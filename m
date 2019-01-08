@@ -2,131 +2,141 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FAE7C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 08:57:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BFD5C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 08:58:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 745622087F
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 08:57:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 511C7206B6
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 08:58:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728149AbfAHI5a convert rfc822-to-8bit (ORCPT
+        id S1728214AbfAHI6p (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 03:57:30 -0500
-Received: from [38.106.11.25] ([38.106.11.25]:47488 "EHLO
-        barracuda02.hxt-semitech.com" rhost-flags-FAIL-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727778AbfAHI5a (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 03:57:30 -0500
-X-ASG-Debug-ID: 1546937844-107606139f152750001-xx1T2L
-Received: from HXTBJIDCEMVIW01.hxtcorp.net ([10.128.0.14]) by barracuda02.hxt-semitech.com with ESMTP id LzL2Zu51YUH14gAn (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NO); Tue, 08 Jan 2019 16:57:24 +0800 (CST)
-X-Barracuda-Envelope-From: xiaoting.liu@hxt-semitech.com
-Received: from HXTBJIDCEMVIW02.hxtcorp.net (10.128.0.15) by
- HXTBJIDCEMVIW01.hxtcorp.net (10.128.0.14) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Tue, 8 Jan 2019 16:57:19 +0800
-Received: from HXTBJIDCEMVIW02.hxtcorp.net ([fe80::3e:f4ff:7927:a6f6]) by
- HXTBJIDCEMVIW02.hxtcorp.net ([fe80::3e:f4ff:7927:a6f6%12]) with mapi id
- 15.00.1395.000; Tue, 8 Jan 2019 16:57:19 +0800
-From:   "Liu, Xiaoting" <xiaoting.liu@hxt-semitech.com>
-To:     Guenter Roeck <linux@roeck-us.net>,
-        "jdelvare@suse.com" <jdelvare@suse.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "openbmc@lists.ozlabs.org" <openbmc@lists.ozlabs.org>
-CC:     "linux-hwmon@vger.kernel.org" <linux-hwmon@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "Yang, Shunyong" <shunyong.yang@hxt-semitech.com>,
-        "Wang, Dongsheng" <dongsheng.wang@hxt-semitech.com>
-Subject: Re: [PATCH v2 2/4] dt-bindings: hwmon: add dps650ab documentation
-Thread-Topic: [PATCH v2 2/4] dt-bindings: hwmon: add dps650ab documentation
-X-ASG-Orig-Subj: Re: [PATCH v2 2/4] dt-bindings: hwmon: add dps650ab documentation
-Thread-Index: AQHUpnWQzQeKH0TYK0OcFgV3qTYMfw==
-Date:   Tue, 8 Jan 2019 08:57:19 +0000
-Message-ID: <6d28f64bd2f441d09819d66b55537e0b@HXTBJIDCEMVIW02.hxtcorp.net>
-References: <cover.1546851856.git.xiaoting.liu@hxt-semitech.com>
- <0087d2d9c7cd7f38761f76c80d1c37cb2cea6ef2.1546851856.git.xiaoting.liu@hxt-semitech.com>
- <568735a3-1de2-3880-5fe1-7be38a55f33f@roeck-us.net>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.64.1.98]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Tue, 8 Jan 2019 03:58:45 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:58188 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726333AbfAHI6m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 03:58:42 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id E9312209BC; Tue,  8 Jan 2019 09:58:39 +0100 (CET)
+Received: from localhost (aaubervilliers-681-1-29-148.w90-88.abo.wanadoo.fr [90.88.149.148])
+        by mail.bootlin.com (Postfix) with ESMTPSA id B7085206DC;
+        Tue,  8 Jan 2019 09:58:29 +0100 (CET)
+Date:   Tue, 8 Jan 2019 09:58:29 +0100
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Jagan Teki <jagan@amarulasolutions.com>
+Cc:     Chen-Yu Tsai <wens@csie.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        linux-amarula@amarulasolutions.com
+Subject: Re: [PATCH v5 07/17] drm/sun4i: sun6i_mipi_dsi: Refactor vertical
+ video start delay
+Message-ID: <20190108085829.clianbtjovu3oieq@flea>
+References: <20181210161729.29720-1-jagan@amarulasolutions.com>
+ <20181210161729.29720-8-jagan@amarulasolutions.com>
+ <20181211164900.wfmkmbrbj3nmlb3h@flea>
+ <CAMty3ZB5F5jD9iJT1soXSA5HtQOf5W9rKO9nCdGFUfVo0hpO4Q@mail.gmail.com>
+ <20190107141158.zaimizk4rlqa6xli@flea>
+ <CAMty3ZBb8byOwh=_W83Ta0Dse1qkoqccOeaBEY9oHPaxDxe9QA@mail.gmail.com>
 MIME-Version: 1.0
-X-Barracuda-Connect: UNKNOWN[10.128.0.14]
-X-Barracuda-Start-Time: 1546937844
-X-Barracuda-Encrypted: ECDHE-RSA-AES256-SHA384
-X-Barracuda-URL: https://192.168.50.102:443/cgi-mod/mark.cgi
-X-Barracuda-Scan-Msg-Size: 1391
-X-Virus-Scanned: by bsmtpd at hxt-semitech.com
-X-Barracuda-BRTS-Status: 1
-X-Barracuda-Bayes: INNOCENT GLOBAL 0.4824 1.0000 0.0000
-X-Barracuda-Spam-Score: 0.00
-X-Barracuda-Spam-Status: No, SCORE=0.00 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=
-X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.65314
-        Rule breakdown below
-         pts rule name              description
-        ---- ---------------------- --------------------------------------------------
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="m3ctiswi7poqkfry"
+Content-Disposition: inline
+In-Reply-To: <CAMty3ZBb8byOwh=_W83Ta0Dse1qkoqccOeaBEY9oHPaxDxe9QA@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/1/7 21:58, Guenter Roeck wrote:
-> On 1/7/19 3:00 AM, Xiaoting Liu wrote:
->> Bindings for DPS650AB power, voltage, temperature, and fan monitering.
->>
->> Signed-off-by: Xiaoting Liu <xiaoting.liu@hxt-semitech.com>
->> ---
->> v2:
->>    Change the patch subject.
->> ---
->>   Documentation/devicetree/bindings/hwmon/dps650ab.txt | 11 +++++++++++
->>   1 file changed, 11 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/hwmon/dps650ab.txt b/Documentation/devicetree/bindings/hwmon/dps650ab.txt
->> new file mode 100644
->> index 000000000000..6bbbff89f6d5
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/hwmon/dps650ab.txt
->> @@ -0,0 +1,11 @@
->> +Bindings for DPS650AB power, voltage, temperature, and fan monitering
->> +
-> Assuming this is the Delta Electronics DPS-650-AB power supply, I think
-> you should mention that here.
-I will update commit message as mentioned.
->
->> +Required properties:
->> +- compatible : "dps650ab"
-> Again, assuming this is the Delta Electronics power supply, this should
-> probably be something like "delta,dps650ab".
 
-OK, I will add delta to compatible property.
+--m3ctiswi7poqkfry
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks,
+On Mon, Jan 07, 2019 at 08:48:21PM +0530, Jagan Teki wrote:
+> On Mon, Jan 7, 2019 at 7:42 PM Maxime Ripard <maxime.ripard@bootlin.com> =
+wrote:
+> >
+> > On Fri, Dec 21, 2018 at 02:26:11AM +0530, Jagan Teki wrote:
+> > > On Tue, Dec 11, 2018 at 10:19 PM Maxime Ripard
+> > > <maxime.ripard@bootlin.com> wrote:
+> > > >
+> > > > On Mon, Dec 10, 2018 at 09:47:19PM +0530, Jagan Teki wrote:
+> > > > > Video start delay can be computed by subtracting total vertical
+> > > > > timing with front porch timing and with adding 1 delay line for T=
+CON.
+> > > > >
+> > > > > BSP code form BPI-M64-bsp is computing video start delay as
+> > > > > (from linux-sunxi/
+> > > > > drivers/video/sunxi/disp2/disp/de/lowlevel_sun50iw1/de_dsi.c)
+> > > > >
+> > > > > u32 vfp =3D panel->lcd_vt - panel->lcd_y - panel->lcd_vbp;
+> > > > > =3D> (panel->lcd_vt) - panel->lcd_y - (panel->lcd_vbp)
+> > > > > =3D> (timmings->ver_front_porch + panel->lcd_vbp + panel->lcd_y)
+> > > > >    - panel->lcd_y - (panel->lcd_vbp)
+> > > > > =3D> timmings->ver_front_porch + panel->lcd_vbp + panel->lcd_y
+> > > > >                            - panel->lcd_y - panel->lcd_vbp
+> > > > > =3D> timmings->ver_front_porch
+> > > > >
+> > > > > So, update the start delay computation accordingly.
+> > > > >
+> > > > > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> > > >
+> > > > Even though it's a bit better now on my A33 board and I don't have =
+the
+> > > > white stripes on the bottom of the display, there's still some
+> > > > flickering with your patches applied.
+> > > >
+> > > > Bisecting it seems to point at that patch, but reverting it doesn't
+> > > > make the issue go away, so it's not really clear which one exactly =
+is
+> > > > at fault.
+> > >
+> > > Is reverting this patch, work fine or not?
+> >
+> > As I was saying, it doesn't.
+> >
+> > > This patch is trying to make use of front porch instead of existing
+> > > back porch to compute the delay. Since we revert the VBP fix patch[1]
+> > > to assume VBP as VFP value look like your setup would also require to
+> > > revert this change. But as per BSP or drm_mode details all of my
+> > > displays even work with and w/o reverting these two.
+> >
+> > Again, I cannot help you without the datasheet for the panels you're
+> > trying to submit.
+>=20
+> The panel bound with Sitronix ST7701 IC
+> http://www.startek-lcd.com/res/starteklcd/pdres/201705/20170512144242904.=
+pdf
 
-Xiaoting
+It's the controller, not the panel
 
->
-> Thanks,
-> Guenter
->
->> +- reg       : I2C address, one of 0x58, 0x59.
->> +
->> +Example:
->> +       dps650ab@58 {
->> +                   compatible = "dps650ab";
->> +                   reg = <0x58>;
->> +       };
->> --
->> 1.8.3.1
->>
->>
->>
->>
+Maxime
 
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--m3ctiswi7poqkfry
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXDRmNQAKCRDj7w1vZxhR
+xX0hAQD/08EfBi/WV1bd+mCQeFb+ux+liOt8kbGwfwOdJWle2wEAxsZnPybyH+5c
+Q7Xrz0RlIUvqu9Sy6WXGgZ9aLOn+lwQ=
+=zTbv
+-----END PGP SIGNATURE-----
+
+--m3ctiswi7poqkfry--
