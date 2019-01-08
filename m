@@ -2,129 +2,71 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32AC3C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 05:24:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CD7AC43612
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 05:25:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 038382089F
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 05:24:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 749E52087E
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 05:25:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727750AbfAHFYs (ORCPT
+        id S1727848AbfAHFZG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 00:24:48 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:47508 "EHLO mx1.redhat.com"
+        Tue, 8 Jan 2019 00:25:06 -0500
+Received: from mga01.intel.com ([192.55.52.88]:52280 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725800AbfAHFYr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 00:24:47 -0500
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 20FA080F9E;
-        Tue,  8 Jan 2019 05:24:47 +0000 (UTC)
-Received: from localhost (ovpn-8-23.pek2.redhat.com [10.72.8.23])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1294F7C828;
-        Tue,  8 Jan 2019 05:24:43 +0000 (UTC)
-Date:   Tue, 8 Jan 2019 13:24:40 +0800
-From:   Baoquan He <bhe@redhat.com>
-To:     Dave Young <dyoung@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, kexec@lists.infradead.org,
-        AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>, x86@kernel.org,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vivek Goyal <vgoyal@redhat.com>
-Subject: Re: [PATCH V2] x86/kexec: fix a kexec_file_load failure
-Message-ID: <20190108052440.GA17983@MiWiFi-R3L-srv>
-References: <20181228011247.GA9999@dhcp-128-65.nay.redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181228011247.GA9999@dhcp-128-65.nay.redhat.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Tue, 08 Jan 2019 05:24:47 +0000 (UTC)
+        id S1725800AbfAHFZG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 00:25:06 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jan 2019 21:25:06 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,453,1539673200"; 
+   d="scan'208";a="308444429"
+Received: from devel-ww.sh.intel.com ([10.239.48.119])
+  by fmsmga006.fm.intel.com with ESMTP; 07 Jan 2019 21:25:03 -0800
+From:   Wei Wang <wei.w.wang@intel.com>
+To:     virtio-dev@lists.oasis-open.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org, virtualization@lists.linux-foundation.org,
+        kvm@vger.kernel.org, mst@redhat.com, cohuck@redhat.com
+Cc:     borntraeger@de.ibm.com, pbonzini@redhat.com, dgilbert@redhat.com,
+        wei.w.wang@intel.com, pasic@linux.ibm.com
+Subject: [PATCH v4 0/3] virtio-balloon: tweak config_changed
+Date:   Tue,  8 Jan 2019 12:50:02 +0800
+Message-Id: <1546923005-40517-1-git-send-email-wei.w.wang@intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/28/18 at 09:12am, Dave Young wrote:
-> The code cleanup mentioned in Fixes tag changed the behavior of
-> kexec_locate_mem_hole.  The kexec_locate_mem_hole will try to
-> allocate free memory only when kbuf.mem is initialized as zero.
-> 
-> But in x86 kexec_file_load implementation there are a few places
-> the kbuf.mem is reused like below:
->   /* kbuf initialized, kbuf.mem = 0 */
->   ...
->   kexec_add_buffer()
->   ...
->   kexec_add_buffer()
-> 
->   The second kexec_add_buffer will reuse previous kbuf but not
->   reinitialize the kbuf.mem.
-> 
-> Thus kexec_file_load failed because the sanity check failed.
-> 
-> So explictily reset kbuf.mem to fix the issue.
-> 
-> Fixes: b6664ba42f14 ("s390, kexec_file: drop arch_kexec_mem_walk()")
-> Signed-off-by: Dave Young <dyoung@redhat.com>
-> Cc: <stable@vger.kernel.org>
-> ---
-> V1 -> V2: use KEXEC_BUF_MEM_UNKNOWN in code.
->  arch/x86/kernel/crash.c           | 1 +
->  arch/x86/kernel/kexec-bzimage64.c | 2 ++
->  2 files changed, 3 insertions(+)
-> 
-> diff --git a/arch/x86/kernel/crash.c b/arch/x86/kernel/crash.c
-> index f631a3f15587..6b7890c7889b 100644
-> --- a/arch/x86/kernel/crash.c
-> +++ b/arch/x86/kernel/crash.c
-> @@ -469,6 +469,7 @@ int crash_load_segments(struct kimage *image)
->  
+Since virtio-ccw doesn't work with accessing to the config space
+inside an interrupt context, this patch series avoids that issue by
+moving the config register accesses to the related workqueue contexts.
 
-Wondering why this place doesn't need the initialization assignment.
-Isn't it to assign in all places before kexec_add_buffer() calling?
+v3->v4 ChangeLog:
+    - change virtio32_to_cpu to cpu_to_virtio_32 in send_cmd_id_start;
+v2->v3 ChangeLog:
+    - rename cmd_id_received to cmd_id_received_cache, and have call sites
+      read the latest value via virtio_balloon_cmd_id_received. (Still
+      kept Cornelia and Halil's reviewed-by as it's a minor change)
+    - remove zeroing vb->num_free_page_blocks in probe since vb is
+      allocated via kzalloc.
+v1->v2 ChangeLog:
+    - add config_read_bitmap to indicate to the workqueue callbacks about
+      the necessity of reading the related config fields.
 
-	/* Add backup segment. */
-        if (image->arch.backup_src_sz) { 
-	}
+Wei Wang (3):
+  virtio-balloon: tweak config_changed implementation
+  virtio-balloon: improve update_balloon_size_func
+  virtio_balloon: remove the unnecessary 0-initialization
 
->  	kbuf.memsz = kbuf.bufsz;
->  	kbuf.buf_align = ELF_CORE_HEADER_ALIGN;
-> +	kbuf.mem = KEXEC_BUF_MEM_UNKNOWN;
->  	ret = kexec_add_buffer(&kbuf);
->  	if (ret) {
->  		vfree((void *)image->arch.elf_headers);
-> diff --git a/arch/x86/kernel/kexec-bzimage64.c b/arch/x86/kernel/kexec-bzimage64.c
-> index 278cd07228dd..0d5efa34f359 100644
-> --- a/arch/x86/kernel/kexec-bzimage64.c
-> +++ b/arch/x86/kernel/kexec-bzimage64.c
-> @@ -434,6 +434,7 @@ static void *bzImage64_load(struct kimage *image, char *kernel,
->  	kbuf.memsz = PAGE_ALIGN(header->init_size);
->  	kbuf.buf_align = header->kernel_alignment;
->  	kbuf.buf_min = MIN_KERNEL_LOAD_ADDR;
+ drivers/virtio/virtio_balloon.c | 104 ++++++++++++++++++++++++++--------------
+ 1 file changed, 69 insertions(+), 35 deletions(-)
 
-Same question for bzImage64_load(), there are three kexec_add_buffer()
-calling, I only saw two initialization in this patch.
+-- 
+2.7.4
 
-> +	kbuf.mem = KEXEC_BUF_MEM_UNKNOWN;
->  	ret = kexec_add_buffer(&kbuf);
->  	if (ret)
->  		goto out_free_params;
-> @@ -448,6 +449,7 @@ static void *bzImage64_load(struct kimage *image, char *kernel,
->  		kbuf.bufsz = kbuf.memsz = initrd_len;
->  		kbuf.buf_align = PAGE_SIZE;
->  		kbuf.buf_min = MIN_INITRD_LOAD_ADDR;
-> +		kbuf.mem = KEXEC_BUF_MEM_UNKNOWN;
->  		ret = kexec_add_buffer(&kbuf);
->  		if (ret)
->  			goto out_free_params;
-> -- 
-> 2.17.0
-> 
