@@ -2,85 +2,110 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F383CC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 15:42:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C04E0C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 15:42:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C864320883
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 15:42:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546962121;
-	bh=gL3eZlgLiao5BI/NFvLeEEo4CLqKI7dbNQXD+1fOR3Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=UWkCfP0AtRU/HmBoqjEktKn2xTRThnZFNyNS5EMtUXtqT5AuSBjmCUV/BuF9xPmnM
-	 MyrKFAKJvr/LH1GjH5F3lar1IUeT6uvygYI4eTZu5Jf2lCy4YiT7eRb29cDqO7xwc8
-	 siw+3e/1QOpdLtyEi4DzZ2LVfSWlQnHPRpHAic8o=
+	by mail.kernel.org (Postfix) with ESMTP id 9424420827
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 15:42:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729058AbfAHPmB (ORCPT
+        id S1729072AbfAHPmn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 10:42:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40048 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728123AbfAHPmA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 10:42:00 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 56B2D20883;
-        Tue,  8 Jan 2019 15:41:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546962119;
-        bh=gL3eZlgLiao5BI/NFvLeEEo4CLqKI7dbNQXD+1fOR3Y=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=mrkiTLj3tC7qP75D5SPWVakCMMbc9xutG8o16tlYH4FbZWp9AI+F3x97OSbz0VgSk
-         +7afYSER1cNT7gzG3GpvYH4eiq3vNgVmIWyTda4wtsxy/S6oX89MnsXVsAfAr+mres
-         pMJ2CS97qjX48GFnmAMY0Tg/koTykM92dp7V0rZo=
-Date:   Tue, 8 Jan 2019 16:41:57 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Kai-Heng Feng <kai.heng.feng@canonical.com>
-Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4] USB: Don't enable LPM if it's already enabled
-Message-ID: <20190108154157.GA20561@kroah.com>
-References: <20181203102643.22690-1-kai.heng.feng@canonical.com>
+        Tue, 8 Jan 2019 10:42:43 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:36719 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727857AbfAHPmn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 10:42:43 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x08FgNhp3567005
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Tue, 8 Jan 2019 07:42:23 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x08FgLxE3567001;
+        Tue, 8 Jan 2019 07:42:21 -0800
+Date:   Tue, 8 Jan 2019 07:42:21 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
+Message-ID: <tip-er8j7qhavtdw0kdga3zswynm@git.kernel.org>
+Cc:     hpa@zytor.com, tglx@linutronix.de, linux-kernel@vger.kernel.org,
+        adrian.hunter@intel.com, acme@redhat.com, ren_guo@c-sky.com,
+        jolsa@kernel.org, namhyung@kernel.org, arnd@arndb.de,
+        mingo@kernel.org, takahiro.akashi@linaro.org, will.deacon@arm.com
+Reply-To: linux-kernel@vger.kernel.org, hpa@zytor.com, tglx@linutronix.de,
+          acme@redhat.com, adrian.hunter@intel.com, jolsa@kernel.org,
+          arnd@arndb.de, namhyung@kernel.org, ren_guo@c-sky.com,
+          will.deacon@arm.com, takahiro.akashi@linaro.org, mingo@kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/urgent] tools headers uapi: Sync copy of
+ asm-generic/unistd.h with the kernel sources
+Git-Commit-ID: 8c91fd605e1a66050c9c4dbc3e159a08e8c5f7d4
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <20181203102643.22690-1-kai.heng.feng@canonical.com>
-User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 03, 2018 at 06:26:43PM +0800, Kai-Heng Feng wrote:
-> USB Bluetooth controller QCA ROME (0cf3:e007) sometimes stops working
-> after S3:
-> [ 165.110742] Bluetooth: hci0: using NVM file: qca/nvm_usb_00000302.bin
-> [ 168.432065] Bluetooth: hci0: Failed to send body at 4 of 1953 (-110)
-> 
-> After some experiments, I found that disabling LPM can workaround the
-> issue.
-> 
-> On some platforms, the USB power is cut during S3, so the driver uses
-> reset-resume to resume the device. During port resume, LPM gets enabled
-> twice, by usb_reset_and_verify_device() and usb_port_resume().
-> 
-> So let's enable LPM for just once, as this solves the issue for the
-> device in question.
-> 
-> Also consolidate USB2 LPM functions to usb_enable_usb2_hardware_lpm()
-> and usb_disable_usb2_hardware_lpm().
+Commit-ID:  8c91fd605e1a66050c9c4dbc3e159a08e8c5f7d4
+Gitweb:     https://git.kernel.org/tip/8c91fd605e1a66050c9c4dbc3e159a08e8c5f7d4
+Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
+AuthorDate: Fri, 4 Jan 2019 12:08:31 -0300
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Fri, 4 Jan 2019 12:54:49 -0300
 
-I thought I asked for this to be two different patches.  One that does
-the "consolidation", and then one that fixes the bug.  You are mixing
-two different things here together, making it harder to review.
+tools headers uapi: Sync copy of asm-generic/unistd.h with the kernel sources
 
-Can you please break this up and send a patch series, with the correct
-"Fixes:" tag added to the second patch that actually fixes the issue?
+To get the changes in:
 
-thanks,
+  b7d624ab4312 asm-generic: unistd.h: fixup broken macro include.
+  4e21565b7fd4 asm-generic: add kexec_file_load system call to unistd.h
 
-greg k-h
+With this the 'kexec_file_load' syscall will be added to arm64's syscall
+table and will appear on the output of 'perf trace' on that platform.
+
+This silences this tools/perf build warning:
+
+  Warning: Kernel ABI header at 'tools/include/uapi/asm-generic/unistd.h' differs from latest version at 'include/uapi/asm-generic/unistd.h'
+  diff -u tools/include/uapi/asm-generic/unistd.h include/uapi/asm-generic/unistd.h
+
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: AKASHI Takahiro <takahiro.akashi@linaro.org>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Guo Ren <ren_guo@c-sky.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Will Deacon <will.deacon@arm.com>
+Link: https://lkml.kernel.org/n/tip-er8j7qhavtdw0kdga3zswynm@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/include/uapi/asm-generic/unistd.h | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/tools/include/uapi/asm-generic/unistd.h b/tools/include/uapi/asm-generic/unistd.h
+index c7f3321fbe43..d90127298f12 100644
+--- a/tools/include/uapi/asm-generic/unistd.h
++++ b/tools/include/uapi/asm-generic/unistd.h
+@@ -738,9 +738,11 @@ __SYSCALL(__NR_statx,     sys_statx)
+ __SC_COMP(__NR_io_pgetevents, sys_io_pgetevents, compat_sys_io_pgetevents)
+ #define __NR_rseq 293
+ __SYSCALL(__NR_rseq, sys_rseq)
++#define __NR_kexec_file_load 294
++__SYSCALL(__NR_kexec_file_load,     sys_kexec_file_load)
+ 
+ #undef __NR_syscalls
+-#define __NR_syscalls 294
++#define __NR_syscalls 295
+ 
+ /*
+  * 32 bit systems traditionally used different
