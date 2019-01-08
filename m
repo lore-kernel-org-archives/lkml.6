@@ -2,289 +2,108 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D949AC43444
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 09:57:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 551FCC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 09:59:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C590218A6
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 09:57:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 195132087E
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 09:59:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="mQ2L/56S"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="tDp1riQy"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728439AbfAHJ5h (ORCPT
+        id S1728383AbfAHJ7N (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 04:57:37 -0500
-Received: from wout2-smtp.messagingengine.com ([64.147.123.25]:54607 "EHLO
-        wout2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727001AbfAHJ5h (ORCPT
+        Tue, 8 Jan 2019 04:59:13 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:45256 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727001AbfAHJ7N (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 04:57:37 -0500
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-        by mailout.west.internal (Postfix) with ESMTP id 2AF1B1372;
-        Tue,  8 Jan 2019 04:57:33 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute6.internal (MEProxy); Tue, 08 Jan 2019 04:57:33 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm1; bh=8NgReACofGr4pfsVek1KnbG548/6VAg+JiRF3ljMJ
-        ik=; b=mQ2L/56S+ov7BImttVK3klS4q7x3z3cfmxwjxB0oew76lugkXWSKxd301
-        jhx3z2uBMhRyc8VYpUDl8I39v1dxiQPBESWlGKwvypRH80sXLpShjyi63ZTzokHW
-        LplagP37FIZU/ZEJ4OhaIYWmNQruEFc3w8fbouwPTSfrpLe46VX2kakNC4FKQakq
-        iNWvA0FHQajxJ/z2MO8Nks3KEe+mwoHGpfEWx1bH+WqpbXf/WhStegRE+7/5fZzp
-        kFk6G4tHvFV+6A9vrU0Q7mM0mEneEI1N6wlZ5FRHH1+hhnbbqCPgm2vtpRlBrLYE
-        Aos5x9n7zVOj3rybFGBe/lfyS6ygg==
-X-ME-Sender: <xms:C3Q0XASfp-usMgrhx_WGTdAASULcT52_PDPMj5Fo5PtBuvuMl_ECAQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedtledrvdelgddtkeculddtuddrgedtkedrtddtmd
-    cutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfhuthen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    gfrhhlucfvnfffucdlfedtmdenucfjughrpefkuffhvfffjghftggfggfgsehtkeertddt
-    reejnecuhfhrohhmpeftuhhsshgvlhhlucevuhhrrhgvhicuoehruhhstghurhesrhhush
-    hsvghllhdrtggtqeenucfkphepuddrudehjedrudelgedrudelkeenucfrrghrrghmpehm
-    rghilhhfrhhomheprhhushgtuhhrsehruhhsshgvlhhlrdgttgenucevlhhushhtvghruf
-    hiiigvpedt
-X-ME-Proxy: <xmx:C3Q0XItAmkhGC32P9BWVvKIneWF6ItIwYel34OmCDto9z5E3EZL4ZA>
-    <xmx:C3Q0XMwtlGuiBWJ69siaYGiWEGUWPUgN2c3UVCsJdfccTkUe1TVg5g>
-    <xmx:C3Q0XIeE_OlUJVYyCa7EKe58lk3mF1GDyaHRfsuAJ2GitCHWzkknFw>
-    <xmx:DHQ0XF5G1WQhdoXRMjmaqMlPrnpqCbb8ql3OuJNf52dmuGpWNujTRA>
-Received: from crackle.ozlabs.ibm.com (unknown [1.157.194.198])
-        by mail.messagingengine.com (Postfix) with ESMTPA id BFF3D10087;
-        Tue,  8 Jan 2019 04:57:27 -0500 (EST)
-Message-ID: <9c1097982d424c0c96459899e36f7f4c9345be73.camel@russell.cc>
-Subject: Re: [PATCH v2 2/2] powerpc: use probe_user_read()
-From:   Russell Currey <ruscur@russell.cc>
-To:     Christophe Leroy <christophe.leroy@c-s.fr>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Mike Rapoport <rppt@linux.ibm.com>, linux-mm@kvack.org,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Date:   Tue, 08 Jan 2019 20:58:37 +1100
-In-Reply-To: <293a653c-52aa-6326-4022-73fb25590354@c-s.fr>
-References: <0b0db24e18063076e9d9f4e376994af83da05456.1546932949.git.christophe.leroy@c-s.fr>
-         <e939991366b784ef13c7afcab51749e3b46327ac.1546932949.git.christophe.leroy@c-s.fr>
-         <293a653c-52aa-6326-4022-73fb25590354@c-s.fr>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.3 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Tue, 8 Jan 2019 04:59:13 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x089wwg0171836;
+        Tue, 8 Jan 2019 09:59:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=dQ8UlmPGnMrKWkrB3A66sb4x9LUYtblrI7itGz1to4U=;
+ b=tDp1riQyDFb408igILo1MK72ybNg2SL2N0fPBDvtX8M40uIVt+REvJeDGq3tILGDwWTO
+ nnm3D3Dxa5YOa0+v4tgndNWGRmqdF0zLd1somGY2qkw2h80D/kH++m4sCDMfCrLZLBbJ
+ 5hotLoH33s7jIwHQu0dsPn9kwi7RZkDPRLT8CdiiaFB8RHA2buDDaBm9jOOiKGer4ocR
+ eZMSpwR0MW6wxAr6phBL1OD8SHrQ5itnSnrscnTQycQbmZgUUMPj/t1tJJ4Wxk4Qi50q
+ bo3oZME4GRzXbdfcqrkwX5BrojlS7/8U/FHaFoHEoZWGiadCnH+84n2xYIc07gOQIAvn XQ== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by userp2120.oracle.com with ESMTP id 2ptn7qteuu-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 08 Jan 2019 09:59:06 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x089x4Or032437
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 8 Jan 2019 09:59:05 GMT
+Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x089x1oB009404;
+        Tue, 8 Jan 2019 09:59:02 GMT
+Received: from kadam (/197.157.0.45)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 08 Jan 2019 01:59:01 -0800
+Date:   Tue, 8 Jan 2019 12:57:38 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Aditya Pakki <pakki001@umn.edu>
+Cc:     Arushi Singhal <arushisinghal19971997@gmail.com>,
+        devel@driverdev.osuosl.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org,
+        Mamta Shukla <mamtashukla555@gmail.com>,
+        Quytelda Kahja <quytelda@tamalin.org>,
+        Wen Yang <wen.yang99@zte.com.cn>
+Subject: Re: [PATCH] [v3] staging: rtl8723bs: Clean up dead code
+Message-ID: <20190108095738.GH3200@kadam>
+References: <20190107232054.4742-1-pakki001@umn.edu>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190107232054.4742-1-pakki001@umn.edu>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9129 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1901080082
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2019-01-08 at 10:37 +0100, Christophe Leroy wrote:
-> Hi Michael and Russell,
+Your subject does work for `git am` but the more normal way to format
+it is:
+
+	[PATCH v4] staging: rtl8723bs: Clean up dead code
+
+On Mon, Jan 07, 2019 at 05:20:52PM -0600, Aditya Pakki wrote:
+> rtw_wps_start() is part of dead code due to CONFIG_INTEL_WIDI.
+> The fix removes the deadcode and replaces the function with NULL
+> in rtw_private_handler. Identified as part of copy_from_user bug.
 > 
-> Any idea why:
-> - checkpatch reports missing Signed-off-by:
-> - Snowpatch build fails on PPC64 (it seems unrelated to the patch, 
-> something wrong in lib/genalloc.c)
-
-Upstream kernel broke for powerpc (snowpatch applies patches on top of
-powerpc/next), it was fixed in commit
-35004f2e55807a1a1491db24ab512dd2f770a130 which I believe is in
-powerpc/next now.  I will look at rerunning tests for all the patches
-that this impacted.
-
-As for the S-o-b, no clue, I'll have a look.  Thanks for the report!
-
-- Russell
-
+> Changes from v1 & 2:
+> The return value of copy_from_user() is not checked appropriately.
+> However, maintainers identified the patch fixing the issue is not
+> required as function rts_wps_start() is dead code and can be removed.
 > 
-> Thanks
-> Christophe
-> 
-> Le 08/01/2019 à 08:37, Christophe Leroy a écrit :
-> > Instead of opencoding, use probe_user_read() to failessly
-> > read a user location.
-> > 
-> > Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-> > ---
-> >   v2: Using probe_user_read() instead of probe_user_address()
-> > 
-> >   arch/powerpc/kernel/process.c   | 12 +-----------
-> >   arch/powerpc/mm/fault.c         |  6 +-----
-> >   arch/powerpc/perf/callchain.c   | 20 +++-----------------
-> >   arch/powerpc/perf/core-book3s.c |  8 +-------
-> >   arch/powerpc/sysdev/fsl_pci.c   | 10 ++++------
-> >   5 files changed, 10 insertions(+), 46 deletions(-)
-> > 
-> > diff --git a/arch/powerpc/kernel/process.c
-> > b/arch/powerpc/kernel/process.c
-> > index ce393df243aa..6a4b59d574c2 100644
-> > --- a/arch/powerpc/kernel/process.c
-> > +++ b/arch/powerpc/kernel/process.c
-> > @@ -1298,16 +1298,6 @@ void show_user_instructions(struct pt_regs
-> > *regs)
-> >   
-> >   	pc = regs->nip - (NR_INSN_TO_PRINT * 3 / 4 * sizeof(int));
-> >   
-> > -	/*
-> > -	 * Make sure the NIP points at userspace, not kernel text/data
-> > or
-> > -	 * elsewhere.
-> > -	 */
-> > -	if (!__access_ok(pc, NR_INSN_TO_PRINT * sizeof(int), USER_DS))
-> > {
-> > -		pr_info("%s[%d]: Bad NIP, not dumping instructions.\n",
-> > -			current->comm, current->pid);
-> > -		return;
-> > -	}
-> > -
-> >   	seq_buf_init(&s, buf, sizeof(buf));
-> >   
-> >   	while (n) {
-> > @@ -1318,7 +1308,7 @@ void show_user_instructions(struct pt_regs
-> > *regs)
-> >   		for (i = 0; i < 8 && n; i++, n--, pc += sizeof(int)) {
-> >   			int instr;
-> >   
-> > -			if (probe_kernel_address((const void *)pc,
-> > instr)) {
-> > +			if (probe_user_read(&instr, (void __user *)pc,
-> > sizeof(instr))) {
-> >   				seq_buf_printf(&s, "XXXXXXXX ");
-> >   				continue;
-> >   			}
-> > diff --git a/arch/powerpc/mm/fault.c b/arch/powerpc/mm/fault.c
-> > index 887f11bcf330..ec74305fa330 100644
-> > --- a/arch/powerpc/mm/fault.c
-> > +++ b/arch/powerpc/mm/fault.c
-> > @@ -276,12 +276,8 @@ static bool bad_stack_expansion(struct pt_regs
-> > *regs, unsigned long address,
-> >   		if ((flags & FAULT_FLAG_WRITE) && (flags &
-> > FAULT_FLAG_USER) &&
-> >   		    access_ok(nip, sizeof(*nip))) {
-> >   			unsigned int inst;
-> > -			int res;
-> >   
-> > -			pagefault_disable();
-> > -			res = __get_user_inatomic(inst, nip);
-> > -			pagefault_enable();
-> > -			if (!res)
-> > +			if (!probe_user_read(&inst, nip, sizeof(inst)))
-> >   				return !store_updates_sp(inst);
-> >   			*must_retry = true;
-> >   		}
-> > diff --git a/arch/powerpc/perf/callchain.c
-> > b/arch/powerpc/perf/callchain.c
-> > index 0af051a1974e..0680efb2237b 100644
-> > --- a/arch/powerpc/perf/callchain.c
-> > +++ b/arch/powerpc/perf/callchain.c
-> > @@ -159,12 +159,8 @@ static int read_user_stack_64(unsigned long
-> > __user *ptr, unsigned long *ret)
-> >   	    ((unsigned long)ptr & 7))
-> >   		return -EFAULT;
-> >   
-> > -	pagefault_disable();
-> > -	if (!__get_user_inatomic(*ret, ptr)) {
-> > -		pagefault_enable();
-> > +	if (!probe_user_read(ret, ptr, sizeof(*ret)))
-> >   		return 0;
-> > -	}
-> > -	pagefault_enable();
-> >   
-> >   	return read_user_stack_slow(ptr, ret, 8);
-> >   }
-> > @@ -175,12 +171,8 @@ static int read_user_stack_32(unsigned int
-> > __user *ptr, unsigned int *ret)
-> >   	    ((unsigned long)ptr & 3))
-> >   		return -EFAULT;
-> >   
-> > -	pagefault_disable();
-> > -	if (!__get_user_inatomic(*ret, ptr)) {
-> > -		pagefault_enable();
-> > +	if (!probe_user_read(ret, ptr, sizeof(*ret)))
-> >   		return 0;
-> > -	}
-> > -	pagefault_enable();
-> >   
-> >   	return read_user_stack_slow(ptr, ret, 4);
-> >   }
-> > @@ -307,17 +299,11 @@ static inline int current_is_64bit(void)
-> >    */
-> >   static int read_user_stack_32(unsigned int __user *ptr, unsigned
-> > int *ret)
-> >   {
-> > -	int rc;
-> > -
-> >   	if ((unsigned long)ptr > TASK_SIZE - sizeof(unsigned int) ||
-> >   	    ((unsigned long)ptr & 3))
-> >   		return -EFAULT;
-> >   
-> > -	pagefault_disable();
-> > -	rc = __get_user_inatomic(*ret, ptr);
-> > -	pagefault_enable();
-> > -
-> > -	return rc;
-> > +	return probe_user_read(ret, ptr, sizeof(*ret));
-> >   }
-> >   
-> >   static inline void perf_callchain_user_64(struct
-> > perf_callchain_entry_ctx *entry,
-> > diff --git a/arch/powerpc/perf/core-book3s.c
-> > b/arch/powerpc/perf/core-book3s.c
-> > index b0723002a396..4b64ddf0db68 100644
-> > --- a/arch/powerpc/perf/core-book3s.c
-> > +++ b/arch/powerpc/perf/core-book3s.c
-> > @@ -416,7 +416,6 @@ static void power_pmu_sched_task(struct
-> > perf_event_context *ctx, bool sched_in)
-> >   static __u64 power_pmu_bhrb_to(u64 addr)
-> >   {
-> >   	unsigned int instr;
-> > -	int ret;
-> >   	__u64 target;
-> >   
-> >   	if (is_kernel_addr(addr)) {
-> > @@ -427,13 +426,8 @@ static __u64 power_pmu_bhrb_to(u64 addr)
-> >   	}
-> >   
-> >   	/* Userspace: need copy instruction here then translate it */
-> > -	pagefault_disable();
-> > -	ret = __get_user_inatomic(instr, (unsigned int __user *)addr);
-> > -	if (ret) {
-> > -		pagefault_enable();
-> > +	if (probe_user_read(&instr, (unsigned int __user *)addr,
-> > sizeof(instr)))
-> >   		return 0;
-> > -	}
-> > -	pagefault_enable();
-> >   
-> >   	target = branch_target(&instr);
-> >   	if ((!target) || (instr & BRANCH_ABSOLUTE))
-> > diff --git a/arch/powerpc/sysdev/fsl_pci.c
-> > b/arch/powerpc/sysdev/fsl_pci.c
-> > index 918be816b097..c8a1b26489f5 100644
-> > --- a/arch/powerpc/sysdev/fsl_pci.c
-> > +++ b/arch/powerpc/sysdev/fsl_pci.c
-> > @@ -1068,13 +1068,11 @@ int fsl_pci_mcheck_exception(struct pt_regs
-> > *regs)
-> >   	addr += mfspr(SPRN_MCAR);
-> >   
-> >   	if (is_in_pci_mem_space(addr)) {
-> > -		if (user_mode(regs)) {
-> > -			pagefault_disable();
-> > -			ret = get_user(inst, (__u32 __user *)regs-
-> > >nip);
-> > -			pagefault_enable();
-> > -		} else {
-> > +		if (user_mode(regs))
-> > +			ret = probe_user_read(&inst, (void __user
-> > *)regs->nip,
-> > +					      sizeof(inst));
-> > +		else
-> >   			ret = probe_kernel_address((void *)regs->nip,
-> > inst);
-> > -		}
-> >   
-> >   		if (!ret && mcheck_handle_load(regs, inst)) {
-> >   			regs->nip += 4;
-> > 
+> Signed-off-by: Aditya Pakki <pakki001@umn.edu>
+> ---
+
+The "Changed from" comments need to go here under the --- cut off line.
+It gets removed from the final kernel git log.
+
+That information is just for maintainers to remember what was discussed
+earlier.  It's not needed for the permanent record.
+
+>  .../staging/rtl8723bs/os_dep/ioctl_linux.c    | 34 +------------------
+>  1 file changed, 1 insertion(+), 33 deletions(-)
+
+regards,
+dan carpenter
 
