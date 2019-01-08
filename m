@@ -4,48 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 296BAC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:52:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0EE2C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:52:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E302F20827
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:52:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 67D18206BB
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:52:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546977123;
-	bh=tnGu0IeRazSJhzU9kv4qJ89Pajls4j4/DXyBm+Q5vGM=;
+	s=default; t=1546977135;
+	bh=P/u98VXXDdojch1qcsHLgrzQJKqTWDrrN4wrhYZy/3c=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Gq2UTErEqI21Bxh6VSbOZXXCHRhSEm9m/Fk0J0X2TaR9P5lMwWdgDYcf7el4DZ+qF
-	 mAtOyuyhaIzt6iM8dQBLeUoxvKGx/kGOauHEl6j4q2pQdsuSwm6zwwEf5LNuLl45L9
-	 U7EWua9EDefbNtDk0nxBwOlpu+QY4ys4SsG2Aq80=
+	b=1Yn0Wuw5FtAR1ekSeRMj0GLonkxxHUGMLPyl6YlaZvm2CPzaVGhYCQtuJMpG97zXH
+	 bSq9GipdyYpSXkK96wBxOljf85SotaoeZuG8L5y7GQrkHjERoO3KOUN9LU1tbxefCj
+	 OtOFWhA+EGgJd/EAc17fZw04aw8QY/zEUDb2Ll6c=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732899AbfAHTwC (ORCPT
+        id S1732586AbfAHTwO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:52:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39422 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 14:52:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39396 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731038AbfAHTbU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:31:20 -0500
+        id S1731045AbfAHTbT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:31:19 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BCB0320645;
-        Tue,  8 Jan 2019 19:31:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B6CB520665;
+        Tue,  8 Jan 2019 19:31:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546975879;
-        bh=tnGu0IeRazSJhzU9kv4qJ89Pajls4j4/DXyBm+Q5vGM=;
+        s=default; t=1546975878;
+        bh=P/u98VXXDdojch1qcsHLgrzQJKqTWDrrN4wrhYZy/3c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Y7hY9Rr/nYFFmQRPT/ZooxG8nn4Jv4jlYGkX4ktAHZJGrIKcbqQHM0xHD0W6xnD52
-         Wl6JMa7GGFovMP6G9aJ4aySKT0yNv8DmNbAH35V1KEs0jSBPR3sIeLWg83m0eNikRm
-         c63F71RjLsjU7RGLCTmzHxHLT3tgjs2sxCwTXOx4=
+        b=FkVgRCsFj0wKxS5pmfKbTdF4ms6Q1r2udCqhRzlqXbsf3016XOK0ybh6yt+eO9bQx
+         XvhOyUfdPfHjol5WVK4HQrDk3tysbDFE5g7W5BXDySBl8kqQ2OdBjN26q8mBDgLGkg
+         3gH8bLbelHdG3eUAoupso72JVXFQIteqTE+I1FXA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Qu Wenruo <wqu@suse.com>, David Sterba <dsterba@suse.com>,
-        Sasha Levin <sashal@kernel.org>, linux-btrfs@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 56/97] btrfs: volumes: Make sure there is no overlap of dev extents at mount time
-Date:   Tue,  8 Jan 2019 14:29:05 -0500
-Message-Id: <20190108192949.122407-56-sashal@kernel.org>
+Cc:     Jonas Danielsson <jonas@orbital-systems.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Sasha Levin <sashal@kernel.org>, linux-mmc@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 55/97] mmc: atmel-mci: do not assume idle after atmci_request_end
+Date:   Tue,  8 Jan 2019 14:29:04 -0500
+Message-Id: <20190108192949.122407-55-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108192949.122407-1-sashal@kernel.org>
 References: <20190108192949.122407-1-sashal@kernel.org>
@@ -57,148 +57,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Qu Wenruo <wqu@suse.com>
+From: Jonas Danielsson <jonas@orbital-systems.com>
 
-[ Upstream commit 5eb193812a42dc49331f25137a38dfef9612d3e4 ]
+[ Upstream commit ae460c115b7aa50c9a36cf78fced07b27962c9d0 ]
 
-Enhance btrfs_verify_dev_extents() to remember previous checked dev
-extents, so it can verify no dev extents can overlap.
+On our AT91SAM9260 board we use the same sdio bus for wifi and for the
+sd card slot. This caused the atmel-mci to give the following splat on
+the serial console:
 
-Analysis from Hans:
+  ------------[ cut here ]------------
+  WARNING: CPU: 0 PID: 538 at drivers/mmc/host/atmel-mci.c:859 atmci_send_command+0x24/0x44
+  Modules linked in:
+  CPU: 0 PID: 538 Comm: mmcqd/0 Not tainted 4.14.76 #14
+  Hardware name: Atmel AT91SAM9
+  [<c000fccc>] (unwind_backtrace) from [<c000d3dc>] (show_stack+0x10/0x14)
+  [<c000d3dc>] (show_stack) from [<c0017644>] (__warn+0xd8/0xf4)
+  [<c0017644>] (__warn) from [<c0017704>] (warn_slowpath_null+0x1c/0x24)
+  [<c0017704>] (warn_slowpath_null) from [<c033bb9c>] (atmci_send_command+0x24/0x44)
+  [<c033bb9c>] (atmci_send_command) from [<c033e984>] (atmci_start_request+0x1f4/0x2dc)
+  [<c033e984>] (atmci_start_request) from [<c033f3b4>] (atmci_request+0xf0/0x164)
+  [<c033f3b4>] (atmci_request) from [<c0327108>] (mmc_start_request+0x280/0x2d0)
+  [<c0327108>] (mmc_start_request) from [<c032800c>] (mmc_start_areq+0x230/0x330)
+  [<c032800c>] (mmc_start_areq) from [<c03366f8>] (mmc_blk_issue_rw_rq+0xc4/0x310)
+  [<c03366f8>] (mmc_blk_issue_rw_rq) from [<c03372c4>] (mmc_blk_issue_rq+0x118/0x5ac)
+  [<c03372c4>] (mmc_blk_issue_rq) from [<c033781c>] (mmc_queue_thread+0xc4/0x118)
+  [<c033781c>] (mmc_queue_thread) from [<c002daf8>] (kthread+0x100/0x118)
+  [<c002daf8>] (kthread) from [<c000a580>] (ret_from_fork+0x14/0x34)
+  ---[ end trace 594371ddfa284bd6 ]---
 
-"Imagine allocating a DATA|DUP chunk.
+This is:
+  WARN_ON(host->cmd);
 
- In the chunk allocator, we first set...
-   max_stripe_size = SZ_1G;
-   max_chunk_size = BTRFS_MAX_DATA_CHUNK_SIZE
- ... which is 10GiB.
+This was fixed on our board by letting atmci_request_end determine what
+state we are in. Instead of unconditionally setting it to STATE_IDLE on
+STATE_END_REQUEST.
 
- Then...
-   /* we don't want a chunk larger than 10% of writeable space */
-   max_chunk_size = min(div_factor(fs_devices->total_rw_bytes, 1),
-       		 max_chunk_size);
-
- Imagine we only have one 7880MiB block device in this filesystem. Now
- max_chunk_size is down to 788MiB.
-
- The next step in the code is to search for max_stripe_size * dev_stripes
- amount of free space on the device, which is in our example 1GiB * 2 =
- 2GiB. Imagine the device has exactly 1578MiB free in one contiguous
- piece. This amount of bytes will be put in devices_info[ndevs - 1].max_avail
-
- Next we recalculate the stripe_size (which is actually the device extent
- length), based on the actual maximum amount of available raw disk space:
-   stripe_size = div_u64(devices_info[ndevs - 1].max_avail, dev_stripes);
-
- stripe_size is now 789MiB
-
- Next we do...
-   data_stripes = num_stripes / ncopies
- ...where data_stripes ends up as 1, because num_stripes is 2 (the amount
- of device extents we're going to have), and DUP has ncopies 2.
-
- Next there's a check...
-   if (stripe_size * data_stripes > max_chunk_size)
- ...which matches because 789MiB * 1 > 788MiB.
-
- We go into the if code, and next is...
-   stripe_size = div_u64(max_chunk_size, data_stripes);
- ...which resets stripe_size to max_chunk_size: 788MiB
-
- Next is a fun one...
-   /* bump the answer up to a 16MB boundary */
-   stripe_size = round_up(stripe_size, SZ_16M);
- ...which changes stripe_size from 788MiB to 800MiB.
-
- We're not done changing stripe_size yet...
-   /* But don't go higher than the limits we found while searching
-    * for free extents
-    */
-   stripe_size = min(devices_info[ndevs - 1].max_avail,
-       	      stripe_size);
-
- This is bad. max_avail is twice the stripe_size (we need to fit 2 device
- extents on the same device for DUP).
-
- The result here is that 800MiB < 1578MiB, so it's unchanged. However,
- the resulting DUP chunk will need 1600MiB disk space, which isn't there,
- and the second dev_extent might extend into the next thing (next
- dev_extent? end of device?) for 22MiB.
-
- The last shown line of code relies on a situation where there's twice
- the value of stripe_size present as value for the variable stripe_size
- when it's DUP. This was actually the case before commit 92e222df7b
- "btrfs: alloc_chunk: fix DUP stripe size handling", from which I quote:
-   "[...] in the meantime there's a check to see if the stripe_size does
- not exceed max_chunk_size. Since during this check stripe_size is twice
- the amount as intended, the check will reduce the stripe_size to
- max_chunk_size if the actual correct to be used stripe_size is more than
- half the amount of max_chunk_size."
-
- In the previous version of the code, the 16MiB alignment (why is this
- done, by the way?) would result in a 50% chance that it would actually
- do an 8MiB alignment for the individual dev_extents, since it was
- operating on double the size. Does this matter?
-
- Does it matter that stripe_size can be set to anything which is not
- 16MiB aligned because of the amount of remaining available disk space
- which is just taken?
-
- What is the main purpose of this round_up?
-
- The most straightforward thing to do seems something like...
-   stripe_size = min(
-       div_u64(devices_info[ndevs - 1].max_avail, dev_stripes),
-       stripe_size
-   )
- ..just putting half of the max_avail into stripe_size."
-
-Link: https://lore.kernel.org/linux-btrfs/b3461a38-e5f8-f41d-c67c-2efac8129054@mendix.com/
-Reported-by: Hans van Kranenburg <hans.van.kranenburg@mendix.com>
-Signed-off-by: Qu Wenruo <wqu@suse.com>
-[ add analysis from report ]
-Signed-off-by: David Sterba <dsterba@suse.com>
+Signed-off-by: Jonas Danielsson <jonas@orbital-systems.com>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/btrfs/volumes.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ drivers/mmc/host/atmel-mci.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
-index f4405e430da6..5aa6296699b4 100644
---- a/fs/btrfs/volumes.c
-+++ b/fs/btrfs/volumes.c
-@@ -7467,6 +7467,8 @@ int btrfs_verify_dev_extents(struct btrfs_fs_info *fs_info)
- 	struct btrfs_path *path;
- 	struct btrfs_root *root = fs_info->dev_root;
- 	struct btrfs_key key;
-+	u64 prev_devid = 0;
-+	u64 prev_dev_ext_end = 0;
- 	int ret = 0;
+diff --git a/drivers/mmc/host/atmel-mci.c b/drivers/mmc/host/atmel-mci.c
+index be53044086c7..fbc56ee99682 100644
+--- a/drivers/mmc/host/atmel-mci.c
++++ b/drivers/mmc/host/atmel-mci.c
+@@ -1954,13 +1954,14 @@ static void atmci_tasklet_func(unsigned long priv)
+ 			}
  
- 	key.objectid = 1;
-@@ -7511,10 +7513,22 @@ int btrfs_verify_dev_extents(struct btrfs_fs_info *fs_info)
- 		chunk_offset = btrfs_dev_extent_chunk_offset(leaf, dext);
- 		physical_len = btrfs_dev_extent_length(leaf, dext);
+ 			atmci_request_end(host, host->mrq);
+-			state = STATE_IDLE;
++			goto unlock; /* atmci_request_end() sets host->state */
+ 			break;
+ 		}
+ 	} while (state != prev_state);
  
-+		/* Check if this dev extent overlaps with the previous one */
-+		if (devid == prev_devid && physical_offset < prev_dev_ext_end) {
-+			btrfs_err(fs_info,
-+"dev extent devid %llu physical offset %llu overlap with previous dev extent end %llu",
-+				  devid, physical_offset, prev_dev_ext_end);
-+			ret = -EUCLEAN;
-+			goto out;
-+		}
-+
- 		ret = verify_one_dev_extent(fs_info, chunk_offset, devid,
- 					    physical_offset, physical_len);
- 		if (ret < 0)
- 			goto out;
-+		prev_devid = devid;
-+		prev_dev_ext_end = physical_offset + physical_len;
-+
- 		ret = btrfs_next_item(root, path);
- 		if (ret < 0)
- 			goto out;
+ 	host->state = state;
+ 
++unlock:
+ 	spin_unlock(&host->lock);
+ }
+ 
 -- 
 2.19.1
 
