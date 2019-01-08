@@ -2,237 +2,278 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3231C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 03:15:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21905C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 03:20:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8ACD5206A3
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 03:15:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DD3E0206B7
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 03:20:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="xFqUudw7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727614AbfAHDPQ (ORCPT
+        id S1727393AbfAHDUK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 22:15:16 -0500
-Received: from inva020.nxp.com ([92.121.34.13]:52198 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727463AbfAHDPD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 22:15:03 -0500
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 53B741A02A7;
-        Tue,  8 Jan 2019 04:15:01 +0100 (CET)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 30A641A02A2;
-        Tue,  8 Jan 2019 04:14:49 +0100 (CET)
-Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id F3AB5402C0;
-        Tue,  8 Jan 2019 11:14:35 +0800 (SGT)
-From:   Xiaowei Bao <xiaowei.bao@nxp.com>
-To:     bhelgaas@google.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        shawnguo@kernel.org, leoyang.li@nxp.com, kishon@ti.com,
-        lorenzo.pieralisi@arm.com, arnd@arndb.de,
-        gregkh@linuxfoundation.org, minghuan.Lian@nxp.com,
-        mingkai.hu@nxp.com, roy.zang@nxp.com, kstewart@linuxfoundation.org,
-        cyrille.pitchen@free-electrons.com, pombredanne@nexb.com,
-        shawn.lin@rock-chips.com, niklas.cassel@axis.com,
-        linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linuxppc-dev@lists.ozlabs.org
-Cc:     Xiaowei Bao <xiaowei.bao@nxp.com>
-Subject: [PATCHv4 3/4] pci: layerscape: Add the EP mode support.
-Date:   Tue,  8 Jan 2019 11:09:21 +0800
-Message-Id: <20190108030922.24031-3-xiaowei.bao@nxp.com>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <20190108030922.24031-1-xiaowei.bao@nxp.com>
-References: <20190108030922.24031-1-xiaowei.bao@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        Mon, 7 Jan 2019 22:20:10 -0500
+Received: from conssluserg-06.nifty.com ([210.131.2.91]:46277 "EHLO
+        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727051AbfAHDUJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 22:20:09 -0500
+Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com [209.85.217.48]) (authenticated)
+        by conssluserg-06.nifty.com with ESMTP id x083K5mA015685;
+        Tue, 8 Jan 2019 12:20:05 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com x083K5mA015685
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1546917606;
+        bh=a+86zybEjf1G0Z7C+9XqCQhInOTEfD3m7EouQ3r6vA8=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=xFqUudw7GrqCLDJ96WMs1/gSZyKv/bYCVPU2vbK7vmCYq3PnI9t2e8doeMv3A05Lc
+         xm9kO2/v/nibVcK6GAAxS3dGqwM/aJdNMH/QWZINB60QZXz7Fd8+P28Ch4HEApm5ty
+         vVsjWCuPL4mlb8Qf4cH955E6tsBvuaOm21x65rvJruhKz91ZgYRoo4lkAkl6MCoP31
+         dkOLyrzsbkdPb1qEpMrBJ9vIzZGnfiOlOrS9Bb0T6KwQLnWWRMeSQskO1ZGqRK4nPO
+         ASJVfTYz6UsRsCLe0HXOVQ1oDr6VZMW59zH4P0oWuG5w7TxJ2YQA9b4/ZnCOnI8HLR
+         sQSA1n2XexqHw==
+X-Nifty-SrcIP: [209.85.217.48]
+Received: by mail-vs1-f48.google.com with SMTP id v205so1621326vsc.3;
+        Mon, 07 Jan 2019 19:20:05 -0800 (PST)
+X-Gm-Message-State: AJcUukd9JhNLCUMtrzhngq/kETOcmzT+vWzxgv5hYQpqErNC/TsbBiWX
+        +cwe35cCYy217ESsNGc/SO77zQtv30FYAepFf90=
+X-Google-Smtp-Source: ALg8bN4NJk3bJGFN/EXmTB0G/arwYqrPDJk3cxHk/uSxaWSgcWjVL5FeUhW4IEFMLPM0G44b+cYXmHP6DGa4VukIXEk=
+X-Received: by 2002:a67:f1c2:: with SMTP id v2mr24097vsm.181.1546917604398;
+ Mon, 07 Jan 2019 19:20:04 -0800 (PST)
+MIME-Version: 1.0
+References: <20190104195714.30045-1-labbott@redhat.com> <874lakc09x.fsf@concordia.ellerman.id.au>
+ <CAK7LNAQLEYc=czrJvzK8UXeXYm08TuLB62uMN2kFedkcW9b1pw@mail.gmail.com>
+ <20190107120716.51d95854.cohuck@redhat.com> <CAK7LNAQtsW5KoOQmOB4uSv2zHM80azmHnEMj=2BunikhJQEpig@mail.gmail.com>
+ <20190107131341.00581863@x1.home> <4b9b6cf2-d39e-8dd2-9271-158489b03a61@ozlabs.ru>
+ <20190107172437.0f0b5331@x1.home> <e906adde-3a5b-69f8-10b3-ad88ab530913@ozlabs.ru>
+ <CAK7LNAQoxeRmTg5QBMuWQ1Z8QQBWG_72KOBGz8PD-2vFWZFwqA@mail.gmail.com> <34647ed9-6aa3-6e38-f3a5-87da87e9341a@ozlabs.ru>
+In-Reply-To: <34647ed9-6aa3-6e38-f3a5-87da87e9341a@ozlabs.ru>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Tue, 8 Jan 2019 12:19:28 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASNLW2YwY0SMsqeabzEr=xmjb_UCwmc9G3=A3q9PDv_8g@mail.gmail.com>
+Message-ID: <CAK7LNASNLW2YwY0SMsqeabzEr=xmjb_UCwmc9G3=A3q9PDv_8g@mail.gmail.com>
+Subject: Re: [PATCH] vfio_pci: Add local source directory as include
+To:     Alexey Kardashevskiy <aik@ozlabs.ru>
+Cc:     Alex Williamson <alex.williamson@redhat.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Laura Abbott <labbott@redhat.com>, kvm@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the PCIe EP mode support for layerscape platform.
+On Tue, Jan 8, 2019 at 11:59 AM Alexey Kardashevskiy <aik@ozlabs.ru> wrote:
+>
+>
+>
+> On 08/01/2019 13:38, Masahiro Yamada wrote:
+> > On Tue, Jan 8, 2019 at 11:22 AM Alexey Kardashevskiy <aik@ozlabs.ru> wrote:
+> >>
+> >>
+> >>
+> >> On 08/01/2019 11:24, Alex Williamson wrote:
+> >>> On Tue, 8 Jan 2019 10:52:43 +1100
+> >>> Alexey Kardashevskiy <aik@ozlabs.ru> wrote:
+> >>>
+> >>>> On 08/01/2019 07:13, Alex Williamson wrote:
+> >>>>> On Mon, 7 Jan 2019 20:39:19 +0900
+> >>>>> Masahiro Yamada <yamada.masahiro@socionext.com> wrote:
+> >>>>>
+> >>>>>> On Mon, Jan 7, 2019 at 8:09 PM Cornelia Huck <cohuck@redhat.com> wrote:
+> >>>>>>>
+> >>>>>>> On Mon, 7 Jan 2019 19:12:10 +0900
+> >>>>>>> Masahiro Yamada <yamada.masahiro@socionext.com> wrote:
+> >>>>>>>
+> >>>>>>>> On Mon, Jan 7, 2019 at 6:18 PM Michael Ellerman <mpe@ellerman.id.au> wrote:
+> >>>>>>>>>
+> >>>>>>>>> Laura Abbott <labbott@redhat.com> writes:
+> >>>>>>>>>> Commit 7f92891778df ("vfio_pci: Add NVIDIA GV100GL [Tesla V100 SXM2]
+> >>>>>>>>>> subdriver") introduced a trace.h file in the local directory but
+> >>>>>>>>>> missed adding the local include path, resulting in compilation
+> >>>>>>>>>> failures with tracepoints:
+> >>>>>>>>>>
+> >>>>>>>>>> In file included from drivers/vfio/pci/trace.h:102,
+> >>>>>>>>>>                  from drivers/vfio/pci/vfio_pci_nvlink2.c:29:
+> >>>>>>>>>> ./include/trace/define_trace.h:89:42: fatal error: ./trace.h: No such file or directory
+> >>>>>>>>>>  #include TRACE_INCLUDE(TRACE_INCLUDE_FILE)
+> >>>>>>>>>>
+> >>>>>>>>>> Fix this by adjusting the include path.
+> >>>>>>>>>>
+> >>>>>>>>>> Fixes: 7f92891778df ("vfio_pci: Add NVIDIA GV100GL [Tesla V100 SXM2] subdriver")
+> >>>>>>>>>> Signed-off-by: Laura Abbott <labbott@redhat.com>
+> >>>>>>>
+> >>>>>>> (...)
+> >>>>>>>
+> >>>>>>>>> Alex I assume you'll merge this fix via the vfio tree?
+> >>>>>>>>>
+> >>>>>>>>> cheers
+> >>>>>>>>>
+> >>>>>>>>>> diff --git a/drivers/vfio/pci/Makefile b/drivers/vfio/pci/Makefile
+> >>>>>>>>>> index 9662c063a6b1..08d4676a8495 100644
+> >>>>>>>>>> --- a/drivers/vfio/pci/Makefile
+> >>>>>>>>>> +++ b/drivers/vfio/pci/Makefile
+> >>>>>>>>>> @@ -1,3 +1,4 @@
+> >>>>>>>>>> +ccflags-y                               += -I$(src)
+> >>>>>>>>>>
+> >>>>>>>>>>  vfio-pci-y := vfio_pci.o vfio_pci_intrs.o vfio_pci_rdwr.o vfio_pci_config.o
+> >>>>>>>>>>  vfio-pci-$(CONFIG_VFIO_PCI_IGD) += vfio_pci_igd.o
+> >>>>>>>>>> --
+> >>>>>>>>>> 2.20.1
+> >>>>>>>>
+> >>>>>>>>
+> >>>>>>>> Hi.
+> >>>>>>>>
+> >>>>>>>> If I correctly understand the usage of TRACE_INCLUDE_PATH,
+> >>>>>>>> the correct fix should be like follows:
+> >>>>>>>>
+> >>>>>>>>
+> >>>>>>>> diff --git a/drivers/vfio/pci/trace.h b/drivers/vfio/pci/trace.h
+> >>>>>>>> index 228ccdb..4d13e51 100644
+> >>>>>>>> --- a/drivers/vfio/pci/trace.h
+> >>>>>>>> +++ b/drivers/vfio/pci/trace.h
+> >>>>>>>> @@ -94,7 +94,7 @@ TRACE_EVENT(vfio_pci_npu2_mmap,
+> >>>>>>>>  #endif /* _TRACE_VFIO_PCI_H */
+> >>>>>>>>
+> >>>>>>>>  #undef TRACE_INCLUDE_PATH
+> >>>>>>>> -#define TRACE_INCLUDE_PATH .
+> >>>>>>>> +#define TRACE_INCLUDE_PATH ../../drivers/vfio/pci
+> >>>>>>>>  #undef TRACE_INCLUDE_FILE
+> >>>>>>>>  #define TRACE_INCLUDE_FILE trace
+> >>>>>>>
+> >>>>>>> Going from the comments in samples/trace_events/trace-events-sample.h,
+> >>>>>>> I think both approaches are possible, and I see both used in various
+> >>>>>>> places.
+> >>>>>>>
+> >>>>>>> Personally, I'd prefer Laura's patch, as it doesn't involve hardcoding
+> >>>>>>> a path.
+> >>>>>
+> >>>>> Numbering options for clarity:
+> >>>>>
+> >>>>> 1)
+> >>>>>> ccflags-y += -I$(src)
+> >>>>>> would add the header search path for all files in drivers/vfio/pci/
+> >>>>>> whereas only the drivers/vfio/pci/vfio_pci_nvlink2.c needs it.
+> >>>>>>
+> >>>>>
+> >>>>> 2)
+> >>>>>> CFLAGS_vfio_pci_nvlink2.o += -I$(src)
+> >>>>>> is a bit better.
+> >>>>>> However, it is not obvious why this extra header search path is needed
+> >>>>>> until you find vfio_pci_nvlink2.c including trace.h
+> >>>>>>
+> >>>>>
+> >>>>> 3)
+> >>>>>> #define TRACE_INCLUDE_PATH ../../drivers/vfio/pci
+> >>>>>> clarifies the intention because the related code is all placed in trace.h
+> >>>>>>
+> >>>>>>
+> >>>>>>
+> >>>>>> From the comment in include/trace/define_trace.h
+> >>>>>> TRACE_INCLUDE_PATH is relative to include/trace/define_trace.h
+> >>>>>
+> >>>>> In my scan of the tree, the most common solution seems to be 2) as this
+> >>>>> is essentially recommended in the sample file.  3) is well represented,
+> >>>>> with much fewer examples of 1), though it might depend how liberally
+> >>>>> we grep out or examine the use cases.  Choice 1) also seems to be the
+> >>>>> most shotgun approach, adding to the search path for all files.
+> >>>>
+> >>>>
+> >>>> The shotgun approach is always used when compiling out of tree which is
+> >>>> what many people do anyway without realizing that there are additional
+> >>>> -I. Why do not we make in-tree behave the same way? Thanks,
+> >>>
+> >>> Are you suggesting bandaging this individual leaf directory, as in
+> >>> choice 1), because it's no worse than what happens for an out-of-tree
+> >>> build anyway,
+> >>
+> >>
+> >> I suggest making in-tree and out-of-tree behavior equal - both either
+> >> fail or compile. Just makes sense to me.
+> >>
+> >> Since out-of-tree adds extra -I, then there should have been a reason
+> >> for that at the time (before 2005 though). Unfortunately git blame does
+> >> not say why it was done this way for out-of-tree so imho the safest
+> >> thing is to add -I for in-tree as well. Or ditch extra -I and do 2) or
+> >> 3) - this is fine too and can count as an impressive compile
+> >> optimization, although... look below :)
+> >
+> >
+> > For the out-of-tree building,
+> > scripts/Makefile.lib adds -I$(srctree)/$(src) and -I$(obj).
+> >
+> >
+> > In my understanding, -I$(srctree)/$(src) is for
+> > including check-in headers from generated C files.
+> >
+> > -I$(obj) is for including generated headers from check-in C files.
+> >
+> >
+> > One example of the correct usage of this is,
+> >
+> >   crypto/rsa_helper.c     (check-in file)
+> >
+> > includes
+> >
+> >   crypto/rsapubkey.asn1.h (generated fle)
+> >
+> >
+> >
+> > Those extra header search paths are unneeded for in-tree building
+> > since generated files and check-in files exist in the same tree.
+> >
+> >
+> >
+> > You just happened to find it works for out-of-tree building.
+> >
+> >
+> > We are talking about how to make include/trace/define_trace.h
+> > include  drivers/vfio/pci/trace.h
+> >
+> > The build system cannot (should not)
+> > cater to such a particular case.
+>
+>
+> Oh well, thanks for the explanation.
+>
+> Alex, how do we proceed now? I like 2) + comment as in
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/misc/ocxl/Makefile?h=v4.20#n8
 
-Signed-off-by: Xiaowei Bao <xiaowei.bao@nxp.com>
----
-v2:
- - remove the EP mode check function.
-v3:
- - modif the return value when enter default case.
-v4:
- - no change.
+It is clear, but
+3) TRACE_INCLUDE_PATH solution
+is self-documenting.
 
- drivers/pci/controller/dwc/Makefile            |    2 +-
- drivers/pci/controller/dwc/pci-layerscape-ep.c |  146 ++++++++++++++++++++++++
- 2 files changed, 147 insertions(+), 1 deletions(-)
- create mode 100644 drivers/pci/controller/dwc/pci-layerscape-ep.c
 
-diff --git a/drivers/pci/controller/dwc/Makefile b/drivers/pci/controller/dwc/Makefile
-index fcf91ea..e97e920 100644
---- a/drivers/pci/controller/dwc/Makefile
-+++ b/drivers/pci/controller/dwc/Makefile
-@@ -8,7 +8,7 @@ obj-$(CONFIG_PCI_EXYNOS) += pci-exynos.o
- obj-$(CONFIG_PCI_IMX6) += pci-imx6.o
- obj-$(CONFIG_PCIE_SPEAR13XX) += pcie-spear13xx.o
- obj-$(CONFIG_PCI_KEYSTONE) += pci-keystone.o
--obj-$(CONFIG_PCI_LAYERSCAPE) += pci-layerscape.o
-+obj-$(CONFIG_PCI_LAYERSCAPE) += pci-layerscape.o pci-layerscape-ep.o
- obj-$(CONFIG_PCIE_QCOM) += pcie-qcom.o
- obj-$(CONFIG_PCIE_ARMADA_8K) += pcie-armada8k.o
- obj-$(CONFIG_PCIE_ARTPEC6) += pcie-artpec6.o
-diff --git a/drivers/pci/controller/dwc/pci-layerscape-ep.c b/drivers/pci/controller/dwc/pci-layerscape-ep.c
-new file mode 100644
-index 0000000..dafb528
---- /dev/null
-+++ b/drivers/pci/controller/dwc/pci-layerscape-ep.c
-@@ -0,0 +1,146 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * PCIe controller EP driver for Freescale Layerscape SoCs
-+ *
-+ * Copyright (C) 2018 NXP Semiconductor.
-+ *
-+ * Author: Xiaowei Bao <xiaowei.bao@nxp.com>
-+ */
-+
-+#include <linux/kernel.h>
-+#include <linux/init.h>
-+#include <linux/of_pci.h>
-+#include <linux/of_platform.h>
-+#include <linux/of_address.h>
-+#include <linux/pci.h>
-+#include <linux/platform_device.h>
-+#include <linux/resource.h>
-+
-+#include "pcie-designware.h"
-+
-+#define PCIE_DBI2_OFFSET		0x1000	/* DBI2 base address*/
-+
-+struct ls_pcie_ep {
-+	struct dw_pcie		*pci;
-+};
-+
-+#define to_ls_pcie_ep(x)	dev_get_drvdata((x)->dev)
-+
-+static int ls_pcie_establish_link(struct dw_pcie *pci)
-+{
-+	return 0;
-+}
-+
-+static const struct dw_pcie_ops ls_pcie_ep_ops = {
-+	.start_link = ls_pcie_establish_link,
-+};
-+
-+static const struct of_device_id ls_pcie_ep_of_match[] = {
-+	{ .compatible = "fsl,ls-pcie-ep",},
-+	{ },
-+};
-+
-+static void ls_pcie_ep_init(struct dw_pcie_ep *ep)
-+{
-+	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
-+	struct pci_epc *epc = ep->epc;
-+	enum pci_barno bar;
-+
-+	for (bar = BAR_0; bar <= BAR_5; bar++)
-+		dw_pcie_ep_reset_bar(pci, bar);
-+
-+	epc->features |= EPC_FEATURE_NO_LINKUP_NOTIFIER;
-+}
-+
-+static int ls_pcie_ep_raise_irq(struct dw_pcie_ep *ep, u8 func_no,
-+				  enum pci_epc_irq_type type, u16 interrupt_num)
-+{
-+	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
-+
-+	switch (type) {
-+	case PCI_EPC_IRQ_LEGACY:
-+		return dw_pcie_ep_raise_legacy_irq(ep, func_no);
-+	case PCI_EPC_IRQ_MSI:
-+		return dw_pcie_ep_raise_msi_irq(ep, func_no, interrupt_num);
-+	case PCI_EPC_IRQ_MSIX:
-+		return dw_pcie_ep_raise_msix_irq(ep, func_no, interrupt_num);
-+	default:
-+		dev_err(pci->dev, "UNKNOWN IRQ type\n");
-+		return -EINVAL;
-+	}
-+}
-+
-+static struct dw_pcie_ep_ops pcie_ep_ops = {
-+	.ep_init = ls_pcie_ep_init,
-+	.raise_irq = ls_pcie_ep_raise_irq,
-+};
-+
-+static int __init ls_add_pcie_ep(struct ls_pcie_ep *pcie,
-+					struct platform_device *pdev)
-+{
-+	struct dw_pcie *pci = pcie->pci;
-+	struct device *dev = pci->dev;
-+	struct dw_pcie_ep *ep;
-+	struct resource *res;
-+	int ret;
-+
-+	ep = &pci->ep;
-+	ep->ops = &pcie_ep_ops;
-+
-+	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "addr_space");
-+	if (!res)
-+		return -EINVAL;
-+
-+	ep->phys_base = res->start;
-+	ep->addr_size = resource_size(res);
-+
-+	ret = dw_pcie_ep_init(ep);
-+	if (ret) {
-+		dev_err(dev, "failed to initialize endpoint\n");
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static int __init ls_pcie_ep_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct dw_pcie *pci;
-+	struct ls_pcie_ep *pcie;
-+	struct resource *dbi_base;
-+	int ret;
-+
-+	pcie = devm_kzalloc(dev, sizeof(*pcie), GFP_KERNEL);
-+	if (!pcie)
-+		return -ENOMEM;
-+
-+	pci = devm_kzalloc(dev, sizeof(*pci), GFP_KERNEL);
-+	if (!pci)
-+		return -ENOMEM;
-+
-+	dbi_base = platform_get_resource_byname(pdev, IORESOURCE_MEM, "regs");
-+	pci->dbi_base = devm_pci_remap_cfg_resource(dev, dbi_base);
-+	if (IS_ERR(pci->dbi_base))
-+		return PTR_ERR(pci->dbi_base);
-+
-+	pci->dbi_base2 = pci->dbi_base + PCIE_DBI2_OFFSET;
-+	pci->dev = dev;
-+	pci->ops = &ls_pcie_ep_ops;
-+	pcie->pci = pci;
-+
-+	platform_set_drvdata(pdev, pcie);
-+
-+	ret = ls_add_pcie_ep(pcie, pdev);
-+
-+	return ret;
-+}
-+
-+static struct platform_driver ls_pcie_ep_driver = {
-+	.driver = {
-+		.name = "layerscape-pcie-ep",
-+		.of_match_table = ls_pcie_ep_of_match,
-+		.suppress_bind_attrs = true,
-+	},
-+};
-+builtin_platform_driver_probe(ls_pcie_ep_driver, ls_pcie_ep_probe);
+> better than 3) as relative paths make it dependable on what file
+> actually includes it and it is not clear what is that and what happens
+> if that file moves deeper in the tree (unlikely to happen though).
+
+
+From the build system PoV, I'd like to discourage people
+from adding crappy header search path like this.
+
+Both 2) and 3) have pros and cons.
+
+I just sent 3) patch, but it is the maintainer's call after all.
+
+
+
+>
+>
+>
+>
+> --
+> Alexey
+
+
+
 -- 
-1.7.1
-
+Best Regards
+Masahiro Yamada
