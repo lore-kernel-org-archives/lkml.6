@@ -4,55 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FD24C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:29:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90F6BC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:29:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F3F7A2070B
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:29:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 634BC2070B
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:29:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546975753;
-	bh=/eMAqon4sbmlcoffqcqn6Vd+qXRrh/+GdEtfmQfROh0=;
+	s=default; t=1546975759;
+	bh=OQy8b5rENhDYapaUmkFVaT4dj9AVSbvqMVon/vdwFoU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=peLc2kLRbWTGImtSI4V7jsQB+dJ5m6C2iqrR7An6wJHANOVVAKyhkFxWYTBypMOg3
-	 RiwuCxewGoDm0yhijVfVsVPuKpUJFRY/i/8kZz3CfGp0k77qHx0lO+k3irQTgep2uN
-	 VhTcfQ6tBFvx7PRaxER21JZLjU9WfcL626d3XOfw=
+	b=WJxfaBA3hVw1GJXj0yhnCMetkPZMkkgi1psj+NtEJaOnNL7ZlSF9ExC+VQeTkM8eZ
+	 PN/dX+PPDWLFov48SfgSmQlxxVC/7QyOAhK3bfBQ0fnp6Otn1c/5mNPOJMVTk2vGr8
+	 cpMjMnw+QtoL1h/5ePtv6QSUDLVB8VjUxqjuBoy0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730328AbfAHT3L (ORCPT
+        id S1730355AbfAHT3S (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:29:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36350 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 14:29:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36558 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730299AbfAHT3I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:29:08 -0500
+        id S1730338AbfAHT3P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:29:15 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BFE64217D9;
-        Tue,  8 Jan 2019 19:29:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9561C20665;
+        Tue,  8 Jan 2019 19:29:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546975747;
-        bh=/eMAqon4sbmlcoffqcqn6Vd+qXRrh/+GdEtfmQfROh0=;
+        s=default; t=1546975754;
+        bh=OQy8b5rENhDYapaUmkFVaT4dj9AVSbvqMVon/vdwFoU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=j9tKqR5EBFr1xGE7iLKNH+LXKVszxYiP2ifk1ltczLsj3qDJCKIdJDkS1pbmkZzxd
-         TsC7tBz31yoPeIZ4qEUedIXoHh2PnR2/hoIWiUnmCk9bRWKGHlxvMhBdAm7Hcf35Dw
-         Oa4jS1ozQZnbDFQQLC0hJySwCmM5/o94c2Ts14zo=
+        b=C/0hWfuBPUSdCzev7P7Tqn/JLSMwfU3m0PPix7Kuc/CHGDHa9cKK2TXONE2svlPwX
+         Ai3hB+IFe9sA0EGiDo+DiCUlltk9jSeQF4XxZ3sVKrHX7ZTSmRw3sVlJdyN0aaSN3z
+         pITU/oYmH6H8sYBmNawGt7NrysHk27jzHxFjawX8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Leo Yan <leo.yan@linaro.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Mike Leach <mike.leach@linaro.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Robert Walker <robert.walker@arm.com>,
-        coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
+Cc:     Milan Broz <gmazyland@gmail.com>,
+        Mike Snitzer <snitzer@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.20 093/117] perf cs-etm: Correct packets swapping in cs_etm__flush()
-Date:   Tue,  8 Jan 2019 14:26:01 -0500
-Message-Id: <20190108192628.121270-93-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.20 098/117] dm: Check for device sector overflow if CONFIG_LBDAF is not set
+Date:   Tue,  8 Jan 2019 14:26:06 -0500
+Message-Id: <20190108192628.121270-98-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108192628.121270-1-sashal@kernel.org>
 References: <20190108192628.121270-1-sashal@kernel.org>
@@ -64,61 +57,116 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Leo Yan <leo.yan@linaro.org>
+From: Milan Broz <gmazyland@gmail.com>
 
-[ Upstream commit 43fd56669c28cd354e9228bdb58e4bca1c1a8b66 ]
+[ Upstream commit ef87bfc24f9b8da82c89aff493df20f078bc9cb1 ]
 
-The structure cs_etm_queue uses 'prev_packet' to point to previous
-packet, this can be used to combine with new coming packet to generate
-samples.
+Reference to a device in device-mapper table contains offset in sectors.
 
-In function cs_etm__flush() it swaps packets only when the flag
-'etm->synth_opts.last_branch' is true, this means that it will not swap
-packets if without option '--itrace=il' to generate last branch entries;
-thus for this case the 'prev_packet' doesn't point to the correct
-previous packet and the stale packet still will be used to generate
-sequential sample.  Thus if dump trace with 'perf script' command we can
-see the incorrect flow with the stale packet's address info.
+If the sector_t is 32bit integer (CONFIG_LBDAF is not set), then
+several device-mapper targets can overflow this offset and validity
+check is then performed on a wrong offset and a wrong table is activated.
 
-This patch corrects packets swapping in cs_etm__flush(); except using
-the flag 'etm->synth_opts.last_branch' it also checks the another flag
-'etm->sample_branches', if any flag is true then it swaps packets so can
-save correct content to 'prev_packet'.  Finally this can fix the wrong
-program flow dumping issue.
+See for example (on 32bit without CONFIG_LBDAF) this overflow:
 
-The patch has a minor refactoring to use 'etm->synth_opts.last_branch'
-instead of 'etmq->etm->synth_opts.last_branch' for condition checking,
-this is consistent with that is done in cs_etm__sample().
+  # dmsetup create test --table "0 2048 linear /dev/sdg 4294967297"
+  # dmsetup table test
+  0 2048 linear 8:96 1
 
-Signed-off-by: Leo Yan <leo.yan@linaro.org>
-Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Mike Leach <mike.leach@linaro.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Robert Walker <robert.walker@arm.com>
-Cc: coresight@lists.linaro.org
-Cc: linux-arm-kernel@lists.infradead.org
-Link: http://lkml.kernel.org/r/1544513908-16805-2-git-send-email-leo.yan@linaro.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+This patch adds explicit check for overflow if the offset is sector_t type.
+
+Signed-off-by: Milan Broz <gmazyland@gmail.com>
+Reviewed-by: Mikulas Patocka <mpatocka@redhat.com>
+Signed-off-by: Mike Snitzer <snitzer@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/util/cs-etm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/md/dm-crypt.c    | 2 +-
+ drivers/md/dm-delay.c    | 2 +-
+ drivers/md/dm-flakey.c   | 2 +-
+ drivers/md/dm-linear.c   | 2 +-
+ drivers/md/dm-raid1.c    | 3 ++-
+ drivers/md/dm-unstripe.c | 2 +-
+ 6 files changed, 7 insertions(+), 6 deletions(-)
 
-diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
-index 73430b73570d..c2f0c92623f0 100644
---- a/tools/perf/util/cs-etm.c
-+++ b/tools/perf/util/cs-etm.c
-@@ -1005,7 +1005,7 @@ static int cs_etm__flush(struct cs_etm_queue *etmq)
+diff --git a/drivers/md/dm-crypt.c b/drivers/md/dm-crypt.c
+index 9a4dec0a0f71..fc7d8b8a654f 100644
+--- a/drivers/md/dm-crypt.c
++++ b/drivers/md/dm-crypt.c
+@@ -2781,7 +2781,7 @@ static int crypt_ctr(struct dm_target *ti, unsigned int argc, char **argv)
  	}
  
- swap_packet:
--	if (etmq->etm->synth_opts.last_branch) {
-+	if (etm->sample_branches || etm->synth_opts.last_branch) {
- 		/*
- 		 * Swap PACKET with PREV_PACKET: PACKET becomes PREV_PACKET for
- 		 * the next incoming packet.
+ 	ret = -EINVAL;
+-	if (sscanf(argv[4], "%llu%c", &tmpll, &dummy) != 1) {
++	if (sscanf(argv[4], "%llu%c", &tmpll, &dummy) != 1 || tmpll != (sector_t)tmpll) {
+ 		ti->error = "Invalid device sector";
+ 		goto bad;
+ 	}
+diff --git a/drivers/md/dm-delay.c b/drivers/md/dm-delay.c
+index 2fb7bb4304ad..fddffe251bf6 100644
+--- a/drivers/md/dm-delay.c
++++ b/drivers/md/dm-delay.c
+@@ -141,7 +141,7 @@ static int delay_class_ctr(struct dm_target *ti, struct delay_class *c, char **a
+ 	unsigned long long tmpll;
+ 	char dummy;
+ 
+-	if (sscanf(argv[1], "%llu%c", &tmpll, &dummy) != 1) {
++	if (sscanf(argv[1], "%llu%c", &tmpll, &dummy) != 1 || tmpll != (sector_t)tmpll) {
+ 		ti->error = "Invalid device sector";
+ 		return -EINVAL;
+ 	}
+diff --git a/drivers/md/dm-flakey.c b/drivers/md/dm-flakey.c
+index 3cb97fa4c11d..8261aa8c7fe1 100644
+--- a/drivers/md/dm-flakey.c
++++ b/drivers/md/dm-flakey.c
+@@ -213,7 +213,7 @@ static int flakey_ctr(struct dm_target *ti, unsigned int argc, char **argv)
+ 	devname = dm_shift_arg(&as);
+ 
+ 	r = -EINVAL;
+-	if (sscanf(dm_shift_arg(&as), "%llu%c", &tmpll, &dummy) != 1) {
++	if (sscanf(dm_shift_arg(&as), "%llu%c", &tmpll, &dummy) != 1 || tmpll != (sector_t)tmpll) {
+ 		ti->error = "Invalid device sector";
+ 		goto bad;
+ 	}
+diff --git a/drivers/md/dm-linear.c b/drivers/md/dm-linear.c
+index 8d7ddee6ac4d..ad980a38fb1e 100644
+--- a/drivers/md/dm-linear.c
++++ b/drivers/md/dm-linear.c
+@@ -45,7 +45,7 @@ static int linear_ctr(struct dm_target *ti, unsigned int argc, char **argv)
+ 	}
+ 
+ 	ret = -EINVAL;
+-	if (sscanf(argv[1], "%llu%c", &tmp, &dummy) != 1) {
++	if (sscanf(argv[1], "%llu%c", &tmp, &dummy) != 1 || tmp != (sector_t)tmp) {
+ 		ti->error = "Invalid device sector";
+ 		goto bad;
+ 	}
+diff --git a/drivers/md/dm-raid1.c b/drivers/md/dm-raid1.c
+index 79eab1071ec2..5a51151f680d 100644
+--- a/drivers/md/dm-raid1.c
++++ b/drivers/md/dm-raid1.c
+@@ -943,7 +943,8 @@ static int get_mirror(struct mirror_set *ms, struct dm_target *ti,
+ 	char dummy;
+ 	int ret;
+ 
+-	if (sscanf(argv[1], "%llu%c", &offset, &dummy) != 1) {
++	if (sscanf(argv[1], "%llu%c", &offset, &dummy) != 1 ||
++	    offset != (sector_t)offset) {
+ 		ti->error = "Invalid offset";
+ 		return -EINVAL;
+ 	}
+diff --git a/drivers/md/dm-unstripe.c b/drivers/md/dm-unstripe.c
+index 954b7ab4e684..e673dacf6418 100644
+--- a/drivers/md/dm-unstripe.c
++++ b/drivers/md/dm-unstripe.c
+@@ -78,7 +78,7 @@ static int unstripe_ctr(struct dm_target *ti, unsigned int argc, char **argv)
+ 		goto err;
+ 	}
+ 
+-	if (sscanf(argv[4], "%llu%c", &start, &dummy) != 1) {
++	if (sscanf(argv[4], "%llu%c", &start, &dummy) != 1 || start != (sector_t)start) {
+ 		ti->error = "Invalid striped device offset";
+ 		goto err;
+ 	}
 -- 
 2.19.1
 
