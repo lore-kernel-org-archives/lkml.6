@@ -2,174 +2,208 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFCD7C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:16:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05ACEC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:17:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B910A20827
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:16:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546978586;
-	bh=q249P9TV9KBP89WhGVH96NjSxj/xQlMiHaiCeODYXkY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=LzBboRdPpWGvQZaIvpycW+3eoTRlXn4q79tTcVpBgCt7o52n1bR+B1SlUbNJzZl6E
-	 xQPAG0n0N5AEBQuYR1r7cjBtAFKJIqoDwG7+EcZ1qIBXIyoi+O45XGvOcrV1Q/0dX5
-	 JtzoRK16JlIBf7CFIEaR2W7m+ELa4kE6JRdxWXsk=
+	by mail.kernel.org (Postfix) with ESMTP id BDA6220675
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:17:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="ccoBiJs8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728882AbfAHUQZ (ORCPT
+        id S1729026AbfAHURW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 15:16:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36324 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728015AbfAHUQZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 15:16:25 -0500
-Received: from quaco.ghostprotocols.net (unknown [177.135.9.49])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0BD5020675;
-        Tue,  8 Jan 2019 20:16:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546978583;
-        bh=q249P9TV9KBP89WhGVH96NjSxj/xQlMiHaiCeODYXkY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=LVrPFRwpyxuasllqDLWeEncmpfLkhyQX4569wdSk2YPJbdsUWTAXWdCbwtXISOfnT
-         khnyGJkzry+E5NR6jeXfifqFviX/41H1Lkj+PTizvkvu2N9tPGY0JewhJDLjvKL/xp
-         l7OxOExLVP+XkA8PW1h4dVvd3DHUZmOs9qLsLB6U=
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id F391D40355; Tue,  8 Jan 2019 17:16:19 -0300 (-03)
-Date:   Tue, 8 Jan 2019 17:16:19 -0300
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Song Liu <songliubraving@fb.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "ast@kernel.org" <ast@kernel.org>,
-        "daniel@iogearbox.net" <daniel@iogearbox.net>,
-        Kernel Team <Kernel-team@fb.com>
-Subject: Re: [PATCH v5 perf, bpf-next 3/7] perf, bpf: introduce
- PERF_RECORD_BPF_EVENT
-Message-ID: <20190108201619.GG28965@kernel.org>
-References: <20181220182904.4193196-1-songliubraving@fb.com>
- <20181220182904.4193196-4-songliubraving@fb.com>
- <20190108184116.GC30894@hirez.programming.kicks-ass.net>
- <77A478D9-F36F-443A-BBFD-F0C1FFE0DD90@fb.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <77A478D9-F36F-443A-BBFD-F0C1FFE0DD90@fb.com>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Tue, 8 Jan 2019 15:17:22 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:44644 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728015AbfAHURW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 15:17:22 -0500
+Received: by mail-pf1-f193.google.com with SMTP id u6so2442083pfh.11
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jan 2019 12:17:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google;
+        h=date:subject:in-reply-to:cc:from:to:message-id:mime-version
+         :content-transfer-encoding;
+        bh=NHq73EOC6P/EZP1zXEp3GS6Y59Bi8cZdKMfq30ztJos=;
+        b=ccoBiJs8wGFBxd3eVhWoT4x7W5UbDJzMJjhybyEKr3HV1C9N5aoNa+32WD/aAozvRY
+         HUhoWeV5zUkRnhZQujj3dHj/700AzDITCf91nEy9Pet1C+UOkZUuUPa52DfRyW78wKEq
+         bIZK8K3yaNa9ZqBhmdwnUSrZ95OUhnGWjl7RmWodjmb8sDMNvloCJqrVbFuuYFeDeN6n
+         wvUY85xIaj7QieU9Qchaj1J1Kkr2R219UI/gxiSw3CcHxyg1pNjpdiWcrwugg2feZi8g
+         MjWJ+Jaq9Uh9NpShSUAAAmYeD7NlnPxAbnVUqHcahXYE2vnuzjfQjcX6uwy7C+bDOb0c
+         4+BA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id
+         :mime-version:content-transfer-encoding;
+        bh=NHq73EOC6P/EZP1zXEp3GS6Y59Bi8cZdKMfq30ztJos=;
+        b=sydqWqEVJMj2tRnRDuRUKZoS3IxNkP+PdhjpfGbAN9ficBzeZlTFLUWDB43CgzG9Wg
+         eSs3YB6EgV+Bsrq9VW/EcI2t/pbzkjJdyrGwOwP9+zkRznpKXHUxBA9wMIlhxm+J3MQ/
+         RrSDVSapPRJgZw2XQgDlThoiBSY0IhzG/wBm9GDWn5TodSIvAU/npS061o0yxRfgGciX
+         Dx6KiCedN2l9Xst7cO53pbazTWkLXREUuNAEZbxPyQ36vDfuDoJbmPDh0aVSXnvpPFC/
+         cqOjrV/gqwG84zJ1AIMihoZREMvmolpxHJ7gpPlGu9QeBt7X5bDapvurIOVU4nUB+n3q
+         plqQ==
+X-Gm-Message-State: AJcUukeqoLwCRwkd6IdIFZgxN1sLOPTAuNhh4cWWkeMBeZmknl64kRaC
+        7OxjrVgEoXIvVa1zz3/je/iwIw==
+X-Google-Smtp-Source: ALg8bN72u4US66UDBZ4SNoRsySPsovguRSvPDE066b/Oi8EEF/GdrakryNTJZhCRogu2wmpDuElM3g==
+X-Received: by 2002:a63:5455:: with SMTP id e21mr2814758pgm.316.1546978640863;
+        Tue, 08 Jan 2019 12:17:20 -0800 (PST)
+Received: from localhost ([12.206.222.5])
+        by smtp.gmail.com with ESMTPSA id i72sm104704585pfe.181.2019.01.08.12.17.19
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 08 Jan 2019 12:17:19 -0800 (PST)
+Date:   Tue, 08 Jan 2019 12:17:19 -0800 (PST)
+X-Google-Original-Date: Tue, 08 Jan 2019 12:16:42 PST (-0800)
+Subject:     Re: [PATCH] riscv: remove redundant kernel-space generic-y
+In-Reply-To: <CAK7LNAT+5eOFc64SG2SKCOThVVsz6S2NPBpemdcjCcZX_zds2Q@mail.gmail.com>
+CC:     aou@eecs.berkeley.edu, linux-riscv@lists.infradead.org,
+        alankao@andestech.com, deepa.kernel@gmail.com,
+        linux-kernel@vger.kernel.org, Jim Wilson <jimw@sifive.com>,
+        geert@linux-m68k.org
+From:   Palmer Dabbelt <palmer@sifive.com>
+To:     yamada.masahiro@socionext.com
+Message-ID: <mhng-aacb9594-f17b-4728-91f7-e2804e6a3dbc@palmer-si-x1c4>
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Tue, Jan 08, 2019 at 07:10:20PM +0000, Song Liu escreveu:
-> > On Jan 8, 2019, at 10:41 AM, Peter Zijlstra <peterz@infradead.org> wrote:
-> > On Thu, Dec 20, 2018 at 10:29:00AM -0800, Song Liu wrote:
-> >> @@ -986,9 +987,35 @@ enum perf_event_type {
-> >> 	 */
-> >> 	PERF_RECORD_KSYMBOL			= 17,
-> >> 
-> >> +	/*
-> >> +	 * Record bpf events:
-> >> +	 *  enum perf_bpf_event_type {
-> >> +	 *	PERF_BPF_EVENT_UNKNOWN		= 0,
-> >> +	 *	PERF_BPF_EVENT_PROG_LOAD	= 1,
-> >> +	 *	PERF_BPF_EVENT_PROG_UNLOAD	= 2,
-> >> +	 *  };
-> >> +	 *
-> >> +	 * struct {
-> >> +	 *	struct perf_event_header	header;
-> >> +	 *	u16				type;
-> >> +	 *	u16				flags;
-> >> +	 *	u32				id;
-> >> +	 *	u8				tag[BPF_TAG_SIZE];
-> >> +	 *	struct sample_id		sample_id;
-> >> +	 * };
-> >> +	 */
-> >> +	PERF_RECORD_BPF_EVENT			= 18,
+On Fri, 04 Jan 2019 07:03:20 PST (-0800), yamada.masahiro@socionext.com wrote:
+> On Fri, Jan 4, 2019 at 11:16 AM Palmer Dabbelt <palmer@sifive.com> wrote:
+>>
+>> On Sun, 16 Dec 2018 06:11:11 PST (-0800), yamada.masahiro@socionext.com wrote:
+>> > This commit removes redundant generic-y defines in
+>> > arch/riscv/include/asm/Kbuild.
+>> >
+>> > [1] It is redundant to define the same generic-y in both
+>> >     arch/$(ARCH)/include/asm/Kbuild and
+>> >     arch/$(ARCH)/include/uapi/asm/Kbuild.
+>> >
+>> >     Remove the following generic-y:
+>> >
+>> >       errno.h
+>> >       fcntl.h
+>> >       ioctl.h
+>> >       ioctls.h
+>> >       ipcbuf.h
+>> >       mman.h
+>> >       msgbuf.h
+>> >       param.h
+>> >       poll.h
+>> >       posix_types.h
+>> >       resource.h
+>> >       sembuf.h
+>> >       setup.h
+>> >       shmbuf.h
+>> >       signal.h
+>> >       socket.h
+>> >       sockios.h
+>> >       stat.h
+>> >       statfs.h
+>> >       swab.h
+>> >       termbits.h
+>> >       termios.h
+>> >       types.h
+>> >
+>> > [2] It is redundant to define generic-y when arch-specific
+>> >     implementation exists in arch/$(ARCH)/include/asm/*.h
+>> >
+>> >     Remove the following generic-y:
+>> >
+>> >       cacheflush.h
+>> >       dma-mapping.h
+>> >       module.h
+>> >
+>> > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+>> > ---
+>> >
+>> >  arch/riscv/include/asm/Kbuild | 26 --------------------------
+>> >  1 file changed, 26 deletions(-)
+>> >
+>> > diff --git a/arch/riscv/include/asm/Kbuild b/arch/riscv/include/asm/Kbuild
+>> > index 6a646d9..f7068f3 100644
+>> > --- a/arch/riscv/include/asm/Kbuild
+>> > +++ b/arch/riscv/include/asm/Kbuild
+>> > @@ -1,5 +1,4 @@
+>> >  generic-y += bugs.h
+>> > -generic-y += cacheflush.h
+>> >  generic-y += checksum.h
+>> >  generic-y += compat.h
+>> >  generic-y += cputime.h
+>> > @@ -7,18 +6,12 @@ generic-y += device.h
+>> >  generic-y += div64.h
+>> >  generic-y += dma.h
+>> >  generic-y += dma-contiguous.h
+>> > -generic-y += dma-mapping.h
+>> >  generic-y += emergency-restart.h
+>> > -generic-y += errno.h
+>> >  generic-y += exec.h
+>> >  generic-y += fb.h
+>> > -generic-y += fcntl.h
+>> >  generic-y += hardirq.h
+>> >  generic-y += hash.h
+>> >  generic-y += hw_irq.h
+>> > -generic-y += ioctl.h
+>> > -generic-y += ioctls.h
+>> > -generic-y += ipcbuf.h
+>> >  generic-y += irq_regs.h
+>> >  generic-y += irq_work.h
+>> >  generic-y += kdebug.h
+>> > @@ -27,34 +20,15 @@ generic-y += kvm_para.h
+>> >  generic-y += local.h
+>> >  generic-y += local64.h
+>> >  generic-y += mm-arch-hooks.h
+>> > -generic-y += mman.h
+>> > -generic-y += module.h
+>> > -generic-y += msgbuf.h
+>> >  generic-y += mutex.h
+>> > -generic-y += param.h
+>> >  generic-y += percpu.h
+>> > -generic-y += poll.h
+>> > -generic-y += posix_types.h
+>> >  generic-y += preempt.h
+>> > -generic-y += resource.h
+>> >  generic-y += scatterlist.h
+>> >  generic-y += sections.h
+>> > -generic-y += sembuf.h
+>> >  generic-y += serial.h
+>> > -generic-y += setup.h
+>> > -generic-y += shmbuf.h
+>> >  generic-y += shmparam.h
+>> > -generic-y += signal.h
+>> > -generic-y += socket.h
+>> > -generic-y += sockios.h
+>> > -generic-y += stat.h
+>> > -generic-y += statfs.h
+>> > -generic-y += swab.h
+>> > -generic-y += termbits.h
+>> > -generic-y += termios.h
+>> >  generic-y += topology.h
+>> >  generic-y += trace_clock.h
+>> > -generic-y += types.h
+>> >  generic-y += unaligned.h
+>> >  generic-y += user.h
+>> >  generic-y += vga.h
+>>
+>> Thanks.  These just sort of collected there because I hadn't trimmed them.  Is
+>> there a script that checks these?
+>
+>
+> No script is available for now, but
+> I'd like to turn on warnings to catch some cases:
+> https://patchwork.kernel.org/patch/10746823/
+>
+>
+> BTW, can I apply this to my tree
+> along with other cleanups?
 
-> > It was suggested to allow pinning modules/programs to avoid this
-> > situation, but that of course has other undesirable effects, such as a
-> > trivial DoS.
-> > 
-> > A truly horrible hack would be to include an open filedesc in the event
-> > that needs closing to release the resource, but I'm sorry for even
-> > suggesting that **shudder**.
-> > 
-> > Do we have any sane ideas?
-> 
-> How about we gate the open filedesc solution with an option, and limit
-> that option for root only? If this still sounds hacky, maybe we should
-> just ignore when short-living programs are missed?
+Acked-by: Palmer Dabbelt <palmer@sifive.com>
 
-Short lived short programs could go in the event? Short lived long
-events.. One could ask for max number of bytes of binary?
-
-The smallest kernel modules are 16KB, multiple of PAGE_SIZE:
-
-[acme@quaco perf]$ cat /proc/modules | sort -k2 -nr | tail
-ebtable_nat 16384 1 - Live 0x0000000000000000
-ebtable_filter 16384 1 - Live 0x0000000000000000
-crct10dif_pclmul 16384 0 - Live 0x0000000000000000
-crc32_pclmul 16384 0 - Live 0x0000000000000000
-coretemp 16384 0 - Live 0x0000000000000000
-btrtl 16384 1 btusb, Live 0x0000000000000000
-btbcm 16384 1 btusb, Live 0x0000000000000000
-arc4 16384 2 - Live 0x0000000000000000
-acpi_thermal_rel 16384 1 int3400_thermal, Live 0x0000000000000000
-ac97_bus 16384 1 snd_soc_core, Live 0x0000000000000000
-[acme@quaco perf]$
-
-On a Fedora 29 I have these here, all rather small:
-
-# bpftool prog
-13: cgroup_skb  tag 7be49e3934a125ba  gpl
-	loaded_at 2019-01-04T14:40:32-0300  uid 0
-	xlated 296B  jited 229B  memlock 4096B  map_ids 13,14
-14: cgroup_skb  tag 2a142ef67aaad174  gpl
-	loaded_at 2019-01-04T14:40:32-0300  uid 0
-	xlated 296B  jited 229B  memlock 4096B  map_ids 13,14
-15: cgroup_skb  tag 7be49e3934a125ba  gpl
-	loaded_at 2019-01-04T14:40:32-0300  uid 0
-	xlated 296B  jited 229B  memlock 4096B  map_ids 15,16
-16: cgroup_skb  tag 2a142ef67aaad174  gpl
-	loaded_at 2019-01-04T14:40:32-0300  uid 0
-	xlated 296B  jited 229B  memlock 4096B  map_ids 15,16
-17: cgroup_skb  tag 7be49e3934a125ba  gpl
-	loaded_at 2019-01-04T14:40:43-0300  uid 0
-	xlated 296B  jited 229B  memlock 4096B  map_ids 17,18
-18: cgroup_skb  tag 2a142ef67aaad174  gpl
-	loaded_at 2019-01-04T14:40:43-0300  uid 0
-	xlated 296B  jited 229B  memlock 4096B  map_ids 17,18
-21: cgroup_skb  tag 7be49e3934a125ba  gpl
-	loaded_at 2019-01-04T14:40:43-0300  uid 0
-	xlated 296B  jited 229B  memlock 4096B  map_ids 21,22
-22: cgroup_skb  tag 2a142ef67aaad174  gpl
-	loaded_at 2019-01-04T14:40:43-0300  uid 0
-	xlated 296B  jited 229B  memlock 4096B  map_ids 21,22
-[root@quaco IRPF2018]#
-
-
-Running 'perf trace' with its BPF augmenter get these two more:
-
-158: tracepoint  name sys_enter  tag 12504ba9402f952f  gpl
-	loaded_at 2019-01-08T17:12:39-0300  uid 0
-	xlated 512B  jited 374B  memlock 4096B  map_ids 118,117,116
-159: tracepoint  name sys_exit  tag c1bd85c092d6e4aa  gpl
-	loaded_at 2019-01-08T17:12:39-0300  uid 0
-	xlated 256B  jited 191B  memlock 4096B  map_ids 118,117
-[root@quaco ~]#
-
-A PERF_RECORD_MMAP gets as its payload up to PATH_MAX - sizeof(u64).
-
-So for a class of programs, shoving it together with the
-PERF_RECORD_MMAP like event may be enough?
-
-You started the shuddering suggestions... ;-)
-
-- Arnaldo
+Thanks!
