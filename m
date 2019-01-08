@@ -4,49 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 652D1C43612
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:55:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3978C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:55:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 352EB20883
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:55:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 928C7206BB
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:55:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546977318;
-	bh=pg0mARTbLSXhDeDct95VCf35MXOvOqH0qv1M4eu7q2Y=;
+	s=default; t=1546977323;
+	bh=HuHH2oH+dqRMw32u2Z9hwr/gJy/Z/dfcd9YjUTUTLUA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=PWZX9W5HxHbIXIYQSI6gGkHvNNHFcoi9YzDHJYf2rMvrQq15flD6hwS8s7bDtR4vK
-	 YvFcoFdlyYJVr+/JiZbKkEBMuerrtt2l4BslyPJckmpMSQU4oqNQ/7MTV1bKLgpR7Z
-	 v66XgxdlmVyo9o2dwquC59j4hz1rGGMfRnp6c8EA=
+	b=Nh6fobLamM8zwET0X+NfsWHCcPepDg2TjQ/ycjgKnEu2XTFR9S8KXIeN1Ex/kXkV3
+	 D4g18VJntUxWikgQdPtai8o/Y8ifjf4yMOuGI2JkDrkB1G1I5DoI1r93A+rwYmgK9e
+	 Z9GFNV8U5Ml+tbshcxqm0JMYowTcJoWYiBjEqRSo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730742AbfAHTaX (ORCPT
+        id S1731267AbfAHTzW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:30:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37852 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 14:55:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38086 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729714AbfAHTaN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:30:13 -0500
+        id S1730724AbfAHTaV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:30:21 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4378120665;
-        Tue,  8 Jan 2019 19:30:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E6058217D9;
+        Tue,  8 Jan 2019 19:30:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546975812;
-        bh=pg0mARTbLSXhDeDct95VCf35MXOvOqH0qv1M4eu7q2Y=;
+        s=default; t=1546975820;
+        bh=HuHH2oH+dqRMw32u2Z9hwr/gJy/Z/dfcd9YjUTUTLUA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aSO6o8PPGa4PCQlSuUP6m0lwi5ecP8m4UPzBOQXDgPjKLVaREb2Y4izg/ig6wS7az
-         Zz0krJjw8XaenvSjTngOsoJhkq+ImIk2zu3cZmfSPzp5V/Lgxx7srSGqIX+mWnuxo9
-         0Z7FiCoekRM6n7IN/+PH7XHK+pChT6YUDJzRgp8U=
+        b=gtHfqC0mP6Yqc+wNjbXMr2IUwRrxLSVNn60/XhjoAa8aQ2Zgror8pUDkztdJP97jc
+         mSJYWJwFbrROBiKPoIu8XBml8v4U7Elb47MoPqjOGq3v2wNbRfE1oZEojXMftyrGdq
+         3kVKguyfkahHCVGX9EdAEZgRR/yQmaKcRcmh4AUk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Borislav Petkov <bp@suse.de>, Yi Wang <wang.yi59@zte.com.cn>,
-        Michael Matz <matz@suse.de>, x86@kernel.org,
-        Sasha Levin <sashal@kernel.org>, linux-edac@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 15/97] x86/mce: Fix -Wmissing-prototypes warnings
-Date:   Tue,  8 Jan 2019 14:28:24 -0500
-Message-Id: <20190108192949.122407-15-sashal@kernel.org>
+Cc:     =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= 
+        <ville.syrjala@linux.intel.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sasha Levin <sashal@kernel.org>,
+        dri-devel@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 4.19 20/97] drm/atomic-helper: Complete fake_commit->flip_done potentially earlier
+Date:   Tue,  8 Jan 2019 14:28:29 -0500
+Message-Id: <20190108192949.122407-20-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108192949.122407-1-sashal@kernel.org>
 References: <20190108192949.122407-1-sashal@kernel.org>
@@ -59,125 +61,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Borislav Petkov <bp@suse.de>
+From: Ville Syrjälä <ville.syrjala@linux.intel.com>
 
-[ Upstream commit 68b5e4326e4b8ac9080835005d8254fed0fb3c56 ]
+[ Upstream commit 2de42f79bb21a412f40ade8831eb6fc445cb78a4 ]
 
-Add the proper includes and make smca_get_name() static.
+Consider the following scenario:
+1. nonblocking enable crtc
+2. wait for the event
+3. nonblocking disable crtc
 
-Fix an actual bug too which the warning triggered:
+On i915 this can lead to a spurious -EBUSY from step 3 on
+account of non-enabled planes getting the fake_commit in step 1
+and we don't complete the fake_commit-> flip_done until
+drm_atomic_helper_commit_hw_done() which can happen a long
+time after the flip event was sent out.
 
-  arch/x86/kernel/cpu/mcheck/therm_throt.c:395:39: error: conflicting \
-  types for ‘smp_thermal_interrupt’
-   asmlinkage __visible void __irq_entry smp_thermal_interrupt(struct pt_regs *r)
-                                         ^~~~~~~~~~~~~~~~~~~~~
-  In file included from arch/x86/kernel/cpu/mcheck/therm_throt.c:29:
-  ./arch/x86/include/asm/traps.h:107:17: note: previous declaration of \
-	  ‘smp_thermal_interrupt’ was here
-   asmlinkage void smp_thermal_interrupt(void);
+This will become somewhat easy to hit on SKL+ once we start
+to add all the planes for the crtc to every modeset commit
+for the purposes of forcing a watermark register programming
+[1].
 
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: Yi Wang <wang.yi59@zte.com.cn>
-Cc: Michael Matz <matz@suse.de>
-Cc: x86@kernel.org
-Link: https://lkml.kernel.org/r/alpine.DEB.2.21.1811081633160.1549@nanos.tec.linutronix.de
+To make the race a little less pronounced let's complete
+fake_commit->flip_done after drm_atomic_helper_wait_for_flip_done().
+For the single crtc case this should make the race quite
+theoretical, assuming drm_atomic_helper_wait_for_flip_done()
+actually has to wait for the real commit flip_done. In case
+the real commit flip_done gets completed singificantly before
+drm_atomic_helper_wait_for_flip_done(), or we are dealing with
+multiple crtcs whose vblanks don't line up nicely the race still
+exists.
+
+[1] https://patchwork.freedesktop.org/patch/262670/
+
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+Fixes: 080de2e5be2d ("drm/atomic: Check for busy planes/connectors before setting the commit")
+Testcase: igt/kms_cursor_legacy/*nonblocking-modeset-vs-cursor-atomic
+Signed-off-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20181122143412.11655-1-ville.syrjala@linux.intel.com
+Reviewed-by: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/include/asm/traps.h             | 6 +++---
- arch/x86/kernel/cpu/mcheck/mce_amd.c     | 5 +++--
- arch/x86/kernel/cpu/mcheck/therm_throt.c | 3 ++-
- arch/x86/kernel/cpu/mcheck/threshold.c   | 3 ++-
- 4 files changed, 10 insertions(+), 7 deletions(-)
+ drivers/gpu/drm/drm_atomic_helper.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/arch/x86/include/asm/traps.h b/arch/x86/include/asm/traps.h
-index 3de69330e6c5..afbc87206886 100644
---- a/arch/x86/include/asm/traps.h
-+++ b/arch/x86/include/asm/traps.h
-@@ -104,9 +104,9 @@ extern int panic_on_unrecovered_nmi;
- 
- void math_emulate(struct math_emu_info *);
- #ifndef CONFIG_X86_32
--asmlinkage void smp_thermal_interrupt(void);
--asmlinkage void smp_threshold_interrupt(void);
--asmlinkage void smp_deferred_error_interrupt(void);
-+asmlinkage void smp_thermal_interrupt(struct pt_regs *regs);
-+asmlinkage void smp_threshold_interrupt(struct pt_regs *regs);
-+asmlinkage void smp_deferred_error_interrupt(struct pt_regs *regs);
- #endif
- 
- extern void ist_enter(struct pt_regs *regs);
-diff --git a/arch/x86/kernel/cpu/mcheck/mce_amd.c b/arch/x86/kernel/cpu/mcheck/mce_amd.c
-index e12454e21b8a..9f915a8791cc 100644
---- a/arch/x86/kernel/cpu/mcheck/mce_amd.c
-+++ b/arch/x86/kernel/cpu/mcheck/mce_amd.c
-@@ -23,6 +23,7 @@
- #include <linux/string.h>
- 
- #include <asm/amd_nb.h>
-+#include <asm/traps.h>
- #include <asm/apic.h>
- #include <asm/mce.h>
- #include <asm/msr.h>
-@@ -99,7 +100,7 @@ static u32 smca_bank_addrs[MAX_NR_BANKS][NR_BLOCKS] __ro_after_init =
- 	[0 ... MAX_NR_BANKS - 1] = { [0 ... NR_BLOCKS - 1] = -1 }
- };
- 
--const char *smca_get_name(enum smca_bank_types t)
-+static const char *smca_get_name(enum smca_bank_types t)
- {
- 	if (t >= N_SMCA_BANK_TYPES)
- 		return NULL;
-@@ -824,7 +825,7 @@ static void __log_error(unsigned int bank, u64 status, u64 addr, u64 misc)
- 	mce_log(&m);
+diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
+index 1bb4c318bdd4..f77bff5aa307 100644
+--- a/drivers/gpu/drm/drm_atomic_helper.c
++++ b/drivers/gpu/drm/drm_atomic_helper.c
+@@ -1425,6 +1425,9 @@ void drm_atomic_helper_wait_for_flip_done(struct drm_device *dev,
+ 			DRM_ERROR("[CRTC:%d:%s] flip_done timed out\n",
+ 				  crtc->base.id, crtc->name);
+ 	}
++
++	if (old_state->fake_commit)
++		complete_all(&old_state->fake_commit->flip_done);
  }
+ EXPORT_SYMBOL(drm_atomic_helper_wait_for_flip_done);
  
--asmlinkage __visible void __irq_entry smp_deferred_error_interrupt(void)
-+asmlinkage __visible void __irq_entry smp_deferred_error_interrupt(struct pt_regs *regs)
- {
- 	entering_irq();
- 	trace_deferred_error_apic_entry(DEFERRED_ERROR_VECTOR);
-diff --git a/arch/x86/kernel/cpu/mcheck/therm_throt.c b/arch/x86/kernel/cpu/mcheck/therm_throt.c
-index 2da67b70ba98..ee229ceee745 100644
---- a/arch/x86/kernel/cpu/mcheck/therm_throt.c
-+++ b/arch/x86/kernel/cpu/mcheck/therm_throt.c
-@@ -25,6 +25,7 @@
- #include <linux/cpu.h>
- 
- #include <asm/processor.h>
-+#include <asm/traps.h>
- #include <asm/apic.h>
- #include <asm/mce.h>
- #include <asm/msr.h>
-@@ -390,7 +391,7 @@ static void unexpected_thermal_interrupt(void)
- 
- static void (*smp_thermal_vector)(void) = unexpected_thermal_interrupt;
- 
--asmlinkage __visible void __irq_entry smp_thermal_interrupt(struct pt_regs *r)
-+asmlinkage __visible void __irq_entry smp_thermal_interrupt(struct pt_regs *regs)
- {
- 	entering_irq();
- 	trace_thermal_apic_entry(THERMAL_APIC_VECTOR);
-diff --git a/arch/x86/kernel/cpu/mcheck/threshold.c b/arch/x86/kernel/cpu/mcheck/threshold.c
-index 2b584b319eff..c21e0a1efd0f 100644
---- a/arch/x86/kernel/cpu/mcheck/threshold.c
-+++ b/arch/x86/kernel/cpu/mcheck/threshold.c
-@@ -6,6 +6,7 @@
- #include <linux/kernel.h>
- 
- #include <asm/irq_vectors.h>
-+#include <asm/traps.h>
- #include <asm/apic.h>
- #include <asm/mce.h>
- #include <asm/trace/irq_vectors.h>
-@@ -18,7 +19,7 @@ static void default_threshold_interrupt(void)
- 
- void (*mce_threshold_vector)(void) = default_threshold_interrupt;
- 
--asmlinkage __visible void __irq_entry smp_threshold_interrupt(void)
-+asmlinkage __visible void __irq_entry smp_threshold_interrupt(struct pt_regs *regs)
- {
- 	entering_irq();
- 	trace_threshold_apic_entry(THRESHOLD_APIC_VECTOR);
 -- 
 2.19.1
 
