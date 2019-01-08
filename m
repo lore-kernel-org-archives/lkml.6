@@ -4,48 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24A25C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:32:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBA35C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:32:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E744A2070B
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:32:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BA5702070B
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:32:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546975971;
-	bh=o0HjUnW5S5f5z97u1DamOUotuwyxzIqU8pIPCXbIHxg=;
+	s=default; t=1546975976;
+	bh=+apJMKxbZ20lG+Sqi2LU4XLodGyrcE5VCHqUJWbZ0wA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=2rC3vHCH9b0/rIZLkw3Q295tZ5PsSpUho8AhLYGx5hDbXSsvn5jBE2B9i0rkKNaWh
-	 HSpzrk15VP0xvrYyql1FPT0afiWyeiPydUSnbAyNIXZ4NkMUsuldzjwcBKSPbNDwAl
-	 8gwOFvJObhb4oDzAZ4MIbk3zkp7apSnUUFdM/lOw=
+	b=NnUdmTiG9SzIHLqtdgP6XMPBedpVm+bdFBIadkC5/3dsLcJcehgrYVVjxwhsdPHTC
+	 /mwtbZgtaVNc6UsEn1wUQjIaLGHCt979MRvjJHWE1bunU0vMO/Aw3cqnPNt5FrCP9Q
+	 Pliz+sQHroVqYa27XUzme1+GMrsqGpoPfLYQgrAM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731474AbfAHTcu (ORCPT
+        id S1731507AbfAHTc4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:32:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41454 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 14:32:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41620 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731452AbfAHTcp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:32:45 -0500
+        id S1729621AbfAHTcx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:32:53 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5311B20665;
-        Tue,  8 Jan 2019 19:32:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EDCC320883;
+        Tue,  8 Jan 2019 19:32:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546975965;
-        bh=o0HjUnW5S5f5z97u1DamOUotuwyxzIqU8pIPCXbIHxg=;
+        s=default; t=1546975971;
+        bh=+apJMKxbZ20lG+Sqi2LU4XLodGyrcE5VCHqUJWbZ0wA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YhmgxzeLCctyA208HfC5OOA58MOYB4QCg6c8qUaRPJsaAFw8X60cTeqogHWIgmA8T
-         h5l4auorvGztE46DMYujHqnRZSSoIM/RClRbqutNZjxo5ngzajpjshVeuSjwafw6TW
-         wKh36HDPN/+BHoEvC7Y6PC16Czxx2JU4Q2gP85qc=
+        b=E2dyUsoUHQ2/Ssv70DdEiCpDhguLrPHnsEKXeU25QxrfD9qj4nPfivpNX2WVZtbSH
+         sRIUDqFx7Jp/qSrTPsfUuvxEKV3DylecvIxcfrIpFoPne+3+6tzEjsp+TOA8dukLM6
+         JjaCGfkRKcPABJGbVuCWSVetLOZVH4blHA68VGb0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
-        Sasha Levin <sashal@kernel.org>, linux-usb@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 11/53] usb: gadget: udc: renesas_usb3: add a safety connection way for forced_b_device
-Date:   Tue,  8 Jan 2019 14:31:39 -0500
-Message-Id: <20190108193222.123316-11-sashal@kernel.org>
+Cc:     "A.s. Dong" <aisheng.dong@nxp.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 16/53] clk: imx: make mux parent strings const
+Date:   Tue,  8 Jan 2019 14:31:44 -0500
+Message-Id: <20190108193222.123316-16-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108193222.123316-1-sashal@kernel.org>
 References: <20190108193222.123316-1-sashal@kernel.org>
@@ -57,90 +60,127 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+From: "A.s. Dong" <aisheng.dong@nxp.com>
 
-[ Upstream commit ceb94bc52c437463f0903e61060a94a2226fb672 ]
+[ Upstream commit 9e5ef7a57ca75a1b9411c46caeeb6881124284a3 ]
 
-This patch adds a safety connection way for "forced_b_device" with
-"workaround_for_vbus" like below:
+As the commit 2893c379461a ("clk: make strings in parent name arrays
+const"), let's make the parent strings const, otherwise we may meet
+the following warning when compiling:
 
-< Example for R-Car E3 Ebisu >
- # modprobe <any usb gadget driver>
- # echo 1 > /sys/kernel/debug/ee020000.usb/b_device
- (connect a usb cable to host side.)
- # echo 2 > /sys/kernel/debug/ee020000.usb/b_device
+drivers/clk/imx/clk-imx7ulp.c: In function 'imx7ulp_clocks_init':
+drivers/clk/imx/clk-imx7ulp.c:73:35: warning: passing argument 5 of
+	'imx_clk_mux_flags' discards 'const' qualifier from pointer target type
 
-Previous code should have connected a usb cable before the "b_device"
-is set to 1 on the Ebisu board. However, if xHCI driver on the board
-is probed, it causes some troubles:
- - Conflicts USB VBUS/signals between the board and another host.
- - "Cannot enable. Maybe the USB cable is bad?" might happen on
-   both the board and another host with a usb hub.
- - Cannot enumerate a usb gadget correctly because an interruption
-   of VBUS change happens unexpectedly.
+  clks[IMX7ULP_CLK_APLL_PRE_SEL] = imx_clk_mux_flags("apll_pre_sel", base + 0x508, 0,
+	1, pll_pre_sels, ARRAY_SIZE(pll_pre_sels), CLK_SET_PARENT_GATE);
+                                   ^
+In file included from drivers/clk/imx/clk-imx7ulp.c:23:0:
+drivers/clk/imx/clk.h:200:27: note: expected 'const char **' but argument is
+ of type 'const char * const*'
+...
 
-Reported-by: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/gadget/udc/renesas_usb3.c | 15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
+ drivers/clk/imx/clk-busy.c      |  2 +-
+ drivers/clk/imx/clk-fixup-mux.c |  2 +-
+ drivers/clk/imx/clk.h           | 18 +++++++++++-------
+ 3 files changed, 13 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/usb/gadget/udc/renesas_usb3.c b/drivers/usb/gadget/udc/renesas_usb3.c
-index ade0723787e5..e5355ede2c46 100644
---- a/drivers/usb/gadget/udc/renesas_usb3.c
-+++ b/drivers/usb/gadget/udc/renesas_usb3.c
-@@ -352,6 +352,7 @@ struct renesas_usb3 {
- 	bool extcon_host;		/* check id and set EXTCON_USB_HOST */
- 	bool extcon_usb;		/* check vbus and set EXTCON_USB */
- 	bool forced_b_device;
-+	bool start_to_connect;
+diff --git a/drivers/clk/imx/clk-busy.c b/drivers/clk/imx/clk-busy.c
+index 5cc99590f9a3..097625c5715c 100644
+--- a/drivers/clk/imx/clk-busy.c
++++ b/drivers/clk/imx/clk-busy.c
+@@ -154,7 +154,7 @@ static struct clk_ops clk_busy_mux_ops = {
+ 
+ struct clk *imx_clk_busy_mux(const char *name, void __iomem *reg, u8 shift,
+ 			     u8 width, void __iomem *busy_reg, u8 busy_shift,
+-			     const char **parent_names, int num_parents)
++			     const char * const *parent_names, int num_parents)
+ {
+ 	struct clk_busy_mux *busy;
+ 	struct clk *clk;
+diff --git a/drivers/clk/imx/clk-fixup-mux.c b/drivers/clk/imx/clk-fixup-mux.c
+index c9b327e0a8dd..44817c1b0b88 100644
+--- a/drivers/clk/imx/clk-fixup-mux.c
++++ b/drivers/clk/imx/clk-fixup-mux.c
+@@ -70,7 +70,7 @@ static const struct clk_ops clk_fixup_mux_ops = {
  };
  
- #define gadget_to_renesas_usb3(_gadget)	\
-@@ -470,7 +471,8 @@ static void usb3_init_axi_bridge(struct renesas_usb3 *usb3)
- static void usb3_init_epc_registers(struct renesas_usb3 *usb3)
+ struct clk *imx_clk_fixup_mux(const char *name, void __iomem *reg,
+-			      u8 shift, u8 width, const char **parents,
++			      u8 shift, u8 width, const char * const *parents,
+ 			      int num_parents, void (*fixup)(u32 *val))
  {
- 	usb3_write(usb3, ~0, USB3_USB_INT_STA_1);
--	usb3_enable_irq_1(usb3, USB_INT_1_VBUS_CNG);
-+	if (!usb3->workaround_for_vbus)
-+		usb3_enable_irq_1(usb3, USB_INT_1_VBUS_CNG);
+ 	struct clk_fixup_mux *fixup_mux;
+diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
+index d69c4bbf3597..b03fbd502528 100644
+--- a/drivers/clk/imx/clk.h
++++ b/drivers/clk/imx/clk.h
+@@ -63,14 +63,14 @@ struct clk *imx_clk_busy_divider(const char *name, const char *parent_name,
+ 
+ struct clk *imx_clk_busy_mux(const char *name, void __iomem *reg, u8 shift,
+ 			     u8 width, void __iomem *busy_reg, u8 busy_shift,
+-			     const char **parent_names, int num_parents);
++			     const char * const *parent_names, int num_parents);
+ 
+ struct clk *imx_clk_fixup_divider(const char *name, const char *parent,
+ 				  void __iomem *reg, u8 shift, u8 width,
+ 				  void (*fixup)(u32 *val));
+ 
+ struct clk *imx_clk_fixup_mux(const char *name, void __iomem *reg,
+-			      u8 shift, u8 width, const char **parents,
++			      u8 shift, u8 width, const char * const *parents,
+ 			      int num_parents, void (*fixup)(u32 *val));
+ 
+ static inline struct clk *imx_clk_fixed(const char *name, int rate)
+@@ -79,7 +79,8 @@ static inline struct clk *imx_clk_fixed(const char *name, int rate)
  }
  
- static bool usb3_wakeup_usb2_phy(struct renesas_usb3 *usb3)
-@@ -676,8 +678,7 @@ static void usb3_mode_config(struct renesas_usb3 *usb3, bool host, bool a_dev)
- 	usb3_set_mode(usb3, host);
- 	usb3_vbus_out(usb3, a_dev);
- 	/* for A-Peripheral or forced B-device mode */
--	if ((!host && a_dev) ||
--	    (usb3->workaround_for_vbus && usb3->forced_b_device))
-+	if ((!host && a_dev) || usb3->start_to_connect)
- 		usb3_connect(usb3);
- 	spin_unlock_irqrestore(&usb3->lock, flags);
+ static inline struct clk *imx_clk_mux_ldb(const char *name, void __iomem *reg,
+-		u8 shift, u8 width, const char **parents, int num_parents)
++			u8 shift, u8 width, const char * const *parents,
++			int num_parents)
+ {
+ 	return clk_register_mux(NULL, name, parents, num_parents,
+ 			CLK_SET_RATE_NO_REPARENT | CLK_SET_RATE_PARENT, reg,
+@@ -178,7 +179,8 @@ static inline struct clk *imx_clk_gate4(const char *name, const char *parent,
  }
-@@ -2369,7 +2370,11 @@ static ssize_t renesas_usb3_b_device_write(struct file *file,
- 	if (copy_from_user(&buf, ubuf, min_t(size_t, sizeof(buf) - 1, count)))
- 		return -EFAULT;
  
--	if (!strncmp(buf, "1", 1))
-+	usb3->start_to_connect = false;
-+	if (usb3->workaround_for_vbus && usb3->forced_b_device &&
-+	    !strncmp(buf, "2", 1))
-+		usb3->start_to_connect = true;
-+	else if (!strncmp(buf, "1", 1))
- 		usb3->forced_b_device = true;
- 	else
- 		usb3->forced_b_device = false;
-@@ -2377,7 +2382,7 @@ static ssize_t renesas_usb3_b_device_write(struct file *file,
- 	if (usb3->workaround_for_vbus)
- 		usb3_disconnect(usb3);
+ static inline struct clk *imx_clk_mux(const char *name, void __iomem *reg,
+-		u8 shift, u8 width, const char **parents, int num_parents)
++			u8 shift, u8 width, const char * const *parents,
++			int num_parents)
+ {
+ 	return clk_register_mux(NULL, name, parents, num_parents,
+ 			CLK_SET_RATE_NO_REPARENT, reg, shift,
+@@ -186,7 +188,8 @@ static inline struct clk *imx_clk_mux(const char *name, void __iomem *reg,
+ }
  
--	/* Let this driver call usb3_connect() anyway */
-+	/* Let this driver call usb3_connect() if needed */
- 	usb3_check_id(usb3);
+ static inline struct clk *imx_clk_mux2(const char *name, void __iomem *reg,
+-		u8 shift, u8 width, const char **parents, int num_parents)
++			u8 shift, u8 width, const char * const *parents,
++			int num_parents)
+ {
+ 	return clk_register_mux(NULL, name, parents, num_parents,
+ 			CLK_SET_RATE_NO_REPARENT | CLK_OPS_PARENT_ENABLE,
+@@ -194,8 +197,9 @@ static inline struct clk *imx_clk_mux2(const char *name, void __iomem *reg,
+ }
  
- 	return count;
+ static inline struct clk *imx_clk_mux_flags(const char *name,
+-		void __iomem *reg, u8 shift, u8 width, const char **parents,
+-		int num_parents, unsigned long flags)
++			void __iomem *reg, u8 shift, u8 width,
++			const char * const *parents, int num_parents,
++			unsigned long flags)
+ {
+ 	return clk_register_mux(NULL, name, parents, num_parents,
+ 			flags | CLK_SET_RATE_NO_REPARENT, reg, shift, width, 0,
 -- 
 2.19.1
 
