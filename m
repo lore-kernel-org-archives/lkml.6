@@ -2,232 +2,129 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 242A9C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:04:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0EA8C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:04:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DDDFB20660
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:04:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7FD2620883
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:04:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546977867;
-	bh=PnqgOVsckHKUZK2V0zZ24v5f3g2oEoPYHUH4QLC2OLY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=fbOJk/keRzZMkrXnF6WAF+LrsYVTyP+WV2a/e1YF5bLQ8vj9IsBYmpCQh8oCcizuO
-	 l/1JwbOabewfoCT2o6JD2BDmloKSN5FQD65VcsArtAKwx8ByEuZhfFqpXVtvwJswpb
-	 FngZpUfYUxO94NmE8bOWC8snqsuKqVnSrbFCq2Q4=
+	s=default; t=1546977882;
+	bh=jefd0SMZoClnZVEyGbhMRSDXSwZCy3m/IjA7jlRT7sE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=iIHg5xCVJIQAgPS3A6oVi6yiEZli2xUZ+S9p4RMxTRP72J1nyTKUWSWcQHEbV0goT
+	 DM6hby92nw/HxVfgXUHn4TYp4YsH/dF9oYpkjuW4yKI7nEiqw+EnbsnOT6jtWG4B7R
+	 UHVtOzUMP39/xUwmgvJ2wfiF050X8b+zfoRvB+AA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733031AbfAHUE0 (ORCPT
+        id S1730455AbfAHUEl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 15:04:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35604 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730068AbfAHT2d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:28:33 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3CC9A20827;
-        Tue,  8 Jan 2019 19:28:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546975712;
-        bh=PnqgOVsckHKUZK2V0zZ24v5f3g2oEoPYHUH4QLC2OLY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Hb0CQYn+PG3gmpPmFCoImY8i9ZGk3YcaBV2DeAtwk7H0QwxuhPTIyfqgDgQ2fZa/c
-         09URSEBZM5wXFwcWlaqct9CZJ/QO4iMxTszBx97o9eF5qCW+uyUJHN46pnreafnhdW
-         Xh3cv6zB8G4XFDUtHpReIwDOBuS0pLSzHd8C+qmo=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Evan Green <evgreen@chromium.org>, Stable@vger.kernel.org,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Sasha Levin <sashal@kernel.org>, linux-iio@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 069/117] iio: adc: qcom-spmi-adc5: Initialize prescale properly
-Date:   Tue,  8 Jan 2019 14:25:37 -0500
-Message-Id: <20190108192628.121270-69-sashal@kernel.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190108192628.121270-1-sashal@kernel.org>
-References: <20190108192628.121270-1-sashal@kernel.org>
+        Tue, 8 Jan 2019 15:04:41 -0500
+Received: from mx2.suse.de ([195.135.220.15]:34722 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729043AbfAHUEj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 15:04:39 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id AF595AEE7;
+        Tue,  8 Jan 2019 20:04:37 +0000 (UTC)
+Date:   Tue, 8 Jan 2019 21:04:36 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Alexander Duyck <alexander.h.duyck@linux.intel.com>
+Cc:     Arun KS <arunks@codeaurora.org>, arunks.linux@gmail.com,
+        akpm@linux-foundation.org, vbabka@suse.cz, osalvador@suse.de,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        getarunks@gmail.com
+Subject: Re: [PATCH v7] mm/page_alloc.c: memory_hotplug: free pages as higher
+ order
+Message-ID: <20190108200436.GK31793@dhcp22.suse.cz>
+References: <1546578076-31716-1-git-send-email-arunks@codeaurora.org>
+ <37498672d5b2345b1435477e78251282af42742b.camel@linux.intel.com>
 MIME-Version: 1.0
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <37498672d5b2345b1435477e78251282af42742b.camel@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Evan Green <evgreen@chromium.org>
+On Tue 08-01-19 10:40:18, Alexander Duyck wrote:
+> On Fri, 2019-01-04 at 10:31 +0530, Arun KS wrote:
+> > When freeing pages are done with higher order, time spent on coalescing
+> > pages by buddy allocator can be reduced.  With section size of 256MB, hot
+> > add latency of a single section shows improvement from 50-60 ms to less
+> > than 1 ms, hence improving the hot add latency by 60 times.  Modify
+> > external providers of online callback to align with the change.
+> > 
+> > Signed-off-by: Arun KS <arunks@codeaurora.org>
+> > Acked-by: Michal Hocko <mhocko@suse.com>
+> > Reviewed-by: Oscar Salvador <osalvador@suse.de>
+> 
+> After running into my initial issue I actually had a few more questions
+> about this patch.
+> 
+> > [...]
+> > +static int online_pages_blocks(unsigned long start, unsigned long nr_pages)
+> > +{
+> > +	unsigned long end = start + nr_pages;
+> > +	int order, ret, onlined_pages = 0;
+> > +
+> > +	while (start < end) {
+> > +		order = min(MAX_ORDER - 1,
+> > +			get_order(PFN_PHYS(end) - PFN_PHYS(start)));
+> > +
+> > +		ret = (*online_page_callback)(pfn_to_page(start), order);
+> > +		if (!ret)
+> > +			onlined_pages += (1UL << order);
+> > +		else if (ret > 0)
+> > +			onlined_pages += ret;
+> > +
+> > +		start += (1UL << order);
+> > +	}
+> > +	return onlined_pages;
+> >  }
+> >  
+> 
+> Should the limit for this really be MAX_ORDER - 1 or should it be
+> pageblock_order? In some cases this will be the same value, but I seem
+> to recall that for x86 MAX_ORDER can be several times larger than
+> pageblock_order.
 
-[ Upstream commit db23d88756abd38e0995ea8449d0025b3de4b26b ]
+Does it make any difference when we are in fact trying to onine nr_pages
+and we clamp to it properly?
 
-adc5_get_dt_data uses a local, prop, feeds it to adc5_get_dt_channel_data,
-and then puts the result into adc->chan_props. The problem is
-adc5_get_dt_channel_data may not initialize that structure fully, so a
-garbage value is used for prescale if the optional "qcom,pre-scaling" is
-not defined in DT. adc5_read_raw then uses this as an array index,
-generating a crash that looks like this:
+> >  static int online_pages_range(unsigned long start_pfn, unsigned long nr_pages,
+> >  			void *arg)
+> >  {
+> > -	unsigned long i;
+> >  	unsigned long onlined_pages = *(unsigned long *)arg;
+> > -	struct page *page;
+> >  
+> >  	if (PageReserved(pfn_to_page(start_pfn)))
+> 
+> I'm not sure we even really need this check. Getting back to the
+> discussion I have been having with Michal in regards to the need for
+> the DAX pages to not have the reserved bit cleared I was originally
+> wondering if we could replace this check with a call to
+> online_section_nr since the section shouldn't be online until we set
+> the bit below in online_mem_sections.
+> 
+> However after doing some further digging it looks like this could
+> probably be dropped entirely since we only call this function from
+> online_pages and that function is only called by memory_block_action if
+> pages_correctly_probed returns true. However pages_correctly_probed
+> should return false if any of the sections contained in the page range
+> is already online.
 
-[    6.683186] Unable to handle kernel paging request at virtual address ffffff90e78c7964
-Call trace:
-qcom_vadc_scale_code_voltage_factor+0x74/0x104
-qcom_vadc_scale_hw_calib_die_temp+0x20/0x60
-qcom_adc5_hw_scale+0x78/0xa4
-adc5_read_raw+0x3d0/0x65c
-iio_channel_read+0x240/0x30c
-iio_read_channel_processed+0x10c/0x150
-qpnp_tm_get_temp+0xc0/0x40c
-of_thermal_get_temp+0x7c/0x98
-thermal_zone_get_temp+0xac/0xd8
-thermal_zone_device_update+0xc0/0x38c
-qpnp_tm_probe+0x624/0x81c
-platform_drv_probe+0xe4/0x11c
-really_probe+0x188/0x3fc
-driver_probe_device+0xb8/0x188
-__device_attach_driver+0x114/0x180
-bus_for_each_drv+0xd8/0x118
-__device_attach+0x180/0x27c
-device_initial_probe+0x20/0x2c
-bus_probe_device+0x78/0x124
-deferred_probe_work_func+0xfc/0x138
-process_one_work+0x3d8/0x8b0
-process_scheduled_works+0x48/0x6c
-worker_thread+0x488/0x7cc
-kthread+0x24c/0x264
-ret_from_fork+0x10/0x18
-
-Unfortunately, when I went to add the initializer for this and tried to
-boot it, my machine shut down immediately, complaining that it was
-hotter than the sun. It appears that adc5_chans_pmic and adc5_chans_rev2
-were initializing prescale_index as if it were directly a divisor,
-rather than the index into adc5_prescale_ratios that it is.
-
-Fix the uninitialized value, and change the static initialization to use
-indices into adc5_prescale_ratios.
-
-Signed-off-by: Evan Green <evgreen@chromium.org>
-Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
-Cc: <Stable@vger.kernel.org>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/iio/adc/qcom-spmi-adc5.c | 58 +++++++++++++++++---------------
- 1 file changed, 31 insertions(+), 27 deletions(-)
-
-diff --git a/drivers/iio/adc/qcom-spmi-adc5.c b/drivers/iio/adc/qcom-spmi-adc5.c
-index f9af6b082916..6a866cc187f7 100644
---- a/drivers/iio/adc/qcom-spmi-adc5.c
-+++ b/drivers/iio/adc/qcom-spmi-adc5.c
-@@ -423,6 +423,7 @@ struct adc5_channels {
- 	enum vadc_scale_fn_type scale_fn_type;
- };
- 
-+/* In these definitions, _pre refers to an index into adc5_prescale_ratios. */
- #define ADC5_CHAN(_dname, _type, _mask, _pre, _scale)			\
- 	{								\
- 		.datasheet_name = _dname,				\
-@@ -443,63 +444,63 @@ struct adc5_channels {
- 		  _pre, _scale)						\
- 
- static const struct adc5_channels adc5_chans_pmic[ADC5_MAX_CHANNEL] = {
--	[ADC5_REF_GND]		= ADC5_CHAN_VOLT("ref_gnd", 1,
-+	[ADC5_REF_GND]		= ADC5_CHAN_VOLT("ref_gnd", 0,
- 					SCALE_HW_CALIB_DEFAULT)
--	[ADC5_1P25VREF]		= ADC5_CHAN_VOLT("vref_1p25", 1,
-+	[ADC5_1P25VREF]		= ADC5_CHAN_VOLT("vref_1p25", 0,
- 					SCALE_HW_CALIB_DEFAULT)
--	[ADC5_VPH_PWR]		= ADC5_CHAN_VOLT("vph_pwr", 3,
-+	[ADC5_VPH_PWR]		= ADC5_CHAN_VOLT("vph_pwr", 1,
- 					SCALE_HW_CALIB_DEFAULT)
--	[ADC5_VBAT_SNS]		= ADC5_CHAN_VOLT("vbat_sns", 3,
-+	[ADC5_VBAT_SNS]		= ADC5_CHAN_VOLT("vbat_sns", 1,
- 					SCALE_HW_CALIB_DEFAULT)
--	[ADC5_DIE_TEMP]		= ADC5_CHAN_TEMP("die_temp", 1,
-+	[ADC5_DIE_TEMP]		= ADC5_CHAN_TEMP("die_temp", 0,
- 					SCALE_HW_CALIB_PMIC_THERM)
--	[ADC5_USB_IN_I]		= ADC5_CHAN_VOLT("usb_in_i_uv", 1,
-+	[ADC5_USB_IN_I]		= ADC5_CHAN_VOLT("usb_in_i_uv", 0,
- 					SCALE_HW_CALIB_DEFAULT)
--	[ADC5_USB_IN_V_16]	= ADC5_CHAN_VOLT("usb_in_v_div_16", 16,
-+	[ADC5_USB_IN_V_16]	= ADC5_CHAN_VOLT("usb_in_v_div_16", 8,
- 					SCALE_HW_CALIB_DEFAULT)
--	[ADC5_CHG_TEMP]		= ADC5_CHAN_TEMP("chg_temp", 1,
-+	[ADC5_CHG_TEMP]		= ADC5_CHAN_TEMP("chg_temp", 0,
- 					SCALE_HW_CALIB_PM5_CHG_TEMP)
- 	/* Charger prescales SBUx and MID_CHG to fit within 1.8V upper unit */
--	[ADC5_SBUx]		= ADC5_CHAN_VOLT("chg_sbux", 3,
-+	[ADC5_SBUx]		= ADC5_CHAN_VOLT("chg_sbux", 1,
- 					SCALE_HW_CALIB_DEFAULT)
--	[ADC5_MID_CHG_DIV6]	= ADC5_CHAN_VOLT("chg_mid_chg", 6,
-+	[ADC5_MID_CHG_DIV6]	= ADC5_CHAN_VOLT("chg_mid_chg", 3,
- 					SCALE_HW_CALIB_DEFAULT)
--	[ADC5_XO_THERM_100K_PU]	= ADC5_CHAN_TEMP("xo_therm", 1,
-+	[ADC5_XO_THERM_100K_PU]	= ADC5_CHAN_TEMP("xo_therm", 0,
- 					SCALE_HW_CALIB_XOTHERM)
--	[ADC5_AMUX_THM1_100K_PU] = ADC5_CHAN_TEMP("amux_thm1_100k_pu", 1,
-+	[ADC5_AMUX_THM1_100K_PU] = ADC5_CHAN_TEMP("amux_thm1_100k_pu", 0,
- 					SCALE_HW_CALIB_THERM_100K_PULLUP)
--	[ADC5_AMUX_THM2_100K_PU] = ADC5_CHAN_TEMP("amux_thm2_100k_pu", 1,
-+	[ADC5_AMUX_THM2_100K_PU] = ADC5_CHAN_TEMP("amux_thm2_100k_pu", 0,
- 					SCALE_HW_CALIB_THERM_100K_PULLUP)
--	[ADC5_AMUX_THM3_100K_PU] = ADC5_CHAN_TEMP("amux_thm3_100k_pu", 1,
-+	[ADC5_AMUX_THM3_100K_PU] = ADC5_CHAN_TEMP("amux_thm3_100k_pu", 0,
- 					SCALE_HW_CALIB_THERM_100K_PULLUP)
--	[ADC5_AMUX_THM2]	= ADC5_CHAN_TEMP("amux_thm2", 1,
-+	[ADC5_AMUX_THM2]	= ADC5_CHAN_TEMP("amux_thm2", 0,
- 					SCALE_HW_CALIB_PM5_SMB_TEMP)
- };
- 
- static const struct adc5_channels adc5_chans_rev2[ADC5_MAX_CHANNEL] = {
--	[ADC5_REF_GND]		= ADC5_CHAN_VOLT("ref_gnd", 1,
-+	[ADC5_REF_GND]		= ADC5_CHAN_VOLT("ref_gnd", 0,
- 					SCALE_HW_CALIB_DEFAULT)
--	[ADC5_1P25VREF]		= ADC5_CHAN_VOLT("vref_1p25", 1,
-+	[ADC5_1P25VREF]		= ADC5_CHAN_VOLT("vref_1p25", 0,
- 					SCALE_HW_CALIB_DEFAULT)
--	[ADC5_VPH_PWR]		= ADC5_CHAN_VOLT("vph_pwr", 3,
-+	[ADC5_VPH_PWR]		= ADC5_CHAN_VOLT("vph_pwr", 1,
- 					SCALE_HW_CALIB_DEFAULT)
--	[ADC5_VBAT_SNS]		= ADC5_CHAN_VOLT("vbat_sns", 3,
-+	[ADC5_VBAT_SNS]		= ADC5_CHAN_VOLT("vbat_sns", 1,
- 					SCALE_HW_CALIB_DEFAULT)
--	[ADC5_VCOIN]		= ADC5_CHAN_VOLT("vcoin", 3,
-+	[ADC5_VCOIN]		= ADC5_CHAN_VOLT("vcoin", 1,
- 					SCALE_HW_CALIB_DEFAULT)
--	[ADC5_DIE_TEMP]		= ADC5_CHAN_TEMP("die_temp", 1,
-+	[ADC5_DIE_TEMP]		= ADC5_CHAN_TEMP("die_temp", 0,
- 					SCALE_HW_CALIB_PMIC_THERM)
--	[ADC5_AMUX_THM1_100K_PU] = ADC5_CHAN_TEMP("amux_thm1_100k_pu", 1,
-+	[ADC5_AMUX_THM1_100K_PU] = ADC5_CHAN_TEMP("amux_thm1_100k_pu", 0,
- 					SCALE_HW_CALIB_THERM_100K_PULLUP)
--	[ADC5_AMUX_THM2_100K_PU] = ADC5_CHAN_TEMP("amux_thm2_100k_pu", 1,
-+	[ADC5_AMUX_THM2_100K_PU] = ADC5_CHAN_TEMP("amux_thm2_100k_pu", 0,
- 					SCALE_HW_CALIB_THERM_100K_PULLUP)
--	[ADC5_AMUX_THM3_100K_PU] = ADC5_CHAN_TEMP("amux_thm3_100k_pu", 1,
-+	[ADC5_AMUX_THM3_100K_PU] = ADC5_CHAN_TEMP("amux_thm3_100k_pu", 0,
- 					SCALE_HW_CALIB_THERM_100K_PULLUP)
--	[ADC5_AMUX_THM4_100K_PU] = ADC5_CHAN_TEMP("amux_thm4_100k_pu", 1,
-+	[ADC5_AMUX_THM4_100K_PU] = ADC5_CHAN_TEMP("amux_thm4_100k_pu", 0,
- 					SCALE_HW_CALIB_THERM_100K_PULLUP)
--	[ADC5_AMUX_THM5_100K_PU] = ADC5_CHAN_TEMP("amux_thm5_100k_pu", 1,
-+	[ADC5_AMUX_THM5_100K_PU] = ADC5_CHAN_TEMP("amux_thm5_100k_pu", 0,
- 					SCALE_HW_CALIB_THERM_100K_PULLUP)
--	[ADC5_XO_THERM_100K_PU]	= ADC5_CHAN_TEMP("xo_therm_100k_pu", 1,
-+	[ADC5_XO_THERM_100K_PU]	= ADC5_CHAN_TEMP("xo_therm_100k_pu", 0,
- 					SCALE_HW_CALIB_THERM_100K_PULLUP)
- };
- 
-@@ -558,6 +559,9 @@ static int adc5_get_dt_channel_data(struct adc5_chip *adc,
- 			return ret;
- 		}
- 		prop->prescale = ret;
-+	} else {
-+		prop->prescale =
-+			adc->data->adc_chans[prop->channel].prescale_index;
- 	}
- 
- 	ret = of_property_read_u32(node, "qcom,hw-settle-time", &value);
+Yes you are right but I guess it would be better to address in a
+separate patch that deals with PageReserved manipulation in general.
+I do not think we want to remove the check silently. People who might be
+interested in backporting this for whatever reason might screatch their
+head why the test is not needed anymore.
 -- 
-2.19.1
-
+Michal Hocko
+SUSE Labs
