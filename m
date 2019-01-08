@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A527C43612
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:42:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 121D6C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:42:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E514D2063F
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:42:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D76672063F
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:42:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546976563;
-	bh=toWdBheG5KtciX3HmlO/y2a8Msu+2LdJVNFybnMKa4E=;
+	s=default; t=1546976565;
+	bh=EbWfpw6OjimesCvV2VVt5SwAhCCO6r72DyPQLPuL0bs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=YqaSbWnV3ACH2Q2hE34JZuUXy0bEh8e9e68eYTJALYtu/WArkNRaIkQdD5/Bz7Gu8
-	 qpZ2aZL4U2PLZSdUoZc2/4bpHgROM9sPaoak1kZuJSjxytfZrlszd8HVbeVeyVDeGR
-	 9mrvy5I4BDsHI82Zbfbadltk2dmsalH9NCDpV/jM=
+	b=y9YE/13ouWZnDIxh7xPCzTQu68t4zytrcNVQQm3qnLd+BHBVOAljmBjXcTT03d8cZ
+	 aS+wlNh4sQxI0/xQHi/gdPAbSiBV4Vkd+WECaD3wyrOTgenuwPZd6gtz4Hsblhy+2L
+	 SBB92GVVR84cvHIHEma5/+gZrWdg3H/luv2oJ3L4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730828AbfAHTd5 (ORCPT
+        id S1732649AbfAHTmp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:33:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42678 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 14:42:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42764 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731834AbfAHTdy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:33:54 -0500
+        id S1730859AbfAHTeC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:34:02 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0697F20645;
-        Tue,  8 Jan 2019 19:33:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6543020645;
+        Tue,  8 Jan 2019 19:34:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546976033;
-        bh=toWdBheG5KtciX3HmlO/y2a8Msu+2LdJVNFybnMKa4E=;
+        s=default; t=1546976042;
+        bh=EbWfpw6OjimesCvV2VVt5SwAhCCO6r72DyPQLPuL0bs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eurkBny4nT78srlCi1In0yQkytOSnlIv+/51yBfSjA8kYBzV2SoHt4bhh5Qf1G73u
-         ydi2ZmavIFOkin3oM61rgVCZOU2pvndP4rtEnB2ieE8tzg9TupTikste+Ize211chp
-         m6QEAwv52xpAGGIUNMGvYmRDnm/BRPrc08OYKW9g=
+        b=Q4WpnOGjcM7SFIFT11kl12i/sFR0Oo8oaHzgWYpQ9xSIUjJQFRxot0yqdSkGmiK1A
+         d4Dq7b+K67JJpZR3R526zFqpOtau3dMgcr5o8sPMyLacJKGPNXAI+Ejl7A9gGqSO4e
+         JhEs/8+u3IRRaTW/anEDAIiBbXClJZNX2iDx5JJc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Anders Roxell <anders.roxell@linaro.org>,
         Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Will Deacon <will.deacon@arm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.9 03/36] writeback: don't decrement wb->refcnt if !wb->bdi
-Date:   Tue,  8 Jan 2019 14:33:15 -0500
-Message-Id: <20190108193348.123880-3-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 07/36] arm64: perf: set suppress_bind_attrs flag to true
+Date:   Tue,  8 Jan 2019 14:33:19 -0500
+Message-Id: <20190108193348.123880-7-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108193348.123880-1-sashal@kernel.org>
 References: <20190108193348.123880-1-sashal@kernel.org>
@@ -61,47 +61,69 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Anders Roxell <anders.roxell@linaro.org>
 
-[ Upstream commit 347a28b586802d09604a149c1a1f6de5dccbe6fa ]
+[ Upstream commit 81e9fa8bab381f8b6eb04df7cdf0f71994099bd4 ]
 
-This happened while running in qemu-system-aarch64, the AMBA PL011 UART
-driver when enabling CONFIG_DEBUG_TEST_DRIVER_REMOVE.
-arch_initcall(pl011_init) came before subsys_initcall(default_bdi_init),
-devtmpfs' handle_remove() crashes because the reference count is a NULL
-pointer only because wb->bdi hasn't been initialized yet.
+The armv8_pmuv3 driver doesn't have a remove function, and when the test
+'CONFIG_DEBUG_TEST_DRIVER_REMOVE=y' is enabled, the following Call trace
+can be seen.
 
-Rework so that wb_put have an extra check if wb->bdi before decrement
-wb->refcnt and also add a WARN_ON_ONCE to get a warning if it happens again
-in other drivers.
+[    1.424287] Failed to register pmu: armv8_pmuv3, reason -17
+[    1.424870] WARNING: CPU: 0 PID: 1 at ../kernel/events/core.c:11771 perf_event_sysfs_init+0x98/0xdc
+[    1.425220] Modules linked in:
+[    1.425531] CPU: 0 PID: 1 Comm: swapper/0 Tainted: G        W         4.19.0-rc7-next-20181012-00003-ge7a97b1ad77b-dirty #35
+[    1.425951] Hardware name: linux,dummy-virt (DT)
+[    1.426212] pstate: 80000005 (Nzcv daif -PAN -UAO)
+[    1.426458] pc : perf_event_sysfs_init+0x98/0xdc
+[    1.426720] lr : perf_event_sysfs_init+0x98/0xdc
+[    1.426908] sp : ffff00000804bd50
+[    1.427077] x29: ffff00000804bd50 x28: ffff00000934e078
+[    1.427429] x27: ffff000009546000 x26: 0000000000000007
+[    1.427757] x25: ffff000009280710 x24: 00000000ffffffef
+[    1.428086] x23: ffff000009408000 x22: 0000000000000000
+[    1.428415] x21: ffff000009136008 x20: ffff000009408730
+[    1.428744] x19: ffff80007b20b400 x18: 000000000000000a
+[    1.429075] x17: 0000000000000000 x16: 0000000000000000
+[    1.429418] x15: 0000000000000400 x14: 2e79726f74636572
+[    1.429748] x13: 696420656d617320 x12: 656874206e692065
+[    1.430060] x11: 6d616e20656d6173 x10: 2065687420687469
+[    1.430335] x9 : ffff00000804bd50 x8 : 206e6f7361657220
+[    1.430610] x7 : 2c3376756d705f38 x6 : ffff00000954d7ce
+[    1.430880] x5 : 0000000000000000 x4 : 0000000000000000
+[    1.431226] x3 : 0000000000000000 x2 : ffffffffffffffff
+[    1.431554] x1 : 4d151327adc50b00 x0 : 0000000000000000
+[    1.431868] Call trace:
+[    1.432102]  perf_event_sysfs_init+0x98/0xdc
+[    1.432382]  do_one_initcall+0x6c/0x1a8
+[    1.432637]  kernel_init_freeable+0x1bc/0x280
+[    1.432905]  kernel_init+0x18/0x160
+[    1.433115]  ret_from_fork+0x10/0x18
+[    1.433297] ---[ end trace 27fd415390eb9883 ]---
 
-Fixes: 52ebea749aae ("writeback: make backing_dev_info host cgroup-specific bdi_writebacks")
+Rework to set suppress_bind_attrs flag to avoid removing the device when
+CONFIG_DEBUG_TEST_DRIVER_REMOVE=y, since there's no real reason to
+remove the armv8_pmuv3 driver.
+
+Cc: Arnd Bergmann <arnd@arndb.de>
 Co-developed-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/linux/backing-dev-defs.h | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ arch/arm64/kernel/perf_event.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/include/linux/backing-dev-defs.h b/include/linux/backing-dev-defs.h
-index 32728ff8095c..4ea779b25a51 100644
---- a/include/linux/backing-dev-defs.h
-+++ b/include/linux/backing-dev-defs.h
-@@ -225,6 +225,14 @@ static inline void wb_get(struct bdi_writeback *wb)
-  */
- static inline void wb_put(struct bdi_writeback *wb)
- {
-+	if (WARN_ON_ONCE(!wb->bdi)) {
-+		/*
-+		 * A driver bug might cause a file to be removed before bdi was
-+		 * initialized.
-+		 */
-+		return;
-+	}
-+
- 	if (wb != &wb->bdi->wb)
- 		percpu_ref_put(&wb->refcnt);
- }
+diff --git a/arch/arm64/kernel/perf_event.c b/arch/arm64/kernel/perf_event.c
+index 199a23f058d5..0770d6d1c37f 100644
+--- a/arch/arm64/kernel/perf_event.c
++++ b/arch/arm64/kernel/perf_event.c
+@@ -1114,6 +1114,7 @@ static struct platform_driver armv8_pmu_driver = {
+ 	.driver		= {
+ 		.name	= ARMV8_PMU_PDEV_NAME,
+ 		.of_match_table = armv8_pmu_of_device_ids,
++		.suppress_bind_attrs = true,
+ 	},
+ 	.probe		= armv8_pmu_device_probe,
+ };
 -- 
 2.19.1
 
