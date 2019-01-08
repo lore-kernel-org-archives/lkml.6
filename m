@@ -2,68 +2,54 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EECB3C43612
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:54:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CD99C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:54:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF5C820827
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:54:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 10FF8206BB
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:54:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546977246;
-	bh=eFvS2/PolwWP3yygMC6lFomROpSUAPX2f8a0KOTQTOk=;
+	s=default; t=1546977250;
+	bh=DdyKglgoHMmy+zF3Qd4EspB1vhwa9aH009maPG7Q+hk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=fTH/Ay9KwuXiam/+qaFmToRuT75tuaPjSEBkZm0fqRoCx/II9OghzoZXebMJn8xtl
-	 ROGMB1tfhXi+xrrYVJwfmNWqOOeZgex19JxjEUpyhTID+/WYwXVsn2UkZ8EfC61nMu
-	 VSOQz3Xb8em4C6vp1mMrQ0IM5o9QX6TV2csKL0hI=
+	b=ANi1uOfs40OJiruFFJH+YHncMcCs6whREj+6Pxwe0BvdjpKudV5/alyT+CBpg0Jww
+	 X13wE3umCwTsMIXrxeiEOgdS23urQ7wLtALbZYoeT7WnroAeKXTWX7PLmQf6x2U2tx
+	 BaQUsVc+HQP4xelmdnzRNt1bzM0JAGqsqzl5Wp94=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730885AbfAHTat (ORCPT
+        id S1732879AbfAHTyI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:30:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38558 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 14:54:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38656 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730792AbfAHTar (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:30:47 -0500
+        id S1730876AbfAHTat (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:30:49 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BC50620665;
-        Tue,  8 Jan 2019 19:30:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 75C0720827;
+        Tue,  8 Jan 2019 19:30:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546975846;
-        bh=eFvS2/PolwWP3yygMC6lFomROpSUAPX2f8a0KOTQTOk=;
+        s=default; t=1546975848;
+        bh=DdyKglgoHMmy+zF3Qd4EspB1vhwa9aH009maPG7Q+hk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Vaf+gEGr9SuVedjQbTNnaN+sVP/q9ZVZ5UCWo4gh8mlbG6e5jTzDsut6LypXO54cu
-         n0qBpSFVWC5+Kzb/nqK3WamDiHr0I8OIthPrBHpejWBUh46pLLP4YPiwQIn8B1HFUn
-         195beq9H3zm47AJjnuiWJjtfdvNx1zgpS83lsbIw=
+        b=fzP1JkB2novWM8jnbYVmb/UTNv/EjyumsqLY7Zqwb76dVxXfE/dmVRd5Kdm1YEYRo
+         XjPLr8uJqKKlEEryQZ/4813kKMhyGoPzDNH+H3h+CIbml0d1iM9BLJ7483oO7acdHZ
+         CYnrSZEL0Dn3+CETPmvNojGBzVJbZtXFlxODRjTc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Nathan Chancellor <natechancellor@gmail.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arend van Spriel <arend.vanspriel@broadcom.com>,
-        Bhupesh Sharma <bhsharma@redhat.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Eric Snowberg <eric.snowberg@oracle.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Joe Perches <joe@perches.com>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Julien Thierry <julien.thierry@arm.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Matt Fleming <matt@codeblueprint.co.uk>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        YiFei Zhu <zhuyifei1999@gmail.com>, linux-efi@vger.kernel.org,
-        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 32/97] efi/libstub: Disable some warnings for x86{,_64}
-Date:   Tue,  8 Jan 2019 14:28:41 -0500
-Message-Id: <20190108192949.122407-32-sashal@kernel.org>
+Cc:     "A.s. Dong" <aisheng.dong@nxp.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 34/97] clk: imx: make mux parent strings const
+Date:   Tue,  8 Jan 2019 14:28:43 -0500
+Message-Id: <20190108192949.122407-34-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108192949.122407-1-sashal@kernel.org>
 References: <20190108192949.122407-1-sashal@kernel.org>
@@ -75,76 +61,127 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+From: "A.s. Dong" <aisheng.dong@nxp.com>
 
-[ Upstream commit 3db5e0ba8b8f4aee631d7ee04b7a11c56cfdc213 ]
+[ Upstream commit 9e5ef7a57ca75a1b9411c46caeeb6881124284a3 ]
 
-When building the kernel with Clang, some disabled warnings appear
-because this Makefile overrides KBUILD_CFLAGS for x86{,_64}. Add them to
-this list so that the build is clean again.
+As the commit 2893c379461a ("clk: make strings in parent name arrays
+const"), let's make the parent strings const, otherwise we may meet
+the following warning when compiling:
 
--Wpointer-sign was disabled for the whole kernel before the beginning of Git history.
+drivers/clk/imx/clk-imx7ulp.c: In function 'imx7ulp_clocks_init':
+drivers/clk/imx/clk-imx7ulp.c:73:35: warning: passing argument 5 of
+	'imx_clk_mux_flags' discards 'const' qualifier from pointer target type
 
--Waddress-of-packed-member was disabled for the whole kernel and for
-the early boot code in these commits:
+  clks[IMX7ULP_CLK_APLL_PRE_SEL] = imx_clk_mux_flags("apll_pre_sel", base + 0x508, 0,
+	1, pll_pre_sels, ARRAY_SIZE(pll_pre_sels), CLK_SET_PARENT_GATE);
+                                   ^
+In file included from drivers/clk/imx/clk-imx7ulp.c:23:0:
+drivers/clk/imx/clk.h:200:27: note: expected 'const char **' but argument is
+ of type 'const char * const*'
+...
 
-  bfb38988c51e ("kbuild: clang: Disable 'address-of-packed-member' warning")
-  20c6c1890455 ("x86/boot: Disable the address-of-packed-member compiler warning").
-
--Wgnu was disabled for the whole kernel and for the early boot code in
-these commits:
-
-  61163efae020 ("kbuild: LLVMLinux: Add Kbuild support for building kernel with Clang")
-  6c3b56b19730 ("x86/boot: Disable Clang warnings about GNU extensions").
-
- [ mingo: Made the changelog more readable. ]
-
-Tested-by: Sedat Dilek <sedat.dilek@gmail.com>
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Reviewed-by: Sedat Dilek <sedat.dilek@gmail.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Arend van Spriel <arend.vanspriel@broadcom.com>
-Cc: Bhupesh Sharma <bhsharma@redhat.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Eric Snowberg <eric.snowberg@oracle.com>
-Cc: Hans de Goede <hdegoede@redhat.com>
-Cc: Joe Perches <joe@perches.com>
-Cc: Jon Hunter <jonathanh@nvidia.com>
-Cc: Julien Thierry <julien.thierry@arm.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Matt Fleming <matt@codeblueprint.co.uk>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: YiFei Zhu <zhuyifei1999@gmail.com>
-Cc: linux-efi@vger.kernel.org
-Link: http://lkml.kernel.org/r/20181129171230.18699-8-ard.biesheuvel@linaro.org
-Link: https://github.com/ClangBuiltLinux/linux/issues/112
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/firmware/efi/libstub/Makefile | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/clk/imx/clk-busy.c      |  2 +-
+ drivers/clk/imx/clk-fixup-mux.c |  2 +-
+ drivers/clk/imx/clk.h           | 18 +++++++++++-------
+ 3 files changed, 13 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/firmware/efi/libstub/Makefile b/drivers/firmware/efi/libstub/Makefile
-index c51627660dbb..d9845099635e 100644
---- a/drivers/firmware/efi/libstub/Makefile
-+++ b/drivers/firmware/efi/libstub/Makefile
-@@ -9,7 +9,10 @@ cflags-$(CONFIG_X86_32)		:= -march=i386
- cflags-$(CONFIG_X86_64)		:= -mcmodel=small
- cflags-$(CONFIG_X86)		+= -m$(BITS) -D__KERNEL__ -O2 \
- 				   -fPIC -fno-strict-aliasing -mno-red-zone \
--				   -mno-mmx -mno-sse -fshort-wchar
-+				   -mno-mmx -mno-sse -fshort-wchar \
-+				   -Wno-pointer-sign \
-+				   $(call cc-disable-warning, address-of-packed-member) \
-+				   $(call cc-disable-warning, gnu)
+diff --git a/drivers/clk/imx/clk-busy.c b/drivers/clk/imx/clk-busy.c
+index 99036527eb0d..e695622c5aa5 100644
+--- a/drivers/clk/imx/clk-busy.c
++++ b/drivers/clk/imx/clk-busy.c
+@@ -154,7 +154,7 @@ static const struct clk_ops clk_busy_mux_ops = {
  
- # arm64 uses the full KBUILD_CFLAGS so it's necessary to explicitly
- # disable the stackleak plugin
+ struct clk *imx_clk_busy_mux(const char *name, void __iomem *reg, u8 shift,
+ 			     u8 width, void __iomem *busy_reg, u8 busy_shift,
+-			     const char **parent_names, int num_parents)
++			     const char * const *parent_names, int num_parents)
+ {
+ 	struct clk_busy_mux *busy;
+ 	struct clk *clk;
+diff --git a/drivers/clk/imx/clk-fixup-mux.c b/drivers/clk/imx/clk-fixup-mux.c
+index c9b327e0a8dd..44817c1b0b88 100644
+--- a/drivers/clk/imx/clk-fixup-mux.c
++++ b/drivers/clk/imx/clk-fixup-mux.c
+@@ -70,7 +70,7 @@ static const struct clk_ops clk_fixup_mux_ops = {
+ };
+ 
+ struct clk *imx_clk_fixup_mux(const char *name, void __iomem *reg,
+-			      u8 shift, u8 width, const char **parents,
++			      u8 shift, u8 width, const char * const *parents,
+ 			      int num_parents, void (*fixup)(u32 *val))
+ {
+ 	struct clk_fixup_mux *fixup_mux;
+diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
+index 8076ec040f37..e65c1115d978 100644
+--- a/drivers/clk/imx/clk.h
++++ b/drivers/clk/imx/clk.h
+@@ -63,14 +63,14 @@ struct clk *imx_clk_busy_divider(const char *name, const char *parent_name,
+ 
+ struct clk *imx_clk_busy_mux(const char *name, void __iomem *reg, u8 shift,
+ 			     u8 width, void __iomem *busy_reg, u8 busy_shift,
+-			     const char **parent_names, int num_parents);
++			     const char * const *parent_names, int num_parents);
+ 
+ struct clk *imx_clk_fixup_divider(const char *name, const char *parent,
+ 				  void __iomem *reg, u8 shift, u8 width,
+ 				  void (*fixup)(u32 *val));
+ 
+ struct clk *imx_clk_fixup_mux(const char *name, void __iomem *reg,
+-			      u8 shift, u8 width, const char **parents,
++			      u8 shift, u8 width, const char * const *parents,
+ 			      int num_parents, void (*fixup)(u32 *val));
+ 
+ static inline struct clk *imx_clk_fixed(const char *name, int rate)
+@@ -79,7 +79,8 @@ static inline struct clk *imx_clk_fixed(const char *name, int rate)
+ }
+ 
+ static inline struct clk *imx_clk_mux_ldb(const char *name, void __iomem *reg,
+-		u8 shift, u8 width, const char **parents, int num_parents)
++			u8 shift, u8 width, const char * const *parents,
++			int num_parents)
+ {
+ 	return clk_register_mux(NULL, name, parents, num_parents,
+ 			CLK_SET_RATE_NO_REPARENT | CLK_SET_RATE_PARENT, reg,
+@@ -192,7 +193,8 @@ static inline struct clk *imx_clk_gate4(const char *name, const char *parent,
+ }
+ 
+ static inline struct clk *imx_clk_mux(const char *name, void __iomem *reg,
+-		u8 shift, u8 width, const char **parents, int num_parents)
++			u8 shift, u8 width, const char * const *parents,
++			int num_parents)
+ {
+ 	return clk_register_mux(NULL, name, parents, num_parents,
+ 			CLK_SET_RATE_NO_REPARENT, reg, shift,
+@@ -200,7 +202,8 @@ static inline struct clk *imx_clk_mux(const char *name, void __iomem *reg,
+ }
+ 
+ static inline struct clk *imx_clk_mux2(const char *name, void __iomem *reg,
+-		u8 shift, u8 width, const char **parents, int num_parents)
++			u8 shift, u8 width, const char * const *parents,
++			int num_parents)
+ {
+ 	return clk_register_mux(NULL, name, parents, num_parents,
+ 			CLK_SET_RATE_NO_REPARENT | CLK_OPS_PARENT_ENABLE,
+@@ -208,8 +211,9 @@ static inline struct clk *imx_clk_mux2(const char *name, void __iomem *reg,
+ }
+ 
+ static inline struct clk *imx_clk_mux_flags(const char *name,
+-		void __iomem *reg, u8 shift, u8 width, const char **parents,
+-		int num_parents, unsigned long flags)
++			void __iomem *reg, u8 shift, u8 width,
++			const char * const *parents, int num_parents,
++			unsigned long flags)
+ {
+ 	return clk_register_mux(NULL, name, parents, num_parents,
+ 			flags | CLK_SET_RATE_NO_REPARENT, reg, shift, width, 0,
 -- 
 2.19.1
 
