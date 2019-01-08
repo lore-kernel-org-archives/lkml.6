@@ -4,49 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E267C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:38:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA51BC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:38:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B35220645
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:38:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 90D9B2063F
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:38:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546976331;
-	bh=D1Dd7SF8SGQME99NDwemuVXVFCjItX+VHGpIAy7eFi4=;
+	s=default; t=1546976338;
+	bh=iHmeG4aa7tFGjpHYelRytZzw4dztBtUJgh64Lleuf1I=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=wjDjy2XP5ILYKtodnJfYmUmIae9HpgkprEmnES4rEBKBtoy4QO6dFJCEnusR2Y95E
-	 06M1g86P2hguAxxgpvEqK1U2bQx5wLfOU0dCCZIcPiEHQkXZAc3y+KQiDeumq/IbpU
-	 rf2U0L6aQei0gQcUyDD2A8MMQzk/l5SUmtsdLb8Y=
+	b=HzFjQRyKbyN//HhtsTyFCfSuq5jEOiKrIW9NAjJdN/oUxLeGBJFSckkWaKUrLTF5T
+	 gYs+BWin7mCVsotREHLNx63IzZziBnD/AvLuO2V0cuALRVyTPzfE9Qfv8KrRROLr9U
+	 5vKEkp0JZG6V4Rr7II+8O5Jduwq2yv8zQmxUA/fI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732356AbfAHTit (ORCPT
+        id S1732428AbfAHTi5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:38:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44020 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 14:38:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43940 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732211AbfAHTfN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:35:13 -0500
+        id S1732144AbfAHTfJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:35:09 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 57C4820827;
-        Tue,  8 Jan 2019 19:35:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 73A9020883;
+        Tue,  8 Jan 2019 19:35:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546976113;
-        bh=D1Dd7SF8SGQME99NDwemuVXVFCjItX+VHGpIAy7eFi4=;
+        s=default; t=1546976109;
+        bh=iHmeG4aa7tFGjpHYelRytZzw4dztBtUJgh64Lleuf1I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jYp8V1KzEFQ1pCabcztIOZgL3E2BaHPLR48JhTYonzRpOTZKBtgk7CnXmvGE0dlB8
-         lajV4pJ4C9ewVtXlb66Q4HOl0j6/lhDxG1ZL9Z9I/7J7XGm4lni7EalqAx7Tjto8gy
-         /9m0pXZ7A9KdPkZVdr/mpZdmcXMJAU/o48qGYVXc=
+        b=JfhrHcYyor/oiqDSbbk+j3NfTpUZ5nAJKIv8/uQwCGMIldmgjCH84CN6Wl1b/JA3T
+         B6bFX1GoHxijQ9CG1s2tKzQ0zJA8GugZ65O7jJ1DnfwClHp84Kxo2PKzC7U0Qdcjws
+         qvyuikbDuzRu2sYhb/DxRKjLUFap6d9qT4QwoJhc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Adrian Hunter <adrian.hunter@intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.4 18/28] perf intel-pt: Fix error with config term "pt=0"
-Date:   Tue,  8 Jan 2019 14:34:35 -0500
-Message-Id: <20190108193445.124251-18-sashal@kernel.org>
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Sasha Levin <sashal@kernel.org>, linux-kbuild@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.4 15/28] kconfig: fix file name and line number of warn_ignored_character()
+Date:   Tue,  8 Jan 2019 14:34:32 -0500
+Message-Id: <20190108193445.124251-15-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108193445.124251-1-sashal@kernel.org>
 References: <20190108193445.124251-1-sashal@kernel.org>
@@ -58,70 +57,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Adrian Hunter <adrian.hunter@intel.com>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-[ Upstream commit 1c6f709b9f96366cc47af23c05ecec9b8c0c392d ]
+[ Upstream commit 77c1c0fa8b1477c5799bdad65026ea5ff676da44 ]
 
-Users should never use 'pt=0', but if they do it may give a meaningless
-error:
+Currently, warn_ignore_character() displays invalid file name and
+line number.
 
-	$ perf record -e intel_pt/pt=0/u uname
-	Error:
-	The sys_perf_event_open() syscall returned with 22 (Invalid argument) for
-	event (intel_pt/pt=0/u).
+The lexer should use current_file->name and yylineno, while the parser
+should use zconf_curname() and zconf_lineno().
 
-Fix that by forcing 'pt=1'.
+This difference comes from that the lexer is always going ahead
+of the parser. The parser needs to look ahead one token to make a
+shift/reduce decision, so the lexer is requested to scan more text
+from the input file.
 
-Committer testing:
+This commit fixes the warning message from warn_ignored_character().
 
-  # perf record -e intel_pt/pt=0/u uname
-  Error:
-  The sys_perf_event_open() syscall returned with 22 (Invalid argument) for event (intel_pt/pt=0/u).
-  /bin/dmesg | grep -i perf may provide additional information.
+[Test Code]
 
-  # perf record -e intel_pt/pt=0/u uname
-  pt=0 doesn't make sense, forcing pt=1
-  Linux
-  [ perf record: Woken up 1 times to write data ]
-  [ perf record: Captured and wrote 0.020 MB perf.data ]
-  #
+  ----(Kconfig begin)----
+  /
+  -----(Kconfig end)-----
 
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Link: http://lkml.kernel.org/r/b7c5b4e5-9497-10e5-fd43-5f3e4a0fe51d@intel.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+[Output]
+
+  Before the fix:
+
+  <none>:0:warning: ignoring unsupported character '/'
+
+  After the fix:
+
+  Kconfig:1:warning: ignoring unsupported character '/'
+
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/arch/x86/util/intel-pt.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ scripts/kconfig/zconf.l | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/perf/arch/x86/util/intel-pt.c b/tools/perf/arch/x86/util/intel-pt.c
-index c53f78767568..df21da796fa7 100644
---- a/tools/perf/arch/x86/util/intel-pt.c
-+++ b/tools/perf/arch/x86/util/intel-pt.c
-@@ -471,10 +471,21 @@ static int intel_pt_validate_config(struct perf_pmu *intel_pt_pmu,
- 				    struct perf_evsel *evsel)
+diff --git a/scripts/kconfig/zconf.l b/scripts/kconfig/zconf.l
+index c410d257da06..6534dc5ac803 100644
+--- a/scripts/kconfig/zconf.l
++++ b/scripts/kconfig/zconf.l
+@@ -71,7 +71,7 @@ static void warn_ignored_character(char chr)
  {
- 	int err;
-+	char c;
+ 	fprintf(stderr,
+ 	        "%s:%d:warning: ignoring unsupported character '%c'\n",
+-	        zconf_curname(), zconf_lineno(), chr);
++	        current_file->name, yylineno, chr);
+ }
+ %}
  
- 	if (!evsel)
- 		return 0;
- 
-+	/*
-+	 * If supported, force pass-through config term (pt=1) even if user
-+	 * sets pt=0, which avoids senseless kernel errors.
-+	 */
-+	if (perf_pmu__scan_file(intel_pt_pmu, "format/pt", "%c", &c) == 1 &&
-+	    !(evsel->attr.config & 1)) {
-+		pr_warning("pt=0 doesn't make sense, forcing pt=1\n");
-+		evsel->attr.config |= 1;
-+	}
-+
- 	err = intel_pt_val_config_term(intel_pt_pmu, "caps/cycle_thresholds",
- 				       "cyc_thresh", "caps/psb_cyc",
- 				       evsel->attr.config);
 -- 
 2.19.1
 
