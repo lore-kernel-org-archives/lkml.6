@@ -6,47 +6,46 @@ X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32F4FC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:06:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED3B4C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:06:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA5FB20827
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:06:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B83F720660
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:06:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546977975;
-	bh=e3TTXzWvOPSkTFCo1MXSUZNkdvFxv/ItDEWx9XNStgg=;
+	s=default; t=1546977977;
+	bh=g2lipeqmxBLVZO2Od5R3b/UbIc2gUb0QSaP0sqUkxSQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=JGhsu86BnfuHkGI6LkLVCMqOne1tOwHL+ztQC+ms1XvaxZM0le04FJYJ5evVuJpuh
-	 TAenYRVUtIE+lc++ByNuvbF7NSS4GuaQbq2iHohthfka9oYqgs/JjkTA9QXjjjAinq
-	 QRowpHtjldDOotS8ci5mMMw7IPI2+8CLAV9+2FzY=
+	b=fc1UcnQ4IP+IGYQsFdf2GNKfpOh3fPLkLy0sq8u5imILVthGBvL1Gu6gYo9XD9X2x
+	 naLG5Eg8qISNBQszGIEvdll2H5yQXTkDwXhho5ZdTVruC3Dtn08PbYMVVKYfErIlYd
+	 o8VovjH8s/RZXWO0GCtHAjnfldQU+UhED2ivXlSI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729153AbfAHT2J (ORCPT
+        id S1730480AbfAHUGQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:28:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34904 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 15:06:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35008 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729888AbfAHT2G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:28:06 -0500
+        id S1729921AbfAHT2K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:28:10 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 08F1820645;
-        Tue,  8 Jan 2019 19:28:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9CE4720645;
+        Tue,  8 Jan 2019 19:28:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546975685;
-        bh=e3TTXzWvOPSkTFCo1MXSUZNkdvFxv/ItDEWx9XNStgg=;
+        s=default; t=1546975689;
+        bh=g2lipeqmxBLVZO2Od5R3b/UbIc2gUb0QSaP0sqUkxSQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sumip6CFDufuVtV1EB+ekr2E7jWDD55DK0uxjL0dlP3Pg8Nw4HEKvMlzssI/oAv7a
-         +RuOsZXTQHDidNjAy/MJ6r3/T86QlamkQhfebjXjbH22esmkeb11s/Fb1RkTn4z4ug
-         PhwZeC8a/zomLTa/BpJPSDcBRy/2BiJH610EtUp0=
+        b=jmelBLiNxGFRnXC+9A58xu/flH1jr1WQKgzN9NaPcMdoRrlYj0yiy86Ewwz1Sp1/R
+         LQTBb1Y7ywkndmXs/dhfkyZGUi2NahkUnwoHjmmbHPy51nlAxGkEN9AbIBVMq1f6kj
+         jQWk2wVJfr9kexFa+cTvtnwVLLWbGLGBkTipJ2Ds=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     "Michael J. Ruhl" <michael.j.ruhl@intel.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Sasha Levin <sashal@kernel.org>, linux-rdma@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 053/117] IB/hfi1: Incorrect sizing of sge for PIO will OOPs
-Date:   Tue,  8 Jan 2019 14:25:21 -0500
-Message-Id: <20190108192628.121270-53-sashal@kernel.org>
+Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org,
+        devel@driverdev.osuosl.org
+Subject: [PATCH AUTOSEL 4.20 056/117] media: cedrus: don't initialize pointers with zero
+Date:   Tue,  8 Jan 2019 14:25:24 -0500
+Message-Id: <20190108192628.121270-56-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108192628.121270-1-sashal@kernel.org>
 References: <20190108192628.121270-1-sashal@kernel.org>
@@ -58,58 +57,94 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Michael J. Ruhl" <michael.j.ruhl@intel.com>
+From: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 
-[ Upstream commit dbc2970caef74e8ff41923d302aa6fb5a4812d0e ]
+[ Upstream commit e4d7b113fdccde1acf8638c5879f2a450d492303 ]
 
-An incorrect sge sizing in the HFI PIO path will cause an OOPs similar to
-this:
+A common mistake is to assume that initializing a var with:
+	struct foo f = { 0 };
 
-BUG: unable to handle kernel NULL pointer dereference at (null)
-IP: [] hfi1_verbs_send_pio+0x3d8/0x530 [hfi1]
-PGD 0
-Oops: 0000 1 SMP
- Call Trace:
- ? hfi1_verbs_send_dma+0xad0/0xad0 [hfi1]
- hfi1_verbs_send+0xdf/0x250 [hfi1]
- ? make_rc_ack+0xa80/0xa80 [hfi1]
- hfi1_do_send+0x192/0x430 [hfi1]
- hfi1_do_send_from_rvt+0x10/0x20 [hfi1]
- rvt_post_send+0x369/0x820 [rdmavt]
- ib_uverbs_post_send+0x317/0x570 [ib_uverbs]
- ib_uverbs_write+0x26f/0x420 [ib_uverbs]
- ? security_file_permission+0x21/0xa0
- vfs_write+0xbd/0x1e0
- ? mntput+0x24/0x40
- SyS_write+0x7f/0xe0
- system_call_fastpath+0x16/0x1b
+Would initialize a zeroed struct. Actually, what this does is
+to initialize the first element of the struct to zero.
 
-Fix by adding the missing sizing check to correctly determine the sge
-length.
+According to C99 Standard 6.7.8.21:
 
-Fixes: 7724105686e7 ("IB/hfi1: add driver files")
-Reviewed-by: Mike Marciniszyn <mike.marciniszyn@intel.com>
-Signed-off-by: Michael J. Ruhl <michael.j.ruhl@intel.com>
-Signed-off-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+    "If there are fewer initializers in a brace-enclosed
+     list than there are elements or members of an aggregate,
+     or fewer characters in a string literal used to initialize
+     an array of known size than there are elements in the array,
+     the remainder of the aggregate shall be initialized implicitly
+     the same as objects that have static storage duration."
+
+So, in practice, it could zero the entire struct, but, if the
+first element is not an integer, it will produce warnings:
+
+	drivers/staging/media/sunxi/cedrus/cedrus.c:drivers/staging/media/sunxi/cedrus/cedrus.c:78:49:  warning: Using plain integer as NULL pointer
+	drivers/staging/media/sunxi/cedrus/cedrus_dec.c:drivers/staging/media/sunxi/cedrus/cedrus_dec.c:29:35:  warning: Using plain integer as NULL pointer
+
+As the right initialization would be, instead:
+
+	struct foo f = { NULL };
+
+Another way to initialize it with gcc is to use:
+
+	struct foo f = {};
+
+That seems to be a gcc extension, but clang also does the right thing,
+and that's a clean way for doing it.
+
+Anyway, I decided to check upstream what's the most commonly pattern.
+The "= {}" pattern has about 2000 entries:
+
+	$ git grep -E "=\s*\{\s*\}"|wc -l
+	1951
+
+The standard-C compliant pattern has about 2500 entries:
+
+	$ git grep -E "=\s*\{\s*NULL\s*\}"|wc -l
+	137
+	$ git grep -E "=\s*\{\s*0\s*\}"|wc -l
+	2323
+
+Meaning that developers have split options on that.
+
+So, let's opt to the simpler form.
+
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Acked-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/infiniband/hw/hfi1/verbs.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/staging/media/sunxi/cedrus/cedrus.c     | 2 +-
+ drivers/staging/media/sunxi/cedrus/cedrus_dec.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/infiniband/hw/hfi1/verbs.c b/drivers/infiniband/hw/hfi1/verbs.c
-index a365089a9305..b7257d7dd925 100644
---- a/drivers/infiniband/hw/hfi1/verbs.c
-+++ b/drivers/infiniband/hw/hfi1/verbs.c
-@@ -919,6 +919,8 @@ int hfi1_verbs_send_pio(struct rvt_qp *qp, struct hfi1_pkt_state *ps,
+diff --git a/drivers/staging/media/sunxi/cedrus/cedrus.c b/drivers/staging/media/sunxi/cedrus/cedrus.c
+index c912c70b3ef7..f18077e8810a 100644
+--- a/drivers/staging/media/sunxi/cedrus/cedrus.c
++++ b/drivers/staging/media/sunxi/cedrus/cedrus.c
+@@ -75,7 +75,7 @@ static int cedrus_init_ctrls(struct cedrus_dev *dev, struct cedrus_ctx *ctx)
+ 	memset(ctx->ctrls, 0, ctrl_size);
  
- 				if (slen > len)
- 					slen = len;
-+				if (slen > ss->sge.sge_length)
-+					slen = ss->sge.sge_length;
- 				rvt_update_sge(ss, slen, false);
- 				seg_pio_copy_mid(pbuf, addr, slen);
- 				len -= slen;
+ 	for (i = 0; i < CEDRUS_CONTROLS_COUNT; i++) {
+-		struct v4l2_ctrl_config cfg = { 0 };
++		struct v4l2_ctrl_config cfg = {};
+ 
+ 		cfg.elem_size = cedrus_controls[i].elem_size;
+ 		cfg.id = cedrus_controls[i].id;
+diff --git a/drivers/staging/media/sunxi/cedrus/cedrus_dec.c b/drivers/staging/media/sunxi/cedrus/cedrus_dec.c
+index e40180a33951..f10c25f5460e 100644
+--- a/drivers/staging/media/sunxi/cedrus/cedrus_dec.c
++++ b/drivers/staging/media/sunxi/cedrus/cedrus_dec.c
+@@ -26,7 +26,7 @@ void cedrus_device_run(void *priv)
+ {
+ 	struct cedrus_ctx *ctx = priv;
+ 	struct cedrus_dev *dev = ctx->dev;
+-	struct cedrus_run run = { 0 };
++	struct cedrus_run run = {};
+ 	struct media_request *src_req;
+ 	unsigned long flags;
+ 
 -- 
 2.19.1
 
