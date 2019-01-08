@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4E47C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:45:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16679C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:46:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A1C38206BB
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:45:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CCC0D2063F
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:46:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546976758;
-	bh=iGrWuTdByu0wNZV7QFgvo23uekEPuI5ElLJSkSsQMSw=;
+	s=default; t=1546976770;
+	bh=MBcdcLc4Tn3Pc48U9TLgfWRrs3e1WrnsoS9dhhekvX4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=WwBrRa7G+OZu4xvnSU9yQx2kR9iA6+8O/r1Ec4bZshETERAPy5zZM2MyUF4DZW+Ux
-	 sNyLP1mqw7Eg+BOLvrELAvCXTUDJbySe4lZRznLd42X/2dRPaoY0AM/khZyJv+MowE
-	 Bq7zSTRVLXHtnP1NH4axDahqs909i36VAK0fGyEs=
+	b=rrr6oCn7wUzWVUvQ8AEJeKmrjSN+UGJ5/MIsmiHp2a2CaUT7g+Mld+gqh1/uwKs2i
+	 72oPhHcxVV3kKvfZzGPH+W48otNiy41NLFSSCKbJBN65c7VN2WKpI84b8JXlYOd+sN
+	 8G+GM4bwb+dy6SVIZ3m82l1R7hArDgsA1VNAvdww=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732721AbfAHTp5 (ORCPT
+        id S1731802AbfAHTqJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:45:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42030 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 14:46:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41944 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731604AbfAHTdN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:33:13 -0500
+        id S1729784AbfAHTdH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:33:07 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5BF5D2063F;
-        Tue,  8 Jan 2019 19:33:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8D37F20645;
+        Tue,  8 Jan 2019 19:33:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546975993;
-        bh=iGrWuTdByu0wNZV7QFgvo23uekEPuI5ElLJSkSsQMSw=;
+        s=default; t=1546975987;
+        bh=MBcdcLc4Tn3Pc48U9TLgfWRrs3e1WrnsoS9dhhekvX4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Uze0w26XTlq6WuOfy576+/5PTdzDsdWJd+z2ofrSGws3oXtKX0yJGvysS2ItlfNRJ
-         LvhRj1WlARp49IsVITfNHWhKaGhd9AST+rrxI8s7nVHV6d+1H2QgDWiAeVsJPL/X5K
-         sYYz6PWHEw05x2chr6szo+28+/4utARoi3STQYlA=
+        b=uwfWzAL1t8zsjgplU1atJiFK37uKE5skRFIr8jffEqwB+478nm2rJPi2OKCHRCu0R
+         Avw/ITGyq1xF7K+49cxsm2Y+NcntUIV93DIHYSIkE0sQrs/CXWd+XPPzXzHm9LTkYg
+         ODjrpLmXphxK2xSp2hRM4WYyE9vzyNdby7tG+G6g=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jonas Danielsson <jonas@orbital-systems.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Sasha Levin <sashal@kernel.org>, linux-mmc@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 31/53] mmc: atmel-mci: do not assume idle after atmci_request_end
-Date:   Tue,  8 Jan 2019 14:31:59 -0500
-Message-Id: <20190108193222.123316-31-sashal@kernel.org>
+Cc:     Lucas Stach <l.stach@pengutronix.de>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 27/53] clk: imx6q: reset exclusive gates on init
+Date:   Tue,  8 Jan 2019 14:31:55 -0500
+Message-Id: <20190108193222.123316-27-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108193222.123316-1-sashal@kernel.org>
 References: <20190108193222.123316-1-sashal@kernel.org>
@@ -58,67 +58,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jonas Danielsson <jonas@orbital-systems.com>
+From: Lucas Stach <l.stach@pengutronix.de>
 
-[ Upstream commit ae460c115b7aa50c9a36cf78fced07b27962c9d0 ]
+[ Upstream commit f7542d817733f461258fd3a47d77da35b2d9fc81 ]
 
-On our AT91SAM9260 board we use the same sdio bus for wifi and for the
-sd card slot. This caused the atmel-mci to give the following splat on
-the serial console:
+The exclusive gates may be set up in the wrong way by software running
+before the clock driver comes up. In that case the exclusive setup is
+locked in its initial state, as the complementary function can't be
+activated without disabling the initial setup first.
 
-  ------------[ cut here ]------------
-  WARNING: CPU: 0 PID: 538 at drivers/mmc/host/atmel-mci.c:859 atmci_send_command+0x24/0x44
-  Modules linked in:
-  CPU: 0 PID: 538 Comm: mmcqd/0 Not tainted 4.14.76 #14
-  Hardware name: Atmel AT91SAM9
-  [<c000fccc>] (unwind_backtrace) from [<c000d3dc>] (show_stack+0x10/0x14)
-  [<c000d3dc>] (show_stack) from [<c0017644>] (__warn+0xd8/0xf4)
-  [<c0017644>] (__warn) from [<c0017704>] (warn_slowpath_null+0x1c/0x24)
-  [<c0017704>] (warn_slowpath_null) from [<c033bb9c>] (atmci_send_command+0x24/0x44)
-  [<c033bb9c>] (atmci_send_command) from [<c033e984>] (atmci_start_request+0x1f4/0x2dc)
-  [<c033e984>] (atmci_start_request) from [<c033f3b4>] (atmci_request+0xf0/0x164)
-  [<c033f3b4>] (atmci_request) from [<c0327108>] (mmc_start_request+0x280/0x2d0)
-  [<c0327108>] (mmc_start_request) from [<c032800c>] (mmc_start_areq+0x230/0x330)
-  [<c032800c>] (mmc_start_areq) from [<c03366f8>] (mmc_blk_issue_rw_rq+0xc4/0x310)
-  [<c03366f8>] (mmc_blk_issue_rw_rq) from [<c03372c4>] (mmc_blk_issue_rq+0x118/0x5ac)
-  [<c03372c4>] (mmc_blk_issue_rq) from [<c033781c>] (mmc_queue_thread+0xc4/0x118)
-  [<c033781c>] (mmc_queue_thread) from [<c002daf8>] (kthread+0x100/0x118)
-  [<c002daf8>] (kthread) from [<c000a580>] (ret_from_fork+0x14/0x34)
-  ---[ end trace 594371ddfa284bd6 ]---
+To avoid this lock situation, reset the exclusive gates to the off
+state and allow the kernel to provide the proper setup.
 
-This is:
-  WARN_ON(host->cmd);
-
-This was fixed on our board by letting atmci_request_end determine what
-state we are in. Instead of unconditionally setting it to STATE_IDLE on
-STATE_END_REQUEST.
-
-Signed-off-by: Jonas Danielsson <jonas@orbital-systems.com>
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+Reviewed-by: Dong Aisheng <Aisheng.dong@nxp.com>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/mmc/host/atmel-mci.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/clk/imx/clk-imx6q.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/mmc/host/atmel-mci.c b/drivers/mmc/host/atmel-mci.c
-index 0a0ebf3a096d..c8a591d8a3d9 100644
---- a/drivers/mmc/host/atmel-mci.c
-+++ b/drivers/mmc/host/atmel-mci.c
-@@ -1954,13 +1954,14 @@ static void atmci_tasklet_func(unsigned long priv)
- 			}
- 
- 			atmci_request_end(host, host->mrq);
--			state = STATE_IDLE;
-+			goto unlock; /* atmci_request_end() sets host->state */
- 			break;
- 		}
- 	} while (state != prev_state);
- 
- 	host->state = state;
- 
-+unlock:
- 	spin_unlock(&host->lock);
- }
+diff --git a/drivers/clk/imx/clk-imx6q.c b/drivers/clk/imx/clk-imx6q.c
+index 8d518ad5dc13..8eb93eb2f857 100644
+--- a/drivers/clk/imx/clk-imx6q.c
++++ b/drivers/clk/imx/clk-imx6q.c
+@@ -515,8 +515,12 @@ static void __init imx6q_clocks_init(struct device_node *ccm_node)
+ 	 * lvds1_gate and lvds2_gate are pseudo-gates.  Both can be
+ 	 * independently configured as clock inputs or outputs.  We treat
+ 	 * the "output_enable" bit as a gate, even though it's really just
+-	 * enabling clock output.
++	 * enabling clock output. Initially the gate bits are cleared, as
++	 * otherwise the exclusive configuration gets locked in the setup done
++	 * by software running before the clock driver, with no way to change
++	 * it.
+ 	 */
++	writel(readl(base + 0x160) & ~0x3c00, base + 0x160);
+ 	clk[IMX6QDL_CLK_LVDS1_GATE] = imx_clk_gate_exclusive("lvds1_gate", "lvds1_sel", base + 0x160, 10, BIT(12));
+ 	clk[IMX6QDL_CLK_LVDS2_GATE] = imx_clk_gate_exclusive("lvds2_gate", "lvds2_sel", base + 0x160, 11, BIT(13));
  
 -- 
 2.19.1
