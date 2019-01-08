@@ -7,51 +7,47 @@ X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1ABECC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:32:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29418C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:32:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DCFCA20645
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:32:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ED65B20665
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:32:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546975941;
-	bh=vuQMvTX01SKNqD5/GRipLVqi2FuqUpX8/PQs4i1l5QI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=BFmR0TfxSXB5OvNOxmHbqL/cq5Uw5rP8YGyPJ8UJ+tzLHk1CPOgL2GA4Lq8ucWoOE
-	 yfS9o5eZoemLA+aBxViMRjUOFXamzfUagGbGoCwEoSSuTqAhS/YiKLzj8GjguU7yH4
-	 rzB1O0qOvJfU2QlhdCJKzRki2fgcKviZ4ATtcnBY=
+	s=default; t=1546975948;
+	bh=aKX+5uJ9oJTJFJDlew8Ko2+8aMEMSjTRYRglabgiQ94=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=2wQWUXTOolUL0tYwv3W3u5s9YZLXhpPzAm97rhDaYlFYY2cQQsFndBm+k6Eon7TtP
+	 /0Zk9f7os8eBmGxVy5em25VdQquxcKk2Haa19rg8SI1qUt4wqahKTKtrdWz0eZSN8w
+	 pOHc6TevsTj72ym1meA/5Pn2+2BPh2i4lHI1Civ4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731349AbfAHTcV (ORCPT
+        id S1731379AbfAHTc1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:32:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40726 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 14:32:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40940 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730434AbfAHTcS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:32:18 -0500
+        id S1730270AbfAHTcY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:32:24 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 52ED720827;
-        Tue,  8 Jan 2019 19:32:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 255F020645;
+        Tue,  8 Jan 2019 19:32:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546975937;
-        bh=vuQMvTX01SKNqD5/GRipLVqi2FuqUpX8/PQs4i1l5QI=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jeiRDVKKK90lYpjc14JG1HukEdtJWJsY80rwxgqoPzsI+tr1LrMtKk1k4ADDOc+1M
-         Ah7yt5yoUZPbZK5xDc2bRvw3+OYPMyE2INZ1+epCoF4jRBjlnpjhl9t/1afkbHgmJf
-         V7IkxFX6pR0XrnYDQPlpaQ/sto9MKCLEqA2lpPgI=
+        s=default; t=1546975943;
+        bh=aKX+5uJ9oJTJFJDlew8Ko2+8aMEMSjTRYRglabgiQ94=;
+        h=From:To:Cc:Subject:Date:From;
+        b=rnpCEzFJk7srqHI1Lgn4sTUZokYtQ0ZYcJq5bbaLz7KpT2/3rLJ2lVURkBzZV7JOt
+         qLe8yTYLCSI+XQXGvK0ILaGhKHJVhkYdeLjV3rKyZU+SBlu41PsaT7Skc4T0gCllzg
+         cMqaXE/L01kXDLwv3VALnIFtQsosja1HCuNcWZyM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Aaron Lu <aaron.lu@intel.com>, Vasily Averin <vvs@virtuozzo.com>,
-        Huang Ying <ying.huang@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>, linux-mm@kvack.org
-Subject: [PATCH AUTOSEL 4.19 95/97] mm/swap: use nr_node_ids for avail_lists in swap_info_struct
-Date:   Tue,  8 Jan 2019 14:29:44 -0500
-Message-Id: <20190108192949.122407-95-sashal@kernel.org>
+Cc:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 01/53] gpio: pl061: Move irq_chip definition inside struct pl061
+Date:   Tue,  8 Jan 2019 14:31:29 -0500
+Message-Id: <20190108193222.123316-1-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190108192949.122407-1-sashal@kernel.org>
-References: <20190108192949.122407-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -60,95 +56,86 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Aaron Lu <aaron.lu@intel.com>
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 
-[ Upstream commit 66f71da9dd38af17dc17209cdde7987d4679a699 ]
+[ Upstream commit ed8dce4c6f726b7f3c6bf40859b92a9e32f189c1 ]
 
-Since a2468cc9bfdf ("swap: choose swap device according to numa node"),
-avail_lists field of swap_info_struct is changed to an array with
-MAX_NUMNODES elements.  This made swap_info_struct size increased to 40KiB
-and needs an order-4 page to hold it.
+Keeping the irq_chip definition static will make it shared with multiple
+giochips in the system. This practice is considered to be bad and now we
+will get the below warning from gpiolib core:
 
-This is not optimal in that:
-1 Most systems have way less than MAX_NUMNODES(1024) nodes so it
-  is a waste of memory;
-2 It could cause swapon failure if the swap device is swapped on
-  after system has been running for a while, due to no order-4
-  page is available as pointed out by Vasily Averin.
+"detected irqchip that is shared with multiple gpiochips: please fix the
+driver."
 
-Solve the above two issues by using nr_node_ids(which is the actual
-possible node number the running system has) for avail_lists instead of
-MAX_NUMNODES.
+Hence, move the irq_chip definition from static to `struct pl061` for
+using a unique irq_chip for each gpiochip.
 
-nr_node_ids is unknown at compile time so can't be directly used when
-declaring this array.  What I did here is to declare avail_lists as zero
-element array and allocate space for it when allocating space for
-swap_info_struct.  The reason why keep using array but not pointer is
-plist_for_each_entry needs the field to be part of the struct, so pointer
-will not work.
-
-This patch is on top of Vasily Averin's fix commit.  I think the use of
-kvzalloc for swap_info_struct is still needed in case nr_node_ids is
-really big on some systems.
-
-Link: http://lkml.kernel.org/r/20181115083847.GA11129@intel.com
-Signed-off-by: Aaron Lu <aaron.lu@intel.com>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Cc: Vasily Averin <vvs@virtuozzo.com>
-Cc: Huang Ying <ying.huang@intel.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/linux/swap.h | 11 ++++++++++-
- mm/swapfile.c        |  3 ++-
- 2 files changed, 12 insertions(+), 2 deletions(-)
+ drivers/gpio/gpio-pl061.c | 21 ++++++++++-----------
+ 1 file changed, 10 insertions(+), 11 deletions(-)
 
-diff --git a/include/linux/swap.h b/include/linux/swap.h
-index 8e2c11e692ba..77221c16733a 100644
---- a/include/linux/swap.h
-+++ b/include/linux/swap.h
-@@ -232,7 +232,6 @@ struct swap_info_struct {
- 	unsigned long	flags;		/* SWP_USED etc: see above */
- 	signed short	prio;		/* swap priority of this type */
- 	struct plist_node list;		/* entry in swap_active_head */
--	struct plist_node avail_lists[MAX_NUMNODES];/* entry in swap_avail_heads */
- 	signed char	type;		/* strange name for an index */
- 	unsigned int	max;		/* extent of the swap_map */
- 	unsigned char *swap_map;	/* vmalloc'ed array of usage counts */
-@@ -273,6 +272,16 @@ struct swap_info_struct {
- 					 */
- 	struct work_struct discard_work; /* discard worker */
- 	struct swap_cluster_list discard_clusters; /* discard clusters list */
-+	struct plist_node avail_lists[0]; /*
-+					   * entries in swap_avail_heads, one
-+					   * entry per node.
-+					   * Must be last as the number of the
-+					   * array is nr_node_ids, which is not
-+					   * a fixed value so have to allocate
-+					   * dynamically.
-+					   * And it has to be an array so that
-+					   * plist_for_each_* can work.
-+					   */
- };
+diff --git a/drivers/gpio/gpio-pl061.c b/drivers/gpio/gpio-pl061.c
+index 6aaaab79c205..f6e1e0e306a3 100644
+--- a/drivers/gpio/gpio-pl061.c
++++ b/drivers/gpio/gpio-pl061.c
+@@ -54,6 +54,7 @@ struct pl061 {
  
- #ifdef CONFIG_64BIT
-diff --git a/mm/swapfile.c b/mm/swapfile.c
-index 8810a6d7d67f..08ba73eaaba2 100644
---- a/mm/swapfile.c
-+++ b/mm/swapfile.c
-@@ -2819,8 +2819,9 @@ static struct swap_info_struct *alloc_swap_info(void)
- 	struct swap_info_struct *p;
- 	unsigned int type;
- 	int i;
-+	int size = sizeof(*p) + nr_node_ids * sizeof(struct plist_node);
+ 	void __iomem		*base;
+ 	struct gpio_chip	gc;
++	struct irq_chip		irq_chip;
+ 	int			parent_irq;
  
--	p = kvzalloc(sizeof(*p), GFP_KERNEL);
-+	p = kvzalloc(size, GFP_KERNEL);
- 	if (!p)
- 		return ERR_PTR(-ENOMEM);
+ #ifdef CONFIG_PM
+@@ -281,15 +282,6 @@ static int pl061_irq_set_wake(struct irq_data *d, unsigned int state)
+ 	return irq_set_irq_wake(pl061->parent_irq, state);
+ }
  
+-static struct irq_chip pl061_irqchip = {
+-	.name		= "pl061",
+-	.irq_ack	= pl061_irq_ack,
+-	.irq_mask	= pl061_irq_mask,
+-	.irq_unmask	= pl061_irq_unmask,
+-	.irq_set_type	= pl061_irq_type,
+-	.irq_set_wake	= pl061_irq_set_wake,
+-};
+-
+ static int pl061_probe(struct amba_device *adev, const struct amba_id *id)
+ {
+ 	struct device *dev = &adev->dev;
+@@ -328,6 +320,13 @@ static int pl061_probe(struct amba_device *adev, const struct amba_id *id)
+ 	/*
+ 	 * irq_chip support
+ 	 */
++	pl061->irq_chip.name = dev_name(dev);
++	pl061->irq_chip.irq_ack	= pl061_irq_ack;
++	pl061->irq_chip.irq_mask = pl061_irq_mask;
++	pl061->irq_chip.irq_unmask = pl061_irq_unmask;
++	pl061->irq_chip.irq_set_type = pl061_irq_type;
++	pl061->irq_chip.irq_set_wake = pl061_irq_set_wake;
++
+ 	writeb(0, pl061->base + GPIOIE); /* disable irqs */
+ 	irq = adev->irq[0];
+ 	if (irq < 0) {
+@@ -336,14 +335,14 @@ static int pl061_probe(struct amba_device *adev, const struct amba_id *id)
+ 	}
+ 	pl061->parent_irq = irq;
+ 
+-	ret = gpiochip_irqchip_add(&pl061->gc, &pl061_irqchip,
++	ret = gpiochip_irqchip_add(&pl061->gc, &pl061->irq_chip,
+ 				   0, handle_bad_irq,
+ 				   IRQ_TYPE_NONE);
+ 	if (ret) {
+ 		dev_info(&adev->dev, "could not add irqchip\n");
+ 		return ret;
+ 	}
+-	gpiochip_set_chained_irqchip(&pl061->gc, &pl061_irqchip,
++	gpiochip_set_chained_irqchip(&pl061->gc, &pl061->irq_chip,
+ 				     irq, pl061_irq_handler);
+ 
+ 	amba_set_drvdata(adev, pl061);
 -- 
 2.19.1
 
