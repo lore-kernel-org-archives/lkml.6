@@ -2,234 +2,245 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.7 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25E25C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 14:34:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D97B5C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 14:34:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D4EED20850
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 14:34:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vX4HvifT"
+	by mail.kernel.org (Postfix) with ESMTP id A26DE2087F
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 14:34:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728839AbfAHOee (ORCPT
+        id S1728881AbfAHOek (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 09:34:34 -0500
-Received: from mail-yw1-f68.google.com ([209.85.161.68]:40578 "EHLO
-        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727592AbfAHOec (ORCPT
+        Tue, 8 Jan 2019 09:34:40 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:49866 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728846AbfAHOej (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 09:34:32 -0500
-Received: by mail-yw1-f68.google.com with SMTP id g194so1598527ywe.7
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jan 2019 06:34:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=FUsGNSltqysvk6dVmJGAHD+qRCQCL+1LMRu0GmFD3PQ=;
-        b=vX4HvifTvuUfF7HfEwFbpCNWzIQtcZ8DpOFbsK3yDf1NVPYZIJws8tuEMMypm6IYjN
-         2b+nPqC3kr7EmTUo42ZJOQ3NP6fkpCmGw7g0LR+Rh3256x+66gciEjXxvMterhfIL2Kg
-         kUnqmlw48Hi4RsMflaMh2MyS+PBN3TRqegFMP9bgJCIyxIV1sBcAB3AbXUJxJRTo/grJ
-         B4ia2gY7+XTndXsoIthlX6hNAfFsLBPhPA/B4hK2M30AvP2iGm9Q3Rb27Mvn8/90BTtx
-         T3fKaDAvQfqeuqK1NCwsGlG074UG6Twai2qhumsXtjZnNZVX6usnRFttB/j0KBOUlcQ4
-         vmyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=FUsGNSltqysvk6dVmJGAHD+qRCQCL+1LMRu0GmFD3PQ=;
-        b=VtC4l5yz6hed3g6tVv8IxmE1haR5DsK6K/1jikSx6vH6MnSlZtMZD5HtdzQrD58ey/
-         JFyDzuSnR+b2NpHTCybigdQmBjy7EmIXO+pQG08Gw0oT0+cCCJD+0sp9kDviisLkboCW
-         ohWgr8uxk75IvNMTCRUabdRjGjmWeLJ7bdlE1Z0PO3Xo1whzwG1fTKJ9jed+QDK4ChQv
-         mOh7a67DiR000TiNHANJRXOet+ZxcuRBQYBqi2V016i9HtwD8nNf/GxAC303oNIDe8ft
-         HAKQuv8U3rMm0IvRqMI4WbtoR/KzazEc8C65PR0vLDzkrTeWX2fheOfke4CWMCxhxOhz
-         tvrw==
-X-Gm-Message-State: AJcUukfMDopQbf3nPQMXAGMU/ZDwkVzfMeAhve+mWAMgnmEOchh0MJO8
-        Z7KfxeMyJpX7EQmwDQfSvRzayYrvjg0s4kibWem7Og==
-X-Google-Smtp-Source: ALg8bN6pXVqyVndyFAYVfHVC5JYjD1tJ2tt63dq2uvKP7Wf5RelvpJT7pqTTsljkFXfAtHwmV44BlCEDpDsSSAlRu80=
-X-Received: by 2002:a81:a395:: with SMTP id a143mr1733752ywh.444.1546958071221;
- Tue, 08 Jan 2019 06:34:31 -0800 (PST)
+        Tue, 8 Jan 2019 09:34:39 -0500
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x08EUa8a151480
+        for <linux-kernel@vger.kernel.org>; Tue, 8 Jan 2019 09:34:38 -0500
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2pvva451vh-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jan 2019 09:34:37 -0500
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
+        Tue, 8 Jan 2019 14:34:35 -0000
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 8 Jan 2019 14:34:32 -0000
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x08EYVFx59768884
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 8 Jan 2019 14:34:31 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 63E2B4C050;
+        Tue,  8 Jan 2019 14:34:31 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C43764C040;
+        Tue,  8 Jan 2019 14:34:30 +0000 (GMT)
+Received: from rapoport-lnx (unknown [9.148.8.241])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Tue,  8 Jan 2019 14:34:30 +0000 (GMT)
+Date:   Tue, 8 Jan 2019 16:34:29 +0200
+From:   Mike Rapoport <rppt@linux.ibm.com>
+To:     Christophe Leroy <christophe.leroy@c-s.fr>
+Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH v12 01/10] powerpc/irq: use memblock functions returning
+ virtual address
+References: <cover.1546954233.git.christophe.leroy@c-s.fr>
+ <ec01a9be000c2305eec61bb1e2c44df2f917c1a6.1546954236.git.christophe.leroy@c-s.fr>
 MIME-Version: 1.0
-References: <20190108035638.9685-1-moritz.fischer@ettus.com> <27c7db25-51c0-c283-c4bb-4a65df9b2105@collabora.com>
-In-Reply-To: <27c7db25-51c0-c283-c4bb-4a65df9b2105@collabora.com>
-From:   Guenter Roeck <groeck@google.com>
-Date:   Tue, 8 Jan 2019 06:34:19 -0800
-Message-ID: <CABXOdTdsuWdVWAev6KHqVZRsRyNsfdSmL4HYQWsuCZSA1v37ow@mail.gmail.com>
-Subject: Re: [PATCH v2] platform/chrome: Add cros_ec_readmem() helpers for
- I2C/SPI based ECs
-To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc:     Moritz Fischer <moritz.fischer@ettus.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Benson Leung <bleung@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Lee Jones <lee.jones@linaro.org>, moritz@ettus.com,
-        Moritz Fischer <mdf@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ec01a9be000c2305eec61bb1e2c44df2f917c1a6.1546954236.git.christophe.leroy@c-s.fr>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 19010814-0028-0000-0000-00000335FC81
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19010814-0029-0000-0000-000023F30A09
+Message-Id: <20190108143428.GB14063@rapoport-lnx>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-08_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901080120
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 8, 2019 at 6:28 AM Enric Balletbo i Serra
-<enric.balletbo@collabora.com> wrote:
->
-> Hi Moritz,
->
-> Many thanks for the patch,I've one concern on this, and I'd be also interested
-> on Benson and Guenter opinion ...
->
-> On 8/1/19 4:56, Moritz Fischer wrote:
-> > From: Moritz Fischer <mdf@kernel.org>
-> >
-> > Add cros_ec_readmem() based helpers for I2C/SPI based ECs.
-> > Unlike the LPC based ECs the I2C/SPI based ones cannot just directly
-> > read the mapped region.
-> >
-> > This is useful for things like accessing fan speeds or temperatures.
-> >
-> > Signed-off-by: Moritz Fischer <mdf@kernel.org>
-> > ---
-> >
-> > Hi all,
-> >
-> >
-> > I had submitted this back in May 2017 [1] and then somewhat forgot
-> > about it. So here's a new version :)
-> >
-> > As to why is this required? we're using this in some of our devices
-> > [2] that run a modified firmware based on Chromium-EC.
-> > I've been carrying the patch downstream in our tree for a while and
-> > it would be nice if we can merge this upstream so I can stop rebasing
-> > this :)
-> >
->
-> Right, if we merge this you'll probably reduce your downstream patches but
-> actually, if I am not wrong, there is no user for this. There isn't an upstream
-> driver that uses the new functions so we will end up having upstream dead code.
-> IMO if you want to have this upstream you should also upstream the drivers that
-> use that code. Makes sense?
->
+Hi,
 
-He has a hwmon driver which I think uses it. Question would rather be
-if that is an acceptable use or if it exposes EC internals, ie non-API
-data. Comments, anyone ?
+On Tue, Jan 08, 2019 at 01:43:09PM +0000, Christophe Leroy wrote:
+> Since only the virtual address of allocated blocks is used,
+> lets use functions returning directly virtual address.
+> 
+> Those functions have the advantage of also zeroing the block.
+> 
+> Suggested-by: Mike Rapoport <rppt@linux.ibm.com>
+> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+> ---
+>  @Mike: Part of this is taken from your serie.
 
-Digging ... https://patchwork.kernel.org/patch/9670517/
+It seems you've found some places I've missed :)
+Note that my series was merged to mmotm, so you may get a conflict with it.
 
-Guenter
+>  I was not sure how to include you in the commit log, I used
+>  Suggested-by: but could use any other property, so if you prefer
+>  something different just tell me. Also, if you could review this patch,
+>  it would be nice.
 
-> Thanks,
->   Enric
->
->
-> > Thanks,
-> >
-> > Moritz
-> >
-> > [1] https://lore.kernel.org/patchwork/patch/786065/
-> > [2] https://www.ettus.com/product/details/USRP-E320
-> >
-> > ---
-> >  drivers/platform/chrome/cros_ec_i2c.c   |  1 +
-> >  drivers/platform/chrome/cros_ec_proto.c | 38 +++++++++++++++++++++++++
-> >  drivers/platform/chrome/cros_ec_spi.c   |  1 +
-> >  include/linux/mfd/cros_ec.h             | 12 ++++++++
-> >  4 files changed, 52 insertions(+)
-> >
-> > diff --git a/drivers/platform/chrome/cros_ec_i2c.c b/drivers/platform/chrome/cros_ec_i2c.c
-> > index ef9b4763356f..c3a9bee37b1d 100644
-> > --- a/drivers/platform/chrome/cros_ec_i2c.c
-> > +++ b/drivers/platform/chrome/cros_ec_i2c.c
-> > @@ -303,6 +303,7 @@ static int cros_ec_i2c_probe(struct i2c_client *client,
-> >       ec_dev->irq = client->irq;
-> >       ec_dev->cmd_xfer = cros_ec_cmd_xfer_i2c;
-> >       ec_dev->pkt_xfer = cros_ec_pkt_xfer_i2c;
-> > +     ec_dev->cmd_readmem = cros_ec_readmem;
-> >       ec_dev->phys_name = client->adapter->name;
-> >       ec_dev->din_size = sizeof(struct ec_host_response_i2c) +
-> >                          sizeof(struct ec_response_get_protocol_info);
-> > diff --git a/drivers/platform/chrome/cros_ec_proto.c b/drivers/platform/chrome/cros_ec_proto.c
-> > index cc7baf0ecb3c..2f1d45a7a934 100644
-> > --- a/drivers/platform/chrome/cros_ec_proto.c
-> > +++ b/drivers/platform/chrome/cros_ec_proto.c
-> > @@ -636,3 +636,41 @@ u32 cros_ec_get_host_event(struct cros_ec_device *ec_dev)
-> >       return host_event;
-> >  }
-> >  EXPORT_SYMBOL(cros_ec_get_host_event);
-> > +
-> > +int cros_ec_readmem(struct cros_ec_device *ec, unsigned int offset,
-> > +                 unsigned int bytes, void *dest)
-> > +{
-> > +     int ret;
-> > +     struct ec_params_read_memmap *params;
-> > +     struct cros_ec_command *msg;
-> > +
-> > +     if (offset >= EC_MEMMAP_SIZE - bytes)
-> > +             return -EINVAL;
-> > +
-> > +     msg = kzalloc(sizeof(*msg) + max(sizeof(*params), bytes), GFP_KERNEL);
-> > +     if (!msg)
-> > +             return -ENOMEM;
-> > +
-> > +     msg->version = 0;
-> > +     msg->command = EC_CMD_READ_MEMMAP;
-> > +     msg->insize = bytes;
-> > +     msg->outsize = sizeof(*params);
-> > +
-> > +     params = (struct ec_params_read_memmap *)msg->data;
-> > +     params->offset = offset;
-> > +     params->size = bytes;
-> > +
-> > +     ret = cros_ec_cmd_xfer_status(ec, msg);
-> > +     if (ret < 0) {
-> > +             dev_warn(ec->dev, "cannot read mapped reg: %d/%d\n",
-> > +                      ret, msg->result);
-> > +             goto out_free;
-> > +     }
-> > +
-> > +     memcpy(dest, msg->data, bytes);
-> > +
-> > +out_free:
-> > +     kfree(msg);
-> > +     return ret;
-> > +}
-> > +EXPORT_SYMBOL_GPL(cros_ec_readmem);
-> > diff --git a/drivers/platform/chrome/cros_ec_spi.c b/drivers/platform/chrome/cros_ec_spi.c
-> > index 2060d1483043..b95c1a25adfc 100644
-> > --- a/drivers/platform/chrome/cros_ec_spi.c
-> > +++ b/drivers/platform/chrome/cros_ec_spi.c
-> > @@ -666,6 +666,7 @@ static int cros_ec_spi_probe(struct spi_device *spi)
-> >       ec_dev->irq = spi->irq;
-> >       ec_dev->cmd_xfer = cros_ec_cmd_xfer_spi;
-> >       ec_dev->pkt_xfer = cros_ec_pkt_xfer_spi;
-> > +     ec_dev->cmd_readmem = cros_ec_readmem;
-> >       ec_dev->phys_name = dev_name(&ec_spi->spi->dev);
-> >       ec_dev->din_size = EC_MSG_PREAMBLE_COUNT +
-> >                          sizeof(struct ec_host_response) +
-> > diff --git a/include/linux/mfd/cros_ec.h b/include/linux/mfd/cros_ec.h
-> > index de8b588c8776..0228fb42dcda 100644
-> > --- a/include/linux/mfd/cros_ec.h
-> > +++ b/include/linux/mfd/cros_ec.h
-> > @@ -335,6 +335,18 @@ int cros_ec_get_next_event(struct cros_ec_device *ec_dev, bool *wake_event);
-> >   */
-> >  u32 cros_ec_get_host_event(struct cros_ec_device *ec_dev);
-> >
-> > +/**
-> > + * cros_ec_readmem - Read mapped memory in the ChromeOS EC
-> > + *
-> > + * @ec: Device to read from
-> > + * @offset: Offset to read within the mapped region
-> > + * @bytes: number of bytes to read
-> > + * @data: Return data
-> > + * @return: 0 if Ok, -ve on error
-> > + */
-> > +int cros_ec_readmem(struct cros_ec_device *ec, unsigned int offset,
-> > +                 unsigned int bytes, void *dest);
-> > +
-> >  /* sysfs stuff */
-> >  extern struct attribute_group cros_ec_attr_group;
-> >  extern struct attribute_group cros_ec_lightbar_attr_group;
-> >
+Suggested-by sounds reasonable.
+ 
+>  arch/powerpc/kernel/irq.c      |  5 -----
+>  arch/powerpc/kernel/setup_32.c | 15 +++++----------
+>  arch/powerpc/kernel/setup_64.c | 16 ++--------------
+>  3 files changed, 7 insertions(+), 29 deletions(-)
+> 
+> diff --git a/arch/powerpc/kernel/irq.c b/arch/powerpc/kernel/irq.c
+> index 916ddc4aac44..4a44bc395fbc 100644
+> --- a/arch/powerpc/kernel/irq.c
+> +++ b/arch/powerpc/kernel/irq.c
+> @@ -725,18 +725,15 @@ void exc_lvl_ctx_init(void)
+>  #endif
+>  #endif
+>  
+> -		memset((void *)critirq_ctx[cpu_nr], 0, THREAD_SIZE);
+>  		tp = critirq_ctx[cpu_nr];
+>  		tp->cpu = cpu_nr;
+>  		tp->preempt_count = 0;
+>  
+>  #ifdef CONFIG_BOOKE
+> -		memset((void *)dbgirq_ctx[cpu_nr], 0, THREAD_SIZE);
+>  		tp = dbgirq_ctx[cpu_nr];
+>  		tp->cpu = cpu_nr;
+>  		tp->preempt_count = 0;
+>  
+> -		memset((void *)mcheckirq_ctx[cpu_nr], 0, THREAD_SIZE);
+>  		tp = mcheckirq_ctx[cpu_nr];
+>  		tp->cpu = cpu_nr;
+>  		tp->preempt_count = HARDIRQ_OFFSET;
+> @@ -754,12 +751,10 @@ void irq_ctx_init(void)
+>  	int i;
+>  
+>  	for_each_possible_cpu(i) {
+> -		memset((void *)softirq_ctx[i], 0, THREAD_SIZE);
+>  		tp = softirq_ctx[i];
+>  		tp->cpu = i;
+>  		klp_init_thread_info(tp);
+>  
+> -		memset((void *)hardirq_ctx[i], 0, THREAD_SIZE);
+>  		tp = hardirq_ctx[i];
+>  		tp->cpu = i;
+>  		klp_init_thread_info(tp);
+> diff --git a/arch/powerpc/kernel/setup_32.c b/arch/powerpc/kernel/setup_32.c
+> index 947f904688b0..bfe1b46a26dc 100644
+> --- a/arch/powerpc/kernel/setup_32.c
+> +++ b/arch/powerpc/kernel/setup_32.c
+> @@ -203,10 +203,8 @@ void __init irqstack_early_init(void)
+>  	/* interrupt stacks must be in lowmem, we get that for free on ppc32
+>  	 * as the memblock is limited to lowmem by default */
+>  	for_each_possible_cpu(i) {
+> -		softirq_ctx[i] = (struct thread_info *)
+> -			__va(memblock_phys_alloc(THREAD_SIZE, THREAD_SIZE));
+> -		hardirq_ctx[i] = (struct thread_info *)
+> -			__va(memblock_phys_alloc(THREAD_SIZE, THREAD_SIZE));
+> +		softirq_ctx[i] = memblock_alloc(THREAD_SIZE, THREAD_SIZE);
+> +		hardirq_ctx[i] = memblock_alloc(THREAD_SIZE, THREAD_SIZE);
+>  	}
+>  }
+>  
+> @@ -224,13 +222,10 @@ void __init exc_lvl_early_init(void)
+>  		hw_cpu = 0;
+>  #endif
+>  
+> -		critirq_ctx[hw_cpu] = (struct thread_info *)
+> -			__va(memblock_phys_alloc(THREAD_SIZE, THREAD_SIZE));
+> +		critirq_ctx[hw_cpu] = memblock_alloc(THREAD_SIZE, THREAD_SIZE);
+>  #ifdef CONFIG_BOOKE
+> -		dbgirq_ctx[hw_cpu] = (struct thread_info *)
+> -			__va(memblock_phys_alloc(THREAD_SIZE, THREAD_SIZE));
+> -		mcheckirq_ctx[hw_cpu] = (struct thread_info *)
+> -			__va(memblock_phys_alloc(THREAD_SIZE, THREAD_SIZE));
+> +		dbgirq_ctx[hw_cpu] = memblock_alloc(THREAD_SIZE, THREAD_SIZE);
+> +		mcheckirq_ctx[hw_cpu] = memblock_alloc(THREAD_SIZE, THREAD_SIZE);
+>  #endif
+>  	}
+>  }
+> diff --git a/arch/powerpc/kernel/setup_64.c b/arch/powerpc/kernel/setup_64.c
+> index 236c1151a3a7..943503f1e2c0 100644
+> --- a/arch/powerpc/kernel/setup_64.c
+> +++ b/arch/powerpc/kernel/setup_64.c
+> @@ -634,19 +634,10 @@ __init u64 ppc64_bolted_size(void)
+>  
+>  static void *__init alloc_stack(unsigned long limit, int cpu)
+>  {
+> -	unsigned long pa;
+> -
+>  	BUILD_BUG_ON(STACK_INT_FRAME_SIZE % 16);
+>  
+> -	pa = memblock_alloc_base_nid(THREAD_SIZE, THREAD_SIZE, limit,
+> -					early_cpu_to_node(cpu), MEMBLOCK_NONE);
+> -	if (!pa) {
+> -		pa = memblock_alloc_base(THREAD_SIZE, THREAD_SIZE, limit);
+> -		if (!pa)
+> -			panic("cannot allocate stacks");
+> -	}
+> -
+> -	return __va(pa);
+> +	return memblock_alloc_try_nid(THREAD_SIZE, THREAD_SIZE, MEMBLOCK_LOW_LIMIT,
+> +				      limit, early_cpu_to_node(cpu));
+
+I'd prefer if you would keep the return value check and panic() here, as
+I'm working on removing the panic() from memblock_alloc*().
+
+Other than that, everything seems right, at least from the memblock
+perspective. So, with panic retained feel free to add
+
+Acked-by: Mike Rapoport <rppt@linux.ibm.com>
+
+>  }
+>  
+>  void __init irqstack_early_init(void)
+> @@ -739,20 +730,17 @@ void __init emergency_stack_init(void)
+>  		struct thread_info *ti;
+>  
+>  		ti = alloc_stack(limit, i);
+> -		memset(ti, 0, THREAD_SIZE);
+>  		emerg_stack_init_thread_info(ti, i);
+>  		paca_ptrs[i]->emergency_sp = (void *)ti + THREAD_SIZE;
+>  
+>  #ifdef CONFIG_PPC_BOOK3S_64
+>  		/* emergency stack for NMI exception handling. */
+>  		ti = alloc_stack(limit, i);
+> -		memset(ti, 0, THREAD_SIZE);
+>  		emerg_stack_init_thread_info(ti, i);
+>  		paca_ptrs[i]->nmi_emergency_sp = (void *)ti + THREAD_SIZE;
+>  
+>  		/* emergency stack for machine check exception handling. */
+>  		ti = alloc_stack(limit, i);
+> -		memset(ti, 0, THREAD_SIZE);
+>  		emerg_stack_init_thread_info(ti, i);
+>  		paca_ptrs[i]->mc_emergency_sp = (void *)ti + THREAD_SIZE;
+>  #endif
+> -- 
+> 2.13.3
+> 
+
+-- 
+Sincerely yours,
+Mike.
+
