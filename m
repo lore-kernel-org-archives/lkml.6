@@ -6,23 +6,23 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2057BC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 16:25:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C37C8C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 16:25:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EDA962087F
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 16:25:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 926342087F
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 16:25:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729517AbfAHQZU (ORCPT
+        id S1729534AbfAHQZc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 11:25:20 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:44906 "EHLO mail.bootlin.com"
+        Tue, 8 Jan 2019 11:25:32 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:44901 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729344AbfAHQYv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 11:24:51 -0500
+        id S1729334AbfAHQYu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 11:24:50 -0500
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 042A320A2F; Tue,  8 Jan 2019 17:24:49 +0100 (CET)
+        id A197920A2A; Tue,  8 Jan 2019 17:24:48 +0100 (CET)
 Received: from localhost.localdomain (aaubervilliers-681-1-45-241.w90-88.abo.wanadoo.fr [90.88.163.241])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 9AA20209C2;
+        by mail.bootlin.com (Postfix) with ESMTPSA id 4218F207A3;
         Tue,  8 Jan 2019 17:24:48 +0100 (CET)
 From:   Miquel Raynal <miquel.raynal@bootlin.com>
 To:     Gregory Clement <gregory.clement@bootlin.com>,
@@ -40,9 +40,9 @@ Cc:     <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>,
         Maxime Chevallier <maxime.chevallier@bootlin.com>,
         Nadav Haklai <nadavh@marvell.com>,
         Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: [PATCH v3 11/15] dt-bindings: PCI: aardvark: Describe the reset-gpios property
-Date:   Tue,  8 Jan 2019 17:24:36 +0100
-Message-Id: <20190108162441.5278-12-miquel.raynal@bootlin.com>
+Subject: [PATCH v3 10/15] dt-bindings: PCI: aardvark: Describe the PCIe endpoint card reset pins
+Date:   Tue,  8 Jan 2019 17:24:35 +0100
+Message-Id: <20190108162441.5278-11-miquel.raynal@bootlin.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108162441.5278-1-miquel.raynal@bootlin.com>
 References: <20190108162441.5278-1-miquel.raynal@bootlin.com>
@@ -53,28 +53,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A GPIO might be used to reset the PCI IP. Describe the property needed
-in this case.
+A line might be used by the PCIe IP to reset the endpoint card upon:
+  - platform reset,
+  - hot reset,
+  - link failure.
+
+Describe the properties needed in this case (optional).
 
 Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- Documentation/devicetree/bindings/pci/aardvark-pci.txt | 2 ++
- 1 file changed, 2 insertions(+)
+ Documentation/devicetree/bindings/pci/aardvark-pci.txt | 5 +++++
+ 1 file changed, 5 insertions(+)
 
 diff --git a/Documentation/devicetree/bindings/pci/aardvark-pci.txt b/Documentation/devicetree/bindings/pci/aardvark-pci.txt
-index 8b7f048705ec..b47d6d608ae1 100644
+index a440f182ccf8..8b7f048705ec 100644
 --- a/Documentation/devicetree/bindings/pci/aardvark-pci.txt
 +++ b/Documentation/devicetree/bindings/pci/aardvark-pci.txt
-@@ -27,6 +27,8 @@ The following are optional properties:
-  - pinctrl-names: must be "default".
-  - pinctrl-0: pin control group to be used to mux the PCIe endpoint card
-    reset line so that it will be automatically driven by the PCIe IP.
-+ - reset-gpios: GPIO to reset the device (alternative to the above
-+   entries that represent a pin controlled by the PCI IP itself).
+@@ -24,6 +24,9 @@ contain the following properties:
+ The following are optional properties:
+ 
+  - phys: the PCIe PHY handle
++ - pinctrl-names: must be "default".
++ - pinctrl-0: pin control group to be used to mux the PCIe endpoint card
++   reset line so that it will be automatically driven by the PCIe IP.
  
  In addition, the Device Tree describing an Aardvark PCIe controller
  must include a sub-node that describes the legacy interrupt controller
+@@ -55,6 +58,8 @@ Example:
+ 				<0 0 0 3 &pcie_intc 2>,
+ 				<0 0 0 4 &pcie_intc 3>;
+ 		phys = <&comphy1 0>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&pcie_card_reset_pins &pcie_clkreq_pins>;
+ 		pcie_intc: interrupt-controller {
+ 			interrupt-controller;
+ 			#interrupt-cells = <1>;
 -- 
 2.19.1
 
