@@ -4,56 +4,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DEA9C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:48:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E956CC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:48:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A39720827
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:48:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B8DBF20827
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:48:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546976936;
-	bh=AS5xXNXcfHKv46JrTTW1YEaqp9QqX381pcJ1aiZGhfg=;
+	s=default; t=1546976939;
+	bh=f3dwyVhbGFElR54j0Q8C55HiW+LcCO8EmTMDmEFjppA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=QlFKfSxGgpnCnQN4yDWaYiRDX7fNWv3g4N2gHuWBVCc5qEkehCzpRv5z4cur+eOIs
-	 o2rDdiXtRmBiKMOU9DlBdBD4HBrxMnF9oRa+lKI79OjZMk36SG9DKnUHBi5PJPeyPR
-	 fkkXw9d4Sv3KIjekNI8R39ehF8j6JitHwBKEf9sQ=
+	b=UH4Thx/DJrml7/1PXIWx7WSYSvrNr4cS3cxG5Vb1KN2T04+uw/uvzfavhZm98AD88
+	 KE9LXFpnZ/HdA1Q5rXc1WkgJAaA4JkfAVVTtbZtcbBIoObzcvsis6PfzKsITQCU5ne
+	 5svLJ4lXed5gaoNHibpym7krkmZSIGyE4QeBy3p0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731301AbfAHTcL (ORCPT
+        id S1732781AbfAHTs6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:32:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40446 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 14:48:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40568 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731274AbfAHTcG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:32:06 -0500
+        id S1731293AbfAHTcK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:32:10 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 86A752070B;
-        Tue,  8 Jan 2019 19:32:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3048620827;
+        Tue,  8 Jan 2019 19:32:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546975925;
-        bh=AS5xXNXcfHKv46JrTTW1YEaqp9QqX381pcJ1aiZGhfg=;
+        s=default; t=1546975930;
+        bh=f3dwyVhbGFElR54j0Q8C55HiW+LcCO8EmTMDmEFjppA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UI9RHe3JK4re9a+I0SEoyu2r7Khm+tVOaeNFYR1O109ScPAwzew4t4tfGNNzaSkW7
-         vfxBROpU4VjYh/q3L/NvJED1PtdxpRvcruwS8I0J+Z7aBPIWdzDNK11k1F67YNosyG
-         Wjb2sUsiMmsQNHCuqnG9adrXom/hudAns64f9S0Y=
+        b=wGg7eoIdBcelYUw1FHKNp9EAPr/WKkDhpSaIdoQ8IiD+yYH65kVpKFG83vKEaibch
+         A7T3eR2GPXSmZ7KPQVEDeM7FOJXSWpgfU/2lK9bTQt/KA2upzajPqo4tCkwh5/JnRQ
+         0dRLVz4WX9y9Yok0GWWmW+Bi/eKOcLZhKuNcjkM0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Kevin Barnett <kevin.barnett@microsemi.com>,
-        Don Brace <don.brace@microsemi.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <sashal@kernel.org>, esc.storagedev@microsemi.com,
-        linux-scsi@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 88/97] scsi: smartpqi: correct lun reset issues
-Date:   Tue,  8 Jan 2019 14:29:37 -0500
-Message-Id: <20190108192949.122407-88-sashal@kernel.org>
+Cc:     Eric Sandeen <sandeen@redhat.com>,
+        Eric Sandeen <sandeen@sandeen.net>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 92/97] iomap: don't search past page end in iomap_is_partially_uptodate
+Date:   Tue,  8 Jan 2019 14:29:41 -0500
+Message-Id: <20190108192949.122407-92-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108192949.122407-1-sashal@kernel.org>
 References: <20190108192949.122407-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -61,76 +59,78 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kevin Barnett <kevin.barnett@microsemi.com>
+From: Eric Sandeen <sandeen@redhat.com>
 
-[ Upstream commit 2ba55c9851d74eb015a554ef69ddf2ef061d5780 ]
+[ Upstream commit 3cc31fa65d85610574c0f6a474e89f4c419923d5 ]
 
-Problem:
-The Linux kernel takes a logical volume offline after a LUN reset.  This is
-generally accompanied by this message in the dmesg output:
+iomap_is_partially_uptodate() is intended to check wither blocks within
+the selected range of a not-uptodate page are uptodate; if the range we
+care about is up to date, it's an optimization.
 
-Device offlined - not ready after error recovery
+However, the iomap implementation continues to check all blocks up to
+from+count, which is beyond the page, and can even be well beyond the
+iop->uptodate bitmap.
 
-Root Cause:
-The root cause is a "quirk" in the timeout handling in the Linux SCSI
-layer. The Linux kernel places a 30-second timeout on most media access
-commands (reads and writes) that it send to device drivers.  When a media
-access command times out, the Linux kernel goes into error recovery mode
-for the LUN that was the target of the command that timed out. Every
-command that timed out is kept on a list inside of the Linux kernel to be
-retried later. The kernel attempts to recover the command(s) that timed out
-by issuing a LUN reset followed by a TEST UNIT READY. If the LUN reset and
-TEST UNIT READY commands are successful, the kernel retries the command(s)
-that timed out.
+I think the worst that will happen is that we may eventually find a zero
+bit and return "not partially uptodate" when it would have otherwise
+returned true, and skip the optimization.  Still, it's clearly an invalid
+memory access that must be fixed.
 
-Each SCSI command issued by the kernel has a result field associated with
-it. This field indicates the final result of the command (success or
-error). When a command times out, the kernel places a value in this result
-field indicating that the command timed out.
+So: fix this by limiting the search to within the page as is done in the
+non-iomap variant, block_is_partially_uptodate().
 
-The "quirk" is that after the LUN reset and TEST UNIT READY commands are
-completed, the kernel checks each command on the timed-out command list
-before retrying it. If the result field is still "timed out", the kernel
-treats that command as not having been successfully recovered for a
-retry. If the number of commands that are in this state are greater than
-two, the kernel takes the LUN offline.
+Zorro noticed thiswhen KASAN went off for 512 byte blocks on a 64k
+page system:
 
-Fix:
-When our RAIDStack receives a LUN reset, it simply waits until all
-outstanding commands complete. Generally, all of these outstanding commands
-complete successfully. Therefore, the fix in the smartpqi driver is to
-always set the command result field to indicate success when a request
-completes successfully. This normally isn’t necessary because the result
-field is always initialized to success when the command is submitted to the
-driver. So when the command completes successfully, the result field is
-left untouched. But in this case, the kernel changes the result field
-behind the driver’s back and then expects the field to be changed by the
-driver as the commands that timed-out complete.
+ BUG: KASAN: slab-out-of-bounds in iomap_is_partially_uptodate+0x1a0/0x1e0
+ Read of size 8 at addr ffff800120c3a318 by task fsstress/22337
 
-Reviewed-by: Dave Carroll <david.carroll@microsemi.com>
-Reviewed-by: Scott Teel <scott.teel@microsemi.com>
-Signed-off-by: Kevin Barnett <kevin.barnett@microsemi.com>
-Signed-off-by: Don Brace <don.brace@microsemi.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Reported-by: Zorro Lang <zlang@redhat.com>
+Signed-off-by: Eric Sandeen <sandeen@redhat.com>
+Signed-off-by: Eric Sandeen <sandeen@sandeen.net>
+Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/smartpqi/smartpqi_init.c | 3 +++
- 1 file changed, 3 insertions(+)
+ fs/iomap.c | 17 +++++++++++++++--
+ 1 file changed, 15 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/scsi/smartpqi/smartpqi_init.c b/drivers/scsi/smartpqi/smartpqi_init.c
-index 2112ea6723c6..c62df3eefd5a 100644
---- a/drivers/scsi/smartpqi/smartpqi_init.c
-+++ b/drivers/scsi/smartpqi/smartpqi_init.c
-@@ -2720,6 +2720,9 @@ static unsigned int pqi_process_io_intr(struct pqi_ctrl_info *ctrl_info,
- 		switch (response->header.iu_type) {
- 		case PQI_RESPONSE_IU_RAID_PATH_IO_SUCCESS:
- 		case PQI_RESPONSE_IU_AIO_PATH_IO_SUCCESS:
-+			if (io_request->scmd)
-+				io_request->scmd->result = 0;
-+			/* fall through */
- 		case PQI_RESPONSE_IU_GENERAL_MANAGEMENT:
- 			break;
- 		case PQI_RESPONSE_IU_TASK_MANAGEMENT:
+diff --git a/fs/iomap.c b/fs/iomap.c
+index ec15cf2ec696..e57fb1e534c5 100644
+--- a/fs/iomap.c
++++ b/fs/iomap.c
+@@ -488,16 +488,29 @@ iomap_readpages(struct address_space *mapping, struct list_head *pages,
+ }
+ EXPORT_SYMBOL_GPL(iomap_readpages);
+ 
++/*
++ * iomap_is_partially_uptodate checks whether blocks within a page are
++ * uptodate or not.
++ *
++ * Returns true if all blocks which correspond to a file portion
++ * we want to read within the page are uptodate.
++ */
+ int
+ iomap_is_partially_uptodate(struct page *page, unsigned long from,
+ 		unsigned long count)
+ {
+ 	struct iomap_page *iop = to_iomap_page(page);
+ 	struct inode *inode = page->mapping->host;
+-	unsigned first = from >> inode->i_blkbits;
+-	unsigned last = (from + count - 1) >> inode->i_blkbits;
++	unsigned len, first, last;
+ 	unsigned i;
+ 
++	/* Limit range to one page */
++	len = min_t(unsigned, PAGE_SIZE - from, count);
++
++	/* First and last blocks in range within page */
++	first = from >> inode->i_blkbits;
++	last = (from + len - 1) >> inode->i_blkbits;
++
+ 	if (iop) {
+ 		for (i = first; i <= last; i++)
+ 			if (!test_bit(i, iop->uptodate))
 -- 
 2.19.1
 
