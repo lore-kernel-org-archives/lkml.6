@@ -2,106 +2,95 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 425A8C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 01:53:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 272A9C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 01:59:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F0C420827
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 01:53:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E3EF6206B7
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 01:59:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lca.pw header.i=@lca.pw header.b="HaGahGz4"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="QG7l9ZRo"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727289AbfAHBxM (ORCPT
+        id S1727317AbfAHB7T (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 20:53:12 -0500
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:41483 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727028AbfAHBxL (ORCPT
+        Mon, 7 Jan 2019 20:59:19 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:39652 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727028AbfAHB7S (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 20:53:11 -0500
-Received: by mail-qt1-f193.google.com with SMTP id l12so2768578qtf.8
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Jan 2019 17:53:10 -0800 (PST)
+        Mon, 7 Jan 2019 20:59:18 -0500
+Received: by mail-pf1-f196.google.com with SMTP id r136so1096620pfc.6
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Jan 2019 17:59:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=BdxXWNWCwXyo34zuyi/62cZr4j0t4y4EbTTp2nD/nis=;
-        b=HaGahGz44oE0fxzBNLN0yUZ9MDPjizLeil/LqGMZ89R5dr3TAC6TkukiBmznTcNvA2
-         BaldlFiapj3RaF7a4iLB0+i3e+yRdLxWDzVkwhqfx2dn+UhfMC9U5uNBDzU75g8TAk5q
-         oZBvxUUT+eo2K/57tWRmAY7oPWZSWBHgSR+iosAY3RQpP/hU/AaXqgCnxpkYO9G1xIwb
-         EljSk7ZQMGNSWKNQpahSJO/UE3GnD3X1LaAjv+wNM3c9lmfIq0CGWB5DVVJ56BhICiqQ
-         9DOGV9TlY/Qo8YGSXIwcV2hJHY4TjuYaP3Fhc80Q6Oz6nkffdldmu7/DJJo0OmmGNiKk
-         IX+w==
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=8UqtZxeh2IygD+LRD03zDiLYo+gKqxvFa2mWBMssNQQ=;
+        b=QG7l9ZRo6VZcU2oPj+WywXLMTEcy7PK21Ejrk4eXiGMFZJHXNlGqENx0P5VU9/EA5b
+         Fm/cyaTFu4PXQwegDf/KvimTSnZijkXHE9as9p2iIfEVDTMXLIrJ9+tfaJ6os4xaKwRi
+         KI5WN/dq/JKwclc65X20tcoGoIL++XMaQcdQc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=BdxXWNWCwXyo34zuyi/62cZr4j0t4y4EbTTp2nD/nis=;
-        b=qcqKM4DluTQEkw7eXI3YicZivvvged8myj2yRsZC0wIeAPIuP9lk648xdJ4/f702oo
-         UV6XYaFDKX6WzS/KD7aMKpCtS1qfSK96Jl9s5kUg5zI2saDrD/BPaUf/eNB30tYVhb9f
-         63ZJCfYeNNWOQGqlSnT5/aGldaM92IMEGTlm7yv7aFCj/aL5JJzmPFxqCVrkDSEUA2UO
-         Qr5aktvUqzWOpIm3RdCyN/P43czRWlhVd7+De5RzmPkx0cQpiIfIv/UGtbmwE/z5w4vo
-         Qoq6O3KbzsmIxcI9fvi/ZvKokNZ7j+AvPD3RxkVWmfPvW3sCG/dncZxOzLucV6MVi7Mx
-         qMwA==
-X-Gm-Message-State: AA+aEWaSTQpw2QTz9IFWDDjZ4pSxnWfrBqCkhNrbqKBtG0kbgKrHtJ67
-        tjdb/IMV53z7F06WeZh0kny6BD2x2B+LEQ==
-X-Google-Smtp-Source: ALg8bN7rpdBhFKOMZ23/wGoipb5SueQlwiWPSmoYoEcpKTArfUZikR3MH7Ie5/H8KKgx7KtdZdpzXg==
-X-Received: by 2002:ac8:2c79:: with SMTP id e54mr62957231qta.17.1546912390079;
-        Mon, 07 Jan 2019 17:53:10 -0800 (PST)
-Received: from ovpn-120-55.rdu2.redhat.com (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
-        by smtp.gmail.com with ESMTPSA id z30sm41882174qtz.26.2019.01.07.17.53.09
+        bh=8UqtZxeh2IygD+LRD03zDiLYo+gKqxvFa2mWBMssNQQ=;
+        b=PxFrcao2M+WLyeHlQDxW9DXavcgI6F7ckNUqCzi8IddyXi/QEXR5JvXGLA7VMMGf5D
+         hhW3KYhYf3rtWBtT75QIH56mjbu1rcQoFx6xVIX7AqwTAGB/68i+RunL5eInJfCgVTOU
+         NVyjZdHcf5Ijc7tOsroC2sKEEJ487NaRdCNeMbQrgNUE/iABQ9ETX1uE6Zcsm2nYOStt
+         JoH6+qzNbdcQeTPHbLFwGZPWNUeY8vImUM52eqg7aHWswV0oGtyd25GEd5/O/t8aRZ5D
+         GQU2LF97pGNfDtppCCprQslRzhc3VgreLmRRfdmdD8EapTQAr4/mNhgpBh2oiJYpNzGb
+         +aig==
+X-Gm-Message-State: AJcUukcdyAGgsm2kxPFetkv9V6qADLT9VsxwIddaCwR2ONgNGB8OFPuX
+        vtq1PWutY/+yuRpq23+WXY1Maw==
+X-Google-Smtp-Source: ALg8bN44kd1NhelnDBZnwGiVgpTTILbQ6gvqAy1e+EvfCsZGMVGoT/pHvEM+eKJEk7XqkLv0qUK9gg==
+X-Received: by 2002:a63:5026:: with SMTP id e38mr12996104pgb.123.1546912758040;
+        Mon, 07 Jan 2019 17:59:18 -0800 (PST)
+Received: from ryandcase.mtv.corp.google.com ([2620:15c:202:201:ed1c:3d1c:9d92:99cb])
+        by smtp.gmail.com with ESMTPSA id p2sm93942693pfb.28.2019.01.07.17.59.17
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 07 Jan 2019 17:53:09 -0800 (PST)
-Subject: Re: [PATCH v3] mm/page_owner: fix for deferred struct page init
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     akpm@linux-foundation.org, Pavel.Tatashin@microsoft.com,
-        mingo@kernel.org, mgorman@techsingularity.net,
-        iamjoonsoo.kim@lge.com, tglx@linutronix.de, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-References: <20190103190715.GZ31793@dhcp22.suse.cz>
- <62e96e34-7ea9-491a-b5b6-4828da980d48@lca.pw>
- <20190103202235.GE31793@dhcp22.suse.cz>
- <a5666d82-b7ad-4b90-5f4e-fd22afc3e1dc@lca.pw>
- <20190104130906.GO31793@dhcp22.suse.cz>
- <e4ad9d12-387d-1cc6-f404-cae6d43ccf80@lca.pw>
- <20190104151737.GT31793@dhcp22.suse.cz>
- <c8faf7eb-d23f-4ef7-3432-0acc7165f883@lca.pw>
- <20190104153245.GV31793@dhcp22.suse.cz>
- <fa135cd8-32e5-86f7-14ee-30685bca91b5@lca.pw>
- <20190107184309.GM31793@dhcp22.suse.cz>
-From:   Qian Cai <cai@lca.pw>
-Message-ID: <bfcd017d-dcf4-b687-1aef-ab0810b12c73@lca.pw>
-Date:   Mon, 7 Jan 2019 20:53:08 -0500
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
- Gecko/20100101 Thunderbird/60.3.3
+        Mon, 07 Jan 2019 17:59:17 -0800 (PST)
+From:   Ryan Case <ryandcase@chromium.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>
+Cc:     Evan Green <evgreen@chromium.org>,
+        Doug Anderson <dianders@chromium.org>,
+        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+        Stephen Boyd <swboyd@chromium.org>,
+        Ryan Case <ryandcase@chromium.org>
+Subject: [PATCH v2 0/4] tty: serial: qcom_geni_serial: Assorted cleanups
+Date:   Mon,  7 Jan 2019 17:58:34 -0800
+Message-Id: <20190108015838.166271-1-ryandcase@chromium.org>
+X-Mailer: git-send-email 2.20.1.97.g81188d93c3-goog
 MIME-Version: 1.0
-In-Reply-To: <20190107184309.GM31793@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+This is a series of cleanups for issues raised in prior reviews that
+were unrelated to the patches at hand.
 
-On 1/7/19 1:43 PM, Michal Hocko wrote:
-> On Fri 04-01-19 15:18:08, Qian Cai wrote:
-> [...]
->> Though, I can't see any really benefit of this approach apart from "beautify"
-> 
-> This is not about beautifying! This is about making the code long term
-> maintainable. As you can see it is just too easy to break it with the
-> current scheme. And that is bad especially when the code is broken
-> because of an optimization.
-> 
+Changes in v2:
+- Updated commit messages
+- Removed CONSOLE from UART_CONSOLE_RX_WM
+- Coalesced lines where possible
+- Updated missed rxstale variable
 
-Understood, but the code is now fixed. If there is something fundamentally
-broken in the future, it may be a good time then to create a looks like
-hundred-line cleanup patch for long-term maintenance at the same time to fix
-real bugs.
+Ryan Case (4):
+  tty: serial: qcom_geni_serial: Remove use of *_relaxed() and mb()
+  tty: serial: qcom_geni_serial: Remove set_rfr_wm() and related
+    variables
+  tty: serial: qcom_geni_serial: Remove xfer_mode variable
+  tty: serial: qcom_geni_serial: Use u32 for register variables
+
+ drivers/tty/serial/qcom_geni_serial.c | 279 ++++++++++----------------
+ 1 file changed, 106 insertions(+), 173 deletions(-)
+
+-- 
+2.20.1.97.g81188d93c3-goog
+
