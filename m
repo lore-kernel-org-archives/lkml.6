@@ -2,130 +2,122 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3990DC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 00:09:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 142B9C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 00:12:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0827320675
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 00:09:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CA9B020827
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 00:12:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="AaQzgaPD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727190AbfAHAJY (ORCPT
+        id S1727186AbfAHAMp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 19:09:24 -0500
-Received: from mout.gmx.net ([212.227.15.15]:38367 "EHLO mout.gmx.net"
+        Mon, 7 Jan 2019 19:12:45 -0500
+Received: from ozlabs.org ([203.11.71.1]:57891 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726667AbfAHAJX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 19:09:23 -0500
-Received: from longitude ([109.90.232.48]) by mail.gmx.com (mrgmx001
- [212.227.17.190]) with ESMTPSA (Nemesis) id 0Ma1tv-1h0ewS1r27-00Lj9n; Tue, 08
- Jan 2019 01:08:55 +0100
-Date:   Tue, 8 Jan 2019 01:08:54 +0100
-From:   Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        YueHaibing <yuehaibing@huawei.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Jann Horn <jannh@google.com>, Kees Cook <keescook@chromium.org>
-Subject: Re: [PATCH] kernel/sys.c: Fix UNAME26 for 5.0
-Message-ID: <20190108000854.GD3987@latitude>
-References: <20190107180306.16602-1-j.neuschaefer@gmx.net>
- <CAHk-=wgAH7QZrAyzaTV1-6MecaSdVkiowSZEM7qwa0L2oegpLA@mail.gmail.com>
+        id S1726667AbfAHAMp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 19:12:45 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 43YXlF3ftgz9sCr;
+        Tue,  8 Jan 2019 11:12:41 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1546906362;
+        bh=cMTDZtCI1H59M+pn3p1TP7P3b+Xt+dG4315tizUTpmc=;
+        h=Date:From:To:Cc:Subject:From;
+        b=AaQzgaPDGftjeSkQnSAERObD5uAQOk6yAyvZ71I+UzvLVeVdDtJQG4FserEAX7u7U
+         pWXm2uwvA8l0aCDlj4wcr7ZNOHZF3qTAo1eZYU8lvt9eStPIpaeS3nB5VnZEOKTGjB
+         xIFjHgv2PPLaKV/wx2WlrJ0ksrCS1z03li+kPOFwnsMX2E3czx4IQXrzBIcgbrCOya
+         LwiVdwiSn7jtLzqyYwUyNdqBDq8udsmARW+O6qFcne2dUHBdhOCrVzZa8RtyKRdn5z
+         vA5nSli7/ZYVdXvyrm37UtWDYsIP2B3IizJvKqR4VuYd/CS5ieFJT3pYCl+ifAPElq
+         BPGwzE/urkAwQ==
+Date:   Tue, 8 Jan 2019 11:12:41 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Intel Graphics <intel-gfx@lists.freedesktop.org>,
+        DRI <dri-devel@lists.freedesktop.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Rob Clark <robdclark@gmail.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>
+Subject: linux-next: build failure after merge of the drm-misc tree
+Message-ID: <20190108111230.2dd3abd9@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="oJ71EGRlYNjSvfq7"
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wgAH7QZrAyzaTV1-6MecaSdVkiowSZEM7qwa0L2oegpLA@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Provags-ID: V03:K1:5q0ClxGSAqgtzwimn0uuqPnpoAa/ktzsZjRmFaBBZ6H/DdQpbD1
- wRc6YItH1q54Yc0rk4jHdD4+DDXvhY3WI3ZbAfReRHpMNtY+1xF3/UIBMt9NQMmH0IUm/i7
- 54QRhsWI0U6h70qW/XhYk8/SLq4ADXnb4Jve6LePlRriTBv7woa7U23U8L0VPzjic+sYXVP
- CFGbakEAKkis1RNQoojyA==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:lNqdgVyKOyg=:9wXSg8Adj4Sn+trvfdoWp4
- dBeoiSIj8hMfW/2opiGPLuVXbjT7Ginh5MaEzvwdFvbI7uCn8Hn654ttq1bpM45ttX+xRrpSs
- slXQGjgVv9R4+RXiBBIZSxukHZt4/HGjy/pbLEMdoRxn6T5BbSRF6AbfoiakfDpSKzG40COy3
- ha1Kbst9vZI6xDxhUTDkj7LhdX5T3U5s1MQtLGpFEAWg5WcZC3zwjgTcUhKJQRSV4PXW9YthX
- IC0zrotQ2brShlQNvnNjjEDPUhLY19dX8Kc8kDh+RtCjlg/hyCxTOHm/MCBF7q+iYxG8hYsH1
- pwpbzFNFxr2R0++XKgv0HfCbkl79/zxYE2677r43ghwI+3Y1sIgDX9zRRu7oMzXYkYhIRyIhT
- lmolIorM3u4oeV/FBEBkpEhro0T6MWSgNEG5Uze0Df4bRvHXgMxFSyUYrBW6+Rrc1wG/LouHy
- xtKElaeRFU6v2iC6OSVYJhzCPp27RF2Du4jnfITmIJ+zvD4NiOC7ebIMDxI2BxN0/JFSYIB1T
- C2Z6nQPAKFjA3C4GRjzJFSn1AGtatMG1CUZR3Uj8Fcf64oSTCANwGxtAZ5CDLOL+DrRzW5G4r
- LVIiKKhnyYVPZykxCx9cJrR+R3vj+Oijlx7qxeeAw7T6i/8hWI7z3YMekbGqzIrpTkT66U9zt
- 31d//0WZiXtgortciQMXa5gR64qAvYK/q99FC98TzTzeN+EdoMgv05Z9FIdGKXuJq6ncPGbMs
- nXzwSSTOF9nrBkkp0mmeVPpoNKfkalhBdN1XSPgWgpYUjKSg3bEhfvcpRn12ycrtbujqlYLwO
- kbojLLzbAHo/XREcK+eZ3blGIUGr3g/S1bC4sYoKcKXXjyF98UL+MNRBeAZposG6ThX66UGD4
- Ab5hwzlca6nZgAzePa33VCKTWayzbbkuT/wrwd0cmm65N1HA7dfKMn77rDHRzL
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi all,
 
---oJ71EGRlYNjSvfq7
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+After merging the drm-misc tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-On Mon, Jan 07, 2019 at 10:10:31AM -0800, Linus Torvalds wrote:
-> On Mon, Jan 7, 2019 at 10:03 AM Jonathan Neusch=C3=A4fer
-> <j.neuschaefer@gmx.net> wrote:
-> >
-> > UNAME26 is a mechanism to report Linux's version as 2.6.x, for
-> > compatibility with old/broken software. Because of the way it is
-> > implemented, it needs to be adjusted to handle version 5.0.
->=20
-> Do we actually need this?
+drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm.c: In function 'amdgpu_dm_mode_config_init':
+drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm.c:1695:30: error: passing argument 1 of 'drm_atomic_private_obj_init' from incompatible pointer type [-Werror=incompatible-pointer-types]
+  drm_atomic_private_obj_init(&adev->dm.atomic_obj,
+                              ^~~~~~~~~~~~~~~~~~~~
+In file included from include/drm/drm_dp_mst_helper.h:27,
+                 from drivers/gpu/drm/amd/amdgpu/amdgpu_mode.h:46,
+                 from drivers/gpu/drm/amd/amdgpu/amdgpu.h:57,
+                 from drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm.c:34:
+include/drm/drm_atomic.h:437:53: note: expected 'struct drm_device *' but argument is of type 'struct drm_private_obj *'
+ void drm_atomic_private_obj_init(struct drm_device *dev,
+                                  ~~~~~~~~~~~~~~~~~~~^~~
+drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm.c:1696:9: error: passing argument 2 of 'drm_atomic_private_obj_init' from incompatible pointer type [-Werror=incompatible-pointer-types]
+         &state->base,
+         ^~~~~~~~~~~~
+In file included from include/drm/drm_dp_mst_helper.h:27,
+                 from drivers/gpu/drm/amd/amdgpu/amdgpu_mode.h:46,
+                 from drivers/gpu/drm/amd/amdgpu/amdgpu.h:57,
+                 from drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm.c:34:
+include/drm/drm_atomic.h:438:30: note: expected 'struct drm_private_obj *' but argument is of type 'struct drm_private_state *'
+      struct drm_private_obj *obj,
+      ~~~~~~~~~~~~~~~~~~~~~~~~^~~
+drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm.c:1697:9: error: passing argument 3 of 'drm_atomic_private_obj_init' from incompatible pointer type [-Werror=incompatible-pointer-types]
+         &dm_atomic_state_funcs);
+         ^~~~~~~~~~~~~~~~~~~~~~
+In file included from include/drm/drm_dp_mst_helper.h:27,
+                 from drivers/gpu/drm/amd/amdgpu/amdgpu_mode.h:46,
+                 from drivers/gpu/drm/amd/amdgpu/amdgpu.h:57,
+                 from drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm.c:34:
+include/drm/drm_atomic.h:439:32: note: expected 'struct drm_private_state *' but argument is of type 'struct drm_private_state_funcs *'
+      struct drm_private_state *state,
+      ~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~
+drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm.c:1695:2: error: too few arguments to function 'drm_atomic_private_obj_init'
+  drm_atomic_private_obj_init(&adev->dm.atomic_obj,
+  ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from include/drm/drm_dp_mst_helper.h:27,
+                 from drivers/gpu/drm/amd/amdgpu/amdgpu_mode.h:46,
+                 from drivers/gpu/drm/amd/amdgpu/amdgpu.h:57,
+                 from drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm.c:34:
+include/drm/drm_atomic.h:437:6: note: declared here
+ void drm_atomic_private_obj_init(struct drm_device *dev,
+      ^~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-I don't run any such old software, so I don't have a strong opinion
-here; I just sent this patch because I knew UNAME26 version strings
-would jump back without it.
+Caused by commit
 
-> I'd rather let it bitrot, and just let it return random versions. It
-> will just start again at 2.4.60, won't it?
+  b962a12050a3 ("drm/atomic: integrate modeset lock with private objects")
 
-Correct.
-(Well, it's 2.6, not 2.4, but yes)
+interacting with commit
 
-> Anybody who uses UNAME26 for a 5.x kernel might as well think it's
-> still 4.x. The user space is so old that it can't possibly care about
-> differences between 4.x and 5.x, can it?
->=20
-> The only thing that matters is that it shows "2.4.<largeenough>",
-> which it will do regardless.
+  eb3dc8978596 ("drm/amd/display: Use private obj helpers for dm_atomic_state")
 
-Good point, I guess that's a valid appraoch.
+from Linus' tree (merged during the merge window).
 
+Its not obvious how to fix this up, so I have used the drm-misc tree
+from next-20190107 for today.
 
-
-Jonathan Neusch=C3=A4fer
-
---oJ71EGRlYNjSvfq7
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEvHAHGBBjQPVy+qvDCDBEmo7zX9sFAlwz6g4ACgkQCDBEmo7z
-X9tnPQ/8DrchH8ol/s3F9fk2ak3Wvu68ACF13dJTptlAzZJSdRkaFNGBKGoqkhVA
-UvYhmsu3JFFxGlcarrtqV6OS41ReLVrmtTvscCfrKtXZKlQ5AW2vXnEpJpVUTKMA
-3wJk9S59sYVQ04IArWtgOa6Eaoupul9G0/ferm8cgb78ZtxpFszlMPvXmuDpauNh
-R1gfkL2qDXyOjVhgnobpFma8I+RBhJWIQrKJgGr1oZ+8qhtE9hBwRgiHobNmQ4YH
-H9h22ZIDG4tOAsjSTXhvTsMkl/Tozql1UAypSZ4/dLsP8hAjobidDhk9Cg9qKjYI
-8MdHY8dzlXzFfRuRyJU4JxNLHy4O5n5PsWZN/I8dJdhMepqsg13+elENxTXWoxct
-z8/VSeeB0lG+Ipg7CarXVSbLxU9909JCkQk09bu9SjIPoc2tiQnjjVMmXlZzH/F8
-tcZYAfov24e4Ciop6I1aAhHOcqhQzPb4SG5HQ6fwlM2R2QfL4gtJ+jhv0KZRJJlB
-I/K4AbOwpuSmmWHX9TUwUApjyCCqi6saav9afdKgWEfi2Cxo2wqjkRpVjTimBWcO
-wyrKg9lGTTXfroV5KEMmDWwQn69L08UlSus+B3k9mUXrnTB86oHPMK230VHivNLC
-Yobf7EVHYqlvOfMhsu45wXh5wzx3TtX19zttpR908gE0O4dUJPE=
-=XkwY
------END PGP SIGNATURE-----
-
---oJ71EGRlYNjSvfq7--
+-- 
+Cheers,
+Stephen Rothwell
