@@ -2,240 +2,135 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81247C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 09:37:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AF0BC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 09:38:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 47863218AF
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 09:37:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D9432206B7
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 09:38:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="P02rmWol"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728236AbfAHJhy (ORCPT
+        id S1728407AbfAHJir (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 04:37:54 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:62128 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727236AbfAHJhy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 04:37:54 -0500
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 43YnHM1psYz9v1Hf;
-        Tue,  8 Jan 2019 10:37:51 +0100 (CET)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id cA4zH0foTH8r; Tue,  8 Jan 2019 10:37:51 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 43YnHM14gfz9v1Hc;
-        Tue,  8 Jan 2019 10:37:51 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 21B668B7CB;
-        Tue,  8 Jan 2019 10:37:52 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id B9UCLNJ6RJx1; Tue,  8 Jan 2019 10:37:52 +0100 (CET)
-Received: from PO15451 (unknown [192.168.4.90])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 66F8D8B7C9;
-        Tue,  8 Jan 2019 10:37:51 +0100 (CET)
-Subject: Re: [PATCH v2 2/2] powerpc: use probe_user_read()
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-To:     Michael Ellerman <mpe@ellerman.id.au>,
-        Russell Currey <ruscur@russell.cc>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Mike Rapoport <rppt@linux.ibm.com>, linux-mm@kvack.org,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-References: <0b0db24e18063076e9d9f4e376994af83da05456.1546932949.git.christophe.leroy@c-s.fr>
- <e939991366b784ef13c7afcab51749e3b46327ac.1546932949.git.christophe.leroy@c-s.fr>
-Message-ID: <293a653c-52aa-6326-4022-73fb25590354@c-s.fr>
-Date:   Tue, 8 Jan 2019 10:37:51 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.3
-MIME-Version: 1.0
-In-Reply-To: <e939991366b784ef13c7afcab51749e3b46327ac.1546932949.git.christophe.leroy@c-s.fr>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+        Tue, 8 Jan 2019 04:38:47 -0500
+Received: from esa5.hgst.iphmx.com ([216.71.153.144]:8878 "EHLO
+        esa5.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727932AbfAHJiq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 04:38:46 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1546940326; x=1578476326;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references;
+  bh=yvtspfG7CoIHnopRwUo0DnfYLecRH2XoGu3rQKnIYZw=;
+  b=P02rmWolculmF+eIPGLtZQhlEuXq7RuKWhK8bUKt4X3cWaU0VKxuFLR4
+   Zcrtsjfy7ASKOt2MkfdJbpuwntVASnExzDjTU3TxhY0joKL7OfDy/195/
+   AQHzBgSiqL9hh25WXz8wztSbDe8yfUSWzAsVR77hQvX32aotwQItBXfVO
+   9t97aq4lcI1AJdz5VdXxT0x31XM3rqdjJB9Sb6ljXOo+S4JMPoRqLB7NB
+   /lmNg7X8hLqCSAEC7oR/ogknE2STEpBJHEHPj1XwVaZfesZeHklJKu0tR
+   EqeQRj47x6tFt2AN4ouhiirPkhxAYQZFs8LhXfTX4t+7/mg6fjbbRzgLa
+   A==;
+X-IronPort-AV: E=Sophos;i="5.56,453,1539619200"; 
+   d="scan'208";a="99458400"
+Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
+  by ob1.hgst.iphmx.com with ESMTP; 08 Jan 2019 17:38:45 +0800
+Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
+  by uls-op-cesaep01.wdc.com with ESMTP; 08 Jan 2019 01:18:50 -0800
+Received: from jedi-01.sdcorp.global.sandisk.com (HELO jedi-01.int.fusionio.com) ([10.11.143.218])
+  by uls-op-cesaip02.wdc.com with ESMTP; 08 Jan 2019 01:38:45 -0800
+From:   Atish Patra <atish.patra@wdc.com>
+To:     linux-riscv@lists.infradead.org
+Cc:     Atish Patra <atish.patra@wdc.com>,
+        Alan Kao <alankao@andestech.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Andreas Schwab <schwab@suse.de>,
+        Anup Patel <anup@brainfault.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Dmitriy Cherkasov <dmitriy@oss-tech.org>,
+        Jason Cooper <jason@lakedaemon.net>,
+        linux-kernel@vger.kernel.org, Marc Zyngier <marc.zyngier@arm.com>,
+        Michael Clark <michaeljclark@mac.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        =?UTF-8?q?Patrick=20St=C3=A4hlin?= <me@packi.ch>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Zong Li <zongbox@gmail.com>
+Subject: [PATCH v2 1/8] RISC-V: Do not wait indefinitely in __cpu_up
+Date:   Tue,  8 Jan 2019 01:38:31 -0800
+Message-Id: <1546940318-9752-2-git-send-email-atish.patra@wdc.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1546940318-9752-1-git-send-email-atish.patra@wdc.com>
+References: <1546940318-9752-1-git-send-email-atish.patra@wdc.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Michael and Russell,
+In SMP path, __cpu_up waits for other CPU to come online
+indefinitely. This is wrong as other CPU might be disabled
+in machine mode and possible CPU is set to the cpus present
+in DT.
 
-Any idea why:
-- checkpatch reports missing Signed-off-by:
-- Snowpatch build fails on PPC64 (it seems unrelated to the patch, 
-something wrong in lib/genalloc.c)
+Introduce a completion variable and waits only for a second.
 
-Thanks
-Christophe
+Signed-off-by: Atish Patra <atish.patra@wdc.com>
+Reviewed-by: Anup Patel <anup@brainfault.org>
+---
+ arch/riscv/kernel/smpboot.c | 14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
 
-Le 08/01/2019 à 08:37, Christophe Leroy a écrit :
-> Instead of opencoding, use probe_user_read() to failessly
-> read a user location.
-> 
-> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-> ---
->   v2: Using probe_user_read() instead of probe_user_address()
-> 
->   arch/powerpc/kernel/process.c   | 12 +-----------
->   arch/powerpc/mm/fault.c         |  6 +-----
->   arch/powerpc/perf/callchain.c   | 20 +++-----------------
->   arch/powerpc/perf/core-book3s.c |  8 +-------
->   arch/powerpc/sysdev/fsl_pci.c   | 10 ++++------
->   5 files changed, 10 insertions(+), 46 deletions(-)
-> 
-> diff --git a/arch/powerpc/kernel/process.c b/arch/powerpc/kernel/process.c
-> index ce393df243aa..6a4b59d574c2 100644
-> --- a/arch/powerpc/kernel/process.c
-> +++ b/arch/powerpc/kernel/process.c
-> @@ -1298,16 +1298,6 @@ void show_user_instructions(struct pt_regs *regs)
->   
->   	pc = regs->nip - (NR_INSN_TO_PRINT * 3 / 4 * sizeof(int));
->   
-> -	/*
-> -	 * Make sure the NIP points at userspace, not kernel text/data or
-> -	 * elsewhere.
-> -	 */
-> -	if (!__access_ok(pc, NR_INSN_TO_PRINT * sizeof(int), USER_DS)) {
-> -		pr_info("%s[%d]: Bad NIP, not dumping instructions.\n",
-> -			current->comm, current->pid);
-> -		return;
-> -	}
-> -
->   	seq_buf_init(&s, buf, sizeof(buf));
->   
->   	while (n) {
-> @@ -1318,7 +1308,7 @@ void show_user_instructions(struct pt_regs *regs)
->   		for (i = 0; i < 8 && n; i++, n--, pc += sizeof(int)) {
->   			int instr;
->   
-> -			if (probe_kernel_address((const void *)pc, instr)) {
-> +			if (probe_user_read(&instr, (void __user *)pc, sizeof(instr))) {
->   				seq_buf_printf(&s, "XXXXXXXX ");
->   				continue;
->   			}
-> diff --git a/arch/powerpc/mm/fault.c b/arch/powerpc/mm/fault.c
-> index 887f11bcf330..ec74305fa330 100644
-> --- a/arch/powerpc/mm/fault.c
-> +++ b/arch/powerpc/mm/fault.c
-> @@ -276,12 +276,8 @@ static bool bad_stack_expansion(struct pt_regs *regs, unsigned long address,
->   		if ((flags & FAULT_FLAG_WRITE) && (flags & FAULT_FLAG_USER) &&
->   		    access_ok(nip, sizeof(*nip))) {
->   			unsigned int inst;
-> -			int res;
->   
-> -			pagefault_disable();
-> -			res = __get_user_inatomic(inst, nip);
-> -			pagefault_enable();
-> -			if (!res)
-> +			if (!probe_user_read(&inst, nip, sizeof(inst)))
->   				return !store_updates_sp(inst);
->   			*must_retry = true;
->   		}
-> diff --git a/arch/powerpc/perf/callchain.c b/arch/powerpc/perf/callchain.c
-> index 0af051a1974e..0680efb2237b 100644
-> --- a/arch/powerpc/perf/callchain.c
-> +++ b/arch/powerpc/perf/callchain.c
-> @@ -159,12 +159,8 @@ static int read_user_stack_64(unsigned long __user *ptr, unsigned long *ret)
->   	    ((unsigned long)ptr & 7))
->   		return -EFAULT;
->   
-> -	pagefault_disable();
-> -	if (!__get_user_inatomic(*ret, ptr)) {
-> -		pagefault_enable();
-> +	if (!probe_user_read(ret, ptr, sizeof(*ret)))
->   		return 0;
-> -	}
-> -	pagefault_enable();
->   
->   	return read_user_stack_slow(ptr, ret, 8);
->   }
-> @@ -175,12 +171,8 @@ static int read_user_stack_32(unsigned int __user *ptr, unsigned int *ret)
->   	    ((unsigned long)ptr & 3))
->   		return -EFAULT;
->   
-> -	pagefault_disable();
-> -	if (!__get_user_inatomic(*ret, ptr)) {
-> -		pagefault_enable();
-> +	if (!probe_user_read(ret, ptr, sizeof(*ret)))
->   		return 0;
-> -	}
-> -	pagefault_enable();
->   
->   	return read_user_stack_slow(ptr, ret, 4);
->   }
-> @@ -307,17 +299,11 @@ static inline int current_is_64bit(void)
->    */
->   static int read_user_stack_32(unsigned int __user *ptr, unsigned int *ret)
->   {
-> -	int rc;
-> -
->   	if ((unsigned long)ptr > TASK_SIZE - sizeof(unsigned int) ||
->   	    ((unsigned long)ptr & 3))
->   		return -EFAULT;
->   
-> -	pagefault_disable();
-> -	rc = __get_user_inatomic(*ret, ptr);
-> -	pagefault_enable();
-> -
-> -	return rc;
-> +	return probe_user_read(ret, ptr, sizeof(*ret));
->   }
->   
->   static inline void perf_callchain_user_64(struct perf_callchain_entry_ctx *entry,
-> diff --git a/arch/powerpc/perf/core-book3s.c b/arch/powerpc/perf/core-book3s.c
-> index b0723002a396..4b64ddf0db68 100644
-> --- a/arch/powerpc/perf/core-book3s.c
-> +++ b/arch/powerpc/perf/core-book3s.c
-> @@ -416,7 +416,6 @@ static void power_pmu_sched_task(struct perf_event_context *ctx, bool sched_in)
->   static __u64 power_pmu_bhrb_to(u64 addr)
->   {
->   	unsigned int instr;
-> -	int ret;
->   	__u64 target;
->   
->   	if (is_kernel_addr(addr)) {
-> @@ -427,13 +426,8 @@ static __u64 power_pmu_bhrb_to(u64 addr)
->   	}
->   
->   	/* Userspace: need copy instruction here then translate it */
-> -	pagefault_disable();
-> -	ret = __get_user_inatomic(instr, (unsigned int __user *)addr);
-> -	if (ret) {
-> -		pagefault_enable();
-> +	if (probe_user_read(&instr, (unsigned int __user *)addr, sizeof(instr)))
->   		return 0;
-> -	}
-> -	pagefault_enable();
->   
->   	target = branch_target(&instr);
->   	if ((!target) || (instr & BRANCH_ABSOLUTE))
-> diff --git a/arch/powerpc/sysdev/fsl_pci.c b/arch/powerpc/sysdev/fsl_pci.c
-> index 918be816b097..c8a1b26489f5 100644
-> --- a/arch/powerpc/sysdev/fsl_pci.c
-> +++ b/arch/powerpc/sysdev/fsl_pci.c
-> @@ -1068,13 +1068,11 @@ int fsl_pci_mcheck_exception(struct pt_regs *regs)
->   	addr += mfspr(SPRN_MCAR);
->   
->   	if (is_in_pci_mem_space(addr)) {
-> -		if (user_mode(regs)) {
-> -			pagefault_disable();
-> -			ret = get_user(inst, (__u32 __user *)regs->nip);
-> -			pagefault_enable();
-> -		} else {
-> +		if (user_mode(regs))
-> +			ret = probe_user_read(&inst, (void __user *)regs->nip,
-> +					      sizeof(inst));
-> +		else
->   			ret = probe_kernel_address((void *)regs->nip, inst);
-> -		}
->   
->   		if (!ret && mcheck_handle_load(regs, inst)) {
->   			regs->nip += 4;
-> 
+diff --git a/arch/riscv/kernel/smpboot.c b/arch/riscv/kernel/smpboot.c
+index fc185eca..32e14572 100644
+--- a/arch/riscv/kernel/smpboot.c
++++ b/arch/riscv/kernel/smpboot.c
+@@ -39,6 +39,7 @@
+ 
+ void *__cpu_up_stack_pointer[NR_CPUS];
+ void *__cpu_up_task_pointer[NR_CPUS];
++static DECLARE_COMPLETION(cpu_running);
+ 
+ void __init smp_prepare_boot_cpu(void)
+ {
+@@ -81,6 +82,7 @@ void __init setup_smp(void)
+ 
+ int __cpu_up(unsigned int cpu, struct task_struct *tidle)
+ {
++	int ret = 0;
+ 	int hartid = cpuid_to_hartid_map(cpu);
+ 	tidle->thread_info.cpu = cpu;
+ 
+@@ -96,10 +98,15 @@ int __cpu_up(unsigned int cpu, struct task_struct *tidle)
+ 		  task_stack_page(tidle) + THREAD_SIZE);
+ 	WRITE_ONCE(__cpu_up_task_pointer[hartid], tidle);
+ 
+-	while (!cpu_online(cpu))
+-		cpu_relax();
++	wait_for_completion_timeout(&cpu_running,
++					    msecs_to_jiffies(1000));
+ 
+-	return 0;
++	if (!cpu_online(cpu)) {
++		pr_crit("CPU%u: failed to come online\n", cpu);
++		ret = -EIO;
++	}
++
++	return ret;
+ }
+ 
+ void __init smp_cpus_done(unsigned int max_cpus)
+@@ -125,6 +132,7 @@ asmlinkage void __init smp_callin(void)
+ 	 * a local TLB flush right now just in case.
+ 	 */
+ 	local_flush_tlb_all();
++	complete(&cpu_running);
+ 	/*
+ 	 * Disable preemption before enabling interrupts, so we don't try to
+ 	 * schedule a CPU that hasn't actually started yet.
+-- 
+2.7.4
+
