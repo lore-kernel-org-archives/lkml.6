@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 672C1C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:58:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 607A9C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:59:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C9DE20660
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:58:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3130220827
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:59:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546977536;
-	bh=0AlTjQqK+uPi0Cm75wSlmaonb8yASqHjdCao1vhi/LM=;
+	s=default; t=1546977540;
+	bh=zpKBx+Mr14lsVMT+rVCB0LfSUJmnEFxpb6RSAuLos4Y=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=JhC9aOszSEARQH18o9VmLPmn0UZRkU3NhaiFJElTU65Pt7UzJdXQW38lqRKRdxkTw
-	 0ltDuXOPO8Eh+oslSIkMtupoxmoNDRVmvR0neDShD4Q6uPw7fvKM8aL58sMjLIdIfL
-	 LIJ2bOUxT33zLuG7nzXG4xiYtW4hAb5LYPVQCqMc=
+	b=q0/jVeDOqTIAWhun9JfSmqEt2FtuzWx6leQqwlUGC4lYoltia/+oZTMaRxrrHz/30
+	 njSB8vSu5PYucaD8lTImn2U33HCPFQOfG5bYl2R+cVXd3I+Ne+Mn5NzLP7PDpQ6jlT
+	 qlh4y5JRMJeTj5FbDFXSGz+QmDU7Q869p5jXbkpk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732813AbfAHT6z (ORCPT
+        id S1731360AbfAHT6y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:58:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36836 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 14:58:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36896 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730367AbfAHT30 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:29:26 -0500
+        id S1730391AbfAHT31 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:29:27 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E3ED62176F;
-        Tue,  8 Jan 2019 19:29:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 09A75217D9;
+        Tue,  8 Jan 2019 19:29:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546975765;
-        bh=0AlTjQqK+uPi0Cm75wSlmaonb8yASqHjdCao1vhi/LM=;
+        s=default; t=1546975766;
+        bh=zpKBx+Mr14lsVMT+rVCB0LfSUJmnEFxpb6RSAuLos4Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IVVgYwidPfnd2oh2JHC7XOj4ZVOBHfE7tlamvBln8MAVfUEuzV2xNlgYhcezup9Gg
-         9CArMYa4GnSc+pNIKolhHfTRt/vNFoKxpyw9Ur+sP785UnVE6vA0PgZMOSNMxoxA4V
-         D62mfjEbNxdzGO1ognbUNo8Z3xoz+4r1pZgnQkzs=
+        b=SpFC4CugkqmPKPAVlEurMKIGmTyJ2r/Wl4v+bpgRX7tQlS2jENpE2NwYUbFuMo5ih
+         V3cqWOosPVPWv6V0bcjXF0AXRMtfx5YqwE9onIeZXi2znmuFOysoa8lnrB4XhlcTcC
+         ghh6MnlWX+pflUnDAZDaiLdeAgM7kRw+LFW/0muQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Suraj Jitindar Singh <sjitindarsingh@gmail.com>,
         Paul Mackerras <paulus@ozlabs.org>,
         Sasha Levin <sashal@kernel.org>, kvm-ppc@vger.kernel.org,
         linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH AUTOSEL 4.20 107/117] KVM: PPC: Book3S HV: Align gfn to L1 page size when inserting nest-rmap entry
-Date:   Tue,  8 Jan 2019 14:26:15 -0500
-Message-Id: <20190108192628.121270-107-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.20 108/117] KVM: PPC: Book3S HV: Apply combination of host and l1 pte rc for nested guest
+Date:   Tue,  8 Jan 2019 14:26:16 -0500
+Message-Id: <20190108192628.121270-108-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108192628.121270-1-sashal@kernel.org>
 References: <20190108192628.121270-1-sashal@kernel.org>
@@ -61,40 +61,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Suraj Jitindar Singh <sjitindarsingh@gmail.com>
 
-[ Upstream commit 8400f8740651c1a3081c30b46004451c448f4d5f ]
+[ Upstream commit 8b23eee4e55a32a2b51a180dfd27a8d214acc7a1 ]
 
-Nested rmap entries are used to store the translation from L1 gpa to L2
-gpa when entries are inserted into the shadow (nested) page tables. This
-rmap list is located by indexing the rmap array in the memslot by L1
-gfn. When we come to search for these entries we only know the L1 page size
-(which could be PAGE_SIZE, 2M or a 1G page) and so can only select a gfn
-aligned to that size. This means that when we insert the entry, so we can
-find it later, we need to align the gfn we use to select the rmap list
-in which to insert the entry to L1 page size as well.
+The shadow page table contains ptes for translations from nested guest
+address to host address. Currently when creating these ptes we take the
+rc bits from the pte for the L1 guest address to host address
+translation. This is incorrect as we must also factor in the rc bits
+from the pte for the nested guest address to L1 guest address
+translation (as contained in the L1 guest partition table for the nested
+guest).
 
-By not doing this we were missing nested rmap entries when modifying L1
-ptes which were for a page also passed through to an L2 guest.
+By not calculating these bits correctly L1 may not have been correctly
+notified when it needed to update its rc bits in the partition table it
+maintains for its nested guest.
+
+Modify the code so that the rc bits in the resultant pte for the L2->L0
+translation are the 'and' of the rc bits in the L2->L1 pte and the L1->L0
+pte, also accounting for whether this was a write access when setting
+the dirty bit.
 
 Signed-off-by: Suraj Jitindar Singh <sjitindarsingh@gmail.com>
 Signed-off-by: Paul Mackerras <paulus@ozlabs.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/kvm/book3s_hv_nested.c | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/powerpc/kvm/book3s_hv_nested.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
 diff --git a/arch/powerpc/kvm/book3s_hv_nested.c b/arch/powerpc/kvm/book3s_hv_nested.c
-index 401d2ecbebc5..fc64535e4c00 100644
+index fc64535e4c00..f8176ae3a5a7 100644
 --- a/arch/powerpc/kvm/book3s_hv_nested.c
 +++ b/arch/powerpc/kvm/book3s_hv_nested.c
-@@ -1220,6 +1220,8 @@ static long int __kvmhv_nested_page_fault(struct kvm_vcpu *vcpu,
- 			return ret;
- 		shift = kvmppc_radix_level_to_shift(level);
- 	}
-+	/* Align gfn to the start of the page */
-+	gfn = (gpa & ~((1UL << shift) - 1)) >> PAGE_SHIFT;
+@@ -1229,6 +1229,9 @@ static long int __kvmhv_nested_page_fault(struct kvm_vcpu *vcpu,
+ 	perm |= gpte.may_read ? 0UL : _PAGE_READ;
+ 	perm |= gpte.may_write ? 0UL : _PAGE_WRITE;
+ 	perm |= gpte.may_execute ? 0UL : _PAGE_EXEC;
++	/* Only set accessed/dirty (rc) bits if set in host and l1 guest ptes */
++	perm |= (gpte.rc & _PAGE_ACCESSED) ? 0UL : _PAGE_ACCESSED;
++	perm |= ((gpte.rc & _PAGE_DIRTY) && writing) ? 0UL : _PAGE_DIRTY;
+ 	pte = __pte(pte_val(pte) & ~perm);
  
- 	/* 3. Compute the pte we need to insert for nest_gpa -> host r_addr */
- 
+ 	/* What size pte can we insert? */
 -- 
 2.19.1
 
