@@ -2,97 +2,94 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33D7FC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 17:33:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB034C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 17:34:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0675620883
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 17:33:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Ff5zqWtv"
+	by mail.kernel.org (Postfix) with ESMTP id A5E8720827
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 17:34:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729120AbfAHRda (ORCPT
+        id S1729013AbfAHReS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 12:33:30 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:37021 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728526AbfAHRda (ORCPT
+        Tue, 8 Jan 2019 12:34:18 -0500
+Received: from iolanthe.rowland.org ([192.131.102.54]:53914 "HELO
+        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1728658AbfAHReS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 12:33:30 -0500
-Received: by mail-lj1-f195.google.com with SMTP id t18-v6so4124321ljd.4
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jan 2019 09:33:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=jfv87pSQ5LVZE74bOZwZ8D7JulJow6i/PnPfHwK+beY=;
-        b=Ff5zqWtvBaoawRAIyfaAccJMtP0gD6XI3rNud/64ERuZvWLhDJGp1ZhDEz6k4MyKQz
-         zl96KtWn8r9He2n6EF6CCs9eydPR9vXh0lkXoocD3+8xeKMI5XOsyRdq6YyFRLlwtH86
-         TBsmVdBas62E0jXz0ABg5ddG9IA3IAetBAYM4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=jfv87pSQ5LVZE74bOZwZ8D7JulJow6i/PnPfHwK+beY=;
-        b=pcdbF6e4kycvmznFknGjNM0dAeqGFstt0UMm7CwkS84GsNiBSRC6RimVX0UTcHK6hg
-         ghIn3hzJoFVy7/xglPKogYNkKubVlzj2pGJxgEXF67gfV5VNsyNSkSm/XFZAvMeUK6/x
-         1w4ghCJ1Dp6Wx2cZm/lkYaAjn5WIv8la0ZcrEmc3HJkdPCArVVd/mKlnygMxG7OviZfD
-         EqDl18qWiFOkxTpjA+V6DXW0DB6LQf3euWReCDfmk+fHjIqT2fEtXN+j9I0qrDoJc6YN
-         HMGOI0yca8OkfKn4Mpm1B6RGPIBzseSan/gG4qf8p/mA66lhlKM7KkAp492aFjqbHKyS
-         stEA==
-X-Gm-Message-State: AJcUukcpUzzi0V6+asQNasUtnlMxr0aEXqmBmj7/9LXlX9SC1Re/ximz
-        Wet80+oy7VY93q2WUmtyNGFzSumch/A=
-X-Google-Smtp-Source: ALg8bN65HxJHnPh0/IRDqe8BAkV8LciGAqyhHn6dpi+/hOL65c2JbX0Nj6dkYMRITdakRCUTioh0jg==
-X-Received: by 2002:a2e:99d7:: with SMTP id l23-v6mr1521786ljj.165.1546968806961;
-        Tue, 08 Jan 2019 09:33:26 -0800 (PST)
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com. [209.85.167.53])
-        by smtp.gmail.com with ESMTPSA id u21-v6sm14437390lju.46.2019.01.08.09.33.25
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 08 Jan 2019 09:33:25 -0800 (PST)
-Received: by mail-lf1-f53.google.com with SMTP id u18so3518791lff.10
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jan 2019 09:33:25 -0800 (PST)
-X-Received: by 2002:a19:3fcf:: with SMTP id m198mr1519595lfa.106.1546968805166;
- Tue, 08 Jan 2019 09:33:25 -0800 (PST)
+        Tue, 8 Jan 2019 12:34:18 -0500
+Received: (qmail 3940 invoked by uid 2102); 8 Jan 2019 12:34:17 -0500
+Received: from localhost (sendmail-bs@127.0.0.1)
+  by localhost with SMTP; 8 Jan 2019 12:34:17 -0500
+Date:   Tue, 8 Jan 2019 12:34:17 -0500 (EST)
+From:   Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@iolanthe.rowland.org
+To:     Kai Heng Feng <kai.heng.feng@canonical.com>
+cc:     Greg KH <gregkh@linuxfoundation.org>, <linux-usb@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4] USB: Don't enable LPM if it's already enabled
+In-Reply-To: <98BF2E31-2F7F-47FA-B591-40B2FFBC65F1@canonical.com>
+Message-ID: <Pine.LNX.4.44L0.1901081230560.1355-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
-References: <1546964798-30067-1-git-send-email-guoren@kernel.org> <1546964798-30067-4-git-send-email-guoren@kernel.org>
-In-Reply-To: <1546964798-30067-4-git-send-email-guoren@kernel.org>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 8 Jan 2019 09:33:09 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wh0H6_Vh3XNQ0EKWa96UFkr7j=v-++2L4kraSLR-RVciQ@mail.gmail.com>
-Message-ID: <CAHk-=wh0H6_Vh3XNQ0EKWa96UFkr7j=v-++2L4kraSLR-RVciQ@mail.gmail.com>
-Subject: Re: [PATCH 4/5] csky: fixup compile error with pte_alloc
-To:     Guo Ren <guoren@kernel.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>, marc.zyngier@arm.com,
-        Arnd Bergmann <arnd@arndb.de>, linux-doc@vger.kernel.org,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Guo Ren <ren_guo@c-sky.com>,
-        Joel Fernandes <joel@joelfernandes.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: TEXT/PLAIN; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 8, 2019 at 8:27 AM <guoren@kernel.org> wrote:
->
-> +       for (i = 0; i < PAGE_SIZE/sizeof(pte_t); i++)
-> +               (pte + i)->pte_low = _PAGE_GLOBAL;
+On Wed, 9 Jan 2019, Kai Heng Feng wrote:
 
-When I first read this, I went "hmm. pte_high is not initialized".
+> > On Jan 8, 2019, at 11:41 PM, Greg KH <gregkh@linuxfoundation.org> wrote:
+> > 
+> > On Mon, Dec 03, 2018 at 06:26:43PM +0800, Kai-Heng Feng wrote:
+> >> USB Bluetooth controller QCA ROME (0cf3:e007) sometimes stops working
+> >> after S3:
+> >> [ 165.110742] Bluetooth: hci0: using NVM file: qca/nvm_usb_00000302.bin
+> >> [ 168.432065] Bluetooth: hci0: Failed to send body at 4 of 1953 (-110)
+> >> 
+> >> After some experiments, I found that disabling LPM can workaround the
+> >> issue.
+> >> 
+> >> On some platforms, the USB power is cut during S3, so the driver uses
+> >> reset-resume to resume the device. During port resume, LPM gets enabled
+> >> twice, by usb_reset_and_verify_device() and usb_port_resume().
+> >> 
+> >> So let's enable LPM for just once, as this solves the issue for the
+> >> device in question.
+> >> 
+> >> Also consolidate USB2 LPM functions to usb_enable_usb2_hardware_lpm()
+> >> and usb_disable_usb2_hardware_lpm().
+> > 
+> > I thought I asked for this to be two different patches.  One that does
+> > the "consolidation", and then one that fixes the bug.  You are mixing
+> > two different things here together, making it harder to review.
+> > 
+> > Can you please break this up and send a patch series, with the correct
+> > "Fixes:" tag added to the second patch that actually fixes the issue?
+> 
+> The consolidation itself is the fix, so I am not sure how to break this up.
+> 
+> In reset-resume case, LPM gets enabled twice, by
+> usb_reset_and_verify_device() and usb_port_resume().
+> 
+> If it’s a normal resume, LPM only gets enabled once, by
+> usb_port_resume().
+> 
+> Since all three checks (capable, allowed and enabled) are merged to
+> a single place, enabling LPM twice can be avoided, hence fixing the
+> issue.
 
-But csky doesn't have a pte_high, and it seems that csky and SH both
-decided to call their (single-word) pte member 'pte_low'.
+One approach would be to have the first patch add the new functions and
+change the code to call them instead of the original function, but
+leaves the checks the way they are now.  Then the second patch could
+add the checks to the new functions and remove them from the call
+sites.
 
-Which is a bit odd, but whatever.
+I'm not sure if it's worth the effort to break things up that way, but 
+it might make Greg happy.  :-)
 
-Other than that oddity, it looks fine to me. I assume I'll get a pull
-request sooner or later,
+Alan Stern
 
-              Linus
