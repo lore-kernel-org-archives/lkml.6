@@ -4,53 +4,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36936C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:55:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 652D1C43612
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:55:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F15B6218AD
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:55:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 352EB20883
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:55:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546977312;
-	bh=KcFeW3P2svcfvbfRibNPI4rXUXIn+IDXesS+I8bBApg=;
+	s=default; t=1546977318;
+	bh=pg0mARTbLSXhDeDct95VCf35MXOvOqH0qv1M4eu7q2Y=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Hk9fbJcT2cSP2eUl3UDTjA5VlEPZbYMIFrAghpmM6mz2+XZTeaXGlE+W+ybeB6rEc
-	 E1rxvEdNUj5TzVvZO5m8SMDRWW+JM5bZLLO10lPU7tev3me9W3DRDdpd9CvSWbMjjH
-	 t5sLVx3Q8e8F+zXWrq7mXu1Zf/O940ZiIWvQlDh8=
+	b=PWZX9W5HxHbIXIYQSI6gGkHvNNHFcoi9YzDHJYf2rMvrQq15flD6hwS8s7bDtR4vK
+	 YvFcoFdlyYJVr+/JiZbKkEBMuerrtt2l4BslyPJckmpMSQU4oqNQ/7MTV1bKLgpR7Z
+	 v66XgxdlmVyo9o2dwquC59j4hz1rGGMfRnp6c8EA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732524AbfAHTzK (ORCPT
+        id S1730742AbfAHTaX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:55:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38136 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730739AbfAHTaX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 8 Jan 2019 14:30:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37852 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729714AbfAHTaN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:30:13 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1D76220827;
-        Tue,  8 Jan 2019 19:30:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4378120665;
+        Tue,  8 Jan 2019 19:30:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546975822;
-        bh=KcFeW3P2svcfvbfRibNPI4rXUXIn+IDXesS+I8bBApg=;
+        s=default; t=1546975812;
+        bh=pg0mARTbLSXhDeDct95VCf35MXOvOqH0qv1M4eu7q2Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hLUv7j3Ar6pomZPgwl1+P2USV5xT9Qq5Tl7xrHJILkjN9mRoU90aqYTUub5QZAfYP
-         NiWKQdPaQn+vyw4nzK6wuEathxu1TX6qXWMjTNC8YUxc3V96Z1guardhscsYS3OW+F
-         LXy/wBF7+uUkOZjOp8EZElkpm8fIyT7U1VPCkYwo=
+        b=aSO6o8PPGa4PCQlSuUP6m0lwi5ecP8m4UPzBOQXDgPjKLVaREb2Y4izg/ig6wS7az
+         Zz0krJjw8XaenvSjTngOsoJhkq+ImIk2zu3cZmfSPzp5V/Lgxx7srSGqIX+mWnuxo9
+         0Z7FiCoekRM6n7IN/+PH7XHK+pChT6YUDJzRgp8U=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     "Daniel T. Lee" <danieltimlee@gmail.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 22/97] samples: bpf: fix: error handling regarding kprobe_events
-Date:   Tue,  8 Jan 2019 14:28:31 -0500
-Message-Id: <20190108192949.122407-22-sashal@kernel.org>
+Cc:     Borislav Petkov <bp@suse.de>, Yi Wang <wang.yi59@zte.com.cn>,
+        Michael Matz <matz@suse.de>, x86@kernel.org,
+        Sasha Levin <sashal@kernel.org>, linux-edac@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 15/97] x86/mce: Fix -Wmissing-prototypes warnings
+Date:   Tue,  8 Jan 2019 14:28:24 -0500
+Message-Id: <20190108192949.122407-15-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108192949.122407-1-sashal@kernel.org>
 References: <20190108192949.122407-1-sashal@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -58,118 +59,125 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Daniel T. Lee" <danieltimlee@gmail.com>
+From: Borislav Petkov <bp@suse.de>
 
-[ Upstream commit 5a863813216ce79e16a8c1503b2543c528b778b6 ]
+[ Upstream commit 68b5e4326e4b8ac9080835005d8254fed0fb3c56 ]
 
-Currently, kprobe_events failure won't be handled properly.
-Due to calling system() indirectly to write to kprobe_events,
-it can't be identified whether an error is derived from kprobe or system.
+Add the proper includes and make smca_get_name() static.
 
-    // buf = "echo '%c:%s %s' >> /s/k/d/t/kprobe_events"
-    err = system(buf);
-    if (err < 0) {
-        printf("failed to create kprobe ..");
-        return -1;
-    }
+Fix an actual bug too which the warning triggered:
 
-For example, running ./tracex7 sample in ext4 partition,
-"echo p:open_ctree open_ctree >> /s/k/d/t/kprobe_events"
-gets 256 error code system() failure.
-=> The error comes from kprobe, but it's not handled correctly.
+  arch/x86/kernel/cpu/mcheck/therm_throt.c:395:39: error: conflicting \
+  types for ‘smp_thermal_interrupt’
+   asmlinkage __visible void __irq_entry smp_thermal_interrupt(struct pt_regs *r)
+                                         ^~~~~~~~~~~~~~~~~~~~~
+  In file included from arch/x86/kernel/cpu/mcheck/therm_throt.c:29:
+  ./arch/x86/include/asm/traps.h:107:17: note: previous declaration of \
+	  ‘smp_thermal_interrupt’ was here
+   asmlinkage void smp_thermal_interrupt(void);
 
-According to man of system(3), it's return value
-just passes the termination status of the child shell
-rather than treating the error as -1. (don't care success)
-
-Which means, currently it's not working as desired.
-(According to the upper code snippet)
-
-    ex) running ./tracex7 with ext4 env.
-    # Current Output
-    sh: echo: I/O error
-    failed to open event open_ctree
-
-    # Desired Output
-    failed to create kprobe 'open_ctree' error 'No such file or directory'
-
-The problem is, error can't be verified whether from child ps
-or system. But using write() directly can verify the command
-failure, and it will treat all error as -1. So I suggest using
-write() directly to 'kprobe_events' rather than calling system().
-
-Signed-off-by: Daniel T. Lee <danieltimlee@gmail.com>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: Yi Wang <wang.yi59@zte.com.cn>
+Cc: Michael Matz <matz@suse.de>
+Cc: x86@kernel.org
+Link: https://lkml.kernel.org/r/alpine.DEB.2.21.1811081633160.1549@nanos.tec.linutronix.de
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- samples/bpf/bpf_load.c | 33 ++++++++++++++++++++++++---------
- 1 file changed, 24 insertions(+), 9 deletions(-)
+ arch/x86/include/asm/traps.h             | 6 +++---
+ arch/x86/kernel/cpu/mcheck/mce_amd.c     | 5 +++--
+ arch/x86/kernel/cpu/mcheck/therm_throt.c | 3 ++-
+ arch/x86/kernel/cpu/mcheck/threshold.c   | 3 ++-
+ 4 files changed, 10 insertions(+), 7 deletions(-)
 
-diff --git a/samples/bpf/bpf_load.c b/samples/bpf/bpf_load.c
-index 904e775d1a44..cf40a8284a38 100644
---- a/samples/bpf/bpf_load.c
-+++ b/samples/bpf/bpf_load.c
-@@ -55,6 +55,23 @@ static int populate_prog_array(const char *event, int prog_fd)
- 	return 0;
+diff --git a/arch/x86/include/asm/traps.h b/arch/x86/include/asm/traps.h
+index 3de69330e6c5..afbc87206886 100644
+--- a/arch/x86/include/asm/traps.h
++++ b/arch/x86/include/asm/traps.h
+@@ -104,9 +104,9 @@ extern int panic_on_unrecovered_nmi;
+ 
+ void math_emulate(struct math_emu_info *);
+ #ifndef CONFIG_X86_32
+-asmlinkage void smp_thermal_interrupt(void);
+-asmlinkage void smp_threshold_interrupt(void);
+-asmlinkage void smp_deferred_error_interrupt(void);
++asmlinkage void smp_thermal_interrupt(struct pt_regs *regs);
++asmlinkage void smp_threshold_interrupt(struct pt_regs *regs);
++asmlinkage void smp_deferred_error_interrupt(struct pt_regs *regs);
+ #endif
+ 
+ extern void ist_enter(struct pt_regs *regs);
+diff --git a/arch/x86/kernel/cpu/mcheck/mce_amd.c b/arch/x86/kernel/cpu/mcheck/mce_amd.c
+index e12454e21b8a..9f915a8791cc 100644
+--- a/arch/x86/kernel/cpu/mcheck/mce_amd.c
++++ b/arch/x86/kernel/cpu/mcheck/mce_amd.c
+@@ -23,6 +23,7 @@
+ #include <linux/string.h>
+ 
+ #include <asm/amd_nb.h>
++#include <asm/traps.h>
+ #include <asm/apic.h>
+ #include <asm/mce.h>
+ #include <asm/msr.h>
+@@ -99,7 +100,7 @@ static u32 smca_bank_addrs[MAX_NR_BANKS][NR_BLOCKS] __ro_after_init =
+ 	[0 ... MAX_NR_BANKS - 1] = { [0 ... NR_BLOCKS - 1] = -1 }
+ };
+ 
+-const char *smca_get_name(enum smca_bank_types t)
++static const char *smca_get_name(enum smca_bank_types t)
+ {
+ 	if (t >= N_SMCA_BANK_TYPES)
+ 		return NULL;
+@@ -824,7 +825,7 @@ static void __log_error(unsigned int bank, u64 status, u64 addr, u64 misc)
+ 	mce_log(&m);
  }
  
-+static int write_kprobe_events(const char *val)
-+{
-+	int fd, ret, flags;
-+
-+	if ((val != NULL) && (val[0] == '\0'))
-+		flags = O_WRONLY | O_TRUNC;
-+	else
-+		flags = O_WRONLY | O_APPEND;
-+
-+	fd = open("/sys/kernel/debug/tracing/kprobe_events", flags);
-+
-+	ret = write(fd, val, strlen(val));
-+	close(fd);
-+
-+	return ret;
-+}
-+
- static int load_and_attach(const char *event, struct bpf_insn *prog, int size)
+-asmlinkage __visible void __irq_entry smp_deferred_error_interrupt(void)
++asmlinkage __visible void __irq_entry smp_deferred_error_interrupt(struct pt_regs *regs)
  {
- 	bool is_socket = strncmp(event, "socket", 6) == 0;
-@@ -166,10 +183,9 @@ static int load_and_attach(const char *event, struct bpf_insn *prog, int size)
+ 	entering_irq();
+ 	trace_deferred_error_apic_entry(DEFERRED_ERROR_VECTOR);
+diff --git a/arch/x86/kernel/cpu/mcheck/therm_throt.c b/arch/x86/kernel/cpu/mcheck/therm_throt.c
+index 2da67b70ba98..ee229ceee745 100644
+--- a/arch/x86/kernel/cpu/mcheck/therm_throt.c
++++ b/arch/x86/kernel/cpu/mcheck/therm_throt.c
+@@ -25,6 +25,7 @@
+ #include <linux/cpu.h>
  
- #ifdef __x86_64__
- 		if (strncmp(event, "sys_", 4) == 0) {
--			snprintf(buf, sizeof(buf),
--				 "echo '%c:__x64_%s __x64_%s' >> /sys/kernel/debug/tracing/kprobe_events",
--				 is_kprobe ? 'p' : 'r', event, event);
--			err = system(buf);
-+			snprintf(buf, sizeof(buf), "%c:__x64_%s __x64_%s",
-+				is_kprobe ? 'p' : 'r', event, event);
-+			err = write_kprobe_events(buf);
- 			if (err >= 0) {
- 				need_normal_check = false;
- 				event_prefix = "__x64_";
-@@ -177,10 +193,9 @@ static int load_and_attach(const char *event, struct bpf_insn *prog, int size)
- 		}
- #endif
- 		if (need_normal_check) {
--			snprintf(buf, sizeof(buf),
--				 "echo '%c:%s %s' >> /sys/kernel/debug/tracing/kprobe_events",
--				 is_kprobe ? 'p' : 'r', event, event);
--			err = system(buf);
-+			snprintf(buf, sizeof(buf), "%c:%s %s",
-+				is_kprobe ? 'p' : 'r', event, event);
-+			err = write_kprobe_events(buf);
- 			if (err < 0) {
- 				printf("failed to create kprobe '%s' error '%s'\n",
- 				       event, strerror(errno));
-@@ -520,7 +535,7 @@ static int do_load_bpf_file(const char *path, fixup_map_cb fixup_map)
- 		return 1;
+ #include <asm/processor.h>
++#include <asm/traps.h>
+ #include <asm/apic.h>
+ #include <asm/mce.h>
+ #include <asm/msr.h>
+@@ -390,7 +391,7 @@ static void unexpected_thermal_interrupt(void)
  
- 	/* clear all kprobes */
--	i = system("echo \"\" > /sys/kernel/debug/tracing/kprobe_events");
-+	i = write_kprobe_events("");
+ static void (*smp_thermal_vector)(void) = unexpected_thermal_interrupt;
  
- 	/* scan over all elf sections to get license and map info */
- 	for (i = 1; i < ehdr.e_shnum; i++) {
+-asmlinkage __visible void __irq_entry smp_thermal_interrupt(struct pt_regs *r)
++asmlinkage __visible void __irq_entry smp_thermal_interrupt(struct pt_regs *regs)
+ {
+ 	entering_irq();
+ 	trace_thermal_apic_entry(THERMAL_APIC_VECTOR);
+diff --git a/arch/x86/kernel/cpu/mcheck/threshold.c b/arch/x86/kernel/cpu/mcheck/threshold.c
+index 2b584b319eff..c21e0a1efd0f 100644
+--- a/arch/x86/kernel/cpu/mcheck/threshold.c
++++ b/arch/x86/kernel/cpu/mcheck/threshold.c
+@@ -6,6 +6,7 @@
+ #include <linux/kernel.h>
+ 
+ #include <asm/irq_vectors.h>
++#include <asm/traps.h>
+ #include <asm/apic.h>
+ #include <asm/mce.h>
+ #include <asm/trace/irq_vectors.h>
+@@ -18,7 +19,7 @@ static void default_threshold_interrupt(void)
+ 
+ void (*mce_threshold_vector)(void) = default_threshold_interrupt;
+ 
+-asmlinkage __visible void __irq_entry smp_threshold_interrupt(void)
++asmlinkage __visible void __irq_entry smp_threshold_interrupt(struct pt_regs *regs)
+ {
+ 	entering_irq();
+ 	trace_threshold_apic_entry(THRESHOLD_APIC_VECTOR);
 -- 
 2.19.1
 
