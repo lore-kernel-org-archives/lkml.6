@@ -2,172 +2,111 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.7 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDB15C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 17:14:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACC90C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 17:16:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 989C52183F
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 17:14:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 79D972070B
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 17:16:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Eos2TEKW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729104AbfAHROM (ORCPT
+        id S1728470AbfAHRQm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 12:14:12 -0500
-Received: from mx2.suse.de ([195.135.220.15]:55400 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728396AbfAHROL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 12:14:11 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id E5819AE19;
-        Tue,  8 Jan 2019 17:14:09 +0000 (UTC)
-Date:   Tue, 8 Jan 2019 18:14:01 +0100
-From:   Borislav Petkov <bp@suse.de>
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        x86-ml <x86@kernel.org>, lkml <linux-kernel@vger.kernel.org>,
-        James Morse <james.morse@arm.com>,
-        Babu Moger <babu.moger@amd.com>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Reinette Chatre <reinette.chatre@intel.com>,
-        Tony Luck <tony.luck@intel.com>
-Subject: [PATCH] x86/cache: Rename config option to CONFIG_X86_RESCTRL
-Message-ID: <20190108171401.GC12235@zn.tnic>
-References: <20181223124859.GA26860@zn.tnic>
- <CAHk-=wiX_6f+7DUaG-x2cQHctjtSHdMrtAeixitOQkbswq2scA@mail.gmail.com>
- <20181226205616.GA4557@zn.tnic>
- <20181228124904.GC20003@gmail.com>
+        Tue, 8 Jan 2019 12:16:42 -0500
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:38883 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727857AbfAHRQm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 12:16:42 -0500
+Received: by mail-yw1-f66.google.com with SMTP id d190so1833764ywb.5
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jan 2019 09:16:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=O3cxKFcsZ7Aia1to+6l/k0BtvfmTcgpFYAEMfuEti+s=;
+        b=Eos2TEKWPnZgj2WETxoQUQ7BxQ0jHy8uuT9rcrfgcL7jSNXF/m0zd96qmubsO2lxpj
+         fQnCb05A2WonrUFbhFnxV1OraNDP8w1jWCtKuqUQwPaNxDWf5SL348o6VY9p4Rtz4Llt
+         hMHxNdEDlSynpYuI37u/Q19TsnPNMIAwMY/3KnBl3BWAoqOB1UU8Muj4tLM9WKLFfqqZ
+         X5YU6zB5uuy+OdaYzMyVLyHweGoYVrs69oOpc/AW7dbzTEy5grPYL7qKsyw3XpiDNtk6
+         h4pfTD7SK2AMN9qv+OEVsI1l6TzmwlPuNF4DwRh3iV1yPT0ICH7TapDrfOVekvZcI/Tt
+         m7Rw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=O3cxKFcsZ7Aia1to+6l/k0BtvfmTcgpFYAEMfuEti+s=;
+        b=KJiGUKGrStyYGkSv0Os21wzC3LrEzo8U+MXwsmH+jnxA5GyhZ5B/DF9RuqHpXhBnKc
+         syeRYAmvmQrodM/ezHFQmHxABB5v3aAauUt/McGvtAYNaHO5yEFVyOqwCETYSzZ151cJ
+         yDb7ZL2/skOEVtpTYs4IgKGq9S6WqdJrJvw+Pb3DwmVBOjS93DckzUcU2IdfoIdt6Q9V
+         fDof6vGcbQJt9rVgwkt9Qjx2u0XjwIOO3+gN+qo14JiQMM/7lwAa0RlAa3KFjjK/O+8P
+         l5rFDLHW/MoSGNMdEJ14alBexVGtlf4lHnTW33N6yEEn3tD97wRbV2KP+SZ3pY4druia
+         k7oQ==
+X-Gm-Message-State: AJcUukdR+46WHb+fp7vothLwmrekq4Fj1zrdnhW0x7HfHq4tpWtIeWDv
+        /Qb5IA30ugxgPYo5gZe6pWpwlEex6JlEOAJEC4XY9g==
+X-Google-Smtp-Source: ALg8bN6l2URd5HHzySXgChs72GaH4+pHFZoZsTeq5nxA3kXQuG5nPR7MqAQJsQXI7rN/GEmH+0peK91MxbbL2clTb0A=
+X-Received: by 2002:a81:ec12:: with SMTP id j18mr2459544ywm.17.1546967800980;
+ Tue, 08 Jan 2019 09:16:40 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181228124904.GC20003@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190108161016.12361-1-enric.balletbo@collabora.com> <20190108161016.12361-5-enric.balletbo@collabora.com>
+In-Reply-To: <20190108161016.12361-5-enric.balletbo@collabora.com>
+From:   Guenter Roeck <groeck@google.com>
+Date:   Tue, 8 Jan 2019 09:16:29 -0800
+Message-ID: <CABXOdTdbzr0GW0NPf7SQRW-ra1-GCeWNDk=vPF-w-8gZuSvqoA@mail.gmail.com>
+Subject: Re: [PATCH 04/10] platform/chrome: cros_ec_vbc: remove unused includes
+To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        Gwendal Grignou <gwendal@chromium.org>, kernel@collabora.com,
+        Benson Leung <bleung@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Will queue to x86/urgent if no issues.
+On Tue, Jan 8, 2019 at 8:10 AM Enric Balletbo i Serra
+<enric.balletbo@collabora.com> wrote:
+>
+> None of these are required at the moment.
+>
+> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> ---
+>
+>  drivers/platform/chrome/cros_ec_vbc.c | 2 --
+>  1 file changed, 2 deletions(-)
+>
+> diff --git a/drivers/platform/chrome/cros_ec_vbc.c b/drivers/platform/chrome/cros_ec_vbc.c
+> index af9bfe6f385c..86903bc31b27 100644
+> --- a/drivers/platform/chrome/cros_ec_vbc.c
+> +++ b/drivers/platform/chrome/cros_ec_vbc.c
+> @@ -18,10 +18,8 @@
+>   * GNU General Public License for more details.
+>   */
+>
+> -#include <linux/of.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/mfd/cros_ec.h>
+> -#include <linux/mfd/cros_ec_commands.h>
 
----
-From: Borislav Petkov <bp@suse.de>
+It is customary to not rely on secondary includes. Yet, with this
+removal, the code will rely on cros_ec.h including cros_ec_commands.h,
+for the definition of EC_VBNV_CONTEXT_OP_READ. Does this really make
+sense ?
 
-CONFIG_RESCTRL is too generic. The final goal is to have a generic
-option called like this which is selected by the arch-specific ones
-CONFIG_X86_RESCTRL and CONFIG_ARM64_RESCTRL. The generic one will
-cover the resctrl filesystem and other generic and shared bits of
-functionality.
+[ I didn't check the other patches, but I suspect the same applies
+there as well ]
 
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Suggested-by: Ingo Molnar <mingo@kernel.org>
-Requested-by: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Babu Moger <babu.moger@amd.com>
-Cc: Fenghua Yu <fenghua.yu@intel.com>
-Cc: James Morse <james.morse@arm.com>
-Cc: Reinette Chatre <reinette.chatre@intel.com>
-Cc: Tony Luck <tony.luck@intel.com>
-Cc: x86@kernel.org
----
- Documentation/x86/resctrl_ui.txt     | 2 +-
- arch/x86/Kconfig                     | 2 +-
- arch/x86/include/asm/resctrl_sched.h | 4 ++--
- arch/x86/kernel/cpu/Makefile         | 2 +-
- arch/x86/kernel/cpu/resctrl/Makefile | 4 ++--
- include/linux/sched.h                | 2 +-
- 6 files changed, 8 insertions(+), 8 deletions(-)
+Guenter
 
-diff --git a/Documentation/x86/resctrl_ui.txt b/Documentation/x86/resctrl_ui.txt
-index d9aed8303984..e8e8d14d3c4e 100644
---- a/Documentation/x86/resctrl_ui.txt
-+++ b/Documentation/x86/resctrl_ui.txt
-@@ -9,7 +9,7 @@ Fenghua Yu <fenghua.yu@intel.com>
- Tony Luck <tony.luck@intel.com>
- Vikas Shivappa <vikas.shivappa@intel.com>
- 
--This feature is enabled by the CONFIG_RESCTRL and the X86 /proc/cpuinfo
-+This feature is enabled by the CONFIG_X86_RESCTRL and the x86 /proc/cpuinfo
- flag bits:
- RDT (Resource Director Technology) Allocation - "rdt_a"
- CAT (Cache Allocation Technology) - "cat_l3", "cat_l2"
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 6185d4f33296..15af091611e2 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -446,7 +446,7 @@ config RETPOLINE
- 	  branches. Requires a compiler with -mindirect-branch=thunk-extern
- 	  support for full protection. The kernel may run slower.
- 
--config RESCTRL
-+config X86_RESCTRL
- 	bool "Resource Control support"
- 	depends on X86 && (CPU_SUP_INTEL || CPU_SUP_AMD)
- 	select KERNFS
-diff --git a/arch/x86/include/asm/resctrl_sched.h b/arch/x86/include/asm/resctrl_sched.h
-index 54990fe2a3ae..40ebddde6ac2 100644
---- a/arch/x86/include/asm/resctrl_sched.h
-+++ b/arch/x86/include/asm/resctrl_sched.h
-@@ -2,7 +2,7 @@
- #ifndef _ASM_X86_RESCTRL_SCHED_H
- #define _ASM_X86_RESCTRL_SCHED_H
- 
--#ifdef CONFIG_RESCTRL
-+#ifdef CONFIG_X86_RESCTRL
- 
- #include <linux/sched.h>
- #include <linux/jump_label.h>
-@@ -88,6 +88,6 @@ static inline void resctrl_sched_in(void)
- 
- static inline void resctrl_sched_in(void) {}
- 
--#endif /* CONFIG_RESCTRL */
-+#endif /* CONFIG_X86_RESCTRL */
- 
- #endif /* _ASM_X86_RESCTRL_SCHED_H */
-diff --git a/arch/x86/kernel/cpu/Makefile b/arch/x86/kernel/cpu/Makefile
-index ac78f90aea56..b6fa0869f7aa 100644
---- a/arch/x86/kernel/cpu/Makefile
-+++ b/arch/x86/kernel/cpu/Makefile
-@@ -39,7 +39,7 @@ obj-$(CONFIG_CPU_SUP_UMC_32)		+= umc.o
- obj-$(CONFIG_X86_MCE)			+= mce/
- obj-$(CONFIG_MTRR)			+= mtrr/
- obj-$(CONFIG_MICROCODE)			+= microcode/
--obj-$(CONFIG_RESCTRL)			+= resctrl/
-+obj-$(CONFIG_X86_RESCTRL)		+= resctrl/
- 
- obj-$(CONFIG_X86_LOCAL_APIC)		+= perfctr-watchdog.o
- 
-diff --git a/arch/x86/kernel/cpu/resctrl/Makefile b/arch/x86/kernel/cpu/resctrl/Makefile
-index 6895049ceef7..1cabe6fd8e11 100644
---- a/arch/x86/kernel/cpu/resctrl/Makefile
-+++ b/arch/x86/kernel/cpu/resctrl/Makefile
-@@ -1,4 +1,4 @@
- # SPDX-License-Identifier: GPL-2.0
--obj-$(CONFIG_RESCTRL)	+= core.o rdtgroup.o monitor.o
--obj-$(CONFIG_RESCTRL)	+= ctrlmondata.o pseudo_lock.o
-+obj-$(CONFIG_X86_RESCTRL)	+= core.o rdtgroup.o monitor.o
-+obj-$(CONFIG_X86_RESCTRL)	+= ctrlmondata.o pseudo_lock.o
- CFLAGS_pseudo_lock.o = -I$(src)
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index 89541d248893..224666226e87 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -995,7 +995,7 @@ struct task_struct {
- 	/* cg_list protected by css_set_lock and tsk->alloc_lock: */
- 	struct list_head		cg_list;
- #endif
--#ifdef CONFIG_RESCTRL
-+#ifdef CONFIG_X86_RESCTRL
- 	u32				closid;
- 	u32				rmid;
- #endif
--- 
-2.19.1
-
--- 
-Regards/Gruss,
-    Boris.
-
-SUSE Linux GmbH, GF: Felix Imendörffer, Jane Smithard, Graham Norton, HRB 21284 (AG Nürnberg)
+>  #include <linux/module.h>
+>  #include <linux/slab.h>
+>
+> --
+> 2.20.1
+>
