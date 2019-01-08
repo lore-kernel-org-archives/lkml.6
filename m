@@ -2,136 +2,66 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D731C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 03:25:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C711C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 03:26:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 77D032183F
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 03:25:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 064132183F
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 03:26:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727266AbfAHDZA (ORCPT
+        id S1727568AbfAHD0i (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 22:25:00 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:13278 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727030AbfAHDZA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 22:25:00 -0500
-X-UUID: 963b6ed344c64603bf61c6f016fea25b-20190108
-X-UUID: 963b6ed344c64603bf61c6f016fea25b-20190108
-Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw02.mediatek.com
-        (envelope-from <miles.chen@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 186511454; Tue, 08 Jan 2019 11:24:51 +0800
-Received: from MTKMBS06N2.mediatek.inc (172.21.101.130) by
- mtkmbs02n1.mediatek.inc (172.21.101.77) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Tue, 8 Jan 2019 11:24:43 +0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs06n2.mediatek.inc (172.21.101.130) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Tue, 8 Jan 2019 11:24:43 +0800
-Received: from [172.21.77.33] (172.21.77.33) by mtkcas07.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Tue, 8 Jan 2019 11:24:43 +0800
-Message-ID: <1546917883.6754.8.camel@mtkswgap22>
-Subject: Re: [PATCH] arm64: trap illegal translations in __virt_to_phys()
-From:   Miles Chen <miles.chen@mediatek.com>
-To:     Mark Rutland <mark.rutland@arm.com>
-CC:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <wsd_upstream@mediatek.com>
-Date:   Tue, 8 Jan 2019 11:24:43 +0800
-In-Reply-To: <20190107150019.GC46743@lakrids.cambridge.arm.com>
-References: <1546860080-13027-1-git-send-email-miles.chen@mediatek.com>
-         <20190107150019.GC46743@lakrids.cambridge.arm.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        Mon, 7 Jan 2019 22:26:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41512 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727147AbfAHD0h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 22:26:37 -0500
+Received: from vmware.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0B2972173C;
+        Tue,  8 Jan 2019 03:26:35 +0000 (UTC)
+Date:   Mon, 7 Jan 2019 22:26:34 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc:     linux-kernel@vger.kernel.org,
+        linux-rt-users <linux-rt-users@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Carsten Emde <C.Emde@osadl.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        John Kacur <jkacur@redhat.com>,
+        Paul Gortmaker <paul.gortmaker@windriver.com>,
+        Julia Cartwright <julia@ni.com>,
+        Daniel Wagner <daniel.wagner@siemens.com>,
+        tom.zanussi@linux.intel.com
+Subject: Re: [PATCH RT 01/13] work-simple: drop a shit statement in
+ SWORK_EVENT_PENDING
+Message-ID: <20190107222634.381bfbd0@vmware.local.home>
+In-Reply-To: <20190108030623.GA6619@jagdpanzerIV>
+References: <20190107195252.599921907@goodmis.org>
+        <20190107195331.608898679@goodmis.org>
+        <20190108030623.GA6619@jagdpanzerIV>
+X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-X-TM-SNTS-SMTP: CF316DC2706CB07A686B9BCABA81EC80B486DB3C62FD6C297DC7DBA4C053A0FD2000:8
-X-MTK:  N
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2019-01-07 at 15:00 +0000, Mark Rutland wrote:
-> On Mon, Jan 07, 2019 at 07:21:20PM +0800, Miles Chen wrote:
-> > Current __virt_to_phys() only print warning messages for non-linear
-> > addresses. It's hard to catch all warnings by those messages.
-> 
-> Why? Are you seeing a large number of warnings somewhere?
+On Tue, 8 Jan 2019 12:06:23 +0900
+Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com> wrote:
 
-Official kernel works fine. I saw some cases in our internal branch and
-we're fixing them.
+> On (01/07/19 14:52), Steven Rostedt wrote:
+> > Subject: [PATCH RT 01/13] work-simple: drop a shit statement in SWORK_EVENT_PENDING  
+> 
+> 						shift?
 
-> 
-> > So add a VIRTUAL_BUG_ON() to trap all non-linear and non-symbol
-> > addresses (e.g., stack addresses)
-> > 
-> > Tested by pass stack addresses and symbol addresses to __pa(). Result:
-> > stack addresses: kernel BUG()
-> 
-> Either:
-> 
-> * Stacks are vmap'd, and __is_lm_address(stack_addr) is false. We'll
->   produce a WARNING() today (and return a junk physical address).
-> 
-> * Stacks are linear mapped, and cannot be distinguished from other
->   linear mapped addresses. The physical address will be valid.
-> 
-> ... so I don't understand why you need to change this.
+Yes. And I noticed this typo after I sent out the list. It appears that
+Sebastian's keyboard has a faulty 'f' key, as he has made this typo
+more than once.
 
-For the first case: for vmap'd stack, __pa() returns a junk
-physical address and it might be easier to debug this incorrect address
-translation by a BUG() call instead of monitoring the warning log.
-
-Like __phys_addr_symbol() does. __phys_addr_symbol() uses
-VIRTUAL_BUG_ON() for non symbol addresses.
-
-> 
-> > symbol addresses: kernel warning message
-> 
-> That should already be the case today, since the kernel image is mapped
-> separately from the linear map, so __is_lm_address(symbol_addr) should
-> be false.
-> 
-> > 
-> > Maybe we should trap all non-linear address translations in the future.
-> > 
-> > Signed-off-by: Miles Chen <miles.chen@mediatek.com>
-> > ---
-> >  arch/arm64/mm/physaddr.c | 5 +++++
-> >  1 file changed, 5 insertions(+)
-> > 
-> > diff --git a/arch/arm64/mm/physaddr.c b/arch/arm64/mm/physaddr.c
-> > index 67a9ba9eaa96..f6b935dad19c 100644
-> > --- a/arch/arm64/mm/physaddr.c
-> > +++ b/arch/arm64/mm/physaddr.c
-> > @@ -14,6 +14,11 @@ phys_addr_t __virt_to_phys(unsigned long x)
-> >  	      (void *)x,
-> >  	      (void *)x);
-> >  
-> > +	/* trap all non-linear and non-symbol addresses */
-> > +	VIRTUAL_BUG_ON(!__is_lm_address(x) &&
-> > +			(x < (unsigned long)KERNEL_START ||
-> > +			 x > (unsigned long)KERNEL_END));
-> 
-> The KERNEL_START and KERNEL_END definitions refer to the kernel image,
-> not the linear map, so it doesn't make any sense to permit those here.
-> 
-> It is *not* valid to call __virt_to_phys() with a symbol address. We
-> only support those in __virt_to_phys_nodebug() so that broken code has a
-> chance of stumbling on.
-> 
-> If you want the kernel to die immediately when it hits a warning here,
-> please set panic_on_warn.
-> 
-> Thanks,
-> Mark.
-
-
+-- Steve
