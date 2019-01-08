@@ -2,141 +2,164 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABF5CC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:43:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4A1DC43612
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:43:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 79A6B2063F
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:43:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="iwdJtN8l"
+	by mail.kernel.org (Postfix) with ESMTP id 7390E2063F
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:43:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1546976628;
+	bh=ZUPS2Q4/6NITXJFqTv69olSNSwwiCpjrBEWSTeZMVos=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=CEEQpty2ZibyHsicaiSHo/NkVLzCi34nlbcesxlXoKHJlg21ZyWIePh5oH2Vhlyl8
+	 UHD0MB12rCbxce2G4bCjjLq0AF41QtHx+7TjT3z6hL6SdzfZV2fMe3yXTb9APOSQth
+	 z6ASdy32YWs3UXZ8hLq7dmriRyA3expXrx51NaMI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732728AbfAHTn3 (ORCPT
+        id S1731820AbfAHTdw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:43:29 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:56218 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731966AbfAHTn0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:43:26 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=AUOfq+X9RJimQkb3B3mEHNGAavaLitn3Hl8uHiWIqCc=; b=iwdJtN8lmLFDvwKdHO8r4GiGb
-        fgAolE2IgxlTVTE+Rd2Trs0thFfChaK+U+a7PHrbKyhxphfWuDoRPabef2F4f4BIokXB/kajx22g3
-        eEXhl2mv34FzZ77oHG/KtQ1dS718Yy6DnwUN1bUkDGvvXPgPj9OMBIUk3TNNSNWjSIdn+/JS8W7zD
-        w7SoZFiws0XwH5pYlCj8oOd6G85Fz26YrVW/uvQvky7uMZ8kfN3fiVhwXeeFIFb3cbetwySyp+FD5
-        zUktCBUEsdpfPq2NoHVQEiRl/xKrD1747/u7FCUZvk4WSceEKvblUwf4wpIvVLae43+mfCtJ/vgUm
-        pS7XcN15A==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1ggxHL-0003mI-V5; Tue, 08 Jan 2019 19:43:12 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 69A3520280192; Tue,  8 Jan 2019 20:43:10 +0100 (CET)
-Date:   Tue, 8 Jan 2019 20:43:10 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Song Liu <songliubraving@fb.com>
-Cc:     lkml <linux-kernel@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "acme@kernel.org" <acme@kernel.org>,
-        "ast@kernel.org" <ast@kernel.org>,
-        "daniel@iogearbox.net" <daniel@iogearbox.net>,
-        Kernel Team <Kernel-team@fb.com>,
-        Andi Kleen <andi@firstfloor.org>
-Subject: Re: [PATCH v5 perf, bpf-next 3/7] perf, bpf: introduce
- PERF_RECORD_BPF_EVENT
-Message-ID: <20190108194310.GD1900@hirez.programming.kicks-ass.net>
-References: <20181220182904.4193196-1-songliubraving@fb.com>
- <20181220182904.4193196-4-songliubraving@fb.com>
- <20190108184116.GC30894@hirez.programming.kicks-ass.net>
- <77A478D9-F36F-443A-BBFD-F0C1FFE0DD90@fb.com>
+        Tue, 8 Jan 2019 14:33:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42504 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731782AbfAHTdm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:33:42 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id EC6FB2176F;
+        Tue,  8 Jan 2019 19:33:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1546976021;
+        bh=ZUPS2Q4/6NITXJFqTv69olSNSwwiCpjrBEWSTeZMVos=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=KjKybdkvoMuY6nJzjJ6aHKdUknmwg/zKPzJRG4Wb76GvA8NwOnIaXkcni8Izcssr/
+         kqkkBoBwlz9QSJvm0AD+hmAof8YWv+KDm2kZOGyp6i8goROWAfDxOUozEhd/09Tb68
+         +UQPUFbXdj6Fv7T5F/3EvFfbBQ87DhJpSzj1CbBE=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Brian Foster <bfoster@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <sashal@kernel.org>, linux-mm@kvack.org
+Subject: [PATCH AUTOSEL 4.14 51/53] mm/page-writeback.c: don't break integrity writeback on ->writepage() error
+Date:   Tue,  8 Jan 2019 14:32:19 -0500
+Message-Id: <20190108193222.123316-51-sashal@kernel.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190108193222.123316-1-sashal@kernel.org>
+References: <20190108193222.123316-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <77A478D9-F36F-443A-BBFD-F0C1FFE0DD90@fb.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 08, 2019 at 07:10:20PM +0000, Song Liu wrote:
-> > On Jan 8, 2019, at 10:41 AM, Peter Zijlstra <peterz@infradead.org> wrote:
-> > On Thu, Dec 20, 2018 at 10:29:00AM -0800, Song Liu wrote:
-> >> @@ -986,9 +987,35 @@ enum perf_event_type {
-> >> 	 */
-> >> 	PERF_RECORD_KSYMBOL			= 17,
-> >> 
-> >> +	/*
-> >> +	 * Record bpf events:
-> >> +	 *  enum perf_bpf_event_type {
-> >> +	 *	PERF_BPF_EVENT_UNKNOWN		= 0,
-> >> +	 *	PERF_BPF_EVENT_PROG_LOAD	= 1,
-> >> +	 *	PERF_BPF_EVENT_PROG_UNLOAD	= 2,
-> >> +	 *  };
-> >> +	 *
-> >> +	 * struct {
-> >> +	 *	struct perf_event_header	header;
-> >> +	 *	u16				type;
-> >> +	 *	u16				flags;
-> >> +	 *	u32				id;
-> >> +	 *	u8				tag[BPF_TAG_SIZE];
-> >> +	 *	struct sample_id		sample_id;
-> >> +	 * };
-> >> +	 */
-> >> +	PERF_RECORD_BPF_EVENT			= 18,
-> >> +
-> > 
-> > Elsewhere today, I raised the point that by the time (however short
-> > interval) userspace gets around to reading this event, the actual
-> > program could be gone again.
-> > 
-> > In this case the program has been with us for a very short period
-> > indeed; but it could still have generated some samples or otherwise
-> > generated trace data.
-> 
-> Since we already have the separate KSYMBOL events, BPF_EVENT is only 
-> required for advanced use cases, like annotation. So I guess missing 
-> it for very-short-living programs should not be a huge problem?
-> 
-> > It was suggested to allow pinning modules/programs to avoid this
-> > situation, but that of course has other undesirable effects, such as a
-> > trivial DoS.
-> > 
-> > A truly horrible hack would be to include an open filedesc in the event
-> > that needs closing to release the resource, but I'm sorry for even
-> > suggesting that **shudder**.
-> > 
-> > Do we have any sane ideas?
-> 
-> How about we gate the open filedesc solution with an option, and limit
-> that option for root only? If this still sounds hacky, maybe we should
-> just ignore when short-living programs are missed?
+From: Brian Foster <bfoster@redhat.com>
 
-I'm afraid we might also 'need' this for the kallsym thing.
+[ Upstream commit 3fa750dcf29e8606e3969d13d8e188cc1c0f511d ]
 
-The problem is that things like Intel PT (ARM Coresight too IIRC) encode
-a bitstream of branch-taken decisions. The only way to decode that and
-reconstruct the actual code-flow is with an exact matching text image.
+write_cache_pages() is used in both background and integrity writeback
+scenarios by various filesystems.  Background writeback is mostly
+concerned with cleaning a certain number of dirty pages based on various
+mm heuristics.  It may not write the full set of dirty pages or wait for
+I/O to complete.  Integrity writeback is responsible for persisting a set
+of dirty pages before the writeback job completes.  For example, an
+fsync() call must perform integrity writeback to ensure data is on disk
+before the call returns.
 
-In order to have this matching text we need to be able to copy out every
-piece of dynamic text (from kcore) that has ever executed before it
-dissapears.
+write_cache_pages() unconditionally breaks out of its processing loop in
+the event of a ->writepage() error.  This is fine for background
+writeback, which had no strict requirements and will eventually come
+around again.  This can cause problems for integrity writeback on
+filesystems that might need to clean up state associated with failed page
+writeouts.  For example, XFS performs internal delayed allocation
+accounting before returning a ->writepage() error, where applicable.  If
+the current writeback happens to be associated with an unmount and
+write_cache_pages() completes the writeback prematurely due to error, the
+filesystem is unmounted in an inconsistent state if dirty+delalloc pages
+still exist.
 
-Elsewhere (*), Andi suggests to have a kind of text-free fence
-interface, where userspace can call a complete. And I suppose as long we
-know there is a consumer, we also know we'll not be blocked
-indefinitely. So it would have to be slightly more complicated than
-suggested, but I think that is something we could work with.
+To handle this problem, update write_cache_pages() to always process the
+full set of pages for integrity writeback regardless of ->writepage()
+errors.  Save the first encountered error and return it to the caller once
+complete.  This facilitates XFS (or any other fs that expects integrity
+writeback to process the entire set of dirty pages) to clean up its
+internal state completely in the event of persistent mapping errors.
+Background writeback continues to exit on the first error encountered.
 
-It would also not complicate these events.
+[akpm@linux-foundation.org: fix typo in comment]
+Link: http://lkml.kernel.org/r/20181116134304.32440-1-bfoster@redhat.com
+Signed-off-by: Brian Foster <bfoster@redhat.com>
+Reviewed-by: Jan Kara <jack@suse.cz>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ mm/page-writeback.c | 35 +++++++++++++++++++++--------------
+ 1 file changed, 21 insertions(+), 14 deletions(-)
 
+diff --git a/mm/page-writeback.c b/mm/page-writeback.c
+index 3175ac850a53..e001de5ac50c 100644
+--- a/mm/page-writeback.c
++++ b/mm/page-writeback.c
+@@ -2157,6 +2157,7 @@ int write_cache_pages(struct address_space *mapping,
+ {
+ 	int ret = 0;
+ 	int done = 0;
++	int error;
+ 	struct pagevec pvec;
+ 	int nr_pages;
+ 	pgoff_t uninitialized_var(writeback_index);
+@@ -2253,25 +2254,31 @@ int write_cache_pages(struct address_space *mapping,
+ 				goto continue_unlock;
+ 
+ 			trace_wbc_writepage(wbc, inode_to_bdi(mapping->host));
+-			ret = (*writepage)(page, wbc, data);
+-			if (unlikely(ret)) {
+-				if (ret == AOP_WRITEPAGE_ACTIVATE) {
++			error = (*writepage)(page, wbc, data);
++			if (unlikely(error)) {
++				/*
++				 * Handle errors according to the type of
++				 * writeback. There's no need to continue for
++				 * background writeback. Just push done_index
++				 * past this page so media errors won't choke
++				 * writeout for the entire file. For integrity
++				 * writeback, we must process the entire dirty
++				 * set regardless of errors because the fs may
++				 * still have state to clear for each page. In
++				 * that case we continue processing and return
++				 * the first error.
++				 */
++				if (error == AOP_WRITEPAGE_ACTIVATE) {
+ 					unlock_page(page);
+-					ret = 0;
+-				} else {
+-					/*
+-					 * done_index is set past this page,
+-					 * so media errors will not choke
+-					 * background writeout for the entire
+-					 * file. This has consequences for
+-					 * range_cyclic semantics (ie. it may
+-					 * not be suitable for data integrity
+-					 * writeout).
+-					 */
++					error = 0;
++				} else if (wbc->sync_mode != WB_SYNC_ALL) {
++					ret = error;
+ 					done_index = page->index + 1;
+ 					done = 1;
+ 					break;
+ 				}
++				if (!ret)
++					ret = error;
+ 			}
+ 
+ 			/*
+-- 
+2.19.1
 
-
-[*] https://lkml.kernel.org/r/20190108172721.GN6118@tassilo.jf.intel.com
