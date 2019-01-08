@@ -2,140 +2,127 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58BE3C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 05:49:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80AD3C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 05:50:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 20F0A2173C
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 05:49:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4FD292173C
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 05:50:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="vHz5qEHV"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P2Z0F3Of"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727672AbfAHFt3 (ORCPT
+        id S1727766AbfAHFuE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 00:49:29 -0500
-Received: from perceval.ideasonboard.com ([213.167.242.64]:50762 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727290AbfAHFt2 (ORCPT
+        Tue, 8 Jan 2019 00:50:04 -0500
+Received: from mail-it1-f196.google.com ([209.85.166.196]:38936 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727290AbfAHFuE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 00:49:28 -0500
-Received: from localhost.localdomain (unknown [96.44.9.117])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 097DE586;
-        Tue,  8 Jan 2019 06:49:24 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1546926566;
-        bh=haDBg8FRrGdlSSiUJXlAfb0IkDX+97QtVOk53gCXxSQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=vHz5qEHVgpTqkpZwhDUdMmFC8PIcR6P6CCy7xa2ci8/NVw6bDc1BMcJz0WUdieQ90
-         6OpeeQ0AY6URuu9mT2Vpem4L7N13bz44qqjjIekhCLJ3e1v+A3++H4HxvpsNISn8U/
-         27uqamP6xGuzG5kWeEmkQk8phw5Q64PM25MRnikA=
-Date:   Tue, 8 Jan 2019 00:49:18 -0500
-From:   Paul Elder <paul.elder@ideasonboard.com>
-To:     Alan Stern <stern@rowland.harvard.edu>
-Cc:     laurent.pinchart@ideasonboard.com, kieran.bingham@ideasonboard.com,
-        b-liu@ti.com, rogerq@ti.com, balbi@kernel.org,
-        gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 5/6] usb: musb: gadget: implement optional explicit
- status stage
-Message-ID: <20190108054918.GB31873@localhost.localdomain>
-References: <20190106160221.4480-6-paul.elder@ideasonboard.com>
- <Pine.LNX.4.44L0.1901061449520.18206-100000@netrider.rowland.org>
+        Tue, 8 Jan 2019 00:50:04 -0500
+Received: by mail-it1-f196.google.com with SMTP id a6so4516424itl.4;
+        Mon, 07 Jan 2019 21:50:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=lWvCasaGEng9FXeUAWZryKZ30PKcNxsGSlD7TD/OKCw=;
+        b=P2Z0F3OfBdVvTYWLuCxJcyiWeizRCBPfYOY3CPEHW4gdifdmnBh+xxn8Z1oOZtDWX/
+         KDzX5vv2OXM/A3iljI52eyEpHXNnx0wfBEWTpn2S8KKfjslqi+daJ3DQ5SJAz8M8sl+7
+         jBrRD0dcvWYWiCJyJb5B8JmKr67OWAZnCsk6jOCaIyBoJOgSGlOAow9xL/f6vgN9/yxg
+         NXb20wf1JqTT7Xd+eG0bp13o4hPjJWUuQze5zD+8VFdOaD3ZOTTiWxXV4fBJ6iG7QCag
+         R/tl26kbmcTWBdJ3XrAgg430CirOJIlwfl8f9Ki6lnOSBgqepC/Ut2TI0Zhf3Ku1oeYS
+         RW+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=lWvCasaGEng9FXeUAWZryKZ30PKcNxsGSlD7TD/OKCw=;
+        b=Nba2nHYY7WXOb+ijJoVNmW0a7NOuRiyubQvflXKtjSEXTI9baRinHORPm/hEtShFiN
+         MJ+gXdGmQa9y+dWD15Zd1qimxLC0sf6Koe85jPIolCVbuPtk0ID8T01dR/2xTERQSCcD
+         Wk9cKEWFlNwL0smkQBh1lf0mJq4FtERSIXl0BHDxYwGsw+kz1EY4jcwSWT0ANmpr6He0
+         l8zj7zzu/IyYODCad1gHarxlGh5Uk1C7fx4ZA/I5Qe+zk9Ierm2IAjcg9Lx9FSdhn9LI
+         U9MURBtSOOsWKvk2e1pKewoSbtherqok6pyxZUrEyVLTHG61vN88Pz9Ul43x59jh7YCb
+         rVXA==
+X-Gm-Message-State: AJcUuke9xOq+XmGcVPEoHRIkYpuZNX7SDiAc1bi+gva5rmBupcBv/B4+
+        Fwt6qD9e8mDrawG+/evPUsECqCxccUKcOmJtNA==
+X-Google-Smtp-Source: ALg8bN70hUYANPkOlTuk95WZ1UOI/x7EZV3t6vDsz1Te3znSg01/IrN5fitPwynEga/IH990OOr7hqZI4YNljNVNsEQ=
+X-Received: by 2002:a02:8244:: with SMTP id q4mr235400jag.43.1546926603139;
+ Mon, 07 Jan 2019 21:50:03 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Pine.LNX.4.44L0.1901061449520.18206-100000@netrider.rowland.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <1546849485-27933-1-git-send-email-kernelfans@gmail.com> <7d72567c-2ed8-e2ae-8518-115cd9c8a82a@intel.com>
+In-Reply-To: <7d72567c-2ed8-e2ae-8518-115cd9c8a82a@intel.com>
+From:   Pingfan Liu <kernelfans@gmail.com>
+Date:   Tue, 8 Jan 2019 13:49:51 +0800
+Message-ID: <CAFgQCTtjD-3z52aETURY9YN-_qfy=u=xSYrdcnmMpSWow3kvjg@mail.gmail.com>
+Subject: Re: [RFC PATCH 0/4] x86_64/mm: remove bottom-up allocation style by
+ pushing forward the parsing of mem hotplug info
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     x86@kernel.org, linux-acpi@vger.kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jan 06, 2019 at 03:03:09PM -0500, Alan Stern wrote:
-> On Sun, 6 Jan 2019, Paul Elder wrote:
-> 
-> > Implement the mechanism for optional explicit status stage for the MUSB
-> > driver. This allows a function driver to specify what to reply for the
-> > status stage. The functionality for an implicit status stage is
-> > retained.
-> > 
-> > Signed-off-by: Paul Elder <paul.elder@ideasonboard.com>
-> > v1 Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> > v1 Acked-by: Bin Liu <b-liu@ti.com>
-> > ---
-> > No change from v3
-> > 
-> > Changes from v2:
-> > - update call to usb_gadget_control_complete to include status
-> > - since sending STALL from the function driver is now done with
-> >   usb_ep_set_halt, there is no need for the internal ep0_send_response to
-> >   take a stall/ack parameter; remove the parameter and make the function
-> >   only send ack, and remove checking for the status reply in the
-> >   usb_request for the status stage
-> > 
-> > Changes from v1:
-> > - obvious change to implement v2 mechanism laid out by 4/6 of this
-> >   series (send_response, and musb_g_ep0_send_response function has
-> >   been removed, call to usb_gadget_control_complete has been added)
-> > - ep0_send_response's ack argument has been changed from stall
-> > - last_packet flag in ep0_rxstate has been removed, since it is equal to
-> >   req != NULL
-> > 
-> >  drivers/usb/musb/musb_gadget.c     |  2 ++
-> >  drivers/usb/musb/musb_gadget_ep0.c | 23 +++++++++++++++++++++++
-> >  2 files changed, 25 insertions(+)
-> > 
-> > diff --git a/drivers/usb/musb/musb_gadget.c b/drivers/usb/musb/musb_gadget.c
-> > index d3f33f449445..a7a992ab0c9d 100644
-> > --- a/drivers/usb/musb/musb_gadget.c
-> > +++ b/drivers/usb/musb/musb_gadget.c
-> > @@ -145,6 +145,8 @@ __acquires(ep->musb->lock)
-> >  
-> >  	trace_musb_req_gb(req);
-> >  	usb_gadget_giveback_request(&req->ep->end_point, &req->request);
-> > +	usb_gadget_control_complete(&musb->g, request->explicit_status,
-> > +			request->status);
-> 
-> I haven't paid much attention to this part of the patch series, not 
-> knowing much about musb.  Still, it's clear that 
-> usb_gadget_control_complete should be called only for transfers on 
-> ep0.  You need to test the endpoint value.
+On Tue, Jan 8, 2019 at 1:04 AM Dave Hansen <dave.hansen@intel.com> wrote:
+>
+> On 1/7/19 12:24 AM, Pingfan Liu wrote:
+> > Background about the defect of the current bottom-up allocation style, take
+> > the following scenario:
+> >   |  unmovable node |     movable node                           |
+> >      | kaslr-kernel |subtree of pgtable for phy<->virt |
+> >
+> > Although kaslr-kernel can avoid to stain the movable node. But the
+> > pgtable can still stain the movable node. That is a probability problem,
+> > with low probability, but still exist. This patch tries to eliminate the
+> > probability. With the previous patch, at the point of init_mem_mapping(),
+> > memblock allocator can work with the knowledge of acpi memory hotmovable
+> > info, and avoid to stain the movable node. As a result,
+> > memory_map_bottom_up() is not needed any more.
+>
+> I'm really missing the basic problem statement.  What's the problem this
+> is fixing?  What is the end-user-visible impact of this problem?
+>
+Sorry for the misaligned figure. It should be
+   |  kaslr-kernel    |subtree of pgtable for phy<->virt    |
+                              |--- boundary between unmovable node and
+movable node
+Where kaslr kernel can be guaranteed to sit inside unmovable node
+after patch: https://lore.kernel.org/patchwork/patch/1029376/. But if
+kaslr kernel is located near the end of the movable node, then
+bottom-up allocator may create pagetable which crosses the  boundary
+between unmovable node and movable node.  It is a probability issue,
+the factors include -1. how big the gap between kernel end and
+unmovable node's end.  -2. how many memory does the system own.
+Alternative way to fix this issue is by increasing the gap by
+boot/compressed/kaslr*. But taking the scenario of PB level memory,
+the pagetable will take server MB even if using 1GB page, so it is
+hard to decide how much should the gap increase.
+In a word, this series fix the probability with certainty, by
+allocating pagetable on unmovable node, instead of following kernel
+end.
 
-Oh oops, yeah, you're right.
+> To make memory hot-remove work, we want as much memory as possible to he
+> hot-removable, which is basically what movable nodes are used for.  But,
+> it sounds like, maybe, that KASLR can place the kernel image inside the
+> movable node.  This is somehow related to the bottom-up allocation style
+> currently in use.
 
-> Another problem: the completion handler may deallocate the request.  
-> Dereferencing request->expicit_status and request->status would then 
-> cause errors.  Would it be preferable to call 
-> usb_gadget_control_complete before usb_gadget_giveback_request?  If 
-> it gets done that way then the arguments could be simplified: we could 
-> pass a pointer to the request instead of the separate explicit_status 
-> and status values.
-
-I thought that usb_gadget_control_complete needs to check the status of
-the request that was given back. Doesn't that mean that
-usb_gadget_giveback_request must be called first?
-
-I was thinking that maybe we could save explicit_status before calling
-usb_gadget_giveback_request, and if request is still valid then we can
-pull status from it otherwise use 0, but then would that be considered
-adding complexity to UDCs that want to implement optional status stage
-delay? Or add a wrapper function?
-
-On the other hand, if we do put usb_gadget_control_complete before
-usb_gadget_giveback_request, then the control transfer would complete
-before the function driver has a chance to complete, but if the function
-driver wanted to intervene/determine the status stage then it would have
-gone through the new mechanism that we're making here. So it could be
-fine to switch the order. My tests for it work too, so I guess we'll go
-with usb_gadget_control_complete before usb_gadget_giveback_request
-then. In that case usb_gadget_control_complete doesn't need to check the
-status of the request, since there isn't any, right?
-
+Yes, currently kaslr kernel can stain the movable node, but it will
+not do this soon after the patch:
+https://lore.kernel.org/patchwork/patch/1029376/
 
 Thanks,
-
-Paul Elder
+Pingfan
