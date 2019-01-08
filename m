@@ -7,46 +7,48 @@ X-Spam-Status: No, score=-18.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D9F1C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:50:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED897C43444
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:50:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C67220827
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:50:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B64C6206BB
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:50:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546977053;
-	bh=nUTO0fXEj0H9oxGpaj5uI4aY9vOM3ROYL9UmY4VDhgk=;
+	s=default; t=1546977058;
+	bh=tYRdg/qbFjq9aTEKWQgql3ZLHBq1gbDHjsgobwIK5Nk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=gs9BlgvIVkmjp+TkMa7auHphJO52mqskQvDc/VIOBPIWbTOkNsbf7GzS+KfDHVMI5
-	 nRJy2t+nrRFlzMMhvh4s/ohBzRRCr4CCtJncXOewyiKBwAjBxBUHWr+XGquVKJC3XZ
-	 7n3KxIVsmSzlNw3HtlF6DDd6lxPgZ8SkY0hxiReA=
+	b=yb3bZhC8KhcqZ9B6xeclD0hSpAgfPWOINl6xPdewEyWr0yr++3PlgCHTAh0hzvx5Q
+	 iS4veRMveLIMJYUON72VNW7py7QzLBLNcAe46SFY7uCyI6zt7F9l1Y/0Py5Pf2G4oD
+	 j5YxTrMViwtSI8eqFPI2UagvQgy9ZQawaclmNe4Y=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731170AbfAHTbl (ORCPT
+        id S1731144AbfAHTbj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:31:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39782 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731133AbfAHTbj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 8 Jan 2019 14:31:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39750 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730395AbfAHTbf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:31:35 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 136152070B;
-        Tue,  8 Jan 2019 19:31:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E4D5A2070B;
+        Tue,  8 Jan 2019 19:31:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546975897;
-        bh=nUTO0fXEj0H9oxGpaj5uI4aY9vOM3ROYL9UmY4VDhgk=;
+        s=default; t=1546975894;
+        bh=tYRdg/qbFjq9aTEKWQgql3ZLHBq1gbDHjsgobwIK5Nk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wyr5Q5Sfw08WbicPjhdmT77OtvSbPpuO9mu8l4ys2Xt2jOFW2nFOnMYpiq0RAV1C2
-         cvHe00U0iQXOv1JMfSzJTXuBwvY6+xGWhL41vv35NXN69Mp1Mis/p2nP/Q3SOL2FLn
-         wYoTYyCsnBsbm76XxN4sCmW+E9nErDAtTRmIffGg=
+        b=PdJ5xUZC6flxUpGQOGsxZ/Q7syutzIMSzypIlAbQYutqTHU8i6ps/i+TVTLg2o1r+
+         e6ere704rLSbMEwsfhWZ2RE/k49bC8pH4gK4GXcjuGGrrRrNpN8CFZXmqyiUSAMP3V
+         YW9wWkI6mli5sKTB6EnP/aiTYSKg9DNnqkWiRVhI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Andi Kleen <ak@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
+Cc:     Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 67/97] perf vendor events intel: Fix Load_Miss_Real_Latency on SKL/SKX
-Date:   Tue,  8 Jan 2019 14:29:16 -0500
-Message-Id: <20190108192949.122407-67-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 66/97] perf parse-events: Fix unchecked usage of strncpy()
+Date:   Tue,  8 Jan 2019 14:29:15 -0500
+Message-Id: <20190108192949.122407-66-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108192949.122407-1-sashal@kernel.org>
 References: <20190108192949.122407-1-sashal@kernel.org>
@@ -58,75 +60,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andi Kleen <ak@linux.intel.com>
+From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-[ Upstream commit 91b2b97025097ce7ca7536bc87eba2bf14760fb4 ]
+[ Upstream commit bd8d57fb7e25e9fcf67a9eef5fa13aabe2016e07 ]
 
-Fix incorrect event names for the Load_Miss_Real_Latency metric for
-Skylake and Skylake Server.
+The strncpy() function may leave the destination string buffer
+unterminated, better use strlcpy() that we have a __weak fallback
+implementation for systems without it.
 
-Fixes https://github.com/andikleen/pmu-tools/issues/158
+This fixes this warning on an Alpine Linux Edge system with gcc 8.2:
 
-Before:
+  util/parse-events.c: In function 'print_symbol_events':
+  util/parse-events.c:2465:4: error: 'strncpy' specified bound 100 equals destination size [-Werror=stringop-truncation]
+      strncpy(name, syms->symbol, MAX_NAME_LEN);
+      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  In function 'print_symbol_events.constprop',
+      inlined from 'print_events' at util/parse-events.c:2508:2:
+  util/parse-events.c:2465:4: error: 'strncpy' specified bound 100 equals destination size [-Werror=stringop-truncation]
+      strncpy(name, syms->symbol, MAX_NAME_LEN);
+      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  In function 'print_symbol_events.constprop',
+      inlined from 'print_events' at util/parse-events.c:2511:2:
+  util/parse-events.c:2465:4: error: 'strncpy' specified bound 100 equals destination size [-Werror=stringop-truncation]
+      strncpy(name, syms->symbol, MAX_NAME_LEN);
+      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  cc1: all warnings being treated as errors
 
-  % perf stat -M Load_Miss_Real_Latency true
-  event syntax error: '..ss.pending,mem_load_retired.l1_miss_ps,mem_load_retired.fb_hit_ps}:W'
-                                    \___ parser error
-
-   Usage: perf stat [<options>] [<command>]
-
-      -M, --metrics <metric/metric group list>
-                            monitor specified metrics or metric groups (separated by ,)
-
-After:
-
-  % perf stat -M Load_Miss_Real_Latency true
-
-   Performance counter stats for 'true':
-
-             279,204      l1d_pend_miss.pending     #     14.0 Load_Miss_Real_Latency
-               4,784      mem_load_uops_retired.l1_miss
-              15,188      mem_load_uops_retired.hit_lfb
-
-         0.000899640 seconds time elapsed
-
-Signed-off-by: Andi Kleen <ak@linux.intel.com>
-Acked-by: Jiri Olsa <jolsa@kernel.org>
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Link: http://lkml.kernel.org/r/20181120050635.4215-1-andi@firstfloor.org
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Fixes: 947b4ad1d198 ("perf list: Fix max event string size")
+Link: https://lkml.kernel.org/n/tip-b663e33bm6x8hrkie4uxh7u2@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/pmu-events/arch/x86/skylake/skl-metrics.json  | 2 +-
- tools/perf/pmu-events/arch/x86/skylakex/skx-metrics.json | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ tools/perf/util/parse-events.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/perf/pmu-events/arch/x86/skylake/skl-metrics.json b/tools/perf/pmu-events/arch/x86/skylake/skl-metrics.json
-index 36c903faed0b..71e9737f4614 100644
---- a/tools/perf/pmu-events/arch/x86/skylake/skl-metrics.json
-+++ b/tools/perf/pmu-events/arch/x86/skylake/skl-metrics.json
-@@ -73,7 +73,7 @@
-     },
-     {
-         "BriefDescription": "Actual Average Latency for L1 data-cache miss demand loads",
--        "MetricExpr": "L1D_PEND_MISS.PENDING / ( MEM_LOAD_RETIRED.L1_MISS_PS + MEM_LOAD_RETIRED.FB_HIT_PS )",
-+        "MetricExpr": "L1D_PEND_MISS.PENDING / ( MEM_LOAD_RETIRED.L1_MISS + MEM_LOAD_RETIRED.FB_HIT )",
-         "MetricGroup": "Memory_Bound;Memory_Lat",
-         "MetricName": "Load_Miss_Real_Latency"
-     },
-diff --git a/tools/perf/pmu-events/arch/x86/skylakex/skx-metrics.json b/tools/perf/pmu-events/arch/x86/skylakex/skx-metrics.json
-index 36c903faed0b..71e9737f4614 100644
---- a/tools/perf/pmu-events/arch/x86/skylakex/skx-metrics.json
-+++ b/tools/perf/pmu-events/arch/x86/skylakex/skx-metrics.json
-@@ -73,7 +73,7 @@
-     },
-     {
-         "BriefDescription": "Actual Average Latency for L1 data-cache miss demand loads",
--        "MetricExpr": "L1D_PEND_MISS.PENDING / ( MEM_LOAD_RETIRED.L1_MISS_PS + MEM_LOAD_RETIRED.FB_HIT_PS )",
-+        "MetricExpr": "L1D_PEND_MISS.PENDING / ( MEM_LOAD_RETIRED.L1_MISS + MEM_LOAD_RETIRED.FB_HIT )",
-         "MetricGroup": "Memory_Bound;Memory_Lat",
-         "MetricName": "Load_Miss_Real_Latency"
-     },
+diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-events.c
+index f8cd3e7c9186..ebb18a9bc460 100644
+--- a/tools/perf/util/parse-events.c
++++ b/tools/perf/util/parse-events.c
+@@ -2454,7 +2454,7 @@ void print_symbol_events(const char *event_glob, unsigned type,
+ 		if (!name_only && strlen(syms->alias))
+ 			snprintf(name, MAX_NAME_LEN, "%s OR %s", syms->symbol, syms->alias);
+ 		else
+-			strncpy(name, syms->symbol, MAX_NAME_LEN);
++			strlcpy(name, syms->symbol, MAX_NAME_LEN);
+ 
+ 		evt_list[evt_i] = strdup(name);
+ 		if (evt_list[evt_i] == NULL)
 -- 
 2.19.1
 
