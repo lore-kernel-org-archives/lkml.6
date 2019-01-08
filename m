@@ -3,150 +3,116 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1F9CC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 04:59:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 695B9C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 05:01:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9043F2089F
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 04:59:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 29D6920700
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 05:01:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oALU/CEx"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="juwE4Gq+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727714AbfAHE7R (ORCPT
+        id S1727505AbfAHFBB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 23:59:17 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:34046 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727290AbfAHE7P (ORCPT
+        Tue, 8 Jan 2019 00:01:01 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:42472 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725785AbfAHFBA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 23:59:15 -0500
-Received: by mail-wr1-f65.google.com with SMTP id j2so2720116wrw.1;
-        Mon, 07 Jan 2019 20:59:14 -0800 (PST)
+        Tue, 8 Jan 2019 00:01:00 -0500
+Received: by mail-pg1-f194.google.com with SMTP id d72so1161233pga.9
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Jan 2019 21:01:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=hlWw0voukglhdooGQz/SxyLb0Z75gM5J6LEq6IH1cuE=;
-        b=oALU/CExrpuSqA0/Z/YDes/IUFd5Tpy9nt2W4Tpj0Cjz62o1esVW0SaSRX4VPJ4tQr
-         lYf/MZGNX21t0nv1p9suxcJesJe74nalGniz2hMtPfFJ9Mktt7QJPy3YlyFuUI2pKWwW
-         CPOep5XpS33FxvdAEiH6Wb0bQJ6m7/xStSInnJMP0/6WJwrIp9N9uLVzfoH+yAliGgZe
-         vUt0VUJPR482J/a4cPhPt23GFBRHR3TutiZ5hlFDte7rd8q9yl9lKnldkWMpdSG/4QI4
-         rlV3LkiRx6iX9UY3gaTEUTm36nXmHg1w4pOijBBspRzPddS5sEHQH+iybXzE+VJMkapm
-         N4lg==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=JyJ6VQDNECiue1P5QSTufBFpRz9Fy0iZlzUs+dyRxnM=;
+        b=juwE4Gq+5GNv9FOzrk700TUnWpEyvtqOzF6MSm+eTsfRDxMEJm1bMqFRUoKhjPnU1l
+         VvuGoGjz2sRfhuIW5v1TDEYR8J3sVUTDMX2c3uLkCaPvUVBVKvg2PQUbSd+4O8MvazpT
+         BHWpypWn9lHdBE52+9JCqg/vh84cY7cRexUCk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=hlWw0voukglhdooGQz/SxyLb0Z75gM5J6LEq6IH1cuE=;
-        b=DK5CyyN7O3tIb1ugX4aPheBw7T6pJ94puxjrZDWvTIUFM7yxW3V7mPkCVMH+ViXzEb
-         AuW8C5NXOtN0GfPVq2LP4OQQwOHHADs1oZ96jhJzMBNdZFIUlFmazwinYdNYDwWQBtfE
-         LtIyY40ysbpudeeoCWUd9pyyV5c4RIdQ6kM4ga1PvJGpLOspQATztgzPcXYjM20+1MO6
-         wm6KaHFnB90dZeeGCQrFe/3VlNxNIrJ588QVyXwR+3mweCQuomD54vMdCD5bNR+Hd+D8
-         YKJ89sljKP4/eGmeLfzWXL0VGGm8TXXaGD1XWYYIvUqodVGmLNkwcPLXuA6b+Ts9SRS/
-         rzww==
-X-Gm-Message-State: AJcUukfwZ6tG3uHhydz0tALLzE8k/dZNr0xsdgrtTVBm5UKVAxYZFoHA
-        YRRNPWqTj2hzE1pgJlqiiN8=
-X-Google-Smtp-Source: ALg8bN5aJUxWXQsn9ZUmRPp9NxxUMR+MmA1OMQ7B911iG/jDjDk6Z1I/J8i7dtrIdfrV6iqJh6wmaA==
-X-Received: by 2002:adf:be8b:: with SMTP id i11mr214953wrh.235.1546923553035;
-        Mon, 07 Jan 2019 20:59:13 -0800 (PST)
-Received: from localhost.localdomain ([2a01:4f8:10b:24a5::2])
-        by smtp.gmail.com with ESMTPSA id i13sm51827837wrw.32.2019.01.07.20.59.11
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=JyJ6VQDNECiue1P5QSTufBFpRz9Fy0iZlzUs+dyRxnM=;
+        b=Utz5Kc5LJJb0Pl/5w1i9FLY2737bdkCiy9VUCulYT9HkydTpX2NFnBRk9QH930mAEF
+         kls2ayZIEuKPZRBL7Sz3GEzZakdzM2NaP+Msm1OBoTYATQ0wYJW0N/5+yliEPRvXpa0A
+         ttgmoEMApCLdzrQFqSCMQ0+g2NgQp60ZlS24InVEV+JbG3IbKMfx0lXdGB9jEldQTcJP
+         18R/WQsbFc5/47IlXh2iAA+Crz13XmYJ+csNkLxfVbOZ2py++N2aLjHLPJduw7V6etYs
+         4tJCRs2AazN+BmOTj9p/ZUvV6JzlOyEmfvGVSZnUkG0FN8YC+xeMVfnaN5rW495V0u2O
+         aW8g==
+X-Gm-Message-State: AJcUukcyHwfdjXx4e5G2VilK/EHsh1P6A4v4kvVC7xJYbM2raMBvVyDl
+        v0ODt958jfnRdVeHuLZaTcrK/w==
+X-Google-Smtp-Source: ALg8bN7KAFJjfSrbpNrbUyhcPClsoEXgvjE0hwFw8w2j4r1ZI+aE4CRq2/ulZY30/CNsQjuvtTnscA==
+X-Received: by 2002:a62:5b44:: with SMTP id p65mr309404pfb.47.1546923659821;
+        Mon, 07 Jan 2019 21:00:59 -0800 (PST)
+Received: from localhost ([122.166.131.155])
+        by smtp.gmail.com with ESMTPSA id e131sm116259147pfg.75.2019.01.07.21.00.58
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 07 Jan 2019 20:59:11 -0800 (PST)
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Dan Williams <dan.j.williams@intel.com>,
-        Ross Zwisler <zwisler@kernel.org>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>, linux-nvdimm@lists.01.org,
-        linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH] nfit: Hide unused functions behind CONFIG_X86
-Date:   Mon,  7 Jan 2019 21:58:53 -0700
-Message-Id: <20190108045853.5471-1-natechancellor@gmail.com>
-X-Mailer: git-send-email 2.20.1
+        Mon, 07 Jan 2019 21:00:59 -0800 (PST)
+Date:   Tue, 8 Jan 2019 10:30:56 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] cpufreq: e_powersaver: Use struct_size() in kzalloc()
+Message-ID: <20190108050056.quckhd2d5ah4ywax@vireshk-i7>
+References: <20190107173343.GA4258@embeddedor>
 MIME-Version: 1.0
-X-Patchwork-Bot: notify
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190107173343.GA4258@embeddedor>
+User-Agent: NeoMutt/20180323-120-3dd1ac
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On arm64 little endian allyesconfig:
+On 07-01-19, 11:33, Gustavo A. R. Silva wrote:
+> One of the more common cases of allocation size calculations is finding the
+> size of a structure that has a zero-sized array at the end, along with memory
+> for some number of elements for that array. For example:
+> 
+> struct foo {
+>     int stuff;
+>     void *entry[];
+> };
+> 
+> instance = kzalloc(sizeof(struct foo) + sizeof(void *) * count, GFP_KERNEL);
+> 
+> Instead of leaving these open-coded and prone to type mistakes, we can now
+> use the new struct_size() helper:
+> 
+> instance = kzalloc(struct_size(instance, entry, count), GFP_KERNEL);
+> 
+> This code was detected with the help of Coccinelle.
+> 
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> ---
+>  drivers/cpufreq/e_powersaver.c | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/cpufreq/e_powersaver.c b/drivers/cpufreq/e_powersaver.c
+> index 60bea302abbe..2d3ef208dd70 100644
+> --- a/drivers/cpufreq/e_powersaver.c
+> +++ b/drivers/cpufreq/e_powersaver.c
+> @@ -323,9 +323,8 @@ static int eps_cpu_init(struct cpufreq_policy *policy)
+>  		states = 2;
+>  
+>  	/* Allocate private data and frequency table for current cpu */
+> -	centaur = kzalloc(sizeof(*centaur)
+> -		    + (states + 1) * sizeof(struct cpufreq_frequency_table),
+> -		    GFP_KERNEL);
+> +	centaur = kzalloc(struct_size(centaur, freq_table, states + 1),
+> +			  GFP_KERNEL);
+>  	if (!centaur)
+>  		return -ENOMEM;
+>  	eps_cpu[0] = centaur;
 
-drivers/acpi/nfit/intel.c:149:12: warning: unused function 'intel_security_unlock' [-Wunused-function]
-static int intel_security_unlock(struct nvdimm *nvdimm,
-           ^
-drivers/acpi/nfit/intel.c:230:12: warning: unused function 'intel_security_erase' [-Wunused-function]
-static int intel_security_erase(struct nvdimm *nvdimm,
-           ^
-drivers/acpi/nfit/intel.c:279:12: warning: unused function 'intel_security_query_overwrite' [-Wunused-function]
-static int intel_security_query_overwrite(struct nvdimm *nvdimm)
-           ^
-drivers/acpi/nfit/intel.c:316:12: warning: unused function 'intel_security_overwrite' [-Wunused-function]
-static int intel_security_overwrite(struct nvdimm *nvdimm,
-           ^
-4 warnings generated.
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 
-These functions are only used in __intel_security_ops when CONFIG_X86 is
-set so only define these functions under that same condition.
-
-Fixes: 4c6926a23b76 ("acpi/nfit, libnvdimm: Add unlock of nvdimm support for Intel DIMMs")
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
----
- drivers/acpi/nfit/intel.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/acpi/nfit/intel.c b/drivers/acpi/nfit/intel.c
-index 850b2927b4e7..2ba0f1543940 100644
---- a/drivers/acpi/nfit/intel.c
-+++ b/drivers/acpi/nfit/intel.c
-@@ -144,6 +144,7 @@ static int intel_security_change_key(struct nvdimm *nvdimm,
- 	}
- }
- 
-+#ifdef CONFIG_X86
- static void nvdimm_invalidate_cache(void);
- 
- static int intel_security_unlock(struct nvdimm *nvdimm,
-@@ -186,6 +187,7 @@ static int intel_security_unlock(struct nvdimm *nvdimm,
- 
- 	return 0;
- }
-+#endif
- 
- static int intel_security_disable(struct nvdimm *nvdimm,
- 		const struct nvdimm_key_data *key_data)
-@@ -227,6 +229,7 @@ static int intel_security_disable(struct nvdimm *nvdimm,
- 	return 0;
- }
- 
-+#ifdef CONFIG_X86
- static int intel_security_erase(struct nvdimm *nvdimm,
- 		const struct nvdimm_key_data *key,
- 		enum nvdimm_passphrase_type ptype)
-@@ -360,16 +363,10 @@ static int intel_security_overwrite(struct nvdimm *nvdimm,
-  * TODO: define a cross arch wbinvd equivalent when/if
-  * NVDIMM_FAMILY_INTEL command support arrives on another arch.
-  */
--#ifdef CONFIG_X86
- static void nvdimm_invalidate_cache(void)
- {
- 	wbinvd_on_all_cpus();
- }
--#else
--static void nvdimm_invalidate_cache(void)
--{
--	WARN_ON_ONCE("cache invalidation required after unlock\n");
--}
- #endif
- 
- static const struct nvdimm_security_ops __intel_security_ops = {
 -- 
-2.20.1
-
+viresh
