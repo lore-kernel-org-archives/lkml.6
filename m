@@ -7,59 +7,58 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32CE2C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 11:48:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03E19C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 11:49:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E1383206B7
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 11:48:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C3265206B7
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 11:49:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=brainfault-org.20150623.gappssmtp.com header.i=@brainfault-org.20150623.gappssmtp.com header.b="SUvjF5QT"
+	dkim=pass (2048-bit key) header.d=brainfault-org.20150623.gappssmtp.com header.i=@brainfault-org.20150623.gappssmtp.com header.b="RJVNzMAI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728632AbfAHLsh (ORCPT
+        id S1728760AbfAHLtO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 06:48:37 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:33559 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727587AbfAHLsh (ORCPT
+        Tue, 8 Jan 2019 06:49:14 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:38487 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727236AbfAHLtO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 06:48:37 -0500
-Received: by mail-wm1-f68.google.com with SMTP id r24so8265704wmh.0
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jan 2019 03:48:35 -0800 (PST)
+        Tue, 8 Jan 2019 06:49:14 -0500
+Received: by mail-wm1-f67.google.com with SMTP id m22so4086384wml.3
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jan 2019 03:49:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=brainfault-org.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=fihLDeBdBCv7UmpGapUichtBalNpltWbM/T1LuHnn1E=;
-        b=SUvjF5QTE/q99kJO/QO9AadOOOqQJy0OsaAQvr0dXzDYTrM/rDxyxXc/D1pzpLDiss
-         RPiTeQKe8HNfCPbasdq3muPc+uJJz1i4HSbJY/EtIUMyh9sWPpwXPp6vuI4pJMbnZQKt
-         A1sN75oTC4HgufmnLk0LedxaFnjIMebh1PUmq8LIx6Dem5qMeVsj8ZaNx2v22fu6Kk92
-         8WIym4S1nSQ6OoyCWRgK8HhdWKPt+McV+PkLz6ONEZZCzpQH44lYSDZxFErXa245h4yv
-         zAODo284aAsJwLhVDdZpezsZulyiAw/U7Dhm2ecWp8dQz5K8v400aoYdvMXXMT3B2BRr
-         Gv/Q==
+        bh=6+V0n8Xtcjz4tHs8ZXrRMUNU6iatKnY0VEqk+wmS3fU=;
+        b=RJVNzMAIesjPC3AE2E+TOmmX5R6vuJzXu/efycylgwXhE1CxBo434WiRvT0LIlPnqH
+         Xbs7Rz8UXSpXOq4XvCfjiajPfiN0SpQDl9EuxEW++yFRJ08jY79tWwbNpMH+RyDp9nsW
+         l1Zk3ZRzGq2KusdLTTZpDyOuFnw32FfI3ut5Fy/PGBeqyHAtH706e+dS9kvvBRp5+Hex
+         mgXXSpXi6nUEfY5HRxgqTsZfXzX7S13J3jG7VQqV8Twpsxsdb/5i9of1VVAu+gYA7iSC
+         71Y6m0RinP6SMCR19Ywy2bMXErQukqsPEvmYvaeRu2iZ6unrQHF18h62pBdqFTwRr3yo
+         rvmQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=fihLDeBdBCv7UmpGapUichtBalNpltWbM/T1LuHnn1E=;
-        b=J1IVYNKEZy3PM2YGMWSOg5068CQqyKYHoDN/eyT+nJUzOUqAwDtVy1BfHYSP9WACi8
-         r8poAaz6pZfp7ND4wo4RjjlJaQqj5SzxrJpw/LMvo50jACDkcH+ylyGR1jWYg/kcymnh
-         XmwPR25/gPjDvAWihxE2x/YTTmHGsxVNkLTcwGfjCyt3yCRPr9uWneOZ+LjdGsQo8E1I
-         lYrRFSCVEdsGuJdh8I3RfZZs2XMviNCBR4d7n8DbWyxqWjtG2V+nmoDtYjiwj8paBvQs
-         994Csp7dlNTVSuJ4kIlfjDBAsVSp2zIgtW5zPfr90ea2SIZYY4584NJAyZgsjYmvosFE
-         9N0A==
-X-Gm-Message-State: AJcUukdKdmiKpmGA/+kUBuYWleay19pMuy5XjtSCaHqQVETx97AIRBBb
-        6+1pqkebekVR8seB8Zh85f2tQUSUNg3mT2JfGtgUbg==
-X-Google-Smtp-Source: ALg8bN5cD2iJ0kVxGqwVi1PVwrKMkhUsaq8p5Clty6fiADVv2zC8MmX6NanYBcrH0TBkbAmccauLUMvnOgOJ/U1koFA=
-X-Received: by 2002:a1c:a3c3:: with SMTP id m186mr1543468wme.16.1546948114765;
- Tue, 08 Jan 2019 03:48:34 -0800 (PST)
+        bh=6+V0n8Xtcjz4tHs8ZXrRMUNU6iatKnY0VEqk+wmS3fU=;
+        b=Oz/ycpEsR8n9WhzAVcYmx+k+5OpYtd4uyY0SevQ10kRire3Qj3HnuGmTZCPHXW77dW
+         QorUZG7jX8f51alCS7WNAz9aUqurLDuPAsnqV6w/f5JKf8sySbKDrlIpn1g66m5dxAKO
+         hdhkmhm8+U9LRMETH8G2dOdjLlHBV1LNqyDS4E8uFqdJ/NOvZ6av1Hnzhu0Dkkmzf8T5
+         vGZI8a/LSReugtrAyii8YRM7SkPpTJhj58g+2AFrEToQOStQZsLgD9E9tLjo1j1TYrI1
+         +aSpcYXZqoPlQ+xwsAjRemN+/l2fchkG8PlTdIcK+T02EQ4CpTGUc5G/qOIEEnjqmUqN
+         vcmw==
+X-Gm-Message-State: AJcUukeFr/yDUIt48nuv4OMk/vq9LCgy5j5vtsbAty2waXdBrZ8nGqUp
+        px/NmyVpyotdV3crUEMZ/jAbBGQ8+ES+DA7U9kat2Q==
+X-Google-Smtp-Source: ALg8bN5Ji4/z3cNLskNRfsCfIPWBHYz878MlwhN7JxfA8KyX57565/Xs6NV9LUpnH6eNYuN4MMatcqZUvKknxJE19mw=
+X-Received: by 2002:a1c:f509:: with SMTP id t9mr1641639wmh.76.1546948151708;
+ Tue, 08 Jan 2019 03:49:11 -0800 (PST)
 MIME-Version: 1.0
-References: <1546940318-9752-1-git-send-email-atish.patra@wdc.com> <1546940318-9752-4-git-send-email-atish.patra@wdc.com>
-In-Reply-To: <1546940318-9752-4-git-send-email-atish.patra@wdc.com>
+References: <1546940318-9752-1-git-send-email-atish.patra@wdc.com> <1546940318-9752-5-git-send-email-atish.patra@wdc.com>
+In-Reply-To: <1546940318-9752-5-git-send-email-atish.patra@wdc.com>
 From:   Anup Patel <anup@brainfault.org>
-Date:   Tue, 8 Jan 2019 17:18:23 +0530
-Message-ID: <CAAhSdy38LyH35ABqexHoG-fy=FXp9B79cruSHBuD+jzY_EFVgw@mail.gmail.com>
-Subject: Re: [PATCH v2 3/8] RISC-V: Remove NR_CPUs check during hartid search
- from DT
+Date:   Tue, 8 Jan 2019 17:19:00 +0530
+Message-ID: <CAAhSdy05324s1RtBM73v5irR9-c5gU0T6W=UA4chVCgEwvR-yA@mail.gmail.com>
+Subject: Re: [PATCH v2 4/8] RISC-V: Allow hartid-to-cpuid function to fail.
 To:     Atish Patra <atish.patra@wdc.com>
 Cc:     linux-riscv@lists.infradead.org, Alan Kao <alankao@andestech.com>,
         Albert Ou <aou@eecs.berkeley.edu>,
@@ -82,32 +81,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Tue, Jan 8, 2019 at 3:08 PM Atish Patra <atish.patra@wdc.com> wrote:
 >
-> In non-smp configuration, hartid can be higher that NR_CPUS.
-> riscv_of_processor_hartid should not be compared to hartid to
-> NR_CPUS in that case. Moreover, this function checks all the
-> DT properties of a hart node. NR_CPUS comparison seems out of
-> place.
+> It is perfectly okay to call riscv_hartid_to_cpuid for a
+> hartid that is not mapped with an CPU id. It can happen
+> if the calling functions retrieves the hartid from DT.
+> However, that hartid was never brought online by the firmware
+> or kernel for any reasons.
+>
+> No need to BUG() in the above case. A negative error return
+> is sufficient and the calling function should check for the
+> return value always.
 >
 > Signed-off-by: Atish Patra <atish.patra@wdc.com>
 > ---
->  arch/riscv/kernel/cpu.c | 4 ----
->  1 file changed, 4 deletions(-)
+>  arch/riscv/kernel/smp.c | 1 -
+>  1 file changed, 1 deletion(-)
 >
-> diff --git a/arch/riscv/kernel/cpu.c b/arch/riscv/kernel/cpu.c
-> index f8fa2c63..19edaeae 100644
-> --- a/arch/riscv/kernel/cpu.c
-> +++ b/arch/riscv/kernel/cpu.c
-> @@ -34,10 +34,6 @@ int riscv_of_processor_hartid(struct device_node *node)
->                 pr_warn("Found CPU without hart ID\n");
->                 return -(ENODEV);
->         }
-> -       if (hart >= NR_CPUS) {
-> -               pr_info("Found hart ID %d, which is above NR_CPUs.  Disabling this hart\n", hart);
-> -               return -(ENODEV);
-> -       }
+> diff --git a/arch/riscv/kernel/smp.c b/arch/riscv/kernel/smp.c
+> index e407bd4f..ce9a2e73 100644
+> --- a/arch/riscv/kernel/smp.c
+> +++ b/arch/riscv/kernel/smp.c
+> @@ -58,7 +58,6 @@ int riscv_hartid_to_cpuid(int hartid)
+>                         return i;
 >
->         if (of_property_read_string(node, "status", &status)) {
->                 pr_warn("CPU with hartid=%d has no \"status\" property\n", hart);
+>         pr_err("Couldn't find cpu id for hartid [%d]\n", hartid);
+> -       BUG();
+>         return i;
+>  }
+>
 > --
 > 2.7.4
 >
