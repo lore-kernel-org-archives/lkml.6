@@ -2,117 +2,91 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 695B9C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 05:01:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08CD9C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 05:01:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 29D6920700
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 05:01:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="juwE4Gq+"
+	by mail.kernel.org (Postfix) with ESMTP id D483B20700
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 05:01:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727505AbfAHFBB (ORCPT
+        id S1727721AbfAHFBF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 00:01:01 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:42472 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725785AbfAHFBA (ORCPT
+        Tue, 8 Jan 2019 00:01:05 -0500
+Received: from orcrist.hmeau.com ([104.223.48.154]:54804 "EHLO
+        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725785AbfAHFBD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 00:01:00 -0500
-Received: by mail-pg1-f194.google.com with SMTP id d72so1161233pga.9
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Jan 2019 21:01:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=JyJ6VQDNECiue1P5QSTufBFpRz9Fy0iZlzUs+dyRxnM=;
-        b=juwE4Gq+5GNv9FOzrk700TUnWpEyvtqOzF6MSm+eTsfRDxMEJm1bMqFRUoKhjPnU1l
-         VvuGoGjz2sRfhuIW5v1TDEYR8J3sVUTDMX2c3uLkCaPvUVBVKvg2PQUbSd+4O8MvazpT
-         BHWpypWn9lHdBE52+9JCqg/vh84cY7cRexUCk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=JyJ6VQDNECiue1P5QSTufBFpRz9Fy0iZlzUs+dyRxnM=;
-        b=Utz5Kc5LJJb0Pl/5w1i9FLY2737bdkCiy9VUCulYT9HkydTpX2NFnBRk9QH930mAEF
-         kls2ayZIEuKPZRBL7Sz3GEzZakdzM2NaP+Msm1OBoTYATQ0wYJW0N/5+yliEPRvXpa0A
-         ttgmoEMApCLdzrQFqSCMQ0+g2NgQp60ZlS24InVEV+JbG3IbKMfx0lXdGB9jEldQTcJP
-         18R/WQsbFc5/47IlXh2iAA+Crz13XmYJ+csNkLxfVbOZ2py++N2aLjHLPJduw7V6etYs
-         4tJCRs2AazN+BmOTj9p/ZUvV6JzlOyEmfvGVSZnUkG0FN8YC+xeMVfnaN5rW495V0u2O
-         aW8g==
-X-Gm-Message-State: AJcUukcyHwfdjXx4e5G2VilK/EHsh1P6A4v4kvVC7xJYbM2raMBvVyDl
-        v0ODt958jfnRdVeHuLZaTcrK/w==
-X-Google-Smtp-Source: ALg8bN7KAFJjfSrbpNrbUyhcPClsoEXgvjE0hwFw8w2j4r1ZI+aE4CRq2/ulZY30/CNsQjuvtTnscA==
-X-Received: by 2002:a62:5b44:: with SMTP id p65mr309404pfb.47.1546923659821;
-        Mon, 07 Jan 2019 21:00:59 -0800 (PST)
-Received: from localhost ([122.166.131.155])
-        by smtp.gmail.com with ESMTPSA id e131sm116259147pfg.75.2019.01.07.21.00.58
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 07 Jan 2019 21:00:59 -0800 (PST)
-Date:   Tue, 8 Jan 2019 10:30:56 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] cpufreq: e_powersaver: Use struct_size() in kzalloc()
-Message-ID: <20190108050056.quckhd2d5ah4ywax@vireshk-i7>
-References: <20190107173343.GA4258@embeddedor>
+        Tue, 8 Jan 2019 00:01:03 -0500
+Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
+        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
+        id 1ggjVB-0000Iu-MR; Tue, 08 Jan 2019 13:00:33 +0800
+Received: from herbert by gondobar with local (Exim 4.89)
+        (envelope-from <herbert@gondor.apana.org.au>)
+        id 1ggjV6-000555-SU; Tue, 08 Jan 2019 13:00:28 +0800
+Date:   Tue, 8 Jan 2019 13:00:28 +0800
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     Christophe Leroy <christophe.leroy@c-s.fr>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Horia Geanta <horia.geanta@nxp.com>,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, stable@vger.kernel.org
+Subject: Re: [PATCH v3] crypto: talitos - fix ablkcipher for CONFIG_VMAP_STACK
+Message-ID: <20190108050028.mrdz727dhzmlbi7i@gondor.apana.org.au>
+References: <ae7b64e9415874060977e32ed48b62f1f6148084.1545346337.git.christophe.leroy@c-s.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190107173343.GA4258@embeddedor>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+In-Reply-To: <ae7b64e9415874060977e32ed48b62f1f6148084.1545346337.git.christophe.leroy@c-s.fr>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07-01-19, 11:33, Gustavo A. R. Silva wrote:
-> One of the more common cases of allocation size calculations is finding the
-> size of a structure that has a zero-sized array at the end, along with memory
-> for some number of elements for that array. For example:
+On Fri, Dec 21, 2018 at 08:07:52AM +0000, Christophe Leroy wrote:
+> [    2.364486] WARNING: CPU: 0 PID: 60 at ./arch/powerpc/include/asm/io.h:837 dma_nommu_map_page+0x44/0xd4
+> [    2.373579] CPU: 0 PID: 60 Comm: cryptomgr_test Tainted: G        W         4.20.0-rc5-00560-g6bfb52e23a00-dirty #531
+> [    2.384740] NIP:  c000c540 LR: c000c584 CTR: 00000000
+> [    2.389743] REGS: c95abab0 TRAP: 0700   Tainted: G        W          (4.20.0-rc5-00560-g6bfb52e23a00-dirty)
+> [    2.400042] MSR:  00029032 <EE,ME,IR,DR,RI>  CR: 24042204  XER: 00000000
+> [    2.406669]
+> [    2.406669] GPR00: c02f2244 c95abb60 c6262990 c95abd80 0000256a 00000001 00000001 00000001
+> [    2.406669] GPR08: 00000000 00002000 00000010 00000010 24042202 00000000 00000100 c95abd88
+> [    2.406669] GPR16: 00000000 c05569d4 00000001 00000010 c95abc88 c0615664 00000004 00000000
+> [    2.406669] GPR24: 00000010 c95abc88 c95abc88 00000000 c61ae210 c7ff6d40 c61ae210 00003d68
+> [    2.441559] NIP [c000c540] dma_nommu_map_page+0x44/0xd4
+> [    2.446720] LR [c000c584] dma_nommu_map_page+0x88/0xd4
+> [    2.451762] Call Trace:
+> [    2.454195] [c95abb60] [82000808] 0x82000808 (unreliable)
+> [    2.459572] [c95abb80] [c02f2244] talitos_edesc_alloc+0xbc/0x3c8
+> [    2.465493] [c95abbb0] [c02f2600] ablkcipher_edesc_alloc+0x4c/0x5c
+> [    2.471606] [c95abbd0] [c02f4ed0] ablkcipher_encrypt+0x20/0x64
+> [    2.477389] [c95abbe0] [c02023b0] __test_skcipher+0x4bc/0xa08
+> [    2.483049] [c95abe00] [c0204b60] test_skcipher+0x2c/0xcc
+> [    2.488385] [c95abe20] [c0204c48] alg_test_skcipher+0x48/0xbc
+> [    2.494064] [c95abe40] [c0205cec] alg_test+0x164/0x2e8
+> [    2.499142] [c95abf00] [c0200dec] cryptomgr_test+0x48/0x50
+> [    2.504558] [c95abf10] [c0039ff4] kthread+0xe4/0x110
+> [    2.509471] [c95abf40] [c000e1d0] ret_from_kernel_thread+0x14/0x1c
+> [    2.515532] Instruction dump:
+> [    2.518468] 7c7e1b78 7c9d2378 7cbf2b78 41820054 3d20c076 8089c200 3d20c076 7c84e850
+> [    2.526127] 8129c204 7c842e70 7f844840 419c0008 <0fe00000> 2f9e0000 54847022 7c84fa14
+> [    2.533960] ---[ end trace bf78d94af73fe3b8 ]---
+> [    2.539123] talitos ff020000.crypto: master data transfer error
+> [    2.544775] talitos ff020000.crypto: TEA error: ISR 0x20000000_00000040
+> [    2.551625] alg: skcipher: encryption failed on test 1 for ecb-aes-talitos: ret=22
 > 
-> struct foo {
->     int stuff;
->     void *entry[];
-> };
+> IV cannot be on stack when CONFIG_VMAP_STACK is selected because the stack
+> cannot be DMA mapped anymore.
 > 
-> instance = kzalloc(sizeof(struct foo) + sizeof(void *) * count, GFP_KERNEL);
-> 
-> Instead of leaving these open-coded and prone to type mistakes, we can now
-> use the new struct_size() helper:
-> 
-> instance = kzalloc(struct_size(instance, entry, count), GFP_KERNEL);
-> 
-> This code was detected with the help of Coccinelle.
-> 
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> ---
->  drivers/cpufreq/e_powersaver.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/cpufreq/e_powersaver.c b/drivers/cpufreq/e_powersaver.c
-> index 60bea302abbe..2d3ef208dd70 100644
-> --- a/drivers/cpufreq/e_powersaver.c
-> +++ b/drivers/cpufreq/e_powersaver.c
-> @@ -323,9 +323,8 @@ static int eps_cpu_init(struct cpufreq_policy *policy)
->  		states = 2;
->  
->  	/* Allocate private data and frequency table for current cpu */
-> -	centaur = kzalloc(sizeof(*centaur)
-> -		    + (states + 1) * sizeof(struct cpufreq_frequency_table),
-> -		    GFP_KERNEL);
-> +	centaur = kzalloc(struct_size(centaur, freq_table, states + 1),
-> +			  GFP_KERNEL);
->  	if (!centaur)
->  		return -ENOMEM;
->  	eps_cpu[0] = centaur;
+> This patch copies the IV into the extended descriptor when iv is not
+> a valid linear address.
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-
+Please make the copy unconditional.  Thanks.
 -- 
-viresh
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
