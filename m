@@ -2,240 +2,216 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B354C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 09:06:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8372C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 09:09:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E43E62087E
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 09:06:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9D38B2087E
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 09:09:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="oEDSOGHs"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="x4ieIxYb"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727689AbfAHJGd (ORCPT
+        id S1727778AbfAHJJo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 04:06:33 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:46378 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727367AbfAHJGc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 04:06:32 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=Ryh1lPF7s9cjCauzgCbtcNSiQDTUySQZy1OBSikJmzY=; b=oEDSOGHstqhLc5IbX2mpa5Bnq
-        89+v8ZJ1zd84ucp2d5qs3TBCKbgDlMpHnUvmoCfGOcE3V7ktvGvav0ak99DrKSwRtNgFjYFbw7KHI
-        wpiWQgowdPEZ9D0pLbV8IMkIF+ZY1KxLTtmBNlTl2piprev/CcoXT1H0mwyUJoBeMDSKZzE3/ZLHW
-        AUn3TAkxMa84IsXXGp1XCtIYobnaXqSAZ9+E0XYrqVTeiL9r+x+djgHt0pdVov5jDKqR82gYDnVNf
-        NbnF+VRROJM7AKwtwYjR1lauywwC1WHsfg18rsnHE21syxzz7bnrsdJaT0ViBX8GhN8S0tWD9xXQg
-        54+prWGEw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1ggnL9-0003e5-0Y; Tue, 08 Jan 2019 09:06:27 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 318CB20074A04; Tue,  8 Jan 2019 10:06:25 +0100 (CET)
-Date:   Tue, 8 Jan 2019 10:06:25 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Mike Galbraith <efault@gmx.de>
-Cc:     Tom Putzeys <tom.putzeys@be.atlascopco.com>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: CFS scheduler: spin_lock usage causes dead lock when
- smp_apic_timer_interrupt occurs
-Message-ID: <20190108090625.GN15430@hirez.programming.kicks-ass.net>
-References: <AM0PR03MB480425D5999E0D08DAB30204BB8E0@AM0PR03MB4804.eurprd03.prod.outlook.com>
- <AM0PR03MB4804FA468B7A006AEEA8592ABB8E0@AM0PR03MB4804.eurprd03.prod.outlook.com>
- <20190107102613.GC2861@worktop.programming.kicks-ass.net>
- <1546864114.26963.5.camel@gmx.de>
- <20190107125231.GE14122@hirez.programming.kicks-ass.net>
- <1546925459.17252.2.camel@gmx.de>
+        Tue, 8 Jan 2019 04:09:44 -0500
+Received: from mail-eopbgr130044.outbound.protection.outlook.com ([40.107.13.44]:2112
+        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727367AbfAHJJo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 04:09:44 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=oacLkzwQqnK2GOFn6qeyO8tStJXGUnggmZWIQabxQTg=;
+ b=x4ieIxYbpMwTTLvW9H4LmSdcJ/5UxEQYzaT7h/Fw9B5vflGmHuqdatr4tfApfMoMlxNW0kJEPB/AEq9/3u9WumzGykc8p6skytcbK3gqsmgWaTNOdySIUoVJefXbUPjbW82zY1LZJ04HVCelJXlmhYphmjEJo87n71KFzoDy3QY=
+Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com (52.134.72.18) by
+ DB3PR0402MB3852.eurprd04.prod.outlook.com (52.134.71.143) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1495.6; Tue, 8 Jan 2019 09:09:39 +0000
+Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com
+ ([fe80::59d2:55a0:dbe3:2a97]) by DB3PR0402MB3916.eurprd04.prod.outlook.com
+ ([fe80::59d2:55a0:dbe3:2a97%6]) with mapi id 15.20.1495.011; Tue, 8 Jan 2019
+ 09:09:39 +0000
+From:   Anson Huang <anson.huang@nxp.com>
+To:     "jic23@kernel.org" <jic23@kernel.org>,
+        "knaack.h@gmx.de" <knaack.h@gmx.de>,
+        "lars@metafoo.de" <lars@metafoo.de>,
+        "pmeerw@pmeerw.net" <pmeerw@pmeerw.net>,
+        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     dl-linux-imx <linux-imx@nxp.com>
+Subject: [PATCH V9] iio: light: isl29018: add vcc regulator operation support
+Thread-Topic: [PATCH V9] iio: light: isl29018: add vcc regulator operation
+ support
+Thread-Index: AQHUpzHiMzfl5aSTU0WD0yCbYNkZqg==
+Date:   Tue, 8 Jan 2019 09:09:39 +0000
+Message-ID: <1546938294-26888-1-git-send-email-Anson.Huang@nxp.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: git-send-email 2.7.4
+x-clientproxiedby: HK2PR03CA0048.apcprd03.prod.outlook.com
+ (2603:1096:202:17::18) To DB3PR0402MB3916.eurprd04.prod.outlook.com
+ (2603:10a6:8:10::18)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=anson.huang@nxp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [119.31.174.66]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DB3PR0402MB3852;6:IaVBvtaUPEpXBaaD820kII3fp118Mx/IniLqgwOc3Jr2NPprzT8TIdRK6DCnL+E8VkiYuFRdqrBdr7jAiaxF+RqN3yWE8/0WXd6zInXmKMnpaiCJxufVytIT+4dpiroePBH7hazGkCSqNpuEF85h55mtj4NFfC/Y2MWxzlbh8hl+eHUxnugNy5k35jHSlTAXYdv3nzrI/tniK2C6ZpxCJBZqiuEw+pmMv2cJlbHbsH+GBLeLJo+EUV5eISIZextJNE9xatWcU/8AM+0irMrSJ9GCzisV2IIeysXiDwsQrz6b1edGEphH1wQfSeCA3omH2dcJJUIc+1mw6BrvayvGpw53cesRfmRQZZSvjaTBI2huSt77vmnCDJCdo36DDSa1dJ5BAbJJo6kePOZQh6X9ppNA7fCNUeXHeombihl1yy3Bd3IReQ5vbIOnkQtBZ+wwxH8492SttlfMyHcM/Zi8jw==;5:0pDmJCBre7ll6IsEo2z4Wvd9/WlVQZcdzbsjqdSDdUnJeq/ZBGxP8dVQXMRnbTd93cBv+VlcqhaGzAvuBageES6+OY9gqqov9iGA+1tjWpr9PcoMfxZAKY61LwYkz13DoiWdZ9ZzVh5qb2Mjk2owxeNZb385qlhGNII25Kq1JZlBEUSDJX2qtUPRXlSENUTBdg2GCYkTtOe987QGI10ikg==;7:oba+QUyWART7XIosWTdFgw4kOFslXe6AdxvahdO7lnF8Gi2oPQuKBtdmqe0r5d3kOjHcWtN/e7RdZG4OM6mQ657A0w93jEjUolH94kw+c6Aqvh73WCuu4rO0oOmHd52HGjKaaUuGWqgp/7wdjPBVqA==
+x-ms-office365-filtering-correlation-id: 0cfc1f43-72c3-4233-e77a-08d675490438
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:DB3PR0402MB3852;
+x-ms-traffictypediagnostic: DB3PR0402MB3852:
+x-microsoft-antispam-prvs: <DB3PR0402MB3852B92B4CB9D625DFD21353F58A0@DB3PR0402MB3852.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(908002)(999002)(5005026)(6040522)(8220060)(2401047)(8121501046)(10201501046)(93006095)(93001095)(3231475)(944501520)(52105112)(3002001)(6055026)(6041310)(20161123562045)(20161123560045)(20161123558120)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:DB3PR0402MB3852;BCL:0;PCL:0;RULEID:;SRVR:DB3PR0402MB3852;
+x-forefront-prvs: 0911D5CE78
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(366004)(376002)(136003)(39860400002)(346002)(54534003)(189003)(199004)(5660300001)(68736007)(106356001)(2501003)(105586002)(71200400001)(97736004)(66066001)(2906002)(71190400001)(486006)(305945005)(256004)(14444005)(6436002)(186003)(8936002)(316002)(7736002)(26005)(6512007)(99286004)(14454004)(8676002)(476003)(2616005)(81156014)(81166006)(110136005)(50226002)(478600001)(6486002)(52116002)(86362001)(36756003)(4326008)(3846002)(386003)(6506007)(25786009)(102836004)(2201001)(53936002)(6116002);DIR:OUT;SFP:1101;SCL:1;SRVR:DB3PR0402MB3852;H:DB3PR0402MB3916.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: HDsMjx9UGJg3U9GWHYee6APiK3bDKGL+farWTWTSQPsdQDlxoo4La513UpB13t15/U4Q6lKkb/FFQSvWoXYXIwz9YdMHS2OghHNJdFcas7CZM56yUpT9m2Xs/z7Dcefdgfx2APoVn/BaAHM8Fl9liWPJmHE6vJmcsTq22b4dmo8NyE+oLUBbFJcQWmuTCsAYzurEs69XEUG8B052StCJZ6wO584sWn6JmD/P43VdvfPcWkPe56McxZ6JuD7tAArO21nuAY7FbtVnFeSEV9hqgAm03JhYtnh3ngdVDX7v0GnA7D5ofo0ftpzu2kK4DY8o
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1546925459.17252.2.camel@gmx.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0cfc1f43-72c3-4233-e77a-08d675490438
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Jan 2019 09:09:35.7125
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR0402MB3852
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 08, 2019 at 06:30:59AM +0100, Mike Galbraith wrote:
-> On Mon, 2019-01-07 at 13:52 +0100, Peter Zijlstra wrote:
-> > On Mon, Jan 07, 2019 at 01:28:34PM +0100, Mike Galbraith wrote:
-> > > diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> > > index 960ad0ce77d7..420624c49f38 100644
-> > > --- a/kernel/sched/fair.c
-> > > +++ b/kernel/sched/fair.c
-> > > @@ -5007,9 +5007,9 @@ void init_cfs_bandwidth(struct cfs_bandwidth *cfs_b)
-> > >  	cfs_b->period = ns_to_ktime(default_cfs_period());
-> > >  
-> > >  	INIT_LIST_HEAD(&cfs_b->throttled_cfs_rq);
-> > > -	hrtimer_init(&cfs_b->period_timer, CLOCK_MONOTONIC, HRTIMER_MODE_ABS_PINNED);
-> > > +	hrtimer_init(&cfs_b->period_timer, CLOCK_MONOTONIC, HRTIMER_MODE_ABS_PINNED_HARD);
-> > >  	cfs_b->period_timer.function = sched_cfs_period_timer;
-> > > -	hrtimer_init(&cfs_b->slack_timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
-> > > +	hrtimer_init(&cfs_b->slack_timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL_HARD);
-> > >  	cfs_b->slack_timer.function = sched_cfs_slack_timer;
-> > >  }
-> > 
-> > Right, that should sort it. But I'm not sure this is the best solution
-> > though. That cfs-runtime crud can (IIRC) iterate lists etc.. so running
-> > it from the softirq isn't a bad idea. We just need to fix that locking
-> > up a bit.
-> > 
-> > Something a wee bit like so perhaps..
-> 
-> I plugged that into 4.19-rt along with revert of hard irq context, and
-> it (as expected) does the trick.
+The light sensor's power supply could be controllable by regulator
+on some platforms, such as i.MX6Q-SABRESD board, the light sensor
+isl29023's power supply is controlled by a GPIO fixed regulator,
+need to make sure the regulator is enabled before any operation of
+sensor, this patch adds vcc regulator operation support.
 
-Much appreciated; I queued it as the below.
-
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 ---
-Subject: sched/fair: Robustify CFS-bandwidth timer locking
-From: Peter Zijlstra <peterz@infradead.org>
-Date: Mon, 7 Jan 2019 13:52:31 +0100
-
-Traditionally hrtimer callbacks were run with IRQs disabled, but with
-the introduction of HRTIMER_MODE_SOFT it is possible they run from
-SoftIRQ context, which does _NOT_ have IRQs disabled.
-
-Allow for the CFS bandwidth timers (period_timer and slack_timer) to
-be ran from SoftIRQ context; this entails removing the assumption that
-IRQs are already disabled from the locking.
-
-While mainline doesn't strictly need this, -RT forces all timers not
-explicitly marked with MODE_HARD into MODE_SOFT and trips over this.
-And marking these timers as MODE_HARD doesn't make sense as they're
-not required for RT operation and can potentially be quite expensive.
-
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Reported-by: Tom Putzeys <tom.putzeys@be.atlascopco.com>
-Tested-by: Mike Galbraith <efault@gmx.de>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Link: https://lkml.kernel.org/r/20190107125231.GE14122@hirez.programming.kicks-ass.net
+ChangeLog since V8:
+  - use devm_add_action_or_reset instead of devm_add_action to avoid callin=
+g regulator disable when failed;
 ---
- kernel/sched/fair.c |   30 ++++++++++++++++--------------
- 1 file changed, 16 insertions(+), 14 deletions(-)
+ drivers/iio/light/isl29018.c | 46 ++++++++++++++++++++++++++++++++++++++++=
++++-
+ 1 file changed, 45 insertions(+), 1 deletion(-)
 
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -4566,7 +4566,7 @@ static u64 distribute_cfs_runtime(struct
- 		struct rq *rq = rq_of(cfs_rq);
- 		struct rq_flags rf;
- 
--		rq_lock(rq, &rf);
-+		rq_lock_irqsave(rq, &rf);
- 		if (!cfs_rq_throttled(cfs_rq))
- 			goto next;
- 
-@@ -4583,7 +4583,7 @@ static u64 distribute_cfs_runtime(struct
- 			unthrottle_cfs_rq(cfs_rq);
- 
- next:
--		rq_unlock(rq, &rf);
-+		rq_unlock_irqrestore(rq, &rf);
- 
- 		if (!remaining)
- 			break;
-@@ -4599,7 +4599,7 @@ static u64 distribute_cfs_runtime(struct
-  * period the timer is deactivated until scheduling resumes; cfs_b->idle is
-  * used to track this state.
-  */
--static int do_sched_cfs_period_timer(struct cfs_bandwidth *cfs_b, int overrun)
-+static int do_sched_cfs_period_timer(struct cfs_bandwidth *cfs_b, int overrun, unsigned long flags)
- {
- 	u64 runtime, runtime_expires;
- 	int throttled;
-@@ -4641,11 +4641,11 @@ static int do_sched_cfs_period_timer(str
- 	while (throttled && cfs_b->runtime > 0 && !cfs_b->distribute_running) {
- 		runtime = cfs_b->runtime;
- 		cfs_b->distribute_running = 1;
--		raw_spin_unlock(&cfs_b->lock);
-+		raw_spin_unlock_irqrestore(&cfs_b->lock, flags);
- 		/* we can't nest cfs_b->lock while distributing bandwidth */
- 		runtime = distribute_cfs_runtime(cfs_b, runtime,
- 						 runtime_expires);
--		raw_spin_lock(&cfs_b->lock);
-+		raw_spin_lock_irqsave(&cfs_b->lock, flags);
- 
- 		cfs_b->distribute_running = 0;
- 		throttled = !list_empty(&cfs_b->throttled_cfs_rq);
-@@ -4754,17 +4754,18 @@ static __always_inline void return_cfs_r
- static void do_sched_cfs_slack_timer(struct cfs_bandwidth *cfs_b)
- {
- 	u64 runtime = 0, slice = sched_cfs_bandwidth_slice();
-+	unsigned long flags;
- 	u64 expires;
- 
- 	/* confirm we're still not at a refresh boundary */
--	raw_spin_lock(&cfs_b->lock);
-+	raw_spin_lock_irqsave(&cfs_b->lock, flags);
- 	if (cfs_b->distribute_running) {
--		raw_spin_unlock(&cfs_b->lock);
-+		raw_spin_unlock_irqrestore(&cfs_b->lock, flags);
- 		return;
- 	}
- 
- 	if (runtime_refresh_within(cfs_b, min_bandwidth_expiration)) {
--		raw_spin_unlock(&cfs_b->lock);
-+		raw_spin_unlock_irqrestore(&cfs_b->lock, flags);
- 		return;
- 	}
- 
-@@ -4775,18 +4776,18 @@ static void do_sched_cfs_slack_timer(str
- 	if (runtime)
- 		cfs_b->distribute_running = 1;
- 
--	raw_spin_unlock(&cfs_b->lock);
-+	raw_spin_unlock_irqrestore(&cfs_b->lock, flags);
- 
- 	if (!runtime)
- 		return;
- 
- 	runtime = distribute_cfs_runtime(cfs_b, runtime, expires);
- 
--	raw_spin_lock(&cfs_b->lock);
-+	raw_spin_lock_irqsave(&cfs_b->lock, flags);
- 	if (expires == cfs_b->runtime_expires)
- 		lsub_positive(&cfs_b->runtime, runtime);
- 	cfs_b->distribute_running = 0;
--	raw_spin_unlock(&cfs_b->lock);
-+	raw_spin_unlock_irqrestore(&cfs_b->lock, flags);
+diff --git a/drivers/iio/light/isl29018.c b/drivers/iio/light/isl29018.c
+index b45400f..846df4d 100644
+--- a/drivers/iio/light/isl29018.c
++++ b/drivers/iio/light/isl29018.c
+@@ -23,6 +23,7 @@
+ #include <linux/mutex.h>
+ #include <linux/delay.h>
+ #include <linux/regmap.h>
++#include <linux/regulator/consumer.h>
+ #include <linux/slab.h>
+ #include <linux/iio/iio.h>
+ #include <linux/iio/sysfs.h>
+@@ -95,6 +96,7 @@ struct isl29018_chip {
+ 	struct isl29018_scale	scale;
+ 	int			prox_scheme;
+ 	bool			suspended;
++	struct regulator	*vcc_reg;
+ };
+=20
+ static int isl29018_set_integration_time(struct isl29018_chip *chip,
+@@ -708,6 +710,16 @@ static const char *isl29018_match_acpi_device(struct d=
+evice *dev, int *data)
+ 	return dev_name(dev);
  }
- 
- /*
-@@ -4864,20 +4865,21 @@ static enum hrtimer_restart sched_cfs_pe
+=20
++static void isl29018_disable_regulator_action(void *_data)
++{
++	struct isl29018_chip *chip =3D _data;
++	int err;
++
++	err =3D regulator_disable(chip->vcc_reg);
++	if (err)
++		pr_err("failed to disable isl29018's VCC regulator!\n");
++}
++
+ static int isl29018_probe(struct i2c_client *client,
+ 			  const struct i2c_device_id *id)
  {
- 	struct cfs_bandwidth *cfs_b =
- 		container_of(timer, struct cfs_bandwidth, period_timer);
-+	unsigned long flags;
- 	int overrun;
- 	int idle = 0;
- 
--	raw_spin_lock(&cfs_b->lock);
-+	raw_spin_lock_irqsave(&cfs_b->lock, flags);
- 	for (;;) {
- 		overrun = hrtimer_forward_now(timer, cfs_b->period);
- 		if (!overrun)
- 			break;
- 
--		idle = do_sched_cfs_period_timer(cfs_b, overrun);
-+		idle = do_sched_cfs_period_timer(cfs_b, overrun, flags);
- 	}
- 	if (idle)
- 		cfs_b->period_active = 0;
--	raw_spin_unlock(&cfs_b->lock);
-+	raw_spin_unlock_irqrestore(&cfs_b->lock, flags);
- 
- 	return idle ? HRTIMER_NORESTART : HRTIMER_RESTART;
+@@ -742,6 +754,27 @@ static int isl29018_probe(struct i2c_client *client,
+ 	chip->scale =3D isl29018_scales[chip->int_time][0];
+ 	chip->suspended =3D false;
+=20
++	chip->vcc_reg =3D devm_regulator_get(&client->dev, "vcc");
++	if (IS_ERR(chip->vcc_reg)) {
++		err =3D PTR_ERR(chip->vcc_reg);
++		if (err !=3D -EPROBE_DEFER)
++			dev_err(&client->dev, "failed to get VCC regulator!\n");
++		return err;
++	}
++
++	err =3D regulator_enable(chip->vcc_reg);
++	if (err) {
++		dev_err(&client->dev, "failed to enable VCC regulator!\n");
++		return err;
++	}
++
++	err =3D devm_add_action_or_reset(&client->dev, isl29018_disable_regulator=
+_action,
++				 chip);
++	if (err) {
++		dev_err(&client->dev, "failed to setup regulator cleanup action!\n");
++		return err;
++	}
++
+ 	chip->regmap =3D devm_regmap_init_i2c(client,
+ 				isl29018_chip_info_tbl[dev_id].regmap_cfg);
+ 	if (IS_ERR(chip->regmap)) {
+@@ -768,6 +801,7 @@ static int isl29018_probe(struct i2c_client *client,
+ static int isl29018_suspend(struct device *dev)
+ {
+ 	struct isl29018_chip *chip =3D iio_priv(dev_get_drvdata(dev));
++	int ret;
+=20
+ 	mutex_lock(&chip->lock);
+=20
+@@ -777,10 +811,13 @@ static int isl29018_suspend(struct device *dev)
+ 	 * So we do not have much to do here.
+ 	 */
+ 	chip->suspended =3D true;
++	ret =3D regulator_disable(chip->vcc_reg);
++	if (ret)
++		dev_err(dev, "failed to disable VCC regulator\n");
+=20
+ 	mutex_unlock(&chip->lock);
+=20
+-	return 0;
++	return ret;
  }
+=20
+ static int isl29018_resume(struct device *dev)
+@@ -790,6 +827,13 @@ static int isl29018_resume(struct device *dev)
+=20
+ 	mutex_lock(&chip->lock);
+=20
++	err =3D regulator_enable(chip->vcc_reg);
++	if (err) {
++		dev_err(dev, "failed to enable VCC regulator\n");
++		mutex_unlock(&chip->lock);
++		return err;
++	}
++
+ 	err =3D isl29018_chip_init(chip);
+ 	if (!err)
+ 		chip->suspended =3D false;
+--=20
+2.7.4
+
