@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C13D1C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 16:11:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71DDCC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 16:11:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9CDF8218AD
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 16:11:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4D90C2087F
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 16:11:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729356AbfAHQK4 (ORCPT
+        id S1729342AbfAHQKz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 11:10:56 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:58878 "EHLO
+        Tue, 8 Jan 2019 11:10:55 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:58872 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729233AbfAHQK1 (ORCPT
+        with ESMTP id S1729227AbfAHQK1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 8 Jan 2019 11:10:27 -0500
 Received: from [127.0.0.1] (localhost [127.0.0.1])
         (Authenticated sender: eballetbo)
-        with ESMTPSA id 0778027EBE5
+        with ESMTPSA id 698A726125E
 From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     groeck@chromium.org, gwendal@chromium.org, kernel@collabora.com,
         bleung@chromium.org
-Subject: [PATCH 05/10] platform/chrome: cros_ec_lightbar: remove pr_fmt() define
-Date:   Tue,  8 Jan 2019 17:10:11 +0100
-Message-Id: <20190108161016.12361-6-enric.balletbo@collabora.com>
+Subject: [PATCH 04/10] platform/chrome: cros_ec_vbc: remove unused includes
+Date:   Tue,  8 Jan 2019 17:10:10 +0100
+Message-Id: <20190108161016.12361-5-enric.balletbo@collabora.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190108161016.12361-1-enric.balletbo@collabora.com>
 References: <20190108161016.12361-1-enric.balletbo@collabora.com>
@@ -40,27 +40,29 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This driver no longer has any pr_{level} messages. Remove the pr_fmt().
+None of these are required at the moment.
 
 Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 ---
 
- drivers/platform/chrome/cros_ec_lightbar.c | 2 --
+ drivers/platform/chrome/cros_ec_vbc.c | 2 --
  1 file changed, 2 deletions(-)
 
-diff --git a/drivers/platform/chrome/cros_ec_lightbar.c b/drivers/platform/chrome/cros_ec_lightbar.c
-index cc2f386a59f0..4211a26587d3 100644
---- a/drivers/platform/chrome/cros_ec_lightbar.c
-+++ b/drivers/platform/chrome/cros_ec_lightbar.c
-@@ -17,8 +17,6 @@
-  * along with this program. If not, see <http://www.gnu.org/licenses/>.
+diff --git a/drivers/platform/chrome/cros_ec_vbc.c b/drivers/platform/chrome/cros_ec_vbc.c
+index af9bfe6f385c..86903bc31b27 100644
+--- a/drivers/platform/chrome/cros_ec_vbc.c
++++ b/drivers/platform/chrome/cros_ec_vbc.c
+@@ -18,10 +18,8 @@
+  * GNU General Public License for more details.
   */
  
--#define pr_fmt(fmt) "cros_ec_lightbar: " fmt
--
- #include <linux/ctype.h>
- #include <linux/fs.h>
+-#include <linux/of.h>
+ #include <linux/platform_device.h>
  #include <linux/mfd/cros_ec.h>
+-#include <linux/mfd/cros_ec_commands.h>
+ #include <linux/module.h>
+ #include <linux/slab.h>
+ 
 -- 
 2.20.1
 
