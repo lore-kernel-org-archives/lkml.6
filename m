@@ -2,191 +2,114 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52A9CC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 10:07:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F718C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 10:10:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A72B2087E
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 10:07:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5AA392087E
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 10:10:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="qZtn5S8u"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728606AbfAHKHE (ORCPT
+        id S1728439AbfAHKKO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 05:07:04 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:44692 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727992AbfAHKHD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 05:07:03 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id BBC9FA329C;
-        Tue,  8 Jan 2019 10:07:02 +0000 (UTC)
-Received: from [10.72.12.122] (ovpn-12-122.pek2.redhat.com [10.72.12.122])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id F06891057069;
-        Tue,  8 Jan 2019 10:06:48 +0000 (UTC)
-Subject: Re: [PATCH RFC 1/2] virtio-net: bql support
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, maxime.coquelin@redhat.com,
-        tiwei.bie@intel.com, wexu@redhat.com, jfreimann@redhat.com,
-        "David S. Miller" <davem@davemloft.net>,
-        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org
-References: <20181226101528-mutt-send-email-mst@kernel.org>
- <0fa99d9b-e510-d7eb-db1b-831bd7610ce9@redhat.com>
- <20181230134106-mutt-send-email-mst@kernel.org>
- <b4f06d11-4761-dabb-f641-5fc05c1c34fc@redhat.com>
- <20190102085457-mutt-send-email-mst@kernel.org>
- <17d2ab21-1c9a-2bb9-166f-2863d019cb0b@redhat.com>
- <20190106221506-mutt-send-email-mst@kernel.org>
- <aea2fd16-ec5b-64b5-2095-9a37044223f6@redhat.com>
- <20190106225951-mutt-send-email-mst@kernel.org>
- <88db987e-b519-5c1f-f64f-6f65f8415799@redhat.com>
- <20190107091334-mutt-send-email-mst@kernel.org>
-From:   Jason Wang <jasowang@redhat.com>
-Message-ID: <f68e3920-6186-c409-6b7b-1ce3e094dd56@redhat.com>
-Date:   Tue, 8 Jan 2019 18:06:45 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Tue, 8 Jan 2019 05:10:14 -0500
+Received: from esa3.hgst.iphmx.com ([216.71.153.141]:48841 "EHLO
+        esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727992AbfAHKKO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 05:10:14 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1546942213; x=1578478213;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=1P8JDvo3dAoiLl00jnPlAemozrC3mVJkmqYB5frnj3k=;
+  b=qZtn5S8uFWkyfCTxQTb7McGwV5r5CceCH074Vuv3+9xziLNg2aJgikmu
+   MkPYQS5i3RsO3u0cojAsD2OMXM5xF3cxIYOdncBsakc9AWLVGVNH2YSCH
+   2Kw7/UhwdbYAjxO8RbWm6MSauXB5R8/Ra4PWW77ZAkxMvN/3Rzz40wiXg
+   gws8AISHAAYslyirDtA1xDtDJxpta7atUNSmesF08xUjibiWoUJt1HhHJ
+   OI8CVNZ+OSOYH0Qo3Bo3yR01p/W1etlh+4SOS5oLsa0NKWjLQ11kHm/XS
+   uqwPqfOfgDG9xXvDNUHE7Dav/nZ/tu2GCZ2CH91WqiajjAYnxWStEwoxd
+   w==;
+X-IronPort-AV: E=Sophos;i="5.56,453,1539619200"; 
+   d="scan'208";a="103169116"
+Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
+  by ob1.hgst.iphmx.com with ESMTP; 08 Jan 2019 18:10:13 +0800
+Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
+  by uls-op-cesaep02.wdc.com with ESMTP; 08 Jan 2019 01:51:46 -0800
+Received: from usa003532.ad.shared (HELO [10.86.59.202]) ([10.86.59.202])
+  by uls-op-cesaip02.wdc.com with ESMTP; 08 Jan 2019 02:10:13 -0800
+Subject: Re: [PATCH] RISC-V: fix bad use of of_node_put
+To:     Andreas Schwab <schwab@suse.de>
+Cc:     "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        "palmer@sifive.com" <palmer@sifive.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "anup@brainfault.org" <anup@brainfault.org>,
+        "jeremy.linton@arm.com" <jeremy.linton@arm.com>,
+        "sudeep.holla@arm.com" <sudeep.holla@arm.com>
+References: <1542755270-10433-1-git-send-email-atish.patra@wdc.com>
+ <mvm8szwwo1o.fsf@suse.de>
+From:   Atish Patra <atish.patra@wdc.com>
+Message-ID: <6326f9ba-695d-dc00-1b0c-c37a94c9b485@wdc.com>
+Date:   Tue, 8 Jan 2019 02:10:12 -0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
+ Gecko/20100101 Thunderbird/60.3.3
 MIME-Version: 1.0
-In-Reply-To: <20190107091334-mutt-send-email-mst@kernel.org>
+In-Reply-To: <mvm8szwwo1o.fsf@suse.de>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
 Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Tue, 08 Jan 2019 10:07:02 +0000 (UTC)
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 1/7/19 6:16 AM, Andreas Schwab wrote:
+> of_find_node_by_type already calls of_node_put, don't call it again.
+> 
+> Fixes: 94f9bf118f ("RISC-V: Fix of_node_* refcount")
+> Signed-off-by: Andreas Schwab <schwab@suse.de>
+> ---
+>   arch/riscv/kernel/smpboot.c | 6 +-----
+>   1 file changed, 1 insertion(+), 5 deletions(-)
+> 
+> diff --git a/arch/riscv/kernel/smpboot.c b/arch/riscv/kernel/smpboot.c
+> index fc185ecabb..18cda0e8cf 100644
+> --- a/arch/riscv/kernel/smpboot.c
+> +++ b/arch/riscv/kernel/smpboot.c
+> @@ -57,15 +57,12 @@ void __init setup_smp(void)
+>   
+>   	while ((dn = of_find_node_by_type(dn, "cpu"))) {
+>   		hart = riscv_of_processor_hartid(dn);
+> -		if (hart < 0) {
+> -			of_node_put(dn);
+> +		if (hart < 0)
+>   			continue;
+> -		}
+>   
+>   		if (hart == cpuid_to_hartid_map(0)) {
+>   			BUG_ON(found_boot_cpu);
+>   			found_boot_cpu = 1;
+> -			of_node_put(dn);
+>   			continue;
+>   		}
+>   
+> @@ -73,7 +70,6 @@ void __init setup_smp(void)
+>   		set_cpu_possible(cpuid, true);
+>   		set_cpu_present(cpuid, true);
+>   		cpuid++;
+> -		of_node_put(dn);
+>   	}
+>   
+>   	BUG_ON(!found_boot_cpu);
+> 
+Thanks for catching and fixing this.
 
-On 2019/1/7 下午10:19, Michael S. Tsirkin wrote:
-> On Mon, Jan 07, 2019 at 02:31:47PM +0800, Jason Wang wrote:
->> On 2019/1/7 下午12:01, Michael S. Tsirkin wrote:
->>> On Mon, Jan 07, 2019 at 11:51:55AM +0800, Jason Wang wrote:
->>>> On 2019/1/7 上午11:17, Michael S. Tsirkin wrote:
->>>>> On Mon, Jan 07, 2019 at 10:14:37AM +0800, Jason Wang wrote:
->>>>>> On 2019/1/2 下午9:59, Michael S. Tsirkin wrote:
->>>>>>> On Wed, Jan 02, 2019 at 11:28:43AM +0800, Jason Wang wrote:
->>>>>>>> On 2018/12/31 上午2:45, Michael S. Tsirkin wrote:
->>>>>>>>> On Thu, Dec 27, 2018 at 06:00:36PM +0800, Jason Wang wrote:
->>>>>>>>>> On 2018/12/26 下午11:19, Michael S. Tsirkin wrote:
->>>>>>>>>>> On Thu, Dec 06, 2018 at 04:17:36PM +0800, Jason Wang wrote:
->>>>>>>>>>>> On 2018/12/6 上午6:54, Michael S. Tsirkin wrote:
->>>>>>>>>>>>> When use_napi is set, let's enable BQLs.  Note: some of the issues are
->>>>>>>>>>>>> similar to wifi.  It's worth considering whether something similar to
->>>>>>>>>>>>> commit 36148c2bbfbe ("mac80211: Adjust TSQ pacing shift") might be
->>>>>>>>>>>>> benefitial.
->>>>>>>>>>>> I've played a similar patch several days before. The tricky part is the mode
->>>>>>>>>>>> switching between napi and no napi. We should make sure when the packet is
->>>>>>>>>>>> sent and trakced by BQL,  it should be consumed by BQL as well. I did it by
->>>>>>>>>>>> tracking it through skb->cb.  And deal with the freeze by reset the BQL
->>>>>>>>>>>> status. Patch attached.
->>>>>>>>>>>>
->>>>>>>>>>>> But when testing with vhost-net, I don't very a stable performance,
->>>>>>>>>>> So how about increasing TSQ pacing shift then?
->>>>>>>>>> I can test this. But changing default TCP value is much more than a
->>>>>>>>>> virtio-net specific thing.
->>>>>>>>> Well same logic as wifi applies. Unpredictable latencies related
->>>>>>>>> to radio in one case, to host scheduler in the other.
->>>>>>>>>
->>>>>>>>>>>> it was
->>>>>>>>>>>> probably because we batch the used ring updating so tx interrupt may come
->>>>>>>>>>>> randomly. We probably need to implement time bounded coalescing mechanism
->>>>>>>>>>>> which could be configured from userspace.
->>>>>>>>>>> I don't think it's reasonable to expect userspace to be that smart ...
->>>>>>>>>>> Why do we need time bounded? used ring is always updated when ring
->>>>>>>>>>> becomes empty.
->>>>>>>>>> We don't add used when means BQL may not see the consumed packet in time.
->>>>>>>>>> And the delay varies based on the workload since we count packets not bytes
->>>>>>>>>> or time before doing the batched updating.
->>>>>>>>>>
->>>>>>>>>> Thanks
->>>>>>>>> Sorry I still don't get it.
->>>>>>>>> When nothing is outstanding then we do update the used.
->>>>>>>>> So if BQL stops userspace from sending packets then
->>>>>>>>> we get an interrupt and packets start flowing again.
->>>>>>>> Yes, but how about the cases of multiple flows. That's where I see unstable
->>>>>>>> results.
->>>>>>>>
->>>>>>>>
->>>>>>>>> It might be suboptimal, we might need to tune it but I doubt running
->>>>>>>>> timers is a solution, timer interrupts cause VM exits.
->>>>>>>> Probably not a timer but a time counter (or event byte counter) in vhost to
->>>>>>>> add used and signal guest if it exceeds a value instead of waiting the
->>>>>>>> number of packets.
->>>>>>>>
->>>>>>>>
->>>>>>>> Thanks
->>>>>>> Well we already have VHOST_NET_WEIGHT - is it too big then?
->>>>>> I'm not sure, it might be too big.
->>>>>>
->>>>>>
->>>>>>> And maybe we should expose the "MORE" flag in the descriptor -
->>>>>>> do you think that will help?
->>>>>>>
->>>>>> I don't know. But how a "more" flag can help here?
->>>>>>
->>>>>> Thanks
->>>>> It sounds like we should be a bit more aggressive in updating used ring.
->>>>> But if we just do it naively we will harm performance for sure as that
->>>>> is how we are doing batching right now.
->>>> I agree but the problem is to balance the PPS and throughput. More batching
->>>> helps for PPS but may damage TCP throughput.
->>> That is what more flag is supposed to be I think - it is only set if
->>> there's a socket that actually needs the skb freed in order to go on.
->>
->> I'm not quite sure I get, but is this something similar to what you want?
->>
->> https://lists.linuxfoundation.org/pipermail/virtualization/2014-October/027667.html
->>
->> Which enables tx interrupt for TCP packets, and you want to add used more
->> aggressively for those sockets?
->>
->>
->> Thanks
-> That's the idea.
-> But then you said we can just play with event index
-> instead. I think the answer to why not do that is that it's tricky to do
-> without races.
+Reviewed-by: Atish Patra <atish.patra@wdc.com>
 
-
-We don't do batched used ring update at that time. We can check whether 
-or not guest asking for a interrupt and add used immediately. Actually, 
-I've played a patch to do this. It helps a little but damage the PPS. 
-This is probably because we need more userspace memory accesses.
-
-
->
->
-> We need to think about the exact semantics: e.g. I think it is better to
-> keep interrupts on and then saying "I promise sending more buffers even
-> if you do not use any buffers so using this one is not urgent" rather
-> than as your patches do keeping them off and then saying "this one is
-> urgent".
->
-> The reason being is that "I promise to send more" is
-> more informative and can allow better batching for the
-> host.
-
-
-Just to make sure I understand, you mean set batch flag for e.g non TCP 
-socket?
-
-Thanks
-
-
->
->>>>>     Instead we could make guest
->>>>> control batching using the more flag - if that's not set we write out
->>>>> the used ring.
->>>> It's under the control of guest, so I'm afraid we still need some more guard
->>>> (e.g time/bytes counters) on host.
->>>>
->>>> Thanks
->>> Point is if guest does not care about the skb being freed, then there is no
->>> rush host side to mark buffer used.
->>>
->>>
+Regards,
+Atish
