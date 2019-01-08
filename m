@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C007BC43612
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:05:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CAEC7C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:05:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9129120883
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:05:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 99ABA20827
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:05:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="u1R4WoIt"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="an2949Sn"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733050AbfAHUFf (ORCPT
+        id S1732972AbfAHUFd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 15:05:35 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:43573 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732413AbfAHUFa (ORCPT
+        Tue, 8 Jan 2019 15:05:33 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:40959 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731251AbfAHUF0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 15:05:30 -0500
-Received: by mail-lj1-f193.google.com with SMTP id q2-v6so4483094lji.10;
-        Tue, 08 Jan 2019 12:05:28 -0800 (PST)
+        Tue, 8 Jan 2019 15:05:26 -0500
+Received: by mail-lf1-f68.google.com with SMTP id v5so3891556lfe.7;
+        Tue, 08 Jan 2019 12:05:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=KjuAmgjHlhPWg7vZv/M0TlOMAshH0WF7o8w6mNSkFXw=;
-        b=u1R4WoItDbfO6hhHhsjLfP7o7pC7bq+5OE70Y3mc1vKCha4OdZYEpjXJbUWrFatenH
-         UjWL1dq+TwAHuGoV/VfZsUS0FxaaxBF9Jd7FBdNhzHdaCW2eq5mMLIX4l6gg6Rl+Sh8n
-         r3ddpAJ6TfFOgFx4b1LCe7n865Kcq+OwAkT9th8YQvGABZE5xkaele7YBs1TT7tLA4SI
-         tRJFICpi6FTtvxju9xECpA9+ozkfkwf9Sa7sU/RV+ylrCeq7PeQwR5sx8g/bkvToaO9P
-         8dbGPJNYtBuPgLm3bPxbvktiN9cmmod3WfQGBgmlhTUWDhOsUuLJaInMy4Q10c7shjAX
-         J4Hw==
+        bh=CKLSuDSiUbomGh4I8Fz1drCWaMjb7DVbiuB6C0KO3NA=;
+        b=an2949SnqLLfU9Rs8eDpBYidaG72QIHQzb2Ogy6sXdZ+kOrIYpD8CNdBAwAd6sdQIJ
+         4t4Xnw8T56Y5w03EzA4iuaOYaLQ65QgHyIw3gKOmeifjc9XwchaEqtTbumVGgMyy/jr4
+         H3Vm8UPEV3QxdwS3LnsWHD8lmbOd2TMuFbXtFyha3N2aVXCKBtLJhPIgNSdZy69uret6
+         VMzD24DhRQUgua0SNZ6Esruu2ykCyI0OlupqV0jqC6I2Gp4rNeeZuqQDI44Uc1lqZ6CG
+         Fl4xIWU+Y0ESq6R+TaQTZwUwuUJH2ZZTNO2hG6JQt+12KA/SUjX0zyhxC0vfWAT/OXV+
+         AKTA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=KjuAmgjHlhPWg7vZv/M0TlOMAshH0WF7o8w6mNSkFXw=;
-        b=W8jz+z1FU+pQmOZsPm1WhRXwNuAvK4By+5vh0O/Wtgp8GsvYTn6WAAGy6Lbf7uLgtP
-         dC8erHffmXvm54fvjmhQU3gxWkjZQr/mKSuZ9F437KUa/mcVGezm8MTh8OEf4kUqbnZC
-         5iNemEbtblTmC713kImbrd9yKkDWGvSENsSgUvgnQ2I6l23QRI49NzixC31sA6EruUmW
-         SfzZNayuxAGnM1wLcDZVGGcLWVEqUMbnEdRlmG8hdhY0BrVqy0HChfhm3Mz1dGC6PrgH
-         q+UXsrEDqLwqRu01Zfgil5LScNI5SLPHn77CvVuoSt1reTrgNY5Fd1MzDsu1nqU+2EhO
-         PJPw==
-X-Gm-Message-State: AJcUukfQHjmnqEXG/Rzfeo2kL8RLRByvAmCjTUMC2MxHCIo8sN3D9aPe
-        I1P1pTo9xVAtGFQzJTfKyzE=
-X-Google-Smtp-Source: ALg8bN5pT46pkrxZpK7o+mLATemc0Niur+ce7kuw8r+G1YGgUn7ukO1fkhqYJIVugFOyvbwxKsnDoQ==
-X-Received: by 2002:a2e:4218:: with SMTP id p24-v6mr1826784lja.58.1546977927995;
-        Tue, 08 Jan 2019 12:05:27 -0800 (PST)
+        bh=CKLSuDSiUbomGh4I8Fz1drCWaMjb7DVbiuB6C0KO3NA=;
+        b=tn5yJVuRCRLftmM1kKKoMFT1cNJMJnXmsDp9IJj0IzcWPYBIfaFlCePlvjZ4aygH8j
+         niONiR6DN46rFr9Yoggvu15D80m9dJjfnVpKFSqLxcKGMYREUrQYgyRJyYag99gXiBw6
+         IaZHtuBNGoSJ0NcbVNr5nxl2agIzGhEPE3hxgg8yWmigoylClIskCsgTTm0L2W7VM4wZ
+         IRx4y1DyP6l0zCJcEZi9TVHZl4vVD+O0n+uN4AIscJcaj8oGTkncJ4h/vmFVhrTnzOog
+         8eJ4McB3dZHAg+15HNCIzcauqIDQJM1o1Fs+d/dat7uu+yHEc3kEhOub4nXoxV8CP7Cm
+         UoDw==
+X-Gm-Message-State: AJcUukd5DwM21iqetKqWRIbcVJnAT7Iucgm8pdq2LSlyw5Tbb0ebUhFK
+        RlF8TEFsUoviwpFnd6JC5Uw=
+X-Google-Smtp-Source: ALg8bN46YCS0ZU8VbXtL9n20S6AqiEI4hOlXxP6D+RREGvAHL54MhaFThRMF+As/6EnUqsBWpGg7AQ==
+X-Received: by 2002:a19:c70a:: with SMTP id x10mr1823599lff.88.1546977923517;
+        Tue, 08 Jan 2019 12:05:23 -0800 (PST)
 Received: from localhost.localdomain ([2a02:a315:5445:5300:d033:e708:8ec7:810d])
-        by smtp.googlemail.com with ESMTPSA id y23-v6sm14486768ljk.95.2019.01.08.12.05.26
+        by smtp.googlemail.com with ESMTPSA id y23-v6sm14486768ljk.95.2019.01.08.12.05.21
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 08 Jan 2019 12:05:27 -0800 (PST)
+        Tue, 08 Jan 2019 12:05:22 -0800 (PST)
 From:   =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
 To:     kgene@kernel.org
 Cc:     krzk@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
@@ -64,9 +64,9 @@ Cc:     krzk@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
         linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
         =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
-Subject: [PATCH 4/4] ARM: defconfig: s5pv210: Add cpufreq support
-Date:   Tue,  8 Jan 2019 21:05:09 +0100
-Message-Id: <20190108200509.30494-5-pawel.mikolaj.chmiel@gmail.com>
+Subject: [PATCH 1/4] ARM: dts: s5pv210: Add dmc nodes
+Date:   Tue,  8 Jan 2019 21:05:06 +0100
+Message-Id: <20190108200509.30494-2-pawel.mikolaj.chmiel@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190108200509.30494-1-pawel.mikolaj.chmiel@gmail.com>
 References: <20190108200509.30494-1-pawel.mikolaj.chmiel@gmail.com>
@@ -78,30 +78,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This commit enables cpufreq support for all s5pv210 devices.
+This commit adds dmc nodes, which are needed by s5pv210 cpufreq driver
+to work.
 
 Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
 ---
- arch/arm/configs/s5pv210_defconfig | 6 ++++++
- 1 file changed, 6 insertions(+)
+ arch/arm/boot/dts/s5pv210.dtsi | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/arch/arm/configs/s5pv210_defconfig b/arch/arm/configs/s5pv210_defconfig
-index 951196bdf008..fd4f28aabda6 100644
---- a/arch/arm/configs/s5pv210_defconfig
-+++ b/arch/arm/configs/s5pv210_defconfig
-@@ -11,6 +11,12 @@ CONFIG_ARCH_S5PV210=y
- CONFIG_VMSPLIT_2G=y
- CONFIG_ARM_APPENDED_DTB=y
- CONFIG_CMDLINE="root=/dev/ram0 rw ramdisk=8192 initrd=0x20800000,8M console=ttySAC1,115200 init=/linuxrc"
-+CONFIG_CPU_FREQ=y
-+CONFIG_CPU_FREQ_STAT=y
-+CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND=y
-+CONFIG_CPU_FREQ_GOV_POWERSAVE=m
-+CONFIG_CPU_FREQ_GOV_USERSPACE=m
-+CONFIG_CPU_FREQ_GOV_CONSERVATIVE=m
- CONFIG_VFP=y
- CONFIG_NEON=y
- CONFIG_MODULES=y
+diff --git a/arch/arm/boot/dts/s5pv210.dtsi b/arch/arm/boot/dts/s5pv210.dtsi
+index e9613418228d..2d55a3a6e79e 100644
+--- a/arch/arm/boot/dts/s5pv210.dtsi
++++ b/arch/arm/boot/dts/s5pv210.dtsi
+@@ -25,6 +25,8 @@
+ 
+ 	aliases {
+ 		csis0 = &csis0;
++		dmc0 = &dmc0;
++		dmc1 = &dmc1;
+ 		fimc0 = &fimc0;
+ 		fimc1 = &fimc1;
+ 		fimc2 = &fimc2;
+@@ -521,6 +523,16 @@
+ 			status = "disabled";
+ 		};
+ 
++		dmc0: dmc@f0000000 {
++			compatible = "samsung,s5pv210-dmc";
++			reg = <0xf0000000 0x1000>;
++		};
++
++		dmc1: dmc@f1400000 {
++			compatible = "samsung,s5pv210-dmc";
++			reg = <0xf1400000 0x1000>;
++		};
++
+ 		g2d: g2d@fa000000 {
+ 			compatible = "samsung,s5pv210-g2d";
+ 			reg = <0xfa000000 0x1000>;
 -- 
 2.17.1
 
