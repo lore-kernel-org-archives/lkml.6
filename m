@@ -2,53 +2,57 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE42BC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:29:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FD24C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:29:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E45B2070B
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:29:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F3F7A2070B
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:29:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546975750;
-	bh=kMUio/CIE75FQuW9CLR1Dth70BxYd3hKUWZP6aC1EG8=;
+	s=default; t=1546975753;
+	bh=/eMAqon4sbmlcoffqcqn6Vd+qXRrh/+GdEtfmQfROh0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=KcoPuoldYC+bj1Ag08l6NdADX/RTOtG3x66s4ecFsWyrQQwQMcEPVSSKcYtvQYuVM
-	 pT2arc164lqKStjn7tNMuBQ7/v38fERWAFkUjXZQrJEiMs6cMBNiZZxEYeQvzosulJ
-	 X4+oPN0oFOlMOAaqvqLs44X+LcVnm8q4HdheAj/o=
+	b=peLc2kLRbWTGImtSI4V7jsQB+dJ5m6C2iqrR7An6wJHANOVVAKyhkFxWYTBypMOg3
+	 RiwuCxewGoDm0yhijVfVsVPuKpUJFRY/i/8kZz3CfGp0k77qHx0lO+k3irQTgep2uN
+	 VhTcfQ6tBFvx7PRaxER21JZLjU9WfcL626d3XOfw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730314AbfAHT3J (ORCPT
+        id S1730328AbfAHT3L (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:29:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36304 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 14:29:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36350 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730285AbfAHT3G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:29:06 -0500
+        id S1730299AbfAHT3I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:29:08 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 965612070B;
-        Tue,  8 Jan 2019 19:29:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BFE64217D9;
+        Tue,  8 Jan 2019 19:29:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546975745;
-        bh=kMUio/CIE75FQuW9CLR1Dth70BxYd3hKUWZP6aC1EG8=;
+        s=default; t=1546975747;
+        bh=/eMAqon4sbmlcoffqcqn6Vd+qXRrh/+GdEtfmQfROh0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mwuOCrsB1V8t8unZ+zcVSqIY8MYV2u3eWKFJSUGJHxnSMKgU4Zj+xb4coorXEF6o+
-         chsuIbtxW1CH569szihugebXQ0JECDBwuEO+AvL3x855POtyj6bD01FXAqGHNf5Khf
-         TYWaJImz7kiDN1kwSj1g4BY3p1m+zQnk2QettW0k=
+        b=j9tKqR5EBFr1xGE7iLKNH+LXKVszxYiP2ifk1ltczLsj3qDJCKIdJDkS1pbmkZzxd
+         TsC7tBz31yoPeIZ4qEUedIXoHh2PnR2/hoIWiUnmCk9bRWKGHlxvMhBdAm7Hcf35Dw
+         Oa4jS1ozQZnbDFQQLC0hJySwCmM5/o94c2Ts14zo=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
+Cc:     Leo Yan <leo.yan@linaro.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Mike Leach <mike.leach@linaro.org>,
         Namhyung Kim <namhyung@kernel.org>,
+        Robert Walker <robert.walker@arm.com>,
+        coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.20 091/117] tools lib subcmd: Don't add the kernel sources to the include path
-Date:   Tue,  8 Jan 2019 14:25:59 -0500
-Message-Id: <20190108192628.121270-91-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.20 093/117] perf cs-etm: Correct packets swapping in cs_etm__flush()
+Date:   Tue,  8 Jan 2019 14:26:01 -0500
+Message-Id: <20190108192628.121270-93-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108192628.121270-1-sashal@kernel.org>
 References: <20190108192628.121270-1-sashal@kernel.org>
@@ -60,71 +64,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnaldo Carvalho de Melo <acme@redhat.com>
+From: Leo Yan <leo.yan@linaro.org>
 
-[ Upstream commit ece9804985b57e1ccd83b1fb6288520955a29d51 ]
+[ Upstream commit 43fd56669c28cd354e9228bdb58e4bca1c1a8b66 ]
 
-At some point we decided not to directly include kernel sources files
-when building tools/perf/, but when tools/lib/subcmd/ was forked from
-tools/perf it somehow ended up adding it via these two lines in its
-Makefile:
+The structure cs_etm_queue uses 'prev_packet' to point to previous
+packet, this can be used to combine with new coming packet to generate
+samples.
 
-  CFLAGS += -I$(srctree)/include/uapi
-  CFLAGS += -I$(srctree)/include
+In function cs_etm__flush() it swaps packets only when the flag
+'etm->synth_opts.last_branch' is true, this means that it will not swap
+packets if without option '--itrace=il' to generate last branch entries;
+thus for this case the 'prev_packet' doesn't point to the correct
+previous packet and the stale packet still will be used to generate
+sequential sample.  Thus if dump trace with 'perf script' command we can
+see the incorrect flow with the stale packet's address info.
 
-As $(srctree) points to the kernel sources.
+This patch corrects packets swapping in cs_etm__flush(); except using
+the flag 'etm->synth_opts.last_branch' it also checks the another flag
+'etm->sample_branches', if any flag is true then it swaps packets so can
+save correct content to 'prev_packet'.  Finally this can fix the wrong
+program flow dumping issue.
 
-Removing those lines and keeping just:
+The patch has a minor refactoring to use 'etm->synth_opts.last_branch'
+instead of 'etmq->etm->synth_opts.last_branch' for condition checking,
+this is consistent with that is done in cs_etm__sample().
 
-  CFLAGS += -I$(srctree)/tools/include/
-
-Is enough to build tools/perf and tools/objtool.
-
-This fixes the build when building from the sources in environments such
-as the Android NDK crossbuilding from a fedora:26 system:
-
-  subcmd-util.h:11:15: error: expected ',' or ';' before 'void'
-   static inline void report(const char *prefix, const char *err, va_list params)
-                 ^
-  In file included from /git/perf/include/uapi/linux/stddef.h:2:0,
-                   from /git/perf/include/uapi/linux/posix_types.h:5,
-                   from /opt/android-ndk-r12b/platforms/android-24/arch-arm/usr/include/sys/types.h:36,
-                   from /opt/android-ndk-r12b/platforms/android-24/arch-arm/usr/include/unistd.h:33,
-                   from run-command.c:2:
-  subcmd-util.h:18:17: error: '__no_instrument_function__' attribute applies only to functions
-
-The /opt/android-ndk-r12b/platforms/android-24/arch-arm/usr/include/sys/types.h
-file that includes linux/posix_types.h ends up getting the one in the kernel
-sources causing the breakage. Fix it.
-
-Test built tools/objtool/ too.
-
-Reported-by: Jiri Olsa <jolsa@kernel.org>
-Tested-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Signed-off-by: Leo Yan <leo.yan@linaro.org>
+Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Mike Leach <mike.leach@linaro.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Fixes: 4b6ab94eabe4 ("perf subcmd: Create subcmd library")
-Link: https://lkml.kernel.org/n/tip-5lhaoecrj12t0bqwvpiu14sm@git.kernel.org
+Cc: Robert Walker <robert.walker@arm.com>
+Cc: coresight@lists.linaro.org
+Cc: linux-arm-kernel@lists.infradead.org
+Link: http://lkml.kernel.org/r/1544513908-16805-2-git-send-email-leo.yan@linaro.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/lib/subcmd/Makefile | 2 --
- 1 file changed, 2 deletions(-)
+ tools/perf/util/cs-etm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/lib/subcmd/Makefile b/tools/lib/subcmd/Makefile
-index 95563b8e1ad7..ed61fb3a46c0 100644
---- a/tools/lib/subcmd/Makefile
-+++ b/tools/lib/subcmd/Makefile
-@@ -36,8 +36,6 @@ endif
- CFLAGS += -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE
+diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
+index 73430b73570d..c2f0c92623f0 100644
+--- a/tools/perf/util/cs-etm.c
++++ b/tools/perf/util/cs-etm.c
+@@ -1005,7 +1005,7 @@ static int cs_etm__flush(struct cs_etm_queue *etmq)
+ 	}
  
- CFLAGS += -I$(srctree)/tools/include/
--CFLAGS += -I$(srctree)/include/uapi
--CFLAGS += -I$(srctree)/include
- 
- SUBCMD_IN := $(OUTPUT)libsubcmd-in.o
- 
+ swap_packet:
+-	if (etmq->etm->synth_opts.last_branch) {
++	if (etm->sample_branches || etm->synth_opts.last_branch) {
+ 		/*
+ 		 * Swap PACKET with PREV_PACKET: PACKET becomes PREV_PACKET for
+ 		 * the next incoming packet.
 -- 
 2.19.1
 
