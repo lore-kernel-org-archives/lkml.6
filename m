@@ -7,46 +7,49 @@ X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE1A7C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:05:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E3EBC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:05:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D94320660
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:05:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 503FA20827
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:05:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546977907;
-	bh=IpoEWFN2V3WzgVluy3yVNPwzwvmawDw92oJ0UPGmtf8=;
+	s=default; t=1546977916;
+	bh=rv7fyLA/ZEffG1ge608eYiwJVTdoGKiwUeibeUsXPHY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=A9gA12G6f34WqcrxqmsYtp+UqM0fWnhTY0pcAXsWEzeQntwhgJf+XdjbkOLbBI1HK
-	 ELKSIzjbc2p20YQJ48B652UFcIc+pxrt2RXtL2Ckka+qR6Q5P00eyx4kmHTDZ0WNly
-	 ZS2hyn/a7aHoxmTXBmxRrkzG/OL7UeEDRdkTgxU8=
+	b=uZD+smZ1k4WeLI0BsIc8RSDU+CMbXR33Cncjvb0/Qg2E/I490nRaSWloCn2VpmLsy
+	 AdaNfDWHz93BGXrWPA9HklPwdkuGmCBn4OWIhOwEUIjcGm7j1AbASJojM1300Jr325
+	 6afZKTmJiOs5CIlameHqi+XX0CY4IID1MXgqn6EM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730624AbfAHUFF (ORCPT
+        id S1731250AbfAHUFP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 15:05:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35276 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 15:05:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35208 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729204AbfAHT2T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:28:19 -0500
+        id S1729324AbfAHT2Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:28:16 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BA3BB20645;
-        Tue,  8 Jan 2019 19:28:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8C4E920645;
+        Tue,  8 Jan 2019 19:28:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546975698;
-        bh=IpoEWFN2V3WzgVluy3yVNPwzwvmawDw92oJ0UPGmtf8=;
+        s=default; t=1546975695;
+        bh=rv7fyLA/ZEffG1ge608eYiwJVTdoGKiwUeibeUsXPHY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=n0bWYj4i0R9tRxArh93qTaZHOaFW6nbLkJ/yj1feYvvIXWRJkKxam0fSbsiZnplJD
-         wHYVJ/rTOFY5R4sZJbubwi/lN75omHkgAexWHHZo/wWY8CeGhN1qNT00lSjzkHeZMu
-         qGaCspxCyveQ2DyzNeXqHwfKCUDGn17MRbwjI8lQ=
+        b=OkqVDf8X2usqpJBeEArPS4OX0ENJgbFSqSFHCNDLu5vf09TB1DaKwHF/AbxqcHkDX
+         JlENSs8kgYswdLpcLRfW75ib+nEbgPM0zNQQ3k3gC+SxbA8gmtbO4y3r4qvmHnRUZD
+         mZZqwFf8xceO1zV+6gBeYOF5QB4vtaHAL0B5dxI4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Lucas Stach <l.stach@pengutronix.de>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 062/117] clk: imx6q: reset exclusive gates on init
-Date:   Tue,  8 Jan 2019 14:25:30 -0500
-Message-Id: <20190108192628.121270-62-sashal@kernel.org>
+Cc:     "Dmitry V. Levin" <ldv@altlinux.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Will Drewry <wad@chromium.org>,
+        linux-kselftest@vger.kernel.org, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.20 060/117] selftests: do not macro-expand failed assertion expressions
+Date:   Tue,  8 Jan 2019 14:25:28 -0500
+Message-Id: <20190108192628.121270-60-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108192628.121270-1-sashal@kernel.org>
 References: <20190108192628.121270-1-sashal@kernel.org>
@@ -58,44 +61,243 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lucas Stach <l.stach@pengutronix.de>
+From: "Dmitry V. Levin" <ldv@altlinux.org>
 
-[ Upstream commit f7542d817733f461258fd3a47d77da35b2d9fc81 ]
+[ Upstream commit b708a3cc9600390ccaa2b68a88087dd265154b2b ]
 
-The exclusive gates may be set up in the wrong way by software running
-before the clock driver comes up. In that case the exclusive setup is
-locked in its initial state, as the complementary function can't be
-activated without disabling the initial setup first.
+I've stumbled over the current macro-expand behaviour of the test
+harness:
 
-To avoid this lock situation, reset the exclusive gates to the off
-state and allow the kernel to provide the proper setup.
+$ gcc -Wall -xc - <<'__EOF__'
+TEST(macro) {
+	int status = 0;
+	ASSERT_TRUE(WIFSIGNALED(status));
+}
+TEST_HARNESS_MAIN
+__EOF__
+$ ./a.out
+[==========] Running 1 tests from 1 test cases.
+[ RUN      ] global.macro
+<stdin>:4:global.macro:Expected 0 (0) != (((signed char) (((status) & 0x7f) + 1) >> 1) > 0) (0)
+global.macro: Test terminated by assertion
+[     FAIL ] global.macro
+[==========] 0 / 1 tests passed.
+[  FAILED  ]
 
-Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
-Reviewed-by: Dong Aisheng <Aisheng.dong@nxp.com>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+With this change the output of the same test looks much more
+comprehensible:
+
+[==========] Running 1 tests from 1 test cases.
+[ RUN      ] global.macro
+<stdin>:4:global.macro:Expected 0 (0) != WIFSIGNALED(status) (0)
+global.macro: Test terminated by assertion
+[     FAIL ] global.macro
+[==========] 0 / 1 tests passed.
+[  FAILED  ]
+
+The issue is very similar to the bug fixed in glibc assert(3)
+three years ago:
+https://sourceware.org/bugzilla/show_bug.cgi?id=18604
+
+Cc: Shuah Khan <shuah@kernel.org>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Andy Lutomirski <luto@amacapital.net>
+Cc: Will Drewry <wad@chromium.org>
+Cc: linux-kselftest@vger.kernel.org
+Signed-off-by: Dmitry V. Levin <ldv@altlinux.org>
+Acked-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: Shuah Khan <shuah@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/imx/clk-imx6q.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ tools/testing/selftests/kselftest_harness.h | 42 ++++++++++-----------
+ 1 file changed, 21 insertions(+), 21 deletions(-)
 
-diff --git a/drivers/clk/imx/clk-imx6q.c b/drivers/clk/imx/clk-imx6q.c
-index bbe0c60f4d09..59f6a3e087db 100644
---- a/drivers/clk/imx/clk-imx6q.c
-+++ b/drivers/clk/imx/clk-imx6q.c
-@@ -508,8 +508,12 @@ static void __init imx6q_clocks_init(struct device_node *ccm_node)
- 	 * lvds1_gate and lvds2_gate are pseudo-gates.  Both can be
- 	 * independently configured as clock inputs or outputs.  We treat
- 	 * the "output_enable" bit as a gate, even though it's really just
--	 * enabling clock output.
-+	 * enabling clock output. Initially the gate bits are cleared, as
-+	 * otherwise the exclusive configuration gets locked in the setup done
-+	 * by software running before the clock driver, with no way to change
-+	 * it.
- 	 */
-+	writel(readl(base + 0x160) & ~0x3c00, base + 0x160);
- 	clk[IMX6QDL_CLK_LVDS1_GATE] = imx_clk_gate_exclusive("lvds1_gate", "lvds1_sel", base + 0x160, 10, BIT(12));
- 	clk[IMX6QDL_CLK_LVDS2_GATE] = imx_clk_gate_exclusive("lvds2_gate", "lvds2_sel", base + 0x160, 11, BIT(13));
+diff --git a/tools/testing/selftests/kselftest_harness.h b/tools/testing/selftests/kselftest_harness.h
+index 6ae3730c4ee3..76d654ef3234 100644
+--- a/tools/testing/selftests/kselftest_harness.h
++++ b/tools/testing/selftests/kselftest_harness.h
+@@ -354,7 +354,7 @@
+  * ASSERT_EQ(expected, measured): expected == measured
+  */
+ #define ASSERT_EQ(expected, seen) \
+-	__EXPECT(expected, seen, ==, 1)
++	__EXPECT(expected, #expected, seen, #seen, ==, 1)
  
+ /**
+  * ASSERT_NE(expected, seen)
+@@ -365,7 +365,7 @@
+  * ASSERT_NE(expected, measured): expected != measured
+  */
+ #define ASSERT_NE(expected, seen) \
+-	__EXPECT(expected, seen, !=, 1)
++	__EXPECT(expected, #expected, seen, #seen, !=, 1)
+ 
+ /**
+  * ASSERT_LT(expected, seen)
+@@ -376,7 +376,7 @@
+  * ASSERT_LT(expected, measured): expected < measured
+  */
+ #define ASSERT_LT(expected, seen) \
+-	__EXPECT(expected, seen, <, 1)
++	__EXPECT(expected, #expected, seen, #seen, <, 1)
+ 
+ /**
+  * ASSERT_LE(expected, seen)
+@@ -387,7 +387,7 @@
+  * ASSERT_LE(expected, measured): expected <= measured
+  */
+ #define ASSERT_LE(expected, seen) \
+-	__EXPECT(expected, seen, <=, 1)
++	__EXPECT(expected, #expected, seen, #seen, <=, 1)
+ 
+ /**
+  * ASSERT_GT(expected, seen)
+@@ -398,7 +398,7 @@
+  * ASSERT_GT(expected, measured): expected > measured
+  */
+ #define ASSERT_GT(expected, seen) \
+-	__EXPECT(expected, seen, >, 1)
++	__EXPECT(expected, #expected, seen, #seen, >, 1)
+ 
+ /**
+  * ASSERT_GE(expected, seen)
+@@ -409,7 +409,7 @@
+  * ASSERT_GE(expected, measured): expected >= measured
+  */
+ #define ASSERT_GE(expected, seen) \
+-	__EXPECT(expected, seen, >=, 1)
++	__EXPECT(expected, #expected, seen, #seen, >=, 1)
+ 
+ /**
+  * ASSERT_NULL(seen)
+@@ -419,7 +419,7 @@
+  * ASSERT_NULL(measured): NULL == measured
+  */
+ #define ASSERT_NULL(seen) \
+-	__EXPECT(NULL, seen, ==, 1)
++	__EXPECT(NULL, "NULL", seen, #seen, ==, 1)
+ 
+ /**
+  * ASSERT_TRUE(seen)
+@@ -429,7 +429,7 @@
+  * ASSERT_TRUE(measured): measured != 0
+  */
+ #define ASSERT_TRUE(seen) \
+-	ASSERT_NE(0, seen)
++	__EXPECT(0, "0", seen, #seen, !=, 1)
+ 
+ /**
+  * ASSERT_FALSE(seen)
+@@ -439,7 +439,7 @@
+  * ASSERT_FALSE(measured): measured == 0
+  */
+ #define ASSERT_FALSE(seen) \
+-	ASSERT_EQ(0, seen)
++	__EXPECT(0, "0", seen, #seen, ==, 1)
+ 
+ /**
+  * ASSERT_STREQ(expected, seen)
+@@ -472,7 +472,7 @@
+  * EXPECT_EQ(expected, measured): expected == measured
+  */
+ #define EXPECT_EQ(expected, seen) \
+-	__EXPECT(expected, seen, ==, 0)
++	__EXPECT(expected, #expected, seen, #seen, ==, 0)
+ 
+ /**
+  * EXPECT_NE(expected, seen)
+@@ -483,7 +483,7 @@
+  * EXPECT_NE(expected, measured): expected != measured
+  */
+ #define EXPECT_NE(expected, seen) \
+-	__EXPECT(expected, seen, !=, 0)
++	__EXPECT(expected, #expected, seen, #seen, !=, 0)
+ 
+ /**
+  * EXPECT_LT(expected, seen)
+@@ -494,7 +494,7 @@
+  * EXPECT_LT(expected, measured): expected < measured
+  */
+ #define EXPECT_LT(expected, seen) \
+-	__EXPECT(expected, seen, <, 0)
++	__EXPECT(expected, #expected, seen, #seen, <, 0)
+ 
+ /**
+  * EXPECT_LE(expected, seen)
+@@ -505,7 +505,7 @@
+  * EXPECT_LE(expected, measured): expected <= measured
+  */
+ #define EXPECT_LE(expected, seen) \
+-	__EXPECT(expected, seen, <=, 0)
++	__EXPECT(expected, #expected, seen, #seen, <=, 0)
+ 
+ /**
+  * EXPECT_GT(expected, seen)
+@@ -516,7 +516,7 @@
+  * EXPECT_GT(expected, measured): expected > measured
+  */
+ #define EXPECT_GT(expected, seen) \
+-	__EXPECT(expected, seen, >, 0)
++	__EXPECT(expected, #expected, seen, #seen, >, 0)
+ 
+ /**
+  * EXPECT_GE(expected, seen)
+@@ -527,7 +527,7 @@
+  * EXPECT_GE(expected, measured): expected >= measured
+  */
+ #define EXPECT_GE(expected, seen) \
+-	__EXPECT(expected, seen, >=, 0)
++	__EXPECT(expected, #expected, seen, #seen, >=, 0)
+ 
+ /**
+  * EXPECT_NULL(seen)
+@@ -537,7 +537,7 @@
+  * EXPECT_NULL(measured): NULL == measured
+  */
+ #define EXPECT_NULL(seen) \
+-	__EXPECT(NULL, seen, ==, 0)
++	__EXPECT(NULL, "NULL", seen, #seen, ==, 0)
+ 
+ /**
+  * EXPECT_TRUE(seen)
+@@ -547,7 +547,7 @@
+  * EXPECT_TRUE(measured): 0 != measured
+  */
+ #define EXPECT_TRUE(seen) \
+-	EXPECT_NE(0, seen)
++	__EXPECT(0, "0", seen, #seen, !=, 0)
+ 
+ /**
+  * EXPECT_FALSE(seen)
+@@ -557,7 +557,7 @@
+  * EXPECT_FALSE(measured): 0 == measured
+  */
+ #define EXPECT_FALSE(seen) \
+-	EXPECT_EQ(0, seen)
++	__EXPECT(0, "0", seen, #seen, ==, 0)
+ 
+ /**
+  * EXPECT_STREQ(expected, seen)
+@@ -597,7 +597,7 @@
+ 	if (_metadata->passed && _metadata->step < 255) \
+ 		_metadata->step++;
+ 
+-#define __EXPECT(_expected, _seen, _t, _assert) do { \
++#define __EXPECT(_expected, _expected_str, _seen, _seen_str, _t, _assert) do { \
+ 	/* Avoid multiple evaluation of the cases */ \
+ 	__typeof__(_expected) __exp = (_expected); \
+ 	__typeof__(_seen) __seen = (_seen); \
+@@ -606,8 +606,8 @@
+ 		unsigned long long __exp_print = (uintptr_t)__exp; \
+ 		unsigned long long __seen_print = (uintptr_t)__seen; \
+ 		__TH_LOG("Expected %s (%llu) %s %s (%llu)", \
+-			 #_expected, __exp_print, #_t, \
+-			 #_seen, __seen_print); \
++			 _expected_str, __exp_print, #_t, \
++			 _seen_str, __seen_print); \
+ 		_metadata->passed = 0; \
+ 		/* Ensure the optional handler is triggered */ \
+ 		_metadata->trigger = 1; \
 -- 
 2.19.1
 
