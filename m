@@ -2,168 +2,110 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61434C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 01:22:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4D81C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 01:29:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1272920663
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 01:22:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7297C2070B
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 01:29:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=memeware.net header.i=@memeware.net header.b="w4e2jwAe"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ed5Qgup3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727246AbfAHBWZ (ORCPT
+        id S1727283AbfAHB3j (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 20:22:25 -0500
-Received: from cock.li ([185.100.85.212]:46754 "EHLO cock.li"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726903AbfAHBWY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 20:22:24 -0500
+        Mon, 7 Jan 2019 20:29:39 -0500
+Received: from mail-ua1-f67.google.com ([209.85.222.67]:37334 "EHLO
+        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727084AbfAHB3j (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 20:29:39 -0500
+Received: by mail-ua1-f67.google.com with SMTP id u19so776158uae.4
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Jan 2019 17:29:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=aTdBtTEZCH/4iLJe/wIuUIn2iqxr4uAZKAK+z38oRWo=;
+        b=ed5Qgup3bl3nLcXUfRsdaHxDIHgv0UGGfg13G694FdL30YmQZTKYrWx1Mxcpo0P7Nj
+         rgF6F8IR0SRhpRCy7RIciGWGpNb74NNdQ5dvKg7E0ncvussiYxVlZazzYN9kx0wUWTK3
+         qfDC6G91dqkfO630DzyjXfDSllYU4GhBEsJPY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=aTdBtTEZCH/4iLJe/wIuUIn2iqxr4uAZKAK+z38oRWo=;
+        b=rxVTFr8z7mQygUGUmE6s2098TNCxwW/lo6xlXnQKhRfaEoxDXDLOo8qhvztPTB+pqv
+         P9utTfOszHk7c6Cq1CiIvMhFbxsF+cMGzVEaldKCrhmP6MmlIffOVm/eBskFcDLM2kGn
+         tw5YMy+ZpALDCgMOEIWiXDsNFBCeoAYnWR8Tcy9/2Dz+aVIKSlusoNiy4dIe7hB0p+r1
+         yLN1xkOMHDH1xyat8fFxgz2Q9lJTRGlyouIo20n0uY40EhakxzU/sW5CAAa0QQpW8UwU
+         j7ojYVBmvG/LZQ58GXgPIamy/JA3wfWnfhmgeR3iirqglNjZ/dqjQzGScZom4kvneXc4
+         Bpkg==
+X-Gm-Message-State: AJcUukccqeSJf9jxCvyIbI9aus2wRZTi9TGFYJbCyq4Zv6FD+RvloVMx
+        XhiK7C/FSCB9S55LOT351wp3iyTdonw=
+X-Google-Smtp-Source: ALg8bN4SRJdMqouTR39JEz3II2dBTRxcUTFafFYfuRyQ3U9KZv5jy05oM0p1105Phz2I828029VvGA==
+X-Received: by 2002:ab0:6190:: with SMTP id h16mr24351309uan.94.1546910977406;
+        Mon, 07 Jan 2019 17:29:37 -0800 (PST)
+Received: from mail-vs1-f45.google.com (mail-vs1-f45.google.com. [209.85.217.45])
+        by smtp.gmail.com with ESMTPSA id q7sm16347968uao.16.2019.01.07.17.29.34
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 07 Jan 2019 17:29:35 -0800 (PST)
+Received: by mail-vs1-f45.google.com with SMTP id x28so1462179vsh.12
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Jan 2019 17:29:34 -0800 (PST)
+X-Received: by 2002:a67:2c13:: with SMTP id s19mr24442833vss.172.1546910974212;
+ Mon, 07 Jan 2019 17:29:34 -0800 (PST)
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=memeware.net; s=mail;
-        t=1546910540; bh=AQRJT6YdqpKfRiZ1D7LC1Xd+mRG2qrRJhSOf8ZG6NLI=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=w4e2jwAe4Q6xGs02APMfehfIgKD0MGSYMC8rUladM6aHstYG9xwKLh/IO1K3SeDAd
-         m8Y7iUauFpYOuShjMaZOujo1iNVxksPampgJtBn4h377SjUii51CR1P16zMbNZUcSW
-         T04+GQ6l6+BAx7i0KBXNbyg7Aw8vXj6HKlNXvsjl+Tzvzcr2++9rCQPLHLozVL4hRh
-         VDHXrSctPfku2ha/k4Vo+6JAUcMmI1sxXzjOnQprqYpuvRy4edZmcKd0EHG04js8If
-         Rr/aKysPvKEKjRLEwLPN5rHBhNyvkEc/GBQpA7O+//1HWqbjVaA0tBDKZE3BPbuQ60
-         /fLvWx2wUAVFw==
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-Date:   Tue, 08 Jan 2019 01:22:19 +0000
-From:   vsnsdualce@memeware.net
-To:     Ivan Ivanov <qmastery16@gmail.com>
-Cc:     gary@extremeground.com, alessandro.baggi@gmail.com,
-        joe@jretrading.com, deloptes@gmail.com, dpchrist@holgerdanske.com,
-        mfidelman@meetinghouse.net, raju.mailinglists@gmail.com,
-        debian-user@lists.debian.org, debian-devel@lists.debian.org,
-        linux-kernel@vger.kernel.org, gentoo-user@lists.gentoo.org,
-        misc@openbsd.org, freebsd-chat@freebsd.org
-Subject: Re: Why choose Debian on server
-In-Reply-To: <CAAaskFAocqH3PywY1b6AZ5TqZeydc6MjfS_TNCsxEgd9Gm8OtA@mail.gmail.com>
-References: <496e512d-4733-fb85-2bc8-84584070781d@gmail.com>
- <b56ed858-fed3-e7fc-dfbf-00f7f9e5b6b2@torfree.net>
- <CAAaskFAocqH3PywY1b6AZ5TqZeydc6MjfS_TNCsxEgd9Gm8OtA@mail.gmail.com>
-Message-ID: <1f6e7c030fba1c86f5cc74e61ef22b64@memeware.net>
-X-Sender: vsnsdualce@memeware.net
-User-Agent: Roundcube Webmail/1.3.6
+References: <50db058a-7dde-441b-a7f9-f6837fe8b69f@schaufler-ca.com>
+ <CAGXu5jLUJYM3nDDhFeBOKkTnyCR-tXAv-rteBJFMBn_J7kVkqA@mail.gmail.com>
+ <alpine.LRH.2.21.1812120556040.11653@namei.org> <CAGXu5j+bx7nJBMdFYigYnJFRyCvz0NAxfiWF8yP9EhRESLnn+Q@mail.gmail.com>
+In-Reply-To: <CAGXu5j+bx7nJBMdFYigYnJFRyCvz0NAxfiWF8yP9EhRESLnn+Q@mail.gmail.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Mon, 7 Jan 2019 17:29:21 -0800
+X-Gmail-Original-Message-ID: <CAGXu5jJOGKAFrFF7HSPnqLpLz0no2Ae_z0TkWPeRt1WWqhqFOA@mail.gmail.com>
+Message-ID: <CAGXu5jJOGKAFrFF7HSPnqLpLz0no2Ae_z0TkWPeRt1WWqhqFOA@mail.gmail.com>
+Subject: Re: [PATCH v5 00/38] LSM: Module stacking for SARA and Landlock
+To:     James Morris <jmorris@namei.org>
+Cc:     Casey Schaufler <casey@schaufler-ca.com>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        SE Linux <selinux@tycho.nsa.gov>,
+        John Johansen <john.johansen@canonical.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Paul Moore <paul@paul-moore.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>,
+        Salvatore Mesoraca <s.mesoraca16@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Indeed.
-Anything _with_ systemd is insecure.
-Any linux distro _without_ the GRSecurity patch is insecure.
+On Tue, Dec 11, 2018 at 1:19 PM Kees Cook <keescook@chromium.org> wrote:
+>
+> On Tue, Dec 11, 2018 at 10:57 AM James Morris <jmorris@namei.org> wrote:
+> >
+> > On Tue, 4 Dec 2018, Kees Cook wrote:
+> >
+> > > On Mon, Nov 26, 2018 at 3:22 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+> > > > v5: Include Kees Cook's rework of the lsm command
+> > > >     line interface. Stacking is not conditional.
+> > >
+> > > Can you resend this series with corrected "From:" lines in the body, etc?
+> > >
+> > > Beyond that, I obviously like it. James, what's needed for this to move forward?
+> >
+> > If there are no outstanding issues, I plan to merge this for 4.21.
+>
+> Yeah, it looks good to me. (Excepting getting the authorship sorted.)
 
-There is nothing secure about Debian.
+I didn't see this actually get merged? Was there something that needed
+fixing? Should I send you a direct pull request for v5.1?
 
-Linux kernel is swiss cheese without the GRSecurity/PaX etc patch.
-(BTW: GRSecurity is currently (Blatantly) violating the licensing terms 
-of the kernel by adding additional restrictive terms so as to prevent 
-redistribution -- which has succeeded*)
-
-*Infact the pro-CoC part of the kernel team itself seems to have been 
-inspired by GRSecurity in some manners here, adding their own additional 
-writing inorder to pressure, libel, and threaten civil torts against 
-those who don't obey their speech codes. Threatening the various other 
-copyright holders themselves.
-
-(There is a remedy: Rescind)
-
-Those are the facts.
-
-On 2019-01-03 09:00, Ivan Ivanov wrote:
->> Debian is very secure
-> 
-> But it uses systemD as its' init system which has a really bad
-> security: over 1 million lines of poorly written code and authors are
-> deliberately ignoring the security issues - to a point where systemD
-> has been awarded a Pwnie anti-award because of arrogant devs refusing
-> to fix a critical vulnerability. If you need a true security, choose
-> Devuan: it has all the benefits of Debian + much simpler init system
-> with in order of magnitude better security, thanks to "Keep It Simple,
-> Stupid" principle
-> 
->> Because Debian doesn't come from a company,
->> it can't go out of business or be taken over.
-> 
-> As a technical project, Debian can ruin itself by choosing the
-> political decisions over technical, like it recently did by removing a
-> Weboob package after the herassment of some SSJiWs from Debian
-> antiher.assment team. Luckily Devuan is not affected by this madness.
-> 
-> чт, 3 янв. 2019 г. в 07:40, Gary Dale <garyndp@gmail.com>:
-> 
->> 
->> On 2019-01-02 5:51 a.m., Alessandro Baggi wrote:
->> > Hi list,
->> > I'm new to this list and I'm choosing the right distribution for
->> > server needs. I hope that I'm not OT and don't want start a flame. I'm
->> > evaluating the possibility to switch on debian so I hope you will give
->> > your experiences about this topic.
->> >
->> > At the moment I'm using CentOS 7 on server and workstation but very
->> > old software, add third repos for get some software, use unmaintained
->> > software where patchs are released by dev distro team, big changes
->> > between a current release and next release, big corporation piloted
->> > distro, waiting that rh release a security patches and then recompiled
->> > on centos, problem on new hardware, unable to install new software
->> > from source due to old libs get me bored, and frustated in the last
->> > year. I like flexibility and I noticed that centos chains my knowledge.
->> >
->> > Today seems that RH Family is the standard and rh is more supported by
->> > software vendors. Considering 10 years of support, Selinux working out
->> > of the box, stability, enteprise class and free distro..user choose
->> > Centos with the perception that things work better because all is
->> > "followed" by a corporation. With this assumption users feel more
->> > secure and unfailing.
->> >
->> > This is not necessarely true. I think that is the sysadmin that make
->> > things safer, secure and unfailing. Sure that a stable and reliable OS
->> > take his part but when big blue take this game I'm not so sure about
->> > centos future. What if someone will choose to drop centos project?
->> > Maybe this is premature but from this "Why not choose a stable and
->> > community piloted distro where user needs are first purpose?"
->> >
->> > I used Debian in the past on several server for a big company without
->> > any problems but now are several years that I use centos on server and
->> > workstation and today I lost my debian knowledge about stability on
->> > server usage.
->> >
->> > Why you choose debian on server? Where for you it is better than
->> > centos and other server distro?
->> >
->> > Thanks in advance.
->> > Alessandro.
->> >
->> Because Debian doesn't come from a company, it can't go out of 
->> business
->> or be taken over. And because Debian has lots of spinoffs, including
->> distros that are in the commercial server market (e.g. Ubuntu), you 
->> can
->> bet that everything runs on it and it runs on everything.
->> 
->> Debian is also very stable and very secure. While Red Hat may have a
->> segment of the corporate market, I'll bet that there are more Debian
->> servers than Red Hat. If you think Red Hat has the market cornered, 
->> you
->> aren't looking at the full market.
->> 
->> Then there are things like the Raspberry Pi, which are used in a lot 
->> of
->> specialized server-type tasks, that mainly use Debian. They can do a 
->> lot
->> of things that are useful in a corporate environment that you wouldn't
->> want to put on a real server.
->> 
->> I also use Debian on my desktop (I have for decades) so there is a 
->> good
->> knowledge crossover. I don't need to learn and use two different kinds
->> of systems.
->> 
->> 
+-- 
+Kees Cook
