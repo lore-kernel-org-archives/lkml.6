@@ -2,190 +2,135 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 297DBC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 18:22:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7731C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 18:24:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC2192070B
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 18:22:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9FA06206BB
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 18:24:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="WiOrp7C4"
+	dkim=pass (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="SbTXfvp3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729532AbfAHSWB (ORCPT
+        id S1729454AbfAHSYv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 13:22:01 -0500
-Received: from mail-it1-f194.google.com ([209.85.166.194]:54734 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728752AbfAHSWB (ORCPT
+        Tue, 8 Jan 2019 13:24:51 -0500
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:40350 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729168AbfAHSYu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 13:22:01 -0500
-Received: by mail-it1-f194.google.com with SMTP id i145so7667910ita.4
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jan 2019 10:22:00 -0800 (PST)
+        Tue, 8 Jan 2019 13:24:50 -0500
+Received: by mail-ed1-f66.google.com with SMTP id g22so5153333edr.7
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jan 2019 10:24:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=XePhn5C1Lmxh/a5HZBqkApnTQigMZIbx/mg6hysE+pU=;
-        b=WiOrp7C4HEza/moZWA1kHBqYAOpEz3CK58x4vwuKhGiDGhl30HjC2X8Sn9YzAFTEMw
-         94vf4EiiRbLqZBjTzWBRMWyXuisImimiMj5/U3qMtFmzck1lnN71QO/iYBfuFKX0ucoM
-         uSvneroZLPJQakfYHNDuhmTv0nUerw97rUhvc=
+        d=brauner.io; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=6NSHDeMu8V/RkKQRrewbiRW7AjiPGZuYZn1RgP9ePDo=;
+        b=SbTXfvp3Qaa4ccNpHJ8ADAJA4Q+j7t2leDuNGO/nnzgIU3VNLlbP5hKa9Sagufuer3
+         h0aH6EYRdqspwKhO6KuzpYFloN6m8rwH3kJ/6ZbhRps9H2D8bjHbvKYJkt2bLDUzg3hL
+         l9sBcVP8XQ46Wlx90msp5vx+iIM/r6XB/KDhYVbz6AL/or3ExyC3FdMEOFBq1L77AUnv
+         u9RSSGxVCgi1yY5OrY6iL1CdYOFLgM9SFy3DK9eij8J/LfdGx7jAhirDu0I8YAkNKWk1
+         GH03vuDTaEwE8+XFDFcOMqQnTIZSIrNhqmf6RdLI2ciVKwVAO717Rq4ywkvPy3ADDWs4
+         3NnA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=XePhn5C1Lmxh/a5HZBqkApnTQigMZIbx/mg6hysE+pU=;
-        b=fELUEiEnTvmCmhergA+3P7uWN8I/cW/KQvZcuTC1DXZIqEKG+p899/XHBqK2v64R84
-         8nqPCbASnpBT5DbULOqoSnZthGm6NJTPB/m2jtxca2uL2R4KIqS8SzN5MO7ixQ9HgJph
-         2KQ8nLPadthsTtqjCUD9D7BMzd9DjiW6/Q2qx8R9wmm7AdjtXyk8rLXhPUcyPUH6oUfw
-         di7rTMMRM30fAkrSEv+DqXAFAnqfLxw3X66fNnfR8RiJeufLx92Pzyhu1Z2uJU5xh411
-         jeLUe9Ul5JV9Cr3zOQlvX0ayrbA9cmb3PmdCec1I8Ve0yAOGEvqClUK8ixuBS4aOL6jr
-         rCDQ==
-X-Gm-Message-State: AJcUukcG2+uBHY0Dh9KzKezJaZEROu4XV4X4NXH9a+eGnu1n6y7ksuaE
-        nNcNm8B7nG1iL7DjDdHlOR9OtIu9/28J/WAydMDupw==
-X-Google-Smtp-Source: ALg8bN44cazA5nwO2aB1U0yAcEqH9zV+3AnaEUo9PL2rMPxBmi+wpvi1fk2lcXfScvHk9nLliVZfgRZ7zvRhF20ZfpI=
-X-Received: by 2002:a24:94cb:: with SMTP id j194mr2002607ite.117.1546971719925;
- Tue, 08 Jan 2019 10:21:59 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=6NSHDeMu8V/RkKQRrewbiRW7AjiPGZuYZn1RgP9ePDo=;
+        b=YN3oM8jHFZuYAG0fkeUlNjZjMGZEloqe+5ZrDZu9fl4/iM89AH2aF2s9wLq8X4uneq
+         US2WK8QpdQP108sNcSu+OcHoe8pIRrxp89gFBEQLaWtDWzg5Wmfyu0GeuHFX/qCnJeKj
+         cJDRd+kd0LjXmiBvMFzzUoLkOXn83Wm6TILjy8Hg+bGGgSyel16J36QirBjLk2BQ6JwT
+         mV+Nsg5uMo//hDxb+PQOcGkOO0GljP63HpuUg+pIVuKrT5bcBUPrQDLBlkZKpl+Q2Rdm
+         KWlkRWZbTokiOKzuAeknwRdp4fYUQ9+4ryvorGWWGCJrS/UVkddHMjElc3LFl9P/TIn2
+         Ldzw==
+X-Gm-Message-State: AJcUukcPXaWH3BNHstity/T0jABxjjCAojDm5GHfK5w7VQgw/Aqf3zRa
+        XssXEomgesQ9IYcjt4yQ6UcUdQ==
+X-Google-Smtp-Source: ALg8bN5GJyKqKB8ug6X1g/nCmB8HQv4wsGWsM7TpJRtdKsuXK3waBC7PfgSl+nlVlUfutEV5m7vlcQ==
+X-Received: by 2002:a17:906:2313:: with SMTP id l19-v6mr2860297eja.204.1546971887812;
+        Tue, 08 Jan 2019 10:24:47 -0800 (PST)
+Received: from brauner.io ([2a02:8109:b6c0:d6c:9810:663f:f898:8929])
+        by smtp.gmail.com with ESMTPSA id p7-v6sm261066ejx.27.2019.01.08.10.24.46
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 08 Jan 2019 10:24:47 -0800 (PST)
+Date:   Tue, 8 Jan 2019 19:24:46 +0100
+From:   Christian Brauner <christian@brauner.io>
+To:     Tycho Andersen <tycho@tycho.ws>
+Cc:     "Serge E. Hallyn" <serge@hallyn.com>, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org, luto@kernel.org, arnd@arndb.de,
+        keescook@chromium.org, akpm@linux-foundation.org, jannh@google.com,
+        oleg@redhat.com, cyphar@cyphar.com, viro@zeniv.linux.org.uk,
+        linux-fsdevel@vger.kernel.org, dancol@google.com,
+        timmurray@google.com, fweimer@redhat.com, tglx@linutronix.de,
+        x86@kernel.org, ebiederm@xmission.com
+Subject: Re: [PATCH v7 2/2] selftests: add tests for pidfd_send_signal()
+Message-ID: <20190108182444.e6kq2gqftde23jou@brauner.io>
+References: <20190102161654.9093-1-christian@brauner.io>
+ <20190102161654.9093-2-christian@brauner.io>
+ <20190108175306.GF29009@cisco>
+ <20190108175415.GA22353@mail.hallyn.com>
+ <20190108175843.GA26016@cisco>
+ <20190108181742.GA22614@mail.hallyn.com>
+ <20190108182023.GA28330@cisco>
 MIME-Version: 1.0
-References: <20190108145056.2276-1-paul.kocialkowski@bootlin.com> <20190108145056.2276-2-paul.kocialkowski@bootlin.com>
-In-Reply-To: <20190108145056.2276-2-paul.kocialkowski@bootlin.com>
-From:   Daniel Vetter <daniel@ffwll.ch>
-Date:   Tue, 8 Jan 2019 19:21:48 +0100
-Message-ID: <CAKMK7uE+=00wayXr4hUDiSj+s0PJbCEe9xqS1FFwd2cp3Om+ng@mail.gmail.com>
-Subject: Re: [PATCH v3 1/4] drm/vc4: Wait for display list synchronization
- when completing commit
-To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Cc:     dri-devel <dri-devel@lists.freedesktop.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Eric Anholt <eric@anholt.net>, David Airlie <airlied@linux.ie>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Eben Upton <eben@raspberrypi.org>,
-        Boris Brezillon <boris.brezillon@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190108182023.GA28330@cisco>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 8, 2019 at 3:51 PM Paul Kocialkowski
-<paul.kocialkowski@bootlin.com> wrote:
->
-> During an atomic commit, the HVS is configured with a display list
-> for the channel matching the associated CRTC. The Pixel Valve (CRTC)
-> and encoder are also configured for the new setup at that time.
-> While the Pixel Valve and encoder are reconfigured synchronously, the
-> HVS is only reconfigured after the display list address (DISPLIST) has
-> been updated to the current display list address (DISPLACTX), which is
-> the responsibility of the hardware.
->
-> The time frame during which the HVS is still running on its previous
-> configuration but the CRTC and encoder have been reconfigured already
-> can lead to a number of synchronization issues. They will eventually
-> cause errors reported on the FIFOs, such as underruns.
->
-> With underrun detection enabled (from Boris Brezillon's series), this
-> leads to unreliable underrun detection with random false positives.
->
-> To ensure a coherent state, wait for each enabled channel of the HVS
-> to synchronize its current display list address. This fixes the issue
-> of random underrun reporting on commits.
->
-> Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-> ---
->  drivers/gpu/drm/vc4/vc4_drv.h  |  1 +
->  drivers/gpu/drm/vc4/vc4_hvs.c  | 17 +++++++++++++++++
->  drivers/gpu/drm/vc4/vc4_kms.c  |  2 ++
->  drivers/gpu/drm/vc4/vc4_regs.h |  2 ++
->  4 files changed, 22 insertions(+)
->
-> diff --git a/drivers/gpu/drm/vc4/vc4_drv.h b/drivers/gpu/drm/vc4/vc4_drv.h
-> index c24b078f0593..955f157f5ad0 100644
-> --- a/drivers/gpu/drm/vc4/vc4_drv.h
-> +++ b/drivers/gpu/drm/vc4/vc4_drv.h
-> @@ -772,6 +772,7 @@ void vc4_irq_reset(struct drm_device *dev);
->  extern struct platform_driver vc4_hvs_driver;
->  void vc4_hvs_dump_state(struct drm_device *dev);
->  int vc4_hvs_debugfs_regs(struct seq_file *m, void *unused);
-> +void vc4_hvs_sync_dlist(struct drm_device *dev);
->
->  /* vc4_kms.c */
->  int vc4_kms_load(struct drm_device *dev);
-> diff --git a/drivers/gpu/drm/vc4/vc4_hvs.c b/drivers/gpu/drm/vc4/vc4_hvs.c
-> index 5d8c749c9749..1ba60b8e0c2d 100644
-> --- a/drivers/gpu/drm/vc4/vc4_hvs.c
-> +++ b/drivers/gpu/drm/vc4/vc4_hvs.c
-> @@ -166,6 +166,23 @@ static int vc4_hvs_upload_linear_kernel(struct vc4_hvs *hvs,
->         return 0;
->  }
->
-> +void vc4_hvs_sync_dlist(struct drm_device *dev)
-> +{
-> +       struct vc4_dev *vc4 = to_vc4_dev(dev);
-> +       unsigned int i;
-> +       int ret;
-> +
-> +       for (i = 0; i < SCALER_CHANNELS_COUNT; i++) {
-> +               if (!(HVS_READ(SCALER_DISPCTRLX(i)) & SCALER_DISPCTRLX_ENABLE))
-> +                       continue;
-> +
-> +               ret = wait_for(HVS_READ(SCALER_DISPLACTX(i)) ==
-> +                              HVS_READ(SCALER_DISPLISTX(i)), 1000);
-> +               WARN(ret, "Timeout waiting for channel %d display list sync\n",
-> +                    i);
-> +       }
-> +}
-> +
->  static int vc4_hvs_bind(struct device *dev, struct device *master, void *data)
->  {
->         struct platform_device *pdev = to_platform_device(dev);
-> diff --git a/drivers/gpu/drm/vc4/vc4_kms.c b/drivers/gpu/drm/vc4/vc4_kms.c
-> index 0490edb192a1..2d66a2b57a91 100644
-> --- a/drivers/gpu/drm/vc4/vc4_kms.c
-> +++ b/drivers/gpu/drm/vc4/vc4_kms.c
-> @@ -155,6 +155,8 @@ vc4_atomic_complete_commit(struct drm_atomic_state *state)
->
->         drm_atomic_helper_commit_hw_done(state);
->
-> +       vc4_hvs_sync_dlist(dev);
+On Tue, Jan 08, 2019 at 11:20:23AM -0700, Tycho Andersen wrote:
+> On Tue, Jan 08, 2019 at 12:17:42PM -0600, Serge E. Hallyn wrote:
+> > On Tue, Jan 08, 2019 at 10:58:43AM -0700, Tycho Andersen wrote:
+> > > On Tue, Jan 08, 2019 at 11:54:15AM -0600, Serge E. Hallyn wrote:
+> > > > On Tue, Jan 08, 2019 at 10:53:06AM -0700, Tycho Andersen wrote:
+> > > > > On Wed, Jan 02, 2019 at 05:16:54PM +0100, Christian Brauner wrote:
+> > > > > > +			/*
+> > > > > > +			 * Stop the child so we can inspect whether we have
+> > > > > > +			 * recycled pid PID_RECYCLE.
+> > > > > > +			 */
+> > > > > > +			close(pipe_fds[0]);
+> > > > > > +			ret = kill(recycled_pid, SIGSTOP);
+> > > > > > +			close(pipe_fds[1]);
+> > > > > > +			if (ret) {
+> > > > > > +				(void)wait_for_pid(recycled_pid);
+> > > > > > +				_exit(PIDFD_ERROR);
+> > > > > > +			}
+> > > > > 
+> > > > > Sorry for being late to the party, but I wonder if this whole thing
+> > > > > couldn't be simplified with /proc/sys/kenrel/ns_last_pid?
+> > > > 
+> > > > no, bc it's not namespaced :)
+> > > 
+> > > Huh? It looks like it is...
+> > > 
+> > > static int pid_ns_ctl_handler(struct ctl_table *table, int write,
+> > >                 void __user *buffer, size_t *lenp, loff_t *ppos)
+> > > {
+> > >         struct pid_namespace *pid_ns = task_active_pid_ns(current);
+> > >         struct ctl_table tmp = *table;
+> > >         int ret, next;
+> > > 
+> > >         if (write && !ns_capable(pid_ns->user_ns, CAP_SYS_ADMIN))
+> > >                 return -EPERM;
+> > > 
+> > >         ...
+> > 
+> > Oh - hah, but that's ns_last_pid.  You'd want pid_max.  And that one
+> > is not namespaced.
+> 
+> Perhaps I'm misunderstanding, but isn't the point of all this code to
+> get the same pid again? So can't we just fork(), kill(), then set
+> ns_last_pid to pid-1, and fork() again to re-use?
 
-From your description I'd have guessed you want this between when you
-update the planes and the crtc, so somewhere between commit_planes()
-and commit_modeset_enables(). At least I have no idea how waiting here
-can prevent underruns, by this point there's no further hw programming
-happening. Only exception is if you have an IOMMU which can fault, in
-which case the cleanup_planes might remove the buffers prematurely.
-But if that's the problem, then your semantics of the flip_done event
-are wrong - when flip_done is signalled, the hw must have stopped
-scanning out the old planes, since userspace expects to be able to
-start overwriting/reusing them.
--Daniel
-
-> +
->         drm_atomic_helper_wait_for_flip_done(dev, state);
->
->         drm_atomic_helper_cleanup_planes(dev, state);
-> diff --git a/drivers/gpu/drm/vc4/vc4_regs.h b/drivers/gpu/drm/vc4/vc4_regs.h
-> index 931088014272..50c653309aec 100644
-> --- a/drivers/gpu/drm/vc4/vc4_regs.h
-> +++ b/drivers/gpu/drm/vc4/vc4_regs.h
-> @@ -212,6 +212,8 @@
->
->  #define PV_HACT_ACT                            0x30
->
-> +#define SCALER_CHANNELS_COUNT                  3
-> +
->  #define SCALER_DISPCTRL                         0x00000000
->  /* Global register for clock gating the HVS */
->  # define SCALER_DISPCTRL_ENABLE                        BIT(31)
-> --
-> 2.20.1
->
-
-
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
+Maybe. It's just a selftest that works reliably as it is so unless
+there's a technical issue with the patch I'm not going to do another
+version just because of that unless people feel super strongly about
+this.
+Another advantage is that the code we have right now works even when
+CONFIG_CHECKPOINT_RESTORE is not selected.
