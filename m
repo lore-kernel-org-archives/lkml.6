@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E2ABC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:10:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 231BDC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:10:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E262520660
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:10:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D5B5E20827
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:10:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546978216;
-	bh=KgUb9btZ/wqkIaZRAqhjhkLQTRHuCqsJI+5W8xXCEus=;
+	s=default; t=1546978225;
+	bh=c/aR64mQpq70LLqGgOeZ/0UuSCwlmMQg4rFdK9J855E=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=een+pGxk5yejyKhd+zQfsPLlFULCAjJsGySojm+OGDwomF8H0gROXlwvL/fckfn4A
-	 4oeCgojbSA2Kqwy6Vv8WnHJQimC4IePCbAOwgvPb7UfYz+IduW+TuyozrqtJdCNhag
-	 g6PvVcviwgkKiVVrBOZnBoYSvctfld9sXjLV1AEY=
+	b=HeNBzc7U02mhxGXACbsCVnqeqNZC3YjVSLyf9rWa4FHtmUAtifQuQbnmw0gbhld8q
+	 5JVVJ5IwomeEfvyPcLkNVy6cxPNix8wRedqvWPK6VNHD75hPXoXrB3Ik5ffRA7NVxo
+	 iJh9OZF1xFQaMTSlzTfW6mJSdfHzRQ72Bh4Of4lI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733113AbfAHUKO (ORCPT
+        id S1729169AbfAHT0r (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 15:10:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60854 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 14:26:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60706 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729168AbfAHT0t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:26:49 -0500
+        id S1728984AbfAHT0n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:26:43 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DE9862087F;
-        Tue,  8 Jan 2019 19:26:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3C88820827;
+        Tue,  8 Jan 2019 19:26:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546975607;
-        bh=KgUb9btZ/wqkIaZRAqhjhkLQTRHuCqsJI+5W8xXCEus=;
+        s=default; t=1546975603;
+        bh=c/aR64mQpq70LLqGgOeZ/0UuSCwlmMQg4rFdK9J855E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vavfW/lxP/7iMHZH/trcDAoYt0Aj9IZCbEDS3NTmWzwsgb0dcKgJuQBLHAxbra1Yp
-         mQrQruKPPnjKHXvpzHKwTfvsGn+XFJQdD7a46C37RJlHI7WE7tpyD/2xjHj0p4jj8F
-         wKarzkmLRgY5fNYzzR9pSkoPAAFeNKbZ+iVD2DnM=
+        b=GAefuSXI3mzkK+RJxRFcFxgdAA+rZbpNn8mBNQoOmfPNzYPBvLnNy+RdWNtWm8ow3
+         n7ZzlDIYO8LymPpxjPwup0FnRnRWLpyNgoEbCEz3LQBIfMx5kAMaGI3vRJNDuETL0B
+         ZMflOoZDnkSBj3ZOZgaxVJGysYFWAy5m5pX7tmsE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Badhri Jagan Sridharan <badhri@google.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sasha Levin <sashal@kernel.org>, linux-usb@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 010/117] usb: typec: tcpm: Do not disconnect link for self powered devices
-Date:   Tue,  8 Jan 2019 14:24:38 -0500
-Message-Id: <20190108192628.121270-10-sashal@kernel.org>
+Cc:     Sergey Matyukevich <sergey.matyukevich.os@quantenna.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 006/117] qtnfmac: fix error handling in control path
+Date:   Tue,  8 Jan 2019 14:24:34 -0500
+Message-Id: <20190108192628.121270-6-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108192628.121270-1-sashal@kernel.org>
 References: <20190108192628.121270-1-sashal@kernel.org>
@@ -58,116 +59,119 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Badhri Jagan Sridharan <badhri@google.com>
+From: Sergey Matyukevich <sergey.matyukevich.os@quantenna.com>
 
-[ Upstream commit 23b5f73266e59a598c1e5dd435d87651b5a7626b ]
+[ Upstream commit 1066bd193d681bda0fbacda9df351241a5ee04d9 ]
 
-During HARD_RESET the data link is disconnected.
-For self powered device, the spec is advising against doing that.
+This patch fixes the following warnings:
 
->From USB_PD_R3_0
-7.1.5 Response to Hard Resets
-Device operation during and after a Hard Reset is defined as follows:
-Self-powered devices Should Not disconnect from USB during a Hard Reset
-(see Section 9.1.2).
-Bus powered devices will disconnect from USB during a Hard Reset due to the
-loss of their power source.
+- smatch
+drivers/net/wireless/quantenna/qtnfmac/commands.c:132 qtnf_cmd_send_with_reply() warn: variable dereferenced before check 'resp' (see line 117)
+drivers/net/wireless/quantenna/qtnfmac/commands.c:716  qtnf_cmd_get_sta_info() error: uninitialized symbol 'var_resp_len'.
+drivers/net/wireless/quantenna/qtnfmac/commands.c:1668 qtnf_cmd_get_mac_info() error: uninitialized symbol 'var_data_len'.
+drivers/net/wireless/quantenna/qtnfmac/commands.c:1697 qtnf_cmd_get_hw_info() error: uninitialized symbol 'info_len'.
+drivers/net/wireless/quantenna/qtnfmac/commands.c:1753 qtnf_cmd_band_info_get() error: uninitialized symbol 'info_len'.
+drivers/net/wireless/quantenna/qtnfmac/commands.c:1782 qtnf_cmd_send_get_phy_params() error: uninitialized symbol 'response_size'.
+drivers/net/wireless/quantenna/qtnfmac/commands.c:2438 qtnf_cmd_get_chan_stats() error: uninitialized symbol 'var_data_len'.
 
-Tackle this by letting TCPM know whether the device is self or bus powered.
+- gcc-8.2.1
+drivers/net/wireless/quantenna/qtnfmac/commands.c: In function 'qtnf_cmd_send_with_reply':
+drivers/net/wireless/quantenna/qtnfmac/commands.c:133:54: error: 'resp' may be used uninitialized in this function [-Werror=maybe-uninitialized]
 
-This overcomes unnecessary port disconnections from hard reset.
-Also, speeds up the enumeration time when connected to Type-A ports.
-
-Signed-off-by: Badhri Jagan Sridharan <badhri@google.com>
-Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
----------
-Version history:
-V3:
-Rebase on top of usb-next
-
-V2:
-Based on feedback from heikki.krogerus@linux.intel.com
-- self_powered added to the struct tcpm_port which is populated from
-  a. "connector" node of the device tree in tcpm_fw_get_caps()
-  b. "self_powered" node of the tcpc_config in tcpm_copy_caps
-
-Based on feedbase from linux@roeck-us.net
-- Code was refactored
-- SRC_HARD_RESET_VBUS_OFF sets the link state to false based
-  on self_powered flag
-
-V1 located here:
-https://lkml.org/lkml/2018/9/13/94
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Reported-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Sergey Matyukevich <sergey.matyukevich.os@quantenna.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/typec/tcpm/tcpm.c | 12 ++++++++++--
- include/linux/usb/tcpm.h      |  1 +
- 2 files changed, 11 insertions(+), 2 deletions(-)
+ .../net/wireless/quantenna/qtnfmac/commands.c | 21 ++++++++++++-------
+ 1 file changed, 13 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/usb/typec/tcpm/tcpm.c b/drivers/usb/typec/tcpm/tcpm.c
-index dbbd71f754d0..ba6e5cdaed2c 100644
---- a/drivers/usb/typec/tcpm/tcpm.c
-+++ b/drivers/usb/typec/tcpm/tcpm.c
-@@ -317,6 +317,9 @@ struct tcpm_port {
- 	/* Deadline in jiffies to exit src_try_wait state */
- 	unsigned long max_wait;
+diff --git a/drivers/net/wireless/quantenna/qtnfmac/commands.c b/drivers/net/wireless/quantenna/qtnfmac/commands.c
+index bfdc1ad30c13..659e7649fe22 100644
+--- a/drivers/net/wireless/quantenna/qtnfmac/commands.c
++++ b/drivers/net/wireless/quantenna/qtnfmac/commands.c
+@@ -84,7 +84,7 @@ static int qtnf_cmd_send_with_reply(struct qtnf_bus *bus,
+ 				    size_t *var_resp_size)
+ {
+ 	struct qlink_cmd *cmd;
+-	const struct qlink_resp *resp;
++	struct qlink_resp *resp = NULL;
+ 	struct sk_buff *resp_skb = NULL;
+ 	u16 cmd_id;
+ 	u8 mac_id;
+@@ -113,7 +113,12 @@ static int qtnf_cmd_send_with_reply(struct qtnf_bus *bus,
+ 	if (ret)
+ 		goto out;
  
-+	/* port belongs to a self powered device */
-+	bool self_powered;
+-	resp = (const struct qlink_resp *)resp_skb->data;
++	if (WARN_ON(!resp_skb || !resp_skb->data)) {
++		ret = -EFAULT;
++		goto out;
++	}
 +
- #ifdef CONFIG_DEBUG_FS
- 	struct dentry *dentry;
- 	struct mutex logbuffer_lock;	/* log buffer access lock */
-@@ -3254,7 +3257,8 @@ static void run_state_machine(struct tcpm_port *port)
- 	case SRC_HARD_RESET_VBUS_OFF:
- 		tcpm_set_vconn(port, true);
- 		tcpm_set_vbus(port, false);
--		tcpm_set_roles(port, false, TYPEC_SOURCE, TYPEC_HOST);
-+		tcpm_set_roles(port, port->self_powered, TYPEC_SOURCE,
-+			       TYPEC_HOST);
- 		tcpm_set_state(port, SRC_HARD_RESET_VBUS_ON, PD_T_SRC_RECOVER);
- 		break;
- 	case SRC_HARD_RESET_VBUS_ON:
-@@ -3267,7 +3271,8 @@ static void run_state_machine(struct tcpm_port *port)
- 		memset(&port->pps_data, 0, sizeof(port->pps_data));
- 		tcpm_set_vconn(port, false);
- 		tcpm_set_charge(port, false);
--		tcpm_set_roles(port, false, TYPEC_SINK, TYPEC_DEVICE);
-+		tcpm_set_roles(port, port->self_powered, TYPEC_SINK,
-+			       TYPEC_DEVICE);
- 		/*
- 		 * VBUS may or may not toggle, depending on the adapter.
- 		 * If it doesn't toggle, transition to SNK_HARD_RESET_SINK_ON
-@@ -4412,6 +4417,8 @@ static int tcpm_fw_get_caps(struct tcpm_port *port,
- 		return -EINVAL;
- 	port->operating_snk_mw = mw / 1000;
++	resp = (struct qlink_resp *)resp_skb->data;
+ 	ret = qtnf_cmd_check_reply_header(resp, cmd_id, mac_id, vif_id,
+ 					  const_resp_size);
+ 	if (ret)
+@@ -686,7 +691,7 @@ int qtnf_cmd_get_sta_info(struct qtnf_vif *vif, const u8 *sta_mac,
+ 	struct sk_buff *cmd_skb, *resp_skb = NULL;
+ 	struct qlink_cmd_get_sta_info *cmd;
+ 	const struct qlink_resp_get_sta_info *resp;
+-	size_t var_resp_len;
++	size_t var_resp_len = 0;
+ 	int ret = 0;
  
-+	port->self_powered = fwnode_property_read_bool(fwnode, "self-powered");
-+
- 	return 0;
- }
+ 	cmd_skb = qtnf_cmd_alloc_new_cmdskb(vif->mac->macid, vif->vifid,
+@@ -1650,7 +1655,7 @@ int qtnf_cmd_get_mac_info(struct qtnf_wmac *mac)
+ {
+ 	struct sk_buff *cmd_skb, *resp_skb = NULL;
+ 	const struct qlink_resp_get_mac_info *resp;
+-	size_t var_data_len;
++	size_t var_data_len = 0;
+ 	int ret = 0;
  
-@@ -4720,6 +4727,7 @@ static int tcpm_copy_caps(struct tcpm_port *port,
- 	port->typec_caps.prefer_role = tcfg->default_role;
- 	port->typec_caps.type = tcfg->type;
- 	port->typec_caps.data = tcfg->data;
-+	port->self_powered = port->tcpc->config->self_powered;
+ 	cmd_skb = qtnf_cmd_alloc_new_cmdskb(mac->macid, QLINK_VIFID_RSVD,
+@@ -1680,8 +1685,8 @@ int qtnf_cmd_get_hw_info(struct qtnf_bus *bus)
+ {
+ 	struct sk_buff *cmd_skb, *resp_skb = NULL;
+ 	const struct qlink_resp_get_hw_info *resp;
++	size_t info_len = 0;
+ 	int ret = 0;
+-	size_t info_len;
  
- 	return 0;
- }
-diff --git a/include/linux/usb/tcpm.h b/include/linux/usb/tcpm.h
-index 7e7fbfb84e8e..50c74a77db55 100644
---- a/include/linux/usb/tcpm.h
-+++ b/include/linux/usb/tcpm.h
-@@ -89,6 +89,7 @@ struct tcpc_config {
- 	enum typec_port_data data;
- 	enum typec_role default_role;
- 	bool try_role_hw;	/* try.{src,snk} implemented in hardware */
-+	bool self_powered;	/* port belongs to a self powered device */
+ 	cmd_skb = qtnf_cmd_alloc_new_cmdskb(QLINK_MACID_RSVD, QLINK_VIFID_RSVD,
+ 					    QLINK_CMD_GET_HW_INFO,
+@@ -1709,9 +1714,9 @@ int qtnf_cmd_band_info_get(struct qtnf_wmac *mac,
+ 			   struct ieee80211_supported_band *band)
+ {
+ 	struct sk_buff *cmd_skb, *resp_skb = NULL;
+-	size_t info_len;
+ 	struct qlink_cmd_band_info_get *cmd;
+ 	struct qlink_resp_band_info_get *resp;
++	size_t info_len = 0;
+ 	int ret = 0;
+ 	u8 qband;
  
- 	const struct typec_altmode_desc *alt_modes;
- };
+@@ -1764,8 +1769,8 @@ int qtnf_cmd_band_info_get(struct qtnf_wmac *mac,
+ int qtnf_cmd_send_get_phy_params(struct qtnf_wmac *mac)
+ {
+ 	struct sk_buff *cmd_skb, *resp_skb = NULL;
+-	size_t response_size;
+ 	struct qlink_resp_phy_params *resp;
++	size_t response_size = 0;
+ 	int ret = 0;
+ 
+ 	cmd_skb = qtnf_cmd_alloc_new_cmdskb(mac->macid, 0,
+@@ -2431,7 +2436,7 @@ int qtnf_cmd_get_chan_stats(struct qtnf_wmac *mac, u16 channel,
+ 	struct sk_buff *cmd_skb, *resp_skb = NULL;
+ 	struct qlink_cmd_get_chan_stats *cmd;
+ 	struct qlink_resp_get_chan_stats *resp;
+-	size_t var_data_len;
++	size_t var_data_len = 0;
+ 	int ret = 0;
+ 
+ 	cmd_skb = qtnf_cmd_alloc_new_cmdskb(mac->macid, QLINK_VIFID_RSVD,
 -- 
 2.19.1
 
