@@ -2,169 +2,153 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9735FC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 06:04:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94F67C43612
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 06:07:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5577720700
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 06:04:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="SpL0QW1h"
+	by mail.kernel.org (Postfix) with ESMTP id 64EA72087E
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 06:07:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1546927659;
+	bh=jDJvaN+uOakVMbxAqNGZOEwg7W7AOFW6nx5YuUUJJdA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=aX8ae3pQmjOSw1A/AWunAQMn+U+cR+UacEHcziSdaBe3zqbUTU/NXJ8AI7k8HBl9F
+	 4x2MF6p/t8g9jPeWKCk56HRs0zTGLRhEiDAL7fYW5yK1g7h5WpdT0siA2DTaYQoFPN
+	 OTqIma2YjLTnXY4AMAkYO4PyGQ4XCIROmNh6vrLo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727906AbfAHGEg (ORCPT
+        id S1727825AbfAHGHi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 01:04:36 -0500
-Received: from mail-eopbgr10049.outbound.protection.outlook.com ([40.107.1.49]:38188
-        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727831AbfAHGEe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 01:04:34 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dFQEZhckWRmIWiBApFW50QSsHMlZ8CUuEZuECppRnuA=;
- b=SpL0QW1hGVRRcjsYiyTVEVtzy8dlSK7l5/K3RK0QVDxggI8MXYCxINn2l/LawBDdDX9DzbDE0U71pVMT2SwuB1Yrd1MrTIyJ5cSCO62xDR57YeK92c+2TC7ylSoV+gmPslgT7V5QkztjLjNsIndMXpY/mSjq//uuraXZu0klfrU=
-Received: from AM5PR0402MB2865.eurprd04.prod.outlook.com (10.175.41.148) by
- AM5PR0402MB2915.eurprd04.prod.outlook.com (10.175.42.17) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1516.13; Tue, 8 Jan 2019 06:04:29 +0000
-Received: from AM5PR0402MB2865.eurprd04.prod.outlook.com
- ([fe80::1c0c:51da:f585:5626]) by AM5PR0402MB2865.eurprd04.prod.outlook.com
- ([fe80::1c0c:51da:f585:5626%2]) with mapi id 15.20.1495.011; Tue, 8 Jan 2019
- 06:04:29 +0000
-From:   Ran Wang <ran.wang_1@nxp.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alan Stern <stern@rowland.harvard.edu>
-CC:     "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Yinbo Zhu <yinbo.zhu@nxp.com>, Ran Wang <ran.wang_1@nxp.com>
-Subject: [PATCH 3/3] drivers: usb :fsl: Remove USB Errata checking code
-Thread-Topic: [PATCH 3/3] drivers: usb :fsl: Remove USB Errata checking code
-Thread-Index: AQHUpxgE3SCqMwWaSU2qZS5l4UGPMA==
-Date:   Tue, 8 Jan 2019 06:04:29 +0000
-Message-ID: <20190108060426.11581-3-ran.wang_1@nxp.com>
-References: <20190108060426.11581-1-ran.wang_1@nxp.com>
-In-Reply-To: <20190108060426.11581-1-ran.wang_1@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: HK0PR01CA0014.apcprd01.prod.exchangelabs.com
- (2603:1096:203:92::26) To AM5PR0402MB2865.eurprd04.prod.outlook.com
- (2603:10a6:203:99::20)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=ran.wang_1@nxp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-mailer: git-send-email 2.17.1
-x-originating-ip: [119.31.174.73]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM5PR0402MB2915;6:kXcS879goJAnoTMa/evy+f/2Y1ARU++/kpZzZAC8YBj2OLdqyn+t2zVhpsA3UZkNguEe5/bfhsgdt7Q5M7yIBToTZXZ5AvFl5k8+mgpTYPVzX35FIfeUVSM9wPHuDFmqoKzxvUla7xTqv3HTHgV4/t7/wMxs9O2Lz4T5qLHeROdwyVjcWXlb8IHN5WC+bO5mSdPK09TXtLVcOL3Wz0m/hvdAO7MljZHX+7k9fjfWzjvYLpDFUbRtx5v0E0BleG32YhHI3MeuSze6x0ujmB7Dpj5zdnoih4DL3hhDDqbPPSdeYIH9x7KSWsqOv/12GOEDOjrfkG08jmjNsPPCj6zAZVxpDVRDUKnc7Y8JQ91QZ5fKw+MLoTPj5zVFrCT/3iy1TuQfCPGNWWQMOHcDF4bDjL2Dh/7ZDz5EDTfT7Lot8wCWZjZdDdgpiO+xEmKnZ/B/3sjHipESkrQTHb3WbIe4ew==;5:aLmcwValxqs5sQeiV/wA+RCykGV13eX+r6clOwR2bSBjxdw9OTDJ5BQdq5pTQ1eYbp/M5vA0xvDT52Jmtbj5tE4rDBttM2/c3KoqE9fSRISDbQqL1LgbUcLsF50FwdmeIpc9Xx6R14DDzM4o/qNdyu4f7WvAf7ot1IAg92eOaDu0UNQAqd4tGxmZC/qmlUOaZoIdLkd9cdpxqemL4cueOg==;7:OqXGtVBSlzP26iogidGn8eBTutnTqWHtscuQXpI8vsTzUMcn9DP5QuLGxtVZbTOWkm57B5Gqxo1bj3V6v2rpUacZHl/YOrfT3WIonP9sHMHFFczFxdC52OPlJUk/ETqNSa9Cdf5BR/wFjTWn01Z7bg==
-x-ms-office365-filtering-correlation-id: e2e168d0-36d8-4769-56bd-08d6752f26a3
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM5PR0402MB2915;
-x-ms-traffictypediagnostic: AM5PR0402MB2915:
-x-microsoft-antispam-prvs: <AM5PR0402MB29151116F077D5A1D1D17506F18A0@AM5PR0402MB2915.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(908002)(999002)(5005026)(6040522)(8220060)(2401047)(8121501046)(10201501046)(3002001)(3231475)(944501520)(52105112)(93006095)(93001095)(6055026)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:AM5PR0402MB2915;BCL:0;PCL:0;RULEID:;SRVR:AM5PR0402MB2915;
-x-forefront-prvs: 0911D5CE78
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(396003)(346002)(376002)(366004)(136003)(199004)(189003)(68736007)(97736004)(36756003)(478600001)(66066001)(476003)(81156014)(81166006)(25786009)(6436002)(8676002)(2616005)(446003)(11346002)(54906003)(6486002)(110136005)(186003)(1076003)(14444005)(106356001)(256004)(105586002)(2906002)(3846002)(71200400001)(6116002)(486006)(7736002)(71190400001)(14454004)(2171002)(50226002)(4326008)(5660300001)(99286004)(305945005)(102836004)(76176011)(53936002)(52116002)(386003)(6506007)(26005)(8936002)(316002)(86362001)(6512007);DIR:OUT;SFP:1101;SCL:1;SRVR:AM5PR0402MB2915;H:AM5PR0402MB2865.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: t8fbkTOzBhaD6cvvMCD5lmCUFWOeqfNBsWVUdRzXTMBDm89I8ONR4fz/zn8pxZTiUmXOmP/9JgGtHzWYK4nlttLasjMzVEdt5WsXyNmeCVgYZK+5dm7vcEHSLFcdZK6oo4LvJrl80j0C4b0r9FjJfkU+xauUVGUL+YbOZLGS3CUEY83cuAjbuAt0F8t1D88YApYyG2vUXnTk795zKmfnGN0qS9N97XTHjqu81EDj3bqjBmk5ymoZfNVwbBH6ZnA1GWhPsAZ9UB+19LpBP6FUuwu0ZvUupFfAdWH77GZ2UU6j+6QJUcUNmue6TpDG2KXA
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        Tue, 8 Jan 2019 01:07:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52650 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727408AbfAHGHi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 01:07:38 -0500
+Received: from localhost (unknown [77.138.135.184])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 98EB920700;
+        Tue,  8 Jan 2019 06:07:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1546927657;
+        bh=jDJvaN+uOakVMbxAqNGZOEwg7W7AOFW6nx5YuUUJJdA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=nIlnt6hsOhlE9yZKhq/xJk+VVs4JEYbBGNurC/WdoIZnHv6cVXlGA8ZlB+lvgEmPb
+         0mxbtdcuVpqEZuSlVM+fB6t8IfRDKtSslA8cKXt3YS71XCuor0qnHx/HxzuZUH3VJH
+         IRoL+lC2tjj52LUqidmbxlCp7yXtKyFSkqC0PLAQ=
+Date:   Tue, 8 Jan 2019 08:07:34 +0200
+From:   Leon Romanovsky <leon@kernel.org>
+To:     Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        David Gibson <david@gibson.dropbear.id.au>,
+        davem@davemloft.net, saeedm@mellanox.com, ogerlitz@mellanox.com,
+        tariqt@mellanox.com, bhelgaas@google.com,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        netdev@vger.kernel.org, alex.williamson@redhat.com,
+        linux-pci@vger.kernel.org, linux-rdma@vger.kernel.org,
+        sbest@redhat.com, paulus@samba.org
+Subject: Re: [PATCH] PCI: Add no-D3 quirk for Mellanox ConnectX-[45]
+Message-ID: <20190108060734.GH3632@mtr-leonro.mtl.com>
+References: <20181206041951.22413-1-david@gibson.dropbear.id.au>
+ <20181206064509.GM15544@mtr-leonro.mtl.com>
+ <20190104034401.GA2801@umbus.fritz.box>
+ <20190105175116.GB14238@ziepe.ca>
+ <c1296ee9120a6a04dc75d0fdb2a641c722cb65d6.camel@kernel.crashing.org>
+ <20190108040129.GE5336@ziepe.ca>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e2e168d0-36d8-4769-56bd-08d6752f26a3
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Jan 2019 06:04:26.8830
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM5PR0402MB2915
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="QNDPHrPUIc00TOLW"
+Content-Disposition: inline
+In-Reply-To: <20190108040129.GE5336@ziepe.ca>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: yinbo.zhu <yinbo.zhu@nxp.com>
 
-Remove USB errata checking code from driver. Applicability of erratum
-is retrieved by reading corresponding property in device tree.
-This property is written during device tree fixup.
+--QNDPHrPUIc00TOLW
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Signed-off-by: Ramneek Mehresh <ramneek.mehresh@freescale.com>
-Signed-off-by: Nikhil Badola <nikhil.badola@freescale.com>
-Signed-off-by: yinbo.zhu <yinbo.zhu@nxp.com>
-Signed-off-by: Ran Wang <ran.wang_1@nxp.com>
----
- drivers/usb/host/ehci-fsl.c      |    7 +------
- drivers/usb/host/fsl-mph-dr-of.c |    6 ++++++
- include/linux/fsl_devices.h      |    7 ++++---
- 3 files changed, 11 insertions(+), 9 deletions(-)
+On Mon, Jan 07, 2019 at 09:01:29PM -0700, Jason Gunthorpe wrote:
+> On Sun, Jan 06, 2019 at 09:43:46AM +1100, Benjamin Herrenschmidt wrote:
+> > On Sat, 2019-01-05 at 10:51 -0700, Jason Gunthorpe wrote:
+> > >
+> > > > Interesting.  I've investigated this further, though I don't have as
+> > > > many new clues as I'd like.  The problem occurs reliably, at least on
+> > > > one particular type of machine (a POWER8 "Garrison" with ConnectX-4).
+> > > > I don't yet know if it occurs with other machines, I'm having trouble
+> > > > getting access to other machines with a suitable card.  I didn't
+> > > > manage to reproduce it on a different POWER8 machine with a
+> > > > ConnectX-5, but I don't know if it's the difference in machine or
+> > > > difference in card revision that's important.
+> > >
+> > > Make sure the card has the latest firmware is always good advice..
+> > >
+> > > > So possibilities that occur to me:
+> > > >   * It's something specific about how the vfio-pci driver uses D3
+> > > >     state - have you tried rebinding your device to vfio-pci?
+> > > >   * It's something specific about POWER, either the kernel or the PCI
+> > > >     bridge hardware
+> > > >   * It's something specific about this particular type of machine
+> > >
+> > > Does the EEH indicate what happend to actually trigger it?
+> >
+> > In a very cryptic way that requires manual parsing using non-public
+> > docs sadly but yes. From the look of it, it's a completion timeout.
+> >
+> > Looks to me like we don't get a response to a config space access
+> > during the change of D state. I don't know if it's the write of the D3
+> > state itself or the read back though (it's probably detected on the
+> > read back or a subsequent read, but that doesn't tell me which specific
+> > one failed).
+>
+> If it is just one card doing it (again, check you have latest
+> firmware) I wonder if it is a sketchy PCI-E electrical link that is
+> causing a long re-training cycle? Can you tell if the PCI-E link is
+> permanently gone or does it eventually return?
+>
+> Does the card work in Gen 3 when it starts? Is there any indication of
+> PCI-E link errors?
+>
+> Everytime or sometimes?
+>
+> POWER 8 firmware is good? If the link does eventually come back, is
+> the POWER8's D3 resumption timeout long enough?
+>
+> If this doesn't lead to an obvious conclusion you'll probably need to
+> connect to IBM's Mellanox support team to get more information from
+> the card side.
 
-diff --git a/drivers/usb/host/ehci-fsl.c b/drivers/usb/host/ehci-fsl.c
-index 59ebe1b..2aa408a 100644
---- a/drivers/usb/host/ehci-fsl.c
-+++ b/drivers/usb/host/ehci-fsl.c
-@@ -304,14 +304,9 @@ static int ehci_fsl_usb_setup(struct ehci_hcd *ehci)
- 			return -EINVAL;
-=20
- 	if (pdata->operating_mode =3D=3D FSL_USB2_MPH_HOST) {
--		unsigned int chip, rev, svr;
--
--		svr =3D mfspr(SPRN_SVR);
--		chip =3D svr >> 16;
--		rev =3D (svr >> 4) & 0xf;
-=20
- 		/* Deal with USB Erratum #14 on MPC834x Rev 1.0 & 1.1 chips */
--		if ((rev =3D=3D 1) && (chip >=3D 0x8050) && (chip <=3D 0x8055))
-+		if (pdata->has_fsl_erratum_14 =3D=3D 1)
- 			ehci->has_fsl_port_bug =3D 1;
-=20
- 		if (pdata->port_enables & FSL_USB2_PORT0_ENABLED)
-diff --git a/drivers/usb/host/fsl-mph-dr-of.c b/drivers/usb/host/fsl-mph-dr=
--of.c
-index 677f9d5..4f8b8a0 100644
---- a/drivers/usb/host/fsl-mph-dr-of.c
-+++ b/drivers/usb/host/fsl-mph-dr-of.c
-@@ -225,6 +225,12 @@ static int fsl_usb2_mph_dr_of_probe(struct platform_de=
-vice *ofdev)
- 	pdata->has_fsl_erratum_a005697 =3D
- 		of_property_read_bool(np, "fsl,usb_erratum-a005697");
-=20
-+	if (of_get_property(np, "fsl,usb_erratum_14", NULL))
-+		pdata->has_fsl_erratum_14 =3D 1;
-+	else
-+		pdata->has_fsl_erratum_14 =3D 0;
-+
-+
- 	/*
- 	 * Determine whether phy_clk_valid needs to be checked
- 	 * by reading property in device tree
-diff --git a/include/linux/fsl_devices.h b/include/linux/fsl_devices.h
-index 60cef82..7aa51bc 100644
---- a/include/linux/fsl_devices.h
-+++ b/include/linux/fsl_devices.h
-@@ -98,10 +98,11 @@ struct fsl_usb2_platform_data {
-=20
- 	unsigned	suspended:1;
- 	unsigned	already_suspended:1;
--	unsigned        has_fsl_erratum_a007792:1;
--	unsigned        has_fsl_erratum_a005275:1;
-+	unsigned    has_fsl_erratum_a007792:1;
-+	unsigned    has_fsl_erratum_14:1;
-+	unsigned    has_fsl_erratum_a005275:1;
- 	unsigned	has_fsl_erratum_a005697:1;
--	unsigned        check_phy_clk_valid:1;
-+	unsigned    check_phy_clk_valid:1;
-=20
- 	/* register save area for suspend/resume */
- 	u32		pm_command;
---=20
-1.7.1
++1, I tried to find any Mellanox-internal bugs related to your issue
+and didn't find anything concrete.
 
+Thanks
+
+>
+> Jason
+
+--QNDPHrPUIc00TOLW
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBAgAGBQJcND4mAAoJEORje4g2clinWmYQALc1t9Jj1WUm7zYVTd84U3pI
+gnGibiWBO2l7MI+MYk14ZBFGEYJlskNRHIigRcOFEkzha5dy6p2JOnQyS3yBvHjO
+Bl3JfvqJLZ6gq4EFqtQlvuH8TaJrkB2L3rxTmWXhbNVcxIw5SIyylhpVDgSncpde
+MtP+XC7viTd15bBrYBTqVJsjr0LnIUfyPzBpDcn6vHht6iPln3pUv90T7w49/Vkm
+EgDUN3bNYjyXbX07sj78Z5t8UuKv0UcQ2oGAWmA/YLGo04XZRQFcUlu4BnWT2YOf
+9z4yHBx/KdBMpxtRue74mqHitFjSu9u+Na5Leq6j3davuFg000q+f3AfE8nCWqLp
+DraqvSZKIhAiCFpQAcBAzEvVM0QzaKS8xqftPpnZ+509cnAwzRzlKDAO3xzyaXNN
+KM56HOXCPSJPvf0uCsTr3zTLpsAnzm1QOSt3J6SW4DxvBPTsdrvro08UQErbUAVL
+VieGklltiu+OeNY2DsCE6JSlxFIMOxMql3zVf5vD9GR7zzhtYA+sgVJssOzBMEY5
+4yHnrg42lQ3OvjBF686S5xFHJ13hNHvd4CvdUiNvlncJS14zlEiFoGzmnk4+44bu
+LSXy8AVLNDtmqk2WG+DlrCZPnm6zp1wC8mvvkvywSpbrWVEkBn2DIlfK788i1BoR
+UMzhWxopBvsJGk41pwm3
+=BVjQ
+-----END PGP SIGNATURE-----
+
+--QNDPHrPUIc00TOLW--
