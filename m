@@ -2,73 +2,140 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E76EC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:50:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BC97C43444
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:50:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 01A1F2070B
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:50:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="eKKSwlCU"
+	by mail.kernel.org (Postfix) with ESMTP id 2377C2070B
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:50:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729446AbfAHUuH (ORCPT
+        id S1729548AbfAHUu5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 15:50:07 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:38578 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728559AbfAHUuG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 15:50:06 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Type:MIME-Version:Message-ID:
-        Subject:To:From:Date:Sender:Reply-To:Cc:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=hII5hqjpPDygDvjgb+X6H2WtdAk+TY22x4uXJlQwkoE=; b=eKKSwlCU0EbfKeNTyHG/6e9VDj
-        8ISVQGdHnoeKwT432I/twykMzbpVrm7wsADH8/T5Dx5tWR0fS/iMfogyUxlWgVaI+Ou5apHiOG/2n
-        HD62kVuXfSIqQJLRI49++1QtCCiYv3KilVmsmqKIeDn74jZTsDtXCTwHlBM1pZgHxIRbKTLySKLyH
-        k6No3dg2t1gz0K2ocXr3tkqOVYfvGn/C03dngBREp9MUHWy+bMEDyFH8Oh4Hu8QvzaxigX7xYL+bb
-        abVYvnvSE9M29UMgXKtk2zt27APwSuWFZ4B81l0dNCNaCwy+I4UVR1HteGOHC95gWRJTN3CPFH5G2
-        IIwsalVg==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1ggyK1-0006V0-GL; Tue, 08 Jan 2019 20:50:01 +0000
-Date:   Tue, 8 Jan 2019 12:50:01 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Lucas Stach <l.stach@pengutronix.de>,
-        Russell King <linux+etnaviv@armlinux.org.uk>,
-        Christian Gmeiner <christian.gmeiner@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>, etnaviv@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] etnaviv mailing list is moderated
-Message-ID: <20190108205001.GG6310@bombadil.infradead.org>
+        Tue, 8 Jan 2019 15:50:57 -0500
+Received: from ale.deltatee.com ([207.54.116.67]:51906 "EHLO ale.deltatee.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728766AbfAHUu4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 15:50:56 -0500
+Received: from cgy1-donard.priv.deltatee.com ([172.16.1.31])
+        by ale.deltatee.com with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <gunthorp@deltatee.com>)
+        id 1ggyKp-0004i8-Sa; Tue, 08 Jan 2019 13:50:53 -0700
+Received: from gunthorp by cgy1-donard.priv.deltatee.com with local (Exim 4.89)
+        (envelope-from <gunthorp@deltatee.com>)
+        id 1ggyKm-0000p5-Uj; Tue, 08 Jan 2019 13:50:48 -0700
+From:   Logan Gunthorpe <logang@deltatee.com>
+To:     linux-scsi@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Logan Gunthorpe <logang@deltatee.com>,
+        Intel SCU Linux support <intel-linux-scu@intel.com>,
+        Artur Paszkiewicz <artur.paszkiewicz@intel.com>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        Jeff Moyer <jmoyer@redhat.com>
+Date:   Tue,  8 Jan 2019 13:50:43 -0700
+Message-Id: <20190108205043.3122-1-logang@deltatee.com>
+X-Mailer: git-send-email 2.19.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 172.16.1.31
+X-SA-Exim-Rcpt-To: linux-scsi@vger.kernel.org, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, logang@deltatee.com, intel-linux-scu@intel.com, artur.paszkiewicz@intel.com, jejb@linux.ibm.com, martin.petersen@oracle.com, hch@lst.de, axboe@kernel.dk, jmoyer@redhat.com
+X-SA-Exim-Mail-From: gunthorp@deltatee.com
+Subject: [PATCH] scsi: isci: initialize shost fully before calling scsi_add_host()
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+scsi_mq_setup_tags(), which is called by scsi_add_host(), calculates
+the command size to allocate based on the prot_capabilities. In the
+isci driver, scsi_host_set_prot() is called after scsi_add_host()
+so the command size gets calculated to be smaller than it needs to be.
+Eventually, scsi_mq_init_request() locates the 'prot_sdb' after the command
+assuming it was sized correctly and a buffer overrun may occur.
 
-Signed-off-by: Matthew Wilcox <willy@infradead.org>
+However, seeing blk_mq_alloc_rqs() rounds up to the nearest cache line
+size, the mistake can go unnoticed.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 32d444476a90..44888eb121d8 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -5141,7 +5141,7 @@ DRM DRIVERS FOR VIVANTE GPU IP
- M:	Lucas Stach <l.stach@pengutronix.de>
- R:	Russell King <linux+etnaviv@armlinux.org.uk>
- R:	Christian Gmeiner <christian.gmeiner@gmail.com>
--L:	etnaviv@lists.freedesktop.org
-+L:	etnaviv@lists.freedesktop.org (moderated for non-subscribers)
- L:	dri-devel@lists.freedesktop.org
- S:	Maintained
- F:	drivers/gpu/drm/etnaviv/
+The bug was noticed after the struct request size was reduced by
+commit 9d037ad707ed ("block: remove req->timeout_list")
+
+Which likely reduced the allocated space for the request by an entire
+cache line, enough that the overflow could be hit and it caused a panic,
+on boot, at:
+
+  RIP: 0010:t10_pi_complete+0x77/0x1c0
+  Call Trace:
+    <IRQ>
+    sd_done+0xf5/0x340
+    scsi_finish_command+0xc3/0x120
+    blk_done_softirq+0x83/0xb0
+    __do_softirq+0xa1/0x2e6
+    irq_exit+0xbc/0xd0
+    call_function_single_interrupt+0xf/0x20
+    </IRQ>
+
+sd_done() would call scsi_prot_sg_count() which reads the number of
+entities in 'prot_sdb', but seeing 'prot_sdb' is located after the end of
+the allocated space it reads a garbage number and erroneously calls
+t10_pi_complete().
+
+To prevent this, the calls to scsi_host_set_prot() are moved into
+isci_host_alloc() before the call to scsi_add_host(). Out of caution,
+also move the similar call to scsi_host_set_guard().
+
+Fixes: 3d2d75254915 ("[SCSI] isci: T10 DIF support")
+Link: http://lkml.kernel.org/r/da851333-eadd-163a-8c78-e1f4ec5ec857@deltatee.com
+Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
+Cc: Intel SCU Linux support <intel-linux-scu@intel.com>
+Cc: Artur Paszkiewicz <artur.paszkiewicz@intel.com>
+Cc: "James E.J. Bottomley" <jejb@linux.ibm.com>
+Cc: "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: Jens Axboe <axboe@kernel.dk>
+Cc: Jeff Moyer <jmoyer@redhat.com>
+---
+ drivers/scsi/isci/init.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/scsi/isci/init.c b/drivers/scsi/isci/init.c
+index 68b90c4f79a3..1727d0c71b12 100644
+--- a/drivers/scsi/isci/init.c
++++ b/drivers/scsi/isci/init.c
+@@ -576,6 +576,13 @@ static struct isci_host *isci_host_alloc(struct pci_dev *pdev, int id)
+ 	shost->max_lun = ~0;
+ 	shost->max_cmd_len = MAX_COMMAND_SIZE;
+ 
++	/* turn on DIF support */
++	scsi_host_set_prot(shost,
++			   SHOST_DIF_TYPE1_PROTECTION |
++			   SHOST_DIF_TYPE2_PROTECTION |
++			   SHOST_DIF_TYPE3_PROTECTION);
++	scsi_host_set_guard(shost, SHOST_DIX_GUARD_CRC);
++
+ 	err = scsi_add_host(shost, &pdev->dev);
+ 	if (err)
+ 		goto err_shost;
+@@ -663,13 +670,6 @@ static int isci_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ 			goto err_host_alloc;
+ 		}
+ 		pci_info->hosts[i] = h;
+-
+-		/* turn on DIF support */
+-		scsi_host_set_prot(to_shost(h),
+-				   SHOST_DIF_TYPE1_PROTECTION |
+-				   SHOST_DIF_TYPE2_PROTECTION |
+-				   SHOST_DIF_TYPE3_PROTECTION);
+-		scsi_host_set_guard(to_shost(h), SHOST_DIX_GUARD_CRC);
+ 	}
+ 
+ 	err = isci_setup_interrupts(pdev);
+-- 
+2.19.0
+
