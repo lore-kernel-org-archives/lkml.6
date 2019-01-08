@@ -4,48 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 656C8C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:49:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11C4DC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:49:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 335A620827
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:49:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D2BAE206BB
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:49:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546976991;
-	bh=PNfLpMWRzwLfayFhU4wPL2/ACMrNB3x7q0CRQD1S9m4=;
+	s=default; t=1546976998;
+	bh=UrAh5yny5LNoG+2p+xDmBbh6djkyPab6brOwxHuB5tw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ZDhpQ/3Wund3QfLlLlUvrm+lrC4DM7W3g1DT67wSPs/wFKkKHVS3SbDFcZj3vHAZT
-	 OvyhyA16zE4cJoUnya8Ls3vHR+/j3yLxZ9eNe0LcvnOSOBT3KQcSWFDVW0wPtipECK
-	 0uu7eF/RsOnTDWyeUzbPn3Jpg1azsymSgL0kd61M=
+	b=n1arxwI0DvpQx0j9MOaAKoNOVFxo6YzJbY8GtuWsv8p7f9wUrmvAWrDRCUB9RjIe7
+	 4z1FNZYxyyCVh4xR/kDN4dZTYUDJqkn/l8S3VrDMmvcEIilLNf1S7+jHhfypAQzQx7
+	 +vl1kOs8tIcG/JMP9b+9NKzrz5b1Kd7trU6IlXIw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731537AbfAHTtu (ORCPT
+        id S1732812AbfAHTt5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:49:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40250 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 14:49:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40218 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731235AbfAHTb6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:31:58 -0500
+        id S1730144AbfAHTb5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:31:57 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BF3DF20665;
-        Tue,  8 Jan 2019 19:31:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ACDB62070B;
+        Tue,  8 Jan 2019 19:31:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546975917;
-        bh=PNfLpMWRzwLfayFhU4wPL2/ACMrNB3x7q0CRQD1S9m4=;
+        s=default; t=1546975916;
+        bh=UrAh5yny5LNoG+2p+xDmBbh6djkyPab6brOwxHuB5tw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GBDjsPcCU/NgFY0Oa5xhMVAK1nTGrnzmphywQeuH4l9Zu11V9LJIcmFkuGK14SP5h
-         TgFOJn92YwE6RpL9yYk7yl/yhcYLMVQO4WhImzwBTwzjkUl0FyHyjXMTNgJchdg1DK
-         8E+/+q69Ooe+VD9Rvd4LTYFaZhRraGnsR/bRihoc=
+        b=LygVxn7aCK4aZQcpyJ5IjIvdP8iCbefCRVszzHM1jhLzKVVorAAWOZyfJJH2CMIJX
+         0L7IbBsm4eFwD7+PI/5v7UrK6KiLdDcZAJhCi6vUPhaucM3M4Mi2D8m6aaOELVJxUm
+         gdnI9flUp4R82UWbSEZxj8LYa0ZdfaLHRe7jD7aA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Milan Broz <gmazyland@gmail.com>,
-        Mike Snitzer <snitzer@redhat.com>,
+Cc:     Yangtao Li <tiny.windzz@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 82/97] dm: Check for device sector overflow if CONFIG_LBDAF is not set
-Date:   Tue,  8 Jan 2019 14:29:31 -0500
-Message-Id: <20190108192949.122407-82-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 81/97] clocksource/drivers/integrator-ap: Add missing of_node_put()
+Date:   Tue,  8 Jan 2019 14:29:30 -0500
+Message-Id: <20190108192949.122407-81-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108192949.122407-1-sashal@kernel.org>
 References: <20190108192949.122407-1-sashal@kernel.org>
@@ -57,116 +58,83 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Milan Broz <gmazyland@gmail.com>
+From: Yangtao Li <tiny.windzz@gmail.com>
 
-[ Upstream commit ef87bfc24f9b8da82c89aff493df20f078bc9cb1 ]
+[ Upstream commit 5eb73c831171115d3b4347e1e7124a5a35d8086c ]
 
-Reference to a device in device-mapper table contains offset in sectors.
+The function of_find_node_by_path() acquires a reference to the node
+returned by it and that reference needs to be dropped by its caller.
 
-If the sector_t is 32bit integer (CONFIG_LBDAF is not set), then
-several device-mapper targets can overflow this offset and validity
-check is then performed on a wrong offset and a wrong table is activated.
+integrator_ap_timer_init_of() doesn't do that.  The pri_node and the
+sec_node are used as an identifier to compare against the current
+node, so we can directly drop the refcount after getting the node from
+the path as it is not used as pointer.
 
-See for example (on 32bit without CONFIG_LBDAF) this overflow:
+By dropping the refcount right after getting it, a single variable is
+needed instead of two.
 
-  # dmsetup create test --table "0 2048 linear /dev/sdg 4294967297"
-  # dmsetup table test
-  0 2048 linear 8:96 1
+Fix this by use a single variable and drop the refcount right after
+of_find_node_by_path().
 
-This patch adds explicit check for overflow if the offset is sector_t type.
-
-Signed-off-by: Milan Broz <gmazyland@gmail.com>
-Reviewed-by: Mikulas Patocka <mpatocka@redhat.com>
-Signed-off-by: Mike Snitzer <snitzer@redhat.com>
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/md/dm-crypt.c    | 2 +-
- drivers/md/dm-delay.c    | 2 +-
- drivers/md/dm-flakey.c   | 2 +-
- drivers/md/dm-linear.c   | 2 +-
- drivers/md/dm-raid1.c    | 3 ++-
- drivers/md/dm-unstripe.c | 2 +-
- 6 files changed, 7 insertions(+), 6 deletions(-)
+ drivers/clocksource/timer-integrator-ap.c | 25 +++++++++++++++--------
+ 1 file changed, 16 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/md/dm-crypt.c b/drivers/md/dm-crypt.c
-index f192ba38f332..f2ec882f96be 100644
---- a/drivers/md/dm-crypt.c
-+++ b/drivers/md/dm-crypt.c
-@@ -2780,7 +2780,7 @@ static int crypt_ctr(struct dm_target *ti, unsigned int argc, char **argv)
+diff --git a/drivers/clocksource/timer-integrator-ap.c b/drivers/clocksource/timer-integrator-ap.c
+index 62d24690ba02..9701107806a7 100644
+--- a/drivers/clocksource/timer-integrator-ap.c
++++ b/drivers/clocksource/timer-integrator-ap.c
+@@ -181,8 +181,7 @@ static int __init integrator_ap_timer_init_of(struct device_node *node)
+ 	int irq;
+ 	struct clk *clk;
+ 	unsigned long rate;
+-	struct device_node *pri_node;
+-	struct device_node *sec_node;
++	struct device_node *alias_node;
+ 
+ 	base = of_io_request_and_map(node, 0, "integrator-timer");
+ 	if (IS_ERR(base))
+@@ -204,7 +203,18 @@ static int __init integrator_ap_timer_init_of(struct device_node *node)
+ 		return err;
  	}
  
- 	ret = -EINVAL;
--	if (sscanf(argv[4], "%llu%c", &tmpll, &dummy) != 1) {
-+	if (sscanf(argv[4], "%llu%c", &tmpll, &dummy) != 1 || tmpll != (sector_t)tmpll) {
- 		ti->error = "Invalid device sector";
- 		goto bad;
- 	}
-diff --git a/drivers/md/dm-delay.c b/drivers/md/dm-delay.c
-index 2fb7bb4304ad..fddffe251bf6 100644
---- a/drivers/md/dm-delay.c
-+++ b/drivers/md/dm-delay.c
-@@ -141,7 +141,7 @@ static int delay_class_ctr(struct dm_target *ti, struct delay_class *c, char **a
- 	unsigned long long tmpll;
- 	char dummy;
+-	pri_node = of_find_node_by_path(path);
++	alias_node = of_find_node_by_path(path);
++
++	/*
++	 * The pointer is used as an identifier not as a pointer, we
++	 * can drop the refcount on the of__node immediately after
++	 * getting it.
++	 */
++	of_node_put(alias_node);
++
++	if (node == alias_node)
++		/* The primary timer lacks IRQ, use as clocksource */
++		return integrator_clocksource_init(rate, base);
  
--	if (sscanf(argv[1], "%llu%c", &tmpll, &dummy) != 1) {
-+	if (sscanf(argv[1], "%llu%c", &tmpll, &dummy) != 1 || tmpll != (sector_t)tmpll) {
- 		ti->error = "Invalid device sector";
- 		return -EINVAL;
- 	}
-diff --git a/drivers/md/dm-flakey.c b/drivers/md/dm-flakey.c
-index 32aabe27b37c..b86d2439ffc7 100644
---- a/drivers/md/dm-flakey.c
-+++ b/drivers/md/dm-flakey.c
-@@ -213,7 +213,7 @@ static int flakey_ctr(struct dm_target *ti, unsigned int argc, char **argv)
- 	devname = dm_shift_arg(&as);
- 
- 	r = -EINVAL;
--	if (sscanf(dm_shift_arg(&as), "%llu%c", &tmpll, &dummy) != 1) {
-+	if (sscanf(dm_shift_arg(&as), "%llu%c", &tmpll, &dummy) != 1 || tmpll != (sector_t)tmpll) {
- 		ti->error = "Invalid device sector";
- 		goto bad;
- 	}
-diff --git a/drivers/md/dm-linear.c b/drivers/md/dm-linear.c
-index 2f7c44a006c4..caa08c4b84cd 100644
---- a/drivers/md/dm-linear.c
-+++ b/drivers/md/dm-linear.c
-@@ -45,7 +45,7 @@ static int linear_ctr(struct dm_target *ti, unsigned int argc, char **argv)
+ 	err = of_property_read_string(of_aliases,
+ 				"arm,timer-secondary", &path);
+@@ -213,14 +223,11 @@ static int __init integrator_ap_timer_init_of(struct device_node *node)
+ 		return err;
  	}
  
- 	ret = -EINVAL;
--	if (sscanf(argv[1], "%llu%c", &tmp, &dummy) != 1) {
-+	if (sscanf(argv[1], "%llu%c", &tmp, &dummy) != 1 || tmp != (sector_t)tmp) {
- 		ti->error = "Invalid device sector";
- 		goto bad;
- 	}
-diff --git a/drivers/md/dm-raid1.c b/drivers/md/dm-raid1.c
-index 79eab1071ec2..5a51151f680d 100644
---- a/drivers/md/dm-raid1.c
-+++ b/drivers/md/dm-raid1.c
-@@ -943,7 +943,8 @@ static int get_mirror(struct mirror_set *ms, struct dm_target *ti,
- 	char dummy;
- 	int ret;
++	alias_node = of_find_node_by_path(path);
  
--	if (sscanf(argv[1], "%llu%c", &offset, &dummy) != 1) {
-+	if (sscanf(argv[1], "%llu%c", &offset, &dummy) != 1 ||
-+	    offset != (sector_t)offset) {
- 		ti->error = "Invalid offset";
- 		return -EINVAL;
- 	}
-diff --git a/drivers/md/dm-unstripe.c b/drivers/md/dm-unstripe.c
-index 954b7ab4e684..e673dacf6418 100644
---- a/drivers/md/dm-unstripe.c
-+++ b/drivers/md/dm-unstripe.c
-@@ -78,7 +78,7 @@ static int unstripe_ctr(struct dm_target *ti, unsigned int argc, char **argv)
- 		goto err;
- 	}
+-	sec_node = of_find_node_by_path(path);
+-
+-	if (node == pri_node)
+-		/* The primary timer lacks IRQ, use as clocksource */
+-		return integrator_clocksource_init(rate, base);
++	of_node_put(alias_node);
  
--	if (sscanf(argv[4], "%llu%c", &start, &dummy) != 1) {
-+	if (sscanf(argv[4], "%llu%c", &start, &dummy) != 1 || start != (sector_t)start) {
- 		ti->error = "Invalid striped device offset";
- 		goto err;
- 	}
+-	if (node == sec_node) {
++	if (node == alias_node) {
+ 		/* The secondary timer will drive the clock event */
+ 		irq = irq_of_parse_and_map(node, 0);
+ 		return integrator_clockevent_init(rate, base, irq);
 -- 
 2.19.1
 
