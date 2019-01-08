@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A96D9C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 16:10:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA209C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 16:11:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 84C7A21019
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 16:10:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9215221019
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 16:11:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729326AbfAHQKu (ORCPT
+        id S1729390AbfAHQK7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 11:10:50 -0500
+        Tue, 8 Jan 2019 11:10:59 -0500
 Received: from bhuna.collabora.co.uk ([46.235.227.227]:58868 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729235AbfAHQK2 (ORCPT
+        with ESMTP id S1729223AbfAHQK0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 11:10:28 -0500
+        Tue, 8 Jan 2019 11:10:26 -0500
 Received: from [127.0.0.1] (localhost [127.0.0.1])
         (Authenticated sender: eballetbo)
-        with ESMTPSA id 8CC7227DE7D
+        with ESMTPSA id CAC1527DE7D
 From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     groeck@chromium.org, gwendal@chromium.org, kernel@collabora.com,
         bleung@chromium.org
-Subject: [PATCH 06/10] platform/chrome: cros_ec_sysfs: remove pr_fmt() define
-Date:   Tue,  8 Jan 2019 17:10:12 +0100
-Message-Id: <20190108161016.12361-7-enric.balletbo@collabora.com>
+Subject: [PATCH 03/10] platform/chrome: cros_ec_sysfs: remove unused includes
+Date:   Tue,  8 Jan 2019 17:10:09 +0100
+Message-Id: <20190108161016.12361-4-enric.balletbo@collabora.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190108161016.12361-1-enric.balletbo@collabora.com>
 References: <20190108161016.12361-1-enric.balletbo@collabora.com>
@@ -40,27 +40,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This driver no longer has any pr_{level} messages. Remove the pr_fmt().
+None of these are required at the moment.
 
 Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 ---
 
- drivers/platform/chrome/cros_ec_sysfs.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/platform/chrome/cros_ec_sysfs.c | 7 -------
+ 1 file changed, 7 deletions(-)
 
 diff --git a/drivers/platform/chrome/cros_ec_sysfs.c b/drivers/platform/chrome/cros_ec_sysfs.c
-index 3d1c1a7415a8..c502c0f52092 100644
+index 0ff5aa30c070..3d1c1a7415a8 100644
 --- a/drivers/platform/chrome/cros_ec_sysfs.c
 +++ b/drivers/platform/chrome/cros_ec_sysfs.c
-@@ -17,8 +17,6 @@
-  * along with this program. If not, see <http://www.gnu.org/licenses/>.
-  */
+@@ -20,19 +20,12 @@
+ #define pr_fmt(fmt) "cros_ec_sysfs: " fmt
  
--#define pr_fmt(fmt) "cros_ec_sysfs: " fmt
--
  #include <linux/ctype.h>
+-#include <linux/delay.h>
  #include <linux/device.h>
  #include <linux/fs.h>
+-#include <linux/kobject.h>
+ #include <linux/mfd/cros_ec.h>
+-#include <linux/mfd/cros_ec_commands.h>
+ #include <linux/module.h>
+ #include <linux/platform_device.h>
+-#include <linux/printk.h>
+ #include <linux/slab.h>
+-#include <linux/stat.h>
+-#include <linux/types.h>
+-#include <linux/uaccess.h>
+ 
+ #define DRV_NAME "cros-ec-sysfs"
+ 
 -- 
 2.20.1
 
