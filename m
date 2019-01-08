@@ -2,152 +2,82 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48018C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 13:27:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C7B1C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 13:27:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 16A1A20827
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 13:27:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vRbpQ/jn"
+	by mail.kernel.org (Postfix) with ESMTP id 17D0620850
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 13:27:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728526AbfAHN1f (ORCPT
+        id S1728575AbfAHN1l (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 08:27:35 -0500
-Received: from mail-io1-f65.google.com ([209.85.166.65]:40854 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727654AbfAHN1f (ORCPT
+        Tue, 8 Jan 2019 08:27:41 -0500
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:44959 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727654AbfAHN1k (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 08:27:35 -0500
-Received: by mail-io1-f65.google.com with SMTP id k2so3086964iog.7;
-        Tue, 08 Jan 2019 05:27:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=2NDQFUiZkkBDgH22zIym5OK5RZCwCMqIWP8GHnsNHvA=;
-        b=vRbpQ/jn4w65x2O35eUPssgrSrjaJ8iCz4re65ESKl7YbyvoEfEk4ysKHXw3tebnam
-         55MD9XIodxeUeP/tafDTi43yunH6iXG5hKX2o6KZviO4uKhbaUtxg5mwYZiepNQSG4m8
-         8M2ON3UNdVC/R/g+1shjn7bsVB00J97SlqjA73YMBRGvExidPxzK4xN4Dep70uXBCYzh
-         /gHYd/xdLsv/95PGbnrUO8SbDAXS5hbezbRTfg9J+36Hdbh5zTXcYeskqn8RFFi/K0se
-         Mt2A3+w/UyRXXGVtvlrbAYi7UTtVearZtIXqF20CaBIpVjmRh6QRcax6u46OdqudFPic
-         SzPw==
+        Tue, 8 Jan 2019 08:27:40 -0500
+Received: by mail-qt1-f196.google.com with SMTP id n32so4253871qte.11;
+        Tue, 08 Jan 2019 05:27:39 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=2NDQFUiZkkBDgH22zIym5OK5RZCwCMqIWP8GHnsNHvA=;
-        b=bwXrdiFbYDByqt3NNAkftwh48GPjQQ0MfMDoFlHf9D5+VjkEEMXxBY12is04gu2KCn
-         uVPnsG9Cv5VojEdhflUuVgsfFljlLXb3zkv33C7tzYyiRIcjltUHPl7jujEiPQmAo5qW
-         YKJuas4nxhB881GIUJrz769Bbl8cI2MbZbpuSSuI//b4BDjg7jjJxjg3PSIoI9VrKk31
-         hThivMftCjFpPMVfChO6jzWoh+p3YcJP/MJ32wX95YIoNmpbfU6sNWV8EA3xqC3au2XE
-         JXhGCq2TaCsZxKW4ViU7qqdDZdkKAteSNSlzQBb4DKFJBtCwh1ZQrA0ytwX9Aegcn4zQ
-         wXtA==
-X-Gm-Message-State: AJcUukeaoMXYf2OSGh3KQqN2EFVL9latSuCEdum5YF8+p3ye4N0ZQhyS
-        EYuzlMaN11JRvlclmHzohWaVa+OSMd+prn/CVA==
-X-Google-Smtp-Source: ALg8bN46misA3c5oLp9zKMcbjquyMfgxb716KkkTgvaJDi+CKJpxQgkwMvfjPZquhcOe2C5afCj9pZha8THldnyfVV4=
-X-Received: by 2002:a6b:3f06:: with SMTP id m6mr927194ioa.117.1546954053471;
- Tue, 08 Jan 2019 05:27:33 -0800 (PST)
+        bh=LJNIeOlWFvWz7FljxszZIwj6olWLlHhc5XsiufOa2M8=;
+        b=SixIM5VgobrDMnMmqSDcoWF9HDTXYwyOl2w2Nz5PaUmyVkBaPzUQrtqsMpy5KqVKiA
+         f48Wzl1mhDAFlw/br76axbvuq3tJSY0cp4uR/XO277fkn1D199xEWYG/TDqQQIQAvddY
+         v4Pc6nmvz5Y/OtHjN9dOJxxTYmCILs2mLCqwcUrXxMUUpb9e7ZJyw6HNm9CKMLpLRrdv
+         js+yejyhZG14uhnM5FVGXLVlROrTMlrxZGWgDV+BWGVRSL24it1I118WL3gm9Qm8GMrx
+         DFIJLlubNxYRBlXRasTqGG8wc6rZRhDeTfSjHk8Y5NQQwn13sJmOyEzewVIBf76bIJhI
+         Dyog==
+X-Gm-Message-State: AJcUukeQAnlXgTwPNGBiakppQg9yhrldPChfkC7qn3fWk5AFPoaVdt8a
+        YAUX33vSkK9+QTfDLzetmuWv1urGMsaj4RT1frQ=
+X-Google-Smtp-Source: ALg8bN77B1XiJ1RSZqDKv6kOx9M7UT54tYcBEYdv7VQqHC1T6vrcXlc/c7QC9Ra5jhozr+QGOh9976R/4tX/GHyj+z8=
+X-Received: by 2002:aed:35c5:: with SMTP id d5mr1604787qte.212.1546954059166;
+ Tue, 08 Jan 2019 05:27:39 -0800 (PST)
 MIME-Version: 1.0
-References: <1546849485-27933-1-git-send-email-kernelfans@gmail.com> <20190108100542.GA2216@localhost.localdomain>
-In-Reply-To: <20190108100542.GA2216@localhost.localdomain>
-From:   Pingfan Liu <kernelfans@gmail.com>
-Date:   Tue, 8 Jan 2019 21:27:22 +0800
-Message-ID: <CAFgQCTu8C6DFqoUSKyKLZnL1twGr=3k+M4bgwgtcjENm+WHqJg@mail.gmail.com>
-Subject: Re: [RFC PATCH 0/4] x86_64/mm: remove bottom-up allocation style by
- pushing forward the parsing of mem hotplug info
-To:     Chao Fan <fanc.fnst@cn.fujitsu.com>
-Cc:     x86@kernel.org, linux-acpi@vger.kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>, linux-kernel@vger.kernel.org,
-        Tejun Heo <tj@kernel.org>, yinghai@kernel.org
+References: <20190105100606.6673-1-okaya@kernel.org> <20190105100606.6673-10-okaya@kernel.org>
+In-Reply-To: <20190105100606.6673-10-okaya@kernel.org>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Tue, 8 Jan 2019 14:27:21 +0100
+Message-ID: <CAK8P3a35HQQCVOQORjmuJLdO3ieiZFjSCF+EwJHRkz_727cFsA@mail.gmail.com>
+Subject: Re: [PATCH v6 09/11] mmc: sdhci-acpi: Make PCI dependency explicit
+To:     Sinan Kaya <okaya@kernel.org>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Faiz Abbas <faiz_abbas@ti.com>,
+        Chunyan Zhang <chunyan.zhang@unisoc.com>,
+        Jisheng Zhang <Jisheng.Zhang@synaptics.com>,
+        Ludovic Barre <ludovic.barre@st.com>,
+        Alex Smith <alex.smith@imgtec.com>,
+        Chris Brandt <chris.brandt@renesas.com>,
+        "open list:MULTIMEDIA CARD (MMC), SECURE DIGITAL (SD) AND..." 
+        <linux-mmc@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 8, 2019 at 6:06 PM Chao Fan <fanc.fnst@cn.fujitsu.com> wrote:
+On Sat, Jan 5, 2019 at 11:06 AM Sinan Kaya <okaya@kernel.org> wrote:
 >
-> On Mon, Jan 07, 2019 at 04:24:41PM +0800, Pingfan Liu wrote:
-> >Background about the defect of the current bottom-up allocation style, take
-> >the following scenario:
-> >  |  unmovable node |     movable node                           |
-> >     | kaslr-kernel |subtree of pgtable for phy<->virt |
-> >
-> >Although kaslr-kernel can avoid to stain the movable node. But the
-> >pgtable can still stain the movable node. That is a probability problem,
-> >with low probability, but still exist. This patch tries to eliminate the
-> >probability. With the previous patch, at the point of init_mem_mapping(),
-> >memblock allocator can work with the knowledge of acpi memory hotmovable
-> >info, and avoid to stain the movable node. As a result,
-> >memory_map_bottom_up() is not needed any more.
-> >
+> After 'commit 5d32a66541c4 ("PCI/ACPI: Allow ACPI to be built without
+> CONFIG_PCI set")' dependencies on CONFIG_PCI that previously were
+> satisfied implicitly through dependencies on CONFIG_ACPI have to be
+> specified directly. This driver relies on IOSF_MBI and IOSF_MBI depends
+> on PCI. For this reason, add a direct dependency to CONFIG_PCI here.
 >
-> Hi Pingfan,
->
-> Tang Chen ever tried to do this before adding 'movable_node':
-> commit e8d1955258091e4c92d5a975ebd7fd8a98f5d30f
-> Author: Tang Chen <tangchen@cn.fujitsu.com>
-> Date:   Fri Feb 22 16:33:44 2013 -0800
->
->     acpi, memory-hotplug: parse SRAT before memblock is ready
->
-> Then, Lu Yinghai tried to do the similar job, you can see:
-> https://lwn.net/Articles/554854/
-> for more information. Hope that can help you.
->
-Thanks, It is a long thread, as my understanding, Tejun concerned
-about the early parsing of ACPI consumes memory from memblock
-allocator. If it is, then this should not happen in my series.
-Cc Tejun and Yinghai.
+> Fixes: 5d32a66541c46 ("PCI/ACPI: Allow ACPI to be built without CONFIG_PCI set")
+> Signed-off-by: Sinan Kaya <okaya@kernel.org>
 
-Regards,
-Pingfan
-> Thanks,
-> Chao Fan
->
-> >
-> >Cc: Thomas Gleixner <tglx@linutronix.de>
-> >Cc: Ingo Molnar <mingo@redhat.com>
-> >Cc: Borislav Petkov <bp@alien8.de>
-> >Cc: "H. Peter Anvin" <hpa@zytor.com>
-> >Cc: Dave Hansen <dave.hansen@linux.intel.com>
-> >Cc: Andy Lutomirski <luto@kernel.org>
-> >Cc: Peter Zijlstra <peterz@infradead.org>
-> >Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-> >Cc: Len Brown <lenb@kernel.org>
-> >Cc: linux-kernel@vger.kernel.org
-> >
-> >Pingfan Liu (4):
-> >  acpi: change the topo of acpi_table_upgrade()
-> >  x86/setup: parse acpi to get hotplug info before init_mem_mapping()
-> >  x86/mm: set allowed range for memblock allocator
-> >  x86/mm: remove bottom-up allocation style for x86_64
-> >
-> > arch/arm64/kernel/setup.c |   2 +-
-> > arch/x86/kernel/setup.c   |  17 ++++-
-> > arch/x86/mm/init.c        | 154 +++++++---------------------------------------
-> > arch/x86/mm/init_32.c     | 123 ++++++++++++++++++++++++++++++++++++
-> > arch/x86/mm/mm_internal.h |   7 +++
-> > drivers/acpi/tables.c     |   4 +-
-> > include/linux/acpi.h      |   5 +-
-> > 7 files changed, 172 insertions(+), 140 deletions(-)
-> >
-> >--
-> >2.7.4
-> >
-> >
-> >
->
->
+Acked-by: Arnd Bergmann <arnd@arndb.de>
