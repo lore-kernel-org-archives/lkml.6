@@ -2,55 +2,54 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-18.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EBC8C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:31:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4A95C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:31:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 009F6217D9
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:31:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7503A2176F
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:31:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546975894;
-	bh=71bZYqIvrgLKtNHcvSBPT2C7oSSe2PEcWzz8UMCPeaE=;
+	s=default; t=1546975898;
+	bh=gIEXv2DrrCFcuLBLc+cGlLVKNNeUhmCn+6HG2qvpy4c=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=WHmPHmhHHWRCWl+/8ChU+3RBgFr4VfxblSFY/IQ4OA6aB3ST4UXnYdoHOdX6IUtEF
-	 Y/PcKVi4RU9giGO6AMGfOPYxvDSapu7FAnwuCu/NW3HmhVN6N4ggs8EQnX7tZMxckj
-	 cSmmbRzanRW+TixbLfyG+abhb82j6QRHkKNC0rlQ=
+	b=kPNoeSlFZIz95IME4EF1pZPV4PEE8erS9eNO1FMy26zpDx/IvKo5WEMUHH/3D93/a
+	 WXLXmIx7EaQXFZlpHKSeEARcJyhFN+atOm8lC9Q7SPktbA7YQp5cDYGEZmdZSta7sV
+	 QVb0tz510ipDLd59bSGPbbFttCQFLXsP/+N8kwT4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731118AbfAHTbc (ORCPT
+        id S1729667AbfAHTbg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:31:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39648 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 14:31:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39686 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729987AbfAHTbb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:31:31 -0500
+        id S1730037AbfAHTbd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:31:33 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6B26F2070B;
-        Tue,  8 Jan 2019 19:31:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B02F420645;
+        Tue,  8 Jan 2019 19:31:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546975890;
-        bh=71bZYqIvrgLKtNHcvSBPT2C7oSSe2PEcWzz8UMCPeaE=;
+        s=default; t=1546975892;
+        bh=gIEXv2DrrCFcuLBLc+cGlLVKNNeUhmCn+6HG2qvpy4c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=G4bL49YtCFod1OpwgEkVu4MaY3TgnVQn51W7JiPuG0IPQNQQTH6YGuTDq8GD3oIla
-         hO3KcoNtV4/ZCkgQKbcvLF9ESorQPqOW88F7CILrPG+VMSw3VgTzNmRBTmupMnuYTn
-         5Wg+4HcIbe3abWzbP52JYdY4kNTdYuUsAtAG0mK8=
+        b=WfcmLCNgBwfI9CU1BpOw0EZdVJqzMJh8auTB3qIfMpzEauNHj0o5DQH2VsyKb5s76
+         VDQkxJnApp1rmPz376uAHGya7uzr2/NsNE5LlZswmkQNRmzt+rd/s5NW+b5sEC35Gf
+         PNn4odPWrsYS+voSHZbADPN6BGVri7nUHOzyAtLQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Florian Fainelli <f.fainelli@gmail.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+Cc:     Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
         Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Arjan van de Ven <arjan@linux.intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 64/97] perf tests ARM: Disable breakpoint tests 32-bit
-Date:   Tue,  8 Jan 2019 14:29:13 -0500
-Message-Id: <20190108192949.122407-64-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 65/97] perf svghelper: Fix unchecked usage of strncpy()
+Date:   Tue,  8 Jan 2019 14:29:14 -0500
+Message-Id: <20190108192949.122407-65-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108192949.122407-1-sashal@kernel.org>
 References: <20190108192949.122407-1-sashal@kernel.org>
@@ -62,70 +61,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Florian Fainelli <f.fainelli@gmail.com>
+From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-[ Upstream commit 24f967337f6d6bce931425769c0f5ff5cf2d212e ]
+[ Upstream commit 2f5302533f306d5ee87bd375aef9ca35b91762cb ]
 
-The breakpoint tests on the ARM 32-bit kernel are broken in several
-ways.
+The strncpy() function may leave the destination string buffer
+unterminated, better use strlcpy() that we have a __weak fallback
+implementation for systems without it.
 
-The breakpoint length requested does not necessarily match whether the
-function address has the Thumb bit (bit 0) set or not, and this does
-matter to the ARM kernel hw_breakpoint infrastructure. See [1] for
-background.
+In this specific case this would only happen if fgets() was buggy, as
+its man page states that it should read one less byte than the size of
+the destination buffer, so that it can put the nul byte at the end of
+it, so it would never copy 255 non-nul chars, as fgets reads into the
+orig buffer at most 254 non-nul chars and terminates it. But lets just
+switch to strlcpy to keep the original intent and silence the gcc 8.2
+warning.
 
-[1]: https://lkml.org/lkml/2018/11/15/205
+This fixes this warning on an Alpine Linux Edge system with gcc 8.2:
 
-As Will indicated, the overflow handling would require single-stepping
-which is not supported at the moment. Just disable those tests for the
-ARM 32-bit platforms and update the comment above to explain these
-limitations.
+  In function 'cpu_model',
+      inlined from 'svg_cpu_box' at util/svghelper.c:378:2:
+  util/svghelper.c:337:5: error: 'strncpy' output may be truncated copying 255 bytes from a string of length 255 [-Werror=stringop-truncation]
+       strncpy(cpu_m, &buf[13], 255);
+       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Co-developed-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
-Acked-by: Jiri Olsa <jolsa@redhat.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/20181203191138.2419-1-f.fainelli@gmail.com
+Cc: Arjan van de Ven <arjan@linux.intel.com>
+Fixes: f48d55ce7871 ("perf: Add a SVG helper library file")
+Link: https://lkml.kernel.org/n/tip-xzkoo0gyr56gej39ltivuh9g@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/tests/bp_signal.c | 20 ++++++++++++++------
- 1 file changed, 14 insertions(+), 6 deletions(-)
+ tools/perf/util/svghelper.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/perf/tests/bp_signal.c b/tools/perf/tests/bp_signal.c
-index a467615c5a0e..910e25e64188 100644
---- a/tools/perf/tests/bp_signal.c
-+++ b/tools/perf/tests/bp_signal.c
-@@ -291,12 +291,20 @@ int test__bp_signal(struct test *test __maybe_unused, int subtest __maybe_unused
- 
- bool test__bp_signal_is_supported(void)
- {
--/*
-- * The powerpc so far does not have support to even create
-- * instruction breakpoint using the perf event interface.
-- * Once it's there we can release this.
-- */
--#if defined(__powerpc__) || defined(__s390x__)
-+	/*
-+	 * PowerPC and S390 do not support creation of instruction
-+	 * breakpoints using the perf_event interface.
-+	 *
-+	 * ARM requires explicit rounding down of the instruction
-+	 * pointer in Thumb mode, and then requires the single-step
-+	 * to be handled explicitly in the overflow handler to avoid
-+	 * stepping into the SIGIO handler and getting stuck on the
-+	 * breakpointed instruction.
-+	 *
-+	 * Just disable the test for these architectures until these
-+	 * issues are resolved.
-+	 */
-+#if defined(__powerpc__) || defined(__s390x__) || defined(__arm__)
- 	return false;
- #else
- 	return true;
+diff --git a/tools/perf/util/svghelper.c b/tools/perf/util/svghelper.c
+index 1cbada2dc6be..f735ee038713 100644
+--- a/tools/perf/util/svghelper.c
++++ b/tools/perf/util/svghelper.c
+@@ -334,7 +334,7 @@ static char *cpu_model(void)
+ 	if (file) {
+ 		while (fgets(buf, 255, file)) {
+ 			if (strstr(buf, "model name")) {
+-				strncpy(cpu_m, &buf[13], 255);
++				strlcpy(cpu_m, &buf[13], 255);
+ 				break;
+ 			}
+ 		}
 -- 
 2.19.1
 
