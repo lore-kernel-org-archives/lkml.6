@@ -2,91 +2,101 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9345C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:01:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4495EC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:07:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85B2C2087F
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:01:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="JBCXTWF3"
+	by mail.kernel.org (Postfix) with ESMTP id 13877206BB
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:07:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728746AbfAHTBO (ORCPT
+        id S1728746AbfAHTHN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:01:14 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:53774 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727947AbfAHTBO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:01:14 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Transfer-Encoding
-        :Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=Kg2ZOj3oRtfmirfVDZJAz6uTlws91sqS1srR4JV9AYU=; b=JBCXTWF3YwF5hqGK9OkYPzmLPe
-        k39t1i/HG9XMpJiNJj8Hgda4LWkzjkmKMurXFM2Tx83nmdRzmULzx/d+3fEpde8A0a5a/vF+zjo9H
-        spkppwI7V55wNk+NezY5DOTvoUF4pXcbjD2mXwOBIX+QFzwe2BhBrV650hA0stfUfSHxtD8tkqeCe
-        FlrDSR5xU/6tsS+Kq9yzoFrAB1ZeoaLolzpjHVz2kEDUnb8WKMgJj31biMCyoMDJq93aJkOVykRnh
-        G6Yf3TaSXX0bsvXoxN+TVuTMjQhpw8gHu/xwvl2BSkxB9J2hj5c9aJihTpdvgM3zsDKNkA+UCN8qG
-        3uAdbVTQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1ggwcc-0006JM-0n; Tue, 08 Jan 2019 19:01:06 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 8579420280451; Tue,  8 Jan 2019 20:01:04 +0100 (CET)
-Date:   Tue, 8 Jan 2019 20:01:04 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Nadav Amit <nadav.amit@gmail.com>
-Cc:     Andi Kleen <ak@linux.intel.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Edward Cree <ecree@solarflare.com>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Borislav Petkov <bp@alien8.de>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        songliubraving@fb.com
-Subject: Re: [RFC v2 0/6] x86: dynamic indirect branch promotion
-Message-ID: <20190108190104.GC1900@hirez.programming.kicks-ass.net>
-References: <20181231072112.21051-1-namit@vmware.com>
- <87zhshe66w.fsf@linux.intel.com>
- <20190107163227.GH14122@hirez.programming.kicks-ass.net>
- <c4e836e8-1949-27f5-f6a0-ed860f590ec5@intel.com>
- <20190108092559.GA6808@hirez.programming.kicks-ass.net>
- <306d38fb-7ce6-a3ec-a351-6c117559ebaa@intel.com>
- <20190108101058.GB6808@hirez.programming.kicks-ass.net>
- <20190108172721.GN6118@tassilo.jf.intel.com>
- <D1A153D5-D23B-45E6-9E7A-EB9CBAE84B7E@gmail.com>
+        Tue, 8 Jan 2019 14:07:13 -0500
+Received: from mout.gmx.net ([212.227.15.18]:58907 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727772AbfAHTHN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:07:13 -0500
+Received: from [91.14.64.214] ([91.14.64.214]) by web-mail.gmx.net
+ (3c-app-gmx-bs35.server.lan [172.19.170.87]) (via HTTP); Tue, 8 Jan 2019
+ 20:06:53 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <D1A153D5-D23B-45E6-9E7A-EB9CBAE84B7E@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Message-ID: <trinity-4ceb1d55-424f-46b8-b8e7-989770b249a2-1546974413848@3c-app-gmx-bs35>
+From:   "Frank Wunderlich" <frank-w@public-files.de>
+To:     "Heiner Kallweit" <hkallweit1@gmail.com>
+Cc:     "Felix Fietkau" <nbd@openwrt.org>,
+        "John Crispin" <john@phrozen.org>,
+        "Sean Wang" <sean.wang@kernel.org>,
+        "Nelson Chang" <nelson.chang@mediatek.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        "Matthias Brugger" <matthias.bgg@gmail.com>,
+        netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Aw: Re: [PATCH] net: ethernet: mediatek: fix warning in
+ phy_start_aneg
+Content-Type: text/plain; charset=UTF-8
+Date:   Tue, 8 Jan 2019 20:06:53 +0100
+Importance: normal
+Sensitivity: Normal
+In-Reply-To: <7acce775-4ab7-c867-c801-25ee004f6b38@gmail.com>
+References: <20190108160526.18928-1-frank-w@public-files.de>
+ <7acce775-4ab7-c867-c801-25ee004f6b38@gmail.com>
+X-UI-Message-Type: mail
+X-Priority: 3
+X-Provags-ID: V03:K1:ZJLH7Z5j6IMWKTHNDAq6EUnJKNx6pZWJhT+UxWNmhz4F977/b+WwiyKDgL3ti+DXmfHD9
+ Wgmm718q0bGENdKngNx39qqL/Jp3zPJlxWjjAg3TMgcJyZxbMVwa42KqxvhopBSGaDfKFzEtVdbq
+ 94mzoVKfARAGMNQkTUiHctnr15Oku8WMu3ujAp34NEngjMyGn5IJS3FS7wb8EfN5n0dhA6il5IBb
+ UWfdOKhMzUQVRga8dvv9xkMtwMNxjzh6m2ykbKU7Ad1M9HoU+knS2yCeGzIUQB6QY6QSdmDctroH
+ No=
+X-UI-Out-Filterresults: notjunk:1;V03:K0:gFXAB7BfwYo=:59sDYjgMRQNN0lLW5e66j5
+ 65hHbsys7LlrQ2dMTQjdy61Q7gYADs13JmEUcXQzg18QT963AePmLlQ2FxzuX6HA4dm0NXbBp
+ PUAz7pAsq6nvlpoI/Q/ULuV7nO/uARLeX9cLZfWKXsEGX0UrzNXSM9AMrWOXWKx+24zFaw/Bi
+ llQRkgl2clHzcC/mQ70SBRV8EfxUHo4MJXDLYBYQmQz1Sk/DSUR9Oq1xPMC+X8QZ90bVcS2xZ
+ EWBHVz4+5kJdJnUNiQWh1LQJ1wjodl7O/GIKN6j4RaYzcpmBOu1fF792y+zz+Ez8puA1qnaeT
+ gT3HI31hsbFIYVFEl8y0fyjyR+F7QPyucsx9iur5hScUFE2DkvehIq4ANXYhCbVGsXZpEmW+D
+ Ii5xQMvTKedrgALOPQx5Xw7+FkD0WRGtQDquG+RG8ApRYejqeIgDxn4ndlDrSlNRMh2nKWdx6
+ 5h2qWvwT9KNF4lZH1CKsBj5lbXuGwecsGXvHujcWQLZkO4smvp5ltDFzCOvyySvz57H9o40rw
+ Isvcjk3GMUM8i6pBiGiWo1AdfDD4V4BBWacLeCkCdwQLMjlTJc5GIUavebfE6DL9knfUfIQ8T
+ vVLl3NvIEboqQ=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 08, 2019 at 10:28:02AM -0800, Nadav Amit wrote:
-> Is it really that important for debugging to get the instructions at the
-> time of execution? Wouldn’t it be easier to annotate the instructions that
-> might change? After all, it is not as if any instruction can change to any
-> other instruction.
 
-I think PT has a bitstream encoding of branch-taken; to decode and
-follow the actual code-flow you then need to have the actual and
-accurate branch target from the code. If we go muck about with the code
-and change that, decoding gets somewhat 'tricky'.
+> In mtk_phy_connect() I would say this complete block can be removed.
+> All this is handled internally by phylib.
+> 
+> 	dev->phydev->autoneg = AUTONEG_ENABLE;
+> 	dev->phydev->speed = 0;
+> 	dev->phydev->duplex = 0;
+> 
+> 	phy_set_max_speed(dev->phydev, SPEED_1000);
+> 	phy_support_asym_pause(dev->phydev);
+> 	linkmode_copy(dev->phydev->advertising, dev->phydev->supported);
+> 	linkmode_set_bit(ETHTOOL_LINK_MODE_Autoneg_BIT,
+> 			 dev->phydev->advertising);
+> 	phy_start_aneg(dev->phydev);
+> 
+> Could you please test this?
 
-Or something along those lines..
+seems to work well, no warning in dmesg
+
+traffic 940Mbit sending, 900 receive
+
+> And a further proposal:
+> Instead of the open-coded dev_info() in mtk_phy_connect_node()
+> you could use phy_attached_info().
+
+have not tried this yet...because it's only an info-message and needs different parameters...have to look how i can convert it 
+
+> Calling phy_start() in the ndo_open callback is fine, you can leave
+> it there.
+
+have it re-added
+
+pushed to my repo: https://github.com/frank-w/BPI-R2-4.14/commits/5.0-rc
+
+regards Frank
