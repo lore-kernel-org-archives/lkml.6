@@ -3,149 +3,223 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B060C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 10:05:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D86C2C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 10:06:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A881218AE
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 10:05:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A50F62087E
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 10:06:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728523AbfAHKFQ (ORCPT
+        id S1728452AbfAHKGO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 05:05:16 -0500
-Received: from www262.sakura.ne.jp ([202.181.97.72]:32488 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727001AbfAHKFP (ORCPT
+        Tue, 8 Jan 2019 05:06:14 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:58810 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727001AbfAHKGN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 05:05:15 -0500
-Received: from fsav110.sakura.ne.jp (fsav110.sakura.ne.jp [27.133.134.237])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x08A4CBY056031;
-        Tue, 8 Jan 2019 19:04:12 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav110.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav110.sakura.ne.jp);
- Tue, 08 Jan 2019 19:04:12 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav110.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank126126163036.bbtec.net [126.126.163.36])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x08A47CH056010
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
-        Tue, 8 Jan 2019 19:04:12 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: INFO: task hung in generic_file_write_iter
-To:     Jan Kara <jack@suse.cz>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        syzbot <syzbot+9933e4476f365f5d5a1b@syzkaller.appspotmail.com>,
-        linux-mm@kvack.org, mgorman@techsingularity.net,
-        Michal Hocko <mhocko@kernel.org>, ak@linux.intel.com,
-        jlayton@redhat.com, linux-kernel@vger.kernel.org,
-        mawilcox@microsoft.com, syzkaller-bugs@googlegroups.com,
-        tim.c.chen@linux.intel.com,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-References: <0000000000009ce88d05714242a8@google.com>
- <4b349bff-8ad4-6410-250d-593b13d8d496@I-love.SAKURA.ne.jp>
- <9b9fcdda-c347-53ee-fdbb-8a7d11cf430e@I-love.SAKURA.ne.jp>
- <20180720130602.f3d6dc4c943558875a36cb52@linux-foundation.org>
- <a2df1f24-f649-f5d8-0b2d-66d45b6cb61f@i-love.sakura.ne.jp>
- <20180806100928.x7anab3c3y5q4ssa@quack2.suse.cz>
- <e8a23623-feaf-7730-5492-b329cb0daa21@i-love.sakura.ne.jp>
- <20190102144015.GA23089@quack2.suse.cz>
- <275523c6-f750-44c2-a8a4-f3825eeab788@i-love.sakura.ne.jp>
- <20190102172636.GA29127@quack2.suse.cz>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <bf209c90-3624-68cd-c0db-86a91210f873@i-love.sakura.ne.jp>
-Date:   Tue, 8 Jan 2019 19:04:06 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Tue, 8 Jan 2019 05:06:13 -0500
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x08A4AT5087653
+        for <linux-kernel@vger.kernel.org>; Tue, 8 Jan 2019 05:06:12 -0500
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2pvpsctasg-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jan 2019 05:06:11 -0500
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <mimu@linux.ibm.com>;
+        Tue, 8 Jan 2019 10:06:10 -0000
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 8 Jan 2019 10:06:06 -0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x08A65On65142898
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 8 Jan 2019 10:06:05 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 51C39A404D;
+        Tue,  8 Jan 2019 10:06:05 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id DC44DA4053;
+        Tue,  8 Jan 2019 10:06:04 +0000 (GMT)
+Received: from [9.152.98.101] (unknown [9.152.98.101])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue,  8 Jan 2019 10:06:04 +0000 (GMT)
+Reply-To: mimu@linux.ibm.com
+Subject: Re: [PATCH v5 14/15] KVM: s390: add and wire function
+ gib_alert_irq_handler()
+To:     pmorel@linux.ibm.com, KVM Mailing List <kvm@vger.kernel.org>
+Cc:     Linux-S390 Mailing List <linux-s390@vger.kernel.org>,
+        linux-kernel@vger.kernel.org,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Janosch Frank <frankja@linux.ibm.com>,
+        David Hildenbrand <david@redhat.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Halil Pasic <pasic@linux.ibm.com>
+References: <20181219191756.57973-1-mimu@linux.ibm.com>
+ <20181219191756.57973-15-mimu@linux.ibm.com>
+ <7dfe72db-97d2-9f33-68f7-acf8ec5ddc5e@linux.ibm.com>
+From:   Michael Mueller <mimu@linux.ibm.com>
+Organization: IBM
+Date:   Tue, 8 Jan 2019 11:06:04 +0100
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
+ Gecko/20100101 Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <20190102172636.GA29127@quack2.suse.cz>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <7dfe72db-97d2-9f33-68f7-acf8ec5ddc5e@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19010810-4275-0000-0000-000002FBD768
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19010810-4276-0000-0000-00003809E1DC
+Message-Id: <fd2efaed-24d5-4397-b79c-1f64dc80a9e4@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-08_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901080083
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/01/03 2:26, Jan Kara wrote:
-> On Thu 03-01-19 01:07:25, Tetsuo Handa wrote:
->> On 2019/01/02 23:40, Jan Kara wrote:
->>> I had a look into this and the only good explanation for this I have is
->>> that sb->s_blocksize is different from (1 << sb->s_bdev->bd_inode->i_blkbits).
->>> If that would happen, we'd get exactly the behavior syzkaller observes
->>> because grow_buffers() would populate different page than
->>> __find_get_block() then looks up.
->>>
->>> However I don't see how that's possible since the filesystem has the block
->>> device open exclusively and blkdev_bszset() makes sure we also have
->>> exclusive access to the block device before changing the block device size.
->>> So changing block device block size after filesystem gets access to the
->>> device should be impossible. 
->>>
->>> Anyway, could you perhaps add to your debug patch a dump of 'size' passed
->>> to __getblk_slow() and bdev->bd_inode->i_blkbits? That should tell us
->>> whether my theory is right or not. Thanks!
->>>
 
-Got two reports. 'size' is 512 while bdev->bd_inode->i_blkbits is 12.
 
-https://syzkaller.appspot.com/text?tag=CrashLog&x=1237c3ab400000
-
-[  385.723941][  T439] kworker/u4:3(439): getblk(): executed=9 bh_count=0 bh_state=0 bdev_super_blocksize=512 size=512 bdev_super_blocksize_bits=9 bdev_inode_blkbits=12
-(...snipped...)
-[  568.159544][  T439] kworker/u4:3(439): getblk(): executed=9 bh_count=0 bh_state=0 bdev_super_blocksize=512 size=512 bdev_super_blocksize_bits=9 bdev_inode_blkbits=12
-
-https://syzkaller.appspot.com/text?tag=CrashLog&x=143383d7400000
-
-[ 1355.681513][ T6893] syz-executor0(6893): getblk(): executed=9 bh_count=0 bh_state=0 bdev_super_blocksize=512 size=512 bdev_super_blocksize_bits=9 bdev_inode_blkbits=12
-[ 1358.274585][T15649] kworker/u4:17(15649): getblk(): executed=9 bh_count=0 bh_state=0 bdev_super_blocksize=512 size=512 bdev_super_blocksize_bits=9 bdev_inode_blkbits=12
-(...snipped...)
-[ 1455.341572][ T6893] syz-executor0(6893): getblk(): executed=9 bh_count=0 bh_state=0 bdev_super_blocksize=512 size=512 bdev_super_blocksize_bits=9 bdev_inode_blkbits=12
-[ 1455.541457][T15649] kworker/u4:17(15649): getblk(): executed=9 bh_count=0 bh_state=0 bdev_super_blocksize=512 size=512 bdev_super_blocksize_bits=9 bdev_inode_blkbits=12
-
+On 03.01.19 16:16, Pierre Morel wrote:
+> On 19/12/2018 20:17, Michael Mueller wrote:
+>> The patch implements a handler for GIB alert interruptions
+>> on the host. Its task is to alert guests that interrupts are
+>> pending for them.
 >>
->> OK. Andrew, will you add (or fold into) this change?
+>> A GIB alert interrupt statistic counter is added as well:
 >>
->> From e6f334380ad2c87457bfc2a4058316c47f75824a Mon Sep 17 00:00:00 2001
->> From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
->> Date: Thu, 3 Jan 2019 01:03:35 +0900
->> Subject: [PATCH] fs/buffer.c: dump more info for __getblk_gfp() stall problem
+>> $ cat /proc/interrupts
+>>            CPU0       CPU1
+>>    ...
+>>    GAL:      23         37   [I/O] GIB Alert
+>>    ...
 >>
->> We need to dump more variables on top of
->> "fs/buffer.c: add debug print for __getblk_gfp() stall problem".
->>
->> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
->> Cc: Jan Kara <jack@suse.cz>
+>> Signed-off-by: Michael Mueller <mimu@linux.ibm.com>
 >> ---
->>  fs/buffer.c | 9 +++++++--
->>  1 file changed, 7 insertions(+), 2 deletions(-)
+>>   arch/s390/include/asm/irq.h |  1 +
+>>   arch/s390/include/asm/isc.h |  1 +
+>>   arch/s390/kernel/irq.c      |  1 +
+>>   arch/s390/kvm/interrupt.c   | 36 ++++++++++++++++++++++++++++++++++--
+>>   4 files changed, 37 insertions(+), 2 deletions(-)
 >>
->> diff --git a/fs/buffer.c b/fs/buffer.c
->> index 580fda0..a50acac 100644
->> --- a/fs/buffer.c
->> +++ b/fs/buffer.c
->> @@ -1066,9 +1066,14 @@ static sector_t blkdev_max_block(struct block_device *bdev, unsigned int size)
->>  #ifdef CONFIG_DEBUG_AID_FOR_SYZBOT
->>  		if (!time_after(jiffies, current->getblk_stamp + 3 * HZ))
->>  			continue;
->> -		printk(KERN_ERR "%s(%u): getblk(): executed=%x bh_count=%d bh_state=%lx\n",
->> +		printk(KERN_ERR "%s(%u): getblk(): executed=%x bh_count=%d bh_state=%lx "
->> +		       "bdev_super_blocksize=%lu size=%u "
->> +		       "bdev_super_blocksize_bits=%u bdev_inode_blkbits=%u\n",
->>  		       current->comm, current->pid, current->getblk_executed,
->> -		       current->getblk_bh_count, current->getblk_bh_state);
->> +		       current->getblk_bh_count, current->getblk_bh_state,
->> +		       bdev->bd_super->s_blocksize, size,
->> +		       bdev->bd_super->s_blocksize_bits,
->> +		       bdev->bd_inode->i_blkbits);
+>> diff --git a/arch/s390/include/asm/irq.h b/arch/s390/include/asm/irq.h
+>> index 2f7f27e5493f..afaf5e3c57fd 100644
+>> --- a/arch/s390/include/asm/irq.h
+>> +++ b/arch/s390/include/asm/irq.h
+>> @@ -62,6 +62,7 @@ enum interruption_class {
+>>       IRQIO_MSI,
+>>       IRQIO_VIR,
+>>       IRQIO_VAI,
+>> +    IRQIO_GAL,
+>>       NMI_NMI,
+>>       CPU_RST,
+>>       NR_ARCH_IRQS
+>> diff --git a/arch/s390/include/asm/isc.h b/arch/s390/include/asm/isc.h
+>> index 6cb9e2ed05b6..b2cc1ec78d06 100644
+>> --- a/arch/s390/include/asm/isc.h
+>> +++ b/arch/s390/include/asm/isc.h
+>> @@ -21,6 +21,7 @@
+>>   /* Adapter interrupts. */
+>>   #define QDIO_AIRQ_ISC IO_SCH_ISC    /* I/O subchannel in qdio mode */
+>>   #define PCI_ISC 2            /* PCI I/O subchannels */
+>> +#define GAL_ISC 5            /* GIB alert */
+>>   #define AP_ISC 6            /* adjunct processor (crypto) devices */
+>>   /* Functions for registration of I/O interruption subclasses */
+>> diff --git a/arch/s390/kernel/irq.c b/arch/s390/kernel/irq.c
+>> index 0e8d68bac82c..0cd5a5f96729 100644
+>> --- a/arch/s390/kernel/irq.c
+>> +++ b/arch/s390/kernel/irq.c
+>> @@ -88,6 +88,7 @@ static const struct irq_class irqclass_sub_desc[] = {
+>>       {.irq = IRQIO_MSI,  .name = "MSI", .desc = "[I/O] MSI Interrupt" },
+>>       {.irq = IRQIO_VIR,  .name = "VIR", .desc = "[I/O] Virtual I/O 
+>> Devices"},
+>>       {.irq = IRQIO_VAI,  .name = "VAI", .desc = "[I/O] Virtual I/O 
+>> Devices AI"},
+>> +    {.irq = IRQIO_GAL,  .name = "GAL", .desc = "[I/O] GIB Alert"},
+>>       {.irq = NMI_NMI,    .name = "NMI", .desc = "[NMI] Machine Check"},
+>>       {.irq = CPU_RST,    .name = "RST", .desc = "[CPU] CPU Restart"},
+>>   };
+>> diff --git a/arch/s390/kvm/interrupt.c b/arch/s390/kvm/interrupt.c
+>> index 03e7ba4f215a..79b9c262479b 100644
+>> --- a/arch/s390/kvm/interrupt.c
+>> +++ b/arch/s390/kvm/interrupt.c
+>> @@ -26,6 +26,7 @@
+>>   #include <asm/gmap.h>
+>>   #include <asm/switch_to.h>
+>>   #include <asm/nmi.h>
+>> +#include <asm/airq.h>
+>>   #include "kvm-s390.h"
+>>   #include "gaccess.h"
+>>   #include "trace-s390.h"
+>> @@ -3043,7 +3044,7 @@ static void __floating_airqs_kick(struct kvm *kvm)
+>>   #define NONE_GISA_ADDR 0x00000001UL
+>>   #define GISA_ADDR_MASK 0xfffff000UL
+>> -static void __maybe_unused process_gib_alert_list(void)
+>> +static void process_gib_alert_list(void)
+>>   {
+>>       u32 final, next_alert, origin = 0UL;
+>>       struct kvm_s390_gisa *gisa;
+>> @@ -3091,7 +3092,10 @@ void kvm_s390_gisa_clear(struct kvm *kvm)
+>>   {
+>>       if (!kvm->arch.gisa)
+>>           return;
+>> +    if (set_iam(kvm->arch.gisa, 0) == -EBUSY)
+>> +        process_gib_alert_list();
 > 
-> Well, bd_super may be NULL if there's no filesystem mounted so it would be
-> safer to check for this rather than blindly dereferencing it... Otherwise
-> the change looks good to me.
+> We call process_gib_alert_list() from different contexts shouldn't we 
+> protect the calls?
+
+That should not be necessary as the xcgh() guarantees that both
+instances will work on gib alert lists with disjunctive gisas.
+
 > 
-> 								Honza
+> 
+>>       nullify_gisa(kvm->arch.gisa);
+>> +    set_iam(kvm->arch.gisa, kvm->arch.iam);
+>>       VM_EVENT(kvm, 3, "gisa 0x%pK cleared", kvm->arch.gisa);
+>>   }
+>> @@ -3111,6 +3115,8 @@ void kvm_s390_gisa_destroy(struct kvm *kvm)
+>>   {
+>>       if (!kvm->arch.gisa)
+>>           return;
+>> +    if (set_iam(kvm->arch.gisa, 0) == -EBUSY)
+>> +        process_gib_alert_list();
+> 
+> idem.
+> 
+>>       kvm->arch.gisa = NULL;
+>>   }
+>> @@ -3159,11 +3165,23 @@ int kvm_s390_gisc_unregister(struct kvm *kvm, 
+>> u32 gisc)
+>>   }
+>>   EXPORT_SYMBOL_GPL(kvm_s390_gisc_unregister);
+>> +static void gib_alert_irq_handler(struct airq_struct *airq)
+>> +{
+>> +    inc_irq_stat(IRQIO_GAL);
+>> +    process_gib_alert_list();
+> 
+> idem.
+> 
+>> +}
+>> +
+>> +static struct airq_struct gib_alert_irq = {
+>> +    .handler = gib_alert_irq_handler,
+>> +    .lsi_ptr = &gib_alert_irq.lsi_mask,
+>> +};
+>> +
+
 > 
 
