@@ -4,55 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09E03C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:09:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F24EC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:09:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C0E9820827
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:09:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3D2A720827
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:09:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546978159;
-	bh=sxJa0TtH59/TOip/7ahu5zdJbR7StEg2U7CHiTf7gvE=;
+	s=default; t=1546978175;
+	bh=0IjQty41PN9pwvT8TYo5Gau8U/nOeKNGu0oVFVgXiCg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=TB0prNFEjSJCGnX2krqckkory+jfVfQw1t28u3cR45TQQvYVD06HhEIIDMhOjZR2s
-	 Wi9V6IUnehu1mXdro+bY4mBYToNw3GJAg70aNWYiYze0IN7MMHEiny2W9QrtLSXM4G
-	 b6C05ZHejHqdn0K8X7P5W1XvFR4p1rDL3Y8iTOdc=
+	b=zgFcLSCF30CgF3IzoB3/+wwP7KFkZYNRttBcB3WEXVxtlD6sLV2/Z+pOGizvFeI3f
+	 d3zyx0bshHEHmDx8XukmHVYPGo0/4lwrLlc/0wqPP3ZSjYVYGWFa75PHHvImn6EsKw
+	 4/JVJHvMOPEaiu4SBFVGB6v0ilOycsmmCpUtkzVA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729538AbfAHT1P (ORCPT
+        id S1732987AbfAHUJe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:27:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33090 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 15:09:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:32824 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729472AbfAHT1J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:27:09 -0500
+        id S1729320AbfAHT06 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:26:58 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0E3612070B;
-        Tue,  8 Jan 2019 19:27:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DBB9420883;
+        Tue,  8 Jan 2019 19:26:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546975627;
-        bh=sxJa0TtH59/TOip/7ahu5zdJbR7StEg2U7CHiTf7gvE=;
+        s=default; t=1546975617;
+        bh=0IjQty41PN9pwvT8TYo5Gau8U/nOeKNGu0oVFVgXiCg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=utDM7yheD6YKyWTEr/oDtV80VRaYCZdsR+iUnc0Uf7Iik3COYus5TPkc10WpxJJQ2
-         nJaAFmf4oA1oRcsCDo8J0+Mq1efNvYP6Jmq9HUToLYqAQHe1lbQHp+3Vk3hqkuw0p8
-         Fzi2tuko/NEBBfy7XuBgVfpt5upsK8/TYSqw1JLc=
+        b=0meY17C3XEx9pOuVbxiktXbzEQZKb2BrquM1QuSgo41Te6nfBQ1hzCyP7VQc8ke/1
+         nSTEE/ZM05D3FRmb3x328pZoxKO7HFRhyYlAaJuV5H4GUSpfCutf0OXA+QrrsL329U
+         i3jIHIqjzvmXYdC1Iek7sbTcOHS2CC0SHz4nIXmI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Trigger Huang <Trigger.Huang@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Sasha Levin <sashal@kernel.org>,
-        dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 4.20 021/117] drm/scheduler: Fix bad job be re-processed in TDR
-Date:   Tue,  8 Jan 2019 14:24:49 -0500
-Message-Id: <20190108192628.121270-21-sashal@kernel.org>
+Cc:     Takashi Sakamoto <o-takashi@sakamocchi.jp>,
+        Takashi Iwai <tiwai@suse.de>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.20 017/117] ALSA: oxfw: add support for APOGEE duet FireWire
+Date:   Tue,  8 Jan 2019 14:24:45 -0500
+Message-Id: <20190108192628.121270-17-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108192628.121270-1-sashal@kernel.org>
 References: <20190108192628.121270-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -60,127 +57,98 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Trigger Huang <Trigger.Huang@amd.com>
+From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
 
-[ Upstream commit 85744e9c100696d3f210e80b85fd56dd19767c81 ]
+[ Upstream commit fba43f454cdf9caa3185219d116bd2a6e6354552 ]
 
-A bad job is the one triggered TDR(In the current amdgpu's
-implementation, actually all the jobs in the current joq-queue will
-be treated as bad jobs). In the recovery process, its fence
-will be fake signaled and as a result, the work behind will be scheduled
-to delete it from the mirror list, but if the TDR process is invoked
-before the work's execution, then this bad job might be processed again
-and the call dma_fence_set_error to its fence in TDR process will lead to
-kernel warning trace:
+This commit adds support for APOGEE duet FireWire, launched 2007, already
+discontinued. This model uses Oxford Semiconductor FW971 as its
+communication engine. Below is information on Configuration ROM of this
+unit. The unit supports some AV/C commands defined by Audio subunit
+specification and vendor dependent commands.
 
-[  143.033605] WARNING: CPU: 2 PID: 53 at ./include/linux/dma-fence.h:437 amddrm_sched_job_recovery+0x1af/0x1c0 [amd_sched]
-kernel: [  143.033606] Modules linked in: amdgpu(OE) amdchash(OE) amdttm(OE) amd_sched(OE) amdkcl(OE) amd_iommu_v2 drm_kms_helper drm i2c_algo_bit fb_sys_fops syscopyarea sysfillrect sysimgblt kvm_intel kvm irqbypass crct10dif_pclmul crc32_pclmul ghash_clmulni_intel pcbc aesni_intel aes_x86_64 snd_hda_codec_generic crypto_simd glue_helper cryptd snd_hda_intel snd_hda_codec snd_hda_core snd_hwdep snd_pcm snd_seq_midi snd_seq_midi_event snd_rawmidi snd_seq joydev snd_seq_device snd_timer snd soundcore binfmt_misc input_leds mac_hid serio_raw nfsd auth_rpcgss nfs_acl lockd grace sunrpc sch_fq_codel parport_pc ppdev lp parport ip_tables x_tables autofs4 8139too floppy psmouse 8139cp mii i2c_piix4 pata_acpi
-[  143.033649] CPU: 2 PID: 53 Comm: kworker/2:1 Tainted: G           OE    4.15.0-20-generic #21-Ubuntu
-[  143.033650] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Ubuntu-1.8.2-1ubuntu1 04/01/2014
-[  143.033653] Workqueue: events drm_sched_job_timedout [amd_sched]
-[  143.033656] RIP: 0010:amddrm_sched_job_recovery+0x1af/0x1c0 [amd_sched]
-[  143.033657] RSP: 0018:ffffa9f880fe7d48 EFLAGS: 00010202
-[  143.033659] RAX: 0000000000000007 RBX: ffff9b98f2b24c00 RCX: ffff9b98efef4f08
-[  143.033660] RDX: ffff9b98f2b27400 RSI: ffff9b98f2b24c50 RDI: ffff9b98efef4f18
-[  143.033660] RBP: ffffa9f880fe7d98 R08: 0000000000000001 R09: 00000000000002b6
-[  143.033661] R10: 0000000000000000 R11: 0000000000000000 R12: ffff9b98efef3430
-[  143.033662] R13: ffff9b98efef4d80 R14: ffff9b98efef4e98 R15: ffff9b98eaf91c00
-[  143.033663] FS:  0000000000000000(0000) GS:ffff9b98ffd00000(0000) knlGS:0000000000000000
-[  143.033664] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  143.033665] CR2: 00007fc49c96d470 CR3: 000000001400a005 CR4: 00000000003606e0
-[  143.033669] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-[  143.033669] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-[  143.033670] Call Trace:
-[  143.033744]  amdgpu_device_gpu_recover+0x144/0x820 [amdgpu]
-[  143.033788]  amdgpu_job_timedout+0x9b/0xa0 [amdgpu]
-[  143.033791]  drm_sched_job_timedout+0xcc/0x150 [amd_sched]
-[  143.033795]  process_one_work+0x1de/0x410
-[  143.033797]  worker_thread+0x32/0x410
-[  143.033799]  kthread+0x121/0x140
-[  143.033801]  ? process_one_work+0x410/0x410
-[  143.033803]  ? kthread_create_worker_on_cpu+0x70/0x70
-[  143.033806]  ret_from_fork+0x35/0x40
+$ ./hinawa-config-rom-printer /dev/fw1
+{ 'bus-info': { 'adj': False,
+                'bmc': False,
+                'chip_ID': 42949742248,
+                'cmc': False,
+                'cyc_clk_acc': 255,
+                'generation': 0,
+                'imc': False,
+                'isc': True,
+                'link_spd': 3,
+                'max_ROM': 0,
+                'max_rec': 64,
+                'name': '1394',
+                'node_vendor_ID': 987,
+                'pmc': False},
+  'root-directory': [ ['VENDOR', 987],
+                      ['DESCRIPTOR', 'Apogee Electronics'],
+                      ['MODEL', 122333],
+                      ['DESCRIPTOR', 'Duet'],
+                      [ 'NODE_CAPABILITIES',
+                        { 'addressing': {'64': True, 'fix': True, 'prv': False},
+                          'misc': {'int': False, 'ms': False, 'spt': True},
+                          'state': { 'atn': False,
+                                     'ded': False,
+                                     'drq': True,
+                                     'elo': False,
+                                     'init': False,
+                                     'lst': True,
+                                     'off': False},
+                          'testing': {'bas': False, 'ext': False}}],
+                      [ 'UNIT',
+                        [ ['SPECIFIER_ID', 41005],
+                          ['VERSION', 65537],
+                          ['MODEL', 122333],
+                          ['DESCRIPTOR', 'Duet']]]]}
 
-So just delete the bad job from mirror list directly
-
-Changes in v3:
-	- Add a helper function to delete the bad jobs from mirror list and call
-		it directly *before* the job's fence is signaled
-
-Changes in v2:
-	- delete the useless list node check
-	- also delete bad jobs in drm_sched_main because:
-		kthread_unpark(ring->sched.thread) will be invoked very early before
-		amdgpu_device_gpu_recover's return, then drm_sched_main will have
-		chance to pick up a new job from the job queue. This new job will be
-		added into the mirror list and processed by amdgpu_job_run, but may
-		not be deleted from the mirror list on time due to the same reason.
-		And finally re-processed by drm_sched_job_recovery
-
-Signed-off-by: Trigger Huang <Trigger.Huang@amd.com>
-Reviewed-by: Christian König <chrstian.koenig@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/scheduler/sched_main.c | 17 ++++++++++++++++-
- 1 file changed, 16 insertions(+), 1 deletion(-)
+ sound/firewire/Kconfig     | 1 +
+ sound/firewire/oxfw/oxfw.c | 8 ++++++++
+ 2 files changed, 9 insertions(+)
 
-diff --git a/drivers/gpu/drm/scheduler/sched_main.c b/drivers/gpu/drm/scheduler/sched_main.c
-index 44fe587aaef9..c5bbbd7cb2de 100644
---- a/drivers/gpu/drm/scheduler/sched_main.c
-+++ b/drivers/gpu/drm/scheduler/sched_main.c
-@@ -60,6 +60,8 @@
+diff --git a/sound/firewire/Kconfig b/sound/firewire/Kconfig
+index 8a146b039276..44cedb65bb88 100644
+--- a/sound/firewire/Kconfig
++++ b/sound/firewire/Kconfig
+@@ -41,6 +41,7 @@ config SND_OXFW
+ 	   * Mackie(Loud) U.420/U.420d
+ 	   * TASCAM FireOne
+ 	   * Stanton Controllers & Systems 1 Deck/Mixer
++	   * APOGEE duet FireWire
  
- static void drm_sched_process_job(struct dma_fence *f, struct dma_fence_cb *cb);
+ 	  To compile this driver as a module, choose M here: the module
+ 	  will be called snd-oxfw.
+diff --git a/sound/firewire/oxfw/oxfw.c b/sound/firewire/oxfw/oxfw.c
+index afb78d90384b..3d27f3378d5d 100644
+--- a/sound/firewire/oxfw/oxfw.c
++++ b/sound/firewire/oxfw/oxfw.c
+@@ -20,6 +20,7 @@
+ #define VENDOR_LACIE		0x00d04b
+ #define VENDOR_TASCAM		0x00022e
+ #define OUI_STANTON		0x001260
++#define OUI_APOGEE		0x0003db
  
-+static void drm_sched_expel_job_unlocked(struct drm_sched_job *s_job);
-+
- /**
-  * drm_sched_rq_init - initialize a given run queue struct
-  *
-@@ -215,7 +217,7 @@ static void drm_sched_job_finish(struct work_struct *work)
+ #define MODEL_SATELLITE		0x00200f
  
- 	spin_lock(&sched->job_list_lock);
- 	/* remove job from ring_mirror_list */
--	list_del(&s_job->node);
-+	list_del_init(&s_job->node);
- 	/* queue TDR for next job */
- 	drm_sched_start_timeout(sched);
- 	spin_unlock(&sched->job_list_lock);
-@@ -378,6 +380,8 @@ void drm_sched_job_recovery(struct drm_gpu_scheduler *sched)
- 					  r);
- 			dma_fence_put(fence);
- 		} else {
-+			if (s_fence->finished.error < 0)
-+				drm_sched_expel_job_unlocked(s_job);
- 			drm_sched_process_job(NULL, &s_fence->cb);
- 		}
- 		spin_lock(&sched->job_list_lock);
-@@ -567,6 +571,8 @@ static int drm_sched_main(void *param)
- 					  r);
- 			dma_fence_put(fence);
- 		} else {
-+			if (s_fence->finished.error < 0)
-+				drm_sched_expel_job_unlocked(sched_job);
- 			drm_sched_process_job(NULL, &s_fence->cb);
- 		}
- 
-@@ -575,6 +581,15 @@ static int drm_sched_main(void *param)
- 	return 0;
- }
- 
-+static void drm_sched_expel_job_unlocked(struct drm_sched_job *s_job)
-+{
-+	struct drm_gpu_scheduler *sched = s_job->sched;
-+
-+	spin_lock(&sched->job_list_lock);
-+	list_del_init(&s_job->node);
-+	spin_unlock(&sched->job_list_lock);
-+}
-+
- /**
-  * drm_sched_init - Init a gpu scheduler instance
-  *
+@@ -397,6 +398,13 @@ static const struct ieee1394_device_id oxfw_id_table[] = {
+ 		.vendor_id	= OUI_STANTON,
+ 		.model_id	= 0x002000,
+ 	},
++	// APOGEE, duet FireWire
++	{
++		.match_flags	= IEEE1394_MATCH_VENDOR_ID |
++				  IEEE1394_MATCH_MODEL_ID,
++		.vendor_id	= OUI_APOGEE,
++		.model_id	= 0x01dddd,
++	},
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(ieee1394, oxfw_id_table);
 -- 
 2.19.1
 
