@@ -7,45 +7,47 @@ X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02FF0C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:45:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29DC5C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:45:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD6652063F
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:45:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EDDDA2063F
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:45:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546976732;
-	bh=BaRtPItSgDMDn8WNB05+gFqV1vVJ1GNuFTe26hJYJuY=;
+	s=default; t=1546976737;
+	bh=howNbSFbtqVdOUBLsx5cXHOFR5FDwJVSK/aN9VXMmro=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=QPUPlbYScryIscubFTJv68XmH0RdZJFyK8HTeo0SbmFR8CUigFpXcmnie6O7j9PV9
-	 4teXHyDulnIz5gj5ljNVt2WCJl/zmImVRV1kfnqrBJIeH8Elquch3zOQ/n+VUVxqFc
-	 y4FN0qjpT/ZYYCU1FdTXq0GXYso2aN6F8e/MyszQ=
+	b=iiEPNPgqxARkg655AeEV+ZDYl8uNaykKNG7WWGIfo7B4qH83YmqBDRleLvrpdPD70
+	 W9VQcJMFGdOeC+pZuIVNp/vQkwA3AqTeXYX9SZsfZVUV853Njv+DraP6Da/s9oMzCm
+	 3p+RS9K8io86+DQT7+uHMyA6kTQaj79VZiOukR/I=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731644AbfAHTdT (ORCPT
+        id S1731594AbfAHTpg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:33:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42020 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 14:45:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42088 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731593AbfAHTdM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:33:12 -0500
+        id S1731634AbfAHTdS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:33:18 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6CA1F20645;
-        Tue,  8 Jan 2019 19:33:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E499A205C9;
+        Tue,  8 Jan 2019 19:33:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546975992;
-        bh=BaRtPItSgDMDn8WNB05+gFqV1vVJ1GNuFTe26hJYJuY=;
+        s=default; t=1546975997;
+        bh=howNbSFbtqVdOUBLsx5cXHOFR5FDwJVSK/aN9VXMmro=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=te3MFP6JLXkM2yOGNQzKuYS75beiOJTB+l0pO055FBKuwLi1WyqcwpPI6C22eNJTM
-         apnnHrG1jPs8dHUY52+xO1TLuAeoSFDmeERgj4NCDYa0rU1AfgQAFQMbVidifEYszH
-         jQmviY1KQc/xEgGQTQJXyBU02wVvBL2Jjnu7E0nE=
+        b=g3HWdmxQPfKcQYZQ9PiomKWd5G9xuHS4Qx+YLTp9Ll5z9YDOuwdQfESQMmvmMCtIV
+         /GEtPTunDRc5ROw1/Our5BOoVBv3XXDJFA8it49PqCDehUSz3vaBBt3FlWKl3CrX6P
+         jFGQicpsKktBuMrw/zsqm/++26woxtDPpBtj1/oU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Sasha Levin <sashal@kernel.org>, linux-kbuild@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 30/53] kconfig: fix memory leak when EOF is encountered in quotation
-Date:   Tue,  8 Jan 2019 14:31:58 -0500
-Message-Id: <20190108193222.123316-30-sashal@kernel.org>
+Cc:     Adrian Hunter <adrian.hunter@intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 34/53] perf intel-pt: Fix error with config term "pt=0"
+Date:   Tue,  8 Jan 2019 14:32:02 -0500
+Message-Id: <20190108193222.123316-34-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108193222.123316-1-sashal@kernel.org>
 References: <20190108193222.123316-1-sashal@kernel.org>
@@ -57,67 +59,70 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
+From: Adrian Hunter <adrian.hunter@intel.com>
 
-[ Upstream commit fbac5977d81cb2b2b7e37b11c459055d9585273c ]
+[ Upstream commit 1c6f709b9f96366cc47af23c05ecec9b8c0c392d ]
 
-An unterminated string literal followed by new line is passed to the
-parser (with "multi-line strings not supported" warning shown), then
-handled properly there.
+Users should never use 'pt=0', but if they do it may give a meaningless
+error:
 
-On the other hand, an unterminated string literal at end of file is
-never passed to the parser, then results in memory leak.
+	$ perf record -e intel_pt/pt=0/u uname
+	Error:
+	The sys_perf_event_open() syscall returned with 22 (Invalid argument) for
+	event (intel_pt/pt=0/u).
 
-[Test Code]
+Fix that by forcing 'pt=1'.
 
-  ----------(Kconfig begin)----------
-  source "Kconfig.inc"
+Committer testing:
 
-  config A
-          bool "a"
-  -----------(Kconfig end)-----------
+  # perf record -e intel_pt/pt=0/u uname
+  Error:
+  The sys_perf_event_open() syscall returned with 22 (Invalid argument) for event (intel_pt/pt=0/u).
+  /bin/dmesg | grep -i perf may provide additional information.
 
-  --------(Kconfig.inc begin)--------
-  config B
-          bool "b\No new line at end of file
-  ---------(Kconfig.inc end)---------
+  # perf record -e intel_pt/pt=0/u uname
+  pt=0 doesn't make sense, forcing pt=1
+  Linux
+  [ perf record: Woken up 1 times to write data ]
+  [ perf record: Captured and wrote 0.020 MB perf.data ]
+  #
 
-[Summary from Valgrind]
-
-  Before the fix:
-
-    LEAK SUMMARY:
-       definitely lost: 16 bytes in 1 blocks
-       ...
-
-  After the fix:
-
-    LEAK SUMMARY:
-       definitely lost: 0 bytes in 0 blocks
-       ...
-
-Eliminate the memory leak path by handling this case. Of course, such
-a Kconfig file is wrong already, so I will add an error message later.
-
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Link: http://lkml.kernel.org/r/b7c5b4e5-9497-10e5-fd43-5f3e4a0fe51d@intel.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- scripts/kconfig/zconf.l | 2 ++
- 1 file changed, 2 insertions(+)
+ tools/perf/arch/x86/util/intel-pt.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-diff --git a/scripts/kconfig/zconf.l b/scripts/kconfig/zconf.l
-index 6534dc5ac803..0c7800112ff5 100644
---- a/scripts/kconfig/zconf.l
-+++ b/scripts/kconfig/zconf.l
-@@ -191,6 +191,8 @@ n	[A-Za-z0-9_-]
- 	}
- 	<<EOF>>	{
- 		BEGIN(INITIAL);
-+		yylval.string = text;
-+		return T_WORD_QUOTE;
- 	}
- }
+diff --git a/tools/perf/arch/x86/util/intel-pt.c b/tools/perf/arch/x86/util/intel-pt.c
+index db0ba8caf5a2..ba8ecaf52200 100644
+--- a/tools/perf/arch/x86/util/intel-pt.c
++++ b/tools/perf/arch/x86/util/intel-pt.c
+@@ -524,10 +524,21 @@ static int intel_pt_validate_config(struct perf_pmu *intel_pt_pmu,
+ 				    struct perf_evsel *evsel)
+ {
+ 	int err;
++	char c;
  
+ 	if (!evsel)
+ 		return 0;
+ 
++	/*
++	 * If supported, force pass-through config term (pt=1) even if user
++	 * sets pt=0, which avoids senseless kernel errors.
++	 */
++	if (perf_pmu__scan_file(intel_pt_pmu, "format/pt", "%c", &c) == 1 &&
++	    !(evsel->attr.config & 1)) {
++		pr_warning("pt=0 doesn't make sense, forcing pt=1\n");
++		evsel->attr.config |= 1;
++	}
++
+ 	err = intel_pt_val_config_term(intel_pt_pmu, "caps/cycle_thresholds",
+ 				       "cyc_thresh", "caps/psb_cyc",
+ 				       evsel->attr.config);
 -- 
 2.19.1
 
