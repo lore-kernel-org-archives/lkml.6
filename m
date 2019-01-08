@@ -2,360 +2,126 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 720B7C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 23:47:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41F6FC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 23:47:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2467221773
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 23:47:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="Vh5ZHkKE"
+	by mail.kernel.org (Postfix) with ESMTP id 160E82084D
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 23:47:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729407AbfAHXr3 (ORCPT
+        id S1729493AbfAHXrk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 18:47:29 -0500
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:34802 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729144AbfAHXr3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 18:47:29 -0500
-Received: by mail-ed1-f65.google.com with SMTP id b3so5874452ede.1
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jan 2019 15:47:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brauner.io; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=FGvvsmuvLed5ycGt6Ao8AszQcCSV7mauqNk1mwlYfB8=;
-        b=Vh5ZHkKER3GfUX6mCeGeXGJBUoTSMOiMwx+ZRnKlNCVVj8O6lnYLL3au5EWj+lPehC
-         UNaLkD1NrnvOQOzmufbD2umQrdIwgBN1lv6LX/10PKm4UfmjB9n3UVLy+cMQixTlwq0g
-         Ohg7veReSDeI/vZb+4eJutB3zdXlyu+xZxGExPBNd0ECxb6LCSb1l98PNi9zbUF6suBh
-         DsISTpmCpVJF/dyP4f9XyFoXsKOxBuX+h8qYyTndsRJlKfQCJWWw060qp4gmh5UR9G1s
-         MbxhHCOCjW3O50olxTOM1rU0uYRzHGkwDHitoqD+Z35j6yI3M/SF0+rY7bYRuXzPKqHs
-         9EeA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=FGvvsmuvLed5ycGt6Ao8AszQcCSV7mauqNk1mwlYfB8=;
-        b=OMpy+4tIxRILWaVh4AfBot7YZ/mA6nbNcqsfmTDg6R35MlKWycTYVOT5GnkF9kHB0M
-         oO0jiGIsEVuTRHOQ6XWhNBcQF350yr6zy3H1CUAkSTAsGcyaWST157zdjObJXN2nzypl
-         0UAREqS3CcB9/Ne92+Wusv1u+ZC70hbRkGghH8ske3wc8AqVZnyshy9Ul+fGNy4wIv/4
-         MP6ItzqJ7TF9RI3BZkqV07sudKx+1cLM/IgrNf9JBuTeqi9faU9yhevqeASysUwfm1Lv
-         ZPcP7hODLQVZWtNEYmlezARexhfyErKQSAdlzSbw9dt6CbBdbbje7bXeuzvvLBdNRKia
-         YVsQ==
-X-Gm-Message-State: AJcUuketd3E6rkx5VekLpD6x4Tb9kQmGsXP9WQabMtfsOtIwpseTUXwA
-        SR7ncqENJpZSSM5+Os7bZdyzhuGTv8gizA==
-X-Google-Smtp-Source: ALg8bN5XldtFgUOOIht/S5wjYTUBhSdO3JBIxVFUDToJyF57JRSP2pzhvI0yLZR18gpp0p6B62Y2kQ==
-X-Received: by 2002:a17:906:8588:: with SMTP id v8-v6mr3479471ejx.172.1546991245548;
-        Tue, 08 Jan 2019 15:47:25 -0800 (PST)
-Received: from brauner.io ([2a02:8109:b6c0:d6c:c571:88:8aee:976c])
-        by smtp.gmail.com with ESMTPSA id p22-v6sm359888ejb.76.2019.01.08.15.47.24
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 08 Jan 2019 15:47:24 -0800 (PST)
-Date:   Wed, 9 Jan 2019 00:47:23 +0100
-From:   Christian Brauner <christian@brauner.io>
-To:     linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        luto@kernel.org, arnd@arndb.de, serge@hallyn.com,
-        keescook@chromium.org, akpm@linux-foundation.org
-Cc:     jannh@google.com, oleg@redhat.com, cyphar@cyphar.com,
-        viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
-        dancol@google.com, timmurray@google.com, fweimer@redhat.com,
-        tglx@linutronix.de, x86@kernel.org, ebiederm@xmission.com
-Subject: Re: [PATCH v7 1/2] signal: add pidfd_send_signal() syscall
-Message-ID: <20190108234722.bojj5bqowlutymnt@brauner.io>
-References: <20190102161654.9093-1-christian@brauner.io>
+        Tue, 8 Jan 2019 18:47:40 -0500
+Received: from ms.lwn.net ([45.79.88.28]:60714 "EHLO ms.lwn.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728882AbfAHXrj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 18:47:39 -0500
+Received: from lwn.net (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ms.lwn.net (Postfix) with ESMTPSA id AEF74286;
+        Tue,  8 Jan 2019 23:47:38 +0000 (UTC)
+Date:   Tue, 8 Jan 2019 16:47:37 -0700
+From:   Jonathan Corbet <corbet@lwn.net>
+To:     Thorsten Leemhuis <linux@leemhuis.info>
+Cc:     linux-doc@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: [PATCH v2 0/2] Revamp admin-guide/tainted-kernels.rst to make
+ it more comprehensible
+Message-ID: <20190108164737.0c2539a6@lwn.net>
+In-Reply-To: <20190108194007.29439-1-linux@leemhuis.info>
+References: <20190108194007.29439-1-linux@leemhuis.info>
+Organization: LWN.net
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190102161654.9093-1-christian@brauner.io>
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 02, 2019 at 05:16:53PM +0100, Christian Brauner wrote:
-> The kill() syscall operates on process identifiers (pid). After a process
-> has exited its pid can be reused by another process. If a caller sends a
-> signal to a reused pid it will end up signaling the wrong process. This
-> issue has often surfaced and there has been a push to address this problem [1].
-> 
-> This patch uses file descriptors (fd) from proc/<pid> as stable handles on
-> struct pid. Even if a pid is recycled the handle will not change. The fd
-> can be used to send signals to the process it refers to.
-> Thus, the new syscall pidfd_send_signal() is introduced to solve this
-> problem. Instead of pids it operates on process fds (pidfd).
-> 
-> /* prototype and argument /*
-> long pidfd_send_signal(int pidfd, int sig, siginfo_t *info, unsigned int flags);
-> 
-> In addition to the pidfd and signal argument it takes an additional
-> siginfo_t and flags argument. If the siginfo_t argument is NULL then
-> pidfd_send_signal() is equivalent to kill(<positive-pid>, <signal>). If it
-> is not NULL pidfd_send_signal() is equivalent to rt_sigqueueinfo().
-> The flags argument is added to allow for future extensions of this syscall.
-> It currently needs to be passed as 0. Failing to do so will cause EINVAL.
-> 
-> /* pidfd_send_signal() replaces multiple pid-based syscalls */
-> The pidfd_send_signal() syscall currently takes on the job of
-> rt_sigqueueinfo(2) and parts of the functionality of kill(2), Namely, when a
-> positive pid is passed to kill(2). It will however be possible to also
-> replace tgkill(2) and rt_tgsigqueueinfo(2) if this syscall is extended.
-> 
-> /* sending signals to threads (tid) and process groups (pgid) */
-> Specifically, the pidfd_send_signal() syscall does currently not operate on
-> process groups or threads. This is left for future extensions.
-> In order to extend the syscall to allow sending signal to threads and
-> process groups appropriately named flags (e.g. PIDFD_TYPE_PGID, and
-> PIDFD_TYPE_TID) should be added. This implies that the flags argument will
-> determine what is signaled and not the file descriptor itself. Put in other
-> words, grouping in this api is a property of the flags argument not a
-> property of the file descriptor (cf. [13]). Clarification for this has been
-> requested by Eric (cf. [19]).
-> When appropriate extensions through the flags argument are added then
-> pidfd_send_signal() can additionally replace the part of kill(2) which
-> operates on process groups as well as the tgkill(2) and
-> rt_tgsigqueueinfo(2) syscalls.
-> How such an extension could be implemented has been very roughly sketched
-> in [14], [15], and [16]. However, this should not be taken as a commitment
-> to a particular implementation. There might be better ways to do it.
-> Right now this is intentionally left out to keep this patchset as simple as
-> possible (cf. [4]). For example, if a pidfd for a tid from
-> /proc/<pid>/task/<tid> is passed EOPNOTSUPP will be returned to give
-> userspace a way to detect when I add support for signaling to threads (cf. [10]).
-> 
-> /* naming */
-> The syscall had various names throughout iterations of this patchset:
-> - procfd_signal()
-> - procfd_send_signal()
-> - taskfd_send_signal()
-> In the last round of reviews it was pointed out that given that if the
-> flags argument decides the scope of the signal instead of different types
-> of fds it might make sense to either settle for "procfd_" or "pidfd_" as
-> prefix. The community was willing to accept either (cf. [17] and [18]).
-> Given that one developer expressed strong preference for the "pidfd_"
-> prefix (cf. [13] and with other developers less opinionated about the name
-> we should settle for "pidfd_" to avoid further bikeshedding.
-> 
-> The  "_send_signal" suffix was chosen to reflect the fact that the syscall
-> takes on the job of multiple syscalls. It is therefore intentional that the
-> name is not reminiscent of neither kill(2) nor rt_sigqueueinfo(2). Not the
-> fomer because it might imply that pidfd_send_signal() is a replacement for
-> kill(2), and not the latter because it is a hassle to remember the correct
-> spelling - especially for non-native speakers - and because it is not
-> descriptive enough of what the syscall actually does. The name
-> "pidfd_send_signal" makes it very clear that its job is to send signals.
-> 
-> /* zombies */
-> Zombies can be signaled just as any other process. No special error will be
-> reported since a zombie state is an unreliable state (cf. [3]). However,
-> this can be added as an extension through the @flags argument if the need
-> ever arises.
-> 
-> /* cross-namespace signals */
-> The patch currently enforces that the signaler and signalee either are in
-> the same pid namespace or that the signaler's pid namespace is an ancestor
-> of the signalee's pid namespace. This is done for the sake of simplicity
-> and because it is unclear to what values certain members of struct
-> siginfo_t would need to be set to (cf. [5], [6]).
-> 
-> /* compat syscalls */
-> It became clear that we would like to avoid adding compat syscalls
-> (cf. [7]).  The compat syscall handling is now done in kernel/signal.c
-> itself by adding __copy_siginfo_from_user_generic() which lets us avoid
-> compat syscalls (cf. [8]). It should be noted that the addition of
-> __copy_siginfo_from_user_any() is caused by a bug in the original
-> implementation of rt_sigqueueinfo(2) (cf. 12).
-> With upcoming rework for syscall handling things might improve
-> significantly (cf. [11]) and __copy_siginfo_from_user_any() will not gain
-> any additional callers.
-> 
-> /* testing */
-> This patch was tested on x64 and x86.
-> 
-> /* userspace usage */
-> An asciinema recording for the basic functionality can be found under [9].
-> With this patch a process can be killed via:
-> 
->  #define _GNU_SOURCE
->  #include <errno.h>
->  #include <fcntl.h>
->  #include <signal.h>
->  #include <stdio.h>
->  #include <stdlib.h>
->  #include <string.h>
->  #include <sys/stat.h>
->  #include <sys/syscall.h>
->  #include <sys/types.h>
->  #include <unistd.h>
-> 
->  static inline int do_pidfd_send_signal(int pidfd, int sig, siginfo_t *info,
->                                          unsigned int flags)
->  {
->  #ifdef __NR_pidfd_send_signal
->          return syscall(__NR_pidfd_send_signal, pidfd, sig, info, flags);
->  #else
->          return -ENOSYS;
->  #endif
->  }
-> 
->  int main(int argc, char *argv[])
->  {
->          int fd, ret, saved_errno, sig;
-> 
->          if (argc < 3)
->                  exit(EXIT_FAILURE);
-> 
->          fd = open(argv[1], O_DIRECTORY | O_CLOEXEC);
->          if (fd < 0) {
->                  printf("%s - Failed to open \"%s\"\n", strerror(errno), argv[1]);
->                  exit(EXIT_FAILURE);
->          }
-> 
->          sig = atoi(argv[2]);
-> 
->          printf("Sending signal %d to process %s\n", sig, argv[1]);
->          ret = do_pidfd_send_signal(fd, sig, NULL, 0);
-> 
->          saved_errno = errno;
->          close(fd);
->          errno = saved_errno;
-> 
->          if (ret < 0) {
->                  printf("%s - Failed to send signal %d to process %s\n",
->                         strerror(errno), sig, argv[1]);
->                  exit(EXIT_FAILURE);
->          }
-> 
->          exit(EXIT_SUCCESS);
->  }
-> 
-> /* Q&A
->  * Given that it seems the same questions get asked again by people who are
->  * late to the party it makes sense to add a Q&A section to the commit
->  * message so it's hopefully easier to avoid duplicate threads.
->  *
->  * For the sake of progress please consider these arguments settled unless
->  * there is a new point that desperately needs to be addressed. Please make
->  * sure to check the links to the threads in this commit message whether
->  * this has not already been covered.
->  */
-> Q-01: (Florian Weimer [20], Andrew Morton [21])
->       What happens when the target process has exited?
-> A-01: Sending the signal will fail with ESRCH (cf. [22]).
-> 
-> Q-02:  (Andrew Morton [21])
->        Is the task_struct pinned by the fd?
-> A-02:  No. A reference to struct pid is kept. struct pid - as far as I
->        understand - was created exactly for the reason to not require to
->        pin struct task_struct (cf. [22]).
-> 
-> Q-03: (Andrew Morton [21])
->       Does the entire procfs directory remain visible? Just one entry
->       within it?
-> A-03: The same thing that happens right now when you hold a file descriptor
->       to /proc/<pid> open (cf. [22]).
-> 
-> Q-04: (Andrew Morton [21])
->       Does the pid remain reserved?
-> A-04: No. This patchset guarantees a stable handle not that pids are not
->       recycled (cf. [22]).
-> 
-> Q-05: (Andrew Morton [21])
->       Do attempts to signal that fd return errors?
-> A-05: See {Q,A}-01.
-> 
-> Q-06: (Andrew Morton [22])
->       Is there a cleaner way of obtaining the fd? Another syscall perhaps.
-> A-06: Userspace can already trivially retrieve file descriptors from procfs
->       so this is something that we will need to support anyway. Hence,
->       there's no immediate need to add another syscalls just to make
->       pidfd_send_signal() not dependent on the presence of procfs. However,
->       adding a syscalls to get such file descriptors is planned for a
->       future patchset (cf. [22]).
-> 
-> Q-07: (Andrew Morton [21] and others)
->       This fd-for-a-process sounds like a handy thing and people may well
->       think up other uses for it in the future, probably unrelated to
->       signals. Are the code and the interface designed to permit such
->       future applications?
-> A-07: Yes (cf. [22]).
-> 
-> Q-08: (Andrew Morton [21] and others)
->       Now I think about it, why a new syscall? This thing is looking
->       rather like an ioctl?
-> A-08: This has been extensively discussed. It was agreed that a syscall is
->       preferred for a variety or reasons. Here are just a few taken from
->       prior threads. Syscalls are safer than ioctl()s especially when
->       signaling to fds. Processes are a core kernel concept so a syscall
->       seems more appropriate. The layout of the syscall with its four
->       arguments would require the addition of a custom struct for the
->       ioctl() thereby causing at least the same amount or even more
->       complexity for userspace than a simple syscall. The new syscall will
->       replace multiple other pid-based syscalls (see description above).
->       The file-descriptors-for-processes concept introduced with this
->       syscall will be extended with other syscalls in the future. See also
->       [22], [23] and various other threads already linked in here.
-> 
-> Q-09: (Florian Weimer [24])
->       What happens if you use the new interface with an O_PATH descriptor?
-> A-09:
->       pidfds opened as O_PATH fds cannot be used to send signals to a
->       process (cf. [2]). Signaling processes through pidfds is the
->       equivalent of writing to a file. Thus, this is not an operation that
->       operates "purely at the file descriptor level" as required by the
->       open(2) manpage. See also [4].
-> 
-> /* References */
-> [1]:  https://lore.kernel.org/lkml/20181029221037.87724-1-dancol@google.com/
-> [2]:  https://lore.kernel.org/lkml/874lbtjvtd.fsf@oldenburg2.str.redhat.com/
-> [3]:  https://lore.kernel.org/lkml/20181204132604.aspfupwjgjx6fhva@brauner.io/
-> [4]:  https://lore.kernel.org/lkml/20181203180224.fkvw4kajtbvru2ku@brauner.io/
-> [5]:  https://lore.kernel.org/lkml/20181121213946.GA10795@mail.hallyn.com/
-> [6]:  https://lore.kernel.org/lkml/20181120103111.etlqp7zop34v6nv4@brauner.io/
-> [7]:  https://lore.kernel.org/lkml/36323361-90BD-41AF-AB5B-EE0D7BA02C21@amacapital.net/
-> [8]:  https://lore.kernel.org/lkml/87tvjxp8pc.fsf@xmission.com/
-> [9]:  https://asciinema.org/a/IQjuCHew6bnq1cr78yuMv16cy
-> [10]: https://lore.kernel.org/lkml/20181203180224.fkvw4kajtbvru2ku@brauner.io/
-> [11]: https://lore.kernel.org/lkml/F53D6D38-3521-4C20-9034-5AF447DF62FF@amacapital.net/
-> [12]: https://lore.kernel.org/lkml/87zhtjn8ck.fsf@xmission.com/
-> [13]: https://lore.kernel.org/lkml/871s6u9z6u.fsf@xmission.com/
-> [14]: https://lore.kernel.org/lkml/20181206231742.xxi4ghn24z4h2qki@brauner.io/
-> [15]: https://lore.kernel.org/lkml/20181207003124.GA11160@mail.hallyn.com/
-> [16]: https://lore.kernel.org/lkml/20181207015423.4miorx43l3qhppfz@brauner.io/
-> [17]: https://lore.kernel.org/lkml/CAGXu5jL8PciZAXvOvCeCU3wKUEB_dU-O3q0tDw4uB_ojMvDEew@mail.gmail.com/
-> [18]: https://lore.kernel.org/lkml/20181206222746.GB9224@mail.hallyn.com/
-> [19]: https://lore.kernel.org/lkml/20181208054059.19813-1-christian@brauner.io/
-> [20]: https://lore.kernel.org/lkml/8736rebl9s.fsf@oldenburg.str.redhat.com/
-> [21]: https://lore.kernel.org/lkml/20181228152012.dbf0508c2508138efc5f2bbe@linux-foundation.org/
-> [22]: https://lore.kernel.org/lkml/20181228233725.722tdfgijxcssg76@brauner.io/
-> [23]: https://lwn.net/Articles/773459/
-> [24]: https://lore.kernel.org/lkml/8736rebl9s.fsf@oldenburg.str.redhat.com/
-> 
-> Cc: "Eric W. Biederman" <ebiederm@xmission.com>
-> Cc: Jann Horn <jannh@google.com>
-> Cc: Andy Lutomirsky <luto@kernel.org>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Oleg Nesterov <oleg@redhat.com>
-> Cc: Al Viro <viro@zeniv.linux.org.uk>
-> Cc: Florian Weimer <fweimer@redhat.com>
-> Signed-off-by: Christian Brauner <christian@brauner.io>
-> Reviewed-by: Kees Cook <keescook@chromium.org>
-> Acked-by: Arnd Bergmann <arnd@arndb.de>
-> Acked-by: Serge Hallyn <serge@hallyn.com>
-> Acked-by: Aleksa Sarai <cyphar@cyphar.com>
+On Tue,  8 Jan 2019 20:40:05 +0100
+Thorsten Leemhuis <linux@leemhuis.info> wrote:
 
-We now have a separate repo on kernel.org for future work related to
-pidfds [1]. This should be the target tree from which we can send prs
-for new syscalls etc. The target branch is named "pidfd".
-Patches for a new merge window will be placed in the "for-next" branch.
-The "for-next" branch is already tracked by Stephen in linux-next.
+> Hi! This is the second version of my patch to make
+> admin-guide/tainted-kernels.rst more comprehensible. It got triggered while
+> working on an update for reporting-bugs.rst, as improving the documentation
+> around reporting bugs and regressions was one of the main things that a lot of
+> people wanted to see while regression tracking was discussed in the kernel and
+> maintainer summit 2017 in Prague.
+> 
+> This is the second version of the patch, which became a patch set, as it now
+> contains a script Randy (thx) provided during the discussion of the first
+> version. 
+> 
+> Please review and consider applying.
 
-[1]: https://git.kernel.org/pub/scm/linux/kernel/git/brauner/linux.git/
+OK, so we're so close...  I think the patches are good; they are a welcome
+improvement to the documentation and the script looks great.  Thanks for
+doing this!  Patches applied.
 
-Thanks!
-Christian
+Now for the "I love your patch, something to improve part" :)
+
+ - Patch 1 didn't apply to docs-next; probably you got caught by the
+   fast-forward to 5.0-rc1.  I've applied it to 4.20 then merged to
+   resolve the conflict in tools/Makefile.
+
+ - I was tempted to ask you to redo the changelogs, but ended up just
+   tweaking them myself.  Changelogs should focus on what the patch does
+   and why; they aren't usually the place for the history of how the patch
+   came to exist in its current form.  I'll append what actually got
+   committed.  (Filling to 72 columns or so is also a nice touch for
+   changelogs).
+
+Thanks for doing this work - looking forward to more.
+
+jon
+
+The reworked changelogs are:
+
+    tools: add a kernel-chktaint to tools/debugging
+    
+    Add a script to the tools/ directory that shows if or why the running
+    kernel was tainted. The script was mostly written by Randy Dunlap; I
+    enhanced the script a bit.  There does not appear to be a good home for
+    this script. so create tools/debugging for tools of this nature.
+    
+    Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+    Signed-off-by: Thorsten Leemhuis <linux@leemhuis.info>
+    [ jc: rewrote changelog ]
+    Signed-off-by: Jonathan Corbet <corbet@lwn.net>
+
+-----
+
+    docs: Revamp tainted-kernels.rst to make it more comprehensible
+    
+    Add a section about decoding /proc/sys/kernel/tainted, create a more
+    understandable intro and a hopefully explain better the tainted flags in
+    bugs, oops or panics messages. Only thing missing then is a table that
+    quickly describes the various bits and taint flags before going into more
+    detail, so add that as well.
+    
+    That table is partly based on a section from Documentation/sysctl/kernel.txt
+,
+    but a bit more compact. To avoid confusion I added the shortened version to
+    kernel.txt; the same table is used in three different places now:
+    ./tools/debugging/kernel-chktaint,
+    Documentation/admin-guide/tainted-kernels.rst and
+    Documentation/sysctl/kernel.txt
+    
+    During review of v1 (see above) a number of existing issues with the text
+    were raised, like outdated usages as well as incomplete or missing
+    descriptions.  Address most of those as well.
+    
+    Signed-off-by: Thorsten Leemhuis <linux@leemhuis.info>
+    [jc: tightened up changelog]
+    Signed-off-by: Jonathan Corbet <corbet@lwn.net>
+
+
+-- 
+Jonathan Corbet / LWN.net / corbet@lwn.net
