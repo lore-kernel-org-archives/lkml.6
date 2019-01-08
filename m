@@ -2,147 +2,106 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13E9CC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 02:51:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07927C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 02:52:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D9EEA2085A
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 02:51:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BB5AE2089F
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 02:52:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="BsBQ4UzP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727344AbfAHCvK convert rfc822-to-8bit (ORCPT
+        id S1727408AbfAHCwu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 21:51:10 -0500
-Received: from szxga02-in.huawei.com ([45.249.212.188]:6955 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727052AbfAHCvJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 21:51:09 -0500
-Received: from DGGEMM404-HUB.china.huawei.com (unknown [172.30.72.54])
-        by Forcepoint Email with ESMTP id B6A6D3CDED83C5A08D9A;
-        Tue,  8 Jan 2019 10:51:07 +0800 (CST)
-Received: from DGGEMM423-HUB.china.huawei.com (10.1.198.40) by
- DGGEMM404-HUB.china.huawei.com (10.3.20.212) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Tue, 8 Jan 2019 10:51:07 +0800
-Received: from DGGEMM528-MBX.china.huawei.com ([169.254.8.187]) by
- dggemm423-hub.china.huawei.com ([10.1.198.40]) with mapi id 14.03.0415.000;
- Tue, 8 Jan 2019 10:51:02 +0800
-From:   "liujian (CE)" <liujian56@huawei.com>
-To:     Greg KH <gregkh@linuxfoundation.org>
-CC:     "michal.simek@xilinx.com" <michal.simek@xilinx.com>,
-        "hamish.martin@alliedtelesis.co.nz" 
-        <hamish.martin@alliedtelesis.co.nz>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v2] driver: uio: fix possible memory leak and
- use-after-free in __uio_register_device
-Thread-Topic: [PATCH v2] driver: uio: fix possible memory leak and
- use-after-free in __uio_register_device
-Thread-Index: AQHUo+SIvIeTJgGl7E6Ihu2x7IZq86WjeeSAgAEx3bA=
-Date:   Tue, 8 Jan 2019 02:51:01 +0000
-Message-ID: <4F88C5DDA1E80143B232E89585ACE27D0258ECAE@DGGEMM528-MBX.china.huawei.com>
-References: <1546611548-205765-1-git-send-email-liujian56@huawei.com>
- <20190107161315.GA25694@kroah.com>
-In-Reply-To: <20190107161315.GA25694@kroah.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
+        Mon, 7 Jan 2019 21:52:50 -0500
+Received: from esa4.microchip.iphmx.com ([68.232.154.123]:13933 "EHLO
+        esa4.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727030AbfAHCwu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 21:52:50 -0500
+X-IronPort-AV: E=Sophos;i="5.56,452,1539673200"; 
+   d="scan'208";a="24763088"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa4.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 07 Jan 2019 19:52:49 -0700
+Received: from NAM04-BN3-obe.outbound.protection.outlook.com (10.10.215.89) by
+ email.microchip.com (10.10.76.38) with Microsoft SMTP Server (TLS) id
+ 14.3.352.0; Mon, 7 Jan 2019 19:52:49 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=microchiptechnology.onmicrosoft.com;
+ s=selector1-microchiptechnology-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=4VxU1ZTb97AHaSJjQKzN14OU2U+JX0dyXq1tGSjfdP0=;
+ b=BsBQ4UzP4n7370icCBlspO4duV3weRrLlmCBra/FWMS+HwBkIgMJFhq/dTbfqQRCJFybvTPYQFvkn/cIA3s0hXUEu5Kqxetu0/xE0QYGHfU5pcsJMEqIxzZOafqM43zU5o1SQgZgXcPCGx1joIcmn47ltbQBZbJFadUJ4IFs8Y0=
+Received: from BYAPR11MB2567.namprd11.prod.outlook.com (52.135.226.160) by
+ BYAPR11MB2936.namprd11.prod.outlook.com (20.177.228.31) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1495.9; Tue, 8 Jan 2019 02:52:47 +0000
+Received: from BYAPR11MB2567.namprd11.prod.outlook.com
+ ([fe80::c110:8559:a438:491d]) by BYAPR11MB2567.namprd11.prod.outlook.com
+ ([fe80::c110:8559:a438:491d%3]) with mapi id 15.20.1495.011; Tue, 8 Jan 2019
+ 02:52:47 +0000
+From:   <Ajay.Kathat@microchip.com>
+To:     <jmilan.dev@gmail.com>, <linux-kernel@vger.kernel.org>
+CC:     <devel@driverdev.osuosl.org>, <linux-wireless@vger.kernel.org>,
+        <gregkh@linuxfoundation.org>, <Adham.Abozaeid@microchip.com>
+Subject: Re: [PATCH v4] staging: wilc1000: fix registration frame size
+Thread-Topic: [PATCH v4] staging: wilc1000: fix registration frame size
+Thread-Index: AQHUppda+eTz9y0zF0yPYg123AH38KWkrWaA
+Date:   Tue, 8 Jan 2019 02:52:47 +0000
+Message-ID: <5edec4b7-0a46-a509-c3b5-d3d915ff765f@microchip.com>
+References: <20190107144305.GA14627@localhost.localdomain>
+In-Reply-To: <20190107144305.GA14627@localhost.localdomain>
+Accept-Language: en-US
+Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-originating-ip: [10.177.97.126]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+x-clientproxiedby: MA1PR01CA0084.INDPRD01.PROD.OUTLOOK.COM (2603:1096:a00::24)
+ To BYAPR11MB2567.namprd11.prod.outlook.com (2603:10b6:a02:c5::32)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Ajay.Kathat@microchip.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [49.205.219.198]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BYAPR11MB2936;6:746KmkoiUX/SSXe59azpxHm8mTSw4Asu0pqHykqHFZoK6LADlyLNJ2ioWmJt51pfD7DGceYTZeGDPszvKlvuxcW2QjlFqtDXdZk00rqP5yP0PLXHkJ28wL9Axah2ROoUQGjSy+YzU2QCF8vJ1ofrMcM6XcnXmhs8IAlZD4byUG4z+8YavQVA2BelCZG0+3qg8BW0Yz/ZvXLt5PTH6wlLpoLdt8uDzqzlXtjURpwRdquygrDvD1uuVIHoo5Tiszb1PJMjt+HAEPJybGVwst2+1vsGUog2y8UGrLC5sZ6YasjoAfkZo540A9s7RdensSOGCqziBDUrC/OySopUDdiEBAYKgpm3bMKZ2BwcqRDwLDVaDMSH/+h4V/vEn/BILwujS1b7iqQ5J6AWJpYvIKD/+YUfLFKJycbv7SKJr56BNv2KgfBrS510+cXdNJXz38wjcK14qSxF99dHUTAzjRbeeg==;5:5Emy7IuAyvWuqn2FWFgI4tI/lnzY7Ka3Tuk70dgUsFU7+SzwtFMrb2Uy565bRCeCvXbZWGI/zb9M4C6zO5rdyRZJOqRm2QWeFmn5cSphQecHRYfyBRUKQaHZBXpCOvBCz6uPtjTHO0x0Hd/veaRXD6zd17lX8e0sbLxDSb55aXp6kEF/Be/BM6cLyTZr75SEcsXm7bwYhsAJz2MVqtYMNw==;7:Va5hlcbLQYH6pGyP5dv/WUPGPXK9p2XLx2eVYIB7F3HF5qxnGQZdIFgV8JWfEwJtddk98cNAgPjV2V25tQg9tI22y/DdFZzjonZDpNyviHiOpZ03saZDyZXSFg7iuAzR4nY9RVHF2cSwSAR6zNV71A==
+x-ms-office365-filtering-correlation-id: 6fefff1b-df7d-4725-e9f5-08d675145ea1
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(2017052603328)(7153060)(7193020);SRVR:BYAPR11MB2936;
+x-ms-traffictypediagnostic: BYAPR11MB2936:
+x-microsoft-antispam-prvs: <BYAPR11MB293610C33EDA751E899BD614E38A0@BYAPR11MB2936.namprd11.prod.outlook.com>
+x-forefront-prvs: 0911D5CE78
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(39860400002)(396003)(366004)(346002)(376002)(189003)(199004)(446003)(2616005)(11346002)(66066001)(53546011)(6116002)(2906002)(305945005)(3846002)(186003)(6506007)(386003)(102836004)(316002)(110136005)(486006)(54906003)(31686004)(97736004)(52116002)(36756003)(105586002)(26005)(99286004)(31696002)(68736007)(72206003)(2501003)(71200400001)(4326008)(71190400001)(478600001)(76176011)(476003)(106356001)(8676002)(6486002)(78486014)(8936002)(14454004)(6436002)(25786009)(107886003)(256004)(81166006)(81156014)(53936002)(6246003)(229853002)(14444005)(5660300001)(39060400002)(7736002)(66574012)(6512007)(86362001);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR11MB2936;H:BYAPR11MB2567.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: microchip.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: nDfThAJ+AEypmAhEkvWTfHSptYLXLasZ6fskoIZQM2hk1kzW40AQQePm7CTJgSiFOIKdkh9y7rf83x+HpZpDJ3QFtFKQLN2+FadIJXVqAJLQfdcEseutmgVAGj9gV3rFd0ySTGUroTrK+bU2t9n2sfoEsgNm8HCQlZb2/DdRvvBXLM6VKIIl+jJgWUKbWqExPD5fy/i/WWT3CAf+zwa3Mh6jsqE1wQZgPrXBtOuFmxFrige8kMC2H88E9X+A8j7uShT4Gayd2LitpzCZxspDImarmKTh672LZ7hPCST2Q4RWV/AS+QllJDwlgU4AVtqh
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <BE0C8267C3B526439692BF65E900E9E2@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6fefff1b-df7d-4725-e9f5-08d675145ea1
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Jan 2019 02:52:47.0250
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR11MB2936
+X-OriginatorOrg: microchip.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-> -----Original Message-----
-> From: Greg KH [mailto:gregkh@linuxfoundation.org]
-> Sent: Tuesday, January 08, 2019 12:13 AM
-> To: liujian (CE) <liujian56@huawei.com>
-> Cc: michal.simek@xilinx.com; hamish.martin@alliedtelesis.co.nz;
-> linux-kernel@vger.kernel.org
-> Subject: Re: [PATCH v2] driver: uio: fix possible memory leak and use-after-free
-> in __uio_register_device
-> 
-> On Fri, Jan 04, 2019 at 10:19:08PM +0800, liujian wrote:
-> > 'idev' is malloced in __uio_register_device() and leak free it before
-> > leaving from the uio_get_minor() error handing case, it will cause
-> > memory leak.
-> >
-> > Also, in uio_dev_add_attributes() error handing case, idev is used
-> > after device_unregister(), in which 'idev' has been released, touch
-> > idev cause use-after-free.
-> >
-> > Fixes: a93e7b331568 ("uio: Prevent device destruction while fds are
-> > open")
-> > Fixes: e6789cd3dfb5 ("uio: Simplify uio error path by using devres
-> > functions")
-> > Signed-off-by: liujian <liujian56@huawei.com>
-> > Reviewed-by: Hamish Martin <hamish.martin@alliedtelesis.co.nz>
-> > ---
-> > v1->v2:
-> > change git log and fix code
-> >
-> >  drivers/uio/uio.c | 10 +++++++---
-> >  1 file changed, 7 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/drivers/uio/uio.c b/drivers/uio/uio.c index
-> > 1313422..be2a943 100644
-> > --- a/drivers/uio/uio.c
-> > +++ b/drivers/uio/uio.c
-> > @@ -940,9 +940,12 @@ int __uio_register_device(struct module *owner,
-> >  	atomic_set(&idev->event, 0);
-> >
-> >  	ret = uio_get_minor(idev);
-> > -	if (ret)
-> > +	if (ret) {
-> > +		kfree(idev);
-> >  		return ret;
-> > +	}
-> >
-> > +	device_initialize(&idev->dev);
-> >  	idev->dev.devt = MKDEV(uio_major, idev->minor);
-> >  	idev->dev.class = &uio_class;
-> >  	idev->dev.parent = parent;
-> > @@ -953,7 +956,7 @@ int __uio_register_device(struct module *owner,
-> >  	if (ret)
-> >  		goto err_device_create;
-> >
-> > -	ret = device_register(&idev->dev);
-> > +	ret = device_add(&idev->dev);
-> >  	if (ret)
-> >  		goto err_device_create;
-> >
-> > @@ -985,9 +988,10 @@ int __uio_register_device(struct module *owner,
-> >  err_request_irq:
-> >  	uio_dev_del_attributes(idev);
-> >  err_uio_dev_add_attributes:
-> > -	device_unregister(&idev->dev);
-> > +	device_del(&idev->dev);
-> >  err_device_create:
-> >  	uio_free_minor(idev);
-> > +	put_device(&idev->dev);
-> 
-> device_del() and then put_device()?  I don't think that's a correct error
-> cleanup path do you?
-> 
-In err_uio_dev_add_attributes error handling case, device_unregister()  will call put_device(), and idev will be released in put_device()
-Then in err_device_create error handling case,  uio_free_minor() will trigger use-after-free
-
-Now, divide device_register() into device_initialize() and device_add(), and divide device_unregister() into device_del() and put_device(). 
-Call uio_free_minor() and then call put_device() to avoid use-after-free
-
-> Please fix one thing at a time here also, this should be a a patch series, right?
-> 
-Yes, I will do, thanks~
-
-Best Regards,
-Liujian
-
-> thanks,
-> 
-> greg k-h
+DQoNCk9uIDEvNy8yMDE5IDg6MTMgUE0sIErDumxpdXMgTWlsYW4gd3JvdGU6DQo+IEZpeGVzIHRo
+ZSBmb2xsb3dpbmcgc3BhcnNlIHdhcm5pbmdzOg0KPiANCj4gZHJpdmVycy9zdGFnaW5nL3dpbGMx
+MDAwL2hvc3RfaW50ZXJmYWNlLmM6MjM2MDozMDogd2FybmluZzoNCj4gIGluY29ycmVjdCB0eXBl
+IGluIGFzc2lnbm1lbnQgKGRpZmZlcmVudCBiYXNlIHR5cGVzKQ0KPiAgICAgZXhwZWN0ZWQgcmVz
+dHJpY3RlZCBfX2xlMzIgW2FkZHJlc3NhYmxlXSBbYXNzaWduZWRdIFt1c2VydHlwZV0gZnJhbWVf
+dHlwZQ0KPiAgICAgZ290IHJlc3RyaWN0ZWQgX19sZTE2IFt1c2VydHlwZV0gPG5vaWRlbnQ+DQo+
+IA0KPiBGaXhlczogMTQ3Y2NmZDQ1MTAyNCAoInN0YWdpbmc6IHdpbGMxMDAwOiBoYW5kbGUgbWdt
+dF9mcmFtZV9yZWdpc3RlciBvcHMgZnJvbSBjZmc4MjAxMSBjb250ZXh0IikNCj4gU2lnbmVkLW9m
+Zi1ieTogSsO6bGl1cyBNaWxhbiA8am1pbGFuLmRldkBnbWFpbC5jb20+DQoNClRoYW5rcywgdGhl
+IGNoYW5nZSBsb29rcyBmaW5lIHRvIG1lLg0KDQpSZXZpZXdlZC1ieTogQWpheSBTaW5naCA8YWph
+eS5rYXRoYXRAbWljcm9jaGlwLmNvbT4NCg0KUmVnYXJkcywNCkFqYXkNCg==
