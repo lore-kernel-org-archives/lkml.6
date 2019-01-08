@@ -2,112 +2,88 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5CFCC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 17:26:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99BEBC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 17:27:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B44DA206A3
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 17:26:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5B4FE20883
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 17:27:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728798AbfAHR0j (ORCPT
+        id S1728929AbfAHR1X (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 12:26:39 -0500
-Received: from gateway36.websitewelcome.com ([192.185.187.5]:20794 "EHLO
-        gateway36.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727484AbfAHR0i (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 12:26:38 -0500
-Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
-        by gateway36.websitewelcome.com (Postfix) with ESMTP id 4F2384011F855
-        for <linux-kernel@vger.kernel.org>; Tue,  8 Jan 2019 10:38:39 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id gv9BgRLS4YTGMgv9BgCn8u; Tue, 08 Jan 2019 11:26:37 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.130.205] (port=54192 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1ggv99-002PFo-R5; Tue, 08 Jan 2019 11:26:36 -0600
-Date:   Tue, 8 Jan 2019 11:26:32 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Igor Mitsyanko <imitsyanko@quantenna.com>,
-        Avinash Patil <avinashp@quantenna.com>,
-        Sergey Matyukevich <smatyukevich@quantenna.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] qtnfmac: use struct_size() in kzalloc()
-Message-ID: <20190108172632.GA2918@embeddedor>
+        Tue, 8 Jan 2019 12:27:23 -0500
+Received: from mga12.intel.com ([192.55.52.136]:10558 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728278AbfAHR1W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 12:27:22 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Jan 2019 09:27:22 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,455,1539673200"; 
+   d="scan'208";a="124321665"
+Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.137])
+  by FMSMGA003.fm.intel.com with ESMTP; 08 Jan 2019 09:27:21 -0800
+Received: by tassilo.localdomain (Postfix, from userid 1000)
+        id 94DE1301BEF; Tue,  8 Jan 2019 09:27:21 -0800 (PST)
+Date:   Tue, 8 Jan 2019 09:27:21 -0800
+From:   Andi Kleen <ak@linux.intel.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Adrian Hunter <adrian.hunter@intel.com>,
+        Nadav Amit <namit@vmware.com>, Ingo Molnar <mingo@redhat.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Edward Cree <ecree@solarflare.com>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Nadav Amit <nadav.amit@gmail.com>, X86 ML <x86@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Borislav Petkov <bp@alien8.de>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        songliubraving@fb.com
+Subject: Re: [RFC v2 0/6] x86: dynamic indirect branch promotion
+Message-ID: <20190108172721.GN6118@tassilo.jf.intel.com>
+References: <20181231072112.21051-1-namit@vmware.com>
+ <87zhshe66w.fsf@linux.intel.com>
+ <20190107163227.GH14122@hirez.programming.kicks-ass.net>
+ <c4e836e8-1949-27f5-f6a0-ed860f590ec5@intel.com>
+ <20190108092559.GA6808@hirez.programming.kicks-ass.net>
+ <306d38fb-7ce6-a3ec-a351-6c117559ebaa@intel.com>
+ <20190108101058.GB6808@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.130.205
-X-Source-L: No
-X-Exim-ID: 1ggv99-002PFo-R5
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.130.205]:54192
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 17
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <20190108101058.GB6808@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-One of the more common cases of allocation size calculations is finding the
-size of a structure that has a zero-sized array at the end, along with memory
-for some number of elements for that array. For example:
+On Tue, Jan 08, 2019 at 11:10:58AM +0100, Peter Zijlstra wrote:
+> On Tue, Jan 08, 2019 at 12:01:11PM +0200, Adrian Hunter wrote:
+> > The problem is that the jitted code gets freed from memory, which is why I
+> > suggested the ability to pin it for a while.
+> 
+> Then what do you tell the guy that keeps PT running for a day and runs
+> out of memory because he likes to JIT a lot?
 
-struct foo {
-    int stuff;
-    void *entry[];
-};
+It only would need to be saved until the next kcore dump, so they would
+need to do regular kcore dumps, after each of which the JIT code could be freed.
 
-instance = kzalloc(sizeof(struct foo) + sizeof(void *) * count, GFP_KERNEL);
+In a sense it would be like RCU for code.
 
-Instead of leaving these open-coded and prone to type mistakes, we can now
-use the new struct_size() helper:
+You would somehow need to tell the kernel when that happens though
+so it can schedule the frees.
 
-instance = kzalloc(struct_size(instance, entry, count), GFP_KERNEL);
+It doesn't work when the code is modified in place, like the
+patch in the $SUBJECT.
 
-This code was detected with the help of Coccinelle.
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/net/wireless/quantenna/qtnfmac/commands.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/net/wireless/quantenna/qtnfmac/commands.c b/drivers/net/wireless/quantenna/qtnfmac/commands.c
-index 659e7649fe22..cf386f579060 100644
---- a/drivers/net/wireless/quantenna/qtnfmac/commands.c
-+++ b/drivers/net/wireless/quantenna/qtnfmac/commands.c
-@@ -914,9 +914,8 @@ qtnf_cmd_resp_proc_hw_info(struct qtnf_bus *bus,
- 	if (WARN_ON(resp->n_reg_rules > NL80211_MAX_SUPP_REG_RULES))
- 		return -E2BIG;
- 
--	hwinfo->rd = kzalloc(sizeof(*hwinfo->rd)
--			     + sizeof(struct ieee80211_reg_rule)
--			     * resp->n_reg_rules, GFP_KERNEL);
-+	hwinfo->rd = kzalloc(struct_size(hwinfo->rd, reg_rules,
-+					 resp->n_reg_rules), GFP_KERNEL);
- 
- 	if (!hwinfo->rd)
- 		return -ENOMEM;
--- 
-2.20.1
-
+-Andi
