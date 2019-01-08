@@ -2,363 +2,72 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLACK autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1F88C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 02:21:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 400F6C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 02:22:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F5332089F
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 02:21:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ozlabs-ru.20150623.gappssmtp.com header.i=@ozlabs-ru.20150623.gappssmtp.com header.b="CPvivoPC"
+	by mail.kernel.org (Postfix) with ESMTP id 1205D2089F
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 02:22:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727377AbfAHCVD (ORCPT
+        id S1727398AbfAHCWH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 21:21:03 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:34953 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727051AbfAHCVC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 21:21:02 -0500
-Received: by mail-pg1-f194.google.com with SMTP id s198so1014819pgs.2
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Jan 2019 18:21:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ozlabs-ru.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=3/aYU1UDMGVAnE26nrlGgN1cekYJujaOT2CoWpsvRtQ=;
-        b=CPvivoPCn6ejXja2hmxcKQZT6YDZTk3QYE3OZkFOSG0bGJDqLhFGslRmLkH/dsRYuN
-         +s/W7qAWRyLwxACzf4Hk8enpAcyn77MGRhH9OitAXyZqFutrsx+ouhj1f+a33xYMWMvV
-         JLlUUL9ECaMUJLsj29PHwnOhX88V9aKa5zUOo/CnBEVT7/t6JeZaIG0aFZQE1zF+y6QA
-         oL4MR4jwQHnTNmi1Jr/Nbj9WirT9xrpOX099j18XdYlr1CKgTUTAOTUC5MXnFsjl9rEO
-         EUXryj0K2DI3cVw8bz3Ey3VGA0Dq2iSFg2WSOssaXVqDju4uVBcbHOIIxn8uRYIwGSAa
-         Vafg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=3/aYU1UDMGVAnE26nrlGgN1cekYJujaOT2CoWpsvRtQ=;
-        b=gO57GLyyfqQM9KtDJgpZctQ/6xQKr4ZqgHD8BwAO3EDf6gaakzQK1s9zFmpQH0ztd5
-         B/qSOl6Howol7G+UpHS6hTjCIFgXk/W1SWxNm/P9u0lr8DSytuSs+X11OvL/8zQEGcqp
-         4R2iiyhMM5FYLfhn5aDS1cyiQBJIt/l7qg8TKe1wotG873EntCVrZh4e5DyIHGQ1rVkS
-         x55GqY+xr0u3bJ4ALCbKiMh2dNoYaZ4FM4n3uBSoQx/vTKBP7MeA568ykSEk/g9qUb3+
-         PpEA7ledUMtqSnN0d83ya8hJcKUaTKeVkoyxLrahECwcDD70lTnmlQGb48+fanteKpI6
-         US5Q==
-X-Gm-Message-State: AA+aEWaYQ6jgPdXu/rnSi09ykRi11rDx5zG+Aesf+1ZmEqI793c2T/ez
-        8H8+aPaZn5Y/WbtYjJf3PI1c4HIcytc=
-X-Google-Smtp-Source: AFSGD/VdZihjrHlNqw6Lrri8s6Ztf2OjP9FDjIaOdh9dwG9YR/S/fvQTyfdISLOms2Hd7gb6hQocRQ==
-X-Received: by 2002:a62:b511:: with SMTP id y17mr65986553pfe.199.1546914061084;
-        Mon, 07 Jan 2019 18:21:01 -0800 (PST)
-Received: from [10.61.2.175] ([122.99.82.10])
-        by smtp.gmail.com with ESMTPSA id v89sm96930611pfj.164.2019.01.07.18.20.57
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 07 Jan 2019 18:21:00 -0800 (PST)
-Subject: Re: [PATCH] vfio_pci: Add local source directory as include
-To:     Alex Williamson <alex.williamson@redhat.com>
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Laura Abbott <labbott@redhat.com>, kvm@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20190104195714.30045-1-labbott@redhat.com>
- <874lakc09x.fsf@concordia.ellerman.id.au>
- <CAK7LNAQLEYc=czrJvzK8UXeXYm08TuLB62uMN2kFedkcW9b1pw@mail.gmail.com>
- <20190107120716.51d95854.cohuck@redhat.com>
- <CAK7LNAQtsW5KoOQmOB4uSv2zHM80azmHnEMj=2BunikhJQEpig@mail.gmail.com>
- <20190107131341.00581863@x1.home>
- <4b9b6cf2-d39e-8dd2-9271-158489b03a61@ozlabs.ru>
- <20190107172437.0f0b5331@x1.home>
-From:   Alexey Kardashevskiy <aik@ozlabs.ru>
-Openpgp: preference=signencrypt
-Autocrypt: addr=aik@ozlabs.ru; keydata=
- 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
-Message-ID: <e906adde-3a5b-69f8-10b3-ad88ab530913@ozlabs.ru>
-Date:   Tue, 8 Jan 2019 13:20:55 +1100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Mon, 7 Jan 2019 21:22:07 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:39688 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727051AbfAHCWH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 21:22:07 -0500
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 6F898A29FB5F9DA0A3B9;
+        Tue,  8 Jan 2019 10:22:04 +0800 (CST)
+Received: from szvp000201624.huawei.com (10.120.216.130) by
+ DGGEMS411-HUB.china.huawei.com (10.3.19.211) with Microsoft SMTP Server id
+ 14.3.408.0; Tue, 8 Jan 2019 10:21:55 +0800
+From:   Chao Yu <yuchao0@huawei.com>
+To:     <jaegeuk@kernel.org>
+CC:     <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
+        Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH] f2fs: fix to trigger fsck if dirent.name_len is zero
+Date:   Tue, 8 Jan 2019 10:21:24 +0800
+Message-ID: <20190108022124.33447-1-yuchao0@huawei.com>
+X-Mailer: git-send-email 2.18.0.rc1
 MIME-Version: 1.0
-In-Reply-To: <20190107172437.0f0b5331@x1.home>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.120.216.130]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+While traversing dirents in f2fs_fill_dentries(), if bitmap is valid,
+filename length should not be zero, otherwise, directory structure
+consistency could be corrupted, in this case, let's print related
+info and set SBI_NEED_FSCK to trigger fsck for repairing.
 
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ fs/f2fs/dir.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-On 08/01/2019 11:24, Alex Williamson wrote:
-> On Tue, 8 Jan 2019 10:52:43 +1100
-> Alexey Kardashevskiy <aik@ozlabs.ru> wrote:
-> 
->> On 08/01/2019 07:13, Alex Williamson wrote:
->>> On Mon, 7 Jan 2019 20:39:19 +0900
->>> Masahiro Yamada <yamada.masahiro@socionext.com> wrote:
->>>   
->>>> On Mon, Jan 7, 2019 at 8:09 PM Cornelia Huck <cohuck@redhat.com> wrote:  
->>>>>
->>>>> On Mon, 7 Jan 2019 19:12:10 +0900
->>>>> Masahiro Yamada <yamada.masahiro@socionext.com> wrote:
->>>>>    
->>>>>> On Mon, Jan 7, 2019 at 6:18 PM Michael Ellerman <mpe@ellerman.id.au> wrote:    
->>>>>>>
->>>>>>> Laura Abbott <labbott@redhat.com> writes:    
->>>>>>>> Commit 7f92891778df ("vfio_pci: Add NVIDIA GV100GL [Tesla V100 SXM2]
->>>>>>>> subdriver") introduced a trace.h file in the local directory but
->>>>>>>> missed adding the local include path, resulting in compilation
->>>>>>>> failures with tracepoints:
->>>>>>>>
->>>>>>>> In file included from drivers/vfio/pci/trace.h:102,
->>>>>>>>                  from drivers/vfio/pci/vfio_pci_nvlink2.c:29:
->>>>>>>> ./include/trace/define_trace.h:89:42: fatal error: ./trace.h: No such file or directory
->>>>>>>>  #include TRACE_INCLUDE(TRACE_INCLUDE_FILE)
->>>>>>>>
->>>>>>>> Fix this by adjusting the include path.
->>>>>>>>
->>>>>>>> Fixes: 7f92891778df ("vfio_pci: Add NVIDIA GV100GL [Tesla V100 SXM2] subdriver")
->>>>>>>> Signed-off-by: Laura Abbott <labbott@redhat.com>    
->>>>>
->>>>> (...)
->>>>>    
->>>>>>> Alex I assume you'll merge this fix via the vfio tree?
->>>>>>>
->>>>>>> cheers
->>>>>>>    
->>>>>>>> diff --git a/drivers/vfio/pci/Makefile b/drivers/vfio/pci/Makefile
->>>>>>>> index 9662c063a6b1..08d4676a8495 100644
->>>>>>>> --- a/drivers/vfio/pci/Makefile
->>>>>>>> +++ b/drivers/vfio/pci/Makefile
->>>>>>>> @@ -1,3 +1,4 @@
->>>>>>>> +ccflags-y                               += -I$(src)
->>>>>>>>
->>>>>>>>  vfio-pci-y := vfio_pci.o vfio_pci_intrs.o vfio_pci_rdwr.o vfio_pci_config.o
->>>>>>>>  vfio-pci-$(CONFIG_VFIO_PCI_IGD) += vfio_pci_igd.o
->>>>>>>> --
->>>>>>>> 2.20.1    
->>>>>>
->>>>>>
->>>>>> Hi.
->>>>>>
->>>>>> If I correctly understand the usage of TRACE_INCLUDE_PATH,
->>>>>> the correct fix should be like follows:
->>>>>>
->>>>>>
->>>>>> diff --git a/drivers/vfio/pci/trace.h b/drivers/vfio/pci/trace.h
->>>>>> index 228ccdb..4d13e51 100644
->>>>>> --- a/drivers/vfio/pci/trace.h
->>>>>> +++ b/drivers/vfio/pci/trace.h
->>>>>> @@ -94,7 +94,7 @@ TRACE_EVENT(vfio_pci_npu2_mmap,
->>>>>>  #endif /* _TRACE_VFIO_PCI_H */
->>>>>>
->>>>>>  #undef TRACE_INCLUDE_PATH
->>>>>> -#define TRACE_INCLUDE_PATH .
->>>>>> +#define TRACE_INCLUDE_PATH ../../drivers/vfio/pci
->>>>>>  #undef TRACE_INCLUDE_FILE
->>>>>>  #define TRACE_INCLUDE_FILE trace    
->>>>>
->>>>> Going from the comments in samples/trace_events/trace-events-sample.h,
->>>>> I think both approaches are possible, and I see both used in various
->>>>> places.
->>>>>
->>>>> Personally, I'd prefer Laura's patch, as it doesn't involve hardcoding
->>>>> a path.  
->>>
->>> Numbering options for clarity:
->>>
->>> 1)  
->>>> ccflags-y += -I$(src)
->>>> would add the header search path for all files in drivers/vfio/pci/
->>>> whereas only the drivers/vfio/pci/vfio_pci_nvlink2.c needs it.
->>>>  
->>>
->>> 2)  
->>>> CFLAGS_vfio_pci_nvlink2.o += -I$(src)
->>>> is a bit better.
->>>> However, it is not obvious why this extra header search path is needed
->>>> until you find vfio_pci_nvlink2.c including trace.h
->>>>  
->>>
->>> 3)  
->>>> #define TRACE_INCLUDE_PATH ../../drivers/vfio/pci
->>>> clarifies the intention because the related code is all placed in trace.h
->>>>
->>>>
->>>>
->>>> From the comment in include/trace/define_trace.h
->>>> TRACE_INCLUDE_PATH is relative to include/trace/define_trace.h  
->>>
->>> In my scan of the tree, the most common solution seems to be 2) as this
->>> is essentially recommended in the sample file.  3) is well represented,
->>> with much fewer examples of 1), though it might depend how liberally
->>> we grep out or examine the use cases.  Choice 1) also seems to be the
->>> most shotgun approach, adding to the search path for all files.  
->>
->>
->> The shotgun approach is always used when compiling out of tree which is
->> what many people do anyway without realizing that there are additional
->> -I. Why do not we make in-tree behave the same way? Thanks,
-> 
-> Are you suggesting bandaging this individual leaf directory, as in
-> choice 1), because it's no worse than what happens for an out-of-tree
-> build anyway, 
-
-
-I suggest making in-tree and out-of-tree behavior equal - both either
-fail or compile. Just makes sense to me.
-
-Since out-of-tree adds extra -I, then there should have been a reason
-for that at the time (before 2005 though). Unfortunately git blame does
-not say why it was done this way for out-of-tree so imho the safest
-thing is to add -I for in-tree as well. Or ditch extra -I and do 2) or
-3) - this is fine too and can count as an impressive compile
-optimization, although... look below :)
-
-
-> or are you suggesting to fix the in-tree build behavior to
-> be as inefficient as the out-of-tree behavior in general? 
-
-Inefficient you say. Hm.
-
-I tried this:
-
---- scripts/Makefile.lib.old	2019-01-08 11:39:51.830983393 +1100
-+++ scripts/Makefile.lib	2019-01-08 13:09:54.199054981 +1100
-@@ -140,11 +140,6 @@
- # If building the kernel in a separate objtree expand all occurrences
- # of -Idir to -I$(srctree)/dir except for absolute paths (starting with
-'/').
-
--ifeq ($(KBUILD_SRC),)
--__c_flags	= $(_c_flags)
--__a_flags	= $(_a_flags)
--__cpp_flags     = $(_cpp_flags)
--else
-
- # -I$(obj) locates generated .h files
- # $(call addtree,-I$(obj)) locates .h files in srctree, from generated
-.c files
-@@ -154,7 +149,6 @@
- 		  $(call flags,_c_flags)
- __a_flags	= $(call flags,_a_flags)
- __cpp_flags     = $(call flags,_cpp_flags)
--endif
-
-
-Compiled 3 times with the patch and without, "make clean ; time make
--j200 vmlinux modules".
-
-No patch:
-
-real    4m33.047s       user    481m48.322s     sys     10m15.639s
-real    4m29.038s       user    480m22.873s     sys     10m11.394s
-real    4m34.373s       user    483m7.570s      sys     10m10.559s
-
-With the patch:
-
-real    4m32.008s       user    479m54.207s     sys     10m13.075s
-real    4m30.027s       user    479m46.272s     sys     10m15.886s
-real    4m31.548s       user    480m2.897s      sys     10m10.024
-
-
-which is slightly faster but I guess within accuracy.
-
-
-
-> It appears
-> to me that options 2) and 3) are the intended solutions for this issue
-> while 1) is more of a workaround.  Thanks,
-> 
-> Alex
-> 
->>>  From a
->>> maintenance perspective I agree that 2) seems more error prone,
->>> especially when the build system only catches the error on in-tree
->>> builds, something I rarely do.  Therefore I'm leaning towards option
->>> 3).  The hardcoded path here doesn't seem much of an issue relative to
->>> the negatives of the other approaches (how often do we move these
->>> files?) and it keeps the trace support relatively self-contained.  Are
->>> there further arguments for or against these options?  Otherwise who
->>> wants to formally post the TRACE_INCLUDE_PATH version?  Thanks,  
-
-
-
-
+diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+index 50d0d36280fa..926166528cd4 100644
+--- a/fs/f2fs/dir.c
++++ b/fs/f2fs/dir.c
+@@ -800,6 +800,10 @@ int f2fs_fill_dentries(struct dir_context *ctx, struct f2fs_dentry_ptr *d,
+ 		if (de->name_len == 0) {
+ 			bit_pos++;
+ 			ctx->pos = start_pos + bit_pos;
++			printk_ratelimited(
++				"%s, invalid namelen(0), ino:%u, run fsck to fix.",
++				KERN_WARNING, le32_to_cpu(de->ino));
++			set_sbi_flag(sbi, SBI_NEED_FSCK);
+ 			continue;
+ 		}
+ 
 -- 
-Alexey
+2.18.0.rc1
+
