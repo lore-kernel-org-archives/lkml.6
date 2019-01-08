@@ -4,49 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11C4DC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:49:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3608CC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:50:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D2BAE206BB
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:49:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 016AC206BB
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:50:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546976998;
-	bh=UrAh5yny5LNoG+2p+xDmBbh6djkyPab6brOwxHuB5tw=;
+	s=default; t=1546977007;
+	bh=beRbsczkUxHkzhjeJLWFxYs6SBuZLzj+U1vI20ydLpE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=n1arxwI0DvpQx0j9MOaAKoNOVFxo6YzJbY8GtuWsv8p7f9wUrmvAWrDRCUB9RjIe7
-	 4z1FNZYxyyCVh4xR/kDN4dZTYUDJqkn/l8S3VrDMmvcEIilLNf1S7+jHhfypAQzQx7
-	 +vl1kOs8tIcG/JMP9b+9NKzrz5b1Kd7trU6IlXIw=
+	b=1F685OURwHJ5OvmOoZzhPD2aW0QOY6xLV7ag0QfElJBEXAU7PbPuZRRnBEvExdnSW
+	 6v5zyN+QP4UjH15DczT1ZVR9OKJ604LiBpVJS0g1tJHfiHIG15xKKOBuQgRA8tnnFy
+	 W6hBDCVoCeEmsKXjxViF0TP+pu3ovKMmazyeQxaY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732812AbfAHTt5 (ORCPT
+        id S1732829AbfAHTuF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:49:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40218 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 14:50:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40180 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730144AbfAHTb5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:31:57 -0500
+        id S1731211AbfAHTbz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:31:55 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ACDB62070B;
-        Tue,  8 Jan 2019 19:31:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C0C912183F;
+        Tue,  8 Jan 2019 19:31:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546975916;
-        bh=UrAh5yny5LNoG+2p+xDmBbh6djkyPab6brOwxHuB5tw=;
+        s=default; t=1546975915;
+        bh=beRbsczkUxHkzhjeJLWFxYs6SBuZLzj+U1vI20ydLpE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LygVxn7aCK4aZQcpyJ5IjIvdP8iCbefCRVszzHM1jhLzKVVorAAWOZyfJJH2CMIJX
-         0L7IbBsm4eFwD7+PI/5v7UrK6KiLdDcZAJhCi6vUPhaucM3M4Mi2D8m6aaOELVJxUm
-         gdnI9flUp4R82UWbSEZxj8LYa0ZdfaLHRe7jD7aA=
+        b=xep5ZVhcze6XTvsFEtlNjs7sI6tZ0HJBATLQTWsB+MCQ+T4S2SJ7F6nqYN68k++7e
+         eah9KiLSLEswKInIxGQ7F8BG6eMitAJmC9RPHg2wl9BfQNbR8Svwmzz8/RLm1Tiy8g
+         uV2quOeNC3c6V5F+9NNQsWPRVzkJ/tjO9kz09LI0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Yangtao Li <tiny.windzz@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 81/97] clocksource/drivers/integrator-ap: Add missing of_node_put()
-Date:   Tue,  8 Jan 2019 14:29:30 -0500
-Message-Id: <20190108192949.122407-81-sashal@kernel.org>
+Cc:     Javier Barrio <javier.barrio.mart@gmail.com>,
+        Jan Kara <jack@suse.cz>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 80/97] quota: Lock s_umount in exclusive mode for Q_XQUOTA{ON,OFF} quotactls.
+Date:   Tue,  8 Jan 2019 14:29:29 -0500
+Message-Id: <20190108192949.122407-80-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108192949.122407-1-sashal@kernel.org>
 References: <20190108192949.122407-1-sashal@kernel.org>
@@ -58,83 +57,86 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yangtao Li <tiny.windzz@gmail.com>
+From: Javier Barrio <javier.barrio.mart@gmail.com>
 
-[ Upstream commit 5eb73c831171115d3b4347e1e7124a5a35d8086c ]
+[ Upstream commit 41c4f85cdac280d356df1f483000ecec4a8868be ]
 
-The function of_find_node_by_path() acquires a reference to the node
-returned by it and that reference needs to be dropped by its caller.
+Commit 1fa5efe3622db58cb8c7b9a50665e9eb9a6c7e97 (ext4: Use generic helpers for quotaon
+and quotaoff) made possible to call quotactl(Q_XQUOTAON/OFF) on ext4 filesystems
+with sysfile quota support. This leads to calling dquot_enable/disable without s_umount
+held in excl. mode, because quotactl_cmd_onoff checks only for Q_QUOTAON/OFF.
 
-integrator_ap_timer_init_of() doesn't do that.  The pri_node and the
-sec_node are used as an identifier to compare against the current
-node, so we can directly drop the refcount after getting the node from
-the path as it is not used as pointer.
+The following WARN_ON_ONCE triggers (in this case for dquot_enable, ext4, latest Linus' tree):
 
-By dropping the refcount right after getting it, a single variable is
-needed instead of two.
+[  117.807056] EXT4-fs (dm-0): mounted filesystem with ordered data mode. Opts: quota,prjquota
 
-Fix this by use a single variable and drop the refcount right after
-of_find_node_by_path().
+[...]
 
-Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+[  155.036847] WARNING: CPU: 0 PID: 2343 at fs/quota/dquot.c:2469 dquot_enable+0x34/0xb9
+[  155.036851] Modules linked in: quota_v2 quota_tree ipv6 af_packet joydev mousedev psmouse serio_raw pcspkr i2c_piix4 intel_agp intel_gtt e1000 ttm drm_kms_helper drm agpgart fb_sys_fops syscopyarea sysfillrect sysimgblt i2c_core input_leds kvm_intel kvm irqbypass qemu_fw_cfg floppy evdev parport_pc parport button crc32c_generic dm_mod ata_generic pata_acpi ata_piix libata loop ext4 crc16 mbcache jbd2 usb_storage usbcore sd_mod scsi_mod
+[  155.036901] CPU: 0 PID: 2343 Comm: qctl Not tainted 4.20.0-rc6-00025-gf5d582777bcb #9
+[  155.036903] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1ubuntu1 04/01/2014
+[  155.036911] RIP: 0010:dquot_enable+0x34/0xb9
+[  155.036915] Code: 41 56 41 55 41 54 55 53 4c 8b 6f 28 74 02 0f 0b 4d 8d 7d 70 49 89 fc 89 cb 41 89 d6 89 f5 4c 89 ff e8 23 09 ea ff 85 c0 74 0a <0f> 0b 4c 89 ff e8 8b 09 ea ff 85 db 74 6a 41 8b b5 f8 00 00 00 0f
+[  155.036918] RSP: 0018:ffffb09b00493e08 EFLAGS: 00010202
+[  155.036922] RAX: 0000000000000001 RBX: 0000000000000008 RCX: 0000000000000008
+[  155.036924] RDX: 0000000000000001 RSI: 0000000000000002 RDI: ffff9781b67cd870
+[  155.036926] RBP: 0000000000000002 R08: 0000000000000000 R09: 61c8864680b583eb
+[  155.036929] R10: ffffb09b00493e48 R11: ffffffffff7ce7d4 R12: ffff9781b7ee8d78
+[  155.036932] R13: ffff9781b67cd800 R14: 0000000000000004 R15: ffff9781b67cd870
+[  155.036936] FS:  00007fd813250b88(0000) GS:ffff9781ba000000(0000) knlGS:0000000000000000
+[  155.036939] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  155.036942] CR2: 00007fd812ff61d6 CR3: 000000007c882000 CR4: 00000000000006b0
+[  155.036951] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[  155.036953] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+[  155.036955] Call Trace:
+[  155.037004]  dquot_quota_enable+0x8b/0xd0
+[  155.037011]  kernel_quotactl+0x628/0x74e
+[  155.037027]  ? do_mprotect_pkey+0x2a6/0x2cd
+[  155.037034]  __x64_sys_quotactl+0x1a/0x1d
+[  155.037041]  do_syscall_64+0x55/0xe4
+[  155.037078]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+[  155.037105] RIP: 0033:0x7fd812fe1198
+[  155.037109] Code: 02 77 0d 48 89 c1 48 c1 e9 3f 75 04 48 8b 04 24 48 83 c4 50 5b c3 48 83 ec 08 49 89 ca 48 63 d2 48 63 ff b8 b3 00 00 00 0f 05 <48> 89 c7 e8 c1 eb ff ff 5a c3 48 63 ff b8 bb 00 00 00 0f 05 48 89
+[  155.037112] RSP: 002b:00007ffe8cd7b050 EFLAGS: 00000206 ORIG_RAX: 00000000000000b3
+[  155.037116] RAX: ffffffffffffffda RBX: 00007ffe8cd7b148 RCX: 00007fd812fe1198
+[  155.037119] RDX: 0000000000000000 RSI: 00007ffe8cd7cea9 RDI: 0000000000580102
+[  155.037121] RBP: 00007ffe8cd7b0f0 R08: 000055fc8eba8a9d R09: 0000000000000000
+[  155.037124] R10: 00007ffe8cd7b074 R11: 0000000000000206 R12: 00007ffe8cd7b168
+[  155.037126] R13: 000055fc8eba8897 R14: 0000000000000000 R15: 0000000000000000
+[  155.037131] ---[ end trace 210f864257175c51 ]---
+
+and then the syscall proceeds without s_umount locking.
+
+This patch locks the superblock ->s_umount sem. in exclusive mode for all Q_XQUOTAON/OFF
+quotactls too in addition to Q_QUOTAON/OFF.
+
+AFAICT, other than ext4, only xfs and ocfs2 are affected by this change.
+The VFS will now call in xfs_quota_* functions with s_umount held, which wasn't the case
+before. This looks good to me but I can not say for sure. Ext4 and ocfs2 where already
+beeing called with s_umount exclusive via quota_quotaon/off which is basically the same.
+
+Signed-off-by: Javier Barrio <javier.barrio.mart@gmail.com>
+Signed-off-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clocksource/timer-integrator-ap.c | 25 +++++++++++++++--------
- 1 file changed, 16 insertions(+), 9 deletions(-)
+ fs/quota/quota.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clocksource/timer-integrator-ap.c b/drivers/clocksource/timer-integrator-ap.c
-index 62d24690ba02..9701107806a7 100644
---- a/drivers/clocksource/timer-integrator-ap.c
-+++ b/drivers/clocksource/timer-integrator-ap.c
-@@ -181,8 +181,7 @@ static int __init integrator_ap_timer_init_of(struct device_node *node)
- 	int irq;
- 	struct clk *clk;
- 	unsigned long rate;
--	struct device_node *pri_node;
--	struct device_node *sec_node;
-+	struct device_node *alias_node;
+diff --git a/fs/quota/quota.c b/fs/quota/quota.c
+index f0cbf58ad4da..fd5dd806f1b9 100644
+--- a/fs/quota/quota.c
++++ b/fs/quota/quota.c
+@@ -791,7 +791,8 @@ static int quotactl_cmd_write(int cmd)
+ /* Return true if quotactl command is manipulating quota on/off state */
+ static bool quotactl_cmd_onoff(int cmd)
+ {
+-	return (cmd == Q_QUOTAON) || (cmd == Q_QUOTAOFF);
++	return (cmd == Q_QUOTAON) || (cmd == Q_QUOTAOFF) ||
++		 (cmd == Q_XQUOTAON) || (cmd == Q_XQUOTAOFF);
+ }
  
- 	base = of_io_request_and_map(node, 0, "integrator-timer");
- 	if (IS_ERR(base))
-@@ -204,7 +203,18 @@ static int __init integrator_ap_timer_init_of(struct device_node *node)
- 		return err;
- 	}
- 
--	pri_node = of_find_node_by_path(path);
-+	alias_node = of_find_node_by_path(path);
-+
-+	/*
-+	 * The pointer is used as an identifier not as a pointer, we
-+	 * can drop the refcount on the of__node immediately after
-+	 * getting it.
-+	 */
-+	of_node_put(alias_node);
-+
-+	if (node == alias_node)
-+		/* The primary timer lacks IRQ, use as clocksource */
-+		return integrator_clocksource_init(rate, base);
- 
- 	err = of_property_read_string(of_aliases,
- 				"arm,timer-secondary", &path);
-@@ -213,14 +223,11 @@ static int __init integrator_ap_timer_init_of(struct device_node *node)
- 		return err;
- 	}
- 
-+	alias_node = of_find_node_by_path(path);
- 
--	sec_node = of_find_node_by_path(path);
--
--	if (node == pri_node)
--		/* The primary timer lacks IRQ, use as clocksource */
--		return integrator_clocksource_init(rate, base);
-+	of_node_put(alias_node);
- 
--	if (node == sec_node) {
-+	if (node == alias_node) {
- 		/* The secondary timer will drive the clock event */
- 		irq = irq_of_parse_and_map(node, 0);
- 		return integrator_clockevent_init(rate, base, irq);
+ /*
 -- 
 2.19.1
 
