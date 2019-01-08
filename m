@@ -2,117 +2,123 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB9A6C43444
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 09:12:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA86DC43444
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 09:13:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C5F5D2089F
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 09:12:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C52442089F
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 09:13:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728084AbfAHJMW (ORCPT
+        id S1728130AbfAHJNQ convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 04:12:22 -0500
-Received: from outbound-smtp08.blacknight.com ([46.22.139.13]:54127 "EHLO
-        outbound-smtp08.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727107AbfAHJMV (ORCPT
+        Tue, 8 Jan 2019 04:13:16 -0500
+Received: from [38.106.11.25] ([38.106.11.25]:47960 "EHLO
+        barracuda02.hxt-semitech.com" rhost-flags-FAIL-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727592AbfAHJNP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 04:12:21 -0500
-Received: from mail.blacknight.com (pemlinmail01.blacknight.ie [81.17.254.10])
-        by outbound-smtp08.blacknight.com (Postfix) with ESMTPS id 69F1B1C2263
-        for <linux-kernel@vger.kernel.org>; Tue,  8 Jan 2019 09:12:19 +0000 (GMT)
-Received: (qmail 26721 invoked from network); 8 Jan 2019 09:12:19 -0000
-Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[37.228.229.96])
-  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 8 Jan 2019 09:12:19 -0000
-Date:   Tue, 8 Jan 2019 09:12:17 +0000
-From:   Mel Gorman <mgorman@techsingularity.net>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Linux-MM <linux-mm@kvack.org>,
-        David Rientjes <rientjes@google.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Vlastimil Babka <vbabka@suse.cz>, ying.huang@intel.com,
-        kirill@shutemov.name,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 00/25] Increase success rates and reduce latency of
- compaction v2
-Message-ID: <20190108091217.GL31517@techsingularity.net>
-References: <20190104125011.16071-1-mgorman@techsingularity.net>
- <20190107154354.b0805ca15767fc7ea9e37545@linux-foundation.org>
+        Tue, 8 Jan 2019 04:13:15 -0500
+X-ASG-Debug-ID: 1546938791-107606139f152b80001-xx1T2L
+Received: from HXTBJIDCEMVIW01.hxtcorp.net ([10.128.0.14]) by barracuda02.hxt-semitech.com with ESMTP id mdPmz4DGalF0DetK (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NO); Tue, 08 Jan 2019 17:13:11 +0800 (CST)
+X-Barracuda-Envelope-From: xiaoting.liu@hxt-semitech.com
+Received: from HXTBJIDCEMVIW02.hxtcorp.net (10.128.0.15) by
+ HXTBJIDCEMVIW01.hxtcorp.net (10.128.0.14) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Tue, 8 Jan 2019 17:13:05 +0800
+Received: from HXTBJIDCEMVIW02.hxtcorp.net ([fe80::3e:f4ff:7927:a6f6]) by
+ HXTBJIDCEMVIW02.hxtcorp.net ([fe80::3e:f4ff:7927:a6f6%12]) with mapi id
+ 15.00.1395.000; Tue, 8 Jan 2019 17:13:05 +0800
+From:   "Liu, Xiaoting" <xiaoting.liu@hxt-semitech.com>
+To:     Guenter Roeck <linux@roeck-us.net>,
+        "jdelvare@suse.com" <jdelvare@suse.com>
+CC:     "openbmc@lists.ozlabs.org" <openbmc@lists.ozlabs.org>,
+        "linux-hwmon@vger.kernel.org" <linux-hwmon@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Yang, Shunyong" <shunyong.yang@hxt-semitech.com>,
+        "Wang, Dongsheng" <dongsheng.wang@hxt-semitech.com>
+Subject: Re: [PATCH v2 4/4] hwmon: (pmbus) add support for DPS-650AB
+Thread-Topic: [PATCH v2 4/4] hwmon: (pmbus) add support for DPS-650AB
+X-ASG-Orig-Subj: Re: [PATCH v2 4/4] hwmon: (pmbus) add support for DPS-650AB
+Thread-Index: AQHUpnWQvB84NJ6vhUqklmqeqreTrQ==
+Date:   Tue, 8 Jan 2019 09:13:04 +0000
+Message-ID: <a05be53a7110480990bc3b2cf1d31dae@HXTBJIDCEMVIW02.hxtcorp.net>
+References: <cover.1546851856.git.xiaoting.liu@hxt-semitech.com>
+ <2e94eb44c0acf6b90c1d9bbffd1c5c5cc2af59be.1546851856.git.xiaoting.liu@hxt-semitech.com>
+ <af54e702-d384-4af8-0cbc-008a1e927b67@roeck-us.net>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.64.1.98]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Disposition: inline
-In-Reply-To: <20190107154354.b0805ca15767fc7ea9e37545@linux-foundation.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Barracuda-Connect: UNKNOWN[10.128.0.14]
+X-Barracuda-Start-Time: 1546938791
+X-Barracuda-Encrypted: ECDHE-RSA-AES256-SHA384
+X-Barracuda-URL: https://192.168.50.102:443/cgi-mod/mark.cgi
+X-Barracuda-Scan-Msg-Size: 1392
+X-Virus-Scanned: by bsmtpd at hxt-semitech.com
+X-Barracuda-BRTS-Status: 1
+X-Barracuda-Bayes: INNOCENT GLOBAL 0.4928 1.0000 0.0000
+X-Barracuda-Spam-Score: 0.00
+X-Barracuda-Spam-Status: No, SCORE=0.00 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=
+X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.65315
+        Rule breakdown below
+         pts rule name              description
+        ---- ---------------------- --------------------------------------------------
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 07, 2019 at 03:43:54PM -0800, Andrew Morton wrote:
-> On Fri,  4 Jan 2019 12:49:46 +0000 Mel Gorman <mgorman@techsingularity.net> wrote:
-> 
-> > This series reduces scan rates and success rates of compaction, primarily
-> > by using the free lists to shorten scans, better controlling of skip
-> > information and whether multiple scanners can target the same block and
-> > capturing pageblocks before being stolen by parallel requests. The series
-> > is based on the 4.21/5.0 merge window after Andrew's tree had been merged.
-> > It's known to rebase cleanly.
-> > 
-> > ...
-> >
-> >  include/linux/compaction.h |    3 +-
-> >  include/linux/gfp.h        |    7 +-
-> >  include/linux/mmzone.h     |    2 +
-> >  include/linux/sched.h      |    4 +
-> >  kernel/sched/core.c        |    3 +
-> >  mm/compaction.c            | 1031 ++++++++++++++++++++++++++++++++++----------
-> >  mm/internal.h              |   23 +-
-> >  mm/migrate.c               |    2 +-
-> >  mm/page_alloc.c            |   70 ++-
-> >  9 files changed, 908 insertions(+), 237 deletions(-)
-> 
-> Boy that's a lot of material. 
+Hi Guenter Roeck,
 
-It's unfortunate I know. It just turned out that there is a lot that had
-to change to make the most important patches in the series work without
-obvious side-effects.
+Thanks for your reply.
 
-> I just tossed it in there unread for
-> now.  Do you have any suggestions as to how we can move ahead with
-> getting this appropriately reviewed and tested?
-> 
+On 2019/1/7 22:04, Guenter Roeck wrote:
+> On 1/7/19 3:06 AM, Xiaoting Liu wrote:
+>> Provide support for PSU DPS-650AB from Delta Electronics, INC.
+>>
+> Where is patch 3/4 ?
 
-The main workloads that should see a difference are those that use
-MADV_HUGEPAGE or change /sys/kernel/mm/transparent_hugepage/defrag. I'm
-expecting MADV_HUGEPAGE is more common in practice. By default, there
-should be little change as direct compaction is not used heavily for THP.
-Although SLUB workloads might see a difference given a long enough uptime,
-it will be relatively difficult to detect.
+Sorry for forgetting to send patch 3/4 to you, please refer to the
+following link,
 
-As this was partially motivated by the __GFP_THISNODE discussion, I
-would like to hear from David if this series makes an impact, if any,
-when starting Google workloads on a fragmented system.
+https://lore.kernel.org/patchwork/patch/1029475/
 
-Similarly, I would be interested in hearing if Andrea's KVM startup times
-see any benefit. I'm expecting less here as I expect that workload is
-still bound by reclaim thrashing the local node in reclaim. Still, a
-confirmation would be nice and if there is any benefit then it's a plus
-even if the workload gets reclaimed excessively.
+Thanks,
 
-Local tests didn't show up anything interesting *other* than what is
-already in the changelogs as those workloads are specifically targetting
-those paths. Intel LKP has not reported any regressions (functional or
-performance) despite being on git.kernel.org for a few weeks. However,
-as they are using default configurations, this is not much of a surprise.
+Xiaoting
 
-Review is harder. Vlastimil would normally be the best fit as he has
-worked on compaction but for him or for anyone else, I'm expecting they're
-dealing with a backlog after the holidays.  I know I still have to get
-to Vlastimil's recent series on THP allocations so I'm guilty of the same
-crime with respect to review.
+>> Signed-off-by: Xiaoting Liu <xiaoting.liu@hxt-semitech.com>
+>> ---
+>> v2:
+>>    Change the patch subject and commit message.
+>>    Drop dps650ab.c file.
+>>    Replace struct name dps650ab_pmbus_info with pmbus_info_one_skip.
+>> ---
+>>   drivers/hwmon/pmbus/pmbus.c | 1 +
+>>   1 file changed, 1 insertion(+)
+>>
+>> diff --git a/drivers/hwmon/pmbus/pmbus.c b/drivers/hwmon/pmbus/pmbus.c
+>> index e38dd97cc49a..f6b35f858db8 100644
+>> --- a/drivers/hwmon/pmbus/pmbus.c
+>> +++ b/drivers/hwmon/pmbus/pmbus.c
+>> @@ -213,6 +213,7 @@ static int pmbus_probe(struct i2c_client *client,
+>>          {"bmr453", (kernel_ulong_t)&pmbus_info_one},
+>>          {"bmr454", (kernel_ulong_t)&pmbus_info_one},
+>>          {"dps460", (kernel_ulong_t)&pmbus_info_one_skip},
+>> +       {"dps650ab", (kernel_ulong_t)&pmbus_info_one_skip},
+>>          {"dps800", (kernel_ulong_t)&pmbus_info_one_skip},
+>>          {"mdt040", (kernel_ulong_t)&pmbus_info_one},
+>>          {"ncp4200", (kernel_ulong_t)&pmbus_info_one},
+>> --
+>> 1.8.3.1
+>>
+>>
+>>
+>
 
--- 
-Mel Gorman
-SUSE Labs
