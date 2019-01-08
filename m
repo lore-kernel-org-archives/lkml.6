@@ -7,45 +7,42 @@ X-Spam-Status: No, score=-12.0 required=3.0
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56715C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 15:37:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D5ACC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 15:37:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2EDD020883
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 15:37:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 55AA421019
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 15:37:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728573AbfAHPhW (ORCPT
+        id S1728631AbfAHPhi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 10:37:22 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:50679 "EHLO
+        Tue, 8 Jan 2019 10:37:38 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:47779 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727906AbfAHPhV (ORCPT
+        with ESMTP id S1727906AbfAHPhh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 10:37:21 -0500
+        Tue, 8 Jan 2019 10:37:37 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x08Favwm3566078
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x08FbVlC3566118
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 8 Jan 2019 07:36:57 -0800
+        Tue, 8 Jan 2019 07:37:31 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x08Favqd3566075;
-        Tue, 8 Jan 2019 07:36:57 -0800
-Date:   Tue, 8 Jan 2019 07:36:57 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x08FbV9T3566115;
+        Tue, 8 Jan 2019 07:37:31 -0800
+Date:   Tue, 8 Jan 2019 07:37:31 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Jin Yao <tipbot@zytor.com>
-Message-ID: <tip-8a99255a50c0b4c2a449b96fd8d45fcc8d72c701@git.kernel.org>
-Cc:     peterz@infradead.org, mingo@kernel.org,
-        alexander.shishkin@linux.intel.com, tglx@linutronix.de,
-        acme@redhat.com, jolsa@kernel.org, yao.jin@linux.intel.com,
-        linux-kernel@vger.kernel.org, hpa@zytor.com,
-        kan.liang@linux.intel.com, ak@linux.intel.com
-Reply-To: peterz@infradead.org, alexander.shishkin@linux.intel.com,
-          tglx@linutronix.de, mingo@kernel.org, yao.jin@linux.intel.com,
-          acme@redhat.com, jolsa@kernel.org, linux-kernel@vger.kernel.org,
-          kan.liang@linux.intel.com, ak@linux.intel.com, hpa@zytor.com
-In-Reply-To: <1546501245-4512-1-git-send-email-yao.jin@linux.intel.com>
-References: <1546501245-4512-1-git-send-email-yao.jin@linux.intel.com>
+From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
+Message-ID: <tip-vvge5xh6ii12oszexqknbgwp@git.kernel.org>
+Cc:     adrian.hunter@intel.com, acme@redhat.com,
+        linux-kernel@vger.kernel.org, mingo@kernel.org, jolsa@kernel.org,
+        tglx@linutronix.de, namhyung@kernel.org, hpa@zytor.com,
+        luto@kernel.org
+Reply-To: adrian.hunter@intel.com, acme@redhat.com, mingo@kernel.org,
+          linux-kernel@vger.kernel.org, jolsa@kernel.org,
+          tglx@linutronix.de, namhyung@kernel.org, hpa@zytor.com,
+          luto@kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf stat: Fix endless wait for child process
-Git-Commit-ID: 8a99255a50c0b4c2a449b96fd8d45fcc8d72c701
+Subject: [tip:perf/urgent] tools headers x86: Sync disabled-features.h
+Git-Commit-ID: 94f45df8aaa35471ab3fc802c2cf1b75c8107500
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -59,93 +56,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  8a99255a50c0b4c2a449b96fd8d45fcc8d72c701
-Gitweb:     https://git.kernel.org/tip/8a99255a50c0b4c2a449b96fd8d45fcc8d72c701
-Author:     Jin Yao <yao.jin@linux.intel.com>
-AuthorDate: Thu, 3 Jan 2019 15:40:45 +0800
+Commit-ID:  94f45df8aaa35471ab3fc802c2cf1b75c8107500
+Gitweb:     https://git.kernel.org/tip/94f45df8aaa35471ab3fc802c2cf1b75c8107500
+Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
+AuthorDate: Thu, 3 Jan 2019 13:53:59 -0300
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Thu, 3 Jan 2019 12:12:18 -0300
+CommitDate: Thu, 3 Jan 2019 13:53:59 -0300
 
-perf stat: Fix endless wait for child process
+tools headers x86: Sync disabled-features.h
 
-We hit a 'perf stat' issue by using following script:
+To silence the following tools/perf build warning:
 
-  #!/bin/bash
+  Warning: Kernel ABI header at 'tools/arch/x86/include/asm/disabled-features.h' differs from latest version at 'arch/x86/include/asm/disabled-features.h'
+  diff -u tools/arch/x86/include/asm/disabled-features.h arch/x86/include/asm/disabled-features.h
 
-  sleep 1000 &
-  exec perf stat -a -e cycles -I1000 -- sleep 5
+Picking up the changes in dae0a1059300 ("x86/cpufeatures, x86/fault:
+Mark SMAP as disabled when configured out") that didn't entail any
+functionality change in the tooling side.
 
-Since "perf stat" is launched by exec, the "sleep 1000" would be the
-child process of "perf stat". The wait4() call will not return because
-it's waiting for the child process "sleep 1000" to end. So 'perf stat'
-doesn't return even after 5s passes.
-
-This patch lets 'perf stat' return when the specified child process ends
-(in this case, the specified child process is "sleep 5").
-
-Committer testing:
-
-  # cat test.sh
-  #!/bin/bash
-
-  sleep 10 &
-  exec perf stat -a -e cycles -I1000 -- sleep 5
-  #
-
-Before:
-
-  # time ./test.sh
-  #           time             counts unit events
-       1.001113090        108,453,351      cycles
-       2.002062196        142,075,435      cycles
-       3.002896194        164,801,068      cycles
-       4.003731666        107,062,140      cycles
-       5.002068867        112,241,832      cycles
-
-  real	0m10.066s
-  user	0m0.016s
-  sys	0m0.101s
-  #
-
-After:
-
-  # time ./test.sh
-  #           time             counts unit events
-       1.001016096         91,412,027      cycles
-       2.002014963        124,063,708      cycles
-       3.002883964        125,993,929      cycles
-       4.003706470        120,465,734      cycles
-       5.002006778        163,560,355      cycles
-
-  real	0m5.123s
-  user	0m0.014s
-  sys	0m0.105s
-  #
-
-Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
-Reviewed-by: Jiri Olsa <jolsa@kernel.org>
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Kan Liang <kan.liang@linux.intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/1546501245-4512-1-git-send-email-yao.jin@linux.intel.com
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Link: https://lkml.kernel.org/n/tip-vvge5xh6ii12oszexqknbgwp@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/builtin-stat.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ tools/arch/x86/include/asm/disabled-features.h | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
-index 1410d66192f7..63a3afc7f32b 100644
---- a/tools/perf/builtin-stat.c
-+++ b/tools/perf/builtin-stat.c
-@@ -561,7 +561,8 @@ try_again:
- 					break;
- 			}
- 		}
--		wait4(child_pid, &status, 0, &stat_config.ru_data);
-+		if (child_pid != -1)
-+			wait4(child_pid, &status, 0, &stat_config.ru_data);
+diff --git a/tools/arch/x86/include/asm/disabled-features.h b/tools/arch/x86/include/asm/disabled-features.h
+index 33833d1909af..a5ea841cc6d2 100644
+--- a/tools/arch/x86/include/asm/disabled-features.h
++++ b/tools/arch/x86/include/asm/disabled-features.h
+@@ -16,6 +16,12 @@
+ # define DISABLE_MPX	(1<<(X86_FEATURE_MPX & 31))
+ #endif
  
- 		if (workload_exec_errno) {
- 			const char *emsg = str_error_r(workload_exec_errno, msg, sizeof(msg));
++#ifdef CONFIG_X86_SMAP
++# define DISABLE_SMAP	0
++#else
++# define DISABLE_SMAP	(1<<(X86_FEATURE_SMAP & 31))
++#endif
++
+ #ifdef CONFIG_X86_INTEL_UMIP
+ # define DISABLE_UMIP	0
+ #else
+@@ -68,7 +74,7 @@
+ #define DISABLED_MASK6	0
+ #define DISABLED_MASK7	(DISABLE_PTI)
+ #define DISABLED_MASK8	0
+-#define DISABLED_MASK9	(DISABLE_MPX)
++#define DISABLED_MASK9	(DISABLE_MPX|DISABLE_SMAP)
+ #define DISABLED_MASK10	0
+ #define DISABLED_MASK11	0
+ #define DISABLED_MASK12	0
