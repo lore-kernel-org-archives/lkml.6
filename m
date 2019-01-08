@@ -2,119 +2,107 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77E34C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 15:33:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF1F5C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 15:33:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F8C920883
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 15:33:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="nfYLxhyg"
+	by mail.kernel.org (Postfix) with ESMTP id AEAE521019
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 15:33:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1546961610;
+	bh=xAoDdHr/2WsnlX+3YCEtl8ZnDkOpUboaCAyqQXgf+Uc=;
+	h=Date:From:To:Subject:References:In-Reply-To:List-ID:From;
+	b=lCFR8biooOWkMi6ppMnlMPf7CBZ1jKn/7e4YXytxqQo8ANLzqsEyx3MlQ9VrlFLb3
+	 I1E6T6k8yQUO/o/j7MrsS81CUprN7wA8CgYXufkBOdCDMuXluEll0a1cc2IFZZcv7V
+	 qio8fL+IpNYKXyb8wmS1JajMbOds5QVCXgI4DrOc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728348AbfAHPdR (ORCPT
+        id S1728638AbfAHPda (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 10:33:17 -0500
-Received: from conssluserg-02.nifty.com ([210.131.2.81]:50648 "EHLO
-        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727906AbfAHPdQ (ORCPT
+        Tue, 8 Jan 2019 10:33:30 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:53964 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728604AbfAHPd3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 10:33:16 -0500
-Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com [209.85.217.48]) (authenticated)
-        by conssluserg-02.nifty.com with ESMTP id x08FX5Wm020694;
-        Wed, 9 Jan 2019 00:33:05 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com x08FX5Wm020694
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1546961586;
-        bh=LQPAha78p1HdGEOw/+HOSVmjiCEBVHG9OH8+5nRjDXM=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=nfYLxhygb44lhetpxe6J0JzMmmwr41+VdNBBM5vEJ3/FuUDHsxhdzlKNhjEFVmBLX
-         /zbCfbPeruPPLAq9SJMLh8VK3J3uKfKQSNAW2x/PyQYj6rLtwcgR97QOOrtRsiZtuo
-         AyWYcw6YlX8sqSIm36EkqIJUgth7BNL9lrFPVyZp1Saw5dl67ObIyPOYAatJoKWuzj
-         jHUkeBlp9YUduVcQkbAJFKvANUrLhHuqekBQa0o1WFy4jv8fIVcDHF/hevu7Tn32Jt
-         xGFJcFRNq0dkGixKw41lR1mdtP4JrddmCxklqy1diO8bU2GfXHoga3v5l5zH7cZ9yc
-         bHBdQH7vexjRw==
-X-Nifty-SrcIP: [209.85.217.48]
-Received: by mail-vs1-f48.google.com with SMTP id x1so2686551vsc.10;
-        Tue, 08 Jan 2019 07:33:05 -0800 (PST)
-X-Gm-Message-State: AJcUukfMoSrRh/PYGaM/JcSF2o2xrXPwR/QVWEtJi/rfB4jabXYv+vqi
-        bUiQWXZzlNN9E0sw72+HqBAyoO2Nr0IbhHYmS/c=
-X-Google-Smtp-Source: ALg8bN4zwJf60tEd8jwfN7+Nb1jFcxO+xLEgXSz53PG8ujjktkHKI+pGN4SaRdDw6eAdTUUVDLjnKur14xYyNJ5b8Q8=
-X-Received: by 2002:a67:a858:: with SMTP id r85mr862339vse.215.1546961584270;
- Tue, 08 Jan 2019 07:33:04 -0800 (PST)
+        Tue, 8 Jan 2019 10:33:29 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:To:From:Date:Sender:Reply-To:Cc:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=ru5TQwtYVLIwXFT7sJTk9YSTYwYOzo6v/mLEKPfBYuw=; b=t0Le/RMLkVK3CUn7lygPmT+GB
+        RmNmxAzHJvRqpyHxPiRlr4kptheR6Jf9B8uEb47YzQwQWxTgE5U3qLedg9E6AkS70D/5tmip0VUWs
+        BMFZOQ2V2xzf1G0YHjX40xU9D/8wrV31wJ54u3BFr7X6giwBIdJpgTRqk3ySkHFGpnqRs=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1ggtNR-0003Gh-4E; Tue, 08 Jan 2019 15:33:13 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 8830A112778C; Tue,  8 Jan 2019 15:33:12 +0000 (GMT)
+Date:   Tue, 8 Jan 2019 15:33:12 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Matthias Reichl <hias@horus.com>,
+        Jon Hunter <jonathanh@nvidia.com>, alsa-devel@alsa-project.org,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Takashi Iwai <tiwai@suse.com>, linux-kernel@vger.kernel.org,
+        Marcel Ziswiler <marcel@ziswiler.com>,
+        linux-tegra@vger.kernel.org
+Subject: Re: [alsa-devel] [PATCH v1 3/3] ASoC: soc-core: fix platform name
+ vs. of_node assignement
+Message-ID: <20190108153312.GE6590@sirena.org.uk>
+References: <20181018111829.27056-1-marcel@ziswiler.com>
+ <20181018111829.27056-4-marcel@ziswiler.com>
+ <e25a7463-9ce0-d7f9-e77b-2bbaab2e0b25@nvidia.com>
+ <20181021112301.GC8554@sirena.org.uk>
+ <20181218174040.k7u26vnnoplllnwb@camel2.lan>
 MIME-Version: 1.0
-References: <1546904307-11124-1-git-send-email-yamada.masahiro@socionext.com> <20190108111032.GP3235@lianli.shorne-pla.net>
-In-Reply-To: <20190108111032.GP3235@lianli.shorne-pla.net>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Wed, 9 Jan 2019 00:32:28 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAS+grgqHM-ht0CCTmZHp+JRvr=Q+sJOo0URqRgTAYRs0w@mail.gmail.com>
-Message-ID: <CAK7LNAS+grgqHM-ht0CCTmZHp+JRvr=Q+sJOo0URqRgTAYRs0w@mail.gmail.com>
-Subject: Re: [PATCH] arch: unexport asm/shmparam.h for all architectures
-To:     Stafford Horne <shorne@gmail.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Michal Simek <monstr@monstr.eu>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Richard Kuo <rkuo@codeaurora.org>,
-        linux-hexagon@vger.kernel.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Guan Xuetao <gxt@pku.edu.cn>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Aurelien Jacquiot <jacquiot.aurelien@gmail.com>,
-        linux-riscv@lists.infradead.org, Greentime Hu <green.hu@gmail.com>,
-        linux-c6x-dev@linux-c6x.org, Guo Ren <guoren@kernel.org>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        "moderated list:H8/300 ARCHITECTURE" 
-        <uclinux-h8-devel@lists.sourceforge.jp>,
-        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>,
-        openrisc@lists.librecores.org, Mark Salter <msalter@redhat.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Jonas Bonn <jonas@southpole.se>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Vincent Chen <deanbo422@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="Ns7jmDPpOpCD+GE/"
+Content-Disposition: inline
+In-Reply-To: <20181218174040.k7u26vnnoplllnwb@camel2.lan>
+X-Cookie: You look tired.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Stafford,
 
+--Ns7jmDPpOpCD+GE/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
+On Tue, Dec 18, 2018 at 06:40:40PM +0100, Matthias Reichl wrote:
+> On Sun, Oct 21, 2018 at 12:23:01PM +0100, Mark Brown wrote:
+> > On Fri, Oct 19, 2018 at 11:22:46AM +0100, Jon Hunter wrote:
 
-On Tue, Jan 8, 2019 at 8:12 PM Stafford Horne <shorne@gmail.com> wrote:
->
-> What is this patch based on?  I tried to apply it to 5.0-rc1 and am having an
-> issue with applying the arch/openrisc/include/uapi/asm/Kbuild part.
+> > Indeed, this is a bit of a mess.  We probably shouldn't be modifying the
+> > data that the drivers passed in, otherwise we get into trouble like
+> > this.   That suggests that we should copy the data, probably all of it.
+> > I will try to have a proper look at this next week.
 
+> did you find the time to look into this?
 
-Based on Linus' latest tree.
-(commit 3bd6e94be)
+No, the end of the year turned out to be really busy unfortunately.
 
-v5.0-rc1 is NOT the latest.
+--Ns7jmDPpOpCD+GE/
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
 
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlw0wrcACgkQJNaLcl1U
+h9B/2Qf+KYOyXhgkAUL6esq2OqmG/7tg94X4kIe8O7y9KJ0okLelfakouR0JGiuY
+CKBUVkzfHLzKtX0qdTayVq9LfVqiISnO1jtkcjYmoxnOvKuINo/KtfNHmpJb0ZYb
+sKP2rNx6++b7EsEBtaB1RmKk0IpjkJBsTYU0aSFpFPwbW7e9usRBmHxXGup0CKm2
+XKoicn805BXwRzKtREilYua/5hHNiUGvrPo4jSRhiNUn13C40IrQELv5kj8txEO5
+ZgnL4P0QNFc5MheXtbGhFB1x/5g9iCYxM4v6udIP5XRV/nFCX2qX3AjdAEaplOJf
+M1mSFzv76wn5VwPKnULRpOPggVNH7A==
+=SDSH
+-----END PGP SIGNATURE-----
 
-> It seems shmparam.h is not there. It was removed with the others in your
-> ("d6e4b3e326d8") arch: remove redundant UAPI generic-y defines, commit a few
-> days ago.
->
-> Note, I can't compile 5.0-rc1 without the first part of this patch.  So please
-> get it merged asap :)
-
-
-I notice the breakage of several arches after v5.0-rc1 release,
-so I asked Linus to pick up 3d6e94be.
-
-I had already noticed
-having shmparam.h in uapi is werid,
-but I decided to fix the build errors first.
-
-
--- 
-Best Regards
-Masahiro Yamada
+--Ns7jmDPpOpCD+GE/--
