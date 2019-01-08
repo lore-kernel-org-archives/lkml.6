@@ -2,108 +2,240 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 551FCC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 09:59:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F074C43612
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 10:00:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 195132087E
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 09:59:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="tDp1riQy"
+	by mail.kernel.org (Postfix) with ESMTP id 4DA712087E
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 10:00:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728383AbfAHJ7N (ORCPT
+        id S1728448AbfAHKA0 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 04:59:13 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:45256 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727001AbfAHJ7N (ORCPT
+        Tue, 8 Jan 2019 05:00:26 -0500
+Received: from kozue.soulik.info ([108.61.200.231]:41322 "EHLO
+        kozue.soulik.info" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727001AbfAHKA0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 04:59:13 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x089wwg0171836;
-        Tue, 8 Jan 2019 09:59:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=dQ8UlmPGnMrKWkrB3A66sb4x9LUYtblrI7itGz1to4U=;
- b=tDp1riQyDFb408igILo1MK72ybNg2SL2N0fPBDvtX8M40uIVt+REvJeDGq3tILGDwWTO
- nnm3D3Dxa5YOa0+v4tgndNWGRmqdF0zLd1somGY2qkw2h80D/kH++m4sCDMfCrLZLBbJ
- 5hotLoH33s7jIwHQu0dsPn9kwi7RZkDPRLT8CdiiaFB8RHA2buDDaBm9jOOiKGer4ocR
- eZMSpwR0MW6wxAr6phBL1OD8SHrQ5itnSnrscnTQycQbmZgUUMPj/t1tJJ4Wxk4Qi50q
- bo3oZME4GRzXbdfcqrkwX5BrojlS7/8U/FHaFoHEoZWGiadCnH+84n2xYIc07gOQIAvn XQ== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by userp2120.oracle.com with ESMTP id 2ptn7qteuu-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 08 Jan 2019 09:59:06 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x089x4Or032437
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 8 Jan 2019 09:59:05 GMT
-Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x089x1oB009404;
-        Tue, 8 Jan 2019 09:59:02 GMT
-Received: from kadam (/197.157.0.45)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 08 Jan 2019 01:59:01 -0800
-Date:   Tue, 8 Jan 2019 12:57:38 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Aditya Pakki <pakki001@umn.edu>
-Cc:     Arushi Singhal <arushisinghal19971997@gmail.com>,
-        devel@driverdev.osuosl.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org,
-        Mamta Shukla <mamtashukla555@gmail.com>,
-        Quytelda Kahja <quytelda@tamalin.org>,
-        Wen Yang <wen.yang99@zte.com.cn>
-Subject: Re: [PATCH] [v3] staging: rtl8723bs: Clean up dead code
-Message-ID: <20190108095738.GH3200@kadam>
-References: <20190107232054.4742-1-pakki001@umn.edu>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190107232054.4742-1-pakki001@umn.edu>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9129 signatures=668680
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1901080082
+        Tue, 8 Jan 2019 05:00:26 -0500
+Received: from [192.168.10.231] (unknown [103.29.142.67])
+        by kozue.soulik.info (Postfix) with ESMTPSA id 58647100F71;
+        Tue,  8 Jan 2019 19:01:07 +0900 (JST)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (1.0)
+Subject: Re: [linux-sunxi] [PATCH v2 1/2] media: v4l: Add definitions for the HEVC slice format and controls
+From:   Ayaka <ayaka@soulik.info>
+X-Mailer: iPad Mail (16A404)
+In-Reply-To: <f982ef378a8ade075bc7077b93640e20ecebf9f4.camel@bootlin.com>
+Date:   Tue, 8 Jan 2019 18:00:21 +0800
+Cc:     Randy Li <randy.li@rock-chips.com>,
+        =?utf-8?Q?Jernej_=C5=A0krabec?= <jernej.skrabec@gmail.com>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devel@driverdev.osuosl.org, linux-arm-kernel@lists.infradead.org,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Ezequiel Garcia <ezequiel@collabora.com>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        linux-rockchip@lists.infradead.org
+Content-Transfer-Encoding: 8BIT
+Message-Id: <82FA0C3F-BC54-4D89-AECB-90D81B89B1CE@soulik.info>
+References: <20181123130209.11696-1-paul.kocialkowski@bootlin.com> <20181123130209.11696-2-paul.kocialkowski@bootlin.com> <5515174.7lFZcYkk85@jernej-laptop> <ffe9c81db34b599f675ca5bbf02de360bf0a1608.camel@bootlin.com> <776e63c9-d4a5-342a-e0f7-200ef144ffc4@rock-chips.com> <64c793e08d61181b78125b3956ec38623fa5d261.camel@bootlin.com> <D8005130-F7FD-4CBD-8396-1BB08BB08E81@soulik.info> <f982ef378a8ade075bc7077b93640e20ecebf9f4.camel@bootlin.com>
+To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Your subject does work for `git am` but the more normal way to format
-it is:
 
-	[PATCH v4] staging: rtl8723bs: Clean up dead code
 
-On Mon, Jan 07, 2019 at 05:20:52PM -0600, Aditya Pakki wrote:
-> rtw_wps_start() is part of dead code due to CONFIG_INTEL_WIDI.
-> The fix removes the deadcode and replaces the function with NULL
-> in rtw_private_handler. Identified as part of copy_from_user bug.
+Sent from my iPad
+
+> On Jan 8, 2019, at 4:38 PM, Paul Kocialkowski <paul.kocialkowski@bootlin.com> wrote:
 > 
-> Changes from v1 & 2:
-> The return value of copy_from_user() is not checked appropriately.
-> However, maintainers identified the patch fixing the issue is not
-> required as function rts_wps_start() is dead code and can be removed.
+> Hi,
 > 
-> Signed-off-by: Aditya Pakki <pakki001@umn.edu>
-> ---
-
-The "Changed from" comments need to go here under the --- cut off line.
-It gets removed from the final kernel git log.
-
-That information is just for maintainers to remember what was discussed
-earlier.  It's not needed for the permanent record.
-
->  .../staging/rtl8723bs/os_dep/ioctl_linux.c    | 34 +------------------
->  1 file changed, 1 insertion(+), 33 deletions(-)
-
-regards,
-dan carpenter
+>> On Tue, 2019-01-08 at 09:16 +0800, Ayaka wrote:
+>> 
+>> Sent from my iPad
+>> 
+>>> On Jan 7, 2019, at 5:57 PM, Paul Kocialkowski <paul.kocialkowski@bootlin.com> wrote:
+>>> 
+>>> Hi,
+>>> 
+>>>>> On Mon, 2019-01-07 at 11:49 +0800, Randy Li wrote:
+>>>>> On 12/12/18 8:51 PM, Paul Kocialkowski wrote:
+>>>>> Hi,
+>>>>> 
+>>>>> On Wed, 2018-12-05 at 21:59 +0100, Jernej Škrabec wrote:
+>>>>> 
+>>>>>>> +
+>>>>>>> +#define V4L2_HEVC_DPB_ENTRY_RPS_ST_CURR_BEFORE    0x01
+>>>>>>> +#define V4L2_HEVC_DPB_ENTRY_RPS_ST_CURR_AFTER    0x02
+>>>>>>> +#define V4L2_HEVC_DPB_ENTRY_RPS_LT_CURR        0x03
+>>>>>>> +
+>>>>>>> +#define V4L2_HEVC_DPB_ENTRIES_NUM_MAX        16
+>>>>>>> +
+>>>>>>> +struct v4l2_hevc_dpb_entry {
+>>>>>>> +    __u32    buffer_tag;
+>>>>>>> +    __u8    rps;
+>>>>>>> +    __u8    field_pic;
+>>>>>>> +    __u16    pic_order_cnt[2];
+>>>>>>> +};
+>>>> 
+>>>> Please add a property for reference index, if that rps is not used for 
+>>>> this, some device would request that(not the rockchip one). And 
+>>>> Rockchip's VDPU1 and VDPU2 for AVC would request a similar property.
+>>> 
+>>> What exactly is that reference index? Is it a bitstream element or
+>>> something deduced from the bitstream?
+>>> 
+>> picture order count(POC) for HEVC and frame_num in AVC. I think it is
+>> the number used in list0(P slice and B slice) and list1(B slice).
+> 
+> The picture order count is already the last field of the DPB entry
+> structure. There is one for each field picture.
+As we are not sure whether there is a field coded slice or CTU, I would hold this part and else about the field.
+> 
+>>>> Adding another buffer_tag for referring the memory of the motion vectors 
+>>>> for each frames. Or a better method is add a meta data to echo picture 
+>>>> buffer,  since the picture output is just the same as the original, 
+>>>> display won't care whether the motion vectors are written the button of 
+>>>> picture or somewhere else.
+>>> 
+>>> The motion vectors are passed as part of the raw bitstream data, in the
+>>> slices. Is there a case where the motion vectors are coded differently?
+>> No, it is an additional cache for decoder, even FFmpeg having such
+>> data, I think allwinner must output it into somewhere.
+> 
+> Ah yes I see what you mean! This is handled internally by our driver
+> and not exposed to userspace. I don't think it would be a good idea to
+> expose this cache or request that userspace allocates it like a video
+> buffer.
+> 
+No, usually the driver should allocate, as the user space have no idea on size of each devices.
+But for advantage user, application can fix a broken picture with a proper data or analysis a object motion from that.
+So I would suggest attaching this information to a picture buffer as a meta data. 
+>>>>>>> +
+>>>>>>> +struct v4l2_hevc_pred_weight_table {
+>>>>>>> +    __u8    luma_log2_weight_denom;
+>>>>>>> +    __s8    delta_chroma_log2_weight_denom;
+>>>>>>> +
+>>>>>>> +    __s8    delta_luma_weight_l0[V4L2_HEVC_DPB_ENTRIES_NUM_MAX];
+>>>>>>> +    __s8    luma_offset_l0[V4L2_HEVC_DPB_ENTRIES_NUM_MAX];
+>>>>>>> +    __s8    delta_chroma_weight_l0[V4L2_HEVC_DPB_ENTRIES_NUM_MAX][2];
+>>>>>>> +    __s8    chroma_offset_l0[V4L2_HEVC_DPB_ENTRIES_NUM_MAX][2];
+>>>>>>> +
+>>>>>>> +    __s8    delta_luma_weight_l1[V4L2_HEVC_DPB_ENTRIES_NUM_MAX];
+>>>>>>> +    __s8    luma_offset_l1[V4L2_HEVC_DPB_ENTRIES_NUM_MAX];
+>>>>>>> +    __s8    delta_chroma_weight_l1[V4L2_HEVC_DPB_ENTRIES_NUM_MAX][2];
+>>>>>>> +    __s8    chroma_offset_l1[V4L2_HEVC_DPB_ENTRIES_NUM_MAX][2];
+>>>>>>> +};
+>>>>>>> +
+>>>> Those properties I think are not necessary are applying for the 
+>>>> Rockchip's device, may not work for the others.
+>>> 
+>>> Yes, it's possible that some of the elements are not necessary for some
+>>> decoders. What we want is to cover all the elements that might be
+>>> required for a decoder.
+>> I wonder whether allwinner need that, those sao flag usually ignored
+>> by decoder in design. But more is better than less, it is hard to
+>> extend a v4l2 structure  in the future, maybe a new HEVC profile
+>> would bring a new property, it is still too early for HEVC.
+> 
+> Yes this is used by our decoder. The idea is to have all the basic
+> bitstream elements in the structures (even if some decoders don't use
+> them all) and add others for extension as separate controls later.
+> 
+>>>>>>> +struct v4l2_ctrl_hevc_slice_params {
+>>>>>>> +    __u32    bit_size;
+>>>>>>> +    __u32    data_bit_offset;
+>>>>>>> +
+>>>>>>> +    /* ISO/IEC 23008-2, ITU-T Rec. H.265: NAL unit header */
+>>>>>>> +    __u8    nal_unit_type;
+>>>>>>> +    __u8    nuh_temporal_id_plus1;
+>>>>>>> +
+>>>>>>> +    /* ISO/IEC 23008-2, ITU-T Rec. H.265: General slice segment header */
+>>>>>>> +    __u8    slice_type;
+>>>>>>> +    __u8    colour_plane_id;
+>>>> ----------------------------------------------------------------------------
+>>>>>>> +    __u16    slice_pic_order_cnt;
+>>>>>>> +    __u8    slice_sao_luma_flag;
+>>>>>>> +    __u8    slice_sao_chroma_flag;
+>>>>>>> +    __u8    slice_temporal_mvp_enabled_flag;
+>>>>>>> +    __u8    num_ref_idx_l0_active_minus1;
+>>>>>>> +    __u8    num_ref_idx_l1_active_minus1;
+>>>> Rockchip's decoder doesn't use this part.
+>>>>>>> +    __u8    mvd_l1_zero_flag;
+>>>>>>> +    __u8    cabac_init_flag;
+>>>>>>> +    __u8    collocated_from_l0_flag;
+>>>>>>> +    __u8    collocated_ref_idx;
+>>>>>>> +    __u8    five_minus_max_num_merge_cand;
+>>>>>>> +    __u8    use_integer_mv_flag;
+>>>>>>> +    __s8    slice_qp_delta;
+>>>>>>> +    __s8    slice_cb_qp_offset;
+>>>>>>> +    __s8    slice_cr_qp_offset;
+>>>>>>> +    __s8    slice_act_y_qp_offset;
+>>>>>>> +    __s8    slice_act_cb_qp_offset;
+>>>>>>> +    __s8    slice_act_cr_qp_offset;
+>>>>>>> +    __u8    slice_deblocking_filter_disabled_flag;
+>>>>>>> +    __s8    slice_beta_offset_div2;
+>>>>>>> +    __s8    slice_tc_offset_div2;
+>>>>>>> +    __u8    slice_loop_filter_across_slices_enabled_flag;
+>>>>>>> +
+>>>>>>> +    /* ISO/IEC 23008-2, ITU-T Rec. H.265: Picture timing SEI message */
+>>>>>>> +    __u8    pic_struct;
+>>>> I think the decoder doesn't care about this, it is used for display.
+>>> 
+>>> The purpose of this field is to indicate whether the current picture is
+>>> a progressive frame or an interlaced field picture, which is useful for
+>>> decoding.
+>>> 
+>>> At least our decoder has a register field to indicate frame/top
+>>> field/bottom field, so we certainly need to keep the info around.
+>>> Looking at the spec and the ffmpeg implementation, it looks like this
+>>> flag of the bitstream is the usual way to report field coding.
+>> It depends whether the decoder cares about scan type or more, I
+>> wonder prefer general_interlaced_source_flag for just scan type, it
+>> would be better than reading another SEL.
+> 
+> Well we still need a way to indicate if the current data is top or
+> bottom field for interlaced. I don't think that knowing that the whole
+> video is interlaced would be precise enough.
+> 
+> Cheers,
+> 
+> Paul
+> 
+>>>>>>> +
+>>>>>>> +    /* ISO/IEC 23008-2, ITU-T Rec. H.265: General slice segment header */
+>>>>>>> +    struct v4l2_hevc_dpb_entry dpb[V4L2_HEVC_DPB_ENTRIES_NUM_MAX];
+>>>>>>> +    __u8    num_active_dpb_entries;
+>>>>>>> +    __u8    ref_idx_l0[V4L2_HEVC_DPB_ENTRIES_NUM_MAX];
+>>>>>>> +    __u8    ref_idx_l1[V4L2_HEVC_DPB_ENTRIES_NUM_MAX];
+>>>>>>> +
+>>>>>>> +    __u8    num_rps_poc_st_curr_before;
+>>>>>>> +    __u8    num_rps_poc_st_curr_after;
+>>>>>>> +    __u8    num_rps_poc_lt_curr;
+>>>>>>> +
+>>>>>>> +    /* ISO/IEC 23008-2, ITU-T Rec. H.265: Weighted prediction parameter */
+>>>>>>> +    struct v4l2_hevc_pred_weight_table pred_weight_table;
+>>>>>>> +};
+>>>>>>> +
+>>>>>>> #endif
+>>> -- 
+>>> Paul Kocialkowski, Bootlin (formerly Free Electrons)
+>>> Embedded Linux and kernel engineering
+>>> https://bootlin.com
+>>> 
+> -- 
+> Paul Kocialkowski, Bootlin (formerly Free Electrons)
+> Embedded Linux and kernel engineering
+> https://bootlin.com
+> 
 
