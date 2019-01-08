@@ -2,53 +2,52 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-18.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89938C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:31:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11B96C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:31:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 58E652176F
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:31:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C5CC72070B
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:31:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546975904;
-	bh=gdqg255WCdru7izd4QObD+y0nUyjQpQ3RbFUDM2LHn4=;
+	s=default; t=1546975912;
+	bh=Z8MumRHjEYYAs2Zm5KUZdX9CeyWPAbUkAtQM98nDZhY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=hVCI44UUbVxxXsGpOEaalcUqFFAcLz64CuBgUqjkLx7KEp5ZylYeb24KXKq/LtgfV
-	 qk8oHBUpQ7+X/w/0OE8eUAeup3cu9/zhA3f7GdpmSGhiwMZFNdxznUjyqqfmEfO6on
-	 e/z34BIFXgme4saGE8UogFQs/mQgtlpxBhP9NL2Y=
+	b=r/AiwOWJlbhcJT+HN7bXxSQV52xSSHqP61+Y+RdC8W4ge5chnqQekXjTxz7pAvQQr
+	 S32XJAL2b2vDyfpBV2bsgG/+DEsCxF4pR9U/Kwnq0VZ680fkS5LR/F1OgYKKDqO+wd
+	 15USLYkhDAFA5/Zk4MGAzbS+6f+b92Bo9/m7bueg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731185AbfAHTbn (ORCPT
+        id S1731216AbfAHTbv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:31:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39862 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 14:31:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39984 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731147AbfAHTbl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:31:41 -0500
+        id S1731192AbfAHTbq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:31:46 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 341A92176F;
-        Tue,  8 Jan 2019 19:31:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CDD342176F;
+        Tue,  8 Jan 2019 19:31:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546975900;
-        bh=gdqg255WCdru7izd4QObD+y0nUyjQpQ3RbFUDM2LHn4=;
+        s=default; t=1546975905;
+        bh=Z8MumRHjEYYAs2Zm5KUZdX9CeyWPAbUkAtQM98nDZhY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XiwjlTFxlbXUMd4K/fpLJcfO2CHjI8RXpi/M+CbeZ122ynyxeXkcBsWQG3sVGKazH
-         pvBi+7NxHTMM8LV1uLJrSPZPcTOeQuLnGN/k83bo9H+QSAkO9G7hHO3rBx1tqf8pv2
-         jV+oW6t2pYnHzMC1qKVlfyTMPA05Ch8FbSihJ+J0=
+        b=xe1iEDTfdL1lbf4+K7xDiUvdidaBerH9ngdGLpr+TrIAf3cxF2PhZDHoWshMrN3eI
+         w3yRuO3z5jajbZnngMDW2JUAOlLcxwPoyJnTZRss7VsXgDMRfmmreN2A9YznYHcfXh
+         0hs4bKUtAg0gxE0k5g1nRmg4ZTZiGheXj7UYhob8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Taehee Yoo <ap420073@gmail.com>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Sasha Levin <sashal@kernel.org>,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 69/97] netfilter: ipt_CLUSTERIP: remove wrong WARN_ON_ONCE in netns exit routine
-Date:   Tue,  8 Jan 2019 14:29:18 -0500
-Message-Id: <20190108192949.122407-69-sashal@kernel.org>
+Cc:     Nikos Tsironis <ntsironis@arrikto.com>,
+        Ilias Tsitsimpis <iliastsi@arrikto.com>,
+        Mike Snitzer <snitzer@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 73/97] dm kcopyd: Fix bug causing workqueue stalls
+Date:   Tue,  8 Jan 2019 14:29:22 -0500
+Message-Id: <20190108192949.122407-73-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108192949.122407-1-sashal@kernel.org>
 References: <20190108192949.122407-1-sashal@kernel.org>
@@ -60,71 +59,159 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Taehee Yoo <ap420073@gmail.com>
+From: Nikos Tsironis <ntsironis@arrikto.com>
 
-[ Upstream commit b12f7bad5ad3724d19754390a3e80928525c0769 ]
+[ Upstream commit d7e6b8dfc7bcb3f4f3a18313581f67486a725b52 ]
 
-When network namespace is destroyed, both clusterip_tg_destroy() and
-clusterip_net_exit() are called. and clusterip_net_exit() is called
-before clusterip_tg_destroy().
-Hence cleanup check code in clusterip_net_exit() doesn't make sense.
+When using kcopyd to run callbacks through dm_kcopyd_do_callback() or
+submitting copy jobs with a source size of 0, the jobs are pushed
+directly to the complete_jobs list, which could be under processing by
+the kcopyd thread. As a result, the kcopyd thread can continue running
+completed jobs indefinitely, without releasing the CPU, as long as
+someone keeps submitting new completed jobs through the aforementioned
+paths. Processing of work items, queued for execution on the same CPU as
+the currently running kcopyd thread, is thus stalled for excessive
+amounts of time, hurting performance.
 
-test commands:
-   %ip netns add vm1
-   %ip netns exec vm1 bash
-   %ip link set lo up
-   %iptables -A INPUT -p tcp -i lo -d 192.168.0.5 --dport 80 \
-	-j CLUSTERIP --new --hashmode sourceip \
-	--clustermac 01:00:5e:00:00:20 --total-nodes 2 --local-node 1
-   %exit
-   %ip netns del vm1
+Running the following test, from the device mapper test suite [1],
 
-splat looks like:
-[  341.184508] WARNING: CPU: 1 PID: 87 at net/ipv4/netfilter/ipt_CLUSTERIP.c:840 clusterip_net_exit+0x319/0x380 [ipt_CLUSTERIP]
-[  341.184850] Modules linked in: ipt_CLUSTERIP nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 xt_tcpudp iptable_filter bpfilter ip_tables x_tables
-[  341.184850] CPU: 1 PID: 87 Comm: kworker/u4:2 Not tainted 4.19.0-rc5+ #16
-[  341.227509] Workqueue: netns cleanup_net
-[  341.227509] RIP: 0010:clusterip_net_exit+0x319/0x380 [ipt_CLUSTERIP]
-[  341.227509] Code: 0f 85 7f fe ff ff 48 c7 c2 80 64 2c c0 be a8 02 00 00 48 c7 c7 a0 63 2c c0 c6 05 18 6e 00 00 01 e8 bc 38 ff f5 e9 5b fe ff ff <0f> 0b e9 33 ff ff ff e8 4b 90 50 f6 e9 2d fe ff ff 48 89 df e8 de
-[  341.227509] RSP: 0018:ffff88011086f408 EFLAGS: 00010202
-[  341.227509] RAX: dffffc0000000000 RBX: 1ffff1002210de85 RCX: 0000000000000000
-[  341.227509] RDX: 1ffff1002210de85 RSI: ffff880110813be8 RDI: ffffed002210de58
-[  341.227509] RBP: ffff88011086f4d0 R08: 0000000000000000 R09: 0000000000000000
-[  341.227509] R10: 0000000000000000 R11: 0000000000000000 R12: 1ffff1002210de81
-[  341.227509] R13: ffff880110625a48 R14: ffff880114cec8c8 R15: 0000000000000014
-[  341.227509] FS:  0000000000000000(0000) GS:ffff880116600000(0000) knlGS:0000000000000000
-[  341.227509] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  341.227509] CR2: 00007f11fd38e000 CR3: 000000013ca16000 CR4: 00000000001006e0
-[  341.227509] Call Trace:
-[  341.227509]  ? __clusterip_config_find+0x460/0x460 [ipt_CLUSTERIP]
-[  341.227509]  ? default_device_exit+0x1ca/0x270
-[  341.227509]  ? remove_proc_entry+0x1cd/0x390
-[  341.227509]  ? dev_change_net_namespace+0xd00/0xd00
-[  341.227509]  ? __init_waitqueue_head+0x130/0x130
-[  341.227509]  ops_exit_list.isra.10+0x94/0x140
-[  341.227509]  cleanup_net+0x45b/0x900
-[ ... ]
+  dmtest run --suite snapshot -n parallel_io_to_many_snaps_N
 
-Fixes: 613d0776d3fe ("netfilter: exit_net cleanup check added")
-Signed-off-by: Taehee Yoo <ap420073@gmail.com>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+, with 8 active snapshots, we get, in dmesg, messages like the
+following:
+
+[68899.948523] BUG: workqueue lockup - pool cpus=0 node=0 flags=0x0 nice=0 stuck for 95s!
+[68899.949282] Showing busy workqueues and worker pools:
+[68899.949288] workqueue events: flags=0x0
+[68899.949295]   pwq 0: cpus=0 node=0 flags=0x0 nice=0 active=2/256
+[68899.949306]     pending: vmstat_shepherd, cache_reap
+[68899.949331] workqueue mm_percpu_wq: flags=0x8
+[68899.949337]   pwq 0: cpus=0 node=0 flags=0x0 nice=0 active=1/256
+[68899.949345]     pending: vmstat_update
+[68899.949387] workqueue dm_bufio_cache: flags=0x8
+[68899.949392]   pwq 4: cpus=2 node=0 flags=0x0 nice=0 active=1/256
+[68899.949400]     pending: work_fn [dm_bufio]
+[68899.949423] workqueue kcopyd: flags=0x8
+[68899.949429]   pwq 0: cpus=0 node=0 flags=0x0 nice=0 active=1/256
+[68899.949437]     pending: do_work [dm_mod]
+[68899.949452] workqueue kcopyd: flags=0x8
+[68899.949458]   pwq 0: cpus=0 node=0 flags=0x0 nice=0 active=2/256
+[68899.949466]     in-flight: 13:do_work [dm_mod]
+[68899.949474]     pending: do_work [dm_mod]
+[68899.949487] workqueue kcopyd: flags=0x8
+[68899.949493]   pwq 0: cpus=0 node=0 flags=0x0 nice=0 active=1/256
+[68899.949501]     pending: do_work [dm_mod]
+[68899.949515] workqueue kcopyd: flags=0x8
+[68899.949521]   pwq 0: cpus=0 node=0 flags=0x0 nice=0 active=1/256
+[68899.949529]     pending: do_work [dm_mod]
+[68899.949541] workqueue kcopyd: flags=0x8
+[68899.949547]   pwq 0: cpus=0 node=0 flags=0x0 nice=0 active=1/256
+[68899.949555]     pending: do_work [dm_mod]
+[68899.949568] pool 0: cpus=0 node=0 flags=0x0 nice=0 hung=95s workers=4 idle: 27130 27223 1084
+
+Fix this by splitting the complete_jobs list into two parts: A user
+facing part, named callback_jobs, and one used internally by kcopyd,
+retaining the name complete_jobs. dm_kcopyd_do_callback() and
+dispatch_job() now push their jobs to the callback_jobs list, which is
+spliced to the complete_jobs list once, every time the kcopyd thread
+wakes up. This prevents kcopyd from hogging the CPU indefinitely and
+causing workqueue stalls.
+
+Re-running the aforementioned test:
+
+  * Workqueue stalls are eliminated
+  * The maximum writing time among all targets is reduced from 09m37.10s
+    to 06m04.85s and the total run time of the test is reduced from
+    10m43.591s to 7m19.199s
+
+[1] https://github.com/jthornber/device-mapper-test-suite
+
+Signed-off-by: Nikos Tsironis <ntsironis@arrikto.com>
+Signed-off-by: Ilias Tsitsimpis <iliastsi@arrikto.com>
+Signed-off-by: Mike Snitzer <snitzer@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/ipv4/netfilter/ipt_CLUSTERIP.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/md/dm-kcopyd.c | 19 ++++++++++++++-----
+ 1 file changed, 14 insertions(+), 5 deletions(-)
 
-diff --git a/net/ipv4/netfilter/ipt_CLUSTERIP.c b/net/ipv4/netfilter/ipt_CLUSTERIP.c
-index e40e6795bd20..33491cb6b9d1 100644
---- a/net/ipv4/netfilter/ipt_CLUSTERIP.c
-+++ b/net/ipv4/netfilter/ipt_CLUSTERIP.c
-@@ -838,7 +838,6 @@ static void clusterip_net_exit(struct net *net)
- 	cn->procdir = NULL;
- #endif
- 	nf_unregister_net_hook(net, &cip_arp_ops);
--	WARN_ON_ONCE(!list_empty(&cn->configs));
- }
+diff --git a/drivers/md/dm-kcopyd.c b/drivers/md/dm-kcopyd.c
+index 2fc4213e02b5..671c24332802 100644
+--- a/drivers/md/dm-kcopyd.c
++++ b/drivers/md/dm-kcopyd.c
+@@ -56,15 +56,17 @@ struct dm_kcopyd_client {
+ 	atomic_t nr_jobs;
  
- static struct pernet_operations clusterip_net_ops = {
+ /*
+- * We maintain three lists of jobs:
++ * We maintain four lists of jobs:
+  *
+  * i)   jobs waiting for pages
+  * ii)  jobs that have pages, and are waiting for the io to be issued.
+- * iii) jobs that have completed.
++ * iii) jobs that don't need to do any IO and just run a callback
++ * iv) jobs that have completed.
+  *
+- * All three of these are protected by job_lock.
++ * All four of these are protected by job_lock.
+  */
+ 	spinlock_t job_lock;
++	struct list_head callback_jobs;
+ 	struct list_head complete_jobs;
+ 	struct list_head io_jobs;
+ 	struct list_head pages_jobs;
+@@ -625,6 +627,7 @@ static void do_work(struct work_struct *work)
+ 	struct dm_kcopyd_client *kc = container_of(work,
+ 					struct dm_kcopyd_client, kcopyd_work);
+ 	struct blk_plug plug;
++	unsigned long flags;
+ 
+ 	/*
+ 	 * The order that these are called is *very* important.
+@@ -633,6 +636,10 @@ static void do_work(struct work_struct *work)
+ 	 * list.  io jobs call wake when they complete and it all
+ 	 * starts again.
+ 	 */
++	spin_lock_irqsave(&kc->job_lock, flags);
++	list_splice_tail_init(&kc->callback_jobs, &kc->complete_jobs);
++	spin_unlock_irqrestore(&kc->job_lock, flags);
++
+ 	blk_start_plug(&plug);
+ 	process_jobs(&kc->complete_jobs, kc, run_complete_job);
+ 	process_jobs(&kc->pages_jobs, kc, run_pages_job);
+@@ -650,7 +657,7 @@ static void dispatch_job(struct kcopyd_job *job)
+ 	struct dm_kcopyd_client *kc = job->kc;
+ 	atomic_inc(&kc->nr_jobs);
+ 	if (unlikely(!job->source.count))
+-		push(&kc->complete_jobs, job);
++		push(&kc->callback_jobs, job);
+ 	else if (job->pages == &zero_page_list)
+ 		push(&kc->io_jobs, job);
+ 	else
+@@ -858,7 +865,7 @@ void dm_kcopyd_do_callback(void *j, int read_err, unsigned long write_err)
+ 	job->read_err = read_err;
+ 	job->write_err = write_err;
+ 
+-	push(&kc->complete_jobs, job);
++	push(&kc->callback_jobs, job);
+ 	wake(kc);
+ }
+ EXPORT_SYMBOL(dm_kcopyd_do_callback);
+@@ -888,6 +895,7 @@ struct dm_kcopyd_client *dm_kcopyd_client_create(struct dm_kcopyd_throttle *thro
+ 		return ERR_PTR(-ENOMEM);
+ 
+ 	spin_lock_init(&kc->job_lock);
++	INIT_LIST_HEAD(&kc->callback_jobs);
+ 	INIT_LIST_HEAD(&kc->complete_jobs);
+ 	INIT_LIST_HEAD(&kc->io_jobs);
+ 	INIT_LIST_HEAD(&kc->pages_jobs);
+@@ -939,6 +947,7 @@ void dm_kcopyd_client_destroy(struct dm_kcopyd_client *kc)
+ 	/* Wait for completion of all jobs submitted by this client. */
+ 	wait_event(kc->destroyq, !atomic_read(&kc->nr_jobs));
+ 
++	BUG_ON(!list_empty(&kc->callback_jobs));
+ 	BUG_ON(!list_empty(&kc->complete_jobs));
+ 	BUG_ON(!list_empty(&kc->io_jobs));
+ 	BUG_ON(!list_empty(&kc->pages_jobs));
 -- 
 2.19.1
 
