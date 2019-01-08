@@ -4,51 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-18.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87C0BC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:33:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23BD1C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:33:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5720520645
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:33:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DD2D52176F
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:33:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546976006;
-	bh=fw2HzvNwUenQ8QrOda34itXJKad2vARMDcz/b3g1HcA=;
+	s=default; t=1546976010;
+	bh=LQqupSHz0VLCudXdcnq0PBdQSxgGrhhDtpkQzsAOx7g=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=QEc/AiKRNqFbTOKk/f4WEGnYuNx8yqnstxr9yTvAlFGnEdPwcGPv1gyF4inzVcUSA
-	 Bcn3nXoLLunbqX/8/S+a8u2KNniZsdc9/wPnCI/Whu4+Re2rI513jZtA3K9Lrb7p3n
-	 AdsJn1gAUxrNtP3GgnVzq/LKyi3okMTGYuTYFJNw=
+	b=gRlQcyVHAYPOqPwFBbHVUf6rovv55aEHI2bq+GNXSOaP2WfZqUKtrw6HDFqsYdFNC
+	 notRh5W9Zh37e02t2rIWSGmUY05TKzQArrMkQBUFlVxo3wgPdiqgAGhVsKx8i5nOkE
+	 ZT21HPjsfcwjJF6ZTOQ1CECvCfCaljuP47rTl7ME=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731692AbfAHTdZ (ORCPT
+        id S1731710AbfAHTd2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:33:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42136 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 14:33:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42192 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731672AbfAHTdW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:33:22 -0500
+        id S1731690AbfAHTd0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:33:26 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3ACB4205C9;
-        Tue,  8 Jan 2019 19:33:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6B098205C9;
+        Tue,  8 Jan 2019 19:33:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546976002;
-        bh=fw2HzvNwUenQ8QrOda34itXJKad2vARMDcz/b3g1HcA=;
+        s=default; t=1546976005;
+        bh=LQqupSHz0VLCudXdcnq0PBdQSxgGrhhDtpkQzsAOx7g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=itiiEVgJ3NJ3JrzvpvYUgp/ZfJzHkD+7gIO+kr46mksSBocdCwb1qaZZQ1UfOoKLg
-         WmIgjrKaI73LhjBIXZlGAGRb6Fk9zijKVoWB+ICXj/4Dgm8ZwEoqQg6SxhQNQ8jHRa
-         yBGbK+0XDzo2rVA/RXqSyhYto5ReJ/5w+jN3ghyk=
+        b=EZnSehnUKRBjz2hd6YQBQeTVR1OSJoqx7uue1ys4PyOSNH5iN0ZTsAxfNNFAH8/0e
+         +ySZFaH/2Dz0nR5l9cWzM+27Ajj3feAABeG1yOYazcEnogf2Psw+BJOCR7YB5nhkWR
+         zaWSNXXwiaePKS2Nrk97xImeO0BOkm19W90Gnqk0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
+Cc:     Nikos Tsironis <ntsironis@arrikto.com>,
+        Ilias Tsitsimpis <iliastsi@arrikto.com>,
+        Mike Snitzer <snitzer@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 36/53] perf parse-events: Fix unchecked usage of strncpy()
-Date:   Tue,  8 Jan 2019 14:32:04 -0500
-Message-Id: <20190108193222.123316-36-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 39/53] dm kcopyd: Fix bug causing workqueue stalls
+Date:   Tue,  8 Jan 2019 14:32:07 -0500
+Message-Id: <20190108193222.123316-39-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108193222.123316-1-sashal@kernel.org>
 References: <20190108193222.123316-1-sashal@kernel.org>
@@ -60,56 +59,159 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnaldo Carvalho de Melo <acme@redhat.com>
+From: Nikos Tsironis <ntsironis@arrikto.com>
 
-[ Upstream commit bd8d57fb7e25e9fcf67a9eef5fa13aabe2016e07 ]
+[ Upstream commit d7e6b8dfc7bcb3f4f3a18313581f67486a725b52 ]
 
-The strncpy() function may leave the destination string buffer
-unterminated, better use strlcpy() that we have a __weak fallback
-implementation for systems without it.
+When using kcopyd to run callbacks through dm_kcopyd_do_callback() or
+submitting copy jobs with a source size of 0, the jobs are pushed
+directly to the complete_jobs list, which could be under processing by
+the kcopyd thread. As a result, the kcopyd thread can continue running
+completed jobs indefinitely, without releasing the CPU, as long as
+someone keeps submitting new completed jobs through the aforementioned
+paths. Processing of work items, queued for execution on the same CPU as
+the currently running kcopyd thread, is thus stalled for excessive
+amounts of time, hurting performance.
 
-This fixes this warning on an Alpine Linux Edge system with gcc 8.2:
+Running the following test, from the device mapper test suite [1],
 
-  util/parse-events.c: In function 'print_symbol_events':
-  util/parse-events.c:2465:4: error: 'strncpy' specified bound 100 equals destination size [-Werror=stringop-truncation]
-      strncpy(name, syms->symbol, MAX_NAME_LEN);
-      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  In function 'print_symbol_events.constprop',
-      inlined from 'print_events' at util/parse-events.c:2508:2:
-  util/parse-events.c:2465:4: error: 'strncpy' specified bound 100 equals destination size [-Werror=stringop-truncation]
-      strncpy(name, syms->symbol, MAX_NAME_LEN);
-      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  In function 'print_symbol_events.constprop',
-      inlined from 'print_events' at util/parse-events.c:2511:2:
-  util/parse-events.c:2465:4: error: 'strncpy' specified bound 100 equals destination size [-Werror=stringop-truncation]
-      strncpy(name, syms->symbol, MAX_NAME_LEN);
-      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  cc1: all warnings being treated as errors
+  dmtest run --suite snapshot -n parallel_io_to_many_snaps_N
 
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Fixes: 947b4ad1d198 ("perf list: Fix max event string size")
-Link: https://lkml.kernel.org/n/tip-b663e33bm6x8hrkie4uxh7u2@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+, with 8 active snapshots, we get, in dmesg, messages like the
+following:
+
+[68899.948523] BUG: workqueue lockup - pool cpus=0 node=0 flags=0x0 nice=0 stuck for 95s!
+[68899.949282] Showing busy workqueues and worker pools:
+[68899.949288] workqueue events: flags=0x0
+[68899.949295]   pwq 0: cpus=0 node=0 flags=0x0 nice=0 active=2/256
+[68899.949306]     pending: vmstat_shepherd, cache_reap
+[68899.949331] workqueue mm_percpu_wq: flags=0x8
+[68899.949337]   pwq 0: cpus=0 node=0 flags=0x0 nice=0 active=1/256
+[68899.949345]     pending: vmstat_update
+[68899.949387] workqueue dm_bufio_cache: flags=0x8
+[68899.949392]   pwq 4: cpus=2 node=0 flags=0x0 nice=0 active=1/256
+[68899.949400]     pending: work_fn [dm_bufio]
+[68899.949423] workqueue kcopyd: flags=0x8
+[68899.949429]   pwq 0: cpus=0 node=0 flags=0x0 nice=0 active=1/256
+[68899.949437]     pending: do_work [dm_mod]
+[68899.949452] workqueue kcopyd: flags=0x8
+[68899.949458]   pwq 0: cpus=0 node=0 flags=0x0 nice=0 active=2/256
+[68899.949466]     in-flight: 13:do_work [dm_mod]
+[68899.949474]     pending: do_work [dm_mod]
+[68899.949487] workqueue kcopyd: flags=0x8
+[68899.949493]   pwq 0: cpus=0 node=0 flags=0x0 nice=0 active=1/256
+[68899.949501]     pending: do_work [dm_mod]
+[68899.949515] workqueue kcopyd: flags=0x8
+[68899.949521]   pwq 0: cpus=0 node=0 flags=0x0 nice=0 active=1/256
+[68899.949529]     pending: do_work [dm_mod]
+[68899.949541] workqueue kcopyd: flags=0x8
+[68899.949547]   pwq 0: cpus=0 node=0 flags=0x0 nice=0 active=1/256
+[68899.949555]     pending: do_work [dm_mod]
+[68899.949568] pool 0: cpus=0 node=0 flags=0x0 nice=0 hung=95s workers=4 idle: 27130 27223 1084
+
+Fix this by splitting the complete_jobs list into two parts: A user
+facing part, named callback_jobs, and one used internally by kcopyd,
+retaining the name complete_jobs. dm_kcopyd_do_callback() and
+dispatch_job() now push their jobs to the callback_jobs list, which is
+spliced to the complete_jobs list once, every time the kcopyd thread
+wakes up. This prevents kcopyd from hogging the CPU indefinitely and
+causing workqueue stalls.
+
+Re-running the aforementioned test:
+
+  * Workqueue stalls are eliminated
+  * The maximum writing time among all targets is reduced from 09m37.10s
+    to 06m04.85s and the total run time of the test is reduced from
+    10m43.591s to 7m19.199s
+
+[1] https://github.com/jthornber/device-mapper-test-suite
+
+Signed-off-by: Nikos Tsironis <ntsironis@arrikto.com>
+Signed-off-by: Ilias Tsitsimpis <iliastsi@arrikto.com>
+Signed-off-by: Mike Snitzer <snitzer@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/util/parse-events.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/md/dm-kcopyd.c | 19 ++++++++++++++-----
+ 1 file changed, 14 insertions(+), 5 deletions(-)
 
-diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-events.c
-index 53f620472151..d0b92d374ba9 100644
---- a/tools/perf/util/parse-events.c
-+++ b/tools/perf/util/parse-events.c
-@@ -2300,7 +2300,7 @@ void print_symbol_events(const char *event_glob, unsigned type,
- 		if (!name_only && strlen(syms->alias))
- 			snprintf(name, MAX_NAME_LEN, "%s OR %s", syms->symbol, syms->alias);
- 		else
--			strncpy(name, syms->symbol, MAX_NAME_LEN);
-+			strlcpy(name, syms->symbol, MAX_NAME_LEN);
+diff --git a/drivers/md/dm-kcopyd.c b/drivers/md/dm-kcopyd.c
+index d4b326914f06..b9d1897bcf5b 100644
+--- a/drivers/md/dm-kcopyd.c
++++ b/drivers/md/dm-kcopyd.c
+@@ -55,15 +55,17 @@ struct dm_kcopyd_client {
+ 	struct dm_kcopyd_throttle *throttle;
  
- 		evt_list[evt_i] = strdup(name);
- 		if (evt_list[evt_i] == NULL)
+ /*
+- * We maintain three lists of jobs:
++ * We maintain four lists of jobs:
+  *
+  * i)   jobs waiting for pages
+  * ii)  jobs that have pages, and are waiting for the io to be issued.
+- * iii) jobs that have completed.
++ * iii) jobs that don't need to do any IO and just run a callback
++ * iv) jobs that have completed.
+  *
+- * All three of these are protected by job_lock.
++ * All four of these are protected by job_lock.
+  */
+ 	spinlock_t job_lock;
++	struct list_head callback_jobs;
+ 	struct list_head complete_jobs;
+ 	struct list_head io_jobs;
+ 	struct list_head pages_jobs;
+@@ -622,6 +624,7 @@ static void do_work(struct work_struct *work)
+ 	struct dm_kcopyd_client *kc = container_of(work,
+ 					struct dm_kcopyd_client, kcopyd_work);
+ 	struct blk_plug plug;
++	unsigned long flags;
+ 
+ 	/*
+ 	 * The order that these are called is *very* important.
+@@ -630,6 +633,10 @@ static void do_work(struct work_struct *work)
+ 	 * list.  io jobs call wake when they complete and it all
+ 	 * starts again.
+ 	 */
++	spin_lock_irqsave(&kc->job_lock, flags);
++	list_splice_tail_init(&kc->callback_jobs, &kc->complete_jobs);
++	spin_unlock_irqrestore(&kc->job_lock, flags);
++
+ 	blk_start_plug(&plug);
+ 	process_jobs(&kc->complete_jobs, kc, run_complete_job);
+ 	process_jobs(&kc->pages_jobs, kc, run_pages_job);
+@@ -647,7 +654,7 @@ static void dispatch_job(struct kcopyd_job *job)
+ 	struct dm_kcopyd_client *kc = job->kc;
+ 	atomic_inc(&kc->nr_jobs);
+ 	if (unlikely(!job->source.count))
+-		push(&kc->complete_jobs, job);
++		push(&kc->callback_jobs, job);
+ 	else if (job->pages == &zero_page_list)
+ 		push(&kc->io_jobs, job);
+ 	else
+@@ -857,7 +864,7 @@ void dm_kcopyd_do_callback(void *j, int read_err, unsigned long write_err)
+ 	job->read_err = read_err;
+ 	job->write_err = write_err;
+ 
+-	push(&kc->complete_jobs, job);
++	push(&kc->callback_jobs, job);
+ 	wake(kc);
+ }
+ EXPORT_SYMBOL(dm_kcopyd_do_callback);
+@@ -887,6 +894,7 @@ struct dm_kcopyd_client *dm_kcopyd_client_create(struct dm_kcopyd_throttle *thro
+ 		return ERR_PTR(-ENOMEM);
+ 
+ 	spin_lock_init(&kc->job_lock);
++	INIT_LIST_HEAD(&kc->callback_jobs);
+ 	INIT_LIST_HEAD(&kc->complete_jobs);
+ 	INIT_LIST_HEAD(&kc->io_jobs);
+ 	INIT_LIST_HEAD(&kc->pages_jobs);
+@@ -936,6 +944,7 @@ void dm_kcopyd_client_destroy(struct dm_kcopyd_client *kc)
+ 	/* Wait for completion of all jobs submitted by this client. */
+ 	wait_event(kc->destroyq, !atomic_read(&kc->nr_jobs));
+ 
++	BUG_ON(!list_empty(&kc->callback_jobs));
+ 	BUG_ON(!list_empty(&kc->complete_jobs));
+ 	BUG_ON(!list_empty(&kc->io_jobs));
+ 	BUG_ON(!list_empty(&kc->pages_jobs));
 -- 
 2.19.1
 
