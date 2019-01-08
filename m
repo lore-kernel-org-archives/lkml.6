@@ -2,138 +2,123 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84BE4C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 04:49:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60AFFC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 04:50:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 501002087F
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 04:49:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 271622089F
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 04:50:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Nq5Ewb0G"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="VkDrSrdS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727546AbfAHEtf (ORCPT
+        id S1727597AbfAHEuF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 23:49:35 -0500
-Received: from mail-yb1-f193.google.com ([209.85.219.193]:45242 "EHLO
-        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727295AbfAHEtf (ORCPT
+        Mon, 7 Jan 2019 23:50:05 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:41049 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727482AbfAHEuE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 23:49:35 -0500
-Received: by mail-yb1-f193.google.com with SMTP id q2so1078911ybd.12;
-        Mon, 07 Jan 2019 20:49:34 -0800 (PST)
+        Mon, 7 Jan 2019 23:50:04 -0500
+Received: by mail-pl1-f195.google.com with SMTP id u6so1248433plm.8
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Jan 2019 20:50:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=oFSWDE7ylA7tHsFZ+Uhyyuy8BZ86kWvQtuER6gDsHAM=;
-        b=Nq5Ewb0G7B/wpzAeVAOQHDAr3MBqAgx+bnVdlV2+iGHij9H8HZkMDXNnHBdnsyDSWZ
-         FUq94AF//AEZZ8l9mcggu4ZWenx86rPvOadPNlkv75C/wMw/ipkKkY6whYb1xfOQgeUg
-         j1K5ToAxM3gsgX77/b0oWH7rdXFNWYnKW6NjnKLU7qxtpNO2IlWJM6IPcOgK7IQ6uDjG
-         DGBoPvdKzC6KOWUZluMnJh7PeaXvBjvkZqpBLgOpihYeEfpv0MIV8CY07XOYpUDrhzf9
-         BxCUSS4KhW+uIzpPycGDf02WOdqtp+5FJZS5ifbLYP3YaZ3n11zWXRNsR0b1uF0Yd/n5
-         lDGg==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=FHxSAaJ5DjyEZ0a3M4dzKHpqkXYHb2pzUKUnN8FZIpY=;
+        b=VkDrSrdSgMSN2lCM3DKfuCf7aTB+8UWnDZLdpq27eTrRpwllmWemA5AAoBnzk4a4B4
+         fkCjh3UynfgP2vM7cj388ZPcHQjOMb6ToH+7IYvV4emghARQxm15qo6tkk//gOCOz6A2
+         kZc6qyU5/E41WnyuQvs0XLHvCd+6kV2+TuN9o=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=oFSWDE7ylA7tHsFZ+Uhyyuy8BZ86kWvQtuER6gDsHAM=;
-        b=EDO0UXTa8nNpKn//sj5gr3glOEPkvBDeAHi8wL3SMZ2xHwDZbALga5cSoCm0euOAJW
-         SAQkfECW1ZcYD94hbcXFCnAE756DWv5VcWxExBTn8c6gMHmoDnTFGGhcjZ1cxw2oSIVa
-         zZDmAodEL+zSjGAhz6WLfzheQ2ce1SjoCCWSYVdNUy0+5RJ9wZmOveS2Jrjng9dAEWcV
-         DPraYY6CzcYWy5Sk2IG9DD4UAa02nzxg+qTJ5WZ/2485PF7Wti7TZ2rHuQ8/OlOO1dH4
-         K0V5R3rqgyAbL/Lcpi5PVf/C9SCN/yaQtBzkyIsOsOkTZN1NIQCm37k0DH85Ft3g4YGQ
-         i4HA==
-X-Gm-Message-State: AJcUukclBwRABYHMBD38pM/WIGNP2yMGcSwgrK8EjMsHAT9dQUHdKJGS
-        hCoisfFws6Sb8SSp/WmMjYw=
-X-Google-Smtp-Source: ALg8bN4ouxCMKcODXGkbWP3hIxvMWyx0NqW6urgLUi9W3UN/u/8SgTl+7h6UrFwqyvvcaGozO7CTTQ==
-X-Received: by 2002:a25:84c7:: with SMTP id x7mr211298ybm.378.1546922974393;
-        Mon, 07 Jan 2019 20:49:34 -0800 (PST)
-Received: from [192.168.1.138] (cpe-24-160-118-96.tampabay.res.rr.com. [24.160.118.96])
-        by smtp.gmail.com with ESMTPSA id j134sm31936261ywb.91.2019.01.07.20.49.33
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=FHxSAaJ5DjyEZ0a3M4dzKHpqkXYHb2pzUKUnN8FZIpY=;
+        b=nPkIGB2/QCYmPlFz8B71SSpnDHtLGWyFsdRP3z9FzMki8CVA6htrsiRRNJWP8jamd0
+         nZ3BPO2gkWqm+IJ1v4UZwWQTGXB0VMSiwJTM8AAMJw4m/2JvaJQCi6h8jvH6/IsVk9FY
+         aBoVYYmCyjbV7Wov+7FBGCHxW0WHtD6cSTZPc4LWffD7908py43jnySTb9/sVbMG/bX6
+         kO5Erpcg9LhovVsupDJrX26l/E07Y8QN3Hv1HVgjxdnrsvBlvY4XucreIuBrhc6yZ1hB
+         GIq7NG9iOf+pfWQByuk3SZXMqWvq9iwpNi/8fde6sgsqlKIE30NYdSseNBAM3GB40H/c
+         NkTw==
+X-Gm-Message-State: AJcUukcCjX4QA1BFOuraM9NXJOLzQ6jqCWZNqGDHJ9kZIQZN/zBOgV5t
+        ltfSfcoJyZwId3Z31QM48zePYg==
+X-Google-Smtp-Source: ALg8bN5S2TVLJXH2biN+Zd69B0ErAfDVm7YM3hk5NBVc/LaeN445QuKCcjXwYRsRQdOF8UjbAy8Y+Q==
+X-Received: by 2002:a17:902:3124:: with SMTP id w33mr280859plb.241.1546923003766;
+        Mon, 07 Jan 2019 20:50:03 -0800 (PST)
+Received: from localhost ([122.166.131.155])
+        by smtp.gmail.com with ESMTPSA id t12sm106206398pfi.45.2019.01.07.20.50.01
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 07 Jan 2019 20:49:33 -0800 (PST)
-Subject: Re: Consistent capitalization of "device tree"?
-To:     Pavel Machek <pavel@ucw.cz>
-Cc:     Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org,
-        kernel list <linux-kernel@vger.kernel.org>, corbet@lwn.net,
-        linux-doc@vger.kernel.org
-References: <20190107183711.GA5671@amd>
- <91bc4723-8e3a-4ed6-5104-36a614d6a6d2@gmail.com> <20190107192458.GG933@amd>
-From:   Frank Rowand <frowand.list@gmail.com>
-Message-ID: <64534368-1ee5-3a6b-18a6-d1d527aa4bdd@gmail.com>
-Date:   Mon, 7 Jan 2019 20:49:32 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Mon, 07 Jan 2019 20:50:02 -0800 (PST)
+Date:   Tue, 8 Jan 2019 10:19:58 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Rajendra Nayak <rnayak@codeaurora.org>
+Cc:     andy.gross@linaro.org, robh@kernel.org, sboyd@kernel.org,
+        ulf.hansson@linaro.org, collinsd@codeaurora.org, mka@chromium.org,
+        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, henryc.chen@mediatek.com
+Subject: Re: [PATCH v9 01/10] dt-bindings: opp: Introduce opp-level bindings
+Message-ID: <20190108044958.katgnp4ozmpqien2@vireshk-i7>
+References: <20190107100959.14528-1-rnayak@codeaurora.org>
+ <20190107100959.14528-2-rnayak@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <20190107192458.GG933@amd>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190107100959.14528-2-rnayak@codeaurora.org>
+User-Agent: NeoMutt/20180323-120-3dd1ac
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/7/19 11:24 AM, Pavel Machek wrote:
-> On Mon 2019-01-07 11:06:27, Frank Rowand wrote:
->>
->> + Frank
->>
->> On 1/7/19 10:37 AM, Pavel Machek wrote:
->>> Is it "Device Tree" or "device tree"?
->>>     
->>>  pavel@duo:/data/l/k/Documentation$ grep -r "Device Tree"  | wc -l
->>>  235
->>>  pavel@duo:/data/l/k/Documentation$ grep -r "device tree"  | wc -l
->>>  595
->>>     
->>> I guess it would be nice to make it consistent. I guess "device tree"
->>> is preffered?
->>>
->>> Should we do something like this?
->>> 								Pavel
->>>
->>> Signed-off-by: Pavel Machek <pavel@ucw.cz>
->>>     
->>> diff --git a/Documentation/devicetree/overlay-notes.txt b/Documentation/devicetree/overlay-notes.txt
->>> index 725fb8d..cc5f507 100644
->>> --- a/Documentation/devicetree/overlay-notes.txt
->>> +++ b/Documentation/devicetree/overlay-notes.txt
->>> @@ -8,7 +8,7 @@ companion document to Documentation/devicetree/dynamic-resolution-notes.txt[1]
->>>  How overlays work
->>>  -----------------
->>>  
->>> -A Device Tree's overlay purpose is to modify the kernel's live tree, and
->>> +A device tree's overlay purpose is to modify the kernel's live tree, and
->>>  have the modification affecting the state of the kernel in a way that
->>>  is reflecting the changes.
->>>  Since the kernel mainly deals with devices, any new device node that result
->>>
->>
->> Not a strong opinion, but I would prefer a third option of devicetree.  That
->> makes it much easier to search for.
+On 07-01-19, 15:39, Rajendra Nayak wrote:
+> On some SoCs (especially from Qualcomm and MediaTek) an OPP
+> node needs to describe an additional level/corner value
+> that is then communicated to a remote microprocessor by the CPU, which
+> then takes some actions (like adjusting voltage values across various rails)
+> based on the value passed.
 > 
-> That one is much less popular at the moment -- according to my
-> searches... so it would be a bigger change.
+> Describe these bindings in the opp-level bindings document.
 > 
-> (Which I'll gladly support if I won't have to do the work... as long
-> as it is consistent. But I believe that "device tree" is most common
-> here, makes sense, and is easiest change, so...)
+> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+> ---
+>  .../devicetree/bindings/opp/opp-level.txt     | 29 +++++++++++++++++++
+>  1 file changed, 29 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/opp/opp-level.txt
 > 
-> 								Pavel
+> diff --git a/Documentation/devicetree/bindings/opp/opp-level.txt b/Documentation/devicetree/bindings/opp/opp-level.txt
+> new file mode 100644
+> index 000000000000..f9134ed08164
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/opp/opp-level.txt
+> @@ -0,0 +1,29 @@
+> +OPP level bindings to descibe OPP nodes with corner/level values
+> +
+> +OPP tables for devices on some SoCs, especially from Qualcomm and
+> +MediaTek require an additional platform specific corner/level
+> +value to be specified.
+> +This value is passed on to a Power Manager by
+> +the CPU, which then takes the necessary actions to set a voltage
+> +rail to an appropriate voltage based on the value passed.
+> +
+> +The bindings are based on top of the operating-points-v2 bindings
+> +described in Documentation/devicetree/bindings/opp/opp.txt,
+> +with the exception that all of the properties are now optional,
+> +including the opp-hz property.
+> +
+> +Additional properties are described below.
+> +
+> +* OPP Table Node
+> +
+> +Required properties:
+> +- compatible: Allow OPPs to express their compatibility. It should be:
+> +  "operating-points-v2-level"
 
-After finding the rest of the thread, and thinking further, I don't think
-the easiest change is the correct change.  Ease of search is much more
-than just grep of the kernel source, it is also web search engines.  I
-think that the extra effort of "devicetree" is worth while in the long
-run.  But I don't see a need to do an immediate global change - it can
-happen either slowly over time or quickly as people choose to submit
-patches.
+All this isn't required. Just define it as a regular property in
+opp.txt only, just like opp-hz or something else.
 
--Frank
-
+-- 
+viresh
