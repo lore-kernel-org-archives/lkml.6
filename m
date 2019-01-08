@@ -2,113 +2,123 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2B53C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 03:21:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 740BCC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 03:23:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8721D206B7
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 03:21:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="WX3l9cQX"
+	by mail.kernel.org (Postfix) with ESMTP id 465A42173C
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 03:23:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727462AbfAHDVi (ORCPT
+        id S1727472AbfAHDXC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 22:21:38 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:44863 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727266AbfAHDVi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 22:21:38 -0500
-Received: by mail-pf1-f196.google.com with SMTP id u6so1179083pfh.11
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Jan 2019 19:21:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=B+IMLFXA2HBWr9n3CSZyHCQgAJd6sL2aKSC1pqE1yWE=;
-        b=WX3l9cQXAerAtlqzLWevVcUeVb4gVgyUZyAa/aKBpcH5JJlCCpQcp/ML9NGBHKC7d3
-         4iAr6S7xUuHV7z50ahXhQMPoTf9cuLg5Ep7B1KS1UGK/lqlFV5LH1BZ59coxCl52ddh3
-         l2/retWusX1Hr95GA3I5NSNCjWROYNJ8j9c/NwZWvsNBVboBqg+5ZiCQoBwT143njRUp
-         RwZ5wJkvBkSavlLI1Cuqa5VuuOrK0RYf75To+U9n2qAMr5iwnwTKqdfgV6e/toZ5t+Q7
-         TYlF0qJLWQsJn1tZ6AwFa79kJ5cSJDlyhTNy7Zh3Gd7bQfcrgINyHuQoWX/byYyaXldY
-         Y+qA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=B+IMLFXA2HBWr9n3CSZyHCQgAJd6sL2aKSC1pqE1yWE=;
-        b=OeMkY7vsbleo37TQCoCoEwY6v1gRumF1naUvU5DBvRGSuIwikw4THhwCvxhH4pe5BX
-         3MopQtTT4ppITySMTLuWXGYet3wPqoqnwbTMTYWWuyHOjWfP3pYcJkdOjDZTGJhSITxq
-         15qKnTwxoKUgDcBJskSorXGqJVoBQoNPIzDWSgw7QtAWQsCqFhNka4sGM+ziXdkVnkDh
-         eWq2l7e8Yxf5QsnBYNKRaYLIXOqyPCehIZTlUlEFXj4jRR1rfw+boMOEqXJhxyoUVpJR
-         7FQrzzCDzHLTg6vEFacph+VwdYl83NAKqQVvnpc9dJ5nlTG96+giZD74cTBl8npyy5IM
-         H5kg==
-X-Gm-Message-State: AJcUukcJ+RZtPRAXye5U8w04zogmZ/+Ea1gQo4wybIKHthH2/ec6igwm
-        Y/QrP3ZaraGrwByVqj3oJ4V9zQ==
-X-Google-Smtp-Source: ALg8bN5J9Ayv2qMrnhkeIeSu00a3FeZWz1Wn9K3Qy5L9lHz3l96YMI3YTtvbfFlnyNcTRCafy+4sMA==
-X-Received: by 2002:a62:61c3:: with SMTP id v186mr79602pfb.55.1546917696839;
-        Mon, 07 Jan 2019 19:21:36 -0800 (PST)
-Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
-        by smtp.gmail.com with ESMTPSA id d80sm188498451pfm.146.2019.01.07.19.21.35
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 07 Jan 2019 19:21:35 -0800 (PST)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1gghxP-0006zF-5N; Mon, 07 Jan 2019 20:21:35 -0700
-Date:   Mon, 7 Jan 2019 20:21:35 -0700
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Joe Perches <joe@perches.com>
-Cc:     Gal Pressman <galpress@amazon.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Stephen Warren <swarren@wwwdotorg.org>,
-        Tariq Toukan <tariqt@mellanox.com>, xavier.huwei@huawei.com,
-        netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
-        Doug Ledford <dledford@redhat.com>,
-        Stephen Warren <swarren@nvidia.com>,
-        Christoph Hellwig <hch@lst.de>,
+        Mon, 7 Jan 2019 22:23:02 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:44920 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727246AbfAHDXB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 22:23:01 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 36D86539A;
+        Tue,  8 Jan 2019 03:23:01 +0000 (UTC)
+Received: from dhcp-128-65.nay.redhat.com (ovpn-12-56.pek2.redhat.com [10.72.12.56])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 24B495C207;
+        Tue,  8 Jan 2019 03:22:55 +0000 (UTC)
+Date:   Tue, 8 Jan 2019 11:22:51 +0800
+From:   Dave Young <dyoung@redhat.com>
+To:     linux-kernel@vger.kernel.org, kexec@lists.infradead.org
+Cc:     AKASHI Takahiro <takahiro.akashi@linaro.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] coding-style: Clarify the expectations around bool
-Message-ID: <20190108032135.GD5336@ziepe.ca>
-References: <20190107211117.GA24142@ziepe.ca>
- <8ec3603317f477fe9923b87499a33da7a2cf81ff.camel@perches.com>
- <20190107232513.GA5336@ziepe.ca>
- <9bc80bb861899633ba93e6c81d36d2201b05936b.camel@perches.com>
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Baoquan He <bhe@redhat.com>, x86@kernel.org,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vivek Goyal <vgoyal@redhat.com>
+Subject: Re: [PATCH V2] x86/kexec: fix a kexec_file_load failure
+Message-ID: <20190108032251.GA30348@dhcp-128-65.nay.redhat.com>
+References: <20181228011247.GA9999@dhcp-128-65.nay.redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <9bc80bb861899633ba93e6c81d36d2201b05936b.camel@perches.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20181228011247.GA9999@dhcp-128-65.nay.redhat.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Tue, 08 Jan 2019 03:23:01 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 07, 2019 at 04:38:50PM -0800, Joe Perches wrote:
-> On Mon, 2019-01-07 at 16:25 -0700, Jason Gunthorpe wrote:
-> > On Mon, Jan 07, 2019 at 02:10:22PM -0800, Joe Perches wrote:
-> > > On Mon, 2019-01-07 at 14:11 -0700, Jason Gunthorpe wrote:
-> > > > There has been some confusion since checkpatch started warning about bool
-> > > > use in structures, and people have been avoiding using it.
-> > > > 
-> > > > Many people feel there is still a legitimate place for bool in structures,
-> > > > so provide some guidance on bool usage derived from the entire thread that
-> > > > spawned the checkpatch warning.
-> > > 
-> > > Thanks Jason.
-> > > 
-> > > It'd be nice to combine this with some better checkpatch warning or
-> > > even a removal of that misleading warning from checkpatch
-> > > altogether.
-> > 
-> > Okay, do you have a preference?
+On 12/28/18 at 09:12am, Dave Young wrote:
+> The code cleanup mentioned in Fixes tag changed the behavior of
+> kexec_locate_mem_hole.  The kexec_locate_mem_hole will try to
+> allocate free memory only when kbuf.mem is initialized as zero.
 > 
-> Yes.
+> But in x86 kexec_file_load implementation there are a few places
+> the kbuf.mem is reused like below:
+>   /* kbuf initialized, kbuf.mem = 0 */
+>   ...
+>   kexec_add_buffer()
+>   ...
+>   kexec_add_buffer()
+> 
+>   The second kexec_add_buffer will reuse previous kbuf but not
+>   reinitialize the kbuf.mem.
+> 
+> Thus kexec_file_load failed because the sanity check failed.
+> 
+> So explictily reset kbuf.mem to fix the issue.
+> 
+> Fixes: b6664ba42f14 ("s390, kexec_file: drop arch_kexec_mem_walk()")
+> Signed-off-by: Dave Young <dyoung@redhat.com>
+> Cc: <stable@vger.kernel.org>
+> ---
+> V1 -> V2: use KEXEC_BUF_MEM_UNKNOWN in code.
+>  arch/x86/kernel/crash.c           | 1 +
+>  arch/x86/kernel/kexec-bzimage64.c | 2 ++
+>  2 files changed, 3 insertions(+)
+> 
+> diff --git a/arch/x86/kernel/crash.c b/arch/x86/kernel/crash.c
+> index f631a3f15587..6b7890c7889b 100644
+> --- a/arch/x86/kernel/crash.c
+> +++ b/arch/x86/kernel/crash.c
+> @@ -469,6 +469,7 @@ int crash_load_segments(struct kimage *image)
+>  
+>  	kbuf.memsz = kbuf.bufsz;
+>  	kbuf.buf_align = ELF_CORE_HEADER_ALIGN;
+> +	kbuf.mem = KEXEC_BUF_MEM_UNKNOWN;
+>  	ret = kexec_add_buffer(&kbuf);
+>  	if (ret) {
+>  		vfree((void *)image->arch.elf_headers);
+> diff --git a/arch/x86/kernel/kexec-bzimage64.c b/arch/x86/kernel/kexec-bzimage64.c
+> index 278cd07228dd..0d5efa34f359 100644
+> --- a/arch/x86/kernel/kexec-bzimage64.c
+> +++ b/arch/x86/kernel/kexec-bzimage64.c
+> @@ -434,6 +434,7 @@ static void *bzImage64_load(struct kimage *image, char *kernel,
+>  	kbuf.memsz = PAGE_ALIGN(header->init_size);
+>  	kbuf.buf_align = header->kernel_alignment;
+>  	kbuf.buf_min = MIN_KERNEL_LOAD_ADDR;
+> +	kbuf.mem = KEXEC_BUF_MEM_UNKNOWN;
+>  	ret = kexec_add_buffer(&kbuf);
+>  	if (ret)
+>  		goto out_free_params;
+> @@ -448,6 +449,7 @@ static void *bzImage64_load(struct kimage *image, char *kernel,
+>  		kbuf.bufsz = kbuf.memsz = initrd_len;
+>  		kbuf.buf_align = PAGE_SIZE;
+>  		kbuf.buf_min = MIN_INITRD_LOAD_ADDR;
+> +		kbuf.mem = KEXEC_BUF_MEM_UNKNOWN;
+>  		ret = kexec_add_buffer(&kbuf);
+>  		if (ret)
+>  			goto out_free_params;
+> -- 
+> 2.17.0
+> 
 
-Great, done, thanks
 
-Jason
+Ping, this is a regression issue, can we get this fixed?
+
+Thanks
+Dave
