@@ -2,108 +2,77 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9FAFC43612
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 21:56:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D733C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 21:59:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8233720665
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 21:56:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1CD1C214C6
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 21:59:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="HjSJoLiR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730160AbfAHV4p (ORCPT
+        id S1730326AbfAHV7O (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 16:56:45 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:55340 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728573AbfAHV4p (ORCPT
+        Tue, 8 Jan 2019 16:59:14 -0500
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:9607 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728552AbfAHV7N (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 16:56:45 -0500
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x08Li21O127626
-        for <linux-kernel@vger.kernel.org>; Tue, 8 Jan 2019 16:56:43 -0500
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2pvyxjbt9q-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jan 2019 16:56:43 -0500
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Tue, 8 Jan 2019 21:56:41 -0000
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 8 Jan 2019 21:56:37 -0000
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x08LuaZp64094332
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 8 Jan 2019 21:56:37 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E29A3A405C;
-        Tue,  8 Jan 2019 21:56:36 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1C5D8A405B;
-        Tue,  8 Jan 2019 21:56:36 +0000 (GMT)
-Received: from dhcp-9-31-102-82.watson.ibm.com (unknown [9.31.102.82])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue,  8 Jan 2019 21:56:35 +0000 (GMT)
-Subject: Re: [GIT PULL] security: general updates for v4.21
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     James Morris <jmorris@namei.org>
-Cc:     Casey Schaufler <casey@schaufler-ca.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        linux-security-module@vger.kernel.org,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Date:   Tue, 08 Jan 2019 16:56:35 -0500
-In-Reply-To: <alpine.LRH.2.21.1901080840080.2451@namei.org>
-References: <alpine.LRH.2.21.1812250652420.2714@namei.org>
-          <CAHk-=wiUaA4sZ=8UnT+q6eXE29K+XGVX=kZPR6gG-Z4UhO3p+Q@mail.gmail.com>
-          <alpine.LRH.2.21.1812291406530.29722@namei.org>
-          <CAHk-=wh4sL5mO1J+yzngonBvjO9ZwL_kA0a2e51rE9TzVjAA4g@mail.gmail.com>
-          <alpine.LRH.2.21.1812291505480.31477@namei.org>
-          <CAHk-=wh+6WrC_W7ZCjMDPaZm9SuuRjoTe8Buq123CfRvTyu0wA@mail.gmail.com>
-          <45d180c5-a174-7eef-9e23-83b819f8abd6@schaufler-ca.com>
-         <1546137859.4069.59.camel@linux.ibm.com>
-         <alpine.LRH.2.21.1901080840080.2451@namei.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19010821-0016-0000-0000-000002422A2E
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19010821-0017-0000-0000-0000329C402E
-Message-Id: <1546984595.19931.158.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-08_12:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=767 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901080166
+        Tue, 8 Jan 2019 16:59:13 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c351d180000>; Tue, 08 Jan 2019 13:58:48 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Tue, 08 Jan 2019 13:59:13 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Tue, 08 Jan 2019 13:59:13 -0800
+Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 8 Jan
+ 2019 21:59:12 +0000
+Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
+ Transport; Tue, 8 Jan 2019 21:59:12 +0000
+Received: from skomatineni-linux.nvidia.com (Not Verified[10.110.102.151]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5c351d300001>; Tue, 08 Jan 2019 13:59:12 -0800
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <mkarthik@nvidia.com>, <smohammed@nvidia.com>, <talho@nvidia.com>
+CC:     <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-i2c@vger.kernel.org>,
+        Sowjanya Komatineni <skomatineni@nvidia.com>
+Subject: [PATCH V5] i2c: tegra: Fix Maximum transfer size
+Date:   Tue, 8 Jan 2019 13:59:09 -0800
+Message-ID: <1546984750-26199-1-git-send-email-skomatineni@nvidia.com>
+X-Mailer: git-send-email 2.7.4
+X-NVConfidentiality: public
+MIME-Version: 1.0
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1546984729; bh=EJ1NnfBEwUAsT7nEE3ok8p7RA3/5IAQ72DrKCHZi9LM=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         X-NVConfidentiality:MIME-Version:Content-Type;
+        b=HjSJoLiR8xSZarmovJY7KfOMHlE4v4qCIJ9H5djLW3h+d4lmLGFM7B2zv0eakpr1F
+         1R1wYYUcqeVDI1xwN2KSPbdBhfOHUcbnHga2NYBbaUt74L8Kj4Au0NLt0GjLyvOGlt
+         QS9rfAqUzQmdHyGaSmjAucVzKEsEJyKwYtNBJPK1ZD+q/Uf126UbN0HEMnVtFf1YE1
+         HU1TKO0j6iSTUMmOBJCqsOZTUs5sgHHw1AcZgdJ5lSnkoihg/KjvSg7VIImBpcM/oB
+         6O5p0qAFw4Fcf+5vDb7Wqd4TCcUPMrQkF180uUHVV9GgAuyHA6YxcytoUBZ6g3SIiU
+         d6mq6iO15JOpQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2019-01-08 at 08:45 +1100, James Morris wrote:
+V5 is same as V4 Patch rebased to 5.0-rc1
 
-> > Included in this open window are a number of LSM changes, which were
-> > not posted on the LSM mailing list and are not being upstreamed via
-> > the LSMs.
-> 
-> If you see changes doing this, please call them out. Any changes to LSM 
-> need to be cc'd at least to the LSM mailing list.
+Sowjanya Komatineni (1):
+  i2c: tegra: Fix Maximum transfer size
 
-Sure.  I'm referring to Al's match_token() and other changes, which I
-only learned about when Linus reviewed Eric Bigger's patch "KEYS: fix
-parsing invalid pkey info string".
+ drivers/i2c/busses/i2c-tegra.c | 15 ++++++++++++++-
+ 1 file changed, 14 insertions(+), 1 deletion(-)
 
-169d68efb03b selinux: switch away from match_token()
-c3300aaf95fb smack: get rid of match_token()
-
-Mimi
+-- 
+2.7.4
 
