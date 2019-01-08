@@ -2,99 +2,128 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0861C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 09:25:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B545C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 09:26:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 80B832089F
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 09:25:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 25FCF2089F
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 09:26:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Rs4efpw8"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="A3JXKdwE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728537AbfAHJZc (ORCPT
+        id S1728472AbfAHJ0Q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 04:25:32 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:42453 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728110AbfAHJZb (ORCPT
+        Tue, 8 Jan 2019 04:26:16 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:48274 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727367AbfAHJ0P (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 04:25:31 -0500
-Received: by mail-lf1-f65.google.com with SMTP id l10so2378490lfh.9
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jan 2019 01:25:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=WycOcE4uFWLGgoA3dJR5IbUT56bdWuS9TAeWpDfvyoc=;
-        b=Rs4efpw8EMiIKa0vPZSJvrbSa5EpU6eIkILvsHPoo4M+yCljkZSbo2uQ06r8oWj3zG
-         scqMInPqThSjih+7iG+CZouJccNEZNkkXF/iiQ0u0/I4K4sZfGZJZtLrF2dNQ0jns4Av
-         oJwauOHbWF5gB6uhS56DTVxJMgRXAeJzSD3Ss=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=WycOcE4uFWLGgoA3dJR5IbUT56bdWuS9TAeWpDfvyoc=;
-        b=LY1YBAHvIHd2DXP0w0ycLTmRA0upcGgei//gP4libe9k7k159ftPTS2eh1kxlSxv7B
-         siGfzMAtwXU2h4nfg98FndWCHw8n76igt39Y2KS/MrBjAGNkXsw2Qey3CwdUuTT8r8Xa
-         WkH4u0bO6Wstbu+ziE5Px6Tsxz3r9c4qEHjC45PVru6jRrF4cR3j2bcySyn5SX7c1Zdh
-         iefLrf8u04lQFCbOdZnDt4br3jN7OjugoKodCRgIbD5RpB72zLBUh3ysNOStyQr/TzC+
-         RA/V1PctyrqXY4a9YZx57+AkdKvqqU8arFGNqDLi9i/274eIALByh0D1zanGKQEhhM5y
-         hoFQ==
-X-Gm-Message-State: AJcUukdM5tZAYItORBnJeWtcBeA/uaIJS4rS3gQiTLCCz6TNP1gYs0lE
-        6/25lcY06+D2ha7X9Kh3Sfe3Hg==
-X-Google-Smtp-Source: ALg8bN6/3lQZynhZJT/bMHv3vB/lbwZ2lh/zl5XMCpbv5GS9qg5wjZjyo+/rE0Azf6xF/aNCgR73fQ==
-X-Received: by 2002:a19:9a8c:: with SMTP id c134mr561920lfe.152.1546939529506;
-        Tue, 08 Jan 2019 01:25:29 -0800 (PST)
-Received: from localhost (c-4f66025c-74736162.cust.telenor.se. [79.102.2.92])
-        by smtp.gmail.com with ESMTPSA id q10-v6sm10574108ljj.3.2019.01.08.01.25.28
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 08 Jan 2019 01:25:28 -0800 (PST)
-From:   Anders Roxell <anders.roxell@linaro.org>
-To:     davem@davemloft.net, shuah@kernel.org
-Cc:     linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Anders Roxell <anders.roxell@linaro.org>
-Subject: [PATCH] selftests/networking: remove timestamping clean target
-Date:   Tue,  8 Jan 2019 10:25:25 +0100
-Message-Id: <20190108092525.12817-1-anders.roxell@linaro.org>
-X-Mailer: git-send-email 2.20.1
+        Tue, 8 Jan 2019 04:26:15 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=UcFs79ElLYfkSMdEYQ8C2tcq6RJzZMgjPuBrAzZDW7c=; b=A3JXKdwEuFvsP8uk/eCujm7nI
+        iPgjSxCw953uuyOEmygiq2MAgHpMaxW2pMVcHalULtHDHPyHRY+T0ybsmEEKnkMJEo4uMx6OrDPn0
+        h6dXsD9DU/WPTo1LiWcCliO8Zzz6NaY20byi7LQTxj5QwsMKKNNFy2XQX5NnJaXp3On46Lkt17z41
+        br4PZILx75vamQFZdD/XDd5/pfvZU/iSL5cDWe2BsOI4IxokI62iDU5RSzim8EcqFTNmbf6TXU3hi
+        SXYYvx7CjIH2r6C5aHvZYT+OmQmfD1FSyhM9juxDv1nAV3c2moVChXZ8UDlt2+6W3HL07DZPLVpJC
+        h7NWDE6bA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1ggne6-0005ow-Jq; Tue, 08 Jan 2019 09:26:03 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id C531B2029D919; Tue,  8 Jan 2019 10:25:59 +0100 (CET)
+Date:   Tue, 8 Jan 2019 10:25:59 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Adrian Hunter <adrian.hunter@intel.com>
+Cc:     Andi Kleen <ak@linux.intel.com>, Nadav Amit <namit@vmware.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Edward Cree <ecree@solarflare.com>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Nadav Amit <nadav.amit@gmail.com>, X86 ML <x86@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Borislav Petkov <bp@alien8.de>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        songliubraving@fb.com
+Subject: Re: [RFC v2 0/6] x86: dynamic indirect branch promotion
+Message-ID: <20190108092559.GA6808@hirez.programming.kicks-ass.net>
+References: <20181231072112.21051-1-namit@vmware.com>
+ <87zhshe66w.fsf@linux.intel.com>
+ <20190107163227.GH14122@hirez.programming.kicks-ass.net>
+ <c4e836e8-1949-27f5-f6a0-ed860f590ec5@intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c4e836e8-1949-27f5-f6a0-ed860f590ec5@intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit cda261f421ba ("selftests: add txtimestamp kselftest") introduced
-a warning:
+On Tue, Jan 08, 2019 at 09:47:18AM +0200, Adrian Hunter wrote:
+> On 7/01/19 6:32 PM, Peter Zijlstra wrote:
+> > On Thu, Jan 03, 2019 at 02:18:15PM -0800, Andi Kleen wrote:
+> >> Nadav Amit <namit@vmware.com> writes:
+> >>>
+> >>> - Do we use periodic learning or not? Josh suggested to reconfigure the
+> >>>   branches whenever a new target is found. However, I do not know at
+> >>>   this time how to do learning efficiently, without making learning much
+> >>>   more expensive.
+> >>
+> >> FWIW frequent patching will likely completely break perf Processor Trace
+> >> decoding, which needs a somewhat stable kernel text image to decode the
+> >> traces generated by the CPU. Right now it relies on kcore dumped after
+> >> the trace usually being stable because jumplabel changes happen only
+> >> infrequently. But if you start patching frequently this assumption will
+> >> break.
+> >>
+> >> You would either need a way to turn this off, or provide
+> >> updates for every change to the trace, so that the decoder can
+> >> keep track.
+> > 
+> > I'm thining it would be entirely possible to create and feed text_poke
+> > events into the regular (!aux) buffer which can be timestamp correlated
+> > to the PT data.
+> 
+> To rebuild kernel text from such events would require a starting point.
+> What is the starting point?  The problem with kcore is that people can
+> deconfig it without realising it is needed to enable the tracing of kernel
+> self-modifying code.  It would be nice if it was all tied together, so that
+> if someone selects the ability to trace kernel self-modifying code, then all
+> the bits needed are also selected.  Perhaps we should expose another ELF
+> image that contains only kernel executable code, and take the opportunity to
+> put the symbols in it also.
 
-Makefile:14: warning: overriding recipe for target 'clean'
-../../lib.mk:137: warning: ignoring old recipe for target 'clean'
+Meh; you always need a magic combo of CONFIG symbols to make stuff work.
+We don't even have a CONFIG symbol for PT, so if you really care you
+should probably start there.
 
-Theres no need for timestamping to have its own 'clean' target. The
-lib.mk file's 'clean' target gets included to the timestamping Makefile
-and that should be enough.
+If you want symbols; what stops us from exposing kallsyms in kcore as
+is?
 
-Fixes: cda261f421ba ("selftests: add txtimestamp kselftest")
-Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
----
- tools/testing/selftests/networking/timestamping/Makefile | 3 ---
- 1 file changed, 3 deletions(-)
+> Also what about BPF jitted code?  Will it always fit in an event?  I was
+> thinking of trying to add a way to prevent temporarily the unload of modules
+> or jitted code, which would be a good-enough solution for now.
 
-diff --git a/tools/testing/selftests/networking/timestamping/Makefile b/tools/testing/selftests/networking/timestamping/Makefile
-index 9050eeea5f5f..1de8bd8ccf5d 100644
---- a/tools/testing/selftests/networking/timestamping/Makefile
-+++ b/tools/testing/selftests/networking/timestamping/Makefile
-@@ -9,6 +9,3 @@ all: $(TEST_PROGS)
- top_srcdir = ../../../../..
- KSFT_KHDR_INSTALL := 1
- include ../../lib.mk
--
--clean:
--	rm -fr $(TEST_GEN_FILES)
--- 
-2.20.1
+We're working on BPF and kallsym events, those should, esp. when
+combined with kcore, allow you to extract the actual instructions.
 
+We don't have module events, but I suppose the kallsym events should
+cover module loading (a new module results in lots of new symbols after
+all).
+
+With all that there is still a race in that nothing blocks module-unload
+while we're still harvesting the information, not sure how/if we want to
+cure that.
