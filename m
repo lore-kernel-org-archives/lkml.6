@@ -2,114 +2,97 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28664C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 17:58:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF9F7C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 17:58:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EEFA7206A3
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 17:58:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="GokJAs66"
+	by mail.kernel.org (Postfix) with ESMTP id CC9D8206A3
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 17:58:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729247AbfAHR6L (ORCPT
+        id S1729270AbfAHR6n (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 12:58:11 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:32916 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728977AbfAHR6L (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 12:58:11 -0500
-Received: by mail-lf1-f65.google.com with SMTP id i26so3623819lfc.0
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jan 2019 09:58:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=db+M0hMXHCoSkBdeDd5EZtIcwj8USIPc3aH5GApnu2E=;
-        b=GokJAs66VB328JuQAj7nCMPOAKLlFcIc1p0dIohaE7gWVg6SFWJMtUNk8AtOJne6fl
-         ykxMuYplWSTTnqZD6aJrfG9Fs/q+OYzkO7lTF3D5CUolWfqub2ihmQauLhXG90AsQt1c
-         6/pQk57mtM2CylvQftRJfayqv1m0lTg+9u4aM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=db+M0hMXHCoSkBdeDd5EZtIcwj8USIPc3aH5GApnu2E=;
-        b=McPhyMT/aDu6hnUEvcNEV4FQsRgQ0f2KsSgHlZc1bvt7gSLxMwWwNSA4OfL2Gs/RCy
-         6ZQlXUM8dbNAp6XSsozZDpqyM0jfFEz0aOeUP/+X5K4ngSvZVBhCA0al/7eQmqfYGPeQ
-         TAmEeb0N6n7g96Tb/LEx8Gu4nm+cXZms2afoIabUpsZqt79ZVqF0u4NdhpOt3lYM4qr6
-         jFil2r5038ucDGZfFPIKv1ei4GLHiJylYA8AcW5mWGWPHrTlfUaQOiYUjWmxrkKFgifg
-         yjyk6KllmrYmPKx6VICliZVQ9S7sjJlPxBM30PSxDtj5gG56uQ5MnJwWvIrJOr0H3H4N
-         v5gw==
-X-Gm-Message-State: AJcUukfQBWY2OlRfZIGSqh12wV/BmPZKW5uDWbaFzgmxLuLQ7a6KodaY
-        ovfb8lOGTJTCK5rQFYbZ7ZJyDsGXcbGOZQ==
-X-Google-Smtp-Source: ALg8bN56J+XSQ3GX9XvUYtgbFT6Rs/4QESdDkM+ZYbpGqRN5qRkar+XefjDAWNebPZe+KWPiHRn89w==
-X-Received: by 2002:a19:10a4:: with SMTP id 36mr1626956lfq.60.1546970288376;
-        Tue, 08 Jan 2019 09:58:08 -0800 (PST)
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com. [209.85.167.48])
-        by smtp.gmail.com with ESMTPSA id m1sm13295384lfb.56.2019.01.08.09.58.06
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 08 Jan 2019 09:58:07 -0800 (PST)
-Received: by mail-lf1-f48.google.com with SMTP id y11so3608247lfj.4
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jan 2019 09:58:06 -0800 (PST)
-X-Received: by 2002:a19:6e0b:: with SMTP id j11mr1719606lfc.124.1546970286304;
- Tue, 08 Jan 2019 09:58:06 -0800 (PST)
+        Tue, 8 Jan 2019 12:58:43 -0500
+Received: from shell.v3.sk ([90.176.6.54]:49904 "EHLO shell.v3.sk"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727484AbfAHR6m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 12:58:42 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id 07EE3100050;
+        Tue,  8 Jan 2019 18:58:36 +0100 (CET)
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id InuCT_yISQSq; Tue,  8 Jan 2019 18:58:25 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id 21C26100057;
+        Tue,  8 Jan 2019 18:58:23 +0100 (CET)
+X-Virus-Scanned: amavisd-new at zimbra.v3.sk
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id loLyG6O6AVhW; Tue,  8 Jan 2019 18:58:22 +0100 (CET)
+Received: from belphegor.brq.redhat.com (nat-pool-brq-t.redhat.com [213.175.37.10])
+        by zimbra.v3.sk (Postfix) with ESMTPSA id 2F64310004D;
+        Tue,  8 Jan 2019 18:58:22 +0100 (CET)
+From:   Lubomir Rintel <lkundrak@v3.sk>
+To:     Andy Shevchenko <andy@infradead.org>,
+        Darren Hart <dvhart@infradead.org>,
+        platform-driver-x86@vger.kernel.org,
+        Russell King <linux@armlinux.org.uk>
+Cc:     James Cameron <quozl@laptop.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>,
+        Sebastian Reichel <sre@kernel.org>, x86@kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v4 00/15] Add support for OLPC XO 1.75 Embedded Controller
+Date:   Tue,  8 Jan 2019 18:58:03 +0100
+Message-Id: <20190108175818.705110-1-lkundrak@v3.sk>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <nycvar.YFH.7.76.1901051817390.16954@cbobk.fhfr.pm>
- <CAG48ez2jAp9xkPXQmVXm0PqNrFGscg9BufQRem2UD8FGX-YzPw@mail.gmail.com>
- <CAHk-=whL4sZiM=JcdQAYQvHm7h7xEtVUh+gYGYhoSk4vi38tXg@mail.gmail.com>
- <CAHk-=wg5Kk+r36=jcGBaLUj+gjopjgiW5eyvkdMqvn0jFkD_iQ@mail.gmail.com>
- <CAHk-=wiMQeCEKESWTmm15x79NjEjNwFvjZ=9XenxY7yH8zqa7A@mail.gmail.com>
- <20190106001138.GW6310@bombadil.infradead.org> <CAHk-=wiT=ov+6zYcnw_64ihYf74Amzqs67iVGtJMQq65PxiVYw@mail.gmail.com>
- <CAHk-=wg1A44Roa8C4dmfdXLRLmNysEW36=3R7f+tzZzbcJ2d2g@mail.gmail.com>
- <CAHk-=wiqbKEC5jUXr3ax+oUuiRrp=QMv_ZnUfO-SPv=UNJ-OTw@mail.gmail.com> <20190108044336.GB27534@dastard>
-In-Reply-To: <20190108044336.GB27534@dastard>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 8 Jan 2019 09:57:49 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wjvzEFQcTGJFh9cyV_MPQftNrjOLon8YMMxaX0G1TLqkg@mail.gmail.com>
-Message-ID: <CAHk-=wjvzEFQcTGJFh9cyV_MPQftNrjOLon8YMMxaX0G1TLqkg@mail.gmail.com>
-Subject: Re: [PATCH] mm/mincore: allow for making sys_mincore() privileged
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Matthew Wilcox <willy@infradead.org>, Jann Horn <jannh@google.com>,
-        Jiri Kosina <jikos@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Michal Hocko <mhocko@suse.com>, Linux-MM <linux-mm@kvack.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 7, 2019 at 8:43 PM Dave Chinner <david@fromorbit.com> wrote:
->
-> So, I read the paper and before I was half way through it I figured
-> there are a bunch of other similar page cache invalidation attacks
-> we can perform without needing mincore. i.e. Focussing on mmap() and
-> mincore() misses the wider issues we have with global shared caches.
+Hello!
 
-Oh, agreed, and that was discussed in the original report too.
+This is a fourth spin of the patch set that adds support for the
+Embedded Controller on an OLPC XO 1.75 machine.
 
-The thing is, you can also depend on our pre-faulting of pages in the
-page fault handler, and use that to get the cached status of nearby
-pages. So do something like "fault one page, then do mincore() to see
-how many pages near it were mapped". See our "do_fault_around()"
-logic.
+It hopefully incorporated all feedback received previously and also
+fixes the kbuild test bot failures. The failed builds were generally
+caused by configurations where the EC driver was built as module.
 
-But mincore is certainly the easiest interface, and the one that
-doesn't require much effort or setup. It's also the one where our old
-behavior was actually arguably simply stupid and actively wrong (ie
-"in caches" isn't even strictly speaking a valid question, since the
-caches in question may be invalid). So let's try to see if giving
-mincore() slightly more well-defined semantics actually causes any
-pain.
+It turned out that the patch that turned the OLPC EC common code into
+a module was not the brightest idea. I now dropped it and modified the
+04/15 to not require it.
 
-I do think that the RWF_NOWAIT case might also be interesting to look at.
+Also, the 01/15 patch has been added to allow the module to provide a
+reboot handler. Patch 15/15 depends on it.
 
-                 Linus
+Tested to work on an OLPC XO 1.75 and also tested not to break x86
+support with an OLPC XO 1 machine. I don't have a XO 1.5, but it's
+unlikely this breaks it when XO 1 works.
+
+[01/15] ARM: export arm_pm_restart()
+[02/15] dt-bindings: olpc,xo1.75-ec: Add OLPC XO-1.75 EC bindings
+[03/15] Platform: OLPC: Remove an unused include
+[04/15] Platform: OLPC: Add XO-1.75 EC driver
+[05/15] Platform: OLPC: Avoid a warning if the EC didn't register yet
+[06/15] Platform: OLPC: Move EC-specific functionality out from x86
+[07/15] Platform: OLPC: Use BIT() and GENMASK() for event masks
+[08/15] Platform: OLPC: add a regulator for the DCON
+[09/15] dt-bindings: olpc_battery: Add XO-1.5 battery
+[10/15] x86, olpc: Use a correct version when making up a battery node
+[11/15] power: supply: olpc_battery: Use DT to get battery version
+[12/15] power: supply: olpc_battery: Move priv data to a struct
+[13/15] power: supply: olpc_battery: Use devm_power_supply_register()
+[14/15] power: supply: olpc_battery: Avoid using platform_info
+[15/15] power: supply: olpc_battery: Add OLPC XO 1.75 support
+
+Lubo
+
+
