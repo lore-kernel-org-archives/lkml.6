@@ -2,99 +2,166 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 600B3C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 07:54:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCC0BC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 07:55:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 337482183F
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 07:54:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8BC1E218A1
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 07:55:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="PhZcd/rr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727894AbfAHHyA (ORCPT
+        id S1727948AbfAHHze (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 02:54:00 -0500
-Received: from mga11.intel.com ([192.55.52.93]:31333 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727295AbfAHHx7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 02:53:59 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jan 2019 23:48:57 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,453,1539673200"; 
-   d="scan'208";a="132579697"
-Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.56]) ([10.237.72.56])
-  by fmsmga002.fm.intel.com with ESMTP; 07 Jan 2019 23:48:53 -0800
-Subject: Re: [RFC v2 0/6] x86: dynamic indirect branch promotion
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Andi Kleen <ak@linux.intel.com>
-Cc:     Nadav Amit <namit@vmware.com>, Ingo Molnar <mingo@redhat.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Edward Cree <ecree@solarflare.com>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Nadav Amit <nadav.amit@gmail.com>, X86 ML <x86@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Borislav Petkov <bp@alien8.de>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>
-References: <20181231072112.21051-1-namit@vmware.com>
- <87zhshe66w.fsf@linux.intel.com>
- <20190107163227.GH14122@hirez.programming.kicks-ass.net>
-From:   Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <c4e836e8-1949-27f5-f6a0-ed860f590ec5@intel.com>
-Date:   Tue, 8 Jan 2019 09:47:18 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Tue, 8 Jan 2019 02:55:34 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:45828 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727295AbfAHHzd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 02:55:33 -0500
+Received: by mail-lf1-f66.google.com with SMTP id b20so2193962lfa.12
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Jan 2019 23:55:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=Ne2U2GWi5WzJT3JmRNQS2Xkk/gbB7lkRB4jSF24eexU=;
+        b=PhZcd/rrfWI4mEXCmPWA3PxqevitWg8aCpxgwumILrWtrr92BNrrz14FrqZ6bZ/wfu
+         cLPVYys8lE+viljsAYTxq4wYmeLNLMNXFCZlqY3Cyw9c+qRgyKmOO7AR6LLBLhNE0Zhb
+         n8E2ohaEIbcsXs3cNblsx/pB2DL4GfxlpVwEw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=Ne2U2GWi5WzJT3JmRNQS2Xkk/gbB7lkRB4jSF24eexU=;
+        b=nLxVtwngqi00AEbdIJBufSqnwBvG8TxKhj1P3zakVyeJ/bmLha857K7uibGW7DpqG/
+         1LSvLlwlY7WRS8aizMVvUKfKC0fVJrFQNizfcXRJUJCgKeMz+1kuEUiLVYJE86LjrJGH
+         KvWi+1bzsaZxOZaLsLIAHUZ4otcHAxZSTU5toF9kffTELmzg+CWZszn1X6vOJui3zuAt
+         pg2F8mAgrPoJewz8Zttc03byPdHtcXsFqPMcTtZafxSC6E9hE9wJ03cTas0a7UTiqtXc
+         rvjeEndV/HlllnDvXpHBlKPZqBuEj2KFwMCJhagcTRq1tsTp26+ZeDPJ+w4olAA+K5gv
+         JhiQ==
+X-Gm-Message-State: AJcUukcXDcuV8zh+qHWpNUEKIx2vZRZnHZ+J1AWFhbSxUKICLD7oBjC1
+        E1yBsQdQ0+2nlNN23oAt5hLLdXI9hDzWfKArMWe/g68N3g3G5g==
+X-Google-Smtp-Source: ALg8bN5VIjG93g0Cu0BPUWY5LGnrfpyhVKUBuY2Dqh0Fv6kW5ODo7EMlEoIicwh9f1uVVYFfPrV9NHI+FAEVhn7yTTQ=
+X-Received: by 2002:a19:9a8c:: with SMTP id c134mr408806lfe.152.1546934131298;
+ Mon, 07 Jan 2019 23:55:31 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20190107163227.GH14122@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20190107105330.280153213@linuxfoundation.org> <20190107155328.GA26514@kroah.com>
+In-Reply-To: <20190107155328.GA26514@kroah.com>
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Tue, 8 Jan 2019 13:25:19 +0530
+Message-ID: <CA+G9fYuVdpS0Xv1X6vekA4EHCtRQBwN5chvrksr56K8QS7c9jg@mail.gmail.com>
+Subject: Re: [PATCH 4.9 00/71] 4.9.149-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        lkft-triage@lists.linaro.org,
+        linux- stable <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/01/19 6:32 PM, Peter Zijlstra wrote:
-> On Thu, Jan 03, 2019 at 02:18:15PM -0800, Andi Kleen wrote:
->> Nadav Amit <namit@vmware.com> writes:
->>>
->>> - Do we use periodic learning or not? Josh suggested to reconfigure the
->>>   branches whenever a new target is found. However, I do not know at
->>>   this time how to do learning efficiently, without making learning much
->>>   more expensive.
->>
->> FWIW frequent patching will likely completely break perf Processor Trace
->> decoding, which needs a somewhat stable kernel text image to decode the
->> traces generated by the CPU. Right now it relies on kcore dumped after
->> the trace usually being stable because jumplabel changes happen only
->> infrequently. But if you start patching frequently this assumption will
->> break.
->>
->> You would either need a way to turn this off, or provide
->> updates for every change to the trace, so that the decoder can
->> keep track.
-> 
-> I'm thining it would be entirely possible to create and feed text_poke
-> events into the regular (!aux) buffer which can be timestamp correlated
-> to the PT data.
+On Mon, 7 Jan 2019 at 21:23, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> On Mon, Jan 07, 2019 at 01:32:29PM +0100, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 4.9.149 release.
+> > There are 71 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> >
+> > Responses should be made by Wed Jan  9 10:53:04 UTC 2019.
+> > Anything received after that time might be too late.
+> >
+> > The whole patch series can be found in one patch at:
+> >       https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
+4.9.149-rc1.gz
+>
+> Ok, hopefully this is better, at least it builds on x86-64 properly
+> now, -rc3:
+>         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
+4.9.149-rc3.gz
 
-To rebuild kernel text from such events would require a starting point.
-What is the starting point?  The problem with kcore is that people can
-deconfig it without realising it is needed to enable the tracing of kernel
-self-modifying code.  It would be nice if it was all tied together, so that
-if someone selects the ability to trace kernel self-modifying code, then all
-the bits needed are also selected.  Perhaps we should expose another ELF
-image that contains only kernel executable code, and take the opportunity to
-put the symbols in it also.
+Test results report of 4.9.149-rc3,
 
-Also what about BPF jitted code?  Will it always fit in an event?  I was
-thinking of trying to add a way to prevent temporarily the unload of modules
-or jitted code, which would be a good-enough solution for now.
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm, x86_64, and i386.
+
+Summary
+------------------------------------------------------------------------
+
+kernel: 4.9.149-rc3
+git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
+le-rc.git
+git branch: linux-4.9.y
+git commit: d1d800b1ed7ab74a26df74ce1f95d5f49f36d717
+git describe: v4.9.148-69-gd1d800b1ed7a
+Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.9-oe/bui=
+ld/v4.9.148-69-gd1d800b1ed7a
+
+
+No regressions (compared to build v4.9.148)
+
+
+No fixes (compared to build v4.9.148)
+
+Ran 19740 total tests in the following environments and test suites.
+
+Environments
+--------------
+- dragonboard-410c - arm64
+- hi6220-hikey - arm64
+- i386
+- juno-r2 - arm64
+- qemu_arm
+- qemu_arm64
+- qemu_i386
+- qemu_x86_64
+- x15 - arm
+- x86_64
+
+Test Suites
+-----------
+* boot
+* install-android-platform-tools-r2600
+* kselftest
+* libhugetlbfs
+* ltp-cap_bounds-tests
+* ltp-containers-tests
+* ltp-cpuhotplug-tests
+* ltp-cve-tests
+* ltp-fcntl-locktests-tests
+* ltp-filecaps-tests
+* ltp-fs-tests
+* ltp-fs_bind-tests
+* ltp-fs_perms_simple-tests
+* ltp-fsx-tests
+* ltp-hugetlb-tests
+* ltp-io-tests
+* ltp-ipc-tests
+* ltp-math-tests
+* ltp-nptl-tests
+* ltp-pty-tests
+* ltp-sched-tests
+* ltp-securebits-tests
+* ltp-syscalls-tests
+* ltp-timers-tests
+* spectre-meltdown-checker-test
+* ltp-open-posix-tests
+* kselftest-vsyscall-mode-native
+* kselftest-vsyscall-mode-none
+
+--=20
+Linaro LKFT
+https://lkft.linaro.org
