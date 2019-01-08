@@ -2,99 +2,103 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05643C43612
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 21:37:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A64D5C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 21:42:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C5DF62070B
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 21:37:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6919020675
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 21:42:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="ZwLy5z3t"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="U7iXYpNR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730357AbfAHVhx (ORCPT
+        id S1730305AbfAHVmC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 16:37:53 -0500
-Received: from sonic313-26.consmr.mail.gq1.yahoo.com ([98.137.65.89]:35438
-        "EHLO sonic313-26.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727917AbfAHVhw (ORCPT
+        Tue, 8 Jan 2019 16:42:02 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:36664 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730161AbfAHVmC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 16:37:52 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1546983471; bh=4gGLfs8Da9xg7fdVU51mrUWTmIlUtC0PvY3sTLbKPik=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=ZwLy5z3twJacaNUxL0LmwjcgaWnNuJraIEuAy6RQXXLWpkxVB8u0wAv9rlR7ju8OE8vSFWJD0kLCPJHwx1eh4fD/3+0IpTGtW1zHP++j8xapXmB3/tGXnkyfa/NVfFciEcfeEdoQVuHJGkLJ8nnxycYN5IucVFzLBpNBMNKbZrfCSKw1F34pB6ehYA5XPYW8K498+FxyL+eNWer8BMLZ5NVk2JF7Xt8IZNnVKo/WViXMMxospzxeWUv8VqAiPJdAnu2+gmbDYr4Y03tdzjzQjuJbc7ThT2PV9QZDVFIgaJGVed8kEnBFJ/kMJ6bgZuEMhcelq/bhExedokaw7zrjbA==
-X-YMail-OSG: dt9_IA0VM1mXyEbxplzicdrl3zWXIFnvOGFT5Xk2KXhIhsg8KQLqy3.91HPS_JM
- kqi7FdgCGg..czcuQdSIugo82W4cSZSmPoEZmjA5I4Bxg8h2IiJUd6QsEFVHrQFrqkBjtCsnxkRq
- eye0.poY62PDszFv.dDL1O3nwlt_U8_UyEuvHF_DgMt_21SdYxJklWeLBlYgYPIbIQGNAHNSo0.D
- THK243zVLTuwjzxEa6F0zfZ6o2cgRuqfrJwZ9ZQNCCx8VGfdOjx.cGZujndvZY223oyysF6BB6tJ
- my67UghRTMIkingPcRmXHl_i.nORynomIDpY5ul8EpmZBCFxb598vxScihn.7ynU3COG4aQQPcdX
- IFnG8E7OEv6fUBE5ETSbKMqzPLGx1Q0OzlZgJfkHOiPKYQTOlGOtd666fGLx0ktiZb5S7VlDlAYs
- V8X_7YjbV8qicvx9RJtkkOf4CYkOVqG8WiGxI10u7YqWbrBUF_lzUXJ.X0vPOz2Ax8gJFJXXHLA0
- BqjxQsX4_WYKIx_i6Pq186keXhGHem65Six.m1J7aBJo7H.1CIvK8OkY.4LNMcuN6j9XFXuTuxkP
- trT6tOVWgJGRWcDwfxwpMil_yeSsXSCrE63JXYoTbUdjNKaQP6jKb4UmmcAsSSJcwxSiaYj02Diq
- jrQ.JNt8aTE2KGcx8Sqpxf2.zSrCpbVpLr8hGET8OQpBh7Pv0.TdD4uTgYC0R1VT46flPCpEO9Oh
- IlSM.4WpxToWdpicyxDvJS7h1hBQdurx7kt95AzhmMOp_tuZYIrKTh6gPFe.ChzrbdMIg3eDZD7D
- FfQMsFg_vBsbC8TKBTW22w9MIYiEW7snTikYgSIKtrJ0ig3XvxBJRacqKKDPNJrGHzBM.Gjskh2B
- p9O3x.T371SR.9P7PXAioLERhFG2pUIygwc.aZpCXO5.y7VZfJXmcNLnK5ehfM4tmKCCwTNrXk.5
- 6ioXrjtZ120KlYuYGvrEnuUAbzIHdGhUPpImLR9mYhHwMAKLPQZxRNZ7KoKiy_2OClrwnnviZvcC
- 0i9fddL0U4Z.LIbiIzmJ4JA505LEAM1qtrM2keu6jyftm5mShRZ7tuBIO7LQX4SodW1DLOyKVa9W
- b0snehKnZmrTPNxnyIMecQEJprCryQzC_9fFgHPec_Mc-
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic313.consmr.mail.gq1.yahoo.com with HTTP; Tue, 8 Jan 2019 21:37:51 +0000
-Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.103]) ([67.169.65.224])
-          by smtp423.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID d5b6cdb001787338e2d275f3df3a03e8;
-          Tue, 08 Jan 2019 21:37:47 +0000 (UTC)
-Subject: Re: [PATCH v5 00/38] LSM: Module stacking for SARA and Landlock
-To:     James Morris <jmorris@namei.org>, Kees Cook <keescook@chromium.org>
-Cc:     linux-security-module <linux-security-module@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        SE Linux <selinux@tycho.nsa.gov>,
-        John Johansen <john.johansen@canonical.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Paul Moore <paul@paul-moore.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
-        Salvatore Mesoraca <s.mesoraca16@gmail.com>
-References: <50db058a-7dde-441b-a7f9-f6837fe8b69f@schaufler-ca.com>
- <CAGXu5jLUJYM3nDDhFeBOKkTnyCR-tXAv-rteBJFMBn_J7kVkqA@mail.gmail.com>
- <alpine.LRH.2.21.1812120556040.11653@namei.org>
- <CAGXu5j+bx7nJBMdFYigYnJFRyCvz0NAxfiWF8yP9EhRESLnn+Q@mail.gmail.com>
- <CAGXu5jJOGKAFrFF7HSPnqLpLz0no2Ae_z0TkWPeRt1WWqhqFOA@mail.gmail.com>
- <alpine.LRH.2.21.1901090805121.24546@namei.org>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <2cd724a9-3735-1be3-4a42-facb264e70dc@schaufler-ca.com>
-Date:   Tue, 8 Jan 2019 13:37:41 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 8 Jan 2019 16:42:02 -0500
+Received: by mail-pg1-f193.google.com with SMTP id n2so2311597pgm.3
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jan 2019 13:42:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
+        bh=Cw0/EpUkh9KIoCMrbNUz1HGkKPdSPNaGkVe871n5XU8=;
+        b=U7iXYpNRREIOeW2oMzWP/kHPPqpauR1697z+P23GO8OuazXmxtXT+FxACGGmT8RS1v
+         qq/4uxyhsInTB+btOSN1CjaFQFHJqkp25IGrOkeD2P9knjoZE3F+asO9crDQhl6mBFQj
+         1vMXkXVpN2H4BXc5n8K3Ujn1aMDe3jfx9J4fc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition;
+        bh=Cw0/EpUkh9KIoCMrbNUz1HGkKPdSPNaGkVe871n5XU8=;
+        b=GUDWpa026bY80FrnXBfKscPWcji/gUZiutz8q2ehIlB/l6ZCrtW6zgbUJnDjw/ESiW
+         3ALG00h2mbqlbB+Yt5T+50juB/mfkRmgke+to4yPyfjzWLMYqamRk5Ty13e34a/fqGHz
+         1UemZlvvuKXmdHU8jJcBep/A2ta44D20dRxLhkN6uMuXj5IqekxW+5ODwEng+jEKrMgE
+         hzmdM3a92eZ3wIPd6TP88c6+wS+atrocDlUr8krPCiRmxdKTVrVLmNcpVeYo26EMlNpM
+         16Fg2yK4hXCZ0JNQHbtoMhgZ4BI3ZXxdGWEtJgoxkxw76LZWGsieBvUBMzO9oEmQwhcV
+         hdbw==
+X-Gm-Message-State: AJcUukdbzGx8AK30gnEWaYuFKNx49CHFcC+B0DW/P5e7sL94S9UWxX91
+        c620PoXCUzjQQVaPiK5pEl9jQg==
+X-Google-Smtp-Source: ALg8bN4YvvVcTD7TFj49sk/jzPzNo/ABtxkSzfr5SUgPIKvI3MHCdbt4PU/bBJ3xtZoFCTuVBPvtpg==
+X-Received: by 2002:a62:c683:: with SMTP id x3mr3337449pfk.10.1546983721478;
+        Tue, 08 Jan 2019 13:42:01 -0800 (PST)
+Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
+        by smtp.gmail.com with ESMTPSA id k15sm115945904pfb.147.2019.01.08.13.42.00
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 08 Jan 2019 13:42:00 -0800 (PST)
+Date:   Tue, 8 Jan 2019 13:41:59 -0800
+From:   Kees Cook <keescook@chromium.org>
+To:     Shuah Khan <shuah@kernel.org>
+Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        Dave Watson <davejwatson@fb.com>
+Subject: [PATCH] selftests/tls: Add {} to avoid static checker warning
+Message-ID: <20190108214159.GA33292@beast>
 MIME-Version: 1.0
-In-Reply-To: <alpine.LRH.2.21.1901090805121.24546@namei.org>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/8/2019 1:05 PM, James Morris wrote:
-> On Mon, 7 Jan 2019, Kees Cook wrote:
->
->> On Tue, Dec 11, 2018 at 1:19 PM Kees Cook <keescook@chromium.org> wrote:
->>> On Tue, Dec 11, 2018 at 10:57 AM James Morris <jmorris@namei.org> wrote:
->>>> On Tue, 4 Dec 2018, Kees Cook wrote:
->>>>
->>>>> On Mon, Nov 26, 2018 at 3:22 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
->>>>>> v5: Include Kees Cook's rework of the lsm command
->>>>>>     line interface. Stacking is not conditional.
->>>>> Can you resend this series with corrected "From:" lines in the body, etc?
->>>>>
->>>>> Beyond that, I obviously like it. James, what's needed for this to move forward?
->>>> If there are no outstanding issues, I plan to merge this for 4.21.
->>> Yeah, it looks good to me. (Excepting getting the authorship sorted.)
->> I didn't see this actually get merged? Was there something that needed
->> fixing? Should I send you a direct pull request for v5.1?
-> Yep, please send a new pull request.
+This silences a static checker warning due to the unusual macro
+construction of EXPECT_*() by adding explicit {}s around the enclosing
+while loop.
 
-Do you want it as is or rebased on 5.0-rc1?
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Fixes: 7f657d5bf507 ("selftests: tls: add selftests for TLS sockets")
+Signed-off-by: Kees Cook <keescook@chromium.org>
+---
+I think this will fix it?
+---
+ tools/testing/selftests/net/tls.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
+diff --git a/tools/testing/selftests/net/tls.c b/tools/testing/selftests/net/tls.c
+index fac68d710f35..e1472b8b53f3 100644
+--- a/tools/testing/selftests/net/tls.c
++++ b/tools/testing/selftests/net/tls.c
+@@ -202,8 +202,9 @@ TEST_F(tls, sendmsg_large)
+ 		EXPECT_EQ(sendmsg(self->cfd, &msg, 0), send_len);
+ 	}
+ 
+-	while (recvs++ < sends)
++	while (recvs++ < sends) {
+ 		EXPECT_NE(recv(self->fd, mem, send_len, 0), -1);
++	}
+ 
+ 	free(mem);
+ }
+-- 
+2.17.1
+
+
+-- 
+Kees Cook
