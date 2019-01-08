@@ -2,167 +2,99 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDD2CC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 07:51:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 600B3C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 07:54:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A11A52183F
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 07:51:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 337482183F
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 07:54:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727865AbfAHHvO (ORCPT
+        id S1727894AbfAHHyA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 02:51:14 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:59608 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727473AbfAHHvO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 02:51:14 -0500
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x087nJTC001298
-        for <linux-kernel@vger.kernel.org>; Tue, 8 Jan 2019 02:51:13 -0500
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2pvpham1fc-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jan 2019 02:51:13 -0500
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
-        Tue, 8 Jan 2019 07:51:10 -0000
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 8 Jan 2019 07:51:08 -0000
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x087p77S7405828
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 8 Jan 2019 07:51:07 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 323015204F;
-        Tue,  8 Jan 2019 07:51:07 +0000 (GMT)
-Received: from rapoport-lnx (unknown [9.148.8.241])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTPS id 755895204E;
-        Tue,  8 Jan 2019 07:51:06 +0000 (GMT)
-Date:   Tue, 8 Jan 2019 09:51:04 +0200
-From:   Mike Rapoport <rppt@linux.ibm.com>
-To:     Christophe Leroy <christophe.leroy@c-s.fr>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-mm@kvack.org
-Subject: Re: [PATCH v2 1/2] mm: add probe_user_read()
-References: <0b0db24e18063076e9d9f4e376994af83da05456.1546932949.git.christophe.leroy@c-s.fr>
+        Tue, 8 Jan 2019 02:54:00 -0500
+Received: from mga11.intel.com ([192.55.52.93]:31333 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727295AbfAHHx7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 02:53:59 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jan 2019 23:48:57 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,453,1539673200"; 
+   d="scan'208";a="132579697"
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.56]) ([10.237.72.56])
+  by fmsmga002.fm.intel.com with ESMTP; 07 Jan 2019 23:48:53 -0800
+Subject: Re: [RFC v2 0/6] x86: dynamic indirect branch promotion
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Andi Kleen <ak@linux.intel.com>
+Cc:     Nadav Amit <namit@vmware.com>, Ingo Molnar <mingo@redhat.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Edward Cree <ecree@solarflare.com>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Nadav Amit <nadav.amit@gmail.com>, X86 ML <x86@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Borislav Petkov <bp@alien8.de>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>
+References: <20181231072112.21051-1-namit@vmware.com>
+ <87zhshe66w.fsf@linux.intel.com>
+ <20190107163227.GH14122@hirez.programming.kicks-ass.net>
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <c4e836e8-1949-27f5-f6a0-ed860f590ec5@intel.com>
+Date:   Tue, 8 Jan 2019 09:47:18 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0b0db24e18063076e9d9f4e376994af83da05456.1546932949.git.christophe.leroy@c-s.fr>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 19010807-4275-0000-0000-000002FBC587
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19010807-4276-0000-0000-00003809CF5E
-Message-Id: <20190108075104.GA4396@rapoport-lnx>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-08_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901080064
+In-Reply-To: <20190107163227.GH14122@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 08, 2019 at 07:37:44AM +0000, Christophe Leroy wrote:
-> In powerpc code, there are several places implementing safe
-> access to user data. This is sometimes implemented using
-> probe_kernel_address() with additional access_ok() verification,
-> sometimes with get_user() enclosed in a pagefault_disable()/enable()
-> pair, etc. :
->     show_user_instructions()
->     bad_stack_expansion()
->     p9_hmi_special_emu()
->     fsl_pci_mcheck_exception()
->     read_user_stack_64()
->     read_user_stack_32() on PPC64
->     read_user_stack_32() on PPC32
->     power_pmu_bhrb_to()
+On 7/01/19 6:32 PM, Peter Zijlstra wrote:
+> On Thu, Jan 03, 2019 at 02:18:15PM -0800, Andi Kleen wrote:
+>> Nadav Amit <namit@vmware.com> writes:
+>>>
+>>> - Do we use periodic learning or not? Josh suggested to reconfigure the
+>>>   branches whenever a new target is found. However, I do not know at
+>>>   this time how to do learning efficiently, without making learning much
+>>>   more expensive.
+>>
+>> FWIW frequent patching will likely completely break perf Processor Trace
+>> decoding, which needs a somewhat stable kernel text image to decode the
+>> traces generated by the CPU. Right now it relies on kcore dumped after
+>> the trace usually being stable because jumplabel changes happen only
+>> infrequently. But if you start patching frequently this assumption will
+>> break.
+>>
+>> You would either need a way to turn this off, or provide
+>> updates for every change to the trace, so that the decoder can
+>> keep track.
 > 
-> In the same spirit as probe_kernel_read(), this patch adds
-> probe_user_read().
-> 
-> probe_user_read() does the same as probe_kernel_read() but
-> first checks that it is really a user address.
-> 
-> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-> ---
->  v2: Added "Returns:" comment and removed probe_user_address()
-> 
->  Changes since RFC: Made a static inline function instead of weak function as recommended by Kees.
-> 
->  include/linux/uaccess.h | 34 ++++++++++++++++++++++++++++++++++
->  1 file changed, 34 insertions(+)
-> 
-> diff --git a/include/linux/uaccess.h b/include/linux/uaccess.h
-> index 37b226e8df13..07f4f0ed69bc 100644
-> --- a/include/linux/uaccess.h
-> +++ b/include/linux/uaccess.h
-> @@ -263,6 +263,40 @@ extern long strncpy_from_unsafe(char *dst, const void *unsafe_addr, long count);
->  #define probe_kernel_address(addr, retval)		\
->  	probe_kernel_read(&retval, addr, sizeof(retval))
->  
-> +/**
-> + * probe_user_read(): safely attempt to read from a user location
-> + * @dst: pointer to the buffer that shall take the data
-> + * @src: address to read from
-> + * @size: size of the data chunk
-> + *
-> + * Returns: 0 on success, -EFAULT on error.
+> I'm thining it would be entirely possible to create and feed text_poke
+> events into the regular (!aux) buffer which can be timestamp correlated
+> to the PT data.
 
-Nit: please put the "Returns:" comment after the description, otherwise
-kernel-doc considers it a part of the elaborate description.
+To rebuild kernel text from such events would require a starting point.
+What is the starting point?  The problem with kcore is that people can
+deconfig it without realising it is needed to enable the tracing of kernel
+self-modifying code.  It would be nice if it was all tied together, so that
+if someone selects the ability to trace kernel self-modifying code, then all
+the bits needed are also selected.  Perhaps we should expose another ELF
+image that contains only kernel executable code, and take the opportunity to
+put the symbols in it also.
 
-> + *
-> + * Safely read from address @src to the buffer at @dst.  If a kernel fault
-> + * happens, handle that and return -EFAULT.
-> + *
-> + * We ensure that the copy_from_user is executed in atomic context so that
-> + * do_page_fault() doesn't attempt to take mmap_sem.  This makes
-> + * probe_user_read() suitable for use within regions where the caller
-> + * already holds mmap_sem, or other locks which nest inside mmap_sem.
-> + */
-> +
-> +#ifndef probe_user_read
-> +static __always_inline long probe_user_read(void *dst, const void __user *src,
-> +					    size_t size)
-> +{
-> +	long ret;
-> +
-> +	if (!access_ok(src, size))
-> +		return -EFAULT;
-> +
-> +	pagefault_disable();
-> +	ret = __copy_from_user_inatomic(dst, src, size);
-> +	pagefault_enable();
-> +
-> +	return ret ? -EFAULT : 0;
-> +}
-> +#endif
-> +
->  #ifndef user_access_begin
->  #define user_access_begin(ptr,len) access_ok(ptr, len)
->  #define user_access_end() do { } while (0)
-> -- 
-> 2.13.3
-> 
-
--- 
-Sincerely yours,
-Mike.
-
+Also what about BPF jitted code?  Will it always fit in an event?  I was
+thinking of trying to add a way to prevent temporarily the unload of modules
+or jitted code, which would be a good-enough solution for now.
