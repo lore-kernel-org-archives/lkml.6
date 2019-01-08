@@ -4,53 +4,55 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FE59C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:09:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09E03C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:09:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4019B20660
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:09:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C0E9820827
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:09:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546978157;
-	bh=0JJxdttynjb1iwPy7ZYsLy9rMQ5I+LAfyaLVx3DVeJ0=;
+	s=default; t=1546978159;
+	bh=sxJa0TtH59/TOip/7ahu5zdJbR7StEg2U7CHiTf7gvE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Z1/Y+RpKS5Pwgm8M/33oF6CmjjAtK3n1enS3jTlUpH43BelCtXh+LhEcluT+jwb27
-	 RwN3uzq9NF4Pi7UrXekrUtdAaTRFEfA1Ji8/nsHdZMhz1/B3pBssp4WLi9ZkBhow5e
-	 xAX5LZVRHM7KpleqSRN8GHpKzdQXUT0w+XGQGkto=
+	b=TB0prNFEjSJCGnX2krqckkory+jfVfQw1t28u3cR45TQQvYVD06HhEIIDMhOjZR2s
+	 Wi9V6IUnehu1mXdro+bY4mBYToNw3GJAg70aNWYiYze0IN7MMHEiny2W9QrtLSXM4G
+	 b6C05ZHejHqdn0K8X7P5W1XvFR4p1rDL3Y8iTOdc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732551AbfAHUJQ (ORCPT
+        id S1729538AbfAHT1P (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 15:09:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33730 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 14:27:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33090 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729698AbfAHT1a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:27:30 -0500
+        id S1729472AbfAHT1J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:27:09 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2306520827;
-        Tue,  8 Jan 2019 19:27:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0E3612070B;
+        Tue,  8 Jan 2019 19:27:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546975649;
-        bh=0JJxdttynjb1iwPy7ZYsLy9rMQ5I+LAfyaLVx3DVeJ0=;
+        s=default; t=1546975627;
+        bh=sxJa0TtH59/TOip/7ahu5zdJbR7StEg2U7CHiTf7gvE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ygugWTz2S31i5Rl9Ts2SEeYlVXIca+kG3e+3iqYvCJYA+RRd9bcW5ZwWeOylS/cM2
-         GYAi5J6M87v4u94Nq3/fHb3jSqjsuwjMIcddv+6A+ebY4TFEIsTKYXa0gxzd5VEtJI
-         dLf8Az8SZrLrehEE7ahfVABqYqDA17htTy8Ty76s=
+        b=utDM7yheD6YKyWTEr/oDtV80VRaYCZdsR+iUnc0Uf7Iik3COYus5TPkc10WpxJJQ2
+         nJaAFmf4oA1oRcsCDo8J0+Mq1efNvYP6Jmq9HUToLYqAQHe1lbQHp+3Vk3hqkuw0p8
+         Fzi2tuko/NEBBfy7XuBgVfpt5upsK8/TYSqw1JLc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     James Morse <james.morse@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.20 033/117] arm64: Use a raw spinlock in __install_bp_hardening_cb()
-Date:   Tue,  8 Jan 2019 14:25:01 -0500
-Message-Id: <20190108192628.121270-33-sashal@kernel.org>
+Cc:     Trigger Huang <Trigger.Huang@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Sasha Levin <sashal@kernel.org>,
+        dri-devel@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 4.20 021/117] drm/scheduler: Fix bad job be re-processed in TDR
+Date:   Tue,  8 Jan 2019 14:24:49 -0500
+Message-Id: <20190108192628.121270-21-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108192628.121270-1-sashal@kernel.org>
 References: <20190108192628.121270-1-sashal@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -58,82 +60,127 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: James Morse <james.morse@arm.com>
+From: Trigger Huang <Trigger.Huang@amd.com>
 
-[ Upstream commit d8797b125711f23d83f5a71e908d34dfcd1fc3e9 ]
+[ Upstream commit 85744e9c100696d3f210e80b85fd56dd19767c81 ]
 
-__install_bp_hardening_cb() is called via stop_machine() as part
-of the cpu_enable callback. To force each CPU to take its turn
-when allocating slots, they take a spinlock.
+A bad job is the one triggered TDR(In the current amdgpu's
+implementation, actually all the jobs in the current joq-queue will
+be treated as bad jobs). In the recovery process, its fence
+will be fake signaled and as a result, the work behind will be scheduled
+to delete it from the mirror list, but if the TDR process is invoked
+before the work's execution, then this bad job might be processed again
+and the call dma_fence_set_error to its fence in TDR process will lead to
+kernel warning trace:
 
-With the RT patches applied, the spinlock becomes a mutex,
-and we get warnings about sleeping while in stop_machine():
-| [    0.319176] CPU features: detected: RAS Extension Support
-| [    0.319950] BUG: scheduling while atomic: migration/3/36/0x00000002
-| [    0.319955] Modules linked in:
-| [    0.319958] Preemption disabled at:
-| [    0.319969] [<ffff000008181ae4>] cpu_stopper_thread+0x7c/0x108
-| [    0.319973] CPU: 3 PID: 36 Comm: migration/3 Not tainted 4.19.1-rt3-00250-g330fc2c2a880 #2
-| [    0.319975] Hardware name: linux,dummy-virt (DT)
-| [    0.319976] Call trace:
-| [    0.319981]  dump_backtrace+0x0/0x148
-| [    0.319983]  show_stack+0x14/0x20
-| [    0.319987]  dump_stack+0x80/0xa4
-| [    0.319989]  __schedule_bug+0x94/0xb0
-| [    0.319991]  __schedule+0x510/0x560
-| [    0.319992]  schedule+0x38/0xe8
-| [    0.319994]  rt_spin_lock_slowlock_locked+0xf0/0x278
-| [    0.319996]  rt_spin_lock_slowlock+0x5c/0x90
-| [    0.319998]  rt_spin_lock+0x54/0x58
-| [    0.320000]  enable_smccc_arch_workaround_1+0xdc/0x260
-| [    0.320001]  __enable_cpu_capability+0x10/0x20
-| [    0.320003]  multi_cpu_stop+0x84/0x108
-| [    0.320004]  cpu_stopper_thread+0x84/0x108
-| [    0.320008]  smpboot_thread_fn+0x1e8/0x2b0
-| [    0.320009]  kthread+0x124/0x128
-| [    0.320010]  ret_from_fork+0x10/0x18
+[  143.033605] WARNING: CPU: 2 PID: 53 at ./include/linux/dma-fence.h:437 amddrm_sched_job_recovery+0x1af/0x1c0 [amd_sched]
+kernel: [  143.033606] Modules linked in: amdgpu(OE) amdchash(OE) amdttm(OE) amd_sched(OE) amdkcl(OE) amd_iommu_v2 drm_kms_helper drm i2c_algo_bit fb_sys_fops syscopyarea sysfillrect sysimgblt kvm_intel kvm irqbypass crct10dif_pclmul crc32_pclmul ghash_clmulni_intel pcbc aesni_intel aes_x86_64 snd_hda_codec_generic crypto_simd glue_helper cryptd snd_hda_intel snd_hda_codec snd_hda_core snd_hwdep snd_pcm snd_seq_midi snd_seq_midi_event snd_rawmidi snd_seq joydev snd_seq_device snd_timer snd soundcore binfmt_misc input_leds mac_hid serio_raw nfsd auth_rpcgss nfs_acl lockd grace sunrpc sch_fq_codel parport_pc ppdev lp parport ip_tables x_tables autofs4 8139too floppy psmouse 8139cp mii i2c_piix4 pata_acpi
+[  143.033649] CPU: 2 PID: 53 Comm: kworker/2:1 Tainted: G           OE    4.15.0-20-generic #21-Ubuntu
+[  143.033650] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Ubuntu-1.8.2-1ubuntu1 04/01/2014
+[  143.033653] Workqueue: events drm_sched_job_timedout [amd_sched]
+[  143.033656] RIP: 0010:amddrm_sched_job_recovery+0x1af/0x1c0 [amd_sched]
+[  143.033657] RSP: 0018:ffffa9f880fe7d48 EFLAGS: 00010202
+[  143.033659] RAX: 0000000000000007 RBX: ffff9b98f2b24c00 RCX: ffff9b98efef4f08
+[  143.033660] RDX: ffff9b98f2b27400 RSI: ffff9b98f2b24c50 RDI: ffff9b98efef4f18
+[  143.033660] RBP: ffffa9f880fe7d98 R08: 0000000000000001 R09: 00000000000002b6
+[  143.033661] R10: 0000000000000000 R11: 0000000000000000 R12: ffff9b98efef3430
+[  143.033662] R13: ffff9b98efef4d80 R14: ffff9b98efef4e98 R15: ffff9b98eaf91c00
+[  143.033663] FS:  0000000000000000(0000) GS:ffff9b98ffd00000(0000) knlGS:0000000000000000
+[  143.033664] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  143.033665] CR2: 00007fc49c96d470 CR3: 000000001400a005 CR4: 00000000003606e0
+[  143.033669] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[  143.033669] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+[  143.033670] Call Trace:
+[  143.033744]  amdgpu_device_gpu_recover+0x144/0x820 [amdgpu]
+[  143.033788]  amdgpu_job_timedout+0x9b/0xa0 [amdgpu]
+[  143.033791]  drm_sched_job_timedout+0xcc/0x150 [amd_sched]
+[  143.033795]  process_one_work+0x1de/0x410
+[  143.033797]  worker_thread+0x32/0x410
+[  143.033799]  kthread+0x121/0x140
+[  143.033801]  ? process_one_work+0x410/0x410
+[  143.033803]  ? kthread_create_worker_on_cpu+0x70/0x70
+[  143.033806]  ret_from_fork+0x35/0x40
 
-Switch this to a raw spinlock, as we know this is only called with
-IRQs masked.
+So just delete the bad job from mirror list directly
 
-Signed-off-by: James Morse <james.morse@arm.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
+Changes in v3:
+	- Add a helper function to delete the bad jobs from mirror list and call
+		it directly *before* the job's fence is signaled
+
+Changes in v2:
+	- delete the useless list node check
+	- also delete bad jobs in drm_sched_main because:
+		kthread_unpark(ring->sched.thread) will be invoked very early before
+		amdgpu_device_gpu_recover's return, then drm_sched_main will have
+		chance to pick up a new job from the job queue. This new job will be
+		added into the mirror list and processed by amdgpu_job_run, but may
+		not be deleted from the mirror list on time due to the same reason.
+		And finally re-processed by drm_sched_job_recovery
+
+Signed-off-by: Trigger Huang <Trigger.Huang@amd.com>
+Reviewed-by: Christian König <chrstian.koenig@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/kernel/cpu_errata.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/scheduler/sched_main.c | 17 ++++++++++++++++-
+ 1 file changed, 16 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/kernel/cpu_errata.c b/arch/arm64/kernel/cpu_errata.c
-index 6ad715d67df8..99622e5ad21b 100644
---- a/arch/arm64/kernel/cpu_errata.c
-+++ b/arch/arm64/kernel/cpu_errata.c
-@@ -135,7 +135,7 @@ static void __install_bp_hardening_cb(bp_hardening_cb_t fn,
- 				      const char *hyp_vecs_start,
- 				      const char *hyp_vecs_end)
- {
--	static DEFINE_SPINLOCK(bp_lock);
-+	static DEFINE_RAW_SPINLOCK(bp_lock);
- 	int cpu, slot = -1;
+diff --git a/drivers/gpu/drm/scheduler/sched_main.c b/drivers/gpu/drm/scheduler/sched_main.c
+index 44fe587aaef9..c5bbbd7cb2de 100644
+--- a/drivers/gpu/drm/scheduler/sched_main.c
++++ b/drivers/gpu/drm/scheduler/sched_main.c
+@@ -60,6 +60,8 @@
  
- 	/*
-@@ -147,7 +147,7 @@ static void __install_bp_hardening_cb(bp_hardening_cb_t fn,
- 		return;
- 	}
+ static void drm_sched_process_job(struct dma_fence *f, struct dma_fence_cb *cb);
  
--	spin_lock(&bp_lock);
-+	raw_spin_lock(&bp_lock);
- 	for_each_possible_cpu(cpu) {
- 		if (per_cpu(bp_hardening_data.fn, cpu) == fn) {
- 			slot = per_cpu(bp_hardening_data.hyp_vectors_slot, cpu);
-@@ -163,7 +163,7 @@ static void __install_bp_hardening_cb(bp_hardening_cb_t fn,
++static void drm_sched_expel_job_unlocked(struct drm_sched_job *s_job);
++
+ /**
+  * drm_sched_rq_init - initialize a given run queue struct
+  *
+@@ -215,7 +217,7 @@ static void drm_sched_job_finish(struct work_struct *work)
  
- 	__this_cpu_write(bp_hardening_data.hyp_vectors_slot, slot);
- 	__this_cpu_write(bp_hardening_data.fn, fn);
--	spin_unlock(&bp_lock);
-+	raw_spin_unlock(&bp_lock);
+ 	spin_lock(&sched->job_list_lock);
+ 	/* remove job from ring_mirror_list */
+-	list_del(&s_job->node);
++	list_del_init(&s_job->node);
+ 	/* queue TDR for next job */
+ 	drm_sched_start_timeout(sched);
+ 	spin_unlock(&sched->job_list_lock);
+@@ -378,6 +380,8 @@ void drm_sched_job_recovery(struct drm_gpu_scheduler *sched)
+ 					  r);
+ 			dma_fence_put(fence);
+ 		} else {
++			if (s_fence->finished.error < 0)
++				drm_sched_expel_job_unlocked(s_job);
+ 			drm_sched_process_job(NULL, &s_fence->cb);
+ 		}
+ 		spin_lock(&sched->job_list_lock);
+@@ -567,6 +571,8 @@ static int drm_sched_main(void *param)
+ 					  r);
+ 			dma_fence_put(fence);
+ 		} else {
++			if (s_fence->finished.error < 0)
++				drm_sched_expel_job_unlocked(sched_job);
+ 			drm_sched_process_job(NULL, &s_fence->cb);
+ 		}
+ 
+@@ -575,6 +581,15 @@ static int drm_sched_main(void *param)
+ 	return 0;
  }
- #else
- #define __smccc_workaround_1_smc_start		NULL
+ 
++static void drm_sched_expel_job_unlocked(struct drm_sched_job *s_job)
++{
++	struct drm_gpu_scheduler *sched = s_job->sched;
++
++	spin_lock(&sched->job_list_lock);
++	list_del_init(&s_job->node);
++	spin_unlock(&sched->job_list_lock);
++}
++
+ /**
+  * drm_sched_init - Init a gpu scheduler instance
+  *
 -- 
 2.19.1
 
