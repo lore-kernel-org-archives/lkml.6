@@ -2,138 +2,122 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1871C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:09:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8E1BC43612
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:09:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AADF920660
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:09:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 86B2020660
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:09:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1546978190;
+	bh=YaT1tGfXdBj9KomnnX0NcNptWWp0E2WfpRcig9w1rI4=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=AZTVlBmKKJrWjMkvhn6LVCz2X96/JkRlqRuH/i9/6JbiYhGsAVkh762jB/ANFyKNb
+	 5xSUurRhgJ7NanxzIS4JP0GwpySIJhL/t8oBVo3L1kUSjN1FBjLH0QBz8hF36K9sWw
+	 Ah8o35bQH/8TbIhXFuvqD8M49WV73ND584mQeTXs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733057AbfAHUJm (ORCPT
+        id S1729328AbfAHT0z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 15:09:42 -0500
-Received: from sauhun.de ([88.99.104.3]:44384 "EHLO pokefinder.org"
+        Tue, 8 Jan 2019 14:26:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60888 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729320AbfAHUJl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 15:09:41 -0500
-Received: from localhost (p54B337DA.dip0.t-ipconnect.de [84.179.55.218])
-        by pokefinder.org (Postfix) with ESMTPSA id 7E82B3E48B8;
-        Tue,  8 Jan 2019 21:09:38 +0100 (CET)
-Date:   Tue, 8 Jan 2019 21:09:38 +0100
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Hans de Goede <hdegoede@redhat.com>,
-        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH 00/10] i2c: move handling of suspended adapters to the
- core
-Message-ID: <20190108200937.bratvsbz4grk6m4e@ninjato>
-References: <20181219164827.20985-1-wsa+renesas@sang-engineering.com>
+        id S1729148AbfAHT0u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:26:50 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2E55B20883;
+        Tue,  8 Jan 2019 19:26:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1546975609;
+        bh=YaT1tGfXdBj9KomnnX0NcNptWWp0E2WfpRcig9w1rI4=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=A25w9AC0sTevGT6VrZBeQzImq+8HvmmhVRYs5zi+4YNZROIAYRYQ9FYrEX934WLNx
+         +e1r8BVCLyko9OZWbHYL+xBuoIMWYKQI2CJfFMKUUrCy3zH85BffmCcZr0ajOePO9d
+         9nqOmXajh4dIJTgBzCt8xugFztXzi/+qkzJ4IyCE=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Frank Rowand <frank.rowand@sony.com>,
+        Sasha Levin <sashal@kernel.org>, devicetree@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 012/117] of: overlay: add missing of_node_put() after add new node to changeset
+Date:   Tue,  8 Jan 2019 14:24:40 -0500
+Message-Id: <20190108192628.121270-12-sashal@kernel.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190108192628.121270-1-sashal@kernel.org>
+References: <20190108192628.121270-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="mwtdafiryfs7cnw6"
-Content-Disposition: inline
-In-Reply-To: <20181219164827.20985-1-wsa+renesas@sang-engineering.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Frank Rowand <frank.rowand@sony.com>
 
---mwtdafiryfs7cnw6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+[ Upstream commit 7c528e457d53c75107d5aa56892316d265c778de ]
 
-On Wed, Dec 19, 2018 at 05:48:16PM +0100, Wolfram Sang wrote:
-> Finally, here is the implementation Hans and I agreed on. Plus, all poten=
-tial
-> users I could spot already converted. Renesas R-Car driver was added on t=
-op.
-> This series was tested on a Renesas Lager board (R-Car H2). I had to hack=
- some
-> error cases into the code to verify the workings. Thanks for all the test=
-s so
-> far. Of course, more testing never hurts ;)
->=20
-> Please comment, review, test... a branch can be found here:
->=20
-> git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/i2c/c=
-ore-pm-helpers
->=20
-> Thanks,
->=20
->    Wolfram
->=20
-> Changes since RFC:
->=20
-> * don't use bitfields anymore but an unsigned long flags variable which i=
-s only
->   meant for flags to be changed when the adapter lock is held
->=20
-> * split the genereic accessor into _mark_suspended() and _mark_resumed()
->=20
-> * added kerneldoc and noted that using these helpers is optional
->=20
-> * documented -ESHUTDOWN as the error code when trying to transfer using an
->   already suspended adapter
->=20
-> * added acks from last series. Changes were minor enough to keep them. Pl=
-ease let
->   me know if you disagree.
->=20
->=20
-> Wolfram Sang (10):
->   i2c: add suspended flag and accessors for i2c adapters
->   i2c: reject new transfers when adapters are suspended
->   i2c: synquacer: remove unused is_suspended flag
->   i2c: brcmstb: use core helper to mark adapter suspended
->   i2c: zx2967: use core helper to mark adapter suspended
->   i2c: sprd: don't use pdev as variable name for struct device *
->   i2c: sprd: use core helper to mark adapter suspended
->   i2c: exynos5: use core helper to mark adapter suspended
->   i2c: s3c2410: use core helper to mark adapter suspended
->   i2c: rcar: add suspend/resume support
+The refcount of a newly added overlay node decrements to one
+(instead of zero) when the overlay changeset is destroyed.  This
+change will cause the final decrement be to zero.
 
-After a long road, I applied this series now to for-next. I only
-squashed patches 1+2 to have the functionality in one place. And fixed a
-typo in patch 1. Thanks to the testers and reviewers, and especially
-Hans, for the input and discussions.
+After applying this patch, new validation warnings will be
+reported from the devicetree unittest during boot due to
+a pre-existing devicetree bug.  The warnings will be similar to:
 
-This will now get a full test cycle in -next. Let's see what happens...
+  OF: ERROR: memory leak before free overlay changeset,  /testcase-data/overlay-node/test-bus/test-unittest4
 
-And let's move on to how to add 'very late transfers without irqs' on
-top of this series.
+This pre-existing devicetree bug will also trigger a WARN_ONCE() from
+refcount_sub_and_test_checked() when an overlay changeset is
+destroyed without having first been applied.  This scenario occurs
+when an error in the overlay is detected during the overlay changeset
+creation:
 
-Happy hacking,
+  WARNING: CPU: 0 PID: 1 at lib/refcount.c:187 refcount_sub_and_test_checked+0xa8/0xbc
+  refcount_t: underflow; use-after-free.
 
-   Wolfram
+  (unwind_backtrace) from (show_stack+0x10/0x14)
+  (show_stack) from (dump_stack+0x6c/0x8c)
+  (dump_stack) from (__warn+0xdc/0x104)
+  (__warn) from (warn_slowpath_fmt+0x44/0x6c)
+  (warn_slowpath_fmt) from (refcount_sub_and_test_checked+0xa8/0xbc)
+  (refcount_sub_and_test_checked) from (kobject_put+0x24/0x208)
+  (kobject_put) from (of_changeset_destroy+0x2c/0xb4)
+  (of_changeset_destroy) from (free_overlay_changeset+0x1c/0x9c)
+  (free_overlay_changeset) from (of_overlay_remove+0x284/0x2cc)
+  (of_overlay_remove) from (of_unittest_apply_revert_overlay_check.constprop.4+0xf8/0x1e8)
+  (of_unittest_apply_revert_overlay_check.constprop.4) from (of_unittest_overlay+0x960/0xed8)
+  (of_unittest_overlay) from (of_unittest+0x1cc4/0x2138)
+  (of_unittest) from (do_one_initcall+0x4c/0x28c)
+  (do_one_initcall) from (kernel_init_freeable+0x29c/0x378)
+  (kernel_init_freeable) from (kernel_init+0x8/0x110)
+  (kernel_init) from (ret_from_fork+0x14/0x2c)
 
+Tested-by: Alan Tull <atull@kernel.org>
+Signed-off-by: Frank Rowand <frank.rowand@sony.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/of/overlay.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---mwtdafiryfs7cnw6
-Content-Type: application/pgp-signature; name="signature.asc"
+diff --git a/drivers/of/overlay.c b/drivers/of/overlay.c
+index 42b1f73ac5f6..1e058196f23f 100644
+--- a/drivers/of/overlay.c
++++ b/drivers/of/overlay.c
+@@ -378,7 +378,9 @@ static int add_changeset_node(struct overlay_changeset *ovcs,
+ 		if (ret)
+ 			return ret;
+ 
+-		return build_changeset_next_level(ovcs, tchild, node);
++		ret = build_changeset_next_level(ovcs, tchild, node);
++		of_node_put(tchild);
++		return ret;
+ 	}
+ 
+ 	if (node->phandle && tchild->phandle)
+-- 
+2.19.1
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlw1A30ACgkQFA3kzBSg
-KbbxWw/8CGkkrx9NPVQwRLHRnix2QucE3r9aD0Df5ybapZtzhPdInKj5cJ6rtJjO
-Ly0VQzmjKc+6FirBXJKF2Zdu35+/8k4y7owr0oh8fNxRjeWU0Pukp4n9NoX9+CsO
-kXyzFEmbx8goTH1zzJgVz1yytO8ebGDCXX086M7D8MDW5ULx0mgzlIWcHkgy81Aj
-gUEmnOjbw/JbmeBL0l+gseT2gO5GWArBv/mUFNkuz7pH0AjV/BbkImZ7BuhlYpOV
-pvWM2PI2/7xbxpsjFIhIQbOs7hHY1iNkQjONftMT2sjCm8PKFRvf1Il+9K8AA/tp
-N13Jn7IGI/lRrxlxGZZ3zr8o715PohfdI4G1OPFpjSorTBs1UV4f8BatsodHk8bh
-fAKKjAkPw5/qRcMA8HnkyIrszoM7qCToOYFkBiMtv8+Drdtn5W13HCKL52PGiOds
-sE9QS5at1rGWtzQX1fkLpq93GQTyNvFMURJ21YvXnU2U47o1hVLQNQKLQFjNNaLj
-k9SOHjoI9xM7PWRgVghphFuUYqQMlHID9GHR1R0bS9uA++CxHzzP4/OTBwTIVBBl
-YpTlg4+UtKgmSTWmWR/QSjGAIpRGiAOSIt2mz8YcCF2E9QtLFm2wMTWXxe48Wavt
-9n/kVEg/kVdxR2yHZWu5guX3AmiPxUBiZxHhfKCYkrlFUuqL97Y=
-=Vtra
------END PGP SIGNATURE-----
-
---mwtdafiryfs7cnw6--
