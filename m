@@ -3,261 +3,322 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E1EDC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 15:20:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F2A3C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 15:21:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A45820685
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 15:20:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C2AD020850
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 15:21:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728238AbfAHPUO (ORCPT
+        id S1728403AbfAHPV0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 10:20:14 -0500
-Received: from foss.arm.com ([217.140.101.70]:54250 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727484AbfAHPUO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 10:20:14 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4824380D;
-        Tue,  8 Jan 2019 07:20:13 -0800 (PST)
-Received: from [10.1.197.45] (e112298-lin.cambridge.arm.com [10.1.197.45])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3D5793F5AF;
-        Tue,  8 Jan 2019 07:20:11 -0800 (PST)
-Subject: Re: [PATCH v8 15/26] arm64: alternative: Apply alternatives early in
- boot process
-To:     Suzuki K Poulose <suzuki.poulose@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Cc:     linux-kernel@vger.kernel.org, daniel.thompson@linaro.org,
-        joel@joelfernandes.org, marc.zyngier@arm.com,
-        christoffer.dall@arm.com, james.morse@arm.com,
-        catalin.marinas@arm.com, will.deacon@arm.com, mark.rutland@arm.com
-References: <1546956464-48825-1-git-send-email-julien.thierry@arm.com>
- <1546956464-48825-16-git-send-email-julien.thierry@arm.com>
- <cec17e88-d199-abb4-4919-deff7182a26f@arm.com>
-From:   Julien Thierry <julien.thierry@arm.com>
-Message-ID: <31a93d8b-9036-aef7-1b96-4de910a8d10b@arm.com>
-Date:   Tue, 8 Jan 2019 15:20:09 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Tue, 8 Jan 2019 10:21:26 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:34650 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727484AbfAHPV0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 10:21:26 -0500
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x08FDSDe067936
+        for <linux-kernel@vger.kernel.org>; Tue, 8 Jan 2019 10:21:24 -0500
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2pvvwgnaej-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jan 2019 10:21:24 -0500
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <mimu@linux.ibm.com>;
+        Tue, 8 Jan 2019 15:21:22 -0000
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 8 Jan 2019 15:21:20 -0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x08FLIs214221406
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 8 Jan 2019 15:21:18 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 95BB9A4059;
+        Tue,  8 Jan 2019 15:21:18 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1692AA4055;
+        Tue,  8 Jan 2019 15:21:18 +0000 (GMT)
+Received: from [9.152.98.101] (unknown [9.152.98.101])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue,  8 Jan 2019 15:21:18 +0000 (GMT)
+Reply-To: mimu@linux.ibm.com
+Subject: Re: [PATCH v5 13/15] KVM: s390: add function process_gib_alert_list()
+To:     Halil Pasic <pasic@linux.ibm.com>
+Cc:     KVM Mailing List <kvm@vger.kernel.org>,
+        Linux-S390 Mailing List <linux-s390@vger.kernel.org>,
+        linux-kernel@vger.kernel.org,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Janosch Frank <frankja@linux.ibm.com>,
+        David Hildenbrand <david@redhat.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Pierre Morel <pmorel@linux.ibm.com>
+References: <20181219191756.57973-1-mimu@linux.ibm.com>
+ <20181219191756.57973-14-mimu@linux.ibm.com>
+ <20190108135919.18048dd4@oc2783563651>
+From:   Michael Mueller <mimu@linux.ibm.com>
+Organization: IBM
+Date:   Tue, 8 Jan 2019 16:21:17 +0100
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
+ Gecko/20100101 Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <cec17e88-d199-abb4-4919-deff7182a26f@arm.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20190108135919.18048dd4@oc2783563651>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 19010815-4275-0000-0000-000002FBFD94
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19010815-4276-0000-0000-0000380A0909
+Message-Id: <7e4a5077-00f0-3a0f-e21a-5bbc2fa14b70@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-08_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901080124
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Suzuki,
 
-On 08/01/2019 14:51, Suzuki K Poulose wrote:
-> Hi Julien,
+
+On 08.01.19 13:59, Halil Pasic wrote:
+> On Wed, 19 Dec 2018 20:17:54 +0100
+> Michael Mueller <mimu@linux.ibm.com> wrote:
 > 
-> On 08/01/2019 14:07, Julien Thierry wrote:
->> From: Daniel Thompson <daniel.thompson@linaro.org>
+>> This function processes the Gib Alert List (GAL). It is required
+>> to run when either a gib alert interruption has been received or
+>> a gisa that is in the alert list is cleared or dropped.
 >>
->> Currently alternatives are applied very late in the boot process (and
->> a long time after we enable scheduling). Some alternative sequences,
->> such as those that alter the way CPU context is stored, must be applied
->> much earlier in the boot sequence.
+>> The GAL is build up by millicode, when the respective ISC bit is
+>> set in the Interruption Alert Mask (IAM) and an interruption of
+>> that class is observed.
 >>
->> Introduce apply_boot_alternatives() to allow some alternatives to be
->> applied immediately after we detect the CPU features of the boot CPU.
->>
->> Signed-off-by: Daniel Thompson <daniel.thompson@linaro.org>
->> [julien.thierry@arm.com: rename to fit new cpufeature framework better,
->>              apply BOOT_SCOPE feature early in boot]
->> Signed-off-by: Julien Thierry <julien.thierry@arm.com>
->> Cc: Catalin Marinas <catalin.marinas@arm.com>
->> Cc: Will Deacon <will.deacon@arm.com>
->> Cc: Christoffer Dall <christoffer.dall@arm.com>
->> Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
+>> Signed-off-by: Michael Mueller <mimu@linux.ibm.com>
 >> ---
->>   arch/arm64/include/asm/alternative.h |  1 +
->>   arch/arm64/include/asm/cpufeature.h  |  4 ++++
->>   arch/arm64/kernel/alternative.c      | 43
->> +++++++++++++++++++++++++++++++-----
->>   arch/arm64/kernel/cpufeature.c       |  6 +++++
->>   arch/arm64/kernel/smp.c              |  7 ++++++
->>   5 files changed, 56 insertions(+), 5 deletions(-)
+>>   arch/s390/kvm/interrupt.c | 140 ++++++++++++++++++++++++++++++++++++++++++++++
+>>   1 file changed, 140 insertions(+)
 >>
->> diff --git a/arch/arm64/include/asm/alternative.h
->> b/arch/arm64/include/asm/alternative.h
->> index 9806a23..b9f8d78 100644
->> --- a/arch/arm64/include/asm/alternative.h
->> +++ b/arch/arm64/include/asm/alternative.h
->> @@ -25,6 +25,7 @@ struct alt_instr {
->>   typedef void (*alternative_cb_t)(struct alt_instr *alt,
->>                    __le32 *origptr, __le32 *updptr, int nr_inst);
->>   +void __init apply_boot_alternatives(void);
->>   void __init apply_alternatives_all(void);
->>   bool alternative_is_applied(u16 cpufeature);
->>   diff --git a/arch/arm64/include/asm/cpufeature.h
->> b/arch/arm64/include/asm/cpufeature.h
->> index 89c3f31..e505e1f 100644
->> --- a/arch/arm64/include/asm/cpufeature.h
->> +++ b/arch/arm64/include/asm/cpufeature.h
->> @@ -391,6 +391,10 @@ static inline int cpucap_default_scope(const
->> struct arm64_cpu_capabilities *cap)
->>   extern struct static_key_false cpu_hwcap_keys[ARM64_NCAPS];
->>   extern struct static_key_false arm64_const_caps_ready;
->>   +/* ARM64 CAPS + alternative_cb */
->> +#define ARM64_NPATCHABLE (ARM64_NCAPS + 1)
->> +extern DECLARE_BITMAP(boot_capabilities, ARM64_NPATCHABLE);
->> +
->>   #define for_each_available_cap(cap)        \
->>       for_each_set_bit(cap, cpu_hwcaps, ARM64_NCAPS)
->>   diff --git a/arch/arm64/kernel/alternative.c
->> b/arch/arm64/kernel/alternative.c
->> index c947d22..a9b4677 100644
->> --- a/arch/arm64/kernel/alternative.c
->> +++ b/arch/arm64/kernel/alternative.c
->> @@ -155,7 +155,8 @@ static void clean_dcache_range_nopatch(u64 start,
->> u64 end)
->>       } while (cur += d_size, cur < end);
->>   }
->>   -static void __apply_alternatives(void *alt_region, bool is_module)
->> +static void __apply_alternatives(void *alt_region,  bool is_module,
->> +                 unsigned long *feature_mask)
->>   {
->>       struct alt_instr *alt;
->>       struct alt_region *region = alt_region;
->> @@ -165,6 +166,9 @@ static void __apply_alternatives(void *alt_region,
->> bool is_module)
->>       for (alt = region->begin; alt < region->end; alt++) {
->>           int nr_inst;
->>   +        if (!test_bit(alt->cpufeature, feature_mask))
->> +            continue;
->> +
->>           /* Use ARM64_CB_PATCH as an unconditional patch */
->>           if (alt->cpufeature < ARM64_CB_PATCH &&
->>               !cpus_have_cap(alt->cpufeature))
->> @@ -203,8 +207,11 @@ static void __apply_alternatives(void
->> *alt_region, bool is_module)
->>           __flush_icache_all();
->>           isb();
->>   -        /* We applied all that was available */
->> -        bitmap_copy(applied_alternatives, cpu_hwcaps, ARM64_NCAPS);
->> +        /* Ignore ARM64_CB bit from feature mask */
->> +        bitmap_or(applied_alternatives, applied_alternatives,
->> +              feature_mask, ARM64_NCAPS);
->> +        bitmap_and(applied_alternatives, applied_alternatives,
->> +               cpu_hwcaps, ARM64_NCAPS);
->>       }
->>   }
->>   @@ -225,8 +232,13 @@ static int __apply_alternatives_multi_stop(void
->> *unused)
->>               cpu_relax();
->>           isb();
->>       } else {
->> +        DECLARE_BITMAP(remaining_capabilities, ARM64_NPATCHABLE);
->> +
->> +        bitmap_complement(remaining_capabilities, boot_capabilities,
->> +                  ARM64_NPATCHABLE);
->> +
->>           BUG_ON(all_alternatives_applied);
->> -        __apply_alternatives(&region, false);
->> +        __apply_alternatives(&region, false, remaining_capabilities);
->>           /* Barriers provided by the cache flushing */
->>           WRITE_ONCE(all_alternatives_applied, 1);
->>       }
->> @@ -240,6 +252,24 @@ void __init apply_alternatives_all(void)
->>       stop_machine(__apply_alternatives_multi_stop, NULL,
->> cpu_online_mask);
->>   }
->>   +/*
->> + * This is called very early in the boot process (directly after we run
->> + * a feature detect on the boot CPU). No need to worry about other CPUs
->> + * here.
->> + */
->> +void __init apply_boot_alternatives(void)
+>> diff --git a/arch/s390/kvm/interrupt.c b/arch/s390/kvm/interrupt.c
+>> index 48a93f5e5333..03e7ba4f215a 100644
+>> --- a/arch/s390/kvm/interrupt.c
+>> +++ b/arch/s390/kvm/interrupt.c
+>> @@ -2941,6 +2941,146 @@ int kvm_s390_get_irq_state(struct kvm_vcpu *vcpu, __u8 __user *buf, int len)
+>>   	return n;
+>>   }
+>>   
+>> +static int __try_airqs_kick(struct kvm *kvm, u8 ipm)
 >> +{
->> +    struct alt_region region = {
->> +        .begin    = (struct alt_instr *)__alt_instructions,
->> +        .end    = (struct alt_instr *)__alt_instructions_end,
->> +    };
+>> +	struct kvm_s390_float_interrupt *fi = &kvm->arch.float_int;
+>> +	struct kvm_vcpu *vcpu = NULL, *kick_vcpu[MAX_ISC + 1];
+>> +	int online_vcpus = atomic_read(&kvm->online_vcpus);
+>> +	u8 ioint_mask, isc_mask, kick_mask = 0x00;
+>> +	int vcpu_id, kicked = 0;
 >> +
->> +    /* If called on non-boot cpu things could go wrong */
->> +    WARN_ON(smp_processor_id() != 0);
+>> +	/* Loop over vcpus in WAIT state. */
+>> +	for (vcpu_id = find_first_bit(fi->idle_mask, online_vcpus);
+>> +	     /* Until all pending ISCs have a vcpu open for airqs. */
+>> +	     (~kick_mask & ipm) && vcpu_id < online_vcpus;
+>> +	     vcpu_id = find_next_bit(fi->idle_mask, online_vcpus, vcpu_id)) {
+>> +		vcpu = kvm_get_vcpu(kvm, vcpu_id);
+>> +		if (psw_ioint_disabled(vcpu))
+>> +			continue;
+>> +		ioint_mask = (u8)(vcpu->arch.sie_block->gcr[6] >> 24);
+>> +		for (isc_mask = 0x80; isc_mask; isc_mask >>= 1) {
+>> +			/* ISC pending in IPM ? */
+>> +			if (!(ipm & isc_mask))
+>> +				continue;
+>> +			/* vcpu for this ISC already found ? */
+>> +			if (kick_mask & isc_mask)
+>> +				continue;
+>> +			/* vcpu open for airq of this ISC ? */
+>> +			if (!(ioint_mask & isc_mask))
+>> +				continue;
+>> +			/* use this vcpu (for all ISCs in ioint_mask) */
+>> +			kick_mask |= ioint_mask;
+>> +			kick_vcpu[kicked++] = vcpu;
+> 
+> Assuming that the vcpu can/will take all ISCs it's currently open for
+> does not seem right. We kind of rely on this assumption here, or?
+
+My latest version of this routine already follows a different strategy.
+It looks for a horizontal distribution of pending ISCs among idle vcpus.
+
+> 
+>> +		}
+>> +	}
 >> +
->> +    __apply_alternatives(&region, false, &boot_capabilities[0]);
+>> +	if (vcpu && ~kick_mask & ipm)
+>> +		VM_EVENT(kvm, 4, "gib alert undeliverable isc mask
+>> 0x%02x",
+>> +			 ~kick_mask & ipm);
+>> +
+>> +	for (vcpu_id = 0; vcpu_id < kicked; vcpu_id++)
+>> +		kvm_s390_vcpu_wakeup(kick_vcpu[vcpu_id]);
+>> +
+>> +	return (online_vcpus != 0) ? kicked : -ENODEV;
 >> +}
 >> +
->>   #ifdef CONFIG_MODULES
->>   void apply_alternatives_module(void *start, size_t length)
->>   {
->> @@ -247,7 +277,10 @@ void apply_alternatives_module(void *start,
->> size_t length)
->>           .begin    = start,
->>           .end    = start + length,
->>       };
->> +    DECLARE_BITMAP(all_capabilities, ARM64_NPATCHABLE);
+>> +static void __floating_airqs_kick(struct kvm *kvm)
+>> +{
+>> +	struct kvm_s390_float_interrupt *fi = &kvm->arch.float_int;
+>> +	int online_vcpus, kicked;
+>> +	u8 ipm_t0, ipm;
 >> +
->> +    bitmap_fill(all_capabilities, ARM64_NPATCHABLE);
->>   -    __apply_alternatives(&region, true);
->> +    __apply_alternatives(&region, true, &all_capabilities[0]);
->>   }
->>   #endif
->> diff --git a/arch/arm64/kernel/cpufeature.c
->> b/arch/arm64/kernel/cpufeature.c
->> index 84fa5be..71c8d4f 100644
->> --- a/arch/arm64/kernel/cpufeature.c
->> +++ b/arch/arm64/kernel/cpufeature.c
->> @@ -54,6 +54,9 @@
->>   EXPORT_SYMBOL(cpu_hwcaps);
->>   static struct arm64_cpu_capabilities const __ro_after_init
->> *cpu_hwcaps_ptrs[ARM64_NCAPS];
->>   +/* Need also bit for ARM64_CB_PATCH */
->> +DECLARE_BITMAP(boot_capabilities, ARM64_NPATCHABLE);
+>> +	/* Get IPM and return if clean, IAM has been restored. */
+>> +	ipm = get_ipm(kvm->arch.gisa, IRQ_FLAG_IAM);
+>> +	if (!ipm)
+>> +		return;
+>> +retry:
+>> +	ipm_t0 = ipm;
 >> +
->>   /*
->>    * Flag to indicate if we have computed the system wide
->>    * capabilities based on the boot time active CPUs. This
->> @@ -1672,6 +1675,9 @@ static void update_cpu_capabilities(u16 scope_mask)
->>           if (caps->desc)
->>               pr_info("detected: %s\n", caps->desc);
->>           cpus_set_cap(caps->capability);
+>> +	/* Try to kick some vcpus in WAIT state. */
+>> +	kicked = __try_airqs_kick(kvm, ipm);
+>> +	if (kicked < 0)
+>> +		return;
 >> +
->> +        if (caps->type & SCOPE_BOOT_CPU)
+>> +	/* Get IPM and return if clean, IAM has been restored. */
+>> +	ipm = get_ipm(kvm->arch.gisa, IRQ_FLAG_IAM);
+>> +	if (!ipm)
+>> +		return;
+>> +
+>> +	/* Start over, if new ISC bits are pending in IPM. */
+>> +	if ((ipm_t0 ^ ipm) & ~ipm_t0)
+>> +		goto retry;
+>> +
 > 
-> You may want to do :
->         if (scope_mask & SCOPE_BOOT_CPU)
+> <MARK A>
 > 
-> for a tighter check to ensure this doesn't update the boot_capabilities
-> after we have applied the boot_scope alternatives and miss applying the
-> alternatives for those, should someone add a multi-scope (i.e
-> SCOPE_BOOT_CPU and
-> something else) capability (even by mistake).
+>> +	/*
+>> +	 * Return as we just kicked at least one vcpu in WAIT state
+>> +	 * open for airqs. The IAM will be restored latest when one
+>> +	 * of them goes into WAIT or STOP state.
+>> +	 */
+>> +	if (kicked > 0)
+>> +		return;
+> 
+> </MARK A>
+> 
+>> +
+>> +	/*
+>> +	 * No vcpu was kicked either because no vcpu was in WAIT state
+>> +	 * or none of the vcpus in WAIT state are open for airqs.
+>> +	 * Return immediately if no vcpus are in WAIT state.
+>> +	 * There are vcpus in RUN state. They will process the airqs
+>> +	 * if not closed for airqs as well. In that case the system will
+>> +	 * delay airqs until a vcpu decides to take airqs again.
+>> +	 */
+>> +	online_vcpus = atomic_read(&kvm->online_vcpus);
+>> +	if (!bitmap_weight(fi->idle_mask, online_vcpus))
+>> +		return;
+>> +
+>> +	/*
+>> +	 * None of the vcpus in WAIT state take airqs and we might
+>> +	 * have no running vcpus as at least one vcpu is in WAIT state
+>> +	 * and IPM is dirty.
+>> +	 */
+>> +	set_iam(kvm->arch.gisa, kvm->arch.iam);
+>> +}
+>> +
+>> +#define NULL_GISA_ADDR 0x00000000UL
+>> +#define NONE_GISA_ADDR 0x00000001UL
+>> +#define GISA_ADDR_MASK 0xfffff000UL
+>> +
+>> +static void __maybe_unused process_gib_alert_list(void)
+>> +{
+>> +	u32 final, next_alert, origin = 0UL;
+>> +	struct kvm_s390_gisa *gisa;
+>> +	struct kvm *kvm;
+>> +
+>> +	do {
+>> +		/*
+>> +		 * If the NONE_GISA_ADDR is still stored in the alert list
+>> +		 * origin, we will leave the outer loop. No further GISA has
+>> +		 * been added to the alert list by millicode while processing
+>> +		 * the current alert list.
+>> +		 */
+>> +		final = (origin & NONE_GISA_ADDR);
+>> +		/*
+>> +		 * Cut off the alert list and store the NONE_GISA_ADDR in the
+>> +		 * alert list origin to avoid further GAL interruptions.
+>> +		 * A new alert list can be build up by millicode in parallel
+>> +		 * for guests not in the yet cut-off alert list. When in the
+>> +		 * final loop, store the NULL_GISA_ADDR instead. This will re-
+>> +		 * enable GAL interruptions on the host again.
+>> +		 */
+>> +		origin = xchg(&gib->alert_list_origin,
+>> +			      (!final) ? NONE_GISA_ADDR : NULL_GISA_ADDR);
+>> +		/* Loop through the just cut-off alert list. */
+>> +		while (origin & GISA_ADDR_MASK) {
+>> +			gisa = (struct kvm_s390_gisa *)(u64)origin;
+>> +			next_alert = gisa->next_alert;
+>> +			/* Unlink the GISA from the alert list. */
+>> +			gisa->next_alert = origin;
+>> +			kvm = container_of(gisa, struct sie_page2, gisa)->kvm;
+>> +			/* Kick suitable vcpus */
+>> +			__floating_airqs_kick(kvm);
+> 
+> We may finish handling the alerted gisa with iam not set e.g.
+> via some vcpus kicked but ipm still dirty and some vcpus still in wait,
+> or?
+
+My above mentioned change to the routine identifying the vcpus to kick
+will select one vcpu for each ISC pending if possible (depends on the
+number of idle vcpus and their respective interruption masks and the
+pending ISCs).
+
+That does not exclude the principle scenario that maybe only one vcpu
+is kicked and multiple ISCs are pending (ipm still dirty) although
+have never observed this with a Linux guest.
+
+What I was trying to avoid was a kind of busy loop running in addition
+to the kicked vcpus monitoring the IPM state for resource utilization
+reasons.
+
+> 
+>  From the comments it seems we speculate on being in a safe state, as
+> these are supposed to return to wait or stop soon-ish, and we will set
+> iam then (See <MARK A>). I don't quite understand.
+
+
+Yes, the next vcpu going idle shall restore the IAM or process the
+top ISC pending if the iomask (GCR) allows. vcpus are not allowed to go 
+in disabled wait (IO int disabled by PSW). If all vcpus always (for
+some time) mask a specific ISC the guest does not want to get 
+interrupted for that ISC but will as soon a running vcpu will open
+the mask again.
+
+> 
+> According to my current understanding we might end up loosing initiative
+> in this scenario. Or am I wrong?
+
+I currently don't have proof for you being wrong but have not observed
+the situation yet.
+
+> 
+> Regards,
+> Halil
+> 
+>> +			origin = next_alert;
+>> +		}
+>> +	} while (!final);
+>> +}
+>> +
+>>   static void nullify_gisa(struct kvm_s390_gisa *gisa)
+>>   {
+>>   	memset(gisa, 0, sizeof(struct kvm_s390_gisa));
 > 
 
-But a multi-scope capability containing SCOPE_BOOT_CPU should already
-get updated for setup_boot_cpu_capabilities. Capabilities marked with
-SCOPE_BOOT_CPU need to be enabled on the boot CPU or not at all.
+-
 
-Shouldn't the call to caps->matches() fail for a boot feature that was
-not found on the boot cpu?
-
-Also, you made the opposite suggestion 4 version ago with a more
-worrying scenario :) :
-https://lkml.org/lkml/2018/5/25/208
-
-Otherwise, if my assumption above is wrong, it means the check should
-probably be:
-	if (caps->type & SCOPE_BOOT_CPU && scope_mask & SCOPE_BOOT_CPU)
-
-But my current understanding is that we don't need that.
-
-> With that:
-> 
-> Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-
-Let me know if I can keep your tag or if I indeed need to change the
-condition.
-
-Thanks,
-
--- 
-Julien Thierry
