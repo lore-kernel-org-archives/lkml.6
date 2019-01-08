@@ -2,52 +2,52 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-18.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F778C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:02:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58334C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:02:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F8F520827
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:02:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1C0E020660
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:02:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546977728;
-	bh=KJyv+xTTUzWQsjlwwYCag+ywrGXmxS055XSsJnc8NNE=;
+	s=default; t=1546977734;
+	bh=+0+o20fY3CIdZRKVD4cr1nqDc+/nt/TaWqJvUQmNBqs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=FUakiZrGfxU+ZLIRF6YhsQQ+Z16bC3M4c8E1YSEoxm4d9r3goGB3shMaaM9PCLv+x
-	 oUp0wFIIrAn9S9Ms1lNlW0CrBZl7IapD0UR1lnW3HgMVpjHMz13fHW2WAflx+EzW+B
-	 l9+W92OYU+DDCKJw+PZkyZfIbhjrk4icQJO4X28w=
+	b=cFYESeapzqwdV0r1wOFqa9X0KsZixAElPL1bcPea4u+h/OlD413TyEcHcqWm5MD2t
+	 ZWFeAAFkp83rohW9g6/Hy1HahQeXvqwmx/DCZqFY7gwLbMKqQTE7LhYv/N563Owajm
+	 HyongQ87JQhCP9mJBcVqUWipx15V/BIIsnvVYz/o=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730296AbfAHT3H (ORCPT
+        id S1730133AbfAHUCM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:29:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36200 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 15:02:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36334 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729559AbfAHT3B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:29:01 -0500
+        id S1730292AbfAHT3H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:29:07 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6CF5720645;
-        Tue,  8 Jan 2019 19:28:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B627F20883;
+        Tue,  8 Jan 2019 19:29:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546975740;
-        bh=KJyv+xTTUzWQsjlwwYCag+ywrGXmxS055XSsJnc8NNE=;
+        s=default; t=1546975746;
+        bh=+0+o20fY3CIdZRKVD4cr1nqDc+/nt/TaWqJvUQmNBqs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KzKychG4klYrjHb7jI/gV8H3mB+XOz+YehCc38xM+X/wbTtYi05QU726H8EU7Rec5
-         BLWo+nepL4Tjx4PnhSOBqu94s/VT1qMINuxeR+rZGZkteuSwThmL9x36CPpmqG7b1i
-         YBmaqgBkP0vg1/6t8MyOGed6/5BS/vKUo3eytATU=
+        b=02b0zpx+KV8RgDpeM4sEfPRBcR9ql+3Z5pWXgEFpXEqGeyRHTQ+464JwYNRnrv0Kt
+         s0HhKRaa5sqNTttyaIMWcg667W4n/m/5MJ92duhLlNYP8yFbNAckfD1FYU5Tl2a9ku
+         CMKcAMK8qjTTaAgH3gaYcG2OLYx/NtGjbycLgQl8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Hui Wang <john.wanghui@huawei.com>,
-        Thomas Gleixner <tglx@linutronix.de>, guijianfeng@huawei.com,
-        wencongyang2@huawei.com, douliyang1@huawei.com,
-        qiaonuohan@huawei.com, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.20 087/117] x86/topology: Use total_cpus for max logical packages calculation
-Date:   Tue,  8 Jan 2019 14:25:55 -0500
-Message-Id: <20190108192628.121270-87-sashal@kernel.org>
+Cc:     Nikos Tsironis <ntsironis@arrikto.com>,
+        Ilias Tsitsimpis <iliastsi@arrikto.com>,
+        Mike Snitzer <snitzer@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.20 092/117] dm snapshot: Fix excessive memory usage and workqueue stalls
+Date:   Tue,  8 Jan 2019 14:26:00 -0500
+Message-Id: <20190108192628.121270-92-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108192628.121270-1-sashal@kernel.org>
 References: <20190108192628.121270-1-sashal@kernel.org>
@@ -59,60 +59,224 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hui Wang <john.wanghui@huawei.com>
+From: Nikos Tsironis <ntsironis@arrikto.com>
 
-[ Upstream commit aa02ef099cff042c2a9109782ec2bf1bffc955d4 ]
+[ Upstream commit 721b1d98fb517ae99ab3b757021cf81db41e67be ]
 
-nr_cpu_ids can be limited on the command line via nr_cpus=. This can break the
-logical package management because it results in a smaller number of packages
-while in kdump kernel.
+kcopyd has no upper limit to the number of jobs one can allocate and
+issue. Under certain workloads this can lead to excessive memory usage
+and workqueue stalls. For example, when creating multiple dm-snapshot
+targets with a 4K chunk size and then writing to the origin through the
+page cache. Syncing the page cache causes a large number of BIOs to be
+issued to the dm-snapshot origin target, which itself issues an even
+larger (because of the BIO splitting taking place) number of kcopyd
+jobs.
 
-Check below case:
-There is a two sockets system, each socket has 8 cores, which has 16 logical
-cpus while HT was turn on.
+Running the following test, from the device mapper test suite [1],
 
- 0  1  2  3  4  5  6  7     |    16 17 18 19 20 21 22 23
- cores on socket 0               threads on socket 0
- 8  9 10 11 12 13 14 15     |    24 25 26 27 28 29 30 31
- cores on socket 1               threads on socket 1
+  dmtest run --suite snapshot -n many_snapshots_of_same_volume_N
 
-While starting the kdump kernel with command line option nr_cpus=16 panic
-was triggered on one of the cpus 24-31 eg. 26, then online cpu will be
-1-15, 26(cpu 0 was disabled in kdump), ncpus will be 16 and
-__max_logical_packages will be 1, but actually two packages were booted on.
+, with 8 active snapshots, results in the kcopyd job slab cache growing
+to 10G. Depending on the available system RAM this can lead to the OOM
+killer killing user processes:
 
-This issue can reproduced by set kdump option nr_cpus=<real physical core
-numbers>, and then trigger panic on last socket's thread, for example:
+[463.492878] kthreadd invoked oom-killer: gfp_mask=0x6040c0(GFP_KERNEL|__GFP_COMP),
+              nodemask=(null), order=1, oom_score_adj=0
+[463.492894] kthreadd cpuset=/ mems_allowed=0
+[463.492948] CPU: 7 PID: 2 Comm: kthreadd Not tainted 4.19.0-rc7 #3
+[463.492950] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
+[463.492952] Call Trace:
+[463.492964]  dump_stack+0x7d/0xbb
+[463.492973]  dump_header+0x6b/0x2fc
+[463.492987]  ? lockdep_hardirqs_on+0xee/0x190
+[463.493012]  oom_kill_process+0x302/0x370
+[463.493021]  out_of_memory+0x113/0x560
+[463.493030]  __alloc_pages_slowpath+0xf40/0x1020
+[463.493055]  __alloc_pages_nodemask+0x348/0x3c0
+[463.493067]  cache_grow_begin+0x81/0x8b0
+[463.493072]  ? cache_grow_begin+0x874/0x8b0
+[463.493078]  fallback_alloc+0x1e4/0x280
+[463.493092]  kmem_cache_alloc_node+0xd6/0x370
+[463.493098]  ? copy_process.part.31+0x1c5/0x20d0
+[463.493105]  copy_process.part.31+0x1c5/0x20d0
+[463.493115]  ? __lock_acquire+0x3cc/0x1550
+[463.493121]  ? __switch_to_asm+0x34/0x70
+[463.493129]  ? kthread_create_worker_on_cpu+0x70/0x70
+[463.493135]  ? finish_task_switch+0x90/0x280
+[463.493165]  _do_fork+0xe0/0x6d0
+[463.493191]  ? kthreadd+0x19f/0x220
+[463.493233]  kernel_thread+0x25/0x30
+[463.493235]  kthreadd+0x1bf/0x220
+[463.493242]  ? kthread_create_on_cpu+0x90/0x90
+[463.493248]  ret_from_fork+0x3a/0x50
+[463.493279] Mem-Info:
+[463.493285] active_anon:20631 inactive_anon:4831 isolated_anon:0
+[463.493285]  active_file:80216 inactive_file:80107 isolated_file:435
+[463.493285]  unevictable:0 dirty:51266 writeback:109372 unstable:0
+[463.493285]  slab_reclaimable:31191 slab_unreclaimable:3483521
+[463.493285]  mapped:526 shmem:4903 pagetables:1759 bounce:0
+[463.493285]  free:33623 free_pcp:2392 free_cma:0
+...
+[463.493489] Unreclaimable slab info:
+[463.493513] Name                      Used          Total
+[463.493522] bio-6                   1028KB       1028KB
+[463.493525] bio-5                   1028KB       1028KB
+[463.493528] dm_snap_pending_exception     236783KB     243789KB
+[463.493531] dm_exception              41KB         42KB
+[463.493534] bio-4                   1216KB       1216KB
+[463.493537] bio-3                 439396KB     439396KB
+[463.493539] kcopyd_job           6973427KB    6973427KB
+...
+[463.494340] Out of memory: Kill process 1298 (ruby2.3) score 1 or sacrifice child
+[463.494673] Killed process 1298 (ruby2.3) total-vm:435740kB, anon-rss:20180kB, file-rss:4kB, shmem-rss:0kB
+[463.506437] oom_reaper: reaped process 1298 (ruby2.3), now anon-rss:0kB, file-rss:0kB, shmem-rss:0kB
 
-taskset -c 26 echo c > /proc/sysrq-trigger
+Moreover, issuing a large number of kcopyd jobs results in kcopyd
+hogging the CPU, while processing them. As a result, processing of work
+items, queued for execution on the same CPU as the currently running
+kcopyd thread, is stalled for long periods of time, hurting performance.
+Running the aforementioned test we get, in dmesg, messages like the
+following:
 
-Use total_cpus which will not be limited by nr_cpus command line to calculate
-the value of __max_logical_packages.
+[67501.194592] BUG: workqueue lockup - pool cpus=4 node=0 flags=0x0 nice=0 stuck for 27s!
+[67501.195586] Showing busy workqueues and worker pools:
+[67501.195591] workqueue events: flags=0x0
+[67501.195597]   pwq 8: cpus=4 node=0 flags=0x0 nice=0 active=1/256
+[67501.195611]     pending: cache_reap
+[67501.195641] workqueue mm_percpu_wq: flags=0x8
+[67501.195645]   pwq 8: cpus=4 node=0 flags=0x0 nice=0 active=1/256
+[67501.195656]     pending: vmstat_update
+[67501.195682] workqueue kblockd: flags=0x18
+[67501.195687]   pwq 5: cpus=2 node=0 flags=0x0 nice=-20 active=1/256
+[67501.195698]     pending: blk_timeout_work
+[67501.195753] workqueue kcopyd: flags=0x8
+[67501.195757]   pwq 8: cpus=4 node=0 flags=0x0 nice=0 active=1/256
+[67501.195768]     pending: do_work [dm_mod]
+[67501.195802] workqueue kcopyd: flags=0x8
+[67501.195806]   pwq 8: cpus=4 node=0 flags=0x0 nice=0 active=1/256
+[67501.195817]     pending: do_work [dm_mod]
+[67501.195834] workqueue kcopyd: flags=0x8
+[67501.195838]   pwq 8: cpus=4 node=0 flags=0x0 nice=0 active=1/256
+[67501.195848]     pending: do_work [dm_mod]
+[67501.195881] workqueue kcopyd: flags=0x8
+[67501.195885]   pwq 8: cpus=4 node=0 flags=0x0 nice=0 active=1/256
+[67501.195896]     pending: do_work [dm_mod]
+[67501.195920] workqueue kcopyd: flags=0x8
+[67501.195924]   pwq 8: cpus=4 node=0 flags=0x0 nice=0 active=2/256
+[67501.195935]     in-flight: 67:do_work [dm_mod]
+[67501.195945]     pending: do_work [dm_mod]
+[67501.195961] pool 8: cpus=4 node=0 flags=0x0 nice=0 hung=27s workers=3 idle: 129 23765
 
-Signed-off-by: Hui Wang <john.wanghui@huawei.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: <guijianfeng@huawei.com>
-Cc: <wencongyang2@huawei.com>
-Cc: <douliyang1@huawei.com>
-Cc: <qiaonuohan@huawei.com>
-Link: https://lkml.kernel.org/r/20181107023643.22174-1-john.wanghui@huawei.com
+The root cause for these issues is the way dm-snapshot uses kcopyd. In
+particular, the lack of an explicit or implicit limit to the maximum
+number of in-flight COW jobs. The merging path is not affected because
+it implicitly limits the in-flight kcopyd jobs to one.
+
+Fix these issues by using a semaphore to limit the maximum number of
+in-flight kcopyd jobs. We grab the semaphore before allocating a new
+kcopyd job in start_copy() and start_full_bio() and release it after the
+job finishes in copy_callback().
+
+The initial semaphore value is configurable through a module parameter,
+to allow fine tuning the maximum number of in-flight COW jobs. Setting
+this parameter to zero initializes the semaphore to INT_MAX.
+
+A default value of 2048 maximum in-flight kcopyd jobs was chosen. This
+value was decided experimentally as a trade-off between memory
+consumption, stalling the kernel's workqueues and maintaining a high
+enough throughput.
+
+Re-running the aforementioned test:
+
+  * Workqueue stalls are eliminated
+  * kcopyd's job slab cache uses a maximum of 130MB
+  * The time taken by the test to write to the snapshot-origin target is
+    reduced from 05m20.48s to 03m26.38s
+
+[1] https://github.com/jthornber/device-mapper-test-suite
+
+Signed-off-by: Nikos Tsironis <ntsironis@arrikto.com>
+Signed-off-by: Ilias Tsitsimpis <iliastsi@arrikto.com>
+Signed-off-by: Mike Snitzer <snitzer@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kernel/smpboot.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/md/dm-snap.c | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
-diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
-index a9134d1910b9..ccd1f2a8e557 100644
---- a/arch/x86/kernel/smpboot.c
-+++ b/arch/x86/kernel/smpboot.c
-@@ -1347,7 +1347,7 @@ void __init calculate_max_logical_packages(void)
- 	 * extrapolate the boot cpu's data to all packages.
- 	 */
- 	ncpus = cpu_data(0).booted_cores * topology_max_smt_threads();
--	__max_logical_packages = DIV_ROUND_UP(nr_cpu_ids, ncpus);
-+	__max_logical_packages = DIV_ROUND_UP(total_cpus, ncpus);
- 	pr_info("Max logical packages: %u\n", __max_logical_packages);
+diff --git a/drivers/md/dm-snap.c b/drivers/md/dm-snap.c
+index ae4b33d10924..36805b12661e 100644
+--- a/drivers/md/dm-snap.c
++++ b/drivers/md/dm-snap.c
+@@ -19,6 +19,7 @@
+ #include <linux/vmalloc.h>
+ #include <linux/log2.h>
+ #include <linux/dm-kcopyd.h>
++#include <linux/semaphore.h>
+ 
+ #include "dm.h"
+ 
+@@ -105,6 +106,9 @@ struct dm_snapshot {
+ 	/* The on disk metadata handler */
+ 	struct dm_exception_store *store;
+ 
++	/* Maximum number of in-flight COW jobs. */
++	struct semaphore cow_count;
++
+ 	struct dm_kcopyd_client *kcopyd_client;
+ 
+ 	/* Wait for events based on state_bits */
+@@ -145,6 +149,19 @@ struct dm_snapshot {
+ #define RUNNING_MERGE          0
+ #define SHUTDOWN_MERGE         1
+ 
++/*
++ * Maximum number of chunks being copied on write.
++ *
++ * The value was decided experimentally as a trade-off between memory
++ * consumption, stalling the kernel's workqueues and maintaining a high enough
++ * throughput.
++ */
++#define DEFAULT_COW_THRESHOLD 2048
++
++static int cow_threshold = DEFAULT_COW_THRESHOLD;
++module_param_named(snapshot_cow_threshold, cow_threshold, int, 0644);
++MODULE_PARM_DESC(snapshot_cow_threshold, "Maximum number of chunks being copied on write");
++
+ DECLARE_DM_KCOPYD_THROTTLE_WITH_MODULE_PARM(snapshot_copy_throttle,
+ 		"A percentage of time allocated for copy on write");
+ 
+@@ -1190,6 +1207,8 @@ static int snapshot_ctr(struct dm_target *ti, unsigned int argc, char **argv)
+ 		goto bad_hash_tables;
+ 	}
+ 
++	sema_init(&s->cow_count, (cow_threshold > 0) ? cow_threshold : INT_MAX);
++
+ 	s->kcopyd_client = dm_kcopyd_client_create(&dm_kcopyd_throttle);
+ 	if (IS_ERR(s->kcopyd_client)) {
+ 		r = PTR_ERR(s->kcopyd_client);
+@@ -1575,6 +1594,7 @@ static void copy_callback(int read_err, unsigned long write_err, void *context)
+ 		rb_link_node(&pe->out_of_order_node, parent, p);
+ 		rb_insert_color(&pe->out_of_order_node, &s->out_of_order_tree);
+ 	}
++	up(&s->cow_count);
  }
+ 
+ /*
+@@ -1598,6 +1618,7 @@ static void start_copy(struct dm_snap_pending_exception *pe)
+ 	dest.count = src.count;
+ 
+ 	/* Hand over to kcopyd */
++	down(&s->cow_count);
+ 	dm_kcopyd_copy(s->kcopyd_client, &src, 1, &dest, 0, copy_callback, pe);
+ }
+ 
+@@ -1617,6 +1638,7 @@ static void start_full_bio(struct dm_snap_pending_exception *pe,
+ 	pe->full_bio = bio;
+ 	pe->full_bio_end_io = bio->bi_end_io;
+ 
++	down(&s->cow_count);
+ 	callback_data = dm_kcopyd_prepare_callback(s->kcopyd_client,
+ 						   copy_callback, pe);
  
 -- 
 2.19.1
