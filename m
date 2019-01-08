@@ -4,48 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFE50C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:50:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5E0CC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:50:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A95D6206BB
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:50:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 82DE520827
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:50:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546977032;
-	bh=gOSUNmHNNwDq4ii3RCKaEj2bKgEmmC3QUQ5b91l7KX8=;
+	s=default; t=1546977034;
+	bh=UWaJXxL5BEsr/tDVj18HmrXGrHxA0yE+VpYXzRYwB4o=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Wn6I4c4IvgZpLR0zlgjWHVsVazu/ud/md7T9mOS69bG5ac/5jf/r5FY7EXA1NkYls
-	 05fyL4/1yvGSr8SOChJQeYYBKAGffgn6TP0IU7QWdPlAoEDKh1ablR5u6uATo/YHl9
-	 pSn43Ia9RmlhPI3ZjK1PoyJOWxlRYJFlIjPOTFXA=
+	b=E6Vtee0aI4U+47N7IhYBfaCeTwnVboPEmPWrtbnU1HY8iyhe704PC1GX445eR6euk
+	 +ZyjO5fLaDMmuLgtP+sOXERK/cGqdQUzw458Baiu4N8ee+JXvXJtatq9cAvqaAA5kq
+	 jikRfKBWlQ4OPLpe2CkW7Z/VxB3Wn/nQXITx94io=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732838AbfAHTuc (ORCPT
+        id S1732846AbfAHTud (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:50:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40004 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 14:50:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39958 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731193AbfAHTbr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:31:47 -0500
+        id S1731187AbfAHTbp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:31:45 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CF25F217D9;
-        Tue,  8 Jan 2019 19:31:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DE6EA2070B;
+        Tue,  8 Jan 2019 19:31:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546975906;
-        bh=gOSUNmHNNwDq4ii3RCKaEj2bKgEmmC3QUQ5b91l7KX8=;
+        s=default; t=1546975904;
+        bh=UWaJXxL5BEsr/tDVj18HmrXGrHxA0yE+VpYXzRYwB4o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=e4PsOEWo8GaUEYwi8jW99fHHt/N0e/wv5iW1228fQbA3ByRnqdrN1pxMKH3YB2my6
-         qkK4NyokmkDkIhf45t4fG4zvRkoz7DS7tkadFdOuRYqRcrRYgsbXaEmvcIrLcRyp/2
-         6QSEPSE+4+XrRrF5HoUrLqdFQIjDGKcaixWi4YnI=
+        b=sI46d6mBowmMZjLz/aM5IcprroX6UMcl5fLuyQv/vBZYDynVy6pnrUaXy3/Ja4IRp
+         8BZGS4/9rKiMkD2TwHFsrAQy4KKgI2jC6czBesD3uA/RvRgeUXMK4Giiw2W3VfKElo
+         +lpUwLSoLhXDrTjw3WT7K7YFn2tnlBJvOtxNHKhM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Michael Petlan <mpetlan@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
+Cc:     AliOS system security <alios_sys_security@linux.alibaba.com>,
+        Mike Snitzer <snitzer@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 74/97] perf stat: Avoid segfaults caused by negated options
-Date:   Tue,  8 Jan 2019 14:29:23 -0500
-Message-Id: <20190108192949.122407-74-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 72/97] dm crypt: use u64 instead of sector_t to store iv_offset
+Date:   Tue,  8 Jan 2019 14:29:21 -0500
+Message-Id: <20190108192949.122407-72-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108192949.122407-1-sashal@kernel.org>
 References: <20190108192949.122407-1-sashal@kernel.org>
@@ -57,61 +57,81 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michael Petlan <mpetlan@redhat.com>
+From: AliOS system security <alios_sys_security@linux.alibaba.com>
 
-[ Upstream commit 51433ead1460fb3f46e1c34f68bb22fd2dd0f5d0 ]
+[ Upstream commit 8d683dcd65c037efc9fb38c696ec9b65b306e573 ]
 
-Some 'perf stat' options do not make sense to be negated (event,
-cgroup), some do not have negated path implemented (metrics). Due to
-that, it is better to disable the "no-" prefix for them, since
-otherwise, the later opt-parsing segfaults.
+The iv_offset in the mapping table of crypt target is a 64bit number when
+IV algorithm is plain64, plain64be, essiv or benbi. It will be assigned to
+iv_offset of struct crypt_config, cc_sector of struct convert_context and
+iv_sector of struct dm_crypt_request. These structures members are defined
+as a sector_t. But sector_t is 32bit when CONFIG_LBDAF is not set in 32bit
+kernel. In this situation sector_t is not big enough to store the 64bit
+iv_offset.
 
-Before:
+Here is a reproducer.
+Prepare test image and device (loop is automatically allocated by cryptsetup):
 
-  $ perf stat --no-metrics -- ls
-  Segmentation fault (core dumped)
+  # dd if=/dev/zero of=tst.img bs=1M count=1
+  # echo "tst"|cryptsetup open --type plain -c aes-xts-plain64 \
+  --skip 500000000000000000 tst.img test
 
-After:
+On 32bit system (use IV offset value that overflows to 64bit; CONFIG_LBDAF if off)
+and device checksum is wrong:
 
-  $ perf stat --no-metrics -- ls
-   Error: option `no-metrics' isn't available
-   Usage: perf stat [<options>] [<command>]
+  # dmsetup table test --showkeys
+  0 2048 crypt aes-xts-plain64 dfa7cfe3c481f2239155739c42e539ae8f2d38f304dcc89d20b26f69daaf0933 3551657984 7:0 0
 
-Signed-off-by: Michael Petlan <mpetlan@redhat.com>
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-LPU-Reference: 1485912065.62416880.1544457604340.JavaMail.zimbra@redhat.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+  # sha256sum /dev/mapper/test
+  533e25c09176632b3794f35303488c4a8f3f965dffffa6ec2df347c168cb6c19 /dev/mapper/test
+
+On 64bit system (and on 32bit system with the patch), table and checksum is now correct:
+
+  # dmsetup table test --showkeys
+  0 2048 crypt aes-xts-plain64 dfa7cfe3c481f2239155739c42e539ae8f2d38f304dcc89d20b26f69daaf0933 500000000000000000 7:0 0
+
+  # sha256sum /dev/mapper/test
+  5d16160f9d5f8c33d8051e65fdb4f003cc31cd652b5abb08f03aa6fce0df75fc /dev/mapper/test
+
+Signed-off-by: AliOS system security <alios_sys_security@linux.alibaba.com>
+Tested-and-Reviewed-by: Milan Broz <gmazyland@gmail.com>
+Signed-off-by: Mike Snitzer <snitzer@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/builtin-stat.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ drivers/md/dm-crypt.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
-index d097b5b47eb8..40720150ccd8 100644
---- a/tools/perf/builtin-stat.c
-+++ b/tools/perf/builtin-stat.c
-@@ -1961,7 +1961,7 @@ static int parse_metric_groups(const struct option *opt,
- 	return metricgroup__parse_groups(opt, str, &metric_events);
- }
+diff --git a/drivers/md/dm-crypt.c b/drivers/md/dm-crypt.c
+index 0481223b1deb..f192ba38f332 100644
+--- a/drivers/md/dm-crypt.c
++++ b/drivers/md/dm-crypt.c
+@@ -49,7 +49,7 @@ struct convert_context {
+ 	struct bio *bio_out;
+ 	struct bvec_iter iter_in;
+ 	struct bvec_iter iter_out;
+-	sector_t cc_sector;
++	u64 cc_sector;
+ 	atomic_t cc_pending;
+ 	union {
+ 		struct skcipher_request *req;
+@@ -81,7 +81,7 @@ struct dm_crypt_request {
+ 	struct convert_context *ctx;
+ 	struct scatterlist sg_in[4];
+ 	struct scatterlist sg_out[4];
+-	sector_t iv_sector;
++	u64 iv_sector;
+ };
  
--static const struct option stat_options[] = {
-+static struct option stat_options[] = {
- 	OPT_BOOLEAN('T', "transaction", &transaction_run,
- 		    "hardware transaction statistics"),
- 	OPT_CALLBACK('e', "event", &evsel_list, "event",
-@@ -2847,6 +2847,12 @@ int cmd_stat(int argc, const char **argv)
- 		return -ENOMEM;
- 
- 	parse_events__shrink_config_terms();
-+
-+	/* String-parsing callback-based options would segfault when negated */
-+	set_option_flag(stat_options, 'e', "event", PARSE_OPT_NONEG);
-+	set_option_flag(stat_options, 'M', "metrics", PARSE_OPT_NONEG);
-+	set_option_flag(stat_options, 'G', "cgroup", PARSE_OPT_NONEG);
-+
- 	argc = parse_options_subcommand(argc, argv, stat_options, stat_subcommands,
- 					(const char **) stat_usage,
- 					PARSE_OPT_STOP_AT_NON_OPTION);
+ struct crypt_config;
+@@ -160,7 +160,7 @@ struct crypt_config {
+ 		struct iv_lmk_private lmk;
+ 		struct iv_tcw_private tcw;
+ 	} iv_gen_private;
+-	sector_t iv_offset;
++	u64 iv_offset;
+ 	unsigned int iv_size;
+ 	unsigned short int sector_size;
+ 	unsigned char sector_shift;
 -- 
 2.19.1
 
