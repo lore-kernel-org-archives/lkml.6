@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A1DBC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:48:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD7EEC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:48:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 46E1B206BB
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:48:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8DDA5206BB
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:48:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546976923;
-	bh=9AiaepvAdtimf5aONMlRYj/d9EGNy2prEximUaU5gzA=;
+	s=default; t=1546976927;
+	bh=/It8ZbyjOQ9tUIauPntqHJlqGq3/61Y/mLlP9UCNWfc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=szBBhkrAKneq/4T9hLQZdJIIpwIkX/jZRtW8Pdjsa+lIZdoOY5ZKxtDcXbjxkEAca
-	 hNRtbG8aKddPI3xBCDEsWcjy0hZFlWwY9z7dRncw/k534afXznp4txGzsdNHyw8gst
-	 JLxJBafgXZkfppvCGgsiGmWO3kF67oYxNLLMmOVY=
+	b=srSCUzPeNF+4XsxpStlTwkecmZkQKCPaWGzwhrp3KGRArWTk+Y4hMePxfqgY6Uem1
+	 DTCcDw3HFZgYHyL3fqIwrvszwWLIFm72MfvnawNXE9TSXzuXK0+oiLWtN8wMcchj6r
+	 oNlAnwCGSyH/wPc3LGjaMjl8toxxVwt3C82dNLTA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731327AbfAHTcP (ORCPT
+        id S1731901AbfAHTsq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:32:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40540 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 14:48:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40626 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729487AbfAHTcJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:32:09 -0500
+        id S1731317AbfAHTcO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:32:14 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1B40B2070B;
-        Tue,  8 Jan 2019 19:32:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A6E5220665;
+        Tue,  8 Jan 2019 19:32:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546975928;
-        bh=9AiaepvAdtimf5aONMlRYj/d9EGNy2prEximUaU5gzA=;
+        s=default; t=1546975933;
+        bh=/It8ZbyjOQ9tUIauPntqHJlqGq3/61Y/mLlP9UCNWfc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BOk61taEfzouDAPHKSmAUo1od/WBoeJNAXXY2gMAPeSRsu8loT8JLdwErDw0vjBct
-         s4zf5sRGAKPxIC7QRhmFS40T4c8j1azeVqbd3XZ2s+J0ps9Qa9oX3NjyFc2yEdHOtm
-         jvnmiUR2JGo1ULOI+fB+JBubyD5BzMUPrdcvBaic=
+        b=Yd7teMg6HiAXrtjjfMaSxrV37hQf4LLwkREkJwonKxz5sqn8Fop1zm+MRSQmYMu4p
+         fBfQ+s0HXlagdsWQoxf/1X27f+N+9tNNv5armBXZwIcdpM8+ZMNNXI7I7//ch0rbk/
+         zE5T1XjoUybOXP5bsw5S+OIyuCGD6BksNcyo+LSw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Qian Cai <cai@lca.pw>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <sashal@kernel.org>,
-        megaraidlinux.pdl@broadcom.com, linux-scsi@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 91/97] scsi: megaraid: fix out-of-bound array accesses
-Date:   Tue,  8 Jan 2019 14:29:40 -0500
-Message-Id: <20190108192949.122407-91-sashal@kernel.org>
+Cc:     Brian Foster <bfoster@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <sashal@kernel.org>, linux-mm@kvack.org
+Subject: [PATCH AUTOSEL 4.19 94/97] mm/page-writeback.c: don't break integrity writeback on ->writepage() error
+Date:   Tue,  8 Jan 2019 14:29:43 -0500
+Message-Id: <20190108192949.122407-94-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108192949.122407-1-sashal@kernel.org>
 References: <20190108192949.122407-1-sashal@kernel.org>
@@ -59,120 +59,108 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Qian Cai <cai@lca.pw>
+From: Brian Foster <bfoster@redhat.com>
 
-[ Upstream commit c7a082e4242fd8cd21a441071e622f87c16bdacc ]
+[ Upstream commit 3fa750dcf29e8606e3969d13d8e188cc1c0f511d ]
 
-UBSAN reported those with MegaRAID SAS-3 3108,
+write_cache_pages() is used in both background and integrity writeback
+scenarios by various filesystems.  Background writeback is mostly
+concerned with cleaning a certain number of dirty pages based on various
+mm heuristics.  It may not write the full set of dirty pages or wait for
+I/O to complete.  Integrity writeback is responsible for persisting a set
+of dirty pages before the writeback job completes.  For example, an
+fsync() call must perform integrity writeback to ensure data is on disk
+before the call returns.
 
-[   77.467308] UBSAN: Undefined behaviour in drivers/scsi/megaraid/megaraid_sas_fp.c:117:32
-[   77.475402] index 255 is out of range for type 'MR_LD_SPAN_MAP [1]'
-[   77.481677] CPU: 16 PID: 333 Comm: kworker/16:1 Not tainted 4.20.0-rc5+ #1
-[   77.488556] Hardware name: Huawei TaiShan 2280 /BC11SPCD, BIOS 1.50 06/01/2018
-[   77.495791] Workqueue: events work_for_cpu_fn
-[   77.500154] Call trace:
-[   77.502610]  dump_backtrace+0x0/0x2c8
-[   77.506279]  show_stack+0x24/0x30
-[   77.509604]  dump_stack+0x118/0x19c
-[   77.513098]  ubsan_epilogue+0x14/0x60
-[   77.516765]  __ubsan_handle_out_of_bounds+0xfc/0x13c
-[   77.521767]  mr_update_load_balance_params+0x150/0x158 [megaraid_sas]
-[   77.528230]  MR_ValidateMapInfo+0x2cc/0x10d0 [megaraid_sas]
-[   77.533825]  megasas_get_map_info+0x244/0x2f0 [megaraid_sas]
-[   77.539505]  megasas_init_adapter_fusion+0x9b0/0xf48 [megaraid_sas]
-[   77.545794]  megasas_init_fw+0x1ab4/0x3518 [megaraid_sas]
-[   77.551212]  megasas_probe_one+0x2c4/0xbe0 [megaraid_sas]
-[   77.556614]  local_pci_probe+0x7c/0xf0
-[   77.560365]  work_for_cpu_fn+0x34/0x50
-[   77.564118]  process_one_work+0x61c/0xf08
-[   77.568129]  worker_thread+0x534/0xa70
-[   77.571882]  kthread+0x1c8/0x1d0
-[   77.575114]  ret_from_fork+0x10/0x1c
+write_cache_pages() unconditionally breaks out of its processing loop in
+the event of a ->writepage() error.  This is fine for background
+writeback, which had no strict requirements and will eventually come
+around again.  This can cause problems for integrity writeback on
+filesystems that might need to clean up state associated with failed page
+writeouts.  For example, XFS performs internal delayed allocation
+accounting before returning a ->writepage() error, where applicable.  If
+the current writeback happens to be associated with an unmount and
+write_cache_pages() completes the writeback prematurely due to error, the
+filesystem is unmounted in an inconsistent state if dirty+delalloc pages
+still exist.
 
-[   89.240332] UBSAN: Undefined behaviour in drivers/scsi/megaraid/megaraid_sas_fp.c:117:32
-[   89.248426] index 255 is out of range for type 'MR_LD_SPAN_MAP [1]'
-[   89.254700] CPU: 16 PID: 95 Comm: kworker/u130:0 Not tainted 4.20.0-rc5+ #1
-[   89.261665] Hardware name: Huawei TaiShan 2280 /BC11SPCD, BIOS 1.50 06/01/2018
-[   89.268903] Workqueue: events_unbound async_run_entry_fn
-[   89.274222] Call trace:
-[   89.276680]  dump_backtrace+0x0/0x2c8
-[   89.280348]  show_stack+0x24/0x30
-[   89.283671]  dump_stack+0x118/0x19c
-[   89.287167]  ubsan_epilogue+0x14/0x60
-[   89.290835]  __ubsan_handle_out_of_bounds+0xfc/0x13c
-[   89.295828]  MR_LdRaidGet+0x50/0x58 [megaraid_sas]
-[   89.300638]  megasas_build_io_fusion+0xbb8/0xd90 [megaraid_sas]
-[   89.306576]  megasas_build_and_issue_cmd_fusion+0x138/0x460 [megaraid_sas]
-[   89.313468]  megasas_queue_command+0x398/0x3d0 [megaraid_sas]
-[   89.319222]  scsi_dispatch_cmd+0x1dc/0x8a8
-[   89.323321]  scsi_request_fn+0x8e8/0xdd0
-[   89.327249]  __blk_run_queue+0xc4/0x158
-[   89.331090]  blk_execute_rq_nowait+0xf4/0x158
-[   89.335449]  blk_execute_rq+0xdc/0x158
-[   89.339202]  __scsi_execute+0x130/0x258
-[   89.343041]  scsi_probe_and_add_lun+0x2fc/0x1488
-[   89.347661]  __scsi_scan_target+0x1cc/0x8c8
-[   89.351848]  scsi_scan_channel.part.3+0x8c/0xc0
-[   89.356382]  scsi_scan_host_selected+0x130/0x1f0
-[   89.361002]  do_scsi_scan_host+0xd8/0xf0
-[   89.364927]  do_scan_async+0x9c/0x320
-[   89.368594]  async_run_entry_fn+0x138/0x420
-[   89.372780]  process_one_work+0x61c/0xf08
-[   89.376793]  worker_thread+0x13c/0xa70
-[   89.380546]  kthread+0x1c8/0x1d0
-[   89.383778]  ret_from_fork+0x10/0x1c
+To handle this problem, update write_cache_pages() to always process the
+full set of pages for integrity writeback regardless of ->writepage()
+errors.  Save the first encountered error and return it to the caller once
+complete.  This facilitates XFS (or any other fs that expects integrity
+writeback to process the entire set of dirty pages) to clean up its
+internal state completely in the event of persistent mapping errors.
+Background writeback continues to exit on the first error encountered.
 
-This is because when populating Driver Map using firmware raid map, all
-non-existing VDs set their ldTgtIdToLd to 0xff, so it can be skipped later.
-
-From drivers/scsi/megaraid/megaraid_sas_base.c ,
-memset(instance->ld_ids, 0xff, MEGASAS_MAX_LD_IDS);
-
-From drivers/scsi/megaraid/megaraid_sas_fp.c ,
-/* For non existing VDs, iterate to next VD*/
-if (ld >= (MAX_LOGICAL_DRIVES_EXT - 1))
-	continue;
-
-However, there are a few places that failed to skip those non-existing VDs
-due to off-by-one errors. Then, those 0xff leaked into MR_LdRaidGet(0xff,
-map) and triggered the out-of-bound accesses.
-
-Fixes: 51087a8617fe ("megaraid_sas : Extended VD support")
-Signed-off-by: Qian Cai <cai@lca.pw>
-Acked-by: Sumit Saxena <sumit.saxena@broadcom.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+[akpm@linux-foundation.org: fix typo in comment]
+Link: http://lkml.kernel.org/r/20181116134304.32440-1-bfoster@redhat.com
+Signed-off-by: Brian Foster <bfoster@redhat.com>
+Reviewed-by: Jan Kara <jack@suse.cz>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/megaraid/megaraid_sas_fp.c     | 2 +-
- drivers/scsi/megaraid/megaraid_sas_fusion.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ mm/page-writeback.c | 35 +++++++++++++++++++++--------------
+ 1 file changed, 21 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/scsi/megaraid/megaraid_sas_fp.c b/drivers/scsi/megaraid/megaraid_sas_fp.c
-index 59ecbb3b53b5..a33628550425 100644
---- a/drivers/scsi/megaraid/megaraid_sas_fp.c
-+++ b/drivers/scsi/megaraid/megaraid_sas_fp.c
-@@ -1266,7 +1266,7 @@ void mr_update_load_balance_params(struct MR_DRV_RAID_MAP_ALL *drv_map,
+diff --git a/mm/page-writeback.c b/mm/page-writeback.c
+index 84ae9bf5858a..ea4fd3af3b4b 100644
+--- a/mm/page-writeback.c
++++ b/mm/page-writeback.c
+@@ -2156,6 +2156,7 @@ int write_cache_pages(struct address_space *mapping,
+ {
+ 	int ret = 0;
+ 	int done = 0;
++	int error;
+ 	struct pagevec pvec;
+ 	int nr_pages;
+ 	pgoff_t uninitialized_var(writeback_index);
+@@ -2236,25 +2237,31 @@ int write_cache_pages(struct address_space *mapping,
+ 				goto continue_unlock;
  
- 	for (ldCount = 0; ldCount < MAX_LOGICAL_DRIVES_EXT; ldCount++) {
- 		ld = MR_TargetIdToLdGet(ldCount, drv_map);
--		if (ld >= MAX_LOGICAL_DRIVES_EXT) {
-+		if (ld >= MAX_LOGICAL_DRIVES_EXT - 1) {
- 			lbInfo[ldCount].loadBalanceFlag = 0;
- 			continue;
- 		}
-diff --git a/drivers/scsi/megaraid/megaraid_sas_fusion.c b/drivers/scsi/megaraid/megaraid_sas_fusion.c
-index c7f95bace353..f45c54f02bfa 100644
---- a/drivers/scsi/megaraid/megaraid_sas_fusion.c
-+++ b/drivers/scsi/megaraid/megaraid_sas_fusion.c
-@@ -2832,7 +2832,7 @@ static void megasas_build_ld_nonrw_fusion(struct megasas_instance *instance,
- 		device_id < instance->fw_supported_vd_count)) {
+ 			trace_wbc_writepage(wbc, inode_to_bdi(mapping->host));
+-			ret = (*writepage)(page, wbc, data);
+-			if (unlikely(ret)) {
+-				if (ret == AOP_WRITEPAGE_ACTIVATE) {
++			error = (*writepage)(page, wbc, data);
++			if (unlikely(error)) {
++				/*
++				 * Handle errors according to the type of
++				 * writeback. There's no need to continue for
++				 * background writeback. Just push done_index
++				 * past this page so media errors won't choke
++				 * writeout for the entire file. For integrity
++				 * writeback, we must process the entire dirty
++				 * set regardless of errors because the fs may
++				 * still have state to clear for each page. In
++				 * that case we continue processing and return
++				 * the first error.
++				 */
++				if (error == AOP_WRITEPAGE_ACTIVATE) {
+ 					unlock_page(page);
+-					ret = 0;
+-				} else {
+-					/*
+-					 * done_index is set past this page,
+-					 * so media errors will not choke
+-					 * background writeout for the entire
+-					 * file. This has consequences for
+-					 * range_cyclic semantics (ie. it may
+-					 * not be suitable for data integrity
+-					 * writeout).
+-					 */
++					error = 0;
++				} else if (wbc->sync_mode != WB_SYNC_ALL) {
++					ret = error;
+ 					done_index = page->index + 1;
+ 					done = 1;
+ 					break;
+ 				}
++				if (!ret)
++					ret = error;
+ 			}
  
- 		ld = MR_TargetIdToLdGet(device_id, local_map_ptr);
--		if (ld >= instance->fw_supported_vd_count)
-+		if (ld >= instance->fw_supported_vd_count - 1)
- 			fp_possible = 0;
- 		else {
- 			raid = MR_LdRaidGet(ld, local_map_ptr);
+ 			/*
 -- 
 2.19.1
 
