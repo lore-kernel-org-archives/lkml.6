@@ -2,187 +2,119 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CBD9C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 21:16:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBD19C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 21:17:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A56A217D9
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 21:16:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8340620883
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 21:17:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qGsSvTBK"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aeYm1XTX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729841AbfAHVQ4 (ORCPT
+        id S1729848AbfAHVRq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 16:16:56 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:43397 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729493AbfAHVQ4 (ORCPT
+        Tue, 8 Jan 2019 16:17:46 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:33619 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729442AbfAHVRp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 16:16:56 -0500
-Received: by mail-lj1-f194.google.com with SMTP id q2-v6so4644875lji.10;
-        Tue, 08 Jan 2019 13:16:52 -0800 (PST)
+        Tue, 8 Jan 2019 16:17:45 -0500
+Received: by mail-wr1-f67.google.com with SMTP id c14so5568779wrr.0
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jan 2019 13:17:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=ffJA1v8eqqAiOla1ZUJvfK0j0opKkLQDfgNuSvF6Syc=;
-        b=qGsSvTBKLSAfIumtgdwAgQWYF1ycQgcNi1inWn41zbCrl0plvnwxzZxtR6MJz8QgOj
-         9HgxziD3aggXUdsVuXn6rO4E/7Riu32iHUcpL3gTFWCRwfCQv/snnFeNncZQHPauTOO5
-         DZ4kCr7YRbi3RCqFD/V3IN6gF3nGdwb72W7bifVKLYSkGbqRWC1R/+GwnjEi8zP7ID3q
-         xdkbfkh2YXsaWNb2/PXql38cjDb3KCG6Db7/fL/SpECV/0nv+TMG/Xe2Um/yJgy4uWXV
-         odjwVV8ya8bo9JPnoQ/+OR2Aq/4xV5BO00qW4Iz4zOgeQg38MoRzSTOfPlg2mUZaC4i7
-         eUjA==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Wy/ZhK1DF0f8O5ZNA6S/iQBUn9NUM0liNaalzHWrKBs=;
+        b=aeYm1XTXo8J5yPu00+PY/m01vk0w12BawB+mDTB52RK2uuyAXW1+wrDjmwDPSidTFJ
+         VhtcV4Nh5YfDo2PQQFWo5bAQJQFHVPHv/mRFLULFHSEvAdcUMtnZqsMqM9VQz5h7sClH
+         SHdV+x9KsIb589xiGps5+mVROjeb8tze+WUyuPU4Z+IA90bPNhWHnFt4CYqjAo9pDEc0
+         wZHSVlY3wFtx02xxf6u5oxlIuMctO5TIwltC4JaN6T//F+YSx9rONbLKbun6igpQDuD/
+         DZMJOIQ8Tmw+MXgz/XsVW+ugGyrtA/Kcicyt8oyS0deuxI+byzDmwYlvc/icJcMp6wjS
+         +Uvw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=ffJA1v8eqqAiOla1ZUJvfK0j0opKkLQDfgNuSvF6Syc=;
-        b=lQVpcG71MCfGa1o7XWilJrn+LW9F3HtSI9Ehirvyz7f5DxDsMnRa7sHkjUZKfcd5ck
-         Gd4QPV8E0VnBFXeypZms34VXEGF3GHRtD6Cef1szzQfgJLbpAqDFU2tiJa3ktvBXbKZQ
-         vyhuYGLv9cdYDxs0nJAKWgbk/sHeHsGZgJVliZUWHbVgMFaOX6aLnFIcX+ee4qMEeUOq
-         GqbQXRS9/MNkDzQBKSlvtDseUciKxFhTpmxHKz5rJdKWFeLvcfbwD7Wk6RN9Ra3X0STy
-         J43q5CgYTX1KhAd2l4oaKozLiRy/yfwNYETh5ai64/blYY6+Xms3E01PpTYVv0xaWtvF
-         q2sg==
-X-Gm-Message-State: AJcUukenfimJWwXxwD/k8v8EgneAOfYw68KcnpMRFz+MsF7B++/vxMoe
-        axazGKiSbESrhkMiHpnlpGEwQE8K
-X-Google-Smtp-Source: ALg8bN4mbFT7AVhu3y2zAQay33dgb87lZf6hBuyWUP0i803Z8bY3Tcy2Yb8hb7kaEofDfpF1TFoAbQ==
-X-Received: by 2002:a2e:612:: with SMTP id 18-v6mr1892244ljg.125.1546982211642;
-        Tue, 08 Jan 2019 13:16:51 -0800 (PST)
-Received: from [192.168.1.18] (dlx201.neoplus.adsl.tpnet.pl. [83.24.53.201])
-        by smtp.gmail.com with ESMTPSA id 185-v6sm11840516ljj.49.2019.01.08.13.16.50
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 08 Jan 2019 13:16:51 -0800 (PST)
-Subject: Re: [PATCH 1/2] dt: bindings: lp5024: Introduce the lp5024 and lp5018
- RGB driver
-To:     Dan Murphy <dmurphy@ti.com>, robh+dt@kernel.org, pavel@ucw.cz
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-leds@vger.kernel.org
-References: <20181219162626.12297-1-dmurphy@ti.com>
- <20181219162626.12297-2-dmurphy@ti.com>
- <dc2283f9-db85-1eaf-f046-3fbbd4adcace@gmail.com>
- <2d2d5dcd-9c23-e901-daac-9b79aa5a5e82@ti.com>
-From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Message-ID: <6c62956e-7789-58ba-5437-f2e033f2825c@gmail.com>
-Date:   Tue, 8 Jan 2019 22:16:48 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Wy/ZhK1DF0f8O5ZNA6S/iQBUn9NUM0liNaalzHWrKBs=;
+        b=BMN2kM+GmLvYr0aG6kri+91WeB6kMDmPZj8m0Wl5UnSMH6ZUCXUy9ro/wm0YPqG6h+
+         iAZTnBKVNiszRNQIN7gNpgZ5svPQ8RHtbp9v/ikOZg4wPDrLcMw+VeA5FqiXWe1oaOs1
+         hkh3oGNEgZtxHCYxUKx0Gw7tSi7KkzCCD4zExgZdWOvx/iooelNmx3m3rClzds9jgyur
+         zst8lfxiUKAt4fYJSWIaYcWFQ2+wsvti+QDoCyu8lPFdjFD/+/esEgD+SNlhL+OEaXX+
+         uvMzZGPbKLzV3K5iP4J5EChRQTnj58AGcu2shJjhf/xMFg2lnk2BO8ofC6pRMF8YJXQq
+         8fMg==
+X-Gm-Message-State: AJcUukf9xVEfT6uQvvQLmwHz0YSB0FD5A+l39AxBuymqahbWnN0kp6Ri
+        0nL77bqPm7cQA3ZkYihBCU1+RtY+DFYCtGLQalw=
+X-Google-Smtp-Source: ALg8bN5u95tbJPo6hDsDGENFL7v93TjMOppWNIl/cvSTtB7G6pP3EaFhYgZNHGIg90EWeCWPUzoJqIUQacOoKwhpmDI=
+X-Received: by 2002:adf:d0c9:: with SMTP id z9mr2541076wrh.317.1546982263799;
+ Tue, 08 Jan 2019 13:17:43 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <2d2d5dcd-9c23-e901-daac-9b79aa5a5e82@ti.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20190108211133.32564-1-lyude@redhat.com>
+In-Reply-To: <20190108211133.32564-1-lyude@redhat.com>
+From:   Alex Deucher <alexdeucher@gmail.com>
+Date:   Tue, 8 Jan 2019 16:17:31 -0500
+Message-ID: <CADnq5_N=wu0C+ZknUqXhodOye3i-ySGVVn9Mrb4_6W1jRPp_EA@mail.gmail.com>
+Subject: Re: [PATCH v2 0/3] drm/amdgpu: Fix suspend/resume issues with MST
+To:     Lyude Paul <lyude@redhat.com>
+Cc:     Maling list - DRI developers <dri-devel@lists.freedesktop.org>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        Sean Paul <sean@poorly.run>,
+        "David (ChunMing) Zhou" <david1.zhou@amd.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Harry Wentland <harry.wentland@amd.com>,
+        Leo Li <sunpeng.li@amd.com>,
+        Bhawanpreet Lakha <bhawanpreet.lakha@amd.com>,
+        David Francis <david.francis@amd.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>,
+        David Airlie <airlied@linux.ie>, Jerry Zuo <Jerry.Zuo@amd.com>,
+        Tony Cheng <tony.cheng@amd.com>,
+        Daniel Vetter <daniel@ffwll.ch>, Shirish S <shirish.s@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Mikita Lipski <mikita.lipski@amd.com>,
+        Anthony Koo <anthony.koo@amd.com>,
+        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/8/19 9:53 PM, Dan Murphy wrote:
-> Jacek
-> 
-> On 1/8/19 2:33 PM, Jacek Anaszewski wrote:
->> Dan,
->>
->> On 12/19/18 5:26 PM, Dan Murphy wrote:
->>> Introduce the bindings for the Texas Instruments LP5024 and the LP5018
->>> RGB LED device driver.  The LP5024/18 can control RGB LEDs individually
->>> or as part of a control bank group.  These devices have the ability
->>> to adjust the mixing control for the RGB LEDs to obtain different colors
->>> independent of the overall brightness of the LED grouping.
->>>
->>> Datasheet:
->>> http://www.ti.com/lit/ds/symlink/lp5024.pdf
->>>
->>> Signed-off-by: Dan Murphy <dmurphy@ti.com>
->>> ---
->>>    .../devicetree/bindings/leds/leds-lp5024.txt  | 63 +++++++++++++++++++
->>>    1 file changed, 63 insertions(+)
->>>    create mode 100644 Documentation/devicetree/bindings/leds/leds-lp5024.txt
->>>
->>> diff --git a/Documentation/devicetree/bindings/leds/leds-lp5024.txt b/Documentation/devicetree/bindings/leds/leds-lp5024.txt
->>> new file mode 100644
->>> index 000000000000..9567aa6f7813
->>> --- /dev/null
->>> +++ b/Documentation/devicetree/bindings/leds/leds-lp5024.txt
->>> @@ -0,0 +1,63 @@
->>> +* Texas Instruments - LP5024/18 RGB LED driver
->>> +
->>> +The LM3692x is an ultra-compact, highly efficient,
->>> +white-LED driver designed for LCD display backlighting.
->>> +
->>> +The main difference between the LP5024 and L5018 is the number of
->>> +RGB LEDs they support.  The LP5024 supports twenty four strings while the
->>> +LP5018 supports eighteen strings.
->>> +
->>> +Required properties:
->>> +    - compatible:
->>> +        "ti,lp5018"
->>> +        "ti,lp5024"
->>> +    - reg :  I2C slave address
->>> +    - #address-cells : 1
->>> +    - #size-cells : 0
->>> +
->>> +Optional properties:
->>> +    - enable-gpios : gpio pin to enable/disable the device.
->>> +    - vled-supply : LED supply
->>> +
->>> +Required child properties:
->>> +    - reg : Is the child node iteration.
->>> +    - led-sources : LP5024 - 0 - 7
->>> +            LP5018 - 0 - 5
->>> +            Declares the LED string or strings that the child node
->>> +            will control.  If ti,control-bank is set then this
->>> +            property will contain multiple LED IDs.
->>> +
->>> +Optional child properties:
->>> +    - label : see Documentation/devicetree/bindings/leds/common.txt
->>> +    - linux,default-trigger :
->>> +       see Documentation/devicetree/bindings/leds/common.txt
->>> +    - ti,control-bank : Indicates that the LED strings declared in the
->>> +                led-sources property are grouped within a control
->>> +                bank for brightness and mixing control.
->>> +
->>> +Example:
->>> +
->>> +led-controller@28 {
->>> +    compatible = "ti,lp5024";
->>> +    reg = <0x28>;
->>> +    #address-cells = <1>;
->>> +    #size-cells = <0>;
->>> +
->>> +    enable-gpios = <&gpio1 28 GPIO_ACTIVE_HIGH>;
->>> +    vled-supply = <&vbatt>;
->>> +
->>> +    led@0 {
->>> +        reg = <0>;
->>> +        led-sources = <1>;
->>> +    };
->>> +
->>> +    led@1 {
->>> +        reg = <1>;
->>> +        led-sources = <0 6>;
->>> +        ti,control-bank;
->>
->> Do you really need ti,control-bank? Doesn't led-sources array size
->> greater than 1 mean that the node describes control bank?
->>
-> 
-> That will work too.
+On Tue, Jan 8, 2019 at 4:11 PM Lyude Paul <lyude@redhat.com> wrote:
+>
+> Fix the suspend/issues that Jerry Zuo found in amdgpu, and add some
+> compiler warnings for drivers ignoring the return code of
+> drm_dp_mst_topology_mgr_resume() to help ensure we don't need to fix
+> this again in the future for someone else's driver.
+>
+> Cc: Jerry Zuo <Jerry.Zuo@amd.com>
+>
+> Lyude Paul (3):
+>   drm/amdgpu: Don't ignore rc from drm_dp_mst_topology_mgr_resume()
+>   drm/amdgpu: Don't fail resume process if resuming atomic state fails
+>   drm/dp_mst: Add __must_check to drm_dp_mst_topology_mgr_resume()
 
->> Also, does it make sense to have only two LEDs in the bank?
-> 
-> The array can populate all 7 LEDs in a single node.  I only show 2 here as the example.
-> See the description above of the led-sources
+I can take these through the amdgpu tree or you can commit them to
+drm-misc (assuming you have commit rights).  Either way works for me.
 
-OK, I confused RGB LED modules with banks.
+Thanks,
 
-Shouldn't we allow for defining either strings or RGB LED
-triplets somehow then?
+Alex
 
--- 
-Best regards,
-Jacek Anaszewski
+>
+>  .../gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 37 +++++++++++++------
+>  include/drm/drm_dp_mst_helper.h               |  3 +-
+>  2 files changed, 27 insertions(+), 13 deletions(-)
+>
+> --
+> 2.20.1
+>
+> _______________________________________________
+> amd-gfx mailing list
+> amd-gfx@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/amd-gfx
