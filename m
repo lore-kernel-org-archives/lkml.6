@@ -2,47 +2,48 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 025FCC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 10:56:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A38E1C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 10:56:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B7BA921019
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 10:56:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6847F206C0
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 10:56:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="fEE5SHaQ"
+	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="YttKn1X/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728158AbfAHK42 (ORCPT
+        id S1728308AbfAHK4c (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 05:56:28 -0500
-Received: from esa5.microchip.iphmx.com ([216.71.150.166]:28496 "EHLO
-        esa5.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727107AbfAHK42 (ORCPT
+        Tue, 8 Jan 2019 05:56:32 -0500
+Received: from esa6.microchip.iphmx.com ([216.71.154.253]:33316 "EHLO
+        esa6.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727107AbfAHK4b (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 05:56:28 -0500
+        Tue, 8 Jan 2019 05:56:31 -0500
 X-IronPort-AV: E=Sophos;i="5.56,453,1539673200"; 
-   d="scan'208";a="23118873"
+   d="scan'208";a="22335034"
 Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 08 Jan 2019 03:56:27 -0700
+  by esa6.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 08 Jan 2019 03:56:30 -0700
 Received: from NAM02-SN1-obe.outbound.protection.outlook.com (10.10.215.89) by
  email.microchip.com (10.10.76.107) with Microsoft SMTP Server (TLS) id
- 14.3.352.0; Tue, 8 Jan 2019 03:56:26 -0700
+ 14.3.352.0; Tue, 8 Jan 2019 03:56:30 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=microchiptechnology.onmicrosoft.com;
  s=selector1-microchiptechnology-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=IBhzeiq+wc7kA0tjwTg8O2rWiUCCpBEfQ9lTSrsd3mQ=;
- b=fEE5SHaQtnn/VFnn0MwwLPrhlpCCx04EBfkkzwy7uF5eLOKnPsrPgrQgFa9FrhN93m2Dbly6ppvtSClr75eY8NxUVq8GbCahKsbrWg0BbyeW8kawJ4KawEkqPz/NIi9Ofs0GjP3oQ6Jt/qt1cHxkQ7bdw/HJJpAGUeuAJ5ZGFGI=
+ bh=gxkZa9nA/bv+2ZamBOfPn1B/WEZr148ZjJQ8WZkDHts=;
+ b=YttKn1X/gffiKpEAaJju8gUHc3aSygfolkI9HZxk9K4IJlSjWMNjyERNUgAIGF0qES3+FP1EJpns4gyVuK9csg8ce+XbasNXPb/OF6C4B+PjV5Ivve/QrERdYUOHXxOY+TlAklOKnnzQp6OTcPvtYK7tbFIGzbrc7ZifaaeTTZU=
 Received: from CY4PR11MB1909.namprd11.prod.outlook.com (10.175.61.147) by
  CY4PR11MB1399.namprd11.prod.outlook.com (10.173.17.13) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1495.9; Tue, 8 Jan 2019 10:56:25 +0000
+ 15.20.1495.9; Tue, 8 Jan 2019 10:56:29 +0000
 Received: from CY4PR11MB1909.namprd11.prod.outlook.com
  ([fe80::5478:c9ff:e5b2:2b4e]) by CY4PR11MB1909.namprd11.prod.outlook.com
  ([fe80::5478:c9ff:e5b2:2b4e%9]) with mapi id 15.20.1495.011; Tue, 8 Jan 2019
- 10:56:25 +0000
+ 10:56:29 +0000
 From:   <Claudiu.Beznea@microchip.com>
 To:     <Nicolas.Ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
         <Ludovic.Desroches@microchip.com>, <linux@armlinux.org.uk>,
@@ -51,11 +52,15 @@ To:     <Nicolas.Ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
 CC:     <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
         <Claudiu.Beznea@microchip.com>
-Subject: [PATCH v2 0/3] add support for power off check in suspend
-Thread-Topic: [PATCH v2 0/3] add support for power off check in suspend
-Thread-Index: AQHUp0DMK00T01NVNECI4VrUGS192w==
-Date:   Tue, 8 Jan 2019 10:56:25 +0000
-Message-ID: <1546944944-13911-1-git-send-email-claudiu.beznea@microchip.com>
+Subject: [PATCH v2 1/3] PM / Suspend: Add support to check if platform's power
+ is off in suspend
+Thread-Topic: [PATCH v2 1/3] PM / Suspend: Add support to check if platform's
+ power is off in suspend
+Thread-Index: AQHUp0DOM7WMwuf4TU6Qg1UGEhg3kQ==
+Date:   Tue, 8 Jan 2019 10:56:29 +0000
+Message-ID: <1546944944-13911-2-git-send-email-claudiu.beznea@microchip.com>
+References: <1546944944-13911-1-git-send-email-claudiu.beznea@microchip.com>
+In-Reply-To: <1546944944-13911-1-git-send-email-claudiu.beznea@microchip.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
@@ -68,24 +73,24 @@ authentication-results: spf=none (sender IP is )
 x-ms-exchange-messagesentrepresentingtype: 1
 x-originating-ip: [94.177.32.154]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR11MB1399;6:FHYnrGD6uYsprzMhS696lyJIqfttbWsl6zplpNNW3iPPjVBiVTGjZ38qtwJg16HP2HDVEvWpLUPicXcsWTn+Twr4tYdqIFHmA5hAAw0tfoTMn7NzPkBXe4fEWK+wg5ns49A/f3+PjwX0pe8Inl1LvDe/P8kvmMYW39otHMfpLOcnsVmScHNva0ph/kLJFVuo1AwB3HkQj1g+Q5F+gLSoZTK0QxdgrsgL94spCS5sfy7/74ufyJAdYXpLbgnIBZsYl/iVHgctMWnRhfgJDVQ0E0vV2Uy50yj9hyKQSuW7ppuYF2eeiebYe6RLE6yaJZWAP9EDvi4HheLk+X4MykKYVmkwceKMi5/TT6bUUjfPD78KBSOwL5WRN79u4BkozXTo4mzKSkOG97QwPqYXLjdbhHgI7QKJT3WewGsiCajZowSJaU1wGPLco6YBpGyTNg1QG07JWN2+OWp4ZfhFl/YzYA==;5:9XdVJJN7BUKwPYHkbyE3VjKfhgeAXuIxCDAR6pBzw5e6BFlJEVYt493KBOIJw6Gks3DlMd2wvMnnizh1u3DyE/rs7ZwFuvhkG5fNd49dL5YhadYUDyiZuFdQxvghDt4sumZV0HcCMbK9UUBfxTI1JJEci1zaRGVB1Poll1s1O023HLgSDgymWujOgvT/U4ZtY6rXtBQ3a4BsyJ1SxdQgEQ==;7:0t9Zm4RvcjU8d3CRyUiodfDv8F6OdMLgqe/bvGeSFP4lBx77H6T5guDqr+HJpFI7NINBjbmmiyCpv5MNklbHAh3iChRbmYkQlB+jFYnupU6jvG3Z+9KajHDjtaEnvBOtzcnI78fztovQy89RRC7hdg==
-x-ms-office365-filtering-correlation-id: 8b81da9f-eda0-4331-ff62-08d67557ef15
+x-microsoft-exchange-diagnostics: 1;CY4PR11MB1399;6:pGE9I4sJ+TJekKlBbjJkL5i6RMw0auPLJcr9DlU3ocMCwj/bhmnXdnpCjDVk6Z5AVG7O4TaoQhjCFaV58+AGOP/HleuKwYOY8AFfoq82/wSN0R/48Lg2ggwMdMhbQNrSU7vKMXY3HqioZwUiEpHMZ+u+a4flCG0VTKx15dq6h/C9Mtuz7p8gXYa+qGIff7/rV6t7uOiPGlGxSNDQa8eH2D0pXCkgD/IKzn89uJ5wsMfgl5zg9ve7lRClKQutua6xA4mWUidybE7Qx/2sYPj36crsGYoo0qQrfcSZSLgO5Y7/ppjGUxaqCuEOc35+qDb4/RFP1xPCF7zFoNNZ78+Hrr40nPilJ2udBIMD8QOqyPIjQnF+iNERB+U7C5T6pbmapz8zLbM+kTsEMnjkcpONbi26sCqp2U48Ph6R4W3D7USP48PyPXnNa/Wfl3zbPQDyXoqohALqO+bGvMGlBuGLRQ==;5:3Z9YwSlG7YN+BuwK0rGrM9Mf5DdLvxx2vRkT4RmSF6apaRGotneaD+oqPRxkvQ7td6qG19spYHS4q0XmavBqj94zV+vQBsWDXd4v3Cx/1WTBDGzY+3f2aC65qK3c2INIUg3g0RXz7uUiMUEoRtTJSBQfDfx91OlNYOVgXsQfRt86J1GGJdHgDHOvzcZlHKxTST0h/EwE0KH929rv6OHY9g==;7:GC1I9CNyz68FyBscPD5anyT+x0U/YUXoRs7OVRi+u0Zorh5mgmpgy1C/1T1bAzplggrL9/aLFBevc8YzmqDvj6qtLT4SLCWhUktE6p1MjOLH9TqmJqQCfR69OPFD4/ouNzRZhqV/uopMlzOV39wWbA==
+x-ms-office365-filtering-correlation-id: 08bc4f42-f8ab-45c7-7ab0-08d67557f122
 x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(2017052603328)(7153060)(7193020);SRVR:CY4PR11MB1399;
 x-ms-traffictypediagnostic: CY4PR11MB1399:
-x-microsoft-antispam-prvs: <CY4PR11MB1399E9FE5FE3932ECE5A169C878A0@CY4PR11MB1399.namprd11.prod.outlook.com>
+x-microsoft-antispam-prvs: <CY4PR11MB139963C7BA5A0B1AAFC366BB878A0@CY4PR11MB1399.namprd11.prod.outlook.com>
 x-forefront-prvs: 0911D5CE78
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(39860400002)(376002)(346002)(396003)(366004)(189003)(199004)(6512007)(966005)(72206003)(8936002)(2616005)(476003)(102836004)(478600001)(97736004)(36756003)(256004)(14444005)(86362001)(71190400001)(2906002)(71200400001)(66066001)(3846002)(6116002)(2201001)(316002)(54906003)(186003)(2501003)(110136005)(305945005)(7736002)(14454004)(6486002)(6436002)(8676002)(7416002)(6506007)(386003)(81156014)(81166006)(5660300001)(25786009)(99286004)(26005)(39060400002)(107886003)(15650500001)(106356001)(105586002)(6306002)(52116002)(68736007)(4326008)(486006)(53936002);DIR:OUT;SFP:1101;SCL:1;SRVR:CY4PR11MB1399;H:CY4PR11MB1909.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(39860400002)(376002)(346002)(396003)(366004)(189003)(199004)(6512007)(72206003)(8936002)(2616005)(476003)(102836004)(478600001)(11346002)(97736004)(36756003)(256004)(575784001)(14444005)(86362001)(71190400001)(2906002)(71200400001)(66066001)(3846002)(6116002)(2201001)(316002)(54906003)(186003)(2501003)(110136005)(305945005)(7736002)(14454004)(446003)(6486002)(6436002)(8676002)(7416002)(6506007)(386003)(81156014)(81166006)(5660300001)(25786009)(99286004)(26005)(39060400002)(107886003)(15650500001)(106356001)(105586002)(76176011)(52116002)(68736007)(4326008)(486006)(53936002);DIR:OUT;SFP:1101;SCL:1;SRVR:CY4PR11MB1399;H:CY4PR11MB1909.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 received-spf: None (protection.outlook.com: microchip.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 7dR9cfVlszI56Xc1M2xtr+ECIgNJAuna2nKF5UT23NaeTn4Kk7ebVL6RSK2bYhLgIwHrToYpqmLLGJb71/HSsSBv2eM4vIqwM8XSROw2KEZKpMFi3BIDd2QB9pWs+ehgrpwXbEcpanj45wqZz4ka3r5L92MrSsh3VZa6+fOjIdQk7u1/eoJkYjV9ipZhvpCuUfOuk7oOpP4Ib+k3Oozs005Pz/7IuTTJU4nbpq5FNQLkP44roGpL9YW+rLlKTocCWYIsu0O9UeFC7wDYacb/FwIwB39CugPyD4tGmOn+lIVT9r1wrpTV5ujLlYxsyByi
+x-microsoft-antispam-message-info: pnRgqE5h8A70thdxtDiV16ezvMa7t69J+RivdNuWkshvY12G0XgiOHwq23ePXXk80ONkM8t/MA+HsC2qRRfj8YRhJSUZ8JMaM7Lc59nNQN1Zs9sCidQyiIJRhS+Hthxldg7sAqbPgzrfnUdhWLpcCrwmUNi3WvzwAgviu6YgOMRGdSCs24DS1ZcCiPP6Gs+9DYHMb+R3hj80YqsXLC6aacK26z9aa+832u4ogJHiW+UNqAwiVkFM9CkeQbWFsFMIQmm4/puRGT1/XtVrUhgKAulk9H7IZgfhae+r7so+u1iIdZ8hw6wzNmrquFTo4lW9
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8b81da9f-eda0-4331-ff62-08d67557ef15
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Jan 2019 10:56:25.6273
+X-MS-Exchange-CrossTenant-Network-Message-Id: 08bc4f42-f8ab-45c7-7ab0-08d67557f122
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Jan 2019 10:56:29.0176
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
@@ -98,80 +103,87 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Claudiu Beznea <claudiu.beznea@microchip.com>
 
-Hi,
+Add support to check if platform's power will be cut off in suspend.
+This will help drivers shared by multiple platforms to take only the
+necessary actions while suspending/resuming (some platform may not need
+to save/restore all the registers if platforms remains powered while
+suspended). In this way suspend/resume time could be improved.
 
-AT91 platforms support a power saving mode where SoC's power is cut off (we=
- call
-it backup mode). The resume is done with the help of bootloaders. To be abl=
-e to
-suspend/resume Linux to/from this mode all the drivers suspend/resume callb=
-acks
-should save/restore the content of all the active registers. We have 2 prob=
-lems
-we are trying to solve:
-- some of these drivers are shared with other non Microchip SoCs (e.g. macb
-  driver) and we don't want to disturbe other users of corresponding IPs wi=
-th
-  all the register save/restore operations;
-- the suspend/resume time for the rest of the power saving mode we are usin=
-g
-  could be improved if we would know in drivers the suspend mode the platfo=
-rm
-  is switched to.
+Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
+---
+ include/linux/suspend.h |  6 ++++++
+ kernel/power/suspend.c  | 13 +++++++++++++
+ 2 files changed, 19 insertions(+)
 
-A solution that would have been solve our problems was proposed in [1] but =
-in
-the end it wasn't accepted. It ended up with the introduction of
-pm_suspend_target_state variable that could be used along with the changes =
-in
-this series.
-
-While the discussion of [1] progressed it has been proposed (in [2]) to
-implement a function that would tell if the platform's power would be cut o=
-ff
-at the end of the suspend procedure.
-
-The patches in this series does as follows:
-1/3 - add a new member to platform_suspend_ops that will tell if platform's
-      power will be cut off at the end of the suspend procedure; drivers co=
-uld
-      use it via platform_off_in_suspend()
-2/3 - add a new function to regulator's core that could be used to check if=
- a
-      proper regulator has been configured (via DT) to be powered off in
-      suspend. This is used on this series to check the CPU's regulator is
-      properly configured in DT to be turned off in suspend.
-3/3 - fill .off_in_suspend member of at91_pm_ops; the functionality in patc=
-h 2/3
-      is used to double check CPU's regulator would be turned off in suspen=
-d.
-
-Thank you,
-Claudiu Beznea
-
-[1] https://lkml.org/lkml/2017/6/22/938
-[2] https://lkml.org/lkml/2017/7/16/457
-
-Changes in v2:
-- remove !! instruction in regulator_is_disabled_in_suspend() and
-  at91_pm_state_allowed()
-- s/weather/wether in patch 1/1
-
-Claudiu Beznea (3):
-  PM / Suspend: Add support to check if platform's power is off in
-    suspend
-  regulator: core: add helper to check if regulator is disabled in
-    suspend
-  ARM: at91: pm: add support for .off_in_suspend
-
- arch/arm/mach-at91/pm.c            | 61 ++++++++++++++++++++++++++++++++++=
-+---
- drivers/regulator/core.c           | 17 +++++++++++
- include/linux/regulator/consumer.h |  7 +++++
- include/linux/suspend.h            |  6 ++++
- kernel/power/suspend.c             | 13 ++++++++
- 5 files changed, 100 insertions(+), 4 deletions(-)
-
+diff --git a/include/linux/suspend.h b/include/linux/suspend.h
+index 3f529ad9a9d2..21f19b167fe2 100644
+--- a/include/linux/suspend.h
++++ b/include/linux/suspend.h
+@@ -173,6 +173,9 @@ static inline void dpm_save_failed_step(enum suspend_st=
+at_step step)
+  *	Called by the PM core if the suspending of devices fails.
+  *	This callback is optional and should only be implemented by platforms
+  *	which require special recovery actions in that situation.
++ *
++ * @off_in_suspend: Returns wether the platform's power will be cut off at
++ *	the end of suspend procedure or not.
+  */
+ struct platform_suspend_ops {
+ 	int (*valid)(suspend_state_t state);
+@@ -185,6 +188,7 @@ struct platform_suspend_ops {
+ 	bool (*suspend_again)(void);
+ 	void (*end)(void);
+ 	void (*recover)(void);
++	bool (*off_in_suspend)(suspend_state_t state);
+ };
+=20
+ struct platform_s2idle_ops {
+@@ -275,6 +279,7 @@ extern void arch_suspend_disable_irqs(void);
+ extern void arch_suspend_enable_irqs(void);
+=20
+ extern int pm_suspend(suspend_state_t state);
++extern bool platform_off_in_suspend(suspend_state_t state);
+ #else /* !CONFIG_SUSPEND */
+ #define suspend_valid_only_mem	NULL
+=20
+@@ -287,6 +292,7 @@ static inline bool pm_suspend_via_s2idle(void) { return=
+ false; }
+=20
+ static inline void suspend_set_ops(const struct platform_suspend_ops *ops)=
+ {}
+ static inline int pm_suspend(suspend_state_t state) { return -ENOSYS; }
++static inline bool platform_off_in_suspend(suspend_state_t state) { return=
+ false; }
+ static inline bool idle_should_enter_s2idle(void) { return false; }
+ static inline void __init pm_states_init(void) {}
+ static inline void s2idle_set_ops(const struct platform_s2idle_ops *ops) {=
+}
+diff --git a/kernel/power/suspend.c b/kernel/power/suspend.c
+index 0bd595a0b610..e1f60c8a17b9 100644
+--- a/kernel/power/suspend.c
++++ b/kernel/power/suspend.c
+@@ -319,6 +319,19 @@ static bool platform_suspend_again(suspend_state_t sta=
+te)
+ 		suspend_ops->suspend_again() : false;
+ }
+=20
++/**
++ * platform_off_in_suspend() - specifies if SoC's power will pe cut off at=
+ the
++ * end of suspend procedure.
++ */
++bool platform_off_in_suspend(suspend_state_t state)
++{
++	if (!suspend_ops || !suspend_ops->off_in_suspend)
++		return false;
++
++	return suspend_ops->off_in_suspend(state);
++}
++EXPORT_SYMBOL_GPL(platform_off_in_suspend);
++
+ #ifdef CONFIG_PM_DEBUG
+ static unsigned int pm_test_delay =3D 5;
+ module_param(pm_test_delay, uint, 0644);
 --=20
 2.7.4
 
