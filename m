@@ -4,49 +4,55 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 535D0C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:28:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CDDFC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:28:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 18E3C20883
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:28:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1126920827
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:28:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546975696;
-	bh=MzHoI7j5VQTWlShsqqtxtoqIkeY13Qg78dnGh9UvX9Y=;
+	s=default; t=1546975699;
+	bh=fLNehjlvcE7r/4GgsUam7FTyBVN0COrdU3nKoYkbGwY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=xRKesbWqrfzYzSJuSTJkOtULUPFRyWLNMOAf44VUgz4rNyBR8GEq0AWEDZhrD2Jcg
-	 QSUfniMUZNbssi9L3Rp84tGOMflU1pn2zXgCFo2xkKyzYjE6xHBVD1RjDtH74fOc7L
-	 C0Jvr/ZNnUM6OHH8QpztHx2u2HMPk1wNN37Axy7o=
+	b=c5ZV8sjNC5Ge4FELk06uQ1MJ72K34Lk1K+Puy4jGITeKLMUSrfXBibibAvD3MoHbs
+	 1+qGxi0qQMzHSBN3SN1xKgKVUO9u7s9bUmM5JxXQSK9Z1NNc7UKNPfua0tRQYXVHqW
+	 3lw4yNvcFCZ5MGBRk4O8NMqIK4iifkakEkNzOats=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729958AbfAHT2P (ORCPT
+        id S1729980AbfAHT2S (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:28:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35052 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 14:28:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35134 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729324AbfAHT2M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:28:12 -0500
+        id S1729956AbfAHT2P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:28:15 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BF33120645;
-        Tue,  8 Jan 2019 19:28:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0628D2070B;
+        Tue,  8 Jan 2019 19:28:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546975691;
-        bh=MzHoI7j5VQTWlShsqqtxtoqIkeY13Qg78dnGh9UvX9Y=;
+        s=default; t=1546975694;
+        bh=fLNehjlvcE7r/4GgsUam7FTyBVN0COrdU3nKoYkbGwY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CuYui3UXP10R3ocekrmdcMBMG0cGed7RsaSU5bLsiQsxX2DKvPLqjUvlhH5QMdie4
-         PZp+PEyVK3fMjbhJ1aYU69m7hHsGqOTrCt5zN8IruBBp31+k9ess36ExSVQN/+nyAf
-         YCyyJvtNJdZY0mULqjuaZbQxQxSg4X2jbwua4edw=
+        b=l9xDegWcIuSbRQT/6VMH9zdBD5SLPPm2SWbG1Cl0yhEoreS1CccMvDRIAoKIqz1Zo
+         L3Ydl87e5GRZcv3vQrRd9mpWMofciYyY9llUCimyGVdEvKEaVUI7hU95amyl50JdwT
+         xqoulOAnTNJtiz9oeho3WbKbvay981RIv8XXBPkE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     yupeng <yupeng0921@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 057/117] net: call sk_dst_reset when set SO_DONTROUTE
-Date:   Tue,  8 Jan 2019 14:25:25 -0500
-Message-Id: <20190108192628.121270-57-sashal@kernel.org>
+Cc:     Bart Van Assche <bvanassche@acm.org>,
+        Nicholas Bellinger <nab@linux-iscsi.org>,
+        Mike Christie <mchristi@redhat.com>,
+        Christoph Hellwig <hch@lst.de>,
+        David Disseldorp <ddiss@suse.de>,
+        Hannes Reinecke <hare@suse.de>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Sasha Levin <sashal@kernel.org>, linux-scsi@vger.kernel.org,
+        target-devel@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 059/117] scsi: target/core: Make sure that target_wait_for_sess_cmds() waits long enough
+Date:   Tue,  8 Jan 2019 14:25:27 -0500
+Message-Id: <20190108192628.121270-59-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108192628.121270-1-sashal@kernel.org>
 References: <20190108192628.121270-1-sashal@kernel.org>
@@ -58,65 +64,222 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: yupeng <yupeng0921@gmail.com>
+From: Bart Van Assche <bvanassche@acm.org>
 
-[ Upstream commit 0fbe82e628c817e292ff588cd5847fc935e025f2 ]
+[ Upstream commit ad669505c4e9db9af9faeb5c51aa399326a80d91 ]
 
-after set SO_DONTROUTE to 1, the IP layer should not route packets if
-the dest IP address is not in link scope. But if the socket has cached
-the dst_entry, such packets would be routed until the sk_dst_cache
-expires. So we should clean the sk_dst_cache when a user set
-SO_DONTROUTE option. Below are server/client python scripts which
-could reprodue this issue:
+A session must only be released after all code that accesses the session
+structure has finished. Make sure that this is the case by introducing a
+new command counter per session that is only decremented after the
+.release_cmd() callback has finished. This patch fixes the following crash:
 
-server side code:
+BUG: KASAN: use-after-free in do_raw_spin_lock+0x1c/0x130
+Read of size 4 at addr ffff8801534b16e4 by task rmdir/14805
+CPU: 16 PID: 14805 Comm: rmdir Not tainted 4.18.0-rc2-dbg+ #5
+Call Trace:
+dump_stack+0xa4/0xf5
+print_address_description+0x6f/0x270
+kasan_report+0x241/0x360
+__asan_load4+0x78/0x80
+do_raw_spin_lock+0x1c/0x130
+_raw_spin_lock_irqsave+0x52/0x60
+srpt_set_ch_state+0x27/0x70 [ib_srpt]
+srpt_disconnect_ch+0x1b/0xc0 [ib_srpt]
+srpt_close_session+0xa8/0x260 [ib_srpt]
+target_shutdown_sessions+0x170/0x180 [target_core_mod]
+core_tpg_del_initiator_node_acl+0xf3/0x200 [target_core_mod]
+target_fabric_nacl_base_release+0x25/0x30 [target_core_mod]
+config_item_release+0x9c/0x110 [configfs]
+config_item_put+0x26/0x30 [configfs]
+configfs_rmdir+0x3b8/0x510 [configfs]
+vfs_rmdir+0xb3/0x1e0
+do_rmdir+0x262/0x2c0
+do_syscall_64+0x77/0x230
+entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
-==========================================================================
-import socket
-import struct
-import time
-
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.bind(('0.0.0.0', 9000))
-s.listen(1)
-sock, addr = s.accept()
-sock.setsockopt(socket.SOL_SOCKET, socket.SO_DONTROUTE, struct.pack('i', 1))
-while True:
-    sock.send(b'foo')
-    time.sleep(1)
-==========================================================================
-
-client side code:
-==========================================================================
-import socket
-import time
-
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.connect(('server_address', 9000))
-while True:
-    data = s.recv(1024)
-    print(data)
-==========================================================================
-
-Signed-off-by: yupeng <yupeng0921@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Cc: Nicholas Bellinger <nab@linux-iscsi.org>
+Cc: Mike Christie <mchristi@redhat.com>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: David Disseldorp <ddiss@suse.de>
+Cc: Hannes Reinecke <hare@suse.de>
+Signed-off-by: Bart Van Assche <bvanassche@acm.org>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/core/sock.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/target/target_core_transport.c | 35 ++++++++++++++++++--------
+ drivers/target/target_core_xcopy.c     |  6 ++++-
+ include/target/target_core_base.h      |  1 +
+ include/target/target_core_fabric.h    |  2 +-
+ 4 files changed, 32 insertions(+), 12 deletions(-)
 
-diff --git a/net/core/sock.c b/net/core/sock.c
-index 080a880a1761..1d0e5ba366a9 100644
---- a/net/core/sock.c
-+++ b/net/core/sock.c
-@@ -698,6 +698,7 @@ int sock_setsockopt(struct socket *sock, int level, int optname,
- 		break;
- 	case SO_DONTROUTE:
- 		sock_valbool_flag(sk, SOCK_LOCALROUTE, valbool);
-+		sk_dst_reset(sk);
- 		break;
- 	case SO_BROADCAST:
- 		sock_valbool_flag(sk, SOCK_BROADCAST, valbool);
+diff --git a/drivers/target/target_core_transport.c b/drivers/target/target_core_transport.c
+index 2cfd61d62e97..ffa5b9f771b5 100644
+--- a/drivers/target/target_core_transport.c
++++ b/drivers/target/target_core_transport.c
+@@ -224,19 +224,28 @@ void transport_subsystem_check_init(void)
+ 	sub_api_initialized = 1;
+ }
+ 
++static void target_release_sess_cmd_refcnt(struct percpu_ref *ref)
++{
++	struct se_session *sess = container_of(ref, typeof(*sess), cmd_count);
++
++	wake_up(&sess->cmd_list_wq);
++}
++
+ /**
+  * transport_init_session - initialize a session object
+  * @se_sess: Session object pointer.
+  *
+  * The caller must have zero-initialized @se_sess before calling this function.
+  */
+-void transport_init_session(struct se_session *se_sess)
++int transport_init_session(struct se_session *se_sess)
+ {
+ 	INIT_LIST_HEAD(&se_sess->sess_list);
+ 	INIT_LIST_HEAD(&se_sess->sess_acl_list);
+ 	INIT_LIST_HEAD(&se_sess->sess_cmd_list);
+ 	spin_lock_init(&se_sess->sess_cmd_lock);
+ 	init_waitqueue_head(&se_sess->cmd_list_wq);
++	return percpu_ref_init(&se_sess->cmd_count,
++			       target_release_sess_cmd_refcnt, 0, GFP_KERNEL);
+ }
+ EXPORT_SYMBOL(transport_init_session);
+ 
+@@ -247,6 +256,7 @@ EXPORT_SYMBOL(transport_init_session);
+ struct se_session *transport_alloc_session(enum target_prot_op sup_prot_ops)
+ {
+ 	struct se_session *se_sess;
++	int ret;
+ 
+ 	se_sess = kmem_cache_zalloc(se_sess_cache, GFP_KERNEL);
+ 	if (!se_sess) {
+@@ -254,7 +264,11 @@ struct se_session *transport_alloc_session(enum target_prot_op sup_prot_ops)
+ 				" se_sess_cache\n");
+ 		return ERR_PTR(-ENOMEM);
+ 	}
+-	transport_init_session(se_sess);
++	ret = transport_init_session(se_sess);
++	if (ret < 0) {
++		kfree(se_sess);
++		return ERR_PTR(ret);
++	}
+ 	se_sess->sup_prot_ops = sup_prot_ops;
+ 
+ 	return se_sess;
+@@ -581,6 +595,7 @@ void transport_free_session(struct se_session *se_sess)
+ 		sbitmap_queue_free(&se_sess->sess_tag_pool);
+ 		kvfree(se_sess->sess_cmd_map);
+ 	}
++	percpu_ref_exit(&se_sess->cmd_count);
+ 	kmem_cache_free(se_sess_cache, se_sess);
+ }
+ EXPORT_SYMBOL(transport_free_session);
+@@ -2719,6 +2734,7 @@ int target_get_sess_cmd(struct se_cmd *se_cmd, bool ack_kref)
+ 	}
+ 	se_cmd->transport_state |= CMD_T_PRE_EXECUTE;
+ 	list_add_tail(&se_cmd->se_cmd_list, &se_sess->sess_cmd_list);
++	percpu_ref_get(&se_sess->cmd_count);
+ out:
+ 	spin_unlock_irqrestore(&se_sess->sess_cmd_lock, flags);
+ 
+@@ -2749,8 +2765,6 @@ static void target_release_cmd_kref(struct kref *kref)
+ 	if (se_sess) {
+ 		spin_lock_irqsave(&se_sess->sess_cmd_lock, flags);
+ 		list_del_init(&se_cmd->se_cmd_list);
+-		if (se_sess->sess_tearing_down && list_empty(&se_sess->sess_cmd_list))
+-			wake_up(&se_sess->cmd_list_wq);
+ 		spin_unlock_irqrestore(&se_sess->sess_cmd_lock, flags);
+ 	}
+ 
+@@ -2758,6 +2772,8 @@ static void target_release_cmd_kref(struct kref *kref)
+ 	se_cmd->se_tfo->release_cmd(se_cmd);
+ 	if (compl)
+ 		complete(compl);
++
++	percpu_ref_put(&se_sess->cmd_count);
+ }
+ 
+ /**
+@@ -2886,6 +2902,8 @@ void target_sess_cmd_list_set_waiting(struct se_session *se_sess)
+ 	spin_lock_irqsave(&se_sess->sess_cmd_lock, flags);
+ 	se_sess->sess_tearing_down = 1;
+ 	spin_unlock_irqrestore(&se_sess->sess_cmd_lock, flags);
++
++	percpu_ref_kill(&se_sess->cmd_count);
+ }
+ EXPORT_SYMBOL(target_sess_cmd_list_set_waiting);
+ 
+@@ -2900,17 +2918,14 @@ void target_wait_for_sess_cmds(struct se_session *se_sess)
+ 
+ 	WARN_ON_ONCE(!se_sess->sess_tearing_down);
+ 
+-	spin_lock_irq(&se_sess->sess_cmd_lock);
+ 	do {
+-		ret = wait_event_lock_irq_timeout(
+-				se_sess->cmd_list_wq,
+-				list_empty(&se_sess->sess_cmd_list),
+-				se_sess->sess_cmd_lock, 180 * HZ);
++		ret = wait_event_timeout(se_sess->cmd_list_wq,
++				percpu_ref_is_zero(&se_sess->cmd_count),
++				180 * HZ);
+ 		list_for_each_entry(cmd, &se_sess->sess_cmd_list, se_cmd_list)
+ 			target_show_cmd("session shutdown: still waiting for ",
+ 					cmd);
+ 	} while (ret <= 0);
+-	spin_unlock_irq(&se_sess->sess_cmd_lock);
+ }
+ EXPORT_SYMBOL(target_wait_for_sess_cmds);
+ 
+diff --git a/drivers/target/target_core_xcopy.c b/drivers/target/target_core_xcopy.c
+index 70adcfdca8d1..124495f953fa 100644
+--- a/drivers/target/target_core_xcopy.c
++++ b/drivers/target/target_core_xcopy.c
+@@ -479,6 +479,8 @@ static const struct target_core_fabric_ops xcopy_pt_tfo = {
+ 
+ int target_xcopy_setup_pt(void)
+ {
++	int ret;
++
+ 	xcopy_wq = alloc_workqueue("xcopy_wq", WQ_MEM_RECLAIM, 0);
+ 	if (!xcopy_wq) {
+ 		pr_err("Unable to allocate xcopy_wq\n");
+@@ -496,7 +498,9 @@ int target_xcopy_setup_pt(void)
+ 	INIT_LIST_HEAD(&xcopy_pt_nacl.acl_list);
+ 	INIT_LIST_HEAD(&xcopy_pt_nacl.acl_sess_list);
+ 	memset(&xcopy_pt_sess, 0, sizeof(struct se_session));
+-	transport_init_session(&xcopy_pt_sess);
++	ret = transport_init_session(&xcopy_pt_sess);
++	if (ret < 0)
++		return ret;
+ 
+ 	xcopy_pt_nacl.se_tpg = &xcopy_pt_tpg;
+ 	xcopy_pt_nacl.nacl_sess = &xcopy_pt_sess;
+diff --git a/include/target/target_core_base.h b/include/target/target_core_base.h
+index e3bdb0550a59..d9fd4eac58c2 100644
+--- a/include/target/target_core_base.h
++++ b/include/target/target_core_base.h
+@@ -601,6 +601,7 @@ struct se_session {
+ 	struct se_node_acl	*se_node_acl;
+ 	struct se_portal_group *se_tpg;
+ 	void			*fabric_sess_ptr;
++	struct percpu_ref	cmd_count;
+ 	struct list_head	sess_list;
+ 	struct list_head	sess_acl_list;
+ 	struct list_head	sess_cmd_list;
+diff --git a/include/target/target_core_fabric.h b/include/target/target_core_fabric.h
+index f4147b398431..eb9d0923c55c 100644
+--- a/include/target/target_core_fabric.h
++++ b/include/target/target_core_fabric.h
+@@ -116,7 +116,7 @@ struct se_session *target_setup_session(struct se_portal_group *,
+ 				struct se_session *, void *));
+ void target_remove_session(struct se_session *);
+ 
+-void transport_init_session(struct se_session *);
++int transport_init_session(struct se_session *se_sess);
+ struct se_session *transport_alloc_session(enum target_prot_op);
+ int transport_alloc_session_tags(struct se_session *, unsigned int,
+ 		unsigned int);
 -- 
 2.19.1
 
