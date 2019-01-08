@@ -4,49 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 743D7C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:33:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21DB2C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:33:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4560C20645
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:33:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DD71A20827
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:33:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546976016;
-	bh=UrAh5yny5LNoG+2p+xDmBbh6djkyPab6brOwxHuB5tw=;
+	s=default; t=1546976021;
+	bh=P+WvAiFqn7Lm5ontZNRDQ3bLzZ7nWF1+k+tJK6m8Tpw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=dUIoZ+DwmZRElSjygGjQpTzt5URUX/X9qnsVDx5zwq7DhygfSJWvAARJgPcliKpPX
-	 O1QMNzTBnKXlgfFw9pYMeEuEGfIXGKysSyNLgT86SMoQlc9hXulzhmQN7n0vIGFfT8
-	 yU6rLfRlR56qcv8IDbC3teICI1O965tbrJkccHHI=
+	b=QXetlyQB2i151EmfoOCdG3QO2qE5ajFYsZw4Aqg4gB7X8h58ybtx4c2p5UsO8dOsD
+	 cuvucmzO2Ud/cSGwmojKQGQ/vVsHFVpeECzKNWRk2HEzN7CcPJ2FsK/f8hWQhuCcK+
+	 zpGcKNDRB/H9L7aAuinTrajY/t46NQ84h3hbCxsg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731747AbfAHTdf (ORCPT
+        id S1731772AbfAHTdj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:33:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42296 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 14:33:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42382 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731719AbfAHTda (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:33:30 -0500
+        id S1730491AbfAHTdf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:33:35 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7F62D20827;
-        Tue,  8 Jan 2019 19:33:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1623220827;
+        Tue,  8 Jan 2019 19:33:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546976010;
-        bh=UrAh5yny5LNoG+2p+xDmBbh6djkyPab6brOwxHuB5tw=;
+        s=default; t=1546976014;
+        bh=P+WvAiFqn7Lm5ontZNRDQ3bLzZ7nWF1+k+tJK6m8Tpw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=g0Is47xIOuJG6HvHW870TkF9mKHcANc9W/swFRZ0mv8S4xfMrEftKyYRSy586++JB
-         1KpLHZBDhFgK/als+iolFQvRrKGQ9Mj8YM4jtdb8oogwV720YA9NyYeyKGEbghiQO0
-         gi8tGm5m/vFqkhWea+pai2U6dieH7G0dr6/5/ii4=
+        b=xIyTqg2x4x5wDOGL5m69eh6o+40sP0u/wOtWHEi0frKz5uGhANBz4Fbz3LOnJj0Sc
+         PrABkUVgXETzSttWtcl8SoFWzoKVFL902ej7e414RxMRdYYQLyXp+7wIciAqVlrXcB
+         A/BxOP8ZZSBRA+PQnYWBLw5qKK9uS0tV9NhKhwuA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Yangtao Li <tiny.windzz@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 43/53] clocksource/drivers/integrator-ap: Add missing of_node_put()
-Date:   Tue,  8 Jan 2019 14:32:11 -0500
-Message-Id: <20190108193222.123316-43-sashal@kernel.org>
+Cc:     Parvi Kaustubhi <pkaustub@cisco.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Sasha Levin <sashal@kernel.org>, linux-rdma@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 46/53] IB/usnic: Fix potential deadlock
+Date:   Tue,  8 Jan 2019 14:32:14 -0500
+Message-Id: <20190108193222.123316-46-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108193222.123316-1-sashal@kernel.org>
 References: <20190108193222.123316-1-sashal@kernel.org>
@@ -58,83 +58,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yangtao Li <tiny.windzz@gmail.com>
+From: Parvi Kaustubhi <pkaustub@cisco.com>
 
-[ Upstream commit 5eb73c831171115d3b4347e1e7124a5a35d8086c ]
+[ Upstream commit 8036e90f92aae2784b855a0007ae2d8154d28b3c ]
 
-The function of_find_node_by_path() acquires a reference to the node
-returned by it and that reference needs to be dropped by its caller.
+Acquiring the rtnl lock while holding usdev_lock could result in a
+deadlock.
 
-integrator_ap_timer_init_of() doesn't do that.  The pri_node and the
-sec_node are used as an identifier to compare against the current
-node, so we can directly drop the refcount after getting the node from
-the path as it is not used as pointer.
+For example:
 
-By dropping the refcount right after getting it, a single variable is
-needed instead of two.
+usnic_ib_query_port()
+| mutex_lock(&us_ibdev->usdev_lock)
+ | ib_get_eth_speed()
+  | rtnl_lock()
 
-Fix this by use a single variable and drop the refcount right after
-of_find_node_by_path().
+rtnl_lock()
+| usnic_ib_netdevice_event()
+ | mutex_lock(&us_ibdev->usdev_lock)
 
-Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+This commit moves the usdev_lock acquisition after the rtnl lock has been
+released.
+
+This is safe to do because usdev_lock is not protecting anything being
+accessed in ib_get_eth_speed(). Hence, the correct order of holding locks
+(rtnl -> usdev_lock) is not violated.
+
+Signed-off-by: Parvi Kaustubhi <pkaustub@cisco.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clocksource/timer-integrator-ap.c | 25 +++++++++++++++--------
- 1 file changed, 16 insertions(+), 9 deletions(-)
+ drivers/infiniband/hw/usnic/usnic_ib_verbs.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/clocksource/timer-integrator-ap.c b/drivers/clocksource/timer-integrator-ap.c
-index 62d24690ba02..9701107806a7 100644
---- a/drivers/clocksource/timer-integrator-ap.c
-+++ b/drivers/clocksource/timer-integrator-ap.c
-@@ -181,8 +181,7 @@ static int __init integrator_ap_timer_init_of(struct device_node *node)
- 	int irq;
- 	struct clk *clk;
- 	unsigned long rate;
--	struct device_node *pri_node;
--	struct device_node *sec_node;
-+	struct device_node *alias_node;
+diff --git a/drivers/infiniband/hw/usnic/usnic_ib_verbs.c b/drivers/infiniband/hw/usnic/usnic_ib_verbs.c
+index 3c3453d213dc..fdfa25059723 100644
+--- a/drivers/infiniband/hw/usnic/usnic_ib_verbs.c
++++ b/drivers/infiniband/hw/usnic/usnic_ib_verbs.c
+@@ -310,13 +310,16 @@ int usnic_ib_query_port(struct ib_device *ibdev, u8 port,
  
- 	base = of_io_request_and_map(node, 0, "integrator-timer");
- 	if (IS_ERR(base))
-@@ -204,7 +203,18 @@ static int __init integrator_ap_timer_init_of(struct device_node *node)
- 		return err;
- 	}
+ 	usnic_dbg("\n");
  
--	pri_node = of_find_node_by_path(path);
-+	alias_node = of_find_node_by_path(path);
-+
+-	mutex_lock(&us_ibdev->usdev_lock);
+ 	if (ib_get_eth_speed(ibdev, port, &props->active_speed,
+-			     &props->active_width)) {
+-		mutex_unlock(&us_ibdev->usdev_lock);
++			     &props->active_width))
+ 		return -EINVAL;
+-	}
+ 
 +	/*
-+	 * The pointer is used as an identifier not as a pointer, we
-+	 * can drop the refcount on the of__node immediately after
-+	 * getting it.
++	 * usdev_lock is acquired after (and not before) ib_get_eth_speed call
++	 * because acquiring rtnl_lock in ib_get_eth_speed, while holding
++	 * usdev_lock could lead to a deadlock.
 +	 */
-+	of_node_put(alias_node);
-+
-+	if (node == alias_node)
-+		/* The primary timer lacks IRQ, use as clocksource */
-+		return integrator_clocksource_init(rate, base);
++	mutex_lock(&us_ibdev->usdev_lock);
+ 	/* props being zeroed by the caller, avoid zeroing it here */
  
- 	err = of_property_read_string(of_aliases,
- 				"arm,timer-secondary", &path);
-@@ -213,14 +223,11 @@ static int __init integrator_ap_timer_init_of(struct device_node *node)
- 		return err;
- 	}
- 
-+	alias_node = of_find_node_by_path(path);
- 
--	sec_node = of_find_node_by_path(path);
--
--	if (node == pri_node)
--		/* The primary timer lacks IRQ, use as clocksource */
--		return integrator_clocksource_init(rate, base);
-+	of_node_put(alias_node);
- 
--	if (node == sec_node) {
-+	if (node == alias_node) {
- 		/* The secondary timer will drive the clock event */
- 		irq = irq_of_parse_and_map(node, 0);
- 		return integrator_clockevent_init(rate, base, irq);
+ 	props->lid = 0;
 -- 
 2.19.1
 
