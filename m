@@ -7,46 +7,52 @@ X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 180C4C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:58:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1DBEC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:58:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D801C20660
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:58:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6960520660
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:58:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546977500;
-	bh=BO7ZNYvt0g9Ws8A977AUJjmcnc5ifS8dxfWtob8J+rQ=;
+	s=default; t=1546977504;
+	bh=0vKajdQvDYlbTLni4tUr1Jz8lE3e9dBiWzT0FAjJpHw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=aGYYQoH5RKTngC3Bb6TGM6/i7Sp/99oYXjP66y88ecRTg6zvvp8vndSS0JMllWafh
-	 YuG77phZZdOEtrH2flQyDfzB//E0WXij5m+CzvCky/ZnAMLEnK9C20LpEQpOxNzfTh
-	 hn9Seg4CJMDPmw3RAxxbMB0LtdPVCWdzLO9wBH2E=
+	b=aupdgu2caDa+UILvtNkQRL6HTOI++a2z8NUwOkTAq7QN/wAhlN3PFw9C9NFdOrq2O
+	 pmRQRGpZUkZicb7+BReIJcHymuPtEqFg5xadUUr2adFHUQy9R1wSriFoJ1InHfvtg4
+	 kM4azQoKepgdX6xtOZ+jZgaTnrQsYh4aXv+4BJVc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729459AbfAHT3g (ORCPT
+        id S1732135AbfAHT6W (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:29:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36954 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 14:58:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37212 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730412AbfAHT3b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:29:31 -0500
+        id S1729783AbfAHT3m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:29:42 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5FCE0218A1;
-        Tue,  8 Jan 2019 19:29:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 34F90218A3;
+        Tue,  8 Jan 2019 19:29:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546975770;
-        bh=BO7ZNYvt0g9Ws8A977AUJjmcnc5ifS8dxfWtob8J+rQ=;
+        s=default; t=1546975781;
+        bh=0vKajdQvDYlbTLni4tUr1Jz8lE3e9dBiWzT0FAjJpHw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aaIREmojIJ/Z6IparhvDsVwhxk8Csu7mY+rupIEH8FHtTA9B2UuoJ9e5/gklOBofv
-         Ml/InzDrJq0Hc+3K6YJvN2bV80Ggk99JVmnJLKof9zZpklyvh+POS5dEgs/Kx+YDzT
-         iggggWuQEeDzGgN+c+WYdD2NJy9uiXuwf4RSq3NQ=
+        b=WLyM1qhcAzMkP+Mo2hHNlTTCmG3BA91JPAGkZvQKHH2+YKmzUT6ZJ6r8Fk2ScfaQH
+         Cdd7CnSgRPwEdoarR89agXfUsEIk2cC8tUhcjM4EGyf1vQA/YYb1Wj7akkmPSGYT8B
+         EPm46g7oIfWWasAZQLvJLIj+PyF7/YcxZG0EeF2M=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Ivan Mironov <mironov.ivan@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 111/117] bnx2x: Fix NULL pointer dereference in bnx2x_del_all_vlans() on some hw
-Date:   Tue,  8 Jan 2019 14:26:19 -0500
-Message-Id: <20190108192628.121270-111-sashal@kernel.org>
+Cc:     Michal Hocko <mhocko@suse.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        David Rientjes <rientjes@google.com>,
+        Paul Oppenheimer <bepvte@gmail.com>,
+        William Kucharski <william.kucharski@oracle.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org,
+        linux-doc@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 116/117] mm, proc: be more verbose about unstable VMA flags in /proc/<pid>/smaps
+Date:   Tue,  8 Jan 2019 14:26:24 -0500
+Message-Id: <20190108192628.121270-116-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108192628.121270-1-sashal@kernel.org>
 References: <20190108192628.121270-1-sashal@kernel.org>
@@ -58,106 +64,106 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ivan Mironov <mironov.ivan@gmail.com>
+From: Michal Hocko <mhocko@suse.com>
 
-[ Upstream commit 38355a5f9a22bfa5bd5b1bb79805aca39fa53729 ]
+[ Upstream commit 7550c6079846a24f30d15ac75a941c8515dbedfb ]
 
-This happened when I tried to boot normal Fedora 29 system with latest
-available kernel (from fedora rawhide, plus some unrelated custom
-patches):
+Patch series "THP eligibility reporting via proc".
 
-	BUG: unable to handle kernel NULL pointer dereference at 0000000000000000
-	PGD 0 P4D 0
-	Oops: 0010 [#1] SMP PTI
-	CPU: 6 PID: 1422 Comm: libvirtd Tainted: G          I       4.20.0-0.rc7.git3.hpsa2.1.fc29.x86_64 #1
-	Hardware name: HP ProLiant BL460c G6, BIOS I24 05/21/2018
-	RIP: 0010:          (null)
-	Code: Bad RIP value.
-	RSP: 0018:ffffa47ccdc9fbe0 EFLAGS: 00010246
-	RAX: 0000000000000000 RBX: 00000000000003e8 RCX: ffffa47ccdc9fbf8
-	RDX: ffffa47ccdc9fc00 RSI: ffff97d9ee7b01f8 RDI: ffff97d9f0150b80
-	RBP: ffff97d9f0150b80 R08: 0000000000000000 R09: 0000000000000000
-	R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000003
-	R13: ffff97d9ef1e53e8 R14: 0000000000000009 R15: ffff97d9f0ac6730
-	FS:  00007f4d224ef700(0000) GS:ffff97d9fa200000(0000) knlGS:0000000000000000
-	CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-	CR2: ffffffffffffffd6 CR3: 00000011ece52006 CR4: 00000000000206e0
-	Call Trace:
-	 ? bnx2x_chip_cleanup+0x195/0x610 [bnx2x]
-	 ? bnx2x_nic_unload+0x1e2/0x8f0 [bnx2x]
-	 ? bnx2x_reload_if_running+0x24/0x40 [bnx2x]
-	 ? bnx2x_set_features+0x79/0xa0 [bnx2x]
-	 ? __netdev_update_features+0x244/0x9e0
-	 ? netlink_broadcast_filtered+0x136/0x4b0
-	 ? netdev_update_features+0x22/0x60
-	 ? dev_disable_lro+0x1c/0xe0
-	 ? devinet_sysctl_forward+0x1c6/0x211
-	 ? proc_sys_call_handler+0xab/0x100
-	 ? __vfs_write+0x36/0x1a0
-	 ? rcu_read_lock_sched_held+0x79/0x80
-	 ? rcu_sync_lockdep_assert+0x2e/0x60
-	 ? __sb_start_write+0x14c/0x1b0
-	 ? vfs_write+0x159/0x1c0
-	 ? vfs_write+0xba/0x1c0
-	 ? ksys_write+0x52/0xc0
-	 ? do_syscall_64+0x60/0x1f0
-	 ? entry_SYSCALL_64_after_hwframe+0x49/0xbe
+This series of three patches aims at making THP eligibility reporting much
+more robust and long term sustainable.  The trigger for the change is a
+regression report [2] and the long follow up discussion.  In short the
+specific application didn't have good API to query whether a particular
+mapping can be backed by THP so it has used VMA flags to workaround that.
+These flags represent a deep internal state of VMAs and as such they
+should be used by userspace with a great deal of caution.
 
-After some investigation I figured out that recently added cleanup code
-tries to call VLAN filtering de-initialization function which exist only
-for newer hardware. Corresponding function pointer is not
-set (== 0) for older hardware, namely these chips:
+A similar has happened for [3] when users complained that VM_MIXEDMAP is
+no longer set on DAX mappings.  Again a lack of a proper API led to an
+abuse.
 
-	#define CHIP_NUM_57710			0x164e
-	#define CHIP_NUM_57711			0x164f
-	#define CHIP_NUM_57711E			0x1650
+The first patch in the series tries to emphasise that that the semantic of
+flags might change and any application consuming those should be really
+careful.
 
-And I have one of those in my test system:
+The remaining two patches provide a more suitable interface to address [2]
+and provide a consistent API to query the THP status both for each VMA and
+process wide as well.  [1]
 
-	Broadcom Inc. and subsidiaries NetXtreme II BCM57711E 10-Gigabit PCIe [14e4:1650]
+http://lkml.kernel.org/r/20181120103515.25280-1-mhocko@kernel.org [2]
+http://lkml.kernel.org/r/http://lkml.kernel.org/r/alpine.DEB.2.21.1809241054050.224429@chino.kir.corp.google.com
+[3] http://lkml.kernel.org/r/20181002100531.GC4135@quack2.suse.cz
 
-Function bnx2x_init_vlan_mac_fp_objs() from
-drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.h decides whether to
-initialize relevant pointers in bnx2x_sp_objs.vlan_obj or not.
+This patch (of 3):
 
-This regression was introduced after v4.20-rc7, and still exists in v4.20
-release.
+Even though vma flags exported via /proc/<pid>/smaps are explicitly
+documented to be not guaranteed for future compatibility the warning
+doesn't go far enough because it doesn't mention semantic changes to those
+flags.  And they are important as well because these flags are a deep
+implementation internal to the MM code and the semantic might change at
+any time.
 
-Fixes: 04f05230c5c13 ("bnx2x: Remove configured vlans as part of unload sequence.")
-Signed-off-by: Ivan Mironov <mironov.ivan@gmail.com>
-Signed-off-by: Ivan Mironov <mironov.ivan@gmail.com>
-Acked-by: Sudarsana Kalluru <Sudarsana.Kalluru@cavium.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Let's consider two recent examples:
+http://lkml.kernel.org/r/20181002100531.GC4135@quack2.suse.cz
+: commit e1fb4a086495 "dax: remove VM_MIXEDMAP for fsdax and device dax" has
+: removed VM_MIXEDMAP flag from DAX VMAs. Now our testing shows that in the
+: mean time certain customer of ours started poking into /proc/<pid>/smaps
+: and looks at VMA flags there and if VM_MIXEDMAP is missing among the VMA
+: flags, the application just fails to start complaining that DAX support is
+: missing in the kernel.
+
+http://lkml.kernel.org/r/alpine.DEB.2.21.1809241054050.224429@chino.kir.corp.google.com
+: Commit 1860033237d4 ("mm: make PR_SET_THP_DISABLE immediately active")
+: introduced a regression in that userspace cannot always determine the set
+: of vmas where thp is ineligible.
+: Userspace relies on the "nh" flag being emitted as part of /proc/pid/smaps
+: to determine if a vma is eligible to be backed by hugepages.
+: Previous to this commit, prctl(PR_SET_THP_DISABLE, 1) would cause thp to
+: be disabled and emit "nh" as a flag for the corresponding vmas as part of
+: /proc/pid/smaps.  After the commit, thp is disabled by means of an mm
+: flag and "nh" is not emitted.
+: This causes smaps parsing libraries to assume a vma is eligible for thp
+: and ends up puzzling the user on why its memory is not backed by thp.
+
+In both cases userspace was relying on a semantic of a specific VMA flag.
+The primary reason why that happened is a lack of a proper interface.
+While this has been worked on and it will be fixed properly, it seems that
+our wording could see some refinement and be more vocal about semantic
+aspect of these flags as well.
+
+Link: http://lkml.kernel.org/r/20181211143641.3503-2-mhocko@kernel.org
+Signed-off-by: Michal Hocko <mhocko@suse.com>
+Acked-by: Jan Kara <jack@suse.cz>
+Acked-by: Dan Williams <dan.j.williams@intel.com>
+Acked-by: David Rientjes <rientjes@google.com>
+Acked-by: Mike Rapoport <rppt@linux.ibm.com>
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: David Rientjes <rientjes@google.com>
+Cc: Paul Oppenheimer <bepvte@gmail.com>
+Cc: William Kucharski <william.kucharski@oracle.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c | 14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
+ Documentation/filesystems/proc.txt | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
-index b164f705709d..3b5b47e98c73 100644
---- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
-+++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
-@@ -9360,10 +9360,16 @@ void bnx2x_chip_cleanup(struct bnx2x *bp, int unload_mode, bool keep_link)
- 		BNX2X_ERR("Failed to schedule DEL commands for UC MACs list: %d\n",
- 			  rc);
+diff --git a/Documentation/filesystems/proc.txt b/Documentation/filesystems/proc.txt
+index 12a5e6e693b6..2a4e63f5122c 100644
+--- a/Documentation/filesystems/proc.txt
++++ b/Documentation/filesystems/proc.txt
+@@ -496,7 +496,9 @@ manner. The codes are the following:
  
--	/* Remove all currently configured VLANs */
--	rc = bnx2x_del_all_vlans(bp);
--	if (rc < 0)
--		BNX2X_ERR("Failed to delete all VLANs\n");
-+	/* The whole *vlan_obj structure may be not initialized if VLAN
-+	 * filtering offload is not supported by hardware. Currently this is
-+	 * true for all hardware covered by CHIP_IS_E1x().
-+	 */
-+	if (!CHIP_IS_E1x(bp)) {
-+		/* Remove all currently configured VLANs */
-+		rc = bnx2x_del_all_vlans(bp);
-+		if (rc < 0)
-+			BNX2X_ERR("Failed to delete all VLANs\n");
-+	}
+ Note that there is no guarantee that every flag and associated mnemonic will
+ be present in all further kernel releases. Things get changed, the flags may
+-be vanished or the reverse -- new added.
++be vanished or the reverse -- new added. Interpretation of their meaning
++might change in future as well. So each consumer of these flags has to
++follow each specific kernel version for the exact semantic.
  
- 	/* Disable LLH */
- 	if (!CHIP_IS_E1(bp))
+ This file is only present if the CONFIG_MMU kernel configuration option is
+ enabled.
 -- 
 2.19.1
 
