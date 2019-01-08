@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01368C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:39:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4885FC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:39:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C548E2063F
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:39:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0FDF92063F
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:39:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546976372;
-	bh=OExvcVX9JRYX5UYv62Ym2oqqvAw7n+6a7brrvQ31hHs=;
+	s=default; t=1546976376;
+	bh=56K9mydgi8e49eIcVM3IAft7Oeyp227BstZjrkTFaCU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=uG+8mxnGewJuPE3VElRCqnCWmqs1K3tgnz5Sg+cljS+t/QLMizw2ClydVy9nG/fxB
-	 kyuPz6WRxRw/dnoao1/1SwiYNUwgmI1M2brZ71yInBIq4mmWhDwcgwByVx1t8pSZT1
-	 ZpSiWbJkupMGDJMh0o5oOD4DWgR7WVjVuO6ycD00=
+	b=JBF+lBl/jsC1Q8x1yF7/TJc1NATBP+BSCDOorsul4dCiuyV8wzyMI/XDoLPSQmXqG
+	 g6Wx0wIy4aPvJVi4bwq3tH7k8tno+hzLxTXTBQotGp5+YxA9QyaRLbSkb0VUYXi3HF
+	 wqYk1zJ7/fhc3gRrKPMKxmeeJHceEoQHEJjjJjm4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731539AbfAHTfD (ORCPT
+        id S1732305AbfAHTjf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:35:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43798 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 14:39:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43868 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732110AbfAHTfA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:35:00 -0500
+        id S1732132AbfAHTfD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:35:03 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D4E6120827;
-        Tue,  8 Jan 2019 19:34:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E55102063F;
+        Tue,  8 Jan 2019 19:35:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546976099;
-        bh=OExvcVX9JRYX5UYv62Ym2oqqvAw7n+6a7brrvQ31hHs=;
+        s=default; t=1546976102;
+        bh=56K9mydgi8e49eIcVM3IAft7Oeyp227BstZjrkTFaCU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dMhxPCGnFIkWRX/ZUWAfmGjjuYgODJFDZC1rfFG+yTqVgea6gzCq8CXlYC22GhUlG
-         A+lxyjTevZBEDEci9+hHbwjcdMcl6SujInENfSx/NPjEPllaMOSzLsEEu72WwUwPMw
-         xqOB/NlAUVvR7JbmOf9rpo3xvtHqLqWG8fGUg8gM=
+        b=OnEtcfxP+WHb3y4rTiQUIbdKmWJaNcgEz/BL6E2kjM/27C+++KH2uojoyo6CTR2fA
+         4TcSwuKJavB7wrkttCPgtIeGW0ZGVAyfZT8fXnoJoLaWXeqg4yMESPo1u5BIn6ZNk5
+         PBGFG7lhpWlG9HQTtsfxHsPz6VeFV83FLjx/cXhA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Sasha Levin <sashal@kernel.org>, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 4.4 07/28] drm/amdgpu: Correct get_crtc_scanoutpos behavior when vpos >= vtotal
-Date:   Tue,  8 Jan 2019 14:34:24 -0500
-Message-Id: <20190108193445.124251-7-sashal@kernel.org>
+Cc:     Breno Leitao <leitao@debian.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Sasha Levin <sashal@kernel.org>, linux-pm@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH AUTOSEL 4.4 10/28] powerpc/pseries/cpuidle: Fix preempt warning
+Date:   Tue,  8 Jan 2019 14:34:27 -0500
+Message-Id: <20190108193445.124251-10-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108193445.124251-1-sashal@kernel.org>
 References: <20190108193445.124251-1-sashal@kernel.org>
@@ -59,56 +59,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>
+From: Breno Leitao <leitao@debian.org>
 
-[ Upstream commit 520f08df45fbe300ed650da786a74093d658b7e1 ]
+[ Upstream commit 2b038cbc5fcf12a7ee1cc9bfd5da1e46dacdee87 ]
 
-When variable refresh rate is active the hardware counter can return
-a position >= vtotal. This results in a vpos being returned from
-amdgpu_display_get_crtc_scanoutpos that's a positive value. The
-positive value indicates to the caller that the display is
-currently in scanout when the display is actually still in vblank.
+When booting a pseries kernel with PREEMPT enabled, it dumps the
+following warning:
 
-This is because the vfront porch duration is unknown with variable
-refresh active and will end when either a page flip occurs or the
-timeout specified by the driver/display is reached.
+   BUG: using smp_processor_id() in preemptible [00000000] code: swapper/0/1
+   caller is pseries_processor_idle_init+0x5c/0x22c
+   CPU: 13 PID: 1 Comm: swapper/0 Not tainted 4.20.0-rc3-00090-g12201a0128bc-dirty #828
+   Call Trace:
+   [c000000429437ab0] [c0000000009c8878] dump_stack+0xec/0x164 (unreliable)
+   [c000000429437b00] [c0000000005f2f24] check_preemption_disabled+0x154/0x160
+   [c000000429437b90] [c000000000cab8e8] pseries_processor_idle_init+0x5c/0x22c
+   [c000000429437c10] [c000000000010ed4] do_one_initcall+0x64/0x300
+   [c000000429437ce0] [c000000000c54500] kernel_init_freeable+0x3f0/0x500
+   [c000000429437db0] [c0000000000112dc] kernel_init+0x2c/0x160
+   [c000000429437e20] [c00000000000c1d0] ret_from_kernel_thread+0x5c/0x6c
 
-The behavior of the amdgpu_display_get_crtc_scanoutpos remains the
-same when the position is below vtotal. When the position is above
-vtotal the function will return a value that is effectively -vbl_end,
-the size of the vback porch.
+This happens because the code calls get_lppaca() which calls
+get_paca() and it checks if preemption is disabled through
+check_preemption_disabled().
 
-The only caller affected by this change is the DRM helper for
-calculating vblank timestamps. This change corrects behavior for
-calculating the page flip timestamp from being the previous timestamp
-to the calculation to the next timestamp when position >= vtotal.
+Preemption should be disabled because the per CPU variable may make no
+sense if there is a preemption (and a CPU switch) after it reads the
+per CPU data and when it is used.
 
-Signed-off-by: Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>
-Reviewed-by: Harry Wentland <harry.wentland@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+In this device driver specifically, it is not a problem, because this
+code just needs to have access to one lppaca struct, and it does not
+matter if it is the current per CPU lppaca struct or not (i.e. when
+there is a preemption and a CPU migration).
+
+That said, the most appropriate fix seems to be related to avoiding
+the debug_smp_processor_id() call at get_paca(), instead of calling
+preempt_disable() before get_paca().
+
+Signed-off-by: Breno Leitao <leitao@debian.org>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu_display.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ drivers/cpuidle/cpuidle-pseries.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
-index c555781685ea..0947567900bf 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
-@@ -883,7 +883,12 @@ int amdgpu_get_crtc_scanoutpos(struct drm_device *dev, unsigned int pipe,
- 	/* Inside "upper part" of vblank area? Apply corrective offset if so: */
- 	if (in_vbl && (*vpos >= vbl_start)) {
- 		vtotal = mode->crtc_vtotal;
--		*vpos = *vpos - vtotal;
-+
-+		/* With variable refresh rate displays the vpos can exceed
-+		 * the vtotal value. Clamp to 0 to return -vbl_end instead
-+		 * of guessing the remaining number of lines until scanout.
-+		 */
-+		*vpos = (*vpos < vtotal) ? (*vpos - vtotal) : 0;
- 	}
+diff --git a/drivers/cpuidle/cpuidle-pseries.c b/drivers/cpuidle/cpuidle-pseries.c
+index 07135e009d8b..601a6c3acc7f 100644
+--- a/drivers/cpuidle/cpuidle-pseries.c
++++ b/drivers/cpuidle/cpuidle-pseries.c
+@@ -240,7 +240,13 @@ static int pseries_idle_probe(void)
+ 		return -ENODEV;
  
- 	/* Correct for shifted end of vbl at vbl_end. */
+ 	if (firmware_has_feature(FW_FEATURE_SPLPAR)) {
+-		if (lppaca_shared_proc(get_lppaca())) {
++		/*
++		 * Use local_paca instead of get_lppaca() since
++		 * preemption is not disabled, and it is not required in
++		 * fact, since lppaca_ptr does not need to be the value
++		 * associated to the current CPU, it can be from any CPU.
++		 */
++		if (lppaca_shared_proc(local_paca->lppaca_ptr)) {
+ 			cpuidle_state_table = shared_states;
+ 			max_idle_state = ARRAY_SIZE(shared_states);
+ 		} else {
 -- 
 2.19.1
 
