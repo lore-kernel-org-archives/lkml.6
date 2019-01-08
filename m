@@ -2,126 +2,191 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1C5FC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 10:06:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52A9CC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 10:07:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 896CF2087E
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 10:06:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1A72B2087E
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 10:07:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728569AbfAHKGl (ORCPT
+        id S1728606AbfAHKHE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 05:06:41 -0500
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:7407 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728209AbfAHKGk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 05:06:40 -0500
-X-IronPort-AV: E=Sophos;i="5.56,453,1539619200"; 
-   d="scan'208";a="51550536"
-Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
-  by heian.cn.fujitsu.com with ESMTP; 08 Jan 2019 18:06:38 +0800
-Received: from G08CNEXCHPEKD01.g08.fujitsu.local (unknown [10.167.33.80])
-        by cn.fujitsu.com (Postfix) with ESMTP id 641B74BAC81A;
-        Tue,  8 Jan 2019 18:06:38 +0800 (CST)
-Received: from localhost.localdomain (10.167.225.56) by
- G08CNEXCHPEKD01.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Tue, 8 Jan 2019 18:06:44 +0800
-Date:   Tue, 8 Jan 2019 18:05:42 +0800
-From:   Chao Fan <fanc.fnst@cn.fujitsu.com>
-To:     Pingfan Liu <kernelfans@gmail.com>
-CC:     <x86@kernel.org>, <linux-acpi@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH 0/4] x86_64/mm: remove bottom-up allocation style by
- pushing forward the parsing of mem hotplug info
-Message-ID: <20190108100542.GA2216@localhost.localdomain>
-References: <1546849485-27933-1-git-send-email-kernelfans@gmail.com>
+        Tue, 8 Jan 2019 05:07:04 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:44692 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727992AbfAHKHD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 05:07:03 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id BBC9FA329C;
+        Tue,  8 Jan 2019 10:07:02 +0000 (UTC)
+Received: from [10.72.12.122] (ovpn-12-122.pek2.redhat.com [10.72.12.122])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id F06891057069;
+        Tue,  8 Jan 2019 10:06:48 +0000 (UTC)
+Subject: Re: [PATCH RFC 1/2] virtio-net: bql support
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, maxime.coquelin@redhat.com,
+        tiwei.bie@intel.com, wexu@redhat.com, jfreimann@redhat.com,
+        "David S. Miller" <davem@davemloft.net>,
+        virtualization@lists.linux-foundation.org, netdev@vger.kernel.org
+References: <20181226101528-mutt-send-email-mst@kernel.org>
+ <0fa99d9b-e510-d7eb-db1b-831bd7610ce9@redhat.com>
+ <20181230134106-mutt-send-email-mst@kernel.org>
+ <b4f06d11-4761-dabb-f641-5fc05c1c34fc@redhat.com>
+ <20190102085457-mutt-send-email-mst@kernel.org>
+ <17d2ab21-1c9a-2bb9-166f-2863d019cb0b@redhat.com>
+ <20190106221506-mutt-send-email-mst@kernel.org>
+ <aea2fd16-ec5b-64b5-2095-9a37044223f6@redhat.com>
+ <20190106225951-mutt-send-email-mst@kernel.org>
+ <88db987e-b519-5c1f-f64f-6f65f8415799@redhat.com>
+ <20190107091334-mutt-send-email-mst@kernel.org>
+From:   Jason Wang <jasowang@redhat.com>
+Message-ID: <f68e3920-6186-c409-6b7b-1ce3e094dd56@redhat.com>
+Date:   Tue, 8 Jan 2019 18:06:45 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <1546849485-27933-1-git-send-email-kernelfans@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Originating-IP: [10.167.225.56]
-X-yoursite-MailScanner-ID: 641B74BAC81A.ADC45
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
+In-Reply-To: <20190107091334-mutt-send-email-mst@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Tue, 08 Jan 2019 10:07:02 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 07, 2019 at 04:24:41PM +0800, Pingfan Liu wrote:
->Background about the defect of the current bottom-up allocation style, take
->the following scenario:
->  |  unmovable node |     movable node                           |
->     | kaslr-kernel |subtree of pgtable for phy<->virt |
->
->Although kaslr-kernel can avoid to stain the movable node. But the
->pgtable can still stain the movable node. That is a probability problem,
->with low probability, but still exist. This patch tries to eliminate the
->probability. With the previous patch, at the point of init_mem_mapping(),
->memblock allocator can work with the knowledge of acpi memory hotmovable
->info, and avoid to stain the movable node. As a result,
->memory_map_bottom_up() is not needed any more.
->
 
-Hi Pingfan,
+On 2019/1/7 下午10:19, Michael S. Tsirkin wrote:
+> On Mon, Jan 07, 2019 at 02:31:47PM +0800, Jason Wang wrote:
+>> On 2019/1/7 下午12:01, Michael S. Tsirkin wrote:
+>>> On Mon, Jan 07, 2019 at 11:51:55AM +0800, Jason Wang wrote:
+>>>> On 2019/1/7 上午11:17, Michael S. Tsirkin wrote:
+>>>>> On Mon, Jan 07, 2019 at 10:14:37AM +0800, Jason Wang wrote:
+>>>>>> On 2019/1/2 下午9:59, Michael S. Tsirkin wrote:
+>>>>>>> On Wed, Jan 02, 2019 at 11:28:43AM +0800, Jason Wang wrote:
+>>>>>>>> On 2018/12/31 上午2:45, Michael S. Tsirkin wrote:
+>>>>>>>>> On Thu, Dec 27, 2018 at 06:00:36PM +0800, Jason Wang wrote:
+>>>>>>>>>> On 2018/12/26 下午11:19, Michael S. Tsirkin wrote:
+>>>>>>>>>>> On Thu, Dec 06, 2018 at 04:17:36PM +0800, Jason Wang wrote:
+>>>>>>>>>>>> On 2018/12/6 上午6:54, Michael S. Tsirkin wrote:
+>>>>>>>>>>>>> When use_napi is set, let's enable BQLs.  Note: some of the issues are
+>>>>>>>>>>>>> similar to wifi.  It's worth considering whether something similar to
+>>>>>>>>>>>>> commit 36148c2bbfbe ("mac80211: Adjust TSQ pacing shift") might be
+>>>>>>>>>>>>> benefitial.
+>>>>>>>>>>>> I've played a similar patch several days before. The tricky part is the mode
+>>>>>>>>>>>> switching between napi and no napi. We should make sure when the packet is
+>>>>>>>>>>>> sent and trakced by BQL,  it should be consumed by BQL as well. I did it by
+>>>>>>>>>>>> tracking it through skb->cb.  And deal with the freeze by reset the BQL
+>>>>>>>>>>>> status. Patch attached.
+>>>>>>>>>>>>
+>>>>>>>>>>>> But when testing with vhost-net, I don't very a stable performance,
+>>>>>>>>>>> So how about increasing TSQ pacing shift then?
+>>>>>>>>>> I can test this. But changing default TCP value is much more than a
+>>>>>>>>>> virtio-net specific thing.
+>>>>>>>>> Well same logic as wifi applies. Unpredictable latencies related
+>>>>>>>>> to radio in one case, to host scheduler in the other.
+>>>>>>>>>
+>>>>>>>>>>>> it was
+>>>>>>>>>>>> probably because we batch the used ring updating so tx interrupt may come
+>>>>>>>>>>>> randomly. We probably need to implement time bounded coalescing mechanism
+>>>>>>>>>>>> which could be configured from userspace.
+>>>>>>>>>>> I don't think it's reasonable to expect userspace to be that smart ...
+>>>>>>>>>>> Why do we need time bounded? used ring is always updated when ring
+>>>>>>>>>>> becomes empty.
+>>>>>>>>>> We don't add used when means BQL may not see the consumed packet in time.
+>>>>>>>>>> And the delay varies based on the workload since we count packets not bytes
+>>>>>>>>>> or time before doing the batched updating.
+>>>>>>>>>>
+>>>>>>>>>> Thanks
+>>>>>>>>> Sorry I still don't get it.
+>>>>>>>>> When nothing is outstanding then we do update the used.
+>>>>>>>>> So if BQL stops userspace from sending packets then
+>>>>>>>>> we get an interrupt and packets start flowing again.
+>>>>>>>> Yes, but how about the cases of multiple flows. That's where I see unstable
+>>>>>>>> results.
+>>>>>>>>
+>>>>>>>>
+>>>>>>>>> It might be suboptimal, we might need to tune it but I doubt running
+>>>>>>>>> timers is a solution, timer interrupts cause VM exits.
+>>>>>>>> Probably not a timer but a time counter (or event byte counter) in vhost to
+>>>>>>>> add used and signal guest if it exceeds a value instead of waiting the
+>>>>>>>> number of packets.
+>>>>>>>>
+>>>>>>>>
+>>>>>>>> Thanks
+>>>>>>> Well we already have VHOST_NET_WEIGHT - is it too big then?
+>>>>>> I'm not sure, it might be too big.
+>>>>>>
+>>>>>>
+>>>>>>> And maybe we should expose the "MORE" flag in the descriptor -
+>>>>>>> do you think that will help?
+>>>>>>>
+>>>>>> I don't know. But how a "more" flag can help here?
+>>>>>>
+>>>>>> Thanks
+>>>>> It sounds like we should be a bit more aggressive in updating used ring.
+>>>>> But if we just do it naively we will harm performance for sure as that
+>>>>> is how we are doing batching right now.
+>>>> I agree but the problem is to balance the PPS and throughput. More batching
+>>>> helps for PPS but may damage TCP throughput.
+>>> That is what more flag is supposed to be I think - it is only set if
+>>> there's a socket that actually needs the skb freed in order to go on.
+>>
+>> I'm not quite sure I get, but is this something similar to what you want?
+>>
+>> https://lists.linuxfoundation.org/pipermail/virtualization/2014-October/027667.html
+>>
+>> Which enables tx interrupt for TCP packets, and you want to add used more
+>> aggressively for those sockets?
+>>
+>>
+>> Thanks
+> That's the idea.
+> But then you said we can just play with event index
+> instead. I think the answer to why not do that is that it's tricky to do
+> without races.
 
-Tang Chen ever tried to do this before adding 'movable_node':
-commit e8d1955258091e4c92d5a975ebd7fd8a98f5d30f
-Author: Tang Chen <tangchen@cn.fujitsu.com>
-Date:   Fri Feb 22 16:33:44 2013 -0800
 
-    acpi, memory-hotplug: parse SRAT before memblock is ready
+We don't do batched used ring update at that time. We can check whether 
+or not guest asking for a interrupt and add used immediately. Actually, 
+I've played a patch to do this. It helps a little but damage the PPS. 
+This is probably because we need more userspace memory accesses.
 
-Then, Lu Yinghai tried to do the similar job, you can see:
-https://lwn.net/Articles/554854/
-for more information. Hope that can help you.
-
-Thanks,
-Chao Fan
 
 >
->Cc: Thomas Gleixner <tglx@linutronix.de>
->Cc: Ingo Molnar <mingo@redhat.com>
->Cc: Borislav Petkov <bp@alien8.de>
->Cc: "H. Peter Anvin" <hpa@zytor.com>
->Cc: Dave Hansen <dave.hansen@linux.intel.com>
->Cc: Andy Lutomirski <luto@kernel.org>
->Cc: Peter Zijlstra <peterz@infradead.org>
->Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
->Cc: Len Brown <lenb@kernel.org>
->Cc: linux-kernel@vger.kernel.org
 >
->Pingfan Liu (4):
->  acpi: change the topo of acpi_table_upgrade()
->  x86/setup: parse acpi to get hotplug info before init_mem_mapping()
->  x86/mm: set allowed range for memblock allocator
->  x86/mm: remove bottom-up allocation style for x86_64
+> We need to think about the exact semantics: e.g. I think it is better to
+> keep interrupts on and then saying "I promise sending more buffers even
+> if you do not use any buffers so using this one is not urgent" rather
+> than as your patches do keeping them off and then saying "this one is
+> urgent".
 >
-> arch/arm64/kernel/setup.c |   2 +-
-> arch/x86/kernel/setup.c   |  17 ++++-
-> arch/x86/mm/init.c        | 154 +++++++---------------------------------------
-> arch/x86/mm/init_32.c     | 123 ++++++++++++++++++++++++++++++++++++
-> arch/x86/mm/mm_internal.h |   7 +++
-> drivers/acpi/tables.c     |   4 +-
-> include/linux/acpi.h      |   5 +-
-> 7 files changed, 172 insertions(+), 140 deletions(-)
->
->-- 
->2.7.4
->
->
->
+> The reason being is that "I promise to send more" is
+> more informative and can allow better batching for the
+> host.
 
 
+Just to make sure I understand, you mean set batch flag for e.g non TCP 
+socket?
+
+Thanks
+
+
+>
+>>>>>     Instead we could make guest
+>>>>> control batching using the more flag - if that's not set we write out
+>>>>> the used ring.
+>>>> It's under the control of guest, so I'm afraid we still need some more guard
+>>>> (e.g time/bytes counters) on host.
+>>>>
+>>>> Thanks
+>>> Point is if guest does not care about the skb being freed, then there is no
+>>> rush host side to mark buffer used.
+>>>
+>>>
