@@ -2,125 +2,96 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80923C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:37:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A891C43444
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:37:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F8302063F
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:37:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546976262;
-	bh=Kzi6stnPKtV6dH/kYiC0VhbIM6yKIzk/tyV8FGyI/wg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=yIN/xuVL1zRozVYngFBxpPZM5A9EDIIFtkCw4ybnbfd8yw607MySvlnGLnFHgp8Hh
-	 FIWdhyTxZzqjopixLOf5l+i9AzmuUq0oDkEH5x/9wcx6S+jcKfscJ3j4x91C8/PEdW
-	 x7790T1TOIRUOq2kxM9NIk1Eheb/5w6Jt4iks1ug=
+	by mail.kernel.org (Postfix) with ESMTP id EBCE0205C9
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:37:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732554AbfAHThl (ORCPT
+        id S1732564AbfAHThr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:37:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44502 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 14:37:47 -0500
+Received: from sauhun.de ([88.99.104.3]:44108 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731732AbfAHTfj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:35:39 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E8676205C9;
-        Tue,  8 Jan 2019 19:35:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546976138;
-        bh=Kzi6stnPKtV6dH/kYiC0VhbIM6yKIzk/tyV8FGyI/wg=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xtXW+bVlu/eWVhIo4GQJ0oDV/b7jRpGgzi6phufNM6c9S3B7cUeP4bm+u9W9I9LYd
-         tWgKQki91be5eK2mrUJ2asO4J7tFymW0VBiYf0XmTFPqm3qyuhjfAzRFt+LPtHQ1Ud
-         k/OcnZNq1U7J3BXQPDnKNl9MWpVgRm7RnzmBElpo=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Daniel Santos <daniel.santos@pobox.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Sasha Levin <sashal@kernel.org>, linux-mtd@lists.infradead.org
-Subject: [PATCH AUTOSEL 3.18 03/19] jffs2: Fix use of uninitialized delayed_work, lockdep breakage
-Date:   Tue,  8 Jan 2019 14:35:15 -0500
-Message-Id: <20190108193534.124555-3-sashal@kernel.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190108193534.124555-1-sashal@kernel.org>
-References: <20190108193534.124555-1-sashal@kernel.org>
+        id S1731786AbfAHThp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:37:45 -0500
+Received: from localhost (p54B337DA.dip0.t-ipconnect.de [84.179.55.218])
+        by pokefinder.org (Postfix) with ESMTPSA id 4626C3E48B8;
+        Tue,  8 Jan 2019 20:37:43 +0100 (CET)
+Date:   Tue, 8 Jan 2019 20:37:39 +0100
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Yi Zeng <yizeng@asrmicro.com>
+Cc:     linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] i2c: dev: prevent adapter retries and timeout being set
+ as minus value
+Message-ID: <20190108193739.owmxiosvgtl3nufk@ninjato>
+References: <1546864661-19407-1-git-send-email-yizeng@asrmicro.com>
 MIME-Version: 1.0
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="q27njlkdxmceqiql"
+Content-Disposition: inline
+In-Reply-To: <1546864661-19407-1-git-send-email-yizeng@asrmicro.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Daniel Santos <daniel.santos@pobox.com>
 
-[ Upstream commit a788c5272769ddbcdbab297cf386413eeac04463 ]
+--q27njlkdxmceqiql
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-jffs2_sync_fs makes the assumption that if CONFIG_JFFS2_FS_WRITEBUFFER
-is defined then a write buffer is available and has been initialized.
-However, this does is not the case when the mtd device has no
-out-of-band buffer:
+On Mon, Jan 07, 2019 at 08:37:41PM +0800, Yi Zeng wrote:
+> If set adapter->retries to minus value from user space via ioctl,
+> will make __i2c_transfer and __i2c_smbus_xfer jump the calling to
+> adapter->algo->master_xfer and adapter->algo->smbus_xfer that
+> registered by the underlying bus drivers, and return value 0 to
+> all the callers. The bus driver will never be accessed anymore by
+> all users, besides, the users may still get successful return value
+> without any error or information log print out.
+>=20
+> If set adapter->timeout to minus value from user space via ioctl,
+> will make the retrying loop in __i2c_transfer and __i2c_smbus_xfer
+> always break after the the first try, due to the time_after always
+> returns true.
+>=20
+> Signed-off-by: Yi Zeng <yizeng@asrmicro.com>
 
-int jffs2_nand_flash_setup(struct jffs2_sb_info *c)
-{
-        if (!c->mtd->oobsize)
-                return 0;
-...
+Please run checkpatch.pl on your patch. It found two issues:
 
-The resulting call to cancel_delayed_work_sync passing a uninitialized
-(but zeroed) delayed_work struct forces lockdep to become disabled.
+ERROR: code indent should use tabs where possible
+#34: FILE: drivers/i2c/i2c-dev.c:480:
++                        return -EINVAL;$
 
-[   90.050639] overlayfs: upper fs does not support tmpfile.
-[   90.652264] INFO: trying to register non-static key.
-[   90.662171] the code is fine but needs lockdep annotation.
-[   90.673090] turning off the locking correctness validator.
-[   90.684021] CPU: 0 PID: 1762 Comm: mount_root Not tainted 4.14.63 #0
-[   90.696672] Stack : 00000000 00000000 80d8f6a2 00000038 805f0000 80444600 8fe364f4 805dfbe7
-[   90.713349]         80563a30 000006e2 8068370c 00000001 00000000 00000001 8e2fdc48 ffffffff
-[   90.730020]         00000000 00000000 80d90000 00000000 00000106 00000000 6465746e 312e3420
-[   90.746690]         6b636f6c 03bf0000 f8000000 20676e69 00000000 80000000 00000000 8e2c2a90
-[   90.763362]         80d90000 00000001 00000000 8e2c2a90 00000003 80260dc0 08052098 80680000
-[   90.780033]         ...
-[   90.784902] Call Trace:
-[   90.789793] [<8000f0d8>] show_stack+0xb8/0x148
-[   90.798659] [<8005a000>] register_lock_class+0x270/0x55c
-[   90.809247] [<8005cb64>] __lock_acquire+0x13c/0xf7c
-[   90.818964] [<8005e314>] lock_acquire+0x194/0x1dc
-[   90.828345] [<8003f27c>] flush_work+0x200/0x24c
-[   90.837374] [<80041dfc>] __cancel_work_timer+0x158/0x210
-[   90.847958] [<801a8770>] jffs2_sync_fs+0x20/0x54
-[   90.857173] [<80125cf4>] iterate_supers+0xf4/0x120
-[   90.866729] [<80158fc4>] sys_sync+0x44/0x9c
-[   90.875067] [<80014424>] syscall_common+0x34/0x58
+WARNING: please, no spaces at the start of a line
+#34: FILE: drivers/i2c/i2c-dev.c:480:
++                        return -EINVAL;$
 
-Signed-off-by: Daniel Santos <daniel.santos@pobox.com>
-Reviewed-by: Hou Tao <houtao1@huawei.com>
-Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/jffs2/super.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/fs/jffs2/super.c b/fs/jffs2/super.c
-index f3194e5147fd..0bbc31d10857 100644
---- a/fs/jffs2/super.c
-+++ b/fs/jffs2/super.c
-@@ -101,7 +101,8 @@ static int jffs2_sync_fs(struct super_block *sb, int wait)
- 	struct jffs2_sb_info *c = JFFS2_SB_INFO(sb);
- 
- #ifdef CONFIG_JFFS2_FS_WRITEBUFFER
--	cancel_delayed_work_sync(&c->wbuf_dwork);
-+	if (jffs2_is_writebuffered(c))
-+		cancel_delayed_work_sync(&c->wbuf_dwork);
- #endif
- 
- 	mutex_lock(&c->alloc_sem);
--- 
-2.19.1
+--q27njlkdxmceqiql
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlw0+/8ACgkQFA3kzBSg
+KbYSshAAnzZE+HczY3uslaNw5nyyKYc2JLsI7ZTagqp+o9IlSBoR4uafDBPuK76A
+8MotMFyvQo/C3D5wu4WL6GWqj28mk7rUDm5x++Xk2uNDqiiBj7huAIO/bYs24ny8
+QJhyNrzUIZvVBkYyurRbnxV0NlaStkmGKu7DRFvfBmaRWQPSXl3V9DpHnNwRggq6
+GEYMFfIoCxjYW3L2qB3RPk/LleUdX1DYz3xTtFc38hjbqrUdz+9OMhHK68SQgF2o
+rUbRkqQtkGHJTE/1F3C7h/L2q43Xdk4X7gmzN4xbf7jlI/lq6/5Cwr6x1l9AnvjE
+wojV4C5TVucFJPpmLTP4OjwVd0VQiZVshnkBzl71KlZImphP/74nMtBwUtb+mDPi
+3+VBcDNcce6X1eBvyZ1+SKZgQ/3fMsmujy6TsRMfNwBYeO+w+0Ni6CQiS4CwqlaC
+r7YQjKYr7ObRhOoqjrB4ehmHXci33H27FrJ2/OE0F47xy/KpgkzLnAZE3lE2rahL
+nLUhgGE1OH8cxENq8tKRLzAv9h7w5yQmFI0EAJFdjpt5xmXeN/nZP5BUKWT+D2Bh
+LgbNAfo5ni/y8wlG2N5oWS8iXKjWpuG8gXSMO7/2zLAgfrbS8tzyxEnZ/gasnZOG
+LBXjjStQIkjPQHafPl0vtZSVOTmu7vjlWE+v11bw0RTTxN0TaNc=
+=vTwj
+-----END PGP SIGNATURE-----
+
+--q27njlkdxmceqiql--
