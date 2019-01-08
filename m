@@ -4,59 +4,57 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB363C43612
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:48:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3C05C43612
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:48:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B75D206BB
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:48:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B4A0A20827
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:48:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546976899;
-	bh=e+rkoOgtLTW+dGJqXFCsGRki8oYgkGp/RtKOXYEAwv4=;
+	s=default; t=1546976903;
+	bh=Jejn04eYtvJDU7RUPfxqNt8Ql6Kji2OlD5+SblMNmEI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Fc/mjVUiIHldxqn7QKyXA6627AYGGEV7kDUF6ZqT5d6He1HbNGxMIPhDDtZXCtlvH
-	 TvfvJYZRJP6xbEmP3O0Ipsf5YCumAQxF5ag67P+yEckZUrWG4WAobwrFB31XvWEz6Y
-	 VvGjUe2IYFtEYh2Uf/FKlr/fg2L51ivQLOi8yzNw=
+	b=SvrBsQ6ZnAN3NFhzemxhefBvnV5bPAW9UXgr0FHNIZJUZtGLi8qQrlPuxTiX7oBct
+	 hMWnOHUvhzDMqhxkeufeS1pU8y6p6M/HfQR5ywp5aR25kB+KzkiypBF8Br1gu1wp1z
+	 Fgd8wMthcUso3WS+NTNvNhpFJKiXIdDMTABAxwS4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731366AbfAHTc0 (ORCPT
+        id S1732789AbfAHTsW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:32:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40854 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 14:48:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40970 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730434AbfAHTcW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:32:22 -0500
+        id S1731355AbfAHTc0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:32:26 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 339E620665;
-        Tue,  8 Jan 2019 19:32:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 268042070B;
+        Tue,  8 Jan 2019 19:32:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546975941;
-        bh=e+rkoOgtLTW+dGJqXFCsGRki8oYgkGp/RtKOXYEAwv4=;
+        s=default; t=1546975945;
+        bh=Jejn04eYtvJDU7RUPfxqNt8Ql6Kji2OlD5+SblMNmEI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ej0dixRyvodIim5dmnO/9NXg7nCh0Xkf2DCeaZy1PfyXHC/C832jG00qPqwdBJ08w
-         IhSbzm584ocOIvhYkEzhX2SpSeEJhTgbKrDU0Unry8XNUHxczkhhw463jPO9SHpMi/
-         UPo8rq7pzJB0Iyk3e7ppSctw6UzQ00XdYWEkbUCI=
+        b=x2ebe8MmDHI1ZEQFEbv8qxXuHCKr2u/InV1tofIxMH7lB3DG374NYgQrnErot0Bgu
+         yP60X9T3xQsouFq/I5Y3nFa02k0xucML6yZy1miDAfJ2mGw0D8wWWs+eUKezaUq3tN
+         K4iCaXGWp4fkcIhplp4fQCfGoPSyxt11xuTOrvqo=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Michal Hocko <mhocko@suse.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        David Rientjes <rientjes@google.com>,
-        Paul Oppenheimer <bepvte@gmail.com>,
-        William Kucharski <william.kucharski@oracle.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org,
-        linux-doc@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 97/97] mm, proc: be more verbose about unstable VMA flags in /proc/<pid>/smaps
-Date:   Tue,  8 Jan 2019 14:29:46 -0500
-Message-Id: <20190108192949.122407-97-sashal@kernel.org>
+Cc:     =?UTF-8?q?Jo=C3=A3o=20Paulo=20Rechi=20Vita?= <jprvita@gmail.com>,
+        =?UTF-8?q?Jo=C3=A3o=20Paulo=20Rechi=20Vita?= <jprvita@endlessm.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Sasha Levin <sashal@kernel.org>,
+        acpi4asus-user@lists.sourceforge.net,
+        platform-driver-x86@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 02/53] platform/x86: asus-wmi: Tell the EC the OS will handle the display off hotkey
+Date:   Tue,  8 Jan 2019 14:31:30 -0500
+Message-Id: <20190108193222.123316-2-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190108192949.122407-1-sashal@kernel.org>
-References: <20190108192949.122407-1-sashal@kernel.org>
+In-Reply-To: <20190108193222.123316-1-sashal@kernel.org>
+References: <20190108193222.123316-1-sashal@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -64,106 +62,131 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michal Hocko <mhocko@suse.com>
+From: João Paulo Rechi Vita <jprvita@gmail.com>
 
-[ Upstream commit 7550c6079846a24f30d15ac75a941c8515dbedfb ]
+[ Upstream commit 78f3ac76d9e5219589718b9e4733bee21627b3f5 ]
 
-Patch series "THP eligibility reporting via proc".
+In the past, Asus firmwares would change the panel backlight directly
+through the EC when the display off hotkey (Fn+F7) was pressed, and
+only notify the OS of such change, with 0x33 when the LCD was ON and
+0x34 when the LCD was OFF. These are currently mapped to
+KEY_DISPLAYTOGGLE and KEY_DISPLAY_OFF, respectively.
 
-This series of three patches aims at making THP eligibility reporting much
-more robust and long term sustainable.  The trigger for the change is a
-regression report [2] and the long follow up discussion.  In short the
-specific application didn't have good API to query whether a particular
-mapping can be backed by THP so it has used VMA flags to workaround that.
-These flags represent a deep internal state of VMAs and as such they
-should be used by userspace with a great deal of caution.
+Most recently the EC on Asus most machines lost ability to toggle the
+LCD backlight directly, but unless the OS informs the firmware it is
+going to handle the display toggle hotkey events, the firmware still
+tries change the brightness through the EC, to no effect. The end result
+is a long list (at Endless we counted 11) of Asus laptop models where
+the display toggle hotkey does not perform any action. Our firmware
+engineers contacts at Asus were surprised that there were still machines
+out there with the old behavior.
 
-A similar has happened for [3] when users complained that VM_MIXEDMAP is
-no longer set on DAX mappings.  Again a lack of a proper API led to an
-abuse.
+Calling WMNB(ASUS_WMI_DEVID_BACKLIGHT==0x00050011, 2) on the _WDG device
+tells the firmware that it should let the OS handle the display toggle
+event, in which case it will simply notify the OS of a key press with
+0x35, as shown by the DSDT excerpts bellow.
 
-The first patch in the series tries to emphasise that that the semantic of
-flags might change and any application consuming those should be really
-careful.
+ Scope (_SB)
+ {
+     (...)
 
-The remaining two patches provide a more suitable interface to address [2]
-and provide a consistent API to query the THP status both for each VMA and
-process wide as well.  [1]
+     Device (ATKD)
+     {
+         (...)
 
-http://lkml.kernel.org/r/20181120103515.25280-1-mhocko@kernel.org [2]
-http://lkml.kernel.org/r/http://lkml.kernel.org/r/alpine.DEB.2.21.1809241054050.224429@chino.kir.corp.google.com
-[3] http://lkml.kernel.org/r/20181002100531.GC4135@quack2.suse.cz
+         Name (_WDG, Buffer (0x28)
+         {
+             /* 0000 */  0xD0, 0x5E, 0x84, 0x97, 0x6D, 0x4E, 0xDE, 0x11,
+             /* 0008 */  0x8A, 0x39, 0x08, 0x00, 0x20, 0x0C, 0x9A, 0x66,
+             /* 0010 */  0x4E, 0x42, 0x01, 0x02, 0x35, 0xBB, 0x3C, 0x0B,
+             /* 0018 */  0xC2, 0xE3, 0xED, 0x45, 0x91, 0xC2, 0x4C, 0x5A,
+             /* 0020 */  0x6D, 0x19, 0x5D, 0x1C, 0xFF, 0x00, 0x01, 0x08
+         })
+         Method (WMNB, 3, Serialized)
+         {
+             CreateDWordField (Arg2, Zero, IIA0)
+             CreateDWordField (Arg2, 0x04, IIA1)
+             Local0 = (Arg1 & 0xFFFFFFFF)
 
-This patch (of 3):
+             (...)
 
-Even though vma flags exported via /proc/<pid>/smaps are explicitly
-documented to be not guaranteed for future compatibility the warning
-doesn't go far enough because it doesn't mention semantic changes to those
-flags.  And they are important as well because these flags are a deep
-implementation internal to the MM code and the semantic might change at
-any time.
+             If ((Local0 == 0x53564544))
+             {
+                 (...)
 
-Let's consider two recent examples:
-http://lkml.kernel.org/r/20181002100531.GC4135@quack2.suse.cz
-: commit e1fb4a086495 "dax: remove VM_MIXEDMAP for fsdax and device dax" has
-: removed VM_MIXEDMAP flag from DAX VMAs. Now our testing shows that in the
-: mean time certain customer of ours started poking into /proc/<pid>/smaps
-: and looks at VMA flags there and if VM_MIXEDMAP is missing among the VMA
-: flags, the application just fails to start complaining that DAX support is
-: missing in the kernel.
+                 If ((IIA0 == 0x00050011))
+                 {
+                     If ((IIA1 == 0x02))
+                     {
+                         ^^PCI0.SBRG.EC0.SPIN (0x72, One)
+                         ^^PCI0.SBRG.EC0.BLCT = One
+                     }
 
-http://lkml.kernel.org/r/alpine.DEB.2.21.1809241054050.224429@chino.kir.corp.google.com
-: Commit 1860033237d4 ("mm: make PR_SET_THP_DISABLE immediately active")
-: introduced a regression in that userspace cannot always determine the set
-: of vmas where thp is ineligible.
-: Userspace relies on the "nh" flag being emitted as part of /proc/pid/smaps
-: to determine if a vma is eligible to be backed by hugepages.
-: Previous to this commit, prctl(PR_SET_THP_DISABLE, 1) would cause thp to
-: be disabled and emit "nh" as a flag for the corresponding vmas as part of
-: /proc/pid/smaps.  After the commit, thp is disabled by means of an mm
-: flag and "nh" is not emitted.
-: This causes smaps parsing libraries to assume a vma is eligible for thp
-: and ends up puzzling the user on why its memory is not backed by thp.
+                     Return (One)
+                 }
+             }
+             (...)
+         }
+         (...)
+     }
+     (...)
+ }
+ (...)
 
-In both cases userspace was relying on a semantic of a specific VMA flag.
-The primary reason why that happened is a lack of a proper interface.
-While this has been worked on and it will be fixed properly, it seems that
-our wording could see some refinement and be more vocal about semantic
-aspect of these flags as well.
+ Scope (_SB.PCI0.SBRG.EC0)
+ {
+     (...)
 
-Link: http://lkml.kernel.org/r/20181211143641.3503-2-mhocko@kernel.org
-Signed-off-by: Michal Hocko <mhocko@suse.com>
-Acked-by: Jan Kara <jack@suse.cz>
-Acked-by: Dan Williams <dan.j.williams@intel.com>
-Acked-by: David Rientjes <rientjes@google.com>
-Acked-by: Mike Rapoport <rppt@linux.ibm.com>
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: David Rientjes <rientjes@google.com>
-Cc: Paul Oppenheimer <bepvte@gmail.com>
-Cc: William Kucharski <william.kucharski@oracle.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+     Name (BLCT, Zero)
+
+     (...)
+
+     Method (_Q10, 0, NotSerialized)  // _Qxx: EC Query
+     {
+         If ((BLCT == Zero))
+         {
+             Local0 = One
+             Local0 = RPIN (0x72)
+             Local0 ^= One
+             SPIN (0x72, Local0)
+             If (ATKP)
+             {
+                 Local0 = (0x34 - Local0)
+                 ^^^^ATKD.IANE (Local0)
+             }
+         }
+         ElseIf ((BLCT == One))
+         {
+             If (ATKP)
+             {
+                 ^^^^ATKD.IANE (0x35)
+             }
+         }
+     }
+     (...)
+ }
+
+Signed-off-by: João Paulo Rechi Vita <jprvita@endlessm.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- Documentation/filesystems/proc.txt | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/platform/x86/asus-wmi.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/filesystems/proc.txt b/Documentation/filesystems/proc.txt
-index 22b4b00dee31..06ac6dda9b34 100644
---- a/Documentation/filesystems/proc.txt
-+++ b/Documentation/filesystems/proc.txt
-@@ -496,7 +496,9 @@ manner. The codes are the following:
+diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
+index 7440f650e81a..3f662cd774d7 100644
+--- a/drivers/platform/x86/asus-wmi.c
++++ b/drivers/platform/x86/asus-wmi.c
+@@ -2147,7 +2147,8 @@ static int asus_wmi_add(struct platform_device *pdev)
+ 		err = asus_wmi_backlight_init(asus);
+ 		if (err && err != -ENODEV)
+ 			goto fail_backlight;
+-	}
++	} else
++		err = asus_wmi_set_devstate(ASUS_WMI_DEVID_BACKLIGHT, 2, NULL);
  
- Note that there is no guarantee that every flag and associated mnemonic will
- be present in all further kernel releases. Things get changed, the flags may
--be vanished or the reverse -- new added.
-+be vanished or the reverse -- new added. Interpretation of their meaning
-+might change in future as well. So each consumer of these flags has to
-+follow each specific kernel version for the exact semantic.
- 
- This file is only present if the CONFIG_MMU kernel configuration option is
- enabled.
+ 	status = wmi_install_notify_handler(asus->driver->event_guid,
+ 					    asus_wmi_notify, asus);
 -- 
 2.19.1
 
