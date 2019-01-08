@@ -2,123 +2,90 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 740BCC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 03:23:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7EC7C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 03:24:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 465A42173C
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 03:23:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8002A2173C
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 03:24:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727472AbfAHDXC (ORCPT
+        id S1727495AbfAHDYF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 22:23:02 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:44920 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727246AbfAHDXB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 22:23:01 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 36D86539A;
-        Tue,  8 Jan 2019 03:23:01 +0000 (UTC)
-Received: from dhcp-128-65.nay.redhat.com (ovpn-12-56.pek2.redhat.com [10.72.12.56])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 24B495C207;
-        Tue,  8 Jan 2019 03:22:55 +0000 (UTC)
-Date:   Tue, 8 Jan 2019 11:22:51 +0800
-From:   Dave Young <dyoung@redhat.com>
-To:     linux-kernel@vger.kernel.org, kexec@lists.infradead.org
-Cc:     AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Baoquan He <bhe@redhat.com>, x86@kernel.org,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vivek Goyal <vgoyal@redhat.com>
-Subject: Re: [PATCH V2] x86/kexec: fix a kexec_file_load failure
-Message-ID: <20190108032251.GA30348@dhcp-128-65.nay.redhat.com>
-References: <20181228011247.GA9999@dhcp-128-65.nay.redhat.com>
+        Mon, 7 Jan 2019 22:24:05 -0500
+Received: from regular1.263xmail.com ([211.150.99.140]:38962 "EHLO
+        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727030AbfAHDYE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 22:24:04 -0500
+X-Greylist: delayed 414 seconds by postgrey-1.27 at vger.kernel.org; Mon, 07 Jan 2019 22:24:02 EST
+Received: from jeffy.chen?rock-chips.com (unknown [192.168.167.207])
+        by regular1.263xmail.com (Postfix) with ESMTP id 7A4F8220;
+        Tue,  8 Jan 2019 11:17:02 +0800 (CST)
+X-263anti-spam: KSV:0;BIG:0;
+X-MAIL-GRAY: 0
+X-MAIL-DELIVERY: 1
+X-KSVirus-check: 0
+X-ADDR-CHECKED4: 1
+X-ABS-CHECKED: 1
+X-SKE-CHECKED: 1
+X-ANTISPAM-LEVEL: 2
+Received: from [172.16.22.144] (unknown [103.29.142.67])
+        by smtp.263.net (postfix) whith ESMTP id P1323T140230924408576S1546917419923208_;
+        Tue, 08 Jan 2019 11:17:02 +0800 (CST)
+X-IP-DOMAINF: 1
+X-UNIQUE-TAG: <8b74f9e3314eb687daffe07f41349aca>
+X-RL-SENDER: jeffy.chen@rock-chips.com
+X-SENDER: cjf@rock-chips.com
+X-LOGIN-NAME: jeffy.chen@rock-chips.com
+X-FST-TO: tony@atomide.com
+X-SENDER-IP: 103.29.142.67
+X-ATTACHMENT-NUM: 0
+X-DNS-TYPE: 0
+Message-ID: <5C34162B.200@rock-chips.com>
+Date:   Tue, 08 Jan 2019 11:16:59 +0800
+From:   JeffyChen <jeffy.chen@rock-chips.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:19.0) Gecko/20130126 Thunderbird/19.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181228011247.GA9999@dhcp-128-65.nay.redhat.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Tue, 08 Jan 2019 03:23:01 +0000 (UTC)
+To:     Tony Lindgren <tony@atomide.com>, Lee Jones <lee.jones@linaro.org>
+CC:     linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org
+Subject: Re: [PATCH] mfd: syscon: Fix syscon name for device tree
+References: <20190108000558.54914-1-tony@atomide.com> <20190108001543.GJ5544@atomide.com>
+In-Reply-To: <20190108001543.GJ5544@atomide.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/28/18 at 09:12am, Dave Young wrote:
-> The code cleanup mentioned in Fixes tag changed the behavior of
-> kexec_locate_mem_hole.  The kexec_locate_mem_hole will try to
-> allocate free memory only when kbuf.mem is initialized as zero.
-> 
-> But in x86 kexec_file_load implementation there are a few places
-> the kbuf.mem is reused like below:
->   /* kbuf initialized, kbuf.mem = 0 */
->   ...
->   kexec_add_buffer()
->   ...
->   kexec_add_buffer()
-> 
->   The second kexec_add_buffer will reuse previous kbuf but not
->   reinitialize the kbuf.mem.
-> 
-> Thus kexec_file_load failed because the sanity check failed.
-> 
-> So explictily reset kbuf.mem to fix the issue.
-> 
-> Fixes: b6664ba42f14 ("s390, kexec_file: drop arch_kexec_mem_walk()")
-> Signed-off-by: Dave Young <dyoung@redhat.com>
-> Cc: <stable@vger.kernel.org>
-> ---
-> V1 -> V2: use KEXEC_BUF_MEM_UNKNOWN in code.
->  arch/x86/kernel/crash.c           | 1 +
->  arch/x86/kernel/kexec-bzimage64.c | 2 ++
->  2 files changed, 3 insertions(+)
-> 
-> diff --git a/arch/x86/kernel/crash.c b/arch/x86/kernel/crash.c
-> index f631a3f15587..6b7890c7889b 100644
-> --- a/arch/x86/kernel/crash.c
-> +++ b/arch/x86/kernel/crash.c
-> @@ -469,6 +469,7 @@ int crash_load_segments(struct kimage *image)
->  
->  	kbuf.memsz = kbuf.bufsz;
->  	kbuf.buf_align = ELF_CORE_HEADER_ALIGN;
-> +	kbuf.mem = KEXEC_BUF_MEM_UNKNOWN;
->  	ret = kexec_add_buffer(&kbuf);
->  	if (ret) {
->  		vfree((void *)image->arch.elf_headers);
-> diff --git a/arch/x86/kernel/kexec-bzimage64.c b/arch/x86/kernel/kexec-bzimage64.c
-> index 278cd07228dd..0d5efa34f359 100644
-> --- a/arch/x86/kernel/kexec-bzimage64.c
-> +++ b/arch/x86/kernel/kexec-bzimage64.c
-> @@ -434,6 +434,7 @@ static void *bzImage64_load(struct kimage *image, char *kernel,
->  	kbuf.memsz = PAGE_ALIGN(header->init_size);
->  	kbuf.buf_align = header->kernel_alignment;
->  	kbuf.buf_min = MIN_KERNEL_LOAD_ADDR;
-> +	kbuf.mem = KEXEC_BUF_MEM_UNKNOWN;
->  	ret = kexec_add_buffer(&kbuf);
->  	if (ret)
->  		goto out_free_params;
-> @@ -448,6 +449,7 @@ static void *bzImage64_load(struct kimage *image, char *kernel,
->  		kbuf.bufsz = kbuf.memsz = initrd_len;
->  		kbuf.buf_align = PAGE_SIZE;
->  		kbuf.buf_min = MIN_INITRD_LOAD_ADDR;
-> +		kbuf.mem = KEXEC_BUF_MEM_UNKNOWN;
->  		ret = kexec_add_buffer(&kbuf);
->  		if (ret)
->  			goto out_free_params;
-> -- 
-> 2.17.0
-> 
+Hi Tony,
+
+On 01/08/2019 08:15 AM, Tony Lindgren wrote:
+> * Tony Lindgren <tony@atomide.com> [190108 00:06]:
+>> I'm now seeing the following error on omap5 during boot:
+>>
+>> (NULL device *): Failed to create dummy-scm_conf@0 debugfs directory
+This log means failed to init regmap debugfs with device(NULL) and 
+name("scm_conf@0"), which likely to be called from of_syscon_register() 
+with np fullname("scm_conf@0").
+
+So my guess would be there're more than one syscon dts nodes named 
+"scm_conf@0".
 
 
-Ping, this is a regression issue, can we get this fixed?
+For omap5 and scm_conf@0, should be these 2:
+https://elixir.bootlin.com/linux/latest/source/arch/arm/boot/dts/omap5.dtsi#L167
+				scm_conf: scm_conf@0 {
+					compatible = "syscon";
 
-Thanks
-Dave
+https://elixir.bootlin.com/linux/latest/source/arch/arm/boot/dts/omap5.dtsi#L313
+				scm_wkup_pad_conf: scm_conf@0 {
+					compatible = "syscon", "simple-bus";
+
+Maybe try to rename one of them(for example, rename the second one to 
+"scm_wkup_pad_conf@0").
+
+
