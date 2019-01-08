@@ -2,118 +2,240 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC807C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 09:33:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81247C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 09:37:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA187218D0
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 09:33:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="mFNelOE/"
+	by mail.kernel.org (Postfix) with ESMTP id 47863218AF
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 09:37:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728305AbfAHJdW (ORCPT
+        id S1728236AbfAHJhy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 04:33:22 -0500
-Received: from mail-eopbgr30056.outbound.protection.outlook.com ([40.107.3.56]:47990
-        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727689AbfAHJdW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 04:33:22 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ZqV5IvbjO/Hs4495vMPopacyxz8Ae5hS0f6FRq2PuHI=;
- b=mFNelOE/qadjceqUhBxCgnyCzGhvu5PDvlw96jzmeHSZJAU2JxbPM8Ew9S7aLl3qMq6O9Zr8ivfIMuZbVzdMrCY8xBxSGKXJlcsSR566vnBrARpIzmpVtYxdPdrHCA3VvNgJiehvJIgdMcCSKaTtOQL4eYquC+BM20BjK1l9H6U=
-Received: from VI1PR0402MB3519.eurprd04.prod.outlook.com (52.134.4.24) by
- VI1SPR01MB326.eurprd04.prod.outlook.com (10.165.198.33) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1516.13; Tue, 8 Jan 2019 09:33:18 +0000
-Received: from VI1PR0402MB3519.eurprd04.prod.outlook.com
- ([fe80::5d51:a6f6:df78:87e]) by VI1PR0402MB3519.eurprd04.prod.outlook.com
- ([fe80::5d51:a6f6:df78:87e%5]) with mapi id 15.20.1495.011; Tue, 8 Jan 2019
- 09:33:18 +0000
-From:   Jacky Bai <ping.bai@nxp.com>
-To:     Randy Dunlap <rdunlap@infradead.org>,
-        "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        Aisheng Dong <aisheng.dong@nxp.com>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-Subject: RE: [PATCH v2 2/2] driver: clocksource: Add nxp system counter timer
- driver support
-Thread-Topic: [PATCH v2 2/2] driver: clocksource: Add nxp system counter timer
- driver support
-Thread-Index: AQHUkduDSPUR4D8ONkaAhIX2AZ1ft6V7cswAgCnNt1A=
-Date:   Tue, 8 Jan 2019 09:33:18 +0000
-Message-ID: <VI1PR0402MB3519AF0CEF41F24867B10986878A0@VI1PR0402MB3519.eurprd04.prod.outlook.com>
-References: <1544592770-19996-1-git-send-email-ping.bai@nxp.com>
- <1544592770-19996-2-git-send-email-ping.bai@nxp.com>
- <dbe836ff-cd29-a693-4d83-a2fee419b424@infradead.org>
-In-Reply-To: <dbe836ff-cd29-a693-4d83-a2fee419b424@infradead.org>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=ping.bai@nxp.com; 
-x-originating-ip: [119.31.174.71]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;VI1SPR01MB326;6:f/LJa7bvb8fol0+gKgDEQEJtGU6m4V6yXGBBchzRoOw7weK1cb5XWpi03rwphVqDMuWMDbI+1YW4zSNkorbPibWWMN+3NO9obd0L6nJn1ScS6EYuE+LNzO48HFvVFHMkUfnG+uBg2JNgxsh+dP7AP/EviPIrwVzC+cuY/f0kOK/dRCP9PpjjmCNA/whfMoUmTXHY4xK7B+Rz/on/VcQNivRYt840JvL1Bzs9XIUoLJa84S233dJAUtWtDSHMwfqgVsP3/QHN43sPiXTAJXYQzAs4ABIv/KKFE1BXuAfB0pL0H0jY8fHMtMA3sDyRUHSnvyCLzRYEaQr0bHC7UBA+TfDqCbsPgmLVzup8TLZxt4PA7gRQJaIkXul1J1emplSM2AAiHz8iRE4dVvQsOo0yDjYP+GsHBShb7QSaptvS5DRKG0wbsV/nNwhsTwRzEVz7y7exXTbYicVIraQRN2HlWg==;5:KrJukW4MgnqVB+lzXd1lRL9EgkejRSvw5NJ/L6WZ/yvistExVFiRmjKFrcvcZLEKMgg6UZagE9nYSP68q5xHpc3Ogxh+a+z2s+DRn8gumpyHoE7YyS+figaY3AmRNCkIjx0Mj0VWTDBCybNdtgcRMU9OsfWIDbHoCJEDoSgthYuK3i+bj8A1ACbpwzwhPPT8+aV97VHvZpeYgYEWqQr+ZA==;7:E/RW03XteL1ptUKXLZb5LWVfBTj+LtdBdUYasGphnOC0S91FgbKIzKS0isKwyfPv1NVgSk0Gf1lh+BscJm+UdAjfCUXEaR4/w2fHeRXYU7t4AhcY45XrHLw5KZaVCNxp57DUZMEEfB6iBSsxEH7O1A==
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: fa9fa579-9364-4206-9cab-08d6754c52ab
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1SPR01MB326;
-x-ms-traffictypediagnostic: VI1SPR01MB326:
-x-microsoft-antispam-prvs: <VI1SPR01MB3261FC92A23A112F3E0C3FD878A0@VI1SPR01MB326.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(908002)(999002)(5005026)(6040522)(8220060)(2401047)(8121501046)(3231475)(944501520)(52105112)(93006095)(93001095)(3002001)(10201501046)(6055026)(6041310)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:VI1SPR01MB326;BCL:0;PCL:0;RULEID:;SRVR:VI1SPR01MB326;
-x-forefront-prvs: 0911D5CE78
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(376002)(39860400002)(396003)(136003)(346002)(189003)(199004)(6636002)(68736007)(476003)(5660300001)(9686003)(14454004)(66066001)(106356001)(105586002)(305945005)(446003)(99286004)(229853002)(7736002)(33656002)(74316002)(6436002)(486006)(55016002)(316002)(54906003)(110136005)(478600001)(53936002)(4326008)(11346002)(6246003)(2201001)(86362001)(256004)(71190400001)(71200400001)(102836004)(81166006)(2906002)(8936002)(97736004)(186003)(8676002)(26005)(81156014)(76176011)(7696005)(6116002)(3846002)(6506007)(53546011)(2501003)(25786009);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1SPR01MB326;H:VI1PR0402MB3519.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: EKmXZqdeRRYqYSSbInEyEAlzamLn7KnuLOXz+HYF5NIFpPQKAJEk2Xw65RHgh8HoRdZUJblGCzAlbqbGSJs3zTNjB+1gcqgNrEla3xsToYR3gxoeP6gX1zAwNEJRMYXPBZUcjC3uq5ROFBBntoiL/OvYhZR8Pym6Sd/C1Tt16c4g4xYZ6NfaXQ3tTCxhItoli2H4A782SPBYbdn+eoFCo6k9uEEUR6oQ8DgVChScddprozfs+yrj15PfdlNsCUHO3fmT5MWWhxe+cF9CogXGYAmTDx/Zoc278MSv6KBKGr05ZYy/q5ckw4z1utFurHKN
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Tue, 8 Jan 2019 04:37:54 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:62128 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727236AbfAHJhy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 04:37:54 -0500
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 43YnHM1psYz9v1Hf;
+        Tue,  8 Jan 2019 10:37:51 +0100 (CET)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id cA4zH0foTH8r; Tue,  8 Jan 2019 10:37:51 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 43YnHM14gfz9v1Hc;
+        Tue,  8 Jan 2019 10:37:51 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 21B668B7CB;
+        Tue,  8 Jan 2019 10:37:52 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id B9UCLNJ6RJx1; Tue,  8 Jan 2019 10:37:52 +0100 (CET)
+Received: from PO15451 (unknown [192.168.4.90])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 66F8D8B7C9;
+        Tue,  8 Jan 2019 10:37:51 +0100 (CET)
+Subject: Re: [PATCH v2 2/2] powerpc: use probe_user_read()
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+To:     Michael Ellerman <mpe@ellerman.id.au>,
+        Russell Currey <ruscur@russell.cc>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Mike Rapoport <rppt@linux.ibm.com>, linux-mm@kvack.org,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+References: <0b0db24e18063076e9d9f4e376994af83da05456.1546932949.git.christophe.leroy@c-s.fr>
+ <e939991366b784ef13c7afcab51749e3b46327ac.1546932949.git.christophe.leroy@c-s.fr>
+Message-ID: <293a653c-52aa-6326-4022-73fb25590354@c-s.fr>
+Date:   Tue, 8 Jan 2019 10:37:51 +0100
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.3
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fa9fa579-9364-4206-9cab-08d6754c52ab
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Jan 2019 09:33:18.2995
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1SPR01MB326
+In-Reply-To: <e939991366b784ef13c7afcab51749e3b46327ac.1546932949.git.christophe.leroy@c-s.fr>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiBTdWJqZWN0OiBSZTogW1BBVENIIHYyIDIvMl0gZHJpdmVyOiBjbG9ja3NvdXJjZTogQWRkIG54
-cCBzeXN0ZW0gY291bnRlciB0aW1lcg0KPiBkcml2ZXIgc3VwcG9ydA0KPiANCj4gSGksDQo+IA0K
-PiBPbiAxMi8xMS8xOCA5OjI4IFBNLCBKYWNreSBCYWkgd3JvdGU6DQo+ID4gZGlmZiAtLWdpdCBh
-L2RyaXZlcnMvY2xvY2tzb3VyY2UvS2NvbmZpZyBiL2RyaXZlcnMvY2xvY2tzb3VyY2UvS2NvbmZp
-Zw0KPiA+IGluZGV4IGM1N2IxNTYuLjdlNWYyZGUgMTAwNjQ0DQo+ID4gLS0tIGEvZHJpdmVycy9j
-bG9ja3NvdXJjZS9LY29uZmlnDQo+ID4gKysrIGIvZHJpdmVycy9jbG9ja3NvdXJjZS9LY29uZmln
-DQo+ID4gQEAgLTU3OSw2ICs1NzksMTQgQEAgY29uZmlnIENMS1NSQ19JTVhfVFBNDQo+ID4gIAkg
-IEVuYWJsZSB0aGlzIG9wdGlvbiB0byB1c2UgSU1YIFRpbWVyL1BXTSBNb2R1bGUgKFRQTSkgdGlt
-ZXIgYXMNCj4gPiAgCSAgY2xvY2tzb3VyY2UuDQo+ID4NCj4gPiArY29uZmlnIENMS1NSQ19JTVhf
-U1lTX0NUUg0KPiA+ICsJYm9vbCAiQ2xvY2tzb3VyY2UgdXNpbmcgaS5NWCBzeXN0ZW0gY291bnRl
-ciIgaWYgQ09NUElMRV9URVNUDQo+IA0KPiBMb29rcyBsaWtlIGEgIm1ha2UgKmNvbmZpZyIgdXNl
-ciBvbmx5IGdldHMgdGhpcyBwcm9tcHQgaWYgQ09NUElMRV9URVNUIGlzIHNldC4NCj4gDQo+IElm
-IENPTVBJTEVfVEVTVCBpcyBub3Qgc2V0LCBob3cgZG9lcyB0aGlzIGRyaXZlciBiZWNvbWUgZW5h
-YmxlZC9zZXQ/DQo+IA0KPiANCg0KU29ycnkgZm9yIHJlcGx5IHRvIHlvdSBzbyBsYXRlci4gdGhp
-cyBkcml2ZXIgbmVlZCB0byBiZSBlbmFibGUgZXhwbGljaXRseSB3aGVuIElNWCBzb2MgaXMgYnVp
-bHQuDQoNCkJSDQo+ID4gKwlkZXBlbmRzIG9uIChBUk0gfHwgQVJNNjQpICYmIENMS0RFVl9MT09L
-VVANCj4gPiArCXNlbGVjdCBDTEtTUkNfTU1JTw0KPiA+ICsJaGVscA0KPiA+ICsJICBFbmFibGUg
-dGhpcyBvcHRpb24gdG8gdXNlIElNWCBzeXN0ZW0gY291bnRlciB0aW1lciBhcw0KPiA+ICsJICBj
-bG9ja3NvdXJjZS4NCj4gPiArDQo+ID4gIGNvbmZpZyBDTEtTUkNfU1RfTFBDDQo+ID4gIAlib29s
-ICJMb3cgcG93ZXIgY2xvY2tzb3VyY2UgZm91bmQgaW4gdGhlIExQQyIgaWYgQ09NUElMRV9URVNU
-DQo+ID4gIAlzZWxlY3QgVElNRVJfT0YgaWYgT0YNCj4gDQo+IHRoYW5rcywNCj4gLS0NCj4gflJh
-bmR5DQo=
+Hi Michael and Russell,
+
+Any idea why:
+- checkpatch reports missing Signed-off-by:
+- Snowpatch build fails on PPC64 (it seems unrelated to the patch, 
+something wrong in lib/genalloc.c)
+
+Thanks
+Christophe
+
+Le 08/01/2019 à 08:37, Christophe Leroy a écrit :
+> Instead of opencoding, use probe_user_read() to failessly
+> read a user location.
+> 
+> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+> ---
+>   v2: Using probe_user_read() instead of probe_user_address()
+> 
+>   arch/powerpc/kernel/process.c   | 12 +-----------
+>   arch/powerpc/mm/fault.c         |  6 +-----
+>   arch/powerpc/perf/callchain.c   | 20 +++-----------------
+>   arch/powerpc/perf/core-book3s.c |  8 +-------
+>   arch/powerpc/sysdev/fsl_pci.c   | 10 ++++------
+>   5 files changed, 10 insertions(+), 46 deletions(-)
+> 
+> diff --git a/arch/powerpc/kernel/process.c b/arch/powerpc/kernel/process.c
+> index ce393df243aa..6a4b59d574c2 100644
+> --- a/arch/powerpc/kernel/process.c
+> +++ b/arch/powerpc/kernel/process.c
+> @@ -1298,16 +1298,6 @@ void show_user_instructions(struct pt_regs *regs)
+>   
+>   	pc = regs->nip - (NR_INSN_TO_PRINT * 3 / 4 * sizeof(int));
+>   
+> -	/*
+> -	 * Make sure the NIP points at userspace, not kernel text/data or
+> -	 * elsewhere.
+> -	 */
+> -	if (!__access_ok(pc, NR_INSN_TO_PRINT * sizeof(int), USER_DS)) {
+> -		pr_info("%s[%d]: Bad NIP, not dumping instructions.\n",
+> -			current->comm, current->pid);
+> -		return;
+> -	}
+> -
+>   	seq_buf_init(&s, buf, sizeof(buf));
+>   
+>   	while (n) {
+> @@ -1318,7 +1308,7 @@ void show_user_instructions(struct pt_regs *regs)
+>   		for (i = 0; i < 8 && n; i++, n--, pc += sizeof(int)) {
+>   			int instr;
+>   
+> -			if (probe_kernel_address((const void *)pc, instr)) {
+> +			if (probe_user_read(&instr, (void __user *)pc, sizeof(instr))) {
+>   				seq_buf_printf(&s, "XXXXXXXX ");
+>   				continue;
+>   			}
+> diff --git a/arch/powerpc/mm/fault.c b/arch/powerpc/mm/fault.c
+> index 887f11bcf330..ec74305fa330 100644
+> --- a/arch/powerpc/mm/fault.c
+> +++ b/arch/powerpc/mm/fault.c
+> @@ -276,12 +276,8 @@ static bool bad_stack_expansion(struct pt_regs *regs, unsigned long address,
+>   		if ((flags & FAULT_FLAG_WRITE) && (flags & FAULT_FLAG_USER) &&
+>   		    access_ok(nip, sizeof(*nip))) {
+>   			unsigned int inst;
+> -			int res;
+>   
+> -			pagefault_disable();
+> -			res = __get_user_inatomic(inst, nip);
+> -			pagefault_enable();
+> -			if (!res)
+> +			if (!probe_user_read(&inst, nip, sizeof(inst)))
+>   				return !store_updates_sp(inst);
+>   			*must_retry = true;
+>   		}
+> diff --git a/arch/powerpc/perf/callchain.c b/arch/powerpc/perf/callchain.c
+> index 0af051a1974e..0680efb2237b 100644
+> --- a/arch/powerpc/perf/callchain.c
+> +++ b/arch/powerpc/perf/callchain.c
+> @@ -159,12 +159,8 @@ static int read_user_stack_64(unsigned long __user *ptr, unsigned long *ret)
+>   	    ((unsigned long)ptr & 7))
+>   		return -EFAULT;
+>   
+> -	pagefault_disable();
+> -	if (!__get_user_inatomic(*ret, ptr)) {
+> -		pagefault_enable();
+> +	if (!probe_user_read(ret, ptr, sizeof(*ret)))
+>   		return 0;
+> -	}
+> -	pagefault_enable();
+>   
+>   	return read_user_stack_slow(ptr, ret, 8);
+>   }
+> @@ -175,12 +171,8 @@ static int read_user_stack_32(unsigned int __user *ptr, unsigned int *ret)
+>   	    ((unsigned long)ptr & 3))
+>   		return -EFAULT;
+>   
+> -	pagefault_disable();
+> -	if (!__get_user_inatomic(*ret, ptr)) {
+> -		pagefault_enable();
+> +	if (!probe_user_read(ret, ptr, sizeof(*ret)))
+>   		return 0;
+> -	}
+> -	pagefault_enable();
+>   
+>   	return read_user_stack_slow(ptr, ret, 4);
+>   }
+> @@ -307,17 +299,11 @@ static inline int current_is_64bit(void)
+>    */
+>   static int read_user_stack_32(unsigned int __user *ptr, unsigned int *ret)
+>   {
+> -	int rc;
+> -
+>   	if ((unsigned long)ptr > TASK_SIZE - sizeof(unsigned int) ||
+>   	    ((unsigned long)ptr & 3))
+>   		return -EFAULT;
+>   
+> -	pagefault_disable();
+> -	rc = __get_user_inatomic(*ret, ptr);
+> -	pagefault_enable();
+> -
+> -	return rc;
+> +	return probe_user_read(ret, ptr, sizeof(*ret));
+>   }
+>   
+>   static inline void perf_callchain_user_64(struct perf_callchain_entry_ctx *entry,
+> diff --git a/arch/powerpc/perf/core-book3s.c b/arch/powerpc/perf/core-book3s.c
+> index b0723002a396..4b64ddf0db68 100644
+> --- a/arch/powerpc/perf/core-book3s.c
+> +++ b/arch/powerpc/perf/core-book3s.c
+> @@ -416,7 +416,6 @@ static void power_pmu_sched_task(struct perf_event_context *ctx, bool sched_in)
+>   static __u64 power_pmu_bhrb_to(u64 addr)
+>   {
+>   	unsigned int instr;
+> -	int ret;
+>   	__u64 target;
+>   
+>   	if (is_kernel_addr(addr)) {
+> @@ -427,13 +426,8 @@ static __u64 power_pmu_bhrb_to(u64 addr)
+>   	}
+>   
+>   	/* Userspace: need copy instruction here then translate it */
+> -	pagefault_disable();
+> -	ret = __get_user_inatomic(instr, (unsigned int __user *)addr);
+> -	if (ret) {
+> -		pagefault_enable();
+> +	if (probe_user_read(&instr, (unsigned int __user *)addr, sizeof(instr)))
+>   		return 0;
+> -	}
+> -	pagefault_enable();
+>   
+>   	target = branch_target(&instr);
+>   	if ((!target) || (instr & BRANCH_ABSOLUTE))
+> diff --git a/arch/powerpc/sysdev/fsl_pci.c b/arch/powerpc/sysdev/fsl_pci.c
+> index 918be816b097..c8a1b26489f5 100644
+> --- a/arch/powerpc/sysdev/fsl_pci.c
+> +++ b/arch/powerpc/sysdev/fsl_pci.c
+> @@ -1068,13 +1068,11 @@ int fsl_pci_mcheck_exception(struct pt_regs *regs)
+>   	addr += mfspr(SPRN_MCAR);
+>   
+>   	if (is_in_pci_mem_space(addr)) {
+> -		if (user_mode(regs)) {
+> -			pagefault_disable();
+> -			ret = get_user(inst, (__u32 __user *)regs->nip);
+> -			pagefault_enable();
+> -		} else {
+> +		if (user_mode(regs))
+> +			ret = probe_user_read(&inst, (void __user *)regs->nip,
+> +					      sizeof(inst));
+> +		else
+>   			ret = probe_kernel_address((void *)regs->nip, inst);
+> -		}
+>   
+>   		if (!ret && mcheck_handle_load(regs, inst)) {
+>   			regs->nip += 4;
+> 
