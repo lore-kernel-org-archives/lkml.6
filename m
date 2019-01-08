@@ -2,194 +2,75 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5A9BC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 05:01:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9073C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 05:04:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 68D7420700
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 05:01:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ErmaQuA6"
+	by mail.kernel.org (Postfix) with ESMTP id BC4962089F
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 05:04:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727759AbfAHFB3 (ORCPT
+        id S1727655AbfAHFEf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 00:01:29 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:45059 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725562AbfAHFB3 (ORCPT
+        Tue, 8 Jan 2019 00:04:35 -0500
+Received: from orcrist.hmeau.com ([104.223.48.154]:54820 "EHLO
+        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725838AbfAHFEf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 00:01:29 -0500
-Received: by mail-ot1-f66.google.com with SMTP id 32so2417595ota.12;
-        Mon, 07 Jan 2019 21:01:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=to:references:from:openpgp:autocrypt:subject:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=e4ls1tn8813ynVEpQn3TmDIz1WVERjRllMsDnoL8/Y0=;
-        b=ErmaQuA6soE+n7hyUUQh0LiCxrUbBymgqz4tsetKtJ3KGKnyR0oNMBH5GtVhdnSrCM
-         H3m8V8Hm4khkC6dhMLtRmiSLn62eQnldElEK8Hk9XPJ/Cww+BXTSRKrkTPqN1YcZDqjH
-         Zu9xOvOHH36sYtxMxl45ujsRVvEqMHz/VS34S6ojIEniSOOSeqgSpMk0cc0hyNQG/Hcm
-         pvPMC+riTReGho126UBpfTFxpxqux9mUTD8QD32T5jpOogxL/8T4+fnXU9cP1w7RVVgs
-         4PfLG2O3dgIeprEZ9crDge138qKLb55o8nF30lnGIn69CueI+31MkTgWBTw1+PZ4vt9g
-         8iGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:references:from:openpgp:autocrypt:subject
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=e4ls1tn8813ynVEpQn3TmDIz1WVERjRllMsDnoL8/Y0=;
-        b=m3w15cj/q3ZUv7S2a6Y6NI8ochPAywdr/AiQytFu0Hs+1K1p21LzS2ZNdzmaS2D7vj
-         hpEVq9ISEr7VPi2ad963TkgRoihr84yz0hR1P0LnSVHd/r83BrnYKBe0PraMTonzaFs8
-         ryRE0+CFQVZNzAPLX2rYSiuoGFFUccEgglL7/laxK0wuBPoER2MsJl9aZIjDgV0wxZKE
-         QOOXRkQxSqX74bfN/kw9xKtz1s402OGYDjpXdmOtPrJU+VjMn2RsGct46u5AxjpXOG0W
-         EbnBO8dQnkFuXOQ8X/uSMEZfHw8q9TbXo06BPsoNvaAaoGi72bi+tN4wAyCDu51QoB5p
-         NAtw==
-X-Gm-Message-State: AJcUukeGunPl7dTIoPn7e19+AUlbVWgkwQPyW8UmUG+Uiz7oAUwdIlsg
-        9WNEtDFuFFaeUZfIxtXGcOOfqFWg
-X-Google-Smtp-Source: ALg8bN7z8Rpk5aTcF6iujla33sqreZ5dRiwmbKc7NerQitD6Z10TO7p2WLzWzWMWxGxaL7ICXNTJOA==
-X-Received: by 2002:a05:6830:1099:: with SMTP id y25mr218662oto.313.1546923687789;
-        Mon, 07 Jan 2019 21:01:27 -0800 (PST)
-Received: from [192.168.1.2] (ip68-228-73-187.oc.oc.cox.net. [68.228.73.187])
-        by smtp.googlemail.com with ESMTPSA id c78sm49237690oig.30.2019.01.07.21.01.26
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 07 Jan 2019 21:01:26 -0800 (PST)
-To:     davem@davemloft.net, linux-omap@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        jiri@mellanox.com, andrew@lunn.ch
-References: <20181203184023.3430-1-ivan.khoronzhuk@linaro.org>
- <20181203184023.3430-3-ivan.khoronzhuk@linaro.org>
- <b2a7baa7-b334-0f6f-c119-a2f30ac68c7b@gmail.com>
- <20181203235119.GF23230@khorivan>
- <35479973-2d2d-d673-f7ab-54d6369ce3d1@gmail.com>
- <20181204185720.GI23230@khorivan>
- <756cbb25-3062-91e8-0613-66bb887f937e@gmail.com>
- <20181205000450.GB3507@khorivan>
-From:   Florian Fainelli <f.fainelli@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
- 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
- a9BQwACgnzGuH1BVeT2J0Ra+ZYgkx7DaPR0=
-Subject: Re: [RFC PATCH net-next 2/5] net: 8021q: vlan_dev: add vid tag for uc
- and mc address lists
-Message-ID: <1dd05b34-e275-d67c-df30-e3694d90e9cc@gmail.com>
-Date:   Mon, 7 Jan 2019 21:01:25 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Tue, 8 Jan 2019 00:04:35 -0500
+Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
+        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
+        id 1ggjYt-0000Ns-JJ; Tue, 08 Jan 2019 13:04:23 +0800
+Received: from herbert by gondobar with local (Exim 4.89)
+        (envelope-from <herbert@gondor.apana.org.au>)
+        id 1ggjYU-00055t-Le; Tue, 08 Jan 2019 13:03:58 +0800
+Date:   Tue, 8 Jan 2019 13:03:58 +0800
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     Stephan Mueller <smueller@chronox.de>
+Cc:     "Lee, Chun-Yi" <joeyli.kernel@gmail.com>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Pavel Machek <pavel@ucw.cz>, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, keyrings@vger.kernel.org,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Chen Yu <yu.c.chen@intel.com>,
+        Oliver Neukum <oneukum@suse.com>,
+        Ryan Chen <yu.chen.surf@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Giovanni Gherdovich <ggherdovich@suse.cz>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Jann Horn <jannh@google.com>, Andy Lutomirski <luto@kernel.org>
+Subject: Re: [PATCH 1/5 v2] PM / hibernate: Create snapshot keys handler
+Message-ID: <20190108050358.llsox32hggn2jioe@gondor.apana.org.au>
+References: <20190103143227.9138-1-jlee@suse.com>
+ <4539995.kc8yiMsNgQ@tauon.chronox.de>
+ <20190107153327.GB4210@linux-l9pv.suse>
+ <4499700.LRS4F2YjjC@tauon.chronox.de>
 MIME-Version: 1.0
-In-Reply-To: <20181205000450.GB3507@khorivan>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4499700.LRS4F2YjjC@tauon.chronox.de>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Le 12/4/18 à 4:04 PM, Ivan Khoronzhuk a écrit :
-> On Tue, Dec 04, 2018 at 11:49:27AM -0800, Florian Fainelli wrote:
-> 
-> ...
-> 
->>>
->>> I was thinking also about pinned list of vlans to the address, but in
->>> this case this information also has to be synced by members of device
->>> chain,
->>> because it can be modified on any device level and it looks not very
->>> friendly,
->>> and at the end address space has addresses with pinned lists of vlans
->>> with
->>> their pointers. But keeping this stuff in sync is not simplest decision.
->>>
->>>
->>
->> I really think we are not communicating properly, it really seems to me
->> that if you had the information about the upper device trying to add an
->> address to the lower device filter's either through notification or call
->> to ndo_set_rxmode, you could be solving your problems. What are we
->> missing here?
-> 
-> Sry, missed this one. The problem in getting  the owner of address.
-> Just simple case: vlan/macvlan/real_dev or vlan/.../.../real_dev
-> 
-> The real dev hasn't simple way to get vid the address belong to, or it has?
+On Mon, Jan 07, 2019 at 04:52:00PM +0100, Stephan Mueller wrote:
+>
+> Would it make sense to polish these mentioned KDF patches and add them to the 
+> kernel crypto API? The sprawl of key derivation logic here and there which 
+> seemingly does not comply to any standard and thus possibly have issues should 
+> be prevented and cleaned up.
 
-Humm looks like your right, by the time the address lists are
-synchronized (e.g: from = vlan_dev, to = real_dev), we lost that
-information. It looks like I just managed to find such an use case
-myself with VLAN filtering enabled on a bridge (so switch is VLAN aware)
-and a VLAN device created on the bridge (br0.42) but with IGMP snooping
-turned off (so we don't get HOST_MDB notifications with correct VLAN ID).
+Are we going to have multiple implementations for the same KDF?
+If not then the crypto API is not a good fit.  To consolidate
+multiple implementations of the same KDF, simply provide helpers
+for them.
 
-Maybe keeping the "from" net_device within the address list that is
-processed by ndo_set_rx_mode() will do the job though?
-
-Then you can do things like:
-
-if (is_vlan_dev(ha->dev) && ha->dev != dev)
-	vid = vlan_dev_vlan_id(ha->dev);
-
-and it should scale to any type of stacked device, regardless of VID or
-something else that we need?
-
-Can you remind me of your use case again? Is it because your switch has
-VLAN filtering enabled and you need to make sure that MC addresses on
-VLAN device get programmed into the switch's multicast database with
-correct VID?
+Cheers,
 -- 
-Florian
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
