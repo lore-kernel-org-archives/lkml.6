@@ -2,100 +2,106 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25B82C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 16:12:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88407C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 16:14:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB2F52087F
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 16:12:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546963965;
-	bh=dp05+YoeRNCMEL/YPcRKXDWC0qDv1RYjKfUJ3QCL/gk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=uk1ijmRRCSMldAec8OPfNnqcykdROGQAXW3pHzbUdRbc1kmhQCUdfsUCKB1pZUTzK
-	 ybwD88O2wFMnfZcqreohS0iibrZHATzhZyksF0fOPY77tzkuBivSdmlmiQafiodHe1
-	 Z9remUMwpRf83heffI/0GesrtfLhBA5U4dWbtqcE=
+	by mail.kernel.org (Postfix) with ESMTP id 55ADD2087F
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 16:14:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729269AbfAHQMo (ORCPT
+        id S1729215AbfAHQOF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 11:12:44 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:35134 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728854AbfAHQMn (ORCPT
+        Tue, 8 Jan 2019 11:14:05 -0500
+Received: from gateway30.websitewelcome.com ([50.116.125.1]:44531 "EHLO
+        gateway30.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728483AbfAHQOF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 11:12:43 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=dp05+YoeRNCMEL/YPcRKXDWC0qDv1RYjKfUJ3QCL/gk=; b=GAL6EtlUYNTf2z8/jWZ5F74LY
-        hSxa04Edu8cyP18KC6V5cpI3V2JToDzmxhoY1bTuzph0b1sxOQ37GjI+FJO7LGwf3bvdIf737tRy8
-        b/p3vRyFICRxqbTprF6cK11bGr6NCOazNiqR3KFGD9rNmSNMuSUuiNfct8QPSRNo0JlfI=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1ggtza-0003PH-NA; Tue, 08 Jan 2019 16:12:38 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 5C129112778C; Tue,  8 Jan 2019 16:12:38 +0000 (GMT)
-Date:   Tue, 8 Jan 2019 16:12:38 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     Cheng-Yi Chiang <cychiang@chromium.org>,
-        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Benson Leung <bleung@chromium.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        alsa-devel@alsa-project.org, dgreid@chromium.org,
-        tzungbi@chromium.org, Rohit kumar <rohitkr@codeaurora.org>
-Subject: Re: [PATCH v3 1/3] mfd: cros_ec: Add commands to control codec
-Message-ID: <20190108161238.GG6590@sirena.org.uk>
-References: <20181226070317.72022-1-cychiang@chromium.org>
- <20190107192402.GW9570@sirena.org.uk>
- <20190108095450.GA27286@dell>
+        Tue, 8 Jan 2019 11:14:05 -0500
+X-Greylist: delayed 354 seconds by postgrey-1.27 at vger.kernel.org; Tue, 08 Jan 2019 11:14:04 EST
+Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
+        by gateway30.websitewelcome.com (Postfix) with ESMTP id 9BE406DD5
+        for <linux-kernel@vger.kernel.org>; Tue,  8 Jan 2019 10:14:04 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id gu0ygV1qI90ongu0ygzEwb; Tue, 08 Jan 2019 10:14:04 -0600
+X-Authority-Reason: nr=8
+Received: from [189.250.130.205] (port=53102 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1ggu0u-001iIe-CK; Tue, 08 Jan 2019 10:14:01 -0600
+Date:   Tue, 8 Jan 2019 10:13:56 -0600
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     "David S. Miller" <davem@davemloft.net>
+Cc:     sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] sparc: use struct_size() in kzalloc()
+Message-ID: <20190108161356.GA23617@embeddedor>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="RMedoP2+Pr6Rq0N2"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190108095450.GA27286@dell>
-X-Cookie: You look tired.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.130.205
+X-Source-L: No
+X-Exim-ID: 1ggu0u-001iIe-CK
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.130.205]:53102
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 12
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+One of the more common cases of allocation size calculations is finding the
+size of a structure that has a zero-sized array at the end, along with memory
+for some number of elements for that array. For example:
 
---RMedoP2+Pr6Rq0N2
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+struct foo {
+    int stuff;
+    void *entry[];
+};
 
-On Tue, Jan 08, 2019 at 09:54:50AM +0000, Lee Jones wrote:
-> On Mon, 07 Jan 2019, Mark Brown wrote:
+instance = kzalloc(sizeof(struct foo) + sizeof(void *) * count, GFP_KERNEL);
 
-> > Is there a tag I can merge?
+Instead of leaving these open-coded and prone to type mistakes, we can now
+use the new struct_size() helper:
 
-> Afraid not, but I reserve the right to rebase my tree, so if you want
-> one, you can have one.
+instance = kzalloc(struct_size(instance, entry, count), GFP_KERNEL);
 
-Yes, please - that'd be most helpful!
+This code was detected with the help of Coccinelle.
 
---RMedoP2+Pr6Rq0N2
-Content-Type: application/pgp-signature; name="signature.asc"
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ arch/sparc/kernel/cpumap.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
------BEGIN PGP SIGNATURE-----
+diff --git a/arch/sparc/kernel/cpumap.c b/arch/sparc/kernel/cpumap.c
+index d1d52822603d..1cb62bfeaa1f 100644
+--- a/arch/sparc/kernel/cpumap.c
++++ b/arch/sparc/kernel/cpumap.c
+@@ -194,8 +194,7 @@ static struct cpuinfo_tree *build_cpuinfo_tree(void)
+ 
+ 	n = enumerate_cpuinfo_nodes(tmp_level);
+ 
+-	new_tree = kzalloc(sizeof(struct cpuinfo_tree) +
+-	                   (sizeof(struct cpuinfo_node) * n), GFP_ATOMIC);
++	new_tree = kzalloc(struct_size(new_tree, nodes, n), GFP_ATOMIC);
+ 	if (!new_tree)
+ 		return NULL;
+ 
+-- 
+2.20.1
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlw0y/UACgkQJNaLcl1U
-h9ApxAf9GHL/qL6na/x5Oo3KZRXkrGOsUE2WxlEhjJrCTWjPHSukTp8Wn1gerCYY
-bzcoovRjtNSXq7QjFh9EXY4rF9cCn9Tz14oAB7RP72pwpxY/o9uflzSLVn18xE+D
-/I4BTZzaxnrZ8vP6s7vi9g6KhRMrkDlTE8E7zjaUf1Ln0qGKIe9OHwPWBDGh6x3w
-ypDu7ybKcvw1KnpkZGAFKam3wikyNbrjdjqlYCvMOWEBTzvmar7b34IxROpwXVCh
-tQYP5FtWzpKqqfNxKYilUZW754lSmeN3gTben9S3mhAvRHlAkPqwWIxzxY/ZpocN
-/7+l7gYcIFlPGRv4bAu3vh82lxf2bg==
-=ZW6R
------END PGP SIGNATURE-----
-
---RMedoP2+Pr6Rq0N2--
