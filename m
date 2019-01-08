@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F04EC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:49:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2CC0C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:49:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1EF05206BB
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:49:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BFDE8206BB
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:49:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546976947;
-	bh=TJ6cPfmYxWRU0NQsUuWRbG+rNHmVONB7XP5Eu/KHowo=;
+	s=default; t=1546976955;
+	bh=s80+TM7Zp05Thqqk2scP3D5sUnOctuZ8xcKcy+3+2bI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=y7muJd85f2m0PnkydV+PtBG8UCSAdEexB+pZRPmzzcUMlfppQDDau9uim6mtWMmcd
-	 WYoDvz/JHRUjdb2hYJM7LqRcBB+yMtppXGoaYdEdj8b+3DGfnWU+mCvQYYhLqqZCKj
-	 AZ0q8AtaDjxOoE+S+E9jj2Oszx4AID+zJNpJnkus=
+	b=h0VepO4hUD27IR5Lx8t2DG1kP1mCvW3qGlJZH0vrzc6c2pr9U2LYz7LztoO2SseBX
+	 0ezGkxv/Nqu0xQs1ShD0c3s82HQh9cwjw7TewWzf3Anq6q1Ad4vWMfagJ1baCvlleZ
+	 YAY0b1Mz02XAP/5r8yTqp9KCixCNYWnTiwrps+oY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732494AbfAHTtG (ORCPT
+        id S1732818AbfAHTtO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:49:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40512 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 14:49:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40470 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731282AbfAHTcI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:32:08 -0500
+        id S1731277AbfAHTcH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:32:07 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F106D20883;
-        Tue,  8 Jan 2019 19:32:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C3A9320665;
+        Tue,  8 Jan 2019 19:32:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546975927;
-        bh=TJ6cPfmYxWRU0NQsUuWRbG+rNHmVONB7XP5Eu/KHowo=;
+        s=default; t=1546975926;
+        bh=s80+TM7Zp05Thqqk2scP3D5sUnOctuZ8xcKcy+3+2bI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oR0xPMigKYxoT8ovavlZchpt/1HtY6GbouMgEeKdpMJ10ukEy/XNhdWcpPh3Mhn0u
-         qWnvaEHD2OAjdyS73RzuYqxJy251BE4cd4ScKJvyat/g+zD9AiuYsKz/L5LIEyksZp
-         fzlwi6Hbf8tzFUWkr6NsqfrsiqZjJrVeWHsA2tU8=
+        b=RKvVHGyF8TrlzaMHFOknGfYKLi/WqSxhmRRv6PJ7YOMJep3iIOg3fbIiClrYnVnkf
+         2q8C5zCDTMEtEgaY0obZZVNXvBbUshBWRw+0Mkta2s+nPr3hUggE9PhdXORZJjnVLo
+         IbCsxeoJAHFCAQBn/tG13jIoQJLtR2F/bo6kKuaM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Yanjiang Jin <yanjiang.jin@hxt-semitech.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <sashal@kernel.org>, esc.storagedev@microsemi.com,
-        linux-scsi@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 90/97] scsi: smartpqi: call pqi_free_interrupts() in pqi_shutdown()
-Date:   Tue,  8 Jan 2019 14:29:39 -0500
-Message-Id: <20190108192949.122407-90-sashal@kernel.org>
+Cc:     Zhi Chen <zhichen@codeaurora.org>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Sasha Levin <sashal@kernel.org>, ath10k@lists.infradead.org,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 89/97] ath10k: fix peer stats null pointer dereference
+Date:   Tue,  8 Jan 2019 14:29:38 -0500
+Message-Id: <20190108192949.122407-89-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108192949.122407-1-sashal@kernel.org>
 References: <20190108192949.122407-1-sashal@kernel.org>
@@ -59,65 +59,85 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yanjiang Jin <yanjiang.jin@hxt-semitech.com>
+From: Zhi Chen <zhichen@codeaurora.org>
 
-[ Upstream commit e57b2945aa654e48f85a41e8917793c64ecb9de8 ]
+[ Upstream commit 2d3b55853b123c177037cf534c5aaa2650310094 ]
 
-We must free all irqs during shutdown, else kexec's 2nd kernel would hang
-in pqi_wait_for_completion_io() as below:
+There was a race condition in SMP that an ath10k_peer was created but its
+member sta was null. Following are procedures of ath10k_peer creation and
+member sta access in peer statistics path.
 
-Call trace:
+    1. Peer creation:
+        ath10k_peer_create()
+            =>ath10k_wmi_peer_create()
+                =>ath10k_wait_for_peer_created()
+                ...
 
- pqi_wait_for_completion_io
- pqi_submit_raid_request_synchronous.constprop.78+0x23c/0x310 [smartpqi]
- pqi_configure_events+0xec/0x1f8 [smartpqi]
- pqi_ctrl_init+0x814/0xca0 [smartpqi]
- pqi_pci_probe+0x400/0x46c [smartpqi]
- local_pci_probe+0x48/0xb0
- pci_device_probe+0x14c/0x1b0
- really_probe+0x218/0x3fc
- driver_probe_device+0x70/0x140
- __driver_attach+0x11c/0x134
- bus_for_each_dev+0x70/0xc8
- driver_attach+0x30/0x38
- bus_add_driver+0x1f0/0x294
- driver_register+0x74/0x12c
- __pci_register_driver+0x64/0x70
- pqi_init+0xd0/0x10000 [smartpqi]
- do_one_initcall+0x60/0x1d8
- do_init_module+0x64/0x1f8
- load_module+0x10ec/0x1350
- __se_sys_finit_module+0xd4/0x100
- __arm64_sys_finit_module+0x28/0x34
- el0_svc_handler+0x104/0x160
- el0_svc+0x8/0xc
+        # another kernel path, RX from firmware
+        ath10k_htt_t2h_msg_handler()
+        =>ath10k_peer_map_event()
+                =>wake_up()
+                # ar->peer_map[id] = peer //add peer to map
 
-This happens only in the following combinations:
+        #wake up original path from waiting
+                ...
+                # peer->sta = sta //sta assignment
 
-1. smartpqi is built as module, not built-in;
-2. We have a disk connected to smartpqi card;
-3. Both kexec's 1st and 2nd kernels use this disk as Rootfs' mount point.
+    2.  RX path of statistics
+        ath10k_htt_t2h_msg_handler()
+            =>ath10k_update_per_peer_tx_stats()
+                =>ath10k_htt_fetch_peer_stats()
+                # peer->sta //sta accessing
 
-Signed-off-by: Yanjiang Jin <yanjiang.jin@hxt-semitech.com>
-Acked-by: Don Brace <don.brace@microsemi.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Any access of peer->sta after peer was added to peer_map but before sta was
+assigned could cause a null pointer issue. And because these two steps are
+asynchronous, no proper lock can protect them. So both peer and sta need to
+be checked before access.
+
+Tested: QCA9984 with firmware ver 10.4-3.9.0.1-00005
+Signed-off-by: Zhi Chen <zhichen@codeaurora.org>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/smartpqi/smartpqi_init.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/wireless/ath/ath10k/debugfs_sta.c | 2 +-
+ drivers/net/wireless/ath/ath10k/htt_rx.c      | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/scsi/smartpqi/smartpqi_init.c b/drivers/scsi/smartpqi/smartpqi_init.c
-index c62df3eefd5a..8c1a232ac6bf 100644
---- a/drivers/scsi/smartpqi/smartpqi_init.c
-+++ b/drivers/scsi/smartpqi/smartpqi_init.c
-@@ -6689,6 +6689,7 @@ static void pqi_shutdown(struct pci_dev *pci_dev)
- 	 * storage.
- 	 */
- 	rc = pqi_flush_cache(ctrl_info, SHUTDOWN);
-+	pqi_free_interrupts(ctrl_info);
- 	pqi_reset(ctrl_info);
- 	if (rc == 0)
- 		return;
+diff --git a/drivers/net/wireless/ath/ath10k/debugfs_sta.c b/drivers/net/wireless/ath/ath10k/debugfs_sta.c
+index a63c97e2c50c..6f10331e986b 100644
+--- a/drivers/net/wireless/ath/ath10k/debugfs_sta.c
++++ b/drivers/net/wireless/ath/ath10k/debugfs_sta.c
+@@ -71,7 +71,7 @@ void ath10k_sta_update_rx_tid_stats_ampdu(struct ath10k *ar, u16 peer_id, u8 tid
+ 	spin_lock_bh(&ar->data_lock);
+ 
+ 	peer = ath10k_peer_find_by_id(ar, peer_id);
+-	if (!peer)
++	if (!peer || !peer->sta)
+ 		goto out;
+ 
+ 	arsta = (struct ath10k_sta *)peer->sta->drv_priv;
+diff --git a/drivers/net/wireless/ath/ath10k/htt_rx.c b/drivers/net/wireless/ath/ath10k/htt_rx.c
+index 4d1cd90d6d27..03d4cc6f35bc 100644
+--- a/drivers/net/wireless/ath/ath10k/htt_rx.c
++++ b/drivers/net/wireless/ath/ath10k/htt_rx.c
+@@ -2589,7 +2589,7 @@ static void ath10k_htt_fetch_peer_stats(struct ath10k *ar,
+ 	rcu_read_lock();
+ 	spin_lock_bh(&ar->data_lock);
+ 	peer = ath10k_peer_find_by_id(ar, peer_id);
+-	if (!peer) {
++	if (!peer || !peer->sta) {
+ 		ath10k_warn(ar, "Invalid peer id %d peer stats buffer\n",
+ 			    peer_id);
+ 		goto out;
+@@ -2642,7 +2642,7 @@ static void ath10k_fetch_10_2_tx_stats(struct ath10k *ar, u8 *data)
+ 	rcu_read_lock();
+ 	spin_lock_bh(&ar->data_lock);
+ 	peer = ath10k_peer_find_by_id(ar, peer_id);
+-	if (!peer) {
++	if (!peer || !peer->sta) {
+ 		ath10k_warn(ar, "Invalid peer id %d in peer stats buffer\n",
+ 			    peer_id);
+ 		goto out;
 -- 
 2.19.1
 
