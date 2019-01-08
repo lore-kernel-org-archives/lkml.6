@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51471C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 17:58:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 686F2C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 17:59:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2FB4C206A3
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 17:58:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 43DE6206A3
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 17:59:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729354AbfAHR64 (ORCPT
+        id S1729406AbfAHR7A (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 12:58:56 -0500
-Received: from shell.v3.sk ([90.176.6.54]:49951 "EHLO shell.v3.sk"
+        Tue, 8 Jan 2019 12:59:00 -0500
+Received: from shell.v3.sk ([90.176.6.54]:49974 "EHLO shell.v3.sk"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728716AbfAHR6y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 12:58:54 -0500
+        id S1728399AbfAHR65 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 12:58:57 -0500
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 8542A100067;
-        Tue,  8 Jan 2019 18:58:50 +0100 (CET)
+        by zimbra.v3.sk (Postfix) with ESMTP id E267F10005F;
+        Tue,  8 Jan 2019 18:58:53 +0100 (CET)
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id HpL6Plyujizj; Tue,  8 Jan 2019 18:58:36 +0100 (CET)
+        with ESMTP id INi8dreiLNAs; Tue,  8 Jan 2019 18:58:36 +0100 (CET)
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 28AEC100054;
-        Tue,  8 Jan 2019 18:58:29 +0100 (CET)
+        by zimbra.v3.sk (Postfix) with ESMTP id ECFD1100051;
+        Tue,  8 Jan 2019 18:58:28 +0100 (CET)
 X-Virus-Scanned: amavisd-new at zimbra.v3.sk
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id f6PVGyXimNbc; Tue,  8 Jan 2019 18:58:26 +0100 (CET)
+        with ESMTP id REtBCLzVx-2E; Tue,  8 Jan 2019 18:58:25 +0100 (CET)
 Received: from belphegor.brq.redhat.com (nat-pool-brq-t.redhat.com [213.175.37.10])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id E5388100056;
-        Tue,  8 Jan 2019 18:58:23 +0100 (CET)
+        by zimbra.v3.sk (Postfix) with ESMTPSA id 9FD6A100059;
+        Tue,  8 Jan 2019 18:58:24 +0100 (CET)
 From:   Lubomir Rintel <lkundrak@v3.sk>
 To:     Andy Shevchenko <andy@infradead.org>,
         Darren Hart <dvhart@infradead.org>,
@@ -47,9 +47,9 @@ Cc:     James Cameron <quozl@laptop.org>,
         linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
         Lubomir Rintel <lkundrak@v3.sk>
-Subject: [PATCH v4 05/15] Platform: OLPC: Avoid a warning if the EC didn't register yet
-Date:   Tue,  8 Jan 2019 18:58:08 +0100
-Message-Id: <20190108175818.705110-6-lkundrak@v3.sk>
+Subject: [PATCH v4 07/15] Platform: OLPC: Use BIT() and GENMASK() for event masks
+Date:   Tue,  8 Jan 2019 18:58:10 +0100
+Message-Id: <20190108175818.705110-8-lkundrak@v3.sk>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190108175818.705110-1-lkundrak@v3.sk>
 References: <20190108175818.705110-1-lkundrak@v3.sk>
@@ -60,43 +60,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Just return EPROBE_DEFER, so that whoever attempted to use the EC call ca=
-n
-defer their work.
+Just a cosmetic tidy-up.
 
 Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-Acked-by: Pavel Machek <pavel@ucw.cz>
 
 ---
-Changes since v2:
-- Adjust the commit message for the s/ENODEV/EPROBE_DEFER/ change
-
 Changes since v1:
-- EPROBE_DEFER instead of ENODEV
+- This patch was added to the set.
 
- drivers/platform/olpc/olpc-ec.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ include/linux/olpc-ec.h | 23 ++++++++++++-----------
+ 1 file changed, 12 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/platform/olpc/olpc-ec.c b/drivers/platform/olpc/olpc=
--ec.c
-index 981955dce926..d7d51a851937 100644
---- a/drivers/platform/olpc/olpc-ec.c
-+++ b/drivers/platform/olpc/olpc-ec.c
-@@ -118,8 +118,11 @@ int olpc_ec_cmd(u8 cmd, u8 *inbuf, size_t inlen, u8 =
-*outbuf, size_t outlen)
- 	struct olpc_ec_priv *ec =3D ec_priv;
- 	struct ec_cmd_desc desc;
+diff --git a/include/linux/olpc-ec.h b/include/linux/olpc-ec.h
+index e28f72416a57..c4602364e909 100644
+--- a/include/linux/olpc-ec.h
++++ b/include/linux/olpc-ec.h
+@@ -2,6 +2,8 @@
+ #ifndef _LINUX_OLPC_EC_H
+ #define _LINUX_OLPC_EC_H
 =20
--	/* Ensure a driver and ec hook have been registered */
--	if (WARN_ON(!ec_driver || !ec_driver->ec_cmd))
-+	/* Driver not yet registered. */
-+	if (!ec_driver)
-+		return -EPROBE_DEFER;
++#include <linux/bits.h>
 +
-+	if (WARN_ON(!ec_driver->ec_cmd))
- 		return -ENODEV;
+ /* XO-1 EC commands */
+ #define EC_FIRMWARE_REV			0x08
+ #define EC_WRITE_SCI_MASK		0x1b
+@@ -17,17 +19,16 @@
+ #define EC_EXT_SCI_QUERY		0x85
 =20
- 	if (!ec)
+ /* SCI source values */
+-#define EC_SCI_SRC_EMPTY        0x00
+-#define EC_SCI_SRC_GAME         0x01
+-#define EC_SCI_SRC_BATTERY      0x02
+-#define EC_SCI_SRC_BATSOC       0x04
+-#define EC_SCI_SRC_BATERR       0x08
+-#define EC_SCI_SRC_EBOOK        0x10    /* XO-1 only */
+-#define EC_SCI_SRC_WLAN         0x20    /* XO-1 only */
+-#define EC_SCI_SRC_ACPWR        0x40
+-#define EC_SCI_SRC_BATCRIT      0x80
+-#define EC_SCI_SRC_GPWAKE       0x100   /* XO-1.5 only */
+-#define EC_SCI_SRC_ALL          0x1FF
++#define EC_SCI_SRC_GAME         BIT(0)
++#define EC_SCI_SRC_BATTERY      BIT(1)
++#define EC_SCI_SRC_BATSOC       BIT(2)
++#define EC_SCI_SRC_BATERR       BIT(3)
++#define EC_SCI_SRC_EBOOK        BIT(4)    /* XO-1 only */
++#define EC_SCI_SRC_WLAN         BIT(5)    /* XO-1 only */
++#define EC_SCI_SRC_ACPWR        BIT(6)
++#define EC_SCI_SRC_BATCRIT      BIT(7)
++#define EC_SCI_SRC_GPWAKE       BIT(8)   /* XO-1.5 only */
++#define EC_SCI_SRC_ALL          GENMASK(8, 0)
+=20
+ struct platform_device;
+=20
 --=20
 2.20.1
 
