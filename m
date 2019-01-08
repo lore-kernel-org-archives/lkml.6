@@ -2,283 +2,191 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50A8AC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:10:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 286D7C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:10:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2090820660
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:10:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EBEEA20660
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:10:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1546978240;
+	bh=zj8qwMlHfHKdEqQH9sAdHYS87SfDKNAKYRlWwnBRTfg=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=p5eXgjKiohJvODmmD2bWbslmI7D29Ul+zTaPOVEQBRUaWKWrLflOpohStW5yq/AIF
+	 DeqCOdxlNaTSrUVsDYAoxYyLpWKLgxlMWS90vBG/KMN4UJZyF196J0NxQmIEseM7tX
+	 wE+Av5cK7nojasXUMYSWmrQRFDpVckjg1cxpJ01k=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733133AbfAHUKc (ORCPT
+        id S1733115AbfAHUKa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 15:10:32 -0500
-Received: from mout.kundenserver.de ([212.227.126.134]:56845 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729168AbfAHUKa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 8 Jan 2019 15:10:30 -0500
-Received: from wuerfel.lan ([109.192.41.194]) by mrelayeu.kundenserver.de
- (mreue012 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1MDv1A-1gX6KU3TJk-009yhV; Tue, 08 Jan 2019 21:10:10 +0100
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Deepa Dinamani <deepa.kernel@gmail.com>
-Cc:     David Miller <davem@davemloft.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Networking <netdev@vger.kernel.org>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
-        ccaulfie@redhat.com, Helge Deller <deller@gmx.de>,
-        Paul Mackerras <paulus@samba.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Richard Henderson <rth@twiddle.net>, cluster-devel@redhat.com,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        linux-alpha@vger.kernel.org,
-        linux-arch <linux-arch@vger.kernel.org>,
-        linux-mips@vger.kernel.org,
-        Parisc List <linux-parisc@vger.kernel.org>,
-        sparclinux <sparclinux@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH] socket: move compat timeout handling into sock.c
-Date:   Tue,  8 Jan 2019 21:09:36 +0100
-Message-Id: <20190108200959.1686520-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.20.0
-In-Reply-To: <CAK8P3a2T=dWgD1mvi77fbdKEsm=ZUwsQENv-btjhECjf+Y5wcg@mail.gmail.com>
-References: <CAK8P3a2T=dWgD1mvi77fbdKEsm=ZUwsQENv-btjhECjf+Y5wcg@mail.gmail.com>
+Received: from mail.kernel.org ([198.145.29.99]:60796 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729094AbfAHT0q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:26:46 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5E3002176F;
+        Tue,  8 Jan 2019 19:26:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1546975605;
+        bh=zj8qwMlHfHKdEqQH9sAdHYS87SfDKNAKYRlWwnBRTfg=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=Gc+jiKrS5ruT3oCSls4MUPWEzbCs5/Fr1SUtCuuh+nGiBMNF/9yDrdVrfgX23GRuj
+         99fxAsI61KDNiYQwxxCV2o+4fIiVC5iTbG0XKJThLIaW3NFtSjMs6Y7hXKqtjHMxA0
+         ZlOFUQz6JGfRsTv5A3nI5e16YWPDc+pENZZnC4b8=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     =?UTF-8?q?Jo=C3=A3o=20Paulo=20Rechi=20Vita?= <jprvita@gmail.com>,
+        =?UTF-8?q?Jo=C3=A3o=20Paulo=20Rechi=20Vita?= <jprvita@endlessm.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Sasha Levin <sashal@kernel.org>,
+        acpi4asus-user@lists.sourceforge.net,
+        platform-driver-x86@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 008/117] platform/x86: asus-wmi: Tell the EC the OS will handle the display off hotkey
+Date:   Tue,  8 Jan 2019 14:24:36 -0500
+Message-Id: <20190108192628.121270-8-sashal@kernel.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190108192628.121270-1-sashal@kernel.org>
+References: <20190108192628.121270-1-sashal@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:uPC0a5Rt4wtHOcL29nyURWhdIfWA6ffq44oOAaPdDhc4Ye86EoB
- HYLVNMSb5rBC59ylQPOL1GHFQ4eKRfhge93q3C7gaeWyx7tA/DJ21qV0RfrnqlT88qs6Vx5
- Wy0abp6eU/9++bVRqIbgf4Zt/iKwEh4XQKNysX3HdrXMw5Lig4O82oYaLrkfBILB0tISaik
- BESvecJlj0op65bTRceUQ==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:Z1hmhFbP734=:bum3G09Y9kTwLx51FEvxdl
- G5DOKBqFXJUIHrfg21S5Im7xqv3ABMXGKWM9YA7xEo0wA8Bi4AkltZbYqcTPw/ppmBlmJrCjC
- Jp580nfPgExPoHJqP2jZY6Y7NVUHvy6g7rN7sb6eMh8K+pXyFthSyq3XK3BqSf2e3TF6KiUex
- zWAk37/8kAw6k3ueAxu5qoFMU66tRcSkmy8IY+1dAXaVRJ+TQ7A3CZNIIMtfBRi32kiCkff5o
- gYUuq3+RisN4YOs2Ob/F328FeL9fTOdXOzV8JyH4RLpzP62HRtaH7CK10fOrzU44SJglAZQ8B
- iTbT5Hyfwy5GGQO0XOUZyTzkqnlrL8znvfF7HwiFPAurNpcFdDIdCOjflOhLAoXkwvnec7BUS
- 9YipPEkr++Iwrn+QWnQ0ECe7kfxf1luHZsbVbW+ZS3XjmSpSBJgdQX8pTXqt3Z1yBh8uX+y/3
- 8TvIvtTkXpixmHqE5HlmXS2xb2nWWjulGzmxt+zsafF6w2OfBmUwICiQmghID2dckSBQPVzRG
- O8jZXSkSBG927Zh/aI+RW7N0QuxRa6U2GrmgGEJqlrxI0GKNT/0fj1Js4OmMZGDHiwyJJZFcF
- qNwwQcYIFecH0+SfV6Cb1EVuquvV/fVCRlHmdjYDkgnI19mauEmAqaiLXOOgOdNZ6lJr1ymdn
- fXoRBN7rL6MARitGODEQby43mPuqMjJXTRsdcriZivBS5XXr1tVOgjdn0LtdLkSg+49XAGRM+
- bJgzgt9dhuOLkHbpX2JhhqzBojAuQAT/NtgGqg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is a cleanup to prepare for the addition of 64-bit time_t
-in O_SNDTIMEO/O_RCVTIMEO. The existing compat handler seems
-unnecessarily complex and error-prone, moving it all into the
-main setsockopt()/getsockopt() implementation requires half
-as much code and is easier to extend.
+From: João Paulo Rechi Vita <jprvita@gmail.com>
 
-32-bit user space can now use old_timeval32 on both 32-bit
-and 64-bit machines, while 64-bit code can use
-__old_kernel_timeval.
+[ Upstream commit 78f3ac76d9e5219589718b9e4733bee21627b3f5 ]
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+In the past, Asus firmwares would change the panel backlight directly
+through the EC when the display off hotkey (Fn+F7) was pressed, and
+only notify the OS of such change, with 0x33 when the LCD was ON and
+0x34 when the LCD was OFF. These are currently mapped to
+KEY_DISPLAYTOGGLE and KEY_DISPLAY_OFF, respectively.
+
+Most recently the EC on Asus most machines lost ability to toggle the
+LCD backlight directly, but unless the OS informs the firmware it is
+going to handle the display toggle hotkey events, the firmware still
+tries change the brightness through the EC, to no effect. The end result
+is a long list (at Endless we counted 11) of Asus laptop models where
+the display toggle hotkey does not perform any action. Our firmware
+engineers contacts at Asus were surprised that there were still machines
+out there with the old behavior.
+
+Calling WMNB(ASUS_WMI_DEVID_BACKLIGHT==0x00050011, 2) on the _WDG device
+tells the firmware that it should let the OS handle the display toggle
+event, in which case it will simply notify the OS of a key press with
+0x35, as shown by the DSDT excerpts bellow.
+
+ Scope (_SB)
+ {
+     (...)
+
+     Device (ATKD)
+     {
+         (...)
+
+         Name (_WDG, Buffer (0x28)
+         {
+             /* 0000 */  0xD0, 0x5E, 0x84, 0x97, 0x6D, 0x4E, 0xDE, 0x11,
+             /* 0008 */  0x8A, 0x39, 0x08, 0x00, 0x20, 0x0C, 0x9A, 0x66,
+             /* 0010 */  0x4E, 0x42, 0x01, 0x02, 0x35, 0xBB, 0x3C, 0x0B,
+             /* 0018 */  0xC2, 0xE3, 0xED, 0x45, 0x91, 0xC2, 0x4C, 0x5A,
+             /* 0020 */  0x6D, 0x19, 0x5D, 0x1C, 0xFF, 0x00, 0x01, 0x08
+         })
+         Method (WMNB, 3, Serialized)
+         {
+             CreateDWordField (Arg2, Zero, IIA0)
+             CreateDWordField (Arg2, 0x04, IIA1)
+             Local0 = (Arg1 & 0xFFFFFFFF)
+
+             (...)
+
+             If ((Local0 == 0x53564544))
+             {
+                 (...)
+
+                 If ((IIA0 == 0x00050011))
+                 {
+                     If ((IIA1 == 0x02))
+                     {
+                         ^^PCI0.SBRG.EC0.SPIN (0x72, One)
+                         ^^PCI0.SBRG.EC0.BLCT = One
+                     }
+
+                     Return (One)
+                 }
+             }
+             (...)
+         }
+         (...)
+     }
+     (...)
+ }
+ (...)
+
+ Scope (_SB.PCI0.SBRG.EC0)
+ {
+     (...)
+
+     Name (BLCT, Zero)
+
+     (...)
+
+     Method (_Q10, 0, NotSerialized)  // _Qxx: EC Query
+     {
+         If ((BLCT == Zero))
+         {
+             Local0 = One
+             Local0 = RPIN (0x72)
+             Local0 ^= One
+             SPIN (0x72, Local0)
+             If (ATKP)
+             {
+                 Local0 = (0x34 - Local0)
+                 ^^^^ATKD.IANE (Local0)
+             }
+         }
+         ElseIf ((BLCT == One))
+         {
+             If (ATKP)
+             {
+                 ^^^^ATKD.IANE (0x35)
+             }
+         }
+     }
+     (...)
+ }
+
+Signed-off-by: João Paulo Rechi Vita <jprvita@endlessm.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/compat.c    | 66 +------------------------------------------------
- net/core/sock.c | 65 +++++++++++++++++++++++++++++++-----------------
- 2 files changed, 44 insertions(+), 87 deletions(-)
+ drivers/platform/x86/asus-wmi.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/net/compat.c b/net/compat.c
-index 959d1c51826d..ce8f6e8cdcd2 100644
---- a/net/compat.c
-+++ b/net/compat.c
-@@ -348,28 +348,6 @@ static int do_set_attach_filter(struct socket *sock, int level, int optname,
- 			      sizeof(struct sock_fprog));
- }
- 
--static int do_set_sock_timeout(struct socket *sock, int level,
--		int optname, char __user *optval, unsigned int optlen)
--{
--	struct compat_timeval __user *up = (struct compat_timeval __user *)optval;
--	struct timeval ktime;
--	mm_segment_t old_fs;
--	int err;
--
--	if (optlen < sizeof(*up))
--		return -EINVAL;
--	if (!access_ok(up, sizeof(*up)) ||
--	    __get_user(ktime.tv_sec, &up->tv_sec) ||
--	    __get_user(ktime.tv_usec, &up->tv_usec))
--		return -EFAULT;
--	old_fs = get_fs();
--	set_fs(KERNEL_DS);
--	err = sock_setsockopt(sock, level, optname, (char *)&ktime, sizeof(ktime));
--	set_fs(old_fs);
--
--	return err;
--}
--
- static int compat_sock_setsockopt(struct socket *sock, int level, int optname,
- 				char __user *optval, unsigned int optlen)
- {
-@@ -377,10 +355,6 @@ static int compat_sock_setsockopt(struct socket *sock, int level, int optname,
- 	    optname == SO_ATTACH_REUSEPORT_CBPF)
- 		return do_set_attach_filter(sock, level, optname,
- 					    optval, optlen);
--	if (!COMPAT_USE_64BIT_TIME &&
--	    (optname == SO_RCVTIMEO || optname == SO_SNDTIMEO))
--		return do_set_sock_timeout(sock, level, optname, optval, optlen);
--
- 	return sock_setsockopt(sock, level, optname, optval, optlen);
- }
- 
-@@ -417,44 +391,6 @@ COMPAT_SYSCALL_DEFINE5(setsockopt, int, fd, int, level, int, optname,
- 	return __compat_sys_setsockopt(fd, level, optname, optval, optlen);
- }
- 
--static int do_get_sock_timeout(struct socket *sock, int level, int optname,
--		char __user *optval, int __user *optlen)
--{
--	struct compat_timeval __user *up;
--	struct timeval ktime;
--	mm_segment_t old_fs;
--	int len, err;
--
--	up = (struct compat_timeval __user *) optval;
--	if (get_user(len, optlen))
--		return -EFAULT;
--	if (len < sizeof(*up))
--		return -EINVAL;
--	len = sizeof(ktime);
--	old_fs = get_fs();
--	set_fs(KERNEL_DS);
--	err = sock_getsockopt(sock, level, optname, (char *) &ktime, &len);
--	set_fs(old_fs);
--
--	if (!err) {
--		if (put_user(sizeof(*up), optlen) ||
--		    !access_ok(up, sizeof(*up)) ||
--		    __put_user(ktime.tv_sec, &up->tv_sec) ||
--		    __put_user(ktime.tv_usec, &up->tv_usec))
--			err = -EFAULT;
+diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
+index c285a16675ee..37b5de541270 100644
+--- a/drivers/platform/x86/asus-wmi.c
++++ b/drivers/platform/x86/asus-wmi.c
+@@ -2131,7 +2131,8 @@ static int asus_wmi_add(struct platform_device *pdev)
+ 		err = asus_wmi_backlight_init(asus);
+ 		if (err && err != -ENODEV)
+ 			goto fail_backlight;
 -	}
--	return err;
--}
--
--static int compat_sock_getsockopt(struct socket *sock, int level, int optname,
--				char __user *optval, int __user *optlen)
--{
--	if (!COMPAT_USE_64BIT_TIME &&
--	    (optname == SO_RCVTIMEO || optname == SO_SNDTIMEO))
--		return do_get_sock_timeout(sock, level, optname, optval, optlen);
--	return sock_getsockopt(sock, level, optname, optval, optlen);
--}
--
- int compat_sock_get_timestamp(struct sock *sk, struct timeval __user *userstamp)
- {
- 	struct compat_timeval __user *ctv;
-@@ -527,7 +463,7 @@ static int __compat_sys_getsockopt(int fd, int level, int optname,
- 		}
++	} else
++		err = asus_wmi_set_devstate(ASUS_WMI_DEVID_BACKLIGHT, 2, NULL);
  
- 		if (level == SOL_SOCKET)
--			err = compat_sock_getsockopt(sock, level,
-+			err = sock_getsockopt(sock, level,
- 					optname, optval, optlen);
- 		else if (sock->ops->compat_getsockopt)
- 			err = sock->ops->compat_getsockopt(sock, level,
-diff --git a/net/core/sock.c b/net/core/sock.c
-index 6aa2e7e0b4fb..e50b9a2abc92 100644
---- a/net/core/sock.c
-+++ b/net/core/sock.c
-@@ -335,14 +335,48 @@ int __sk_backlog_rcv(struct sock *sk, struct sk_buff *skb)
- }
- EXPORT_SYMBOL(__sk_backlog_rcv);
- 
-+static int sock_get_timeout(long timeo, void *optval)
-+{
-+	struct __kernel_old_timeval tv;
-+
-+	if (timeo == MAX_SCHEDULE_TIMEOUT) {
-+		tv.tv_sec = 0;
-+		tv.tv_usec = 0;
-+	} else {
-+		tv.tv_sec = timeo / HZ;
-+		tv.tv_usec = ((timeo % HZ) * USEC_PER_SEC) / HZ;
-+	}
-+
-+	if (in_compat_syscall() && !COMPAT_USE_64BIT_TIME) {
-+		struct old_timeval32 tv32 = { tv.tv_sec, tv.tv_usec };
-+		*(struct old_timeval32 *)optval = tv32;
-+		return sizeof(tv32);
-+	}
-+
-+	*(struct __kernel_old_timeval *)optval = tv;
-+	return sizeof(tv);
-+}
-+
- static int sock_set_timeout(long *timeo_p, char __user *optval, int optlen)
- {
--	struct timeval tv;
-+	struct __kernel_old_timeval tv;
- 
--	if (optlen < sizeof(tv))
--		return -EINVAL;
--	if (copy_from_user(&tv, optval, sizeof(tv)))
--		return -EFAULT;
-+	if (in_compat_syscall() && !COMPAT_USE_64BIT_TIME) {
-+		struct old_timeval32 tv32;
-+
-+		if (optlen < sizeof(tv32))
-+			return -EINVAL;
-+
-+		if (copy_from_user(&tv, optval, sizeof(tv)))
-+			return -EFAULT;
-+		tv.tv_sec = tv32.tv_sec;
-+		tv.tv_usec = tv32.tv_usec;
-+	} else {
-+		if (optlen < sizeof(tv))
-+			return -EINVAL;
-+		if (copy_from_user(&tv, optval, sizeof(tv)))
-+			return -EFAULT;
-+	}
- 	if (tv.tv_usec < 0 || tv.tv_usec >= USEC_PER_SEC)
- 		return -EDOM;
- 
-@@ -1099,7 +1133,8 @@ int sock_getsockopt(struct socket *sock, int level, int optname,
- 		int val;
- 		u64 val64;
- 		struct linger ling;
--		struct timeval tm;
-+		struct old_timeval32 tm32;
-+		struct __kernel_old_timeval tm;
- 		struct sock_txtime txtime;
- 	} v;
- 
-@@ -1200,25 +1235,11 @@ int sock_getsockopt(struct socket *sock, int level, int optname,
- 		break;
- 
- 	case SO_RCVTIMEO:
--		lv = sizeof(struct timeval);
--		if (sk->sk_rcvtimeo == MAX_SCHEDULE_TIMEOUT) {
--			v.tm.tv_sec = 0;
--			v.tm.tv_usec = 0;
--		} else {
--			v.tm.tv_sec = sk->sk_rcvtimeo / HZ;
--			v.tm.tv_usec = ((sk->sk_rcvtimeo % HZ) * USEC_PER_SEC) / HZ;
--		}
-+		lv = sock_get_timeout(sk->sk_rcvtimeo, optval);
- 		break;
- 
- 	case SO_SNDTIMEO:
--		lv = sizeof(struct timeval);
--		if (sk->sk_sndtimeo == MAX_SCHEDULE_TIMEOUT) {
--			v.tm.tv_sec = 0;
--			v.tm.tv_usec = 0;
--		} else {
--			v.tm.tv_sec = sk->sk_sndtimeo / HZ;
--			v.tm.tv_usec = ((sk->sk_sndtimeo % HZ) * USEC_PER_SEC) / HZ;
--		}
-+		lv = sock_get_timeout(sk->sk_sndtimeo, optval);
- 		break;
- 
- 	case SO_RCVLOWAT:
+ 	status = wmi_install_notify_handler(asus->driver->event_guid,
+ 					    asus_wmi_notify, asus);
 -- 
-2.20.0
+2.19.1
 
