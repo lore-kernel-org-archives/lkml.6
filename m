@@ -2,264 +2,195 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5827EC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 22:00:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB4BFC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 22:02:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A1C6214C6
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 22:00:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="os1Wossw"
+	by mail.kernel.org (Postfix) with ESMTP id B8B4721738
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 22:02:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730421AbfAHWA1 (ORCPT
+        id S1730381AbfAHWC4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 17:00:27 -0500
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:36127 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728552AbfAHWA0 (ORCPT
+        Tue, 8 Jan 2019 17:02:56 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:54490 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728573AbfAHWC4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 17:00:26 -0500
-Received: by mail-oi1-f193.google.com with SMTP id x23so4659245oix.3;
-        Tue, 08 Jan 2019 14:00:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=CSM1cwp7TQGD2Ez8ZUa/lIlRA7NNaBCN962+NJRpDIQ=;
-        b=os1WosswGnfSgzxpCybyH4jeEeaJ7zkwfBSe19K1866ogYyrR0t3G0+/H0uZoD0fz9
-         lyF7cI+8AemFRgrXpjmAVGo7TUne6qZWpob2kjRmmgz9NHSDMj/P6SPO6wQkBJHTDz3+
-         Fhp726E+JKKfCLXARImhcmxF/kFsfro+1CsrI1CIAffdNa2aQTNihEiGfhbraGh3tH6s
-         q1cJvczVTDi01+OP6dXi81w8HVLBsrAmhKrZzXQMmUKSHEcjJUzD0kKhCcTK9HVMSOXu
-         Fi3V1PyFgrX+mhiQA9MP5ATAy/xwmkigPDf1A7xIXBrRChz1tn2hVhYZEVBCqYS16Fvs
-         LZsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=CSM1cwp7TQGD2Ez8ZUa/lIlRA7NNaBCN962+NJRpDIQ=;
-        b=C2xb1AOscaGGy2geN4QPK2ztvQEvzGCnzITqyRqQIPcjQ5Ns0N80hfOUei7RDH9nw8
-         wII7sYbRMo4UxpN8y8CQH5H0BzZ+dOKyEpQgLA0a1dTyzyLBw40UsN+hrUvw4W95mmzo
-         blOAou4/89iGO9k1ihgGDsxUp7dHAbCSbcHAxzIy2PRLUBtFX8IMlEZRxkPV6a4bhMME
-         C38dgbFw2eDKgVy1yuRP27A6u3m9D2KnWpzy7BvIXzc4xIyknIRfpjaVGxZYacEwgDb7
-         Mn2NbjXeinwOZydwP3bY+pRzwCjqf4gqmC+DTRce0Q/PWyI0OsAO+NAbi7+QJWdKODE+
-         h8Yg==
-X-Gm-Message-State: AJcUukegCC2nOYqlLJ/TPDSC63ugEcaz8sra/VTGedCzAKXAKTN+FCS+
-        TOanDj8Ux06oZVyfZJhleXa3KzDPhw6nV5DnRto=
-X-Google-Smtp-Source: ALg8bN5KDa0Y94mBHqZOJ9i7Y3iibLrR0XlWmjwyqNALjZcRGKKRhavV9CvPA95n3zgcaFnnPUSI5wfrFdNQZx1uTiw=
-X-Received: by 2002:aca:e884:: with SMTP id f126mr2315643oih.181.1546984825046;
- Tue, 08 Jan 2019 14:00:25 -0800 (PST)
-MIME-Version: 1.0
-References: <20181206151828.24417-1-jbrunet@baylibre.com> <CAFBinCCUO6ihxNWDup5ZVKWBc8+oiW_-j8OUxRhb+tjpGsUBkg@mail.gmail.com>
- <db2580c8740ca202d02f37ef567be0e273eca6d7.camel@baylibre.com>
-In-Reply-To: <db2580c8740ca202d02f37ef567be0e273eca6d7.camel@baylibre.com>
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Tue, 8 Jan 2019 23:00:13 +0100
-Message-ID: <CAFBinCApEio05u+Us9XUK4UMpGi8bGa5j6psz21-3ry10PV6pg@mail.gmail.com>
-Subject: Re: [PATCH 0/4] mmc: meson-gx: chained descriptor fixup and improvements
-To:     Jerome Brunet <jbrunet@baylibre.com>
-Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Carlo Caione <carlo@caione.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        linux-amlogic@lists.infradead.org, linux-mmc@vger.kernel.org,
+        Tue, 8 Jan 2019 17:02:56 -0500
+Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0FE38265;
+        Tue,  8 Jan 2019 22:02:55 +0000 (UTC)
+Date:   Tue, 8 Jan 2019 14:02:53 -0800
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Qian Cai <cai@lca.pw>
+Cc:     Michal Hocko <mhocko@kernel.org>, Pavel.Tatashin@microsoft.com,
+        mingo@kernel.org, mgorman@techsingularity.net,
+        iamjoonsoo.kim@lge.com, tglx@linutronix.de, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH v3] mm/page_owner: fix for deferred struct page init
+Message-Id: <20190108140253.5b6db0ab37334b845e9d4fc2@linux-foundation.org>
+In-Reply-To: <1546953547.6911.1.camel@lca.pw>
+References: <20190103202235.GE31793@dhcp22.suse.cz>
+        <a5666d82-b7ad-4b90-5f4e-fd22afc3e1dc@lca.pw>
+        <20190104130906.GO31793@dhcp22.suse.cz>
+        <e4ad9d12-387d-1cc6-f404-cae6d43ccf80@lca.pw>
+        <20190104151737.GT31793@dhcp22.suse.cz>
+        <c8faf7eb-d23f-4ef7-3432-0acc7165f883@lca.pw>
+        <20190104153245.GV31793@dhcp22.suse.cz>
+        <fa135cd8-32e5-86f7-14ee-30685bca91b5@lca.pw>
+        <20190107184309.GM31793@dhcp22.suse.cz>
+        <bfcd017d-dcf4-b687-1aef-ab0810b12c73@lca.pw>
+        <20190108082032.GP31793@dhcp22.suse.cz>
+        <1546953547.6911.1.camel@lca.pw>
+X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jerome,
 
-On Wed, Jan 2, 2019 at 1:46 PM Jerome Brunet <jbrunet@baylibre.com> wrote:
->
-> On Sat, 2018-12-22 at 18:28 +0100, Martin Blumenstingl wrote:
-> > Hi Jerome,
-> >
-> > On Thu, Dec 6, 2018 at 4:18 PM Jerome Brunet <jbrunet@baylibre.com> wrote:
-> > > The goal of the patchset was mainly to address the following warning:
-> > >
-> > > WARNING: CPU: 0 PID: 0 at /usr/src/kernel/drivers/mmc/host/meson-gx-
-> > > mmc.c:1025 meson_mmc_irq+0xc0/0x1e0
-> > > Modules linked in: crc32_ce crct10dif_ce ipv6 overlay
-> > > CPU: 0 PID: 0 Comm: swapper/0 Tainted: G        W         4.19.1 #1
-> > > Hardware name: Some A113 Board (DT)
-> > > pstate: 40000085 (nZcv daIf -PAN -UAO)
-> > > pc : meson_mmc_irq+0xc0/0x1e0
-> > > lr : __handle_irq_event_percpu+0x70/0x180
-> > > sp : ffff000008003980
-> > > x29: ffff000008003980 x28: 0000000000000000
-> > > [...]
-> > > x1 : ffff80001a71bd40 x0 : 0000000000000000
-> > > Call trace:
-> > >  meson_mmc_irq+0xc0/0x1e0
-> > >  __handle_irq_event_percpu+0x70/0x180
-> > >  handle_irq_event_percpu+0x34/0x88
-> > >  handle_irq_event+0x48/0x78
-> > >  handle_fasteoi_irq+0xa0/0x180
-> > >  generic_handle_irq+0x24/0x38
-> > >  __handle_domain_irq+0x5c/0xb8
-> > >  gic_handle_irq+0x58/0xa8
-> > >
-> > > This happens when using the chained descriptor mode. If there is an
-> > > error, we call mmc_request_done(), loosing any reference to the cmd. It
-> > > turns out that the chained descriptor does really stops when we do so, at
-> > > least not completly. Most of the time, it can be seen with this harmless
-> > > warning because the descriptor will raise another unexpected IRQ. On rare
-> > > occasion, it will completly break the MMC.
-> > >
-> > > This is mostly adressed by patch #1.
-> > > With this fixed, I took (yet) another look at the ultra-high speed modes
-> > > and the tuning.
-> > >
-> > > I came up with new settings in patch 3 and 4. I've tested them on eMMC,
-> > > sdcard and sdio on the following platforms:
-> > >  * gxbb p200
-> > >  * gxl p230, libretech (eMMC only), kvim.
-> > >  * axg s400
-> > >
-> > > So far, these new settings seems to be working great but I think it
-> > > would be nice if others could test this and provide their feedback.
-> > > This why  patch 3 and 4 are RFT tagged.
-> > >
-> > > Jerome Brunet (4):
-> > >   mmc: meson-gx: make sure the descriptor is stopped on errors
-> > >   mmc: meson-gx: remove useless lock
-> > >   mmc: meson-gx: align default phase on soc vendor tree
-> > >   mmc: meson-gx: add signal resampling
-> > I gave all four patches a go on my Khadas VIM2 Basic (16GB eMMC).
-> > regardless of whether I have your patch applied or not: eMMC
-> > sporadically fails tuning (if I reboot the board a few times it starts
-> > to work)
-> > [    4.172686] mmc1: tuning execution failed: -5
-> > [    4.182535] mmc1: error -5 whilst initialising MMC card
->
-> Damn ...
->
-> This particular device is set to use hs400 ATM. Could you try with hs200 only
-> ? (removing mmc-hs400-1_8v from meson-gxm-khadas-vim2.dts)
-I put that on my TODO-list to re-try it
-last year that "fixed" it for me, see [0]
-
-> I might be wrong but I think tuning is supposed to be done with hs200, before
-> activating DDR mode to switch to hs400. In theory, removing hs400 should not
-> change anything (so I expect the tuning to still fail) but it is worth
-> checking.
->
-> >
-> > I'm not sure if this issue is specific to my Khadas VIM2 so this is
-> > *not* a nack for your patches.
->
-> I'll check if I can get my hands on this device.
->
-> When cooking this series, I tried another trick which was cycling on the
-> resampling delays (see ADJUST_ADJ_DELAY_MASK). At the time, I could not see
-> any significant improvement while doing it, so I dropped it.
->
-> If possible. could you check if any particular value in this field, between 0
-> and 5, makes things any better ?
->
-> Alternatively, if you find another combination of phase for the mmc_clk and
-> tx_clk that works better for this device, feel free to let me know. Maybe we
-> can work something out.
-I booted whatever Android / Linux is on the eMMC of my Khadas VIM2:
-kvim2:/ $ dmesg | grep -i emmc
-[    2.605927@2] aml_sd_emmc_probe: line 3608
-[    2.609368@2] mmc driver version: 1.07, 2017-4-26: Support new emmc
-host controller for version 3
-[    2.618678@2] aml_sd_emmc_reg_init 1152
-[    2.647411@2] get property:                  pinname, str:emmc
-[    2.669798@2] emmc:pdata->caps = c0000d47
-[    2.673712@2] emmc:pdata->caps2 = 18060
-[    2.677509@2] emmc:pdata->pm_caps = 0
-[    2.725316@2] [aml_sd_emmc_probe] aml_sd_emmc_probe() success!
-[    2.725543@2] aml_sd_emmc_probe: line 3608
-[    2.729971@2] aml_sd_emmc_reg_init 1152
-[    2.845635@2] [aml_sd_emmc_probe] aml_sd_emmc_probe() success!
-[    2.845871@2] aml_sd_emmc_probe: line 3608
-[    2.850305@2] aml_sd_emmc_reg_init 1152
-[    2.890367@0] emmc: BKOPS_EN bit is not set
-[    2.896816@0] emmc: trying cali 0-th time(s)
-[    2.903969@0] emmc: delay[0]= 1000 padding= 4, bidx=1
-[    2.903971@0] emmc: delay[1]= 1000 padding= 4, bidx=1
-[    2.903973@0] emmc: delay[2]=  750 padding= 1, bidx=0
-[    2.903975@0] emmc: delay[3]= 1250 padding= 3, bidx=1
-[    2.903977@0] emmc: delay[4]= 1250 padding= 3, bidx=1
-[    2.903979@0] emmc: delay[5]= 1250 padding= 3, bidx=1
-[    2.903981@0] emmc: delay[6]= 1000 padding= 4, bidx=1
-[    2.903983@0] emmc: delay[7]= 1250 padding= 3, bidx=1
-[    2.903985@0] emmc: calibration result @ 0: max(1250), min(750)
-[    2.903988@0] emmc: line_delay =0x1000211, max_cal_result =1250
-[    2.903990@0] emmc: base_index_max 1, base_index_min 0
-[    2.903996@0] emmc: clk 100000000 SDR mode tuning start
-[    2.904428@0] emmc: rx_tuning_result[1] = 10
-[    2.904795@0] emmc: rx_tuning_result[2] = 10
-[    2.905159@0] emmc: rx_tuning_result[3] = 10
-[    2.905530@0] emmc: rx_tuning_result[4] = 10
-[    2.905896@0] emmc: rx_tuning_result[5] = 10
-[    2.906260@0] emmc: rx_tuning_result[6] = 10
-[    2.906626@0] emmc: rx_tuning_result[7] = 10
-[    2.906991@0] emmc: rx_tuning_result[8] = 10
-[    2.907357@0] emmc: rx_tuning_result[9] = 10
-[    2.907360@0] emmc: best_win_start =1, best_win_size =9
-[    2.907362@0] emmc:
-sd_emmc_regs->gclock=0x100024a,sd_emmc_regs->gadjust=0x52000
-[    2.907365@0] emmc: gclock =0x100024a, gdelay=0x1000211, gadjust=0x52000
-[    2.907506@0] emmc: support driver strength type 1
-[    2.907575@0] emmc: try set sd/emmc to DDR mode
-[    2.907579@0] emmc: try set sd/emmc to DDR mode
-[    2.907710@0] emmc: new HS400 MMC card at address 0001
-[    2.908238@1] emmc: clock 100000000, 8-bit-bus-width
-[    2.908239@1] mmcblk0: emmc:0001 AJNB4R 14.5 GiB
-[    2.908375@1] mmcblk0boot0: emmc:0001 AJNB4R partition 1 4.00 MiB
-[    2.908504@1] mmcblk0boot1: emmc:0001 AJNB4R partition 2 4.00 MiB
-[    2.908631@1] mmcblk0rpmb: emmc:0001 AJNB4R partition 3 4.00 MiB
-[    2.909793@0] [aml_sd_emmc_irq] emmc: warning... response
-crc,vstat:0xa1ff2400,virqc:3fff
-[    2.909801@0] [aml_host_bus_fsm_show] emmc: err: wait for irq
-service, bus_fsm:0x8
-[    2.909801@0] [mmc_cmd_LBA_show] emmc: cmd 18, arg 0x12000,
-operation is in [reserved] disk!
-[    2.909819@6] aml_sd_emmc_data_thread 2642 emmc: cmd:18
-[    2.909824@6] [aml_sd_emmc_data_thread] aml_sd_emmc_data_thread()
-2658: set 1st retry!
-[    2.909827@6] [aml_sd_emmc_data_thread] retry cmd 18 the 10-th time(s)
-[    2.909829@6] [aml_sd_emmc_data_thread] cmd_delay change to 2
-[    2.909840@0] [aml_sd_emmc_irq] emmc:
-resp_timeout,vstat:0xa1ff2800,virqc:3fff
-[    2.909858@6] aml_sd_emmc_data_thread : 2589
-[    2.910078@1] add_emmc_partition
-[    2.911868@0] emmc_key_init:527 emmc key lba_start:0x12020,lba_end:0x12220
-[    2.911870@0] emmc key: emmc_key_init:552 ok.
-[    2.916963@1] Exit aml_emmc_partition_ops OK.
-[    2.919073@1] clear_emmc_wait_flag
-[    3.355313@2] [aml_sd_emmc_probe] aml_sd_emmc_probe() success!
-[    9.546113@4] emmc_key_read:428, read ok
-[   19.016202@0] [aml_sd_emmc_irq] sdio:
-resp_timeout,vstat:0xa3ff2800,virqc:3fff
-[   19.028652@6] aml_sd_emmc_data_thread 2642 sdio: cmd:52
-[   19.035022@0] [aml_sd_emmc_irq] sdio:
-resp_timeout,vstat:0xa3ff2800,virqc:3fff
-[   19.048492@6] aml_sd_emmc_data_thread 2642 sdio: cmd:52
-[   19.058504@0] [aml_sd_emmc_irq] sdio:
-resp_timeout,vstat:0xa3ff2800,virqc:3fff
-[   19.068332@6] aml_sd_emmc_data_thread 2642 sdio: cmd:8
-[   19.251397@1] sdio:
-sd_emmc_regs->gclock=0x1000245,sd_emmc_regs->gadjust=0x32000
-[   20.509105@4] sdio:
-sd_emmc_regs->gclock=0x1000245,sd_emmc_regs->gadjust=0x32000
-[   21.970494@4] sdio:
-sd_emmc_regs->gclock=0x1000245,sd_emmc_regs->gadjust=0x32000
-
-the register values of the clock, delay and adjust registers are
-printed by Amlogic's 3.14 kernel - in case that helps you
+It's unclear (to me) where we stand with this patch.  Shold we proceed
+with v3 for now, or is something else planned?
 
 
-Regards
-Martin
+From: Qian Cai <cai@lca.pw>
+Subject: mm/page_owner: fix for deferred struct page init
+
+When booting a system with "page_owner=on",
+
+start_kernel
+  page_ext_init
+    invoke_init_callbacks
+      init_section_page_ext
+        init_page_owner
+          init_early_allocated_pages
+            init_zones_in_node
+              init_pages_in_zone
+                lookup_page_ext
+                  page_to_nid
+
+The issue here is that page_to_nid() will not work since some page
+flags have no node information until later in page_alloc_init_late() due
+to DEFERRED_STRUCT_PAGE_INIT. Hence, it could trigger an out-of-bounds
+access with an invalid nid.
+
+[    8.666047] UBSAN: Undefined behaviour in ./include/linux/mm.h:1104:50
+[    8.672603] index 7 is out of range for type 'zone [5]'
+
+Also, kernel will panic since flags were poisoned earlier with,
+
+CONFIG_DEBUG_VM_PGFLAGS=y
+CONFIG_NODE_NOT_IN_PAGE_FLAGS=n
+
+start_kernel
+  setup_arch
+    pagetable_init
+      paging_init
+        sparse_init
+          sparse_init_nid
+            memblock_alloc_try_nid_raw
+
+Although later it tries to set page flags for pages in reserved bootmem
+regions,
+
+mm_init
+  mem_init
+    memblock_free_all
+      free_low_memory_core_early
+        reserve_bootmem_region
+
+there could still have some freed pages from the page allocator but yet
+to be initialized due to DEFERRED_STRUCT_PAGE_INIT. It have already been
+dealt with a bit in page_ext_init().
+
+* Take into account DEFERRED_STRUCT_PAGE_INIT.
+*/
+if (early_pfn_to_nid(pfn) != nid)
+	continue;
+
+However, it did not handle it well in init_pages_in_zone() which end up
+calling page_to_nid().
+
+[   11.917212] page:ffffea0004200000 is uninitialized and poisoned
+[   11.917220] raw: ffffffffffffffff ffffffffffffffff ffffffffffffffff
+ffffffffffffffff
+[   11.921745] raw: ffffffffffffffff ffffffffffffffff ffffffffffffffff
+ffffffffffffffff
+[   11.924523] page dumped because: VM_BUG_ON_PAGE(PagePoisoned(p))
+[   11.926498] page_owner info is not active (free page?)
+[   12.329560] kernel BUG at include/linux/mm.h:990!
+[   12.337632] RIP: 0010:init_page_owner+0x486/0x520
+
+Since there is no other routines depend on page_ext_init() in
+start_kernel(), just move it after page_alloc_init_late() to ensure that
+there is no deferred pages need to de dealt with. If deselected
+DEFERRED_STRUCT_PAGE_INIT, it is still better to call page_ext_init()
+earlier, so page owner could catch more early page allocation call
+sites. This gives us a good compromise between catching good and bad
+call sites (See the v1 patch [1]) in case of DEFERRED_STRUCT_PAGE_INIT.
+
+[1] https://lore.kernel.org/lkml/20181220060303.38686-1-cai@lca.pw/
+
+Link: http://lkml.kernel.org/r/20181220203156.43441-1-cai@lca.pw
+Fixes: fe53ca54270 (mm: use early_pfn_to_nid in page_ext_init)
+Signed-off-by: Qian Cai <cai@lca.pw>
+Suggested-by: Michal Hocko <mhocko@kernel.org>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Cc: Pasha Tatashin <Pavel.Tatashin@microsoft.com>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Mel Gorman <mgorman@techsingularity.net>
+Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
+Cc: Yang Shi <yang.shi@linaro.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+---
+
+ init/main.c   |    5 +++++
+ mm/page_ext.c |    3 +--
+ 2 files changed, 6 insertions(+), 2 deletions(-)
+
+--- a/init/main.c~mm-page_owner-fix-for-deferred-struct-page-init
++++ a/init/main.c
+@@ -695,7 +695,9 @@ asmlinkage __visible void __init start_k
+ 		initrd_start = 0;
+ 	}
+ #endif
++#ifndef CONFIG_DEFERRED_STRUCT_PAGE_INIT
+ 	page_ext_init();
++#endif
+ 	kmemleak_init();
+ 	setup_per_cpu_pageset();
+ 	numa_policy_init();
+@@ -1131,6 +1133,9 @@ static noinline void __init kernel_init_
+ 	sched_init_smp();
+ 
+ 	page_alloc_init_late();
++#ifdef CONFIG_DEFERRED_STRUCT_PAGE_INIT
++	page_ext_init();
++#endif
+ 
+ 	do_basic_setup();
+ 
+--- a/mm/page_ext.c~mm-page_owner-fix-for-deferred-struct-page-init
++++ a/mm/page_ext.c
+@@ -399,9 +399,8 @@ void __init page_ext_init(void)
+ 			 * -------------pfn-------------->
+ 			 * N0 | N1 | N2 | N0 | N1 | N2|....
+ 			 *
+-			 * Take into account DEFERRED_STRUCT_PAGE_INIT.
+ 			 */
+-			if (early_pfn_to_nid(pfn) != nid)
++			if (pfn_to_nid(pfn) != nid)
+ 				continue;
+ 			if (init_section_page_ext(pfn, nid))
+ 				goto oom;
+_
 
 
-[0] http://lists.infradead.org/pipermail/linux-amlogic/2018-January/006251.html
