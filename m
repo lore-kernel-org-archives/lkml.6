@@ -4,53 +4,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16D6FC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:54:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF604C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:54:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DBB5B206BB
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:54:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 78A5D206BB
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:54:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546977288;
-	bh=fA6b5H6rWIdz0Kis2llTIdCZbguoF05a2MAZDrjAVOw=;
+	s=default; t=1546977293;
+	bh=FnzdZ44KrUWf5TtceLddhclQOHbLfdDkUcf+v8L3Wpc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=2If9DOQfXg8tW1Eq7x03jDt7peN6LN7Rgy8V8hw2TGVnZsFqw02SpGZ0yqDkHUFJa
-	 bzr7YDnJraweKlQPg0csSmHTcXgSzLJIeTwcJko++X2mmXRabqp5ThZtYmk0CawBOJ
-	 Ldkw46PVcFMoqaUcfih6w/5Sp9LABqPZWf64zU18=
+	b=DtgRKXNnkMkztShn5PIxeQqTYxQ58wUc1tFSzL5u8evhY5V0/VM9p73DRysFYXQkv
+	 cvDlkCwHQ0+UTPX586e3yPXjQe/qKUOszExX7sAmK/s5ToPRx/CFKIOWbzM5LaBoNn
+	 eCr5eoYAYE7qgSN4G/5b2gMsFrT9eLlHzWAlWCiw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732870AbfAHTyr (ORCPT
+        id S1730780AbfAHTa1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:54:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38232 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 14:30:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38062 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730775AbfAHTa2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:30:28 -0500
+        id S1730719AbfAHTaU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:30:20 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A62252176F;
-        Tue,  8 Jan 2019 19:30:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D8CC62176F;
+        Tue,  8 Jan 2019 19:30:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546975827;
-        bh=fA6b5H6rWIdz0Kis2llTIdCZbguoF05a2MAZDrjAVOw=;
+        s=default; t=1546975819;
+        bh=FnzdZ44KrUWf5TtceLddhclQOHbLfdDkUcf+v8L3Wpc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oCtBcCkdBkMriSq8RZhbdpC8xhDRw1Dr08SVXwhdhzqL4ISpUA5sh2AUQcYtVKsHX
-         RG++YjoJkZoCYr9Pm284Xg6OksTFxOl6dIPHFJOMmKvoE+NO89pKqZ71FGrWLhmf26
-         oqU68WQVe4GmBn5x5/GDc3yDXgyx3JRxzpuNo+6c=
+        b=rdox/wihtRhvZf2MA2oQiwyvnIzWHXmgWVfu1pyY1oeNsw4Zt3gjN/Vu37J44nVS/
+         a9UeCIw9qlfrIjPo/V59hucdMhhzroDO9OaOOx0kEpU1ZiHgKHBwuPQd1aAMEfz14b
+         abQ/dAMQFH8XntoAh1BSPu4ytHjq+P9cT/3YdVVU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Ondrej Mosnacek <omosnace@redhat.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Sasha Levin <sashal@kernel.org>, selinux@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 25/97] selinux: always allow mounting submounts
-Date:   Tue,  8 Jan 2019 14:28:34 -0500
-Message-Id: <20190108192949.122407-25-sashal@kernel.org>
+Cc:     Nikolaj Fogh <nikolajfogh@gmail.com>,
+        Johan Hovold <johan@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-usb@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 19/97] USB: serial: ftdi_sio: use rounding when calculating baud rate divisors
+Date:   Tue,  8 Jan 2019 14:28:28 -0500
+Message-Id: <20190108192949.122407-19-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108192949.122407-1-sashal@kernel.org>
 References: <20190108192949.122407-1-sashal@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -58,68 +58,77 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ondrej Mosnacek <omosnace@redhat.com>
+From: Nikolaj Fogh <nikolajfogh@gmail.com>
 
-[ Upstream commit 2cbdcb882f97a45f7475c67ac6257bbc16277dfe ]
+[ Upstream commit 6abd837104a3a8e1cda64fc4d7675f6c3ece9d8b ]
 
-If a superblock has the MS_SUBMOUNT flag set, we should always allow
-mounting it. These mounts are done automatically by the kernel either as
-part of mounting some parent mount (e.g. debugfs always mounts tracefs
-under "tracing" for compatibility) or they are mounted automatically as
-needed on subdirectory accesses (e.g. NFS crossmnt mounts). Since such
-automounts are either an implicit consequence of the parent mount (which
-is already checked) or they can happen during regular accesses (where it
-doesn't make sense to check against the current task's context), the
-mount permission check should be skipped for them.
+Improve baud-rate generation by using rounding-to-closest instead of
+truncation in divisor calculation.
 
-Without this patch, attempts to access contents of an automounted
-directory can cause unexpected SELinux denials.
+Results have been verified by logic analyzer on an FT232RT (232BM) chip.
+The following table shows the wanted baud rate, the baud rate obtained
+with the old method (truncation), with the new method (rounding) and the
+baud rate generated by the windows 10 driver. The numbers in parentheses
+is the error.
 
-In the current kernel tree, the MS_SUBMOUNT flag is set only via
-vfs_submount(), which is called only from the following places:
- - AFS, when automounting special "symlinks" referencing other cells
- - CIFS, when automounting "referrals"
- - NFS, when automounting subtrees
- - debugfs, when automounting tracefs
++- Wanted --+------ Old -------+------ New -------+------ Win -------+
+|    9600   |    9600 (0.00%)  |    9604 (0.05%)  |    9605 (0.05%)  |
+|   19200   |   19200 (0.00%)  |   19199 (0.01%)  |   19198 (0.01%)  |
+|   38400   |   38395 (0.01%)  |   38431 (0.08%)  |   38394 (0.02%)  |
+|   57600   |   57725 (0.22%)  |   57540 (0.10%)  |   57673 (0.13%)  |
+|  115200   |  115307 (0.09%)  |  115330 (0.11%)  |  115320 (0.10%)  |
+|  921600   |  919963 (0.18%)  |  920386 (0.13%)  |  920810 (0.09%)  |
+|  961200   |  996512 (3.67%)  |  956480 (0.49%)  |  956937 (0.44%)  |
++-----------+------------------+------------------+------------------+
 
-In all cases the submounts are meant to be transparent to the user and
-it makes sense that if mounting the master is allowed, then so should be
-the automounts. Note that CAP_SYS_ADMIN capability checking is already
-skipped for (SB_KERNMOUNT|SB_SUBMOUNT) in:
- - sget_userns() in fs/super.c:
-	if (!(flags & (SB_KERNMOUNT|SB_SUBMOUNT)) &&
-	    !(type->fs_flags & FS_USERNS_MOUNT) &&
-	    !capable(CAP_SYS_ADMIN))
-		return ERR_PTR(-EPERM);
- - sget() in fs/super.c:
-        /* Ensure the requestor has permissions over the target filesystem */
-        if (!(flags & (SB_KERNMOUNT|SB_SUBMOUNT)) && !ns_capable(user_ns, CAP_SYS_ADMIN))
-                return ERR_PTR(-EPERM);
+The error due to noise in the measurements is in the order of a few
+tenths of a %. As can be seen, the baud rate is significantly improved
+for some rates (e.g. 961200), and corresponds to the output given by the
+windows driver.
 
-Verified internally on patched RHEL 7.6 with a reproducer using
-NFS+httpd and selinux-tesuite.
+The theoretical baud rate has been calculated for all baud rates from 1
+to 3M, and as expected, the error is centered around 0, with a triangle
+shape instead of a sawtooth, so the maximum error is decreased to half.
 
-Fixes: 93faccbbfa95 ("fs: Better permission checking for submounts")
-Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
-Signed-off-by: Paul Moore <paul@paul-moore.com>
+Signed-off-by: Nikolaj Fogh <nikolajfogh@gmail.com>
+[ johan: edit commit message slightly ]
+Signed-off-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- security/selinux/hooks.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/serial/ftdi_sio.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index fe251c6f09f1..3c3878f0d2fa 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -2934,7 +2934,7 @@ static int selinux_sb_kern_mount(struct super_block *sb, int flags, void *data)
- 		return rc;
+diff --git a/drivers/usb/serial/ftdi_sio.c b/drivers/usb/serial/ftdi_sio.c
+index b5cef322826f..97101f666e07 100644
+--- a/drivers/usb/serial/ftdi_sio.c
++++ b/drivers/usb/serial/ftdi_sio.c
+@@ -1114,7 +1114,7 @@ static unsigned short int ftdi_232am_baud_base_to_divisor(int baud, int base)
+ {
+ 	unsigned short int divisor;
+ 	/* divisor shifted 3 bits to the left */
+-	int divisor3 = base / 2 / baud;
++	int divisor3 = DIV_ROUND_CLOSEST(base, 2 * baud);
+ 	if ((divisor3 & 0x7) == 7)
+ 		divisor3++; /* round x.7/8 up to x+1 */
+ 	divisor = divisor3 >> 3;
+@@ -1140,7 +1140,7 @@ static u32 ftdi_232bm_baud_base_to_divisor(int baud, int base)
+ 	static const unsigned char divfrac[8] = { 0, 3, 2, 4, 1, 5, 6, 7 };
+ 	u32 divisor;
+ 	/* divisor shifted 3 bits to the left */
+-	int divisor3 = base / 2 / baud;
++	int divisor3 = DIV_ROUND_CLOSEST(base, 2 * baud);
+ 	divisor = divisor3 >> 3;
+ 	divisor |= (u32)divfrac[divisor3 & 0x7] << 14;
+ 	/* Deal with special cases for highest baud rates. */
+@@ -1163,7 +1163,7 @@ static u32 ftdi_2232h_baud_base_to_divisor(int baud, int base)
+ 	int divisor3;
  
- 	/* Allow all mounts performed by the kernel */
--	if (flags & MS_KERNMOUNT)
-+	if (flags & (MS_KERNMOUNT | MS_SUBMOUNT))
- 		return 0;
+ 	/* hi-speed baud rate is 10-bit sampling instead of 16-bit */
+-	divisor3 = base * 8 / (baud * 10);
++	divisor3 = DIV_ROUND_CLOSEST(8 * base, 10 * baud);
  
- 	ad.type = LSM_AUDIT_DATA_DENTRY;
+ 	divisor = divisor3 >> 3;
+ 	divisor |= (u32)divfrac[divisor3 & 0x7] << 14;
 -- 
 2.19.1
 
