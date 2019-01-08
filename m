@@ -2,80 +2,94 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56B85C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 03:10:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A38ADC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 03:11:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1791B2070C
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 03:10:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 63B3A2087E
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 03:11:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ICweIGJ8"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jk4L4uCC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727482AbfAHDKm (ORCPT
+        id S1727548AbfAHDLH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 22:10:42 -0500
-Received: from mail-ed1-f53.google.com ([209.85.208.53]:44260 "EHLO
-        mail-ed1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727145AbfAHDKm (ORCPT
+        Mon, 7 Jan 2019 22:11:07 -0500
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:38335 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727371AbfAHDLH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 22:10:42 -0500
-Received: by mail-ed1-f53.google.com with SMTP id y56so2767016edd.11
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Jan 2019 19:10:41 -0800 (PST)
+        Mon, 7 Jan 2019 22:11:07 -0500
+Received: by mail-ed1-f66.google.com with SMTP id h50so2792061ede.5
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Jan 2019 19:11:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=ebYjQj3w9N6BeKLRbMxmWtzuFXlLsdYBCJKOXxZa3Dk=;
-        b=ICweIGJ8cYdGcvU740Bs2F/wj7p07U4i4Jg1/hIiFulGwb+jAdPshhJ6y54WIfu/+e
-         wu6keTuXWuHOoz1JUcK6I6tlguulihCGYvNG10VjzSxtXp8StivJXkXvJr7Ce88KPg9Z
-         cVnAtVz0UpNQ7mfklov9p4+0RbdlQqyRkSIG/2XJP7YVEb09qypp0KhP0o5BzO/8ecn7
-         xgiZkQrt+QppBr5w0q42al9JKS8/X1g6yZNXAaL50Mix1ZnIj2AMCGpr8XbOChX9G9A2
-         /6bMFw36emCKfow3tFjIOoKbD+r+kkSP5kbMrg9bYcllmzXdusf5+tgUf9V0PbTy5Syn
-         kiuw==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=sGZK5k3+us1fsD2MJBky8yVgRarUBxYg3xvOC2DjMcw=;
+        b=jk4L4uCCMugxV7KKFGnDO+g8gI6TxRUPRGCCM61IxytOksHrPiV76B7NnfAudsplEB
+         N4huuCEWt09uYINpw+MPg0hGzsE9E3TUmr8ywolb1vCMUWdJrZ4ijJRf6+fC7gSklAjD
+         txKbT0lREV7zZoGhJ98g2WuI8ukO34cHVsZA6JU64+7ODsdvsyXH65gDOJgyHpFGeUYe
+         dR513Skqay7NUi6lxoIwIKGx8bJbP4wrKr+3H6uUUYm7MCSxxRcj704Is3lBwUBiYKYB
+         wPsmm5nQ73JTcwEGS0hQsLgRqXrMDkQszcH/7OBEZpujcXW9YNzurs4LVA4mcLY9L7Qv
+         5DDA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=ebYjQj3w9N6BeKLRbMxmWtzuFXlLsdYBCJKOXxZa3Dk=;
-        b=CFFPcIho0G9mWRI6IgmjJiuQcy9mro27DFH01qnlX5NbMovw0XdqUBIQf103izBisX
-         I0aeUst93U4Zfhv9T44mns4T5g4lOD6fafqmBbFg09WDbJ3tZKISVVbDlCjWbdm7fTNH
-         PE2HMsaquZeIKdaotgO3/Am2He/ttgsVO/l0WkubfT5NjK3d0MM4NeH+6BCxUYi/DIl8
-         y9QUFSDdP8qWCpmyJR3cXvM5ASmvQsrrz33C8G4I6LLRSZVRRM9eHDsoeVx4vfKs2mPT
-         lZrfPVbLCm51JxqQE6RKDfG5r/T5lfZy3Z/uOYMy2wKE+nu3PAtLVgf/W0jVFXeWKX8B
-         +1eA==
-X-Gm-Message-State: AJcUuke/46gxqBK92rBU6Q9LeEevowdQSqqcMmW6snr7Ym8eFGWBKZiN
-        sdq1/29A9BhmHQRMn8YdBDk=
-X-Google-Smtp-Source: ALg8bN5ASl4nrl1lQAAND3PraZ+Osp+zs3BYwS+d4VRWNhxxtgmjAi71Q5U2n908F34Ksu9CWixLnQ==
-X-Received: by 2002:a17:906:4e82:: with SMTP id v2-v6mr291790eju.149.1546917040834;
-        Mon, 07 Jan 2019 19:10:40 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=sGZK5k3+us1fsD2MJBky8yVgRarUBxYg3xvOC2DjMcw=;
+        b=hJmrk0q2dTA5adzULWujmwdguC1syPCov8+7CPIYoFgPXlhbOpDZSWMDyPFUSDRMVi
+         2tkmcRRnA3D6eTa6rMuZsByeBU7f35qSpB6qGN4979AsSKbFTOXTcTB/ih3GeizqMtDk
+         HHXcXpMbRzseZh1BDBpeoPN7WSygdUcJ6CzMV6wwx3MxZ+hAcTyz+E0D7Gr6ZKc+UuAc
+         d5kaHvZWVmn2nypj6FkhRhn5EP+ErulQvOU55VFB9IJBWXICLb0lFAcJDc2mGH6aOxIn
+         D3tTdzZ5destsDRW3CuoLXMTFwypT7M5bLz5DmFK3hwhPxu7pHF+bG+bXaTZUK3dXkB/
+         izhg==
+X-Gm-Message-State: AJcUukdgODIcXLRXyMGkYAcvNvlV6vilsMOlc7cns6JUzd3JtKhsDKV9
+        4bBkcZNwSr4mMA1yZ/d51OI=
+X-Google-Smtp-Source: ALg8bN5Owb0uiyk8LF3ypZixAjQiJZcBnSIdXGSt/JvXX8sFyv2Q9sGvl1tBfOdJp/NHDvJO0zMr6A==
+X-Received: by 2002:a17:906:6c14:: with SMTP id j20-v6mr309750ejr.41.1546917065804;
+        Mon, 07 Jan 2019 19:11:05 -0800 (PST)
 Received: from localhost.localdomain ([191.101.9.198])
-        by smtp.gmail.com with ESMTPSA id a27sm37037195eda.65.2019.01.07.19.10.38
+        by smtp.gmail.com with ESMTPSA id s3sm30036635edm.31.2019.01.07.19.11.03
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 07 Jan 2019 19:10:40 -0800 (PST)
+        Mon, 07 Jan 2019 19:11:05 -0800 (PST)
 From:   Bo YU <tsu.yubo@gmail.com>
 To:     gregkh@linuxfoundation.org, rafael@kernel.org
 Cc:     Bo YU <tsu.yubo@gmail.com>, linux-kernel@vger.kernel.org,
         joe@perches.com, yuzibode@126.com
-Subject: [PATCH v4 0/2] kobject: trival fix
-Date:   Mon,  7 Jan 2019 22:10:24 -0500
-Message-Id: <cover.1546915794.git.tsu.yubo@gmail.com>
+Subject: [PATCH v4 1/2] kobject: use pr_warn to replace printk
+Date:   Mon,  7 Jan 2019 22:10:58 -0500
+Message-Id: <8c73ad4b2b29bda53f2dfb6624b8b7984b52e307.1546915794.git.tsu.yubo@gmail.com>
 X-Mailer: git-send-email 2.11.0
+In-Reply-To: <cover.1546915794.git.tsu.yubo@gmail.com>
+References: <cover.1546915794.git.tsu.yubo@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is trival fix for lib/kobject_uevent.c file.
+This is a fix to replace printk with pr_warn
 
-Bo YU (2):
-  kobject: use pr_warn to replace printk
-  kobject: drop newline from msg string
+Signed-off-by: Bo YU <tsu.yubo@gmail.com>
+---
+ lib/kobject_uevent.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- lib/kobject_uevent.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
---
+diff --git a/lib/kobject_uevent.c b/lib/kobject_uevent.c
+index 27c6118afd1c..499dfcdafcb0 100644
+--- a/lib/kobject_uevent.c
++++ b/lib/kobject_uevent.c
+@@ -224,7 +224,7 @@ int kobject_synth_uevent(struct kobject *kobj, const char *buf, size_t count)
+ out:
+ 	if (r) {
+ 		devpath = kobject_get_path(kobj, GFP_KERNEL);
+-		printk(KERN_WARNING "synth uevent: %s: %s",
++		pr_warn("synth uevent: %s: %s",
+ 		       devpath ?: "unknown device",
+ 		       msg ?: "failed to send uevent");
+ 		kfree(devpath);
+-- 
 2.11.0
 
