@@ -2,50 +2,54 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-18.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A704C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:35:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA67AC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:35:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1197720645
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:35:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9A7F420827
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:35:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546976115;
-	bh=BaRtPItSgDMDn8WNB05+gFqV1vVJ1GNuFTe26hJYJuY=;
+	s=default; t=1546976119;
+	bh=+FrZnoe0vXc6XvFZWm2HCYNg8vU1DqdoqfGcQhUJhDM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=WdbmnpEj+NsTgQ99WYTAaZ9z6v0nEZkoI1V6s1tsCpM7hVagDIN3s4s+no5dT22bl
-	 y2omFMQPoiDXuUQWrqFYuGl8Yip/bJPCNChXQaxsuvXRbdvjG4Rlo211rGcVDgI2cY
-	 p9I6NPsXCl+bXK6OmhIng3ADlHfxUOXo0gRlNpBY=
+	b=Eo1MBZpGap3Whvp+BqDSeMRmjIlmm0FdbnW8FQszf4zUIZznItYekA838pYftrp2F
+	 3NCeNpjtIvo3fVCYu4hib3jhJ6szdzBGTzMi1Q26CG3BlHrjSzZO91EDzboqooq1rG
+	 sP2cZCtY0DO/bPVdAtrA+7uHj0lBcgJKd4jFUoyI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732218AbfAHTfO (ORCPT
+        id S1732244AbfAHTfS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:35:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43966 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 14:35:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44064 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732193AbfAHTfK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:35:10 -0500
+        id S1732222AbfAHTfQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:35:16 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6770620827;
-        Tue,  8 Jan 2019 19:35:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 84C722063F;
+        Tue,  8 Jan 2019 19:35:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546976110;
-        bh=BaRtPItSgDMDn8WNB05+gFqV1vVJ1GNuFTe26hJYJuY=;
+        s=default; t=1546976115;
+        bh=+FrZnoe0vXc6XvFZWm2HCYNg8vU1DqdoqfGcQhUJhDM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tm4hikLHH64ugszF24KaVQtHES8rUXByiqP8z+oKLJj5ABI+5qhN+S5GNny7mkj+x
-         TVGoT76fPXgy9AxTOty3tlZP0VowmRmiM7pkIRIoNBLTpYkSVzHvwuO789Dbf93MO1
-         onMt5LBVBREA1292pwSA9+/3oO5MXhTg90QJ7+5s=
+        b=DBAvG6fJ6VvRvkWNvKyZ6OEqeQFPkMvh+MqPJXBHffPoJlqtHjryEc7dpPSdKhhgV
+         Gk4uJ7ToXbkzSRlqEFnqindbud4svjwI1kiNBlw4HhS0whznbAJD5uT0ap57WWzQa7
+         Y/KYs7MccZ5G719nRYKAsI60at27XkMPcveRsarg=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Sasha Levin <sashal@kernel.org>, linux-kbuild@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.4 16/28] kconfig: fix memory leak when EOF is encountered in quotation
-Date:   Tue,  8 Jan 2019 14:34:33 -0500
-Message-Id: <20190108193445.124251-16-sashal@kernel.org>
+Cc:     Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Arjan van de Ven <arjan@linux.intel.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 19/28] perf svghelper: Fix unchecked usage of strncpy()
+Date:   Tue,  8 Jan 2019 14:34:36 -0500
+Message-Id: <20190108193445.124251-19-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108193445.124251-1-sashal@kernel.org>
 References: <20190108193445.124251-1-sashal@kernel.org>
@@ -57,67 +61,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
+From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-[ Upstream commit fbac5977d81cb2b2b7e37b11c459055d9585273c ]
+[ Upstream commit 2f5302533f306d5ee87bd375aef9ca35b91762cb ]
 
-An unterminated string literal followed by new line is passed to the
-parser (with "multi-line strings not supported" warning shown), then
-handled properly there.
+The strncpy() function may leave the destination string buffer
+unterminated, better use strlcpy() that we have a __weak fallback
+implementation for systems without it.
 
-On the other hand, an unterminated string literal at end of file is
-never passed to the parser, then results in memory leak.
+In this specific case this would only happen if fgets() was buggy, as
+its man page states that it should read one less byte than the size of
+the destination buffer, so that it can put the nul byte at the end of
+it, so it would never copy 255 non-nul chars, as fgets reads into the
+orig buffer at most 254 non-nul chars and terminates it. But lets just
+switch to strlcpy to keep the original intent and silence the gcc 8.2
+warning.
 
-[Test Code]
+This fixes this warning on an Alpine Linux Edge system with gcc 8.2:
 
-  ----------(Kconfig begin)----------
-  source "Kconfig.inc"
+  In function 'cpu_model',
+      inlined from 'svg_cpu_box' at util/svghelper.c:378:2:
+  util/svghelper.c:337:5: error: 'strncpy' output may be truncated copying 255 bytes from a string of length 255 [-Werror=stringop-truncation]
+       strncpy(cpu_m, &buf[13], 255);
+       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-  config A
-          bool "a"
-  -----------(Kconfig end)-----------
-
-  --------(Kconfig.inc begin)--------
-  config B
-          bool "b\No new line at end of file
-  ---------(Kconfig.inc end)---------
-
-[Summary from Valgrind]
-
-  Before the fix:
-
-    LEAK SUMMARY:
-       definitely lost: 16 bytes in 1 blocks
-       ...
-
-  After the fix:
-
-    LEAK SUMMARY:
-       definitely lost: 0 bytes in 0 blocks
-       ...
-
-Eliminate the memory leak path by handling this case. Of course, such
-a Kconfig file is wrong already, so I will add an error message later.
-
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Arjan van de Ven <arjan@linux.intel.com>
+Fixes: f48d55ce7871 ("perf: Add a SVG helper library file")
+Link: https://lkml.kernel.org/n/tip-xzkoo0gyr56gej39ltivuh9g@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- scripts/kconfig/zconf.l | 2 ++
- 1 file changed, 2 insertions(+)
+ tools/perf/util/svghelper.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/scripts/kconfig/zconf.l b/scripts/kconfig/zconf.l
-index 6534dc5ac803..0c7800112ff5 100644
---- a/scripts/kconfig/zconf.l
-+++ b/scripts/kconfig/zconf.l
-@@ -191,6 +191,8 @@ n	[A-Za-z0-9_-]
- 	}
- 	<<EOF>>	{
- 		BEGIN(INITIAL);
-+		yylval.string = text;
-+		return T_WORD_QUOTE;
- 	}
- }
- 
+diff --git a/tools/perf/util/svghelper.c b/tools/perf/util/svghelper.c
+index eec6c1149f44..132878d4847a 100644
+--- a/tools/perf/util/svghelper.c
++++ b/tools/perf/util/svghelper.c
+@@ -333,7 +333,7 @@ static char *cpu_model(void)
+ 	if (file) {
+ 		while (fgets(buf, 255, file)) {
+ 			if (strstr(buf, "model name")) {
+-				strncpy(cpu_m, &buf[13], 255);
++				strlcpy(cpu_m, &buf[13], 255);
+ 				break;
+ 			}
+ 		}
 -- 
 2.19.1
 
