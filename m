@@ -2,125 +2,409 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D67BEC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 06:38:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B886C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 06:39:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AEC7E2087E
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 06:38:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E23A52087E
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 06:39:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b="A84jdkVH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727933AbfAHGiJ (ORCPT
+        id S1727956AbfAHGju (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 01:38:09 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:55830 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727706AbfAHGiG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 01:38:06 -0500
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x086Y1fA033223
-        for <linux-kernel@vger.kernel.org>; Tue, 8 Jan 2019 01:38:05 -0500
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2pvpcmh0qn-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jan 2019 01:38:05 -0500
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <heiko.carstens@de.ibm.com>;
-        Tue, 8 Jan 2019 06:38:03 -0000
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 8 Jan 2019 06:38:00 -0000
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x086bwf957081972
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 8 Jan 2019 06:37:59 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C0060AE056;
-        Tue,  8 Jan 2019 06:37:58 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 70354AE053;
-        Tue,  8 Jan 2019 06:37:58 +0000 (GMT)
-Received: from osiris (unknown [9.152.212.95])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Tue,  8 Jan 2019 06:37:58 +0000 (GMT)
-Date:   Tue, 8 Jan 2019 07:37:57 +0100
-From:   Heiko Carstens <heiko.carstens@de.ibm.com>
-To:     pmorel@linux.ibm.com
-Cc:     Michael Mueller <mimu@linux.ibm.com>,
-        KVM Mailing List <kvm@vger.kernel.org>,
-        Linux-S390 Mailing List <linux-s390@vger.kernel.org>,
-        linux-kernel@vger.kernel.org,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        David Hildenbrand <david@redhat.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Halil Pasic <pasic@linux.ibm.com>
-Subject: Re: [PATCH v5 13/15] KVM: s390: add function process_gib_alert_list()
-References: <20181219191756.57973-1-mimu@linux.ibm.com>
- <20181219191756.57973-14-mimu@linux.ibm.com>
- <645d74cf-7448-f143-c899-bdcf290dac59@linux.ibm.com>
- <ae479e60-d235-acf3-55cc-afd875644a19@linux.ibm.com>
+        Tue, 8 Jan 2019 01:39:50 -0500
+Received: from mout02.posteo.de ([185.67.36.66]:32895 "EHLO mout02.posteo.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727706AbfAHGju (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 01:39:50 -0500
+Received: from submission (posteo.de [89.146.220.130]) 
+        by mout02.posteo.de (Postfix) with ESMTPS id CB8402400FB
+        for <linux-kernel@vger.kernel.org>; Tue,  8 Jan 2019 07:39:46 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=posteo.de; s=2017;
+        t=1546929586; bh=qYylgmuZoXlAkpvmXvaVyvAwZ8kfqy+ZrsUKyBaYk6U=;
+        h=Subject:To:Cc:From:Openpgp:Autocrypt:Date:From;
+        b=A84jdkVHoSMWrehj+G/22F4EF2cZMEq0+ozV3d0TPW+UUaclJiu4l/RgPtg7H87a7
+         PTBe3o3bFIsCsOXAUkYeMyuSPvx1V2pQ/prfXvfI0vVYFUXWFmMn1Q+lY9phyGpfFg
+         SHQOAVCkHOlgPYfwHzuE1IMAnhCMgyvH7yb1UuO3x+XRcl0ed0u+nqC7+fRiQ1c37A
+         P0KVAYDDAJLld/xCyBPOiUCGVdD98Fg/KIaQixDeGiiB61+tnr7zCtp1M8E3C9wI7u
+         EarbD2xC+Khoag2FP9Kt3XK/XSX7T9I4fghB3dpIpKO1K3WtvuoEuhZRVDbWFtQ2rp
+         qCj6vkaP1FcWA==
+Received: from customer (localhost [127.0.0.1])
+        by submission (posteo.de) with ESMTPSA id 43YjKq72zYz9rxD;
+        Tue,  8 Jan 2019 07:39:43 +0100 (CET)
+Subject: Re: [PATCH V6 2/2] iio: accell: mma8452: add vdd/vddio regulator
+ operation support
+To:     Jonathan Cameron <jic23@kernel.org>,
+        Anson Huang <anson.huang@nxp.com>
+Cc:     "knaack.h@gmx.de" <knaack.h@gmx.de>,
+        "lars@metafoo.de" <lars@metafoo.de>,
+        "pmeerw@pmeerw.net" <pmeerw@pmeerw.net>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "gustavo@embeddedor.com" <gustavo@embeddedor.com>,
+        "rtresidd@electromag.com.au" <rtresidd@electromag.com.au>,
+        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>
+References: <1545555462-16121-1-git-send-email-Anson.Huang@nxp.com>
+ <1545555462-16121-2-git-send-email-Anson.Huang@nxp.com>
+ <20190105172942.2787d236@archlinux>
+From:   Martin Kepplinger <martink@posteo.de>
+Openpgp: preference=signencrypt
+Autocrypt: addr=martink@posteo.de; keydata=
+ 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
+Message-ID: <bbb55d00-df06-8ee7-85b0-88c286656b4f@posteo.de>
+Date:   Tue, 8 Jan 2019 07:39:43 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <ae479e60-d235-acf3-55cc-afd875644a19@linux.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 19010806-0028-0000-0000-00000335C09C
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19010806-0029-0000-0000-000023F2CC85
-Message-Id: <20190108063757.GA3766@osiris>
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: 8bit
-Content-Disposition: inline
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-08_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=964 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901080052
+In-Reply-To: <20190105172942.2787d236@archlinux>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 07, 2019 at 08:19:26PM +0100, Michael Mueller wrote:
+On 05.01.19 18:29, Jonathan Cameron wrote:
+> On Sun, 23 Dec 2018 09:02:32 +0000
+> Anson Huang <anson.huang@nxp.com> wrote:
 > 
-> On 03.01.19 15:43, Pierre Morel wrote:
-> >On 19/12/2018 20:17, Michael Mueller wrote:
-> >>This function processes the Gib Alert List (GAL). It is required
-> >>to run when either a gib alert interruption has been received or
-> >>a gisa that is in the alert list is cleared or dropped.
-> >>
-> >>The GAL is build up by millicode, when the respective ISC bit is
-> >>set in the Interruption Alert Mask (IAM) and an interruption of
-> >>that class is observed.
-> >>
-> >>Signed-off-by: Michael Mueller <mimu@linux.ibm.com>
-> >>---
-> >>  arch/s390/kvm/interrupt.c | 140
-> >>++++++++++++++++++++++++++++++++++++++++++++++
-> >>  1 file changed, 140 insertions(+)
-> >>
-> >>diff --git a/arch/s390/kvm/interrupt.c b/arch/s390/kvm/interrupt.c
-> >>index 48a93f5e5333..03e7ba4f215a 100644
-> >>--- a/arch/s390/kvm/interrupt.c
-> >>+++ b/arch/s390/kvm/interrupt.c
-> >>@@ -2941,6 +2941,146 @@ int kvm_s390_get_irq_state(struct kvm_vcpu
-> >>*vcpu, __u8 __user *buf, int len)
-> >>      return n;
-> >>  }
-> >>  +static int __try_airqs_kick(struct kvm *kvm, u8 ipm)
-> >
-> >static inline ?
+>> The accelerometer's power supply could be controllable on some
+>> platforms, such as i.MX6Q-SABRESD board, the mma8451's power supplies
+>> are controlled by a GPIO fixed regulator, need to make sure the
+>> regulators are enabled before any communication with mma8451, this
+>> patch adds vdd/vddio regulator operation support.
+>>
+>> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+>> Acked-by: Martin Kepplinger <martink@posteo.de>
+> 
+> I'm fine with the general approach now, though I would like separate
+> error handling for the two different regulators.
+> 
+> Also, this has obviously changed a fair bit since Martin originally gave
+> that Ack.  Martin, could you confirm you are still happy with the code?
 
-Why?
+I'd like to have the change you mention below too. I'll build, review
+and confirm after that. thanks!
 
-In general it is a good idea to leave it up to the compiler to decide
-if it is worth to inline a function or not, unless you have a good
-reason to force inlining.
+> 
+> Thanks,
+> 
+> Jonathan
+> 
+> 
+>> ---
+>> ChangeLog since V5:
+>>     - ONLY enable vdd/vddio regulators after both of them are aquired;
+>>     - Since the suspend/resume operations are same as runtime suspend/resume, so just use the
+>>       pm_runtime_force_suspend/resume for suspend/resuem callback to simply the code.
+>> ---
+>>  drivers/iio/accel/mma8452.c | 99 +++++++++++++++++++++++++++++++++++----------
+>>  1 file changed, 77 insertions(+), 22 deletions(-)
+>>
+>> diff --git a/drivers/iio/accel/mma8452.c b/drivers/iio/accel/mma8452.c
+>> index 421a0a8..7519ed5 100644
+>> --- a/drivers/iio/accel/mma8452.c
+>> +++ b/drivers/iio/accel/mma8452.c
+>> @@ -31,6 +31,7 @@
+>>  #include <linux/of_device.h>
+>>  #include <linux/of_irq.h>
+>>  #include <linux/pm_runtime.h>
+>> +#include <linux/regulator/consumer.h>
+>>  
+>>  #define MMA8452_STATUS				0x00
+>>  #define  MMA8452_STATUS_DRDY			(BIT(2) | BIT(1) | BIT(0))
+>> @@ -107,6 +108,8 @@ struct mma8452_data {
+>>  	u8 data_cfg;
+>>  	const struct mma_chip_info *chip_info;
+>>  	int sleep_val;
+>> +	struct regulator *vdd_reg;
+>> +	struct regulator *vddio_reg;
+>>  };
+>>  
+>>   /**
+>> @@ -1534,9 +1537,33 @@ static int mma8452_probe(struct i2c_client *client,
+>>  	mutex_init(&data->lock);
+>>  	data->chip_info = match->data;
+>>  
+>> +	data->vdd_reg = devm_regulator_get(&client->dev, "vdd");
+>> +	data->vddio_reg = devm_regulator_get(&client->dev, "vddio");
+>> +	if (IS_ERR(data->vdd_reg) || IS_ERR(data->vddio_reg)) {
+>> +		if (PTR_ERR(data->vdd_reg) == -EPROBE_DEFER ||
+>> +			PTR_ERR(data->vddio_reg) == -EPROBE_DEFER)
+>> +			return -EPROBE_DEFER;
+>> +
+>> +		dev_err(&client->dev, "failed to get VDD/VDDIO regulator!\n");
+>> +		return IS_ERR(data->vdd_reg) ?
+>> +		       PTR_ERR(data->vdd_reg) : PTR_ERR(data->vddio_reg);
+> 
+> This is overly complex.  It'll be more lines of code, but I'd prefer
+> you handle the two separately as the result will be more readable / less
+> fragile.
+> 
+>> +	}
+>> +
+>> +	ret = regulator_enable(data->vdd_reg);
+>> +	if (ret) {
+>> +		dev_err(&client->dev, "failed to enable VDD regulator!\n");
+>> +		return ret;
+>> +	}
+>> +
+>> +	ret = regulator_enable(data->vddio_reg);
+>> +	if (ret) {
+>> +		dev_err(&client->dev, "failed to enable VDDIO regulator!\n");
+>> +		goto disable_regulator_vdd;
+>> +	}
+>> +
+>>  	ret = i2c_smbus_read_byte_data(client, MMA8452_WHO_AM_I);
+>>  	if (ret < 0)
+>> -		return ret;
+>> +		goto disable_regulators;
+>>  
+>>  	switch (ret) {
+>>  	case MMA8451_DEVICE_ID:
+>> @@ -1549,7 +1576,8 @@ static int mma8452_probe(struct i2c_client *client,
+>>  			break;
+>>  		/* else: fall through */
+>>  	default:
+>> -		return -ENODEV;
+>> +		ret = -ENODEV;
+>> +		goto disable_regulators;
+>>  	}
+>>  
+>>  	dev_info(&client->dev, "registering %s accelerometer; ID 0x%x\n",
+>> @@ -1566,13 +1594,13 @@ static int mma8452_probe(struct i2c_client *client,
+>>  
+>>  	ret = mma8452_reset(client);
+>>  	if (ret < 0)
+>> -		return ret;
+>> +		goto disable_regulators;
+>>  
+>>  	data->data_cfg = MMA8452_DATA_CFG_FS_2G;
+>>  	ret = i2c_smbus_write_byte_data(client, MMA8452_DATA_CFG,
+>>  					data->data_cfg);
+>>  	if (ret < 0)
+>> -		return ret;
+>> +		goto disable_regulators;
+>>  
+>>  	/*
+>>  	 * By default set transient threshold to max to avoid events if
+>> @@ -1581,7 +1609,7 @@ static int mma8452_probe(struct i2c_client *client,
+>>  	ret = i2c_smbus_write_byte_data(client, MMA8452_TRANSIENT_THS,
+>>  					MMA8452_TRANSIENT_THS_MASK);
+>>  	if (ret < 0)
+>> -		return ret;
+>> +		goto disable_regulators;
+>>  
+>>  	if (client->irq) {
+>>  		int irq2;
+>> @@ -1595,7 +1623,7 @@ static int mma8452_probe(struct i2c_client *client,
+>>  						MMA8452_CTRL_REG5,
+>>  						data->chip_info->all_events);
+>>  			if (ret < 0)
+>> -				return ret;
+>> +				goto disable_regulators;
+>>  
+>>  			dev_dbg(&client->dev, "using interrupt line INT1\n");
+>>  		}
+>> @@ -1604,11 +1632,11 @@ static int mma8452_probe(struct i2c_client *client,
+>>  					MMA8452_CTRL_REG4,
+>>  					data->chip_info->enabled_events);
+>>  		if (ret < 0)
+>> -			return ret;
+>> +			goto disable_regulators;
+>>  
+>>  		ret = mma8452_trigger_setup(indio_dev);
+>>  		if (ret < 0)
+>> -			return ret;
+>> +			goto disable_regulators;
+>>  	}
+>>  
+>>  	data->ctrl_reg1 = MMA8452_CTRL_ACTIVE |
+>> @@ -1661,12 +1689,19 @@ static int mma8452_probe(struct i2c_client *client,
+>>  trigger_cleanup:
+>>  	mma8452_trigger_cleanup(indio_dev);
+>>  
+>> +disable_regulators:
+>> +	regulator_disable(data->vddio_reg);
+>> +
+>> +disable_regulator_vdd:
+>> +	regulator_disable(data->vdd_reg);
+>> +
+>>  	return ret;
+>>  }
+>>  
+>>  static int mma8452_remove(struct i2c_client *client)
+>>  {
+>>  	struct iio_dev *indio_dev = i2c_get_clientdata(client);
+>> +	struct mma8452_data *data = iio_priv(indio_dev);
+>>  
+>>  	iio_device_unregister(indio_dev);
+>>  
+>> @@ -1678,6 +1713,9 @@ static int mma8452_remove(struct i2c_client *client)
+>>  	mma8452_trigger_cleanup(indio_dev);
+>>  	mma8452_standby(iio_priv(indio_dev));
+>>  
+>> +	regulator_disable(data->vddio_reg);
+>> +	regulator_disable(data->vdd_reg);
+>> +
+>>  	return 0;
+>>  }
+>>  
+>> @@ -1696,6 +1734,18 @@ static int mma8452_runtime_suspend(struct device *dev)
+>>  		return -EAGAIN;
+>>  	}
+>>  
+>> +	ret = regulator_disable(data->vddio_reg);
+>> +	if (ret) {
+>> +		dev_err(dev, "failed to disable VDDIO regulator\n");
+>> +		return ret;
+>> +	}
+>> +
+>> +	ret = regulator_disable(data->vdd_reg);
+>> +	if (ret) {
+>> +		dev_err(dev, "failed to disable VDD regulator\n");
+>> +		return ret;
+>> +	}
+>> +
+>>  	return 0;
+>>  }
+>>  
+>> @@ -1705,9 +1755,22 @@ static int mma8452_runtime_resume(struct device *dev)
+>>  	struct mma8452_data *data = iio_priv(indio_dev);
+>>  	int ret, sleep_val;
+>>  
+>> +	ret = regulator_enable(data->vdd_reg);
+>> +	if (ret) {
+>> +		dev_err(dev, "failed to enable VDD regulator\n");
+>> +		return ret;
+>> +	}
+>> +
+>> +	ret = regulator_enable(data->vddio_reg);
+>> +	if (ret) {
+>> +		dev_err(dev, "failed to enable VDDIO regulator\n");
+>> +		regulator_disable(data->vdd_reg);
+>> +		return ret;
+>> +	}
+>> +
+>>  	ret = mma8452_active(data);
+>>  	if (ret < 0)
+>> -		return ret;
+>> +		goto runtime_resume_failed;
+>>  
+>>  	ret = mma8452_get_odr_index(data);
+>>  	sleep_val = 1000 / mma8452_samp_freq[ret][0];
+>> @@ -1717,25 +1780,17 @@ static int mma8452_runtime_resume(struct device *dev)
+>>  		msleep_interruptible(sleep_val);
+>>  
+>>  	return 0;
+>> -}
+>> -#endif
+>>  
+>> -#ifdef CONFIG_PM_SLEEP
+>> -static int mma8452_suspend(struct device *dev)
+>> -{
+>> -	return mma8452_standby(iio_priv(i2c_get_clientdata(
+>> -		to_i2c_client(dev))));
+>> -}
+>> +runtime_resume_failed:
+>> +	regulator_disable(data->vddio_reg);
+>> +	regulator_disable(data->vdd_reg);
+>>  
+>> -static int mma8452_resume(struct device *dev)
+>> -{
+>> -	return mma8452_active(iio_priv(i2c_get_clientdata(
+>> -		to_i2c_client(dev))));
+>> +	return ret;
+>>  }
+>>  #endif
+>>  
+>>  static const struct dev_pm_ops mma8452_pm_ops = {
+>> -	SET_SYSTEM_SLEEP_PM_OPS(mma8452_suspend, mma8452_resume)
+>> +	SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend, pm_runtime_force_resume)
+>>  	SET_RUNTIME_PM_OPS(mma8452_runtime_suspend,
+>>  			   mma8452_runtime_resume, NULL)
+>>  };
+> 
 
