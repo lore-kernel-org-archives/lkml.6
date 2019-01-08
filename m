@@ -4,32 +4,32 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B948C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 16:10:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1079EC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 16:10:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D4A6B2087F
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 16:10:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DDAF12087F
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 16:10:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729264AbfAHQKc (ORCPT
+        id S1729280AbfAHQKg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 11:10:32 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:58866 "EHLO
+        Tue, 8 Jan 2019 11:10:36 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:58868 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729237AbfAHQK2 (ORCPT
+        with ESMTP id S1729250AbfAHQKa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 11:10:28 -0500
+        Tue, 8 Jan 2019 11:10:30 -0500
 Received: from [127.0.0.1] (localhost [127.0.0.1])
         (Authenticated sender: eballetbo)
-        with ESMTPSA id 3076427DE80
+        with ESMTPSA id 007F227DE7D
 From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     groeck@chromium.org, gwendal@chromium.org, kernel@collabora.com,
         bleung@chromium.org
-Subject: [PATCH 07/10] platform/chrome: cros_ec_debugfs: switch to SPDX identifier
-Date:   Tue,  8 Jan 2019 17:10:13 +0100
-Message-Id: <20190108161016.12361-8-enric.balletbo@collabora.com>
+Subject: [PATCH 10/10] platform/chrome: cros_ec_vbc: switch to SPDX identifier
+Date:   Tue,  8 Jan 2019 17:10:16 +0100
+Message-Id: <20190108161016.12361-11-enric.balletbo@collabora.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190108161016.12361-1-enric.balletbo@collabora.com>
 References: <20190108161016.12361-1-enric.balletbo@collabora.com>
@@ -46,18 +46,22 @@ management.
 Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 ---
 
- drivers/platform/chrome/cros_ec_debugfs.c | 22 ++++------------------
- 1 file changed, 4 insertions(+), 18 deletions(-)
+ drivers/platform/chrome/cros_ec_vbc.c | 24 +++++-------------------
+ 1 file changed, 5 insertions(+), 19 deletions(-)
 
-diff --git a/drivers/platform/chrome/cros_ec_debugfs.c b/drivers/platform/chrome/cros_ec_debugfs.c
-index 5e0039509368..204738ff6338 100644
---- a/drivers/platform/chrome/cros_ec_debugfs.c
-+++ b/drivers/platform/chrome/cros_ec_debugfs.c
-@@ -1,21 +1,7 @@
+diff --git a/drivers/platform/chrome/cros_ec_vbc.c b/drivers/platform/chrome/cros_ec_vbc.c
+index 86903bc31b27..63f451f85d8d 100644
+--- a/drivers/platform/chrome/cros_ec_vbc.c
++++ b/drivers/platform/chrome/cros_ec_vbc.c
+@@ -1,22 +1,8 @@
 -/*
-- * cros_ec_debugfs - debug logs for Chrome OS EC
+- * cros_ec_vbc - Expose the vboot context nvram to userspace
 - *
-- * Copyright 2015 Google, Inc.
+- * Copyright (C) 2015 Collabora Ltd.
+- *
+- * based on vendor driver,
+- *
+- * Copyright (C) 2012 The Chromium OS Authors
 - *
 - * This program is free software; you can redistribute it and/or modify
 - * it under the terms of the GNU General Public License as published by
@@ -66,19 +70,17 @@ index 5e0039509368..204738ff6338 100644
 - *
 - * This program is distributed in the hope that it will be useful,
 - * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 - * GNU General Public License for more details.
-- *
-- * You should have received a copy of the GNU General Public License
-- * along with this program. If not, see <http://www.gnu.org/licenses/>.
 - */
 +// SPDX-License-Identifier: GPL-2.0+
-+// Debug logs for the ChromeOS EC
++// Expose the vboot context nvram to userspace
 +//
-+// Copyright (C) 2015 Google, Inc.
++// Copyright (C) 2012 Google, Inc.
++// Copyright (C) 2015 Collabora Ltd.
  
- #include <linux/circ_buf.h>
- #include <linux/debugfs.h>
+ #include <linux/platform_device.h>
+ #include <linux/mfd/cros_ec.h>
 -- 
 2.20.1
 
