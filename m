@@ -4,40 +4,41 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9150C43612
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 04:44:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9549C43612
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 04:45:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 776522089F
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 04:44:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A92B42089F
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 04:45:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546922690;
-	bh=6ob0MKQGzxk8mYibWwfjZnQphFowS7y3JsRIT+9BqXQ=;
+	s=default; t=1546922718;
+	bh=xQc/P7vx7xya8t6opXe7Oq8Ck8XsunNZuzE3auLwQUw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Vp8vD4tey3RuKk1CjBAdafw0Z6lZp8HfBga9s0eClb6SLX3BAX4FP8f9t3x1+a+Xs
-	 9wcyA5Yf2Ke++RP4fazY+4fUBbRthwnQl5EAxO0GjIBwjxyM1d70bHymVhjKDY9Mfs
-	 QdtSAx63DoXcF19Lc8kgzAWBavEbfhQyPIp+5iZU=
+	b=1EIHzupkqEmRyu0sMdfbHNWIaSjuDcFuwaZ4Qg5ZFhTvXR09f8xtXVD0LKiYwgqEQ
+	 K8al5Ru1ZUB6AgVzyI/qFGmKEmI5oTFm2q+0hHR/7XvWwRG+2I5lGQhdwSGCCa0EDq
+	 KQoh0uzB8w8GvNxY+SM0MYhAO+M5hj3wTw7rY1/4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727607AbfAHEot (ORCPT
+        id S1727639AbfAHEpR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 23:44:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52524 "EHLO mail.kernel.org"
+        Mon, 7 Jan 2019 23:45:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52646 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727374AbfAHEot (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 23:44:49 -0500
+        id S1727295AbfAHEpR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 23:45:17 -0500
 Received: from localhost.localdomain (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4CD462087F;
-        Tue,  8 Jan 2019 04:44:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BF5242087F;
+        Tue,  8 Jan 2019 04:45:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546922688;
-        bh=6ob0MKQGzxk8mYibWwfjZnQphFowS7y3JsRIT+9BqXQ=;
+        s=default; t=1546922716;
+        bh=xQc/P7vx7xya8t6opXe7Oq8Ck8XsunNZuzE3auLwQUw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Mf1khbeaHoRq40mNnjpy6rPeI5E52e/Fq3D3gEmE3gJTmI3b4ICzWTnSOu6LiKvL6
-         XtSlBZp+cRgB8KLrk/Gfp+T9VLm58BZVWwtAzJSuRklSFaOvZSjS+VYZNaGMlewLgZ
-         8RHzsAaVfBLs+bc13ova7g48HULeE9xAm8dHA3Ps=
+        b=qqydPi1++5LoKCup+fATgNurvcabf9qr0D//ozxy2aTYMTJSD3a90Qj60AoP5mWu7
+         N4yMEv3pcL712utM7pnk+MZyC5CFEcx0IsVWAM9mMyEN8AdmQwOy+2WS04IT5KRCsK
+         y7dJFqRtigb5VBngpV0mcJO8G62wUBsJR67d9h10=
 From:   Masami Hiramatsu <mhiramat@kernel.org>
 To:     Ingo Molnar <mingo@redhat.com>
 Cc:     Masami Hiramatsu <mhiramat@kernel.org>, peterz@infradead.org,
@@ -45,9 +46,9 @@ Cc:     Masami Hiramatsu <mhiramat@kernel.org>, peterz@infradead.org,
         linux-kernel <linux-kernel@vger.kernel.org>,
         Andrea Righi <righi.andrea@gmail.com>,
         Steven Rostedt <rostedt@goodmis.org>, stable@vger.kernel.org
-Subject: [PATCH v2 1/3] x86/kprobes: Verify stack frame on kretprobe
-Date:   Tue,  8 Jan 2019 13:44:25 +0900
-Message-Id: <154692266533.1133.6910955750800302479.stgit@devbox>
+Subject: [PATCH v2 2/3] kprobes: Mark ftrace mcount handler functions nokprobe
+Date:   Tue,  8 Jan 2019 13:44:54 +0900
+Message-Id: <154692269381.1133.17151202401532686704.stgit@devbox>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <154692263564.1133.17363562046971295490.stgit@devbox>
 References: <154692263564.1133.17363562046971295490.stgit@devbox>
@@ -60,102 +61,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Verify the stack frame pointer on kretprobe trampoline handler,
-If the stack frame pointer does not match, it skips the wrong
-entry and tries to find correct one.
-
-This can happen if user puts the kretprobe on the function
-which can be used in the path of ftrace user-function call.
-Such functions should not be probed, so this adds a warning
-message that reports which function should be blacklisted.
+Mark ftrace mcount handler functions nokprobe since
+probing on these functions with kretprobe pushes
+return address incorrectly on kretprobe shadow stack.
 
 Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+Reported-by: Francis Deslauriers <francis.deslauriers@efficios.com>
 Tested-by: Andrea Righi <righi.andrea@gmail.com>
 Cc: stable@vger.kernel.org
 ---
- arch/x86/kernel/kprobes/core.c |   26 ++++++++++++++++++++++++++
- include/linux/kprobes.h        |    1 +
- 2 files changed, 27 insertions(+)
+ - Changes in v2:
+   Fix to include kprobes.h (Thanks Andrea!)
+---
+ kernel/trace/ftrace.c |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/kernel/kprobes/core.c b/arch/x86/kernel/kprobes/core.c
-index 4ba75afba527..69b6400d1ce2 100644
---- a/arch/x86/kernel/kprobes/core.c
-+++ b/arch/x86/kernel/kprobes/core.c
-@@ -569,6 +569,7 @@ void arch_prepare_kretprobe(struct kretprobe_instance *ri, struct pt_regs *regs)
- 	unsigned long *sara = stack_addr(regs);
+diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
+index f0ff24173a0b..b0774388d52b 100644
+--- a/kernel/trace/ftrace.c
++++ b/kernel/trace/ftrace.c
+@@ -34,6 +34,7 @@
+ #include <linux/list.h>
+ #include <linux/hash.h>
+ #include <linux/rcupdate.h>
++#include <linux/kprobes.h>
  
- 	ri->ret_addr = (kprobe_opcode_t *) *sara;
-+	ri->fp = sara;
+ #include <trace/events/sched.h>
  
- 	/* Replace the return addr with trampoline addr */
- 	*sara = (unsigned long) &kretprobe_trampoline;
-@@ -759,15 +760,21 @@ static __used void *trampoline_handler(struct pt_regs *regs)
- 	unsigned long flags, orig_ret_address = 0;
- 	unsigned long trampoline_address = (unsigned long)&kretprobe_trampoline;
- 	kprobe_opcode_t *correct_ret_addr = NULL;
-+	void *frame_pointer;
-+	bool skipped = false;
+@@ -6250,7 +6251,7 @@ void ftrace_reset_array_ops(struct trace_array *tr)
+ 	tr->ops->func = ftrace_stub;
+ }
  
- 	INIT_HLIST_HEAD(&empty_rp);
- 	kretprobe_hash_lock(current, &head, &flags);
- 	/* fixup registers */
- #ifdef CONFIG_X86_64
- 	regs->cs = __KERNEL_CS;
-+	/* On x86-64, we use pt_regs->sp for return address holder. */
-+	frame_pointer = &regs->sp;
+-static inline void
++static nokprobe_inline void
+ __ftrace_ops_list_func(unsigned long ip, unsigned long parent_ip,
+ 		       struct ftrace_ops *ignored, struct pt_regs *regs)
+ {
+@@ -6310,11 +6311,13 @@ static void ftrace_ops_list_func(unsigned long ip, unsigned long parent_ip,
+ {
+ 	__ftrace_ops_list_func(ip, parent_ip, NULL, regs);
+ }
++NOKPROBE_SYMBOL(ftrace_ops_list_func);
  #else
- 	regs->cs = __KERNEL_CS | get_kernel_rpl();
- 	regs->gs = 0;
-+	/* On x86-32, we use pt_regs->flags for return address holder. */
-+	frame_pointer = &regs->flags;
+ static void ftrace_ops_no_ops(unsigned long ip, unsigned long parent_ip)
+ {
+ 	__ftrace_ops_list_func(ip, parent_ip, NULL, NULL);
+ }
++NOKPROBE_SYMBOL(ftrace_ops_no_ops);
  #endif
- 	regs->ip = trampoline_address;
- 	regs->orig_ax = ~0UL;
-@@ -789,8 +796,25 @@ static __used void *trampoline_handler(struct pt_regs *regs)
- 		if (ri->task != current)
- 			/* another task is sharing our hash bucket */
- 			continue;
-+		/*
-+		 * Return probes must be pushed on this hash list correct
-+		 * order (same as return order) so that it can be poped
-+		 * correctly. However, if we find it is pushed it incorrect
-+		 * order, this means we find a function which should not be
-+		 * probed, because the wrong order entry is pushed on the
-+		 * path of processing other kretprobe itself.
-+		 */
-+		if (ri->fp != frame_pointer) {
-+			if (!skipped)
-+				pr_warn("kretprobe is stacked incorrectly. Trying to fixup.\n");
-+			skipped = true;
-+			continue;
-+		}
  
- 		orig_ret_address = (unsigned long)ri->ret_addr;
-+		if (skipped)
-+			pr_warn("%ps must be blacklisted because of incorrect kretprobe order\n",
-+				ri->rp->kp.addr);
+ /*
+@@ -6341,6 +6344,7 @@ static void ftrace_ops_assist_func(unsigned long ip, unsigned long parent_ip,
+ 	preempt_enable_notrace();
+ 	trace_clear_recursion(bit);
+ }
++NOKPROBE_SYMBOL(ftrace_ops_assist_func);
  
- 		if (orig_ret_address != trampoline_address)
- 			/*
-@@ -808,6 +832,8 @@ static __used void *trampoline_handler(struct pt_regs *regs)
- 		if (ri->task != current)
- 			/* another task is sharing our hash bucket */
- 			continue;
-+		if (ri->fp != frame_pointer)
-+			continue;
- 
- 		orig_ret_address = (unsigned long)ri->ret_addr;
- 		if (ri->rp && ri->rp->handler) {
-diff --git a/include/linux/kprobes.h b/include/linux/kprobes.h
-index e07e91daaacc..72ff78c33033 100644
---- a/include/linux/kprobes.h
-+++ b/include/linux/kprobes.h
-@@ -173,6 +173,7 @@ struct kretprobe_instance {
- 	struct kretprobe *rp;
- 	kprobe_opcode_t *ret_addr;
- 	struct task_struct *task;
-+	void *fp;
- 	char data[0];
- };
- 
+ /**
+  * ftrace_ops_get_func - get the function a trampoline should call
 
