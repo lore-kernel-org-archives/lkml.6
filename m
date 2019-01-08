@@ -2,135 +2,112 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7556AC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 00:43:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B7AFC43444
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 00:46:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35FF7206B7
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 00:43:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 094E32183F
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 00:46:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uDdzQhGg"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k2791II8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727157AbfAHAnF (ORCPT
+        id S1727190AbfAHAqK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 19:43:05 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:43452 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726667AbfAHAnF (ORCPT
+        Mon, 7 Jan 2019 19:46:10 -0500
+Received: from mail-pg1-f175.google.com ([209.85.215.175]:37371 "EHLO
+        mail-pg1-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726667AbfAHAqK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 19:43:05 -0500
-Received: by mail-pf1-f196.google.com with SMTP id w73so998356pfk.10;
-        Mon, 07 Jan 2019 16:43:04 -0800 (PST)
+        Mon, 7 Jan 2019 19:46:10 -0500
+Received: by mail-pg1-f175.google.com with SMTP id c25so910342pgb.4;
+        Mon, 07 Jan 2019 16:46:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=uh6y++QuNYAwaPfmBzU2d4BBPDSSfTlTmyZselgp4qo=;
-        b=uDdzQhGgc/gXXT+6PrSE77KYwE4V8/3wnoml3lG3km0A8CC1+R/En5h4lgHUFIIqP9
-         bUP3pD4tSUb91ZAf7u8dapgVWQ5aCHi7W9a/1qQt+VWcp2bGN/tv+9kSEAL4ZELNpOvj
-         sY0r/DfS5SSf/G5i/xwdod1YdGhWE6Gx5DRG/1yPBTqpUJKwtkBcVb5cHTuj65g1pSv+
-         41Rmr1huydRyvv4utbqAmUbsjzg7C1S8Y3jeKgOYZ7N8oEQQdw6w6c7i73oLL6meC5+y
-         ROaIVvmcnc1lTJaHPtYn9MyI28yOoC2Ab9SUKRbAWS+3oTZSwSUrv7F8YA/5yX7H6YKp
-         ++6g==
+        bh=Snvh6Ow7n3uk2POMbNVXitzrCaFvEq04lk3zzwRJXcM=;
+        b=k2791II8ShxWskzTaqJFueGmHUnsV3hTJ9t40Qse9ilQTsVofbhtEJ94ddNVe9+LpV
+         rtGE3goxE6psxRjGldEhbjdas2sfdqjBmfrOz9WK97Zbgp8N9IE6sI436s/spRDvMUs7
+         jTLFRa4fBUJDqvhS2bMj+Qo+VRhAxc5TEOZCXUNb+34gGIEogLGs2xiOaEy4piYyM0dX
+         dS5hiJ+qH7xH4q3QIZ5DvIfDUZjTPDvXVIs37Ryvx+aYUhejLIa7eI0lPlEqXiYebyYp
+         FWKUFzQAlf9jeupGHGaLZRrZFpe5r2gACvZ8f0JpbC5GySJD7t685Nsr0sRSHhmRkOSf
+         0E3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=uh6y++QuNYAwaPfmBzU2d4BBPDSSfTlTmyZselgp4qo=;
-        b=J3PsThcg6A8WBh+zITEsexM3rTXDZvoODPrmbidrbtnozT03qQ3HqMEczEUn7PXkp8
-         LjRKyx5rMwz6bYIiLuKCQeyFHg0ZXixkXeZSPx4Vr6o8JiaiO5veZgUGpXO0iwr6GaIq
-         F3g93vA4EYKRuYOK0d9Kab85yWWyx7qBbpm+1/AYQJUKYccFaF2A/22DKZmqRSAwHKKb
-         yu+mdjoWNX20ql35A2BPf6MgcXVMQczKppWZ1CwvepUJ49sZEjtBU72Z2b1024ROh3K4
-         4up8KlWL3eGJUVRrKrZ9RSt+zDXqyW/s0o8Bl45/FGOevE2qP0yCDnGDtc46L5aqWn71
-         v15g==
-X-Gm-Message-State: AJcUukf8htw5X/ydOeNepn6L9jjF0lzsUlsaiA9J94baqLbgjTaFcs+l
-        35RKwQMQaMPho46oLcYuF64=
-X-Google-Smtp-Source: ALg8bN64PSnqCc1R4s4ZZe86cF3pjja4HOnqcU8P09KcCGzkIzsFYSzihcAO6t3Woi0zTd8aVmSuQQ==
-X-Received: by 2002:a63:fa58:: with SMTP id g24mr12495112pgk.390.1546908184267;
-        Mon, 07 Jan 2019 16:43:04 -0800 (PST)
-Received: from mail.google.com ([207.246.99.41])
-        by smtp.gmail.com with ESMTPSA id y5sm122211088pge.49.2019.01.07.16.43.01
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 07 Jan 2019 16:43:03 -0800 (PST)
-Date:   Tue, 8 Jan 2019 08:42:57 +0800
-From:   Changbin Du <changbin.du@gmail.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Changbin Du <changbin.du@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [GIT PULL 2/4] Kbuild updates for v4.21 part2
-Message-ID: <20190108004255.tq2fffkbxffrzsv3@mail.google.com>
-References: <CAK7LNARQggM3aKEPRKJqa4tunFAfmfErMZuS-rrnRv6UB1VpPQ@mail.gmail.com>
- <CAHk-=wiLt3rgeyM3BWAd5VJrKcnxxuHybwoQiDGMgyspo6oXDg@mail.gmail.com>
- <CAK7LNASpO86yNe4BWBYnfd+r82=d_ofxYybLi_aM+4+dgf46+A@mail.gmail.com>
+        bh=Snvh6Ow7n3uk2POMbNVXitzrCaFvEq04lk3zzwRJXcM=;
+        b=dgs9V8wl8MiQWSPYa1xNMqwFoNrNAHlzDdzw4xR7Wzeu6t96f0ErmdEZRdZ1Fp92ME
+         X50LAykSKBcJl1nW/8g7fPJRRyzRII+zgkXH3+rkVq0B7pupSKU8HCRp4a1KBTnrsbU+
+         1BA+C+zdTha9JZecUl6XFid/FNGpQSlROFFwvNS3QTc8/kzdgyHOfOgiR5/n35YBtO65
+         gBv5L/NYaO/s/P24oNinCNsAuQXTmXu2Gcyl/uN0ebMwTCCXbUkx5k/N9epOhCou6rRE
+         ASjDEBaDrH1cJZQI2muS+Dfu4PFjmCxTEBTUYMjPCIV0bAXx7BiEV4xZxWXJL3pnQZsp
+         EPxQ==
+X-Gm-Message-State: AJcUukdC8sNxtaxP1sCkQ1u+pKNR8cDkIq3NAY45BYZh0pOYwuLUgAZf
+        1+mBUW4DIagI8PJ4bl7zEI8=
+X-Google-Smtp-Source: ALg8bN7FwyZJ+F8saacMoC6xj3PEZJIeLQtbbJHC4h+w/z0VHqR6O8Rn+Ysbbg76HUWDrLX+w9rF/Q==
+X-Received: by 2002:a63:db48:: with SMTP id x8mr12397898pgi.365.1546908368876;
+        Mon, 07 Jan 2019 16:46:08 -0800 (PST)
+Received: from icarus ([2001:268:c0a3:b52b:e409:8f0c:a3eb:73df])
+        by smtp.gmail.com with ESMTPSA id v190sm97819675pfv.26.2019.01.07.16.46.02
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 07 Jan 2019 16:46:08 -0800 (PST)
+Date:   Tue, 8 Jan 2019 09:46:32 +0900
+From:   William Breathitt Gray <vilhelm.gray@gmail.com>
+To:     Patrick Havelange <patrick.havelange@essensium.com>,
+        Jonathan Cameron <jic23@kernel.org>, gregkh@linuxfoundation.org
+Cc:     linux-iio@vger.kernel.org, fabrice.gasnier@st.com,
+        benjamin.gaignard@st.com, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
+        akpm@linux-foundation.org
+Subject: Re: New IIO/counter driver
+Message-ID: <20190108004632.GA3247@icarus>
+References: <CAKKE0ZHmODzhvjPNJFVgT2cF_F=f2kNKr5K_CGP+0XgA5XZokw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAK7LNASpO86yNe4BWBYnfd+r82=d_ofxYybLi_aM+4+dgf46+A@mail.gmail.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <CAKKE0ZHmODzhvjPNJFVgT2cF_F=f2kNKr5K_CGP+0XgA5XZokw@mail.gmail.com>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 07, 2019 at 01:32:56PM +0900, Masahiro Yamada wrote:
-> (+CC Changbin Du, Arnd Bergmann)
+On Mon, Jan 07, 2019 at 02:45:37PM +0100, Patrick Havelange wrote:
+> Hello,
 > 
+> I'm in the process of adding a new IIO/counter driver, however I also saw
+> that there was a work in progress to have a separate counter subsystem (
+> https://marc.info/?l=linux-iio&m=153974167727206 ). But it seems there is
+> no recent progress on it.
+> What is the state of those patches ? Is it still interesting to develop the
+> driver as an IIO/counter , or should I use already that new subsystem ?
 > 
+> Best Regards,
 > 
-[...]
-> > This branch already added a couple of extra inline markers just to
-> > make code work reasonably. How many tens (or hundreds) got missed just
-> > because the build still works, but the lack of inlining means that we
-> > generate completely garbage code?
-> 
-> 
-> I do not have the exact number, but
-> my impression was "not so many".
-> 
-> Changbin and Arnd might have better insight.
-> They were trying to eliminate potential problems beforehand.
-> 
-> For example,
-> 7e17916b
-> 412dd15c
-> 08813e0e
-> 
-Yes, the case is not so many. At the beginning, I also thought this could
-require incredible change. But after trying, just found it is not so bad. I have
-a couple of patches to fix the remaing warnings which adds 'inline' or '_init'
-markers for related functions.
+> Patrick Havelange.
 
-I promise that all warnings get fixed with new version. And since I only have
-coressponding setup to fully test x86 and ARM platform, I think we could make
-this new option depend on x86 or arm temparaly so untested platforms will
-not complain anymore.
+Hello,
 
-Linus, is this good for you? Thank you for revewing.
+I am still open to merging this patchset and maintaining the Counter
+subsystem. However, I took the lack of response for my latest
+submission to indicate a loss of interest in this patchset's approach.
+If there are still people who want this, I can rebase and resend this
+patchset for submission; the past few versions have primarily been code
+clarity and documentation changes so I believe the core design itself is
+somewhat stable now.
 
-> 
-> 
-> 
-> > I'm going to skip this pull request.
-> >
-> > We have basically always required a certain level of competence from
-> > the compiler, and this basically says that the compiler can do stupid
-> > things and we'd have to fix those stupidities by hand.
-> >
-> >              Linus
-> 
-> 
-> 
-> -- 
-> Best Regards
-> Masahiro Yamada
+Just let me know how best to proceed and I shall be happy to oblige --
+whether to continue maintaining this patchset or to drop this design in
+favor of improving the existing IIO Counter code in the kernel.
 
--- 
-Cheers,
-Changbin Du
+I'll CC those from the patchset submission to keep them in the loop.
+
+Sincerely,
+
+William Breathitt Gray
