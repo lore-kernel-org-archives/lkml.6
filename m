@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64938C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 14:08:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37AD4C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 14:08:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 394A4206BB
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 14:08:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0E093206C0
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 14:08:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729001AbfAHOIY (ORCPT
+        id S1729021AbfAHOI0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 09:08:24 -0500
-Received: from foss.arm.com ([217.140.101.70]:52256 "EHLO foss.arm.com"
+        Tue, 8 Jan 2019 09:08:26 -0500
+Received: from foss.arm.com ([217.140.101.70]:52272 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728636AbfAHOIV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 09:08:21 -0500
+        id S1728996AbfAHOIY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 09:08:24 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4F5B71688;
-        Tue,  8 Jan 2019 06:08:21 -0800 (PST)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8705E15AB;
+        Tue,  8 Jan 2019 06:08:23 -0800 (PST)
 Received: from e112298-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 30A0B3F70D;
-        Tue,  8 Jan 2019 06:08:19 -0800 (PST)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 8B0D23F70D;
+        Tue,  8 Jan 2019 06:08:21 -0800 (PST)
 From:   Julien Thierry <julien.thierry@arm.com>
 To:     linux-arm-kernel@lists.infradead.org
 Cc:     linux-kernel@vger.kernel.org, daniel.thompson@linaro.org,
         joel@joelfernandes.org, marc.zyngier@arm.com,
         christoffer.dall@arm.com, james.morse@arm.com,
         catalin.marinas@arm.com, will.deacon@arm.com, mark.rutland@arm.com,
-        Julien Thierry <julien.thierry@arm.com>,
-        kvmarm@lists.cs.columbia.edu
-Subject: [PATCH v8 10/26] arm64: kvm: Unmask PMR before entering guest
-Date:   Tue,  8 Jan 2019 14:07:28 +0000
-Message-Id: <1546956464-48825-11-git-send-email-julien.thierry@arm.com>
+        Julien Thierry <julien.thierry@arm.com>
+Subject: [PATCH v8 11/26] efi: Let architectures decide the flags that should be saved/restored
+Date:   Tue,  8 Jan 2019 14:07:29 +0000
+Message-Id: <1546956464-48825-12-git-send-email-julien.thierry@arm.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1546956464-48825-1-git-send-email-julien.thierry@arm.com>
 References: <1546956464-48825-1-git-send-email-julien.thierry@arm.com>
@@ -44,94 +43,89 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Interrupts masked by ICC_PMR_EL1 will not be signaled to the CPU. This
-means that hypervisor will not receive masked interrupts while running a
-guest.
+Currently, irqflags are saved before calling runtime services and
+checked for mismatch on return.
 
-Avoid this by making sure ICC_PMR_EL1 is unmasked when we enter a guest.
+Provide a pair of overridable macros to save and restore (if needed) the
+state that need to be preserved on return from a runtime service.
+This allows to check for flags that are not necesarly related to
+irqflags.
 
 Signed-off-by: Julien Thierry <julien.thierry@arm.com>
-Cc: Christoffer Dall <christoffer.dall@arm.com>
-Cc: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: kvmarm@lists.cs.columbia.edu
 ---
- arch/arm64/include/asm/kvm_host.h | 12 ++++++++++++
- arch/arm64/kvm/hyp/switch.c       | 16 ++++++++++++++++
- 2 files changed, 28 insertions(+)
+ drivers/firmware/efi/runtime-wrappers.c | 17 +++++++++++++++--
+ include/linux/efi.h                     |  5 +++--
+ 2 files changed, 18 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
-index 7732d0b..a1f9f55 100644
---- a/arch/arm64/include/asm/kvm_host.h
-+++ b/arch/arm64/include/asm/kvm_host.h
-@@ -24,6 +24,7 @@
+diff --git a/drivers/firmware/efi/runtime-wrappers.c b/drivers/firmware/efi/runtime-wrappers.c
+index 8903b9c..2f4b68b 100644
+--- a/drivers/firmware/efi/runtime-wrappers.c
++++ b/drivers/firmware/efi/runtime-wrappers.c
+@@ -89,11 +89,24 @@
+ 	efi_rts_work.status;						\
+ })
  
- #include <linux/types.h>
- #include <linux/kvm_types.h>
-+#include <asm/arch_gicv3.h>
- #include <asm/cpufeature.h>
- #include <asm/daifflags.h>
- #include <asm/fpsimd.h>
-@@ -474,6 +475,17 @@ static inline int kvm_arch_vcpu_run_pid_change(struct kvm_vcpu *vcpu)
- static inline void kvm_arm_vhe_guest_enter(void)
++#ifndef arch_efi_save_flags
++#define arch_efi_save_flags(state_flags)	local_save_flags(state_flags)
++#define arch_efi_restore_flags(state_flags)	local_irq_restore(state_flags)
++#endif
++
++inline unsigned long efi_call_virt_save_flags(void)
++{
++	unsigned long flags;
++
++	arch_efi_save_flags(flags);
++	return flags;
++}
++
+ void efi_call_virt_check_flags(unsigned long flags, const char *call)
  {
- 	local_daif_mask();
-+
-+	/*
-+	 * Having IRQs masked via PMR when entering the guest means the GIC
-+	 * will not signal the CPU of interrupts of lower priority, and the
-+	 * only way to get out will be via guest exceptions.
-+	 * Naturally, we want to avoid this.
-+	 */
-+	if (system_uses_irq_prio_masking()) {
-+		gic_write_pmr(GIC_PRIO_IRQON);
-+		dsb(sy);
-+	}
+ 	unsigned long cur_flags, mismatch;
+ 
+-	local_save_flags(cur_flags);
++	cur_flags = efi_call_virt_save_flags();
+ 
+ 	mismatch = flags ^ cur_flags;
+ 	if (!WARN_ON_ONCE(mismatch & ARCH_EFI_IRQ_FLAGS_MASK))
+@@ -102,7 +115,7 @@ void efi_call_virt_check_flags(unsigned long flags, const char *call)
+ 	add_taint(TAINT_FIRMWARE_WORKAROUND, LOCKDEP_NOW_UNRELIABLE);
+ 	pr_err_ratelimited(FW_BUG "IRQ flags corrupted (0x%08lx=>0x%08lx) by EFI %s\n",
+ 			   flags, cur_flags, call);
+-	local_irq_restore(flags);
++	arch_efi_restore_flags(flags);
  }
  
- static inline void kvm_arm_vhe_guest_exit(void)
-diff --git a/arch/arm64/kvm/hyp/switch.c b/arch/arm64/kvm/hyp/switch.c
-index b0b1478..6a4c2d6 100644
---- a/arch/arm64/kvm/hyp/switch.c
-+++ b/arch/arm64/kvm/hyp/switch.c
-@@ -22,6 +22,7 @@
+ /*
+diff --git a/include/linux/efi.h b/include/linux/efi.h
+index 45ff763..bd80b7e 100644
+--- a/include/linux/efi.h
++++ b/include/linux/efi.h
+@@ -1607,6 +1607,7 @@ efi_status_t efi_setup_gop(efi_system_table_t *sys_table_arg,
  
- #include <kvm/arm_psci.h>
+ bool efi_runtime_disabled(void);
+ extern void efi_call_virt_check_flags(unsigned long flags, const char *call);
++extern unsigned long efi_call_virt_save_flags(void);
  
-+#include <asm/arch_gicv3.h>
- #include <asm/cpufeature.h>
- #include <asm/kvm_asm.h>
- #include <asm/kvm_emulate.h>
-@@ -521,6 +522,17 @@ int __hyp_text __kvm_vcpu_run_nvhe(struct kvm_vcpu *vcpu)
- 	struct kvm_cpu_context *guest_ctxt;
- 	u64 exit_code;
- 
-+	/*
-+	 * Having IRQs masked via PMR when entering the guest means the GIC
-+	 * will not signal the CPU of interrupts of lower priority, and the
-+	 * only way to get out will be via guest exceptions.
-+	 * Naturally, we want to avoid this.
-+	 */
-+	if (system_uses_irq_prio_masking()) {
-+		gic_write_pmr(GIC_PRIO_IRQON);
-+		dsb(sy);
-+	}
-+
- 	vcpu = kern_hyp_va(vcpu);
- 
- 	host_ctxt = kern_hyp_va(vcpu->arch.host_cpu_context);
-@@ -573,6 +585,10 @@ int __hyp_text __kvm_vcpu_run_nvhe(struct kvm_vcpu *vcpu)
- 	 */
- 	__debug_switch_to_host(vcpu);
- 
-+	/* Returning to host will clear PSR.I, remask PMR if needed */
-+	if (system_uses_irq_prio_masking())
-+		gic_write_pmr(GIC_PRIO_IRQOFF);
-+
- 	return exit_code;
- }
- 
+ enum efi_secureboot_mode {
+ 	efi_secureboot_mode_unset,
+@@ -1652,7 +1653,7 @@ enum efi_secureboot_mode {
+ 									\
+ 	arch_efi_call_virt_setup();					\
+ 									\
+-	local_save_flags(__flags);					\
++	__flags = efi_call_virt_save_flags();				\
+ 	__s = arch_efi_call_virt(p, f, args);				\
+ 	efi_call_virt_check_flags(__flags, __stringify(f));		\
+ 									\
+@@ -1667,7 +1668,7 @@ enum efi_secureboot_mode {
+ 									\
+ 	arch_efi_call_virt_setup();					\
+ 									\
+-	local_save_flags(__flags);					\
++	__flags = efi_call_virt_save_flags();				\
+ 	arch_efi_call_virt(p, f, args);					\
+ 	efi_call_virt_check_flags(__flags, __stringify(f));		\
+ 									\
 -- 
 1.9.1
 
