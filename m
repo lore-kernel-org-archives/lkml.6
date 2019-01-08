@@ -2,439 +2,277 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8E9CC43612
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 09:16:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D0C6C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 09:16:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9FA442183F
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 09:16:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EBF922089F
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 09:16:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="lMGGq/1/"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="WEUpEx40"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728389AbfAHJQJ (ORCPT
+        id S1728404AbfAHJQN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 04:16:09 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:44789 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728356AbfAHJQH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 04:16:07 -0500
-Received: by mail-ed1-f67.google.com with SMTP id y56so3434478edd.11
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jan 2019 01:16:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=tYduuyLykfVkK02cpHVrshV0EAassw2QUbxst2VbhOo=;
-        b=lMGGq/1/+RrKG+Y5iaA+D1X2h4tWmXYaeKoUan2/+LY4VCG52v/a/N8FhFabzjD/aZ
-         6RUMHAabT3uwztPOYb32kL576UldulvYC3r+ev8KBIlfg9QFJYx+ZmyokTy7dKnHKdcI
-         AL3qnndA/2nVB631bAQCMRjGXtjJ4+qgF7BdZiK/VkqxaPoj79RjL+6bjRcCX38gA6Px
-         DiNzE0VNeFKanncYsZOm7KK0su6rc/vjolE7NE40n6QxCtfMrI7WfGpKhg3w4p3IUXIZ
-         8Xo0lARxBwv0BQIltA4C+lBvD1azWXt0wHjV6n84EEh5xFbXW8wCwPMgBMjv4LAcDuW6
-         90rw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=tYduuyLykfVkK02cpHVrshV0EAassw2QUbxst2VbhOo=;
-        b=E7d3Ubsfkdh7cCgprwdDlE7gwYBlyKOSVCb8vIpnoXuuD0l1kFgDeZjSiOz5LcXmDe
-         fxM1JixtmSm66Dydo1PelCqWufG/fzeFz6vUxoeJewXVFiB8yGBDKZeork3sZBrwyazw
-         VvSpwIY+wuMyBos/ZIawzbUSAtylGBqYwstjanGfWHQa9ks/b0Hh3Oc18aYNzFPDJ3TQ
-         WDycuJ9i7uPWJtCUSV+kShBEJrWHhDkw3txA4ncqcJsW4cbklz3kqcu7DNMHxrsIGl0q
-         swMPFTEb7dHt8akxdDuGL6H0oQxWeihwHDZHvEGRyqelEMlnUvHNTeFpORdcjezpgD5z
-         zl2Q==
-X-Gm-Message-State: AJcUukeyWpA400RYSfvq8cUUpsEvv2dWGk3v+Q0KYZutzLej/7Z81Cbm
-        8BMoMx46qCtVQDBjST2deUkvTQ==
-X-Google-Smtp-Source: ALg8bN7EBiqcXgy8zu4HyKYCXHdhSNO6sw6k4tpeRnsjRlFlsQIaCJc98mEtHhWPY6DIkqmj3wqeDg==
-X-Received: by 2002:a05:6402:1347:: with SMTP id y7mr1309667edw.114.1546938964858;
-        Tue, 08 Jan 2019 01:16:04 -0800 (PST)
-Received: from debian-brgl.home ([2a01:cb1d:af:5b00:6d6c:8493:1ab5:dad7])
-        by smtp.gmail.com with ESMTPSA id gp22-v6sm18373560ejb.4.2019.01.08.01.16.03
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 08 Jan 2019 01:16:04 -0800 (PST)
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-i2c@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [RESEND PATCH 12/12] eeprom: at24: remove at24_platform_data
-Date:   Tue,  8 Jan 2019 10:15:39 +0100
-Message-Id: <20190108091539.16674-13-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190108091539.16674-1-brgl@bgdev.pl>
-References: <20190108091539.16674-1-brgl@bgdev.pl>
+        Tue, 8 Jan 2019 04:16:13 -0500
+Received: from mail-eopbgr00067.outbound.protection.outlook.com ([40.107.0.67]:52899
+        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728366AbfAHJQK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 04:16:10 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=fVmlZpVpat/Q5WpWQbgzkW94soesUoPMPXmcrNZjAWs=;
+ b=WEUpEx40nBF1xmFqk9NoNdkAAet9faMDGc4F+9au6nakS25TaOyqC9PKRaX3+SoOW/HmJGp3hQ4fVxpWXWo7D1+9j23gEaoesLJKcAALpfoRepZVkQg+zVOREKNHlVJsFtpYKK0k/q8yQhsNJYhep0ECIE9Vbf/kmZPAfQ7qKYs=
+Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com (52.134.72.18) by
+ DB3PR0402MB3787.eurprd04.prod.outlook.com (52.134.73.25) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1495.7; Tue, 8 Jan 2019 09:16:04 +0000
+Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com
+ ([fe80::59d2:55a0:dbe3:2a97]) by DB3PR0402MB3916.eurprd04.prod.outlook.com
+ ([fe80::59d2:55a0:dbe3:2a97%6]) with mapi id 15.20.1495.011; Tue, 8 Jan 2019
+ 09:16:04 +0000
+From:   Anson Huang <anson.huang@nxp.com>
+To:     "jic23@kernel.org" <jic23@kernel.org>,
+        "knaack.h@gmx.de" <knaack.h@gmx.de>,
+        "lars@metafoo.de" <lars@metafoo.de>,
+        "pmeerw@pmeerw.net" <pmeerw@pmeerw.net>,
+        "rtresidd@electromag.com.au" <rtresidd@electromag.com.au>,
+        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     dl-linux-imx <linux-imx@nxp.com>
+Subject: [PATCH V7] iio: magnetometer: mag3110: add vdd/vddio regulator
+ operation support
+Thread-Topic: [PATCH V7] iio: magnetometer: mag3110: add vdd/vddio regulator
+ operation support
+Thread-Index: AQHUpzLHxhHxIt0idk61kdQPBHQnuw==
+Date:   Tue, 8 Jan 2019 09:16:04 +0000
+Message-ID: <1546938681-27028-1-git-send-email-Anson.Huang@nxp.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: git-send-email 2.7.4
+x-clientproxiedby: HK2PR04CA0060.apcprd04.prod.outlook.com
+ (2603:1096:202:14::28) To DB3PR0402MB3916.eurprd04.prod.outlook.com
+ (2603:10a6:8:10::18)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=anson.huang@nxp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [119.31.174.66]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DB3PR0402MB3787;6:wfpNIk/1qs5QTNzlXyThKp68VDMt8BR7hqzCx67dDbYUwwWyET8XN2Tlw/WhttFH7KKX484t2qYlrrJ6DKcXoaG+O5Y3nH5uJetEzjEvlFo45dqMPCWDZsFnLLnSYTW/2IzJjgajU/BEsSiaA+fFAzV3yRWkvVsA0hmchhDZNYEz+1AusLWA/fFPuKZm/Sc2naUXWUwCsbwN1hCo5xqsyddccuRLVE9cljf2aABIIz8pPXFCSHF1SLJvrCwmgK8YCa2iB1SJ39xe/gTyO2uazFTZ0ipXZKc+I0x6OZbbpKNVKynSH8BVs88ttAbauE+LBKnNc/kxZ/yURjIBMRHDJYAiahdfbjsMklS2LAEEI11Gm5ij71QVJ1FxqmRD1lpRrYsUqZzObZX+aR97Mtik+Ht1RBG95Dw5Q5iiCkvbNFqfTp7+eCgw55soUW0xg9PzpwUnaG9pQPBqrq8WkpBKvw==;5:Det+hIn7wgQmtauBhPu9dXhbI9bqAHSu9knSElsQpHDOl0BIOqEdjT8mYcgnBOQlFuOb34sKMq6TrE2sAW4/l4eCoFS8P4/Ki9oe5FW6qa0fKop+jmjGTZKAp4LHXZ3dFRBXA4V5fJPrS7bwfs0kTKKCDsIa5txQwke9vDamcIndm/aad7dSAsu3pbxVh3igne3TTxneS+7i//tnrSuYkA==;7:evFbxBXEJhMC4J1FKJicPvKInhTkpYvzClJj47shwcpdsPiP0mq/G/z9QT57fkgpMJEprubqAiPk9Kb+4C0tvDbIykLFPWV/+NGpotFhT1BYfuJEZ6Ur2omMU6PXiMzTr9GCBVWb73CDSgAspazkKw==
+x-ms-office365-filtering-correlation-id: 4c701cd5-309e-42cb-1f12-08d67549ea2b
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:DB3PR0402MB3787;
+x-ms-traffictypediagnostic: DB3PR0402MB3787:
+x-microsoft-antispam-prvs: <DB3PR0402MB3787F1A17677BEA84B9F2470F58A0@DB3PR0402MB3787.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(908002)(999002)(5005026)(6040522)(8220060)(2401047)(8121501046)(10201501046)(3002001)(3231475)(944501520)(52105112)(93006095)(93001095)(6055026)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:DB3PR0402MB3787;BCL:0;PCL:0;RULEID:;SRVR:DB3PR0402MB3787;
+x-forefront-prvs: 0911D5CE78
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(366004)(376002)(39860400002)(346002)(396003)(54534003)(199004)(189003)(8936002)(6436002)(50226002)(68736007)(6486002)(110136005)(81166006)(36756003)(106356001)(66066001)(105586002)(86362001)(14444005)(256004)(97736004)(476003)(2616005)(99286004)(2201001)(305945005)(52116002)(102836004)(478600001)(186003)(53936002)(486006)(2501003)(7736002)(14454004)(6116002)(71190400001)(71200400001)(316002)(81156014)(8676002)(3846002)(6506007)(386003)(4326008)(26005)(25786009)(6512007)(5660300001)(2906002);DIR:OUT;SFP:1101;SCL:1;SRVR:DB3PR0402MB3787;H:DB3PR0402MB3916.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: 27SqnCaC8yjSCpi+muPr6oq8BiyCSuPa+tBVT40IBir/TIMs3PYcaefGzcjM9IhlKUdWaVbW+P+kFdK7IsGarGlc3QVVuK9gtabE19y2H0zziDe+5xouzhOMcNbcIg7scLTm2wC5m4hqLlrBCf6kzrGCHICsnezIEQn30f6wu/Th5eQ9PVPWwlYyIPmGDKiquRImFHZia5cmSYLyj/BadZ+pAW9e0gq4FXZWzymKpOH1vgoT2OelkSJRFBBptc4JHNpO+PkeRzOEASF/RhdAGkMCVs6iyfBNz+Fymq51XczBssekEZBWTaIyP2IP9r1k
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4c701cd5-309e-42cb-1f12-08d67549ea2b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Jan 2019 09:16:01.1710
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR0402MB3787
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+The magnetometer's power supplies could be controllable on some platforms,
+such as i.MX6Q-SABRESD board, the mag3110's power supplies are controlled
+by a GPIO fixed regulator, need to make sure the regulators are enabled
+before any communication with mag3110, this patch adds vdd/vddio regulator
+operation support.
 
-There are no more users of at24_platform_data. Remove the relevant
-header and modify the driver code to not use it anymore.
-
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 ---
- MAINTAINERS                        |   1 -
- drivers/misc/eeprom/at24.c         | 162 +++++++++++++----------------
- include/linux/platform_data/at24.h |  60 -----------
- 3 files changed, 75 insertions(+), 148 deletions(-)
- delete mode 100644 include/linux/platform_data/at24.h
+ChangeLog Since V6:
+  - separate the error handling of regulators get to make code easy to read=
+.
+---
+ drivers/iio/magnetometer/mag3110.c | 94 ++++++++++++++++++++++++++++++++++=
+----
+ 1 file changed, 86 insertions(+), 8 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 32d444476a90..767c1e0e5cf7 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -2503,7 +2503,6 @@ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git
- S:	Maintained
- F:	Documentation/devicetree/bindings/eeprom/at24.txt
- F:	drivers/misc/eeprom/at24.c
--F:	include/linux/platform_data/at24.h
- 
- ATA OVER ETHERNET (AOE) DRIVER
- M:	"Ed L. Cashin" <ed.cashin@acm.org>
-diff --git a/drivers/misc/eeprom/at24.c b/drivers/misc/eeprom/at24.c
-index ddfcf4ade7bf..b806a403ca46 100644
---- a/drivers/misc/eeprom/at24.c
-+++ b/drivers/misc/eeprom/at24.c
-@@ -22,10 +22,24 @@
- #include <linux/i2c.h>
- #include <linux/nvmem-provider.h>
- #include <linux/regmap.h>
--#include <linux/platform_data/at24.h>
- #include <linux/pm_runtime.h>
- #include <linux/gpio/consumer.h>
- 
-+/* Address pointer is 16 bit. */
-+#define AT24_FLAG_ADDR16	BIT(7)
-+/* sysfs-entry will be read-only. */
-+#define AT24_FLAG_READONLY	BIT(6)
-+/* sysfs-entry will be world-readable. */
-+#define AT24_FLAG_IRUGO		BIT(5)
-+/* Take always 8 addresses (24c00). */
-+#define AT24_FLAG_TAKE8ADDR	BIT(4)
-+/* Factory-programmed serial number. */
-+#define AT24_FLAG_SERIAL	BIT(3)
-+/* Factory-programmed mac address. */
-+#define AT24_FLAG_MAC		BIT(2)
-+/* Does not auto-rollover reads to the next slave address. */
-+#define AT24_FLAG_NO_RDROL	BIT(1)
-+
- /*
-  * I2C EEPROMs from most vendors are inexpensive and mostly interchangeable.
-  * Differences between different vendor product lines (like Atmel AT24C or
-@@ -107,10 +121,6 @@ module_param_named(write_timeout, at24_write_timeout, uint, 0);
- MODULE_PARM_DESC(at24_write_timeout, "Time (in ms) to try writes (default 25)");
- 
- struct at24_chip_data {
--	/*
--	 * these fields mirror their equivalents in
--	 * struct at24_platform_data
--	 */
- 	u32 byte_len;
- 	u8 flags;
+diff --git a/drivers/iio/magnetometer/mag3110.c b/drivers/iio/magnetometer/=
+mag3110.c
+index f063355..dd990cd 100644
+--- a/drivers/iio/magnetometer/mag3110.c
++++ b/drivers/iio/magnetometer/mag3110.c
+@@ -20,6 +20,7 @@
+ #include <linux/iio/buffer.h>
+ #include <linux/iio/triggered_buffer.h>
+ #include <linux/delay.h>
++#include <linux/regulator/consumer.h>
+=20
+ #define MAG3110_STATUS 0x00
+ #define MAG3110_OUT_X 0x01 /* MSB first */
+@@ -56,6 +57,8 @@ struct mag3110_data {
+ 	struct mutex lock;
+ 	u8 ctrl_reg1;
+ 	int sleep_val;
++	struct regulator *vdd_reg;
++	struct regulator *vddio_reg;
  };
-@@ -471,63 +481,11 @@ static int at24_write(void *priv, unsigned int off, void *val, size_t count)
- 	return 0;
- }
- 
--static void at24_properties_to_pdata(struct device *dev,
--				     struct at24_platform_data *chip)
--{
--	int err;
--	u32 val;
--
--	if (device_property_present(dev, "read-only"))
--		chip->flags |= AT24_FLAG_READONLY;
--	if (device_property_present(dev, "no-read-rollover"))
--		chip->flags |= AT24_FLAG_NO_RDROL;
--
--	err = device_property_read_u32(dev, "address-width", &val);
--	if (!err) {
--		switch (val) {
--		case 8:
--			if (chip->flags & AT24_FLAG_ADDR16)
--				dev_warn(dev, "Override address width to be 8, while default is 16\n");
--			chip->flags &= ~AT24_FLAG_ADDR16;
--			break;
--		case 16:
--			chip->flags |= AT24_FLAG_ADDR16;
--			break;
--		default:
--			dev_warn(dev, "Bad \"address-width\" property: %u\n",
--				 val);
--		}
--	}
--
--	err = device_property_read_u32(dev, "size", &val);
--	if (!err)
--		chip->byte_len = val;
--
--	err = device_property_read_u32(dev, "pagesize", &val);
--	if (!err) {
--		chip->page_size = val;
--	} else {
--		/*
--		 * This is slow, but we can't know all eeproms, so we better
--		 * play safe. Specifying custom eeprom-types via platform_data
--		 * is recommended anyhow.
--		 */
--		chip->page_size = 1;
--	}
--}
--
--static int at24_get_pdata(struct device *dev, struct at24_platform_data *pdata)
-+static const struct at24_chip_data *at24_get_chip_data(struct device *dev)
- {
- 	struct device_node *of_node = dev->of_node;
- 	const struct at24_chip_data *cdata;
- 	const struct i2c_device_id *id;
--	struct at24_platform_data *pd;
--
--	pd = dev_get_platdata(dev);
--	if (pd) {
--		memcpy(pdata, pd, sizeof(*pdata));
--		return 0;
--	}
- 
- 	id = i2c_match_id(at24_ids, to_i2c_client(dev));
- 
-@@ -544,13 +502,9 @@ static int at24_get_pdata(struct device *dev, struct at24_platform_data *pdata)
- 		cdata = acpi_device_get_match_data(dev);
- 
- 	if (!cdata)
+=20
+ static int mag3110_request(struct mag3110_data *data)
+@@ -469,17 +472,50 @@ static int mag3110_probe(struct i2c_client *client,
+ 	struct iio_dev *indio_dev;
+ 	int ret;
+=20
+-	ret =3D i2c_smbus_read_byte_data(client, MAG3110_WHO_AM_I);
+-	if (ret < 0)
+-		return ret;
+-	if (ret !=3D MAG3110_DEVICE_ID)
 -		return -ENODEV;
-+		return ERR_PTR(-ENODEV);
- 
--	pdata->byte_len = cdata->byte_len;
--	pdata->flags = cdata->flags;
--	at24_properties_to_pdata(dev, pdata);
 -
--	return 0;
-+	return cdata;
- }
- 
- static void at24_remove_dummy_clients(struct at24_data *at24)
-@@ -619,7 +573,8 @@ static int at24_probe(struct i2c_client *client)
- {
- 	struct regmap_config regmap_config = { };
- 	struct nvmem_config nvmem_config = { };
--	struct at24_platform_data pdata = { };
-+	u32 byte_len, page_size, flags, addrw;
-+	const struct at24_chip_data *cdata;
- 	struct device *dev = &client->dev;
- 	bool i2c_fn_i2c, i2c_fn_block;
- 	unsigned int i, num_addresses;
-@@ -634,35 +589,72 @@ static int at24_probe(struct i2c_client *client)
- 	i2c_fn_block = i2c_check_functionality(client->adapter,
- 					       I2C_FUNC_SMBUS_WRITE_I2C_BLOCK);
- 
--	err = at24_get_pdata(dev, &pdata);
-+	cdata = at24_get_chip_data(dev);
-+	if (IS_ERR(cdata))
-+		return PTR_ERR(cdata);
+ 	indio_dev =3D devm_iio_device_alloc(&client->dev, sizeof(*data));
+ 	if (!indio_dev)
+ 		return -ENOMEM;
+=20
+ 	data =3D iio_priv(indio_dev);
 +
-+	err = device_property_read_u32(dev, "pagesize", &page_size);
- 	if (err)
--		return err;
-+		/*
-+		 * This is slow, but we can't know all eeproms, so we better
-+		 * play safe. Specifying custom eeprom-types via platform_data
-+		 * is recommended anyhow.
-+		 */
-+		page_size = 1;
++	data->vdd_reg =3D devm_regulator_get(&client->dev, "vdd");
++	if (IS_ERR(data->vdd_reg)) {
++		if (PTR_ERR(data->vdd_reg) =3D=3D -EPROBE_DEFER)
++			return -EPROBE_DEFER;
 +
-+	flags = cdata->flags;
-+	if (device_property_present(dev, "read-only"))
-+		flags |= AT24_FLAG_READONLY;
-+	if (device_property_present(dev, "no-read-rollover"))
-+		flags |= AT24_FLAG_NO_RDROL;
-+
-+	err = device_property_read_u32(dev, "address-width", &addrw);
-+	if (!err) {
-+		switch (addrw) {
-+		case 8:
-+			if (flags & AT24_FLAG_ADDR16)
-+				dev_warn(dev,
-+					 "Override address width to be 8, while default is 16\n");
-+			flags &= ~AT24_FLAG_ADDR16;
-+			break;
-+		case 16:
-+			flags |= AT24_FLAG_ADDR16;
-+			break;
-+		default:
-+			dev_warn(dev, "Bad \"address-width\" property: %u\n",
-+				 addrw);
-+		}
++		dev_err(&client->dev, "failed to get VDD regulator!\n");
++		return PTR_ERR(data->vdd_reg);
 +	}
 +
-+	err = device_property_read_u32(dev, "size", &byte_len);
-+	if (err)
-+		byte_len = cdata->byte_len;
- 
- 	if (!i2c_fn_i2c && !i2c_fn_block)
--		pdata.page_size = 1;
-+		page_size = 1;
- 
--	if (!pdata.page_size) {
-+	if (!page_size) {
- 		dev_err(dev, "page_size must not be 0!\n");
- 		return -EINVAL;
- 	}
- 
--	if (!is_power_of_2(pdata.page_size))
-+	if (!is_power_of_2(page_size))
- 		dev_warn(dev, "page_size looks suspicious (no power of 2)!\n");
- 
--	if (pdata.flags & AT24_FLAG_TAKE8ADDR)
-+	if (flags & AT24_FLAG_TAKE8ADDR)
- 		num_addresses = 8;
- 	else
--		num_addresses =	DIV_ROUND_UP(pdata.byte_len,
--			(pdata.flags & AT24_FLAG_ADDR16) ? 65536 : 256);
-+		num_addresses =	DIV_ROUND_UP(byte_len,
-+			(flags & AT24_FLAG_ADDR16) ? 65536 : 256);
- 
--	if ((pdata.flags & AT24_FLAG_SERIAL) && (pdata.flags & AT24_FLAG_MAC)) {
-+	if ((flags & AT24_FLAG_SERIAL) && (flags & AT24_FLAG_MAC)) {
- 		dev_err(dev,
- 			"invalid device data - cannot have both AT24_FLAG_SERIAL & AT24_FLAG_MAC.");
- 		return -EINVAL;
- 	}
- 
- 	regmap_config.val_bits = 8;
--	regmap_config.reg_bits = (pdata.flags & AT24_FLAG_ADDR16) ? 16 : 8;
-+	regmap_config.reg_bits = (flags & AT24_FLAG_ADDR16) ? 16 : 8;
- 	regmap_config.disable_locking = true;
- 
- 	regmap = devm_regmap_init_i2c(client, &regmap_config);
-@@ -675,11 +667,11 @@ static int at24_probe(struct i2c_client *client)
- 		return -ENOMEM;
- 
- 	mutex_init(&at24->lock);
--	at24->byte_len = pdata.byte_len;
--	at24->page_size = pdata.page_size;
--	at24->flags = pdata.flags;
-+	at24->byte_len = byte_len;
-+	at24->page_size = page_size;
-+	at24->flags = flags;
- 	at24->num_addresses = num_addresses;
--	at24->offset_adj = at24_get_offset_adj(pdata.flags, pdata.byte_len);
-+	at24->offset_adj = at24_get_offset_adj(flags, byte_len);
- 	at24->client[0].client = client;
- 	at24->client[0].regmap = regmap;
- 
-@@ -687,10 +679,10 @@ static int at24_probe(struct i2c_client *client)
- 	if (IS_ERR(at24->wp_gpio))
- 		return PTR_ERR(at24->wp_gpio);
- 
--	writable = !(pdata.flags & AT24_FLAG_READONLY);
-+	writable = !(flags & AT24_FLAG_READONLY);
- 	if (writable) {
- 		at24->write_max = min_t(unsigned int,
--					pdata.page_size, at24_io_limit);
-+					page_size, at24_io_limit);
- 		if (!i2c_fn_i2c && at24->write_max > I2C_SMBUS_BLOCK_MAX)
- 			at24->write_max = I2C_SMBUS_BLOCK_MAX;
- 	}
-@@ -733,7 +725,7 @@ static int at24_probe(struct i2c_client *client)
- 	nvmem_config.priv = at24;
- 	nvmem_config.stride = 1;
- 	nvmem_config.word_size = 1;
--	nvmem_config.size = pdata.byte_len;
-+	nvmem_config.size = byte_len;
- 
- 	at24->nvmem = devm_nvmem_register(dev, &nvmem_config);
- 	if (IS_ERR(at24->nvmem)) {
-@@ -742,13 +734,9 @@ static int at24_probe(struct i2c_client *client)
- 	}
- 
- 	dev_info(dev, "%u byte %s EEPROM, %s, %u bytes/write\n",
--		 pdata.byte_len, client->name,
-+		 byte_len, client->name,
- 		 writable ? "writable" : "read-only", at24->write_max);
- 
--	/* export data to kernel code */
--	if (pdata.setup)
--		pdata.setup(at24->nvmem, pdata.context);
--
++	data->vddio_reg =3D devm_regulator_get(&client->dev, "vddio");
++	if (IS_ERR(data->vddio_reg)) {
++		if (PTR_ERR(data->vddio_reg) =3D=3D -EPROBE_DEFER)
++			return -EPROBE_DEFER;
++
++		dev_err(&client->dev, "failed to get VDDIO regulator!\n");
++		return PTR_ERR(data->vddio_reg);
++	}
++
++	ret =3D regulator_enable(data->vdd_reg);
++	if (ret) {
++		dev_err(&client->dev, "failed to enable VDD regulator!\n");
++		return ret;
++	}
++
++	ret =3D regulator_enable(data->vddio_reg);
++	if (ret) {
++		dev_err(&client->dev, "failed to enable VDDIO regulator!\n");
++		goto disable_regulator_vdd;
++	}
++
++	ret =3D i2c_smbus_read_byte_data(client, MAG3110_WHO_AM_I);
++	if (ret < 0)
++		goto disable_regulators;
++	if (ret !=3D MAG3110_DEVICE_ID) {
++		ret =3D -ENODEV;
++		goto disable_regulators;
++	}
++
+ 	data->client =3D client;
+ 	mutex_init(&data->lock);
+=20
+@@ -499,7 +535,7 @@ static int mag3110_probe(struct i2c_client *client,
+=20
+ 	ret =3D mag3110_change_config(data, MAG3110_CTRL_REG1, data->ctrl_reg1);
+ 	if (ret < 0)
+-		return ret;
++		goto disable_regulators;
+=20
+ 	ret =3D i2c_smbus_write_byte_data(client, MAG3110_CTRL_REG2,
+ 		MAG3110_CTRL_AUTO_MRST_EN);
+@@ -520,16 +556,24 @@ static int mag3110_probe(struct i2c_client *client,
+ 	iio_triggered_buffer_cleanup(indio_dev);
+ standby_on_error:
+ 	mag3110_standby(iio_priv(indio_dev));
++disable_regulators:
++	regulator_disable(data->vddio_reg);
++disable_regulator_vdd:
++	regulator_disable(data->vdd_reg);
++
+ 	return ret;
+ }
+=20
+ static int mag3110_remove(struct i2c_client *client)
+ {
+ 	struct iio_dev *indio_dev =3D i2c_get_clientdata(client);
++	struct mag3110_data *data =3D iio_priv(indio_dev);
+=20
+ 	iio_device_unregister(indio_dev);
+ 	iio_triggered_buffer_cleanup(indio_dev);
+ 	mag3110_standby(iio_priv(indio_dev));
++	regulator_disable(data->vddio_reg);
++	regulator_disable(data->vdd_reg);
+=20
  	return 0;
- 
- err_clients:
-diff --git a/include/linux/platform_data/at24.h b/include/linux/platform_data/at24.h
-deleted file mode 100644
-index 63507ff464ee..000000000000
---- a/include/linux/platform_data/at24.h
-+++ /dev/null
-@@ -1,60 +0,0 @@
--/*
-- * at24.h - platform_data for the at24 (generic eeprom) driver
-- * (C) Copyright 2008 by Pengutronix
-- * (C) Copyright 2012 by Wolfram Sang
-- * same license as the driver
-- */
--
--#ifndef _LINUX_AT24_H
--#define _LINUX_AT24_H
--
--#include <linux/types.h>
--#include <linux/nvmem-consumer.h>
--#include <linux/bitops.h>
--
--/**
-- * struct at24_platform_data - data to set up at24 (generic eeprom) driver
-- * @byte_len: size of eeprom in byte
-- * @page_size: number of byte which can be written in one go
-- * @flags: tunable options, check AT24_FLAG_* defines
-- * @setup: an optional callback invoked after eeprom is probed; enables kernel
--	code to access eeprom via nvmem, see example
-- * @context: optional parameter passed to setup()
-- *
-- * If you set up a custom eeprom type, please double-check the parameters.
-- * Especially page_size needs extra care, as you risk data loss if your value
-- * is bigger than what the chip actually supports!
-- *
-- * An example in pseudo code for a setup() callback:
-- *
-- * void get_mac_addr(struct nvmem_device *nvmem, void *context)
-- * {
-- *	u8 *mac_addr = ethernet_pdata->mac_addr;
-- *	off_t offset = context;
-- *
-- *	// Read MAC addr from EEPROM
-- *	if (nvmem_device_read(nvmem, offset, ETH_ALEN, mac_addr) == ETH_ALEN)
-- *		pr_info("Read MAC addr from EEPROM: %pM\n", mac_addr);
-- * }
-- *
-- * This function pointer and context can now be set up in at24_platform_data.
-- */
--
--struct at24_platform_data {
--	u32		byte_len;		/* size (sum of all addr) */
--	u16		page_size;		/* for writes */
--	u8		flags;
--#define AT24_FLAG_ADDR16	BIT(7)	/* address pointer is 16 bit */
--#define AT24_FLAG_READONLY	BIT(6)	/* sysfs-entry will be read-only */
--#define AT24_FLAG_IRUGO		BIT(5)	/* sysfs-entry will be world-readable */
--#define AT24_FLAG_TAKE8ADDR	BIT(4)	/* take always 8 addresses (24c00) */
--#define AT24_FLAG_SERIAL	BIT(3)	/* factory-programmed serial number */
--#define AT24_FLAG_MAC		BIT(2)	/* factory-programmed mac address */
--#define AT24_FLAG_NO_RDROL	BIT(1)	/* does not auto-rollover reads to */
--					/* the next slave address */
--
--	void		(*setup)(struct nvmem_device *nvmem, void *context);
--	void		*context;
--};
--
--#endif /* _LINUX_AT24_H */
--- 
-2.19.1
+ }
+@@ -537,14 +581,48 @@ static int mag3110_remove(struct i2c_client *client)
+ #ifdef CONFIG_PM_SLEEP
+ static int mag3110_suspend(struct device *dev)
+ {
+-	return mag3110_standby(iio_priv(i2c_get_clientdata(
++	struct mag3110_data *data =3D iio_priv(i2c_get_clientdata(
++		to_i2c_client(dev)));
++	int ret;
++
++	ret =3D mag3110_standby(iio_priv(i2c_get_clientdata(
+ 		to_i2c_client(dev))));
++	if (ret)
++		return ret;
++
++	ret =3D regulator_disable(data->vddio_reg);
++	if (ret) {
++		dev_err(dev, "failed to disable VDDIO regulator\n");
++		return ret;
++	}
++
++	ret =3D regulator_disable(data->vdd_reg);
++	if (ret) {
++		dev_err(dev, "failed to disable VDD regulator\n");
++		return ret;
++	}
++
++	return 0;
+ }
+=20
+ static int mag3110_resume(struct device *dev)
+ {
+ 	struct mag3110_data *data =3D iio_priv(i2c_get_clientdata(
+ 		to_i2c_client(dev)));
++	int ret;
++
++	ret =3D regulator_enable(data->vdd_reg);
++	if (ret) {
++		dev_err(dev, "failed to enable VDD regulator\n");
++		return ret;
++	}
++
++	ret =3D regulator_enable(data->vddio_reg);
++	if (ret) {
++		dev_err(dev, "failed to enable VDDIO regulator\n");
++		regulator_disable(data->vdd_reg);
++		return ret;
++	}
+=20
+ 	return i2c_smbus_write_byte_data(data->client, MAG3110_CTRL_REG1,
+ 		data->ctrl_reg1);
+--=20
+2.7.4
 
