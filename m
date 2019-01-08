@@ -6,54 +6,53 @@ X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 563F6C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 14:53:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4D63C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 14:57:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 221202171F
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 14:53:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8DA8820827
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 14:57:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546959213;
-	bh=dDcLr7PFigttfu9qxS0LqYl7q6wlG7peD973QvNyd3Y=;
+	s=default; t=1546959423;
+	bh=ermArLtvls1wgNieOXTgJ3O6kO3RHBy5b15Gt5oH92U=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=fn3adAfhrYsng+RSZseeFqDiOQbQ4LRDIaGLrKcVqySu4AlwMnmDtIj/N++Y5aQTg
-	 dKWko0Y0WNC4wMuOUVMaM1UdwiV4BPoTm1h8VWJ+5jWU7ChLwwLOSHNaimyJ0A0+mt
-	 9yguXza29RFTT1XpxoUzNVBAzJeF3RFUFvysAPCI=
+	b=zIUl1sBO4w+0MWaZHAsg8vjyJEmUbQUA8MR5TdWZSBnuNv6MAwmnjO1pzLEjPPoJP
+	 hNqndyOtkwfD83+BOughBh8lw8+zh3VYL35U5oDryHylfXidss2Xoe7I1txnkaWmi5
+	 DRaNimzLoo6LWhDb543opxPEcfGze/8ikG4syZsU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728475AbfAHOxc (ORCPT
+        id S1728112AbfAHO5C (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 09:53:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38822 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 09:57:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39484 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727662AbfAHOxb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 09:53:31 -0500
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
+        id S1727662AbfAHO5C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 09:57:02 -0500
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0B50A21019;
-        Tue,  8 Jan 2019 14:53:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 55DC621019;
+        Tue,  8 Jan 2019 14:57:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546959211;
-        bh=dDcLr7PFigttfu9qxS0LqYl7q6wlG7peD973QvNyd3Y=;
+        s=default; t=1546959421;
+        bh=ermArLtvls1wgNieOXTgJ3O6kO3RHBy5b15Gt5oH92U=;
         h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=0aslcSEgIrTXWD0Jf+6BfY8Uw5IVTffG8q3wYlIjdy2YP54yzUHGzJ+y3zNpxtGZp
-         zHIYp5y3b71eh6hdl0gObNjJADDz33Ct2NWTcRoFw6QOLst40pwcnSN4+Z9M80zruU
-         +E07QYjYEKhH6T5e8um41fKaMmL30xN9XW33lSTE=
-Received: by mail-qt1-f169.google.com with SMTP id k12so4607821qtf.7;
-        Tue, 08 Jan 2019 06:53:31 -0800 (PST)
-X-Gm-Message-State: AJcUukc3Aqbtpy3Wy1iK2grG4bnbbPlID0ob+Chldne/un24cHdO0y7U
-        +NaIFgSCItP3xaEmCzTkefVD+aqAIcb6XvXVPw==
-X-Google-Smtp-Source: ALg8bN5OGxu5emk9VpVjTgAoC4e6gwhWHhsD3YnTCVEEKOtdKzPp/ZPdgcSJuVjtVLcbXZzMwNYR1Pw/XH2yiZHeTms=
-X-Received: by 2002:aed:29a6:: with SMTP id o35mr1872256qtd.257.1546959210219;
- Tue, 08 Jan 2019 06:53:30 -0800 (PST)
+        b=GpUQ6y2ek6S+NtAqULX25wso+Zx9r5VH60GM1xJvBV8IY1YsNv3HA2T364NsHU4QF
+         tFBGvFCuhfp8K1jXv8hHujG+C4Un9VOLmz2puBM3s9oZ7xKAc/AdZj6HQ+E8n1njIO
+         n0WNGeRKdxx3H1uziedWt+1L75JEF5jUAjqFEhD4=
+Received: by mail-qt1-f174.google.com with SMTP id n32so4585279qte.11;
+        Tue, 08 Jan 2019 06:57:01 -0800 (PST)
+X-Gm-Message-State: AJcUukc6XwWct9b4SCTTnAJ9b4MU3yegZnHJPwQ6AOA5rqWSO+tG07oc
+        syaK/6ro9B9/4i4wcrszJh3KwhVnY8wERCLQ2w==
+X-Google-Smtp-Source: ALg8bN4DTMPwuqi6GrKoOjHsoXa/AUhAr7ZBhJzYYrOtIh6+jPTcCnmr+EZ6HYQtZevVA99ege7oDhlPWDFgZ6rKDiE=
+X-Received: by 2002:aed:29a6:: with SMTP id o35mr1882981qtd.257.1546959420549;
+ Tue, 08 Jan 2019 06:57:00 -0800 (PST)
 MIME-Version: 1.0
 References: <1545144107-88378-1-git-send-email-michal.vokac@ysoft.com>
  <20181228232556.GA14277@bogus> <49371bd4-6ab9-31c3-dd48-800becac17e3@ysoft.com>
- <353b8f62-e265-c3c1-e352-d33c204eb6dc@ysoft.com>
-In-Reply-To: <353b8f62-e265-c3c1-e352-d33c204eb6dc@ysoft.com>
+In-Reply-To: <49371bd4-6ab9-31c3-dd48-800becac17e3@ysoft.com>
 From:   Rob Herring <robh@kernel.org>
-Date:   Tue, 8 Jan 2019 08:53:18 -0600
-X-Gmail-Original-Message-ID: <CAL_Jsq+k3BvjP=oY=yGRiHgvy+yXjnzfT6H8V9HjVGf8MOQAYA@mail.gmail.com>
-Message-ID: <CAL_Jsq+k3BvjP=oY=yGRiHgvy+yXjnzfT6H8V9HjVGf8MOQAYA@mail.gmail.com>
+Date:   Tue, 8 Jan 2019 08:56:49 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqJyZt=VCv2bX1YYFQt91BcFqDWfeAqkJVcF7eFD0_JM1g@mail.gmail.com>
+Message-ID: <CAL_JsqJyZt=VCv2bX1YYFQt91BcFqDWfeAqkJVcF7eFD0_JM1g@mail.gmail.com>
 Subject: Re: [PATCH v2] ARM: dts: imx: Add Y Soft IOTA Draco, Hydra and Ursa boards
 To:     =?UTF-8?B?Vm9rw6HEjSBNaWNoYWw=?= <Michal.Vokac@ysoft.com>
 Cc:     Shawn Guo <shawnguo@kernel.org>,
@@ -70,44 +69,28 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 8, 2019 at 8:25 AM Vok=C3=A1=C4=8D Michal <Michal.Vokac@ysoft.c=
+On Tue, Jan 8, 2019 at 5:43 AM Vok=C3=A1=C4=8D Michal <Michal.Vokac@ysoft.c=
 om> wrote:
 >
-> On 8.1.2019 12:43, Vok=C3=A1=C4=8D Michal wrote:
-> > On 29.12.2018 00:25, Rob Herring wrote:
-> >> On Tue, Dec 18, 2018 at 02:42:11PM +0000, Vok=C3=A1=C4=8D Michal wrote=
-:
-> [...]
-> >>> +&i2c3 {
-> >>> +   clock-frequency =3D <100000>;
-> >>> +   pinctrl-names =3D "default";
-> >>> +   pinctrl-0 =3D <&pinctrl_i2c3>;
-> >>> +   status =3D "disabled";
-> >>> +
-> >>> +   gpio_oled: gpio@41 {
-> >>> +           compatible =3D "nxp,pca9536";
-> >>> +           gpio-controller;
-> >>> +           #gpio-cells =3D <2>;
-> >>> +           reg =3D <0x41>;
-> >>> +           vcc-supply =3D <&sw2_reg>;
-> >>> +           status =3D "disabled";
-> >>> +   };
-> >>> +
-> >>> +   oled: oled@3d {
-> >>> +           compatible =3D "solomon,ssd1305fb-i2c";
-> >>
-> >> Not documented.
-> >
-> > OK, I will send a separate patch for that.
->
-> Rob, I double checked that and it actually is already documented.
-> Not in a way that you would find the whole compatible string though..
->
-> See https://elixir.bootlin.com/linux/v5.0-rc1/source/Documentation/device=
-tree/bindings/display/ssd1307fb.txt#L4
->
-> Are you OK with that as it is?
+> On 29.12.2018 00:25, Rob Herring wrote:
+> > On Tue, Dec 18, 2018 at 02:42:11PM +0000, Vok=C3=A1=C4=8D Michal wrote:
+> >> These are i.MX6S/DL based SBCs embedded in various Y Soft products.
+> >> All share the same board design but have slightly different HW
+> >> configuration.
 
-Ah, okay. It's fine.
+[...]
+
+> >> +/ {
+> >> +    model =3D "Y Soft IOTA Draco i.MX6Solo board";
+> >> +    compatible =3D "ysoft,imx6dl-yapp4-draco", "fsl,imx6dl";
+> >
+> > All compatible strings should be documented, not just SoC vendor boards=
+.
+>
+> OK, I will add a Documentation/devicetree/bindings/arm/ysoft.yaml file fo=
+r that.
+
+Actually, it should go in fsl.yaml. The file for every board vendor is
+gone. i.MX was pretty much the only platform doing that.
 
 Rob
