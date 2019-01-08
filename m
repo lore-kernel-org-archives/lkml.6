@@ -4,52 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 286D7C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:10:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCC6FC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:10:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EBEEA20660
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:10:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8D20B20660
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:10:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546978240;
-	bh=zj8qwMlHfHKdEqQH9sAdHYS87SfDKNAKYRlWwnBRTfg=;
+	s=default; t=1546978244;
+	bh=JAczUz8CzjTCLIv4ona2lT4ONvcnVK49JaKJ52S+XJo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=p5eXgjKiohJvODmmD2bWbslmI7D29Ul+zTaPOVEQBRUaWKWrLflOpohStW5yq/AIF
-	 DeqCOdxlNaTSrUVsDYAoxYyLpWKLgxlMWS90vBG/KMN4UJZyF196J0NxQmIEseM7tX
-	 wE+Av5cK7nojasXUMYSWmrQRFDpVckjg1cxpJ01k=
+	b=Qlz1nctODOljCEiHhE1AHkU4aDju8FwPSVKUx9VTA9WyYFMQWqlpjs+Cg0VLMsFMC
+	 6XJlWnS4KyjrYasvw53Q8CGx/JObZznb4IozFc9gAf0OZ/sqbYNffD8/jYT2l4awuj
+	 uFuJRszADX1Jy8M9jKbOceiGR7f+WbnjvaHZF6Zo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733115AbfAHUKa (ORCPT
+        id S1729120AbfAHT0q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 15:10:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60796 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729094AbfAHT0q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 8 Jan 2019 14:26:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60636 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729016AbfAHT0l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:26:41 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5E3002176F;
-        Tue,  8 Jan 2019 19:26:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BAFC020883;
+        Tue,  8 Jan 2019 19:26:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546975605;
-        bh=zj8qwMlHfHKdEqQH9sAdHYS87SfDKNAKYRlWwnBRTfg=;
+        s=default; t=1546975600;
+        bh=JAczUz8CzjTCLIv4ona2lT4ONvcnVK49JaKJ52S+XJo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Gc+jiKrS5ruT3oCSls4MUPWEzbCs5/Fr1SUtCuuh+nGiBMNF/9yDrdVrfgX23GRuj
-         99fxAsI61KDNiYQwxxCV2o+4fIiVC5iTbG0XKJThLIaW3NFtSjMs6Y7hXKqtjHMxA0
-         ZlOFUQz6JGfRsTv5A3nI5e16YWPDc+pENZZnC4b8=
+        b=hxzio3X+N+TMB55nrVmkkJZNJCG8c6QirgwwWE5SWc0fWxH3MMVjQ4KTfM/r7wlHM
+         MT5A5AayTWQDRQ+gsXmC1IrcPc2hRaM+3A59niGhtFdiLjyccZwhjkfM0QvTJyzIoX
+         PPcJvXz9vdTYVUYLXLP8KTIm53bncxJvPUwnF+1E=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     =?UTF-8?q?Jo=C3=A3o=20Paulo=20Rechi=20Vita?= <jprvita@gmail.com>,
-        =?UTF-8?q?Jo=C3=A3o=20Paulo=20Rechi=20Vita?= <jprvita@endlessm.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+Cc:     =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
         Sasha Levin <sashal@kernel.org>,
-        acpi4asus-user@lists.sourceforge.net,
-        platform-driver-x86@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 008/117] platform/x86: asus-wmi: Tell the EC the OS will handle the display off hotkey
-Date:   Tue,  8 Jan 2019 14:24:36 -0500
-Message-Id: <20190108192628.121270-8-sashal@kernel.org>
+        dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 4.20 005/117] drm/amdkfd: fix interrupt spin lock
+Date:   Tue,  8 Jan 2019 14:24:33 -0500
+Message-Id: <20190108192628.121270-5-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108192628.121270-1-sashal@kernel.org>
 References: <20190108192628.121270-1-sashal@kernel.org>
@@ -62,131 +60,80 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: João Paulo Rechi Vita <jprvita@gmail.com>
+From: Christian König <christian.koenig@amd.com>
 
-[ Upstream commit 78f3ac76d9e5219589718b9e4733bee21627b3f5 ]
+[ Upstream commit 2383a767c0ca06f96534456d8313909017c6c8d0 ]
 
-In the past, Asus firmwares would change the panel backlight directly
-through the EC when the display off hotkey (Fn+F7) was pressed, and
-only notify the OS of such change, with 0x33 when the LCD was ON and
-0x34 when the LCD was OFF. These are currently mapped to
-KEY_DISPLAYTOGGLE and KEY_DISPLAY_OFF, respectively.
+Vega10 has multiple interrupt rings, so this can be called from multiple
+calles at the same time resulting in:
 
-Most recently the EC on Asus most machines lost ability to toggle the
-LCD backlight directly, but unless the OS informs the firmware it is
-going to handle the display toggle hotkey events, the firmware still
-tries change the brightness through the EC, to no effect. The end result
-is a long list (at Endless we counted 11) of Asus laptop models where
-the display toggle hotkey does not perform any action. Our firmware
-engineers contacts at Asus were surprised that there were still machines
-out there with the old behavior.
+[   71.779334] ================================
+[   71.779406] WARNING: inconsistent lock state
+[   71.779478] 4.19.0-rc1+ #44 Tainted: G        W
+[   71.779565] --------------------------------
+[   71.779637] inconsistent {IN-HARDIRQ-W} -> {HARDIRQ-ON-W} usage.
+[   71.779740] kworker/6:1/120 [HC0[0]:SC0[0]:HE1:SE1] takes:
+[   71.779832] 00000000ad761971 (&(&kfd->interrupt_lock)->rlock){?...},
+at: kgd2kfd_interrupt+0x75/0x100 [amdgpu]
+[   71.780058] {IN-HARDIRQ-W} state was registered at:
+[   71.780115]   _raw_spin_lock+0x2c/0x40
+[   71.780180]   kgd2kfd_interrupt+0x75/0x100 [amdgpu]
+[   71.780248]   amdgpu_irq_callback+0x6c/0x150 [amdgpu]
+[   71.780315]   amdgpu_ih_process+0x88/0x100 [amdgpu]
+[   71.780380]   amdgpu_irq_handler+0x20/0x40 [amdgpu]
+[   71.780409]   __handle_irq_event_percpu+0x49/0x2a0
+[   71.780436]   handle_irq_event_percpu+0x30/0x70
+[   71.780461]   handle_irq_event+0x37/0x60
+[   71.780484]   handle_edge_irq+0x83/0x1b0
+[   71.780506]   handle_irq+0x1f/0x30
+[   71.780526]   do_IRQ+0x53/0x110
+[   71.780544]   ret_from_intr+0x0/0x22
+[   71.780566]   cpuidle_enter_state+0xaa/0x330
+[   71.780591]   do_idle+0x203/0x280
+[   71.780610]   cpu_startup_entry+0x6f/0x80
+[   71.780634]   start_secondary+0x1b0/0x200
+[   71.780657]   secondary_startup_64+0xa4/0xb0
 
-Calling WMNB(ASUS_WMI_DEVID_BACKLIGHT==0x00050011, 2) on the _WDG device
-tells the firmware that it should let the OS handle the display toggle
-event, in which case it will simply notify the OS of a key press with
-0x35, as shown by the DSDT excerpts bellow.
+Fix this by always using irq save spin locks.
 
- Scope (_SB)
- {
-     (...)
-
-     Device (ATKD)
-     {
-         (...)
-
-         Name (_WDG, Buffer (0x28)
-         {
-             /* 0000 */  0xD0, 0x5E, 0x84, 0x97, 0x6D, 0x4E, 0xDE, 0x11,
-             /* 0008 */  0x8A, 0x39, 0x08, 0x00, 0x20, 0x0C, 0x9A, 0x66,
-             /* 0010 */  0x4E, 0x42, 0x01, 0x02, 0x35, 0xBB, 0x3C, 0x0B,
-             /* 0018 */  0xC2, 0xE3, 0xED, 0x45, 0x91, 0xC2, 0x4C, 0x5A,
-             /* 0020 */  0x6D, 0x19, 0x5D, 0x1C, 0xFF, 0x00, 0x01, 0x08
-         })
-         Method (WMNB, 3, Serialized)
-         {
-             CreateDWordField (Arg2, Zero, IIA0)
-             CreateDWordField (Arg2, 0x04, IIA1)
-             Local0 = (Arg1 & 0xFFFFFFFF)
-
-             (...)
-
-             If ((Local0 == 0x53564544))
-             {
-                 (...)
-
-                 If ((IIA0 == 0x00050011))
-                 {
-                     If ((IIA1 == 0x02))
-                     {
-                         ^^PCI0.SBRG.EC0.SPIN (0x72, One)
-                         ^^PCI0.SBRG.EC0.BLCT = One
-                     }
-
-                     Return (One)
-                 }
-             }
-             (...)
-         }
-         (...)
-     }
-     (...)
- }
- (...)
-
- Scope (_SB.PCI0.SBRG.EC0)
- {
-     (...)
-
-     Name (BLCT, Zero)
-
-     (...)
-
-     Method (_Q10, 0, NotSerialized)  // _Qxx: EC Query
-     {
-         If ((BLCT == Zero))
-         {
-             Local0 = One
-             Local0 = RPIN (0x72)
-             Local0 ^= One
-             SPIN (0x72, Local0)
-             If (ATKP)
-             {
-                 Local0 = (0x34 - Local0)
-                 ^^^^ATKD.IANE (Local0)
-             }
-         }
-         ElseIf ((BLCT == One))
-         {
-             If (ATKP)
-             {
-                 ^^^^ATKD.IANE (0x35)
-             }
-         }
-     }
-     (...)
- }
-
-Signed-off-by: João Paulo Rechi Vita <jprvita@endlessm.com>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Christian König <christian.koenig@amd.com>
+Acked-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/platform/x86/asus-wmi.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/amd/amdkfd/kfd_device.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
-index c285a16675ee..37b5de541270 100644
---- a/drivers/platform/x86/asus-wmi.c
-+++ b/drivers/platform/x86/asus-wmi.c
-@@ -2131,7 +2131,8 @@ static int asus_wmi_add(struct platform_device *pdev)
- 		err = asus_wmi_backlight_init(asus);
- 		if (err && err != -ENODEV)
- 			goto fail_backlight;
--	}
-+	} else
-+		err = asus_wmi_set_devstate(ASUS_WMI_DEVID_BACKLIGHT, 2, NULL);
+diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_device.c b/drivers/gpu/drm/amd/amdkfd/kfd_device.c
+index e4ded890b1cb..6edaf11d69aa 100644
+--- a/drivers/gpu/drm/amd/amdkfd/kfd_device.c
++++ b/drivers/gpu/drm/amd/amdkfd/kfd_device.c
+@@ -688,6 +688,7 @@ void kgd2kfd_interrupt(struct kfd_dev *kfd, const void *ih_ring_entry)
+ {
+ 	uint32_t patched_ihre[KFD_MAX_RING_ENTRY_SIZE];
+ 	bool is_patched = false;
++	unsigned long flags;
  
- 	status = wmi_install_notify_handler(asus->driver->event_guid,
- 					    asus_wmi_notify, asus);
+ 	if (!kfd->init_complete)
+ 		return;
+@@ -697,7 +698,7 @@ void kgd2kfd_interrupt(struct kfd_dev *kfd, const void *ih_ring_entry)
+ 		return;
+ 	}
+ 
+-	spin_lock(&kfd->interrupt_lock);
++	spin_lock_irqsave(&kfd->interrupt_lock, flags);
+ 
+ 	if (kfd->interrupts_active
+ 	    && interrupt_is_wanted(kfd, ih_ring_entry,
+@@ -706,7 +707,7 @@ void kgd2kfd_interrupt(struct kfd_dev *kfd, const void *ih_ring_entry)
+ 				     is_patched ? patched_ihre : ih_ring_entry))
+ 		queue_work(kfd->ih_wq, &kfd->interrupt_work);
+ 
+-	spin_unlock(&kfd->interrupt_lock);
++	spin_unlock_irqrestore(&kfd->interrupt_lock, flags);
+ }
+ 
+ int kgd2kfd_quiesce_mm(struct mm_struct *mm)
 -- 
 2.19.1
 
