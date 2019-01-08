@@ -7,47 +7,41 @@ X-Spam-Status: No, score=-12.0 required=3.0
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D0E1C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 15:45:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AF34C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 15:46:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A1A721019
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 15:45:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D8D7520827
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 15:46:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729171AbfAHPpt (ORCPT
+        id S1729174AbfAHPqM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 10:45:49 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:35681 "EHLO
+        Tue, 8 Jan 2019 10:46:12 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:38363 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728552AbfAHPps (ORCPT
+        with ESMTP id S1728041AbfAHPqM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 10:45:48 -0500
+        Tue, 8 Jan 2019 10:46:12 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x08FhaaD3567122
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x08Fk45H3569207
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 8 Jan 2019 07:43:36 -0800
+        Tue, 8 Jan 2019 07:46:04 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x08Fha6d3567119;
-        Tue, 8 Jan 2019 07:43:36 -0800
-Date:   Tue, 8 Jan 2019 07:43:36 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x08Fk4R83569204;
+        Tue, 8 Jan 2019 07:46:04 -0800
+Date:   Tue, 8 Jan 2019 07:46:04 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Jin Yao <tipbot@zytor.com>
-Message-ID: <tip-a3366db06bb656cef2e03f30f780d93059bcc594@git.kernel.org>
-Cc:     yao.jin@linux.intel.com, ak@linux.intel.com,
-        linux-kernel@vger.kernel.org, kan.liang@linux.intel.com,
-        hpa@zytor.com, jolsa@kernel.org,
-        alexander.shishkin@linux.intel.com, mingo@kernel.org,
-        tglx@linutronix.de, acme@redhat.com, peterz@infradead.org
-Reply-To: acme@redhat.com, peterz@infradead.org, yao.jin@linux.intel.com,
-          ak@linux.intel.com, linux-kernel@vger.kernel.org, hpa@zytor.com,
-          kan.liang@linux.intel.com, jolsa@kernel.org,
-          alexander.shishkin@linux.intel.com, mingo@kernel.org,
-          tglx@linutronix.de
-In-Reply-To: <1546582230-17507-1-git-send-email-yao.jin@linux.intel.com>
-References: <1546582230-17507-1-git-send-email-yao.jin@linux.intel.com>
+From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
+Message-ID: <tip-klt3n0i58dfqttveti09q3fi@git.kernel.org>
+Cc:     tglx@linutronix.de, linux-kernel@vger.kernel.org,
+        adrian.hunter@intel.com, jolsa@kernel.org, namhyung@kernel.org,
+        hpa@zytor.com, mingo@kernel.org, acme@redhat.com
+Reply-To: linux-kernel@vger.kernel.org, tglx@linutronix.de,
+          adrian.hunter@intel.com, jolsa@kernel.org, namhyung@kernel.org,
+          hpa@zytor.com, acme@redhat.com, mingo@kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf report: Fix wrong iteration count in
- --branch-history
-Git-Commit-ID: a3366db06bb656cef2e03f30f780d93059bcc594
+Subject: [tip:perf/urgent] perf test shell: Use a fallback to get the
+ pathname in vfs_getname
+Git-Commit-ID: 03fa483821c0b4db7c2b1453d3332f397d82313f
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -61,226 +55,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  a3366db06bb656cef2e03f30f780d93059bcc594
-Gitweb:     https://git.kernel.org/tip/a3366db06bb656cef2e03f30f780d93059bcc594
-Author:     Jin Yao <yao.jin@linux.intel.com>
-AuthorDate: Fri, 4 Jan 2019 14:10:30 +0800
+Commit-ID:  03fa483821c0b4db7c2b1453d3332f397d82313f
+Gitweb:     https://git.kernel.org/tip/03fa483821c0b4db7c2b1453d3332f397d82313f
+Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
+AuthorDate: Fri, 4 Jan 2019 15:10:00 -0300
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Fri, 4 Jan 2019 12:54:49 -0300
+CommitDate: Fri, 4 Jan 2019 15:12:29 -0300
 
-perf report: Fix wrong iteration count in --branch-history
+perf test shell: Use a fallback to get the pathname in vfs_getname
 
-By calculating the removed loops, we can get the iteration count.
+Some kernels, like 4.19.13-300.fc29.x86_64 in fedora 29, fail with the
+existing probe definition asking for the contents of result->name,
+working when we ask for the 'filename' variable instead, so add a
+fallback to that.
 
-But the iteration count could be reported incorrectly, reporting
-impossibly high counts.
+Now those tests are back working on fedora 29 systems with that kernel:
 
-That's because previous code uses the number of removed LBR entries for
-the iteration count. That's not good. Fix this by increasing the
-iteration count when a loop is detected.
+  # perf test vfs_getname
+  65: Use vfs_getname probe to get syscall args filenames   : Ok
+  66: Add vfs_getname probe to get syscall args filenames   : Ok
+  67: Check open filename arg using perf trace + vfs_getname: Ok
+  #
 
-When matching the chain, the iteration count would be added up, finally we need
-to compute the average value when printing out.
-
-For example,
-
-  $ perf report --branch-history --stdio --no-children
-
-Before:
-
-  ---f2 +0
-     |
-     |--33.62%--f1 +9 (cycles:1)
-     |          f1 +0
-     |          main +22 (cycles:1)
-     |          main +17
-     |          main +38 (cycles:1)
-     |          main +27
-     |          f1 +26 (cycles:1)
-     |          f1 +24
-     |          f2 +27 (cycles:7)
-     |          f2 +0
-     |          f1 +19 (cycles:1)
-     |          f1 +14
-     |          f2 +27 (cycles:11)
-     |          f2 +0
-     |          f1 +9 (cycles:1 iter:2968 avg_cycles:3)
-     |          f1 +0
-     |          main +22 (cycles:1 iter:2968 avg_cycles:3)
-     |          main +17
-     |          main +38 (cycles:1 iter:2968 avg_cycles:3)
-
-2968 is an impossible high iteration count and avg_cycles is too small.
-
-After:
-
-  ---f2 +0
-     |
-     |--33.62%--f1 +9 (cycles:1)
-     |          f1 +0
-     |          main +22 (cycles:1)
-     |          main +17
-     |          main +38 (cycles:1)
-     |          main +27
-     |          f1 +26 (cycles:1)
-     |          f1 +24
-     |          f2 +27 (cycles:7)
-     |          f2 +0
-     |          f1 +19 (cycles:1)
-     |          f1 +14
-     |          f2 +27 (cycles:11)
-     |          f2 +0
-     |          f1 +9 (cycles:1 iter:1 avg_cycles:23)
-     |          f1 +0
-     |          main +22 (cycles:1 iter:1 avg_cycles:23)
-     |          main +17
-     |          main +38 (cycles:1 iter:1 avg_cycles:23)
-
-avg_cycles:23 is the average cycles of this iteration.
-
-Fixes: c4ee06251d42 ("perf report: Calculate the average cycles of iterations")
-
-Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Kan Liang <kan.liang@linux.intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/1546582230-17507-1-git-send-email-yao.jin@linux.intel.com
+Cc: Namhyung Kim <namhyung@kernel.org>
+Link: https://lkml.kernel.org/n/tip-klt3n0i58dfqttveti09q3fi@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/callchain.c | 32 ++++++++++++++++++++------------
- tools/perf/util/callchain.h |  1 +
- tools/perf/util/machine.c   |  2 +-
- 3 files changed, 22 insertions(+), 13 deletions(-)
+ tools/perf/tests/shell/lib/probe_vfs_getname.sh | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/tools/perf/util/callchain.c b/tools/perf/util/callchain.c
-index 32ef7bdca1cf..dc2212e12184 100644
---- a/tools/perf/util/callchain.c
-+++ b/tools/perf/util/callchain.c
-@@ -766,6 +766,7 @@ static enum match_result match_chain(struct callchain_cursor_node *node,
- 			cnode->cycles_count += node->branch_flags.cycles;
- 			cnode->iter_count += node->nr_loop_iter;
- 			cnode->iter_cycles += node->iter_cycles;
-+			cnode->from_count++;
- 		}
- 	}
- 
-@@ -1345,10 +1346,10 @@ static int branch_to_str(char *bf, int bfsize,
- static int branch_from_str(char *bf, int bfsize,
- 			   u64 branch_count,
- 			   u64 cycles_count, u64 iter_count,
--			   u64 iter_cycles)
-+			   u64 iter_cycles, u64 from_count)
- {
- 	int printed = 0, i = 0;
--	u64 cycles;
-+	u64 cycles, v = 0;
- 
- 	cycles = cycles_count / branch_count;
- 	if (cycles) {
-@@ -1357,14 +1358,16 @@ static int branch_from_str(char *bf, int bfsize,
- 				bf + printed, bfsize - printed);
- 	}
- 
--	if (iter_count) {
--		printed += count_pri64_printf(i++, "iter",
--				iter_count,
--				bf + printed, bfsize - printed);
-+	if (iter_count && from_count) {
-+		v = iter_count / from_count;
-+		if (v) {
-+			printed += count_pri64_printf(i++, "iter",
-+					v, bf + printed, bfsize - printed);
- 
--		printed += count_pri64_printf(i++, "avg_cycles",
--				iter_cycles / iter_count,
--				bf + printed, bfsize - printed);
-+			printed += count_pri64_printf(i++, "avg_cycles",
-+					iter_cycles / iter_count,
-+					bf + printed, bfsize - printed);
-+		}
- 	}
- 
- 	if (i)
-@@ -1377,6 +1380,7 @@ static int counts_str_build(char *bf, int bfsize,
- 			     u64 branch_count, u64 predicted_count,
- 			     u64 abort_count, u64 cycles_count,
- 			     u64 iter_count, u64 iter_cycles,
-+			     u64 from_count,
- 			     struct branch_type_stat *brtype_stat)
- {
- 	int printed;
-@@ -1389,7 +1393,8 @@ static int counts_str_build(char *bf, int bfsize,
- 				predicted_count, abort_count, brtype_stat);
- 	} else {
- 		printed = branch_from_str(bf, bfsize, branch_count,
--				cycles_count, iter_count, iter_cycles);
-+				cycles_count, iter_count, iter_cycles,
-+				from_count);
- 	}
- 
- 	if (!printed)
-@@ -1402,13 +1407,14 @@ static int callchain_counts_printf(FILE *fp, char *bf, int bfsize,
- 				   u64 branch_count, u64 predicted_count,
- 				   u64 abort_count, u64 cycles_count,
- 				   u64 iter_count, u64 iter_cycles,
-+				   u64 from_count,
- 				   struct branch_type_stat *brtype_stat)
- {
- 	char str[256];
- 
- 	counts_str_build(str, sizeof(str), branch_count,
- 			 predicted_count, abort_count, cycles_count,
--			 iter_count, iter_cycles, brtype_stat);
-+			 iter_count, iter_cycles, from_count, brtype_stat);
- 
- 	if (fp)
- 		return fprintf(fp, "%s", str);
-@@ -1422,6 +1428,7 @@ int callchain_list_counts__printf_value(struct callchain_list *clist,
- 	u64 branch_count, predicted_count;
- 	u64 abort_count, cycles_count;
- 	u64 iter_count, iter_cycles;
-+	u64 from_count;
- 
- 	branch_count = clist->branch_count;
- 	predicted_count = clist->predicted_count;
-@@ -1429,11 +1436,12 @@ int callchain_list_counts__printf_value(struct callchain_list *clist,
- 	cycles_count = clist->cycles_count;
- 	iter_count = clist->iter_count;
- 	iter_cycles = clist->iter_cycles;
-+	from_count = clist->from_count;
- 
- 	return callchain_counts_printf(fp, bf, bfsize, branch_count,
- 				       predicted_count, abort_count,
- 				       cycles_count, iter_count, iter_cycles,
--				       &clist->brtype_stat);
-+				       from_count, &clist->brtype_stat);
+diff --git a/tools/perf/tests/shell/lib/probe_vfs_getname.sh b/tools/perf/tests/shell/lib/probe_vfs_getname.sh
+index 1c16e56cd93e..7cb99b433888 100644
+--- a/tools/perf/tests/shell/lib/probe_vfs_getname.sh
++++ b/tools/perf/tests/shell/lib/probe_vfs_getname.sh
+@@ -13,7 +13,8 @@ add_probe_vfs_getname() {
+ 	local verbose=$1
+ 	if [ $had_vfs_getname -eq 1 ] ; then
+ 		line=$(perf probe -L getname_flags 2>&1 | egrep 'result.*=.*filename;' | sed -r 's/[[:space:]]+([[:digit:]]+)[[:space:]]+result->uptr.*/\1/')
+-		perf probe $verbose "vfs_getname=getname_flags:${line} pathname=result->name:string"
++		perf probe -q       "vfs_getname=getname_flags:${line} pathname=result->name:string" || \
++		perf probe $verbose "vfs_getname=getname_flags:${line} pathname=filename:string"
+ 	fi
  }
  
- static void free_callchain_node(struct callchain_node *node)
-diff --git a/tools/perf/util/callchain.h b/tools/perf/util/callchain.h
-index 154560b1eb65..99d38ac019b8 100644
---- a/tools/perf/util/callchain.h
-+++ b/tools/perf/util/callchain.h
-@@ -118,6 +118,7 @@ struct callchain_list {
- 		bool		has_children;
- 	};
- 	u64			branch_count;
-+	u64			from_count;
- 	u64			predicted_count;
- 	u64			abort_count;
- 	u64			cycles_count;
-diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
-index 6fcb3bce0442..143f7057d581 100644
---- a/tools/perf/util/machine.c
-+++ b/tools/perf/util/machine.c
-@@ -2005,7 +2005,7 @@ static void save_iterations(struct iterations *iter,
- {
- 	int i;
- 
--	iter->nr_loop_iter = nr;
-+	iter->nr_loop_iter++;
- 	iter->cycles = 0;
- 
- 	for (i = 0; i < nr; i++)
