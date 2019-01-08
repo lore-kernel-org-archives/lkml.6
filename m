@@ -7,48 +7,47 @@ X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7CD5C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:30:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D897C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:30:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A64DA20645
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:30:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0DDDC20827
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:30:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546975813;
-	bh=jvKTy8wiFXgKB1Cpr2r1PuGeHz4X9qM4i48XyALzRKM=;
+	s=default; t=1546975816;
+	bh=i3NUVmaqrF8zeugH6FRTqs71W/9YIMAQR9lOxZjSmMY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Us7gsWVK14GLbyiu3t1VBJTd/OHQgNl80iJCvm6s0G8zxfldpm3Ibfz0tmsPy3r3V
-	 C/ATmVThdGiTFwB1caysewo1TBHBZksGJSpl1xcXKRz1C1HEt/q16Btaj0bkzv79NW
-	 Fqz+vkoInmWV+lOEg0opH/fnbwQ8r0DGBu9MZ6xA=
+	b=gRdiS6rab6UtRtDnSlIwJ9AIOLNgIXH8VyxIiUtbVunMDlBG9fxBkFcpis+PPYAiX
+	 +EZJ8BZnuF/ThgSzjAqt9Q0Ph/p6tIAee0LIwq4Xd0NpBsR3Ad7xxKUZYIwmIkdVpT
+	 72aLOgto29C7dN46/LhAMm17QMW0zd9wdvbg0ecc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730677AbfAHTaM (ORCPT
+        id S1730691AbfAHTaP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:30:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37664 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 14:30:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37730 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730568AbfAHTaD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:30:03 -0500
+        id S1730543AbfAHTaI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:30:08 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C00E12070B;
-        Tue,  8 Jan 2019 19:30:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1213F20665;
+        Tue,  8 Jan 2019 19:30:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546975802;
-        bh=jvKTy8wiFXgKB1Cpr2r1PuGeHz4X9qM4i48XyALzRKM=;
+        s=default; t=1546975806;
+        bh=i3NUVmaqrF8zeugH6FRTqs71W/9YIMAQR9lOxZjSmMY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oeALYn7ojtI5UdFXXlKg2Py+raUZpXXB+Os1JzdED6B6+dm45LA2ZloK6qUkdpq2C
-         aV5HRDS8OHU125oGlJAi8nIX9awXQwGonxi4uYiYgPOGXPNDECh5pN2TDobs8pla7i
-         uWr44Qs8jgyGb5Ei21hUu3ktKMVlLbBWPql3lKAo=
+        b=HQM1nEnWY8VzdFpTPavux1HrRpdccK3ouK4NPNgUJ1E1nTn111SFptFnLbIJgHltf
+         BWQM/phXTdXxW7LiTueiPXsi1Z8JVjlyYwX5EXzzTGqXHQ6RvowiHlUxZwQzOQhxpc
+         5yPgRlAi0snNrvnO74emDiAmCzPEpMnKY0auovwk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Quentin Monnet <quentin.monnet@netronome.com>,
-        Jesper Dangaard Brouer <brouer@redhat.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
-        linux-kselftest@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 09/97] selftests/bpf: enable (uncomment) all tests in test_libbpf.sh
-Date:   Tue,  8 Jan 2019 14:28:18 -0500
-Message-Id: <20190108192949.122407-9-sashal@kernel.org>
+Cc:     Anders Roxell <anders.roxell@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sasha Levin <sashal@kernel.org>, linux-serial@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 12/97] serial: set suppress_bind_attrs flag only if builtin
+Date:   Tue,  8 Jan 2019 14:28:21 -0500
+Message-Id: <20190108192949.122407-12-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108192949.122407-1-sashal@kernel.org>
 References: <20190108192949.122407-1-sashal@kernel.org>
@@ -60,104 +59,126 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Quentin Monnet <quentin.monnet@netronome.com>
+From: Anders Roxell <anders.roxell@linaro.org>
 
-[ Upstream commit f96afa767baffba7645f5e10998f5178948bb9aa ]
+[ Upstream commit 646097940ad35aa2c1f2012af932d55976a9f255 ]
 
-libbpf is now able to load successfully test_l4lb_noinline.o and
-samples/bpf/tracex3_kern.o.
+When the test 'CONFIG_DEBUG_TEST_DRIVER_REMOVE=y' is enabled,
+arch_initcall(pl011_init) came before subsys_initcall(default_bdi_init).
+devtmpfs gets killed because we try to remove a file and decrement the
+wb reference count before the noop_backing_device_info gets initialized.
 
-For the test_l4lb_noinline, uncomment related tests from test_libbpf.c
-and remove the associated "TODO".
+[    0.332075] Serial: AMBA PL011 UART driver
+[    0.485276] 9000000.pl011: ttyAMA0 at MMIO 0x9000000 (irq = 39, base_baud = 0) is a PL011 rev1
+[    0.502382] console [ttyAMA0] enabled
+[    0.515710] Unable to handle kernel paging request at virtual address 0000800074c12000
+[    0.516053] Mem abort info:
+[    0.516222]   ESR = 0x96000004
+[    0.516417]   Exception class = DABT (current EL), IL = 32 bits
+[    0.516641]   SET = 0, FnV = 0
+[    0.516826]   EA = 0, S1PTW = 0
+[    0.516984] Data abort info:
+[    0.517149]   ISV = 0, ISS = 0x00000004
+[    0.517339]   CM = 0, WnR = 0
+[    0.517553] [0000800074c12000] user address but active_mm is swapper
+[    0.517928] Internal error: Oops: 96000004 [#1] PREEMPT SMP
+[    0.518305] Modules linked in:
+[    0.518839] CPU: 0 PID: 13 Comm: kdevtmpfs Not tainted 4.19.0-rc5-next-20180928-00002-g2ba39ab0cd01-dirty #82
+[    0.519307] Hardware name: linux,dummy-virt (DT)
+[    0.519681] pstate: 80000005 (Nzcv daif -PAN -UAO)
+[    0.519959] pc : __destroy_inode+0x94/0x2a8
+[    0.520212] lr : __destroy_inode+0x78/0x2a8
+[    0.520401] sp : ffff0000098c3b20
+[    0.520590] x29: ffff0000098c3b20 x28: 00000000087a3714
+[    0.520904] x27: 0000000000002000 x26: 0000000000002000
+[    0.521179] x25: ffff000009583000 x24: 0000000000000000
+[    0.521467] x23: ffff80007bb52000 x22: ffff80007bbaa7c0
+[    0.521737] x21: ffff0000093f9338 x20: 0000000000000000
+[    0.522033] x19: ffff80007bbb05d8 x18: 0000000000000400
+[    0.522376] x17: 0000000000000000 x16: 0000000000000000
+[    0.522727] x15: 0000000000000400 x14: 0000000000000400
+[    0.523068] x13: 0000000000000001 x12: 0000000000000001
+[    0.523421] x11: 0000000000000000 x10: 0000000000000970
+[    0.523749] x9 : ffff0000098c3a60 x8 : ffff80007bbab190
+[    0.524017] x7 : ffff80007bbaa880 x6 : 0000000000000c88
+[    0.524305] x5 : ffff0000093d96c8 x4 : 61c8864680b583eb
+[    0.524567] x3 : ffff0000093d6180 x2 : ffffffffffffffff
+[    0.524872] x1 : 0000800074c12000 x0 : 0000800074c12000
+[    0.525207] Process kdevtmpfs (pid: 13, stack limit = 0x(____ptrval____))
+[    0.525529] Call trace:
+[    0.525806]  __destroy_inode+0x94/0x2a8
+[    0.526108]  destroy_inode+0x34/0x88
+[    0.526370]  evict+0x144/0x1c8
+[    0.526636]  iput+0x184/0x230
+[    0.526871]  dentry_unlink_inode+0x118/0x130
+[    0.527152]  d_delete+0xd8/0xe0
+[    0.527420]  vfs_unlink+0x240/0x270
+[    0.527665]  handle_remove+0x1d8/0x330
+[    0.527875]  devtmpfsd+0x138/0x1c8
+[    0.528085]  kthread+0x14c/0x158
+[    0.528291]  ret_from_fork+0x10/0x18
+[    0.528720] Code: 92800002 aa1403e0 d538d081 8b010000 (c85f7c04)
+[    0.529367] ---[ end trace 5a3dee47727f877c ]---
 
-For tracex3_kern.o, instead of loading a program from samples/bpf/ that
-might not have been compiled at this stage, try loading a program from
-BPF selftests. Since this test case is about loading a program compiled
-without the "-target bpf" flag, change the Makefile to compile one
-program accordingly (instead of passing the flag for compiling all
-programs).
+Rework to set suppress_bind_attrs flag to avoid removing the device when
+CONFIG_DEBUG_TEST_DRIVER_REMOVE=y. This applies for pic32_uart and
+xilinx_uartps as well.
 
-Regarding test_xdp_noinline.o: in its current shape the program fails to
-load because it provides no version section, but the loader needs one.
-The test was added to make sure that libbpf could load XDP programs even
-if they do not provide a version number in a dedicated section. But
-libbpf is already capable of doing that: in our case loading fails
-because the loader does not know that this is an XDP program (it does
-not need to, since it does not attach the program). So trying to load
-test_xdp_noinline.o does not bring much here: just delete this subtest.
-
-For the record, the error message obtained with tracex3_kern.o was
-fixed by commit e3d91b0ca523 ("tools/libbpf: handle issues with bpf ELF
-objects containing .eh_frames")
-
-I have not been abled to reproduce the "libbpf: incorrect bpf_call
-opcode" error for test_l4lb_noinline.o, even with the version of libbpf
-present at the time when test_libbpf.sh and test_libbpf_open.c were
-created.
-
-RFC -> v1:
-- Compile test_xdp without the "-target bpf" flag, and try to load it
-  instead of ../../samples/bpf/tracex3_kern.o.
-- Delete test_xdp_noinline.o subtest.
-
-Cc: Jesper Dangaard Brouer <brouer@redhat.com>
-Signed-off-by: Quentin Monnet <quentin.monnet@netronome.com>
-Acked-by: Jakub Kicinski <jakub.kicinski@netronome.com>
-Acked-by: Jesper Dangaard Brouer <brouer@redhat.com>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Co-developed-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/testing/selftests/bpf/Makefile       | 10 ++++++++++
- tools/testing/selftests/bpf/test_libbpf.sh | 14 ++++----------
- 2 files changed, 14 insertions(+), 10 deletions(-)
+ drivers/tty/serial/amba-pl011.c    | 2 ++
+ drivers/tty/serial/pic32_uart.c    | 1 +
+ drivers/tty/serial/xilinx_uartps.c | 1 +
+ 3 files changed, 4 insertions(+)
 
-diff --git a/tools/testing/selftests/bpf/Makefile b/tools/testing/selftests/bpf/Makefile
-index fff7fb1285fc..f3f874ba186b 100644
---- a/tools/testing/selftests/bpf/Makefile
-+++ b/tools/testing/selftests/bpf/Makefile
-@@ -124,6 +124,16 @@ endif
- endif
- endif
+diff --git a/drivers/tty/serial/amba-pl011.c b/drivers/tty/serial/amba-pl011.c
+index ebd33c0232e6..89ade213a1a9 100644
+--- a/drivers/tty/serial/amba-pl011.c
++++ b/drivers/tty/serial/amba-pl011.c
+@@ -2780,6 +2780,7 @@ static struct platform_driver arm_sbsa_uart_platform_driver = {
+ 		.name	= "sbsa-uart",
+ 		.of_match_table = of_match_ptr(sbsa_uart_of_match),
+ 		.acpi_match_table = ACPI_PTR(sbsa_uart_acpi_match),
++		.suppress_bind_attrs = IS_BUILTIN(CONFIG_SERIAL_AMBA_PL011),
+ 	},
+ };
  
-+# Have one program compiled without "-target bpf" to test whether libbpf loads
-+# it successfully
-+$(OUTPUT)/test_xdp.o: test_xdp.c
-+	$(CLANG) $(CLANG_FLAGS) \
-+		-O2 -emit-llvm -c $< -o - | \
-+	$(LLC) -march=bpf -mcpu=$(CPU) $(LLC_FLAGS) -filetype=obj -o $@
-+ifeq ($(DWARF2BTF),y)
-+	$(BTF_PAHOLE) -J $@
-+endif
-+
- $(OUTPUT)/%.o: %.c
- 	$(CLANG) $(CLANG_FLAGS) \
- 		 -O2 -target bpf -emit-llvm -c $< -o - |      \
-diff --git a/tools/testing/selftests/bpf/test_libbpf.sh b/tools/testing/selftests/bpf/test_libbpf.sh
-index d97dc914cd49..8b1bc96d8e0c 100755
---- a/tools/testing/selftests/bpf/test_libbpf.sh
-+++ b/tools/testing/selftests/bpf/test_libbpf.sh
-@@ -33,17 +33,11 @@ trap exit_handler 0 2 3 6 9
+@@ -2808,6 +2809,7 @@ static struct amba_driver pl011_driver = {
+ 	.drv = {
+ 		.name	= "uart-pl011",
+ 		.pm	= &pl011_dev_pm_ops,
++		.suppress_bind_attrs = IS_BUILTIN(CONFIG_SERIAL_AMBA_PL011),
+ 	},
+ 	.id_table	= pl011_ids,
+ 	.probe		= pl011_probe,
+diff --git a/drivers/tty/serial/pic32_uart.c b/drivers/tty/serial/pic32_uart.c
+index fd80d999308d..0bdf1687983f 100644
+--- a/drivers/tty/serial/pic32_uart.c
++++ b/drivers/tty/serial/pic32_uart.c
+@@ -919,6 +919,7 @@ static struct platform_driver pic32_uart_platform_driver = {
+ 	.driver		= {
+ 		.name	= PIC32_DEV_NAME,
+ 		.of_match_table	= of_match_ptr(pic32_serial_dt_ids),
++		.suppress_bind_attrs = IS_BUILTIN(CONFIG_SERIAL_PIC32),
+ 	},
+ };
  
- libbpf_open_file test_l4lb.o
+diff --git a/drivers/tty/serial/xilinx_uartps.c b/drivers/tty/serial/xilinx_uartps.c
+index a48f19b1b88f..e5e9924ed7fb 100644
+--- a/drivers/tty/serial/xilinx_uartps.c
++++ b/drivers/tty/serial/xilinx_uartps.c
+@@ -1608,6 +1608,7 @@ static struct platform_driver cdns_uart_platform_driver = {
+ 		.name = CDNS_UART_NAME,
+ 		.of_match_table = cdns_uart_of_match,
+ 		.pm = &cdns_uart_dev_pm_ops,
++		.suppress_bind_attrs = IS_BUILTIN(CONFIG_SERIAL_XILINX_PS_UART),
+ 		},
+ };
  
--# TODO: fix libbpf to load noinline functions
--# [warning] libbpf: incorrect bpf_call opcode
--#libbpf_open_file test_l4lb_noinline.o
-+# Load a program with BPF-to-BPF calls
-+libbpf_open_file test_l4lb_noinline.o
- 
--# TODO: fix test_xdp_meta.c to load with libbpf
--# [warning] libbpf: test_xdp_meta.o doesn't provide kernel version
--#libbpf_open_file test_xdp_meta.o
--
--# TODO: fix libbpf to handle .eh_frame
--# [warning] libbpf: relocation failed: no section(10)
--#libbpf_open_file ../../../../samples/bpf/tracex3_kern.o
-+# Load a program compiled without the "-target bpf" flag
-+libbpf_open_file test_xdp.o
- 
- # Success
- exit 0
 -- 
 2.19.1
 
