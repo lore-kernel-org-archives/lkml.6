@@ -2,104 +2,79 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 801E8C43444
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 18:13:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9508DC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 18:13:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A4142070B
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 18:13:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6AD3520645
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 18:13:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546971206;
-	bh=fxuCelbzDrO/ReyDYo4jWPz/eXJn0lr9yCggSP4OI4Y=;
+	s=default; t=1546971236;
+	bh=GkjDV+FiMGLo4s/Vr7rqB737QhdbWDFuU3AGFG8lk3c=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=2tHgXOtQrDlx82XdAfeTNC9u16dIggKYXYjnxOpHXT9399WS5jwJIeREV6FH0NPhv
-	 NCXUN0htw7q/1DixPTRi/JmnSRHfG+WMV6YM3OV4PtA88YxFd71rXFGo/VQW2K4ofe
-	 OcQLVp8fBSjCOyp8SXOTmI0efDlYnfe3DJgrniCc=
+	b=zxYGZa5OQsaxlOTa0LCFIo6xjceVbIxq9Tmb6VvJyp7jEz6Us7jM3YkfwB9plQBy4
+	 SYhQwTttjvwzz+O0sJToPuFrCIxQjVKo7mKmNlx7ufzAdeATcP1ozFgR5qY5vrlz4J
+	 iiqJ0Kk1+/0eOU168KQ/L43+s8SI0U0+TBMECONw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729401AbfAHSNZ (ORCPT
+        id S1729425AbfAHSNz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 13:13:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51610 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727484AbfAHSNZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 13:13:25 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E286F20645;
-        Tue,  8 Jan 2019 18:13:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546971204;
-        bh=fxuCelbzDrO/ReyDYo4jWPz/eXJn0lr9yCggSP4OI4Y=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=lbyoJvnqhsi6eN6IdFBvRx+v5y2C2g4QPZojCiI4NVy7Uzl6rm+XwfcMy5K6GTD0o
-         eEiTZiMpDRgZ8kEF0F08HFhrC9vBfVTfWD2V5750sA1uuWCfuKaFlCbXdh/R96vuVE
-         guE+orQIoG0Ei6ZurFJy6aT3eXtyb+QeIvHoi2Yk=
-Date:   Tue, 8 Jan 2019 19:13:22 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Guenter Roeck <linux@roeck-us.net>,
-        Breno Leitao <leitao@debian.org>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 4.19 000/170] 4.19.14-stable review
-Message-ID: <20190108181322.GA4194@kroah.com>
-References: <20190107104452.953560660@linuxfoundation.org>
- <20190108172503.GA28031@roeck-us.net>
- <20190108175640.GA2461@kroah.com>
- <20190108180951.GB28031@roeck-us.net>
+        Tue, 8 Jan 2019 13:13:55 -0500
+Received: from mx2.suse.de ([195.135.220.15]:39142 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727484AbfAHSNz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 13:13:55 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id CAF0EAD00;
+        Tue,  8 Jan 2019 18:13:53 +0000 (UTC)
+Date:   Tue, 8 Jan 2019 19:13:52 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Alexander Duyck <alexander.h.duyck@linux.intel.com>
+Cc:     Arun KS <arunks@codeaurora.org>, arunks.linux@gmail.com,
+        akpm@linux-foundation.org, vbabka@suse.cz, osalvador@suse.de,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        getarunks@gmail.com
+Subject: Re: [PATCH v7] mm/page_alloc.c: memory_hotplug: free pages as higher
+ order
+Message-ID: <20190108181352.GI31793@dhcp22.suse.cz>
+References: <1546578076-31716-1-git-send-email-arunks@codeaurora.org>
+ <fb6465c99b3ada2c6af587a7eb00016d96d56f77.camel@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190108180951.GB28031@roeck-us.net>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+In-Reply-To: <fb6465c99b3ada2c6af587a7eb00016d96d56f77.camel@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 08, 2019 at 10:09:51AM -0800, Guenter Roeck wrote:
-> On Tue, Jan 08, 2019 at 06:56:40PM +0100, Greg Kroah-Hartman wrote:
-> > On Tue, Jan 08, 2019 at 09:25:03AM -0800, Guenter Roeck wrote:
-> > > On Mon, Jan 07, 2019 at 01:30:27PM +0100, Greg Kroah-Hartman wrote:
-> > > > This is the start of the stable review cycle for the 4.19.14 release.
-> > > > There are 170 patches in this series, all will be posted as a response
-> > > > to this one.  If anyone has any issues with these being applied, please
-> > > > let me know.
-> > > > 
-> > > > Responses should be made by Wed Jan  9 10:43:54 UTC 2019.
-> > > > Anything received after that time might be too late.
-> > > > 
-> > > 
-> > > Still (for v4.19.13-171-gc68ce175c3b8):
-> > > 
-> > > arch/powerpc/kernel/signal_64.c: In function ‘sys_rt_sigreturn’:
-> > > arch/powerpc/kernel/signal_64.c:761:21: error: ‘msr’ undeclared 
-> > > 
-> > > AFAICS commit 5c784c8414fba ("powerpc/tm: Remove msr_tm_active()") is missing.
-> > 
-> > Breno on this thread just said that this patch should not be applied,
-> > and another one will be submitted upstream instead to solve the problem
-> > correctly and then we can backport it.
-> > 
-> > So we can live with this build issue for now.
-> > 
+On Tue 08-01-19 09:56:09, Alexander Duyck wrote:
+> On Fri, 2019-01-04 at 10:31 +0530, Arun KS wrote:
+[...]
+> >  static int online_pages_range(unsigned long start_pfn, unsigned long nr_pages,
+> >  			void *arg)
+> >  {
+> > -	unsigned long i;
+> >  	unsigned long onlined_pages = *(unsigned long *)arg;
+> > -	struct page *page;
+> >  
+> >  	if (PageReserved(pfn_to_page(start_pfn)))
+> > -		for (i = 0; i < nr_pages; i++) {
+> > -			page = pfn_to_page(start_pfn + i);
+> > -			(*online_page_callback)(page);
+> > -			onlined_pages++;
+> > -		}
+> > +		onlined_pages = online_pages_blocks(start_pfn, nr_pages);
 > 
-> I think you should drop the offending patch in this case. It doesn't make
-> sense to keep it - all it accomplishes is to break various builds. What is
-> the point of doing that ? Is that somehow better than living with the bug
-> it is supposed to fix ?
+> Shouldn't this be a "+=" instead of an "="? It seems like you are going
+> to lose your count otherwise.
 
-That's what the developers involved seem to say.
-
-Breno, should I drop the offending patch now, or wait for your fix to
-land and then fix up the build then?
-
-thanks,
-
-greg k-h
+You are right of course. I should have noticed during the review.
+Thanks!
+-- 
+Michal Hocko
+SUSE Labs
