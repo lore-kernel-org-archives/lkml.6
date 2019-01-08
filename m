@@ -2,43 +2,157 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D345C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:46:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 867C4C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:46:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 153462063F
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:46:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 537D42063F
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:46:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1546976817;
+	bh=OXxvn0OaptjFeg1jchr9B7WnvuREIkoQyP0OfUm8VAQ=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=QLAuvpPczAUbqUX+bUzP0415TfGAWT1WZ5KEN/m4eZA92jZ7OIf/UedLJ+GVvD6ZR
+	 dUSsW5N5Sq4LiyT4jdkka+t0uZZepwptYwFQ2wmpgoWY0ZYYMdc0JhKFgU8aWeDoFE
+	 lpCxqcHxstBSYXJ8pznZNs0gw9IQv1XW8Syds9wk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732745AbfAHTqt (ORCPT
+        id S1732743AbfAHTq4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:46:49 -0500
-Received: from mx.demfloro.ru ([185.52.0.75]:35826 "EHLO mx.demfloro.ru"
+        Tue, 8 Jan 2019 14:46:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41762 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730692AbfAHTqp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:46:45 -0500
-X-Greylist: delayed 419 seconds by postgrey-1.27 at vger.kernel.org; Tue, 08 Jan 2019 14:46:45 EST
-Received: by mx.demfloro.ru (Postfix, from userid 1000)
-        id 43Z2dr6ySKz7VMT; Tue,  8 Jan 2019 19:39:44 +0000 (UTC)
-From:   Dmitrii Tcvetkov <demfloro@demfloro.ru>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     <stable@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-In-Reply-To: <20190107104437.308206189@linuxfoundation.org>
-Subject: Re: [PATCH 4.20 000/145] 4.20.1-stable review
-Message-Id: <43Z2dr6ySKz7VMT@mx.demfloro.ru>
-Date:   Tue,  8 Jan 2019 19:39:44 +0000 (UTC)
+        id S1731513AbfAHTc7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:32:59 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 71C832063F;
+        Tue,  8 Jan 2019 19:32:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1546975978;
+        bh=OXxvn0OaptjFeg1jchr9B7WnvuREIkoQyP0OfUm8VAQ=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=jD+q6k5z9XslSRXniSbCSKitx3Wsvx+Io29lYU2vBuCHNLXfLfbXeimcOmhFjpvQL
+         rSIVLkmVnmxbi4qORsBil29s6nYuR+RfKEZfRBTXr5EJY5X1Y6J5AWavCQdsHXhqUM
+         cf167RsPza9SdMbVnBjnvTa8RpVifX3R7DjiO/r8=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Peter Smith <peter.smith@linaro.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 20/53] arm64: relocatable: fix inconsistencies in linker script and options
+Date:   Tue,  8 Jan 2019 14:31:48 -0500
+Message-Id: <20190108193222.123316-20-sashal@kernel.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190108193222.123316-1-sashal@kernel.org>
+References: <20190108193222.123316-1-sashal@kernel.org>
+MIME-Version: 1.0
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello, 
+From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 
-Don't have anything against listed patches, just curious: doesn't upstream commit 
-574823bfab82d9d8fa47f422778043fbb4b4f50e 
-(Change mincore() to count "mapped" pages rather than "cached" pages) 
-need to be backported as a security fix for CVE-2019-5489[1] to stable kernels?
+[ Upstream commit 3bbd3db86470c701091fb1d67f1fab6621debf50 ]
 
-[1] https://www.openwall.com/lists/oss-security/2019/01/07/2
+readelf complains about the section layout of vmlinux when building
+with CONFIG_RELOCATABLE=y (for KASLR):
+
+  readelf: Warning: [21]: Link field (0) should index a symtab section.
+  readelf: Warning: [21]: Info field (0) should index a relocatable section.
+
+Also, it seems that our use of '-pie -shared' is contradictory, and
+thus ambiguous. In general, the way KASLR is wired up at the moment
+is highly tailored to how ld.bfd happens to implement (and conflate)
+PIE executables and shared libraries, so given the current effort to
+support other toolchains, let's fix some of these issues as well.
+
+- Drop the -pie linker argument and just leave -shared. In ld.bfd,
+  the differences between them are unclear (except for the ELF type
+  of the produced image [0]) but lld chokes on seeing both at the
+  same time.
+
+- Rename the .rela output section to .rela.dyn, as is customary for
+  shared libraries and PIE executables, so that it is not misidentified
+  by readelf as a static relocation section (producing the warnings
+  above).
+
+- Pass the -z notext and -z norelro options to explicitly instruct the
+  linker to permit text relocations, and to omit the RELRO program
+  header (which requires a certain section layout that we don't adhere
+  to in the kernel). These are the defaults for current versions of
+  ld.bfd.
+
+- Discard .eh_frame and .gnu.hash sections to avoid them from being
+  emitted between .head.text and .text, screwing up the section layout.
+
+These changes only affect the ELF image, and produce the same binary
+image.
+
+[0] b9dce7f1ba01 ("arm64: kernel: force ET_DYN ELF type for ...")
+
+Cc: Nick Desaulniers <ndesaulniers@google.com>
+Cc: Peter Smith <peter.smith@linaro.org>
+Tested-by: Nick Desaulniers <ndesaulniers@google.com>
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ arch/arm64/Makefile             | 2 +-
+ arch/arm64/kernel/vmlinux.lds.S | 9 +++++----
+ 2 files changed, 6 insertions(+), 5 deletions(-)
+
+diff --git a/arch/arm64/Makefile b/arch/arm64/Makefile
+index 48f2b3657507..0c5f70e6d5cf 100644
+--- a/arch/arm64/Makefile
++++ b/arch/arm64/Makefile
+@@ -18,7 +18,7 @@ ifeq ($(CONFIG_RELOCATABLE), y)
+ # Pass --no-apply-dynamic-relocs to restore pre-binutils-2.27 behaviour
+ # for relative relocs, since this leads to better Image compression
+ # with the relocation offsets always being zero.
+-LDFLAGS_vmlinux		+= -pie -shared -Bsymbolic \
++LDFLAGS_vmlinux		+= -shared -Bsymbolic -z notext -z norelro \
+ 			$(call ld-option, --no-apply-dynamic-relocs)
+ endif
+ 
+diff --git a/arch/arm64/kernel/vmlinux.lds.S b/arch/arm64/kernel/vmlinux.lds.S
+index ddfd3c0942f7..6edfdf5b061d 100644
+--- a/arch/arm64/kernel/vmlinux.lds.S
++++ b/arch/arm64/kernel/vmlinux.lds.S
+@@ -99,7 +99,8 @@ SECTIONS
+ 		*(.discard)
+ 		*(.discard.*)
+ 		*(.interp .dynamic)
+-		*(.dynsym .dynstr .hash)
++		*(.dynsym .dynstr .hash .gnu.hash)
++		*(.eh_frame)
+ 	}
+ 
+ 	. = KIMAGE_VADDR + TEXT_OFFSET;
+@@ -176,12 +177,12 @@ SECTIONS
+ 
+ 	PERCPU_SECTION(L1_CACHE_BYTES)
+ 
+-	.rela : ALIGN(8) {
++	.rela.dyn : ALIGN(8) {
+ 		*(.rela .rela*)
+ 	}
+ 
+-	__rela_offset	= ABSOLUTE(ADDR(.rela) - KIMAGE_VADDR);
+-	__rela_size	= SIZEOF(.rela);
++	__rela_offset	= ABSOLUTE(ADDR(.rela.dyn) - KIMAGE_VADDR);
++	__rela_size	= SIZEOF(.rela.dyn);
+ 
+ 	. = ALIGN(SEGMENT_ALIGN);
+ 	__initdata_end = .;
+-- 
+2.19.1
+
