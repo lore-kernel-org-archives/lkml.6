@@ -2,114 +2,81 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F718C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 10:10:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2CC7C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 10:11:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5AA392087E
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 10:10:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7FA622087E
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 10:11:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="qZtn5S8u"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="JLRrkdMW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728439AbfAHKKO (ORCPT
+        id S1728489AbfAHKLX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 05:10:14 -0500
-Received: from esa3.hgst.iphmx.com ([216.71.153.141]:48841 "EHLO
-        esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727992AbfAHKKO (ORCPT
+        Tue, 8 Jan 2019 05:11:23 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:48518 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727001AbfAHKLX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 05:10:14 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1546942213; x=1578478213;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=1P8JDvo3dAoiLl00jnPlAemozrC3mVJkmqYB5frnj3k=;
-  b=qZtn5S8uFWkyfCTxQTb7McGwV5r5CceCH074Vuv3+9xziLNg2aJgikmu
-   MkPYQS5i3RsO3u0cojAsD2OMXM5xF3cxIYOdncBsakc9AWLVGVNH2YSCH
-   2Kw7/UhwdbYAjxO8RbWm6MSauXB5R8/Ra4PWW77ZAkxMvN/3Rzz40wiXg
-   gws8AISHAAYslyirDtA1xDtDJxpta7atUNSmesF08xUjibiWoUJt1HhHJ
-   OI8CVNZ+OSOYH0Qo3Bo3yR01p/W1etlh+4SOS5oLsa0NKWjLQ11kHm/XS
-   uqwPqfOfgDG9xXvDNUHE7Dav/nZ/tu2GCZ2CH91WqiajjAYnxWStEwoxd
-   w==;
-X-IronPort-AV: E=Sophos;i="5.56,453,1539619200"; 
-   d="scan'208";a="103169116"
-Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 08 Jan 2019 18:10:13 +0800
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep02.wdc.com with ESMTP; 08 Jan 2019 01:51:46 -0800
-Received: from usa003532.ad.shared (HELO [10.86.59.202]) ([10.86.59.202])
-  by uls-op-cesaip02.wdc.com with ESMTP; 08 Jan 2019 02:10:13 -0800
-Subject: Re: [PATCH] RISC-V: fix bad use of of_node_put
-To:     Andreas Schwab <schwab@suse.de>
-Cc:     "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        "palmer@sifive.com" <palmer@sifive.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "anup@brainfault.org" <anup@brainfault.org>,
-        "jeremy.linton@arm.com" <jeremy.linton@arm.com>,
-        "sudeep.holla@arm.com" <sudeep.holla@arm.com>
-References: <1542755270-10433-1-git-send-email-atish.patra@wdc.com>
- <mvm8szwwo1o.fsf@suse.de>
-From:   Atish Patra <atish.patra@wdc.com>
-Message-ID: <6326f9ba-695d-dc00-1b0c-c37a94c9b485@wdc.com>
-Date:   Tue, 8 Jan 2019 02:10:12 -0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:60.0)
- Gecko/20100101 Thunderbird/60.3.3
+        Tue, 8 Jan 2019 05:11:23 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=6HFTOvCdOJyPtI074m0FbqlthaoX/Yqru68BY88Q/tk=; b=JLRrkdMW47F7LOHXj9h5jzSzx
+        Rhhy7RBD+CZSNH5irRWgVrRyaPJy+PVPF/d1LxBXL1cI/sOpqkcoyUJ/S12X7Q9y5F5zmZn6qhsIz
+        DHhdGeWKbJdIqLxDZzMFbRoHN1mwUhgMPZtweYU37HuvPPSdMI+Rr9BYemwADde1vfjTun7b1Djt1
+        LFAEMgMJqCKOE+ZfCYyxr5aeZ4x4elTi1YiXUkatMhjbgZQSfR0710aUTMSmw75orsdlLr+3b2Z/1
+        gBmQbeyq911DQYASXgpwy/+ZgxQDhETUDZuahH+syUH0xepvpqM0X1VEWhwIpFM7QXXiPRsLr9Iot
+        g7uxhdYKA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1ggoLc-0003is-SZ; Tue, 08 Jan 2019 10:11:01 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 248F6201BF307; Tue,  8 Jan 2019 11:10:58 +0100 (CET)
+Date:   Tue, 8 Jan 2019 11:10:58 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Adrian Hunter <adrian.hunter@intel.com>
+Cc:     Andi Kleen <ak@linux.intel.com>, Nadav Amit <namit@vmware.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Edward Cree <ecree@solarflare.com>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Nadav Amit <nadav.amit@gmail.com>, X86 ML <x86@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Borislav Petkov <bp@alien8.de>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        songliubraving@fb.com
+Subject: Re: [RFC v2 0/6] x86: dynamic indirect branch promotion
+Message-ID: <20190108101058.GB6808@hirez.programming.kicks-ass.net>
+References: <20181231072112.21051-1-namit@vmware.com>
+ <87zhshe66w.fsf@linux.intel.com>
+ <20190107163227.GH14122@hirez.programming.kicks-ass.net>
+ <c4e836e8-1949-27f5-f6a0-ed860f590ec5@intel.com>
+ <20190108092559.GA6808@hirez.programming.kicks-ass.net>
+ <306d38fb-7ce6-a3ec-a351-6c117559ebaa@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <mvm8szwwo1o.fsf@suse.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <306d38fb-7ce6-a3ec-a351-6c117559ebaa@intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/7/19 6:16 AM, Andreas Schwab wrote:
-> of_find_node_by_type already calls of_node_put, don't call it again.
-> 
-> Fixes: 94f9bf118f ("RISC-V: Fix of_node_* refcount")
-> Signed-off-by: Andreas Schwab <schwab@suse.de>
-> ---
->   arch/riscv/kernel/smpboot.c | 6 +-----
->   1 file changed, 1 insertion(+), 5 deletions(-)
-> 
-> diff --git a/arch/riscv/kernel/smpboot.c b/arch/riscv/kernel/smpboot.c
-> index fc185ecabb..18cda0e8cf 100644
-> --- a/arch/riscv/kernel/smpboot.c
-> +++ b/arch/riscv/kernel/smpboot.c
-> @@ -57,15 +57,12 @@ void __init setup_smp(void)
->   
->   	while ((dn = of_find_node_by_type(dn, "cpu"))) {
->   		hart = riscv_of_processor_hartid(dn);
-> -		if (hart < 0) {
-> -			of_node_put(dn);
-> +		if (hart < 0)
->   			continue;
-> -		}
->   
->   		if (hart == cpuid_to_hartid_map(0)) {
->   			BUG_ON(found_boot_cpu);
->   			found_boot_cpu = 1;
-> -			of_node_put(dn);
->   			continue;
->   		}
->   
-> @@ -73,7 +70,6 @@ void __init setup_smp(void)
->   		set_cpu_possible(cpuid, true);
->   		set_cpu_present(cpuid, true);
->   		cpuid++;
-> -		of_node_put(dn);
->   	}
->   
->   	BUG_ON(!found_boot_cpu);
-> 
-Thanks for catching and fixing this.
+On Tue, Jan 08, 2019 at 12:01:11PM +0200, Adrian Hunter wrote:
+> The problem is that the jitted code gets freed from memory, which is why I
+> suggested the ability to pin it for a while.
 
-Reviewed-by: Atish Patra <atish.patra@wdc.com>
-
-Regards,
-Atish
+Then what do you tell the guy that keeps PT running for a day and runs
+out of memory because he likes to JIT a lot?
