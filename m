@@ -2,88 +2,133 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37C10C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 17:34:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 786EEC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 17:35:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0613520827
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 17:34:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4A7A320827
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 17:35:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="EJ0T+txC"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DGyizKUS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729137AbfAHRew (ORCPT
+        id S1729111AbfAHRfv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 12:34:52 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:44128 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728256AbfAHRev (ORCPT
+        Tue, 8 Jan 2019 12:35:51 -0500
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:39218 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727484AbfAHRfu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 12:34:51 -0500
-Received: by mail-lj1-f193.google.com with SMTP id k19-v6so4082358lji.11
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jan 2019 09:34:50 -0800 (PST)
+        Tue, 8 Jan 2019 12:35:50 -0500
+Received: by mail-qt1-f196.google.com with SMTP id u47so5263086qtj.6
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jan 2019 09:35:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=3+c/iSAWkyckmdJB6osdVXbVSK2QjMmepJfo9YtUYBc=;
-        b=EJ0T+txC9MhBF53rvnGnx4oFP7zqslyjXVAVe6yASBnl2JL/OMPMjFgpZ22oGbYr8c
-         pIAGDi2dIWmDDUMBT2VGHvPkb+aNtwAeGP5YnsrPTYSxSAGgG5L8Y9qZRwl/QFfcmTUA
-         iusjGr/3vmqkFlUh/w1BBweSTmsc5a1nOWmEM=
+         :cc:content-transfer-encoding;
+        bh=bQeG/bTYFgG4QFMLKTEBa9/B0VgVbffUqu5K1tWUHxA=;
+        b=DGyizKUSlAGBIEaGyznWWbRK8/HqNUwIRS0T2bak4Be9XM8IQ064cxcYUgscyeT1Qb
+         41ps8zamyeRo/uaBG1TSR/zioWPWlz8XtfhOwDtuWinWpJdo52hltYwoVdbmVamwWr/5
+         M5rYI7G2fp84njHYGwOuAdDN1ffYPrTtR4SMWPJAX3y2k7ZqdfaCuW2pIMptfWUjXBqN
+         dVz3EkDUe7nVWRRoVnZCUx7Tcp8J9uwAvyaQq55bYj9oH85ACZGLXaCTDvno9ED7aJ/7
+         TwfC3PW2RQHsbKqfL7HuuGAnyHCdTHacToY/PKWEBg0FccYqVQqSsnd5SbLo0FtG7V0I
+         MJAA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=3+c/iSAWkyckmdJB6osdVXbVSK2QjMmepJfo9YtUYBc=;
-        b=e12cpSSGX67kwgAp144IYZ2bPA2rGrPG9hsgkzrE8NptccaJs5/GgYHph6jIUUIcK0
-         gxaI55y3/wMGj0eNB9V/ZIVnCgkcJ3O4EpXuWnHNovYGzKtzbSaqgsD3BGtcd7strI2Z
-         Yevl0FHmArHMvF/Hz6jIeoNRViLXisx1ttfu6B8MB4ULgokVsmt+1PAVGGQ336zx9U3Y
-         rUQxW8n/ZE9/sQzv3v12vATa2Vu2phdQmoDwqdNHKhnBlFnJRfrcDIFdfrhushGrhXiA
-         zrP3+u8Gt1cHB6xRpn8bm6AgPJLXCfPw5HMvytHLLVfPuEu7tuao9Dnb3gbqr/qs2TbH
-         XEPA==
-X-Gm-Message-State: AJcUukf8fRKIMM4ltXLA+yVr48ffWBF95AwKj5LMW+uB3BZy/v6pyeZ3
-        g8HmcKKxOGVISAHBXXK3P5ID8fwLKSI=
-X-Google-Smtp-Source: ALg8bN6cG5dNhkQPCPsY+5jR2uPANSL11NLfQNZwLBhzMjOPd6GZ4jeTs8pLaWvviv/1x/cwtQACqg==
-X-Received: by 2002:a2e:9107:: with SMTP id m7-v6mr1600958ljg.23.1546968889239;
-        Tue, 08 Jan 2019 09:34:49 -0800 (PST)
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com. [209.85.167.47])
-        by smtp.gmail.com with ESMTPSA id z7-v6sm14343719lji.42.2019.01.08.09.34.47
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 08 Jan 2019 09:34:48 -0800 (PST)
-Received: by mail-lf1-f47.google.com with SMTP id i26so3566950lfc.0
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jan 2019 09:34:47 -0800 (PST)
-X-Received: by 2002:a19:6e0b:: with SMTP id j11mr1672866lfc.124.1546968887575;
- Tue, 08 Jan 2019 09:34:47 -0800 (PST)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=bQeG/bTYFgG4QFMLKTEBa9/B0VgVbffUqu5K1tWUHxA=;
+        b=MNPEpLjror5ehYwGwVLhmlpOWGtvbBUU7TpIg7D9/B9WsFRg/glXqxljCGxlpoxLxg
+         it8jIcBeVYc7R7ucuINkhzS1KhvC/UPfIDetj7YCl1x4m//x39mrkUtzEBp/8U8LKTa0
+         JvarKvsQrNQpi9fvqvSsb3lAG/M3jjHmyDKbGWiF7Of/2QusL0Hv+/B0M9+idbGaa5Np
+         lAKrrtmtkmsG9eFJ/OrG93xYTAbs7dVEq+kO2Sz9GksUEL9DmKSCYiuhL1EgRCyJi9Km
+         jjNp5X68XaVg7bpRlqNr116NsdjE/ha4QTkcWWA0Dbtc8PMPenCZ5BPc5ViSAQt4hITR
+         uPVA==
+X-Gm-Message-State: AJcUukcPM9+IdWwBXFkuMTi8IGibUKhVniz7Mt3rCa7AIkGced1QwLVd
+        2EKBk537IYphHFpC6m8f0dIY1VNUcQgB39D7mzA=
+X-Google-Smtp-Source: ALg8bN7JU4O1yk7PnwBKHsn3+TgNirmfweumaL0fdDrhp+BfHIBO47/8LYsYSEwvXbdzWIdXH6/0QGQS3WIfc56Oy14=
+X-Received: by 2002:a0c:8542:: with SMTP id n60mr2559309qva.205.1546968949355;
+ Tue, 08 Jan 2019 09:35:49 -0800 (PST)
 MIME-Version: 1.0
-References: <20181223124859.GA26860@zn.tnic> <CAHk-=wiX_6f+7DUaG-x2cQHctjtSHdMrtAeixitOQkbswq2scA@mail.gmail.com>
- <20181226205616.GA4557@zn.tnic> <20181228124904.GC20003@gmail.com> <20190108171401.GC12235@zn.tnic>
-In-Reply-To: <20190108171401.GC12235@zn.tnic>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 8 Jan 2019 09:34:31 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wg6U4SxGOH8zE94MZ2zE2Ara12eMMt1MKcqa7SZGDVFgA@mail.gmail.com>
-Message-ID: <CAHk-=wg6U4SxGOH8zE94MZ2zE2Ara12eMMt1MKcqa7SZGDVFgA@mail.gmail.com>
-Subject: Re: [PATCH] x86/cache: Rename config option to CONFIG_X86_RESCTRL
-To:     Borislav Petkov <bp@suse.de>
-Cc:     Ingo Molnar <mingo@kernel.org>, x86-ml <x86@kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        James Morse <james.morse@arm.com>,
-        Babu Moger <babu.moger@amd.com>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Reinette Chatre <reinette.chatre@intel.com>,
-        Tony Luck <tony.luck@intel.com>
+References: <20180815095934.11205-1-enric.balletbo@collabora.com>
+ <20180815095934.11205-2-enric.balletbo@collabora.com> <2908229.jFki8unlfB@phil>
+In-Reply-To: <2908229.jFki8unlfB@phil>
+From:   Enric Balletbo Serra <eballetbo@gmail.com>
+Date:   Tue, 8 Jan 2019 18:35:38 +0100
+Message-ID: <CAFqH_50tz1Toi6L1Ju5imyMRPzN1bDg7mxzcLrJWvdxOwknfdw@mail.gmail.com>
+Subject: Re: [PATCH 1/4] phy: rockchip-inno-usb2: fix misspelling and
+ kernel-doc documentation.
+To:     Heiko Stuebner <heiko@sntech.de>
+Cc:     Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Alexandru Stan <amstan@chromium.org>,
+        Guenter Roeck <groeck@google.com>,
+        kieran.bingham@ideasonboard.com,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        kernel@collabora.com, Benson Leung <bleung@chromium.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 8, 2019 at 9:14 AM Borislav Petkov <bp@suse.de> wrote:
+Hi Heiko and all,
+
+Missatge de Heiko Stuebner <heiko@sntech.de> del dia dc., 15 d=E2=80=99ag.
+2018 a les 12:31:
 >
-> Will queue to x86/urgent if no issues.
+> Am Mittwoch, 15. August 2018, 11:59:31 CEST schrieb Enric Balletbo i Serr=
+a:
+> > Fix the typo flase -> false and clean up the kernel-doc documentation i=
+n
+> > phy-rockchip-inno.usb2.c and fix the following warnings when documentat=
+ion
+> > is built.
+> >
+> >   :58: warning: missing initial short description
+> >   :69: warning: cannot understand function prototype: 'enum usb_chg_sta=
+te '
+> >   :97: warning: missing initial short description
+> >   :136: warning: cannot understand function prototype: 'struct rockchip=
+_usb2phy_port_cfg '
+> >   :157: warning: cannot understand function prototype: 'struct rockchip=
+_usb2phy_cfg '
+> >   :163: warning: Function parameter or member 'port_cfgs' not described=
+ in 'rockchip_usb2phy_cfg'
+> >   :187: warning: cannot understand function prototype: 'struct rockchip=
+_usb2phy_port '
+> >   :204: warning: Function parameter or member 'port_cfg' not described =
+in 'rockchip_usb2phy_port'
+> >   :207: warning: missing initial short description
+> >   :234: warning: Function parameter or member 'dev' not described in 'r=
+ockchip_usb2phy'
+> >   :234: warning: Function parameter or member 'clk480m_hw' not describe=
+d in 'rockchip_usb2phy'
+> >
+> > Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+>
+> Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+>
+
+I included this patch in these series because I found the errors when
+I was working on this. But this patch doesn't really depend on the
+other patches and probably I should have had to send independently. I
+am planning to send a new version of these series excluding this
+patch. I think that the patch can be already picked (still applies
+cleanly and is fine to pick?) or do you prefer I resend?
 
 Thanks,
+ Enric
 
-                 Linus
+>
+>
+> _______________________________________________
+> Linux-rockchip mailing list
+> Linux-rockchip@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-rockchip
