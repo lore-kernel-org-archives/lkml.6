@@ -2,144 +2,128 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D708C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 12:00:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE9C6C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 12:01:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5AB262087F
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 12:00:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8D5D220850
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 12:01:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="jPtJ5os3"
+	dkim=pass (2048-bit key) header.d=brainfault-org.20150623.gappssmtp.com header.i=@brainfault-org.20150623.gappssmtp.com header.b="wL+AvZqu"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728882AbfAHMAU (ORCPT
+        id S1728763AbfAHMBw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 07:00:20 -0500
-Received: from mail-eopbgr30072.outbound.protection.outlook.com ([40.107.3.72]:15520
-        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727932AbfAHMAT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 07:00:19 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=JZVN/awjcaKE/2ulu4KEfbfi91zYmAAt2NxEcD8oH7I=;
- b=jPtJ5os3hk8o2K1cnGzFSDATQlOTUdn7gtSZfaXVkrzB+gWYUa8/0OQVF9RrGdsNE8653PhDaFLMyC8mxOG0pY/esn+x3JJiEzS1BsTbQWH7ap4w3p3JFtQg0GA4ppPmMieMw1M0yRadMqDLvmzPCx/W/Usyl00qh9dMgu+Ijw0=
-Received: from VI1PR04MB4543.eurprd04.prod.outlook.com (20.177.55.90) by
- VI1PR04MB6125.eurprd04.prod.outlook.com (20.179.26.80) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1495.9; Tue, 8 Jan 2019 12:00:16 +0000
-Received: from VI1PR04MB4543.eurprd04.prod.outlook.com
- ([fe80::6d0a:7236:6fac:6fd6]) by VI1PR04MB4543.eurprd04.prod.outlook.com
- ([fe80::6d0a:7236:6fac:6fd6%3]) with mapi id 15.20.1495.011; Tue, 8 Jan 2019
- 12:00:16 +0000
-From:   Robin Gong <yibin.gong@nxp.com>
-To:     "vkoul@kernel.org" <vkoul@kernel.org>
-CC:     "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-Subject: [PATCH v2] dmaengine: imx-sdma: refine to load context only once
-Thread-Topic: [PATCH v2] dmaengine: imx-sdma: refine to load context only once
-Thread-Index: AQHUp0m46lBvnAQrVES/5clQPkHmbg==
-Date:   Tue, 8 Jan 2019 12:00:16 +0000
-Message-ID: <1546977740-10846-1-git-send-email-yibin.gong@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: git-send-email 2.7.4
-x-clientproxiedby: HK0PR03CA0038.apcprd03.prod.outlook.com
- (2603:1096:203:2f::26) To VI1PR04MB4543.eurprd04.prod.outlook.com
- (2603:10a6:803:6d::26)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=yibin.gong@nxp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [119.31.174.66]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;VI1PR04MB6125;6:HLSnuQffUvB1Lr0EY+iab1RrOo6sN6Cn5JWIAYb/hDP0Q1uvbiQg1qTDT0iCNSS8eTsKiRtG+zGu5AtSFiuECBdtkVCsWTIaPiQtwQSM9BFAJaJoirMHnkvTskXYVtxLAt9xslVNO+sYn4G8n0qEBQFfFLGG9w08BI0crC32w9pF5rSBM1SrMUDMd29L7z+jz5RvJYm3nR5+1Ux7ol07im85hcAAZNW3IgHoG1jj/qjy+lBfNfT5DxGLWCb0I39m9wL6o/NJrnWCHgWNMHm1kEjcZpFYhBDP9zsyR/K7lDrxptXkrANlUdWdZXrWRt/hxIQdnpLAy+Y8ynr+worQ+b0gskeWR6y6Jm6LbtQho0Y1X9SIM7pSsa1S4ibz4qoqde2Dn5dotOAfLE+nvUcFlptvdw8Efhu+LEUq+QZjoJ9SzwLi6hx1aXotbb/S6PgGZygLBLmQidk+STcr81aPbw==;5:IKZpQqOjx8bpv0xS96JQkdBpjThTbIVNpBjLw7y1sENith1GDt/cQDK2rAetSBaSsyThTSPNcc8zQBkqU2Ss3zWbYxiCHrjtR0PzijYooM/5THmNLJJUzEvMRPj3W0W6Ep7fCyeVAqIOPHj8uuqjsDRSG+N1TFG1uIuowTebv7OMPCXhQ2UtCFP1x7E4oL+G6rerZ/Pe0Rv7vvRf1PxEng==;7:yPpSVVV2QQ2VrLucyJTbBe/Ib7rHESsrQ+sfocUaWx661BOA9AbHwAaBgVpL+RRQ0JMgsTpfHObyiDbA5OgJ0t8s+5/WAnPDNk4rL0l+GBCpbGELlal+qBv5RyIsx1WBfElV1F8WWgF4SLGYNTvGZg==
-x-ms-office365-filtering-correlation-id: 37d3ec58-6ac2-4362-5c98-08d67560da85
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB6125;
-x-ms-traffictypediagnostic: VI1PR04MB6125:
-x-microsoft-antispam-prvs: <VI1PR04MB6125DE8AE082E15AB5BCA888898A0@VI1PR04MB6125.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(908002)(999002)(5005026)(6040522)(8220060)(2401047)(8121501046)(10201501046)(3002001)(3231475)(944501520)(52105112)(93006095)(93001095)(6055026)(6041310)(20161123564045)(20161123562045)(20161123560045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:VI1PR04MB6125;BCL:0;PCL:0;RULEID:;SRVR:VI1PR04MB6125;
-x-forefront-prvs: 0911D5CE78
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(39860400002)(346002)(136003)(376002)(366004)(199004)(189003)(2906002)(53936002)(7736002)(6916009)(6512007)(86362001)(256004)(54906003)(5660300001)(81156014)(14444005)(6486002)(25786009)(4326008)(486006)(3846002)(6116002)(97736004)(71190400001)(71200400001)(575784001)(2616005)(476003)(8676002)(2351001)(36756003)(186003)(26005)(1730700003)(305945005)(50226002)(106356001)(102836004)(105586002)(68736007)(478600001)(14454004)(99286004)(5640700003)(8936002)(316002)(6436002)(2501003)(81166006)(6506007)(66066001)(386003)(52116002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB6125;H:VI1PR04MB4543.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: YgZM7uLy2VMedKcr3UZVMEi/rx7Yq9AJx6QKIBmu+RjKzaLiW0Na5qM92BfllMYEx3S56ugvEO9JqvKwlc2lVpgKp4VO+A8QEyxAWz/2gJfsuStsRNTb/VYrURHq734wkMeqp5tMzWJG9hL1HxxOrIRr17D6/Ua32R32gkpjRZ/615ZEorCt8Lx5OdyHNpxog5BZ2U6zMA+ZpUeN9NWhHe5b7tvRSHolYs/NO+c7sxIp6L9/wuAx2+8M9QV8BQAcThMo+m89oX0QTH4vILzl8oJWfwT/zCOTEJdiG7iheFBYcfXtQsnPJGvyb7tUw91L
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        Tue, 8 Jan 2019 07:01:52 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:51354 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727107AbfAHMBv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 07:01:51 -0500
+Received: by mail-wm1-f65.google.com with SMTP id b11so3889537wmj.1
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jan 2019 04:01:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brainfault-org.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=4z/joS18OrBx5VzkEUr1UXjVHtJ0iMM9fC/5WEi+jKg=;
+        b=wL+AvZquaWVe3+cpWa6p+I7Qq5eeTQRKQgOLuwpVCjMC1pd5/PCHJV2lPQ50Gy+NXJ
+         KoRyatQs2KqojE9wsH5bgtbQiY5eF5UgjY7At4k0n2qi2pfnkbMACSnxQ01htM0if6nB
+         kezg4lD3DKi7ZQK2LsQgM9kiZmNXQVv39sFiq8OPgVugnP8gL2saqm8d+yd4BOKnAtQf
+         O6mJW8kgiAYCB2eE1d1jJYbMwtbOELXEl4K/i+JGrrhZZZiLkkg3WNIP7WVM9ckUbnsk
+         XQVweuX30Eruy5yGcg9IdnW8zbxFcn9R2SpFtbiI6RW97vQYO/3YO3i9zZk5oRL+/tF+
+         Ck2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=4z/joS18OrBx5VzkEUr1UXjVHtJ0iMM9fC/5WEi+jKg=;
+        b=EAeRnGFBNCJPfqtnyAIr9orTw4+plogl0t/FkQYseTyhY6h2ttoGvZQlICjopIlaUH
+         6S1sEOHdvPwsjAEz7m34vh05Q1gZUNy91qT66D61BmcXYjVkrZmfVWcwTLxkENNusEHl
+         goKjGJ1qxcGPd70SRmPpwxbTGsMF4esuvTPfOvjPoCda8RjzpNUmHuyf6zoLIL00rQNO
+         E95kZhIZ4BLAB5K5dcCbeQ+vYaD+Errx7UBY/XjWiUN4S2SpjiEsipo+SIVmqZsngY8G
+         LkC5dIdyCCat7zSEeuNo0Ond2BvpN2rihjxYB7sB6gWLC/n5wkGbfSPURCN3RoV8FmF0
+         o8Xw==
+X-Gm-Message-State: AJcUukeOfLPYSQphN8wWTxGkiB9d/lF3n0/FERyDWJsz1YzNcPRnDYs7
+        4RhrAAQ5k/GHRAbQa9D0G7EAW2u0yv0C2495UgForg==
+X-Google-Smtp-Source: ALg8bN4aYf2g6YWDCTVDUmY6Gbu21QIrrBP/U9lgVysYWhr35oABl6RGoIwFWnrB6Rgj7yyrTTmkelU+TASMZy02zAI=
+X-Received: by 2002:a1c:ca15:: with SMTP id a21mr1458339wmg.132.1546948909573;
+ Tue, 08 Jan 2019 04:01:49 -0800 (PST)
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 37d3ec58-6ac2-4362-5c98-08d67560da85
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Jan 2019 12:00:14.4844
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB6125
+References: <1546940318-9752-1-git-send-email-atish.patra@wdc.com> <1546940318-9752-9-git-send-email-atish.patra@wdc.com>
+In-Reply-To: <1546940318-9752-9-git-send-email-atish.patra@wdc.com>
+From:   Anup Patel <anup@brainfault.org>
+Date:   Tue, 8 Jan 2019 17:31:38 +0530
+Message-ID: <CAAhSdy1_5ULea-2JKYeQd8dAPbnZ+OVM-p=iP5RwWbuiZ5NJJw@mail.gmail.com>
+Subject: Re: [PATCH v2 8/8] RISC-V: Assign hwcap only according to current cpu.
+To:     Atish Patra <atish.patra@wdc.com>
+Cc:     linux-riscv@lists.infradead.org, Alan Kao <alankao@andestech.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Andreas Schwab <schwab@suse.de>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Dmitriy Cherkasov <dmitriy@oss-tech.org>,
+        Jason Cooper <jason@lakedaemon.net>,
+        "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Michael Clark <michaeljclark@mac.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        =?UTF-8?Q?Patrick_St=C3=A4hlin?= <me@packi.ch>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Zong Li <zongbox@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The context loaded only one time before channel running,but
-currently sdma_config_channel() and dma_prep_* duplicated with
-sdma_load_context(), so refine it to load context only one time
-before channel running and reload after the channel terminated.
+On Tue, Jan 8, 2019 at 3:08 PM Atish Patra <atish.patra@wdc.com> wrote:
+>
+> Currently, we set hwcap based on first valid cpu from
+> DT. This may not be correct always as that CPU might not
+> be current booting cpu.
+>
+> Set hwcap based on the current cpu instead of first
+> valid CPU from DT.
+>
+> Signed-off-by: Atish Patra <atish.patra@wdc.com>
+> ---
+>  arch/riscv/kernel/cpufeature.c | 11 +++++++----
+>  1 file changed, 7 insertions(+), 4 deletions(-)
+>
+> diff --git a/arch/riscv/kernel/cpufeature.c b/arch/riscv/kernel/cpufeature.c
+> index a6e369ed..ed6122ff 100644
+> --- a/arch/riscv/kernel/cpufeature.c
+> +++ b/arch/riscv/kernel/cpufeature.c
+> @@ -43,12 +43,15 @@ void riscv_fill_hwcap(void)
+>         elf_hwcap = 0;
+>
+>         /*
+> -        * We don't support running Linux on hertergenous ISA systems.  For
+> -        * now, we just check the ISA of the first "okay" processor.
+> +        * We don't support running Linux on hertergenous ISA systems.
+> +        * But first "okay" processor might not be the boot cpu.
+> +        * Check the ISA of boot cpu.
+>          */
+> -       while ((node = of_find_node_by_type(node, "cpu")))
+> -               if (riscv_of_processor_hartid(node) >= 0)
+> +       while ((node = of_find_node_by_type(node, "cpu"))) {
+> +               if (riscv_of_processor_hartid(node) == boot_cpu_hartid)
+>                         break;
+> +       }
+> +
+>         if (!node) {
+>                 pr_warning("Unable to find \"cpu\" devicetree entry");
+>                 return;
+> --
+> 2.7.4
+>
 
-Signed-off-by: Robin Gong <yibin.gong@nxp.com>
----
- drivers/dma/imx-sdma.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+Looks good to me.
 
-diff --git a/drivers/dma/imx-sdma.c b/drivers/dma/imx-sdma.c
-index a2b0a0e..015c17a 100644
---- a/drivers/dma/imx-sdma.c
-+++ b/drivers/dma/imx-sdma.c
-@@ -377,6 +377,7 @@ struct sdma_channel {
- 	unsigned long			watermark_level;
- 	u32				shp_addr, per_addr;
- 	enum dma_status			status;
-+	bool				context_loaded;
- 	struct imx_dma_data		data;
- 	struct work_struct		terminate_worker;
- };
-@@ -970,6 +971,9 @@ static int sdma_load_context(struct sdma_channel *sdmac=
-)
- 	int ret;
- 	unsigned long flags;
-=20
-+	if (sdmac->context_loaded)
-+		return 0;
-+
- 	if (sdmac->direction =3D=3D DMA_DEV_TO_MEM)
- 		load_address =3D sdmac->pc_from_device;
- 	else if (sdmac->direction =3D=3D DMA_DEV_TO_DEV)
-@@ -1012,6 +1016,8 @@ static int sdma_load_context(struct sdma_channel *sdm=
-ac)
-=20
- 	spin_unlock_irqrestore(&sdma->channel_0_lock, flags);
-=20
-+	sdmac->context_loaded =3D true;
-+
- 	return ret;
- }
-=20
-@@ -1051,6 +1057,7 @@ static void sdma_channel_terminate_work(struct work_s=
-truct *work)
- 	sdmac->desc =3D NULL;
- 	spin_unlock_irqrestore(&sdmac->vc.lock, flags);
- 	vchan_dma_desc_free_list(&sdmac->vc, &head);
-+	sdmac->context_loaded =3D false;
- }
-=20
- static int sdma_disable_channel_async(struct dma_chan *chan)
---=20
-2.7.4
+Reviewed-by: Anup Patel <anup@brainfault.org>
 
+Regards,
+Anup
