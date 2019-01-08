@@ -6,47 +6,52 @@ X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D099C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:34:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DD5FC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:34:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1AD1B20827
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:34:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4BBBE20645
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:34:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546976089;
-	bh=l5MfHsxG+Obod8AP1Q92TDXwdaUHDY9d+iB9feHZwgU=;
+	s=default; t=1546976093;
+	bh=kre70+d8uzJ8FvACdFI79BLA9fkyW8w13nbV39CgHJk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=jHq7L3hAijx3ZqI2NJoDP2QdDRPQC/9lgiQnYdMk2Eddmx0JvjdEXnA1xwnbHmw1D
-	 g44X4grMK/wjOPpgp+MOUxbzr42o3so+cwP8ccHO/yXxs8LnK70Gjp9xgmfVvfYkGS
-	 +HdCO1bZFqK3wpGh8UL5AfbuW/YtuYHwjgtzspGY=
+	b=hwPcLvZDGpAI8oKXkSrhImMmuL8MTp7GUY6FGKBRsMuFeC8qbYwB54OLd7ry0MU+c
+	 PXK7v/4E9C8/ER/V9tcflgCya2i9N5pzr8laalvNDLz0M5efcv+7AYf6WQeiNnpjV0
+	 DK2EXuI2lZr/Df9X1vBk5dV+1jENPDUrf1JxsQek=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732078AbfAHTes (ORCPT
+        id S1732101AbfAHTew (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:34:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43416 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 14:34:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43532 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732033AbfAHTek (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:34:40 -0500
+        id S1732026AbfAHTeq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:34:46 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4A9B720645;
-        Tue,  8 Jan 2019 19:34:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EBAE02176F;
+        Tue,  8 Jan 2019 19:34:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546976079;
-        bh=l5MfHsxG+Obod8AP1Q92TDXwdaUHDY9d+iB9feHZwgU=;
+        s=default; t=1546976085;
+        bh=kre70+d8uzJ8FvACdFI79BLA9fkyW8w13nbV39CgHJk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=haOdvwtu6+0A6e4v1TCoBiDszLjietAX4UoG9SVHYx1kGFiChq6ISaU0jVo9U/utG
-         VBnbc03frCHcSqI9zS4viEkxX5vaktCeMbamrmNH+l4GHFHRbMaLds3onqzI6WonbJ
-         cXn5pmCuCbNvq07DTauJEOa4oahefF8EUbVlqLwg=
+        b=1OMrGUPK7WGkr2Z6UK5jJeonKBQ98V4bOonaTEIQSarppcN4rm+KXtt2qpRxzs6mC
+         BkmxzKe/W2e4nT1/ulIfAHNZBgNCSZOKtv3aCT1D3b8ZfMY0NOma4vJ1lk3vRykakr
+         QDefivvZpGeAoWOZSY7YkcEv2KlbF1NVddtLvRm4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Qian Cai <cai@lca.pw>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <sashal@kernel.org>,
-        megaraidlinux.pdl@broadcom.com, linux-scsi@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 33/36] scsi: megaraid: fix out-of-bound array accesses
-Date:   Tue,  8 Jan 2019 14:33:45 -0500
-Message-Id: <20190108193348.123880-33-sashal@kernel.org>
+Cc:     Michal Hocko <mhocko@suse.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        David Rientjes <rientjes@google.com>,
+        Paul Oppenheimer <bepvte@gmail.com>,
+        William Kucharski <william.kucharski@oracle.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org,
+        linux-doc@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 36/36] mm, proc: be more verbose about unstable VMA flags in /proc/<pid>/smaps
+Date:   Tue,  8 Jan 2019 14:33:48 -0500
+Message-Id: <20190108193348.123880-36-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108193348.123880-1-sashal@kernel.org>
 References: <20190108193348.123880-1-sashal@kernel.org>
@@ -58,120 +63,106 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Qian Cai <cai@lca.pw>
+From: Michal Hocko <mhocko@suse.com>
 
-[ Upstream commit c7a082e4242fd8cd21a441071e622f87c16bdacc ]
+[ Upstream commit 7550c6079846a24f30d15ac75a941c8515dbedfb ]
 
-UBSAN reported those with MegaRAID SAS-3 3108,
+Patch series "THP eligibility reporting via proc".
 
-[   77.467308] UBSAN: Undefined behaviour in drivers/scsi/megaraid/megaraid_sas_fp.c:117:32
-[   77.475402] index 255 is out of range for type 'MR_LD_SPAN_MAP [1]'
-[   77.481677] CPU: 16 PID: 333 Comm: kworker/16:1 Not tainted 4.20.0-rc5+ #1
-[   77.488556] Hardware name: Huawei TaiShan 2280 /BC11SPCD, BIOS 1.50 06/01/2018
-[   77.495791] Workqueue: events work_for_cpu_fn
-[   77.500154] Call trace:
-[   77.502610]  dump_backtrace+0x0/0x2c8
-[   77.506279]  show_stack+0x24/0x30
-[   77.509604]  dump_stack+0x118/0x19c
-[   77.513098]  ubsan_epilogue+0x14/0x60
-[   77.516765]  __ubsan_handle_out_of_bounds+0xfc/0x13c
-[   77.521767]  mr_update_load_balance_params+0x150/0x158 [megaraid_sas]
-[   77.528230]  MR_ValidateMapInfo+0x2cc/0x10d0 [megaraid_sas]
-[   77.533825]  megasas_get_map_info+0x244/0x2f0 [megaraid_sas]
-[   77.539505]  megasas_init_adapter_fusion+0x9b0/0xf48 [megaraid_sas]
-[   77.545794]  megasas_init_fw+0x1ab4/0x3518 [megaraid_sas]
-[   77.551212]  megasas_probe_one+0x2c4/0xbe0 [megaraid_sas]
-[   77.556614]  local_pci_probe+0x7c/0xf0
-[   77.560365]  work_for_cpu_fn+0x34/0x50
-[   77.564118]  process_one_work+0x61c/0xf08
-[   77.568129]  worker_thread+0x534/0xa70
-[   77.571882]  kthread+0x1c8/0x1d0
-[   77.575114]  ret_from_fork+0x10/0x1c
+This series of three patches aims at making THP eligibility reporting much
+more robust and long term sustainable.  The trigger for the change is a
+regression report [2] and the long follow up discussion.  In short the
+specific application didn't have good API to query whether a particular
+mapping can be backed by THP so it has used VMA flags to workaround that.
+These flags represent a deep internal state of VMAs and as such they
+should be used by userspace with a great deal of caution.
 
-[   89.240332] UBSAN: Undefined behaviour in drivers/scsi/megaraid/megaraid_sas_fp.c:117:32
-[   89.248426] index 255 is out of range for type 'MR_LD_SPAN_MAP [1]'
-[   89.254700] CPU: 16 PID: 95 Comm: kworker/u130:0 Not tainted 4.20.0-rc5+ #1
-[   89.261665] Hardware name: Huawei TaiShan 2280 /BC11SPCD, BIOS 1.50 06/01/2018
-[   89.268903] Workqueue: events_unbound async_run_entry_fn
-[   89.274222] Call trace:
-[   89.276680]  dump_backtrace+0x0/0x2c8
-[   89.280348]  show_stack+0x24/0x30
-[   89.283671]  dump_stack+0x118/0x19c
-[   89.287167]  ubsan_epilogue+0x14/0x60
-[   89.290835]  __ubsan_handle_out_of_bounds+0xfc/0x13c
-[   89.295828]  MR_LdRaidGet+0x50/0x58 [megaraid_sas]
-[   89.300638]  megasas_build_io_fusion+0xbb8/0xd90 [megaraid_sas]
-[   89.306576]  megasas_build_and_issue_cmd_fusion+0x138/0x460 [megaraid_sas]
-[   89.313468]  megasas_queue_command+0x398/0x3d0 [megaraid_sas]
-[   89.319222]  scsi_dispatch_cmd+0x1dc/0x8a8
-[   89.323321]  scsi_request_fn+0x8e8/0xdd0
-[   89.327249]  __blk_run_queue+0xc4/0x158
-[   89.331090]  blk_execute_rq_nowait+0xf4/0x158
-[   89.335449]  blk_execute_rq+0xdc/0x158
-[   89.339202]  __scsi_execute+0x130/0x258
-[   89.343041]  scsi_probe_and_add_lun+0x2fc/0x1488
-[   89.347661]  __scsi_scan_target+0x1cc/0x8c8
-[   89.351848]  scsi_scan_channel.part.3+0x8c/0xc0
-[   89.356382]  scsi_scan_host_selected+0x130/0x1f0
-[   89.361002]  do_scsi_scan_host+0xd8/0xf0
-[   89.364927]  do_scan_async+0x9c/0x320
-[   89.368594]  async_run_entry_fn+0x138/0x420
-[   89.372780]  process_one_work+0x61c/0xf08
-[   89.376793]  worker_thread+0x13c/0xa70
-[   89.380546]  kthread+0x1c8/0x1d0
-[   89.383778]  ret_from_fork+0x10/0x1c
+A similar has happened for [3] when users complained that VM_MIXEDMAP is
+no longer set on DAX mappings.  Again a lack of a proper API led to an
+abuse.
 
-This is because when populating Driver Map using firmware raid map, all
-non-existing VDs set their ldTgtIdToLd to 0xff, so it can be skipped later.
+The first patch in the series tries to emphasise that that the semantic of
+flags might change and any application consuming those should be really
+careful.
 
-From drivers/scsi/megaraid/megaraid_sas_base.c ,
-memset(instance->ld_ids, 0xff, MEGASAS_MAX_LD_IDS);
+The remaining two patches provide a more suitable interface to address [2]
+and provide a consistent API to query the THP status both for each VMA and
+process wide as well.  [1]
 
-From drivers/scsi/megaraid/megaraid_sas_fp.c ,
-/* For non existing VDs, iterate to next VD*/
-if (ld >= (MAX_LOGICAL_DRIVES_EXT - 1))
-	continue;
+http://lkml.kernel.org/r/20181120103515.25280-1-mhocko@kernel.org [2]
+http://lkml.kernel.org/r/http://lkml.kernel.org/r/alpine.DEB.2.21.1809241054050.224429@chino.kir.corp.google.com
+[3] http://lkml.kernel.org/r/20181002100531.GC4135@quack2.suse.cz
 
-However, there are a few places that failed to skip those non-existing VDs
-due to off-by-one errors. Then, those 0xff leaked into MR_LdRaidGet(0xff,
-map) and triggered the out-of-bound accesses.
+This patch (of 3):
 
-Fixes: 51087a8617fe ("megaraid_sas : Extended VD support")
-Signed-off-by: Qian Cai <cai@lca.pw>
-Acked-by: Sumit Saxena <sumit.saxena@broadcom.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Even though vma flags exported via /proc/<pid>/smaps are explicitly
+documented to be not guaranteed for future compatibility the warning
+doesn't go far enough because it doesn't mention semantic changes to those
+flags.  And they are important as well because these flags are a deep
+implementation internal to the MM code and the semantic might change at
+any time.
+
+Let's consider two recent examples:
+http://lkml.kernel.org/r/20181002100531.GC4135@quack2.suse.cz
+: commit e1fb4a086495 "dax: remove VM_MIXEDMAP for fsdax and device dax" has
+: removed VM_MIXEDMAP flag from DAX VMAs. Now our testing shows that in the
+: mean time certain customer of ours started poking into /proc/<pid>/smaps
+: and looks at VMA flags there and if VM_MIXEDMAP is missing among the VMA
+: flags, the application just fails to start complaining that DAX support is
+: missing in the kernel.
+
+http://lkml.kernel.org/r/alpine.DEB.2.21.1809241054050.224429@chino.kir.corp.google.com
+: Commit 1860033237d4 ("mm: make PR_SET_THP_DISABLE immediately active")
+: introduced a regression in that userspace cannot always determine the set
+: of vmas where thp is ineligible.
+: Userspace relies on the "nh" flag being emitted as part of /proc/pid/smaps
+: to determine if a vma is eligible to be backed by hugepages.
+: Previous to this commit, prctl(PR_SET_THP_DISABLE, 1) would cause thp to
+: be disabled and emit "nh" as a flag for the corresponding vmas as part of
+: /proc/pid/smaps.  After the commit, thp is disabled by means of an mm
+: flag and "nh" is not emitted.
+: This causes smaps parsing libraries to assume a vma is eligible for thp
+: and ends up puzzling the user on why its memory is not backed by thp.
+
+In both cases userspace was relying on a semantic of a specific VMA flag.
+The primary reason why that happened is a lack of a proper interface.
+While this has been worked on and it will be fixed properly, it seems that
+our wording could see some refinement and be more vocal about semantic
+aspect of these flags as well.
+
+Link: http://lkml.kernel.org/r/20181211143641.3503-2-mhocko@kernel.org
+Signed-off-by: Michal Hocko <mhocko@suse.com>
+Acked-by: Jan Kara <jack@suse.cz>
+Acked-by: Dan Williams <dan.j.williams@intel.com>
+Acked-by: David Rientjes <rientjes@google.com>
+Acked-by: Mike Rapoport <rppt@linux.ibm.com>
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: David Rientjes <rientjes@google.com>
+Cc: Paul Oppenheimer <bepvte@gmail.com>
+Cc: William Kucharski <william.kucharski@oracle.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/megaraid/megaraid_sas_fp.c     | 2 +-
- drivers/scsi/megaraid/megaraid_sas_fusion.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ Documentation/filesystems/proc.txt | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/megaraid/megaraid_sas_fp.c b/drivers/scsi/megaraid/megaraid_sas_fp.c
-index e413113c86ac..663d8f503c86 100644
---- a/drivers/scsi/megaraid/megaraid_sas_fp.c
-+++ b/drivers/scsi/megaraid/megaraid_sas_fp.c
-@@ -1275,7 +1275,7 @@ void mr_update_load_balance_params(struct MR_DRV_RAID_MAP_ALL *drv_map,
+diff --git a/Documentation/filesystems/proc.txt b/Documentation/filesystems/proc.txt
+index 74329fd0add2..077c37ed976f 100644
+--- a/Documentation/filesystems/proc.txt
++++ b/Documentation/filesystems/proc.txt
+@@ -484,7 +484,9 @@ manner. The codes are the following:
  
- 	for (ldCount = 0; ldCount < MAX_LOGICAL_DRIVES_EXT; ldCount++) {
- 		ld = MR_TargetIdToLdGet(ldCount, drv_map);
--		if (ld >= MAX_LOGICAL_DRIVES_EXT) {
-+		if (ld >= MAX_LOGICAL_DRIVES_EXT - 1) {
- 			lbInfo[ldCount].loadBalanceFlag = 0;
- 			continue;
- 		}
-diff --git a/drivers/scsi/megaraid/megaraid_sas_fusion.c b/drivers/scsi/megaraid/megaraid_sas_fusion.c
-index f722a0e6caa4..fe1a20973e47 100644
---- a/drivers/scsi/megaraid/megaraid_sas_fusion.c
-+++ b/drivers/scsi/megaraid/megaraid_sas_fusion.c
-@@ -1902,7 +1902,7 @@ static void megasas_build_ld_nonrw_fusion(struct megasas_instance *instance,
- 		device_id < instance->fw_supported_vd_count)) {
+ Note that there is no guarantee that every flag and associated mnemonic will
+ be present in all further kernel releases. Things get changed, the flags may
+-be vanished or the reverse -- new added.
++be vanished or the reverse -- new added. Interpretation of their meaning
++might change in future as well. So each consumer of these flags has to
++follow each specific kernel version for the exact semantic.
  
- 		ld = MR_TargetIdToLdGet(device_id, local_map_ptr);
--		if (ld >= instance->fw_supported_vd_count)
-+		if (ld >= instance->fw_supported_vd_count - 1)
- 			fp_possible = 0;
- 
- 		raid = MR_LdRaidGet(ld, local_map_ptr);
+ This file is only present if the CONFIG_MMU kernel configuration option is
+ enabled.
 -- 
 2.19.1
 
