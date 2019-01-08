@@ -2,55 +2,52 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-18.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A9BCC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:40:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C709C43612
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:40:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 29CCA2063F
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:40:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 115AB2063F
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:40:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546976433;
-	bh=3unuNo+wFotaRVLvdTKE1RSGLPtodCmEMhyVTGPNOvc=;
+	s=default; t=1546976440;
+	bh=HFYB4A2/Ee1wG0AT5JCPws0L6F2qMoIuw4rnEC+D4NY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=GW0+5lF5GnOMzRA9Nx0F6UiOPWlxxPP7oARErmIFPT0ZcVgwVZ5X9rOKb5H29JyXK
-	 ODq9CyqFldQuiHKKEkqPR8aSpL9Us298qkZ2UEYv1AiXm0NZTV7QYJi22zJPT6bl4h
-	 P+luiP78UserzlzvQAwNuRESBKUiIfXw/qyNPsL4=
+	b=psF4RZ/F1K4hoVArtQfeH7nV7qi3R0ypi71GKEHicrXta5/cxHCnXsuWappkwozr1
+	 Ht069x1Yx5u76I2m3HamFrXDVPpMjNcigO/l15QP+/fvw8jLqQR56j4VXooU3wd67k
+	 ipsVa1ehd58dyAbiAMS6T3wAEw8XuMiksnVT4pd4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732264AbfAHTkc (ORCPT
+        id S1732031AbfAHTej (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:40:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43436 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 14:34:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43304 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732042AbfAHTel (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:34:41 -0500
+        id S1731982AbfAHTee (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:34:34 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 75F9B20827;
-        Tue,  8 Jan 2019 19:34:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4822A20645;
+        Tue,  8 Jan 2019 19:34:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546976080;
-        bh=3unuNo+wFotaRVLvdTKE1RSGLPtodCmEMhyVTGPNOvc=;
+        s=default; t=1546976072;
+        bh=HFYB4A2/Ee1wG0AT5JCPws0L6F2qMoIuw4rnEC+D4NY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=n0l5imNzfGbuWvekEpdXj/FyssMx1ef0vIQ7zXBjgyi+XNHN2Y8rfxZbO4Jy80oOX
-         kDWV40ddaU0jty+QAaYVzWT2LD11Vfnk+KsXpf139K0Duszi2x89q5VzNOuBIhvwxQ
-         cozVyxT0P1odLuHDeBy47ZCtBoWoUV36cTwM0tTg=
+        b=CseRYHAsWmnOxY5JF298vfA+ud/kJyvQlf7wWedZ0ZVLbfUC/BKnmphH3Anx0CTLy
+         CwpnX3wz0jiMcktidpQw0EkC1RhSXXQMBi2esrqoolWnWgbHutT9KD9qzLwKHhuTCP
+         n4cwJRQO93rgIPurT+YDBOVR+oVQXJ9l86lFBW+k=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Junxiao Bi <junxiao.bi@oracle.com>, Jun Piao <piaojun@huawei.com>,
-        Mark Fasheh <mfasheh@versity.com>,
-        Joel Becker <jlbec@evilplan.org>,
-        Changwei Ge <ge.changwei@h3c.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+Cc:     Nikos Tsironis <ntsironis@arrikto.com>,
+        Ilias Tsitsimpis <iliastsi@arrikto.com>,
+        Mike Snitzer <snitzer@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.9 34/36] ocfs2: fix panic due to unrecovered local alloc
-Date:   Tue,  8 Jan 2019 14:33:46 -0500
-Message-Id: <20190108193348.123880-34-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 29/36] dm snapshot: Fix excessive memory usage and workqueue stalls
+Date:   Tue,  8 Jan 2019 14:33:41 -0500
+Message-Id: <20190108193348.123880-29-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108193348.123880-1-sashal@kernel.org>
 References: <20190108193348.123880-1-sashal@kernel.org>
@@ -62,104 +59,224 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Junxiao Bi <junxiao.bi@oracle.com>
+From: Nikos Tsironis <ntsironis@arrikto.com>
 
-[ Upstream commit 532e1e54c8140188e192348c790317921cb2dc1c ]
+[ Upstream commit 721b1d98fb517ae99ab3b757021cf81db41e67be ]
 
-mount.ocfs2 ignore the inconsistent error that journal is clean but
-local alloc is unrecovered.  After mount, local alloc not empty, then
-reserver cluster didn't alloc a new local alloc window, reserveration
-map is empty(ocfs2_reservation_map.m_bitmap_len = 0), that triggered the
-following panic.
+kcopyd has no upper limit to the number of jobs one can allocate and
+issue. Under certain workloads this can lead to excessive memory usage
+and workqueue stalls. For example, when creating multiple dm-snapshot
+targets with a 4K chunk size and then writing to the origin through the
+page cache. Syncing the page cache causes a large number of BIOs to be
+issued to the dm-snapshot origin target, which itself issues an even
+larger (because of the BIO splitting taking place) number of kcopyd
+jobs.
 
-This issue was reported at
+Running the following test, from the device mapper test suite [1],
 
-  https://oss.oracle.com/pipermail/ocfs2-devel/2015-May/010854.html
+  dmtest run --suite snapshot -n many_snapshots_of_same_volume_N
 
-and was advised to fixed during mount.  But this is a very unusual
-inconsistent state, usually journal dirty flag should be cleared at the
-last stage of umount until every other things go right.  We may need do
-further debug to check that.  Any way to avoid possible futher
-corruption, mount should be abort and fsck should be run.
+, with 8 active snapshots, results in the kcopyd job slab cache growing
+to 10G. Depending on the available system RAM this can lead to the OOM
+killer killing user processes:
 
-  (mount.ocfs2,1765,1):ocfs2_load_local_alloc:353 ERROR: Local alloc hasn't been recovered!
-  found = 6518, set = 6518, taken = 8192, off = 15912372
-  ocfs2: Mounting device (202,64) on (node 0, slot 3) with ordered data mode.
-  o2dlm: Joining domain 89CEAC63CC4F4D03AC185B44E0EE0F3F ( 0 1 2 3 4 5 6 8 ) 8 nodes
-  ocfs2: Mounting device (202,80) on (node 0, slot 3) with ordered data mode.
-  o2hb: Region 89CEAC63CC4F4D03AC185B44E0EE0F3F (xvdf) is now a quorum device
-  o2net: Accepted connection from node yvwsoa17p (num 7) at 172.22.77.88:7777
-  o2dlm: Node 7 joins domain 64FE421C8C984E6D96ED12C55FEE2435 ( 0 1 2 3 4 5 6 7 8 ) 9 nodes
-  o2dlm: Node 7 joins domain 89CEAC63CC4F4D03AC185B44E0EE0F3F ( 0 1 2 3 4 5 6 7 8 ) 9 nodes
-  ------------[ cut here ]------------
-  kernel BUG at fs/ocfs2/reservations.c:507!
-  invalid opcode: 0000 [#1] SMP
-  Modules linked in: ocfs2 rpcsec_gss_krb5 auth_rpcgss nfsv4 nfs fscache lockd grace ocfs2_dlmfs ocfs2_stack_o2cb ocfs2_dlm ocfs2_nodemanager ocfs2_stackglue configfs sunrpc ipt_REJECT nf_reject_ipv4 nf_conntrack_ipv4 nf_defrag_ipv4 iptable_filter ip_tables ip6t_REJECT nf_reject_ipv6 nf_conntrack_ipv6 nf_defrag_ipv6 xt_state nf_conntrack ip6table_filter ip6_tables ib_ipoib rdma_ucm ib_ucm ib_uverbs ib_umad rdma_cm ib_cm iw_cm ib_sa ib_mad ib_core ib_addr ipv6 ovmapi ppdev parport_pc parport xen_netfront fb_sys_fops sysimgblt sysfillrect syscopyarea acpi_cpufreq pcspkr i2c_piix4 i2c_core sg ext4 jbd2 mbcache2 sr_mod cdrom xen_blkfront pata_acpi ata_generic ata_piix floppy dm_mirror dm_region_hash dm_log dm_mod
-  CPU: 0 PID: 4349 Comm: startWebLogic.s Not tainted 4.1.12-124.19.2.el6uek.x86_64 #2
-  Hardware name: Xen HVM domU, BIOS 4.4.4OVM 09/06/2018
-  task: ffff8803fb04e200 ti: ffff8800ea4d8000 task.ti: ffff8800ea4d8000
-  RIP: 0010:[<ffffffffa05e96a8>]  [<ffffffffa05e96a8>] __ocfs2_resv_find_window+0x498/0x760 [ocfs2]
-  Call Trace:
-    ocfs2_resmap_resv_bits+0x10d/0x400 [ocfs2]
-    ocfs2_claim_local_alloc_bits+0xd0/0x640 [ocfs2]
-    __ocfs2_claim_clusters+0x178/0x360 [ocfs2]
-    ocfs2_claim_clusters+0x1f/0x30 [ocfs2]
-    ocfs2_convert_inline_data_to_extents+0x634/0xa60 [ocfs2]
-    ocfs2_write_begin_nolock+0x1c6/0x1da0 [ocfs2]
-    ocfs2_write_begin+0x13e/0x230 [ocfs2]
-    generic_perform_write+0xbf/0x1c0
-    __generic_file_write_iter+0x19c/0x1d0
-    ocfs2_file_write_iter+0x589/0x1360 [ocfs2]
-    __vfs_write+0xb8/0x110
-    vfs_write+0xa9/0x1b0
-    SyS_write+0x46/0xb0
-    system_call_fastpath+0x18/0xd7
-  Code: ff ff 8b 75 b8 39 75 b0 8b 45 c8 89 45 98 0f 84 e5 fe ff ff 45 8b 74 24 18 41 8b 54 24 1c e9 56 fc ff ff 85 c0 0f 85 48 ff ff ff <0f> 0b 48 8b 05 cf c3 de ff 48 ba 00 00 00 00 00 00 00 10 48 85
-  RIP   __ocfs2_resv_find_window+0x498/0x760 [ocfs2]
-   RSP <ffff8800ea4db668>
-  ---[ end trace 566f07529f2edf3c ]---
-  Kernel panic - not syncing: Fatal exception
-  Kernel Offset: disabled
+[463.492878] kthreadd invoked oom-killer: gfp_mask=0x6040c0(GFP_KERNEL|__GFP_COMP),
+              nodemask=(null), order=1, oom_score_adj=0
+[463.492894] kthreadd cpuset=/ mems_allowed=0
+[463.492948] CPU: 7 PID: 2 Comm: kthreadd Not tainted 4.19.0-rc7 #3
+[463.492950] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
+[463.492952] Call Trace:
+[463.492964]  dump_stack+0x7d/0xbb
+[463.492973]  dump_header+0x6b/0x2fc
+[463.492987]  ? lockdep_hardirqs_on+0xee/0x190
+[463.493012]  oom_kill_process+0x302/0x370
+[463.493021]  out_of_memory+0x113/0x560
+[463.493030]  __alloc_pages_slowpath+0xf40/0x1020
+[463.493055]  __alloc_pages_nodemask+0x348/0x3c0
+[463.493067]  cache_grow_begin+0x81/0x8b0
+[463.493072]  ? cache_grow_begin+0x874/0x8b0
+[463.493078]  fallback_alloc+0x1e4/0x280
+[463.493092]  kmem_cache_alloc_node+0xd6/0x370
+[463.493098]  ? copy_process.part.31+0x1c5/0x20d0
+[463.493105]  copy_process.part.31+0x1c5/0x20d0
+[463.493115]  ? __lock_acquire+0x3cc/0x1550
+[463.493121]  ? __switch_to_asm+0x34/0x70
+[463.493129]  ? kthread_create_worker_on_cpu+0x70/0x70
+[463.493135]  ? finish_task_switch+0x90/0x280
+[463.493165]  _do_fork+0xe0/0x6d0
+[463.493191]  ? kthreadd+0x19f/0x220
+[463.493233]  kernel_thread+0x25/0x30
+[463.493235]  kthreadd+0x1bf/0x220
+[463.493242]  ? kthread_create_on_cpu+0x90/0x90
+[463.493248]  ret_from_fork+0x3a/0x50
+[463.493279] Mem-Info:
+[463.493285] active_anon:20631 inactive_anon:4831 isolated_anon:0
+[463.493285]  active_file:80216 inactive_file:80107 isolated_file:435
+[463.493285]  unevictable:0 dirty:51266 writeback:109372 unstable:0
+[463.493285]  slab_reclaimable:31191 slab_unreclaimable:3483521
+[463.493285]  mapped:526 shmem:4903 pagetables:1759 bounce:0
+[463.493285]  free:33623 free_pcp:2392 free_cma:0
+...
+[463.493489] Unreclaimable slab info:
+[463.493513] Name                      Used          Total
+[463.493522] bio-6                   1028KB       1028KB
+[463.493525] bio-5                   1028KB       1028KB
+[463.493528] dm_snap_pending_exception     236783KB     243789KB
+[463.493531] dm_exception              41KB         42KB
+[463.493534] bio-4                   1216KB       1216KB
+[463.493537] bio-3                 439396KB     439396KB
+[463.493539] kcopyd_job           6973427KB    6973427KB
+...
+[463.494340] Out of memory: Kill process 1298 (ruby2.3) score 1 or sacrifice child
+[463.494673] Killed process 1298 (ruby2.3) total-vm:435740kB, anon-rss:20180kB, file-rss:4kB, shmem-rss:0kB
+[463.506437] oom_reaper: reaped process 1298 (ruby2.3), now anon-rss:0kB, file-rss:0kB, shmem-rss:0kB
 
-Link: http://lkml.kernel.org/r/20181121020023.3034-2-junxiao.bi@oracle.com
-Signed-off-by: Junxiao Bi <junxiao.bi@oracle.com>
-Reviewed-by: Yiwen Jiang <jiangyiwen@huawei.com>
-Acked-by: Joseph Qi <jiangqi903@gmail.com>
-Cc: Jun Piao <piaojun@huawei.com>
-Cc: Mark Fasheh <mfasheh@versity.com>
-Cc: Joel Becker <jlbec@evilplan.org>
-Cc: Changwei Ge <ge.changwei@h3c.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Moreover, issuing a large number of kcopyd jobs results in kcopyd
+hogging the CPU, while processing them. As a result, processing of work
+items, queued for execution on the same CPU as the currently running
+kcopyd thread, is stalled for long periods of time, hurting performance.
+Running the aforementioned test we get, in dmesg, messages like the
+following:
+
+[67501.194592] BUG: workqueue lockup - pool cpus=4 node=0 flags=0x0 nice=0 stuck for 27s!
+[67501.195586] Showing busy workqueues and worker pools:
+[67501.195591] workqueue events: flags=0x0
+[67501.195597]   pwq 8: cpus=4 node=0 flags=0x0 nice=0 active=1/256
+[67501.195611]     pending: cache_reap
+[67501.195641] workqueue mm_percpu_wq: flags=0x8
+[67501.195645]   pwq 8: cpus=4 node=0 flags=0x0 nice=0 active=1/256
+[67501.195656]     pending: vmstat_update
+[67501.195682] workqueue kblockd: flags=0x18
+[67501.195687]   pwq 5: cpus=2 node=0 flags=0x0 nice=-20 active=1/256
+[67501.195698]     pending: blk_timeout_work
+[67501.195753] workqueue kcopyd: flags=0x8
+[67501.195757]   pwq 8: cpus=4 node=0 flags=0x0 nice=0 active=1/256
+[67501.195768]     pending: do_work [dm_mod]
+[67501.195802] workqueue kcopyd: flags=0x8
+[67501.195806]   pwq 8: cpus=4 node=0 flags=0x0 nice=0 active=1/256
+[67501.195817]     pending: do_work [dm_mod]
+[67501.195834] workqueue kcopyd: flags=0x8
+[67501.195838]   pwq 8: cpus=4 node=0 flags=0x0 nice=0 active=1/256
+[67501.195848]     pending: do_work [dm_mod]
+[67501.195881] workqueue kcopyd: flags=0x8
+[67501.195885]   pwq 8: cpus=4 node=0 flags=0x0 nice=0 active=1/256
+[67501.195896]     pending: do_work [dm_mod]
+[67501.195920] workqueue kcopyd: flags=0x8
+[67501.195924]   pwq 8: cpus=4 node=0 flags=0x0 nice=0 active=2/256
+[67501.195935]     in-flight: 67:do_work [dm_mod]
+[67501.195945]     pending: do_work [dm_mod]
+[67501.195961] pool 8: cpus=4 node=0 flags=0x0 nice=0 hung=27s workers=3 idle: 129 23765
+
+The root cause for these issues is the way dm-snapshot uses kcopyd. In
+particular, the lack of an explicit or implicit limit to the maximum
+number of in-flight COW jobs. The merging path is not affected because
+it implicitly limits the in-flight kcopyd jobs to one.
+
+Fix these issues by using a semaphore to limit the maximum number of
+in-flight kcopyd jobs. We grab the semaphore before allocating a new
+kcopyd job in start_copy() and start_full_bio() and release it after the
+job finishes in copy_callback().
+
+The initial semaphore value is configurable through a module parameter,
+to allow fine tuning the maximum number of in-flight COW jobs. Setting
+this parameter to zero initializes the semaphore to INT_MAX.
+
+A default value of 2048 maximum in-flight kcopyd jobs was chosen. This
+value was decided experimentally as a trade-off between memory
+consumption, stalling the kernel's workqueues and maintaining a high
+enough throughput.
+
+Re-running the aforementioned test:
+
+  * Workqueue stalls are eliminated
+  * kcopyd's job slab cache uses a maximum of 130MB
+  * The time taken by the test to write to the snapshot-origin target is
+    reduced from 05m20.48s to 03m26.38s
+
+[1] https://github.com/jthornber/device-mapper-test-suite
+
+Signed-off-by: Nikos Tsironis <ntsironis@arrikto.com>
+Signed-off-by: Ilias Tsitsimpis <iliastsi@arrikto.com>
+Signed-off-by: Mike Snitzer <snitzer@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/ocfs2/localalloc.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ drivers/md/dm-snap.c | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
-diff --git a/fs/ocfs2/localalloc.c b/fs/ocfs2/localalloc.c
-index fe0d1f9571bb..5d53d0d63d19 100644
---- a/fs/ocfs2/localalloc.c
-+++ b/fs/ocfs2/localalloc.c
-@@ -345,13 +345,18 @@ int ocfs2_load_local_alloc(struct ocfs2_super *osb)
- 	if (num_used
- 	    || alloc->id1.bitmap1.i_used
- 	    || alloc->id1.bitmap1.i_total
--	    || la->la_bm_off)
--		mlog(ML_ERROR, "Local alloc hasn't been recovered!\n"
-+	    || la->la_bm_off) {
-+		mlog(ML_ERROR, "inconsistent detected, clean journal with"
-+		     " unrecovered local alloc, please run fsck.ocfs2!\n"
- 		     "found = %u, set = %u, taken = %u, off = %u\n",
- 		     num_used, le32_to_cpu(alloc->id1.bitmap1.i_used),
- 		     le32_to_cpu(alloc->id1.bitmap1.i_total),
- 		     OCFS2_LOCAL_ALLOC(alloc)->la_bm_off);
+diff --git a/drivers/md/dm-snap.c b/drivers/md/dm-snap.c
+index c65feeada864..2da0b9b213c7 100644
+--- a/drivers/md/dm-snap.c
++++ b/drivers/md/dm-snap.c
+@@ -19,6 +19,7 @@
+ #include <linux/vmalloc.h>
+ #include <linux/log2.h>
+ #include <linux/dm-kcopyd.h>
++#include <linux/semaphore.h>
  
-+		status = -EINVAL;
-+		goto bail;
-+	}
+ #include "dm.h"
+ 
+@@ -105,6 +106,9 @@ struct dm_snapshot {
+ 	/* The on disk metadata handler */
+ 	struct dm_exception_store *store;
+ 
++	/* Maximum number of in-flight COW jobs. */
++	struct semaphore cow_count;
 +
- 	osb->local_alloc_bh = alloc_bh;
- 	osb->local_alloc_state = OCFS2_LA_ENABLED;
+ 	struct dm_kcopyd_client *kcopyd_client;
+ 
+ 	/* Wait for events based on state_bits */
+@@ -145,6 +149,19 @@ struct dm_snapshot {
+ #define RUNNING_MERGE          0
+ #define SHUTDOWN_MERGE         1
+ 
++/*
++ * Maximum number of chunks being copied on write.
++ *
++ * The value was decided experimentally as a trade-off between memory
++ * consumption, stalling the kernel's workqueues and maintaining a high enough
++ * throughput.
++ */
++#define DEFAULT_COW_THRESHOLD 2048
++
++static int cow_threshold = DEFAULT_COW_THRESHOLD;
++module_param_named(snapshot_cow_threshold, cow_threshold, int, 0644);
++MODULE_PARM_DESC(snapshot_cow_threshold, "Maximum number of chunks being copied on write");
++
+ DECLARE_DM_KCOPYD_THROTTLE_WITH_MODULE_PARM(snapshot_copy_throttle,
+ 		"A percentage of time allocated for copy on write");
+ 
+@@ -1189,6 +1206,8 @@ static int snapshot_ctr(struct dm_target *ti, unsigned int argc, char **argv)
+ 		goto bad_hash_tables;
+ 	}
+ 
++	sema_init(&s->cow_count, (cow_threshold > 0) ? cow_threshold : INT_MAX);
++
+ 	s->kcopyd_client = dm_kcopyd_client_create(&dm_kcopyd_throttle);
+ 	if (IS_ERR(s->kcopyd_client)) {
+ 		r = PTR_ERR(s->kcopyd_client);
+@@ -1560,6 +1579,7 @@ static void copy_callback(int read_err, unsigned long write_err, void *context)
+ 		}
+ 		list_add(&pe->out_of_order_entry, lh);
+ 	}
++	up(&s->cow_count);
+ }
+ 
+ /*
+@@ -1583,6 +1603,7 @@ static void start_copy(struct dm_snap_pending_exception *pe)
+ 	dest.count = src.count;
+ 
+ 	/* Hand over to kcopyd */
++	down(&s->cow_count);
+ 	dm_kcopyd_copy(s->kcopyd_client, &src, 1, &dest, 0, copy_callback, pe);
+ }
+ 
+@@ -1602,6 +1623,7 @@ static void start_full_bio(struct dm_snap_pending_exception *pe,
+ 	pe->full_bio = bio;
+ 	pe->full_bio_end_io = bio->bi_end_io;
+ 
++	down(&s->cow_count);
+ 	callback_data = dm_kcopyd_prepare_callback(s->kcopyd_client,
+ 						   copy_callback, pe);
  
 -- 
 2.19.1
