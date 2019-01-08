@@ -4,50 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29DC5C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:45:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55C02C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:45:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EDDDA2063F
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:45:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 251BC206BB
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:45:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546976737;
-	bh=howNbSFbtqVdOUBLsx5cXHOFR5FDwJVSK/aN9VXMmro=;
+	s=default; t=1546976743;
+	bh=46e5r+222hYxU3wO2RCkKFkn2G9HKt3NNFdPEfzki5w=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=iiEPNPgqxARkg655AeEV+ZDYl8uNaykKNG7WWGIfo7B4qH83YmqBDRleLvrpdPD70
-	 W9VQcJMFGdOeC+pZuIVNp/vQkwA3AqTeXYX9SZsfZVUV853Njv+DraP6Da/s9oMzCm
-	 3p+RS9K8io86+DQT7+uHMyA6kTQaj79VZiOukR/I=
+	b=tLPtBTaTgCSYBBvndEVyf0mOuVp2Pp0dnQLzGvKvv/OI6CnaPVb4eFUU1r8a8O4/Y
+	 ybintEfPm2a3zRV8ab1lO6bydJu/Z6UnIfa5FmXUqDtT+cEqLVtDic1JS01JMbkYei
+	 lXR9qtQhjUm8v1Mi0UijBkNt9dDpOBHliUQJEM2k=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731594AbfAHTpg (ORCPT
+        id S1731632AbfAHTdQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:45:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42088 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 14:33:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41980 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731634AbfAHTdS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:33:18 -0500
+        id S1730489AbfAHTdL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:33:11 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E499A205C9;
-        Tue,  8 Jan 2019 19:33:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A71C4205C9;
+        Tue,  8 Jan 2019 19:33:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546975997;
-        bh=howNbSFbtqVdOUBLsx5cXHOFR5FDwJVSK/aN9VXMmro=;
+        s=default; t=1546975990;
+        bh=46e5r+222hYxU3wO2RCkKFkn2G9HKt3NNFdPEfzki5w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=g3HWdmxQPfKcQYZQ9PiomKWd5G9xuHS4Qx+YLTp9Ll5z9YDOuwdQfESQMmvmMCtIV
-         /GEtPTunDRc5ROw1/Our5BOoVBv3XXDJFA8it49PqCDehUSz3vaBBt3FlWKl3CrX6P
-         jFGQicpsKktBuMrw/zsqm/++26woxtDPpBtj1/oU=
+        b=RvQL9QGqXWZrJT4F7o9jsoikiDrfDJRUPe8NRLryOmdTQiXvlDVsk3bTP1pzBs4EX
+         lPybxRJR/+mDU0f9vp/Tn40R+q9Pyuj7lGPbe/DRXKHf/Ge/j9udksOQWLjXU96z3F
+         iDb7/T8Y282HlnKmBqdnJod1k+wppv568vVuOB8o=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Adrian Hunter <adrian.hunter@intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 34/53] perf intel-pt: Fix error with config term "pt=0"
-Date:   Tue,  8 Jan 2019 14:32:02 -0500
-Message-Id: <20190108193222.123316-34-sashal@kernel.org>
+Cc:     Will Deacon <will.deacon@arm.com>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 28/53] arm64: Fix minor issues with the dcache_by_line_op macro
+Date:   Tue,  8 Jan 2019 14:31:56 -0500
+Message-Id: <20190108193222.123316-28-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108193222.123316-1-sashal@kernel.org>
 References: <20190108193222.123316-1-sashal@kernel.org>
@@ -59,70 +56,114 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Adrian Hunter <adrian.hunter@intel.com>
+From: Will Deacon <will.deacon@arm.com>
 
-[ Upstream commit 1c6f709b9f96366cc47af23c05ecec9b8c0c392d ]
+[ Upstream commit 33309ecda0070506c49182530abe7728850ebe78 ]
 
-Users should never use 'pt=0', but if they do it may give a meaningless
-error:
+The dcache_by_line_op macro suffers from a couple of small problems:
 
-	$ perf record -e intel_pt/pt=0/u uname
-	Error:
-	The sys_perf_event_open() syscall returned with 22 (Invalid argument) for
-	event (intel_pt/pt=0/u).
+First, the GAS directives that are currently being used rely on
+assembler behavior that is not documented, and probably not guaranteed
+to produce the correct behavior going forward. As a result, we end up
+with some undefined symbols in cache.o:
 
-Fix that by forcing 'pt=1'.
+$ nm arch/arm64/mm/cache.o
+         ...
+         U civac
+         ...
+         U cvac
+         U cvap
+         U cvau
 
-Committer testing:
+This is due to the fact that the comparisons used to select the
+operation type in the dcache_by_line_op macro are comparing symbols
+not strings, and even though it seems that GAS is doing the right
+thing here (undefined symbols by the same name are equal to each
+other), it seems unwise to rely on this.
 
-  # perf record -e intel_pt/pt=0/u uname
-  Error:
-  The sys_perf_event_open() syscall returned with 22 (Invalid argument) for event (intel_pt/pt=0/u).
-  /bin/dmesg | grep -i perf may provide additional information.
+Second, when patching in a DC CVAP instruction on CPUs that support it,
+the fallback path consists of a DC CVAU instruction which may be
+affected by CPU errata that require ARM64_WORKAROUND_CLEAN_CACHE.
 
-  # perf record -e intel_pt/pt=0/u uname
-  pt=0 doesn't make sense, forcing pt=1
-  Linux
-  [ perf record: Woken up 1 times to write data ]
-  [ perf record: Captured and wrote 0.020 MB perf.data ]
-  #
+Solve these issues by unrolling the various maintenance routines and
+using the conditional directives that are documented as operating on
+strings. To avoid the complexity of nested alternatives, we move the
+DC CVAP patching to __clean_dcache_area_pop, falling back to a branch
+to __clean_dcache_area_poc if DCPOP is not supported by the CPU.
 
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Link: http://lkml.kernel.org/r/b7c5b4e5-9497-10e5-fd43-5f3e4a0fe51d@intel.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Reported-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Suggested-by: Robin Murphy <robin.murphy@arm.com>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/arch/x86/util/intel-pt.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ arch/arm64/include/asm/assembler.h | 30 ++++++++++++++++++------------
+ arch/arm64/mm/cache.S              |  3 +++
+ 2 files changed, 21 insertions(+), 12 deletions(-)
 
-diff --git a/tools/perf/arch/x86/util/intel-pt.c b/tools/perf/arch/x86/util/intel-pt.c
-index db0ba8caf5a2..ba8ecaf52200 100644
---- a/tools/perf/arch/x86/util/intel-pt.c
-+++ b/tools/perf/arch/x86/util/intel-pt.c
-@@ -524,10 +524,21 @@ static int intel_pt_validate_config(struct perf_pmu *intel_pt_pmu,
- 				    struct perf_evsel *evsel)
- {
- 	int err;
-+	char c;
- 
- 	if (!evsel)
- 		return 0;
- 
-+	/*
-+	 * If supported, force pass-through config term (pt=1) even if user
-+	 * sets pt=0, which avoids senseless kernel errors.
-+	 */
-+	if (perf_pmu__scan_file(intel_pt_pmu, "format/pt", "%c", &c) == 1 &&
-+	    !(evsel->attr.config & 1)) {
-+		pr_warning("pt=0 doesn't make sense, forcing pt=1\n");
-+		evsel->attr.config |= 1;
-+	}
+diff --git a/arch/arm64/include/asm/assembler.h b/arch/arm64/include/asm/assembler.h
+index 66aea4aa455d..02d73d83f0de 100644
+--- a/arch/arm64/include/asm/assembler.h
++++ b/arch/arm64/include/asm/assembler.h
+@@ -373,27 +373,33 @@ alternative_endif
+  * 	size:		size of the region
+  * 	Corrupts:	kaddr, size, tmp1, tmp2
+  */
++	.macro __dcache_op_workaround_clean_cache, op, kaddr
++alternative_if_not ARM64_WORKAROUND_CLEAN_CACHE
++	dc	\op, \kaddr
++alternative_else
++	dc	civac, \kaddr
++alternative_endif
++	.endm
 +
- 	err = intel_pt_val_config_term(intel_pt_pmu, "caps/cycle_thresholds",
- 				       "cyc_thresh", "caps/psb_cyc",
- 				       evsel->attr.config);
+ 	.macro dcache_by_line_op op, domain, kaddr, size, tmp1, tmp2
+ 	dcache_line_size \tmp1, \tmp2
+ 	add	\size, \kaddr, \size
+ 	sub	\tmp2, \tmp1, #1
+ 	bic	\kaddr, \kaddr, \tmp2
+ 9998:
+-	.if	(\op == cvau || \op == cvac)
+-alternative_if_not ARM64_WORKAROUND_CLEAN_CACHE
+-	dc	\op, \kaddr
+-alternative_else
+-	dc	civac, \kaddr
+-alternative_endif
+-	.elseif	(\op == cvap)
+-alternative_if ARM64_HAS_DCPOP
+-	sys 3, c7, c12, 1, \kaddr	// dc cvap
+-alternative_else
+-	dc	cvac, \kaddr
+-alternative_endif
++	.ifc	\op, cvau
++	__dcache_op_workaround_clean_cache \op, \kaddr
++	.else
++	.ifc	\op, cvac
++	__dcache_op_workaround_clean_cache \op, \kaddr
++	.else
++	.ifc	\op, cvap
++	sys	3, c7, c12, 1, \kaddr	// dc cvap
+ 	.else
+ 	dc	\op, \kaddr
+ 	.endif
++	.endif
++	.endif
+ 	add	\kaddr, \kaddr, \tmp1
+ 	cmp	\kaddr, \size
+ 	b.lo	9998b
+diff --git a/arch/arm64/mm/cache.S b/arch/arm64/mm/cache.S
+index 91464e7f77cc..c1e8f3c6ffd5 100644
+--- a/arch/arm64/mm/cache.S
++++ b/arch/arm64/mm/cache.S
+@@ -181,6 +181,9 @@ ENDPROC(__dma_clean_area)
+  *	- size    - size in question
+  */
+ ENTRY(__clean_dcache_area_pop)
++	alternative_if_not ARM64_HAS_DCPOP
++	b	__clean_dcache_area_poc
++	alternative_else_nop_endif
+ 	dcache_by_line_op cvap, sy, x0, x1, x2, x3
+ 	ret
+ ENDPIPROC(__clean_dcache_area_pop)
 -- 
 2.19.1
 
