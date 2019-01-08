@@ -2,95 +2,117 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 324A0C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 09:43:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B22BBC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 09:44:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 07838206C0
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 09:43:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7CEF52087F
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 09:44:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="r6tYESJG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728004AbfAHJnI (ORCPT
+        id S1727701AbfAHJoh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 04:43:08 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:34734 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727107AbfAHJnI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 04:43:08 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id CC08EA10DA;
-        Tue,  8 Jan 2019 09:43:07 +0000 (UTC)
-Received: from vitty.brq.redhat.com.redhat.com (unknown [10.34.248.165])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id AAA945D756;
-        Tue,  8 Jan 2019 09:42:58 +0000 (UTC)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     David Hildenbrand <david@redhat.com>, devel@linuxdriverproject.org
-Cc:     Sasha Levin <sashal@kernel.org>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        linux-kernel@vger.kernel.org, Dexuan Cui <decui@microsoft.com>
-Subject: Re: [PATCH] hv_balloon: avoid touching uninitialized struct page during tail onlining
-In-Reply-To: <39a3ac32-6569-d19f-c87c-da6d72251748@redhat.com>
-References: <20190104141942.19126-1-vkuznets@redhat.com> <2ea7e975-6aae-de71-83e5-9302518802ef@redhat.com> <87d0p837lt.fsf@vitty.brq.redhat.com> <39a3ac32-6569-d19f-c87c-da6d72251748@redhat.com>
-Date:   Tue, 08 Jan 2019 10:42:56 +0100
-Message-ID: <877eff32ov.fsf@vitty.brq.redhat.com>
+        Tue, 8 Jan 2019 04:44:37 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:57020 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727760AbfAHJoh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 04:44:37 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x089hpVx156378;
+        Tue, 8 Jan 2019 09:44:14 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=uZ587fcjhZ8NOLszjusqcUyELM0LPFeexQDtVZY8iM4=;
+ b=r6tYESJGFXDO3SWSV0llMW4RcZt2A9mPkU2Kl/MlxFuIwIgPJpJ3G9bJSOM+pMHh6me3
+ /OdMAiMXcWMwmsoYszSIYTMAcYZtq9X/Ajwljj9MjvzeaMF9Yza6zsC1jZEpZntShVrQ
+ V3/NO5zXHnmxQvkgdr5YGGJ6RDJ7P+gG+ji20awB01LG4WcDhAXyR092Uh79XTMivvvo
+ Xw5B+aECY+4BnjrW3Ue3aelx2TJz+/u4XsSRHVgLHPdyzAwcFjicIdsz2ZibDo/ZGmAE
+ YHojRyYuAyGD0KW7VBIoQ+ig9zNZY0+VKqoX/oDPuwskwbhkZbXpGL6enF5rSWWnKIlZ Ag== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by userp2120.oracle.com with ESMTP id 2ptn7qtbjc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 08 Jan 2019 09:44:14 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x089iENN030800
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 8 Jan 2019 09:44:14 GMT
+Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x089iDNJ002040;
+        Tue, 8 Jan 2019 09:44:13 GMT
+Received: from kadam (/197.157.0.45)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 08 Jan 2019 01:44:11 -0800
+Date:   Tue, 8 Jan 2019 12:42:49 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Colin King <colin.king@canonical.com>
+Cc:     Steve French <sfrench@samba.org>, linux-cifs@vger.kernel.org,
+        samba-technical@lists.samba.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] cifs: fix memory leak of an allocated cifs_ntsd structure
+Message-ID: <20190108094249.GF3200@kadam>
+References: <20190107171515.4537-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Tue, 08 Jan 2019 09:43:08 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190107171515.4537-1-colin.king@canonical.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9129 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=959
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1901080080
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-David Hildenbrand <david@redhat.com> writes:
+On Mon, Jan 07, 2019 at 05:15:15PM +0000, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> The call to SMB2_queary_acl can allocate memory to pntsd and also
+> return a failure via a call to SMB2_query_acl (and then query_info).
+> This occurs when query_info allocates the structure and then in
+> query_info the call to smb2_validate_and_copy_iov fails. Currently the
+> failure just returns without kfree'ing pntsd hence causing a memory
+> leak.  Fix this by kfree'ing pntsd before returning.
+> 
+> Detected by CoverityScan, CID#1457059 ("Resource Leak")
+> 
+> Fixes: 2f1afe25997f ("cifs: Use smb 2 - 3 and cifsacl mount options getacl functions")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  fs/cifs/smb2ops.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/cifs/smb2ops.c b/fs/cifs/smb2ops.c
+> index cf7eb891804f..6d71958ad2cb 100644
+> --- a/fs/cifs/smb2ops.c
+> +++ b/fs/cifs/smb2ops.c
+> @@ -2238,8 +2238,10 @@ get_smb2_acl_by_fid(struct cifs_sb_info *cifs_sb,
+>  	cifs_put_tlink(tlink);
+>  
+>  	cifs_dbg(FYI, "%s: rc = %d ACL len %d\n", __func__, rc, *pacllen);
+> -	if (rc)
+> +	if (rc) {
+> +		kfree(pntsd);
+>  		return ERR_PTR(rc);
+> +	}
 
-> On 07.01.19 14:44, Vitaly Kuznetsov wrote:
->> David Hildenbrand <david@redhat.com> writes:
->> 
-...
->>> On 04.01.19 15:19, Vitaly Kuznetsov wrote:
->>>>  			if (start_pfn > has->start_pfn &&
->>>> -			    !PageReserved(pfn_to_page(start_pfn - 1)))
->>>> +			    online_section_nr(pfn_to_section_nr(start_pfn)))
->>>>  				hv_bring_pgs_online(has, start_pfn, pgs_ol);
->>>>  
->>>>  		}
->>>>
->>>
->>> I wonder if you should use pfn_to_online_page() and check for PageOffline().
->>>
->>> (I guess online_section_nr() should also do the trick)
->> 
->> I'm worried a bit about racing with mm code here as we're not doing
->> mem_hotplug_begin()/done() so I'd slightly prefer keeping
->> online_section_nr() (pfn_to_online_page() also uses it but then it gets
->> to the particular struct page). Moreover, with pfn_to_online_page() we
->> will be looking at some other pfn - because the start_pfn is definitelly
->> offline (pre-patch we were looking at start_pfn-1). Just looking at the
->> whole section seems cleaner.
->
-> Fine with me. I guess the section can never be offlined as it still
-> contains reserved pages if not fully "fake-onlined" by HV code already.
->
-> But we could still consider mem_hotplug_begin()/done() as we could have
-> a online section although online_pages() has not completed yet. So we
-> could actually touch some "semi onlined section".
+This is a layering violation.  The memory was allocated in query_info()
+so it should be freed there instead.  Also if the kmalloc() fails in
+query_info() then it should return -ENOMEM instead of success.
 
-Yes, exactly, if we race with section onlining here we may never online
-the tail so it will remain 'semi onlined'. I'm going to propose
-exporting mem_hotplug_begin()/done() to modules to fix this (in a
-separate patch because I anticipate some pushback :-)
+This only affects code which calls SMB2_query_acl().  There are two
+callers.  You have fixed one but the other is also buggy because we're
+returning uninitialized memory in get_smb2_acl_by_path().
 
->
-> Acked-by: David Hildenbrand <david@redhat.com>
->
+regards,
+dan carpenter
 
-Thanks!
-
--- 
-Vitaly
