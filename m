@@ -2,134 +2,216 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 898D9C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 23:54:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07C21C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 23:54:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 543CB20661
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 23:54:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BFF61217F9
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 23:54:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="Gae9CgEy"
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="UJH2Rwy8";
+	dkim=pass (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="UzPpgkq3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729526AbfAHXy1 (ORCPT
+        id S1729620AbfAHXy5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 18:54:27 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:43466 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728887AbfAHXy0 (ORCPT
+        Tue, 8 Jan 2019 18:54:57 -0500
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:33756 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728642AbfAHXy5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 18:54:26 -0500
-Received: by mail-pl1-f193.google.com with SMTP id gn14so2642696plb.10
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jan 2019 15:54:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=0NXIEprZBUufgpmdQuyOnwoc3RHjnrXf2w7NJy6aLVU=;
-        b=Gae9CgEyzAiUliCjXZwGypIC4RPUBYVTa4Hfbc8QT5uB1f/VUG8AJtY1n43Ze7H514
-         jlLeFger8Cekm9A0I1Ju/DFauNRMHBMErtXPsXWiph/aTHnm5MsB5r/1CpMZ7eK0De+B
-         OQUxr7cEnBonOUA/1CGVl/ka/ceAymFWszUOAMKKeOa/x9iOKJ8Y45HPe7O0UiqpHaSl
-         QKH9eYsYAOqobGruqYXeMxI9mC0vfXS24/VZjyaMfIFBtX6t/mDEOxuFbF2xlAfd49Ht
-         n9b0NVphpjJfh/irB9e4deoT2HMKDi/XTTh8tBbZ0Wz/e5bXbvL5M63425nl9zBhv/h+
-         qopw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=0NXIEprZBUufgpmdQuyOnwoc3RHjnrXf2w7NJy6aLVU=;
-        b=FvjkAo3zOWhC1n0KMejA6t2WiFX6LmHBuyCBi5+nEIvO9Zq9ryLPqn/MyJmL/kqKvA
-         99MtWRChGZREepVsum6Nspcjwk3RlkWSeiM2YlbcFtmrCEEE2t6iN9cow/Xu83/vlaT4
-         vqtJaj30PDD3f4EuSNULxCvvw8DXgXOdQsWfYg+MNahXnqFQeR2mz/OP+HloGqqE0zWp
-         sfZ28A3Tne19+0JYnDqAaSST0Als/xIVk+rEW2B+DG/GwiuZ1QP5cmydXcfrA6Kt7bpV
-         t/C7ZgTIG7UQilf/TODtuXXhL25dI32RCj+0aNKmL/v9aXBCR2UHI7/lcrPJKUb1JG/1
-         22sQ==
-X-Gm-Message-State: AJcUukfVWX/CGPX57gwI2pi/3iFV6UJKGR4FR0qSzw+pJyALPeSHA+Uo
-        81a+ZFm6u5VEtWTlxjA9HBuk9A==
-X-Google-Smtp-Source: ALg8bN487jclGfZVfC+BtgsTUx6xzpJ4dATfjdK0kgxIlYcDw3wtVKiiKvh9CGBD85f1jLnBQa8jUQ==
-X-Received: by 2002:a17:902:4624:: with SMTP id o33mr3719588pld.289.1546991665174;
-        Tue, 08 Jan 2019 15:54:25 -0800 (PST)
-Received: from ?IPv6:2600:1010:b01c:527f:fcaf:25c:3d43:d2b0? ([2600:1010:b01c:527f:fcaf:25c:3d43:d2b0])
-        by smtp.gmail.com with ESMTPSA id o1sm107475977pgn.63.2019.01.08.15.54.24
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 08 Jan 2019 15:54:24 -0800 (PST)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH 1/5 v2] PM / hibernate: Create snapshot keys handler
-From:   Andy Lutomirski <luto@amacapital.net>
-X-Mailer: iPhone Mail (16C101)
-In-Reply-To: <1565399.7ulKdI1fm5@tauon.chronox.de>
-Date:   Tue, 8 Jan 2019 15:54:22 -0800
-Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
-        "Lee, Chun-Yi" <joeyli.kernel@gmail.com>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Pavel Machek <pavel@ucw.cz>, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, keyrings@vger.kernel.org,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Chen Yu <yu.c.chen@intel.com>,
-        Oliver Neukum <oneukum@suse.com>,
-        Ryan Chen <yu.chen.surf@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Giovanni Gherdovich <ggherdovich@suse.cz>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Jann Horn <jannh@google.com>, Andy Lutomirski <luto@kernel.org>
+        Tue, 8 Jan 2019 18:54:57 -0500
+Received: from pps.filterd (m0044012.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x08Noxef019688;
+        Tue, 8 Jan 2019 15:54:27 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : references : in-reply-to : content-type : content-id
+ : content-transfer-encoding : mime-version; s=facebook;
+ bh=w87Z/q/nRYgfuGG+cEL62PpWw7lXRboD9oNZCMEi8tA=;
+ b=UJH2Rwy8hwm848ArznsTe+WajJanUwWoA3nuwTEOIhZ/S1fD2Vh2VAD/VhOuNAOo/EC8
+ Z0Sc7BYVgAT1QNa63I/USRGD63/x/qPV/H3wQHdroyLMH3ETm7bKvIgewohSaS4QGhD7
+ rzYEGgfA/Fq1K9T5JLFSRd90Em+3gr9uIz4= 
+Received: from mail.thefacebook.com ([199.201.64.23])
+        by mx0a-00082601.pphosted.com with ESMTP id 2pw33u0jgw-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Tue, 08 Jan 2019 15:54:27 -0800
+Received: from prn-hub03.TheFacebook.com (2620:10d:c081:35::127) by
+ prn-hub05.TheFacebook.com (2620:10d:c081:35::129) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.1.1531.3; Tue, 8 Jan 2019 15:54:26 -0800
+Received: from NAM01-SN1-obe.outbound.protection.outlook.com (192.168.54.28)
+ by o365-in.thefacebook.com (192.168.16.27) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.1.1531.3
+ via Frontend Transport; Tue, 8 Jan 2019 15:54:26 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector1-fb-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=w87Z/q/nRYgfuGG+cEL62PpWw7lXRboD9oNZCMEi8tA=;
+ b=UzPpgkq3uh6Jd6mBVDIG6a+6HU9bMMwY7dX2paRHHMrjuoTx7xyrSw85kNjNrAObjKYkSHJD+FfA7H/1gTyCMZ2yWvZ7LqSowBuSIYQB+Sv9QZk7eYPzTt7b5wdDa6FGLq1jOGvn9i5GuSJIiH4thyAugWUxmHzbAKp8qvSTX0Y=
+Received: from MWHPR15MB1165.namprd15.prod.outlook.com (10.175.2.19) by
+ MWHPR15MB1375.namprd15.prod.outlook.com (10.173.234.14) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1495.7; Tue, 8 Jan 2019 23:54:05 +0000
+Received: from MWHPR15MB1165.namprd15.prod.outlook.com
+ ([fe80::78be:8c1:352b:6f6e]) by MWHPR15MB1165.namprd15.prod.outlook.com
+ ([fe80::78be:8c1:352b:6f6e%6]) with mapi id 15.20.1495.011; Tue, 8 Jan 2019
+ 23:54:04 +0000
+From:   Song Liu <songliubraving@fb.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+CC:     lkml <linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "acme@kernel.org" <acme@kernel.org>,
+        "ast@kernel.org" <ast@kernel.org>,
+        "daniel@iogearbox.net" <daniel@iogearbox.net>,
+        Kernel Team <Kernel-team@fb.com>,
+        Andi Kleen <andi@firstfloor.org>
+Subject: Re: [PATCH v5 perf, bpf-next 3/7] perf, bpf: introduce
+ PERF_RECORD_BPF_EVENT
+Thread-Topic: [PATCH v5 perf, bpf-next 3/7] perf, bpf: introduce
+ PERF_RECORD_BPF_EVENT
+Thread-Index: AQHUmJHygB8CuOaEkU2QMQ4A40UscaWl0lUAgAAIHwCAAAktAIAARhkA
+Date:   Tue, 8 Jan 2019 23:54:04 +0000
+Message-ID: <A0C713E9-6ACE-4235-87C2-2653A8F22F7B@fb.com>
+References: <20181220182904.4193196-1-songliubraving@fb.com>
+ <20181220182904.4193196-4-songliubraving@fb.com>
+ <20190108184116.GC30894@hirez.programming.kicks-ass.net>
+ <77A478D9-F36F-443A-BBFD-F0C1FFE0DD90@fb.com>
+ <20190108194310.GD1900@hirez.programming.kicks-ass.net>
+In-Reply-To: <20190108194310.GD1900@hirez.programming.kicks-ass.net>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: Apple Mail (2.3445.102.3)
+x-originating-ip: [2620:10d:c090:200::5:43fb]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;MWHPR15MB1375;20:30cu2JAbd9TBMc9y6Y0KKd4f76xTWTmrg+aITwDj1X5zFbp3HRhu4tyyTBsR1/qptlTWJysSOkLvDvw3tNqkJMnXhhUejXjTUuNz8et8AJwqSaKEWBkYXmm0rj33/yWUJDp6x4PBmKagEXdFOmQ77GV2q89HRooaG176Tm55lW0=
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: d1c36917-0d5d-4454-3069-08d675c4926a
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(2017052603328)(7153060)(7193020);SRVR:MWHPR15MB1375;
+x-ms-traffictypediagnostic: MWHPR15MB1375:
+x-microsoft-antispam-prvs: <MWHPR15MB137573C9371CE49E8253A770B38A0@MWHPR15MB1375.namprd15.prod.outlook.com>
+x-forefront-prvs: 0911D5CE78
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(136003)(376002)(366004)(39860400002)(396003)(51444003)(199004)(189003)(57306001)(186003)(71200400001)(4326008)(71190400001)(97736004)(14454004)(305945005)(7736002)(486006)(966005)(68736007)(6916009)(86362001)(478600001)(25786009)(106356001)(99286004)(83716004)(36756003)(82746002)(256004)(14444005)(46003)(105586002)(6116002)(6506007)(53546011)(8676002)(6246003)(54906003)(76176011)(11346002)(6512007)(446003)(6306002)(2616005)(476003)(229853002)(316002)(102836004)(6436002)(5660300001)(53936002)(50226002)(81156014)(81166006)(8936002)(93886005)(33656002)(6486002)(2906002);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR15MB1375;H:MWHPR15MB1165.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: fb.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: FVdssIuRbdypH5VO2f0QLuCRjITnmWtE2tUlOUsqEoGEy0wR9qugJ1IPYFFsZIYpNWCsyQPGQenjwiLQLdb+pCxBP8fq0MfN94twyG5YoABD672XlQyt6evWPKsK5XVrp1y/yVm9iDz3yvYHUE1gu08O4ZL3DDuF+InymZ5WQXYLty8tY53jbtz63iLlSlOzOuMdVTrG/tCuSynVxtCbBEqpXhz0BQRL0zYO8De18TVxYiAk6S42JMs7aUvgZPBRVQL+cEPQDK/XFpURX1x7mXQR/qvpQK7RE5JOMYoL7uZW/P/qVGOfT4wdH6t3Qegm
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <DF65D9179275104B82DEA05E38B29559@namprd15.prod.outlook.com>
 Content-Transfer-Encoding: quoted-printable
-Message-Id: <D70458DE-712B-4767-8143-7DC9107689C3@amacapital.net>
-References: <20190103143227.9138-1-jlee@suse.com> <4499700.LRS4F2YjjC@tauon.chronox.de> <20190108050358.llsox32hggn2jioe@gondor.apana.org.au> <1565399.7ulKdI1fm5@tauon.chronox.de>
-To:     Stephan Mueller <smueller@chronox.de>
+MIME-Version: 1.0
+X-MS-Exchange-CrossTenant-Network-Message-Id: d1c36917-0d5d-4454-3069-08d675c4926a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Jan 2019 23:54:04.8064
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR15MB1375
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-08_13:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-> On Jan 7, 2019, at 11:09 PM, Stephan Mueller <smueller@chronox.de> wrote:
+
+> On Jan 8, 2019, at 11:43 AM, Peter Zijlstra <peterz@infradead.org> wrote:
 >=20
-> Am Dienstag, 8. Januar 2019, 06:03:58 CET schrieb Herbert Xu:
+> On Tue, Jan 08, 2019 at 07:10:20PM +0000, Song Liu wrote:
+>>> On Jan 8, 2019, at 10:41 AM, Peter Zijlstra <peterz@infradead.org> wrot=
+e:
+>>> On Thu, Dec 20, 2018 at 10:29:00AM -0800, Song Liu wrote:
+>>>> @@ -986,9 +987,35 @@ enum perf_event_type {
+>>>> 	 */
+>>>> 	PERF_RECORD_KSYMBOL			=3D 17,
+>>>>=20
+>>>> +	/*
+>>>> +	 * Record bpf events:
+>>>> +	 *  enum perf_bpf_event_type {
+>>>> +	 *	PERF_BPF_EVENT_UNKNOWN		=3D 0,
+>>>> +	 *	PERF_BPF_EVENT_PROG_LOAD	=3D 1,
+>>>> +	 *	PERF_BPF_EVENT_PROG_UNLOAD	=3D 2,
+>>>> +	 *  };
+>>>> +	 *
+>>>> +	 * struct {
+>>>> +	 *	struct perf_event_header	header;
+>>>> +	 *	u16				type;
+>>>> +	 *	u16				flags;
+>>>> +	 *	u32				id;
+>>>> +	 *	u8				tag[BPF_TAG_SIZE];
+>>>> +	 *	struct sample_id		sample_id;
+>>>> +	 * };
+>>>> +	 */
+>>>> +	PERF_RECORD_BPF_EVENT			=3D 18,
+>>>> +
+>>>=20
+>>> Elsewhere today, I raised the point that by the time (however short
+>>> interval) userspace gets around to reading this event, the actual
+>>> program could be gone again.
+>>>=20
+>>> In this case the program has been with us for a very short period
+>>> indeed; but it could still have generated some samples or otherwise
+>>> generated trace data.
+>>=20
+>> Since we already have the separate KSYMBOL events, BPF_EVENT is only=20
+>> required for advanced use cases, like annotation. So I guess missing=20
+>> it for very-short-living programs should not be a huge problem?
+>>=20
+>>> It was suggested to allow pinning modules/programs to avoid this
+>>> situation, but that of course has other undesirable effects, such as a
+>>> trivial DoS.
+>>>=20
+>>> A truly horrible hack would be to include an open filedesc in the event
+>>> that needs closing to release the resource, but I'm sorry for even
+>>> suggesting that **shudder**.
+>>>=20
+>>> Do we have any sane ideas?
+>>=20
+>> How about we gate the open filedesc solution with an option, and limit
+>> that option for root only? If this still sounds hacky, maybe we should
+>> just ignore when short-living programs are missed?
 >=20
-> Hi Herbert,
+> I'm afraid we might also 'need' this for the kallsym thing.
 >=20
->> Are we going to have multiple implementations for the same KDF?
->> If not then the crypto API is not a good fit.  To consolidate
->> multiple implementations of the same KDF, simply provide helpers
->> for them.
+> The problem is that things like Intel PT (ARM Coresight too IIRC) encode
+> a bitstream of branch-taken decisions. The only way to decode that and
+> reconstruct the actual code-flow is with an exact matching text image.
 >=20
-> It is unlikely to have multiple implementations of a KDF. However, KDFs re=
-late=20
-> to hashes like block chaining modes to raw block ciphers. Thus a KDF can b=
-e=20
-> applied with different hashes.
+> In order to have this matching text we need to be able to copy out every
+> piece of dynamic text (from kcore) that has ever executed before it
+> dissapears.
 >=20
-> My idea was to add template support to RNGs (because KDFs are effectively a=
-=20
-> type of RNG since they produce an arbitrary output from a fixed input). Th=
-e=20
-> KDFs would be a template wrapping hashes. For example, the CTR-KDF from=20=
-
-> SP800-108 could be instantiated like kdf-ctr(sha256).
+> Elsewhere (*), Andi suggests to have a kind of text-free fence
+> interface, where userspace can call a complete. And I suppose as long we
+> know there is a consumer, we also know we'll not be blocked
+> indefinitely. So it would have to be slightly more complicated than
+> suggested, but I think that is something we could work with.
+>=20
+> It would also not complicate these events.
 >=20
 >=20
+>=20
+> [*] https://lkml.kernel.org/r/20190108172721.GN6118@tassilo.jf.intel.com
 
-I think that, if the crypto API is going to grow a KDF facility, it should b=
-e done right. Have a key type or flag or whatever that says =E2=80=9Cthis ke=
-y may *only* be used to derive keys using such-and-such algorithm=E2=80=9D, a=
-nd have a helper to derive a key.  That helper should take some useful param=
-eters and mix them in:
+I think Intel PT case is at instruction granularity (instead of ksymbol
+granularity)? If this is true, modules, BPF, and PT could still share
+the ksymbol record for basic profiling. And advanced use cases like=20
+annotation will depend on user space to record BPF_EVENT (and equivalent
+for other cases) timely. But at least, the ksymbol is already there.=20
 
-- What type of key is being derived?  ECDSA signing key?  HMAC key?  AES key=
-?
+Does this make sense? =20
 
-- Can user code access the derived key?
+Thanks,
+Song=20
 
-- What is the key=E2=80=99s purpose?  =E2=80=9CEncrypt and authenticate a hi=
-bernation image=E2=80=9D would be a purpose.
 
-- Number of bytes.
 
-All of these parameters should be mixed in to the key derivation.
-
-Also, an AE key, even for AES+HMAC, should be just one derived key.  If you n=
-eed 512 bits, ask for a 512-bit key, not two 256-bit keys.=
