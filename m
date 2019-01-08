@@ -2,52 +2,52 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD2BCC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:35:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82928C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:35:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9297520827
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:35:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5287720645
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:35:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546976129;
-	bh=amXK6Lpy7FYWJ+9oVP9zTEih0iWPnvWXTD4NNAq54HU=;
+	s=default; t=1546976133;
+	bh=qZ42c2a7cTdpDt8IXVmHQpc4wmuUgzNnae2D8iGBQcA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=jTHpWghJgvjiXMWCpMFzvCeUvGeD8wQ0Q15Ewa0hy3VErkJpQmK4SsltZpRx1umcx
-	 vrRo+WzIaRu+Jy1LW/8TfJwdzvPmx9mrk0n2Vrkts66/PcAZv5KILtZsbCeX7b1d7k
-	 YdS+uLr8d/hPqYVPehFQDR3xmmdaqCJXFHewLWq8=
+	b=dHgWumXov5L9wm65RLXp7GbofrSJX4hiJhjcPxgp8xPf1B8ttmEr+ru4yCTEPCRmJ
+	 jKV8NJKYBShZyF5ez+kCa2nL+1X7PkxedbZcp3PiM2KDOnkGtpOi7fZypGh0p5VsCz
+	 KRr/QwTHO8jt8bwc6WP+NHSySnkABk1zjLV4Dby0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731495AbfAHTf2 (ORCPT
+        id S1732287AbfAHTfc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:35:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44154 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 14:35:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44244 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731530AbfAHTfV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:35:21 -0500
+        id S1732261AbfAHTf0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:35:26 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5F20320645;
-        Tue,  8 Jan 2019 19:35:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5603020827;
+        Tue,  8 Jan 2019 19:35:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546976120;
-        bh=amXK6Lpy7FYWJ+9oVP9zTEih0iWPnvWXTD4NNAq54HU=;
+        s=default; t=1546976125;
+        bh=qZ42c2a7cTdpDt8IXVmHQpc4wmuUgzNnae2D8iGBQcA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MOutb4G3wzVpsZ8pYqH3JJHcQVDomuRQQNKXwTlUeDBcAHtuAN01EaHklAEKmbgGZ
-         weyRG8WQE/LMGhpXyMy05AugMQFPicl6srpkXoXHgrg7zO7TQoXCgPzluviIt9HNaB
-         FEy/6Aon7gf1Yag8zp14oebi/l5IkA3zpAFMnLnI=
+        b=gSQ/cJjMnRbbcxQxrevL0uK5lEoc0L39kQOweX0DGzvODC0bi/Jr6uO/XLyMkbyph
+         hbjY3mHHM0zeHAo6puf9G00zDA6o7/TOkCModHLmgnfIVeTJcFbjQsbtik3K6j/Mvp
+         21Lef4lJQqmaa6gGwQRy5srmbOZOkGsXY9qjMDXA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Nikos Tsironis <ntsironis@arrikto.com>,
-        Ilias Tsitsimpis <iliastsi@arrikto.com>,
-        Mike Snitzer <snitzer@redhat.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.4 22/28] dm snapshot: Fix excessive memory usage and workqueue stalls
-Date:   Tue,  8 Jan 2019 14:34:39 -0500
-Message-Id: <20190108193445.124251-22-sashal@kernel.org>
+Cc:     Qian Cai <cai@lca.pw>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Sasha Levin <sashal@kernel.org>,
+        megaraidlinux.pdl@broadcom.com, linux-scsi@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.4 25/28] scsi: megaraid: fix out-of-bound array accesses
+Date:   Tue,  8 Jan 2019 14:34:42 -0500
+Message-Id: <20190108193445.124251-25-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108193445.124251-1-sashal@kernel.org>
 References: <20190108193445.124251-1-sashal@kernel.org>
@@ -59,225 +59,120 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nikos Tsironis <ntsironis@arrikto.com>
+From: Qian Cai <cai@lca.pw>
 
-[ Upstream commit 721b1d98fb517ae99ab3b757021cf81db41e67be ]
+[ Upstream commit c7a082e4242fd8cd21a441071e622f87c16bdacc ]
 
-kcopyd has no upper limit to the number of jobs one can allocate and
-issue. Under certain workloads this can lead to excessive memory usage
-and workqueue stalls. For example, when creating multiple dm-snapshot
-targets with a 4K chunk size and then writing to the origin through the
-page cache. Syncing the page cache causes a large number of BIOs to be
-issued to the dm-snapshot origin target, which itself issues an even
-larger (because of the BIO splitting taking place) number of kcopyd
-jobs.
+UBSAN reported those with MegaRAID SAS-3 3108,
 
-Running the following test, from the device mapper test suite [1],
+[   77.467308] UBSAN: Undefined behaviour in drivers/scsi/megaraid/megaraid_sas_fp.c:117:32
+[   77.475402] index 255 is out of range for type 'MR_LD_SPAN_MAP [1]'
+[   77.481677] CPU: 16 PID: 333 Comm: kworker/16:1 Not tainted 4.20.0-rc5+ #1
+[   77.488556] Hardware name: Huawei TaiShan 2280 /BC11SPCD, BIOS 1.50 06/01/2018
+[   77.495791] Workqueue: events work_for_cpu_fn
+[   77.500154] Call trace:
+[   77.502610]  dump_backtrace+0x0/0x2c8
+[   77.506279]  show_stack+0x24/0x30
+[   77.509604]  dump_stack+0x118/0x19c
+[   77.513098]  ubsan_epilogue+0x14/0x60
+[   77.516765]  __ubsan_handle_out_of_bounds+0xfc/0x13c
+[   77.521767]  mr_update_load_balance_params+0x150/0x158 [megaraid_sas]
+[   77.528230]  MR_ValidateMapInfo+0x2cc/0x10d0 [megaraid_sas]
+[   77.533825]  megasas_get_map_info+0x244/0x2f0 [megaraid_sas]
+[   77.539505]  megasas_init_adapter_fusion+0x9b0/0xf48 [megaraid_sas]
+[   77.545794]  megasas_init_fw+0x1ab4/0x3518 [megaraid_sas]
+[   77.551212]  megasas_probe_one+0x2c4/0xbe0 [megaraid_sas]
+[   77.556614]  local_pci_probe+0x7c/0xf0
+[   77.560365]  work_for_cpu_fn+0x34/0x50
+[   77.564118]  process_one_work+0x61c/0xf08
+[   77.568129]  worker_thread+0x534/0xa70
+[   77.571882]  kthread+0x1c8/0x1d0
+[   77.575114]  ret_from_fork+0x10/0x1c
 
-  dmtest run --suite snapshot -n many_snapshots_of_same_volume_N
+[   89.240332] UBSAN: Undefined behaviour in drivers/scsi/megaraid/megaraid_sas_fp.c:117:32
+[   89.248426] index 255 is out of range for type 'MR_LD_SPAN_MAP [1]'
+[   89.254700] CPU: 16 PID: 95 Comm: kworker/u130:0 Not tainted 4.20.0-rc5+ #1
+[   89.261665] Hardware name: Huawei TaiShan 2280 /BC11SPCD, BIOS 1.50 06/01/2018
+[   89.268903] Workqueue: events_unbound async_run_entry_fn
+[   89.274222] Call trace:
+[   89.276680]  dump_backtrace+0x0/0x2c8
+[   89.280348]  show_stack+0x24/0x30
+[   89.283671]  dump_stack+0x118/0x19c
+[   89.287167]  ubsan_epilogue+0x14/0x60
+[   89.290835]  __ubsan_handle_out_of_bounds+0xfc/0x13c
+[   89.295828]  MR_LdRaidGet+0x50/0x58 [megaraid_sas]
+[   89.300638]  megasas_build_io_fusion+0xbb8/0xd90 [megaraid_sas]
+[   89.306576]  megasas_build_and_issue_cmd_fusion+0x138/0x460 [megaraid_sas]
+[   89.313468]  megasas_queue_command+0x398/0x3d0 [megaraid_sas]
+[   89.319222]  scsi_dispatch_cmd+0x1dc/0x8a8
+[   89.323321]  scsi_request_fn+0x8e8/0xdd0
+[   89.327249]  __blk_run_queue+0xc4/0x158
+[   89.331090]  blk_execute_rq_nowait+0xf4/0x158
+[   89.335449]  blk_execute_rq+0xdc/0x158
+[   89.339202]  __scsi_execute+0x130/0x258
+[   89.343041]  scsi_probe_and_add_lun+0x2fc/0x1488
+[   89.347661]  __scsi_scan_target+0x1cc/0x8c8
+[   89.351848]  scsi_scan_channel.part.3+0x8c/0xc0
+[   89.356382]  scsi_scan_host_selected+0x130/0x1f0
+[   89.361002]  do_scsi_scan_host+0xd8/0xf0
+[   89.364927]  do_scan_async+0x9c/0x320
+[   89.368594]  async_run_entry_fn+0x138/0x420
+[   89.372780]  process_one_work+0x61c/0xf08
+[   89.376793]  worker_thread+0x13c/0xa70
+[   89.380546]  kthread+0x1c8/0x1d0
+[   89.383778]  ret_from_fork+0x10/0x1c
 
-, with 8 active snapshots, results in the kcopyd job slab cache growing
-to 10G. Depending on the available system RAM this can lead to the OOM
-killer killing user processes:
+This is because when populating Driver Map using firmware raid map, all
+non-existing VDs set their ldTgtIdToLd to 0xff, so it can be skipped later.
 
-[463.492878] kthreadd invoked oom-killer: gfp_mask=0x6040c0(GFP_KERNEL|__GFP_COMP),
-              nodemask=(null), order=1, oom_score_adj=0
-[463.492894] kthreadd cpuset=/ mems_allowed=0
-[463.492948] CPU: 7 PID: 2 Comm: kthreadd Not tainted 4.19.0-rc7 #3
-[463.492950] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
-[463.492952] Call Trace:
-[463.492964]  dump_stack+0x7d/0xbb
-[463.492973]  dump_header+0x6b/0x2fc
-[463.492987]  ? lockdep_hardirqs_on+0xee/0x190
-[463.493012]  oom_kill_process+0x302/0x370
-[463.493021]  out_of_memory+0x113/0x560
-[463.493030]  __alloc_pages_slowpath+0xf40/0x1020
-[463.493055]  __alloc_pages_nodemask+0x348/0x3c0
-[463.493067]  cache_grow_begin+0x81/0x8b0
-[463.493072]  ? cache_grow_begin+0x874/0x8b0
-[463.493078]  fallback_alloc+0x1e4/0x280
-[463.493092]  kmem_cache_alloc_node+0xd6/0x370
-[463.493098]  ? copy_process.part.31+0x1c5/0x20d0
-[463.493105]  copy_process.part.31+0x1c5/0x20d0
-[463.493115]  ? __lock_acquire+0x3cc/0x1550
-[463.493121]  ? __switch_to_asm+0x34/0x70
-[463.493129]  ? kthread_create_worker_on_cpu+0x70/0x70
-[463.493135]  ? finish_task_switch+0x90/0x280
-[463.493165]  _do_fork+0xe0/0x6d0
-[463.493191]  ? kthreadd+0x19f/0x220
-[463.493233]  kernel_thread+0x25/0x30
-[463.493235]  kthreadd+0x1bf/0x220
-[463.493242]  ? kthread_create_on_cpu+0x90/0x90
-[463.493248]  ret_from_fork+0x3a/0x50
-[463.493279] Mem-Info:
-[463.493285] active_anon:20631 inactive_anon:4831 isolated_anon:0
-[463.493285]  active_file:80216 inactive_file:80107 isolated_file:435
-[463.493285]  unevictable:0 dirty:51266 writeback:109372 unstable:0
-[463.493285]  slab_reclaimable:31191 slab_unreclaimable:3483521
-[463.493285]  mapped:526 shmem:4903 pagetables:1759 bounce:0
-[463.493285]  free:33623 free_pcp:2392 free_cma:0
-...
-[463.493489] Unreclaimable slab info:
-[463.493513] Name                      Used          Total
-[463.493522] bio-6                   1028KB       1028KB
-[463.493525] bio-5                   1028KB       1028KB
-[463.493528] dm_snap_pending_exception     236783KB     243789KB
-[463.493531] dm_exception              41KB         42KB
-[463.493534] bio-4                   1216KB       1216KB
-[463.493537] bio-3                 439396KB     439396KB
-[463.493539] kcopyd_job           6973427KB    6973427KB
-...
-[463.494340] Out of memory: Kill process 1298 (ruby2.3) score 1 or sacrifice child
-[463.494673] Killed process 1298 (ruby2.3) total-vm:435740kB, anon-rss:20180kB, file-rss:4kB, shmem-rss:0kB
-[463.506437] oom_reaper: reaped process 1298 (ruby2.3), now anon-rss:0kB, file-rss:0kB, shmem-rss:0kB
+From drivers/scsi/megaraid/megaraid_sas_base.c ,
+memset(instance->ld_ids, 0xff, MEGASAS_MAX_LD_IDS);
 
-Moreover, issuing a large number of kcopyd jobs results in kcopyd
-hogging the CPU, while processing them. As a result, processing of work
-items, queued for execution on the same CPU as the currently running
-kcopyd thread, is stalled for long periods of time, hurting performance.
-Running the aforementioned test we get, in dmesg, messages like the
-following:
+From drivers/scsi/megaraid/megaraid_sas_fp.c ,
+/* For non existing VDs, iterate to next VD*/
+if (ld >= (MAX_LOGICAL_DRIVES_EXT - 1))
+	continue;
 
-[67501.194592] BUG: workqueue lockup - pool cpus=4 node=0 flags=0x0 nice=0 stuck for 27s!
-[67501.195586] Showing busy workqueues and worker pools:
-[67501.195591] workqueue events: flags=0x0
-[67501.195597]   pwq 8: cpus=4 node=0 flags=0x0 nice=0 active=1/256
-[67501.195611]     pending: cache_reap
-[67501.195641] workqueue mm_percpu_wq: flags=0x8
-[67501.195645]   pwq 8: cpus=4 node=0 flags=0x0 nice=0 active=1/256
-[67501.195656]     pending: vmstat_update
-[67501.195682] workqueue kblockd: flags=0x18
-[67501.195687]   pwq 5: cpus=2 node=0 flags=0x0 nice=-20 active=1/256
-[67501.195698]     pending: blk_timeout_work
-[67501.195753] workqueue kcopyd: flags=0x8
-[67501.195757]   pwq 8: cpus=4 node=0 flags=0x0 nice=0 active=1/256
-[67501.195768]     pending: do_work [dm_mod]
-[67501.195802] workqueue kcopyd: flags=0x8
-[67501.195806]   pwq 8: cpus=4 node=0 flags=0x0 nice=0 active=1/256
-[67501.195817]     pending: do_work [dm_mod]
-[67501.195834] workqueue kcopyd: flags=0x8
-[67501.195838]   pwq 8: cpus=4 node=0 flags=0x0 nice=0 active=1/256
-[67501.195848]     pending: do_work [dm_mod]
-[67501.195881] workqueue kcopyd: flags=0x8
-[67501.195885]   pwq 8: cpus=4 node=0 flags=0x0 nice=0 active=1/256
-[67501.195896]     pending: do_work [dm_mod]
-[67501.195920] workqueue kcopyd: flags=0x8
-[67501.195924]   pwq 8: cpus=4 node=0 flags=0x0 nice=0 active=2/256
-[67501.195935]     in-flight: 67:do_work [dm_mod]
-[67501.195945]     pending: do_work [dm_mod]
-[67501.195961] pool 8: cpus=4 node=0 flags=0x0 nice=0 hung=27s workers=3 idle: 129 23765
+However, there are a few places that failed to skip those non-existing VDs
+due to off-by-one errors. Then, those 0xff leaked into MR_LdRaidGet(0xff,
+map) and triggered the out-of-bound accesses.
 
-The root cause for these issues is the way dm-snapshot uses kcopyd. In
-particular, the lack of an explicit or implicit limit to the maximum
-number of in-flight COW jobs. The merging path is not affected because
-it implicitly limits the in-flight kcopyd jobs to one.
-
-Fix these issues by using a semaphore to limit the maximum number of
-in-flight kcopyd jobs. We grab the semaphore before allocating a new
-kcopyd job in start_copy() and start_full_bio() and release it after the
-job finishes in copy_callback().
-
-The initial semaphore value is configurable through a module parameter,
-to allow fine tuning the maximum number of in-flight COW jobs. Setting
-this parameter to zero initializes the semaphore to INT_MAX.
-
-A default value of 2048 maximum in-flight kcopyd jobs was chosen. This
-value was decided experimentally as a trade-off between memory
-consumption, stalling the kernel's workqueues and maintaining a high
-enough throughput.
-
-Re-running the aforementioned test:
-
-  * Workqueue stalls are eliminated
-  * kcopyd's job slab cache uses a maximum of 130MB
-  * The time taken by the test to write to the snapshot-origin target is
-    reduced from 05m20.48s to 03m26.38s
-
-[1] https://github.com/jthornber/device-mapper-test-suite
-
-Signed-off-by: Nikos Tsironis <ntsironis@arrikto.com>
-Signed-off-by: Ilias Tsitsimpis <iliastsi@arrikto.com>
-Signed-off-by: Mike Snitzer <snitzer@redhat.com>
+Fixes: 51087a8617fe ("megaraid_sas : Extended VD support")
+Signed-off-by: Qian Cai <cai@lca.pw>
+Acked-by: Sumit Saxena <sumit.saxena@broadcom.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/md/dm-snap.c | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+ drivers/scsi/megaraid/megaraid_sas_fp.c     | 2 +-
+ drivers/scsi/megaraid/megaraid_sas_fusion.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/md/dm-snap.c b/drivers/md/dm-snap.c
-index e108deebbaaa..5d3797728b9c 100644
---- a/drivers/md/dm-snap.c
-+++ b/drivers/md/dm-snap.c
-@@ -19,6 +19,7 @@
- #include <linux/vmalloc.h>
- #include <linux/log2.h>
- #include <linux/dm-kcopyd.h>
-+#include <linux/semaphore.h>
+diff --git a/drivers/scsi/megaraid/megaraid_sas_fp.c b/drivers/scsi/megaraid/megaraid_sas_fp.c
+index 741509b35617..14f32c114c55 100644
+--- a/drivers/scsi/megaraid/megaraid_sas_fp.c
++++ b/drivers/scsi/megaraid/megaraid_sas_fp.c
+@@ -1273,7 +1273,7 @@ void mr_update_load_balance_params(struct MR_DRV_RAID_MAP_ALL *drv_map,
  
- #include "dm.h"
- 
-@@ -105,6 +106,9 @@ struct dm_snapshot {
- 	/* The on disk metadata handler */
- 	struct dm_exception_store *store;
- 
-+	/* Maximum number of in-flight COW jobs. */
-+	struct semaphore cow_count;
-+
- 	struct dm_kcopyd_client *kcopyd_client;
- 
- 	/* Wait for events based on state_bits */
-@@ -145,6 +149,19 @@ struct dm_snapshot {
- #define RUNNING_MERGE          0
- #define SHUTDOWN_MERGE         1
- 
-+/*
-+ * Maximum number of chunks being copied on write.
-+ *
-+ * The value was decided experimentally as a trade-off between memory
-+ * consumption, stalling the kernel's workqueues and maintaining a high enough
-+ * throughput.
-+ */
-+#define DEFAULT_COW_THRESHOLD 2048
-+
-+static int cow_threshold = DEFAULT_COW_THRESHOLD;
-+module_param_named(snapshot_cow_threshold, cow_threshold, int, 0644);
-+MODULE_PARM_DESC(snapshot_cow_threshold, "Maximum number of chunks being copied on write");
-+
- DECLARE_DM_KCOPYD_THROTTLE_WITH_MODULE_PARM(snapshot_copy_throttle,
- 		"A percentage of time allocated for copy on write");
- 
-@@ -1190,6 +1207,8 @@ static int snapshot_ctr(struct dm_target *ti, unsigned int argc, char **argv)
- 		goto bad_hash_tables;
- 	}
- 
-+	sema_init(&s->cow_count, (cow_threshold > 0) ? cow_threshold : INT_MAX);
-+
- 	s->kcopyd_client = dm_kcopyd_client_create(&dm_kcopyd_throttle);
- 	if (IS_ERR(s->kcopyd_client)) {
- 		r = PTR_ERR(s->kcopyd_client);
-@@ -1563,6 +1582,7 @@ static void copy_callback(int read_err, unsigned long write_err, void *context)
+ 	for (ldCount = 0; ldCount < MAX_LOGICAL_DRIVES_EXT; ldCount++) {
+ 		ld = MR_TargetIdToLdGet(ldCount, drv_map);
+-		if (ld >= MAX_LOGICAL_DRIVES_EXT) {
++		if (ld >= MAX_LOGICAL_DRIVES_EXT - 1) {
+ 			lbInfo[ldCount].loadBalanceFlag = 0;
+ 			continue;
  		}
- 		list_add(&pe->out_of_order_entry, lh);
- 	}
-+	up(&s->cow_count);
- }
+diff --git a/drivers/scsi/megaraid/megaraid_sas_fusion.c b/drivers/scsi/megaraid/megaraid_sas_fusion.c
+index 213944ed64d9..3d3bfa814093 100644
+--- a/drivers/scsi/megaraid/megaraid_sas_fusion.c
++++ b/drivers/scsi/megaraid/megaraid_sas_fusion.c
+@@ -1758,7 +1758,7 @@ static void megasas_build_ld_nonrw_fusion(struct megasas_instance *instance,
+ 		device_id < instance->fw_supported_vd_count)) {
  
- /*
-@@ -1586,6 +1606,7 @@ static void start_copy(struct dm_snap_pending_exception *pe)
- 	dest.count = src.count;
+ 		ld = MR_TargetIdToLdGet(device_id, local_map_ptr);
+-		if (ld >= instance->fw_supported_vd_count)
++		if (ld >= instance->fw_supported_vd_count - 1)
+ 			fp_possible = 0;
  
- 	/* Hand over to kcopyd */
-+	down(&s->cow_count);
- 	dm_kcopyd_copy(s->kcopyd_client, &src, 1, &dest, 0, copy_callback, pe);
- }
- 
-@@ -1606,6 +1627,7 @@ static void start_full_bio(struct dm_snap_pending_exception *pe,
- 	pe->full_bio_end_io = bio->bi_end_io;
- 	pe->full_bio_private = bio->bi_private;
- 
-+	down(&s->cow_count);
- 	callback_data = dm_kcopyd_prepare_callback(s->kcopyd_client,
- 						   copy_callback, pe);
- 
+ 		raid = MR_LdRaidGet(ld, local_map_ptr);
 -- 
 2.19.1
 
