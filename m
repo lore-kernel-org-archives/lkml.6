@@ -2,190 +2,142 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 402F0C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:29:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3B36C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:30:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E354217D9
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:29:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546975796;
-	bh=1flXoYz3wjULUj+PBOzW2SY0n8DFOypLvWXKvU9ZOmw=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=nTRGOvXzuntzcKOASCl2rrDXqOPRqqRoV9/WinZYtYtMrKnYFoOLDBhhk0uJRwViw
-	 S1bAH7ZDh/5CMwJfmJsO3PfYroynXKdrbSec8ed2ZzVqdgGHUG6UdLTKtFxiQL1oR1
-	 3SLivAv/P1zXig50Q6VbWfapAVxSGyH+tqhAbQbk=
+	by mail.kernel.org (Postfix) with ESMTP id 803DD20827
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:30:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="soYTQG0b"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730516AbfAHT3z (ORCPT
+        id S1730665AbfAHTaK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:29:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37412 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728913AbfAHT3w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:29:52 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 553D920645;
-        Tue,  8 Jan 2019 19:29:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546975791;
-        bh=1flXoYz3wjULUj+PBOzW2SY0n8DFOypLvWXKvU9ZOmw=;
-        h=From:To:Cc:Subject:Date:From;
-        b=LtLzLuLUCO/4UFODG1iwrjxGcEY2gn/VYavDJe/ekMMONJfcI82fNRlkWsNGrPyTd
-         7kmrZR7kRf1CyiFBdbEImvP5lpqAR6hBjnh4WhZcEKR65StqaEwwRASbvy6EW6r25W
-         QEwwbGbxuCZIGmWkReaegs89DsdsqGttsIgFbPoo=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Stefano Brivio <sbrivio@redhat.com>,
-        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
-        Sasha Levin <sashal@kernel.org>,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 01/97] netfilter: ipset: Allow matching on destination MAC address for mac and ipmac sets
-Date:   Tue,  8 Jan 2019 14:28:10 -0500
-Message-Id: <20190108192949.122407-1-sashal@kernel.org>
-X-Mailer: git-send-email 2.19.1
+        Tue, 8 Jan 2019 14:30:10 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:34865 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730550AbfAHTaC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:30:02 -0500
+Received: by mail-lj1-f195.google.com with SMTP id x85-v6so4433017ljb.2
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jan 2019 11:30:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=5XUflO4G4Dd3EM/eG7jeSYEDT6AoE9me3ht4t1gspZk=;
+        b=soYTQG0bq+WP+8/CnlLdsctJTfpWE99LXcVyiDRYxCwxnONaQir+4fDmulkNhNza/4
+         lhzCBPP/4/2gn2ZbjETTH48hV1e38ke4oJ4uOmYMeFGrGgqOvkfkESl5+IF5O5r0qxe1
+         ZQnCEM0/+pqEFAwfJClgvOKCSG1BCPGISdlDEs4s/quN0NNvHjauVkm2Y6cyRmYM2R69
+         hUpr51f+k+rGEa2dtnPYL2FYTdmMeiQyO7USe4velZAIhyNWvfDs81dKP4aBqCZfY0Jn
+         2/CwNAO1sNBJnyEuvUFkU6oahAuLcaebdadkyIunT7PUdL1q+6XbhhSc/mC6v37j87NH
+         r8IQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
+         :in-reply-to:references:mime-version:content-transfer-encoding;
+        bh=5XUflO4G4Dd3EM/eG7jeSYEDT6AoE9me3ht4t1gspZk=;
+        b=uBBTB86YS/iiTxm+k992KJTbjQsyiCfY11W1cuqAfMw8yvBsnXPrIB3HGo12MNj0xp
+         bHVun+nskLlsw+7vw+5NW9v0XlnyKDL6bwun4uW2MXjufsrw7T9uSEjm0L17+qPvWciO
+         Q3B32lJrXvOVDP3il3zL8+K0qU1oeBqtoVwR59TM+cJeEqnVZWgxX/tRe0jOILPbpbuI
+         8Y0Vg2VDI3d9P9p5HPUkiZLYjoFh+f/6hWLDKhxOrV2yjwsXDjN9cmJQPoqIC2SM/BP/
+         iyPknM9555+W+f7RMuL981stRrSx+DldptuH/48KvawDcw4cAI4bmuaq0+IjDQ/4Ucy2
+         YwNg==
+X-Gm-Message-State: AJcUukdzw2FyOApiGlwrr0pbuLh/Q6YGnyf257jk78/r7z/Y/D9Yvk93
+        Q4WoWz2tFiccyIGBk0QUk3o=
+X-Google-Smtp-Source: ALg8bN5T39rO5PA2D9Bl4KSEQT29+0y8fiQbOsB9r+jbMTGusrVNJl/jReg4hZNDRJtfUVadw9XdSw==
+X-Received: by 2002:a2e:4442:: with SMTP id r63-v6mr1811885lja.79.1546975800393;
+        Tue, 08 Jan 2019 11:30:00 -0800 (PST)
+Received: from jupiter.lan (18.158-248-194.customer.lyse.net. [158.248.194.18])
+        by smtp.gmail.com with ESMTPSA id q128-v6sm9122246ljq.14.2019.01.08.11.29.59
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 08 Jan 2019 11:29:59 -0800 (PST)
+From:   Sam Ravnborg <sam@ravnborg.org>
+To:     Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@linux.ie>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>,
+        David Lechner <david@lechnology.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        =?UTF-8?q?Noralf=20Tr=C3=B8nnes?= <noralf@tronnes.org>,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+Cc:     Sam Ravnborg <sam@ravnborg.org>,
+        Alexey Brodkin <abrodkin@synopsys.com>
+Subject: [PATCH v3 09/12] drm/arc: do not reply on drmP.h from drm_gem_cma_helper.h
+Date:   Tue,  8 Jan 2019 20:29:36 +0100
+Message-Id: <20190108192939.15255-10-sam@ravnborg.org>
+X-Mailer: git-send-email 2.12.0
+In-Reply-To: <20190108192939.15255-1-sam@ravnborg.org>
+References: <20190108192939.15255-1-sam@ravnborg.org>
 MIME-Version: 1.0
-X-Patchwork-Hint: Ignore
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stefano Brivio <sbrivio@redhat.com>
+drmP.h was the only header file in the past and a lot
+of files rely on that drmP.h defines everything.
+The goal is to one day to delete drmP.h and
+as a step towards this it will no longer be included in the
+headers files in include/drm/
 
-[ Upstream commit 8cc4ccf58379935f3ad456cc34e61c4e4c921d0e ]
+To prepare arc/ for this add dependencies that
+othwewise was pulled in by drmP.h from drm_gem_cma_helper.h
 
-There doesn't seem to be any reason to restrict MAC address
-matching to source MAC addresses in set types bitmap:ipmac,
-hash:ipmac and hash:mac. With this patch, and this setup:
-
-  ip netns add A
-  ip link add veth1 type veth peer name veth2 netns A
-  ip addr add 192.0.2.1/24 dev veth1
-  ip -net A addr add 192.0.2.2/24 dev veth2
-  ip link set veth1 up
-  ip -net A link set veth2 up
-
-  ip netns exec A ipset create test hash:mac
-  dst=$(ip netns exec A cat /sys/class/net/veth2/address)
-  ip netns exec A ipset add test ${dst}
-  ip netns exec A iptables -P INPUT DROP
-  ip netns exec A iptables -I INPUT -m set --match-set test dst -j ACCEPT
-
-ipset will match packets based on destination MAC address:
-
-  # ping -c1 192.0.2.2 >/dev/null
-  # echo $?
-  0
-
-Reported-by: Yi Chen <yiche@redhat.com>
-Signed-off-by: Stefano Brivio <sbrivio@redhat.com>
-Signed-off-by: Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Sam Ravnborg <sam@ravnborg.org>
+Acked-by: Noralf Trønnes <noralf@tronnes.org>
+Cc: Alexey Brodkin <abrodkin@synopsys.com>
+Cc: Daniel Vetter <daniel@ffwll.ch>
+Cc: David Airlie <airlied@linux.ie>
 ---
- net/netfilter/ipset/ip_set_bitmap_ipmac.c | 10 +++++-----
- net/netfilter/ipset/ip_set_hash_ipmac.c   | 16 ++++++++++------
- net/netfilter/ipset/ip_set_hash_mac.c     | 10 +++++-----
- 3 files changed, 20 insertions(+), 16 deletions(-)
+ drivers/gpu/drm/arc/arcpgu_crtc.c | 2 ++
+ drivers/gpu/drm/arc/arcpgu_drv.c  | 6 ++++++
+ 2 files changed, 8 insertions(+)
 
-diff --git a/net/netfilter/ipset/ip_set_bitmap_ipmac.c b/net/netfilter/ipset/ip_set_bitmap_ipmac.c
-index c00b6a2e8e3c..13ade5782847 100644
---- a/net/netfilter/ipset/ip_set_bitmap_ipmac.c
-+++ b/net/netfilter/ipset/ip_set_bitmap_ipmac.c
-@@ -219,10 +219,6 @@ bitmap_ipmac_kadt(struct ip_set *set, const struct sk_buff *skb,
- 	struct ip_set_ext ext = IP_SET_INIT_KEXT(skb, opt, set);
- 	u32 ip;
+diff --git a/drivers/gpu/drm/arc/arcpgu_crtc.c b/drivers/gpu/drm/arc/arcpgu_crtc.c
+index 62f51f70606d..155ab177ce0b 100644
+--- a/drivers/gpu/drm/arc/arcpgu_crtc.c
++++ b/drivers/gpu/drm/arc/arcpgu_crtc.c
+@@ -16,8 +16,10 @@
  
--	/* MAC can be src only */
--	if (!(opt->flags & IPSET_DIM_TWO_SRC))
--		return 0;
--
- 	ip = ntohl(ip4addr(skb, opt->flags & IPSET_DIM_ONE_SRC));
- 	if (ip < map->first_ip || ip > map->last_ip)
- 		return -IPSET_ERR_BITMAP_RANGE;
-@@ -233,7 +229,11 @@ bitmap_ipmac_kadt(struct ip_set *set, const struct sk_buff *skb,
- 		return -EINVAL;
+ #include <drm/drm_atomic_helper.h>
+ #include <drm/drm_crtc_helper.h>
++#include <drm/drm_device.h>
+ #include <drm/drm_fb_cma_helper.h>
+ #include <drm/drm_gem_cma_helper.h>
++#include <drm/drm_vblank.h>
+ #include <drm/drm_plane_helper.h>
+ #include <linux/clk.h>
+ #include <linux/platform_data/simplefb.h>
+diff --git a/drivers/gpu/drm/arc/arcpgu_drv.c b/drivers/gpu/drm/arc/arcpgu_drv.c
+index 206a76abf771..39a79f5718c4 100644
+--- a/drivers/gpu/drm/arc/arcpgu_drv.c
++++ b/drivers/gpu/drm/arc/arcpgu_drv.c
+@@ -16,12 +16,18 @@
  
- 	e.id = ip_to_id(map, ip);
--	memcpy(e.ether, eth_hdr(skb)->h_source, ETH_ALEN);
-+
-+	if (opt->flags & IPSET_DIM_ONE_SRC)
-+		ether_addr_copy(e.ether, eth_hdr(skb)->h_source);
-+	else
-+		ether_addr_copy(e.ether, eth_hdr(skb)->h_dest);
+ #include <linux/clk.h>
+ #include <drm/drm_crtc_helper.h>
++#include <drm/drm_device.h>
++#include <drm/drm_debugfs.h>
++#include <drm/drm_drv.h>
+ #include <drm/drm_fb_cma_helper.h>
+ #include <drm/drm_fb_helper.h>
+ #include <drm/drm_gem_cma_helper.h>
+ #include <drm/drm_gem_framebuffer_helper.h>
+ #include <drm/drm_atomic_helper.h>
++#include <linux/dma-mapping.h>
++#include <linux/module.h>
+ #include <linux/of_reserved_mem.h>
++#include <linux/platform_device.h>
  
- 	return adtfn(set, &e, &ext, &opt->ext, opt->cmdflags);
- }
-diff --git a/net/netfilter/ipset/ip_set_hash_ipmac.c b/net/netfilter/ipset/ip_set_hash_ipmac.c
-index 1ab5ed2f6839..fd87de3ed55b 100644
---- a/net/netfilter/ipset/ip_set_hash_ipmac.c
-+++ b/net/netfilter/ipset/ip_set_hash_ipmac.c
-@@ -103,7 +103,11 @@ hash_ipmac4_kadt(struct ip_set *set, const struct sk_buff *skb,
- 	    (skb_mac_header(skb) + ETH_HLEN) > skb->data)
- 		return -EINVAL;
- 
--	memcpy(e.ether, eth_hdr(skb)->h_source, ETH_ALEN);
-+	if (opt->flags & IPSET_DIM_ONE_SRC)
-+		ether_addr_copy(e.ether, eth_hdr(skb)->h_source);
-+	else
-+		ether_addr_copy(e.ether, eth_hdr(skb)->h_dest);
-+
- 	if (ether_addr_equal(e.ether, invalid_ether))
- 		return -EINVAL;
- 
-@@ -211,15 +215,15 @@ hash_ipmac6_kadt(struct ip_set *set, const struct sk_buff *skb,
- 	};
- 	struct ip_set_ext ext = IP_SET_INIT_KEXT(skb, opt, set);
- 
--	 /* MAC can be src only */
--	if (!(opt->flags & IPSET_DIM_TWO_SRC))
--		return 0;
--
- 	if (skb_mac_header(skb) < skb->head ||
- 	    (skb_mac_header(skb) + ETH_HLEN) > skb->data)
- 		return -EINVAL;
- 
--	memcpy(e.ether, eth_hdr(skb)->h_source, ETH_ALEN);
-+	if (opt->flags & IPSET_DIM_ONE_SRC)
-+		ether_addr_copy(e.ether, eth_hdr(skb)->h_source);
-+	else
-+		ether_addr_copy(e.ether, eth_hdr(skb)->h_dest);
-+
- 	if (ether_addr_equal(e.ether, invalid_ether))
- 		return -EINVAL;
- 
-diff --git a/net/netfilter/ipset/ip_set_hash_mac.c b/net/netfilter/ipset/ip_set_hash_mac.c
-index f9d5a2a1e3d0..4fe5f243d0a3 100644
---- a/net/netfilter/ipset/ip_set_hash_mac.c
-+++ b/net/netfilter/ipset/ip_set_hash_mac.c
-@@ -81,15 +81,15 @@ hash_mac4_kadt(struct ip_set *set, const struct sk_buff *skb,
- 	struct hash_mac4_elem e = { { .foo[0] = 0, .foo[1] = 0 } };
- 	struct ip_set_ext ext = IP_SET_INIT_KEXT(skb, opt, set);
- 
--	 /* MAC can be src only */
--	if (!(opt->flags & IPSET_DIM_ONE_SRC))
--		return 0;
--
- 	if (skb_mac_header(skb) < skb->head ||
- 	    (skb_mac_header(skb) + ETH_HLEN) > skb->data)
- 		return -EINVAL;
- 
--	ether_addr_copy(e.ether, eth_hdr(skb)->h_source);
-+	if (opt->flags & IPSET_DIM_ONE_SRC)
-+		ether_addr_copy(e.ether, eth_hdr(skb)->h_source);
-+	else
-+		ether_addr_copy(e.ether, eth_hdr(skb)->h_dest);
-+
- 	if (is_zero_ether_addr(e.ether))
- 		return -EINVAL;
- 	return adtfn(set, &e, &ext, &opt->ext, opt->cmdflags);
+ #include "arcpgu.h"
+ #include "arcpgu_regs.h"
 -- 
-2.19.1
+2.12.0
 
