@@ -4,57 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DD5FC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:34:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13AA1C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:34:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4BBBE20645
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:34:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CA84B20827
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:34:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546976093;
-	bh=kre70+d8uzJ8FvACdFI79BLA9fkyW8w13nbV39CgHJk=;
+	s=default; t=1546976096;
+	bh=yL1Hp3LCsbPU8bkOJ1nZMnNehtYI+7MVpr9YdfarBCA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=hwPcLvZDGpAI8oKXkSrhImMmuL8MTp7GUY6FGKBRsMuFeC8qbYwB54OLd7ry0MU+c
-	 PXK7v/4E9C8/ER/V9tcflgCya2i9N5pzr8laalvNDLz0M5efcv+7AYf6WQeiNnpjV0
-	 DK2EXuI2lZr/Df9X1vBk5dV+1jENPDUrf1JxsQek=
+	b=c62vGNpeJGzQyvVRtJ0UVCHf6pA4B/r8qB8s9N/O0km/WEp56RccoWgssRvfcp7Rg
+	 gQP0/xKYDsJ6w+Iq+LDHBzQRtP6na58ycau8MJGXqW3SwUmg+8bhsjhoi+P0GuxL7g
+	 zdj/XRa41GO2M2pk3l/21nQgjK0VGAiJFOEn2GSQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732101AbfAHTew (ORCPT
+        id S1732114AbfAHTe4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:34:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43532 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 14:34:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43670 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732026AbfAHTeq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:34:46 -0500
+        id S1732092AbfAHTev (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:34:51 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EBAE02176F;
-        Tue,  8 Jan 2019 19:34:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6A66F2063F;
+        Tue,  8 Jan 2019 19:34:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546976085;
-        bh=kre70+d8uzJ8FvACdFI79BLA9fkyW8w13nbV39CgHJk=;
+        s=default; t=1546976091;
+        bh=yL1Hp3LCsbPU8bkOJ1nZMnNehtYI+7MVpr9YdfarBCA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1OMrGUPK7WGkr2Z6UK5jJeonKBQ98V4bOonaTEIQSarppcN4rm+KXtt2qpRxzs6mC
-         BkmxzKe/W2e4nT1/ulIfAHNZBgNCSZOKtv3aCT1D3b8ZfMY0NOma4vJ1lk3vRykakr
-         QDefivvZpGeAoWOZSY7YkcEv2KlbF1NVddtLvRm4=
+        b=POs813D3Cno5GbGPhOwdqb/Z9IMcarZ98duMXF8JjEN9OLIhq2LxdSxj8yWPb/4I+
+         tIy2sTJVLWIylBFDUUepwN/BjGYxn2r4B+HJJ9UgA8GhRHRZ4g9eoUAkFiBxEK10Xe
+         0tT6k9ptyNbHbsEm+Um/rkdp5RCQSqInFCZXsvPg=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Michal Hocko <mhocko@suse.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        David Rientjes <rientjes@google.com>,
-        Paul Oppenheimer <bepvte@gmail.com>,
-        William Kucharski <william.kucharski@oracle.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org,
-        linux-doc@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 36/36] mm, proc: be more verbose about unstable VMA flags in /proc/<pid>/smaps
-Date:   Tue,  8 Jan 2019 14:33:48 -0500
-Message-Id: <20190108193348.123880-36-sashal@kernel.org>
+Cc:     Anders Roxell <anders.roxell@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 03/28] writeback: don't decrement wb->refcnt if !wb->bdi
+Date:   Tue,  8 Jan 2019 14:34:20 -0500
+Message-Id: <20190108193445.124251-3-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190108193348.123880-1-sashal@kernel.org>
-References: <20190108193348.123880-1-sashal@kernel.org>
+In-Reply-To: <20190108193445.124251-1-sashal@kernel.org>
+References: <20190108193445.124251-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -63,106 +58,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michal Hocko <mhocko@suse.com>
+From: Anders Roxell <anders.roxell@linaro.org>
 
-[ Upstream commit 7550c6079846a24f30d15ac75a941c8515dbedfb ]
+[ Upstream commit 347a28b586802d09604a149c1a1f6de5dccbe6fa ]
 
-Patch series "THP eligibility reporting via proc".
+This happened while running in qemu-system-aarch64, the AMBA PL011 UART
+driver when enabling CONFIG_DEBUG_TEST_DRIVER_REMOVE.
+arch_initcall(pl011_init) came before subsys_initcall(default_bdi_init),
+devtmpfs' handle_remove() crashes because the reference count is a NULL
+pointer only because wb->bdi hasn't been initialized yet.
 
-This series of three patches aims at making THP eligibility reporting much
-more robust and long term sustainable.  The trigger for the change is a
-regression report [2] and the long follow up discussion.  In short the
-specific application didn't have good API to query whether a particular
-mapping can be backed by THP so it has used VMA flags to workaround that.
-These flags represent a deep internal state of VMAs and as such they
-should be used by userspace with a great deal of caution.
+Rework so that wb_put have an extra check if wb->bdi before decrement
+wb->refcnt and also add a WARN_ON_ONCE to get a warning if it happens again
+in other drivers.
 
-A similar has happened for [3] when users complained that VM_MIXEDMAP is
-no longer set on DAX mappings.  Again a lack of a proper API led to an
-abuse.
-
-The first patch in the series tries to emphasise that that the semantic of
-flags might change and any application consuming those should be really
-careful.
-
-The remaining two patches provide a more suitable interface to address [2]
-and provide a consistent API to query the THP status both for each VMA and
-process wide as well.  [1]
-
-http://lkml.kernel.org/r/20181120103515.25280-1-mhocko@kernel.org [2]
-http://lkml.kernel.org/r/http://lkml.kernel.org/r/alpine.DEB.2.21.1809241054050.224429@chino.kir.corp.google.com
-[3] http://lkml.kernel.org/r/20181002100531.GC4135@quack2.suse.cz
-
-This patch (of 3):
-
-Even though vma flags exported via /proc/<pid>/smaps are explicitly
-documented to be not guaranteed for future compatibility the warning
-doesn't go far enough because it doesn't mention semantic changes to those
-flags.  And they are important as well because these flags are a deep
-implementation internal to the MM code and the semantic might change at
-any time.
-
-Let's consider two recent examples:
-http://lkml.kernel.org/r/20181002100531.GC4135@quack2.suse.cz
-: commit e1fb4a086495 "dax: remove VM_MIXEDMAP for fsdax and device dax" has
-: removed VM_MIXEDMAP flag from DAX VMAs. Now our testing shows that in the
-: mean time certain customer of ours started poking into /proc/<pid>/smaps
-: and looks at VMA flags there and if VM_MIXEDMAP is missing among the VMA
-: flags, the application just fails to start complaining that DAX support is
-: missing in the kernel.
-
-http://lkml.kernel.org/r/alpine.DEB.2.21.1809241054050.224429@chino.kir.corp.google.com
-: Commit 1860033237d4 ("mm: make PR_SET_THP_DISABLE immediately active")
-: introduced a regression in that userspace cannot always determine the set
-: of vmas where thp is ineligible.
-: Userspace relies on the "nh" flag being emitted as part of /proc/pid/smaps
-: to determine if a vma is eligible to be backed by hugepages.
-: Previous to this commit, prctl(PR_SET_THP_DISABLE, 1) would cause thp to
-: be disabled and emit "nh" as a flag for the corresponding vmas as part of
-: /proc/pid/smaps.  After the commit, thp is disabled by means of an mm
-: flag and "nh" is not emitted.
-: This causes smaps parsing libraries to assume a vma is eligible for thp
-: and ends up puzzling the user on why its memory is not backed by thp.
-
-In both cases userspace was relying on a semantic of a specific VMA flag.
-The primary reason why that happened is a lack of a proper interface.
-While this has been worked on and it will be fixed properly, it seems that
-our wording could see some refinement and be more vocal about semantic
-aspect of these flags as well.
-
-Link: http://lkml.kernel.org/r/20181211143641.3503-2-mhocko@kernel.org
-Signed-off-by: Michal Hocko <mhocko@suse.com>
-Acked-by: Jan Kara <jack@suse.cz>
-Acked-by: Dan Williams <dan.j.williams@intel.com>
-Acked-by: David Rientjes <rientjes@google.com>
-Acked-by: Mike Rapoport <rppt@linux.ibm.com>
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: David Rientjes <rientjes@google.com>
-Cc: Paul Oppenheimer <bepvte@gmail.com>
-Cc: William Kucharski <william.kucharski@oracle.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: 52ebea749aae ("writeback: make backing_dev_info host cgroup-specific bdi_writebacks")
+Co-developed-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- Documentation/filesystems/proc.txt | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ include/linux/backing-dev-defs.h | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/Documentation/filesystems/proc.txt b/Documentation/filesystems/proc.txt
-index 74329fd0add2..077c37ed976f 100644
---- a/Documentation/filesystems/proc.txt
-+++ b/Documentation/filesystems/proc.txt
-@@ -484,7 +484,9 @@ manner. The codes are the following:
- 
- Note that there is no guarantee that every flag and associated mnemonic will
- be present in all further kernel releases. Things get changed, the flags may
--be vanished or the reverse -- new added.
-+be vanished or the reverse -- new added. Interpretation of their meaning
-+might change in future as well. So each consumer of these flags has to
-+follow each specific kernel version for the exact semantic.
- 
- This file is only present if the CONFIG_MMU kernel configuration option is
- enabled.
+diff --git a/include/linux/backing-dev-defs.h b/include/linux/backing-dev-defs.h
+index a307c37c2e6c..072501a0ac86 100644
+--- a/include/linux/backing-dev-defs.h
++++ b/include/linux/backing-dev-defs.h
+@@ -225,6 +225,14 @@ static inline void wb_get(struct bdi_writeback *wb)
+  */
+ static inline void wb_put(struct bdi_writeback *wb)
+ {
++	if (WARN_ON_ONCE(!wb->bdi)) {
++		/*
++		 * A driver bug might cause a file to be removed before bdi was
++		 * initialized.
++		 */
++		return;
++	}
++
+ 	if (wb != &wb->bdi->wb)
+ 		percpu_ref_put(&wb->refcnt);
+ }
 -- 
 2.19.1
 
