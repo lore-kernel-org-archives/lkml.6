@@ -2,53 +2,50 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06736C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:03:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A56BC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:03:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C8BA120827
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:03:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DD35F20660
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:03:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546977795;
-	bh=K01uuJxrDKOM1G1Otpwr8qo7UeOserko38jUPonRSQY=;
+	s=default; t=1546977799;
+	bh=YGY7k4S2cG7uMSu/EBpXR4QRd34/KE2tWRxnOP64u/k=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Sm5u6RGsY6yymuTWDxU1ofBHxhejZgI+IL7WbF+FHY7G9aB0B4fpuy8pgi0Hpumj5
-	 tuIZpkMDDwKKKxgyx6e9RJQtTW3Qd7ayf7dHooaYNnoCDYiXnaUIKu0+Kka8KapWX6
-	 f6NclfNEXyhx4/QQP+z6phgED1ishFEy2yHKOfos=
+	b=HAxM8PCfGVUlkqnAAvsPWQzFFTWhFMgCaFwppRBz4BwzoCxI9zkcbAodZESnSk6vJ
+	 RaJV3Ickx2H6tIHvzXk5S1P/psK9ojtekT29usFGiQ81GXD+93FIS0Q3NmCRW5JDa5
+	 qylRFycXxsiCFLb2IcOvmaMp1Ssgr0ZyFvUmUI4I=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730651AbfAHUDM (ORCPT
+        id S1730175AbfAHT2u (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 15:03:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36016 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 14:28:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35706 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730181AbfAHT2w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:28:52 -0500
+        id S1730102AbfAHT2i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:28:38 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BD7412070B;
-        Tue,  8 Jan 2019 19:28:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5F33320827;
+        Tue,  8 Jan 2019 19:28:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546975731;
-        bh=K01uuJxrDKOM1G1Otpwr8qo7UeOserko38jUPonRSQY=;
+        s=default; t=1546975717;
+        bh=YGY7k4S2cG7uMSu/EBpXR4QRd34/KE2tWRxnOP64u/k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Fed74O7MWWU2IYb0kcjUimEQMmKyfjcyjc8olWQVcP4jpI0Y3s5BylxkBGTm47f2o
-         3SEDvhFhCbPYMNGgxYD0m2d+CHRxMPiv7Z3V8FoAV7Q5y6nfx70HQe2cW7eG7B45MJ
-         BmH7NR6WATzaO6IFGYp0CM81ejey3xCfKYhcb0Fg=
+        b=kcvHv1pn0r09m2HHER3jcxA4l6Go97Z2HPoYJzwsU8gxWUJi38aP1KQQaStwCaK7w
+         J7qa3jtb8UipRwM8/XuYcMgLSNlpbj6O3KPzyqLFSA5XqVMPjFyNeAfZSO31Z+Kju0
+         Tuje9H8ciFo2z4P6Vp4vObbIdVVSBjIUzFY2qm2c=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.20 082/117] perf parse-events: Fix unchecked usage of strncpy()
-Date:   Tue,  8 Jan 2019 14:25:50 -0500
-Message-Id: <20190108192628.121270-82-sashal@kernel.org>
+Cc:     Filipe Manana <fdmanana@suse.com>, David Sterba <dsterba@suse.com>,
+        Sasha Levin <sashal@kernel.org>, linux-btrfs@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 074/117] Btrfs: fix deadlock when enabling quotas due to concurrent snapshot creation
+Date:   Tue,  8 Jan 2019 14:25:42 -0500
+Message-Id: <20190108192628.121270-74-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108192628.121270-1-sashal@kernel.org>
 References: <20190108192628.121270-1-sashal@kernel.org>
@@ -60,56 +57,134 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnaldo Carvalho de Melo <acme@redhat.com>
+From: Filipe Manana <fdmanana@suse.com>
 
-[ Upstream commit bd8d57fb7e25e9fcf67a9eef5fa13aabe2016e07 ]
+[ Upstream commit 9a6f209e36500efac51528132a3e3083586eda5f ]
 
-The strncpy() function may leave the destination string buffer
-unterminated, better use strlcpy() that we have a __weak fallback
-implementation for systems without it.
+If the quota enable and snapshot creation ioctls are called concurrently
+we can get into a deadlock where the task enabling quotas will deadlock
+on the fs_info->qgroup_ioctl_lock mutex because it attempts to lock it
+twice, or the task creating a snapshot tries to commit the transaction
+while the task enabling quota waits for the former task to commit the
+transaction while holding the mutex. The following time diagrams show how
+both cases happen.
 
-This fixes this warning on an Alpine Linux Edge system with gcc 8.2:
+First scenario:
 
-  util/parse-events.c: In function 'print_symbol_events':
-  util/parse-events.c:2465:4: error: 'strncpy' specified bound 100 equals destination size [-Werror=stringop-truncation]
-      strncpy(name, syms->symbol, MAX_NAME_LEN);
-      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  In function 'print_symbol_events.constprop',
-      inlined from 'print_events' at util/parse-events.c:2508:2:
-  util/parse-events.c:2465:4: error: 'strncpy' specified bound 100 equals destination size [-Werror=stringop-truncation]
-      strncpy(name, syms->symbol, MAX_NAME_LEN);
-      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  In function 'print_symbol_events.constprop',
-      inlined from 'print_events' at util/parse-events.c:2511:2:
-  util/parse-events.c:2465:4: error: 'strncpy' specified bound 100 equals destination size [-Werror=stringop-truncation]
-      strncpy(name, syms->symbol, MAX_NAME_LEN);
-      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  cc1: all warnings being treated as errors
+           CPU 0                                    CPU 1
 
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Fixes: 947b4ad1d198 ("perf list: Fix max event string size")
-Link: https://lkml.kernel.org/n/tip-b663e33bm6x8hrkie4uxh7u2@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+ btrfs_ioctl()
+  btrfs_ioctl_quota_ctl()
+   btrfs_quota_enable()
+    mutex_lock(fs_info->qgroup_ioctl_lock)
+    btrfs_start_transaction()
+
+                                             btrfs_ioctl()
+                                              btrfs_ioctl_snap_create_v2
+                                               create_snapshot()
+                                                --> adds snapshot to the
+                                                    list pending_snapshots
+                                                    of the current
+                                                    transaction
+
+    btrfs_commit_transaction()
+     create_pending_snapshots()
+       create_pending_snapshot()
+        qgroup_account_snapshot()
+         btrfs_qgroup_inherit()
+	   mutex_lock(fs_info->qgroup_ioctl_lock)
+	    --> deadlock, mutex already locked
+	        by this task at
+		btrfs_quota_enable()
+
+Second scenario:
+
+           CPU 0                                    CPU 1
+
+ btrfs_ioctl()
+  btrfs_ioctl_quota_ctl()
+   btrfs_quota_enable()
+    mutex_lock(fs_info->qgroup_ioctl_lock)
+    btrfs_start_transaction()
+
+                                             btrfs_ioctl()
+                                              btrfs_ioctl_snap_create_v2
+                                               create_snapshot()
+                                                --> adds snapshot to the
+                                                    list pending_snapshots
+                                                    of the current
+                                                    transaction
+
+                                                btrfs_commit_transaction()
+                                                 --> waits for task at
+                                                     CPU 0 to release
+                                                     its transaction
+                                                     handle
+
+    btrfs_commit_transaction()
+     --> sees another task started
+         the transaction commit first
+     --> releases its transaction
+         handle
+     --> waits for the transaction
+         commit to be completed by
+         the task at CPU 1
+
+                                                 create_pending_snapshot()
+                                                  qgroup_account_snapshot()
+                                                   btrfs_qgroup_inherit()
+                                                    mutex_lock(fs_info->qgroup_ioctl_lock)
+                                                     --> deadlock, task at CPU 0
+                                                         has the mutex locked but
+                                                         it is waiting for us to
+                                                         finish the transaction
+                                                         commit
+
+So fix this by setting the quota enabled flag in fs_info after committing
+the transaction at btrfs_quota_enable(). This ends up serializing quota
+enable and snapshot creation as if the snapshot creation happened just
+before the quota enable request. The quota rescan task, scheduled after
+committing the transaction in btrfs_quote_enable(), will do the accounting.
+
+Fixes: 6426c7ad697d ("btrfs: qgroup: Fix qgroup accounting when creating snapshot")
+Signed-off-by: Filipe Manana <fdmanana@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/util/parse-events.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/btrfs/qgroup.c | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
 
-diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-events.c
-index 59be3466d64d..920e1e6551dd 100644
---- a/tools/perf/util/parse-events.c
-+++ b/tools/perf/util/parse-events.c
-@@ -2462,7 +2462,7 @@ void print_symbol_events(const char *event_glob, unsigned type,
- 		if (!name_only && strlen(syms->alias))
- 			snprintf(name, MAX_NAME_LEN, "%s OR %s", syms->symbol, syms->alias);
- 		else
--			strncpy(name, syms->symbol, MAX_NAME_LEN);
-+			strlcpy(name, syms->symbol, MAX_NAME_LEN);
+diff --git a/fs/btrfs/qgroup.c b/fs/btrfs/qgroup.c
+index f70825af6438..9e419f6878c5 100644
+--- a/fs/btrfs/qgroup.c
++++ b/fs/btrfs/qgroup.c
+@@ -1013,16 +1013,22 @@ int btrfs_quota_enable(struct btrfs_fs_info *fs_info)
+ 		btrfs_abort_transaction(trans, ret);
+ 		goto out_free_path;
+ 	}
+-	spin_lock(&fs_info->qgroup_lock);
+-	fs_info->quota_root = quota_root;
+-	set_bit(BTRFS_FS_QUOTA_ENABLED, &fs_info->flags);
+-	spin_unlock(&fs_info->qgroup_lock);
  
- 		evt_list[evt_i] = strdup(name);
- 		if (evt_list[evt_i] == NULL)
+ 	ret = btrfs_commit_transaction(trans);
+ 	trans = NULL;
+ 	if (ret)
+ 		goto out_free_path;
+ 
++	/*
++	 * Set quota enabled flag after committing the transaction, to avoid
++	 * deadlocks on fs_info->qgroup_ioctl_lock with concurrent snapshot
++	 * creation.
++	 */
++	spin_lock(&fs_info->qgroup_lock);
++	fs_info->quota_root = quota_root;
++	set_bit(BTRFS_FS_QUOTA_ENABLED, &fs_info->flags);
++	spin_unlock(&fs_info->qgroup_lock);
++
+ 	ret = qgroup_rescan_init(fs_info, 0, 1);
+ 	if (!ret) {
+ 	        qgroup_rescan_zero_tracking(fs_info);
 -- 
 2.19.1
 
