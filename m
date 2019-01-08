@@ -2,117 +2,102 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B22BBC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 09:44:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1087C43444
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 09:47:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7CEF52087F
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 09:44:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6F77F20827
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 09:47:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="r6tYESJG"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="XdzN13vG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727701AbfAHJoh (ORCPT
+        id S1728100AbfAHJrf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 04:44:37 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:57020 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727760AbfAHJoh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 04:44:37 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x089hpVx156378;
-        Tue, 8 Jan 2019 09:44:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=uZ587fcjhZ8NOLszjusqcUyELM0LPFeexQDtVZY8iM4=;
- b=r6tYESJGFXDO3SWSV0llMW4RcZt2A9mPkU2Kl/MlxFuIwIgPJpJ3G9bJSOM+pMHh6me3
- /OdMAiMXcWMwmsoYszSIYTMAcYZtq9X/Ajwljj9MjvzeaMF9Yza6zsC1jZEpZntShVrQ
- V3/NO5zXHnmxQvkgdr5YGGJ6RDJ7P+gG+ji20awB01LG4WcDhAXyR092Uh79XTMivvvo
- Xw5B+aECY+4BnjrW3Ue3aelx2TJz+/u4XsSRHVgLHPdyzAwcFjicIdsz2ZibDo/ZGmAE
- YHojRyYuAyGD0KW7VBIoQ+ig9zNZY0+VKqoX/oDPuwskwbhkZbXpGL6enF5rSWWnKIlZ Ag== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by userp2120.oracle.com with ESMTP id 2ptn7qtbjc-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 08 Jan 2019 09:44:14 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x089iENN030800
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 8 Jan 2019 09:44:14 GMT
-Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x089iDNJ002040;
-        Tue, 8 Jan 2019 09:44:13 GMT
-Received: from kadam (/197.157.0.45)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 08 Jan 2019 01:44:11 -0800
-Date:   Tue, 8 Jan 2019 12:42:49 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Colin King <colin.king@canonical.com>
-Cc:     Steve French <sfrench@samba.org>, linux-cifs@vger.kernel.org,
-        samba-technical@lists.samba.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] cifs: fix memory leak of an allocated cifs_ntsd structure
-Message-ID: <20190108094249.GF3200@kadam>
-References: <20190107171515.4537-1-colin.king@canonical.com>
+        Tue, 8 Jan 2019 04:47:35 -0500
+Received: from mail-eopbgr130075.outbound.protection.outlook.com ([40.107.13.75]:18686
+        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727001AbfAHJrf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 04:47:35 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=On8ICrgJkbEUzsxeC2y8dv7ul6hjSiKkbX6E5QOEi4g=;
+ b=XdzN13vGOrEoCWZcBDOwH+VIpKrKeL23f53OjduljsT8L/ts6aHUopaFVmvPlDi+PhNOVojI/cdveS19W82iOHD9TCL5jDmzYRHozUkuMiGkBZRNi9LRgURgPS7YH3GM6wSbjy8vciUHdpXNNez1bHY+EAtAZfMFMtkuEDyckok=
+Received: from VI1PR0402MB3485.eurprd04.prod.outlook.com (52.134.3.153) by
+ VI1PR0402MB3824.eurprd04.prod.outlook.com (52.134.16.33) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1495.10; Tue, 8 Jan 2019 09:47:31 +0000
+Received: from VI1PR0402MB3485.eurprd04.prod.outlook.com
+ ([fe80::9c4e:17cb:deff:1c18]) by VI1PR0402MB3485.eurprd04.prod.outlook.com
+ ([fe80::9c4e:17cb:deff:1c18%5]) with mapi id 15.20.1495.011; Tue, 8 Jan 2019
+ 09:47:31 +0000
+From:   Horia Geanta <horia.geanta@nxp.com>
+To:     Christophe Leroy <christophe.leroy@c-s.fr>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>
+CC:     "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: Re: [PATCH v4 1/2] crypto: talitos - reorder code in
+ talitos_edesc_alloc()
+Thread-Topic: [PATCH v4 1/2] crypto: talitos - reorder code in
+ talitos_edesc_alloc()
+Thread-Index: AQHUpx9U2UgnBhsXrEyEQzxfOR/K1Q==
+Date:   Tue, 8 Jan 2019 09:47:30 +0000
+Message-ID: <VI1PR0402MB3485608DF1B37BB7C740DD36988A0@VI1PR0402MB3485.eurprd04.prod.outlook.com>
+References: <5ed91db5e2976a4c260465c3d027acc9affd2d2b.1545445924.git.christophe.leroy@c-s.fr>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=horia.geanta@nxp.com; 
+x-originating-ip: [86.34.165.90]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;VI1PR0402MB3824;6:NJQ4MHmnPQVX4tYi727ZGWzyzWhbDCDZ8L0695zFx8MWsdIc19vldXXOnkrOfDTL0QaKbGtOXYJNaL1ffrxmiHWu+l2vOdASJK3TsJHgGD1y4LYbAqMeY5OSOaFQuJRTuBSIYyg5ZD3WehH5m9hrzZrY7aABWVeDiQVXF8oSN9ZRAQAUsxKQDOX/4UfDsWSbZrCGYAPzwxzcP2yfkRowW5X847/AOWKbloIkV6k+32qh2ra5SfkNR5GP6ukDyXMD+g3KkbU4dygE2tg3B9XbQ2yFQXxTug52n7AIZl/1dsj12gMWp4ZlQ7MSFjh/NBEyul+o/lEUR44FkFvQaMEdj9EOzCrlSd3SIA8MxWUIqYv2XlQkVVgHbUUw7ZqFL5buIds8EWllwqfPHLUvwpBWCUSLHYjB61BykSrbb1Tn2HzT/gqvnRiDv+ReYjzqUo0p9XEUY8B9MkeW+PBi8WH2Mg==;5:+F3UBqXWpkzvkDF5m99U8xfiZOVEAylwwGala5e/sunVf8QoQh187v1V9OzhOSTB9J9Ka6ntqHDr5Vqiu+ncoojSRM5lQaA7IaS3xcV4x6/z3yYNOanVhRCToe6D9Y8vvvl6+a8+p8q+bTBOMc4V0hLdl/PSDLp9WpsRY3Kvt6y2PaUeqvmi+8bZ5OJi2gerG9MW4K0tasQzmjic2COZnw==;7:WJjRLxP1O8Sac/8ey5yPazefcIZhQJL6xYZRHKpdZfA4CvGeBL9sSKsMQRF+YEf2/CYw4DPtZayFtnung/De4okvn9Lb2qWF1vU+cVaO57ptLxEfBMBWltc6D/WilIityDeu4uyxPyWwY6GXk8+lTg==
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: a845eab7-56a0-4c0a-a156-08d6754e4edc
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1PR0402MB3824;
+x-ms-traffictypediagnostic: VI1PR0402MB3824:
+x-microsoft-antispam-prvs: <VI1PR0402MB38241F192714F82D7A846FD4988A0@VI1PR0402MB3824.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(908002)(999002)(5005026)(6040522)(8220060)(2401047)(8121501046)(10201501046)(93006095)(93001095)(3231475)(944501520)(52105112)(3002001)(6055026)(6041310)(20161123564045)(20161123562045)(20161123558120)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:VI1PR0402MB3824;BCL:0;PCL:0;RULEID:;SRVR:VI1PR0402MB3824;
+x-forefront-prvs: 0911D5CE78
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(39860400002)(396003)(366004)(136003)(346002)(189003)(199004)(55016002)(5660300001)(102836004)(486006)(110136005)(229853002)(97736004)(54906003)(7696005)(74316002)(186003)(6506007)(53546011)(68736007)(99286004)(86362001)(316002)(71200400001)(71190400001)(6436002)(3846002)(76176011)(81156014)(8936002)(8676002)(106356001)(476003)(81166006)(14454004)(33656002)(256004)(2906002)(478600001)(446003)(105586002)(6246003)(6116002)(26005)(9686003)(44832011)(4326008)(53936002)(25786009)(66066001)(305945005)(7736002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0402MB3824;H:VI1PR0402MB3485.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: BLApUqWy8m3W6PslOiuj23CSxFxMQvNNej/yFizX1mxos3d9OR62wKGgV5lYanmXqHdUywErv/FAlMEHeALdPQUnMLyTj6iGkUbrUV76ndx2wAYNxWI/KoImciC66DmWDPibfOviestasHNwPzc5O4tEMt7EoQys9wmY3kTCaVg9sLZbiQaLm8+VPbo+hsWpINJaukFiF5mi+0ckXQL1+4C9jbYIOvfdStk9t89s+9aMraDzVdw4cen/lDJe7xU6/bqNAAOe0N8vlc4fbFGaJytNNA1/AXvUb1fJQxi8zSy7kpCuqYVXHOB6Fg/V20q1
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-2"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190107171515.4537-1-colin.king@canonical.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9129 signatures=668680
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=959
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1901080080
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a845eab7-56a0-4c0a-a156-08d6754e4edc
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Jan 2019 09:47:30.9534
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0402MB3824
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 07, 2019 at 05:15:15PM +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> The call to SMB2_queary_acl can allocate memory to pntsd and also
-> return a failure via a call to SMB2_query_acl (and then query_info).
-> This occurs when query_info allocates the structure and then in
-> query_info the call to smb2_validate_and_copy_iov fails. Currently the
-> failure just returns without kfree'ing pntsd hence causing a memory
-> leak.  Fix this by kfree'ing pntsd before returning.
-> 
-> Detected by CoverityScan, CID#1457059 ("Resource Leak")
-> 
-> Fixes: 2f1afe25997f ("cifs: Use smb 2 - 3 and cifsacl mount options getacl functions")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  fs/cifs/smb2ops.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/cifs/smb2ops.c b/fs/cifs/smb2ops.c
-> index cf7eb891804f..6d71958ad2cb 100644
-> --- a/fs/cifs/smb2ops.c
-> +++ b/fs/cifs/smb2ops.c
-> @@ -2238,8 +2238,10 @@ get_smb2_acl_by_fid(struct cifs_sb_info *cifs_sb,
->  	cifs_put_tlink(tlink);
->  
->  	cifs_dbg(FYI, "%s: rc = %d ACL len %d\n", __func__, rc, *pacllen);
-> -	if (rc)
-> +	if (rc) {
-> +		kfree(pntsd);
->  		return ERR_PTR(rc);
-> +	}
-
-This is a layering violation.  The memory was allocated in query_info()
-so it should be freed there instead.  Also if the kmalloc() fails in
-query_info() then it should return -ENOMEM instead of success.
-
-This only affects code which calls SMB2_query_acl().  There are two
-callers.  You have fixed one but the other is also buggy because we're
-returning uninitialized memory in get_smb2_acl_by_path().
-
-regards,
-dan carpenter
-
+On 1/8/2019 8:56 AM, Christophe Leroy wrote:=0A=
+> This patch moves the mapping of IV after the kmalloc(). This=0A=
+> avoids having to unmap in case kmalloc() fails.=0A=
+> =0A=
+> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>=0A=
+Reviewed-by: Horia Geant=E3 <horia.geanta@nxp.com>=0A=
+=0A=
+Since patch 2/2 is Cc-ing stable, this one should do the same.=0A=
+Herbert, could you append the commit message before applying it?=0A=
+=0A=
+Thanks,=0A=
+Horia=0A=
