@@ -2,169 +2,152 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49050C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 13:26:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48018C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 13:27:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1EA29206B6
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 13:26:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 16A1A20827
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 13:27:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vRbpQ/jn"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728427AbfAHN0q (ORCPT
+        id S1728526AbfAHN1f (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 08:26:46 -0500
-Received: from lb1-smtp-cloud8.xs4all.net ([194.109.24.21]:42300 "EHLO
-        lb1-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727980AbfAHN0p (ORCPT
+        Tue, 8 Jan 2019 08:27:35 -0500
+Received: from mail-io1-f65.google.com ([209.85.166.65]:40854 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727654AbfAHN1f (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 08:26:45 -0500
-Received: from [IPv6:2001:420:44c1:2579:e5a0:705e:8afb:6231] ([IPv6:2001:420:44c1:2579:e5a0:705e:8afb:6231])
-        by smtp-cloud8.xs4all.net with ESMTPA
-        id grOwgXMyFNR5ygrP0gzSFx; Tue, 08 Jan 2019 14:26:43 +0100
-Subject: Re: [PATCH] media: imx: queue subdev events to reachable video
- devices
-To:     Steve Longerbeam <slongerbeam@gmail.com>,
-        linux-media@vger.kernel.org
-Cc:     Philipp Zabel <p.zabel@pengutronix.de>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "open list:STAGING SUBSYSTEM" <devel@driverdev.osuosl.org>,
-        open list <linux-kernel@vger.kernel.org>
-References: <20181209195722.26858-1-steve_longerbeam@mentor.com>
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <2bd52738-f466-96d8-5877-aab96a129e74@xs4all.nl>
-Date:   Tue, 8 Jan 2019 14:26:38 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        Tue, 8 Jan 2019 08:27:35 -0500
+Received: by mail-io1-f65.google.com with SMTP id k2so3086964iog.7;
+        Tue, 08 Jan 2019 05:27:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=2NDQFUiZkkBDgH22zIym5OK5RZCwCMqIWP8GHnsNHvA=;
+        b=vRbpQ/jn4w65x2O35eUPssgrSrjaJ8iCz4re65ESKl7YbyvoEfEk4ysKHXw3tebnam
+         55MD9XIodxeUeP/tafDTi43yunH6iXG5hKX2o6KZviO4uKhbaUtxg5mwYZiepNQSG4m8
+         8M2ON3UNdVC/R/g+1shjn7bsVB00J97SlqjA73YMBRGvExidPxzK4xN4Dep70uXBCYzh
+         /gHYd/xdLsv/95PGbnrUO8SbDAXS5hbezbRTfg9J+36Hdbh5zTXcYeskqn8RFFi/K0se
+         Mt2A3+w/UyRXXGVtvlrbAYi7UTtVearZtIXqF20CaBIpVjmRh6QRcax6u46OdqudFPic
+         SzPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=2NDQFUiZkkBDgH22zIym5OK5RZCwCMqIWP8GHnsNHvA=;
+        b=bwXrdiFbYDByqt3NNAkftwh48GPjQQ0MfMDoFlHf9D5+VjkEEMXxBY12is04gu2KCn
+         uVPnsG9Cv5VojEdhflUuVgsfFljlLXb3zkv33C7tzYyiRIcjltUHPl7jujEiPQmAo5qW
+         YKJuas4nxhB881GIUJrz769Bbl8cI2MbZbpuSSuI//b4BDjg7jjJxjg3PSIoI9VrKk31
+         hThivMftCjFpPMVfChO6jzWoh+p3YcJP/MJ32wX95YIoNmpbfU6sNWV8EA3xqC3au2XE
+         JXhGCq2TaCsZxKW4ViU7qqdDZdkKAteSNSlzQBb4DKFJBtCwh1ZQrA0ytwX9Aegcn4zQ
+         wXtA==
+X-Gm-Message-State: AJcUukeaoMXYf2OSGh3KQqN2EFVL9latSuCEdum5YF8+p3ye4N0ZQhyS
+        EYuzlMaN11JRvlclmHzohWaVa+OSMd+prn/CVA==
+X-Google-Smtp-Source: ALg8bN46misA3c5oLp9zKMcbjquyMfgxb716KkkTgvaJDi+CKJpxQgkwMvfjPZquhcOe2C5afCj9pZha8THldnyfVV4=
+X-Received: by 2002:a6b:3f06:: with SMTP id m6mr927194ioa.117.1546954053471;
+ Tue, 08 Jan 2019 05:27:33 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20181209195722.26858-1-steve_longerbeam@mentor.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfDwlDzP+GrXe9IXkkz7HS4rwGxtnrCNKUH0e/DFrr3SxrQlnfzCtJMiQM1QgWczTUzfe3Yde432tduJlBj/2J1qU0nLKcn2Mkr+D+xIdc9iS3pARZmxe
- QFQB81D4UJLMRiHp2u9scCvrYTTpuTF8wQNP0lt/9JqHU/Nr8WjANPuyuxJRDKRfcHJ4wGCV52ceMfhnDMuSYRTpbLIKPf1QWuyCnMEnflImjoLBtbu0Enkv
- ofGUh3DV6ShLQgjuG16dKtp8ara/ULn8y2alOdPcNxaXgdRfByg4zBb0bOCt7vgKo7dnWvs/WFlRgnM6yMGikbYSQ9KCg80VbsMb7JBfRd1KHIwqS6cfpC0o
- F5VJ0JXQ8dNwydwfEH7LqrVbrhBVrfROVtJVydrDSdzoe65zY6ZCqQr/OMluBdiFCIfU2LKTp2CbxLNOXBtoD+a+Qd9vC0ro9Ql+ID90e/W+wlINNKwTDCBL
- KhgG/FkvfVjeNfdIzdJb1uPRX3veUgVSLtHYAA==
+References: <1546849485-27933-1-git-send-email-kernelfans@gmail.com> <20190108100542.GA2216@localhost.localdomain>
+In-Reply-To: <20190108100542.GA2216@localhost.localdomain>
+From:   Pingfan Liu <kernelfans@gmail.com>
+Date:   Tue, 8 Jan 2019 21:27:22 +0800
+Message-ID: <CAFgQCTu8C6DFqoUSKyKLZnL1twGr=3k+M4bgwgtcjENm+WHqJg@mail.gmail.com>
+Subject: Re: [RFC PATCH 0/4] x86_64/mm: remove bottom-up allocation style by
+ pushing forward the parsing of mem hotplug info
+To:     Chao Fan <fanc.fnst@cn.fujitsu.com>
+Cc:     x86@kernel.org, linux-acpi@vger.kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>, linux-kernel@vger.kernel.org,
+        Tejun Heo <tj@kernel.org>, yinghai@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/09/18 20:57, Steve Longerbeam wrote:
-> From: Steve Longerbeam <slongerbeam@gmail.com>
-> 
-> Forward events from a sub-device to its list of reachable video
-> devices.
-> 
-> Note this will queue the event to a video device even if there is
-> no actual _enabled_ media path from the sub-device to the video device.
-> So a future improvement is to skip the video device if there is no enabled
-> path to it from the sub-device. The entity->pipe pointer can't be
-> used for this check because in imx-media a sub-device can be a
-> member to more than one streaming pipeline at a time.
-
-You explain what you are doing, but I am missing an explanation of *why*
-this is needed.
-
-> 
-> Signed-off-by: Steve Longerbeam <slongerbeam@gmail.com>
-> ---
->  drivers/staging/media/imx/imx-media-capture.c | 18 ++++++++++++++
->  drivers/staging/media/imx/imx-media-dev.c     | 24 +++++++++++++++++++
->  2 files changed, 42 insertions(+)
-> 
-> diff --git a/drivers/staging/media/imx/imx-media-capture.c b/drivers/staging/media/imx/imx-media-capture.c
-> index b37e1186eb2f..4dfbe05d203e 100644
-> --- a/drivers/staging/media/imx/imx-media-capture.c
-> +++ b/drivers/staging/media/imx/imx-media-capture.c
-> @@ -335,6 +335,21 @@ static int capture_s_parm(struct file *file, void *fh,
->  	return 0;
->  }
->  
-> +static int capture_subscribe_event(struct v4l2_fh *fh,
-> +				   const struct v4l2_event_subscription *sub)
-> +{
-> +	switch (sub->type) {
-> +	case V4L2_EVENT_IMX_FRAME_INTERVAL_ERROR:
-> +		return v4l2_event_subscribe(fh, sub, 0, NULL);
-> +	case V4L2_EVENT_SOURCE_CHANGE:
-> +		return v4l2_src_change_event_subscribe(fh, sub);
-> +	case V4L2_EVENT_CTRL:
-> +		return v4l2_ctrl_subscribe_event(fh, sub);
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +}
-> +
->  static const struct v4l2_ioctl_ops capture_ioctl_ops = {
->  	.vidioc_querycap	= vidioc_querycap,
->  
-> @@ -362,6 +377,9 @@ static const struct v4l2_ioctl_ops capture_ioctl_ops = {
->  	.vidioc_expbuf		= vb2_ioctl_expbuf,
->  	.vidioc_streamon	= vb2_ioctl_streamon,
->  	.vidioc_streamoff	= vb2_ioctl_streamoff,
-> +
-> +	.vidioc_subscribe_event = capture_subscribe_event,
-> +	.vidioc_unsubscribe_event = v4l2_event_unsubscribe,
->  };
-
-This part of the patch adds event support to the capture device, can't this be
-split up into a separate patch? It seems to be useful in its own right.
-
->  
->  /*
-> diff --git a/drivers/staging/media/imx/imx-media-dev.c b/drivers/staging/media/imx/imx-media-dev.c
-> index 4b344a4a3706..25e916562c66 100644
-> --- a/drivers/staging/media/imx/imx-media-dev.c
-> +++ b/drivers/staging/media/imx/imx-media-dev.c
-> @@ -442,6 +442,29 @@ static const struct media_device_ops imx_media_md_ops = {
->  	.link_notify = imx_media_link_notify,
->  };
->  
-> +static void imx_media_notify(struct v4l2_subdev *sd,
-> +			     unsigned int notification,
-> +			     void *arg)
-> +{
-> +	struct media_entity *entity = &sd->entity;
-> +	int i;
-> +
-> +	if (notification != V4L2_DEVICE_NOTIFY_EVENT)
-> +		return;
-> +
-> +	for (i = 0; i < entity->num_pads; i++) {
-> +		struct media_pad *pad = &entity->pads[i];
-> +		struct imx_media_pad_vdev *pad_vdev;
-> +		struct list_head *pad_vdev_list;
-> +
-> +		pad_vdev_list = to_pad_vdev_list(sd, pad->index);
-> +		if (!pad_vdev_list)
-> +			continue;
-> +		list_for_each_entry(pad_vdev, pad_vdev_list, list)
-> +			v4l2_event_queue(pad_vdev->vdev->vfd, arg);
-
-Which events do you want to forward? E.g. forwarding control events
-doesn't seem right, but other events may be useful. Are those events
-also appearing on the v4l-subdevX device? And if so, should they?
-
-> +	}
-> +}
-> +
->  static int imx_media_probe(struct platform_device *pdev)
->  {
->  	struct device *dev = &pdev->dev;
-> @@ -462,6 +485,7 @@ static int imx_media_probe(struct platform_device *pdev)
->  	mutex_init(&imxmd->mutex);
->  
->  	imxmd->v4l2_dev.mdev = &imxmd->md;
-> +	imxmd->v4l2_dev.notify = imx_media_notify;
->  	strscpy(imxmd->v4l2_dev.name, "imx-media",
->  		sizeof(imxmd->v4l2_dev.name));
->  
-> 
+On Tue, Jan 8, 2019 at 6:06 PM Chao Fan <fanc.fnst@cn.fujitsu.com> wrote:
+>
+> On Mon, Jan 07, 2019 at 04:24:41PM +0800, Pingfan Liu wrote:
+> >Background about the defect of the current bottom-up allocation style, take
+> >the following scenario:
+> >  |  unmovable node |     movable node                           |
+> >     | kaslr-kernel |subtree of pgtable for phy<->virt |
+> >
+> >Although kaslr-kernel can avoid to stain the movable node. But the
+> >pgtable can still stain the movable node. That is a probability problem,
+> >with low probability, but still exist. This patch tries to eliminate the
+> >probability. With the previous patch, at the point of init_mem_mapping(),
+> >memblock allocator can work with the knowledge of acpi memory hotmovable
+> >info, and avoid to stain the movable node. As a result,
+> >memory_map_bottom_up() is not needed any more.
+> >
+>
+> Hi Pingfan,
+>
+> Tang Chen ever tried to do this before adding 'movable_node':
+> commit e8d1955258091e4c92d5a975ebd7fd8a98f5d30f
+> Author: Tang Chen <tangchen@cn.fujitsu.com>
+> Date:   Fri Feb 22 16:33:44 2013 -0800
+>
+>     acpi, memory-hotplug: parse SRAT before memblock is ready
+>
+> Then, Lu Yinghai tried to do the similar job, you can see:
+> https://lwn.net/Articles/554854/
+> for more information. Hope that can help you.
+>
+Thanks, It is a long thread, as my understanding, Tejun concerned
+about the early parsing of ACPI consumes memory from memblock
+allocator. If it is, then this should not happen in my series.
+Cc Tejun and Yinghai.
 
 Regards,
-
-	Hans
+Pingfan
+> Thanks,
+> Chao Fan
+>
+> >
+> >Cc: Thomas Gleixner <tglx@linutronix.de>
+> >Cc: Ingo Molnar <mingo@redhat.com>
+> >Cc: Borislav Petkov <bp@alien8.de>
+> >Cc: "H. Peter Anvin" <hpa@zytor.com>
+> >Cc: Dave Hansen <dave.hansen@linux.intel.com>
+> >Cc: Andy Lutomirski <luto@kernel.org>
+> >Cc: Peter Zijlstra <peterz@infradead.org>
+> >Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+> >Cc: Len Brown <lenb@kernel.org>
+> >Cc: linux-kernel@vger.kernel.org
+> >
+> >Pingfan Liu (4):
+> >  acpi: change the topo of acpi_table_upgrade()
+> >  x86/setup: parse acpi to get hotplug info before init_mem_mapping()
+> >  x86/mm: set allowed range for memblock allocator
+> >  x86/mm: remove bottom-up allocation style for x86_64
+> >
+> > arch/arm64/kernel/setup.c |   2 +-
+> > arch/x86/kernel/setup.c   |  17 ++++-
+> > arch/x86/mm/init.c        | 154 +++++++---------------------------------------
+> > arch/x86/mm/init_32.c     | 123 ++++++++++++++++++++++++++++++++++++
+> > arch/x86/mm/mm_internal.h |   7 +++
+> > drivers/acpi/tables.c     |   4 +-
+> > include/linux/acpi.h      |   5 +-
+> > 7 files changed, 172 insertions(+), 140 deletions(-)
+> >
+> >--
+> >2.7.4
+> >
+> >
+> >
+>
+>
