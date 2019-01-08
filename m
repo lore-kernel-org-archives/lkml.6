@@ -4,53 +4,59 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EBF2C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:08:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CAE3C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:09:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 035F220660
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:08:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4820420827
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:09:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546978133;
-	bh=fStCbmvejQ5Ut/mV1TBU45k5TJ5W6IpNXoRTxad5qnw=;
+	s=default; t=1546978143;
+	bh=Sezvcsn5OJPc9yuyhSUxm5paiQLANTXNIs/lAvXm3iU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=YP8K3ktLad2gaZ2Q9YIjivjr6zc4GeGD2ZDl50X/dP8cjyJptowvYGd2Vk01iE1Ch
-	 BfcTIbIe9aZY9e/FvpixN4c7MKe+rfpDOo7E45gtH0cMfJVg3z+ZGVqChK9IREBrVp
-	 071XL8GzNupYM4ZXB4djXmSftianRWmteQdm9kFY=
+	b=UiaSP1pH4hNj8P9x0yH7YkmVQnbwXjWMxlCO0m9PND+6PdVmMvpwcsElGz0DYTMa4
+	 3GJXRpiqgLV0zjZrYK8YYFCfRXtpSA+p9IaU3632CeuuginpCWx/DXS2u5rY4rsV0o
+	 lwM9YWNWVmTqbZRf9BmmjeksBc3Zkfs/YAhnxM8Q=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730008AbfAHUIw (ORCPT
+        id S1730272AbfAHUJC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 15:08:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33394 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 15:09:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33320 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729579AbfAHT1T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:27:19 -0500
+        id S1729429AbfAHT1S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:27:18 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5B47A20883;
-        Tue,  8 Jan 2019 19:27:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B33F020827;
+        Tue,  8 Jan 2019 19:27:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546975639;
-        bh=fStCbmvejQ5Ut/mV1TBU45k5TJ5W6IpNXoRTxad5qnw=;
+        s=default; t=1546975638;
+        bh=Sezvcsn5OJPc9yuyhSUxm5paiQLANTXNIs/lAvXm3iU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KIO5ELaBAUKqeoSwJFUvDH28flHjzkwhn0fROLM/e6Vbn8yLkHbwumByuozytQn57
-         O8XRFzXoej/8hFVyGPv5dxSQ3OGM2mw97XPW3PHBfXg2veTUUr0GReVL8xB43/V8t6
-         yy8qBZmXHoZcSQ/sHszpMn4O4AAcpfwiWEsrZX8M=
+        b=HlVgeJD109iXlQCjY0yUSwz59FjZG7IgmL/uIp+0jG6v/qnQ62q3s+nVlqiOsFSy5
+         ZRI+6oKpAK0x/M/Fc+U+VZ5F59gZARhYm8tEgZ6DBqI8ffgEZbiv87jXUrTRtxoB98
+         JlCwAPEZJKOgivAlvYuS9Va3gz0LWcr5rjcEZAXI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Nikolaj Fogh <nikolajfogh@gmail.com>,
-        Johan Hovold <johan@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-usb@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 025/117] USB: serial: ftdi_sio: use rounding when calculating baud rate divisors
-Date:   Tue,  8 Jan 2019 14:24:53 -0500
-Message-Id: <20190108192628.121270-25-sashal@kernel.org>
+Cc:     Andy Lutomirski <luto@kernel.org>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rik van Riel <riel@surriel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Yu-cheng Yu <yu-cheng.yu@intel.com>,
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.20 024/117] x86/fault: Don't try to recover from an implicit supervisor access
+Date:   Tue,  8 Jan 2019 14:24:52 -0500
+Message-Id: <20190108192628.121270-24-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108192628.121270-1-sashal@kernel.org>
 References: <20190108192628.121270-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -58,77 +64,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nikolaj Fogh <nikolajfogh@gmail.com>
+From: Andy Lutomirski <luto@kernel.org>
 
-[ Upstream commit 6abd837104a3a8e1cda64fc4d7675f6c3ece9d8b ]
+[ Upstream commit ebb53e2597e2dc7637ab213df006e99681b6ee25 ]
 
-Improve baud-rate generation by using rounding-to-closest instead of
-truncation in divisor calculation.
+This avoids a situation in which we attempt to apply various fixups
+that are not intended to handle implicit supervisor accesses from
+user mode if we screw up in a way that causes this type of fault.
 
-Results have been verified by logic analyzer on an FT232RT (232BM) chip.
-The following table shows the wanted baud rate, the baud rate obtained
-with the old method (truncation), with the new method (rounding) and the
-baud rate generated by the windows 10 driver. The numbers in parentheses
-is the error.
-
-+- Wanted --+------ Old -------+------ New -------+------ Win -------+
-|    9600   |    9600 (0.00%)  |    9604 (0.05%)  |    9605 (0.05%)  |
-|   19200   |   19200 (0.00%)  |   19199 (0.01%)  |   19198 (0.01%)  |
-|   38400   |   38395 (0.01%)  |   38431 (0.08%)  |   38394 (0.02%)  |
-|   57600   |   57725 (0.22%)  |   57540 (0.10%)  |   57673 (0.13%)  |
-|  115200   |  115307 (0.09%)  |  115330 (0.11%)  |  115320 (0.10%)  |
-|  921600   |  919963 (0.18%)  |  920386 (0.13%)  |  920810 (0.09%)  |
-|  961200   |  996512 (3.67%)  |  956480 (0.49%)  |  956937 (0.44%)  |
-+-----------+------------------+------------------+------------------+
-
-The error due to noise in the measurements is in the order of a few
-tenths of a %. As can be seen, the baud rate is significantly improved
-for some rates (e.g. 961200), and corresponds to the output given by the
-windows driver.
-
-The theoretical baud rate has been calculated for all baud rates from 1
-to 3M, and as expected, the error is centered around 0, with a triangle
-shape instead of a sawtooth, so the maximum error is decreased to half.
-
-Signed-off-by: Nikolaj Fogh <nikolajfogh@gmail.com>
-[ johan: edit commit message slightly ]
-Signed-off-by: Johan Hovold <johan@kernel.org>
+Signed-off-by: Andy Lutomirski <luto@kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Rik van Riel <riel@surriel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Yu-cheng Yu <yu-cheng.yu@intel.com>
+Link: http://lkml.kernel.org/r/9999f151d72ff352265f3274c5ab3a4105090f49.1542841400.git.luto@kernel.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/serial/ftdi_sio.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/x86/mm/fault.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/drivers/usb/serial/ftdi_sio.c b/drivers/usb/serial/ftdi_sio.c
-index 609198d9594c..1ab2a6191013 100644
---- a/drivers/usb/serial/ftdi_sio.c
-+++ b/drivers/usb/serial/ftdi_sio.c
-@@ -1130,7 +1130,7 @@ static unsigned short int ftdi_232am_baud_base_to_divisor(int baud, int base)
- {
- 	unsigned short int divisor;
- 	/* divisor shifted 3 bits to the left */
--	int divisor3 = base / 2 / baud;
-+	int divisor3 = DIV_ROUND_CLOSEST(base, 2 * baud);
- 	if ((divisor3 & 0x7) == 7)
- 		divisor3++; /* round x.7/8 up to x+1 */
- 	divisor = divisor3 >> 3;
-@@ -1156,7 +1156,7 @@ static u32 ftdi_232bm_baud_base_to_divisor(int baud, int base)
- 	static const unsigned char divfrac[8] = { 0, 3, 2, 4, 1, 5, 6, 7 };
- 	u32 divisor;
- 	/* divisor shifted 3 bits to the left */
--	int divisor3 = base / 2 / baud;
-+	int divisor3 = DIV_ROUND_CLOSEST(base, 2 * baud);
- 	divisor = divisor3 >> 3;
- 	divisor |= (u32)divfrac[divisor3 & 0x7] << 14;
- 	/* Deal with special cases for highest baud rates. */
-@@ -1179,7 +1179,7 @@ static u32 ftdi_2232h_baud_base_to_divisor(int baud, int base)
- 	int divisor3;
+diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
+index 71d4b9d4d43f..26388576a599 100644
+--- a/arch/x86/mm/fault.c
++++ b/arch/x86/mm/fault.c
+@@ -639,6 +639,15 @@ no_context(struct pt_regs *regs, unsigned long error_code,
+ 	unsigned long flags;
+ 	int sig;
  
- 	/* hi-speed baud rate is 10-bit sampling instead of 16-bit */
--	divisor3 = base * 8 / (baud * 10);
-+	divisor3 = DIV_ROUND_CLOSEST(8 * base, 10 * baud);
++	if (user_mode(regs)) {
++		/*
++		 * This is an implicit supervisor-mode access from user
++		 * mode.  Bypass all the kernel-mode recovery code and just
++		 * OOPS.
++		 */
++		goto oops;
++	}
++
+ 	/* Are we prepared to handle this kernel fault? */
+ 	if (fixup_exception(regs, X86_TRAP_PF, error_code, address)) {
+ 		/*
+@@ -726,6 +735,7 @@ no_context(struct pt_regs *regs, unsigned long error_code,
+ 	if (IS_ENABLED(CONFIG_EFI))
+ 		efi_recover_from_page_fault(address);
  
- 	divisor = divisor3 >> 3;
- 	divisor |= (u32)divfrac[divisor3 & 0x7] << 14;
++oops:
+ 	/*
+ 	 * Oops. The kernel tried to access some bad page. We'll have to
+ 	 * terminate things with extreme prejudice:
 -- 
 2.19.1
 
