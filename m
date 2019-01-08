@@ -6,46 +6,47 @@ X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA8AAC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:47:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D626C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:47:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 888632063F
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:47:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3749E2063F
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:47:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546976847;
-	bh=0hoNIVo64XE+aPHkFrmc8ZvPslS6uqudaR38VNGcItc=;
+	s=default; t=1546976852;
+	bh=QAuzKGbon8A2K7gB7ShJNWYV2hyYv0vmnci+VJQ1o6U=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=OETjnwmGFZylme1M1XbvoS+G7QvQoFemebGiCbgvsJyBWz+wofX6rTQbm+A8zaEB6
-	 EY5MnL3KkafqBZzBECoKCp/4kdn/c5VSJ+OXeTHbbxBiRW+e5CtE4JoiPf4UVPF6YJ
-	 hZp8hAVS3M2TYFt4EfRNnF5nUUVl9xkLeER5qMl4=
+	b=HQt9kiVvsLqaZKDUY8t/76fAMwvnnDbkmF7xYKk+3DdHzBiSsjhdTBfdJU04zOTck
+	 9P5LNCuKtW7wK0YnPXn3D7xKxSaFeFXXUOl6K/QPxOFI2qxnOoj9P9makxQNmihE4S
+	 lcM47gXUjJgwbR5cJo60wJQUTKb3VROl1mK7Rg5A=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732763AbfAHTr1 (ORCPT
+        id S1732754AbfAHTrY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:47:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41470 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 14:47:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41530 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730394AbfAHTcq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:32:46 -0500
+        id S1731466AbfAHTct (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:32:49 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 556342070B;
-        Tue,  8 Jan 2019 19:32:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B917920645;
+        Tue,  8 Jan 2019 19:32:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546975966;
-        bh=0hoNIVo64XE+aPHkFrmc8ZvPslS6uqudaR38VNGcItc=;
+        s=default; t=1546975968;
+        bh=QAuzKGbon8A2K7gB7ShJNWYV2hyYv0vmnci+VJQ1o6U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aJNhuyijpTm5+BevSnmib68DewAw1Gu636yUFSZg+BWDtCOSn4jUHExa/+LlXpA8v
-         7zDqY1bSjsTKHf07qK0Y1Pv+Cuno+onFSm8WSNG7fZxiTjhKkYWYggniCBqn/+dro/
-         5CLTvXNKLLJHKdp0n9KeQg7TmsUymwUV5Uy1nCew=
+        b=q8ay6QEIx9GU/c2L7cSLFtZd9ilJOtzM7FpZpuLdbUqHl7GW9ey+cVWBXE4LxeMp9
+         qo1LIaLQOS85DVs1Pr/jDbonQT1ZswSrXzL01qr/FP/xpTEkFV1RxDZLqeJsIzH9rd
+         E0vZFWHZTn0z4USl07HJxCk7hOazbUx0rMt23ZEc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Ondrej Mosnacek <omosnace@redhat.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Sasha Levin <sashal@kernel.org>, selinux@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 12/53] selinux: always allow mounting submounts
-Date:   Tue,  8 Jan 2019 14:31:40 -0500
-Message-Id: <20190108193222.123316-12-sashal@kernel.org>
+Cc:     Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Sasha Levin <sashal@kernel.org>, amd-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 4.14 13/53] drm/amdgpu: Correct get_crtc_scanoutpos behavior when vpos >= vtotal
+Date:   Tue,  8 Jan 2019 14:31:41 -0500
+Message-Id: <20190108193222.123316-13-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108193222.123316-1-sashal@kernel.org>
 References: <20190108193222.123316-1-sashal@kernel.org>
@@ -57,68 +58,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ondrej Mosnacek <omosnace@redhat.com>
+From: Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>
 
-[ Upstream commit 2cbdcb882f97a45f7475c67ac6257bbc16277dfe ]
+[ Upstream commit 520f08df45fbe300ed650da786a74093d658b7e1 ]
 
-If a superblock has the MS_SUBMOUNT flag set, we should always allow
-mounting it. These mounts are done automatically by the kernel either as
-part of mounting some parent mount (e.g. debugfs always mounts tracefs
-under "tracing" for compatibility) or they are mounted automatically as
-needed on subdirectory accesses (e.g. NFS crossmnt mounts). Since such
-automounts are either an implicit consequence of the parent mount (which
-is already checked) or they can happen during regular accesses (where it
-doesn't make sense to check against the current task's context), the
-mount permission check should be skipped for them.
+When variable refresh rate is active the hardware counter can return
+a position >= vtotal. This results in a vpos being returned from
+amdgpu_display_get_crtc_scanoutpos that's a positive value. The
+positive value indicates to the caller that the display is
+currently in scanout when the display is actually still in vblank.
 
-Without this patch, attempts to access contents of an automounted
-directory can cause unexpected SELinux denials.
+This is because the vfront porch duration is unknown with variable
+refresh active and will end when either a page flip occurs or the
+timeout specified by the driver/display is reached.
 
-In the current kernel tree, the MS_SUBMOUNT flag is set only via
-vfs_submount(), which is called only from the following places:
- - AFS, when automounting special "symlinks" referencing other cells
- - CIFS, when automounting "referrals"
- - NFS, when automounting subtrees
- - debugfs, when automounting tracefs
+The behavior of the amdgpu_display_get_crtc_scanoutpos remains the
+same when the position is below vtotal. When the position is above
+vtotal the function will return a value that is effectively -vbl_end,
+the size of the vback porch.
 
-In all cases the submounts are meant to be transparent to the user and
-it makes sense that if mounting the master is allowed, then so should be
-the automounts. Note that CAP_SYS_ADMIN capability checking is already
-skipped for (SB_KERNMOUNT|SB_SUBMOUNT) in:
- - sget_userns() in fs/super.c:
-	if (!(flags & (SB_KERNMOUNT|SB_SUBMOUNT)) &&
-	    !(type->fs_flags & FS_USERNS_MOUNT) &&
-	    !capable(CAP_SYS_ADMIN))
-		return ERR_PTR(-EPERM);
- - sget() in fs/super.c:
-        /* Ensure the requestor has permissions over the target filesystem */
-        if (!(flags & (SB_KERNMOUNT|SB_SUBMOUNT)) && !ns_capable(user_ns, CAP_SYS_ADMIN))
-                return ERR_PTR(-EPERM);
+The only caller affected by this change is the DRM helper for
+calculating vblank timestamps. This change corrects behavior for
+calculating the page flip timestamp from being the previous timestamp
+to the calculation to the next timestamp when position >= vtotal.
 
-Verified internally on patched RHEL 7.6 with a reproducer using
-NFS+httpd and selinux-tesuite.
-
-Fixes: 93faccbbfa95 ("fs: Better permission checking for submounts")
-Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
-Signed-off-by: Paul Moore <paul@paul-moore.com>
+Signed-off-by: Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>
+Reviewed-by: Harry Wentland <harry.wentland@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- security/selinux/hooks.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/amd/amdgpu/amdgpu_display.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index f5d304736852..d6b9ed34ceae 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -2820,7 +2820,7 @@ static int selinux_sb_kern_mount(struct super_block *sb, int flags, void *data)
- 		return rc;
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
+index 6ad243293a78..8c0a208e43c5 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
+@@ -855,7 +855,12 @@ int amdgpu_get_crtc_scanoutpos(struct drm_device *dev, unsigned int pipe,
+ 	/* Inside "upper part" of vblank area? Apply corrective offset if so: */
+ 	if (in_vbl && (*vpos >= vbl_start)) {
+ 		vtotal = mode->crtc_vtotal;
+-		*vpos = *vpos - vtotal;
++
++		/* With variable refresh rate displays the vpos can exceed
++		 * the vtotal value. Clamp to 0 to return -vbl_end instead
++		 * of guessing the remaining number of lines until scanout.
++		 */
++		*vpos = (*vpos < vtotal) ? (*vpos - vtotal) : 0;
+ 	}
  
- 	/* Allow all mounts performed by the kernel */
--	if (flags & MS_KERNMOUNT)
-+	if (flags & (MS_KERNMOUNT | MS_SUBMOUNT))
- 		return 0;
- 
- 	ad.type = LSM_AUDIT_DATA_DENTRY;
+ 	/* Correct for shifted end of vbl at vbl_end. */
 -- 
 2.19.1
 
