@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77205C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 10:29:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4208CC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 10:29:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4DC052173C
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 10:29:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 19A7320850
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 10:29:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728967AbfAHK3A (ORCPT
+        id S1728984AbfAHK3E (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 05:29:00 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:46602 "EHLO mx1.redhat.com"
+        Tue, 8 Jan 2019 05:29:04 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:56716 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728920AbfAHK26 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 05:28:58 -0500
+        id S1728530AbfAHK3D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 05:29:03 -0500
 Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 96B86637EF;
-        Tue,  8 Jan 2019 10:28:57 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 781031555A;
+        Tue,  8 Jan 2019 10:29:02 +0000 (UTC)
 Received: from laptop.redhat.com (ovpn-116-249.ams2.redhat.com [10.36.116.249])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 3670B601A4;
-        Tue,  8 Jan 2019 10:28:52 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id EB210605AE;
+        Tue,  8 Jan 2019 10:28:57 +0000 (UTC)
 From:   Eric Auger <eric.auger@redhat.com>
 To:     eric.auger.pro@gmail.com, eric.auger@redhat.com,
         iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
@@ -36,116 +36,99 @@ To:     eric.auger.pro@gmail.com, eric.auger@redhat.com,
         will.deacon@arm.com, robin.murphy@arm.com
 Cc:     kevin.tian@intel.com, ashok.raj@intel.com, marc.zyngier@arm.com,
         christoffer.dall@arm.com, peter.maydell@linaro.org
-Subject: [RFC v3 19/21] vfio-pci: Register an iommu fault handler
-Date:   Tue,  8 Jan 2019 11:26:31 +0100
-Message-Id: <20190108102633.17482-20-eric.auger@redhat.com>
+Subject: [RFC v3 20/21] vfio-pci: Add VFIO_PCI_DMA_FAULT_IRQ_INDEX
+Date:   Tue,  8 Jan 2019 11:26:32 +0100
+Message-Id: <20190108102633.17482-21-eric.auger@redhat.com>
 In-Reply-To: <20190108102633.17482-1-eric.auger@redhat.com>
 References: <20190108102633.17482-1-eric.auger@redhat.com>
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Tue, 08 Jan 2019 10:28:57 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Tue, 08 Jan 2019 10:29:02 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch registers a fault handler which records faults in
-a circular buffer and then signals an eventfd. This buffer is
-exposed within the fault region.
+Add a new VFIO_PCI_DMA_FAULT_IRQ_INDEX index. This allows to
+set/unset an eventfd that will be triggered when DMA translation
+faults are detected at physical level when the nested mode is used.
 
 Signed-off-by: Eric Auger <eric.auger@redhat.com>
 ---
- drivers/vfio/pci/vfio_pci.c         | 44 ++++++++++++++++++++++++++++-
- drivers/vfio/pci/vfio_pci_private.h |  1 +
- 2 files changed, 44 insertions(+), 1 deletion(-)
+ drivers/vfio/pci/vfio_pci.c       |  3 +++
+ drivers/vfio/pci/vfio_pci_intrs.c | 19 +++++++++++++++++++
+ include/uapi/linux/vfio.h         |  1 +
+ 3 files changed, 23 insertions(+)
 
 diff --git a/drivers/vfio/pci/vfio_pci.c b/drivers/vfio/pci/vfio_pci.c
-index 2ba181ab2edd..f9e2c8292e60 100644
+index f9e2c8292e60..66d44736e71d 100644
 --- a/drivers/vfio/pci/vfio_pci.c
 +++ b/drivers/vfio/pci/vfio_pci.c
-@@ -29,6 +29,7 @@
- #include <linux/vfio.h>
- #include <linux/vgaarb.h>
- #include <linux/nospec.h>
-+#include <linux/circ_buf.h>
+@@ -495,6 +495,8 @@ static int vfio_pci_get_irq_count(struct vfio_pci_device *vdev, int irq_type)
+ 			return 1;
+ 	} else if (irq_type == VFIO_PCI_REQ_IRQ_INDEX) {
+ 		return 1;
++	} else if (irq_type == VFIO_PCI_DMA_FAULT_IRQ_INDEX) {
++		return 1;
+ 	}
  
- #include "vfio_pci_private.h"
- 
-@@ -1296,6 +1297,44 @@ static const struct vfio_pci_regops vfio_pci_dma_fault_regops = {
- 	.release	= vfio_pci_dma_fault_release,
- };
- 
-+int vfio_pci_iommu_dev_fault_handler(struct iommu_fault_event *evt, void *data)
-+{
-+	struct vfio_pci_device *vdev = (struct vfio_pci_device *) data;
-+	int prod, cons, size;
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&vdev->fault_queue_lock, flags);
-+	prod = vdev->fault_region->header.prod;
-+	cons = vdev->fault_region->header.cons;
-+	size = vdev->fault_region->header.size;
-+
-+	if (cons > VFIO_FAULT_QUEUE_SIZE - 1)
-+		goto unlock;
-+	if (prod > VFIO_FAULT_QUEUE_SIZE - 1)
-+		goto unlock;
-+	if (size != VFIO_FAULT_QUEUE_SIZE)
-+		goto unlock;
-+	if (vdev->fault_region->header.reserved)
-+		goto unlock;
-+	if (CIRC_SPACE(prod, cons, size) < 1)
-+		goto unlock;
-+
-+	vdev->fault_region->queue[prod] = evt->fault;
-+	prod = (prod + 1) % size;
-+	vdev->fault_region->header.prod = prod;
-+	spin_unlock_irqrestore(&vdev->fault_queue_lock, flags);
-+
-+	mutex_lock(&vdev->igate);
-+	if (vdev->dma_fault_trigger)
-+		eventfd_signal(vdev->dma_fault_trigger, 1);
-+	mutex_unlock(&vdev->igate);
-+	return 0;
-+
-+unlock:
-+	spin_unlock_irqrestore(&vdev->fault_queue_lock, flags);
-+	return -EINVAL;
-+}
-+
- static int vfio_pci_init_dma_fault_region(struct vfio_pci_device *vdev)
- {
- 	u32 flags = VFIO_REGION_INFO_FLAG_READ | VFIO_REGION_INFO_FLAG_WRITE |
-@@ -1322,7 +1361,9 @@ static int vfio_pci_init_dma_fault_region(struct vfio_pci_device *vdev)
- 	vdev->fault_region->header.cons = 0;
- 	vdev->fault_region->header.reserved = 0;
- 	vdev->fault_region->header.size = VFIO_FAULT_QUEUE_SIZE;
--	return 0;
-+	return iommu_register_device_fault_handler(&vdev->pdev->dev,
-+					vfio_pci_iommu_dev_fault_handler,
-+					vdev);
+ 	return 0;
+@@ -822,6 +824,7 @@ static long vfio_pci_ioctl(void *device_data,
+ 		switch (info.index) {
+ 		case VFIO_PCI_INTX_IRQ_INDEX ... VFIO_PCI_MSIX_IRQ_INDEX:
+ 		case VFIO_PCI_REQ_IRQ_INDEX:
++		case VFIO_PCI_DMA_FAULT_IRQ_INDEX:
+ 			break;
+ 		case VFIO_PCI_ERR_IRQ_INDEX:
+ 			if (pci_is_pcie(vdev->pdev))
+diff --git a/drivers/vfio/pci/vfio_pci_intrs.c b/drivers/vfio/pci/vfio_pci_intrs.c
+index 1c46045b0e7f..28a96117daf3 100644
+--- a/drivers/vfio/pci/vfio_pci_intrs.c
++++ b/drivers/vfio/pci/vfio_pci_intrs.c
+@@ -622,6 +622,18 @@ static int vfio_pci_set_req_trigger(struct vfio_pci_device *vdev,
+ 					       count, flags, data);
  }
  
- static int vfio_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
-@@ -1414,6 +1455,7 @@ static void vfio_pci_remove(struct pci_dev *pdev)
++static int vfio_pci_set_dma_fault_trigger(struct vfio_pci_device *vdev,
++					  unsigned index, unsigned start,
++					  unsigned count, uint32_t flags,
++					  void *data)
++{
++	if (index != VFIO_PCI_DMA_FAULT_IRQ_INDEX || start != 0 || count > 1)
++		return -EINVAL;
++
++	return vfio_pci_set_ctx_trigger_single(&vdev->dma_fault_trigger,
++					       count, flags, data);
++}
++
+ int vfio_pci_set_irqs_ioctl(struct vfio_pci_device *vdev, uint32_t flags,
+ 			    unsigned index, unsigned start, unsigned count,
+ 			    void *data)
+@@ -671,6 +683,13 @@ int vfio_pci_set_irqs_ioctl(struct vfio_pci_device *vdev, uint32_t flags,
+ 			break;
+ 		}
+ 		break;
++	case VFIO_PCI_DMA_FAULT_IRQ_INDEX:
++		switch (flags & VFIO_IRQ_SET_ACTION_TYPE_MASK) {
++		case VFIO_IRQ_SET_ACTION_TRIGGER:
++			func = vfio_pci_set_dma_fault_trigger;
++			break;
++		}
++		break;
+ 	}
  
- 	vfio_iommu_group_put(pdev->dev.iommu_group, &pdev->dev);
- 	kfree(vdev->region);
-+	iommu_unregister_device_fault_handler(&pdev->dev);
- 	kfree(vdev->fault_region);
- 	mutex_destroy(&vdev->ioeventfds_lock);
- 	kfree(vdev);
-diff --git a/drivers/vfio/pci/vfio_pci_private.h b/drivers/vfio/pci/vfio_pci_private.h
-index 38b5d1764a26..5936802cbbd0 100644
---- a/drivers/vfio/pci/vfio_pci_private.h
-+++ b/drivers/vfio/pci/vfio_pci_private.h
-@@ -120,6 +120,7 @@ struct vfio_pci_device {
- 	int			ioeventfds_nr;
- 	struct eventfd_ctx	*err_trigger;
- 	struct eventfd_ctx	*req_trigger;
-+	struct eventfd_ctx	*dma_fault_trigger;
- 	spinlock_t              fault_queue_lock;
- 	struct vfio_fault_region *fault_region;
- 	struct list_head	dummy_resources_list;
+ 	if (!func)
+diff --git a/include/uapi/linux/vfio.h b/include/uapi/linux/vfio.h
+index b78c2c62af6d..47b65ef9d448 100644
+--- a/include/uapi/linux/vfio.h
++++ b/include/uapi/linux/vfio.h
+@@ -554,6 +554,7 @@ enum {
+ 	VFIO_PCI_MSIX_IRQ_INDEX,
+ 	VFIO_PCI_ERR_IRQ_INDEX,
+ 	VFIO_PCI_REQ_IRQ_INDEX,
++	VFIO_PCI_DMA_FAULT_IRQ_INDEX,
+ 	VFIO_PCI_NUM_IRQS
+ };
+ 
 -- 
 2.17.2
 
