@@ -2,154 +2,105 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FA6AC43612
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 09:51:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5ABF1C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 09:51:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3989D20827
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 09:51:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1CD1B20827
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 09:51:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=vmware.com header.i=@vmware.com header.b="e/Nxaqjq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728360AbfAHJvp (ORCPT
+        id S1728389AbfAHJvy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 04:51:45 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:54657 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727367AbfAHJvp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 04:51:45 -0500
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 43YnbK71kqz9tyy2;
-        Tue,  8 Jan 2019 10:51:41 +0100 (CET)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id ROjGTkHZZm7i; Tue,  8 Jan 2019 10:51:41 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 43YnbK6WJTz9tyy1;
-        Tue,  8 Jan 2019 10:51:41 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id EBD5A8B7CF;
-        Tue,  8 Jan 2019 10:51:42 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id SnInYRpUBJDf; Tue,  8 Jan 2019 10:51:42 +0100 (CET)
-Received: from PO15451 (unknown [192.168.4.90])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 2CB1C8B7C9;
-        Tue,  8 Jan 2019 10:51:42 +0100 (CET)
-Subject: Re: [PATCH v4 1/2] crypto: talitos - reorder code in
- talitos_edesc_alloc()
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-To:     Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Horia Geanta <horia.geanta@nxp.com>
-Cc:     linuxppc-dev@lists.ozlabs.org, linux-crypto@vger.kernel.org,
-        stable@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <5ed91db5e2976a4c260465c3d027acc9affd2d2b.1545445924.git.christophe.leroy@c-s.fr>
-Message-ID: <cfb285c6-5700-194d-d4b2-9cc8601dbc04@c-s.fr>
-Date:   Tue, 8 Jan 2019 10:51:41 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.3
+        Tue, 8 Jan 2019 04:51:54 -0500
+Received: from mail-eopbgr730086.outbound.protection.outlook.com ([40.107.73.86]:53376
+        "EHLO NAM05-DM3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727367AbfAHJvx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 04:51:53 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vmware.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Xj0OZwEox1+p/ik+eVqmd+BdEtgPtyivAKOKNKTZ2hE=;
+ b=e/NxaqjqLPWzYttivhJTwiyDgtTpedZYD/S6YTwuAbY/qjopZZt2X25vATaVS/heca2VTMIQBixAWHujGajTreM4X8qe3sd+1nISRsCygsFMiPs7PZWaTrjnAmAWVAzC9+iH5SzwXmuc2TbDooIPEz5mJZnj7s3S+hkclOlGecM=
+Received: from BYAPR05MB5592.namprd05.prod.outlook.com (20.177.186.153) by
+ BYAPR05MB5383.namprd05.prod.outlook.com (20.177.184.28) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1516.2; Tue, 8 Jan 2019 09:51:45 +0000
+Received: from BYAPR05MB5592.namprd05.prod.outlook.com
+ ([fe80::4a1:2561:2487:5919]) by BYAPR05MB5592.namprd05.prod.outlook.com
+ ([fe80::4a1:2561:2487:5919%4]) with mapi id 15.20.1516.010; Tue, 8 Jan 2019
+ 09:51:45 +0000
+From:   Thomas Hellstrom <thellstrom@vmware.com>
+To:     "hch@lst.de" <hch@lst.de>
+CC:     "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        Linux-graphics-maintainer <Linux-graphics-maintainer@vmware.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>
+Subject: Re: fix DMA ops layering violations in vmwgfx
+Thread-Topic: fix DMA ops layering violations in vmwgfx
+Thread-Index: AQHUpMzZVFIPYaGKbE2WJhk3NBDIkqWlJeuA
+Date:   Tue, 8 Jan 2019 09:51:45 +0000
+Message-ID: <99091bb861e21d5bb4182f08dedbc494c637cc0f.camel@vmware.com>
+References: <20190105080108.14837-1-hch@lst.de>
+In-Reply-To: <20190105080108.14837-1-hch@lst.de>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=thellstrom@vmware.com; 
+x-originating-ip: [155.4.205.56]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BYAPR05MB5383;20:6IlN+6pUb54SF2GLU10QS6UkNOTRPSR57XR+OTxqxWk2xvoWmA1J5clTshYUa3YKcjaSndojL1AZRXPNsHzH7TDUd8FH0bQyKQHFxcdHlfcRDTX7fz4KTZl3VIXdc0XuVE7UczeO1B7kIXR5aNGZjIIbbx0Gz03jmgtBchKVmpQ=
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: f0142efe-8d50-42f8-290b-08d6754ee67c
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(2017052603328)(7153060)(7193020);SRVR:BYAPR05MB5383;
+x-ms-traffictypediagnostic: BYAPR05MB5383:
+x-ld-processed: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0,ExtAddr
+x-microsoft-antispam-prvs: <BYAPR05MB5383315D111F1E6AB45697A2A18A0@BYAPR05MB5383.namprd05.prod.outlook.com>
+x-forefront-prvs: 0911D5CE78
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(376002)(396003)(366004)(39860400002)(136003)(189003)(199004)(6486002)(71190400001)(71200400001)(476003)(2616005)(14454004)(118296001)(26005)(186003)(8936002)(4326008)(6246003)(229853002)(5640700003)(86362001)(66066001)(478600001)(446003)(11346002)(6436002)(2351001)(6916009)(2906002)(102836004)(6506007)(5660300001)(68736007)(97736004)(256004)(14444005)(53936002)(2501003)(7736002)(305945005)(486006)(76176011)(6512007)(105586002)(36756003)(106356001)(81166006)(3846002)(81156014)(1730700003)(25786009)(6116002)(8676002)(316002)(99286004)(54906003)(17423001)(156123004);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR05MB5383;H:BYAPR05MB5592.namprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: vmware.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: aUnYtmtgFYA1xkCM3WFEo+M6QcgmUsEqi5fg/wmz4yJU9V2lVFOOHZkIIyVLgDX55NSNoo3ZYsYa880Ju3Om2Z7ksNexhY46RtYusiGpDjgXKfDiuQ9LTkvQ+u7C6As2zOktwg9y9nafZ568dpuPHTa8rj/Pylp/pK2NJ3By7esAEExonzcJGM8d7a7swSnxsnjrZ8r5uzgZ2qGY8ePcuFIzQheZ4OVPRknLYzZ34Ph+xn4JS6jJHZIEpIvDg5Bsp515t8eJt7ogfxhyIdA2GqElypwAbJHUOM5yKm1ERHBvTrffDFuGD0+qJcu20FtA
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <1584723A4D4FBB41B929C5765478E42A@namprd05.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-In-Reply-To: <5ed91db5e2976a4c260465c3d027acc9affd2d2b.1545445924.git.christophe.leroy@c-s.fr>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: vmware.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f0142efe-8d50-42f8-290b-08d6754ee67c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Jan 2019 09:51:45.2227
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR05MB5383
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-Le 08/01/2019 à 07:56, Christophe Leroy a écrit :
-> This patch moves the mapping of IV after the kmalloc(). This
-> avoids having to unmap in case kmalloc() fails.
-> 
-> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-
-Cc: stable@vger.kernel.org
-
-> ---
->   new in v4
-> 
->   drivers/crypto/talitos.c | 25 +++++++------------------
->   1 file changed, 7 insertions(+), 18 deletions(-)
-> 
-> diff --git a/drivers/crypto/talitos.c b/drivers/crypto/talitos.c
-> index 45e20707cef8..54d80e7edb86 100644
-> --- a/drivers/crypto/talitos.c
-> +++ b/drivers/crypto/talitos.c
-> @@ -1361,23 +1361,18 @@ static struct talitos_edesc *talitos_edesc_alloc(struct device *dev,
->   	struct talitos_private *priv = dev_get_drvdata(dev);
->   	bool is_sec1 = has_ftr_sec1(priv);
->   	int max_len = is_sec1 ? TALITOS1_MAX_DATA_LEN : TALITOS2_MAX_DATA_LEN;
-> -	void *err;
->   
->   	if (cryptlen + authsize > max_len) {
->   		dev_err(dev, "length exceeds h/w max limit\n");
->   		return ERR_PTR(-EINVAL);
->   	}
->   
-> -	if (ivsize)
-> -		iv_dma = dma_map_single(dev, iv, ivsize, DMA_TO_DEVICE);
-> -
->   	if (!dst || dst == src) {
->   		src_len = assoclen + cryptlen + authsize;
->   		src_nents = sg_nents_for_len(src, src_len);
->   		if (src_nents < 0) {
->   			dev_err(dev, "Invalid number of src SG.\n");
-> -			err = ERR_PTR(-EINVAL);
-> -			goto error_sg;
-> +			return ERR_PTR(-EINVAL);
->   		}
->   		src_nents = (src_nents == 1) ? 0 : src_nents;
->   		dst_nents = dst ? src_nents : 0;
-> @@ -1387,16 +1382,14 @@ static struct talitos_edesc *talitos_edesc_alloc(struct device *dev,
->   		src_nents = sg_nents_for_len(src, src_len);
->   		if (src_nents < 0) {
->   			dev_err(dev, "Invalid number of src SG.\n");
-> -			err = ERR_PTR(-EINVAL);
-> -			goto error_sg;
-> +			return ERR_PTR(-EINVAL);
->   		}
->   		src_nents = (src_nents == 1) ? 0 : src_nents;
->   		dst_len = assoclen + cryptlen + (encrypt ? authsize : 0);
->   		dst_nents = sg_nents_for_len(dst, dst_len);
->   		if (dst_nents < 0) {
->   			dev_err(dev, "Invalid number of dst SG.\n");
-> -			err = ERR_PTR(-EINVAL);
-> -			goto error_sg;
-> +			return ERR_PTR(-EINVAL);
->   		}
->   		dst_nents = (dst_nents == 1) ? 0 : dst_nents;
->   	}
-> @@ -1425,10 +1418,10 @@ static struct talitos_edesc *talitos_edesc_alloc(struct device *dev,
->   		alloc_len += sizeof(struct talitos_desc);
->   
->   	edesc = kmalloc(alloc_len, GFP_DMA | flags);
-> -	if (!edesc) {
-> -		err = ERR_PTR(-ENOMEM);
-> -		goto error_sg;
-> -	}
-> +	if (!edesc)
-> +		return ERR_PTR(-ENOMEM);
-> +	if (ivsize)
-> +		iv_dma = dma_map_single(dev, iv, ivsize, DMA_TO_DEVICE);
->   	memset(&edesc->desc, 0, sizeof(edesc->desc));
->   
->   	edesc->src_nents = src_nents;
-> @@ -1445,10 +1438,6 @@ static struct talitos_edesc *talitos_edesc_alloc(struct device *dev,
->   						     DMA_BIDIRECTIONAL);
->   	}
->   	return edesc;
-> -error_sg:
-> -	if (iv_dma)
-> -		dma_unmap_single(dev, iv_dma, ivsize, DMA_TO_DEVICE);
-> -	return err;
->   }
->   
->   static struct talitos_edesc *aead_edesc_alloc(struct aead_request *areq, u8 *iv,
-> 
+SGksIENocmlzdG9waCwNCg0KT24gU2F0LCAyMDE5LTAxLTA1IGF0IDA5OjAxICswMTAwLCBDaHJp
+c3RvcGggSGVsbHdpZyB3cm90ZToNCj4gSGkgVGhvbWFzLA0KPiANCj4gdm13Z2Z4IGhhcyBiZWVu
+IGRvaW5nIHNvbWUgb2RkIGNoZWNrcyBiYXNlZCBvbiBETUEgb3BzIHdoaWNoIHJlbHkNCj4gb24g
+ZGVlcCBETUEgbWFwcGluZyBsYXllciBpbnRlcm5hbHMsIGFuZCBJIHRoaW5rIHRoZSBjaGFuZ2Vz
+IGluDQo+IExpbnV4IDQuMjEgZmluYWxseSBicm9rZSBtb3N0IG9mIHRoZXNlIGltcGxpY2l0IGFz
+c3VtcHRpb25zLg0KDQpUaGFua3MuIA0KV2hhdCB3ZSdyZSByZWFsbHkgdHJ5aW5nIHRvIGRvIGhl
+cmUgaXMgdG8gdHJ5IHRvIGRldGVjdCB0aGUgc2l0dWF0aW9uDQp3aGVyZSBETUEgcmVtYXBwaW5n
+IHVzaW5nIGhhcmR3YXJlIElPTU1VcyBpcyBnb2luZyBvbiBidXQgbWVtb3J5IGlzDQpzdGlsbCBj
+b2hlcmVudCwgc2luY2UgdGhlIGRyaXZlciBjYW4gY3VycmVudGx5IG9ubHkgd29yayB3aXRoIGNv
+aGVyZW50DQptZW1vcnlbMV0uIEN1cnJlbnRseSB3ZSB1c2UgaW50ZWxfaW9tbXVfZW5hYmxlZCB0
+byBkZXRlY3QgdGhpcw0Kc2l0dWF0aW9uLCBidXQgaXQgd291bGQgYmUgcmVhbGx5IGhlbHBmdWwg
+aWYgdGhlcmUgd2VyZSBhIGdlbmVyaWMgYm9vbA0KdGhhdCBhZHZlcnRpemVzIHRoaXMgc2l0dWF0
+aW9uIHNpbmNlIHdlIG5lZWQgdG8gZGVhbCB3aXRoIG90aGVyIElPTU1Vcw0KYXMgd2VsbCBnb2lu
+ZyBmb3J3YXJkLiBBbnkgc3VnZ2VzdGlvbj8NCg0KQ29tbWVudHMgb24gdGhlIHBhdGNoZXMgc2Vw
+YXJhdGVseS4NCg0KVGhhbmtzLA0KVGhvbWFzDQoNCg0KDQoNCj4gDQo+IFRoZSByZWFsIGZpeCBp
+cyBpbiBwYXRjaCAzLCBidXQgSSB0aGluayB0aGUgb3RoZXJzIGFyZSBpbXBvcnRhbnQNCj4gdG8g
+bWFrZSBpdCBjbGVhciB3aGF0IGlzIGFjdHVhbGx5IGdvaW5nIG9uLg0K
