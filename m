@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2795DC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 16:10:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A96D9C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 16:10:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 01B032087F
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 16:10:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 84C7A21019
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 16:10:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729295AbfAHQKk (ORCPT
+        id S1729326AbfAHQKu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 11:10:40 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:58878 "EHLO
+        Tue, 8 Jan 2019 11:10:50 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:58868 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728853AbfAHQK3 (ORCPT
+        with ESMTP id S1729235AbfAHQK2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 11:10:29 -0500
+        Tue, 8 Jan 2019 11:10:28 -0500
 Received: from [127.0.0.1] (localhost [127.0.0.1])
         (Authenticated sender: eballetbo)
-        with ESMTPSA id 5A67526125E
+        with ESMTPSA id 8CC7227DE7D
 From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     groeck@chromium.org, gwendal@chromium.org, kernel@collabora.com,
         bleung@chromium.org
-Subject: [PATCH 09/10] platform/chrome: cros_ec_sysfs: switch to SPDX identifier
-Date:   Tue,  8 Jan 2019 17:10:15 +0100
-Message-Id: <20190108161016.12361-10-enric.balletbo@collabora.com>
+Subject: [PATCH 06/10] platform/chrome: cros_ec_sysfs: remove pr_fmt() define
+Date:   Tue,  8 Jan 2019 17:10:12 +0100
+Message-Id: <20190108161016.12361-7-enric.balletbo@collabora.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190108161016.12361-1-enric.balletbo@collabora.com>
 References: <20190108161016.12361-1-enric.balletbo@collabora.com>
@@ -40,45 +40,27 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adopt the SPDX license identifier headers to ease license compliance
-management.
+This driver no longer has any pr_{level} messages. Remove the pr_fmt().
 
 Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 ---
 
- drivers/platform/chrome/cros_ec_sysfs.c | 22 ++++------------------
- 1 file changed, 4 insertions(+), 18 deletions(-)
+ drivers/platform/chrome/cros_ec_sysfs.c | 2 --
+ 1 file changed, 2 deletions(-)
 
 diff --git a/drivers/platform/chrome/cros_ec_sysfs.c b/drivers/platform/chrome/cros_ec_sysfs.c
-index c502c0f52092..c2dd253567ec 100644
+index 3d1c1a7415a8..c502c0f52092 100644
 --- a/drivers/platform/chrome/cros_ec_sysfs.c
 +++ b/drivers/platform/chrome/cros_ec_sysfs.c
-@@ -1,21 +1,7 @@
--/*
-- * cros_ec_sysfs - expose the Chrome OS EC through sysfs
-- *
-- * Copyright (C) 2014 Google, Inc.
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License, or
-- * (at your option) any later version.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-- * GNU General Public License for more details.
-- *
-- * You should have received a copy of the GNU General Public License
-- * along with this program. If not, see <http://www.gnu.org/licenses/>.
-- */
-+// SPDX-License-Identifier: GPL-2.0+
-+// Expose the ChromeOS EC through sysfs
-+//
-+// Copyright (C) 2014 Google, Inc.
+@@ -17,8 +17,6 @@
+  * along with this program. If not, see <http://www.gnu.org/licenses/>.
+  */
  
+-#define pr_fmt(fmt) "cros_ec_sysfs: " fmt
+-
  #include <linux/ctype.h>
  #include <linux/device.h>
+ #include <linux/fs.h>
 -- 
 2.20.1
 
