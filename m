@@ -2,302 +2,139 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3D95C43612
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:52:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1235C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:52:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 89E34206BB
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:52:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546977156;
-	bh=rv7fyLA/ZEffG1ge608eYiwJVTdoGKiwUeibeUsXPHY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ZFbImyGJhKcLy+tln4JhKZ4sqHD+qPsLJ/1V0RkMrB+3tYW2wJ0sy5IsoUHz1rHTi
-	 vzHaPCJOTBBSAbGZx3KD6R5a9umAAnx14TvcQ/BjGJXDNeYXSFmYW+w0tBR1rQVAkT
-	 lq78NqVCYveHuE6fhzcnggeBZOkDoZJRGpFsgnt0=
+	by mail.kernel.org (Postfix) with ESMTP id 84926206BB
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:52:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JAw8bBuC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731021AbfAHTbN (ORCPT
+        id S1732654AbfAHTwk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 8 Jan 2019 14:52:40 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:52543 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731014AbfAHTbN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 8 Jan 2019 14:31:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39178 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730989AbfAHTbJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:31:09 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B390C2070B;
-        Tue,  8 Jan 2019 19:31:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546975868;
-        bh=rv7fyLA/ZEffG1ge608eYiwJVTdoGKiwUeibeUsXPHY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Oc7qG8UNuGDpDWNGIWjHITqasMu6HDvm8oC0CqaepIOha6LrV7V1F2T0aOzpNHQwQ
-         SSnTkOhiSbzCsYQtCFk4rRy4siwii71NV9OKfXoV8fHy5IrdIxVzPf3vRg3aAOl42+
-         FG78G/Pbj/ZsqCxKIKgU65kB6Ljz8kUsFcvwv+jw=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     "Dmitry V. Levin" <ldv@altlinux.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Will Drewry <wad@chromium.org>,
-        linux-kselftest@vger.kernel.org, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 48/97] selftests: do not macro-expand failed assertion expressions
-Date:   Tue,  8 Jan 2019 14:28:57 -0500
-Message-Id: <20190108192949.122407-48-sashal@kernel.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190108192949.122407-1-sashal@kernel.org>
-References: <20190108192949.122407-1-sashal@kernel.org>
+Received: by mail-wm1-f66.google.com with SMTP id m1so5276781wml.2;
+        Tue, 08 Jan 2019 11:31:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=5sFOPt4aq19rpBhUsbZpWrQgS4A7ZzjtPjtU08pKzcs=;
+        b=JAw8bBuCMF3bZAc4dQ1CfPWk8hesh/W5PqLm3LwpinI+KgUajK/F9cEGmZ6m3b6WQ0
+         aBXBMfunZyy4w4L0ZHu4b2W26OUg4OQvIkHcfM9hvIy3QfW9E+dJfpnKG+ItfGjFS9JE
+         4mN1IUWR0sYjx/+Cm0msU/uNOAITWHD11oNv4dbDd5wBdp6glhVahRUXvciQn7g7tp4F
+         qAxWvT8FXfXMgH740pKikBO3kuOsVqPuUz5E3KnUCit/KZDFlCUJv97qvMKRoXaH5FnX
+         vScQ41Z63qSbbfrY5Q3pCy+4SgMXWBg1KgAFhNGQWspl2k1ChWAgbKpOkKDuM+KXEkyk
+         mZmg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=5sFOPt4aq19rpBhUsbZpWrQgS4A7ZzjtPjtU08pKzcs=;
+        b=GUoNV4VBIUWoF/m7SXmLtNUg6nSfmOZtraUA9l4qF8+4K8Ncp7nF+nyExxkv95M8hq
+         cmrb4bgHriQ1vAEj1z3g+GswFKoKp8d1sCsBhIbHnIAG1dTxvaEYj84fPTeEfckNlQTb
+         iomdRpqFNBL+mcazZR5WQzExtIYKVNU0ev8zpgJNhelMlYevakKzbN8BB/q9lOd4jMPR
+         PCg/n+7oW59KV5456RETQbHxgALLZxlFGgUXexLrYFw84e/fKVLLZW7Rb7hBbA3kFP7h
+         z3gWYlKGioQ5ycgH/hUKnip86qtxwS7vbFaS4TCutu0z0D/APHoJgcJOR0rRImQxTgsx
+         fKNw==
+X-Gm-Message-State: AJcUukcUdUDNbuoMkds9eIs6yDkKMkA/XedT32NJ0vBIR60XrkHLZfnZ
+        hjLk212cTwnRIRCesz4fOqytAzc=
+X-Google-Smtp-Source: ALg8bN46R0ml13cK4fQo6XQ58TDql2yCccAJbY8dfp1s/cq8EfbQz8OOEeFQQ5znjX3+jkURoMcNIA==
+X-Received: by 2002:a1c:e488:: with SMTP id b130mr2821687wmh.124.1546975871477;
+        Tue, 08 Jan 2019 11:31:11 -0800 (PST)
+Received: from avx2 (nat-minsk-pool-46-53-201-92.telecom.by. [46.53.201.92])
+        by smtp.gmail.com with ESMTPSA id 10sm12926161wmy.40.2019.01.08.11.31.10
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 08 Jan 2019 11:31:10 -0800 (PST)
+Date:   Tue, 8 Jan 2019 22:31:08 +0300
+From:   Alexey Dobriyan <adobriyan@gmail.com>
+To:     akpm@linux-foundation.org
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: [PATCH] proc: return exit code 4 for skipped tests
+Message-ID: <20190108193108.GA12259@avx2>
 MIME-Version: 1.0
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Dmitry V. Levin" <ldv@altlinux.org>
+Test harness uses 4 for SKIP, not 2.
 
-[ Upstream commit b708a3cc9600390ccaa2b68a88087dd265154b2b ]
-
-I've stumbled over the current macro-expand behaviour of the test
-harness:
-
-$ gcc -Wall -xc - <<'__EOF__'
-TEST(macro) {
-	int status = 0;
-	ASSERT_TRUE(WIFSIGNALED(status));
-}
-TEST_HARNESS_MAIN
-__EOF__
-$ ./a.out
-[==========] Running 1 tests from 1 test cases.
-[ RUN      ] global.macro
-<stdin>:4:global.macro:Expected 0 (0) != (((signed char) (((status) & 0x7f) + 1) >> 1) > 0) (0)
-global.macro: Test terminated by assertion
-[     FAIL ] global.macro
-[==========] 0 / 1 tests passed.
-[  FAILED  ]
-
-With this change the output of the same test looks much more
-comprehensible:
-
-[==========] Running 1 tests from 1 test cases.
-[ RUN      ] global.macro
-<stdin>:4:global.macro:Expected 0 (0) != WIFSIGNALED(status) (0)
-global.macro: Test terminated by assertion
-[     FAIL ] global.macro
-[==========] 0 / 1 tests passed.
-[  FAILED  ]
-
-The issue is very similar to the bug fixed in glibc assert(3)
-three years ago:
-https://sourceware.org/bugzilla/show_bug.cgi?id=18604
-
-Cc: Shuah Khan <shuah@kernel.org>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Andy Lutomirski <luto@amacapital.net>
-Cc: Will Drewry <wad@chromium.org>
-Cc: linux-kselftest@vger.kernel.org
-Signed-off-by: Dmitry V. Levin <ldv@altlinux.org>
-Acked-by: Kees Cook <keescook@chromium.org>
-Signed-off-by: Shuah Khan <shuah@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
 ---
- tools/testing/selftests/kselftest_harness.h | 42 ++++++++++-----------
- 1 file changed, 21 insertions(+), 21 deletions(-)
 
-diff --git a/tools/testing/selftests/kselftest_harness.h b/tools/testing/selftests/kselftest_harness.h
-index 6ae3730c4ee3..76d654ef3234 100644
---- a/tools/testing/selftests/kselftest_harness.h
-+++ b/tools/testing/selftests/kselftest_harness.h
-@@ -354,7 +354,7 @@
-  * ASSERT_EQ(expected, measured): expected == measured
-  */
- #define ASSERT_EQ(expected, seen) \
--	__EXPECT(expected, seen, ==, 1)
-+	__EXPECT(expected, #expected, seen, #seen, ==, 1)
- 
- /**
-  * ASSERT_NE(expected, seen)
-@@ -365,7 +365,7 @@
-  * ASSERT_NE(expected, measured): expected != measured
-  */
- #define ASSERT_NE(expected, seen) \
--	__EXPECT(expected, seen, !=, 1)
-+	__EXPECT(expected, #expected, seen, #seen, !=, 1)
- 
- /**
-  * ASSERT_LT(expected, seen)
-@@ -376,7 +376,7 @@
-  * ASSERT_LT(expected, measured): expected < measured
-  */
- #define ASSERT_LT(expected, seen) \
--	__EXPECT(expected, seen, <, 1)
-+	__EXPECT(expected, #expected, seen, #seen, <, 1)
- 
- /**
-  * ASSERT_LE(expected, seen)
-@@ -387,7 +387,7 @@
-  * ASSERT_LE(expected, measured): expected <= measured
-  */
- #define ASSERT_LE(expected, seen) \
--	__EXPECT(expected, seen, <=, 1)
-+	__EXPECT(expected, #expected, seen, #seen, <=, 1)
- 
- /**
-  * ASSERT_GT(expected, seen)
-@@ -398,7 +398,7 @@
-  * ASSERT_GT(expected, measured): expected > measured
-  */
- #define ASSERT_GT(expected, seen) \
--	__EXPECT(expected, seen, >, 1)
-+	__EXPECT(expected, #expected, seen, #seen, >, 1)
- 
- /**
-  * ASSERT_GE(expected, seen)
-@@ -409,7 +409,7 @@
-  * ASSERT_GE(expected, measured): expected >= measured
-  */
- #define ASSERT_GE(expected, seen) \
--	__EXPECT(expected, seen, >=, 1)
-+	__EXPECT(expected, #expected, seen, #seen, >=, 1)
- 
- /**
-  * ASSERT_NULL(seen)
-@@ -419,7 +419,7 @@
-  * ASSERT_NULL(measured): NULL == measured
-  */
- #define ASSERT_NULL(seen) \
--	__EXPECT(NULL, seen, ==, 1)
-+	__EXPECT(NULL, "NULL", seen, #seen, ==, 1)
- 
- /**
-  * ASSERT_TRUE(seen)
-@@ -429,7 +429,7 @@
-  * ASSERT_TRUE(measured): measured != 0
-  */
- #define ASSERT_TRUE(seen) \
--	ASSERT_NE(0, seen)
-+	__EXPECT(0, "0", seen, #seen, !=, 1)
- 
- /**
-  * ASSERT_FALSE(seen)
-@@ -439,7 +439,7 @@
-  * ASSERT_FALSE(measured): measured == 0
-  */
- #define ASSERT_FALSE(seen) \
--	ASSERT_EQ(0, seen)
-+	__EXPECT(0, "0", seen, #seen, ==, 1)
- 
- /**
-  * ASSERT_STREQ(expected, seen)
-@@ -472,7 +472,7 @@
-  * EXPECT_EQ(expected, measured): expected == measured
-  */
- #define EXPECT_EQ(expected, seen) \
--	__EXPECT(expected, seen, ==, 0)
-+	__EXPECT(expected, #expected, seen, #seen, ==, 0)
- 
- /**
-  * EXPECT_NE(expected, seen)
-@@ -483,7 +483,7 @@
-  * EXPECT_NE(expected, measured): expected != measured
-  */
- #define EXPECT_NE(expected, seen) \
--	__EXPECT(expected, seen, !=, 0)
-+	__EXPECT(expected, #expected, seen, #seen, !=, 0)
- 
- /**
-  * EXPECT_LT(expected, seen)
-@@ -494,7 +494,7 @@
-  * EXPECT_LT(expected, measured): expected < measured
-  */
- #define EXPECT_LT(expected, seen) \
--	__EXPECT(expected, seen, <, 0)
-+	__EXPECT(expected, #expected, seen, #seen, <, 0)
- 
- /**
-  * EXPECT_LE(expected, seen)
-@@ -505,7 +505,7 @@
-  * EXPECT_LE(expected, measured): expected <= measured
-  */
- #define EXPECT_LE(expected, seen) \
--	__EXPECT(expected, seen, <=, 0)
-+	__EXPECT(expected, #expected, seen, #seen, <=, 0)
- 
- /**
-  * EXPECT_GT(expected, seen)
-@@ -516,7 +516,7 @@
-  * EXPECT_GT(expected, measured): expected > measured
-  */
- #define EXPECT_GT(expected, seen) \
--	__EXPECT(expected, seen, >, 0)
-+	__EXPECT(expected, #expected, seen, #seen, >, 0)
- 
- /**
-  * EXPECT_GE(expected, seen)
-@@ -527,7 +527,7 @@
-  * EXPECT_GE(expected, measured): expected >= measured
-  */
- #define EXPECT_GE(expected, seen) \
--	__EXPECT(expected, seen, >=, 0)
-+	__EXPECT(expected, #expected, seen, #seen, >=, 0)
- 
- /**
-  * EXPECT_NULL(seen)
-@@ -537,7 +537,7 @@
-  * EXPECT_NULL(measured): NULL == measured
-  */
- #define EXPECT_NULL(seen) \
--	__EXPECT(NULL, seen, ==, 0)
-+	__EXPECT(NULL, "NULL", seen, #seen, ==, 0)
- 
- /**
-  * EXPECT_TRUE(seen)
-@@ -547,7 +547,7 @@
-  * EXPECT_TRUE(measured): 0 != measured
-  */
- #define EXPECT_TRUE(seen) \
--	EXPECT_NE(0, seen)
-+	__EXPECT(0, "0", seen, #seen, !=, 0)
- 
- /**
-  * EXPECT_FALSE(seen)
-@@ -557,7 +557,7 @@
-  * EXPECT_FALSE(measured): 0 == measured
-  */
- #define EXPECT_FALSE(seen) \
--	EXPECT_EQ(0, seen)
-+	__EXPECT(0, "0", seen, #seen, ==, 0)
- 
- /**
-  * EXPECT_STREQ(expected, seen)
-@@ -597,7 +597,7 @@
- 	if (_metadata->passed && _metadata->step < 255) \
- 		_metadata->step++;
- 
--#define __EXPECT(_expected, _seen, _t, _assert) do { \
-+#define __EXPECT(_expected, _expected_str, _seen, _seen_str, _t, _assert) do { \
- 	/* Avoid multiple evaluation of the cases */ \
- 	__typeof__(_expected) __exp = (_expected); \
- 	__typeof__(_seen) __seen = (_seen); \
-@@ -606,8 +606,8 @@
- 		unsigned long long __exp_print = (uintptr_t)__exp; \
- 		unsigned long long __seen_print = (uintptr_t)__seen; \
- 		__TH_LOG("Expected %s (%llu) %s %s (%llu)", \
--			 #_expected, __exp_print, #_t, \
--			 #_seen, __seen_print); \
-+			 _expected_str, __exp_print, #_t, \
-+			 _seen_str, __seen_print); \
- 		_metadata->passed = 0; \
- 		/* Ensure the optional handler is triggered */ \
- 		_metadata->trigger = 1; \
--- 
-2.19.1
+ tools/testing/selftests/proc/proc-loadavg-001.c        |    2 +-
+ tools/testing/selftests/proc/proc-self-map-files-002.c |    2 +-
+ tools/testing/selftests/proc/proc-self-syscall.c       |    2 +-
+ tools/testing/selftests/proc/proc-self-wchan.c         |    2 +-
+ tools/testing/selftests/proc/read.c                    |    2 +-
+ 5 files changed, 5 insertions(+), 5 deletions(-)
 
+--- a/tools/testing/selftests/proc/proc-loadavg-001.c
++++ b/tools/testing/selftests/proc/proc-loadavg-001.c
+@@ -30,7 +30,7 @@ int main(void)
+ 
+ 	if (unshare(CLONE_NEWPID) == -1) {
+ 		if (errno == ENOSYS || errno == EPERM)
+-			return 2;
++			return 4;
+ 		return 1;
+ 	}
+ 
+--- a/tools/testing/selftests/proc/proc-self-map-files-002.c
++++ b/tools/testing/selftests/proc/proc-self-map-files-002.c
+@@ -63,7 +63,7 @@ int main(void)
+ 	p = mmap((void *)va, PAGE_SIZE, PROT_NONE, MAP_PRIVATE|MAP_FILE|MAP_FIXED, fd, 0);
+ 	if (p == MAP_FAILED) {
+ 		if (errno == EPERM)
+-			return 2;
++			return 4;
+ 		return 1;
+ 	}
+ 
+--- a/tools/testing/selftests/proc/proc-self-syscall.c
++++ b/tools/testing/selftests/proc/proc-self-syscall.c
+@@ -39,7 +39,7 @@ int main(void)
+ 	fd = open("/proc/self/syscall", O_RDONLY);
+ 	if (fd == -1) {
+ 		if (errno == ENOENT)
+-			return 2;
++			return 4;
+ 		return 1;
+ 	}
+ 
+--- a/tools/testing/selftests/proc/proc-self-wchan.c
++++ b/tools/testing/selftests/proc/proc-self-wchan.c
+@@ -27,7 +27,7 @@ int main(void)
+ 	fd = open("/proc/self/wchan", O_RDONLY);
+ 	if (fd == -1) {
+ 		if (errno == ENOENT)
+-			return 2;
++			return 4;
+ 		return 1;
+ 	}
+ 
+--- a/tools/testing/selftests/proc/read.c
++++ b/tools/testing/selftests/proc/read.c
+@@ -126,7 +126,7 @@ int main(void)
+ 
+ 	d = opendir("/proc");
+ 	if (!d)
+-		return 2;
++		return 4;
+ 	f(d, 0);
+ 	return 0;
+ }
