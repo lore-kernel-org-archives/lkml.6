@@ -2,172 +2,404 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AED8FC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 14:23:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ED08C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 14:23:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6BF492064C
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 14:23:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546957402;
-	bh=KEgcI7i8PqsjxF5PgIKLGPfNmh9V8loBs3krZd53Icc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=RVB2BSu3h70+ZlUYFhw7NONXXXnPEv65xSUtfArQ5kQZ75JtH85swgeWSukKTqiBt
-	 ABoY5ZPd3TTF9ZRxph7VyQV0qeDqrr0WSmn6Al0McoVstzW1dU2hkFPhqIbBFfF4r3
-	 8IKhYFixaC1zpMsRXQDTki5zMNsw1ctxtEsHEkE0=
+	by mail.kernel.org (Postfix) with ESMTP id 5FA6620827
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 14:23:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728650AbfAHOXV (ORCPT
+        id S1728736AbfAHOX6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 09:23:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57996 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728123AbfAHOXV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 09:23:21 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 167302064C;
-        Tue,  8 Jan 2019 14:23:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546957399;
-        bh=KEgcI7i8PqsjxF5PgIKLGPfNmh9V8loBs3krZd53Icc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=e8FPHQLH4yMMVz14jZrcxQ8i+g8LhwvxHisibuqXGhtzPRN5g8FBMQ+27aKCm7hep
-         P3RYMXqpRxvqDjUZ0ryOOH1CIoy0psccn2wkW6kYs0vh366sAF0vDoKHQutgAvSmzl
-         NejLq3VUMT/yCgJojlva3V6j7VUpSH6do4cu1Xww=
-Date:   Tue, 8 Jan 2019 15:23:17 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Peter Rajnoha <prajnoha@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, msekleta@redhat.com
-Subject: Re: [PATCH v2] kobject: add kernel/uevent_features sysfs file
-Message-ID: <20190108142317.GA16948@kroah.com>
-References: <20181207114607.26981-1-prajnoha@redhat.com>
- <20181207120123.GB15336@kroah.com>
- <e0072bf2-c89e-df9c-8764-7505a71ab36e@redhat.com>
- <20181219092441.GB7356@kroah.com>
- <c0025f62-8b69-de02-ea62-b756a1ffc961@redhat.com>
+        Tue, 8 Jan 2019 09:23:58 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:43332 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727662AbfAHOX6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 09:23:58 -0500
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x08EKu0Q142059
+        for <linux-kernel@vger.kernel.org>; Tue, 8 Jan 2019 09:23:56 -0500
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2pvva94h1b-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jan 2019 09:23:56 -0500
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
+        Tue, 8 Jan 2019 14:23:52 -0000
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 8 Jan 2019 14:23:46 -0000
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x08ENjnw56295606
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 8 Jan 2019 14:23:45 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3B191A4054;
+        Tue,  8 Jan 2019 14:23:45 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4B5E5A405C;
+        Tue,  8 Jan 2019 14:23:43 +0000 (GMT)
+Received: from rapoport-lnx (unknown [9.148.8.241])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Tue,  8 Jan 2019 14:23:43 +0000 (GMT)
+Date:   Tue, 8 Jan 2019 16:23:41 +0200
+From:   Mike Rapoport <rppt@linux.ibm.com>
+To:     Christophe Leroy <christophe.leroy@c-s.fr>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>, linux-sh@vger.kernel.org,
+        Heiko Carstens <heiko.carstens@de.ibm.com>, linux-mm@kvack.org,
+        Rich Felker <dalias@libc.org>,
+        Paul Mackerras <paulus@samba.org>, sparclinux@vger.kernel.org,
+        Vincent Chen <deanbo422@gmail.com>,
+        Jonas Bonn <jonas@southpole.se>, linux-s390@vger.kernel.org,
+        linux-c6x-dev@linux-c6x.org,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Russell King <linux@armlinux.org.uk>,
+        Mark Salter <msalter@redhat.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
+        openrisc@lists.librecores.org, Greentime Hu <green.hu@gmail.com>,
+        Stafford Horne <shorne@gmail.com>,
+        Guan Xuetao <gxt@pku.edu.cn>,
+        linux-arm-kernel@lists.infradead.org,
+        Michal Simek <monstr@monstr.eu>, linux-kernel@vger.kernel.org,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        linuxppc-dev@lists.ozlabs.org,
+        "David S. Miller" <davem@davemloft.net>
+Subject: Re: [PATCH v4 1/6] powerpc: prefer memblock APIs returning virtual
+ address
+References: <1546248566-14910-1-git-send-email-rppt@linux.ibm.com>
+ <1546248566-14910-2-git-send-email-rppt@linux.ibm.com>
+ <282fd5d1-24b5-81ac-b7ff-7329fe3c0fe1@c-s.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <c0025f62-8b69-de02-ea62-b756a1ffc961@redhat.com>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <282fd5d1-24b5-81ac-b7ff-7329fe3c0fe1@c-s.fr>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 19010814-0012-0000-0000-000002E3F66B
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19010814-0013-0000-0000-0000211B03C6
+Message-Id: <20190108142341.GA14063@rapoport-lnx>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-08_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901080118
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 02, 2019 at 10:59:53AM +0100, Peter Rajnoha wrote:
-> On 12/19/18 10:24 AM, Greg KH wrote:
-> > On Fri, Dec 07, 2018 at 01:28:52PM +0100, Peter Rajnoha wrote:
-> >> On 12/7/18 1:01 PM, Greg KH wrote:
-> >>> On Fri, Dec 07, 2018 at 12:46:07PM +0100, Peter Rajnoha wrote:
-> >>>> This patch adds /sys/kernel/uevent_features file which currently lists
-> >>>> 'synthargs' string to denote that the kernel is able to recognize the
-> >>>> extended synthetic uevent arguments. Userspace can easily check for
-> >>>> the feature then.
-> >>>
-> >>> So this is just to try to have userspace detect what type of feature the
-> >>> kernel has?  Why can't you just go off of the other sysfs file itself?
-> >>> You shouldn't need a "this is a feature list" for the kernel, otherwise
-> >>> we would be on a huge slippery slope trying to document everything.
-> >>>
-> >>> Who is going to use this thing?  And what else would go into it?
-> >>>
-> >>> Isn't there some other way you can detect this from userspace (like
-> >>> writing to the file and it fails?)
-> >>>
-> >>
-> >> Yes, it's for userspace to be sure that uevent interface has certain
-> >> features available that it can use.
-> > 
-> > That is nice, but no, that is not how we export to userspace what
-> > "features" a specific kernel has, sorry.
-> > 
+Hi,
+
+On Tue, Jan 08, 2019 at 11:02:24AM +0100, Christophe Leroy wrote:
 > 
-> I've already seen existing "features" files already in /sys:
+> Le 31/12/2018 à 10:29, Mike Rapoport a écrit :
+> >There are a several places that allocate memory using memblock APIs that
+> >return a physical address, convert the returned address to the virtual
+> >address and frequently also memset(0) the allocated range.
+> >
+> >Update these places to use memblock allocators already returning a virtual
+> >address. Use memblock functions that clear the allocated memory instead of
+> >calling memset(0) where appropriate.
+> >
+> >The calls to memblock_alloc_base() that were not followed by memset(0) are
+> >replaced with memblock_alloc_try_nid_raw(). Since the latter does not
+> >panic() when the allocation fails, the appropriate panic() calls are added
+> >to the call sites.
+> >
+> >Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
+> >---
+> >  arch/powerpc/kernel/paca.c             | 16 ++++++----------
+> >  arch/powerpc/kernel/setup_64.c         | 24 ++++++++++--------------
+> >  arch/powerpc/mm/hash_utils_64.c        |  6 +++---
+> >  arch/powerpc/mm/pgtable-book3e.c       |  8 ++------
+> >  arch/powerpc/mm/pgtable-book3s64.c     |  5 +----
+> >  arch/powerpc/mm/pgtable-radix.c        | 25 +++++++------------------
+> >  arch/powerpc/platforms/pasemi/iommu.c  |  5 +++--
+> >  arch/powerpc/platforms/pseries/setup.c | 18 ++++++++++++++----
+> >  arch/powerpc/sysdev/dart_iommu.c       |  7 +++++--
+> >  9 files changed, 51 insertions(+), 63 deletions(-)
+> >
+> >diff --git a/arch/powerpc/kernel/paca.c b/arch/powerpc/kernel/paca.c
+> >index 913bfca..276d36d4 100644
+> >--- a/arch/powerpc/kernel/paca.c
+> >+++ b/arch/powerpc/kernel/paca.c
+> >@@ -27,7 +27,7 @@
+> >  static void *__init alloc_paca_data(unsigned long size, unsigned long align,
+> >  				unsigned long limit, int cpu)
+> >  {
+> >-	unsigned long pa;
+> >+	void *ptr;
+> >  	int nid;
+> >  	/*
+> >@@ -42,17 +42,15 @@ static void *__init alloc_paca_data(unsigned long size, unsigned long align,
+> >  		nid = early_cpu_to_node(cpu);
+> >  	}
+> >-	pa = memblock_alloc_base_nid(size, align, limit, nid, MEMBLOCK_NONE);
+> >-	if (!pa) {
+> >-		pa = memblock_alloc_base(size, align, limit);
+> >-		if (!pa)
+> >-			panic("cannot allocate paca data");
+> >-	}
+> >+	ptr = memblock_alloc_try_nid(size, align, MEMBLOCK_LOW_LIMIT,
+> >+				     limit, nid);
+> >+	if (!ptr)
+> >+		panic("cannot allocate paca data");
 > 
->   /sys/kernel/cgroup/features
+> AFAIKS, memblock_alloc_try_nid() panics if memblock_alloc_internal() returns
+> NULL, so the above panic is useless, isn't it ?
+ 
+My plan is to make all memblock_alloc() APIs to return NULL rather then
+panic and then get rid of _nopanic variants. It's currently WIP and
+hopefully I'll have the patches ready next week.
 
-cgroupfs is "odd", let's not duplicate that :)
-
->   /sys/fs/ext4/features
-
-One value per file :)
-
->   /sys/kernel/debug/sched_features	
-
-debugfs does not count, sorry.  We have whole README files in debugfs,
-never use that as an excuse for anything outside of debugfs please.
-
->   ...
+> >  	if (cpu == boot_cpuid)
+> >  		memblock_set_bottom_up(false);
+> >-	return __va(pa);
+> >+	return ptr;
+> >  }
+> >  #ifdef CONFIG_PPC_PSERIES
+> >@@ -118,7 +116,6 @@ static struct slb_shadow * __init new_slb_shadow(int cpu, unsigned long limit)
+> >  	}
+> >  	s = alloc_paca_data(sizeof(*s), L1_CACHE_BYTES, limit, cpu);
+> >-	memset(s, 0, sizeof(*s));
+> >  	s->persistent = cpu_to_be32(SLB_NUM_BOLTED);
+> >  	s->buffer_length = cpu_to_be32(sizeof(*s));
+> >@@ -222,7 +219,6 @@ void __init allocate_paca(int cpu)
+> >  	paca = alloc_paca_data(sizeof(struct paca_struct), L1_CACHE_BYTES,
+> >  				limit, cpu);
+> >  	paca_ptrs[cpu] = paca;
+> >-	memset(paca, 0, sizeof(struct paca_struct));
+> >  	initialise_paca(paca, cpu);
+> >  #ifdef CONFIG_PPC_PSERIES
+> >diff --git a/arch/powerpc/kernel/setup_64.c b/arch/powerpc/kernel/setup_64.c
+> >index 236c115..3dcd779 100644
+> >--- a/arch/powerpc/kernel/setup_64.c
+> >+++ b/arch/powerpc/kernel/setup_64.c
+> >@@ -634,19 +634,17 @@ __init u64 ppc64_bolted_size(void)
+> >  static void *__init alloc_stack(unsigned long limit, int cpu)
+> >  {
+> >-	unsigned long pa;
+> >+	void *ptr;
+> >  	BUILD_BUG_ON(STACK_INT_FRAME_SIZE % 16);
+> >-	pa = memblock_alloc_base_nid(THREAD_SIZE, THREAD_SIZE, limit,
+> >-					early_cpu_to_node(cpu), MEMBLOCK_NONE);
+> >-	if (!pa) {
+> >-		pa = memblock_alloc_base(THREAD_SIZE, THREAD_SIZE, limit);
+> >-		if (!pa)
+> >-			panic("cannot allocate stacks");
+> >-	}
+> >+	ptr = memblock_alloc_try_nid(THREAD_SIZE, THREAD_SIZE,
+> >+				     MEMBLOCK_LOW_LIMIT, limit,
+> >+				     early_cpu_to_node(cpu));
+> >+	if (!ptr)
+> >+		panic("cannot allocate stacks");
 > 
-> (Though the one under "debug" is a bit different type of coffee, I have
-> to admit.)
-
-very different.
-
-Again, I really do not want this in the kernel as it will be a pain to
-maintain and support for the next 40+ years just to get over the hump of
-the next year when you have a mix of old kernels and new userspace to
-deal with.
-
-> >> For now, it's just that "synthetic uevent arguments" that is the
-> >> extension of the original uevent interface. That applies to both input
-> >> (writing to /sys/.../uevent file) and output (related extra variables
-> >> that appear in generated uevents).
-> >>
-> >> The obvious user of this is going to be systemd/udev that will add extra
-> >> variables to identify various synthetic uevents it produces (coming as
-> >> result of the WATCH udev rule, coming from the udevadm trigger call and
-> >> other specific uses where it needs to generate synthetic uevents). Other
-> >> users I know of involve storage handling tools which need to generate
-> >> these synthetic uevents whenever a change happens and it needs to
-> >> synchronize with udevd processing (e.g. waiting on refresh to get
-> >> reflected in udev database).
-> >>
-> >> I understand that there is an argument that we can just use kernel
-> >> version check, but this is not acceptable for all unfortunately (see
-> >> also https://github.com/systemd/systemd/pull/7294#issuecomment-343491015).
-> > 
-> > Kernel version checks are horrible as well, I know.
-> > 
-> >> The issue with checking the return code after writing to /sys/.../uevent
-> >> is that it doesn't work with older kernel releases because there, it
-> >> always returned success, no matter if the input string was correct or
-> >> not or whether the arguments were recognized (unfortunately, this was
-> >> like that from beginning, it seems). Even though, I've fixed this return
-> >> code with df44b479 recently, but still, there are possible older
-> >> releases out there... And still, there might be new variables introduced
-> >> in the future that don't necessarily need to be direct result of writing
-> >> to /sys/.../uevent file.
-> > 
-> > We do not add things to the kernel for "maybe sometime in the future
-> > something else might be added", sorry.  We deal with what we have now.
-> > 
-> > And right now the kernel is fine, it is userspace that is having a
-> > problem with this.  Why can't you just try to trigger an event from
-> > userspace and if it does not come back, then you know that kernel does
-> > not have that feature?
+> Same ?
 > 
-> Because in that case, there's an issue arising of how much should we
-> wait for the uevent to appear back in userspace after triggering it.
-> There's no right timeout.
+> Christophe
 > 
-> Of course, we wouldn't need to think about all of this if the "write" to
-> the "uevent" file properly returned error code, but unfortunately it
-> didn't and that was the bug that was sitting there from day one, it
-> seems (...fixed now, but still there are those older kernel versions out
-> there).
+> >-	return __va(pa);
+> >+	return ptr;
+> >  }
+> >  void __init irqstack_early_init(void)
+> >@@ -739,20 +737,17 @@ void __init emergency_stack_init(void)
+> >  		struct thread_info *ti;
+> >  		ti = alloc_stack(limit, i);
+> >-		memset(ti, 0, THREAD_SIZE);
+> >  		emerg_stack_init_thread_info(ti, i);
+> >  		paca_ptrs[i]->emergency_sp = (void *)ti + THREAD_SIZE;
+> >  #ifdef CONFIG_PPC_BOOK3S_64
+> >  		/* emergency stack for NMI exception handling. */
+> >  		ti = alloc_stack(limit, i);
+> >-		memset(ti, 0, THREAD_SIZE);
+> >  		emerg_stack_init_thread_info(ti, i);
+> >  		paca_ptrs[i]->nmi_emergency_sp = (void *)ti + THREAD_SIZE;
+> >  		/* emergency stack for machine check exception handling. */
+> >  		ti = alloc_stack(limit, i);
+> >-		memset(ti, 0, THREAD_SIZE);
+> >  		emerg_stack_init_thread_info(ti, i);
+> >  		paca_ptrs[i]->mc_emergency_sp = (void *)ti + THREAD_SIZE;
+> >  #endif
+> >@@ -933,8 +928,9 @@ static void __ref init_fallback_flush(void)
+> >  	 * hardware prefetch runoff. We don't have a recipe for load patterns to
+> >  	 * reliably avoid the prefetcher.
+> >  	 */
+> >-	l1d_flush_fallback_area = __va(memblock_alloc_base(l1d_size * 2, l1d_size, limit));
+> >-	memset(l1d_flush_fallback_area, 0, l1d_size * 2);
+> >+	l1d_flush_fallback_area = memblock_alloc_try_nid(l1d_size * 2,
+> >+						l1d_size, MEMBLOCK_LOW_LIMIT,
+> >+						limit, NUMA_NO_NODE);
+> >  	for_each_possible_cpu(cpu) {
+> >  		struct paca_struct *paca = paca_ptrs[cpu];
+> >diff --git a/arch/powerpc/mm/hash_utils_64.c b/arch/powerpc/mm/hash_utils_64.c
+> >index 0cc7fbc..bc6be44 100644
+> >--- a/arch/powerpc/mm/hash_utils_64.c
+> >+++ b/arch/powerpc/mm/hash_utils_64.c
+> >@@ -908,9 +908,9 @@ static void __init htab_initialize(void)
+> >  #ifdef CONFIG_DEBUG_PAGEALLOC
+> >  	if (debug_pagealloc_enabled()) {
+> >  		linear_map_hash_count = memblock_end_of_DRAM() >> PAGE_SHIFT;
+> >-		linear_map_hash_slots = __va(memblock_alloc_base(
+> >-				linear_map_hash_count, 1, ppc64_rma_size));
+> >-		memset(linear_map_hash_slots, 0, linear_map_hash_count);
+> >+		linear_map_hash_slots = memblock_alloc_try_nid(
+> >+				linear_map_hash_count, 1, MEMBLOCK_LOW_LIMIT,
+> >+				ppc64_rma_size,	NUMA_NO_NODE);
+> >  	}
+> >  #endif /* CONFIG_DEBUG_PAGEALLOC */
+> >diff --git a/arch/powerpc/mm/pgtable-book3e.c b/arch/powerpc/mm/pgtable-book3e.c
+> >index e0ccf36..53cbc7d 100644
+> >--- a/arch/powerpc/mm/pgtable-book3e.c
+> >+++ b/arch/powerpc/mm/pgtable-book3e.c
+> >@@ -57,12 +57,8 @@ void vmemmap_remove_mapping(unsigned long start,
+> >  static __ref void *early_alloc_pgtable(unsigned long size)
+> >  {
+> >-	void *pt;
+> >-
+> >-	pt = __va(memblock_alloc_base(size, size, __pa(MAX_DMA_ADDRESS)));
+> >-	memset(pt, 0, size);
+> >-
+> >-	return pt;
+> >+	return memblock_alloc_try_nid(size, size, MEMBLOCK_LOW_LIMIT,
+> >+				      __pa(MAX_DMA_ADDRESS), NUMA_NO_NODE);
+> >  }
+> >  /*
+> >diff --git a/arch/powerpc/mm/pgtable-book3s64.c b/arch/powerpc/mm/pgtable-book3s64.c
+> >index f3c31f5..55876b7 100644
+> >--- a/arch/powerpc/mm/pgtable-book3s64.c
+> >+++ b/arch/powerpc/mm/pgtable-book3s64.c
+> >@@ -195,11 +195,8 @@ void __init mmu_partition_table_init(void)
+> >  	unsigned long ptcr;
+> >  	BUILD_BUG_ON_MSG((PATB_SIZE_SHIFT > 36), "Partition table size too large.");
+> >-	partition_tb = __va(memblock_alloc_base(patb_size, patb_size,
+> >-						MEMBLOCK_ALLOC_ANYWHERE));
+> >-
+> >  	/* Initialize the Partition Table with no entries */
+> >-	memset((void *)partition_tb, 0, patb_size);
+> >+	partition_tb = memblock_alloc(patb_size, patb_size);
+> >  	/*
+> >  	 * update partition table control register,
+> >diff --git a/arch/powerpc/mm/pgtable-radix.c b/arch/powerpc/mm/pgtable-radix.c
+> >index 9311560..29bcea5 100644
+> >--- a/arch/powerpc/mm/pgtable-radix.c
+> >+++ b/arch/powerpc/mm/pgtable-radix.c
+> >@@ -51,26 +51,15 @@ static int native_register_process_table(unsigned long base, unsigned long pg_sz
+> >  static __ref void *early_alloc_pgtable(unsigned long size, int nid,
+> >  			unsigned long region_start, unsigned long region_end)
+> >  {
+> >-	unsigned long pa = 0;
+> >-	void *pt;
+> >+	phys_addr_t min_addr = MEMBLOCK_LOW_LIMIT;
+> >+	phys_addr_t max_addr = MEMBLOCK_ALLOC_ANYWHERE;
+> >-	if (region_start || region_end) /* has region hint */
+> >-		pa = memblock_alloc_range(size, size, region_start, region_end,
+> >-						MEMBLOCK_NONE);
+> >-	else if (nid != -1) /* has node hint */
+> >-		pa = memblock_alloc_base_nid(size, size,
+> >-						MEMBLOCK_ALLOC_ANYWHERE,
+> >-						nid, MEMBLOCK_NONE);
+> >+	if (region_start)
+> >+		min_addr = region_start;
+> >+	if (region_end)
+> >+		max_addr = region_end;
+> >-	if (!pa)
+> >-		pa = memblock_alloc_base(size, size, MEMBLOCK_ALLOC_ANYWHERE);
+> >-
+> >-	BUG_ON(!pa);
+> >-
+> >-	pt = __va(pa);
+> >-	memset(pt, 0, size);
+> >-
+> >-	return pt;
+> >+	return memblock_alloc_try_nid(size, size, min_addr, max_addr, nid);
+> >  }
+> >  static int early_map_kernel_page(unsigned long ea, unsigned long pa,
+> >diff --git a/arch/powerpc/platforms/pasemi/iommu.c b/arch/powerpc/platforms/pasemi/iommu.c
+> >index f297152..f62930f 100644
+> >--- a/arch/powerpc/platforms/pasemi/iommu.c
+> >+++ b/arch/powerpc/platforms/pasemi/iommu.c
+> >@@ -208,7 +208,9 @@ static int __init iob_init(struct device_node *dn)
+> >  	pr_debug(" -> %s\n", __func__);
+> >  	/* For 2G space, 8x64 pages (2^21 bytes) is max total l2 size */
+> >-	iob_l2_base = (u32 *)__va(memblock_alloc_base(1UL<<21, 1UL<<21, 0x80000000));
+> >+	iob_l2_base = memblock_alloc_try_nid_raw(1UL << 21, 1UL << 21,
+> >+					MEMBLOCK_LOW_LIMIT, 0x80000000,
+> >+					NUMA_NO_NODE);
+> >  	pr_info("IOBMAP L2 allocated at: %p\n", iob_l2_base);
+> >@@ -269,4 +271,3 @@ void __init iommu_init_early_pasemi(void)
+> >  	pasemi_pci_controller_ops.dma_bus_setup = pci_dma_bus_setup_pasemi;
+> >  	set_pci_dma_ops(&dma_iommu_ops);
+> >  }
+> >-
+> >diff --git a/arch/powerpc/platforms/pseries/setup.c b/arch/powerpc/platforms/pseries/setup.c
+> >index 41f62ca2..e4f0dfd 100644
+> >--- a/arch/powerpc/platforms/pseries/setup.c
+> >+++ b/arch/powerpc/platforms/pseries/setup.c
+> >@@ -130,8 +130,13 @@ static void __init fwnmi_init(void)
+> >  	 * It will be used in real mode mce handler, hence it needs to be
+> >  	 * below RMA.
+> >  	 */
+> >-	mce_data_buf = __va(memblock_alloc_base(RTAS_ERROR_LOG_MAX * nr_cpus,
+> >-					RTAS_ERROR_LOG_MAX, ppc64_rma_size));
+> >+	mce_data_buf = memblock_alloc_try_nid_raw(RTAS_ERROR_LOG_MAX * nr_cpus,
+> >+					RTAS_ERROR_LOG_MAX, MEMBLOCK_LOW_LIMIT,
+> >+					ppc64_rma_size, NUMA_NO_NODE);
+> >+	if (!mce_data_buf)
+> >+		panic("Failed to allocate %d bytes below %pa for MCE buffer\n",
+> >+		      RTAS_ERROR_LOG_MAX * nr_cpus, &ppc64_rma_size);
+> >+
+> >  	for_each_possible_cpu(i) {
+> >  		paca_ptrs[i]->mce_data_buf = mce_data_buf +
+> >  						(RTAS_ERROR_LOG_MAX * i);
+> >@@ -140,8 +145,13 @@ static void __init fwnmi_init(void)
+> >  #ifdef CONFIG_PPC_BOOK3S_64
+> >  	/* Allocate per cpu slb area to save old slb contents during MCE */
+> >  	size = sizeof(struct slb_entry) * mmu_slb_size * nr_cpus;
+> >-	slb_ptr = __va(memblock_alloc_base(size, sizeof(struct slb_entry),
+> >-					   ppc64_rma_size));
+> >+	slb_ptr = memblock_alloc_try_nid_raw(size, sizeof(struct slb_entry),
+> >+					MEMBLOCK_LOW_LIMIT, ppc64_rma_size,
+> >+					NUMA_NO_NODE);
+> >+	if (!slb_ptr)
+> >+		panic("Failed to allocate %zu bytes below %pa for slb area\n",
+> >+		      size, &ppc64_rma_size);
+> >+
+> >  	for_each_possible_cpu(i)
+> >  		paca_ptrs[i]->mce_faulty_slbs = slb_ptr + (mmu_slb_size * i);
+> >  #endif
+> >diff --git a/arch/powerpc/sysdev/dart_iommu.c b/arch/powerpc/sysdev/dart_iommu.c
+> >index a5b40d1..25bc25f 100644
+> >--- a/arch/powerpc/sysdev/dart_iommu.c
+> >+++ b/arch/powerpc/sysdev/dart_iommu.c
+> >@@ -251,8 +251,11 @@ static void allocate_dart(void)
+> >  	 * 16MB (1 << 24) alignment. We allocate a full 16Mb chuck since we
+> >  	 * will blow up an entire large page anyway in the kernel mapping.
+> >  	 */
+> >-	dart_tablebase = __va(memblock_alloc_base(1UL<<24,
+> >-						  1UL<<24, 0x80000000L));
+> >+	dart_tablebase = memblock_alloc_try_nid_raw(SZ_16M, SZ_16M,
+> >+					MEMBLOCK_LOW_LIMIT, SZ_2G,
+> >+					NUMA_NO_NODE);
+> >+	if (!dart_tablebase)
+> >+		panic("Failed to allocate 16MB below 2GB for DART table\n");
+> >  	/* There is no point scanning the DART space for leaks*/
+> >  	kmemleak_no_scan((void *)dart_tablebase);
+> >
+> 
 
-We can backport it to the stable kernels which will then mean that only
-any kernel that anyone cares about will result in this getting fixed.
-Any systems that do not pick up that change, you can discount as they
-will not be getting an updated userspace program either :)
+-- 
+Sincerely yours,
+Mike.
 
-thanks,
-
-greg k-h
