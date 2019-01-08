@@ -2,122 +2,90 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03FDDC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 03:11:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9024EC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 03:15:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE28520850
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 03:11:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GBypAcq9"
+	by mail.kernel.org (Postfix) with ESMTP id 54CA221855
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 03:15:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727560AbfAHDLo (ORCPT
+        id S1727446AbfAHDO7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 22:11:44 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:32919 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727145AbfAHDLo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 22:11:44 -0500
-Received: by mail-ed1-f66.google.com with SMTP id p6so2832242eds.0
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Jan 2019 19:11:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=x1qWC+eVN1k4ler/EqrFbu9Pj4IAc3px2CReajRy9As=;
-        b=GBypAcq9ZSVM0kxOjOVHgRQb6BkiIWUIy6Wv6up2DCusRWzVMy2tVauhpd+QVBav90
-         OzkaR7GLGLk/EcV0kxFR8+zCpQTXGlLdIKrVgPdouhK7M6r06yQar+W8pFGlRXpXn/FN
-         hEIouBL1hLcnoqOApVHL+ET2x31apOh6v5tYOYpWFGqOUTtKxTV/dG7vBd+quPUe3Rv3
-         1JNJvd4nTIfWPnw+z/PUwFHwABeFaAuhyT96yHtx1upCyknQWpCvYKEEENpmiFYSfDk8
-         DJLxzV3HAqLYdZlwXO4UzYLSMb8vapgovgps5tdKrXq6cq9LMHazBZy82handoKa/Q6L
-         NUrw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=x1qWC+eVN1k4ler/EqrFbu9Pj4IAc3px2CReajRy9As=;
-        b=AcpQBX20pKqO9wN5l9tvagkCOUNLzdHxJL1Mu4qLMqzbbN4gnPmvT0xqjc5fe4ns+f
-         N/sp8vcux/LYXWEoePut8aGLoSOaw9UUSX7po6Mm4s23onppa3vLd/jJjhkRZuw9r0xW
-         BQZyJmQ4NUbDtUEX0OFeRkPwUEZVxfLRctWdaI7Zw2XckfISgQWZUVNO9XVgQQTjufSK
-         SD2VA5phu9aRSREnFd7X7Oi6vbfV8pg5U1MjMsqPXt7xzGEaxloJzIR5e/kRf8ok1pyq
-         6rDPIs05nsJR+2xx85959eAjUcNB9fvFfO0jHJJXzC29dIlpumtSdlw3rep8UsqrrPxA
-         FeLA==
-X-Gm-Message-State: AJcUukcRAAU/zqQZ7A7AaHVMJAXzHqYF0mRPt3xjMNoiUDsLo5t2xkN4
-        KlnOMBkER32dxWNu71gBpMo=
-X-Google-Smtp-Source: ALg8bN6RcpFpIyRphFlw0n/uU3WhwDa+i/407dygFNjwNRQXOLAeFr2B2xSbeNJKAtsnXSfPKUlvJA==
-X-Received: by 2002:aa7:c352:: with SMTP id j18mr323119edr.295.1546917102526;
-        Mon, 07 Jan 2019 19:11:42 -0800 (PST)
-Received: from localhost.localdomain ([191.101.9.198])
-        by smtp.gmail.com with ESMTPSA id m14sm39303015edc.27.2019.01.07.19.11.40
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 07 Jan 2019 19:11:42 -0800 (PST)
-From:   Bo YU <tsu.yubo@gmail.com>
-To:     gregkh@linuxfoundation.org, rafael@kernel.org
-Cc:     Bo YU <tsu.yubo@gmail.com>, linux-kernel@vger.kernel.org,
-        joe@perches.com, yuzibode@126.com
-Subject: [PATCH v4 2/2] kobject: drop newline from msg string
-Date:   Mon,  7 Jan 2019 22:11:35 -0500
-Message-Id: <2ba5177197f8b40e399867ea1f1aee2920c3cb49.1546915794.git.tsu.yubo@gmail.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <cover.1546915794.git.tsu.yubo@gmail.com>
-References: <cover.1546915794.git.tsu.yubo@gmail.com>
+        Mon, 7 Jan 2019 22:14:59 -0500
+Received: from inva020.nxp.com ([92.121.34.13]:52128 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727147AbfAHDO7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 22:14:59 -0500
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id E103A1A04B0;
+        Tue,  8 Jan 2019 04:14:56 +0100 (CET)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 717981A0218;
+        Tue,  8 Jan 2019 04:14:45 +0100 (CET)
+Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id BD54C402A9;
+        Tue,  8 Jan 2019 11:14:31 +0800 (SGT)
+From:   Xiaowei Bao <xiaowei.bao@nxp.com>
+To:     bhelgaas@google.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        shawnguo@kernel.org, leoyang.li@nxp.com, kishon@ti.com,
+        lorenzo.pieralisi@arm.com, arnd@arndb.de,
+        gregkh@linuxfoundation.org, minghuan.Lian@nxp.com,
+        mingkai.hu@nxp.com, roy.zang@nxp.com, kstewart@linuxfoundation.org,
+        cyrille.pitchen@free-electrons.com, pombredanne@nexb.com,
+        shawn.lin@rock-chips.com, niklas.cassel@axis.com,
+        linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linuxppc-dev@lists.ozlabs.org
+Cc:     Xiaowei Bao <xiaowei.bao@nxp.com>
+Subject: [PATCHv4 1/4] dt-bindings: add DT binding for the layerscape PCIe controller with EP mode
+Date:   Tue,  8 Jan 2019 11:09:19 +0800
+Message-Id: <20190108030922.24031-1-xiaowei.bao@nxp.com>
+X-Mailer: git-send-email 2.14.1
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is currently a missing terminating newline in non-switch case
-match,when msg == NULL
+Add the documentation for the Device Tree binding for the layerscape PCIe
+controller with EP mode.
 
-Signed-off-by: Bo YU <tsu.yubo@gmail.com>
+Signed-off-by: Xiaowei Bao <xiaowei.bao@nxp.com>
 ---
-Changes in V4:
-Recovery  originly declaration, requested by Greg.
+v2:
+ - Add the SoC specific compatibles.
+v3:
+ - modify the commit message.
+v4:
+ - no change.
 
-Changes in V3:
-Improve the commit log, requested by rafael.
+ .../devicetree/bindings/pci/layerscape-pci.txt     |    3 +++
+ 1 files changed, 3 insertions(+), 0 deletions(-)
 
-Changes in V2:
-According to Joe's suggestion, drop newline from msg string
----
- lib/kobject_uevent.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/lib/kobject_uevent.c b/lib/kobject_uevent.c
-index 499dfcdafcb0..118226a02707 100644
---- a/lib/kobject_uevent.c
-+++ b/lib/kobject_uevent.c
-@@ -200,7 +200,7 @@ int kobject_synth_uevent(struct kobject *kobj, const char *buf, size_t count)
+diff --git a/Documentation/devicetree/bindings/pci/layerscape-pci.txt b/Documentation/devicetree/bindings/pci/layerscape-pci.txt
+index 9b2b8d6..e20ceaa 100644
+--- a/Documentation/devicetree/bindings/pci/layerscape-pci.txt
++++ b/Documentation/devicetree/bindings/pci/layerscape-pci.txt
+@@ -13,6 +13,7 @@ information.
  
- 	r = kobject_action_type(buf, count, &action, &action_args);
- 	if (r) {
--		msg = "unknown uevent action string\n";
-+		msg = "unknown uevent action string";
- 		goto out;
- 	}
- 
-@@ -212,7 +212,7 @@ int kobject_synth_uevent(struct kobject *kobj, const char *buf, size_t count)
- 	r = kobject_action_args(action_args,
- 				count - (action_args - buf), &env);
- 	if (r == -EINVAL) {
--		msg = "incorrect uevent action arguments\n";
-+		msg = "incorrect uevent action arguments";
- 		goto out;
- 	}
- 
-@@ -224,7 +224,7 @@ int kobject_synth_uevent(struct kobject *kobj, const char *buf, size_t count)
- out:
- 	if (r) {
- 		devpath = kobject_get_path(kobj, GFP_KERNEL);
--		pr_warn("synth uevent: %s: %s",
-+		pr_warn("synth uevent: %s: %s\n",
- 		       devpath ?: "unknown device",
- 		       msg ?: "failed to send uevent");
- 		kfree(devpath);
+ Required properties:
+ - compatible: should contain the platform identifier such as:
++  RC mode:
+         "fsl,ls1021a-pcie"
+         "fsl,ls2080a-pcie", "fsl,ls2085a-pcie"
+         "fsl,ls2088a-pcie"
+@@ -20,6 +21,8 @@ Required properties:
+         "fsl,ls1046a-pcie"
+         "fsl,ls1043a-pcie"
+         "fsl,ls1012a-pcie"
++  EP mode:
++	"fsl,ls1046a-pcie-ep", "fsl,ls-pcie-ep"
+ - reg: base addresses and lengths of the PCIe controller register blocks.
+ - interrupts: A list of interrupt outputs of the controller. Must contain an
+   entry for each entry in the interrupt-names property.
 -- 
-2.11.0
+1.7.1
 
