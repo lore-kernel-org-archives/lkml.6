@@ -2,60 +2,60 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36739C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 09:16:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EFFBC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 09:16:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 03AEA2089F
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 09:16:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EEA722089F
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 09:16:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="Fu/QOCWK"
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="mscUU3ZW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728452AbfAHJQb (ORCPT
+        id S1728470AbfAHJQl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 04:16:31 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:38275 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728336AbfAHJQF (ORCPT
+        Tue, 8 Jan 2019 04:16:41 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:33574 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728253AbfAHJQE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 04:16:05 -0500
-Received: by mail-ed1-f68.google.com with SMTP id h50so3458114ede.5
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jan 2019 01:16:04 -0800 (PST)
+        Tue, 8 Jan 2019 04:16:04 -0500
+Received: by mail-ed1-f67.google.com with SMTP id p6so3498575eds.0
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jan 2019 01:16:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=oXTGXgrClMlW8LabyP51oPTHLt1d9TPP5bN7Oy9yaTQ=;
-        b=Fu/QOCWKaQzM2CCroguKhoRNbbqYVmumF4ev4NEHPxj7T/7yCHXXnkIVLB0hTrpukK
-         1t11LaomRucyU3qot62gzR0r9TZZAHscsL5atPEX+Ngqsj+xzuykuNkXPZjkVK/v8G5Y
-         om0lBoJtgLINU53aB9oSllH3KUr19uT2CCGKp/LG0OGrXa4ermeZ20jhiKjrNcTx4FNA
-         LD7MyuFMtLpw3w1vFGKSxd7Rr33nRYgCx5IhtvRzoO01e1RWawuVvfIB5XQdmxnwnmrh
-         VPwt672T7X0qIPlvqwPHVNUTKby3uuhKSV5l5RP2Xrr7hGCChClmb/wgHw1bbWNJkxnJ
-         mUKA==
+        bh=syCNYOhWI2Fa3CkPeYThsu7drj9CGAM/9EZeMe/84fg=;
+        b=mscUU3ZWKPFNJHUEfNCsIH9Q6oMXrfnX4GjoBcDTTRTCfpTqqskB8ocUk3JJS6f7nH
+         F1QPu6fR0Qc/E10AyfaUCOcJ9Jn3owXgOnusdSM3Wa953EWG+ixmUezdY1iXoo3X/SAM
+         Y+tqYuuJrzNetOMRfLn62Ki31x5ODVN8O+Tassm3sW7pgpIBNeMPIRgJr7s2e6UkIGCz
+         05PF/B9vBpQp++4E3934cLafg0iezy9iHXPYypudW6fD29Et8K6rxh18Ni12NwuXSOfU
+         shPXkmpCuR1BbJCz+O4a6UyJ8su0KQPQ2ye74GXElSqM92Aifsb53Ao4lkBtES/sQZ0c
+         uOhg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=oXTGXgrClMlW8LabyP51oPTHLt1d9TPP5bN7Oy9yaTQ=;
-        b=fC/AlAMZpA9wFI8AHoFSSqC1MFi9hOQb6RkHYfW6irWTV9oUBQTijPFkYx1nkfOEWT
-         TgDzRhLLL863te7NARh57N+gNVanqwhWUhKMrwANcr+AGklTpecn+bYtsolaPfIvMJol
-         OPvSbr1KAEHGPmG1bjwIy8VequucR0vIDD3nzefO7s5b9TkCPSeelYpsPrHX0R1GOS1X
-         f+3axOZRWkJuk3ofegcliHHEACV0HLfhEHqGVQHKL8hhECtiDKu1bRaQf8e6RC4CQqy0
-         jNEVN//fxFYy0hxuv+AMPp5hVMoacAoS1f9T2lF1FbTE/dbCmsC49vOYDdUNaZe7er/B
-         BnZg==
-X-Gm-Message-State: AJcUukcXx+dnnpe56sQKQg9C/cEgLBDMxXIvu3wdDJcKXMOqPT2ImFzy
-        MZ6DwMxl+PanLMDXiP4S7GXDlQ==
-X-Google-Smtp-Source: ALg8bN4Y0hzLVqHt9UX4a4qUt7Jtxi/praTdrf7KUCraeBLgRDkxBBiK7c3f5PBwTWZwlNSO4TE2yw==
-X-Received: by 2002:aa7:de06:: with SMTP id h6mr1274531edv.137.1546938963541;
-        Tue, 08 Jan 2019 01:16:03 -0800 (PST)
+        bh=syCNYOhWI2Fa3CkPeYThsu7drj9CGAM/9EZeMe/84fg=;
+        b=A98dGcmNGlI3q+u3p/TM4SoPcVe9WP3MjTDNKf5dMG2U/tJC+KPe53/cmbbp0QottM
+         TyISxqj118rHLq0zd2aPhVHwXYWPcDXSBbOei8OlK+CF5Ca995UqicPi5uZjALJv+pbm
+         +0cvDyCy3M0WjAhcTjzhHnmwsSf1IU/GO3eFu/8UiqHlij2yU0d53MOgTfkQes096ErV
+         qa+Bto7vlHi+65ouiiNPtK1a2ZuEcFbk7ZpFsATQZYyhi/3DZY75kH+M9sooPLFhnE1u
+         a83rZfFhiiLQrl8f5NLto5cmRBwY+6rWuhBt87eme+dH8XKYpV/rpSZp8Y0IP3I6p+4c
+         Wj5w==
+X-Gm-Message-State: AJcUukfaJhz3znhNO2r8gHNEhBqTxM3pREOkm7TFfeq8tfw+jkaFhqb1
+        CHOOR+7tuQA5fJGEqmFWoR1G5A==
+X-Google-Smtp-Source: ALg8bN4dDw5IvyscDJ7IN+fJkMMKyW2fwpGh6nsmSR42EOQznEqT9Y6G2fSaVLrGxUkS9e2x57NcyA==
+X-Received: by 2002:a17:906:5202:: with SMTP id g2-v6mr1163630ejm.139.1546938962046;
+        Tue, 08 Jan 2019 01:16:02 -0800 (PST)
 Received: from debian-brgl.home ([2a01:cb1d:af:5b00:6d6c:8493:1ab5:dad7])
-        by smtp.gmail.com with ESMTPSA id gp22-v6sm18373560ejb.4.2019.01.08.01.16.02
+        by smtp.gmail.com with ESMTPSA id gp22-v6sm18373560ejb.4.2019.01.08.01.16.00
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 08 Jan 2019 01:16:03 -0800 (PST)
+        Tue, 08 Jan 2019 01:16:01 -0800 (PST)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
         Arnd Bergmann <arnd@arndb.de>,
@@ -63,9 +63,9 @@ To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
 Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-i2c@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [RESEND PATCH 11/12] ARM: davinci: mityomapl138: use device properties for at24 eeprom
-Date:   Tue,  8 Jan 2019 10:15:38 +0100
-Message-Id: <20190108091539.16674-12-brgl@bgdev.pl>
+Subject: [RESEND PATCH 10/12] ARM: davinci: mityomapl138: use nvmem notifiers
+Date:   Tue,  8 Jan 2019 10:15:37 +0100
+Message-Id: <20190108091539.16674-11-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108091539.16674-1-brgl@bgdev.pl>
 References: <20190108091539.16674-1-brgl@bgdev.pl>
@@ -78,62 +78,75 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-We want to work towards phasing out the at24_platform_data structure.
-There are few users and its contents can be represented using generic
-device properties. Using device properties only will allow us to
-significantly simplify the at24 configuration code.
-
-Remove the at24_platform_data structure and replace it with an array
-of property entries. Drop the byte_len/size property, as the model name
-already implies the EEPROM's size.
+Stop using the at24_platform_data setup callback in favor of nvmem
+notifiers.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- arch/arm/mach-davinci/board-mityomapl138.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ arch/arm/mach-davinci/board-mityomapl138.c | 18 +++++++++++++++---
+ 1 file changed, 15 insertions(+), 3 deletions(-)
 
 diff --git a/arch/arm/mach-davinci/board-mityomapl138.c b/arch/arm/mach-davinci/board-mityomapl138.c
-index ac1a1699d185..a381b26328d8 100644
+index 3286dc2457a5..ac1a1699d185 100644
 --- a/arch/arm/mach-davinci/board-mityomapl138.c
 +++ b/arch/arm/mach-davinci/board-mityomapl138.c
-@@ -14,13 +14,13 @@
- #include <linux/init.h>
+@@ -15,6 +15,8 @@
  #include <linux/console.h>
  #include <linux/platform_device.h>
-+#include <linux/property.h>
  #include <linux/mtd/partitions.h>
- #include <linux/notifier.h>
- #include <linux/nvmem-consumer.h>
++#include <linux/notifier.h>
++#include <linux/nvmem-consumer.h>
  #include <linux/nvmem-provider.h>
  #include <linux/regulator/machine.h>
  #include <linux/i2c.h>
--#include <linux/platform_data/at24.h>
- #include <linux/etherdevice.h>
- #include <linux/spi/spi.h>
- #include <linux/spi/flash.h>
-@@ -192,10 +192,10 @@ static struct nvmem_cell_lookup mityomapl138_nvmem_cell_lookup = {
- 	.con_id		= "mac-address",
- };
+@@ -117,10 +119,15 @@ static void mityomapl138_cpufreq_init(const char *partnum)
+ static void mityomapl138_cpufreq_init(const char *partnum) { }
+ #endif
  
--static struct at24_platform_data mityomapl138_fd_chip = {
--	.byte_len	= 256,
--	.page_size	= 8,
--	.flags		= AT24_FLAG_READONLY | AT24_FLAG_IRUGO,
-+static const struct property_entry mityomapl138_fd_chip_properties[] = {
-+	PROPERTY_ENTRY_U32("pagesize", 8),
-+	PROPERTY_ENTRY_BOOL("read-only"),
-+	{ }
+-static void read_factory_config(struct nvmem_device *nvmem, void *context)
++static int read_factory_config(struct notifier_block *nb,
++			       unsigned long event, void *data)
+ {
+ 	int ret;
+ 	const char *partnum = NULL;
++	struct nvmem_device *nvmem = data;
++
++	if (strcmp(nvmem_dev_name(nvmem), "1-00500") != 0)
++		return NOTIFY_DONE;
+ 
+ 	if (!IS_BUILTIN(CONFIG_NVMEM)) {
+ 		pr_warn("Factory Config not available without CONFIG_NVMEM\n");
+@@ -152,8 +159,14 @@ static void read_factory_config(struct nvmem_device *nvmem, void *context)
+ bad_config:
+ 	/* default maximum speed is valid for all platforms */
+ 	mityomapl138_cpufreq_init(partnum);
++
++	return NOTIFY_STOP;
+ }
+ 
++static struct notifier_block mityomapl138_nvmem_notifier = {
++	.notifier_call = read_factory_config,
++};
++
+ /*
+  * We don't define a cell for factory config as it will be accessed from the
+  * board file using the nvmem notifier chain.
+@@ -183,8 +196,6 @@ static struct at24_platform_data mityomapl138_fd_chip = {
+ 	.byte_len	= 256,
+ 	.page_size	= 8,
+ 	.flags		= AT24_FLAG_READONLY | AT24_FLAG_IRUGO,
+-	.setup		= read_factory_config,
+-	.context	= NULL,
  };
  
  static struct davinci_i2c_platform_data mityomap_i2c_0_pdata = {
-@@ -324,7 +324,7 @@ static struct i2c_board_info __initdata mityomap_tps65023_info[] = {
- 	},
- 	{
- 		I2C_BOARD_INFO("24c02", 0x50),
--		.platform_data = &mityomapl138_fd_chip,
-+		.properties = mityomapl138_fd_chip_properties,
- 	},
- };
+@@ -561,6 +572,7 @@ static void __init mityomapl138_init(void)
+ 
+ 	davinci_serial_init(da8xx_serial_device);
+ 
++	nvmem_register_notifier(&mityomapl138_nvmem_notifier);
+ 	nvmem_add_cell_table(&mityomapl138_nvmem_cell_table);
+ 	nvmem_add_cell_lookups(&mityomapl138_nvmem_cell_lookup, 1);
  
 -- 
 2.19.1
