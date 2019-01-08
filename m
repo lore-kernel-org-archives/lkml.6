@@ -2,120 +2,106 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01780C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:37:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7949C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:37:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BAD392063F
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:37:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546976237;
-	bh=FWsQIMOKIyUSmpuCpP2vGsmQGTPEH9RmSjN8ssXQotU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=dISrLhZLshDAG3CZa4vPUYztkLGuyKptMmotEN+w5e9jRPfknMn4bEO4RejP/wY7v
-	 H+2aBnmQdo4lwWGwYpKqnwJp19WLKQNoA+TuzcxUCDnxCm1RnEJLynLCa6ZIVIGPrh
-	 rJp0bTzrpfoF/Ff2NGCDDQ9acV2TiM+m2UXMUYrE=
+	by mail.kernel.org (Postfix) with ESMTP id A60A5205C9
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:37:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732527AbfAHThQ (ORCPT
+        id S1732239AbfAHThU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:37:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44618 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732343AbfAHTfo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:35:44 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3D1CD205C9;
-        Tue,  8 Jan 2019 19:35:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546976143;
-        bh=FWsQIMOKIyUSmpuCpP2vGsmQGTPEH9RmSjN8ssXQotU=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Cvryo8mREfbuZQiS/D9n2Ud+3gcgkHoq0Th8g/PkALaMwZ2RlVxnCBLBp/dqTYYhD
-         sLR6Zq89Eb2JAI/zpRsaAuY8DnaGaSYkQKeJrbIMrRtNZ4PKEj89NfZ4nSGu1wnV/W
-         rrTiDqf4Ahn35lYlsn4dVP9DNwrnLE/0M7gJ0hVk=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     yupeng <yupeng0921@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 3.18 07/19] net: call sk_dst_reset when set SO_DONTROUTE
-Date:   Tue,  8 Jan 2019 14:35:19 -0500
-Message-Id: <20190108193534.124555-7-sashal@kernel.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190108193534.124555-1-sashal@kernel.org>
-References: <20190108193534.124555-1-sashal@kernel.org>
+        Tue, 8 Jan 2019 14:37:20 -0500
+Received: from gateway36.websitewelcome.com ([192.185.197.22]:28057 "EHLO
+        gateway36.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731866AbfAHThT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:37:19 -0500
+Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
+        by gateway36.websitewelcome.com (Postfix) with ESMTP id D5AAD40164969
+        for <linux-kernel@vger.kernel.org>; Tue,  8 Jan 2019 12:49:20 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id gxBegrLFPdnCegxBegxK7W; Tue, 08 Jan 2019 13:37:18 -0600
+X-Authority-Reason: nr=8
+Received: from [189.250.130.205] (port=57412 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1ggxBd-003gLX-F1; Tue, 08 Jan 2019 13:37:17 -0600
+Date:   Tue, 8 Jan 2019 13:37:14 -0600
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] bio-integrity: use struct_size() in kmalloc()
+Message-ID: <20190108193714.GA24832@embeddedor>
 MIME-Version: 1.0
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.130.205
+X-Source-L: No
+X-Exim-ID: 1ggxBd-003gLX-F1
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.130.205]:57412
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 7
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: yupeng <yupeng0921@gmail.com>
+One of the more common cases of allocation size calculations is finding
+the size of a structure that has a zero-sized array at the end, along
+with memory for some number of elements for that array. For example:
 
-[ Upstream commit 0fbe82e628c817e292ff588cd5847fc935e025f2 ]
+struct foo {
+    int stuff;
+    void *entry[];
+};
 
-after set SO_DONTROUTE to 1, the IP layer should not route packets if
-the dest IP address is not in link scope. But if the socket has cached
-the dst_entry, such packets would be routed until the sk_dst_cache
-expires. So we should clean the sk_dst_cache when a user set
-SO_DONTROUTE option. Below are server/client python scripts which
-could reprodue this issue:
+instance = kmalloc(sizeof(struct foo) + sizeof(void *) * count, GFP_KERNEL);
 
-server side code:
+Instead of leaving these open-coded and prone to type mistakes, we can
+now use the new struct_size() helper:
 
-==========================================================================
-import socket
-import struct
-import time
+instance = kmalloc(struct_size(instance, entry, count), GFP_KERNEL);
 
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.bind(('0.0.0.0', 9000))
-s.listen(1)
-sock, addr = s.accept()
-sock.setsockopt(socket.SOL_SOCKET, socket.SO_DONTROUTE, struct.pack('i', 1))
-while True:
-    sock.send(b'foo')
-    time.sleep(1)
-==========================================================================
+This code was detected with the help of Coccinelle.
 
-client side code:
-==========================================================================
-import socket
-import time
-
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.connect(('server_address', 9000))
-while True:
-    data = s.recv(1024)
-    print(data)
-==========================================================================
-
-Signed-off-by: yupeng <yupeng0921@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- net/core/sock.c | 1 +
- 1 file changed, 1 insertion(+)
+ block/bio-integrity.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/net/core/sock.c b/net/core/sock.c
-index 55f35765c6e0..76959d941a1f 100644
---- a/net/core/sock.c
-+++ b/net/core/sock.c
-@@ -720,6 +720,7 @@ int sock_setsockopt(struct socket *sock, int level, int optname,
- 		break;
- 	case SO_DONTROUTE:
- 		sock_valbool_flag(sk, SOCK_LOCALROUTE, valbool);
-+		sk_dst_reset(sk);
- 		break;
- 	case SO_BROADCAST:
- 		sock_valbool_flag(sk, SOCK_BROADCAST, valbool);
+diff --git a/block/bio-integrity.c b/block/bio-integrity.c
+index 1b633a3526d4..ae8c68ecc0ca 100644
+--- a/block/bio-integrity.c
++++ b/block/bio-integrity.c
+@@ -57,8 +57,8 @@ struct bio_integrity_payload *bio_integrity_alloc(struct bio *bio,
+ 	unsigned inline_vecs;
+ 
+ 	if (!bs || !mempool_initialized(&bs->bio_integrity_pool)) {
+-		bip = kmalloc(sizeof(struct bio_integrity_payload) +
+-			      sizeof(struct bio_vec) * nr_vecs, gfp_mask);
++		bip = kmalloc(struct_size(bip, bip_inline_vecs, nr_vecs),
++			      gfp_mask);
+ 		inline_vecs = nr_vecs;
+ 	} else {
+ 		bip = mempool_alloc(&bs->bio_integrity_pool, gfp_mask);
 -- 
-2.19.1
+2.20.1
 
