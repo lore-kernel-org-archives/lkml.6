@@ -7,38 +7,38 @@ X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF777C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:59:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0008DC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:59:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 84B88217D9
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:59:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C1D4B218A1
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:59:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546977576;
-	bh=p3w1h77NVZ+RgMJ/K6mUHvknz55aaq/hKqyhsvA2g1g=;
+	s=default; t=1546977582;
+	bh=qawiTky0pHdLR0GWgMAD7rI3uUyb2kE6Ixc1g9pDjrM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Doff1hQzsmK8Aq6fu5O8bd7h2Q8OHNv8PG2BFk5U735wd8MN2ElPpc2ylSuu9ETW9
-	 chQg1iiZQYadrFF/vnnZ6SaQ/T5uFojnxNGCBTr8ZZmpJEki59+A5dQPAD2KdroWes
-	 2VyilrdlvHhaMLEG/DdmyJWIEmHLNL4OS2vx8YAI=
+	b=UZ8FvkFmfpBvH/lkVygvG+e23WbNOX6qd5P/4oRyrpm9RiHMPbPOnFxC4lr1I6PUK
+	 GYKo2Gq0NbiaIqjkWyArPWcIdjsX2YdDgFYB7YJ83wJB3RqmwYMbyIynr7wypqelWY
+	 Ft7NAbalPuJ9CiaLVreJsHeWZAjxOsHMUUj6dP20=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730886AbfAHT7f (ORCPT
+        id S1731492AbfAHT7l (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:59:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56522 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 14:59:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56600 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730544AbfAHT7d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:59:33 -0500
+        id S1731016AbfAHT7h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:59:37 -0500
 Received: from quaco.ghostprotocols.net (unknown [177.135.9.49])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8AA48214C6;
-        Tue,  8 Jan 2019 19:59:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A04AB20827;
+        Tue,  8 Jan 2019 19:59:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546977572;
-        bh=p3w1h77NVZ+RgMJ/K6mUHvknz55aaq/hKqyhsvA2g1g=;
+        s=default; t=1546977577;
+        bh=qawiTky0pHdLR0GWgMAD7rI3uUyb2kE6Ixc1g9pDjrM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=F/o0RxOakxdP6HE2zFNwCirw4rWP/wpaYZnhRt9OWtzZYo2qXXib9SQPLAWfovc2H
-         TEcj/WRlCQn9xk56S0wVBgdmgG+Kvbb1Iu33ngCJlLqdlphDEkwyvAlINy8pUOBa+U
-         6WmqOp1+W4l0CIcHY76evPZJgoJnPLm07Kjvp44s=
+        b=ZW8pQzgrmmvGmFPXDDWD9XXLxWjUeT14rFc+Uekj4VMHkFbThXZo1q2sYkMU01tMF
+         qb/OwxiXVEDl1wFzR3yWPRuz4jefRdoPCv6Pw/49tRe6fs6ReCYLWGCEzwS77MDb0G
+         KZVG3N2Gl2bD+w8sQ5ay5g/oTKGPzkUxw+fHdZ2k=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
@@ -57,9 +57,9 @@ Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
         Thomas Gleixner <tglx@linutronix.de>,
         Thomas Richter <tmricht@linux.ibm.com>,
         Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 03/16] perf tools: Make find_vdso_map() more modular
-Date:   Tue,  8 Jan 2019 16:58:57 -0300
-Message-Id: <20190108195910.17726-4-acme@kernel.org>
+Subject: [PATCH 04/16] perf tests: Add a test for the ARM 32-bit [vectors] page
+Date:   Tue,  8 Jan 2019 16:58:58 -0300
+Message-Id: <20190108195910.17726-5-acme@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190108195910.17726-1-acme@kernel.org>
 References: <20190108195910.17726-1-acme@kernel.org>
@@ -72,11 +72,10 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Florian Fainelli <f.fainelli@gmail.com>
 
-In preparation for checking that the vectors page on the ARM
-architecture, refactor the find_vdso_map() function to accept finding an
-arbitrary string and create a dedicated helper function for that under
-util/find-map.c and update the filename to find-map.c and all references
-to it: perf-read-vdso.c and util/vdso.c.
+perf on ARM requires CONFIG_KUSER_HELPERS to be turned on to allow some
+independance with respect to the ARM CPU being used. Add a test which
+tries to locate the [vectors] page, created when CONFIG_KUSER_HELPERS is
+turned on to help asses the system's health.
 
 Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 Acked-by: Jiri Olsa <jolsa@kernel.org>
@@ -91,119 +90,85 @@ Cc: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
 Cc: Russell King <rmk+kernel@armlinux.org.uk>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Thomas Richter <tmricht@linux.ibm.com>
-Link: http://lkml.kernel.org/r/20181221034337.26663-2-f.fainelli@gmail.com
+Link: http://lkml.kernel.org/r/20181221034337.26663-3-f.fainelli@gmail.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/Makefile.perf                        | 4 ++--
- tools/perf/perf-read-vdso.c                     | 6 +++---
- tools/perf/util/{find-vdso-map.c => find-map.c} | 7 +++----
- tools/perf/util/vdso.c                          | 6 +++---
- 4 files changed, 11 insertions(+), 12 deletions(-)
- rename tools/perf/util/{find-vdso-map.c => find-map.c} (71%)
+ tools/perf/arch/arm/tests/Build          |  1 +
+ tools/perf/arch/arm/tests/arch-tests.c   |  4 ++++
+ tools/perf/arch/arm/tests/vectors-page.c | 24 ++++++++++++++++++++++++
+ tools/perf/tests/tests.h                 |  5 +++++
+ 4 files changed, 34 insertions(+)
+ create mode 100644 tools/perf/arch/arm/tests/vectors-page.c
 
-diff --git a/tools/perf/Makefile.perf b/tools/perf/Makefile.perf
-index 2921f829a0f4..0ee6795d82cc 100644
---- a/tools/perf/Makefile.perf
-+++ b/tools/perf/Makefile.perf
-@@ -662,12 +662,12 @@ $(OUTPUT)perf-%: %.o $(PERFLIBS)
- 	$(QUIET_LINK)$(CC) $(CFLAGS) -o $@ $(LDFLAGS) $(filter %.o,$^) $(LIBS)
+diff --git a/tools/perf/arch/arm/tests/Build b/tools/perf/arch/arm/tests/Build
+index 883c57ff0c08..d9ae2733f9cc 100644
+--- a/tools/perf/arch/arm/tests/Build
++++ b/tools/perf/arch/arm/tests/Build
+@@ -1,4 +1,5 @@
+ libperf-y += regs_load.o
+ libperf-y += dwarf-unwind.o
++libperf-y += vectors-page.o
  
- ifndef NO_PERF_READ_VDSO32
--$(OUTPUT)perf-read-vdso32: perf-read-vdso.c util/find-vdso-map.c
-+$(OUTPUT)perf-read-vdso32: perf-read-vdso.c util/find-map.c
- 	$(QUIET_CC)$(CC) -m32 $(filter -static,$(LDFLAGS)) -Wall -Werror -o $@ perf-read-vdso.c
- endif
- 
- ifndef NO_PERF_READ_VDSOX32
--$(OUTPUT)perf-read-vdsox32: perf-read-vdso.c util/find-vdso-map.c
-+$(OUTPUT)perf-read-vdsox32: perf-read-vdso.c util/find-map.c
- 	$(QUIET_CC)$(CC) -mx32 $(filter -static,$(LDFLAGS)) -Wall -Werror -o $@ perf-read-vdso.c
- endif
- 
-diff --git a/tools/perf/perf-read-vdso.c b/tools/perf/perf-read-vdso.c
-index 8c0ca0cc428f..aaa5210ea84a 100644
---- a/tools/perf/perf-read-vdso.c
-+++ b/tools/perf/perf-read-vdso.c
-@@ -5,17 +5,17 @@
- #define VDSO__MAP_NAME "[vdso]"
- 
- /*
-- * Include definition of find_vdso_map() also used in util/vdso.c for
-+ * Include definition of find_map() also used in util/vdso.c for
-  * building perf.
-  */
--#include "util/find-vdso-map.c"
+ libperf-y += arch-tests.o
+diff --git a/tools/perf/arch/arm/tests/arch-tests.c b/tools/perf/arch/arm/tests/arch-tests.c
+index 5b1543c98022..6848101a855f 100644
+--- a/tools/perf/arch/arm/tests/arch-tests.c
++++ b/tools/perf/arch/arm/tests/arch-tests.c
+@@ -10,6 +10,10 @@ struct test arch_tests[] = {
+ 		.func = test__dwarf_unwind,
+ 	},
+ #endif
++	{
++		.desc = "Vectors page",
++		.func = test__vectors_page,
++	},
+ 	{
+ 		.func = NULL,
+ 	},
+diff --git a/tools/perf/arch/arm/tests/vectors-page.c b/tools/perf/arch/arm/tests/vectors-page.c
+new file mode 100644
+index 000000000000..7ffdd79971c8
+--- /dev/null
++++ b/tools/perf/arch/arm/tests/vectors-page.c
+@@ -0,0 +1,24 @@
++// SPDX-License-Identifier: GPL-2.0
++#include <stdio.h>
++#include <string.h>
++#include <linux/compiler.h>
++
++#include "debug.h"
++#include "tests/tests.h"
 +#include "util/find-map.c"
- 
- int main(void)
- {
- 	void *start, *end;
- 	size_t size, written;
- 
--	if (find_vdso_map(&start, &end))
-+	if (find_map(&start, &end, VDSO__MAP_NAME))
- 		return 1;
- 
- 	size = end - start;
-diff --git a/tools/perf/util/find-vdso-map.c b/tools/perf/util/find-map.c
-similarity index 71%
-rename from tools/perf/util/find-vdso-map.c
-rename to tools/perf/util/find-map.c
-index d7823e3508fc..7b2300588ece 100644
---- a/tools/perf/util/find-vdso-map.c
-+++ b/tools/perf/util/find-map.c
-@@ -1,5 +1,5 @@
- // SPDX-License-Identifier: GPL-2.0
--static int find_vdso_map(void **start, void **end)
-+static int find_map(void **start, void **end, const char *name)
- {
- 	FILE *maps;
- 	char line[128];
-@@ -7,7 +7,7 @@ static int find_vdso_map(void **start, void **end)
- 
- 	maps = fopen("/proc/self/maps", "r");
- 	if (!maps) {
--		fprintf(stderr, "vdso: cannot open maps\n");
-+		fprintf(stderr, "cannot open maps\n");
- 		return -1;
- 	}
- 
-@@ -21,8 +21,7 @@ static int find_vdso_map(void **start, void **end)
- 		if (m < 0)
- 			continue;
- 
--		if (!strncmp(&line[m], VDSO__MAP_NAME,
--			     sizeof(VDSO__MAP_NAME) - 1))
-+		if (!strncmp(&line[m], name, strlen(name)))
- 			found = 1;
- 	}
- 
-diff --git a/tools/perf/util/vdso.c b/tools/perf/util/vdso.c
-index 741af209b19d..3702cba11d7d 100644
---- a/tools/perf/util/vdso.c
-+++ b/tools/perf/util/vdso.c
-@@ -18,10 +18,10 @@
- #include "debug.h"
- 
- /*
-- * Include definition of find_vdso_map() also used in perf-read-vdso.c for
-+ * Include definition of find_map() also used in perf-read-vdso.c for
-  * building perf-read-vdso32 and perf-read-vdsox32.
-  */
--#include "find-vdso-map.c"
-+#include "find-map.c"
- 
- #define VDSO__TEMP_FILE_NAME "/tmp/perf-vdso.so-XXXXXX"
- 
-@@ -76,7 +76,7 @@ static char *get_file(struct vdso_file *vdso_file)
- 	if (vdso_file->found)
- 		return vdso_file->temp_file_name;
- 
--	if (vdso_file->error || find_vdso_map(&start, &end))
-+	if (vdso_file->error || find_map(&start, &end, VDSO__MAP_NAME))
- 		return NULL;
- 
- 	size = end - start;
++
++#define VECTORS__MAP_NAME "[vectors]"
++
++int test__vectors_page(struct test *test __maybe_unused,
++		       int subtest __maybe_unused)
++{
++	void *start, *end;
++
++	if (find_map(&start, &end, VECTORS__MAP_NAME)) {
++		pr_err("%s not found, is CONFIG_KUSER_HELPERS enabled?\n",
++		       VECTORS__MAP_NAME);
++		return TEST_FAIL;
++	}
++
++	return TEST_OK;
++}
+diff --git a/tools/perf/tests/tests.h b/tools/perf/tests/tests.h
+index b82f55fcc294..399f18ca71a3 100644
+--- a/tools/perf/tests/tests.h
++++ b/tools/perf/tests/tests.h
+@@ -119,4 +119,9 @@ int test__arch_unwind_sample(struct perf_sample *sample,
+ 			     struct thread *thread);
+ #endif
+ #endif
++
++#if defined(__arm__)
++int test__vectors_page(struct test *test, int subtest);
++#endif
++
+ #endif /* TESTS_H */
 -- 
 2.20.1
 
