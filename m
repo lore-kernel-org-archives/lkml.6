@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CFEFC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:39:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7B62C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:39:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 617C620645
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:39:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B6CF2063F
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:39:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546976355;
-	bh=kP3xqKMPjF9mdDQili8JQSuUpvPUc/O9wMpOSEfIfhU=;
+	s=default; t=1546976359;
+	bh=jnt6AxjfQmOZnh9HPCY31qYhNxSodac4hxyvMDKN6LY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=UGH1G6v5A4CWLaBWCIIiTJRiZbKClVCenjBxG037s2quRZbsp6nmiedqYcBoBlNyX
-	 tvHl3pToy48wPQplLk0yGiC5iZ06QQ/Tq3Rdq4p9+BR0VjL8xLOQHvJGWvIQRZTF8D
-	 MPgmUyVncdRD2OI6blusLEuBE8Lqthcbl6k3tCX4=
+	b=TXFThgRdlEiI+x2NudA/uuGY6QUL3+F5dELFbVwKCQxqGd/mYR9QxckYLThTQIdJf
+	 Xeyyn6mtrLp9ZROLswjahG3GqM9LbplssbLX/s1s0z/v1+FyugV7tPMZUMj8UBAPuX
+	 YLap55K7S7q2UI4HXzJZATdQ4+DfGtGOXzMQ0zHE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732169AbfAHTfH (ORCPT
+        id S1732576AbfAHTjS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:35:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43852 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 14:39:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43898 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730097AbfAHTfC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:35:02 -0500
+        id S1732162AbfAHTfG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:35:06 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 06B8B20645;
-        Tue,  8 Jan 2019 19:35:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4F96320883;
+        Tue,  8 Jan 2019 19:35:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546976101;
-        bh=kP3xqKMPjF9mdDQili8JQSuUpvPUc/O9wMpOSEfIfhU=;
+        s=default; t=1546976106;
+        bh=jnt6AxjfQmOZnh9HPCY31qYhNxSodac4hxyvMDKN6LY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CILTb9YiRNacdA9vUa3Eq64KCq3VV51sVhzWI1ldAl1V7xHsqC0q45n7pUc2gSp/y
-         H1goTafas1TwqlNYykS1qcGSD0w5xeMiVc3vgO4Y9TzQF12Csl1H87T+mmKj2kYOXn
-         4K6IYZl8n+TBREVzc2y1Mh9DEJuVme0ApoZkS4E8=
+        b=BnqivNOj2G6q99KDLMY1Fnd4aTChQq4mUt/UOvdYMqNmQVa7YFLQCCiqwmGNPtU/0
+         e8n6szluaZt9NdVs8St1aq72zFDI+PFbNNcId5fv4uuGTe9np944OXucEEAxS7G7uK
+         wFm9xYmYrCgQVqtiwjdRFO7C4GQiLcyNasvouibo=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        Kees Cook <keescook@chromium.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.4 09/28] pstore/ram: Do not treat empty buffers as valid
-Date:   Tue,  8 Jan 2019 14:34:26 -0500
-Message-Id: <20190108193445.124251-9-sashal@kernel.org>
+Cc:     yupeng <yupeng0921@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.4 12/28] net: call sk_dst_reset when set SO_DONTROUTE
+Date:   Tue,  8 Jan 2019 14:34:29 -0500
+Message-Id: <20190108193445.124251-12-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108193445.124251-1-sashal@kernel.org>
 References: <20190108193445.124251-1-sashal@kernel.org>
@@ -58,51 +58,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
+From: yupeng <yupeng0921@gmail.com>
 
-[ Upstream commit 30696378f68a9e3dad6bfe55938b112e72af00c2 ]
+[ Upstream commit 0fbe82e628c817e292ff588cd5847fc935e025f2 ]
 
-The ramoops backend currently calls persistent_ram_save_old() even
-if a buffer is empty. While this appears to work, it is does not seem
-like the right thing to do and could lead to future bugs so lets avoid
-that. It also prevents misleading prints in the logs which claim the
-buffer is valid.
+after set SO_DONTROUTE to 1, the IP layer should not route packets if
+the dest IP address is not in link scope. But if the socket has cached
+the dst_entry, such packets would be routed until the sk_dst_cache
+expires. So we should clean the sk_dst_cache when a user set
+SO_DONTROUTE option. Below are server/client python scripts which
+could reprodue this issue:
 
-I got something like:
+server side code:
 
-	found existing buffer, size 0, start 0
+==========================================================================
+import socket
+import struct
+import time
 
-When I was expecting:
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s.bind(('0.0.0.0', 9000))
+s.listen(1)
+sock, addr = s.accept()
+sock.setsockopt(socket.SOL_SOCKET, socket.SO_DONTROUTE, struct.pack('i', 1))
+while True:
+    sock.send(b'foo')
+    time.sleep(1)
+==========================================================================
 
-	no valid data in buffer (sig = ...)
+client side code:
+==========================================================================
+import socket
+import time
 
-This bails out early (and reports with pr_debug()), since it's an
-acceptable state.
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s.connect(('server_address', 9000))
+while True:
+    data = s.recv(1024)
+    print(data)
+==========================================================================
 
-Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
-Co-developed-by: Kees Cook <keescook@chromium.org>
-Signed-off-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: yupeng <yupeng0921@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/pstore/ram_core.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ net/core/sock.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/fs/pstore/ram_core.c b/fs/pstore/ram_core.c
-index bd21795ce657..679d75a864d0 100644
---- a/fs/pstore/ram_core.c
-+++ b/fs/pstore/ram_core.c
-@@ -445,6 +445,11 @@ static int persistent_ram_post_init(struct persistent_ram_zone *prz, u32 sig,
- 	sig ^= PERSISTENT_RAM_SIG;
- 
- 	if (prz->buffer->sig == sig) {
-+		if (buffer_size(prz) == 0) {
-+			pr_debug("found existing empty buffer\n");
-+			return 0;
-+		}
-+
- 		if (buffer_size(prz) > prz->buffer_size ||
- 		    buffer_start(prz) > buffer_size(prz))
- 			pr_info("found existing invalid buffer, size %zu, start %zu\n",
+diff --git a/net/core/sock.c b/net/core/sock.c
+index 4238835a0e4e..f7254127b25a 100644
+--- a/net/core/sock.c
++++ b/net/core/sock.c
+@@ -732,6 +732,7 @@ int sock_setsockopt(struct socket *sock, int level, int optname,
+ 		break;
+ 	case SO_DONTROUTE:
+ 		sock_valbool_flag(sk, SOCK_LOCALROUTE, valbool);
++		sk_dst_reset(sk);
+ 		break;
+ 	case SO_BROADCAST:
+ 		sock_valbool_flag(sk, SOCK_BROADCAST, valbool);
 -- 
 2.19.1
 
