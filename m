@@ -2,69 +2,79 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 157B9C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 00:06:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D78BEC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 00:07:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C5BBE2183F
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 00:06:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AC4602173C
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 00:07:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727145AbfAHAGB (ORCPT
+        id S1727246AbfAHAH2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 19:06:01 -0500
-Received: from muru.com ([72.249.23.125]:60420 "EHLO muru.com"
+        Mon, 7 Jan 2019 19:07:28 -0500
+Received: from mga05.intel.com ([192.55.52.43]:33392 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726689AbfAHAGB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 19:06:01 -0500
-Received: from hillo.muru.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTP id 3BD59813A;
-        Tue,  8 Jan 2019 00:06:07 +0000 (UTC)
-From:   Tony Lindgren <tony@atomide.com>
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
-        Jeffy Chen <jeffy.chen@rock-chips.com>
-Subject: [PATCH] mfd: syscon: Fix syscon name for device tree
-Date:   Mon,  7 Jan 2019 16:05:58 -0800
-Message-Id: <20190108000558.54914-1-tony@atomide.com>
-X-Mailer: git-send-email 2.20.1
+        id S1726667AbfAHAH2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 19:07:28 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jan 2019 16:07:27 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,451,1539673200"; 
+   d="scan'208";a="108051261"
+Received: from bachmicx-mobl.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.252.57.24])
+  by orsmga008.jf.intel.com with ESMTP; 07 Jan 2019 16:07:25 -0800
+Received: by kekkonen.fi.intel.com (Postfix, from userid 1000)
+        id 6D43321D0B; Tue,  8 Jan 2019 02:07:20 +0200 (EET)
+Date:   Tue, 8 Jan 2019 02:07:20 +0200
+From:   "sakari.ailus@linux.intel.com" <sakari.ailus@linux.intel.com>
+To:     David Binderman <dcb314@hotmail.com>
+Cc:     "mchehab@kernel.org" <mchehab@kernel.org>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: drivers/staging/media/ipu3/ipu3-css.c:1831: bad compare ?
+Message-ID: <20190108000719.2rvfpdnvaszl3r7x@kekkonen.localdomain>
+References: <DB7PR08MB380173BC25D42FD8E5C9ED8C9C890@DB7PR08MB3801.eurprd08.prod.outlook.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <DB7PR08MB380173BC25D42FD8E5C9ED8C9C890@DB7PR08MB3801.eurprd08.prod.outlook.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I'm now seeing the following error on omap5 during boot:
+Hi David,
 
-(NULL device *): Failed to create dummy-scm_conf@0 debugfs directory
+On Mon, Jan 07, 2019 at 10:30:55PM +0000, David Binderman wrote:
+> Hello there,
+> 
+> drivers/staging/media/ipu3/ipu3-css.c:1831:30: warning: comparison of unsigned expression < 0 is always false [-Wtype-limits]
+> 
+> Source code is
+>         css->pipes[pipe].bindex =
+>                 ipu3_css_find_binary(css, pipe, q, r);
+>         if (css->pipes[pipe].bindex < 0) {
+>                 dev_err(css->dev, "failed to find suitable binary\n");
+>                 return -EINVAL;
+>         }
+> 
+> Suggest sanity check return value from function first, then if it is ok,
+> assign it to an unsigned variable.
 
-This is because we have two separate scm_conf syscon regions in the
-dts. Let's fix the issue by setting a proper name if syscon is
-configured via device tree.
+Thanks for reporting this. There have been a few patches to address it so
+far, the one going in is here:
 
-See also related fix for commit 500f9ff518cf ("mfd: syscon: Set name
-of regmap_config").
+<URL:https://patchwork.linuxtv.org/patch/53633/>
 
-Cc: Jeffy Chen <jeffy.chen@rock-chips.com>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
----
- drivers/mfd/syscon.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/mfd/syscon.c b/drivers/mfd/syscon.c
---- a/drivers/mfd/syscon.c
-+++ b/drivers/mfd/syscon.c
-@@ -241,6 +241,8 @@ static int syscon_probe(struct platform_device *pdev)
- 	syscon_config.max_register = res->end - res->start - 3;
- 	if (pdata)
- 		syscon_config.name = pdata->label;
-+	else
-+		syscon_config.name = dev_name(dev);
- 	syscon->regmap = devm_regmap_init_mmio(dev, base, &syscon_config);
- 	if (IS_ERR(syscon->regmap)) {
- 		dev_err(dev, "regmap init failed\n");
 -- 
-2.20.1
+Sakari Ailus
+sakari.ailus@linux.intel.com
