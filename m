@@ -7,47 +7,50 @@ X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E0A3C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:38:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FCA3C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:38:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 691E02063F
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:38:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 60F0C2063F
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:38:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546976285;
-	bh=ICxEwSWZnPYcHSQTcj637brTgrzTZp61DKf6svN11ks=;
+	s=default; t=1546976292;
+	bh=4G3YTJAT259qhal7fKIlWyanub+/weiAEE2ghU+F3lY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Muv1OeF7K1KF7f+VBzOoR+EYiW3ZadQhHYCnzbRdIGahwY+6F64Yy+N0ABonql1Bw
-	 n7+WVzu1vCJW8sR9hgQEElJn1HWOdwDtz6/jVNqKVHOlRlUcSV3ypLYCaaWfjTtKv8
-	 aDG8W1adVFeaGHYn2bXEXWq9PsEOVsbcwUDcLToU=
+	b=UQ+Zegposfv70SiV2Wj9lqdDpTzCEPqFMV2RkG1bKwzBu+4pPagNBUA6wZY+Yjkq1
+	 ZRXSuqO4NRpjflCf99nXE2rBnRt8+0eCyURhO5th2+0FFLaPtTg5W/aUzevNikoeys
+	 2D4cyWI7YgwcZIW/vDZ56ES2ENteb40G6gHJ/2lA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732400AbfAHTiE (ORCPT
+        id S1732462AbfAHTiL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:38:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44304 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 14:38:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44258 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732277AbfAHTf3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:35:29 -0500
+        id S1732270AbfAHTf1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:35:27 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BD0EA20645;
-        Tue,  8 Jan 2019 19:35:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6D606205C9;
+        Tue,  8 Jan 2019 19:35:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546976128;
-        bh=ICxEwSWZnPYcHSQTcj637brTgrzTZp61DKf6svN11ks=;
+        s=default; t=1546976126;
+        bh=4G3YTJAT259qhal7fKIlWyanub+/weiAEE2ghU+F3lY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lQrwnNOcMlWTTnfwz1Xfku8QthjFokf7mYlRNQdLzZHdmR3Soqf9rsJe3bsa0Uajs
-         OS4Ykj8gapiV3ZYe+6+kbNNu2ZxXeHzWuVc7TJvhS7H+9GyjUwmY3h+HwsA+v1TZyi
-         4N65bI66c5G3PunEOS0Ldo5kntW+738Edl1NuUvM=
+        b=ILm/DXw4Yph1nfA74kqdfuDoYVMV+ezZj/RO/kMpMDj6a9QW0jZ94mzZyCfRoVLp/
+         DoozyMXjG3jPppZCXCf8OVauLshR+DG6tQOvuTcaHNhueimKkRx9tRYR/dxlOCz4Im
+         vXqmnZpNk7s9Jc4fYguYHAMIHYUYYd1FBK39ygis=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Brian Foster <bfoster@redhat.com>,
+Cc:     Junxiao Bi <junxiao.bi@oracle.com>, Jun Piao <piaojun@huawei.com>,
+        Mark Fasheh <mfasheh@versity.com>,
+        Joel Becker <jlbec@evilplan.org>,
+        Changwei Ge <ge.changwei@h3c.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>, linux-mm@kvack.org
-Subject: [PATCH AUTOSEL 4.4 27/28] mm/page-writeback.c: don't break integrity writeback on ->writepage() error
-Date:   Tue,  8 Jan 2019 14:34:44 -0500
-Message-Id: <20190108193445.124251-27-sashal@kernel.org>
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 26/28] ocfs2: fix panic due to unrecovered local alloc
+Date:   Tue,  8 Jan 2019 14:34:43 -0500
+Message-Id: <20190108193445.124251-26-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108193445.124251-1-sashal@kernel.org>
 References: <20190108193445.124251-1-sashal@kernel.org>
@@ -59,108 +62,105 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Brian Foster <bfoster@redhat.com>
+From: Junxiao Bi <junxiao.bi@oracle.com>
 
-[ Upstream commit 3fa750dcf29e8606e3969d13d8e188cc1c0f511d ]
+[ Upstream commit 532e1e54c8140188e192348c790317921cb2dc1c ]
 
-write_cache_pages() is used in both background and integrity writeback
-scenarios by various filesystems.  Background writeback is mostly
-concerned with cleaning a certain number of dirty pages based on various
-mm heuristics.  It may not write the full set of dirty pages or wait for
-I/O to complete.  Integrity writeback is responsible for persisting a set
-of dirty pages before the writeback job completes.  For example, an
-fsync() call must perform integrity writeback to ensure data is on disk
-before the call returns.
+mount.ocfs2 ignore the inconsistent error that journal is clean but
+local alloc is unrecovered.  After mount, local alloc not empty, then
+reserver cluster didn't alloc a new local alloc window, reserveration
+map is empty(ocfs2_reservation_map.m_bitmap_len = 0), that triggered the
+following panic.
 
-write_cache_pages() unconditionally breaks out of its processing loop in
-the event of a ->writepage() error.  This is fine for background
-writeback, which had no strict requirements and will eventually come
-around again.  This can cause problems for integrity writeback on
-filesystems that might need to clean up state associated with failed page
-writeouts.  For example, XFS performs internal delayed allocation
-accounting before returning a ->writepage() error, where applicable.  If
-the current writeback happens to be associated with an unmount and
-write_cache_pages() completes the writeback prematurely due to error, the
-filesystem is unmounted in an inconsistent state if dirty+delalloc pages
-still exist.
+This issue was reported at
 
-To handle this problem, update write_cache_pages() to always process the
-full set of pages for integrity writeback regardless of ->writepage()
-errors.  Save the first encountered error and return it to the caller once
-complete.  This facilitates XFS (or any other fs that expects integrity
-writeback to process the entire set of dirty pages) to clean up its
-internal state completely in the event of persistent mapping errors.
-Background writeback continues to exit on the first error encountered.
+  https://oss.oracle.com/pipermail/ocfs2-devel/2015-May/010854.html
 
-[akpm@linux-foundation.org: fix typo in comment]
-Link: http://lkml.kernel.org/r/20181116134304.32440-1-bfoster@redhat.com
-Signed-off-by: Brian Foster <bfoster@redhat.com>
-Reviewed-by: Jan Kara <jack@suse.cz>
+and was advised to fixed during mount.  But this is a very unusual
+inconsistent state, usually journal dirty flag should be cleared at the
+last stage of umount until every other things go right.  We may need do
+further debug to check that.  Any way to avoid possible futher
+corruption, mount should be abort and fsck should be run.
+
+  (mount.ocfs2,1765,1):ocfs2_load_local_alloc:353 ERROR: Local alloc hasn't been recovered!
+  found = 6518, set = 6518, taken = 8192, off = 15912372
+  ocfs2: Mounting device (202,64) on (node 0, slot 3) with ordered data mode.
+  o2dlm: Joining domain 89CEAC63CC4F4D03AC185B44E0EE0F3F ( 0 1 2 3 4 5 6 8 ) 8 nodes
+  ocfs2: Mounting device (202,80) on (node 0, slot 3) with ordered data mode.
+  o2hb: Region 89CEAC63CC4F4D03AC185B44E0EE0F3F (xvdf) is now a quorum device
+  o2net: Accepted connection from node yvwsoa17p (num 7) at 172.22.77.88:7777
+  o2dlm: Node 7 joins domain 64FE421C8C984E6D96ED12C55FEE2435 ( 0 1 2 3 4 5 6 7 8 ) 9 nodes
+  o2dlm: Node 7 joins domain 89CEAC63CC4F4D03AC185B44E0EE0F3F ( 0 1 2 3 4 5 6 7 8 ) 9 nodes
+  ------------[ cut here ]------------
+  kernel BUG at fs/ocfs2/reservations.c:507!
+  invalid opcode: 0000 [#1] SMP
+  Modules linked in: ocfs2 rpcsec_gss_krb5 auth_rpcgss nfsv4 nfs fscache lockd grace ocfs2_dlmfs ocfs2_stack_o2cb ocfs2_dlm ocfs2_nodemanager ocfs2_stackglue configfs sunrpc ipt_REJECT nf_reject_ipv4 nf_conntrack_ipv4 nf_defrag_ipv4 iptable_filter ip_tables ip6t_REJECT nf_reject_ipv6 nf_conntrack_ipv6 nf_defrag_ipv6 xt_state nf_conntrack ip6table_filter ip6_tables ib_ipoib rdma_ucm ib_ucm ib_uverbs ib_umad rdma_cm ib_cm iw_cm ib_sa ib_mad ib_core ib_addr ipv6 ovmapi ppdev parport_pc parport xen_netfront fb_sys_fops sysimgblt sysfillrect syscopyarea acpi_cpufreq pcspkr i2c_piix4 i2c_core sg ext4 jbd2 mbcache2 sr_mod cdrom xen_blkfront pata_acpi ata_generic ata_piix floppy dm_mirror dm_region_hash dm_log dm_mod
+  CPU: 0 PID: 4349 Comm: startWebLogic.s Not tainted 4.1.12-124.19.2.el6uek.x86_64 #2
+  Hardware name: Xen HVM domU, BIOS 4.4.4OVM 09/06/2018
+  task: ffff8803fb04e200 ti: ffff8800ea4d8000 task.ti: ffff8800ea4d8000
+  RIP: 0010:[<ffffffffa05e96a8>]  [<ffffffffa05e96a8>] __ocfs2_resv_find_window+0x498/0x760 [ocfs2]
+  Call Trace:
+    ocfs2_resmap_resv_bits+0x10d/0x400 [ocfs2]
+    ocfs2_claim_local_alloc_bits+0xd0/0x640 [ocfs2]
+    __ocfs2_claim_clusters+0x178/0x360 [ocfs2]
+    ocfs2_claim_clusters+0x1f/0x30 [ocfs2]
+    ocfs2_convert_inline_data_to_extents+0x634/0xa60 [ocfs2]
+    ocfs2_write_begin_nolock+0x1c6/0x1da0 [ocfs2]
+    ocfs2_write_begin+0x13e/0x230 [ocfs2]
+    generic_perform_write+0xbf/0x1c0
+    __generic_file_write_iter+0x19c/0x1d0
+    ocfs2_file_write_iter+0x589/0x1360 [ocfs2]
+    __vfs_write+0xb8/0x110
+    vfs_write+0xa9/0x1b0
+    SyS_write+0x46/0xb0
+    system_call_fastpath+0x18/0xd7
+  Code: ff ff 8b 75 b8 39 75 b0 8b 45 c8 89 45 98 0f 84 e5 fe ff ff 45 8b 74 24 18 41 8b 54 24 1c e9 56 fc ff ff 85 c0 0f 85 48 ff ff ff <0f> 0b 48 8b 05 cf c3 de ff 48 ba 00 00 00 00 00 00 00 10 48 85
+  RIP   __ocfs2_resv_find_window+0x498/0x760 [ocfs2]
+   RSP <ffff8800ea4db668>
+  ---[ end trace 566f07529f2edf3c ]---
+  Kernel panic - not syncing: Fatal exception
+  Kernel Offset: disabled
+
+Link: http://lkml.kernel.org/r/20181121020023.3034-2-junxiao.bi@oracle.com
+Signed-off-by: Junxiao Bi <junxiao.bi@oracle.com>
+Reviewed-by: Yiwen Jiang <jiangyiwen@huawei.com>
+Acked-by: Joseph Qi <jiangqi903@gmail.com>
+Cc: Jun Piao <piaojun@huawei.com>
+Cc: Mark Fasheh <mfasheh@versity.com>
+Cc: Joel Becker <jlbec@evilplan.org>
+Cc: Changwei Ge <ge.changwei@h3c.com>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- mm/page-writeback.c | 35 +++++++++++++++++++++--------------
- 1 file changed, 21 insertions(+), 14 deletions(-)
+ fs/ocfs2/localalloc.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/mm/page-writeback.c b/mm/page-writeback.c
-index 3309dbda7ffa..0bc7fa21db85 100644
---- a/mm/page-writeback.c
-+++ b/mm/page-writeback.c
-@@ -2151,6 +2151,7 @@ int write_cache_pages(struct address_space *mapping,
- {
- 	int ret = 0;
- 	int done = 0;
-+	int error;
- 	struct pagevec pvec;
- 	int nr_pages;
- 	pgoff_t uninitialized_var(writeback_index);
-@@ -2247,25 +2248,31 @@ int write_cache_pages(struct address_space *mapping,
- 				goto continue_unlock;
+diff --git a/fs/ocfs2/localalloc.c b/fs/ocfs2/localalloc.c
+index 0a4457fb0711..85111d740c9d 100644
+--- a/fs/ocfs2/localalloc.c
++++ b/fs/ocfs2/localalloc.c
+@@ -345,13 +345,18 @@ int ocfs2_load_local_alloc(struct ocfs2_super *osb)
+ 	if (num_used
+ 	    || alloc->id1.bitmap1.i_used
+ 	    || alloc->id1.bitmap1.i_total
+-	    || la->la_bm_off)
+-		mlog(ML_ERROR, "Local alloc hasn't been recovered!\n"
++	    || la->la_bm_off) {
++		mlog(ML_ERROR, "inconsistent detected, clean journal with"
++		     " unrecovered local alloc, please run fsck.ocfs2!\n"
+ 		     "found = %u, set = %u, taken = %u, off = %u\n",
+ 		     num_used, le32_to_cpu(alloc->id1.bitmap1.i_used),
+ 		     le32_to_cpu(alloc->id1.bitmap1.i_total),
+ 		     OCFS2_LOCAL_ALLOC(alloc)->la_bm_off);
  
- 			trace_wbc_writepage(wbc, inode_to_bdi(mapping->host));
--			ret = (*writepage)(page, wbc, data);
--			if (unlikely(ret)) {
--				if (ret == AOP_WRITEPAGE_ACTIVATE) {
-+			error = (*writepage)(page, wbc, data);
-+			if (unlikely(error)) {
-+				/*
-+				 * Handle errors according to the type of
-+				 * writeback. There's no need to continue for
-+				 * background writeback. Just push done_index
-+				 * past this page so media errors won't choke
-+				 * writeout for the entire file. For integrity
-+				 * writeback, we must process the entire dirty
-+				 * set regardless of errors because the fs may
-+				 * still have state to clear for each page. In
-+				 * that case we continue processing and return
-+				 * the first error.
-+				 */
-+				if (error == AOP_WRITEPAGE_ACTIVATE) {
- 					unlock_page(page);
--					ret = 0;
--				} else {
--					/*
--					 * done_index is set past this page,
--					 * so media errors will not choke
--					 * background writeout for the entire
--					 * file. This has consequences for
--					 * range_cyclic semantics (ie. it may
--					 * not be suitable for data integrity
--					 * writeout).
--					 */
-+					error = 0;
-+				} else if (wbc->sync_mode != WB_SYNC_ALL) {
-+					ret = error;
- 					done_index = page->index + 1;
- 					done = 1;
- 					break;
- 				}
-+				if (!ret)
-+					ret = error;
- 			}
++		status = -EINVAL;
++		goto bail;
++	}
++
+ 	osb->local_alloc_bh = alloc_bh;
+ 	osb->local_alloc_state = OCFS2_LA_ENABLED;
  
- 			/*
 -- 
 2.19.1
 
