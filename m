@@ -2,49 +2,52 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EF88C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:06:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E940C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:06:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D86C20827
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:06:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5AB0A20660
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:06:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546978007;
-	bh=+RygfPGvdr6e1c5HrjW0cz9VkYqFlt7GStkqWPuXTcs=;
+	s=default; t=1546978016;
+	bh=/Sqx/ZTSQ9CoKEiCpenwJT5WCUBN4mY1we4wX1dxiTA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=VblYXx4fjTLk3GIAicv5wVdxpcaMfFdSUmaJFpiK7aSU/Tuie7e1cRU4o7N1D3KIp
-	 QIiMTaCJS012//AUH7a3oDd29EHaJkvSgoCh1exnYSya4zsOTqDbVmYb41LMuof6kZ
-	 eucPdgYFBk9DbcWo9qi/vvwNyJ7aerRV4kvOgasM=
+	b=g+y+P5tX3ItA6aGHtWifqpj01f4GytoM3+CnedhWowGZqXHQYpy/G71cQ5i8U4fl4
+	 v9VkPoankOGT/ihmy4QkJbjtJ9AOKLdiGbvXGSxZSuB3dvWgVa0V3q2UO6pCNH9xV0
+	 2LIHv64FVPdvpCmMrd4k8ReU9ecj1ud3w+d3kLlk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732930AbfAHUGp (ORCPT
+        id S1732986AbfAHUGz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 15:06:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34824 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 15:06:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34640 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729875AbfAHT2D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:28:03 -0500
+        id S1729842AbfAHT2C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:28:02 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C188720665;
-        Tue,  8 Jan 2019 19:28:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9EF122070B;
+        Tue,  8 Jan 2019 19:28:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546975683;
-        bh=+RygfPGvdr6e1c5HrjW0cz9VkYqFlt7GStkqWPuXTcs=;
+        s=default; t=1546975681;
+        bh=/Sqx/ZTSQ9CoKEiCpenwJT5WCUBN4mY1we4wX1dxiTA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1BaLjOWNQIAGy62bbGNvUYMQbPsiyZTaPlSfBMqHlk4DoVDB6wZKJ3mlRL6qfR5iZ
-         UofJuUN7rwRrMhplyhlWFy8hUxPDrnamga1MSsWBpZNw+xkjGDq31nlQQP/+5bsGWK
-         3A+GzUZ4uPxyGaKO+PTPFVsmj8AVTsVKe9IJorZE=
+        b=azI4GV1YyOe8twd7iPBS6US4VFU1dLpH4cVprKUpgXFry2Pc+Dke5TEbkstJHGRzI
+         FilWNaB3fG7e1QcgJQLNwajE1FKJ4CMlkk4otVD8IH4gxZc+MyKU/mtdzIFVdXKUwu
+         vpe7GhIPaR8FhbVW9HEvTXA2W4mGhuPWXkFv7U2A=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Yu Zhao <yuzhao@google.com>, Mark Brown <broonie@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.20 051/117] ASoC: use dma_ops of parent device for acp_audio_dma
-Date:   Tue,  8 Jan 2019 14:25:19 -0500
-Message-Id: <20190108192628.121270-51-sashal@kernel.org>
+Cc:     Nathan Chancellor <natechancellor@gmail.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org,
+        linux1394-devel@lists.sourceforge.net
+Subject: [PATCH AUTOSEL 4.20 050/117] media: firewire: Fix app_info parameter type in avc_ca{,_app}_info
+Date:   Tue,  8 Jan 2019 14:25:18 -0500
+Message-Id: <20190108192628.121270-50-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108192628.121270-1-sashal@kernel.org>
 References: <20190108192628.121270-1-sashal@kernel.org>
@@ -56,63 +59,89 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yu Zhao <yuzhao@google.com>
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-[ Upstream commit 23aa128bb28d9da69bb1bdb2b70e50128857884a ]
+[ Upstream commit b2e9a4eda11fd2cb1e6714e9ad3f455c402568ff ]
 
-AMD platform device acp_audio_dma can only be created by parent PCI
-device driver (drivers/gpu/drm/amd/amdgpu/amdgpu_acp.c). Pass struct
-device of the parent to snd_pcm_lib_preallocate_pages() so
-dma_alloc_coherent() can use correct dma_ops. Otherwise, it will
-use default dma_ops which is nommu_dma_ops on x86_64 even when
-IOMMU is enabled and set to non passthrough mode.
+Clang warns:
 
-Though platform device inherits some dma related fields during its
-creation in mfd_add_device(), we can't simply pass its struct device
-to snd_pcm_lib_preallocate_pages() because dma_ops is not among the
-inherited fields. Even it were, drivers/iommu/amd_iommu.c would
-ignore it because get_device_id() doesn't handle platform device.
+drivers/media/firewire/firedtv-avc.c:999:45: warning: implicit
+conversion from 'int' to 'char' changes value from 159 to -97
+[-Wconstant-conversion]
+        app_info[0] = (EN50221_TAG_APP_INFO >> 16) & 0xff;
+                    ~ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~
+drivers/media/firewire/firedtv-avc.c:1000:45: warning: implicit
+conversion from 'int' to 'char' changes value from 128 to -128
+[-Wconstant-conversion]
+        app_info[1] = (EN50221_TAG_APP_INFO >>  8) & 0xff;
+                    ~ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~
+drivers/media/firewire/firedtv-avc.c:1040:44: warning: implicit
+conversion from 'int' to 'char' changes value from 159 to -97
+[-Wconstant-conversion]
+        app_info[0] = (EN50221_TAG_CA_INFO >> 16) & 0xff;
+                    ~ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~
+drivers/media/firewire/firedtv-avc.c:1041:44: warning: implicit
+conversion from 'int' to 'char' changes value from 128 to -128
+[-Wconstant-conversion]
+        app_info[1] = (EN50221_TAG_CA_INFO >>  8) & 0xff;
+                    ~ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~
+4 warnings generated.
 
-This change shouldn't give us any trouble even struct device of the
-parent becomes null or represents some non PCI device in the future,
-because get_dma_ops() correctly handles null struct device or uses
-the default dma_ops if struct device doesn't have it set.
+Change app_info's type to unsigned char to match the type of the
+member msg in struct ca_msg, which is the only thing passed into the
+app_info parameter in this function.
 
-Signed-off-by: Yu Zhao <yuzhao@google.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Link: https://github.com/ClangBuiltLinux/linux/issues/105
+
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/amd/acp-pcm-dma.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/media/firewire/firedtv-avc.c | 6 ++++--
+ drivers/media/firewire/firedtv.h     | 6 ++++--
+ 2 files changed, 8 insertions(+), 4 deletions(-)
 
-diff --git a/sound/soc/amd/acp-pcm-dma.c b/sound/soc/amd/acp-pcm-dma.c
-index cdebab2f8ce5..7ada2c1f4964 100644
---- a/sound/soc/amd/acp-pcm-dma.c
-+++ b/sound/soc/amd/acp-pcm-dma.c
-@@ -1151,18 +1151,21 @@ static int acp_dma_new(struct snd_soc_pcm_runtime *rtd)
- 	struct snd_soc_component *component = snd_soc_rtdcom_lookup(rtd,
- 								    DRV_NAME);
- 	struct audio_drv_data *adata = dev_get_drvdata(component->dev);
-+	struct device *parent = component->dev->parent;
+diff --git a/drivers/media/firewire/firedtv-avc.c b/drivers/media/firewire/firedtv-avc.c
+index 1c933b2cf760..3ef5df1648d7 100644
+--- a/drivers/media/firewire/firedtv-avc.c
++++ b/drivers/media/firewire/firedtv-avc.c
+@@ -968,7 +968,8 @@ static int get_ca_object_length(struct avc_response_frame *r)
+ 	return r->operand[7];
+ }
  
- 	switch (adata->asic_type) {
- 	case CHIP_STONEY:
- 		ret = snd_pcm_lib_preallocate_pages_for_all(rtd->pcm,
- 							    SNDRV_DMA_TYPE_DEV,
--							    NULL, ST_MIN_BUFFER,
-+							    parent,
-+							    ST_MIN_BUFFER,
- 							    ST_MAX_BUFFER);
- 		break;
- 	default:
- 		ret = snd_pcm_lib_preallocate_pages_for_all(rtd->pcm,
- 							    SNDRV_DMA_TYPE_DEV,
--							    NULL, MIN_BUFFER,
-+							    parent,
-+							    MIN_BUFFER,
- 							    MAX_BUFFER);
- 		break;
- 	}
+-int avc_ca_app_info(struct firedtv *fdtv, char *app_info, unsigned int *len)
++int avc_ca_app_info(struct firedtv *fdtv, unsigned char *app_info,
++		    unsigned int *len)
+ {
+ 	struct avc_command_frame *c = (void *)fdtv->avc_data;
+ 	struct avc_response_frame *r = (void *)fdtv->avc_data;
+@@ -1009,7 +1010,8 @@ int avc_ca_app_info(struct firedtv *fdtv, char *app_info, unsigned int *len)
+ 	return ret;
+ }
+ 
+-int avc_ca_info(struct firedtv *fdtv, char *app_info, unsigned int *len)
++int avc_ca_info(struct firedtv *fdtv, unsigned char *app_info,
++		unsigned int *len)
+ {
+ 	struct avc_command_frame *c = (void *)fdtv->avc_data;
+ 	struct avc_response_frame *r = (void *)fdtv->avc_data;
+diff --git a/drivers/media/firewire/firedtv.h b/drivers/media/firewire/firedtv.h
+index 876cdec8329b..009905a19947 100644
+--- a/drivers/media/firewire/firedtv.h
++++ b/drivers/media/firewire/firedtv.h
+@@ -124,8 +124,10 @@ int avc_lnb_control(struct firedtv *fdtv, char voltage, char burst,
+ 		    struct dvb_diseqc_master_cmd *diseqcmd);
+ void avc_remote_ctrl_work(struct work_struct *work);
+ int avc_register_remote_control(struct firedtv *fdtv);
+-int avc_ca_app_info(struct firedtv *fdtv, char *app_info, unsigned int *len);
+-int avc_ca_info(struct firedtv *fdtv, char *app_info, unsigned int *len);
++int avc_ca_app_info(struct firedtv *fdtv, unsigned char *app_info,
++		    unsigned int *len);
++int avc_ca_info(struct firedtv *fdtv, unsigned char *app_info,
++		unsigned int *len);
+ int avc_ca_reset(struct firedtv *fdtv);
+ int avc_ca_pmt(struct firedtv *fdtv, char *app_info, int length);
+ int avc_ca_get_time_date(struct firedtv *fdtv, int *interval);
 -- 
 2.19.1
 
