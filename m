@@ -2,117 +2,181 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.9 required=3.0 tests=DATE_IN_PAST_24_48,FROM_WORDY,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F357C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 14:14:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27166C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 14:15:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D3220206BB
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 14:14:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547043293;
-	bh=D1F4L/xoHiYXuEHbB+jmB0uZHHtvpwnGM9DIfLHRJpY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=vHHReiQW796DfudtNSmoWOsV1HVYgHuSvqCoPt4r8lvEd1UCxrHQzoAkbEq0an9TX
-	 PfZnOVv6ngPFADnQofplSlxBYjKDp4cFrwNXVF5QGtffPKU0n/5w7c1ZP3ZGUDGr2Y
-	 /X+axvPHzIMSs55fGp08YArNyUkBSFZklH3pxHCo=
+	by mail.kernel.org (Postfix) with ESMTP id E519C206BB
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 14:15:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731598AbfAIOOx (ORCPT
+        id S1731611AbfAIOPB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 09:14:53 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:52092 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731355AbfAIOOv (ORCPT
+        Wed, 9 Jan 2019 09:15:01 -0500
+Received: from mail1.bemta25.messagelabs.com ([195.245.230.1]:17688 "EHLO
+        mail1.bemta25.messagelabs.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731138AbfAIONr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 09:14:51 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=D1F4L/xoHiYXuEHbB+jmB0uZHHtvpwnGM9DIfLHRJpY=; b=CzU+RzIazmCSIIOPGXefv5sfX
-        TPWvZ/CmxQIyo2UbQ3PusfaGcNUdA8vQ1NrPpMxKDtHJMdvUdTTLuD67jrhYpZxrwfDzr4DuIjExo
-        u6STvW/j4xT5rgsRiLqQYBQqhLQbmZ4iHAYhHMxI+IpxnUX+b/8yiFLs/WpmAhfzhlnXo=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1ghEcx-00089R-LE; Wed, 09 Jan 2019 14:14:39 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 30C621127528; Wed,  9 Jan 2019 14:14:39 +0000 (GMT)
-Date:   Wed, 9 Jan 2019 14:14:39 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Wed, 9 Jan 2019 09:13:47 -0500
+Received: from [46.226.52.104] (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256 bits))
+        by server-1.bemta.az-a.eu-west-1.aws.symcld.net id 4D/29-19156-391063C5; Wed, 09 Jan 2019 14:13:39 +0000
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupgleJIrShJLcpLzFFi42I5+MHzqO5kRrM
+  Yg9V/5C1Otexht7hy8RCTxdSHT9gs9p7/yGzx7UoHk8XlXXPYLDp39bNabPi+ltGBw2PD5yY2
+  j9ZLf9k8ds66y+6xYFOpx6ZVnWwe+94uY/NYv+Uqi8fnTXIBHFGsmXlJ+RUJrBlTbh5jLNgsV
+  bHmaQNTA+MBsS5GLg4hgXWMEnPO3GTtYuQAcioklqwFMjk5eAUyJZZfn8cOYnMKuEu8bDzCDG
+  ILCbhJTNn9hQnEZhOwkJh84gEbiM0ioCKx5PkRsHphAW+JY39/g80REehilDh/1BtkF7PAIUa
+  JXZt3skMsEJQ4OfMJC4jNLCAhcfDFC6gFBhKnFzSCxSUE7CWmv7/KDHKbhIC+ROOxWIiwocT3
+  Wd+gSswlVjxcwDaBUXAWkqmzkExdwMi0itE8qSgzPaMkNzEzR9fQwEDX0NBI19DSVNfcTC+xS
+  jdRL7VUtzy1uETXUC+xvFivuDI3OSdFLy+1ZBMjMIZSCg777GC8tzz9EKMkB5OSKO+W76YxQn
+  xJ+SmVGYnFGfFFpTmpxYcYZTg4lCR4PRjMYoQEi1LTUyvSMnOA0QyTluDgURLh5QNGtBBvcUF
+  ibnFmOkTqFKOilDgv5y+gmQIgiYzSPLg2WAK5xCgrJczLyMDAIMRTkFqUm1mCKv+KUZyDUUmY
+  twxkO09mXgnc9FdAi5mAFh9iNAFZXJKIkJJqYJy06fR1xei1p/jf1R6auHbBY8vCW5FF6scNF
+  q7Zcvla1+WVy2XqLJpCDh92Pmpw5qNTLqOwF8uC5tDV196tlqqf+THaielgD39Ff5NuP9PxqG
+  uV/h88hM5ZvztwZIf3iQw1VYOfT4QVLMo+PhMK+uXid/d1VsgfHoUfT6Z0Maxk2878cVbkOyY
+  lluKMREMt5qLiRACHsM8jGwMAAA==
+X-Env-Sender: Adam.Thomson.Opensource@diasemi.com
+X-Msg-Ref: server-4.tower-268.messagelabs.com!1547043218!1157657!5
+X-Originating-IP: [193.240.73.197]
+X-SYMC-ESS-Client-Auth: outbound-route-from=pass
+X-StarScan-Received: 
+X-StarScan-Version: 9.31.5; banners=-,-,-
+X-VirusChecked: Checked
+Received: (qmail 6255 invoked from network); 9 Jan 2019 14:13:39 -0000
+Received: from unknown (HELO sw-ex-cashub01.diasemi.com) (193.240.73.197)
+  by server-4.tower-268.messagelabs.com with AES128-SHA256 encrypted SMTP; 9 Jan 2019 14:13:39 -0000
+Received: from swsrvapps-01.diasemi.com (10.20.28.141) by
+ SW-EX-CASHUB01.diasemi.com (10.20.16.140) with Microsoft SMTP Server id
+ 14.3.382.0; Wed, 9 Jan 2019 14:13:37 +0000
+Received: by swsrvapps-01.diasemi.com (Postfix, from userid 22379)      id
+ E60153FBF8; Tue,  8 Jan 2019 09:13:27 +0000 (GMT)
+Message-ID:
+ <ac23ca274965f4c811c0bbbbfe953589a20610c2.1546876084.git.Adam.Thomson.Opensource@diasemi.com>
+In-Reply-To: <cover.1546876084.git.Adam.Thomson.Opensource@diasemi.com>
+References: <cover.1546876084.git.Adam.Thomson.Opensource@diasemi.com>
+From:   Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
+Date:   Tue, 8 Jan 2019 09:13:27 +0000
+Subject: [PATCH 1/2] ASoC: da7219: MCLK should be enabled before DAI clocks
+To:     Mark Brown <broonie@kernel.org>,
         Liam Girdwood <lgirdwood@gmail.com>,
-        linux-tegra@vger.kernel.org, Matthias Reichl <hias@horus.com>,
-        alsa-devel@alsa-project.org,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        Takashi Iwai <tiwai@suse.com>, linux-kernel@vger.kernel.org,
-        Marcel Ziswiler <marcel@ziswiler.com>
-Subject: Re: [alsa-devel] [PATCH v1 3/3] ASoC: soc-core: fix platform name
- vs. of_node assignement
-Message-ID: <20190109141439.GE10405@sirena.org.uk>
-References: <20181218174040.k7u26vnnoplllnwb@camel2.lan>
- <952471da-b355-6471-6c19-5120d6704f81@nvidia.com>
- <87lg3vuc7p.wl-kuninori.morimoto.gx@renesas.com>
- <b5164c93-8be8-1c3d-9415-c895da6ad622@nvidia.com>
- <d1e41ed2-da7c-b46c-bc6d-64cf3e536771@nvidia.com>
- <865d2a3e-bf6b-1f30-1179-7e922c0d0641@nvidia.com>
- <87k1je38w7.wl-kuninori.morimoto.gx@renesas.com>
- <0660a471-3698-2059-4494-ad146518a4ed@nvidia.com>
- <20190109125340.GD10405@sirena.org.uk>
- <52f5f2cf-9260-f9c5-f73d-3c3d5debc86b@nvidia.com>
+        Takashi Iwai <tiwai@suse.com>, Jaroslav Kysela <perex@perex.cz>
+CC:     Akshu Agrawal <Akshu.Agrawal@amd.com>,
+        Daniel Kurtz <djkurtz@google.com>,
+        <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>,
+        Support Opensource <support.opensource@diasemi.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="GxcwvYAGnODwn7V8"
-Content-Disposition: inline
-In-Reply-To: <52f5f2cf-9260-f9c5-f73d-3c3d5debc86b@nvidia.com>
-X-Cookie: VMS version 2.0 ==>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-KSE-AttachmentFiltering-Interceptor-Info: protection disabled
+X-KSE-ServerInfo: sw-ex-cashub01.diasemi.com, 9
+X-KSE-Antivirus-Interceptor-Info: scan successful
+X-KSE-Antivirus-Info: Clean, bases: 09/01/2019 12:09:00
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Message-ID: <20190108091327.mYVFjlSoXWey3X9TXMKYZwBIREbU_Dv3v5mBkaXdWaQ@z>
 
+For platforms using the Common Clock Framework to control the
+codec's DAI clocks, MCLK should be enabled prior to DAI clocks
+being turned on. For some platforms the codec is already
+provided with an MCLK reference and can therefore control MCLK
+itself as it needs to.
 
---GxcwvYAGnODwn7V8
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+To improve functionality MCLK is now added as a parent to the
+DAI clocks, if MCLK was provided, so that if they are enabled MCLK
+will automatically be enabled as a prerequisite by the CCF.
 
-On Wed, Jan 09, 2019 at 02:11:58PM +0000, Jon Hunter wrote:
-> On 09/01/2019 12:53, Mark Brown wrote:
+Signed-off-by: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
+---
+ sound/soc/codecs/da7219.c | 32 ++++++++++++++++++++++++--------
+ 1 file changed, 24 insertions(+), 8 deletions(-)
 
-> >> Yes that is an alternative and I can convert all the Tegra machine
-> >> drivers to use this now. However, that will not solve the problem for
-> >> non-Tegra devices and everyone will have to do this.
+diff --git a/sound/soc/codecs/da7219.c b/sound/soc/codecs/da7219.c
+index e46e9f4..66dd4c2 100644
+--- a/sound/soc/codecs/da7219.c
++++ b/sound/soc/codecs/da7219.c
+@@ -1804,7 +1804,7 @@ static int da7219_dai_clks_is_prepared(struct clk_hw *hw)
+ 	.is_prepared = da7219_dai_clks_is_prepared,
+ };
+ 
+-static void da7219_register_dai_clks(struct snd_soc_component *component)
++static int da7219_register_dai_clks(struct snd_soc_component *component)
+ {
+ 	struct device *dev = component->dev;
+ 	struct da7219_priv *da7219 = snd_soc_component_get_drvdata(component);
+@@ -1812,9 +1812,17 @@ static void da7219_register_dai_clks(struct snd_soc_component *component)
+ 	struct clk_init_data init = {};
+ 	struct clk *dai_clks;
+ 	struct clk_lookup *dai_clks_lookup;
++	const char *parent_name;
++
++	if (da7219->mclk) {
++		parent_name = __clk_get_name(da7219->mclk);
++		init.parent_names = &parent_name;
++		init.num_parents = 1;
++	} else {
++		init.parent_names = NULL;
++		init.num_parents = 0;
++	}
+ 
+-	init.parent_names = NULL;
+-	init.num_parents = 0;
+ 	init.name = pdata->dai_clks_name;
+ 	init.ops = &da7219_dai_clks_ops;
+ 	da7219->dai_clks_hw.init = &init;
+@@ -1823,7 +1831,7 @@ static void da7219_register_dai_clks(struct snd_soc_component *component)
+ 	if (IS_ERR(dai_clks)) {
+ 		dev_warn(dev, "Failed to register DAI clocks: %ld\n",
+ 			 PTR_ERR(dai_clks));
+-		return;
++		return PTR_ERR(dai_clks);
+ 	}
+ 	da7219->dai_clks = dai_clks;
+ 
+@@ -1835,13 +1843,18 @@ static void da7219_register_dai_clks(struct snd_soc_component *component)
+ 		dai_clks_lookup = clkdev_create(dai_clks, pdata->dai_clks_name,
+ 						"%s", dev_name(dev));
+ 		if (!dai_clks_lookup)
+-			dev_warn(dev, "Failed to create DAI clkdev");
++			return -ENOMEM;
+ 		else
+ 			da7219->dai_clks_lookup = dai_clks_lookup;
+ 	}
++
++	return 0;
+ }
+ #else
+-static inline void da7219_register_dai_clks(struct snd_soc_component *component) {}
++static inline int da7219_register_dai_clks(struct snd_soc_component *component)
++{
++	return 0;
++}
+ #endif /* CONFIG_COMMON_CLK */
+ 
+ static void da7219_handle_pdata(struct snd_soc_component *component)
+@@ -1854,8 +1867,6 @@ static void da7219_handle_pdata(struct snd_soc_component *component)
+ 
+ 		da7219->wakeup_source = pdata->wakeup_source;
+ 
+-		da7219_register_dai_clks(component);
+-
+ 		/* Mic Bias voltages */
+ 		switch (pdata->micbias_lvl) {
+ 		case DA7219_MICBIAS_1_6V:
+@@ -1947,6 +1958,11 @@ static int da7219_probe(struct snd_soc_component *component)
+ 		}
+ 	}
+ 
++	/* Register CCF DAI clock control */
++	ret = da7219_register_dai_clks(component);
++	if (ret)
++		return ret;
++
+ 	/* Default PC counter to free-running */
+ 	snd_soc_component_update_bits(component, DA7219_PC_COUNT, DA7219_PC_FREERUN_MASK,
+ 			    DA7219_PC_FREERUN_MASK);
+-- 
+1.9.1
 
-> > We're going to have to go through another round of conversions that
-> > touch everything at some point no matter what :/
-
-> Do you have a preference here? Do you think that we can fix-up the
-> soc-core or should I go ahead and migrate the Tegra machine driver to
-> workaround this issue now?
-
-We're going to need to migrate Tegra regardless so it'd be good to do
-that whatever happens, I'm intending to try to properly review the patch
-today.
-
---GxcwvYAGnODwn7V8
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlw2Ac4ACgkQJNaLcl1U
-h9AjYgf9EvgU+L0fi5qtHIdBZBOJEXt8zxHplyCjLWZSQvJ9ZasVIZWn40mjttXT
-JZ1PnMRftcHZ9OB3LEFRLVI27coE+bc9tAECVuWpIYsSih4pdLaFxz7RjlPnucwq
-yd7ERUKkF8Z5dmqo+JaKoa3nzPsCynsBRN6ETD3u2zIDFbcYeA9Up0ImO/5G1TjD
-jhkMDmZ/WqgRmF8IxnFQGYpNsW2n3GHr7Whbt75T/czieOw1/6DFBaxDc9JM3SKZ
-8ac30r52eXFqtm6Pb1exD3MUEwblll1GeKZwA4BPiFSPsI8fM95rZ/J2Mli9WL04
-xtSwIa0yvoHTkR6DgyqDu5dhfBTaUA==
-=+KSw
------END PGP SIGNATURE-----
-
---GxcwvYAGnODwn7V8--
