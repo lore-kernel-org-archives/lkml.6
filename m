@@ -2,128 +2,74 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 008C9C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 22:50:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CF08C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 22:51:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C82FB2146F
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 22:50:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 18CAA214C6
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 22:51:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730335AbfAHWuP convert rfc822-to-8bit (ORCPT
+        id S1729860AbfAHWvO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 17:50:15 -0500
-Received: from mail-oln040092072090.outbound.protection.outlook.com ([40.92.72.90]:6338
-        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729328AbfAHWuO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 17:50:14 -0500
-Received: from AM5EUR03FT023.eop-EUR03.prod.protection.outlook.com
- (10.152.16.57) by AM5EUR03HT201.eop-EUR03.prod.protection.outlook.com
- (10.152.17.252) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1382.18; Tue, 8 Jan
- 2019 22:50:11 +0000
-Received: from AM6PR07MB5608.eurprd07.prod.outlook.com (10.152.16.52) by
- AM5EUR03FT023.mail.protection.outlook.com (10.152.16.169) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1382.18 via Frontend Transport; Tue, 8 Jan 2019 22:50:11 +0000
-Received: from AM6PR07MB5608.eurprd07.prod.outlook.com
- ([fe80::68b1:73c3:455d:de2a]) by AM6PR07MB5608.eurprd07.prod.outlook.com
- ([fe80::68b1:73c3:455d:de2a%2]) with mapi id 15.20.1516.010; Tue, 8 Jan 2019
- 22:50:10 +0000
-From:   Bernd Edlinger <bernd.edlinger@hotmail.de>
-To:     Ping-Ke Shih <pkshih@realtek.com>,
-        Larry Finger <Larry.Finger@lwfinger.net>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Andrew Lunn <andrew@lunn.ch>
-Subject: [PATCH v4 4/4] rtlwifi: Don't clear num_rx_inperiod too early
-Thread-Topic: [PATCH v4 4/4] rtlwifi: Don't clear num_rx_inperiod too early
-Thread-Index: AQHUp6SC8r1w83ZuyUSZa/fZVTIQLw==
-Date:   Tue, 8 Jan 2019 22:50:09 +0000
-Message-ID: <AM6PR07MB56088926A38CC1188EBCB56EE48A0@AM6PR07MB5608.eurprd07.prod.outlook.com>
-Accept-Language: en-US, en-GB, de-DE
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: AM6PR0202CA0044.eurprd02.prod.outlook.com
- (2603:10a6:20b:3a::21) To AM6PR07MB5608.eurprd07.prod.outlook.com
- (2603:10a6:20b:6f::21)
-x-incomingtopheadermarker: OriginalChecksum:F87B65D8440940669ABD98019F1F40C3C9AA84B70A8C575266543B5B9B8D58AD;UpperCasedChecksum:7BF64386373019B204CA359039A02BCAA850BAC3FE8A0156804CB61DBF796372;SizeAsReceived:8799;Count:62
-x-ms-exchange-messagesentrepresentingtype: 1
-x-tmn:  [YdZb3YgA7+wtqWGa8Ch/4KNZo50jDcQR]
-x-microsoft-original-message-id: <1e89861e-c921-9100-7d5a-224ed33207ca@hotmail.de>
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM5EUR03HT201;6:3Gn7zrFaNX5gCfLYDHPyzA9zDENvf8GPTHOfbBpDyx7wvt/zXXpSuHVIIBlPdpkC+9WQpYQWuJTfIR+ohUfage3pCh5rCvJqr21/GlAd8XXYBEzxEjz0Y/z/xuzkl4YKItgbCSUrXi1uB1RN91X3JRUg+xB6RA5S2xh2n4eN5cYuQ0nmCL3OpLKeRlghOV8R1fb0B6X2q0jFAz9Hx+3fq9F7DTS6JxowkqnVL1iI861KINrPYDJN9T+fJIAtXdpdQCbNhFbu586ZHWeT1pgE088qDa//gTDq1cdK0f/7Cs4ongyFa1OfRG3O7RWPCVxF4iOgefnBWSZgXrSYQ7J79WG3JG1p3acrpi3WnrsOg6ypF6jF6eoq9tALkyzpRGTULx2OZMy6N5yj7I/+MbJSjOhjTkWRx68HUGyfhXKU0b8NlekXfnYrN1t6nUaY5mwtoK2LMtQu5/HjQTKUKxWEpg==;5:mvQcGi4t70sojHyiF5Kl+Oze4IJQtZbbx5E0ns+Ejuti32TJiMz2snsMytB8E0G0Wi3+8BXT7gfHJlvMTrB8QaPKBIpoyFp3ktA26Bb7O2oergqoiELad63JijGtIi6r0feJyyh1I/6FavlJGDCIYOSLYUTUKNlrwyDPUcL07BQ=;7:p6/Y6SAECtam19WXbFdXzyKf5aYGAbUU6QIUcRT6pxzb2Soz0PqROzyB4UuJMojhYBspc37g6OctdmKXdmRsx5r99mTY4ETSBcwhvcLJbraPvQvXQ3FPl8K6slFJsRF+cPnMw+hB9efbQoTxG8do/A==
-x-incomingheadercount: 62
-x-eopattributedmessage: 0
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(20181119063)(201702061078)(5061506573)(5061507331)(1603103135)(2017031320274)(2017031323274)(2017031324274)(2017031322404)(1601125500)(1603101475)(1701031045);SRVR:AM5EUR03HT201;
-x-ms-traffictypediagnostic: AM5EUR03HT201:
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(4566010)(82015058);SRVR:AM5EUR03HT201;BCL:0;PCL:0;RULEID:;SRVR:AM5EUR03HT201;
-x-microsoft-antispam-message-info: U3ITlpjxp2S+yx7sBu4VgJ6Zf0V4e96entPbPZIQObvVXKKgCKvRcF3kayxfnAkC
-Content-Type: text/plain; charset="Windows-1252"
-Content-ID: <710DD038E4CCE24DB9CC5DE021EDF983@eurprd07.prod.outlook.com>
-Content-Transfer-Encoding: 8BIT
+        Tue, 8 Jan 2019 17:51:14 -0500
+Received: from kvm5.telegraphics.com.au ([98.124.60.144]:56610 "EHLO
+        kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729418AbfAHWvN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 17:51:13 -0500
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by kvm5.telegraphics.com.au (Postfix) with ESMTP id BA86822C33;
+        Tue,  8 Jan 2019 17:51:09 -0500 (EST)
+Date:   Wed, 9 Jan 2019 09:51:48 +1100 (AEDT)
+From:   Finn Thain <fthain@telegraphics.com.au>
+To:     Michael Ellerman <mpe@ellerman.id.au>
+cc:     Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-m68k <linux-m68k@lists.linux-m68k.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+Subject: Re: [PATCH v8 24/25] powerpc: Adopt nvram module for PPC64
+In-Reply-To: <87h8ejts74.fsf@concordia.ellerman.id.au>
+Message-ID: <alpine.LNX.2.21.1901090947170.11@nippy.intranet>
+References: <cover.1545784679.git.fthain@telegraphics.com.au> <2fe2b8e6395aeacfafcbde590a50922d4e632189.1545784679.git.fthain@telegraphics.com.au> <CAK8P3a2p91XJfJuSCZqRLRgC-aP3LR1tMK2DDxTiSuD8_FOg8Q@mail.gmail.com> <8736q5xst1.fsf@concordia.ellerman.id.au>
+ <alpine.LNX.2.21.1901071533060.30@nippy.intranet> <87h8ejts74.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: d4d70346-2c10-4f39-8c00-e767963926d9
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9aedd9d2-d39e-4f44-498f-08d675bba465
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: d4d70346-2c10-4f39-8c00-e767963926d9
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Jan 2019 22:50:09.3777
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Internet
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM5EUR03HT201
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch moves the clearing of rtlpriv->link_info.num_rx_inperiod in
-rtl_watchdog_wq_callback a few lines down.
+On Tue, 8 Jan 2019, Michael Ellerman wrote:
 
-This is necessary since it is still used in the "AP off" detection
-code block. Moved clearing of rtlpriv->link_info.num_rx_inperiod
-as well for consistency.
+> > The reason why that doesn't work boils down to introspection. (This 
+> > was mentioned elsewhere in this email thread.) For example, we 
+> > presently have code like this,
+> >
+> > ssize_t nvram_get_size(void)
+> > {
+> >        if (ppc_md.nvram_size)
+> >                return ppc_md.nvram_size();
+> >        return -1;
+> > }
+> > EXPORT_SYMBOL(nvram_get_size);
+> >
+> > This construction means we get to decide at run-time which of the NVRAM 
+> > functions should be used. (Whereas your example makes a build-time decision.)
+> 
+> Right, but we only need to make a runtime decision on powerpc (right?).
 
-Signed-off-by: Bernd Edlinger <bernd.edlinger@hotmail.de>
----
-v2: Improved patch description.
+It's needed in many places outside of powerpc. Otherwise the caller can't 
+determine at run-time which ops are implemented.
 
-v3: Make the title fit in one line.
+Hence you have to duplicate the caller for each supported configuration 
+that you build.
 
-v4: Try to fix the line endings the message body.
----
- drivers/net/wireless/realtek/rtlwifi/base.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Already, this precludes a shared misc device implementation and belies the 
+"generic" in drivers/char/generic_nvram.c.
 
-diff --git a/drivers/net/wireless/realtek/rtlwifi/base.c b/drivers/net/wireless/realtek/rtlwifi/base.c
-index ef9b502..7aa68fe 100644
---- a/drivers/net/wireless/realtek/rtlwifi/base.c
-+++ b/drivers/net/wireless/realtek/rtlwifi/base.c
-@@ -2172,8 +2172,6 @@ void rtl_watchdog_wq_callback(void *data)
- 		;
- 	}
- 
--	rtlpriv->link_info.num_rx_inperiod = 0;
--	rtlpriv->link_info.num_tx_inperiod = 0;
- 	for (tid = 0; tid <= 7; tid++)
- 		rtlpriv->link_info.tidtx_inperiod[tid] = 0;
- 
-@@ -2236,6 +2234,8 @@ void rtl_watchdog_wq_callback(void *data)
- 			rtlpriv->btcoexist.btc_info.in_4way = false;
- 	}
- 
-+	rtlpriv->link_info.num_rx_inperiod = 0;
-+	rtlpriv->link_info.num_tx_inperiod = 0;
- 	rtlpriv->link_info.bcn_rx_inperiod = 0;
- 
- 	/* <6> scan list */
 -- 
-1.9.1
