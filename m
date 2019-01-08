@@ -2,52 +2,50 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DAE7CC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:44:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06EDBC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:44:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9DF402063F
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:44:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CA2812063F
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:44:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546976681;
-	bh=gRXeE1hDMgfi3F4rfdx46LtRdoYNsJ0O4UGzKZxXTvY=;
+	s=default; t=1546976686;
+	bh=4KDyV6Tr/hzbahdDpdDWXcytxgu+hpS2PZymXEMzkfg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ycwvjpSS0zRWxcKLjMuzVn5YmJ06uHlcA5KLTr2qLKCQEovXOQjzEEco2oqI/lvoF
-	 Hxc5xxqDVm9t4WY1VYLOX3xf2KxJEcZG5aXDK9DRkV/m37GICEuC+HNUfrQ5bj6ACM
-	 mdasj2CidYM8U6pWTaN5RN+pKQcbcLaXycObnqhI=
+	b=YhA3RU3nKFNXMJNFD7WhE7N1tF1LywfOi8TcyVs/mp4Ul5YhOCSJrBhfGoofpxqoT
+	 7Ij5q2ciBG4rWXUsoDFL05fSQ5Gb8GsGZd9WKxzHQUjTaviOY8pCeTyw+JuTGUSXsf
+	 +TL8mC3A2VqH3qOchh9ssAuKxUGPahmXwlEjcSLw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731736AbfAHTde (ORCPT
+        id S1732068AbfAHToq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:33:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42242 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 14:44:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42318 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731711AbfAHTd3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:33:29 -0500
+        id S1731730AbfAHTdc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:33:32 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 87E1E20645;
-        Tue,  8 Jan 2019 19:33:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7076A20827;
+        Tue,  8 Jan 2019 19:33:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546976008;
-        bh=gRXeE1hDMgfi3F4rfdx46LtRdoYNsJ0O4UGzKZxXTvY=;
+        s=default; t=1546976012;
+        bh=4KDyV6Tr/hzbahdDpdDWXcytxgu+hpS2PZymXEMzkfg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BcjIfrrMODKAlr5Ohq8JmzPpvW2m4n4T9t5OTyYe0Oagfm8uyD/1FBIYfeliXM4wE
-         tr/meFdQSm5NVepYq6m3aY7fj+3J/vjkF4t3YajTrgpu0ar7fdUIXRjNEP2f+ekuEf
-         uEQ4UKJP3JWkJPjzKiwwh8MF3Qv2mF/KRoDeEk3M=
+        b=cleoXSZq/PyrKMlQoVTFEMqZigVWfE/ddvhojRdj5361wgeQXmJrbOa/Vhy9/eHC4
+         wmTmM7hs85pqRAfOItPv7SDo/+gidBeuVGsvm5zEFR4SJiOz8NXjt9KKhOUzgivYgP
+         0h/4cHg9ljLt0XJ9ZNyMGPi4rUq+v7Yj41EiEQKM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Nikos Tsironis <ntsironis@arrikto.com>,
-        Ilias Tsitsimpis <iliastsi@arrikto.com>,
-        Mike Snitzer <snitzer@redhat.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 41/53] dm snapshot: Fix excessive memory usage and workqueue stalls
-Date:   Tue,  8 Jan 2019 14:32:09 -0500
-Message-Id: <20190108193222.123316-41-sashal@kernel.org>
+Cc:     Takashi Sakamoto <o-takashi@sakamocchi.jp>,
+        Takashi Iwai <tiwai@suse.de>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 44/53] ALSA: bebob: fix model-id of unit for Apogee Ensemble
+Date:   Tue,  8 Jan 2019 14:32:12 -0500
+Message-Id: <20190108193222.123316-44-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108193222.123316-1-sashal@kernel.org>
 References: <20190108193222.123316-1-sashal@kernel.org>
@@ -59,225 +57,93 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nikos Tsironis <ntsironis@arrikto.com>
+From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
 
-[ Upstream commit 721b1d98fb517ae99ab3b757021cf81db41e67be ]
+[ Upstream commit 644b2e97405b0b74845e1d3c2b4fe4c34858062b ]
 
-kcopyd has no upper limit to the number of jobs one can allocate and
-issue. Under certain workloads this can lead to excessive memory usage
-and workqueue stalls. For example, when creating multiple dm-snapshot
-targets with a 4K chunk size and then writing to the origin through the
-page cache. Syncing the page cache causes a large number of BIOs to be
-issued to the dm-snapshot origin target, which itself issues an even
-larger (because of the BIO splitting taking place) number of kcopyd
-jobs.
+This commit fixes hard-coded model-id for an unit of Apogee Ensemble with
+a correct value. This unit uses DM1500 ASIC produced ArchWave AG (formerly
+known as BridgeCo AG).
 
-Running the following test, from the device mapper test suite [1],
+I note that this model supports three modes in the number of data channels
+in tx/rx streams; 8 ch pairs, 10 ch pairs, 18 ch pairs. The mode is
+switched by Vendor-dependent AV/C command, like:
 
-  dmtest run --suite snapshot -n many_snapshots_of_same_volume_N
+$ cd linux-firewire-utils
+$ ./firewire-request /dev/fw1 fcp 0x00ff000003dbeb0600000000 (8ch pairs)
+$ ./firewire-request /dev/fw1 fcp 0x00ff000003dbeb0601000000 (10ch pairs)
+$ ./firewire-request /dev/fw1 fcp 0x00ff000003dbeb0602000000 (18ch pairs)
 
-, with 8 active snapshots, results in the kcopyd job slab cache growing
-to 10G. Depending on the available system RAM this can lead to the OOM
-killer killing user processes:
+When switching between different mode, the unit disappears from IEEE 1394
+bus, then appears on the bus with different combination of stream formats.
+In a mode of 18 ch pairs, available sampling rate is up to 96.0 kHz, else
+up to 192.0 kHz.
 
-[463.492878] kthreadd invoked oom-killer: gfp_mask=0x6040c0(GFP_KERNEL|__GFP_COMP),
-              nodemask=(null), order=1, oom_score_adj=0
-[463.492894] kthreadd cpuset=/ mems_allowed=0
-[463.492948] CPU: 7 PID: 2 Comm: kthreadd Not tainted 4.19.0-rc7 #3
-[463.492950] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
-[463.492952] Call Trace:
-[463.492964]  dump_stack+0x7d/0xbb
-[463.492973]  dump_header+0x6b/0x2fc
-[463.492987]  ? lockdep_hardirqs_on+0xee/0x190
-[463.493012]  oom_kill_process+0x302/0x370
-[463.493021]  out_of_memory+0x113/0x560
-[463.493030]  __alloc_pages_slowpath+0xf40/0x1020
-[463.493055]  __alloc_pages_nodemask+0x348/0x3c0
-[463.493067]  cache_grow_begin+0x81/0x8b0
-[463.493072]  ? cache_grow_begin+0x874/0x8b0
-[463.493078]  fallback_alloc+0x1e4/0x280
-[463.493092]  kmem_cache_alloc_node+0xd6/0x370
-[463.493098]  ? copy_process.part.31+0x1c5/0x20d0
-[463.493105]  copy_process.part.31+0x1c5/0x20d0
-[463.493115]  ? __lock_acquire+0x3cc/0x1550
-[463.493121]  ? __switch_to_asm+0x34/0x70
-[463.493129]  ? kthread_create_worker_on_cpu+0x70/0x70
-[463.493135]  ? finish_task_switch+0x90/0x280
-[463.493165]  _do_fork+0xe0/0x6d0
-[463.493191]  ? kthreadd+0x19f/0x220
-[463.493233]  kernel_thread+0x25/0x30
-[463.493235]  kthreadd+0x1bf/0x220
-[463.493242]  ? kthread_create_on_cpu+0x90/0x90
-[463.493248]  ret_from_fork+0x3a/0x50
-[463.493279] Mem-Info:
-[463.493285] active_anon:20631 inactive_anon:4831 isolated_anon:0
-[463.493285]  active_file:80216 inactive_file:80107 isolated_file:435
-[463.493285]  unevictable:0 dirty:51266 writeback:109372 unstable:0
-[463.493285]  slab_reclaimable:31191 slab_unreclaimable:3483521
-[463.493285]  mapped:526 shmem:4903 pagetables:1759 bounce:0
-[463.493285]  free:33623 free_pcp:2392 free_cma:0
-...
-[463.493489] Unreclaimable slab info:
-[463.493513] Name                      Used          Total
-[463.493522] bio-6                   1028KB       1028KB
-[463.493525] bio-5                   1028KB       1028KB
-[463.493528] dm_snap_pending_exception     236783KB     243789KB
-[463.493531] dm_exception              41KB         42KB
-[463.493534] bio-4                   1216KB       1216KB
-[463.493537] bio-3                 439396KB     439396KB
-[463.493539] kcopyd_job           6973427KB    6973427KB
-...
-[463.494340] Out of memory: Kill process 1298 (ruby2.3) score 1 or sacrifice child
-[463.494673] Killed process 1298 (ruby2.3) total-vm:435740kB, anon-rss:20180kB, file-rss:4kB, shmem-rss:0kB
-[463.506437] oom_reaper: reaped process 1298 (ruby2.3), now anon-rss:0kB, file-rss:0kB, shmem-rss:0kB
+$ ./hinawa-config-rom-printer /dev/fw1
+{ 'bus-info': { 'adj': False,
+                'bmc': True,
+                'chip_ID': 21474898341,
+                'cmc': True,
+                'cyc_clk_acc': 100,
+                'generation': 2,
+                'imc': True,
+                'isc': True,
+                'link_spd': 2,
+                'max_ROM': 1,
+                'max_rec': 512,
+                'name': '1394',
+                'node_vendor_ID': 987,
+                'pmc': False},
+  'root-directory': [ ['HARDWARE_VERSION', 19],
+                      [ 'NODE_CAPABILITIES',
+                        { 'addressing': {'64': True, 'fix': True, 'prv': False},
+                          'misc': {'int': False, 'ms': False, 'spt': True},
+                          'state': { 'atn': False,
+                                     'ded': False,
+                                     'drq': True,
+                                     'elo': False,
+                                     'init': False,
+                                     'lst': True,
+                                     'off': False},
+                          'testing': {'bas': False, 'ext': False}}],
+                      ['VENDOR', 987],
+                      ['DESCRIPTOR', 'Apogee Electronics'],
+                      ['MODEL', 126702],
+                      ['DESCRIPTOR', 'Ensemble'],
+                      ['VERSION', 5297],
+                      [ 'UNIT',
+                        [ ['SPECIFIER_ID', 41005],
+                          ['VERSION', 65537],
+                          ['MODEL', 126702],
+                          ['DESCRIPTOR', 'Ensemble']]],
+                      [ 'DEPENDENT_INFO',
+                        [ ['SPECIFIER_ID', 2037],
+                          ['VERSION', 1],
+                          [(58, 'IMMEDIATE'), 16777159],
+                          [(59, 'IMMEDIATE'), 1048576],
+                          [(60, 'IMMEDIATE'), 16777159],
+                          [(61, 'IMMEDIATE'), 6291456]]]]}
 
-Moreover, issuing a large number of kcopyd jobs results in kcopyd
-hogging the CPU, while processing them. As a result, processing of work
-items, queued for execution on the same CPU as the currently running
-kcopyd thread, is stalled for long periods of time, hurting performance.
-Running the aforementioned test we get, in dmesg, messages like the
-following:
-
-[67501.194592] BUG: workqueue lockup - pool cpus=4 node=0 flags=0x0 nice=0 stuck for 27s!
-[67501.195586] Showing busy workqueues and worker pools:
-[67501.195591] workqueue events: flags=0x0
-[67501.195597]   pwq 8: cpus=4 node=0 flags=0x0 nice=0 active=1/256
-[67501.195611]     pending: cache_reap
-[67501.195641] workqueue mm_percpu_wq: flags=0x8
-[67501.195645]   pwq 8: cpus=4 node=0 flags=0x0 nice=0 active=1/256
-[67501.195656]     pending: vmstat_update
-[67501.195682] workqueue kblockd: flags=0x18
-[67501.195687]   pwq 5: cpus=2 node=0 flags=0x0 nice=-20 active=1/256
-[67501.195698]     pending: blk_timeout_work
-[67501.195753] workqueue kcopyd: flags=0x8
-[67501.195757]   pwq 8: cpus=4 node=0 flags=0x0 nice=0 active=1/256
-[67501.195768]     pending: do_work [dm_mod]
-[67501.195802] workqueue kcopyd: flags=0x8
-[67501.195806]   pwq 8: cpus=4 node=0 flags=0x0 nice=0 active=1/256
-[67501.195817]     pending: do_work [dm_mod]
-[67501.195834] workqueue kcopyd: flags=0x8
-[67501.195838]   pwq 8: cpus=4 node=0 flags=0x0 nice=0 active=1/256
-[67501.195848]     pending: do_work [dm_mod]
-[67501.195881] workqueue kcopyd: flags=0x8
-[67501.195885]   pwq 8: cpus=4 node=0 flags=0x0 nice=0 active=1/256
-[67501.195896]     pending: do_work [dm_mod]
-[67501.195920] workqueue kcopyd: flags=0x8
-[67501.195924]   pwq 8: cpus=4 node=0 flags=0x0 nice=0 active=2/256
-[67501.195935]     in-flight: 67:do_work [dm_mod]
-[67501.195945]     pending: do_work [dm_mod]
-[67501.195961] pool 8: cpus=4 node=0 flags=0x0 nice=0 hung=27s workers=3 idle: 129 23765
-
-The root cause for these issues is the way dm-snapshot uses kcopyd. In
-particular, the lack of an explicit or implicit limit to the maximum
-number of in-flight COW jobs. The merging path is not affected because
-it implicitly limits the in-flight kcopyd jobs to one.
-
-Fix these issues by using a semaphore to limit the maximum number of
-in-flight kcopyd jobs. We grab the semaphore before allocating a new
-kcopyd job in start_copy() and start_full_bio() and release it after the
-job finishes in copy_callback().
-
-The initial semaphore value is configurable through a module parameter,
-to allow fine tuning the maximum number of in-flight COW jobs. Setting
-this parameter to zero initializes the semaphore to INT_MAX.
-
-A default value of 2048 maximum in-flight kcopyd jobs was chosen. This
-value was decided experimentally as a trade-off between memory
-consumption, stalling the kernel's workqueues and maintaining a high
-enough throughput.
-
-Re-running the aforementioned test:
-
-  * Workqueue stalls are eliminated
-  * kcopyd's job slab cache uses a maximum of 130MB
-  * The time taken by the test to write to the snapshot-origin target is
-    reduced from 05m20.48s to 03m26.38s
-
-[1] https://github.com/jthornber/device-mapper-test-suite
-
-Signed-off-by: Nikos Tsironis <ntsironis@arrikto.com>
-Signed-off-by: Ilias Tsitsimpis <iliastsi@arrikto.com>
-Signed-off-by: Mike Snitzer <snitzer@redhat.com>
+Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/md/dm-snap.c | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+ sound/firewire/bebob/bebob.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/md/dm-snap.c b/drivers/md/dm-snap.c
-index a0613bd8ed00..b502debc6df3 100644
---- a/drivers/md/dm-snap.c
-+++ b/drivers/md/dm-snap.c
-@@ -19,6 +19,7 @@
- #include <linux/vmalloc.h>
- #include <linux/log2.h>
- #include <linux/dm-kcopyd.h>
-+#include <linux/semaphore.h>
- 
- #include "dm.h"
- 
-@@ -105,6 +106,9 @@ struct dm_snapshot {
- 	/* The on disk metadata handler */
- 	struct dm_exception_store *store;
- 
-+	/* Maximum number of in-flight COW jobs. */
-+	struct semaphore cow_count;
-+
- 	struct dm_kcopyd_client *kcopyd_client;
- 
- 	/* Wait for events based on state_bits */
-@@ -145,6 +149,19 @@ struct dm_snapshot {
- #define RUNNING_MERGE          0
- #define SHUTDOWN_MERGE         1
- 
-+/*
-+ * Maximum number of chunks being copied on write.
-+ *
-+ * The value was decided experimentally as a trade-off between memory
-+ * consumption, stalling the kernel's workqueues and maintaining a high enough
-+ * throughput.
-+ */
-+#define DEFAULT_COW_THRESHOLD 2048
-+
-+static int cow_threshold = DEFAULT_COW_THRESHOLD;
-+module_param_named(snapshot_cow_threshold, cow_threshold, int, 0644);
-+MODULE_PARM_DESC(snapshot_cow_threshold, "Maximum number of chunks being copied on write");
-+
- DECLARE_DM_KCOPYD_THROTTLE_WITH_MODULE_PARM(snapshot_copy_throttle,
- 		"A percentage of time allocated for copy on write");
- 
-@@ -1189,6 +1206,8 @@ static int snapshot_ctr(struct dm_target *ti, unsigned int argc, char **argv)
- 		goto bad_hash_tables;
- 	}
- 
-+	sema_init(&s->cow_count, (cow_threshold > 0) ? cow_threshold : INT_MAX);
-+
- 	s->kcopyd_client = dm_kcopyd_client_create(&dm_kcopyd_throttle);
- 	if (IS_ERR(s->kcopyd_client)) {
- 		r = PTR_ERR(s->kcopyd_client);
-@@ -1560,6 +1579,7 @@ static void copy_callback(int read_err, unsigned long write_err, void *context)
- 		}
- 		list_add(&pe->out_of_order_entry, lh);
- 	}
-+	up(&s->cow_count);
- }
- 
- /*
-@@ -1583,6 +1603,7 @@ static void start_copy(struct dm_snap_pending_exception *pe)
- 	dest.count = src.count;
- 
- 	/* Hand over to kcopyd */
-+	down(&s->cow_count);
- 	dm_kcopyd_copy(s->kcopyd_client, &src, 1, &dest, 0, copy_callback, pe);
- }
- 
-@@ -1602,6 +1623,7 @@ static void start_full_bio(struct dm_snap_pending_exception *pe,
- 	pe->full_bio = bio;
- 	pe->full_bio_end_io = bio->bi_end_io;
- 
-+	down(&s->cow_count);
- 	callback_data = dm_kcopyd_prepare_callback(s->kcopyd_client,
- 						   copy_callback, pe);
- 
+diff --git a/sound/firewire/bebob/bebob.c b/sound/firewire/bebob/bebob.c
+index 93676354f87f..de4af8a41ff0 100644
+--- a/sound/firewire/bebob/bebob.c
++++ b/sound/firewire/bebob/bebob.c
+@@ -434,7 +434,7 @@ static const struct ieee1394_device_id bebob_id_table[] = {
+ 	/* Apogee Electronics, DA/AD/DD-16X (X-FireWire card) */
+ 	SND_BEBOB_DEV_ENTRY(VEN_APOGEE, 0x00010048, &spec_normal),
+ 	/* Apogee Electronics, Ensemble */
+-	SND_BEBOB_DEV_ENTRY(VEN_APOGEE, 0x00001eee, &spec_normal),
++	SND_BEBOB_DEV_ENTRY(VEN_APOGEE, 0x01eeee, &spec_normal),
+ 	/* ESI, Quatafire610 */
+ 	SND_BEBOB_DEV_ENTRY(VEN_ESI, 0x00010064, &spec_normal),
+ 	/* AcousticReality, eARMasterOne */
 -- 
 2.19.1
 
