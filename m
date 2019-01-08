@@ -4,53 +4,57 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69194C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:44:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3A46C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:44:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3864B206BB
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:44:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B7DED2063F
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:44:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546976661;
-	bh=3unuNo+wFotaRVLvdTKE1RSGLPtodCmEMhyVTGPNOvc=;
+	s=default; t=1546976676;
+	bh=Z2P1XJyzm3GX2FgR4hSOBtGDRsxLV7hUmQp7WgYrPuA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=FyJrjvDnKLubEPFfH6ey80U6Jdp5pzwxvfmkEwXhrJOCg4t8965q3gB6RvYQdUsTC
-	 sZUkrLL1Ox02vdXwR/9hyKjU4fobbI8YLLXTd4TvJW0e610Ph644b46iGCkpo0My7o
-	 rIwmfZZzb5j95v8wi4X79OassMtsd8MlCDj9iTIY=
+	b=hUPKyGXdc6bxAm9w2Fz1mU1VrK3fp/45RHGpScIgvRCY2tX2GJsYdO2dwO2EYnPWq
+	 OXBcTIWafWkXlWZLFgJ62g/jEoAzPMok8sWpvh+OPa7Iv5kZFKND9wpkaHa/E6ITZe
+	 LF0BlnjulvxUpYRvalVxM5GQD1+bE5lpE+8JDZFU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732548AbfAHToU (ORCPT
+        id S1732118AbfAHTof (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:44:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42462 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 14:44:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42352 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731771AbfAHTdl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:33:41 -0500
+        id S1731065AbfAHTdf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:33:35 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8AB8E20645;
-        Tue,  8 Jan 2019 19:33:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 62608205C9;
+        Tue,  8 Jan 2019 19:33:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546976019;
-        bh=3unuNo+wFotaRVLvdTKE1RSGLPtodCmEMhyVTGPNOvc=;
+        s=default; t=1546976013;
+        bh=Z2P1XJyzm3GX2FgR4hSOBtGDRsxLV7hUmQp7WgYrPuA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=H7/qirmE6VYCZt4Avlol0sWDKWLQUxWxCNsniLBGmUtDTNUrVEJ8yIsYa1e5NGpAA
-         jaoNolfoQfaJyLuxXy96MsGVNOIoO1AeHqTbvZwDGeFoquZQvQdorMjHGYSsTpOMSa
-         y0a4MZycP63oK5vagR8RvJXrkVroTmlr72A6GhMU=
+        b=coJ7Gn2iErxVKRfMCuutP3oehy2rvrg8/i+CgIivjK0GC0krchzWt6kWC4vUl4Ji1
+         4vOvm1R3fMC92cL+TsFhQxsqkOT5hjGQ/P2JXZExS+YpsaNlGtujLdrKtQVdG5yuvo
+         FlxpcSOEDoqylX1sMwdp2VbBZWAQqsd8/eF0uddM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Junxiao Bi <junxiao.bi@oracle.com>, Jun Piao <piaojun@huawei.com>,
-        Mark Fasheh <mfasheh@versity.com>,
-        Joel Becker <jlbec@evilplan.org>,
-        Changwei Ge <ge.changwei@h3c.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Ramalingam C <ramalingam.c@intel.com>,
+        Arend van Spriel <aspriel@gmail.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Joe Perches <joe@perches.com>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 50/53] ocfs2: fix panic due to unrecovered local alloc
-Date:   Tue,  8 Jan 2019 14:32:18 -0500
-Message-Id: <20190108193222.123316-50-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 45/53] sysfs: Disable lockdep for driver bind/unbind files
+Date:   Tue,  8 Jan 2019 14:32:13 -0500
+Message-Id: <20190108193222.123316-45-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108193222.123316-1-sashal@kernel.org>
 References: <20190108193222.123316-1-sashal@kernel.org>
@@ -62,105 +66,174 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Junxiao Bi <junxiao.bi@oracle.com>
+From: Daniel Vetter <daniel.vetter@ffwll.ch>
 
-[ Upstream commit 532e1e54c8140188e192348c790317921cb2dc1c ]
+[ Upstream commit 4f4b374332ec0ae9c738ff8ec9bed5cd97ff9adc ]
 
-mount.ocfs2 ignore the inconsistent error that journal is clean but
-local alloc is unrecovered.  After mount, local alloc not empty, then
-reserver cluster didn't alloc a new local alloc window, reserveration
-map is empty(ocfs2_reservation_map.m_bitmap_len = 0), that triggered the
-following panic.
+This is the much more correct fix for my earlier attempt at:
 
-This issue was reported at
+https://lkml.org/lkml/2018/12/10/118
 
-  https://oss.oracle.com/pipermail/ocfs2-devel/2015-May/010854.html
+Short recap:
 
-and was advised to fixed during mount.  But this is a very unusual
-inconsistent state, usually journal dirty flag should be cleared at the
-last stage of umount until every other things go right.  We may need do
-further debug to check that.  Any way to avoid possible futher
-corruption, mount should be abort and fsck should be run.
+- There's not actually a locking issue, it's just lockdep being a bit
+  too eager to complain about a possible deadlock.
 
-  (mount.ocfs2,1765,1):ocfs2_load_local_alloc:353 ERROR: Local alloc hasn't been recovered!
-  found = 6518, set = 6518, taken = 8192, off = 15912372
-  ocfs2: Mounting device (202,64) on (node 0, slot 3) with ordered data mode.
-  o2dlm: Joining domain 89CEAC63CC4F4D03AC185B44E0EE0F3F ( 0 1 2 3 4 5 6 8 ) 8 nodes
-  ocfs2: Mounting device (202,80) on (node 0, slot 3) with ordered data mode.
-  o2hb: Region 89CEAC63CC4F4D03AC185B44E0EE0F3F (xvdf) is now a quorum device
-  o2net: Accepted connection from node yvwsoa17p (num 7) at 172.22.77.88:7777
-  o2dlm: Node 7 joins domain 64FE421C8C984E6D96ED12C55FEE2435 ( 0 1 2 3 4 5 6 7 8 ) 9 nodes
-  o2dlm: Node 7 joins domain 89CEAC63CC4F4D03AC185B44E0EE0F3F ( 0 1 2 3 4 5 6 7 8 ) 9 nodes
-  ------------[ cut here ]------------
-  kernel BUG at fs/ocfs2/reservations.c:507!
-  invalid opcode: 0000 [#1] SMP
-  Modules linked in: ocfs2 rpcsec_gss_krb5 auth_rpcgss nfsv4 nfs fscache lockd grace ocfs2_dlmfs ocfs2_stack_o2cb ocfs2_dlm ocfs2_nodemanager ocfs2_stackglue configfs sunrpc ipt_REJECT nf_reject_ipv4 nf_conntrack_ipv4 nf_defrag_ipv4 iptable_filter ip_tables ip6t_REJECT nf_reject_ipv6 nf_conntrack_ipv6 nf_defrag_ipv6 xt_state nf_conntrack ip6table_filter ip6_tables ib_ipoib rdma_ucm ib_ucm ib_uverbs ib_umad rdma_cm ib_cm iw_cm ib_sa ib_mad ib_core ib_addr ipv6 ovmapi ppdev parport_pc parport xen_netfront fb_sys_fops sysimgblt sysfillrect syscopyarea acpi_cpufreq pcspkr i2c_piix4 i2c_core sg ext4 jbd2 mbcache2 sr_mod cdrom xen_blkfront pata_acpi ata_generic ata_piix floppy dm_mirror dm_region_hash dm_log dm_mod
-  CPU: 0 PID: 4349 Comm: startWebLogic.s Not tainted 4.1.12-124.19.2.el6uek.x86_64 #2
-  Hardware name: Xen HVM domU, BIOS 4.4.4OVM 09/06/2018
-  task: ffff8803fb04e200 ti: ffff8800ea4d8000 task.ti: ffff8800ea4d8000
-  RIP: 0010:[<ffffffffa05e96a8>]  [<ffffffffa05e96a8>] __ocfs2_resv_find_window+0x498/0x760 [ocfs2]
-  Call Trace:
-    ocfs2_resmap_resv_bits+0x10d/0x400 [ocfs2]
-    ocfs2_claim_local_alloc_bits+0xd0/0x640 [ocfs2]
-    __ocfs2_claim_clusters+0x178/0x360 [ocfs2]
-    ocfs2_claim_clusters+0x1f/0x30 [ocfs2]
-    ocfs2_convert_inline_data_to_extents+0x634/0xa60 [ocfs2]
-    ocfs2_write_begin_nolock+0x1c6/0x1da0 [ocfs2]
-    ocfs2_write_begin+0x13e/0x230 [ocfs2]
-    generic_perform_write+0xbf/0x1c0
-    __generic_file_write_iter+0x19c/0x1d0
-    ocfs2_file_write_iter+0x589/0x1360 [ocfs2]
-    __vfs_write+0xb8/0x110
-    vfs_write+0xa9/0x1b0
-    SyS_write+0x46/0xb0
-    system_call_fastpath+0x18/0xd7
-  Code: ff ff 8b 75 b8 39 75 b0 8b 45 c8 89 45 98 0f 84 e5 fe ff ff 45 8b 74 24 18 41 8b 54 24 1c e9 56 fc ff ff 85 c0 0f 85 48 ff ff ff <0f> 0b 48 8b 05 cf c3 de ff 48 ba 00 00 00 00 00 00 00 10 48 85
-  RIP   __ocfs2_resv_find_window+0x498/0x760 [ocfs2]
-   RSP <ffff8800ea4db668>
-  ---[ end trace 566f07529f2edf3c ]---
-  Kernel panic - not syncing: Fatal exception
-  Kernel Offset: disabled
+- Contrary to what I claimed the real problem is recursion on
+  kn->count. Greg pointed me at sysfs_break_active_protection(), used
+  by the scsi subsystem to allow a sysfs file to unbind itself. That
+  would be a real deadlock, which isn't what's happening here. Also,
+  breaking the active protection means we'd need to manually handle
+  all the lifetime fun.
 
-Link: http://lkml.kernel.org/r/20181121020023.3034-2-junxiao.bi@oracle.com
-Signed-off-by: Junxiao Bi <junxiao.bi@oracle.com>
-Reviewed-by: Yiwen Jiang <jiangyiwen@huawei.com>
-Acked-by: Joseph Qi <jiangqi903@gmail.com>
-Cc: Jun Piao <piaojun@huawei.com>
-Cc: Mark Fasheh <mfasheh@versity.com>
-Cc: Joel Becker <jlbec@evilplan.org>
-Cc: Changwei Ge <ge.changwei@h3c.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+- With Rafael we discussed the task_work approach, which kinda works,
+  but has two downsides: It's a functional change for a lockdep
+  annotation issue, and it won't work for the bind file (which needs
+  to get the errno from the driver load function back to userspace).
+
+- Greg also asked why this never showed up: To hit this you need to
+  unregister a 2nd driver from the unload code of your first driver. I
+  guess only gpus do that. The bug has always been there, but only
+  with a recent patch series did we add more locks so that lockdep
+  built a chain from unbinding the snd-hda driver to the
+  acpi_video_unregister call.
+
+Full lockdep splat:
+
+[12301.898799] ============================================
+[12301.898805] WARNING: possible recursive locking detected
+[12301.898811] 4.20.0-rc7+ #84 Not tainted
+[12301.898815] --------------------------------------------
+[12301.898821] bash/5297 is trying to acquire lock:
+[12301.898826] 00000000f61c6093 (kn->count#39){++++}, at: kernfs_remove_by_name_ns+0x3b/0x80
+[12301.898841] but task is already holding lock:
+[12301.898847] 000000005f634021 (kn->count#39){++++}, at: kernfs_fop_write+0xdc/0x190
+[12301.898856] other info that might help us debug this:
+[12301.898862]  Possible unsafe locking scenario:
+[12301.898867]        CPU0
+[12301.898870]        ----
+[12301.898874]   lock(kn->count#39);
+[12301.898879]   lock(kn->count#39);
+[12301.898883] *** DEADLOCK ***
+[12301.898891]  May be due to missing lock nesting notation
+[12301.898899] 5 locks held by bash/5297:
+[12301.898903]  #0: 00000000cd800e54 (sb_writers#4){.+.+}, at: vfs_write+0x17f/0x1b0
+[12301.898915]  #1: 000000000465e7c2 (&of->mutex){+.+.}, at: kernfs_fop_write+0xd3/0x190
+[12301.898925]  #2: 000000005f634021 (kn->count#39){++++}, at: kernfs_fop_write+0xdc/0x190
+[12301.898936]  #3: 00000000414ef7ac (&dev->mutex){....}, at: device_release_driver_internal+0x34/0x240
+[12301.898950]  #4: 000000003218fbdf (register_count_mutex){+.+.}, at: acpi_video_unregister+0xe/0x40
+[12301.898960] stack backtrace:
+[12301.898968] CPU: 1 PID: 5297 Comm: bash Not tainted 4.20.0-rc7+ #84
+[12301.898974] Hardware name: Hewlett-Packard HP EliteBook 8460p/161C, BIOS 68SCF Ver. F.01 03/11/2011
+[12301.898982] Call Trace:
+[12301.898989]  dump_stack+0x67/0x9b
+[12301.898997]  __lock_acquire+0x6ad/0x1410
+[12301.899003]  ? kernfs_remove_by_name_ns+0x3b/0x80
+[12301.899010]  ? find_held_lock+0x2d/0x90
+[12301.899017]  ? mutex_spin_on_owner+0xe4/0x150
+[12301.899023]  ? find_held_lock+0x2d/0x90
+[12301.899030]  ? lock_acquire+0x90/0x180
+[12301.899036]  lock_acquire+0x90/0x180
+[12301.899042]  ? kernfs_remove_by_name_ns+0x3b/0x80
+[12301.899049]  __kernfs_remove+0x296/0x310
+[12301.899055]  ? kernfs_remove_by_name_ns+0x3b/0x80
+[12301.899060]  ? kernfs_name_hash+0xd/0x80
+[12301.899066]  ? kernfs_find_ns+0x6c/0x100
+[12301.899073]  kernfs_remove_by_name_ns+0x3b/0x80
+[12301.899080]  bus_remove_driver+0x92/0xa0
+[12301.899085]  acpi_video_unregister+0x24/0x40
+[12301.899127]  i915_driver_unload+0x42/0x130 [i915]
+[12301.899160]  i915_pci_remove+0x19/0x30 [i915]
+[12301.899169]  pci_device_remove+0x36/0xb0
+[12301.899176]  device_release_driver_internal+0x185/0x240
+[12301.899183]  unbind_store+0xaf/0x180
+[12301.899189]  kernfs_fop_write+0x104/0x190
+[12301.899195]  __vfs_write+0x31/0x180
+[12301.899203]  ? rcu_read_lock_sched_held+0x6f/0x80
+[12301.899209]  ? rcu_sync_lockdep_assert+0x29/0x50
+[12301.899216]  ? __sb_start_write+0x13c/0x1a0
+[12301.899221]  ? vfs_write+0x17f/0x1b0
+[12301.899227]  vfs_write+0xb9/0x1b0
+[12301.899233]  ksys_write+0x50/0xc0
+[12301.899239]  do_syscall_64+0x4b/0x180
+[12301.899247]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+[12301.899253] RIP: 0033:0x7f452ac7f7a4
+[12301.899259] Code: 00 f7 d8 64 89 02 48 c7 c0 ff ff ff ff eb b7 0f 1f 80 00 00 00 00 8b 05 aa f0 2c 00 48 63 ff 85 c0 75 13 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 54 f3 c3 66 90 55 53 48 89 d5 48 89 f3 48 83
+[12301.899273] RSP: 002b:00007ffceafa6918 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+[12301.899282] RAX: ffffffffffffffda RBX: 000000000000000d RCX: 00007f452ac7f7a4
+[12301.899288] RDX: 000000000000000d RSI: 00005612a1abf7c0 RDI: 0000000000000001
+[12301.899295] RBP: 00005612a1abf7c0 R08: 000000000000000a R09: 00005612a1c46730
+[12301.899301] R10: 000000000000000a R11: 0000000000000246 R12: 000000000000000d
+[12301.899308] R13: 0000000000000001 R14: 00007f452af4a740 R15: 000000000000000d
+
+Looking around I've noticed that usb and i2c already handle similar
+recursion problems, where a sysfs file can unbind the same type of
+sysfs somewhere else in the hierarchy. Relevant commits are:
+
+commit 356c05d58af05d582e634b54b40050c73609617b
+Author: Alan Stern <stern@rowland.harvard.edu>
+Date:   Mon May 14 13:30:03 2012 -0400
+
+    sysfs: get rid of some lockdep false positives
+
+commit e9b526fe704812364bca07edd15eadeba163ebfb
+Author: Alexander Sverdlin <alexander.sverdlin@nsn.com>
+Date:   Fri May 17 14:56:35 2013 +0200
+
+    i2c: suppress lockdep warning on delete_device
+
+Implement the same trick for driver bind/unbind.
+
+v2: Put the macro into bus.c (Greg).
+
+Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Cc: Ramalingam C <ramalingam.c@intel.com>
+Cc: Arend van Spriel <aspriel@gmail.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Cc: Vivek Gautam <vivek.gautam@codeaurora.org>
+Cc: Joe Perches <joe@perches.com>
+Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/ocfs2/localalloc.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ drivers/base/bus.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/fs/ocfs2/localalloc.c b/fs/ocfs2/localalloc.c
-index fe0d1f9571bb..5d53d0d63d19 100644
---- a/fs/ocfs2/localalloc.c
-+++ b/fs/ocfs2/localalloc.c
-@@ -345,13 +345,18 @@ int ocfs2_load_local_alloc(struct ocfs2_super *osb)
- 	if (num_used
- 	    || alloc->id1.bitmap1.i_used
- 	    || alloc->id1.bitmap1.i_total
--	    || la->la_bm_off)
--		mlog(ML_ERROR, "Local alloc hasn't been recovered!\n"
-+	    || la->la_bm_off) {
-+		mlog(ML_ERROR, "inconsistent detected, clean journal with"
-+		     " unrecovered local alloc, please run fsck.ocfs2!\n"
- 		     "found = %u, set = %u, taken = %u, off = %u\n",
- 		     num_used, le32_to_cpu(alloc->id1.bitmap1.i_used),
- 		     le32_to_cpu(alloc->id1.bitmap1.i_total),
- 		     OCFS2_LOCAL_ALLOC(alloc)->la_bm_off);
+diff --git a/drivers/base/bus.c b/drivers/base/bus.c
+index 22a64fd3309b..1cf1460f8c90 100644
+--- a/drivers/base/bus.c
++++ b/drivers/base/bus.c
+@@ -33,6 +33,9 @@ static struct kset *system_kset;
  
-+		status = -EINVAL;
-+		goto bail;
-+	}
-+
- 	osb->local_alloc_bh = alloc_bh;
- 	osb->local_alloc_state = OCFS2_LA_ENABLED;
+ #define to_drv_attr(_attr) container_of(_attr, struct driver_attribute, attr)
  
++#define DRIVER_ATTR_IGNORE_LOCKDEP(_name, _mode, _show, _store) \
++	struct driver_attribute driver_attr_##_name =		\
++		__ATTR_IGNORE_LOCKDEP(_name, _mode, _show, _store)
+ 
+ static int __must_check bus_rescan_devices_helper(struct device *dev,
+ 						void *data);
+@@ -197,7 +200,7 @@ static ssize_t unbind_store(struct device_driver *drv, const char *buf,
+ 	bus_put(bus);
+ 	return err;
+ }
+-static DRIVER_ATTR_WO(unbind);
++static DRIVER_ATTR_IGNORE_LOCKDEP(unbind, S_IWUSR, NULL, unbind_store);
+ 
+ /*
+  * Manually attach a device to a driver.
+@@ -233,7 +236,7 @@ static ssize_t bind_store(struct device_driver *drv, const char *buf,
+ 	bus_put(bus);
+ 	return err;
+ }
+-static DRIVER_ATTR_WO(bind);
++static DRIVER_ATTR_IGNORE_LOCKDEP(bind, S_IWUSR, NULL, bind_store);
+ 
+ static ssize_t show_drivers_autoprobe(struct bus_type *bus, char *buf)
+ {
 -- 
 2.19.1
 
