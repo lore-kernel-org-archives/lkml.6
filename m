@@ -4,27 +4,27 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9676EC43444
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 14:10:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7ECEEC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 14:10:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F25D206C0
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 14:10:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 58039206BB
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 14:10:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728855AbfAHOIK (ORCPT
+        id S1729069AbfAHOKU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 8 Jan 2019 09:10:20 -0500
+Received: from foss.arm.com ([217.140.101.70]:52178 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728847AbfAHOIK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 8 Jan 2019 09:08:10 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:52158 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728398AbfAHOIF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 09:08:05 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E0B0A1650;
-        Tue,  8 Jan 2019 06:08:04 -0800 (PST)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 77A9715AB;
+        Tue,  8 Jan 2019 06:08:09 -0800 (PST)
 Received: from e112298-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id C1FFD3F70D;
-        Tue,  8 Jan 2019 06:08:02 -0800 (PST)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 8503C3F70D;
+        Tue,  8 Jan 2019 06:08:07 -0800 (PST)
 From:   Julien Thierry <julien.thierry@arm.com>
 To:     linux-arm-kernel@lists.infradead.org
 Cc:     linux-kernel@vger.kernel.org, daniel.thompson@linaro.org,
@@ -32,10 +32,10 @@ Cc:     linux-kernel@vger.kernel.org, daniel.thompson@linaro.org,
         christoffer.dall@arm.com, james.morse@arm.com,
         catalin.marinas@arm.com, will.deacon@arm.com, mark.rutland@arm.com,
         Julien Thierry <julien.thierry@arm.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>
-Subject: [PATCH v8 03/26] arm64: cpufeature: Set SYSREG_GIC_CPUIF as a boot system feature
-Date:   Tue,  8 Jan 2019 14:07:21 +0000
-Message-Id: <1546956464-48825-4-git-send-email-julien.thierry@arm.com>
+        Russell King <linux@armlinux.org.uk>
+Subject: [PATCH v8 05/26] arm/arm64: gic-v3: Add PMR and RPR accessors
+Date:   Tue,  8 Jan 2019 14:07:23 +0000
+Message-Id: <1546956464-48825-6-git-send-email-julien.thierry@arm.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1546956464-48825-1-git-send-email-julien.thierry@arm.com>
 References: <1546956464-48825-1-git-send-email-julien.thierry@arm.com>
@@ -44,42 +44,81 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It is not supported to have some CPUs using GICv3 sysreg CPU interface
-while some others do not.
-
-Once ICC_SRE_EL1.SRE is set on a CPU, the bit cannot be cleared. Since
-matching this feature require setting ICC_SRE_EL1.SRE, it cannot be
-turned off if found on a CPU.
-
-Set the feature as STRICT_BOOT, if boot CPU has it, all other CPUs are
-required to have it.
+Add helper functions to access system registers related to interrupt
+priorities: PMR and RPR.
 
 Signed-off-by: Julien Thierry <julien.thierry@arm.com>
-Suggested-by: Daniel Thompson <daniel.thompson@linaro.org>
-Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 Reviewed-by: Mark Rutland <mark.rutland@arm.com>
 Acked-by: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Russell King <linux@armlinux.org.uk>
 Cc: Catalin Marinas <catalin.marinas@arm.com>
 Cc: Will Deacon <will.deacon@arm.com>
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
 Cc: Marc Zyngier <marc.zyngier@arm.com>
 ---
- arch/arm64/kernel/cpufeature.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/include/asm/arch_gicv3.h   | 16 ++++++++++++++++
+ arch/arm64/include/asm/arch_gicv3.h | 15 +++++++++++++++
+ 2 files changed, 31 insertions(+)
 
-diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
-index 4f27239..9542d01 100644
---- a/arch/arm64/kernel/cpufeature.c
-+++ b/arch/arm64/kernel/cpufeature.c
-@@ -1202,7 +1202,7 @@ static void cpu_enable_address_auth(struct arm64_cpu_capabilities const *cap)
- 	{
- 		.desc = "GIC system register CPU interface",
- 		.capability = ARM64_HAS_SYSREG_GIC_CPUIF,
--		.type = ARM64_CPUCAP_SYSTEM_FEATURE,
-+		.type = ARM64_CPUCAP_STRICT_BOOT_CPU_FEATURE,
- 		.matches = has_useable_gicv3_cpuif,
- 		.sys_reg = SYS_ID_AA64PFR0_EL1,
- 		.field_pos = ID_AA64PFR0_GIC_SHIFT,
+diff --git a/arch/arm/include/asm/arch_gicv3.h b/arch/arm/include/asm/arch_gicv3.h
+index 0bd5307..bef0b5d 100644
+--- a/arch/arm/include/asm/arch_gicv3.h
++++ b/arch/arm/include/asm/arch_gicv3.h
+@@ -34,6 +34,7 @@
+ #define ICC_SRE				__ACCESS_CP15(c12, 0, c12, 5)
+ #define ICC_IGRPEN1			__ACCESS_CP15(c12, 0, c12, 7)
+ #define ICC_BPR1			__ACCESS_CP15(c12, 0, c12, 3)
++#define ICC_RPR				__ACCESS_CP15(c12, 0, c11, 3)
+ 
+ #define __ICC_AP0Rx(x)			__ACCESS_CP15(c12, 0, c8, 4 | x)
+ #define ICC_AP0R0			__ICC_AP0Rx(0)
+@@ -245,6 +246,21 @@ static inline void gic_write_bpr1(u32 val)
+ 	write_sysreg(val, ICC_BPR1);
+ }
+ 
++static inline u32 gic_read_pmr(void)
++{
++	return read_sysreg(ICC_PMR);
++}
++
++static inline void gic_write_pmr(u32 val)
++{
++	write_sysreg(val, ICC_PMR);
++}
++
++static inline u32 gic_read_rpr(void)
++{
++	return read_sysreg(ICC_RPR);
++}
++
+ /*
+  * Even in 32bit systems that use LPAE, there is no guarantee that the I/O
+  * interface provides true 64bit atomic accesses, so using strd/ldrd doesn't
+diff --git a/arch/arm64/include/asm/arch_gicv3.h b/arch/arm64/include/asm/arch_gicv3.h
+index e278f94..37193e2 100644
+--- a/arch/arm64/include/asm/arch_gicv3.h
++++ b/arch/arm64/include/asm/arch_gicv3.h
+@@ -114,6 +114,21 @@ static inline void gic_write_bpr1(u32 val)
+ 	write_sysreg_s(val, SYS_ICC_BPR1_EL1);
+ }
+ 
++static inline u32 gic_read_pmr(void)
++{
++	return read_sysreg_s(SYS_ICC_PMR_EL1);
++}
++
++static inline void gic_write_pmr(u32 val)
++{
++	write_sysreg_s(val, SYS_ICC_PMR_EL1);
++}
++
++static inline u32 gic_read_rpr(void)
++{
++	return read_sysreg_s(SYS_ICC_RPR_EL1);
++}
++
+ #define gic_read_typer(c)		readq_relaxed(c)
+ #define gic_write_irouter(v, c)		writeq_relaxed(v, c)
+ #define gic_read_lpir(c)		readq_relaxed(c)
 -- 
 1.9.1
 
