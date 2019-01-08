@@ -2,102 +2,96 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1087C43444
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 09:47:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FE48C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 09:47:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F77F20827
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 09:47:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="XdzN13vG"
+	by mail.kernel.org (Postfix) with ESMTP id 491BC2087F
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 09:47:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728100AbfAHJrf (ORCPT
+        id S1728179AbfAHJrj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 04:47:35 -0500
-Received: from mail-eopbgr130075.outbound.protection.outlook.com ([40.107.13.75]:18686
-        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727001AbfAHJrf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 04:47:35 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=On8ICrgJkbEUzsxeC2y8dv7ul6hjSiKkbX6E5QOEi4g=;
- b=XdzN13vGOrEoCWZcBDOwH+VIpKrKeL23f53OjduljsT8L/ts6aHUopaFVmvPlDi+PhNOVojI/cdveS19W82iOHD9TCL5jDmzYRHozUkuMiGkBZRNi9LRgURgPS7YH3GM6wSbjy8vciUHdpXNNez1bHY+EAtAZfMFMtkuEDyckok=
-Received: from VI1PR0402MB3485.eurprd04.prod.outlook.com (52.134.3.153) by
- VI1PR0402MB3824.eurprd04.prod.outlook.com (52.134.16.33) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1495.10; Tue, 8 Jan 2019 09:47:31 +0000
-Received: from VI1PR0402MB3485.eurprd04.prod.outlook.com
- ([fe80::9c4e:17cb:deff:1c18]) by VI1PR0402MB3485.eurprd04.prod.outlook.com
- ([fe80::9c4e:17cb:deff:1c18%5]) with mapi id 15.20.1495.011; Tue, 8 Jan 2019
- 09:47:31 +0000
-From:   Horia Geanta <horia.geanta@nxp.com>
-To:     Christophe Leroy <christophe.leroy@c-s.fr>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>
-CC:     "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: Re: [PATCH v4 1/2] crypto: talitos - reorder code in
- talitos_edesc_alloc()
-Thread-Topic: [PATCH v4 1/2] crypto: talitos - reorder code in
- talitos_edesc_alloc()
-Thread-Index: AQHUpx9U2UgnBhsXrEyEQzxfOR/K1Q==
-Date:   Tue, 8 Jan 2019 09:47:30 +0000
-Message-ID: <VI1PR0402MB3485608DF1B37BB7C740DD36988A0@VI1PR0402MB3485.eurprd04.prod.outlook.com>
-References: <5ed91db5e2976a4c260465c3d027acc9affd2d2b.1545445924.git.christophe.leroy@c-s.fr>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=horia.geanta@nxp.com; 
-x-originating-ip: [86.34.165.90]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;VI1PR0402MB3824;6:NJQ4MHmnPQVX4tYi727ZGWzyzWhbDCDZ8L0695zFx8MWsdIc19vldXXOnkrOfDTL0QaKbGtOXYJNaL1ffrxmiHWu+l2vOdASJK3TsJHgGD1y4LYbAqMeY5OSOaFQuJRTuBSIYyg5ZD3WehH5m9hrzZrY7aABWVeDiQVXF8oSN9ZRAQAUsxKQDOX/4UfDsWSbZrCGYAPzwxzcP2yfkRowW5X847/AOWKbloIkV6k+32qh2ra5SfkNR5GP6ukDyXMD+g3KkbU4dygE2tg3B9XbQ2yFQXxTug52n7AIZl/1dsj12gMWp4ZlQ7MSFjh/NBEyul+o/lEUR44FkFvQaMEdj9EOzCrlSd3SIA8MxWUIqYv2XlQkVVgHbUUw7ZqFL5buIds8EWllwqfPHLUvwpBWCUSLHYjB61BykSrbb1Tn2HzT/gqvnRiDv+ReYjzqUo0p9XEUY8B9MkeW+PBi8WH2Mg==;5:+F3UBqXWpkzvkDF5m99U8xfiZOVEAylwwGala5e/sunVf8QoQh187v1V9OzhOSTB9J9Ka6ntqHDr5Vqiu+ncoojSRM5lQaA7IaS3xcV4x6/z3yYNOanVhRCToe6D9Y8vvvl6+a8+p8q+bTBOMc4V0hLdl/PSDLp9WpsRY3Kvt6y2PaUeqvmi+8bZ5OJi2gerG9MW4K0tasQzmjic2COZnw==;7:WJjRLxP1O8Sac/8ey5yPazefcIZhQJL6xYZRHKpdZfA4CvGeBL9sSKsMQRF+YEf2/CYw4DPtZayFtnung/De4okvn9Lb2qWF1vU+cVaO57ptLxEfBMBWltc6D/WilIityDeu4uyxPyWwY6GXk8+lTg==
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: a845eab7-56a0-4c0a-a156-08d6754e4edc
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1PR0402MB3824;
-x-ms-traffictypediagnostic: VI1PR0402MB3824:
-x-microsoft-antispam-prvs: <VI1PR0402MB38241F192714F82D7A846FD4988A0@VI1PR0402MB3824.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(908002)(999002)(5005026)(6040522)(8220060)(2401047)(8121501046)(10201501046)(93006095)(93001095)(3231475)(944501520)(52105112)(3002001)(6055026)(6041310)(20161123564045)(20161123562045)(20161123558120)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:VI1PR0402MB3824;BCL:0;PCL:0;RULEID:;SRVR:VI1PR0402MB3824;
-x-forefront-prvs: 0911D5CE78
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(39860400002)(396003)(366004)(136003)(346002)(189003)(199004)(55016002)(5660300001)(102836004)(486006)(110136005)(229853002)(97736004)(54906003)(7696005)(74316002)(186003)(6506007)(53546011)(68736007)(99286004)(86362001)(316002)(71200400001)(71190400001)(6436002)(3846002)(76176011)(81156014)(8936002)(8676002)(106356001)(476003)(81166006)(14454004)(33656002)(256004)(2906002)(478600001)(446003)(105586002)(6246003)(6116002)(26005)(9686003)(44832011)(4326008)(53936002)(25786009)(66066001)(305945005)(7736002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0402MB3824;H:VI1PR0402MB3485.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: BLApUqWy8m3W6PslOiuj23CSxFxMQvNNej/yFizX1mxos3d9OR62wKGgV5lYanmXqHdUywErv/FAlMEHeALdPQUnMLyTj6iGkUbrUV76ndx2wAYNxWI/KoImciC66DmWDPibfOviestasHNwPzc5O4tEMt7EoQys9wmY3kTCaVg9sLZbiQaLm8+VPbo+hsWpINJaukFiF5mi+0ckXQL1+4C9jbYIOvfdStk9t89s+9aMraDzVdw4cen/lDJe7xU6/bqNAAOe0N8vlc4fbFGaJytNNA1/AXvUb1fJQxi8zSy7kpCuqYVXHOB6Fg/V20q1
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-2"
-Content-Transfer-Encoding: quoted-printable
+        Tue, 8 Jan 2019 04:47:39 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:60289 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727001AbfAHJrh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 04:47:37 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id F1F4BF87A6;
+        Tue,  8 Jan 2019 09:47:36 +0000 (UTC)
+Received: from gondolin (dhcp-192-222.str.redhat.com [10.33.192.222])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 310807ED7F;
+        Tue,  8 Jan 2019 09:47:35 +0000 (UTC)
+Date:   Tue, 8 Jan 2019 10:47:32 +0100
+From:   Cornelia Huck <cohuck@redhat.com>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Alex Williamson <alex.williamson@redhat.com>, kvm@vger.kernel.org,
+        Laura Abbott <labbott@redhat.com>,
+        Alexey Kardashevskiy <aik@ozlabs.ru>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] vfio_pci: set TRACE_INCLUDE_PATH to fix the build error
+Message-ID: <20190108104732.42c1e2a9.cohuck@redhat.com>
+In-Reply-To: <1546916883-25911-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1546916883-25911-1-git-send-email-yamada.masahiro@socionext.com>
+Organization: Red Hat GmbH
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a845eab7-56a0-4c0a-a156-08d6754e4edc
-X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Jan 2019 09:47:30.9534
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0402MB3824
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Tue, 08 Jan 2019 09:47:37 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/8/2019 8:56 AM, Christophe Leroy wrote:=0A=
-> This patch moves the mapping of IV after the kmalloc(). This=0A=
-> avoids having to unmap in case kmalloc() fails.=0A=
-> =0A=
-> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>=0A=
-Reviewed-by: Horia Geant=E3 <horia.geanta@nxp.com>=0A=
-=0A=
-Since patch 2/2 is Cc-ing stable, this one should do the same.=0A=
-Herbert, could you append the commit message before applying it?=0A=
-=0A=
-Thanks,=0A=
-Horia=0A=
+On Tue,  8 Jan 2019 12:08:03 +0900
+Masahiro Yamada <yamada.masahiro@socionext.com> wrote:
+
+> drivers/vfio/pci/vfio_pci_nvlink2.c cannot be compiled for in-tree
+> building.
+> 
+>     CC      drivers/vfio/pci/vfio_pci_nvlink2.o
+>   In file included from drivers/vfio/pci/trace.h:102,
+>                    from drivers/vfio/pci/vfio_pci_nvlink2.c:29:
+>   ./include/trace/define_trace.h:89:42: fatal error: ./trace.h: No such file or directory
+>    #include TRACE_INCLUDE(TRACE_INCLUDE_FILE)
+>                                           ^
+>   compilation terminated.
+>   make[1]: *** [scripts/Makefile.build;277: drivers/vfio/pci/vfio_pci_nvlink2.o] Error 1
+> 
+> To fix the build error, let's tell include/trace/define_trace.h the
+> location of drivers/vfio/pci/trace.h
+> 
+> Fixes: 7f92891778df ("vfio_pci: Add NVIDIA GV100GL [Tesla V100 SXM2] subdriver")
+> Reported-by: Laura Abbott <labbott@redhat.com>
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> ---
+> 
+>  drivers/vfio/pci/trace.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/vfio/pci/trace.h b/drivers/vfio/pci/trace.h
+> index 228ccdb..4d13e51 100644
+> --- a/drivers/vfio/pci/trace.h
+> +++ b/drivers/vfio/pci/trace.h
+> @@ -94,7 +94,7 @@ TRACE_EVENT(vfio_pci_npu2_mmap,
+>  #endif /* _TRACE_VFIO_PCI_H */
+>  
+>  #undef TRACE_INCLUDE_PATH
+> -#define TRACE_INCLUDE_PATH .
+> +#define TRACE_INCLUDE_PATH ../../drivers/vfio/pci
+>  #undef TRACE_INCLUDE_FILE
+>  #define TRACE_INCLUDE_FILE trace
+>  
+
+I think both this and the other fix option via the Makefile are fine
+(even though I still slightly prefer the latter), so I'll leave the
+choice to the maintainer.
+
+Reviewed-by: Cornelia Huck <cohuck@redhat.com>
