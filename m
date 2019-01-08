@@ -2,152 +2,149 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 448D2C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 12:54:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 005F5C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 12:56:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F3FCA20827
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 12:54:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B569820827
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 12:56:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="S3uZCgHE"
+	dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b="hcb4wgrk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728055AbfAHMyd (ORCPT
+        id S1727857AbfAHM41 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 07:54:33 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:36164 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727473AbfAHMyd (ORCPT
+        Tue, 8 Jan 2019 07:56:27 -0500
+Received: from forwardcorp1j.cmail.yandex.net ([5.255.227.105]:57450 "EHLO
+        forwardcorp1j.cmail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727473AbfAHM41 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 07:54:33 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x08CnRMU106980;
-        Tue, 8 Jan 2019 12:54:29 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=UxsG6YQtanntTpoobrn5UKm9QY/ZYn5pisnTRhY7lBg=;
- b=S3uZCgHE4sK2LT/Wb0yaZZxDH2/S8V6LEgXlqN3ZORDLipuU4VM91j57HgHa05KqRRYs
- RJWD4+way9UjLNiTj0PqzfnaMwvBBfOAb8IvWr4wuQX277lhVymn45T37NrjkISpekyv
- 2zkoUYZpqswcM7H0kHYAA861bxxu47/QLfzmTIE1BeWKV0oNlSl9bnLNxApI2qYYvO69
- rNoCqGTnyhhe2a8SI/WMRaXTaEi4uzv7iUuh66cCwDOMJjT1E7LhaBcVoGVZM6WI8/15
- cmuanpyPQvfm/Y2LDNIWbhruSCK6ipEcNyrhMBYTswf22DN63HBnqyFNM055afpuXHdz 6g== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by userp2120.oracle.com with ESMTP id 2ptn7qu63e-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 08 Jan 2019 12:54:29 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x08CsStC030211
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 8 Jan 2019 12:54:28 GMT
-Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x08CsR3q024190;
-        Tue, 8 Jan 2019 12:54:28 GMT
-Received: from [172.16.42.110] (/123.118.59.63)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 08 Jan 2019 04:54:27 -0800
-Subject: Re: [PATCH] net: nvidia: forcedeth: Fix two possible concurrency
- use-after-free bugs
-To:     Jia-Ju Bai <baijiaju1990@gmail.com>, davem@davemloft.net,
-        keescook@chromium.org
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190108124518.21986-1-baijiaju1990@gmail.com>
-From:   Zhu Yanjun <yanjun.zhu@oracle.com>
-Message-ID: <27392ae0-2c0f-f099-05d8-f9cdbfbd313e@oracle.com>
-Date:   Tue, 8 Jan 2019 20:54:20 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Tue, 8 Jan 2019 07:56:27 -0500
+Received: from mxbackcorp1j.mail.yandex.net (mxbackcorp1j.mail.yandex.net [IPv6:2a02:6b8:0:1619::162])
+        by forwardcorp1j.cmail.yandex.net (Yandex) with ESMTP id 7F11B2105A;
+        Tue,  8 Jan 2019 15:56:22 +0300 (MSK)
+Received: from smtpcorp1p.mail.yandex.net (smtpcorp1p.mail.yandex.net [2a02:6b8:0:1472:2741:0:8b6:10])
+        by mxbackcorp1j.mail.yandex.net (nwsmtp/Yandex) with ESMTP id R7pwechRPO-uMbWlGsB;
+        Tue, 08 Jan 2019 15:56:22 +0300
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
+        t=1546952182; bh=TSLB06xsdrfXfY4i9m3b0UnjQObVvBo80ghKY2GKvZU=;
+        h=Subject:To:Cc:References:From:Message-ID:Date:In-Reply-To;
+        b=hcb4wgrkG+k1WV3WhVDjvcCAyG8O6/KLfZn2bktShlx0HokCLO6D/pwut0je9nxrU
+         Th4izi48lXmw4nIIWLzId1v8HZHDzI3n5CX/eusxfp5wltKuq1gkGj5mvYexSGQVdh
+         9EojxCHoKIncVg2FHkOt5my7ip3FWQB8UKiJbiBo=
+Authentication-Results: mxbackcorp1j.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
+Received: from dynamic-vpn.dhcp.yndx.net (dynamic-vpn.dhcp.yndx.net [2a02:6b8:0:3712::1:4b])
+        by smtpcorp1p.mail.yandex.net (nwsmtp/Yandex) with ESMTPSA id GJ9eC1H9w1-uMkiF0PB;
+        Tue, 08 Jan 2019 15:56:22 +0300
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (Client certificate not present)
+Subject: Re: [PATCH] net/core/neighbour: tell kmemleak about hash tables
+To:     Eric Dumazet <eric.dumazet@gmail.com>, netdev@vger.kernel.org,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        linux-kernel@vger.kernel.org
+References: <154693980088.104235.16222977463502002037.stgit@buzz>
+ <1e75f0ad-11f1-7325-b7a5-a7e21e8ee704@gmail.com>
+From:   Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Message-ID: <024789b1-17c6-c606-8ec8-81447201ced2@yandex-team.ru>
+Date:   Tue, 8 Jan 2019 15:56:21 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <20190108124518.21986-1-baijiaju1990@gmail.com>
-Content-Type: text/plain; charset=gbk; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9129 signatures=668680
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=679
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1901080106
+In-Reply-To: <1e75f0ad-11f1-7325-b7a5-a7e21e8ee704@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-CA
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-ÔÚ 2019/1/8 20:45, Jia-Ju Bai Ð´µÀ:
-> In drivers/net/ethernet/nvidia/forcedeth.c, the functions
-> nv_start_xmit() and nv_start_xmit_optimized() can be concurrently
-> executed with nv_poll_controller().
->
-> nv_start_xmit
->    line 2321: prev_tx_ctx->skb = skb;
->
-> nv_start_xmit_optimized
->    line 2479: prev_tx_ctx->skb = skb;
->
-> nv_poll_controller
->    nv_do_nic_poll
->      line 4134: spin_lock(&np->lock);
->      nv_drain_rxtx
->        nv_drain_tx
->          nv_release_txskb
->            line 2004: dev_kfree_skb_any(tx_skb->skb);
->
-> Thus, two possible concurrency use-after-free bugs may occur.
->
-> To fix these possible bugs,
 
+On 08.01.2019 14:59, Eric Dumazet wrote:
+> 
+> 
+> On 01/08/2019 01:30 AM, Konstantin Khlebnikov wrote:
+>> This fixes false-positive kmemleak reports about leaked neighbour entries:
+>>
+>> unreferenced object 0xffff8885c6e4d0a8 (size 1024):
+> 
+> 
+> size 1024 object : should have been allocated by kzalloc(), right ?
 
-Does this really occur? Can you reproduce this ?
+Yep, neigh_alloc calls kzalloc.
 
+Size might be bloated by lockdep.
 
->   the calls to spin_lock_irqsave() in
-> nv_start_xmit() and nv_start_xmit_optimized() are moved to the
-> front of "prev_tx_ctx->skb = skb;"
->
-> Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
-> ---
->   drivers/net/ethernet/nvidia/forcedeth.c | 8 ++++----
->   1 file changed, 4 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/net/ethernet/nvidia/forcedeth.c b/drivers/net/ethernet/nvidia/forcedeth.c
-> index 1d9b0d44ddb6..48fa5a0bd2cb 100644
-> --- a/drivers/net/ethernet/nvidia/forcedeth.c
-> +++ b/drivers/net/ethernet/nvidia/forcedeth.c
-> @@ -2317,6 +2317,8 @@ static netdev_tx_t nv_start_xmit(struct sk_buff *skb, struct net_device *dev)
->   	/* set last fragment flag  */
->   	prev_tx->flaglen |= cpu_to_le32(tx_flags_extra);
->   
-> +	spin_lock_irqsave(&np->lock, flags);
-> +
->   	/* save skb in this slot's context area */
->   	prev_tx_ctx->skb = skb;
->   
-> @@ -2326,8 +2328,6 @@ static netdev_tx_t nv_start_xmit(struct sk_buff *skb, struct net_device *dev)
->   		tx_flags_extra = skb->ip_summed == CHECKSUM_PARTIAL ?
->   			 NV_TX2_CHECKSUM_L3 | NV_TX2_CHECKSUM_L4 : 0;
->   
-> -	spin_lock_irqsave(&np->lock, flags);
-> -
->   	/* set tx flags */
->   	start_tx->flaglen |= cpu_to_le32(tx_flags | tx_flags_extra);
->   
-> @@ -2475,6 +2475,8 @@ static netdev_tx_t nv_start_xmit_optimized(struct sk_buff *skb,
->   	/* set last fragment flag  */
->   	prev_tx->flaglen |= cpu_to_le32(NV_TX2_LASTPACKET);
->   
-> +	spin_lock_irqsave(&np->lock, flags);
-> +
->   	/* save skb in this slot's context area */
->   	prev_tx_ctx->skb = skb;
->   
-> @@ -2491,8 +2493,6 @@ static netdev_tx_t nv_start_xmit_optimized(struct sk_buff *skb,
->   	else
->   		start_tx->txvlan = 0;
->   
-> -	spin_lock_irqsave(&np->lock, flags);
-> -
->   	if (np->tx_limit) {
->   		/* Limit the number of outstanding tx. Setup all fragments, but
->   		 * do not set the VALID bit on the first descriptor. Save a pointer
+> 
+>>    comm "softirq", pid 0, jiffies 4294922664 (age 167640.804s)
+>>    hex dump (first 32 bytes):
+>>      00 00 00 00 00 00 00 00 20 2c f3 83 ff ff ff ff  ........ ,......
+>>      08 c0 ef 5f 84 88 ff ff 01 8c 7d 02 01 00 00 00  ..._......}.....
+>>    backtrace:
+>>      [<00000000748509fe>] ip6_finish_output2+0x887/0x1e40
+>>      [<0000000036d7a0d8>] ip6_output+0x1ba/0x600
+>>      [<0000000027ea7dba>] ip6_send_skb+0x92/0x2f0
+>>      [<00000000d6e2111d>] udp_v6_send_skb.isra.24+0x680/0x15e0
+>>      [<000000000668a8be>] udpv6_sendmsg+0x18c9/0x27a0
+>>      [<000000004bd5fa90>] sock_sendmsg+0xb3/0xf0
+>>      [<000000008227b29f>] ___sys_sendmsg+0x745/0x8f0
+>>      [<000000008698009d>] __sys_sendmsg+0xde/0x170
+>>      [<00000000889dacf1>] do_syscall_64+0x9b/0x400
+>>      [<0000000081cdb353>] entry_SYSCALL_64_after_hwframe+0x49/0xbe
+>>      [<000000005767ed39>] 0xffffffffffffffff
+>>
+>> Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+>> ---
+>>   net/core/neighbour.c |   13 +++++++++----
+>>   1 file changed, 9 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/net/core/neighbour.c b/net/core/neighbour.c
+>> index 763a7b08df67..3e27a779f288 100644
+>> --- a/net/core/neighbour.c
+>> +++ b/net/core/neighbour.c
+>> @@ -18,6 +18,7 @@
+>>   #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+>>   
+>>   #include <linux/slab.h>
+>> +#include <linux/kmemleak.h>
+>>   #include <linux/types.h>
+>>   #include <linux/kernel.h>
+>>   #include <linux/module.h>
+>> @@ -443,12 +444,14 @@ static struct neigh_hash_table *neigh_hash_alloc(unsigned int shift)
+>>   	ret = kmalloc(sizeof(*ret), GFP_ATOMIC);
+>>   	if (!ret)
+>>   		return NULL;
+>> -	if (size <= PAGE_SIZE)
+>> +	if (size <= PAGE_SIZE) {
+>>   		buckets = kzalloc(size, GFP_ATOMIC);
+>> -	else
+>> +	} else {
+>>   		buckets = (struct neighbour __rcu **)
+>>   			  __get_free_pages(GFP_ATOMIC | __GFP_ZERO,
+>>   					   get_order(size));
+>> +		kmemleak_alloc(buckets, size, 0, GFP_ATOMIC);
+>> +	}
+>>   	if (!buckets) {
+>>   		kfree(ret);
+>>   		return NULL;
+>> @@ -468,10 +471,12 @@ static void neigh_hash_free_rcu(struct rcu_head *head)
+>>   	size_t size = (1 << nht->hash_shift) * sizeof(struct neighbour *);
+>>   	struct neighbour __rcu **buckets = nht->hash_buckets;
+>>   
+>> -	if (size <= PAGE_SIZE)
+>> +	if (size <= PAGE_SIZE) {
+>>   		kfree(buckets);
+>> -	else
+>> +	} else {
+>> +		kmemleak_free(buckets);
+>>   		free_pages((unsigned long)buckets, get_order(size));
+>> +	}
+>>   	kfree(nht);
+>>   }
+>>   
+>>
