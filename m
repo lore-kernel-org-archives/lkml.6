@@ -7,46 +7,52 @@ X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E1D4C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:03:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88291C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:03:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F7EC20827
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:03:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5174520660
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:03:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546977811;
-	bh=nv6A0KI3Ex7MTJsyYVsRAqFnTj5BI3eAyG5r3BuIiIs=;
+	s=default; t=1546977819;
+	bh=Vi3fVnDpSyabi+pGiAi4/hAhhGji6HsCdKe3aPIgpOY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=GU1qJmMDuNiixG00zc3uwCT0/zmrWUZ1SIJrLxZQ5DUr6oJtJihB64slggSQq6Qxb
-	 OLMMcyd+BIQ4ENazzW1wnCUivOtip6uNHYnCjVwAfBTw0YOOE3X9/YupWcoW0DIrG7
-	 jlEbIIfnv/kWN4NRmXrww8uu5JwXRDKFfymtZ0LI=
+	b=p+8WVXtR006pWRR7NYOPpaA4UqJyLmw/TR42BXGCPwsAAlAMPfRyG/2hVftRTS3HU
+	 1LlRHogdLnnDSWai6J92tmbrznOfV0O7h8F2YFzlGaZipkV8PFay0+8uKDde6GvKIu
+	 m7p64app6cRVgC47bbXuE08Ws7k5GtWqo8VRd1bw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729454AbfAHT2n (ORCPT
+        id S1730881AbfAHUDi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:28:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35774 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 15:03:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35788 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730116AbfAHT2j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:28:39 -0500
+        id S1729428AbfAHT2l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:28:41 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 67633217D9;
-        Tue,  8 Jan 2019 19:28:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6C2962176F;
+        Tue,  8 Jan 2019 19:28:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546975719;
-        bh=nv6A0KI3Ex7MTJsyYVsRAqFnTj5BI3eAyG5r3BuIiIs=;
+        s=default; t=1546975720;
+        bh=Vi3fVnDpSyabi+pGiAi4/hAhhGji6HsCdKe3aPIgpOY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lwqy4DklT7bUiSlAh59ZQI2nlnXes3KCXbslzWDEat8MN4OSA28G7Y7sKXmEfOH8r
-         4xpljsVM6OJN3GbNsV77orBGo06HIYmNT7OStrNq6x0kmjDJMzvNgWoXGye6V/4qbF
-         cSDkssFiMTBheFDBisXe1/f83w2V0HvkzDmbnCrU=
+        b=EjLv6zYtjUyON1MBoajHo+rcPHtGiorkE3ajDYL8qZq58LMRgDPZXfVRk2qk/zyIa
+         doI/KfHvMqHNyLZZ4yfNxZtT+8Waiu9PgmQuQ1oktxIMAFKDNsCg9DmvG4whR31qN0
+         7zuxFpKRP8X3jOeUoUe70doG8gfhVM1MDegHvTLY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Johannes Thumshirn <jthumshirn@suse.de>,
-        David Sterba <dsterba@suse.com>,
-        Sasha Levin <sashal@kernel.org>, linux-btrfs@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 076/117] btrfs: improve error handling of btrfs_add_link
-Date:   Tue,  8 Jan 2019 14:25:44 -0500
-Message-Id: <20190108192628.121270-76-sashal@kernel.org>
+Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Waiman Long <longman@redhat.com>,
+        Dmitry Safonov <dima@arista.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Sasha Levin <sashal@kernel.org>, linux-serial@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 077/117] tty/serial: do not free trasnmit buffer page under port lock
+Date:   Tue,  8 Jan 2019 14:25:45 -0500
+Message-Id: <20190108192628.121270-77-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108192628.121270-1-sashal@kernel.org>
 References: <20190108192628.121270-1-sashal@kernel.org>
@@ -58,56 +64,114 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johannes Thumshirn <jthumshirn@suse.de>
+From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
 
-[ Upstream commit 1690dd41e0cb1dade80850ed8a3eb0121b96d22f ]
+[ Upstream commit d72402145ace0697a6a9e8e75a3de5bf3375f78d ]
 
-In the error handling block, err holds the return value of either
-btrfs_del_root_ref() or btrfs_del_inode_ref() but it hasn't been checked
-since it's introduction with commit fe66a05a0679 (Btrfs: improve error
-handling for btrfs_insert_dir_item callers) in 2012.
+LKP has hit yet another circular locking dependency between uart
+console drivers and debugobjects [1]:
 
-If the error handling in the error handling fails, there's not much left
-to do and the abort either happened earlier in the callees or is
-necessary here.
+     CPU0                                    CPU1
 
-So if one of btrfs_del_root_ref() or btrfs_del_inode_ref() failed, abort
-the transaction, but still return the original code of the failure
-stored in 'ret' as this will be reported to the user.
+                                            rhltable_init()
+                                             __init_work()
+                                              debug_object_init
+     uart_shutdown()                          /* db->lock */
+      /* uart_port->lock */                    debug_print_object()
+       free_page()                              printk()
+                                                 call_console_drivers()
+        debug_check_no_obj_freed()                /* uart_port->lock */
+         /* db->lock */
+          debug_print_object()
 
-Signed-off-by: Johannes Thumshirn <jthumshirn@suse.de>
-Reviewed-by: David Sterba <dsterba@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+So there are two dependency chains:
+	uart_port->lock -> db->lock
+And
+	db->lock -> uart_port->lock
+
+This particular circular locking dependency can be addressed in several
+ways:
+
+a) One way would be to move debug_print_object() out of db->lock scope
+   and, thus, break the db->lock -> uart_port->lock chain.
+b) Another one would be to free() transmit buffer page out of db->lock
+   in UART code; which is what this patch does.
+
+It makes sense to apply a) and b) independently: there are too many things
+going on behind free(), none of which depend on uart_port->lock.
+
+The patch fixes transmit buffer page free() in uart_shutdown() and,
+additionally, in uart_port_startup() (as was suggested by Dmitry Safonov).
+
+[1] https://lore.kernel.org/lkml/20181211091154.GL23332@shao2-debian/T/#u
+Signed-off-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Reviewed-by: Petr Mladek <pmladek@suse.com>
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Jiri Slaby <jslaby@suse.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Waiman Long <longman@redhat.com>
+Cc: Dmitry Safonov <dima@arista.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/btrfs/inode.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ drivers/tty/serial/serial_core.c | 22 ++++++++++++++++------
+ 1 file changed, 16 insertions(+), 6 deletions(-)
 
-diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-index 9ea4c6f0352f..ff9268a60eaf 100644
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -6406,14 +6406,19 @@ int btrfs_add_link(struct btrfs_trans_handle *trans,
- 		err = btrfs_del_root_ref(trans, key.objectid,
- 					 root->root_key.objectid, parent_ino,
- 					 &local_index, name, name_len);
--
-+		if (err)
-+			btrfs_abort_transaction(trans, err);
- 	} else if (add_backref) {
- 		u64 local_index;
- 		int err;
- 
- 		err = btrfs_del_inode_ref(trans, root, name, name_len,
- 					  ino, parent_ino, &local_index);
-+		if (err)
-+			btrfs_abort_transaction(trans, err);
+diff --git a/drivers/tty/serial/serial_core.c b/drivers/tty/serial/serial_core.c
+index c439a5a1e6c0..d4cca5bdaf1c 100644
+--- a/drivers/tty/serial/serial_core.c
++++ b/drivers/tty/serial/serial_core.c
+@@ -205,10 +205,15 @@ static int uart_port_startup(struct tty_struct *tty, struct uart_state *state,
+ 	if (!state->xmit.buf) {
+ 		state->xmit.buf = (unsigned char *) page;
+ 		uart_circ_clear(&state->xmit);
++		uart_port_unlock(uport, flags);
+ 	} else {
++		uart_port_unlock(uport, flags);
++		/*
++		 * Do not free() the page under the port lock, see
++		 * uart_shutdown().
++		 */
+ 		free_page(page);
  	}
+-	uart_port_unlock(uport, flags);
+ 
+ 	retval = uport->ops->startup(uport);
+ 	if (retval == 0) {
+@@ -268,6 +273,7 @@ static void uart_shutdown(struct tty_struct *tty, struct uart_state *state)
+ 	struct uart_port *uport = uart_port_check(state);
+ 	struct tty_port *port = &state->port;
+ 	unsigned long flags = 0;
++	char *xmit_buf = NULL;
+ 
+ 	/*
+ 	 * Set the TTY IO error marker
+@@ -298,14 +304,18 @@ static void uart_shutdown(struct tty_struct *tty, struct uart_state *state)
+ 	tty_port_set_suspended(port, 0);
+ 
+ 	/*
+-	 * Free the transmit buffer page.
++	 * Do not free() the transmit buffer page under the port lock since
++	 * this can create various circular locking scenarios. For instance,
++	 * console driver may need to allocate/free a debug object, which
++	 * can endup in printk() recursion.
+ 	 */
+ 	uart_port_lock(state, flags);
+-	if (state->xmit.buf) {
+-		free_page((unsigned long)state->xmit.buf);
+-		state->xmit.buf = NULL;
+-	}
++	xmit_buf = state->xmit.buf;
++	state->xmit.buf = NULL;
+ 	uart_port_unlock(uport, flags);
 +
-+	/* Return the original error code */
- 	return ret;
++	if (xmit_buf)
++		free_page((unsigned long)xmit_buf);
  }
  
+ /**
 -- 
 2.19.1
 
