@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA10EC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:27:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D45BBC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:27:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A461E2087F
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:27:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A55732176F
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:27:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546975632;
-	bh=UyuG+mvMzQt2zRN7FIuJCF69QmsxcHhrEJcp6tZC0mQ=;
+	s=default; t=1546975638;
+	bh=c/5/BBD30zJs1jNSOg/58QjlpuRjPQB2IAK2Yrd5BOg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=jfX2iMPPYvYiHFfAlPTJTUUtPZXrfby40HLuT1o1v3kay90ajQOuXBru6iyWG3DPf
-	 +Eh5vB01uY5UipJ+rFcSb6TphqUVv4ulLa9HvzleVkkOqCaj8G4bSDA+5O6YbEaKGG
-	 iXsgKAVjh9fO/7h4LurkuhJSoLz/ip2hbLHY3qmU=
+	b=ooW7GK14OqM2DtEzvQKua4aW8+C+8UB7+i/CHAFDnZ5ZqtplzuirLXZ2sRWRS7PlM
+	 wR2Q/+w0FdgdUXCFMjKvx4r9EScdrrfajxsvqvXS7KRxokjYfzaDqWnDThAF9GpbhJ
+	 NAuZ5U55LWFIQbGThXcU1DeOyyfArN5vMA+n8ias=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729507AbfAHT1M (ORCPT
+        id S1729571AbfAHT1R (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:27:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33006 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 14:27:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33106 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729443AbfAHT1G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:27:06 -0500
+        id S1729429AbfAHT1J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:27:09 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8A29F217D9;
-        Tue,  8 Jan 2019 19:27:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1294520827;
+        Tue,  8 Jan 2019 19:27:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546975625;
-        bh=UyuG+mvMzQt2zRN7FIuJCF69QmsxcHhrEJcp6tZC0mQ=;
+        s=default; t=1546975628;
+        bh=c/5/BBD30zJs1jNSOg/58QjlpuRjPQB2IAK2Yrd5BOg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Y8atheOzAkyGz6RTsjcomNEgNPWxrH4vVD58TVR2WV9IYQo1lbv2W3z7K39H7IHjU
-         s+xjvG38nlThS1Ea5f20oYsY6BYOnZHEZQKMuksEd8ZRYKPaKL1/fWsh7xLxkNV+DG
-         L7Vn9HJItzJPk6wG6DjVsoeSH8BTenZOPXn21g5w=
+        b=Xvk7adRkOnDcDYjEJBwkT4GYWZ5l6Guw8ZdHonSTaxZ4J5ykXg0aDGvainvVFT4I3
+         oguzvh+WPdAV9RuqqtVLnVgCIPT22f5ag0XZH3QN61L2MxOc/tWIW0gfn26cTaoFNK
+         UDxIXCMI7FsXDWMmeI7UZoO8i08CfGvD/6YcWv2w=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Vitaly Chikunov <vt@altlinux.org>,
-        kernel-hardening@lists.openwall.com,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Sasha Levin <sashal@kernel.org>, linux-crypto@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 020/117] crypto: ecc - regularize scalar for scalar multiplication
-Date:   Tue,  8 Jan 2019 14:24:48 -0500
-Message-Id: <20190108192628.121270-20-sashal@kernel.org>
+Cc:     Anders Roxell <anders.roxell@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Will Deacon <will.deacon@arm.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.20 022/117] arm64: perf: set suppress_bind_attrs flag to true
+Date:   Tue,  8 Jan 2019 14:24:50 -0500
+Message-Id: <20190108192628.121270-22-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108192628.121270-1-sashal@kernel.org>
 References: <20190108192628.121270-1-sashal@kernel.org>
@@ -59,84 +59,71 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vitaly Chikunov <vt@altlinux.org>
+From: Anders Roxell <anders.roxell@linaro.org>
 
-[ Upstream commit 3da2c1dfdb802b184eea0653d1e589515b52d74b ]
+[ Upstream commit 81e9fa8bab381f8b6eb04df7cdf0f71994099bd4 ]
 
-ecc_point_mult is supposed to be used with a regularized scalar,
-otherwise, it's possible to deduce the position of the top bit of the
-scalar with timing attack. This is important when the scalar is a
-private key.
+The armv8_pmuv3 driver doesn't have a remove function, and when the test
+'CONFIG_DEBUG_TEST_DRIVER_REMOVE=y' is enabled, the following Call trace
+can be seen.
 
-ecc_point_mult is already using a regular algorithm (i.e. having an
-operation flow independent of the input scalar) but regularization step
-is not implemented.
+[    1.424287] Failed to register pmu: armv8_pmuv3, reason -17
+[    1.424870] WARNING: CPU: 0 PID: 1 at ../kernel/events/core.c:11771 perf_event_sysfs_init+0x98/0xdc
+[    1.425220] Modules linked in:
+[    1.425531] CPU: 0 PID: 1 Comm: swapper/0 Tainted: G        W         4.19.0-rc7-next-20181012-00003-ge7a97b1ad77b-dirty #35
+[    1.425951] Hardware name: linux,dummy-virt (DT)
+[    1.426212] pstate: 80000005 (Nzcv daif -PAN -UAO)
+[    1.426458] pc : perf_event_sysfs_init+0x98/0xdc
+[    1.426720] lr : perf_event_sysfs_init+0x98/0xdc
+[    1.426908] sp : ffff00000804bd50
+[    1.427077] x29: ffff00000804bd50 x28: ffff00000934e078
+[    1.427429] x27: ffff000009546000 x26: 0000000000000007
+[    1.427757] x25: ffff000009280710 x24: 00000000ffffffef
+[    1.428086] x23: ffff000009408000 x22: 0000000000000000
+[    1.428415] x21: ffff000009136008 x20: ffff000009408730
+[    1.428744] x19: ffff80007b20b400 x18: 000000000000000a
+[    1.429075] x17: 0000000000000000 x16: 0000000000000000
+[    1.429418] x15: 0000000000000400 x14: 2e79726f74636572
+[    1.429748] x13: 696420656d617320 x12: 656874206e692065
+[    1.430060] x11: 6d616e20656d6173 x10: 2065687420687469
+[    1.430335] x9 : ffff00000804bd50 x8 : 206e6f7361657220
+[    1.430610] x7 : 2c3376756d705f38 x6 : ffff00000954d7ce
+[    1.430880] x5 : 0000000000000000 x4 : 0000000000000000
+[    1.431226] x3 : 0000000000000000 x2 : ffffffffffffffff
+[    1.431554] x1 : 4d151327adc50b00 x0 : 0000000000000000
+[    1.431868] Call trace:
+[    1.432102]  perf_event_sysfs_init+0x98/0xdc
+[    1.432382]  do_one_initcall+0x6c/0x1a8
+[    1.432637]  kernel_init_freeable+0x1bc/0x280
+[    1.432905]  kernel_init+0x18/0x160
+[    1.433115]  ret_from_fork+0x10/0x18
+[    1.433297] ---[ end trace 27fd415390eb9883 ]---
 
-Arrange scalar to always have fixed top bit by adding a multiple of the
-curve order (n).
+Rework to set suppress_bind_attrs flag to avoid removing the device when
+CONFIG_DEBUG_TEST_DRIVER_REMOVE=y, since there's no real reason to
+remove the armv8_pmuv3 driver.
 
-References:
-The constant time regularization step is based on micro-ecc by Kenneth
-MacKay and also referenced in the literature (Bernstein, D. J., & Lange,
-T. (2017). Montgomery curves and the Montgomery ladder. (Cryptology
-ePrint Archive; Vol. 2017/293). s.l.: IACR. Chapter 4.6.2.)
-
-Signed-off-by: Vitaly Chikunov <vt@altlinux.org>
-Cc: kernel-hardening@lists.openwall.com
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Co-developed-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- crypto/ecc.c | 16 ++++++++++++----
- 1 file changed, 12 insertions(+), 4 deletions(-)
+ arch/arm64/kernel/perf_event.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/crypto/ecc.c b/crypto/ecc.c
-index 8facafd67802..adcce310f646 100644
---- a/crypto/ecc.c
-+++ b/crypto/ecc.c
-@@ -842,15 +842,23 @@ static void xycz_add_c(u64 *x1, u64 *y1, u64 *x2, u64 *y2, u64 *curve_prime,
- 
- static void ecc_point_mult(struct ecc_point *result,
- 			   const struct ecc_point *point, const u64 *scalar,
--			   u64 *initial_z, u64 *curve_prime,
-+			   u64 *initial_z, const struct ecc_curve *curve,
- 			   unsigned int ndigits)
- {
- 	/* R0 and R1 */
- 	u64 rx[2][ECC_MAX_DIGITS];
- 	u64 ry[2][ECC_MAX_DIGITS];
- 	u64 z[ECC_MAX_DIGITS];
-+	u64 sk[2][ECC_MAX_DIGITS];
-+	u64 *curve_prime = curve->p;
- 	int i, nb;
--	int num_bits = vli_num_bits(scalar, ndigits);
-+	int num_bits;
-+	int carry;
-+
-+	carry = vli_add(sk[0], scalar, curve->n, ndigits);
-+	vli_add(sk[1], sk[0], curve->n, ndigits);
-+	scalar = sk[!carry];
-+	num_bits = sizeof(u64) * ndigits * 8 + 1;
- 
- 	vli_set(rx[1], point->x, ndigits);
- 	vli_set(ry[1], point->y, ndigits);
-@@ -1004,7 +1012,7 @@ int ecc_make_pub_key(unsigned int curve_id, unsigned int ndigits,
- 		goto out;
- 	}
- 
--	ecc_point_mult(pk, &curve->g, priv, NULL, curve->p, ndigits);
-+	ecc_point_mult(pk, &curve->g, priv, NULL, curve, ndigits);
- 	if (ecc_point_is_zero(pk)) {
- 		ret = -EAGAIN;
- 		goto err_free_point;
-@@ -1090,7 +1098,7 @@ int crypto_ecdh_shared_secret(unsigned int curve_id, unsigned int ndigits,
- 		goto err_alloc_product;
- 	}
- 
--	ecc_point_mult(product, pk, priv, rand_z, curve->p, ndigits);
-+	ecc_point_mult(product, pk, priv, rand_z, curve, ndigits);
- 
- 	ecc_swap_digits(product->x, secret, ndigits);
- 
+diff --git a/arch/arm64/kernel/perf_event.c b/arch/arm64/kernel/perf_event.c
+index e213f8e867f6..8a91ac067d44 100644
+--- a/arch/arm64/kernel/perf_event.c
++++ b/arch/arm64/kernel/perf_event.c
+@@ -1274,6 +1274,7 @@ static struct platform_driver armv8_pmu_driver = {
+ 	.driver		= {
+ 		.name	= ARMV8_PMU_PDEV_NAME,
+ 		.of_match_table = armv8_pmu_of_device_ids,
++		.suppress_bind_attrs = true,
+ 	},
+ 	.probe		= armv8_pmu_device_probe,
+ };
 -- 
 2.19.1
 
