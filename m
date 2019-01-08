@@ -4,48 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46CAAC43444
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:31:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADC5DC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:31:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D76A2070B
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:31:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7374920827
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:31:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546975878;
-	bh=d1u8BwQe20uw1Ej7C6lpZIkVa1IQ/7VMYBsHokp50U0=;
+	s=default; t=1546975884;
+	bh=PtY6PeUmpFquJC2vCTsgCAvQLr26bXmiJ2DcYaajt0E=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Ep4GZfkOBCOIwuHnE7v2IqurOTmIidO9x8+Vmk6mYjKvnVrB88yxTioM+/TzQAhAw
-	 kYvhjHNnL2mkbfze7GdrI66bDhYagvrh2opy0067adtkmUOXaAOCBUURMDhNeIcqBL
-	 w2eKNDK5rWwdoB5CUDXlevDOl/bYA4IyIP8YRWm0=
+	b=POTMfvf7hGGV8oQtOr+wuaB5xB5F0AjiDbWvkSJkcXffGdmLYO11zjAlNkUSX4CCn
+	 vTT0DOQfknKevJU4A+gQMxB5GVXa3yC667UVrtyNGMxq+dGi3LgIkDp7zeflOBPIjd
+	 1g4lXspYkiSRbIRobzi6WBvvcKlc+VpzYNg/cW+A=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731037AbfAHTbQ (ORCPT
+        id S1731076AbfAHTbX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:31:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39250 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 14:31:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39318 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731012AbfAHTbM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:31:12 -0500
+        id S1731035AbfAHTbQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:31:16 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E5BC220645;
-        Tue,  8 Jan 2019 19:31:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C776520665;
+        Tue,  8 Jan 2019 19:31:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546975871;
-        bh=d1u8BwQe20uw1Ej7C6lpZIkVa1IQ/7VMYBsHokp50U0=;
+        s=default; t=1546975875;
+        bh=PtY6PeUmpFquJC2vCTsgCAvQLr26bXmiJ2DcYaajt0E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bbIuKQK9dgv9TSyXAysMKjHdJ2yIyfjwEnqPyqoMJR3XoAdJfmtkWZs9RVG39Zb0/
-         6IrC08hwOdJaaCGeUvukFDK5K+n256vwCNXKjgqYrVWxlG7Jj0k2dTr1y2MFHfE/La
-         kOIpSCscKz6EpHNT/ez/9XXzyTGcyk7LAxHKAfEg=
+        b=zT3FjP1X7NeMEMSmb5cFfYPMNbS/A15YVv2BGiGlv8A2J0h/EzPsRYpt9gt420CKt
+         TrJAL6JoGVVZwpfFcTX/nLH4dB4BkMmsSeJ0Ao5Kw2Bs0xGBws9ClOaIP+aALc3TRI
+         ee9/uMVed7ERmvSGqUR7myWJis2QobFDgSon6G6w=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Lucas Stach <l.stach@pengutronix.de>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 50/97] clk: imx6q: reset exclusive gates on init
-Date:   Tue,  8 Jan 2019 14:28:59 -0500
-Message-Id: <20190108192949.122407-50-sashal@kernel.org>
+Cc:     Jiong Wang <jiong.wang@netronome.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
+        linux-kselftest@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 52/97] bpf: relax verifier restriction on BPF_MOV | BPF_ALU
+Date:   Tue,  8 Jan 2019 14:29:01 -0500
+Message-Id: <20190108192949.122407-52-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108192949.122407-1-sashal@kernel.org>
 References: <20190108192949.122407-1-sashal@kernel.org>
@@ -57,44 +58,173 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lucas Stach <l.stach@pengutronix.de>
+From: Jiong Wang <jiong.wang@netronome.com>
 
-[ Upstream commit f7542d817733f461258fd3a47d77da35b2d9fc81 ]
+[ Upstream commit e434b8cdf788568ba65a0a0fd9f3cb41f3ca1803 ]
 
-The exclusive gates may be set up in the wrong way by software running
-before the clock driver comes up. In that case the exclusive setup is
-locked in its initial state, as the complementary function can't be
-activated without disabling the initial setup first.
+Currently, the destination register is marked as unknown for 32-bit
+sub-register move (BPF_MOV | BPF_ALU) whenever the source register type is
+SCALAR_VALUE.
 
-To avoid this lock situation, reset the exclusive gates to the off
-state and allow the kernel to provide the proper setup.
+This is too conservative that some valid cases will be rejected.
+Especially, this may turn a constant scalar value into unknown value that
+could break some assumptions of verifier.
 
-Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
-Reviewed-by: Dong Aisheng <Aisheng.dong@nxp.com>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+For example, test_l4lb_noinline.c has the following C code:
+
+    struct real_definition *dst
+
+1:  if (!get_packet_dst(&dst, &pckt, vip_info, is_ipv6))
+2:    return TC_ACT_SHOT;
+3:
+4:  if (dst->flags & F_IPV6) {
+
+get_packet_dst is responsible for initializing "dst" into valid pointer and
+return true (1), otherwise return false (0). The compiled instruction
+sequence using alu32 will be:
+
+  412: (54) (u32) r7 &= (u32) 1
+  413: (bc) (u32) r0 = (u32) r7
+  414: (95) exit
+
+insn 413, a BPF_MOV | BPF_ALU, however will turn r0 into unknown value even
+r7 contains SCALAR_VALUE 1.
+
+This causes trouble when verifier is walking the code path that hasn't
+initialized "dst" inside get_packet_dst, for which case 0 is returned and
+we would then expect verifier concluding line 1 in the above C code pass
+the "if" check, therefore would skip fall through path starting at line 4.
+Now, because r0 returned from callee has became unknown value, so verifier
+won't skip analyzing path starting at line 4 and "dst->flags" requires
+dereferencing the pointer "dst" which actually hasn't be initialized for
+this path.
+
+This patch relaxed the code marking sub-register move destination. For a
+SCALAR_VALUE, it is safe to just copy the value from source then truncate
+it into 32-bit.
+
+A unit test also included to demonstrate this issue. This test will fail
+before this patch.
+
+This relaxation could let verifier skipping more paths for conditional
+comparison against immediate. It also let verifier recording a more
+accurate/strict value for one register at one state, if this state end up
+with going through exit without rejection and it is used for state
+comparison later, then it is possible an inaccurate/permissive value is
+better. So the real impact on verifier processed insn number is complex.
+But in all, without this fix, valid program could be rejected.
+
+>From real benchmarking on kernel selftests and Cilium bpf tests, there is
+no impact on processed instruction number when tests ares compiled with
+default compilation options. There is slightly improvements when they are
+compiled with -mattr=+alu32 after this patch.
+
+Also, test_xdp_noinline/-mattr=+alu32 now passed verification. It is
+rejected before this fix.
+
+Insn processed before/after this patch:
+
+                        default     -mattr=+alu32
+
+Kernel selftest
+
+===
+test_xdp.o              371/371      369/369
+test_l4lb.o             6345/6345    5623/5623
+test_xdp_noinline.o     2971/2971    rejected/2727
+test_tcp_estates.o      429/429      430/430
+
+Cilium bpf
+===
+bpf_lb-DLB_L3.o:        2085/2085     1685/1687
+bpf_lb-DLB_L4.o:        2287/2287     1986/1982
+bpf_lb-DUNKNOWN.o:      690/690       622/622
+bpf_lxc.o:              95033/95033   N/A
+bpf_netdev.o:           7245/7245     N/A
+bpf_overlay.o:          2898/2898     3085/2947
+
+NOTE:
+  - bpf_lxc.o and bpf_netdev.o compiled by -mattr=+alu32 are rejected by
+    verifier due to another issue inside verifier on supporting alu32
+    binary.
+  - Each cilium bpf program could generate several processed insn number,
+    above number is sum of them.
+
+v1->v2:
+ - Restrict the change on SCALAR_VALUE.
+ - Update benchmark numbers on Cilium bpf tests.
+
+Signed-off-by: Jiong Wang <jiong.wang@netronome.com>
+Signed-off-by: Alexei Starovoitov <ast@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/imx/clk-imx6q.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ kernel/bpf/verifier.c                       | 16 ++++++++++++----
+ tools/testing/selftests/bpf/test_verifier.c | 13 +++++++++++++
+ 2 files changed, 25 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/clk/imx/clk-imx6q.c b/drivers/clk/imx/clk-imx6q.c
-index 8c7c2fcb8d94..c509324f6338 100644
---- a/drivers/clk/imx/clk-imx6q.c
-+++ b/drivers/clk/imx/clk-imx6q.c
-@@ -508,8 +508,12 @@ static void __init imx6q_clocks_init(struct device_node *ccm_node)
- 	 * lvds1_gate and lvds2_gate are pseudo-gates.  Both can be
- 	 * independently configured as clock inputs or outputs.  We treat
- 	 * the "output_enable" bit as a gate, even though it's really just
--	 * enabling clock output.
-+	 * enabling clock output. Initially the gate bits are cleared, as
-+	 * otherwise the exclusive configuration gets locked in the setup done
-+	 * by software running before the clock driver, with no way to change
-+	 * it.
- 	 */
-+	writel(readl(base + 0x160) & ~0x3c00, base + 0x160);
- 	clk[IMX6QDL_CLK_LVDS1_GATE] = imx_clk_gate_exclusive("lvds1_gate", "lvds1_sel", base + 0x160, 10, BIT(12));
- 	clk[IMX6QDL_CLK_LVDS2_GATE] = imx_clk_gate_exclusive("lvds2_gate", "lvds2_sel", base + 0x160, 11, BIT(13));
+diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+index 89cea3ed535d..341806668f03 100644
+--- a/kernel/bpf/verifier.c
++++ b/kernel/bpf/verifier.c
+@@ -3285,12 +3285,15 @@ static int check_alu_op(struct bpf_verifier_env *env, struct bpf_insn *insn)
+ 			return err;
  
+ 		if (BPF_SRC(insn->code) == BPF_X) {
++			struct bpf_reg_state *src_reg = regs + insn->src_reg;
++			struct bpf_reg_state *dst_reg = regs + insn->dst_reg;
++
+ 			if (BPF_CLASS(insn->code) == BPF_ALU64) {
+ 				/* case: R1 = R2
+ 				 * copy register state to dest reg
+ 				 */
+-				regs[insn->dst_reg] = regs[insn->src_reg];
+-				regs[insn->dst_reg].live |= REG_LIVE_WRITTEN;
++				*dst_reg = *src_reg;
++				dst_reg->live |= REG_LIVE_WRITTEN;
+ 			} else {
+ 				/* R1 = (u32) R2 */
+ 				if (is_pointer_value(env, insn->src_reg)) {
+@@ -3298,9 +3301,14 @@ static int check_alu_op(struct bpf_verifier_env *env, struct bpf_insn *insn)
+ 						"R%d partial copy of pointer\n",
+ 						insn->src_reg);
+ 					return -EACCES;
++				} else if (src_reg->type == SCALAR_VALUE) {
++					*dst_reg = *src_reg;
++					dst_reg->live |= REG_LIVE_WRITTEN;
++				} else {
++					mark_reg_unknown(env, regs,
++							 insn->dst_reg);
+ 				}
+-				mark_reg_unknown(env, regs, insn->dst_reg);
+-				coerce_reg_to_size(&regs[insn->dst_reg], 4);
++				coerce_reg_to_size(dst_reg, 4);
+ 			}
+ 		} else {
+ 			/* case: R = imm
+diff --git a/tools/testing/selftests/bpf/test_verifier.c b/tools/testing/selftests/bpf/test_verifier.c
+index e436b67f2426..9db5a7378f40 100644
+--- a/tools/testing/selftests/bpf/test_verifier.c
++++ b/tools/testing/selftests/bpf/test_verifier.c
+@@ -2748,6 +2748,19 @@ static struct bpf_test tests[] = {
+ 		.result_unpriv = REJECT,
+ 		.result = ACCEPT,
+ 	},
++	{
++		"alu32: mov u32 const",
++		.insns = {
++			BPF_MOV32_IMM(BPF_REG_7, 0),
++			BPF_ALU32_IMM(BPF_AND, BPF_REG_7, 1),
++			BPF_MOV32_REG(BPF_REG_0, BPF_REG_7),
++			BPF_JMP_IMM(BPF_JEQ, BPF_REG_0, 0, 1),
++			BPF_LDX_MEM(BPF_DW, BPF_REG_0, BPF_REG_7, 0),
++			BPF_EXIT_INSN(),
++		},
++		.result = ACCEPT,
++		.retval = 0,
++	},
+ 	{
+ 		"unpriv: partial copy of pointer",
+ 		.insns = {
 -- 
 2.19.1
 
