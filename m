@@ -2,28 +2,28 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AAE0C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 16:31:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19221C43612
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 16:31:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E93D72070B
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 16:31:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DDDEC20883
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 16:31:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729452AbfAHQbn (ORCPT
+        id S1729472AbfAHQbq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 11:31:43 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:45887 "EHLO mail.bootlin.com"
+        Tue, 8 Jan 2019 11:31:46 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:45936 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728238AbfAHQbj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 11:31:39 -0500
+        id S1729400AbfAHQbn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 11:31:43 -0500
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 52EEE20A1D; Tue,  8 Jan 2019 17:31:36 +0100 (CET)
+        id D180F209D7; Tue,  8 Jan 2019 17:31:40 +0100 (CET)
 Received: from localhost.localdomain (aaubervilliers-681-1-45-241.w90-88.abo.wanadoo.fr [90.88.163.241])
-        by mail.bootlin.com (Postfix) with ESMTPSA id E7C2420763;
-        Tue,  8 Jan 2019 17:31:25 +0100 (CET)
+        by mail.bootlin.com (Postfix) with ESMTPSA id 0864620A0D;
+        Tue,  8 Jan 2019 17:31:27 +0100 (CET)
 From:   Miquel Raynal <miquel.raynal@bootlin.com>
 To:     Gregory Clement <gregory.clement@bootlin.com>,
         Jason Cooper <jason@lakedaemon.net>,
@@ -40,11 +40,14 @@ Cc:     <devicetree@vger.kernel.org>,
         Nadav Haklai <nadavh@marvell.com>,
         Marcin Wojtas <mw@semihalf.com>,
         Grzegorz Jaszczyk <jaz@semihalf.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: [PATCH v5 0/7] Add Armada 3700 COMPHY support
-Date:   Tue,  8 Jan 2019 17:31:17 +0100
-Message-Id: <20190108163124.6409-1-miquel.raynal@bootlin.com>
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Evan Wang <xswang@marvell.com>
+Subject: [PATCH v5 3/7] phy: add A3700 COMPHY support
+Date:   Tue,  8 Jan 2019 17:31:20 +0100
+Message-Id: <20190108163124.6409-4-miquel.raynal@bootlin.com>
 X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190108163124.6409-1-miquel.raynal@bootlin.com>
+References: <20190108163124.6409-1-miquel.raynal@bootlin.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -53,76 +56,388 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Add a driver to support COMPHY, a hardware block providing shared
+serdes PHYs on Marvell Armada 3700. This driver uses SMC calls and
+rely on having an up-to-date firmware.
 
-This series adds a new driver to support Armada 3700 COMPHY IP.
-The series has been tested on an ESPRESSObin with SATA, PCIe
-and USB3 host. For this purpose, patch 1 enumerates the SATA PHY
-mode. The SGMII PHY mode that is supported by the IP has been written
-(uses SMC calls anyway) but could not be tested on this platform.
+SATA, PCie and USB3 host mode have been tested successfully with an
+ESPRESSObin. (HS)SGMII mode cannot be tested with this platform.
 
-Three series will follow to add PHY support (or at least a PHY nodes
-in the A3700/ESPRESSObin device trees) to the MVEBU AHCI driver, the
-Aardvark PCI controller driver and the MVEBU xHCI driver. All this is
-needed in order to achieve suspend to RAM on this platform.
+Evan worked on the original driver structure and Grzegorz on the SMC
+calls rework. The structure of this driver has been copied from
+Antoine Tenart work on CP110 COMPHY driver.
 
-Thanks,
-Miquèl
-
-
-Changes since v4:
-=================
-* Fixed error in the driver probe where PHY_INTERFACE_MODE_NA was
-  assigned to lane->mode instead of lane->submode.
-* Compile-in the driver by default (depends on ARCH_MVEBU).
-* Add dependency on HAVE_ARM_SMCC in Kconfig.
-
-Changes since v3:
-=================
-* Added Rob's Reviewed-by tag on bindings.
-* Rebased on top of phy -next as of the 12th of December, 2018.
-* Adapted the driver to support SGMII/1000BASEX and
-  HS_SGMII/2500BASEX.
-
-Changes since v2:
-=================
-* Remove redundant check on lane->port/args->arg[0] at the end of the
-  ->xlate() callback. Do it on both armada-cp110 and armada-a3700
-  COMPHY drivers.
-* Put my SoB as author of the patch first when a patch is co-developed.
-
-Changes since v1:
-=================
-* Fix wrong check in ->xlate().
-* Apply the same fix to the cp110 comphy driver from which the a3700
-  driver is based.
-* Added credit to Gregorz Jaszczyk for his work.
-* Added Suggested-by tag to the patch adding the COMPHY DT node.
-
-
-Grzegorz Jaszczyk (1):
-  phy: enumerate SATA PHY mode
-
-Miquel Raynal (6):
-  phy: mvebu-cp110-comphy: fix port check in ->xlate()
-  phy: add A3700 COMPHY support
-  dt-bindings: phy: mvebu-comphy: extend the file to describe a3700
-    bindings
-  MAINTAINERS: phy: add entry for Armada 3700 COMPHY driver
-  ARM64: dts: marvell: armada-37xx: fix SATA node scope
-  ARM64: dts: marvell: armada-37xx: declare the COMPHY node
-
- .../bindings/phy/phy-mvebu-comphy.txt         |  65 +++-
- MAINTAINERS                                   |   6 +
- arch/arm64/boot/dts/marvell/armada-37xx.dtsi  |  31 +-
- drivers/phy/marvell/Kconfig                   |  12 +
- drivers/phy/marvell/Makefile                  |   1 +
- drivers/phy/marvell/phy-mvebu-a3700-comphy.c  | 318 ++++++++++++++++++
- drivers/phy/marvell/phy-mvebu-cp110-comphy.c  |   2 -
- include/linux/phy/phy.h                       |   1 +
- 8 files changed, 421 insertions(+), 15 deletions(-)
+Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+Co-developed-by: Evan Wang <xswang@marvell.com>
+Signed-off-by: Evan Wang <xswang@marvell.com>
+Co-developed-by: Grzegorz Jaszczyk <jaz@semihalf.com>
+Signed-off-by: Grzegorz Jaszczyk <jaz@semihalf.com>
+---
+ drivers/phy/marvell/Kconfig                  |  12 +
+ drivers/phy/marvell/Makefile                 |   1 +
+ drivers/phy/marvell/phy-mvebu-a3700-comphy.c | 318 +++++++++++++++++++
+ 3 files changed, 331 insertions(+)
  create mode 100644 drivers/phy/marvell/phy-mvebu-a3700-comphy.c
 
+diff --git a/drivers/phy/marvell/Kconfig b/drivers/phy/marvell/Kconfig
+index 6fb4b56e4c14..9c90c0408ea3 100644
+--- a/drivers/phy/marvell/Kconfig
++++ b/drivers/phy/marvell/Kconfig
+@@ -21,6 +21,18 @@ config PHY_BERLIN_USB
+ 	help
+ 	  Enable this to support the USB PHY on Marvell Berlin SoCs.
+ 
++config PHY_MVEBU_A3700_COMPHY
++	tristate "Marvell A3700 comphy driver"
++	depends on ARCH_MVEBU || COMPILE_TEST
++	depends on OF
++	depends on HAVE_ARM_SMCCC
++	default y
++	select GENERIC_PHY
++	help
++	  This driver allows to control the comphy, a hardware block providing
++	  shared serdes PHYs on Marvell Armada 3700. Its serdes lanes can be
++	  used by various controllers: Ethernet, SATA, USB3, PCIe.
++
+ config PHY_MVEBU_CP110_COMPHY
+ 	tristate "Marvell CP110 comphy driver"
+ 	depends on ARCH_MVEBU || COMPILE_TEST
+diff --git a/drivers/phy/marvell/Makefile b/drivers/phy/marvell/Makefile
+index 3975b144f8ec..c13a0c8ab6f0 100644
+--- a/drivers/phy/marvell/Makefile
++++ b/drivers/phy/marvell/Makefile
+@@ -2,6 +2,7 @@
+ obj-$(CONFIG_ARMADA375_USBCLUSTER_PHY)	+= phy-armada375-usb2.o
+ obj-$(CONFIG_PHY_BERLIN_SATA)		+= phy-berlin-sata.o
+ obj-$(CONFIG_PHY_BERLIN_USB)		+= phy-berlin-usb.o
++obj-$(CONFIG_PHY_MVEBU_A3700_COMPHY)	+= phy-mvebu-a3700-comphy.o
+ obj-$(CONFIG_PHY_MVEBU_CP110_COMPHY)	+= phy-mvebu-cp110-comphy.o
+ obj-$(CONFIG_PHY_MVEBU_SATA)		+= phy-mvebu-sata.o
+ obj-$(CONFIG_PHY_PXA_28NM_HSIC)		+= phy-pxa-28nm-hsic.o
+diff --git a/drivers/phy/marvell/phy-mvebu-a3700-comphy.c b/drivers/phy/marvell/phy-mvebu-a3700-comphy.c
+new file mode 100644
+index 000000000000..8812a104c233
+--- /dev/null
++++ b/drivers/phy/marvell/phy-mvebu-a3700-comphy.c
+@@ -0,0 +1,318 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (C) 2018 Marvell
++ *
++ * Authors:
++ *   Evan Wang <xswang@marvell.com>
++ *   Miquèl Raynal <miquel.raynal@bootlin.com>
++ *
++ * Structure inspired from phy-mvebu-cp110-comphy.c written by Antoine Tenart.
++ * SMC call initial support done by Grzegorz Jaszczyk.
++ */
++
++#include <linux/arm-smccc.h>
++#include <linux/io.h>
++#include <linux/iopoll.h>
++#include <linux/mfd/syscon.h>
++#include <linux/module.h>
++#include <linux/phy.h>
++#include <linux/phy/phy.h>
++#include <linux/platform_device.h>
++
++#define MVEBU_A3700_COMPHY_LANES		3
++#define MVEBU_A3700_COMPHY_PORTS		2
++
++/* COMPHY Fast SMC function identifiers */
++#define COMPHY_SIP_POWER_ON			0x82000001
++#define COMPHY_SIP_POWER_OFF			0x82000002
++#define COMPHY_SIP_PLL_LOCK			0x82000003
++
++#define COMPHY_FW_MODE_SATA			0x1
++#define COMPHY_FW_MODE_SGMII			0x2
++#define COMPHY_FW_MODE_HS_SGMII			0x3
++#define COMPHY_FW_MODE_USB3H			0x4
++#define COMPHY_FW_MODE_USB3D			0x5
++#define COMPHY_FW_MODE_PCIE			0x6
++#define COMPHY_FW_MODE_RXAUI			0x7
++#define COMPHY_FW_MODE_XFI			0x8
++#define COMPHY_FW_MODE_SFI			0x9
++#define COMPHY_FW_MODE_USB3			0xa
++
++#define COMPHY_FW_SPEED_1_25G			0 /* SGMII 1G */
++#define COMPHY_FW_SPEED_2_5G			1
++#define COMPHY_FW_SPEED_3_125G			2 /* SGMII 2.5G */
++#define COMPHY_FW_SPEED_5G			3
++#define COMPHY_FW_SPEED_5_15625G		4 /* XFI 5G */
++#define COMPHY_FW_SPEED_6G			5
++#define COMPHY_FW_SPEED_10_3125G		6 /* XFI 10G */
++#define COMPHY_FW_SPEED_MAX			0x3F
++
++#define COMPHY_FW_MODE(mode)			((mode) << 12)
++#define COMPHY_FW_NET(mode, idx, speed)		(COMPHY_FW_MODE(mode) | \
++						 ((idx) << 8) |	\
++						 ((speed) << 2))
++#define COMPHY_FW_PCIE(mode, idx, speed, width)	(COMPHY_FW_NET(mode, idx, speed) | \
++						 ((width) << 18))
++
++struct mvebu_a3700_comphy_conf {
++	unsigned int lane;
++	enum phy_mode mode;
++	int submode;
++	unsigned int port;
++	u32 fw_mode;
++};
++
++#define MVEBU_A3700_COMPHY_CONF(_lane, _mode, _smode, _port, _fw)	\
++	{								\
++		.lane = _lane,						\
++		.mode = _mode,						\
++		.submode = _smode,					\
++		.port = _port,						\
++		.fw_mode = _fw,						\
++	}
++
++#define MVEBU_A3700_COMPHY_CONF_GEN(_lane, _mode, _port, _fw) \
++	MVEBU_A3700_COMPHY_CONF(_lane, _mode, PHY_INTERFACE_MODE_NA, _port, _fw)
++
++#define MVEBU_A3700_COMPHY_CONF_ETH(_lane, _smode, _port, _fw) \
++	MVEBU_A3700_COMPHY_CONF(_lane, PHY_MODE_ETHERNET, _smode, _port, _fw)
++
++static const struct mvebu_a3700_comphy_conf mvebu_a3700_comphy_modes[] = {
++	/* lane 0 */
++	MVEBU_A3700_COMPHY_CONF_GEN(0, PHY_MODE_USB_HOST_SS, 0,
++				    COMPHY_FW_MODE_USB3H),
++	MVEBU_A3700_COMPHY_CONF_ETH(0, PHY_INTERFACE_MODE_SGMII, 1,
++				    COMPHY_FW_MODE_SGMII),
++	MVEBU_A3700_COMPHY_CONF_ETH(0, PHY_INTERFACE_MODE_2500BASEX, 1,
++				    COMPHY_FW_MODE_HS_SGMII),
++	/* lane 1 */
++	MVEBU_A3700_COMPHY_CONF_GEN(1, PHY_MODE_PCIE, 0,
++				    COMPHY_FW_MODE_PCIE),
++	MVEBU_A3700_COMPHY_CONF_ETH(1, PHY_INTERFACE_MODE_SGMII, 0,
++				    COMPHY_FW_MODE_SGMII),
++	MVEBU_A3700_COMPHY_CONF_ETH(1, PHY_INTERFACE_MODE_2500BASEX, 0,
++				    COMPHY_FW_MODE_HS_SGMII),
++	/* lane 2 */
++	MVEBU_A3700_COMPHY_CONF_GEN(2, PHY_MODE_SATA, 0,
++				    COMPHY_FW_MODE_SATA),
++	MVEBU_A3700_COMPHY_CONF_GEN(2, PHY_MODE_USB_HOST_SS, 0,
++				    COMPHY_FW_MODE_USB3H),
++};
++
++struct mvebu_a3700_comphy_lane {
++	struct device *dev;
++	unsigned int id;
++	enum phy_mode mode;
++	int submode;
++	int port;
++};
++
++static int mvebu_a3700_comphy_smc(unsigned long function, unsigned long lane,
++				  unsigned long mode)
++{
++	struct arm_smccc_res res;
++
++	arm_smccc_smc(function, lane, mode, 0, 0, 0, 0, 0, &res);
++
++	return res.a0;
++}
++
++static int mvebu_a3700_comphy_get_fw_mode(int lane, int port,
++					  enum phy_mode mode,
++					  int submode)
++{
++	int i, n = ARRAY_SIZE(mvebu_a3700_comphy_modes);
++
++	/* Unused PHY mux value is 0x0 */
++	if (mode == PHY_MODE_INVALID)
++		return -EINVAL;
++
++	for (i = 0; i < n; i++) {
++		if (mvebu_a3700_comphy_modes[i].lane == lane &&
++		    mvebu_a3700_comphy_modes[i].port == port &&
++		    mvebu_a3700_comphy_modes[i].mode == mode &&
++		    mvebu_a3700_comphy_modes[i].submode == submode)
++			break;
++	}
++
++	if (i == n)
++		return -EINVAL;
++
++	return mvebu_a3700_comphy_modes[i].fw_mode;
++}
++
++static int mvebu_a3700_comphy_set_mode(struct phy *phy, enum phy_mode mode,
++				       int submode)
++{
++	struct mvebu_a3700_comphy_lane *lane = phy_get_drvdata(phy);
++	int fw_mode;
++
++	if (submode == PHY_INTERFACE_MODE_1000BASEX)
++		submode = PHY_INTERFACE_MODE_SGMII;
++
++	fw_mode = mvebu_a3700_comphy_get_fw_mode(lane->id, lane->port, mode,
++						 submode);
++	if (fw_mode < 0) {
++		dev_err(lane->dev, "invalid COMPHY mode\n");
++		return fw_mode;
++	}
++
++	/* Just remember the mode, ->power_on() will do the real setup */
++	lane->mode = mode;
++	lane->submode = submode;
++
++	return 0;
++}
++
++static int mvebu_a3700_comphy_power_on(struct phy *phy)
++{
++	struct mvebu_a3700_comphy_lane *lane = phy_get_drvdata(phy);
++	u32 fw_param;
++	int fw_mode;
++
++	fw_mode = mvebu_a3700_comphy_get_fw_mode(lane->id, lane->port,
++						 lane->mode, lane->submode);
++	if (fw_mode < 0) {
++		dev_err(lane->dev, "invalid COMPHY mode\n");
++		return fw_mode;
++	}
++
++	switch (lane->mode) {
++	case PHY_MODE_USB_HOST_SS:
++		dev_dbg(lane->dev, "set lane %d to USB3 host mode\n", lane->id);
++		fw_param = COMPHY_FW_MODE(fw_mode);
++		break;
++	case PHY_MODE_SATA:
++		dev_dbg(lane->dev, "set lane %d to SATA mode\n", lane->id);
++		fw_param = COMPHY_FW_MODE(fw_mode);
++		break;
++	case PHY_MODE_ETHERNET:
++		switch (lane->submode) {
++		case PHY_INTERFACE_MODE_SGMII:
++			dev_dbg(lane->dev, "set lane %d to SGMII mode\n",
++				lane->id);
++			fw_param = COMPHY_FW_NET(fw_mode, lane->port,
++						 COMPHY_FW_SPEED_1_25G);
++			break;
++		case PHY_INTERFACE_MODE_2500BASEX:
++			dev_dbg(lane->dev, "set lane %d to HS SGMII mode\n",
++				lane->id);
++			fw_param = COMPHY_FW_NET(fw_mode, lane->port,
++						 COMPHY_FW_SPEED_3_125G);
++			break;
++		default:
++			dev_err(lane->dev, "unsupported PHY submode (%d)\n",
++				lane->submode);
++			return -ENOTSUPP;
++		}
++		break;
++	case PHY_MODE_PCIE:
++		dev_dbg(lane->dev, "set lane %d to PCIe mode\n", lane->id);
++		fw_param = COMPHY_FW_PCIE(fw_mode, lane->port,
++					  COMPHY_FW_SPEED_5G,
++					  phy->attrs.bus_width);
++		break;
++	default:
++		dev_err(lane->dev, "unsupported PHY mode (%d)\n", lane->mode);
++		return -ENOTSUPP;
++	}
++
++	return mvebu_a3700_comphy_smc(COMPHY_SIP_POWER_ON, lane->id, fw_param);
++}
++
++static int mvebu_a3700_comphy_power_off(struct phy *phy)
++{
++	struct mvebu_a3700_comphy_lane *lane = phy_get_drvdata(phy);
++
++	return mvebu_a3700_comphy_smc(COMPHY_SIP_POWER_OFF, lane->id, 0);
++}
++
++static const struct phy_ops mvebu_a3700_comphy_ops = {
++	.power_on	= mvebu_a3700_comphy_power_on,
++	.power_off	= mvebu_a3700_comphy_power_off,
++	.set_mode	= mvebu_a3700_comphy_set_mode,
++	.owner		= THIS_MODULE,
++};
++
++static struct phy *mvebu_a3700_comphy_xlate(struct device *dev,
++					    struct of_phandle_args *args)
++{
++	struct mvebu_a3700_comphy_lane *lane;
++	struct phy *phy;
++
++	if (WARN_ON(args->args[0] >= MVEBU_A3700_COMPHY_PORTS))
++		return ERR_PTR(-EINVAL);
++
++	phy = of_phy_simple_xlate(dev, args);
++	if (IS_ERR(phy))
++		return phy;
++
++	lane = phy_get_drvdata(phy);
++	lane->port = args->args[0];
++
++	return phy;
++}
++
++static int mvebu_a3700_comphy_probe(struct platform_device *pdev)
++{
++	struct phy_provider *provider;
++	struct device_node *child;
++
++	for_each_available_child_of_node(pdev->dev.of_node, child) {
++		struct mvebu_a3700_comphy_lane *lane;
++		struct phy *phy;
++		int ret;
++		u32 lane_id;
++
++		ret = of_property_read_u32(child, "reg", &lane_id);
++		if (ret < 0) {
++			dev_err(&pdev->dev, "missing 'reg' property (%d)\n",
++				ret);
++			continue;
++		}
++
++		if (lane_id >= MVEBU_A3700_COMPHY_LANES) {
++			dev_err(&pdev->dev, "invalid 'reg' property\n");
++			continue;
++		}
++
++		lane = devm_kzalloc(&pdev->dev, sizeof(*lane), GFP_KERNEL);
++		if (!lane)
++			return -ENOMEM;
++
++		phy = devm_phy_create(&pdev->dev, child,
++				      &mvebu_a3700_comphy_ops);
++		if (IS_ERR(phy))
++			return PTR_ERR(phy);
++
++		lane->dev = &pdev->dev;
++		lane->mode = PHY_MODE_INVALID;
++		lane->submode = PHY_INTERFACE_MODE_NA;
++		lane->id = lane_id;
++		lane->port = -1;
++		phy_set_drvdata(phy, lane);
++	}
++
++	provider = devm_of_phy_provider_register(&pdev->dev,
++						 mvebu_a3700_comphy_xlate);
++	return PTR_ERR_OR_ZERO(provider);
++}
++
++static const struct of_device_id mvebu_a3700_comphy_of_match_table[] = {
++	{ .compatible = "marvell,comphy-a3700" },
++	{ },
++};
++MODULE_DEVICE_TABLE(of, mvebu_a3700_comphy_of_match_table);
++
++static struct platform_driver mvebu_a3700_comphy_driver = {
++	.probe	= mvebu_a3700_comphy_probe,
++	.driver	= {
++		.name = "mvebu-a3700-comphy",
++		.of_match_table = mvebu_a3700_comphy_of_match_table,
++	},
++};
++module_platform_driver(mvebu_a3700_comphy_driver);
++
++MODULE_AUTHOR("Miquèl Raynal <miquel.raynal@bootlin.com>");
++MODULE_DESCRIPTION("Common PHY driver for A3700");
++MODULE_LICENSE("GPL v2");
 -- 
 2.19.1
 
