@@ -2,128 +2,94 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B545C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 09:26:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CDD1C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 09:27:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 25FCF2089F
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 09:26:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5C85E218A1
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 09:27:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="A3JXKdwE"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="M+0Ia54X"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728472AbfAHJ0Q (ORCPT
+        id S1728421AbfAHJ1N (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 04:26:16 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:48274 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727367AbfAHJ0P (ORCPT
+        Tue, 8 Jan 2019 04:27:13 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:41594 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728179AbfAHJ1M (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 04:26:15 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=UcFs79ElLYfkSMdEYQ8C2tcq6RJzZMgjPuBrAzZDW7c=; b=A3JXKdwEuFvsP8uk/eCujm7nI
-        iPgjSxCw953uuyOEmygiq2MAgHpMaxW2pMVcHalULtHDHPyHRY+T0ybsmEEKnkMJEo4uMx6OrDPn0
-        h6dXsD9DU/WPTo1LiWcCliO8Zzz6NaY20byi7LQTxj5QwsMKKNNFy2XQX5NnJaXp3On46Lkt17z41
-        br4PZILx75vamQFZdD/XDd5/pfvZU/iSL5cDWe2BsOI4IxokI62iDU5RSzim8EcqFTNmbf6TXU3hi
-        SXYYvx7CjIH2r6C5aHvZYT+OmQmfD1FSyhM9juxDv1nAV3c2moVChXZ8UDlt2+6W3HL07DZPLVpJC
-        h7NWDE6bA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1ggne6-0005ow-Jq; Tue, 08 Jan 2019 09:26:03 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id C531B2029D919; Tue,  8 Jan 2019 10:25:59 +0100 (CET)
-Date:   Tue, 8 Jan 2019 10:25:59 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Adrian Hunter <adrian.hunter@intel.com>
-Cc:     Andi Kleen <ak@linux.intel.com>, Nadav Amit <namit@vmware.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Edward Cree <ecree@solarflare.com>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Nadav Amit <nadav.amit@gmail.com>, X86 ML <x86@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Borislav Petkov <bp@alien8.de>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        songliubraving@fb.com
-Subject: Re: [RFC v2 0/6] x86: dynamic indirect branch promotion
-Message-ID: <20190108092559.GA6808@hirez.programming.kicks-ass.net>
-References: <20181231072112.21051-1-namit@vmware.com>
- <87zhshe66w.fsf@linux.intel.com>
- <20190107163227.GH14122@hirez.programming.kicks-ass.net>
- <c4e836e8-1949-27f5-f6a0-ed860f590ec5@intel.com>
+        Tue, 8 Jan 2019 04:27:12 -0500
+Received: by mail-lj1-f195.google.com with SMTP id k15-v6so2777632ljc.8
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jan 2019 01:27:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=AKWZrFGB2fy0hvkU+TdNt6WtCT+/Ni6C2ZMu+Ml6WUY=;
+        b=M+0Ia54XDuUGFvSKsJv51akkZj2klbnLkb5VPfK36nrBR/4/a2cUVcWCIoUmpt40pW
+         /rzjKIJ/GyVVEQw6R2CNIyz64nYNGPg/IIar/LtCFPsUpb+NECSexPvMnHMVLqyeqexM
+         bs865UTcUvVLnykIpr+nGcjnYRWzMX7iVu5cs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=AKWZrFGB2fy0hvkU+TdNt6WtCT+/Ni6C2ZMu+Ml6WUY=;
+        b=GFvzEWNV/UeqOkgpR89jmiFu0vquq86/6N5Wv4S/f3g8IWqfEritpU3JYMALkc/67D
+         Zn4W3l0jsemoUTrtj0/0FLxo6Jhruw6QVEhK/vu0hsIXvfsv1thEStYqsaYH378R3uHA
+         OCC1nBTBI3UWiPR+q7GPpXIdeLj3g0XmYJRbUN7cOhGOKkXmBdRuswRrf8qizIe+bMIS
+         3qwLYEg7G6lefGz7DoNy65BpDHwpWTaFWoRvSZhTwfpIutcRM5rWg5sZJm5n0eRa9Fqf
+         v1zwPYLa5S8bN0t9R2YzyfmXDivx9bbsXVrEqts6sm4Y5G2qd04OCsMSGxB+AabCzPb3
+         FuTA==
+X-Gm-Message-State: AJcUukd2dOZgiPW7qRINkKsuAGxDJcQERdUVdZHholDyMJygCQLGNXJx
+        c8hGziaeqaEzbq/9uqUJxtrC/A==
+X-Google-Smtp-Source: ALg8bN7ofoJpLTk2p/ow9rJN0XSIyTUa5VssT88YWIglWuR8sk8IZtRAXxJBpNyNndsWKnWnRTHc8A==
+X-Received: by 2002:a2e:841:: with SMTP id g1-v6mr655718ljd.21.1546939630590;
+        Tue, 08 Jan 2019 01:27:10 -0800 (PST)
+Received: from localhost ([79.102.2.92])
+        by smtp.gmail.com with ESMTPSA id p23sm13078259lfh.47.2019.01.08.01.27.09
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 08 Jan 2019 01:27:09 -0800 (PST)
+From:   Anders Roxell <anders.roxell@linaro.org>
+To:     pbonzini@redhat.com, shuah@kernel.org
+Cc:     linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Anders Roxell <anders.roxell@linaro.org>
+Subject: [PATCH] selftests/kvm: add missing executables to .gitignore
+Date:   Tue,  8 Jan 2019 10:26:54 +0100
+Message-Id: <20190108092654.13113-1-anders.roxell@linaro.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c4e836e8-1949-27f5-f6a0-ed860f590ec5@intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 08, 2019 at 09:47:18AM +0200, Adrian Hunter wrote:
-> On 7/01/19 6:32 PM, Peter Zijlstra wrote:
-> > On Thu, Jan 03, 2019 at 02:18:15PM -0800, Andi Kleen wrote:
-> >> Nadav Amit <namit@vmware.com> writes:
-> >>>
-> >>> - Do we use periodic learning or not? Josh suggested to reconfigure the
-> >>>   branches whenever a new target is found. However, I do not know at
-> >>>   this time how to do learning efficiently, without making learning much
-> >>>   more expensive.
-> >>
-> >> FWIW frequent patching will likely completely break perf Processor Trace
-> >> decoding, which needs a somewhat stable kernel text image to decode the
-> >> traces generated by the CPU. Right now it relies on kcore dumped after
-> >> the trace usually being stable because jumplabel changes happen only
-> >> infrequently. But if you start patching frequently this assumption will
-> >> break.
-> >>
-> >> You would either need a way to turn this off, or provide
-> >> updates for every change to the trace, so that the decoder can
-> >> keep track.
-> > 
-> > I'm thining it would be entirely possible to create and feed text_poke
-> > events into the regular (!aux) buffer which can be timestamp correlated
-> > to the PT data.
-> 
-> To rebuild kernel text from such events would require a starting point.
-> What is the starting point?  The problem with kcore is that people can
-> deconfig it without realising it is needed to enable the tracing of kernel
-> self-modifying code.  It would be nice if it was all tied together, so that
-> if someone selects the ability to trace kernel self-modifying code, then all
-> the bits needed are also selected.  Perhaps we should expose another ELF
-> image that contains only kernel executable code, and take the opportunity to
-> put the symbols in it also.
+Fixes: 2a31b9db1535 ("kvm: introduce manual dirty log reprotect")
+Fixes: 7edcb7343327 ("KVM: selftests: Add hyperv_cpuid test")
+Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+---
+ tools/testing/selftests/kvm/.gitignore | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Meh; you always need a magic combo of CONFIG symbols to make stuff work.
-We don't even have a CONFIG symbol for PT, so if you really care you
-should probably start there.
+diff --git a/tools/testing/selftests/kvm/.gitignore b/tools/testing/selftests/kvm/.gitignore
+index 6210ba41c29e..51ffd8a8bc38 100644
+--- a/tools/testing/selftests/kvm/.gitignore
++++ b/tools/testing/selftests/kvm/.gitignore
+@@ -1,8 +1,10 @@
+ /x86_64/cr4_cpuid_sync_test
+ /x86_64/evmcs_test
++/x86_64/hyperv_cpuid
+ /x86_64/platform_info_test
+ /x86_64/set_sregs_test
+ /x86_64/sync_regs_test
+ /x86_64/vmx_tsc_adjust_test
+ /x86_64/state_test
++/clear_dirty_log_test
+ /dirty_log_test
+-- 
+2.20.1
 
-If you want symbols; what stops us from exposing kallsyms in kcore as
-is?
-
-> Also what about BPF jitted code?  Will it always fit in an event?  I was
-> thinking of trying to add a way to prevent temporarily the unload of modules
-> or jitted code, which would be a good-enough solution for now.
-
-We're working on BPF and kallsym events, those should, esp. when
-combined with kcore, allow you to extract the actual instructions.
-
-We don't have module events, but I suppose the kallsym events should
-cover module loading (a new module results in lots of new symbols after
-all).
-
-With all that there is still a race in that nothing blocks module-unload
-while we're still harvesting the information, not sure how/if we want to
-cure that.
