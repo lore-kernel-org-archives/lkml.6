@@ -2,53 +2,53 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED897C43444
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:50:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6B8AC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:51:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B64C6206BB
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:50:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8C7A8206BB
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:51:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546977058;
-	bh=tYRdg/qbFjq9aTEKWQgql3ZLHBq1gbDHjsgobwIK5Nk=;
+	s=default; t=1546977063;
+	bh=PCsSG/5zDrhI1uJVcM7dVv5Df6v1erVi93DG8g9sxhY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=yb3bZhC8KhcqZ9B6xeclD0hSpAgfPWOINl6xPdewEyWr0yr++3PlgCHTAh0hzvx5Q
-	 iS4veRMveLIMJYUON72VNW7py7QzLBLNcAe46SFY7uCyI6zt7F9l1Y/0Py5Pf2G4oD
-	 j5YxTrMViwtSI8eqFPI2UagvQgy9ZQawaclmNe4Y=
+	b=LbHXPKPw87Ig6RnzMT0937sQUklHfqedYJSc6giQHJJnqZ4NTAcheCPb3/VnY9T1Y
+	 X7JSbe3Uf/AN5S1lSYMPfdKM5E2H2wWlcnmJYzIVVxN4u/R1DIHgRBlb3aIqDPC4cZ
+	 SjE0Wx5TsfgmJGdlcuN4J/Gp4z778OmAEW1EUn8A=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731144AbfAHTbj (ORCPT
+        id S1731303AbfAHTvC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:31:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39750 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 14:51:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39842 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730395AbfAHTbf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:31:35 -0500
+        id S1731139AbfAHTbj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:31:39 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E4D5A2070B;
-        Tue,  8 Jan 2019 19:31:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 04A2620883;
+        Tue,  8 Jan 2019 19:31:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546975894;
-        bh=tYRdg/qbFjq9aTEKWQgql3ZLHBq1gbDHjsgobwIK5Nk=;
+        s=default; t=1546975898;
+        bh=PCsSG/5zDrhI1uJVcM7dVv5Df6v1erVi93DG8g9sxhY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PdJ5xUZC6flxUpGQOGsxZ/Q7syutzIMSzypIlAbQYutqTHU8i6ps/i+TVTLg2o1r+
-         e6ere704rLSbMEwsfhWZ2RE/k49bC8pH4gK4GXcjuGGrrRrNpN8CFZXmqyiUSAMP3V
-         YW9wWkI6mli5sKTB6EnP/aiTYSKg9DNnqkWiRVhI=
+        b=z+gFDlqnEufT02RDYEXejBBmbTWzIrmGAwV+hdMpv8GA+sN5ZNhoOfdqvXmG06T+e
+         cWryX/1KydWIHG8yetmHl8nZ6i/z0xFB+yRekvnfVRZhs1fAgwIsH4w/UUA9steKXG
+         CLKA4HduNrkVvEFdNIUm9III0OLXr8za5Wu7hHw4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 66/97] perf parse-events: Fix unchecked usage of strncpy()
-Date:   Tue,  8 Jan 2019 14:29:15 -0500
-Message-Id: <20190108192949.122407-66-sashal@kernel.org>
+Cc:     Taehee Yoo <ap420073@gmail.com>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Sasha Levin <sashal@kernel.org>,
+        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+        netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 68/97] netfilter: ipt_CLUSTERIP: check MAC address when duplicate config is set
+Date:   Tue,  8 Jan 2019 14:29:17 -0500
+Message-Id: <20190108192949.122407-68-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108192949.122407-1-sashal@kernel.org>
 References: <20190108192949.122407-1-sashal@kernel.org>
@@ -60,56 +60,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnaldo Carvalho de Melo <acme@redhat.com>
+From: Taehee Yoo <ap420073@gmail.com>
 
-[ Upstream commit bd8d57fb7e25e9fcf67a9eef5fa13aabe2016e07 ]
+[ Upstream commit 06aa151ad1fc74a49b45336672515774a678d78d ]
 
-The strncpy() function may leave the destination string buffer
-unterminated, better use strlcpy() that we have a __weak fallback
-implementation for systems without it.
+If same destination IP address config is already existing, that config is
+just used. MAC address also should be same.
+However, there is no MAC address checking routine.
+So that MAC address checking routine is added.
 
-This fixes this warning on an Alpine Linux Edge system with gcc 8.2:
+test commands:
+   %iptables -A INPUT -p tcp -i lo -d 192.168.0.5 --dport 80 \
+	   -j CLUSTERIP --new --hashmode sourceip \
+	   --clustermac 01:00:5e:00:00:20 --total-nodes 2 --local-node 1
+   %iptables -A INPUT -p tcp -i lo -d 192.168.0.5 --dport 80 \
+	   -j CLUSTERIP --new --hashmode sourceip \
+	   --clustermac 01:00:5e:00:00:21 --total-nodes 2 --local-node 1
 
-  util/parse-events.c: In function 'print_symbol_events':
-  util/parse-events.c:2465:4: error: 'strncpy' specified bound 100 equals destination size [-Werror=stringop-truncation]
-      strncpy(name, syms->symbol, MAX_NAME_LEN);
-      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  In function 'print_symbol_events.constprop',
-      inlined from 'print_events' at util/parse-events.c:2508:2:
-  util/parse-events.c:2465:4: error: 'strncpy' specified bound 100 equals destination size [-Werror=stringop-truncation]
-      strncpy(name, syms->symbol, MAX_NAME_LEN);
-      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  In function 'print_symbol_events.constprop',
-      inlined from 'print_events' at util/parse-events.c:2511:2:
-  util/parse-events.c:2465:4: error: 'strncpy' specified bound 100 equals destination size [-Werror=stringop-truncation]
-      strncpy(name, syms->symbol, MAX_NAME_LEN);
-      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  cc1: all warnings being treated as errors
+After this patch, above commands are disallowed.
 
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Fixes: 947b4ad1d198 ("perf list: Fix max event string size")
-Link: https://lkml.kernel.org/n/tip-b663e33bm6x8hrkie4uxh7u2@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Taehee Yoo <ap420073@gmail.com>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/util/parse-events.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/ipv4/netfilter/ipt_CLUSTERIP.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-events.c
-index f8cd3e7c9186..ebb18a9bc460 100644
---- a/tools/perf/util/parse-events.c
-+++ b/tools/perf/util/parse-events.c
-@@ -2454,7 +2454,7 @@ void print_symbol_events(const char *event_glob, unsigned type,
- 		if (!name_only && strlen(syms->alias))
- 			snprintf(name, MAX_NAME_LEN, "%s OR %s", syms->symbol, syms->alias);
- 		else
--			strncpy(name, syms->symbol, MAX_NAME_LEN);
-+			strlcpy(name, syms->symbol, MAX_NAME_LEN);
+diff --git a/net/ipv4/netfilter/ipt_CLUSTERIP.c b/net/ipv4/netfilter/ipt_CLUSTERIP.c
+index 2c8d313ae216..e40e6795bd20 100644
+--- a/net/ipv4/netfilter/ipt_CLUSTERIP.c
++++ b/net/ipv4/netfilter/ipt_CLUSTERIP.c
+@@ -496,7 +496,8 @@ static int clusterip_tg_check(const struct xt_tgchk_param *par)
+ 			if (IS_ERR(config))
+ 				return PTR_ERR(config);
+ 		}
+-	}
++	} else if (memcmp(&config->clustermac, &cipinfo->clustermac, ETH_ALEN))
++		return -EINVAL;
  
- 		evt_list[evt_i] = strdup(name);
- 		if (evt_list[evt_i] == NULL)
+ 	ret = nf_ct_netns_get(par->net, par->family);
+ 	if (ret < 0) {
 -- 
 2.19.1
 
