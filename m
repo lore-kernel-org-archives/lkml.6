@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B7FFC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:27:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA10EC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:27:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B93620883
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:27:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A461E2087F
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:27:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546975629;
-	bh=0B71l8SQpkzlkJA1QR1d+6AbzJjUK26zeyAPLCAdea8=;
+	s=default; t=1546975632;
+	bh=UyuG+mvMzQt2zRN7FIuJCF69QmsxcHhrEJcp6tZC0mQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=mIOFbSLaJRPSr+xTvA3wP4p0sUBuN1PMoIa67nKItBTtLLEk0zfHFFi6i1aV9gG70
-	 aHUPO2tYzAVrUUMS+CC9injA/9oA4radrl3F+/6ruEwHI6zEJ2IzvLC8UYUyWc2JXi
-	 ccvh8IHciqOdcEittmGarimz8PP18T6hyrNfAWTg=
+	b=jfX2iMPPYvYiHFfAlPTJTUUtPZXrfby40HLuT1o1v3kay90ajQOuXBru6iyWG3DPf
+	 +Eh5vB01uY5UipJ+rFcSb6TphqUVv4ulLa9HvzleVkkOqCaj8G4bSDA+5O6YbEaKGG
+	 iXsgKAVjh9fO/7h4LurkuhJSoLz/ip2hbLHY3qmU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729473AbfAHT1I (ORCPT
+        id S1729507AbfAHT1M (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:27:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:32988 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 14:27:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33006 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729429AbfAHT1F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:27:05 -0500
+        id S1729443AbfAHT1G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:27:06 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5BC792087F;
-        Tue,  8 Jan 2019 19:27:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8A29F217D9;
+        Tue,  8 Jan 2019 19:27:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546975624;
-        bh=0B71l8SQpkzlkJA1QR1d+6AbzJjUK26zeyAPLCAdea8=;
+        s=default; t=1546975625;
+        bh=UyuG+mvMzQt2zRN7FIuJCF69QmsxcHhrEJcp6tZC0mQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=O5InKGHnGblZCtaD1JqVctKeOZCYyYUpIS0ff+ZNAlb3lfqgw+su33NwBOxRF2fZF
-         07tPnH+BrKC7eqWjzjokCR0fJZBzUV0yGEtQXUWzJsDk2VVPCOea7Kji+V6PR46SzS
-         OUO3lowxFKUlj19A7G77H4s5O4I6I8wQAC54dFBI=
+        b=Y8atheOzAkyGz6RTsjcomNEgNPWxrH4vVD58TVR2WV9IYQo1lbv2W3z7K39H7IHjU
+         s+xjvG38nlThS1Ea5f20oYsY6BYOnZHEZQKMuksEd8ZRYKPaKL1/fWsh7xLxkNV+DG
+         L7Vn9HJItzJPk6wG6DjVsoeSH8BTenZOPXn21g5w=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     "Maciej W. Rozycki" <macro@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org,
-        Sasha Levin <sashal@kernel.org>, linux-mips@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 019/117] MIPS: SiByte: Enable swiotlb for SWARM, LittleSur and BigSur
-Date:   Tue,  8 Jan 2019 14:24:47 -0500
-Message-Id: <20190108192628.121270-19-sashal@kernel.org>
+Cc:     Vitaly Chikunov <vt@altlinux.org>,
+        kernel-hardening@lists.openwall.com,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Sasha Levin <sashal@kernel.org>, linux-crypto@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 020/117] crypto: ecc - regularize scalar for scalar multiplication
+Date:   Tue,  8 Jan 2019 14:24:48 -0500
+Message-Id: <20190108192628.121270-20-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108192628.121270-1-sashal@kernel.org>
 References: <20190108192628.121270-1-sashal@kernel.org>
@@ -59,155 +59,84 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Maciej W. Rozycki" <macro@linux-mips.org>
+From: Vitaly Chikunov <vt@altlinux.org>
 
-[ Upstream commit e4849aff1e169b86c561738daf8ff020e9de1011 ]
+[ Upstream commit 3da2c1dfdb802b184eea0653d1e589515b52d74b ]
 
-The Broadcom SiByte BCM1250, BCM1125, and BCM1125H SOCs have an onchip
-DRAM controller that supports memory amounts of up to 16GiB, and due to
-how the address decoder has been wired in the SOC any memory beyond 1GiB
-is actually mapped starting from 4GiB physical up, that is beyond the
-32-bit addressable limit[1].  Consequently if the maximum amount of
-memory has been installed, then it will span up to 19GiB.
+ecc_point_mult is supposed to be used with a regularized scalar,
+otherwise, it's possible to deduce the position of the top bit of the
+scalar with timing attack. This is important when the scalar is a
+private key.
 
-Many of the evaluation boards we support that are based on one of these
-SOCs have their memory soldered and the amount present fits in the
-32-bit address range.  The BCM91250A SWARM board however has actual DIMM
-slots and accepts, depending on the peripherals revision of the SOC, up
-to 4GiB or 8GiB of memory in commercially available JEDEC modules[2].
-I believe this is also the case with the BCM91250C2 LittleSur board.
-This means that up to either 3GiB or 7GiB of memory requires 64-bit
-addressing to access.
+ecc_point_mult is already using a regular algorithm (i.e. having an
+operation flow independent of the input scalar) but regularization step
+is not implemented.
 
-I believe the BCM91480B BigSur board, which has the BCM1480 SOC instead,
-accepts at least as much memory, although I have no documentation or
-actual hardware available to verify that.
-
-Both systems have PCI slots installed for use by any PCI option boards,
-including ones that only support 32-bit addressing (additionally the
-32-bit PCI host bridge of the BCM1250, BCM1125, and BCM1125H SOCs limits
-addressing to 32-bits), and there is no IOMMU available.  Therefore for
-PCI DMA to work in the presence of memory beyond enable swiotlb for the
-affected systems.
-
-All the other SOC onchip DMA devices use 40-bit addressing and therefore
-can address the whole memory, so only enable swiotlb if PCI support and
-support for DMA beyond 4GiB have been both enabled in the configuration
-of the kernel.
-
-This shows up as follows:
-
-Broadcom SiByte BCM1250 B2 @ 800 MHz (SB1 rev 2)
-Board type: SiByte BCM91250A (SWARM)
-Determined physical RAM map:
- memory: 000000000fe7fe00 @ 0000000000000000 (usable)
- memory: 000000001ffffe00 @ 0000000080000000 (usable)
- memory: 000000000ffffe00 @ 00000000c0000000 (usable)
- memory: 0000000087fffe00 @ 0000000100000000 (usable)
-software IO TLB: mapped [mem 0xcbffc000-0xcfffc000] (64MB)
-
-in the bootstrap log and removes failures like these:
-
-defxx 0000:02:00.0: dma_direct_map_page: overflow 0x0000000185bc6080+4608 of device mask ffffffff bus mask 0
-fddi0: Receive buffer allocation failed
-fddi0: Adapter open failed!
-IP-Config: Failed to open fddi0
-defxx 0000:09:08.0: dma_direct_map_page: overflow 0x0000000185bc6080+4608 of device mask ffffffff bus mask 0
-fddi1: Receive buffer allocation failed
-fddi1: Adapter open failed!
-IP-Config: Failed to open fddi1
-
-when memory beyond 4GiB is handed out to devices that can only do 32-bit
-addressing.
-
-This updates commit cce335ae47e2 ("[MIPS] 64-bit Sibyte kernels need
-DMA32.").
+Arrange scalar to always have fixed top bit by adding a multiple of the
+curve order (n).
 
 References:
+The constant time regularization step is based on micro-ecc by Kenneth
+MacKay and also referenced in the literature (Bernstein, D. J., & Lange,
+T. (2017). Montgomery curves and the Montgomery ladder. (Cryptology
+ePrint Archive; Vol. 2017/293). s.l.: IACR. Chapter 4.6.2.)
 
-[1] "BCM1250/BCM1125/BCM1125H User Manual", Revision 1250_1125-UM100-R,
-    Broadcom Corporation, 21 Oct 2002, Section 3: "System Overview",
-    "Memory Map", pp. 34-38
-
-[2] "BCM91250A User Manual", Revision 91250A-UM100-R, Broadcom
-    Corporation, 18 May 2004, Section 3: "Physical Description",
-    "Supported DRAM", p. 23
-
-Signed-off-by: Maciej W. Rozycki <macro@linux-mips.org>
-[paul.burton@mips.com: Remove GPL text from dma.c; SPDX tag covers it]
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Patchwork: https://patchwork.linux-mips.org/patch/21108/
-References: cce335ae47e2 ("[MIPS] 64-bit Sibyte kernels need DMA32.")
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: linux-mips@linux-mips.org
-Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Vitaly Chikunov <vt@altlinux.org>
+Cc: kernel-hardening@lists.openwall.com
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/mips/Kconfig                |  3 +++
- arch/mips/sibyte/common/Makefile |  1 +
- arch/mips/sibyte/common/dma.c    | 14 ++++++++++++++
- 3 files changed, 18 insertions(+)
- create mode 100644 arch/mips/sibyte/common/dma.c
+ crypto/ecc.c | 16 ++++++++++++----
+ 1 file changed, 12 insertions(+), 4 deletions(-)
 
-diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
-index 8272ea4c7264..a19c9fd05886 100644
---- a/arch/mips/Kconfig
-+++ b/arch/mips/Kconfig
-@@ -794,6 +794,7 @@ config SIBYTE_SWARM
- 	select SYS_SUPPORTS_HIGHMEM
- 	select SYS_SUPPORTS_LITTLE_ENDIAN
- 	select ZONE_DMA32 if 64BIT
-+	select SWIOTLB if ARCH_DMA_ADDR_T_64BIT && PCI
+diff --git a/crypto/ecc.c b/crypto/ecc.c
+index 8facafd67802..adcce310f646 100644
+--- a/crypto/ecc.c
++++ b/crypto/ecc.c
+@@ -842,15 +842,23 @@ static void xycz_add_c(u64 *x1, u64 *y1, u64 *x2, u64 *y2, u64 *curve_prime,
  
- config SIBYTE_LITTLESUR
- 	bool "Sibyte BCM91250C2-LittleSur"
-@@ -814,6 +815,7 @@ config SIBYTE_SENTOSA
- 	select SYS_HAS_CPU_SB1
- 	select SYS_SUPPORTS_BIG_ENDIAN
- 	select SYS_SUPPORTS_LITTLE_ENDIAN
-+	select SWIOTLB if ARCH_DMA_ADDR_T_64BIT && PCI
- 
- config SIBYTE_BIGSUR
- 	bool "Sibyte BCM91480B-BigSur"
-@@ -826,6 +828,7 @@ config SIBYTE_BIGSUR
- 	select SYS_SUPPORTS_HIGHMEM
- 	select SYS_SUPPORTS_LITTLE_ENDIAN
- 	select ZONE_DMA32 if 64BIT
-+	select SWIOTLB if ARCH_DMA_ADDR_T_64BIT && PCI
- 
- config SNI_RM
- 	bool "SNI RM200/300/400"
-diff --git a/arch/mips/sibyte/common/Makefile b/arch/mips/sibyte/common/Makefile
-index b3d6bf23a662..3ef3fb658136 100644
---- a/arch/mips/sibyte/common/Makefile
-+++ b/arch/mips/sibyte/common/Makefile
-@@ -1,4 +1,5 @@
- obj-y := cfe.o
-+obj-$(CONFIG_SWIOTLB)			+= dma.o
- obj-$(CONFIG_SIBYTE_BUS_WATCHER)	+= bus_watcher.o
- obj-$(CONFIG_SIBYTE_CFE_CONSOLE)	+= cfe_console.o
- obj-$(CONFIG_SIBYTE_TBPROF)		+= sb_tbprof.o
-diff --git a/arch/mips/sibyte/common/dma.c b/arch/mips/sibyte/common/dma.c
-new file mode 100644
-index 000000000000..eb47a94f3583
---- /dev/null
-+++ b/arch/mips/sibyte/common/dma.c
-@@ -0,0 +1,14 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ *	DMA support for Broadcom SiByte platforms.
-+ *
-+ *	Copyright (c) 2018  Maciej W. Rozycki
-+ */
+ static void ecc_point_mult(struct ecc_point *result,
+ 			   const struct ecc_point *point, const u64 *scalar,
+-			   u64 *initial_z, u64 *curve_prime,
++			   u64 *initial_z, const struct ecc_curve *curve,
+ 			   unsigned int ndigits)
+ {
+ 	/* R0 and R1 */
+ 	u64 rx[2][ECC_MAX_DIGITS];
+ 	u64 ry[2][ECC_MAX_DIGITS];
+ 	u64 z[ECC_MAX_DIGITS];
++	u64 sk[2][ECC_MAX_DIGITS];
++	u64 *curve_prime = curve->p;
+ 	int i, nb;
+-	int num_bits = vli_num_bits(scalar, ndigits);
++	int num_bits;
++	int carry;
 +
-+#include <linux/swiotlb.h>
-+#include <asm/bootinfo.h>
-+
-+void __init plat_swiotlb_setup(void)
-+{
-+	swiotlb_init(1);
-+}
++	carry = vli_add(sk[0], scalar, curve->n, ndigits);
++	vli_add(sk[1], sk[0], curve->n, ndigits);
++	scalar = sk[!carry];
++	num_bits = sizeof(u64) * ndigits * 8 + 1;
+ 
+ 	vli_set(rx[1], point->x, ndigits);
+ 	vli_set(ry[1], point->y, ndigits);
+@@ -1004,7 +1012,7 @@ int ecc_make_pub_key(unsigned int curve_id, unsigned int ndigits,
+ 		goto out;
+ 	}
+ 
+-	ecc_point_mult(pk, &curve->g, priv, NULL, curve->p, ndigits);
++	ecc_point_mult(pk, &curve->g, priv, NULL, curve, ndigits);
+ 	if (ecc_point_is_zero(pk)) {
+ 		ret = -EAGAIN;
+ 		goto err_free_point;
+@@ -1090,7 +1098,7 @@ int crypto_ecdh_shared_secret(unsigned int curve_id, unsigned int ndigits,
+ 		goto err_alloc_product;
+ 	}
+ 
+-	ecc_point_mult(product, pk, priv, rand_z, curve->p, ndigits);
++	ecc_point_mult(product, pk, priv, rand_z, curve, ndigits);
+ 
+ 	ecc_swap_digits(product->x, secret, ndigits);
+ 
 -- 
 2.19.1
 
