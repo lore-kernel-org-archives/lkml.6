@@ -2,202 +2,137 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E71CC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 18:51:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28913C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 18:52:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA31B20827
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 18:51:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EC03320827
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 18:52:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="S7Hcy1Vb"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729523AbfAHSvD (ORCPT
+        id S1728882AbfAHSwd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 13:51:03 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:42178 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727947AbfAHSvD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 13:51:03 -0500
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 8A6F589ACA;
-        Tue,  8 Jan 2019 18:51:02 +0000 (UTC)
-Received: from redhat.com (ovpn-126-25.rdu2.redhat.com [10.10.126.25])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 2CEA61A7D5;
-        Tue,  8 Jan 2019 18:50:59 +0000 (UTC)
-Date:   Tue, 8 Jan 2019 13:50:58 -0500
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Jason Wang <jasowang@redhat.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Andrea Parri <andrea.parri@amarulasolutions.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Akira Yokosawa <akiyks@gmail.com>,
-        Daniel Lustig <dlustig@nvidia.com>, linux-arch@vger.kernel.org,
-        netdev@vger.kernel.org, virtualization@lists.linux-foundation.org,
-        Eli Friedman <efriedma@codeaurora.org>,
-        Joe Perches <joe@perches.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        linux-sparse@vger.kernel.org,
-        Eric Christopher <echristo@google.com>
-Subject: Re: [PATCH RFC 1/4] include/linux/compiler*.h: fix OPTIMIZER_HIDE_VAR
-Message-ID: <20190108134549-mutt-send-email-mst@kernel.org>
-References: <20190102205715.14054-1-mst@redhat.com>
- <20190102205715.14054-2-mst@redhat.com>
- <CAKwvOdk3b6mnpTEEyY-JFrej8K12w9oTMLqi7q5aNiRMyJo6Ow@mail.gmail.com>
+        Tue, 8 Jan 2019 13:52:33 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:40240 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727829AbfAHSwc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 13:52:32 -0500
+Received: by mail-pf1-f194.google.com with SMTP id i12so2351120pfo.7
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jan 2019 10:52:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:content-transfer-encoding:subject:cc:to:in-reply-to
+         :from:user-agent:references:message-id:date;
+        bh=CZwbN/htHRHZzxXRs1Pr8UB4Vmqq/oNAuuczQzeEzQg=;
+        b=S7Hcy1VbYi7dMcqS3COU1x2qHlp9q8BqZKsMuE+Zakvf1LTVUsJr48Ak/YUIBE9+tL
+         7aK7C4OSvwFF1zLdTd+zn9092p7+57So/fwfndGAT/epblCCEC6BMRs5NDSs/RqlUAu4
+         CrngqgoM7kldSoNSF2fl6WGQUJSu6uLq9VuHQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:content-transfer-encoding:subject
+         :cc:to:in-reply-to:from:user-agent:references:message-id:date;
+        bh=CZwbN/htHRHZzxXRs1Pr8UB4Vmqq/oNAuuczQzeEzQg=;
+        b=bgQxEQRtZiWXnUbt4OlwAFaBkHsgus4bvQuoxDEw7+2i5vgDo1DYoh1MN2CZXJseot
+         MZgruDKpEIffttKsYxqyY+3POTAH47CPfCNWnLGobKczYpSVHpzymP0y8CgtkhdA8v4b
+         s/6MVcpAHAdIp9L4QgZUKrxI6dAl8oPvxZLRiuXs+7N83YCr9+oQdlCyO6LKOBbRbjRG
+         a7CCtYts81Y3JLdhFSdStTtG6WXXgnzRN5gAAa4/Yl4w+whO5gNhPKf0ZfNlxwgwrmn1
+         pfKs35UMcCsww30tftOD7FQMxav4GQsU00YJScApNFmo7bVplee2sCKXVQAVh9R8zJhL
+         PQ1g==
+X-Gm-Message-State: AJcUuke2DeLXvw3a1ja3PF7R55sy5/UOS+gHWeX3gE1mWBAnGhVKEhTS
+        dHxJ5lkiWgjsK5lTrjZCngWcXQ==
+X-Google-Smtp-Source: ALg8bN7VaArd9TyGYxhgoGC4vY1YqrWhhggm0iEH/+bFdGJ5HWCpjtvFgnJ4Xp1RDU8PJvAZsO435w==
+X-Received: by 2002:a63:ef47:: with SMTP id c7mr2587188pgk.386.1546973551377;
+        Tue, 08 Jan 2019 10:52:31 -0800 (PST)
+Received: from localhost ([2620:15c:202:1:fa53:7765:582b:82b9])
+        by smtp.gmail.com with ESMTPSA id t87sm227611293pfk.122.2019.01.08.10.52.30
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 08 Jan 2019 10:52:30 -0800 (PST)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKwvOdk3b6mnpTEEyY-JFrej8K12w9oTMLqi7q5aNiRMyJo6Ow@mail.gmail.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Tue, 08 Jan 2019 18:51:03 +0000 (UTC)
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] soc: qcom: rpmh: Avoid accessing freed memory from batch API
+Cc:     Andy Gross <andy.gross@linaro.org>, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        "Raju P.L.S.S.S.N" <rplsssn@codeaurora.org>,
+        Matthias Kaehlcke <mka@chromium.org>
+To:     Evan Green <evgreen@chromium.org>, Lina Iyer <ilina@codeaurora.org>
+In-Reply-To: <CAE=gft6H29BM5k5q=t-eQ_2LT1GORqqhQReVQZ7VCKn7=Oz=Yg@mail.gmail.com>
+From:   Stephen Boyd <swboyd@chromium.org>
+User-Agent: alot/0.8
+References: <20190103174657.251968-1-swboyd@chromium.org> <20190108174938.GA22547@codeaurora.org> <CAE=gft6H29BM5k5q=t-eQ_2LT1GORqqhQReVQZ7VCKn7=Oz=Yg@mail.gmail.com>
+Message-ID: <154697354993.15366.3623820425365137828@swboyd.mtv.corp.google.com>
+Date:   Tue, 08 Jan 2019 10:52:29 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 08, 2019 at 09:44:28AM -0800, Nick Desaulniers wrote:
-> Thanks for the patch and sorry for the delay; was totally unplugged
-> for the holidays.
-> On Wed, Jan 2, 2019 at 12:57 PM Michael S. Tsirkin <mst@redhat.com> wrote:
+Quoting Evan Green (2019-01-08 10:30:04)
+> On Tue, Jan 8, 2019 at 9:49 AM Lina Iyer <ilina@codeaurora.org> wrote:
 > >
-> > Since commit 815f0ddb346c ("include/linux/compiler*.h: make compiler-*.h
-> > mutually exclusive") clang no longer reuses the OPTIMIZER_HIDE_VAR macro
-> > from compiler-gcc - instead it gets the version in
-> > include/linux/compiler.h.  Unfortunately that version doesn't actually
-> > prevent compiler from optimizing out the variable.
-> 
-> Good catch. Did you find this via eyeballing the code, a test, or some
-> other way?
+> > diff --git a/drivers/soc/qcom/rpmh.c b/drivers/soc/qcom/rpmh.c
+> > index c7beb6841289..0303a2971d4a 100644
+> > --- a/drivers/soc/qcom/rpmh.c
+> > +++ b/drivers/soc/qcom/rpmh.c
+> > @@ -80,6 +80,7 @@ void rpmh_tx_done(const struct tcs_request *msg, int =
+r)
+> >         struct rpmh_request *rpm_msg =3D container_of(msg, struct rpmh_=
+request,
+> >                                                     msg);
+> >         struct completion *compl =3D rpm_msg->completion;
+> > +       bool free =3D rpm_msg->needs_free;
+> >
+> >         rpm_msg->err =3D r;
+> >
+> > @@ -94,7 +95,7 @@ void rpmh_tx_done(const struct tcs_request *msg, int =
+r)
+> >         complete(compl);
+> >
+> >  exit:
+> > -       if (rpm_msg->needs_free)
+> > +       if (free)
+> >                 kfree(rpm_msg);
+> >  }
+> >
+>=20
+> Hi Lina,
+> I think that's a worthy fix, too, and is needed to solve the issue you de=
+scribe.
 
-eyeballing
+Looks like we need both fixes so I can combine them together.
 
-> >
-> > Fix up by moving the macro out from compiler-gcc.h to compiler.h.
-> > Compilers without incline asm support will keep working
-> > since it's protected by an ifdef.
-> >
-> > Also fix up comments to match reality since we are no longer overriding
-> > any macros.
-> >
-> > Build-tested with gcc and clang.
-> >
-> > Fixes: 815f0ddb346c ("include/linux/compiler*.h: make compiler-*.h mutually exclusive")
-> > Cc: Eli Friedman <efriedma@codeaurora.org>
-> > Cc: Joe Perches <joe@perches.com>
-> > Cc: Nick Desaulniers <ndesaulniers@google.com>
-> > Cc: Linus Torvalds <torvalds@linux-foundation.org>
-> > Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
-> 
-> Also for more context, see:
-> commit 7829fb09a2b4 ("lib: make memzero_explicit more robust against
-> dead store elimination")
+>=20
+> But I think Stephen's fix is still needed. In the rpmh_write_batch
+> scenario, we queue N things into rpmh, but set the same completion for
+> all of them. If only the first one completes but not the others, then
+> the loop in rpmh_write_batch will call wait_for_completion_timeout N
+> times on the same completion, and then goes on to free all N requests,
+> even though only the first one is actually done and out of the system
+> (well, almost out of the system, with the bug you noticed above).
 
+This code looks an awful lot like kref_put() with a release function
+that's a kfree() of the rpm message. Would that simplify the code
+somewhat if we made a refcounter (that probably only counted up to 2)
+and then properly refcounted the messages? We would have to allocate a
+bunch of messages for the batch writing API, but I'm not sure that's a
+big deal either.
 
-Interesting. That added this text:
+>=20
+> We considered having just one completion on the last transfer, but
+> then if there's an error part way through you have no way of waiting
+> on the transfers that did get submitted. So I think N completions are
+> needed.
 
- * while gcc behavior gets along with a normal
- * barrier(), llvm needs an explicit input variable to be assumed
- * clobbered.
+For that, I'd like to make the batch API know more about the TCS it's
+filling so it can know how to unwind the state if something fails. From
+what I can tell this function is implemented at the wrong abstraction
+level. It should be a lower level function so it can manage the queue
+and push multiple messages through.
 
-however:
-#define barrier_data(ptr) __asm__ __volatile__("": :"r"(ptr) :"memory")
-
-So no explicit variable is clobbered.
-Weird isn't it?
-
-
-
-> > ---
-> >  include/linux/compiler-clang.h | 5 ++---
-> >  include/linux/compiler-gcc.h   | 4 ----
-> >  include/linux/compiler-intel.h | 4 +---
-> >  include/linux/compiler.h       | 4 +++-
-> >  4 files changed, 6 insertions(+), 11 deletions(-)
-> >
-> > diff --git a/include/linux/compiler-clang.h b/include/linux/compiler-clang.h
-> > index 3e7dafb3ea80..7ddaeb5182e3 100644
-> > --- a/include/linux/compiler-clang.h
-> > +++ b/include/linux/compiler-clang.h
-> > @@ -3,9 +3,8 @@
-> >  #error "Please don't include <linux/compiler-clang.h> directly, include <linux/compiler.h> instead."
-> >  #endif
-> >
-> > -/* Some compiler specific definitions are overwritten here
-> > - * for Clang compiler
-> > - */
-> > +/* Compiler specific definitions for Clang compiler */
-> > +
-> >  #define uninitialized_var(x) x = *(&(x))
-> >
-> >  /* same as gcc, this was present in clang-2.6 so we can assume it works
-> > diff --git a/include/linux/compiler-gcc.h b/include/linux/compiler-gcc.h
-> > index 2010493e1040..72054d9f0eaa 100644
-> > --- a/include/linux/compiler-gcc.h
-> > +++ b/include/linux/compiler-gcc.h
-> > @@ -58,10 +58,6 @@
-> >         (typeof(ptr)) (__ptr + (off));                                  \
-> >  })
-> >
-> > -/* Make the optimizer believe the variable can be manipulated arbitrarily. */
-> > -#define OPTIMIZER_HIDE_VAR(var)                                                \
-> > -       __asm__ ("" : "=r" (var) : "0" (var))
-> > -
-> >  /*
-> >   * A trick to suppress uninitialized variable warning without generating any
-> >   * code
-> > diff --git a/include/linux/compiler-intel.h b/include/linux/compiler-intel.h
-> > index 517bd14e1222..b17f3cd18334 100644
-> > --- a/include/linux/compiler-intel.h
-> > +++ b/include/linux/compiler-intel.h
-> > @@ -5,9 +5,7 @@
-> >
-> >  #ifdef __ECC
-> >
-> > -/* Some compiler specific definitions are overwritten here
-> > - * for Intel ECC compiler
-> > - */
-> > +/* Compiler specific definitions for Intel ECC compiler */
-> >
-> >  #include <asm/intrinsics.h>
-> >
-> > diff --git a/include/linux/compiler.h b/include/linux/compiler.h
-> > index 06396c1cf127..1ad367b4cd8d 100644
-> > --- a/include/linux/compiler.h
-> > +++ b/include/linux/compiler.h
-> > @@ -152,7 +152,9 @@ void ftrace_likely_update(struct ftrace_likely_data *f, int val,
-> >  #endif
-> >
-> >  #ifndef OPTIMIZER_HIDE_VAR
-> > -#define OPTIMIZER_HIDE_VAR(var) barrier()
-> > +/* Make the optimizer believe the variable can be manipulated arbitrarily. */
-> > +#define OPTIMIZER_HIDE_VAR(var)                                                \
-> > +       __asm__ ("" : "=r" (var) : "0" (var))
-> >  #endif
-> 
-> This should be fine, thanks for the cleanup!  For now, we're not yet
-> confident to turn on Clang's integrated assembler for the kernel, but
-> I'll make sure to revisit this should we, in case Clang is then able
-> to optimize this out.
-> + Eric, who might know of a better trick for what we're trying to
-> accomplish with this macro.
-> 
-> Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-> 
-> + Miguel
-> Miguel, would you mind taking this into your compiler-attributes tree?
-> -- 
-> Thanks,
-> ~Nick Desaulniers
