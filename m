@@ -2,97 +2,121 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27928C43612
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 17:25:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FD1CC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 17:25:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EEDC0206A3
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 17:25:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 621C2206A3
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 17:25:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EYyGvonp"
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="bxc+0NZB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728994AbfAHRZI (ORCPT
+        id S1729041AbfAHRZR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 12:25:08 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:43973 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727857AbfAHRZG (ORCPT
+        Tue, 8 Jan 2019 12:25:17 -0500
+Received: from mail-yb1-f196.google.com ([209.85.219.196]:34121 "EHLO
+        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728996AbfAHRZQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 12:25:06 -0500
-Received: by mail-pg1-f195.google.com with SMTP id v28so2007246pgk.10;
-        Tue, 08 Jan 2019 09:25:06 -0800 (PST)
+        Tue, 8 Jan 2019 12:25:16 -0500
+Received: by mail-yb1-f196.google.com with SMTP id w186so983172ybg.1
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jan 2019 09:25:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=k2DECF9Z1/RbZZyvwYEcnyrofLE6V58SwNDftQ2UV2E=;
-        b=EYyGvonp63Y4b4GIlZxsVbphB1WRsZLfi740SVzfKB9eRPUYj5lRLruK10Kbvg/U93
-         TQp34L10EiAvmbsux0U5b2dumPt8VrGuJ6EBY/pKr6kclzys+II0R6Ch+lE3oUEREYgm
-         HFXRCGGIr8cSpbCyZdHL/UUyIhXtdrkwHUL6Y6RiGYl+DnAVT/tgPhqjAYNmoguqnpo3
-         sYOZTCw14jmoPq6wJ66SSf5Fx8FyaJs50RkaYaUIfpHHdMU5LsLB5eJcpqNFZ79Ea35h
-         wOTGLeAd3YjxT1j4ltikzMHZL8ywFwUa66aaaHpV+a0r3XvMB742BdfN68aqdyA98nZn
-         QOeg==
+        d=broadcom.com; s=google;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=3bg8CAnFW238OIcpYA+0yZo5cJSugpakiBbJrbNjlKY=;
+        b=bxc+0NZBmNtmzZMFuoxksibf2LzHorp/nJMXDwUNg7SuoiEObIn4J09MT+DLuweAVa
+         JB3bqQiR4K6Iti0lpHx7ZI+HRS5MzEDUEtg7kHNYx0CESX/FmstrhT8Rr4YKEFGb+eXT
+         U/6VAgfV9e1tvwFIsWW84RBpT+3FF8kNYIl0c=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=k2DECF9Z1/RbZZyvwYEcnyrofLE6V58SwNDftQ2UV2E=;
-        b=U+5niO1WF1WqkRy03XkzFa02kMhrZRtJw7MlEZwmx/yKbSXXMsMAhNnlu7w7OK9W0B
-         voBC/tTw0RKgV4pEi3QOkVQCsL87gpCi/dPcc0LUEdEUw/Sh0r+NjNW3xUd5XdYPJVX+
-         wJFaYAA2AP6jk28xY6x6wk9waRStxn5NjVIYRpFxO2lPZKNkIjc+ssXXtZZbAaSPg5W3
-         8Vd6oA5F0dfqE/dLr7kMtbcLZJUldRRzVf9tcSmlmm9i1/I0deZ9IG2zngvDgK6+vEui
-         9bWx9beoO934lT0NoGB/QV3MjdrUeDwhaZGPjsVxMCd80EbzeI//Q8du+nWbxjrnlcII
-         3rjw==
-X-Gm-Message-State: AJcUukdFf3ukG/olQZS13LvEtKf0cn3l+vTVtT4oUNk9RhEnRei/Kdq8
-        vk4PCsDYb6SfHNzB/DkcFJY=
-X-Google-Smtp-Source: ALg8bN6p2ORy8G6EigXohPGYRPVOU0HrEvxIG7eltRpbvY2y5HPUsg/v950AALRpxmx7X6U3yS+A5A==
-X-Received: by 2002:a63:441e:: with SMTP id r30mr77407pga.128.1546968305584;
-        Tue, 08 Jan 2019 09:25:05 -0800 (PST)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id r187sm222910479pfc.63.2019.01.08.09.25.04
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=3bg8CAnFW238OIcpYA+0yZo5cJSugpakiBbJrbNjlKY=;
+        b=MaBz4uhr1ES/5UcX0tozKpZM8j3o6a/gIaVc1ftjg+mSX+7vCgFLVd6tYHQiG3bBg2
+         KAG8QxgRSsSZ+mYodLImr+PHib6ivxmTjQ8d5rz6hXnFzW++KDG+Q7KxOFXRiewonwI6
+         3ykCXQaJHDj2h3cY/LbsHIiAju0dXpS1crEXmm2vvfG71HyHNsNRNs19SrIC24eVbfeK
+         dE619BQEw9+LBu6v3GAo/Xt/3zhKTJESym/lrIAcBH33U8UIQpank4+z+ePZJ6aty1hK
+         Q0OSizRfYtzXwPSxqzwNTBs3Dm+Ube7E7eKc1rSUdr1RppZDw4GaYicEq8e+hm2iOk4e
+         2IDg==
+X-Gm-Message-State: AJcUukfkMRSrVzATihsMTIzk4iWkVdQQEt7P3O6kdg1KMA1BXJLdP+/h
+        k5KiWN76fPwl7imaZ0wV2t2QGg==
+X-Google-Smtp-Source: ALg8bN4wHddVIFoJHInYz7PaSeIFeBkHjI/6p6ArC9mXmlLxlIMC76qUHvHhjQzryfR9Vvb6eZNbXA==
+X-Received: by 2002:a25:2f88:: with SMTP id v130mr2493374ybv.455.1546968314963;
+        Tue, 08 Jan 2019 09:25:14 -0800 (PST)
+Received: from [10.136.8.252] ([192.19.228.250])
+        by smtp.gmail.com with ESMTPSA id v9sm34914192ywh.2.2019.01.08.09.25.12
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 08 Jan 2019 09:25:04 -0800 (PST)
-Date:   Tue, 8 Jan 2019 09:25:03 -0800
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 4.19 000/170] 4.19.14-stable review
-Message-ID: <20190108172503.GA28031@roeck-us.net>
-References: <20190107104452.953560660@linuxfoundation.org>
+        Tue, 08 Jan 2019 09:25:13 -0800 (PST)
+Subject: Re: [PATCH 0/8] Add IPROC I2C slave mode and NIC I2C support
+To:     Rayagonda Kokatanur <rayagonda.kokatanur@broadcom.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Shreesha Rajashekar <shreesha.rajashekar@broadcom.com>,
+        Michael Cheng <ccheng@broadcom.com>, linux-i2c@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com
+References: <1546938997-13798-1-git-send-email-rayagonda.kokatanur@broadcom.com>
+From:   Ray Jui <ray.jui@broadcom.com>
+Message-ID: <6a5380e3-1e15-31e3-bbaa-134856a0c2dc@broadcom.com>
+Date:   Tue, 8 Jan 2019 09:25:09 -0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
+In-Reply-To: <1546938997-13798-1-git-send-email-rayagonda.kokatanur@broadcom.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190107104452.953560660@linuxfoundation.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 07, 2019 at 01:30:27PM +0100, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.19.14 release.
-> There are 170 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+You sent out the same patch series 3 times without any explanation. Very
+confusing.
+
+Is this the latest one that should be reviewed?
+
+Thanks,
+
+Ray
+
+On 1/8/2019 1:16 AM, Rayagonda Kokatanur wrote:
+> Hi,
+> This patchset contains support for IPROC I2C slave and NIC I2C support.
+> Following are the brief changes done inorder to support both IPROC I2C
+> slave mode and NIC I2C,
 > 
-> Responses should be made by Wed Jan  9 10:43:54 UTC 2019.
-> Anything received after that time might be too late.
+> a. Add support to allow I2C rx transfer upto 255 bytes
+> b. Add polling mode support to the iProc I2C driver. Polling mode is used
+>    in certain SoCs where interrupt is not connected from the I2C block.
+> c. Add warpper read/write access for register to support indirect register
+>    access. This is required in certain SoCs with this iProc I2C
+>    block registered.
 > 
-
-Still (for v4.19.13-171-gc68ce175c3b8):
-
-arch/powerpc/kernel/signal_64.c: In function ‘sys_rt_sigreturn’:
-arch/powerpc/kernel/signal_64.c:761:21: error: ‘msr’ undeclared 
-
-AFAICS commit 5c784c8414fba ("powerpc/tm: Remove msr_tm_active()") is missing.
-
-Guenter
+> 
+> Ray Jui (1):
+>   dt-bindings: i2c: iproc: make 'interrupts' optional
+> 
+> Rayagonda Kokatanur (5):
+>   i2c: iproc: add polling support
+>   i2c: iproc: use wrapper for read/write access
+>   dt-bindings: i2c: iproc: add "brcm,iproc-nic-i2c" compatible string
+>   i2c: iproc: add NIC I2C support
+>   arm64: dts: Stingray: Add NIC i2c device node
+> 
+> Shreesha Rajashekar (2):
+>   i2c: iproc: I2C read up to 255 bytes support
+>   i2c: iproc: Add Slave mode support
+> 
+>  .../devicetree/bindings/i2c/brcm,iproc-i2c.txt     |  14 +-
+>  .../arm64/boot/dts/broadcom/stingray/stingray.dtsi |  18 +
+>  drivers/i2c/busses/Kconfig                         |   1 +
+>  drivers/i2c/busses/i2c-bcm-iproc.c                 | 767 +++++++++++++++++----
+>  4 files changed, 669 insertions(+), 131 deletions(-)
+> 
