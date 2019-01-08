@@ -4,48 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B37AC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:55:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46FC3C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:55:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A89E206BB
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:55:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1527E206BB
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:55:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546977328;
-	bh=CG0YJwJ9X5kc358AWe//lGl78jW6aKwyC/G9mXOhmlc=;
+	s=default; t=1546977333;
+	bh=c/5/BBD30zJs1jNSOg/58QjlpuRjPQB2IAK2Yrd5BOg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=yuUBGHquhK4aSg6Q22QG2YXbCjcAPzL4RdRp9L35DGuqeHZk6CfSp74yDQTW2Ofu6
-	 VEVxm3d0lMop7dkBuItua0t6r/Rf8QU4atttzKS2Tak0rihFTMu0c8JhPFkr7E8sUo
-	 QcRoX1EcSS8jd0Anc6hakKA6LxCcg05n2+Nls9zM=
+	b=E0NBz3XrWMXFlGJy7/66wlxrTXxKfIcsLvUJ8ZQnIjDnjcJsktS3WNZNXOF8fzCQP
+	 oxGv8PNwH8ftbd0REoM1jnrACvd61Xl/pWacer7H3OzNaq8/ue/XK+CpiPgKyTm07/
+	 LXHIHl9vUwXJArqtP2XnJ3bCH77LUfkEsiw0jKXQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730723AbfAHTaU (ORCPT
+        id S1731350AbfAHTzc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:30:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37786 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 14:55:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38008 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729700AbfAHTaK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:30:10 -0500
+        id S1730633AbfAHTaT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:30:19 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4007C20645;
-        Tue,  8 Jan 2019 19:30:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CE81720827;
+        Tue,  8 Jan 2019 19:30:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546975809;
-        bh=CG0YJwJ9X5kc358AWe//lGl78jW6aKwyC/G9mXOhmlc=;
+        s=default; t=1546975818;
+        bh=c/5/BBD30zJs1jNSOg/58QjlpuRjPQB2IAK2Yrd5BOg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=galxYBVAYJ2eGqxKkhwHCBfUD9rcnJWPJkET4tCNejaIJtlsRVYtQpgsdc6nrCZo/
-         oKAO313FPyT/t1lAuxJ5MsMqwDpBtn8FFiaqRG761CVVP7ncaIsT0osIPI30HmRtos
-         OjAm73gCI0DLu7DQnToiXQgsQqzgGSZ7DY3v822Q=
+        b=iSuAfBS49d2Gh9i+TlP9kNsEOOJLOkvrOOjxGaFMygY0qX02OXss4KttcY4nvu//J
+         RznyRhlYKXiPQE6GAyVB67NP8qDOrbqUryZBydAAQaHIWa52yf9FMmjpxhP0jU555x
+         6DTbXCg0aI+E2KEoSR0QjvH68fbjvglH9JmR3PXw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Takashi Sakamoto <o-takashi@sakamocchi.jp>,
-        Takashi Iwai <tiwai@suse.de>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 14/97] ALSA: oxfw: add support for APOGEE duet FireWire
-Date:   Tue,  8 Jan 2019 14:28:23 -0500
-Message-Id: <20190108192949.122407-14-sashal@kernel.org>
+Cc:     Anders Roxell <anders.roxell@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Will Deacon <will.deacon@arm.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 18/97] arm64: perf: set suppress_bind_attrs flag to true
+Date:   Tue,  8 Jan 2019 14:28:27 -0500
+Message-Id: <20190108192949.122407-18-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108192949.122407-1-sashal@kernel.org>
 References: <20190108192949.122407-1-sashal@kernel.org>
@@ -57,98 +59,71 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+From: Anders Roxell <anders.roxell@linaro.org>
 
-[ Upstream commit fba43f454cdf9caa3185219d116bd2a6e6354552 ]
+[ Upstream commit 81e9fa8bab381f8b6eb04df7cdf0f71994099bd4 ]
 
-This commit adds support for APOGEE duet FireWire, launched 2007, already
-discontinued. This model uses Oxford Semiconductor FW971 as its
-communication engine. Below is information on Configuration ROM of this
-unit. The unit supports some AV/C commands defined by Audio subunit
-specification and vendor dependent commands.
+The armv8_pmuv3 driver doesn't have a remove function, and when the test
+'CONFIG_DEBUG_TEST_DRIVER_REMOVE=y' is enabled, the following Call trace
+can be seen.
 
-$ ./hinawa-config-rom-printer /dev/fw1
-{ 'bus-info': { 'adj': False,
-                'bmc': False,
-                'chip_ID': 42949742248,
-                'cmc': False,
-                'cyc_clk_acc': 255,
-                'generation': 0,
-                'imc': False,
-                'isc': True,
-                'link_spd': 3,
-                'max_ROM': 0,
-                'max_rec': 64,
-                'name': '1394',
-                'node_vendor_ID': 987,
-                'pmc': False},
-  'root-directory': [ ['VENDOR', 987],
-                      ['DESCRIPTOR', 'Apogee Electronics'],
-                      ['MODEL', 122333],
-                      ['DESCRIPTOR', 'Duet'],
-                      [ 'NODE_CAPABILITIES',
-                        { 'addressing': {'64': True, 'fix': True, 'prv': False},
-                          'misc': {'int': False, 'ms': False, 'spt': True},
-                          'state': { 'atn': False,
-                                     'ded': False,
-                                     'drq': True,
-                                     'elo': False,
-                                     'init': False,
-                                     'lst': True,
-                                     'off': False},
-                          'testing': {'bas': False, 'ext': False}}],
-                      [ 'UNIT',
-                        [ ['SPECIFIER_ID', 41005],
-                          ['VERSION', 65537],
-                          ['MODEL', 122333],
-                          ['DESCRIPTOR', 'Duet']]]]}
+[    1.424287] Failed to register pmu: armv8_pmuv3, reason -17
+[    1.424870] WARNING: CPU: 0 PID: 1 at ../kernel/events/core.c:11771 perf_event_sysfs_init+0x98/0xdc
+[    1.425220] Modules linked in:
+[    1.425531] CPU: 0 PID: 1 Comm: swapper/0 Tainted: G        W         4.19.0-rc7-next-20181012-00003-ge7a97b1ad77b-dirty #35
+[    1.425951] Hardware name: linux,dummy-virt (DT)
+[    1.426212] pstate: 80000005 (Nzcv daif -PAN -UAO)
+[    1.426458] pc : perf_event_sysfs_init+0x98/0xdc
+[    1.426720] lr : perf_event_sysfs_init+0x98/0xdc
+[    1.426908] sp : ffff00000804bd50
+[    1.427077] x29: ffff00000804bd50 x28: ffff00000934e078
+[    1.427429] x27: ffff000009546000 x26: 0000000000000007
+[    1.427757] x25: ffff000009280710 x24: 00000000ffffffef
+[    1.428086] x23: ffff000009408000 x22: 0000000000000000
+[    1.428415] x21: ffff000009136008 x20: ffff000009408730
+[    1.428744] x19: ffff80007b20b400 x18: 000000000000000a
+[    1.429075] x17: 0000000000000000 x16: 0000000000000000
+[    1.429418] x15: 0000000000000400 x14: 2e79726f74636572
+[    1.429748] x13: 696420656d617320 x12: 656874206e692065
+[    1.430060] x11: 6d616e20656d6173 x10: 2065687420687469
+[    1.430335] x9 : ffff00000804bd50 x8 : 206e6f7361657220
+[    1.430610] x7 : 2c3376756d705f38 x6 : ffff00000954d7ce
+[    1.430880] x5 : 0000000000000000 x4 : 0000000000000000
+[    1.431226] x3 : 0000000000000000 x2 : ffffffffffffffff
+[    1.431554] x1 : 4d151327adc50b00 x0 : 0000000000000000
+[    1.431868] Call trace:
+[    1.432102]  perf_event_sysfs_init+0x98/0xdc
+[    1.432382]  do_one_initcall+0x6c/0x1a8
+[    1.432637]  kernel_init_freeable+0x1bc/0x280
+[    1.432905]  kernel_init+0x18/0x160
+[    1.433115]  ret_from_fork+0x10/0x18
+[    1.433297] ---[ end trace 27fd415390eb9883 ]---
 
-Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Rework to set suppress_bind_attrs flag to avoid removing the device when
+CONFIG_DEBUG_TEST_DRIVER_REMOVE=y, since there's no real reason to
+remove the armv8_pmuv3 driver.
+
+Cc: Arnd Bergmann <arnd@arndb.de>
+Co-developed-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/firewire/Kconfig     | 1 +
- sound/firewire/oxfw/oxfw.c | 8 ++++++++
- 2 files changed, 9 insertions(+)
+ arch/arm64/kernel/perf_event.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/sound/firewire/Kconfig b/sound/firewire/Kconfig
-index 529d9f405fa9..0cb65d0864cc 100644
---- a/sound/firewire/Kconfig
-+++ b/sound/firewire/Kconfig
-@@ -41,6 +41,7 @@ config SND_OXFW
- 	   * Mackie(Loud) U.420/U.420d
- 	   * TASCAM FireOne
- 	   * Stanton Controllers & Systems 1 Deck/Mixer
-+	   * APOGEE duet FireWire
- 
- 	  To compile this driver as a module, choose M here: the module
- 	  will be called snd-oxfw.
-diff --git a/sound/firewire/oxfw/oxfw.c b/sound/firewire/oxfw/oxfw.c
-index 2ea8be6c8584..5f82a375725a 100644
---- a/sound/firewire/oxfw/oxfw.c
-+++ b/sound/firewire/oxfw/oxfw.c
-@@ -20,6 +20,7 @@
- #define VENDOR_LACIE		0x00d04b
- #define VENDOR_TASCAM		0x00022e
- #define OUI_STANTON		0x001260
-+#define OUI_APOGEE		0x0003db
- 
- #define MODEL_SATELLITE		0x00200f
- 
-@@ -436,6 +437,13 @@ static const struct ieee1394_device_id oxfw_id_table[] = {
- 		.vendor_id	= OUI_STANTON,
- 		.model_id	= 0x002000,
+diff --git a/arch/arm64/kernel/perf_event.c b/arch/arm64/kernel/perf_event.c
+index e213f8e867f6..8a91ac067d44 100644
+--- a/arch/arm64/kernel/perf_event.c
++++ b/arch/arm64/kernel/perf_event.c
+@@ -1274,6 +1274,7 @@ static struct platform_driver armv8_pmu_driver = {
+ 	.driver		= {
+ 		.name	= ARMV8_PMU_PDEV_NAME,
+ 		.of_match_table = armv8_pmu_of_device_ids,
++		.suppress_bind_attrs = true,
  	},
-+	// APOGEE, duet FireWire
-+	{
-+		.match_flags	= IEEE1394_MATCH_VENDOR_ID |
-+				  IEEE1394_MATCH_MODEL_ID,
-+		.vendor_id	= OUI_APOGEE,
-+		.model_id	= 0x01dddd,
-+	},
- 	{ }
+ 	.probe		= armv8_pmu_device_probe,
  };
- MODULE_DEVICE_TABLE(ieee1394, oxfw_id_table);
 -- 
 2.19.1
 
