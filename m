@@ -2,128 +2,101 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2954DC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 22:09:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A50E3C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 22:10:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F20552146F
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 22:09:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6F3392146F
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 22:10:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F9WZxSyd"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730281AbfAHWJt (ORCPT
+        id S1730426AbfAHWKT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 17:09:49 -0500
-Received: from mga04.intel.com ([192.55.52.120]:47409 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728041AbfAHWJs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 17:09:48 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Jan 2019 14:09:47 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,455,1539673200"; 
-   d="scan'208";a="308699544"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.154])
-  by fmsmga006.fm.intel.com with ESMTP; 08 Jan 2019 14:09:47 -0800
-Date:   Tue, 8 Jan 2019 14:09:47 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     "Huang, Kai" <kai.huang@intel.com>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Jethro Beekman <jethro@fortanix.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "x86@kernel.org" <x86@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Haitao Huang <haitao.huang@linux.intel.com>,
-        "Dr . Greg Wettstein" <greg@enjellic.com>
-Subject: Re: x86/sgx: uapi change proposal
-Message-ID: <20190108220946.GA30462@linux.intel.com>
-References: <20181214215729.4221-1-sean.j.christopherson@intel.com>
- <7706b2aa71312e1f0009958bcab24e1e9d8d1237.camel@linux.intel.com>
- <598cd050-f0b5-d18c-96a0-915f02525e3e@fortanix.com>
- <20181219091148.GA5121@linux.intel.com>
- <613c6814-4e71-38e5-444a-545f0e286df8@fortanix.com>
- <20181219144515.GA30909@linux.intel.com>
- <CALCETrW_8LnitFamYUU7POHFOJFxLO7ESFUdS=aeG_SOvHVPkw@mail.gmail.com>
- <20181221162825.GB26865@linux.intel.com>
- <105F7BF4D0229846AF094488D65A0989355A45B6@PGSMSX112.gar.corp.intel.com>
+        Tue, 8 Jan 2019 17:10:19 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:42619 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728041AbfAHWKT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 17:10:19 -0500
+Received: by mail-lj1-f195.google.com with SMTP id l15-v6so4750335lja.9;
+        Tue, 08 Jan 2019 14:10:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=6PCL6SPpxh6oJrJWKG6CXu3MXYNCgU8onwhqQd2u91k=;
+        b=F9WZxSyd4KRouDh0sH0eLyvGsEIWlIk9AUuOwZvDdLXMwcov1QczghHVs3c/7/VmQd
+         BD7/vW/Cb4RMsyUR9R1q9s7ghr4DDLse10IBxdq+umEE+yBsvvf+PBqmBSaXY9F8jBQu
+         EXoebQjbcjQhFpPEddf4sv32kEsfgEX6WnLl532XYjgvMd9YrCii4EOywpPht3SkQVGx
+         NxfcPmxTv/DTw13Kaw/8tqTXT7wEY4TKxwKJIW7BCTgEryo3HfwSumUoNjXBR3cjN9Hu
+         vIQabCzF48Hz441ul7hv+6PthVILE3MhZNqjIMN5Z/p+9OHR6iEZOvJd5qIAvbAk/Ai1
+         iZUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=6PCL6SPpxh6oJrJWKG6CXu3MXYNCgU8onwhqQd2u91k=;
+        b=dXgEQRvVavRMNfyROtPVTxUBHzqfOCOnnLwStvWziMBrsuRqHWd+5xXm8L5tLMludW
+         BgZWaL+sYD+mPdVINDdbCingqyG70e5ybOWbbRoWq8HZHCKjdQUHzQm5c4/bgm5sOCq3
+         P7g7vtjeCMwQDQg1PJHN/zgVbPC/Y6YUUJxvBNyJOnLDksXWFpa/LAy5apwBqOGMsKDB
+         9rjzs/d23esd74ZuhT/J7BvxlCjR+yfle7Yjw7uFJXu3En0kQ6zrHFqa/CjNWS4TL76Z
+         kJ+2Qa34VKLCYj1ny6nzBpMqVgnxd4+9WaA1FBN31zQS2YYYioFnyzHkIz5TxS3oWHM1
+         Gp8A==
+X-Gm-Message-State: AJcUukc4auVCTOxo2EAQeKLXqc7W7CI5gQG+RBTyUpor5MaFCN4xNkIu
+        nUSTUArJhffm84Y75aBUI3wiZEvmxVzzaDUoEEHw7A==
+X-Google-Smtp-Source: ALg8bN7rHdaz/xuJmrRYVPxp8Y/0Bwq4Nnll0v3UQEGdW94IbgfSZvN9DTjmQ3iDSpvfExe4gVMlDxTf4UJzXLAYxj8=
+X-Received: by 2002:a2e:5b93:: with SMTP id m19-v6mr1737897lje.115.1546985415412;
+ Tue, 08 Jan 2019 14:10:15 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <105F7BF4D0229846AF094488D65A0989355A45B6@PGSMSX112.gar.corp.intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+References: <CAA85sZsiifWTKq=Mw30f-UVyrzywnYYX7GvyqG+O+ndSYBML9A@mail.gmail.com>
+ <CAA85sZsj5PxZeiXSVK92QXi93fc+Ch2x2KHqzzPcT2OffaKsEQ@mail.gmail.com>
+In-Reply-To: <CAA85sZsj5PxZeiXSVK92QXi93fc+Ch2x2KHqzzPcT2OffaKsEQ@mail.gmail.com>
+From:   Ian Kumlien <ian.kumlien@gmail.com>
+Date:   Tue, 8 Jan 2019 23:10:04 +0100
+Message-ID: <CAA85sZsyEnkmwO2grp3H5pXErrNV=prOjEfPy=odoQ8iSHox4Q@mail.gmail.com>
+Subject: Re: [BUG] v4.20 - bridge not getting DHCP responses? (works in 4.19.13)
+To:     Linux Kernel Network Developers <netdev@vger.kernel.org>
+Cc:     jeffrey.t.kirsher@intel.com,
+        Roopa Prabhu <roopa@cumulusnetworks.com>,
+        nikolay@cumulusnetworks.com,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 08, 2019 at 11:27:11AM -0800, Huang, Kai wrote:
-> > >
-> > > Can one of you explain why SGX_ENCLAVE_CREATE is better than just
-> > > opening a new instance of /dev/sgx for each encalve?
-> > 
-> > Directly associating /dev/sgx with an enclave means /dev/sgx can't be used
-> > to provide ioctl()'s for other SGX-related needs, e.g. to mmap() raw EPC and
-> > expose it a VM.  Proposed layout in the link below.  I'll also respond to
-> > Jarkko's question about exposing EPC through /dev/sgx instead of having
-> > KVM allocate it on behalf of the VM.
-> > 
-> > https://lkml.kernel.org/r/20181218185349.GC30082@linux.intel.com
-> 
-> Hi Sean,
-> 
-> Sorry for replying to old email. But IMHO it is not a must that Qemu
-> needs to open some /dev/sgx and allocate/mmap EPC for guest's virtual
-> EPC slot, instead, KVM could create private slot, which is not visible
-> to Qemu, for virtual EPC, and KVM could call core-SGX EPC allocation
-> API directly.
-
-That's possible, but it has several downsides.
-
-  - Duplicates a lot of code in KVM for managing memory regions.
-  - Artificially restricts userspace to a single EPC region, unless
-    even more code is duplicated to handle multiple private regions.
-  - Requires additional ioctls() or capabilities to probe EPC support
-  - Does not fit with Qemu/KVM's memory model, e.g. all other types of
-    memory are exposed to a guest through KVM_SET_USER_MEMORY_REGION. 
-  - Prevents userspace from debugging a guest's enclave.  I'm not saying
-    this is a likely scenario, but I also don't think we should preclude
-    it without good reason.
-  - KVM is now responsible for managing the lifecycle of EPC, e.g. what
-    happens if an EPC cgroup limit is lowered on a running VM and
-    KVM can't gracefully reclaim EPC?  The userspace hypervisor should
-    ultimately decide how to handle such an event.
-  - SGX logic is split between SGX and KVM, e.g. VA page management for
-    oversubscription will likely be common to SGX and KVM.  From a long
-    term maintenance perspective, this means that changes to the EPC
-    management could potentially need to be Acked by KVM, and vice versa.
-
-> I am not sure what's the good of allowing userspace to alloc/mmap a
-> raw EPC region? Userspace is not allowed to touch EPC anyway, expect
-> enclave code.
+On Sun, Jan 6, 2019 at 11:21 PM Ian Kumlien <ian.kumlien@gmail.com> wrote:
 >
-> To me KVM creates private EPC slot is cleaner than exposing /dev/sgx/epc
-> and allowing userspace to map some raw EPC region.
+> [Sorry for the repost, screwed up the netdev address...]
+>
+> Hi,
+>
+> Switching from 4.19.x -> 4.20 resulted in DHCP not working for my VM:s.
+>
+> My firewall (which also runs the dhcpd) runs VM:s and it does this by
+> having physical
+> interfaces attached to bridges - which the VM:s in turn attach to.
+>
+> Since 4.20 the VM:s can't use DHCP, it's odd since the requests are
+> seen - a response is sent but
+> it never enters the interface attached to the bridge.
+>
+> Basically:
+> VM vnet2: -> br0 -> eno2 -> switch -> eno1 (dhcpd)
+> dhcpd eno1 -> siwtch and... gone.
+>
+> Any clues?
+>
+> All the nics are handled by ixgbe
 
-Cleaner in the sense that it's faster to get basic support up and running
-since there are fewer touchpoints, but there are long term ramifications
-to cramming EPC management in KVM.
+So, doing similar tests at work with other drivers works - could it be
+related to the mac address filter that was added?
+I don't *really* use VF:s though... (can't really find anything else atm)
 
-And at this point I'm not stating any absolutes, e.g. how EPC will be
-handled by KVM.  What I'm pushing for is to not eliminate the possibility
-of having the SGX subsystem own all EPC management, e.g. don't tie
-/dev/sgx to a single enclave.
-
-> 
-> Thanks,
-> -Kai
+Will try to test, but the VM:s on this machine is in use.
