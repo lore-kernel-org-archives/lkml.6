@@ -2,86 +2,125 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDDE7C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 08:20:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80939C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 08:21:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA72820665
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 08:20:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546935637;
-	bh=3JGwhMx6n9nR5JpfUor00G2ZX8GTgHYScx/dPcHXk3E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=owERHPERw5zIphVSq1hNYjVQhuEV/jKXlvm8kBa/h5BI7oeKMBgmY3DCHe+sc5nb+
-	 jJH8Qo6bhUjQKBG7FJcVwIFIbP2ylVasfjKiI8ARBITk7oWbVfwrals+CBcjxyHUHw
-	 9sjN3AiDYcW+NBYB1u83+cuq9qmCla5L98DkSlAA=
+	by mail.kernel.org (Postfix) with ESMTP id 5A87420665
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 08:21:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728041AbfAHIUh (ORCPT
+        id S1728100AbfAHIVp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 03:20:37 -0500
-Received: from mx2.suse.de ([195.135.220.15]:42540 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727368AbfAHIUg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 03:20:36 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 578A4AB4D;
-        Tue,  8 Jan 2019 08:20:35 +0000 (UTC)
-Date:   Tue, 8 Jan 2019 09:20:32 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Qian Cai <cai@lca.pw>
-Cc:     akpm@linux-foundation.org, Pavel.Tatashin@microsoft.com,
-        mingo@kernel.org, mgorman@techsingularity.net,
-        iamjoonsoo.kim@lge.com, tglx@linutronix.de, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] mm/page_owner: fix for deferred struct page init
-Message-ID: <20190108082032.GP31793@dhcp22.suse.cz>
-References: <20190103202235.GE31793@dhcp22.suse.cz>
- <a5666d82-b7ad-4b90-5f4e-fd22afc3e1dc@lca.pw>
- <20190104130906.GO31793@dhcp22.suse.cz>
- <e4ad9d12-387d-1cc6-f404-cae6d43ccf80@lca.pw>
- <20190104151737.GT31793@dhcp22.suse.cz>
- <c8faf7eb-d23f-4ef7-3432-0acc7165f883@lca.pw>
- <20190104153245.GV31793@dhcp22.suse.cz>
- <fa135cd8-32e5-86f7-14ee-30685bca91b5@lca.pw>
- <20190107184309.GM31793@dhcp22.suse.cz>
- <bfcd017d-dcf4-b687-1aef-ab0810b12c73@lca.pw>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <bfcd017d-dcf4-b687-1aef-ab0810b12c73@lca.pw>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Tue, 8 Jan 2019 03:21:45 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:46407 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726333AbfAHIVp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 03:21:45 -0500
+Received: from kresse.hi.pengutronix.de ([2001:67c:670:100:1d::2a])
+        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
+        (envelope-from <l.stach@pengutronix.de>)
+        id 1ggmdn-0003rq-Kv; Tue, 08 Jan 2019 09:21:39 +0100
+Message-ID: <1546935698.3580.21.camel@pengutronix.de>
+Subject: Re: [PATCH v4 3/4] PCI: imx6: Convert DIRECT_SPEED_CHANGE quirk
+ code to use a flag
+From:   Lucas Stach <l.stach@pengutronix.de>
+To:     Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc:     Bjorn Helgaas <bhelgaas@google.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Chris Healy <cphealy@gmail.com>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        "A.s. Dong" <aisheng.dong@nxp.com>,
+        Richard Zhu <hongxing.zhu@nxp.com>, linux-imx@nxp.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-pci@vger.kernel.org
+Date:   Tue, 08 Jan 2019 09:21:38 +0100
+In-Reply-To: <20190104165335.13205-4-andrew.smirnov@gmail.com>
+References: <20190104165335.13205-1-andrew.smirnov@gmail.com>
+         <20190104165335.13205-4-andrew.smirnov@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::2a
+X-SA-Exim-Mail-From: l.stach@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 07-01-19 20:53:08, Qian Cai wrote:
+Am Freitag, den 04.01.2019, 08:53 -0800 schrieb Andrey Smirnov:
+> Both i.MX7D and i.MX8MQ have the same behaviour when it comes to
+> clearing DIRECT_SPEED_CHANGE bit when no speed change occur. To
+> account for that change the code handling that to use a generic flag
+> instead of checking IP block variant.
 > 
-> 
-> On 1/7/19 1:43 PM, Michal Hocko wrote:
-> > On Fri 04-01-19 15:18:08, Qian Cai wrote:
-> > [...]
-> >> Though, I can't see any really benefit of this approach apart from "beautify"
-> > 
-> > This is not about beautifying! This is about making the code long term
-> > maintainable. As you can see it is just too easy to break it with the
-> > current scheme. And that is bad especially when the code is broken
-> > because of an optimization.
-> > 
-> 
-> Understood, but the code is now fixed. If there is something fundamentally
-> broken in the future, it may be a good time then to create a looks like
-> hundred-line cleanup patch for long-term maintenance at the same time to fix
-> real bugs.
+> > Cc: Bjorn Helgaas <bhelgaas@google.com>
+> > Cc: Fabio Estevam <fabio.estevam@nxp.com>
+> > Cc: Chris Healy <cphealy@gmail.com>
+> > Cc: Lucas Stach <l.stach@pengutronix.de>
+> > Cc: Leonard Crestez <leonard.crestez@nxp.com>
+> > Cc: "A.s. Dong" <aisheng.dong@nxp.com>
+> > Cc: Richard Zhu <hongxing.zhu@nxp.com>
+> Cc: linux-imx@nxp.com
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: linux-pci@vger.kernel.org
+> Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
 
-Yeah, so revert = fix and redisign the thing to make the code more
-robust longterm + allow to catch more allocation. I really fail to see
-why this has to be repeated several times in this thread. Really.
+Reviewed-by: Lucas Stach <l.stach@pengutronix.de>
 
--- 
-Michal Hocko
-SUSE Labs
+> ---
+>  drivers/pci/controller/dwc/pci-imx6.c | 13 +++++++++----
+>  1 file changed, 9 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
+> index c55d93c1187d..75ee0cd7af3b 100644
+> --- a/drivers/pci/controller/dwc/pci-imx6.c
+> +++ b/drivers/pci/controller/dwc/pci-imx6.c
+> @@ -42,6 +42,7 @@ enum imx6_pcie_variants {
+>  };
+>  
+> >  #define IMX6_PCIE_FLAG_IMX6_PHY			BIT(0)
+> > +#define IMX6_PCIE_FLAG_IMX6_SPEED_CHANGE	BIT(1)
+>  
+>  struct imx6_pcie_drvdata {
+> >  	enum imx6_pcie_variants variant;
+> @@ -711,7 +712,8 @@ static int imx6_pcie_establish_link(struct imx6_pcie *imx6_pcie)
+> >  		tmp |= PORT_LOGIC_SPEED_CHANGE;
+> >  		dw_pcie_writel_dbi(pci, PCIE_LINK_WIDTH_SPEED_CONTROL, tmp);
+>  
+> > -		if (imx6_pcie->drvdata->variant != IMX7D) {
+> > +		if (imx6_pcie->drvdata->flags &
+> > +		    IMX6_PCIE_FLAG_IMX6_SPEED_CHANGE) {
+> >  			/*
+> >  			 * On i.MX7, DIRECT_SPEED_CHANGE behaves differently
+> >  			 * from i.MX6 family when no link speed transition
+> @@ -1097,15 +1099,18 @@ static void imx6_pcie_shutdown(struct platform_device *pdev)
+>  static const struct imx6_pcie_drvdata drvdata[] = {
+> >  	[IMX6Q] = {
+> >  		.variant = IMX6Q,
+> > -		.flags = IMX6_PCIE_FLAG_IMX6_PHY,
+> > +		.flags = IMX6_PCIE_FLAG_IMX6_PHY |
+> > +			 IMX6_PCIE_FLAG_IMX6_SPEED_CHANGE,
+> >  	},
+> >  	[IMX6SX] = {
+> >  		.variant = IMX6SX,
+> > -		.flags = IMX6_PCIE_FLAG_IMX6_PHY,
+> > +		.flags = IMX6_PCIE_FLAG_IMX6_PHY |
+> > +			 IMX6_PCIE_FLAG_IMX6_SPEED_CHANGE,
+> >  	},
+> >  	[IMX6QP] = {
+> >  		.variant = IMX6QP,
+> > -		.flags = IMX6_PCIE_FLAG_IMX6_PHY,
+> > +		.flags = IMX6_PCIE_FLAG_IMX6_PHY |
+> > +			 IMX6_PCIE_FLAG_IMX6_SPEED_CHANGE,
+> >  	},
+> >  	[IMX7D] = {
+> >  		.variant = IMX7D,
