@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84120C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 16:10:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2795DC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 16:10:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C11C2087F
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 16:10:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 01B032087F
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 16:10:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729312AbfAHQKk (ORCPT
+        id S1729295AbfAHQKk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Tue, 8 Jan 2019 11:10:40 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:58872 "EHLO
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:58878 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729244AbfAHQK3 (ORCPT
+        with ESMTP id S1728853AbfAHQK3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 8 Jan 2019 11:10:29 -0500
 Received: from [127.0.0.1] (localhost [127.0.0.1])
         (Authenticated sender: eballetbo)
-        with ESMTPSA id BF89727F094
+        with ESMTPSA id 5A67526125E
 From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     groeck@chromium.org, gwendal@chromium.org, kernel@collabora.com,
         bleung@chromium.org
-Subject: [PATCH 08/10] platform/chrome: cros_ec_lightbar: switch to SPDX identifier
-Date:   Tue,  8 Jan 2019 17:10:14 +0100
-Message-Id: <20190108161016.12361-9-enric.balletbo@collabora.com>
+Subject: [PATCH 09/10] platform/chrome: cros_ec_sysfs: switch to SPDX identifier
+Date:   Tue,  8 Jan 2019 17:10:15 +0100
+Message-Id: <20190108161016.12361-10-enric.balletbo@collabora.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190108161016.12361-1-enric.balletbo@collabora.com>
 References: <20190108161016.12361-1-enric.balletbo@collabora.com>
@@ -46,16 +46,16 @@ management.
 Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 ---
 
- drivers/platform/chrome/cros_ec_lightbar.c | 22 ++++------------------
+ drivers/platform/chrome/cros_ec_sysfs.c | 22 ++++------------------
  1 file changed, 4 insertions(+), 18 deletions(-)
 
-diff --git a/drivers/platform/chrome/cros_ec_lightbar.c b/drivers/platform/chrome/cros_ec_lightbar.c
-index 4211a26587d3..596b899e5508 100644
---- a/drivers/platform/chrome/cros_ec_lightbar.c
-+++ b/drivers/platform/chrome/cros_ec_lightbar.c
+diff --git a/drivers/platform/chrome/cros_ec_sysfs.c b/drivers/platform/chrome/cros_ec_sysfs.c
+index c502c0f52092..c2dd253567ec 100644
+--- a/drivers/platform/chrome/cros_ec_sysfs.c
++++ b/drivers/platform/chrome/cros_ec_sysfs.c
 @@ -1,21 +1,7 @@
 -/*
-- * cros_ec_lightbar - expose the Chromebook Pixel lightbar to userspace
+- * cros_ec_sysfs - expose the Chrome OS EC through sysfs
 - *
 - * Copyright (C) 2014 Google, Inc.
 - *
@@ -73,12 +73,12 @@ index 4211a26587d3..596b899e5508 100644
 - * along with this program. If not, see <http://www.gnu.org/licenses/>.
 - */
 +// SPDX-License-Identifier: GPL-2.0+
-+// Expose the Chromebook Pixel lightbar to userspace
++// Expose the ChromeOS EC through sysfs
 +//
 +// Copyright (C) 2014 Google, Inc.
  
  #include <linux/ctype.h>
- #include <linux/fs.h>
+ #include <linux/device.h>
 -- 
 2.20.1
 
