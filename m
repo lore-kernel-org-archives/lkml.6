@@ -2,107 +2,100 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF70BC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 15:40:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02BEFC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 15:40:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C844920883
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 15:40:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CD1E720883
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 15:40:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728835AbfAHPkW (ORCPT
+        id S1728914AbfAHPkc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 10:40:22 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54502 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727906AbfAHPkV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 10:40:21 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4BF9780D;
-        Tue,  8 Jan 2019 07:40:21 -0800 (PST)
-Received: from e103592.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1007D3F5AF;
-        Tue,  8 Jan 2019 07:40:18 -0800 (PST)
-Date:   Tue, 8 Jan 2019 15:40:13 +0000
-From:   Dave Martin <Dave.Martin@arm.com>
-To:     Julien Thierry <julien.thierry@arm.com>
-Cc:     linux-arm-kernel@lists.infradead.org, mark.rutland@arm.com,
-        daniel.thompson@linaro.org, marc.zyngier@arm.com,
-        catalin.marinas@arm.com,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        will.deacon@arm.com, linux-kernel@vger.kernel.org,
-        christoffer.dall@arm.com, james.morse@arm.com,
-        Oleg Nesterov <oleg@redhat.com>, joel@joelfernandes.org
-Subject: Re: [PATCH v8 12/26] arm64: irqflags: Use ICC_PMR_EL1 for interrupt
- masking
-Message-ID: <20190108153957.GA5840@e103592.cambridge.arm.com>
-References: <1546956464-48825-1-git-send-email-julien.thierry@arm.com>
- <1546956464-48825-13-git-send-email-julien.thierry@arm.com>
+        Tue, 8 Jan 2019 10:40:32 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:49325 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728238AbfAHPkb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 10:40:31 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x08FdvUW3566531
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Tue, 8 Jan 2019 07:39:57 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x08Fdvbb3566528;
+        Tue, 8 Jan 2019 07:39:57 -0800
+Date:   Tue, 8 Jan 2019 07:39:57 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Jiri Olsa <tipbot@zytor.com>
+Message-ID: <tip-536cdb684d2d5139708d290b9dc124b1420886c1@git.kernel.org>
+Cc:     mingo@kernel.org, tglx@linutronix.de,
+        andriy.shevchenko@linux.intel.com, acme@redhat.com,
+        linux-kernel@vger.kernel.org, jic23@kernel.org,
+        peterz@infradead.org, hpa@zytor.com, jolsa@kernel.org,
+        namhyung@kernel.org, lars@metafoo.de, knaack.h@gmx.de,
+        alexander.shishkin@linux.intel.com
+Reply-To: andriy.shevchenko@linux.intel.com, acme@redhat.com,
+          mingo@kernel.org, tglx@linutronix.de, peterz@infradead.org,
+          linux-kernel@vger.kernel.org, jic23@kernel.org, hpa@zytor.com,
+          alexander.shishkin@linux.intel.com, knaack.h@gmx.de,
+          jolsa@kernel.org, namhyung@kernel.org, lars@metafoo.de
+In-Reply-To: <20190103161350.11446-3-jolsa@kernel.org>
+References: <20190103161350.11446-3-jolsa@kernel.org>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/urgent] tools iio: Override CFLAGS assignments
+Git-Commit-ID: 536cdb684d2d5139708d290b9dc124b1420886c1
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <1546956464-48825-13-git-send-email-julien.thierry@arm.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 08, 2019 at 02:07:30PM +0000, Julien Thierry wrote:
-> Instead disabling interrupts by setting the PSR.I bit, use a priority
-> higher than the one used for interrupts to mask them via PMR.
-> 
-> When using PMR to disable interrupts, the value of PMR will be used
-> instead of PSR.[DAIF] for the irqflags.
-> 
-> Signed-off-by: Julien Thierry <julien.thierry@arm.com>
-> Suggested-by: Daniel Thompson <daniel.thompson@linaro.org>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will.deacon@arm.com>
-> Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-> Cc: Oleg Nesterov <oleg@redhat.com>
-> ---
->  arch/arm64/include/asm/efi.h      |  11 ++++
->  arch/arm64/include/asm/irqflags.h | 123 +++++++++++++++++++++++++++++---------
->  2 files changed, 106 insertions(+), 28 deletions(-)
+Commit-ID:  536cdb684d2d5139708d290b9dc124b1420886c1
+Gitweb:     https://git.kernel.org/tip/536cdb684d2d5139708d290b9dc124b1420886c1
+Author:     Jiri Olsa <jolsa@kernel.org>
+AuthorDate: Thu, 3 Jan 2019 17:13:50 +0100
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Fri, 4 Jan 2019 12:54:49 -0300
 
-[...]
+tools iio: Override CFLAGS assignments
 
-> diff --git a/arch/arm64/include/asm/irqflags.h b/arch/arm64/include/asm/irqflags.h
-> index 24692ed..fa3b06f 100644
-> --- a/arch/arm64/include/asm/irqflags.h
-> +++ b/arch/arm64/include/asm/irqflags.h
-> @@ -18,7 +18,9 @@
+So user could specify outside CFLAGS values.
 
-[...]
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Hartmut Knaack <knaack.h@gmx.de>
+Cc: Jonathan Cameron <jic23@kernel.org>
+Cc: Lars-Peter Clausen <lars@metafoo.de>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lkml.kernel.org/r/20190103161350.11446-3-jolsa@kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/iio/Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
->  static inline void arch_local_irq_enable(void)
->  {
-> -	asm volatile(
-> -		"msr	daifclr, #2		// arch_local_irq_enable"
-> -		:
-> +	unsigned long unmasked = GIC_PRIO_IRQON;
-> +
-> +	asm volatile(ALTERNATIVE(
-> +		"msr	daifclr, #2		// arch_local_irq_enable\n"
-> +		"nop",
-> +		"msr_s  " __stringify(SYS_ICC_PMR_EL1) ",%0\n"
-> +		"dsb	sy",
-
-I'm still not convinced these dsbs are needed.
-
-Without the dsb, we are probably not guaranteed to take a pending
-interrupt _immediately_ on unmasking, but I'm not sure that's a
-problem.
-
-What goes wrong if we omit them?
-
-(My attempts to answer these questions using the GIC architecture spec
-have met with limited success so far...)
-
-[...]
-
-Cheers
----Dave
+diff --git a/tools/iio/Makefile b/tools/iio/Makefile
+index 332ed2f6c2c2..e22378dba244 100644
+--- a/tools/iio/Makefile
++++ b/tools/iio/Makefile
+@@ -12,7 +12,7 @@ endif
+ # (this improves performance and avoids hard-to-debug behaviour);
+ MAKEFLAGS += -r
+ 
+-CFLAGS += -O2 -Wall -g -D_GNU_SOURCE -I$(OUTPUT)include
++override CFLAGS += -O2 -Wall -g -D_GNU_SOURCE -I$(OUTPUT)include
+ 
+ ALL_TARGETS := iio_event_monitor lsiio iio_generic_buffer
+ ALL_PROGRAMS := $(patsubst %,$(OUTPUT)%,$(ALL_TARGETS))
