@@ -4,54 +4,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17F6EC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:31:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EBC8C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:31:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D780920645
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:31:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 009F6217D9
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:31:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546975890;
-	bh=MC+rHNNDwAuNlih5jVRxD/vhWL2kQMVyXmQ/MPrZ+/I=;
+	s=default; t=1546975894;
+	bh=71bZYqIvrgLKtNHcvSBPT2C7oSSe2PEcWzz8UMCPeaE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=vw9FKxK1lX3xx46akvNDWc5enNBYMmEaHcBC3Z8SUbcDzjHPKmPpT9duT9Y9LKsW7
-	 7dfigsQNp7G3wE3K+V+4V1NyZNeSJQowGXzFrn8GwkuoiwnIHj8O4b3lB5LEyXHwm2
-	 JWMGU04wylWL+c1tf9L+gh+cQ6rkIx3kKeymSS9U=
+	b=WHmPHmhHHWRCWl+/8ChU+3RBgFr4VfxblSFY/IQ4OA6aB3ST4UXnYdoHOdX6IUtEF
+	 Y/PcKVi4RU9giGO6AMGfOPYxvDSapu7FAnwuCu/NW3HmhVN6N4ggs8EQnX7tZMxckj
+	 cSmmbRzanRW+TixbLfyG+abhb82j6QRHkKNC0rlQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731104AbfAHTb3 (ORCPT
+        id S1731118AbfAHTbc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:31:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39546 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 14:31:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39648 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729987AbfAHTb1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:31:27 -0500
+        id S1729987AbfAHTbb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:31:31 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D13BB20827;
-        Tue,  8 Jan 2019 19:31:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6B26F2070B;
+        Tue,  8 Jan 2019 19:31:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546975886;
-        bh=MC+rHNNDwAuNlih5jVRxD/vhWL2kQMVyXmQ/MPrZ+/I=;
+        s=default; t=1546975890;
+        bh=71bZYqIvrgLKtNHcvSBPT2C7oSSe2PEcWzz8UMCPeaE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1K+ywRZpiwkrXj7YPZ0xEi4Rso6BJvlFSVLlE4S0vVehpaW78DvGRWUf7h0j72WkD
-         T1kH1ENqYklGjGcNAoIM/8VnQsRXraupcs4nvTVXpV9niVC0ykKkMku1TKuUMLx/og
-         HI/FXo15WdM9syJpkjpoT3x84OMqWN53qtYoqlL0=
+        b=G4bL49YtCFod1OpwgEkVu4MaY3TgnVQn51W7JiPuG0IPQNQQTH6YGuTDq8GD3oIla
+         hO3KcoNtV4/ZCkgQKbcvLF9ESorQPqOW88F7CILrPG+VMSw3VgTzNmRBTmupMnuYTn
+         5Wg+4HcIbe3abWzbP52JYdY4kNTdYuUsAtAG0mK8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Waiman Long <longman@redhat.com>,
-        Dmitry Safonov <dima@arista.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Sasha Levin <sashal@kernel.org>, linux-serial@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 62/97] tty/serial: do not free trasnmit buffer page under port lock
-Date:   Tue,  8 Jan 2019 14:29:11 -0500
-Message-Id: <20190108192949.122407-62-sashal@kernel.org>
+Cc:     Florian Fainelli <f.fainelli@gmail.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 64/97] perf tests ARM: Disable breakpoint tests 32-bit
+Date:   Tue,  8 Jan 2019 14:29:13 -0500
+Message-Id: <20190108192949.122407-64-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108192949.122407-1-sashal@kernel.org>
 References: <20190108192949.122407-1-sashal@kernel.org>
@@ -63,114 +62,70 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
 
-[ Upstream commit d72402145ace0697a6a9e8e75a3de5bf3375f78d ]
+[ Upstream commit 24f967337f6d6bce931425769c0f5ff5cf2d212e ]
 
-LKP has hit yet another circular locking dependency between uart
-console drivers and debugobjects [1]:
+The breakpoint tests on the ARM 32-bit kernel are broken in several
+ways.
 
-     CPU0                                    CPU1
+The breakpoint length requested does not necessarily match whether the
+function address has the Thumb bit (bit 0) set or not, and this does
+matter to the ARM kernel hw_breakpoint infrastructure. See [1] for
+background.
 
-                                            rhltable_init()
-                                             __init_work()
-                                              debug_object_init
-     uart_shutdown()                          /* db->lock */
-      /* uart_port->lock */                    debug_print_object()
-       free_page()                              printk()
-                                                 call_console_drivers()
-        debug_check_no_obj_freed()                /* uart_port->lock */
-         /* db->lock */
-          debug_print_object()
+[1]: https://lkml.org/lkml/2018/11/15/205
 
-So there are two dependency chains:
-	uart_port->lock -> db->lock
-And
-	db->lock -> uart_port->lock
+As Will indicated, the overflow handling would require single-stepping
+which is not supported at the moment. Just disable those tests for the
+ARM 32-bit platforms and update the comment above to explain these
+limitations.
 
-This particular circular locking dependency can be addressed in several
-ways:
-
-a) One way would be to move debug_print_object() out of db->lock scope
-   and, thus, break the db->lock -> uart_port->lock chain.
-b) Another one would be to free() transmit buffer page out of db->lock
-   in UART code; which is what this patch does.
-
-It makes sense to apply a) and b) independently: there are too many things
-going on behind free(), none of which depend on uart_port->lock.
-
-The patch fixes transmit buffer page free() in uart_shutdown() and,
-additionally, in uart_port_startup() (as was suggested by Dmitry Safonov).
-
-[1] https://lore.kernel.org/lkml/20181211091154.GL23332@shao2-debian/T/#u
-Signed-off-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Reviewed-by: Petr Mladek <pmladek@suse.com>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Jiri Slaby <jslaby@suse.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Waiman Long <longman@redhat.com>
-Cc: Dmitry Safonov <dima@arista.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Co-developed-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
+Acked-by: Jiri Olsa <jolsa@redhat.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lkml.kernel.org/r/20181203191138.2419-1-f.fainelli@gmail.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/tty/serial/serial_core.c | 22 ++++++++++++++++------
- 1 file changed, 16 insertions(+), 6 deletions(-)
+ tools/perf/tests/bp_signal.c | 20 ++++++++++++++------
+ 1 file changed, 14 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/tty/serial/serial_core.c b/drivers/tty/serial/serial_core.c
-index 80bb56facfb6..ad126f51d549 100644
---- a/drivers/tty/serial/serial_core.c
-+++ b/drivers/tty/serial/serial_core.c
-@@ -205,10 +205,15 @@ static int uart_port_startup(struct tty_struct *tty, struct uart_state *state,
- 	if (!state->xmit.buf) {
- 		state->xmit.buf = (unsigned char *) page;
- 		uart_circ_clear(&state->xmit);
-+		uart_port_unlock(uport, flags);
- 	} else {
-+		uart_port_unlock(uport, flags);
-+		/*
-+		 * Do not free() the page under the port lock, see
-+		 * uart_shutdown().
-+		 */
- 		free_page(page);
- 	}
--	uart_port_unlock(uport, flags);
+diff --git a/tools/perf/tests/bp_signal.c b/tools/perf/tests/bp_signal.c
+index a467615c5a0e..910e25e64188 100644
+--- a/tools/perf/tests/bp_signal.c
++++ b/tools/perf/tests/bp_signal.c
+@@ -291,12 +291,20 @@ int test__bp_signal(struct test *test __maybe_unused, int subtest __maybe_unused
  
- 	retval = uport->ops->startup(uport);
- 	if (retval == 0) {
-@@ -268,6 +273,7 @@ static void uart_shutdown(struct tty_struct *tty, struct uart_state *state)
- 	struct uart_port *uport = uart_port_check(state);
- 	struct tty_port *port = &state->port;
- 	unsigned long flags = 0;
-+	char *xmit_buf = NULL;
- 
- 	/*
- 	 * Set the TTY IO error marker
-@@ -298,14 +304,18 @@ static void uart_shutdown(struct tty_struct *tty, struct uart_state *state)
- 	tty_port_set_suspended(port, 0);
- 
- 	/*
--	 * Free the transmit buffer page.
-+	 * Do not free() the transmit buffer page under the port lock since
-+	 * this can create various circular locking scenarios. For instance,
-+	 * console driver may need to allocate/free a debug object, which
-+	 * can endup in printk() recursion.
- 	 */
- 	uart_port_lock(state, flags);
--	if (state->xmit.buf) {
--		free_page((unsigned long)state->xmit.buf);
--		state->xmit.buf = NULL;
--	}
-+	xmit_buf = state->xmit.buf;
-+	state->xmit.buf = NULL;
- 	uart_port_unlock(uport, flags);
-+
-+	if (xmit_buf)
-+		free_page((unsigned long)xmit_buf);
- }
- 
- /**
+ bool test__bp_signal_is_supported(void)
+ {
+-/*
+- * The powerpc so far does not have support to even create
+- * instruction breakpoint using the perf event interface.
+- * Once it's there we can release this.
+- */
+-#if defined(__powerpc__) || defined(__s390x__)
++	/*
++	 * PowerPC and S390 do not support creation of instruction
++	 * breakpoints using the perf_event interface.
++	 *
++	 * ARM requires explicit rounding down of the instruction
++	 * pointer in Thumb mode, and then requires the single-step
++	 * to be handled explicitly in the overflow handler to avoid
++	 * stepping into the SIGIO handler and getting stuck on the
++	 * breakpointed instruction.
++	 *
++	 * Just disable the test for these architectures until these
++	 * issues are resolved.
++	 */
++#if defined(__powerpc__) || defined(__s390x__) || defined(__arm__)
+ 	return false;
+ #else
+ 	return true;
 -- 
 2.19.1
 
