@@ -2,164 +2,130 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AB55C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 10:59:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 983ABC43612
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 11:02:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 38AAF206B7
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 10:59:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="He9Gc0jN"
+	by mail.kernel.org (Postfix) with ESMTP id 6C13E206B7
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 11:02:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728261AbfAHK7I (ORCPT
+        id S1728256AbfAHLCh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 05:59:08 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:40161 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727587AbfAHK7H (ORCPT
+        Tue, 8 Jan 2019 06:02:37 -0500
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:7546 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727107AbfAHLCh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 05:59:07 -0500
-Received: by mail-lf1-f67.google.com with SMTP id v5so2587694lfe.7
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jan 2019 02:59:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=43ol8C+25gQidZaua2BLbSSjTjeQ0Ha0jeUYYqRcrmw=;
-        b=He9Gc0jN7CP5lvFTA7JV+G0ZqecfPCCyVZ3O9Ulisp6HjWh2/rmmzEW1xmMbEgv98O
-         z5HpnxaG1VsU46ZFi2lKBKuMsbc7W/GjyOnhb/jdifYgjf+TWnnDd66yQMjHkRSLga5r
-         hCjNlO0Iuf12OpNlG8ATBuqp9qEfv1ta8y8nw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=43ol8C+25gQidZaua2BLbSSjTjeQ0Ha0jeUYYqRcrmw=;
-        b=pgOx3dwDnkdnoU90gfWwv+QRxtxdY1WqaI20/zeHp/HwxrMR+T+suAIMijGj2k/z9V
-         gW2UbViFZ4MmFDUHoWWt1k/kx5i/myElmMHmc4rtDG6KSq6IjMvt51ZKUpHRVp/7T4ec
-         /3n1xAUil3VKtPWcuyEYoe6mZzwO+ND+47m3QzuzCX8PZ7zZPkgIQW3HJHryvGw1OjYm
-         ojc0blo52mqRJV681cgfoD4vxQlR66KTJbqGGKNXWoX1il8nxW+HClMIcwCA82ZHWyoW
-         PimgtO9lNFCv3q2beQ8+2H9SyX4FUOHIYoIWuNh2RgcZruJimEuFTJkcLG1zczB6Hryu
-         E6ng==
-X-Gm-Message-State: AJcUukeIrnqjhX9HSJVq1Junxj+14yhjhT4nFGl93eO8kqXeV64EDFoO
-        T0ToBDOLum2UxS3JXb9FyHWvUmSbMRDeNU+mESqWyg==
-X-Google-Smtp-Source: ALg8bN7damIu424xCRh0odpnIgI/fyCLWb9IbIHDBKf0Vrrf4aDQ2slg3fGwgBMISdSE3elhRayvhCEJTFujd3kmUm4=
-X-Received: by 2002:a19:ca51:: with SMTP id h17mr724602lfj.126.1546945145264;
- Tue, 08 Jan 2019 02:59:05 -0800 (PST)
-MIME-Version: 1.0
-References: <20190107104437.308206189@linuxfoundation.org>
-In-Reply-To: <20190107104437.308206189@linuxfoundation.org>
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Tue, 8 Jan 2019 16:28:53 +0530
-Message-ID: <CA+G9fYsx=oUnq6V1JcQ4dvnPgLVwrBM_MjyXF7F1xV_CoGBOAQ@mail.gmail.com>
-Subject: Re: [PATCH 4.20 000/145] 4.20.1-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        Tue, 8 Jan 2019 06:02:37 -0500
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x08Au4Jn016914;
+        Tue, 8 Jan 2019 12:02:01 +0100
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2ptt11xepy-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Tue, 08 Jan 2019 12:02:01 +0100
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 16C1238;
+        Tue,  8 Jan 2019 11:01:59 +0000 (GMT)
+Received: from Webmail-eu.st.com (sfhdag5node3.st.com [10.75.127.15])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id C8E5C2A7F;
+        Tue,  8 Jan 2019 11:01:58 +0000 (GMT)
+Received: from [10.48.0.167] (10.75.127.50) by SFHDAG5NODE3.st.com
+ (10.75.127.15) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Tue, 8 Jan
+ 2019 12:01:57 +0100
+Subject: Re: New IIO/counter driver
+To:     Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        William Breathitt Gray <vilhelm.gray@gmail.com>
+CC:     Patrick Havelange <patrick.havelange@essensium.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <devicetree@vger.kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
+        Benjamin GAIGNARD <benjamin.gaignard@st.com>,
+        <linux-iio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Hartmut Knaack <knaack.h@gmx.de>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        lkft-triage@lists.linaro.org,
-        linux- stable <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+References: <CAKKE0ZHmODzhvjPNJFVgT2cF_F=f2kNKr5K_CGP+0XgA5XZokw@mail.gmail.com>
+ <20190108004632.GA3247@icarus>
+ <CA+M3ks7wX6MxvapDi_5SQ0rkJWoV+BcmzmbvtiqHVBzrrwAp4g@mail.gmail.com>
+From:   Fabrice Gasnier <fabrice.gasnier@st.com>
+Message-ID: <8b2bb569-a6e0-25ec-740d-48083b30fe60@st.com>
+Date:   Tue, 8 Jan 2019 12:01:57 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <CA+M3ks7wX6MxvapDi_5SQ0rkJWoV+BcmzmbvtiqHVBzrrwAp4g@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.75.127.50]
+X-ClientProxiedBy: SFHDAG8NODE1.st.com (10.75.127.22) To SFHDAG5NODE3.st.com
+ (10.75.127.15)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-08_06:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 7 Jan 2019 at 18:04, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 4.20.1 release.
-> There are 145 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Wed Jan  9 10:43:39 UTC 2019.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
-4.20.1-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-4.20.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+On 1/8/19 11:57 AM, Benjamin Gaignard wrote:
+> Le mar. 8 janv. 2019 à 01:46, William Breathitt Gray
+> <vilhelm.gray@gmail.com> a écrit :
+>>
+>> On Mon, Jan 07, 2019 at 02:45:37PM +0100, Patrick Havelange wrote:
+>>> Hello,
+>>>
+>>> I'm in the process of adding a new IIO/counter driver, however I also saw
+>>> that there was a work in progress to have a separate counter subsystem (
+>>> https://marc.info/?l=linux-iio&m=153974167727206 ). But it seems there is
+>>> no recent progress on it.
+>>> What is the state of those patches ? Is it still interesting to develop the
+>>> driver as an IIO/counter , or should I use already that new subsystem ?
+>>>
+>>> Best Regards,
+>>>
+>>> Patrick Havelange.
+>>
+>> Hello,
+>>
+>> I am still open to merging this patchset and maintaining the Counter
+>> subsystem. However, I took the lack of response for my latest
+>> submission to indicate a loss of interest in this patchset's approach.
+>> If there are still people who want this, I can rebase and resend this
+>> patchset for submission; the past few versions have primarily been code
+>> clarity and documentation changes so I believe the core design itself is
+>> somewhat stable now.
+>>
+>> Just let me know how best to proceed and I shall be happy to oblige --
+>> whether to continue maintaining this patchset or to drop this design in
+>> favor of improving the existing IIO Counter code in the kernel.
+>>
+>> I'll CC those from the patchset submission to keep them in the loop.
+> 
+> I confirm that I still interested to get those patches merged.
+> 
+> Regards,
+> Benjamin
+Hi,
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+Same for me,
 
-Summary
-------------------------------------------------------------------------
-
-kernel: 4.20.1-rc1
-git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
-le-rc.git
-git branch: linux-4.20.y
-git commit: b3b71d0e3c63a729d9d98c74e0a2db10b4133d9e
-git describe: v4.20-146-gb3b71d0e3c63
-Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.20-oe/bu=
-ild/v4.20-146-gb3b71d0e3c63
-
-No regressions (compared to build v4.20-46-g6fb31b79ec72)
-
-No fixes (compared to build v4.20-46-g6fb31b79ec72)
-
-Ran 20523 total tests in the following environments and test suites.
-
-Environments
---------------
-- dragonboard-410c - arm64
-- hi6220-hikey - arm64
-- i386
-- juno-r2 - arm64
-- qemu_arm
-- qemu_arm64
-- qemu_i386
-- qemu_x86_64
-- x15 - arm
-- x86_64
-
-Test Suites
------------
-* boot
-* install-android-platform-tools-r2600
-* kselftest
-* libhugetlbfs
-* ltp-cap_bounds-tests
-* ltp-containers-tests
-* ltp-cpuhotplug-tests
-* ltp-cve-tests
-* ltp-fcntl-locktests-tests
-* ltp-filecaps-tests
-* ltp-fs_bind-tests
-* ltp-fs_perms_simple-tests
-* ltp-fsx-tests
-* ltp-hugetlb-tests
-* ltp-io-tests
-* ltp-ipc-tests
-* ltp-math-tests
-* ltp-nptl-tests
-* ltp-pty-tests
-* ltp-sched-tests
-* ltp-securebits-tests
-* ltp-syscalls-tests
-* ltp-timers-tests
-* spectre-meltdown-checker-test
-* ltp-fs-tests
-* ltp-open-posix-tests
-* kselftest-vsyscall-mode-native
-* kselftest-vsyscall-mode-none
-
---=20
-Linaro LKFT
-https://lkft.linaro.org
+Regards,
+Fabrice
+>>
+>> Sincerely,
+>>
+>> William Breathitt Gray
+>>
+>> _______________________________________________
+>> linux-arm-kernel mailing list
+>> linux-arm-kernel@lists.infradead.org
+>> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> 
+> 
+> 
