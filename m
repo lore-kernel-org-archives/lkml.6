@@ -2,123 +2,133 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D379EC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 03:42:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90C84C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 03:49:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F7F520850
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 03:42:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5DFA020850
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 03:49:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UIv0nKRp"
+	dkim=pass (2048-bit key) header.d=lca.pw header.i=@lca.pw header.b="VZF3BisZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727454AbfAHDmS (ORCPT
+        id S1727424AbfAHDtr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 22:42:18 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:40165 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727145AbfAHDmR (ORCPT
+        Mon, 7 Jan 2019 22:49:47 -0500
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:41281 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727145AbfAHDtr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 22:42:17 -0500
-Received: by mail-pl1-f195.google.com with SMTP id u18so1177958plq.7;
-        Mon, 07 Jan 2019 19:42:17 -0800 (PST)
+        Mon, 7 Jan 2019 22:49:47 -0500
+Received: by mail-qk1-f196.google.com with SMTP id 189so1588186qkj.8
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Jan 2019 19:49:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=kKJodC/fqmxyY09UdTJHPL4jkV8xwQpAkt2atTNVY2Q=;
-        b=UIv0nKRp12x3kUmuPMkZwsIDZIcHhfsy7c1BgSo9daR+bVW1l3JfmWC48csOLvmzM4
-         g2SsVPCmAwQnswmX3oM6NGZvR9OE4O2JglU1X4FZ8A+/H3uF+v54n1OMGCXg8qkJPHhL
-         T7s61fhv6y/a8maTd/U85+KRWE3b/TZxwz3ct0xopNtAfT3oD6UCE+wvglfYRKOsjG9q
-         uT2HWeX5Zkc2YElARz3yS3oIBT7gxSfk6vEzyvVaif+yvs+FB+gn4uRxCFYBwD2+m9VS
-         feHAkvGuye3BxqQl2XS8rhb2GRy/hWxrdB8WNMjxQzGaT8hxHT0oprpblNkMCBlc0wlq
-         VF/Q==
+        d=lca.pw; s=google;
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=g3kvm8LKerN2EuWSNQkFLEia5e8Kr7TjBCuMbx/WN2U=;
+        b=VZF3BisZLmlLeI5FObSlVEhPdeiF4naaiMjV2xSIuLQ3sQ+r3kp+l517CZsB7ShJqA
+         lkdl0MDJHTpbaMqQrRJjmDYPgZAkiTQa6o0b011DIAzNqmzCEF10CNAd+Hm2NcEnORM1
+         ooKK4KP0EIBu3oHDWAi9KrCxz/bbP5LmWWknkAhU4TKLVy5jX5wl3C4qgVrblBpxubOl
+         +6wy1FbjvNVppe8Qd2qpXFMS/f6CqMkmhouDH/Say75JWwMR2cbR7oev31h5hO47qdX/
+         Z3GqlmIDnStTfs57X0B59zpzZS7fWW/np7XDdmPwV6XGlrGa61dM8/80ddY+5fgyFY5d
+         5cHw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=kKJodC/fqmxyY09UdTJHPL4jkV8xwQpAkt2atTNVY2Q=;
-        b=EdJSXE8X3fpnBPV16DwWwIvlPsOtxWKWnxuSAptwm/0Q/Vt9lzomN72xDSmyijh1WP
-         b4hC0IP/Kqw6QNU1U35saeOSTJ9M0uf05o//bs+b3/K2z49eocmwSgzQkLQMHButPkEO
-         T0whE8FHzGC1DqtdKjZGOZDebYCPZybMav88BVUUlzvXJ9btmz1S6HjSB2LTpSG429BD
-         KikjEHmq7vq0uSKki106s1DRofVBHOxxw0EAgAJROltltf9r0WQAcpThzozyNhhGZILh
-         MkCINlNsPx+N8eXflqxPB+q1WmJuVDawb8/dDuWGVhkXy+NdhGxqpUMnL7JeATkhcjMC
-         o75Q==
-X-Gm-Message-State: AJcUukf9qOgDCzQckLTuEiJvhTteqLwzJ7gbbM2V7GO0bIxmL086493k
-        u0RkVTL/IirOFGDmlcY3p5QlHY8ukNjNScQXK6Y=
-X-Google-Smtp-Source: ALg8bN4ngKnkpiDqIKFMSt3Unfc3HkgEdj8Z7LCdN89jRUf+BkM4KYH/NFezHtJ2V+29MSaW+etYIlyex4ESR1jtnTA=
-X-Received: by 2002:a17:902:8d95:: with SMTP id v21mr150616plo.162.1546918936825;
- Mon, 07 Jan 2019 19:42:16 -0800 (PST)
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=g3kvm8LKerN2EuWSNQkFLEia5e8Kr7TjBCuMbx/WN2U=;
+        b=nIbXyGhq8HHc6kekDRNtXhtawv3NVnTYmRtUbUvNrG8MuO8mbvsIujmKbu86y+9tnV
+         KZYBBm11ZJzsAtfZInfDh6LrvpU00QqCivL5zf2lR0zZf063xjedNuO8FYYUI9n4aOHw
+         +Stjy8O5NASBSVFgUi9Fwni3mcG2L42JsSeFnLO70hkqxZxSO7jKaSh7SLKJfACtiqy+
+         nkZj96YRrR3WsuTuh5uaqUvI73fze5jkRkw3C+MnqsHw4uxWgGAKYKfrGNyan4cgBat/
+         jb0V0y8O2QzBqBv1cawWz3sCXi3N3MSgGa8Vv7fuowKoeQVZua1eg2i03psPQ+4h/Zp6
+         rVWQ==
+X-Gm-Message-State: AJcUukdAR7L1ks8JC91Gs6P3ecHHVwbcvjZ1RWo9obTHx6utvQR2vBEf
+        0gfeDwLiuv5/0McOz9N1DFhM8IJZPgy35w==
+X-Google-Smtp-Source: ALg8bN6Xw8O7axmuRJs2dl44rfIzJAdg2yRg29ooq39yPgoQZ8GqQ2drCY6gGaAG2Ge8wlmKPDAq5g==
+X-Received: by 2002:a37:c00e:: with SMTP id o14mr109201qki.319.1546919385568;
+        Mon, 07 Jan 2019 19:49:45 -0800 (PST)
+Received: from ovpn-120-55.rdu2.redhat.com (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
+        by smtp.gmail.com with ESMTPSA id o49sm37183144qtf.60.2019.01.07.19.49.44
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 07 Jan 2019 19:49:45 -0800 (PST)
+Subject: Re: [PATCH v2] kmemleak: survive in a low-memory situation
+From:   Qian Cai <cai@lca.pw>
+To:     Catalin Marinas <catalin.marinas@arm.com>,
+        Michal Hocko <mhocko@kernel.org>
+Cc:     akpm@linux-foundation.org, cl@linux.com, penberg@kernel.org,
+        rientjes@google.com, iamjoonsoo.kim@lge.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+References: <20190102165931.GB6584@arrakis.emea.arm.com>
+ <20190102180619.12392-1-cai@lca.pw> <20190103093201.GB31793@dhcp22.suse.cz>
+ <9197d86b-a684-c7f4-245b-63c890f1104f@lca.pw>
+ <20190103170735.GV31793@dhcp22.suse.cz> <20190107104314.uugftsqcjsi5j6g2@mbp>
+ <47dbc0fc-5322-10fb-a8c4-698a4b17e3b3@lca.pw>
+Message-ID: <ecb5d958-1e86-7725-e271-def315265537@lca.pw>
+Date:   Mon, 7 Jan 2019 22:49:43 -0500
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
+ Gecko/20100101 Thunderbird/60.3.3
 MIME-Version: 1.0
-References: <20190104085405.40356-1-Tianyu.Lan@microsoft.com>
- <20190104085405.40356-12-Tianyu.Lan@microsoft.com> <20190104161235.GB11288@linux.intel.com>
- <CAOLK0pzPe3agXCFrvHt9Qa_kRVfdtYeKorbRL2waOo29f5wcyw@mail.gmail.com> <d434edb8-5f09-7331-c89d-9b78907e896a@redhat.com>
-In-Reply-To: <d434edb8-5f09-7331-c89d-9b78907e896a@redhat.com>
-From:   Tianyu Lan <lantianyu1986@gmail.com>
-Date:   Tue, 8 Jan 2019 11:42:05 +0800
-Message-ID: <CAOLK0pxrdWZ6RAJROw0cyfexjZnKqSsCrm-jUD=wUHWvWV47kQ@mail.gmail.com>
-Subject: Re: [PATCH 11/11] KVM/MMU: Flush tlb in the kvm_age_rmapp()
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        Lan Tianyu <Tianyu.Lan@microsoft.com>,
-        Radim Krcmar <rkrcmar@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, bp@alien8.de,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        kvm <kvm@vger.kernel.org>,
-        "linux-kernel@vger kernel org" <linux-kernel@vger.kernel.org>,
-        michael.h.kelley@microsoft.com, kys@microsoft.com,
-        vkuznets@redhat.com, linux@armlinux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <47dbc0fc-5322-10fb-a8c4-698a4b17e3b3@lca.pw>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Paolo:
-               Thanks for your review.
 
-On Tue, Jan 8, 2019 at 12:31 AM Paolo Bonzini <pbonzini@redhat.com> wrote:
->
-> On 07/01/19 04:42, Tianyu Lan wrote:
-> >> I'm assuming you're
-> >> clearing young to avoid the flush in kvm_mmu_notifier_clear_flush_young(),
-> >> but keeping that flush is silly since it will never be invoked.  Just
-> >> squash this patch with patch 10/11 so that you can remove the unnecessary
-> >> flush in kvm_mmu_notifier_clear_flush_young() and preserve young.
-> >>
-> > The platform may provide tlb flush with address range as granularity. My changes
-> > are to use range flush when it's available. kvm_mmu_notifier_clear_flush_young()
-> > is common function for all platforms and most platforms still need the
-> > flush in the
-> > kvm_mmu_notifier_clear_flush_young(). I think it's better to separate
-> > flush request and
-> > "young" from return value of kvm_age_hva(). New flush parameter I
-> > added in the patch 10
-> > can be changed to a pointer and kvm_age_hva() can use it to return
-> > flush request.
->
-> There are two possibilities:
->
-> - pass a "bool *flush".  If NULL, kvm_age_hva should not flush.  If not
-> NULL, kvm_age_hva should receive a true *flush, and should change it to
-> false if kvm_age_hva takes care of the flush
->
-> - pass a "bool flush".  In patch 10, change all kvm_age_hva
-> implementation to do the flush if they return 1.
->
-> I think I prefer the latter, in this case the small code duplication is
-> offset by a simpler API.
->
 
-From my understanding, this means to move the flush in the
-kvm_mmu_notifier_clear_flush_young()
-to kvm_age_hva() and do flush in kvm_age_hva() when young is >0 and "flush"
-parameter is true, right?
--- 
-Best regards
-Tianyu Lan
+On 1/7/19 9:06 PM, Qian Cai wrote:
+> 
+> 
+> On 1/7/19 5:43 AM, Catalin Marinas wrote:
+>> On Thu, Jan 03, 2019 at 06:07:35PM +0100, Michal Hocko wrote:
+>>>>> On Wed 02-01-19 13:06:19, Qian Cai wrote:
+>>>>> [...]
+>>>>>> diff --git a/mm/kmemleak.c b/mm/kmemleak.c
+>>>>>> index f9d9dc250428..9e1aa3b7df75 100644
+>>>>>> --- a/mm/kmemleak.c
+>>>>>> +++ b/mm/kmemleak.c
+>>>>>> @@ -576,6 +576,16 @@ static struct kmemleak_object *create_object(unsigned long ptr, size_t size,
+>>>>>>  	struct rb_node **link, *rb_parent;
+>>>>>>  
+>>>>>>  	object = kmem_cache_alloc(object_cache, gfp_kmemleak_mask(gfp));
+>>>>>> +#ifdef CONFIG_PREEMPT_COUNT
+>>>>>> +	if (!object) {
+>>>>>> +		/* last-ditch effort in a low-memory situation */
+>>>>>> +		if (irqs_disabled() || is_idle_task(current) || in_atomic())
+>>>>>> +			gfp = GFP_ATOMIC;
+>>>>>> +		else
+>>>>>> +			gfp = gfp_kmemleak_mask(gfp) | __GFP_DIRECT_RECLAIM;
+>>>>>> +		object = kmem_cache_alloc(object_cache, gfp);
+>>>>>> +	}
+>>>>>> +#endif
+>> [...]
+>>> I will not object to this workaround but I strongly believe that
+>>> kmemleak should rethink the metadata allocation strategy to be really
+>>> robust.
+>>
+>> This would be nice indeed and it was discussed last year. I just haven't
+>> got around to trying anything yet:
+>>
+>> https://marc.info/?l=linux-mm&m=152812489819532
+>>
+> 
+> It could be helpful to apply this 10-line patch first if has no fundamental
+> issue, as it survives probably 50 times running LTP oom* workloads without a
+> single kmemleak allocation failure.
+> 
+> Of course, if someone is going to embed kmemleak metadata into slab objects
+> itself soon, this workaround is not needed.
+> 
+
+Well, it is really hard to tell even if someone get eventually redesign kmemleak
+to embed the metadata into slab objects alone would survive LTP oom* workloads,
+because it seems still use separate metadata for non-slab objects where kmemleak
+allocation could fail like it right now and disable itself again.
