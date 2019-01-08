@@ -2,140 +2,147 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.7 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BC97C43444
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:50:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 338EBC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:52:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2377C2070B
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:50:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E8969214C6
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:52:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nwEAsR1y"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729548AbfAHUu5 (ORCPT
+        id S1729581AbfAHUwW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 15:50:57 -0500
-Received: from ale.deltatee.com ([207.54.116.67]:51906 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728766AbfAHUu4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 15:50:56 -0500
-Received: from cgy1-donard.priv.deltatee.com ([172.16.1.31])
-        by ale.deltatee.com with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <gunthorp@deltatee.com>)
-        id 1ggyKp-0004i8-Sa; Tue, 08 Jan 2019 13:50:53 -0700
-Received: from gunthorp by cgy1-donard.priv.deltatee.com with local (Exim 4.89)
-        (envelope-from <gunthorp@deltatee.com>)
-        id 1ggyKm-0000p5-Uj; Tue, 08 Jan 2019 13:50:48 -0700
-From:   Logan Gunthorpe <logang@deltatee.com>
-To:     linux-scsi@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Logan Gunthorpe <logang@deltatee.com>,
-        Intel SCU Linux support <intel-linux-scu@intel.com>,
-        Artur Paszkiewicz <artur.paszkiewicz@intel.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        Jeff Moyer <jmoyer@redhat.com>
-Date:   Tue,  8 Jan 2019 13:50:43 -0700
-Message-Id: <20190108205043.3122-1-logang@deltatee.com>
-X-Mailer: git-send-email 2.19.0
+        Tue, 8 Jan 2019 15:52:22 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:41889 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728766AbfAHUwW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 15:52:22 -0500
+Received: by mail-pl1-f194.google.com with SMTP id u6so2442384plm.8
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jan 2019 12:52:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=aKsnrpS9LfIKVDJmKQ/CzyPXAJq7+uyByfdWwDdMbNs=;
+        b=nwEAsR1yyq6BTBh8k2XHHsB3pmyrTaBhb6x8PK3Zn7lfZF+fetEfACCXxsUKw/Wtut
+         +l9kSw3niiERFEObum6UMQNuGf2r0Vtmec9DhHF+2qWXoZNWPGQeYfGG/Ln6vtgqOvOU
+         GSJXw2ru/8UsHA/HxVRrRYE0Q58NpWPGO7jJE8yaE1LmpQo1Zjv7HNkE6MWYSnSIu2jW
+         ZrpkGLwuShZwkkrnUFiH7A5NpejfGHVAtKiOlubpTMdz5E9G11ypi1017I6mC5het/U9
+         MIHUH1Z70oJFYqBbMe//Ik4+SyfZo1zcMGrQF+aXS+JyAYZ2gZZc2SpCiIpYMGjngubb
+         N89g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=aKsnrpS9LfIKVDJmKQ/CzyPXAJq7+uyByfdWwDdMbNs=;
+        b=fQ73pi91V9A98+7heGI0IKAX0jhxLZdzilKjVCJ7YxhpaB4vY3roIhIyPEblIlTvyU
+         TW9sXsWuS1pzyM4LjmXB8nZD56jBc0g8TpCB2jQO1JDF/tO5zzfLOEj8P89hKjKHvPmM
+         hBQ4SSIzkTXFP4iK4aec2PFlSMeAnrkew+IwhH0eGMX1DBbneR0Ec76V5hBT80Rlwg96
+         3t3dLeV23HUkTt6d5AgDpwNujfcn3prZ9usl01yLuNcLsAjya4tTYVkNiC5ym7Z97XYk
+         YEoVVB60DFwXSNUHQ7d22GrKz4cc/5v2/iKxQ2a30KQeAKdVId265rRuTF1U/Hn/Q5Pt
+         IS7g==
+X-Gm-Message-State: AJcUukcvkdlySojKEF6DjpQhHIJwpKoCHH9oncdb/5O8ViMJzhbrU9Tq
+        XME25n8IByPZgmBbwMlIv8VdZLae0v5uzwQ9bGXmBA==
+X-Google-Smtp-Source: ALg8bN57UrBNBFZexuMrCTGnsg5CO495YXiS4IEQQuCD3bgLZ+uDsiKegtPaSiozcKo4PNZySv0SHvwmxT5zkJof5t4=
+X-Received: by 2002:a17:902:29ab:: with SMTP id h40mr3274954plb.238.1546980741482;
+ Tue, 08 Jan 2019 12:52:21 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 172.16.1.31
-X-SA-Exim-Rcpt-To: linux-scsi@vger.kernel.org, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, logang@deltatee.com, intel-linux-scu@intel.com, artur.paszkiewicz@intel.com, jejb@linux.ibm.com, martin.petersen@oracle.com, hch@lst.de, axboe@kernel.dk, jmoyer@redhat.com
-X-SA-Exim-Mail-From: gunthorp@deltatee.com
-Subject: [PATCH] scsi: isci: initialize shost fully before calling scsi_add_host()
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+References: <20181219183509.GB31643@zn.tnic> <20181219190145.252035-1-ndesaulniers@google.com>
+In-Reply-To: <20181219190145.252035-1-ndesaulniers@google.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Tue, 8 Jan 2019 12:52:10 -0800
+Message-ID: <CAKwvOdn5Syd_pvAmcDy6n6c9=HrpRxEU2fWBa7Rf2QexPZP90g@mail.gmail.com>
+Subject: Re: [PATCH v2] x86/build: Mark per-cpu symbols as absolute
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Rafael Avila de Espindola <rafael@espindo.la>, x86@kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
+        Bill Wendling <morbo@google.com>,
+        Dmitry Golovin <dima@golovin.in>, hpa@zytor.com,
+        Michael Matz <matz@suse.de>, Tri Vo <trong@android.com>,
+        Brijesh Singh <brijesh.singh@amd.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Joerg Roedel <jroedel@suse.de>,
+        Cao jin <caoj.fnst@cn.fujitsu.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-scsi_mq_setup_tags(), which is called by scsi_add_host(), calculates
-the command size to allocate based on the prot_capabilities. In the
-isci driver, scsi_host_set_prot() is called after scsi_add_host()
-so the command size gets calculated to be smaller than it needs to be.
-Eventually, scsi_mq_init_request() locates the 'prot_sdb' after the command
-assuming it was sized correctly and a buffer overrun may occur.
+On Wed, Dec 19, 2018 at 11:02 AM <ndesaulniers@google.com> wrote:
+>
+> From: Rafael =C3=81vila de Esp=C3=ADndola <rafael@espindo.la>
+>
+> The kernel has many variables that it wants to have per CPU. It is
+> similar to how each thread wants a copy of a thread local variable.
+>
+> To access such variable, the code has to find the offset of that
+> variable in the per cpu block and add it to the address of the current
+> brock for that cpu.
+>
+> Section 3.10.8 of ld.bfd's documentation states:
+> ```
+> For expressions involving numbers, relative addresses and absolute
+> addresses, ld follows these rules to evaluate terms:
+>
+> Other binary operations, that is, between two relative addresses
+> not in the same section, or between a relative address and an
+> absolute address, first convert any non-absolute term to an
+> absolute address before applying the operator."
+> ```
+>
+> Note that ld.lld does not implement this behavior. Instead, we can
+> explicitly mark non-absolute terms ABSOLUTE via linker script. This is
+> no functional change for ld.bfd which coverts the term to ABSOLUTE
+> anyways as specified above.
+>
+> Reported-by: Dmitry Golovin <dima@golovin.in>
+> Tested-by: Dmitry Golovin <dima@golovin.in>
+> Suggested-by: Borislav Petkov <bp@alien8.de>
+> Suggested-by: Michael Matz <matz@suse.de>
+> Signed-off-by: Tri Vo <trong@android.com>
+> Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
+> Signed-off-by: Rafael =C3=81vila de Esp=C3=ADndola <rafael@espindo.la>
+> [nd: commit message updated as per Boris' and Michael's sugguestions]
 
-However, seeing blk_mq_alloc_rqs() rounds up to the nearest cache line
-size, the mistake can go unnoticed.
+Happy new year.  Bumping for review.
 
-The bug was noticed after the struct request size was reduced by
-commit 9d037ad707ed ("block: remove req->timeout_list")
+> ---
+> Changes from v1 -> v2: commit message updated
+>
+>  arch/x86/kernel/vmlinux.lds.S | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/arch/x86/kernel/vmlinux.lds.S b/arch/x86/kernel/vmlinux.lds.=
+S
+> index 0d618ee634ac..ee3b5c7d662e 100644
+> --- a/arch/x86/kernel/vmlinux.lds.S
+> +++ b/arch/x86/kernel/vmlinux.lds.S
+> @@ -401,7 +401,7 @@ SECTIONS
+>   * Per-cpu symbols which need to be offset from __per_cpu_load
+>   * for the boot processor.
+>   */
+> -#define INIT_PER_CPU(x) init_per_cpu__##x =3D x + __per_cpu_load
+> +#define INIT_PER_CPU(x) init_per_cpu__##x =3D ABSOLUTE(x) + __per_cpu_lo=
+ad
+>  INIT_PER_CPU(gdt_page);
+>  INIT_PER_CPU(irq_stack_union);
+>
+> --
+> 2.20.1.415.g653613c723-goog
+>
 
-Which likely reduced the allocated space for the request by an entire
-cache line, enough that the overflow could be hit and it caused a panic,
-on boot, at:
 
-  RIP: 0010:t10_pi_complete+0x77/0x1c0
-  Call Trace:
-    <IRQ>
-    sd_done+0xf5/0x340
-    scsi_finish_command+0xc3/0x120
-    blk_done_softirq+0x83/0xb0
-    __do_softirq+0xa1/0x2e6
-    irq_exit+0xbc/0xd0
-    call_function_single_interrupt+0xf/0x20
-    </IRQ>
-
-sd_done() would call scsi_prot_sg_count() which reads the number of
-entities in 'prot_sdb', but seeing 'prot_sdb' is located after the end of
-the allocated space it reads a garbage number and erroneously calls
-t10_pi_complete().
-
-To prevent this, the calls to scsi_host_set_prot() are moved into
-isci_host_alloc() before the call to scsi_add_host(). Out of caution,
-also move the similar call to scsi_host_set_guard().
-
-Fixes: 3d2d75254915 ("[SCSI] isci: T10 DIF support")
-Link: http://lkml.kernel.org/r/da851333-eadd-163a-8c78-e1f4ec5ec857@deltatee.com
-Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
-Cc: Intel SCU Linux support <intel-linux-scu@intel.com>
-Cc: Artur Paszkiewicz <artur.paszkiewicz@intel.com>
-Cc: "James E.J. Bottomley" <jejb@linux.ibm.com>
-Cc: "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Jens Axboe <axboe@kernel.dk>
-Cc: Jeff Moyer <jmoyer@redhat.com>
----
- drivers/scsi/isci/init.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/scsi/isci/init.c b/drivers/scsi/isci/init.c
-index 68b90c4f79a3..1727d0c71b12 100644
---- a/drivers/scsi/isci/init.c
-+++ b/drivers/scsi/isci/init.c
-@@ -576,6 +576,13 @@ static struct isci_host *isci_host_alloc(struct pci_dev *pdev, int id)
- 	shost->max_lun = ~0;
- 	shost->max_cmd_len = MAX_COMMAND_SIZE;
- 
-+	/* turn on DIF support */
-+	scsi_host_set_prot(shost,
-+			   SHOST_DIF_TYPE1_PROTECTION |
-+			   SHOST_DIF_TYPE2_PROTECTION |
-+			   SHOST_DIF_TYPE3_PROTECTION);
-+	scsi_host_set_guard(shost, SHOST_DIX_GUARD_CRC);
-+
- 	err = scsi_add_host(shost, &pdev->dev);
- 	if (err)
- 		goto err_shost;
-@@ -663,13 +670,6 @@ static int isci_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- 			goto err_host_alloc;
- 		}
- 		pci_info->hosts[i] = h;
--
--		/* turn on DIF support */
--		scsi_host_set_prot(to_shost(h),
--				   SHOST_DIF_TYPE1_PROTECTION |
--				   SHOST_DIF_TYPE2_PROTECTION |
--				   SHOST_DIF_TYPE3_PROTECTION);
--		scsi_host_set_guard(to_shost(h), SHOST_DIX_GUARD_CRC);
- 	}
- 
- 	err = isci_setup_interrupts(pdev);
--- 
-2.19.0
-
+--=20
+Thanks,
+~Nick Desaulniers
