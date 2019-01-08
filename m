@@ -2,91 +2,194 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08CD9C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 05:01:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5A9BC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 05:01:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D483B20700
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 05:01:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 68D7420700
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 05:01:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ErmaQuA6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727721AbfAHFBF (ORCPT
+        id S1727759AbfAHFB3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 00:01:05 -0500
-Received: from orcrist.hmeau.com ([104.223.48.154]:54804 "EHLO
-        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725785AbfAHFBD (ORCPT
+        Tue, 8 Jan 2019 00:01:29 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:45059 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725562AbfAHFB3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 00:01:03 -0500
-Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
-        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
-        id 1ggjVB-0000Iu-MR; Tue, 08 Jan 2019 13:00:33 +0800
-Received: from herbert by gondobar with local (Exim 4.89)
-        (envelope-from <herbert@gondor.apana.org.au>)
-        id 1ggjV6-000555-SU; Tue, 08 Jan 2019 13:00:28 +0800
-Date:   Tue, 8 Jan 2019 13:00:28 +0800
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Christophe Leroy <christophe.leroy@c-s.fr>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Horia Geanta <horia.geanta@nxp.com>,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, stable@vger.kernel.org
-Subject: Re: [PATCH v3] crypto: talitos - fix ablkcipher for CONFIG_VMAP_STACK
-Message-ID: <20190108050028.mrdz727dhzmlbi7i@gondor.apana.org.au>
-References: <ae7b64e9415874060977e32ed48b62f1f6148084.1545346337.git.christophe.leroy@c-s.fr>
+        Tue, 8 Jan 2019 00:01:29 -0500
+Received: by mail-ot1-f66.google.com with SMTP id 32so2417595ota.12;
+        Mon, 07 Jan 2019 21:01:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=to:references:from:openpgp:autocrypt:subject:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=e4ls1tn8813ynVEpQn3TmDIz1WVERjRllMsDnoL8/Y0=;
+        b=ErmaQuA6soE+n7hyUUQh0LiCxrUbBymgqz4tsetKtJ3KGKnyR0oNMBH5GtVhdnSrCM
+         H3m8V8Hm4khkC6dhMLtRmiSLn62eQnldElEK8Hk9XPJ/Cww+BXTSRKrkTPqN1YcZDqjH
+         Zu9xOvOHH36sYtxMxl45ujsRVvEqMHz/VS34S6ojIEniSOOSeqgSpMk0cc0hyNQG/Hcm
+         pvPMC+riTReGho126UBpfTFxpxqux9mUTD8QD32T5jpOogxL/8T4+fnXU9cP1w7RVVgs
+         4PfLG2O3dgIeprEZ9crDge138qKLb55o8nF30lnGIn69CueI+31MkTgWBTw1+PZ4vt9g
+         8iGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:to:references:from:openpgp:autocrypt:subject
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=e4ls1tn8813ynVEpQn3TmDIz1WVERjRllMsDnoL8/Y0=;
+        b=m3w15cj/q3ZUv7S2a6Y6NI8ochPAywdr/AiQytFu0Hs+1K1p21LzS2ZNdzmaS2D7vj
+         hpEVq9ISEr7VPi2ad963TkgRoihr84yz0hR1P0LnSVHd/r83BrnYKBe0PraMTonzaFs8
+         ryRE0+CFQVZNzAPLX2rYSiuoGFFUccEgglL7/laxK0wuBPoER2MsJl9aZIjDgV0wxZKE
+         QOOXRkQxSqX74bfN/kw9xKtz1s402OGYDjpXdmOtPrJU+VjMn2RsGct46u5AxjpXOG0W
+         EbnBO8dQnkFuXOQ8X/uSMEZfHw8q9TbXo06BPsoNvaAaoGi72bi+tN4wAyCDu51QoB5p
+         NAtw==
+X-Gm-Message-State: AJcUukeGunPl7dTIoPn7e19+AUlbVWgkwQPyW8UmUG+Uiz7oAUwdIlsg
+        9WNEtDFuFFaeUZfIxtXGcOOfqFWg
+X-Google-Smtp-Source: ALg8bN7z8Rpk5aTcF6iujla33sqreZ5dRiwmbKc7NerQitD6Z10TO7p2WLzWzWMWxGxaL7ICXNTJOA==
+X-Received: by 2002:a05:6830:1099:: with SMTP id y25mr218662oto.313.1546923687789;
+        Mon, 07 Jan 2019 21:01:27 -0800 (PST)
+Received: from [192.168.1.2] (ip68-228-73-187.oc.oc.cox.net. [68.228.73.187])
+        by smtp.googlemail.com with ESMTPSA id c78sm49237690oig.30.2019.01.07.21.01.26
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 07 Jan 2019 21:01:26 -0800 (PST)
+To:     davem@davemloft.net, linux-omap@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        jiri@mellanox.com, andrew@lunn.ch
+References: <20181203184023.3430-1-ivan.khoronzhuk@linaro.org>
+ <20181203184023.3430-3-ivan.khoronzhuk@linaro.org>
+ <b2a7baa7-b334-0f6f-c119-a2f30ac68c7b@gmail.com>
+ <20181203235119.GF23230@khorivan>
+ <35479973-2d2d-d673-f7ab-54d6369ce3d1@gmail.com>
+ <20181204185720.GI23230@khorivan>
+ <756cbb25-3062-91e8-0613-66bb887f937e@gmail.com>
+ <20181205000450.GB3507@khorivan>
+From:   Florian Fainelli <f.fainelli@gmail.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
+ 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
+ a9BQwACgnzGuH1BVeT2J0Ra+ZYgkx7DaPR0=
+Subject: Re: [RFC PATCH net-next 2/5] net: 8021q: vlan_dev: add vid tag for uc
+ and mc address lists
+Message-ID: <1dd05b34-e275-d67c-df30-e3694d90e9cc@gmail.com>
+Date:   Mon, 7 Jan 2019 21:01:25 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ae7b64e9415874060977e32ed48b62f1f6148084.1545346337.git.christophe.leroy@c-s.fr>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20181205000450.GB3507@khorivan>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 21, 2018 at 08:07:52AM +0000, Christophe Leroy wrote:
-> [    2.364486] WARNING: CPU: 0 PID: 60 at ./arch/powerpc/include/asm/io.h:837 dma_nommu_map_page+0x44/0xd4
-> [    2.373579] CPU: 0 PID: 60 Comm: cryptomgr_test Tainted: G        W         4.20.0-rc5-00560-g6bfb52e23a00-dirty #531
-> [    2.384740] NIP:  c000c540 LR: c000c584 CTR: 00000000
-> [    2.389743] REGS: c95abab0 TRAP: 0700   Tainted: G        W          (4.20.0-rc5-00560-g6bfb52e23a00-dirty)
-> [    2.400042] MSR:  00029032 <EE,ME,IR,DR,RI>  CR: 24042204  XER: 00000000
-> [    2.406669]
-> [    2.406669] GPR00: c02f2244 c95abb60 c6262990 c95abd80 0000256a 00000001 00000001 00000001
-> [    2.406669] GPR08: 00000000 00002000 00000010 00000010 24042202 00000000 00000100 c95abd88
-> [    2.406669] GPR16: 00000000 c05569d4 00000001 00000010 c95abc88 c0615664 00000004 00000000
-> [    2.406669] GPR24: 00000010 c95abc88 c95abc88 00000000 c61ae210 c7ff6d40 c61ae210 00003d68
-> [    2.441559] NIP [c000c540] dma_nommu_map_page+0x44/0xd4
-> [    2.446720] LR [c000c584] dma_nommu_map_page+0x88/0xd4
-> [    2.451762] Call Trace:
-> [    2.454195] [c95abb60] [82000808] 0x82000808 (unreliable)
-> [    2.459572] [c95abb80] [c02f2244] talitos_edesc_alloc+0xbc/0x3c8
-> [    2.465493] [c95abbb0] [c02f2600] ablkcipher_edesc_alloc+0x4c/0x5c
-> [    2.471606] [c95abbd0] [c02f4ed0] ablkcipher_encrypt+0x20/0x64
-> [    2.477389] [c95abbe0] [c02023b0] __test_skcipher+0x4bc/0xa08
-> [    2.483049] [c95abe00] [c0204b60] test_skcipher+0x2c/0xcc
-> [    2.488385] [c95abe20] [c0204c48] alg_test_skcipher+0x48/0xbc
-> [    2.494064] [c95abe40] [c0205cec] alg_test+0x164/0x2e8
-> [    2.499142] [c95abf00] [c0200dec] cryptomgr_test+0x48/0x50
-> [    2.504558] [c95abf10] [c0039ff4] kthread+0xe4/0x110
-> [    2.509471] [c95abf40] [c000e1d0] ret_from_kernel_thread+0x14/0x1c
-> [    2.515532] Instruction dump:
-> [    2.518468] 7c7e1b78 7c9d2378 7cbf2b78 41820054 3d20c076 8089c200 3d20c076 7c84e850
-> [    2.526127] 8129c204 7c842e70 7f844840 419c0008 <0fe00000> 2f9e0000 54847022 7c84fa14
-> [    2.533960] ---[ end trace bf78d94af73fe3b8 ]---
-> [    2.539123] talitos ff020000.crypto: master data transfer error
-> [    2.544775] talitos ff020000.crypto: TEA error: ISR 0x20000000_00000040
-> [    2.551625] alg: skcipher: encryption failed on test 1 for ecb-aes-talitos: ret=22
+Le 12/4/18 à 4:04 PM, Ivan Khoronzhuk a écrit :
+> On Tue, Dec 04, 2018 at 11:49:27AM -0800, Florian Fainelli wrote:
 > 
-> IV cannot be on stack when CONFIG_VMAP_STACK is selected because the stack
-> cannot be DMA mapped anymore.
+> ...
 > 
-> This patch copies the IV into the extended descriptor when iv is not
-> a valid linear address.
+>>>
+>>> I was thinking also about pinned list of vlans to the address, but in
+>>> this case this information also has to be synced by members of device
+>>> chain,
+>>> because it can be modified on any device level and it looks not very
+>>> friendly,
+>>> and at the end address space has addresses with pinned lists of vlans
+>>> with
+>>> their pointers. But keeping this stuff in sync is not simplest decision.
+>>>
+>>>
+>>
+>> I really think we are not communicating properly, it really seems to me
+>> that if you had the information about the upper device trying to add an
+>> address to the lower device filter's either through notification or call
+>> to ndo_set_rxmode, you could be solving your problems. What are we
+>> missing here?
+> 
+> Sry, missed this one. The problem in getting  the owner of address.
+> Just simple case: vlan/macvlan/real_dev or vlan/.../.../real_dev
+> 
+> The real dev hasn't simple way to get vid the address belong to, or it has?
 
-Please make the copy unconditional.  Thanks.
+Humm looks like your right, by the time the address lists are
+synchronized (e.g: from = vlan_dev, to = real_dev), we lost that
+information. It looks like I just managed to find such an use case
+myself with VLAN filtering enabled on a bridge (so switch is VLAN aware)
+and a VLAN device created on the bridge (br0.42) but with IGMP snooping
+turned off (so we don't get HOST_MDB notifications with correct VLAN ID).
+
+Maybe keeping the "from" net_device within the address list that is
+processed by ndo_set_rx_mode() will do the job though?
+
+Then you can do things like:
+
+if (is_vlan_dev(ha->dev) && ha->dev != dev)
+	vid = vlan_dev_vlan_id(ha->dev);
+
+and it should scale to any type of stacked device, regardless of VID or
+something else that we need?
+
+Can you remind me of your use case again? Is it because your switch has
+VLAN filtering enabled and you need to make sure that MC addresses on
+VLAN device get programmed into the switch's multicast database with
+correct VID?
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Florian
