@@ -2,219 +2,175 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC6B3C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 10:14:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F34EC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 10:22:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA7DE206B7
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 10:14:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="VPuVpTFW";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="SyofKlDn"
+	by mail.kernel.org (Postfix) with ESMTP id 48CC92089F
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 10:22:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728644AbfAHKOS (ORCPT
+        id S1728566AbfAHKWD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 05:14:18 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:54836 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727001AbfAHKOR (ORCPT
+        Tue, 8 Jan 2019 05:22:03 -0500
+Received: from mail1.bemta25.messagelabs.com ([195.245.230.1]:5201 "EHLO
+        mail1.bemta25.messagelabs.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727001AbfAHKWD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 05:14:17 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 57EAD606AC; Tue,  8 Jan 2019 10:14:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1546942456;
-        bh=Uxqsd7B7mT31J11aVMnUmh40XLBJoBSloE2pP0zJ2ZU=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=VPuVpTFWIrCOUVVWwlAnXdUAD0kKDgLrCDPLvKjHm2opYCrNXwqgVWWU9tz6XKVNk
-         rbtmP5TloX+E5h2GPCbQoQcQgx5lJBdRa902oXGrJKBw7E1d6PDO+A/Y7p1kE68TR/
-         IJznOGcYqaHYBMUoqse+Xk8jpCMFXJvBsf3u5poE=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id 27BD360112;
-        Tue,  8 Jan 2019 10:14:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1546942455;
-        bh=Uxqsd7B7mT31J11aVMnUmh40XLBJoBSloE2pP0zJ2ZU=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=SyofKlDnZjVCENB7YF+Z/6dcf1aRdIUNIFVdlbyUJt7p38enkvmxver5S+Tv6eYeY
-         bt6b3+LRxYOAQU4SCSm7zWHk6XYee4dLNALSUU0qxhedGU1DE6hNxrXkYdGpEkScMk
-         yeztSNOTNytleSucdanLLWjpkSg2h8MWRUus4Ye0=
+        Tue, 8 Jan 2019 05:22:03 -0500
+Received: from [46.226.52.98] (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256 bits))
+        by server-1.bemta.az-a.eu-west-1.aws.symcld.net id F0/8A-19156-7C9743C5; Tue, 08 Jan 2019 10:21:59 +0000
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrKKsWRWlGSWpSXmKPExsVy8IPnUd3jlSY
+  xBrOdLKY+fMJm8ezWXiaL5sXr2Swu75rDZrH92yM2izlLT7BYzP0yldmB3eP30cfsHjtn3WX3
+  2LSqk83j0OEORo/9c9ewe3zeJBfAFsWamZeUX5HAmvFz3hKmgg0mFbsPz2RqYLxh3MXIxSEks
+  JRR4s+Bf6xdjJwcbAKGEvPevGcEsUUEkiX2LTvNDGIzC8xhkni+wxLEFhYIlthy9iE7RE2IxI
+  Rt54DqOYBsI4kvp+VBwiwCKhJbTs8FG8krECAxZ+oNJohdDYwS3Rd3g83kFAiUWLVxL5jNKCA
+  r8aVxNdQucYlbT+YzgdgSAgISS/acZ4awRSVePoa4U0JAXuLumiVQNfYSr++9Y4Gw9SUePX7E
+  CGEbSqyadgAqbi7xce5RdpA7mQU0Jdbv0odYpSgxpRviFV4BQYmTM5+wTGAUn4XkilkIHbOQd
+  MxC0rGAkWUVo0VSUWZ6RkluYmaOrqGBga6hoZGuoSUQW5jrJVbpJuqlluqWpxaX6BrqJZYX6x
+  VX5ibnpOjlpZZsYgRGeUrBgd07GN93pR9ilORgUhLlnRtlEiPEl5SfUpmRWJwRX1Sak1p8iFG
+  Gg0NJgjeyGCgnWJSanlqRlpkDTDcwaQkOHiURXqEKoDRvcUFibnFmOkTqFKMux5UznTOYhVjy
+  8vNSpcR5U8uBigRAijJK8+BGwFLfJUZZKWFeRgYGBiGegtSi3MwSVPlXjOIcjErCvH0gU3gy8
+  0rgNr0COoIJ6IhDjGBHlCQipKQaGLl0HCeENZbxPPgS9/PH2zmLKhZr/Ddfl+F7M9Rwd+upBf
+  1bS82OB0zo2ix7q+rap1+NhvKPVCo5ylxn3u19nt568fJyvdjeH+JMZXKlLt7bCi6fytjJndh
+  e2R26Za9qf67hw1ccs1pf+fMXaWwJ+nVvQaDF1Ozv55hz0pkP3HPfYPwu5aq1nRJLcUaioRZz
+  UXEiADmbLER4AwAA
+X-Env-Sender: stwiss.opensource@diasemi.com
+X-Msg-Ref: server-22.tower-262.messagelabs.com!1546942916!1110385!1
+X-Originating-IP: [193.240.73.197]
+X-SYMC-ESS-Client-Auth: outbound-route-from=pass
+X-StarScan-Received: 
+X-StarScan-Version: 9.31.5; banners=-,-,-
+X-VirusChecked: Checked
+Received: (qmail 2310 invoked from network); 8 Jan 2019 10:21:57 -0000
+Received: from unknown (HELO sw-ex-cashub02.diasemi.com) (193.240.73.197)
+  by server-22.tower-262.messagelabs.com with AES128-SHA256 encrypted SMTP; 8 Jan 2019 10:21:57 -0000
+Received: from SW-EX-MBX02.diasemi.com ([169.254.4.193]) by
+ sw-ex-cashub02.diasemi.com ([10.20.16.142]) with mapi id 14.03.0382.000; Tue,
+ 8 Jan 2019 10:21:55 +0000
+From:   Steve Twiss <stwiss.opensource@diasemi.com>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+CC:     "mazziesaccount@gmail.com" <mazziesaccount@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Support Opensource <Support.Opensource@diasemi.com>
+Subject: RE: [PATCH] regmap: regmap-irq: silently ignore unsupported type
+ settings
+Thread-Topic: [PATCH] regmap: regmap-irq: silently ignore unsupported type
+ settings
+Thread-Index: AQHUn2eRGEaG3Adhikys+xUg2f+AdKWlL49A
+Date:   Tue, 8 Jan 2019 10:21:54 +0000
+Message-ID: <6ED8E3B22081A4459DAC7699F3695FB7022179F236@SW-EX-MBX02.diasemi.com>
+References: <20181227084443.GA23991@localhost.localdomain>
+ <CAMuHMdUg=C+pNrbauM-f7LchXRnwu1ufYyUSp=jO+8hs_SrgXQ@mail.gmail.com>
+In-Reply-To: <CAMuHMdUg=C+pNrbauM-f7LchXRnwu1ufYyUSp=jO+8hs_SrgXQ@mail.gmail.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.20.27.87]
+x-kse-attachmentfiltering-interceptor-info: protection disabled
+x-kse-serverinfo: sw-ex-cashub02.diasemi.com, 9
+x-kse-antivirus-interceptor-info: scan successful
+x-kse-antivirus-info: Clean, bases: 08/01/2019 07:43:00
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Tue, 08 Jan 2019 15:44:15 +0530
-From:   Sibi Sankar <sibis@codeaurora.org>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     robh+dt@kernel.org, andy.gross@linaro.org, david.brown@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        tsoni@codeaurora.org, clew@codeaurora.org, akdwived@codeaurora.org,
-        ohad@wizery.com, mark.rutland@arm.com,
-        linux-remoteproc@vger.kernel.org, dianders@chromium.org,
-        linux-kernel-owner@vger.kernel.org
-Subject: Re: [PATCH v2 3/4] remoteproc: qcom: Wait for shutdown-ack/ind on
- sysmon shutdown
-In-Reply-To: <20190103233354.GG31596@builder>
-References: <20181224084824.25193-1-sibis@codeaurora.org>
- <20181224084824.25193-3-sibis@codeaurora.org>
- <20190103233354.GG31596@builder>
-Message-ID: <da1854d3e291a6ebb995c8bcabe8319f@codeaurora.org>
-X-Sender: sibis@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Bjorn,
-Thanks for the review!
-
-On 2019-01-04 05:03, Bjorn Andersson wrote:
-> On Mon 24 Dec 00:48 PST 2018, Sibi Sankar wrote:
-> 
->> After sending a sysmon shutdown request to the SSCTL service on the
->> subsystem, wait for the service to send shutdown-ack interrupt or
->> an indication message to signal the completion of graceful shutdown.
->> 
->> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
-> 
-> I prefer something closer to v1, where you kept the handling of the
-> interrupt within the sysmon driver.
-> 
-> What I didn't like was the fact that you resolved the mss
-> platform_device to get to the irq, not that you grabbed the irq from 
-> the
-> parent's DT node from within the sysmon device.
-> 
-> 
-> You can get the remoteproc's DT node by rproc->dev.parent->of_node and
-> use of_irq_get_byname() to get an irq number, which you can request in
-> the sysmon device - which will work regardless of the remoteproc driver
-> being a platform_driver or something else.
-> 
-> All the logic looks sound, but by shuffling things around we should get
-> less coupling of the implementation (DT binding looks good).
-> 
-
-will make it closer to v1 in the next re-spin
-
-> Regards,
-> Bjorn
-> 
->> ---
->>  drivers/remoteproc/qcom_sysmon.c | 40 
->> +++++++++++++++++++++++++++++++-
->>  1 file changed, 39 insertions(+), 1 deletion(-)
->> 
->> diff --git a/drivers/remoteproc/qcom_sysmon.c 
->> b/drivers/remoteproc/qcom_sysmon.c
->> index c0d6ee8de995..0da83638ca99 100644
->> --- a/drivers/remoteproc/qcom_sysmon.c
->> +++ b/drivers/remoteproc/qcom_sysmon.c
->> @@ -36,6 +36,7 @@ struct qcom_sysmon {
->> 
->>  	struct rpmsg_endpoint *ept;
->>  	struct completion comp;
->> +	struct completion ind_comp;
->>  	struct mutex lock;
->> 
->>  	bool ssr_ack;
->> @@ -139,6 +140,7 @@ static int sysmon_callback(struct rpmsg_device 
->> *rpdev, void *data, int count,
->>  }
->> 
->>  #define SSCTL_SHUTDOWN_REQ		0x21
->> +#define SSCTL_SHUTDOWN_READY_IND	0x21
->>  #define SSCTL_SUBSYS_EVENT_REQ		0x23
->> 
->>  #define SSCTL_MAX_MSG_LEN		7
->> @@ -254,6 +256,29 @@ static struct qmi_elem_info 
->> ssctl_subsys_event_resp_ei[] = {
->>  	{}
->>  };
->> 
->> +static struct qmi_elem_info ssctl_shutdown_ind_ei[] = {
->> +	{}
->> +};
->> +
->> +static void sysmon_ind_cb(struct qmi_handle *qmi, struct 
->> sockaddr_qrtr *sq,
->> +			  struct qmi_txn *txn, const void *data)
->> +{
->> +	struct qcom_sysmon *sysmon = container_of(qmi, struct qcom_sysmon, 
->> qmi);
->> +
->> +	complete(&sysmon->ind_comp);
->> +}
->> +
->> +static struct qmi_msg_handler qmi_indication_handler[] = {
->> +	{
->> +		.type = QMI_INDICATION,
->> +		.msg_id = SSCTL_SHUTDOWN_READY_IND,
->> +		.ei = ssctl_shutdown_ind_ei,
->> +		.decoded_size = 0,
->> +		.fn = sysmon_ind_cb
->> +	},
->> +	{}
->> +};
->> +
->>  /**
->>   * ssctl_request_shutdown() - request shutdown via SSCTL QMI service
->>   * @sysmon:	sysmon context
->> @@ -264,6 +289,7 @@ static void ssctl_request_shutdown(struct 
->> qcom_sysmon *sysmon)
->>  	struct qmi_txn txn;
->>  	int ret;
->> 
->> +	reinit_completion(&sysmon->ind_comp);
->>  	ret = qmi_txn_init(&sysmon->qmi, &txn, ssctl_shutdown_resp_ei, 
->> &resp);
->>  	if (ret < 0) {
->>  		dev_err(sysmon->dev, "failed to allocate QMI txn\n");
->> @@ -285,6 +311,16 @@ static void ssctl_request_shutdown(struct 
->> qcom_sysmon *sysmon)
->>  		dev_err(sysmon->dev, "shutdown request failed\n");
->>  	else
->>  		dev_dbg(sysmon->dev, "shutdown request completed\n");
->> +
->> +	if (sysmon->q6v5) {
->> +		ret = qcom_q6v5_wait_for_shutdown(sysmon->q6v5, 10 * HZ);
->> +		if (ret) {
->> +			ret = try_wait_for_completion(&sysmon->ind_comp);
->> +			if (!ret)
->> +				dev_err(sysmon->dev,
->> +					"timeout waiting for shutdown ack\n");
->> +		}
->> +	}
->>  }
->> 
->>  /**
->> @@ -462,9 +498,11 @@ struct qcom_sysmon *qcom_add_sysmon_subdev(struct 
->> rproc *rproc,
->>  	sysmon->q6v5 = q6v5;
->> 
->>  	init_completion(&sysmon->comp);
->> +	init_completion(&sysmon->ind_comp);
->>  	mutex_init(&sysmon->lock);
->> 
->> -	ret = qmi_handle_init(&sysmon->qmi, SSCTL_MAX_MSG_LEN, &ssctl_ops, 
->> NULL);
->> +	ret = qmi_handle_init(&sysmon->qmi, SSCTL_MAX_MSG_LEN, &ssctl_ops,
->> +			      qmi_indication_handler);
->>  	if (ret < 0) {
->>  		dev_err(sysmon->dev, "failed to initialize qmi handle\n");
->>  		kfree(sysmon);
->> --
->> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora 
->> Forum,
->> a Linux Foundation Collaborative Project
->> 
-
--- 
--- Sibi Sankar --
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project.
+SGkgR2VlcnQsDQoNCk9uIDI5IERlY2VtYmVyIDIwMTggMTE6MTQgR2VlcnQgVXl0dGVyaG9ldmVu
+IHdyb3RlOg0KDQo+IFRvOiBNYXR0aSBWYWl0dGluZW4gPG1hdHRpLnZhaXR0aW5lbkBmaS5yb2ht
+ZXVyb3BlLmNvbT4NCj4gQ2M6IG1henppZXNhY2NvdW50QGdtYWlsLmNvbTsgTWFyayBCcm93biA8
+YnJvb25pZUBrZXJuZWwub3JnPjsgR3JlZyBLSA0KPiA8Z3JlZ2toQGxpbnV4Zm91bmRhdGlvbi5v
+cmc+OyBSYWZhZWwgSi4gV3lzb2NraSA8cmFmYWVsQGtlcm5lbC5vcmc+OyBMaW51eA0KPiBLZXJu
+ZWwgTWFpbGluZyBMaXN0IDxsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnPjsgU3VwcG9ydCBP
+cGVuc291cmNlDQo+IDxTdXBwb3J0Lk9wZW5zb3VyY2VAZGlhc2VtaS5jb20+DQo+IFN1YmplY3Q6
+IFJlOiBbUEFUQ0hdIHJlZ21hcDogcmVnbWFwLWlycTogc2lsZW50bHkgaWdub3JlIHVuc3VwcG9y
+dGVkIHR5cGUNCj4gc2V0dGluZ3MNCj4gDQo+IEhpIE1hdHRpLA0KPiANCj4gT24gVGh1LCBEZWMg
+MjcsIDIwMTggYXQgOTo0NCBBTSBNYXR0aSBWYWl0dGluZW4NCj4gPG1hdHRpLnZhaXR0aW5lbkBm
+aS5yb2htZXVyb3BlLmNvbT4gd3JvdGU6DQo+ID4gRG8gbm90IHJldHVybiBlcnJvciBpZiBpcnEt
+dHlwZSBzZXR0aW5nIGlzIHJlcXVlc3RlZCBmb3INCj4gPiBjb250cm9sbG9lciB3aGljaCBkb2Vz
+IG5vdCBzdXBwb3J0IHRoaXMuIFRoaXMgaXMgaG93DQo+ID4gcmVnbWFwLWlycSBoYXMgcHJldmlv
+dXNseSBoYW5kbGVkIHRoZSB1bmR1cHBvcnRlZCB0eXBlDQo+ID4gc2V0dGluZ3MgYW5kIGV4aXN0
+aW5nIGRyaXZlcnMgc2VlbSB0byBiZSB1cHNldCBpZiBmYWlsdXJlDQo+ID4gaXMgbm93IHJlcG9y
+dGVkLg0KPiA+DQo+ID4gRml4ZXM6IDFjMjkyOGUzZTMyMSAoInJlZ21hcDogcmVnbWFwLWlycS9n
+cGlvLW1heDc3NjIwOiBhZGQgbGV2ZWwtaXJxIHN1cHBvcnQiKQ0KPiA+IFNpZ25lZC1vZmYtYnk6
+IE1hdHRpIFZhaXR0aW5lbiA8bWF0dGkudmFpdHRpbmVuQGZpLnJvaG1ldXJvcGUuY29tPg0KPiAN
+Cj4gUmVwb3J0ZWQtYnk6IEdlZXJ0IFV5dHRlcmhvZXZlbiA8Z2VlcnQrcmVuZXNhc0BnbGlkZXIu
+YmU+DQo+IA0KPiA+IC0tLQ0KPiA+DQo+ID4gR2VlcnQgcmVwb3J0ZWQgdGhhdCAxYzI5MjhlM2Uz
+MjEgYnJlYWtzIGRhOTA2My1ydGMgb24gdGhlIFJlbmVzYXMNCj4gPiBLb2Vsc2NoIGJvYXJkOg0K
+PiA+DQo+ID4NCj4gaHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcvbGttbC8yMDE4MTIyNzA3NTY0OC5H
+QjI0NjFAbG9jYWxob3N0LmxvY2FsZG9tYWluL1QvIw0KPiBtMTk0NjE2Y2M4OGQ3YjRjMmE3OGY3
+Y2UwNzkwNzYwOGZkYjY0YTA5Mg0KPiA+DQo+ID4gR2VlcnQsIGRvIHlvdSBrbm93IGlmIGFueW9u
+ZSB2b3VsZCB0byB0ZXN0IHRoaXM/DQo+IA0KPiBUaGFua3MsIHRoYXQgc2VlbXMgdG8gZml4IHRo
+ZSBpc3N1ZSB3aXRoIGRhOTA2My1ydGMuDQo+IA0KPiBJIGRvbid0IGtub3cgaG93IHRvIHRyaWdn
+ZXIgYW4gYWN0dWFsIGludGVycnVwdCwgdGhvdWdoLg0KPiANCj4gPiAtLS0gYS9kcml2ZXJzL2Jh
+c2UvcmVnbWFwL3JlZ21hcC1pcnEuYw0KPiA+ICsrKyBiL2RyaXZlcnMvYmFzZS9yZWdtYXAvcmVn
+bWFwLWlycS5jDQo+ID4gQEAgLTI1OCw3ICsyNTgsNyBAQCBzdGF0aWMgaW50IHJlZ21hcF9pcnFf
+c2V0X3R5cGUoc3RydWN0IGlycV9kYXRhICpkYXRhLA0KPiB1bnNpZ25lZCBpbnQgdHlwZSkNCj4g
+PiAgICAgICAgIGNvbnN0IHN0cnVjdCByZWdtYXBfaXJxX3R5cGUgKnQgPSAmaXJxX2RhdGEtPnR5
+cGU7DQo+ID4NCj4gPiAgICAgICAgIGlmICgodC0+dHlwZXNfc3VwcG9ydGVkICYgdHlwZSkgIT0g
+dHlwZSkNCj4gPiAtICAgICAgICAgICAgICAgcmV0dXJuIC1FTk9UU1VQUDsNCj4gPiArICAgICAg
+ICAgICAgICAgcmV0dXJuIDA7DQo+ID4NCj4gPiAgICAgICAgIHJlZyA9IHQtPnR5cGVfcmVnX29m
+ZnNldCAvIG1hcC0+cmVnX3N0cmlkZTsNCj4gPg0KPiA+IC0tDQo+ID4gMi4xNC4zDQo+IA0KDQpJ
+J3ZlIHJ1biB0aGlzIHBhdGNoIG9uIHRoZSBEQTkwNjMgc2V0LXVwIEkgaGF2ZSBoZXJlLiBBbmQg
+dGhpcyBmaXhlcyB0aGUNCnByb2JsZW0uDQoNCkFja2VkLWJ5OiBTdGV2ZSBUd2lzcyA8c3R3aXNz
+Lm9wZW5zb3VyY2VAZGlhc2VtaS5jb20+DQpUZXN0ZWQtYnk6IFN0ZXZlIFR3aXNzIDxzdHdpc3Mu
+b3BlbnNvdXJjZUBkaWFzZW1pLmNvbT4NCg0KUmVnYXJkcywNClN0ZXZlDQoNCk15IHByZXZpb3Vz
+IHJlcG9ydCB1c2luZyB0aGUgdW5tb2RpZmllZCB2NS4wLXJjMSBMaW51eCBrZXJuZWwgaXMgaGVy
+ZToNCmh0dHBzOi8vbG9yZS5rZXJuZWwub3JnL2xrbWwvNkVEOEUzQjIyMDgxQTQ0NTlEQUM3Njk5
+RjM2OTVGQjcwMjIxNzlGMDE4QFNXLUVYLU1CWDAyLmRpYXNlbWkuY29tDQoNClRoaXMgdjUuMC1y
+YzEgTGludXgga2VybmVsIGZhaWxlZCB0byBhbGxvdyBJUlFzIGZvciB0aGUgTUZEIGNlbGxzIGlu
+IHRoZQ0KREE5MDYzLiBCdXQsIGFsdGVyaW5nIHRoZSB2NS4wLXJjMSBrZXJuZWwgd2l0aCB0aGUg
+cGF0Y2ggZ2l2ZW4gYWJvdmUgKHRvDQpyZXR1cm4gMCBpbnN0ZWFkIG9mIC1FTk9UU1VQUCBpbiBy
+ZWdtYXAtaXJxLmMpLCBmaXhlcyB0aGUgcHJvYmxlbS4NCg0KQSBjdXQtZG93biBjb25zb2xlIG91
+dHB1dCBmb3IgdGhpcyByZXN1bHQgaXMgZ2l2ZW4gYmVsb3cuDQoNCi0tLSA4PCAtLS0NClsuLi5d
+DQpkYTkwNjMgMS0wMDU4OiBEZXZpY2UgZGV0ZWN0ZWQgKGNoaXAtSUQ6IDB4NjEsIHZhci1JRDog
+MHg2MCkNClsuLi5dDQpkYTkwNjMtb25rZXkgZGE5MDYzLW9ua2V5OiBETUEgbWFzayBub3Qgc2V0
+DQppbnB1dDogZGE5MDYzLW9ua2V5IGFzIC9kZXZpY2VzL3NvYzAvc29jLzIxMDAwMDAuYWlwcy1i
+dXMvMjFhNDAwMC5pMmMvaTJjLTEvMS0wMDU4L2RhOTA2My1vbmtleS9pbnB1dC9pbnB1dDINCmRh
+OTA2My1ydGMgZGE5MDYzLXJ0YzogRE1BIG1hc2sgbm90IHNldA0KZGE5MDYzLXJ0YyBkYTkwNjMt
+cnRjOiByZWdpc3RlcmVkIGFzIHJ0YzANClsuLi5dDQpkYTkwNjMtd2F0Y2hkb2cgZGE5MDYzLXdh
+dGNoZG9nOiBETUEgbWFzayBub3Qgc2V0DQpbLi4uXQ0KZGE5MDYzLXJ0YyBkYTkwNjMtcnRjOiBz
+ZXR0aW5nIHN5c3RlbSBjbG9jayB0byAyMDAwLTAxLTAxVDAwOjAwOjAwIFVUQyAoOTQ2Njg0ODAw
+KQ0KWy4uLl0NCi0tLSA4PCAtLS0NCg0KYW5kIHRoZSByZXN1bHRzIG9mIHNldHRpbmcgYW4gUlRD
+IGFsYXJtIGFuZCB3YWl0aW5nIGZvciB0aGUgaW50ZXJydXB0IG91dHB1dHMNCnRoZSBmb2xsb3dp
+bmc6DQoNCi0tLSA4PCAtLS0NCj4gY2F0ICoucmVzDQpbUEFTU10gU2V0IFJUQyBhbGFybXMgZnVu
+Y3Rpb25hbCB0ZXN0IGZvciBURVNUIHdpdGggREE5MDYzLVRFU1QNCltQQVNTXSBTZXR0aW5nIHRl
+c3QgdHlwZSB0byB1c2UgQkIgUlRDIGFsYXJtIGZ1bmN0aW9uYWwgdGVzdCBmb3IgVEVTVCB3aXRo
+IERBOTA2My1URVNUDQpbUEFTU10gUnVubmluZyBzZXQgYWxhcm0gdGVzdHMgZm9yIFJUQyB7IDEg
+fQ0KW1BBU1NdIFJ1bm5pbmcgdGVzdCBmb3IgdGVzdF9ydGNfcHJvZ19zZXRfc2ltcGxlX2FsYXJt
+X3NlY29uZHMoKQ0KW1BBU1NdIFNldHRpbmcgdGhlIGN1cnJlbnQgZGF0ZSBhbmQgdGltZSBmcm9t
+IHRoZSBkYTkwNjMtcnRjIGFzIDIwMDAtMDEtMDEgMDA6MDA6MDANCltQQVNTXSBTZXR0aW5nIHRo
+ZSBhbGFybSBkYXRlIGFuZCB0aW1lIGZyb20gdGhlIGRhOTA2My1ydGMgYXMgMjAwMC0wMS0wMSAw
+MDowMDowNSAoKzUgc2VjcyBpbnRvIHRoZSBmdXR1cmUpDQpbUEFTU10gU2V0dGluZyB0aGUgbGlz
+dGVuZXIgb24gZGE5MDYzLXJ0YyB0aGVuIHdhaXRpbmcgZm9yIGVsYXBzZWQgdGltZW91dCBvZiAx
+NSBzZWNvbmRzLi4uDQpbUEFTU10gVGhlIGFsYXJtIHdhcyB0cmlnZ2VyZWQgb24gZGE5MDYzLXJ0
+YyB3aXRoaW4gdGhlIGV4cGVjdGVkIHRpbWUgYW5kIHRoZSBhbGFybSBoYXBwZW5lZCBhdCAyMDAw
+LTAxLTAxIDAwOjAwOjA1DQpbUEFTU10gUnVubmluZyB0ZXN0IGZvciB0ZXN0X3J0Y19wcm9nX3Nl
+dF9zaW1wbGVfYWxhcm1fc2Vjb25kcygpDQpbUEFTU10gU2V0dGluZyB0aGUgY3VycmVudCBkYXRl
+IGFuZCB0aW1lIGZyb20gdGhlIGRhOTA2My1ydGMgYXMgMjAwMC0wMS0wMSAwMDowMDowMA0KW1BB
+U1NdIFNldHRpbmcgdGhlIGFsYXJtIGRhdGUgYW5kIHRpbWUgZnJvbSB0aGUgZGE5MDYzLXJ0YyBh
+cyAyMDAwLTAxLTAxIDAwOjAwOjE1ICgrMTUgc2VjcyBpbnRvIHRoZSBmdXR1cmUpDQpbUEFTU10g
+U2V0dGluZyB0aGUgbGlzdGVuZXIgb24gZGE5MDYzLXJ0YyB0aGVuIHdhaXRpbmcgZm9yIGVsYXBz
+ZWQgdGltZW91dCBvZiAyNSBzZWNvbmRzLi4uDQpbUEFTU10gVGhlIGFsYXJtIHdhcyB0cmlnZ2Vy
+ZWQgb24gZGE5MDYzLXJ0YyB3aXRoaW4gdGhlIGV4cGVjdGVkIHRpbWUgYW5kIHRoZSBhbGFybSBo
+YXBwZW5lZCBhdCAyMDAwLTAxLTAxIDAwOjAwOjE1DQpbUEFTU10gRmluaXNoZWQgcnVubmluZyBE
+QTkwNjMgc2V0IGFsYXJtIHRlc3RzIGZvciBSVEMgeyAxIH0gb24gVEVTVA0KPiBjYXQgL3Byb2Mv
+aW50ZXJydXB0cyB8IGdyZXAgZGE5MDYzDQoyNDk6ICAgICAgICAgIDIgICAgICAgICAgMCAgICAg
+ICAgICAwICAgICAgICAgIDAgIGdwaW8tbXhjICAxMSBMZXZlbCAgICAgZGE5MDYzLWlycQ0KMzAy
+OiAgICAgICAgICAwICAgICAgICAgIDAgICAgICAgICAgMCAgICAgICAgICAwICBkYTkwNjMtaXJx
+ICAgMCBMZXZlbCAgICAgT05LRVkNCjMwMzogICAgICAgICAgMCAgICAgICAgICAwICAgICAgICAg
+IDAgICAgICAgICAgMiAgZGE5MDYzLWlycSAgIDEgTGV2ZWwgICAgIEFMQVJNDQozMTA6ICAgICAg
+ICAgIDAgICAgICAgICAgMCAgICAgICAgICAwICAgICAgICAgIDAgIGRhOTA2My1pcnEgICA4IExl
+dmVsICAgICBMRE9fTElNDQo+IHVuYW1lIC1hDQpMaW51eCB0ZXN0IDUuMC4wLXJjMSAjMSBTTVAg
+VHVlIEphbiA4IDA5OjM5OjMwIEdNVCAyMDE5IGFybXY3bCBHTlUvTGludXgNCi0tLSA4PCAtLS0N
+Cg0K
