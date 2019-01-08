@@ -6,25 +6,25 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5A07C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 14:08:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E73A8C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 14:08:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A6571206BB
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 14:08:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B6C38206BB
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 14:08:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729058AbfAHOIb (ORCPT
+        id S1729080AbfAHOIe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 09:08:31 -0500
-Received: from foss.arm.com ([217.140.101.70]:52282 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729009AbfAHOI0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 09:08:26 -0500
+        Tue, 8 Jan 2019 09:08:34 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:52322 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729009AbfAHOId (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 09:08:33 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DA8DB19BF;
-        Tue,  8 Jan 2019 06:08:25 -0800 (PST)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BA93F1B55;
+        Tue,  8 Jan 2019 06:08:32 -0800 (PST)
 Received: from e112298-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id C3C133F70D;
-        Tue,  8 Jan 2019 06:08:23 -0800 (PST)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id C78CA3F70D;
+        Tue,  8 Jan 2019 06:08:30 -0800 (PST)
 From:   Julien Thierry <julien.thierry@arm.com>
 To:     linux-arm-kernel@lists.infradead.org
 Cc:     linux-kernel@vger.kernel.org, daniel.thompson@linaro.org,
@@ -32,11 +32,10 @@ Cc:     linux-kernel@vger.kernel.org, daniel.thompson@linaro.org,
         christoffer.dall@arm.com, james.morse@arm.com,
         catalin.marinas@arm.com, will.deacon@arm.com, mark.rutland@arm.com,
         Julien Thierry <julien.thierry@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Oleg Nesterov <oleg@redhat.com>
-Subject: [PATCH v8 12/26] arm64: irqflags: Use ICC_PMR_EL1 for interrupt masking
-Date:   Tue,  8 Jan 2019 14:07:30 +0000
-Message-Id: <1546956464-48825-13-git-send-email-julien.thierry@arm.com>
+        Suzuki K Poulose <suzuki.poulose@arm.com>
+Subject: [PATCH v8 15/26] arm64: alternative: Apply alternatives early in boot process
+Date:   Tue,  8 Jan 2019 14:07:33 +0000
+Message-Id: <1546956464-48825-16-git-send-email-julien.thierry@arm.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1546956464-48825-1-git-send-email-julien.thierry@arm.com>
 References: <1546956464-48825-1-git-send-email-julien.thierry@arm.com>
@@ -45,217 +44,191 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Instead disabling interrupts by setting the PSR.I bit, use a priority
-higher than the one used for interrupts to mask them via PMR.
+From: Daniel Thompson <daniel.thompson@linaro.org>
 
-When using PMR to disable interrupts, the value of PMR will be used
-instead of PSR.[DAIF] for the irqflags.
+Currently alternatives are applied very late in the boot process (and
+a long time after we enable scheduling). Some alternative sequences,
+such as those that alter the way CPU context is stored, must be applied
+much earlier in the boot sequence.
 
+Introduce apply_boot_alternatives() to allow some alternatives to be
+applied immediately after we detect the CPU features of the boot CPU.
+
+Signed-off-by: Daniel Thompson <daniel.thompson@linaro.org>
+[julien.thierry@arm.com: rename to fit new cpufeature framework better,
+			 apply BOOT_SCOPE feature early in boot]
 Signed-off-by: Julien Thierry <julien.thierry@arm.com>
-Suggested-by: Daniel Thompson <daniel.thompson@linaro.org>
 Cc: Catalin Marinas <catalin.marinas@arm.com>
 Cc: Will Deacon <will.deacon@arm.com>
-Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: Oleg Nesterov <oleg@redhat.com>
+Cc: Christoffer Dall <christoffer.dall@arm.com>
+Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
 ---
- arch/arm64/include/asm/efi.h      |  11 ++++
- arch/arm64/include/asm/irqflags.h | 123 +++++++++++++++++++++++++++++---------
- 2 files changed, 106 insertions(+), 28 deletions(-)
+ arch/arm64/include/asm/alternative.h |  1 +
+ arch/arm64/include/asm/cpufeature.h  |  4 ++++
+ arch/arm64/kernel/alternative.c      | 43 +++++++++++++++++++++++++++++++-----
+ arch/arm64/kernel/cpufeature.c       |  6 +++++
+ arch/arm64/kernel/smp.c              |  7 ++++++
+ 5 files changed, 56 insertions(+), 5 deletions(-)
 
-diff --git a/arch/arm64/include/asm/efi.h b/arch/arm64/include/asm/efi.h
-index 7ed3208..134ff6e 100644
---- a/arch/arm64/include/asm/efi.h
-+++ b/arch/arm64/include/asm/efi.h
-@@ -44,6 +44,17 @@
+diff --git a/arch/arm64/include/asm/alternative.h b/arch/arm64/include/asm/alternative.h
+index 9806a23..b9f8d78 100644
+--- a/arch/arm64/include/asm/alternative.h
++++ b/arch/arm64/include/asm/alternative.h
+@@ -25,6 +25,7 @@ struct alt_instr {
+ typedef void (*alternative_cb_t)(struct alt_instr *alt,
+ 				 __le32 *origptr, __le32 *updptr, int nr_inst);
  
- #define ARCH_EFI_IRQ_FLAGS_MASK (PSR_D_BIT | PSR_A_BIT | PSR_I_BIT | PSR_F_BIT)
++void __init apply_boot_alternatives(void);
+ void __init apply_alternatives_all(void);
+ bool alternative_is_applied(u16 cpufeature);
  
-+#define arch_efi_save_flags(state_flags)		\
-+	do {						\
-+		(state_flags) =	read_sysreg(daif);	\
-+	} while (0)
+diff --git a/arch/arm64/include/asm/cpufeature.h b/arch/arm64/include/asm/cpufeature.h
+index 89c3f31..e505e1f 100644
+--- a/arch/arm64/include/asm/cpufeature.h
++++ b/arch/arm64/include/asm/cpufeature.h
+@@ -391,6 +391,10 @@ static inline int cpucap_default_scope(const struct arm64_cpu_capabilities *cap)
+ extern struct static_key_false cpu_hwcap_keys[ARM64_NCAPS];
+ extern struct static_key_false arm64_const_caps_ready;
+ 
++/* ARM64 CAPS + alternative_cb */
++#define ARM64_NPATCHABLE (ARM64_NCAPS + 1)
++extern DECLARE_BITMAP(boot_capabilities, ARM64_NPATCHABLE);
 +
-+#define arch_efi_restore_flags(state_flags)		\
-+	do {						\
-+		write_sysreg(state_flags, daif);	\
-+	} while (0)
-+
-+
- /* arch specific definitions used by the stub code */
+ #define for_each_available_cap(cap)		\
+ 	for_each_set_bit(cap, cpu_hwcaps, ARM64_NCAPS)
  
- /*
-diff --git a/arch/arm64/include/asm/irqflags.h b/arch/arm64/include/asm/irqflags.h
-index 24692ed..fa3b06f 100644
---- a/arch/arm64/include/asm/irqflags.h
-+++ b/arch/arm64/include/asm/irqflags.h
-@@ -18,7 +18,9 @@
- 
- #ifdef __KERNEL__
- 
-+#include <asm/alternative.h>
- #include <asm/ptrace.h>
-+#include <asm/sysreg.h>
- 
- /*
-  * Aarch64 has flags for masking: Debug, Asynchronous (serror), Interrupts and
-@@ -36,47 +38,96 @@
- /*
-  * CPU interrupt mask handling.
-  */
--static inline unsigned long arch_local_irq_save(void)
--{
--	unsigned long flags;
--	asm volatile(
--		"mrs	%0, daif		// arch_local_irq_save\n"
--		"msr	daifset, #2"
--		: "=r" (flags)
--		:
--		: "memory");
--	return flags;
--}
--
- static inline void arch_local_irq_enable(void)
- {
--	asm volatile(
--		"msr	daifclr, #2		// arch_local_irq_enable"
--		:
-+	unsigned long unmasked = GIC_PRIO_IRQON;
-+
-+	asm volatile(ALTERNATIVE(
-+		"msr	daifclr, #2		// arch_local_irq_enable\n"
-+		"nop",
-+		"msr_s  " __stringify(SYS_ICC_PMR_EL1) ",%0\n"
-+		"dsb	sy",
-+		ARM64_HAS_IRQ_PRIO_MASKING)
- 		:
-+		: "r" (unmasked)
- 		: "memory");
+diff --git a/arch/arm64/kernel/alternative.c b/arch/arm64/kernel/alternative.c
+index c947d22..a9b4677 100644
+--- a/arch/arm64/kernel/alternative.c
++++ b/arch/arm64/kernel/alternative.c
+@@ -155,7 +155,8 @@ static void clean_dcache_range_nopatch(u64 start, u64 end)
+ 	} while (cur += d_size, cur < end);
  }
  
- static inline void arch_local_irq_disable(void)
+-static void __apply_alternatives(void *alt_region, bool is_module)
++static void __apply_alternatives(void *alt_region,  bool is_module,
++				 unsigned long *feature_mask)
  {
--	asm volatile(
--		"msr	daifset, #2		// arch_local_irq_disable"
--		:
-+	unsigned long masked = GIC_PRIO_IRQOFF;
+ 	struct alt_instr *alt;
+ 	struct alt_region *region = alt_region;
+@@ -165,6 +166,9 @@ static void __apply_alternatives(void *alt_region, bool is_module)
+ 	for (alt = region->begin; alt < region->end; alt++) {
+ 		int nr_inst;
+ 
++		if (!test_bit(alt->cpufeature, feature_mask))
++			continue;
 +
-+	asm volatile(ALTERNATIVE(
-+		"msr	daifset, #2		// arch_local_irq_disable",
-+		"msr_s  " __stringify(SYS_ICC_PMR_EL1) ", %0",
-+		ARM64_HAS_IRQ_PRIO_MASKING)
- 		:
-+		: "r" (masked)
- 		: "memory");
+ 		/* Use ARM64_CB_PATCH as an unconditional patch */
+ 		if (alt->cpufeature < ARM64_CB_PATCH &&
+ 		    !cpus_have_cap(alt->cpufeature))
+@@ -203,8 +207,11 @@ static void __apply_alternatives(void *alt_region, bool is_module)
+ 		__flush_icache_all();
+ 		isb();
+ 
+-		/* We applied all that was available */
+-		bitmap_copy(applied_alternatives, cpu_hwcaps, ARM64_NCAPS);
++		/* Ignore ARM64_CB bit from feature mask */
++		bitmap_or(applied_alternatives, applied_alternatives,
++			  feature_mask, ARM64_NCAPS);
++		bitmap_and(applied_alternatives, applied_alternatives,
++			   cpu_hwcaps, ARM64_NCAPS);
+ 	}
  }
  
- /*
-+ * Having two ways to control interrupt status is a bit complicated. Some
-+ * locations like exception entries will have PSR.I bit set by the architecture
-+ * while PMR is unmasked.
-+ * We need the irqflags to represent that interrupts are disabled in such cases.
-+ *
-+ * For this, we lower the value read from PMR when the I bit is set so it is
-+ * considered as an irq masking priority. (With PMR, lower value means masking
-+ * more interrupts).
-+ */
-+#define _get_irqflags(daif_bits, pmr)					\
-+({									\
-+	unsigned long flags;						\
-+									\
-+	BUILD_BUG_ON(GIC_PRIO_IRQOFF < (GIC_PRIO_IRQON & ~PSR_I_BIT));	\
-+	asm volatile(ALTERNATIVE(					\
-+		"mov	%0, %1\n"					\
-+		"nop\n"							\
-+		"nop",							\
-+		"and	%0, %1, #" __stringify(PSR_I_BIT) "\n"		\
-+		"mvn	%0, %0\n"					\
-+		"and	%0, %0, %2",					\
-+		ARM64_HAS_IRQ_PRIO_MASKING)				\
-+		: "=&r" (flags)						\
-+		: "r" (daif_bits), "r" (pmr)				\
-+		: "memory");						\
-+									\
-+	flags;								\
-+})
+@@ -225,8 +232,13 @@ static int __apply_alternatives_multi_stop(void *unused)
+ 			cpu_relax();
+ 		isb();
+ 	} else {
++		DECLARE_BITMAP(remaining_capabilities, ARM64_NPATCHABLE);
 +
++		bitmap_complement(remaining_capabilities, boot_capabilities,
++				  ARM64_NPATCHABLE);
++
+ 		BUG_ON(all_alternatives_applied);
+-		__apply_alternatives(&region, false);
++		__apply_alternatives(&region, false, remaining_capabilities);
+ 		/* Barriers provided by the cache flushing */
+ 		WRITE_ONCE(all_alternatives_applied, 1);
+ 	}
+@@ -240,6 +252,24 @@ void __init apply_alternatives_all(void)
+ 	stop_machine(__apply_alternatives_multi_stop, NULL, cpu_online_mask);
+ }
+ 
 +/*
-  * Save the current interrupt enable state.
-  */
- static inline unsigned long arch_local_save_flags(void)
- {
--	unsigned long flags;
--	asm volatile(
--		"mrs	%0, daif		// arch_local_save_flags"
--		: "=r" (flags)
-+	unsigned long daif_bits;
-+	unsigned long pmr; // Only used if alternative is on
++ * This is called very early in the boot process (directly after we run
++ * a feature detect on the boot CPU). No need to worry about other CPUs
++ * here.
++ */
++void __init apply_boot_alternatives(void)
++{
++	struct alt_region region = {
++		.begin	= (struct alt_instr *)__alt_instructions,
++		.end	= (struct alt_instr *)__alt_instructions_end,
++	};
 +
-+	daif_bits = read_sysreg(daif);
++	/* If called on non-boot cpu things could go wrong */
++	WARN_ON(smp_processor_id() != 0);
 +
-+	// Get PMR
-+	asm volatile(ALTERNATIVE(
-+			"nop",
-+			"mrs_s	%0, " __stringify(SYS_ICC_PMR_EL1),
-+			ARM64_HAS_IRQ_PRIO_MASKING)
-+		: "=&r" (pmr)
- 		:
- 		: "memory");
-+
-+	return _get_irqflags(daif_bits, pmr);
++	__apply_alternatives(&region, false, &boot_capabilities[0]);
 +}
 +
-+#undef _get_irqflags
-+
-+static inline unsigned long arch_local_irq_save(void)
-+{
-+	unsigned long flags;
-+
-+	flags = arch_local_save_flags();
-+
-+	arch_local_irq_disable();
-+
- 	return flags;
- }
- 
-@@ -85,16 +136,32 @@ static inline unsigned long arch_local_save_flags(void)
-  */
- static inline void arch_local_irq_restore(unsigned long flags)
+ #ifdef CONFIG_MODULES
+ void apply_alternatives_module(void *start, size_t length)
  {
--	asm volatile(
--		"msr	daif, %0		// arch_local_irq_restore"
--	:
--	: "r" (flags)
--	: "memory");
-+	asm volatile(ALTERNATIVE(
-+			"msr	daif, %0\n"
-+			"nop",
-+			"msr_s	" __stringify(SYS_ICC_PMR_EL1) ", %0\n"
-+			"dsb	sy",
-+			ARM64_HAS_IRQ_PRIO_MASKING)
-+		: "+r" (flags)
-+		:
-+		: "memory");
- }
+@@ -247,7 +277,10 @@ void apply_alternatives_module(void *start, size_t length)
+ 		.begin	= start,
+ 		.end	= start + length,
+ 	};
++	DECLARE_BITMAP(all_capabilities, ARM64_NPATCHABLE);
++
++	bitmap_fill(all_capabilities, ARM64_NPATCHABLE);
  
- static inline int arch_irqs_disabled_flags(unsigned long flags)
- {
--	return flags & PSR_I_BIT;
-+	int res;
-+
-+	asm volatile(ALTERNATIVE(
-+			"and	%w0, %w1, #" __stringify(PSR_I_BIT) "\n"
-+			"nop",
-+			"cmp	%w1, #" __stringify(GIC_PRIO_IRQOFF) "\n"
-+			"cset	%w0, ls",
-+			ARM64_HAS_IRQ_PRIO_MASKING)
-+		: "=&r" (res)
-+		: "r" ((int) flags)
-+		: "memory");
-+
-+	return res;
+-	__apply_alternatives(&region, true);
++	__apply_alternatives(&region, true, &all_capabilities[0]);
  }
  #endif
- #endif
+diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
+index 84fa5be..71c8d4f 100644
+--- a/arch/arm64/kernel/cpufeature.c
++++ b/arch/arm64/kernel/cpufeature.c
+@@ -54,6 +54,9 @@
+ EXPORT_SYMBOL(cpu_hwcaps);
+ static struct arm64_cpu_capabilities const __ro_after_init *cpu_hwcaps_ptrs[ARM64_NCAPS];
+ 
++/* Need also bit for ARM64_CB_PATCH */
++DECLARE_BITMAP(boot_capabilities, ARM64_NPATCHABLE);
++
+ /*
+  * Flag to indicate if we have computed the system wide
+  * capabilities based on the boot time active CPUs. This
+@@ -1672,6 +1675,9 @@ static void update_cpu_capabilities(u16 scope_mask)
+ 		if (caps->desc)
+ 			pr_info("detected: %s\n", caps->desc);
+ 		cpus_set_cap(caps->capability);
++
++		if (caps->type & SCOPE_BOOT_CPU)
++			set_bit(caps->capability, boot_capabilities);
+ 	}
+ }
+ 
+diff --git a/arch/arm64/kernel/smp.c b/arch/arm64/kernel/smp.c
+index 1598d6f..a944edd 100644
+--- a/arch/arm64/kernel/smp.c
++++ b/arch/arm64/kernel/smp.c
+@@ -419,6 +419,13 @@ void __init smp_prepare_boot_cpu(void)
+ 	 */
+ 	jump_label_init();
+ 	cpuinfo_store_boot_cpu();
++
++	/*
++	 * We now know enough about the boot CPU to apply the
++	 * alternatives that cannot wait until interrupt handling
++	 * and/or scheduling is enabled.
++	 */
++	apply_boot_alternatives();
+ }
+ 
+ static u64 __init of_get_cpu_mpidr(struct device_node *dn)
 -- 
 1.9.1
 
