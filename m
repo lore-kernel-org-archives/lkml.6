@@ -7,50 +7,46 @@ X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8535C43444
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:04:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00B6AC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:04:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 966D920827
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:04:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C513520827
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:04:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546977862;
-	bh=V4xGP7AvQceKMyoNwU1chVCiS2JZFGNHAF3N1QNWmWY=;
+	s=default; t=1546977864;
+	bh=P/u98VXXDdojch1qcsHLgrzQJKqTWDrrN4wrhYZy/3c=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=obzzlBheMVKr+pn+6VEl+JqrENUJm09xui+xiK0j7KZ5GwmLe4DvceXqo+N5r35XN
-	 jkNrxK6r2m3Sfad4KMF5N6mDDMkQPaUcRPC7zRLTyi+ALMUbg2wMM0GBoux+V6wQqC
-	 ozYGgWw9d+vGIAGp2d/Cd2Gag5BNg7sZueZT4gQ0=
+	b=ltrKtG7xI+PjmoRITqC796WM7AGZX5dTA5WgbYvkDcEW7UcAi08XkOQvvyjccE2Yz
+	 ROsc87bNugrBSmtDyomm3ZUY1aNbrFkmESvulVJjsp8MBgYeWUbXvEDOIkhO25Aq0s
+	 zh1QkIr5HDoeqb6W9wlAWKvQbYM89fMBgPCkMgJo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730076AbfAHT2d (ORCPT
+        id S1730367AbfAHUEX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:28:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35464 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 15:04:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35628 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730025AbfAHT20 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:28:26 -0500
+        id S1730072AbfAHT2d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:28:33 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E5D7220883;
-        Tue,  8 Jan 2019 19:28:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 53B1C20645;
+        Tue,  8 Jan 2019 19:28:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546975705;
-        bh=V4xGP7AvQceKMyoNwU1chVCiS2JZFGNHAF3N1QNWmWY=;
+        s=default; t=1546975713;
+        bh=P/u98VXXDdojch1qcsHLgrzQJKqTWDrrN4wrhYZy/3c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=beJvIWWYFN1ZPzPG5mu5f8GhagaTkXE0O0tXyObtvvey8jTf7S/ftiAhOQUNnOJgm
-         ITyzT9lPkJ+UKI7DFtcN25taPt+l6HdSbstmlP75syKyK3NqEaLYirMYnhGPrJBfDC
-         yiLly917iYdV8672IvuU+52/ifrE1NqJJhpSvuxM=
+        b=BFlRzJSHMq5WO5872xHqyZrH+vb6iSO3TdTJlhvFV2dAMLmS+au09ABCiHc+4YUh5
+         OvMCQChWvDwVaF63n/fmmxSDuGrZMms/a4zd3BZGb2nD4U/h0qlmy87GVsPSJWg/Sa
+         L5BB1Jg0jZTFCyHnzmPwsNQu6taRgM7SODYaxsc8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Reinette Chatre <reinette.chatre@intel.com>,
-        Borislav Petkov <bp@suse.de>, "H. Peter Anvin" <hpa@zytor.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tony Luck <tony.luck@intel.com>, fenghua.yu@intel.com,
-        gavin.hindman@intel.com, jithu.joseph@intel.com,
-        x86-ml <x86@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.20 066/117] x86/resctrl: Fix rdt_find_domain() return value and checks
-Date:   Tue,  8 Jan 2019 14:25:34 -0500
-Message-Id: <20190108192628.121270-66-sashal@kernel.org>
+Cc:     Jonas Danielsson <jonas@orbital-systems.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Sasha Levin <sashal@kernel.org>, linux-mmc@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 070/117] mmc: atmel-mci: do not assume idle after atmci_request_end
+Date:   Tue,  8 Jan 2019 14:25:38 -0500
+Message-Id: <20190108192628.121270-70-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108192628.121270-1-sashal@kernel.org>
 References: <20190108192628.121270-1-sashal@kernel.org>
@@ -62,87 +58,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Reinette Chatre <reinette.chatre@intel.com>
+From: Jonas Danielsson <jonas@orbital-systems.com>
 
-[ Upstream commit 52eb74339a6233c69f4e3794b69ea7c98eeeae1b ]
+[ Upstream commit ae460c115b7aa50c9a36cf78fced07b27962c9d0 ]
 
-rdt_find_domain() returns an ERR_PTR() that is generated from a provided
-domain id when the value is negative.
+On our AT91SAM9260 board we use the same sdio bus for wifi and for the
+sd card slot. This caused the atmel-mci to give the following splat on
+the serial console:
 
-Care needs to be taken when creating an ERR_PTR() from this value
-because a subsequent check using IS_ERR() expects the error to
-be within the MAX_ERRNO range. Using an invalid domain id as an
-ERR_PTR() does work at this time since this is currently always -1.
-Using this undocumented assumption is fragile since future users of
-rdt_find_domain() may not be aware of thus assumption.
+  ------------[ cut here ]------------
+  WARNING: CPU: 0 PID: 538 at drivers/mmc/host/atmel-mci.c:859 atmci_send_command+0x24/0x44
+  Modules linked in:
+  CPU: 0 PID: 538 Comm: mmcqd/0 Not tainted 4.14.76 #14
+  Hardware name: Atmel AT91SAM9
+  [<c000fccc>] (unwind_backtrace) from [<c000d3dc>] (show_stack+0x10/0x14)
+  [<c000d3dc>] (show_stack) from [<c0017644>] (__warn+0xd8/0xf4)
+  [<c0017644>] (__warn) from [<c0017704>] (warn_slowpath_null+0x1c/0x24)
+  [<c0017704>] (warn_slowpath_null) from [<c033bb9c>] (atmci_send_command+0x24/0x44)
+  [<c033bb9c>] (atmci_send_command) from [<c033e984>] (atmci_start_request+0x1f4/0x2dc)
+  [<c033e984>] (atmci_start_request) from [<c033f3b4>] (atmci_request+0xf0/0x164)
+  [<c033f3b4>] (atmci_request) from [<c0327108>] (mmc_start_request+0x280/0x2d0)
+  [<c0327108>] (mmc_start_request) from [<c032800c>] (mmc_start_areq+0x230/0x330)
+  [<c032800c>] (mmc_start_areq) from [<c03366f8>] (mmc_blk_issue_rw_rq+0xc4/0x310)
+  [<c03366f8>] (mmc_blk_issue_rw_rq) from [<c03372c4>] (mmc_blk_issue_rq+0x118/0x5ac)
+  [<c03372c4>] (mmc_blk_issue_rq) from [<c033781c>] (mmc_queue_thread+0xc4/0x118)
+  [<c033781c>] (mmc_queue_thread) from [<c002daf8>] (kthread+0x100/0x118)
+  [<c002daf8>] (kthread) from [<c000a580>] (ret_from_fork+0x14/0x34)
+  ---[ end trace 594371ddfa284bd6 ]---
 
-Two related issues are addressed:
+This is:
+  WARN_ON(host->cmd);
 
-- Ensure that rdt_find_domain() always returns a valid error value by
-forcing the error to be -ENODEV when a negative domain id is provided.
+This was fixed on our board by letting atmci_request_end determine what
+state we are in. Instead of unconditionally setting it to STATE_IDLE on
+STATE_END_REQUEST.
 
-- In a few instances the return value of rdt_find_domain() is just
-checked for NULL - fix these to include a check of ERR_PTR.
-
-Fixes: d89b7379015f ("x86/intel_rdt/cqm: Add mon_data")
-Fixes: 521348b011d6 ("x86/intel_rdt: Introduce utility to obtain CDP peer")
-Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Tony Luck <tony.luck@intel.com>
-Cc: fenghua.yu@intel.com
-Cc: gavin.hindman@intel.com
-Cc: jithu.joseph@intel.com
-Cc: x86-ml <x86@kernel.org>
-Link: https://lkml.kernel.org/r/b88cd4ff6a75995bf8db9b0ea546908fe50f69f3.1544479852.git.reinette.chatre@intel.com
+Signed-off-by: Jonas Danielsson <jonas@orbital-systems.com>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kernel/cpu/intel_rdt.c             | 2 +-
- arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c | 2 +-
- arch/x86/kernel/cpu/intel_rdt_rdtgroup.c    | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+ drivers/mmc/host/atmel-mci.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/kernel/cpu/intel_rdt.c b/arch/x86/kernel/cpu/intel_rdt.c
-index 44272b7107ad..2d0a565fd0bb 100644
---- a/arch/x86/kernel/cpu/intel_rdt.c
-+++ b/arch/x86/kernel/cpu/intel_rdt.c
-@@ -421,7 +421,7 @@ struct rdt_domain *rdt_find_domain(struct rdt_resource *r, int id,
- 	struct list_head *l;
+diff --git a/drivers/mmc/host/atmel-mci.c b/drivers/mmc/host/atmel-mci.c
+index be53044086c7..fbc56ee99682 100644
+--- a/drivers/mmc/host/atmel-mci.c
++++ b/drivers/mmc/host/atmel-mci.c
+@@ -1954,13 +1954,14 @@ static void atmci_tasklet_func(unsigned long priv)
+ 			}
  
- 	if (id < 0)
--		return ERR_PTR(id);
-+		return ERR_PTR(-ENODEV);
+ 			atmci_request_end(host, host->mrq);
+-			state = STATE_IDLE;
++			goto unlock; /* atmci_request_end() sets host->state */
+ 			break;
+ 		}
+ 	} while (state != prev_state);
  
- 	list_for_each(l, &r->domains) {
- 		d = list_entry(l, struct rdt_domain, list);
-diff --git a/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c b/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c
-index efa4a519f5e5..c8b72aff55e0 100644
---- a/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c
-+++ b/arch/x86/kernel/cpu/intel_rdt_ctrlmondata.c
-@@ -467,7 +467,7 @@ int rdtgroup_mondata_show(struct seq_file *m, void *arg)
+ 	host->state = state;
  
- 	r = &rdt_resources_all[resid];
- 	d = rdt_find_domain(r, domid, NULL);
--	if (!d) {
-+	if (IS_ERR_OR_NULL(d)) {
- 		ret = -ENOENT;
- 		goto out;
- 	}
-diff --git a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-index f27b8115ffa2..951c61367688 100644
---- a/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-+++ b/arch/x86/kernel/cpu/intel_rdt_rdtgroup.c
-@@ -1029,7 +1029,7 @@ static int rdt_cdp_peer_get(struct rdt_resource *r, struct rdt_domain *d,
- 	 * peer RDT CDP resource. Hence the WARN.
- 	 */
- 	_d_cdp = rdt_find_domain(_r_cdp, d->id, NULL);
--	if (WARN_ON(!_d_cdp)) {
-+	if (WARN_ON(IS_ERR_OR_NULL(_d_cdp))) {
- 		_r_cdp = NULL;
- 		ret = -EINVAL;
- 	}
++unlock:
+ 	spin_unlock(&host->lock);
+ }
+ 
 -- 
 2.19.1
 
