@@ -2,52 +2,52 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E940C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:06:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49B64C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:07:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5AB0A20660
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:06:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1392E20660
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:07:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546978016;
-	bh=/Sqx/ZTSQ9CoKEiCpenwJT5WCUBN4mY1we4wX1dxiTA=;
+	s=default; t=1546978025;
+	bh=AOKM9aP3K91DApiEOhrPC6XBXVCx80u9YSho/Ff4azY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=g+y+P5tX3ItA6aGHtWifqpj01f4GytoM3+CnedhWowGZqXHQYpy/G71cQ5i8U4fl4
-	 v9VkPoankOGT/ihmy4QkJbjtJ9AOKLdiGbvXGSxZSuB3dvWgVa0V3q2UO6pCNH9xV0
-	 2LIHv64FVPdvpCmMrd4k8ReU9ecj1ud3w+d3kLlk=
+	b=ZBKSwMBxYnmQ+RrtM0axlYhiFxFgnv+2lmbe3xUxH92ZLIa55F8afHRmYazzllSFQ
+	 /FZZZ+kr6BBXTb/cGdcmIRvUM5zPqARFKQ8bg+t75HBTJmRYYgyASJ6HQOAp4aCKjH
+	 73MTjPGQb27vohhqvCMwSepMmGphZHmolJDx2mcY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732986AbfAHUGz (ORCPT
+        id S1730887AbfAHUHE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 15:06:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34640 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 15:07:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34544 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729842AbfAHT2C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:28:02 -0500
+        id S1729115AbfAHT16 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:27:58 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9EF122070B;
-        Tue,  8 Jan 2019 19:28:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5DE1D20578;
+        Tue,  8 Jan 2019 19:27:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546975681;
-        bh=/Sqx/ZTSQ9CoKEiCpenwJT5WCUBN4mY1we4wX1dxiTA=;
+        s=default; t=1546975678;
+        bh=AOKM9aP3K91DApiEOhrPC6XBXVCx80u9YSho/Ff4azY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=azI4GV1YyOe8twd7iPBS6US4VFU1dLpH4cVprKUpgXFry2Pc+Dke5TEbkstJHGRzI
-         FilWNaB3fG7e1QcgJQLNwajE1FKJ4CMlkk4otVD8IH4gxZc+MyKU/mtdzIFVdXKUwu
-         vpe7GhIPaR8FhbVW9HEvTXA2W4mGhuPWXkFv7U2A=
+        b=IYrSi9TBrzQ85r9/UZtQOs94Ys6KPQvUFvELlV/+IYjE2YLf7X8H6gUYFylxdgrs0
+         BAYgQ77p9MFIx5NzBsgXOJGSlhJWk9ZE8rEFQObBukIVbbiFyr28tvD9oZkpc31u7H
+         RMZArqre+3yM2/jzAlu2jjPRKmtoM0ljij6npQKI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Nathan Chancellor <natechancellor@gmail.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org,
-        linux1394-devel@lists.sourceforge.net
-Subject: [PATCH AUTOSEL 4.20 050/117] media: firewire: Fix app_info parameter type in avc_ca{,_app}_info
-Date:   Tue,  8 Jan 2019 14:25:18 -0500
-Message-Id: <20190108192628.121270-50-sashal@kernel.org>
+Cc:     Breno Leitao <leitao@debian.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Sasha Levin <sashal@kernel.org>, linux-pm@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH AUTOSEL 4.20 048/117] powerpc/pseries/cpuidle: Fix preempt warning
+Date:   Tue,  8 Jan 2019 14:25:16 -0500
+Message-Id: <20190108192628.121270-48-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108192628.121270-1-sashal@kernel.org>
 References: <20190108192628.121270-1-sashal@kernel.org>
@@ -59,89 +59,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+From: Breno Leitao <leitao@debian.org>
 
-[ Upstream commit b2e9a4eda11fd2cb1e6714e9ad3f455c402568ff ]
+[ Upstream commit 2b038cbc5fcf12a7ee1cc9bfd5da1e46dacdee87 ]
 
-Clang warns:
+When booting a pseries kernel with PREEMPT enabled, it dumps the
+following warning:
 
-drivers/media/firewire/firedtv-avc.c:999:45: warning: implicit
-conversion from 'int' to 'char' changes value from 159 to -97
-[-Wconstant-conversion]
-        app_info[0] = (EN50221_TAG_APP_INFO >> 16) & 0xff;
-                    ~ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~
-drivers/media/firewire/firedtv-avc.c:1000:45: warning: implicit
-conversion from 'int' to 'char' changes value from 128 to -128
-[-Wconstant-conversion]
-        app_info[1] = (EN50221_TAG_APP_INFO >>  8) & 0xff;
-                    ~ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~
-drivers/media/firewire/firedtv-avc.c:1040:44: warning: implicit
-conversion from 'int' to 'char' changes value from 159 to -97
-[-Wconstant-conversion]
-        app_info[0] = (EN50221_TAG_CA_INFO >> 16) & 0xff;
-                    ~ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~
-drivers/media/firewire/firedtv-avc.c:1041:44: warning: implicit
-conversion from 'int' to 'char' changes value from 128 to -128
-[-Wconstant-conversion]
-        app_info[1] = (EN50221_TAG_CA_INFO >>  8) & 0xff;
-                    ~ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~
-4 warnings generated.
+   BUG: using smp_processor_id() in preemptible [00000000] code: swapper/0/1
+   caller is pseries_processor_idle_init+0x5c/0x22c
+   CPU: 13 PID: 1 Comm: swapper/0 Not tainted 4.20.0-rc3-00090-g12201a0128bc-dirty #828
+   Call Trace:
+   [c000000429437ab0] [c0000000009c8878] dump_stack+0xec/0x164 (unreliable)
+   [c000000429437b00] [c0000000005f2f24] check_preemption_disabled+0x154/0x160
+   [c000000429437b90] [c000000000cab8e8] pseries_processor_idle_init+0x5c/0x22c
+   [c000000429437c10] [c000000000010ed4] do_one_initcall+0x64/0x300
+   [c000000429437ce0] [c000000000c54500] kernel_init_freeable+0x3f0/0x500
+   [c000000429437db0] [c0000000000112dc] kernel_init+0x2c/0x160
+   [c000000429437e20] [c00000000000c1d0] ret_from_kernel_thread+0x5c/0x6c
 
-Change app_info's type to unsigned char to match the type of the
-member msg in struct ca_msg, which is the only thing passed into the
-app_info parameter in this function.
+This happens because the code calls get_lppaca() which calls
+get_paca() and it checks if preemption is disabled through
+check_preemption_disabled().
 
-Link: https://github.com/ClangBuiltLinux/linux/issues/105
+Preemption should be disabled because the per CPU variable may make no
+sense if there is a preemption (and a CPU switch) after it reads the
+per CPU data and when it is used.
 
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+In this device driver specifically, it is not a problem, because this
+code just needs to have access to one lppaca struct, and it does not
+matter if it is the current per CPU lppaca struct or not (i.e. when
+there is a preemption and a CPU migration).
+
+That said, the most appropriate fix seems to be related to avoiding
+the debug_smp_processor_id() call at get_paca(), instead of calling
+preempt_disable() before get_paca().
+
+Signed-off-by: Breno Leitao <leitao@debian.org>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/firewire/firedtv-avc.c | 6 ++++--
- drivers/media/firewire/firedtv.h     | 6 ++++--
- 2 files changed, 8 insertions(+), 4 deletions(-)
+ drivers/cpuidle/cpuidle-pseries.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/media/firewire/firedtv-avc.c b/drivers/media/firewire/firedtv-avc.c
-index 1c933b2cf760..3ef5df1648d7 100644
---- a/drivers/media/firewire/firedtv-avc.c
-+++ b/drivers/media/firewire/firedtv-avc.c
-@@ -968,7 +968,8 @@ static int get_ca_object_length(struct avc_response_frame *r)
- 	return r->operand[7];
- }
+diff --git a/drivers/cpuidle/cpuidle-pseries.c b/drivers/cpuidle/cpuidle-pseries.c
+index 9e56bc411061..74c247972bb3 100644
+--- a/drivers/cpuidle/cpuidle-pseries.c
++++ b/drivers/cpuidle/cpuidle-pseries.c
+@@ -247,7 +247,13 @@ static int pseries_idle_probe(void)
+ 		return -ENODEV;
  
--int avc_ca_app_info(struct firedtv *fdtv, char *app_info, unsigned int *len)
-+int avc_ca_app_info(struct firedtv *fdtv, unsigned char *app_info,
-+		    unsigned int *len)
- {
- 	struct avc_command_frame *c = (void *)fdtv->avc_data;
- 	struct avc_response_frame *r = (void *)fdtv->avc_data;
-@@ -1009,7 +1010,8 @@ int avc_ca_app_info(struct firedtv *fdtv, char *app_info, unsigned int *len)
- 	return ret;
- }
- 
--int avc_ca_info(struct firedtv *fdtv, char *app_info, unsigned int *len)
-+int avc_ca_info(struct firedtv *fdtv, unsigned char *app_info,
-+		unsigned int *len)
- {
- 	struct avc_command_frame *c = (void *)fdtv->avc_data;
- 	struct avc_response_frame *r = (void *)fdtv->avc_data;
-diff --git a/drivers/media/firewire/firedtv.h b/drivers/media/firewire/firedtv.h
-index 876cdec8329b..009905a19947 100644
---- a/drivers/media/firewire/firedtv.h
-+++ b/drivers/media/firewire/firedtv.h
-@@ -124,8 +124,10 @@ int avc_lnb_control(struct firedtv *fdtv, char voltage, char burst,
- 		    struct dvb_diseqc_master_cmd *diseqcmd);
- void avc_remote_ctrl_work(struct work_struct *work);
- int avc_register_remote_control(struct firedtv *fdtv);
--int avc_ca_app_info(struct firedtv *fdtv, char *app_info, unsigned int *len);
--int avc_ca_info(struct firedtv *fdtv, char *app_info, unsigned int *len);
-+int avc_ca_app_info(struct firedtv *fdtv, unsigned char *app_info,
-+		    unsigned int *len);
-+int avc_ca_info(struct firedtv *fdtv, unsigned char *app_info,
-+		unsigned int *len);
- int avc_ca_reset(struct firedtv *fdtv);
- int avc_ca_pmt(struct firedtv *fdtv, char *app_info, int length);
- int avc_ca_get_time_date(struct firedtv *fdtv, int *interval);
+ 	if (firmware_has_feature(FW_FEATURE_SPLPAR)) {
+-		if (lppaca_shared_proc(get_lppaca())) {
++		/*
++		 * Use local_paca instead of get_lppaca() since
++		 * preemption is not disabled, and it is not required in
++		 * fact, since lppaca_ptr does not need to be the value
++		 * associated to the current CPU, it can be from any CPU.
++		 */
++		if (lppaca_shared_proc(local_paca->lppaca_ptr)) {
+ 			cpuidle_state_table = shared_states;
+ 			max_idle_state = ARRAY_SIZE(shared_states);
+ 		} else {
 -- 
 2.19.1
 
