@@ -4,53 +4,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C3ACC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:27:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3186C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:27:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2BBD32087F
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:27:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 72AFA20883
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:27:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546975622;
-	bh=JHVnP8ykc/kXNooKkd6LVOEefLJ7d/95lgsaSFGwwKg=;
+	s=default; t=1546975626;
+	bh=pg0mARTbLSXhDeDct95VCf35MXOvOqH0qv1M4eu7q2Y=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=kmFgd5Ck9xEqrG2958hOVFRRzQ36Z6uS0MKKgNakkwt5ZsNBBmOenuBe6eOsO08R4
-	 tiYRHIo6v8ENu4cMXbnal/GqoJhFszbCuNJhXrO/KmIhmlhhzahsFeJEq2B5RXHAi0
-	 A+zmuC6hMHOm7/dXbnv6zWGPykENf7QgAfIBjQvE=
+	b=P6QeCIPRXbgkn1lPzJQtlinFUd31H9aTvyqeIhUEptZk2uFTyiqmqWzk4283UzrZe
+	 cbXZKIPW23lhVYFLU1fofWCuEgpuSQ1aNp2zJbLEHuz7ysUrWF2ExNDwLRrjGgDL7P
+	 tT0fVtvi6LvsMtBd8KosPibbEFGFjQ6Gh2iRZNrA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729415AbfAHT1B (ORCPT
+        id S1729445AbfAHT1F (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:27:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:32794 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 14:27:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:32896 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729317AbfAHT04 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:26:56 -0500
+        id S1729403AbfAHT1B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:27:01 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AEC522087F;
-        Tue,  8 Jan 2019 19:26:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E7EBD214C6;
+        Tue,  8 Jan 2019 19:26:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546975615;
-        bh=JHVnP8ykc/kXNooKkd6LVOEefLJ7d/95lgsaSFGwwKg=;
+        s=default; t=1546975619;
+        bh=pg0mARTbLSXhDeDct95VCf35MXOvOqH0qv1M4eu7q2Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LqPXewkdtTo/W95qdSCe5Y+SL4xAgovKWWx/VXrJy1XOFZkbZsmmDY3J+9944GrVs
-         9II94+ptGqXXVqKPjBjDcM1MYbLd6c0yrFtjP01mmm1C88fLUTb2o8Fo8PkzbcV75F
-         VDygGUJS9j9yi13mc7ti2ypIba1LcbEQZvuyDFeU=
+        b=uKHptpoejbAKcAvyU6yNH+C9h9XilIZJjhVI5UTT3QNbIyfp/FW8pLNlqHA0PLb8L
+         3jliDf9Q8GHhKSevhW6Ksqqlu5OFqq4uhnO5pNvBeqlaVFgIfaD23z8UoG4SzO6YWV
+         bh2UyloGIBMTwbjDvLjoUUPDc0r4b4nUYu+8VaE4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Matthew Bobrowski <mbobrowski@mbobrowski.org>,
-        Jan Kara <jack@suse.cz>, Sasha Levin <sashal@kernel.org>,
-        linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 016/117] fanotify: return only user requested event types in event mask
-Date:   Tue,  8 Jan 2019 14:24:44 -0500
-Message-Id: <20190108192628.121270-16-sashal@kernel.org>
+Cc:     Borislav Petkov <bp@suse.de>, Yi Wang <wang.yi59@zte.com.cn>,
+        Michael Matz <matz@suse.de>, x86@kernel.org,
+        Sasha Levin <sashal@kernel.org>, linux-edac@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 018/117] x86/mce: Fix -Wmissing-prototypes warnings
+Date:   Tue,  8 Jan 2019 14:24:46 -0500
+Message-Id: <20190108192628.121270-18-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108192628.121270-1-sashal@kernel.org>
 References: <20190108192628.121270-1-sashal@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -58,113 +59,125 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Matthew Bobrowski <mbobrowski@mbobrowski.org>
+From: Borislav Petkov <bp@suse.de>
 
-[ Upstream commit 2d10b23082a7eb8be508b3789f2e7250a88a5ddb ]
+[ Upstream commit 68b5e4326e4b8ac9080835005d8254fed0fb3c56 ]
 
-Modify fanotify_should_send_event() so that it now returns a mask for
-an event that contains ONLY flags for the event types that have been
-specifically requested by the user. Flags that may have been included
-within the event mask, but have not been explicitly requested by the
-user will not be present in the returned value.
+Add the proper includes and make smca_get_name() static.
 
-As an example, given the situation where a user requests events of type
-FAN_OPEN. Traditionally, the event mask returned within an event that
-occurred on a filesystem object that has been marked for monitoring and is
-opened, will only ever have the FAN_OPEN bit set. With the introduction of
-the new flags like FAN_OPEN_EXEC, and perhaps any other future event
-flags, there is a possibility of the returned event mask containing more
-than a single bit set, despite having only requested the single event type.
-Prior to these modifications performed to fanotify_should_send_event(), a
-user would have received a bundled event mask containing flags FAN_OPEN
-and FAN_OPEN_EXEC in the instance that a file was opened for execution via
-execve(), for example. This means that a user would receive event types
-in the returned event mask that have not been requested. This runs the
-possibility of breaking existing systems and causing other unforeseen
-issues.
+Fix an actual bug too which the warning triggered:
 
-To mitigate this possibility, fanotify_should_send_event() has been
-modified to return the event mask containing ONLY event types explicitly
-requested by the user. This means that we will NOT report events that the
-user did no set a mask for, and we will NOT report events that the user
-has set an ignore mask for.
+  arch/x86/kernel/cpu/mcheck/therm_throt.c:395:39: error: conflicting \
+  types for ‘smp_thermal_interrupt’
+   asmlinkage __visible void __irq_entry smp_thermal_interrupt(struct pt_regs *r)
+                                         ^~~~~~~~~~~~~~~~~~~~~
+  In file included from arch/x86/kernel/cpu/mcheck/therm_throt.c:29:
+  ./arch/x86/include/asm/traps.h:107:17: note: previous declaration of \
+	  ‘smp_thermal_interrupt’ was here
+   asmlinkage void smp_thermal_interrupt(void);
 
-The function name fanotify_should_send_event() has also been updated so
-that it's more relevant to what it has been designed to do.
-
-Signed-off-by: Matthew Bobrowski <mbobrowski@mbobrowski.org>
-Reviewed-by: Amir Goldstein <amir73il@gmail.com>
-Signed-off-by: Jan Kara <jack@suse.cz>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: Yi Wang <wang.yi59@zte.com.cn>
+Cc: Michael Matz <matz@suse.de>
+Cc: x86@kernel.org
+Link: https://lkml.kernel.org/r/alpine.DEB.2.21.1811081633160.1549@nanos.tec.linutronix.de
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/notify/fanotify/fanotify.c | 28 ++++++++++++++++------------
- 1 file changed, 16 insertions(+), 12 deletions(-)
+ arch/x86/include/asm/traps.h             | 6 +++---
+ arch/x86/kernel/cpu/mcheck/mce_amd.c     | 5 +++--
+ arch/x86/kernel/cpu/mcheck/therm_throt.c | 3 ++-
+ arch/x86/kernel/cpu/mcheck/threshold.c   | 3 ++-
+ 4 files changed, 10 insertions(+), 7 deletions(-)
 
-diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
-index e08a6647267b..f4f8359bc597 100644
---- a/fs/notify/fanotify/fanotify.c
-+++ b/fs/notify/fanotify/fanotify.c
-@@ -89,7 +89,13 @@ static int fanotify_get_response(struct fsnotify_group *group,
- 	return ret;
- }
+diff --git a/arch/x86/include/asm/traps.h b/arch/x86/include/asm/traps.h
+index 3de69330e6c5..afbc87206886 100644
+--- a/arch/x86/include/asm/traps.h
++++ b/arch/x86/include/asm/traps.h
+@@ -104,9 +104,9 @@ extern int panic_on_unrecovered_nmi;
  
--static bool fanotify_should_send_event(struct fsnotify_iter_info *iter_info,
-+/*
-+ * This function returns a mask for an event that only contains the flags
-+ * that have been specifically requested by the user. Flags that may have
-+ * been included within the event mask, but have not been explicitly
-+ * requested by the user, will not be present in the returned mask.
-+ */
-+static u32 fanotify_group_event_mask(struct fsnotify_iter_info *iter_info,
- 				       u32 event_mask, const void *data,
- 				       int data_type)
+ void math_emulate(struct math_emu_info *);
+ #ifndef CONFIG_X86_32
+-asmlinkage void smp_thermal_interrupt(void);
+-asmlinkage void smp_threshold_interrupt(void);
+-asmlinkage void smp_deferred_error_interrupt(void);
++asmlinkage void smp_thermal_interrupt(struct pt_regs *regs);
++asmlinkage void smp_threshold_interrupt(struct pt_regs *regs);
++asmlinkage void smp_deferred_error_interrupt(struct pt_regs *regs);
+ #endif
+ 
+ extern void ist_enter(struct pt_regs *regs);
+diff --git a/arch/x86/kernel/cpu/mcheck/mce_amd.c b/arch/x86/kernel/cpu/mcheck/mce_amd.c
+index e12454e21b8a..9f915a8791cc 100644
+--- a/arch/x86/kernel/cpu/mcheck/mce_amd.c
++++ b/arch/x86/kernel/cpu/mcheck/mce_amd.c
+@@ -23,6 +23,7 @@
+ #include <linux/string.h>
+ 
+ #include <asm/amd_nb.h>
++#include <asm/traps.h>
+ #include <asm/apic.h>
+ #include <asm/mce.h>
+ #include <asm/msr.h>
+@@ -99,7 +100,7 @@ static u32 smca_bank_addrs[MAX_NR_BANKS][NR_BLOCKS] __ro_after_init =
+ 	[0 ... MAX_NR_BANKS - 1] = { [0 ... NR_BLOCKS - 1] = -1 }
+ };
+ 
+-const char *smca_get_name(enum smca_bank_types t)
++static const char *smca_get_name(enum smca_bank_types t)
  {
-@@ -101,14 +107,14 @@ static bool fanotify_should_send_event(struct fsnotify_iter_info *iter_info,
- 	pr_debug("%s: report_mask=%x mask=%x data=%p data_type=%d\n",
- 		 __func__, iter_info->report_mask, event_mask, data, data_type);
- 
--	/* if we don't have enough info to send an event to userspace say no */
-+	/* If we don't have enough info to send an event to userspace say no */
- 	if (data_type != FSNOTIFY_EVENT_PATH)
--		return false;
-+		return 0;
- 
--	/* sorry, fanotify only gives a damn about files and dirs */
-+	/* Sorry, fanotify only gives a damn about files and dirs */
- 	if (!d_is_reg(path->dentry) &&
- 	    !d_can_lookup(path->dentry))
--		return false;
-+		return 0;
- 
- 	fsnotify_foreach_obj_type(type) {
- 		if (!fsnotify_iter_should_report_type(iter_info, type))
-@@ -129,13 +135,10 @@ static bool fanotify_should_send_event(struct fsnotify_iter_info *iter_info,
- 
- 	if (d_is_dir(path->dentry) &&
- 	    !(marks_mask & FS_ISDIR & ~marks_ignored_mask))
--		return false;
--
--	if (event_mask & FANOTIFY_OUTGOING_EVENTS &
--	    marks_mask & ~marks_ignored_mask)
--		return true;
-+		return 0;
- 
--	return false;
-+	return event_mask & FANOTIFY_OUTGOING_EVENTS & marks_mask &
-+		~marks_ignored_mask;
+ 	if (t >= N_SMCA_BANK_TYPES)
+ 		return NULL;
+@@ -824,7 +825,7 @@ static void __log_error(unsigned int bank, u64 status, u64 addr, u64 misc)
+ 	mce_log(&m);
  }
  
- struct fanotify_event_info *fanotify_alloc_event(struct fsnotify_group *group,
-@@ -210,7 +213,8 @@ static int fanotify_handle_event(struct fsnotify_group *group,
+-asmlinkage __visible void __irq_entry smp_deferred_error_interrupt(void)
++asmlinkage __visible void __irq_entry smp_deferred_error_interrupt(struct pt_regs *regs)
+ {
+ 	entering_irq();
+ 	trace_deferred_error_apic_entry(DEFERRED_ERROR_VECTOR);
+diff --git a/arch/x86/kernel/cpu/mcheck/therm_throt.c b/arch/x86/kernel/cpu/mcheck/therm_throt.c
+index 2da67b70ba98..ee229ceee745 100644
+--- a/arch/x86/kernel/cpu/mcheck/therm_throt.c
++++ b/arch/x86/kernel/cpu/mcheck/therm_throt.c
+@@ -25,6 +25,7 @@
+ #include <linux/cpu.h>
  
- 	BUILD_BUG_ON(HWEIGHT32(ALL_FANOTIFY_EVENT_BITS) != 10);
+ #include <asm/processor.h>
++#include <asm/traps.h>
+ #include <asm/apic.h>
+ #include <asm/mce.h>
+ #include <asm/msr.h>
+@@ -390,7 +391,7 @@ static void unexpected_thermal_interrupt(void)
  
--	if (!fanotify_should_send_event(iter_info, mask, data, data_type))
-+	mask = fanotify_group_event_mask(iter_info, mask, data, data_type);
-+	if (!mask)
- 		return 0;
+ static void (*smp_thermal_vector)(void) = unexpected_thermal_interrupt;
  
- 	pr_debug("%s: group=%p inode=%p mask=%x\n", __func__, group, inode,
+-asmlinkage __visible void __irq_entry smp_thermal_interrupt(struct pt_regs *r)
++asmlinkage __visible void __irq_entry smp_thermal_interrupt(struct pt_regs *regs)
+ {
+ 	entering_irq();
+ 	trace_thermal_apic_entry(THERMAL_APIC_VECTOR);
+diff --git a/arch/x86/kernel/cpu/mcheck/threshold.c b/arch/x86/kernel/cpu/mcheck/threshold.c
+index 2b584b319eff..c21e0a1efd0f 100644
+--- a/arch/x86/kernel/cpu/mcheck/threshold.c
++++ b/arch/x86/kernel/cpu/mcheck/threshold.c
+@@ -6,6 +6,7 @@
+ #include <linux/kernel.h>
+ 
+ #include <asm/irq_vectors.h>
++#include <asm/traps.h>
+ #include <asm/apic.h>
+ #include <asm/mce.h>
+ #include <asm/trace/irq_vectors.h>
+@@ -18,7 +19,7 @@ static void default_threshold_interrupt(void)
+ 
+ void (*mce_threshold_vector)(void) = default_threshold_interrupt;
+ 
+-asmlinkage __visible void __irq_entry smp_threshold_interrupt(void)
++asmlinkage __visible void __irq_entry smp_threshold_interrupt(struct pt_regs *regs)
+ {
+ 	entering_irq();
+ 	trace_threshold_apic_entry(THRESHOLD_APIC_VECTOR);
 -- 
 2.19.1
 
