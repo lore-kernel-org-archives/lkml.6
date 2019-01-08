@@ -2,323 +2,107 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F2A3C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 15:21:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC72CC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 15:22:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C2AD020850
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 15:21:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A295420685
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 15:22:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728403AbfAHPV0 (ORCPT
+        id S1728457AbfAHPWb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 10:21:26 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:34650 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727484AbfAHPV0 (ORCPT
+        Tue, 8 Jan 2019 10:22:31 -0500
+Received: from gateway32.websitewelcome.com ([192.185.145.108]:45658 "EHLO
+        gateway32.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727785AbfAHPWb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 10:21:26 -0500
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x08FDSDe067936
-        for <linux-kernel@vger.kernel.org>; Tue, 8 Jan 2019 10:21:24 -0500
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2pvvwgnaej-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jan 2019 10:21:24 -0500
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <mimu@linux.ibm.com>;
-        Tue, 8 Jan 2019 15:21:22 -0000
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 8 Jan 2019 15:21:20 -0000
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x08FLIs214221406
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 8 Jan 2019 15:21:18 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 95BB9A4059;
-        Tue,  8 Jan 2019 15:21:18 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1692AA4055;
-        Tue,  8 Jan 2019 15:21:18 +0000 (GMT)
-Received: from [9.152.98.101] (unknown [9.152.98.101])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue,  8 Jan 2019 15:21:18 +0000 (GMT)
-Reply-To: mimu@linux.ibm.com
-Subject: Re: [PATCH v5 13/15] KVM: s390: add function process_gib_alert_list()
-To:     Halil Pasic <pasic@linux.ibm.com>
-Cc:     KVM Mailing List <kvm@vger.kernel.org>,
-        Linux-S390 Mailing List <linux-s390@vger.kernel.org>,
-        linux-kernel@vger.kernel.org,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        David Hildenbrand <david@redhat.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Pierre Morel <pmorel@linux.ibm.com>
-References: <20181219191756.57973-1-mimu@linux.ibm.com>
- <20181219191756.57973-14-mimu@linux.ibm.com>
- <20190108135919.18048dd4@oc2783563651>
-From:   Michael Mueller <mimu@linux.ibm.com>
-Organization: IBM
-Date:   Tue, 8 Jan 2019 16:21:17 +0100
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
- Gecko/20100101 Thunderbird/60.4.0
+        Tue, 8 Jan 2019 10:22:31 -0500
+Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
+        by gateway32.websitewelcome.com (Postfix) with ESMTP id 54D8156AB1
+        for <linux-kernel@vger.kernel.org>; Tue,  8 Jan 2019 09:22:30 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id gtD4grekv2PzOgtD4gWM7E; Tue, 08 Jan 2019 09:22:30 -0600
+X-Authority-Reason: nr=8
+Received: from [189.250.130.205] (port=52060 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1ggtD3-001EcC-AM; Tue, 08 Jan 2019 09:22:29 -0600
+Date:   Tue, 8 Jan 2019 09:22:25 -0600
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] USB: core: urb: Use struct_size() in kmalloc()
+Message-ID: <20190108152225.GA5721@embeddedor>
 MIME-Version: 1.0
-In-Reply-To: <20190108135919.18048dd4@oc2783563651>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 19010815-4275-0000-0000-000002FBFD94
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19010815-4276-0000-0000-0000380A0909
-Message-Id: <7e4a5077-00f0-3a0f-e21a-5bbc2fa14b70@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-08_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901080124
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.130.205
+X-Source-L: No
+X-Exim-ID: 1ggtD3-001EcC-AM
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.130.205]:52060
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 3
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+One of the more common cases of allocation size calculations is finding
+the size of a structure that has a zero-sized array at the end, along
+with memory for some number of elements for that array. For example:
 
+struct foo {
+    int stuff;
+    void *entry[];
+};
 
-On 08.01.19 13:59, Halil Pasic wrote:
-> On Wed, 19 Dec 2018 20:17:54 +0100
-> Michael Mueller <mimu@linux.ibm.com> wrote:
-> 
->> This function processes the Gib Alert List (GAL). It is required
->> to run when either a gib alert interruption has been received or
->> a gisa that is in the alert list is cleared or dropped.
->>
->> The GAL is build up by millicode, when the respective ISC bit is
->> set in the Interruption Alert Mask (IAM) and an interruption of
->> that class is observed.
->>
->> Signed-off-by: Michael Mueller <mimu@linux.ibm.com>
->> ---
->>   arch/s390/kvm/interrupt.c | 140 ++++++++++++++++++++++++++++++++++++++++++++++
->>   1 file changed, 140 insertions(+)
->>
->> diff --git a/arch/s390/kvm/interrupt.c b/arch/s390/kvm/interrupt.c
->> index 48a93f5e5333..03e7ba4f215a 100644
->> --- a/arch/s390/kvm/interrupt.c
->> +++ b/arch/s390/kvm/interrupt.c
->> @@ -2941,6 +2941,146 @@ int kvm_s390_get_irq_state(struct kvm_vcpu *vcpu, __u8 __user *buf, int len)
->>   	return n;
->>   }
->>   
->> +static int __try_airqs_kick(struct kvm *kvm, u8 ipm)
->> +{
->> +	struct kvm_s390_float_interrupt *fi = &kvm->arch.float_int;
->> +	struct kvm_vcpu *vcpu = NULL, *kick_vcpu[MAX_ISC + 1];
->> +	int online_vcpus = atomic_read(&kvm->online_vcpus);
->> +	u8 ioint_mask, isc_mask, kick_mask = 0x00;
->> +	int vcpu_id, kicked = 0;
->> +
->> +	/* Loop over vcpus in WAIT state. */
->> +	for (vcpu_id = find_first_bit(fi->idle_mask, online_vcpus);
->> +	     /* Until all pending ISCs have a vcpu open for airqs. */
->> +	     (~kick_mask & ipm) && vcpu_id < online_vcpus;
->> +	     vcpu_id = find_next_bit(fi->idle_mask, online_vcpus, vcpu_id)) {
->> +		vcpu = kvm_get_vcpu(kvm, vcpu_id);
->> +		if (psw_ioint_disabled(vcpu))
->> +			continue;
->> +		ioint_mask = (u8)(vcpu->arch.sie_block->gcr[6] >> 24);
->> +		for (isc_mask = 0x80; isc_mask; isc_mask >>= 1) {
->> +			/* ISC pending in IPM ? */
->> +			if (!(ipm & isc_mask))
->> +				continue;
->> +			/* vcpu for this ISC already found ? */
->> +			if (kick_mask & isc_mask)
->> +				continue;
->> +			/* vcpu open for airq of this ISC ? */
->> +			if (!(ioint_mask & isc_mask))
->> +				continue;
->> +			/* use this vcpu (for all ISCs in ioint_mask) */
->> +			kick_mask |= ioint_mask;
->> +			kick_vcpu[kicked++] = vcpu;
-> 
-> Assuming that the vcpu can/will take all ISCs it's currently open for
-> does not seem right. We kind of rely on this assumption here, or?
+instance = kmalloc(sizeof(struct foo) + sizeof(void *) * count, GFP_KERNEL);
 
-My latest version of this routine already follows a different strategy.
-It looks for a horizontal distribution of pending ISCs among idle vcpus.
+Instead of leaving these open-coded and prone to type mistakes, we can
+now use the new struct_size() helper:
 
-> 
->> +		}
->> +	}
->> +
->> +	if (vcpu && ~kick_mask & ipm)
->> +		VM_EVENT(kvm, 4, "gib alert undeliverable isc mask
->> 0x%02x",
->> +			 ~kick_mask & ipm);
->> +
->> +	for (vcpu_id = 0; vcpu_id < kicked; vcpu_id++)
->> +		kvm_s390_vcpu_wakeup(kick_vcpu[vcpu_id]);
->> +
->> +	return (online_vcpus != 0) ? kicked : -ENODEV;
->> +}
->> +
->> +static void __floating_airqs_kick(struct kvm *kvm)
->> +{
->> +	struct kvm_s390_float_interrupt *fi = &kvm->arch.float_int;
->> +	int online_vcpus, kicked;
->> +	u8 ipm_t0, ipm;
->> +
->> +	/* Get IPM and return if clean, IAM has been restored. */
->> +	ipm = get_ipm(kvm->arch.gisa, IRQ_FLAG_IAM);
->> +	if (!ipm)
->> +		return;
->> +retry:
->> +	ipm_t0 = ipm;
->> +
->> +	/* Try to kick some vcpus in WAIT state. */
->> +	kicked = __try_airqs_kick(kvm, ipm);
->> +	if (kicked < 0)
->> +		return;
->> +
->> +	/* Get IPM and return if clean, IAM has been restored. */
->> +	ipm = get_ipm(kvm->arch.gisa, IRQ_FLAG_IAM);
->> +	if (!ipm)
->> +		return;
->> +
->> +	/* Start over, if new ISC bits are pending in IPM. */
->> +	if ((ipm_t0 ^ ipm) & ~ipm_t0)
->> +		goto retry;
->> +
-> 
-> <MARK A>
-> 
->> +	/*
->> +	 * Return as we just kicked at least one vcpu in WAIT state
->> +	 * open for airqs. The IAM will be restored latest when one
->> +	 * of them goes into WAIT or STOP state.
->> +	 */
->> +	if (kicked > 0)
->> +		return;
-> 
-> </MARK A>
-> 
->> +
->> +	/*
->> +	 * No vcpu was kicked either because no vcpu was in WAIT state
->> +	 * or none of the vcpus in WAIT state are open for airqs.
->> +	 * Return immediately if no vcpus are in WAIT state.
->> +	 * There are vcpus in RUN state. They will process the airqs
->> +	 * if not closed for airqs as well. In that case the system will
->> +	 * delay airqs until a vcpu decides to take airqs again.
->> +	 */
->> +	online_vcpus = atomic_read(&kvm->online_vcpus);
->> +	if (!bitmap_weight(fi->idle_mask, online_vcpus))
->> +		return;
->> +
->> +	/*
->> +	 * None of the vcpus in WAIT state take airqs and we might
->> +	 * have no running vcpus as at least one vcpu is in WAIT state
->> +	 * and IPM is dirty.
->> +	 */
->> +	set_iam(kvm->arch.gisa, kvm->arch.iam);
->> +}
->> +
->> +#define NULL_GISA_ADDR 0x00000000UL
->> +#define NONE_GISA_ADDR 0x00000001UL
->> +#define GISA_ADDR_MASK 0xfffff000UL
->> +
->> +static void __maybe_unused process_gib_alert_list(void)
->> +{
->> +	u32 final, next_alert, origin = 0UL;
->> +	struct kvm_s390_gisa *gisa;
->> +	struct kvm *kvm;
->> +
->> +	do {
->> +		/*
->> +		 * If the NONE_GISA_ADDR is still stored in the alert list
->> +		 * origin, we will leave the outer loop. No further GISA has
->> +		 * been added to the alert list by millicode while processing
->> +		 * the current alert list.
->> +		 */
->> +		final = (origin & NONE_GISA_ADDR);
->> +		/*
->> +		 * Cut off the alert list and store the NONE_GISA_ADDR in the
->> +		 * alert list origin to avoid further GAL interruptions.
->> +		 * A new alert list can be build up by millicode in parallel
->> +		 * for guests not in the yet cut-off alert list. When in the
->> +		 * final loop, store the NULL_GISA_ADDR instead. This will re-
->> +		 * enable GAL interruptions on the host again.
->> +		 */
->> +		origin = xchg(&gib->alert_list_origin,
->> +			      (!final) ? NONE_GISA_ADDR : NULL_GISA_ADDR);
->> +		/* Loop through the just cut-off alert list. */
->> +		while (origin & GISA_ADDR_MASK) {
->> +			gisa = (struct kvm_s390_gisa *)(u64)origin;
->> +			next_alert = gisa->next_alert;
->> +			/* Unlink the GISA from the alert list. */
->> +			gisa->next_alert = origin;
->> +			kvm = container_of(gisa, struct sie_page2, gisa)->kvm;
->> +			/* Kick suitable vcpus */
->> +			__floating_airqs_kick(kvm);
-> 
-> We may finish handling the alerted gisa with iam not set e.g.
-> via some vcpus kicked but ipm still dirty and some vcpus still in wait,
-> or?
+instance = kmalloc(struct_size(instance, entry, count), GFP_KERNEL);
 
-My above mentioned change to the routine identifying the vcpus to kick
-will select one vcpu for each ISC pending if possible (depends on the
-number of idle vcpus and their respective interruption masks and the
-pending ISCs).
+This code was detected with the help of Coccinelle.
 
-That does not exclude the principle scenario that maybe only one vcpu
-is kicked and multiple ISCs are pending (ipm still dirty) although
-have never observed this with a Linux guest.
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/usb/core/urb.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-What I was trying to avoid was a kind of busy loop running in addition
-to the kicked vcpus monitoring the IPM state for resource utilization
-reasons.
-
-> 
->  From the comments it seems we speculate on being in a safe state, as
-> these are supposed to return to wait or stop soon-ish, and we will set
-> iam then (See <MARK A>). I don't quite understand.
-
-
-Yes, the next vcpu going idle shall restore the IAM or process the
-top ISC pending if the iomask (GCR) allows. vcpus are not allowed to go 
-in disabled wait (IO int disabled by PSW). If all vcpus always (for
-some time) mask a specific ISC the guest does not want to get 
-interrupted for that ISC but will as soon a running vcpu will open
-the mask again.
-
-> 
-> According to my current understanding we might end up loosing initiative
-> in this scenario. Or am I wrong?
-
-I currently don't have proof for you being wrong but have not observed
-the situation yet.
-
-> 
-> Regards,
-> Halil
-> 
->> +			origin = next_alert;
->> +		}
->> +	} while (!final);
->> +}
->> +
->>   static void nullify_gisa(struct kvm_s390_gisa *gisa)
->>   {
->>   	memset(gisa, 0, sizeof(struct kvm_s390_gisa));
-> 
-
--
+diff --git a/drivers/usb/core/urb.c b/drivers/usb/core/urb.c
+index f51750bcd152..0eab79f82ce4 100644
+--- a/drivers/usb/core/urb.c
++++ b/drivers/usb/core/urb.c
+@@ -70,9 +70,8 @@ struct urb *usb_alloc_urb(int iso_packets, gfp_t mem_flags)
+ {
+ 	struct urb *urb;
+ 
+-	urb = kmalloc(sizeof(struct urb) +
+-		iso_packets * sizeof(struct usb_iso_packet_descriptor),
+-		mem_flags);
++	urb = kmalloc(struct_size(urb, iso_frame_desc, iso_packets),
++		      mem_flags);
+ 	if (!urb)
+ 		return NULL;
+ 	usb_init_urb(urb);
+-- 
+2.20.1
 
