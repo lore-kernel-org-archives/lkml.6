@@ -2,129 +2,94 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FD64C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 23:00:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F10EC43444
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 23:05:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC0FE20883
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 23:00:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3CED5214C6
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 23:05:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oz3EqEuh"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i2imSKPj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729116AbfAHXAR (ORCPT
+        id S1729153AbfAHXFL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 18:00:17 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:35667 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727772AbfAHXAR (ORCPT
+        Tue, 8 Jan 2019 18:05:11 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:47059 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727772AbfAHXFK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 18:00:17 -0500
-Received: by mail-lf1-f66.google.com with SMTP id e26so4224230lfc.2;
-        Tue, 08 Jan 2019 15:00:15 -0800 (PST)
+        Tue, 8 Jan 2019 18:05:10 -0500
+Received: by mail-pf1-f193.google.com with SMTP id c73so2626150pfe.13;
+        Tue, 08 Jan 2019 15:05:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=lqVKiaumFqDCnajS3YPLWJ/gLAjmJXW0r/JzDCtZcno=;
-        b=oz3EqEuh8sXDbMVHGtYXEf4Wl42yKRVUdaPlbmGyriqdEZHcmBdJnDgLAgsXvm09Ym
-         1jbU9ERuYRRcnuf3H3qC2apl9dBea9eepj6FnNHqb/TbUmOTWqbDz8h8kkSUGrjCzP3G
-         T5TjaiZtielK+DBC/P+TPHtLykzShkomABZbp7KP+6MxTrEFfAmjAWfJkgMKM4uoT65G
-         utOeyh4HEeRhWjUPp2nC2/RauW7Uy6dXgpe/7IvmrVKXJcV5fmlTchdivWDv4JFdHEMj
-         QxHm4ldvHpIWltPbpLjTmCfVLLSox6F0w3uzzsxUN0X+xMD+d8PzHNF2ddfVYuxJVG1V
-         xv9A==
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=DU6YXgpJA2UqPDNob0/gv6gT/+P6KHZXMw7cnVkgZ0Q=;
+        b=i2imSKPjmzKP6DpILMidjQvD4cqXrFBsX1XE8KCLwcbpgSF/g9fT7AtWQPzVYtao1b
+         MXGbnSOr1i9oJ5BOIGt3B4E0SC0aTdWJxh1nmGtt9qXU6wBaMOkKj5WW52WnPohCO03t
+         kmPnrjv68xwXRtpJuiCJWk0RY9LRD+7HDGMTIyU9eDxMLOJWf2sWlxzgEZ/rx2vuaO8m
+         PEFXwHZRmyW6bK4YTlLD7mALhVFjth7XtKF5Z/zEwq1yM90vH6UVdApC6w6mYsFblVTG
+         Vwbimx9CcY5zG3p6ABO0QfNK247jeu/aUtqiLFr9ndXZXldX/XOJ8E+NkRW+T1dTdyw6
+         D40A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=lqVKiaumFqDCnajS3YPLWJ/gLAjmJXW0r/JzDCtZcno=;
-        b=CzEsuuCLp9LQUppvIXAmRuL+tbYpUQ69DUps3ejt/Fq4CU1PgBNP+Qln2cXyyT7tFn
-         T9goP+HrDh1lc9GYuuPOuO+C/6Gn80S/H86Q3pvoP25qCxgqmd2z10Qu5PLQ5hiqW7rL
-         9UcNcYVVBC2Ksh/ktTke4cheTXfahjlPU7Qluo1x7v8zHPkxISHA4wYlach4cCs5FYZB
-         yO1A47fS98961Gj6E1jo5wcRgp/NMHJMVQvCuj47Y29GBXU08zUpYdFblZWBjZvfbEYO
-         UoCjAbXJTuMVoCA6DxpqL5SYLqBQcqF2zAoxwEmzTT5IaU3LXtKTFLRIVrd2WlAnkDGd
-         UG+g==
-X-Gm-Message-State: AJcUukf9EJPdI2U3l27SNDhyqvwlKlb5K4yS+AqLzWIb0vA8xJBgMQ2v
-        yk0vXlBwnO4hHaWSX+Eohq6eQpoH4LrTzq2deZ8=
-X-Google-Smtp-Source: ALg8bN6J4pcZBoZP1VbUCrnD4X7lkolwmamfiBieAqPvNRdYVguqMQrq8l01jhmc0EKhHBvXvJRgy9edywh9huiIwko=
-X-Received: by 2002:ac2:55a3:: with SMTP id y3mr1006952lfg.93.1546988414455;
- Tue, 08 Jan 2019 15:00:14 -0800 (PST)
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=DU6YXgpJA2UqPDNob0/gv6gT/+P6KHZXMw7cnVkgZ0Q=;
+        b=CkOzDnsYnFwP/NvQ+QvfsrboVTj4GAGq2wBBmZXARXdH8wjQzyI5p3G8XyH8vG90CJ
+         Eum6GybtqB4rlqeMUmYdznS4Bc6+hkLScxILk2cx2knvpVM2b0ebIfGCA/oJj34s0os2
+         /r0RUKWk0dLZdgnYqaoxYlykzW2neDurKtRfcicAsbu9u/P/pHk3eYNWDsWz128+YQkc
+         56bQGLLKMhmPY5R04sDDT0OCq5NsW1Ofi1gce+KmTtXoOiUCoY88BYtiMtyBztKTpOwV
+         /xaSo6LDpUZ0WdeHX0h1FJ6U5oOk76p7itWav5EIhTbbKfwzBswmPVNewniBujf17Gp6
+         jt2A==
+X-Gm-Message-State: AJcUukc//2a4UKZKNGFRuV0Umg5FbkS6jR7wZ6wFOphzamRxdzLC7D0O
+        lgK49ZdKJyVruHMKcjnqkEw=
+X-Google-Smtp-Source: ALg8bN51SX2LecHKP1R37q3PFUpK/d9CvKg3Y5dASYUXk6mz2yi6ifexWkTzS6BuORTtwO0+Z5TS1Q==
+X-Received: by 2002:a62:7086:: with SMTP id l128mr3606173pfc.68.1546988710159;
+        Tue, 08 Jan 2019 15:05:10 -0800 (PST)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id r80sm118528447pfa.111.2019.01.08.15.05.09
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 08 Jan 2019 15:05:09 -0800 (PST)
+Date:   Tue, 8 Jan 2019 15:05:08 -0800
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH 4.9 00/71] 4.9.149-stable review
+Message-ID: <20190108230508.GA20519@roeck-us.net>
+References: <20190107105330.280153213@linuxfoundation.org>
 MIME-Version: 1.0
-References: <CAA85sZsiifWTKq=Mw30f-UVyrzywnYYX7GvyqG+O+ndSYBML9A@mail.gmail.com>
- <CAA85sZsj5PxZeiXSVK92QXi93fc+Ch2x2KHqzzPcT2OffaKsEQ@mail.gmail.com>
- <CAA85sZsyEnkmwO2grp3H5pXErrNV=prOjEfPy=odoQ8iSHox4Q@mail.gmail.com> <20190108145112.65fc554f@hermes.lan>
-In-Reply-To: <20190108145112.65fc554f@hermes.lan>
-From:   Ian Kumlien <ian.kumlien@gmail.com>
-Date:   Wed, 9 Jan 2019 00:00:03 +0100
-Message-ID: <CAA85sZt=mrqprwkKLGbv2UMy6vQb0XSc58YrWvqxzK4yhdbpGQ@mail.gmail.com>
-Subject: Re: [BUG] v4.20 - bridge not getting DHCP responses? (works in 4.19.13)
-To:     Stephen Hemminger <stephen@networkplumber.org>
-Cc:     Linux Kernel Network Developers <netdev@vger.kernel.org>,
-        jeffrey.t.kirsher@intel.com,
-        Roopa Prabhu <roopa@cumulusnetworks.com>,
-        nikolay@cumulusnetworks.com,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190107105330.280153213@linuxfoundation.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 8, 2019 at 11:51 PM Stephen Hemminger
-<stephen@networkplumber.org> wrote:
-> On Tue, 8 Jan 2019 23:10:04 +0100
-> Ian Kumlien <ian.kumlien@gmail.com> wrote:
-> > On Sun, Jan 6, 2019 at 11:21 PM Ian Kumlien <ian.kumlien@gmail.com> wrote:
-> > >
-> > > [Sorry for the repost, screwed up the netdev address...]
-> > >
-> > > Hi,
-> > >
-> > > Switching from 4.19.x -> 4.20 resulted in DHCP not working for my VM:s.
-> > >
-> > > My firewall (which also runs the dhcpd) runs VM:s and it does this by
-> > > having physical
-> > > interfaces attached to bridges - which the VM:s in turn attach to.
-> > >
-> > > Since 4.20 the VM:s can't use DHCP, it's odd since the requests are
-> > > seen - a response is sent but
-> > > it never enters the interface attached to the bridge.
-> > >
-> > > Basically:
-> > > VM vnet2: -> br0 -> eno2 -> switch -> eno1 (dhcpd)
-> > > dhcpd eno1 -> siwtch and... gone.
-> > >
-> > > Any clues?
-> > >
-> > > All the nics are handled by ixgbe
-> >
-> > So, doing similar tests at work with other drivers works - could it be
-> > related to the mac address filter that was added?
-> > I don't *really* use VF:s though... (can't really find anything else atm)
-> >
-> > Will try to test, but the VM:s on this machine is in use.
->
-> The default MAC address of the bridge device is the first device assigned
-> to the bridge.  Remember most VF interfaces will only allow single MAC address
-> and no promiscious mode.
+On Mon, Jan 07, 2019 at 01:32:29PM +0100, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.9.149 release.
+> There are 71 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Wed Jan  9 10:53:04 UTC 2019.
+> Anything received after that time might be too late.
+> 
 
-Yeah, I'm not running any VF:s and it just seems like the responses
-are dropped somewhere
+For v4.9.148-68-g8af94cd8ec70:
 
-when looking at "git log v4.19...v4.20
-drivers/net/ethernet/intel/ixgbe/" nothing else really stands out...
-The machine is also running NAT for my home network and all of that
-works just fine...
+Build results:
+	total: 171 pass: 171 fail: 0
+Qemu test results:
+	total: 305 pass: 305 fail: 0
 
-I started with tcpdump, prooving that packets reached all the way
-outside but replies never made it, reboorting
-with 4.19.13 resulted in replies appearing in the tcpdump.
-
-I don't quite know where to look - and what can i do to test - i tried
-disabling all offloading (due to the UDP
-offloading changes) but nothing helped...
-
-Ideas? Patches? ;)
+Guenter
