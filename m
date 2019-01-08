@@ -2,109 +2,206 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35141C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 16:06:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5A99C43444
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 16:07:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D7302087F
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 16:06:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 824472087F
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 16:07:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1546963624;
+	bh=WXcE22ZPmi0Q9lnIYuh8ycXYppaxe7mke/zDxMMwRkM=;
+	h=In-Reply-To:References:From:Date:Subject:To:Cc:List-ID:From;
+	b=Pe8ys8EL1C1q+jyDtUDaSgxCgzpHlfjmQ2vfAJoBdTK1hOYGSfPGl+MwMyCWNpO2m
+	 r5IxQChuiwBPi4t9tnAXMyGaxJoGPoX+0E+5ZlFq5zEBt3heSGN3W/bRBing8nPaEw
+	 tucvqGHncIrP/bwnif6oenXDSmFM9kaajUp95bP4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729119AbfAHQGA (ORCPT
+        id S1729170AbfAHQHD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 11:06:00 -0500
-Received: from mout.gmx.net ([212.227.15.15]:45063 "EHLO mout.gmx.net"
+        Tue, 8 Jan 2019 11:07:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53186 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728238AbfAHQF7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 11:05:59 -0500
-Received: from localhost.localdomain ([91.14.64.214]) by mail.gmx.com
- (mrgmx001 [212.227.17.190]) with ESMTPSA (Nemesis) id
- 0M9sa0-1gaKJm3hyC-00B6US; Tue, 08 Jan 2019 17:05:39 +0100
-From:   Frank Wunderlich <frank-w@public-files.de>
-To:     Felix Fietkau <nbd@openwrt.org>, John Crispin <john@phrozen.org>,
-        Sean Wang <sean.wang@kernel.org>,
-        Nelson Chang <nelson.chang@mediatek.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     Frank Wunderlich <frank-w@public-files.de>
-Subject: [PATCH] net: ethernet: mediatek: fix warning in phy_start_aneg
-Date:   Tue,  8 Jan 2019 17:05:26 +0100
-Message-Id: <20190108160526.18928-1-frank-w@public-files.de>
-X-Mailer: git-send-email 2.17.1
-X-Provags-ID: V03:K1:l+mp37KjOVJSmnrQlklK3mKCAchMZ0EQQ1Llijw3B/XrLPiw3H4
- pOSn9+778/b+5mU0T8R1EsXyplHgEa4Uf9cFOtH8POmcB9x/j+VQ1arrIlQJIcVlwjX/q32
- 4U25wQ6UJUVLIG4k6pnHp8ZVpQn+MRwvCImbC0HquhrZPvHXo1dznYJRJDTbTfNmWBK8FTh
- MqL5VH7rd2XvOzJpsOq5A==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:b0FwHQ8FA68=:Vr1q3Owek51B+r7KjzVsdQ
- AsWui84BV/olgwdOhBXrd7NaMIBs3nYcNtlRXcxhsiM1d8fviE60zlkEbHuFBDUFh9Zeko/ik
- gQsTRzr736En38FNIh6Xu3j+787mYdCTkF/QNIU//SalsgtAYeZBUnZniUnAUoSJbT+wF552h
- gpUHWVHnz4k6J8gV5+6ORh5lnBmYbFqHJlD1LL90tX9hPJ8Ow0ADGKc9XUzJr32LHMhwoYt3H
- t7lGWh7w2edioj62WC1P0jjxBeqW0UPtC08Llk/X/3UikeLJuGCqn2RBdnd+XqdNt476s3/wk
- 7PcO9PYGEPeQ/DDnhAklTm1nU7F772IhJb/B0FtK5iqgNR3ExowgmVUHcRExlb5jOVaYwnB3L
- aJPjGXuYGgbaMHwqQUit+RkKXpcinECV2nJAwZYLYmbl4K5Ovg0oXdb6CEgFqI/7R8HzapoR0
- ECWuBIYZw+ZJ/AlPFvUXFCHnha50mr5xQ7SJ275Tuw0Glez4q+LZ8PZ926huDFQ+GgI9PKvKV
- GuNSqaPoRkpDSgjdD+qGtn+rGE1dbfZj3KikUzkt0VfgaIfDDrqLKFxjbgJj6v/OYNWsOid8P
- k8tEFU4kysTU2Z4gheyGlgQU1rrvaXSjHaXWB7W7AwqAiNpaDyK7xbtKnSthhmk13RO2Fh7Ay
- 7Uf2IFOpttTtUEHEbgY7KxuY5E+pxpnh3hrFAgf+gjl75+Ij49HAjuS+IGeZ6pyXZTi++d9nl
- U10LeTvFhqpWP74GEjSR6IpfeHUbOCDSslW/gMzrIuw/vv5zvylnPGISrQUOks4yW3OlHi4KG
- +V23+beMlEWwbAeRz6IjAuqpELkUToDZuUFgCCEiuqZTWnX/J8Trkh2rFBN9arslnqDCdal6n
- LNvxpddiiYKeWjj2POJjxccHS0qB6VZeI3K+p+rXJorxveqwBGnpCORCaji93G
+        id S1728238AbfAHQHD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 11:07:03 -0500
+Received: from mail-oi1-f179.google.com (mail-oi1-f179.google.com [209.85.167.179])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 154CC214C6;
+        Tue,  8 Jan 2019 16:07:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1546963622;
+        bh=WXcE22ZPmi0Q9lnIYuh8ycXYppaxe7mke/zDxMMwRkM=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=04pe4voBK+s/3po4W2PzB2Q49eV+/fgPiu9xVWO+gZznKJOFyNFu9oZWSb+yByOGa
+         V47Z27/sW0OrVnySt8gOWkNIKeq+bhbFGmAcXP6NsSAcJ2uZQzLV3WCTF47Yu/zLiF
+         O4C70bx/QlA9Kr98pzxZY2mOmTl06cNS6avmZM1s=
+Received: by mail-oi1-f179.google.com with SMTP id m6so3696276oig.11;
+        Tue, 08 Jan 2019 08:07:02 -0800 (PST)
+X-Gm-Message-State: AJcUukcHmcehGL9ICSKzcxUm+VF/I5QyXkOjqFnw9aqfmcTwbKRyubS9
+        +lQpK+dTlbfbHIp4aflmxdHHZJCu4IP1ZEDhcqo=
+X-Google-Smtp-Source: ALg8bN7o2ijn07aIe3azvMyGFtNz1M7Fb1aMsJPyAVa3LHZTqfqhgcFStE4SvzKFwOn4tYuXRFhimwojuQ+d5ru5xSM=
+X-Received: by 2002:aca:c312:: with SMTP id t18mr1583284oif.92.1546963621320;
+ Tue, 08 Jan 2019 08:07:01 -0800 (PST)
+MIME-Version: 1.0
+Received: by 2002:a4a:2755:0:0:0:0:0 with HTTP; Tue, 8 Jan 2019 08:07:00 -0800 (PST)
+In-Reply-To: <9af7993d-9d61-6488-3c97-a4126ffed07c@molgen.mpg.de>
+References: <3a1c95bb-9986-663d-09a1-8c7e84d0a7a7@molgen.mpg.de>
+ <6ba074cd-bd1b-3844-8a3b-b0cfb34e24bc@linux.intel.com> <9af7993d-9d61-6488-3c97-a4126ffed07c@molgen.mpg.de>
+From:   Sinan Kaya <Okaya@kernel.org>
+Date:   Tue, 8 Jan 2019 11:07:00 -0500
+X-Gmail-Original-Message-ID: <CAK9iUCMNC2SdEwmQjqmzKD5d3ats9ZcW4wqbi6jHb6U=aExu4w@mail.gmail.com>
+Message-ID: <CAK9iUCMNC2SdEwmQjqmzKD5d3ats9ZcW4wqbi6jHb6U=aExu4w@mail.gmail.com>
+Subject: Re: [PATCH] drm: Require PCI for selecting VGA_ARB.
+To:     Paul Menzel <pmenzel@molgen.mpg.de>
+Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-pci@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        Bjorn Helgaas <bhelgaas@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sean Wang <sean.wang@kernel.org>
+On 1/8/19, Paul Menzel <pmenzel@molgen.mpg.de> wrote:
+> Dear Maarten,
+>
+>
+> Thank you very much for the quick response.
+>
+> On 01/08/19 16:37, Maarten Lankhorst wrote:
+>> Op 08-01-2019 om 16:07 schreef Paul Menzel:
+>
+>>> Building Linux 5.0-rc1 fails with the errors below. Please find the
+>>> configuration file attached.
+>>>
+>>> ```
+>>> $ make -j120
+>>> [=E2=80=A6]
+>>> drivers/gpu/vga/vgaarb.c: In function =E2=80=98__vga_tryget=E2=80=99:
+>>> drivers/gpu/vga/vgaarb.c:286:14: error: =E2=80=98PCI_VGA_STATE_CHANGE_D=
+ECODES=E2=80=99
+>>> undeclared (first use in this function); did you mean
+>>> =E2=80=98PCI_SUBTRACTIVE_DECODE=E2=80=99?
+>>>      flags |=3D PCI_VGA_STATE_CHANGE_DECODES;
+>>>               ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>>>               PCI_SUBTRACTIVE_DECODE
+>>> drivers/gpu/vga/vgaarb.c:286:14: note: each undeclared identifier is
+>>> reported only once for each function it appears in
+>>>   CC [M]  net/netfilter/xt_realm.o
+>>>   CC      drivers/hid/hid-cherry.o
+>>> drivers/gpu/vga/vga_switcheroo.c: In function
+>>> =E2=80=98vga_switcheroo_runtime_suspend=E2=80=99:
+>>> drivers/gpu/vga/vga_switcheroo.c:1053:2: error: implicit declaration of
+>>> function =E2=80=98pci_bus_set_current_state=E2=80=99; did you mean =E2=
+=80=98__set_current_state=E2=80=99?
+>>> [-Werror=3Dimplicit-function-declaration]
+>>>   pci_bus_set_current_state(pdev->bus, PCI_D3cold);
+>>>   ^~~~~~~~~~~~~~~~~~~~~~~~~
+>>>   __set_current_state
+>>> drivers/gpu/vga/vgaarb.c:291:13: error: =E2=80=98PCI_VGA_STATE_CHANGE_B=
+RIDGE=E2=80=99
+>>> undeclared (first use in this function); did you mean
+>>> =E2=80=98PCI_VGA_STATE_CHANGE_DECODES=E2=80=99?
+>>>     flags |=3D PCI_VGA_STATE_CHANGE_BRIDGE;
+>>>              ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+>>>              PCI_VGA_STATE_CHANGE_DECODES
+>>>   CC      fs/reiserfs/dir.o
+>>>   LD [M]  net/tipc/tipc.o
+>>> drivers/gpu/vga/vga_switcheroo.c: In function
+>>> =E2=80=98vga_switcheroo_runtime_resume=E2=80=99:
+>>> drivers/gpu/vga/vga_switcheroo.c:1067:2: error: implicit declaration of
+>>> function =E2=80=98pci_wakeup_bus=E2=80=99; did you mean =E2=80=98__wake=
+_up_bit=E2=80=99?
+>>> [-Werror=3Dimplicit-function-declaration]
+>>>   pci_wakeup_bus(pdev->bus);
+>>>   ^~~~~~~~~~~~~~
+>>>   __wake_up_bit
+>>> drivers/gpu/vga/vgaarb.c:293:3: error: implicit declaration of function
+>>> =E2=80=98pci_set_vga_state=E2=80=99; did you mean =E2=80=98pci_set_powe=
+r_state=E2=80=99?
+>>> [-Werror=3Dimplicit-function-declaration]
+>>>    pci_set_vga_state(conflict->pdev, false, pci_bits, flags);
+>>>    ^~~~~~~~~~~~~~~~~
+>>>    pci_set_power_state
+>>>   CC      fs/read_write.o
+>>>   CC      drivers/hid/hid-chicony.o
+>>>   CC      drivers/hid/hid-cypress.o
+>>> drivers/gpu/vga/vgaarb.c: In function =E2=80=98vga_arb_device_init=E2=
+=80=99:
+>>> drivers/gpu/vga/vgaarb.c:1495:25: error: =E2=80=98pci_bus_type=E2=80=99=
+ undeclared (first
+>>> use in this function); did you mean =E2=80=98pci_pcie_type=E2=80=99?
+>>>   bus_register_notifier(&pci_bus_type, &pci_notifier);
+>>>                          ^~~~~~~~~~~~
+>>>                          pci_pcie_type
+>>> cc1: some warnings being treated as errors
+>>> make[3]: *** [scripts/Makefile.build:277: drivers/gpu/vga/vgaarb.o] Err=
+or
+>>> 1
+>>> make[3]: *** Waiting for unfinished jobs....
+>>> [=E2=80=A6]
+>>> ```
+>
+>> WARNING: unmet direct dependencies detected for VGA_ARB
+>>   Depends on [n]: HAS_IOMEM [=3Dy] && PCI [=3Dn] && !S390
+>>   Selected by [y]:
+>>   - VGA_SWITCHEROO [=3Dy] && HAS_IOMEM [=3Dy] && X86 [=3Dy] && ACPI [=3D=
+y]
+>>
+>> So I guess you need to enable PCI, probably not a common config you're
+>> using. :)
+>>
+>> Especially since you selected EXPERT.
+>
+> We have the attached defconfig, which is then integrated using
+> `make olddefconfig`.
+>
+>> Oh well, apply this with git am --scissors?
+>> -----8<----
+>> When configuring the kernel without PCI we can still enable VGA
+>> switcheroo,
+>> which is not possible because VGA_ARB cannot be selected.
+>>
+>> Remove this by depending on PCI for !S390.
+>>
+>> Reported-by: Paul Menzel <pmenzel@molgen.mpg.de>
+>> Signed-off-by: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+>> ---
+>> diff --git a/drivers/gpu/vga/Kconfig b/drivers/gpu/vga/Kconfig
+>> index b677e5d524e6..ef5671475870 100644
+>> --- a/drivers/gpu/vga/Kconfig
+>> +++ b/drivers/gpu/vga/Kconfig
+>> @@ -21,6 +21,7 @@ config VGA_SWITCHEROO
+>>  	bool "Laptop Hybrid Graphics - GPU switching support"
+>>  	depends on X86
+>>  	depends on ACPI
+>> +	depends on (PCI && !S390) # For VGA_ARB
+>>  	select VGA_ARB
+>>  	help
+>>  	  Many laptops released in 2008/9/10 have two GPUs with a multiplexer
+>
+> Is this an effect of commit eb01d42a (PCI: consolidate PCI config entry i=
+n
+> drivers/pci) as the `default y` is missing now?
+>
 
-linux 5.0-rc1 shows following warning on bpi-r2/mt7623 bootup:
+See this :
 
-[ 5.170597] WARNING: CPU: 3 PID: 1 at drivers/net/phy/phy.c:548 phy_start_aneg+0x110/0x144
-[ 5.178826] called from state READY
-....
-[ 5.264111] [<c0629fd4>] (phy_start_aneg) from [<c0e3e720>] (mtk_init+0x414/0x47c)
-[ 5.271630] r7:df5f5eec r6:c0f08c48 r5:00000000 r4:dea67800
-[ 5.277256] [<c0e3e30c>] (mtk_init) from [<c07dabbc>] (register_netdevice+0x98/0x51c)
-[ 5.285035] r8:00000000 r7:00000000 r6:c0f97080 r5:c0f08c48 r4:dea67800
-[ 5.291693] [<c07dab24>] (register_netdevice) from [<c07db06c>] (register_netdev+0x2c/0x44)
-[ 5.299989] r8:00000000 r7:dea2e608 r6:deacea00 r5:dea2e604 r4:dea67800
-[ 5.306646] [<c07db040>] (register_netdev) from [<c06326d8>] (mtk_probe+0x668/0x7ac)
-[ 5.314336] r5:dea2e604 r4:dea2e040
-[ 5.317890] [<c0632070>] (mtk_probe) from [<c05a78fc>] (platform_drv_probe+0x58/0xa8)
-[ 5.325670] r10:c0f86bac r9:00000000 r8:c0fbe578 r7:00000000 r6:c0f86bac r5:00000000
-[ 5.333445] r4:deacea10
-[ 5.335963] [<c05a78a4>] (platform_drv_probe) from [<c05a5248>] (really_probe+0x2d8/0x424)
+https://patchwork.kernel.org/patch/10749209/
 
-maybe other boards using this generic driver are affected
+This change is about to go in.
 
-Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
----
- drivers/net/ethernet/mediatek/mtk_eth_soc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/ethernet/mediatek/mtk_eth_soc.c b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
-index 399f565dd85a..e48c06874a85 100644
---- a/drivers/net/ethernet/mediatek/mtk_eth_soc.c
-+++ b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
-@@ -356,6 +356,7 @@ static int mtk_phy_connect(struct net_device *dev)
- 	linkmode_copy(dev->phydev->advertising, dev->phydev->supported);
- 	linkmode_set_bit(ETHTOOL_LINK_MODE_Autoneg_BIT,
- 			 dev->phydev->advertising);
-+	phy_start(dev->phydev);
- 	phy_start_aneg(dev->phydev);
- 
- 	of_node_put(np);
-@@ -1821,7 +1822,6 @@ static int mtk_open(struct net_device *dev)
- 	else
- 		refcount_inc(&eth->dma_refcnt);
- 
--	phy_start(dev->phydev);
- 	netif_start_queue(dev);
- 
- 	return 0;
--- 
-2.17.1
-
+>
+> Kind regards,
+>
+> Paul
+>
