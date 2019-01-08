@@ -4,48 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED8E2C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:26:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C3ACC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:27:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE04F217D9
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:26:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2BBD32087F
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:27:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546975617;
-	bh=SOsfVzCKaisJ8DmdxNlxAhvOw/qrhgn0Wa8EhkLmq3k=;
+	s=default; t=1546975622;
+	bh=JHVnP8ykc/kXNooKkd6LVOEefLJ7d/95lgsaSFGwwKg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=jQld94GQq09M4Hk0URyeXk/F5vD9D7gZsMw3QSI80Z0uuOh3QoUXt0gq2u9FndwpC
-	 JM4+Lc4QIk9Sk7q0QAAMSf8PWZaSXGemx2bzpEcYYTimi60fh8PnmfE6Qse9T10qXN
-	 aihdK6flaN8J2TnVCzidb1a0wjJ6wm6p4KattR38=
+	b=kmFgd5Ck9xEqrG2958hOVFRRzQ36Z6uS0MKKgNakkwt5ZsNBBmOenuBe6eOsO08R4
+	 tiYRHIo6v8ENu4cMXbnal/GqoJhFszbCuNJhXrO/KmIhmlhhzahsFeJEq2B5RXHAi0
+	 A+zmuC6hMHOm7/dXbnv6zWGPykENf7QgAfIBjQvE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729376AbfAHT05 (ORCPT
+        id S1729415AbfAHT1B (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:26:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:32780 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 14:27:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:32794 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729320AbfAHT0z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:26:55 -0500
+        id S1729317AbfAHT04 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:26:56 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A131C20883;
-        Tue,  8 Jan 2019 19:26:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AEC522087F;
+        Tue,  8 Jan 2019 19:26:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546975614;
-        bh=SOsfVzCKaisJ8DmdxNlxAhvOw/qrhgn0Wa8EhkLmq3k=;
+        s=default; t=1546975615;
+        bh=JHVnP8ykc/kXNooKkd6LVOEefLJ7d/95lgsaSFGwwKg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QsoYA5goh67OSw2k3xmeHNSJkJC1f/DBJYSKraWdorVxNa4abUbaqfa3rScCQHgYW
-         7oDL93RaUkJcA+nAIxKnDMSlnekZDWjIgN70oyFbIT1+cL3DvzIg/du4aq6mr0mxZo
-         1lxRrtRCAs0ntsZoabbQ1VIC/OGkmWUrBycgmv6w=
+        b=LqPXewkdtTo/W95qdSCe5Y+SL4xAgovKWWx/VXrJy1XOFZkbZsmmDY3J+9944GrVs
+         9II94+ptGqXXVqKPjBjDcM1MYbLd6c0yrFtjP01mmm1C88fLUTb2o8Fo8PkzbcV75F
+         VDygGUJS9j9yi13mc7ti2ypIba1LcbEQZvuyDFeU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Andrey Ignatov <rdna@fb.com>, Alexei Starovoitov <ast@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 015/117] bpf: Allow narrow loads with offset > 0
-Date:   Tue,  8 Jan 2019 14:24:43 -0500
-Message-Id: <20190108192628.121270-15-sashal@kernel.org>
+Cc:     Matthew Bobrowski <mbobrowski@mbobrowski.org>,
+        Jan Kara <jack@suse.cz>, Sasha Levin <sashal@kernel.org>,
+        linux-fsdevel@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 016/117] fanotify: return only user requested event types in event mask
+Date:   Tue,  8 Jan 2019 14:24:44 -0500
+Message-Id: <20190108192628.121270-16-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108192628.121270-1-sashal@kernel.org>
 References: <20190108192628.121270-1-sashal@kernel.org>
@@ -57,149 +58,113 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andrey Ignatov <rdna@fb.com>
+From: Matthew Bobrowski <mbobrowski@mbobrowski.org>
 
-[ Upstream commit 46f53a65d2de3e1591636c22b626b09d8684fd71 ]
+[ Upstream commit 2d10b23082a7eb8be508b3789f2e7250a88a5ddb ]
 
-Currently BPF verifier allows narrow loads for a context field only with
-offset zero. E.g. if there is a __u32 field then only the following
-loads are permitted:
-  * off=0, size=1 (narrow);
-  * off=0, size=2 (narrow);
-  * off=0, size=4 (full).
+Modify fanotify_should_send_event() so that it now returns a mask for
+an event that contains ONLY flags for the event types that have been
+specifically requested by the user. Flags that may have been included
+within the event mask, but have not been explicitly requested by the
+user will not be present in the returned value.
 
-On the other hand LLVM can generate a load with offset different than
-zero that make sense from program logic point of view, but verifier
-doesn't accept it.
+As an example, given the situation where a user requests events of type
+FAN_OPEN. Traditionally, the event mask returned within an event that
+occurred on a filesystem object that has been marked for monitoring and is
+opened, will only ever have the FAN_OPEN bit set. With the introduction of
+the new flags like FAN_OPEN_EXEC, and perhaps any other future event
+flags, there is a possibility of the returned event mask containing more
+than a single bit set, despite having only requested the single event type.
+Prior to these modifications performed to fanotify_should_send_event(), a
+user would have received a bundled event mask containing flags FAN_OPEN
+and FAN_OPEN_EXEC in the instance that a file was opened for execution via
+execve(), for example. This means that a user would receive event types
+in the returned event mask that have not been requested. This runs the
+possibility of breaking existing systems and causing other unforeseen
+issues.
 
-E.g. tools/testing/selftests/bpf/sendmsg4_prog.c has code:
+To mitigate this possibility, fanotify_should_send_event() has been
+modified to return the event mask containing ONLY event types explicitly
+requested by the user. This means that we will NOT report events that the
+user did no set a mask for, and we will NOT report events that the user
+has set an ignore mask for.
 
-  #define DST_IP4			0xC0A801FEU /* 192.168.1.254 */
-  ...
-  	if ((ctx->user_ip4 >> 24) == (bpf_htonl(DST_IP4) >> 24) &&
+The function name fanotify_should_send_event() has also been updated so
+that it's more relevant to what it has been designed to do.
 
-where ctx is struct bpf_sock_addr.
-
-Some versions of LLVM can produce the following byte code for it:
-
-       8:       71 12 07 00 00 00 00 00         r2 = *(u8 *)(r1 + 7)
-       9:       67 02 00 00 18 00 00 00         r2 <<= 24
-      10:       18 03 00 00 00 00 00 fe 00 00 00 00 00 00 00 00         r3 = 4261412864 ll
-      12:       5d 32 07 00 00 00 00 00         if r2 != r3 goto +7 <LBB0_6>
-
-where `*(u8 *)(r1 + 7)` means narrow load for ctx->user_ip4 with size=1
-and offset=3 (7 - sizeof(ctx->user_family) = 3). This load is currently
-rejected by verifier.
-
-Verifier code that rejects such loads is in bpf_ctx_narrow_access_ok()
-what means any is_valid_access implementation, that uses the function,
-works this way, e.g. bpf_skb_is_valid_access() for __sk_buff or
-sock_addr_is_valid_access() for bpf_sock_addr.
-
-The patch makes such loads supported. Offset can be in [0; size_default)
-but has to be multiple of load size. E.g. for __u32 field the following
-loads are supported now:
-  * off=0, size=1 (narrow);
-  * off=1, size=1 (narrow);
-  * off=2, size=1 (narrow);
-  * off=3, size=1 (narrow);
-  * off=0, size=2 (narrow);
-  * off=2, size=2 (narrow);
-  * off=0, size=4 (full).
-
-Reported-by: Yonghong Song <yhs@fb.com>
-Signed-off-by: Andrey Ignatov <rdna@fb.com>
-Signed-off-by: Alexei Starovoitov <ast@kernel.org>
+Signed-off-by: Matthew Bobrowski <mbobrowski@mbobrowski.org>
+Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+Signed-off-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/linux/filter.h | 16 +---------------
- kernel/bpf/verifier.c  | 21 ++++++++++++++++-----
- 2 files changed, 17 insertions(+), 20 deletions(-)
+ fs/notify/fanotify/fanotify.c | 28 ++++++++++++++++------------
+ 1 file changed, 16 insertions(+), 12 deletions(-)
 
-diff --git a/include/linux/filter.h b/include/linux/filter.h
-index a8b9d90a8042..25a556589ae8 100644
---- a/include/linux/filter.h
-+++ b/include/linux/filter.h
-@@ -675,24 +675,10 @@ static inline u32 bpf_ctx_off_adjust_machine(u32 size)
- 	return size;
+diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
+index e08a6647267b..f4f8359bc597 100644
+--- a/fs/notify/fanotify/fanotify.c
++++ b/fs/notify/fanotify/fanotify.c
+@@ -89,7 +89,13 @@ static int fanotify_get_response(struct fsnotify_group *group,
+ 	return ret;
  }
  
--static inline bool bpf_ctx_narrow_align_ok(u32 off, u32 size_access,
--					   u32 size_default)
--{
--	size_default = bpf_ctx_off_adjust_machine(size_default);
--	size_access  = bpf_ctx_off_adjust_machine(size_access);
--
--#ifdef __LITTLE_ENDIAN
--	return (off & (size_default - 1)) == 0;
--#else
--	return (off & (size_default - 1)) + size_access == size_default;
--#endif
--}
--
- static inline bool
- bpf_ctx_narrow_access_ok(u32 off, u32 size, u32 size_default)
+-static bool fanotify_should_send_event(struct fsnotify_iter_info *iter_info,
++/*
++ * This function returns a mask for an event that only contains the flags
++ * that have been specifically requested by the user. Flags that may have
++ * been included within the event mask, but have not been explicitly
++ * requested by the user, will not be present in the returned mask.
++ */
++static u32 fanotify_group_event_mask(struct fsnotify_iter_info *iter_info,
+ 				       u32 event_mask, const void *data,
+ 				       int data_type)
  {
--	return bpf_ctx_narrow_align_ok(off, size, size_default) &&
--	       size <= size_default && (size & (size - 1)) == 0;
-+	return size <= size_default && (size & (size - 1)) == 0;
+@@ -101,14 +107,14 @@ static bool fanotify_should_send_event(struct fsnotify_iter_info *iter_info,
+ 	pr_debug("%s: report_mask=%x mask=%x data=%p data_type=%d\n",
+ 		 __func__, iter_info->report_mask, event_mask, data, data_type);
+ 
+-	/* if we don't have enough info to send an event to userspace say no */
++	/* If we don't have enough info to send an event to userspace say no */
+ 	if (data_type != FSNOTIFY_EVENT_PATH)
+-		return false;
++		return 0;
+ 
+-	/* sorry, fanotify only gives a damn about files and dirs */
++	/* Sorry, fanotify only gives a damn about files and dirs */
+ 	if (!d_is_reg(path->dentry) &&
+ 	    !d_can_lookup(path->dentry))
+-		return false;
++		return 0;
+ 
+ 	fsnotify_foreach_obj_type(type) {
+ 		if (!fsnotify_iter_should_report_type(iter_info, type))
+@@ -129,13 +135,10 @@ static bool fanotify_should_send_event(struct fsnotify_iter_info *iter_info,
+ 
+ 	if (d_is_dir(path->dentry) &&
+ 	    !(marks_mask & FS_ISDIR & ~marks_ignored_mask))
+-		return false;
+-
+-	if (event_mask & FANOTIFY_OUTGOING_EVENTS &
+-	    marks_mask & ~marks_ignored_mask)
+-		return true;
++		return 0;
+ 
+-	return false;
++	return event_mask & FANOTIFY_OUTGOING_EVENTS & marks_mask &
++		~marks_ignored_mask;
  }
  
- #define bpf_classic_proglen(fprog) (fprog->len * sizeof(fprog->filter[0]))
-diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-index 51ba84d4d34a..a81f52b2c92e 100644
---- a/kernel/bpf/verifier.c
-+++ b/kernel/bpf/verifier.c
-@@ -5789,10 +5789,10 @@ static int convert_ctx_accesses(struct bpf_verifier_env *env)
- 	int i, cnt, size, ctx_field_size, delta = 0;
- 	const int insn_cnt = env->prog->len;
- 	struct bpf_insn insn_buf[16], *insn;
-+	u32 target_size, size_default, off;
- 	struct bpf_prog *new_prog;
- 	enum bpf_access_type type;
- 	bool is_narrower_load;
--	u32 target_size;
+ struct fanotify_event_info *fanotify_alloc_event(struct fsnotify_group *group,
+@@ -210,7 +213,8 @@ static int fanotify_handle_event(struct fsnotify_group *group,
  
- 	if (ops->gen_prologue || env->seen_direct_write) {
- 		if (!ops->gen_prologue) {
-@@ -5885,9 +5885,9 @@ static int convert_ctx_accesses(struct bpf_verifier_env *env)
- 		 * we will apply proper mask to the result.
- 		 */
- 		is_narrower_load = size < ctx_field_size;
-+		size_default = bpf_ctx_off_adjust_machine(ctx_field_size);
-+		off = insn->off;
- 		if (is_narrower_load) {
--			u32 size_default = bpf_ctx_off_adjust_machine(ctx_field_size);
--			u32 off = insn->off;
- 			u8 size_code;
+ 	BUILD_BUG_ON(HWEIGHT32(ALL_FANOTIFY_EVENT_BITS) != 10);
  
- 			if (type == BPF_WRITE) {
-@@ -5915,12 +5915,23 @@ static int convert_ctx_accesses(struct bpf_verifier_env *env)
- 		}
+-	if (!fanotify_should_send_event(iter_info, mask, data, data_type))
++	mask = fanotify_group_event_mask(iter_info, mask, data, data_type);
++	if (!mask)
+ 		return 0;
  
- 		if (is_narrower_load && size < target_size) {
--			if (ctx_field_size <= 4)
-+			u8 shift = (off & (size_default - 1)) * 8;
-+
-+			if (ctx_field_size <= 4) {
-+				if (shift)
-+					insn_buf[cnt++] = BPF_ALU32_IMM(BPF_RSH,
-+									insn->dst_reg,
-+									shift);
- 				insn_buf[cnt++] = BPF_ALU32_IMM(BPF_AND, insn->dst_reg,
- 								(1 << size * 8) - 1);
--			else
-+			} else {
-+				if (shift)
-+					insn_buf[cnt++] = BPF_ALU64_IMM(BPF_RSH,
-+									insn->dst_reg,
-+									shift);
- 				insn_buf[cnt++] = BPF_ALU64_IMM(BPF_AND, insn->dst_reg,
- 								(1 << size * 8) - 1);
-+			}
- 		}
- 
- 		new_prog = bpf_patch_insn_data(env, i + delta, insn_buf, cnt);
+ 	pr_debug("%s: group=%p inode=%p mask=%x\n", __func__, group, inode,
 -- 
 2.19.1
 
