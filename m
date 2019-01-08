@@ -2,102 +2,114 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFD4AC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:06:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32F4FC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:06:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E13020660
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:06:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LIXyMLEB"
+	by mail.kernel.org (Postfix) with ESMTP id EA5FB20827
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:06:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1546977975;
+	bh=e3TTXzWvOPSkTFCo1MXSUZNkdvFxv/ItDEWx9XNStgg=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=JGhsu86BnfuHkGI6LkLVCMqOne1tOwHL+ztQC+ms1XvaxZM0le04FJYJ5evVuJpuh
+	 TAenYRVUtIE+lc++ByNuvbF7NSS4GuaQbq2iHohthfka9oYqgs/JjkTA9QXjjjAinq
+	 QRowpHtjldDOotS8ci5mMMw7IPI2+8CLAV9+2FzY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730429AbfAHUFy (ORCPT
+        id S1729153AbfAHT2J (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 15:05:54 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:42295 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732070AbfAHUF2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 15:05:28 -0500
-Received: by mail-lf1-f67.google.com with SMTP id l10so3870515lfh.9;
-        Tue, 08 Jan 2019 12:05:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=guPCTwuWnn47rPONmcgssOljllOslnow0b18H5K7mjI=;
-        b=LIXyMLEBheOJO3UAd9rTK0qeugFaM2RBAkfmNV0KTvKGlnkjD8AM+hWkuZ2ALCY0AV
-         X/YOpK6l9DlwYTpfVIPLQ45RCkVeGW7xOYw5AKBUudMZ7uwcqmdhIsflNSqiOfrQ3muS
-         9g1PbWTm7BPsElNOaTEO3j+vGh1WubrQCuuxoiFDY833BRGvkWxQjZv3NWkV2rnJ5qua
-         hZP6SA/82NckRg2twRkmDdj47lOUrTzGEvn4zhcLaNX6ci2iEbdNONNPhz529vtmiUeR
-         wqergCCjpmbR0PQz8Xq4OzD/YGMT2npObu/ulteYwyCJUd0DsXbOvPjAiE/vm8iJFci/
-         pPAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=guPCTwuWnn47rPONmcgssOljllOslnow0b18H5K7mjI=;
-        b=YRStbyOHCvwog6RvzclIPeC0qdODU3+6IOlE5reXb046UMlO3lb5xu3o8OjmQNy0X9
-         aB5neVvVgOdC3n2JQ1FUU4BHELy3Ijr8uuQ40u3294eQ/cXqr4ggGh22qtGo3NXszQQr
-         dtWAR3EM4oVV7adobaj1WaNprYWxVmD7J2OfQEMp26w97PoX2GpCpA6LldUyXowJ6WAm
-         KLhgw7tD67HmNpenGVsnNMbAoOavkwdjuU4zCf4E1dR8u1iPLZPzWkrT94emoGoxihHF
-         zyhU7xw/NQ7HD3J5rKD/xXbfoZI7sM2uzpA1SLNWEpr/Wa2yV8cavmr0AHqnz6LlliLs
-         a1MA==
-X-Gm-Message-State: AJcUukd+AROHG7cxAQYzhyHxTGxw8Vk4DONT7QN4eZHjpWM5fQPyBCPi
-        UwcjurpaV6wv7s9IZTVIrzM=
-X-Google-Smtp-Source: ALg8bN5Tg3hlmHVJyiBjR7tOBcXM6cK0vSXgZxUTEU4dG4QVgn9I3JC31Hr6TBOtFWvOVpy3xQxK0w==
-X-Received: by 2002:a19:e01e:: with SMTP id x30mr1778838lfg.89.1546977925100;
-        Tue, 08 Jan 2019 12:05:25 -0800 (PST)
-Received: from localhost.localdomain ([2a02:a315:5445:5300:d033:e708:8ec7:810d])
-        by smtp.googlemail.com with ESMTPSA id y23-v6sm14486768ljk.95.2019.01.08.12.05.23
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 08 Jan 2019 12:05:24 -0800 (PST)
-From:   =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
-To:     kgene@kernel.org
-Cc:     krzk@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        linux@armlinux.org.uk, viresh.kumar@linaro.org, rjw@rjwysocki.net,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
-Subject: [PATCH 2/4] cpufreq: s5pv210: Don't flood kernel log after cpufreq change
-Date:   Tue,  8 Jan 2019 21:05:07 +0100
-Message-Id: <20190108200509.30494-3-pawel.mikolaj.chmiel@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190108200509.30494-1-pawel.mikolaj.chmiel@gmail.com>
-References: <20190108200509.30494-1-pawel.mikolaj.chmiel@gmail.com>
+        Tue, 8 Jan 2019 14:28:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34904 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729888AbfAHT2G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:28:06 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 08F1820645;
+        Tue,  8 Jan 2019 19:28:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1546975685;
+        bh=e3TTXzWvOPSkTFCo1MXSUZNkdvFxv/ItDEWx9XNStgg=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=sumip6CFDufuVtV1EB+ekr2E7jWDD55DK0uxjL0dlP3Pg8Nw4HEKvMlzssI/oAv7a
+         +RuOsZXTQHDidNjAy/MJ6r3/T86QlamkQhfebjXjbH22esmkeb11s/Fb1RkTn4z4ug
+         PhwZeC8a/zomLTa/BpJPSDcBRy/2BiJH610EtUp0=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     "Michael J. Ruhl" <michael.j.ruhl@intel.com>,
+        Dennis Dalessandro <dennis.dalessandro@intel.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Sasha Levin <sashal@kernel.org>, linux-rdma@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 053/117] IB/hfi1: Incorrect sizing of sge for PIO will OOPs
+Date:   Tue,  8 Jan 2019 14:25:21 -0500
+Message-Id: <20190108192628.121270-53-sashal@kernel.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190108192628.121270-1-sashal@kernel.org>
+References: <20190108192628.121270-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This commit replaces printk with pr_debug, so we don't flood kernel log.
+From: "Michael J. Ruhl" <michael.j.ruhl@intel.com>
 
-Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
+[ Upstream commit dbc2970caef74e8ff41923d302aa6fb5a4812d0e ]
+
+An incorrect sge sizing in the HFI PIO path will cause an OOPs similar to
+this:
+
+BUG: unable to handle kernel NULL pointer dereference at (null)
+IP: [] hfi1_verbs_send_pio+0x3d8/0x530 [hfi1]
+PGD 0
+Oops: 0000 1 SMP
+ Call Trace:
+ ? hfi1_verbs_send_dma+0xad0/0xad0 [hfi1]
+ hfi1_verbs_send+0xdf/0x250 [hfi1]
+ ? make_rc_ack+0xa80/0xa80 [hfi1]
+ hfi1_do_send+0x192/0x430 [hfi1]
+ hfi1_do_send_from_rvt+0x10/0x20 [hfi1]
+ rvt_post_send+0x369/0x820 [rdmavt]
+ ib_uverbs_post_send+0x317/0x570 [ib_uverbs]
+ ib_uverbs_write+0x26f/0x420 [ib_uverbs]
+ ? security_file_permission+0x21/0xa0
+ vfs_write+0xbd/0x1e0
+ ? mntput+0x24/0x40
+ SyS_write+0x7f/0xe0
+ system_call_fastpath+0x16/0x1b
+
+Fix by adding the missing sizing check to correctly determine the sge
+length.
+
+Fixes: 7724105686e7 ("IB/hfi1: add driver files")
+Reviewed-by: Mike Marciniszyn <mike.marciniszyn@intel.com>
+Signed-off-by: Michael J. Ruhl <michael.j.ruhl@intel.com>
+Signed-off-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/cpufreq/s5pv210-cpufreq.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/infiniband/hw/hfi1/verbs.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/cpufreq/s5pv210-cpufreq.c b/drivers/cpufreq/s5pv210-cpufreq.c
-index dbecd7667db2..f51697f1e0b3 100644
---- a/drivers/cpufreq/s5pv210-cpufreq.c
-+++ b/drivers/cpufreq/s5pv210-cpufreq.c
-@@ -481,7 +481,7 @@ static int s5pv210_target(struct cpufreq_policy *policy, unsigned int index)
- 				arm_volt, arm_volt_max);
- 	}
+diff --git a/drivers/infiniband/hw/hfi1/verbs.c b/drivers/infiniband/hw/hfi1/verbs.c
+index a365089a9305..b7257d7dd925 100644
+--- a/drivers/infiniband/hw/hfi1/verbs.c
++++ b/drivers/infiniband/hw/hfi1/verbs.c
+@@ -919,6 +919,8 @@ int hfi1_verbs_send_pio(struct rvt_qp *qp, struct hfi1_pkt_state *ps,
  
--	printk(KERN_DEBUG "Perf changed[L%d]\n", index);
-+	pr_debug("Perf changed[L%d]\n", index);
- 
- exit:
- 	mutex_unlock(&set_freq_lock);
+ 				if (slen > len)
+ 					slen = len;
++				if (slen > ss->sge.sge_length)
++					slen = ss->sge.sge_length;
+ 				rvt_update_sge(ss, slen, false);
+ 				seg_pio_copy_mid(pbuf, addr, slen);
+ 				len -= slen;
 -- 
-2.17.1
+2.19.1
 
