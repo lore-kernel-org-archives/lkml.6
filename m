@@ -2,135 +2,220 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92D7CC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 15:08:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A36DEC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 15:14:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D1A020827
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 15:08:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 71FE820685
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 15:14:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728336AbfAHPID (ORCPT
+        id S1728265AbfAHPON (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 10:08:03 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:36145 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727840AbfAHPID (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 10:08:03 -0500
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 43YwcH5H4pz9v15q;
-        Tue,  8 Jan 2019 16:07:59 +0100 (CET)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id wM7Vhfiv3EJu; Tue,  8 Jan 2019 16:07:59 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 43YwcH4p4yz9v15p;
-        Tue,  8 Jan 2019 16:07:59 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 1CF238B844;
-        Tue,  8 Jan 2019 16:08:01 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id 5VqcRETIkO1j; Tue,  8 Jan 2019 16:08:01 +0100 (CET)
-Received: from po16846vm.idsi0.si.c-s.fr (unknown [192.168.4.90])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id E76448B7DF;
-        Tue,  8 Jan 2019 16:08:00 +0100 (CET)
-Received: by po16846vm.idsi0.si.c-s.fr (Postfix, from userid 0)
-        id B6481717F2; Tue,  8 Jan 2019 15:08:00 +0000 (UTC)
-Message-Id: <fc763a05d2b9dbe2cb6124d97ab9a0fe9e3e5350.1546960038.git.christophe.leroy@c-s.fr>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH] powerpc/ipic: drop unused functions
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date:   Tue,  8 Jan 2019 15:08:00 +0000 (UTC)
+        Tue, 8 Jan 2019 10:14:13 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:34050 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727764AbfAHPON (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 10:14:13 -0500
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 6BEFAD4D1CA368F306C2;
+        Tue,  8 Jan 2019 23:14:07 +0800 (CST)
+Received: from localhost.localdomain (10.67.212.75) by
+ DGGEMS406-HUB.china.huawei.com (10.3.19.206) with Microsoft SMTP Server id
+ 14.3.408.0; Tue, 8 Jan 2019 23:13:58 +0800
+From:   John Garry <john.garry@huawei.com>
+To:     <jejb@linux.vnet.ibm.com>, <martin.petersen@oracle.com>
+CC:     <linuxarm@huawei.com>, <linux-kernel@vger.kernel.org>,
+        <linux-scsi@vger.kernel.org>, John Garry <john.garry@huawei.com>
+Subject: [PATCH v2] scsi: sd: Make protection lookup tables static and relocate functions
+Date:   Tue, 8 Jan 2019 23:14:52 +0800
+Message-ID: <1546960492-218420-1-git-send-email-john.garry@huawei.com>
+X-Mailer: git-send-email 2.8.1
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.67.212.75]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ipic_set_highest_priority(), ipic_enable_mcp() and ipic_disable_mcp()
-are unused. This patch drops them.
+Currently the protection lookup tables in sd_prot_flag_mask() and
+sd_prot_op() are declared as non-static. As such, they will be rebuilt
+for each respective function call.
 
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+Optimise by making them static.
+
+This saves ~100B object code for sd.c:
+
+Before:
+   text	   data	    bss	    dec	    hex	filename
+  25403	   1024	     16	  26443	   674b	drivers/scsi/sd.o
+
+After:
+  text	   data	    bss	    dec	    hex	filename
+  25299	   1024	     16	  26339	   66e3	drivers/scsi/sd.o
+
+In addition, since those same functions are declared in sd.h, but each are
+only referenced in sd.c, relocate them to that same c file.
+
+The inline specifier is dropped also, since gcc should be able to make the
+decision to inline.
+
+Signed-off-by: John Garry <john.garry@huawei.com>
 ---
- arch/powerpc/include/asm/ipic.h |  3 ---
- arch/powerpc/sysdev/ipic.c      | 35 -----------------------------------
- 2 files changed, 38 deletions(-)
 
-diff --git a/arch/powerpc/include/asm/ipic.h b/arch/powerpc/include/asm/ipic.h
-index 3dbd47f2bffe..abad50a745db 100644
---- a/arch/powerpc/include/asm/ipic.h
-+++ b/arch/powerpc/include/asm/ipic.h
-@@ -69,10 +69,7 @@ enum ipic_mcp_irq {
- 	IPIC_MCP_MU   = 7,
- };
+Differences v1->v2:
+- relocate functions to sd.c and drop inline specifier
+
+diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
+index 3bb2b33..e7dcc02 100644
+--- a/drivers/scsi/sd.c
++++ b/drivers/scsi/sd.c
+@@ -658,6 +658,68 @@ static int sd_sec_submit(void *data, u16 spsp, u8 secp, void *buffer,
+ }
+ #endif /* CONFIG_BLK_SED_OPAL */
  
--extern void ipic_set_highest_priority(unsigned int irq);
- extern void ipic_set_default_priority(void);
--extern void ipic_enable_mcp(enum ipic_mcp_irq mcp_irq);
--extern void ipic_disable_mcp(enum ipic_mcp_irq mcp_irq);
- extern u32 ipic_get_mcp_status(void);
- extern void ipic_clear_mcp_status(u32 mask);
- 
-diff --git a/arch/powerpc/sysdev/ipic.c b/arch/powerpc/sysdev/ipic.c
-index 8030a0f55e96..fd129c8ecceb 100644
---- a/arch/powerpc/sysdev/ipic.c
-+++ b/arch/powerpc/sysdev/ipic.c
-@@ -771,21 +771,6 @@ struct ipic * __init ipic_init(struct device_node *node, unsigned int flags)
- 	return ipic;
++/*
++ * Look up the DIX operation based on whether the command is read or
++ * write and whether dix and dif are enabled.
++ */
++static unsigned int sd_prot_op(bool write, bool dix, bool dif)
++{
++	/* Lookup table: bit 2 (write), bit 1 (dix), bit 0 (dif) */
++	static const unsigned int ops[] = {	/* wrt dix dif */
++		SCSI_PROT_NORMAL,		/*  0	0   0  */
++		SCSI_PROT_READ_STRIP,		/*  0	0   1  */
++		SCSI_PROT_READ_INSERT,		/*  0	1   0  */
++		SCSI_PROT_READ_PASS,		/*  0	1   1  */
++		SCSI_PROT_NORMAL,		/*  1	0   0  */
++		SCSI_PROT_WRITE_INSERT,		/*  1	0   1  */
++		SCSI_PROT_WRITE_STRIP,		/*  1	1   0  */
++		SCSI_PROT_WRITE_PASS,		/*  1	1   1  */
++	};
++
++	return ops[write << 2 | dix << 1 | dif];
++}
++
++/*
++ * Returns a mask of the protection flags that are valid for a given DIX
++ * operation.
++ */
++static unsigned int sd_prot_flag_mask(unsigned int prot_op)
++{
++	static const unsigned int flag_mask[] = {
++		[SCSI_PROT_NORMAL]		= 0,
++
++		[SCSI_PROT_READ_STRIP]		= SCSI_PROT_TRANSFER_PI |
++						  SCSI_PROT_GUARD_CHECK |
++						  SCSI_PROT_REF_CHECK |
++						  SCSI_PROT_REF_INCREMENT,
++
++		[SCSI_PROT_READ_INSERT]		= SCSI_PROT_REF_INCREMENT |
++						  SCSI_PROT_IP_CHECKSUM,
++
++		[SCSI_PROT_READ_PASS]		= SCSI_PROT_TRANSFER_PI |
++						  SCSI_PROT_GUARD_CHECK |
++						  SCSI_PROT_REF_CHECK |
++						  SCSI_PROT_REF_INCREMENT |
++						  SCSI_PROT_IP_CHECKSUM,
++
++		[SCSI_PROT_WRITE_INSERT]	= SCSI_PROT_TRANSFER_PI |
++						  SCSI_PROT_REF_INCREMENT,
++
++		[SCSI_PROT_WRITE_STRIP]		= SCSI_PROT_GUARD_CHECK |
++						  SCSI_PROT_REF_CHECK |
++						  SCSI_PROT_REF_INCREMENT |
++						  SCSI_PROT_IP_CHECKSUM,
++
++		[SCSI_PROT_WRITE_PASS]		= SCSI_PROT_TRANSFER_PI |
++						  SCSI_PROT_GUARD_CHECK |
++						  SCSI_PROT_REF_CHECK |
++						  SCSI_PROT_REF_INCREMENT |
++						  SCSI_PROT_IP_CHECKSUM,
++	};
++
++	return flag_mask[prot_op];
++}
++
+ static unsigned char sd_setup_protect_cmnd(struct scsi_cmnd *scmd,
+ 					   unsigned int dix, unsigned int dif)
+ {
+diff --git a/drivers/scsi/sd.h b/drivers/scsi/sd.h
+index 1d63f3a..6e68baf 100644
+--- a/drivers/scsi/sd.h
++++ b/drivers/scsi/sd.h
+@@ -188,68 +188,6 @@ static inline sector_t sectors_to_logical(struct scsi_device *sdev, sector_t sec
+ 	return sector >> (ilog2(sdev->sector_size) - 9);
  }
  
--void ipic_set_highest_priority(unsigned int virq)
+-/*
+- * Look up the DIX operation based on whether the command is read or
+- * write and whether dix and dif are enabled.
+- */
+-static inline unsigned int sd_prot_op(bool write, bool dix, bool dif)
 -{
--	struct ipic *ipic = ipic_from_irq(virq);
--	unsigned int src = virq_to_hw(virq);
--	u32 temp;
+-	/* Lookup table: bit 2 (write), bit 1 (dix), bit 0 (dif) */
+-	const unsigned int ops[] = {	/* wrt dix dif */
+-		SCSI_PROT_NORMAL,	/*  0	0   0  */
+-		SCSI_PROT_READ_STRIP,	/*  0	0   1  */
+-		SCSI_PROT_READ_INSERT,	/*  0	1   0  */
+-		SCSI_PROT_READ_PASS,	/*  0	1   1  */
+-		SCSI_PROT_NORMAL,	/*  1	0   0  */
+-		SCSI_PROT_WRITE_INSERT, /*  1	0   1  */
+-		SCSI_PROT_WRITE_STRIP,	/*  1	1   0  */
+-		SCSI_PROT_WRITE_PASS,	/*  1	1   1  */
+-	};
 -
--	temp = ipic_read(ipic->regs, IPIC_SICFR);
--
--	/* clear and set HPI */
--	temp &= 0x7f000000;
--	temp |= (src & 0x7f) << 24;
--
--	ipic_write(ipic->regs, IPIC_SICFR, temp);
+-	return ops[write << 2 | dix << 1 | dif];
 -}
 -
- void ipic_set_default_priority(void)
- {
- 	ipic_write(primary_ipic->regs, IPIC_SIPRR_A, IPIC_PRIORITY_DEFAULT);
-@@ -796,26 +781,6 @@ void ipic_set_default_priority(void)
- 	ipic_write(primary_ipic->regs, IPIC_SMPRR_B, IPIC_PRIORITY_DEFAULT);
- }
+-/*
+- * Returns a mask of the protection flags that are valid for a given DIX
+- * operation.
+- */
+-static inline unsigned int sd_prot_flag_mask(unsigned int prot_op)
+-{
+-	const unsigned int flag_mask[] = {
+-		[SCSI_PROT_NORMAL]		= 0,
+-
+-		[SCSI_PROT_READ_STRIP]		= SCSI_PROT_TRANSFER_PI |
+-						  SCSI_PROT_GUARD_CHECK |
+-						  SCSI_PROT_REF_CHECK |
+-						  SCSI_PROT_REF_INCREMENT,
+-
+-		[SCSI_PROT_READ_INSERT]		= SCSI_PROT_REF_INCREMENT |
+-						  SCSI_PROT_IP_CHECKSUM,
+-
+-		[SCSI_PROT_READ_PASS]		= SCSI_PROT_TRANSFER_PI |
+-						  SCSI_PROT_GUARD_CHECK |
+-						  SCSI_PROT_REF_CHECK |
+-						  SCSI_PROT_REF_INCREMENT |
+-						  SCSI_PROT_IP_CHECKSUM,
+-
+-		[SCSI_PROT_WRITE_INSERT]	= SCSI_PROT_TRANSFER_PI |
+-						  SCSI_PROT_REF_INCREMENT,
+-
+-		[SCSI_PROT_WRITE_STRIP]		= SCSI_PROT_GUARD_CHECK |
+-						  SCSI_PROT_REF_CHECK |
+-						  SCSI_PROT_REF_INCREMENT |
+-						  SCSI_PROT_IP_CHECKSUM,
+-
+-		[SCSI_PROT_WRITE_PASS]		= SCSI_PROT_TRANSFER_PI |
+-						  SCSI_PROT_GUARD_CHECK |
+-						  SCSI_PROT_REF_CHECK |
+-						  SCSI_PROT_REF_INCREMENT |
+-						  SCSI_PROT_IP_CHECKSUM,
+-	};
+-
+-	return flag_mask[prot_op];
+-}
+-
+ #ifdef CONFIG_BLK_DEV_INTEGRITY
  
--void ipic_enable_mcp(enum ipic_mcp_irq mcp_irq)
--{
--	struct ipic *ipic = primary_ipic;
--	u32 temp;
--
--	temp = ipic_read(ipic->regs, IPIC_SERMR);
--	temp |= (1 << (31 - mcp_irq));
--	ipic_write(ipic->regs, IPIC_SERMR, temp);
--}
--
--void ipic_disable_mcp(enum ipic_mcp_irq mcp_irq)
--{
--	struct ipic *ipic = primary_ipic;
--	u32 temp;
--
--	temp = ipic_read(ipic->regs, IPIC_SERMR);
--	temp &= (1 << (31 - mcp_irq));
--	ipic_write(ipic->regs, IPIC_SERMR, temp);
--}
--
- u32 ipic_get_mcp_status(void)
- {
- 	return primary_ipic ? ipic_read(primary_ipic->regs, IPIC_SERSR) : 0;
+ extern void sd_dif_config_host(struct scsi_disk *);
 -- 
-2.13.3
+1.9.1
 
