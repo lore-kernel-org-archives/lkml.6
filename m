@@ -2,114 +2,114 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB14BC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 17:19:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B64EC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 17:20:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7CCC12070B
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 17:19:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E9101206A3
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 17:20:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cxZvZiiq"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="KELjYcJ+";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="fMYKBcPd"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728590AbfAHRTo (ORCPT
+        id S1728716AbfAHRUC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 12:19:44 -0500
-Received: from mail-it1-f194.google.com ([209.85.166.194]:35425 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727484AbfAHRTo (ORCPT
+        Tue, 8 Jan 2019 12:20:02 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:38568 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728398AbfAHRUB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 12:19:44 -0500
-Received: by mail-it1-f194.google.com with SMTP id p197so7061776itp.0
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jan 2019 09:19:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Zpa2fL7q2YZTofq9H0F49nWh5nPFN0Bl9DMZ4qDyzi8=;
-        b=cxZvZiiqvt5CbEYPCEFQ65p+1B3pprinpPzF0PdVI+SQwvkKXidk3R9GBFec3EBXOG
-         looVJcRTokGt2rmKessd1x48pAZfXc/oyqe0rLNguuE7UP8KZXQdfnq2Ec3oYN/z8aoZ
-         za/k9/GmJj5ve/Ca6wG7oAW46b3EGCsY+o4X0/xHZXGG8wpKi4VYlXA7DYe9NDqfcF8X
-         ZJaA4iOUCV31JBOy8EKyyGv961qKGEdQMaox0OCetrMH8J4HISGFmGOXYJsRCpXGtTmW
-         Ewj3Jd5FvO9/f/guObVTOHdvysCFzrMb44Rr3vSfE4NIB5NYOCNjNQE0UXrjjo4ldzQM
-         0waQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Zpa2fL7q2YZTofq9H0F49nWh5nPFN0Bl9DMZ4qDyzi8=;
-        b=r5CtftsBpDk7JSOavc2aFd+AbwrRgczt8S1gj8WCsuD9KeKHxec86qVHP/3Skqu0Ye
-         4brY3OfZceiR3qbOlTurFZH02prV03WkcPJ0JIkFxZEGryINGcg23PPS6JBnRXiJlm5c
-         3KWPSII7RfWSIKdmDtPHm12l/Ip7IM545hWrN7vJlmzeBawzbQCC0U2g1AlixWuC6AXK
-         V6IUDXL0GCmVcxPxi4HbBioaCq2vUSPBRzKw9DBPtOju31zFNtGZBxQLz71l4pyuKfxr
-         X3TnYa8qduvbzfooxXFiq5TDVpIODIn8c7g5F5OHLMFhE9XKunVimdiEHsBMvjziuMYA
-         15dg==
-X-Gm-Message-State: AJcUukfV5UOEG/AaAQJC/Kolhy9y+/smL7g7LEDpzsRiOg6e/1WoPT5h
-        plLaVqHgzSR6qn9eK4RgoWLic7NB8fTNbHM49a9lCw==
-X-Google-Smtp-Source: ALg8bN6Ou/5/xF0tY5jUcJTvLf6IctdCv0epIHr4OrR571e81CpaZEmznhbtmqhgePpt4eVAybK2QqxTe3LusJPZvgs=
-X-Received: by 2002:a24:4a95:: with SMTP id k143mr1803645itb.77.1546967982815;
- Tue, 08 Jan 2019 09:19:42 -0800 (PST)
+        Tue, 8 Jan 2019 12:20:01 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 2891260240; Tue,  8 Jan 2019 17:20:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1546968000;
+        bh=Z/fsdlkSrWXWnipD4yOxb0GHEOwi50y5i55k2OwF9e0=;
+        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+        b=KELjYcJ+P4bzqEmFI7Du9uLrLRdcdmgWqq+JSvP3jI0qmBo7MyTH/NGelsHgt21fj
+         KDxFOfSq9F5OzXz+oR1EFHNbWboqXqFpumMhKAHZ5+4ViNqSkBlit0Fd2vFkoKMIT1
+         Ueb+swDlpBslQRQo28zaJfGIrGeh6Z/vSEPiZYd4=
+Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id E5360601D1;
+        Tue,  8 Jan 2019 17:19:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1546967999;
+        bh=Z/fsdlkSrWXWnipD4yOxb0GHEOwi50y5i55k2OwF9e0=;
+        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+        b=fMYKBcPdrlQvtDvQLK9CwcJZ0DW0BIsslZJTwAM9eHZchFpswXQgupFLOOx9y1k5Z
+         eUsN7nuSoTaBPt7Pl+qTcn+tx/Z0a8MJkHg8OZiNRQlwUXTrQJGqCMBSZwqx9uJq3m
+         3YsuGFUFHI5UzRl7gbMXBARqeI247RuKWkr7AcEw=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E5360601D1
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+From:   Kalle Valo <kvalo@codeaurora.org>
+To:     "Garnayak\, Sarada Prasanna" <sarada.prasanna.garnayak@intel.com>
+Cc:     "Berg\, Johannes" <johannes.berg@intel.com>,
+        Jouni Malinen <j@w1.fi>,
+        Sergey Matyukevich <sergey.matyukevich.os@quantenna.com>,
+        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-wireless@vger.kernel.org
+Subject: Re: [RFC PATCH v1] cfg80211/nl80211: add support for AID assignment by driver : https://patchwork.kernel.org/patch/10726899/
+References: <751CDD2CADF63344AAEAE35AACE235DCCC3BCD@BGSMSX106.gar.corp.intel.com>
+Date:   Tue, 08 Jan 2019 19:19:55 +0200
+In-Reply-To: <751CDD2CADF63344AAEAE35AACE235DCCC3BCD@BGSMSX106.gar.corp.intel.com>
+        (Sarada Prasanna Garnayak's message of "Sat, 5 Jan 2019 13:35:08
+        +0000")
+Message-ID: <87a7kbqd6s.fsf@kamboji.qca.qualcomm.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
 MIME-Version: 1.0
-References: <1545816338-1171-1-git-send-email-wei.w.wang@intel.com>
- <1545816338-1171-6-git-send-email-wei.w.wang@intel.com> <CALMp9eTOV3Twep9gL-9S+Pe_k-=v17CcJTLb5=+7_pjvWf9RfQ@mail.gmail.com>
- <5C2DC132.9050103@intel.com> <CALMp9eQ0nzKBP7az72G+eRe8C4KQQUBdj+7oD_WJHSFfYkj+Vw@mail.gmail.com>
- <5C3318A1.9090009@intel.com> <CALMp9eSyC5arXkrFdJKCx=cG7uF6tVgkbSJbUJArf4cFje13rQ@mail.gmail.com>
- <20190107182012.GL6118@tassilo.jf.intel.com> <CALMp9eT2J=qFTEEpsym_aqeCRwyCquTYnY8=taZ3nY3rs8WeJA@mail.gmail.com>
- <5C34570D.6010208@intel.com>
-In-Reply-To: <5C34570D.6010208@intel.com>
-From:   Jim Mattson <jmattson@google.com>
-Date:   Tue, 8 Jan 2019 09:19:31 -0800
-Message-ID: <CALMp9eQad9UkPMd+VUyCMqi07BoiOU3F5Ws_Re7o_vkd_Z-Dkg@mail.gmail.com>
-Subject: Re: [PATCH v4 05/10] KVM/x86: expose MSR_IA32_PERF_CAPABILITIES to
- the guest
-To:     Wei Wang <wei.w.wang@intel.com>
-Cc:     Andi Kleen <ak@linux.intel.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        kvm list <kvm@vger.kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Kan Liang <kan.liang@intel.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        like.xu@intel.com, Jann Horn <jannh@google.com>,
-        arei.gonglei@huawei.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 7, 2019 at 11:48 PM Wei Wang <wei.w.wang@intel.com> wrote:
->
-> On 01/08/2019 02:48 AM, Jim Mattson wrote:
-> > On Mon, Jan 7, 2019 at 10:20 AM Andi Kleen <ak@linux.intel.com> wrote:
-> >>> The issue is compatibility. Prior to your change, reading this MSR
-> >>> from a VM would raise #GP. After your change, it won't. That means
-> >>> that if you have a VM migrating between hosts with kernel versions
-> >>> before and after this change, the results will be inconsistent. In the
-> >> No it will not be. All Linux kernel uses of this MSR are guarded
-> >> by a CPUID check.
-> > Linux usage is irrelevant to the architected behavior of the virtual
-> > CPU. According to volume 4 of the SDM, this MSR is only supported when
-> > CPUID.01H:ECX.PDCM [bit 15] is set. Therefore, kvm should raise #GP
-> > whenever a guest tries to read this MSR and the guest's
-> > CPUID.01H:ECX.PDCM [bit 15] is clear.
-> >
->
-> Probably one more check would be better:
->
-> if (!boot_cpu_has(X86_FEATURE_PDCM) ||
->      !guest_cpuid_has(vcpu, X86_FEATURE_PDCM))
->      return 1;
++ linux-wireless
 
-Thanks for that change!
+"Garnayak, Sarada Prasanna" <sarada.prasanna.garnayak@intel.com> writes:
 
-> (host isn't expected to read this MSR when PDCM is not supported
-> by the guest, so don't have "!msr_info->host_initiate" added to above)
+> Thank you so much for reviewing my RFC patch and here I would like to
+> address the big concerns/comments about this RFC patch like=20
+>
+> =C3=98 What are the exact use case and potential user of this patch.
+>
+> =C3=98 How the Hostapd will handle this get aid and free aid.
+>
+> =C3=98 etc.
+>
+> In the current implementation in WLAN Stack, the hostapd is assigning
+> the AID for a station during association.=20
+>
+> But we have a few WLAN hardware which is maintaining the AID in the
+> WLAN hardware level itself and the firmware checking this AID in the
+> hardware level according to that the firmware is taking action on
+> station management
+>
+> like (Station DB management, BA agreement, SMPS and TM management
+> frame etc....). For this reason, we need these get_aid/free_aid.=20
+>
+> Also here I am attaching the Hostapd RFC Patch for the same. PFA
+> (hostapd patch, call flow diagram and comments on this kernel patch)
+>
+> Please review the call flow below:
 
-In keeping with commit 44883f01fe6ae ("KVM: x86: ensure all MSRs can
-always be KVM_GET/SET_MSR'd"), I think the host_initiated check should
-be added.
+You made few crucial mistakes:
+
+1. You did not CC linux-wireless.
+
+2. You submitted the message as HTML and our lists automatically filter
+   those.
+
+3. You attached a powerpoint file and I would hope that our lists
+   automatically filter those as well. At least I'm not going to open
+   any random powerpoint/word files I receive via email.
+
+--=20
+Kalle Valo
