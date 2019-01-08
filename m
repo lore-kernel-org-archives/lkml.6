@@ -2,59 +2,52 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3A46C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:44:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAE7CC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:44:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B7DED2063F
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:44:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9DF402063F
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:44:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546976676;
-	bh=Z2P1XJyzm3GX2FgR4hSOBtGDRsxLV7hUmQp7WgYrPuA=;
+	s=default; t=1546976681;
+	bh=gRXeE1hDMgfi3F4rfdx46LtRdoYNsJ0O4UGzKZxXTvY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=hUPKyGXdc6bxAm9w2Fz1mU1VrK3fp/45RHGpScIgvRCY2tX2GJsYdO2dwO2EYnPWq
-	 OXBcTIWafWkXlWZLFgJ62g/jEoAzPMok8sWpvh+OPa7Iv5kZFKND9wpkaHa/E6ITZe
-	 LF0BlnjulvxUpYRvalVxM5GQD1+bE5lpE+8JDZFU=
+	b=ycwvjpSS0zRWxcKLjMuzVn5YmJ06uHlcA5KLTr2qLKCQEovXOQjzEEco2oqI/lvoF
+	 Hxc5xxqDVm9t4WY1VYLOX3xf2KxJEcZG5aXDK9DRkV/m37GICEuC+HNUfrQ5bj6ACM
+	 mdasj2CidYM8U6pWTaN5RN+pKQcbcLaXycObnqhI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732118AbfAHTof (ORCPT
+        id S1731736AbfAHTde (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:44:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42352 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 14:33:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42242 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731065AbfAHTdf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:33:35 -0500
+        id S1731711AbfAHTd3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:33:29 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 62608205C9;
-        Tue,  8 Jan 2019 19:33:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 87E1E20645;
+        Tue,  8 Jan 2019 19:33:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546976013;
-        bh=Z2P1XJyzm3GX2FgR4hSOBtGDRsxLV7hUmQp7WgYrPuA=;
+        s=default; t=1546976008;
+        bh=gRXeE1hDMgfi3F4rfdx46LtRdoYNsJ0O4UGzKZxXTvY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=coJ7Gn2iErxVKRfMCuutP3oehy2rvrg8/i+CgIivjK0GC0krchzWt6kWC4vUl4Ji1
-         4vOvm1R3fMC92cL+TsFhQxsqkOT5hjGQ/P2JXZExS+YpsaNlGtujLdrKtQVdG5yuvo
-         FlxpcSOEDoqylX1sMwdp2VbBZWAQqsd8/eF0uddM=
+        b=BcjIfrrMODKAlr5Ohq8JmzPpvW2m4n4T9t5OTyYe0Oagfm8uyD/1FBIYfeliXM4wE
+         tr/meFdQSm5NVepYq6m3aY7fj+3J/vjkF4t3YajTrgpu0ar7fdUIXRjNEP2f+ekuEf
+         uEQ4UKJP3JWkJPjzKiwwh8MF3Qv2mF/KRoDeEk3M=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Ramalingam C <ramalingam.c@intel.com>,
-        Arend van Spriel <aspriel@gmail.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Joe Perches <joe@perches.com>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+Cc:     Nikos Tsironis <ntsironis@arrikto.com>,
+        Ilias Tsitsimpis <iliastsi@arrikto.com>,
+        Mike Snitzer <snitzer@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 45/53] sysfs: Disable lockdep for driver bind/unbind files
-Date:   Tue,  8 Jan 2019 14:32:13 -0500
-Message-Id: <20190108193222.123316-45-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 41/53] dm snapshot: Fix excessive memory usage and workqueue stalls
+Date:   Tue,  8 Jan 2019 14:32:09 -0500
+Message-Id: <20190108193222.123316-41-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108193222.123316-1-sashal@kernel.org>
 References: <20190108193222.123316-1-sashal@kernel.org>
@@ -66,174 +59,225 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Daniel Vetter <daniel.vetter@ffwll.ch>
+From: Nikos Tsironis <ntsironis@arrikto.com>
 
-[ Upstream commit 4f4b374332ec0ae9c738ff8ec9bed5cd97ff9adc ]
+[ Upstream commit 721b1d98fb517ae99ab3b757021cf81db41e67be ]
 
-This is the much more correct fix for my earlier attempt at:
+kcopyd has no upper limit to the number of jobs one can allocate and
+issue. Under certain workloads this can lead to excessive memory usage
+and workqueue stalls. For example, when creating multiple dm-snapshot
+targets with a 4K chunk size and then writing to the origin through the
+page cache. Syncing the page cache causes a large number of BIOs to be
+issued to the dm-snapshot origin target, which itself issues an even
+larger (because of the BIO splitting taking place) number of kcopyd
+jobs.
 
-https://lkml.org/lkml/2018/12/10/118
+Running the following test, from the device mapper test suite [1],
 
-Short recap:
+  dmtest run --suite snapshot -n many_snapshots_of_same_volume_N
 
-- There's not actually a locking issue, it's just lockdep being a bit
-  too eager to complain about a possible deadlock.
+, with 8 active snapshots, results in the kcopyd job slab cache growing
+to 10G. Depending on the available system RAM this can lead to the OOM
+killer killing user processes:
 
-- Contrary to what I claimed the real problem is recursion on
-  kn->count. Greg pointed me at sysfs_break_active_protection(), used
-  by the scsi subsystem to allow a sysfs file to unbind itself. That
-  would be a real deadlock, which isn't what's happening here. Also,
-  breaking the active protection means we'd need to manually handle
-  all the lifetime fun.
+[463.492878] kthreadd invoked oom-killer: gfp_mask=0x6040c0(GFP_KERNEL|__GFP_COMP),
+              nodemask=(null), order=1, oom_score_adj=0
+[463.492894] kthreadd cpuset=/ mems_allowed=0
+[463.492948] CPU: 7 PID: 2 Comm: kthreadd Not tainted 4.19.0-rc7 #3
+[463.492950] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
+[463.492952] Call Trace:
+[463.492964]  dump_stack+0x7d/0xbb
+[463.492973]  dump_header+0x6b/0x2fc
+[463.492987]  ? lockdep_hardirqs_on+0xee/0x190
+[463.493012]  oom_kill_process+0x302/0x370
+[463.493021]  out_of_memory+0x113/0x560
+[463.493030]  __alloc_pages_slowpath+0xf40/0x1020
+[463.493055]  __alloc_pages_nodemask+0x348/0x3c0
+[463.493067]  cache_grow_begin+0x81/0x8b0
+[463.493072]  ? cache_grow_begin+0x874/0x8b0
+[463.493078]  fallback_alloc+0x1e4/0x280
+[463.493092]  kmem_cache_alloc_node+0xd6/0x370
+[463.493098]  ? copy_process.part.31+0x1c5/0x20d0
+[463.493105]  copy_process.part.31+0x1c5/0x20d0
+[463.493115]  ? __lock_acquire+0x3cc/0x1550
+[463.493121]  ? __switch_to_asm+0x34/0x70
+[463.493129]  ? kthread_create_worker_on_cpu+0x70/0x70
+[463.493135]  ? finish_task_switch+0x90/0x280
+[463.493165]  _do_fork+0xe0/0x6d0
+[463.493191]  ? kthreadd+0x19f/0x220
+[463.493233]  kernel_thread+0x25/0x30
+[463.493235]  kthreadd+0x1bf/0x220
+[463.493242]  ? kthread_create_on_cpu+0x90/0x90
+[463.493248]  ret_from_fork+0x3a/0x50
+[463.493279] Mem-Info:
+[463.493285] active_anon:20631 inactive_anon:4831 isolated_anon:0
+[463.493285]  active_file:80216 inactive_file:80107 isolated_file:435
+[463.493285]  unevictable:0 dirty:51266 writeback:109372 unstable:0
+[463.493285]  slab_reclaimable:31191 slab_unreclaimable:3483521
+[463.493285]  mapped:526 shmem:4903 pagetables:1759 bounce:0
+[463.493285]  free:33623 free_pcp:2392 free_cma:0
+...
+[463.493489] Unreclaimable slab info:
+[463.493513] Name                      Used          Total
+[463.493522] bio-6                   1028KB       1028KB
+[463.493525] bio-5                   1028KB       1028KB
+[463.493528] dm_snap_pending_exception     236783KB     243789KB
+[463.493531] dm_exception              41KB         42KB
+[463.493534] bio-4                   1216KB       1216KB
+[463.493537] bio-3                 439396KB     439396KB
+[463.493539] kcopyd_job           6973427KB    6973427KB
+...
+[463.494340] Out of memory: Kill process 1298 (ruby2.3) score 1 or sacrifice child
+[463.494673] Killed process 1298 (ruby2.3) total-vm:435740kB, anon-rss:20180kB, file-rss:4kB, shmem-rss:0kB
+[463.506437] oom_reaper: reaped process 1298 (ruby2.3), now anon-rss:0kB, file-rss:0kB, shmem-rss:0kB
 
-- With Rafael we discussed the task_work approach, which kinda works,
-  but has two downsides: It's a functional change for a lockdep
-  annotation issue, and it won't work for the bind file (which needs
-  to get the errno from the driver load function back to userspace).
+Moreover, issuing a large number of kcopyd jobs results in kcopyd
+hogging the CPU, while processing them. As a result, processing of work
+items, queued for execution on the same CPU as the currently running
+kcopyd thread, is stalled for long periods of time, hurting performance.
+Running the aforementioned test we get, in dmesg, messages like the
+following:
 
-- Greg also asked why this never showed up: To hit this you need to
-  unregister a 2nd driver from the unload code of your first driver. I
-  guess only gpus do that. The bug has always been there, but only
-  with a recent patch series did we add more locks so that lockdep
-  built a chain from unbinding the snd-hda driver to the
-  acpi_video_unregister call.
+[67501.194592] BUG: workqueue lockup - pool cpus=4 node=0 flags=0x0 nice=0 stuck for 27s!
+[67501.195586] Showing busy workqueues and worker pools:
+[67501.195591] workqueue events: flags=0x0
+[67501.195597]   pwq 8: cpus=4 node=0 flags=0x0 nice=0 active=1/256
+[67501.195611]     pending: cache_reap
+[67501.195641] workqueue mm_percpu_wq: flags=0x8
+[67501.195645]   pwq 8: cpus=4 node=0 flags=0x0 nice=0 active=1/256
+[67501.195656]     pending: vmstat_update
+[67501.195682] workqueue kblockd: flags=0x18
+[67501.195687]   pwq 5: cpus=2 node=0 flags=0x0 nice=-20 active=1/256
+[67501.195698]     pending: blk_timeout_work
+[67501.195753] workqueue kcopyd: flags=0x8
+[67501.195757]   pwq 8: cpus=4 node=0 flags=0x0 nice=0 active=1/256
+[67501.195768]     pending: do_work [dm_mod]
+[67501.195802] workqueue kcopyd: flags=0x8
+[67501.195806]   pwq 8: cpus=4 node=0 flags=0x0 nice=0 active=1/256
+[67501.195817]     pending: do_work [dm_mod]
+[67501.195834] workqueue kcopyd: flags=0x8
+[67501.195838]   pwq 8: cpus=4 node=0 flags=0x0 nice=0 active=1/256
+[67501.195848]     pending: do_work [dm_mod]
+[67501.195881] workqueue kcopyd: flags=0x8
+[67501.195885]   pwq 8: cpus=4 node=0 flags=0x0 nice=0 active=1/256
+[67501.195896]     pending: do_work [dm_mod]
+[67501.195920] workqueue kcopyd: flags=0x8
+[67501.195924]   pwq 8: cpus=4 node=0 flags=0x0 nice=0 active=2/256
+[67501.195935]     in-flight: 67:do_work [dm_mod]
+[67501.195945]     pending: do_work [dm_mod]
+[67501.195961] pool 8: cpus=4 node=0 flags=0x0 nice=0 hung=27s workers=3 idle: 129 23765
 
-Full lockdep splat:
+The root cause for these issues is the way dm-snapshot uses kcopyd. In
+particular, the lack of an explicit or implicit limit to the maximum
+number of in-flight COW jobs. The merging path is not affected because
+it implicitly limits the in-flight kcopyd jobs to one.
 
-[12301.898799] ============================================
-[12301.898805] WARNING: possible recursive locking detected
-[12301.898811] 4.20.0-rc7+ #84 Not tainted
-[12301.898815] --------------------------------------------
-[12301.898821] bash/5297 is trying to acquire lock:
-[12301.898826] 00000000f61c6093 (kn->count#39){++++}, at: kernfs_remove_by_name_ns+0x3b/0x80
-[12301.898841] but task is already holding lock:
-[12301.898847] 000000005f634021 (kn->count#39){++++}, at: kernfs_fop_write+0xdc/0x190
-[12301.898856] other info that might help us debug this:
-[12301.898862]  Possible unsafe locking scenario:
-[12301.898867]        CPU0
-[12301.898870]        ----
-[12301.898874]   lock(kn->count#39);
-[12301.898879]   lock(kn->count#39);
-[12301.898883] *** DEADLOCK ***
-[12301.898891]  May be due to missing lock nesting notation
-[12301.898899] 5 locks held by bash/5297:
-[12301.898903]  #0: 00000000cd800e54 (sb_writers#4){.+.+}, at: vfs_write+0x17f/0x1b0
-[12301.898915]  #1: 000000000465e7c2 (&of->mutex){+.+.}, at: kernfs_fop_write+0xd3/0x190
-[12301.898925]  #2: 000000005f634021 (kn->count#39){++++}, at: kernfs_fop_write+0xdc/0x190
-[12301.898936]  #3: 00000000414ef7ac (&dev->mutex){....}, at: device_release_driver_internal+0x34/0x240
-[12301.898950]  #4: 000000003218fbdf (register_count_mutex){+.+.}, at: acpi_video_unregister+0xe/0x40
-[12301.898960] stack backtrace:
-[12301.898968] CPU: 1 PID: 5297 Comm: bash Not tainted 4.20.0-rc7+ #84
-[12301.898974] Hardware name: Hewlett-Packard HP EliteBook 8460p/161C, BIOS 68SCF Ver. F.01 03/11/2011
-[12301.898982] Call Trace:
-[12301.898989]  dump_stack+0x67/0x9b
-[12301.898997]  __lock_acquire+0x6ad/0x1410
-[12301.899003]  ? kernfs_remove_by_name_ns+0x3b/0x80
-[12301.899010]  ? find_held_lock+0x2d/0x90
-[12301.899017]  ? mutex_spin_on_owner+0xe4/0x150
-[12301.899023]  ? find_held_lock+0x2d/0x90
-[12301.899030]  ? lock_acquire+0x90/0x180
-[12301.899036]  lock_acquire+0x90/0x180
-[12301.899042]  ? kernfs_remove_by_name_ns+0x3b/0x80
-[12301.899049]  __kernfs_remove+0x296/0x310
-[12301.899055]  ? kernfs_remove_by_name_ns+0x3b/0x80
-[12301.899060]  ? kernfs_name_hash+0xd/0x80
-[12301.899066]  ? kernfs_find_ns+0x6c/0x100
-[12301.899073]  kernfs_remove_by_name_ns+0x3b/0x80
-[12301.899080]  bus_remove_driver+0x92/0xa0
-[12301.899085]  acpi_video_unregister+0x24/0x40
-[12301.899127]  i915_driver_unload+0x42/0x130 [i915]
-[12301.899160]  i915_pci_remove+0x19/0x30 [i915]
-[12301.899169]  pci_device_remove+0x36/0xb0
-[12301.899176]  device_release_driver_internal+0x185/0x240
-[12301.899183]  unbind_store+0xaf/0x180
-[12301.899189]  kernfs_fop_write+0x104/0x190
-[12301.899195]  __vfs_write+0x31/0x180
-[12301.899203]  ? rcu_read_lock_sched_held+0x6f/0x80
-[12301.899209]  ? rcu_sync_lockdep_assert+0x29/0x50
-[12301.899216]  ? __sb_start_write+0x13c/0x1a0
-[12301.899221]  ? vfs_write+0x17f/0x1b0
-[12301.899227]  vfs_write+0xb9/0x1b0
-[12301.899233]  ksys_write+0x50/0xc0
-[12301.899239]  do_syscall_64+0x4b/0x180
-[12301.899247]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-[12301.899253] RIP: 0033:0x7f452ac7f7a4
-[12301.899259] Code: 00 f7 d8 64 89 02 48 c7 c0 ff ff ff ff eb b7 0f 1f 80 00 00 00 00 8b 05 aa f0 2c 00 48 63 ff 85 c0 75 13 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 54 f3 c3 66 90 55 53 48 89 d5 48 89 f3 48 83
-[12301.899273] RSP: 002b:00007ffceafa6918 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-[12301.899282] RAX: ffffffffffffffda RBX: 000000000000000d RCX: 00007f452ac7f7a4
-[12301.899288] RDX: 000000000000000d RSI: 00005612a1abf7c0 RDI: 0000000000000001
-[12301.899295] RBP: 00005612a1abf7c0 R08: 000000000000000a R09: 00005612a1c46730
-[12301.899301] R10: 000000000000000a R11: 0000000000000246 R12: 000000000000000d
-[12301.899308] R13: 0000000000000001 R14: 00007f452af4a740 R15: 000000000000000d
+Fix these issues by using a semaphore to limit the maximum number of
+in-flight kcopyd jobs. We grab the semaphore before allocating a new
+kcopyd job in start_copy() and start_full_bio() and release it after the
+job finishes in copy_callback().
 
-Looking around I've noticed that usb and i2c already handle similar
-recursion problems, where a sysfs file can unbind the same type of
-sysfs somewhere else in the hierarchy. Relevant commits are:
+The initial semaphore value is configurable through a module parameter,
+to allow fine tuning the maximum number of in-flight COW jobs. Setting
+this parameter to zero initializes the semaphore to INT_MAX.
 
-commit 356c05d58af05d582e634b54b40050c73609617b
-Author: Alan Stern <stern@rowland.harvard.edu>
-Date:   Mon May 14 13:30:03 2012 -0400
+A default value of 2048 maximum in-flight kcopyd jobs was chosen. This
+value was decided experimentally as a trade-off between memory
+consumption, stalling the kernel's workqueues and maintaining a high
+enough throughput.
 
-    sysfs: get rid of some lockdep false positives
+Re-running the aforementioned test:
 
-commit e9b526fe704812364bca07edd15eadeba163ebfb
-Author: Alexander Sverdlin <alexander.sverdlin@nsn.com>
-Date:   Fri May 17 14:56:35 2013 +0200
+  * Workqueue stalls are eliminated
+  * kcopyd's job slab cache uses a maximum of 130MB
+  * The time taken by the test to write to the snapshot-origin target is
+    reduced from 05m20.48s to 03m26.38s
 
-    i2c: suppress lockdep warning on delete_device
+[1] https://github.com/jthornber/device-mapper-test-suite
 
-Implement the same trick for driver bind/unbind.
-
-v2: Put the macro into bus.c (Greg).
-
-Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Cc: Ramalingam C <ramalingam.c@intel.com>
-Cc: Arend van Spriel <aspriel@gmail.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Cc: Vivek Gautam <vivek.gautam@codeaurora.org>
-Cc: Joe Perches <joe@perches.com>
-Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Nikos Tsironis <ntsironis@arrikto.com>
+Signed-off-by: Ilias Tsitsimpis <iliastsi@arrikto.com>
+Signed-off-by: Mike Snitzer <snitzer@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/base/bus.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/md/dm-snap.c | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
-diff --git a/drivers/base/bus.c b/drivers/base/bus.c
-index 22a64fd3309b..1cf1460f8c90 100644
---- a/drivers/base/bus.c
-+++ b/drivers/base/bus.c
-@@ -33,6 +33,9 @@ static struct kset *system_kset;
+diff --git a/drivers/md/dm-snap.c b/drivers/md/dm-snap.c
+index a0613bd8ed00..b502debc6df3 100644
+--- a/drivers/md/dm-snap.c
++++ b/drivers/md/dm-snap.c
+@@ -19,6 +19,7 @@
+ #include <linux/vmalloc.h>
+ #include <linux/log2.h>
+ #include <linux/dm-kcopyd.h>
++#include <linux/semaphore.h>
  
- #define to_drv_attr(_attr) container_of(_attr, struct driver_attribute, attr)
+ #include "dm.h"
  
-+#define DRIVER_ATTR_IGNORE_LOCKDEP(_name, _mode, _show, _store) \
-+	struct driver_attribute driver_attr_##_name =		\
-+		__ATTR_IGNORE_LOCKDEP(_name, _mode, _show, _store)
+@@ -105,6 +106,9 @@ struct dm_snapshot {
+ 	/* The on disk metadata handler */
+ 	struct dm_exception_store *store;
  
- static int __must_check bus_rescan_devices_helper(struct device *dev,
- 						void *data);
-@@ -197,7 +200,7 @@ static ssize_t unbind_store(struct device_driver *drv, const char *buf,
- 	bus_put(bus);
- 	return err;
++	/* Maximum number of in-flight COW jobs. */
++	struct semaphore cow_count;
++
+ 	struct dm_kcopyd_client *kcopyd_client;
+ 
+ 	/* Wait for events based on state_bits */
+@@ -145,6 +149,19 @@ struct dm_snapshot {
+ #define RUNNING_MERGE          0
+ #define SHUTDOWN_MERGE         1
+ 
++/*
++ * Maximum number of chunks being copied on write.
++ *
++ * The value was decided experimentally as a trade-off between memory
++ * consumption, stalling the kernel's workqueues and maintaining a high enough
++ * throughput.
++ */
++#define DEFAULT_COW_THRESHOLD 2048
++
++static int cow_threshold = DEFAULT_COW_THRESHOLD;
++module_param_named(snapshot_cow_threshold, cow_threshold, int, 0644);
++MODULE_PARM_DESC(snapshot_cow_threshold, "Maximum number of chunks being copied on write");
++
+ DECLARE_DM_KCOPYD_THROTTLE_WITH_MODULE_PARM(snapshot_copy_throttle,
+ 		"A percentage of time allocated for copy on write");
+ 
+@@ -1189,6 +1206,8 @@ static int snapshot_ctr(struct dm_target *ti, unsigned int argc, char **argv)
+ 		goto bad_hash_tables;
+ 	}
+ 
++	sema_init(&s->cow_count, (cow_threshold > 0) ? cow_threshold : INT_MAX);
++
+ 	s->kcopyd_client = dm_kcopyd_client_create(&dm_kcopyd_throttle);
+ 	if (IS_ERR(s->kcopyd_client)) {
+ 		r = PTR_ERR(s->kcopyd_client);
+@@ -1560,6 +1579,7 @@ static void copy_callback(int read_err, unsigned long write_err, void *context)
+ 		}
+ 		list_add(&pe->out_of_order_entry, lh);
+ 	}
++	up(&s->cow_count);
  }
--static DRIVER_ATTR_WO(unbind);
-+static DRIVER_ATTR_IGNORE_LOCKDEP(unbind, S_IWUSR, NULL, unbind_store);
  
  /*
-  * Manually attach a device to a driver.
-@@ -233,7 +236,7 @@ static ssize_t bind_store(struct device_driver *drv, const char *buf,
- 	bus_put(bus);
- 	return err;
- }
--static DRIVER_ATTR_WO(bind);
-+static DRIVER_ATTR_IGNORE_LOCKDEP(bind, S_IWUSR, NULL, bind_store);
+@@ -1583,6 +1603,7 @@ static void start_copy(struct dm_snap_pending_exception *pe)
+ 	dest.count = src.count;
  
- static ssize_t show_drivers_autoprobe(struct bus_type *bus, char *buf)
- {
+ 	/* Hand over to kcopyd */
++	down(&s->cow_count);
+ 	dm_kcopyd_copy(s->kcopyd_client, &src, 1, &dest, 0, copy_callback, pe);
+ }
+ 
+@@ -1602,6 +1623,7 @@ static void start_full_bio(struct dm_snap_pending_exception *pe,
+ 	pe->full_bio = bio;
+ 	pe->full_bio_end_io = bio->bi_end_io;
+ 
++	down(&s->cow_count);
+ 	callback_data = dm_kcopyd_prepare_callback(s->kcopyd_client,
+ 						   copy_callback, pe);
+ 
 -- 
 2.19.1
 
