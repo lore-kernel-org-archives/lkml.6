@@ -7,47 +7,48 @@ X-Spam-Status: No, score=-18.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9996C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:36:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 489FAC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:36:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 68F9C205C9
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:36:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 184A72063F
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:36:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546976199;
-	bh=uIXx4MWpdalxKYOj0RlxO1a0xRn1QzMmC8HW/Nu3RUQ=;
+	s=default; t=1546976208;
+	bh=vupsjzxeS33mA7ZRPFSt2Ib7XSF+4IZT+C+7TD3CPOY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=0Sj+16VpL6Q5KKnxKDfz/+cLx71WrwXp9UPfvPrDH5JtC7Ydoe6WUaQLMDufZ1hzx
-	 mfyD59P3tvxA49Qf7yd0iDN84PllMRhlRPvcdJeodmp5tBeNdsvvezpXwF/8X1xWq7
-	 esKny7dC8Lnp5uCX/ktNZRCo8uXgM9K4u9eDSaOI=
+	b=WcejxKVt5H0urRuqVc9Ry11zwHIK8i5ZjOYNNyC4X0VoLfhqbwknFH+aIK3QD8xq3
+	 kZYLXy7SQm4WxI+bNmdaO28sN879xHu4E0WhDUukZ9eJgUrzHCi+7VJ0LiFb/X3+vY
+	 hIvqXrfIEGBybTxdRvGI4M1+GrNPtt5AGjFAEDNw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732474AbfAHTgi (ORCPT
+        id S1732486AbfAHTgq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:36:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44846 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 14:36:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44792 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732374AbfAHTfz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:35:55 -0500
+        id S1732378AbfAHTfw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:35:52 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 987E42183F;
-        Tue,  8 Jan 2019 19:35:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7F9792063F;
+        Tue,  8 Jan 2019 19:35:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546976154;
-        bh=uIXx4MWpdalxKYOj0RlxO1a0xRn1QzMmC8HW/Nu3RUQ=;
+        s=default; t=1546976152;
+        bh=vupsjzxeS33mA7ZRPFSt2Ib7XSF+4IZT+C+7TD3CPOY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BOIE47f79EspfQMctnaxaI0Mrf2PtaIyMayD3vrPlApOfmgPqH1l/Y4YvguY+V2br
-         YVPRApBouMg19MuTCEisDxFLHqzKA6G5OU/tylaobJSFnWA+QprfQAtNriD8xVD71f
-         XJiTHD/ICp7vvO9rrw0eP9fEMeQ+o0kh2Mh4JZGM=
+        b=A6Ty770bVi5gcKPMAFxuPz0SeRO0JchgrzTEHbyDLSIObtPHB9k2G1OoRbdP3LcKO
+         lZTcisxSM92gDtt971k3rf62oZRsLz/1+xyVob0QpHia3qtYKAutJz5WXBF+GqaQYQ
+         OX+KgFQhAGsIJpmxRPdjPqibS2WYOivz0503OJG0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Nikos Tsironis <ntsironis@arrikto.com>,
-        Ilias Tsitsimpis <iliastsi@arrikto.com>,
-        Mike Snitzer <snitzer@redhat.com>,
+Cc:     Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 3.18 15/19] dm snapshot: Fix excessive memory usage and workqueue stalls
-Date:   Tue,  8 Jan 2019 14:35:27 -0500
-Message-Id: <20190108193534.124555-15-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 3.18 13/19] perf parse-events: Fix unchecked usage of strncpy()
+Date:   Tue,  8 Jan 2019 14:35:25 -0500
+Message-Id: <20190108193534.124555-13-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108193534.124555-1-sashal@kernel.org>
 References: <20190108193534.124555-1-sashal@kernel.org>
@@ -59,224 +60,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nikos Tsironis <ntsironis@arrikto.com>
+From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-[ Upstream commit 721b1d98fb517ae99ab3b757021cf81db41e67be ]
+[ Upstream commit bd8d57fb7e25e9fcf67a9eef5fa13aabe2016e07 ]
 
-kcopyd has no upper limit to the number of jobs one can allocate and
-issue. Under certain workloads this can lead to excessive memory usage
-and workqueue stalls. For example, when creating multiple dm-snapshot
-targets with a 4K chunk size and then writing to the origin through the
-page cache. Syncing the page cache causes a large number of BIOs to be
-issued to the dm-snapshot origin target, which itself issues an even
-larger (because of the BIO splitting taking place) number of kcopyd
-jobs.
+The strncpy() function may leave the destination string buffer
+unterminated, better use strlcpy() that we have a __weak fallback
+implementation for systems without it.
 
-Running the following test, from the device mapper test suite [1],
+This fixes this warning on an Alpine Linux Edge system with gcc 8.2:
 
-  dmtest run --suite snapshot -n many_snapshots_of_same_volume_N
+  util/parse-events.c: In function 'print_symbol_events':
+  util/parse-events.c:2465:4: error: 'strncpy' specified bound 100 equals destination size [-Werror=stringop-truncation]
+      strncpy(name, syms->symbol, MAX_NAME_LEN);
+      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  In function 'print_symbol_events.constprop',
+      inlined from 'print_events' at util/parse-events.c:2508:2:
+  util/parse-events.c:2465:4: error: 'strncpy' specified bound 100 equals destination size [-Werror=stringop-truncation]
+      strncpy(name, syms->symbol, MAX_NAME_LEN);
+      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  In function 'print_symbol_events.constprop',
+      inlined from 'print_events' at util/parse-events.c:2511:2:
+  util/parse-events.c:2465:4: error: 'strncpy' specified bound 100 equals destination size [-Werror=stringop-truncation]
+      strncpy(name, syms->symbol, MAX_NAME_LEN);
+      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  cc1: all warnings being treated as errors
 
-, with 8 active snapshots, results in the kcopyd job slab cache growing
-to 10G. Depending on the available system RAM this can lead to the OOM
-killer killing user processes:
-
-[463.492878] kthreadd invoked oom-killer: gfp_mask=0x6040c0(GFP_KERNEL|__GFP_COMP),
-              nodemask=(null), order=1, oom_score_adj=0
-[463.492894] kthreadd cpuset=/ mems_allowed=0
-[463.492948] CPU: 7 PID: 2 Comm: kthreadd Not tainted 4.19.0-rc7 #3
-[463.492950] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
-[463.492952] Call Trace:
-[463.492964]  dump_stack+0x7d/0xbb
-[463.492973]  dump_header+0x6b/0x2fc
-[463.492987]  ? lockdep_hardirqs_on+0xee/0x190
-[463.493012]  oom_kill_process+0x302/0x370
-[463.493021]  out_of_memory+0x113/0x560
-[463.493030]  __alloc_pages_slowpath+0xf40/0x1020
-[463.493055]  __alloc_pages_nodemask+0x348/0x3c0
-[463.493067]  cache_grow_begin+0x81/0x8b0
-[463.493072]  ? cache_grow_begin+0x874/0x8b0
-[463.493078]  fallback_alloc+0x1e4/0x280
-[463.493092]  kmem_cache_alloc_node+0xd6/0x370
-[463.493098]  ? copy_process.part.31+0x1c5/0x20d0
-[463.493105]  copy_process.part.31+0x1c5/0x20d0
-[463.493115]  ? __lock_acquire+0x3cc/0x1550
-[463.493121]  ? __switch_to_asm+0x34/0x70
-[463.493129]  ? kthread_create_worker_on_cpu+0x70/0x70
-[463.493135]  ? finish_task_switch+0x90/0x280
-[463.493165]  _do_fork+0xe0/0x6d0
-[463.493191]  ? kthreadd+0x19f/0x220
-[463.493233]  kernel_thread+0x25/0x30
-[463.493235]  kthreadd+0x1bf/0x220
-[463.493242]  ? kthread_create_on_cpu+0x90/0x90
-[463.493248]  ret_from_fork+0x3a/0x50
-[463.493279] Mem-Info:
-[463.493285] active_anon:20631 inactive_anon:4831 isolated_anon:0
-[463.493285]  active_file:80216 inactive_file:80107 isolated_file:435
-[463.493285]  unevictable:0 dirty:51266 writeback:109372 unstable:0
-[463.493285]  slab_reclaimable:31191 slab_unreclaimable:3483521
-[463.493285]  mapped:526 shmem:4903 pagetables:1759 bounce:0
-[463.493285]  free:33623 free_pcp:2392 free_cma:0
-...
-[463.493489] Unreclaimable slab info:
-[463.493513] Name                      Used          Total
-[463.493522] bio-6                   1028KB       1028KB
-[463.493525] bio-5                   1028KB       1028KB
-[463.493528] dm_snap_pending_exception     236783KB     243789KB
-[463.493531] dm_exception              41KB         42KB
-[463.493534] bio-4                   1216KB       1216KB
-[463.493537] bio-3                 439396KB     439396KB
-[463.493539] kcopyd_job           6973427KB    6973427KB
-...
-[463.494340] Out of memory: Kill process 1298 (ruby2.3) score 1 or sacrifice child
-[463.494673] Killed process 1298 (ruby2.3) total-vm:435740kB, anon-rss:20180kB, file-rss:4kB, shmem-rss:0kB
-[463.506437] oom_reaper: reaped process 1298 (ruby2.3), now anon-rss:0kB, file-rss:0kB, shmem-rss:0kB
-
-Moreover, issuing a large number of kcopyd jobs results in kcopyd
-hogging the CPU, while processing them. As a result, processing of work
-items, queued for execution on the same CPU as the currently running
-kcopyd thread, is stalled for long periods of time, hurting performance.
-Running the aforementioned test we get, in dmesg, messages like the
-following:
-
-[67501.194592] BUG: workqueue lockup - pool cpus=4 node=0 flags=0x0 nice=0 stuck for 27s!
-[67501.195586] Showing busy workqueues and worker pools:
-[67501.195591] workqueue events: flags=0x0
-[67501.195597]   pwq 8: cpus=4 node=0 flags=0x0 nice=0 active=1/256
-[67501.195611]     pending: cache_reap
-[67501.195641] workqueue mm_percpu_wq: flags=0x8
-[67501.195645]   pwq 8: cpus=4 node=0 flags=0x0 nice=0 active=1/256
-[67501.195656]     pending: vmstat_update
-[67501.195682] workqueue kblockd: flags=0x18
-[67501.195687]   pwq 5: cpus=2 node=0 flags=0x0 nice=-20 active=1/256
-[67501.195698]     pending: blk_timeout_work
-[67501.195753] workqueue kcopyd: flags=0x8
-[67501.195757]   pwq 8: cpus=4 node=0 flags=0x0 nice=0 active=1/256
-[67501.195768]     pending: do_work [dm_mod]
-[67501.195802] workqueue kcopyd: flags=0x8
-[67501.195806]   pwq 8: cpus=4 node=0 flags=0x0 nice=0 active=1/256
-[67501.195817]     pending: do_work [dm_mod]
-[67501.195834] workqueue kcopyd: flags=0x8
-[67501.195838]   pwq 8: cpus=4 node=0 flags=0x0 nice=0 active=1/256
-[67501.195848]     pending: do_work [dm_mod]
-[67501.195881] workqueue kcopyd: flags=0x8
-[67501.195885]   pwq 8: cpus=4 node=0 flags=0x0 nice=0 active=1/256
-[67501.195896]     pending: do_work [dm_mod]
-[67501.195920] workqueue kcopyd: flags=0x8
-[67501.195924]   pwq 8: cpus=4 node=0 flags=0x0 nice=0 active=2/256
-[67501.195935]     in-flight: 67:do_work [dm_mod]
-[67501.195945]     pending: do_work [dm_mod]
-[67501.195961] pool 8: cpus=4 node=0 flags=0x0 nice=0 hung=27s workers=3 idle: 129 23765
-
-The root cause for these issues is the way dm-snapshot uses kcopyd. In
-particular, the lack of an explicit or implicit limit to the maximum
-number of in-flight COW jobs. The merging path is not affected because
-it implicitly limits the in-flight kcopyd jobs to one.
-
-Fix these issues by using a semaphore to limit the maximum number of
-in-flight kcopyd jobs. We grab the semaphore before allocating a new
-kcopyd job in start_copy() and start_full_bio() and release it after the
-job finishes in copy_callback().
-
-The initial semaphore value is configurable through a module parameter,
-to allow fine tuning the maximum number of in-flight COW jobs. Setting
-this parameter to zero initializes the semaphore to INT_MAX.
-
-A default value of 2048 maximum in-flight kcopyd jobs was chosen. This
-value was decided experimentally as a trade-off between memory
-consumption, stalling the kernel's workqueues and maintaining a high
-enough throughput.
-
-Re-running the aforementioned test:
-
-  * Workqueue stalls are eliminated
-  * kcopyd's job slab cache uses a maximum of 130MB
-  * The time taken by the test to write to the snapshot-origin target is
-    reduced from 05m20.48s to 03m26.38s
-
-[1] https://github.com/jthornber/device-mapper-test-suite
-
-Signed-off-by: Nikos Tsironis <ntsironis@arrikto.com>
-Signed-off-by: Ilias Tsitsimpis <iliastsi@arrikto.com>
-Signed-off-by: Mike Snitzer <snitzer@redhat.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Fixes: 947b4ad1d198 ("perf list: Fix max event string size")
+Link: https://lkml.kernel.org/n/tip-b663e33bm6x8hrkie4uxh7u2@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/md/dm-snap.c | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+ tools/perf/util/parse-events.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/md/dm-snap.c b/drivers/md/dm-snap.c
-index b91b39caf7a9..0a304e7de260 100644
---- a/drivers/md/dm-snap.c
-+++ b/drivers/md/dm-snap.c
-@@ -19,6 +19,7 @@
- #include <linux/vmalloc.h>
- #include <linux/log2.h>
- #include <linux/dm-kcopyd.h>
-+#include <linux/semaphore.h>
+diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-events.c
+index c659a3ca1283..78b452421375 100644
+--- a/tools/perf/util/parse-events.c
++++ b/tools/perf/util/parse-events.c
+@@ -1319,7 +1319,7 @@ static void print_symbol_events(const char *event_glob, unsigned type,
+ 		if (strlen(syms->alias))
+ 			snprintf(name, MAX_NAME_LEN, "%s OR %s", syms->symbol, syms->alias);
+ 		else
+-			strncpy(name, syms->symbol, MAX_NAME_LEN);
++			strlcpy(name, syms->symbol, MAX_NAME_LEN);
  
- #include "dm.h"
- 
-@@ -98,6 +99,9 @@ struct dm_snapshot {
- 	/* The on disk metadata handler */
- 	struct dm_exception_store *store;
- 
-+	/* Maximum number of in-flight COW jobs. */
-+	struct semaphore cow_count;
-+
- 	struct dm_kcopyd_client *kcopyd_client;
- 
- 	/* Wait for events based on state_bits */
-@@ -138,6 +142,19 @@ struct dm_snapshot {
- #define RUNNING_MERGE          0
- #define SHUTDOWN_MERGE         1
- 
-+/*
-+ * Maximum number of chunks being copied on write.
-+ *
-+ * The value was decided experimentally as a trade-off between memory
-+ * consumption, stalling the kernel's workqueues and maintaining a high enough
-+ * throughput.
-+ */
-+#define DEFAULT_COW_THRESHOLD 2048
-+
-+static int cow_threshold = DEFAULT_COW_THRESHOLD;
-+module_param_named(snapshot_cow_threshold, cow_threshold, int, 0644);
-+MODULE_PARM_DESC(snapshot_cow_threshold, "Maximum number of chunks being copied on write");
-+
- DECLARE_DM_KCOPYD_THROTTLE_WITH_MODULE_PARM(snapshot_copy_throttle,
- 		"A percentage of time allocated for copy on write");
- 
-@@ -1173,6 +1190,8 @@ static int snapshot_ctr(struct dm_target *ti, unsigned int argc, char **argv)
- 		goto bad_hash_tables;
- 	}
- 
-+	sema_init(&s->cow_count, (cow_threshold > 0) ? cow_threshold : INT_MAX);
-+
- 	s->kcopyd_client = dm_kcopyd_client_create(&dm_kcopyd_throttle);
- 	if (IS_ERR(s->kcopyd_client)) {
- 		r = PTR_ERR(s->kcopyd_client);
-@@ -1545,6 +1564,7 @@ static void copy_callback(int read_err, unsigned long write_err, void *context)
- 		}
- 		list_add(&pe->out_of_order_entry, lh);
- 	}
-+	up(&s->cow_count);
- }
- 
- /*
-@@ -1568,6 +1588,7 @@ static void start_copy(struct dm_snap_pending_exception *pe)
- 	dest.count = src.count;
- 
- 	/* Hand over to kcopyd */
-+	down(&s->cow_count);
- 	dm_kcopyd_copy(s->kcopyd_client, &src, 1, &dest, 0, copy_callback, pe);
- }
- 
-@@ -1588,6 +1609,7 @@ static void start_full_bio(struct dm_snap_pending_exception *pe,
- 	pe->full_bio_end_io = bio->bi_end_io;
- 	pe->full_bio_private = bio->bi_private;
- 
-+	down(&s->cow_count);
- 	callback_data = dm_kcopyd_prepare_callback(s->kcopyd_client,
- 						   copy_callback, pe);
+ 		printf("  %-50s [%s]\n", name, event_type_descriptors[type]);
  
 -- 
 2.19.1
