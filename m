@@ -2,77 +2,102 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0AC8C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:29:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA8D4C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:33:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB0B120883
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:29:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="tbpmaNXz"
+	by mail.kernel.org (Postfix) with ESMTP id 9774E20827
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:33:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729241AbfAHU3U (ORCPT
+        id S1729198AbfAHUdB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 15:29:20 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:38034 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728469AbfAHU3U (ORCPT
+        Tue, 8 Jan 2019 15:33:01 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:36030 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728644AbfAHUdB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 15:29:20 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=0rIiIIOb/sO6sVpZv2phZOg6LzeV/mUb8vKJncWZBmM=; b=tbpmaNXzp2r5ZzyFTzkY3zhTa
-        0mtMujIsrR3hwMOjD8o5Nwg0AynYx4ZoOZgjPEI2rP8TkBQBxahDR616D4s7Im0Xv3NqdUBCMnzAR
-        g1deFVb/cM4QyGwiYQFVdpQRL6l67omYHojrDyJ8VXV8POXNpYkJv2PP9MVvNCg0cd7+5v/mXIwqP
-        NXjvtZCJjtwMYvR8A9lJ5XLphzwctZZxuk30aOb0jWEMN1IsvCF+hWfjYURutw5xsyI6OvQMS+0XA
-        CDQqZfOnJftpTPNosreGJNpCgqKmNGZoirt2J/auT2exahsbTzH60xYdWsCtYCOc5fnxLuPG7WkBT
-        53hYDmq1w==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1ggxzx-0000QY-4v; Tue, 08 Jan 2019 20:29:17 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 35C8820274B53; Tue,  8 Jan 2019 21:29:15 +0100 (CET)
-Date:   Tue, 8 Jan 2019 21:29:15 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Song Liu <songliubraving@fb.com>
-Cc:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        acme@kernel.org, ast@kernel.org, daniel@iogearbox.net,
-        kernel-team@fb.com
-Subject: Re: [PATCH v5 perf, bpf-next 3/7] perf, bpf: introduce
- PERF_RECORD_BPF_EVENT
-Message-ID: <20190108202915.GE30894@hirez.programming.kicks-ass.net>
-References: <20181220182904.4193196-1-songliubraving@fb.com>
- <20181220182904.4193196-4-songliubraving@fb.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181220182904.4193196-4-songliubraving@fb.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Tue, 8 Jan 2019 15:33:01 -0500
+Received: by mail-pl1-f193.google.com with SMTP id g9so2436631plo.3;
+        Tue, 08 Jan 2019 12:33:01 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=VTXsaVss40almLHqHsDRF5KIiFFMihZGFy0rLMrD0mY=;
+        b=s84Q+WI5X4aWLhsuT/0UygzIP4jAR0d2zCZss4IVH0/JyNs7UpjoeM5T4Va51i7pvY
+         MHFmI4tQQayCNufGcQK7wbNz1p78vIg9vby4NH0FbZMprqUUP6Ck190bAf4ILQRwCFu6
+         74/NTq4vvIQk/wJMMgtMAlO1gR7ZXPy4bTqhdfpY3OL4Ak93kWnMAH4geYD1oIL29ajn
+         RBuKwuNuErK1Km3VDciO+ztNqL+A4hp/D2q0/VFKJHjOzgAYXJ1rjW0M/YNSTXMghubj
+         lDtLxkxXqTXvReiIrL4L8u53Rv/IO69oIV4ylGGNL8731u1xjPB4lDmdG01UsFL+DSzY
+         ed5w==
+X-Gm-Message-State: AJcUukcD8kbQrvFQTCq3HrZg18BqqNTzvGDzbMaCE3HnfUQQv3xsJ4Yk
+        OjUBXlQR20z9qzY5hrQuQbc=
+X-Google-Smtp-Source: ALg8bN69VsdcY03pqQi5mjyG9gfxNb661+rftukSsb0tdOzKG0VQshGpLBhxAeI3NHnW7ieQkCQ6pg==
+X-Received: by 2002:a17:902:b03:: with SMTP id 3mr3191295plq.91.1546979580490;
+        Tue, 08 Jan 2019 12:33:00 -0800 (PST)
+Received: from ?IPv6:2620:15c:2cd:203:5cdc:422c:7b28:ebb5? ([2620:15c:2cd:203:5cdc:422c:7b28:ebb5])
+        by smtp.gmail.com with ESMTPSA id h10sm96687222pgn.11.2019.01.08.12.32.58
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 08 Jan 2019 12:32:59 -0800 (PST)
+Message-ID: <1546979577.83374.30.camel@acm.org>
+Subject: Re: [PATCH] IB/srp: Use struct_size() in kzalloc()
+From:   Bart Van Assche <bvanassche@acm.org>
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Tue, 08 Jan 2019 12:32:57 -0800
+In-Reply-To: <20190108160805.GA22698@embeddedor>
+References: <20190108160805.GA22698@embeddedor>
+Content-Type: text/plain; charset="UTF-7"
+X-Mailer: Evolution 3.26.2-1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 20, 2018 at 10:29:00AM -0800, Song Liu wrote:
-> The following example shows kernel symbols for a BPF program with 7
-> sub programs:
-> 
->     ffffffffa0257cf9 t bpf_prog_b07ccb89267cf242_F
->     ffffffffa02592e1 t bpf_prog_2dcecc18072623fc_F
->     ffffffffa025b0e9 t bpf_prog_bb7a405ebaec5d5c_F
->     ffffffffa025dd2c t bpf_prog_a7540d4a39ec1fc7_F
->     ffffffffa025fcca t bpf_prog_05762d4ade0e3737_F
->     ffffffffa026108f t bpf_prog_db4bd11e35df90d4_F
->     ffffffffa0263f00 t bpf_prog_89d64e4abf0f0126_F
->     ffffffffa0257cf9 t bpf_prog_ae31629322c4b018__dummy_tracepoi
+On Tue, 2019-01-08 at 10:08 -0600, Gustavo A. R. Silva wrote:
++AD4 One of the more common cases of allocation size calculations is finding the
++AD4 size of a structure that has a zero-sized array at the end, along with memory
++AD4 for some number of elements for that array. For example:
++AD4 
++AD4 struct foo +AHs
++AD4     int stuff+ADs
++AD4     void +ACo-entry+AFsAXQA7
++AD4 +AH0AOw
++AD4 
++AD4 instance +AD0 kzalloc(sizeof(struct foo) +- sizeof(void +ACo) +ACo count, GFP+AF8-KERNEL)+ADs
++AD4 
++AD4 Instead of leaving these open-coded and prone to type mistakes, we can now
++AD4 use the new struct+AF8-size() helper:
++AD4 
++AD4 instance +AD0 kzalloc(struct+AF8-size(instance, entry, count), GFP+AF8-KERNEL)+ADs
++AD4 
++AD4 This code was detected with the help of Coccinelle.
++AD4 
++AD4 Signed-off-by: Gustavo A. R. Silva +ADw-gustavo+AEA-embeddedor.com+AD4
++AD4 ---
++AD4  drivers/infiniband/ulp/srp/ib+AF8-srp.c +AHw 3 +---
++AD4  1 file changed, 1 insertion(+-), 2 deletions(-)
++AD4 
++AD4 diff --git a/drivers/infiniband/ulp/srp/ib+AF8-srp.c b/drivers/infiniband/ulp/srp/ib+AF8-srp.c
++AD4 index 31d91538bbf4..0f855294ff3f 100644
++AD4 --- a/drivers/infiniband/ulp/srp/ib+AF8-srp.c
++AD4 +-+-+- b/drivers/infiniband/ulp/srp/ib+AF8-srp.c
++AD4 +AEAAQA -443,8 +-443,7 +AEAAQA static struct srp+AF8-fr+AF8-pool +ACo-srp+AF8-create+AF8-fr+AF8-pool(struct ib+AF8-device +ACo-device,
++AD4  	if (pool+AF8-size +ADwAPQ 0)
++AD4  		goto err+ADs
++AD4  	ret +AD0 -ENOMEM+ADs
++AD4 -	pool +AD0 kzalloc(sizeof(struct srp+AF8-fr+AF8-pool) +-
++AD4 -		       pool+AF8-size +ACo sizeof(struct srp+AF8-fr+AF8-desc), GFP+AF8-KERNEL)+ADs
++AD4 +-	pool +AD0 kzalloc(struct+AF8-size(pool, desc, pool+AF8-size), GFP+AF8-KERNEL)+ADs
++AD4  	if (+ACE-pool)
++AD4  		goto err+ADs
++AD4  	pool-+AD4-size +AD0 pool+AF8-size+ADs
 
-We should probably specify somewhere that the name can include a
-'[module]' part just like normal kallsyms. Even though you don't
-currently use that.
+Reviewed-by: Bart Van Assche +ADw-bvanassche+AEA-acm.org+AD4-
