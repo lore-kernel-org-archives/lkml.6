@@ -2,167 +2,153 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A9EBC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 04:43:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 550AEC43612
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 04:44:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D11192087F
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 04:43:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1FE92218A1
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 04:44:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1546922662;
+	bh=v5nU2a3xaCgrR9VGbQtPWzhpekPikp+rMRzB33VfNAw=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=LXKroARs9jyutKn16F8hmvo2akkOTcTJSs1x+4NRmvNB81UUoo/+sg05GOS59axKf
+	 pt5F19DJQYkfZ0Cg31jeT+0Xfbs5OXdnpQtn5ImGvOWqF937QaJQodTj0sAJPiplps
+	 6gD2DlwssWam0Erbt/lXRdUUhoDVBA3nTWi2Nnhc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727507AbfAHEnl (ORCPT
+        id S1727560AbfAHEoV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 23:43:41 -0500
-Received: from ipmail06.adl2.internode.on.net ([150.101.137.129]:37026 "EHLO
-        ipmail06.adl2.internode.on.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727374AbfAHEnl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 23:43:41 -0500
-Received: from ppp59-167-129-252.static.internode.on.net (HELO dastard) ([59.167.129.252])
-  by ipmail06.adl2.internode.on.net with ESMTP; 08 Jan 2019 15:13:38 +1030
-Received: from dave by dastard with local (Exim 4.80)
-        (envelope-from <david@fromorbit.com>)
-        id 1ggjEm-0007Uv-H7; Tue, 08 Jan 2019 15:43:36 +1100
-Date:   Tue, 8 Jan 2019 15:43:36 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Matthew Wilcox <willy@infradead.org>, Jann Horn <jannh@google.com>,
-        Jiri Kosina <jikos@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Michal Hocko <mhocko@suse.com>, Linux-MM <linux-mm@kvack.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>
-Subject: Re: [PATCH] mm/mincore: allow for making sys_mincore() privileged
-Message-ID: <20190108044336.GB27534@dastard>
-References: <nycvar.YFH.7.76.1901051817390.16954@cbobk.fhfr.pm>
- <CAG48ez2jAp9xkPXQmVXm0PqNrFGscg9BufQRem2UD8FGX-YzPw@mail.gmail.com>
- <CAHk-=whL4sZiM=JcdQAYQvHm7h7xEtVUh+gYGYhoSk4vi38tXg@mail.gmail.com>
- <CAHk-=wg5Kk+r36=jcGBaLUj+gjopjgiW5eyvkdMqvn0jFkD_iQ@mail.gmail.com>
- <CAHk-=wiMQeCEKESWTmm15x79NjEjNwFvjZ=9XenxY7yH8zqa7A@mail.gmail.com>
- <20190106001138.GW6310@bombadil.infradead.org>
- <CAHk-=wiT=ov+6zYcnw_64ihYf74Amzqs67iVGtJMQq65PxiVYw@mail.gmail.com>
- <CAHk-=wg1A44Roa8C4dmfdXLRLmNysEW36=3R7f+tzZzbcJ2d2g@mail.gmail.com>
- <CAHk-=wiqbKEC5jUXr3ax+oUuiRrp=QMv_ZnUfO-SPv=UNJ-OTw@mail.gmail.com>
+        Mon, 7 Jan 2019 23:44:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52428 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727374AbfAHEoV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 7 Jan 2019 23:44:21 -0500
+Received: from localhost.localdomain (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D2C1B2087F;
+        Tue,  8 Jan 2019 04:44:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1546922660;
+        bh=v5nU2a3xaCgrR9VGbQtPWzhpekPikp+rMRzB33VfNAw=;
+        h=From:To:Cc:Subject:Date:From;
+        b=JFSQIBfsDpFw4G2lZTEV2TxIsT2yF/BaYWAb0Y1mxqAddtHLENw0B/Cn33eM80PzJ
+         lfjlZl2BVeii3pblL1QBQa5FgzOPn8wYKTGEPjD20ojxMUx6j1rl51q24sU8WouCb5
+         Pbyx6HN0XuD9Pc6It2D1UCyCUaMm6zgnLbt6j/CQ=
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Ingo Molnar <mingo@redhat.com>
+Cc:     Masami Hiramatsu <mhiramat@kernel.org>, peterz@infradead.org,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Andrea Righi <righi.andrea@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>, stable@vger.kernel.org
+Subject: [PATCH v2 0/3] kprobes: Fix kretprobe issues
+Date:   Tue,  8 Jan 2019 13:43:55 +0900
+Message-Id: <154692263564.1133.17363562046971295490.stgit@devbox>
+X-Mailer: git-send-email 2.13.6
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wiqbKEC5jUXr3ax+oUuiRrp=QMv_ZnUfO-SPv=UNJ-OTw@mail.gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jan 06, 2019 at 01:46:37PM -0800, Linus Torvalds wrote:
-> On Sat, Jan 5, 2019 at 5:50 PM Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
-> >
-> > Slightly updated patch in case somebody wants to try things out.
-> 
-> I decided to just apply that patch. It is *not* marked for stable,
-> very intentionally, because I expect that we will need to wait and see
-> if there are issues with it, and whether we might have to do something
-> entirely different (more like the traditional behavior with some extra
-> "only for owner" logic).
+Hello,
 
-So, I read the paper and before I was half way through it I figured
-there are a bunch of other similar page cache invalidation attacks
-we can perform without needing mincore. i.e. Focussing on mmap() and
-mincore() misses the wider issues we have with global shared caches.
+This is v2 series of fixing kretprobe incorrect stacking order patches.
+In this version, I fixed a lack of kprobes.h including and added new
+patch for kretprobe trampoline recursion issue. (and add Cc:stable)
 
-My first thought:
+(1) kprobe incorrct stacking order problem
 
-	fd = open(some_file, O_RDONLY);
-	iov[0].iov_base = buf;
-	iov[0].iov_len = 1;
-	ret = preadv2(fd, iov, 1, off, RWF_NOWAIT);
-	switch (ret) {
-	case -EAGAIN:
-		/* page not resident in page cache */
-		break;
-	case 1:
-		/* page resident in page cache */
-		break;
-	default:
-		/* beyond EOF or some other error */
-		break;
-	}
+On recent talk with Andrea, I started more precise investigation on
+the kernel panic with kretprobes on notrace functions, which Francis
+had been reported last year ( https://lkml.org/lkml/2017/7/14/466 ).
 
-This is "as documented" in the man page for preadv2:
+See the investigation details in 
+https://lkml.kernel.org/r/154686789378.15479.2886543882215785247.stgit@devbox
 
-RWF_NOWAIT (since Linux 4.14)
-      Do  not  wait  for  data which is not immediately available.
-      If this flag is specified, the preadv2() system call will
-      return instantly if it would have to read data from the
-      backing storage or wait for a lock.  If some data was
-      successfully read, it will return the number of bytes read.
-      If no bytes were read, it will return  -1 and set errno to
-      EAGAIN.  Currently, this flag is meaningful only for
-      preadv2().
+When we put a kretprobe on ftrace_ops_assist_func() and put another
+kretprobe on probed-function, below happens
 
-IOWs, we've explicitly designed interfaces to communicate whether
-data is "immediately accessible" or not to the application so they
-can make sensible decisions about IO scheduling. i.e. IO won't
-block the main application processing loop and so can be scheduled in
-the background by the app and the data processed when that IO
-returns.  That just so happens to be exactly the same information
-about the page cache that mincore is making available to userspace.
+<caller>
+ -><probed-function>
+   ->fentry
+    ->ftrace_ops_assist_func()
+     ->int3
+      ->kprobe_int3_handler()
+      ...->pre_handler_kretprobe()
+           push the return address (*fentry*) of ftrace_ops_assist_func() to
+           top of the kretprobe list and replace it with kretprobe_trampoline.
+      <-kprobe_int3_handler()
+     <-(int3)
+     ->kprobe_ftrace_handler()
+      ...->pre_handler_kretprobe()
+           push the return address (caller) of probed-function to top of the
+           kretprobe list and replace it with kretprobe_trampoline.
+     <-(kprobe_ftrace_handler())
+    <-(ftrace_ops_assist_func())
+    [kretprobe_trampoline]
+     ->tampoline_handler()
+       pop the return address (caller) from top of the kretprobe list
+     <-(trampoline_handler())
+    <caller>
+    [run caller with incorrect stack information]
+   <-(<caller>)
+  !!KERNEL PANIC!!
 
-If we "remove" this information from the interfaces like it has been
-done for mincore(), it doesn't mean userspace can't get it in other
-ways. e.g. it now just has to time the read(2) syscall duration and
-infer whether the data came from the page cache or disk from the
-timing information.
+Therefore, this kernel panic happens only when we put 2 k*ret*probes on
+ftrace_ops_assist_func() and other functions. If we put kprobes, it
+doesn't cause any issue, since it doesn't change the return address.
 
-IMO, there's nothing new or novel about this page cache information
-leak - it was just a matter of time before some researcher put 2 and
-2 together and realised that sharing the page cache across a
-security boundary is little different from sharing deduplicated
-pages across those same security boundaries.  i.e. As long as we
-shared caches across security boundaries and userspace can control
-both cache invalidation and instantiation, we cannot prevent
-userspace from constructing these invalidate+read information
-exfiltration scenarios.
+To fix (or just avoid) this issue, we can introduce a frame pointer
+verification to skip wrong order entries. And I also would like to
+blacklist those functions because those are part of ftrace-based 
+kprobe handling routine.
 
-And then there is overlayfs. Overlay is really just a way to
-efficiently share the page cache of the same underlying read-only
-directory tree across all containers on a host. i.e.  we have been
-specifically designing our container hosting systems to share the
-underlying read-only page cache across all security boundaries on
-the host. If overlay is vulnerable to these shared page cache
-attacks (seems extremely likely) then we've got much bigger problems
-than mincore to think about....
+(2) kretprobe trampoline recursion problem
 
-> But doing a test patch during the merge window (which is about to
-> close) sounds like the right thing to do.
+This was found by Andrea in the previous thread
+https://lkml.kernel.org/r/20190107183444.GA5966@xps-13
 
-IMO it seems like the wrong thing to do. It's just a hacky band-aid
-over a specific extraction method and does nothing to reduce the
-actual scope of the information leak. Focussing on the band-aid
-means you've missed all the other avenues that the same information
-is exposed and all the infrastructure we've build on the core
-concept of sharing kernel side pages across security boundaries.
+----
+ echo "r:event_1 __fdget" >> kprobe_events
+ echo "r:event_2 _raw_spin_lock_irqsave" >> kprobe_events
+ echo 1 > events/kprobes/enable
+ [DEADLOCK]
+----
 
-And that's even without considering whether the change breaks
-userspace. Which it does. e.g. vmtouch is fairly widely used to
-manage page cache instantiation for rapid bring-up and migration of
-guest VMs and containers. They save the hot page cache information
-from a running container and then using that to instantiate the page
-cache in new instances running the same workload so they run at full
-speed right from the start. This use case calls mincore() to pull
-the page cache information from the running container.
+Because kretprobe trampoline_handler uses spinlock for protecting
+hash table, if we probe the spinlock itself, it causes deadlock.
+Thank you Andrea and Steve for discovering this root cause!!
 
-If anyone else proposed merging a syscall implementation change that
-was extremely likely to break userspace you'd be shouting at them
-that "we don't break userspace"....
+This bug has been introduced with the asm-coded trampoline
+code, since previously it used another kprobe for hooking
+the function return placeholder (which only has a nop) and
+trampoline handler was called from that kprobe.
 
-Cheers,
+To fix this bug, I introduced a dummy kprobe and set it in
+current_kprobe as we did in old days.
 
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Thank you,
+
+---
+
+Masami Hiramatsu (3):
+      x86/kprobes: Verify stack frame on kretprobe
+      kprobes: Mark ftrace mcount handler functions nokprobe
+      x86/kprobes: Fix to avoid kretprobe recursion
+
+
+ arch/x86/kernel/kprobes/core.c |   48 ++++++++++++++++++++++++++++++++++++++--
+ include/linux/kprobes.h        |    1 +
+ kernel/trace/ftrace.c          |    6 ++++-
+ 3 files changed, 52 insertions(+), 3 deletions(-)
+
+--
+Masami Hiramatsu (Linaro) <mhiramat@kernel.org>
