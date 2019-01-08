@@ -6,45 +6,46 @@ X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAE8DC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:34:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56CB5C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:34:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 87FE920645
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:34:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 18E5D20645
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:34:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546976046;
-	bh=oHB4xrwQp6HXi1hYnkJp8SbKJ4hp9cCgbgV6d9NtYeY=;
+	s=default; t=1546976052;
+	bh=ciGsIKyl4BhGWqdpuVW3YC6tNHCMU3Je4Pc+YSEzjkk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=SXyXwKKLj3igCwu3p251nRaymsJb3ofdYPWcXMSsOVoxFp/DYpWEQpk8XL6YGHEuE
-	 RJ7O+NsWE3JrKRd0WbLlrJbFiaJHPgskm6gLtL/Ox2bjMDRvNJJ0sMyvg0GU/uwzWr
-	 jhHUwL/cL3w8InOvunoB4YJhRTXALxL/G46hDqmY=
+	b=jcyKoN04OSsabmbXfXBtjDglfNTCUnUjkVEAc6u/URH2urWIU91qhhSiWe3ChooOo
+	 i6at2bMYfFCWb+j5TwBApwipRHLbwJaPQ0EGax5lXZcoZ/hszYIw0B67c4QhXUWart
+	 QTprvY/qFJQKAiSRLXGpiVJFe6OFEH0q86r8i5ac=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731873AbfAHTeF (ORCPT
+        id S1731902AbfAHTeL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:34:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42726 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 14:34:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42846 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731846AbfAHTd6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:33:58 -0500
+        id S1731865AbfAHTeI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:34:08 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 40A2520645;
-        Tue,  8 Jan 2019 19:33:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C9FB820645;
+        Tue,  8 Jan 2019 19:34:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546976036;
-        bh=oHB4xrwQp6HXi1hYnkJp8SbKJ4hp9cCgbgV6d9NtYeY=;
+        s=default; t=1546976047;
+        bh=ciGsIKyl4BhGWqdpuVW3YC6tNHCMU3Je4Pc+YSEzjkk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=L1e+rYA+c0LvJ7OiyBva2mPpotcYqAj9FIv0oYsYojcO3d/KW2xOimkCcWDz6N2f0
-         agRZhaB1yaPN71CHi5WjIH4yEkbGfK0DCqg1e4KNhmFQy2DxMHrLRwPlpu/UA+iGlr
-         HJO+Uf9EBb5YO84oJoNgbx2EOk4g2cwBH3QzqLZ0=
+        b=pHaoe5nZkXbv+1vvemsx0x7Zwo0omzVRw2y01KQXri7E39HF0wBH67C96ju1s8LfH
+         FFeD45dR4j+wenljcvrp/hWPQNd5Rvu+3VZdDXZj0o5TwkQXtdqD6sElkEoj49lGjA
+         ExQzh3k+gufN85qR0rIaKKnhkopL5aE52XVTtw/c=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Takashi Sakamoto <o-takashi@sakamocchi.jp>,
-        Takashi Iwai <tiwai@suse.de>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.9 05/36] ALSA: oxfw: add support for APOGEE duet FireWire
-Date:   Tue,  8 Jan 2019 14:33:17 -0500
-Message-Id: <20190108193348.123880-5-sashal@kernel.org>
+Cc:     Chuck Lever <chuck.lever@oracle.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Sasha Levin <sashal@kernel.org>, linux-rdma@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 11/36] rxe: IB_WR_REG_MR does not capture MR's iova field
+Date:   Tue,  8 Jan 2019 14:33:23 -0500
+Message-Id: <20190108193348.123880-11-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108193348.123880-1-sashal@kernel.org>
 References: <20190108193348.123880-1-sashal@kernel.org>
@@ -56,98 +57,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+From: Chuck Lever <chuck.lever@oracle.com>
 
-[ Upstream commit fba43f454cdf9caa3185219d116bd2a6e6354552 ]
+[ Upstream commit b024dd0eba6e6d568f69d63c5e3153aba94c23e3 ]
 
-This commit adds support for APOGEE duet FireWire, launched 2007, already
-discontinued. This model uses Oxford Semiconductor FW971 as its
-communication engine. Below is information on Configuration ROM of this
-unit. The unit supports some AV/C commands defined by Audio subunit
-specification and vendor dependent commands.
+FRWR memory registration is done with a series of calls and WRs.
+1. ULP invokes ib_dma_map_sg()
+2. ULP invokes ib_map_mr_sg()
+3. ULP posts an IB_WR_REG_MR on the Send queue
 
-$ ./hinawa-config-rom-printer /dev/fw1
-{ 'bus-info': { 'adj': False,
-                'bmc': False,
-                'chip_ID': 42949742248,
-                'cmc': False,
-                'cyc_clk_acc': 255,
-                'generation': 0,
-                'imc': False,
-                'isc': True,
-                'link_spd': 3,
-                'max_ROM': 0,
-                'max_rec': 64,
-                'name': '1394',
-                'node_vendor_ID': 987,
-                'pmc': False},
-  'root-directory': [ ['VENDOR', 987],
-                      ['DESCRIPTOR', 'Apogee Electronics'],
-                      ['MODEL', 122333],
-                      ['DESCRIPTOR', 'Duet'],
-                      [ 'NODE_CAPABILITIES',
-                        { 'addressing': {'64': True, 'fix': True, 'prv': False},
-                          'misc': {'int': False, 'ms': False, 'spt': True},
-                          'state': { 'atn': False,
-                                     'ded': False,
-                                     'drq': True,
-                                     'elo': False,
-                                     'init': False,
-                                     'lst': True,
-                                     'off': False},
-                          'testing': {'bas': False, 'ext': False}}],
-                      [ 'UNIT',
-                        [ ['SPECIFIER_ID', 41005],
-                          ['VERSION', 65537],
-                          ['MODEL', 122333],
-                          ['DESCRIPTOR', 'Duet']]]]}
+Step 2 generates an iova. It is permissible for ULPs to change this
+iova (with certain restrictions) between steps 2 and 3.
 
-Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+rxe_map_mr_sg captures the MR's iova but later when rxe processes the
+REG_MR WR, it ignores the MR's iova field. If a ULP alters the MR's iova
+after step 2 but before step 3, rxe never captures that change.
+
+When the remote sends an RDMA Read targeting that MR, rxe looks up the
+R_key, but the altered iova does not match the iova stored in the MR,
+causing the RDMA Read request to fail.
+
+Reported-by: Anna Schumaker <schumaker.anna@gmail.com>
+Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
+Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/firewire/Kconfig     | 1 +
- sound/firewire/oxfw/oxfw.c | 8 ++++++++
- 2 files changed, 9 insertions(+)
+ drivers/infiniband/sw/rxe/rxe_req.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/sound/firewire/Kconfig b/sound/firewire/Kconfig
-index ab894ed1ff67..8557e54d2659 100644
---- a/sound/firewire/Kconfig
-+++ b/sound/firewire/Kconfig
-@@ -40,6 +40,7 @@ config SND_OXFW
- 	   * Mackie(Loud) U.420/U.420d
- 	   * TASCAM FireOne
- 	   * Stanton Controllers & Systems 1 Deck/Mixer
-+	   * APOGEE duet FireWire
- 
- 	  To compile this driver as a module, choose M here: the module
- 	  will be called snd-oxfw.
-diff --git a/sound/firewire/oxfw/oxfw.c b/sound/firewire/oxfw/oxfw.c
-index 696b6cf35003..b0395c4209ab 100644
---- a/sound/firewire/oxfw/oxfw.c
-+++ b/sound/firewire/oxfw/oxfw.c
-@@ -20,6 +20,7 @@
- #define VENDOR_LACIE		0x00d04b
- #define VENDOR_TASCAM		0x00022e
- #define OUI_STANTON		0x001260
-+#define OUI_APOGEE		0x0003db
- 
- #define MODEL_SATELLITE		0x00200f
- 
-@@ -441,6 +442,13 @@ static const struct ieee1394_device_id oxfw_id_table[] = {
- 		.vendor_id	= OUI_STANTON,
- 		.model_id	= 0x002000,
- 	},
-+	// APOGEE, duet FireWire
-+	{
-+		.match_flags	= IEEE1394_MATCH_VENDOR_ID |
-+				  IEEE1394_MATCH_MODEL_ID,
-+		.vendor_id	= OUI_APOGEE,
-+		.model_id	= 0x01dddd,
-+	},
- 	{ }
- };
- MODULE_DEVICE_TABLE(ieee1394, oxfw_id_table);
+diff --git a/drivers/infiniband/sw/rxe/rxe_req.c b/drivers/infiniband/sw/rxe/rxe_req.c
+index 47219ebd8ff2..0f9fe2ca2a91 100644
+--- a/drivers/infiniband/sw/rxe/rxe_req.c
++++ b/drivers/infiniband/sw/rxe/rxe_req.c
+@@ -643,6 +643,7 @@ int rxe_requester(void *arg)
+ 			rmr->access = wqe->wr.wr.reg.access;
+ 			rmr->lkey = wqe->wr.wr.reg.key;
+ 			rmr->rkey = wqe->wr.wr.reg.key;
++			rmr->iova = wqe->wr.wr.reg.mr->iova;
+ 			wqe->state = wqe_state_done;
+ 			wqe->status = IB_WC_SUCCESS;
+ 		} else {
 -- 
 2.19.1
 
