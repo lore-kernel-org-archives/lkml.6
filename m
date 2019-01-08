@@ -2,276 +2,240 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32097C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 09:04:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B354C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 09:06:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EAD1420896
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 09:04:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E43E62087E
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 09:06:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="oEDSOGHs"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727977AbfAHJEe (ORCPT
+        id S1727689AbfAHJGd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 04:04:34 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:48838 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726333AbfAHJEe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 04:04:34 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 353B17F6B3;
-        Tue,  8 Jan 2019 09:04:33 +0000 (UTC)
-Received: from [10.36.117.234] (ovpn-117-234.ams2.redhat.com [10.36.117.234])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C8ACC10027CE;
-        Tue,  8 Jan 2019 09:04:29 +0000 (UTC)
-Subject: Re: [PATCH v2 2/2] powerpc: use probe_user_read()
-To:     Christophe Leroy <christophe.leroy@c-s.fr>,
-        Kees Cook <keescook@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Mike Rapoport <rppt@linux.ibm.com>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-mm@kvack.org
-References: <0b0db24e18063076e9d9f4e376994af83da05456.1546932949.git.christophe.leroy@c-s.fr>
- <e939991366b784ef13c7afcab51749e3b46327ac.1546932949.git.christophe.leroy@c-s.fr>
-From:   David Hildenbrand <david@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- SE+xAvmumFBY
-Organization: Red Hat GmbH
-Message-ID: <8a52b522-7b9d-e3d4-9c04-98292db11d85@redhat.com>
-Date:   Tue, 8 Jan 2019 10:04:28 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        Tue, 8 Jan 2019 04:06:33 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:46378 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727367AbfAHJGc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 04:06:32 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=Ryh1lPF7s9cjCauzgCbtcNSiQDTUySQZy1OBSikJmzY=; b=oEDSOGHstqhLc5IbX2mpa5Bnq
+        89+v8ZJ1zd84ucp2d5qs3TBCKbgDlMpHnUvmoCfGOcE3V7ktvGvav0ak99DrKSwRtNgFjYFbw7KHI
+        wpiWQgowdPEZ9D0pLbV8IMkIF+ZY1KxLTtmBNlTl2piprev/CcoXT1H0mwyUJoBeMDSKZzE3/ZLHW
+        AUn3TAkxMa84IsXXGp1XCtIYobnaXqSAZ9+E0XYrqVTeiL9r+x+djgHt0pdVov5jDKqR82gYDnVNf
+        NbnF+VRROJM7AKwtwYjR1lauywwC1WHsfg18rsnHE21syxzz7bnrsdJaT0ViBX8GhN8S0tWD9xXQg
+        54+prWGEw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1ggnL9-0003e5-0Y; Tue, 08 Jan 2019 09:06:27 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 318CB20074A04; Tue,  8 Jan 2019 10:06:25 +0100 (CET)
+Date:   Tue, 8 Jan 2019 10:06:25 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Mike Galbraith <efault@gmx.de>
+Cc:     Tom Putzeys <tom.putzeys@be.atlascopco.com>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: CFS scheduler: spin_lock usage causes dead lock when
+ smp_apic_timer_interrupt occurs
+Message-ID: <20190108090625.GN15430@hirez.programming.kicks-ass.net>
+References: <AM0PR03MB480425D5999E0D08DAB30204BB8E0@AM0PR03MB4804.eurprd03.prod.outlook.com>
+ <AM0PR03MB4804FA468B7A006AEEA8592ABB8E0@AM0PR03MB4804.eurprd03.prod.outlook.com>
+ <20190107102613.GC2861@worktop.programming.kicks-ass.net>
+ <1546864114.26963.5.camel@gmx.de>
+ <20190107125231.GE14122@hirez.programming.kicks-ass.net>
+ <1546925459.17252.2.camel@gmx.de>
 MIME-Version: 1.0
-In-Reply-To: <e939991366b784ef13c7afcab51749e3b46327ac.1546932949.git.christophe.leroy@c-s.fr>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Tue, 08 Jan 2019 09:04:33 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1546925459.17252.2.camel@gmx.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08.01.19 08:37, Christophe Leroy wrote:
-> Instead of opencoding, use probe_user_read() to failessly
-> read a user location.
+On Tue, Jan 08, 2019 at 06:30:59AM +0100, Mike Galbraith wrote:
+> On Mon, 2019-01-07 at 13:52 +0100, Peter Zijlstra wrote:
+> > On Mon, Jan 07, 2019 at 01:28:34PM +0100, Mike Galbraith wrote:
+> > > diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> > > index 960ad0ce77d7..420624c49f38 100644
+> > > --- a/kernel/sched/fair.c
+> > > +++ b/kernel/sched/fair.c
+> > > @@ -5007,9 +5007,9 @@ void init_cfs_bandwidth(struct cfs_bandwidth *cfs_b)
+> > >  	cfs_b->period = ns_to_ktime(default_cfs_period());
+> > >  
+> > >  	INIT_LIST_HEAD(&cfs_b->throttled_cfs_rq);
+> > > -	hrtimer_init(&cfs_b->period_timer, CLOCK_MONOTONIC, HRTIMER_MODE_ABS_PINNED);
+> > > +	hrtimer_init(&cfs_b->period_timer, CLOCK_MONOTONIC, HRTIMER_MODE_ABS_PINNED_HARD);
+> > >  	cfs_b->period_timer.function = sched_cfs_period_timer;
+> > > -	hrtimer_init(&cfs_b->slack_timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
+> > > +	hrtimer_init(&cfs_b->slack_timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL_HARD);
+> > >  	cfs_b->slack_timer.function = sched_cfs_slack_timer;
+> > >  }
+> > 
+> > Right, that should sort it. But I'm not sure this is the best solution
+> > though. That cfs-runtime crud can (IIRC) iterate lists etc.. so running
+> > it from the softirq isn't a bad idea. We just need to fix that locking
+> > up a bit.
+> > 
+> > Something a wee bit like so perhaps..
 > 
-> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-> ---
->  v2: Using probe_user_read() instead of probe_user_address()
-> 
->  arch/powerpc/kernel/process.c   | 12 +-----------
->  arch/powerpc/mm/fault.c         |  6 +-----
->  arch/powerpc/perf/callchain.c   | 20 +++-----------------
->  arch/powerpc/perf/core-book3s.c |  8 +-------
->  arch/powerpc/sysdev/fsl_pci.c   | 10 ++++------
->  5 files changed, 10 insertions(+), 46 deletions(-)
-> 
-> diff --git a/arch/powerpc/kernel/process.c b/arch/powerpc/kernel/process.c
-> index ce393df243aa..6a4b59d574c2 100644
-> --- a/arch/powerpc/kernel/process.c
-> +++ b/arch/powerpc/kernel/process.c
-> @@ -1298,16 +1298,6 @@ void show_user_instructions(struct pt_regs *regs)
->  
->  	pc = regs->nip - (NR_INSN_TO_PRINT * 3 / 4 * sizeof(int));
->  
-> -	/*
-> -	 * Make sure the NIP points at userspace, not kernel text/data or
-> -	 * elsewhere.
-> -	 */
-> -	if (!__access_ok(pc, NR_INSN_TO_PRINT * sizeof(int), USER_DS)) {
-> -		pr_info("%s[%d]: Bad NIP, not dumping instructions.\n",
-> -			current->comm, current->pid);
-> -		return;
-> -	}
-> -
->  	seq_buf_init(&s, buf, sizeof(buf));
->  
->  	while (n) {
-> @@ -1318,7 +1308,7 @@ void show_user_instructions(struct pt_regs *regs)
->  		for (i = 0; i < 8 && n; i++, n--, pc += sizeof(int)) {
->  			int instr;
->  
-> -			if (probe_kernel_address((const void *)pc, instr)) {
-> +			if (probe_user_read(&instr, (void __user *)pc, sizeof(instr))) {
->  				seq_buf_printf(&s, "XXXXXXXX ");
->  				continue;
->  			}
-> diff --git a/arch/powerpc/mm/fault.c b/arch/powerpc/mm/fault.c
-> index 887f11bcf330..ec74305fa330 100644
-> --- a/arch/powerpc/mm/fault.c
-> +++ b/arch/powerpc/mm/fault.c
-> @@ -276,12 +276,8 @@ static bool bad_stack_expansion(struct pt_regs *regs, unsigned long address,
->  		if ((flags & FAULT_FLAG_WRITE) && (flags & FAULT_FLAG_USER) &&
->  		    access_ok(nip, sizeof(*nip))) {
->  			unsigned int inst;
-> -			int res;
->  
-> -			pagefault_disable();
-> -			res = __get_user_inatomic(inst, nip);
-> -			pagefault_enable();
-> -			if (!res)
-> +			if (!probe_user_read(&inst, nip, sizeof(inst)))
->  				return !store_updates_sp(inst);
->  			*must_retry = true;
->  		}
-> diff --git a/arch/powerpc/perf/callchain.c b/arch/powerpc/perf/callchain.c
-> index 0af051a1974e..0680efb2237b 100644
-> --- a/arch/powerpc/perf/callchain.c
-> +++ b/arch/powerpc/perf/callchain.c
-> @@ -159,12 +159,8 @@ static int read_user_stack_64(unsigned long __user *ptr, unsigned long *ret)
->  	    ((unsigned long)ptr & 7))
->  		return -EFAULT;
->  
-> -	pagefault_disable();
-> -	if (!__get_user_inatomic(*ret, ptr)) {
-> -		pagefault_enable();
-> +	if (!probe_user_read(ret, ptr, sizeof(*ret)))
->  		return 0;
-> -	}
-> -	pagefault_enable();
->  
->  	return read_user_stack_slow(ptr, ret, 8);
->  }
-> @@ -175,12 +171,8 @@ static int read_user_stack_32(unsigned int __user *ptr, unsigned int *ret)
->  	    ((unsigned long)ptr & 3))
->  		return -EFAULT;
->  
-> -	pagefault_disable();
-> -	if (!__get_user_inatomic(*ret, ptr)) {
-> -		pagefault_enable();
-> +	if (!probe_user_read(ret, ptr, sizeof(*ret)))
->  		return 0;
-> -	}
-> -	pagefault_enable();
->  
->  	return read_user_stack_slow(ptr, ret, 4);
->  }
-> @@ -307,17 +299,11 @@ static inline int current_is_64bit(void)
->   */
->  static int read_user_stack_32(unsigned int __user *ptr, unsigned int *ret)
->  {
-> -	int rc;
-> -
->  	if ((unsigned long)ptr > TASK_SIZE - sizeof(unsigned int) ||
->  	    ((unsigned long)ptr & 3))
->  		return -EFAULT;
->  
-> -	pagefault_disable();
-> -	rc = __get_user_inatomic(*ret, ptr);
-> -	pagefault_enable();
-> -
-> -	return rc;
-> +	return probe_user_read(ret, ptr, sizeof(*ret));
->  }
->  
->  static inline void perf_callchain_user_64(struct perf_callchain_entry_ctx *entry,
-> diff --git a/arch/powerpc/perf/core-book3s.c b/arch/powerpc/perf/core-book3s.c
-> index b0723002a396..4b64ddf0db68 100644
-> --- a/arch/powerpc/perf/core-book3s.c
-> +++ b/arch/powerpc/perf/core-book3s.c
-> @@ -416,7 +416,6 @@ static void power_pmu_sched_task(struct perf_event_context *ctx, bool sched_in)
->  static __u64 power_pmu_bhrb_to(u64 addr)
->  {
->  	unsigned int instr;
-> -	int ret;
->  	__u64 target;
->  
->  	if (is_kernel_addr(addr)) {
-> @@ -427,13 +426,8 @@ static __u64 power_pmu_bhrb_to(u64 addr)
->  	}
->  
->  	/* Userspace: need copy instruction here then translate it */
-> -	pagefault_disable();
-> -	ret = __get_user_inatomic(instr, (unsigned int __user *)addr);
-> -	if (ret) {
-> -		pagefault_enable();
-> +	if (probe_user_read(&instr, (unsigned int __user *)addr, sizeof(instr)))
->  		return 0;
-> -	}
-> -	pagefault_enable();
->  
->  	target = branch_target(&instr);
->  	if ((!target) || (instr & BRANCH_ABSOLUTE))
-> diff --git a/arch/powerpc/sysdev/fsl_pci.c b/arch/powerpc/sysdev/fsl_pci.c
-> index 918be816b097..c8a1b26489f5 100644
-> --- a/arch/powerpc/sysdev/fsl_pci.c
-> +++ b/arch/powerpc/sysdev/fsl_pci.c
-> @@ -1068,13 +1068,11 @@ int fsl_pci_mcheck_exception(struct pt_regs *regs)
->  	addr += mfspr(SPRN_MCAR);
->  
->  	if (is_in_pci_mem_space(addr)) {
-> -		if (user_mode(regs)) {
-> -			pagefault_disable();
-> -			ret = get_user(inst, (__u32 __user *)regs->nip);
-> -			pagefault_enable();
-> -		} else {
-> +		if (user_mode(regs))
-> +			ret = probe_user_read(&inst, (void __user *)regs->nip,
-> +					      sizeof(inst));
+> I plugged that into 4.19-rt along with revert of hard irq context, and
+> it (as expected) does the trick.
 
-What about also adding probe_user_address ?
+Much appreciated; I queued it as the below.
 
-> +		else
->  			ret = probe_kernel_address((void *)regs->nip, inst);
-> -		}
->  
->  		if (!ret && mcheck_handle_load(regs, inst)) {
->  			regs->nip += 4;
-> 
+---
+Subject: sched/fair: Robustify CFS-bandwidth timer locking
+From: Peter Zijlstra <peterz@infradead.org>
+Date: Mon, 7 Jan 2019 13:52:31 +0100
 
+Traditionally hrtimer callbacks were run with IRQs disabled, but with
+the introduction of HRTIMER_MODE_SOFT it is possible they run from
+SoftIRQ context, which does _NOT_ have IRQs disabled.
 
--- 
+Allow for the CFS bandwidth timers (period_timer and slack_timer) to
+be ran from SoftIRQ context; this entails removing the assumption that
+IRQs are already disabled from the locking.
 
-Thanks,
+While mainline doesn't strictly need this, -RT forces all timers not
+explicitly marked with MODE_HARD into MODE_SOFT and trips over this.
+And marking these timers as MODE_HARD doesn't make sense as they're
+not required for RT operation and can potentially be quite expensive.
 
-David / dhildenb
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Reported-by: Tom Putzeys <tom.putzeys@be.atlascopco.com>
+Tested-by: Mike Galbraith <efault@gmx.de>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Link: https://lkml.kernel.org/r/20190107125231.GE14122@hirez.programming.kicks-ass.net
+---
+ kernel/sched/fair.c |   30 ++++++++++++++++--------------
+ 1 file changed, 16 insertions(+), 14 deletions(-)
+
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -4566,7 +4566,7 @@ static u64 distribute_cfs_runtime(struct
+ 		struct rq *rq = rq_of(cfs_rq);
+ 		struct rq_flags rf;
+ 
+-		rq_lock(rq, &rf);
++		rq_lock_irqsave(rq, &rf);
+ 		if (!cfs_rq_throttled(cfs_rq))
+ 			goto next;
+ 
+@@ -4583,7 +4583,7 @@ static u64 distribute_cfs_runtime(struct
+ 			unthrottle_cfs_rq(cfs_rq);
+ 
+ next:
+-		rq_unlock(rq, &rf);
++		rq_unlock_irqrestore(rq, &rf);
+ 
+ 		if (!remaining)
+ 			break;
+@@ -4599,7 +4599,7 @@ static u64 distribute_cfs_runtime(struct
+  * period the timer is deactivated until scheduling resumes; cfs_b->idle is
+  * used to track this state.
+  */
+-static int do_sched_cfs_period_timer(struct cfs_bandwidth *cfs_b, int overrun)
++static int do_sched_cfs_period_timer(struct cfs_bandwidth *cfs_b, int overrun, unsigned long flags)
+ {
+ 	u64 runtime, runtime_expires;
+ 	int throttled;
+@@ -4641,11 +4641,11 @@ static int do_sched_cfs_period_timer(str
+ 	while (throttled && cfs_b->runtime > 0 && !cfs_b->distribute_running) {
+ 		runtime = cfs_b->runtime;
+ 		cfs_b->distribute_running = 1;
+-		raw_spin_unlock(&cfs_b->lock);
++		raw_spin_unlock_irqrestore(&cfs_b->lock, flags);
+ 		/* we can't nest cfs_b->lock while distributing bandwidth */
+ 		runtime = distribute_cfs_runtime(cfs_b, runtime,
+ 						 runtime_expires);
+-		raw_spin_lock(&cfs_b->lock);
++		raw_spin_lock_irqsave(&cfs_b->lock, flags);
+ 
+ 		cfs_b->distribute_running = 0;
+ 		throttled = !list_empty(&cfs_b->throttled_cfs_rq);
+@@ -4754,17 +4754,18 @@ static __always_inline void return_cfs_r
+ static void do_sched_cfs_slack_timer(struct cfs_bandwidth *cfs_b)
+ {
+ 	u64 runtime = 0, slice = sched_cfs_bandwidth_slice();
++	unsigned long flags;
+ 	u64 expires;
+ 
+ 	/* confirm we're still not at a refresh boundary */
+-	raw_spin_lock(&cfs_b->lock);
++	raw_spin_lock_irqsave(&cfs_b->lock, flags);
+ 	if (cfs_b->distribute_running) {
+-		raw_spin_unlock(&cfs_b->lock);
++		raw_spin_unlock_irqrestore(&cfs_b->lock, flags);
+ 		return;
+ 	}
+ 
+ 	if (runtime_refresh_within(cfs_b, min_bandwidth_expiration)) {
+-		raw_spin_unlock(&cfs_b->lock);
++		raw_spin_unlock_irqrestore(&cfs_b->lock, flags);
+ 		return;
+ 	}
+ 
+@@ -4775,18 +4776,18 @@ static void do_sched_cfs_slack_timer(str
+ 	if (runtime)
+ 		cfs_b->distribute_running = 1;
+ 
+-	raw_spin_unlock(&cfs_b->lock);
++	raw_spin_unlock_irqrestore(&cfs_b->lock, flags);
+ 
+ 	if (!runtime)
+ 		return;
+ 
+ 	runtime = distribute_cfs_runtime(cfs_b, runtime, expires);
+ 
+-	raw_spin_lock(&cfs_b->lock);
++	raw_spin_lock_irqsave(&cfs_b->lock, flags);
+ 	if (expires == cfs_b->runtime_expires)
+ 		lsub_positive(&cfs_b->runtime, runtime);
+ 	cfs_b->distribute_running = 0;
+-	raw_spin_unlock(&cfs_b->lock);
++	raw_spin_unlock_irqrestore(&cfs_b->lock, flags);
+ }
+ 
+ /*
+@@ -4864,20 +4865,21 @@ static enum hrtimer_restart sched_cfs_pe
+ {
+ 	struct cfs_bandwidth *cfs_b =
+ 		container_of(timer, struct cfs_bandwidth, period_timer);
++	unsigned long flags;
+ 	int overrun;
+ 	int idle = 0;
+ 
+-	raw_spin_lock(&cfs_b->lock);
++	raw_spin_lock_irqsave(&cfs_b->lock, flags);
+ 	for (;;) {
+ 		overrun = hrtimer_forward_now(timer, cfs_b->period);
+ 		if (!overrun)
+ 			break;
+ 
+-		idle = do_sched_cfs_period_timer(cfs_b, overrun);
++		idle = do_sched_cfs_period_timer(cfs_b, overrun, flags);
+ 	}
+ 	if (idle)
+ 		cfs_b->period_active = 0;
+-	raw_spin_unlock(&cfs_b->lock);
++	raw_spin_unlock_irqrestore(&cfs_b->lock, flags);
+ 
+ 	return idle ? HRTIMER_NORESTART : HRTIMER_RESTART;
+ }
