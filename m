@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF135C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:34:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA14DC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:34:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85C76205C9
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:34:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B0DB82063F
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:34:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546976061;
-	bh=IaBh0WqDb0rFfVzGVQLhT9NnDlaxPqDmPkgTmcntw+s=;
+	s=default; t=1546976063;
+	bh=buDvPRuGpI4Ip4q6GJVcMFbxrUjNVWPo7my1Xave8QQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=zJUWl/fMAzPHa8qk4R4c4Sq6XyCt3ZdTKsVlK4BN6ugV+jgEBP9wqFvyaTb1ylTyw
-	 hurgkbaiLA+pU9TGg3Nx9/+mXps5vMAQRFn1zehb5fH5DY2zxCWAnL8xW/942a88ob
-	 76qKm1YDyM1BxYL0ahlGPl2pShS8F+WcGNAvH/OI=
+	b=gGYuoxSonuFNYpa04I8XZOlAgsGsV+ll2znxfBMSIBIcpngYanaJGnrL2fZuTfegE
+	 mt+vi4t/XhVHRA13mdQos2vYkXuuIK0rkXm+HwG7s62TMvcC2wAp0JwdFTacjlmD4D
+	 L/vk1QETmcwNniSRb9FSlcK6Juqey/xwrESd7xJI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731302AbfAHTeU (ORCPT
+        id S1730258AbfAHTeW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:34:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42998 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 14:34:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43034 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731090AbfAHTeQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:34:16 -0500
+        id S1731934AbfAHTeS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:34:18 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 227EE217D9;
-        Tue,  8 Jan 2019 19:34:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3DBDE2176F;
+        Tue,  8 Jan 2019 19:34:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546976055;
-        bh=IaBh0WqDb0rFfVzGVQLhT9NnDlaxPqDmPkgTmcntw+s=;
+        s=default; t=1546976057;
+        bh=buDvPRuGpI4Ip4q6GJVcMFbxrUjNVWPo7my1Xave8QQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zQgFgcxBCtI1ctMrHpvLmg/pTcCtmApaE6JgCkFApo/qqOj20+3bnF2Xb1Cd58hPB
-         IoNPeESaBdXF9s+CMMJbUuBDyIykkGX7SSBwTTXbt3Ta8avamvExI2zunh3lytgt2R
-         Co0iot8rcvgkxxJFeGBKUdIe9PCCQmdlXK0owvFI=
+        b=pE8WPc6JLEBfjhkl/o8YNqWuwqiAwZCHLaE8/jnXdDK9MRFX5CstFiCGqCzmjIVpY
+         SyHLPLJ3j/ZvjrsnJoaSKQNLDMGMv2F79e3IgkJh+EB7TjbYeBvSGgmKuOaUBomq1e
+         QMLEB5UFH2R9UEz88cvPYTmt0F+wYfK6nh/mTHcw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     yupeng <yupeng0921@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 17/36] net: call sk_dst_reset when set SO_DONTROUTE
-Date:   Tue,  8 Jan 2019 14:33:29 -0500
-Message-Id: <20190108193348.123880-17-sashal@kernel.org>
+Cc:     Lucas Stach <l.stach@pengutronix.de>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 19/36] clk: imx6q: reset exclusive gates on init
+Date:   Tue,  8 Jan 2019 14:33:31 -0500
+Message-Id: <20190108193348.123880-19-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108193348.123880-1-sashal@kernel.org>
 References: <20190108193348.123880-1-sashal@kernel.org>
@@ -58,65 +58,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: yupeng <yupeng0921@gmail.com>
+From: Lucas Stach <l.stach@pengutronix.de>
 
-[ Upstream commit 0fbe82e628c817e292ff588cd5847fc935e025f2 ]
+[ Upstream commit f7542d817733f461258fd3a47d77da35b2d9fc81 ]
 
-after set SO_DONTROUTE to 1, the IP layer should not route packets if
-the dest IP address is not in link scope. But if the socket has cached
-the dst_entry, such packets would be routed until the sk_dst_cache
-expires. So we should clean the sk_dst_cache when a user set
-SO_DONTROUTE option. Below are server/client python scripts which
-could reprodue this issue:
+The exclusive gates may be set up in the wrong way by software running
+before the clock driver comes up. In that case the exclusive setup is
+locked in its initial state, as the complementary function can't be
+activated without disabling the initial setup first.
 
-server side code:
+To avoid this lock situation, reset the exclusive gates to the off
+state and allow the kernel to provide the proper setup.
 
-==========================================================================
-import socket
-import struct
-import time
-
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.bind(('0.0.0.0', 9000))
-s.listen(1)
-sock, addr = s.accept()
-sock.setsockopt(socket.SOL_SOCKET, socket.SO_DONTROUTE, struct.pack('i', 1))
-while True:
-    sock.send(b'foo')
-    time.sleep(1)
-==========================================================================
-
-client side code:
-==========================================================================
-import socket
-import time
-
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.connect(('server_address', 9000))
-while True:
-    data = s.recv(1024)
-    print(data)
-==========================================================================
-
-Signed-off-by: yupeng <yupeng0921@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+Reviewed-by: Dong Aisheng <Aisheng.dong@nxp.com>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/core/sock.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/clk/imx/clk-imx6q.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/net/core/sock.c b/net/core/sock.c
-index 1c4c43483b54..8566da877ec2 100644
---- a/net/core/sock.c
-+++ b/net/core/sock.c
-@@ -699,6 +699,7 @@ int sock_setsockopt(struct socket *sock, int level, int optname,
- 		break;
- 	case SO_DONTROUTE:
- 		sock_valbool_flag(sk, SOCK_LOCALROUTE, valbool);
-+		sk_dst_reset(sk);
- 		break;
- 	case SO_BROADCAST:
- 		sock_valbool_flag(sk, SOCK_BROADCAST, valbool);
+diff --git a/drivers/clk/imx/clk-imx6q.c b/drivers/clk/imx/clk-imx6q.c
+index 93a19667003d..14682df5d312 100644
+--- a/drivers/clk/imx/clk-imx6q.c
++++ b/drivers/clk/imx/clk-imx6q.c
+@@ -258,8 +258,12 @@ static void __init imx6q_clocks_init(struct device_node *ccm_node)
+ 	 * lvds1_gate and lvds2_gate are pseudo-gates.  Both can be
+ 	 * independently configured as clock inputs or outputs.  We treat
+ 	 * the "output_enable" bit as a gate, even though it's really just
+-	 * enabling clock output.
++	 * enabling clock output. Initially the gate bits are cleared, as
++	 * otherwise the exclusive configuration gets locked in the setup done
++	 * by software running before the clock driver, with no way to change
++	 * it.
+ 	 */
++	writel(readl(base + 0x160) & ~0x3c00, base + 0x160);
+ 	clk[IMX6QDL_CLK_LVDS1_GATE] = imx_clk_gate_exclusive("lvds1_gate", "lvds1_sel", base + 0x160, 10, BIT(12));
+ 	clk[IMX6QDL_CLK_LVDS2_GATE] = imx_clk_gate_exclusive("lvds2_gate", "lvds2_sel", base + 0x160, 11, BIT(13));
+ 
 -- 
 2.19.1
 
