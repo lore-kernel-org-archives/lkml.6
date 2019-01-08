@@ -4,49 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26EACC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:30:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40A10C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:30:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E551B20645
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:30:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 064E92176F
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:30:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546975852;
-	bh=HywN864SVKIN2CpUdBZL26z4S1wjWXTSoW4kReZv2Os=;
+	s=default; t=1546975856;
+	bh=gAdcduL4w429neXlretvKrzx2dABdkMYjOD3WuuevdA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=TC4avVjBoBbms9BTuS7cEpcoLC70Nw7l3I3lFRMQG1ljisJg0lpE/+c8CVAxJp2fd
-	 gWPks5G+JK6M73ZQIPzEOJRqU/JwxdGrYEGhT8wy97DOiaWTvJ6xQGWzN4Q461BQlC
-	 suJKTTZb2WF5QQzxb7P6NSZf4TpMd2bDzSzWws2U=
+	b=q83YiNPybvk5JsxQXCGVeKO7pW7gXwJlVqvyvtOAd9FLk1IFH/Xl+0WK8K2gD9nHy
+	 bQ7vxIUkxVR5rnsOM+VXIJ3A7FF5LwZp/Oxz+VRs/vz0AfNXb75lsA2acRS1ddggjN
+	 5Eb+nhdSswTSsP5B120HoAQnTcpB4OJiCN3kBk1U=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730898AbfAHTav (ORCPT
+        id S1730915AbfAHTay (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:30:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38630 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 14:30:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38714 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730869AbfAHTar (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:30:47 -0500
+        id S1729891AbfAHTav (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:30:51 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 62DB2217D9;
-        Tue,  8 Jan 2019 19:30:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B73A42070B;
+        Tue,  8 Jan 2019 19:30:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546975847;
-        bh=HywN864SVKIN2CpUdBZL26z4S1wjWXTSoW4kReZv2Os=;
+        s=default; t=1546975850;
+        bh=gAdcduL4w429neXlretvKrzx2dABdkMYjOD3WuuevdA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zactgIkUB+/0Nx9SXN5dhdw7/nKr4/0tJ3ETQRvKPnWgz2yFJiYi6tRtUxOUqPa/u
-         F5H+Qk6erwaEVR7C1Uk2EJ3U9KytwhGuRBrLHNgc/333p8l6ixye2sH4vRozlwn+sy
-         JIOWHAn7/CIYxQBzV0T+wCfIQgM8lLMPa0tjYcxY=
+        b=DQMj2TjiaKbTpwSODUqmjZvf8FW2bN+qbwjuvSfilmZv4FBf+RGN0WaeGVG8L5dbA
+         WKLzH1kBGKJu5etSMf7IHVbjb7yUUfANL0MCpymw4pNNoEcIYvBheyqah6ZtlgCTOH
+         LIVcdKmd+YAVjLFogdLDFxDkcDNNb2GIfyNnI99M=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Daniel Santos <daniel.santos@pobox.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Sasha Levin <sashal@kernel.org>, linux-mtd@lists.infradead.org
-Subject: [PATCH AUTOSEL 4.19 33/97] jffs2: Fix use of uninitialized delayed_work, lockdep breakage
-Date:   Tue,  8 Jan 2019 14:28:42 -0500
-Message-Id: <20190108192949.122407-33-sashal@kernel.org>
+Cc:     Daniel Axtens <dja@axtens.net>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 36/97] media: uvcvideo: Refactor teardown of uvc on USB disconnect
+Date:   Tue,  8 Jan 2019 14:28:45 -0500
+Message-Id: <20190108192949.122407-36-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108192949.122407-1-sashal@kernel.org>
 References: <20190108192949.122407-1-sashal@kernel.org>
@@ -58,69 +59,185 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Daniel Santos <daniel.santos@pobox.com>
+From: Daniel Axtens <dja@axtens.net>
 
-[ Upstream commit a788c5272769ddbcdbab297cf386413eeac04463 ]
+[ Upstream commit 10e1fdb95809ed21406f53b5b4f064673a1b9ceb ]
 
-jffs2_sync_fs makes the assumption that if CONFIG_JFFS2_FS_WRITEBUFFER
-is defined then a write buffer is available and has been initialized.
-However, this does is not the case when the mtd device has no
-out-of-band buffer:
+Currently, disconnecting a USB webcam while it is in use prints out a
+number of warnings, such as:
 
-int jffs2_nand_flash_setup(struct jffs2_sb_info *c)
-{
-        if (!c->mtd->oobsize)
-                return 0;
-...
+WARNING: CPU: 2 PID: 3118 at /build/linux-ezBi1T/linux-4.8.0/fs/sysfs/group.c:237 sysfs_remove_group+0x8b/0x90
+sysfs group ffffffffa7cd0780 not found for kobject 'event13'
 
-The resulting call to cancel_delayed_work_sync passing a uninitialized
-(but zeroed) delayed_work struct forces lockdep to become disabled.
+This has been noticed before. [0]
 
-[   90.050639] overlayfs: upper fs does not support tmpfile.
-[   90.652264] INFO: trying to register non-static key.
-[   90.662171] the code is fine but needs lockdep annotation.
-[   90.673090] turning off the locking correctness validator.
-[   90.684021] CPU: 0 PID: 1762 Comm: mount_root Not tainted 4.14.63 #0
-[   90.696672] Stack : 00000000 00000000 80d8f6a2 00000038 805f0000 80444600 8fe364f4 805dfbe7
-[   90.713349]         80563a30 000006e2 8068370c 00000001 00000000 00000001 8e2fdc48 ffffffff
-[   90.730020]         00000000 00000000 80d90000 00000000 00000106 00000000 6465746e 312e3420
-[   90.746690]         6b636f6c 03bf0000 f8000000 20676e69 00000000 80000000 00000000 8e2c2a90
-[   90.763362]         80d90000 00000001 00000000 8e2c2a90 00000003 80260dc0 08052098 80680000
-[   90.780033]         ...
-[   90.784902] Call Trace:
-[   90.789793] [<8000f0d8>] show_stack+0xb8/0x148
-[   90.798659] [<8005a000>] register_lock_class+0x270/0x55c
-[   90.809247] [<8005cb64>] __lock_acquire+0x13c/0xf7c
-[   90.818964] [<8005e314>] lock_acquire+0x194/0x1dc
-[   90.828345] [<8003f27c>] flush_work+0x200/0x24c
-[   90.837374] [<80041dfc>] __cancel_work_timer+0x158/0x210
-[   90.847958] [<801a8770>] jffs2_sync_fs+0x20/0x54
-[   90.857173] [<80125cf4>] iterate_supers+0xf4/0x120
-[   90.866729] [<80158fc4>] sys_sync+0x44/0x9c
-[   90.875067] [<80014424>] syscall_common+0x34/0x58
+This is because of the order in which things are torn down.
 
-Signed-off-by: Daniel Santos <daniel.santos@pobox.com>
-Reviewed-by: Hou Tao <houtao1@huawei.com>
-Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+If there are no streams active during a USB disconnect:
+
+ - uvc_disconnect() is invoked via device_del() through the bus
+   notifier mechanism.
+
+ - this calls uvc_unregister_video().
+
+ - uvc_unregister_video() unregisters the video device for each
+   stream,
+
+ - because there are no streams open, it calls uvc_delete()
+
+ - uvc_delete() calls uvc_status_cleanup(), which cleans up the status
+   input device.
+
+ - uvc_delete() calls media_device_unregister(), which cleans up the
+   media device
+
+ - uvc_delete(), uvc_unregister_video() and uvc_disconnect() all
+   return, and we end up back in device_del().
+
+ - device_del() then cleans up the sysfs folder for the camera with
+   dpm_sysfs_remove(). Because uvc_status_cleanup() and
+   media_device_unregister() have already been called, this all works
+   nicely.
+
+If, on the other hand, there *are* streams active during a USB disconnect:
+
+ - uvc_disconnect() is invoked
+
+ - this calls uvc_unregister_video()
+
+ - uvc_unregister_video() unregisters the video device for each
+   stream,
+
+ - uvc_unregister_video() and uvc_disconnect() return, and we end up
+   back in device_del().
+
+ - device_del() then cleans up the sysfs folder for the camera with
+   dpm_sysfs_remove(). Because the status input device and the media
+   device are children of the USB device, this also deletes their
+   sysfs folders.
+
+ - Sometime later, the final stream is closed, invoking uvc_release().
+
+ - uvc_release() calls uvc_delete()
+
+ - uvc_delete() calls uvc_status_cleanup(), which cleans up the status
+   input device. Because the sysfs directory has already been removed,
+   this causes a WARNing.
+
+ - uvc_delete() calls media_device_unregister(), which cleans up the
+   media device. Because the sysfs directory has already been removed,
+   this causes another WARNing.
+
+To fix this, we need to make sure the devices are always unregistered
+before the end of uvc_disconnect(). To this, move the unregistration
+into the disconnect path:
+
+ - split uvc_status_cleanup() into two parts, one on disconnect that
+   unregisters and one on delete that frees.
+
+ - move v4l2_device_unregister() and media_device_unregister() into
+   the disconnect path.
+
+[0]: https://lkml.org/lkml/2016/12/8/657
+
+[Renamed uvc_input_cleanup() to uvc_input_unregister()]
+
+Signed-off-by: Daniel Axtens <dja@axtens.net>
+Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/jffs2/super.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/media/usb/uvc/uvc_driver.c | 13 +++++++++----
+ drivers/media/usb/uvc/uvc_status.c | 12 ++++++++----
+ drivers/media/usb/uvc/uvcvideo.h   |  1 +
+ 3 files changed, 18 insertions(+), 8 deletions(-)
 
-diff --git a/fs/jffs2/super.c b/fs/jffs2/super.c
-index 902a7dd10e5c..bb6ae387469f 100644
---- a/fs/jffs2/super.c
-+++ b/fs/jffs2/super.c
-@@ -101,7 +101,8 @@ static int jffs2_sync_fs(struct super_block *sb, int wait)
- 	struct jffs2_sb_info *c = JFFS2_SB_INFO(sb);
+diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
+index d46dc432456c..361abbc00486 100644
+--- a/drivers/media/usb/uvc/uvc_driver.c
++++ b/drivers/media/usb/uvc/uvc_driver.c
+@@ -1824,11 +1824,7 @@ static void uvc_delete(struct kref *kref)
+ 	usb_put_intf(dev->intf);
+ 	usb_put_dev(dev->udev);
  
- #ifdef CONFIG_JFFS2_FS_WRITEBUFFER
--	cancel_delayed_work_sync(&c->wbuf_dwork);
-+	if (jffs2_is_writebuffered(c))
-+		cancel_delayed_work_sync(&c->wbuf_dwork);
+-	if (dev->vdev.dev)
+-		v4l2_device_unregister(&dev->vdev);
+ #ifdef CONFIG_MEDIA_CONTROLLER
+-	if (media_devnode_is_registered(dev->mdev.devnode))
+-		media_device_unregister(&dev->mdev);
+ 	media_device_cleanup(&dev->mdev);
  #endif
  
- 	mutex_lock(&c->alloc_sem);
+@@ -1885,6 +1881,15 @@ static void uvc_unregister_video(struct uvc_device *dev)
+ 
+ 		uvc_debugfs_cleanup_stream(stream);
+ 	}
++
++	uvc_status_unregister(dev);
++
++	if (dev->vdev.dev)
++		v4l2_device_unregister(&dev->vdev);
++#ifdef CONFIG_MEDIA_CONTROLLER
++	if (media_devnode_is_registered(dev->mdev.devnode))
++		media_device_unregister(&dev->mdev);
++#endif
+ }
+ 
+ int uvc_register_video_device(struct uvc_device *dev,
+diff --git a/drivers/media/usb/uvc/uvc_status.c b/drivers/media/usb/uvc/uvc_status.c
+index 0722dc684378..883e4cab45e7 100644
+--- a/drivers/media/usb/uvc/uvc_status.c
++++ b/drivers/media/usb/uvc/uvc_status.c
+@@ -54,7 +54,7 @@ static int uvc_input_init(struct uvc_device *dev)
+ 	return ret;
+ }
+ 
+-static void uvc_input_cleanup(struct uvc_device *dev)
++static void uvc_input_unregister(struct uvc_device *dev)
+ {
+ 	if (dev->input)
+ 		input_unregister_device(dev->input);
+@@ -71,7 +71,7 @@ static void uvc_input_report_key(struct uvc_device *dev, unsigned int code,
+ 
+ #else
+ #define uvc_input_init(dev)
+-#define uvc_input_cleanup(dev)
++#define uvc_input_unregister(dev)
+ #define uvc_input_report_key(dev, code, value)
+ #endif /* CONFIG_USB_VIDEO_CLASS_INPUT_EVDEV */
+ 
+@@ -292,12 +292,16 @@ int uvc_status_init(struct uvc_device *dev)
+ 	return 0;
+ }
+ 
+-void uvc_status_cleanup(struct uvc_device *dev)
++void uvc_status_unregister(struct uvc_device *dev)
+ {
+ 	usb_kill_urb(dev->int_urb);
++	uvc_input_unregister(dev);
++}
++
++void uvc_status_cleanup(struct uvc_device *dev)
++{
+ 	usb_free_urb(dev->int_urb);
+ 	kfree(dev->status);
+-	uvc_input_cleanup(dev);
+ }
+ 
+ int uvc_status_start(struct uvc_device *dev, gfp_t flags)
+diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
+index e5f5d84f1d1d..a738486fd9d6 100644
+--- a/drivers/media/usb/uvc/uvcvideo.h
++++ b/drivers/media/usb/uvc/uvcvideo.h
+@@ -750,6 +750,7 @@ int uvc_register_video_device(struct uvc_device *dev,
+ 
+ /* Status */
+ int uvc_status_init(struct uvc_device *dev);
++void uvc_status_unregister(struct uvc_device *dev);
+ void uvc_status_cleanup(struct uvc_device *dev);
+ int uvc_status_start(struct uvc_device *dev, gfp_t flags);
+ void uvc_status_stop(struct uvc_device *dev);
 -- 
 2.19.1
 
