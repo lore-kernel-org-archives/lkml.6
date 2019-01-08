@@ -6,38 +6,35 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E77C6C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 14:09:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E154FC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 14:09:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C23D2206C0
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 14:09:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ACAE6206BB
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 14:09:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729293AbfAHOJr (ORCPT
+        id S1729042AbfAHOIa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 09:09:47 -0500
-Received: from foss.arm.com ([217.140.101.70]:52300 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729037AbfAHOIb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 09:08:31 -0500
+        Tue, 8 Jan 2019 09:08:30 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:52292 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728112AbfAHOI2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 09:08:28 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8B0831AED;
-        Tue,  8 Jan 2019 06:08:30 -0800 (PST)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E62591A25;
+        Tue,  8 Jan 2019 06:08:27 -0800 (PST)
 Received: from e112298-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 2E6353F70D;
-        Tue,  8 Jan 2019 06:08:28 -0800 (PST)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 22BA13F70D;
+        Tue,  8 Jan 2019 06:08:25 -0800 (PST)
 From:   Julien Thierry <julien.thierry@arm.com>
 To:     linux-arm-kernel@lists.infradead.org
 Cc:     linux-kernel@vger.kernel.org, daniel.thompson@linaro.org,
         joel@joelfernandes.org, marc.zyngier@arm.com,
         christoffer.dall@arm.com, james.morse@arm.com,
         catalin.marinas@arm.com, will.deacon@arm.com, mark.rutland@arm.com,
-        Julien Thierry <julien.thierry@arm.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Marc Zyngier <Marc.Zyngier@arm.com>,
-        Christoffer Dall <Christoffer.Dall@arm.com>
-Subject: [PATCH v8 14/26] arm64: alternative: Allow alternative status checking per cpufeature
-Date:   Tue,  8 Jan 2019 14:07:32 +0000
-Message-Id: <1546956464-48825-15-git-send-email-julien.thierry@arm.com>
+        Julien Thierry <julien.thierry@arm.com>
+Subject: [PATCH v8 13/26] arm64: daifflags: Include PMR in daifflags restore operations
+Date:   Tue,  8 Jan 2019 14:07:31 +0000
+Message-Id: <1546956464-48825-14-git-send-email-julien.thierry@arm.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1546956464-48825-1-git-send-email-julien.thierry@arm.com>
 References: <1546956464-48825-1-git-send-email-julien.thierry@arm.com>
@@ -46,117 +43,81 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation for the application of alternatives at different points
-during the boot process, provide the possibility to check whether
-alternatives for a feature of interest was already applied instead of
-having a global boolean for all alternatives.
+The addition of PMR should not bypass the semantics of daifflags.
 
-Make VHE enablement code check for the VHE feature instead of considering
-all alternatives.
+When DA_F are set, I bit is also set as no interrupts (even of higher
+priority) is allowed.
+
+When DA_F are cleared, I bit is cleared and interrupt enabling/disabling
+goes through ICC_PMR_EL1.
 
 Signed-off-by: Julien Thierry <julien.thierry@arm.com>
 Cc: Catalin Marinas <catalin.marinas@arm.com>
 Cc: Will Deacon <will.deacon@arm.com>
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
-Cc: Marc Zyngier <Marc.Zyngier@arm.com>
-Cc: Christoffer Dall <Christoffer.Dall@arm.com>
+Cc: James Morse <james.morse@arm.com>
 ---
- arch/arm64/include/asm/alternative.h |  3 +--
- arch/arm64/kernel/alternative.c      | 21 +++++++++++++++++----
- arch/arm64/kernel/cpufeature.c       |  2 +-
- 3 files changed, 19 insertions(+), 7 deletions(-)
+ arch/arm64/include/asm/daifflags.h | 31 +++++++++++++++++++++++++++----
+ 1 file changed, 27 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm64/include/asm/alternative.h b/arch/arm64/include/asm/alternative.h
-index 4b650ec..9806a23 100644
---- a/arch/arm64/include/asm/alternative.h
-+++ b/arch/arm64/include/asm/alternative.h
-@@ -14,8 +14,6 @@
- #include <linux/stddef.h>
- #include <linux/stringify.h>
+diff --git a/arch/arm64/include/asm/daifflags.h b/arch/arm64/include/asm/daifflags.h
+index 546bc39..1fd390e 100644
+--- a/arch/arm64/include/asm/daifflags.h
++++ b/arch/arm64/include/asm/daifflags.h
+@@ -18,6 +18,8 @@
  
--extern int alternatives_applied;
--
- struct alt_instr {
- 	s32 orig_offset;	/* offset to original instruction */
- 	s32 alt_offset;		/* offset to replacement instruction */
-@@ -28,6 +26,7 @@ typedef void (*alternative_cb_t)(struct alt_instr *alt,
- 				 __le32 *origptr, __le32 *updptr, int nr_inst);
+ #include <linux/irqflags.h>
  
- void __init apply_alternatives_all(void);
-+bool alternative_is_applied(u16 cpufeature);
- 
- #ifdef CONFIG_MODULES
- void apply_alternatives_module(void *start, size_t length);
-diff --git a/arch/arm64/kernel/alternative.c b/arch/arm64/kernel/alternative.c
-index b5d6039..c947d22 100644
---- a/arch/arm64/kernel/alternative.c
-+++ b/arch/arm64/kernel/alternative.c
-@@ -32,13 +32,23 @@
- #define ALT_ORIG_PTR(a)		__ALT_PTR(a, orig_offset)
- #define ALT_REPL_PTR(a)		__ALT_PTR(a, alt_offset)
- 
--int alternatives_applied;
-+static int all_alternatives_applied;
++#include <asm/cpufeature.h>
 +
-+static DECLARE_BITMAP(applied_alternatives, ARM64_NCAPS);
+ #define DAIF_PROCCTX		0
+ #define DAIF_PROCCTX_NOIRQ	PSR_I_BIT
  
- struct alt_region {
- 	struct alt_instr *begin;
- 	struct alt_instr *end;
- };
+@@ -36,7 +38,13 @@ static inline unsigned long local_daif_save(void)
+ {
+ 	unsigned long flags;
  
-+bool alternative_is_applied(u16 cpufeature)
-+{
-+	if (WARN_ON(cpufeature >= ARM64_NCAPS))
-+		return false;
+-	flags = arch_local_save_flags();
++	flags = read_sysreg(daif);
 +
-+	return test_bit(cpufeature, applied_alternatives);
-+}
++	if (system_uses_irq_prio_masking()) {
++		/* If IRQs are masked with PMR, reflect it in the flags */
++		if (read_sysreg_s(SYS_ICC_PMR_EL1) <= GIC_PRIO_IRQOFF)
++			flags |= PSR_I_BIT;
++	}
+ 
+ 	local_daif_mask();
+ 
+@@ -45,12 +53,27 @@ static inline unsigned long local_daif_save(void)
+ 
+ static inline void local_daif_restore(unsigned long flags)
+ {
+-	if (!arch_irqs_disabled_flags(flags))
++	bool irq_disabled = flags & PSR_I_BIT;
 +
- /*
-  * Check if the target PC is within an alternative block.
-  */
-@@ -192,6 +202,9 @@ static void __apply_alternatives(void *alt_region, bool is_module)
- 		dsb(ish);
- 		__flush_icache_all();
- 		isb();
++	if (!irq_disabled) {
+ 		trace_hardirqs_on();
+ 
+-	arch_local_irq_restore(flags);
++		if (system_uses_irq_prio_masking())
++			arch_local_irq_enable();
++	} else if (!(flags & PSR_A_BIT)) {
++		/*
++		 * If interrupts are disabled but we can take
++		 * asynchronous errors, we can take NMIs
++		 */
++		if (system_uses_irq_prio_masking()) {
++			flags &= ~PSR_I_BIT;
++			arch_local_irq_disable();
++		}
++	}
 +
-+		/* We applied all that was available */
-+		bitmap_copy(applied_alternatives, cpu_hwcaps, ARM64_NCAPS);
- 	}
++	write_sysreg(flags, daif);
+ 
+-	if (arch_irqs_disabled_flags(flags))
++	if (irq_disabled)
+ 		trace_hardirqs_off();
  }
  
-@@ -208,14 +221,14 @@ static int __apply_alternatives_multi_stop(void *unused)
- 
- 	/* We always have a CPU 0 at this point (__init) */
- 	if (smp_processor_id()) {
--		while (!READ_ONCE(alternatives_applied))
-+		while (!READ_ONCE(all_alternatives_applied))
- 			cpu_relax();
- 		isb();
- 	} else {
--		BUG_ON(alternatives_applied);
-+		BUG_ON(all_alternatives_applied);
- 		__apply_alternatives(&region, false);
- 		/* Barriers provided by the cache flushing */
--		WRITE_ONCE(alternatives_applied, 1);
-+		WRITE_ONCE(all_alternatives_applied, 1);
- 	}
- 
- 	return 0;
-diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
-index c426302..84fa5be 100644
---- a/arch/arm64/kernel/cpufeature.c
-+++ b/arch/arm64/kernel/cpufeature.c
-@@ -1113,7 +1113,7 @@ static void cpu_copy_el2regs(const struct arm64_cpu_capabilities *__unused)
- 	 * that, freshly-onlined CPUs will set tpidr_el2, so we don't need to
- 	 * do anything here.
- 	 */
--	if (!alternatives_applied)
-+	if (!alternative_is_applied(ARM64_HAS_VIRT_HOST_EXTN))
- 		write_sysreg(read_sysreg(tpidr_el1), tpidr_el2);
- }
- #endif
 -- 
 1.9.1
 
