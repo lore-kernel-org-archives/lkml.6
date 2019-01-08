@@ -4,50 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-18.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23BD1C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:33:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7664C43612
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:33:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD2D52176F
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:33:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8888120883
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:33:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546976010;
-	bh=LQqupSHz0VLCudXdcnq0PBdQSxgGrhhDtpkQzsAOx7g=;
+	s=default; t=1546976012;
+	bh=kMUio/CIE75FQuW9CLR1Dth70BxYd3hKUWZP6aC1EG8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=gRlQcyVHAYPOqPwFBbHVUf6rovv55aEHI2bq+GNXSOaP2WfZqUKtrw6HDFqsYdFNC
-	 notRh5W9Zh37e02t2rIWSGmUY05TKzQArrMkQBUFlVxo3wgPdiqgAGhVsKx8i5nOkE
-	 ZT21HPjsfcwjJF6ZTOQ1CECvCfCaljuP47rTl7ME=
+	b=xUW1p4eL7uUW0fJK2gpL5eG9fLRC3G5W+PrRpmUvfDDbP6nUaWpFyCQUvjJNL6/Q5
+	 W103e7jMAgPTUSnxn9GTFYpXx2epvrBtZyseTVAXuCRjDS9V5+WaFooS8UXGSpMbNT
+	 2qP5M9YtD/Lbe0lmmXuadca5q7oV/wr1Fb0argCI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731710AbfAHTd2 (ORCPT
+        id S1731726AbfAHTdb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:33:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42192 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 14:33:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42228 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731690AbfAHTd0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:33:26 -0500
+        id S1731700AbfAHTd1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:33:27 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6B098205C9;
-        Tue,  8 Jan 2019 19:33:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 70EBF20827;
+        Tue,  8 Jan 2019 19:33:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546976005;
-        bh=LQqupSHz0VLCudXdcnq0PBdQSxgGrhhDtpkQzsAOx7g=;
+        s=default; t=1546976007;
+        bh=kMUio/CIE75FQuW9CLR1Dth70BxYd3hKUWZP6aC1EG8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EZnSehnUKRBjz2hd6YQBQeTVR1OSJoqx7uue1ys4PyOSNH5iN0ZTsAxfNNFAH8/0e
-         +ySZFaH/2Dz0nR5l9cWzM+27Ajj3feAABeG1yOYazcEnogf2Psw+BJOCR7YB5nhkWR
-         zaWSNXXwiaePKS2Nrk97xImeO0BOkm19W90Gnqk0=
+        b=p9A8mumPm2mLzHWO0XPEjhdtJ2n/M724J//pK3rh7g1geBeDYjRdrI5hEV0Ecnmhk
+         Rq65Mcbbf03W1UUHHQGQuaHKVVAHeF7qc8G0wtM1YIjwCNj4J6c7HeP5HqrFYPF2H5
+         IN8EtplWAPbmUiFK8NLuO4d2mDsCQMX6nCf5vSyk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Nikos Tsironis <ntsironis@arrikto.com>,
-        Ilias Tsitsimpis <iliastsi@arrikto.com>,
-        Mike Snitzer <snitzer@redhat.com>,
+Cc:     Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 39/53] dm kcopyd: Fix bug causing workqueue stalls
-Date:   Tue,  8 Jan 2019 14:32:07 -0500
-Message-Id: <20190108193222.123316-39-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 40/53] tools lib subcmd: Don't add the kernel sources to the include path
+Date:   Tue,  8 Jan 2019 14:32:08 -0500
+Message-Id: <20190108193222.123316-40-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108193222.123316-1-sashal@kernel.org>
 References: <20190108193222.123316-1-sashal@kernel.org>
@@ -59,159 +60,71 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nikos Tsironis <ntsironis@arrikto.com>
+From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-[ Upstream commit d7e6b8dfc7bcb3f4f3a18313581f67486a725b52 ]
+[ Upstream commit ece9804985b57e1ccd83b1fb6288520955a29d51 ]
 
-When using kcopyd to run callbacks through dm_kcopyd_do_callback() or
-submitting copy jobs with a source size of 0, the jobs are pushed
-directly to the complete_jobs list, which could be under processing by
-the kcopyd thread. As a result, the kcopyd thread can continue running
-completed jobs indefinitely, without releasing the CPU, as long as
-someone keeps submitting new completed jobs through the aforementioned
-paths. Processing of work items, queued for execution on the same CPU as
-the currently running kcopyd thread, is thus stalled for excessive
-amounts of time, hurting performance.
+At some point we decided not to directly include kernel sources files
+when building tools/perf/, but when tools/lib/subcmd/ was forked from
+tools/perf it somehow ended up adding it via these two lines in its
+Makefile:
 
-Running the following test, from the device mapper test suite [1],
+  CFLAGS += -I$(srctree)/include/uapi
+  CFLAGS += -I$(srctree)/include
 
-  dmtest run --suite snapshot -n parallel_io_to_many_snaps_N
+As $(srctree) points to the kernel sources.
 
-, with 8 active snapshots, we get, in dmesg, messages like the
-following:
+Removing those lines and keeping just:
 
-[68899.948523] BUG: workqueue lockup - pool cpus=0 node=0 flags=0x0 nice=0 stuck for 95s!
-[68899.949282] Showing busy workqueues and worker pools:
-[68899.949288] workqueue events: flags=0x0
-[68899.949295]   pwq 0: cpus=0 node=0 flags=0x0 nice=0 active=2/256
-[68899.949306]     pending: vmstat_shepherd, cache_reap
-[68899.949331] workqueue mm_percpu_wq: flags=0x8
-[68899.949337]   pwq 0: cpus=0 node=0 flags=0x0 nice=0 active=1/256
-[68899.949345]     pending: vmstat_update
-[68899.949387] workqueue dm_bufio_cache: flags=0x8
-[68899.949392]   pwq 4: cpus=2 node=0 flags=0x0 nice=0 active=1/256
-[68899.949400]     pending: work_fn [dm_bufio]
-[68899.949423] workqueue kcopyd: flags=0x8
-[68899.949429]   pwq 0: cpus=0 node=0 flags=0x0 nice=0 active=1/256
-[68899.949437]     pending: do_work [dm_mod]
-[68899.949452] workqueue kcopyd: flags=0x8
-[68899.949458]   pwq 0: cpus=0 node=0 flags=0x0 nice=0 active=2/256
-[68899.949466]     in-flight: 13:do_work [dm_mod]
-[68899.949474]     pending: do_work [dm_mod]
-[68899.949487] workqueue kcopyd: flags=0x8
-[68899.949493]   pwq 0: cpus=0 node=0 flags=0x0 nice=0 active=1/256
-[68899.949501]     pending: do_work [dm_mod]
-[68899.949515] workqueue kcopyd: flags=0x8
-[68899.949521]   pwq 0: cpus=0 node=0 flags=0x0 nice=0 active=1/256
-[68899.949529]     pending: do_work [dm_mod]
-[68899.949541] workqueue kcopyd: flags=0x8
-[68899.949547]   pwq 0: cpus=0 node=0 flags=0x0 nice=0 active=1/256
-[68899.949555]     pending: do_work [dm_mod]
-[68899.949568] pool 0: cpus=0 node=0 flags=0x0 nice=0 hung=95s workers=4 idle: 27130 27223 1084
+  CFLAGS += -I$(srctree)/tools/include/
 
-Fix this by splitting the complete_jobs list into two parts: A user
-facing part, named callback_jobs, and one used internally by kcopyd,
-retaining the name complete_jobs. dm_kcopyd_do_callback() and
-dispatch_job() now push their jobs to the callback_jobs list, which is
-spliced to the complete_jobs list once, every time the kcopyd thread
-wakes up. This prevents kcopyd from hogging the CPU indefinitely and
-causing workqueue stalls.
+Is enough to build tools/perf and tools/objtool.
 
-Re-running the aforementioned test:
+This fixes the build when building from the sources in environments such
+as the Android NDK crossbuilding from a fedora:26 system:
 
-  * Workqueue stalls are eliminated
-  * The maximum writing time among all targets is reduced from 09m37.10s
-    to 06m04.85s and the total run time of the test is reduced from
-    10m43.591s to 7m19.199s
+  subcmd-util.h:11:15: error: expected ',' or ';' before 'void'
+   static inline void report(const char *prefix, const char *err, va_list params)
+                 ^
+  In file included from /git/perf/include/uapi/linux/stddef.h:2:0,
+                   from /git/perf/include/uapi/linux/posix_types.h:5,
+                   from /opt/android-ndk-r12b/platforms/android-24/arch-arm/usr/include/sys/types.h:36,
+                   from /opt/android-ndk-r12b/platforms/android-24/arch-arm/usr/include/unistd.h:33,
+                   from run-command.c:2:
+  subcmd-util.h:18:17: error: '__no_instrument_function__' attribute applies only to functions
 
-[1] https://github.com/jthornber/device-mapper-test-suite
+The /opt/android-ndk-r12b/platforms/android-24/arch-arm/usr/include/sys/types.h
+file that includes linux/posix_types.h ends up getting the one in the kernel
+sources causing the breakage. Fix it.
 
-Signed-off-by: Nikos Tsironis <ntsironis@arrikto.com>
-Signed-off-by: Ilias Tsitsimpis <iliastsi@arrikto.com>
-Signed-off-by: Mike Snitzer <snitzer@redhat.com>
+Test built tools/objtool/ too.
+
+Reported-by: Jiri Olsa <jolsa@kernel.org>
+Tested-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Fixes: 4b6ab94eabe4 ("perf subcmd: Create subcmd library")
+Link: https://lkml.kernel.org/n/tip-5lhaoecrj12t0bqwvpiu14sm@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/md/dm-kcopyd.c | 19 ++++++++++++++-----
- 1 file changed, 14 insertions(+), 5 deletions(-)
+ tools/lib/subcmd/Makefile | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/md/dm-kcopyd.c b/drivers/md/dm-kcopyd.c
-index d4b326914f06..b9d1897bcf5b 100644
---- a/drivers/md/dm-kcopyd.c
-+++ b/drivers/md/dm-kcopyd.c
-@@ -55,15 +55,17 @@ struct dm_kcopyd_client {
- 	struct dm_kcopyd_throttle *throttle;
+diff --git a/tools/lib/subcmd/Makefile b/tools/lib/subcmd/Makefile
+index 95563b8e1ad7..ed61fb3a46c0 100644
+--- a/tools/lib/subcmd/Makefile
++++ b/tools/lib/subcmd/Makefile
+@@ -36,8 +36,6 @@ endif
+ CFLAGS += -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE
  
- /*
-- * We maintain three lists of jobs:
-+ * We maintain four lists of jobs:
-  *
-  * i)   jobs waiting for pages
-  * ii)  jobs that have pages, and are waiting for the io to be issued.
-- * iii) jobs that have completed.
-+ * iii) jobs that don't need to do any IO and just run a callback
-+ * iv) jobs that have completed.
-  *
-- * All three of these are protected by job_lock.
-+ * All four of these are protected by job_lock.
-  */
- 	spinlock_t job_lock;
-+	struct list_head callback_jobs;
- 	struct list_head complete_jobs;
- 	struct list_head io_jobs;
- 	struct list_head pages_jobs;
-@@ -622,6 +624,7 @@ static void do_work(struct work_struct *work)
- 	struct dm_kcopyd_client *kc = container_of(work,
- 					struct dm_kcopyd_client, kcopyd_work);
- 	struct blk_plug plug;
-+	unsigned long flags;
+ CFLAGS += -I$(srctree)/tools/include/
+-CFLAGS += -I$(srctree)/include/uapi
+-CFLAGS += -I$(srctree)/include
  
- 	/*
- 	 * The order that these are called is *very* important.
-@@ -630,6 +633,10 @@ static void do_work(struct work_struct *work)
- 	 * list.  io jobs call wake when they complete and it all
- 	 * starts again.
- 	 */
-+	spin_lock_irqsave(&kc->job_lock, flags);
-+	list_splice_tail_init(&kc->callback_jobs, &kc->complete_jobs);
-+	spin_unlock_irqrestore(&kc->job_lock, flags);
-+
- 	blk_start_plug(&plug);
- 	process_jobs(&kc->complete_jobs, kc, run_complete_job);
- 	process_jobs(&kc->pages_jobs, kc, run_pages_job);
-@@ -647,7 +654,7 @@ static void dispatch_job(struct kcopyd_job *job)
- 	struct dm_kcopyd_client *kc = job->kc;
- 	atomic_inc(&kc->nr_jobs);
- 	if (unlikely(!job->source.count))
--		push(&kc->complete_jobs, job);
-+		push(&kc->callback_jobs, job);
- 	else if (job->pages == &zero_page_list)
- 		push(&kc->io_jobs, job);
- 	else
-@@ -857,7 +864,7 @@ void dm_kcopyd_do_callback(void *j, int read_err, unsigned long write_err)
- 	job->read_err = read_err;
- 	job->write_err = write_err;
+ SUBCMD_IN := $(OUTPUT)libsubcmd-in.o
  
--	push(&kc->complete_jobs, job);
-+	push(&kc->callback_jobs, job);
- 	wake(kc);
- }
- EXPORT_SYMBOL(dm_kcopyd_do_callback);
-@@ -887,6 +894,7 @@ struct dm_kcopyd_client *dm_kcopyd_client_create(struct dm_kcopyd_throttle *thro
- 		return ERR_PTR(-ENOMEM);
- 
- 	spin_lock_init(&kc->job_lock);
-+	INIT_LIST_HEAD(&kc->callback_jobs);
- 	INIT_LIST_HEAD(&kc->complete_jobs);
- 	INIT_LIST_HEAD(&kc->io_jobs);
- 	INIT_LIST_HEAD(&kc->pages_jobs);
-@@ -936,6 +944,7 @@ void dm_kcopyd_client_destroy(struct dm_kcopyd_client *kc)
- 	/* Wait for completion of all jobs submitted by this client. */
- 	wait_event(kc->destroyq, !atomic_read(&kc->nr_jobs));
- 
-+	BUG_ON(!list_empty(&kc->callback_jobs));
- 	BUG_ON(!list_empty(&kc->complete_jobs));
- 	BUG_ON(!list_empty(&kc->io_jobs));
- 	BUG_ON(!list_empty(&kc->pages_jobs));
 -- 
 2.19.1
 
