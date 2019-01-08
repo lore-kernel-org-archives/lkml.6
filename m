@@ -7,48 +7,49 @@ X-Spam-Status: No, score=-18.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A043C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:40:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DD9BC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:41:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 14E972063F
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:40:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C75AB2063F
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:41:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546976458;
-	bh=GQZhYTfQbiLgV0u9OMuxy2R+Eqswi4te3uB6ECv1fEk=;
+	s=default; t=1546976463;
+	bh=gIEXv2DrrCFcuLBLc+cGlLVKNNeUhmCn+6HG2qvpy4c=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=DVxTcPgl58oSYh3x/QwOrt0M90y6kNjzZFNlVncrKplXWyraamBalgLADUJdFcmTi
-	 aYboQQNLrZoHukVvDStirsZOofI6xqFo9Qv1R8oRk7y3dUkR5UfScxankf6kT/DImZ
-	 XgArS1qsycseaZFsZT2O5DApsVkOHg9e6jr2QSbc=
+	b=TPZiji20+gneCSe3QxZdlzwGrGgTeC4xmqas+oJ7X2YITWb2I8p5n2ydu15GOL21E
+	 wsFouGzgduacJT/XHdezuQLzGWqRws2/EtTPUAHrZmfPigVnFXdXjwUI7GxW7YX/bB
+	 AB/VKNDMvdHnZvaR7Anxv30924HxmJtMM5jKpRc0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732321AbfAHTk5 (ORCPT
+        id S1731990AbfAHTea (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:40:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43278 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 14:34:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43190 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731998AbfAHTec (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:34:32 -0500
+        id S1731975AbfAHTe1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:34:27 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2E4FE205C9;
-        Tue,  8 Jan 2019 19:34:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A8B012063F;
+        Tue,  8 Jan 2019 19:34:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546976071;
-        bh=GQZhYTfQbiLgV0u9OMuxy2R+Eqswi4te3uB6ECv1fEk=;
+        s=default; t=1546976066;
+        bh=gIEXv2DrrCFcuLBLc+cGlLVKNNeUhmCn+6HG2qvpy4c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SRuGDMUe3QIqew0+3sOfHyxlEvR2ivqkrDiXKI1XsdSjHiQNw+JNnolbtrnZh8ZNm
-         ccKT6QlhPAE2wfN39leYhIoWkQKo+R9i87crYcNDj6g4xlr72Yr+AIA87zkYqJ5PTu
-         xAuBG/a4qyt8FtdPTTle+Vl1KWq4HyI/EFBprUPo=
+        b=oeHjwBq8lnPxA5tNjFsmuUXLn5tSQk1RmhJ0QPv4esy+G/cZSEkXtCSsvIWL46Pa0
+         2Rm9+9TTv7S3MPMdQMgZ8Lmkyuazrovm8uQhPStJwRAo/JbvLeqvFiq99Fv2PffPXj
+         IZv2lsSvlJUecmtG0Zrqiilbx+UBsjyEvfni6q0w=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Arnaldo Carvalho de Melo <acme@redhat.com>,
         Adrian Hunter <adrian.hunter@intel.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Jiri Olsa <jolsa@kernel.org>,
         Namhyung Kim <namhyung@kernel.org>,
+        Arjan van de Ven <arjan@linux.intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.9 28/36] tools lib subcmd: Don't add the kernel sources to the include path
-Date:   Tue,  8 Jan 2019 14:33:40 -0500
-Message-Id: <20190108193348.123880-28-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 25/36] perf svghelper: Fix unchecked usage of strncpy()
+Date:   Tue,  8 Jan 2019 14:33:37 -0500
+Message-Id: <20190108193348.123880-25-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108193348.123880-1-sashal@kernel.org>
 References: <20190108193348.123880-1-sashal@kernel.org>
@@ -62,69 +63,53 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-[ Upstream commit ece9804985b57e1ccd83b1fb6288520955a29d51 ]
+[ Upstream commit 2f5302533f306d5ee87bd375aef9ca35b91762cb ]
 
-At some point we decided not to directly include kernel sources files
-when building tools/perf/, but when tools/lib/subcmd/ was forked from
-tools/perf it somehow ended up adding it via these two lines in its
-Makefile:
+The strncpy() function may leave the destination string buffer
+unterminated, better use strlcpy() that we have a __weak fallback
+implementation for systems without it.
 
-  CFLAGS += -I$(srctree)/include/uapi
-  CFLAGS += -I$(srctree)/include
+In this specific case this would only happen if fgets() was buggy, as
+its man page states that it should read one less byte than the size of
+the destination buffer, so that it can put the nul byte at the end of
+it, so it would never copy 255 non-nul chars, as fgets reads into the
+orig buffer at most 254 non-nul chars and terminates it. But lets just
+switch to strlcpy to keep the original intent and silence the gcc 8.2
+warning.
 
-As $(srctree) points to the kernel sources.
+This fixes this warning on an Alpine Linux Edge system with gcc 8.2:
 
-Removing those lines and keeping just:
+  In function 'cpu_model',
+      inlined from 'svg_cpu_box' at util/svghelper.c:378:2:
+  util/svghelper.c:337:5: error: 'strncpy' output may be truncated copying 255 bytes from a string of length 255 [-Werror=stringop-truncation]
+       strncpy(cpu_m, &buf[13], 255);
+       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-  CFLAGS += -I$(srctree)/tools/include/
-
-Is enough to build tools/perf and tools/objtool.
-
-This fixes the build when building from the sources in environments such
-as the Android NDK crossbuilding from a fedora:26 system:
-
-  subcmd-util.h:11:15: error: expected ',' or ';' before 'void'
-   static inline void report(const char *prefix, const char *err, va_list params)
-                 ^
-  In file included from /git/perf/include/uapi/linux/stddef.h:2:0,
-                   from /git/perf/include/uapi/linux/posix_types.h:5,
-                   from /opt/android-ndk-r12b/platforms/android-24/arch-arm/usr/include/sys/types.h:36,
-                   from /opt/android-ndk-r12b/platforms/android-24/arch-arm/usr/include/unistd.h:33,
-                   from run-command.c:2:
-  subcmd-util.h:18:17: error: '__no_instrument_function__' attribute applies only to functions
-
-The /opt/android-ndk-r12b/platforms/android-24/arch-arm/usr/include/sys/types.h
-file that includes linux/posix_types.h ends up getting the one in the kernel
-sources causing the breakage. Fix it.
-
-Test built tools/objtool/ too.
-
-Reported-by: Jiri Olsa <jolsa@kernel.org>
-Tested-by: Jiri Olsa <jolsa@kernel.org>
 Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Fixes: 4b6ab94eabe4 ("perf subcmd: Create subcmd library")
-Link: https://lkml.kernel.org/n/tip-5lhaoecrj12t0bqwvpiu14sm@git.kernel.org
+Cc: Arjan van de Ven <arjan@linux.intel.com>
+Fixes: f48d55ce7871 ("perf: Add a SVG helper library file")
+Link: https://lkml.kernel.org/n/tip-xzkoo0gyr56gej39ltivuh9g@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/lib/subcmd/Makefile | 2 --
- 1 file changed, 2 deletions(-)
+ tools/perf/util/svghelper.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/lib/subcmd/Makefile b/tools/lib/subcmd/Makefile
-index ce4b7e527566..a690d230c311 100644
---- a/tools/lib/subcmd/Makefile
-+++ b/tools/lib/subcmd/Makefile
-@@ -29,8 +29,6 @@ endif
- CFLAGS += -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64 -D_GNU_SOURCE
- 
- CFLAGS += -I$(srctree)/tools/include/
--CFLAGS += -I$(srctree)/include/uapi
--CFLAGS += -I$(srctree)/include
- 
- SUBCMD_IN := $(OUTPUT)libsubcmd-in.o
- 
+diff --git a/tools/perf/util/svghelper.c b/tools/perf/util/svghelper.c
+index 1cbada2dc6be..f735ee038713 100644
+--- a/tools/perf/util/svghelper.c
++++ b/tools/perf/util/svghelper.c
+@@ -334,7 +334,7 @@ static char *cpu_model(void)
+ 	if (file) {
+ 		while (fgets(buf, 255, file)) {
+ 			if (strstr(buf, "model name")) {
+-				strncpy(cpu_m, &buf[13], 255);
++				strlcpy(cpu_m, &buf[13], 255);
+ 				break;
+ 			}
+ 		}
 -- 
 2.19.1
 
