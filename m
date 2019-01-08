@@ -2,206 +2,136 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E1ACC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 03:57:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01E6DC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 04:01:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D5B62089F
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 03:57:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BAA722087F
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 04:01:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ettus-com.20150623.gappssmtp.com header.i=@ettus-com.20150623.gappssmtp.com header.b="q6QpXxqf"
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="aqmzHBbv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727435AbfAHD5F (ORCPT
+        id S1727463AbfAHEBc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 22:57:05 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:44093 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727145AbfAHD5F (ORCPT
+        Mon, 7 Jan 2019 23:01:32 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:36871 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727295AbfAHEBc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 22:57:05 -0500
-Received: by mail-pg1-f195.google.com with SMTP id t13so1090014pgr.11
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Jan 2019 19:57:04 -0800 (PST)
+        Mon, 7 Jan 2019 23:01:32 -0500
+Received: by mail-pg1-f196.google.com with SMTP id c25so1111799pgb.4
+        for <linux-kernel@vger.kernel.org>; Mon, 07 Jan 2019 20:01:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ettus-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=9Phue9K3b18E6tBPB72fQB7pO/am4rKViU95kxXzrZY=;
-        b=q6QpXxqfCHkSeG6V+I7848S8PBjyt+RGR0iSQLywNcvemVs07SlWr4SAU3ESSrhHRt
-         rYl4apNe/6TYywcTNRyaiZ1yM5yswQ7UfNdW3RoVNW4647Jf+R922SA0g3k86aONr62H
-         vFEGGNxs0y9V/JwayF4akrwJVOng+zMn7MxPUps1es6u8Pz3YWwPJGqu70vGn7iN5MoI
-         Nfz+/LS7ae3HF3jpclixsb78r3OEsyLMnYkFi3JjX9ifJx86xt6pyDWsCGlro6G0ptef
-         hgV4TWavG73cOvlCCutETeSZC4chSC4VFDi9HjU245WoLXTd1igVWjKHTXN/4Ztf389y
-         anbg==
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=hI3HFiiQiOBTLixuPxZ9I+eYojMS0YjMnMKMa+vFZv0=;
+        b=aqmzHBbvoLVOt7Kzd0jPRPAXuG0MwgDzU65fDYLm0mvdSLfTYsGF/j5wjnjs66hAMy
+         3SkmSAYSBAEMLq/Z1oHm/cHUXTbrjipWjnnT4yig3mAZdNbXf1UgnVbG6P+VV2gb8SgI
+         hN5fF0DVkSi1e8TLsQV6Bo5BcDEODI8r7HNLU98uaeNKI6iymOkd7Hn6us+oGui1cjkS
+         8hlxeLMeV8tZvOxTgTSIDOeJhKtYX7Rn2A2ybKszGIbWZRspawStiEfEs78uThE9JKya
+         b0Kjx5Z2Frg2AJUyLdloUVN0BGGOTuzFi/HPKdxI/pHTE96zgHlCzbtTJ9d2yehubXR8
+         PypQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=9Phue9K3b18E6tBPB72fQB7pO/am4rKViU95kxXzrZY=;
-        b=KmFjAroS+ptbflWvysuxoivlrDt7yowaWgzO3VOrTBA+21sQwtyCT6sb6Bbl6lGwFx
-         wZJlREd80GN6Da3uEg7h2QrHMhUdYonK3gNXjaY2ML6otsagxzIWITC43gnoOlwXxqqU
-         5ijx3n0QHigZTdYu9IJoiuC9pJsNfic5dukUfDWayXi8wFUQ4xC/9Ps9b6dHh1uG9Sid
-         o20ETjz/efHt9QO4PLY/NyaNDDtkHm7hrpX/ZMne39HkUdVSQ6RKY+kwLYIoH98XgxNE
-         OitFvdurY2Tgg/uRGyd6TCx200zhnDmffcJXA5UErXqgUFFUYZAllivEcrBsTObgpET2
-         Cn4Q==
-X-Gm-Message-State: AJcUukdVM31vS2c6fdwOsKytnIPsM7Z60g1aoXQLI0yZfmO2vsm7QU4Z
-        gDXRqqe614+NvRsQ6IRSGcLhUja2uvs=
-X-Google-Smtp-Source: ALg8bN7aAOrSeFQabShCO5SBYj0BfUWf4VkJIpxlI84YmsDMfhsUw8jdA3G1fyPtIB+gqWOx+h2GDA==
-X-Received: by 2002:a63:3d1:: with SMTP id 200mr167612pgd.68.1546919823741;
-        Mon, 07 Jan 2019 19:57:03 -0800 (PST)
-Received: from localhost ([2601:647:4700:93d:6db5:e35d:dacd:7872])
-        by smtp.gmail.com with ESMTPSA id n22sm134729001pfh.166.2019.01.07.19.57.02
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=hI3HFiiQiOBTLixuPxZ9I+eYojMS0YjMnMKMa+vFZv0=;
+        b=LnlXt5qCE5JvBY8AFNz0EPwXIAcuyNY678B2qwflUpFIOex2Hq8duH8QZbAwtb7gWV
+         /0Om5Bw52G6tec0y8F5Jv2M0il8TnRw+QuVoX85LEtcQ41KH5aOJyjrkjl2ZthvQF+jy
+         MXxFdJy6QBTzo6IL0LR2aD0JEfwqPMekhn39hpJSs+ayN4WkuNj6LPdZgeABZEsAatrU
+         c6mVtedtzO1jCPZ8nAEX/LYWI0hNC8+N1eFU5qU7zmXkOb2lrnFp2Q+WIqeF61/ABvHm
+         NQXllF37GNsxA7KwcJqenEU1O99pPUcZJrMMtlI22ugUFz5qwu5bUmjLKOqAlk+DJim3
+         h9SA==
+X-Gm-Message-State: AJcUukeewdhY/1AN18+8NdXiAaXzHrS8GHnF/yHte6JiGCM48LMaDTzu
+        YMLlNKO0OlYJPpAFVoN+ZyDduA==
+X-Google-Smtp-Source: ALg8bN5lzQ0TEnC4tGM2QWkSvlrK0kiKtDXVTjW+AYsWMmHGaLKZPdjkTUkbSM05fVQOqZwN2LmacQ==
+X-Received: by 2002:a63:b24a:: with SMTP id t10mr135492pgo.223.1546920090935;
+        Mon, 07 Jan 2019 20:01:30 -0800 (PST)
+Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
+        by smtp.gmail.com with ESMTPSA id g15sm298482974pfj.131.2019.01.07.20.01.29
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 07 Jan 2019 19:57:03 -0800 (PST)
-From:   Moritz Fischer <moritz.fischer@ettus.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     bleung@chromium.org, enric.balletbo@collabora.com,
-        groeck@chromium.org, lee.jones@linaro.org, moritz@ettus.com,
-        Moritz Fischer <mdf@kernel.org>
-Subject: [PATCH v2] platform/chrome: Add cros_ec_readmem() helpers for I2C/SPI based ECs
-Date:   Mon,  7 Jan 2019 19:56:38 -0800
-Message-Id: <20190108035638.9685-1-moritz.fischer@ettus.com>
-X-Mailer: git-send-email 2.20.1
+        Mon, 07 Jan 2019 20:01:30 -0800 (PST)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1ggia1-0007HO-C7; Mon, 07 Jan 2019 21:01:29 -0700
+Date:   Mon, 7 Jan 2019 21:01:29 -0700
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc:     David Gibson <david@gibson.dropbear.id.au>,
+        Leon Romanovsky <leon@kernel.org>, davem@davemloft.net,
+        saeedm@mellanox.com, ogerlitz@mellanox.com, tariqt@mellanox.com,
+        bhelgaas@google.com, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, netdev@vger.kernel.org,
+        alex.williamson@redhat.com, linux-pci@vger.kernel.org,
+        linux-rdma@vger.kernel.org, sbest@redhat.com, paulus@samba.org
+Subject: Re: [PATCH] PCI: Add no-D3 quirk for Mellanox ConnectX-[45]
+Message-ID: <20190108040129.GE5336@ziepe.ca>
+References: <20181206041951.22413-1-david@gibson.dropbear.id.au>
+ <20181206064509.GM15544@mtr-leonro.mtl.com>
+ <20190104034401.GA2801@umbus.fritz.box>
+ <20190105175116.GB14238@ziepe.ca>
+ <c1296ee9120a6a04dc75d0fdb2a641c722cb65d6.camel@kernel.crashing.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c1296ee9120a6a04dc75d0fdb2a641c722cb65d6.camel@kernel.crashing.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Moritz Fischer <mdf@kernel.org>
+On Sun, Jan 06, 2019 at 09:43:46AM +1100, Benjamin Herrenschmidt wrote:
+> On Sat, 2019-01-05 at 10:51 -0700, Jason Gunthorpe wrote:
+> > 
+> > > Interesting.  I've investigated this further, though I don't have as
+> > > many new clues as I'd like.  The problem occurs reliably, at least on
+> > > one particular type of machine (a POWER8 "Garrison" with ConnectX-4).
+> > > I don't yet know if it occurs with other machines, I'm having trouble
+> > > getting access to other machines with a suitable card.  I didn't
+> > > manage to reproduce it on a different POWER8 machine with a
+> > > ConnectX-5, but I don't know if it's the difference in machine or
+> > > difference in card revision that's important.
+> > 
+> > Make sure the card has the latest firmware is always good advice..
+> > 
+> > > So possibilities that occur to me:
+> > >   * It's something specific about how the vfio-pci driver uses D3
+> > >     state - have you tried rebinding your device to vfio-pci?
+> > >   * It's something specific about POWER, either the kernel or the PCI
+> > >     bridge hardware
+> > >   * It's something specific about this particular type of machine
+> > 
+> > Does the EEH indicate what happend to actually trigger it?
+> 
+> In a very cryptic way that requires manual parsing using non-public
+> docs sadly but yes. From the look of it, it's a completion timeout.
+> 
+> Looks to me like we don't get a response to a config space access
+> during the change of D state. I don't know if it's the write of the D3
+> state itself or the read back though (it's probably detected on the
+> read back or a subsequent read, but that doesn't tell me which specific
+> one failed).
 
-Add cros_ec_readmem() based helpers for I2C/SPI based ECs.
-Unlike the LPC based ECs the I2C/SPI based ones cannot just directly
-read the mapped region.
+If it is just one card doing it (again, check you have latest
+firmware) I wonder if it is a sketchy PCI-E electrical link that is
+causing a long re-training cycle? Can you tell if the PCI-E link is
+permanently gone or does it eventually return?
 
-This is useful for things like accessing fan speeds or temperatures.
+Does the card work in Gen 3 when it starts? Is there any indication of
+PCI-E link errors?
 
-Signed-off-by: Moritz Fischer <mdf@kernel.org>
----
+Everytime or sometimes?
 
-Hi all,
+POWER 8 firmware is good? If the link does eventually come back, is
+the POWER8's D3 resumption timeout long enough?
 
+If this doesn't lead to an obvious conclusion you'll probably need to
+connect to IBM's Mellanox support team to get more information from
+the card side.
 
-I had submitted this back in May 2017 [1] and then somewhat forgot
-about it. So here's a new version :)
-
-As to why is this required? we're using this in some of our devices
-[2] that run a modified firmware based on Chromium-EC.
-I've been carrying the patch downstream in our tree for a while and
-it would be nice if we can merge this upstream so I can stop rebasing
-this :)
-
-Thanks,
-
-Moritz
-
-[1] https://lore.kernel.org/patchwork/patch/786065/ 
-[2] https://www.ettus.com/product/details/USRP-E320 
-
----
- drivers/platform/chrome/cros_ec_i2c.c   |  1 +
- drivers/platform/chrome/cros_ec_proto.c | 38 +++++++++++++++++++++++++
- drivers/platform/chrome/cros_ec_spi.c   |  1 +
- include/linux/mfd/cros_ec.h             | 12 ++++++++
- 4 files changed, 52 insertions(+)
-
-diff --git a/drivers/platform/chrome/cros_ec_i2c.c b/drivers/platform/chrome/cros_ec_i2c.c
-index ef9b4763356f..c3a9bee37b1d 100644
---- a/drivers/platform/chrome/cros_ec_i2c.c
-+++ b/drivers/platform/chrome/cros_ec_i2c.c
-@@ -303,6 +303,7 @@ static int cros_ec_i2c_probe(struct i2c_client *client,
- 	ec_dev->irq = client->irq;
- 	ec_dev->cmd_xfer = cros_ec_cmd_xfer_i2c;
- 	ec_dev->pkt_xfer = cros_ec_pkt_xfer_i2c;
-+	ec_dev->cmd_readmem = cros_ec_readmem;
- 	ec_dev->phys_name = client->adapter->name;
- 	ec_dev->din_size = sizeof(struct ec_host_response_i2c) +
- 			   sizeof(struct ec_response_get_protocol_info);
-diff --git a/drivers/platform/chrome/cros_ec_proto.c b/drivers/platform/chrome/cros_ec_proto.c
-index cc7baf0ecb3c..2f1d45a7a934 100644
---- a/drivers/platform/chrome/cros_ec_proto.c
-+++ b/drivers/platform/chrome/cros_ec_proto.c
-@@ -636,3 +636,41 @@ u32 cros_ec_get_host_event(struct cros_ec_device *ec_dev)
- 	return host_event;
- }
- EXPORT_SYMBOL(cros_ec_get_host_event);
-+
-+int cros_ec_readmem(struct cros_ec_device *ec, unsigned int offset,
-+		    unsigned int bytes, void *dest)
-+{
-+	int ret;
-+	struct ec_params_read_memmap *params;
-+	struct cros_ec_command *msg;
-+
-+	if (offset >= EC_MEMMAP_SIZE - bytes)
-+		return -EINVAL;
-+
-+	msg = kzalloc(sizeof(*msg) + max(sizeof(*params), bytes), GFP_KERNEL);
-+	if (!msg)
-+		return -ENOMEM;
-+
-+	msg->version = 0;
-+	msg->command = EC_CMD_READ_MEMMAP;
-+	msg->insize = bytes;
-+	msg->outsize = sizeof(*params);
-+
-+	params = (struct ec_params_read_memmap *)msg->data;
-+	params->offset = offset;
-+	params->size = bytes;
-+
-+	ret = cros_ec_cmd_xfer_status(ec, msg);
-+	if (ret < 0) {
-+		dev_warn(ec->dev, "cannot read mapped reg: %d/%d\n",
-+			 ret, msg->result);
-+		goto out_free;
-+	}
-+
-+	memcpy(dest, msg->data, bytes);
-+
-+out_free:
-+	kfree(msg);
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(cros_ec_readmem);
-diff --git a/drivers/platform/chrome/cros_ec_spi.c b/drivers/platform/chrome/cros_ec_spi.c
-index 2060d1483043..b95c1a25adfc 100644
---- a/drivers/platform/chrome/cros_ec_spi.c
-+++ b/drivers/platform/chrome/cros_ec_spi.c
-@@ -666,6 +666,7 @@ static int cros_ec_spi_probe(struct spi_device *spi)
- 	ec_dev->irq = spi->irq;
- 	ec_dev->cmd_xfer = cros_ec_cmd_xfer_spi;
- 	ec_dev->pkt_xfer = cros_ec_pkt_xfer_spi;
-+	ec_dev->cmd_readmem = cros_ec_readmem;
- 	ec_dev->phys_name = dev_name(&ec_spi->spi->dev);
- 	ec_dev->din_size = EC_MSG_PREAMBLE_COUNT +
- 			   sizeof(struct ec_host_response) +
-diff --git a/include/linux/mfd/cros_ec.h b/include/linux/mfd/cros_ec.h
-index de8b588c8776..0228fb42dcda 100644
---- a/include/linux/mfd/cros_ec.h
-+++ b/include/linux/mfd/cros_ec.h
-@@ -335,6 +335,18 @@ int cros_ec_get_next_event(struct cros_ec_device *ec_dev, bool *wake_event);
-  */
- u32 cros_ec_get_host_event(struct cros_ec_device *ec_dev);
- 
-+/**
-+ * cros_ec_readmem - Read mapped memory in the ChromeOS EC
-+ *
-+ * @ec: Device to read from
-+ * @offset: Offset to read within the mapped region
-+ * @bytes: number of bytes to read
-+ * @data: Return data
-+ * @return: 0 if Ok, -ve on error
-+ */
-+int cros_ec_readmem(struct cros_ec_device *ec, unsigned int offset,
-+		    unsigned int bytes, void *dest);
-+
- /* sysfs stuff */
- extern struct attribute_group cros_ec_attr_group;
- extern struct attribute_group cros_ec_lightbar_attr_group;
--- 
-2.20.1
-
+Jason
