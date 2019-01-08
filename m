@@ -2,117 +2,160 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12BE9C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 08:29:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 921D5C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 08:37:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DFFA92087F
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 08:29:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 508472087F
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 08:37:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="jQkOVpPz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728159AbfAHI3S (ORCPT
+        id S1727710AbfAHIh2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 03:29:18 -0500
-Received: from shell.v3.sk ([90.176.6.54]:47726 "EHLO shell.v3.sk"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728007AbfAHI3R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 03:29:17 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 9A18FFFE99;
-        Tue,  8 Jan 2019 09:29:13 +0100 (CET)
-Received: from shell.v3.sk ([127.0.0.1])
-        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id jJf6GhD-fEXz; Tue,  8 Jan 2019 09:29:10 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id D0ACBFFF72;
-        Tue,  8 Jan 2019 09:29:09 +0100 (CET)
-X-Virus-Scanned: amavisd-new at zimbra.v3.sk
-Received: from shell.v3.sk ([127.0.0.1])
-        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id g-RMr4E43fl6; Tue,  8 Jan 2019 09:29:09 +0100 (CET)
-Received: from belphegor (nat-pool-brq-t.redhat.com [213.175.37.10])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id C4244FFE99;
-        Tue,  8 Jan 2019 09:29:08 +0100 (CET)
-Message-ID: <04e606dd8551bdf71d3b79b12aed46d1ad5157b6.camel@v3.sk>
-Subject: Re: [PATCH v3 03/16] Revert "platform/olpc: Make ec explicitly
- non-modular"
-From:   Lubomir Rintel <lkundrak@v3.sk>
-To:     Andy Shevchenko <andy@infradead.org>,
-        Darren Hart <dvhart@infradead.org>,
-        platform-driver-x86@vger.kernel.org
-Cc:     James Cameron <quozl@laptop.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>,
-        Sebastian Reichel <sre@kernel.org>, x86@kernel.org,
-        devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Tue, 08 Jan 2019 09:29:07 +0100
-In-Reply-To: <20190107183439.50626-4-lkundrak@v3.sk>
-References: <20190107183439.50626-1-lkundrak@v3.sk>
-         <20190107183439.50626-4-lkundrak@v3.sk>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.3 (3.30.3-1.fc29) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Tue, 8 Jan 2019 03:37:28 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:39176 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727505AbfAHIh2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 03:37:28 -0500
+Received: by mail-ed1-f68.google.com with SMTP id b14so3349552edt.6
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jan 2019 00:37:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=aJqDdLnQHsKFL0WPPIBBPF3nQ2EqP4XrCwEVMe0Y+Dw=;
+        b=jQkOVpPz4Nu587nJaDBLKRdgLnagw+kBSMKU000KyTi3LVvtIGJpzLFj2gf7UMriNq
+         sOe+Ob900gQW3a+D+CHLqqW99sP6GvkV+hNNtxJXpTGWmf6sjQyXM1BSdGZPR1Ks4Lfb
+         qJ+VlHRoz9jl0Q2TyDG6Hz3z9yop0R8uG1YyA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=aJqDdLnQHsKFL0WPPIBBPF3nQ2EqP4XrCwEVMe0Y+Dw=;
+        b=KuHikLLlL8j1kw+Eu+YCq5vhfmR/JLbdww/ftRES6CINkv0hJYKlTsiLCiqyNwSRrk
+         IMGqqPnSUrGk+8xM3krHahHWcBVe6GuPkWJIeTMJvyO/q7yLtaV+KEHlIN6sCPp3c8ey
+         Dd6BiRxKRQ5ba9XK5qw0SVpozbMWgd311zh7V4Kz9GJu/Yb3VwJ2QdQhxmPbw+Il3SZK
+         sBejZgJGnCbip5TZhg14sSK02GWGCaM4e8uf8aYoFKr2RlXDLT98640TcRARKvRWIMjU
+         Sb7uhCxpnAm1qfUNQjQtg7kQAHMmjmeJbT1tXGOV1Uwcgp40KcK61/W3ylgzD8dxKgPy
+         mDeA==
+X-Gm-Message-State: AJcUukevuRsMZeK9pg7sl4oI+ZQnwoErpofMkcPW6A6/5/dM5BG2tx7l
+        Zv24S/yLFmIc0fBuVeVo5wSlaA==
+X-Google-Smtp-Source: ALg8bN7XYGss+u0mNwwcW28KF2o4Xx59M31cConO36Vdg5mQZS7ppBzEJOFprFz1rdsQhPSXU/Cg2g==
+X-Received: by 2002:a50:b0e5:: with SMTP id j92mr1119435edd.188.1546936645425;
+        Tue, 08 Jan 2019 00:37:25 -0800 (PST)
+Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
+        by smtp.gmail.com with ESMTPSA id w10sm31593992eda.77.2019.01.08.00.37.24
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 08 Jan 2019 00:37:24 -0800 (PST)
+Date:   Tue, 8 Jan 2019 09:37:22 +0100
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Intel Graphics <intel-gfx@lists.freedesktop.org>,
+        DRI <dri-devel@lists.freedesktop.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Rob Clark <robdclark@gmail.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>
+Subject: Re: linux-next: build failure after merge of the drm-misc tree
+Message-ID: <20190108083722.GQ21184@phenom.ffwll.local>
+Mail-Followup-To: Stephen Rothwell <sfr@canb.auug.org.au>,
+        Intel Graphics <intel-gfx@lists.freedesktop.org>,
+        DRI <dri-devel@lists.freedesktop.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Rob Clark <robdclark@gmail.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>
+References: <20190108111230.2dd3abd9@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190108111230.2dd3abd9@canb.auug.org.au>
+X-Operating-System: Linux phenom 4.18.0-2-amd64 
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2019-01-07 at 19:34 +0100, Lubomir Rintel wrote:
-> It doesn't make sense to always have this built-in, e.g. on ARM
-> multiplatform kernels.
+On Tue, Jan 08, 2019 at 11:12:41AM +1100, Stephen Rothwell wrote:
+> Hi all,
 > 
-> A better way to address the problem the original commit aimed to solve is
-> to fix Kconfig. That is what the next commit in the series does.
+> After merging the drm-misc tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
 > 
-> This reverts commit f48d1496b8537d75776478c6942dd87f34d7f270.
+> drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm.c: In function 'amdgpu_dm_mode_config_init':
+> drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm.c:1695:30: error: passing argument 1 of 'drm_atomic_private_obj_init' from incompatible pointer type [-Werror=incompatible-pointer-types]
+>   drm_atomic_private_obj_init(&adev->dm.atomic_obj,
+>                               ^~~~~~~~~~~~~~~~~~~~
+> In file included from include/drm/drm_dp_mst_helper.h:27,
+>                  from drivers/gpu/drm/amd/amdgpu/amdgpu_mode.h:46,
+>                  from drivers/gpu/drm/amd/amdgpu/amdgpu.h:57,
+>                  from drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm.c:34:
+> include/drm/drm_atomic.h:437:53: note: expected 'struct drm_device *' but argument is of type 'struct drm_private_obj *'
+>  void drm_atomic_private_obj_init(struct drm_device *dev,
+>                                   ~~~~~~~~~~~~~~~~~~~^~~
+> drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm.c:1696:9: error: passing argument 2 of 'drm_atomic_private_obj_init' from incompatible pointer type [-Werror=incompatible-pointer-types]
+>          &state->base,
+>          ^~~~~~~~~~~~
+> In file included from include/drm/drm_dp_mst_helper.h:27,
+>                  from drivers/gpu/drm/amd/amdgpu/amdgpu_mode.h:46,
+>                  from drivers/gpu/drm/amd/amdgpu/amdgpu.h:57,
+>                  from drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm.c:34:
+> include/drm/drm_atomic.h:438:30: note: expected 'struct drm_private_obj *' but argument is of type 'struct drm_private_state *'
+>       struct drm_private_obj *obj,
+>       ~~~~~~~~~~~~~~~~~~~~~~~~^~~
+> drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm.c:1697:9: error: passing argument 3 of 'drm_atomic_private_obj_init' from incompatible pointer type [-Werror=incompatible-pointer-types]
+>          &dm_atomic_state_funcs);
+>          ^~~~~~~~~~~~~~~~~~~~~~
+> In file included from include/drm/drm_dp_mst_helper.h:27,
+>                  from drivers/gpu/drm/amd/amdgpu/amdgpu_mode.h:46,
+>                  from drivers/gpu/drm/amd/amdgpu/amdgpu.h:57,
+>                  from drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm.c:34:
+> include/drm/drm_atomic.h:439:32: note: expected 'struct drm_private_state *' but argument is of type 'struct drm_private_state_funcs *'
+>       struct drm_private_state *state,
+>       ~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~
+> drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm.c:1695:2: error: too few arguments to function 'drm_atomic_private_obj_init'
+>   drm_atomic_private_obj_init(&adev->dm.atomic_obj,
+>   ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+> In file included from include/drm/drm_dp_mst_helper.h:27,
+>                  from drivers/gpu/drm/amd/amdgpu/amdgpu_mode.h:46,
+>                  from drivers/gpu/drm/amd/amdgpu/amdgpu.h:57,
+>                  from drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm.c:34:
+> include/drm/drm_atomic.h:437:6: note: declared here
+>  void drm_atomic_private_obj_init(struct drm_device *dev,
+>       ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+> 
+> Caused by commit
+> 
+>   b962a12050a3 ("drm/atomic: integrate modeset lock with private objects")
+> 
+> interacting with commit
+> 
+>   eb3dc8978596 ("drm/amd/display: Use private obj helpers for dm_atomic_state")
+> 
+> from Linus' tree (merged during the merge window).
+> 
+> Its not obvious how to fix this up, so I have used the drm-misc tree
+> from next-20190107 for today.
 
-The kBuild but figured out that this is not such a great idea.
+https://cgit.freedesktop.org/drm-tip/tree/fixups/drm-misc-next.patch?h=rerere-cache
 
-I'm going to follow-up with a new patch set; sorry for the noise.
-
-> 
-> Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-> 
-> ---
-> Changes since v1:
-> - Sort it later in the patch set
-> 
->  drivers/platform/olpc/olpc-ec.c | 8 +++++---
->  1 file changed, 5 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/platform/olpc/olpc-ec.c b/drivers/platform/olpc/olpc-ec.c
-> index 981955dce926..35a21c66cd0d 100644
-> --- a/drivers/platform/olpc/olpc-ec.c
-> +++ b/drivers/platform/olpc/olpc-ec.c
-> @@ -1,8 +1,6 @@
->  /*
->   * Generic driver for the OLPC Embedded Controller.
->   *
-> - * Author: Andres Salomon <dilinger@queued.net>
-> - *
->   * Copyright (C) 2011-2012 One Laptop per Child Foundation.
->   *
->   * Licensed under the GPL v2 or later.
-> @@ -14,7 +12,7 @@
->  #include <linux/platform_device.h>
->  #include <linux/slab.h>
->  #include <linux/workqueue.h>
-> -#include <linux/init.h>
-> +#include <linux/module.h>
->  #include <linux/list.h>
->  #include <linux/olpc-ec.h>
->  
-> @@ -327,4 +325,8 @@ static int __init olpc_ec_init_module(void)
->  {
->  	return platform_driver_register(&olpc_ec_plat_driver);
->  }
-> +
->  arch_initcall(olpc_ec_init_module);
-> +
-> +MODULE_AUTHOR("Andres Salomon <dilinger@queued.net>");
-> +MODULE_LICENSE("GPL");
-
+is the fixup you want. Should get baked into drm-next any moment, since
+the first drm-misc-next pull is already out.
+-Daniel
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
