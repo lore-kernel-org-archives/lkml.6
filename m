@@ -2,142 +2,112 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A341C43444
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 05:07:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 134DAC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 05:08:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F2FC62173C
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 05:07:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D432E20700
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 05:08:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="pjaj2YHO"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IoayY1Fb"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727675AbfAHFHt (ORCPT
+        id S1727745AbfAHFIB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 00:07:49 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:59260 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725838AbfAHFHs (ORCPT
+        Tue, 8 Jan 2019 00:08:01 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:54099 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725838AbfAHFIA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 00:07:48 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x084xt6k176054;
-        Tue, 8 Jan 2019 05:07:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- content-transfer-encoding : in-reply-to; s=corp-2018-07-02;
- bh=BOF8zLPlRfBkFXlEvYnlTN7TUDSdg9M/4VsWxklbMwk=;
- b=pjaj2YHOHrAJs9RKUbXtJbE8hycwhR3g3C66EiUZfqYq6zMuBdEYUbXPSogi2PnFU8fj
- 1S1yNYncz/5ODHtTUr7GzbD0HhKKNUlp12u4+2ilHgpvilAK+BVgYT1ZGv+XgAZ6FdSG
- Bbj9HU088wITfl+pfn8y9MTWgsPx2gHzsoZzz2jg4obHZ6VExR+Z+TDgTCPipoYjm+Am
- B6PL0fSsh9amElm2CuCpk3yWsYCBl9u7vvA1WbVk8/WdTQpG5IQri5I7invXtuzF0x4+
- z1ZWvPYkO43KHjkIgEQQlTA6aUTwiyJZFoGGQW+F2NsfrN7FmUFt19DVrdDEZsR7yw7D dA== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by userp2130.oracle.com with ESMTP id 2ptm0u1c0t-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 08 Jan 2019 05:07:42 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x0857fXi017993
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 8 Jan 2019 05:07:42 GMT
-Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x0857ea1027926;
-        Tue, 8 Jan 2019 05:07:40 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 07 Jan 2019 21:07:40 -0800
-Date:   Mon, 7 Jan 2019 21:07:39 -0800
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     "Su Yanjun <suyj.fnst@cn.fujitsu.com>" <suyj.fnst@cn.fujitsu.com>
-Cc:     Eric Sandeen <sandeen@sandeen.net>, linux-xfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org, suyanjun218@gmail.com
-Subject: Re: [PATCH] xfs: correct statx's result_mask value
-Message-ID: <20190108050739.GQ12689@magnolia>
-References: <1546854790-5233-1-git-send-email-suyj.fnst@cn.fujitsu.com>
- <20190107175229.GJ12689@magnolia>
- <2b27e2ec-368b-d24c-8443-e265f87e417c@sandeen.net>
- <67e03af1-6e11-4236-76e6-6127b6cfb9b9@cn.fujitsu.com>
+        Tue, 8 Jan 2019 00:08:00 -0500
+Received: by mail-wm1-f67.google.com with SMTP id d15so2829190wmb.3;
+        Mon, 07 Jan 2019 21:07:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=18QAWLA00yLBRYhbDWeCqa1PJ4zB9ywupFQ5k9+uPCc=;
+        b=IoayY1Fb4jWRCNopeeCX8WoTdrFewjRtzTqFf4cryLaeOz86mFFcZUq3O8SHXWMXqr
+         L6/TYvu9JpQnYxQOhIjYeEv+7GvialQmUQ+imBXePXNrPoh40/0M1FRs4aas2pTiLC22
+         Hv9xE8ub8KQzsdQkF9FugTBppE/Qywp3Nv3ts66Y85mR7AbWH28eEKI26zSckOZnozbA
+         MUCo3VMCI8CgC2aJ9edIrcMqp0dRZWX/V7HZf0sT49D5zTnSmxMa8C/o0Jqljf4qutQS
+         WgzXbopFgeItPcSK3GUBD02/I21fAV+1ZXGNP3bO1UoeCEqKNMQxUnIMGNk0w/oCvyiA
+         PCVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=18QAWLA00yLBRYhbDWeCqa1PJ4zB9ywupFQ5k9+uPCc=;
+        b=Amy9n58sWjdZ0YKegQttAqCSidnyxzKHM2q0yKfJ3irM/iIYr6ZWKX6IO2E32OnFq4
+         pbJkaCthS+D3NSgAU86QS9BO0zkoKZYi4QBC2+lchFGDrdLk/sv/UEMD8bCsMDRmT9Jn
+         iwMpo6QIQPUxAvJyzlwScu7xGmQMvlk3+s09HdBy2WxcGCz7e0Y2EHiZXV2xoL3L7ZAN
+         iO2+exITVE8MFrSYFRvo4Mj61spvw/SdctLopINSqpYYhovIb0FF5YcL0DxNZm76NV4N
+         LJNiUY9lt3eGSIN7RRLvMpgsvA3KbzBrQ9o4SGqgmd50hgPLsOUUfF34+bGdTi2noZ7a
+         cZRQ==
+X-Gm-Message-State: AJcUukf9IxtuCrp+Dy3vQc1jahtngJKHIcItg6lQDuJl9YkRr/SI/Aux
+        qvE7t9jLbh6QbZuJ2o0xjUY=
+X-Google-Smtp-Source: ALg8bN6cHP8GGbSRbTutukUCi70uCw2HJRlGsVBflX1cI8oQiOIuGnI8UmVkW9PjbjPOv4JsISHstA==
+X-Received: by 2002:a7b:c397:: with SMTP id s23mr446182wmj.127.1546924077811;
+        Mon, 07 Jan 2019 21:07:57 -0800 (PST)
+Received: from localhost.localdomain ([2a01:4f8:10b:24a5::2])
+        by smtp.gmail.com with ESMTPSA id y34sm151735604wrd.68.2019.01.07.21.07.56
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 07 Jan 2019 21:07:57 -0800 (PST)
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Karsten Keil <isdn@linux-pingi.de>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Nathan Chancellor <natechancellor@gmail.com>
+Subject: [PATCH] isdn: avm: Fix string plus integer warning from Clang
+Date:   Mon,  7 Jan 2019 22:06:49 -0700
+Message-Id: <20190108050649.9962-1-natechancellor@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+X-Patchwork-Bot: notify
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <67e03af1-6e11-4236-76e6-6127b6cfb9b9@cn.fujitsu.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9129 signatures=668680
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1901080038
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 08, 2019 at 12:58:43PM +0800, Su Yanjun <suyj.fnst@cn.fujitsu.com> wrote:
-> 
-> 
-> On 1/8/2019 2:04 AM, Eric Sandeen wrote:
-> > On 1/7/19 11:52 AM, Darrick J. Wong wrote:
-> > > On Mon, Jan 07, 2019 at 04:53:10AM -0500, Su Yanjun wrote:
-> > > > For statx syscall, xfs return the wrong result_mask.
-> > > > 
-> > > > Signed-off-by: Su Yanjun<suyj.fnst@cn.fujitsu.com>
-> > > > ---
-> > > >   fs/xfs/xfs_iops.c | 3 +++
-> > > >   1 file changed, 3 insertions(+)
-> > > > 
-> > > > diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
-> > > > index f48ffd7..3811457 100644
-> > > > --- a/fs/xfs/xfs_iops.c
-> > > > +++ b/fs/xfs/xfs_iops.c
-> > > > @@ -521,6 +521,9 @@ xfs_vn_getattr(
-> > > >   			stat->btime.tv_nsec = ip->i_d.di_crtime.t_nsec;
-> > > >   		}
-> > > >   	}
-> > > > +	
-> > > > +	/* Only return mask that we care */
-> > > > +	stat->result_mask &= request_mask;
-> > > Why not just:
-> > > 
-> > > 	stat->result_mask = STATX_BASIC_STATS;
-> > > 
-> > > at the top of the function?
-> > > 
-> > > I don't see the need to mask off result_mask at all, since we could some
-> > > day elect to return more than what's in request_mask...
-> When we run xfstests with nfs, the generic/423 case runs failed. So i review
-> the nfs'
-> nfs_getattr code it does validate the request_mask.
-> 
-> Then i review the xfs' getattr code, it has no such check. Whatever
-> request_mask
->  is set, the stat's result_mask always the 0x7ff.
+A recent commit in Clang expanded the -Wstring-plus-int warning, showing
+some odd behavior in this file.
 
-Yes, statx can return more data than what userspace callers ask for:
+drivers/isdn/hardware/avm/b1.c:426:30: warning: adding 'int' to a string does not append to the string [-Wstring-plus-int]
+                cinfo->version[j] = "\0\0" + 1;
+                                    ~~~~~~~^~~
+drivers/isdn/hardware/avm/b1.c:426:30: note: use array indexing to silence this warning
+                cinfo->version[j] = "\0\0" + 1;
+                                           ^
+                                    &      [  ]
+1 warning generated.
 
-> Maybe it has Unclear semantics about statx's result_mask.
+This is equivalent to just "\0" so fix it to clean up the warning.
 
-"A filesystem may also fill in fields that the caller didn't ask for if
-it has values for them available and the information is available at no
-extra cost.  If this happens, the  corresponding  bits will be set in
-stx_mask."
+Link: https://github.com/ClangBuiltLinux/linux/issues/309
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+---
+ drivers/isdn/hardware/avm/b1.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---D
+diff --git a/drivers/isdn/hardware/avm/b1.c b/drivers/isdn/hardware/avm/b1.c
+index 4ac378e48902..7fa8141e2019 100644
+--- a/drivers/isdn/hardware/avm/b1.c
++++ b/drivers/isdn/hardware/avm/b1.c
+@@ -423,7 +423,7 @@ void b1_parse_version(avmctrl_info *cinfo)
+ 	int i, j;
+ 
+ 	for (j = 0; j < AVM_MAXVERSION; j++)
+-		cinfo->version[j] = "\0\0" + 1;
++		cinfo->version[j] = "\0";
+ 	for (i = 0, j = 0;
+ 	     j < AVM_MAXVERSION && i < cinfo->versionlen;
+ 	     j++, i += cinfo->versionbuf[i] + 1)
+-- 
+2.20.1
 
-> > > ...waitaminute, are you seeing garbage in the result_mask that's
-> > > returned to userspace?  I also noticed the vfs stat functions declare
-> > > "struct kstat stat;" without explicitly zeroing the structure fields,
-> > > which means (I think) that we can leak stack information if the kernel
-> > > isn't built with the stackleak plugin?
-> No such problem.
-> > A clear problem statement and reproducer steps would be hugely useful
-> > here.
-> > 
-> > -Eric
-> Thanks,
-> Su
-> 
-> 
