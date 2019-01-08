@@ -2,111 +2,232 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.7 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACC90C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 17:16:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E836C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 17:16:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 79D972070B
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 17:16:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Eos2TEKW"
+	by mail.kernel.org (Postfix) with ESMTP id E3C122070B
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 17:16:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728470AbfAHRQm (ORCPT
+        id S1728688AbfAHRQs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 12:16:42 -0500
-Received: from mail-yw1-f66.google.com ([209.85.161.66]:38883 "EHLO
-        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727857AbfAHRQm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 12:16:42 -0500
-Received: by mail-yw1-f66.google.com with SMTP id d190so1833764ywb.5
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jan 2019 09:16:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=O3cxKFcsZ7Aia1to+6l/k0BtvfmTcgpFYAEMfuEti+s=;
-        b=Eos2TEKWPnZgj2WETxoQUQ7BxQ0jHy8uuT9rcrfgcL7jSNXF/m0zd96qmubsO2lxpj
-         fQnCb05A2WonrUFbhFnxV1OraNDP8w1jWCtKuqUQwPaNxDWf5SL348o6VY9p4Rtz4Llt
-         hMHxNdEDlSynpYuI37u/Q19TsnPNMIAwMY/3KnBl3BWAoqOB1UU8Muj4tLM9WKLFfqqZ
-         X5YU6zB5uuy+OdaYzMyVLyHweGoYVrs69oOpc/AW7dbzTEy5grPYL7qKsyw3XpiDNtk6
-         h4pfTD7SK2AMN9qv+OEVsI1l6TzmwlPuNF4DwRh3iV1yPT0ICH7TapDrfOVekvZcI/Tt
-         m7Rw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=O3cxKFcsZ7Aia1to+6l/k0BtvfmTcgpFYAEMfuEti+s=;
-        b=KJiGUKGrStyYGkSv0Os21wzC3LrEzo8U+MXwsmH+jnxA5GyhZ5B/DF9RuqHpXhBnKc
-         syeRYAmvmQrodM/ezHFQmHxABB5v3aAauUt/McGvtAYNaHO5yEFVyOqwCETYSzZ151cJ
-         yDb7ZL2/skOEVtpTYs4IgKGq9S6WqdJrJvw+Pb3DwmVBOjS93DckzUcU2IdfoIdt6Q9V
-         fDof6vGcbQJt9rVgwkt9Qjx2u0XjwIOO3+gN+qo14JiQMM/7lwAa0RlAa3KFjjK/O+8P
-         l5rFDLHW/MoSGNMdEJ14alBexVGtlf4lHnTW33N6yEEn3tD97wRbV2KP+SZ3pY4druia
-         k7oQ==
-X-Gm-Message-State: AJcUukdR+46WHb+fp7vothLwmrekq4Fj1zrdnhW0x7HfHq4tpWtIeWDv
-        /Qb5IA30ugxgPYo5gZe6pWpwlEex6JlEOAJEC4XY9g==
-X-Google-Smtp-Source: ALg8bN6l2URd5HHzySXgChs72GaH4+pHFZoZsTeq5nxA3kXQuG5nPR7MqAQJsQXI7rN/GEmH+0peK91MxbbL2clTb0A=
-X-Received: by 2002:a81:ec12:: with SMTP id j18mr2459544ywm.17.1546967800980;
- Tue, 08 Jan 2019 09:16:40 -0800 (PST)
+        Tue, 8 Jan 2019 12:16:48 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:56592 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727828AbfAHRQs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 12:16:48 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9EA3BA78;
+        Tue,  8 Jan 2019 09:16:47 -0800 (PST)
+Received: from [10.1.196.62] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 86E2C3F5AF;
+        Tue,  8 Jan 2019 09:16:45 -0800 (PST)
+Subject: Re: [PATCH v8 12/26] arm64: irqflags: Use ICC_PMR_EL1 for interrupt
+ masking
+To:     Dave Martin <Dave.Martin@arm.com>
+Cc:     Julien Thierry <julien.thierry@arm.com>, mark.rutland@arm.com,
+        daniel.thompson@linaro.org,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        catalin.marinas@arm.com, will.deacon@arm.com,
+        linux-kernel@vger.kernel.org, christoffer.dall@arm.com,
+        james.morse@arm.com, Oleg Nesterov <oleg@redhat.com>,
+        joel@joelfernandes.org, linux-arm-kernel@lists.infradead.org
+References: <1546956464-48825-1-git-send-email-julien.thierry@arm.com>
+ <1546956464-48825-13-git-send-email-julien.thierry@arm.com>
+ <20190108153957.GA5840@e103592.cambridge.arm.com>
+ <8cae8016-d2c7-3c86-9832-f4278d42ea21@arm.com>
+ <20190108164510.GB5840@e103592.cambridge.arm.com>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=marc.zyngier@arm.com; prefer-encrypt=mutual; keydata=
+ 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
+Organization: ARM Ltd
+Message-ID: <64a0dc42-0398-95ac-2c28-88797f969cef@arm.com>
+Date:   Tue, 8 Jan 2019 17:16:43 +0000
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-References: <20190108161016.12361-1-enric.balletbo@collabora.com> <20190108161016.12361-5-enric.balletbo@collabora.com>
-In-Reply-To: <20190108161016.12361-5-enric.balletbo@collabora.com>
-From:   Guenter Roeck <groeck@google.com>
-Date:   Tue, 8 Jan 2019 09:16:29 -0800
-Message-ID: <CABXOdTdbzr0GW0NPf7SQRW-ra1-GCeWNDk=vPF-w-8gZuSvqoA@mail.gmail.com>
-Subject: Re: [PATCH 04/10] platform/chrome: cros_ec_vbc: remove unused includes
-To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Gwendal Grignou <gwendal@chromium.org>, kernel@collabora.com,
-        Benson Leung <bleung@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190108164510.GB5840@e103592.cambridge.arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 8, 2019 at 8:10 AM Enric Balletbo i Serra
-<enric.balletbo@collabora.com> wrote:
->
-> None of these are required at the moment.
->
-> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> ---
->
->  drivers/platform/chrome/cros_ec_vbc.c | 2 --
->  1 file changed, 2 deletions(-)
->
-> diff --git a/drivers/platform/chrome/cros_ec_vbc.c b/drivers/platform/chrome/cros_ec_vbc.c
-> index af9bfe6f385c..86903bc31b27 100644
-> --- a/drivers/platform/chrome/cros_ec_vbc.c
-> +++ b/drivers/platform/chrome/cros_ec_vbc.c
-> @@ -18,10 +18,8 @@
->   * GNU General Public License for more details.
->   */
->
-> -#include <linux/of.h>
->  #include <linux/platform_device.h>
->  #include <linux/mfd/cros_ec.h>
-> -#include <linux/mfd/cros_ec_commands.h>
+On 08/01/2019 16:45, Dave Martin wrote:
+> On Tue, Jan 08, 2019 at 03:51:18PM +0000, Marc Zyngier wrote:
+>> On 08/01/2019 15:40, Dave Martin wrote:
+>>> On Tue, Jan 08, 2019 at 02:07:30PM +0000, Julien Thierry wrote:
+>>>> Instead disabling interrupts by setting the PSR.I bit, use a priority
+>>>> higher than the one used for interrupts to mask them via PMR.
+>>>>
+>>>> When using PMR to disable interrupts, the value of PMR will be used
+>>>> instead of PSR.[DAIF] for the irqflags.
+>>>>
+>>>> Signed-off-by: Julien Thierry <julien.thierry@arm.com>
+>>>> Suggested-by: Daniel Thompson <daniel.thompson@linaro.org>
+>>>> Cc: Catalin Marinas <catalin.marinas@arm.com>
+>>>> Cc: Will Deacon <will.deacon@arm.com>
+>>>> Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+>>>> Cc: Oleg Nesterov <oleg@redhat.com>
+>>>> ---
+>>>>  arch/arm64/include/asm/efi.h      |  11 ++++
+>>>>  arch/arm64/include/asm/irqflags.h | 123 +++++++++++++++++++++++++++++---------
+>>>>  2 files changed, 106 insertions(+), 28 deletions(-)
+>>>
+>>> [...]
+>>>
+>>>> diff --git a/arch/arm64/include/asm/irqflags.h b/arch/arm64/include/asm/irqflags.h
+>>>> index 24692ed..fa3b06f 100644
+>>>> --- a/arch/arm64/include/asm/irqflags.h
+>>>> +++ b/arch/arm64/include/asm/irqflags.h
+>>>> @@ -18,7 +18,9 @@
+>>>
+>>> [...]
+>>>
+>>>>  static inline void arch_local_irq_enable(void)
+>>>>  {
+>>>> -	asm volatile(
+>>>> -		"msr	daifclr, #2		// arch_local_irq_enable"
+>>>> -		:
+>>>> +	unsigned long unmasked = GIC_PRIO_IRQON;
+>>>> +
+>>>> +	asm volatile(ALTERNATIVE(
+>>>> +		"msr	daifclr, #2		// arch_local_irq_enable\n"
+>>>> +		"nop",
+>>>> +		"msr_s  " __stringify(SYS_ICC_PMR_EL1) ",%0\n"
+>>>> +		"dsb	sy",
+>>>
+>>> I'm still not convinced these dsbs are needed.
+>>>
+>>> Without the dsb, we are probably not guaranteed to take a pending
+>>> interrupt _immediately_ on unmasking, but I'm not sure that's a
+>>> problem.
+>>>
+>>> What goes wrong if we omit them?
+>>
+>> Then the GIC doesn't know it can now deliver interrupts of a lower
+>> priority. Only a dsb can guarantee that the GIC's view of PMR will get
+>> updated.
+>>
+>> See 9.1.6 (Observability of the effects of accesses to the GIC
+>> registers), which states:
+>>
+>> <quote>
+>> Architectural execution of a DSB instruction guarantees that
+>> — The last value written to ICC_PMR_EL1 or GICC_PMR is observed by the
+>> associated Redistributor.
+>> </quote>
+>>
+>> So yes, DSB is required.
+> 
+> But it says neither what is means for the PMR write to be "observed by
+> the redistributor", nor whether the DSB is required for the
+> redistributor to observe the write at all.
 
-It is customary to not rely on secondary includes. Yet, with this
-removal, the code will rely on cros_ec.h including cros_ec_commands.h,
-for the definition of EC_VBNV_CONTEXT_OP_READ. Does this really make
-sense ?
+Well, it seems pretty clear to me that if the redistributor doesn't
+observe the PMR value, it is unlikely to change its interpretation of
+it· And conversely, the redistributor is allowed to sit pretty and not
+give you any interrupt until you are actually telling it that something
+has changed.
 
-[ I didn't check the other patches, but I suspect the same applies
-there as well ]
+I really think that for once, the spec is pretty unambiguous about what
+is required.
 
-Guenter
+> (So, is an implementation
+> allowed to cached in the CPU interface indefinitely until forcibly
+> flushed to the redistributor by a DSB, and in any case can the write's
+> reaching the distributor in finite time or not have any effect that we
+> care about in this case?).
 
->  #include <linux/module.h>
->  #include <linux/slab.h>
->
-> --
-> 2.20.1
->
+Nothing in the spec says that the system register write will magically
+trickle down to the redistributor in the absence of a DSB.
+
+> My reason for querying this is that temporary local masking of classes
+> of interrupts seems an obvious use case for the PMR, and the DSB
+> requirement flies rather in the face of this.
+
+Are you implying that the GIC architecture should have any form of
+sanity and be useful for general purpose software? Think again! ;-)
+
+The PMR behavior you are describing only works in a single direction
+(from low to high priority), because the CPU interface has to perform
+some filtering. In the opposite direction, you need the big hammer.
+
+> Have we seen hardware where interrupts may stall forever upstream of the
+> CPU interface after a PMR write, until a dsb is executed by the CPU?
+
+Yes. You even have to have a DSB right after a read of IAR to avoid
+loosing interrupts. The short story is that there is hardly any
+synchronization between redistributor and CPU interface. Implementations
+are allowed a more closely coupled design, but that's not what the
+architecture mandates.
+
+> If so that is sad, but I guess we have to live with it.
+> 
+> Also, is it ever important in Linux that a pending interrupt be taken
+> immediately upon unmasking (and how do we know that said interrupt is
+> pending)?  If not, we don't care precisely when such interrupts are
+> pended to the PE, just that such an interrupt cannot be taken before
+> the PMR write that unmasks it.  It would be insane for the self-
+> synchronization of PMR writes to lack this guarantee (and a DSB after
+> the PMR write would do no good anyway in that case).
+
+RT folks are usually quite picky on when they see their interrupts
+firing. I can also imagine the following scenario:
+
+	set_pmr(allow all interrupts)
+	WFI
+
+where things stop rather abruptly if this is the only CPU in the system.
+
+Thanks,
+
+	M.
+-- 
+Jazz is not dead. It just smells funny...
