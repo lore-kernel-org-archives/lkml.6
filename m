@@ -2,113 +2,136 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77B49C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 22:27:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9B71C43612
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 22:30:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 42FC920665
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 22:27:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A701C214C6
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 22:30:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1546986629;
+	bh=hXnMppBc3pgIEOn2BXm63YNiYbwzeHEpcsiQ/uzH2Vo=;
+	h=Date:From:To:Cc:Subject:List-ID:From;
+	b=dtpEhP049tSxKOC5PaJ+jZZDpUfFYOb7s0f4StWhVMajhfQALnvNZR9bHoIU5/k1m
+	 GsyD3ML7hyEsc/H1Cmrb4HGx+n/K9b+f0Kwcpq6Ilsa72LGo9lqmCmh1sZ0kzTbJlV
+	 hKdY0FRpE1JRla7aJjutKoxJj2fPEg10qiT8EUls=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729642AbfAHW1Y (ORCPT
+        id S1729689AbfAHWa3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 17:27:24 -0500
-Received: from ipmailnode02.adl6.internode.on.net ([150.101.137.148]:46766
-        "EHLO ipmailnode02.adl6.internode.on.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729042AbfAHW1Y (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 17:27:24 -0500
-Received: from ppp59-167-129-252.static.internode.on.net (HELO dastard) ([59.167.129.252])
-  by ipmail02.adl6.internode.on.net with ESMTP; 09 Jan 2019 08:57:05 +1030
-Received: from dave by dastard with local (Exim 4.80)
-        (envelope-from <david@fromorbit.com>)
-        id 1ggzpw-0000BO-PR; Wed, 09 Jan 2019 09:27:04 +1100
-Date:   Wed, 9 Jan 2019 09:27:04 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Waiman Long <longman@redhat.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Daniel Colascione <dancol@google.com>,
-        Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: [PATCH 0/2] /proc/stat: Reduce irqs counting performance overhead
-Message-ID: <20190108222704.GD27534@dastard>
-References: <1546873978-27797-1-git-send-email-longman@redhat.com>
- <20190107223214.GZ6311@dastard>
- <9b4208b7-f97b-047c-4dab-15bd3791e7de@redhat.com>
- <20190108020422.GA27534@dastard>
- <56954b42-4258-7268-53b5-ddca28758193@redhat.com>
+        Tue, 8 Jan 2019 17:30:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37238 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729042AbfAHWa2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 17:30:28 -0500
+Received: from localhost (unknown [69.71.4.100])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5171A20665;
+        Tue,  8 Jan 2019 22:30:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1546986627;
+        bh=hXnMppBc3pgIEOn2BXm63YNiYbwzeHEpcsiQ/uzH2Vo=;
+        h=Date:From:To:Cc:Subject:From;
+        b=d0tFW0jR/zJ+oALZ7m+kmx7JDFbj56gT9DSOEyAOFtVIgHdRbs6E623oevDaD3oPV
+         WkylKhjBM6wLu3nfjjb8r6wTPvVn5vX8AKIPBPKMtBj0lUFYH0Xf78VcSTJuEQLL0q
+         T9uepaluzZlPF4O20miGOQvdPlplfzrYtmseR34s=
+Date:   Tue, 8 Jan 2019 16:30:24 -0600
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
+Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        linux-pci@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Kconfig label updates
+Message-ID: <20190108223024.GA147017@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <56954b42-4258-7268-53b5-ddca28758193@redhat.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 08, 2019 at 11:58:26AM -0500, Waiman Long wrote:
-> On 01/07/2019 09:04 PM, Dave Chinner wrote:
-> > On Mon, Jan 07, 2019 at 05:41:39PM -0500, Waiman Long wrote:
-> >> On 01/07/2019 05:32 PM, Dave Chinner wrote:
-> >>> On Mon, Jan 07, 2019 at 10:12:56AM -0500, Waiman Long wrote:
-> > What I was suggesting is that you change the per-cpu counter
-> > implementation to the /generic infrastructure/ that solves this
-> > problem, and then determine if the extra update overhead is at all
-> > measurable. If you can't measure any difference in update overhead,
-> > then slapping complexity on the existing counter to attempt to
-> > mitigate the summing overhead is the wrong solution.
-> >
-> > Indeed, it may be that you need o use a custom batch scaling curve
-> > for the generic per-cpu coutner infrastructure to mitigate the
-> > update overhead, but the fact is we already have generic
-> > infrastructure that solves your problem and so the solution should
-> > be "use the generic infrastructure" until it can be proven not to
-> > work.
-> >
-> > i.e. prove the generic infrastructure is not fit for purpose and
-> > cannot be improved sufficiently to work for this use case before
-> > implementing a complex, one-off snowflake counter implementation...
-> 
-> I see your point. I like the deferred summation approach that I am
-> currently using. If I have to modify the current per-cpu counter
-> implementation to support that
+Hi,
 
-No! Stop that already. The "deferred counter summation" is exactly
-the problem the current algorithm has and exactly the problem the
-generic counters /don't have/. Changing the generic percpu counter
-algorithm to match this specific hand rolled implementation is not
-desirable as it will break implementations that rely on the
-bound maximum summation deviation of the existing algorithm (e.g.
-the ext4 and XFS ENOSPC accounting algorithms).
+I want to update the PCI Kconfig labels so they're more consistent and
+useful to users, something like the patch below.  IIUC, the items
+below are all IBM-related; please correct me if not.
 
-> and I probably need to add counter
-> grouping support to amortize the overhead, that can be a major
+I'd also like to expand (or remove) "RPA" because Google doesn't find
+anything about "IBM RPA", except Robotic Process Automation, which I
+think must be something else.
 
-The per-cpu counters already have configurable update batching
-to amortise the summation update cost across multiple individual
-per-cpu updates. You don't need to change the implementation at all,
-just tweak the amortisation curve appropriately for the desired
-requirements for update scalability (high) vs read accuracy (low).
+Is there some text expansion of RPA that we could use that would be
+meaningful to a user, i.e., something he/she might find on a nameplate
+or in a user manual?
 
-Let's face it, on large systems where counters are frequently
-updated, the resultant sum can be highly inaccurate by the time a
-thousand CPU counters have been summed. The generic counters have a
-predictable and bound "fast sum" maximum deviation (batch size *
-nr_cpus), so over large machines are likely to be much more accurate
-than "unlocked summing on demand" algorithms.
+Ideally the PCI Kconfig labels would match the terms used in
+arch/.../Kconfig, e.g.,
 
-Cheers,
+  config PPC_POWERNV
+    bool "IBM PowerNV (Non-Virtualized) platform support"
 
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+  config PPC_PSERIES
+    bool "IBM pSeries & new (POWER5-based) iSeries"
+
+  config MARCH_Z900
+    bool "IBM zSeries model z800 and z900"
+
+  config MARCH_Z9_109
+    bool "IBM System z9"
+
+Bjorn
+
+
+diff --git a/drivers/pci/hotplug/Kconfig b/drivers/pci/hotplug/Kconfig
+index e9f78eb390d2..1c1d145bfd84 100644
+--- a/drivers/pci/hotplug/Kconfig
++++ b/drivers/pci/hotplug/Kconfig
+@@ -112,7 +112,7 @@ config HOTPLUG_PCI_SHPC
+ 	  When in doubt, say N.
+ 
+ config HOTPLUG_PCI_POWERNV
+-	tristate "PowerPC PowerNV PCI Hotplug driver"
++	tristate "IBM PowerNV PCI Hotplug driver"
+ 	depends on PPC_POWERNV && EEH
+ 	select OF_DYNAMIC
+ 	help
+@@ -125,10 +125,11 @@ config HOTPLUG_PCI_POWERNV
+ 	  When in doubt, say N.
+ 
+ config HOTPLUG_PCI_RPA
+-	tristate "RPA PCI Hotplug driver"
++	tristate "IBM Power Systems RPA PCI Hotplug driver"
+ 	depends on PPC_PSERIES && EEH
+ 	help
+ 	  Say Y here if you have a RPA system that supports PCI Hotplug.
++	  This includes the earlier pSeries and iSeries.
+ 
+ 	  To compile this driver as a module, choose M here: the
+ 	  module will be called rpaphp.
+@@ -136,7 +137,7 @@ config HOTPLUG_PCI_RPA
+ 	  When in doubt, say N.
+ 
+ config HOTPLUG_PCI_RPA_DLPAR
+-	tristate "RPA Dynamic Logical Partitioning for I/O slots"
++	tristate "IBM RPA Dynamic Logical Partitioning for I/O slots"
+ 	depends on HOTPLUG_PCI_RPA
+ 	help
+ 	  Say Y here if your system supports Dynamic Logical Partitioning
+@@ -157,7 +158,7 @@ config HOTPLUG_PCI_SGI
+ 	  When in doubt, say N.
+ 
+ config HOTPLUG_PCI_S390
+-	bool "System z PCI Hotplug Support"
++	bool "IBM System z PCI Hotplug Support"
+ 	depends on S390 && 64BIT
+ 	help
+ 	  Say Y here if you want to use the System z PCI Hotplug
