@@ -2,93 +2,139 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CFC6C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 09:49:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBC38C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 09:49:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F14AE2087F
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 09:49:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="F9xzdgpF"
+	by mail.kernel.org (Postfix) with ESMTP id A7C6E20827
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 09:49:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728282AbfAHJta (ORCPT
+        id S1728319AbfAHJtz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 04:49:30 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:53022 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727001AbfAHJta (ORCPT
+        Tue, 8 Jan 2019 04:49:55 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:36917 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727001AbfAHJtz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 04:49:30 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x089nL8u009815;
-        Tue, 8 Jan 2019 09:49:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=CCZqnBr5X7fUulrz391lwnnp0fmZ0BbuU5v5+BAhJtE=;
- b=F9xzdgpFtUqZF/lEldJuFWyqimA04JdKqI1ffUYf08+hDgBG6Qjv6W5Z5z16M3U303PT
- l11V9Ck4b9I7WBB/rinH/oC/6lu+wQx3q36u5F4z6ebhun7VIS8FHxmvq4B/9LMEp/UL
- D33ze1YOACsJc8o1HsqOKc8QjZRtkbsTnWLZmgHZ1QJZXCwY986ZIAF5DTHzLbjzjhFC
- 4zyDIp3ea537/75VORQFJRHH3kwTz7xffmwFj8zOJlv8cBtEX/WKnF4hRv5V7cOcTecx
- BuHBkQtTnqkcLvA8x5ZSJO05WT4Y170zX3tsfHRj+/AhPCj2P41axsf+Q24e9tQRokk6 Zw== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by userp2130.oracle.com with ESMTP id 2ptm0u2jwg-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 08 Jan 2019 09:49:22 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x089nL6U029562
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 8 Jan 2019 09:49:21 GMT
-Received: from abhmp0020.oracle.com (abhmp0020.oracle.com [141.146.116.26])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x089nLNv016744;
-        Tue, 8 Jan 2019 09:49:21 GMT
-Received: from kadam (/197.157.0.45)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 08 Jan 2019 01:49:21 -0800
-Date:   Tue, 8 Jan 2019 12:47:55 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Vitaly Kuznetsov <vkuznets@redhat.com>
-Cc:     Sasha Levin <sashal@kernel.org>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        David Hildenbrand <david@redhat.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        linux-kernel@vger.kernel.org, devel@linuxdriverproject.org
-Subject: Re: [PATCH] hv_balloon: avoid touching uninitialized struct page
- during tail onlining
-Message-ID: <20190108094755.GG3200@kadam>
-References: <20190104141942.19126-1-vkuznets@redhat.com>
- <2ea7e975-6aae-de71-83e5-9302518802ef@redhat.com>
- <87d0p837lt.fsf@vitty.brq.redhat.com>
- <20190107175650.GG166797@sasha-vm>
- <87a7kc2u03.fsf@vitty.brq.redhat.com>
+        Tue, 8 Jan 2019 04:49:55 -0500
+Received: from 1.general.cking.uk.vpn ([10.172.193.212])
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_128_CBC_SHA1:16)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1ggo1A-0006XK-62; Tue, 08 Jan 2019 09:49:52 +0000
+Subject: Re: [PATCH] cifs: fix memory leak of an allocated cifs_ntsd structure
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Steve French <sfrench@samba.org>, linux-cifs@vger.kernel.org,
+        samba-technical@lists.samba.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20190107171515.4537-1-colin.king@canonical.com>
+ <20190108094249.GF3200@kadam>
+From:   Colin Ian King <colin.king@canonical.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=colin.king@canonical.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <2f01add7-06f0-e312-2018-18b056405d6a@canonical.com>
+Date:   Tue, 8 Jan 2019 09:49:51 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87a7kc2u03.fsf@vitty.brq.redhat.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9129 signatures=668680
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=702
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1901080081
+In-Reply-To: <20190108094249.GF3200@kadam>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 07, 2019 at 07:38:20PM +0100, Vitaly Kuznetsov wrote:
-> (I remember Greg disliked when people were tagging patches for stable@
-> themselves, he prefered maintainers deciding if the particular commit
-> deserves stable@ or not - but as you have a tree now we may as well have
-> different rules :-)
+On 08/01/2019 09:42, Dan Carpenter wrote:
+> On Mon, Jan 07, 2019 at 05:15:15PM +0000, Colin King wrote:
+>> From: Colin Ian King <colin.king@canonical.com>
+>>
+>> The call to SMB2_queary_acl can allocate memory to pntsd and also
+>> return a failure via a call to SMB2_query_acl (and then query_info).
+>> This occurs when query_info allocates the structure and then in
+>> query_info the call to smb2_validate_and_copy_iov fails. Currently the
+>> failure just returns without kfree'ing pntsd hence causing a memory
+>> leak.  Fix this by kfree'ing pntsd before returning.
+>>
+>> Detected by CoverityScan, CID#1457059 ("Resource Leak")
+>>
+>> Fixes: 2f1afe25997f ("cifs: Use smb 2 - 3 and cifsacl mount options getacl functions")
+>> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+>> ---
+>>  fs/cifs/smb2ops.c | 4 +++-
+>>  1 file changed, 3 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/fs/cifs/smb2ops.c b/fs/cifs/smb2ops.c
+>> index cf7eb891804f..6d71958ad2cb 100644
+>> --- a/fs/cifs/smb2ops.c
+>> +++ b/fs/cifs/smb2ops.c
+>> @@ -2238,8 +2238,10 @@ get_smb2_acl_by_fid(struct cifs_sb_info *cifs_sb,
+>>  	cifs_put_tlink(tlink);
+>>  
+>>  	cifs_dbg(FYI, "%s: rc = %d ACL len %d\n", __func__, rc, *pacllen);
+>> -	if (rc)
+>> +	if (rc) {
+>> +		kfree(pntsd);
+>>  		return ERR_PTR(rc);
+>> +	}
+> 
+> This is a layering violation.  The memory was allocated in query_info()
+> so it should be freed there instead.  Also if the kmalloc() fails in
+> query_info() then it should return -ENOMEM instead of success.
+> 
+> This only affects code which calls SMB2_query_acl().  There are two
+> callers.  You have fixed one but the other is also buggy because we're
+> returning uninitialized memory in get_smb2_acl_by_path().
+> 
+> regards,
+> dan carpenter
+> 
 
-You're thinking of Dave Miller.  So far as I know he's the only
-maintainer who handles stable that way.  It's a lot of work to do the
-things Dave does.  #understatement
+Eep. very true. NACK to my fixes and I'll sort out a correct fix later.
 
-regards,
-dan carpenter
+Colin
