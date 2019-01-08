@@ -2,53 +2,52 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B3D6C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:01:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F778C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:02:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 249DC20660
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:01:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F8F520827
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:02:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546977718;
-	bh=XUS7PF6pZ50B8RMHl+TuW+6xE/bctCgX4LVNPTtm69g=;
+	s=default; t=1546977728;
+	bh=KJyv+xTTUzWQsjlwwYCag+ywrGXmxS055XSsJnc8NNE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=AZGAg2vmwT4D9LbmZhRr6O5FnRZWF6R4SiSBLkUyfcAgq65Zp98LBE2iBu+TCgVgh
-	 9xXpfN03hd2sa2GojR5PpCgWMo54OvxxpkwCIRD9hOa4JNijRLd928dyeZisqlDoIS
-	 POLva2vUyH2mRLKBDg//NsMuHlt4oFTdFPETTI7Q=
+	b=FUakiZrGfxU+ZLIRF6YhsQQ+Z16bC3M4c8E1YSEoxm4d9r3goGB3shMaaM9PCLv+x
+	 oUp0wFIIrAn9S9Ms1lNlW0CrBZl7IapD0UR1lnW3HgMVpjHMz13fHW2WAflx+EzW+B
+	 l9+W92OYU+DDCKJw+PZkyZfIbhjrk4icQJO4X28w=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730979AbfAHUB5 (ORCPT
+        id S1730296AbfAHT3H (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 15:01:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36404 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 14:29:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36200 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730323AbfAHT3K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:29:10 -0500
+        id S1729559AbfAHT3B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:29:01 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 59C7120645;
-        Tue,  8 Jan 2019 19:29:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6CF5720645;
+        Tue,  8 Jan 2019 19:28:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546975750;
-        bh=XUS7PF6pZ50B8RMHl+TuW+6xE/bctCgX4LVNPTtm69g=;
+        s=default; t=1546975740;
+        bh=KJyv+xTTUzWQsjlwwYCag+ywrGXmxS055XSsJnc8NNE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=L0V92El14jxTBZoNiMR89nMkHMGUGTIeAYPf01INW1cCuYWEysX1V8VWonIv+u4fr
-         dY2y77wzwaK3BEVMrbzKeWhGAhTIL/TXv4jhW/7mLPIoCuGjYwXzr1b+xxFXQJIlz4
-         LL1U46sqUjrV42lY8skXloBSwAEYYcIdDGj8+FqU=
+        b=KzKychG4klYrjHb7jI/gV8H3mB+XOz+YehCc38xM+X/wbTtYi05QU726H8EU7Rec5
+         BLWo+nepL4Tjx4PnhSOBqu94s/VT1qMINuxeR+rZGZkteuSwThmL9x36CPpmqG7b1i
+         YBmaqgBkP0vg1/6t8MyOGed6/5BS/vKUo3eytATU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.20 094/117] perf tools: Add missing sigqueue() prototype for systems lacking it
-Date:   Tue,  8 Jan 2019 14:26:02 -0500
-Message-Id: <20190108192628.121270-94-sashal@kernel.org>
+Cc:     Hui Wang <john.wanghui@huawei.com>,
+        Thomas Gleixner <tglx@linutronix.de>, guijianfeng@huawei.com,
+        wencongyang2@huawei.com, douliyang1@huawei.com,
+        qiaonuohan@huawei.com, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.20 087/117] x86/topology: Use total_cpus for max logical packages calculation
+Date:   Tue,  8 Jan 2019 14:25:55 -0500
+Message-Id: <20190108192628.121270-87-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108192628.121270-1-sashal@kernel.org>
 References: <20190108192628.121270-1-sashal@kernel.org>
@@ -60,66 +59,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnaldo Carvalho de Melo <acme@redhat.com>
+From: Hui Wang <john.wanghui@huawei.com>
 
-[ Upstream commit 748fe0889c1ff12d378946bd5326e8ee8eacf5cf ]
+[ Upstream commit aa02ef099cff042c2a9109782ec2bf1bffc955d4 ]
 
-There are systems such as the Android NDK API level 24 has the
-sigqueue() function but doesn't provide a prototype, adding noise to the
-build:
+nr_cpu_ids can be limited on the command line via nr_cpus=. This can break the
+logical package management because it results in a smaller number of packages
+while in kdump kernel.
 
-  util/evlist.c: In function 'perf_evlist__prepare_workload':
-  util/evlist.c:1494:4: warning: implicit declaration of function 'sigqueue' [-Wimplicit-function-declaration]
-      if (sigqueue(getppid(), SIGUSR1, val))
-      ^
-  util/evlist.c:1494:4: warning: nested extern declaration of 'sigqueue' [-Wnested-externs]
+Check below case:
+There is a two sockets system, each socket has 8 cores, which has 16 logical
+cpus while HT was turn on.
 
-Define a LACKS_SIGQUEUE_PROTOTYPE define so that code needing that can
-get a prototype.
+ 0  1  2  3  4  5  6  7     |    16 17 18 19 20 21 22 23
+ cores on socket 0               threads on socket 0
+ 8  9 10 11 12 13 14 15     |    24 25 26 27 28 29 30 31
+ cores on socket 1               threads on socket 1
 
-Checked in the bionic git repo to be available since level 23:
+While starting the kdump kernel with command line option nr_cpus=16 panic
+was triggered on one of the cpus 24-31 eg. 26, then online cpu will be
+1-15, 26(cpu 0 was disabled in kdump), ncpus will be 16 and
+__max_logical_packages will be 1, but actually two packages were booted on.
 
-https://android.googlesource.com/platform/bionic/+/master/libc/include/signal.h#123
+This issue can reproduced by set kdump option nr_cpus=<real physical core
+numbers>, and then trigger panic on last socket's thread, for example:
 
-  int sigqueue(pid_t __pid, int __signal, const union sigval __value) __INTRODUCED_IN(23);
+taskset -c 26 echo c > /proc/sysrq-trigger
 
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Link: https://lkml.kernel.org/n/tip-lmhpev1uni9kdrv7j29glyov@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Use total_cpus which will not be limited by nr_cpus command line to calculate
+the value of __max_logical_packages.
+
+Signed-off-by: Hui Wang <john.wanghui@huawei.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: <guijianfeng@huawei.com>
+Cc: <wencongyang2@huawei.com>
+Cc: <douliyang1@huawei.com>
+Cc: <qiaonuohan@huawei.com>
+Link: https://lkml.kernel.org/r/20181107023643.22174-1-john.wanghui@huawei.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/Makefile.config | 1 +
- tools/perf/util/evlist.c   | 4 ++++
- 2 files changed, 5 insertions(+)
+ arch/x86/kernel/smpboot.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
-index a0e8c23f9125..e106e7ce6933 100644
---- a/tools/perf/Makefile.config
-+++ b/tools/perf/Makefile.config
-@@ -294,6 +294,7 @@ ifndef NO_BIONIC
-   $(call feature_check,bionic)
-   ifeq ($(feature-bionic), 1)
-     BIONIC := 1
-+    CFLAGS += -DLACKS_SIGQUEUE_PROTOTYPE
-     EXTLIBS := $(filter-out -lrt,$(EXTLIBS))
-     EXTLIBS := $(filter-out -lpthread,$(EXTLIBS))
-   endif
-diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
-index 668d2a9ef0f4..8a806b0758b0 100644
---- a/tools/perf/util/evlist.c
-+++ b/tools/perf/util/evlist.c
-@@ -34,6 +34,10 @@
- #include <linux/log2.h>
- #include <linux/err.h>
- 
-+#ifdef LACKS_SIGQUEUE_PROTOTYPE
-+int sigqueue(pid_t pid, int sig, const union sigval value);
-+#endif
-+
- #define FD(e, x, y) (*(int *)xyarray__entry(e->fd, x, y))
- #define SID(e, x, y) xyarray__entry(e->sample_id, x, y)
+diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
+index a9134d1910b9..ccd1f2a8e557 100644
+--- a/arch/x86/kernel/smpboot.c
++++ b/arch/x86/kernel/smpboot.c
+@@ -1347,7 +1347,7 @@ void __init calculate_max_logical_packages(void)
+ 	 * extrapolate the boot cpu's data to all packages.
+ 	 */
+ 	ncpus = cpu_data(0).booted_cores * topology_max_smt_threads();
+-	__max_logical_packages = DIV_ROUND_UP(nr_cpu_ids, ncpus);
++	__max_logical_packages = DIV_ROUND_UP(total_cpus, ncpus);
+ 	pr_info("Max logical packages: %u\n", __max_logical_packages);
+ }
  
 -- 
 2.19.1
