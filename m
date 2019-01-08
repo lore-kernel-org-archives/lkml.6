@@ -2,118 +2,95 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 320BDC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 03:09:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8654CC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 03:09:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E7CEF2070C
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 03:09:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4A0EF2070C
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 03:09:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bpvARHkz"
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="uhGTmSE8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727377AbfAHDJB (ORCPT
+        id S1727467AbfAHDJO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 22:09:01 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:33361 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727030AbfAHDJB (ORCPT
+        Mon, 7 Jan 2019 22:09:14 -0500
+Received: from conuserg-08.nifty.com ([210.131.2.75]:17859 "EHLO
+        conuserg-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727030AbfAHDJO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 22:09:01 -0500
-Received: by mail-pl1-f196.google.com with SMTP id z23so1157221plo.0
-        for <linux-kernel@vger.kernel.org>; Mon, 07 Jan 2019 19:09:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Ew2wNgFvbLIz4YKqHPkR7qa5yqA7zyiirOjkBk6eK8U=;
-        b=bpvARHkzVqJUTUZz+NrCBl+ZpxISKgOxqjPW9dcBB88G+hReMvjgs7R0d5B8hlbTpl
-         ZzAOpsovn7Ic1fngD4un6dL8fLm8COy9MJKRj6JRmiSsXHJsMsFulGJvhfX3IR+lBCXM
-         u1DUUjBSKmfEtSMW18oZpNUwNtoX3x3BzdznFMHVht4U4ORyK4aPMTgN973jtg1Hx2Pz
-         05IcFIHYiDYXVZMmf/vbiML+E5ijZmxdPLZqGxRbqyLm+vYSPZcrR5/iS/2U0i7/j8HB
-         MsunU5hjxRtXvr+ZJHGtkKvkJFaFsB9LsidP72VhOqBiVezIYFV+BLnhQYsvAme1zsPg
-         s7jw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Ew2wNgFvbLIz4YKqHPkR7qa5yqA7zyiirOjkBk6eK8U=;
-        b=NCaWaEq6nntnkNnQwC3POLQxJ1NtIjd2DrnSVrZcad9K070NxJbG4af/2wtfJyj8g+
-         bGMFmV1F76cczLdkmkISOcRHg6pPDL51ym+rXzmsD+suQB9EkY3hvx/BZQiTp9XsRbci
-         DdIuLyDg5pQJ14xNKBJ4cK9Jq8xpDKezutR9rhO0uMQbTVsVVTlnay3JNQMHxPdumJvT
-         diJ1knZM/E/wytggMuMMoS+js4Ty8Rurp4VjuF6z6m1Abb2FPXiQFwqgXumvqs5sJ8O7
-         tMmQ+7JNM7rMZtQ5wi22sxnXzmTxKHBGi7ixCsbabmbBFGvB6P0P/Qg7MK+/un+QBToo
-         xltA==
-X-Gm-Message-State: AJcUukfpMjrT9McCVFKeXDC/w9KVE+q/2tREkm+7G0XrXMPeNAzAJhAH
-        uqgvf4dionDbXJSwBXgUxUU=
-X-Google-Smtp-Source: ALg8bN5EtC1yv7Y+q2j+ub0lb7Sf9fBuAilj2eSqjH8k0+5Jw4PyZm3Pnc9XxsFYp3WPKx5w+rflaQ==
-X-Received: by 2002:a17:902:7848:: with SMTP id e8mr73719pln.100.1546916940168;
-        Mon, 07 Jan 2019 19:09:00 -0800 (PST)
-Received: from squirtle.lan (c-24-22-235-96.hsd1.wa.comcast.net. [24.22.235.96])
-        by smtp.gmail.com with ESMTPSA id i21sm111995569pgm.17.2019.01.07.19.08.58
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 07 Jan 2019 19:08:59 -0800 (PST)
-From:   Andrey Smirnov <andrew.smirnov@gmail.com>
-To:     linux-nvme@lists.infradead.org
-Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Keith Busch <keith.busch@intel.com>, Jens Axboe <axboe@fb.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Sagi Grimberg <sagi@grimberg.me>, linux-kernel@vger.kernel.org
-Subject: [PATCH] nvme-core: don't initlialize ctrl->cntlid twice
-Date:   Mon,  7 Jan 2019 19:08:49 -0800
-Message-Id: <20190108030849.12870-1-andrew.smirnov@gmail.com>
-X-Mailer: git-send-email 2.20.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Mon, 7 Jan 2019 22:09:14 -0500
+Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-08.nifty.com with ESMTP id x0838WCh015986;
+        Tue, 8 Jan 2019 12:08:32 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-08.nifty.com x0838WCh015986
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1546916913;
+        bh=m5WV52/VwpLTcERxr6/ZtnxvtYDgEHjN4n2QvQD/Zi0=;
+        h=From:To:Cc:Subject:Date:From;
+        b=uhGTmSE8yLGEYT0nMFVMoLymcidbDud4eTVfZKj+gCrVRFNs19hU0eLItim0sJTtg
+         39i1mwrX7+dBuYugVn5pQqZW1Xy7Cqgk73G1JnpAVNcA6ObNykJF0Dm6joWWktHdLV
+         teioFZqFqAbSfZIB+UHxYx4hXYD9Vt4+1vO5fjqYrOLN+m4cA6mAo3K4eXGn2YGCgE
+         hirR82stTjemdYY1nZHM3cjbdzSizganSvZy+HsIHvcuaECOLxYoL+XXCqgxCTO162
+         Yjf1REUmXOyChhAXtUkQH5RwXgrxwgsmIdmI+scANTvbGfZ6gqYxb/biLTlaX9+vUD
+         rdKPU5izt0Deg==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     Alex Williamson <alex.williamson@redhat.com>, kvm@vger.kernel.org
+Cc:     Laura Abbott <labbott@redhat.com>,
+        Alexey Kardashevskiy <aik@ozlabs.ru>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] vfio_pci: set TRACE_INCLUDE_PATH to fix the build error
+Date:   Tue,  8 Jan 2019 12:08:03 +0900
+Message-Id: <1546916883-25911-1-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ctrl->cntlid will already be initialized from id->cntlid for
-non-NVME_F_FABRICS controllers few lines below. For NVME_F_FABRICS
-controllers this field should already be initialized, otherwise the
-check
+drivers/vfio/pci/vfio_pci_nvlink2.c cannot be compiled for in-tree
+building.
 
-	if (ctrl->cntlid != le16_to_cpu(id->cntlid))
+    CC      drivers/vfio/pci/vfio_pci_nvlink2.o
+  In file included from drivers/vfio/pci/trace.h:102,
+                   from drivers/vfio/pci/vfio_pci_nvlink2.c:29:
+  ./include/trace/define_trace.h:89:42: fatal error: ./trace.h: No such file or directory
+   #include TRACE_INCLUDE(TRACE_INCLUDE_FILE)
+                                          ^
+  compilation terminated.
+  make[1]: *** [scripts/Makefile.build;277: drivers/vfio/pci/vfio_pci_nvlink2.o] Error 1
 
-below will always be a no-op.
+To fix the build error, let's tell include/trace/define_trace.h the
+location of drivers/vfio/pci/trace.h
 
-Cc: Keith Busch <keith.busch@intel.com>
-Cc: Jens Axboe <axboe@fb.com>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Sagi Grimberg <sagi@grimberg.me>
-Cc: linux-nvme@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+Fixes: 7f92891778df ("vfio_pci: Add NVIDIA GV100GL [Tesla V100 SXM2] subdriver")
+Reported-by: Laura Abbott <labbott@redhat.com>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
 
-I created this patch just from readying NVMe code. Appologies for the
-noise if I misread/misinterpreted things and this assignment is
-actually necessary.
+ drivers/vfio/pci/trace.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks,
-Andrey Smirnov
-
- drivers/nvme/host/core.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-index 2e65be8b1387..1ec87b30fad1 100644
---- a/drivers/nvme/host/core.c
-+++ b/drivers/nvme/host/core.c
-@@ -2397,7 +2397,6 @@ int nvme_init_identify(struct nvme_ctrl *ctrl)
- 	ctrl->oaes = le32_to_cpu(id->oaes);
- 	atomic_set(&ctrl->abort_limit, id->acl + 1);
- 	ctrl->vwc = id->vwc;
--	ctrl->cntlid = le16_to_cpup(&id->cntlid);
- 	if (id->mdts)
- 		max_hw_sectors = 1 << (id->mdts + page_shift - 9);
- 	else
+diff --git a/drivers/vfio/pci/trace.h b/drivers/vfio/pci/trace.h
+index 228ccdb..4d13e51 100644
+--- a/drivers/vfio/pci/trace.h
++++ b/drivers/vfio/pci/trace.h
+@@ -94,7 +94,7 @@ TRACE_EVENT(vfio_pci_npu2_mmap,
+ #endif /* _TRACE_VFIO_PCI_H */
+ 
+ #undef TRACE_INCLUDE_PATH
+-#define TRACE_INCLUDE_PATH .
++#define TRACE_INCLUDE_PATH ../../drivers/vfio/pci
+ #undef TRACE_INCLUDE_FILE
+ #define TRACE_INCLUDE_FILE trace
+ 
 -- 
-2.20.1
+2.7.4
 
