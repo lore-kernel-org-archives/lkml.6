@@ -2,212 +2,151 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1BEDC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 13:35:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FF53C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 13:36:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6511220850
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 13:35:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546954543;
-	bh=EAikm38jmsnPfSQcMEDLbQ4kuJlqFvcIxVPbcEgpEso=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=ER1vFSU6P2d4UOLA+cJq0XYBZrPapw+FQlfQOEA7AdCpOZWvHr0Q8fb5tR6oUqeIc
-	 KUbp/EWq/trtFcXxbAfdUHZ7DquRspqBWaernxbinmstx/qWQ/mrZesDxuEFpfydGM
-	 K0DdZJ6Tsm0Myald4T9fR1eDnC54r2MtDqdtEhpk=
+	by mail.kernel.org (Postfix) with ESMTP id 622E820850
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 13:36:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728619AbfAHNfm (ORCPT
+        id S1728643AbfAHNg0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 08:35:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37332 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728594AbfAHNfk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 08:35:40 -0500
-Received: from quaco.ghostprotocols.net (unknown [190.15.121.82])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7E1F320827;
-        Tue,  8 Jan 2019 13:35:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546954539;
-        bh=EAikm38jmsnPfSQcMEDLbQ4kuJlqFvcIxVPbcEgpEso=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=J/U/qDmvFkP2YDgTTNrVoUcmTqQO4t+jNJW2nGccfdU8r15Xnrf9+WhYK8BaQmWDF
-         fOEDijYjfnAgO07C8hfWpgYTWpHXc7UFkT/52F2UzaC83ysgA50OCALAzM/m32wUDV
-         4wDibNXOc/+BOZavX8SdQxOltzGiWLql+Hk6RmF4=
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id 35EED40355; Tue,  8 Jan 2019 10:35:36 -0300 (-03)
-Date:   Tue, 8 Jan 2019 10:35:36 -0300
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Tzvetomir Stoyanov <tstoyanov@vmware.com>
-Subject: Re: [PATCH 8/9] tools/lib/traceevent: Introduce new libtracevent
- API: tep_override_comm()
-Message-ID: <20190108133536.GD28965@kernel.org>
-References: <20181130154403.150474900@goodmis.org>
- <20181130154648.038915912@goodmis.org>
+        Tue, 8 Jan 2019 08:36:26 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:59072 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727941AbfAHNgZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 08:36:25 -0500
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x08DYSG8013525
+        for <linux-kernel@vger.kernel.org>; Tue, 8 Jan 2019 08:36:23 -0500
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2pvthbr78y-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jan 2019 08:36:22 -0500
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <pasic@linux.ibm.com>;
+        Tue, 8 Jan 2019 13:36:20 -0000
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 8 Jan 2019 13:36:17 -0000
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x08DaFNJ32768008
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 8 Jan 2019 13:36:15 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 656D14C058;
+        Tue,  8 Jan 2019 13:36:15 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0AFFF4C050;
+        Tue,  8 Jan 2019 13:36:15 +0000 (GMT)
+Received: from oc2783563651 (unknown [9.152.224.86])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue,  8 Jan 2019 13:36:14 +0000 (GMT)
+Date:   Tue, 8 Jan 2019 14:36:13 +0100
+From:   Halil Pasic <pasic@linux.ibm.com>
+To:     Cornelia Huck <cohuck@redhat.com>
+Cc:     Michael Mueller <mimu@linux.ibm.com>,
+        Pierre Morel <pmorel@linux.ibm.com>,
+        KVM Mailing List <kvm@vger.kernel.org>,
+        Linux-S390 Mailing List <linux-s390@vger.kernel.org>,
+        linux-kernel@vger.kernel.org,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Janosch Frank <frankja@linux.ibm.com>,
+        David Hildenbrand <david@redhat.com>
+Subject: Re: [PATCH v5 10/15] KVM: s390: add functions to (un)register GISC
+ with GISA
+In-Reply-To: <20190108113444.56e76f13.cohuck@redhat.com>
+References: <20181219191756.57973-1-mimu@linux.ibm.com>
+        <20181219191756.57973-11-mimu@linux.ibm.com>
+        <bd1a6082-cb73-5ef7-f2b6-8cbd7d8c7136@linux.ibm.com>
+        <20190104141836.0ca98a77.cohuck@redhat.com>
+        <b001fc9b-c174-644f-a9fa-e60ff5b4aa58@linux.ibm.com>
+        <20190108113444.56e76f13.cohuck@redhat.com>
+Organization: IBM
+X-Mailer: Claws Mail 3.11.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181130154648.038915912@goodmis.org>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 19010813-0028-0000-0000-00000335F4D6
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19010813-0029-0000-0000-000023F30226
+Message-Id: <20190108143613.2ca1a9d3@oc2783563651>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-08_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=650 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901080112
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Fri, Nov 30, 2018 at 10:44:11AM -0500, Steven Rostedt escreveu:
-> From: Tzvetomir Stoyanov <tstoyanov@vmware.com>
+On Tue, 8 Jan 2019 11:34:44 +0100
+Cornelia Huck <cohuck@redhat.com> wrote:
+
+> > >>    
+> > >>> +	spin_unlock(&kvm->arch.iam_ref_lock);
+> > >>> +
+> > >>> +	return gib->nisc;
+> > >>> +}
+> > >>> +EXPORT_SYMBOL_GPL(kvm_s390_gisc_register);
+> > >>> +
+> > >>> +int kvm_s390_gisc_unregister(struct kvm *kvm, u32 gisc)
+> > >>> +{
+> > >>> +	int rc = 0;
+> > >>> +
+> > >>> +	if (!kvm->arch.gib_in_use)
+> > >>> +		return -ENODEV;
+> > >>> +	if (gisc > MAX_ISC)
+> > >>> +		return -ERANGE;
+> > >>> +
+> > >>> +	spin_lock(&kvm->arch.iam_ref_lock);
+> > >>> +	if (kvm->arch.iam_ref_count[gisc] == 0) {
+> > >>> +		rc = -EINVAL;
+> > >>> +		goto out;
+> > >>> +	}
+> > >>> +	kvm->arch.iam_ref_count[gisc]--;
+> > >>> +	if (kvm->arch.iam_ref_count[gisc] == 0) {
+> > >>> +		kvm->arch.iam &= ~(0x80 >> gisc);
+> > >>> +		set_iam(kvm->arch.gisa, kvm->arch.iam);    
+> > > 
+> > > Any chance of this function failing here? If yes, would there be any
+> > > implications?    
+> > 
+> > It is the same here.  
 > 
-> This patch adds a new API of tracevent library: tep_override_comm()
-> It registers a pid / command mapping. If a mapping with the same
-> pid already exists, the entry is updated with the new command.
+> I'm not sure that I follow: This is the reverse operation
+> (unregistering the gisc). Can we rely on get_ipm() to do any fixup
+> later? Is that a problem for the caller?
 
-This one had fell thru the cracks, noticed that while processing the
-following patchkit, now its in and I'm processing the last one.
+IMHO gib alerts are all about not loosing initiative. I.e. avoiding
+substantially delayed delivery of interrupts due to vCPUs in wait
+state.
 
-- Arnaldo
- 
-> Signed-off-by: Tzvetomir Stoyanov <tstoyanov@vmware.com>
-> Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-> ---
->  tools/lib/traceevent/event-parse.c | 69 +++++++++++++++++++++++-------
->  tools/lib/traceevent/event-parse.h |  1 +
->  2 files changed, 55 insertions(+), 15 deletions(-)
+Thus we must avoid letting go before setting up stuff (gisa.iam under
+consideration of gisa ipm, gisa.next_alert, and gib.alert_list_origin)
+so that we can react on the next interrupt (if necessary).
+
+On the other hand, getting more gisa alerts than necessary is not
+fatal -- better avoided if not too much hassle of course.
+
+Bottom line is, while it may be critical that the IAM changes implied
+by register take place immediately, unregister is a different story.
+
+Regards,
+Halil
+
 > 
-> diff --git a/tools/lib/traceevent/event-parse.c b/tools/lib/traceevent/event-parse.c
-> index 8863de9f8869..892cf032a096 100644
-> --- a/tools/lib/traceevent/event-parse.c
-> +++ b/tools/lib/traceevent/event-parse.c
-> @@ -232,11 +232,13 @@ int tep_pid_is_registered(struct tep_handle *pevent, int pid)
->   * we must add this pid. This is much slower than when cmdlines
->   * are added before the array is initialized.
->   */
-> -static int add_new_comm(struct tep_handle *pevent, const char *comm, int pid)
-> +static int add_new_comm(struct tep_handle *pevent,
-> +			const char *comm, int pid, bool override)
->  {
->  	struct cmdline *cmdlines = pevent->cmdlines;
-> -	const struct cmdline *cmdline;
-> +	struct cmdline *cmdline;
->  	struct cmdline key;
-> +	char *new_comm;
->  
->  	if (!pid)
->  		return 0;
-> @@ -247,8 +249,19 @@ static int add_new_comm(struct tep_handle *pevent, const char *comm, int pid)
->  	cmdline = bsearch(&key, pevent->cmdlines, pevent->cmdline_count,
->  		       sizeof(*pevent->cmdlines), cmdline_cmp);
->  	if (cmdline) {
-> -		errno = EEXIST;
-> -		return -1;
-> +		if (!override) {
-> +			errno = EEXIST;
-> +			return -1;
-> +		}
-> +		new_comm = strdup(comm);
-> +		if (!new_comm) {
-> +			errno = ENOMEM;
-> +			return -1;
-> +		}
-> +		free(cmdline->comm);
-> +		cmdline->comm = new_comm;
-> +
-> +		return 0;
->  	}
->  
->  	cmdlines = realloc(cmdlines, sizeof(*cmdlines) * (pevent->cmdline_count + 1));
-> @@ -275,21 +288,13 @@ static int add_new_comm(struct tep_handle *pevent, const char *comm, int pid)
->  	return 0;
->  }
->  
-> -/**
-> - * tep_register_comm - register a pid / comm mapping
-> - * @pevent: handle for the pevent
-> - * @comm: the command line to register
-> - * @pid: the pid to map the command line to
-> - *
-> - * This adds a mapping to search for command line names with
-> - * a given pid. The comm is duplicated.
-> - */
-> -int tep_register_comm(struct tep_handle *pevent, const char *comm, int pid)
-> +static int _tep_register_comm(struct tep_handle *pevent,
-> +			      const char *comm, int pid, bool override)
->  {
->  	struct cmdline_list *item;
->  
->  	if (pevent->cmdlines)
-> -		return add_new_comm(pevent, comm, pid);
-> +		return add_new_comm(pevent, comm, pid, override);
->  
->  	item = malloc(sizeof(*item));
->  	if (!item)
-> @@ -312,6 +317,40 @@ int tep_register_comm(struct tep_handle *pevent, const char *comm, int pid)
->  	return 0;
->  }
->  
-> +/**
-> + * tep_register_comm - register a pid / comm mapping
-> + * @pevent: handle for the pevent
-> + * @comm: the command line to register
-> + * @pid: the pid to map the command line to
-> + *
-> + * This adds a mapping to search for command line names with
-> + * a given pid. The comm is duplicated. If a command with the same pid
-> + * already exist, -1 is returned and errno is set to EEXIST
-> + */
-> +int tep_register_comm(struct tep_handle *pevent, const char *comm, int pid)
-> +{
-> +	return _tep_register_comm(pevent, comm, pid, false);
-> +}
-> +
-> +/**
-> + * tep_override_comm - register a pid / comm mapping
-> + * @pevent: handle for the pevent
-> + * @comm: the command line to register
-> + * @pid: the pid to map the command line to
-> + *
-> + * This adds a mapping to search for command line names with
-> + * a given pid. The comm is duplicated. If a command with the same pid
-> + * already exist, the command string is udapted with the new one
-> + */
-> +int tep_override_comm(struct tep_handle *pevent, const char *comm, int pid)
-> +{
-> +	if (!pevent->cmdlines && cmdline_init(pevent)) {
-> +		errno = ENOMEM;
-> +		return -1;
-> +	}
-> +	return _tep_register_comm(pevent, comm, pid, true);
-> +}
-> +
->  int tep_register_trace_clock(struct tep_handle *pevent, const char *trace_clock)
->  {
->  	pevent->trace_clock = strdup(trace_clock);
-> diff --git a/tools/lib/traceevent/event-parse.h b/tools/lib/traceevent/event-parse.h
-> index 35d37087d3c5..e6f4249910e6 100644
-> --- a/tools/lib/traceevent/event-parse.h
-> +++ b/tools/lib/traceevent/event-parse.h
-> @@ -432,6 +432,7 @@ int tep_set_function_resolver(struct tep_handle *pevent,
->  			      tep_func_resolver_t *func, void *priv);
->  void tep_reset_function_resolver(struct tep_handle *pevent);
->  int tep_register_comm(struct tep_handle *pevent, const char *comm, int pid);
-> +int tep_override_comm(struct tep_handle *pevent, const char *comm, int pid);
->  int tep_register_trace_clock(struct tep_handle *pevent, const char *trace_clock);
->  int tep_register_function(struct tep_handle *pevent, char *name,
->  			  unsigned long long addr, char *mod);
-> -- 
-> 2.19.1
-> 
+> Apologies if I sound confused (well, that's because I probably am);
+> this is hard to review without access to the hardware specification.
 
--- 
-
-- Arnaldo
