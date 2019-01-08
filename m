@@ -2,119 +2,144 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03E19C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 11:49:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA205C43444
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 11:49:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C3265206B7
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 11:49:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 884BE2173C
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 11:49:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=brainfault-org.20150623.gappssmtp.com header.i=@brainfault-org.20150623.gappssmtp.com header.b="RJVNzMAI"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ifImmzUk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728760AbfAHLtO (ORCPT
+        id S1728801AbfAHLtV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 06:49:14 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:38487 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727236AbfAHLtO (ORCPT
+        Tue, 8 Jan 2019 06:49:21 -0500
+Received: from mail-it1-f194.google.com ([209.85.166.194]:34734 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727236AbfAHLtV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 06:49:14 -0500
-Received: by mail-wm1-f67.google.com with SMTP id m22so4086384wml.3
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jan 2019 03:49:12 -0800 (PST)
+        Tue, 8 Jan 2019 06:49:21 -0500
+Received: by mail-it1-f194.google.com with SMTP id x124so9803913itd.1
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jan 2019 03:49:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20150623.gappssmtp.com; s=20150623;
+        d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=6+V0n8Xtcjz4tHs8ZXrRMUNU6iatKnY0VEqk+wmS3fU=;
-        b=RJVNzMAIesjPC3AE2E+TOmmX5R6vuJzXu/efycylgwXhE1CxBo434WiRvT0LIlPnqH
-         Xbs7Rz8UXSpXOq4XvCfjiajPfiN0SpQDl9EuxEW++yFRJ08jY79tWwbNpMH+RyDp9nsW
-         l1Zk3ZRzGq2KusdLTTZpDyOuFnw32FfI3ut5Fy/PGBeqyHAtH706e+dS9kvvBRp5+Hex
-         mgXXSpXi6nUEfY5HRxgqTsZfXzX7S13J3jG7VQqV8Twpsxsdb/5i9of1VVAu+gYA7iSC
-         71Y6m0RinP6SMCR19Ywy2bMXErQukqsPEvmYvaeRu2iZ6unrQHF18h62pBdqFTwRr3yo
-         rvmQ==
+        bh=UYiOeKvvjCy/nZN8BIg7I+uAiPR7TR44LEWFvR+29rE=;
+        b=ifImmzUkZ4YOobm7FKBmQujA7lx01M+r6LQXcpuYmUexOR2QWBPmgZBiFAYHEnfCnz
+         2yYb9RPOIDclUyaep5KViGIJ0HxwW5Va6DJU+7Y26veY+iX/btwMtWrLQ9OmzxxQF4gN
+         7p07I2DwPZl+HaZu02kQc6OhPnFBp0WoQ1TpbCUwV0iV+h66IjGNHYLMTfgsDQB4BoN8
+         zbVHqAplqmBKz5qb2Ln9nZtBTxjAA9l0kGDgXxZbsSEgrJBMeSWcABYEKAd7kpNB/fxM
+         aQccAVpGCrWp8Ff+jl5Mx1XWtoVAfPr7/7CKfm0YAz0k5SmdhEZiqyT7rZxj6fbJxGRR
+         teQA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=6+V0n8Xtcjz4tHs8ZXrRMUNU6iatKnY0VEqk+wmS3fU=;
-        b=Oz/ycpEsR8n9WhzAVcYmx+k+5OpYtd4uyY0SevQ10kRire3Qj3HnuGmTZCPHXW77dW
-         QorUZG7jX8f51alCS7WNAz9aUqurLDuPAsnqV6w/f5JKf8sySbKDrlIpn1g66m5dxAKO
-         hdhkmhm8+U9LRMETH8G2dOdjLlHBV1LNqyDS4E8uFqdJ/NOvZ6av1Hnzhu0Dkkmzf8T5
-         vGZI8a/LSReugtrAyii8YRM7SkPpTJhj58g+2AFrEToQOStQZsLgD9E9tLjo1j1TYrI1
-         +aSpcYXZqoPlQ+xwsAjRemN+/l2fchkG8PlTdIcK+T02EQ4CpTGUc5G/qOIEEnjqmUqN
-         vcmw==
-X-Gm-Message-State: AJcUukeFr/yDUIt48nuv4OMk/vq9LCgy5j5vtsbAty2waXdBrZ8nGqUp
-        px/NmyVpyotdV3crUEMZ/jAbBGQ8+ES+DA7U9kat2Q==
-X-Google-Smtp-Source: ALg8bN5Ji4/z3cNLskNRfsCfIPWBHYz878MlwhN7JxfA8KyX57565/Xs6NV9LUpnH6eNYuN4MMatcqZUvKknxJE19mw=
-X-Received: by 2002:a1c:f509:: with SMTP id t9mr1641639wmh.76.1546948151708;
- Tue, 08 Jan 2019 03:49:11 -0800 (PST)
+        bh=UYiOeKvvjCy/nZN8BIg7I+uAiPR7TR44LEWFvR+29rE=;
+        b=UnwI5cgykvOLKz/fYKolplXOEe1imwnfhCC/C+gTNyp0wSDb0uPBeTAM2yve/wTN3D
+         YiST2JzEWjMRCOZV7tvTR6+J0IGWDZRlvyydDh46EP4Ril6CXEk4NzdZY1tNvmW4cG83
+         cIBD9qAQgPfWRha0Bn9gpjEe+EWm8NkkR2hiyfoNs9IJ/892+t7NhMZJJobY9Mwi3YGN
+         beDKlExB93FrxH/Lujs50B1OtMZb0uTCmLrL339p9XREAMwMo+6S4L+gPMFE6adXuHk2
+         izAVgse4XeRf9h1REGCq8VJLr+rbZ2vQSnQIJsAUOacza6qlH5WQpP1qFsUbY8/1WmX/
+         rjJg==
+X-Gm-Message-State: AJcUukcZuw7jQOlwnDU8kXzgM2Fr6T0KKbqMqBH80jjY1YaVnYwNtP+p
+        nP9nLXV7G6zCCV4OOHpiEUwbWTPlUcFCFe9OO/f0vg==
+X-Google-Smtp-Source: ALg8bN7S7HoDwKZQ+7GoujWB6nSgYGh8A1BD2KSSEvXraiadJGJyBcWWBNAu1EBukbpSUQhq8YpdodxGJygcW8wAD7Q=
+X-Received: by 2002:a24:6511:: with SMTP id u17mr1069772itb.12.1546948159977;
+ Tue, 08 Jan 2019 03:49:19 -0800 (PST)
 MIME-Version: 1.0
-References: <1546940318-9752-1-git-send-email-atish.patra@wdc.com> <1546940318-9752-5-git-send-email-atish.patra@wdc.com>
-In-Reply-To: <1546940318-9752-5-git-send-email-atish.patra@wdc.com>
-From:   Anup Patel <anup@brainfault.org>
-Date:   Tue, 8 Jan 2019 17:19:00 +0530
-Message-ID: <CAAhSdy05324s1RtBM73v5irR9-c5gU0T6W=UA4chVCgEwvR-yA@mail.gmail.com>
-Subject: Re: [PATCH v2 4/8] RISC-V: Allow hartid-to-cpuid function to fail.
-To:     Atish Patra <atish.patra@wdc.com>
-Cc:     linux-riscv@lists.infradead.org, Alan Kao <alankao@andestech.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Andreas Schwab <schwab@suse.de>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Dmitriy Cherkasov <dmitriy@oss-tech.org>,
-        Jason Cooper <jason@lakedaemon.net>,
-        "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Michael Clark <michaeljclark@mac.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        =?UTF-8?Q?Patrick_St=C3=A4hlin?= <me@packi.ch>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Zong Li <zongbox@gmail.com>
+References: <4b349bff-8ad4-6410-250d-593b13d8d496@I-love.SAKURA.ne.jp>
+ <9b9fcdda-c347-53ee-fdbb-8a7d11cf430e@I-love.SAKURA.ne.jp>
+ <20180720130602.f3d6dc4c943558875a36cb52@linux-foundation.org>
+ <a2df1f24-f649-f5d8-0b2d-66d45b6cb61f@i-love.sakura.ne.jp>
+ <20180806100928.x7anab3c3y5q4ssa@quack2.suse.cz> <e8a23623-feaf-7730-5492-b329cb0daa21@i-love.sakura.ne.jp>
+ <20190102144015.GA23089@quack2.suse.cz> <275523c6-f750-44c2-a8a4-f3825eeab788@i-love.sakura.ne.jp>
+ <20190102172636.GA29127@quack2.suse.cz> <bf209c90-3624-68cd-c0db-86a91210f873@i-love.sakura.ne.jp>
+ <20190108112425.GC8076@quack2.suse.cz>
+In-Reply-To: <20190108112425.GC8076@quack2.suse.cz>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Tue, 8 Jan 2019 12:49:08 +0100
+Message-ID: <CACT4Y+bxUJ-6dLch+orY0AcjrvJhXq1=ELvHciX5M-gd5bdPpA@mail.gmail.com>
+Subject: Re: INFO: task hung in generic_file_write_iter
+To:     Jan Kara <jack@suse.cz>
+Cc:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        syzbot <syzbot+9933e4476f365f5d5a1b@syzkaller.appspotmail.com>,
+        Linux-MM <linux-mm@kvack.org>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Michal Hocko <mhocko@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>, jlayton@redhat.com,
+        LKML <linux-kernel@vger.kernel.org>,
+        Matthew Wilcox <mawilcox@microsoft.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        tim.c.chen@linux.intel.com,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 8, 2019 at 3:08 PM Atish Patra <atish.patra@wdc.com> wrote:
+On Tue, Jan 8, 2019 at 12:24 PM Jan Kara <jack@suse.cz> wrote:
 >
-> It is perfectly okay to call riscv_hartid_to_cpuid for a
-> hartid that is not mapped with an CPU id. It can happen
-> if the calling functions retrieves the hartid from DT.
-> However, that hartid was never brought online by the firmware
-> or kernel for any reasons.
+> On Tue 08-01-19 19:04:06, Tetsuo Handa wrote:
+> > On 2019/01/03 2:26, Jan Kara wrote:
+> > > On Thu 03-01-19 01:07:25, Tetsuo Handa wrote:
+> > >> On 2019/01/02 23:40, Jan Kara wrote:
+> > >>> I had a look into this and the only good explanation for this I have is
+> > >>> that sb->s_blocksize is different from (1 << sb->s_bdev->bd_inode->i_blkbits).
+> > >>> If that would happen, we'd get exactly the behavior syzkaller observes
+> > >>> because grow_buffers() would populate different page than
+> > >>> __find_get_block() then looks up.
+> > >>>
+> > >>> However I don't see how that's possible since the filesystem has the block
+> > >>> device open exclusively and blkdev_bszset() makes sure we also have
+> > >>> exclusive access to the block device before changing the block device size.
+> > >>> So changing block device block size after filesystem gets access to the
+> > >>> device should be impossible.
+> > >>>
+> > >>> Anyway, could you perhaps add to your debug patch a dump of 'size' passed
+> > >>> to __getblk_slow() and bdev->bd_inode->i_blkbits? That should tell us
+> > >>> whether my theory is right or not. Thanks!
+> > >>>
+> >
+> > Got two reports. 'size' is 512 while bdev->bd_inode->i_blkbits is 12.
+> >
+> > https://syzkaller.appspot.com/text?tag=CrashLog&x=1237c3ab400000
+> >
+> > [  385.723941][  T439] kworker/u4:3(439): getblk(): executed=9 bh_count=0 bh_state=0 bdev_super_blocksize=512 size=512 bdev_super_blocksize_bits=9 bdev_inode_blkbits=12
+> > (...snipped...)
+> > [  568.159544][  T439] kworker/u4:3(439): getblk(): executed=9 bh_count=0 bh_state=0 bdev_super_blocksize=512 size=512 bdev_super_blocksize_bits=9 bdev_inode_blkbits=12
 >
-> No need to BUG() in the above case. A negative error return
-> is sufficient and the calling function should check for the
-> return value always.
+> Right, so indeed the block size in the superblock and in the block device
+> gets out of sync which explains why we endlessly loop in the buffer cache
+> code. The superblock uses blocksize of 512 while the block device thinks
+> the set block size is 4096.
 >
-> Signed-off-by: Atish Patra <atish.patra@wdc.com>
-> ---
->  arch/riscv/kernel/smp.c | 1 -
->  1 file changed, 1 deletion(-)
+> And after staring into the code for some time, I finally have a trivial
+> reproducer:
 >
-> diff --git a/arch/riscv/kernel/smp.c b/arch/riscv/kernel/smp.c
-> index e407bd4f..ce9a2e73 100644
-> --- a/arch/riscv/kernel/smp.c
-> +++ b/arch/riscv/kernel/smp.c
-> @@ -58,7 +58,6 @@ int riscv_hartid_to_cpuid(int hartid)
->                         return i;
+> truncate -s 1G /tmp/image
+> losetup /dev/loop0 /tmp/image
+> mkfs.ext4 -b 1024 /dev/loop0
+> mount -t ext4 /dev/loop0 /mnt
+> losetup -c /dev/loop0
+> l /mnt
+> <hangs>
 >
->         pr_err("Couldn't find cpu id for hartid [%d]\n", hartid);
-> -       BUG();
->         return i;
->  }
+> And the problem is that LOOP_SET_CAPACITY ioctl ends up reseting block
+> device block size to 4096 by calling bd_set_size(). I have to think how to
+> best fix this...
 >
-> --
-> 2.7.4
->
+> Thanks for your help with debugging this!
 
-Looks good to me.
-
-Reviewed-by: Anup Patel <anup@brainfault.org>
-
-Regards,
-Anup
+Wow! I am very excited.
+We have 587 open "task hung" reports, I suspect this explains lots of them.
+What would be some pattern that we can use to best-effort distinguish
+most manifestations? Skimming through few reports I see "inode_lock",
+"get_super", "blkdev_put" as common indicators. Anything else?
