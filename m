@@ -2,153 +2,142 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94F67C43612
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 06:07:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23482C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 06:07:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 64EA72087E
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 06:07:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546927659;
-	bh=jDJvaN+uOakVMbxAqNGZOEwg7W7AOFW6nx5YuUUJJdA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=aX8ae3pQmjOSw1A/AWunAQMn+U+cR+UacEHcziSdaBe3zqbUTU/NXJ8AI7k8HBl9F
-	 4x2MF6p/t8g9jPeWKCk56HRs0zTGLRhEiDAL7fYW5yK1g7h5WpdT0siA2DTaYQoFPN
-	 OTqIma2YjLTnXY4AMAkYO4PyGQ4XCIROmNh6vrLo=
+	by mail.kernel.org (Postfix) with ESMTP id EF41A20700
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 06:07:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727825AbfAHGHi (ORCPT
+        id S1727894AbfAHGHt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 01:07:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52650 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 01:07:49 -0500
+Received: from mga18.intel.com ([134.134.136.126]:35738 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727408AbfAHGHi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 01:07:38 -0500
-Received: from localhost (unknown [77.138.135.184])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 98EB920700;
-        Tue,  8 Jan 2019 06:07:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546927657;
-        bh=jDJvaN+uOakVMbxAqNGZOEwg7W7AOFW6nx5YuUUJJdA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=nIlnt6hsOhlE9yZKhq/xJk+VVs4JEYbBGNurC/WdoIZnHv6cVXlGA8ZlB+lvgEmPb
-         0mxbtdcuVpqEZuSlVM+fB6t8IfRDKtSslA8cKXt3YS71XCuor0qnHx/HxzuZUH3VJH
-         IRoL+lC2tjj52LUqidmbxlCp7yXtKyFSkqC0PLAQ=
-Date:   Tue, 8 Jan 2019 08:07:34 +0200
-From:   Leon Romanovsky <leon@kernel.org>
-To:     Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        David Gibson <david@gibson.dropbear.id.au>,
-        davem@davemloft.net, saeedm@mellanox.com, ogerlitz@mellanox.com,
-        tariqt@mellanox.com, bhelgaas@google.com,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        netdev@vger.kernel.org, alex.williamson@redhat.com,
-        linux-pci@vger.kernel.org, linux-rdma@vger.kernel.org,
-        sbest@redhat.com, paulus@samba.org
-Subject: Re: [PATCH] PCI: Add no-D3 quirk for Mellanox ConnectX-[45]
-Message-ID: <20190108060734.GH3632@mtr-leonro.mtl.com>
-References: <20181206041951.22413-1-david@gibson.dropbear.id.au>
- <20181206064509.GM15544@mtr-leonro.mtl.com>
- <20190104034401.GA2801@umbus.fritz.box>
- <20190105175116.GB14238@ziepe.ca>
- <c1296ee9120a6a04dc75d0fdb2a641c722cb65d6.camel@kernel.crashing.org>
- <20190108040129.GE5336@ziepe.ca>
+        id S1727408AbfAHGHt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 01:07:49 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 07 Jan 2019 22:07:48 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,453,1539673200"; 
+   d="scan'208";a="112986427"
+Received: from unknown (HELO [10.239.13.114]) ([10.239.13.114])
+  by fmsmga007.fm.intel.com with ESMTP; 07 Jan 2019 22:07:46 -0800
+Message-ID: <5C343F7C.10407@intel.com>
+Date:   Tue, 08 Jan 2019 14:13:16 +0800
+From:   Wei Wang <wei.w.wang@intel.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101 Thunderbird/31.7.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="QNDPHrPUIc00TOLW"
-Content-Disposition: inline
-In-Reply-To: <20190108040129.GE5336@ziepe.ca>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+To:     "Liang, Kan" <kan.liang@linux.intel.com>,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        pbonzini@redhat.com, ak@linux.intel.com, peterz@infradead.org
+CC:     kan.liang@intel.com, mingo@redhat.com, rkrcmar@redhat.com,
+        like.xu@intel.com, jannh@google.com, arei.gonglei@huawei.com
+Subject: Re: [PATCH v4 04/10] KVM/x86: intel_pmu_lbr_enable
+References: <1545816338-1171-1-git-send-email-wei.w.wang@intel.com> <1545816338-1171-5-git-send-email-wei.w.wang@intel.com> <5a04d8ea-b788-6018-8b34-ebd528578916@linux.intel.com> <5C2F2E3E.7020306@intel.com> <4e5cd929-8a28-461d-7f8f-79a2f9301b7c@linux.intel.com> <5C308277.3090005@intel.com> <dbe469bb-f6ca-4b1f-f2f7-09607a283977@linux.intel.com>
+In-Reply-To: <dbe469bb-f6ca-4b1f-f2f7-09607a283977@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---QNDPHrPUIc00TOLW
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Mon, Jan 07, 2019 at 09:01:29PM -0700, Jason Gunthorpe wrote:
-> On Sun, Jan 06, 2019 at 09:43:46AM +1100, Benjamin Herrenschmidt wrote:
-> > On Sat, 2019-01-05 at 10:51 -0700, Jason Gunthorpe wrote:
-> > >
-> > > > Interesting.  I've investigated this further, though I don't have as
-> > > > many new clues as I'd like.  The problem occurs reliably, at least on
-> > > > one particular type of machine (a POWER8 "Garrison" with ConnectX-4).
-> > > > I don't yet know if it occurs with other machines, I'm having trouble
-> > > > getting access to other machines with a suitable card.  I didn't
-> > > > manage to reproduce it on a different POWER8 machine with a
-> > > > ConnectX-5, but I don't know if it's the difference in machine or
-> > > > difference in card revision that's important.
-> > >
-> > > Make sure the card has the latest firmware is always good advice..
-> > >
-> > > > So possibilities that occur to me:
-> > > >   * It's something specific about how the vfio-pci driver uses D3
-> > > >     state - have you tried rebinding your device to vfio-pci?
-> > > >   * It's something specific about POWER, either the kernel or the PCI
-> > > >     bridge hardware
-> > > >   * It's something specific about this particular type of machine
-> > >
-> > > Does the EEH indicate what happend to actually trigger it?
-> >
-> > In a very cryptic way that requires manual parsing using non-public
-> > docs sadly but yes. From the look of it, it's a completion timeout.
-> >
-> > Looks to me like we don't get a response to a config space access
-> > during the change of D state. I don't know if it's the write of the D3
-> > state itself or the read back though (it's probably detected on the
-> > read back or a subsequent read, but that doesn't tell me which specific
-> > one failed).
+On 01/07/2019 10:22 PM, Liang, Kan wrote:
 >
-> If it is just one card doing it (again, check you have latest
-> firmware) I wonder if it is a sketchy PCI-E electrical link that is
-> causing a long re-training cycle? Can you tell if the PCI-E link is
-> permanently gone or does it eventually return?
+>> Thanks for sharing. I understand the point of maintaining those 
+>> models at one place,
+>> but this factor-out doesn't seem very elegant to me, like below
+>>
+>> __intel_pmu_init (int model, struct x86_pmu *x86_pmu)
+>> {
+>> ...
+>> switch (model)
+>> case INTEL_FAM6_NEHALEM:
+>> case INTEL_FAM6_NEHALEM_EP:
+>> case INTEL_FAM6_NEHALEM_EX:
+>>      intel_pmu_lbr_init(x86_pmu);
+>>      if (model != boot_cpu_data.x86_model)
+>>          return;
+>>
+>>      /* Other a lot of things init like below..*/
+>>      memcpy(hw_cache_event_ids, nehalem_hw_cache_event_ids,
+>>                     sizeof(hw_cache_event_ids));
+>>      memcpy(hw_cache_extra_regs, nehalem_hw_cache_extra_regs,
+>>                     sizeof(hw_cache_extra_regs));
+>>      x86_pmu.event_constraints = intel_nehalem_event_constraints;
+>>                  x86_pmu.pebs_constraints = 
+>> intel_nehalem_pebs_event_constraints;
+>>                  x86_pmu.enable_all = intel_pmu_nhm_enable_all;
+>>                  x86_pmu.extra_regs = intel_nehalem_extra_regs;
+>>   ...
+>>
+>> Case...
+>> }
+>> We need insert "if (model != boot_cpu_data.x86_model)" in every "Case 
+>> xx".
+>>
+>> What would be the rationale that we only do lbr_init for "x86_pmu"
+>> when model != boot_cpu_data.x86_model?
+>> (It looks more like a workaround to factor-out the function and get 
+>> what we want)
 >
-> Does the card work in Gen 3 when it starts? Is there any indication of
-> PCI-E link errors?
+> I thought the new function may be extended to support fake pmu as below.
+> It's not only for lbr. PMU has many CPU specific features. It can be 
+> used for other features, if you want to check the compatibility in 
+> future. But I don't have an example now.
 >
-> Everytime or sometimes?
+> __intel_pmu_init (int model, struct x86_pmu *x86_pmu)
+> {
+> bool fake_pmu = (model != boot_cpu_data.x86_model) ? true : false;
+> ...
+> switch (model)
+> case INTEL_FAM6_NEHALEM:
+> case INTEL_FAM6_NEHALEM_EP:
+> case INTEL_FAM6_NEHALEM_EX:
+>      intel_pmu_lbr_init(x86_pmu);
+>      x86_pmu->event_constraints = intel_nehalem_event_constraints;
+>      x86_pmu->pebs_constraints = intel_nehalem_pebs_event_constraints;
+>      x86_pmu->enable_all = intel_pmu_nhm_enable_all;
+>      x86_pmu->extra_regs = intel_nehalem_extra_regs;
 >
-> POWER 8 firmware is good? If the link does eventually come back, is
-> the POWER8's D3 resumption timeout long enough?
->
-> If this doesn't lead to an obvious conclusion you'll probably need to
-> connect to IBM's Mellanox support team to get more information from
-> the card side.
+>      if (fake_pmu)
+>          return;
 
-+1, I tried to find any Mellanox-internal bugs related to your issue
-and didn't find anything concrete.
+It looks similar as the one I shared above, the difference is that more 
+things
+(e.g. constraints) are assigned to x86_fake_pmu.
+I'm not sure about the logic behind it (still look like a workaround).
 
-Thanks
+
 
 >
-> Jason
+>      /* Global variables should not be updated for fake PMU */
+>      memcpy(hw_cache_event_ids, nehalem_hw_cache_event_ids,
+>                     sizeof(hw_cache_event_ids));
+>      memcpy(hw_cache_extra_regs, nehalem_hw_cache_extra_regs,
+>                     sizeof(hw_cache_extra_regs));
+>
+>
+>>
+>> I would prefer having them separated as this patch for now - it is 
+>> logically more clear to me.
+>>
+>
+> But it will be a problem for maintenance. Perf developer probably 
+> forget to update the list in KVM. I think you have to regularly check 
+> the perf code.
+>
 
---QNDPHrPUIc00TOLW
-Content-Type: application/pgp-signature; name="signature.asc"
+It's been very common in hypervisor development. That's why we have 
+hypervisor developers here.
+When a new platform is added, we will definitely get some work like this 
+to do.
 
------BEGIN PGP SIGNATURE-----
+Best,
+Wei
 
-iQIcBAEBAgAGBQJcND4mAAoJEORje4g2clinWmYQALc1t9Jj1WUm7zYVTd84U3pI
-gnGibiWBO2l7MI+MYk14ZBFGEYJlskNRHIigRcOFEkzha5dy6p2JOnQyS3yBvHjO
-Bl3JfvqJLZ6gq4EFqtQlvuH8TaJrkB2L3rxTmWXhbNVcxIw5SIyylhpVDgSncpde
-MtP+XC7viTd15bBrYBTqVJsjr0LnIUfyPzBpDcn6vHht6iPln3pUv90T7w49/Vkm
-EgDUN3bNYjyXbX07sj78Z5t8UuKv0UcQ2oGAWmA/YLGo04XZRQFcUlu4BnWT2YOf
-9z4yHBx/KdBMpxtRue74mqHitFjSu9u+Na5Leq6j3davuFg000q+f3AfE8nCWqLp
-DraqvSZKIhAiCFpQAcBAzEvVM0QzaKS8xqftPpnZ+509cnAwzRzlKDAO3xzyaXNN
-KM56HOXCPSJPvf0uCsTr3zTLpsAnzm1QOSt3J6SW4DxvBPTsdrvro08UQErbUAVL
-VieGklltiu+OeNY2DsCE6JSlxFIMOxMql3zVf5vD9GR7zzhtYA+sgVJssOzBMEY5
-4yHnrg42lQ3OvjBF686S5xFHJ13hNHvd4CvdUiNvlncJS14zlEiFoGzmnk4+44bu
-LSXy8AVLNDtmqk2WG+DlrCZPnm6zp1wC8mvvkvywSpbrWVEkBn2DIlfK788i1BoR
-UMzhWxopBvsJGk41pwm3
-=BVjQ
------END PGP SIGNATURE-----
-
---QNDPHrPUIc00TOLW--
