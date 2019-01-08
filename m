@@ -4,48 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5E0CC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:50:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 546B1C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:50:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 82DE520827
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:50:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D4A4A206BB
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:50:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546977034;
-	bh=UWaJXxL5BEsr/tDVj18HmrXGrHxA0yE+VpYXzRYwB4o=;
+	s=default; t=1546977044;
+	bh=IrNXA9x2tMabqe/pwKtnWzB0UscfhI+RYax52idFOQ0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=E6Vtee0aI4U+47N7IhYBfaCeTwnVboPEmPWrtbnU1HY8iyhe704PC1GX445eR6euk
-	 +ZyjO5fLaDMmuLgtP+sOXERK/cGqdQUzw458Baiu4N8ee+JXvXJtatq9cAvqaAA5kq
-	 jikRfKBWlQ4OPLpe2CkW7Z/VxB3Wn/nQXITx94io=
+	b=vKzQXPmKjIYZwKbWUcikhMQqkth0rHJkTmm+FoC9DYlRuEBEgKfm96yx3rDqvTPna
+	 BCIbKGy81Rk0h1vhC7fphdTrq47PLKGd0hXqovp/ZAxG8j1e8jzG8rVhIBnlK/DeD0
+	 wlgEa74ZdUikkalygiESYGaq+lkitMgnc1DE+4D4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732846AbfAHTud (ORCPT
+        id S1732859AbfAHTum (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:50:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39958 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 14:50:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39888 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731187AbfAHTbp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:31:45 -0500
+        id S1731162AbfAHTbm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:31:42 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DE6EA2070B;
-        Tue,  8 Jan 2019 19:31:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 63E372070B;
+        Tue,  8 Jan 2019 19:31:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546975904;
-        bh=UWaJXxL5BEsr/tDVj18HmrXGrHxA0yE+VpYXzRYwB4o=;
+        s=default; t=1546975901;
+        bh=IrNXA9x2tMabqe/pwKtnWzB0UscfhI+RYax52idFOQ0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sI46d6mBowmMZjLz/aM5IcprroX6UMcl5fLuyQv/vBZYDynVy6pnrUaXy3/Ja4IRp
-         8BZGS4/9rKiMkD2TwHFsrAQy4KKgI2jC6czBesD3uA/RvRgeUXMK4Giiw2W3VfKElo
-         +lpUwLSoLhXDrTjw3WT7K7YFn2tnlBJvOtxNHKhM=
+        b=XRQGtAOPAhoPAMmRaJGzhGru2BLGUOeVFQghBLeMpOKYmaHyWG4H7qCuoOKnCyVsq
+         usFrFB7Q/WHiuONYQM771Y+LsPUMt0HGvHeLnnLOVy2THg70DJu2SU7PkxZbGQOETE
+         MEztmFLtZfziGPdmOE1422iUDoBE03Ej4OHFQzkQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     AliOS system security <alios_sys_security@linux.alibaba.com>,
-        Mike Snitzer <snitzer@redhat.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 72/97] dm crypt: use u64 instead of sector_t to store iv_offset
-Date:   Tue,  8 Jan 2019 14:29:21 -0500
-Message-Id: <20190108192949.122407-72-sashal@kernel.org>
+Cc:     Taehee Yoo <ap420073@gmail.com>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Sasha Levin <sashal@kernel.org>,
+        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+        netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 70/97] netfilter: ipt_CLUSTERIP: fix deadlock in netns exit routine
+Date:   Tue,  8 Jan 2019 14:29:19 -0500
+Message-Id: <20190108192949.122407-70-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108192949.122407-1-sashal@kernel.org>
 References: <20190108192949.122407-1-sashal@kernel.org>
@@ -57,81 +59,418 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: AliOS system security <alios_sys_security@linux.alibaba.com>
+From: Taehee Yoo <ap420073@gmail.com>
 
-[ Upstream commit 8d683dcd65c037efc9fb38c696ec9b65b306e573 ]
+[ Upstream commit 5a86d68bcf02f2d1e9a5897dd482079fd5f75e7f ]
 
-The iv_offset in the mapping table of crypt target is a 64bit number when
-IV algorithm is plain64, plain64be, essiv or benbi. It will be assigned to
-iv_offset of struct crypt_config, cc_sector of struct convert_context and
-iv_sector of struct dm_crypt_request. These structures members are defined
-as a sector_t. But sector_t is 32bit when CONFIG_LBDAF is not set in 32bit
-kernel. In this situation sector_t is not big enough to store the 64bit
-iv_offset.
+When network namespace is destroyed, cleanup_net() is called.
+cleanup_net() holds pernet_ops_rwsem then calls each ->exit callback.
+So that clusterip_tg_destroy() is called by cleanup_net().
+And clusterip_tg_destroy() calls unregister_netdevice_notifier().
 
-Here is a reproducer.
-Prepare test image and device (loop is automatically allocated by cryptsetup):
+But both cleanup_net() and clusterip_tg_destroy() hold same
+lock(pernet_ops_rwsem). hence deadlock occurrs.
 
-  # dd if=/dev/zero of=tst.img bs=1M count=1
-  # echo "tst"|cryptsetup open --type plain -c aes-xts-plain64 \
-  --skip 500000000000000000 tst.img test
+After this patch, only 1 notifier is registered when module is inserted.
+And all of configs are added to per-net list.
 
-On 32bit system (use IV offset value that overflows to 64bit; CONFIG_LBDAF if off)
-and device checksum is wrong:
+test commands:
+   %ip netns add vm1
+   %ip netns exec vm1 bash
+   %ip link set lo up
+   %iptables -A INPUT -p tcp -i lo -d 192.168.0.5 --dport 80 \
+	-j CLUSTERIP --new --hashmode sourceip \
+	--clustermac 01:00:5e:00:00:20 --total-nodes 2 --local-node 1
+   %exit
+   %ip netns del vm1
 
-  # dmsetup table test --showkeys
-  0 2048 crypt aes-xts-plain64 dfa7cfe3c481f2239155739c42e539ae8f2d38f304dcc89d20b26f69daaf0933 3551657984 7:0 0
+splat looks like:
+[  341.809674] ============================================
+[  341.809674] WARNING: possible recursive locking detected
+[  341.809674] 4.19.0-rc5+ #16 Tainted: G        W
+[  341.809674] --------------------------------------------
+[  341.809674] kworker/u4:2/87 is trying to acquire lock:
+[  341.809674] 000000005da2d519 (pernet_ops_rwsem){++++}, at: unregister_netdevice_notifier+0x8c/0x460
+[  341.809674]
+[  341.809674] but task is already holding lock:
+[  341.809674] 000000005da2d519 (pernet_ops_rwsem){++++}, at: cleanup_net+0x119/0x900
+[  341.809674]
+[  341.809674] other info that might help us debug this:
+[  341.809674]  Possible unsafe locking scenario:
+[  341.809674]
+[  341.809674]        CPU0
+[  341.809674]        ----
+[  341.809674]   lock(pernet_ops_rwsem);
+[  341.809674]   lock(pernet_ops_rwsem);
+[  341.809674]
+[  341.809674]  *** DEADLOCK ***
+[  341.809674]
+[  341.809674]  May be due to missing lock nesting notation
+[  341.809674]
+[  341.809674] 3 locks held by kworker/u4:2/87:
+[  341.809674]  #0: 00000000d9df6c92 ((wq_completion)"%s""netns"){+.+.}, at: process_one_work+0xafe/0x1de0
+[  341.809674]  #1: 00000000c2cbcee2 (net_cleanup_work){+.+.}, at: process_one_work+0xb60/0x1de0
+[  341.809674]  #2: 000000005da2d519 (pernet_ops_rwsem){++++}, at: cleanup_net+0x119/0x900
+[  341.809674]
+[  341.809674] stack backtrace:
+[  341.809674] CPU: 1 PID: 87 Comm: kworker/u4:2 Tainted: G        W         4.19.0-rc5+ #16
+[  341.809674] Workqueue: netns cleanup_net
+[  341.809674] Call Trace:
+[ ... ]
+[  342.070196]  down_write+0x93/0x160
+[  342.070196]  ? unregister_netdevice_notifier+0x8c/0x460
+[  342.070196]  ? down_read+0x1e0/0x1e0
+[  342.070196]  ? sched_clock_cpu+0x126/0x170
+[  342.070196]  ? find_held_lock+0x39/0x1c0
+[  342.070196]  unregister_netdevice_notifier+0x8c/0x460
+[  342.070196]  ? register_netdevice_notifier+0x790/0x790
+[  342.070196]  ? __local_bh_enable_ip+0xe9/0x1b0
+[  342.070196]  ? __local_bh_enable_ip+0xe9/0x1b0
+[  342.070196]  ? clusterip_tg_destroy+0x372/0x650 [ipt_CLUSTERIP]
+[  342.070196]  ? trace_hardirqs_on+0x93/0x210
+[  342.070196]  ? __bpf_trace_preemptirq_template+0x10/0x10
+[  342.070196]  ? clusterip_tg_destroy+0x372/0x650 [ipt_CLUSTERIP]
+[  342.123094]  clusterip_tg_destroy+0x3ad/0x650 [ipt_CLUSTERIP]
+[  342.123094]  ? clusterip_net_init+0x3d0/0x3d0 [ipt_CLUSTERIP]
+[  342.123094]  ? cleanup_match+0x17d/0x200 [ip_tables]
+[  342.123094]  ? xt_unregister_table+0x215/0x300 [x_tables]
+[  342.123094]  ? kfree+0xe2/0x2a0
+[  342.123094]  cleanup_entry+0x1d5/0x2f0 [ip_tables]
+[  342.123094]  ? cleanup_match+0x200/0x200 [ip_tables]
+[  342.123094]  __ipt_unregister_table+0x9b/0x1a0 [ip_tables]
+[  342.123094]  iptable_filter_net_exit+0x43/0x80 [iptable_filter]
+[  342.123094]  ops_exit_list.isra.10+0x94/0x140
+[  342.123094]  cleanup_net+0x45b/0x900
+[ ... ]
 
-  # sha256sum /dev/mapper/test
-  533e25c09176632b3794f35303488c4a8f3f965dffffa6ec2df347c168cb6c19 /dev/mapper/test
-
-On 64bit system (and on 32bit system with the patch), table and checksum is now correct:
-
-  # dmsetup table test --showkeys
-  0 2048 crypt aes-xts-plain64 dfa7cfe3c481f2239155739c42e539ae8f2d38f304dcc89d20b26f69daaf0933 500000000000000000 7:0 0
-
-  # sha256sum /dev/mapper/test
-  5d16160f9d5f8c33d8051e65fdb4f003cc31cd652b5abb08f03aa6fce0df75fc /dev/mapper/test
-
-Signed-off-by: AliOS system security <alios_sys_security@linux.alibaba.com>
-Tested-and-Reviewed-by: Milan Broz <gmazyland@gmail.com>
-Signed-off-by: Mike Snitzer <snitzer@redhat.com>
+Fixes: 202f59afd441 ("netfilter: ipt_CLUSTERIP: do not hold dev")
+Signed-off-by: Taehee Yoo <ap420073@gmail.com>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/md/dm-crypt.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ net/ipv4/netfilter/ipt_CLUSTERIP.c | 155 ++++++++++++++++-------------
+ 1 file changed, 87 insertions(+), 68 deletions(-)
 
-diff --git a/drivers/md/dm-crypt.c b/drivers/md/dm-crypt.c
-index 0481223b1deb..f192ba38f332 100644
---- a/drivers/md/dm-crypt.c
-+++ b/drivers/md/dm-crypt.c
-@@ -49,7 +49,7 @@ struct convert_context {
- 	struct bio *bio_out;
- 	struct bvec_iter iter_in;
- 	struct bvec_iter iter_out;
--	sector_t cc_sector;
-+	u64 cc_sector;
- 	atomic_t cc_pending;
- 	union {
- 		struct skcipher_request *req;
-@@ -81,7 +81,7 @@ struct dm_crypt_request {
- 	struct convert_context *ctx;
- 	struct scatterlist sg_in[4];
- 	struct scatterlist sg_out[4];
--	sector_t iv_sector;
-+	u64 iv_sector;
+diff --git a/net/ipv4/netfilter/ipt_CLUSTERIP.c b/net/ipv4/netfilter/ipt_CLUSTERIP.c
+index 33491cb6b9d1..fb1e7f237f53 100644
+--- a/net/ipv4/netfilter/ipt_CLUSTERIP.c
++++ b/net/ipv4/netfilter/ipt_CLUSTERIP.c
+@@ -57,17 +57,14 @@ struct clusterip_config {
+ 	enum clusterip_hashmode hash_mode;	/* which hashing mode */
+ 	u_int32_t hash_initval;			/* hash initialization */
+ 	struct rcu_head rcu;
+-
++	struct net *net;			/* netns for pernet list */
+ 	char ifname[IFNAMSIZ];			/* device ifname */
+-	struct notifier_block notifier;		/* refresh c->ifindex in it */
  };
  
- struct crypt_config;
-@@ -160,7 +160,7 @@ struct crypt_config {
- 		struct iv_lmk_private lmk;
- 		struct iv_tcw_private tcw;
- 	} iv_gen_private;
--	sector_t iv_offset;
-+	u64 iv_offset;
- 	unsigned int iv_size;
- 	unsigned short int sector_size;
- 	unsigned char sector_shift;
+ #ifdef CONFIG_PROC_FS
+ static const struct file_operations clusterip_proc_fops;
+ #endif
+ 
+-static unsigned int clusterip_net_id __read_mostly;
+-
+ struct clusterip_net {
+ 	struct list_head configs;
+ 	/* lock protects the configs list */
+@@ -78,16 +75,30 @@ struct clusterip_net {
+ #endif
+ };
+ 
++static unsigned int clusterip_net_id __read_mostly;
++static inline struct clusterip_net *clusterip_pernet(struct net *net)
++{
++	return net_generic(net, clusterip_net_id);
++}
++
+ static inline void
+ clusterip_config_get(struct clusterip_config *c)
+ {
+ 	refcount_inc(&c->refcount);
+ }
+ 
+-
+ static void clusterip_config_rcu_free(struct rcu_head *head)
+ {
+-	kfree(container_of(head, struct clusterip_config, rcu));
++	struct clusterip_config *config;
++	struct net_device *dev;
++
++	config = container_of(head, struct clusterip_config, rcu);
++	dev = dev_get_by_name(config->net, config->ifname);
++	if (dev) {
++		dev_mc_del(dev, config->clustermac);
++		dev_put(dev);
++	}
++	kfree(config);
+ }
+ 
+ static inline void
+@@ -101,9 +112,9 @@ clusterip_config_put(struct clusterip_config *c)
+  * entry(rule) is removed, remove the config from lists, but don't free it
+  * yet, since proc-files could still be holding references */
+ static inline void
+-clusterip_config_entry_put(struct net *net, struct clusterip_config *c)
++clusterip_config_entry_put(struct clusterip_config *c)
+ {
+-	struct clusterip_net *cn = net_generic(net, clusterip_net_id);
++	struct clusterip_net *cn = clusterip_pernet(c->net);
+ 
+ 	local_bh_disable();
+ 	if (refcount_dec_and_lock(&c->entries, &cn->lock)) {
+@@ -118,8 +129,6 @@ clusterip_config_entry_put(struct net *net, struct clusterip_config *c)
+ 		spin_unlock(&cn->lock);
+ 		local_bh_enable();
+ 
+-		unregister_netdevice_notifier(&c->notifier);
+-
+ 		return;
+ 	}
+ 	local_bh_enable();
+@@ -129,7 +138,7 @@ static struct clusterip_config *
+ __clusterip_config_find(struct net *net, __be32 clusterip)
+ {
+ 	struct clusterip_config *c;
+-	struct clusterip_net *cn = net_generic(net, clusterip_net_id);
++	struct clusterip_net *cn = clusterip_pernet(net);
+ 
+ 	list_for_each_entry_rcu(c, &cn->configs, list) {
+ 		if (c->clusterip == clusterip)
+@@ -181,32 +190,37 @@ clusterip_netdev_event(struct notifier_block *this, unsigned long event,
+ 		       void *ptr)
+ {
+ 	struct net_device *dev = netdev_notifier_info_to_dev(ptr);
++	struct net *net = dev_net(dev);
++	struct clusterip_net *cn = clusterip_pernet(net);
+ 	struct clusterip_config *c;
+ 
+-	c = container_of(this, struct clusterip_config, notifier);
+-	switch (event) {
+-	case NETDEV_REGISTER:
+-		if (!strcmp(dev->name, c->ifname)) {
+-			c->ifindex = dev->ifindex;
+-			dev_mc_add(dev, c->clustermac);
+-		}
+-		break;
+-	case NETDEV_UNREGISTER:
+-		if (dev->ifindex == c->ifindex) {
+-			dev_mc_del(dev, c->clustermac);
+-			c->ifindex = -1;
+-		}
+-		break;
+-	case NETDEV_CHANGENAME:
+-		if (!strcmp(dev->name, c->ifname)) {
+-			c->ifindex = dev->ifindex;
+-			dev_mc_add(dev, c->clustermac);
+-		} else if (dev->ifindex == c->ifindex) {
+-			dev_mc_del(dev, c->clustermac);
+-			c->ifindex = -1;
++	spin_lock_bh(&cn->lock);
++	list_for_each_entry_rcu(c, &cn->configs, list) {
++		switch (event) {
++		case NETDEV_REGISTER:
++			if (!strcmp(dev->name, c->ifname)) {
++				c->ifindex = dev->ifindex;
++				dev_mc_add(dev, c->clustermac);
++			}
++			break;
++		case NETDEV_UNREGISTER:
++			if (dev->ifindex == c->ifindex) {
++				dev_mc_del(dev, c->clustermac);
++				c->ifindex = -1;
++			}
++			break;
++		case NETDEV_CHANGENAME:
++			if (!strcmp(dev->name, c->ifname)) {
++				c->ifindex = dev->ifindex;
++				dev_mc_add(dev, c->clustermac);
++			} else if (dev->ifindex == c->ifindex) {
++				dev_mc_del(dev, c->clustermac);
++				c->ifindex = -1;
++			}
++			break;
+ 		}
+-		break;
+ 	}
++	spin_unlock_bh(&cn->lock);
+ 
+ 	return NOTIFY_DONE;
+ }
+@@ -215,30 +229,44 @@ static struct clusterip_config *
+ clusterip_config_init(struct net *net, const struct ipt_clusterip_tgt_info *i,
+ 		      __be32 ip, const char *iniface)
+ {
+-	struct clusterip_net *cn = net_generic(net, clusterip_net_id);
++	struct clusterip_net *cn = clusterip_pernet(net);
+ 	struct clusterip_config *c;
++	struct net_device *dev;
+ 	int err;
+ 
++	if (iniface[0] == '\0') {
++		pr_info("Please specify an interface name\n");
++		return ERR_PTR(-EINVAL);
++	}
++
+ 	c = kzalloc(sizeof(*c), GFP_ATOMIC);
+ 	if (!c)
+ 		return ERR_PTR(-ENOMEM);
+ 
+-	strcpy(c->ifname, iniface);
+-	c->ifindex = -1;
+-	c->clusterip = ip;
++	dev = dev_get_by_name(net, iniface);
++	if (!dev) {
++		pr_info("no such interface %s\n", iniface);
++		kfree(c);
++		return ERR_PTR(-ENOENT);
++	}
++	c->ifindex = dev->ifindex;
++	strcpy(c->ifname, dev->name);
+ 	memcpy(&c->clustermac, &i->clustermac, ETH_ALEN);
++	dev_mc_add(dev, c->clustermac);
++	dev_put(dev);
++
++	c->clusterip = ip;
+ 	c->num_total_nodes = i->num_total_nodes;
+ 	clusterip_config_init_nodelist(c, i);
+ 	c->hash_mode = i->hash_mode;
+ 	c->hash_initval = i->hash_initval;
++	c->net = net;
+ 	refcount_set(&c->refcount, 1);
+ 
+ 	spin_lock_bh(&cn->lock);
+ 	if (__clusterip_config_find(net, ip)) {
+-		spin_unlock_bh(&cn->lock);
+-		kfree(c);
+-
+-		return ERR_PTR(-EBUSY);
++		err = -EBUSY;
++		goto out_config_put;
+ 	}
+ 
+ 	list_add_rcu(&c->list, &cn->configs);
+@@ -260,22 +288,17 @@ clusterip_config_init(struct net *net, const struct ipt_clusterip_tgt_info *i,
+ 	}
+ #endif
+ 
+-	c->notifier.notifier_call = clusterip_netdev_event;
+-	err = register_netdevice_notifier(&c->notifier);
+-	if (!err) {
+-		refcount_set(&c->entries, 1);
+-		return c;
+-	}
++	refcount_set(&c->entries, 1);
++	return c;
+ 
+ #ifdef CONFIG_PROC_FS
+-	proc_remove(c->pde);
+ err:
+ #endif
+ 	spin_lock_bh(&cn->lock);
+ 	list_del_rcu(&c->list);
++out_config_put:
+ 	spin_unlock_bh(&cn->lock);
+ 	clusterip_config_put(c);
+-
+ 	return ERR_PTR(err);
+ }
+ 
+@@ -475,21 +498,6 @@ static int clusterip_tg_check(const struct xt_tgchk_param *par)
+ 				&e->ip.dst.s_addr);
+ 			return -EINVAL;
+ 		} else {
+-			struct net_device *dev;
+-
+-			if (e->ip.iniface[0] == '\0') {
+-				pr_info("Please specify an interface name\n");
+-				return -EINVAL;
+-			}
+-
+-			dev = dev_get_by_name(par->net, e->ip.iniface);
+-			if (!dev) {
+-				pr_info("no such interface %s\n",
+-					e->ip.iniface);
+-				return -ENOENT;
+-			}
+-			dev_put(dev);
+-
+ 			config = clusterip_config_init(par->net, cipinfo,
+ 						       e->ip.dst.s_addr,
+ 						       e->ip.iniface);
+@@ -503,7 +511,7 @@ static int clusterip_tg_check(const struct xt_tgchk_param *par)
+ 	if (ret < 0) {
+ 		pr_info("cannot load conntrack support for proto=%u\n",
+ 			par->family);
+-		clusterip_config_entry_put(par->net, config);
++		clusterip_config_entry_put(config);
+ 		clusterip_config_put(config);
+ 		return ret;
+ 	}
+@@ -525,7 +533,7 @@ static void clusterip_tg_destroy(const struct xt_tgdtor_param *par)
+ 
+ 	/* if no more entries are referencing the config, remove it
+ 	 * from the list and destroy the proc entry */
+-	clusterip_config_entry_put(par->net, cipinfo->config);
++	clusterip_config_entry_put(cipinfo->config);
+ 
+ 	clusterip_config_put(cipinfo->config);
+ 
+@@ -807,7 +815,7 @@ static const struct file_operations clusterip_proc_fops = {
+ 
+ static int clusterip_net_init(struct net *net)
+ {
+-	struct clusterip_net *cn = net_generic(net, clusterip_net_id);
++	struct clusterip_net *cn = clusterip_pernet(net);
+ 	int ret;
+ 
+ 	INIT_LIST_HEAD(&cn->configs);
+@@ -832,7 +840,7 @@ static int clusterip_net_init(struct net *net)
+ 
+ static void clusterip_net_exit(struct net *net)
+ {
+-	struct clusterip_net *cn = net_generic(net, clusterip_net_id);
++	struct clusterip_net *cn = clusterip_pernet(net);
+ #ifdef CONFIG_PROC_FS
+ 	proc_remove(cn->procdir);
+ 	cn->procdir = NULL;
+@@ -847,6 +855,10 @@ static struct pernet_operations clusterip_net_ops = {
+ 	.size = sizeof(struct clusterip_net),
+ };
+ 
++struct notifier_block cip_netdev_notifier = {
++	.notifier_call = clusterip_netdev_event
++};
++
+ static int __init clusterip_tg_init(void)
+ {
+ 	int ret;
+@@ -859,11 +871,17 @@ static int __init clusterip_tg_init(void)
+ 	if (ret < 0)
+ 		goto cleanup_subsys;
+ 
++	ret = register_netdevice_notifier(&cip_netdev_notifier);
++	if (ret < 0)
++		goto unregister_target;
++
+ 	pr_info("ClusterIP Version %s loaded successfully\n",
+ 		CLUSTERIP_VERSION);
+ 
+ 	return 0;
+ 
++unregister_target:
++	xt_unregister_target(&clusterip_tg_reg);
+ cleanup_subsys:
+ 	unregister_pernet_subsys(&clusterip_net_ops);
+ 	return ret;
+@@ -873,6 +891,7 @@ static void __exit clusterip_tg_exit(void)
+ {
+ 	pr_info("ClusterIP Version %s unloading\n", CLUSTERIP_VERSION);
+ 
++	unregister_netdevice_notifier(&cip_netdev_notifier);
+ 	xt_unregister_target(&clusterip_tg_reg);
+ 	unregister_pernet_subsys(&clusterip_net_ops);
+ 
 -- 
 2.19.1
 
