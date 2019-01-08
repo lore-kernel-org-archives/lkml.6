@@ -2,142 +2,162 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3B36C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:30:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7CD5C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:30:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 803DD20827
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:30:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="soYTQG0b"
+	by mail.kernel.org (Postfix) with ESMTP id A64DA20645
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:30:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1546975813;
+	bh=jvKTy8wiFXgKB1Cpr2r1PuGeHz4X9qM4i48XyALzRKM=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=Us7gsWVK14GLbyiu3t1VBJTd/OHQgNl80iJCvm6s0G8zxfldpm3Ibfz0tmsPy3r3V
+	 C/ATmVThdGiTFwB1caysewo1TBHBZksGJSpl1xcXKRz1C1HEt/q16Btaj0bkzv79NW
+	 Fqz+vkoInmWV+lOEg0opH/fnbwQ8r0DGBu9MZ6xA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730665AbfAHTaK (ORCPT
+        id S1730677AbfAHTaM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:30:10 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:34865 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730550AbfAHTaC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:30:02 -0500
-Received: by mail-lj1-f195.google.com with SMTP id x85-v6so4433017ljb.2
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jan 2019 11:30:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=5XUflO4G4Dd3EM/eG7jeSYEDT6AoE9me3ht4t1gspZk=;
-        b=soYTQG0bq+WP+8/CnlLdsctJTfpWE99LXcVyiDRYxCwxnONaQir+4fDmulkNhNza/4
-         lhzCBPP/4/2gn2ZbjETTH48hV1e38ke4oJ4uOmYMeFGrGgqOvkfkESl5+IF5O5r0qxe1
-         ZQnCEM0/+pqEFAwfJClgvOKCSG1BCPGISdlDEs4s/quN0NNvHjauVkm2Y6cyRmYM2R69
-         hUpr51f+k+rGEa2dtnPYL2FYTdmMeiQyO7USe4velZAIhyNWvfDs81dKP4aBqCZfY0Jn
-         2/CwNAO1sNBJnyEuvUFkU6oahAuLcaebdadkyIunT7PUdL1q+6XbhhSc/mC6v37j87NH
-         r8IQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
-         :in-reply-to:references:mime-version:content-transfer-encoding;
-        bh=5XUflO4G4Dd3EM/eG7jeSYEDT6AoE9me3ht4t1gspZk=;
-        b=uBBTB86YS/iiTxm+k992KJTbjQsyiCfY11W1cuqAfMw8yvBsnXPrIB3HGo12MNj0xp
-         bHVun+nskLlsw+7vw+5NW9v0XlnyKDL6bwun4uW2MXjufsrw7T9uSEjm0L17+qPvWciO
-         Q3B32lJrXvOVDP3il3zL8+K0qU1oeBqtoVwR59TM+cJeEqnVZWgxX/tRe0jOILPbpbuI
-         8Y0Vg2VDI3d9P9p5HPUkiZLYjoFh+f/6hWLDKhxOrV2yjwsXDjN9cmJQPoqIC2SM/BP/
-         iyPknM9555+W+f7RMuL981stRrSx+DldptuH/48KvawDcw4cAI4bmuaq0+IjDQ/4Ucy2
-         YwNg==
-X-Gm-Message-State: AJcUukdzw2FyOApiGlwrr0pbuLh/Q6YGnyf257jk78/r7z/Y/D9Yvk93
-        Q4WoWz2tFiccyIGBk0QUk3o=
-X-Google-Smtp-Source: ALg8bN5T39rO5PA2D9Bl4KSEQT29+0y8fiQbOsB9r+jbMTGusrVNJl/jReg4hZNDRJtfUVadw9XdSw==
-X-Received: by 2002:a2e:4442:: with SMTP id r63-v6mr1811885lja.79.1546975800393;
-        Tue, 08 Jan 2019 11:30:00 -0800 (PST)
-Received: from jupiter.lan (18.158-248-194.customer.lyse.net. [158.248.194.18])
-        by smtp.gmail.com with ESMTPSA id q128-v6sm9122246ljq.14.2019.01.08.11.29.59
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 08 Jan 2019 11:29:59 -0800 (PST)
-From:   Sam Ravnborg <sam@ravnborg.org>
-To:     Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@linux.ie>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>,
-        David Lechner <david@lechnology.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        =?UTF-8?q?Noralf=20Tr=C3=B8nnes?= <noralf@tronnes.org>,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-Cc:     Sam Ravnborg <sam@ravnborg.org>,
-        Alexey Brodkin <abrodkin@synopsys.com>
-Subject: [PATCH v3 09/12] drm/arc: do not reply on drmP.h from drm_gem_cma_helper.h
-Date:   Tue,  8 Jan 2019 20:29:36 +0100
-Message-Id: <20190108192939.15255-10-sam@ravnborg.org>
-X-Mailer: git-send-email 2.12.0
-In-Reply-To: <20190108192939.15255-1-sam@ravnborg.org>
-References: <20190108192939.15255-1-sam@ravnborg.org>
+        Tue, 8 Jan 2019 14:30:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37664 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730568AbfAHTaD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:30:03 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C00E12070B;
+        Tue,  8 Jan 2019 19:30:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1546975802;
+        bh=jvKTy8wiFXgKB1Cpr2r1PuGeHz4X9qM4i48XyALzRKM=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=oeALYn7ojtI5UdFXXlKg2Py+raUZpXXB+Os1JzdED6B6+dm45LA2ZloK6qUkdpq2C
+         aV5HRDS8OHU125oGlJAi8nIX9awXQwGonxi4uYiYgPOGXPNDECh5pN2TDobs8pla7i
+         uWr44Qs8jgyGb5Ei21hUu3ktKMVlLbBWPql3lKAo=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Quentin Monnet <quentin.monnet@netronome.com>,
+        Jesper Dangaard Brouer <brouer@redhat.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
+        linux-kselftest@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 09/97] selftests/bpf: enable (uncomment) all tests in test_libbpf.sh
+Date:   Tue,  8 Jan 2019 14:28:18 -0500
+Message-Id: <20190108192949.122407-9-sashal@kernel.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190108192949.122407-1-sashal@kernel.org>
+References: <20190108192949.122407-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-drmP.h was the only header file in the past and a lot
-of files rely on that drmP.h defines everything.
-The goal is to one day to delete drmP.h and
-as a step towards this it will no longer be included in the
-headers files in include/drm/
+From: Quentin Monnet <quentin.monnet@netronome.com>
 
-To prepare arc/ for this add dependencies that
-othwewise was pulled in by drmP.h from drm_gem_cma_helper.h
+[ Upstream commit f96afa767baffba7645f5e10998f5178948bb9aa ]
 
-Signed-off-by: Sam Ravnborg <sam@ravnborg.org>
-Acked-by: Noralf Trønnes <noralf@tronnes.org>
-Cc: Alexey Brodkin <abrodkin@synopsys.com>
-Cc: Daniel Vetter <daniel@ffwll.ch>
-Cc: David Airlie <airlied@linux.ie>
+libbpf is now able to load successfully test_l4lb_noinline.o and
+samples/bpf/tracex3_kern.o.
+
+For the test_l4lb_noinline, uncomment related tests from test_libbpf.c
+and remove the associated "TODO".
+
+For tracex3_kern.o, instead of loading a program from samples/bpf/ that
+might not have been compiled at this stage, try loading a program from
+BPF selftests. Since this test case is about loading a program compiled
+without the "-target bpf" flag, change the Makefile to compile one
+program accordingly (instead of passing the flag for compiling all
+programs).
+
+Regarding test_xdp_noinline.o: in its current shape the program fails to
+load because it provides no version section, but the loader needs one.
+The test was added to make sure that libbpf could load XDP programs even
+if they do not provide a version number in a dedicated section. But
+libbpf is already capable of doing that: in our case loading fails
+because the loader does not know that this is an XDP program (it does
+not need to, since it does not attach the program). So trying to load
+test_xdp_noinline.o does not bring much here: just delete this subtest.
+
+For the record, the error message obtained with tracex3_kern.o was
+fixed by commit e3d91b0ca523 ("tools/libbpf: handle issues with bpf ELF
+objects containing .eh_frames")
+
+I have not been abled to reproduce the "libbpf: incorrect bpf_call
+opcode" error for test_l4lb_noinline.o, even with the version of libbpf
+present at the time when test_libbpf.sh and test_libbpf_open.c were
+created.
+
+RFC -> v1:
+- Compile test_xdp without the "-target bpf" flag, and try to load it
+  instead of ../../samples/bpf/tracex3_kern.o.
+- Delete test_xdp_noinline.o subtest.
+
+Cc: Jesper Dangaard Brouer <brouer@redhat.com>
+Signed-off-by: Quentin Monnet <quentin.monnet@netronome.com>
+Acked-by: Jakub Kicinski <jakub.kicinski@netronome.com>
+Acked-by: Jesper Dangaard Brouer <brouer@redhat.com>
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/arc/arcpgu_crtc.c | 2 ++
- drivers/gpu/drm/arc/arcpgu_drv.c  | 6 ++++++
- 2 files changed, 8 insertions(+)
+ tools/testing/selftests/bpf/Makefile       | 10 ++++++++++
+ tools/testing/selftests/bpf/test_libbpf.sh | 14 ++++----------
+ 2 files changed, 14 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/gpu/drm/arc/arcpgu_crtc.c b/drivers/gpu/drm/arc/arcpgu_crtc.c
-index 62f51f70606d..155ab177ce0b 100644
---- a/drivers/gpu/drm/arc/arcpgu_crtc.c
-+++ b/drivers/gpu/drm/arc/arcpgu_crtc.c
-@@ -16,8 +16,10 @@
+diff --git a/tools/testing/selftests/bpf/Makefile b/tools/testing/selftests/bpf/Makefile
+index fff7fb1285fc..f3f874ba186b 100644
+--- a/tools/testing/selftests/bpf/Makefile
++++ b/tools/testing/selftests/bpf/Makefile
+@@ -124,6 +124,16 @@ endif
+ endif
+ endif
  
- #include <drm/drm_atomic_helper.h>
- #include <drm/drm_crtc_helper.h>
-+#include <drm/drm_device.h>
- #include <drm/drm_fb_cma_helper.h>
- #include <drm/drm_gem_cma_helper.h>
-+#include <drm/drm_vblank.h>
- #include <drm/drm_plane_helper.h>
- #include <linux/clk.h>
- #include <linux/platform_data/simplefb.h>
-diff --git a/drivers/gpu/drm/arc/arcpgu_drv.c b/drivers/gpu/drm/arc/arcpgu_drv.c
-index 206a76abf771..39a79f5718c4 100644
---- a/drivers/gpu/drm/arc/arcpgu_drv.c
-+++ b/drivers/gpu/drm/arc/arcpgu_drv.c
-@@ -16,12 +16,18 @@
++# Have one program compiled without "-target bpf" to test whether libbpf loads
++# it successfully
++$(OUTPUT)/test_xdp.o: test_xdp.c
++	$(CLANG) $(CLANG_FLAGS) \
++		-O2 -emit-llvm -c $< -o - | \
++	$(LLC) -march=bpf -mcpu=$(CPU) $(LLC_FLAGS) -filetype=obj -o $@
++ifeq ($(DWARF2BTF),y)
++	$(BTF_PAHOLE) -J $@
++endif
++
+ $(OUTPUT)/%.o: %.c
+ 	$(CLANG) $(CLANG_FLAGS) \
+ 		 -O2 -target bpf -emit-llvm -c $< -o - |      \
+diff --git a/tools/testing/selftests/bpf/test_libbpf.sh b/tools/testing/selftests/bpf/test_libbpf.sh
+index d97dc914cd49..8b1bc96d8e0c 100755
+--- a/tools/testing/selftests/bpf/test_libbpf.sh
++++ b/tools/testing/selftests/bpf/test_libbpf.sh
+@@ -33,17 +33,11 @@ trap exit_handler 0 2 3 6 9
  
- #include <linux/clk.h>
- #include <drm/drm_crtc_helper.h>
-+#include <drm/drm_device.h>
-+#include <drm/drm_debugfs.h>
-+#include <drm/drm_drv.h>
- #include <drm/drm_fb_cma_helper.h>
- #include <drm/drm_fb_helper.h>
- #include <drm/drm_gem_cma_helper.h>
- #include <drm/drm_gem_framebuffer_helper.h>
- #include <drm/drm_atomic_helper.h>
-+#include <linux/dma-mapping.h>
-+#include <linux/module.h>
- #include <linux/of_reserved_mem.h>
-+#include <linux/platform_device.h>
+ libbpf_open_file test_l4lb.o
  
- #include "arcpgu.h"
- #include "arcpgu_regs.h"
+-# TODO: fix libbpf to load noinline functions
+-# [warning] libbpf: incorrect bpf_call opcode
+-#libbpf_open_file test_l4lb_noinline.o
++# Load a program with BPF-to-BPF calls
++libbpf_open_file test_l4lb_noinline.o
+ 
+-# TODO: fix test_xdp_meta.c to load with libbpf
+-# [warning] libbpf: test_xdp_meta.o doesn't provide kernel version
+-#libbpf_open_file test_xdp_meta.o
+-
+-# TODO: fix libbpf to handle .eh_frame
+-# [warning] libbpf: relocation failed: no section(10)
+-#libbpf_open_file ../../../../samples/bpf/tracex3_kern.o
++# Load a program compiled without the "-target bpf" flag
++libbpf_open_file test_xdp.o
+ 
+ # Success
+ exit 0
 -- 
-2.12.0
+2.19.1
 
