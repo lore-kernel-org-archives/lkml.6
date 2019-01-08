@@ -2,123 +2,148 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61052C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:01:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 530AAC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:01:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2BD7B20827
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:01:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 212A820827
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:01:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546977679;
-	bh=zNGh6OeHgxYHogMRKVICP1CnSKIHWitFEE+e78ba1bk=;
+	s=default; t=1546977687;
+	bh=pzVLturlpQEiUGiMh92+49OWwqhsDcMTbWcRzmTJ7D4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Yd4ncWQVckpIPBmZUiJUJ/sjqRNoXJhJp5+HsLFeBfSmo8yvbrWCg+pbvAF9v/JVq
-	 3RbiHvg0VoFM0IZJKleXi/LVvrP6LysiSp1K7TFLwgoJ/9Oq1Z3mDndv6xejqbvVyB
-	 uhF5VCTOzGORjvXSovGu8c/l9DVGqoFBdl56O0aw=
+	b=iYhBCFKiudY+qSD1w/h+UKNchspLsZmR3/9ihuzANkIaWgtTDVw98JjczcxVoS4uj
+	 goItJeJLin7oQU0RnpSEJIjdjrZd5uW8HgJs83OwWQkpvnAteh94MoSP2tttStpAKn
+	 pW0efumsxhnCWIuzed853I6AxpkDjg9RXQ3MuKD0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730643AbfAHUBS (ORCPT
+        id S1730593AbfAHUB0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 15:01:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56410 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 15:01:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36632 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730785AbfAHT7X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:59:23 -0500
-Received: from quaco.ghostprotocols.net (unknown [177.135.9.49])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1729695AbfAHT3S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:29:18 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7287320827;
-        Tue,  8 Jan 2019 19:59:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9F0C320645;
+        Tue,  8 Jan 2019 19:29:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546977562;
-        bh=zNGh6OeHgxYHogMRKVICP1CnSKIHWitFEE+e78ba1bk=;
+        s=default; t=1546975757;
+        bh=pzVLturlpQEiUGiMh92+49OWwqhsDcMTbWcRzmTJ7D4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bcMxfkZgHNlUfOesCdr2hJTIrJ0ES+FTiXmNfgIBBltaADkK02tlY2KJvEgaBERCX
-         cxtduLla91CwzeJ0P6g/1EFHX1bT7pijsnwVK5wbjyCKY4gbC3tDtbRSutRj+pR1ti
-         1IVoQe1Mi7/wOLmRVR4pMwvGkBokru/AfEecFt2I=
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        =?UTF-8?q?Luis=20Cl=C3=A1udio=20Gon=C3=A7alves?= 
-        <lclaudio@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-        Wang Nan <wangnan0@huawei.com>
-Subject: [PATCH 01/16] perf trace: Fix ')' placement in "interrupted" syscall lines
-Date:   Tue,  8 Jan 2019 16:58:55 -0300
-Message-Id: <20190108195910.17726-2-acme@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190108195910.17726-1-acme@kernel.org>
-References: <20190108195910.17726-1-acme@kernel.org>
+        b=ufz99pgKWsDJ0Er+haOJHmSMAMOfivCml3Z1M8vpSYRPi+5yocsDowkuVAN32s4lm
+         lo7LNnBVYsv4XHFAZNwmHYkdDsMIERddla4uVHWkdt0e6cF2LGcyJH7XBVy29mIzpS
+         Zry+Jg2fhi2PMwA5nldjKwCtLJw/1Qc1Y5npHrio=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Takashi Sakamoto <o-takashi@sakamocchi.jp>,
+        Takashi Iwai <tiwai@suse.de>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.20 100/117] ALSA: bebob: fix model-id of unit for Apogee Ensemble
+Date:   Tue,  8 Jan 2019 14:26:08 -0500
+Message-Id: <20190108192628.121270-100-sashal@kernel.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190108192628.121270-1-sashal@kernel.org>
+References: <20190108192628.121270-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnaldo Carvalho de Melo <acme@redhat.com>
+From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
 
-When we get the sys_enter for a syscall we check if the last one is
-still waiting for its matching sys_exit, if so we print this:
+[ Upstream commit 644b2e97405b0b74845e1d3c2b4fe4c34858062b ]
 
-   468.753 (         ): firefox/32382 poll(ufds: 0x7f3988d3dd00, nfds: 7, timeout_msecs: 4294967295)     ...
-   449.575 ( 0.004 ms): Softwar~cThrea/32434 futex(uaddr: 0x7f39a18a9b70, op: WAKE|PRIVATE_FLAG, val: 1)           = 0
+This commit fixes hard-coded model-id for an unit of Apogee Ensemble with
+a correct value. This unit uses DM1500 ASIC produced ArchWave AG (formerly
+known as BridgeCo AG).
 
-At some point we'll get that poll sys_exit event and will print a "[continued]" line.
+I note that this model supports three modes in the number of data channels
+in tx/rx streams; 8 ch pairs, 10 ch pairs, 18 ch pairs. The mode is
+switched by Vendor-dependent AV/C command, like:
 
-While making the sizing of the alignment after the syscall arg list and
-its result configurable, so that we can mimic strace, which uses a
-smaller alingment by default, a bug was introduced where the closing
-parens appeared before the syscall name and its arg list, fix it.
+$ cd linux-firewire-utils
+$ ./firewire-request /dev/fw1 fcp 0x00ff000003dbeb0600000000 (8ch pairs)
+$ ./firewire-request /dev/fw1 fcp 0x00ff000003dbeb0601000000 (10ch pairs)
+$ ./firewire-request /dev/fw1 fcp 0x00ff000003dbeb0602000000 (18ch pairs)
 
-Fixes: 4b8a240ed5e0 ("perf trace: Add alignment spaces after the closing parens")
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Luis Cláudio Gonçalves <lclaudio@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-oi45i54s59h1w1kmgpzrfuum@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+When switching between different mode, the unit disappears from IEEE 1394
+bus, then appears on the bus with different combination of stream formats.
+In a mode of 18 ch pairs, available sampling rate is up to 96.0 kHz, else
+up to 192.0 kHz.
+
+$ ./hinawa-config-rom-printer /dev/fw1
+{ 'bus-info': { 'adj': False,
+                'bmc': True,
+                'chip_ID': 21474898341,
+                'cmc': True,
+                'cyc_clk_acc': 100,
+                'generation': 2,
+                'imc': True,
+                'isc': True,
+                'link_spd': 2,
+                'max_ROM': 1,
+                'max_rec': 512,
+                'name': '1394',
+                'node_vendor_ID': 987,
+                'pmc': False},
+  'root-directory': [ ['HARDWARE_VERSION', 19],
+                      [ 'NODE_CAPABILITIES',
+                        { 'addressing': {'64': True, 'fix': True, 'prv': False},
+                          'misc': {'int': False, 'ms': False, 'spt': True},
+                          'state': { 'atn': False,
+                                     'ded': False,
+                                     'drq': True,
+                                     'elo': False,
+                                     'init': False,
+                                     'lst': True,
+                                     'off': False},
+                          'testing': {'bas': False, 'ext': False}}],
+                      ['VENDOR', 987],
+                      ['DESCRIPTOR', 'Apogee Electronics'],
+                      ['MODEL', 126702],
+                      ['DESCRIPTOR', 'Ensemble'],
+                      ['VERSION', 5297],
+                      [ 'UNIT',
+                        [ ['SPECIFIER_ID', 41005],
+                          ['VERSION', 65537],
+                          ['MODEL', 126702],
+                          ['DESCRIPTOR', 'Ensemble']]],
+                      [ 'DEPENDENT_INFO',
+                        [ ['SPECIFIER_ID', 2037],
+                          ['VERSION', 1],
+                          [(58, 'IMMEDIATE'), 16777159],
+                          [(59, 'IMMEDIATE'), 1048576],
+                          [(60, 'IMMEDIATE'), 16777159],
+                          [(61, 'IMMEDIATE'), 6291456]]]]}
+
+Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/builtin-trace.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ sound/firewire/bebob/bebob.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-index adbf28183560..b8bf5d025563 100644
---- a/tools/perf/builtin-trace.c
-+++ b/tools/perf/builtin-trace.c
-@@ -1758,6 +1758,7 @@ static int trace__printf_interrupted_entry(struct trace *trace)
- {
- 	struct thread_trace *ttrace;
- 	size_t printed;
-+	int len;
- 
- 	if (trace->failure_only || trace->current == NULL)
- 		return 0;
-@@ -1768,9 +1769,14 @@ static int trace__printf_interrupted_entry(struct trace *trace)
- 		return 0;
- 
- 	printed  = trace__fprintf_entry_head(trace, trace->current, 0, false, ttrace->entry_time, trace->output);
--	printed += fprintf(trace->output, ")%-*s ...\n", trace->args_alignment, ttrace->entry_str);
--	ttrace->entry_pending = false;
-+	printed += len = fprintf(trace->output, "%s)", ttrace->entry_str);
-+
-+	if (len < trace->args_alignment - 4)
-+		printed += fprintf(trace->output, "%-*s", trace->args_alignment - 4 - len, " ");
- 
-+	printed += fprintf(trace->output, " ...\n");
-+
-+	ttrace->entry_pending = false;
- 	++trace->nr_events_printed;
- 
- 	return printed;
+diff --git a/sound/firewire/bebob/bebob.c b/sound/firewire/bebob/bebob.c
+index 672d13488454..d91874275d2c 100644
+--- a/sound/firewire/bebob/bebob.c
++++ b/sound/firewire/bebob/bebob.c
+@@ -408,7 +408,7 @@ static const struct ieee1394_device_id bebob_id_table[] = {
+ 	/* Apogee Electronics, DA/AD/DD-16X (X-FireWire card) */
+ 	SND_BEBOB_DEV_ENTRY(VEN_APOGEE, 0x00010048, &spec_normal),
+ 	/* Apogee Electronics, Ensemble */
+-	SND_BEBOB_DEV_ENTRY(VEN_APOGEE, 0x00001eee, &spec_normal),
++	SND_BEBOB_DEV_ENTRY(VEN_APOGEE, 0x01eeee, &spec_normal),
+ 	/* ESI, Quatafire610 */
+ 	SND_BEBOB_DEV_ENTRY(VEN_ESI, 0x00010064, &spec_normal),
+ 	/* AcousticReality, eARMasterOne */
 -- 
-2.20.1
+2.19.1
 
