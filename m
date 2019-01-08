@@ -2,161 +2,127 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC0E9C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 09:27:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F033AC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 09:30:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 957FC218D0
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 09:27:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 91DA120651
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 09:30:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b="Jcbob2Lv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728466AbfAHJ1d (ORCPT
+        id S1728123AbfAHJaI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 04:27:33 -0500
-Received: from ozlabs.org ([203.11.71.1]:60031 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727381AbfAHJ1d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 04:27:33 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43Yn3N4vjcz9sMQ;
-        Tue,  8 Jan 2019 20:27:28 +1100 (AEDT)
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     Finn Thain <fthain@telegraphics.com.au>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
-Subject: Re: [PATCH v8 24/25] powerpc: Adopt nvram module for PPC64
-In-Reply-To: <alpine.LNX.2.21.1901071533060.30@nippy.intranet>
-References: <cover.1545784679.git.fthain@telegraphics.com.au> <2fe2b8e6395aeacfafcbde590a50922d4e632189.1545784679.git.fthain@telegraphics.com.au> <CAK8P3a2p91XJfJuSCZqRLRgC-aP3LR1tMK2DDxTiSuD8_FOg8Q@mail.gmail.com> <8736q5xst1.fsf@concordia.ellerman.id.au> <alpine.LNX.2.21.1901071533060.30@nippy.intranet>
-Date:   Tue, 08 Jan 2019 20:27:27 +1100
-Message-ID: <87h8ejts74.fsf@concordia.ellerman.id.au>
+        Tue, 8 Jan 2019 04:30:08 -0500
+Received: from forwardcorp1o.cmail.yandex.net ([37.9.109.47]:43956 "EHLO
+        forwardcorp1o.cmail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727367AbfAHJaI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 04:30:08 -0500
+Received: from mxbackcorp1g.mail.yandex.net (mxbackcorp1g.mail.yandex.net [IPv6:2a02:6b8:0:1402::301])
+        by forwardcorp1o.cmail.yandex.net (Yandex) with ESMTP id E959C219C4;
+        Tue,  8 Jan 2019 12:30:03 +0300 (MSK)
+Received: from smtpcorp1p.mail.yandex.net (smtpcorp1p.mail.yandex.net [2a02:6b8:0:1472:2741:0:8b6:10])
+        by mxbackcorp1g.mail.yandex.net (nwsmtp/Yandex) with ESMTP id km6jRh9bSC-U3MmhjRE;
+        Tue, 08 Jan 2019 12:30:03 +0300
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
+        t=1546939803; bh=S6PJGIpbFKuIM+CevDzLcHQLDsrocdVdhip87MGJSpw=;
+        h=Subject:From:To:Cc:Date:Message-ID;
+        b=Jcbob2LvrnqZpmnCgfJQ71GJBfe3NT1czzaHeEGOHU1sSP6eEI0wIQLyYdg2Uo1nx
+         0ZZZfQiABWn3OWfG4oH0wdGNrgna2lJwDcgx0CfbQszImxxIi4vMgcwlwIHLAuO6Wb
+         JfM+o9GCLlx8gyVA+5AodH2PT6STxJHZCnnoE7Dk=
+Authentication-Results: mxbackcorp1g.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
+Received: from dynamic-iva.dhcp.yndx.net (dynamic-iva.dhcp.yndx.net [2a02:6b8:0:827::1:2])
+        by smtpcorp1p.mail.yandex.net (nwsmtp/Yandex) with ESMTPSA id CiL51olxVn-U3k8N6ba;
+        Tue, 08 Jan 2019 12:30:03 +0300
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (Client certificate not present)
+Subject: [PATCH] net/core/neighbour: tell kmemleak about hash tables
+From:   Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+To:     netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        linux-kernel@vger.kernel.org
+Date:   Tue, 08 Jan 2019 12:30:00 +0300
+Message-ID: <154693980088.104235.16222977463502002037.stgit@buzz>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Finn Thain <fthain@telegraphics.com.au> writes:
-> On Mon, 7 Jan 2019, Michael Ellerman wrote:
->
->> Arnd Bergmann <arnd@arndb.de> writes:
->> > On Wed, Dec 26, 2018 at 1:43 AM Finn Thain <fthain@telegraphics.com.au> wrote:
->> >
->> >> +static ssize_t ppc_nvram_get_size(void)
->> >> +{
->> >> +       if (ppc_md.nvram_size)
->> >> +               return ppc_md.nvram_size();
->> >> +       return -ENODEV;
->> >> +}
->> >
->> >> +const struct nvram_ops arch_nvram_ops = {
->> >> +       .read           = ppc_nvram_read,
->> >> +       .write          = ppc_nvram_write,
->> >> +       .get_size       = ppc_nvram_get_size,
->> >> +       .sync           = ppc_nvram_sync,
->> >> +};
->> >
->> > Coming back to this after my comment on the m68k side, I notice that
->> > there is now a double indirection through function pointers. Have you
->> > considered completely removing the operations from ppc_md instead
->> > by having multiple copies of nvram_ops?
->> >
->> > With the current method, it does seem odd to have a single
->> > per-architecture instance of the exported structure containing
->> > function pointers. This doesn't give us the flexibility of having
->> > multiple copies in the kernel the way that ppc_md does, but it adds
->> > overhead compared to simply exporting the functions directly.
->> 
->> Yeah TBH I'm not convinced the arch ops is the best solution.
->> 
->> Why can't each arch just implement the required ops functions? On ppc
->> we'd still use ppc_md but that would be a ppc detail.
->> 
->> Optional ops are fairly easy to support by providing a default
->> implementation, eg. instead of:
->> 
->> +	if (arch_nvram_ops.get_size == NULL)
->> +		return -ENODEV;
->> +
->> +	nvram_size = arch_nvram_ops.get_size();
->> +	if (nvram_size < 0)
->> +		return nvram_size;
->> 
->> 
->> We do in some header:
->> 
->> #ifndef arch_nvram_get_size
->> static inline int arch_nvram_get_size(void)
->> {
->> 	return -ENODEV;
->> }
->> #endif
->> 
->> And then:
->> 
->> 	nvram_size = arch_nvram_get_size();
->> 	if (nvram_size < 0)
->> 		return nvram_size;
->> 
->> 
->> But I haven't digested the whole series so maybe I'm missing something?
->> 
->
-> The reason why that doesn't work boils down to introspection. (This was 
-> mentioned elsewhere in this email thread.) For example, we presently have 
-> code like this,
->
-> ssize_t nvram_get_size(void)
-> {
->        if (ppc_md.nvram_size)
->                return ppc_md.nvram_size();
->        return -1;
-> }
-> EXPORT_SYMBOL(nvram_get_size);
->
-> This construction means we get to decide at run-time which of the NVRAM 
-> functions should be used. (Whereas your example makes a build-time decision.)
+This fixes false-positive kmemleak reports about leaked neighbour entries:
 
-Right, but we only need to make a runtime decision on powerpc (right?).
-So it seems to me we should isolate that in the powerpc code.
+unreferenced object 0xffff8885c6e4d0a8 (size 1024):
+  comm "softirq", pid 0, jiffies 4294922664 (age 167640.804s)
+  hex dump (first 32 bytes):
+    00 00 00 00 00 00 00 00 20 2c f3 83 ff ff ff ff  ........ ,......
+    08 c0 ef 5f 84 88 ff ff 01 8c 7d 02 01 00 00 00  ..._......}.....
+  backtrace:
+    [<00000000748509fe>] ip6_finish_output2+0x887/0x1e40
+    [<0000000036d7a0d8>] ip6_output+0x1ba/0x600
+    [<0000000027ea7dba>] ip6_send_skb+0x92/0x2f0
+    [<00000000d6e2111d>] udp_v6_send_skb.isra.24+0x680/0x15e0
+    [<000000000668a8be>] udpv6_sendmsg+0x18c9/0x27a0
+    [<000000004bd5fa90>] sock_sendmsg+0xb3/0xf0
+    [<000000008227b29f>] ___sys_sendmsg+0x745/0x8f0
+    [<000000008698009d>] __sys_sendmsg+0xde/0x170
+    [<00000000889dacf1>] do_syscall_64+0x9b/0x400
+    [<0000000081cdb353>] entry_SYSCALL_64_after_hwframe+0x49/0xbe
+    [<000000005767ed39>] 0xffffffffffffffff
 
-> The purpose of arch_nvram_ops is much the same. That is, it does for m68k 
-> and x86 what ppc_md already does for ppc32 and ppc64. (And once these 
-> platforms share an API like this, they can share more driver code, and 
-> reduce duplicated code.)
+Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+---
+ net/core/neighbour.c |   13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
 
-> The approach taken in this series was to push the arch_nvram_ops approach 
-> as far as possible, because by making everything fit into that regime it 
-> immediately became apparent where architectures and platforms have 
-> diverged, creating weird inconsistencies like the differences in sync 
-> ioctl behaviour between ppc32 and ppc64 for core99. (Early revisions of 
-> this series exposed more issues like bugs and dead code that got addressed 
-> elsewhere.)
+diff --git a/net/core/neighbour.c b/net/core/neighbour.c
+index 763a7b08df67..3e27a779f288 100644
+--- a/net/core/neighbour.c
++++ b/net/core/neighbour.c
+@@ -18,6 +18,7 @@
+ #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+ 
+ #include <linux/slab.h>
++#include <linux/kmemleak.h>
+ #include <linux/types.h>
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+@@ -443,12 +444,14 @@ static struct neigh_hash_table *neigh_hash_alloc(unsigned int shift)
+ 	ret = kmalloc(sizeof(*ret), GFP_ATOMIC);
+ 	if (!ret)
+ 		return NULL;
+-	if (size <= PAGE_SIZE)
++	if (size <= PAGE_SIZE) {
+ 		buckets = kzalloc(size, GFP_ATOMIC);
+-	else
++	} else {
+ 		buckets = (struct neighbour __rcu **)
+ 			  __get_free_pages(GFP_ATOMIC | __GFP_ZERO,
+ 					   get_order(size));
++		kmemleak_alloc(buckets, size, 0, GFP_ATOMIC);
++	}
+ 	if (!buckets) {
+ 		kfree(ret);
+ 		return NULL;
+@@ -468,10 +471,12 @@ static void neigh_hash_free_rcu(struct rcu_head *head)
+ 	size_t size = (1 << nht->hash_shift) * sizeof(struct neighbour *);
+ 	struct neighbour __rcu **buckets = nht->hash_buckets;
+ 
+-	if (size <= PAGE_SIZE)
++	if (size <= PAGE_SIZE) {
+ 		kfree(buckets);
+-	else
++	} else {
++		kmemleak_free(buckets);
+ 		free_pages((unsigned long)buckets, get_order(size));
++	}
+ 	kfree(nht);
+ }
+ 
 
-I just don't see the advantage of having arch_nvram_ops which is a
-structure of function pointers that are always the same on a given arch,
-vs some static inlines that implement the same ops for that arch.
-
-> Problem is, as Arnd pointed out, powerpc doesn't need both kinds of ops 
-> struct. So I'm rewriting this series in such a way that powerpc doesn't 
-> have to implement both. This rewrite is going to look totally different 
-> for powerpc (though not for x86 or m68k) so you might want to wait for me 
-> to post v9 before spending more time on code review.
-
-OK. I know you've been working on this series for a long time and I
-don't want to roadblock it, so at the end of the day I don't feel that
-strongly about it as long as the code works.
-
-I'll wait for v9 and have another look then.
-
-cheers
