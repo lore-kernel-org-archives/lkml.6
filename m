@@ -2,235 +2,324 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB522C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 17:55:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55F37C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 17:56:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C7112064C
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 17:55:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tronnes.org header.i=@tronnes.org header.b="gQVtm6/q"
+	by mail.kernel.org (Postfix) with ESMTP id 28AD22064C
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 17:56:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729206AbfAHRze (ORCPT
+        id S1729211AbfAHR4N (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 12:55:34 -0500
-Received: from smtp.domeneshop.no ([194.63.252.55]:39131 "EHLO
-        smtp.domeneshop.no" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727484AbfAHRze (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 12:55:34 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=tronnes.org; s=ds201810;
-        h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:References:Cc:To:From:Subject; bh=LVduWQzrwS5PSAUjQlYPzQwExsx1wFXehB/TIaFeW/k=;
-        b=gQVtm6/qtsTfheWNdjg6QO8DhlnYu0VSpgx5MaMdjtf6P7Jp9+wMzHFgbyIzrruV8zI1Vlt+2eaJjg17mNApRk82pALv8d6EUkXVd3WG9A0uUpOgyURJigkq00FxkNgMCa5/gbclPc0nN8Q+1KwS8KRJ+nzjUCwGAxXGoK68bPhravjurM98dgpRFnznptVAnmgnvEPwtAZWHZAnICCDwt6T7qAVCw3wrDBoKfZUrGyd5fvrs5xv5WFUs1zOpWXkJe3r+tJEPk/szuwYWjA4SGM4a8ZwKMMmW0dK0vQMHSlP4yc9MeB8QFxY3DLZrq/HdudAiUTu6we5pQGii2Q0TA==;
-Received: from 211.81-166-168.customer.lyse.net ([81.166.168.211]:55277 helo=[192.168.10.174])
-        by smtp.domeneshop.no with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.84_2)
-        (envelope-from <noralf@tronnes.org>)
-        id 1ggvb7-0002P0-M1; Tue, 08 Jan 2019 18:55:29 +0100
-Subject: Re: [PATCH] drm/fb-helper: fix leaks in error path of
- drm_fb_helper_fbdev_setup
-From:   =?UTF-8?Q?Noralf_Tr=c3=b8nnes?= <noralf@tronnes.org>
-To:     Peter Wu <peter@lekensteyn.nl>
-Cc:     lkp@01.org, rong.a.chen@intel.com,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        dri-devel@lists.freedesktop.org, kraxel@redhat.com,
-        Linus Torvalds <torvalds@linux-foundation.org>
-References: <20181223004315.GA11455@al>
- <20181223005507.28328-1-peter@lekensteyn.nl>
- <ad4be2e7-b53c-97b5-7029-83f4017e4643@tronnes.org>
- <20181223231033.GA31596@al>
- <80d98ab2-dbf8-8d77-e5ca-07995cef0f1b@tronnes.org> <20181224150302.GA2259@al>
- <564896a7-e232-70e2-dd01-fec265f731eb@tronnes.org>
-Message-ID: <f125dc93-0bde-02ee-c9b1-10665c0f523e@tronnes.org>
-Date:   Tue, 8 Jan 2019 18:55:26 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <564896a7-e232-70e2-dd01-fec265f731eb@tronnes.org>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+        Tue, 8 Jan 2019 12:56:13 -0500
+Received: from mga09.intel.com ([134.134.136.24]:50255 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728905AbfAHR4N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 12:56:13 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Jan 2019 09:56:12 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,455,1539673200"; 
+   d="scan'208";a="125261114"
+Received: from ahduyck-desk1.jf.intel.com ([10.7.198.76])
+  by orsmga001.jf.intel.com with ESMTP; 08 Jan 2019 09:56:09 -0800
+Message-ID: <fb6465c99b3ada2c6af587a7eb00016d96d56f77.camel@linux.intel.com>
+Subject: Re: [PATCH v7] mm/page_alloc.c: memory_hotplug: free pages as
+ higher order
+From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
+To:     Arun KS <arunks@codeaurora.org>, arunks.linux@gmail.com,
+        akpm@linux-foundation.org, mhocko@kernel.org, vbabka@suse.cz,
+        osalvador@suse.de, linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Cc:     getarunks@gmail.com
+Date:   Tue, 08 Jan 2019 09:56:09 -0800
+In-Reply-To: <1546578076-31716-1-git-send-email-arunks@codeaurora.org>
+References: <1546578076-31716-1-git-send-email-arunks@codeaurora.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-2.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, 2019-01-04 at 10:31 +0530, Arun KS wrote:
+> When freeing pages are done with higher order, time spent on coalescing
+> pages by buddy allocator can be reduced.  With section size of 256MB, hot
+> add latency of a single section shows improvement from 50-60 ms to less
+> than 1 ms, hence improving the hot add latency by 60 times.  Modify
+> external providers of online callback to align with the change.
+> 
+> Signed-off-by: Arun KS <arunks@codeaurora.org>
+> Acked-by: Michal Hocko <mhocko@suse.com>
+> Reviewed-by: Oscar Salvador <osalvador@suse.de>
+> ---
+> Changes since v6:
+> - Rebased to 4.20
+> - Changelog updated.
+> - No improvement seen on arm64, hence removed removal of prefetch.
+> 
+> Changes since v5:
+> - Rebased to 4.20-rc1.
+> - Changelog updated.
+> 
+> Changes since v4:
+> - As suggested by Michal Hocko,
+> - Simplify logic in online_pages_block() by using get_order().
+> - Seperate out removal of prefetch from __free_pages_core().
+> 
+> Changes since v3:
+> - Renamed _free_pages_boot_core -> __free_pages_core.
+> - Removed prefetch from __free_pages_core.
+> - Removed xen_online_page().
+> 
+> Changes since v2:
+> - Reuse code from __free_pages_boot_core().
+> 
+> Changes since v1:
+> - Removed prefetch().
+> 
+> Changes since RFC:
+> - Rebase.
+> - As suggested by Michal Hocko remove pages_per_block.
+> - Modifed external providers of online_page_callback.
+> 
+> v6: https://lore.kernel.org/patchwork/patch/1007253/
+> v5: https://lore.kernel.org/patchwork/patch/995739/
+> v4: https://lore.kernel.org/patchwork/patch/995111/
+> v3: https://lore.kernel.org/patchwork/patch/992348/
+> v2: https://lore.kernel.org/patchwork/patch/991363/
+> v1: https://lore.kernel.org/patchwork/patch/989445/
+> RFC: https://lore.kernel.org/patchwork/patch/984754/
+> 
+> ---
+>  drivers/hv/hv_balloon.c        |  6 ++++--
+>  drivers/xen/balloon.c          | 23 +++++++++++++++--------
+>  include/linux/memory_hotplug.h |  2 +-
+>  mm/internal.h                  |  1 +
+>  mm/memory_hotplug.c            | 42 ++++++++++++++++++++++++++++++------------
+>  mm/page_alloc.c                |  8 ++++----
+>  6 files changed, 55 insertions(+), 27 deletions(-)
+> 
+> diff --git a/drivers/hv/hv_balloon.c b/drivers/hv/hv_balloon.c
+> index 5301fef..211f3fe 100644
+> --- a/drivers/hv/hv_balloon.c
+> +++ b/drivers/hv/hv_balloon.c
+> @@ -771,7 +771,7 @@ static void hv_mem_hot_add(unsigned long start, unsigned long size,
+>  	}
+>  }
+>  
+> -static void hv_online_page(struct page *pg)
+> +static int hv_online_page(struct page *pg, unsigned int order)
+>  {
+>  	struct hv_hotadd_state *has;
+>  	unsigned long flags;
+> @@ -783,10 +783,12 @@ static void hv_online_page(struct page *pg)
+>  		if ((pfn < has->start_pfn) || (pfn >= has->end_pfn))
+>  			continue;
+>  
+> -		hv_page_online_one(has, pg);
+> +		hv_bring_pgs_online(has, pfn, (1UL << order));
+>  		break;
+>  	}
+>  	spin_unlock_irqrestore(&dm_device.ha_lock, flags);
+> +
+> +	return 0;
+>  }
+>  
+>  static int pfn_covered(unsigned long start_pfn, unsigned long pfn_cnt)
+> diff --git a/drivers/xen/balloon.c b/drivers/xen/balloon.c
+> index ceb5048..95f888f 100644
+> --- a/drivers/xen/balloon.c
+> +++ b/drivers/xen/balloon.c
+> @@ -345,8 +345,8 @@ static enum bp_state reserve_additional_memory(void)
+>  
+>  	/*
+>  	 * add_memory_resource() will call online_pages() which in its turn
+> -	 * will call xen_online_page() callback causing deadlock if we don't
+> -	 * release balloon_mutex here. Unlocking here is safe because the
+> +	 * will call xen_bring_pgs_online() callback causing deadlock if we
+> +	 * don't release balloon_mutex here. Unlocking here is safe because the
+>  	 * callers drop the mutex before trying again.
+>  	 */
+>  	mutex_unlock(&balloon_mutex);
+> @@ -369,15 +369,22 @@ static enum bp_state reserve_additional_memory(void)
+>  	return BP_ECANCELED;
+>  }
+>  
+> -static void xen_online_page(struct page *page)
+> +static int xen_bring_pgs_online(struct page *pg, unsigned int order)
+>  {
+> -	__online_page_set_limits(page);
+> +	unsigned long i, size = (1 << order);
+> +	unsigned long start_pfn = page_to_pfn(pg);
+> +	struct page *p;
+>  
+> +	pr_debug("Online %lu pages starting at pfn 0x%lx\n", size, start_pfn);
+>  	mutex_lock(&balloon_mutex);
+> -
+> -	__balloon_append(page);
+> -
+> +	for (i = 0; i < size; i++) {
+> +		p = pfn_to_page(start_pfn + i);
+> +		__online_page_set_limits(p);
+> +		__balloon_append(p);
+> +	}
+>  	mutex_unlock(&balloon_mutex);
+> +
+> +	return 0;
+>  }
+>  
+>  static int xen_memory_notifier(struct notifier_block *nb, unsigned long val, void *v)
+> @@ -702,7 +709,7 @@ static int __init balloon_init(void)
+>  	balloon_stats.max_retry_count = RETRY_UNLIMITED;
+>  
+>  #ifdef CONFIG_XEN_BALLOON_MEMORY_HOTPLUG
+> -	set_online_page_callback(&xen_online_page);
+> +	set_online_page_callback(&xen_bring_pgs_online);
+>  	register_memory_notifier(&xen_memory_nb);
+>  	register_sysctl_table(xen_root);
+>  #endif
+> diff --git a/include/linux/memory_hotplug.h b/include/linux/memory_hotplug.h
+> index 07da5c6..d56bfba 100644
+> --- a/include/linux/memory_hotplug.h
+> +++ b/include/linux/memory_hotplug.h
+> @@ -87,7 +87,7 @@ extern int test_pages_in_a_zone(unsigned long start_pfn, unsigned long end_pfn,
+>  	unsigned long *valid_start, unsigned long *valid_end);
+>  extern void __offline_isolated_pages(unsigned long, unsigned long);
+>  
+> -typedef void (*online_page_callback_t)(struct page *page);
+> +typedef int (*online_page_callback_t)(struct page *page, unsigned int order);
+>  
+>  extern int set_online_page_callback(online_page_callback_t callback);
+>  extern int restore_online_page_callback(online_page_callback_t callback);
+> diff --git a/mm/internal.h b/mm/internal.h
+> index f4a7bb0..536bc2a 100644
+> --- a/mm/internal.h
+> +++ b/mm/internal.h
+> @@ -163,6 +163,7 @@ static inline struct page *pageblock_pfn_to_page(unsigned long start_pfn,
+>  extern int __isolate_free_page(struct page *page, unsigned int order);
+>  extern void memblock_free_pages(struct page *page, unsigned long pfn,
+>  					unsigned int order);
+> +extern void __free_pages_core(struct page *page, unsigned int order);
+>  extern void prep_compound_page(struct page *page, unsigned int order);
+>  extern void post_alloc_hook(struct page *page, unsigned int order,
+>  					gfp_t gfp_flags);
+> diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+> index b9a667d..0ea0eb1 100644
+> --- a/mm/memory_hotplug.c
+> +++ b/mm/memory_hotplug.c
+> @@ -47,7 +47,7 @@
+>   * and restore_online_page_callback() for generic callback restore.
+>   */
+>  
+> -static void generic_online_page(struct page *page);
+> +static int generic_online_page(struct page *page, unsigned int order);
+>  
+>  static online_page_callback_t online_page_callback = generic_online_page;
+>  static DEFINE_MUTEX(online_page_callback_lock);
+> @@ -656,26 +656,44 @@ void __online_page_free(struct page *page)
+>  }
+>  EXPORT_SYMBOL_GPL(__online_page_free);
+>  
+> -static void generic_online_page(struct page *page)
+> +static int generic_online_page(struct page *page, unsigned int order)
+>  {
+> -	__online_page_set_limits(page);
+> -	__online_page_increment_counters(page);
+> -	__online_page_free(page);
+> +	__free_pages_core(page, order);
+> +	totalram_pages_add(1UL << order);
+> +#ifdef CONFIG_HIGHMEM
+> +	if (PageHighMem(page))
+> +		totalhigh_pages_add(1UL << order);
+> +#endif
+> +	return 0;
+> +}
+> +
+> +static int online_pages_blocks(unsigned long start, unsigned long nr_pages)
+> +{
+> +	unsigned long end = start + nr_pages;
+> +	int order, ret, onlined_pages = 0;
+> +
+> +	while (start < end) {
+> +		order = min(MAX_ORDER - 1,
+> +			get_order(PFN_PHYS(end) - PFN_PHYS(start)));
+> +
+> +		ret = (*online_page_callback)(pfn_to_page(start), order);
+> +		if (!ret)
+> +			onlined_pages += (1UL << order);
+> +		else if (ret > 0)
+> +			onlined_pages += ret;
+> +
+> +		start += (1UL << order);
+> +	}
+> +	return onlined_pages;
+>  }
+>  
+>  static int online_pages_range(unsigned long start_pfn, unsigned long nr_pages,
+>  			void *arg)
+>  {
+> -	unsigned long i;
+>  	unsigned long onlined_pages = *(unsigned long *)arg;
+> -	struct page *page;
+>  
+>  	if (PageReserved(pfn_to_page(start_pfn)))
+> -		for (i = 0; i < nr_pages; i++) {
+> -			page = pfn_to_page(start_pfn + i);
+> -			(*online_page_callback)(page);
+> -			onlined_pages++;
+> -		}
+> +		onlined_pages = online_pages_blocks(start_pfn, nr_pages);
 
+Shouldn't this be a "+=" instead of an "="? It seems like you are going
+to lose your count otherwise.
 
-Den 05.01.2019 19.25, skrev Noralf Trønnes:
-> 
-> 
-> Den 24.12.2018 16.03, skrev Peter Wu:
->> On Mon, Dec 24, 2018 at 03:52:55PM +0100, Noralf Trønnes wrote:
->>>
->>>
->>> Den 24.12.2018 00.10, skrev Peter Wu:
->>>> On Sun, Dec 23, 2018 at 02:55:52PM +0100, Noralf Trønnes wrote:
->>>>>
->>>>>
->>>>> Den 23.12.2018 01.55, skrev Peter Wu:
->>>>>> After drm_fb_helper_fbdev_setup calls drm_fb_helper_init,
->>>>>> "dev->fb_helper" will be initialized (and thus drm_fb_helper_fini
->>>>>> will
->>>>>> have some effect). After that, drm_fb_helper_initial_config is called
->>>>>> which may call the "fb_probe" driver callback.
->>>>>>
->>>>>> This driver callback may call drm_fb_helper_defio_init (as is done by
->>>>>> drm_fb_helper_generic_probe) or set a framebuffer (as is done by
->>>>>> bochs)
->>>>>> as documented. These are normally cleaned up on exit by
->>>>>> drm_fb_helper_fbdev_teardown which also calls drm_fb_helper_fini.
->>>>>>
->>>>>> If an error occurs after "fb_probe", but before setup is complete,
->>>>>> then
->>>>>> calling just drm_fb_helper_fini will leak resources. This was
->>>>>> triggered
->>>>>> by df2052cc922 ("bochs: convert to
->>>>>> drm_fb_helper_fbdev_setup/teardown"):
->>>>>>
->>>>>>        [   50.008030] bochsdrmfb: enable CONFIG_FB_LITTLE_ENDIAN
->>>>>> to support this framebuffer
->>>>>>        [   50.009436] bochs-drm 0000:00:02.0:
->>>>>> [drm:drm_fb_helper_fbdev_setup] *ERROR* fbdev: Failed to set
->>>>>> configuration (ret=-38)
->>>>>>        [   50.011456] [drm] Initialized bochs-drm 1.0.0 20130925
->>>>>> for 0000:00:02.0 on minor 2
->>>>>>        [   50.013604] WARNING: CPU: 1 PID: 1 at
->>>>>> drivers/gpu/drm/drm_mode_config.c:477
->>>>>> drm_mode_config_cleanup+0x280/0x2a0
->>>>>>        [   50.016175] CPU: 1 PID: 1 Comm: swapper/0 Tainted:
->>>>>> G                T 4.20.0-rc7 #1
->>>>>>        [   50.017732] EIP: drm_mode_config_cleanup+0x280/0x2a0
->>>>>>        ...
->>>>>>        [   50.023155] Call Trace:
->>>>>>        [   50.023155]  ? bochs_kms_fini+0x1e/0x30
->>>>>>        [   50.023155]  ? bochs_unload+0x18/0x40
->>>>>>
->>>>>> This can be reproduced with QEMU and CONFIG_FB_LITTLE_ENDIAN=n.
->>>>>>
->>>>>> Link: https://lkml.kernel.org/r/20181221083226.GI23332@shao2-debian
->>>>>> Link: https://lkml.kernel.org/r/20181223004315.GA11455@al
->>>>>> Fixes: 8741216396b2 ("drm/fb-helper: Add
->>>>>> drm_fb_helper_fbdev_setup/teardown()")
->>>>>> Reported-by: kernel test robot <rong.a.chen@intel.com>
->>>>>> Cc: Noralf Trønnes <noralf@tronnes.org>
->>>>>> Signed-off-by: Peter Wu <peter@lekensteyn.nl>
->>>>>> ---
->>>>>>     drivers/gpu/drm/drm_fb_helper.c | 2 +-
->>>>>>     1 file changed, 1 insertion(+), 1 deletion(-)
->>>>>>
->>>>>> diff --git a/drivers/gpu/drm/drm_fb_helper.c
->>>>>> b/drivers/gpu/drm/drm_fb_helper.c
->>>>>> index 9d64f874f965..432e0f3b9267 100644
->>>>>> --- a/drivers/gpu/drm/drm_fb_helper.c
->>>>>> +++ b/drivers/gpu/drm/drm_fb_helper.c
->>>>>> @@ -2860,7 +2860,7 @@ int drm_fb_helper_fbdev_setup(struct
->>>>>> drm_device *dev,
->>>>>>         return 0;
->>>>>>     err_drm_fb_helper_fini:
->>>>>> -    drm_fb_helper_fini(fb_helper);
->>>>>> +    drm_fb_helper_fbdev_teardown(dev);
->>>>>
->>>>> This change will break the error path for drm_fbdev_generic_setup()
->>>>> because drm_fb_helper_generic_probe() cleans up on error but doesn't
->>>>> clear drm_fb_helper->fb resulting in a double
->>>>> drm_framebuffer_remove().
->>>>
->>>> This should probably considered a bug of drm_fb_helper_generic_probe.
->>>> Ownership of fb_helper should remain with the caller. The caller can
->>>> detect an error and act accordingly.
->>>>
->>>>> My assumption has been that the drm_fb_helper_funcs->fb_probe callback
->>>>> cleans up its resources on error. Clearly this is not the case for
->>>>> bochs, so
->>>>> my take on this is that bochsfb_create() needs to clean up on error.
->>>>
->>>> That assumption still holds for bochs. The problem is this sequence:
->>>> - drm_fb_helper_fbdev_setup is called.
->>>> - fb_probe succeeds (this is crucial).
->>>> - register_framebuffer fails.
->>>> - error path of setup is triggered.
->>>>
->>>> As fb_helper is fully setup by drivers, the drm_fb_helper core should
->>>> fully deallocate it again on the error path or else a leak occurs.
->>>>
->>>>> Gerd has a patchset that switches bochs over to the generic fbdev
->>>>> emulation, but ofc that doesn't help with 4.20:
->>>>> https://patchwork.freedesktop.org/series/54269/
->>>>
->>>> And that does not help with other users of the drm_fb_helper who use
->>>> functions like drm_fb_helper_defio_init. They will likely run in the
->>>> same problem.
->>>>
->>>> I don't have a way to test tinydrm or other drivers, but if you force
->>>> register_framebuffer to fail, you should be able to reproduce the
->>>> problem with drm_fb_helper_generic_probe.
->>>>
->>>
->>> Now I understand. I have looked at the drivers that use drm_fb_helper
->>> and no one seem to handle the case where register_framebuffer() is
->>> failing.
->>>
->>> Here's what drivers do when drm_fb_helper_initial_config() fails:
->>>
->>> Doesn't check:
->>> amdgpu
->>> virtio
->>>
->>> Calls drm_fb_helper_fini():
->>> armada
->>> ast
->>> exynos
->>> gma500
->>> hisilicon
->>> mgag200
->>> msm
->>> nouveau
->>> omap
->>> radeon
->>> rockchip
->>> tegra
->>> udl
->>> bochs - Uses drm_fb_helper_fbdev_setup()
->>> qxl - Uses drm_fb_helper_fbdev_setup()
->>> vboxvideo - Uses drm_fb_helper_fbdev_setup()
->>>
->>> Might clean up, not sure:
->>> cirrus
->>>
->>> Looks suspicious:
->>> i915
->>>
->>> I looked at bochs before it switched to drm_fb_helper_fbdev_setup() and
->>> it also just called drm_fb_helper_fini().
->>>
->>> It looks like you've uncovered something no one has though about (or
->>> not implemented at least).
->>>
->>> It's not just the framebuffer that's not destroyed, the buffer object
->>> is also leaked. drm_mode_config_cleanup() yells about the framebuffer
->>> (and frees it), but says nothing about the buffer object. It might be
->>> that it can't even be made to detect that since some drivers do special
->>> stuff for the fbdev buffer.
->>>
->>> I'll pick up on this and do some testing after the Christmas holidays.
->>
->> Thanks, the warning is bad for CI (which uses QEMU), but otherwise it
->> should not have any effect on regular users so it can wait.
->>
-> 
-> This patch is good as long as it's applied along side the fix[1] to the
-> generic emulation:
-> 
-> Reviewed-by: Noralf Trønnes <noralf@tronnes.org>
-> 
-> I can apply them both when I get an ack/rb on the other patch.
-> 
+>  
+>  	online_mem_sections(start_pfn, start_pfn + nr_pages);
+>  
+> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> index cde5dac..f51a920 100644
+> --- a/mm/page_alloc.c
+> +++ b/mm/page_alloc.c
+> @@ -1303,7 +1303,7 @@ static void __free_pages_ok(struct page *page, unsigned int order)
+>  	local_irq_restore(flags);
+>  }
+>  
+> -static void __init __free_pages_boot_core(struct page *page, unsigned int order)
+> +void __free_pages_core(struct page *page, unsigned int order)
+>  {
+>  	unsigned int nr_pages = 1 << order;
+>  	struct page *p = page;
+> @@ -1382,7 +1382,7 @@ void __init memblock_free_pages(struct page *page, unsigned long pfn,
+>  {
+>  	if (early_page_uninitialised(pfn))
+>  		return;
+> -	return __free_pages_boot_core(page, order);
+> +	__free_pages_core(page, order);
+>  }
+>  
+>  /*
+> @@ -1472,14 +1472,14 @@ static void __init deferred_free_range(unsigned long pfn,
+>  	if (nr_pages == pageblock_nr_pages &&
+>  	    (pfn & (pageblock_nr_pages - 1)) == 0) {
+>  		set_pageblock_migratetype(page, MIGRATE_MOVABLE);
+> -		__free_pages_boot_core(page, pageblock_order);
+> +		__free_pages_core(page, pageblock_order);
+>  		return;
+>  	}
+>  
+>  	for (i = 0; i < nr_pages; i++, page++, pfn++) {
+>  		if ((pfn & (pageblock_nr_pages - 1)) == 0)
+>  			set_pageblock_migratetype(page, MIGRATE_MOVABLE);
+> -		__free_pages_boot_core(page, 0);
+> +		__free_pages_core(page, 0);
+>  	}
+>  }
+>  
 
-Applied to drm-misc-next.
-
-Noralf.
