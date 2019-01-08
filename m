@@ -7,47 +7,45 @@ X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D897C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:30:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76532C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:30:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0DDDC20827
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:30:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 416C8217D9
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:30:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546975816;
-	bh=i3NUVmaqrF8zeugH6FRTqs71W/9YIMAQR9lOxZjSmMY=;
+	s=default; t=1546975819;
+	bh=D1YlaMD8yC8AL8uiGDr3XxEhnarR+sPXAWFwaMZQUJk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=gRdiS6rab6UtRtDnSlIwJ9AIOLNgIXH8VyxIiUtbVunMDlBG9fxBkFcpis+PPYAiX
-	 +EZJ8BZnuF/ThgSzjAqt9Q0Ph/p6tIAee0LIwq4Xd0NpBsR3Ad7xxKUZYIwmIkdVpT
-	 72aLOgto29C7dN46/LhAMm17QMW0zd9wdvbg0ecc=
+	b=i8NiaWSwTUGyguIjF69LsYQLhbyTySA7y65riVmefI4LoQFbV0brjvwKaJuaXmYAS
+	 /T0A3/lb4RBaBEMGYetF3McsUCqKKK/etNS0YXXhBYowX/FPeorcQdKoXlG76dz2ix
+	 C9spM1wOIwltj+oeIBztNL/6ozO95WaRraAadDkg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730691AbfAHTaP (ORCPT
+        id S1730706AbfAHTaS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:30:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37730 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 14:30:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37744 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730543AbfAHTaI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:30:08 -0500
+        id S1730633AbfAHTaJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:30:09 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1213F20665;
-        Tue,  8 Jan 2019 19:30:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 37C7320827;
+        Tue,  8 Jan 2019 19:30:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546975806;
-        bh=i3NUVmaqrF8zeugH6FRTqs71W/9YIMAQR9lOxZjSmMY=;
+        s=default; t=1546975807;
+        bh=D1YlaMD8yC8AL8uiGDr3XxEhnarR+sPXAWFwaMZQUJk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HQM1nEnWY8VzdFpTPavux1HrRpdccK3ouK4NPNgUJ1E1nTn111SFptFnLbIJgHltf
-         BWQM/phXTdXxW7LiTueiPXsi1Z8JVjlyYwX5EXzzTGqXHQ6RvowiHlUxZwQzOQhxpc
-         5yPgRlAi0snNrvnO74emDiAmCzPEpMnKY0auovwk=
+        b=xb3G8xX0yZGgs4g4qIAI+REUs9eOvSIdxbn+D7v6jXHYaRINOLyMpgZhUg4BNMQAH
+         xejRWZ1aTwrMTAUfxdrDb+IhcWslaSrdlw3Rt0PQiMD6hXla9F85zxrohhcwJj83LV
+         v78XZtWjpIXu9acYfwOI7aeryrQTpiavb3WY3z6Q=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Anders Roxell <anders.roxell@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sasha Levin <sashal@kernel.org>, linux-serial@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 12/97] serial: set suppress_bind_attrs flag only if builtin
-Date:   Tue,  8 Jan 2019 14:28:21 -0500
-Message-Id: <20190108192949.122407-12-sashal@kernel.org>
+Cc:     Andrey Ignatov <rdna@fb.com>, Alexei Starovoitov <ast@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 13/97] bpf: Allow narrow loads with offset > 0
+Date:   Tue,  8 Jan 2019 14:28:22 -0500
+Message-Id: <20190108192949.122407-13-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108192949.122407-1-sashal@kernel.org>
 References: <20190108192949.122407-1-sashal@kernel.org>
@@ -59,126 +57,149 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Anders Roxell <anders.roxell@linaro.org>
+From: Andrey Ignatov <rdna@fb.com>
 
-[ Upstream commit 646097940ad35aa2c1f2012af932d55976a9f255 ]
+[ Upstream commit 46f53a65d2de3e1591636c22b626b09d8684fd71 ]
 
-When the test 'CONFIG_DEBUG_TEST_DRIVER_REMOVE=y' is enabled,
-arch_initcall(pl011_init) came before subsys_initcall(default_bdi_init).
-devtmpfs gets killed because we try to remove a file and decrement the
-wb reference count before the noop_backing_device_info gets initialized.
+Currently BPF verifier allows narrow loads for a context field only with
+offset zero. E.g. if there is a __u32 field then only the following
+loads are permitted:
+  * off=0, size=1 (narrow);
+  * off=0, size=2 (narrow);
+  * off=0, size=4 (full).
 
-[    0.332075] Serial: AMBA PL011 UART driver
-[    0.485276] 9000000.pl011: ttyAMA0 at MMIO 0x9000000 (irq = 39, base_baud = 0) is a PL011 rev1
-[    0.502382] console [ttyAMA0] enabled
-[    0.515710] Unable to handle kernel paging request at virtual address 0000800074c12000
-[    0.516053] Mem abort info:
-[    0.516222]   ESR = 0x96000004
-[    0.516417]   Exception class = DABT (current EL), IL = 32 bits
-[    0.516641]   SET = 0, FnV = 0
-[    0.516826]   EA = 0, S1PTW = 0
-[    0.516984] Data abort info:
-[    0.517149]   ISV = 0, ISS = 0x00000004
-[    0.517339]   CM = 0, WnR = 0
-[    0.517553] [0000800074c12000] user address but active_mm is swapper
-[    0.517928] Internal error: Oops: 96000004 [#1] PREEMPT SMP
-[    0.518305] Modules linked in:
-[    0.518839] CPU: 0 PID: 13 Comm: kdevtmpfs Not tainted 4.19.0-rc5-next-20180928-00002-g2ba39ab0cd01-dirty #82
-[    0.519307] Hardware name: linux,dummy-virt (DT)
-[    0.519681] pstate: 80000005 (Nzcv daif -PAN -UAO)
-[    0.519959] pc : __destroy_inode+0x94/0x2a8
-[    0.520212] lr : __destroy_inode+0x78/0x2a8
-[    0.520401] sp : ffff0000098c3b20
-[    0.520590] x29: ffff0000098c3b20 x28: 00000000087a3714
-[    0.520904] x27: 0000000000002000 x26: 0000000000002000
-[    0.521179] x25: ffff000009583000 x24: 0000000000000000
-[    0.521467] x23: ffff80007bb52000 x22: ffff80007bbaa7c0
-[    0.521737] x21: ffff0000093f9338 x20: 0000000000000000
-[    0.522033] x19: ffff80007bbb05d8 x18: 0000000000000400
-[    0.522376] x17: 0000000000000000 x16: 0000000000000000
-[    0.522727] x15: 0000000000000400 x14: 0000000000000400
-[    0.523068] x13: 0000000000000001 x12: 0000000000000001
-[    0.523421] x11: 0000000000000000 x10: 0000000000000970
-[    0.523749] x9 : ffff0000098c3a60 x8 : ffff80007bbab190
-[    0.524017] x7 : ffff80007bbaa880 x6 : 0000000000000c88
-[    0.524305] x5 : ffff0000093d96c8 x4 : 61c8864680b583eb
-[    0.524567] x3 : ffff0000093d6180 x2 : ffffffffffffffff
-[    0.524872] x1 : 0000800074c12000 x0 : 0000800074c12000
-[    0.525207] Process kdevtmpfs (pid: 13, stack limit = 0x(____ptrval____))
-[    0.525529] Call trace:
-[    0.525806]  __destroy_inode+0x94/0x2a8
-[    0.526108]  destroy_inode+0x34/0x88
-[    0.526370]  evict+0x144/0x1c8
-[    0.526636]  iput+0x184/0x230
-[    0.526871]  dentry_unlink_inode+0x118/0x130
-[    0.527152]  d_delete+0xd8/0xe0
-[    0.527420]  vfs_unlink+0x240/0x270
-[    0.527665]  handle_remove+0x1d8/0x330
-[    0.527875]  devtmpfsd+0x138/0x1c8
-[    0.528085]  kthread+0x14c/0x158
-[    0.528291]  ret_from_fork+0x10/0x18
-[    0.528720] Code: 92800002 aa1403e0 d538d081 8b010000 (c85f7c04)
-[    0.529367] ---[ end trace 5a3dee47727f877c ]---
+On the other hand LLVM can generate a load with offset different than
+zero that make sense from program logic point of view, but verifier
+doesn't accept it.
 
-Rework to set suppress_bind_attrs flag to avoid removing the device when
-CONFIG_DEBUG_TEST_DRIVER_REMOVE=y. This applies for pic32_uart and
-xilinx_uartps as well.
+E.g. tools/testing/selftests/bpf/sendmsg4_prog.c has code:
 
-Co-developed-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+  #define DST_IP4			0xC0A801FEU /* 192.168.1.254 */
+  ...
+  	if ((ctx->user_ip4 >> 24) == (bpf_htonl(DST_IP4) >> 24) &&
+
+where ctx is struct bpf_sock_addr.
+
+Some versions of LLVM can produce the following byte code for it:
+
+       8:       71 12 07 00 00 00 00 00         r2 = *(u8 *)(r1 + 7)
+       9:       67 02 00 00 18 00 00 00         r2 <<= 24
+      10:       18 03 00 00 00 00 00 fe 00 00 00 00 00 00 00 00         r3 = 4261412864 ll
+      12:       5d 32 07 00 00 00 00 00         if r2 != r3 goto +7 <LBB0_6>
+
+where `*(u8 *)(r1 + 7)` means narrow load for ctx->user_ip4 with size=1
+and offset=3 (7 - sizeof(ctx->user_family) = 3). This load is currently
+rejected by verifier.
+
+Verifier code that rejects such loads is in bpf_ctx_narrow_access_ok()
+what means any is_valid_access implementation, that uses the function,
+works this way, e.g. bpf_skb_is_valid_access() for __sk_buff or
+sock_addr_is_valid_access() for bpf_sock_addr.
+
+The patch makes such loads supported. Offset can be in [0; size_default)
+but has to be multiple of load size. E.g. for __u32 field the following
+loads are supported now:
+  * off=0, size=1 (narrow);
+  * off=1, size=1 (narrow);
+  * off=2, size=1 (narrow);
+  * off=3, size=1 (narrow);
+  * off=0, size=2 (narrow);
+  * off=2, size=2 (narrow);
+  * off=0, size=4 (full).
+
+Reported-by: Yonghong Song <yhs@fb.com>
+Signed-off-by: Andrey Ignatov <rdna@fb.com>
+Signed-off-by: Alexei Starovoitov <ast@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/tty/serial/amba-pl011.c    | 2 ++
- drivers/tty/serial/pic32_uart.c    | 1 +
- drivers/tty/serial/xilinx_uartps.c | 1 +
- 3 files changed, 4 insertions(+)
+ include/linux/filter.h | 16 +---------------
+ kernel/bpf/verifier.c  | 21 ++++++++++++++++-----
+ 2 files changed, 17 insertions(+), 20 deletions(-)
 
-diff --git a/drivers/tty/serial/amba-pl011.c b/drivers/tty/serial/amba-pl011.c
-index ebd33c0232e6..89ade213a1a9 100644
---- a/drivers/tty/serial/amba-pl011.c
-+++ b/drivers/tty/serial/amba-pl011.c
-@@ -2780,6 +2780,7 @@ static struct platform_driver arm_sbsa_uart_platform_driver = {
- 		.name	= "sbsa-uart",
- 		.of_match_table = of_match_ptr(sbsa_uart_of_match),
- 		.acpi_match_table = ACPI_PTR(sbsa_uart_acpi_match),
-+		.suppress_bind_attrs = IS_BUILTIN(CONFIG_SERIAL_AMBA_PL011),
- 	},
- };
+diff --git a/include/linux/filter.h b/include/linux/filter.h
+index 6791a0ac0139..ec90d5255cf7 100644
+--- a/include/linux/filter.h
++++ b/include/linux/filter.h
+@@ -665,24 +665,10 @@ static inline u32 bpf_ctx_off_adjust_machine(u32 size)
+ 	return size;
+ }
  
-@@ -2808,6 +2809,7 @@ static struct amba_driver pl011_driver = {
- 	.drv = {
- 		.name	= "uart-pl011",
- 		.pm	= &pl011_dev_pm_ops,
-+		.suppress_bind_attrs = IS_BUILTIN(CONFIG_SERIAL_AMBA_PL011),
- 	},
- 	.id_table	= pl011_ids,
- 	.probe		= pl011_probe,
-diff --git a/drivers/tty/serial/pic32_uart.c b/drivers/tty/serial/pic32_uart.c
-index fd80d999308d..0bdf1687983f 100644
---- a/drivers/tty/serial/pic32_uart.c
-+++ b/drivers/tty/serial/pic32_uart.c
-@@ -919,6 +919,7 @@ static struct platform_driver pic32_uart_platform_driver = {
- 	.driver		= {
- 		.name	= PIC32_DEV_NAME,
- 		.of_match_table	= of_match_ptr(pic32_serial_dt_ids),
-+		.suppress_bind_attrs = IS_BUILTIN(CONFIG_SERIAL_PIC32),
- 	},
- };
+-static inline bool bpf_ctx_narrow_align_ok(u32 off, u32 size_access,
+-					   u32 size_default)
+-{
+-	size_default = bpf_ctx_off_adjust_machine(size_default);
+-	size_access  = bpf_ctx_off_adjust_machine(size_access);
+-
+-#ifdef __LITTLE_ENDIAN
+-	return (off & (size_default - 1)) == 0;
+-#else
+-	return (off & (size_default - 1)) + size_access == size_default;
+-#endif
+-}
+-
+ static inline bool
+ bpf_ctx_narrow_access_ok(u32 off, u32 size, u32 size_default)
+ {
+-	return bpf_ctx_narrow_align_ok(off, size, size_default) &&
+-	       size <= size_default && (size & (size - 1)) == 0;
++	return size <= size_default && (size & (size - 1)) == 0;
+ }
  
-diff --git a/drivers/tty/serial/xilinx_uartps.c b/drivers/tty/serial/xilinx_uartps.c
-index a48f19b1b88f..e5e9924ed7fb 100644
---- a/drivers/tty/serial/xilinx_uartps.c
-+++ b/drivers/tty/serial/xilinx_uartps.c
-@@ -1608,6 +1608,7 @@ static struct platform_driver cdns_uart_platform_driver = {
- 		.name = CDNS_UART_NAME,
- 		.of_match_table = cdns_uart_of_match,
- 		.pm = &cdns_uart_dev_pm_ops,
-+		.suppress_bind_attrs = IS_BUILTIN(CONFIG_SERIAL_XILINX_PS_UART),
- 		},
- };
+ #define bpf_classic_proglen(fprog) (fprog->len * sizeof(fprog->filter[0]))
+diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+index 2954e4b3abd5..89cea3ed535d 100644
+--- a/kernel/bpf/verifier.c
++++ b/kernel/bpf/verifier.c
+@@ -5341,10 +5341,10 @@ static int convert_ctx_accesses(struct bpf_verifier_env *env)
+ 	int i, cnt, size, ctx_field_size, delta = 0;
+ 	const int insn_cnt = env->prog->len;
+ 	struct bpf_insn insn_buf[16], *insn;
++	u32 target_size, size_default, off;
+ 	struct bpf_prog *new_prog;
+ 	enum bpf_access_type type;
+ 	bool is_narrower_load;
+-	u32 target_size;
  
+ 	if (ops->gen_prologue) {
+ 		cnt = ops->gen_prologue(insn_buf, env->seen_direct_write,
+@@ -5421,9 +5421,9 @@ static int convert_ctx_accesses(struct bpf_verifier_env *env)
+ 		 * we will apply proper mask to the result.
+ 		 */
+ 		is_narrower_load = size < ctx_field_size;
++		size_default = bpf_ctx_off_adjust_machine(ctx_field_size);
++		off = insn->off;
+ 		if (is_narrower_load) {
+-			u32 size_default = bpf_ctx_off_adjust_machine(ctx_field_size);
+-			u32 off = insn->off;
+ 			u8 size_code;
+ 
+ 			if (type == BPF_WRITE) {
+@@ -5451,12 +5451,23 @@ static int convert_ctx_accesses(struct bpf_verifier_env *env)
+ 		}
+ 
+ 		if (is_narrower_load && size < target_size) {
+-			if (ctx_field_size <= 4)
++			u8 shift = (off & (size_default - 1)) * 8;
++
++			if (ctx_field_size <= 4) {
++				if (shift)
++					insn_buf[cnt++] = BPF_ALU32_IMM(BPF_RSH,
++									insn->dst_reg,
++									shift);
+ 				insn_buf[cnt++] = BPF_ALU32_IMM(BPF_AND, insn->dst_reg,
+ 								(1 << size * 8) - 1);
+-			else
++			} else {
++				if (shift)
++					insn_buf[cnt++] = BPF_ALU64_IMM(BPF_RSH,
++									insn->dst_reg,
++									shift);
+ 				insn_buf[cnt++] = BPF_ALU64_IMM(BPF_AND, insn->dst_reg,
+ 								(1 << size * 8) - 1);
++			}
+ 		}
+ 
+ 		new_prog = bpf_patch_insn_data(env, i + delta, insn_buf, cnt);
 -- 
 2.19.1
 
