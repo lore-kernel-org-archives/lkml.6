@@ -2,51 +2,68 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-18.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2543AC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:54:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EECB3C43612
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:54:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D8F8F206BB
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:54:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AF5C820827
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:54:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546977242;
-	bh=qqtGQgUzx6kn7kcwTK8uVxR+rzlHb3XJGlWwRnppqU0=;
+	s=default; t=1546977246;
+	bh=eFvS2/PolwWP3yygMC6lFomROpSUAPX2f8a0KOTQTOk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=FHhbBMQnLrAy7GBQxzXJgQzvxsabSwP50WRpHb/UhdnDESu5b/25v1/bGhl2C7QEa
-	 pG4mefA15xtC5mVCFyez+VZLB99ueobvqMWkWkR/Z0/kdT0iTtDR6rXeoChkVSWU/N
-	 I8PCX8LUr1ADCSnuMhYF2U4oBbU9LKiYskDHWU24=
+	b=fTH/Ay9KwuXiam/+qaFmToRuT75tuaPjSEBkZm0fqRoCx/II9OghzoZXebMJn8xtl
+	 ROGMB1tfhXi+xrrYVJwfmNWqOOeZgex19JxjEUpyhTID+/WYwXVsn2UkZ8EfC61nMu
+	 VSOQz3Xb8em4C6vp1mMrQ0IM5o9QX6TV2csKL0hI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732268AbfAHTyB (ORCPT
+        id S1730885AbfAHTat (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:54:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38694 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730160AbfAHTat (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 8 Jan 2019 14:30:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38558 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730792AbfAHTar (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:30:47 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BAF3320645;
-        Tue,  8 Jan 2019 19:30:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BC50620665;
+        Tue,  8 Jan 2019 19:30:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546975849;
-        bh=qqtGQgUzx6kn7kcwTK8uVxR+rzlHb3XJGlWwRnppqU0=;
+        s=default; t=1546975846;
+        bh=eFvS2/PolwWP3yygMC6lFomROpSUAPX2f8a0KOTQTOk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ef+SCDYr9G35ESuK3XUBixyu1SgGe52iJyybbGSsTzBg9h+qXTyU+peGPuAD4QnP/
-         bA3/aW+doFNywZGhTgy0X9bLJpzAZ3qDbbIwg4hGE2yW8XVd/VrXF4lP9nb2xmw44l
-         as+QaeTAW0hqNASEHHk/8FOUUCAbj2BH3HJQRUoY=
+        b=Vaf+gEGr9SuVedjQbTNnaN+sVP/q9ZVZ5UCWo4gh8mlbG6e5jTzDsut6LypXO54cu
+         n0qBpSFVWC5+Kzb/nqK3WamDiHr0I8OIthPrBHpejWBUh46pLLP4YPiwQIn8B1HFUn
+         195beq9H3zm47AJjnuiWJjtfdvNx1zgpS83lsbIw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        Kees Cook <keescook@chromium.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 35/97] pstore/ram: Do not treat empty buffers as valid
-Date:   Tue,  8 Jan 2019 14:28:44 -0500
-Message-Id: <20190108192949.122407-35-sashal@kernel.org>
+Cc:     Nathan Chancellor <natechancellor@gmail.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arend van Spriel <arend.vanspriel@broadcom.com>,
+        Bhupesh Sharma <bhsharma@redhat.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Eric Snowberg <eric.snowberg@oracle.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Joe Perches <joe@perches.com>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Julien Thierry <julien.thierry@arm.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Matt Fleming <matt@codeblueprint.co.uk>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        YiFei Zhu <zhuyifei1999@gmail.com>, linux-efi@vger.kernel.org,
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 32/97] efi/libstub: Disable some warnings for x86{,_64}
+Date:   Tue,  8 Jan 2019 14:28:41 -0500
+Message-Id: <20190108192949.122407-32-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108192949.122407-1-sashal@kernel.org>
 References: <20190108192949.122407-1-sashal@kernel.org>
@@ -58,51 +75,76 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-[ Upstream commit 30696378f68a9e3dad6bfe55938b112e72af00c2 ]
+[ Upstream commit 3db5e0ba8b8f4aee631d7ee04b7a11c56cfdc213 ]
 
-The ramoops backend currently calls persistent_ram_save_old() even
-if a buffer is empty. While this appears to work, it is does not seem
-like the right thing to do and could lead to future bugs so lets avoid
-that. It also prevents misleading prints in the logs which claim the
-buffer is valid.
+When building the kernel with Clang, some disabled warnings appear
+because this Makefile overrides KBUILD_CFLAGS for x86{,_64}. Add them to
+this list so that the build is clean again.
 
-I got something like:
+-Wpointer-sign was disabled for the whole kernel before the beginning of Git history.
 
-	found existing buffer, size 0, start 0
+-Waddress-of-packed-member was disabled for the whole kernel and for
+the early boot code in these commits:
 
-When I was expecting:
+  bfb38988c51e ("kbuild: clang: Disable 'address-of-packed-member' warning")
+  20c6c1890455 ("x86/boot: Disable the address-of-packed-member compiler warning").
 
-	no valid data in buffer (sig = ...)
+-Wgnu was disabled for the whole kernel and for the early boot code in
+these commits:
 
-This bails out early (and reports with pr_debug()), since it's an
-acceptable state.
+  61163efae020 ("kbuild: LLVMLinux: Add Kbuild support for building kernel with Clang")
+  6c3b56b19730 ("x86/boot: Disable Clang warnings about GNU extensions").
 
-Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
-Co-developed-by: Kees Cook <keescook@chromium.org>
-Signed-off-by: Kees Cook <keescook@chromium.org>
+ [ mingo: Made the changelog more readable. ]
+
+Tested-by: Sedat Dilek <sedat.dilek@gmail.com>
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Reviewed-by: Sedat Dilek <sedat.dilek@gmail.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Arend van Spriel <arend.vanspriel@broadcom.com>
+Cc: Bhupesh Sharma <bhsharma@redhat.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Eric Snowberg <eric.snowberg@oracle.com>
+Cc: Hans de Goede <hdegoede@redhat.com>
+Cc: Joe Perches <joe@perches.com>
+Cc: Jon Hunter <jonathanh@nvidia.com>
+Cc: Julien Thierry <julien.thierry@arm.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Marc Zyngier <marc.zyngier@arm.com>
+Cc: Matt Fleming <matt@codeblueprint.co.uk>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: YiFei Zhu <zhuyifei1999@gmail.com>
+Cc: linux-efi@vger.kernel.org
+Link: http://lkml.kernel.org/r/20181129171230.18699-8-ard.biesheuvel@linaro.org
+Link: https://github.com/ClangBuiltLinux/linux/issues/112
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/pstore/ram_core.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/firmware/efi/libstub/Makefile | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/fs/pstore/ram_core.c b/fs/pstore/ram_core.c
-index 0792595ebcfb..3c777ec80d47 100644
---- a/fs/pstore/ram_core.c
-+++ b/fs/pstore/ram_core.c
-@@ -496,6 +496,11 @@ static int persistent_ram_post_init(struct persistent_ram_zone *prz, u32 sig,
- 	sig ^= PERSISTENT_RAM_SIG;
+diff --git a/drivers/firmware/efi/libstub/Makefile b/drivers/firmware/efi/libstub/Makefile
+index c51627660dbb..d9845099635e 100644
+--- a/drivers/firmware/efi/libstub/Makefile
++++ b/drivers/firmware/efi/libstub/Makefile
+@@ -9,7 +9,10 @@ cflags-$(CONFIG_X86_32)		:= -march=i386
+ cflags-$(CONFIG_X86_64)		:= -mcmodel=small
+ cflags-$(CONFIG_X86)		+= -m$(BITS) -D__KERNEL__ -O2 \
+ 				   -fPIC -fno-strict-aliasing -mno-red-zone \
+-				   -mno-mmx -mno-sse -fshort-wchar
++				   -mno-mmx -mno-sse -fshort-wchar \
++				   -Wno-pointer-sign \
++				   $(call cc-disable-warning, address-of-packed-member) \
++				   $(call cc-disable-warning, gnu)
  
- 	if (prz->buffer->sig == sig) {
-+		if (buffer_size(prz) == 0) {
-+			pr_debug("found existing empty buffer\n");
-+			return 0;
-+		}
-+
- 		if (buffer_size(prz) > prz->buffer_size ||
- 		    buffer_start(prz) > buffer_size(prz))
- 			pr_info("found existing invalid buffer, size %zu, start %zu\n",
+ # arm64 uses the full KBUILD_CFLAGS so it's necessary to explicitly
+ # disable the stackleak plugin
 -- 
 2.19.1
 
