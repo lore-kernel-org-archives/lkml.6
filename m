@@ -7,44 +7,52 @@ X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55C02C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:45:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BEADC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:45:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 251BC206BB
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:45:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2C1B82063F
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:45:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546976743;
-	bh=46e5r+222hYxU3wO2RCkKFkn2G9HKt3NNFdPEfzki5w=;
+	s=default; t=1546976746;
+	bh=pIxSMCGR6zt2ic3xCjfTFwS47B/3MBxgl1RJy5w5LUs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=tLPtBTaTgCSYBBvndEVyf0mOuVp2Pp0dnQLzGvKvv/OI6CnaPVb4eFUU1r8a8O4/Y
-	 ybintEfPm2a3zRV8ab1lO6bydJu/Z6UnIfa5FmXUqDtT+cEqLVtDic1JS01JMbkYei
-	 lXR9qtQhjUm8v1Mi0UijBkNt9dDpOBHliUQJEM2k=
+	b=LCis2po+BD6bdSatSlM9KLKDy753HGxS0F8cQC/hx6oyUpM3WV+10qnXop3z082f1
+	 ocEvy/MP1rexdQVlOxr8Vnjzfz+4KBcMoUJhfTKs0JD0piEmNre20rpY2ucVMr0BLW
+	 YZrCHc4ztDhqR0QfZOtHaAOWtZQ91Sydu95aqymM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731632AbfAHTdQ (ORCPT
+        id S1732709AbfAHTpp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:33:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41980 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 14:45:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42064 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730489AbfAHTdL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:33:11 -0500
+        id S1731621AbfAHTdQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:33:16 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A71C4205C9;
-        Tue,  8 Jan 2019 19:33:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5FEE82063F;
+        Tue,  8 Jan 2019 19:33:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546975990;
-        bh=46e5r+222hYxU3wO2RCkKFkn2G9HKt3NNFdPEfzki5w=;
+        s=default; t=1546975995;
+        bh=pIxSMCGR6zt2ic3xCjfTFwS47B/3MBxgl1RJy5w5LUs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RvQL9QGqXWZrJT4F7o9jsoikiDrfDJRUPe8NRLryOmdTQiXvlDVsk3bTP1pzBs4EX
-         lPybxRJR/+mDU0f9vp/Tn40R+q9Pyuj7lGPbe/DRXKHf/Ge/j9udksOQWLjXU96z3F
-         iDb7/T8Y282HlnKmBqdnJod1k+wppv568vVuOB8o=
+        b=FhlkmSSQmA7SihwAbjvOLvsCcXdAQKkxGu+JoSx9akQ0Dyp8/1OgVqlAGs/ucMcEB
+         026BXy8PbEX8qS95vFwQv0+SvIDxYPR/HCVnjxWjobpPvkiF1V9VoFP/C1Foa3EvQ7
+         Rgsu8pEcrRcUnmewY2zc3opP2fYfKkPVBwNLzwpc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Will Deacon <will.deacon@arm.com>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 28/53] arm64: Fix minor issues with the dcache_by_line_op macro
-Date:   Tue,  8 Jan 2019 14:31:56 -0500
-Message-Id: <20190108193222.123316-28-sashal@kernel.org>
+Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Waiman Long <longman@redhat.com>,
+        Dmitry Safonov <dima@arista.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Sasha Levin <sashal@kernel.org>, linux-serial@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 33/53] tty/serial: do not free trasnmit buffer page under port lock
+Date:   Tue,  8 Jan 2019 14:32:01 -0500
+Message-Id: <20190108193222.123316-33-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108193222.123316-1-sashal@kernel.org>
 References: <20190108193222.123316-1-sashal@kernel.org>
@@ -56,114 +64,114 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Will Deacon <will.deacon@arm.com>
+From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
 
-[ Upstream commit 33309ecda0070506c49182530abe7728850ebe78 ]
+[ Upstream commit d72402145ace0697a6a9e8e75a3de5bf3375f78d ]
 
-The dcache_by_line_op macro suffers from a couple of small problems:
+LKP has hit yet another circular locking dependency between uart
+console drivers and debugobjects [1]:
 
-First, the GAS directives that are currently being used rely on
-assembler behavior that is not documented, and probably not guaranteed
-to produce the correct behavior going forward. As a result, we end up
-with some undefined symbols in cache.o:
+     CPU0                                    CPU1
 
-$ nm arch/arm64/mm/cache.o
-         ...
-         U civac
-         ...
-         U cvac
-         U cvap
-         U cvau
+                                            rhltable_init()
+                                             __init_work()
+                                              debug_object_init
+     uart_shutdown()                          /* db->lock */
+      /* uart_port->lock */                    debug_print_object()
+       free_page()                              printk()
+                                                 call_console_drivers()
+        debug_check_no_obj_freed()                /* uart_port->lock */
+         /* db->lock */
+          debug_print_object()
 
-This is due to the fact that the comparisons used to select the
-operation type in the dcache_by_line_op macro are comparing symbols
-not strings, and even though it seems that GAS is doing the right
-thing here (undefined symbols by the same name are equal to each
-other), it seems unwise to rely on this.
+So there are two dependency chains:
+	uart_port->lock -> db->lock
+And
+	db->lock -> uart_port->lock
 
-Second, when patching in a DC CVAP instruction on CPUs that support it,
-the fallback path consists of a DC CVAU instruction which may be
-affected by CPU errata that require ARM64_WORKAROUND_CLEAN_CACHE.
+This particular circular locking dependency can be addressed in several
+ways:
 
-Solve these issues by unrolling the various maintenance routines and
-using the conditional directives that are documented as operating on
-strings. To avoid the complexity of nested alternatives, we move the
-DC CVAP patching to __clean_dcache_area_pop, falling back to a branch
-to __clean_dcache_area_poc if DCPOP is not supported by the CPU.
+a) One way would be to move debug_print_object() out of db->lock scope
+   and, thus, break the db->lock -> uart_port->lock chain.
+b) Another one would be to free() transmit buffer page out of db->lock
+   in UART code; which is what this patch does.
 
-Reported-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Suggested-by: Robin Murphy <robin.murphy@arm.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
+It makes sense to apply a) and b) independently: there are too many things
+going on behind free(), none of which depend on uart_port->lock.
+
+The patch fixes transmit buffer page free() in uart_shutdown() and,
+additionally, in uart_port_startup() (as was suggested by Dmitry Safonov).
+
+[1] https://lore.kernel.org/lkml/20181211091154.GL23332@shao2-debian/T/#u
+Signed-off-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Reviewed-by: Petr Mladek <pmladek@suse.com>
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Jiri Slaby <jslaby@suse.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Waiman Long <longman@redhat.com>
+Cc: Dmitry Safonov <dima@arista.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/include/asm/assembler.h | 30 ++++++++++++++++++------------
- arch/arm64/mm/cache.S              |  3 +++
- 2 files changed, 21 insertions(+), 12 deletions(-)
+ drivers/tty/serial/serial_core.c | 22 ++++++++++++++++------
+ 1 file changed, 16 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm64/include/asm/assembler.h b/arch/arm64/include/asm/assembler.h
-index 66aea4aa455d..02d73d83f0de 100644
---- a/arch/arm64/include/asm/assembler.h
-+++ b/arch/arm64/include/asm/assembler.h
-@@ -373,27 +373,33 @@ alternative_endif
-  * 	size:		size of the region
-  * 	Corrupts:	kaddr, size, tmp1, tmp2
-  */
-+	.macro __dcache_op_workaround_clean_cache, op, kaddr
-+alternative_if_not ARM64_WORKAROUND_CLEAN_CACHE
-+	dc	\op, \kaddr
-+alternative_else
-+	dc	civac, \kaddr
-+alternative_endif
-+	.endm
+diff --git a/drivers/tty/serial/serial_core.c b/drivers/tty/serial/serial_core.c
+index 6db8844ef3ec..543d0f95f094 100644
+--- a/drivers/tty/serial/serial_core.c
++++ b/drivers/tty/serial/serial_core.c
+@@ -218,10 +218,15 @@ static int uart_port_startup(struct tty_struct *tty, struct uart_state *state,
+ 	if (!state->xmit.buf) {
+ 		state->xmit.buf = (unsigned char *) page;
+ 		uart_circ_clear(&state->xmit);
++		uart_port_unlock(uport, flags);
+ 	} else {
++		uart_port_unlock(uport, flags);
++		/*
++		 * Do not free() the page under the port lock, see
++		 * uart_shutdown().
++		 */
+ 		free_page(page);
+ 	}
+-	uart_port_unlock(uport, flags);
+ 
+ 	retval = uport->ops->startup(uport);
+ 	if (retval == 0) {
+@@ -281,6 +286,7 @@ static void uart_shutdown(struct tty_struct *tty, struct uart_state *state)
+ 	struct uart_port *uport = uart_port_check(state);
+ 	struct tty_port *port = &state->port;
+ 	unsigned long flags = 0;
++	char *xmit_buf = NULL;
+ 
+ 	/*
+ 	 * Set the TTY IO error marker
+@@ -311,14 +317,18 @@ static void uart_shutdown(struct tty_struct *tty, struct uart_state *state)
+ 	tty_port_set_suspended(port, 0);
+ 
+ 	/*
+-	 * Free the transmit buffer page.
++	 * Do not free() the transmit buffer page under the port lock since
++	 * this can create various circular locking scenarios. For instance,
++	 * console driver may need to allocate/free a debug object, which
++	 * can endup in printk() recursion.
+ 	 */
+ 	uart_port_lock(state, flags);
+-	if (state->xmit.buf) {
+-		free_page((unsigned long)state->xmit.buf);
+-		state->xmit.buf = NULL;
+-	}
++	xmit_buf = state->xmit.buf;
++	state->xmit.buf = NULL;
+ 	uart_port_unlock(uport, flags);
 +
- 	.macro dcache_by_line_op op, domain, kaddr, size, tmp1, tmp2
- 	dcache_line_size \tmp1, \tmp2
- 	add	\size, \kaddr, \size
- 	sub	\tmp2, \tmp1, #1
- 	bic	\kaddr, \kaddr, \tmp2
- 9998:
--	.if	(\op == cvau || \op == cvac)
--alternative_if_not ARM64_WORKAROUND_CLEAN_CACHE
--	dc	\op, \kaddr
--alternative_else
--	dc	civac, \kaddr
--alternative_endif
--	.elseif	(\op == cvap)
--alternative_if ARM64_HAS_DCPOP
--	sys 3, c7, c12, 1, \kaddr	// dc cvap
--alternative_else
--	dc	cvac, \kaddr
--alternative_endif
-+	.ifc	\op, cvau
-+	__dcache_op_workaround_clean_cache \op, \kaddr
-+	.else
-+	.ifc	\op, cvac
-+	__dcache_op_workaround_clean_cache \op, \kaddr
-+	.else
-+	.ifc	\op, cvap
-+	sys	3, c7, c12, 1, \kaddr	// dc cvap
- 	.else
- 	dc	\op, \kaddr
- 	.endif
-+	.endif
-+	.endif
- 	add	\kaddr, \kaddr, \tmp1
- 	cmp	\kaddr, \size
- 	b.lo	9998b
-diff --git a/arch/arm64/mm/cache.S b/arch/arm64/mm/cache.S
-index 91464e7f77cc..c1e8f3c6ffd5 100644
---- a/arch/arm64/mm/cache.S
-+++ b/arch/arm64/mm/cache.S
-@@ -181,6 +181,9 @@ ENDPROC(__dma_clean_area)
-  *	- size    - size in question
-  */
- ENTRY(__clean_dcache_area_pop)
-+	alternative_if_not ARM64_HAS_DCPOP
-+	b	__clean_dcache_area_poc
-+	alternative_else_nop_endif
- 	dcache_by_line_op cvap, sy, x0, x1, x2, x3
- 	ret
- ENDPIPROC(__clean_dcache_area_pop)
++	if (xmit_buf)
++		free_page((unsigned long)xmit_buf);
+ }
+ 
+ /**
 -- 
 2.19.1
 
