@@ -2,106 +2,146 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7949C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:37:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E1F4C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:37:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A60A5205C9
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:37:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6DA56205C9
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:37:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1546976251;
+	bh=EFLKP2e2c8SXlFc0rCCbWnZNRG+2J58K4nGwMmynqBI=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=Ush6KFTqUf6gyOAkUyHlUOFWClf8gKjwbf2Amb9hVubR8oysirIzL432In8R1uT/w
+	 OCGyuvQ1URu2G+9svA13T7W+pilX4x71cdZUG/9pHi3VfesBGv0+Sv7+rB3XQgJUkx
+	 a5SMCMwnhVIExciAZKdEiA5L1YXYyVDlwGbQsx/8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732239AbfAHThU (ORCPT
+        id S1732543AbfAHTha (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:37:20 -0500
-Received: from gateway36.websitewelcome.com ([192.185.197.22]:28057 "EHLO
-        gateway36.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731866AbfAHThT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:37:19 -0500
-Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
-        by gateway36.websitewelcome.com (Postfix) with ESMTP id D5AAD40164969
-        for <linux-kernel@vger.kernel.org>; Tue,  8 Jan 2019 12:49:20 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id gxBegrLFPdnCegxBegxK7W; Tue, 08 Jan 2019 13:37:18 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.130.205] (port=57412 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1ggxBd-003gLX-F1; Tue, 08 Jan 2019 13:37:17 -0600
-Date:   Tue, 8 Jan 2019 13:37:14 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] bio-integrity: use struct_size() in kmalloc()
-Message-ID: <20190108193714.GA24832@embeddedor>
+        Tue, 8 Jan 2019 14:37:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44582 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730069AbfAHTfn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:35:43 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0A57C20827;
+        Tue,  8 Jan 2019 19:35:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1546976141;
+        bh=EFLKP2e2c8SXlFc0rCCbWnZNRG+2J58K4nGwMmynqBI=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=r8cqjoPW1H6cxlxlovh+4q0VbIjnrdnt/Yl5hxsPNKb9SdcYzbBH2BsiatkZAitoq
+         VoFNZrqjCq8myKKTgdQzYNFMS7OmbEFp6A+vh6o1Oq08Vznt1HGvnvZ7Cl2fMujkk/
+         cm4g+P3N8TkjXsNgCY/cmcvCemrmyt31E4dmZgTc=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Nathan Chancellor <natechancellor@gmail.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org,
+        linux1394-devel@lists.sourceforge.net
+Subject: [PATCH AUTOSEL 3.18 06/19] media: firewire: Fix app_info parameter type in avc_ca{,_app}_info
+Date:   Tue,  8 Jan 2019 14:35:18 -0500
+Message-Id: <20190108193534.124555-6-sashal@kernel.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190108193534.124555-1-sashal@kernel.org>
+References: <20190108193534.124555-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.130.205
-X-Source-L: No
-X-Exim-ID: 1ggxBd-003gLX-F1
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.130.205]:57412
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 7
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-One of the more common cases of allocation size calculations is finding
-the size of a structure that has a zero-sized array at the end, along
-with memory for some number of elements for that array. For example:
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-struct foo {
-    int stuff;
-    void *entry[];
-};
+[ Upstream commit b2e9a4eda11fd2cb1e6714e9ad3f455c402568ff ]
 
-instance = kmalloc(sizeof(struct foo) + sizeof(void *) * count, GFP_KERNEL);
+Clang warns:
 
-Instead of leaving these open-coded and prone to type mistakes, we can
-now use the new struct_size() helper:
+drivers/media/firewire/firedtv-avc.c:999:45: warning: implicit
+conversion from 'int' to 'char' changes value from 159 to -97
+[-Wconstant-conversion]
+        app_info[0] = (EN50221_TAG_APP_INFO >> 16) & 0xff;
+                    ~ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~
+drivers/media/firewire/firedtv-avc.c:1000:45: warning: implicit
+conversion from 'int' to 'char' changes value from 128 to -128
+[-Wconstant-conversion]
+        app_info[1] = (EN50221_TAG_APP_INFO >>  8) & 0xff;
+                    ~ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~
+drivers/media/firewire/firedtv-avc.c:1040:44: warning: implicit
+conversion from 'int' to 'char' changes value from 159 to -97
+[-Wconstant-conversion]
+        app_info[0] = (EN50221_TAG_CA_INFO >> 16) & 0xff;
+                    ~ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~
+drivers/media/firewire/firedtv-avc.c:1041:44: warning: implicit
+conversion from 'int' to 'char' changes value from 128 to -128
+[-Wconstant-conversion]
+        app_info[1] = (EN50221_TAG_CA_INFO >>  8) & 0xff;
+                    ~ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~
+4 warnings generated.
 
-instance = kmalloc(struct_size(instance, entry, count), GFP_KERNEL);
+Change app_info's type to unsigned char to match the type of the
+member msg in struct ca_msg, which is the only thing passed into the
+app_info parameter in this function.
 
-This code was detected with the help of Coccinelle.
+Link: https://github.com/ClangBuiltLinux/linux/issues/105
 
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- block/bio-integrity.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/media/firewire/firedtv-avc.c | 6 ++++--
+ drivers/media/firewire/firedtv.h     | 6 ++++--
+ 2 files changed, 8 insertions(+), 4 deletions(-)
 
-diff --git a/block/bio-integrity.c b/block/bio-integrity.c
-index 1b633a3526d4..ae8c68ecc0ca 100644
---- a/block/bio-integrity.c
-+++ b/block/bio-integrity.c
-@@ -57,8 +57,8 @@ struct bio_integrity_payload *bio_integrity_alloc(struct bio *bio,
- 	unsigned inline_vecs;
+diff --git a/drivers/media/firewire/firedtv-avc.c b/drivers/media/firewire/firedtv-avc.c
+index 251a556112a9..280b5ffea592 100644
+--- a/drivers/media/firewire/firedtv-avc.c
++++ b/drivers/media/firewire/firedtv-avc.c
+@@ -968,7 +968,8 @@ static int get_ca_object_length(struct avc_response_frame *r)
+ 	return r->operand[7];
+ }
  
- 	if (!bs || !mempool_initialized(&bs->bio_integrity_pool)) {
--		bip = kmalloc(sizeof(struct bio_integrity_payload) +
--			      sizeof(struct bio_vec) * nr_vecs, gfp_mask);
-+		bip = kmalloc(struct_size(bip, bip_inline_vecs, nr_vecs),
-+			      gfp_mask);
- 		inline_vecs = nr_vecs;
- 	} else {
- 		bip = mempool_alloc(&bs->bio_integrity_pool, gfp_mask);
+-int avc_ca_app_info(struct firedtv *fdtv, char *app_info, unsigned int *len)
++int avc_ca_app_info(struct firedtv *fdtv, unsigned char *app_info,
++		    unsigned int *len)
+ {
+ 	struct avc_command_frame *c = (void *)fdtv->avc_data;
+ 	struct avc_response_frame *r = (void *)fdtv->avc_data;
+@@ -1009,7 +1010,8 @@ int avc_ca_app_info(struct firedtv *fdtv, char *app_info, unsigned int *len)
+ 	return ret;
+ }
+ 
+-int avc_ca_info(struct firedtv *fdtv, char *app_info, unsigned int *len)
++int avc_ca_info(struct firedtv *fdtv, unsigned char *app_info,
++		unsigned int *len)
+ {
+ 	struct avc_command_frame *c = (void *)fdtv->avc_data;
+ 	struct avc_response_frame *r = (void *)fdtv->avc_data;
+diff --git a/drivers/media/firewire/firedtv.h b/drivers/media/firewire/firedtv.h
+index c2ba085e0d20..54853159482e 100644
+--- a/drivers/media/firewire/firedtv.h
++++ b/drivers/media/firewire/firedtv.h
+@@ -124,8 +124,10 @@ int avc_lnb_control(struct firedtv *fdtv, char voltage, char burst,
+ 		    struct dvb_diseqc_master_cmd *diseqcmd);
+ void avc_remote_ctrl_work(struct work_struct *work);
+ int avc_register_remote_control(struct firedtv *fdtv);
+-int avc_ca_app_info(struct firedtv *fdtv, char *app_info, unsigned int *len);
+-int avc_ca_info(struct firedtv *fdtv, char *app_info, unsigned int *len);
++int avc_ca_app_info(struct firedtv *fdtv, unsigned char *app_info,
++		    unsigned int *len);
++int avc_ca_info(struct firedtv *fdtv, unsigned char *app_info,
++		unsigned int *len);
+ int avc_ca_reset(struct firedtv *fdtv);
+ int avc_ca_pmt(struct firedtv *fdtv, char *app_info, int length);
+ int avc_ca_get_time_date(struct firedtv *fdtv, int *interval);
 -- 
-2.20.1
+2.19.1
 
