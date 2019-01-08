@@ -1,178 +1,204 @@
 Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=1.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FSL_HELO_FAKE,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-13.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DB98C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:36:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F083C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:38:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 042A720827
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:36:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5A14920883
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:38:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mdKw8BcY"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="T83jVv5D"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729186AbfAHUgR (ORCPT
+        id S1729372AbfAHUiR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 15:36:17 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:42737 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728313AbfAHUgQ (ORCPT
+        Tue, 8 Jan 2019 15:38:17 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:45663 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728945AbfAHUiR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 15:36:16 -0500
-Received: by mail-pl1-f196.google.com with SMTP id y1so2429312plp.9
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jan 2019 12:36:15 -0800 (PST)
+        Tue, 8 Jan 2019 15:38:17 -0500
+Received: by mail-pl1-f195.google.com with SMTP id a14so2423086plm.12
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jan 2019 12:38:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=chromium.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=HAiNRxjnamjJs7foBFRydsfbmARLDQ7hr/Drh+QCbSE=;
-        b=mdKw8BcY9LnhFjtdwY8huJ6ltRHDFB/UWcjqrz/TDSihtSk7IgEuX7qyRFOnpw8mkj
-         MA9FuyZV8ZBcbl5mtqxHdqzB23ehuMMga/JdfwTz/jwTWrgvwR9I2swP6pIh1qQfJyTX
-         gxS0/qiSOF9VnweaBW3xXzO5kxml+9Gn7EgrKaoxhQrNdcVhXL60nBtMfmBGi9BgW/L8
-         n87mSwGL4Fdh2JnOf32V4sGrp8qhlAKXBkDsaoYJmFxmgqQC2qoIhZBDTZAhIHCKQd/h
-         Z+zJBdDAF+Nf0LtfQMNYgu/ER3bbWVqpfAfI0EMiWaO6epxf1xJnLZRAyvFa2/QUmDzf
-         3IhA==
+        bh=JptQFPXaFj+7cZrMFm7qMV8jqKhElIWw3ImK4Vrev2c=;
+        b=T83jVv5DjVAvoask1c+VzTvqxrHAUa4UlVbtYGHI4HALo20BC09WjB5HmNtWWZD9sc
+         IlI4hucVom3wXOTVMMqxHhjIq2nnX3EQV+yhmLIGtUrodvHc3f6fCwHKaLIHsQAGS2qh
+         jrTWx4DUojL9f46yoQRU7galP/MpryrR81mbE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=HAiNRxjnamjJs7foBFRydsfbmARLDQ7hr/Drh+QCbSE=;
-        b=Ias2hQgqArq2L9TJE91bnJMj6B5NIducYhH1WLsZbf7SD0CRFqPbYVi+j8TH+Fsn8i
-         JzzdB28LcJLbzmXWhIKQsunJ4NdEm/A5JjksIb2WCdWSJmt9wyAW2AwYvKsvgQT4T9VO
-         KhFyAAciHWoXI1e6IPBWufRstrkxfEMJglCzTlS8BS0Fx2tzfFptimvA9fnC25vVBJCj
-         LNLNkS4pLC/qU6yOgSb1pVj7/nhxkegn94qANLElCvWKg7Zqpy8xUtXrwmQwUrqfvyHb
-         dN+PaR2XObHlpLQkbbghJ2CkCo/vwbvnZY7AfvL/8Mdg7kpjBAsmurZHq6d0dX1VIQJS
-         xrTg==
-X-Gm-Message-State: AJcUukc384iYTVmYDadtDPEqimPeti58+HEINCTdcPmkIyu5SGO2Rg3W
-        uRTEKULz+23e9a59OzCBTUE=
-X-Google-Smtp-Source: ALg8bN722StuzKpHZu+8lBWaoGP9XNNasah1TVrM96U5kg1GtZLNhvFJUZGWRZJusWjV7xXY7yDTHg==
-X-Received: by 2002:a17:902:6848:: with SMTP id f8mr3147703pln.300.1546979774989;
-        Tue, 08 Jan 2019 12:36:14 -0800 (PST)
-Received: from gmail.com ([2620:0:1008:fd00:78b4:3a07:980a:287b])
-        by smtp.gmail.com with ESMTPSA id h134sm140961811pfe.27.2019.01.08.12.36.14
+        bh=JptQFPXaFj+7cZrMFm7qMV8jqKhElIWw3ImK4Vrev2c=;
+        b=FunQsgC9Y5xw8d/hc+pMaT4DvdMyLGbJWi1iLJG0nzeNwDYovSgG78OjYSvplPlA56
+         7/PX6thHyfSBc0pbXwCH5TENZnm4p0Yg8asWhFdLIRg0sNQwH7XZMHjswm60cmPQ9ST6
+         XgPvQkR0otHbVtOgmg2ZYSSdFRNtCUndGGnJISDwCiMj1H6sbOj1Du3k2WLjkbvmkum4
+         jimHZuSlPxGyoE0u0SRhymzu0ekLUPUeez/34j05NUwQjz3QmXwmgNbegUCMOVKRDPD1
+         zh0MCbllJJ395djCKCuA5QcUsBP/TR5mhSqj7aoi6I52+ce7nFN3tJH/BlNpwSImKYKH
+         FnAw==
+X-Gm-Message-State: AJcUuke4uFOIE8OXAysLv0OH6tSI4vufpU/oDOKgw0SbE9YogmOoXFak
+        GO63YQuN8ymBIgsh/xD8idXCAg==
+X-Google-Smtp-Source: ALg8bN5J3BhqE50cNZ9m/rEBUXgz/5LBiLBnB402PDIc36UrbRNqb8wuZF869BNGv1Pxnmu3Eh6o+g==
+X-Received: by 2002:a17:902:6909:: with SMTP id j9mr3145497plk.196.1546979895166;
+        Tue, 08 Jan 2019 12:38:15 -0800 (PST)
+Received: from localhost ([2620:15c:202:1:75a:3f6e:21d:9374])
+        by smtp.gmail.com with ESMTPSA id r6sm111861602pgk.91.2019.01.08.12.38.14
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 08 Jan 2019 12:36:14 -0800 (PST)
-Date:   Tue, 8 Jan 2019 12:36:13 -0800
-From:   Andrei Vagin <avagin@gmail.com>
-To:     Oleg Nesterov <oleg@redhat.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org,
-        "Eric W. Biederman" <ebiederm@xmission.com>
-Subject: Re: [PATCH] kernel: release ptraced tasks before zap_pid_ns_processes
-Message-ID: <20190108203612.GA19454@gmail.com>
-References: <20190102205939.26231-1-avagin@gmail.com>
- <20190108165043.GA10240@redhat.com>
+        Tue, 08 Jan 2019 12:38:14 -0800 (PST)
+Date:   Tue, 8 Jan 2019 12:38:13 -0800
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Quentin Perret <quentin.perret@arm.com>
+Cc:     peterz@infradead.org, rjw@rjwysocki.net,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        gregkh@linuxfoundation.org, mingo@redhat.com,
+        dietmar.eggemann@arm.com, morten.rasmussen@arm.com,
+        chris.redpath@arm.com, patrick.bellasi@arm.com,
+        valentin.schneider@arm.com, vincent.guittot@linaro.org,
+        thara.gopinath@linaro.org, viresh.kumar@linaro.org,
+        tkjos@google.com, joel@joelfernandes.org, smuckle@google.com,
+        adharmap@codeaurora.org, skannan@codeaurora.org,
+        pkondeti@codeaurora.org, juri.lelli@redhat.com,
+        edubezval@gmail.com, srinivas.pandruvada@linux.intel.com,
+        currojerez@riseup.net, javi.merino@kernel.org
+Subject: Re: [PATCH v10 15/15] OPTIONAL: cpufreq: dt: Register an Energy Model
+Message-ID: <20190108203813.GS261387@google.com>
+References: <20181203095628.11858-1-quentin.perret@arm.com>
+ <20181203095628.11858-16-quentin.perret@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=koi8-r
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190108165043.GA10240@redhat.com>
+In-Reply-To: <20181203095628.11858-16-quentin.perret@arm.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 08, 2019 at 05:50:43PM +0100, Oleg Nesterov wrote:
-> Sorry for delay, vacation,
-> 
-> On 01/02, Andrei Vagin wrote:
-> >
-> > zap_pid_ns_processes() can stuck on waiting tasks from the dead list. In
-> > this case, we will have one unkillable process with one or more dead
-> > children.
-> 
-> Thanks!
-> 
-> > --- a/kernel/exit.c
-> > +++ b/kernel/exit.c
-> > @@ -664,9 +664,6 @@ static void forget_original_parent(struct task_struct *father,
-> >  {
-> >  	struct task_struct *p, *t, *reaper;
-> >  
-> > -	if (unlikely(!list_empty(&father->ptraced)))
-> > -		exit_ptrace(father, dead);
-> > -
-> >  	/* Can drop and reacquire tasklist_lock */
-> >  	reaper = find_child_reaper(father);
-> >  	if (list_empty(&father->children))
-> > @@ -705,8 +702,18 @@ static void exit_notify(struct task_struct *tsk, int group_dead)
-> >  	LIST_HEAD(dead);
-> >  
-> >  	write_lock_irq(&tasklist_lock);
-> > -	forget_original_parent(tsk, &dead);
-> > +	if (unlikely(!list_empty(&tsk->ptraced)))
-> > +		exit_ptrace(tsk, &dead);
-> > +	write_unlock_irq(&tasklist_lock);
-> > +
-> > +	/* Ptraced tasks have to be released before zap_pid_ns_processes(). */
-> > +	list_for_each_entry_safe(p, n, &dead, ptrace_entry) {
-> > +		list_del_init(&p->ptrace_entry);
-> > +		release_task(p);
-> > +	}
-> >  
-> > +	write_lock_irq(&tasklist_lock);
-> > +	forget_original_parent(tsk, &dead);
-> >  	if (group_dead)
-> >  		kill_orphaned_pgrp(tsk->group_leader, NULL);
-> 
-> How about a different fix below? It avoids additional write_lock/unlock(tasklist),
-> and another list_for_each_entry_safe(dead) loop is called only if it is actually
-> needed.
-> 
-> Or I missed something?
+Hi Quentin,
 
-No, you don't. The patch looks really nice. Thanks!
-
-BTW: We probably need to add the "Fixes:" tag, but I am not sure to which
-commit, it looks like the issue is here for years.
-
-Acked-by: Andrei Vagin <avagin@gmail.com>
-
+On Mon, Dec 03, 2018 at 09:56:28AM +0000, Quentin Perret wrote:
+> *******************************************************************
+> * This patch illustrates the usage of the newly introduced Energy *
+> * Model framework and isn't supposed to be merged as-is.          *
+> *******************************************************************
 > 
-> Oleg.
+> The Energy Model framework provides an API to register the active power
+> of CPUs. Call this API from the cpufreq-dt driver with an estimation
+> of the power as P = C * V^2 * f with C, V, and f respectively the
+> capacitance of the CPU and the voltage and frequency of the OPP.
 > 
+> The CPU capacitance is read from the "dynamic-power-coefficient" DT
+> binding (originally introduced for thermal/IPA), and the voltage and
+> frequency values from PM_OPP.
 > 
-> --- x/kernel/exit.c
-> +++ x/kernel/exit.c
-> @@ -558,12 +558,14 @@ static struct task_struct *find_alive_th
->  	return NULL;
+> Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+> Cc: Viresh Kumar <viresh.kumar@linaro.org>
+> Signed-off-by: Quentin Perret <quentin.perret@arm.com>
+> ---
+>  drivers/cpufreq/cpufreq-dt.c | 48 +++++++++++++++++++++++++++++++++++-
+>  1 file changed, 47 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/cpufreq/cpufreq-dt.c b/drivers/cpufreq/cpufreq-dt.c
+> index e58bfcb1169e..4cfef5554d86 100644
+> --- a/drivers/cpufreq/cpufreq-dt.c
+> +++ b/drivers/cpufreq/cpufreq-dt.c
+> @@ -16,6 +16,7 @@
+>  #include <linux/cpu_cooling.h>
+>  #include <linux/cpufreq.h>
+>  #include <linux/cpumask.h>
+> +#include <linux/energy_model.h>
+>  #include <linux/err.h>
+>  #include <linux/module.h>
+>  #include <linux/of.h>
+> @@ -150,8 +151,50 @@ static int resources_available(void)
+>  	return 0;
 >  }
 >  
-> -static struct task_struct *find_child_reaper(struct task_struct *father)
-> +static struct task_struct *find_child_reaper(struct task_struct *father,
-> +						struct list_head *dead)
->  	__releases(&tasklist_lock)
->  	__acquires(&tasklist_lock)
->  {
->  	struct pid_namespace *pid_ns = task_active_pid_ns(father);
->  	struct task_struct *reaper = pid_ns->child_reaper;
-> +	struct task_struct *p, *n;
->  
->  	if (likely(reaper != father))
->  		return reaper;
-> @@ -579,6 +581,11 @@ static struct task_struct *find_child_re
->  		panic("Attempted to kill init! exitcode=0x%08x\n",
->  			father->signal->group_exit_code ?: father->exit_code);
->  	}
+> +static int __maybe_unused of_est_power(unsigned long *mW, unsigned long *KHz,
+> +				       int cpu)
+> +{
+> +	unsigned long mV, Hz, MHz;
+> +	struct device *cpu_dev;
+> +	struct dev_pm_opp *opp;
+> +	struct device_node *np;
+> +	u32 cap;
+> +	u64 tmp;
 > +
-> +	list_for_each_entry_safe(p, n, &dead, ptrace_entry) {
-> +		list_del_init(&p->ptrace_entry);
-> +		release_task(p);
-> +	}
->  	zap_pid_ns_processes(pid_ns);
->  	write_lock_irq(&tasklist_lock);
+> +	cpu_dev = get_cpu_device(cpu);
+> +	if (!cpu_dev)
+> +		return -ENODEV;
+> +
+> +	np = of_node_get(cpu_dev->of_node);
+> +	if (!np)
+> +		return -EINVAL;
+> +
+> +	if (of_property_read_u32(np, "dynamic-power-coefficient", &cap))
+> +		return -EINVAL;
+> +
+> +	Hz = *KHz * 1000;
+> +	opp = dev_pm_opp_find_freq_ceil(cpu_dev, &Hz);
+> +	if (IS_ERR(opp))
+> +		return -EINVAL;
+> +
+> +	mV = dev_pm_opp_get_voltage(opp) / 1000;
+> +	dev_pm_opp_put(opp);
+> +	if (!mV)
+> +		return -EINVAL;
+> +
+> +	MHz = Hz / 1000000;
+> +	tmp = (u64)cap * mV * mV * MHz;
+> +	do_div(tmp, 1000000000);
+> +
+> +	*mW = (unsigned long)tmp;
+> +	*KHz = Hz / 1000;
+> +
+> +	return 0;
+> +}
+> +
+>  static int cpufreq_init(struct cpufreq_policy *policy)
+>  {
+> +	struct em_data_callback em_cb = EM_DATA_CB(of_est_power);
+>  	struct cpufreq_frequency_table *freq_table;
+>  	struct opp_table *opp_table = NULL;
+>  	struct private_data *priv;
+> @@ -160,7 +203,7 @@ static int cpufreq_init(struct cpufreq_policy *policy)
+>  	unsigned int transition_latency;
+>  	bool fallback = false;
+>  	const char *name;
+> -	int ret;
+> +	int ret, nr_opp;
 >  
-> @@ -668,7 +675,7 @@ static void forget_original_parent(struc
->  		exit_ptrace(father, dead);
+>  	cpu_dev = get_cpu_device(policy->cpu);
+>  	if (!cpu_dev) {
+> @@ -237,6 +280,7 @@ static int cpufreq_init(struct cpufreq_policy *policy)
+>  		ret = -EPROBE_DEFER;
+>  		goto out_free_opp;
+>  	}
+> +	nr_opp = ret;
 >  
->  	/* Can drop and reacquire tasklist_lock */
-> -	reaper = find_child_reaper(father);
-> +	reaper = find_child_reaper(father, dead);
->  	if (list_empty(&father->children))
->  		return;
+>  	if (fallback) {
+>  		cpumask_setall(policy->cpus);
+> @@ -280,6 +324,8 @@ static int cpufreq_init(struct cpufreq_policy *policy)
+>  	policy->cpuinfo.transition_latency = transition_latency;
+>  	policy->dvfs_possible_from_any_cpu = true;
 >  
-> 
+> +	em_register_perf_domain(policy->cpus, nr_opp, &em_cb);
+
+Shouldn't there also be a function to unregister a perf domain to be
+called from cpufreq_exit()?
+
+->exit() is called on suspend when the CPUs are taken offline, and
+->init() on resume, hence em_register_perf_domain() is called multiple
+times, but without doing any cleanup.
+
+Cheers
+
+Matthias
