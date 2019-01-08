@@ -2,118 +2,135 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4680C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 09:01:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AA7AC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 09:01:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A1D32087F
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 09:01:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6073E2087F
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 09:01:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728004AbfAHJBg (ORCPT
+        id S1728087AbfAHJBw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 04:01:36 -0500
-Received: from mail-ua1-f68.google.com ([209.85.222.68]:45220 "EHLO
-        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727509AbfAHJBg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 04:01:36 -0500
-Received: by mail-ua1-f68.google.com with SMTP id e16so1019079uam.12
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jan 2019 01:01:35 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=0KYvlQz43o7q+5VwFGaqQDak4wIv2QCxeRi5jX8GAZE=;
-        b=hS4pQBOU735gj0hKsBYsTmoSwbPF0Lfkp8G9WvZm2iIttjQ/kAtGA6gn1K0WKGCWMU
-         yHaAdDzLFk5CqDr7+HsGf3T0VcqRi0RyVcNfLlnwRoYzPQvgXldwv9qZOzo233gw+ZBr
-         MHBOnGmuhHutquKag+dMF66bylKGTilG0HGpYJXN9Gf0jGSDH2RgfJBz0BStRs2t46T5
-         +lnLJvUaLdGkgfL5Yz3aVlLYbX90nqu8QxM5fY+q2if4A5i3uNz7iA/FeNE8e1EIj4jo
-         MLFBh1lSpJzyDA3FQQTjfye/MnbkmFI8Bmf/pJt8RpCXC0TOhirGjukf6CdzICy3TVO6
-         90/A==
-X-Gm-Message-State: AJcUukffIgjaJ7EPhD0k/Kxgctkzb/RUcZYoWr1g8fHlyuMGQQ5F4SZw
-        g8FgsSwDSXB2vP/5mTRvXbUhQ/GgihCYhgVov7kjoKewj60=
-X-Google-Smtp-Source: ALg8bN5i9MgIYKguZUuidXv1cwrcrXQZ4b4k7gpCsAvs7urJB982cf4kOmnIIFj056LsK3NpKpeEVdajMV6tNK9pUDM=
-X-Received: by 2002:a9f:364a:: with SMTP id s10mr285998uad.78.1546938094136;
- Tue, 08 Jan 2019 01:01:34 -0800 (PST)
+        Tue, 8 Jan 2019 04:01:52 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:49274 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727507AbfAHJBv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 04:01:51 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 14410C07D8C5;
+        Tue,  8 Jan 2019 09:01:50 +0000 (UTC)
+Received: from localhost (ovpn-8-23.pek2.redhat.com [10.72.8.23])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id CDDCC60E3F;
+        Tue,  8 Jan 2019 09:01:40 +0000 (UTC)
+Date:   Tue, 8 Jan 2019 17:01:38 +0800
+From:   Baoquan He <bhe@redhat.com>
+To:     Mike Rapoport <rppt@linux.ibm.com>
+Cc:     Pingfan Liu <kernelfans@gmail.com>, linux-mm@kvack.org,
+        kexec@lists.infradead.org, Tang Chen <tangchen@cn.fujitsu.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Yaowei Bai <baiyaowei@cmss.chinamobile.com>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Daniel Vacek <neelx@redhat.com>,
+        Mathieu Malaterre <malat@debian.org>,
+        Stefan Agner <stefan@agner.ch>, Dave Young <dyoung@redhat.com>,
+        yinghai@kernel.org, vgoyal@redhat.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCHv5] x86/kdump: bugfix, make the behavior of crashkernel=X
+ consistent with kaslr
+Message-ID: <20190108090138.GB18718@MiWiFi-R3L-srv>
+References: <1546848299-23628-1-git-send-email-kernelfans@gmail.com>
+ <20190108080538.GB4396@rapoport-lnx>
 MIME-Version: 1.0
-References: <20190108084857.26756-1-geert@linux-m68k.org>
-In-Reply-To: <20190108084857.26756-1-geert@linux-m68k.org>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 8 Jan 2019 10:01:22 +0100
-Message-ID: <CAMuHMdUw9LMVb-8RSNVBEcDMVB9SFOdfF+kb20=gxJiWF1x8sQ@mail.gmail.com>
-Subject: Re: Build regressions/improvements in v5.0-rc1
-To:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Cc:     Linux MIPS Mailing List <linux-mips@linux-mips.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190108080538.GB4396@rapoport-lnx>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Tue, 08 Jan 2019 09:01:51 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 8, 2019 at 9:49 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> Below is the list of build error/warning regressions/improvements in
-> v5.0-rc1[1] compared to v4.20[2].
->
-> Summarized:
->   - build errors: +12/-4
->   - build warnings: +405/-350
->
-> Happy fixing! ;-)
->
-> Thanks to the linux-next team for providing the build service.
->
-> [1] http://kisskb.ellerman.id.au/kisskb/branch/linus/head/bfeffd155283772bbe78c6a05dec7c0128ee500c/ (all 240 configs)
-> [2] http://kisskb.ellerman.id.au/kisskb/branch/linus/head/8fe28cb58bcb235034b64cbbb7550a8a43fd88be/ (all 240 configs)
->
->
-> *** ERRORS ***
->
-> 12 error regressions:
->   + /kisskb/src/arch/mips/generic/init.c: error: -ffunction-sections disabled; it makes profiling impossible [-Werror]:  => 1:0
->   + /kisskb/src/arch/mips/generic/irq.c: error: -ffunction-sections disabled; it makes profiling impossible [-Werror]:  => 1:0
->   + /kisskb/src/arch/mips/kernel/branch.c: error: -ffunction-sections disabled; it makes profiling impossible [-Werror]:  => 1:0
->   + /kisskb/src/arch/mips/kernel/cmpxchg.c: error: -ffunction-sections disabled; it makes profiling impossible [-Werror]:  => 1:0
->   + /kisskb/src/arch/mips/kernel/cpu-probe.c: error: -ffunction-sections disabled; it makes profiling impossible [-Werror]:  => 1:0
->   + /kisskb/src/arch/mips/mm/cache.c: error: -ffunction-sections disabled; it makes profiling impossible [-Werror]:  => 1:0
->   + /kisskb/src/arch/mips/mm/extable.c: error: -ffunction-sections disabled; it makes profiling impossible [-Werror]:  => 1:0
->   + /kisskb/src/arch/mips/mm/fault.c: error: -ffunction-sections disabled; it makes profiling impossible [-Werror]:  => 1:0
->   + /kisskb/src/arch/mips/net/bpf_jit.c: error: -ffunction-sections disabled; it makes profiling impossible [-Werror]:  => 1:0
->   + arch/mips/vdso/vdso-image.c: error: -ffunction-sections disabled; it makes profiling impossible [-Werror]:  => 1:0
+Hi Mike,
 
-mips-allmodconfig
+On 01/08/19 at 10:05am, Mike Rapoport wrote:
+> I'm not thrilled by duplicating this code (yet again).
+> I liked the v3 of this patch [1] more, assuming we allow bottom-up mode to
+> allocate [0, kernel_start) unconditionally. 
+> I'd just replace you first patch in v3 [2] with something like:
 
-These are even more annoying than on powerpc, as mips enables -Werror for
-arch/mips/ :-(
-Can this be avoided, e.g. by making LD_DEAD_CODE_DATA_ELIMINATION and
-profiling mutually exclusive?
+In initmem_init(), we will restore the top-down allocation style anyway.
+While reserve_crashkernel() is called after initmem_init(), it's not
+appropriate to adjust memblock_find_in_range_node(), and we really want
+to find region bottom up for crashkernel reservation, no matter where
+kernel is loaded, better call __memblock_find_range_bottom_up().
 
->   + error: arch/sparc/kernel/head_32.o: relocation truncated to fit: R_SPARC_WDISP22 against `.init.text':  => (.head.text+0x5100), (.head.text+0x5040)
->   + error: arch/sparc/kernel/head_32.o: relocation truncated to fit: R_SPARC_WDISP22 against symbol `leon_smp_cpu_startup' defined in .text section in arch/sparc/kernel/trampoline_32.o:  => (.init.text+0xa4)
+Create a wrapper to do the necessary handling, then call
+__memblock_find_range_bottom_up() directly, looks better.
 
-Same as before, just a different signature.
+Thanks
+Baoquan
 
-> 4 error improvements:
->   - /kisskb/src/arch/s390/kernel/nospec-branch.c: error: macro "memcpy" passed 6 arguments, but takes just 3: 130:61 =>
->   - /kisskb/src/sound/pci/hda/patch_ca0132.c: error: implicit declaration of function 'pci_iomap' [-Werror=implicit-function-declaration]: 8800:3 =>
->   - error: arch/sparc/kernel/.tmp_head_32.o: relocation truncated to fit: R_SPARC_WDISP22 against `.init.text': (.head.text+0x5040), (.head.text+0x5100) =>
->   - error: arch/sparc/kernel/.tmp_head_32.o: relocation truncated to fit: R_SPARC_WDISP22 against symbol `leon_smp_cpu_startup' defined in .text section in arch/sparc/kernel/trampoline_32.o: (.init.text+0xa4) =>
->
->
-> *** WARNINGS ***
->
-> [Deleted 490 lines about "warning: -ffunction-sections disabled; it makes profiling impossible [enabled by default]" on {mips,powerpc}-all{mod,yes}config*]
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> 
+> diff --git a/mm/memblock.c b/mm/memblock.c
+> index 7df468c..d1b30b9 100644
+> --- a/mm/memblock.c
+> +++ b/mm/memblock.c
+> @@ -274,24 +274,14 @@ phys_addr_t __init_memblock memblock_find_in_range_node(phys_addr_t size,
+>  	 * try bottom-up allocation only when bottom-up mode
+>  	 * is set and @end is above the kernel image.
+>  	 */
+> -	if (memblock_bottom_up() && end > kernel_end) {
+> -		phys_addr_t bottom_up_start;
+> -
+> -		/* make sure we will allocate above the kernel */
+> -		bottom_up_start = max(start, kernel_end);
+> -
+> +	if (memblock_bottom_up()) {
+>  		/* ok, try bottom-up allocation first */
+> -		ret = __memblock_find_range_bottom_up(bottom_up_start, end,
+> +		ret = __memblock_find_range_bottom_up(start, end,
+>  						      size, align, nid, flags);
+>  		if (ret)
+>  			return ret;
+>  
+>  		/*
+> -		 * we always limit bottom-up allocation above the kernel,
+> -		 * but top-down allocation doesn't have the limit, so
+> -		 * retrying top-down allocation may succeed when bottom-up
+> -		 * allocation failed.
+> -		 *
+>  		 * bottom-up allocation is expected to be fail very rarely,
+>  		 * so we use WARN_ONCE() here to see the stack trace if
+>  		 * fail happens.
+> 
+> [1] https://lore.kernel.org/lkml/1545966002-3075-3-git-send-email-kernelfans@gmail.com/
+> [2] https://lore.kernel.org/lkml/1545966002-3075-2-git-send-email-kernelfans@gmail.com/
+> 
+> > +
+> > +	return ret;
+> > +}
+> > +
+> >  /**
+> >   * __memblock_find_range_top_down - find free area utility, in top-down
+> >   * @start: start of candidate range
+> > -- 
+> > 2.7.4
+> > 
+> 
+> -- 
+> Sincerely yours,
+> Mike.
+> 
