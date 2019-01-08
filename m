@@ -4,58 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E43AEC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:38:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1FC4C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:38:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9BE6020645
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:38:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C40D12063F
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:38:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546976303;
-	bh=/TfgzYuBffso2vpSGL+i8ROJPAqnFgqiShJQzsdETWo=;
+	s=default; t=1546976310;
+	bh=jJsUVAztSjoffnDPoP/vlwZFpt2jJiVnQR5g24rCM+s=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=AJ/lSdrpzH5X6KGtRiwy1k+BKRRkyO5FVP9rrQEwcKm87TW4XkCIXc650qucrvZxq
-	 HO6cw5ZSSrwwZz/vE65LT0le52Pfl+V0V6U6v0hGCNTvHdH+YQ52LiiQCMKhdJ7hKR
-	 LZF7hFChbx0diItMumBOcltBOiDdePlGZZ4/aZ2o=
+	b=uK+7Scjc5d8RpzXyrZhu8py27Bp2yvb0FcZzkW6Azg1lbdFCdwD2bk18XKwX9gj5y
+	 9B8hs/lsbAlJh7uTpZzILTX8PdpNT9zTRO9lMnklc/D5tmTej63t4VL3EXD9pkzp3M
+	 iFI2RPbxehR9RVM3jbibZz4ZIVPI4C1+r3jbjjuY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732570AbfAHTiU (ORCPT
+        id S1732621AbfAHTi3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:38:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44194 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 14:38:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44172 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731252AbfAHTfZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:35:25 -0500
+        id S1731666AbfAHTfX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:35:23 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 99DF22063F;
-        Tue,  8 Jan 2019 19:35:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A0393205C9;
+        Tue,  8 Jan 2019 19:35:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546976123;
-        bh=/TfgzYuBffso2vpSGL+i8ROJPAqnFgqiShJQzsdETWo=;
+        s=default; t=1546976122;
+        bh=jJsUVAztSjoffnDPoP/vlwZFpt2jJiVnQR5g24rCM+s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1AHtxX7Q9buzqLj8v+oia1Tsi8zlHY3xIrD0p+zm9O/z04mWIZ2NEZqX8WLrmO/OE
-         mK+aqc7a2l6gpmhibnlCqmPU2RcZbYCjO0/R9dWBqiBSPT8iYlJNFccOd31dtCsZM6
-         FJLQ4m+HCtf2lGJmiahbaLD6RujOATxm5Q9HVF00=
+        b=YjwxH1hhl1c35zt2+9B/1Eu7tooOog7j+BEhPxiv3aaagIR8yyip0PduwwDbT7NTa
+         sfVQi/erXRk94GSenmWDXPu3psvOjYtZI4EufOGDmd3b707nLYfl0hPPt0Rc7uqZQi
+         TAb+ceIwCS2cXNuJvP1CCnswa7AbOyj1sBWE34SM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Ramalingam C <ramalingam.c@intel.com>,
-        Arend van Spriel <aspriel@gmail.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Joe Perches <joe@perches.com>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.4 24/28] sysfs: Disable lockdep for driver bind/unbind files
-Date:   Tue,  8 Jan 2019 14:34:41 -0500
-Message-Id: <20190108193445.124251-24-sashal@kernel.org>
+Cc:     Takashi Sakamoto <o-takashi@sakamocchi.jp>,
+        Takashi Iwai <tiwai@suse.de>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 23/28] ALSA: bebob: fix model-id of unit for Apogee Ensemble
+Date:   Tue,  8 Jan 2019 14:34:40 -0500
+Message-Id: <20190108193445.124251-23-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108193445.124251-1-sashal@kernel.org>
 References: <20190108193445.124251-1-sashal@kernel.org>
@@ -67,174 +57,93 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Daniel Vetter <daniel.vetter@ffwll.ch>
+From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
 
-[ Upstream commit 4f4b374332ec0ae9c738ff8ec9bed5cd97ff9adc ]
+[ Upstream commit 644b2e97405b0b74845e1d3c2b4fe4c34858062b ]
 
-This is the much more correct fix for my earlier attempt at:
+This commit fixes hard-coded model-id for an unit of Apogee Ensemble with
+a correct value. This unit uses DM1500 ASIC produced ArchWave AG (formerly
+known as BridgeCo AG).
 
-https://lkml.org/lkml/2018/12/10/118
+I note that this model supports three modes in the number of data channels
+in tx/rx streams; 8 ch pairs, 10 ch pairs, 18 ch pairs. The mode is
+switched by Vendor-dependent AV/C command, like:
 
-Short recap:
+$ cd linux-firewire-utils
+$ ./firewire-request /dev/fw1 fcp 0x00ff000003dbeb0600000000 (8ch pairs)
+$ ./firewire-request /dev/fw1 fcp 0x00ff000003dbeb0601000000 (10ch pairs)
+$ ./firewire-request /dev/fw1 fcp 0x00ff000003dbeb0602000000 (18ch pairs)
 
-- There's not actually a locking issue, it's just lockdep being a bit
-  too eager to complain about a possible deadlock.
+When switching between different mode, the unit disappears from IEEE 1394
+bus, then appears on the bus with different combination of stream formats.
+In a mode of 18 ch pairs, available sampling rate is up to 96.0 kHz, else
+up to 192.0 kHz.
 
-- Contrary to what I claimed the real problem is recursion on
-  kn->count. Greg pointed me at sysfs_break_active_protection(), used
-  by the scsi subsystem to allow a sysfs file to unbind itself. That
-  would be a real deadlock, which isn't what's happening here. Also,
-  breaking the active protection means we'd need to manually handle
-  all the lifetime fun.
+$ ./hinawa-config-rom-printer /dev/fw1
+{ 'bus-info': { 'adj': False,
+                'bmc': True,
+                'chip_ID': 21474898341,
+                'cmc': True,
+                'cyc_clk_acc': 100,
+                'generation': 2,
+                'imc': True,
+                'isc': True,
+                'link_spd': 2,
+                'max_ROM': 1,
+                'max_rec': 512,
+                'name': '1394',
+                'node_vendor_ID': 987,
+                'pmc': False},
+  'root-directory': [ ['HARDWARE_VERSION', 19],
+                      [ 'NODE_CAPABILITIES',
+                        { 'addressing': {'64': True, 'fix': True, 'prv': False},
+                          'misc': {'int': False, 'ms': False, 'spt': True},
+                          'state': { 'atn': False,
+                                     'ded': False,
+                                     'drq': True,
+                                     'elo': False,
+                                     'init': False,
+                                     'lst': True,
+                                     'off': False},
+                          'testing': {'bas': False, 'ext': False}}],
+                      ['VENDOR', 987],
+                      ['DESCRIPTOR', 'Apogee Electronics'],
+                      ['MODEL', 126702],
+                      ['DESCRIPTOR', 'Ensemble'],
+                      ['VERSION', 5297],
+                      [ 'UNIT',
+                        [ ['SPECIFIER_ID', 41005],
+                          ['VERSION', 65537],
+                          ['MODEL', 126702],
+                          ['DESCRIPTOR', 'Ensemble']]],
+                      [ 'DEPENDENT_INFO',
+                        [ ['SPECIFIER_ID', 2037],
+                          ['VERSION', 1],
+                          [(58, 'IMMEDIATE'), 16777159],
+                          [(59, 'IMMEDIATE'), 1048576],
+                          [(60, 'IMMEDIATE'), 16777159],
+                          [(61, 'IMMEDIATE'), 6291456]]]]}
 
-- With Rafael we discussed the task_work approach, which kinda works,
-  but has two downsides: It's a functional change for a lockdep
-  annotation issue, and it won't work for the bind file (which needs
-  to get the errno from the driver load function back to userspace).
-
-- Greg also asked why this never showed up: To hit this you need to
-  unregister a 2nd driver from the unload code of your first driver. I
-  guess only gpus do that. The bug has always been there, but only
-  with a recent patch series did we add more locks so that lockdep
-  built a chain from unbinding the snd-hda driver to the
-  acpi_video_unregister call.
-
-Full lockdep splat:
-
-[12301.898799] ============================================
-[12301.898805] WARNING: possible recursive locking detected
-[12301.898811] 4.20.0-rc7+ #84 Not tainted
-[12301.898815] --------------------------------------------
-[12301.898821] bash/5297 is trying to acquire lock:
-[12301.898826] 00000000f61c6093 (kn->count#39){++++}, at: kernfs_remove_by_name_ns+0x3b/0x80
-[12301.898841] but task is already holding lock:
-[12301.898847] 000000005f634021 (kn->count#39){++++}, at: kernfs_fop_write+0xdc/0x190
-[12301.898856] other info that might help us debug this:
-[12301.898862]  Possible unsafe locking scenario:
-[12301.898867]        CPU0
-[12301.898870]        ----
-[12301.898874]   lock(kn->count#39);
-[12301.898879]   lock(kn->count#39);
-[12301.898883] *** DEADLOCK ***
-[12301.898891]  May be due to missing lock nesting notation
-[12301.898899] 5 locks held by bash/5297:
-[12301.898903]  #0: 00000000cd800e54 (sb_writers#4){.+.+}, at: vfs_write+0x17f/0x1b0
-[12301.898915]  #1: 000000000465e7c2 (&of->mutex){+.+.}, at: kernfs_fop_write+0xd3/0x190
-[12301.898925]  #2: 000000005f634021 (kn->count#39){++++}, at: kernfs_fop_write+0xdc/0x190
-[12301.898936]  #3: 00000000414ef7ac (&dev->mutex){....}, at: device_release_driver_internal+0x34/0x240
-[12301.898950]  #4: 000000003218fbdf (register_count_mutex){+.+.}, at: acpi_video_unregister+0xe/0x40
-[12301.898960] stack backtrace:
-[12301.898968] CPU: 1 PID: 5297 Comm: bash Not tainted 4.20.0-rc7+ #84
-[12301.898974] Hardware name: Hewlett-Packard HP EliteBook 8460p/161C, BIOS 68SCF Ver. F.01 03/11/2011
-[12301.898982] Call Trace:
-[12301.898989]  dump_stack+0x67/0x9b
-[12301.898997]  __lock_acquire+0x6ad/0x1410
-[12301.899003]  ? kernfs_remove_by_name_ns+0x3b/0x80
-[12301.899010]  ? find_held_lock+0x2d/0x90
-[12301.899017]  ? mutex_spin_on_owner+0xe4/0x150
-[12301.899023]  ? find_held_lock+0x2d/0x90
-[12301.899030]  ? lock_acquire+0x90/0x180
-[12301.899036]  lock_acquire+0x90/0x180
-[12301.899042]  ? kernfs_remove_by_name_ns+0x3b/0x80
-[12301.899049]  __kernfs_remove+0x296/0x310
-[12301.899055]  ? kernfs_remove_by_name_ns+0x3b/0x80
-[12301.899060]  ? kernfs_name_hash+0xd/0x80
-[12301.899066]  ? kernfs_find_ns+0x6c/0x100
-[12301.899073]  kernfs_remove_by_name_ns+0x3b/0x80
-[12301.899080]  bus_remove_driver+0x92/0xa0
-[12301.899085]  acpi_video_unregister+0x24/0x40
-[12301.899127]  i915_driver_unload+0x42/0x130 [i915]
-[12301.899160]  i915_pci_remove+0x19/0x30 [i915]
-[12301.899169]  pci_device_remove+0x36/0xb0
-[12301.899176]  device_release_driver_internal+0x185/0x240
-[12301.899183]  unbind_store+0xaf/0x180
-[12301.899189]  kernfs_fop_write+0x104/0x190
-[12301.899195]  __vfs_write+0x31/0x180
-[12301.899203]  ? rcu_read_lock_sched_held+0x6f/0x80
-[12301.899209]  ? rcu_sync_lockdep_assert+0x29/0x50
-[12301.899216]  ? __sb_start_write+0x13c/0x1a0
-[12301.899221]  ? vfs_write+0x17f/0x1b0
-[12301.899227]  vfs_write+0xb9/0x1b0
-[12301.899233]  ksys_write+0x50/0xc0
-[12301.899239]  do_syscall_64+0x4b/0x180
-[12301.899247]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-[12301.899253] RIP: 0033:0x7f452ac7f7a4
-[12301.899259] Code: 00 f7 d8 64 89 02 48 c7 c0 ff ff ff ff eb b7 0f 1f 80 00 00 00 00 8b 05 aa f0 2c 00 48 63 ff 85 c0 75 13 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 54 f3 c3 66 90 55 53 48 89 d5 48 89 f3 48 83
-[12301.899273] RSP: 002b:00007ffceafa6918 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-[12301.899282] RAX: ffffffffffffffda RBX: 000000000000000d RCX: 00007f452ac7f7a4
-[12301.899288] RDX: 000000000000000d RSI: 00005612a1abf7c0 RDI: 0000000000000001
-[12301.899295] RBP: 00005612a1abf7c0 R08: 000000000000000a R09: 00005612a1c46730
-[12301.899301] R10: 000000000000000a R11: 0000000000000246 R12: 000000000000000d
-[12301.899308] R13: 0000000000000001 R14: 00007f452af4a740 R15: 000000000000000d
-
-Looking around I've noticed that usb and i2c already handle similar
-recursion problems, where a sysfs file can unbind the same type of
-sysfs somewhere else in the hierarchy. Relevant commits are:
-
-commit 356c05d58af05d582e634b54b40050c73609617b
-Author: Alan Stern <stern@rowland.harvard.edu>
-Date:   Mon May 14 13:30:03 2012 -0400
-
-    sysfs: get rid of some lockdep false positives
-
-commit e9b526fe704812364bca07edd15eadeba163ebfb
-Author: Alexander Sverdlin <alexander.sverdlin@nsn.com>
-Date:   Fri May 17 14:56:35 2013 +0200
-
-    i2c: suppress lockdep warning on delete_device
-
-Implement the same trick for driver bind/unbind.
-
-v2: Put the macro into bus.c (Greg).
-
-Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Cc: Ramalingam C <ramalingam.c@intel.com>
-Cc: Arend van Spriel <aspriel@gmail.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Cc: Vivek Gautam <vivek.gautam@codeaurora.org>
-Cc: Joe Perches <joe@perches.com>
-Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/base/bus.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ sound/firewire/bebob/bebob.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/base/bus.c b/drivers/base/bus.c
-index 0346e46e2871..ecca4ae248e0 100644
---- a/drivers/base/bus.c
-+++ b/drivers/base/bus.c
-@@ -33,6 +33,9 @@ static struct kset *system_kset;
- 
- #define to_drv_attr(_attr) container_of(_attr, struct driver_attribute, attr)
- 
-+#define DRIVER_ATTR_IGNORE_LOCKDEP(_name, _mode, _show, _store) \
-+	struct driver_attribute driver_attr_##_name =		\
-+		__ATTR_IGNORE_LOCKDEP(_name, _mode, _show, _store)
- 
- static int __must_check bus_rescan_devices_helper(struct device *dev,
- 						void *data);
-@@ -198,7 +201,7 @@ static ssize_t unbind_store(struct device_driver *drv, const char *buf,
- 	bus_put(bus);
- 	return err;
- }
--static DRIVER_ATTR_WO(unbind);
-+static DRIVER_ATTR_IGNORE_LOCKDEP(unbind, S_IWUSR, NULL, unbind_store);
- 
- /*
-  * Manually attach a device to a driver.
-@@ -234,7 +237,7 @@ static ssize_t bind_store(struct device_driver *drv, const char *buf,
- 	bus_put(bus);
- 	return err;
- }
--static DRIVER_ATTR_WO(bind);
-+static DRIVER_ATTR_IGNORE_LOCKDEP(bind, S_IWUSR, NULL, bind_store);
- 
- static ssize_t show_drivers_autoprobe(struct bus_type *bus, char *buf)
- {
+diff --git a/sound/firewire/bebob/bebob.c b/sound/firewire/bebob/bebob.c
+index 091290d1f3ea..1898fa4228ad 100644
+--- a/sound/firewire/bebob/bebob.c
++++ b/sound/firewire/bebob/bebob.c
+@@ -382,7 +382,7 @@ static const struct ieee1394_device_id bebob_id_table[] = {
+ 	/* Apogee Electronics, DA/AD/DD-16X (X-FireWire card) */
+ 	SND_BEBOB_DEV_ENTRY(VEN_APOGEE, 0x00010048, &spec_normal),
+ 	/* Apogee Electronics, Ensemble */
+-	SND_BEBOB_DEV_ENTRY(VEN_APOGEE, 0x00001eee, &spec_normal),
++	SND_BEBOB_DEV_ENTRY(VEN_APOGEE, 0x01eeee, &spec_normal),
+ 	/* ESI, Quatafire610 */
+ 	SND_BEBOB_DEV_ENTRY(VEN_ESI, 0x00010064, &spec_normal),
+ 	/* AcousticReality, eARMasterOne */
 -- 
 2.19.1
 
