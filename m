@@ -2,121 +2,301 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FD1CC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 17:25:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26EA3C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 17:25:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 621C2206A3
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 17:25:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DAC7F206A3
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 17:25:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="bxc+0NZB"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="s76pdiCa"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729041AbfAHRZR (ORCPT
+        id S1728587AbfAHRZV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 12:25:17 -0500
-Received: from mail-yb1-f196.google.com ([209.85.219.196]:34121 "EHLO
-        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728996AbfAHRZQ (ORCPT
+        Tue, 8 Jan 2019 12:25:21 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:41539 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729013AbfAHRZS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 12:25:16 -0500
-Received: by mail-yb1-f196.google.com with SMTP id w186so983172ybg.1
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jan 2019 09:25:15 -0800 (PST)
+        Tue, 8 Jan 2019 12:25:18 -0500
+Received: by mail-pf1-f196.google.com with SMTP id b7so2238784pfi.8;
+        Tue, 08 Jan 2019 09:25:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=3bg8CAnFW238OIcpYA+0yZo5cJSugpakiBbJrbNjlKY=;
-        b=bxc+0NZBmNtmzZMFuoxksibf2LzHorp/nJMXDwUNg7SuoiEObIn4J09MT+DLuweAVa
-         JB3bqQiR4K6Iti0lpHx7ZI+HRS5MzEDUEtg7kHNYx0CESX/FmstrhT8Rr4YKEFGb+eXT
-         U/6VAgfV9e1tvwFIsWW84RBpT+3FF8kNYIl0c=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=nEwzF8zaiI8SJS9a4H240DsRqcPQV+7B8fDXwb3ElrE=;
+        b=s76pdiCaw90+LRnVEeBw8TmMIO5ChNX5SiuB79tqkTrMdHG0B3mLvOvTGtq63KjV24
+         xCMhUvdRIpZTY5H/PkqYVkagOzqoDkD48mZy9VeY+p3VokDhmGNS3KeQWZrIXfnV3rwU
+         LgOafLMwfV0w3D51eBdtSy9kZwTpZp2GpGSZU9lXddbtINid2nSEtkW40GWOBmesEtSg
+         nZ9T7zddFVupTWjjbthdbp+knqiSzJMMRDTqSDBK5hg67WoSY4xPvBqIZPApwOCKibd2
+         eLh3urlIZUjnOJsg5An+QKm8feIpa5mYy78R1V0XMa5edwlchEo+CanQgkZHseXlDmIB
+         QTBA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=3bg8CAnFW238OIcpYA+0yZo5cJSugpakiBbJrbNjlKY=;
-        b=MaBz4uhr1ES/5UcX0tozKpZM8j3o6a/gIaVc1ftjg+mSX+7vCgFLVd6tYHQiG3bBg2
-         KAG8QxgRSsSZ+mYodLImr+PHib6ivxmTjQ8d5rz6hXnFzW++KDG+Q7KxOFXRiewonwI6
-         3ykCXQaJHDj2h3cY/LbsHIiAju0dXpS1crEXmm2vvfG71HyHNsNRNs19SrIC24eVbfeK
-         dE619BQEw9+LBu6v3GAo/Xt/3zhKTJESym/lrIAcBH33U8UIQpank4+z+ePZJ6aty1hK
-         Q0OSizRfYtzXwPSxqzwNTBs3Dm+Ube7E7eKc1rSUdr1RppZDw4GaYicEq8e+hm2iOk4e
-         2IDg==
-X-Gm-Message-State: AJcUukfkMRSrVzATihsMTIzk4iWkVdQQEt7P3O6kdg1KMA1BXJLdP+/h
-        k5KiWN76fPwl7imaZ0wV2t2QGg==
-X-Google-Smtp-Source: ALg8bN4wHddVIFoJHInYz7PaSeIFeBkHjI/6p6ArC9mXmlLxlIMC76qUHvHhjQzryfR9Vvb6eZNbXA==
-X-Received: by 2002:a25:2f88:: with SMTP id v130mr2493374ybv.455.1546968314963;
-        Tue, 08 Jan 2019 09:25:14 -0800 (PST)
-Received: from [10.136.8.252] ([192.19.228.250])
-        by smtp.gmail.com with ESMTPSA id v9sm34914192ywh.2.2019.01.08.09.25.12
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=nEwzF8zaiI8SJS9a4H240DsRqcPQV+7B8fDXwb3ElrE=;
+        b=De2vsQG2ZvZBRETouVzUtBQkM1LeRGmNhdwQxNkPmPmNNvXWPswBwB4CFzjL4scZca
+         57t0yusFnfV+D5lmC+TeTbhu9e1oXCD8tq4yNsow7YAKbxd/IyUqEO3GXXjOVPd4Nnol
+         ArHiFuKRW9pHyoq8pLOlzGCSmweJB1Zf/Jbb7fHuaYmz4Q01oRjm5aYjVZg90yhBJQpT
+         1Te/RZMQcnHzYnD3OLCdhVXxttiX0q0EPDfv+PZk09N/X61DawvCw4fKcbrKq8nAmuWH
+         4mx8iL3mrn60KTn9BUumJHyw7Bd50g6h25mOc8Qcd/cEU5WkfB8fyXlN5aWYvZRqTxDU
+         Zn3w==
+X-Gm-Message-State: AJcUukfOmCATjn4N0gixyl8OkAGXrpWR0G/ngqfCPm22KLoJGQ/yPONK
+        e1iwSClLyaQvAoldiBZqrbo=
+X-Google-Smtp-Source: ALg8bN6hcCpzRt03HCt8bPGdbnCjGkdPU8rA6pAz3jU3h3OW/BrUJqrtuSApZfbWnlW8m5+KYGnltg==
+X-Received: by 2002:a63:ca02:: with SMTP id n2mr2278366pgi.187.1546968316852;
+        Tue, 08 Jan 2019 09:25:16 -0800 (PST)
+Received: from ap-To-be-filled-by-O-E-M.8.8.8.8 ([14.33.120.60])
+        by smtp.gmail.com with ESMTPSA id 4sm114558463pfq.10.2019.01.08.09.25.14
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 08 Jan 2019 09:25:13 -0800 (PST)
-Subject: Re: [PATCH 0/8] Add IPROC I2C slave mode and NIC I2C support
-To:     Rayagonda Kokatanur <rayagonda.kokatanur@broadcom.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Shreesha Rajashekar <shreesha.rajashekar@broadcom.com>,
-        Michael Cheng <ccheng@broadcom.com>, linux-i2c@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com
-References: <1546938997-13798-1-git-send-email-rayagonda.kokatanur@broadcom.com>
-From:   Ray Jui <ray.jui@broadcom.com>
-Message-ID: <6a5380e3-1e15-31e3-bbaa-134856a0c2dc@broadcom.com>
-Date:   Tue, 8 Jan 2019 09:25:09 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <1546938997-13798-1-git-send-email-rayagonda.kokatanur@broadcom.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Tue, 08 Jan 2019 09:25:16 -0800 (PST)
+From:   Taehee Yoo <ap420073@gmail.com>
+To:     davem@davemloft.net, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, daniel@iogearbox.net, ast@kernel.org,
+        mcgrof@kernel.org
+Cc:     ap420073@gmail.com
+Subject: [PATCH net v4 4/4] net: bpfilter: disallow to remove bpfilter module while being used
+Date:   Wed,  9 Jan 2019 02:25:10 +0900
+Message-Id: <20190108172510.12305-1-ap420073@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-You sent out the same patch series 3 times without any explanation. Very
-confusing.
+The bpfilter.ko module can be removed while functions of the bpfilter.ko
+are executing. so panic can occurred. in order to protect that, locks can
+be used. a bpfilter_lock protects routines in the
+__bpfilter_process_sockopt() but it's not enough because __exit routine
+can be executed concurrently.
 
-Is this the latest one that should be reviewed?
+Now, the bpfilter_umh can not run in parallel.
+So, the module do not removed while it's being used and it do not
+double-create UMH process.
+The members of the umh_info and the bpfilter_umh_ops are protected by
+the bpfilter_umh_ops.lock.
 
-Thanks,
+test commands:
+   while :
+   do
+	iptables -I FORWARD -m string --string ap --algo kmp &
+	modprobe -rv bpfilter &
+   done
 
-Ray
+splat looks like:
+[  298.623435] BUG: unable to handle kernel paging request at fffffbfff807440b
+[  298.628512] #PF error: [normal kernel read fault]
+[  298.633018] PGD 124327067 P4D 124327067 PUD 11c1a3067 PMD 119eb2067 PTE 0
+[  298.638859] Oops: 0000 [#1] SMP DEBUG_PAGEALLOC KASAN PTI
+[  298.638859] CPU: 0 PID: 2997 Comm: iptables Not tainted 4.20.0+ #154
+[  298.638859] RIP: 0010:__mutex_lock+0x6b9/0x16a0
+[  298.638859] Code: c0 00 00 e8 89 82 ff ff 80 bd 8f fc ff ff 00 0f 85 d9 05 00 00 48 8b 85 80 fc ff ff 48 bf 00 00 00 00 00 fc ff df 48 c1 e8 03 <80> 3c 38 00 0f 85 1d 0e 00 00 48 8b 85 c8 fc ff ff 49 39 47 58 c6
+[  298.638859] RSP: 0018:ffff88810e7777a0 EFLAGS: 00010202
+[  298.638859] RAX: 1ffffffff807440b RBX: ffff888111bd4d80 RCX: 0000000000000000
+[  298.638859] RDX: 1ffff110235ff806 RSI: ffff888111bd5538 RDI: dffffc0000000000
+[  298.638859] RBP: ffff88810e777b30 R08: 0000000080000002 R09: 0000000000000000
+[  298.638859] R10: 0000000000000000 R11: 0000000000000000 R12: fffffbfff168a42c
+[  298.638859] R13: ffff888111bd4d80 R14: ffff8881040e9a05 R15: ffffffffc03a2000
+[  298.638859] FS:  00007f39e3758700(0000) GS:ffff88811ae00000(0000) knlGS:0000000000000000
+[  298.638859] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  298.638859] CR2: fffffbfff807440b CR3: 000000011243e000 CR4: 00000000001006f0
+[  298.638859] Call Trace:
+[  298.638859]  ? mutex_lock_io_nested+0x1560/0x1560
+[  298.638859]  ? kasan_kmalloc+0xa0/0xd0
+[  298.638859]  ? kmem_cache_alloc+0x1c2/0x260
+[  298.638859]  ? __alloc_file+0x92/0x3c0
+[  298.638859]  ? alloc_empty_file+0x43/0x120
+[  298.638859]  ? alloc_file_pseudo+0x220/0x330
+[  298.638859]  ? sock_alloc_file+0x39/0x160
+[  298.638859]  ? __sys_socket+0x113/0x1d0
+[  298.638859]  ? __x64_sys_socket+0x6f/0xb0
+[  298.638859]  ? do_syscall_64+0x138/0x560
+[  298.638859]  ? entry_SYSCALL_64_after_hwframe+0x49/0xbe
+[  298.638859]  ? __alloc_file+0x92/0x3c0
+[  298.638859]  ? init_object+0x6b/0x80
+[  298.638859]  ? cyc2ns_read_end+0x10/0x10
+[  298.638859]  ? cyc2ns_read_end+0x10/0x10
+[  298.638859]  ? hlock_class+0x140/0x140
+[  298.638859]  ? sched_clock_local+0xd4/0x140
+[  298.638859]  ? sched_clock_local+0xd4/0x140
+[  298.638859]  ? check_flags.part.37+0x440/0x440
+[  298.638859]  ? __lock_acquire+0x4f90/0x4f90
+[  298.638859]  ? set_rq_offline.part.89+0x140/0x140
+[ ... ]
 
-On 1/8/2019 1:16 AM, Rayagonda Kokatanur wrote:
-> Hi,
-> This patchset contains support for IPROC I2C slave and NIC I2C support.
-> Following are the brief changes done inorder to support both IPROC I2C
-> slave mode and NIC I2C,
-> 
-> a. Add support to allow I2C rx transfer upto 255 bytes
-> b. Add polling mode support to the iProc I2C driver. Polling mode is used
->    in certain SoCs where interrupt is not connected from the I2C block.
-> c. Add warpper read/write access for register to support indirect register
->    access. This is required in certain SoCs with this iProc I2C
->    block registered.
-> 
-> 
-> Ray Jui (1):
->   dt-bindings: i2c: iproc: make 'interrupts' optional
-> 
-> Rayagonda Kokatanur (5):
->   i2c: iproc: add polling support
->   i2c: iproc: use wrapper for read/write access
->   dt-bindings: i2c: iproc: add "brcm,iproc-nic-i2c" compatible string
->   i2c: iproc: add NIC I2C support
->   arm64: dts: Stingray: Add NIC i2c device node
-> 
-> Shreesha Rajashekar (2):
->   i2c: iproc: I2C read up to 255 bytes support
->   i2c: iproc: Add Slave mode support
-> 
->  .../devicetree/bindings/i2c/brcm,iproc-i2c.txt     |  14 +-
->  .../arm64/boot/dts/broadcom/stingray/stingray.dtsi |  18 +
->  drivers/i2c/busses/Kconfig                         |   1 +
->  drivers/i2c/busses/i2c-bcm-iproc.c                 | 767 +++++++++++++++++----
->  4 files changed, 669 insertions(+), 131 deletions(-)
-> 
+Fixes: d2ba09c17a06 ("net: add skeleton of bpfilter kernel module")
+Signed-off-by: Taehee Yoo <ap420073@gmail.com>
+---
+ include/linux/bpfilter.h     |  2 ++
+ net/bpfilter/bpfilter_kern.c | 28 +++++++++++-----------------
+ net/ipv4/bpfilter/sockopt.c  | 22 ++++++++++++++++------
+ 3 files changed, 29 insertions(+), 23 deletions(-)
+
+diff --git a/include/linux/bpfilter.h b/include/linux/bpfilter.h
+index 8ebcbdd70bdc..d815622cd31e 100644
+--- a/include/linux/bpfilter.h
++++ b/include/linux/bpfilter.h
+@@ -12,6 +12,8 @@ int bpfilter_ip_get_sockopt(struct sock *sk, int optname, char __user *optval,
+ 			    int __user *optlen);
+ struct bpfilter_umh_ops {
+ 	struct umh_info info;
++	/* since ip_getsockopt() can run in parallel, serialize access to umh */
++	struct mutex lock;
+ 	int (*sockopt)(struct sock *sk, int optname,
+ 		       char __user *optval,
+ 		       unsigned int optlen, bool is_set);
+diff --git a/net/bpfilter/bpfilter_kern.c b/net/bpfilter/bpfilter_kern.c
+index c0fcde910a7a..7ee4fea93637 100644
+--- a/net/bpfilter/bpfilter_kern.c
++++ b/net/bpfilter/bpfilter_kern.c
+@@ -13,9 +13,6 @@
+ extern char bpfilter_umh_start;
+ extern char bpfilter_umh_end;
+ 
+-/* since ip_getsockopt() can run in parallel, serialize access to umh */
+-static DEFINE_MUTEX(bpfilter_lock);
+-
+ static void shutdown_umh(void)
+ {
+ 	struct task_struct *tsk;
+@@ -36,13 +33,6 @@ static void __stop_umh(void)
+ 		shutdown_umh();
+ }
+ 
+-static void stop_umh(void)
+-{
+-	mutex_lock(&bpfilter_lock);
+-	__stop_umh();
+-	mutex_unlock(&bpfilter_lock);
+-}
+-
+ static int __bpfilter_process_sockopt(struct sock *sk, int optname,
+ 				      char __user *optval,
+ 				      unsigned int optlen, bool is_set)
+@@ -58,7 +48,6 @@ static int __bpfilter_process_sockopt(struct sock *sk, int optname,
+ 	req.cmd = optname;
+ 	req.addr = (long __force __user)optval;
+ 	req.len = optlen;
+-	mutex_lock(&bpfilter_lock);
+ 	if (!bpfilter_ops.info.pid)
+ 		goto out;
+ 	n = __kernel_write(bpfilter_ops.info.pipe_to_umh, &req, sizeof(req),
+@@ -80,7 +69,6 @@ static int __bpfilter_process_sockopt(struct sock *sk, int optname,
+ 	}
+ 	ret = reply.status;
+ out:
+-	mutex_unlock(&bpfilter_lock);
+ 	return ret;
+ }
+ 
+@@ -99,7 +87,7 @@ static int start_umh(void)
+ 
+ 	/* health check that usermode process started correctly */
+ 	if (__bpfilter_process_sockopt(NULL, 0, NULL, 0, 0) != 0) {
+-		stop_umh();
++		shutdown_umh();
+ 		return -EFAULT;
+ 	}
+ 
+@@ -110,24 +98,30 @@ static int __init load_umh(void)
+ {
+ 	int err;
+ 
+-	if (!bpfilter_ops.stop)
+-		return -EFAULT;
++	mutex_lock(&bpfilter_ops.lock);
++	if (!bpfilter_ops.stop) {
++		err = -EFAULT;
++		goto out;
++	}
+ 	err = start_umh();
+ 	if (!err && IS_ENABLED(CONFIG_INET)) {
+ 		bpfilter_ops.sockopt = &__bpfilter_process_sockopt;
+ 		bpfilter_ops.start = &start_umh;
+ 	}
+-
++out:
++	mutex_unlock(&bpfilter_ops.lock);
+ 	return err;
+ }
+ 
+ static void __exit fini_umh(void)
+ {
++	mutex_lock(&bpfilter_ops.lock);
+ 	if (IS_ENABLED(CONFIG_INET)) {
++		shutdown_umh();
+ 		bpfilter_ops.start = NULL;
+ 		bpfilter_ops.sockopt = NULL;
+ 	}
+-	stop_umh();
++	mutex_unlock(&bpfilter_ops.lock);
+ }
+ module_init(load_umh);
+ module_exit(fini_umh);
+diff --git a/net/ipv4/bpfilter/sockopt.c b/net/ipv4/bpfilter/sockopt.c
+index de84ede4e765..1e976bb93d99 100644
+--- a/net/ipv4/bpfilter/sockopt.c
++++ b/net/ipv4/bpfilter/sockopt.c
+@@ -14,10 +14,12 @@ EXPORT_SYMBOL_GPL(bpfilter_ops);
+ 
+ static void bpfilter_umh_cleanup(struct umh_info *info)
+ {
++	mutex_lock(&bpfilter_ops.lock);
+ 	bpfilter_ops.stop = true;
+ 	fput(info->pipe_to_umh);
+ 	fput(info->pipe_from_umh);
+ 	info->pid = 0;
++	mutex_unlock(&bpfilter_ops.lock);
+ }
+ 
+ static int bpfilter_mbox_request(struct sock *sk, int optname,
+@@ -25,21 +27,28 @@ static int bpfilter_mbox_request(struct sock *sk, int optname,
+ 				 unsigned int optlen, bool is_set)
+ {
+ 	int err;
+-
++	mutex_lock(&bpfilter_ops.lock);
+ 	if (!bpfilter_ops.sockopt) {
++		mutex_unlock(&bpfilter_ops.lock);
+ 		err = request_module("bpfilter");
++		mutex_lock(&bpfilter_ops.lock);
+ 
+ 		if (err)
+-			return err;
+-		if (!bpfilter_ops.sockopt)
+-			return -ECHILD;
++			goto out;
++		if (!bpfilter_ops.sockopt) {
++			err = -ECHILD;
++			goto out;
++		}
+ 	}
+ 	if (bpfilter_ops.stop) {
+ 		err = bpfilter_ops.start();
+ 		if (err)
+-			return err;
++			goto out;
+ 	}
+-	return bpfilter_ops.sockopt(sk, optname, optval, optlen, is_set);
++	err = bpfilter_ops.sockopt(sk, optname, optval, optlen, is_set);
++out:
++	mutex_unlock(&bpfilter_ops.lock);
++	return err;
+ }
+ 
+ int bpfilter_ip_set_sockopt(struct sock *sk, int optname, char __user *optval,
+@@ -61,6 +70,7 @@ int bpfilter_ip_get_sockopt(struct sock *sk, int optname, char __user *optval,
+ 
+ static int __init bpfilter_sockopt_init(void)
+ {
++	mutex_init(&bpfilter_ops.lock);
+ 	bpfilter_ops.stop = true;
+ 	bpfilter_ops.info.cmdline = "bpfilter_umh";
+ 	bpfilter_ops.info.cleanup = &bpfilter_umh_cleanup;
+-- 
+2.17.1
+
