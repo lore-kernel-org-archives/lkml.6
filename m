@@ -2,142 +2,112 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A5E9C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 10:29:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 199FAC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 10:29:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 32A6720850
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 10:29:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D37D82173C
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 10:29:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="KtPkx1Ci"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728990AbfAHK3R (ORCPT
+        id S1728997AbfAHK32 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 05:29:17 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:56226 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727614AbfAHK3Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 05:29:16 -0500
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 537933F731;
-        Tue,  8 Jan 2019 10:29:15 +0000 (UTC)
-Received: from laptop.redhat.com (ovpn-116-249.ams2.redhat.com [10.36.116.249])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id DF6336013A;
-        Tue,  8 Jan 2019 10:29:02 +0000 (UTC)
-From:   Eric Auger <eric.auger@redhat.com>
-To:     eric.auger.pro@gmail.com, eric.auger@redhat.com,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, kvmarm@lists.cs.columbia.edu, joro@8bytes.org,
-        alex.williamson@redhat.com, jacob.jun.pan@linux.intel.com,
-        yi.l.liu@linux.intel.com, jean-philippe.brucker@arm.com,
-        will.deacon@arm.com, robin.murphy@arm.com
-Cc:     kevin.tian@intel.com, ashok.raj@intel.com, marc.zyngier@arm.com,
-        christoffer.dall@arm.com, peter.maydell@linaro.org
-Subject: [RFC v3 21/21] vfio: Document nested stage control
-Date:   Tue,  8 Jan 2019 11:26:33 +0100
-Message-Id: <20190108102633.17482-22-eric.auger@redhat.com>
-In-Reply-To: <20190108102633.17482-1-eric.auger@redhat.com>
-References: <20190108102633.17482-1-eric.auger@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Tue, 08 Jan 2019 10:29:15 +0000 (UTC)
+        Tue, 8 Jan 2019 05:29:28 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:48782 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728034AbfAHK31 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 05:29:27 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=a3kU5k+u673a2t4p3kZsUUxiSNyKyt8voZTb8FPfGoU=; b=KtPkx1CiOsfJMDgrKwdFT06Wg
+        RsxgG+HhPdWeZT2jQM2eF/RrXNalETBM4ZFaA9Xy6HS5tx8TknXTI7JkPDwPyc4ZoykiCuM6OwVDu
+        c26g/Pna8g9b7AFhFeYOFo2ukav88impf1E5/f4d7VQwaZTuh7jVHc4jXGEb/Vvv3cY8ajOmEtH0y
+        2SZrEjNZ2fytGuPTc+WTgg0NywS0Gj50L6jsHOpV6/GeEiuDYHSUZ9ji+/Mp027aMTj2leFSsF7+U
+        G5va0gYlsmkGWKPArWaKBMWLO2kI/qb25k/EdrXhEl8oE6q22epOoF2ZUVaKJvBPvWtqywRNO3PMf
+        NLCUwZRng==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1ggoc8-0003ob-DZ; Tue, 08 Jan 2019 10:28:04 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 04C1D20268504; Tue,  8 Jan 2019 11:28:02 +0100 (CET)
+Date:   Tue, 8 Jan 2019 11:28:02 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Andrew Murray <andrew.murray@arm.com>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Richard Henderson <rth@twiddle.net>,
+        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+        Matt Turner <mattst88@gmail.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        Russell King <linux@armlinux.org.uk>, suzuki.poulose@arm.com,
+        robin.murphy@arm.com, Michael Ellerman <mpe@ellerman.id.au>,
+        x86@kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-alpha@vger.kernel.org
+Subject: Re: [PATCH v4 05/13] arm: perf: conditionally use
+ PERF_PMU_CAP_NO_EXCLUDE
+Message-ID: <20190108102802.GC6808@hirez.programming.kicks-ass.net>
+References: <1546878450-20341-1-git-send-email-andrew.murray@arm.com>
+ <1546878450-20341-6-git-send-email-andrew.murray@arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1546878450-20341-6-git-send-email-andrew.murray@arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-New iotcls were introduced to pass information about guest stage1
-to the host through VFIO. Let's document the nested stage control.
+On Mon, Jan 07, 2019 at 04:27:22PM +0000, Andrew Murray wrote:
+> @@ -393,9 +386,8 @@ __hw_perf_event_init(struct perf_event *event)
+>  	/*
+>  	 * Check whether we need to exclude the counter from certain modes.
+>  	 */
+> +	if (armpmu->set_event_filter &&
+> +	    armpmu->set_event_filter(hwc, &event->attr)) {
+>  		pr_debug("ARM performance counters do not support "
+>  			 "mode exclusion\n");
+>  		return -EOPNOTSUPP;
 
-Signed-off-by: Eric Auger <eric.auger@redhat.com>
+This then requires all set_event_filter() implementations to check all
+the various exclude options; also, set_event_filter() failing then
+returns with -EOPNOTSUPP instead of the -EINVAL the CAP_NO_EXCLUDE
+generates, which is again inconsitent.
 
----
+If I look at (the very first git-grep found me)
+armv7pmu_set_event_filter(), then I find it returning -EPERM (again
+inconsistent but irrelevant because the actual value is not preserved)
+for exclude_idle.
 
-v2 -> v3:
-- document the new fault API
+But it doesn't seem to check exclude_host at all for example.
 
-v1 -> v2:
-- use the new ioctl names
-- add doc related to fault handling
----
- Documentation/vfio.txt | 62 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 62 insertions(+)
-
-diff --git a/Documentation/vfio.txt b/Documentation/vfio.txt
-index f1a4d3c3ba0b..620e38ed0c4a 100644
---- a/Documentation/vfio.txt
-+++ b/Documentation/vfio.txt
-@@ -239,6 +239,68 @@ group and can access them as follows::
- 	/* Gratuitous device reset and go... */
- 	ioctl(device, VFIO_DEVICE_RESET);
- 
-+IOMMU Dual Stage Control
-+------------------------
-+
-+Some IOMMUs support 2 stages/levels of translation. "Stage" corresponds to
-+the ARM terminology while "level" corresponds to Intel's VTD terminology. In
-+the following text we use either without distinction.
-+
-+This is useful when the guest is exposed with a virtual IOMMU and some
-+devices are assigned to the guest through VFIO. Then the guest OS can use
-+stage 1 (IOVA -> GPA), while the hypervisor uses stage 2 for VM isolation
-+(GPA -> HPA).
-+
-+The guest gets ownership of the stage 1 page tables and also owns stage 1
-+configuration structures. The hypervisor owns the root configuration structure
-+(for security reason), including stage 2 configuration. This works as long
-+configuration structures and page table format are compatible between the
-+virtual IOMMU and the physical IOMMU.
-+
-+Assuming the HW supports it, this nested mode is selected by choosing the
-+VFIO_TYPE1_NESTING_IOMMU type through:
-+
-+ioctl(container, VFIO_SET_IOMMU, VFIO_TYPE1_NESTING_IOMMU);
-+
-+This forces the hypervisor to use the stage 2, leaving stage 1 available for
-+guest usage.
-+
-+Once groups are attached to the container, the guest stage 1 translation
-+configuration data can be passed to VFIO by using
-+
-+ioctl(container, VFIO_IOMMU_BIND_PASID_TABLE, &pasid_table_info);
-+
-+This allows to combine guest stage 1 configuration structure along with
-+hypervisor stage 2 configuration structure. stage 1 configuration structures
-+are dependent on the IOMMU type.
-+
-+As the stage 1 translation is fully delegated to the HW, physical events that
-+may occur (especially translation faults), need to be propagated up to
-+the virtualizer and re-injected into the guest.
-+
-+By using VFIO_DEVICE_SET_IRQS along with the VFIO_PCI_DMA_FAULT_IRQ_INDEX
-+index, the virtualizer can register an eventfd signalled whenever a
-+fault is observed at physical level. The actual faults can be retrieved
-+from the device fault region whose type/subtype is:
-+VFIO_REGION_TYPE_NESTED/VFIO_REGION_SUBTYPE_NESTED_FAULT_REGION.
-+
-+This region can be mmapped. When a fault is consumed, the user must increment
-+the consumer index.
-+
-+When the guest invalidates stage 1 related caches, invalidations must be
-+forwarded to the host through
-+ioctl(container, VFIO_IOMMU_CACHE_INVALIDATE, &inv_data);
-+Those invalidations can happen at various granularity levels, page, context, ...
-+
-+The ARM SMMU specification introduces another challenge: MSIs are translated by
-+both the virtual SMMU and the physical SMMU. To build a nested mapping for the
-+IOVA programmed into the assigned device, the guest needs to pass its IOVA/MSI
-+doorbell GPA binding to the host. Then the hypervisor can build a nested stage 2
-+binding eventually translating into the physical MSI doorbell.
-+
-+This is achieved by
-+ioctl(container, VFIO_IOMMU_BIND_MSI, &guest_binding);
-+
- VFIO User API
- -------------------------------------------------------------------------------
- 
--- 
-2.17.2
-
+> @@ -867,6 +859,9 @@ int armpmu_register(struct arm_pmu *pmu)
+>  	if (ret)
+>  		return ret;
+>  
+> +	if (!pmu->set_event_filter)
+> +		pmu->pmu.capabilities |= PERF_PMU_CAP_NO_EXCLUDE;
+> +
+>  	ret = perf_pmu_register(&pmu->pmu, pmu->name, -1);
+>  	if (ret)
+>  		goto out_destroy;
+> -- 
+> 2.7.4
+> 
