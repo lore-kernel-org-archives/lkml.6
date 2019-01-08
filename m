@@ -2,54 +2,53 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4A95C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:31:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89938C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:31:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7503A2176F
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:31:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 58E652176F
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:31:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546975898;
-	bh=gIEXv2DrrCFcuLBLc+cGlLVKNNeUhmCn+6HG2qvpy4c=;
+	s=default; t=1546975904;
+	bh=gdqg255WCdru7izd4QObD+y0nUyjQpQ3RbFUDM2LHn4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=kPNoeSlFZIz95IME4EF1pZPV4PEE8erS9eNO1FMy26zpDx/IvKo5WEMUHH/3D93/a
-	 WXLXmIx7EaQXFZlpHKSeEARcJyhFN+atOm8lC9Q7SPktbA7YQp5cDYGEZmdZSta7sV
-	 QVb0tz510ipDLd59bSGPbbFttCQFLXsP/+N8kwT4=
+	b=hVCI44UUbVxxXsGpOEaalcUqFFAcLz64CuBgUqjkLx7KEp5ZylYeb24KXKq/LtgfV
+	 qk8oHBUpQ7+X/w/0OE8eUAeup3cu9/zhA3f7GdpmSGhiwMZFNdxznUjyqqfmEfO6on
+	 e/z34BIFXgme4saGE8UogFQs/mQgtlpxBhP9NL2Y=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729667AbfAHTbg (ORCPT
+        id S1731185AbfAHTbn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:31:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39686 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 14:31:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39862 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730037AbfAHTbd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:31:33 -0500
+        id S1731147AbfAHTbl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:31:41 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B02F420645;
-        Tue,  8 Jan 2019 19:31:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 341A92176F;
+        Tue,  8 Jan 2019 19:31:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546975892;
-        bh=gIEXv2DrrCFcuLBLc+cGlLVKNNeUhmCn+6HG2qvpy4c=;
+        s=default; t=1546975900;
+        bh=gdqg255WCdru7izd4QObD+y0nUyjQpQ3RbFUDM2LHn4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WfcmLCNgBwfI9CU1BpOw0EZdVJqzMJh8auTB3qIfMpzEauNHj0o5DQH2VsyKb5s76
-         VDQkxJnApp1rmPz376uAHGya7uzr2/NsNE5LlZswmkQNRmzt+rd/s5NW+b5sEC35Gf
-         PNn4odPWrsYS+voSHZbADPN6BGVri7nUHOzyAtLQ=
+        b=XiwjlTFxlbXUMd4K/fpLJcfO2CHjI8RXpi/M+CbeZ122ynyxeXkcBsWQG3sVGKazH
+         pvBi+7NxHTMM8LV1uLJrSPZPcTOeQuLnGN/k83bo9H+QSAkO9G7hHO3rBx1tqf8pv2
+         jV+oW6t2pYnHzMC1qKVlfyTMPA05Ch8FbSihJ+J0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Arjan van de Ven <arjan@linux.intel.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 65/97] perf svghelper: Fix unchecked usage of strncpy()
-Date:   Tue,  8 Jan 2019 14:29:14 -0500
-Message-Id: <20190108192949.122407-65-sashal@kernel.org>
+Cc:     Taehee Yoo <ap420073@gmail.com>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Sasha Levin <sashal@kernel.org>,
+        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+        netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 69/97] netfilter: ipt_CLUSTERIP: remove wrong WARN_ON_ONCE in netns exit routine
+Date:   Tue,  8 Jan 2019 14:29:18 -0500
+Message-Id: <20190108192949.122407-69-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108192949.122407-1-sashal@kernel.org>
 References: <20190108192949.122407-1-sashal@kernel.org>
@@ -61,55 +60,71 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnaldo Carvalho de Melo <acme@redhat.com>
+From: Taehee Yoo <ap420073@gmail.com>
 
-[ Upstream commit 2f5302533f306d5ee87bd375aef9ca35b91762cb ]
+[ Upstream commit b12f7bad5ad3724d19754390a3e80928525c0769 ]
 
-The strncpy() function may leave the destination string buffer
-unterminated, better use strlcpy() that we have a __weak fallback
-implementation for systems without it.
+When network namespace is destroyed, both clusterip_tg_destroy() and
+clusterip_net_exit() are called. and clusterip_net_exit() is called
+before clusterip_tg_destroy().
+Hence cleanup check code in clusterip_net_exit() doesn't make sense.
 
-In this specific case this would only happen if fgets() was buggy, as
-its man page states that it should read one less byte than the size of
-the destination buffer, so that it can put the nul byte at the end of
-it, so it would never copy 255 non-nul chars, as fgets reads into the
-orig buffer at most 254 non-nul chars and terminates it. But lets just
-switch to strlcpy to keep the original intent and silence the gcc 8.2
-warning.
+test commands:
+   %ip netns add vm1
+   %ip netns exec vm1 bash
+   %ip link set lo up
+   %iptables -A INPUT -p tcp -i lo -d 192.168.0.5 --dport 80 \
+	-j CLUSTERIP --new --hashmode sourceip \
+	--clustermac 01:00:5e:00:00:20 --total-nodes 2 --local-node 1
+   %exit
+   %ip netns del vm1
 
-This fixes this warning on an Alpine Linux Edge system with gcc 8.2:
+splat looks like:
+[  341.184508] WARNING: CPU: 1 PID: 87 at net/ipv4/netfilter/ipt_CLUSTERIP.c:840 clusterip_net_exit+0x319/0x380 [ipt_CLUSTERIP]
+[  341.184850] Modules linked in: ipt_CLUSTERIP nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 xt_tcpudp iptable_filter bpfilter ip_tables x_tables
+[  341.184850] CPU: 1 PID: 87 Comm: kworker/u4:2 Not tainted 4.19.0-rc5+ #16
+[  341.227509] Workqueue: netns cleanup_net
+[  341.227509] RIP: 0010:clusterip_net_exit+0x319/0x380 [ipt_CLUSTERIP]
+[  341.227509] Code: 0f 85 7f fe ff ff 48 c7 c2 80 64 2c c0 be a8 02 00 00 48 c7 c7 a0 63 2c c0 c6 05 18 6e 00 00 01 e8 bc 38 ff f5 e9 5b fe ff ff <0f> 0b e9 33 ff ff ff e8 4b 90 50 f6 e9 2d fe ff ff 48 89 df e8 de
+[  341.227509] RSP: 0018:ffff88011086f408 EFLAGS: 00010202
+[  341.227509] RAX: dffffc0000000000 RBX: 1ffff1002210de85 RCX: 0000000000000000
+[  341.227509] RDX: 1ffff1002210de85 RSI: ffff880110813be8 RDI: ffffed002210de58
+[  341.227509] RBP: ffff88011086f4d0 R08: 0000000000000000 R09: 0000000000000000
+[  341.227509] R10: 0000000000000000 R11: 0000000000000000 R12: 1ffff1002210de81
+[  341.227509] R13: ffff880110625a48 R14: ffff880114cec8c8 R15: 0000000000000014
+[  341.227509] FS:  0000000000000000(0000) GS:ffff880116600000(0000) knlGS:0000000000000000
+[  341.227509] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  341.227509] CR2: 00007f11fd38e000 CR3: 000000013ca16000 CR4: 00000000001006e0
+[  341.227509] Call Trace:
+[  341.227509]  ? __clusterip_config_find+0x460/0x460 [ipt_CLUSTERIP]
+[  341.227509]  ? default_device_exit+0x1ca/0x270
+[  341.227509]  ? remove_proc_entry+0x1cd/0x390
+[  341.227509]  ? dev_change_net_namespace+0xd00/0xd00
+[  341.227509]  ? __init_waitqueue_head+0x130/0x130
+[  341.227509]  ops_exit_list.isra.10+0x94/0x140
+[  341.227509]  cleanup_net+0x45b/0x900
+[ ... ]
 
-  In function 'cpu_model',
-      inlined from 'svg_cpu_box' at util/svghelper.c:378:2:
-  util/svghelper.c:337:5: error: 'strncpy' output may be truncated copying 255 bytes from a string of length 255 [-Werror=stringop-truncation]
-       strncpy(cpu_m, &buf[13], 255);
-       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Arjan van de Ven <arjan@linux.intel.com>
-Fixes: f48d55ce7871 ("perf: Add a SVG helper library file")
-Link: https://lkml.kernel.org/n/tip-xzkoo0gyr56gej39ltivuh9g@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Fixes: 613d0776d3fe ("netfilter: exit_net cleanup check added")
+Signed-off-by: Taehee Yoo <ap420073@gmail.com>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/util/svghelper.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/ipv4/netfilter/ipt_CLUSTERIP.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/tools/perf/util/svghelper.c b/tools/perf/util/svghelper.c
-index 1cbada2dc6be..f735ee038713 100644
---- a/tools/perf/util/svghelper.c
-+++ b/tools/perf/util/svghelper.c
-@@ -334,7 +334,7 @@ static char *cpu_model(void)
- 	if (file) {
- 		while (fgets(buf, 255, file)) {
- 			if (strstr(buf, "model name")) {
--				strncpy(cpu_m, &buf[13], 255);
-+				strlcpy(cpu_m, &buf[13], 255);
- 				break;
- 			}
- 		}
+diff --git a/net/ipv4/netfilter/ipt_CLUSTERIP.c b/net/ipv4/netfilter/ipt_CLUSTERIP.c
+index e40e6795bd20..33491cb6b9d1 100644
+--- a/net/ipv4/netfilter/ipt_CLUSTERIP.c
++++ b/net/ipv4/netfilter/ipt_CLUSTERIP.c
+@@ -838,7 +838,6 @@ static void clusterip_net_exit(struct net *net)
+ 	cn->procdir = NULL;
+ #endif
+ 	nf_unregister_net_hook(net, &cip_arp_ops);
+-	WARN_ON_ONCE(!list_empty(&cn->configs));
+ }
+ 
+ static struct pernet_operations clusterip_net_ops = {
 -- 
 2.19.1
 
