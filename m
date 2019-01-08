@@ -4,50 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 867C4C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:46:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 699ACC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:47:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 537D42063F
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:46:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3AEE2206BB
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:47:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546976817;
-	bh=OXxvn0OaptjFeg1jchr9B7WnvuREIkoQyP0OfUm8VAQ=;
+	s=default; t=1546976826;
+	bh=8oeZAB77nDuc30Jy2kZfjwNhQL9VpTQS8IRP4MWBEOE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=QLAuvpPczAUbqUX+bUzP0415TfGAWT1WZ5KEN/m4eZA92jZ7OIf/UedLJ+GVvD6ZR
-	 dUSsW5N5Sq4LiyT4jdkka+t0uZZepwptYwFQ2wmpgoWY0ZYYMdc0JhKFgU8aWeDoFE
-	 lpCxqcHxstBSYXJ8pznZNs0gw9IQv1XW8Syds9wk=
+	b=IuUN7igR1ZoXNlGMmPFVU52Ea0lSSD14zPJeraO3nE6pEda6OT8bfCl/HJfT6HHgs
+	 2UC642ml71fN2Fsn+jHNyIrfk3tmMeBjdhuDLE7aqomStSSUkeaDJtxpqs5OHE6qUG
+	 JKXygj8ZRMAgPXzcs2rMXyvkGEKJhjkc+HnoRmmE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732743AbfAHTq4 (ORCPT
+        id S1732747AbfAHTrF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:46:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41762 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 14:47:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41686 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731513AbfAHTc7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:32:59 -0500
+        id S1731500AbfAHTc4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:32:56 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 71C832063F;
-        Tue,  8 Jan 2019 19:32:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 366F520645;
+        Tue,  8 Jan 2019 19:32:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546975978;
-        bh=OXxvn0OaptjFeg1jchr9B7WnvuREIkoQyP0OfUm8VAQ=;
+        s=default; t=1546975974;
+        bh=8oeZAB77nDuc30Jy2kZfjwNhQL9VpTQS8IRP4MWBEOE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jD+q6k5z9XslSRXniSbCSKitx3Wsvx+Io29lYU2vBuCHNLXfLfbXeimcOmhFjpvQL
-         rSIVLkmVnmxbi4qORsBil29s6nYuR+RfKEZfRBTXr5EJY5X1Y6J5AWavCQdsHXhqUM
-         cf167RsPza9SdMbVnBjnvTa8RpVifX3R7DjiO/r8=
+        b=AS7HyIeclNkjJPYdsadp7vIxJox/DcSGbw4jNQI7ShsE84pEYT2zoQUfUj5Fxv7oV
+         7/EfcSE1Ose9z/Rk/Btx1piPm33ha+eSKzYNazw3fWAwgne8eQ1RZT9iCpgfpl2cRL
+         9VRJIxor7qnF9MpggZ/DRSWYLSf85BgwhVk2Fdas=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Peter Smith <peter.smith@linaro.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 20/53] arm64: relocatable: fix inconsistencies in linker script and options
-Date:   Tue,  8 Jan 2019 14:31:48 -0500
-Message-Id: <20190108193222.123316-20-sashal@kernel.org>
+Cc:     Breno Leitao <leitao@debian.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Sasha Levin <sashal@kernel.org>, linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH AUTOSEL 4.14 18/53] powerpc/xmon: Fix invocation inside lock region
+Date:   Tue,  8 Jan 2019 14:31:46 -0500
+Message-Id: <20190108193222.123316-18-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108193222.123316-1-sashal@kernel.org>
 References: <20190108193222.123316-1-sashal@kernel.org>
@@ -59,100 +58,86 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+From: Breno Leitao <leitao@debian.org>
 
-[ Upstream commit 3bbd3db86470c701091fb1d67f1fab6621debf50 ]
+[ Upstream commit 8d4a862276a9c30a269d368d324fb56529e6d5fd ]
 
-readelf complains about the section layout of vmlinux when building
-with CONFIG_RELOCATABLE=y (for KASLR):
+Currently xmon needs to get devtree_lock (through rtas_token()) during its
+invocation (at crash time). If there is a crash while devtree_lock is being
+held, then xmon tries to get the lock but spins forever and never get into
+the interactive debugger, as in the following case:
 
-  readelf: Warning: [21]: Link field (0) should index a symtab section.
-  readelf: Warning: [21]: Info field (0) should index a relocatable section.
+	int *ptr = NULL;
+	raw_spin_lock_irqsave(&devtree_lock, flags);
+	*ptr = 0xdeadbeef;
 
-Also, it seems that our use of '-pie -shared' is contradictory, and
-thus ambiguous. In general, the way KASLR is wired up at the moment
-is highly tailored to how ld.bfd happens to implement (and conflate)
-PIE executables and shared libraries, so given the current effort to
-support other toolchains, let's fix some of these issues as well.
+This patch avoids calling rtas_token(), thus trying to get the same lock,
+at crash time. This new mechanism proposes getting the token at
+initialization time (xmon_init()) and just consuming it at crash time.
 
-- Drop the -pie linker argument and just leave -shared. In ld.bfd,
-  the differences between them are unclear (except for the ELF type
-  of the produced image [0]) but lld chokes on seeing both at the
-  same time.
+This would allow xmon to be possible invoked independent of devtree_lock
+being held or not.
 
-- Rename the .rela output section to .rela.dyn, as is customary for
-  shared libraries and PIE executables, so that it is not misidentified
-  by readelf as a static relocation section (producing the warnings
-  above).
-
-- Pass the -z notext and -z norelro options to explicitly instruct the
-  linker to permit text relocations, and to omit the RELRO program
-  header (which requires a certain section layout that we don't adhere
-  to in the kernel). These are the defaults for current versions of
-  ld.bfd.
-
-- Discard .eh_frame and .gnu.hash sections to avoid them from being
-  emitted between .head.text and .text, screwing up the section layout.
-
-These changes only affect the ELF image, and produce the same binary
-image.
-
-[0] b9dce7f1ba01 ("arm64: kernel: force ET_DYN ELF type for ...")
-
-Cc: Nick Desaulniers <ndesaulniers@google.com>
-Cc: Peter Smith <peter.smith@linaro.org>
-Tested-by: Nick Desaulniers <ndesaulniers@google.com>
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Breno Leitao <leitao@debian.org>
+Reviewed-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/Makefile             | 2 +-
- arch/arm64/kernel/vmlinux.lds.S | 9 +++++----
- 2 files changed, 6 insertions(+), 5 deletions(-)
+ arch/powerpc/xmon/xmon.c | 18 ++++++++++++++----
+ 1 file changed, 14 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm64/Makefile b/arch/arm64/Makefile
-index 48f2b3657507..0c5f70e6d5cf 100644
---- a/arch/arm64/Makefile
-+++ b/arch/arm64/Makefile
-@@ -18,7 +18,7 @@ ifeq ($(CONFIG_RELOCATABLE), y)
- # Pass --no-apply-dynamic-relocs to restore pre-binutils-2.27 behaviour
- # for relative relocs, since this leads to better Image compression
- # with the relocation offsets always being zero.
--LDFLAGS_vmlinux		+= -pie -shared -Bsymbolic \
-+LDFLAGS_vmlinux		+= -shared -Bsymbolic -z notext -z norelro \
- 			$(call ld-option, --no-apply-dynamic-relocs)
- endif
+diff --git a/arch/powerpc/xmon/xmon.c b/arch/powerpc/xmon/xmon.c
+index a5938fadd031..f752f771f29d 100644
+--- a/arch/powerpc/xmon/xmon.c
++++ b/arch/powerpc/xmon/xmon.c
+@@ -78,6 +78,9 @@ static int xmon_gate;
+ #define xmon_owner 0
+ #endif /* CONFIG_SMP */
  
-diff --git a/arch/arm64/kernel/vmlinux.lds.S b/arch/arm64/kernel/vmlinux.lds.S
-index ddfd3c0942f7..6edfdf5b061d 100644
---- a/arch/arm64/kernel/vmlinux.lds.S
-+++ b/arch/arm64/kernel/vmlinux.lds.S
-@@ -99,7 +99,8 @@ SECTIONS
- 		*(.discard)
- 		*(.discard.*)
- 		*(.interp .dynamic)
--		*(.dynsym .dynstr .hash)
-+		*(.dynsym .dynstr .hash .gnu.hash)
-+		*(.eh_frame)
- 	}
++#ifdef CONFIG_PPC_PSERIES
++static int set_indicator_token = RTAS_UNKNOWN_SERVICE;
++#endif
+ static unsigned long in_xmon __read_mostly = 0;
+ static int xmon_on = IS_ENABLED(CONFIG_XMON_DEFAULT);
  
- 	. = KIMAGE_VADDR + TEXT_OFFSET;
-@@ -176,12 +177,12 @@ SECTIONS
+@@ -357,7 +360,6 @@ static inline void disable_surveillance(void)
+ #ifdef CONFIG_PPC_PSERIES
+ 	/* Since this can't be a module, args should end up below 4GB. */
+ 	static struct rtas_args args;
+-	int token;
  
- 	PERCPU_SECTION(L1_CACHE_BYTES)
+ 	/*
+ 	 * At this point we have got all the cpus we can into
+@@ -366,11 +368,11 @@ static inline void disable_surveillance(void)
+ 	 * If we did try to take rtas.lock there would be a
+ 	 * real possibility of deadlock.
+ 	 */
+-	token = rtas_token("set-indicator");
+-	if (token == RTAS_UNKNOWN_SERVICE)
++	if (set_indicator_token == RTAS_UNKNOWN_SERVICE)
+ 		return;
  
--	.rela : ALIGN(8) {
-+	.rela.dyn : ALIGN(8) {
- 		*(.rela .rela*)
- 	}
+-	rtas_call_unlocked(&args, token, 3, 1, NULL, SURVEILLANCE_TOKEN, 0, 0);
++	rtas_call_unlocked(&args, set_indicator_token, 3, 1, NULL,
++			   SURVEILLANCE_TOKEN, 0, 0);
  
--	__rela_offset	= ABSOLUTE(ADDR(.rela) - KIMAGE_VADDR);
--	__rela_size	= SIZEOF(.rela);
-+	__rela_offset	= ABSOLUTE(ADDR(.rela.dyn) - KIMAGE_VADDR);
-+	__rela_size	= SIZEOF(.rela.dyn);
- 
- 	. = ALIGN(SEGMENT_ALIGN);
- 	__initdata_end = .;
+ #endif /* CONFIG_PPC_PSERIES */
+ }
+@@ -3472,6 +3474,14 @@ static void xmon_init(int enable)
+ 		__debugger_iabr_match = xmon_iabr_match;
+ 		__debugger_break_match = xmon_break_match;
+ 		__debugger_fault_handler = xmon_fault_handler;
++
++#ifdef CONFIG_PPC_PSERIES
++		/*
++		 * Get the token here to avoid trying to get a lock
++		 * during the crash, causing a deadlock.
++		 */
++		set_indicator_token = rtas_token("set-indicator");
++#endif
+ 	} else {
+ 		__debugger = NULL;
+ 		__debugger_ipi = NULL;
 -- 
 2.19.1
 
