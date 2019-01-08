@@ -2,138 +2,162 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FC28C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 22:19:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47F6DC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 22:20:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6755D20883
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 22:19:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fbmmFUjh"
+	by mail.kernel.org (Postfix) with ESMTP id 11C3D20883
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 22:20:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729625AbfAHWTf (ORCPT
+        id S1729754AbfAHWUP convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 17:19:35 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:45456 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728015AbfAHWTe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 17:19:34 -0500
-Received: by mail-pf1-f196.google.com with SMTP id g62so2580840pfd.12;
-        Tue, 08 Jan 2019 14:19:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=/O3sY8celNMvtR9WhIqaTjCanK7+dtn6FuJgraOR7Uw=;
-        b=fbmmFUjh8COCYh5vjmZyvsTK03G99sIrzefroQ5j2Uu9CO9ADuBlP173v5pOy8mkv9
-         ciWJf5mnLE1UPL7SQi4Yiags1nwwvcqUkSlMhsqptXAjFJMx6tZ01b5pPtOdHzspitut
-         Vo597QJWW7ki/mitT1ERlnnvD4obEg0SxPk4+rLodY/MZ5FSEekGfjTcZVXqbE+1kSn+
-         Cif7+1EG12rKvpIR+fR3PktyXs/SvTFO4h/5kk/jAXtAlDMGofTanPAFiKqfiZNGkVsY
-         Bn5TvhtCbKZx5nVhnJGTdkzyaTR5pJyaBdmz/NAkWosY9WfgkLCGIPoPVvLQn59zi3+9
-         vnDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=/O3sY8celNMvtR9WhIqaTjCanK7+dtn6FuJgraOR7Uw=;
-        b=Io+OjksIWlL6FuYqvR1jWgnM08+FAerXWdbp9vtnDoAa0trEQHqFrnR2WFh2aMGVsb
-         hDWRqcqb0rvxXUs4cdXudkPGB/EpJr76EsRQAiHhExgukzr4T5wir+xJtEyM147Uu0o4
-         v0Ad6JtYyV1so9ItZ7Z/F2VukYqWMDMXV3RrrtF0Tz/fvS0Q79UEkevQBL/w+vfu4j6z
-         hWp1pRgn5UIEqcx2urrOSSs2Idl72zd9Y/JhEEoQ4lVV2SL/Rw7WGfsQ1yuF0E8s8erV
-         7GUOP7qFTd4kI5p86ZWCJEM9igkHZYj5Xt/d1qIy88Xuw0QsMWYGHS1k+h8kBLWaBAkb
-         NCrQ==
-X-Gm-Message-State: AJcUukeTo2wcjst3FJU2rvgCuacWU3Zt7f0MbeuKKSUM9Tiat0zQjb23
-        22BeOtDznYrWZbWOw6PcEIQ=
-X-Google-Smtp-Source: ALg8bN722fGi+WjBj2KsQHVwIaf0ObT5Q3kuvGLXfLoHV5w7jFnlyoDS9iIt/nAZXcGQ99DTQT1vKg==
-X-Received: by 2002:a62:2547:: with SMTP id l68mr3428061pfl.131.1546985973598;
-        Tue, 08 Jan 2019 14:19:33 -0800 (PST)
-Received: from localhost (g206.124-44-15.ppp.wakwak.ne.jp. [124.44.15.206])
-        by smtp.gmail.com with ESMTPSA id v184sm99160620pfb.182.2019.01.08.14.19.32
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 08 Jan 2019 14:19:32 -0800 (PST)
-Date:   Wed, 9 Jan 2019 07:19:30 +0900
-From:   Stafford Horne <shorne@gmail.com>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Michal Simek <monstr@monstr.eu>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Richard Kuo <rkuo@codeaurora.org>,
-        linux-hexagon@vger.kernel.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Guan Xuetao <gxt@pku.edu.cn>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Nicolas Dichtel <nicolas.dichtel@6wind.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Aurelien Jacquiot <jacquiot.aurelien@gmail.com>,
-        linux-riscv@lists.infradead.org, Greentime Hu <green.hu@gmail.com>,
-        linux-c6x-dev@linux-c6x.org, Guo Ren <guoren@kernel.org>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        "moderated list:H8/300 ARCHITECTURE" 
-        <uclinux-h8-devel@lists.sourceforge.jp>,
-        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>,
-        openrisc@lists.librecores.org, Mark Salter <msalter@redhat.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Jonas Bonn <jonas@southpole.se>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Vincent Chen <deanbo422@gmail.com>
-Subject: Re: [PATCH] arch: unexport asm/shmparam.h for all architectures
-Message-ID: <20190108221930.GQ3235@lianli.shorne-pla.net>
-References: <1546904307-11124-1-git-send-email-yamada.masahiro@socionext.com>
- <20190108111032.GP3235@lianli.shorne-pla.net>
- <CAK7LNAS+grgqHM-ht0CCTmZHp+JRvr=Q+sJOo0URqRgTAYRs0w@mail.gmail.com>
+        Tue, 8 Jan 2019 17:20:15 -0500
+Received: from mail-oln040092068058.outbound.protection.outlook.com ([40.92.68.58]:21568
+        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728015AbfAHWUO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 17:20:14 -0500
+Received: from HE1EUR02FT025.eop-EUR02.prod.protection.outlook.com
+ (10.152.10.59) by HE1EUR02HT083.eop-EUR02.prod.protection.outlook.com
+ (10.152.11.232) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1471.13; Tue, 8 Jan
+ 2019 22:20:10 +0000
+Received: from AM6PR07MB5608.eurprd07.prod.outlook.com (10.152.10.60) by
+ HE1EUR02FT025.mail.protection.outlook.com (10.152.10.79) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.1471.13 via Frontend Transport; Tue, 8 Jan 2019 22:20:10 +0000
+Received: from AM6PR07MB5608.eurprd07.prod.outlook.com
+ ([fe80::68b1:73c3:455d:de2a]) by AM6PR07MB5608.eurprd07.prod.outlook.com
+ ([fe80::68b1:73c3:455d:de2a%2]) with mapi id 15.20.1516.010; Tue, 8 Jan 2019
+ 22:20:10 +0000
+From:   Bernd Edlinger <bernd.edlinger@hotmail.de>
+To:     Kalle Valo <kvalo@codeaurora.org>
+CC:     Ping-Ke Shih <pkshih@realtek.com>,
+        Larry Finger <Larry.Finger@lwfinger.net>,
+        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Andrew Lunn <andrew@lunn.ch>
+Subject: Re: [PATCH v3 1/4] rtl8723ae: Take the FW LPS mode handling out
+Thread-Topic: [PATCH v3 1/4] rtl8723ae: Take the FW LPS mode handling out
+Thread-Index: AQHUpVMW1dQwmrtP7EOElJ7UgzyQKqWlpGO9gABRlgA=
+Date:   Tue, 8 Jan 2019 22:20:10 +0000
+Message-ID: <AM6PR07MB5608485F4D295B7DE5E00A0DE48A0@AM6PR07MB5608.eurprd07.prod.outlook.com>
+References: <DB7PR07MB535316A20C8447096DBC822DE4880@DB7PR07MB5353.eurprd07.prod.outlook.com>
+ <875zuzqctc.fsf@kamboji.qca.qualcomm.com>
+In-Reply-To: <875zuzqctc.fsf@kamboji.qca.qualcomm.com>
+Accept-Language: en-US, en-GB, de-DE
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: AM5P190CA0036.EURP190.PROD.OUTLOOK.COM
+ (2603:10a6:206:14::49) To AM6PR07MB5608.eurprd07.prod.outlook.com
+ (2603:10a6:20b:6f::21)
+x-incomingtopheadermarker: OriginalChecksum:957DD6C58A6FAD965940A81D39EABDD8F1B652FB7212EC848CB4C6C09821CF4E;UpperCasedChecksum:8745FE5092B997B585FCD429DC97297067141C2AD048BA2E959539BEA9AC3230;SizeAsReceived:8956;Count:65
+x-ms-exchange-messagesentrepresentingtype: 1
+x-tmn:  [J/sOYt11xHoPHK5fRRtJa+VMfEeo+LZt]
+x-microsoft-original-message-id: <193bd17c-8f12-aa33-74a7-c9fa9a90246f@hotmail.de>
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;HE1EUR02HT083;6:KPLH69ctTezlkJ133pPDBwDDaeXrKqMGQ6aUpPpvf2X/mBM8ZC1dDd7SmlHjDz8xhpVdZ1k7K2641dM/+ucv1VnpjoYTbmdCNlukn2zLYw63vEDpPI21B63u3UHCtswitS/H/k+jzHirkitZ8TptiylBQY90GTSEZlTTp6Dnr2AQ1E7YdxZ3LPVpGbmRX34PMdLrN21nbxKUDYiW8JTqdRnK+674dB1fMu06ByAVGHE/x6ey/1l6O79wShysuL6CcQ6BcpAr2DoUBz/HHKoeGUYk1GkFq623pRp/rx6XS+TZz87xf/ES8ccaiqdszgm83Z1ZS3SuXwOHqCDznhc4n6SZy5v7Wld3X1+RD4OGyfeSiIGOYPpS1H46dOGdEl99TO+K3TTk1BvxgENp2SsI2T/K7YsdsRJmGDasf8H2+mbiH2HQy29shC+tFWZVmcAr5OuE6PkXhkodABVYcGvyVw==;5:DF6T8gJUl7DHZv1dldn8vFWGHqYUOdPnX28m91larEievcQG9bwoaxun2blBpRI7EYet5fbwkAyYQU8In2t88+6Nj/jHFuurYS/TxERCMfs0wm7oys0GwdQwNVzRSfLH760LJ5suk7ysgDoTKcGk6U9E3rwYnTL4KiD77OkGbA0=;7:GsfIXAMCeBq3fGhd+jDEE0nVX7gucb4WkFVYsS5VVpDLhaQGtsXSd3YGtijioRZgeJE9bPt0vBHqAxgPC4nlx/WK1qz0nK2btkOQsjVA2KUa0n4okLKYGJWRpfWdIeisQlnVV/CgNcrE8UAbG3Wplg==
+x-incomingheadercount: 65
+x-eopattributedmessage: 0
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(201702061078)(5061506573)(5061507331)(1603103135)(2017031320274)(2017031323274)(2017031324274)(2017031322404)(1601125500)(1603101475)(1701031045);SRVR:HE1EUR02HT083;
+x-ms-traffictypediagnostic: HE1EUR02HT083:
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(4566010)(82015058);SRVR:HE1EUR02HT083;BCL:0;PCL:0;RULEID:;SRVR:HE1EUR02HT083;
+x-microsoft-antispam-message-info: bGTMq1lAuyp2nlMuYloPfmwsocgSEGss2Bd0iukbEOdlRCSjQ8cNKez2cM5CAtN0
+Content-Type: text/plain; charset="Windows-1252"
+Content-ID: <8F1AEF01D7017547B6C1DF8E5F67BC06@eurprd07.prod.outlook.com>
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAK7LNAS+grgqHM-ht0CCTmZHp+JRvr=Q+sJOo0URqRgTAYRs0w@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: d4d70346-2c10-4f39-8c00-e767963926d9
+X-MS-Exchange-CrossTenant-Network-Message-Id: e4296a1f-4885-4b53-bec9-08d675b773a1
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: d4d70346-2c10-4f39-8c00-e767963926d9
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Jan 2019 22:20:09.5266
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Internet
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1EUR02HT083
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 09, 2019 at 12:32:28AM +0900, Masahiro Yamada wrote:
-> Hi Stafford,
+On 1/8/19 6:27 PM, Kalle Valo wrote:
+> Bernd Edlinger <bernd.edlinger@hotmail.de> writes:
 > 
+>> This appears to trigger a firmware bug and causes severe
+>> problems with rtl8723ae PCI devices.
+>>
+>> When the power save mode is activated for longer periods
+>> of time the firmware stops to receive any packets.
+>>
+>> This problem was exposed by commit 873ffe154ae0 ("rtlwifi:
+>> Fix logic error in enter/exit power-save mode").
+>>
+>> Previously the power save mode was only active rarely and
+>> only for a short time so that the problem was not noticeable.
+>>
+>> Signed-off-by: Bernd Edlinger <bernd.edlinger@hotmail.de>
+>> ---
+>> v2: Adjust the defaults of swlps and fwlps module
+>> parameters to match the firmware capabilities instead of removing
+>> the whole code, so it can be easily re-activated once a firmware
+>> update is available.
+>>
+>> v3: Make the title fit in one line.
 > 
+> hotmail.de made me suspicious and indeed my Spidey sense was right:
 > 
-> On Tue, Jan 8, 2019 at 8:12 PM Stafford Horne <shorne@gmail.com> wrote:
-> >
-> > What is this patch based on?  I tried to apply it to 5.0-rc1 and am having an
-> > issue with applying the arch/openrisc/include/uapi/asm/Kbuild part.
+> Applying: rtl8723ae: Take the FW LPS mode handling out
+> Using index info to reconstruct a base tree...
+> .git/rebase-apply/patch:22: trailing whitespace.
+>         .swctrl_lps = true,
+> .git/rebase-apply/patch:23: trailing whitespace.
+>         .fwctrl_lps = false,
+> .git/rebase-apply/patch:33: trailing whitespace.
+> MODULE_PARM_DESC(swlps, "Set to 1 to use SW control power save (default 1)\n");
+> .git/rebase-apply/patch:34: trailing whitespace.
+> MODULE_PARM_DESC(fwlps, "Set to 1 to use FW control power save (default 0)\n");
+> error: patch failed: drivers/net/wireless/realtek/rtlwifi/rtl8723ae/sw.c:266
+> error: drivers/net/wireless/realtek/rtlwifi/rtl8723ae/sw.c: patch does not apply
+> error: Did you hand edit your patch?
+> It does not apply to blobs recorded in its index.
+> Patch failed at 0001 rtl8723ae: Take the FW LPS mode handling out
 > 
+> Did you use Outlook to send this patch or what? Anyway, it's strongly
+> suggested to use git to submit the patches (and not use Outlook servers
+> either as they are notorious in breaking our patches):
 > 
-> Based on Linus' latest tree.
-> (commit 3bd6e94be)
-> 
-> v5.0-rc1 is NOT the latest.
 
-OK, understood, in that case:
+No, I did use firefox with the settings which I found at
+https://www.kernel.org/doc/html/latest/process/email-clients.html#email-clients
 
-Acked-by: Stafford Horne <shorne@gmail.com>
+I think all that is wrong with the message body is it is base64 encoded, and all the
+lines end with CRLF, and it seems the CR is the trailing whitespace.
 
-(though I see its already being picked up on the -mm tree)
+I think the Character Encoding/UTF-8 does not work right with
+Exchange Servers.
 
-> > It seems shmparam.h is not there. It was removed with the others in your
-> > ("d6e4b3e326d8") arch: remove redundant UAPI generic-y defines, commit a few
-> > days ago.
-> >
-> > Note, I can't compile 5.0-rc1 without the first part of this patch.  So please
-> > get it merged asap :)
-> 
-> 
-> I notice the breakage of several arches after v5.0-rc1 release,
-> so I asked Linus to pick up 3d6e94be.
-> 
-> I had already noticed
-> having shmparam.h in uapi is werid,
-> but I decided to fix the build errors first.
+What Character Encoding would git send-email use?  UTF-8?
 
-Yes, that makes sense.
+So I will try to send the patches again, with 7-bit encoded message bodies.
+Actually it will be quoted-printable, but I do not use any umlauts.
 
--Stafford
+
+So for the records, I did open about:config in the firefox preferences,
+and change:
+
+mailnews.send_default_charset from UTF-8 to ISO-8859-1
+
+that I have already done before, but it was not sufficient:
+
+mailnews.send_plaintext_flowed from true to false
+mailnews.wraplength from 72 to 0
+
+
+Thanks
+Bernd.
