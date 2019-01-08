@@ -2,880 +2,259 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=FREEMAIL_REPLYTO_END_DIGIT,
+	FROM_EXCESS_BASE64,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAF78C43612
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 04:17:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE25FC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 04:18:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C28CF2089F
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 04:17:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AF09D206B7
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 04:18:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727594AbfAHERm (ORCPT
+        id S1727627AbfAHESS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 7 Jan 2019 23:17:42 -0500
-Received: from twhmllg3.macronix.com ([122.147.135.201]:48733 "EHLO
-        TWHMLLG3.macronix.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727246AbfAHERl (ORCPT
+        Mon, 7 Jan 2019 23:18:18 -0500
+Received: from [51.254.83.74] ([51.254.83.74]:54793 "EHLO
+        intergradetrading.com" rhost-flags-FAIL-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727246AbfAHESS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 7 Jan 2019 23:17:41 -0500
-Received: from localhost.localdomain ([172.17.195.96])
-        by TWHMLLG3.macronix.com with ESMTP id x084H3Ep091858;
-        Tue, 8 Jan 2019 12:17:05 +0800 (GMT-8)
-        (envelope-from masonccyang@mxic.com.tw)
-From:   Mason Yang <masonccyang@mxic.com.tw>
-To:     broonie@kernel.org, marek.vasut@gmail.com,
-        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
-        boris.brezillon@bootlin.com, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        sergei.shtylyov@cogentembedded.com
-Cc:     juliensu@mxic.com.tw, Simon Horman <horms@verge.net.au>,
-        zhengxunli@mxic.com.tw, Mason Yang <masonccyang@mxic.com.tw>
-Subject: [PATCH v5 1/2] spi: Add Renesas R-Car Gen3 RPC-IF SPI controller driver
-Date:   Tue,  8 Jan 2019 12:16:59 +0800
-Message-Id: <1546921020-20436-2-git-send-email-masonccyang@mxic.com.tw>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1546921020-20436-1-git-send-email-masonccyang@mxic.com.tw>
-References: <1546921020-20436-1-git-send-email-masonccyang@mxic.com.tw>
-X-MAIL: TWHMLLG3.macronix.com x084H3Ep091858
+        Mon, 7 Jan 2019 23:18:18 -0500
+Reply-To: =?UTF-8?B?QUZCIE1ldGFsIMOHZWxpayBTdGVlbA==?= 
+          <frankdereck3601@gmail.com>
+From:   =?UTF-8?B?IkFGQiBNZXRhbCDDh2VsaWsgU3RlZWwi?= 
+        <contact@intergradetrading.com>
+To:     linux-kernel@vger.kernel.org
+Subject: linux-kernel@vger.kernel.org scan copy of payment
+Date:   08 Jan 2019 05:18:20 +0100
+Message-ID: <20190108051820.08C388F0B85022E4@intergradetrading.com>
+MIME-Version: 1.0
+Content-Type: multipart/mixed;
+        boundary="----=_NextPart_000_0012_8572620B.7D227DA3"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a driver for Renesas R-Car Gen3 RPC-IF SPI controller.
+This is a multi-part message in MIME format.
 
-Signed-off-by: Mason Yang <masonccyang@mxic.com.tw>
----
- drivers/spi/Kconfig           |   6 +
- drivers/spi/Makefile          |   1 +
- drivers/spi/spi-renesas-rpc.c | 787 ++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 794 insertions(+)
- create mode 100644 drivers/spi/spi-renesas-rpc.c
+------=_NextPart_000_0012_8572620B.7D227DA3
+Content-Type: text/plain;
+	charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/spi/Kconfig b/drivers/spi/Kconfig
-index 9f89cb1..81b4e04 100644
---- a/drivers/spi/Kconfig
-+++ b/drivers/spi/Kconfig
-@@ -544,6 +544,12 @@ config SPI_RSPI
- 	help
- 	  SPI driver for Renesas RSPI and QSPI blocks.
- 
-+config SPI_RENESAS_RPC_IF
-+	tristate "Renesas R-Car Gen3 RPC-IF SPI controller"
-+	depends on ARCH_RENESAS || COMPILE_TEST
-+	help
-+	  SPI driver for Renesas R-Car Gen3 RPC-IF.
-+
- config SPI_QCOM_QSPI
- 	tristate "QTI QSPI controller"
- 	depends on ARCH_QCOM
-diff --git a/drivers/spi/Makefile b/drivers/spi/Makefile
-index f296270..3f2b2f9 100644
---- a/drivers/spi/Makefile
-+++ b/drivers/spi/Makefile
-@@ -84,6 +84,7 @@ obj-$(CONFIG_SPI_QUP)			+= spi-qup.o
- obj-$(CONFIG_SPI_ROCKCHIP)		+= spi-rockchip.o
- obj-$(CONFIG_SPI_RB4XX)			+= spi-rb4xx.o
- obj-$(CONFIG_SPI_RSPI)			+= spi-rspi.o
-+obj-$(CONFIG_SPI_RENESAS_RPC_IF)	+= spi-renesas-rpc.o
- obj-$(CONFIG_SPI_S3C24XX)		+= spi-s3c24xx-hw.o
- spi-s3c24xx-hw-y			:= spi-s3c24xx.o
- spi-s3c24xx-hw-$(CONFIG_SPI_S3C24XX_FIQ) += spi-s3c24xx-fiq.o
-diff --git a/drivers/spi/spi-renesas-rpc.c b/drivers/spi/spi-renesas-rpc.c
-new file mode 100644
-index 0000000..1e57eb1
---- /dev/null
-+++ b/drivers/spi/spi-renesas-rpc.c
-@@ -0,0 +1,787 @@
-+// SPDX-License-Identifier: GPL-2.0
-+//
-+// Copyright (C) 2018 ~ 2019 Renesas Solutions Corp.
-+// Copyright (C) 2018 Macronix International Co., Ltd.
-+//
-+// R-Car Gen3 RPC-IF SPI/QSPI/Octa driver
-+//
-+// Authors:
-+//	Mason Yang <masonccyang@mxic.com.tw>
-+//
-+
-+#include <linux/clk.h>
-+#include <linux/io.h>
-+#include <linux/log2.h>
-+#include <linux/iopoll.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/pm_runtime.h>
-+#include <linux/of.h>
-+#include <linux/regmap.h>
-+#include <linux/reset.h>
-+#include <linux/spi/spi.h>
-+#include <linux/spi/spi-mem.h>
-+
-+#include <asm/unaligned.h>
-+
-+#define RPC_CMNCR		0x0000	// R/W
-+#define RPC_CMNCR_MD		BIT(31)
-+#define RPC_CMNCR_SFDE		BIT(24) // undocumented bit but must be set
-+#define RPC_CMNCR_MOIIO3(val)	(((val) & 0x3) << 22)
-+#define RPC_CMNCR_MOIIO2(val)	(((val) & 0x3) << 20)
-+#define RPC_CMNCR_MOIIO1(val)	(((val) & 0x3) << 18)
-+#define RPC_CMNCR_MOIIO0(val)	(((val) & 0x3) << 16)
-+#define RPC_CMNCR_MOIIO_HIZ	(RPC_CMNCR_MOIIO0(3) | RPC_CMNCR_MOIIO1(3) | \
-+				 RPC_CMNCR_MOIIO2(3) | RPC_CMNCR_MOIIO3(3))
-+#define RPC_CMNCR_IO3FV(val)	(((val) & 0x3) << 14) // undocumented bit
-+#define RPC_CMNCR_IO2FV(val)	(((val) & 0x3) << 12) // undocumented bit
-+#define RPC_CMNCR_IO0FV(val)	(((val) & 0x3) << 8)
-+#define RPC_CMNCR_IOFV_HIZ	(RPC_CMNCR_IO0FV(3) | RPC_CMNCR_IO2FV(3) | \
-+				 RPC_CMNCR_IO3FV(3))
-+#define RPC_CMNCR_BSZ(val)	(((val) & 0x3) << 0)
-+
-+#define RPC_SSLDR		0x0004	// R/W
-+#define RPC_SSLDR_SPNDL(d)	(((d) & 0x7) << 16)
-+#define RPC_SSLDR_SLNDL(d)	(((d) & 0x7) << 8)
-+#define RPC_SSLDR_SCKDL(d)	(((d) & 0x7) << 0)
-+
-+#define RPC_DRCR		0x000C	// R/W
-+#define RPC_DRCR_SSLN		BIT(24)
-+#define RPC_DRCR_RBURST(v)	((((v) - 1) & 0x1F) << 16)
-+#define RPC_DRCR_RCF		BIT(9)
-+#define RPC_DRCR_RBE		BIT(8)
-+#define RPC_DRCR_SSLE		BIT(0)
-+
-+#define RPC_DRCMR		0x0010	// R/W
-+#define RPC_DRCMR_CMD(c)	(((c) & 0xFF) << 16)
-+#define RPC_DRCMR_OCMD(c)	(((c) & 0xFF) << 0)
-+
-+#define RPC_DREAR		0x0014	// R/W
-+#define RPC_DREAR_EAC(c)	(((c) & 0x7) << 0)
-+
-+#define RPC_DROPR		0x0018	// R/W
-+
-+#define RPC_DRENR		0x001C	// R/W
-+#define RPC_DRENR_CDB(o)	(u32)((((o) & 0x3) << 30))
-+#define RPC_DRENR_OCDB(o)	(((o) & 0x3) << 28)
-+#define RPC_DRENR_ADB(o)	(((o) & 0x3) << 24)
-+#define RPC_DRENR_OPDB(o)	(((o) & 0x3) << 20)
-+#define RPC_DRENR_SPIDB(o)	(((o) & 0x3) << 16)
-+#define RPC_DRENR_DME		BIT(15)
-+#define RPC_DRENR_CDE		BIT(14)
-+#define RPC_DRENR_OCDE		BIT(12)
-+#define RPC_DRENR_ADE(v)	(((v) & 0xF) << 8)
-+#define RPC_DRENR_OPDE(v)	(((v) & 0xF) << 4)
-+
-+#define RPC_SMCR		0x0020	// R/W
-+#define RPC_SMCR_SSLKP		BIT(8)
-+#define RPC_SMCR_SPIRE		BIT(2)
-+#define RPC_SMCR_SPIWE		BIT(1)
-+#define RPC_SMCR_SPIE		BIT(0)
-+
-+#define RPC_SMCMR		0x0024	// R/W
-+#define RPC_SMCMR_CMD(c)	(((c) & 0xFF) << 16)
-+#define RPC_SMCMR_OCMD(c)	(((c) & 0xFF) << 0)
-+
-+#define RPC_SMADR		0x0028	// R/W
-+#define RPC_SMOPR		0x002C	// R/W
-+#define RPC_SMOPR_OPD3(o)	(((o) & 0xFF) << 24)
-+#define RPC_SMOPR_OPD2(o)	(((o) & 0xFF) << 16)
-+#define RPC_SMOPR_OPD1(o)	(((o) & 0xFF) << 8)
-+#define RPC_SMOPR_OPD0(o)	(((o) & 0xFF) << 0)
-+
-+#define RPC_SMENR		0x0030	// R/W
-+#define RPC_SMENR_CDB(o)	(((o) & 0x2) << 30)
-+#define RPC_SMENR_OCDB(o)	(((o) & 0x2) << 28)
-+#define RPC_SMENR_ADB(o)	(((o) & 0x2) << 24)
-+#define RPC_SMENR_OPDB(o)	(((o) & 0x2) << 20)
-+#define RPC_SMENR_SPIDB(o)	(((o) & 0x2) << 16)
-+#define RPC_SMENR_DME		BIT(15)
-+#define RPC_SMENR_CDE		BIT(14)
-+#define RPC_SMENR_OCDE		BIT(12)
-+#define RPC_SMENR_ADE(v)	(((v) & 0xF) << 8)
-+#define RPC_SMENR_OPDE(v)	(((v) & 0xF) << 4)
-+#define RPC_SMENR_SPIDE(v)	(((v) & 0xF) << 0)
-+
-+#define RPC_SMRDR0		0x0038	// R
-+#define RPC_SMRDR1		0x003C	// R
-+#define RPC_SMWDR0		0x0040	// W
-+#define RPC_SMWDR1		0x0044	// W
-+
-+#define RPC_CMNSR		0x0048	// R
-+#define RPC_CMNSR_SSLF		BIT(1)
-+#define RPC_CMNSR_TEND		BIT(0)
-+
-+#define RPC_DRDMCR		0x0058	// R/W
-+#define RPC_DRDRENR		0x005C	// R/W
-+
-+#define RPC_SMDMCR		0x0060	// R/W
-+#define RPC_SMDMCR_DMCYC(v)	((((v) - 1) & 0x1F) << 0)
-+
-+#define RPC_SMDRENR		0x0064	// R/W
-+#define RPC_SMDRENR_HYPE	(0x5 << 12)
-+#define RPC_SMDRENR_ADDRE	BIT(8)
-+#define RPC_SMDRENR_OPDRE	BIT(4)
-+#define RPC_SMDRENR_SPIDRE	BIT(0)
-+
-+#define RPC_PHYCNT		0x007C	// R/W
-+#define RPC_PHYCNT_CAL		BIT(31)
-+#define PRC_PHYCNT_OCTA_AA	BIT(22)
-+#define PRC_PHYCNT_OCTA_SA	BIT(23)
-+#define PRC_PHYCNT_EXDS		BIT(21)
-+#define RPC_PHYCNT_OCT		BIT(20)
-+#define RPC_PHYCNT_STRTIM(v)	(((v) & 0x7) << 15)
-+#define RPC_PHYCNT_WBUF2	BIT(4)
-+#define RPC_PHYCNT_WBUF		BIT(2)
-+#define RPC_PHYCNT_PHYMEM(v)	(((v) & 0x3) << 0)
-+
-+#define RPC_PHYOFFSET1		0x0080	// R/W
-+#define RPC_PHYOFFSET1_DDRTMG(v) (((v) & 0x3) << 28)
-+#define RPC_PHYOFFSET2		0x0084	// R/W
-+#define RPC_PHYOFFSET2_OCTTMG(v) (((v) & 0x7) << 8)
-+
-+#define RPC_WBUF		0x8000	// Write Buffer
-+#define RPC_WBUF_SIZE		256	// Write Buffer size
-+
-+struct rpc_spi {
-+	struct clk *clk_rpc;
-+	void __iomem *base;
-+	void __iomem *dirmap;
-+	struct regmap *regmap;
-+	u32 cur_speed_hz;
-+	u32 cmd;
-+	u32 addr;
-+	u32 dummy;
-+	u32 smcr;
-+	u32 smenr;
-+	u32 xferlen;
-+	u32 totalxferlen;
-+	enum spi_mem_data_dir xfer_dir;
-+	struct reset_control *rstc;
-+};
-+
-+static int rpc_spi_set_freq(struct rpc_spi *rpc, unsigned long freq)
-+{
-+	int ret;
-+
-+	if (rpc->cur_speed_hz == freq)
-+		return 0;
-+
-+	ret = clk_set_rate(rpc->clk_rpc, freq);
-+	if (ret)
-+		return ret;
-+
-+	rpc->cur_speed_hz = freq;
-+	return ret;
-+}
-+
-+static void rpc_spi_hw_init(struct rpc_spi *rpc)
-+{
-+	//
-+	// NOTE: The 0x260 are undocumented bits, but they must be set.
-+	//	RPC_PHYCNT_STRTIM is strobe timing adjustment bit,
-+	//	0x0 : the delay is biggest,
-+	//	0x1 : the delay is 2nd biggest,
-+	//	On H3 ES1.x, the value should be 0, while on others,
-+	//	the value should be 6.
-+	//
-+	regmap_write(rpc->regmap, RPC_PHYCNT, RPC_PHYCNT_CAL |
-+		     RPC_PHYCNT_STRTIM(6) | 0x260);
-+
-+	//
-+	// NOTE: The 0x1511144 are undocumented bits, but they must be set
-+	//       for RPC_PHYOFFSET1.
-+	//	 The 0x31 are undocumented bits, but they must be set
-+	//	 for RPC_PHYOFFSET2.
-+	//
-+	regmap_write(rpc->regmap, RPC_PHYOFFSET1,
-+		     RPC_PHYOFFSET1_DDRTMG(3) | 0x1511144);
-+	regmap_write(rpc->regmap, RPC_PHYOFFSET2, 0x31 |
-+		     RPC_PHYOFFSET2_OCTTMG(4));
-+	regmap_write(rpc->regmap, RPC_SSLDR, RPC_SSLDR_SPNDL(7) |
-+		     RPC_SSLDR_SLNDL(7) | RPC_SSLDR_SCKDL(7));
-+	regmap_write(rpc->regmap, RPC_CMNCR, RPC_CMNCR_MD | RPC_CMNCR_SFDE |
-+		     RPC_CMNCR_MOIIO_HIZ | RPC_CMNCR_IOFV_HIZ |
-+		     RPC_CMNCR_BSZ(0));
-+}
-+
-+static int wait_msg_xfer_end(struct rpc_spi *rpc)
-+{
-+	u32 sts;
-+
-+	return regmap_read_poll_timeout(rpc->regmap, RPC_CMNSR, sts,
-+					sts & RPC_CMNSR_TEND, 0, USEC_PER_SEC);
-+}
-+
-+static u8 rpc_bits_set(u32 nbytes)
-+{
-+	nbytes = clamp(nbytes, 1U, 4U);
-+
-+	return GENMASK(3, 4 - nbytes);
-+}
-+
-+static int rpc_spi_io_xfer(struct rpc_spi *rpc,
-+			   const void *tx_buf, void *rx_buf)
-+{
-+	u32 smenr, smcr, data, pos = 0;
-+	int ret = 0;
-+
-+	regmap_update_bits(rpc->regmap, RPC_CMNCR, RPC_CMNCR_MD, RPC_CMNCR_MD);
-+	regmap_write(rpc->regmap, RPC_SMDRENR, 0);
-+	regmap_write(rpc->regmap, RPC_SMCMR, rpc->cmd);
-+	regmap_write(rpc->regmap, RPC_SMDMCR, rpc->dummy);
-+	regmap_write(rpc->regmap, RPC_SMADR, rpc->addr);
-+	smenr = rpc->smenr;
-+
-+	if (tx_buf) {
-+		while (pos < rpc->xferlen) {
-+			u32 nbytes = rpc->xferlen - pos;
-+
-+			regmap_write(rpc->regmap, RPC_SMWDR0,
-+				     get_unaligned((u32 *)(tx_buf + pos)));
-+
-+			smcr = rpc->smcr | RPC_SMCR_SPIE;
-+
-+			if (nbytes > 4) {
-+				nbytes = 4;
-+				smcr |= RPC_SMCR_SSLKP;
-+			}
-+
-+			regmap_write(rpc->regmap, RPC_SMENR, smenr);
-+			regmap_write(rpc->regmap, RPC_SMCR, smcr);
-+			ret = wait_msg_xfer_end(rpc);
-+			if (ret)
-+				goto out;
-+
-+			pos += nbytes;
-+			smenr = rpc->smenr & ~RPC_SMENR_CDE &
-+					     ~RPC_SMENR_ADE(0xf);
-+		}
-+	} else if (rx_buf) {
-+		//
-+		// RPC-IF spoils the data for the commands without an address
-+		// phase (like RDID) in the manual mode, so we'll have to work
-+		// around this issue by using the external address space read
-+		// mode instead; we seem to be able to read 8 bytes at most in
-+		// this mode though...
-+		//
-+		if (!(smenr & RPC_SMENR_ADE(0xf))) {
-+			u32 nbytes = rpc->xferlen - pos;
-+			u64 tmp;
-+
-+			if (nbytes > 8)
-+				nbytes = 8;
-+
-+			regmap_update_bits(rpc->regmap, RPC_CMNCR,
-+					   RPC_CMNCR_MD, 0);
-+			regmap_write(rpc->regmap, RPC_DRCR, 0);
-+			regmap_write(rpc->regmap, RPC_DREAR, RPC_DREAR_EAC(1));
-+			regmap_write(rpc->regmap, RPC_DRCMR, rpc->cmd);
-+			regmap_write(rpc->regmap, RPC_DRDMCR, rpc->dummy);
-+			regmap_write(rpc->regmap, RPC_DROPR, 0);
-+			regmap_write(rpc->regmap, RPC_DRENR, rpc->smenr &
-+				     ~RPC_SMENR_SPIDE(0xf));
-+
-+			tmp = readq(rpc->dirmap);
-+			memcpy(rx_buf, &tmp, nbytes);
-+		} else {
-+			while (pos < rpc->xferlen) {
-+				u32 nbytes = rpc->xferlen - pos;
-+
-+				if (nbytes > 4)
-+					nbytes = 4;
-+
-+				regmap_write(rpc->regmap, RPC_SMENR, smenr);
-+				regmap_write(rpc->regmap, RPC_SMCR, rpc->smcr |
-+					     RPC_SMCR_SPIE);
-+				ret = wait_msg_xfer_end(rpc);
-+				if (ret)
-+					goto out;
-+
-+				regmap_read(rpc->regmap, RPC_SMRDR0, &data);
-+				memcpy(rx_buf + pos, &data, nbytes);
-+				pos += nbytes;
-+
-+				regmap_write(rpc->regmap, RPC_SMADR,
-+					     rpc->addr + pos);
-+			}
-+		}
-+	} else {
-+		regmap_write(rpc->regmap, RPC_SMENR, rpc->smenr);
-+		regmap_write(rpc->regmap, RPC_SMCR, rpc->smcr | RPC_SMCR_SPIE);
-+		ret = wait_msg_xfer_end(rpc);
-+		if (ret)
-+			goto out;
-+	}
-+
-+	return ret;
-+
-+out:
-+	return reset_control_reset(rpc->rstc);
-+}
-+
-+static void rpc_spi_mem_set_prep_op_cfg(struct spi_device *spi,
-+					const struct spi_mem_op *op,
-+					u64 *offs, size_t *len)
-+{
-+	struct rpc_spi *rpc = spi_master_get_devdata(spi->master);
-+
-+	rpc->cmd = RPC_SMCMR_CMD(op->cmd.opcode);
-+	rpc->smenr = RPC_SMENR_CDE |
-+		     RPC_SMENR_CDB(ilog2(op->cmd.buswidth));
-+	rpc->totalxferlen = 1;
-+	rpc->xfer_dir = SPI_MEM_NO_DATA;
-+	rpc->xferlen = 0;
-+	rpc->addr = 0;
-+
-+	if (op->addr.nbytes) {
-+		rpc->smenr |= RPC_SMENR_ADB(ilog2(op->addr.buswidth));
-+		if (op->addr.nbytes == 4)
-+			rpc->smenr |= RPC_SMENR_ADE(0xf);
-+		else
-+			rpc->smenr |= RPC_SMENR_ADE(0x7);
-+
-+		if (offs && len)
-+			rpc->addr = *offs;
-+		else
-+			rpc->addr = op->addr.val;
-+		rpc->totalxferlen += op->addr.nbytes;
-+	}
-+
-+	if (op->dummy.nbytes) {
-+		rpc->smenr |= RPC_SMENR_DME;
-+		rpc->dummy = RPC_SMDMCR_DMCYC(op->dummy.nbytes);
-+		rpc->totalxferlen += op->dummy.nbytes;
-+	}
-+
-+	if (op->data.nbytes || (offs && len)) {
-+		if (op->data.dir == SPI_MEM_DATA_IN) {
-+			rpc->smcr = RPC_SMCR_SPIRE;
-+			rpc->xfer_dir = SPI_MEM_DATA_IN;
-+		} else if (op->data.dir == SPI_MEM_DATA_OUT) {
-+			rpc->smcr = RPC_SMCR_SPIWE;
-+			rpc->xfer_dir = SPI_MEM_DATA_OUT;
-+		}
-+
-+		if (offs && len) {
-+			rpc->smenr |= RPC_SMENR_SPIDE(rpc_bits_set(*len)) |
-+				      RPC_SMENR_SPIDB(ilog2(op->data.buswidth));
-+			rpc->xferlen = *len;
-+			rpc->totalxferlen += *len;
-+		} else {
-+			rpc->smenr |=
-+				RPC_SMENR_SPIDE(rpc_bits_set(op->data.nbytes)) |
-+				RPC_SMENR_SPIDB(ilog2(op->data.buswidth));
-+			rpc->xferlen = op->data.nbytes;
-+			rpc->totalxferlen += op->data.nbytes;
-+		}
-+	}
-+}
-+
-+static bool rpc_spi_mem_supports_op(struct spi_mem *mem,
-+				    const struct spi_mem_op *op)
-+{
-+	if (op->data.buswidth > 4 || op->addr.buswidth > 4 ||
-+	    op->dummy.buswidth > 4 || op->cmd.buswidth > 4 ||
-+	    op->addr.nbytes > 4)
-+		return false;
-+
-+	return true;
-+}
-+
-+static ssize_t rpc_spi_mem_dirmap_read(struct spi_mem_dirmap_desc *desc,
-+				       u64 offs, size_t len, void *buf)
-+{
-+	struct rpc_spi *rpc = spi_master_get_devdata(desc->mem->spi->master);
-+	int ret;
-+
-+	if (WARN_ON(offs + desc->info.offset + len > U32_MAX))
-+		return -EINVAL;
-+
-+	if (WARN_ON(len > 0x4000000))
-+		len = 0x4000000;
-+
-+	ret = rpc_spi_set_freq(rpc, desc->mem->spi->max_speed_hz);
-+	if (ret)
-+		return ret;
-+
-+	rpc_spi_mem_set_prep_op_cfg(desc->mem->spi,
-+				    &desc->info.op_tmpl, &offs, &len);
-+
-+	regmap_update_bits(rpc->regmap, RPC_CMNCR, RPC_CMNCR_MD, 0);
-+	regmap_write(rpc->regmap, RPC_DRCR, RPC_DRCR_RBURST(32) |
-+		     RPC_DRCR_RBE);
-+	regmap_write(rpc->regmap, RPC_DRCMR, rpc->cmd);
-+	regmap_write(rpc->regmap, RPC_DREAR, RPC_DREAR_EAC(1));
-+	regmap_write(rpc->regmap, RPC_DROPR, 0);
-+	regmap_write(rpc->regmap, RPC_DRENR, rpc->smenr);
-+	regmap_write(rpc->regmap, RPC_DRDMCR, rpc->dummy);
-+	regmap_write(rpc->regmap, RPC_DRDRENR, 0);
-+
-+	memcpy_fromio(buf, rpc->dirmap + desc->info.offset + offs, len);
-+
-+	return len;
-+}
-+
-+static ssize_t rpc_spi_mem_dirmap_write(struct spi_mem_dirmap_desc *desc,
-+					u64 offs, size_t len, const void *buf)
-+{
-+	struct rpc_spi *rpc = spi_master_get_devdata(desc->mem->spi->master);
-+	int ret;
-+
-+	if (WARN_ON(offs + desc->info.offset + len > U32_MAX))
-+		return -EINVAL;
-+
-+	if (WARN_ON(len > RPC_WBUF_SIZE))
-+		len = RPC_WBUF_SIZE;
-+
-+	ret = rpc_spi_set_freq(rpc, desc->mem->spi->max_speed_hz);
-+	if (ret)
-+		return ret;
-+
-+	rpc_spi_mem_set_prep_op_cfg(desc->mem->spi,
-+				    &desc->info.op_tmpl, &offs, &len);
-+
-+	regmap_update_bits(rpc->regmap, RPC_CMNCR, RPC_CMNCR_MD, RPC_CMNCR_MD);
-+
-+	regmap_write(rpc->regmap, RPC_SMDRENR, 0);
-+	regmap_write(rpc->regmap, RPC_PHYCNT, RPC_PHYCNT_CAL | 0x260 |
-+				  RPC_PHYCNT_WBUF2 | RPC_PHYCNT_WBUF);
-+
-+	memcpy_toio(rpc->base + RPC_WBUF, buf, len);
-+
-+	regmap_write(rpc->regmap, RPC_SMCMR, rpc->cmd);
-+	regmap_write(rpc->regmap, RPC_SMADR, offs);
-+	regmap_write(rpc->regmap, RPC_SMENR, rpc->smenr);
-+	regmap_write(rpc->regmap, RPC_SMCR, rpc->smcr | RPC_SMCR_SPIE);
-+	ret = wait_msg_xfer_end(rpc);
-+	if (ret)
-+		goto out;
-+
-+	regmap_write(rpc->regmap, RPC_DRCR, RPC_DRCR_RCF);
-+	regmap_write(rpc->regmap, RPC_PHYCNT, RPC_PHYCNT_CAL |
-+				  RPC_PHYCNT_STRTIM(6) | 0x260);
-+
-+	return len;
-+
-+out:
-+	return reset_control_reset(rpc->rstc);
-+}
-+
-+static int rpc_spi_mem_dirmap_create(struct spi_mem_dirmap_desc *desc)
-+{
-+	struct rpc_spi *rpc = spi_master_get_devdata(desc->mem->spi->master);
-+
-+	if (desc->info.offset + desc->info.length > U32_MAX)
-+		return -ENOTSUPP;
-+
-+	if (!rpc_spi_mem_supports_op(desc->mem, &desc->info.op_tmpl))
-+		return -ENOTSUPP;
-+
-+	if (!rpc->dirmap &&
-+	    desc->info.op_tmpl.data.dir == SPI_MEM_DATA_IN)
-+		return -ENOTSUPP;
-+
-+	return 0;
-+}
-+
-+static int rpc_spi_mem_exec_op(struct spi_mem *mem,
-+			       const struct spi_mem_op *op)
-+{
-+	struct rpc_spi *rpc = spi_master_get_devdata(mem->spi->master);
-+	int ret;
-+
-+	ret = rpc_spi_set_freq(rpc, mem->spi->max_speed_hz);
-+	if (ret)
-+		return ret;
-+
-+	rpc_spi_mem_set_prep_op_cfg(mem->spi, op, NULL, NULL);
-+
-+	ret = rpc_spi_io_xfer(rpc,
-+			      op->data.dir == SPI_MEM_DATA_OUT ?
-+			      op->data.buf.out : NULL,
-+			      op->data.dir == SPI_MEM_DATA_IN ?
-+			      op->data.buf.in : NULL);
-+
-+	return ret;
-+}
-+
-+static const struct spi_controller_mem_ops rpc_spi_mem_ops = {
-+	.supports_op = rpc_spi_mem_supports_op,
-+	.exec_op = rpc_spi_mem_exec_op,
-+	.dirmap_create = rpc_spi_mem_dirmap_create,
-+	.dirmap_read = rpc_spi_mem_dirmap_read,
-+	.dirmap_write = rpc_spi_mem_dirmap_write,
-+};
-+
-+static void rpc_spi_transfer_setup(struct rpc_spi *rpc,
-+				   struct spi_message *msg)
-+{
-+	struct spi_transfer *t, xfer[4] = { };
-+	u32 i, xfercnt, xferpos = 0;
-+
-+	rpc->totalxferlen = 0;
-+	rpc->xfer_dir = SPI_MEM_NO_DATA;
-+
-+	list_for_each_entry(t, &msg->transfers, transfer_list) {
-+		if (t->tx_buf) {
-+			xfer[xferpos].tx_buf = t->tx_buf;
-+			xfer[xferpos].tx_nbits = t->tx_nbits;
-+		}
-+
-+		if (t->rx_buf) {
-+			xfer[xferpos].rx_buf = t->rx_buf;
-+			xfer[xferpos].rx_nbits = t->rx_nbits;
-+		}
-+
-+		if (t->len) {
-+			xfer[xferpos++].len = t->len;
-+			rpc->totalxferlen += t->len;
-+		}
-+
-+		if (list_is_last(&t->transfer_list, &msg->transfers)) {
-+			if (xferpos > 1) {
-+				if (t->rx_buf) {
-+					rpc->xfer_dir = SPI_MEM_DATA_IN;
-+					rpc->smcr = RPC_SMCR_SPIRE;
-+				} else if (t->tx_buf) {
-+					rpc->xfer_dir = SPI_MEM_DATA_OUT;
-+					rpc->smcr = RPC_SMCR_SPIWE;
-+				}
-+			}
-+		}
-+	}
-+
-+	xfercnt = xferpos;
-+	rpc->xferlen = xfer[--xferpos].len;
-+	rpc->cmd = RPC_SMCMR_CMD(((u8 *)xfer[0].tx_buf)[0]);
-+	rpc->smenr = RPC_SMENR_CDE |
-+		     RPC_SMENR_CDB(ilog2((unsigned int)xfer[0].tx_nbits));
-+	rpc->addr = 0;
-+
-+	if (xfercnt > 2 && xfer[1].len && xfer[1].tx_buf) {
-+		rpc->smenr |=
-+			RPC_SMENR_ADB(ilog2((unsigned int)xfer[1].tx_nbits));
-+
-+		for (i = 0; i < xfer[1].len; i++)
-+			rpc->addr |= ((u8 *)xfer[1].tx_buf)[i] <<
-+				     (8 * (xfer[1].len - i - 1));
-+
-+		if (xfer[1].len == 4)
-+			rpc->smenr |= RPC_SMENR_ADE(0xf);
-+		else
-+			rpc->smenr |= RPC_SMENR_ADE(0x7);
-+	}
-+
-+	if (xfercnt > 3 && xfer[2].len && xfer[2].tx_buf) {
-+		rpc->smenr |= RPC_SMENR_DME;
-+		rpc->dummy = RPC_SMDMCR_DMCYC(xfer[2].len);
-+	}
-+
-+	for (i = xfercnt - 1; i < xfercnt && xfercnt > 1; i++) {
-+		if (xfer[i].rx_buf) {
-+			rpc->smenr |=
-+				RPC_SMENR_SPIDE(rpc_bits_set(xfer[i].len)) |
-+				RPC_SMENR_SPIDB
-+					(ilog2((unsigned int)xfer[i].rx_nbits));
-+		} else if (xfer[i].tx_buf) {
-+			rpc->smenr |=
-+				RPC_SMENR_SPIDE(rpc_bits_set(xfer[i].len)) |
-+				RPC_SMENR_SPIDB
-+					(ilog2((unsigned int)xfer[i].tx_nbits));
-+		}
-+	}
-+}
-+
-+static int rpc_spi_xfer_message(struct rpc_spi *rpc, struct spi_transfer *t)
-+{
-+	int ret;
-+
-+	ret = rpc_spi_set_freq(rpc, t->speed_hz);
-+	if (ret)
-+		return ret;
-+
-+	ret = rpc_spi_io_xfer(rpc,
-+			      rpc->xfer_dir == SPI_MEM_DATA_OUT ?
-+			      t->tx_buf : NULL,
-+			      rpc->xfer_dir == SPI_MEM_DATA_IN ?
-+			      t->rx_buf : NULL);
-+
-+	return ret;
-+}
-+
-+static int rpc_spi_transfer_one_message(struct spi_master *master,
-+					struct spi_message *msg)
-+{
-+	struct rpc_spi *rpc = spi_master_get_devdata(master);
-+	struct spi_transfer *t;
-+	int ret;
-+
-+	rpc_spi_transfer_setup(rpc, msg);
-+
-+	list_for_each_entry(t, &msg->transfers, transfer_list) {
-+		if (!list_is_last(&t->transfer_list, &msg->transfers))
-+			continue;
-+		ret = rpc_spi_xfer_message(rpc, t);
-+		if (ret)
-+			goto out;
-+	}
-+
-+	msg->status = 0;
-+	msg->actual_length = rpc->totalxferlen;
-+out:
-+	spi_finalize_current_message(master);
-+	return 0;
-+}
-+
-+static const struct regmap_range rpc_spi_volatile_ranges[] = {
-+	regmap_reg_range(RPC_SMRDR0, RPC_SMRDR0),
-+	regmap_reg_range(RPC_SMWDR0, RPC_SMWDR0),
-+	regmap_reg_range(RPC_CMNSR, RPC_CMNSR),
-+};
-+
-+static const struct regmap_access_table rpc_spi_volatile_table = {
-+	.yes_ranges	= rpc_spi_volatile_ranges,
-+	.n_yes_ranges	= ARRAY_SIZE(rpc_spi_volatile_ranges),
-+};
-+
-+static const struct regmap_config rpc_spi_regmap_config = {
-+	.reg_bits = 32,
-+	.val_bits = 32,
-+	.reg_stride = 4,
-+	.fast_io = true,
-+	.max_register = RPC_PHYOFFSET2,
-+	.volatile_table = &rpc_spi_volatile_table,
-+};
-+
-+static int rpc_spi_probe(struct platform_device *pdev)
-+{
-+	struct spi_master *master;
-+	struct resource *res;
-+	struct rpc_spi *rpc;
-+	const struct regmap_config *regmap_config;
-+	const char *mode;
-+	int ret;
-+
-+	ret = of_property_read_string(pdev->dev.of_node,
-+				      "renesas,rpc-mode", &mode);
-+	if (ret < 0)
-+		return ret;
-+
-+	if (strcasecmp(mode, "spi"))
-+		return -ENODEV;
-+
-+	master = spi_alloc_master(&pdev->dev, sizeof(*rpc));
-+	if (!master)
-+		return -ENOMEM;
-+
-+	platform_set_drvdata(pdev, master);
-+
-+	rpc = spi_master_get_devdata(master);
-+
-+	master->dev.of_node = pdev->dev.of_node;
-+
-+	rpc->clk_rpc = devm_clk_get(&pdev->dev, "rpc");
-+	if (IS_ERR(rpc->clk_rpc))
-+		return PTR_ERR(rpc->clk_rpc);
-+
-+	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "regs");
-+	rpc->base = devm_ioremap_resource(&pdev->dev, res);
-+	if (IS_ERR(rpc->base))
-+		return PTR_ERR(rpc->base);
-+
-+	regmap_config = &rpc_spi_regmap_config;
-+	rpc->regmap = devm_regmap_init_mmio(&pdev->dev, rpc->base,
-+					    regmap_config);
-+	if (IS_ERR(rpc->regmap)) {
-+		dev_err(&pdev->dev, "failed to init regmap %ld for rpc-spi\n",
-+			PTR_ERR(rpc->regmap));
-+		return PTR_ERR(rpc->regmap);
-+	}
-+
-+	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "dirmap");
-+	rpc->dirmap = devm_ioremap_resource(&pdev->dev, res);
-+	if (IS_ERR(rpc->dirmap))
-+		rpc->dirmap = NULL;
-+
-+	rpc->rstc = devm_reset_control_get_exclusive(&pdev->dev, NULL);
-+	if (IS_ERR(rpc->rstc))
-+		return PTR_ERR(rpc->rstc);
-+
-+	pm_runtime_enable(&pdev->dev);
-+	master->auto_runtime_pm = true;
-+
-+	master->num_chipselect = 1;
-+	master->mem_ops = &rpc_spi_mem_ops;
-+	master->transfer_one_message = rpc_spi_transfer_one_message;
-+
-+	master->bits_per_word_mask = SPI_BPW_MASK(8);
-+	master->mode_bits = SPI_CPOL | SPI_CPHA | SPI_TX_QUAD | SPI_RX_QUAD;
-+
-+	rpc_spi_hw_init(rpc);
-+
-+	ret = spi_register_master(master);
-+	if (ret) {
-+		dev_err(&pdev->dev, "spi_register_master failed\n");
-+		goto err_put_master;
-+	}
-+	return 0;
-+
-+err_put_master:
-+	spi_master_put(master);
-+	pm_runtime_disable(&pdev->dev);
-+
-+	return ret;
-+}
-+
-+static int rpc_spi_remove(struct platform_device *pdev)
-+{
-+	struct spi_master *master = platform_get_drvdata(pdev);
-+
-+	pm_runtime_disable(&pdev->dev);
-+	spi_unregister_master(master);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id rpc_spi_of_ids[] = {
-+	{ .compatible = "renesas,r8a77995-rpc", },
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(of, rpc_spi_of_ids);
-+
-+#ifdef CONFIG_PM_SLEEP
-+static int rpc_spi_suspend(struct device *dev)
-+{
-+	struct spi_master *master = dev_get_drvdata(dev);
-+
-+	return spi_master_suspend(master);
-+}
-+
-+static int rpc_spi_resume(struct device *dev)
-+{
-+	struct spi_master *master = dev_get_drvdata(dev);
-+
-+	return spi_master_resume(master);
-+}
-+
-+static SIMPLE_DEV_PM_OPS(rpc_spi_pm_ops, rpc_spi_suspend, rpc_spi_resume);
-+#define DEV_PM_OPS	(&rpc_spi_pm_ops)
-+#else
-+#define DEV_PM_OPS	NULL
-+#endif
-+
-+static struct platform_driver rpc_spi_driver = {
-+	.probe = rpc_spi_probe,
-+	.remove = rpc_spi_remove,
-+	.driver = {
-+		.name = "rpc-spi",
-+		.of_match_table = rpc_spi_of_ids,
-+		.pm = DEV_PM_OPS,
-+	},
-+};
-+module_platform_driver(rpc_spi_driver);
-+
-+MODULE_AUTHOR("Mason Yang <masonccyang@mxic.com.tw>");
-+MODULE_DESCRIPTION("Renesas R-Car Gen3 RPC-IF SPI controller driver");
-+MODULE_LICENSE("GPL v2");
--- 
-1.9.1
+
+Dear linux-kernel@vger.kernel.org
+
+Sorry for the delay find the attachment of the payment slip and=20
+send me the new account in which i will make the remainig balance=20
+payment to. kindly reply me as soon as possible
+
+
+Best regards,
+MOHAMMED  ALI
+AFB Metal =C3=87elik Steel
+Tel: +966 1 -4576780
+Fax: +966 0746 - 690121
+Mob: +966 334 =E2=80=93 6686965
+skype: Amador Velasquez
+
+
+
+
+
+
+
+
+------=_NextPart_000_0012_8572620B.7D227DA3
+Content-Type: application/octet-stream; name="Payment Slip-7th-01-19.xlsx"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="Payment Slip-7th-01-19.xlsx"
+
+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
+
+------=_NextPart_000_0012_8572620B.7D227DA3--
 
