@@ -2,215 +2,131 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B294EC43612
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 16:20:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC901C43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 16:21:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B3A6218B0
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 16:20:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B93692087F
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 16:21:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uBEh0Pdx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729410AbfAHQUE (ORCPT
+        id S1729261AbfAHQV0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 11:20:04 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:44428 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728483AbfAHQTo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 11:19:44 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id AFD82209EF; Tue,  8 Jan 2019 17:19:41 +0100 (CET)
-Received: from localhost.localdomain (aaubervilliers-681-1-45-241.w90-88.abo.wanadoo.fr [90.88.163.241])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 62E1C207A3;
-        Tue,  8 Jan 2019 17:19:41 +0100 (CET)
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Russell King <linux@armlinux.org.uk>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Nadav Haklai <nadavh@marvell.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: [PATCH v4 1/4] clk: core: link consumer with clock driver
-Date:   Tue,  8 Jan 2019 17:19:37 +0100
-Message-Id: <20190108161940.4814-2-miquel.raynal@bootlin.com>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190108161940.4814-1-miquel.raynal@bootlin.com>
-References: <20190108161940.4814-1-miquel.raynal@bootlin.com>
+        Tue, 8 Jan 2019 11:21:26 -0500
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:42271 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728483AbfAHQV0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 11:21:26 -0500
+Received: by mail-qt1-f194.google.com with SMTP id d19so4947196qtq.9
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jan 2019 08:21:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=07BzCdpckXQqtk9KgXjEnM5LyJCw7Na2QsPG1DGciJQ=;
+        b=uBEh0Pdx9atTEhwbfv3jz6u6ix5dq8fjrq+x0m6CkzFu5N4bacu+mZH/7tN2c4yLEs
+         9Y2B4x00iAu7MafB4YN6NrLKSPvRXnzbSRcuoaH2OuZ2eoi87yiw7lbII1+QpSeA0XGS
+         sncdATfgFOAwhsnvRDVYP/tvnzpg3my9yghOGj12upApyUt679BPtXrz7yegBE47bP5G
+         lU4lkwzjJ75VctGrIWh9cJIFLn6OChVw5ennwutvyheXmsQYMTJ5zJgvgyojPTkj47qo
+         +3Ve6ZOtTgJZdJCi4y7Cv36b9NlK7CmD/jexOIBhm/l+FnqEUgvKCuGvwzT2g/93MtPg
+         4QqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=07BzCdpckXQqtk9KgXjEnM5LyJCw7Na2QsPG1DGciJQ=;
+        b=pwhi1QDy9q6ZdZOOD4991QVUknKboV1alugEC7D17N5QE8IDDJUCGOcqqs55JEJng9
+         Fxwjrkq0COkcqJF4NbiCManu04hV0ua5oKX6Qvsr7UexzPhaRUCbpm8IXvTBeVhzorFm
+         HtkmZqWwyC2trVb8XFqBsHGAMMU6Ejyn2TEY2bC9cbotPHgv/9hGhVrqJ+6aXcctGpXE
+         tPXmRr/gTuthAFWIOM6pMTOES7TGYEdPKMVodAbz6iZ2EWb7jU/NBKtntGw/W2AE6zx5
+         xT/c8Klccd5hTLef0lNu708Z+XK6RHjPdiQKweVJwG68rkFgkN80DvkZ2lWIq84iD49v
+         A9FA==
+X-Gm-Message-State: AJcUukf4nuPa8osOyDGwzYK9z5PPPnUumjqIJaRXMFnN2NJUH/cX5tJJ
+        volcBEV9d55MHsi84bR3VC5C2mkuvT7imnQ2eRk=
+X-Google-Smtp-Source: ALg8bN55WaHJOK2rTGQZxTuOwLpimQjtio/s+BS6YJLpdWN7gKOVZ7g3FgFqm9XOsAEyFrQV6fjM5M+AlnGP9HFa++c=
+X-Received: by 2002:a0c:9a4a:: with SMTP id q10mr2280267qvd.150.1546964484715;
+ Tue, 08 Jan 2019 08:21:24 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20181212173402.27086-1-enric.balletbo@collabora.com> <20181221091001.GA13248@dell>
+In-Reply-To: <20181221091001.GA13248@dell>
+From:   Enric Balletbo Serra <eballetbo@gmail.com>
+Date:   Tue, 8 Jan 2019 17:21:13 +0100
+Message-ID: <CAFqH_51mrsb=cBOeBL0avyYGogZ-MtMUpKUS7avXGT9Q2JmWHw@mail.gmail.com>
+Subject: Re: [PATCH v5 0/7] mfd / platform: cros_ec: move cros_ec sysfs
+ attributes to its own drivers.
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Gwendal Grignou <gwendal@chromium.org>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Guenter Roeck <groeck@chromium.org>, kernel@collabora.com,
+        Benson Leung <bleung@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-One major concern when, for instance, suspending/resuming a platform
-is to never access registers before the underlying clock has been
-resumed, otherwise most of the time the kernel will just crash. One
-solution is to use syscore operations when registering clock drivers
-suspend/resume callbacks. One problem of using syscore_ops is that the
-suspend/resume scheduling will depend on the order of the
-registrations, which brings (unacceptable) randomness in the process.
+Hi Lee,
 
-A feature called device links has been introduced to handle such
-situation. It creates dependencies between consumers and providers,
-enforcing e.g. the suspend/resume order when needed. Such feature is
-already in use for regulators.
+Missatge de Lee Jones <lee.jones@linaro.org> del dia dv., 21 de des.
+2018 a les 16:39:
+>
+> On Wed, 12 Dec 2018, Enric Balletbo i Serra wrote:
+>
+> > Hi,
+> >
+> > This is another patchset to try to cleanup a bit more the crossed
+> > references for cros-ec driver between the MFD and the platform/chrome
+> > subsystems.
+> >
+> > The purpose of these patches is get rid of the different cros-ec attrib=
+utes
+> > from mfd/cros_ec_dev to its own sub-driver in platform/chrome. cros_ec_=
+dev
+> > continues instantiating the sub-devices but the sysfs attributes are ow=
+ned
+> > by the platform driver.E.g. The lightbar driver should own his sysfs
+> > attributes and be instantiated only if the Embedded Controller has a
+> > lightbar.
+> >
+> > The patchset also adds the documentation of the sysfs attributes.
+> >
+> > Most of the patches touches mfd subsystem and platform/chrome so I'd
+> > suggest go all using and inmutable branch.
+>
+> That's fine.
+>
+> What else needs to happen with this set?
+>
 
-Add device links support in the clock subsystem by creating/deleting
-the links at get/put time.
+I think the patchset is ready to be queued. Note that to apply cleanly
+it depends on [1] which is already merged in your for-next branch.
+What do you prefer, go through your repo or go through the
+chrome-platform repo? Do you want Benson or I create an immutable
+branch? I'm fine with whenever you decide.
 
-Example of a boot (ESPRESSObin, A3700 SoC) with devices linked to clocks:
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git/commit/?h=
+=3Dfor-mfd-next&id=3D18e294ddafaeb80a1e2e10c9bd750a6cb8388d5b
 
-marvell-armada-3700-tbg-clock d0013200.tbg: Linked as a consumer to d0013800.pinctrl:xtal-clk
-marvell-armada-3700-tbg-clock d0013200.tbg: Dropping the link to d0013800.pinctrl:xtal-clk
-marvell-armada-3700-tbg-clock d0013200.tbg: Linked as a consumer to d0013800.pinctrl:xtal-clk
-marvell-armada-3700-periph-clock d0013000.nb-periph-clk: Linked as a consumer to d0013200.tbg
-marvell-armada-3700-periph-clock d0013000.nb-periph-clk: Linked as a consumer to d0013800.pinctrl:xtal-clk
-marvell-armada-3700-periph-clock d0018000.sb-periph-clk: Linked as a consumer to d0013200.tbg
-mvneta d0030000.ethernet: Linked as a consumer to d0018000.sb-periph-clk
-xhci-hcd d0058000.usb: Linked as a consumer to d0018000.sb-periph-clk
-xenon-sdhci d00d0000.sdhci: Linked as a consumer to d0013000.nb-periph-clk
-xenon-sdhci d00d0000.sdhci: Dropping the link to d0013000.nb-periph-clk
-mvebu-uart d0012000.serial: Linked as a consumer to d0013800.pinctrl:xtal-clk
-advk-pcie d0070000.pcie: Linked as a consumer to d0018000.sb-periph-clk
-xenon-sdhci d00d0000.sdhci: Linked as a consumer to d0013000.nb-periph-clk
-xenon-sdhci d00d0000.sdhci: Linked as a consumer to regulator.1
-cpu cpu0: Linked as a consumer to d0013000.nb-periph-clk
-cpu cpu0: Dropping the link to d0013000.nb-periph-clk
-cpu cpu0: Linked as a consumer to d0013000.nb-periph-clk
+> Any more Acks required?
+>
 
-Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
----
- drivers/clk/clk.c | 50 ++++++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 49 insertions(+), 1 deletion(-)
+I think that you, Guenter, Benson and I are fine with it, so not more
+acks needed.
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index e1449db544c7..5c36ff52cb72 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -78,6 +78,7 @@ struct clk_core {
- 	struct hlist_node	debug_node;
- #endif
- 	struct kref		ref;
-+	struct device_link	*parent_clk_link;
- };
- 
- #define CREATE_TRACE_POINTS
-@@ -92,6 +93,7 @@ struct clk {
- 	unsigned long max_rate;
- 	unsigned int exclusive_count;
- 	struct hlist_node clks_node;
-+	struct device_link *consumer_link;
- };
- 
- /***           runtime pm          ***/
-@@ -276,6 +278,35 @@ struct clk_hw *clk_hw_get_parent(const struct clk_hw *hw)
- }
- EXPORT_SYMBOL_GPL(clk_hw_get_parent);
- 
-+static void clk_link_consumer(struct device *consumer, struct clk *clk)
-+{
-+	if (consumer && clk)
-+		clk->consumer_link = device_link_add(consumer, clk->core->dev,
-+						     DL_FLAG_STATELESS);
-+}
-+
-+static void clk_unlink_consumer(struct clk *clk)
-+{
-+	if (clk && clk->consumer_link)
-+		device_link_del(clk->consumer_link);
-+}
-+
-+static void clk_link_hierarchy(struct clk_core *consumer,
-+			       struct clk_core *provider)
-+{
-+	if (consumer && provider)
-+		consumer->parent_clk_link = device_link_add(consumer->dev,
-+							    provider->dev,
-+							    DL_FLAG_STATELESS);
-+}
-+
-+static void clk_unlink_hierarchy(struct clk_core *consumer,
-+				 struct clk_core *provider)
-+{
-+	if (consumer && provider && consumer->parent_clk_link)
-+		device_link_del(consumer->parent_clk_link);
-+}
-+
- static struct clk_core *__clk_lookup_subtree(const char *name,
- 					     struct clk_core *core)
- {
-@@ -1599,6 +1630,9 @@ static void clk_reparent(struct clk_core *core, struct clk_core *new_parent)
- 
- 	hlist_del(&core->child_node);
- 
-+	if (core->parent)
-+		clk_unlink_hierarchy(core, core->parent);
-+
- 	if (new_parent) {
- 		bool becomes_orphan = new_parent->orphan;
- 
-@@ -1610,6 +1644,8 @@ static void clk_reparent(struct clk_core *core, struct clk_core *new_parent)
- 
- 		if (was_orphan != becomes_orphan)
- 			clk_core_update_orphan_status(core, becomes_orphan);
-+
-+		clk_link_hierarchy(core, new_parent);
- 	} else {
- 		hlist_add_head(&core->child_node, &clk_orphan_list);
- 		if (!was_orphan)
-@@ -2336,6 +2372,8 @@ __clk_init_parent(struct clk_core *core, bool update_orphan)
- 	if (!parent_hw)
- 		return NULL;
- 
-+	clk_link_hierarchy(core, parent_hw->core);
-+
- 	return parent_hw->core;
- }
- 
-@@ -3411,6 +3449,7 @@ struct clk *clk_hw_create_clk(struct device *dev, struct clk_hw *hw,
- 	}
- 
- 	kref_get(&core->ref);
-+	clk_link_consumer(dev, clk);
- 	clk_core_link_consumer(core, clk);
- 
- 	return clk;
-@@ -3633,11 +3672,18 @@ void clk_unregister(struct clk *clk)
- 	clk->core->ops = &clk_nodrv_ops;
- 	clk_enable_unlock(flags);
- 
-+	clk_unlink_hierarchy(clk->core, clk->core->parent);
-+
- 	if (!hlist_empty(&clk->core->children)) {
- 		struct clk_core *child;
- 		struct hlist_node *t;
- 
--		/* Reparent all children to the orphan list. */
-+		/*
-+		 * Reparent all children to the orphan list.
-+		 *
-+		 * No need to unlink the child clock manually, this will be
-+		 * handled by clk_reparent().
-+		 */
- 		hlist_for_each_entry_safe(child, t, &clk->core->children,
- 					  child_node)
- 			clk_core_set_parent_nolock(child, NULL);
-@@ -3799,6 +3845,8 @@ void __clk_put(struct clk *clk)
- 
- 	clk_prepare_lock();
- 
-+	clk_unlink_consumer(clk);
-+
- 	/*
- 	 * Before calling clk_put, all calls to clk_rate_exclusive_get() from a
- 	 * given user should be balanced with calls to clk_rate_exclusive_put()
--- 
-2.19.1
+Thanks,
+ Enric
 
+> --
+> Lee Jones [=E6=9D=8E=E7=90=BC=E6=96=AF]
+> Linaro Services Technical Lead
+> Linaro.org =E2=94=82 Open source software for ARM SoCs
+> Follow Linaro: Facebook | Twitter | Blog
