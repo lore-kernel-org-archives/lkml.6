@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 489D9C43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:41:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D1ABC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:41:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0FC632063F
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:41:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 50E6B2063F
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 19:41:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546976485;
-	bh=BaRtPItSgDMDn8WNB05+gFqV1vVJ1GNuFTe26hJYJuY=;
+	s=default; t=1546976495;
+	bh=iHmeG4aa7tFGjpHYelRytZzw4dztBtUJgh64Lleuf1I=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=v1uInv3SSgW3lGt4qRp8kpQZVUrnXgU6uM5h9ecZEKF1w4swm1jzb2NBir5gjS9pg
-	 BzjFXwTiMnw4MVPc5WWhdNxQUCM6CW4oNZfty2inJhidh+PC52yobyLf57trtfscp2
-	 3B+zG7e62DUKGTxBgrEBk+TQ6k7gDbkcVA0SKf/I=
+	b=NIJp0wFNqQs+VKVmkhhKRgNFYG3uj7YSrVKXsmrQPBimIDCvVYaj0MevwYIjiAKVH
+	 hxPFMD1HOCSzJBCya4Mke+/umuDPmYkdVzvPOjoAERYNK2JoqP9JAy+8p4fVO/ftA2
+	 QHaRr/TFCB0aVsgA35FyUNtIrBdYrEd8CbqonNn8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732615AbfAHTlY (ORCPT
+        id S1732137AbfAHTle (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 14:41:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43082 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 14:41:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43052 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731945AbfAHTeU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:34:20 -0500
+        id S1731913AbfAHTeT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:34:19 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2FB73205C9;
-        Tue,  8 Jan 2019 19:34:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4168A20827;
+        Tue,  8 Jan 2019 19:34:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546976059;
-        bh=BaRtPItSgDMDn8WNB05+gFqV1vVJ1GNuFTe26hJYJuY=;
+        s=default; t=1546976058;
+        bh=iHmeG4aa7tFGjpHYelRytZzw4dztBtUJgh64Lleuf1I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pr6I0iSQWtfeiPhXvzLkvg0VC5shSFgYX8jGEfcMyp3E/McMhcE54ZKNgDwFtAOZ6
-         wVqLV+vOfK1os7gJIh5KdbH8C7ks03pz6i0mmPRMzftbXuwd2wC8w6T9sS6M+jQxce
-         l72JlMrvPvYM2czMM82IRJj2sNyuYwX919Oqqwb0=
+        b=EKdSdwVrUt84aU6aK/QzrMYqx4JrqP7jNaaQmTg4AuEtOSWWi+Lwa1xyz2VBVQ/AC
+         rdc2lVHvGVDRRi88wYuZ2gHW3oS0aJXr33QH7kpfrXONUzav93qE7qdLToM+XEfjvE
+         Q44HR5jPx+zaA0i+Xqafd2NDrNv3lbMkZcu1j540=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
         Sasha Levin <sashal@kernel.org>, linux-kbuild@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 21/36] kconfig: fix memory leak when EOF is encountered in quotation
-Date:   Tue,  8 Jan 2019 14:33:33 -0500
-Message-Id: <20190108193348.123880-21-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 20/36] kconfig: fix file name and line number of warn_ignored_character()
+Date:   Tue,  8 Jan 2019 14:33:32 -0500
+Message-Id: <20190108193348.123880-20-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190108193348.123880-1-sashal@kernel.org>
 References: <20190108193348.123880-1-sashal@kernel.org>
@@ -59,64 +59,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-[ Upstream commit fbac5977d81cb2b2b7e37b11c459055d9585273c ]
+[ Upstream commit 77c1c0fa8b1477c5799bdad65026ea5ff676da44 ]
 
-An unterminated string literal followed by new line is passed to the
-parser (with "multi-line strings not supported" warning shown), then
-handled properly there.
+Currently, warn_ignore_character() displays invalid file name and
+line number.
 
-On the other hand, an unterminated string literal at end of file is
-never passed to the parser, then results in memory leak.
+The lexer should use current_file->name and yylineno, while the parser
+should use zconf_curname() and zconf_lineno().
+
+This difference comes from that the lexer is always going ahead
+of the parser. The parser needs to look ahead one token to make a
+shift/reduce decision, so the lexer is requested to scan more text
+from the input file.
+
+This commit fixes the warning message from warn_ignored_character().
 
 [Test Code]
 
-  ----------(Kconfig begin)----------
-  source "Kconfig.inc"
+  ----(Kconfig begin)----
+  /
+  -----(Kconfig end)-----
 
-  config A
-          bool "a"
-  -----------(Kconfig end)-----------
-
-  --------(Kconfig.inc begin)--------
-  config B
-          bool "b\No new line at end of file
-  ---------(Kconfig.inc end)---------
-
-[Summary from Valgrind]
+[Output]
 
   Before the fix:
 
-    LEAK SUMMARY:
-       definitely lost: 16 bytes in 1 blocks
-       ...
+  <none>:0:warning: ignoring unsupported character '/'
 
   After the fix:
 
-    LEAK SUMMARY:
-       definitely lost: 0 bytes in 0 blocks
-       ...
-
-Eliminate the memory leak path by handling this case. Of course, such
-a Kconfig file is wrong already, so I will add an error message later.
+  Kconfig:1:warning: ignoring unsupported character '/'
 
 Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- scripts/kconfig/zconf.l | 2 ++
- 1 file changed, 2 insertions(+)
+ scripts/kconfig/zconf.l | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/scripts/kconfig/zconf.l b/scripts/kconfig/zconf.l
-index 6534dc5ac803..0c7800112ff5 100644
+index c410d257da06..6534dc5ac803 100644
 --- a/scripts/kconfig/zconf.l
 +++ b/scripts/kconfig/zconf.l
-@@ -191,6 +191,8 @@ n	[A-Za-z0-9_-]
- 	}
- 	<<EOF>>	{
- 		BEGIN(INITIAL);
-+		yylval.string = text;
-+		return T_WORD_QUOTE;
- 	}
+@@ -71,7 +71,7 @@ static void warn_ignored_character(char chr)
+ {
+ 	fprintf(stderr,
+ 	        "%s:%d:warning: ignoring unsupported character '%c'\n",
+-	        zconf_curname(), zconf_lineno(), chr);
++	        current_file->name, yylineno, chr);
  }
+ %}
  
 -- 
 2.19.1
