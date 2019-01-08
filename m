@@ -2,100 +2,114 @@ Return-Path: <SRS0=iEdC=PQ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E56AC43387
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:01:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3450EC43387
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:01:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C7A120660
-	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:01:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 04BBC20660
+	for <linux-kernel@archiver.kernel.org>; Tue,  8 Jan 2019 20:01:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1546977668;
-	bh=HeJTL5QyjD7wyQL28gE4CZvCivyhUS7nSSY5nfjBD9k=;
+	s=default; t=1546977675;
+	bh=y/UhQd/Sjne+dGRdjK6XgovLak8A5IPpPgH0/avH9hI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=wsDF7RyZ4ZVeVa8+PcqDtYtA9kbbqyFRlJhC8wjx4qhEMIOcO809+NGWC3WqAqwRp
-	 qM3SBIWWmw9JAo8JouYv5K1w7ZZFvyCYS7tBS5TEgNz5IfsFXQ5L4tuSpQWfWl0qf0
-	 5SY9JcP9Qr9nREDWLMVZdoMT2F42uLaoN+grFHUQ=
+	b=IS7wQXB1acjsjawOStCYUCPbolyw+jnkD3ZTocrxdI80ZgClPUgDoiwfFbHfW5Q63
+	 4C41mPUM/SxPNXL4ylyRKBEZDnTnqaXpN38OopPZ0IjGBhk7sOVB4uik2D2jPTs2rR
+	 sxR+cvq3GQRBzTump2DtloqhqnDC33kzWQ+9AnHI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730461AbfAHUBH (ORCPT
+        id S1732965AbfAHT7X (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 15:01:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56436 "EHLO mail.kernel.org"
+        Tue, 8 Jan 2019 14:59:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36732 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732979AbfAHT70 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 14:59:26 -0500
-Received: from quaco.ghostprotocols.net (unknown [177.135.9.49])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1729144AbfAHT3V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 14:29:21 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6CE1C20883;
-        Tue,  8 Jan 2019 19:59:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4A2502070B;
+        Tue,  8 Jan 2019 19:29:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1546977566;
-        bh=HeJTL5QyjD7wyQL28gE4CZvCivyhUS7nSSY5nfjBD9k=;
+        s=default; t=1546975761;
+        bh=y/UhQd/Sjne+dGRdjK6XgovLak8A5IPpPgH0/avH9hI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yk2FRIw+u+6JNAB3Zv7yUMphIN06/iYL/O5FTkV+D7VoyHfLsqesIT5lFxFfNTJU9
-         jXlozZ4lX6hpifV6rPsQPkDf1YxcIbRoOx6PqejQtPKAZq7q2XA2FqP+NubPpFHvJA
-         mVFMve4T8fNv4VW7OAHTgceQjRWBJr3Ok/E36wGs=
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        =?UTF-8?q?Luis=20Cl=C3=A1udio=20Gon=C3=A7alves?= 
-        <lclaudio@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-        Wang Nan <wangnan0@huawei.com>
-Subject: [PATCH 02/16] perf trace: Fix alignment for [continued] lines
-Date:   Tue,  8 Jan 2019 16:58:56 -0300
-Message-Id: <20190108195910.17726-3-acme@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190108195910.17726-1-acme@kernel.org>
-References: <20190108195910.17726-1-acme@kernel.org>
+        b=vRaFcMVr+rEgTLd0SD8i4W3PYJyGo82YVGr1Zc+R9CWRvnzJonMzbmgDdnpAGTU7F
+         FNzhpRrZNS2bKGnq/S+kinC65VDD2KUkxb1jOrv+TN98Qy5cK0jSM3jcZdesEH0aw6
+         gu/GNWJ2mS7YLNN7ktOdxphVGIdUA7bZMvy9F+Po=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     =?UTF-8?q?Stephan=20G=C3=BCnther?= <moepi@moepi.net>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Sasha Levin <sashal@kernel.org>,
+        MPT-FusionLinux.pdl@broadcom.com, linux-scsi@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 103/117] scsi: mpt3sas: fix memory ordering on 64bit writes
+Date:   Tue,  8 Jan 2019 14:26:11 -0500
+Message-Id: <20190108192628.121270-103-sashal@kernel.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190108192628.121270-1-sashal@kernel.org>
+References: <20190108192628.121270-1-sashal@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnaldo Carvalho de Melo <acme@redhat.com>
+From: Stephan Günther <moepi@moepi.net>
 
-We were not taking into account the "... [continued]" printed
-characters, fix it.
+[ Upstream commit 23c3828aa2f84edec7020c7397a22931e7a879e1 ]
 
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Luis Cláudio Gonçalves <lclaudio@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-qt20y0acmf8k0bzisce8kw95@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+With commit 09c2f95ad404 ("scsi: mpt3sas: Swap I/O memory read value back
+to cpu endianness"), 64bit writes in _base_writeq() were rewritten to use
+__raw_writeq() instad of writeq().
+
+This introduced a bug apparent on powerpc64 systems such as the Raptor
+Talos II that causes the HBA to drop from the PCIe bus under heavy load and
+being reinitialized after a couple of seconds.
+
+It can easily be triggered on affacted systems by using something like
+
+  fio --name=random-write --iodepth=4 --rw=randwrite --bs=4k --direct=0 \
+    --size=128M --numjobs=64 --end_fsync=1
+  fio --name=random-write --iodepth=4 --rw=randwrite --bs=64k --direct=0 \
+    --size=128M --numjobs=64 --end_fsync=1
+
+a couple of times. In my case I tested it on both a ZFS raidz2 and a btrfs
+raid6 using LSI 9300-8i and 9400-8i controllers.
+
+The fix consists in resembling the write ordering of writeq() by adding a
+mandatory write memory barrier before device access and a compiler barrier
+afterwards. The additional MMIO barrier is superfluous.
+
+Signed-off-by: Stephan Günther <moepi@moepi.net>
+Reported-by: Matt Corallo <linux@bluematt.me>
+Acked-by: Sreekanth Reddy <Sreekanth.Reddy@broadcom.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/builtin-trace.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/scsi/mpt3sas/mpt3sas_base.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-index b8bf5d025563..ed4583128b9c 100644
---- a/tools/perf/builtin-trace.c
-+++ b/tools/perf/builtin-trace.c
-@@ -2032,9 +2032,10 @@ static int trace__sys_exit(struct trace *trace, struct perf_evsel *evsel,
- 	if (ttrace->entry_pending) {
- 		printed = fprintf(trace->output, "%s", ttrace->entry_str);
- 	} else {
--		fprintf(trace->output, " ... [");
-+		printed += fprintf(trace->output, " ... [");
- 		color_fprintf(trace->output, PERF_COLOR_YELLOW, "continued");
--		fprintf(trace->output, "]: %s()", sc->name);
-+		printed += 9;
-+		printed += fprintf(trace->output, "]: %s()", sc->name);
- 	}
- 
- 	printed++; /* the closing ')' */
+diff --git a/drivers/scsi/mpt3sas/mpt3sas_base.c b/drivers/scsi/mpt3sas/mpt3sas_base.c
+index 2500377d0723..bfd826deabbe 100644
+--- a/drivers/scsi/mpt3sas/mpt3sas_base.c
++++ b/drivers/scsi/mpt3sas/mpt3sas_base.c
+@@ -3319,8 +3319,9 @@ _base_mpi_ep_writeq(__u64 b, volatile void __iomem *addr,
+ static inline void
+ _base_writeq(__u64 b, volatile void __iomem *addr, spinlock_t *writeq_lock)
+ {
++	wmb();
+ 	__raw_writeq(b, addr);
+-	mmiowb();
++	barrier();
+ }
+ #else
+ static inline void
 -- 
-2.20.1
+2.19.1
 
