@@ -2,131 +2,144 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0748C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 10:10:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11CDFC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 10:10:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8EF821738
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 10:10:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D203121738
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 10:10:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="MaJ0AoeC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730102AbfAIKKf (ORCPT
+        id S1730205AbfAIKKu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 05:10:35 -0500
-Received: from foss.arm.com ([217.140.101.70]:39890 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729281AbfAIKKe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 05:10:34 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B738480D;
-        Wed,  9 Jan 2019 02:10:33 -0800 (PST)
-Received: from [10.1.196.72] (e119884-lin.cambridge.arm.com [10.1.196.72])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CC3893F70D;
-        Wed,  9 Jan 2019 02:10:27 -0800 (PST)
-Subject: Re: [PATCH v3 1/3] kasan, arm64: use ARCH_SLAB_MINALIGN instead of
- manual aligning
-To:     Andrey Konovalov <andreyknvl@google.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Christoph Lameter <cl@linux.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Dave Martin <dave.martin@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Paul Lawrence <paullawrence@google.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        kasan-dev@googlegroups.com, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-sparse@vger.kernel.org, linux-mm@kvack.org,
-        linux-kbuild@vger.kernel.org
-Cc:     Kostya Serebryany <kcc@google.com>,
-        Evgeniy Stepanov <eugenis@google.com>,
-        Lee Smith <Lee.Smith@arm.com>,
-        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
-        Jacob Bramley <Jacob.Bramley@arm.com>,
-        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
-        Jann Horn <jannh@google.com>,
-        Mark Brand <markbrand@google.com>,
-        Chintan Pandya <cpandya@codeaurora.org>,
-        Vishwath Mohan <vishwath@google.com>
-References: <cover.1546540962.git.andreyknvl@google.com>
- <52ddd881916bcc153a9924c154daacde78522227.1546540962.git.andreyknvl@google.com>
-From:   Vincenzo Frascino <vincenzo.frascino@arm.com>
-Message-ID: <fc93e5a4-fa54-98a1-ea5f-4708568d7857@arm.com>
-Date:   Wed, 9 Jan 2019 10:10:26 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Wed, 9 Jan 2019 05:10:50 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:45057 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729281AbfAIKKt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 05:10:49 -0500
+Received: by mail-ed1-f65.google.com with SMTP id d39so6777855edb.12
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Jan 2019 02:10:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=uJbJ4UP1+2isnhipetsVHXrLnq1QpwTD0XItJlhIzU8=;
+        b=MaJ0AoeCi/lkfhayt30FgT/qApqZYMm8n5E2slCGrrCan/or34+k36aOiX/70XxTB9
+         6dMIaxTsmLlOz3NJH11LGu1JGvXicdjMjhHzIRPWJ4WF5zOlg7zArIzdHyqW4jpSDU6z
+         gGAI6MDtyXxA0nbTdUstUleujzHxDKh16EaJE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=uJbJ4UP1+2isnhipetsVHXrLnq1QpwTD0XItJlhIzU8=;
+        b=jfXDhbTYw8AGrzKcRdgVOzUhEmQ7qiq/J9XGo5CYlYzV242DKtjwvfh91al04a6jq+
+         WQtb9vXN01JVp5inthUTEvXqA1Mvs0RZC3nO1O2Y/ffP9AAcRpuGgtI3EH0ua3ocCCQH
+         rukAQ3b8L1aJBjrJ/WLagA+3jvDJbGINxcqRzQ4/za3CjN+0UrGHIqeBqbAFCvVzhbc0
+         3ODdz9o4ihbik4hkOxj24NugWsYT6NoC1C2qBmTQa3Yhmu25Jv8jKGe6Og4h3D4UPly9
+         5R/xutYNoNXecaNEcFsveWy9OOR9JO2kMjpay9e8RbuvH80as5U1ZL2IiatHAhgN5FXy
+         Ts5A==
+X-Gm-Message-State: AJcUukf+9oTGKU43ckrEDUWgcniq0oD3CpYxxe8zi7Jk4DzQlgaRkega
+        JhDcqZ9yBmqhnXaz2MinM3lsBg==
+X-Google-Smtp-Source: ALg8bN5HIE6LG/qEaIdcYsjtoVUz1nvPMLx9DJ7BFyczpaYNCjegLFiF3NUy6z5sW2s9h+kcA23LaQ==
+X-Received: by 2002:a50:aa31:: with SMTP id o46mr5378174edc.23.1547028647347;
+        Wed, 09 Jan 2019 02:10:47 -0800 (PST)
+Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
+        by smtp.gmail.com with ESMTPSA id cd6-v6sm699316ejb.14.2019.01.09.02.10.46
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 09 Jan 2019 02:10:46 -0800 (PST)
+Date:   Wed, 9 Jan 2019 11:10:44 +0100
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Gerd Hoffmann <kraxel@redhat.com>
+Cc:     dri-devel@lists.freedesktop.org, David Airlie <airlied@redhat.com>,
+        andr2000@gmail.com, David Airlie <airlied@linux.ie>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:DRM DRIVER FOR BOCHS VIRTUAL GPU" 
+        <virtualization@lists.linux-foundation.org>
+Subject: Re: [PATCH v2 15/15] drm/bochs: reserve bo for pin/unpin
+Message-ID: <20190109101044.GS21184@phenom.ffwll.local>
+Mail-Followup-To: Gerd Hoffmann <kraxel@redhat.com>,
+        dri-devel@lists.freedesktop.org, David Airlie <airlied@redhat.com>,
+        andr2000@gmail.com, David Airlie <airlied@linux.ie>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:DRM DRIVER FOR BOCHS VIRTUAL GPU" <virtualization@lists.linux-foundation.org>
+References: <20190108112519.27473-1-kraxel@redhat.com>
+ <20190108112519.27473-16-kraxel@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <52ddd881916bcc153a9924c154daacde78522227.1546540962.git.andreyknvl@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190108112519.27473-16-kraxel@redhat.com>
+X-Operating-System: Linux phenom 4.18.0-2-amd64 
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 03/01/2019 18:45, Andrey Konovalov wrote:
-> Instead of changing cache->align to be aligned to KASAN_SHADOW_SCALE_SIZE
-> in kasan_cache_create() we can reuse the ARCH_SLAB_MINALIGN macro.
+On Tue, Jan 08, 2019 at 12:25:19PM +0100, Gerd Hoffmann wrote:
+> The buffer object must be reserved before calling
+> ttm_bo_validate for pinning/unpinning.
 > 
-> Suggested-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
-> Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
+> Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+
+Seems a bit a bisect fumble in your series here: legacy kms code reserved
+the ttm bo before calling boch_bo_pin/unpin, your atomic code doesn't. I
+think pushing this into bochs_bo_pin/unpin makes sense for atomic, but to
+avoid bisect fail I think you need to have these temporarily in your
+cleanup/prepare_plane functions too.
+
+Looked through the entire series, this here is the only issue I think
+should be fixed before merging (making atomic_enable optional can be done
+as a follow-up if you feel like it). With that addressed on the series:
+
+Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
 > ---
->  arch/arm64/include/asm/cache.h | 6 ++++++
->  mm/kasan/common.c              | 2 --
->  2 files changed, 6 insertions(+), 2 deletions(-)
+>  drivers/gpu/drm/bochs/bochs_mm.c | 8 ++++++++
+>  1 file changed, 8 insertions(+)
 > 
-> diff --git a/arch/arm64/include/asm/cache.h b/arch/arm64/include/asm/cache.h
-> index 13dd42c3ad4e..eb43e09c1980 100644
-> --- a/arch/arm64/include/asm/cache.h
-> +++ b/arch/arm64/include/asm/cache.h
-> @@ -58,6 +58,12 @@
->   */
->  #define ARCH_DMA_MINALIGN	(128)
+> diff --git a/drivers/gpu/drm/bochs/bochs_mm.c b/drivers/gpu/drm/bochs/bochs_mm.c
+> index cfe061c25f..970a591908 100644
+> --- a/drivers/gpu/drm/bochs/bochs_mm.c
+> +++ b/drivers/gpu/drm/bochs/bochs_mm.c
+> @@ -223,7 +223,11 @@ int bochs_bo_pin(struct bochs_bo *bo, u32 pl_flag)
+>  	bochs_ttm_placement(bo, pl_flag);
+>  	for (i = 0; i < bo->placement.num_placement; i++)
+>  		bo->placements[i].flags |= TTM_PL_FLAG_NO_EVICT;
+> +	ret = ttm_bo_reserve(&bo->bo, true, false, NULL);
+> +	if (ret)
+> +		return ret;
+>  	ret = ttm_bo_validate(&bo->bo, &bo->placement, &ctx);
+> +	ttm_bo_unreserve(&bo->bo);
+>  	if (ret)
+>  		return ret;
 >  
-> +#ifdef CONFIG_KASAN_SW_TAGS
-> +#define ARCH_SLAB_MINALIGN	(1ULL << KASAN_SHADOW_SCALE_SHIFT)
-> +#else
-> +#define ARCH_SLAB_MINALIGN	__alignof__(unsigned long long)
-> +#endif
-> +
-
-Could you please remove the "#else" case here, because it is redundant (it is
-defined in linux/slab.h as ifndef) and could be misleading in future?
-
->  #ifndef __ASSEMBLY__
+> @@ -247,7 +251,11 @@ int bochs_bo_unpin(struct bochs_bo *bo)
 >  
->  #include <linux/bitops.h>
-> diff --git a/mm/kasan/common.c b/mm/kasan/common.c
-> index 03d5d1374ca7..44390392d4c9 100644
-> --- a/mm/kasan/common.c
-> +++ b/mm/kasan/common.c
-> @@ -298,8 +298,6 @@ void kasan_cache_create(struct kmem_cache *cache, unsigned int *size,
->  		return;
->  	}
+>  	for (i = 0; i < bo->placement.num_placement; i++)
+>  		bo->placements[i].flags &= ~TTM_PL_FLAG_NO_EVICT;
+> +	ret = ttm_bo_reserve(&bo->bo, true, false, NULL);
+> +	if (ret)
+> +		return ret;
+>  	ret = ttm_bo_validate(&bo->bo, &bo->placement, &ctx);
+> +	ttm_bo_unreserve(&bo->bo);
+>  	if (ret)
+>  		return ret;
 >  
-> -	cache->align = round_up(cache->align, KASAN_SHADOW_SCALE_SIZE);
-> -
->  	*flags |= SLAB_KASAN;
->  }
->  
+> -- 
+> 2.9.3
 > 
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
 
 -- 
-Regards,
-Vincenzo
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
