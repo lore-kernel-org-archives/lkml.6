@@ -2,84 +2,194 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3805AC43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 16:52:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2983AC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 16:52:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F0C2A217F9
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 16:52:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EE10D20859
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 16:52:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726422AbfAIQwA (ORCPT
+        id S1726458AbfAIQwX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 11:52:00 -0500
-Received: from smtp.nue.novell.com ([195.135.221.5]:50298 "EHLO
-        smtp.nue.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725468AbfAIQwA (ORCPT
-        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
-        Wed, 9 Jan 2019 11:52:00 -0500
-Received: from linux-l9pv.suse (124-11-22-254.static.tfn.net.tw [124.11.22.254])
-        by smtp.nue.novell.com with ESMTP (TLS encrypted); Wed, 09 Jan 2019 17:51:50 +0100
-Date:   Thu, 10 Jan 2019 00:51:39 +0800
-From:   joeyli <jlee@suse.com>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Pavel Machek <pavel@ucw.cz>,
-        "Lee, Chun-Yi" <joeyli.kernel@gmail.com>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        LKML <linux-kernel@vger.kernel.org>, linux-pm@vger.kernel.org,
-        keyrings@vger.kernel.org,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Chen Yu <yu.c.chen@intel.com>,
-        Oliver Neukum <oneukum@suse.com>,
-        Ryan Chen <yu.chen.surf@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Giovanni Gherdovich <ggherdovich@suse.cz>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Jann Horn <jannh@google.com>
-Subject: Re: [PATCH 0/5 v2][RFC] Encryption and authentication for hibernate
- snapshot image
-Message-ID: <20190109165139.GH9503@linux-l9pv.suse>
-References: <20190103143227.9138-1-jlee@suse.com>
- <20190106181026.GA15256@amd>
- <20190107173743.GC4210@linux-l9pv.suse>
- <CALCETrWHjn_WN1WRc2pbFPB+H-ZL_1y=8dhhHoVqA53Q7Pj5vA@mail.gmail.com>
- <20190109163958.GG9503@linux-l9pv.suse>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190109163958.GG9503@linux-l9pv.suse>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        Wed, 9 Jan 2019 11:52:23 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:49068 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726275AbfAIQwX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 11:52:23 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 2C39A20750; Wed,  9 Jan 2019 17:52:21 +0100 (CET)
+Received: from aptenodytes (aaubervilliers-681-1-45-241.w90-88.abo.wanadoo.fr [90.88.163.241])
+        by mail.bootlin.com (Postfix) with ESMTPSA id B7B2F20712;
+        Wed,  9 Jan 2019 17:52:20 +0100 (CET)
+Message-ID: <e918403362bc6e47fd4fce2c108ec3515c5e857a.camel@bootlin.com>
+Subject: Re: [PATCH v3 1/4] drm/vc4: Wait for display list synchronization
+ when completing commit
+From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+To:     Daniel Vetter <daniel@ffwll.ch>
+Cc:     dri-devel <dri-devel@lists.freedesktop.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Eric Anholt <eric@anholt.net>, David Airlie <airlied@linux.ie>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Eben Upton <eben@raspberrypi.org>,
+        Boris Brezillon <boris.brezillon@bootlin.com>
+Date:   Wed, 09 Jan 2019 17:52:20 +0100
+In-Reply-To: <CAKMK7uE+=00wayXr4hUDiSj+s0PJbCEe9xqS1FFwd2cp3Om+ng@mail.gmail.com>
+References: <20190108145056.2276-1-paul.kocialkowski@bootlin.com>
+         <20190108145056.2276-2-paul.kocialkowski@bootlin.com>
+         <CAKMK7uE+=00wayXr4hUDiSj+s0PJbCEe9xqS1FFwd2cp3Om+ng@mail.gmail.com>
+Organization: Bootlin
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.3 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 10, 2019 at 12:39:58AM +0800, joeyli wrote:
-> Hi Andy,
->
-[...snip] 
-> 
-> Let's why I encrypt/decrypt data pages one by one, then I copy the
-^^^^^^^ That's why
+Hi Daniel,
 
-> encrypt/decrypt data from buffer page (only one buffer page reserved
-> for encrypt/decrypt) to original page. I encreypt pages one by one, but
-> I HMAC and verify the whole snapshot image by update mode.
+On Tue, 2019-01-08 at 19:21 +0100, Daniel Vetter wrote:
+> On Tue, Jan 8, 2019 at 3:51 PM Paul Kocialkowski
+> <paul.kocialkowski@bootlin.com> wrote:
+> > During an atomic commit, the HVS is configured with a display list
+> > for the channel matching the associated CRTC. The Pixel Valve (CRTC)
+> > and encoder are also configured for the new setup at that time.
+> > While the Pixel Valve and encoder are reconfigured synchronously, the
+> > HVS is only reconfigured after the display list address (DISPLIST) has
+> > been updated to the current display list address (DISPLACTX), which is
+> > the responsibility of the hardware.
+> > 
+> > The time frame during which the HVS is still running on its previous
+> > configuration but the CRTC and encoder have been reconfigured already
+> > can lead to a number of synchronization issues. They will eventually
+> > cause errors reported on the FIFOs, such as underruns.
+> > 
+> > With underrun detection enabled (from Boris Brezillon's series), this
+> > leads to unreliable underrun detection with random false positives.
+> > 
+> > To ensure a coherent state, wait for each enabled channel of the HVS
+> > to synchronize its current display list address. This fixes the issue
+> > of random underrun reporting on commits.
+> > 
+> > Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+> > ---
+> >  drivers/gpu/drm/vc4/vc4_drv.h  |  1 +
+> >  drivers/gpu/drm/vc4/vc4_hvs.c  | 17 +++++++++++++++++
+> >  drivers/gpu/drm/vc4/vc4_kms.c  |  2 ++
+> >  drivers/gpu/drm/vc4/vc4_regs.h |  2 ++
+> >  4 files changed, 22 insertions(+)
+> > 
+> > diff --git a/drivers/gpu/drm/vc4/vc4_drv.h b/drivers/gpu/drm/vc4/vc4_drv.h
+> > index c24b078f0593..955f157f5ad0 100644
+> > --- a/drivers/gpu/drm/vc4/vc4_drv.h
+> > +++ b/drivers/gpu/drm/vc4/vc4_drv.h
+> > @@ -772,6 +772,7 @@ void vc4_irq_reset(struct drm_device *dev);
+> >  extern struct platform_driver vc4_hvs_driver;
+> >  void vc4_hvs_dump_state(struct drm_device *dev);
+> >  int vc4_hvs_debugfs_regs(struct seq_file *m, void *unused);
+> > +void vc4_hvs_sync_dlist(struct drm_device *dev);
+> > 
+> >  /* vc4_kms.c */
+> >  int vc4_kms_load(struct drm_device *dev);
+> > diff --git a/drivers/gpu/drm/vc4/vc4_hvs.c b/drivers/gpu/drm/vc4/vc4_hvs.c
+> > index 5d8c749c9749..1ba60b8e0c2d 100644
+> > --- a/drivers/gpu/drm/vc4/vc4_hvs.c
+> > +++ b/drivers/gpu/drm/vc4/vc4_hvs.c
+> > @@ -166,6 +166,23 @@ static int vc4_hvs_upload_linear_kernel(struct vc4_hvs *hvs,
+> >         return 0;
+> >  }
+> > 
+> > +void vc4_hvs_sync_dlist(struct drm_device *dev)
+> > +{
+> > +       struct vc4_dev *vc4 = to_vc4_dev(dev);
+> > +       unsigned int i;
+> > +       int ret;
+> > +
+> > +       for (i = 0; i < SCALER_CHANNELS_COUNT; i++) {
+> > +               if (!(HVS_READ(SCALER_DISPCTRLX(i)) & SCALER_DISPCTRLX_ENABLE))
+> > +                       continue;
+> > +
+> > +               ret = wait_for(HVS_READ(SCALER_DISPLACTX(i)) ==
+> > +                              HVS_READ(SCALER_DISPLISTX(i)), 1000);
+> > +               WARN(ret, "Timeout waiting for channel %d display list sync\n",
+> > +                    i);
+> > +       }
+> > +}
+> > +
+> >  static int vc4_hvs_bind(struct device *dev, struct device *master, void *data)
+> >  {
+> >         struct platform_device *pdev = to_platform_device(dev);
+> > diff --git a/drivers/gpu/drm/vc4/vc4_kms.c b/drivers/gpu/drm/vc4/vc4_kms.c
+> > index 0490edb192a1..2d66a2b57a91 100644
+> > --- a/drivers/gpu/drm/vc4/vc4_kms.c
+> > +++ b/drivers/gpu/drm/vc4/vc4_kms.c
+> > @@ -155,6 +155,8 @@ vc4_atomic_complete_commit(struct drm_atomic_state *state)
+> > 
+> >         drm_atomic_helper_commit_hw_done(state);
+> > 
+> > +       vc4_hvs_sync_dlist(dev);
 > 
-[...snip]
->  
-> > Why are you manually supporting three different key types?  Can’t you
-> > just somehow support all key types?  And shouldn’t you be verifying
+> From your description I'd have guessed you want this between when you
+> update the planes and the crtc, so somewhere between commit_planes()
+> and commit_modeset_enables(). At least I have no idea how waiting here
+> can prevent underruns, by this point there's no further hw programming
+> happening.
+
+One thing that I did not mention is that the display list (that
+configures the planes) is only set at crtc_enable time (and taken into
+account by the hardware later).
+
+However, even calling vc4_hvs_sync_dlist right at the end of
+crtc_enable doesn't do either (the old display list just sticks). It
+only seems to work after the HDMI encoder enable step and I don't know
+any good reason why.
+
+I didn't find any description of when that dlist sync mechanism is
+supposed to take place and what particular event triggers it. Perhaps
+it is triggered by a signal originating from the encoder? If anyone has
+insight on the hardware, feel free to shed some light here :)
+
+Cheers and thanks for the review,
+
+Paul
+
+> Only exception is if you have an IOMMU which can fault, in
+> which case the cleanup_planes might remove the buffers prematurely.
+> But if that's the problem, then your semantics of the flip_done event
+> are wrong - when flip_done is signalled, the hw must have stopped
+> scanning out the old planes, since userspace expects to be able to
+> start overwriting/reusing them.
+> -Daniel
 > 
-> I only supported two key typs in my patch set, user defined key and
-> TPM trusted key. The EFI secure boot did not accept by EFI subsystem.
-                   ^^^^^^^^^^^^^^^^^^^ EFI secure key
-   https://lkml.org/lkml/2018/8/5/10
+> > +
+> >         drm_atomic_helper_wait_for_flip_done(dev, state);
+> > 
+> >         drm_atomic_helper_cleanup_planes(dev, state);
+> > diff --git a/drivers/gpu/drm/vc4/vc4_regs.h b/drivers/gpu/drm/vc4/vc4_regs.h
+> > index 931088014272..50c653309aec 100644
+> > --- a/drivers/gpu/drm/vc4/vc4_regs.h
+> > +++ b/drivers/gpu/drm/vc4/vc4_regs.h
+> > @@ -212,6 +212,8 @@
+> > 
+> >  #define PV_HACT_ACT                            0x30
+> > 
+> > +#define SCALER_CHANNELS_COUNT                  3
+> > +
+> >  #define SCALER_DISPCTRL                         0x00000000
+> >  /* Global register for clock gating the HVS */
+> >  # define SCALER_DISPCTRL_ENABLE                        BIT(31)
+> > --
+> > 2.20.1
+> > 
+> 
+> 
+-- 
+Paul Kocialkowski, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
 
-Sorry for I produced too many typo when feeling sleepy...
-
-Thanks a lot!
-Joey Lee
