@@ -2,130 +2,117 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F29BC43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 22:51:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15DFAC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 22:57:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 39A9C206B7
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 22:51:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CDC11206B6
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 22:57:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cmpxchg-org.20150623.gappssmtp.com header.i=@cmpxchg-org.20150623.gappssmtp.com header.b="bD2b+gDc"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="d7e9Ny3U"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726580AbfAIWvr (ORCPT
+        id S1726652AbfAIW5P (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 17:51:47 -0500
-Received: from mail-yb1-f193.google.com ([209.85.219.193]:33819 "EHLO
-        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726113AbfAIWvq (ORCPT
+        Wed, 9 Jan 2019 17:57:15 -0500
+Received: from mail-ua1-f65.google.com ([209.85.222.65]:33279 "EHLO
+        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726309AbfAIW5O (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 17:51:46 -0500
-Received: by mail-yb1-f193.google.com with SMTP id w186so2786238ybg.1
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jan 2019 14:51:45 -0800 (PST)
+        Wed, 9 Jan 2019 17:57:14 -0500
+Received: by mail-ua1-f65.google.com with SMTP id t8so3009906uap.0
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Jan 2019 14:57:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=z/PELudoJ9+yusLyWAV/ORaSDQ7RbDfqH8OvQbS5ILw=;
-        b=bD2b+gDcHCHp+Kl1aNcH3MGObexA4fX/zV8gbJjs37vDT3DCawzNgGAqBXlvk7qtDp
-         2HXgfdeolfZtUt5dtwt3QmaKZrx+aB0Gj8cuFFS0sruSSUl7gyDtHTdHRuUTwMBW+3te
-         PdMPr2Pb1cGtUKQrdPb0cY9hUvCtaIPEAsECOppZjEXnU9wDmroctWchPOv17ul2gspH
-         CL+1MjECxVF1mB9X+CRy1pPGvOqBYzGFqSmpBZViSjd3/W1ysKwSyGmc2KTizbnX+/rJ
-         DsCGFwvkMYEf87+gyj3dovhQC84AByDizo+iWMG6bqc5wTXq3oi4d7VoynPl8HKQxPNh
-         KiCg==
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=vsdxCcv8/JRksb9dNzq/93JGI+gwRbu29X95bcXC4uc=;
+        b=d7e9Ny3U0XW/TAHbTgfSveFPDeGV/DsF6KuOKQ//6bO/ZNw4xyopfnAhAOq3UJdzl5
+         uPYAcVIMnKkd6Ol01MD0GrJhTr8VIhWdty506jIGRZw1Y41jrwGITcDOFu9FruGmJbvl
+         GQyW+lrPlZ7TR+S2wliwcksi8Fc8tqaUJ8ZU4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=z/PELudoJ9+yusLyWAV/ORaSDQ7RbDfqH8OvQbS5ILw=;
-        b=LkEfnlJsskcTZMbhJPbmVE+GnaLDUeQox/Iheawc3yPPq2wBELSkmfph6YJ0IdVpJv
-         1ke2K6QeczhaFEQk6LX7eXj84NXoLWreVXlTuJz69J2QErcaOzfWp3Z66DgQCZfEkgu3
-         MxFuwFKlAEhoI712eXEJjU9yN0J8d6cslgdOA2HdI3fB4DTSLvZNYoW1ZwVqgv3S/RBd
-         6NdFkwy9tHObvfonlLIw3ABtX0zTvInjfTjOVEFnYK2yB+Qodt/4pX2iLD+Ah7mqMEiv
-         Nok2SaLkuXz6g3TiHD16a+4BNfUr+AgAyoLPHiYD+eRZtsWkanwSs0gAk5GyV9jcM90r
-         W7yA==
-X-Gm-Message-State: AJcUukeIsl4eRrVuptxBYzMDdabY7ht1+SLHp+yWn3Uf+Iotp3Lz7BHH
-        LvJFEgIcx8w0ELxEOASWbr/iBg==
-X-Google-Smtp-Source: ALg8bN43to+hXFHIVq9mhfwhgv4ve082evkLnurxYP12X3cJwNBMdwyGxi44c8Ipqrhf0AcAArbpXg==
-X-Received: by 2002:a25:b81:: with SMTP id 123mr7438835ybl.335.1547074305397;
-        Wed, 09 Jan 2019 14:51:45 -0800 (PST)
-Received: from localhost ([2620:10d:c091:200::7:f15b])
-        by smtp.gmail.com with ESMTPSA id k64sm26253105ywc.56.2019.01.09.14.51.44
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 09 Jan 2019 14:51:44 -0800 (PST)
-Date:   Wed, 9 Jan 2019 17:51:43 -0500
-From:   Johannes Weiner <hannes@cmpxchg.org>
-To:     Yang Shi <yang.shi@linux.alibaba.com>
-Cc:     mhocko@suse.com, shakeelb@google.com, akpm@linux-foundation.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC v3 PATCH 0/5] mm: memcontrol: do memory reclaim when
- offlining
-Message-ID: <20190109225143.GA22252@cmpxchg.org>
-References: <1547061285-100329-1-git-send-email-yang.shi@linux.alibaba.com>
- <20190109193247.GA16319@cmpxchg.org>
- <d92912c7-511e-2ab5-39a6-38af3209fcaf@linux.alibaba.com>
- <20190109212334.GA18978@cmpxchg.org>
- <9de4bb4a-6bb7-e13a-0d9a-c1306e1b3e60@linux.alibaba.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=vsdxCcv8/JRksb9dNzq/93JGI+gwRbu29X95bcXC4uc=;
+        b=KWgP2QvOfAjdLMCnKl4n4xbPJolAFuWzgClqMMCqICOoL0TzSVdlyOOCY6bz9wPa8X
+         hxT2abK/EyFr12/Nv54BebYkxq9lWnPVTQrrN0uF50Mho7eT96JkfEDK2Ws/BD/XmJbJ
+         Q6n8d1dEWagjdh8cNcKltXIG1IEDKm7ZCBQoPRKVfF8Al4zzonVVS7i1wZ5dl2/8unYo
+         MxWAIvsTrKWNdmsePDmnjgRPKwHkskRW2EZ4lN2BFJFKGx+KPOHLyicBbxxT1deFXKYc
+         9FLX1yIN2DCcW5Yeh6Up0o3JzNnoAE3VrpZ9DXqJ6UpN/PyjRPRy3KeW9ThiQHwdiF7B
+         Y1cg==
+X-Gm-Message-State: AJcUukdXJf/R9Zi5mKMU4i9pncPto2E7LREaBI4vy3oh5XuhN/0yTiP8
+        /iXJs24yrGbUlQCJxojvsuF23C0Cy1w=
+X-Google-Smtp-Source: ALg8bN4rBsXzjdQ7B7I9Aztql9LdXoPKoAnS6Bj5HuXC0ofW3hXgSqkOMTQiuwAPhqxEjCCN21QxeQ==
+X-Received: by 2002:ab0:498d:: with SMTP id e13mr3008243uad.134.1547074633029;
+        Wed, 09 Jan 2019 14:57:13 -0800 (PST)
+Received: from mail-vk1-f179.google.com (mail-vk1-f179.google.com. [209.85.221.179])
+        by smtp.gmail.com with ESMTPSA id q193sm27981421vsd.0.2019.01.09.14.57.11
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 09 Jan 2019 14:57:11 -0800 (PST)
+Received: by mail-vk1-f179.google.com with SMTP id 197so2065242vkf.4
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Jan 2019 14:57:11 -0800 (PST)
+X-Received: by 2002:a1f:e807:: with SMTP id f7mr2951324vkh.16.1547074630978;
+ Wed, 09 Jan 2019 14:57:10 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9de4bb4a-6bb7-e13a-0d9a-c1306e1b3e60@linux.alibaba.com>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+References: <cover.1547054308.git.saiprakash.ranjan@codeaurora.org> <5f400b3a15cab5dd071e4a129d38cb21e7123b78.1547054308.git.saiprakash.ranjan@codeaurora.org>
+In-Reply-To: <5f400b3a15cab5dd071e4a129d38cb21e7123b78.1547054308.git.saiprakash.ranjan@codeaurora.org>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Wed, 9 Jan 2019 14:57:00 -0800
+X-Gmail-Original-Message-ID: <CAD=FV=UgFwVdsTuaQhVA9q18Ns8n278A4mx=TrvuOW3mmZm84A@mail.gmail.com>
+Message-ID: <CAD=FV=UgFwVdsTuaQhVA9q18Ns8n278A4mx=TrvuOW3mmZm84A@mail.gmail.com>
+Subject: Re: [PATCH 3/3] arm64: dts: qcom: sdm845: Remove the duplicate header inclusion
+To:     Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <andy.gross@linaro.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Leo Yan <leo.yan@linaro.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        David Brown <david.brown@linaro.org>,
+        devicetree@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Sibi Sankar <sibis@codeaurora.org>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 09, 2019 at 02:09:20PM -0800, Yang Shi wrote:
-> On 1/9/19 1:23 PM, Johannes Weiner wrote:
-> > On Wed, Jan 09, 2019 at 12:36:11PM -0800, Yang Shi wrote:
-> > > As I mentioned above, if we know some page caches from some memcgs
-> > > are referenced one-off and unlikely shared, why just keep them
-> > > around to increase memory pressure?
-> > It's just not clear to me that your scenarios are generic enough to
-> > justify adding two interfaces that we have to maintain forever, and
-> > that they couldn't be solved with existing mechanisms.
-> > 
-> > Please explain:
-> > 
-> > - Unmapped clean page cache isn't expensive to reclaim, certainly
-> >    cheaper than the IO involved in new application startup. How could
-> >    recycling clean cache be a prohibitive part of workload warmup?
-> 
-> It is nothing about recycling. Those page caches might be referenced by
-> memcg just once, then nobody touch them until memory pressure is hit. And,
-> they might be not accessed again at any time soon.
+Hi,
 
-I meant recycling the page frames, not the cache in them. So the new
-workload as it starts up needs to take those pages from the LRU list
-instead of just the allocator freelist. While that's obviously not the
-same cost, it's not clear why the difference would be prohibitive to
-application startup especially since app startup tends to be dominated
-by things like IO to fault in executables etc.
+On Wed, Jan 9, 2019 at 9:48 AM Sai Prakash Ranjan
+<saiprakash.ranjan@codeaurora.org> wrote:
+>
+> Remove the duplicate inclusion of qcom,gcc-sdm845.h
+> mistakenly introduced by commit 6e17f8140521 ("arm64:
+> dts: sdm845: add prng-ee node").
+>
+> Signed-off-by: Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+> ---
+>  arch/arm64/boot/dts/qcom/sdm845.dtsi | 1 -
+>  1 file changed, 1 deletion(-)
+>
+> diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+> index 03683179b8f7..8dced99f875e 100644
+> --- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+> @@ -12,7 +12,6 @@
+>  #include <dt-bindings/phy/phy-qcom-qusb2.h>
+>  #include <dt-bindings/reset/qcom,sdm845-aoss.h>
+>  #include <dt-bindings/soc/qcom,rpmh-rsc.h>
+> -#include <dt-bindings/clock/qcom,gcc-sdm845.h>
 
-> > - Why you couldn't set memory.high or memory.max to 0 after the
-> >    application quits and before you call rmdir on the cgroup
-> 
-> I recall I explained this in the review email for the first version. Set
-> memory.high or memory.max to 0 would trigger direct reclaim which may stall
-> the offline of memcg. But, we have "restarting the same name job" logic in
-> our usecase (I'm not quite sure why they do so). Basically, it means to
-> create memcg with the exact same name right after the old one is deleted,
-> but may have different limit or other settings. The creation has to wait for
-> rmdir is done.
+This was on my TODO list, but you beat me to it.  This could land any
+time and is completely separate from the other patches in this series.
 
-This really needs a fix on your end. We cannot add new cgroup control
-files because you cannot handle a delayed release in the cgroupfs
-namespace while you're reclaiming associated memory. A simple serial
-number would fix this.
-
-Whether others have asked for this knob or not, these patches should
-come with a solid case in the cover letter and changelogs that explain
-why this ABI is necessary to solve a generic cgroup usecase. But it
-sounds to me that setting the limit to 0 once the group is empty would
-meet the functional requirement (use fork() if you don't want to wait)
-of what you are trying to do.
-
-I don't think the new interface bar is met here.
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
