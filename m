@@ -2,112 +2,139 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A22BC43444
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 15:27:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 178B7C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 15:29:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 07CDB206BA
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 15:27:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="Pi+EHYZI"
+	by mail.kernel.org (Postfix) with ESMTP id DBADE2070B
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 15:29:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731490AbfAIP1y (ORCPT
+        id S1732301AbfAIP3N (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 10:27:54 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:42156 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730880AbfAIP1x (ORCPT
+        Wed, 9 Jan 2019 10:29:13 -0500
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:40699 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730774AbfAIP3N (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 10:27:53 -0500
-Received: by mail-pg1-f196.google.com with SMTP id d72so3445993pga.9
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jan 2019 07:27:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=2C2snWHRKLn4kJkXeCP/a0zp+l931OoPJBmot/AY+to=;
-        b=Pi+EHYZI8+1oSpoFdQsBOc/c6MrQgQnuh5OclYtJ8xs+7ULX+FfM1A4Cjq6EWahovv
-         DoZ+qy6g/3Cps2qzTs9+D6QUr+4TqTcLZMM9vepBc9Sfh+5RT3Ey437A0kDaSlozKrZT
-         k3c0AWq23fvEd9fOTemTlyISYThWPBBdUbKT6/mnwdHkH209I084DnU0tYtzbMFXm+eb
-         vw2MdD2zyhx+YyGFRXUpt9QLLpXO/6Y03RLNj0Y3PCZRerL3gchzOBALO6LjMQzDIWxx
-         NIYuDv2FYJ7RC//2nud0BZhT0HINYs81IlQZZ4AziLrs1o4hKw67r1QEpddBiCNPl81X
-         5q3A==
+        Wed, 9 Jan 2019 10:29:13 -0500
+Received: by mail-qk1-f196.google.com with SMTP id y16so4614719qki.7
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Jan 2019 07:29:12 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=2C2snWHRKLn4kJkXeCP/a0zp+l931OoPJBmot/AY+to=;
-        b=RjfqVJowY8WLVwh5892UQlw1vclf1kH8rlW1I2pCB+CXG7aLIRLCCv/gGcEAfk3L+q
-         jRABLWjpii2nycJct1ncIhdemvlD5i65wzbYsIy8G6yMy7CDKBUZswDxDPG3sac7AFvC
-         NQ1sV5+1hOJMQXQT2AKXbODqG7pK6P3uUMircMfc2HJlxGGye7Os9TsiX24kcm00Iw/s
-         mCvcPphUB6/HAadtRreNAeh1APZzcM5/1YF3sp1lAfox4X4Qn72BpWJqj/XEt7CJmuqE
-         g3ZeThWfa9bDw6TPNE8RlkLwMfALmiWcqYR5RO/zQamrTh0urD45Y2wGgizFz2V4K7g9
-         9gWQ==
-X-Gm-Message-State: AJcUukd5lR5sPzzhe6yzoh1Ywy/YANrt74ZuhrnoGZ84f5gWeTCxwPi4
-        gAVsHzrEojr62vjXuHiWhgbjCw==
-X-Google-Smtp-Source: ALg8bN5PTEFkU4DezniC2nJ1wMZFeOhp+djX6Fu+GXxks1fE0U3Rr6SDT2Jtedp2XLffR6m4r01rjA==
-X-Received: by 2002:a63:e80e:: with SMTP id s14mr5796633pgh.30.1547047671865;
-        Wed, 09 Jan 2019 07:27:51 -0800 (PST)
-Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
-        by smtp.gmail.com with ESMTPSA id f62sm88015706pgc.67.2019.01.09.07.27.50
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 09 Jan 2019 07:27:50 -0800 (PST)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1ghFll-000255-FV; Wed, 09 Jan 2019 08:27:49 -0700
-Date:   Wed, 9 Jan 2019 08:27:49 -0700
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc:     David Gibson <david@gibson.dropbear.id.au>,
-        Leon Romanovsky <leon@kernel.org>, davem@davemloft.net,
-        saeedm@mellanox.com, ogerlitz@mellanox.com, tariqt@mellanox.com,
-        bhelgaas@google.com, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, netdev@vger.kernel.org,
-        alex.williamson@redhat.com, linux-pci@vger.kernel.org,
-        linux-rdma@vger.kernel.org, sbest@redhat.com, paulus@samba.org,
-        Alexey Kardashevskiy <aik@au1.ibm.com>
-Subject: Re: [PATCH] PCI: Add no-D3 quirk for Mellanox ConnectX-[45]
-Message-ID: <20190109152749.GA6890@ziepe.ca>
-References: <20181206041951.22413-1-david@gibson.dropbear.id.au>
- <20181206064509.GM15544@mtr-leonro.mtl.com>
- <20190104034401.GA2801@umbus.fritz.box>
- <20190105175116.GB14238@ziepe.ca>
- <c1296ee9120a6a04dc75d0fdb2a641c722cb65d6.camel@kernel.crashing.org>
- <20190108040129.GE5336@ziepe.ca>
- <012d24d58a542ed44c8af9f517f1bd61ab912037.camel@kernel.crashing.org>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=fHIoyvJ6wOj03zsUc6yprgUWpK6Tykrcn6Wjy6B7AkY=;
+        b=evtKiFyg2cjneawnv5pJWIA/J47T7fYj3rOI6p94vl8N04o89LK41wbLg24F91Ybjq
+         yHLBohmOVxHfeVKbelUYiJ+JZdK1fFKHutwJSHchQyaULFoSv3Nbleugpmpz/l/oBuTm
+         TycYKF08v/UbcCWWZmTYtE4tZdfS9VPwNK4dBeNAbs0OrJslxhwNnNWuTZSMDVUJy6z6
+         1nJGD0jHjZ24P3lyXIL7b3v206udkjBN0P4PyRISenur62n+FtA+q7X0WhB5jlBn1tsr
+         XKnkq969tgtZhor4P4a1tZc0pFwotHdDVzYOwBmRzwtAaPclbW98z0/Tw8JQbZB9QY7V
+         1uxw==
+X-Gm-Message-State: AJcUukfmo9a0M2K5kz/WNzvEFppSeYFNHnMePNGswSxbTjxGehewEklY
+        9GJta9A2X/G7uyr8Z1jEVizFWw==
+X-Google-Smtp-Source: ALg8bN4/C3YktYlVVG9BGJjQMTtQFGuKrsMMva3zSziYIsATWzAR7eGe1YgeXaZ14H6Za85Cf7fz6g==
+X-Received: by 2002:a37:b1c7:: with SMTP id a190mr5627883qkf.94.1547047751994;
+        Wed, 09 Jan 2019 07:29:11 -0800 (PST)
+Received: from ?IPv6:2601:602:9800:dae6::814b? ([2601:602:9800:dae6::814b])
+        by smtp.gmail.com with ESMTPSA id r56sm38648890qtj.30.2019.01.09.07.29.10
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 09 Jan 2019 07:29:11 -0800 (PST)
+Subject: Re: [PATCH] tools uapi asm: Update asm-generic/unistd.h
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
+References: <20190108221758.14546-1-labbott@redhat.com>
+ <20190109131540.GC25192@kernel.org>
+From:   Laura Abbott <labbott@redhat.com>
+Message-ID: <2be8f051-1430-77d6-413c-2edaad4c1346@redhat.com>
+Date:   Wed, 9 Jan 2019 07:29:09 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <012d24d58a542ed44c8af9f517f1bd61ab912037.camel@kernel.crashing.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20190109131540.GC25192@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 09, 2019 at 04:09:02PM +1100, Benjamin Herrenschmidt wrote:
-
-> > POWER 8 firmware is good? If the link does eventually come back, is
-> > the POWER8's D3 resumption timeout long enough?
-> > 
-> > If this doesn't lead to an obvious conclusion you'll probably need to
-> > connect to IBM's Mellanox support team to get more information from
-> > the card side.
+On 1/9/19 5:15 AM, Arnaldo Carvalho de Melo wrote:
+> Em Tue, Jan 08, 2019 at 02:17:58PM -0800, Laura Abbott escreveu:
+>> Commit 4e21565b7fd4 ("asm-generic: add kexec_file_load system
+>> call to unistd.h") added the system call to the generic header
+>> but not to the perf copy resulting a compile failure on aarch64
 > 
-> We are IBM :-) So far, it seems to be that the card is doing something
-> not quite right, but we don't know what. We might need to engage
-> Mellanox themselves.
+> Humm, that shouldn't happen, i.e. kernel developers don't have to update
+> anything in tools/ as part of their normal kernel development workflows.
+> 
+> They can if they wish, but are not required, so the build failure was
+> due to something else or a pre-existing bug where tools/ living stuff
+> used things outside tools/.
+> 
 
-Sorry, it was unclear, I ment the support team for IBM inside Mellanox
-..
+I think that's the issue, I couldn't reproduce the issue until I
+installed the 5.0-rc1 headers. This is the invocation of the script
+(paths trimmed)
 
-There might be internal debugging available that can show if the card
-is detecting the beacon, how far it gets in renegotiation, etc.
+/tools/perf/arch/arm64/entry/syscalls//mksyscalltbl' 'gcc' 'gcc' /tools /tools/arch/arm64/include/uapi/asm/unistd.h > arch/arm64/include/generated/asm/syscalls.c
 
-From all the mails it really has the feel of a PCI-E interop problem between
-these two specific chips..
 
-Jason
+In tools/perf/arch/arm64/entry/syscalls/mksyscalltbl,
+
+$hostcc -I $incpath/include/uapi -o $create_table_exe -x c -
+
+This was the gcc command that was failing.
+tools/arch/arm64/include/uapi/asm/unistd.h includes asm-generic/unistd.h
+so I think that's what's leaking from the system.
+
+>> When running mksyscalltbl
+> 
+> Lemme try this on my Orangi PI zero...
+> 
+> - Arnaldo
+> >> BUILDSTDERR: <stdin>: In function 'main':
+>> BUILDSTDERR: <stdin>:273:44: error: '__NR_kexec_file_load' undeclared (first use in this function)
+>> BUILDSTDERR: <stdin>:273:44: note: each undeclared identifier is reported only once for each function it appears in
+>>
+>> Fix this by syncing up.
+>>
+>> Fixes: 4e21565b7fd4 ("asm-generic: add kexec_file_load system call to unistd.h")
+>> Signed-off-by: Laura Abbott <labbott@redhat.com>
+>> ---
+>> Found this on Fedora when compiling 5.0-rc1, I hadn't seen a patch
+>> queued yet.
+>> ---
+>>   tools/include/uapi/asm-generic/unistd.h | 4 +++-
+>>   1 file changed, 3 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/tools/include/uapi/asm-generic/unistd.h b/tools/include/uapi/asm-generic/unistd.h
+>> index c7f3321fbe43..d90127298f12 100644
+>> --- a/tools/include/uapi/asm-generic/unistd.h
+>> +++ b/tools/include/uapi/asm-generic/unistd.h
+>> @@ -738,9 +738,11 @@ __SYSCALL(__NR_statx,     sys_statx)
+>>   __SC_COMP(__NR_io_pgetevents, sys_io_pgetevents, compat_sys_io_pgetevents)
+>>   #define __NR_rseq 293
+>>   __SYSCALL(__NR_rseq, sys_rseq)
+>> +#define __NR_kexec_file_load 294
+>> +__SYSCALL(__NR_kexec_file_load,     sys_kexec_file_load)
+>>   
+>>   #undef __NR_syscalls
+>> -#define __NR_syscalls 294
+>> +#define __NR_syscalls 295
+>>   
+>>   /*
+>>    * 32 bit systems traditionally used different
+>> -- 
+>> 2.20.1
+> 
+
