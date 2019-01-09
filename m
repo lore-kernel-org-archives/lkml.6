@@ -2,150 +2,112 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4152C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 23:23:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7BF2C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 23:39:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD5B1206BB
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 23:23:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AED8120661
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 23:39:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="FvdIPB0C"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="H3j7dJ+u"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726646AbfAIXXW (ORCPT
+        id S1726640AbfAIXeL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 18:23:22 -0500
-Received: from mail-vs1-f68.google.com ([209.85.217.68]:45088 "EHLO
-        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726113AbfAIXXW (ORCPT
+        Wed, 9 Jan 2019 18:34:11 -0500
+Received: from mail-lf1-f46.google.com ([209.85.167.46]:35326 "EHLO
+        mail-lf1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726146AbfAIXeK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 18:23:22 -0500
-Received: by mail-vs1-f68.google.com with SMTP id x28so5854472vsh.12
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jan 2019 15:23:21 -0800 (PST)
+        Wed, 9 Jan 2019 18:34:10 -0500
+Received: by mail-lf1-f46.google.com with SMTP id e26so6975542lfc.2
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Jan 2019 15:34:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
+        d=linux-foundation.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=nEobjsRjQW1Qhb95tY/P1G513nyuu7ZvoRPJF9hVBOk=;
-        b=FvdIPB0CTV3eVi4wj7UdAvdLzn0tbdt+GI8h2s0RG0JRxvf9dqrrlvjvIp4xUbcqki
-         p8684iGmy2Rekvw0VM/06/Q/CLjZB8DsBCBjrKoS2ddnN4l8GR/iDIWK+r5DsG5s5ASy
-         aACN8iPzA7SYFj+faMO1FkyXxSL6fVgT5HwG8=
+        bh=Kihea9656pyrZLekdKJKkbc+TkTwWk+wlGPYP62NVDs=;
+        b=H3j7dJ+utHvOHiJP+4P/itsVuR3HAJBKrIunG8RM+JfHYw5EUICbpdOv0Ji44E9Zby
+         RyaIDz3n7mOy8mx2d4jdtWhVnNBf3iQP2UztKg1Qku8sWR7F/5wjJFb8WllKluP0jll0
+         bgeBuMwSVvM+X1Au59rOLXWdzfqzjZPyTGyPw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=nEobjsRjQW1Qhb95tY/P1G513nyuu7ZvoRPJF9hVBOk=;
-        b=Dl1l7TYRaprf2tBb85K0fzBm0AmM7oxPBVHmdnosyIM4Ro/YzoPa6Xx0K+OsCspTZO
-         JtjXpvfAYxr/aSOVibU894E/7Xz/e+ie6kwnd4vGuXVtLsk84yfB9gs0Fzr9vfYnL+hR
-         3b8SrZPI7Czwe5wRyppTS6xM78s4wxo99/03Nv7nn1p/nVNWnK+RUkHeTKO4PtVE97XW
-         oLIKMS6ByyVJM/v7JXVZXHhUh0/1IBVdggWkORYwyFrtzba9A1vBbCr3zP23hEXvOf8D
-         nI9hK/FHL+zPaK6SWFRFBb2oRsz2+0yshqGptpnWpftaZ2zmwLdX6yIKWxxrcIHk/Mxd
-         2vVg==
-X-Gm-Message-State: AJcUukc/NjertfWpMgiUZxKRFFavMQqI1TOH7XhOwvUXumz9jub0nvwm
-        HeHH6rM5y6zzRan/rhxLsbChMuM9Jaw=
-X-Google-Smtp-Source: ALg8bN7dzAbDsbf4ObqSmf2z3PqBSU1EgZdTPPkSDGgmgD9A/eRIU4pBpUWfoCAmSL+oMMkrDaVDNg==
-X-Received: by 2002:a67:7106:: with SMTP id m6mr3394391vsc.67.1547076200482;
-        Wed, 09 Jan 2019 15:23:20 -0800 (PST)
-Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com. [209.85.217.42])
-        by smtp.gmail.com with ESMTPSA id r8sm22646671uan.0.2019.01.09.15.23.20
+        bh=Kihea9656pyrZLekdKJKkbc+TkTwWk+wlGPYP62NVDs=;
+        b=GkO6xKuVepDCWuNJbUoKtbKp/ZDju4YlR6YnNOJMk66DQZxK/wRtit/SM014C7OSe6
+         ffv+lQL6nzUia0jdT73zBJRH3TLBHg9lHEvEKdeJLKBe9x3+1nl395cUAxz5m2vI4Jk+
+         DOUhOp5Hf/3ck0PkU2eQ3PNF5DBtlb9KF5zPKrIeARsj366RECx1gJ2wr6pjS00U57Lq
+         E/fa0lHT42IN1klJXaPMlrGfLRHTKSQ69k8jB8iwzhv8XtFHHeZvVJ/BPe5my1iHhCKu
+         gpZvYUMxhNwP1QaRSzcBlgjG5mYHED2TDuGB23Cj1hNTftCWpv5tpYoceJpWaXeENWPU
+         9ppQ==
+X-Gm-Message-State: AJcUukdI9EYoj8Gf5pSfvREKEEQnAReRvTOPuWSJpTvYRmAmUV8dDo/m
+        FEspz+OYRrO03fBalbrmWGeGW8qnHF8=
+X-Google-Smtp-Source: ALg8bN5WeUgmFrCleaT7j6UDu/wFYUIA9EyKant3ShDhs9mcr7FvgfFTf3QWvIBlamZCFly0r3hzgQ==
+X-Received: by 2002:ac2:4116:: with SMTP id b22mr4786941lfi.19.1547076848141;
+        Wed, 09 Jan 2019 15:34:08 -0800 (PST)
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com. [209.85.167.46])
+        by smtp.gmail.com with ESMTPSA id 11-v6sm14736469ljv.1.2019.01.09.15.34.06
         for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 09 Jan 2019 15:23:20 -0800 (PST)
-Received: by mail-vs1-f42.google.com with SMTP id t17so5876535vsc.8
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jan 2019 15:23:20 -0800 (PST)
-X-Received: by 2002:a67:da93:: with SMTP id w19mr3363306vsj.144.1547075892583;
- Wed, 09 Jan 2019 15:18:12 -0800 (PST)
+        Wed, 09 Jan 2019 15:34:07 -0800 (PST)
+Received: by mail-lf1-f46.google.com with SMTP id n18so6971625lfh.6
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Jan 2019 15:34:06 -0800 (PST)
+X-Received: by 2002:a19:c014:: with SMTP id q20mr4297785lff.16.1547076846414;
+ Wed, 09 Jan 2019 15:34:06 -0800 (PST)
 MIME-Version: 1.0
-References: <20181208170216.32555-1-georgi.djakov@linaro.org> <20181208170216.32555-7-georgi.djakov@linaro.org>
-In-Reply-To: <20181208170216.32555-7-georgi.djakov@linaro.org>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Wed, 9 Jan 2019 15:18:01 -0800
-X-Gmail-Original-Message-ID: <CAD=FV=Xg5Sz029_UjuDg-ms05Ez+riv8qr0FLWkvg6axPYbZ_g@mail.gmail.com>
-Message-ID: <CAD=FV=Xg5Sz029_UjuDg-ms05Ez+riv8qr0FLWkvg6axPYbZ_g@mail.gmail.com>
-Subject: Re: [PATCH v12 6/7] arm64: dts: sdm845: Add interconnect provider DT nodes
-To:     Georgi Djakov <georgi.djakov@linaro.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
-        linux-pm@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Saravana Kannan <skannan@codeaurora.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Amit Kucheria <amit.kucheria@linaro.org>,
-        seansw@qti.qualcomm.com, daidavid1@codeaurora.org,
-        Evan Green <evgreen@chromium.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Alexandre Bailon <abailon@baylibre.com>,
-        maxime.ripard@bootlin.com,
-        Thierry Reding <thierry.reding@gmail.com>,
-        ksitaraman@nvidia.com, sanjayc@nvidia.com,
-        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        linux-tegra@vger.kernel.org
+References: <20190109203119.GR6310@bombadil.infradead.org>
+In-Reply-To: <20190109203119.GR6310@bombadil.infradead.org>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 9 Jan 2019 15:33:50 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wjjkLv-8oAZPLf=pp4z_-VFpWJw+wTJYevqq0bWWY=L9g@mail.gmail.com>
+Message-ID: <CAHk-=wjjkLv-8oAZPLf=pp4z_-VFpWJw+wTJYevqq0bWWY=L9g@mail.gmail.com>
+Subject: Re: [RFC] Use plan9 C extensions
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On Sat, Dec 8, 2018 at 9:02 AM Georgi Djakov <georgi.djakov@linaro.org> wrote:
+On Wed, Jan 9, 2019 at 12:31 PM Matthew Wilcox <willy@infradead.org> wrote:
 >
-> From: David Dai <daidavid1@codeaurora.org>
->
-> Add RSC (Resource State Coordinator) provider
-> dictating network-on-chip interconnect bus performance
-> found on SDM845-based platforms.
->
-> Signed-off-by: David Dai <daidavid1@codeaurora.org>
-> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
-> ---
->  arch/arm64/boot/dts/qcom/sdm845.dtsi | 5 +++++
->  1 file changed, 5 insertions(+)
->
-> diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> index b72bdb0a31a5..b3cd256a154e 100644
-> --- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> @@ -1324,6 +1324,11 @@
->                                 compatible = "qcom,sdm845-rpmh-clk";
->                                 #clock-cells = <1>;
->                         };
-> +
-> +                       rsc_hlos: interconnect {
-> +                               compatible = "qcom,sdm845-rsc-hlos";
-> +                               #interconnect-cells = <1>;
-> +                       };
+> While replacing idr_alloc_cyclic(), I've come across a situation in
+> which being able to depend on -fplan9-extensions is going to lead to
+> nicer code in the users.
 
-It would have been convenient if this patch had also added an include above:
+Oh, no. Please don't.
 
-#include <dt-bindings/interconnect/qcom,sdm845.h>
+The subset of the pla9 extensions that are called just "ms" extenions
+is fine. That's a reasonable thing, and is a very natural expansion of
+the unnamed structures we already have - namely being able to
+pre-declare that unnamed structure/union.
 
-...while the include isn't technically needed by this patch, all the
-patches that want to actually _use_ the interconnect will need to add
-the #include and then you get to some fun fights about who has to add
-the include in which patch.  For instance these two patches won't
-compile:
+But the full plan9 extensions are nasty, and makes it much too easy to
+write "convenient" code that is really hard to read as an outsider
+because of how the types are silently converted.
 
-* https://lkml.kernel.org/r/1545373748-1416-1-git-send-email-jshekhar@codeaurora.org
-* https://lkml.kernel.org/r/20181220173026.3857-4-jcrouse@codeaurora.org
+And I think what you want is explicitly that silent conversion.
 
-...because neither of them happened to add the include.  Maybe they
-were both assuming someone else would do it?
+So no. Don't do it. Use a macro or a inline function that makes the
+conversion explicit so that it's shown when grepping.
 
+The "one extra argument" is not a strong argument for something that
+simply isn't that common. The upsides of a nonstandard feature like
+that needs to be pretty compelling.
 
-If nobody else wants to, I'm happy to post a patch to add that include
-myself and it can be applied atop this one.  ...or if this patch needs
-to spin for some other reason maybe you could add it into this patch
-directly?
+We've used various gcc extensions since day #1 ("inline" being perhaps
+the biggest one that took _forever_ to become standard C), but these
+things need to have very strong arguments.
 
--Doug
+"One extra argument" that could be hidden by a macro or a helper
+inline is simply not a strong argument.
+
+                      Linus
