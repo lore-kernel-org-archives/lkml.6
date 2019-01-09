@@ -2,99 +2,130 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89B61C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 09:31:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51FAEC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 09:31:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 57528206BB
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 09:31:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 20E4B206BB
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 09:31:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ingics-com.20150623.gappssmtp.com header.i=@ingics-com.20150623.gappssmtp.com header.b="r8WSXUjg"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=xenosoft.de header.i=@xenosoft.de header.b="IlwAM+0b"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730095AbfAIJbB (ORCPT
+        id S1730165AbfAIJbi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 04:31:01 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:39055 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728041AbfAIJbA (ORCPT
+        Wed, 9 Jan 2019 04:31:38 -0500
+Received: from mo4-p02-ob.smtp.rzone.de ([85.215.255.83]:15233 "EHLO
+        mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729826AbfAIJbh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 04:31:00 -0500
-Received: by mail-pl1-f195.google.com with SMTP id 101so3324762pld.6
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jan 2019 01:31:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ingics-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id;
-        bh=r9g2fl+uk0xYlw7mbUe7EYhhNf8SIYDQx0juUeHJ99E=;
-        b=r8WSXUjgeYWnTE329V60FMztl3FpfdaRu90/0a+8HU/oGRwlSnGr8yIUfMyZO0BfMp
-         J168bXmQwA4kuliZVeNOC7yjMfgI18azguJOyc+SiOpLSjUbf1Kcg7/p9UbiJwwfhfYj
-         S4SzAHridJueuuThkwZBXwQNa0DE8rBEzl/8QSzZDF5O2Hmr9SYr+UaAw4R97vfdjHEj
-         Its/SUqQIISlOwB3D1hPsqFRh4xJanEPR0jmL9VdAaUFRYrSdBaT0kk/FojZEUAkinMd
-         ECSQhyWSNmG8pBNX0bF9iX2Wz0IucKMfAo/bkrZKriZ2Q3sAm7MTluzMDQero6sLVy/5
-         2dnw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=r9g2fl+uk0xYlw7mbUe7EYhhNf8SIYDQx0juUeHJ99E=;
-        b=NdSdvdmS9pN8cV+G/pEnvc+LFYLnWBHdRlN+r5ko0mW3Px1sUltLTjlYvh18HSLC8y
-         8X4uFJ/OXRBJTz5JFCjiZifFBIjB3Ahdc47BPSxheuDMUM6Mu3RCwYNNfjOJnG2oK8Ch
-         9Jjaeq5xdjspKRJJtc5F9A1KJOWlwybM5SR2YllhW2zSW9+VVkvN5XDnjZ2GY3Zf+22x
-         xz1eaVW3/o3Vv6Rp+UoMPVDxpmwJ10kfm484J6QgU8HZUtNXmeZA95jdFnciRi10wNp2
-         Q2FawFkODdkXYiBL0ERnIGuaAEnmMnDo11+9PFEfHgTWK7BcayC7N1s3f2Z2h008eRDU
-         v7XA==
-X-Gm-Message-State: AJcUukcYfpL6hTqWoMtCL5JJ441YkSJylm86indblH/KvPaohGJ9qceZ
-        WLR1TogogMwNLhbXeiZpAAgrlw==
-X-Google-Smtp-Source: ALg8bN6yHgKEZGimoTJjYgIPIaVqOSGplY6WPvyx+rOHEqVDojN7ETew8K4lMS5FJH2+AB76iRRqvQ==
-X-Received: by 2002:a17:902:4:: with SMTP id 4mr5323891pla.20.1547026260002;
-        Wed, 09 Jan 2019 01:31:00 -0800 (PST)
-Received: from localhost.localdomain (220-133-186-239.HINET-IP.hinet.net. [220.133.186.239])
-        by smtp.gmail.com with ESMTPSA id n21sm103789604pfg.84.2019.01.09.01.30.57
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 09 Jan 2019 01:30:59 -0800 (PST)
-From:   Axel Lin <axel.lin@ingics.com>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Tony Lindgren <tony@atomide.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        linux-kernel@vger.kernel.org, Axel Lin <axel.lin@ingics.com>
-Subject: [PATCH] regulator: twl6030: Use of_device_get_match_data()
-Date:   Wed,  9 Jan 2019 17:30:49 +0800
-Message-Id: <20190109093049.19068-1-axel.lin@ingics.com>
-X-Mailer: git-send-email 2.17.1
+        Wed, 9 Jan 2019 04:31:37 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1547026295;
+        s=strato-dkim-0002; d=xenosoft.de;
+        h=In-Reply-To:Date:Message-ID:References:Cc:To:From:Subject:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=mMV73ymLCzyBXvRgZydGFWvElefknLZMPGkd83NTE7c=;
+        b=IlwAM+0bh1xtvBMNCAKxtPDLoLT0d+FnGNBCqcQeIY2Qqprr9Ljt9omPFGco+71kJU
+        QW7WkzKNQeVh1NkcRsCsPR+AfPi2nNWXWm5jf7q/p1zXPYhoCKkX0Isi8uNxVXcgrcp3
+        8CLllDm45/WRLUcWpaeghmpD7cBsgL4oXbHF8DJZS8nxH0Q/OUhQ+StgKnQ9zBtt/mK/
+        6YGpWDxfs63FV4gC6v2AKno8mXF7dW6O9SqDSZ4dAUBYB8YEB4BH5ns00vvBTm4NxSej
+        87dc4YJl71WpDVX6tlN2cyO6fCDR9ZSaEgginSWnI2fjAG9dEW5BY8bOjA/OwMXzXVv1
+        9gkA==
+X-RZG-AUTH: ":L2QefEenb+UdBJSdRCXu93KJ1bmSGnhMdmOod1DhGM4l4Hio94KKxRySfLxnHfJ+Dkjp5G5MdirQj0WG7CkNimMvbrZAzFDEkUVxOxhlYp59rA=="
+X-RZG-CLASS-ID: mo00
+Received: from [IPv6:2a02:8109:a400:162c:241f:1c8c:b5d5:97da]
+        by smtp.strato.de (RZmta 44.9 AUTH)
+        with ESMTPSA id t0203dv099VXN5k
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Wed, 9 Jan 2019 10:31:33 +0100 (CET)
+Subject: Re: use generic DMA mapping code in powerpc V4
+From:   Christian Zigotzky <chzigotzky@xenosoft.de>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     linux-arch@vger.kernel.org,
+        Darren Stevens <darren@stevens-zone.net>,
+        linux-kernel@vger.kernel.org, Julian Margetson <runaway@candw.ms>,
+        linux-mm@kvack.org, iommu@lists.linux-foundation.org,
+        Paul Mackerras <paulus@samba.org>,
+        Olof Johansson <olof@lixom.net>, linuxppc-dev@lists.ozlabs.org
+References: <2242B4B2-6311-492E-BFF9-6740E36EC6D4@xenosoft.de>
+ <84558d7f-5a7f-5219-0c3a-045e6b4c494f@xenosoft.de>
+ <20181213091021.GA2106@lst.de>
+ <835bd119-081e-a5ea-1899-189d439c83d6@xenosoft.de>
+ <76bc684a-b4d2-1d26-f18d-f5c9ba65978c@xenosoft.de>
+ <20181213112511.GA4574@lst.de>
+ <e109de27-f4af-147d-dc0e-067c8bafb29b@xenosoft.de>
+ <ad5a5a8a-d232-d523-a6f7-e9377fc3857b@xenosoft.de>
+ <e60d6ca3-860c-f01d-8860-c5e022ec7179@xenosoft.de>
+ <008c981e-bdd2-21a7-f5f7-c57e4850ae9a@xenosoft.de>
+ <20190103073622.GA24323@lst.de>
+ <71A251A5-FA06-4019-B324-7AED32F7B714@xenosoft.de>
+ <1b0c5c21-2761-d3a3-651b-3687bb6ae694@xenosoft.de>
+Message-ID: <3504ee70-02de-049e-6402-2d530bf55a84@xenosoft.de>
+Date:   Wed, 9 Jan 2019 10:31:33 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
+MIME-Version: 1.0
+In-Reply-To: <1b0c5c21-2761-d3a3-651b-3687bb6ae694@xenosoft.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: de-DE
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use of_device_get_match_data() to simplify the code a bit.
+Next step: a64e18ba191ba9102fb174f27d707485ffd9389c (powerpc/dma: remove 
+dma_nommu_get_required_mask)
 
-Signed-off-by: Axel Lin <axel.lin@ingics.com>
----
- drivers/regulator/twl6030-regulator.c | 7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
+git clone git://git.infradead.org/users/hch/misc.git -b powerpc-dma.6 a
 
-diff --git a/drivers/regulator/twl6030-regulator.c b/drivers/regulator/twl6030-regulator.c
-index 219cbd910dbf..78b964539775 100644
---- a/drivers/regulator/twl6030-regulator.c
-+++ b/drivers/regulator/twl6030-regulator.c
-@@ -687,14 +687,9 @@ static int twlreg_probe(struct platform_device *pdev)
- 	struct regulator_init_data	*initdata;
- 	struct regulation_constraints	*c;
- 	struct regulator_dev		*rdev;
--	const struct of_device_id	*match;
- 	struct regulator_config		config = { };
- 
--	match = of_match_device(twl_of_match, &pdev->dev);
--	if (!match)
--		return -ENODEV;
--
--	template = match->data;
-+	template = of_device_get_match_data(&pdev->dev);
- 	if (!template)
- 		return -ENODEV;
- 
--- 
-2.17.1
+git checkout a64e18ba191ba9102fb174f27d707485ffd9389c
+
+Link to the Git: 
+http://git.infradead.org/users/hch/misc.git/shortlog/refs/heads/powerpc-dma.6
+
+Results: PASEMI onboard ethernet works and the X5000 (P5020 board) 
+boots. I also successfully tested sound, hardware 3D acceleration, 
+Bluetooth, network, booting with a label etc. The uImages work also in a 
+virtual e5500 quad-core QEMU machine.
+
+-- Christian
+
+
+On 05 January 2019 at 5:03PM, Christian Zigotzky wrote:
+> Next step: c446404b041130fbd9d1772d184f24715cf2362f (powerpc/dma: 
+> remove dma_nommu_mmap_coherent)
+>
+> git clone git://git.infradead.org/users/hch/misc.git -b powerpc-dma.6 a
+>
+> git checkout c446404b041130fbd9d1772d184f24715cf2362f
+>
+> Output:
+>
+> Note: checking out 'c446404b041130fbd9d1772d184f24715cf2362f'.
+>
+> You are in 'detached HEAD' state. You can look around, make experimental
+> changes and commit them, and you can discard any commits you make in this
+> state without impacting any branches by performing another checkout.
+>
+> If you want to create a new branch to retain commits you create, you may
+> do so (now or later) by using -b with the checkout command again. 
+> Example:
+>
+>   git checkout -b <new-branch-name>
+>
+> HEAD is now at c446404... powerpc/dma: remove dma_nommu_mmap_coherent
+>
+> -----
+>
+> Link to the Git: 
+> http://git.infradead.org/users/hch/misc.git/shortlog/refs/heads/powerpc-dma.6
+>
+> Result: PASEMI onboard ethernet works and the X5000 (P5020 board) boots.
+>
+> -- Christian
+>
 
