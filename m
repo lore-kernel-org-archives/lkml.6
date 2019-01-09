@@ -2,92 +2,140 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A7A1C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 17:48:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD801C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 17:48:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C8D920665
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 17:48:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="rAInm8F9"
+	by mail.kernel.org (Postfix) with ESMTP id B2E1520665
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 17:48:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727398AbfAIRsY (ORCPT
+        id S1727414AbfAIRse (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 12:48:24 -0500
-Received: from mo4-p01-ob.smtp.rzone.de ([81.169.146.165]:14453 "EHLO
-        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727289AbfAIRsW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 12:48:22 -0500
-X-Greylist: delayed 3687 seconds by postgrey-1.27 at vger.kernel.org; Wed, 09 Jan 2019 12:48:20 EST
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1547056099;
-        s=strato-dkim-0002; d=goldelico.com;
-        h=Message-Id:Date:Subject:Cc:To:From:X-RZG-CLASS-ID:X-RZG-AUTH:From:
-        Subject:Sender;
-        bh=Ip5hK3VNNEDTJxAJENmJN37jeu081Kuq8YoroF4+vE4=;
-        b=rAInm8F94t+JJ7lJa5zEVnW3XufwUP3jdbqdu/3Rfw6jYqqWNJljXum1BjS7C8iw9P
-        1Fih7dBlad+B7deataSrR6pDGSviRtzCVodipLYgJIDoblADya1dWeJdP6yWM0Cf6NhD
-        qfZg75M3CuDeXFBqlDgEBgUwZ3x1Am1JuZO6kS+qvNo4lrnMJsTSLFppr9ShlPe6x8RW
-        t2XYOdWJIMfoWyRW8YZXLKEh8cKGpm7V27AD7ctHOZX531UHXgCi0Mvm/oBg5LHNbr3x
-        tK8ROhdp/SNcXlXfVnfIJ4wx/zGlQBWchGMpO9j5m+wO4lpzk5VKIdpD1kPa60C5nCen
-        hNHg==
-X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9o1mfYzBGHXH4GpcRmBzW"
-X-RZG-CLASS-ID: mo00
-Received: from iMac.fritz.box
-        by smtp.strato.de (RZmta 44.9 AUTH)
-        with ESMTPSA id 608499v09Hm2S6R
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
-        (Client did not present a certificate);
-        Wed, 9 Jan 2019 18:48:02 +0100 (CET)
-From:   "H. Nikolaus Schaller" <hns@goldelico.com>
-To:     Tony Lindgren <tony@atomide.com>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Rob Herring <robh@kernel.org>,
-        =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     linux-kernel@vger.kernel.org,
-        linux-omap <linux-omap@vger.kernel.org>,
-        letux-kernel@openphoenux.org,
-        Andreas Kemnade <andreas@kemnade.info>
-Subject: [PATCH v2] arm: dts: gta04: add bluetooth serdev driver flags
-Date:   Wed,  9 Jan 2019 18:47:52 +0100
-Message-Id: <913cd7034be0d05c01148cbcedbb663454772b03.1547056071.git.hns@goldelico.com>
-X-Mailer: git-send-email 2.19.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Wed, 9 Jan 2019 12:48:34 -0500
+Received: from mga11.intel.com ([192.55.52.93]:34830 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727276AbfAIRsC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 12:48:02 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Jan 2019 09:48:00 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,458,1539673200"; 
+   d="scan'208";a="115485636"
+Received: from unknown (HELO localhost.lm.intel.com) ([10.232.112.69])
+  by fmsmga008.fm.intel.com with ESMTP; 09 Jan 2019 09:47:59 -0800
+From:   Keith Busch <keith.busch@intel.com>
+To:     linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+        linux-mm@kvack.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rafael Wysocki <rafael@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Keith Busch <keith.busch@intel.com>
+Subject: [PATCHv3 09/13] acpi/hmat: Register performance attributes
+Date:   Wed,  9 Jan 2019 10:43:37 -0700
+Message-Id: <20190109174341.19818-10-keith.busch@intel.com>
+X-Mailer: git-send-email 2.13.6
+In-Reply-To: <20190109174341.19818-1-keith.busch@intel.com>
+References: <20190109174341.19818-1-keith.busch@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andreas Kemnade <andreas@kemnade.info>
+Save the best performace access attributes and register these with the
+memory's node if HMAT provides the locality table. While HMAT does make
+it possible to know performance for all possible initiator-target
+pairings, we export only the best pairings at this time.
 
-gta04a[34] have bluetooth chips which simply understand
-h4 protocol.
-
-Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+Signed-off-by: Keith Busch <keith.busch@intel.com>
 ---
- arch/arm/boot/dts/omap3-gta04.dtsi | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/acpi/Kconfig |  1 +
+ drivers/acpi/hmat.c  | 34 ++++++++++++++++++++++++++++++++++
+ 2 files changed, 35 insertions(+)
 
-diff --git a/arch/arm/boot/dts/omap3-gta04.dtsi b/arch/arm/boot/dts/omap3-gta04.dtsi
-index 499e3b0e920b..ec7b1e31c07e 100644
---- a/arch/arm/boot/dts/omap3-gta04.dtsi
-+++ b/arch/arm/boot/dts/omap3-gta04.dtsi
-@@ -722,6 +722,8 @@
- 
- 	bluetooth: bluetooth {
- 		compatible = "wi2wi,w2cbw003-bluetooth";
-+		speed = <3000000>;
-+		flow;
- 		vdd-supply = <&vaux4>;
- 	};
+diff --git a/drivers/acpi/Kconfig b/drivers/acpi/Kconfig
+index b102d9f544ee..ac6c38b50916 100644
+--- a/drivers/acpi/Kconfig
++++ b/drivers/acpi/Kconfig
+@@ -329,6 +329,7 @@ config ACPI_NUMA
+ config ACPI_HMAT
+ 	bool "ACPI Heterogeneous Memory Attribute Table Support"
+ 	depends on ACPI_NUMA
++	select HMEM_REPORTING
+ 	help
+ 	 Parses representation of the ACPI Heterogeneous Memory Attributes
+ 	 Table (HMAT) and set the memory node relationships and access
+diff --git a/drivers/acpi/hmat.c b/drivers/acpi/hmat.c
+index efb33c74d1a3..45e20dc677f9 100644
+--- a/drivers/acpi/hmat.c
++++ b/drivers/acpi/hmat.c
+@@ -23,6 +23,8 @@ struct memory_target {
+ 	struct list_head node;
+ 	unsigned int memory_pxm;
+ 	unsigned long p_nodes[BITS_TO_LONGS(MAX_NUMNODES)];
++	bool hmem_valid;
++	struct node_hmem_attrs hmem;
  };
+ 
+ static __init struct memory_target *find_mem_target(unsigned int m)
+@@ -108,6 +110,34 @@ static __init void hmat_update_access(u8 type, u32 value, u32 *best)
+ 	}
+ }
+ 
++static __init void hmat_update_target(struct memory_target *t, u8 type,
++				      u32 value)
++{
++	switch (type) {
++	case ACPI_HMAT_ACCESS_LATENCY:
++		t->hmem.read_latency = value;
++		t->hmem.write_latency = value;
++		break;
++	case ACPI_HMAT_READ_LATENCY:
++		t->hmem.read_latency = value;
++		break;
++	case ACPI_HMAT_WRITE_LATENCY:
++		t->hmem.write_latency = value;
++		break;
++	case ACPI_HMAT_ACCESS_BANDWIDTH:
++		t->hmem.read_bandwidth = value;
++		t->hmem.write_bandwidth = value;
++		break;
++	case ACPI_HMAT_READ_BANDWIDTH:
++		t->hmem.read_bandwidth = value;
++		break;
++	case ACPI_HMAT_WRITE_BANDWIDTH:
++		t->hmem.write_bandwidth = value;
++		break;
++	}
++	t->hmem_valid = true;
++}
++
+ static __init int hmat_parse_locality(union acpi_subtable_headers *header,
+ 				      const unsigned long end)
+ {
+@@ -166,6 +196,8 @@ static __init int hmat_parse_locality(union acpi_subtable_headers *header,
+ 					set_bit(p_node, t->p_nodes);
+ 			}
+ 		}
++		if (t && best)
++			hmat_update_target(t, type, best);
+ 	}
+ 	return 0;
+ }
+@@ -267,6 +299,8 @@ static __init void hmat_register_targets(void)
+ 		m = pxm_to_node(t->memory_pxm);
+ 		for_each_set_bit(p, t->p_nodes, MAX_NUMNODES)
+ 			register_memory_node_under_compute_node(m, p, 0);
++		if (t->hmem_valid)
++			node_set_perf_attrs(m, &t->hmem, 0);
+ 		kfree(t);
+ 	}
+ }
 -- 
-2.19.1
+2.14.4
 
