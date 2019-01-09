@@ -7,52 +7,45 @@ X-Spam-Status: No, score=-12.0 required=3.0
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01665C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 07:12:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 700D3C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 07:13:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C0B6720821
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 07:12:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3D5F8206BB
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 07:13:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729811AbfAIHMI (ORCPT
+        id S1729716AbfAIHNM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 02:12:08 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:50327 "EHLO
+        Wed, 9 Jan 2019 02:13:12 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:60567 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725835AbfAIHMI (ORCPT
+        with ESMTP id S1725835AbfAIHNM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 02:12:08 -0500
+        Wed, 9 Jan 2019 02:13:12 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x097BLgC3855589
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x097CYGn3855883
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 8 Jan 2019 23:11:21 -0800
+        Tue, 8 Jan 2019 23:12:34 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x097BItD3855576;
-        Tue, 8 Jan 2019 23:11:18 -0800
-Date:   Tue, 8 Jan 2019 23:11:18 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x097CYGj3855880;
+        Tue, 8 Jan 2019 23:12:34 -0800
+Date:   Tue, 8 Jan 2019 23:12:34 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Florian Fainelli <tipbot@zytor.com>
-Message-ID: <tip-011532379b7c2de6757e129037bdfc8d704bce23@git.kernel.org>
-Cc:     tmricht@linux.ibm.com, ravi.bangoria@linux.ibm.com,
-        acme@redhat.com, f.fainelli@gmail.com, jolsa@kernel.org,
-        tglx@linutronix.de, kim.phillips@arm.com,
-        gregkh@linuxfoundation.org, l.stach@pengutronix.de,
-        alexander.shishkin@linux.intel.com, rmk+kernel@armlinux.org.uk,
-        cphealy@gmail.com, peterz@infradead.org,
-        linux-kernel@vger.kernel.org, hpa@zytor.com, mingo@kernel.org,
-        namhyung@kernel.org
-Reply-To: acme@redhat.com, f.fainelli@gmail.com, tmricht@linux.ibm.com,
-          ravi.bangoria@linux.ibm.com, l.stach@pengutronix.de,
-          jolsa@kernel.org, kim.phillips@arm.com,
-          gregkh@linuxfoundation.org, tglx@linutronix.de,
-          alexander.shishkin@linux.intel.com, rmk+kernel@armlinux.org.uk,
-          cphealy@gmail.com, peterz@infradead.org, hpa@zytor.com,
-          mingo@kernel.org, linux-kernel@vger.kernel.org,
-          namhyung@kernel.org
-In-Reply-To: <20181221034337.26663-2-f.fainelli@gmail.com>
-References: <20181221034337.26663-2-f.fainelli@gmail.com>
+From:   tip-bot for Tzvetomir Stoyanov <tipbot@zytor.com>
+Message-ID: <tip-ca3958b1c0968a6f3105e211355f128ce871e796@git.kernel.org>
+Cc:     rostedt@goodmis.org, tstoyanov@vmware.com, jolsa@redhat.com,
+        acme@redhat.com, mingo@kernel.org, tglx@linutronix.de,
+        namhyung@kernel.org, akpm@linux-foundation.org,
+        linux-kernel@vger.kernel.org, hpa@zytor.com
+Reply-To: rostedt@goodmis.org, tstoyanov@vmware.com, jolsa@redhat.com,
+          mingo@kernel.org, acme@redhat.com, namhyung@kernel.org,
+          tglx@linutronix.de, hpa@zytor.com, linux-kernel@vger.kernel.org,
+          akpm@linux-foundation.org
+In-Reply-To: <20181130154648.038915912@goodmis.org>
+References: <20181130154648.038915912@goodmis.org>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf tools: Make find_vdso_map() more modular
-Git-Commit-ID: 011532379b7c2de6757e129037bdfc8d704bce23
+Subject: [tip:perf/urgent] tools lib traceevent: Introduce new libtracevent
+ API: tep_override_comm()
+Git-Commit-ID: ca3958b1c0968a6f3105e211355f128ce871e796
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -66,143 +59,148 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  011532379b7c2de6757e129037bdfc8d704bce23
-Gitweb:     https://git.kernel.org/tip/011532379b7c2de6757e129037bdfc8d704bce23
-Author:     Florian Fainelli <f.fainelli@gmail.com>
-AuthorDate: Thu, 20 Dec 2018 19:43:36 -0800
+Commit-ID:  ca3958b1c0968a6f3105e211355f128ce871e796
+Gitweb:     https://git.kernel.org/tip/ca3958b1c0968a6f3105e211355f128ce871e796
+Author:     Tzvetomir Stoyanov <tstoyanov@vmware.com>
+AuthorDate: Fri, 30 Nov 2018 10:44:11 -0500
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitDate: Tue, 8 Jan 2019 13:28:13 -0300
 
-perf tools: Make find_vdso_map() more modular
+tools lib traceevent: Introduce new libtracevent API: tep_override_comm()
 
-In preparation for checking that the vectors page on the ARM
-architecture, refactor the find_vdso_map() function to accept finding an
-arbitrary string and create a dedicated helper function for that under
-util/find-map.c and update the filename to find-map.c and all references
-to it: perf-read-vdso.c and util/vdso.c.
+This patch adds a new API of tracevent library: tep_override_comm() It
+registers a pid / command mapping. If a mapping with the same pid
+already exists, the entry is updated with the new command.
 
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
-Acked-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Chris Healy <cphealy@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Kim Phillips <kim.phillips@arm.com>
-Cc: Lucas Stach <l.stach@pengutronix.de>
+Signed-off-by: Tzvetomir Stoyanov <tstoyanov@vmware.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Jiri Olsa <jolsa@redhat.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Cc: Russell King <rmk+kernel@armlinux.org.uk>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Thomas Richter <tmricht@linux.ibm.com>
-Link: http://lkml.kernel.org/r/20181221034337.26663-2-f.fainelli@gmail.com
+Link: http://lkml.kernel.org/r/20181130154648.038915912@goodmis.org
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/Makefile.perf                        | 4 ++--
- tools/perf/perf-read-vdso.c                     | 6 +++---
- tools/perf/util/{find-vdso-map.c => find-map.c} | 7 +++----
- tools/perf/util/vdso.c                          | 6 +++---
- 4 files changed, 11 insertions(+), 12 deletions(-)
+ tools/lib/traceevent/event-parse.c | 69 +++++++++++++++++++++++++++++---------
+ tools/lib/traceevent/event-parse.h |  1 +
+ 2 files changed, 55 insertions(+), 15 deletions(-)
 
-diff --git a/tools/perf/Makefile.perf b/tools/perf/Makefile.perf
-index 2921f829a0f4..0ee6795d82cc 100644
---- a/tools/perf/Makefile.perf
-+++ b/tools/perf/Makefile.perf
-@@ -662,12 +662,12 @@ $(OUTPUT)perf-%: %.o $(PERFLIBS)
- 	$(QUIET_LINK)$(CC) $(CFLAGS) -o $@ $(LDFLAGS) $(filter %.o,$^) $(LIBS)
- 
- ifndef NO_PERF_READ_VDSO32
--$(OUTPUT)perf-read-vdso32: perf-read-vdso.c util/find-vdso-map.c
-+$(OUTPUT)perf-read-vdso32: perf-read-vdso.c util/find-map.c
- 	$(QUIET_CC)$(CC) -m32 $(filter -static,$(LDFLAGS)) -Wall -Werror -o $@ perf-read-vdso.c
- endif
- 
- ifndef NO_PERF_READ_VDSOX32
--$(OUTPUT)perf-read-vdsox32: perf-read-vdso.c util/find-vdso-map.c
-+$(OUTPUT)perf-read-vdsox32: perf-read-vdso.c util/find-map.c
- 	$(QUIET_CC)$(CC) -mx32 $(filter -static,$(LDFLAGS)) -Wall -Werror -o $@ perf-read-vdso.c
- endif
- 
-diff --git a/tools/perf/perf-read-vdso.c b/tools/perf/perf-read-vdso.c
-index 8c0ca0cc428f..aaa5210ea84a 100644
---- a/tools/perf/perf-read-vdso.c
-+++ b/tools/perf/perf-read-vdso.c
-@@ -5,17 +5,17 @@
- #define VDSO__MAP_NAME "[vdso]"
- 
- /*
-- * Include definition of find_vdso_map() also used in util/vdso.c for
-+ * Include definition of find_map() also used in util/vdso.c for
-  * building perf.
+diff --git a/tools/lib/traceevent/event-parse.c b/tools/lib/traceevent/event-parse.c
+index 69a96e39f0ab..156e513074b2 100644
+--- a/tools/lib/traceevent/event-parse.c
++++ b/tools/lib/traceevent/event-parse.c
+@@ -232,11 +232,13 @@ int tep_pid_is_registered(struct tep_handle *pevent, int pid)
+  * we must add this pid. This is much slower than when cmdlines
+  * are added before the array is initialized.
   */
--#include "util/find-vdso-map.c"
-+#include "util/find-map.c"
- 
- int main(void)
+-static int add_new_comm(struct tep_handle *pevent, const char *comm, int pid)
++static int add_new_comm(struct tep_handle *pevent,
++			const char *comm, int pid, bool override)
  {
- 	void *start, *end;
- 	size_t size, written;
+ 	struct cmdline *cmdlines = pevent->cmdlines;
+-	const struct cmdline *cmdline;
++	struct cmdline *cmdline;
+ 	struct cmdline key;
++	char *new_comm;
  
--	if (find_vdso_map(&start, &end))
-+	if (find_map(&start, &end, VDSO__MAP_NAME))
- 		return 1;
- 
- 	size = end - start;
-diff --git a/tools/perf/util/find-vdso-map.c b/tools/perf/util/find-map.c
-similarity index 71%
-rename from tools/perf/util/find-vdso-map.c
-rename to tools/perf/util/find-map.c
-index d7823e3508fc..7b2300588ece 100644
---- a/tools/perf/util/find-vdso-map.c
-+++ b/tools/perf/util/find-map.c
-@@ -1,5 +1,5 @@
- // SPDX-License-Identifier: GPL-2.0
--static int find_vdso_map(void **start, void **end)
-+static int find_map(void **start, void **end, const char *name)
- {
- 	FILE *maps;
- 	char line[128];
-@@ -7,7 +7,7 @@ static int find_vdso_map(void **start, void **end)
- 
- 	maps = fopen("/proc/self/maps", "r");
- 	if (!maps) {
--		fprintf(stderr, "vdso: cannot open maps\n");
-+		fprintf(stderr, "cannot open maps\n");
- 		return -1;
+ 	if (!pid)
+ 		return 0;
+@@ -247,8 +249,19 @@ static int add_new_comm(struct tep_handle *pevent, const char *comm, int pid)
+ 	cmdline = bsearch(&key, pevent->cmdlines, pevent->cmdline_count,
+ 		       sizeof(*pevent->cmdlines), cmdline_cmp);
+ 	if (cmdline) {
+-		errno = EEXIST;
+-		return -1;
++		if (!override) {
++			errno = EEXIST;
++			return -1;
++		}
++		new_comm = strdup(comm);
++		if (!new_comm) {
++			errno = ENOMEM;
++			return -1;
++		}
++		free(cmdline->comm);
++		cmdline->comm = new_comm;
++
++		return 0;
  	}
  
-@@ -21,8 +21,7 @@ static int find_vdso_map(void **start, void **end)
- 		if (m < 0)
- 			continue;
+ 	cmdlines = realloc(cmdlines, sizeof(*cmdlines) * (pevent->cmdline_count + 1));
+@@ -275,21 +288,13 @@ static int add_new_comm(struct tep_handle *pevent, const char *comm, int pid)
+ 	return 0;
+ }
  
--		if (!strncmp(&line[m], VDSO__MAP_NAME,
--			     sizeof(VDSO__MAP_NAME) - 1))
-+		if (!strncmp(&line[m], name, strlen(name)))
- 			found = 1;
- 	}
+-/**
+- * tep_register_comm - register a pid / comm mapping
+- * @pevent: handle for the pevent
+- * @comm: the command line to register
+- * @pid: the pid to map the command line to
+- *
+- * This adds a mapping to search for command line names with
+- * a given pid. The comm is duplicated.
+- */
+-int tep_register_comm(struct tep_handle *pevent, const char *comm, int pid)
++static int _tep_register_comm(struct tep_handle *pevent,
++			      const char *comm, int pid, bool override)
+ {
+ 	struct cmdline_list *item;
  
-diff --git a/tools/perf/util/vdso.c b/tools/perf/util/vdso.c
-index 741af209b19d..3702cba11d7d 100644
---- a/tools/perf/util/vdso.c
-+++ b/tools/perf/util/vdso.c
-@@ -18,10 +18,10 @@
- #include "debug.h"
+ 	if (pevent->cmdlines)
+-		return add_new_comm(pevent, comm, pid);
++		return add_new_comm(pevent, comm, pid, override);
  
- /*
-- * Include definition of find_vdso_map() also used in perf-read-vdso.c for
-+ * Include definition of find_map() also used in perf-read-vdso.c for
-  * building perf-read-vdso32 and perf-read-vdsox32.
-  */
--#include "find-vdso-map.c"
-+#include "find-map.c"
+ 	item = malloc(sizeof(*item));
+ 	if (!item)
+@@ -312,6 +317,40 @@ int tep_register_comm(struct tep_handle *pevent, const char *comm, int pid)
+ 	return 0;
+ }
  
- #define VDSO__TEMP_FILE_NAME "/tmp/perf-vdso.so-XXXXXX"
- 
-@@ -76,7 +76,7 @@ static char *get_file(struct vdso_file *vdso_file)
- 	if (vdso_file->found)
- 		return vdso_file->temp_file_name;
- 
--	if (vdso_file->error || find_vdso_map(&start, &end))
-+	if (vdso_file->error || find_map(&start, &end, VDSO__MAP_NAME))
- 		return NULL;
- 
- 	size = end - start;
++/**
++ * tep_register_comm - register a pid / comm mapping
++ * @pevent: handle for the pevent
++ * @comm: the command line to register
++ * @pid: the pid to map the command line to
++ *
++ * This adds a mapping to search for command line names with
++ * a given pid. The comm is duplicated. If a command with the same pid
++ * already exist, -1 is returned and errno is set to EEXIST
++ */
++int tep_register_comm(struct tep_handle *pevent, const char *comm, int pid)
++{
++	return _tep_register_comm(pevent, comm, pid, false);
++}
++
++/**
++ * tep_override_comm - register a pid / comm mapping
++ * @pevent: handle for the pevent
++ * @comm: the command line to register
++ * @pid: the pid to map the command line to
++ *
++ * This adds a mapping to search for command line names with
++ * a given pid. The comm is duplicated. If a command with the same pid
++ * already exist, the command string is udapted with the new one
++ */
++int tep_override_comm(struct tep_handle *pevent, const char *comm, int pid)
++{
++	if (!pevent->cmdlines && cmdline_init(pevent)) {
++		errno = ENOMEM;
++		return -1;
++	}
++	return _tep_register_comm(pevent, comm, pid, true);
++}
++
+ int tep_register_trace_clock(struct tep_handle *pevent, const char *trace_clock)
+ {
+ 	pevent->trace_clock = strdup(trace_clock);
+diff --git a/tools/lib/traceevent/event-parse.h b/tools/lib/traceevent/event-parse.h
+index 35d37087d3c5..e6f4249910e6 100644
+--- a/tools/lib/traceevent/event-parse.h
++++ b/tools/lib/traceevent/event-parse.h
+@@ -432,6 +432,7 @@ int tep_set_function_resolver(struct tep_handle *pevent,
+ 			      tep_func_resolver_t *func, void *priv);
+ void tep_reset_function_resolver(struct tep_handle *pevent);
+ int tep_register_comm(struct tep_handle *pevent, const char *comm, int pid);
++int tep_override_comm(struct tep_handle *pevent, const char *comm, int pid);
+ int tep_register_trace_clock(struct tep_handle *pevent, const char *trace_clock);
+ int tep_register_function(struct tep_handle *pevent, char *name,
+ 			  unsigned long long addr, char *mod);
