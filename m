@@ -6,21 +6,21 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AAB63C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 19:19:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40566C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 19:20:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7DE7E206BA
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 19:19:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 19A28214C6
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 19:20:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728190AbfAITTp (ORCPT
+        id S1728202AbfAITUY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 14:19:45 -0500
-Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:60002 "EHLO
-        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728150AbfAITTp (ORCPT
+        Wed, 9 Jan 2019 14:20:24 -0500
+Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:43002 "EHLO
+        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728143AbfAITUX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 14:19:45 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R171e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04446;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0THtvvDg_1547061291;
+        Wed, 9 Jan 2019 14:20:23 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R231e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07486;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0THtvvDg_1547061291;
 Received: from e19h19392.et15sqa.tbsite.net(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0THtvvDg_1547061291)
           by smtp.aliyun-inc.com(127.0.0.1);
           Thu, 10 Jan 2019 03:14:59 +0800
@@ -29,9 +29,9 @@ To:     mhocko@suse.com, hannes@cmpxchg.org, shakeelb@google.com,
         akpm@linux-foundation.org
 Cc:     yang.shi@linux.alibaba.com, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org
-Subject: [v3 PATCH 1/5] doc: memcontrol: fix the obsolete content about force empty
-Date:   Thu, 10 Jan 2019 03:14:41 +0800
-Message-Id: <1547061285-100329-2-git-send-email-yang.shi@linux.alibaba.com>
+Subject: [v3 PATCH 5/5] doc: memcontrol: add description for wipe_on_offline
+Date:   Thu, 10 Jan 2019 03:14:45 +0800
+Message-Id: <1547061285-100329-6-git-send-email-yang.shi@linux.alibaba.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1547061285-100329-1-git-send-email-yang.shi@linux.alibaba.com>
 References: <1547061285-100329-1-git-send-email-yang.shi@linux.alibaba.com>
@@ -40,42 +40,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We don't do page cache reparent anymore when offlining memcg, so update
-force empty related content accordingly.
+Add desprition of wipe_on_offline interface in cgroup documents.
 
-Reviewed-by: Shakeel Butt <shakeelb@google.com>
-Acked-by: Michal Hocko <mhocko@suse.com>
+Cc: Michal Hocko <mhocko@suse.com>
 Cc: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Shakeel Butt <shakeelb@google.com>
 Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
 ---
- Documentation/cgroup-v1/memory.txt | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ Documentation/admin-guide/cgroup-v2.rst |  9 +++++++++
+ Documentation/cgroup-v1/memory.txt      | 10 ++++++++++
+ 2 files changed, 19 insertions(+)
 
+diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admin-guide/cgroup-v2.rst
+index 0290c65..e4ef08c 100644
+--- a/Documentation/admin-guide/cgroup-v2.rst
++++ b/Documentation/admin-guide/cgroup-v2.rst
+@@ -1303,6 +1303,15 @@ PAGE_SIZE multiple when read back.
+         memory pressure happens. If you want to avoid that, force_empty will be
+         useful.
+ 
++  memory.wipe_on_offline
++
++        This is similar to force_empty, but it just does memory reclaim
++        asynchronously in css offline kworker.
++
++        Writing into 1 will enable it, disable it by writing into 0.
++
++        It would reclaim as much as possible memory just as what force_empty does.
++
+ 
+ Usage Guidelines
+ ~~~~~~~~~~~~~~~~
 diff --git a/Documentation/cgroup-v1/memory.txt b/Documentation/cgroup-v1/memory.txt
-index 3682e99..8e2cb1d 100644
+index 8e2cb1d..1c6e1ca 100644
 --- a/Documentation/cgroup-v1/memory.txt
 +++ b/Documentation/cgroup-v1/memory.txt
-@@ -70,7 +70,7 @@ Brief summary of control files.
-  memory.soft_limit_in_bytes	 # set/show soft limit of memory usage
+@@ -71,6 +71,7 @@ Brief summary of control files.
   memory.stat			 # show various statistics
   memory.use_hierarchy		 # set/show hierarchical account enabled
-- memory.force_empty		 # trigger forced move charge to parent
-+ memory.force_empty		 # trigger forced page reclaim
+  memory.force_empty		 # trigger forced page reclaim
++ memory.wipe_on_offline		 # trigger forced page reclaim when offlining
   memory.pressure_level		 # set memory pressure notifications
   memory.swappiness		 # set/show swappiness parameter of vmscan
  				 (See sysctl's vm.swappiness)
-@@ -459,8 +459,9 @@ About use_hierarchy, see Section 6.
-   the cgroup will be reclaimed and as many pages reclaimed as possible.
+@@ -581,6 +582,15 @@ hierarchical_<counter>=<counter pages> N0=<node 0 pages> N1=<node 1 pages> ...
  
-   The typical use case for this interface is before calling rmdir().
--  Because rmdir() moves all pages to parent, some out-of-use page caches can be
--  moved to the parent. If you want to avoid that, force_empty will be useful.
-+  Though rmdir() offlines memcg, but the memcg may still stay there due to
-+  charged file caches. Some out-of-use page caches may keep charged until
-+  memory pressure happens. If you want to avoid that, force_empty will be useful.
+ The "total" count is sum of file + anon + unevictable.
  
-   Also, note that when memory.kmem.limit_in_bytes is set the charges due to
-   kernel pages will still be seen. This is not considered a failure and the
++5.7 wipe_on_offline
++
++This is similar to force_empty, but it just does memory reclaim asynchronously
++in css offline kworker.
++
++Writing into 1 will enable it, disable it by writing into 0.
++
++It would reclaim as much as possible memory just as what force_empty does.
++
+ 6. Hierarchy support
+ 
+ The memory controller supports a deep hierarchy and hierarchical accounting.
 -- 
 1.8.3.1
 
