@@ -2,185 +2,174 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8678C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 16:18:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CE0CC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 16:21:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 88D1B206BB
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 16:18:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CF85D206BB
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 16:21:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732675AbfAIQSP convert rfc822-to-8bit (ORCPT
+        id S1732699AbfAIQVv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 11:18:15 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:56378 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1731219AbfAIQSO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 11:18:14 -0500
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x09G4Dfb031233
-        for <linux-kernel@vger.kernel.org>; Wed, 9 Jan 2019 11:18:12 -0500
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2pwjn9wq64-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jan 2019 11:18:12 -0500
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <pasic@linux.ibm.com>;
-        Wed, 9 Jan 2019 16:18:10 -0000
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 9 Jan 2019 16:18:08 -0000
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x09GI6GB5505318
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 9 Jan 2019 16:18:06 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8E26A4C046;
-        Wed,  9 Jan 2019 16:18:06 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4A65D4C064;
-        Wed,  9 Jan 2019 16:18:06 +0000 (GMT)
-Received: from oc2783563651 (unknown [9.152.98.225])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed,  9 Jan 2019 16:18:06 +0000 (GMT)
-Date:   Wed, 9 Jan 2019 17:18:04 +0100
-From:   Halil Pasic <pasic@linux.ibm.com>
-To:     Pierre Morel <pmorel@linux.ibm.com>
-Cc:     mimu@linux.ibm.com, KVM Mailing List <kvm@vger.kernel.org>,
-        Linux-S390 Mailing List <linux-s390@vger.kernel.org>,
-        linux-kernel@vger.kernel.org,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        David Hildenbrand <david@redhat.com>,
-        Cornelia Huck <cohuck@redhat.com>
-Subject: Re: [PATCH v5 13/15] KVM: s390: add function
- process_gib_alert_list()
-In-Reply-To: <b5d42266-3c14-acd1-7f22-9f2cd5d7b443@linux.ibm.com>
-References: <20181219191756.57973-1-mimu@linux.ibm.com>
-        <20181219191756.57973-14-mimu@linux.ibm.com>
-        <20190108135919.18048dd4@oc2783563651>
-        <7e4a5077-00f0-3a0f-e21a-5bbc2fa14b70@linux.ibm.com>
-        <01566362-d452-c04b-0509-cdcc758bc1e1@linux.ibm.com>
-        <20190109141015.3023fb55@oc2783563651>
-        <b5d42266-3c14-acd1-7f22-9f2cd5d7b443@linux.ibm.com>
-Organization: IBM
-X-Mailer: Claws Mail 3.11.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+        Wed, 9 Jan 2019 11:21:51 -0500
+Received: from foss.arm.com ([217.140.101.70]:47084 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731100AbfAIQVu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 11:21:50 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BE65AA78;
+        Wed,  9 Jan 2019 08:21:49 -0800 (PST)
+Received: from [10.1.196.62] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CAC533F5AF;
+        Wed,  9 Jan 2019 08:21:48 -0800 (PST)
+Subject: Re: [PATCH] ARM: irq: Add IRQ_SET_MASK_OK_DONE handling in
+ migrate_one_irq()
+To:     Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Cc:     Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        linux-kernel@vger.kernel.org
+References: <20190108135805.5535-1-dietmar.eggemann@arm.com>
+ <9288fdeb-8eb1-28ca-f950-ccf36d63688a@arm.com>
+ <1fcb35b7-4105-e4b7-a528-eb48be876edf@arm.com>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=marc.zyngier@arm.com; prefer-encrypt=mutual; keydata=
+ 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
+Organization: ARM Ltd
+Message-ID: <9235d4df-55b8-2f33-a992-abab64e35347@arm.com>
+Date:   Wed, 9 Jan 2019 16:21:47 +0000
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-X-TM-AS-GCONF: 00
-x-cbid: 19010916-0028-0000-0000-0000033697DD
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19010916-0029-0000-0000-000023F3A963
-Message-Id: <20190109171804.13767bcd@oc2783563651>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-09_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901090134
+In-Reply-To: <1fcb35b7-4105-e4b7-a528-eb48be876edf@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 9 Jan 2019 15:49:56 +0100
-Pierre Morel <pmorel@linux.ibm.com> wrote:
-
-> On 09/01/2019 14:10, Halil Pasic wrote:
-> > On Wed, 9 Jan 2019 13:14:17 +0100
-> > Pierre Morel <pmorel@linux.ibm.com> wrote:
-> > 
-> >> On 08/01/2019 16:21, Michael Mueller wrote:
-> >>>
-> >>>
-> >>> On 08.01.19 13:59, Halil Pasic wrote:
-> >>>> On Wed, 19 Dec 2018 20:17:54 +0100
-> >>>> Michael Mueller <mimu@linux.ibm.com> wrote:
-> >>>>
-> >>>>> This function processes the Gib Alert List (GAL). It is required
-> >>>>> to run when either a gib alert interruption has been received or
-> >>>>> a gisa that is in the alert list is cleared or dropped.
-> >>>>>
-> >>>>> The GAL is build up by millicode, when the respective ISC bit is
-> >>>>> set in the Interruption Alert Mask (IAM) and an interruption of
-> >>>>> that class is observed.
-> >>>>>
-> >>>>> Signed-off-by: Michael Mueller <mimu@linux.ibm.com>
-> >>>>> ---
-> >>>>>    arch/s390/kvm/interrupt.c | 140
-> >>>>> ++++++++++++++++++++++++++++++++++++++++++++++
-> >>>>>    1 file changed, 140 insertions(+)
-> >>>>>
-> >>>>> diff --git a/arch/s390/kvm/interrupt.c b/arch/s390/kvm/interrupt.c
-> >>>>> index 48a93f5e5333..03e7ba4f215a 100644
-> >>>>> --- a/arch/s390/kvm/interrupt.c
-> >>>>> +++ b/arch/s390/kvm/interrupt.c
-> >>>>> @@ -2941,6 +2941,146 @@ int kvm_s390_get_irq_state(struct kvm_vcpu
-> >>>>> *vcpu, __u8 __user *buf, int len)
-> >>>>>        return n;
-> >>>>>    }
-> >>>>> +static int __try_airqs_kick(struct kvm *kvm, u8 ipm)
-> >>>>> +{
-> >>>>> +    struct kvm_s390_float_interrupt *fi = &kvm->arch.float_int;
-> >>>>> +    struct kvm_vcpu *vcpu = NULL, *kick_vcpu[MAX_ISC + 1];
-> >>>>> +    int online_vcpus = atomic_read(&kvm->online_vcpus);
-> >>>>> +    u8 ioint_mask, isc_mask, kick_mask = 0x00;
-> >>>>> +    int vcpu_id, kicked = 0;
-> >>>>> +
-> >>>>> +    /* Loop over vcpus in WAIT state. */
-> >>>>> +    for (vcpu_id = find_first_bit(fi->idle_mask, online_vcpus);
-> >>>>> +         /* Until all pending ISCs have a vcpu open for airqs. */
-> >>>>> +         (~kick_mask & ipm) && vcpu_id < online_vcpus;
-> >>>>> +         vcpu_id = find_next_bit(fi->idle_mask, online_vcpus,
-> >>>>> vcpu_id)) {
-> >>>>> +        vcpu = kvm_get_vcpu(kvm, vcpu_id);
-> >>>>> +        if (psw_ioint_disabled(vcpu))
-> >>>>> +            continue;
-> >>>>> +        ioint_mask = (u8)(vcpu->arch.sie_block->gcr[6] >> 24);
-> >>>>> +        for (isc_mask = 0x80; isc_mask; isc_mask >>= 1) {
-> >>>>> +            /* ISC pending in IPM ? */
-> >>>>> +            if (!(ipm & isc_mask))
-> >>>>> +                continue;
-> >>>>> +            /* vcpu for this ISC already found ? */
-> >>>>> +            if (kick_mask & isc_mask)
-> >>>>> +                continue;
-> >>>>> +            /* vcpu open for airq of this ISC ? */
-> >>>>> +            if (!(ioint_mask & isc_mask))
-> >>>>> +                continue;
-> >>>>> +            /* use this vcpu (for all ISCs in ioint_mask) */
-> >>>>> +            kick_mask |= ioint_mask;
-> >>>>> +            kick_vcpu[kicked++] = vcpu;
-> >>>>
-> >>>> Assuming that the vcpu can/will take all ISCs it's currently open for
-> >>>> does not seem right. We kind of rely on this assumption here, or?
-> >>
-> >> why does it not seem right?
-> >>
-> > 
-> > When an interrupt is delivered a psw-swap takes place. The new-psw
-> > may fence IO interrupts. Thus for example if we have the vcpu open for
-> > all ISCs and 0, 1 and 2 pending, we may end up only delivering 0, if the
-> > psw-swap corresponding to delivering 0 closes the vcpu for IO
-> > interrupts. After guest has control, we don't have control over the rest
-> > of the story.
+On 09/01/2019 15:47, Dietmar Eggemann wrote:
+> Hi Marc,
 > 
-> OK I think I understand your concern, waking up a single waiting vCPU 
-> per ISC is not enough.
-> We must wake all vCPU in wait state having at least one matching ISC bit.
+> On 1/8/19 3:16 PM, Marc Zyngier wrote:
+>> Hi Dietmar,
+>>
+>> On 08/01/2019 13:58, Dietmar Eggemann wrote:
+>>> Arm TC2 (multi_v7_defconfig plus CONFIG_ARM_BIG_LITTLE_CPUFREQ=y and
+>>> CONFIG_ARM_VEXPRESS_SPC_CPUFREQ=y) fails hotplug stress tests.
+>>>
+>>> This issue was tracked down to a missing copy of the new affinity
+>>> cpumask of the vexpress-spc interrupt into struct
+>>> irq_common_data.affinity when the interrupt is migrated in
+>>> migrate_one_irq().
+>>>
+>>> Commit 0407daceedfe ("irqchip/gic: Return IRQ_SET_MASK_OK_DONE in the
+>>> set_affinity method") changed the return value of the irq_set_affinity()
+>>> function of the GIC from IRQ_SET_MASK_OK to IRQ_SET_MASK_OK_DONE.
+>>>
+>>> In migrate_one_irq() if the current irq affinity mask and the cpu
+>>> online mask do not share any CPU, the affinity mask is set to the cpu
+>>> online mask. In this case (ret == true) and when the irq chip
+>>> function irq_set_affinity() returns successfully (IRQ_SET_MASK_OK),
+>>> struct irq_common_data.affinity should also be updated.
+>>>
+>>> Add IRQ_SET_MASK_OK_DONE next to IRQ_SET_MASK_OK when checking that the
+>>> irq chip function irq_set_affinity() returns successfully.
+>>>
+>>> Commit 2cb625478f8c ("genirq: Add IRQ_SET_MASK_OK_DONE to support
+>>> stacked irqchip") only added IRQ_SET_MASK_OK_DONE handling to
+>>> irq_do_set_affinity() in the irq core and not to the Arm32 irq code.
+>>>
+>>> Signed-off-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
+>>> ---
+>>>
+>>> The hotplug issue on Arm TC2 happens because the vexpress-spc interrupt
+>>> (irq=22) is affine to CPU0. This occurs since it is setup early when the
+>>> cpu_online_mask is still 0.
+>>> But the problem with the missing copy of the affinity mask should occur
+>>> with every interrupt which is forced to migrate.
+>>>
+>>> With additional debug in irq_setup_affinity():
+>>>
+>>> [0.000619] irq_setup_affinity(): irq=17 mask=0 cpu_online_mask=0 set=0-4
+>>> [0.007065] irq_setup_affinity(): irq=22 mask=0 cpu_online_mask=0 set=0-4
+>>> [3.372907] irq_setup_affinity(): irq=47 mask=0-4 cpu_online_mask=0-4
+>>> set=0-4
+>>>
+>>> cat /proc/interrupts
+>>>             CPU0       CPU1       CPU2       CPU3       CPU4
+>>> 22:        316          0          0          0          0     GIC-0 127
+>>> Level     vexpress-spc
+>>>
+>>> cat /proc/irq/22/smp_affinity_list
+>>> 0
 > 
+> [...]
+> 
+>>
+>> On the arm64 side, we've solved the exact same issue by getting rid of
+>> this code and using the generic implementation. See 217d453d473c5
+>> ("arm64: fix a migrating irq bug when hotplug cpu"), which uses
+>> irq_migrate_all_off_this_cpu instead.
+>>
+>> I'm not sure there is much value in not using the core code in this case.
+> 
+> Thanks for the hint! Much more elegant! I tried the following on TC2 and 
+> it worked just fine. I'm not aware on any drawbacks of using the generic 
+> irq migration for Arm32 as well.
 
-That is not what I was trying to say, and IMHO generally it also ain't
-true that we must. But I may be missing something.
+[...]
 
-Regards,
-Halil
+Sounds great! Can you put it in a proper patch and resend it?
 
+Thanks,
+
+	M.
+-- 
+Jazz is not dead. It just smells funny...
