@@ -2,242 +2,108 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A956CC43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 09:20:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D6A5C43612
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 09:20:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 764A420821
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 09:20:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E9ED4214C6
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 09:20:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547025632;
+	bh=lHoM7/4O/LM2gt5uh9mzGu4CMzautCVPG4hQWl/wgRs=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=x2CJ9ncomnE8MTudWHm2S4CW+0YAKlCGVy9N1dcG6yAf7lVYzLU24j/Ys29IlXFKd
+	 pGsOPReifSY3njaAocv03LD0vPnUPC/mBpa9ApzsFBMLXdkh3LgHyttmjezxQTRZMp
+	 ESPjYqmeGRdQnaxJOVV+5Js5dVVv6NuvWsVdI4AE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730298AbfAIJUY (ORCPT
+        id S1730323AbfAIJUb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 04:20:24 -0500
-Received: from mga07.intel.com ([134.134.136.100]:13930 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730281AbfAIJUU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 04:20:20 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Jan 2019 01:20:20 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,456,1539673200"; 
-   d="scan'208";a="105163049"
-Received: from ahunter-desktop.fi.intel.com ([10.237.72.56])
-  by orsmga007.jf.intel.com with ESMTP; 09 Jan 2019 01:20:18 -0800
-From:   Adrian Hunter <adrian.hunter@intel.com>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     Jiri Olsa <jolsa@redhat.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH 4/6] perf thread-stack: Represent jmps to the start of a different symbol
-Date:   Wed,  9 Jan 2019 11:18:33 +0200
-Message-Id: <20190109091835.5570-5-adrian.hunter@intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190109091835.5570-1-adrian.hunter@intel.com>
-References: <20190109091835.5570-1-adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki, Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+        Wed, 9 Jan 2019 04:20:31 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:32855 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729926AbfAIJU3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 04:20:29 -0500
+Received: by mail-oi1-f196.google.com with SMTP id c206so5783120oib.0
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Jan 2019 01:20:29 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=13DAwGIcZbDE6y55GldF98FlJBg/ruKsjhIbPFxhRyQ=;
+        b=cFrrPBDgFTGzHAYKLswugyHA7w4n6ZyFSEM5NYfg+ZjzT3aCdOF/ukLsA2pHpv43rc
+         uav6LCNJE6satkddtY7hM0OoEGnom8IEA5zLB8Aew7CxhqEkLfjlVGZIYcegERbBgDxL
+         nfR2GEypWvtS3f9ggyQWpwV1uurITH1TBTua/l5Wu4Y9fM/n0iHfWnh+G8xAH96m6y9h
+         VJPt21rzhzCP96h6Y6uk2M/8nlzRBl7N1iNPWS6D/Y/LwpOIr+R6j2TA8TdUkvu5Bp6B
+         n2H4PoDpztRLsC8xZle4Rjh5oUhMi3MPLF3JwrWbqENKkZgE6wqOsThoEMVBmVolgs9F
+         sReA==
+X-Gm-Message-State: AJcUukfXXAfOyhZYXfuEoK8shVgmQ/BAGgpLqKSYwc/0ucTSYely2Xfb
+        TXz7XRXwVDTxJYtpNUWMuwXSzy1rKjzNIdPp4mM=
+X-Google-Smtp-Source: ALg8bN4ZX9ks8p1FR6CKmJN/z0/I6dsg2XcLjcAr/Wf58blyc6LQa4MFU+tSxHang3UR2tH1wK8PGO7Y7jjYgy361xE=
+X-Received: by 2002:aca:368a:: with SMTP id d132mr3583767oia.193.1547025628990;
+ Wed, 09 Jan 2019 01:20:28 -0800 (PST)
+MIME-Version: 1.0
+References: <cover.1547024167.git.tsu.yubo@gmail.com> <99e9edd31414bd240286b5b63b39140fc74e6ca5.1547024167.git.tsu.yubo@gmail.com>
+In-Reply-To: <99e9edd31414bd240286b5b63b39140fc74e6ca5.1547024167.git.tsu.yubo@gmail.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Wed, 9 Jan 2019 10:20:17 +0100
+Message-ID: <CAJZ5v0iaMuj=MPEaY2-RPMtDeez=ke1Y1wMA9qwhWw=sONqvOg@mail.gmail.com>
+Subject: Re: [PATCH V5 1/2] kobject: to repalce printk with pr_* style
+To:     Bo YU <tsu.yubo@gmail.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Joe Perches <joe@perches.com>, yuzibode@126.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The compiler might optimize a call/ret combination by making it a jmp.
-However the thread-stack does not presently cater for that, so that such
-control flow is not visible in the call graph. Make it visible by recording
-on the stack a branch to the start of a different symbol. Note, that means
-when a ret pops the stack, all jmps must be popped off first.
+On Wed, Jan 9, 2019 at 10:17 AM Bo YU <tsu.yubo@gmail.com> wrote:
+>
+> Repalce printk with pr_warn in kobject_synth_uevent and replace
+> printk with pr_err in uevent_net_init to make both consistent with
+> other code in kobject_uevent.c
+>
+> Signed-off-by: Bo YU <tsu.yubo@gmail.com>
 
-Example:
+Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-$ cat jmp-to-fn.c
-__attribute__((noinline)) int bar(void)
-{
-        return -1;
-}
-
-__attribute__((noinline)) int foo(void)
-{
-        return bar() + 1;
-}
-
-int main()
-{
-        return foo();
-}
-$ gcc -ggdb3 -Wall -Wextra -O2 -o jmp-to-fn jmp-to-fn.c
-$ objdump -d jmp-to-fn
-<SNIP>
-0000000000001040 <main>:
-    1040:       31 c0                   xor    %eax,%eax
-    1042:       e9 09 01 00 00          jmpq   1150 <foo>
-<SNIP>
-0000000000001140 <bar>:
-    1140:       b8 ff ff ff ff          mov    $0xffffffff,%eax
-    1145:       c3                      retq
-<SNIP>
-0000000000001150 <foo>:
-    1150:       31 c0                   xor    %eax,%eax
-    1152:       e8 e9 ff ff ff          callq  1140 <bar>
-    1157:       83 c0 01                add    $0x1,%eax
-    115a:       c3                      retq
-<SNIP>
-$ perf record -o jmp-to-fn.perf.data -e intel_pt/cyc/u ./jmp-to-fn
-[ perf record: Woken up 1 times to write data ]
-[ perf record: Captured and wrote 0,017 MB jmp-to-fn.perf.data ]
-$ perf script -i jmp-to-fn.perf.data --itrace=be -s ~/libexec/perf-core/scripts/python/export-to-sqlite.py jmp-to-fn.db branches calls
-2019-01-08 13:24:58.783069 Creating database...
-2019-01-08 13:24:58.794650 Writing records...
-2019-01-08 13:24:59.008050 Adding indexes
-2019-01-08 13:24:59.015802 Done
-$  ~/libexec/perf-core/scripts/python/exported-sql-viewer.py jmp-to-fn.db
-
-Before:
-
-    main
-        -> bar
-
-After:
-
-    main
-        -> foo
-            -> bar
-
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
----
- .../scripts/python/export-to-postgresql.py    |  2 +-
- tools/perf/scripts/python/export-to-sqlite.py |  2 +-
- tools/perf/util/thread-stack.c                | 30 +++++++++++++++++--
- tools/perf/util/thread-stack.h                |  3 ++
- 4 files changed, 33 insertions(+), 4 deletions(-)
-
-diff --git a/tools/perf/scripts/python/export-to-postgresql.py b/tools/perf/scripts/python/export-to-postgresql.py
-index 0564dd7377f2..30130213da7e 100644
---- a/tools/perf/scripts/python/export-to-postgresql.py
-+++ b/tools/perf/scripts/python/export-to-postgresql.py
-@@ -478,7 +478,7 @@ if perf_db_export_calls:
- 			'branch_count,'
- 			'call_id,'
- 			'return_id,'
--			'CASE WHEN flags=1 THEN \'no call\' WHEN flags=2 THEN \'no return\' WHEN flags=3 THEN \'no call/return\' ELSE \'\' END AS flags,'
-+			'CASE WHEN flags=0 THEN \'\' WHEN flags=1 THEN \'no call\' WHEN flags=2 THEN \'no return\' WHEN flags=3 THEN \'no call/return\' WHEN flags=6 THEN \'jump\' ELSE flags END AS flags,'
- 			'parent_call_path_id'
- 		' FROM calls INNER JOIN call_paths ON call_paths.id = call_path_id')
- 
-diff --git a/tools/perf/scripts/python/export-to-sqlite.py b/tools/perf/scripts/python/export-to-sqlite.py
-index 245caf2643ed..ed237f2ed03f 100644
---- a/tools/perf/scripts/python/export-to-sqlite.py
-+++ b/tools/perf/scripts/python/export-to-sqlite.py
-@@ -320,7 +320,7 @@ if perf_db_export_calls:
- 			'branch_count,'
- 			'call_id,'
- 			'return_id,'
--			'CASE WHEN flags=1 THEN \'no call\' WHEN flags=2 THEN \'no return\' WHEN flags=3 THEN \'no call/return\' ELSE \'\' END AS flags,'
-+			'CASE WHEN flags=0 THEN \'\' WHEN flags=1 THEN \'no call\' WHEN flags=2 THEN \'no return\' WHEN flags=3 THEN \'no call/return\' WHEN flags=6 THEN \'jump\' ELSE flags END AS flags,'
- 			'parent_call_path_id'
- 		' FROM calls INNER JOIN call_paths ON call_paths.id = call_path_id')
- 
-diff --git a/tools/perf/util/thread-stack.c b/tools/perf/util/thread-stack.c
-index 7f8eff018c16..f52c0f90915d 100644
---- a/tools/perf/util/thread-stack.c
-+++ b/tools/perf/util/thread-stack.c
-@@ -38,6 +38,7 @@
-  * @cp: call path
-  * @no_call: a 'call' was not seen
-  * @trace_end: a 'call' but trace ended
-+ * @non_call: a branch but not a 'call' to the start of a different symbol
-  */
- struct thread_stack_entry {
- 	u64 ret_addr;
-@@ -47,6 +48,7 @@ struct thread_stack_entry {
- 	struct call_path *cp;
- 	bool no_call;
- 	bool trace_end;
-+	bool non_call;
- };
- 
- /**
-@@ -268,6 +270,8 @@ static int thread_stack__call_return(struct thread *thread,
- 		cr.flags |= CALL_RETURN_NO_CALL;
- 	if (no_return)
- 		cr.flags |= CALL_RETURN_NO_RETURN;
-+	if (tse->non_call)
-+		cr.flags |= CALL_RETURN_NON_CALL;
- 
- 	return crp->process(&cr, crp->data);
- }
-@@ -510,6 +514,7 @@ static int thread_stack__push_cp(struct thread_stack *ts, u64 ret_addr,
- 	tse->cp = cp;
- 	tse->no_call = no_call;
- 	tse->trace_end = trace_end;
-+	tse->non_call = false;
- 
- 	return 0;
- }
-@@ -531,14 +536,16 @@ static int thread_stack__pop_cp(struct thread *thread, struct thread_stack *ts,
- 							 timestamp, ref, false);
- 	}
- 
--	if (ts->stack[ts->cnt - 1].ret_addr == ret_addr) {
-+	if (ts->stack[ts->cnt - 1].ret_addr == ret_addr &&
-+	    !ts->stack[ts->cnt - 1].non_call) {
- 		return thread_stack__call_return(thread, ts, --ts->cnt,
- 						 timestamp, ref, false);
- 	} else {
- 		size_t i = ts->cnt - 1;
- 
- 		while (i--) {
--			if (ts->stack[i].ret_addr != ret_addr)
-+			if (ts->stack[i].ret_addr != ret_addr ||
-+			    ts->stack[i].non_call)
- 				continue;
- 			i += 1;
- 			while (ts->cnt > i) {
-@@ -757,6 +764,25 @@ int thread_stack__process(struct thread *thread, struct comm *comm,
- 		err = thread_stack__trace_begin(thread, ts, sample->time, ref);
- 	} else if (sample->flags & PERF_IP_FLAG_TRACE_END) {
- 		err = thread_stack__trace_end(ts, sample, ref);
-+	} else if (sample->flags & PERF_IP_FLAG_BRANCH &&
-+		   from_al->sym != to_al->sym && to_al->sym &&
-+		   to_al->addr == to_al->sym->start) {
-+		struct call_path_root *cpr = ts->crp->cpr;
-+		struct call_path *cp;
-+
-+		/*
-+		 * The compiler might optimize a call/ret combination by making
-+		 * it a jmp. Make that visible by recording on the stack a
-+		 * branch to the start of a different symbol. Note, that means
-+		 * when a ret pops the stack, all jmps must be popped off first.
-+		 */
-+		cp = call_path__findnew(cpr, ts->stack[ts->cnt - 1].cp,
-+					to_al->sym, sample->addr,
-+					ts->kernel_start);
-+		err = thread_stack__push_cp(ts, 0, sample->time, ref, cp, false,
-+					    false);
-+		if (!err)
-+			ts->stack[ts->cnt - 1].non_call = true;
- 	}
- 
- 	return err;
-diff --git a/tools/perf/util/thread-stack.h b/tools/perf/util/thread-stack.h
-index 1f626f4a1c40..b7c04e19ad41 100644
---- a/tools/perf/util/thread-stack.h
-+++ b/tools/perf/util/thread-stack.h
-@@ -35,10 +35,13 @@ struct call_path;
-  *
-  * CALL_RETURN_NO_CALL: 'return' but no matching 'call'
-  * CALL_RETURN_NO_RETURN: 'call' but no matching 'return'
-+ * CALL_RETURN_NON_CALL: a branch but not a 'call' to the start of a different
-+ *                       symbol
-  */
- enum {
- 	CALL_RETURN_NO_CALL	= 1 << 0,
- 	CALL_RETURN_NO_RETURN	= 1 << 1,
-+	CALL_RETURN_NON_CALL	= 1 << 2,
- };
- 
- /**
--- 
-2.17.1
-
+>
+> ---
+> Changes in V2:
+> Improve the commit log, doing as the patch did.
+> ---
+>  lib/kobject_uevent.c | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
+>
+> diff --git a/lib/kobject_uevent.c b/lib/kobject_uevent.c
+> index 27c6118afd1c..c87a96c4800e 100644
+> --- a/lib/kobject_uevent.c
+> +++ b/lib/kobject_uevent.c
+> @@ -224,7 +224,7 @@ int kobject_synth_uevent(struct kobject *kobj, const char *buf, size_t count)
+>  out:
+>         if (r) {
+>                 devpath = kobject_get_path(kobj, GFP_KERNEL);
+> -               printk(KERN_WARNING "synth uevent: %s: %s",
+> +               pr_warn("synth uevent: %s: %s",
+>                        devpath ?: "unknown device",
+>                        msg ?: "failed to send uevent");
+>                 kfree(devpath);
+> @@ -765,8 +765,7 @@ static int uevent_net_init(struct net *net)
+>
+>         ue_sk->sk = netlink_kernel_create(net, NETLINK_KOBJECT_UEVENT, &cfg);
+>         if (!ue_sk->sk) {
+> -               printk(KERN_ERR
+> -                      "kobject_uevent: unable to create netlink socket!\n");
+> +               pr_err("kobject_uevent: unable to create netlink socket!\n");
+>                 kfree(ue_sk);
+>                 return -ENODEV;
+>         }
+> --
+> 2.11.0
+>
