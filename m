@@ -2,118 +2,82 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BBFAC43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 16:48:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A44D9C43612
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 16:49:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D0553206BB
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 16:48:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="BFqBCiAD"
+	by mail.kernel.org (Postfix) with ESMTP id 73D2920859
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 16:49:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726449AbfAIQsg (ORCPT
+        id S1726512AbfAIQtB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 11:48:36 -0500
-Received: from mail-io1-f67.google.com ([209.85.166.67]:34952 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725468AbfAIQsf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 11:48:35 -0500
-Received: by mail-io1-f67.google.com with SMTP id f4so6553475ion.2
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jan 2019 08:48:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=fdCynCQXJR51Uq88sO1InC8ROmQ7T31Q2pMI8I3KRIY=;
-        b=BFqBCiADprgxye+2BS0wxgDl9lErgr8cSN6izzYo8ORz7+eTVv76AIP+9ORHl9CJco
-         2wvdQX/qWVKUwMfr5hC0oyLaXyyQQQ/P/nufVdFam6MOx9ZyMX2kHfX8g93gQ5bmdJy6
-         xyrmWN4DLI7ohts8fK85H6eCs7gjl4dz6ydx0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=fdCynCQXJR51Uq88sO1InC8ROmQ7T31Q2pMI8I3KRIY=;
-        b=g4Z/4ZbPiar5Fc208Sf5I0waXhMfsa0zf9/TU0E4Tux5egFIO0sZfPn1bGSBXHhNp+
-         T4dUzoWQgB7SAwxpvYXyuGCGD/Oc3/NP1STvuLNbRhVHfIcldz2RUMpVAAQgcObfu6fS
-         GfyMkDWQu8NMbIuGvWldIn0Et+0q+aQDP3ypFz90OYnfAEpa+yg44JZDnHzby9TUvsJa
-         fkQmFfbsHnLUmVv1eoBoWWBVF66kIyUT1vnTppmsvo+V4PRkZBn5LkbMbqmIwOsqllkH
-         eu86t3tuny29CidDY867G/gzsTYmZVi0G2CUNN6471gaAlZbqBwhBctMweCjr8FtoKd9
-         /GKw==
-X-Gm-Message-State: AJcUukeP7TkxnWF8931rSajsziDX5bryFTn25AE/DDqHz0mfwTUPCkBz
-        a0KGkTtndS4rhtRkK2BnhrwZDrta9DzsaK8jz7F6rA==
-X-Google-Smtp-Source: ALg8bN46TfwF2T9uKnRpMHXxc2amErUpK307V7pvh/LihSLwY/nSB41VOSrL8lYO01v+ZQU/+Cc9DbX0Pwb4CqrjaUc=
-X-Received: by 2002:a6b:c8c9:: with SMTP id y192mr4084607iof.183.1547052514283;
- Wed, 09 Jan 2019 08:48:34 -0800 (PST)
+        Wed, 9 Jan 2019 11:49:01 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:44098 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725785AbfAIQtB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 11:49:01 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id EC6AD99C18;
+        Wed,  9 Jan 2019 16:49:00 +0000 (UTC)
+Received: from kasong-desktop-nay-redhat-com.nay.redhat.com (unknown [10.66.128.41])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id EF58D57AB;
+        Wed,  9 Jan 2019 16:48:55 +0000 (UTC)
+From:   Kairui Song <kasong@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     dhowells@redhat.com, dwmw2@infradead.org,
+        jwboyer@fedoraproject.org, keyrings@vger.kernel.org,
+        jmorris@namei.org, serge@hallyn.com, zohar@linux.ibm.com,
+        bauerman@linux.ibm.com, ebiggers@google.com, nayna@linux.ibm.com,
+        dyoung@redhat.com, linux-integrity@vger.kernel.org,
+        kexec@lists.infradead.org, Kairui Song <kasong@redhat.com>
+Subject: [RFC PATCH 0/2] let kexec_file_load use platform keyring to verify the kernel image
+Date:   Thu, 10 Jan 2019 00:48:22 +0800
+Message-Id: <20190109164824.19708-1-kasong@redhat.com>
 MIME-Version: 1.0
-References: <20190107233833.GI5544@atomide.com> <CAKfTPtDBEmcsLotp-6K1KU1wM9Ba1EpMp3niXScRxYgzjs0nog@mail.gmail.com>
- <20190108155354.GL5544@atomide.com> <CAKfTPtCoOK-cYLXJ--sOfpVa9RVmzOAEN1+zB2qHMCzkJN0qaQ@mail.gmail.com>
- <20190108213743.GN5544@atomide.com> <20190109014218.GA8363@linaro.org>
- <20190109015124.GO5544@atomide.com> <CAJZ5v0hi5sVESKPbZoniikOhNxdUDtJhQrs39Fib8B03MYoMMQ@mail.gmail.com>
- <20190109162846.GP5544@atomide.com>
-In-Reply-To: <20190109162846.GP5544@atomide.com>
-From:   Vincent Guittot <vincent.guittot@linaro.org>
-Date:   Wed, 9 Jan 2019 17:48:23 +0100
-Message-ID: <CAKfTPtBzE9fqDgUOJ4uTj_Dtfe2KCp+R4FajAaQqpV02upQZJA@mail.gmail.com>
-Subject: Re: Regression in v5.0-rc1 with autosuspend hrtimers
-To:     Tony Lindgren <tony@atomide.com>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        LAK <linux-arm-kernel@lists.infradead.org>,
-        Linux OMAP Mailing List <linux-omap@vger.kernel.org>,
-        Ladislav Michl <ladis@linux-mips.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Wed, 09 Jan 2019 16:49:01 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 9 Jan 2019 at 17:28, Tony Lindgren <tony@atomide.com> wrote:
->
-> * Rafael J. Wysocki <rafael@kernel.org> [190109 09:44]:
-> > On Wed, Jan 9, 2019 at 2:51 AM Tony Lindgren <tony@atomide.com> wrote:
-> > >
-> > > * Vincent Guittot <vincent.guittot@linaro.org> [190109 01:42]:
-> > > > Le Tuesday 08 Jan 2019 =C3=A0 13:37:43 (-0800), Tony Lindgren a =C3=
-=A9crit :
-> > > > > Lowering the autosuspend_delay_ms to 2100 ms makes things work ag=
-ain.
-> > > > > Anything higher than 2200 ms seems to somehow time out immediatel=
-y
-> > > > > now :)
-> > > >
-> > > > This is quite close to the max ns of an int on arm 32bits
-> > > >
-> > > > Could you try the patch below ?
-> > >
-> > > Yup great thanks, that's it:
-> > >
-> > > Tested-by: Tony Lindgren <tony@atomide.com>
-> >
-> > Cool.  Thanks for getting to the bottom of this!
->
-> No problem.
->
-> One more thing I noticed: The 25% slack can get noticeable
-> for larger values. For things like a 3 second uart console
-> timeout slack of 750 ms is quite large variation.
->
-> Should we have a limit of max 100 ms for the slack?
+Hi,
 
-Keep in mind that when jiffies were used, expires was rounded to a
-full second when delay was greater than a second. So you could already
-have difference of up 990ms on arm before this patch
-And i don't take into account the rework of timer infra which add
-another level of variation, something like up to 640 ms more when the
-timer is greater than 2880 ms for arm IIRC
->
-> Regards,
->
-> Tony
+This is a different approach for the previous patch:
+[RFC PATCH 0/1] KEYS, integrity: Link .platform keyring to .secondary_trusted_keys
+make kexec_file_load be able to verify the kernel image against keys
+provided by platform or firmware.
+
+This patch adds a .platform_trusted_keys in system_keyring as the reference
+to .platform keyring in integrity subsystem, when platform keyring is
+being initialized it will be updated.
+
+Another thing on my mind is that now kexec_file_load will still relay on
+CONFIG_INTEGRITY_PLATFORM_KEYRING and all its dependencies to be enabled
+to be able to verify the image against firmware keys. I'm thinking about
+to have something like CONFIG_PLATFORM_KEYRING and make the .platform
+keyring could be enabled for a more wider usage. Not sure if it's a good
+idea though.
+
+Tested in a VM with locally signed kernel with pesign and imported the
+cert to EFI's MokList variable.
+
+Kairui Song (2):
+  integrity, KEYS: add a reference to platform keyring
+  kexec, KEYS: Make use of platform keyring for signature verify
+
+ arch/x86/kernel/kexec-bzimage64.c | 13 ++++++++++---
+ certs/system_keyring.c            | 10 +++++++++-
+ include/keys/system_keyring.h     |  5 +++++
+ include/linux/verification.h      |  1 +
+ security/integrity/digsig.c       |  4 ++++
+ 5 files changed, 29 insertions(+), 4 deletions(-)
+
+-- 
+2.20.1
+
