@@ -6,24 +6,24 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5E10C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 11:48:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE648C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 11:48:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF94220665
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 11:48:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AA7C920665
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 11:48:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730956AbfAILsc (ORCPT
+        id S1731078AbfAILsn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 06:48:32 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:56114 "EHLO
+        Wed, 9 Jan 2019 06:48:43 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:56185 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730839AbfAILs3 (ORCPT
+        with ESMTP id S1731015AbfAILsl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 06:48:29 -0500
+        Wed, 9 Jan 2019 06:48:41 -0500
 Received: from localhost ([127.0.0.1] helo=bazinga.breakpoint.cc)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <bigeasy@linutronix.de>)
-        id 1ghCLP-0007Al-GI; Wed, 09 Jan 2019 12:48:23 +0100
+        id 1ghCLY-0007Al-Td; Wed, 09 Jan 2019 12:48:33 +0100
 From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 To:     linux-kernel@vger.kernel.org
 Cc:     x86@kernel.org, Andy Lutomirski <luto@kernel.org>,
@@ -33,9 +33,9 @@ Cc:     x86@kernel.org, Andy Lutomirski <luto@kernel.org>,
         Rik van Riel <riel@surriel.com>,
         Dave Hansen <dave.hansen@linux.intel.com>,
         Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [PATCH 01/22] x86/fpu: Remove fpu->initialized usage in __fpu__restore_sig()
-Date:   Wed,  9 Jan 2019 12:47:23 +0100
-Message-Id: <20190109114744.10936-2-bigeasy@linutronix.de>
+Subject: [PATCH 11/22] x86/fpu: Make get_xsave_field_ptr() and get_xsave_addr() use feature number instead of mask
+Date:   Wed,  9 Jan 2019 12:47:33 +0100
+Message-Id: <20190109114744.10936-12-bigeasy@linutronix.de>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190109114744.10936-1-bigeasy@linutronix.de>
 References: <20190109114744.10936-1-bigeasy@linutronix.de>
@@ -46,159 +46,243 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is a preparation for the removal of the ->initialized member in the
-fpu struct.
-__fpu__restore_sig() is deactivating the FPU via fpu__drop() and then
-setting manually ->initialized followed by fpu__restore(). The result is
-that it is possible to manipulate fpu->state and the state of registers
-won't be saved/restored on a context switch which would overwrite
-fpu->state.
+After changing the argument of __raw_xsave_addr() from a mask to number
+Dave suggested to check if it makes sense to do the same for
+get_xsave_addr(). As it turns out it does. Only get_xsave_addr() needs
+the mask to check if the requested feature is part of what is
+support/saved and then uses the number again. The shift operation is
+cheaper compared to "find last bit set". Also, the feature number uses
+less opcode space compared to the mask :)
 
-Don't access the fpu->state while the content is read from user space
-and examined / sanitized. Use a temporary kmalloc() buffer for the
-preparation of the FPU registers and once the state is considered okay,
-load it. Should something go wrong, return with an error and without
-altering the original FPU registers.
+Make get_xsave_addr() argument a xfeature number instead of mask and fix
+up its callers.
+As part of this use xfeature_nr and xfeature_mask consistently.
+This results in changes to the kvm code as:
+	feature -> xfeature_mask
+	index -> xfeature_nr
 
-The removal of "fpu__initialize()" is a nop because fpu->initialized is
-already set for the user task.
-
+Suggested-by: Dave Hansen <dave.hansen@linux.intel.com>
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 ---
- arch/x86/include/asm/fpu/signal.h |  2 +-
- arch/x86/kernel/fpu/regset.c      |  5 ++--
- arch/x86/kernel/fpu/signal.c      | 41 ++++++++++++-------------------
- 3 files changed, 19 insertions(+), 29 deletions(-)
+ arch/x86/include/asm/fpu/xstate.h |  4 ++--
+ arch/x86/kernel/fpu/xstate.c      | 23 +++++++++++------------
+ arch/x86/kernel/traps.c           |  2 +-
+ arch/x86/kvm/x86.c                | 28 ++++++++++++++--------------
+ arch/x86/mm/mpx.c                 |  6 +++---
+ 5 files changed, 31 insertions(+), 32 deletions(-)
 
-diff --git a/arch/x86/include/asm/fpu/signal.h b/arch/x86/include/asm/fpu/signal.h
-index 44bbc39a57b30..7fb516b6893a8 100644
---- a/arch/x86/include/asm/fpu/signal.h
-+++ b/arch/x86/include/asm/fpu/signal.h
-@@ -22,7 +22,7 @@ int ia32_setup_frame(int sig, struct ksignal *ksig,
+diff --git a/arch/x86/include/asm/fpu/xstate.h b/arch/x86/include/asm/fpu/xstate.h
+index 48581988d78c7..fbe41f808e5d8 100644
+--- a/arch/x86/include/asm/fpu/xstate.h
++++ b/arch/x86/include/asm/fpu/xstate.h
+@@ -46,8 +46,8 @@ extern void __init update_regset_xstate_info(unsigned int size,
+ 					     u64 xstate_mask);
  
- extern void convert_from_fxsr(struct user_i387_ia32_struct *env,
- 			      struct task_struct *tsk);
--extern void convert_to_fxsr(struct task_struct *tsk,
-+extern void convert_to_fxsr(struct fxregs_state *fxsave,
- 			    const struct user_i387_ia32_struct *env);
- 
- unsigned long
-diff --git a/arch/x86/kernel/fpu/regset.c b/arch/x86/kernel/fpu/regset.c
-index bc02f5144b958..5dbc099178a88 100644
---- a/arch/x86/kernel/fpu/regset.c
-+++ b/arch/x86/kernel/fpu/regset.c
-@@ -269,11 +269,10 @@ convert_from_fxsr(struct user_i387_ia32_struct *env, struct task_struct *tsk)
- 		memcpy(&to[i], &from[i], sizeof(to[0]));
- }
- 
--void convert_to_fxsr(struct task_struct *tsk,
-+void convert_to_fxsr(struct fxregs_state *fxsave,
- 		     const struct user_i387_ia32_struct *env)
- 
+ void fpu__xstate_clear_all_cpu_caps(void);
+-void *get_xsave_addr(struct xregs_state *xsave, int xstate);
+-const void *get_xsave_field_ptr(int xstate_field);
++void *get_xsave_addr(struct xregs_state *xsave, int xfeature_nr);
++const void *get_xsave_field_ptr(int xfeature_nr);
+ int using_compacted_format(void);
+ int copy_xstate_to_kernel(void *kbuf, struct xregs_state *xsave, unsigned int offset, unsigned int size);
+ int copy_xstate_to_user(void __user *ubuf, struct xregs_state *xsave, unsigned int offset, unsigned int size);
+diff --git a/arch/x86/kernel/fpu/xstate.c b/arch/x86/kernel/fpu/xstate.c
+index 0e759a032c1c7..d288e4d271b71 100644
+--- a/arch/x86/kernel/fpu/xstate.c
++++ b/arch/x86/kernel/fpu/xstate.c
+@@ -830,15 +830,15 @@ static void *__raw_xsave_addr(struct xregs_state *xsave, int xfeature_nr)
+  *
+  * Inputs:
+  *	xstate: the thread's storage area for all FPU data
+- *	xstate_feature: state which is defined in xsave.h (e.g.
+- *	XFEATURE_MASK_FP, XFEATURE_MASK_SSE, etc...)
++ *	xfeature_nr: state which is defined in xsave.h (e.g. XFEATURE_FP,
++ *	XFEATURE_SSE, etc...)
+  * Output:
+  *	address of the state in the xsave area, or NULL if the
+  *	field is not present in the xsave buffer.
+  */
+-void *get_xsave_addr(struct xregs_state *xsave, int xstate_feature)
++void *get_xsave_addr(struct xregs_state *xsave, int xfeature_nr)
  {
--	struct fxregs_state *fxsave = &tsk->thread.fpu.state.fxsave;
- 	struct _fpreg *from = (struct _fpreg *) &env->st_space[0];
- 	struct _fpxreg *to = (struct _fpxreg *) &fxsave->st_space[0];
- 	int i;
-@@ -350,7 +349,7 @@ int fpregs_set(struct task_struct *target, const struct user_regset *regset,
- 
- 	ret = user_regset_copyin(&pos, &count, &kbuf, &ubuf, &env, 0, -1);
- 	if (!ret)
--		convert_to_fxsr(target, &env);
-+		convert_to_fxsr(&target->thread.fpu.state.fxsave, &env);
- 
+-	int xfeature_nr;
++	u64 xfeature_mask = 1ULL << xfeature_nr;
  	/*
- 	 * update the header bit in the xsave header, indicating the
-diff --git a/arch/x86/kernel/fpu/signal.c b/arch/x86/kernel/fpu/signal.c
-index f6a1d299627c5..c0cdcb9b7de5a 100644
---- a/arch/x86/kernel/fpu/signal.c
-+++ b/arch/x86/kernel/fpu/signal.c
-@@ -207,11 +207,11 @@ int copy_fpstate_to_sigframe(void __user *buf, void __user *buf_fx, int size)
+ 	 * Do we even *have* xsave state?
+ 	 */
+@@ -850,11 +850,11 @@ void *get_xsave_addr(struct xregs_state *xsave, int xstate_feature)
+ 	 * have not enabled.  Remember that pcntxt_mask is
+ 	 * what we write to the XCR0 register.
+ 	 */
+-	WARN_ONCE(!(xfeatures_mask & xstate_feature),
++	WARN_ONCE(!(xfeatures_mask & xfeature_mask),
+ 		  "get of unsupported state");
+ 	/*
+ 	 * This assumes the last 'xsave*' instruction to
+-	 * have requested that 'xstate_feature' be saved.
++	 * have requested that 'xfeature_mask' be saved.
+ 	 * If it did not, we might be seeing and old value
+ 	 * of the field in the buffer.
+ 	 *
+@@ -863,10 +863,9 @@ void *get_xsave_addr(struct xregs_state *xsave, int xstate_feature)
+ 	 * or because the "init optimization" caused it
+ 	 * to not be saved.
+ 	 */
+-	if (!(xsave->header.xfeatures & xstate_feature))
++	if (!(xsave->header.xfeatures & xfeature_mask))
+ 		return NULL;
+ 
+-	xfeature_nr = fls64(xstate_feature) - 1;
+ 	return __raw_xsave_addr(xsave, xfeature_nr);
+ }
+ EXPORT_SYMBOL_GPL(get_xsave_addr);
+@@ -882,13 +881,13 @@ EXPORT_SYMBOL_GPL(get_xsave_addr);
+  * Note that this only works on the current task.
+  *
+  * Inputs:
+- *	@xsave_state: state which is defined in xsave.h (e.g. XFEATURE_MASK_FP,
+- *	XFEATURE_MASK_SSE, etc...)
++ *	@xfeature_nr: state which is defined in xsave.h (e.g. XFEATURE_FP,
++ *	XFEATURE_SSE, etc...)
+  * Output:
+  *	address of the state in the xsave area or NULL if the state
+  *	is not present or is in its 'init state'.
+  */
+-const void *get_xsave_field_ptr(int xsave_state)
++const void *get_xsave_field_ptr(int xfeature_nr)
+ {
+ 	struct fpu *fpu = &current->thread.fpu;
+ 
+@@ -898,7 +897,7 @@ const void *get_xsave_field_ptr(int xsave_state)
+ 	 */
+ 	fpu__save(fpu);
+ 
+-	return get_xsave_addr(&fpu->state.xsave, xsave_state);
++	return get_xsave_addr(&fpu->state.xsave, xfeature_nr);
  }
  
- static inline void
--sanitize_restored_xstate(struct task_struct *tsk,
-+sanitize_restored_xstate(union fpregs_state *state,
- 			 struct user_i387_ia32_struct *ia32_env,
- 			 u64 xfeatures, int fx_only)
- {
--	struct xregs_state *xsave = &tsk->thread.fpu.state.xsave;
-+	struct xregs_state *xsave = &state->xsave;
- 	struct xstate_header *header = &xsave->header;
+ #ifdef CONFIG_ARCH_HAS_PKEYS
+diff --git a/arch/x86/kernel/traps.c b/arch/x86/kernel/traps.c
+index 9b7c4ca8f0a73..626853b2ac344 100644
+--- a/arch/x86/kernel/traps.c
++++ b/arch/x86/kernel/traps.c
+@@ -455,7 +455,7 @@ dotraplinkage void do_bounds(struct pt_regs *regs, long error_code)
+ 	 * which is all zeros which indicates MPX was not
+ 	 * responsible for the exception.
+ 	 */
+-	bndcsr = get_xsave_field_ptr(XFEATURE_MASK_BNDCSR);
++	bndcsr = get_xsave_field_ptr(XFEATURE_BNDCSR);
+ 	if (!bndcsr)
+ 		goto exit_trap;
  
- 	if (use_xsave()) {
-@@ -238,7 +238,7 @@ sanitize_restored_xstate(struct task_struct *tsk,
- 		 */
- 		xsave->i387.mxcsr &= mxcsr_feature_mask;
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index 02c8e095a2390..6c21aa5c00e58 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -3662,15 +3662,15 @@ static void fill_xsave(u8 *dest, struct kvm_vcpu *vcpu)
+ 	 */
+ 	valid = xstate_bv & ~XFEATURE_MASK_FPSSE;
+ 	while (valid) {
+-		u64 feature = valid & -valid;
+-		int index = fls64(feature) - 1;
+-		void *src = get_xsave_addr(xsave, feature);
++		u64 xfeature_mask = valid & -valid;
++		int xfeature_nr = fls64(xfeature_mask) - 1;
++		void *src = get_xsave_addr(xsave, xfeature_nr);
  
--		convert_to_fxsr(tsk, ia32_env);
-+		convert_to_fxsr(&state->fxsave, ia32_env);
+ 		if (src) {
+ 			u32 size, offset, ecx, edx;
+-			cpuid_count(XSTATE_CPUID, index,
++			cpuid_count(XSTATE_CPUID, xfeature_nr,
+ 				    &size, &offset, &ecx, &edx);
+-			if (feature == XFEATURE_MASK_PKRU)
++			if (xfeature_nr == XFEATURE_PKRU)
+ 				memcpy(dest + offset, &vcpu->arch.pkru,
+ 				       sizeof(vcpu->arch.pkru));
+ 			else
+@@ -3678,7 +3678,7 @@ static void fill_xsave(u8 *dest, struct kvm_vcpu *vcpu)
+ 
+ 		}
+ 
+-		valid -= feature;
++		valid -= xfeature_mask;
  	}
  }
  
-@@ -284,8 +284,6 @@ static int __fpu__restore_sig(void __user *buf, void __user *buf_fx, int size)
- 	if (!access_ok(buf, size))
- 		return -EACCES;
+@@ -3705,22 +3705,22 @@ static void load_xsave(struct kvm_vcpu *vcpu, u8 *src)
+ 	 */
+ 	valid = xstate_bv & ~XFEATURE_MASK_FPSSE;
+ 	while (valid) {
+-		u64 feature = valid & -valid;
+-		int index = fls64(feature) - 1;
+-		void *dest = get_xsave_addr(xsave, feature);
++		u64 xfeature_mask = valid & -valid;
++		int xfeature_nr = fls64(xfeature_mask) - 1;
++		void *dest = get_xsave_addr(xsave, xfeature_nr);
  
--	fpu__initialize(fpu);
--
- 	if (!static_cpu_has(X86_FEATURE_FPU))
- 		return fpregs_soft_set(current, NULL,
- 				       0, sizeof(struct user_i387_ia32_struct),
-@@ -315,40 +313,33 @@ static int __fpu__restore_sig(void __user *buf, void __user *buf_fx, int size)
- 		 * header. Validate and sanitize the copied state.
- 		 */
- 		struct user_i387_ia32_struct env;
-+		union fpregs_state *state;
- 		int err = 0;
-+		void *tmp;
- 
--		/*
--		 * Drop the current fpu which clears fpu->initialized. This ensures
--		 * that any context-switch during the copy of the new state,
--		 * avoids the intermediate state from getting restored/saved.
--		 * Thus avoiding the new restored state from getting corrupted.
--		 * We will be ready to restore/save the state only after
--		 * fpu->initialized is again set.
--		 */
--		fpu__drop(fpu);
-+		tmp = kzalloc(sizeof(*state) + fpu_kernel_xstate_size + 64, GFP_KERNEL);
-+		if (!tmp)
-+			return -ENOMEM;
-+		state = PTR_ALIGN(tmp, 64);
- 
- 		if (using_compacted_format()) {
--			err = copy_user_to_xstate(&fpu->state.xsave, buf_fx);
-+			err = copy_user_to_xstate(&state->xsave, buf_fx);
- 		} else {
--			err = __copy_from_user(&fpu->state.xsave, buf_fx, state_size);
-+			err = __copy_from_user(&state->xsave, buf_fx, state_size);
- 
- 			if (!err && state_size > offsetof(struct xregs_state, header))
--				err = validate_xstate_header(&fpu->state.xsave.header);
-+				err = validate_xstate_header(&state->xsave.header);
+ 		if (dest) {
+ 			u32 size, offset, ecx, edx;
+-			cpuid_count(XSTATE_CPUID, index,
++			cpuid_count(XSTATE_CPUID, xfeature_nr,
+ 				    &size, &offset, &ecx, &edx);
+-			if (feature == XFEATURE_MASK_PKRU)
++			if (xfeature_nr == XFEATURE_PKRU)
+ 				memcpy(&vcpu->arch.pkru, src + offset,
+ 				       sizeof(vcpu->arch.pkru));
+ 			else
+ 				memcpy(dest, src + offset, size);
  		}
  
- 		if (err || __copy_from_user(&env, buf, sizeof(env))) {
--			fpstate_init(&fpu->state);
--			trace_x86_fpu_init_state(fpu);
- 			err = -1;
- 		} else {
--			sanitize_restored_xstate(tsk, &env, xfeatures, fx_only);
-+			sanitize_restored_xstate(state, &env,
-+						 xfeatures, fx_only);
-+			copy_kernel_to_fpregs(state);
- 		}
+-		valid -= feature;
++		valid -= xfeature_mask;
+ 	}
+ }
  
--		local_bh_disable();
--		fpu->initialized = 1;
--		fpu__restore(fpu);
--		local_bh_enable();
--
-+		kfree(tmp);
- 		return err;
- 	} else {
- 		/*
+@@ -8804,11 +8804,11 @@ void kvm_vcpu_reset(struct kvm_vcpu *vcpu, bool init_event)
+ 		if (init_event)
+ 			kvm_put_guest_fpu(vcpu);
+ 		mpx_state_buffer = get_xsave_addr(&vcpu->arch.guest_fpu->state.xsave,
+-					XFEATURE_MASK_BNDREGS);
++					XFEATURE_BNDREGS);
+ 		if (mpx_state_buffer)
+ 			memset(mpx_state_buffer, 0, sizeof(struct mpx_bndreg_state));
+ 		mpx_state_buffer = get_xsave_addr(&vcpu->arch.guest_fpu->state.xsave,
+-					XFEATURE_MASK_BNDCSR);
++					XFEATURE_BNDCSR);
+ 		if (mpx_state_buffer)
+ 			memset(mpx_state_buffer, 0, sizeof(struct mpx_bndcsr));
+ 		if (init_event)
+diff --git a/arch/x86/mm/mpx.c b/arch/x86/mm/mpx.c
+index de1851d156997..c1ec9d81c627c 100644
+--- a/arch/x86/mm/mpx.c
++++ b/arch/x86/mm/mpx.c
+@@ -142,7 +142,7 @@ int mpx_fault_info(struct mpx_fault_info *info, struct pt_regs *regs)
+ 		goto err_out;
+ 	}
+ 	/* get bndregs field from current task's xsave area */
+-	bndregs = get_xsave_field_ptr(XFEATURE_MASK_BNDREGS);
++	bndregs = get_xsave_field_ptr(XFEATURE_BNDREGS);
+ 	if (!bndregs) {
+ 		err = -EINVAL;
+ 		goto err_out;
+@@ -190,7 +190,7 @@ static __user void *mpx_get_bounds_dir(void)
+ 	 * The bounds directory pointer is stored in a register
+ 	 * only accessible if we first do an xsave.
+ 	 */
+-	bndcsr = get_xsave_field_ptr(XFEATURE_MASK_BNDCSR);
++	bndcsr = get_xsave_field_ptr(XFEATURE_BNDCSR);
+ 	if (!bndcsr)
+ 		return MPX_INVALID_BOUNDS_DIR;
+ 
+@@ -376,7 +376,7 @@ static int do_mpx_bt_fault(void)
+ 	const struct mpx_bndcsr *bndcsr;
+ 	struct mm_struct *mm = current->mm;
+ 
+-	bndcsr = get_xsave_field_ptr(XFEATURE_MASK_BNDCSR);
++	bndcsr = get_xsave_field_ptr(XFEATURE_BNDCSR);
+ 	if (!bndcsr)
+ 		return -EINVAL;
+ 	/*
 -- 
 2.20.1
 
