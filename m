@@ -2,152 +2,230 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B570C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 19:43:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61D73C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 19:46:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6FF6620859
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 19:43:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2700820859
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 19:46:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="x6rz9ciR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728482AbfAITnl (ORCPT
+        id S1728451AbfAITqd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 14:43:41 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:33082 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728151AbfAITnl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 14:43:41 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Wed, 9 Jan 2019 14:46:33 -0500
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:49248 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728371AbfAITqc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 14:46:32 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id A1D808EE444;
+        Wed,  9 Jan 2019 11:46:31 -0800 (PST)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id y7TAdiiNjhAu; Wed,  9 Jan 2019 11:46:31 -0800 (PST)
+Received: from [153.66.254.194] (unknown [50.35.68.20])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id E2B93CA376;
-        Wed,  9 Jan 2019 19:43:40 +0000 (UTC)
-Received: from x1.home (ovpn-116-25.phx2.redhat.com [10.3.116.25])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 8E97E607CC;
-        Wed,  9 Jan 2019 19:43:37 +0000 (UTC)
-Date:   Wed, 9 Jan 2019 12:43:37 -0700
-From:   Alex Williamson <alex.williamson@redhat.com>
-To:     Pierre Morel <pmorel@linux.ibm.com>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        walling@linux.ibm.com, cohuck@redhat.com, david@redhat.com,
-        pasic@linux.ibm.com, thuth@redhat.com,
-        Shameerali Kolothum Thodi 
-        <shameerali.kolothum.thodi@huawei.com>
-Subject: Re: [PATCH v1 1/2] vfio:iommu: Use capabilities do report IOMMU
- informations
-Message-ID: <20190109124337.3e85395e@x1.home>
-In-Reply-To: <bd36cddc-cce1-adc1-cab8-d6df2089e931@linux.ibm.com>
-References: <1547037714-21592-1-git-send-email-pmorel@linux.ibm.com>
-        <1547037714-21592-2-git-send-email-pmorel@linux.ibm.com>
-        <20190109083708.1d39234d@x1.home>
-        <bd36cddc-cce1-adc1-cab8-d6df2089e931@linux.ibm.com>
-Organization: Red Hat
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Wed, 09 Jan 2019 19:43:41 +0000 (UTC)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id ACA868EE092;
+        Wed,  9 Jan 2019 11:46:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1547063191;
+        bh=ci5X5OXB50OlpLNpDIBXsEIikEeMcUNtGrVO1/LbG00=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=x6rz9ciRNJ73kpuCy1wke8UbKUXUkmP6lAvPwASBTwIPJccOBwm8L76ri3Kx2QNWJ
+         YoSbbkL/VKR1XVhtHcPF1kPW6ov8XeLpPlh5N3qpliITWV+FAgfIta0qZiWUrB9Rs5
+         PrkXNh/3mUpyzf6ocGXLxtjVefABgu9ihBtS3tg4=
+Message-ID: <1547063189.2879.47.camel@HansenPartnership.com>
+Subject: Re: [PATCH 1/5 v2] PM / hibernate: Create snapshot keys handler
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Stephan Mueller <smueller@chronox.de>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "Lee, Chun-Yi" <joeyli.kernel@gmail.com>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Pavel Machek <pavel@ucw.cz>,
+        LKML <linux-kernel@vger.kernel.org>, linux-pm@vger.kernel.org,
+        keyrings@vger.kernel.org,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Chen Yu <yu.c.chen@intel.com>,
+        Oliver Neukum <oneukum@suse.com>,
+        Ryan Chen <yu.chen.surf@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Giovanni Gherdovich <ggherdovich@suse.cz>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Jann Horn <jannh@google.com>
+Date:   Wed, 09 Jan 2019 11:46:29 -0800
+In-Reply-To: <CALCETrWoSAf4hHCXvqVZhQ5YAMBaZzaBCfnb6sC8JPrSs6FRog@mail.gmail.com>
+References: <20190103143227.9138-1-jlee@suse.com>
+         <4499700.LRS4F2YjjC@tauon.chronox.de>
+         <20190108050358.llsox32hggn2jioe@gondor.apana.org.au>
+         <1565399.7ulKdI1fm5@tauon.chronox.de>
+         <D70458DE-712B-4767-8143-7DC9107689C3@amacapital.net>
+         <1546994671.6077.10.camel@HansenPartnership.com>
+         <CALCETrWTAYpWv73MgAz=NUfvJSLq965fWMYvJnDepJoRBsgt6Q@mail.gmail.com>
+         <1547016579.2789.17.camel@HansenPartnership.com>
+         <CALCETrWoSAf4hHCXvqVZhQ5YAMBaZzaBCfnb6sC8JPrSs6FRog@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 9 Jan 2019 18:07:19 +0100
-Pierre Morel <pmorel@linux.ibm.com> wrote:
-
-> On 09/01/2019 16:37, Alex Williamson wrote:
-> > On Wed,  9 Jan 2019 13:41:53 +0100
-> > Pierre Morel <pmorel@linux.ibm.com> wrote:
-> >   
-> >> We add a new flag, VFIO_IOMMU_INFO_CAPABILITIES, inside the
-> >> vfio_iommu_type1_info to specify the support for capabilities.
-> >>
-> >> We add a new capability, with id VFIO_IOMMU_INFO_CAP_DMA
-> >> in the capability list of the VFIO_IOMMU_GET_INFO ioctl.
-> >>
-> >> Signed-off-by: Pierre Morel <pmorel@linux.ibm.com>
-> >> ---
-> >>   include/uapi/linux/vfio.h | 9 +++++++++
-> >>   1 file changed, 9 insertions(+)
-> >>
-> >> diff --git a/include/uapi/linux/vfio.h b/include/uapi/linux/vfio.h
-> >> index 8131028..54c4fcb 100644
-> >> --- a/include/uapi/linux/vfio.h
-> >> +++ b/include/uapi/linux/vfio.h
-> >> @@ -669,6 +669,15 @@ struct vfio_iommu_type1_info {
-> >>   	__u32	flags;
-> >>   #define VFIO_IOMMU_INFO_PGSIZES (1 << 0)	/* supported page sizes info */
-> >>   	__u64	iova_pgsizes;		/* Bitmap of supported page sizes */
-> >> +#define VFIO_IOMMU_INFO_CAPABILITIES (1 << 1)  /* support capabilities info */
-> >> +	__u64   cap_offset;     /* Offset within info struct of first cap */
-> >> +};
-> >> +
-> >> +#define VFIO_IOMMU_INFO_CAP_DMA 1
-> >> +struct vfio_iommu_cap_dma {
-> >> +	struct vfio_info_cap_header header;
-> >> +	__u64   dma_start;
-> >> +	__u64   dma_end;
-> >>   };
-> >>   
-> >>   #define VFIO_IOMMU_GET_INFO _IO(VFIO_TYPE, VFIO_BASE + 12)  
+On Wed, 2019-01-09 at 10:34 -0800, Andy Lutomirski wrote:
+> > > On Jan 8, 2019, at 10:49 PM, James Bottomley <James.Bottomley@han
+> > > senpartnership.com> wrote:
+> > > 
+> > > On Tue, 2019-01-08 at 17:43 -0800, Andy Lutomirski wrote:
+> > > [Adding Jarkko because this stuff relates to the TPM.]
+> > > Anyway, if we're talking about the TPM, it seems like the entire
+> > > "trusted key" mechanism in the kernel is missing the point.  If I
+> > > want to encrypt something like a hibernation image on a machine
+> > > with a TPM, it makes essentially no sense to me that we would get
+> > > a key with a known raw value that is merely TPM-backed (i.e. the
+> > > "trusted key") and use that to decrypt the image.  The right way
+> > > to do it is to the use the TPM as it was intended to be used:
+> > > generate a single-use key that protects the hibernation image and
+> > > seal *that* directly on the TPM, such that it can only be
+> > > unsealed with appropriate PCR values.  Heck, we could even use
+> > > one of the fancy NV counters such that we *can't* decrypt the
+> > > image later on.  And using HMAC or any AE construction the normal
+> > > way is also wrong -- we should *hash* the image and sign the hash
+> > > directly on the TPM so that the restore code can validate the PCR
+> > > values that were in place when the hibernation image was
+> > > created.  [0]
 > > 
-> > Unfortunately for most systems, a simple start and end is not really
-> > sufficient to describe the available IOVA space, there are often
-> > reserved regions intermixed, so this is not really a complete
-> > solution.  Shameer tried to solve this last year[1] but we ran into a
-> > road block that Intel IGD devices impose a reserved range of IOVA
-> > spaces reported to the user that conflict with existing assignment of
-> > this device and we haven't figured out yet how to be more selective of
-> > the enforcement of those reserved ranges.  Thanks,
-> > 
-> > Alex
-> > 
-> > [1] https://lkml.org/lkml/2018/4/18/293
-> >   
+> > Well, theoretically, trusted keys can be used for PCR sealed
+> > bundles, at least in 1.2 ... I'm not sure the 2.0 one actually
+> > works because you have to construct the policy session outside the
+> > kernel.
 > 
-> I understand that some architecture may be more complex and have special 
-> needs.
-> However the IOMMU geometry is a constant for all IOMMU devices and
-> is reported by the geometry in the iommu operations.
+> I suppose I should go read the 2.0 spec. I’ve read the 1.2 spec, but
+> I always assumed that 2.0 was essentially a superset of 1.2
+> functionality.
+
+It was sold as an incremental upgrade, but in practice, adding crypto
+agility and flexible policy (the main 2.0 enhancements) meant that the
+API is redically different.
+
+> > >  Presumably we should at least try to replay the PCR operations
+> > > that have occurred so that we can massage the PCRs into the same
+> > > state post-hibernation.  Also, do we have any way for the kernel
+> > > to sign something with the TPM along with an attestation that the
+> > > signature was requested *by the kernel*?  Something like a sub-
+> > > hierarchy of keys that the kernel explicitly prevents userspace
+> > > from accessing?)
+> > 
+> > We're just growing that now with the TPM asymmetric operations.
+> > Attesting that the kernel requested the signature is harder.  The
+> > TPM can attest to log entries (as it does for the UEFI log and IMA)
+> > and it can certify keys, but that only proves they're TPM resident
+> > not who the requestor was.  Effectively the latter is an assertion
+> > about who knows the key authority, which is hard to prove.
 > 
-> This makes the IOMMU geometry a special case.
+> Can the kernel filter TPM 2.0 operations?
 
-I'm not so sure that the geometry is a constant for all IOMMU devices,
-nor am I sure how if that were true and it's part of an in-kernel
-interface that it automatically qualifies it as the right way to expose
-it to userspace.  The fact that we have a reserved region interface to
-augment a basic contiguous range suggests it's known to be insufficient
-even for in-kernel use.
+There is a proposal for this, but the proposal is on the operations by
+type, not the content.  Meaning we can't really police loading and
+using a kernel key because we can't distinguish whether any key is a
+kernel key.  We can't forbid all key load operations to non-kernel
+because that removes most of the TPM usefulness as a keystore.
 
-> It is also a special case because it is an inclusive description of 
-> available memory, to oppose to the exclusive description given by the 
-> windows.
+>   If so, then a signature that the kernel would have prevented user
+> code from generating is de facto an attestation that the kernel
+> generated it (or that the kernel was compromised, which is sort of
+> equivalent).
 
-Geometry doesn't really have anything to do with available memory, it's
-the minimum and maximum IOVA aperture.  Shameer's proposal gave us an
-IOVA list, which is based on the IOMMU geometry, from which it excludes
-various reserved ranges.  So if you have a less complex architecture,
-you might only have one entry in the list, which gives you the start
-and end of the base geometry.  Move complex architectures might have
-more entries, but the geometry can still be deduced from the absolute
-highest and lowest addresses within the list.  Therefore a basic
-geometry capability is automatically redundant to the interface that's
-already been proposed.
+The TPM's idea of this is it polices by authorization.  Now one of the
+things we can do here is add what's called locality based
+authorization.  we have three non-uefi localities to play with and we
+could enforce walling one off for the kernel only to use, so a kernel
+key could come with a policy requiring use of the kernel locality for
+use of the key.  That would give you an effective guarantee that only
+the kernel could use this key.  Note the enforcement of locality would
+require a key policy, which is easy for TPM 1.2, but requires the use
+of a policy session for TPM 2.0 which means we'd have to improve our
+policy session handling.
 
-> Isn't it possible to separate the IOMMU geometry, which is really 
-> related to the IOMMU chip, from other windows exclusion related to the 
-> system memory mapping?
+> > > [0] If you take some data, run it through an authenticated
+> > > encryption algorithm, and sign (key, nonce, tag), I think you're
+> > > operating outside of the accepted security definitions if you
+> > > expect this to guarantee that the data wasn't tampered with.  I'm
+> > > reasonably confident that there are quite a few excellent AE
+> > > algorithms that completely fail if used this like this.  In fact,
+> > > pretty much all of the modern fast ones probably fail.  AE is for
+> > > when the key is *secret*.
+> > 
+> > Well, I think here, if we were actually trying to solve the problem
+> > of proving the hibernated image were the same one we would need to
+> > prove some log of the kernel operation came to a particular value
+> > *after* the hibernated image were restored ... it's not really
+> > possible to condition key release which must occur before the
+> > restore on that outcome, so it strikes me we need more than a
+> > simple release bound to PCR values.
+> 
+> I’m not sure I follow. Here are the two properties I’d like to see:
+> 
+> 1. If you have an encrypted hibernation image, the only thing you
+> should be able to do with it is to restore it. So only an actual
+> Linux kernel in hibernation restore mode ought to be able to restore
+> it.  We get this if the image can only be read with appropriate PCRs
+> and then only by the kernel.  This way, you can’t just read out
+> secrets from the image if you steal a laptop — you have to actually
+> boot the thing.
 
-Why would we ever have both given the description above?
+Right, this we can do and if you use a TPM sealed encryption key, you
+can guarantee the image will only restore on the same physical system. 
+You don't need PCRs for this, just the TPM and the locality
+enforcement.
 
-> Retrieving the IOMMU geometry is very important for us because the 
-> driver inside the guest must get it and program the IOMMU based on these 
-> values.
+Note if someone has your laptop and the ability to boot their own
+kernels, they could always corrupt the kernel into decrypting the image
+or giving you the unsealed key, but there's no real way of preventing
+that even with PCR sealing or lockdown, so the basis for the threat
+model is very much my laptop in my possession running my kernel.
 
-So you have motivation to help move the IOVA list proposal forward,
-or some equally inclusive proposal that isn't just a stop-gap ;)
-Thanks,
+> 2. You shouldn’t be able to create an intentionally corrupt image
+> that pwns you when you restore it unless you have already pwned the
+> kernel.
 
-Alex
+So here there's a problem: the policy stated above governs key *use*
+not key creation, so anyone can create a key that has a locality
+restriction.  The way to guarantee that the key was created by
+something that has access to the locality is to have a parent key with
+a locality use policy (key creation requires parent key use
+authorization).  Which means every system would have to create a
+persistent parent key for the kernel to use (the kernel could do this
+and it could be made NV resident for persistence, so it's not
+impossible, just complicated).
+
+> Maybe the “kernel” bit in #1 can be relaxed to “root” without totally
+> defeating the purpose, but if some random non-root process that
+> happens to have access to /dev/tpm* can make a valid-looking TPM
+> image, then I think we fail.  Limiting it to the kernel is only
+> dubiously better than limiting it to root until we implement
+> lockdown, in which case it's important.
+> 
+> #2 only really matters with lockdown.
+> 
+> I suppose that a good summary of my opinion is that there is no point
+> to kernel support for encrypted hibernation images until lockdown is
+> upstream.
+
+I really don't think lockdown helps.  If we implement locality
+isolation for the kernels use of keys, a properly functioning kernel
+isn't going to be tricked into releasing one of its keys to userspace. 
+A buggy kernel might be exploited to cause it to give one up but that
+would happen irrespective of lockdown and, of course, all bets are off
+if the attacker can boot their own kernel.
+
+James
+
