@@ -2,89 +2,292 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FF51C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 03:11:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6479C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 03:13:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F02420821
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 03:11:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A42AB20645
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 03:13:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DVEgu299"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728661AbfAIDLP (ORCPT
+        id S1728811AbfAIDNW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 22:11:15 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:41398 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727857AbfAIDLO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 22:11:14 -0500
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 737C087643;
-        Wed,  9 Jan 2019 03:11:14 +0000 (UTC)
-Received: from xz-x1 (dhcp-14-128.nay.redhat.com [10.66.14.128])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 737E92C8F1;
-        Wed,  9 Jan 2019 03:11:05 +0000 (UTC)
-Date:   Wed, 9 Jan 2019 11:11:03 +0800
-From:   Peter Xu <peterx@redhat.com>
-To:     Alex Williamson <alex.williamson@redhat.com>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dan.carpenter@oracle.com, cohuck@redhat.com
-Subject: Re: [PATCH] vfio/type1: Fix unmap overflow off-by-one
-Message-ID: <20190109031102.GB12837@xz-x1>
-References: <154696559827.32763.11706407320970225120.stgit@gimli.home>
+        Tue, 8 Jan 2019 22:13:22 -0500
+Received: from mail-it1-f193.google.com ([209.85.166.193]:52753 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727857AbfAIDNV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 22:13:21 -0500
+Received: by mail-it1-f193.google.com with SMTP id g76so9618849itg.2
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jan 2019 19:13:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=xPG3lfDwpQxOOMXTwldNhjlt9w/NmiiZfy1Iv6t7A6c=;
+        b=DVEgu299xSwIR7Hu5dG7aR9sExvaoNdXpR8RYsuDVW0zaiissKtWpIIvwsM5op57id
+         daAk9MNOj4kBMLjEmw19iAjhzwuHqYM/Jooc6303Z0ZDH896brtqjleAnZZDwL2RzfqK
+         CTxPZoUC19GZmzsHvPlXdW5rwldyMuXQY2DWynIxPr7EdSO/TOyFf7hKs0W1kxaIO8xO
+         kILnmNJfropj7aU8+55H5jPXgMGwJytbA7hEDnuxLpZCFb9mWD9B0KJUNDasj2m18s4C
+         CTLL8Y2oaQ1r4gSYs8a6ELh/tDAvHdkWDxAjJG9e6fuoOzBMDd0jDQ0WtKcFI6XakJ6Q
+         WfLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=xPG3lfDwpQxOOMXTwldNhjlt9w/NmiiZfy1Iv6t7A6c=;
+        b=hveJqAdyNky8YaKA7vMOGZFP5YLqCyUXtkW1LheVAZzjWSzwEif4iHwvgRUnNiwYk9
+         E9/FwCKiw9CQ+sb/7TEXLgvqYTBX+mz4J92zQ28qWu4Rx2+nJ1fl/cykva24rW6AGn6m
+         IAnp82Cglr7g5Vcfu++OLQOXeq/W/vnujM7bsp5EcCM9xaFYr3DWGwXDWVqdLa04VJgZ
+         MRk3aTTEBlHf3Off4liWWgwmX6nBgEl7IUzT2elUj+qDBJZZ1T86dDIBb5wrQyfSNNrP
+         qNnasHRaqSblU/hfmMwO2ENgHMxB0+YCeptOmDRXevHlyTM2GuUX8vgdMdfxi+fplYGM
+         yRhg==
+X-Gm-Message-State: AJcUukfZ/50QMEXlx/WiT/W2s7F9VwLatM4h9XMLWuFGhAtFrOYqrrF1
+        Hi64+n1iaighbFNIUG/rQDGV2+uUCOd+rv++zQ==
+X-Google-Smtp-Source: ALg8bN4ZZ66ZCb+ui8oZxTCNKwi5CkOpPqpR2cw/VKwJfWVcv6scdKi6WxKUN11meWaLcJ28TH37H7WJSNv7Z/AloXk=
+X-Received: by 2002:a24:3282:: with SMTP id j124mr3030181ita.173.1547003600411;
+ Tue, 08 Jan 2019 19:13:20 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <154696559827.32763.11706407320970225120.stgit@gimli.home>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Wed, 09 Jan 2019 03:11:14 +0000 (UTC)
+References: <CAFgQCTuu54oZWKq_ppEvZFb4Mz31gVmsa37gTap+e9KbE=T0aQ@mail.gmail.com>
+ <20181207155627.GG1286@dhcp22.suse.cz> <20181210123738.GN1286@dhcp22.suse.cz>
+ <CAFgQCTupPc1rKv2SrmWD+eJ0H6PRaizPBw3+AG67_PuLA2SKFw@mail.gmail.com>
+ <20181212115340.GQ1286@dhcp22.suse.cz> <CAFgQCTuhW6sPtCNFmnz13p30v3owE3Rty5WJNgtqgz8XaZT-aQ@mail.gmail.com>
+ <CAFgQCTtFZ8ku7W_7rcmrbmH4Qvsv7zgOSHKfPSpNSkVjYkPfBg@mail.gmail.com>
+ <20181217132926.GM30879@dhcp22.suse.cz> <CAFgQCTubm9B1_zM+oc1GLfOChu+XY9N4OcjyeDgk6ggObRtMKg@mail.gmail.com>
+ <20181220091934.GC14234@dhcp22.suse.cz> <20190108143440.GU31793@dhcp22.suse.cz>
+In-Reply-To: <20190108143440.GU31793@dhcp22.suse.cz>
+From:   Pingfan Liu <kernelfans@gmail.com>
+Date:   Wed, 9 Jan 2019 11:13:08 +0800
+Message-ID: <CAFgQCTv1hfcL6+hAxcyd-u6kgAkBFBqbkKqC4E=KCJB+jmSruQ@mail.gmail.com>
+Subject: Re: [PATCH] mm/alloc: fallback to first node if the wanted node offline
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 08, 2019 at 09:40:06AM -0700, Alex Williamson wrote:
-> The below referenced commit adds a test for integer overflow, but in
-> doing so prevents the unmap ioctl from ever including the last page of
-> the address space.  Subtract one to compare to the last address of the
-> unmap to avoid the overflow and wrap-around.
-> 
-> Fixes: 71a7d3d78e3c ("vfio/type1: silence integer overflow warning")
-> Link: https://bugzilla.redhat.com/show_bug.cgi?id=1662291
-> Cc: Dan Carpenter <dan.carpenter@oracle.com>
-> Reported-by: Pei Zhang <pezhang@redhat.com>
-> Debugged-by: Peter Xu <peterx@redhat.com>
-> Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
+On Tue, Jan 8, 2019 at 10:34 PM Michal Hocko <mhocko@kernel.org> wrote:
+>
+> On Thu 20-12-18 10:19:34, Michal Hocko wrote:
+> > On Thu 20-12-18 15:19:39, Pingfan Liu wrote:
+> > > Hi Michal,
+> > >
+> > > WIth this patch applied on the old one, I got the following message.
+> > > Please get it from attachment.
+> > [...]
+> > > [    0.409637] NUMA: Node 1 [mem 0x00000000-0x0009ffff] + [mem 0x00100000-0x7fffffff] -> [mem 0x00000000-0x7fffffff]
+> > > [    0.419858] NUMA: Node 1 [mem 0x00000000-0x7fffffff] + [mem 0x100000000-0x47fffffff] -> [mem 0x00000000-0x47fffffff]
+> > > [    0.430356] NODE_DATA(0) allocated [mem 0x87efd4000-0x87effefff]
+> > > [    0.436325]     NODE_DATA(0) on node 5
+> > > [    0.440092] Initmem setup node 0 [mem 0x0000000000000000-0x0000000000000000]
+> > > [    0.447078] node[0] zonelist:
+> > > [    0.450106] NODE_DATA(1) allocated [mem 0x47ffd5000-0x47fffffff]
+> > > [    0.456114] NODE_DATA(2) allocated [mem 0x87efa9000-0x87efd3fff]
+> > > [    0.462064]     NODE_DATA(2) on node 5
+> > > [    0.465852] Initmem setup node 2 [mem 0x0000000000000000-0x0000000000000000]
+> > > [    0.472813] node[2] zonelist:
+> > > [    0.475846] NODE_DATA(3) allocated [mem 0x87ef7e000-0x87efa8fff]
+> > > [    0.481827]     NODE_DATA(3) on node 5
+> > > [    0.485590] Initmem setup node 3 [mem 0x0000000000000000-0x0000000000000000]
+> > > [    0.492575] node[3] zonelist:
+> > > [    0.495608] NODE_DATA(4) allocated [mem 0x87ef53000-0x87ef7dfff]
+> > > [    0.501587]     NODE_DATA(4) on node 5
+> > > [    0.505349] Initmem setup node 4 [mem 0x0000000000000000-0x0000000000000000]
+> > > [    0.512334] node[4] zonelist:
+> > > [    0.515370] NODE_DATA(5) allocated [mem 0x87ef28000-0x87ef52fff]
+> > > [    0.521384] NODE_DATA(6) allocated [mem 0x87eefd000-0x87ef27fff]
+> > > [    0.527329]     NODE_DATA(6) on node 5
+> > > [    0.531091] Initmem setup node 6 [mem 0x0000000000000000-0x0000000000000000]
+> > > [    0.538076] node[6] zonelist:
+> > > [    0.541109] NODE_DATA(7) allocated [mem 0x87eed2000-0x87eefcfff]
+> > > [    0.547090]     NODE_DATA(7) on node 5
+> > > [    0.550851] Initmem setup node 7 [mem 0x0000000000000000-0x0000000000000000]
+> > > [    0.557836] node[7] zonelist:
+> >
+> > OK, so it is clear that building zonelists this early is not going to
+> > fly. We do not have the complete information yet. I am not sure when do
+> > we get that at this moment but I suspect the we either need to move that
+> > initialization to a sooner stage or we have to reconsider whether the
+> > phase when we build zonelists really needs to consider only online numa
+> > nodes.
+> >
+> > [...]
+> > > [    1.067658] percpu: Embedded 46 pages/cpu @(____ptrval____) s151552 r8192 d28672 u262144
+> > > [    1.075692] node[1] zonelist: 1:Normal 1:DMA32 1:DMA 5:Normal
+> > > [    1.081376] node[5] zonelist: 5:Normal 1:Normal 1:DMA32 1:DMA
+> >
+> > I hope to get to this before I leave for christmas vacation, if not I
+> > will stare into it after then.
+>
+> I am sorry but I didn't get to this sooner. But I've got another idea. I
+> concluded that the whole dance is simply bogus and we should treat
+> memory less nodes, well, as nodes with no memory ranges rather than
+> special case them. Could you give the following a spin please?
+>
 
-I tested this against the QEMU reboot error and it works.
+Sure, I have queued a loan for the remote machine. It will take some time.
 
-Reviewed-by: Peter Xu <peterx@redhat.com>
-Tested-by: Peter Xu <peterx@redhat.com>
-
-Thanks,
-
+Regards,
+Pingfan
 > ---
->  drivers/vfio/vfio_iommu_type1.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
-> index 7651cfb14836..73652e21efec 100644
-> --- a/drivers/vfio/vfio_iommu_type1.c
-> +++ b/drivers/vfio/vfio_iommu_type1.c
-> @@ -878,7 +878,7 @@ static int vfio_dma_do_unmap(struct vfio_iommu *iommu,
->  		return -EINVAL;
->  	if (!unmap->size || unmap->size & mask)
->  		return -EINVAL;
-> -	if (unmap->iova + unmap->size < unmap->iova ||
-> +	if (unmap->iova + unmap->size - 1 < unmap->iova ||
->  	    unmap->size > SIZE_MAX)
->  		return -EINVAL;
->  
-> 
-
--- 
-Peter Xu
+> diff --git a/arch/x86/mm/numa.c b/arch/x86/mm/numa.c
+> index 1308f5408bf7..0e79445cfd85 100644
+> --- a/arch/x86/mm/numa.c
+> +++ b/arch/x86/mm/numa.c
+> @@ -216,8 +216,6 @@ static void __init alloc_node_data(int nid)
+>
+>         node_data[nid] = nd;
+>         memset(NODE_DATA(nid), 0, sizeof(pg_data_t));
+> -
+> -       node_set_online(nid);
+>  }
+>
+>  /**
+> @@ -535,6 +533,7 @@ static int __init numa_register_memblks(struct numa_meminfo *mi)
+>         /* Account for nodes with cpus and no memory */
+>         node_possible_map = numa_nodes_parsed;
+>         numa_nodemask_from_meminfo(&node_possible_map, mi);
+> +       pr_info("parsed=%*pbl, possible=%*pbl\n", nodemask_pr_args(&numa_nodes_parsed), nodemask_pr_args(&node_possible_map));
+>         if (WARN_ON(nodes_empty(node_possible_map)))
+>                 return -EINVAL;
+>
+> @@ -570,7 +569,7 @@ static int __init numa_register_memblks(struct numa_meminfo *mi)
+>                 return -EINVAL;
+>
+>         /* Finally register nodes. */
+> -       for_each_node_mask(nid, node_possible_map) {
+> +       for_each_node_mask(nid, numa_nodes_parsed) {
+>                 u64 start = PFN_PHYS(max_pfn);
+>                 u64 end = 0;
+>
+> @@ -581,9 +580,6 @@ static int __init numa_register_memblks(struct numa_meminfo *mi)
+>                         end = max(mi->blk[i].end, end);
+>                 }
+>
+> -               if (start >= end)
+> -                       continue;
+> -
+>                 /*
+>                  * Don't confuse VM with a node that doesn't have the
+>                  * minimum amount of memory:
+> @@ -592,6 +588,8 @@ static int __init numa_register_memblks(struct numa_meminfo *mi)
+>                         continue;
+>
+>                 alloc_node_data(nid);
+> +               if (end)
+> +                       node_set_online(nid);
+>         }
+>
+>         /* Dump memblock with node info and return. */
+> @@ -721,21 +719,6 @@ void __init x86_numa_init(void)
+>         numa_init(dummy_numa_init);
+>  }
+>
+> -static void __init init_memory_less_node(int nid)
+> -{
+> -       unsigned long zones_size[MAX_NR_ZONES] = {0};
+> -       unsigned long zholes_size[MAX_NR_ZONES] = {0};
+> -
+> -       /* Allocate and initialize node data. Memory-less node is now online.*/
+> -       alloc_node_data(nid);
+> -       free_area_init_node(nid, zones_size, 0, zholes_size);
+> -
+> -       /*
+> -        * All zonelists will be built later in start_kernel() after per cpu
+> -        * areas are initialized.
+> -        */
+> -}
+> -
+>  /*
+>   * Setup early cpu_to_node.
+>   *
+> @@ -763,9 +746,6 @@ void __init init_cpu_to_node(void)
+>                 if (node == NUMA_NO_NODE)
+>                         continue;
+>
+> -               if (!node_online(node))
+> -                       init_memory_less_node(node);
+> -
+>                 numa_set_node(cpu, node);
+>         }
+>  }
+> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> index 2ec9cc407216..52e54d16662a 100644
+> --- a/mm/page_alloc.c
+> +++ b/mm/page_alloc.c
+> @@ -5234,6 +5234,8 @@ static void build_zonelists(pg_data_t *pgdat)
+>         int node, load, nr_nodes = 0;
+>         nodemask_t used_mask;
+>         int local_node, prev_node;
+> +       struct zone *zone;
+> +       struct zoneref *z;
+>
+>         /* NUMA-aware ordering of nodes */
+>         local_node = pgdat->node_id;
+> @@ -5259,6 +5261,11 @@ static void build_zonelists(pg_data_t *pgdat)
+>
+>         build_zonelists_in_node_order(pgdat, node_order, nr_nodes);
+>         build_thisnode_zonelists(pgdat);
+> +
+> +       pr_info("node[%d] zonelist: ", pgdat->node_id);
+> +       for_each_zone_zonelist(zone, z, &pgdat->node_zonelists[ZONELIST_FALLBACK], MAX_NR_ZONES-1)
+> +               pr_cont("%d:%s ", zone_to_nid(zone), zone->name);
+> +       pr_cont("\n");
+>  }
+>
+>  #ifdef CONFIG_HAVE_MEMORYLESS_NODES
+> @@ -5361,10 +5368,11 @@ static void __build_all_zonelists(void *data)
+>         if (self && !node_online(self->node_id)) {
+>                 build_zonelists(self);
+>         } else {
+> -               for_each_online_node(nid) {
+> +               for_each_node(nid) {
+>                         pg_data_t *pgdat = NODE_DATA(nid);
+>
+> -                       build_zonelists(pgdat);
+> +                       if (pgdat)
+> +                               build_zonelists(pgdat);
+>                 }
+>
+>  #ifdef CONFIG_HAVE_MEMORYLESS_NODES
+> @@ -6644,10 +6652,8 @@ static unsigned long __init find_min_pfn_for_node(int nid)
+>         for_each_mem_pfn_range(i, nid, &start_pfn, NULL, NULL)
+>                 min_pfn = min(min_pfn, start_pfn);
+>
+> -       if (min_pfn == ULONG_MAX) {
+> -               pr_warn("Could not find start_pfn for node %d\n", nid);
+> +       if (min_pfn == ULONG_MAX)
+>                 return 0;
+> -       }
+>
+>         return min_pfn;
+>  }
+> @@ -6991,8 +6997,12 @@ void __init free_area_init_nodes(unsigned long *max_zone_pfn)
+>         mminit_verify_pageflags_layout();
+>         setup_nr_node_ids();
+>         zero_resv_unavail();
+> -       for_each_online_node(nid) {
+> +       for_each_node(nid) {
+>                 pg_data_t *pgdat = NODE_DATA(nid);
+> +
+> +               if (!pgdat)
+> +                       continue;
+> +
+>                 free_area_init_node(nid, NULL,
+>                                 find_min_pfn_for_node(nid), NULL);
+>
+> --
+> Michal Hocko
+> SUSE Labs
