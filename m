@@ -2,107 +2,97 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38FBCC43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 18:51:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF06DC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 18:51:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 06E2C20685
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 18:51:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547059866;
-	bh=hKyL4CfL7YSUjp0Dl0YOxZy+BWcnp2DvLGJ9XkgMYR4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=AiIHED9GlFrAEyw//PUCmS4gDiM/x0wspQ7Bg8kw5HgQTnXe2WHrZ2w3kGQCTEmOM
-	 ZhFW19nAmdjeXCv54QpfRM8xMhe7I4FwHdJMW+/iukVSEdzD/T4D90hTwMYJGajs8t
-	 EzA7LDnusqBK36LhzXy9RNS2k0ADctcKZENDq19o=
+	by mail.kernel.org (Postfix) with ESMTP id AEDC720661
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 18:51:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RdZpE3R8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727953AbfAISvF (ORCPT
+        id S1727961AbfAISvb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 13:51:05 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:36330 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726465AbfAISvE (ORCPT
+        Wed, 9 Jan 2019 13:51:31 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:32783 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726465AbfAISvb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 13:51:04 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=hKyL4CfL7YSUjp0Dl0YOxZy+BWcnp2DvLGJ9XkgMYR4=; b=LkkGaiVCgD13wGa0Otq7kEuJP
-        yTBDaI36Go73N4kwiEPCiVI35F9fF83OEewahVfGQOJa3ckr0NKPpmzB97kfr8JbFBtkQGbThsVe9
-        vbewzbS2q/LU9OMCa+TAruCFWT//eyk6dVHj7kAv83mNutYQiqgcZEDUWSXd6jL61us0M=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1ghIwM-0000ks-Mg; Wed, 09 Jan 2019 18:50:58 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 542661127528; Wed,  9 Jan 2019 18:50:58 +0000 (GMT)
-Date:   Wed, 9 Jan 2019 18:50:58 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Chen-Yu Tsai <wens@csie.org>
-Cc:     Code Kipper <codekipper@gmail.com>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        linux-sunxi <linux-sunxi@googlegroups.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        "Andrea Venturi (pers)" <be17068@iperbole.bo.it>
-Subject: Re: [PATCH v3 4/9] ASoC: sun4i-i2s: Fix offset mask
-Message-ID: <20190109185058.GL10405@sirena.org.uk>
-References: <20181221152110.17982-1-codekipper@gmail.com>
- <20181221152110.17982-5-codekipper@gmail.com>
- <CAGb2v649OVnaYNbZKPtBYkPHkFP13y201RZPTRauNsjiGQKwjw@mail.gmail.com>
+        Wed, 9 Jan 2019 13:51:31 -0500
+Received: by mail-pf1-f193.google.com with SMTP id c123so4092220pfb.0
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Jan 2019 10:51:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=YkoW1gL7hsj7KTI0vvS0qJj0mnhFctPDX2a+8UMkWZM=;
+        b=RdZpE3R8r9PA0FA6JlF36WOe5jmAnwGttpGcV7Mov59p9TAFekp2UBTbxAXfFvFJnH
+         kXBWSgbX9rCIjVlYNhS8q0wC9a894rwbJ0KtHOxMMCRcqhpmyfTr9KbgkL5VX7cwib3a
+         n6roDZlfDMdB5neTUkyawPJizZ/7AH/9JnH8ppIGc6raUZRAqx8CRxZfJoJIPc+Jq4Sq
+         yB+vTPXt/tyqnoBCir3wHn7yTVUZpIIG0KxfnlxoMacRk3BPlLIfMmOKnARz6mRU6QJH
+         E/RJcExb7RXnAxpBq4GtculEGn7QfI3oGa//8aalXHck7Qk4uOXUIJ6So+OfdwxrMI5b
+         cjkw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=YkoW1gL7hsj7KTI0vvS0qJj0mnhFctPDX2a+8UMkWZM=;
+        b=Xwcjoz3mcyeKdiDDvW9HBQQPLH63iphVZTs4czpgBg5pBbo+t20Un1ZBwbRJsPFOZn
+         t++ZBGkyCMxyzQN9H/f0XHwlTPtJgu+IqRfuL28ZheNn/vdbbiIFWN6joYgSVwKi4Cgh
+         Dy+Z0ReETBpA8OqAQuy1toi50H6XefKziTVXwTBjO3HAIXuFRaOugO8jf+8Zu4LhwtRQ
+         3jY/lAuhcqwC+SCxule1H7tSbhM33oPd6D3+bngDGJpFcbs7NimRUvl7/eQkqlApYU25
+         jSHnHLpydr0Rcai58GBO03j1PC2LRnZXRKo/nrT/CtBLZALNihq4MkTJWyhIowssZZdy
+         hF7g==
+X-Gm-Message-State: AJcUukdEgdwugNFUaV1S1S1lYxZszMh3khDqP5D1joe5LKiefgum9C+H
+        su/tlNEWz3iiGFu6HHFibglNu7S/P+o=
+X-Google-Smtp-Source: ALg8bN5rmpsZbWPc64pmrg1Un4Y9lJ7ysfzaRgsWYO5SlnmmWxoian7KLyrePmNjLH8E8pmsfBqsLw==
+X-Received: by 2002:a62:5d0c:: with SMTP id r12mr7374759pfb.0.1547059890083;
+        Wed, 09 Jan 2019 10:51:30 -0800 (PST)
+Received: from Ideapad-330S ([49.206.13.149])
+        by smtp.gmail.com with ESMTPSA id r66sm114392116pfk.157.2019.01.09.10.51.28
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 09 Jan 2019 10:51:29 -0800 (PST)
+Date:   Thu, 10 Jan 2019 00:21:24 +0530
+From:   b-ak <anur.bhargav@gmail.com>
+To:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ASoC: tlv320aic32x4: SND_SOC_DAPM_MICBIAS is deprecated
+Message-ID: <20190109185124.GA15153@Ideapad-330S>
+References: <20190109171121.GA12810@Ideapad-330S>
+ <20190109183836.GI10405@sirena.org.uk>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="t5C3/nrmPumNj5sH"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAGb2v649OVnaYNbZKPtBYkPHkFP13y201RZPTRauNsjiGQKwjw@mail.gmail.com>
-X-Cookie: VMS version 2.0 ==>
+In-Reply-To: <20190109183836.GI10405@sirena.org.uk>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Jan 09, 2019 at 06:38:36PM +0000, Mark Brown wrote:
+> On Wed, Jan 09, 2019 at 10:41:21PM +0530, b-ak wrote:
+> > SND_SOC_DAPM_MICBIAS is deprecated, replace it with SND_SOC_DAPM_SUPPLY.
+> > 
+> > MICBIAS voltage wasn't supplied to the microphone with the older
+> > SND_SOC_DAPM_MICBIAS widget, hence the microphone wouldn't work.
+> > 
+> > This patch fixes the problem.
+> 
+> Note that the reason we've not done that already for everything is that
+> the DAPM graph needs updating for the new routing in machine drivers as
+> the two widgets are wired differently.  However this is fine here as
+> there aren't any in tree users I can see so I'll apply, thanks!
 
---t5C3/nrmPumNj5sH
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Hello Mark,
 
-On Sat, Dec 22, 2018 at 12:54:48AM +0800, Chen-Yu Tsai wrote:
-> On Fri, Dec 21, 2018 at 11:21 PM <codekipper@gmail.com> wrote:
+Thank you so much for that.
 
-> > Also add offset to RX channel select
+And can you please point me to some documentation of the new updates talking about the
+differences in the routing?
 
-> Commit log seems a bit lacking. You could probably explain how you
-> found this, either when comparing datasheet macros, or some actual
-> error manifested and you "heard" it. You could also state what the
-> fixed outcome should be.
+- Bhargav
 
-> Also please add a fixes tag.
-
-Plus send this at the start of the series so it can be applied as a fix
-and sent to Linus during the development cycle.
-
---t5C3/nrmPumNj5sH
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlw2QpEACgkQJNaLcl1U
-h9A/2Qf+MpKvC1sDIcOBBmk7hZNPdkcZE5wlhCQAmahqcAdv8UeXEo+DGX8UwwtV
-4DI7HFayI95aRYebTz5VK/W1noETZaQMciZ8eeqELS95MInDMhauwlioR0QlN90L
-re/xxB9i+h/rGYomJenLE4UblW9FQ9D92bIudL7aSW+ysnEJFvptf3e6IVYwWGBH
-Oh3H2N35iCCVsO45ex6Ra2k4h5/zDqz8jqM3MrlDN0AAb5OmT76HHWfiCNPTNZyU
-hty4A7sssYji0nqfs3gB6UqJwK4eAxjGak6tmh5yHu02WXh+4HQjMMpnQfvYVdX3
-RUFMDvm2f2KaEaljyksXH4Wml+pKAw==
-=REGU
------END PGP SIGNATURE-----
-
---t5C3/nrmPumNj5sH--
