@@ -2,107 +2,118 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5959C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 14:44:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D644BC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 14:44:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9FE032070B
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 14:44:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A3A23214C6
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 14:44:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547045098;
+	bh=LAzpRkFrjHBrwRQNHGbADfrZz6bPbBwxN4Uv9ilLwe0=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=PoVA4dbSbkXRv53vTGuAHVVZDQlKYfoCVGyKIOUmmB0Jmpa28NLGUQ4I1ZzkxzNRW
+	 C+qZtoE+iSTbHeJVlWoXgc2OK+30Ss/xar3CTRIhELW5RI/0y55PyUpYpltuqewDj4
+	 Vo1Ue4BeYcji6+yvBH406q54HbZQj5GfttqL1fVY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731751AbfAIOom (ORCPT
+        id S1731771AbfAIOo6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 09:44:42 -0500
-Received: from gateway33.websitewelcome.com ([192.185.146.85]:40441 "EHLO
-        gateway33.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731479AbfAIOom (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 09:44:42 -0500
-Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
-        by gateway33.websitewelcome.com (Postfix) with ESMTP id 1211D8A0C2E
-        for <linux-kernel@vger.kernel.org>; Wed,  9 Jan 2019 08:44:41 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id hF61gAwgW2PzOhF61gpNHF; Wed, 09 Jan 2019 08:44:41 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.130.205] (port=41158 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1ghF5z-0029TM-TJ; Wed, 09 Jan 2019 08:44:40 -0600
-Date:   Wed, 9 Jan 2019 08:44:37 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Lars-Peter Clausen <lars@metafoo.de>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Vinod Koul <vkoul@kernel.org>
-Cc:     dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] dmaengine: axi-dmac: Use struct_size() in kzalloc()
-Message-ID: <20190109144437.GA10733@embeddedor>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.130.205
-X-Source-L: No
-X-Exim-ID: 1ghF5z-0029TM-TJ
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.130.205]:41158
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 5
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+        Wed, 9 Jan 2019 09:44:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48242 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731752AbfAIOo5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 09:44:57 -0500
+Received: from PC-kkoz.proceq.com (unknown [213.160.61.66])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E8C77206BA;
+        Wed,  9 Jan 2019 14:44:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547045096;
+        bh=LAzpRkFrjHBrwRQNHGbADfrZz6bPbBwxN4Uv9ilLwe0=;
+        h=From:To:Cc:Subject:Date:From;
+        b=Be3BhZMUY+nkmcl2VBqwOLh3a9gArvMJ+o+0MHO3tLdQDwicvXjMVTE0KOmOVSe9J
+         hElCytUJFG6Ah2RXtI0Ey3s7UpojyAy0+vK9EIcWkD44PRjRe7jDBM8Ht1IEDTCrDO
+         pAd9iVaWWmz0FshDwS0GhZJeERxmuTtWGUcls/7I=
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
+        devicetree@vger.kernel.org
+Cc:     Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH v7 0/5] leds: trigger: Add pattern initialization from Device Tree
+Date:   Wed,  9 Jan 2019 15:44:44 +0100
+Message-Id: <1547045089-19128-1-git-send-email-krzk@kernel.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-One of the more common cases of allocation size calculations is finding the
-size of a structure that has a zero-sized array at the end, along with memory
-for some number of elements for that array. For example:
+Hi,
 
-struct foo {
-    int stuff;
-    void *entry[];
-};
+Changes since v6:
+1. Drop goto from led_get_default_pattern() and rename "DeviceTree"
+   into "device tree".
+2. Add Pavel's ack to patch 1/5.
 
-instance = kzalloc(sizeof(struct foo) + sizeof(void *) * count, GFP_KERNEL);
+Changes since v5:
+1. Drop the "classdev" prefix from helper for getting default pattern
+   and move the kerneldoc to header file (this was not fixed in v5 by
+   mistake).
 
-Instead of leaving these open-coded and prone to type mistakes, we can now
-use the new struct_size() helper:
+Changes since v4:
+1. Move helper to get default pattern from led-class.c to led-core.c and
+   rename it (build issue pointed by kbuild robot).
 
-instance = kzalloc(struct_size(instance, entry, count), GFP_KERNEL);
+Changes since v3:
+1. Add missing EXPORT_SYMBOL_GPL.
+2. Put pattern trigger format into common file - shared between
+   dt-bindings and sysfs.
+3. Use array of integers as led-pattern property (since it is bigger change
+   I did not add Pavel's ack to patch 2/5).
+4. Mention ms units for led-pattern bindings.
 
-This code was detected with the help of Coccinelle.
+Changes since v2:
+1. Drop Jacek's patches and my "led: triggers: Initialize
+   LED_INIT_DEFAULT_TRIGGER if trigger is brought after class".
+2. Follow Rob's advices about bindings - use "led-pattern" property
+   and generalize usage of it into to three triggers.
+3. New patches (2/5, 4/5 and 5/5).
 
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/dma/dma-axi-dmac.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Changes since v1:
+1. Rebase on Jacek's patches.
+2. Add patch 3/5 for fixup of Jacek's solution.
+3. Drop first two patches from the series (applied).
+4. Patch 5/5: Use LED_INIT_DEFAULT_TRIGGER (suggested by Jacek Anaszewski).
+5. Patch 5/5: Return-on-error and log warning (suggested by Pavel Machek).
 
-diff --git a/drivers/dma/dma-axi-dmac.c b/drivers/dma/dma-axi-dmac.c
-index 15b2453d2647..ffc0adc2f6ce 100644
---- a/drivers/dma/dma-axi-dmac.c
-+++ b/drivers/dma/dma-axi-dmac.c
-@@ -367,8 +367,7 @@ static struct axi_dmac_desc *axi_dmac_alloc_desc(unsigned int num_sgs)
- 	struct axi_dmac_desc *desc;
- 	unsigned int i;
- 
--	desc = kzalloc(sizeof(struct axi_dmac_desc) +
--		sizeof(struct axi_dmac_sg) * num_sgs, GFP_NOWAIT);
-+	desc = kzalloc(struct_size(desc, sg, num_sgs), GFP_NOWAIT);
- 	if (!desc)
- 		return NULL;
- 
+
+Best regards,
+Krzysztof
+
+Krzysztof Kozlowski (5):
+  dt-bindings: leds: Add pattern initialization from Device Tree
+  leds: Add helper for getting default pattern from Device Tree
+  leds: trigger: pattern: Add pattern initialization from Device Tree
+  leds: trigger: oneshot: Add initialization from Device Tree
+  leds: trigger: timer: Add initialization from Device Tree
+
+ .../ABI/testing/sysfs-class-led-trigger-pattern    | 51 +----------
+ Documentation/devicetree/bindings/leds/common.txt  | 12 +++
+ .../bindings/leds/leds-trigger-pattern.txt         | 49 +++++++++++
+ drivers/leds/led-core.c                            | 30 +++++++
+ drivers/leds/trigger/ledtrig-oneshot.c             | 38 ++++++++-
+ drivers/leds/trigger/ledtrig-pattern.c             | 99 +++++++++++++++++-----
+ drivers/leds/trigger/ledtrig-timer.c               | 34 ++++++++
+ include/linux/leds.h                               | 13 +++
+ 8 files changed, 257 insertions(+), 69 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-trigger-pattern.txt
+
 -- 
-2.20.1
+2.7.4
 
