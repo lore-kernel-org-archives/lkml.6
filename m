@@ -6,50 +6,50 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80352C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 21:19:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AD7EC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 21:19:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 550A2206B6
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 21:19:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1B6F2206B6
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 21:19:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726494AbfAIVTU (ORCPT
+        id S1727415AbfAIVTW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 16:19:20 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:51684 "EHLO
+        Wed, 9 Jan 2019 16:19:22 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:44666 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726808AbfAIVTC (ORCPT
+        by vger.kernel.org with ESMTP id S1727083AbfAIVTP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 16:19:02 -0500
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x09LIj2f130537
-        for <linux-kernel@vger.kernel.org>; Wed, 9 Jan 2019 16:19:02 -0500
-Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2pwpxh534j-1
+        Wed, 9 Jan 2019 16:19:15 -0500
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x09LJBhf089805
+        for <linux-kernel@vger.kernel.org>; Wed, 9 Jan 2019 16:19:13 -0500
+Received: from e15.ny.us.ibm.com (e15.ny.us.ibm.com [129.33.205.205])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2pwnf7s1hq-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jan 2019 16:19:00 -0500
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Jan 2019 16:19:11 -0500
 Received: from localhost
-        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e15.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Wed, 9 Jan 2019 21:18:59 -0000
-Received: from b01cxnp22035.gho.pok.ibm.com (9.57.198.25)
-        by e13.ny.us.ibm.com (146.89.104.200) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Wed, 9 Jan 2019 21:18:58 -0000
+Received: from b01cxnp22033.gho.pok.ibm.com (9.57.198.23)
+        by e15.ny.us.ibm.com (146.89.104.202) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 9 Jan 2019 21:18:53 -0000
+        Wed, 9 Jan 2019 21:18:54 -0000
 Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x09LIq0E10616916
+        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x09LIrUW17694966
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 9 Jan 2019 21:18:52 GMT
+        Wed, 9 Jan 2019 21:18:53 GMT
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 98534B206E;
-        Wed,  9 Jan 2019 21:18:52 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 19B89B2067;
+        Wed,  9 Jan 2019 21:18:53 +0000 (GMT)
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 778FCB2067;
+        by IMSVA (Postfix) with ESMTP id DDB50B2070;
         Wed,  9 Jan 2019 21:18:52 +0000 (GMT)
 Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.88])
         by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
         Wed,  9 Jan 2019 21:18:52 +0000 (GMT)
 Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 4B65D16C63E5; Wed,  9 Jan 2019 13:18:52 -0800 (PST)
+        id 73F8516C6419; Wed,  9 Jan 2019 13:18:52 -0800 (PST)
 From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
@@ -58,105 +58,249 @@ Cc:     mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
         rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
         fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
         "Paul E. McKenney" <paulmck@linux.ibm.com>
-Subject: [PATCH tip/core/rcu 03/12] rcu: Rename and comment changes due to only one rcuo kthread per CPU
-Date:   Wed,  9 Jan 2019 13:18:41 -0800
+Subject: [PATCH tip/core/rcu 10/12] rcu: Consolidate PREEMPT and !PREEMPT synchronize_rcu()
+Date:   Wed,  9 Jan 2019 13:18:48 -0800
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190109211830.GA30595@linux.ibm.com>
 References: <20190109211830.GA30595@linux.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 19010921-0064-0000-0000-000003940FF4
+x-cbid: 19010921-0068-0000-0000-000003800517
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00010374; HX=3.00000242; KW=3.00000007;
  PH=3.00000004; SC=3.00000274; SDB=6.01144142; UDB=6.00595706; IPR=6.00924404;
- MB=3.00025056; MTD=3.00000008; XFM=3.00000015; UTC=2019-01-09 21:18:57
+ MB=3.00025056; MTD=3.00000008; XFM=3.00000015; UTC=2019-01-09 21:18:58
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19010921-0065-0000-0000-00003BF95DA7
-Message-Id: <20190109211850.31599-3-paulmck@linux.ibm.com>
+x-cbparentid: 19010921-0069-0000-0000-000047121E1D
+Message-Id: <20190109211850.31599-10-paulmck@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-09_10:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
  malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ mlxlogscore=943 adultscore=0 classifier=spam adjust=0 reason=mlx
  scancount=1 engine=8.0.1-1810050000 definitions=main-1901090170
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Given RCU flavor consolidation, the name rcu_spawn_all_nocb_kthreads()
-is quite misleading.  It no longer ever creates more than one kthread,
-and it does so only for the specified CPU.  This commit therefore changes
-this name to the more descriptive rcu_spawn_cpu_nocb_kthread(), and also
-fixes up a similar issue in its header comment while in the area.
+Now that rcu_blocking_is_gp() makes the correct immediate-return
+decision for both PREEMPT and !PREEMPT, a single implementation of
+synchronize_rcu() will work correctly under both configurations.
+This commit therefore eliminates a few lines of code by consolidating
+the two implementations of synchronize_rcu().
 
 Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
 ---
- kernel/rcu/tree.c        | 2 +-
- kernel/rcu/tree.h        | 2 +-
- kernel/rcu/tree_plugin.h | 8 ++++----
- 3 files changed, 6 insertions(+), 6 deletions(-)
+ kernel/rcu/tree.c        | 73 ++++++++++++++++++++++++++++++++++++++++
+ kernel/rcu/tree_exp.h    | 27 ---------------
+ kernel/rcu/tree_plugin.h | 64 -----------------------------------
+ 3 files changed, 73 insertions(+), 91 deletions(-)
 
 diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-index 9180158756d2..f4edc664fb65 100644
+index fc37bec32731..e2bd42b2b563 100644
 --- a/kernel/rcu/tree.c
 +++ b/kernel/rcu/tree.c
-@@ -3299,7 +3299,7 @@ int rcutree_prepare_cpu(unsigned int cpu)
- 	trace_rcu_grace_period(rcu_state.name, rdp->gp_seq, TPS("cpuonl"));
- 	raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
- 	rcu_prepare_kthreads(cpu);
--	rcu_spawn_all_nocb_kthreads(cpu);
-+	rcu_spawn_cpu_nocb_kthread(cpu);
- 
- 	return 0;
+@@ -2950,6 +2950,79 @@ void kfree_call_rcu(struct rcu_head *head, rcu_callback_t func)
  }
-diff --git a/kernel/rcu/tree.h b/kernel/rcu/tree.h
-index d90b02b53c0e..bcfd684a5c57 100644
---- a/kernel/rcu/tree.h
-+++ b/kernel/rcu/tree.h
-@@ -451,7 +451,7 @@ static bool rcu_nocb_adopt_orphan_cbs(struct rcu_data *my_rdp,
- static int rcu_nocb_need_deferred_wakeup(struct rcu_data *rdp);
- static void do_nocb_deferred_wakeup(struct rcu_data *rdp);
- static void rcu_boot_init_nocb_percpu_data(struct rcu_data *rdp);
--static void rcu_spawn_all_nocb_kthreads(int cpu);
-+static void rcu_spawn_cpu_nocb_kthread(int cpu);
- static void __init rcu_spawn_nocb_kthreads(void);
- #ifdef CONFIG_RCU_NOCB_CPU
- static void __init rcu_organize_nocb_kthreads(void);
-diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
-index 1b3dd2fc0cd6..4d4091565a2c 100644
---- a/kernel/rcu/tree_plugin.h
-+++ b/kernel/rcu/tree_plugin.h
-@@ -2517,9 +2517,9 @@ static void rcu_spawn_one_nocb_kthread(int cpu)
+ EXPORT_SYMBOL_GPL(kfree_call_rcu);
+ 
++/*
++ * During early boot, any blocking grace-period wait automatically
++ * implies a grace period.  Later on, this is never the case for PREEMPT.
++ *
++ * Howevr, because a context switch is a grace period for !PREEMPT, any
++ * blocking grace-period wait automatically implies a grace period if
++ * there is only one CPU online at any point time during execution of
++ * either synchronize_rcu() or synchronize_rcu_expedited().  It is OK to
++ * occasionally incorrectly indicate that there are multiple CPUs online
++ * when there was in fact only one the whole time, as this just adds some
++ * overhead: RCU still operates correctly.
++ */
++static int rcu_blocking_is_gp(void)
++{
++	int ret;
++
++	if (IS_ENABLED(CONFIG_PREEMPT))
++		return rcu_scheduler_active == RCU_SCHEDULER_INACTIVE;
++	might_sleep();  /* Check for RCU read-side critical section. */
++	preempt_disable();
++	ret = num_online_cpus() <= 1;
++	preempt_enable();
++	return ret;
++}
++
++/**
++ * synchronize_rcu - wait until a grace period has elapsed.
++ *
++ * Control will return to the caller some time after a full grace
++ * period has elapsed, in other words after all currently executing RCU
++ * read-side critical sections have completed.  Note, however, that
++ * upon return from synchronize_rcu(), the caller might well be executing
++ * concurrently with new RCU read-side critical sections that began while
++ * synchronize_rcu() was waiting.  RCU read-side critical sections are
++ * delimited by rcu_read_lock() and rcu_read_unlock(), and may be nested.
++ * In addition, regions of code across which interrupts, preemption, or
++ * softirqs have been disabled also serve as RCU read-side critical
++ * sections.  This includes hardware interrupt handlers, softirq handlers,
++ * and NMI handlers.
++ *
++ * Note that this guarantee implies further memory-ordering guarantees.
++ * On systems with more than one CPU, when synchronize_rcu() returns,
++ * each CPU is guaranteed to have executed a full memory barrier since
++ * the end of its last RCU read-side critical section whose beginning
++ * preceded the call to synchronize_rcu().  In addition, each CPU having
++ * an RCU read-side critical section that extends beyond the return from
++ * synchronize_rcu() is guaranteed to have executed a full memory barrier
++ * after the beginning of synchronize_rcu() and before the beginning of
++ * that RCU read-side critical section.  Note that these guarantees include
++ * CPUs that are offline, idle, or executing in user mode, as well as CPUs
++ * that are executing in the kernel.
++ *
++ * Furthermore, if CPU A invoked synchronize_rcu(), which returned
++ * to its caller on CPU B, then both CPU A and CPU B are guaranteed
++ * to have executed a full memory barrier during the execution of
++ * synchronize_rcu() -- even if CPU A and CPU B are the same CPU (but
++ * again only if the system has more than one CPU).
++ */
++void synchronize_rcu(void)
++{
++	RCU_LOCKDEP_WARN(lock_is_held(&rcu_bh_lock_map) ||
++			 lock_is_held(&rcu_lock_map) ||
++			 lock_is_held(&rcu_sched_lock_map),
++			 "Illegal synchronize_rcu() in RCU read-side critical section");
++	if (rcu_blocking_is_gp())
++		return;
++	if (rcu_gp_is_expedited())
++		synchronize_rcu_expedited();
++	else
++		wait_rcu_gp(call_rcu);
++}
++EXPORT_SYMBOL_GPL(synchronize_rcu);
++
+ /**
+  * get_state_synchronize_rcu - Snapshot current RCU state
+  *
+diff --git a/kernel/rcu/tree_exp.h b/kernel/rcu/tree_exp.h
+index b800bdfe74b3..353d113c0cd4 100644
+--- a/kernel/rcu/tree_exp.h
++++ b/kernel/rcu/tree_exp.h
+@@ -643,33 +643,6 @@ static void _synchronize_rcu_expedited(void)
+ 	mutex_unlock(&rcu_state.exp_mutex);
+ }
+ 
+-/*
+- * During early boot, any blocking grace-period wait automatically
+- * implies a grace period.  Later on, this is never the case for PREEMPT.
+- *
+- * Howevr, because a context switch is a grace period for !PREEMPT, any
+- * blocking grace-period wait automatically implies a grace period if
+- * there is only one CPU online at any point time during execution of
+- * either synchronize_rcu() or synchronize_rcu_expedited().  It is OK to
+- * occasionally incorrectly indicate that there are multiple CPUs online
+- * when there was in fact only one the whole time, as this just adds some
+- * overhead: RCU still operates correctly.
+- */
+-static int rcu_blocking_is_gp(void)
+-{
+-	int ret;
+-
+-	if (rcu_scheduler_active == RCU_SCHEDULER_INACTIVE)
+-		return true;
+-	if (IS_ENABLED(CONFIG_PREEMPT))
+-		return false;
+-	might_sleep();  /* Check for RCU read-side critical section. */
+-	preempt_disable();
+-	ret = num_online_cpus() <= 1;
+-	preempt_enable();
+-	return ret;
+-}
+-
+ #ifdef CONFIG_PREEMPT_RCU
  
  /*
-  * If the specified CPU is a no-CBs CPU that does not already have its
-- * rcuo kthreads, spawn them.
-+ * rcuo kthread, spawn it.
-  */
--static void rcu_spawn_all_nocb_kthreads(int cpu)
-+static void rcu_spawn_cpu_nocb_kthread(int cpu)
- {
- 	if (rcu_scheduler_fully_active)
- 		rcu_spawn_one_nocb_kthread(cpu);
-@@ -2536,7 +2536,7 @@ static void __init rcu_spawn_nocb_kthreads(void)
- 	int cpu;
- 
- 	for_each_online_cpu(cpu)
--		rcu_spawn_all_nocb_kthreads(cpu);
-+		rcu_spawn_cpu_nocb_kthread(cpu);
+diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
+index bcf3e7366a28..43f3f2ee9d63 100644
+--- a/kernel/rcu/tree_plugin.h
++++ b/kernel/rcu/tree_plugin.h
+@@ -825,54 +825,6 @@ static void rcu_flavor_check_callbacks(int user)
+ 		t->rcu_read_unlock_special.b.need_qs = true;
  }
  
- /* How many follower CPU IDs per leader?  Default of -1 for sqrt(nr_cpu_ids). */
-@@ -2670,7 +2670,7 @@ static void do_nocb_deferred_wakeup(struct rcu_data *rdp)
- {
+-/**
+- * synchronize_rcu - wait until a grace period has elapsed.
+- *
+- * Control will return to the caller some time after a full grace
+- * period has elapsed, in other words after all currently executing RCU
+- * read-side critical sections have completed.  Note, however, that
+- * upon return from synchronize_rcu(), the caller might well be executing
+- * concurrently with new RCU read-side critical sections that began while
+- * synchronize_rcu() was waiting.  RCU read-side critical sections are
+- * delimited by rcu_read_lock() and rcu_read_unlock(), and may be nested.
+- * In addition, regions of code across which interrupts, preemption, or
+- * softirqs have been disabled also serve as RCU read-side critical
+- * sections.  This includes hardware interrupt handlers, softirq handlers,
+- * and NMI handlers.
+- *
+- * Note that this guarantee implies further memory-ordering guarantees.
+- * On systems with more than one CPU, when synchronize_rcu() returns,
+- * each CPU is guaranteed to have executed a full memory barrier since
+- * the end of its last RCU read-side critical section whose beginning
+- * preceded the call to synchronize_rcu().  In addition, each CPU having
+- * an RCU read-side critical section that extends beyond the return from
+- * synchronize_rcu() is guaranteed to have executed a full memory barrier
+- * after the beginning of synchronize_rcu() and before the beginning of
+- * that RCU read-side critical section.  Note that these guarantees include
+- * CPUs that are offline, idle, or executing in user mode, as well as CPUs
+- * that are executing in the kernel.
+- *
+- * Furthermore, if CPU A invoked synchronize_rcu(), which returned
+- * to its caller on CPU B, then both CPU A and CPU B are guaranteed
+- * to have executed a full memory barrier during the execution of
+- * synchronize_rcu() -- even if CPU A and CPU B are the same CPU (but
+- * again only if the system has more than one CPU).
+- */
+-void synchronize_rcu(void)
+-{
+-	RCU_LOCKDEP_WARN(lock_is_held(&rcu_bh_lock_map) ||
+-			 lock_is_held(&rcu_lock_map) ||
+-			 lock_is_held(&rcu_sched_lock_map),
+-			 "Illegal synchronize_rcu() in RCU read-side critical section");
+-	if (rcu_scheduler_active == RCU_SCHEDULER_INACTIVE)
+-		return;
+-	if (rcu_gp_is_expedited())
+-		synchronize_rcu_expedited();
+-	else
+-		wait_rcu_gp(call_rcu);
+-}
+-EXPORT_SYMBOL_GPL(synchronize_rcu);
+-
+ /*
+  * Check for a task exiting while in a preemptible-RCU read-side
+  * critical section, clean up if so.  No need to issue warnings,
+@@ -1115,22 +1067,6 @@ static void rcu_flavor_check_callbacks(int user)
+ 	}
  }
  
--static void rcu_spawn_all_nocb_kthreads(int cpu)
-+static void rcu_spawn_cpu_nocb_kthread(int cpu)
- {
- }
- 
+-/* PREEMPT=n implementation of synchronize_rcu(). */
+-void synchronize_rcu(void)
+-{
+-	RCU_LOCKDEP_WARN(lock_is_held(&rcu_bh_lock_map) ||
+-			 lock_is_held(&rcu_lock_map) ||
+-			 lock_is_held(&rcu_sched_lock_map),
+-			 "Illegal synchronize_rcu() in RCU read-side critical section");
+-	if (rcu_blocking_is_gp())
+-		return;
+-	if (rcu_gp_is_expedited())
+-		synchronize_rcu_expedited();
+-	else
+-		wait_rcu_gp(call_rcu);
+-}
+-EXPORT_SYMBOL_GPL(synchronize_rcu);
+-
+ /*
+  * Because preemptible RCU does not exist, tasks cannot possibly exit
+  * while in preemptible RCU read-side critical sections.
 -- 
 2.17.1
 
