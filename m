@@ -2,113 +2,92 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E621C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 15:19:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29CB5C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 15:25:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B8FD2070B
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 15:19:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dVp4PWdA"
+	by mail.kernel.org (Postfix) with ESMTP id 0046E206BA
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 15:25:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732211AbfAIPTm (ORCPT
+        id S1731324AbfAIPZI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 10:19:42 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:38142 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730956AbfAIPTm (ORCPT
+        Wed, 9 Jan 2019 10:25:08 -0500
+Received: from zg8tmtu5ljg5lje1ms4xmtka.icoremail.net ([159.89.151.119]:39657
+        "HELO zg8tmtu5ljg5lje1ms4xmtka.icoremail.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with SMTP id S1730871AbfAIPZI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 10:19:42 -0500
-Received: by mail-lf1-f67.google.com with SMTP id a8so5917621lfk.5
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jan 2019 07:19:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=gaOt2YPYx8I6ERYlSZZamEEQqXDJxdmbZ8uQFGMIFxQ=;
-        b=dVp4PWdAmOKFQ72bTn3URRj7OYUebk3xb0V2jOiVz8tKtQ85ZcG9PDV6qMbz2CbsEG
-         am1oGpO2yyd/BpX8E6nAiO/QPVUyMnT03A5W5izMIvMoFchGmn6GniUzyck7/fDIB2wn
-         8z5bMZ+khSyTLi5PTKhI46EoTeyJ+aJt6W9aVwuhB/ZEW8rxVgCNZHjtl2dEBiP3XzR+
-         bYWwDluhxOS4+moHB534TMtxlpAxxqNp9H4XFrqflMsQYp34ju9aBpphVVi8h54YMqO3
-         UTLQzmxWLcTAocFFqVUqDfTPxI8vfaETVrc9/fbwNY50uDGgrD7g297IK5ap1sn8fAME
-         JQKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=gaOt2YPYx8I6ERYlSZZamEEQqXDJxdmbZ8uQFGMIFxQ=;
-        b=eiIV19vUWf93Q4b7CMl4BZhjgIv5tMMLG/Bi+zq/Jq4JYyuAzhWgvkhl2fQWwYTZB1
-         bW+Mbffxfa7hW4HDaSA8j8agwOFRRNjRtXA/VmThoTsSJfc2q9WZRs9dpI4piRPm0wJn
-         c5HzCyPfwiQ4gs9hqwRXVWCCcM2WGoENQQNJcAnvKXpd3iKLySyauvCFLoJimikmIRtu
-         mxOkaHC0vmNViSaVf1CYG6Vcbu7E6VWQUtP/+R3ip2T28lgoMi2QzOBQb5UMw9y/EswS
-         kB1derET7YvDvb6nC8lvoieY3U4OQsJI2aJgk5/Qsiqoe+iuc59v/1koEIwpi5EdA75V
-         DS5w==
-X-Gm-Message-State: AJcUukfTpHSCnFe+UCyzcZndziQrqZ7d0wk7r4u6Eqq+ONgLeJ/aD3qh
-        rgV1CHnajFq1doFCiZforVvsk/QaEX6tkm7SQJl5C1Ch
-X-Google-Smtp-Source: ALg8bN5htIFbADW4Xir9NrBFpjSGGyKwTer506KZweTR6KoXMGn5Xac91l7xWpXVdUZuoGwCOwn/rTjOqhEzmMYH0Ys=
-X-Received: by 2002:a19:ee08:: with SMTP id g8mr3865390lfb.72.1547047180008;
- Wed, 09 Jan 2019 07:19:40 -0800 (PST)
+        Wed, 9 Jan 2019 10:25:08 -0500
+X-Greylist: delayed 22632 seconds by postgrey-1.27 at vger.kernel.org; Wed, 09 Jan 2019 10:25:07 EST
+Received: from MI20170214RZUL (unknown [114.255.247.135])
+        by email2 (Coremail) with SMTP id AgBjCgDX3zc8EjZcB5YRCg--.43451S3;
+        Wed, 09 Jan 2019 23:24:47 +0800 (CST)
+From:   "Peng Wang" <rocking@whu.edu.cn>
+To:     "'Matthew Wilcox'" <willy@infradead.org>
+Cc:     <cl@linux.com>, <penberg@kernel.org>, <rientjes@google.com>,
+        <iamjoonsoo.kim@lge.com>, <akpm@linux-foundation.org>,
+        <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>
+References: <20190109090628.1695-1-rocking@whu.edu.cn> <20190109121352.GI6310@bombadil.infradead.org>
+In-Reply-To: <20190109121352.GI6310@bombadil.infradead.org>
+Subject: RE: [PATCH] mm/slub.c: re-randomize random_seq if necessary
+Date:   Wed, 9 Jan 2019 23:24:44 +0800
+Message-ID: <000501d4a82f$74821b40$5d8651c0$@whu.edu.cn>
 MIME-Version: 1.0
-References: <20190109152209.GA13599@jordon-HP-15-Notebook-PC>
-In-Reply-To: <20190109152209.GA13599@jordon-HP-15-Notebook-PC>
-From:   Souptick Joarder <jrdr.linux@gmail.com>
-Date:   Wed, 9 Jan 2019 20:53:31 +0530
-Message-ID: <CAFqt6zbRA9AKvTy0riSFoUGNyqTVi_7WUPAkpySS1Sj28r+R5Q@mail.gmail.com>
-Subject: Re: [PATCH] x86/mm/fault.c: Convert to use vm_fault_t
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     dave.hansen@linux.intel.com, luto@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, bp@alien8.de,
-        "H. Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
-        linux-kernel@vger.kernel.org, Matthew Wilcox <willy@infradead.org>,
-        ak@linux.intel.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain;
+        charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQHS10gH9bp1oZXRh7a3ROcd3vd+NwIerMmLpZmMotA=
+Content-Language: zh-cn
+X-CM-TRANSID: AgBjCgDX3zc8EjZcB5YRCg--.43451S3
+X-Coremail-Antispam: 1UD129KBjvdXoWrurW5tr4rCr4fCw15Zw43KFg_yoWDGrg_Za
+        4IvFyDAa15Wr4DWa45Ca15ZryxKr9ruF18t34kGr12qryvqrZrA3W5W34xu3WIvFn8GrW3
+        Ar4kJa1xAasakjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+        9fnUUIcSsGvfJTRUUUb2xYjsxI4VWxJwAYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I
+        6I8E6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM2
+        8CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0
+        cI8IcVCY1x0267AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4
+        A2jsIEc7CjxVAFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IE
+        w4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMc
+        vjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwCY02Avz4vE14v_XrWl42xK82IY
+        c2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s
+        026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF
+        0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0x
+        vE42xK8VAvwI8IcIk0rVWrJr0_WFyUJwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E
+        87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxU4znQUUUUU
+X-CM-SenderInfo: qsqrijaqrviiqqxyq4lkxovvfxof0/
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 9, 2019 at 8:48 PM Souptick Joarder <jrdr.linux@gmail.com> wrote:
->
-> Convert to use vm_fault_t type for last argument of do_sigbus().
->
-> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
 
-kbuild reported a warning during testing of final vm_fault_t patch integrated
-in mm tree.
+On Wednesday, January 9, 2019 8:14 PM, Matthew Wilcox wrote:
+> On Wed, Jan 09, 2019 at 05:06:27PM +0800, Peng Wang wrote:
+> > calculate_sizes() could be called in several places
+> > like (red_zone/poison/order/store_user)_store() while
+> > random_seq remains unchanged.
+> >
+> > If random_seq is not NULL in calculate_sizes(), re-randomize it.
+> 
+> Why do we want to re-randomise the slab at these points?
 
-[auto build test WARNING on linus/master]
-[also build test WARNING on v5.0-rc1 next-20190109]
-[if your patch is applied to the wrong git tree, please drop us a note
-to help improve the system]
+At these points, s->size might change,
+but random_seq still use the old size and not updated.
 
-url:    https://github.com/0day-ci/linux/commits/Souptick-Joarder/mm-Create-the-new-vm_fault_t-type/20190109-154216
+When doing shuffle_freelist() in allocat_slab(),
+old next object offset would be used. 
 
-This patch has fixed the warning.
+    idx = s->random_seq[*pos];
 
-> ---
->  arch/x86/mm/fault.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
-> index 2ff25ad..dea3725 100644
-> --- a/arch/x86/mm/fault.c
-> +++ b/arch/x86/mm/fault.c
-> @@ -1031,7 +1031,7 @@ static inline bool bad_area_access_from_pkeys(unsigned long error_code,
->
->  static void
->  do_sigbus(struct pt_regs *regs, unsigned long error_code, unsigned long address,
-> -         unsigned int fault)
-> +         vm_fault_t fault)
->  {
->         struct task_struct *tsk = current;
->
-> --
-> 1.9.1
->
+One possible case:
+
+s->size gets smaller, then number of objects in a slab gets bigger.
+The size of s->random_seq array should be bigger but not updated.
+In next_freelist_entry(), *pos might exceed the s->random_seq.
+
+When we get zero value from s->random_seq[*pos] twice after exceeding,
+BUG_ON(object == fp) would be triggered in set_freepointer().
+
+
