@@ -2,271 +2,107 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FAEFC43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 21:31:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F86FC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 21:33:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 08E3D214C6
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 21:31:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="cPC6hURA"
+	by mail.kernel.org (Postfix) with ESMTP id 7274E20685
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 21:33:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726729AbfAIVb2 (ORCPT
+        id S1726545AbfAIVdM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 16:31:28 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:34282 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726221AbfAIVb1 (ORCPT
+        Wed, 9 Jan 2019 16:33:12 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:41542 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726090AbfAIVdL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 16:31:27 -0500
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x09LVLhR005979;
-        Wed, 9 Jan 2019 15:31:21 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1547069481;
-        bh=F/cvwq5YdwTgyrTxrNhyyORsZieESkq2TJLl8571eRo=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=cPC6hURAOl8fQ98YWZNcq7EYyYt5XHrWbNF7o9ujvqrvzrJ1j5/UJVVCrvsTDdElD
-         52VFGJ4SYNrn30349AFnynBgvYNCuH+HI65sK9znjDA7E8e6Cf5Zwaxa2BrDUXyV+r
-         0dcG/2GbdNzUxDeFcv9KvtHIzm2dd8BOGm3toeL0=
-Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x09LVKTQ047359
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 9 Jan 2019 15:31:21 -0600
-Received: from DLEE100.ent.ti.com (157.170.170.30) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Wed, 9
- Jan 2019 15:31:20 -0600
-Received: from dlep32.itg.ti.com (157.170.170.100) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Wed, 9 Jan 2019 15:31:20 -0600
-Received: from [172.22.122.36] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x09LVKfx018553;
-        Wed, 9 Jan 2019 15:31:20 -0600
-Subject: Re: [PATCH 1/2] dt: bindings: lp5024: Introduce the lp5024 and lp5018
- RGB driver
-To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        <robh+dt@kernel.org>, <pavel@ucw.cz>
-CC:     <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-leds@vger.kernel.org>
-References: <20181219162626.12297-1-dmurphy@ti.com>
- <20181219162626.12297-2-dmurphy@ti.com>
- <dc2283f9-db85-1eaf-f046-3fbbd4adcace@gmail.com>
- <2d2d5dcd-9c23-e901-daac-9b79aa5a5e82@ti.com>
- <6c62956e-7789-58ba-5437-f2e033f2825c@gmail.com>
- <366cbf6d-94fa-fea9-be58-07ddb09cff3a@ti.com>
- <df59c10d-7038-cb4a-45f0-7420254c6398@gmail.com>
- <ec0393b7-118e-1f3b-d5af-86ecdf66412a@ti.com>
- <ae700129-7b59-c92b-0c0a-b57a6f230ff7@gmail.com>
-From:   Dan Murphy <dmurphy@ti.com>
-Message-ID: <adcd7987-f7fc-ae1f-9aa4-cebcbf01ad58@ti.com>
-Date:   Wed, 9 Jan 2019 15:31:10 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.3
+        Wed, 9 Jan 2019 16:33:11 -0500
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x09LSZcH022631
+        for <linux-kernel@vger.kernel.org>; Wed, 9 Jan 2019 16:33:11 -0500
+Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2pwq4rmvj5-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Jan 2019 16:33:10 -0500
+Received: from localhost
+        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Wed, 9 Jan 2019 21:33:09 -0000
+Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
+        by e13.ny.us.ibm.com (146.89.104.200) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 9 Jan 2019 21:33:03 -0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x09LX2ek12976296
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 9 Jan 2019 21:33:02 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C0016B206A;
+        Wed,  9 Jan 2019 21:33:02 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A0A9EB2066;
+        Wed,  9 Jan 2019 21:33:02 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.88])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Wed,  9 Jan 2019 21:33:02 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 7717B16C63D3; Wed,  9 Jan 2019 13:33:02 -0800 (PST)
+Date:   Wed, 9 Jan 2019 13:33:02 -0800
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
+        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
+        josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
+        rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
+        fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org
+Subject: [PATCH tip/core/rcu 0/3] Documentation updates for v5.1
+Reply-To: paulmck@linux.ibm.com
 MIME-Version: 1.0
-In-Reply-To: <ae700129-7b59-c92b-0c0a-b57a6f230ff7@gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 19010921-0064-0000-0000-000003941144
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010375; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000274; SDB=6.01144146; UDB=6.00595709; IPR=6.00924409;
+ MB=3.00025056; MTD=3.00000008; XFM=3.00000015; UTC=2019-01-09 21:33:07
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19010921-0065-0000-0000-00003BF96553
+Message-Id: <20190109213302.GA1723@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-09_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=729 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901090171
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Jacek
+Hello!
 
-On 1/9/19 3:28 PM, Jacek Anaszewski wrote:
-> On 1/9/19 10:12 PM, Dan Murphy wrote:
->> On 1/9/19 2:12 PM, Jacek Anaszewski wrote:
->>> Hi Dan,
->>>
->>> On 1/8/19 10:22 PM, Dan Murphy wrote:
->>>> On 1/8/19 3:16 PM, Jacek Anaszewski wrote:
->>>>> On 1/8/19 9:53 PM, Dan Murphy wrote:
->>>>>> Jacek
->>>>>>
->>>>>> On 1/8/19 2:33 PM, Jacek Anaszewski wrote:
->>>>>>> Dan,
->>>>>>>
->>>>>>> On 12/19/18 5:26 PM, Dan Murphy wrote:
->>>>>>>> Introduce the bindings for the Texas Instruments LP5024 and the LP5018
->>>>>>>> RGB LED device driver.  The LP5024/18 can control RGB LEDs individually
->>>>>>>> or as part of a control bank group.  These devices have the ability
->>>>>>>> to adjust the mixing control for the RGB LEDs to obtain different colors
->>>>>>>> independent of the overall brightness of the LED grouping.
->>>>>>>>
->>>>>>>> Datasheet:
->>>>>>>> http://www.ti.com/lit/ds/symlink/lp5024.pdf
->>>>>>>>
->>>>>>>> Signed-off-by: Dan Murphy <dmurphy@ti.com>
->>>>>>>> ---
->>>>>>>>      .../devicetree/bindings/leds/leds-lp5024.txt  | 63 +++++++++++++++++++
->>>>>>>>      1 file changed, 63 insertions(+)
->>>>>>>>      create mode 100644 Documentation/devicetree/bindings/leds/leds-lp5024.txt
->>>>>>>>
->>>>>>>> diff --git a/Documentation/devicetree/bindings/leds/leds-lp5024.txt b/Documentation/devicetree/bindings/leds/leds-lp5024.txt
->>>>>>>> new file mode 100644
->>>>>>>> index 000000000000..9567aa6f7813
->>>>>>>> --- /dev/null
->>>>>>>> +++ b/Documentation/devicetree/bindings/leds/leds-lp5024.txt
->>>>>>>> @@ -0,0 +1,63 @@
->>>>>>>> +* Texas Instruments - LP5024/18 RGB LED driver
->>>>>>>> +
->>>>>>>> +The LM3692x is an ultra-compact, highly efficient,
->>>>>>>> +white-LED driver designed for LCD display backlighting.
->>>>>>>> +
->>>>>>>> +The main difference between the LP5024 and L5018 is the number of
->>>>>>>> +RGB LEDs they support.  The LP5024 supports twenty four strings while the
->>>>>>>> +LP5018 supports eighteen strings.
->>>>>>>> +
->>>>>>>> +Required properties:
->>>>>>>> +    - compatible:
->>>>>>>> +        "ti,lp5018"
->>>>>>>> +        "ti,lp5024"
->>>>>>>> +    - reg :  I2C slave address
->>>>>>>> +    - #address-cells : 1
->>>>>>>> +    - #size-cells : 0
->>>>>>>> +
->>>>>>>> +Optional properties:
->>>>>>>> +    - enable-gpios : gpio pin to enable/disable the device.
->>>>>>>> +    - vled-supply : LED supply
->>>>>>>> +
->>>>>>>> +Required child properties:
->>>>>>>> +    - reg : Is the child node iteration.
->>>>>>>> +    - led-sources : LP5024 - 0 - 7
->>>>>>>> +            LP5018 - 0 - 5
->>>>>>>> +            Declares the LED string or strings that the child node
->>>>>>>> +            will control.  If ti,control-bank is set then this
->>>>>>>> +            property will contain multiple LED IDs.
->>>>>>>> +
->>>>>>>> +Optional child properties:
->>>>>>>> +    - label : see Documentation/devicetree/bindings/leds/common.txt
->>>>>>>> +    - linux,default-trigger :
->>>>>>>> +       see Documentation/devicetree/bindings/leds/common.txt
->>>>>>>> +    - ti,control-bank : Indicates that the LED strings declared in the
->>>>>>>> +                led-sources property are grouped within a control
->>>>>>>> +                bank for brightness and mixing control.
->>>>>>>> +
->>>>>>>> +Example:
->>>>>>>> +
->>>>>>>> +led-controller@28 {
->>>>>>>> +    compatible = "ti,lp5024";
->>>>>>>> +    reg = <0x28>;
->>>>>>>> +    #address-cells = <1>;
->>>>>>>> +    #size-cells = <0>;
->>>>>>>> +
->>>>>>>> +    enable-gpios = <&gpio1 28 GPIO_ACTIVE_HIGH>;
->>>>>>>> +    vled-supply = <&vbatt>;
->>>>>>>> +
->>>>>>>> +    led@0 {
->>>>>>>> +        reg = <0>;
->>>>>>>> +        led-sources = <1>;
->>>>>>>> +    };
->>>>>>>> +
->>>>>>>> +    led@1 {
->>>>>>>> +        reg = <1>;
->>>>>>>> +        led-sources = <0 6>;
->>>>>>>> +        ti,control-bank;
->>>>>>>
->>>>>>> Do you really need ti,control-bank? Doesn't led-sources array size
->>>>>>> greater than 1 mean that the node describes control bank?
->>>>>>>
->>>>>>
->>>>>> That will work too.
->>>>>
->>>>>>> Also, does it make sense to have only two LEDs in the bank?
->>>>>>
->>>>>> The array can populate all 7 LEDs in a single node.  I only show 2 here as the example.
->>>>>> See the description above of the led-sources
->>>>>
->>>>> OK, I confused RGB LED modules with banks.
->>>>>
->>>>> Shouldn't we allow for defining either strings or RGB LED
->>>>> triplets somehow then?
->>>>>
->>>>
->>>> Well that is what this should be doing.  If you define a single LED in LED sources then
->>>> the triplet is controlled via the associated LEDx_brightness register.
->>>
->>> led-sources should map to iouts directly.
->>> So, for RGB LED modules I would expect:
->>>
->>> LED0: led-sources = <0 1 2>;
->>> LED1: led-sources = <3 4 5>;
->>> LED2: led-sources = <6 7 8>;
->>> and so on.
->>
->>>
->>> for banks:
->>>
->>> Bank A with iouts 0,3,6,9: led-sources<0 3 6 9>;
->>> Bank B with iouts 2,4,10:  led-sources<2 4 10>;
->>> Bank C with iouts 5,8,11,14,17: led-sources<5 8 11 14 17>;
->>>
->>
->> Ok the led-sources would need to be different then this as I don't define the sources for banks.
->>
->> The led-sources for the banks and the individual groups will have different meanings within the same
->> document.  I was attempting to keep the led-sources mapped to the LEDx_brightness registers as opposed to
->> the hardware outputs since the RGB LEDs are controlled and grouped by a single brightness register and if banked then
->> it would be controlled by the bank brightness register.
->>
->> Describing these in the DT seems wrought with potential issues as the data sheet defines what outputs map to what bank and LED
->> registers.
-> 
-> Yes, that's why I mentioned the need for validation of led-sources.
-> But they have to be iouts. This property was introduced specifically
-> for such purposes.
-> 
+This series contains RCU documentation updates:
 
-Yes Pavel also mentioned that as well.
+1.	Record the fact that jiffies_till_sched_qs solicits help from
+	cond_resched().
 
-I will look into validating the sources.  But there will be no mapping of the sources to the output that is done
-in the hardware.  This would just be a data sheet mapping since the outputs are not configurable.
+2.	Document that CPU-hotplug notifiers cannot invoke
+	synchronize_srcu() or srcu_barrier().
 
-Dan
+3.	Fix outdated links, courtesy of Junchang Wang.
 
-> common LED bindings say:
-> 
-> - led-sources : List of device current outputs the LED is connected to. The
->                 outputs are identified by the numbers that must be defined
->                 in the LED device binding documentation.
-> 
->>> We could additionally mark banks with ti,control-bank,
->>
->> We would have to keep the ti,control-bank node based on the above.
->>
->>> but I'm not sure if it would ease parsing, since
->>> you will have to validate iouts configuration anyway.
->>>
->>>> If you have multiple LED sources defined in the led-sources then those LEDs would be grouped in the bank.
->>>> I guess I need to provide some protection or a warning if a DT defines two banks because there is only one bank control.
->>>
->>> Does the hardware allow the IOUT to belong to an RGB LED module
->>> and to a bank in the same time?
->>>
->>
->> No it does not.  LED_CONFIG0 sets the bit if it is control bank or not.
-> 
-> OK, so validation will also have to check if led-sources definitions
-> are not mutually exclusive between child DT nodes. For consistency it
-> would be really better if bank definitions also used led-sources.
-> 
->> Section 8.3.2 in the data sheet says
->> "When a channel is configured in
->> LED bank-control mode, the related color mixing and intensity control is governed by the bank control registers
->> (BANK_A_COLOR, BANK_B_COLOR, BANK_C_COLOR, and BANK_BRIGHTNESS) regardless of the inputs
->> on its own color-mixing and intensity-control registers."
->>
-> 
+							Thanx, Paul
 
+------------------------------------------------------------------------
 
--- 
-------------------
-Dan Murphy
+ RCU/Design/Requirements/Requirements.html |   20 +++++++++++++-------
+ RCU/whatisRCU.txt                         |    4 ++--
+ admin-guide/kernel-parameters.txt         |   27 ++++++++++++++-------------
+ 3 files changed, 29 insertions(+), 22 deletions(-)
+
