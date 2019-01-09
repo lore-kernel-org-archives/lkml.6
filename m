@@ -2,106 +2,343 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0612C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 08:40:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4321FC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 08:40:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F22C20821
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 08:40:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547023235;
-	bh=iuP91Lkge1Hs9U3eDxABQD0l4ZfrpUneT0U1FKhKJdg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=iQGFJI4vksnaBpZM1+p8PiTJwRt0JHpLvTSYPwmxiJJ4ewJwfPsQ5XDtjaoOEDSSH
-	 RO+ffW6Y8QKcLrpP6mdAOb6QG6/cISKvyVqFOC0jH1xd23nxmH7lfcumgJo2zJkamA
-	 RHCVdrXNrmsZc2TVNJrqRJgdz3kY+EBpt9PJA7vQ=
+	by mail.kernel.org (Postfix) with ESMTP id 10E5820821
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 08:40:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730092AbfAIIke (ORCPT
+        id S1730111AbfAIIkg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 9 Jan 2019 03:40:36 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:42568 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729783AbfAIIke (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 9 Jan 2019 03:40:34 -0500
-Received: from mx2.suse.de ([195.135.220.15]:55986 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729612AbfAIIke (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 03:40:34 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id D79FCAFDE;
-        Wed,  9 Jan 2019 08:40:32 +0000 (UTC)
-Date:   Wed, 9 Jan 2019 09:40:31 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Arun KS <arunks@codeaurora.org>
-Cc:     Alexander Duyck <alexander.h.duyck@linux.intel.com>,
-        arunks.linux@gmail.com, akpm@linux-foundation.org, vbabka@suse.cz,
-        osalvador@suse.de, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, getarunks@gmail.com
-Subject: Re: [PATCH v7] mm/page_alloc.c: memory_hotplug: free pages as higher
- order
-Message-ID: <20190109084031.GN31793@dhcp22.suse.cz>
-References: <1546578076-31716-1-git-send-email-arunks@codeaurora.org>
- <fb6465c99b3ada2c6af587a7eb00016d96d56f77.camel@linux.intel.com>
- <20190108181352.GI31793@dhcp22.suse.cz>
- <bfb543b6e343c21c3e263a110f234e08@codeaurora.org>
- <20190109073718.GM31793@dhcp22.suse.cz>
- <a053bd9b93e71baae042cdfc3432f945@codeaurora.org>
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x098dJ9h031094
+        for <linux-kernel@vger.kernel.org>; Wed, 9 Jan 2019 03:40:33 -0500
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2pwagp7h19-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Jan 2019 03:40:33 -0500
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <aneesh.kumar@linux.ibm.com>;
+        Wed, 9 Jan 2019 08:40:31 -0000
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 9 Jan 2019 08:40:27 -0000
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x098eQeh57475092
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 9 Jan 2019 08:40:26 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7E22B52054;
+        Wed,  9 Jan 2019 08:40:26 +0000 (GMT)
+Received: from skywalker.linux.ibm.com (unknown [9.199.42.126])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 439425204E;
+        Wed,  9 Jan 2019 08:40:24 +0000 (GMT)
+X-Mailer: emacs 26.1 (via feedmail 11-beta-1 I)
+From:   "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
+To:     Andrea Arcangeli <aarcange@redhat.com>
+Cc:     akpm@linux-foundation.org, Michal Hocko <mhocko@kernel.org>,
+        Alexey Kardashevskiy <aik@ozlabs.ru>,
+        David Gibson <david@gibson.dropbear.id.au>, mpe@ellerman.id.au,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH V6 3/4] powerpc/mm/iommu: Allow migration of cma allocated pages during mm_iommu_get
+In-Reply-To: <20190109015359.GE20586@redhat.com>
+References: <20190108045110.28597-1-aneesh.kumar@linux.ibm.com> <20190108045110.28597-4-aneesh.kumar@linux.ibm.com> <20190109015359.GE20586@redhat.com>
+Date:   Wed, 09 Jan 2019 14:10:22 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a053bd9b93e71baae042cdfc3432f945@codeaurora.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-TM-AS-GCONF: 00
+x-cbid: 19010908-0008-0000-0000-000002AE3337
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19010908-0009-0000-0000-0000221A3437
+Message-Id: <87a7kajkax.fsf@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-09_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901090075
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 09-01-19 13:58:50, Arun KS wrote:
-> On 2019-01-09 13:07, Michal Hocko wrote:
-> > On Wed 09-01-19 11:28:52, Arun KS wrote:
-> > > On 2019-01-08 23:43, Michal Hocko wrote:
-> > > > On Tue 08-01-19 09:56:09, Alexander Duyck wrote:
-> > > > > On Fri, 2019-01-04 at 10:31 +0530, Arun KS wrote:
-> > > > [...]
-> > > > > >  static int online_pages_range(unsigned long start_pfn, unsigned long nr_pages,
-> > > > > >  			void *arg)
-> > > > > >  {
-> > > > > > -	unsigned long i;
-> > > > > >  	unsigned long onlined_pages = *(unsigned long *)arg;
-> > > > > > -	struct page *page;
-> > > > > >
-> > > > > >  	if (PageReserved(pfn_to_page(start_pfn)))
-> > > > > > -		for (i = 0; i < nr_pages; i++) {
-> > > > > > -			page = pfn_to_page(start_pfn + i);
-> > > > > > -			(*online_page_callback)(page);
-> > > > > > -			onlined_pages++;
-> > > > > > -		}
-> > > > > > +		onlined_pages = online_pages_blocks(start_pfn, nr_pages);
-> > > > >
-> > > > > Shouldn't this be a "+=" instead of an "="? It seems like you are
-> > > > > going
-> > > > > to lose your count otherwise.
-> > > >
-> > > > You are right of course. I should have noticed during the review.
-> > > > Thanks!
-> > > 
-> > > I think we don't need to. The caller function is setting
-> > > onlined_pages = 0
-> > > before calling online_pages_range().
-> > > And there are no other reference to online_pages_range other than from
-> > > online_pages().
-> > 
-> > Are you missing that we accumulate onlined_pages via
-> > 	*(unsigned long *)arg = onlined_pages;
-> > in online_pages_range?
-> 
-> In my testing I didn't find any problem. To match the code being replaced
-> and to avoid any corner cases, it is better to use +=
-> Will update the patch.
+Andrea Arcangeli <aarcange@redhat.com> writes:
 
-Have you checked that the number of present pages both in the zone and
-the node is correct because I fail to see how that would be possible.
+> Hello,
+>
+> On Tue, Jan 08, 2019 at 10:21:09AM +0530, Aneesh Kumar K.V wrote:
+>> @@ -187,41 +149,25 @@ static long mm_iommu_do_alloc(struct mm_struct *mm, unsigned long ua,
+>>  		goto unlock_exit;
+>>  	}
+>>  
+>> +	ret = get_user_pages_cma_migrate(ua, entries, 1, mem->hpages);
+>
+> In terms of gup APIs, I've been wondering if this shall become
+> get_user_pages_longerm(FOLL_CMA_MIGRATE). So basically moving this
+> CMA migrate logic inside get_user_pages_longerm.
 
--- 
-Michal Hocko
-SUSE Labs
+Do we need the FOLL_CMA_MIGRATE flag? Wondering whether a long term pin
+won't imply a CMA migrate? What is the benefit of that FOLL_CMA_MIGRATE
+flags. We can do better by taking a list of pages for migration and I
+guess it is much simpler if we limit that migration logic to
+get_user_pages_longterm()?
+
+I ended up with something like below. Do you suggest we should add those
+isolate_lru and other details via FOLL_CMA_MIGRATE flag and do that when
+we take the page reference instead of doing this by iterating the page array in
+get_user_pages_longterm as in the below diff?
+
+diff --git a/mm/gup.c b/mm/gup.c
+index 05acd7e2eb22..6e8152594e83 100644
+--- a/mm/gup.c
++++ b/mm/gup.c
+@@ -13,6 +13,9 @@
+ #include <linux/sched/signal.h>
+ #include <linux/rwsem.h>
+ #include <linux/hugetlb.h>
++#include <linux/migrate.h>
++#include <linux/mm_inline.h>
++#include <linux/sched/mm.h>
+ 
+ #include <asm/mmu_context.h>
+ #include <asm/pgtable.h>
+@@ -1126,7 +1129,167 @@ long get_user_pages(unsigned long start, unsigned long nr_pages,
+ }
+ EXPORT_SYMBOL(get_user_pages);
+ 
++#if defined(CONFIG_FS_DAX) || defined (CONFIG_CMA)
++
+ #ifdef CONFIG_FS_DAX
++static bool check_dax_vmas(struct vm_area_struct **vmas, long nr_pages)
++{
++	long i;
++	struct vm_area_struct *vma_prev = NULL;
++
++	for (i = 0; i < nr_pages; i++) {
++		struct vm_area_struct *vma = vmas[i];
++
++		if (vma == vma_prev)
++			continue;
++
++		vma_prev = vma;
++
++		if (vma_is_fsdax(vma))
++			return true;
++	}
++	return false;
++}
++#else
++static inline bool check_dax_vmas(struct vm_area_struct **vmas, long nr_pages)
++{
++	return false;
++}
++#endif
++
++#ifdef CONFIG_CMA
++static struct page *new_non_cma_page(struct page *page, unsigned long private)
++{
++	/*
++	 * We want to make sure we allocate the new page from the same node
++	 * as the source page.
++	 */
++	int nid = page_to_nid(page);
++	/*
++	 * Trying to allocate a page for migration. Ignore allocation
++	 * failure warnings. We don't force __GFP_THISNODE here because
++	 * this node here is the node where we have CMA reservation and
++	 * in some case these nodes will have really less non movable
++	 * allocation memory.
++	 */
++	gfp_t gfp_mask = GFP_USER | __GFP_NOWARN;
++
++	if (PageHighMem(page))
++		gfp_mask |= __GFP_HIGHMEM;
++
++#ifdef CONFIG_HUGETLB_PAGE
++	if (PageHuge(page)) {
++		struct hstate *h = page_hstate(page);
++		/*
++		 * We don't want to dequeue from the pool because pool pages will
++		 * mostly be from the CMA region.
++		 */
++		return alloc_migrate_huge_page(h, gfp_mask, nid, NULL);
++	}
++#endif
++	if (PageTransHuge(page)) {
++		struct page *thp;
++		/*
++		 * ignore allocation failure warnings
++		 */
++		gfp_t thp_gfpmask = GFP_TRANSHUGE | __GFP_NOWARN;
++
++		/*
++		 * Remove the movable mask so that we don't allocate from
++		 * CMA area again.
++		 */
++		thp_gfpmask &= ~__GFP_MOVABLE;
++		thp = __alloc_pages_node(nid, thp_gfpmask, HPAGE_PMD_ORDER);
++		if (!thp)
++			return NULL;
++		prep_transhuge_page(thp);
++		return thp;
++	}
++
++	return __alloc_pages_node(nid, gfp_mask, 0);
++}
++
++static long check_and_migrate_cma_pages(unsigned long start, long nr_pages,
++					unsigned int gup_flags,
++					struct page **pages,
++					struct vm_area_struct **vmas)
++{
++	long i;
++	bool drain_allow = true;
++	bool migrate_allow = true;
++	LIST_HEAD(cma_page_list);
++
++check_again:
++	for (i = 0; i < nr_pages; i++) {
++		/*
++		 * If we get a page from the CMA zone, since we are going to
++		 * be pinning these entries, we might as well move them out
++		 * of the CMA zone if possible.
++		 */
++		if (is_migrate_cma_page(pages[i])) {
++
++			struct page *head = compound_head(pages[i]);
++
++			if (PageHuge(head)) {
++				isolate_huge_page(head, &cma_page_list);
++			} else {
++				if (!PageLRU(head) && drain_allow) {
++					lru_add_drain_all();
++					drain_allow = false;
++				}
++
++				if (!isolate_lru_page(head)) {
++					list_add_tail(&head->lru, &cma_page_list);
++					mod_node_page_state(page_pgdat(head),
++							    NR_ISOLATED_ANON +
++							    page_is_file_cache(head),
++							    hpage_nr_pages(head));
++				}
++			}
++		}
++	}
++
++	if (!list_empty(&cma_page_list)) {
++		/*
++		 * drop the above get_user_pages reference.
++		 */
++		for (i = 0; i < nr_pages; i++)
++			put_page(pages[i]);
++
++		if (migrate_pages(&cma_page_list, new_non_cma_page,
++				  NULL, 0, MIGRATE_SYNC, MR_CONTIG_RANGE)) {
++			/*
++			 * some of the pages failed migration. Do get_user_pages
++			 * without migration.
++			 */
++			migrate_allow = false;
++
++			if (!list_empty(&cma_page_list))
++				putback_movable_pages(&cma_page_list);
++		}
++		/*
++		 * We did migrate all the pages, Try to get the page references again
++		 * migrating any new CMA pages which we failed to isolate earlier.
++		 */
++		nr_pages = get_user_pages(start, nr_pages, gup_flags, pages, vmas);
++		if ((nr_pages > 0) && migrate_allow) {
++			drain_allow = true;
++			goto check_again;
++		}
++	}
++
++	return nr_pages;
++}
++#else
++static inline long check_and_migrate_cma_pages(unsigned long start, long nr_pages,
++					       unsigned int gup_flags,
++					       struct page **pages,
++					       struct vm_area_struct **vmas)
++{
++	return nr_pages;
++}
++#endif
++
+ /*
+  * This is the same as get_user_pages() in that it assumes we are
+  * operating on the current task's mm, but it goes further to validate
+@@ -1140,11 +1303,11 @@ EXPORT_SYMBOL(get_user_pages);
+  * Contrast this to iov_iter_get_pages() usages which are transient.
+  */
+ long get_user_pages_longterm(unsigned long start, unsigned long nr_pages,
+-		unsigned int gup_flags, struct page **pages,
+-		struct vm_area_struct **vmas_arg)
++			     unsigned int gup_flags, struct page **pages,
++			     struct vm_area_struct **vmas_arg)
+ {
+ 	struct vm_area_struct **vmas = vmas_arg;
+-	struct vm_area_struct *vma_prev = NULL;
++	unsigned long flags;
+ 	long rc, i;
+ 
+ 	if (!pages)
+@@ -1157,31 +1320,20 @@ long get_user_pages_longterm(unsigned long start, unsigned long nr_pages,
+ 			return -ENOMEM;
+ 	}
+ 
++	flags = memalloc_nocma_save();
+ 	rc = get_user_pages(start, nr_pages, gup_flags, pages, vmas);
++	memalloc_nocma_restore(flags);
++	if (rc < 0)
++		goto out;
+ 
+-	for (i = 0; i < rc; i++) {
+-		struct vm_area_struct *vma = vmas[i];
+-
+-		if (vma == vma_prev)
+-			continue;
+-
+-		vma_prev = vma;
+-
+-		if (vma_is_fsdax(vma))
+-			break;
+-	}
+-
+-	/*
+-	 * Either get_user_pages() failed, or the vma validation
+-	 * succeeded, in either case we don't need to put_page() before
+-	 * returning.
+-	 */
+-	if (i >= rc)
++	if (check_dax_vmas(vmas, rc)) {
++		for (i = 0; i < rc; i++)
++			put_page(pages[i]);
++		rc = -EOPNOTSUPP;
+ 		goto out;
++	}
+ 
+-	for (i = 0; i < rc; i++)
+-		put_page(pages[i]);
+-	rc = -EOPNOTSUPP;
++	rc = check_and_migrate_cma_pages(start, rc, gup_flags, pages, vmas);
+ out:
+ 	if (vmas != vmas_arg)
+ 		kfree(vmas);
+
