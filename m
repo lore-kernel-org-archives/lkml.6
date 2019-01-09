@@ -6,23 +6,23 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8F57C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 12:44:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5983DC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 12:44:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 80351206B6
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 12:44:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 30A70206B6
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 12:44:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731214AbfAIMnr (ORCPT
+        id S1730829AbfAIMoc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 07:43:47 -0500
-Received: from mx2.suse.de ([195.135.220.15]:42746 "EHLO mx1.suse.de"
+        Wed, 9 Jan 2019 07:44:32 -0500
+Received: from mx2.suse.de ([195.135.220.15]:42860 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730145AbfAIMno (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 07:43:44 -0500
+        id S1730720AbfAIMnr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 07:43:47 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 902CBAECF;
-        Wed,  9 Jan 2019 12:43:42 +0000 (UTC)
+        by mx1.suse.de (Postfix) with ESMTP id 7C31FAFA0;
+        Wed,  9 Jan 2019 12:43:45 +0000 (UTC)
 From:   Petr Mladek <pmladek@suse.com>
 To:     Jiri Kosina <jikos@kernel.org>,
         Josh Poimboeuf <jpoimboe@redhat.com>,
@@ -32,9 +32,9 @@ Cc:     Jason Baron <jbaron@akamai.com>,
         Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
         live-patching@vger.kernel.org, linux-kernel@vger.kernel.org,
         Petr Mladek <pmladek@suse.com>
-Subject: [PATCH v15 04/11] livepatch: Don't block the removal of patches loaded after a forced transition
-Date:   Wed,  9 Jan 2019 13:43:22 +0100
-Message-Id: <20190109124329.21991-5-pmladek@suse.com>
+Subject: [PATCH v15 09/11] livepatch: Atomic replace and cumulative patches documentation
+Date:   Wed,  9 Jan 2019 13:43:27 +0100
+Message-Id: <20190109124329.21991-10-pmladek@suse.com>
 X-Mailer: git-send-email 2.13.7
 In-Reply-To: <20190109124329.21991-1-pmladek@suse.com>
 References: <20190109124329.21991-1-pmladek@suse.com>
@@ -43,128 +43,142 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-module_put() is currently never called in klp_complete_transition() when
-klp_force is set. As a result, we might keep the reference count even when
-klp_enable_patch() fails and klp_cancel_transition() is called.
-
-This might give the impression that a module might get blocked in some
-strange init state. Fortunately, it is not the case. The reference count
-is ignored when mod->init fails and erroneous modules are always removed.
-
-Anyway, this might be confusing. Instead, this patch moves
-the global klp_forced flag into struct klp_patch. As a result,
-we block only modules that might still be in use after a forced
-transition. Newly loaded livepatches might be eventually completely
-removed later.
-
-It is not a big deal. But the code is at least consistent with
-the reality.
+User documentation for the atomic replace feature. It makes it easier
+to maintain livepatches using so-called cumulative patches.
 
 Signed-off-by: Petr Mladek <pmladek@suse.com>
+Acked-by: Miroslav Benes <mbenes@suse.cz>
 Acked-by: Joe Lawrence <joe.lawrence@redhat.com>
 ---
- include/linux/livepatch.h     |  2 ++
- kernel/livepatch/core.c       |  4 +++-
- kernel/livepatch/core.h       |  1 +
- kernel/livepatch/transition.c | 10 +++++-----
- 4 files changed, 11 insertions(+), 6 deletions(-)
+ Documentation/livepatch/cumulative-patches.txt | 105 +++++++++++++++++++++++++
+ Documentation/livepatch/livepatch.txt          |   2 +
+ 2 files changed, 107 insertions(+)
+ create mode 100644 Documentation/livepatch/cumulative-patches.txt
 
-diff --git a/include/linux/livepatch.h b/include/linux/livepatch.h
-index 6978785bc059..6a9165d9b090 100644
---- a/include/linux/livepatch.h
-+++ b/include/linux/livepatch.h
-@@ -143,6 +143,7 @@ struct klp_object {
-  * @kobj:	kobject for sysfs resources
-  * @kobj_added: @kobj has been added and needs freeing
-  * @enabled:	the patch is enabled (but operation may be incomplete)
-+ * @forced:	was involved in a forced transition
-  * @finish:	for waiting till it is safe to remove the patch module
-  */
- struct klp_patch {
-@@ -155,6 +156,7 @@ struct klp_patch {
- 	struct kobject kobj;
- 	bool kobj_added;
- 	bool enabled;
-+	bool forced;
- 	struct completion finish;
- };
+diff --git a/Documentation/livepatch/cumulative-patches.txt b/Documentation/livepatch/cumulative-patches.txt
+new file mode 100644
+index 000000000000..e7cf5be69f23
+--- /dev/null
++++ b/Documentation/livepatch/cumulative-patches.txt
+@@ -0,0 +1,105 @@
++===================================
++Atomic Replace & Cumulative Patches
++===================================
++
++There might be dependencies between livepatches. If multiple patches need
++to do different changes to the same function(s) then we need to define
++an order in which the patches will be installed. And function implementations
++from any newer livepatch must be done on top of the older ones.
++
++This might become a maintenance nightmare. Especially if anyone would want
++to remove a patch that is in the middle of the stack.
++
++An elegant solution comes with the feature called "Atomic Replace". It allows
++creation of so called "Cumulative Patches". They include all wanted changes
++from all older livepatches and completely replace them in one transition.
++
++Usage
++-----
++
++The atomic replace can be enabled by setting "replace" flag in struct klp_patch,
++for example:
++
++	static struct klp_patch patch = {
++		.mod = THIS_MODULE,
++		.objs = objs,
++		.replace = true,
++	};
++
++Such a patch is added on top of the livepatch stack when enabled.
++
++All processes are then migrated to use the code only from the new patch.
++Once the transition is finished, all older patches are automatically
++disabled and removed from the stack of patches.
++
++Ftrace handlers are transparently removed from functions that are no
++longer modified by the new cumulative patch.
++
++As a result, the livepatch authors might maintain sources only for one
++cumulative patch. It helps to keep the patch consistent while adding or
++removing various fixes or features.
++
++Users could keep only the last patch installed on the system after
++the transition to has finished. It helps to clearly see what code is
++actually in use. Also the livepatch might then be seen as a "normal"
++module that modifies the kernel behavior. The only difference is that
++it can be updated at runtime without breaking its functionality.
++
++
++Features
++--------
++
++The atomic replace allows:
++
++  + Atomically revert some functions in a previous patch while
++    upgrading other functions.
++
++  + Remove eventual performance impact caused by core redirection
++    for functions that are no longer patched.
++
++  + Decrease user confusion about stacking order and what code
++    is actually in use.
++
++
++Limitations:
++------------
++
++  + Once the operation finishes, there is no straightforward way
++    to reverse it and restore the replaced patches atomically.
++
++    A good practice is to set .replace flag in any released livepatch.
++    Then re-adding an older livepatch is equivalent to downgrading
++    to that patch. This is safe as long as the livepatches do _not_ do
++    extra modifications in (un)patching callbacks or in the module_init()
++    or module_exit() functions, see below.
++
++    Also note that the replaced patch can be removed and loaded again
++    only when the transition was not forced.
++
++
++  + Only the (un)patching callbacks from the _new_ cumulative livepatch are
++    executed. Any callbacks from the replaced patches are ignored.
++
++    In other words, the cumulative patch is responsible for doing any actions
++    that are necessary to properly replace any older patch.
++
++    As a result, it might be dangerous to replace newer cumulative patches by
++    older ones. The old livepatches might not provide the necessary callbacks.
++
++    This might be seen as a limitation in some scenarios. But it makes life
++    easier in many others. Only the new cumulative livepatch knows what
++    fixes/features are added/removed and what special actions are necessary
++    for a smooth transition.
++
++    In any case, it would be a nightmare to think about the order of
++    the various callbacks and their interactions if the callbacks from all
++    enabled patches were called.
++
++
++  + There is no special handling of shadow variables. Livepatch authors
++    must create their own rules how to pass them from one cumulative
++    patch to the other. Especially that they should not blindly remove
++    them in module_exit() functions.
++
++    A good practice might be to remove shadow variables in the post-unpatch
++    callback. It is called only when the livepatch is properly disabled.
+diff --git a/Documentation/livepatch/livepatch.txt b/Documentation/livepatch/livepatch.txt
+index 2a70f43166f6..6f32d6ea2fcb 100644
+--- a/Documentation/livepatch/livepatch.txt
++++ b/Documentation/livepatch/livepatch.txt
+@@ -365,6 +365,8 @@ the ftrace handler is unregistered and the struct klp_ops is
+ freed when the related function is not modified by the new patch
+ and func_stack list becomes empty.
  
-diff --git a/kernel/livepatch/core.c b/kernel/livepatch/core.c
-index 6f0d9095f662..e77c5017ae0c 100644
---- a/kernel/livepatch/core.c
-+++ b/kernel/livepatch/core.c
-@@ -45,7 +45,8 @@
-  */
- DEFINE_MUTEX(klp_mutex);
++See Documentation/livepatch/cumulative-patches.txt for more details.
++
  
--static LIST_HEAD(klp_patches);
-+/* Registered patches */
-+LIST_HEAD(klp_patches);
- 
- static struct kobject *klp_root_kobj;
- 
-@@ -659,6 +660,7 @@ static int klp_init_patch_early(struct klp_patch *patch)
- 	INIT_LIST_HEAD(&patch->list);
- 	patch->kobj_added = false;
- 	patch->enabled = false;
-+	patch->forced = false;
- 	init_completion(&patch->finish);
- 
- 	klp_for_each_object(patch, obj) {
-diff --git a/kernel/livepatch/core.h b/kernel/livepatch/core.h
-index 48a83d4364cf..d0cb5390e247 100644
---- a/kernel/livepatch/core.h
-+++ b/kernel/livepatch/core.h
-@@ -5,6 +5,7 @@
- #include <linux/livepatch.h>
- 
- extern struct mutex klp_mutex;
-+extern struct list_head klp_patches;
- 
- static inline bool klp_is_object_loaded(struct klp_object *obj)
- {
-diff --git a/kernel/livepatch/transition.c b/kernel/livepatch/transition.c
-index f27a378ad5e1..a4c921364003 100644
---- a/kernel/livepatch/transition.c
-+++ b/kernel/livepatch/transition.c
-@@ -33,8 +33,6 @@ struct klp_patch *klp_transition_patch;
- 
- static int klp_target_state = KLP_UNDEFINED;
- 
--static bool klp_forced = false;
--
- /*
-  * This work can be performed periodically to finish patching or unpatching any
-  * "straggler" tasks which failed to transition in the first attempt.
-@@ -137,10 +135,10 @@ static void klp_complete_transition(void)
- 		  klp_target_state == KLP_PATCHED ? "patching" : "unpatching");
- 
- 	/*
--	 * klp_forced set implies unbounded increase of module's ref count if
-+	 * patch->forced set implies unbounded increase of module's ref count if
- 	 * the module is disabled/enabled in a loop.
- 	 */
--	if (!klp_forced && klp_target_state == KLP_UNPATCHED)
-+	if (!klp_transition_patch->forced && klp_target_state == KLP_UNPATCHED)
- 		module_put(klp_transition_patch->mod);
- 
- 	klp_target_state = KLP_UNDEFINED;
-@@ -620,6 +618,7 @@ void klp_send_signals(void)
-  */
- void klp_force_transition(void)
- {
-+	struct klp_patch *patch;
- 	struct task_struct *g, *task;
- 	unsigned int cpu;
- 
-@@ -633,5 +632,6 @@ void klp_force_transition(void)
- 	for_each_possible_cpu(cpu)
- 		klp_update_patch_state(idle_task(cpu));
- 
--	klp_forced = true;
-+	list_for_each_entry(patch, &klp_patches, list)
-+		patch->forced = true;
- }
+ 5.4. Disabling
+ --------------
 -- 
 2.13.7
 
