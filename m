@@ -2,174 +2,375 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79B88C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 21:20:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AD15C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 21:20:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 48DB22075C
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 21:20:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C3AD22075C
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 21:20:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="a/UzS9AR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727151AbfAIVUB (ORCPT
+        id S1727185AbfAIVUQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 16:20:01 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:36718 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726657AbfAIVTA (ORCPT
+        Wed, 9 Jan 2019 16:20:16 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:39774 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726657AbfAIVUP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 16:19:00 -0500
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x09LImgQ174235
-        for <linux-kernel@vger.kernel.org>; Wed, 9 Jan 2019 16:18:59 -0500
-Received: from e15.ny.us.ibm.com (e15.ny.us.ibm.com [129.33.205.205])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2pwq2x4j8w-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jan 2019 16:18:59 -0500
-Received: from localhost
-        by e15.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Wed, 9 Jan 2019 21:18:58 -0000
-Received: from b01cxnp22035.gho.pok.ibm.com (9.57.198.25)
-        by e15.ny.us.ibm.com (146.89.104.202) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 9 Jan 2019 21:18:53 -0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x09LIqXE15794224
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 9 Jan 2019 21:18:52 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B5A51B2064;
-        Wed,  9 Jan 2019 21:18:52 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 838FBB206A;
-        Wed,  9 Jan 2019 21:18:52 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.88])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Wed,  9 Jan 2019 21:18:52 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 553DC16C63FE; Wed,  9 Jan 2019 13:18:52 -0800 (PST)
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
-        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
-        josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
-        rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
-        fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>
-Subject: [PATCH tip/core/rcu 05/12] rcu: Inline force_quiescent_state() into rcu_force_quiescent_state()
-Date:   Wed,  9 Jan 2019 13:18:43 -0800
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190109211830.GA30595@linux.ibm.com>
-References: <20190109211830.GA30595@linux.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 19010921-0068-0000-0000-000003800516
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010374; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000274; SDB=6.01144142; UDB=6.00595706; IPR=6.00924404;
- MB=3.00025056; MTD=3.00000008; XFM=3.00000015; UTC=2019-01-09 21:18:58
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19010921-0069-0000-0000-000047121E1A
-Message-Id: <20190109211850.31599-5-paulmck@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-09_10:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901090170
+        Wed, 9 Jan 2019 16:20:15 -0500
+Received: by mail-ed1-f67.google.com with SMTP id b14so8497934edt.6
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Jan 2019 13:20:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition
+         :content-transfer-encoding:in-reply-to:user-agent;
+        bh=DTa8rsS6M9IwkOdyknCOGGHqjIMGtC/5eFA19O2kuTg=;
+        b=a/UzS9ARRfERHIgkIFtoseTSSKOEWMbsPsl16IhkKYmG8FAqGybUFIc74gx1fGyoMZ
+         nnLdgFA6pi2RovYJWE6XMpmfoe23V0LF+4qIuNP2sd+DtZD/crrzmWGVOKfJFrQrymgi
+         yTKYgvg8cdCwE5mSloBWIYFfU0FEK3niAV+Rc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :content-transfer-encoding:in-reply-to:user-agent;
+        bh=DTa8rsS6M9IwkOdyknCOGGHqjIMGtC/5eFA19O2kuTg=;
+        b=qRdXDwTRE1W1m96Qd+hJPIFLPEiKK7nzdLay76XdvXl9dF0m5/QQYwJ9ZPXFQnFdS4
+         lWg2M75n3ZZcjoybOereA+WmHgiTVGZTYA2yX5LCjW0/3D+HoRIM4Tcc3npBTl2WT8P2
+         JlRCFpjUTaY+w1cyKQo1vuRWHWDmOxP99UP9mZESSovLEstALJX7y1b4F1LByeOqU4yI
+         HiK/RKhVCw4JUuh4KxVxhVNjCOQohxfQD4y61VYof1Z+5HiWoFMOIf2Wg85XTfP4SvHc
+         gBbtyzehgafytFNRXQM2DzwiuxJYd8iFQ3pMxh0Y1ji2qVdW6dhz7WBzA/6CX+/N0z/D
+         Y6hQ==
+X-Gm-Message-State: AJcUukctzrTso08fr7X7kYTnJBNdO8DY7YomHQ+f6t+hk6nxiFQERpNo
+        nwTHIZhoFpzVd6mhOa5pMp1T0w==
+X-Google-Smtp-Source: ALg8bN7Mc5QnHuS8jItL8/qE7wxETVTwUHYEo/Mm0N4+Y67PHOA2K+lXd+ZQRD3QmPziUvxePBWS0Q==
+X-Received: by 2002:aa7:dc51:: with SMTP id g17mr7165994edu.115.1547068812088;
+        Wed, 09 Jan 2019 13:20:12 -0800 (PST)
+Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
+        by smtp.gmail.com with ESMTPSA id f20sm1617829edf.19.2019.01.09.13.20.10
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 09 Jan 2019 13:20:11 -0800 (PST)
+Date:   Wed, 9 Jan 2019 22:20:09 +0100
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Sam Ravnborg <sam@ravnborg.org>
+Cc:     Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@linux.ie>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>,
+        David Lechner <david@lechnology.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Noralf =?iso-8859-1?Q?Tr=F8nnes?= <noralf@tronnes.org>,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        Rob Clark <robdclark@gmail.com>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Eric Anholt <eric@anholt.net>
+Subject: Re: [PATCH v3 04/12] drm: move drm_can_sleep() to drm_util.h
+Message-ID: <20190109212008.GY21184@phenom.ffwll.local>
+Mail-Followup-To: Sam Ravnborg <sam@ravnborg.org>,
+        David Airlie <airlied@linux.ie>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, David Lechner <david@lechnology.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Noralf =?iso-8859-1?Q?Tr=F8nnes?= <noralf@tronnes.org>,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
+        Gerd Hoffmann <kraxel@redhat.com>, Rob Clark <robdclark@gmail.com>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Eric Anholt <eric@anholt.net>
+References: <20190108192939.15255-1-sam@ravnborg.org>
+ <20190108192939.15255-5-sam@ravnborg.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190108192939.15255-5-sam@ravnborg.org>
+X-Operating-System: Linux phenom 4.18.0-2-amd64 
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Given that rcu_force_quiescent_state() is a simple wrapper around
-force_quiescent_state(), this commit saves a few lines of code by
-inlining force_quiescent_state() into rcu_force_quiescent_state(),
-and changing all references to force_quiescent_state() to instead
-invoke rcu_force_quiescent_state().
+On Tue, Jan 08, 2019 at 08:29:31PM +0100, Sam Ravnborg wrote:
+> Move drm_can_sleep() out of drmP.h to allow users
+> to get rid of the drmP.h include.
+> 
+> There was no header file that was a good match for this helper function.
+> So add this to drm_util with the relevant includes.
+> 
+> Update comments to use kernel-doc style.
+> Add FIXME to drm_can_sleep and add note
+> that this function should not be used in new code
+> 
+> Add include of drm_util.h to all users.
+> 
+> Signed-off-by: Sam Ravnborg <sam@ravnborg.org>
+> Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+> Cc: Maxime Ripard <maxime.ripard@bootlin.com>
+> Cc: Sean Paul <sean@poorly.run>
+> Cc: David Airlie <airlied@linux.ie>
+> Cc: Daniel Vetter <daniel@ffwll.ch>
+> Cc: Alex Deucher <alexander.deucher@amd.com>
+> Cc: "Christian König" <christian.koenig@amd.com>
+> Cc: "David (ChunMing) Zhou" <David1.Zhou@amd.com>
+> Cc: Gerd Hoffmann <kraxel@redhat.com>
+> Cc: Rob Clark <robdclark@gmail.com>
+> Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>
+> Cc: Eric Anholt <eric@anholt.net>
+> ---
+>  drivers/gpu/drm/amd/amdgpu/atom.c               |  2 ++
+>  drivers/gpu/drm/ast/ast_fb.c                    |  2 ++
+>  drivers/gpu/drm/cirrus/cirrus_fbdev.c           |  1 +
+>  drivers/gpu/drm/drm_flip_work.c                 |  1 +
+>  drivers/gpu/drm/mgag200/mgag200_fb.c            |  1 +
+>  drivers/gpu/drm/msm/disp/mdp5/mdp5_smp.c        |  1 +
+>  drivers/gpu/drm/omapdrm/omap_fbdev.c            |  1 +
+>  drivers/gpu/drm/qxl/qxl_cmd.c                   |  2 ++
+>  drivers/gpu/drm/radeon/atom.c                   |  2 ++
+>  drivers/gpu/drm/radeon/radeon_legacy_encoders.c |  1 +
+>  drivers/gpu/drm/vc4/vc4_drv.h                   |  1 +
+>  include/drm/drmP.h                              |  8 -----
+>  include/drm/drm_util.h                          | 42 ++++++++++++++++++++++++-
+>  13 files changed, 56 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/amd/amdgpu/atom.c b/drivers/gpu/drm/amd/amdgpu/atom.c
+> index e9934de1b9cf..dd30f4e61a8c 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/atom.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/atom.c
+> @@ -27,6 +27,8 @@
+>  #include <linux/slab.h>
+>  #include <asm/unaligned.h>
+>  
+> +#include <drm/drm_util.h>
+> +
+>  #define ATOM_DEBUG
+>  
+>  #include "atom.h"
+> diff --git a/drivers/gpu/drm/ast/ast_fb.c b/drivers/gpu/drm/ast/ast_fb.c
+> index a80bca1a857f..eb66bf7d3e63 100644
+> --- a/drivers/gpu/drm/ast/ast_fb.c
+> +++ b/drivers/gpu/drm/ast/ast_fb.c
+> @@ -39,7 +39,9 @@
+>  #include <drm/drmP.h>
+>  #include <drm/drm_crtc.h>
+>  #include <drm/drm_fb_helper.h>
+> +#include <drm/drm_util.h>
+>  #include <drm/drm_crtc_helper.h>
+> +
+>  #include "ast_drv.h"
+>  
+>  static void ast_dirty_update(struct ast_fbdev *afbdev,
+> diff --git a/drivers/gpu/drm/cirrus/cirrus_fbdev.c b/drivers/gpu/drm/cirrus/cirrus_fbdev.c
+> index 4dd499c7d1ba..79fea1b8bc14 100644
+> --- a/drivers/gpu/drm/cirrus/cirrus_fbdev.c
+> +++ b/drivers/gpu/drm/cirrus/cirrus_fbdev.c
+> @@ -10,6 +10,7 @@
+>   */
+>  #include <linux/module.h>
+>  #include <drm/drmP.h>
+> +#include <drm/drm_util.h>
+>  #include <drm/drm_fb_helper.h>
+>  #include <drm/drm_crtc_helper.h>
+>  
+> diff --git a/drivers/gpu/drm/drm_flip_work.c b/drivers/gpu/drm/drm_flip_work.c
+> index 12dea16f22a8..3da3bf5af405 100644
+> --- a/drivers/gpu/drm/drm_flip_work.c
+> +++ b/drivers/gpu/drm/drm_flip_work.c
+> @@ -22,6 +22,7 @@
+>   */
+>  
+>  #include <drm/drmP.h>
+> +#include <drm/drm_util.h>
+>  #include <drm/drm_flip_work.h>
+>  
+>  /**
+> diff --git a/drivers/gpu/drm/mgag200/mgag200_fb.c b/drivers/gpu/drm/mgag200/mgag200_fb.c
+> index 30726c9fe28c..6893934b26c0 100644
+> --- a/drivers/gpu/drm/mgag200/mgag200_fb.c
+> +++ b/drivers/gpu/drm/mgag200/mgag200_fb.c
+> @@ -12,6 +12,7 @@
+>   */
+>  #include <linux/module.h>
+>  #include <drm/drmP.h>
+> +#include <drm/drm_util.h>
+>  #include <drm/drm_fb_helper.h>
+>  #include <drm/drm_crtc_helper.h>
+>  
+> diff --git a/drivers/gpu/drm/msm/disp/mdp5/mdp5_smp.c b/drivers/gpu/drm/msm/disp/mdp5/mdp5_smp.c
+> index 96c2b828dba4..fa2d1d8995ee 100644
+> --- a/drivers/gpu/drm/msm/disp/mdp5/mdp5_smp.c
+> +++ b/drivers/gpu/drm/msm/disp/mdp5/mdp5_smp.c
+> @@ -16,6 +16,7 @@
+>   * this program.  If not, see <http://www.gnu.org/licenses/>.
+>   */
+>  
+> +#include <drm/drm_util.h>
+>  
+>  #include "mdp5_kms.h"
+>  #include "mdp5_smp.h"
+> diff --git a/drivers/gpu/drm/omapdrm/omap_fbdev.c b/drivers/gpu/drm/omapdrm/omap_fbdev.c
+> index aee99194499f..851c59f07eb1 100644
+> --- a/drivers/gpu/drm/omapdrm/omap_fbdev.c
+> +++ b/drivers/gpu/drm/omapdrm/omap_fbdev.c
+> @@ -16,6 +16,7 @@
+>   */
+>  
+>  #include <drm/drm_crtc.h>
+> +#include <drm/drm_util.h>
+>  #include <drm/drm_fb_helper.h>
+>  
+>  #include "omap_drv.h"
+> diff --git a/drivers/gpu/drm/qxl/qxl_cmd.c b/drivers/gpu/drm/qxl/qxl_cmd.c
+> index dffc5093ff16..2e100f644236 100644
+> --- a/drivers/gpu/drm/qxl/qxl_cmd.c
+> +++ b/drivers/gpu/drm/qxl/qxl_cmd.c
+> @@ -25,6 +25,8 @@
+>  
+>  /* QXL cmd/ring handling */
+>  
+> +#include <drm/drm_util.h>
+> +
+>  #include "qxl_drv.h"
+>  #include "qxl_object.h"
+>  
+> diff --git a/drivers/gpu/drm/radeon/atom.c b/drivers/gpu/drm/radeon/atom.c
+> index e55cbeee7a53..ac98ad561870 100644
+> --- a/drivers/gpu/drm/radeon/atom.c
+> +++ b/drivers/gpu/drm/radeon/atom.c
+> @@ -27,6 +27,8 @@
+>  #include <linux/slab.h>
+>  #include <asm/unaligned.h>
+>  
+> +#include <drm/drm_util.h>
+> +
+>  #define ATOM_DEBUG
+>  
+>  #include "atom.h"
+> diff --git a/drivers/gpu/drm/radeon/radeon_legacy_encoders.c b/drivers/gpu/drm/radeon/radeon_legacy_encoders.c
+> index 222a1fa41d7c..7e3257e8fd56 100644
+> --- a/drivers/gpu/drm/radeon/radeon_legacy_encoders.c
+> +++ b/drivers/gpu/drm/radeon/radeon_legacy_encoders.c
+> @@ -24,6 +24,7 @@
+>   *          Alex Deucher
+>   */
+>  #include <drm/drmP.h>
+> +#include <drm/drm_util.h>
+>  #include <drm/drm_crtc_helper.h>
+>  #include <drm/radeon_drm.h>
+>  #include "radeon.h"
+> diff --git a/drivers/gpu/drm/vc4/vc4_drv.h b/drivers/gpu/drm/vc4/vc4_drv.h
+> index c24b078f0593..2c635f001c71 100644
+> --- a/drivers/gpu/drm/vc4/vc4_drv.h
+> +++ b/drivers/gpu/drm/vc4/vc4_drv.h
+> @@ -9,6 +9,7 @@
+>  #include <linux/mm_types.h>
+>  #include <linux/reservation.h>
+>  #include <drm/drmP.h>
+> +#include <drm/drm_util.h>
+>  #include <drm/drm_encoder.h>
+>  #include <drm/drm_gem_cma_helper.h>
+>  #include <drm/drm_atomic.h>
+> diff --git a/include/drm/drmP.h b/include/drm/drmP.h
+> index 9e47c8dc6b87..bc4cb3732407 100644
+> --- a/include/drm/drmP.h
+> +++ b/include/drm/drmP.h
+> @@ -94,14 +94,6 @@ struct dma_buf_attachment;
+>  struct pci_dev;
+>  struct pci_controller;
+>  
+> -/* returns true if currently okay to sleep */
+> -static inline bool drm_can_sleep(void)
+> -{
+> -	if (in_atomic() || in_dbg_master() || irqs_disabled())
+> -		return false;
+> -	return true;
+> -}
+> -
+>  #if defined(CONFIG_DRM_DEBUG_SELFTEST_MODULE)
+>  #define EXPORT_SYMBOL_FOR_TESTS_ONLY(x) EXPORT_SYMBOL(x)
+>  #else
+> diff --git a/include/drm/drm_util.h b/include/drm/drm_util.h
+> index 88abdca89baa..8fda5777471c 100644
+> --- a/include/drm/drm_util.h
+> +++ b/include/drm/drm_util.h
+> @@ -26,7 +26,47 @@
+>  #ifndef _DRM_UTIL_H_
+>  #define _DRM_UTIL_H_
+>  
+> -/* helper for handling conditionals in various for_each macros */
+> +/**
+> + * DOC: drm utils
+> + *
+> + * Macros and inline functions that does not naturally belong in other places
+> + */
 
-Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
----
- kernel/rcu/tree.c | 21 ++++++---------------
- 1 file changed, 6 insertions(+), 15 deletions(-)
+The nice new docs here aren't included anywhere. We already have a "Misc
+Utilities" in drm-internals.rst, including this there under a "Utilities"
+subheading makes sense I think - yes I know, not the most creative name :-)
+> +
+> +#include <linux/irqflags.h>
+> +#include <linux/preempt.h>
+> +#include <linux/kgdb.h>
+> +#include <linux/smp.h>
+> +
+> +/**
+> + * for_each_if - helper for handling conditionals in various for_each macros
+> + * @condition The condition to check
+> + *
+> + * Typical use:
+> + * #define for_each_foo_bar(x, y) \
+> + *	list_for_each_entry(x, y->list, head) \
+> + *		for_each_if(x->something == SOMETHING)
 
-diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-index f4edc664fb65..e56a46444775 100644
---- a/kernel/rcu/tree.c
-+++ b/kernel/rcu/tree.c
-@@ -479,7 +479,6 @@ module_param_cb(jiffies_till_next_fqs, &next_fqs_jiffies_ops, &jiffies_till_next
- module_param(rcu_kick_kthreads, bool, 0644);
- 
- static void force_qs_rnp(int (*f)(struct rcu_data *rdp));
--static void force_quiescent_state(void);
- static int rcu_pending(void);
- 
- /*
-@@ -503,15 +502,6 @@ unsigned long rcu_exp_batches_completed(void)
- }
- EXPORT_SYMBOL_GPL(rcu_exp_batches_completed);
- 
--/*
-- * Force a quiescent state.
-- */
--void rcu_force_quiescent_state(void)
--{
--	force_quiescent_state();
--}
--EXPORT_SYMBOL_GPL(rcu_force_quiescent_state);
--
- /*
-  * Convert a ->gp_state value to a character string.
-  */
-@@ -1310,7 +1300,7 @@ static void print_other_cpu_stall(unsigned long gp_seq)
- 
- 	panic_on_rcu_stall();
- 
--	force_quiescent_state();  /* Kick them all. */
-+	rcu_force_quiescent_state();  /* Kick them all. */
- }
- 
- static void print_cpu_stall(void)
-@@ -2578,7 +2568,7 @@ static void force_qs_rnp(int (*f)(struct rcu_data *rdp))
-  * Force quiescent states on reluctant CPUs, and also detect which
-  * CPUs are in dyntick-idle mode.
-  */
--static void force_quiescent_state(void)
-+void rcu_force_quiescent_state(void)
- {
- 	unsigned long flags;
- 	bool ret;
-@@ -2610,6 +2600,7 @@ static void force_quiescent_state(void)
- 	raw_spin_unlock_irqrestore_rcu_node(rnp_old, flags);
- 	rcu_gp_kthread_wake();
- }
-+EXPORT_SYMBOL_GPL(rcu_force_quiescent_state);
- 
- /*
-  * This function checks for grace-period requests that fail to motivate
-@@ -2801,9 +2792,9 @@ static void __call_rcu_core(struct rcu_data *rdp, struct rcu_head *head,
- 
- 	/*
- 	 * Force the grace period if too many callbacks or too long waiting.
--	 * Enforce hysteresis, and don't invoke force_quiescent_state()
-+	 * Enforce hysteresis, and don't invoke rcu_force_quiescent_state()
- 	 * if some other CPU has recently done so.  Also, don't bother
--	 * invoking force_quiescent_state() if the newly enqueued callback
-+	 * invoking rcu_force_quiescent_state() if the newly enqueued callback
- 	 * is the only one waiting for a grace period to complete.
- 	 */
- 	if (unlikely(rcu_segcblist_n_cbs(&rdp->cblist) >
-@@ -2820,7 +2811,7 @@ static void __call_rcu_core(struct rcu_data *rdp, struct rcu_head *head,
- 			rdp->blimit = LONG_MAX;
- 			if (rcu_state.n_force_qs == rdp->n_force_qs_snap &&
- 			    rcu_segcblist_first_pend_cb(&rdp->cblist) != head)
--				force_quiescent_state();
-+				rcu_force_quiescent_state();
- 			rdp->n_force_qs_snap = rcu_state.n_force_qs;
- 			rdp->qlen_last_fqs_check = rcu_segcblist_n_cbs(&rdp->cblist);
- 		}
+I think the formatting of this in the html output will look off:
+Double-colon plus indenting should fix that.
+
+Merged the first 3 patches of this series thus far.
+
+Thanks, Daniel
+
+> + *
+> + * The for_each_if() macro makes the use of for_each_foo_bar() less error
+> + * prone.
+> + */
+>  #define for_each_if(condition) if (!(condition)) {} else
+>  
+> +/**
+> + * drm_can_sleep - returns true if currently okay to sleep
+> + *
+> + * This function shall not be used in new code.
+> + * The check for running in atomic context may not work - see linux/preempt.h.
+> + *
+> + * FIXME: All users of drm_can_sleep should be removed (see todo.rst)
+> + *
+> + * Returns:
+> + * True if kgdb is active or we are in an atomic context or irqs are disabled
+> + */
+> +static inline bool drm_can_sleep(void)
+> +{
+> +	if (in_atomic() || in_dbg_master() || irqs_disabled())
+> +		return false;
+> +	return true;
+> +}
+> +
+>  #endif
+> -- 
+> 2.12.0
+> 
+
 -- 
-2.17.1
-
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
