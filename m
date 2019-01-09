@@ -5,64 +5,71 @@ X-Spam-Level:
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38122C43444
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 18:16:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F982C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 18:16:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 058B820859
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 18:16:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 119EF20859
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 18:16:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DDkJr3jh"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Lyahv7FK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727648AbfAISQx (ORCPT
+        id S1727697AbfAISQ6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 13:16:53 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:45222 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727574AbfAISQw (ORCPT
+        Wed, 9 Jan 2019 13:16:58 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:35435 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727649AbfAISQ4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 13:16:52 -0500
-Received: by mail-pf1-f194.google.com with SMTP id g62so4015064pfd.12;
-        Wed, 09 Jan 2019 10:16:51 -0800 (PST)
+        Wed, 9 Jan 2019 13:16:56 -0500
+Received: by mail-pg1-f196.google.com with SMTP id s198so3663373pgs.2;
+        Wed, 09 Jan 2019 10:16:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=RmobXmdh5KaomT8TdFIr2+dJd6/NCDTEAkU6A7sJjko=;
-        b=DDkJr3jhu1Svtxh9aobnSIVGOnOtFoAjb6KbsJZtfCL3qHTC2OasLGHRGZD/tjA4C4
-         7hclNkvt+OR3vfD82KeSvOthlqX4LT+Kx5wASMoXfXq5W8cx+N67Eq78DkMrV/lleIhs
-         a/b8jsDyZSHYLun9sGMQdAdR8T+DYG3hIeIPAf2VKfokBTquPIzMFjOQB9IF2b9dX7Ke
-         tEswuY/dK47v1QetI4DmewGCVTyNd9leJOT7X6BLlKtOcCSOgn/MQkN2xLnlzuEIxp9o
-         xzYlf1ryUmByInyZJfWrezVU7Vu9T3QaIcfPcyveQINP2YOGG5vIt02nZbLM6JZkXCaI
-         oX8w==
+        bh=4N7ojczW0kjHmDJMWNYmDjBpUir6wWRrzDKNFy4GszY=;
+        b=Lyahv7FKoDdYwh7bib8JjifyGKFgDxWBbx7CE8z0sZ9ebOziV1IV3pFqDAjrUw01Ci
+         aWj0uRrf5RaA7TPKkeBpSgzv4uoKF3zqt8DALAUej3uwC5qK6pwkVEHWmZpGafZk9i/p
+         qnlCU0OMBKPXBosfJfIBfhjYVZUanhimNYWdepF8/b6VinuZUKj4p6JD9qC3QkVwZ0m9
+         5lqywR0PVJlI+skU1Q0JAO616YV2BuIg35PFT+nXPcH5q1ll3Yjg8fQqqzX8S7t54oPV
+         K2TRJRUvBz4UApnWqZeY1KvHqvd2a7oONXdZL0Mio53mmJfWQDQ8Tac7CUA0kGzCy24N
+         7wOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=RmobXmdh5KaomT8TdFIr2+dJd6/NCDTEAkU6A7sJjko=;
-        b=cXhztmmo2ktRRD7V2XUY4LtAIPMDF4F238gquUn9HRBvCtLINzJk5CMLFAmUT44AfR
-         zpAZhkSBr9Ej5a1ubiYSds0NWkvak6tCRQI/N4OvldRsOS6TMnepHQ5PqjjburUykL5y
-         CcKO+FndCYafA1xmVD6nuBZQaf+rZPTSn7YOX+3ErqmSbKNSF7rTIoBm9G6a8B2piZm4
-         3Tvx6llCAgJsKD7dylGUnNpvnNdGz4CK7QaedS2ot2/FMzzbaD6LbsC5XQoREHHwR3Mm
-         HH4ZuCnHTHq+ZuIj9IKDE+Hrad/LKNK4T2aiBoVihr2ayS1yZ+wJ+RvNdLVjKWlOF2DL
-         1C6A==
-X-Gm-Message-State: AJcUukfFbsIAlK740javAV4BnB5O/Kgn+i2d5H7C1vkcN6mXmTgQu+lw
-        DcQRnXaIdcrVQiWcJ5lZOs+2TOXq
-X-Google-Smtp-Source: ALg8bN428o/50VsT5RQcCNP1YMkRa+jTMpK08liC6tWu2tFFZxRds0VuKb2LjFDLst+qYfnpqWHWgw==
-X-Received: by 2002:a63:d655:: with SMTP id d21mr6378761pgj.280.1547057811091;
-        Wed, 09 Jan 2019 10:16:51 -0800 (PST)
+        bh=4N7ojczW0kjHmDJMWNYmDjBpUir6wWRrzDKNFy4GszY=;
+        b=TiXQ8AwpxWihcZ39mS/zIvxUZk023fWyF9n6uxP4/G91BRjLqAAzG3JbU0c9vCaiQ5
+         t/OuJr+B3UcpR4TxXXQDxivAPtmBSdPiWfQwreG3PEgmbNmPqcyhhMtqUqWp8SDkUQBv
+         TsrHGWG1l2dsoWjnWnmj0n/gD+eAMzDDDsf39Wg+JrcIy/WoFyv0ExowWa4iWL21THkG
+         CEa2pHWKh91Emovf8b00np0Yqwx9hdOQtt9HptvU5tJ0CYBr/j6tDAdZ71ab/3q0pBrP
+         DTInGR8WEXxXKgMqJCibPkH8voEVyZjMYo6CF2UeBPlgDVTM5LX+nuylvOzx4mF2YNg/
+         lSTA==
+X-Gm-Message-State: AJcUukd/xybmj46B4lXkwiXUrA9QlDp9LNuaqr+UjZOaajGBRt/yJ6hM
+        5c5xZp+7qwPej+ZFT6PHDczewhJf
+X-Google-Smtp-Source: ALg8bN4zyfPen9WA9SHmkQaDZApgW9wCC+VdYU6dNO+I+cSKQYnXS8k5Ng8f6lt1lyR5JOljrRBgWQ==
+X-Received: by 2002:a63:1408:: with SMTP id u8mr6402757pgl.271.1547057814345;
+        Wed, 09 Jan 2019 10:16:54 -0800 (PST)
 Received: from majic.sklembedded.com (c-98-210-181-167.hsd1.ca.comcast.net. [98.210.181.167])
-        by smtp.googlemail.com with ESMTPSA id h19sm97030004pfn.114.2019.01.09.10.16.49
+        by smtp.googlemail.com with ESMTPSA id h19sm97030004pfn.114.2019.01.09.10.16.52
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 09 Jan 2019 10:16:50 -0800 (PST)
+        Wed, 09 Jan 2019 10:16:53 -0800 (PST)
 From:   Steve Longerbeam <slongerbeam@gmail.com>
 To:     linux-media@vger.kernel.org
 Cc:     Steve Longerbeam <slongerbeam@gmail.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v7 01/11] media: videodev2.h: Add more field helper macros
-Date:   Wed,  9 Jan 2019 10:16:31 -0800
-Message-Id: <20190109181642.19378-2-slongerbeam@gmail.com>
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        dri-devel@lists.freedesktop.org (open list:DRM DRIVERS FOR FREESCALE
+        IMX), linux-kernel@vger.kernel.org (open list),
+        devel@driverdev.osuosl.org (open list:STAGING SUBSYSTEM),
+        linux-fbdev@vger.kernel.org (open list:FRAMEBUFFER LAYER)
+Subject: [PATCH v7 03/11] gpu: ipu-v3: Add planar support to interlaced scan
+Date:   Wed,  9 Jan 2019 10:16:33 -0800
+Message-Id: <20190109181642.19378-4-slongerbeam@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190109181642.19378-1-slongerbeam@gmail.com>
 References: <20190109181642.19378-1-slongerbeam@gmail.com>
@@ -71,49 +78,113 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adds two helper macros:
-
-V4L2_FIELD_IS_SEQUENTIAL: returns true if the given field type is
-'sequential', that is a full frame is transmitted, or exists in
-memory, as all top field lines followed by all bottom field lines,
-or vice-versa.
-
-V4L2_FIELD_IS_INTERLACED: returns true if the given field type is
-'interlaced', that is a full frame is transmitted, or exists in
-memory, as top field lines interlaced with bottom field lines.
+To support interlaced scan with planar formats, cpmem SLUV must
+be programmed with the correct chroma line stride. For full and
+partial planar 4:2:2 (YUV422P, NV16), chroma line stride must
+be doubled. For full and partial planar 4:2:0 (YUV420, YVU420, NV12),
+chroma line stride must _not_ be doubled, since a single chroma line
+is shared by two luma lines.
 
 Signed-off-by: Steve Longerbeam <slongerbeam@gmail.com>
+Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+Acked-by: Philipp Zabel <p.zabel@pengutronix.de>
 ---
-Changes since v3:
-- none
-Changes since v2:
-- none
-Changes since v1:
-- add the complement macro V4L2_FIELD_IS_INTERLACED
-- remove V4L2_FIELD_ALTERNATE from V4L2_FIELD_IS_SEQUENTIAL macro.
-- moved new macros past end of existing V4L2_FIELD_HAS_* macros.
----
- include/uapi/linux/videodev2.h | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/gpu/ipu-v3/ipu-cpmem.c              | 26 +++++++++++++++++++--
+ drivers/staging/media/imx/imx-ic-prpencvf.c |  3 ++-
+ drivers/staging/media/imx/imx-media-csi.c   |  3 ++-
+ include/video/imx-ipu-v3.h                  |  3 ++-
+ 4 files changed, 30 insertions(+), 5 deletions(-)
 
-diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
-index d6eed479c3a6..bca07d35ea09 100644
---- a/include/uapi/linux/videodev2.h
-+++ b/include/uapi/linux/videodev2.h
-@@ -130,6 +130,13 @@ enum v4l2_field {
- 	((field) == V4L2_FIELD_BOTTOM ||\
- 	 (field) == V4L2_FIELD_TOP ||\
- 	 (field) == V4L2_FIELD_ALTERNATE)
-+#define V4L2_FIELD_IS_INTERLACED(field) \
-+	((field) == V4L2_FIELD_INTERLACED ||\
-+	 (field) == V4L2_FIELD_INTERLACED_TB ||\
-+	 (field) == V4L2_FIELD_INTERLACED_BT)
-+#define V4L2_FIELD_IS_SEQUENTIAL(field) \
-+	((field) == V4L2_FIELD_SEQ_TB ||\
-+	 (field) == V4L2_FIELD_SEQ_BT)
+diff --git a/drivers/gpu/ipu-v3/ipu-cpmem.c b/drivers/gpu/ipu-v3/ipu-cpmem.c
+index 163fadb8a33a..d047a6867c59 100644
+--- a/drivers/gpu/ipu-v3/ipu-cpmem.c
++++ b/drivers/gpu/ipu-v3/ipu-cpmem.c
+@@ -277,9 +277,10 @@ void ipu_cpmem_set_uv_offset(struct ipuv3_channel *ch, u32 u_off, u32 v_off)
+ }
+ EXPORT_SYMBOL_GPL(ipu_cpmem_set_uv_offset);
  
- enum v4l2_buf_type {
- 	V4L2_BUF_TYPE_VIDEO_CAPTURE        = 1,
+-void ipu_cpmem_interlaced_scan(struct ipuv3_channel *ch, int stride)
++void ipu_cpmem_interlaced_scan(struct ipuv3_channel *ch, int stride,
++			       u32 pixelformat)
+ {
+-	u32 ilo, sly;
++	u32 ilo, sly, sluv;
+ 
+ 	if (stride < 0) {
+ 		stride = -stride;
+@@ -290,9 +291,30 @@ void ipu_cpmem_interlaced_scan(struct ipuv3_channel *ch, int stride)
+ 
+ 	sly = (stride * 2) - 1;
+ 
++	switch (pixelformat) {
++	case V4L2_PIX_FMT_YUV420:
++	case V4L2_PIX_FMT_YVU420:
++		sluv = stride / 2 - 1;
++		break;
++	case V4L2_PIX_FMT_NV12:
++		sluv = stride - 1;
++		break;
++	case V4L2_PIX_FMT_YUV422P:
++		sluv = stride - 1;
++		break;
++	case V4L2_PIX_FMT_NV16:
++		sluv = stride * 2 - 1;
++		break;
++	default:
++		sluv = 0;
++		break;
++	}
++
+ 	ipu_ch_param_write_field(ch, IPU_FIELD_SO, 1);
+ 	ipu_ch_param_write_field(ch, IPU_FIELD_ILO, ilo);
+ 	ipu_ch_param_write_field(ch, IPU_FIELD_SLY, sly);
++	if (sluv)
++		ipu_ch_param_write_field(ch, IPU_FIELD_SLUV, sluv);
+ };
+ EXPORT_SYMBOL_GPL(ipu_cpmem_interlaced_scan);
+ 
+diff --git a/drivers/staging/media/imx/imx-ic-prpencvf.c b/drivers/staging/media/imx/imx-ic-prpencvf.c
+index 28f41caba05d..af7224846bd5 100644
+--- a/drivers/staging/media/imx/imx-ic-prpencvf.c
++++ b/drivers/staging/media/imx/imx-ic-prpencvf.c
+@@ -412,7 +412,8 @@ static int prp_setup_channel(struct prp_priv *priv,
+ 	if (image.pix.field == V4L2_FIELD_NONE &&
+ 	    V4L2_FIELD_HAS_BOTH(infmt->field) &&
+ 	    channel == priv->out_ch)
+-		ipu_cpmem_interlaced_scan(channel, image.pix.bytesperline);
++		ipu_cpmem_interlaced_scan(channel, image.pix.bytesperline,
++					  image.pix.pixelformat);
+ 
+ 	ret = ipu_ic_task_idma_init(priv->ic, channel,
+ 				    image.pix.width, image.pix.height,
+diff --git a/drivers/staging/media/imx/imx-media-csi.c b/drivers/staging/media/imx/imx-media-csi.c
+index c2a8d9cd31b7..da4808348845 100644
+--- a/drivers/staging/media/imx/imx-media-csi.c
++++ b/drivers/staging/media/imx/imx-media-csi.c
+@@ -512,7 +512,8 @@ static int csi_idmac_setup_channel(struct csi_priv *priv)
+ 	if (image.pix.field == V4L2_FIELD_NONE &&
+ 	    V4L2_FIELD_HAS_BOTH(infmt->field))
+ 		ipu_cpmem_interlaced_scan(priv->idmac_ch,
+-					  image.pix.bytesperline);
++					  image.pix.bytesperline,
++					  image.pix.pixelformat);
+ 
+ 	ipu_idmac_set_double_buffer(priv->idmac_ch, true);
+ 
+diff --git a/include/video/imx-ipu-v3.h b/include/video/imx-ipu-v3.h
+index bbc8481f567d..c887f4bee5f8 100644
+--- a/include/video/imx-ipu-v3.h
++++ b/include/video/imx-ipu-v3.h
+@@ -258,7 +258,8 @@ void ipu_cpmem_set_stride(struct ipuv3_channel *ch, int stride);
+ void ipu_cpmem_set_high_priority(struct ipuv3_channel *ch);
+ void ipu_cpmem_set_buffer(struct ipuv3_channel *ch, int bufnum, dma_addr_t buf);
+ void ipu_cpmem_set_uv_offset(struct ipuv3_channel *ch, u32 u_off, u32 v_off);
+-void ipu_cpmem_interlaced_scan(struct ipuv3_channel *ch, int stride);
++void ipu_cpmem_interlaced_scan(struct ipuv3_channel *ch, int stride,
++			       u32 pixelformat);
+ void ipu_cpmem_set_axi_id(struct ipuv3_channel *ch, u32 id);
+ int ipu_cpmem_get_burstsize(struct ipuv3_channel *ch);
+ void ipu_cpmem_set_burstsize(struct ipuv3_channel *ch, int burstsize);
 -- 
 2.17.1
 
