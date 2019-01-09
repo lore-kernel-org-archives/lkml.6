@@ -2,93 +2,173 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 718F4C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 12:44:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35CF5C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 12:44:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 36A0D206B6
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 12:44:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547037847;
-	bh=N8L1j+H1TmsfJR1dH0YB8nmgBWazIfdW64KOHooclc8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=n7rBYOkXgoP8Gt6qnRAyYkDvFJmAfMxOcAfVBHEu0SyjSTOqiN8Jg5FDzmkBPMwa8
-	 +rQqGpn3RjRLiNdEUyvov2vO6CnC8sYigTmoa65YwcowwMq7D5eo2hovYSMWDWwsk9
-	 xrRgtIv7uEkdIeGuaQWVwEih6I5va/iggjqdw4Us=
+	by mail.kernel.org (Postfix) with ESMTP id 0EC61206B6
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 12:44:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731282AbfAIMoG (ORCPT
+        id S1730584AbfAIMoY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 07:44:06 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:40534 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730215AbfAIMoA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 07:44:00 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=N8L1j+H1TmsfJR1dH0YB8nmgBWazIfdW64KOHooclc8=; b=NJlM5H2uHMqM0d7s6B1ko7d+3
-        QEwLEu36Z+FpGA/rgQp66P/721pMwYYhMfQGSo6Gm2Vbg580ahELFuDJGBGqm+7hnD4zVp+78DRrQ
-        i8j9FhBxrJn64AS3V7DtvHzakd8ni0Akl2QuaQ7ueyqOJtwgK3tdqROPd+HVyslhwxRNw=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1ghDDB-0007yC-Nu; Wed, 09 Jan 2019 12:43:57 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 309861127528; Wed,  9 Jan 2019 12:43:57 +0000 (GMT)
-Date:   Wed, 9 Jan 2019 12:43:57 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Clark Wang <xiaoning.wang@nxp.com>
-Cc:     "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 6/8] spi: lpspi: add the error info of transfer speed
- setting
-Message-ID: <20190109124357.GC10405@sirena.org.uk>
-References: <20190107074639.6336-1-xiaoning.wang@nxp.com>
- <20190107074639.6336-7-xiaoning.wang@nxp.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="4jXrM3lyYWu4nBt5"
-Content-Disposition: inline
-In-Reply-To: <20190107074639.6336-7-xiaoning.wang@nxp.com>
-X-Cookie: VMS version 2.0 ==>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Wed, 9 Jan 2019 07:44:24 -0500
+Received: from mx2.suse.de ([195.135.220.15]:42890 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1731215AbfAIMns (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 07:43:48 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id E84C0AD8C;
+        Wed,  9 Jan 2019 12:43:46 +0000 (UTC)
+From:   Petr Mladek <pmladek@suse.com>
+To:     Jiri Kosina <jikos@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Miroslav Benes <mbenes@suse.cz>
+Cc:     Jason Baron <jbaron@akamai.com>,
+        Joe Lawrence <joe.lawrence@redhat.com>,
+        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
+        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Petr Mladek <pmladek@suse.com>
+Subject: [PATCH v15 10/11] livepatch: Remove ordering (stacking) of the livepatches
+Date:   Wed,  9 Jan 2019 13:43:28 +0100
+Message-Id: <20190109124329.21991-11-pmladek@suse.com>
+X-Mailer: git-send-email 2.13.7
+In-Reply-To: <20190109124329.21991-1-pmladek@suse.com>
+References: <20190109124329.21991-1-pmladek@suse.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The atomic replace and cumulative patches were introduced as a more secure
+way to handle dependent patches. They simplify the logic:
 
---4jXrM3lyYWu4nBt5
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+  + Any new cumulative patch is supposed to take over shadow variables
+    and changes made by callbacks from previous livepatches.
 
-On Mon, Jan 07, 2019 at 07:47:45AM +0000, Clark Wang wrote:
-> Add a error info when set a speed which greater than half of per-clk of
-> spi module.
+  + All replaced patches are discarded and the modules can be unloaded.
+    As a result, there is only one scenario when a cumulative livepatch
+    gets disabled.
 
-This (and it turns out the subsequent patch which I said I'd apply)
-doesn't apply against current code, please check and resend.
+The different handling of "normal" and cumulative patches might cause
+confusion. It would make sense to keep only one mode. On the other hand,
+it would be rude to enforce using the cumulative livepatches even for
+trivial and independent (hot) fixes.
 
---4jXrM3lyYWu4nBt5
-Content-Type: application/pgp-signature; name="signature.asc"
+However, the stack of patches is not really necessary any longer.
+The patch ordering was never clearly visible via the sysfs interface.
+Also the "normal" patches need a lot of caution anyway.
 
------BEGIN PGP SIGNATURE-----
+Note that the list of enabled patches is still necessary but the ordering
+is not longer enforced.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlw17IwACgkQJNaLcl1U
-h9Dpkgf8C0s+n1XGV5l9HeB+IWNq5DrE0cPLhOfoiIouE2WQ+RMBcjl2xbCk66ar
-ZPaxLULyiPo+E8aYpRLfuGOskB/biToeFzLdpJ0i8heneVSwfQify+ce2JmXsniM
-uElXHf71XYRMPJK0MYAEsnssZdlxiFSisVc/Ear6PSkTYHcO2JP3xh51gMeADaSw
-jxcyvfBiFj55g3HlpakvpNt//Fpj5bAGrQeW4MktGbVLopx+PFLFduBDYblqcbqC
-fLba3Ib/WqQVctnEJ+zf+U3FEV9ae3mfWBhl9OqZOCRm6HrS2m1CbbXv5gZaVuDo
-A2L60N1v3NaGwbaz13N9vdiZJFcJ5g==
-=owl/
------END PGP SIGNATURE-----
+Otherwise, the code is ready to disable livepatches in an random order.
+Namely, klp_check_stack_func() always looks for the function from
+the livepatch that is being disabled. klp_func structures are just
+removed from the related func_stack. Finally, the ftrace handlers
+is removed only when the func_stack becomes empty.
 
---4jXrM3lyYWu4nBt5--
+Signed-off-by: Petr Mladek <pmladek@suse.com>
+---
+ Documentation/livepatch/cumulative-patches.txt | 11 ++++-------
+ Documentation/livepatch/livepatch.txt          | 13 +++++++------
+ kernel/livepatch/core.c                        |  4 ----
+ 3 files changed, 11 insertions(+), 17 deletions(-)
+
+diff --git a/Documentation/livepatch/cumulative-patches.txt b/Documentation/livepatch/cumulative-patches.txt
+index e7cf5be69f23..0012808e8d44 100644
+--- a/Documentation/livepatch/cumulative-patches.txt
++++ b/Documentation/livepatch/cumulative-patches.txt
+@@ -7,8 +7,8 @@ to do different changes to the same function(s) then we need to define
+ an order in which the patches will be installed. And function implementations
+ from any newer livepatch must be done on top of the older ones.
+ 
+-This might become a maintenance nightmare. Especially if anyone would want
+-to remove a patch that is in the middle of the stack.
++This might become a maintenance nightmare. Especially when more patches
++modified the same function in different ways.
+ 
+ An elegant solution comes with the feature called "Atomic Replace". It allows
+ creation of so called "Cumulative Patches". They include all wanted changes
+@@ -26,11 +26,9 @@ for example:
+ 		.replace = true,
+ 	};
+ 
+-Such a patch is added on top of the livepatch stack when enabled.
+-
+ All processes are then migrated to use the code only from the new patch.
+ Once the transition is finished, all older patches are automatically
+-disabled and removed from the stack of patches.
++disabled.
+ 
+ Ftrace handlers are transparently removed from functions that are no
+ longer modified by the new cumulative patch.
+@@ -57,8 +55,7 @@ The atomic replace allows:
+   + Remove eventual performance impact caused by core redirection
+     for functions that are no longer patched.
+ 
+-  + Decrease user confusion about stacking order and what code
+-    is actually in use.
++  + Decrease user confusion about dependencies between livepatches.
+ 
+ 
+ Limitations:
+diff --git a/Documentation/livepatch/livepatch.txt b/Documentation/livepatch/livepatch.txt
+index 6f32d6ea2fcb..71d7f286ec4d 100644
+--- a/Documentation/livepatch/livepatch.txt
++++ b/Documentation/livepatch/livepatch.txt
+@@ -143,9 +143,9 @@ without HAVE_RELIABLE_STACKTRACE are not considered fully supported by
+ the kernel livepatching.
+ 
+ The /sys/kernel/livepatch/<patch>/transition file shows whether a patch
+-is in transition.  Only a single patch (the topmost patch on the stack)
+-can be in transition at a given time.  A patch can remain in transition
+-indefinitely, if any of the tasks are stuck in the initial patch state.
++is in transition.  Only a single patch can be in transition at a given
++time.  A patch can remain in transition indefinitely, if any of the tasks
++are stuck in the initial patch state.
+ 
+ A transition can be reversed and effectively canceled by writing the
+ opposite value to the /sys/kernel/livepatch/<patch>/enabled file while
+@@ -351,6 +351,10 @@ to '0'.
+     The right implementation is selected by the ftrace handler, see
+     the "Consistency model" section.
+ 
++    That said, it is highly recommended to use cumulative livepatches
++    because they help keeping the consistency of all changes. In this case,
++    functions might be patched two times only during the transition period.
++
+ 
+ 5.3. Replacing
+ --------------
+@@ -389,9 +393,6 @@ becomes empty.
+ 
+ Third, the sysfs interface is destroyed.
+ 
+-Note that patches must be disabled in exactly the reverse order in which
+-they were enabled. It makes the problem and the implementation much easier.
+-
+ 
+ 5.5. Removing
+ -------------
+diff --git a/kernel/livepatch/core.c b/kernel/livepatch/core.c
+index 113645ee86b6..adca5cf07f7e 100644
+--- a/kernel/livepatch/core.c
++++ b/kernel/livepatch/core.c
+@@ -925,10 +925,6 @@ static int __klp_disable_patch(struct klp_patch *patch)
+ 	if (klp_transition_patch)
+ 		return -EBUSY;
+ 
+-	/* enforce stacking: only the last enabled patch can be disabled */
+-	if (!list_is_last(&patch->list, &klp_patches))
+-		return -EBUSY;
+-
+ 	klp_init_transition(patch, KLP_UNPATCHED);
+ 
+ 	klp_for_each_object(patch, obj)
+-- 
+2.13.7
+
