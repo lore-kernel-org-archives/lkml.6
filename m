@@ -2,160 +2,181 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9A68C43612
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 05:22:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E48C9C43612
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 05:24:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A813220883
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 05:22:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547011357;
-	bh=4+gpQWAzKL285mAFcSkebQtdYiJ07ZSZGgKxHBuSDx4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=1dUaMmC0URQ5Q4otSRyrPEA2m7mmiX0CI4E2I++H/ZuLH2ALGv7n9XuPHIWlKiDqM
-	 GLzU5UWtJpLZjf/ewuv4tsx9zUkInbh+P2VYodBzQ7r50bLyvDSdPUjiGyyq4vlBjX
-	 cn78Pruv3hFQhmAbWgfQfpBtCAp5wzvd1exNeXpU=
+	by mail.kernel.org (Postfix) with ESMTP id B1CE620883
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 05:24:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729437AbfAIFWg (ORCPT
+        id S1729297AbfAIFYp convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 00:22:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60174 "EHLO mail.kernel.org"
+        Wed, 9 Jan 2019 00:24:45 -0500
+Received: from mga05.intel.com ([192.55.52.43]:64491 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729132AbfAIFWg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 00:22:36 -0500
-Received: from localhost (unknown [104.132.1.85])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8548620883;
-        Wed,  9 Jan 2019 05:22:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547011355;
-        bh=4+gpQWAzKL285mAFcSkebQtdYiJ07ZSZGgKxHBuSDx4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=gTxtz3mWApTaR0ATun8FzKXnOli/6jt7rw6jRIZp5HQeupr3SFF9nNWwYHkA3ISr0
-         S03J5SpJQx9P/mGAS2+dXOZrA6J5WtwDqwPCgrYZN59V8R0PLsCQmDbax6Pg3lehFd
-         JxjPhfgPDLk3Z7scjOUsfboZecstqQyCi2NIbyPI=
-Date:   Tue, 8 Jan 2019 21:22:34 -0800
-From:   Jaegeuk Kim <jaegeuk@kernel.org>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     linux-kernel@vger.kernel.org, linux-block@vger.kernel.org
-Subject: Re: [PATCH v3] loop: drop caches if offset or block_size are changed
-Message-ID: <20190109052234.GA81011@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20181214203223.7063-1-jaegeuk@kernel.org>
- <20181217194236.GA50659@jaegeuk-macbookpro.roam.corp.google.com>
- <29369548-df14-a5a7-2bee-a40b3479df68@kernel.dk>
- <20181218224139.GB31062@jaegeuk-macbookpro.roam.corp.google.com>
+        id S1726237AbfAIFYp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 00:24:45 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Jan 2019 21:24:44 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,456,1539673200"; 
+   d="scan'208";a="136607201"
+Received: from pgsmsx105.gar.corp.intel.com ([10.221.44.96])
+  by fmsmga001.fm.intel.com with ESMTP; 08 Jan 2019 21:24:40 -0800
+Received: from pgsmsx112.gar.corp.intel.com ([169.254.3.246]) by
+ PGSMSX105.gar.corp.intel.com ([169.254.4.160]) with mapi id 14.03.0415.000;
+ Wed, 9 Jan 2019 13:24:40 +0800
+From:   "Huang, Kai" <kai.huang@intel.com>
+To:     "Christopherson, Sean J" <sean.j.christopherson@intel.com>
+CC:     Andy Lutomirski <luto@kernel.org>,
+        Jethro Beekman <jethro@fortanix.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "x86@kernel.org" <x86@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        "Haitao Huang" <haitao.huang@linux.intel.com>,
+        "Dr . Greg Wettstein" <greg@enjellic.com>
+Subject: RE: x86/sgx: uapi change proposal
+Thread-Topic: x86/sgx: uapi change proposal
+Thread-Index: AQHUl3CouNmOMJQZHU2YX8Dh54+gQaWFODMAgAAIjACAAAbWAIAAVlWAgADM8wCAAnSJgIAc/6rw//+proCAAOdxMA==
+Date:   Wed, 9 Jan 2019 05:24:38 +0000
+Message-ID: <105F7BF4D0229846AF094488D65A0989355A58F1@PGSMSX112.gar.corp.intel.com>
+References: <20181214215729.4221-1-sean.j.christopherson@intel.com>
+ <7706b2aa71312e1f0009958bcab24e1e9d8d1237.camel@linux.intel.com>
+ <598cd050-f0b5-d18c-96a0-915f02525e3e@fortanix.com>
+ <20181219091148.GA5121@linux.intel.com>
+ <613c6814-4e71-38e5-444a-545f0e286df8@fortanix.com>
+ <20181219144515.GA30909@linux.intel.com>
+ <CALCETrW_8LnitFamYUU7POHFOJFxLO7ESFUdS=aeG_SOvHVPkw@mail.gmail.com>
+ <20181221162825.GB26865@linux.intel.com>
+ <105F7BF4D0229846AF094488D65A0989355A45B6@PGSMSX112.gar.corp.intel.com>
+ <20190108220946.GA30462@linux.intel.com>
+In-Reply-To: <20190108220946.GA30462@linux.intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiZTMwY2IwMTctM2I2Yi00Mjg2LWFkNDMtY2YxMGRkN2JhOWQ3IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiTTMrWnJ3XC96SUhCT25TT3JzNWRcL3dxSnlrR2kxcGNVem9USTJLajM0OWJlR1JxQWszR01EMFwvdUhXS1lqNXJxMCJ9
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-originating-ip: [172.30.20.206]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181218224139.GB31062@jaegeuk-macbookpro.roam.corp.google.com>
-User-Agent: Mutt/1.8.2 (2017-04-18)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jens,
+> On Tue, Jan 08, 2019 at 11:27:11AM -0800, Huang, Kai wrote:
+> > > >
+> > > > Can one of you explain why SGX_ENCLAVE_CREATE is better than just
+> > > > opening a new instance of /dev/sgx for each encalve?
+> > >
+> > > Directly associating /dev/sgx with an enclave means /dev/sgx can't
+> > > be used to provide ioctl()'s for other SGX-related needs, e.g. to
+> > > mmap() raw EPC and expose it a VM.  Proposed layout in the link
+> > > below.  I'll also respond to Jarkko's question about exposing EPC
+> > > through /dev/sgx instead of having KVM allocate it on behalf of the VM.
+> > >
+> > > https://lkml.kernel.org/r/20181218185349.GC30082@linux.intel.com
+> >
+> > Hi Sean,
+> >
+> > Sorry for replying to old email. But IMHO it is not a must that Qemu
+> > needs to open some /dev/sgx and allocate/mmap EPC for guest's virtual
+> > EPC slot, instead, KVM could create private slot, which is not visible
+> > to Qemu, for virtual EPC, and KVM could call core-SGX EPC allocation
+> > API directly.
+> 
+> That's possible, but it has several downsides.
+> 
+>   - Duplicates a lot of code in KVM for managing memory regions.
 
-May I ask whether this patch is acceptable?
+I don't see why there will be duplicated code. you can simply call __x86_set_memory_region to create private slot. It is KVM x86 equivalent to KVM_SET_USER_MEMORY_REGION from userspace. The only difference is Qemu is not aware of the private slot.
+
+>   - Artificially restricts userspace to a single EPC region, unless
+>     even more code is duplicated to handle multiple private regions.
+
+You can have multiple private slots, by calling __x86_set_memory_region for each EPC section. KVM receives EPC section/sections info from Qemu, via CPUID, or dedicated IOCTL (is this you are going to add?), and simply creates private EPC slot/slots.
+
+>   - Requires additional ioctls() or capabilities to probe EPC support
+
+No. EPC info is from Qemu at the beginning (size is given by parameter, base is calculated by Qemu), and actually it is Qemu notifies KVM EPC info, so I don't think we require additional ioctls or capabilities here.
+
+>   - Does not fit with Qemu/KVM's memory model, e.g. all other types of
+>     memory are exposed to a guest through
+> KVM_SET_USER_MEMORY_REGION.
+
+EPC is different. I am not sure whether EPC needs to fit such model. There are already examples in KVM which uses private slot w/o using KVM_SET_USER_MEMORY_REGION, for example, APIC access page.
+
+>   - Prevents userspace from debugging a guest's enclave.  I'm not saying
+>     this is a likely scenario, but I also don't think we should preclude
+>     it without good reason.
+
+I am not sure how important it is, so don't know whether this can be a justification. To me we don't need to consider this. Qemu normally doesn't access guest memory unless it has to (ie, for device model). 
+
+>   - KVM is now responsible for managing the lifecycle of EPC, e.g. what
+>     happens if an EPC cgroup limit is lowered on a running VM and
+>     KVM can't gracefully reclaim EPC?  The userspace hypervisor should
+>     ultimately decide how to handle such an event.
+
+Even using KVM_SET_USER_MEMORY_REGION, KVM is also responsible for managing the lifecycle of EPC, no? And "managing the lifecycle of EPC" you mean doesn't need to be "managing EPC itself" I suppose, since EPC should always be managed by core SGX code.
+
+I don't see the difference between private slot and KVM_SET_USER_MEMORY_REGION, in terms of how does KVM reclaim EPC, or how does KVM do when it fails to reclaim EPC. 
+
+>   - SGX logic is split between SGX and KVM, e.g. VA page management for
+>     oversubscription will likely be common to SGX and KVM.  From a long
+>     term maintenance perspective, this means that changes to the EPC
+>     management could potentially need to be Acked by KVM, and vice versa.
+
+I think most of the code should be in core SGX code under x86. KVM should only have the code that is specifically related to virtualization, ie, ENCLV.
+
+VA page allocation should be under code SGX code. KVM might need to call function such as alloc_va_page, etc, but this is not a problem. There are many other cases now.
+
+And this is not related to private slot vs KVM_SET_USER_MEMORY_REGION.
+
+> 
+> > I am not sure what's the good of allowing userspace to alloc/mmap a
+> > raw EPC region? Userspace is not allowed to touch EPC anyway, expect
+> > enclave code.
+> >
+> > To me KVM creates private EPC slot is cleaner than exposing
+> > /dev/sgx/epc and allowing userspace to map some raw EPC region.
+> 
+> Cleaner in the sense that it's faster to get basic support up and running since
+> there are fewer touchpoints, but there are long term ramifications to
+> cramming EPC management in KVM.
+> 
+> And at this point I'm not stating any absolutes, e.g. how EPC will be handled
+> by KVM.  What I'm pushing for is to not eliminate the possibility of having
+> the SGX subsystem own all EPC management, e.g. don't tie /dev/sgx to a
+> single enclave.
+
+I suppose "SGX subsystem" you mean here is core SGX code under x86. IMHO EPC should always be managed by such SGX subsystem, and KVM and SGX driver are just consumers (ie, calling EPC allocation function, etc).
+
+IMHO I think /dev/sgx (or whatever /dev/sgx/xxx) should be in SGX driver, but not SGX core code. For example, if we don't consider KVM EPC oversubscription here, theoretically we only need below code in core SGX code to make KVM SGX work:
+
+1) SGX feature detection. There should be some core structure (such as boot_cpu_data, etc) where KVM can query SGX capabilities, ie, whether FLC is available.
+2) EPC management. KVM simply calls EPC management APIs when it needs. For example, when EPC slot is created, we should populate all EPC pages, and fail to create VM if running out of EPC.
+3) Other code to deal with ENCLS, SGX data structure, etc, since we have agreed even with EPC static allocation, we should trap EINIT. 
+
+We probably even don't need code to deal with enclave, if only for KVM. Of course, in order to support KVM EPC oversubscription, we should also include enclave management code in core SGX code, but this doesn't necessary mean we should include /dev/sgx/xxx in core SGX code.
+
+It seems there still are lots of design issues we haven't got consensus in terms of how SGX  driver should be (or how SGX stack is supposed to work), but if we can focus on what core SGX code should really have (w/o involving SGX driver logic), we can at least get KVM SGX code working. After all, we also have window SGX support. 
 
 Thanks,
-
-On 12/18, Jaegeuk Kim wrote:
-> If we don't drop caches used in old offset or block_size, we can get old data
-> from new offset/block_size, which gives unexpected data to user.
-> 
-> For example, Martijn found a loopback bug in the below scenario.
-> 1) LOOP_SET_FD loads first two pages on loop file
-> 2) LOOP_SET_STATUS64 changes the offset on the loop file
-> 3) mount is failed due to the cached pages having wrong superblock
-> 
-> Cc: Jens Axboe <axboe@kernel.dk>
-> Cc: linux-block@vger.kernel.org
-> Reported-by: Martijn Coenen <maco@google.com>
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> ---
-> v2 -> v3:
->  - avoid to submit IOs on frozen mq
-> 
-> Jens, how about this?
-> 
-> Thanks,
-> 
->  drivers/block/loop.c | 29 +++++++++++++++++++++++++++--
->  1 file changed, 27 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/block/loop.c b/drivers/block/loop.c
-> index cb0cc8685076..6b03121d62aa 100644
-> --- a/drivers/block/loop.c
-> +++ b/drivers/block/loop.c
-> @@ -1126,6 +1126,12 @@ loop_set_status(struct loop_device *lo, const struct loop_info64 *info)
->  	if ((unsigned int) info->lo_encrypt_key_size > LO_KEY_SIZE)
->  		return -EINVAL;
->  
-> +	if (lo->lo_offset != info->lo_offset ||
-> +	    lo->lo_sizelimit != info->lo_sizelimit) {
-> +		sync_blockdev(lo->lo_device);
-> +		kill_bdev(lo->lo_device);
-> +	}
-> +
->  	/* I/O need to be drained during transfer transition */
->  	blk_mq_freeze_queue(lo->lo_queue);
->  
-> @@ -1154,6 +1160,11 @@ loop_set_status(struct loop_device *lo, const struct loop_info64 *info)
->  
->  	if (lo->lo_offset != info->lo_offset ||
->  	    lo->lo_sizelimit != info->lo_sizelimit) {
-> +		/* kill_bdev should have truncated all the pages */
-> +		if (lo->lo_device->bd_inode->i_mapping->nrpages) {
-> +			err = -EAGAIN;
-> +			goto exit;
-> +		}
->  		if (figure_loop_size(lo, info->lo_offset, info->lo_sizelimit)) {
->  			err = -EFBIG;
->  			goto exit;
-> @@ -1375,22 +1386,36 @@ static int loop_set_dio(struct loop_device *lo, unsigned long arg)
->  
->  static int loop_set_block_size(struct loop_device *lo, unsigned long arg)
->  {
-> +	int err = 0;
-> +
->  	if (lo->lo_state != Lo_bound)
->  		return -ENXIO;
->  
->  	if (arg < 512 || arg > PAGE_SIZE || !is_power_of_2(arg))
->  		return -EINVAL;
->  
-> +	if (lo->lo_queue->limits.logical_block_size != arg) {
-> +		sync_blockdev(lo->lo_device);
-> +		kill_bdev(lo->lo_device);
-> +	}
-> +
->  	blk_mq_freeze_queue(lo->lo_queue);
->  
-> +	/* kill_bdev should have truncated all the pages */
-> +	if (lo->lo_queue->limits.logical_block_size != arg &&
-> +			lo->lo_device->bd_inode->i_mapping->nrpages) {
-> +		err = -EAGAIN;
-> +		goto out;
-> +	}
-> +
->  	blk_queue_logical_block_size(lo->lo_queue, arg);
->  	blk_queue_physical_block_size(lo->lo_queue, arg);
->  	blk_queue_io_min(lo->lo_queue, arg);
->  	loop_update_dio(lo);
-> -
-> +out:
->  	blk_mq_unfreeze_queue(lo->lo_queue);
->  
-> -	return 0;
-> +	return err;
->  }
->  
->  static int lo_ioctl(struct block_device *bdev, fmode_t mode,
-> -- 
-> 2.19.0.605.g01d371f741-goog
+-Kai 
