@@ -2,64 +2,78 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3ADE5C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 02:38:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D740C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 02:38:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 07F1F20883
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 02:38:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2447220883
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 02:38:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729184AbfAICiQ (ORCPT
+        id S1729351AbfAICiu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 21:38:16 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:59412 "EHLO mx1.redhat.com"
+        Tue, 8 Jan 2019 21:38:50 -0500
+Received: from nautica.notk.org ([91.121.71.147]:38592 "EHLO nautica.notk.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727917AbfAICiQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 21:38:16 -0500
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 9FD5DC056797;
-        Wed,  9 Jan 2019 02:38:15 +0000 (UTC)
-Received: from sky.random (ovpn-120-73.rdu2.redhat.com [10.10.120.73])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id A3C7A600C8;
-        Wed,  9 Jan 2019 02:38:14 +0000 (UTC)
-Date:   Tue, 8 Jan 2019 21:38:12 -0500
-From:   Andrea Arcangeli <aarcange@redhat.com>
-To:     "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
-Cc:     akpm@linux-foundation.org, Michal Hocko <mhocko@kernel.org>,
-        Alexey Kardashevskiy <aik@ozlabs.ru>,
-        David Gibson <david@gibson.dropbear.id.au>, mpe@ellerman.id.au,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH V6 1/4] mm/cma: Add PF flag to force non cma alloc
-Message-ID: <20190109023812.GF20586@redhat.com>
-References: <20190108045110.28597-1-aneesh.kumar@linux.ibm.com>
- <20190108045110.28597-2-aneesh.kumar@linux.ibm.com>
+        id S1727917AbfAICit (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 21:38:49 -0500
+Received: by nautica.notk.org (Postfix, from userid 1001)
+        id AC4A7C01B; Wed,  9 Jan 2019 03:38:47 +0100 (CET)
+Date:   Wed, 9 Jan 2019 03:38:32 +0100
+From:   Dominique Martinet <asmadeus@codewreck.org>
+To:     Hou Tao <houtao1@huawei.com>
+Cc:     v9fs-developer@lists.sourceforge.net, lucho@ionkov.net,
+        ericvh@gmail.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, xingaopeng@huawei.com
+Subject: Re: [PATCH] 9p: use inode->i_lock to protect i_size_write()
+Message-ID: <20190109023832.GA12389@nautica>
+References: <20190109020522.105713-1-houtao1@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190108045110.28597-2-aneesh.kumar@linux.ibm.com>
-User-Agent: Mutt/1.11.1 (2018-12-01)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Wed, 09 Jan 2019 02:38:16 +0000 (UTC)
+In-Reply-To: <20190109020522.105713-1-houtao1@huawei.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 08, 2019 at 10:21:07AM +0530, Aneesh Kumar K.V wrote:
-> This patch add PF_MEMALLOC_NOCMA which make sure any allocation in that context
-> is marked non movable and hence cannot be satisfied by CMA region.
-> 
-> This is useful with get_user_pages_cma_migrate where we take a page pin by
-> migrating pages from CMA region. Marking the section PF_MEMALLOC_NOCMA ensures
-> that we avoid uncessary page migration later.
-> 
-> Suggested-by: Andrea Arcangeli <aarcange@redhat.com>
-> Signed-off-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
+Hou Tao wrote on Wed, Jan 09, 2019:
+> Use inode->i_lock to protect i_size_write(), else i_size_read() in
+> generic_fillattr() may loop infinitely when multiple processes invoke
+> v9fs_vfs_getattr() or v9fs_vfs_getattr_dotl() simultaneously under
+> 32-bit SMP environment, and a soft lockup will be triggered as show below:
 
-Reviewed-by: Andrea Arcangeli <aarcange@redhat.com>
+Hmm, I'm not familiar with the read/write seqcount code for 32 bit but I
+don't understand how locking here helps besides slowing things down (so
+if the value is constantly updated, the read thread might have a chance
+to be scheduled between two updates which was harder to do before ; and
+thus "solving" your soft lockup)
+
+Instead, a better fix would be to update v9fs_stat2inode to first read
+the inode size, and only call i_size_write if it changed - I'd bet this
+also fixes the problem and looks better than locking to me.
+(Can also probably reuse stat->length instead of the following
+i_size_read for i_blocks...)
+
+
+
+On the other hand it might make sense to also lock the inode for
+stat2inode because we're dealing with partially updated inodes at time,
+but if we do this I'd rather put the locking in v9fs_stat2inode and not
+outside of it to catch all the places where it's used; but the readers
+don't lock so I'm not sure it makes much sense.
+
+There's also a window during which the inode's nlink is dropped down to
+1 then set again appropriately if the extension is present; that's
+rather ugly and we probably should only reset it to 1 if the attribute
+wasn't set before... That can be another patch and/or I'll do it
+eventually if you don't.
+
+I hope what I said makes sense.
+
+Thanks,
+-- 
+Dominique Martinet | Asmadeus
