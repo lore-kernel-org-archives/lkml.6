@@ -2,243 +2,132 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	FROM_LOCAL_NOVOWEL,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.7 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92CD5C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 05:34:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2045BC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 05:35:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 45CAB218D0
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 05:34:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DFA0C21848
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 05:35:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="CBow2YMk";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="nW5pOslc"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SuY/z/BO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729434AbfAIFen (ORCPT
+        id S1729485AbfAIFfu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 00:34:43 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:54154 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728138AbfAIFen (ORCPT
+        Wed, 9 Jan 2019 00:35:50 -0500
+Received: from mail-io1-f43.google.com ([209.85.166.43]:41014 "EHLO
+        mail-io1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727387AbfAIFfu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 00:34:43 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 031FD6079B; Wed,  9 Jan 2019 05:34:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1547012081;
-        bh=Px+VPNjOCZJ9TeXJ/SnsBY+UVYAyqE9tD4YaxE/J+zU=;
-        h=Subject:From:To:Cc:References:Date:In-Reply-To:From;
-        b=CBow2YMklDubsCYpFaJ3IOCewQ3uQ+UZYF0mB84yU+ITt3clRFu7QzQe9EWSEiSEb
-         W2RBxoGW18pY+GUbS3IiTG8d+4VtKd/UVU/gGMZ42vtutsiniFQdYMHSatBjKWQkjW
-         /iBYL1IGlGui6JPQXN9iCzQDVJk/fdvblPIq/ibs=
-Received: from [10.206.16.85] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: rplsssn@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 6D49060234;
-        Wed,  9 Jan 2019 05:34:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1547012079;
-        bh=Px+VPNjOCZJ9TeXJ/SnsBY+UVYAyqE9tD4YaxE/J+zU=;
-        h=Subject:From:To:Cc:References:Date:In-Reply-To:From;
-        b=nW5pOslcBoy9NCiCmMPwRul1q5GLVMPpvZvOp5FX6bwhO50ugHvBl+HvoNN9EM3Tn
-         5RohgyVgNRXmu9aleYly3eWroIVHoCdSNA5g6F1apffxTXNaXRd4oY+QCY+8LOh8B8
-         osha5j/3UlUeTLTVlvMW9G8nJfTjPBnkA3E1g4Mo=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6D49060234
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rplsssn@codeaurora.org
-Subject: Re: [PATCH RFC 3/5] dt-bindings: Add PDC timer bindings for Qualcomm
- SoCs
-From:   Raju P L S S S N <rplsssn@codeaurora.org>
-To:     Stephen Boyd <swboyd@chromium.org>, andy.gross@linaro.org,
-        david.brown@linaro.org, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org
-Cc:     rnayak@codeaurora.org, bjorn.andersson@linaro.org,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        evgreen@chromium.org, dianders@chromium.org, mka@chromium.org,
-        ilina@codeaurora.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-References: <20181221115946.10095-1-rplsssn@codeaurora.org>
- <20181221115946.10095-4-rplsssn@codeaurora.org>
- <154546438942.179992.14851496143150245966@swboyd.mtv.corp.google.com>
- <504cae51-0f35-beb8-496b-a335863a9071@codeaurora.org>
- <154603310752.179992.9262815873457262616@swboyd.mtv.corp.google.com>
- <b97937a0-68ff-ded7-d63b-680981818114@codeaurora.org>
- <154655037205.15366.7302521016277534390@swboyd.mtv.corp.google.com>
- <6384bcac-634c-5e7e-b357-93982de6eafb@codeaurora.org>
-Message-ID: <93a4b632-5740-42a9-9552-b46dd599ad68@codeaurora.org>
-Date:   Wed, 9 Jan 2019 11:04:32 +0530
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Wed, 9 Jan 2019 00:35:50 -0500
+Received: by mail-io1-f43.google.com with SMTP id s22so5083765ioc.8
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jan 2019 21:35:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=/WVHyTuBrX2Rn5yLapMfjo88L7PXGhBB2wQv9lPJLEU=;
+        b=SuY/z/BO2DWvTXym37KH8V9PADURSCmY0mMUoO4f4xmcl63689UWrvJQ8FEUKeg36K
+         5NkjRCJpQ4cPfmLojdIX2Y4EZm6oxnxmWU9+GkywRKdI0CTf99R7QiYUskkq48piUr9F
+         zZY7l3CUrt+5sB2Rd0G7v60aLi5gw4k6bXcaxbRKA8eFyNF2IaPuGAXocXxfD8eDaMZZ
+         gmWQvsVlhxo0rEfjFPSImwOEBMQZRcYrSMYMN6raJSNmJpeIvwTBdQle/KF5ASBlhBK7
+         ak0xGRuwPG9va+VCZLdPp4wHAJB8WGKe89ndM+FluFic2ZYPWD05ViviZIvmL+t7TRdO
+         j4KA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/WVHyTuBrX2Rn5yLapMfjo88L7PXGhBB2wQv9lPJLEU=;
+        b=ijtTNDnan6aed+zwm0hMtpX3NWGS3txEb6tJJY78d168AGr6hWJ3OgIwAaC2nnLRCc
+         Ci2pWuGbaQTWQFrYOC7I2rRbY+iGECKSoMhuz5JsbVRie1OQHTMsdUiup7MfJIJ0BWM/
+         lc1bxYGmMJV6x9rn84NShGNk2NRWu5yR7xux6FigAuMmhjhbIynedkJN2Gx4YmIVHbxW
+         8dh6cDycWcf02W3Rzr3yC1UVpxMWUEKWaX4J4CKIDFridAYFyJS2O3tkXDsZxT9r2dwt
+         GVKHrQlyieonWsKo005KyP+JQA2Xq/eF6Y9HVQls4M/tXCeeGy0JsT7qdhxgqg/0k1tW
+         Cv/A==
+X-Gm-Message-State: AJcUukcwicwmfBZuIV7Vt/v1Q3UVXWeaiTol+qNzk/ZMCzcqeuUJZd+g
+        /PnAEJbIKsa73ebkidYM8hMbESGX93miecy82CmXsA==
+X-Google-Smtp-Source: ALg8bN6Uai4JR3vMpEO619EBRqHhw+++41b0Xap2GSekLGu8hdb6EOQwp8GsWzIrv4Fk2Yuncsx5DQUqr2+gzMWp6O4=
+X-Received: by 2002:a5d:9456:: with SMTP id x22mr2509083ior.282.1547012149087;
+ Tue, 08 Jan 2019 21:35:49 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <6384bcac-634c-5e7e-b357-93982de6eafb@codeaurora.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <CAOMFOmU=t9YbE68YpoQn0Ug0XN1F+0iuJp9J=htCRRrbdaPSVA@mail.gmail.com>
+ <20190109000214.GA5907@andrea> <CAOMFOmUSttpLyeiRLjxw4rSN0tOiAq1jbwK=kRdCkuOKPOC3Rg@mail.gmail.com>
+In-Reply-To: <CAOMFOmUSttpLyeiRLjxw4rSN0tOiAq1jbwK=kRdCkuOKPOC3Rg@mail.gmail.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Wed, 9 Jan 2019 06:35:37 +0100
+Message-ID: <CACT4Y+ZaoB7t7DYwrdf6cQ3m_n5=Jz5800zEdpF1oT070bt66A@mail.gmail.com>
+Subject: Re: seqcount usage in xt_replace_table()
+To:     Anatol Pomozov <anatol.pomozov@gmail.com>
+Cc:     Andrea Parri <andrea.parri@amarulasolutions.com>,
+        Florian Westphal <fw@strlen.de>,
+        Paul McKenney <paulmck@linux.ibm.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Andrey Konovalov <andreyknvl@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Jan 9, 2019 at 1:36 AM Anatol Pomozov <anatol.pomozov@gmail.com> wrote:
+>
+> Hello
+>
+> On Tue, Jan 8, 2019 at 4:02 PM Andrea Parri
+> <andrea.parri@amarulasolutions.com> wrote:
+> >
+> > Hi Anatol,
+> >
+> > On Tue, Jan 08, 2019 at 11:33:39AM -0800, Anatol Pomozov wrote:
+> > > Hello folks,
+> > >
+> > > A bit of context what I am doing. I am trying to port KTSAN (Kernel
+> > > Thread Sanitizer) tool to v4.20. That tool tracks shared data usage
+> > > and makes sure it is accessed in a thread-safe manner.
+> >
+> > Interesting!  FYI, some LKMM's maintainers (Paul included) had and
+> > continued to have some "fun" discussing topics related to "thread-
+> > safe memory accesses": I'm sure that they'll be very interested in
+> > such work of yours and eager to discuss your results.
+>
+> Thread Sanitizer is a great tool to find thread-safety issues with
+> user-space code. The tool been developed by a team of smart people
+> from Google [1].
+>
+> KTSAN is an attempt to bring the same ideas to Linux kernel [2]. A
+> bunch of work been done there but the project is still at
+> proof-of-concept point.
+>
+> I am not a part of Google's dynamic tools team. But I've decided to
+> pick something to do during the New Year holidays so started porting
+> KTSAN from v4.2 to v4.20. The work is "almost completed" but I need to
+> fix a few crashes [3].
+>
+> [1] https://github.com/google/sanitizers
+> [2] https://github.com/google/ktsan/wiki
+> [3] https://github.com/anatol/linux/tree/ktsan_4.20
 
 
-On 1/7/2019 9:47 PM, Raju P L S S S N wrote:
-> 
-> 
-> On 1/4/2019 2:49 AM, Stephen Boyd wrote:
->> Quoting Raju P L S S S N (2019-01-03 04:22:58)
->>>
->>> On 12/29/2018 3:08 AM, Stephen Boyd wrote:
->>>> Quoting Raju P L S S S N (2018-12-26 01:44:43)
->>>>>
->>>>> There are two RSC devices in SoC one for application processor 
->>>>> subsystem
->>>>> & other display subsystem. Both RSC contain registers for PDC timers
->>>>> (one for each subsystem).
->>>>
->>>> When is the timer programmed on the display subsystem's RSC? It's hard
->>>> to give advice without all the information.
->>>
->>> For display subsystem RSC, hardware sleep solver takes care of timer
->>> programming for wakeup when the subsystem goes to Power collapse.
->>
->> So the display subsystem doesn't need to program their PDC in their RSC
->> from software?
-> Yes.
-> 
->>
->>>>
->>>> I would think that it would make sense for the application processor's
->>>> RSC timer to be programmed from the broadcast timer mechanism in the
->>>> kernel so that timers during idle work and suspend turns off the timer
->>>> appropriately with a shutdown hook. I guess the PDC can't tell you the
->>>> time though? It looks like a shadow (and limited) version of the ARM
->>>> architected MMIO timer that we already program for the broadcast timer
->>>> mechanism. Is that because even the MMIO timer can't wakeup the system
->>>> in deep idle?  Assuming that's true, it means the ARM MMIO timer can't
->>>> always be used as the system wide broadcast mechanism because we 
->>>> need to
->>>> augment it with the PDC timer to get the actual wakeup.
->>>>
->>>
->>> Yes. this is correct.
->>>
->>>> Maybe we should be adding hooks into the broadcast timer mechanism to
->>>> program this wakeup event hardware in addition to the ARM MMIO 
->>>> timer. Or
->>>> we should stop using the ARM MMIO timer on these systems and read the
->>>> system register based physical time in the RSC timer driver and 
->>>> register
->>>> this 64-bit PDC register as the broadcast timer. So the time reading
->>>> would be through sysreg and the wakeup programming would be done by
->>>> writing the PDC timer. The assumption would be that we have access to
->>>> the physical time registers (which sounds like the assumption we 
->>>> have to
->>>> make).
->>>
->>> There are no physical timer registers available in RSC for this purpose.
->>>
->>>>
->>>> Do we get an interrupt somewhere from the RSC hardware when the timer
->>>> fires? Or does that just cause a system wakeup event without any 
->>>> pending
->>>> irq and then another irq (like the ARM architected timer) just happens
->>>> to be pending around the same time? If we get an interrupt somehow then
->>>> I would prefer to drop the ARM MMIO timer and do this hybrid broadcast
->>>> timer approach.
->>>
->>> There is no interrupt for PDC timeout. It just causes system wakeup
->>> without a pending irq. ARM MMIO is necessary for irq.
->>
->> Does that system wakeup cause the CPUs to be enabled? So the sysreg
->> based timer in the CPU would start working? Or does it only make the
->> system come out of a deep enough idle state to make an always on domain
->> work that only contains the MMIO based ARM architected timer?
-> 
-> It only makes the system come out of deep sleep state for MMIO timer to 
-> function.
-> 
->>
->> I'd hope that each RSC's PDC timer wakes up the owner of the RSC so that
->> we can use the sysreg based timers and ignore the MMIO based timers
->> here. This isn't a very important distinction to make though, so if you
->> have to use the MMIO timers then it just means some extra DT things need
->> to be done to relate the MMIO timers with the RSC that has the timer
->> that needs to be programmed too.
-> 
->>
->> Either way we would need a way to either hook the ARM architected timer
->> driver in the kernel, or reimplement the bit of code needed to implement
->> the clockevent based on the ARM architected timer that programs the ARM
->> timer and the PDC timer together.
->>
-> 
-> Could you please provide some more details on the implementation?
+For completeness, at the time we also had to add
+read_seqcount_cancel() function to dynamically mark all seqcount read
+regions. It can be used here too, start read region and immediately
+end it. Less clear than raw_read_seqcount_nocritical(), but also less
+API surface.
 
-Hi Stephen,
+/**
+ * read_seqcount_cancel - cancel a seq-read critical section
+ * @s: pointer to seqcount_t
+ *
+ * This is a no-op except for ktsan, it needs to know scopes of seq-read
+ * critical sections. The sections are denoted either by begin->retry or
+ * by begin->cancel.
+ */
+static inline void read_seqcount_cancel(const seqcount_t *s)
+{
+        ktsan_seqcount_end(s);
+}
 
-Regardless of implementation options about application processor 
-subsytem PDC timer, I think there is a need to differentiate the fact 
-that for application processor subsystem PDC timer programming is done 
-by SW but not for display processor subsystem as HW sleep solver takes 
-care of PDC timer during sleep entry/exit. How about having a dt 
-property like qcom,pdc-timer-mode = "solver"/"sw" ? The current patch 
-introduced client based model using regmap to achieve this 
-differentiation between these two subsystems. By using the dt property, 
-once rpmh-src driver instance for application subsystem can have PDC 
-timer programing implemented. Let me know if there is another way.
-
-For implementation of PDC timer, I see the following based on above 
-discussion -
-1. Take the existing cpu_pm_notify approach and move the current series 
-approach of programing PDC timer registers to RSC driver. This wouldn't 
-involve any changes in clock_event_framework/broadcast framework.
-
-2. Add api hooks (like reading the next wake up programmed) to ARM 
-architecture timer driver so that the value is copied to PDC timer using 
-the api with in RSC driver based on cpu_pm_notifications.
-
-3. Changes in clockevent to program both ARM mem timer & PDC timer 
-together. Could you please share some more details on this?
-
-
-Please let me know if the first approach is ok.
-
-Thanks,
-Raju.
-
-> 
-> 
->>>
->>>>
->>>> How the RSC is used in general by other devices, like display, is not
->>>> clear to me. We don't have a "wakeup event" framework in the kernel 
->>>> that
->>>> device drivers like the display driver can grab a reference to and
->>>> program some system wide wakeup for. That sounds like something new 
->>>> that
->>>> could be handled entirely in the display driver with direct register
->>>> writes, or it could be some qcom specific API/framework that eventually
->>>> calls down into the same RSC driver that knows what offsets to write
->>>> into in the display RSC's register space, or it could be an entirely
->>>> generic framework like clk or regulator frameworks that could be 
->>>> used by
->>>> anything. BTW, are we using the display RSC yet?
->>>>
->>>
->>> Only display subsystem RSC is programmed along with CPU RSC in Linux.
->>> display RSC instance is not present in upstream but it is present in
->>> downstream and used for resource communication purpose only.
->>
->>  From the comment above it sounds like the display RSC handles the wakeup
->> programming in hardware? So there isn't a need to add a 'wakeup event'
->> framework or anything like that. Please correct me if I'm wrong.
-> 
-> Yes. There is no need for any framework. From RSC driver point of view 
-> there is a need to differentiate apps_rsc vs display_rsc as SW programs 
-> PDC timer only in apps_rsc case. How about having a dt property to 
-> capture this?
-> 
-> Thanks,
-> Raju
+https://github.com/google/ktsan/blob/tsan/include/linux/seqlock.h#L235-L246
