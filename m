@@ -5,57 +5,56 @@ X-Spam-Level:
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18120C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 00:16:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7D27C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 00:16:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6E1B2146F
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 00:16:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A6E1C20883
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 00:16:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gBKx023g"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a1VM7OHC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728736AbfAIAQg (ORCPT
+        id S1729534AbfAIAQL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 19:16:36 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:41113 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729590AbfAIAQP (ORCPT
+        Tue, 8 Jan 2019 19:16:11 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:40586 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727917AbfAIAQI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 19:16:15 -0500
-Received: by mail-pf1-f196.google.com with SMTP id b7so2722005pfi.8;
-        Tue, 08 Jan 2019 16:16:14 -0800 (PST)
+        Tue, 8 Jan 2019 19:16:08 -0500
+Received: by mail-pf1-f193.google.com with SMTP id i12so2725090pfo.7;
+        Tue, 08 Jan 2019 16:16:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=P/8QzMGhwKMfmIOAF2zlUPiFd1xnlUH+CAb9uo8OAbQ=;
-        b=gBKx023g1sVQJfTSr8KqKyluUSy9n+5B4jeyffhSD3sh2uWQIR6lM2rbVXHhh52jRJ
-         r5jzltiu4zgo3RpfNFV6P45bTIHCq5JJlUXtGesVIzWRxmvw73z17AXo1w7lur6eriB7
-         zawWqG1yPfzOXiVeeKOQvRdIwmB0UsfyS3PJqUIxDT+vVpwElcwpl4xoOpFLee4mUFxj
-         UHLn8flkVvBApKnpoCkfUNHoWIJDuqZxJlNM2hhjqKxWPk6gDheEyoxKs15n1+it0zN5
-         y/Gc8/V6marjLuukUufLj+GvxBY4l5fJX5nfSQ97RrFbQn9jMpS2/I8Zq1SiF9sUs07j
-         Drjw==
+        bh=Czin5sL8tW0JC/3lnEKv/S5HZ7pdR7BqrSyW7TzK7EU=;
+        b=a1VM7OHC8lgSv15TBVN9mp9osmm70Bc4s8eopOZIopXpxSTWgWo7yLeFOFTqkXHnT6
+         fRz7Azvw9KqOrcgPRomKn/5Y+IszcWnaR+GnuI/SPMSAMjjWyXm2ZEGRhNliBTpvbPEf
+         cDS/aBNEZgwLjgK+OYvBEdS2+goag8zKOfc/VAp9eJj2C+HBEV0YYHnCu7ZBWsopJRux
+         eMqwQaLuQu6h3ZcQzgIUWvJtTGNYUqw4HZnVIsfL7GUV7gSIzaT/zSOYg+CMGy/N9goG
+         T1BMhrKgATg4d49cy764BODCsewy2JvqQFFnQcxT/Cs58X2BIv0vwsGLFXGTubdX6ENe
+         0E7Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=P/8QzMGhwKMfmIOAF2zlUPiFd1xnlUH+CAb9uo8OAbQ=;
-        b=UB1KdeTXVRXZYR9GgZS+9QBDwav4lsi24ZGvuDm5dUh70Kdn6opFOMKgQ1XL5y3XhF
-         6/5wLrA/Q1Uz3vamXnCAW9+9zILIUS2NLfXvhCvl1hCArmE0IHRaPcJP26BW1clskJu+
-         c4Xa+GBv2uttWTvfLNobNtCO5Z/6H69ahs+iQb2IPt0Ok1fm+ZYGwdz7grqQMuA773Vk
-         odXPQjAjWJZsV9UnqIwk3RY2MFabjZoTkrZGiykth0QbqbnBIWSCpYLIJMLmh9zoCW24
-         7ILKd6uUIiAg9X2axTiAPEKIFPhOelWUhwqBbfc3EZ/Gky3r+El7TlFKsCAzYDKwM9py
-         LqRw==
-X-Gm-Message-State: AJcUukdfKAPEu7O8rnQ5hyDQGSX3RnaT60ijV0SClb6dPIiySagoIhQA
-        aSrQgNYVSiDg2QIWgX3+O3QKPI5u
-X-Google-Smtp-Source: ALg8bN7NhP7FGaas3c7/lMoO21UyXU/zgYe2R9ZbhRHWt75Fa8MIhjPwG/ytaDbm/Pl1NpsnGRfCnQ==
-X-Received: by 2002:a63:4f20:: with SMTP id d32mr3416555pgb.47.1546992974209;
-        Tue, 08 Jan 2019 16:16:14 -0800 (PST)
+        bh=Czin5sL8tW0JC/3lnEKv/S5HZ7pdR7BqrSyW7TzK7EU=;
+        b=Yf+BFesIjw5GZT29TvsNzyAmVwWAi0tmjIDDgGb2zsDdOHN0tIyjUFqxt8aC3yqUgx
+         IW7n2X2151w5+ad555NAgluFQKqTvMKJwLdq8q2FFBpPycS/ZAuoqzIk9iUe38Cy89qm
+         Duvt7fuQd6mo++vZSC9M5g0q2zUqFBlSwXCwgtxezZJ7Zxbbe5RGVAhID6krRtkBdmED
+         R/oIvF7D59IZdT47qA3HTSHKxLcUQyPHxNakVj2M+qCK9uTTAd9weHjlWRnnuAFfxn32
+         7gmPD0RLE1OzibLu9RpOHqoIZWpPEp0CU8JMSOrsJHTJJKIHxrH405ImDvtYlwj4zAPW
+         FubQ==
+X-Gm-Message-State: AJcUukdF0NEz7V3ytCBDAQoYZvbpnQdHD9Q1gduC5nphtlE3Pt61o57t
+        ZehNxaymScM5R7z96bz8is0G7d4w
+X-Google-Smtp-Source: ALg8bN5cBC/AlmfBQS/Mf4dkZboVWzl4FuZEHkygAKs8tKw5rqxT30dQDJPrUwCpCzENJ/VIZqp7Sg==
+X-Received: by 2002:a63:fa06:: with SMTP id y6mr3419463pgh.177.1546992967008;
+        Tue, 08 Jan 2019 16:16:07 -0800 (PST)
 Received: from majic.sklembedded.com (c-98-210-181-167.hsd1.ca.comcast.net. [98.210.181.167])
-        by smtp.googlemail.com with ESMTPSA id 134sm83978490pgb.78.2019.01.08.16.16.12
+        by smtp.googlemail.com with ESMTPSA id 134sm83978490pgb.78.2019.01.08.16.16.05
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 08 Jan 2019 16:16:13 -0800 (PST)
+        Tue, 08 Jan 2019 16:16:06 -0800 (PST)
 From:   Steve Longerbeam <slongerbeam@gmail.com>
 To:     linux-media@vger.kernel.org
 Cc:     Steve Longerbeam <slongerbeam@gmail.com>,
@@ -64,9 +63,9 @@ Cc:     Steve Longerbeam <slongerbeam@gmail.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         devel@driverdev.osuosl.org (open list:STAGING SUBSYSTEM),
         linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v6 10/12] media: imx-csi: Move crop/compose reset after filling default mbus fields
-Date:   Tue,  8 Jan 2019 16:15:49 -0800
-Message-Id: <20190109001551.16113-11-slongerbeam@gmail.com>
+Subject: [PATCH v6 05/12] media: imx-csi: Input connections to CSI should be optional
+Date:   Tue,  8 Jan 2019 16:15:44 -0800
+Message-Id: <20190109001551.16113-6-slongerbeam@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190109001551.16113-1-slongerbeam@gmail.com>
 References: <20190109001551.16113-1-slongerbeam@gmail.com>
@@ -75,63 +74,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If caller passes un-initialized field type V4L2_FIELD_ANY to CSI
-sink pad, the reset CSI crop window would not be correct, because
-the crop window depends on a valid input field type. To fix move
-the reset of crop and compose windows to after the call to
-imx_media_fill_default_mbus_fields().
+Some imx platforms do not have fwnode connections to all CSI input
+ports, and should not be treated as an error. This includes the
+imx6q SabreAuto, which has no connections to ipu1_csi1 and ipu2_csi0.
+Return -ENOTCONN in imx_csi_parse_endpoint() so that v4l2-fwnode
+endpoint parsing will not treat an unconnected endpoint as an error.
+
+Fixes: c893500a16baf ("media: imx: csi: Register a subdev notifier")
 
 Signed-off-by: Steve Longerbeam <slongerbeam@gmail.com>
-Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
 ---
- drivers/staging/media/imx/imx-media-csi.c | 27 ++++++++++++-----------
- 1 file changed, 14 insertions(+), 13 deletions(-)
+ drivers/staging/media/imx/imx-media-csi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/staging/media/imx/imx-media-csi.c b/drivers/staging/media/imx/imx-media-csi.c
-index 47568ec43f4a..7afb7e367d76 100644
+index e3a4f39dbf73..b276672cae1d 100644
 --- a/drivers/staging/media/imx/imx-media-csi.c
 +++ b/drivers/staging/media/imx/imx-media-csi.c
-@@ -1409,19 +1409,6 @@ static void csi_try_fmt(struct csi_priv *priv,
- 				      W_ALIGN, &sdformat->format.height,
- 				      MIN_H, MAX_H, H_ALIGN, S_ALIGN);
- 
--		/* Reset crop and compose rectangles */
--		crop->left = 0;
--		crop->top = 0;
--		crop->width = sdformat->format.width;
--		crop->height = sdformat->format.height;
--		if (sdformat->format.field == V4L2_FIELD_ALTERNATE)
--			crop->height *= 2;
--		csi_try_crop(priv, crop, cfg, &sdformat->format, upstream_ep);
--		compose->left = 0;
--		compose->top = 0;
--		compose->width = crop->width;
--		compose->height = crop->height;
--
- 		*cc = imx_media_find_mbus_format(sdformat->format.code,
- 						 CS_SEL_ANY, true);
- 		if (!*cc) {
-@@ -1437,6 +1424,20 @@ static void csi_try_fmt(struct csi_priv *priv,
- 		imx_media_fill_default_mbus_fields(
- 			&sdformat->format, infmt,
- 			priv->active_output_pad == CSI_SRC_PAD_DIRECT);
-+
-+		/* Reset crop and compose rectangles */
-+		crop->left = 0;
-+		crop->top = 0;
-+		crop->width = sdformat->format.width;
-+		crop->height = sdformat->format.height;
-+		if (sdformat->format.field == V4L2_FIELD_ALTERNATE)
-+			crop->height *= 2;
-+		csi_try_crop(priv, crop, cfg, &sdformat->format, upstream_ep);
-+		compose->left = 0;
-+		compose->top = 0;
-+		compose->width = crop->width;
-+		compose->height = crop->height;
-+
- 		break;
- 	}
+@@ -1815,7 +1815,7 @@ static int imx_csi_parse_endpoint(struct device *dev,
+ 				  struct v4l2_fwnode_endpoint *vep,
+ 				  struct v4l2_async_subdev *asd)
+ {
+-	return fwnode_device_is_available(asd->match.fwnode) ? 0 : -EINVAL;
++	return fwnode_device_is_available(asd->match.fwnode) ? 0 : -ENOTCONN;
  }
+ 
+ static int imx_csi_async_register(struct csi_priv *priv)
 -- 
 2.17.1
 
