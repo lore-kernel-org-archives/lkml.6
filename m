@@ -2,176 +2,120 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F00CDC43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 21:04:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0968DC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 21:07:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B3D41206BB
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 21:04:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=mailprotect.be header.i=@mailprotect.be header.b="QDAzg0wO"
+	by mail.kernel.org (Postfix) with ESMTP id C1525206B7
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 21:07:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728085AbfAIVE1 (ORCPT
+        id S1726415AbfAIVHP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 16:04:27 -0500
-Received: from out002.mailprotect.be ([83.217.72.86]:42915 "EHLO
-        out002.mailprotect.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727434AbfAIVCy (ORCPT
+        Wed, 9 Jan 2019 16:07:15 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:36118 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725730AbfAIVHO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 16:02:54 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=mailprotect.be; s=mail; h=Content-Transfer-Encoding:MIME-Version:References
-        :In-Reply-To:Message-Id:Date:Subject:Cc:To:From:reply-to:sender:bcc:
-        content-type; bh=gz+c7T7GOW633FMGLDVxyReVbF0BgqqCDpXDgDcsmZU=; b=QDAzg0wO9Gew
-        6p6NWkz7e9Vl0w2ofMG/1REGslJTRJc7mNOjgsXvxpRwbqdZphL2IB7IqMejjkA1hnLQKHrw3DMyZ
-        k/VxG2aDr0gd4b8PNyo+XXFZ7JvErEce2QKrWsLkhumKCz1mGPEHkKYwNawjjeNyeaa7Lrv5196xC
-        eMUraQEXXOmk7mgpocgaUrMj68gWFVzNzPpOf4P+2pC1IyijVjBPmr97WEcYJCQGGOUpSf0s2WGTQ
-        S2DNqgKudC6PVTpihUCzYKnP28DXxXkVKj8OyAa6vKKVwO/fYRaRy1/6THcICg8pwnzYCtrCxbiEc
-        ZzuJmW7Ke5vTMmtrJkg4uw==;
-Received: from smtp-auth.mailprotect.be ([178.208.39.159])
-        by com-mpt-out002.mailprotect.be with esmtp (Exim 4.89)
-        (envelope-from <bvanassche@acm.org>)
-        id 1ghKzn-0009Ce-F2; Wed, 09 Jan 2019 22:02:40 +0100
-Received: from desktop-bart.svl.corp.google.com (unknown [104.133.8.89])
-        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by smtp-auth.mailprotect.be (Postfix) with ESMTPSA id 6CDF9C15F1;
-        Wed,  9 Jan 2019 22:02:23 +0100 (CET)
-From:   Bart Van Assche <bvanassche@acm.org>
-To:     peterz@infradead.org
-Cc:     mingo@redhat.com, tj@kernel.org, longman@redhat.com,
-        johannes.berg@intel.com, linux-kernel@vger.kernel.org,
-        Bart Van Assche <bvanassche@acm.org>,
-        Johannes Berg <johannes@sipsolutions.net>
-Subject: [PATCH v6 03/16] locking/lockdep: Make zap_class() remove all matching lock order entries
-Date:   Wed,  9 Jan 2019 13:01:51 -0800
-Message-Id: <20190109210204.192109-4-bvanassche@acm.org>
-X-Mailer: git-send-email 2.20.1.97.g81188d93c3-goog
-In-Reply-To: <20190109210204.192109-1-bvanassche@acm.org>
-References: <20190109210204.192109-1-bvanassche@acm.org>
+        Wed, 9 Jan 2019 16:07:14 -0500
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x09Kn2NB044886
+        for <linux-kernel@vger.kernel.org>; Wed, 9 Jan 2019 16:07:13 -0500
+Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2pwpxh4ntn-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Jan 2019 16:07:13 -0500
+Received: from localhost
+        by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Wed, 9 Jan 2019 21:07:12 -0000
+Received: from b01cxnp22033.gho.pok.ibm.com (9.57.198.23)
+        by e11.ny.us.ibm.com (146.89.104.198) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 9 Jan 2019 21:07:07 -0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x09L76Si21037074
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 9 Jan 2019 21:07:06 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8B858B205F;
+        Wed,  9 Jan 2019 21:07:06 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6B7F5B2065;
+        Wed,  9 Jan 2019 21:07:06 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.88])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Wed,  9 Jan 2019 21:07:06 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 3934016C63FE; Wed,  9 Jan 2019 13:07:06 -0800 (PST)
+Date:   Wed, 9 Jan 2019 13:07:06 -0800
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        mingo@kernel.org
+Cc:     stern@rowland.harvard.edu, parri.andrea@gmail.com,
+        will.deacon@arm.com, peterz@infradead.org, boqun.feng@gmail.com,
+        npiggin@gmail.com, dhowells@redhat.com, j.alglave@ucl.ac.uk,
+        luc.maranget@inria.fr, akiyks@gmail.com, willy@infradead.org
+Subject: [PATCH RFC memory-model 0/6] LKMM updates
+Reply-To: paulmck@linux.ibm.com
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: 178.208.39.159
-X-SpamExperts-Domain: mailprotect.be
-X-SpamExperts-Username: 178.208.39.128/27
-Authentication-Results: mailprotect.be; auth=pass smtp.auth=178.208.39.128/27@mailprotect.be
-X-SpamExperts-Outgoing-Class: ham
-X-SpamExperts-Outgoing-Evidence: Combined (0.03)
-X-Recommended-Action: accept
-X-Filter-ID: EX5BVjFpneJeBchSMxfU5hA/aS4EuEn7BhjIUVbLMpZ602E9L7XzfQH6nu9C/Fh9KJzpNe6xgvOx
- q3u0UDjvO1tLifGj39bI0bcPyaJsYTb/+zriNZuqQk0xRpGwjn+MTR8dtByWYYhgj25jR+mEA3YO
- AtfhCcV13BpIh8lqRXSSiFVwqwU9VgKUrYQ0lqWyFDaym8oavoPYsm7m1mVEGf0/5ST3nkt5XYDK
- YAuRpmF7E2F3eqKXiTd2ECUghryWXlqwG31yUGf3t09vBVYS71V1Pk0aHudBU1wyWVTA5OYS1waI
- XXCBiQFDV0yen8nGcSeERs4TOTnIH1kc1IWc5eLazqbUYkjl7F1LyK0RORqWM32AItFObsAtCbZS
- TT1RSNgvEAWLFiDAlQR6Wu0I/iWDegq4fQ11AxLVlrI7DVH6GzPz+r852EXXeYX4ImMyzDg6HYuT
- CyYgL61SIkBTYXPEvhymCNb22qmKERGbL1SqvGGff0htQqhQf0/aDrhpLM4xnCPpmyyS7jgD9Nen
- VVoB/PLX+rmdznc91veCJAwpCI+5VHpzDqRcT2+GtIE8SRAgmLDKAcp9i+Q+BEiSUj07SNjVkl0P
- Pj+OUYZX3/1fKPQPEuPra72LpiTN2rUT6Y9xm3kmEG6YzhU+GhpkbBQllJXXeGX8fAMzPNqrCG8d
- f68W0InH/+bTMKNm38MHmfnhF9U/dVeZ9xbDBH3UiCDt3yfQxlhCaKc8coJFU+8pOMQJvQ/Ck3ii
- U+4DQAj38VcpxSBd167NiiR0DMS/T4GvZUhi7BJ7QOeRk66G/m8jRjgifve2wm5/91NPphLvwdjs
- knqyEbjDKViNADzUevfG9Bh3rY3E1fk/gwQQ70WqltsYPx2OGpapJQwbU6lxiSPQp1QN34zBsoOP
- LAVTMEsOC75ReJHeVybconOP07vieGH1wwKQhUuVJ6kr80wTGaiTXW7z2lMqAnbumOwh0pBt+CpM
- AQh13vqug5h3DxxGoN9Ok9QgavkxBN81FyM027EnVMwCxJ89QGE/4wVOzpIAiDKO1d3jsySf+J0s
- zc1uD9pAwuLhqtxw5exj8Aw7fqb5R4VemuUI6bcEARsm0JyPNwoZFF/BeruF9IPYgMLyX2cd5RrN
- VWdImRunoKaV5Izq4VabSfIGUY8RJ38dSGEP+JYPRX76oPSBtBBPLYw1mZQfhvSXPX1npIQpGBE7
- MnJiHvQ8gQs8eCOaG4DvtrnB4hxWBV/7jCqhcJq0hur2OKHH5lr9xXvSM4nM3avg
-X-Report-Abuse-To: spam@com-mpt-mgt001.mailprotect.be
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 19010921-2213-0000-0000-000003399411
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010374; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000274; SDB=6.01144138; UDB=6.00595704; IPR=6.00924400;
+ MB=3.00025055; MTD=3.00000008; XFM=3.00000015; UTC=2019-01-09 21:07:10
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19010921-2214-0000-0000-00005CE7EA80
+Message-Id: <20190109210706.GA27268@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-09_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=99 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901090168
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Make sure that all lock order entries that refer to a class are removed
-from the list_entries[] array when a kernel module is unloaded.
+Hello!
 
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Waiman Long <longman@redhat.com>
-Cc: Johannes Berg <johannes@sipsolutions.net>
-Signed-off-by: Bart Van Assche <bvanassche@acm.org>
----
- include/linux/lockdep.h  |  1 +
- kernel/locking/lockdep.c | 19 +++++++++++++------
- 2 files changed, 14 insertions(+), 6 deletions(-)
+This series contains updates for the Linux-kernel memory model:
 
-diff --git a/include/linux/lockdep.h b/include/linux/lockdep.h
-index c5335df2372f..71caa1118f4c 100644
---- a/include/linux/lockdep.h
-+++ b/include/linux/lockdep.h
-@@ -178,6 +178,7 @@ static inline void lockdep_copy_map(struct lockdep_map *to,
- struct lock_list {
- 	struct list_head		entry;
- 	struct lock_class		*class;
-+	struct lock_class		*links_to;
- 	struct stack_trace		trace;
- 	int				distance;
- 
-diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-index 7a7c2d7b01c2..e52ce8745cba 100644
---- a/kernel/locking/lockdep.c
-+++ b/kernel/locking/lockdep.c
-@@ -859,7 +859,8 @@ static struct lock_list *alloc_list_entry(void)
- /*
-  * Add a new dependency to the head of the list:
-  */
--static int add_lock_to_list(struct lock_class *this, struct list_head *head,
-+static int add_lock_to_list(struct lock_class *this,
-+			    struct lock_class *links_to, struct list_head *head,
- 			    unsigned long ip, int distance,
- 			    struct stack_trace *trace)
- {
-@@ -873,6 +874,7 @@ static int add_lock_to_list(struct lock_class *this, struct list_head *head,
- 		return 0;
- 
- 	entry->class = this;
-+	entry->links_to = links_to;
- 	entry->distance = distance;
- 	entry->trace = *trace;
- 	/*
-@@ -1918,14 +1920,14 @@ check_prev_add(struct task_struct *curr, struct held_lock *prev,
- 	 * Ok, all validations passed, add the new lock
- 	 * to the previous lock's dependency list:
- 	 */
--	ret = add_lock_to_list(hlock_class(next),
-+	ret = add_lock_to_list(hlock_class(next), hlock_class(prev),
- 			       &hlock_class(prev)->locks_after,
- 			       next->acquire_ip, distance, trace);
- 
- 	if (!ret)
- 		return 0;
- 
--	ret = add_lock_to_list(hlock_class(prev),
-+	ret = add_lock_to_list(hlock_class(prev), hlock_class(next),
- 			       &hlock_class(next)->locks_before,
- 			       next->acquire_ip, distance, trace);
- 	if (!ret)
-@@ -4119,15 +4121,20 @@ void lockdep_reset(void)
-  */
- static void zap_class(struct lock_class *class)
- {
-+	struct lock_list *entry;
- 	int i;
- 
- 	/*
- 	 * Remove all dependencies this lock is
- 	 * involved in:
- 	 */
--	for (i = 0; i < nr_list_entries; i++) {
--		if (list_entries[i].class == class)
--			list_del_rcu(&list_entries[i].entry);
-+	for (i = 0, entry = list_entries; i < nr_list_entries; i++, entry++) {
-+		if (entry->class != class && entry->links_to != class)
-+			continue;
-+		list_del_rcu(&entry->entry);
-+		/* Clear .class and .links_to to avoid double removal. */
-+		WRITE_ONCE(entry->class, NULL);
-+		WRITE_ONCE(entry->links_to, NULL);
- 	}
- 	/*
- 	 * Unhash the class and remove it from the all_lock_classes list:
--- 
-2.20.1.97.g81188d93c3-goog
+1-3.	Add SRCU support, courtesy of Alan Stern.
+
+4.	Update README for adding of SRCU support.
+
+5.	Update memory-barriers.txt on enforcing heavy ordering for
+	port-I/O accesses, courtesy of Will Deacon.  This one needs
+	an ack, preferably by someone from Intel.  Matthew Wilcox
+	posted some feedback from an Intel manual here, which might
+	be considered to be a close substitute, but...  ;-)
+
+	http://lkml.kernel.org/r/20181127192234.GF10377@bombadil.infradead.org
+
+6.	Update Documentation/explanation.txt to include SRCU support,
+	courtesy of Alan Stern.
+
+7.	Dynamically check SRCU lock-to-unlock matching, courtesy of
+	Luc Maranget.  This needs an ack.
+
+							Thanx, Paul
+
+------------------------------------------------------------------------
+
+ Documentation/memory-barriers.txt                |    6 
+ tools/memory-model/Documentation/explanation.txt |  289 ++++++++++++-----------
+ tools/memory-model/README                        |   25 +
+ tools/memory-model/linux-kernel.bell             |   37 ++
+ tools/memory-model/linux-kernel.cat              |   55 ++--
+ tools/memory-model/linux-kernel.def              |    7 
+ 6 files changed, 250 insertions(+), 169 deletions(-)
 
