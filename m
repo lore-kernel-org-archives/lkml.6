@@ -2,143 +2,160 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35943C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 12:53:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8D36C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 12:59:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F3965206B6
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 12:53:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547038437;
-	bh=Dv5QSL5046OU14WaDc5ngmggBjPB7be+g6ThooBnLCs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=CdrqAWY18GXojIcuNA9WNg21LfKbpMdrLGLMaejwifD+pLXqOwG3RT7pAFN9Vhlqi
-	 Q5TzJ2+VfO1Y8LQYW0af4HZIELvhZjkXR/Qf5aA03IA28PSHK6U0rXDmdD9dIEqZza
-	 NdAuTNS9k3voPTq9hAa3Fo8USZpnk2TTeXM/JOzc=
+	by mail.kernel.org (Postfix) with ESMTP id 70C9120578
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 12:59:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ABFxu0l3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730628AbfAIMxz (ORCPT
+        id S1730515AbfAIM7o (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 07:53:55 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:57286 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729152AbfAIMxz (ORCPT
+        Wed, 9 Jan 2019 07:59:44 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:35326 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729721AbfAIM7n (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 07:53:55 -0500
+        Wed, 9 Jan 2019 07:59:43 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=BcoIGHPMGUm3GN1U/z0BUReNVYNAlQdtFgQRREGBPw4=; b=Gb4kvTNS2Lg2rS9qFBm0p2WsM
-        2PphZdvYdfwc/S+QAWRlrmBGqTfsErTrJRMS0DBW18pKtMZigQ44kBOMqOe+UKkA0GyViYu4A7lkG
-        ah0iCjamLG9opkdbfxKRmvbskffvN71JK89UCp9kOcGUQVOBts3SzBXOA36k4mDJotUFc=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1ghDMa-0007zr-JM; Wed, 09 Jan 2019 12:53:40 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 226F81127528; Wed,  9 Jan 2019 12:53:40 +0000 (GMT)
-Date:   Wed, 9 Jan 2019 12:53:40 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        linux-tegra@vger.kernel.org, Matthias Reichl <hias@horus.com>,
-        alsa-devel@alsa-project.org,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        Takashi Iwai <tiwai@suse.com>, linux-kernel@vger.kernel.org,
-        Marcel Ziswiler <marcel@ziswiler.com>
-Subject: Re: [alsa-devel] [PATCH v1 3/3] ASoC: soc-core: fix platform name
- vs. of_node assignement
-Message-ID: <20190109125340.GD10405@sirena.org.uk>
-References: <e25a7463-9ce0-d7f9-e77b-2bbaab2e0b25@nvidia.com>
- <20181021112301.GC8554@sirena.org.uk>
- <20181218174040.k7u26vnnoplllnwb@camel2.lan>
- <952471da-b355-6471-6c19-5120d6704f81@nvidia.com>
- <87lg3vuc7p.wl-kuninori.morimoto.gx@renesas.com>
- <b5164c93-8be8-1c3d-9415-c895da6ad622@nvidia.com>
- <d1e41ed2-da7c-b46c-bc6d-64cf3e536771@nvidia.com>
- <865d2a3e-bf6b-1f30-1179-7e922c0d0641@nvidia.com>
- <87k1je38w7.wl-kuninori.morimoto.gx@renesas.com>
- <0660a471-3698-2059-4494-ad146518a4ed@nvidia.com>
+         bh=lQr2MMBoooeIZvC1sUfkR9ACXBzS1/uLXOD1DM7niPs=; b=ABFxu0l3NG6E2RiEmgS9ME/NS
+        RNmjfbTNoRRikIdd52//Me9ROpFO2MG7QwNNRQjGsmkPtL+pE0E6aC6etQvOmgZZhS66b15weNXQd
+        W1+6ELlKxmq+GS8nVzqL7DI2QNnRox9WwPmcl150gK3y9CgYpxJESbIAOHK5mXkte6F8edFUdR7+J
+        cDdRyIgeXAZ19rdXBtJr0ZSuh7Ons364DEKgM1iEYEfjC6+A6eL4EqUSs9jzTSB1JRnkBgi04QsOJ
+        d2Zmw4j9X19Xn7OX8qYhnd6/ESqntBWBtOzO4uPsw5fXECHy4P5w7TQwM66bg+ZDplwtfSFXQHz2I
+        DZgWXHpQQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1ghDSN-0000db-LI; Wed, 09 Jan 2019 12:59:39 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 7170520281DDA; Wed,  9 Jan 2019 13:59:38 +0100 (CET)
+Date:   Wed, 9 Jan 2019 13:59:38 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Song Liu <songliubraving@fb.com>
+Cc:     lkml <linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "acme@kernel.org" <acme@kernel.org>,
+        "ast@kernel.org" <ast@kernel.org>,
+        "daniel@iogearbox.net" <daniel@iogearbox.net>,
+        Kernel Team <Kernel-team@fb.com>,
+        Andi Kleen <andi@firstfloor.org>
+Subject: Re: [PATCH v5 perf, bpf-next 3/7] perf, bpf: introduce
+ PERF_RECORD_BPF_EVENT
+Message-ID: <20190109125938.GJ1900@hirez.programming.kicks-ass.net>
+References: <20181220182904.4193196-1-songliubraving@fb.com>
+ <20181220182904.4193196-4-songliubraving@fb.com>
+ <20190108184116.GC30894@hirez.programming.kicks-ass.net>
+ <77A478D9-F36F-443A-BBFD-F0C1FFE0DD90@fb.com>
+ <20190108194310.GD1900@hirez.programming.kicks-ass.net>
+ <A0C713E9-6ACE-4235-87C2-2653A8F22F7B@fb.com>
+ <20190109101808.GG1900@hirez.programming.kicks-ass.net>
+ <924AE46C-B2B9-4E17-A6FC-C678FEADC03B@fb.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="3Gf/FFewwPeBMqCJ"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <0660a471-3698-2059-4494-ad146518a4ed@nvidia.com>
-X-Cookie: VMS version 2.0 ==>
+In-Reply-To: <924AE46C-B2B9-4E17-A6FC-C678FEADC03B@fb.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Jan 09, 2019 at 11:32:50AM +0000, Song Liu wrote:
+> I was thinking about modifying the text in-place scenario. In this case, 
+> we can use something like
+> 
+> struct perf_record_text_modify {
+>     u64 addr;
+>     u_big_enough old_instr;
+>     u_big_enough new_instr;
 
---3Gf/FFewwPeBMqCJ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+char[15] for x86 ;-)
 
-On Wed, Jan 09, 2019 at 11:03:44AM +0000, Jon Hunter wrote:
-> On 09/01/2019 01:51, Kuninori Morimoto wrote:
+Also, I don't think we need old, we should already have the old text,
+either from a previous event or from the initial kcore snapshot.
 
-> > "multi platform" is no plan (?).
+>     timestamp ;
 
-> I would like someone to explain what multi-platform means? Even if a
-> soundcard supports multiple platforms, there is only one platform you
-> are using at any time so ...
+that lives in struct sample_id.
 
-Platform in this case means DMA driver (for historical reasons I've
-never entirely understood the DMA drivers got called the platform
-drivers).  It is possible that a system might have multiple DMA
-implementations in a single sound card but fortunately we don't seem to
-run into that.
+> };
+> 
+> It is a fixed size record, and we don't need process it immediately 
+> in user space. At the end of perf run, a series of these events will 
+> help us reconstruct exact text at any time. 
 
-> > I want to which to modern style immediately and remove legacy style.
-> > But as you know, we have too many ALSA SoC drivers now.
-> > So, if I posted "switch legacy style to modern style" patch
-> > for each (= for codec, for platform, for cpu), it will be patch-bomb,
-> > and Lars-Petter/Mark don't like it.
-> > Thus, I'm waiting "multi CPU" support patch.
+That works for text_poke users, see also:
 
-> Sorry, I still don't understand the dependency on the multi CPU and why
-> we need to wait.
+  https://lkml.kernel.org/r/20190109103544.GH1900@hirez.programming.kicks-ass.net
 
-I believe Morimoto-san's concern is to minimize the number of
-refactorings of the drivers as that gets disruptive.  That's definitely
-a valid concern but we can't postpone fixing bugs over releases, we need
-things to work for people.
+But is useless for module / bpf / ftrace dynamic text.
 
-> > If CPU/Codec/Platform can be snd_soc_init_platform style,
-> > then, we can switch to modern style for all drivers.
-> > Then, all driver will have *static* platform.
+> > All we need is some means of ensuring the symbol is still there by the
+> > time we see the event and do the copy.
+> > 
+> > I think we can do this with a new ioctl() on /proc/kcore itself:
+> > 
+> > - when we have kcore open, we queue all text-free operations on list-1.
+> > 
+> > - when we close kcore, we drain all (text-free) list-* and perform the
+> >   pending frees immediately.
+> > 
+> > - on ioctl(KCORE_QC) we perform the pending free of list-3 and advance
+> >   list-2 to list-3 and list-1 to list-2.
+> > 
+> > Perf would then open kcore at the start of the record, make a complete
+> > copy and keep the FD open. At the end of every buffer process, we issue
+> > KCORE_QC IFF we observed a ksym unreg in that buffer.
+> 
+> Does this mean we need to scan every buffer before writing it to perf.data 
+> during perf-record? 
 
-> > # So, I guess if your driver can switch to use
-> > # snd_soc_init_platform style directly, your problem can gone ?
+Just like the BPF events, yes. Now for PT most of the actual data is not
+in the regular buffer, so it shouldn't be too horrible, but just like
+the BPF event, it can get its own buffer if it does become a problem.
 
-> Yes that is an alternative and I can convert all the Tegra machine
-> drivers to use this now. However, that will not solve the problem for
-> non-Tegra devices and everyone will have to do this.
+> Also, if we need ksym unreg here, I guess it is NOT really modifying text 
+> in-place, but creating new version and swap? Then can we include something 
+> like this in perf.data:
+> 
+> struct perf_record_text_modify {
+>     u64 old_addr;
+>     u64 new_addr;
+>     u32 old_len; /* up to MAX_SIZE */
+>     u32 new_len; /* up to MAX_SIZE */
+>     u8 old_text[MAX_SIZE];
+>     u8 new_text[MAX_SIZE];
+>     timestamp ;
+> };
+> 
+> In this way, this record is embedded in perf.data, and doesn't require
+> extra processing during perf-record (only at the end of perf-record). 
+> This would work for text modifying case, as modifying text is simply
+> old-text to new-text.
+>  
+> Similar solution would not work for BPF case, as bpf_prog_info is 
+> getting a lot more members in the near future. 
+> 
+> Does this make sense...?
 
-We're going to have to go through another round of conversions that
-touch everything at some point no matter what :/
+I don't think we actually need old_text here either. We're creating a
+new text mapping, there was nothing there before.
 
---3Gf/FFewwPeBMqCJ
-Content-Type: application/pgp-signature; name="signature.asc"
+But still, perf events are limited to 64k, so that means we cannot
+support symbols larger than that (although I suppose that would be
+fairly rare).
 
------BEGIN PGP SIGNATURE-----
+Something like that could work, but I'm not sure it is actually better.
+Some PT person would have to play with things I suppose.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlw17tMACgkQJNaLcl1U
-h9BKZwgAgiM09pC/S8pF3GuNtiVWeTFJvT4K9Ys03qD/pYCXjk4xmwhrfrvB736w
-kvJwQz0WGCYh96IYskAJMAfMKh8jzneCBHswcVCM9IruT0bTDXZll0VpC+6W0N1F
-yavk0QNgg8hWkQ61EMP1XQy3gS++DIoljTsNGT/7B87ikf/O3g+vA8e/tzrrxp9U
-CQt5cQH9lRfkHS6LGKZxGnuFnadmk+pRushWhfWeDRIQZESV4r4Wf8hb73d9SUJA
-B5ffkYQJmR9Ae39eQDVXEw0duXk/z3SChCfyKdh19yEpEKfan+9JATb8XDlVTFpE
-W6BCTdiNcQtc+3gfAjTTD9MOE56JBw==
-=zUC8
------END PGP SIGNATURE-----
 
---3Gf/FFewwPeBMqCJ--
