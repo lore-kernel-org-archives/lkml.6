@@ -7,52 +7,53 @@ X-Spam-Status: No, score=-13.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F311C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 09:43:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DD2EC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 09:43:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 41D03214C6
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 09:43:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1D383214C6
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 09:43:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="DcmxWujH"
+	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="u0wQbVcj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730684AbfAIJnU (ORCPT
+        id S1730690AbfAIJno (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 04:43:20 -0500
-Received: from smtp-fw-9102.amazon.com ([207.171.184.29]:38448 "EHLO
-        smtp-fw-9102.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730443AbfAIJm3 (ORCPT
+        Wed, 9 Jan 2019 04:43:44 -0500
+Received: from smtp-fw-2101.amazon.com ([72.21.196.25]:6461 "EHLO
+        smtp-fw-2101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730364AbfAIJmX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 04:42:29 -0500
+        Wed, 9 Jan 2019 04:42:23 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
-  t=1547026947; x=1578562947;
+  t=1547026942; x=1578562942;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references;
-  bh=7IzEYV9FoSpsE6ZCAmYPvlNyjLadlOMGwjgHhakmUKQ=;
-  b=DcmxWujHh246pxp8DZRhapkuJtzq+bi01picoVv7dTXYpSiqCVCtPDn8
-   x8XYkuWm2Zq/XZbqWC0JFV1mKmcmaqe1VSbeVdoBBHtP9ZDS/+W/wWoIp
-   luM2knw69vaA4JmUXbm55MUCrPNl1eScCOMxzhCp6Y7qtYgKwiMkY6VIk
-   A=;
+  bh=bnzeuEUS60UibzIf6CzBfmI0leq/yGJtjEHqDSi8SqA=;
+  b=u0wQbVcj0b2W2Oc62pUa0gBdlkSeg2wtriq/7bB/b4kqOYdOSZQZK1uD
+   uhpG58GBn73SHwIUh/hjXF95Xh9jdGgUJpaZO5NC/bb12+hMOtcQ3SqIt
+   QPqcNpPc/6kxuLbF3P7NSTxVPee5h0PdBb0A6iTkxdWSX5/ntjdpjkiJG
+   w=;
 X-IronPort-AV: E=Sophos;i="5.56,253,1539648000"; 
-   d="scan'208";a="652219861"
-Received: from sea3-co-svc-lb6-vlan3.sea.amazon.com (HELO email-inbound-relay-2c-c6afef2e.us-west-2.amazon.com) ([10.47.22.38])
-  by smtp-border-fw-out-9102.sea19.amazon.com with ESMTP; 09 Jan 2019 09:42:24 +0000
+   d="scan'208";a="712024356"
+Received: from iad6-co-svc-p1-lb1-vlan2.amazon.com (HELO email-inbound-relay-2b-a7fdc47a.us-west-2.amazon.com) ([10.124.125.2])
+  by smtp-border-fw-out-2101.iad2.amazon.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 09 Jan 2019 09:42:21 +0000
 Received: from u54e1ad5160425a4b64ea.ant.amazon.com (pdx2-ws-svc-lb17-vlan3.amazon.com [10.247.140.70])
-        by email-inbound-relay-2c-c6afef2e.us-west-2.amazon.com (Postfix) with ESMTPS id 49969A2321;
-        Wed,  9 Jan 2019 09:42:24 +0000 (UTC)
+        by email-inbound-relay-2b-a7fdc47a.us-west-2.amazon.com (8.14.7/8.14.7) with ESMTP id x099gHWC054039
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Wed, 9 Jan 2019 09:42:18 GMT
 Received: from u54e1ad5160425a4b64ea.ant.amazon.com (localhost [127.0.0.1])
-        by u54e1ad5160425a4b64ea.ant.amazon.com (8.15.2/8.15.2/Debian-3) with ESMTP id x099gMLQ031347;
-        Wed, 9 Jan 2019 10:42:22 +0100
+        by u54e1ad5160425a4b64ea.ant.amazon.com (8.15.2/8.15.2/Debian-3) with ESMTP id x099gG6N031298;
+        Wed, 9 Jan 2019 10:42:17 +0100
 Received: (from karahmed@localhost)
-        by u54e1ad5160425a4b64ea.ant.amazon.com (8.15.2/8.15.2/Submit) id x099gMdY031346;
-        Wed, 9 Jan 2019 10:42:22 +0100
+        by u54e1ad5160425a4b64ea.ant.amazon.com (8.15.2/8.15.2/Submit) id x099gGAj031297;
+        Wed, 9 Jan 2019 10:42:16 +0100
 From:   KarimAllah Ahmed <karahmed@amazon.de>
 To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
         pbonzini@redhat.com, rkrcmar@redhat.com
 Cc:     KarimAllah Ahmed <karahmed@amazon.de>
-Subject: [PATCH v5 12/13] KVM/nVMX: Use kvm_vcpu_map for accessing the enlightened VMCS
-Date:   Wed,  9 Jan 2019 10:42:12 +0100
-Message-Id: <1547026933-31226-13-git-send-email-karahmed@amazon.de>
+Subject: [PATCH v5 02/13] X86/nVMX: Update the PML table without mapping and unmapping the page
+Date:   Wed,  9 Jan 2019 10:42:02 +0100
+Message-Id: <1547026933-31226-3-git-send-email-karahmed@amazon.de>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1547026933-31226-1-git-send-email-karahmed@amazon.de>
 References: <1547026933-31226-1-git-send-email-karahmed@amazon.de>
@@ -61,76 +62,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use kvm_vcpu_map for accessing the enhanced VMCS since using
-kvm_vcpu_gpa_to_page() and kmap() will only work for guest memory that has
-a "struct page".
+Update the PML table without mapping and unmapping the page. This also
+avoids using kvm_vcpu_gpa_to_page(..) which assumes that there is a "struct
+page" for guest memory.
+
+As a side-effect of using kvm_write_guest_page the page is also properly
+marked as dirty.
 
 Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
-
+Reviewed-by: David Hildenbrand <david@redhat.com>
 ---
-v4 -> v5:
-- s/enhanced/enlightened
-- unmap with dirty flag
+v1 -> v2:
+- Use kvm_write_guest_page instead of kvm_write_guest (pbonzini)
+- Do not use pointer arithmetic for pml_address (pbonzini)
 ---
- arch/x86/kvm/vmx/nested.c | 14 +++++---------
- arch/x86/kvm/vmx/vmx.h    |  2 +-
- 2 files changed, 6 insertions(+), 10 deletions(-)
+ arch/x86/kvm/vmx/vmx.c | 14 +++++---------
+ 1 file changed, 5 insertions(+), 9 deletions(-)
 
-diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
-index 04a8b43..ccb3b63 100644
---- a/arch/x86/kvm/vmx/nested.c
-+++ b/arch/x86/kvm/vmx/nested.c
-@@ -193,10 +193,8 @@ static inline void nested_release_evmcs(struct kvm_vcpu *vcpu)
- 	if (!vmx->nested.hv_evmcs)
- 		return;
+diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+index 4d39f73..71d88df 100644
+--- a/arch/x86/kvm/vmx/vmx.c
++++ b/arch/x86/kvm/vmx/vmx.c
+@@ -7199,9 +7199,7 @@ static int vmx_write_pml_buffer(struct kvm_vcpu *vcpu)
+ {
+ 	struct vmcs12 *vmcs12;
+ 	struct vcpu_vmx *vmx = to_vmx(vcpu);
+-	gpa_t gpa;
+-	struct page *page = NULL;
+-	u64 *pml_address;
++	gpa_t gpa, dst;
  
--	kunmap(vmx->nested.hv_evmcs_page);
--	kvm_release_page_dirty(vmx->nested.hv_evmcs_page);
-+	kvm_vcpu_unmap(&vmx->nested.hv_evmcs_map, true);
- 	vmx->nested.hv_evmcs_vmptr = -1ull;
--	vmx->nested.hv_evmcs_page = NULL;
- 	vmx->nested.hv_evmcs = NULL;
- }
+ 	if (is_guest_mode(vcpu)) {
+ 		WARN_ON_ONCE(vmx->nested.pml_full);
+@@ -7221,15 +7219,13 @@ static int vmx_write_pml_buffer(struct kvm_vcpu *vcpu)
+ 		}
  
-@@ -1769,13 +1767,11 @@ static int nested_vmx_handle_enlightened_vmptrld(struct kvm_vcpu *vcpu,
+ 		gpa = vmcs_read64(GUEST_PHYSICAL_ADDRESS) & ~0xFFFull;
++		dst = vmcs12->pml_address + sizeof(u64) * vmcs12->guest_pml_index;
  
- 		nested_release_evmcs(vcpu);
- 
--		vmx->nested.hv_evmcs_page = kvm_vcpu_gpa_to_page(
--			vcpu, assist_page.current_nested_vmcs);
--
--		if (unlikely(is_error_page(vmx->nested.hv_evmcs_page)))
-+		if (kvm_vcpu_map(vcpu, gpa_to_gfn(assist_page.current_nested_vmcs),
-+				 &vmx->nested.hv_evmcs_map))
+-		page = kvm_vcpu_gpa_to_page(vcpu, vmcs12->pml_address);
+-		if (is_error_page(page))
++		if (kvm_write_guest_page(vcpu->kvm, gpa_to_gfn(dst), &gpa,
++					 offset_in_page(dst), sizeof(gpa)))
  			return 0;
  
--		vmx->nested.hv_evmcs = kmap(vmx->nested.hv_evmcs_page);
-+		vmx->nested.hv_evmcs = vmx->nested.hv_evmcs_map.hva;
+-		pml_address = kmap(page);
+-		pml_address[vmcs12->guest_pml_index--] = gpa;
+-		kunmap(page);
+-		kvm_release_page_clean(page);
++		vmcs12->guest_pml_index--;
+ 	}
  
- 		/*
- 		 * Currently, KVM only supports eVMCS version 1
-@@ -4278,7 +4274,7 @@ static int handle_vmclear(struct kvm_vcpu *vcpu)
- 		return nested_vmx_failValid(vcpu,
- 			VMXERR_VMCLEAR_VMXON_POINTER);
- 
--	if (vmx->nested.hv_evmcs_page) {
-+	if (vmx->nested.hv_evmcs_map.hva) {
- 		if (vmptr == vmx->nested.hv_evmcs_vmptr)
- 			nested_release_evmcs(vcpu);
- 	} else {
-diff --git a/arch/x86/kvm/vmx/vmx.h b/arch/x86/kvm/vmx/vmx.h
-index bd04725..a130139 100644
---- a/arch/x86/kvm/vmx/vmx.h
-+++ b/arch/x86/kvm/vmx/vmx.h
-@@ -172,7 +172,7 @@ struct nested_vmx {
- 	} smm;
- 
- 	gpa_t hv_evmcs_vmptr;
--	struct page *hv_evmcs_page;
-+	struct kvm_host_map hv_evmcs_map;
- 	struct hv_enlightened_vmcs *hv_evmcs;
- };
- 
+ 	return 0;
 -- 
 2.7.4
 
