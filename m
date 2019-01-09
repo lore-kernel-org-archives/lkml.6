@@ -4,66 +4,66 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83703C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 01:27:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C2DEC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 01:27:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2446F20821
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 01:27:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CA5E620821
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 01:27:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gRrj8IWh"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mkQsH/oa"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729676AbfAIB1r (ORCPT
+        id S1729700AbfAIB1u (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 20:27:47 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:46008 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729607AbfAIB1n (ORCPT
+        Tue, 8 Jan 2019 20:27:50 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:43983 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729463AbfAIB1q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 20:27:43 -0500
-Received: by mail-wr1-f67.google.com with SMTP id t6so5962482wrr.12;
-        Tue, 08 Jan 2019 17:27:39 -0800 (PST)
+        Tue, 8 Jan 2019 20:27:46 -0500
+Received: by mail-wr1-f68.google.com with SMTP id r10so5985437wrs.10;
+        Tue, 08 Jan 2019 17:27:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=KjNSi+0N2H/8Xhjc+yJMuYo30/iCeyb8aSeyo2QGjjk=;
-        b=gRrj8IWhZlKwr1BCLy5akVCJ3PmSNlKUFH1hJWPUYUdil/N3oOraY6FlaYQe0ZXJ2X
-         OvXicznAq9hQ19cxcmnYUjMZvAzzjMD7GFQ5Syu0QgQE25NZUQu/Upts6RD/3icWSIcu
-         OvLv3w3xNYFyaV07byGVF/ai/SN/o3CD7Ps3BBAOXBa/IvD338So0GrTHXA5jsHfvhQw
-         f1BNZJWCu4iLVTsu+s41JJHQF3a8QIMzjB0zB3v/3Skch/YkBI2OD1l1r4ZwMMnRLepG
-         KpjjWKcoca7zbEiuzT9r95Nes5sEapQKy57aoTrwq8XKXhd4OjXoKtGWafyb93lacLTb
-         4oTQ==
+        bh=EzW93gEgWsfTpxPAaTuWjU1X/H8eKAtRzIDsKr1uTpY=;
+        b=mkQsH/oabhGy3PPfV+0FOEf4p7R3XhpgBfzLg/CmGBpfy4vcdXIVcvWfvVCQPczITs
+         6zHXaY220AW8+AbMMhLkjG84MWmWGaAWzL1TKYa0eSolBqmUwL6TU8NbkeqajaXLHGRp
+         kQD6jOjFvrl1gNmfAafhoTPM3Vs1tw1m3XQ9BV7UFzgk7Tj0El9vZGU3Cffmg7fKfp0G
+         ZRsczu9vGf6OZm0MrJtylgYNSKIkBpgBWn7uw1B4Cze7z9j8MsIn9C4Etoq0Kb7ZxM/+
+         W6HwS5CvP27m8KNErBjriffp+b+PbEDJJ6ClehyXtmvA2UQ7sbc5paooG0VxA3wIJwBh
+         Fv9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
          :in-reply-to:references:mime-version:content-transfer-encoding;
-        bh=KjNSi+0N2H/8Xhjc+yJMuYo30/iCeyb8aSeyo2QGjjk=;
-        b=LrKKVrTJcl/pAq/cGtP+Y8BKh1T9kHP7pVY7IchXYWIHzopcQ9yqqXYhRz4Vh/qTCs
-         1gw8Rgx3H5fiD7df6S/d77aJdMymqhwqRSE6AsGqZljlrMcWF/Rnp6raET30FebDWFPU
-         p/yKaA5mZtI/9eM8YqBEoul0hmQkRE8tyKUWEQgA2RV6zfan62ch45WheIHVZfZqWvH9
-         4uYafMTxuk/rpHLUKiK7Zc9uvTHt5SDKMgBNd5H0sBAEX4LlCOTi68UsuprWmrIBJOp/
-         PthMNrVZvub+jsD1l3uxu2IzT5gZoQgcf0Dpb29i45WE8bKxj05PyZ+mFaUl/0V+nFRt
-         wbrQ==
-X-Gm-Message-State: AJcUukedQC7UuIf6Q+XgboOt+WrtGhuK4e9KA4prfUv5kAU3HmeiJzwI
-        NjoEopEDPfSKKEi8CZudcro=
-X-Google-Smtp-Source: ALg8bN5+HCjvAdxj37VF8I87Du3TUZwhPy0P9HRqUmeS4au3Vgho03ac5NJ9uq85u22LAUF6TzkwKA==
-X-Received: by 2002:adf:8342:: with SMTP id 60mr2932296wrd.212.1546997258941;
-        Tue, 08 Jan 2019 17:27:38 -0800 (PST)
+        bh=EzW93gEgWsfTpxPAaTuWjU1X/H8eKAtRzIDsKr1uTpY=;
+        b=URK69lXkXCcbT+f2CS+qmfUoqAKiMy1l5HOcYXe36vnIkLTiyvFFMXN89MU0ieGtBQ
+         4if6Eb5mgw9jnP5TP+Myun4orkw5B/PjhH9+BPUJXELGbXMhBUj6IoMezQ198zO84I7y
+         9FNHF1eB92RvD/UAtXrrJtR84atP2YTug+jD/nuOypbGxXse366EMYKqiotZNU1MCA2X
+         snK7PB/cPgDI3Zj56sc+LhzTS/D6FkTTAZls45JkvscR4hrPNSB3Shx1W4hmvY1uw12+
+         Eunj3qribTjc7WLK7ojNeohpVlmvqOTV5T3EtN++ksRqFfVSn+kYk3HXdenpmL8UlCfh
+         kFIg==
+X-Gm-Message-State: AJcUukesdgOGBi8gBp5FRpTLBd1Xp/XnivkBtzy7qX2a/ZRZ8d0Vpklp
+        L96z9Gl1/a61X+lfVH+BwDE=
+X-Google-Smtp-Source: ALg8bN4/r+jsFzBN7MaouE9M3KZZel/maZxbilYKUtOWOoIESwsrBBdJoLmOe9fzpZvBKAsglqFw0A==
+X-Received: by 2002:a5d:6549:: with SMTP id z9mr3018213wrv.116.1546997262794;
+        Tue, 08 Jan 2019 17:27:42 -0800 (PST)
 Received: from beren.harmstone.com ([88.97.13.154])
-        by smtp.gmail.com with ESMTPSA id y34sm156915088wrd.68.2019.01.08.17.27.38
+        by smtp.gmail.com with ESMTPSA id y34sm156915088wrd.68.2019.01.08.17.27.41
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 08 Jan 2019 17:27:38 -0800 (PST)
+        Tue, 08 Jan 2019 17:27:42 -0800 (PST)
 From:   Mark Harmstone <mark@harmstone.com>
 Cc:     mark@harmstone.com, Chris Mason <clm@fb.com>,
         Josef Bacik <josef@toxicpanda.com>,
         David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [RFC PATCH 11/19] btrfs: allow writing encrypted inline extents
-Date:   Wed,  9 Jan 2019 01:26:53 +0000
-Message-Id: <20190109012701.26441-11-mark@harmstone.com>
+Subject: [RFC PATCH 13/19] btrfs: allow writing normal and compressed encrypted extents
+Date:   Wed,  9 Jan 2019 01:26:55 +0000
+Message-Id: <20190109012701.26441-13-mark@harmstone.com>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20190109012701.26441-1-mark@harmstone.com>
 References: <20190109012701.26441-1-mark@harmstone.com>
@@ -77,180 +77,30 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Signed-off-by: Mark Harmstone <mark@harmstone.com>
 ---
- fs/btrfs/ctree.h      |   5 +-
- fs/btrfs/encryption.c | 156 +++++++++++++++++++++++++++++++++++++++++-
- fs/btrfs/encryption.h |   9 +++
- fs/btrfs/inode.c      |  99 +++++++++++++++++++++++----
- fs/btrfs/ioctl.c      |   2 +-
- 5 files changed, 254 insertions(+), 17 deletions(-)
+ fs/btrfs/encryption.c   | 125 ++++++++++++++++++++++++++++
+ fs/btrfs/encryption.h   |   8 ++
+ fs/btrfs/extent_io.c    |  20 +++--
+ fs/btrfs/inode.c        | 180 ++++++++++++++++++++++++++++++++++------
+ fs/btrfs/ordered-data.c |  19 +++--
+ fs/btrfs/ordered-data.h |  12 ++-
+ 6 files changed, 320 insertions(+), 44 deletions(-)
 
-diff --git a/fs/btrfs/ctree.h b/fs/btrfs/ctree.h
-index a1368c5c1236..51fcc24047f8 100644
---- a/fs/btrfs/ctree.h
-+++ b/fs/btrfs/ctree.h
-@@ -2393,8 +2393,11 @@ btrfs_file_extent_inline_start(const struct btrfs_file_extent_item *e)
- 	return (unsigned long)e + BTRFS_FILE_EXTENT_INLINE_DATA_START;
- }
- 
--static inline u32 btrfs_file_extent_calc_inline_size(u32 datasize)
-+static inline u32 btrfs_file_extent_calc_inline_size(u32 datasize, bool enc)
- {
-+	if (enc)
-+		datasize += sizeof(struct btrfs_file_extent_inline_enc);
-+
- 	return BTRFS_FILE_EXTENT_INLINE_DATA_START + datasize;
- }
- 
 diff --git a/fs/btrfs/encryption.c b/fs/btrfs/encryption.c
-index a1c9a982b009..81313c4378b4 100644
+index 41c001339cc7..2bf45c9f96fa 100644
 --- a/fs/btrfs/encryption.c
 +++ b/fs/btrfs/encryption.c
-@@ -6,6 +6,7 @@
- #include <crypto/hash.h>
- #include <keys/user-type.h>
- #include "ctree.h"
-+#include "btrfs_inode.h"
- #include "encryption.h"
- 
- #define KEY_SIG_PREFIX "btrfs:"
-@@ -80,7 +81,7 @@ static int derive_aes_key(u64 salt, char *data, unsigned int datalen,
- 	return ret;
- }
- 
--static int btrfs_load_key(struct btrfs_enc_key *k)
-+int btrfs_load_key(struct btrfs_enc_key *k)
- {
- 	struct key *key;
- 	u64 salt;
-@@ -361,3 +362,156 @@ int btrfs_get_key_id(u64 salt, char *password, unsigned int pwdlen,
- 
+@@ -552,3 +552,128 @@ int btrfs_encrypt_inline(struct extent_buffer *eb, char *plaintext,
+ 	kfree(tmp);
  	return ret;
  }
 +
-+void btrfs_find_inode_encryption_key(struct inode *inode,
-+			       struct btrfs_enc_key **key_ret)
-+{
-+	struct btrfs_fs_info *fs_info = btrfs_sb(inode->i_sb);
-+	struct btrfs_enc_key *k;
-+
-+	*key_ret = NULL;
-+
-+	if (BTRFS_I(inode)->prop_key == 0)
-+		return;
-+
-+	down_write(&fs_info->key_sem);
-+
-+	list_for_each_entry(k, &fs_info->key_list, key_list) {
-+		if (k->key_number == BTRFS_I(inode)->prop_key) {
-+			*key_ret = k;
-+			break;
-+		}
-+	}
-+
-+	if (!*key_ret && fs_info->key_root) {
-+		struct btrfs_key key;
-+		struct btrfs_path *path;
-+		int ret;
-+		struct extent_buffer *leaf;
-+		int slot;
-+		u32 item_size;
-+		struct btrfs_encryption_key_item *item;
-+		char key_id[BTRFS_ENCRYPTION_KEY_ID_LENGTH];
-+
-+		path = btrfs_alloc_path();
-+		if (!path) {
-+			up_write(&fs_info->key_sem);
-+			return;
-+		}
-+
-+		key.objectid = BTRFS_I(inode)->prop_key;
-+		key.type = BTRFS_ENCRYPTION_KEY;
-+		key.offset = 0;
-+
-+		ret = btrfs_search_slot(NULL, fs_info->key_root, &key,
-+					path, 0,  0);
-+		if (ret < 0) {
-+			btrfs_free_path(path);
-+			up_write(&fs_info->key_sem);
-+			return;
-+		}
-+
-+		leaf = path->nodes[0];
-+		slot = path->slots[0];
-+		btrfs_item_key_to_cpu(leaf, &key, slot);
-+
-+		if (key.objectid != BTRFS_I(inode)->prop_key ||
-+			key.type != BTRFS_ENCRYPTION_KEY) {
-+			btrfs_free_path(path);
-+			up_write(&fs_info->key_sem);
-+			return;
-+		}
-+
-+		item_size = btrfs_item_size_nr(leaf, slot);
-+
-+		if (item_size != sizeof(struct btrfs_encryption_key_item)) {
-+			btrfs_free_path(path);
-+			up_write(&fs_info->key_sem);
-+		}
-+
-+		item = btrfs_item_ptr(leaf, path->slots[0],
-+					struct btrfs_encryption_key_item);
-+
-+		read_eb_member(leaf, item,
-+				struct btrfs_encryption_key_item,
-+				key_id, key_id);
-+
-+		k = kmalloc(sizeof(*k), GFP_KERNEL);
-+		if (!k) {
-+			btrfs_free_path(path);
-+			up_write(&fs_info->key_sem);
-+			return;
-+		}
-+
-+		memcpy(k->key_id, key_id, BTRFS_ENCRYPTION_KEY_ID_LENGTH);
-+		k->key_number = key.objectid;
-+		k->loaded = false;
-+		k->added = false;
-+		k->used = true;
-+		mutex_init(&k->lock);
-+
-+		list_add(&k->key_list, &fs_info->key_list);
-+
-+		btrfs_free_path(path);
-+
-+		*key_ret = k;
-+	}
-+
-+	up_write(&fs_info->key_sem);
-+}
-+
-+int btrfs_encrypt_inline(struct extent_buffer *eb, char *plaintext,
-+			 unsigned long start, unsigned long len,
-+			 struct btrfs_enc_key *key, char *iv)
++static int btrfs_encrypt_page(char *src, char *dest,
++			      struct btrfs_enc_key *key, char *iv)
 +{
 +	struct scatterlist sg;
 +	struct scatterlist sg2;
 +	struct skcipher_request *req = NULL;
-+	int tmp_len;
-+	char *tmp = NULL;
-+	char ctr[BTRFS_ENCRYPTION_BLOCK_LENGTH];
 +	int ret = -EFAULT;
-+	struct btrfs_file_extent_inline_enc *eienc;
-+
-+	key->used = true;
-+
-+	tmp_len = len + sizeof(struct btrfs_file_extent_inline_enc);
-+	tmp = kmalloc(tmp_len, GFP_KERNEL);
-+	if (!tmp) {
-+		ret = -ENOMEM;
-+		goto out;
-+	}
-+
-+	memcpy(ctr, iv, BTRFS_ENCRYPTION_BLOCK_LENGTH);
-+
-+	sg_init_one(&sg, plaintext, len);
-+	sg_init_one(&sg2, tmp + sizeof(struct btrfs_file_extent_inline_enc),
-+		    len);
 +
 +	req = skcipher_request_alloc(key->skcipher, GFP_KERNEL);
 +	if (!req) {
@@ -259,305 +109,709 @@ index a1c9a982b009..81313c4378b4 100644
 +		goto out;
 +	}
 +
-+	skcipher_request_set_crypt(req, &sg, &sg2, len, ctr);
++	sg_init_one(&sg, src, PAGE_SIZE);
++	sg_init_one(&sg2, dest, PAGE_SIZE);
++	skcipher_request_set_crypt(req, &sg, &sg2, PAGE_SIZE, iv);
 +
-+	ret = crypto_skcipher_decrypt(req);
++	ret = crypto_skcipher_encrypt(req);
++
 +	if (ret < 0)
 +		goto out;
-+
-+	eienc = (struct btrfs_file_extent_inline_enc *)tmp;
-+
-+	eienc->key_number = cpu_to_le64(key->key_number);
-+	memcpy(eienc->iv, iv, BTRFS_ENCRYPTION_BLOCK_LENGTH);
-+
-+	write_extent_buffer(eb, tmp, start, tmp_len);
 +
 +out:
 +	if (req)
 +		skcipher_request_free(req);
-+
-+	kfree(tmp);
 +	return ret;
 +}
-diff --git a/fs/btrfs/encryption.h b/fs/btrfs/encryption.h
-index add7ee6d879d..dbc035a880a5 100644
---- a/fs/btrfs/encryption.h
-+++ b/fs/btrfs/encryption.h
-@@ -36,4 +36,13 @@ int btrfs_decrypt(struct btrfs_fs_info *fs_info,
- int btrfs_get_key_id(u64 salt, char *password, unsigned int pwdlen,
- 		     char *key_id);
- 
-+void btrfs_find_inode_encryption_key(struct inode *inode,
-+			       struct btrfs_enc_key **key_ret);
 +
-+int btrfs_encrypt_inline(struct extent_buffer *eb, char *plaintext,
-+			 unsigned long start, unsigned long len,
-+			 struct btrfs_enc_key *key, char *iv);
++int btrfs_encrypt_pages(struct address_space *mapping, struct page **pages,
++			unsigned long *nr_pages, u64 start,
++			struct btrfs_enc_key *key, char *iv)
++{
++	int ret;
++	unsigned int i;
++	char ctr[BTRFS_ENCRYPTION_BLOCK_LENGTH];
 +
-+int btrfs_load_key(struct btrfs_enc_key *k);
++	if (!key->loaded) {
++		mutex_lock(&key->lock);
++		ret = btrfs_load_key(key);
++		mutex_unlock(&key->lock);
 +
- #endif
-diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-index 202a7458584f..7018a2169e3e 100644
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -28,6 +28,7 @@
- #include <linux/magic.h>
- #include <linux/iversion.h>
- #include <asm/unaligned.h>
-+#include <crypto/rng.h>
- #include "ctree.h"
- #include "disk-io.h"
- #include "transaction.h"
-@@ -166,7 +167,8 @@ static int insert_inline_extent(struct btrfs_trans_handle *trans,
- 				struct btrfs_root *root, struct inode *inode,
- 				u64 start, size_t size, size_t compressed_size,
- 				int compress_type,
--				struct page **compressed_pages)
-+				struct page **compressed_pages,
-+				struct btrfs_enc_key *enc_key, char *iv)
- {
- 	struct extent_buffer *leaf;
- 	struct page *page = NULL;
-@@ -190,7 +192,8 @@ static int insert_inline_extent(struct btrfs_trans_handle *trans,
- 		key.offset = start;
- 		key.type = BTRFS_EXTENT_DATA_KEY;
- 
--		datasize = btrfs_file_extent_calc_inline_size(cur_size);
-+		datasize = btrfs_file_extent_calc_inline_size(cur_size,
-+							      enc_key);
- 		path->leave_spinning = 1;
- 		ret = btrfs_insert_empty_item(trans, root, path, &key,
- 					      datasize);
-@@ -202,11 +205,16 @@ static int insert_inline_extent(struct btrfs_trans_handle *trans,
- 			    struct btrfs_file_extent_item);
- 	btrfs_set_file_extent_generation(leaf, ei, trans->transid);
- 	btrfs_set_file_extent_type(leaf, ei, BTRFS_FILE_EXTENT_INLINE);
--	btrfs_set_file_extent_encryption(leaf, ei, 0);
- 	btrfs_set_file_extent_other_encoding(leaf, ei, 0);
- 	btrfs_set_file_extent_ram_bytes(leaf, ei, size);
- 	ptr = btrfs_file_extent_inline_start(ei);
- 
-+	if (enc_key)
-+		btrfs_set_file_extent_encryption(leaf, ei,
-+						 BTRFS_ENCRYPTION_AES256CTR);
-+	else
-+		btrfs_set_file_extent_encryption(leaf, ei, 0);
++		if (ret) {
++			*nr_pages = 0;
++			return ret;
++		}
++	}
 +
- 	if (compress_type != BTRFS_COMPRESS_NONE) {
- 		struct page *cpage;
- 		int i = 0;
-@@ -231,7 +239,20 @@ static int insert_inline_extent(struct btrfs_trans_handle *trans,
- 		btrfs_set_file_extent_compression(leaf, ei, 0);
- 		kaddr = kmap_atomic(page);
- 		offset = start & (PAGE_SIZE - 1);
--		write_extent_buffer(leaf, kaddr + offset, ptr, size);
++	key->used = true;
 +
-+		if (enc_key) {
-+			ret = btrfs_encrypt_inline(leaf, kaddr + offset,
-+						   ptr, size, enc_key, iv);
++	memcpy(ctr, iv, BTRFS_ENCRYPTION_BLOCK_LENGTH);
 +
-+			if (ret) {
-+				kunmap_atomic(kaddr);
-+				put_page(page);
-+				goto fail;
-+			}
-+		} else {
-+			write_extent_buffer(leaf, kaddr + offset, ptr, size);
++	for (i = 0; i < *nr_pages; i++) {
++		struct page *in_page;
++		char *src, *dest;
++
++		in_page = find_get_page(mapping, start >> PAGE_SHIFT);
++
++		pages[i] = alloc_page(GFP_NOFS | __GFP_HIGHMEM);
++		if (!pages[i]) {
++			*nr_pages = i;
++			return -ENOMEM;
 +		}
 +
- 		kunmap_atomic(kaddr);
- 		put_page(page);
- 	}
-@@ -263,7 +284,8 @@ static int insert_inline_extent(struct btrfs_trans_handle *trans,
- static noinline int cow_file_range_inline(struct inode *inode, u64 start,
- 					  u64 end, size_t compressed_size,
- 					  int compress_type,
--					  struct page **compressed_pages)
-+					  struct page **compressed_pages,
-+					  struct btrfs_enc_key *key, char *iv)
- {
- 	struct btrfs_root *root = BTRFS_I(inode)->root;
- 	struct btrfs_fs_info *fs_info = root->fs_info;
-@@ -304,10 +326,10 @@ static noinline int cow_file_range_inline(struct inode *inode, u64 start,
- 
- 	if (compressed_size && compressed_pages)
- 		extent_item_size = btrfs_file_extent_calc_inline_size(
--		   compressed_size);
-+		   compressed_size, key);
- 	else
- 		extent_item_size = btrfs_file_extent_calc_inline_size(
--		    inline_len);
-+		    inline_len, key);
- 
- 	ret = __btrfs_drop_extents(trans, root, inode, path,
- 				   start, aligned_end, NULL,
-@@ -322,7 +344,7 @@ static noinline int cow_file_range_inline(struct inode *inode, u64 start,
- 	ret = insert_inline_extent(trans, path, extent_inserted,
- 				   root, inode, start,
- 				   inline_len, compressed_size,
--				   compress_type, compressed_pages);
-+				   compress_type, compressed_pages, key, iv);
- 	if (ret && ret != -ENOSPC) {
- 		btrfs_abort_transaction(trans, ret);
- 		goto out;
-@@ -408,6 +430,18 @@ static inline int inode_need_compress(struct inode *inode, u64 start, u64 end)
- 	return 0;
- }
- 
-+static inline int inode_need_encrypt(struct inode *inode)
-+{
-+	struct btrfs_enc_key *key;
++		src = kmap(in_page);
++		dest = kmap(pages[i]);
 +
-+	if (!(BTRFS_I(inode)->flags & BTRFS_INODE_ENCRYPT))
-+		return 0;
++		ret = btrfs_encrypt_page(src, dest, key, ctr);
 +
-+	btrfs_find_inode_encryption_key(inode, &key);
++		kunmap(pages[i]);
++		kunmap(in_page);
 +
-+	return key ? 1 : 0;
++		if (ret) {
++			*nr_pages = i;
++			return ret;
++		}
++
++		start += PAGE_SIZE;
++	}
++
++	return 0;
 +}
 +
- static inline void inode_should_defrag(struct btrfs_inode *inode,
- 		u64 start, u64 end, u64 num_bytes, u64 small_write)
- {
-@@ -451,8 +485,10 @@ static noinline void compress_file_range(struct inode *inode,
- 	unsigned long total_in = 0;
- 	int i;
- 	int will_compress;
-+	struct btrfs_enc_key *key;
- 	int compress_type = fs_info->compress_type;
- 	int redirty = 0;
-+	char iv[BTRFS_ENCRYPTION_BLOCK_LENGTH];
- 
- 	inode_should_defrag(BTRFS_I(inode), start, end, end - start + 1,
- 			SZ_16K);
-@@ -480,11 +516,13 @@ static noinline void compress_file_range(struct inode *inode,
- 
- 	total_compressed = actual_end - start;
- 
-+	btrfs_find_inode_encryption_key(inode, &key);
++int btrfs_encrypt_compressed_pages(struct page **pages,
++				   unsigned long *nr_pages,
++				   struct btrfs_enc_key *key, char *iv)
++{
++	int ret;
++	unsigned int i;
++	char ctr[BTRFS_ENCRYPTION_BLOCK_LENGTH];
 +
++	if (!key->loaded) {
++		mutex_lock(&key->lock);
++		ret = btrfs_load_key(key);
++		mutex_unlock(&key->lock);
++
++		if (ret) {
++			*nr_pages = 0;
++			return ret;
++		}
++	}
++
++	key->used = true;
++
++	memcpy(ctr, iv, BTRFS_ENCRYPTION_BLOCK_LENGTH);
++
++	for (i = 0; i < *nr_pages; i++) {
++		char *buf;
++
++		buf = kmap(pages[i]);
++
++		ret = btrfs_encrypt_page(buf, buf, key, ctr);
++
++		kunmap(pages[i]);
++
++		if (ret) {
++			*nr_pages = i;
++			return ret;
++		}
++	}
++
++	return 0;
++}
+diff --git a/fs/btrfs/encryption.h b/fs/btrfs/encryption.h
+index 0d24dc51793c..cf10859fafe1 100644
+--- a/fs/btrfs/encryption.h
++++ b/fs/btrfs/encryption.h
+@@ -46,6 +46,14 @@ int btrfs_encrypt_inline(struct extent_buffer *eb, char *plaintext,
+ 			 unsigned long start, unsigned long len,
+ 			 struct btrfs_enc_key *key, char *iv);
+ 
++int btrfs_encrypt_pages(struct address_space *mapping, struct page **pages,
++			unsigned long *nr_pages, u64 start,
++			struct btrfs_enc_key *key, char *iv);
++
++int btrfs_encrypt_compressed_pages(struct page **pages,
++				   unsigned long *nr_pages,
++				   struct btrfs_enc_key *key, char *iv);
++
+ int btrfs_load_key(struct btrfs_enc_key *k);
+ 
+ #endif
+diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
+index 73fb0af50da8..92bc9924c001 100644
+--- a/fs/btrfs/extent_io.c
++++ b/fs/btrfs/extent_io.c
+@@ -3407,7 +3407,7 @@ static noinline_for_stack int __extent_writepage_io(struct inode *inode,
+ 	size_t blocksize;
+ 	int ret = 0;
+ 	int nr = 0;
+-	bool compressed;
++	bool compressed, encrypted;
+ 
+ 	if (tree->ops && tree->ops->writepage_start_hook) {
+ 		ret = tree->ops->writepage_start_hook(page, start,
+@@ -3469,28 +3469,30 @@ static noinline_for_stack int __extent_writepage_io(struct inode *inode,
+ 		bdev = em->bdev;
+ 		block_start = em->block_start;
+ 		compressed = test_bit(EXTENT_FLAG_COMPRESSED, &em->flags);
++		encrypted = test_bit(EXTENT_FLAG_ENCRYPTED, &em->flags);
+ 		free_extent_map(em);
+ 		em = NULL;
+ 
+ 		/*
+-		 * compressed and inline extents are written through other
+-		 * paths in the FS
++		 * compressed, encrypted, or inline extents are written through
++		 * other paths in the FS
+ 		 */
+-		if (compressed || block_start == EXTENT_MAP_HOLE ||
+-		    block_start == EXTENT_MAP_INLINE) {
++		if (compressed || encrypted ||
++			block_start == EXTENT_MAP_HOLE ||
++			block_start == EXTENT_MAP_INLINE) {
+ 			/*
+ 			 * end_io notification does not happen here for
+ 			 * compressed extents
+ 			 */
+-			if (!compressed && tree->ops &&
++			if (!compressed && !encrypted && tree->ops &&
+ 			    tree->ops->writepage_end_io_hook)
+ 				tree->ops->writepage_end_io_hook(page, cur,
+ 							 cur + iosize - 1,
+ 							 NULL, 1);
+-			else if (compressed) {
++			else if (compressed || encrypted) {
+ 				/* we don't want to end_page_writeback on
+-				 * a compressed extent.  this happens
+-				 * elsewhere
++				 * a compressed or encrypted extent.
++				 * This happens elsewhere
+ 				 */
+ 				nr++;
+ 			}
+diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
+index 52ea7d7c880b..61481833f5e4 100644
+--- a/fs/btrfs/inode.c
++++ b/fs/btrfs/inode.c
+@@ -97,7 +97,8 @@ static struct extent_map *create_io_em(struct inode *inode, u64 start, u64 len,
+ 				       u64 orig_start, u64 block_start,
+ 				       u64 block_len, u64 orig_block_len,
+ 				       u64 ram_bytes, int compress_type,
+-				       int type);
++				       int type, struct btrfs_enc_key *enc_key,
++				       char *iv);
+ 
+ static void __endio_write_update_ordered(struct inode *inode,
+ 					 const u64 offset, const u64 bytes,
+@@ -375,6 +376,8 @@ struct async_extent {
+ 	struct page **pages;
+ 	unsigned long nr_pages;
+ 	int compress_type;
++	struct btrfs_enc_key *key;
++	char iv[BTRFS_ENCRYPTION_BLOCK_LENGTH];
+ 	struct list_head list;
+ };
+ 
+@@ -394,7 +397,8 @@ static noinline int add_async_extent(struct async_cow *cow,
+ 				     u64 compressed_size,
+ 				     struct page **pages,
+ 				     unsigned long nr_pages,
+-				     int compress_type)
++				     int compress_type,
++				     struct btrfs_enc_key *key, char *iv)
+ {
+ 	struct async_extent *async_extent;
+ 
+@@ -406,6 +410,11 @@ static noinline int add_async_extent(struct async_cow *cow,
+ 	async_extent->pages = pages;
+ 	async_extent->nr_pages = nr_pages;
+ 	async_extent->compress_type = compress_type;
++	async_extent->key = key;
++
++	if (key)
++		memcpy(async_extent->iv, iv, BTRFS_ENCRYPTION_BLOCK_LENGTH);
++
+ 	list_add_tail(&async_extent->list, &cow->extents);
+ 	return 0;
+ }
+@@ -498,8 +507,6 @@ static noinline void compress_file_range(struct inode *inode,
+ 	will_compress = 0;
+ 	nr_pages = (end >> PAGE_SHIFT) - (start >> PAGE_SHIFT) + 1;
+ 	BUILD_BUG_ON((BTRFS_MAX_COMPRESSED % PAGE_SIZE) != 0);
+-	nr_pages = min_t(unsigned long, nr_pages,
+-			BTRFS_MAX_COMPRESSED / PAGE_SIZE);
+ 
  	/*
- 	 * skip compression for a small file range(<=blocksize) that
- 	 * isn't an inline extent, since it doesn't save disk space at all.
- 	 */
--	if (total_compressed <= blocksize &&
-+	if (!key && total_compressed <= blocksize &&
+ 	 * we don't want to send crud past the end of i_size through
+@@ -526,8 +533,6 @@ static noinline void compress_file_range(struct inode *inode,
  	   (start > 0 || end + 1 < BTRFS_I(inode)->disk_i_size))
  		goto cleanup_and_bail_uncompressed;
  
-@@ -564,12 +602,14 @@ static noinline void compress_file_range(struct inode *inode,
- 			 * to make an uncompressed inline extent.
- 			 */
- 			ret = cow_file_range_inline(inode, start, end, 0,
--						    BTRFS_COMPRESS_NONE, NULL);
-+						    BTRFS_COMPRESS_NONE, NULL,
-+						    key, iv);
- 		} else {
- 			/* try making a compressed inline extent */
- 			ret = cow_file_range_inline(inode, start, end,
- 						    total_compressed,
--						    compress_type, pages);
-+						    compress_type, pages,
-+						    key, iv);
+-	total_compressed = min_t(unsigned long, total_compressed,
+-			BTRFS_MAX_UNCOMPRESSED);
+ 	total_in = 0;
+ 	ret = 0;
+ 
+@@ -537,6 +542,8 @@ static noinline void compress_file_range(struct inode *inode,
+ 	 * change at any time if we discover bad compression ratios.
+ 	 */
+ 	if (inode_need_compress(inode, start, end)) {
++		nr_pages = min_t(unsigned long, nr_pages,
++				 BTRFS_MAX_COMPRESSED / PAGE_SIZE);
+ 		WARN_ON(pages);
+ 		pages = kcalloc(nr_pages, sizeof(struct page *), GFP_NOFS);
+ 		if (!pages) {
+@@ -567,6 +574,9 @@ static noinline void compress_file_range(struct inode *inode,
+ 			redirty = 1;
  		}
- 		if (ret <= 0) {
- 			unsigned long clear_flags = EXTENT_DELALLOC |
-@@ -952,6 +992,7 @@ static noinline int cow_file_range(struct inode *inode,
- 	unsigned long page_ops;
- 	bool extent_reserved = false;
- 	int ret = 0;
-+	struct btrfs_enc_key *key = NULL;
  
- 	if (btrfs_is_free_space_inode(BTRFS_I(inode))) {
- 		WARN_ON_ONCE(1);
-@@ -965,10 +1006,23 @@ static noinline int cow_file_range(struct inode *inode,
- 
- 	inode_should_defrag(BTRFS_I(inode), start, end, num_bytes, SZ_64K);
- 
-+	if (inode_need_encrypt(inode))
-+		btrfs_find_inode_encryption_key(inode, &key);
++		total_compressed = min_t(unsigned long, total_compressed,
++					 BTRFS_MAX_UNCOMPRESSED);
 +
+ 		/* Compression level is applied here and only here */
+ 		ret = btrfs_compress_pages(
+ 			compress_type | (fs_info->compress_level << 4),
+@@ -594,6 +604,37 @@ static noinline void compress_file_range(struct inode *inode,
+ 			will_compress = 1;
+ 		}
+ 	}
++
++	if (key) {
++		if (!pages) {
++			pages = kcalloc(nr_pages,
++					sizeof(struct page *), GFP_NOFS);
++			if (!pages)
++				goto cont;
++		}
++
++		if (!redirty) {
++			extent_range_clear_dirty_for_io(inode, start, end);
++			redirty = 1;
++		}
++
++		ret = crypto_rng_get_bytes(crypto_default_rng, iv,
++					   BTRFS_ENCRYPTION_BLOCK_LENGTH);
++
++		if (ret)
++			goto cont;
++
++		if (will_compress) {
++			ret = btrfs_encrypt_compressed_pages(pages, &nr_pages,
++							     key, iv);
++		} else {
++			ret = btrfs_encrypt_pages(inode->i_mapping, pages,
++						  &nr_pages, start, key, iv);
++		}
++
++		if (ret)
++			key = NULL;
++	}
+ cont:
  	if (start == 0) {
+ 		/* lets try to make an inline extent */
+@@ -664,7 +705,7 @@ static noinline void compress_file_range(struct inode *inode,
+ 			 */
+ 			add_async_extent(async_cow, start, total_in,
+ 					total_compressed, pages, nr_pages,
+-					compress_type);
++					compress_type, key, iv);
+ 
+ 			if (start + total_in < end) {
+ 				start += total_in;
+@@ -675,6 +716,29 @@ static noinline void compress_file_range(struct inode *inode,
+ 			return;
+ 		}
+ 	}
++
++	if (key) {
++		total_in = ALIGN(end - start, PAGE_SIZE);
++
++		if (total_in == 0)
++			return;
++
++		total_compressed = ALIGN(total_compressed, blocksize);
++
++		*num_added += 1;
++
++		if (!will_compress) {
++			compress_type = BTRFS_COMPRESS_NONE;
++			total_compressed = total_in;
++		}
++
++		add_async_extent(async_cow, start, total_in,
++				 total_compressed, pages, nr_pages,
++				 compress_type, key, iv);
++
++		return;
++	}
++
+ 	if (pages) {
+ 		/*
+ 		 * the compression code ran but failed to make things smaller,
+@@ -710,7 +774,7 @@ static noinline void compress_file_range(struct inode *inode,
+ 	if (redirty)
+ 		extent_range_redirty_for_io(inode, start, end);
+ 	add_async_extent(async_cow, start, end - start + 1, 0, NULL, 0,
+-			 BTRFS_COMPRESS_NONE);
++			 BTRFS_COMPRESS_NONE, NULL, NULL);
+ 	*num_added += 1;
+ 
+ 	return;
+@@ -848,7 +912,8 @@ static noinline void submit_compressed_extents(struct inode *inode,
+ 				  ins.offset, /* orig_block_len */
+ 				  async_extent->ram_size, /* ram_bytes */
+ 				  async_extent->compress_type,
+-				  BTRFS_ORDERED_COMPRESSED);
++				  BTRFS_ORDERED_COMPRESSED,
++				  async_extent->key, async_extent->iv);
+ 		if (IS_ERR(em))
+ 			/* ret value is not necessary due to void function */
+ 			goto out_free_reserve;
+@@ -860,7 +925,9 @@ static noinline void submit_compressed_extents(struct inode *inode,
+ 						async_extent->ram_size,
+ 						ins.offset,
+ 						BTRFS_ORDERED_COMPRESSED,
+-						async_extent->compress_type);
++						async_extent->compress_type,
++						async_extent->key,
++						async_extent->iv);
+ 		if (ret) {
+ 			btrfs_drop_extent_cache(BTRFS_I(inode),
+ 						async_extent->start,
+@@ -1051,6 +1118,8 @@ static noinline int cow_file_range(struct inode *inode,
+ 			start + num_bytes - 1, 0);
+ 
+ 	while (num_bytes > 0) {
 +		char iv[BTRFS_ENCRYPTION_BLOCK_LENGTH];
 +
+ 		cur_alloc_size = num_bytes;
+ 		ret = btrfs_reserve_extent(root, cur_alloc_size, cur_alloc_size,
+ 					   fs_info->sectorsize, 0, alloc_hint,
+@@ -1060,6 +1129,14 @@ static noinline int cow_file_range(struct inode *inode,
+ 		cur_alloc_size = ins.offset;
+ 		extent_reserved = true;
+ 
 +		if (key) {
 +			ret = crypto_rng_get_bytes(crypto_default_rng, iv,
 +						BTRFS_ENCRYPTION_BLOCK_LENGTH);
 +
 +			if (ret)
-+				goto out_unlock;
++				goto out_reserve;
 +		}
 +
- 		/* lets try to make an inline extent */
- 		ret = cow_file_range_inline(inode, start, end, 0,
--					    BTRFS_COMPRESS_NONE, NULL);
-+					    BTRFS_COMPRESS_NONE, NULL, key, iv);
- 		if (ret == 0) {
- 			/*
- 			 * We use DO_ACCOUNTING here because we need the
-@@ -3755,6 +3809,19 @@ static int btrfs_read_locked_inode(struct inode *inode,
- 	}
+ 		ram_size = ins.offset;
+ 		em = create_io_em(inode, start, ins.offset, /* len */
+ 				  start, /* orig_start */
+@@ -1068,7 +1145,8 @@ static noinline int cow_file_range(struct inode *inode,
+ 				  ins.offset, /* orig_block_len */
+ 				  ram_size, /* ram_bytes */
+ 				  BTRFS_COMPRESS_NONE, /* compress_type */
+-				  BTRFS_ORDERED_REGULAR /* type */);
++				  BTRFS_ORDERED_REGULAR /* type */,
++				  key, iv);
+ 		if (IS_ERR(em)) {
+ 			ret = PTR_ERR(em);
+ 			goto out_reserve;
+@@ -1076,7 +1154,8 @@ static noinline int cow_file_range(struct inode *inode,
+ 		free_extent_map(em);
  
- 	btrfs_sync_inode_flags_to_i_flags(inode);
+ 		ret = btrfs_add_ordered_extent(inode, start, ins.objectid,
+-					       ram_size, cur_alloc_size, 0);
++					       ram_size, cur_alloc_size, 0,
++					       key, iv);
+ 		if (ret)
+ 			goto out_drop_extent_cache;
+ 
+@@ -1249,8 +1328,10 @@ static int cow_file_range_async(struct inode *inode, struct page *locked_page,
+ 		async_cow->start = start;
+ 		async_cow->write_flags = write_flags;
+ 
+-		if (BTRFS_I(inode)->flags & BTRFS_INODE_NOCOMPRESS &&
+-		    !btrfs_test_opt(fs_info, FORCE_COMPRESS))
++		if ((inode_need_encrypt(inode) &&
++			!inode_need_compress(inode, start, end)) ||
++		   (BTRFS_I(inode)->flags & BTRFS_INODE_NOCOMPRESS &&
++		    !btrfs_test_opt(fs_info, FORCE_COMPRESS)))
+ 			cur_end = end;
+ 		else
+ 			cur_end = min(end, start + SZ_512K - 1);
+@@ -1532,7 +1613,7 @@ static noinline int run_delalloc_nocow(struct inode *inode,
+ 					  num_bytes, /* block_len */
+ 					  disk_num_bytes, /* orig_block_len */
+ 					  ram_bytes, BTRFS_COMPRESS_NONE,
+-					  BTRFS_ORDERED_PREALLOC);
++					  BTRFS_ORDERED_PREALLOC, NULL, NULL);
+ 			if (IS_ERR(em)) {
+ 				if (nocow)
+ 					btrfs_dec_nocow_writers(fs_info,
+@@ -1550,7 +1631,8 @@ static noinline int run_delalloc_nocow(struct inode *inode,
+ 		}
+ 
+ 		ret = btrfs_add_ordered_extent(inode, cur_offset, disk_bytenr,
+-					       num_bytes, num_bytes, type);
++					       num_bytes, num_bytes, type,
++					       NULL, NULL);
+ 		if (nocow)
+ 			btrfs_dec_nocow_writers(fs_info, disk_bytenr);
+ 		BUG_ON(ret); /* -ENOMEM */
+@@ -1642,14 +1724,17 @@ static int run_delalloc_range(void *private_data, struct page *locked_page,
+ 	int ret;
+ 	int force_cow = need_force_cow(inode, start, end);
+ 	unsigned int write_flags = wbc_to_write_flags(wbc);
++	bool encrypt = inode_need_encrypt(inode);
+ 
+-	if (BTRFS_I(inode)->flags & BTRFS_INODE_NODATACOW && !force_cow) {
++	if (BTRFS_I(inode)->flags & BTRFS_INODE_NODATACOW && !force_cow &&
++	    !encrypt) {
+ 		ret = run_delalloc_nocow(inode, locked_page, start, end,
+ 					 page_started, 1, nr_written);
+-	} else if (BTRFS_I(inode)->flags & BTRFS_INODE_PREALLOC && !force_cow) {
++	} else if (BTRFS_I(inode)->flags & BTRFS_INODE_PREALLOC &&
++		!force_cow && !encrypt) {
+ 		ret = run_delalloc_nocow(inode, locked_page, start, end,
+ 					 page_started, 0, nr_written);
+-	} else if (!inode_need_compress(inode, start, end)) {
++	} else if (!inode_need_compress(inode, start, end) && !encrypt) {
+ 		ret = cow_file_range(inode, locked_page, start, end, end,
+ 				      page_started, nr_written, 1, NULL);
+ 	} else {
+@@ -2238,7 +2323,8 @@ static int insert_reserved_file_extent(struct btrfs_trans_handle *trans,
+ 				       u64 disk_bytenr, u64 disk_num_bytes,
+ 				       u64 num_bytes, u64 ram_bytes,
+ 				       u8 compression, u8 encryption,
+-				       u16 other_encoding, int extent_type)
++				       u16 other_encoding, int extent_type,
++				       u64 key_number, char *iv)
+ {
+ 	struct btrfs_root *root = BTRFS_I(inode)->root;
+ 	struct btrfs_file_extent_item *fi;
+@@ -2248,11 +2334,17 @@ static int insert_reserved_file_extent(struct btrfs_trans_handle *trans,
+ 	u64 qg_released;
+ 	int extent_inserted = 0;
+ 	int ret;
++	size_t item_size;
+ 
+ 	path = btrfs_alloc_path();
+ 	if (!path)
+ 		return -ENOMEM;
+ 
++	if (encryption != BTRFS_ENCRYPTION_NONE)
++		item_size = sizeof(struct btrfs_file_extent_item_enc);
++	else
++		item_size = sizeof(*fi);
 +
-+	if (BTRFS_I(inode)->prop_key != 0) {
-+		struct btrfs_enc_key *key;
+ 	/*
+ 	 * we may be replacing one extent in the tree with another.
+ 	 * The new extent is pinned in the extent map, and we don't want
+@@ -2264,7 +2356,7 @@ static int insert_reserved_file_extent(struct btrfs_trans_handle *trans,
+ 	 */
+ 	ret = __btrfs_drop_extents(trans, root, inode, path, file_pos,
+ 				   file_pos + num_bytes, NULL, 0,
+-				   1, sizeof(*fi), &extent_inserted);
++				   1, item_size, &extent_inserted);
+ 	if (ret)
+ 		goto out;
+ 
+@@ -2275,7 +2367,7 @@ static int insert_reserved_file_extent(struct btrfs_trans_handle *trans,
+ 
+ 		path->leave_spinning = 1;
+ 		ret = btrfs_insert_empty_item(trans, root, path, &ins,
+-					      sizeof(*fi));
++					      item_size);
+ 		if (ret)
+ 			goto out;
+ 	}
+@@ -2293,6 +2385,17 @@ static int insert_reserved_file_extent(struct btrfs_trans_handle *trans,
+ 	btrfs_set_file_extent_encryption(leaf, fi, encryption);
+ 	btrfs_set_file_extent_other_encoding(leaf, fi, other_encoding);
+ 
++	if (encryption != BTRFS_ENCRYPTION_NONE) {
++		struct btrfs_file_extent_item_enc *fi_enc;
 +
-+		btrfs_find_inode_encryption_key(inode, &key);
++		fi_enc = (struct btrfs_file_extent_item_enc *)fi;
 +
-+		if (key && !key->loaded) {
-+			mutex_lock(&key->lock);
-+			btrfs_load_key(key);
-+			mutex_unlock(&key->lock);
-+		}
++		btrfs_set_file_extent_enc_key_number(leaf, fi_enc, key_number);
++
++		write_eb_member(leaf, fi_enc, struct btrfs_file_extent_item_enc,
++				iv, iv);
 +	}
 +
- 	return 0;
- }
+ 	btrfs_mark_buffer_dirty(leaf);
+ 	btrfs_release_path(path);
  
-@@ -4677,7 +4744,8 @@ int btrfs_truncate_inode_items(struct btrfs_trans_handle *trans,
- 				u32 size = (u32)(new_size - found_key.offset);
- 
- 				btrfs_set_file_extent_ram_bytes(leaf, fi, size);
--				size = btrfs_file_extent_calc_inline_size(size);
-+				size = btrfs_file_extent_calc_inline_size(size,
-+									false);
- 				btrfs_truncate_item(root->fs_info, path, size, 1);
- 			} else if (!del_item) {
- 				/*
-@@ -6167,6 +6235,9 @@ static void btrfs_inherit_iflags(struct inode *inode, struct inode *dir)
- 			BTRFS_I(inode)->flags |= BTRFS_INODE_NODATASUM;
- 	}
- 
-+	if (flags & BTRFS_INODE_ENCRYPT)
-+		BTRFS_I(inode)->flags |= BTRFS_INODE_ENCRYPT;
+@@ -3091,14 +3194,27 @@ static int btrfs_finish_ordered_io(struct btrfs_ordered_extent *ordered_extent)
+ 						ordered_extent->file_offset +
+ 						logical_len);
+ 	} else {
++		u32 encrypt_type;
++		u64 key_number;
 +
- 	btrfs_sync_inode_flags_to_i_flags(inode);
++		if (ordered_extent->key) {
++			encrypt_type = BTRFS_ENCRYPTION_AES256CTR;
++			key_number = ordered_extent->key->key_number;
++		} else {
++			encrypt_type = BTRFS_ENCRYPTION_NONE;
++			key_number = 0;
++		}
++
+ 		BUG_ON(root == fs_info->tree_root);
+ 		ret = insert_reserved_file_extent(trans, inode,
+ 						ordered_extent->file_offset,
+ 						ordered_extent->start,
+ 						ordered_extent->disk_len,
+ 						logical_len, logical_len,
+-						compress_type, 0, 0,
+-						BTRFS_FILE_EXTENT_REG);
++						compress_type, encrypt_type, 0,
++						BTRFS_FILE_EXTENT_REG,
++						key_number,
++						ordered_extent->iv);
+ 		if (!ret) {
+ 			clear_reserved_extent = false;
+ 			btrfs_release_delalloc_bytes(fs_info,
+@@ -7283,7 +7399,7 @@ static struct extent_map *btrfs_create_dio_extent(struct inode *inode,
+ 				  block_start, block_len, orig_block_len,
+ 				  ram_bytes,
+ 				  BTRFS_COMPRESS_NONE, /* compress_type */
+-				  type);
++				  type, NULL, NULL);
+ 		if (IS_ERR(em))
+ 			goto out;
+ 	}
+@@ -7562,7 +7678,8 @@ static struct extent_map *create_io_em(struct inode *inode, u64 start, u64 len,
+ 				       u64 orig_start, u64 block_start,
+ 				       u64 block_len, u64 orig_block_len,
+ 				       u64 ram_bytes, int compress_type,
+-				       int type)
++				       int type, struct btrfs_enc_key *enc_key,
++				       char *iv)
+ {
+ 	struct extent_map_tree *em_tree;
+ 	struct extent_map *em;
+@@ -7596,6 +7713,14 @@ static struct extent_map *create_io_em(struct inode *inode, u64 start, u64 len,
+ 		em->compress_type = compress_type;
+ 	}
+ 
++	if (enc_key) {
++		em->encrypt_type = BTRFS_ENCRYPTION_AES256CTR;
++		em->key_number = enc_key->key_number;
++		memcpy(em->iv, iv, BTRFS_ENCRYPTION_BLOCK_LENGTH);
++	} else {
++		em->encrypt_type = BTRFS_ENCRYPTION_NONE;
++	}
++
+ 	do {
+ 		btrfs_drop_extent_cache(BTRFS_I(inode), em->start,
+ 				em->start + em->len - 1, 0);
+@@ -10413,7 +10538,8 @@ static int __btrfs_prealloc_file_range(struct inode *inode, int mode,
+ 						  cur_offset, ins.objectid,
+ 						  ins.offset, ins.offset,
+ 						  ins.offset, 0, 0, 0,
+-						  BTRFS_FILE_EXTENT_PREALLOC);
++						  BTRFS_FILE_EXTENT_PREALLOC,
++						  0, NULL);
+ 		if (ret) {
+ 			btrfs_free_reserved_extent(fs_info, ins.objectid,
+ 						   ins.offset, 0);
+diff --git a/fs/btrfs/ordered-data.c b/fs/btrfs/ordered-data.c
+index 0c4ef208b8b9..5fbb60b5ddbe 100644
+--- a/fs/btrfs/ordered-data.c
++++ b/fs/btrfs/ordered-data.c
+@@ -170,7 +170,8 @@ static inline struct rb_node *tree_search(struct btrfs_ordered_inode_tree *tree,
+  */
+ static int __btrfs_add_ordered_extent(struct inode *inode, u64 file_offset,
+ 				      u64 start, u64 len, u64 disk_len,
+-				      int type, int dio, int compress_type)
++				      int type, int dio, int compress_type,
++				      struct btrfs_enc_key *key, char *iv)
+ {
+ 	struct btrfs_fs_info *fs_info = btrfs_sb(inode->i_sb);
+ 	struct btrfs_root *root = BTRFS_I(inode)->root;
+@@ -190,10 +191,14 @@ static int __btrfs_add_ordered_extent(struct inode *inode, u64 file_offset,
+ 	entry->bytes_left = len;
+ 	entry->inode = igrab(inode);
+ 	entry->compress_type = compress_type;
++	entry->key = key;
+ 	entry->truncated_len = (u64)-1;
+ 	if (type != BTRFS_ORDERED_IO_DONE && type != BTRFS_ORDERED_COMPLETE)
+ 		set_bit(type, &entry->flags);
+ 
++	if (key)
++		memcpy(entry->iv, iv, BTRFS_ENCRYPTION_BLOCK_LENGTH);
++
+ 	if (dio)
+ 		set_bit(BTRFS_ORDERED_DIRECT, &entry->flags);
+ 
+@@ -241,11 +246,12 @@ static int __btrfs_add_ordered_extent(struct inode *inode, u64 file_offset,
  }
  
-@@ -10230,7 +10301,7 @@ static int btrfs_symlink(struct inode *dir, struct dentry *dentry,
- 	key.objectid = btrfs_ino(BTRFS_I(inode));
- 	key.offset = 0;
- 	key.type = BTRFS_EXTENT_DATA_KEY;
--	datasize = btrfs_file_extent_calc_inline_size(name_len);
-+	datasize = btrfs_file_extent_calc_inline_size(name_len, false);
- 	err = btrfs_insert_empty_item(trans, root, path, &key,
- 				      datasize);
- 	if (err) {
-diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
-index 92fbed90dc4e..6589656e3988 100644
---- a/fs/btrfs/ioctl.c
-+++ b/fs/btrfs/ioctl.c
-@@ -3851,7 +3851,7 @@ static int clone_copy_inline_extent(struct inode *dst,
- 		return ret;
+ int btrfs_add_ordered_extent(struct inode *inode, u64 file_offset,
+-			     u64 start, u64 len, u64 disk_len, int type)
++			     u64 start, u64 len, u64 disk_len, int type,
++			     struct btrfs_enc_key *key, char *iv)
+ {
+ 	return __btrfs_add_ordered_extent(inode, file_offset, start, len,
+ 					  disk_len, type, 0,
+-					  BTRFS_COMPRESS_NONE);
++					  BTRFS_COMPRESS_NONE, key, iv);
+ }
  
- 	if (skip) {
--		const u32 start = btrfs_file_extent_calc_inline_size(0);
-+		const u32 start = btrfs_file_extent_calc_inline_size(0, false);
+ int btrfs_add_ordered_extent_dio(struct inode *inode, u64 file_offset,
+@@ -253,16 +259,17 @@ int btrfs_add_ordered_extent_dio(struct inode *inode, u64 file_offset,
+ {
+ 	return __btrfs_add_ordered_extent(inode, file_offset, start, len,
+ 					  disk_len, type, 1,
+-					  BTRFS_COMPRESS_NONE);
++					  BTRFS_COMPRESS_NONE, NULL, NULL);
+ }
  
- 		memmove(inline_data + start, inline_data + start + skip, datal);
- 	}
+ int btrfs_add_ordered_extent_compress(struct inode *inode, u64 file_offset,
+ 				      u64 start, u64 len, u64 disk_len,
+-				      int type, int compress_type)
++				      int type, int compress_type,
++				      struct btrfs_enc_key *key, char *iv)
+ {
+ 	return __btrfs_add_ordered_extent(inode, file_offset, start, len,
+ 					  disk_len, type, 0,
+-					  compress_type);
++					  compress_type, key, iv);
+ }
+ 
+ /*
+diff --git a/fs/btrfs/ordered-data.h b/fs/btrfs/ordered-data.h
+index 02d813aaa261..563d882fdd16 100644
+--- a/fs/btrfs/ordered-data.h
++++ b/fs/btrfs/ordered-data.h
+@@ -95,6 +95,12 @@ struct btrfs_ordered_extent {
+ 	/* compression algorithm */
+ 	int compress_type;
+ 
++	/* encryption key */
++	struct btrfs_enc_key *key;
++
++	/* encryption initialization vector */
++	char iv[BTRFS_ENCRYPTION_BLOCK_LENGTH];
++
+ 	/* reference count */
+ 	refcount_t refs;
+ 
+@@ -158,12 +164,14 @@ int btrfs_dec_test_first_ordered_pending(struct inode *inode,
+ 				   u64 *file_offset, u64 io_size,
+ 				   int uptodate);
+ int btrfs_add_ordered_extent(struct inode *inode, u64 file_offset,
+-			     u64 start, u64 len, u64 disk_len, int type);
++			     u64 start, u64 len, u64 disk_len, int type,
++			     struct btrfs_enc_key *key, char *iv);
+ int btrfs_add_ordered_extent_dio(struct inode *inode, u64 file_offset,
+ 				 u64 start, u64 len, u64 disk_len, int type);
+ int btrfs_add_ordered_extent_compress(struct inode *inode, u64 file_offset,
+ 				      u64 start, u64 len, u64 disk_len,
+-				      int type, int compress_type);
++				      int type, int compress_type,
++				      struct btrfs_enc_key *key, char *iv);
+ void btrfs_add_ordered_sum(struct inode *inode,
+ 			   struct btrfs_ordered_extent *entry,
+ 			   struct btrfs_ordered_sum *sum);
 -- 
 2.19.2
 
