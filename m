@@ -2,98 +2,90 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67373C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 16:52:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB8AFC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 16:53:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 361DD20859
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 16:52:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547052760;
-	bh=PGmQbghLzB//LYJFii0db6Hv2f/jthDwNAeOQyXQduk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=PrNyBXmWFxiPmhtq396J2NsH2RwzzQXcqFXkl4RMKfOhEwPS86hk00hMUPdqCR1OW
-	 CMRR1O/fyeqR8GKHHTIfoAJbq77ObG6oX0BD4WrtXC9eehQ5jzv4ieb2LTUM0oHziC
-	 lrCAwJK9O0DKVclte0t80cF8bLwh7cfqhCPY+9rA=
+	by mail.kernel.org (Postfix) with ESMTP id BA0AE206BA
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 16:53:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726498AbfAIQwj (ORCPT
+        id S1726545AbfAIQxd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 11:52:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49812 "EHLO mail.kernel.org"
+        Wed, 9 Jan 2019 11:53:33 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:60210 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726275AbfAIQwi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 11:52:38 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1725785AbfAIQxd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 11:53:33 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B4901206BA;
-        Wed,  9 Jan 2019 16:52:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547052758;
-        bh=PGmQbghLzB//LYJFii0db6Hv2f/jthDwNAeOQyXQduk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=1OeohSki498/SbzVQ4l7ltwXEM4p766QfBV+9ohg8SHz0ndntxEQ09W3kSRB5YybH
-         xAe/Bu4A00E2tXTcRP6u45HoJn1rrQl9mBLeKuEwHxRwJS9u+mY45q8xl0JQv5pf+M
-         WzSPO1d55AdhE4WZ2vZLYaNkaHzz4MQj47Cg1AO8=
-Date:   Wed, 9 Jan 2019 17:52:35 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc:     Marc Dionne <marc.c.dionne@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        x86@kernel.org
-Subject: Re: x86/fpu: Don't export __kernel_fpu_{begin,end}()
-Message-ID: <20190109165235.GA8151@kroah.com>
-References: <git-mailbomb-linux-master-12209993e98c5fa1855c467f22a24e3d5b8be205@kernel.org>
- <CAB9dFdsZb-sZixeOzrt8F50h1pnUK2W2Cxx8+xjhgd0=6xs7iw@mail.gmail.com>
- <20190109111951.5zvnj7ls6jv56p2u@linutronix.de>
+        by mx1.redhat.com (Postfix) with ESMTPS id 322EC804F7;
+        Wed,  9 Jan 2019 16:53:33 +0000 (UTC)
+Received: from krava (unknown [10.43.17.222])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 8263057AB;
+        Wed,  9 Jan 2019 16:53:31 +0000 (UTC)
+Date:   Wed, 9 Jan 2019 17:53:30 +0100
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Alexey Budankov <alexey.budankov@linux.intel.com>
+Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 3/4] perf record: apply affinity masks when reading
+ mmap buffers
+Message-ID: <20190109165330.GC19455@krava>
+References: <b31ddfd5-a017-d8da-14eb-d1b48bfc255b@linux.intel.com>
+ <a5081531-f89b-9d5a-df16-76a1de3c0d82@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190109111951.5zvnj7ls6jv56p2u@linutronix.de>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+In-Reply-To: <a5081531-f89b-9d5a-df16-76a1de3c0d82@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Wed, 09 Jan 2019 16:53:33 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 09, 2019 at 12:19:52PM +0100, Sebastian Andrzej Siewior wrote:
-> On 2019-01-07 18:08:26 [-0400], Marc Dionne wrote:
-> > On Thu, Dec 27, 2018 at 11:20 AM Linux Kernel Mailing List
-> > <linux-kernel@vger.kernel.org> wrote:
-> > >
-> > > Commit:     12209993e98c5fa1855c467f22a24e3d5b8be205
-> > >     x86/fpu: Don't export __kernel_fpu_{begin,end}()
-> > >
-> …
-> > >     With EFI gone as the last user of __kernel_fpu_{begin|end}(), both can
-> > >     be made static and not exported anymore.
-> > >
-> > This commit removes an exported function pair that is currently used
-> > by out of tree modules, while the replacement pair
-> > (kernel_fpu_begin/end) is EXPORT_SYMBOL_GPL.  So this is making
-> > existing functionality GPL only, which will probably be an issue for
-> > several out of tree modules that use the fpu.
-> > 
-> > Could kernel_fpu_begin/end be made plain EXPORT_SYMBOL?
-> 
-> It can be used by OOT modules as long as they are not under a
-> proprietary license. The change here is not for me to decide, I added
-> the x86 maintainers to make their decision. I can make a patch if they
-> say so.
+On Wed, Jan 09, 2019 at 12:38:23PM +0300, Alexey Budankov wrote:
 
-If there are no in-kernel users, the symbols should not be exported
-anymore.  That's nothing new, we have always done this.
+SNIP
 
-> On the other hand could we just drop EXPORT_SYMBOL_GPL? I doubt this
-> helps in any way yet please correct me if I am wrong. 
+> diff --git a/tools/perf/util/mmap.c b/tools/perf/util/mmap.c
+> index e5220790f1fb..ee0230eed635 100644
+> --- a/tools/perf/util/mmap.c
+> +++ b/tools/perf/util/mmap.c
+> @@ -377,6 +377,24 @@ void perf_mmap__munmap(struct perf_mmap *map)
+>  	auxtrace_mmap__munmap(&map->auxtrace_mmap);
+>  }
+>  
+> +static void perf_mmap__setup_affinity_mask(struct perf_mmap *map, struct mmap_params *mp)
+> +{
+> +	int c, cpu, nr_cpus, node;
+> +
+> +	CPU_ZERO(&map->affinity_mask);
+> +	if (mp->affinity == PERF_AFFINITY_NODE && cpu__max_node() > 1) {
+> +		nr_cpus = cpu_map__nr(mp->cpu_map);
+> +		node = cpu__get_node(map->cpu);
+> +		for (c = 0; c < nr_cpus; c++) {
+> +			cpu = mp->cpu_map->map[c]; /* map c index to online cpu index */
+> +			if (cpu__get_node(cpu) == node)
+> +				CPU_SET(cpu, &map->affinity_mask);
 
-Yes, it helps, please leave it as-is.
+should we do that from from all possible cpus task (perf record)
+can run on, instead of mp->cpu_map, which might be only subset
+(-C ... option)
+
+also node -> cpu_map is static configuration, we could prepare
+this map ahead (like cpunode_map) and just assign it in here
+based on node index
 
 thanks,
-
-greg k-h
+jirka
