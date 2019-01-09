@@ -2,123 +2,102 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62E59C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 09:13:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95604C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 09:14:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 32B5420821
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 09:13:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 621DF20821
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 09:14:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="uLKo8NDa"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730095AbfAIJNz (ORCPT
+        id S1730131AbfAIJO1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 04:13:55 -0500
-Received: from mga17.intel.com ([192.55.52.151]:35449 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727387AbfAIJNy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 04:13:54 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Jan 2019 01:13:53 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,456,1539673200"; 
-   d="scan'208";a="108470244"
-Received: from linux.intel.com ([10.54.29.200])
-  by orsmga008.jf.intel.com with ESMTP; 09 Jan 2019 01:13:53 -0800
-Received: from [10.125.252.236] (abudanko-mobl.ccr.corp.intel.com [10.125.252.236])
-        by linux.intel.com (Postfix) with ESMTP id CF2C158056F;
-        Wed,  9 Jan 2019 01:13:50 -0800 (PST)
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-Subject: Re: [PATCH v2 3/4] perf record: apply affinity masks when reading
- mmap buffers
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <e8fccb5e-31b7-b3a0-74bf-490c2d439ab4@linux.intel.com>
- <4b7b902b-01b7-7a3f-eee2-e7fc8433322c@linux.intel.com>
- <20190101213932.GE13760@krava>
-Organization: Intel Corp.
-Message-ID: <94e6b67e-441c-89cb-eb10-1c8d135d8840@linux.intel.com>
-Date:   Wed, 9 Jan 2019 12:13:49 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Wed, 9 Jan 2019 04:14:27 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:45182 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727828AbfAIJO0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 04:14:26 -0500
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x099EOBc127736;
+        Wed, 9 Jan 2019 03:14:24 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1547025265;
+        bh=L6RbpFrQ9zUXUEJRWNc+rSpyKLl7L2+EYHiQ++6bbIg=;
+        h=Subject:To:References:CC:From:Date:In-Reply-To;
+        b=uLKo8NDaQ0vkkOtMrB3ESd6RFBYc0qv+lIrzm69oD0l2q7d8HQ7OKzZgJaTgSgCNk
+         nXhmPaR6Fra6fL0b51MNhJoH7f0+W7uhIvM8pjrCX/wqtNy7WiufOyg7pMvffKROaL
+         MvLPZpb18TU2N/4zwiaBhN2d+z2jbDZeIEVlTQHU=
+Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x099EOki115035
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 9 Jan 2019 03:14:24 -0600
+Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Wed, 9
+ Jan 2019 03:14:23 -0600
+Received: from dflp32.itg.ti.com (10.64.6.15) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Wed, 9 Jan 2019 03:14:23 -0600
+Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x099ELVE021373;
+        Wed, 9 Jan 2019 03:14:22 -0600
+Subject: Re: [PATCH 0/4] phy: ti: Add AM654 USB2 support
+To:     <kishon@ti.com>
+References: <1544022206-2300-1-git-send-email-rogerq@ti.com>
+CC:     <robh+dt@kernel.org>, <nsekhar@ti.com>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>
+From:   Roger Quadros <rogerq@ti.com>
+Message-ID: <5C35BB6D.2030509@ti.com>
+Date:   Wed, 9 Jan 2019 11:14:21 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
+ Thunderbird/38.6.0
 MIME-Version: 1.0
-In-Reply-To: <20190101213932.GE13760@krava>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <1544022206-2300-1-git-send-email-rogerq@ti.com>
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Hi Kishon,
 
-On 02.01.2019 0:39, Jiri Olsa wrote:
-> On Mon, Dec 24, 2018 at 03:27:17PM +0300, Alexey Budankov wrote:
+On 05/12/18 17:03, Roger Quadros wrote:
+> Hi Kishon,
 > 
-> SNIP
-> 
->> diff --git a/tools/perf/util/mmap.c b/tools/perf/util/mmap.c
->> index 742fa9a8e498..a2095e4eda4b 100644
->> --- a/tools/perf/util/mmap.c
->> +++ b/tools/perf/util/mmap.c
->> @@ -361,6 +361,7 @@ void perf_mmap__munmap(struct perf_mmap *map)
->>  
->>  int perf_mmap__mmap(struct perf_mmap *map, struct mmap_params *mp, int fd, int cpu)
->>  {
->> +	int c, nr_cpus, node;
->>  	/*
->>  	 * The last one will be done at perf_mmap__consume(), so that we
->>  	 * make sure we don't prevent tools from consuming every last event in
->> @@ -389,6 +390,17 @@ int perf_mmap__mmap(struct perf_mmap *map, struct mmap_params *mp, int fd, int c
->>  	map->cpu = cpu;
->>  
->>  	CPU_ZERO(&map->affinity_mask);
->> +	if (mp->affinity == PERF_AFFINITY_NODE && cpu__max_node() > 1) {
->> +		nr_cpus = cpu_map__nr(mp->cpu_map);
->> +		node = cpu__get_node(map->cpu);
->> +		for (c = 0; c < nr_cpus; c++) {
->> +			if (cpu__get_node(c) == node) {
-> 
-> the 'c' is just an index here, I think you need to
-> use the real cpu value from the mp->cpu_map->map[c]
+> This series extends omap-usb2 PHY driver to be used
+> for AM654 USB2 PHY.
 
-Well, yes, mapping c index to online cpu index is more generic. 
-Corrected in v3. Thanks!
+Any comments on this series? If it looks fine, could you please
+queue this for -next. Thanks.
 
-Alexey
+cheers,
+-roger
 
 > 
-> jirka
+> cheers,
+> -roger
 > 
->> +				CPU_SET(c, &map->affinity_mask);
->> +			}
->> +		}
->> +	} else if (mp->affinity == PERF_AFFINITY_CPU) {
->> +		CPU_SET(map->cpu, &map->affinity_mask);
->> +	}
->>  
->>  	if (auxtrace_mmap__mmap(&map->auxtrace_mmap,
->>  				&mp->auxtrace_mp, map->base, fd))
->> diff --git a/tools/perf/util/mmap.h b/tools/perf/util/mmap.h
->> index e566c19b242b..b3f724fad22e 100644
->> --- a/tools/perf/util/mmap.h
->> +++ b/tools/perf/util/mmap.h
->> @@ -72,6 +72,7 @@ enum bkw_mmap_state {
->>  struct mmap_params {
->>  	int			    prot, mask, nr_cblocks, affinity;
->>  	struct auxtrace_mmap_params auxtrace_mp;
->> +	const struct cpu_map	    *cpu_map;
->>  };
->>  
->>  int perf_mmap__mmap(struct perf_mmap *map, struct mmap_params *mp, int fd, int cpu);
+> Roger Quadros (4):
+>   phy: ti: usb2: Fix logic on -EPROBE_DEFER
+>   phy: ti: Don't depend on OMAP_OCP2SCP
+>   dt-bindings: phy: ti: Add support for AM654x USB2 PHY
+>   phy: ti: usb2: Add support for AM654 USB2 PHY
 > 
+>  Documentation/devicetree/bindings/phy/ti-phy.txt |   1 +
+>  drivers/phy/ti/Kconfig                           |   6 +-
+>  drivers/phy/ti/phy-omap-usb2.c                   | 105 ++++++++++++++---------
+>  3 files changed, 67 insertions(+), 45 deletions(-)
+> 
+
+-- 
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
