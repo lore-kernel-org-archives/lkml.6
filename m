@@ -2,177 +2,113 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94BFAC43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 08:27:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54FA2C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 08:28:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6913821726
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 08:27:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1D2B2214C6
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 08:28:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="Cht7Uqex"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729782AbfAII1J (ORCPT
+        id S1729829AbfAII2Y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 03:27:09 -0500
-Received: from mail-out.m-online.net ([212.18.0.10]:40954 "EHLO
-        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725865AbfAII1I (ORCPT
+        Wed, 9 Jan 2019 03:28:24 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:46185 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729721AbfAII2X (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 03:27:08 -0500
-Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
-        by mail-out.m-online.net (Postfix) with ESMTP id 43ZMgC3RYFz1qxDK;
-        Wed,  9 Jan 2019 09:27:03 +0100 (CET)
-Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
-        by mail.m-online.net (Postfix) with ESMTP id 43ZMgC2F1qz1qsnL;
-        Wed,  9 Jan 2019 09:27:03 +0100 (CET)
-X-Virus-Scanned: amavisd-new at mnet-online.de
-Received: from mail.mnet-online.de ([192.168.8.182])
-        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
-        with ESMTP id xBvQsi6o18L9; Wed,  9 Jan 2019 09:27:01 +0100 (CET)
-X-Auth-Info: 1+rO4lRmIIukx0YPZJNK1lgwjqcb6gvY5S0Z71gKMp8=
-Received: from localhost.localdomain (85-222-111-42.dynamic.chello.pl [85.222.111.42])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.mnet-online.de (Postfix) with ESMTPSA;
-        Wed,  9 Jan 2019 09:27:01 +0100 (CET)
-From:   Lukasz Majewski <lukma@denx.de>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Mark Rutland <mark.rutland@arm.com>, linux-spi@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Esben Haabendal <eha@deif.com>,
-        =?UTF-8?q?Martin=20Hundeb=C3=B8ll?= <martin@geanix.com>,
-        Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Lukasz Majewski <lukma@denx.de>
-Subject: [PATCH v5] ARM: dspi: Provide support for DSPI slave mode operation (Vybryd vf610)
-Date:   Wed,  9 Jan 2019 09:26:44 +0100
-Message-Id: <20190109082644.14941-1-lukma@denx.de>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180927150709.17010-1-lukma@denx.de>
-References: <20180927150709.17010-1-lukma@denx.de>
+        Wed, 9 Jan 2019 03:28:23 -0500
+Received: by mail-ed1-f68.google.com with SMTP id o10so6530282edt.13
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Jan 2019 00:28:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=5TgjE5Tc//Ey4KRCrEBUNKc5Zm2Bcs7gVi6WSkJCjlM=;
+        b=Cht7UqexD8T1Ka5UqjIPEExH8jDEJdt+6WqGaCt7wd0tx8F3omd62OLajdOA+fygHi
+         1AoEMBPRJS+F14CqC58JIojNT37koybR+fxB/a7LpPLzRINIy6Kr+gMx5xH6gfzJWS2X
+         m3leW76t8dImgfa3O7UMV0DUG7YRnGUZHziCQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=5TgjE5Tc//Ey4KRCrEBUNKc5Zm2Bcs7gVi6WSkJCjlM=;
+        b=bh3XEWBzETTcg/HZcsF9ZqP1x1unbezwMZHdyLbxleCWYk0EJqkOluxJmag/5IbutO
+         xzs81m3bcpe/tJd4r/hMhZeMVA+IEPJR30lnxbnzb2uDC2GnUNv11a+SR27tLBfC/GEe
+         ADmv1kif/H+1OnxcFkg/D6iCukwB1WIA5c2OFIMJI47DF1mqSI9qCvad2Z2RXWmwW2gN
+         Dy67EtHAIBNFRh1d6jf0CBru2CC1ouF6iaW04IQj5FrQzTyyErGCkpU2YGC4RS54SEVU
+         9creLBA0RH3Qk7OnBs0KBckhnrVQLjODj2HP7f6aVEsHmXxfsOLVBEdnPMeGdOZvMWyT
+         Cemg==
+X-Gm-Message-State: AJcUukeXNrxzvl7xkS2WK6xSOvTHoi0gGgi6BfbGmYwJlN9xvvmY5Rwu
+        yRc2VRc+cKl/9Rf7d5vQDp3vwpq5cB5huF7cypfHbYskqYlWbGjoiHYMWMZpl+6gE8tlruahR6k
+        g72DQ6fl1sRX0KzvX/cGrTuUn4iXaXHtKFME4EXeophrsRFtVGGUmmqBLXWgIgx9IyztLFx/SQx
+        1C/UIAB7Zedpk=
+X-Google-Smtp-Source: ALg8bN7+k2O9XM4kCB+oiCi5orsFwjtbszL49mNzTdP5SbKI4HJqszbhMS7M9WGL7+1U3KS8OgdbVg==
+X-Received: by 2002:a50:cc04:: with SMTP id m4mr5229995edi.171.1547022501849;
+        Wed, 09 Jan 2019 00:28:21 -0800 (PST)
+Received: from [10.176.68.125] ([192.19.248.250])
+        by smtp.gmail.com with ESMTPSA id j31sm833826eda.46.2019.01.09.00.28.20
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 09 Jan 2019 00:28:21 -0800 (PST)
+Subject: Re: [PATCH] net: brcm80211: add a check for the status of
+ usb_register
+To:     Kalle Valo <kvalo@codeaurora.org>, Kangjie Lu <kjlu@umn.edu>
+Cc:     pakki001@umn.edu, Franky Lin <franky.lin@broadcom.com>,
+        Hante Meuleman <hante.meuleman@broadcom.com>,
+        Chi-Hsien Lin <chi-hsien.lin@cypress.com>,
+        Wright Feng <wright.feng@cypress.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Pieter-Paul Giesberts <pieter-paul.giesberts@broadcom.com>,
+        linux-wireless@vger.kernel.org,
+        brcm80211-dev-list.pdl@broadcom.com,
+        brcm80211-dev-list@cypress.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20181226012227.70524-1-kjlu@umn.edu>
+ <87zhsbqeuu.fsf@kamboji.qca.qualcomm.com>
+From:   Arend Van Spriel <arend.vanspriel@broadcom.com>
+Message-ID: <7ddb04d4-f45f-2b41-12da-d17e8f8c1173@broadcom.com>
+Date:   Wed, 9 Jan 2019 09:28:19 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
+MIME-Version: 1.0
+In-Reply-To: <87zhsbqeuu.fsf@kamboji.qca.qualcomm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The NXP's Vybryd vf610 can work as a SPI slave device (the CS and clock
-signals are provided by master).
+On 1/8/2019 5:43 PM, Kalle Valo wrote:
+> Kangjie Lu <kjlu@umn.edu> writes:
+> 
+>> usb_register() may fail, so let's check its status and issue an error
+>> message if it fails.
+>>
+>> Signed-off-by: Kangjie Lu <kjlu@umn.edu>
+>> ---
+>>   drivers/net/wireless/broadcom/brcm80211/brcmfmac/usb.c | 6 +++++-
+> 
+> The title prefix should be "brcmfmac: " but I can fix that.
 
-It is possible to specify a single device to work in that mode. As we do
-use DMA for transferring data, the RX channel must be prepared for
-incoming data.
-Moreover, in slave mode we just set a subset of control fields in
-configuration registers (CTAR0, PUSHR).
+Hi Kalle,
 
-For testing the spidev_test program has been used.
-Test script for this patch can be found here:
-https://github.com/lmajewski/tests-spi/blob/master/tests/spi/spi_tests.sh
+I wanted to ack this patch, but can not locate it in my email not in 
+linux-wireless patchwork. Was it posted to the networking list only?
 
-Signed-off-by: Lukasz Majewski <lukma@denx.de>
----
-Changes for v5:
+Using scripts/get_maintainer.pl with the patch would reveal the lists to 
+post to in order of preference. For wireless driver changes I refrain to 
+linux-wireless only, but that is a personal choice I guess.
 
-- Rebase to v5.0-rc1 (no code changes needed)
+Regards,
+Arend
 
-Changes for v4:
-
-- Rebase to v4.20-rc5 (no code changes needed)
-
-Changes for v3:
-
-- Rebase to v4.20-rc2 (no code changes needed)
-
-Changes for v2:
-
-- Remove patch which adds extra NXP specific DTS property to support slave
-mode and reuse the generic one (spi-slave)
-- Remove patch which brings back the mcr_register local copy. It is not
-needed as generic SPI slave infrastructure is used.
-- Rewrite the code to use spi_controller_is_slave() helper functions
----
- drivers/spi/spi-fsl-dspi.c | 40 ++++++++++++++++++++++++++++++----------
- 1 file changed, 30 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/spi/spi-fsl-dspi.c b/drivers/spi/spi-fsl-dspi.c
-index 5e10dc5c93a5..348682be9dd5 100644
---- a/drivers/spi/spi-fsl-dspi.c
-+++ b/drivers/spi/spi-fsl-dspi.c
-@@ -233,6 +233,9 @@ static u32 dspi_pop_tx_pushr(struct fsl_dspi *dspi)
- {
- 	u16 cmd = dspi->tx_cmd, data = dspi_pop_tx(dspi);
- 
-+	if (spi_controller_is_slave(dspi->master))
-+		return data;
-+
- 	if (dspi->len > 0)
- 		cmd |= SPI_PUSHR_CMD_CONT;
- 	return cmd << 16 | data;
-@@ -329,6 +332,11 @@ static int dspi_next_xfer_dma_submit(struct fsl_dspi *dspi)
- 	dma_async_issue_pending(dma->chan_rx);
- 	dma_async_issue_pending(dma->chan_tx);
- 
-+	if (spi_controller_is_slave(dspi->master)) {
-+		wait_for_completion_interruptible(&dspi->dma->cmd_rx_complete);
-+		return 0;
-+	}
-+
- 	time_left = wait_for_completion_timeout(&dspi->dma->cmd_tx_complete,
- 					DMA_COMPLETION_TIMEOUT);
- 	if (time_left == 0) {
-@@ -798,14 +806,18 @@ static int dspi_setup(struct spi_device *spi)
- 	ns_delay_scale(&pasc, &asc, sck_cs_delay, clkrate);
- 
- 	chip->ctar_val = SPI_CTAR_CPOL(spi->mode & SPI_CPOL ? 1 : 0)
--		| SPI_CTAR_CPHA(spi->mode & SPI_CPHA ? 1 : 0)
--		| SPI_CTAR_LSBFE(spi->mode & SPI_LSB_FIRST ? 1 : 0)
--		| SPI_CTAR_PCSSCK(pcssck)
--		| SPI_CTAR_CSSCK(cssck)
--		| SPI_CTAR_PASC(pasc)
--		| SPI_CTAR_ASC(asc)
--		| SPI_CTAR_PBR(pbr)
--		| SPI_CTAR_BR(br);
-+		| SPI_CTAR_CPHA(spi->mode & SPI_CPHA ? 1 : 0);
-+
-+	if (!spi_controller_is_slave(dspi->master)) {
-+		chip->ctar_val |= SPI_CTAR_LSBFE(spi->mode &
-+						 SPI_LSB_FIRST ? 1 : 0)
-+			| SPI_CTAR_PCSSCK(pcssck)
-+			| SPI_CTAR_CSSCK(cssck)
-+			| SPI_CTAR_PASC(pasc)
-+			| SPI_CTAR_ASC(asc)
-+			| SPI_CTAR_PBR(pbr)
-+			| SPI_CTAR_BR(br);
-+	}
- 
- 	spi_set_ctldata(spi, chip);
- 
-@@ -970,8 +982,13 @@ static const struct regmap_config dspi_xspi_regmap_config[] = {
- 
- static void dspi_init(struct fsl_dspi *dspi)
- {
--	regmap_write(dspi->regmap, SPI_MCR, SPI_MCR_MASTER | SPI_MCR_PCSIS |
--		     (dspi->devtype_data->xspi_mode ? SPI_MCR_XSPI : 0));
-+	unsigned int mcr = SPI_MCR_PCSIS |
-+		(dspi->devtype_data->xspi_mode ? SPI_MCR_XSPI : 0);
-+
-+	if (!spi_controller_is_slave(dspi->master))
-+		mcr |= SPI_MCR_MASTER;
-+
-+	regmap_write(dspi->regmap, SPI_MCR, mcr);
- 	regmap_write(dspi->regmap, SPI_SR, SPI_SR_CLEAR);
- 	if (dspi->devtype_data->xspi_mode)
- 		regmap_write(dspi->regmap, SPI_CTARE(0),
-@@ -1027,6 +1044,9 @@ static int dspi_probe(struct platform_device *pdev)
- 		}
- 		master->bus_num = bus_num;
- 
-+		if (of_property_read_bool(np, "spi-slave"))
-+			master->slave = true;
-+
- 		dspi->devtype_data = of_device_get_match_data(&pdev->dev);
- 		if (!dspi->devtype_data) {
- 			dev_err(&pdev->dev, "can't get devtype_data\n");
--- 
-2.11.0
-
+> https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches#commit_title_is_wrong
+> 
