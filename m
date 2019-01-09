@@ -2,74 +2,90 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AF75C43444
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 18:59:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CFDBC43613
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 19:00:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4707E214C6
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 18:59:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547060369;
-	bh=m2a1IVxvYwWBIZaGoBIOb0gMPSv1Uh4/WfDSGjVGou4=;
-	h=Subject:Cc:To:In-Reply-To:From:References:Date:List-ID:From;
-	b=CIZJPVQnVTEnTldHJ7ZLyItQiIrr+Efqq1yj+gA0RyRnN1EZ2CekLaX2vauaVQj3w
-	 lu6vkWKkvn+Jm54TmPJ4B+OgzLCzMP+l2FgTuWh09WlcJP3GxMRGFKqCqToRww/CC8
-	 VHDPp/yJR15nY1/yexaT5on1+AvJnmQz5cMNYWaA=
+	by mail.kernel.org (Postfix) with ESMTP id 20509214C6
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 19:00:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728054AbfAIS72 (ORCPT
+        id S1727998AbfAITAv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 13:59:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55572 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727804AbfAIS71 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 13:59:27 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 310A220859;
-        Wed,  9 Jan 2019 18:59:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547060367;
-        bh=m2a1IVxvYwWBIZaGoBIOb0gMPSv1Uh4/WfDSGjVGou4=;
-        h=Subject:Cc:To:In-Reply-To:From:References:Date:From;
-        b=HZ8Xa67Mj6MwRx+JcS/6W0NVYYAIhP1Hi+0EPL6HFPZIgmwOHEFRL5gXA9TDIAjNe
-         CEvmPcEriJPVKbmxZXgusFEEzUF9SK+bWWhC8MhLdZQuB5rSAAv1diwrwFxWZAXvyb
-         pLYSRys/GoJof363aY/+pcr5XSp3rDhqNsKcZbXM=
-Content-Type: text/plain; charset="utf-8"
+        Wed, 9 Jan 2019 14:00:51 -0500
+Received: from mout.kundenserver.de ([212.227.126.134]:38011 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726469AbfAITAu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 14:00:50 -0500
+Received: from oxbsltgw03.schlund.de ([172.19.249.20]) by
+ mrelayeu.kundenserver.de (mreue010 [213.165.67.97]) with ESMTPSA (Nemesis) id
+ 1MQdpG-1gsnov1vMc-00NmAx; Wed, 09 Jan 2019 20:00:15 +0100
+Date:   Wed, 9 Jan 2019 20:00:13 +0100 (CET)
+From:   Stefan Wahren <stefan.wahren@i2se.com>
+To:     Eric Anholt <eric@anholt.net>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
+        Guenter Roeck <linux@roeck-us.net>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     bcm-kernel-feedback-list@broadcom.com,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Message-ID: <1966518233.54588.1547060413944@email.ionos.de>
+In-Reply-To: <7dde45e2-8e26-5051-dea6-da3566bb5e0e@i2se.com>
+References: <20181212235150.6491-1-eric@anholt.net>
+ <7dde45e2-8e26-5051-dea6-da3566bb5e0e@i2se.com>
+Subject: Re: [PATCH v4 0/5] BCM2835 PM driver
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v1 2/6] clk: qcom: Skip halt checks on gcc_usb3_phy_pipe_clk for 8998
-Cc:     bjorn.andersson@linaro.org, andy.gross@linaro.org,
-        david.brown@linaro.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kishon@ti.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, gregkh@linuxfoundation.org,
-        balbi@kernel.org, linux-usb@vger.kernel.org,
-        Jeffrey Hugo <jhugo@codeaurora.org>
-To:     Jeffrey Hugo <jhugo@codeaurora.org>, mturquette@baylibre.com
-In-Reply-To: <1546620615-2389-1-git-send-email-jhugo@codeaurora.org>
-From:   Stephen Boyd <sboyd@kernel.org>
-User-Agent: alot/0.8
-References: <1546620615-2389-1-git-send-email-jhugo@codeaurora.org>
-Message-ID: <154706036649.15366.4782578068557224270@swboyd.mtv.corp.google.com>
-Date:   Wed, 09 Jan 2019 10:59:26 -0800
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Priority: 3
+Importance: Medium
+X-Mailer: Open-Xchange Mailer v7.8.4-Rev47
+X-Originating-Client: open-xchange-appsuite
+X-Provags-ID: V03:K1:xe9R5NiMj5STj4jz1+DejXlRv4idZiMxmQwZyvUdKsCduF8oMsW
+ A0Zi21xKcDqhGFwhkeneIdrV/aoL37XFrjVlQPj4BT628jYyEegl/tHTfZBimhqkUPo3EAM
+ hg+8JeqTf3IeXL9Nna5s+jFTqFePa0sApA/B8wjJeBXAp3mju3EYSXt3IBK2oqdLZmpTmD4
+ K5dSRPWaDgBs9cm0pN/Dg==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:cEN39ddn6aI=:o3oBq9HYGiR1Fwm4iPZXAK
+ +9nsslsvaCMFLziOrafwf0jKO8/klF9OJ809tks57L8n6nAQ4SXA7XBee43UqQ1i4Bi3Io8Vv
+ i+gj++ILw9pbPSdrUcR1bIUHUxNwCB5aCORiPrPA8EQUpaB07uJHwvGC1vvRIua7kdej2Swyg
+ NRGZbkBNdRllUTKNafx16keGEF8sm8AZjNzvwFRVTczgjWaDrShRABgPTM5Q0GiVwdgQ6Lq0R
+ WVstAmsNClCUFVEcIreIRTXtyH1LoTvo0Hw6T9VjXll44oOB+3IA+RWhsG5+Ihe6XVOzKNyJV
+ Liid4Zmlweii2A0TiLT0aw/EaOQpjtHZWM/K6RtIQCJEiPMkkNUxMDPXtuTDXHHiw96ypnN1S
+ tGhF8uEOPTCkNUNlw4UlhtpH3D+J1ktqq/iZMIUlL13WVdjnkHbKIWnzg5EDZHEWNsU2+hN8m
+ HX4gV4IZtrTudnZoe2t2wgl5Xqq2E6bHEtb+T3hILUkI6FgxK0lacHgB9nKVcFQ5P3J+l4cK9
+ srQ0vjTgH2zsEYEVZ3nTsW4TLwDFtdidLNAk9bm5mBvMcWTOWtXc8kH1uJ7x4byAOMAylUMYE
+ 9spRqEJ1uAw/u/JzqqUGGFk3FYrXcHLsoki2xR0RyWAKZPEZX+NEWiLbR37giq2xHrcIjN0ny
+ EuTlZGyGmdWTP0USt50kuh+j/wHBq4UPo/XZvPFQflxEdB74d5r1a58lS1TWuQnnfjBHhBdsK
+ 0mASgBbugV98sDt8flr6zoXHgTfViLcNh2BFCY+AyJLmOaRauij5ohFEFEc=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Jeffrey Hugo (2019-01-04 08:50:15)
-> The gcc_usb3_phy_pipe_clk is generated by the phy, but is also used by
-> the phy during init.  The clock needs to be enabled during the init
-> sequence, but may not be fully active until after the init sequence is
-> complete.  This causes a catch-22 if the clock status is checked during
-> enable.  As a result, skip the checks to avoid the troubling situation.
->=20
-> Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
-> ---
 
-Applied to clk-next
+> Stefan Wahren <stefan.wahren@i2se.com> hat am 3. Januar 2019 um 16:56 geschrieben:
+> 
+> 
+> Hi Eric,
+> 
+> Am 13.12.2018 um 00:51 schrieb Eric Anholt:
+> > v4 adds the system-power-controller node to the binding as requested
+> > by Stefan.  No driver changes are added to make the power controller
+> > behavior optional yet, since it's really unrelated to this series.
+> >
+> apologize for my late reply. This whole series is
+> 
+> Acked-by: Stefan Wahren <stefan.wahren@i2se.com>
+> 
 
+Applied to bcm2835-drivers-next / bcm2835-dt-next
+
+Thanks
+Stefan
