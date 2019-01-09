@@ -2,98 +2,130 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D4E7C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 08:46:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F00E3C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 08:48:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D1F2821726
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 08:46:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BD2242075C
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 08:48:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="E2Ze6TIf"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Pahit59c";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ogR4syil"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730028AbfAIIqq (ORCPT
+        id S1729938AbfAIIsC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 03:46:46 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:54768 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729962AbfAIIqn (ORCPT
+        Wed, 9 Jan 2019 03:48:02 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:36926 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727828AbfAIIsC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 03:46:43 -0500
-Received: by mail-wm1-f65.google.com with SMTP id a62so6718172wmh.4
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jan 2019 00:46:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=k4RL04dCWBEEiRneWm+s6fPFvXmhyEUAvF7ZZsTQAKI=;
-        b=E2Ze6TIfo+LPyuH/G0b3V4EeUGV5UuYUgXTsoeZm8TvnFXgxyTeptTjCc3KBQ/2LqZ
-         2EAVEQu8R8zishLal8B0Tbg7rzvra2CaRYpGEpEP3bDTdYPaRowC8VYj6AgnaJnlk0z3
-         s7ZrrP5fNutXS9bgAcxfovIqBa/Dpsl6vPnAc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=k4RL04dCWBEEiRneWm+s6fPFvXmhyEUAvF7ZZsTQAKI=;
-        b=YMF2aGaE/pUOdKit/jvt9/4e708lk6fwQAaPenyzoU/gvoNjUoMwUv95/FwcqnGp6C
-         UVgEO7GGhiZ3VKpPkPlEFjioUXdSiockQWEk8CbKGE+mjXRli7ioO3wFoeFEybCx07P/
-         p+94of4HiNGEnHbClEhub8l51N9sAeAGxRghXuSVigvI2qJ/r9e6lTWfcggDPMq0KxJB
-         ZWh7MMtJge8YgQUxsUNUkp5vZ4ZZuZGlYQTa8eoffyJgfESeSnTGcfhnXl9Qn0c5fJm6
-         ORn5zuAuWTglwTvRFkg+uD8zYs38gsvI3MRnzxD7qJrA9KfQvEtiFxKJqu7fb2uLjGmF
-         2RpQ==
-X-Gm-Message-State: AJcUukdyJTxLlX7x0qGgTg8PO4PcLPpkfwzjrynysK6F8Eten0OAUsRi
-        GFeES8fl77FV51TdwTghIsrShA==
-X-Google-Smtp-Source: ALg8bN7jwiJwbPyAYcxqnoLwTzP+P5GY6RlYE4niBN5d5Yd13yjCudvy7f9Ab1EaUTd7vN5pAQ2oCA==
-X-Received: by 2002:a1c:4046:: with SMTP id n67mr4387280wma.123.1547023601122;
-        Wed, 09 Jan 2019 00:46:41 -0800 (PST)
-Received: from localhost.localdomain ([37.157.136.206])
-        by smtp.gmail.com with ESMTPSA id n82sm12776455wma.42.2019.01.09.00.46.39
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 09 Jan 2019 00:46:40 -0800 (PST)
-From:   Stanimir Varbanov <stanimir.varbanov@linaro.org>
-To:     linux-media@vger.kernel.org
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        Vikash Garodia <vgarodia@codeaurora.org>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Malathi Gottam <mgottam@codeaurora.org>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Subject: [PATCH 2/4] venus: core: corect maximum hardware load for sdm845
-Date:   Wed,  9 Jan 2019 10:46:14 +0200
-Message-Id: <20190109084616.17162-3-stanimir.varbanov@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190109084616.17162-1-stanimir.varbanov@linaro.org>
-References: <20190109084616.17162-1-stanimir.varbanov@linaro.org>
+        Wed, 9 Jan 2019 03:48:02 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 1B8EC608C6; Wed,  9 Jan 2019 08:48:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1547023681;
+        bh=49ZmOkJlqAD88GfcBWboINxEulavztigu4Y+9LtQoHQ=;
+        h=From:To:Cc:Subject:Date:From;
+        b=Pahit59cEC8Yqmt6HQq4f35qkfgwxdS+MBVma124tkCno8qsKF5cu+7kPA7KUCXPj
+         ZB1LSITgmb/6GkVj7jdADz50ydC19CGahPH1p87uF+eP67HXHQ9dMZYQ5cim82GmiH
+         AsvHSjUYF8Rq87H8U9vJAJ+x+oM2oyDZlAt09V8g=
+Received: from rohkumar-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: rohitkr@codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 0233060132;
+        Wed,  9 Jan 2019 08:47:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1547023680;
+        bh=49ZmOkJlqAD88GfcBWboINxEulavztigu4Y+9LtQoHQ=;
+        h=From:To:Cc:Subject:Date:From;
+        b=ogR4syilfBlUchHqJ6xT+2p3EuEwK8pz6FZShgPiw8uXYjN4ScMmcGMQNqRLcdyie
+         zKiRwJyJPx45auqngMrZPVHP2aD9cjCIZyZqI0Qxb2DeYIqCIVjya/dMJK5Q2AgYyB
+         6J9BJd12sgyqwD1Fcbet0IYtOrLm83bBZBd5Sa8M=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0233060132
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rohitkr@codeaurora.org
+From:   Rohit kumar <rohitkr@codeaurora.org>
+To:     plai@codeaurora.org, bgoswami@codeaurora.org,
+        asishb@codeaurora.org, lgirdwood@gmail.com, broonie@kernel.org,
+        perex@perex.cz, tiwai@suse.com, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org, rohkumar@qti.qualcomm.com,
+        srinivas.kandagatla@linaro.org, vinod.koul@linaro.org
+Cc:     Ajit Pandey <ajitp@codeaurora.org>,
+        Rohit kumar <rohitkr@codeaurora.org>
+Subject: [PATCH v2] ASoC: soc-core: defer card probe until all component is added to list
+Date:   Wed,  9 Jan 2019 14:17:07 +0530
+Message-Id: <1547023627-30312-1-git-send-email-rohitkr@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This corects maximum hardware load constant in per SoC resources
-for sdm845 aka Venus v4.
+From: Ajit Pandey <ajitp@codeaurora.org>
 
-Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
+DAI component probe is not called if it is not present
+in component list during sound card registration.
+Check if component is available in component list for
+platform and cpu dai before soundcard registration.
+
+Signed-off-by: Ajit Pandey <ajitp@codeaurora.org>
+Signed-off-by: Rohit kumar <rohitkr@codeaurora.org>
 ---
- drivers/media/platform/qcom/venus/core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Changes since v1:
+Moved component find logic to soc-core instead of machine driver
+as suggested by Mark.
 
-diff --git a/drivers/media/platform/qcom/venus/core.c b/drivers/media/platform/qcom/venus/core.c
-index cb411eb85ee4..d95185ea32c3 100644
---- a/drivers/media/platform/qcom/venus/core.c
-+++ b/drivers/media/platform/qcom/venus/core.c
-@@ -455,7 +455,7 @@ static const struct venus_resources msm8996_res = {
- 	.reg_tbl_size = ARRAY_SIZE(msm8996_reg_preset),
- 	.clks = {"core", "iface", "bus", "mbus" },
- 	.clks_num = 4,
--	.max_load = 2563200,
-+	.max_load = 3110400,	/* 4096x2160@90 */
- 	.hfi_version = HFI_VERSION_3XX,
- 	.vmem_id = VIDC_RESOURCE_NONE,
- 	.vmem_size = 0,
+ sound/soc/soc-core.c | 17 ++++++++++++++++-
+ 1 file changed, 16 insertions(+), 1 deletion(-)
+
+diff --git a/sound/soc/soc-core.c b/sound/soc/soc-core.c
+index 0462b3e..eec92f1 100644
+--- a/sound/soc/soc-core.c
++++ b/sound/soc/soc-core.c
+@@ -1027,7 +1027,6 @@ static int snd_soc_init_platform(struct snd_soc_card *card,
+ 				 struct snd_soc_dai_link *dai_link)
+ {
+ 	struct snd_soc_dai_link_component *platform = dai_link->platform;
+-
+ 	/*
+ 	 * FIXME
+ 	 *
+@@ -1129,6 +1128,14 @@ static int soc_init_dai_link(struct snd_soc_card *card,
+ 			link->name);
+ 		return -EINVAL;
+ 	}
++
++	/*
++	 * Defer card registartion if platform dai component is not added to
++	 * component list.
++	 */
++	if (!soc_find_component(link->platform->of_node, link->platform->name))
++		return -EPROBE_DEFER;
++
+ 	/*
+ 	 * CPU device may be specified by either name or OF node, but
+ 	 * can be left unspecified, and will be matched based on DAI
+@@ -1140,6 +1147,14 @@ static int soc_init_dai_link(struct snd_soc_card *card,
+ 			link->name);
+ 		return -EINVAL;
+ 	}
++
++	/*
++	 * Defer card registartion if cpu dai component is not added to
++	 * component list.
++	 */
++	if (!soc_find_component(link->cpu_of_node, link->cpu_name))
++		return -EPROBE_DEFER;
++
+ 	/*
+ 	 * At least one of CPU DAI name or CPU device name/node must be
+ 	 * specified
 -- 
-2.17.1
+Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.,
+is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
 
