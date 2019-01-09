@@ -2,135 +2,74 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F11AEC43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 18:57:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AAF82C43612
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 18:59:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C358920859
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 18:57:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6E32D21738
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 18:59:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547060343;
+	bh=zzSA5aRRwHqiJsUJtmpgsyL4dwgZua8xQR/+YxkdSNA=;
+	h=Subject:Cc:To:In-Reply-To:From:References:Date:List-ID:From;
+	b=jXH7DMcdvMEB48KxL7Hm0peUFNrVFuVbGhtZVPrkB0yVnFNdbZOzENnQJFDzJdQIC
+	 MSgR9P+NcDx24KXmeEXQkv4jwlL4gh6Kbty5Tp91ER8XhDUZnNPbAJxi0+jVE8Yvm/
+	 Imu6iwMiX0goivR+zZ+NQItRRwis3Nyq3NNoV1q0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727983AbfAIS5j (ORCPT
+        id S1727996AbfAIS7D (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 13:57:39 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:34076 "EHLO mx1.redhat.com"
+        Wed, 9 Jan 2019 13:59:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55328 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726581AbfAIS5i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 13:57:38 -0500
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1727878AbfAIS7C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 13:59:02 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A7E97C0740E7;
-        Wed,  9 Jan 2019 18:57:37 +0000 (UTC)
-Received: from llong.remote.csb (dhcp-17-223.bos.redhat.com [10.18.17.223])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 749E687A8;
-        Wed,  9 Jan 2019 18:57:36 +0000 (UTC)
-Subject: Re: [PATCH v2 0/4] /proc/stat: Reduce irqs counting performance
- overhead
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Daniel Colascione <dancol@google.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Randy Dunlap <rdunlap@infradead.org>
-References: <1547054628-12703-1-git-send-email-longman@redhat.com>
- <20190109174403.GN6310@bombadil.infradead.org>
- <f6302369-9eda-ef58-4f18-3dc9ffbc31f1@redhat.com>
- <20190109182417.GO6310@bombadil.infradead.org>
- <f0ae7bd8-5c5b-aefd-aff8-2719fc0edbaa@redhat.com>
- <20190109185226.GP6310@bombadil.infradead.org>
-From:   Waiman Long <longman@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=longman@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- weim8xU=
-Organization: Red Hat
-Message-ID: <116b9b0e-8352-3fed-2dc8-4436915ace57@redhat.com>
-Date:   Wed, 9 Jan 2019 13:57:36 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        by mail.kernel.org (Postfix) with ESMTPSA id AD69B20859;
+        Wed,  9 Jan 2019 18:59:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547060341;
+        bh=zzSA5aRRwHqiJsUJtmpgsyL4dwgZua8xQR/+YxkdSNA=;
+        h=Subject:Cc:To:In-Reply-To:From:References:Date:From;
+        b=uK8KbihkiFQA21MuZE6OxG+cZm+JFeKNC11OCG4A5CXNcg7ZxPFVVUZTB8owJ1XdT
+         q37tmTH4E18+YFiBAhW9NTt+yDFGbL1t7HgFI+Ee4iIRPyFQ2HpSoD0WMEJb1cxj+p
+         XXKp16ANF6i1J417vqiZ6CQW9L+8K0VPCJd3xLXI=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <20190109185226.GP6310@bombadil.infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Wed, 09 Jan 2019 18:57:37 +0000 (UTC)
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v1 2/6] clk: qcom: Skip halt checks on gcc_usb3_phy_pipe_clk for 8998
+Cc:     bjorn.andersson@linaro.org, andy.gross@linaro.org,
+        david.brown@linaro.org, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kishon@ti.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, gregkh@linuxfoundation.org,
+        balbi@kernel.org, linux-usb@vger.kernel.org,
+        Jeffrey Hugo <jhugo@codeaurora.org>
+To:     Jeffrey Hugo <jhugo@codeaurora.org>, mturquette@baylibre.com
+In-Reply-To: <1546620615-2389-1-git-send-email-jhugo@codeaurora.org>
+From:   Stephen Boyd <sboyd@kernel.org>
+User-Agent: alot/0.8
+References: <1546620615-2389-1-git-send-email-jhugo@codeaurora.org>
+Message-ID: <154706034090.15366.11081837995313995010@swboyd.mtv.corp.google.com>
+Date:   Wed, 09 Jan 2019 10:59:00 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01/09/2019 01:52 PM, Matthew Wilcox wrote:
-> On Wed, Jan 09, 2019 at 01:37:23PM -0500, Waiman Long wrote:
->> On 01/09/2019 01:24 PM, Matthew Wilcox wrote:
->>> Did you even try just using the general purpose infrastructure that's
->>> in place?  If that shows a performance problem _then_ it's time to make
->>> this special snowflake just a little more special.  Not before.
->> I have looked into the percpu counter code. There are two aspects that I
->> don't like to introduce to the interrupt handler's code path for
->> updating the counts.
->>
->> 1) There is a raw spinlock in the percpu_counter structure that may need
->> to be acquired in the update path. This can be a performance drag
->> especially if lockdep is enabled.
->>
->> 2) The percpu_counter structure is 40 bytes in size on 64-bit systems
->> compared with just 8 bytes for the percpu count pointer and an
->> additional 4 bytes that I introduced in patch 2. With thousands of irq
->> descriptors, it can consume quite a lot more memory. Memory consumption
->> was a point that you brought up in one of your previous mails.
-> Then _argue that_.  Don't just go off and do something random without
-> explaining to the rest of us why we're wrong.
+Quoting Jeffrey Hugo (2019-01-04 08:50:15)
+> The gcc_usb3_phy_pipe_clk is generated by the phy, but is also used by
+> the phy during init.  The clock needs to be enabled during the init
+> sequence, but may not be fully active until after the init sequence is
+> complete.  This causes a catch-22 if the clock status is checked during
+> enable.  As a result, skip the checks to avoid the troubling situation.
 
-Sorry about that. I should have included that in the cover-letter.
-
-Cheers,
-Longman
+I will ask again, is anyone going to fix this in the phy driver? In
+theory it isn't needed if the phy driver can do things differently, but
+last time I checked I was told that the phy team said it had to be done
+this way.
 
