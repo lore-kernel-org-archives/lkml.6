@@ -2,132 +2,120 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40877C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 21:48:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3667C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 21:49:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 02B4D2075C
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 21:48:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="huyvVBDM"
+	by mail.kernel.org (Postfix) with ESMTP id A99592075C
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 21:49:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727027AbfAIVsC (ORCPT
+        id S1726954AbfAIVty (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 16:48:02 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:38257 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726221AbfAIVsB (ORCPT
+        Wed, 9 Jan 2019 16:49:54 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:48320 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726090AbfAIVty (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 16:48:01 -0500
-Received: by mail-wr1-f66.google.com with SMTP id v13so9203223wrw.5;
-        Wed, 09 Jan 2019 13:48:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=wbPtCnCMYFXNwMaTry6/291aYlawOCT2SxLb0zLOzsI=;
-        b=huyvVBDM3pwU3ksnZy8h/Ic6cXlyob6PrXIz5bHNSdK11APCdBieVVnd73ytxEvwJO
-         +lYwXs1ZTDWf4+opAkxkwCUnIQNmIDdIK/bnsb43r6C4a1ewVLQGzKNRTm0bgpMf08OI
-         roHpZ5vL/3wIu+zNLio0Bu9+lkbBzkrVlQgI4hF/qMccVTHZKqjlRSNTpkiPh7AoZZg0
-         JYal0su6f5IwbumvfbPoc/sYyzZgjDnVLg5jlA75vYi+3WfughVUGMiCHQlPKTaInk0X
-         goE5gPHHRejqfcU+g0n2RbHXO6NUJyjnpFdk9cv2zUGJH1SHBhLgJ3rqSQSI4maqBk5u
-         C6Kw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=wbPtCnCMYFXNwMaTry6/291aYlawOCT2SxLb0zLOzsI=;
-        b=SN54WdYZR1a+vxWIexICjWyplAxGJrvCOISeUb9dyVsg16L7f7CG+LukSCy5MEfaia
-         oAeUhIP2SbqxqzH6A/rBf2xH8oX3XaDG3t0SCG6yPrh7Hm5XyQMKUGlf4TZQtmPq71ia
-         yKjPMbo5qnr+yoOfzhoz/V7IiilRpnEjxVdaImBiHIZcDMVArk6BvqvZZOdNSS0/DmLc
-         b1+IZ4V+y7Xv3ez8x1PFugou0+GeMsP7ZIWw6UoYEBqhM07xHmEYbdulx4RTubzS+xbm
-         2J2M8uyOPQkxARcWcNP6G86SEZ2jVOYDzblKBTxezKL+xcLVLUNdaEHDmvMRTleZ60bf
-         dLVw==
-X-Gm-Message-State: AJcUukdhxYaaRMKEEV6PAuK1dKc81hO1edIEi6kk8dBTPQTbl71kMY5z
-        0mTYu/e30IudnaV4snyX7uE=
-X-Google-Smtp-Source: ALg8bN6i43bnOxPmycRp2a4CUUYymT+kYP3hK2gXmWjkVd63qmsPy5KE9SV6fFqbC7zSkQo/+OXTBw==
-X-Received: by 2002:adf:9d08:: with SMTP id k8mr6945177wre.203.1547070479392;
-        Wed, 09 Jan 2019 13:47:59 -0800 (PST)
-Received: from localhost.localdomain ([46.216.128.22])
-        by smtp.gmail.com with ESMTPSA id g129sm13917603wmf.39.2019.01.09.13.47.57
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 09 Jan 2019 13:47:58 -0800 (PST)
-Received: from [127.0.0.1] (helo=jeknote.loshitsa1.net)
-        by localhost.localdomain with esmtp (Exim 4.91)
-        (envelope-from <jekhor@gmail.com>)
-        id 1ghLhc-0005FV-Ik; Thu, 10 Jan 2019 00:47:56 +0300
-Date:   Thu, 10 Jan 2019 00:47:56 +0300
-From:   Yauhen Kharuzhy <jekhor@gmail.com>
-To:     Charles Keepax <ckeepax@opensource.cirrus.com>
-Cc:     wsa@the-dreams.de, linux-i2c@vger.kernel.org,
-        linux-kernel@vger.kernel.org, patches@opensource.cirrus.com
-Subject: Re: [PATCH 2/2] i2c: Clear client->irq in i2c_device_remove
-Message-ID: <20190109214756.GA18115@jeknote.loshitsa1.net>
-References: <20181019085958.32694-1-ckeepax@opensource.cirrus.com>
- <20181019085958.32694-2-ckeepax@opensource.cirrus.com>
+        Wed, 9 Jan 2019 16:49:54 -0500
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x09LnS5D034827
+        for <linux-kernel@vger.kernel.org>; Wed, 9 Jan 2019 16:49:53 -0500
+Received: from e15.ny.us.ibm.com (e15.ny.us.ibm.com [129.33.205.205])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2pwq4rneew-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Jan 2019 16:49:52 -0500
+Received: from localhost
+        by e15.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Wed, 9 Jan 2019 21:49:51 -0000
+Received: from b01cxnp23033.gho.pok.ibm.com (9.57.198.28)
+        by e15.ny.us.ibm.com (146.89.104.202) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 9 Jan 2019 21:49:46 -0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x09LnjNt9830516
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 9 Jan 2019 21:49:45 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0EA41B2064;
+        Wed,  9 Jan 2019 21:49:45 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E2357B205F;
+        Wed,  9 Jan 2019 21:49:44 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.88])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Wed,  9 Jan 2019 21:49:44 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id B69F516C63C3; Wed,  9 Jan 2019 13:49:44 -0800 (PST)
+Date:   Wed, 9 Jan 2019 13:49:44 -0800
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
+        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
+        josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
+        rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
+        fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org
+Subject: [PATCH tip/core/rcu 0/10] Torture-test updates for v5.1
+Reply-To: paulmck@linux.ibm.com
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181019085958.32694-2-ckeepax@opensource.cirrus.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 19010921-0068-0000-0000-0000038007E9
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010375; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000274; SDB=6.01144152; UDB=6.00595713; IPR=6.00924414;
+ MB=3.00025056; MTD=3.00000008; XFM=3.00000015; UTC=2019-01-09 21:49:50
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19010921-0069-0000-0000-000047122E6E
+Message-Id: <20190109214944.GA5610@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-09_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=835 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901090173
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 19, 2018 at 09:59:58AM +0100, Charles Keepax wrote:
-> The IRQ will be mapped in i2c_device_probe only if client->irq is zero and
-> i2c_device_remove does not clear this. When rebinding an I2C device,
-> whos IRQ provider has also been rebound this means that an IRQ mapping
-> will never be created, causing the I2C device to fail to acquire its
-> IRQ. Fix this issue by clearing client->irq in i2c_device_remove,
-> forcing i2c_device_probe to lookup the mapping again.
+Hello!
 
-Hi.
+This series contains torture-test updates:
 
-I found  driver i2c/busses/i2c-cht-wc.c which instantiates I2C device
-(battery charger) and passes IRQ to driver not using standard I2C IRQ mapping code.
-So if we reprobe I2C device (by reloading I2C device driver module or by
-manipulations with sysfs), we get invalid IRQ number for client:
+1.	Record grace periods in forward-progress histogram.
 
- adap->client_irq = irq_create_mapping(adap->irq_domain, 0);
- ...
- irq_set_chip_data(adap->client_irq, adap);
- irq_set_chip_and_handler(adap->client_irq, &adap->irqchip, handle_simple_irq);
- ...
- board_info.irq = adap->client_irq;
- adap->client = i2c_new_device(&adap->adapter, &board_info);
+2.	Explain and simplify odd "for" loop in mkinitrd.sh.
 
+3.	Add grace period after CPU offline.
 
-adap->client->irq will be reset after device removing here.
+4.	Stop abusing IS_ENABLED().
 
+5-9.	Fixes to nolibc, plus move it to somewhere less RCU-centric,
+	courtesy of Willy Tarreau, who also stepped up to be maintainer.
 
-Any advice to fix this? Maybe move initial i2c_client->irq value to new field
-like client->init_irq and copy it to client->irq at probing, for example?
+10.	Remove section MODULE PARAMETERS from torture.txt in favor of
+	the existing documentation in kernel-parameters.txt, courtesy
+	of Junchang Wang.
 
-> 
-> Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
-> Reviewed-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-> ---
->  drivers/i2c/i2c-core-base.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/i2c/i2c-core-base.c b/drivers/i2c/i2c-core-base.c
-> index 656f0a6fe3adf..28460f6a60cc1 100644
-> --- a/drivers/i2c/i2c-core-base.c
-> +++ b/drivers/i2c/i2c-core-base.c
-> @@ -430,6 +430,8 @@ static int i2c_device_remove(struct device *dev)
->  	dev_pm_clear_wake_irq(&client->dev);
->  	device_init_wakeup(&client->dev, false);
->  
-> +	client->irq = 0;
-> +
->  	return status;
->  }
->  
+							Thanx, Paul
 
--- 
-Yauhen Kharuzhy
+------------------------------------------------------------------------
+
+ Documentation/RCU/torture.txt                      |  169 ---------------------
+ MAINTAINERS                                        |    6 
+ include/linux/torture.h                            |    3 
+ kernel/locking/locktorture.c                       |    2 
+ kernel/rcu/rcuperf.c                               |    8 
+ kernel/rcu/rcutorture.c                            |   40 +++-
+ kernel/torture.c                                   |    6 
+ tools/testing/selftests/rcutorture/bin/mkinitrd.sh |   27 ++-
+ tools/testing/selftests/rcutorture/bin/nolibc.h    |  118 +++++++++++---
+ 9 files changed, 164 insertions(+), 215 deletions(-)
+
