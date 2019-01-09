@@ -6,57 +6,56 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FE73C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 16:29:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0DDAC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 16:30:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E30F7217F9
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 16:29:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 61BCE2054F
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 16:30:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726399AbfAIQ3v (ORCPT
+        id S1726419AbfAIQa1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 11:29:51 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:49308 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726318AbfAIQ3v (ORCPT
+        Wed, 9 Jan 2019 11:30:27 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:53830 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725681AbfAIQa1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 11:29:51 -0500
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x09GTmKm125748
-        for <linux-kernel@vger.kernel.org>; Wed, 9 Jan 2019 11:29:49 -0500
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2pwjn9x60s-1
+        Wed, 9 Jan 2019 11:30:27 -0500
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x09GTjwa034221
+        for <linux-kernel@vger.kernel.org>; Wed, 9 Jan 2019 11:30:25 -0500
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2pwj7u7n6v-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jan 2019 11:29:42 -0500
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Jan 2019 11:30:25 -0500
 Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <borntraeger@de.ibm.com>;
-        Wed, 9 Jan 2019 16:29:26 -0000
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Wed, 9 Jan 2019 16:30:23 -0000
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 9 Jan 2019 16:29:21 -0000
+        Wed, 9 Jan 2019 16:30:19 -0000
 Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x09GTKvW24379564
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x09GUIYW1048880
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 9 Jan 2019 16:29:20 GMT
+        Wed, 9 Jan 2019 16:30:18 GMT
 Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C2E0FA4055;
-        Wed,  9 Jan 2019 16:29:20 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 86142A4051;
+        Wed,  9 Jan 2019 16:30:18 +0000 (GMT)
 Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 24561A4051;
-        Wed,  9 Jan 2019 16:29:20 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id DC6F4A4059;
+        Wed,  9 Jan 2019 16:30:17 +0000 (GMT)
 Received: from oc7455500831.ibm.com (unknown [9.145.32.142])
         by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed,  9 Jan 2019 16:29:20 +0000 (GMT)
-Subject: Re: [PATCH v1 1/2] virtio_pci: use queue idx instead of array idx to
- set up the vq
+        Wed,  9 Jan 2019 16:30:17 +0000 (GMT)
+Subject: Re: [PATCH v1 2/2] virtio: don't allocate vqs when names[i] = NULL
 To:     Wei Wang <wei.w.wang@intel.com>, virtio-dev@lists.oasis-open.org,
         linux-kernel@vger.kernel.org,
         virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
         mst@redhat.com, cohuck@redhat.com
 Cc:     pbonzini@redhat.com, dgilbert@redhat.com
 References: <1545963986-11280-1-git-send-email-wei.w.wang@intel.com>
- <1545963986-11280-2-git-send-email-wei.w.wang@intel.com>
+ <1545963986-11280-3-git-send-email-wei.w.wang@intel.com>
 From:   Christian Borntraeger <borntraeger@de.ibm.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=borntraeger@de.ibm.com; prefer-encrypt=mutual; keydata=
@@ -102,20 +101,20 @@ Autocrypt: addr=borntraeger@de.ibm.com; prefer-encrypt=mutual; keydata=
  RGIN40QWFVlZvkKIEkzlzqpAyGaRLhXJPv/6tpoQaCQQoSAc5Z9kM/wEd9e2zMeojcWjUXgg
  oWj8A/wY4UXExGBu+UCzzP/6sQRpBiPFgmqPTytrDo/gsUGqjOudLiHQcMU+uunULYQxVghC
  syiRa+UVlsKmx1hsEg==
-Date:   Wed, 9 Jan 2019 17:29:19 +0100
+Date:   Wed, 9 Jan 2019 17:30:17 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <1545963986-11280-2-git-send-email-wei.w.wang@intel.com>
+In-Reply-To: <1545963986-11280-3-git-send-email-wei.w.wang@intel.com>
 Content-Language: en-US
 X-TM-AS-GCONF: 00
-x-cbid: 19010916-0008-0000-0000-000002AE6FCC
+x-cbid: 19010916-0016-0000-0000-000002429CE5
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19010916-0009-0000-0000-0000221A7273
-Message-Id: <ed55e8b4-1274-a57e-bc84-c857f9d661fe@de.ibm.com>
+x-cbparentid: 19010916-0017-0000-0000-0000329CB77F
+Message-Id: <3b3b43c4-de92-8093-096b-0d3783409391@de.ibm.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-09_07:,,
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-09_09:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
  malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
@@ -130,61 +129,125 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 Cc: stable@vger.kernel.org
 Fixes: 86a559787e6f ("virtio-balloon: VIRTIO_BALLOON_F_FREE_PAGE_HINT")
 
-
 On 28.12.2018 03:26, Wei Wang wrote:
-> When find_vqs, there will be no vq[i] allocation if its corresponding
-> names[i] is NULL. For example, the caller may pass in names[i] (i=4)
-> with names[2] being NULL because the related feature bit is turned off,
-> so technically there are 3 queues on the device, and name[4] should
-> correspond to the 3rd queue on the device.
-> 
-> So we use queue_idx as the queue index, which is increased only when the
-> queue exists.
+> Some vqs may not need to be allocated when their related feature bits
+> are disabled. So callers may pass in such vqs with "names = NULL".
+> Then we skip such vq allocations.
 > 
 > Signed-off-by: Wei Wang <wei.w.wang@intel.com>
 > ---
->  drivers/virtio/virtio_pci_common.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
+>  drivers/misc/mic/vop/vop_main.c        |  9 +++++++--
+>  drivers/remoteproc/remoteproc_virtio.c |  9 +++++++--
+>  drivers/s390/virtio/virtio_ccw.c       | 12 +++++++++---
+>  drivers/virtio/virtio_mmio.c           |  9 +++++++--
+>  4 files changed, 30 insertions(+), 9 deletions(-)
 > 
-> diff --git a/drivers/virtio/virtio_pci_common.c b/drivers/virtio/virtio_pci_common.c
-> index 465a6f5..d0584c0 100644
-> --- a/drivers/virtio/virtio_pci_common.c
-> +++ b/drivers/virtio/virtio_pci_common.c
-> @@ -285,7 +285,7 @@ static int vp_find_vqs_msix(struct virtio_device *vdev, unsigned nvqs,
->  {
->  	struct virtio_pci_device *vp_dev = to_vp_device(vdev);
->  	u16 msix_vec;
-> -	int i, err, nvectors, allocated_vectors;
-> +	int i, err, nvectors, allocated_vectors, queue_idx = 0;
+> diff --git a/drivers/misc/mic/vop/vop_main.c b/drivers/misc/mic/vop/vop_main.c
+> index 6b212c8..2bfa3a9 100644
+> --- a/drivers/misc/mic/vop/vop_main.c
+> +++ b/drivers/misc/mic/vop/vop_main.c
+> @@ -394,16 +394,21 @@ static int vop_find_vqs(struct virtio_device *dev, unsigned nvqs,
+>  	struct _vop_vdev *vdev = to_vopvdev(dev);
+>  	struct vop_device *vpdev = vdev->vpdev;
+>  	struct mic_device_ctrl __iomem *dc = vdev->dc;
+> -	int i, err, retry;
+> +	int i, err, retry, queue_idx = 0;
 >  
->  	vp_dev->vqs = kcalloc(nvqs, sizeof(*vp_dev->vqs), GFP_KERNEL);
->  	if (!vp_dev->vqs)
-> @@ -321,7 +321,7 @@ static int vp_find_vqs_msix(struct virtio_device *vdev, unsigned nvqs,
->  			msix_vec = allocated_vectors++;
->  		else
->  			msix_vec = VP_MSIX_VQ_VECTOR;
-> -		vqs[i] = vp_setup_vq(vdev, i, callbacks[i], names[i],
-> +		vqs[i] = vp_setup_vq(vdev, queue_idx++, callbacks[i], names[i],
->  				     ctx ? ctx[i] : false,
->  				     msix_vec);
+>  	/* We must have this many virtqueues. */
+>  	if (nvqs > ioread8(&vdev->desc->num_vq))
+>  		return -ENOENT;
+>  
+>  	for (i = 0; i < nvqs; ++i) {
+> +		if (!names[i]) {
+> +			vqs[i] = NULL;
+> +			continue;
+> +		}
+> +
+>  		dev_dbg(_vop_dev(vdev), "%s: %d: %s\n",
+>  			__func__, i, names[i]);
+> -		vqs[i] = vop_find_vq(dev, i, callbacks[i], names[i],
+> +		vqs[i] = vop_find_vq(dev, queue_idx++, callbacks[i], names[i],
+>  				     ctx ? ctx[i] : false);
 >  		if (IS_ERR(vqs[i])) {
-> @@ -356,7 +356,7 @@ static int vp_find_vqs_intx(struct virtio_device *vdev, unsigned nvqs,
->  		const char * const names[], const bool *ctx)
+>  			err = PTR_ERR(vqs[i]);
+> diff --git a/drivers/remoteproc/remoteproc_virtio.c b/drivers/remoteproc/remoteproc_virtio.c
+> index 183fc42..2d7cd344 100644
+> --- a/drivers/remoteproc/remoteproc_virtio.c
+> +++ b/drivers/remoteproc/remoteproc_virtio.c
+> @@ -153,10 +153,15 @@ static int rproc_virtio_find_vqs(struct virtio_device *vdev, unsigned int nvqs,
+>  				 const bool * ctx,
+>  				 struct irq_affinity *desc)
 >  {
->  	struct virtio_pci_device *vp_dev = to_vp_device(vdev);
+> -	int i, ret;
+> +	int i, ret, queue_idx = 0;
+>  
+>  	for (i = 0; i < nvqs; ++i) {
+> -		vqs[i] = rp_find_vq(vdev, i, callbacks[i], names[i],
+> +		if (!names[i]) {
+> +			vqs[i] = NULL;
+> +			continue;
+> +		}
+> +
+> +		vqs[i] = rp_find_vq(vdev, queue_idx++, callbacks[i], names[i],
+>  				    ctx ? ctx[i] : false);
+>  		if (IS_ERR(vqs[i])) {
+>  			ret = PTR_ERR(vqs[i]);
+> diff --git a/drivers/s390/virtio/virtio_ccw.c b/drivers/s390/virtio/virtio_ccw.c
+> index fc9dbad..ae1d56d 100644
+> --- a/drivers/s390/virtio/virtio_ccw.c
+> +++ b/drivers/s390/virtio/virtio_ccw.c
+> @@ -635,7 +635,7 @@ static int virtio_ccw_find_vqs(struct virtio_device *vdev, unsigned nvqs,
+>  {
+>  	struct virtio_ccw_device *vcdev = to_vc_device(vdev);
+>  	unsigned long *indicatorp = NULL;
+> -	int ret, i;
+> +	int ret, i, queue_idx = 0;
+>  	struct ccw1 *ccw;
+>  
+>  	ccw = kzalloc(sizeof(*ccw), GFP_DMA | GFP_KERNEL);
+> @@ -643,8 +643,14 @@ static int virtio_ccw_find_vqs(struct virtio_device *vdev, unsigned nvqs,
+>  		return -ENOMEM;
+>  
+>  	for (i = 0; i < nvqs; ++i) {
+> -		vqs[i] = virtio_ccw_setup_vq(vdev, i, callbacks[i], names[i],
+> -					     ctx ? ctx[i] : false, ccw);
+> +		if (!names[i]) {
+> +			vqs[i] = NULL;
+> +			continue;
+> +		}
+> +
+> +		vqs[i] = virtio_ccw_setup_vq(vdev, queue_idx++, callbacks[i],
+> +					     names[i], ctx ? ctx[i] : false,
+> +					     ccw);
+>  		if (IS_ERR(vqs[i])) {
+>  			ret = PTR_ERR(vqs[i]);
+>  			vqs[i] = NULL;
+> diff --git a/drivers/virtio/virtio_mmio.c b/drivers/virtio/virtio_mmio.c
+> index 4cd9ea5..d9dd0f78 100644
+> --- a/drivers/virtio/virtio_mmio.c
+> +++ b/drivers/virtio/virtio_mmio.c
+> @@ -468,7 +468,7 @@ static int vm_find_vqs(struct virtio_device *vdev, unsigned nvqs,
+>  {
+>  	struct virtio_mmio_device *vm_dev = to_virtio_mmio_device(vdev);
+>  	unsigned int irq = platform_get_irq(vm_dev->pdev, 0);
 > -	int i, err;
 > +	int i, err, queue_idx = 0;
 >  
->  	vp_dev->vqs = kcalloc(nvqs, sizeof(*vp_dev->vqs), GFP_KERNEL);
->  	if (!vp_dev->vqs)
-> @@ -374,7 +374,7 @@ static int vp_find_vqs_intx(struct virtio_device *vdev, unsigned nvqs,
->  			vqs[i] = NULL;
->  			continue;
->  		}
-> -		vqs[i] = vp_setup_vq(vdev, i, callbacks[i], names[i],
-> +		vqs[i] = vp_setup_vq(vdev, queue_idx++, callbacks[i], names[i],
->  				     ctx ? ctx[i] : false,
->  				     VIRTIO_MSI_NO_VECTOR);
+>  	err = request_irq(irq, vm_interrupt, IRQF_SHARED,
+>  			dev_name(&vdev->dev), vm_dev);
+> @@ -476,7 +476,12 @@ static int vm_find_vqs(struct virtio_device *vdev, unsigned nvqs,
+>  		return err;
+>  
+>  	for (i = 0; i < nvqs; ++i) {
+> -		vqs[i] = vm_setup_vq(vdev, i, callbacks[i], names[i],
+> +		if (!names[i]) {
+> +			vqs[i] = NULL;
+> +			continue;
+> +		}
+> +
+> +		vqs[i] = vm_setup_vq(vdev, queue_idx++, callbacks[i], names[i],
+>  				     ctx ? ctx[i] : false);
 >  		if (IS_ERR(vqs[i])) {
+>  			vm_del_vqs(vdev);
 > 
 
