@@ -2,123 +2,130 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9157C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 22:47:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F29BC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 22:51:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A37CF206B7
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 22:47:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 39A9C206B7
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 22:51:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="A0gLzy9W"
+	dkim=pass (2048-bit key) header.d=cmpxchg-org.20150623.gappssmtp.com header.i=@cmpxchg-org.20150623.gappssmtp.com header.b="bD2b+gDc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726590AbfAIWrf (ORCPT
+        id S1726580AbfAIWvr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 17:47:35 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:46402 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726113AbfAIWrb (ORCPT
+        Wed, 9 Jan 2019 17:51:47 -0500
+Received: from mail-yb1-f193.google.com ([209.85.219.193]:33819 "EHLO
+        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726113AbfAIWvq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 17:47:31 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=g/Qw7ZmXNSasK/SUcOq5J7QB659xYt9kfAFxlkrc9TY=; b=A0gLzy9W0sF3/0sdzVsZ5TTQG
-        jOHwLpi46u7hR6uhw8jxEmJ3iEdyFSx0Jhxkvo96qWbHV4oLVWRA6cHOYIWm0/aoVKqujcSKybc4+
-        7TwWPMpIP33eXlWJ+/skN7ZyioW3ECTMdq5VA4ZnmcJge1bqNJWx3epVbn/hMYKmhCQrheJvxSgHT
-        k5bvPchIYBuZNmnEl1cLxK4wJTppoimVVLVg04aWWfYZNWQjUDsGK5p+i5oUZdXLGaXitU1UyU0Qm
-        66OnQnKBKWb4xx84IpW/zWc8bLw9hSllBVLyTa0GTloxQjQvBAQU/A/mKhcO6/BlV62dcF3srUAnu
-        4so/yEDew==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1ghMdF-000806-Jc; Wed, 09 Jan 2019 22:47:29 +0000
-Date:   Wed, 9 Jan 2019 14:47:29 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Peter Collingbourne <pcc@google.com>, rsmith@google.com
-Subject: Re: [RFC] Use plan9 C extensions
-Message-ID: <20190109224729.GS6310@bombadil.infradead.org>
-References: <20190109203119.GR6310@bombadil.infradead.org>
- <CAKwvOdns4358_UgKgBPGzMfXoFLDijv13wFnv5UP=G_zjZbcwA@mail.gmail.com>
+        Wed, 9 Jan 2019 17:51:46 -0500
+Received: by mail-yb1-f193.google.com with SMTP id w186so2786238ybg.1
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Jan 2019 14:51:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=z/PELudoJ9+yusLyWAV/ORaSDQ7RbDfqH8OvQbS5ILw=;
+        b=bD2b+gDcHCHp+Kl1aNcH3MGObexA4fX/zV8gbJjs37vDT3DCawzNgGAqBXlvk7qtDp
+         2HXgfdeolfZtUt5dtwt3QmaKZrx+aB0Gj8cuFFS0sruSSUl7gyDtHTdHRuUTwMBW+3te
+         PdMPr2Pb1cGtUKQrdPb0cY9hUvCtaIPEAsECOppZjEXnU9wDmroctWchPOv17ul2gspH
+         CL+1MjECxVF1mB9X+CRy1pPGvOqBYzGFqSmpBZViSjd3/W1ysKwSyGmc2KTizbnX+/rJ
+         DsCGFwvkMYEf87+gyj3dovhQC84AByDizo+iWMG6bqc5wTXq3oi4d7VoynPl8HKQxPNh
+         KiCg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=z/PELudoJ9+yusLyWAV/ORaSDQ7RbDfqH8OvQbS5ILw=;
+        b=LkEfnlJsskcTZMbhJPbmVE+GnaLDUeQox/Iheawc3yPPq2wBELSkmfph6YJ0IdVpJv
+         1ke2K6QeczhaFEQk6LX7eXj84NXoLWreVXlTuJz69J2QErcaOzfWp3Z66DgQCZfEkgu3
+         MxFuwFKlAEhoI712eXEJjU9yN0J8d6cslgdOA2HdI3fB4DTSLvZNYoW1ZwVqgv3S/RBd
+         6NdFkwy9tHObvfonlLIw3ABtX0zTvInjfTjOVEFnYK2yB+Qodt/4pX2iLD+Ah7mqMEiv
+         Nok2SaLkuXz6g3TiHD16a+4BNfUr+AgAyoLPHiYD+eRZtsWkanwSs0gAk5GyV9jcM90r
+         W7yA==
+X-Gm-Message-State: AJcUukeIsl4eRrVuptxBYzMDdabY7ht1+SLHp+yWn3Uf+Iotp3Lz7BHH
+        LvJFEgIcx8w0ELxEOASWbr/iBg==
+X-Google-Smtp-Source: ALg8bN43to+hXFHIVq9mhfwhgv4ve082evkLnurxYP12X3cJwNBMdwyGxi44c8Ipqrhf0AcAArbpXg==
+X-Received: by 2002:a25:b81:: with SMTP id 123mr7438835ybl.335.1547074305397;
+        Wed, 09 Jan 2019 14:51:45 -0800 (PST)
+Received: from localhost ([2620:10d:c091:200::7:f15b])
+        by smtp.gmail.com with ESMTPSA id k64sm26253105ywc.56.2019.01.09.14.51.44
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 09 Jan 2019 14:51:44 -0800 (PST)
+Date:   Wed, 9 Jan 2019 17:51:43 -0500
+From:   Johannes Weiner <hannes@cmpxchg.org>
+To:     Yang Shi <yang.shi@linux.alibaba.com>
+Cc:     mhocko@suse.com, shakeelb@google.com, akpm@linux-foundation.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC v3 PATCH 0/5] mm: memcontrol: do memory reclaim when
+ offlining
+Message-ID: <20190109225143.GA22252@cmpxchg.org>
+References: <1547061285-100329-1-git-send-email-yang.shi@linux.alibaba.com>
+ <20190109193247.GA16319@cmpxchg.org>
+ <d92912c7-511e-2ab5-39a6-38af3209fcaf@linux.alibaba.com>
+ <20190109212334.GA18978@cmpxchg.org>
+ <9de4bb4a-6bb7-e13a-0d9a-c1306e1b3e60@linux.alibaba.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAKwvOdns4358_UgKgBPGzMfXoFLDijv13wFnv5UP=G_zjZbcwA@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <9de4bb4a-6bb7-e13a-0d9a-c1306e1b3e60@linux.alibaba.com>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 09, 2019 at 02:07:11PM -0800, Nick Desaulniers wrote:
-> On Wed, Jan 9, 2019 at 12:31 PM Matthew Wilcox <willy@infradead.org> wrote:
-> > For cyclic allocations, we need to keep a 'next' value somewhere.
-> > The IDR had a moderately large root, so they didn't mind the cost to
-> > all users of embedding the next value in the root.
+On Wed, Jan 09, 2019 at 02:09:20PM -0800, Yang Shi wrote:
+> On 1/9/19 1:23 PM, Johannes Weiner wrote:
+> > On Wed, Jan 09, 2019 at 12:36:11PM -0800, Yang Shi wrote:
+> > > As I mentioned above, if we know some page caches from some memcgs
+> > > are referenced one-off and unlikely shared, why just keep them
+> > > around to increase memory pressure?
+> > It's just not clear to me that your scenarios are generic enough to
+> > justify adding two interfaces that we have to maintain forever, and
+> > that they couldn't be solved with existing mechanisms.
+> > 
+> > Please explain:
+> > 
+> > - Unmapped clean page cache isn't expensive to reclaim, certainly
+> >    cheaper than the IO involved in new application startup. How could
+> >    recycling clean cache be a prohibitive part of workload warmup?
 > 
-> This sounds like some kind of "intrusive data structure?"  Doesn't the
-> kernel have macro's for generic intrusive containers?  Would you be
-> adding similar macros for xarray (or is that irrelevant to your
-> question)?
+> It is nothing about recycling. Those page caches might be referenced by
+> memcg just once, then nobody touch them until memory pressure is hit. And,
+> they might be not accessed again at any time soon.
 
-I think that's irrelevant ...
+I meant recycling the page frames, not the cache in them. So the new
+workload as it starts up needs to take those pages from the LRU list
+instead of just the allocator freelist. While that's obviously not the
+same cost, it's not clear why the difference would be prohibitive to
+application startup especially since app startup tends to be dominated
+by things like IO to fault in executables etc.
 
-> Sorry, this doesn't look quite syntactically valid, so I'm having a
-> hard time following along.  Would you be able to show me a simple
-> reproducer in godbolt (https://godbolt.org/) with GCC what you're
-> trying to do (maybe with comments showing before/after)?  (Godbolt is
-> a godsend for developers to clearly communicate codegen issues with
-> compiler vendors, and its short links can easily be embedded in bug
-> reports and commit messages).
-
-Sure!  https://godbolt.org/z/OfHOLI is an example of a client of the API
-I want to create.
-
-> > (ie one fewer argument, as well as one fewer thing to track in their struct).
+> > - Why you couldn't set memory.high or memory.max to 0 after the
+> >    application quits and before you call rmdir on the cgroup
 > 
-> The difference in the second case from the first looks like the "one
-> fewer argument" is the address of another member of `nn`.  In general
-> cases of trying to minimize the number of parameters passed, rather
-> than pass 2 pointers to 2 members, I would curious if you could just
-> pass 1 pointer to parent struct (ie. `nn`) to `xa_foo()` and friends
-> and pull out the members there?
+> I recall I explained this in the review email for the first version. Set
+> memory.high or memory.max to 0 would trigger direct reclaim which may stall
+> the offline of memcg. But, we have "restarting the same name job" logic in
+> our usecase (I'm not quite sure why they do so). Basically, it means to
+> create memcg with the exact same name right after the old one is deleted,
+> but may have different limit or other settings. The creation has to wait for
+> rmdir is done.
 
-Not really; nn is going to be a per-client type, ie hundreds of different
-structs.  The struct xarray gets embedded in it.
+This really needs a fix on your end. We cannot add new cgroup control
+files because you cannot handle a delayed release in the cgroupfs
+namespace while you're reclaiming associated memory. A simple serial
+number would fix this.
 
-> > That's what -fplan9-extensions would allow us to do.  Without it,
-> > we'd need to name that struct xarray and need extra syntactic sugar;
-> > eg later when it calls xa_erase(), it'd look like this:
-> >
-> >         xa_erase(&nn->s2s_cp_stateids, copy->cp_stateid.si_opaque.so_id);
-> >
-> > instead of:
-> >
-> >         xa_erase(&nn->s2s_cp_stateids.xa, copy->cp_stateid.si_opaque.so_id);
-> 
-> Also hard to spot the intended difference as there's no `xa` member in
-> any of your examples (I assume you meant `xarray`, but a godbolt link
-> would be appreciated to make sure I'm understanding the problem
-> correctly).
+Whether others have asked for this knob or not, these patches should
+come with a solid case in the cover letter and changelogs that explain
+why this ABI is necessary to solve a generic cgroup usecase. But it
+sounds to me that setting the limit to 0 once the group is empty would
+meet the functional requirement (use fork() if you don't want to wait)
+of what you are trying to do.
 
-Right, what I'm trying to communicate there is that if we need to name
-the xarray, we then have to name it everywhere that we use it.
-
-> Thanks for including us (LLVM folks)!  It would be good that new
-> additions be made optional if possible if unsupported in Clang; but
-> that's not doable in this case.  From the documentation, it seems that
-> `-fplan9-extensions` enables a couple of things, and I think with a
-> clearer example of what you're trying to do, I would be better
-> equipped to comment on which part of the compiler flag you'd like to
-> make use of.
-
-I hope the example makes things clearer!
+I don't think the new interface bar is met here.
