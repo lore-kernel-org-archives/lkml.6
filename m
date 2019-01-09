@@ -2,220 +2,139 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A170FC43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 13:36:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7824EC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 13:36:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 68696206B6
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 13:36:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3A0292075C
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 13:36:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="YGb1FjjI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731013AbfAINgA (ORCPT
+        id S1731146AbfAINgu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 08:36:00 -0500
-Received: from mx3.molgen.mpg.de ([141.14.17.11]:55955 "EHLO mx1.molgen.mpg.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730050AbfAINgA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 08:36:00 -0500
-Received: from keineahnung.molgen.mpg.de (keineahnung.molgen.mpg.de [141.14.17.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: pmenzel)
-        by mx.molgen.mpg.de (Postfix) with ESMTPSA id D19A8201353427;
-        Wed,  9 Jan 2019 14:35:57 +0100 (CET)
-Subject: Re: General protection fault in `switch_mm_irqs_off()`
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Jiri Kosina <jikos@kernel.org>, x86@kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Thomas Lendacky <Thomas.Lendacky@amd.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Borislav Petkov <bp@alien8.de>
-References: <784ab00e-ed72-c1bc-bc0c-31264deb7726@molgen.mpg.de>
- <alpine.LRH.2.00.1901041737290.28043@gjva.wvxbf.pm>
- <cb7ba667-562b-1e4c-f16e-7c11804bc98a@molgen.mpg.de>
- <alpine.DEB.2.21.1901091410500.1755@nanos.tec.linutronix.de>
-From:   Paul Menzel <pmenzel@molgen.mpg.de>
-Message-ID: <5c38f377-f088-5684-91a5-c2cc2d64dbbd@molgen.mpg.de>
-Date:   Wed, 9 Jan 2019 14:35:57 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 9 Jan 2019 08:36:50 -0500
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:43231 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729895AbfAINgt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 08:36:49 -0500
+Received: by mail-ed1-f66.google.com with SMTP id f9so7301508eds.10
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Jan 2019 05:36:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=JnLgVrJVpbIyePwV3TfK2FR4As9YTA7Q8/JEe8171WQ=;
+        b=YGb1FjjIxdsQJiHQLY5+Najak26OJm8/l0CGSofVvUEOpFgiUn7GK9yb0vUejON7uX
+         Mnq5UrVvPmczHxtzIy1OBym9P4j8G9HeR7F+6bG2vHYY4iiqdhzPYgAdiRlupNPP7uQY
+         KpGvFtJ7IRnchYC5b6CyfbEMn6gR/i3qoFsc/okhcZBb20Gozn2TnEBslfQFKB69e8FR
+         ScsP3TccmT92L5CoEhqRzwhTUWJmT/at1H/nyYJsOC4UFYo8t9sTqgpUq/30dWm91htb
+         vyKWmWbHTD6q1lAF3ARdMEXZMfhZ9NKCWBtntJY7UKrCZUve03anHQOFkg4nK+2N5b/7
+         UYtA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=JnLgVrJVpbIyePwV3TfK2FR4As9YTA7Q8/JEe8171WQ=;
+        b=ePOP2xgwwTxRAdaR3gVyYx6Ot/2RjACzDKoR9uZsJyJOgtE3v22OWfqMDQpJP81LMf
+         SzPYhh2XOtl+vlEq25o46D0grBUMmIm8udzZyecPgaQmPfZRp0mZWFPTafMiY4mBhzyL
+         szCeJDW+YuhRgameUVTe/Jo+fRM+9HX3xY4PVaaHNGCVSsDtyAs3i0uKVuvOGg6YSAn2
+         XCPRzyhfUGkEc7uHUVMiRv9o6M6GCpJ3R1Pead1d9alSFS/3ck+aadGZ2eh/4PeKoSNF
+         QotuhXP58GXOyS+wuTaMb1IijZzYpxZpPO8adA4qbp9kfcAjdeUfnHniasOjdjk6JDlu
+         mUAQ==
+X-Gm-Message-State: AJcUukdqu0hIk0pM75SvFszIlk0vKW+yCTQPBVbOALclJ02nNQxyim9x
+        VV6vNaT7+7jj0P3Baj4601opOOPqUz0=
+X-Google-Smtp-Source: ALg8bN4HYlDh4yDZ4sQMTutowgKGpGI1HJ4YYFkzY7WW/4Utj1ZzHPxVqlbE7kF+37CiCt+QxANg8A==
+X-Received: by 2002:a50:90c6:: with SMTP id d6mr6213815eda.15.1547041007775;
+        Wed, 09 Jan 2019 05:36:47 -0800 (PST)
+Received: from localhost.localdomain (wal59-h01-176-150-251-154.dsl.sta.abo.bbox.fr. [176.150.251.154])
+        by smtp.gmail.com with ESMTPSA id c53sm1623999ede.26.2019.01.09.05.36.45
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Wed, 09 Jan 2019 05:36:46 -0800 (PST)
+From:   Neil Armstrong <narmstrong@baylibre.com>
+To:     daniel@ffwll.ch
+Cc:     Neil Armstrong <narmstrong@baylibre.com>,
+        dri-devel@lists.freedesktop.org, linux-amlogic@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] drm/meson: Fix atomic mode switching regression
+Date:   Wed,  9 Jan 2019 14:36:43 +0100
+Message-Id: <20190109133644.27459-1-narmstrong@baylibre.com>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.1901091410500.1755@nanos.tec.linutronix.de>
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256; boundary="------------ms090202040209030801050305"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is a cryptographically signed message in MIME format.
+Since commit 2bcd3ecab773 when switching mode from X11 (ubuntu mate for
+example) the display gets blurry, looking like an invalid framebuffer width.
 
---------------ms090202040209030801050305
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+This commit fixed atomic crtc modesetting but didn't update the display
+parameters when changing mode, but only when starting a mode setting after
+a crtc disable.
 
-Dear Thomas,
+This commit setups the crctc parameter in _begin() and _enable() to
+take in account the current ctrc parameters.
 
+Reported-by: Tony McKahan <tonymckahan@gmail.com>
+Fixes: 2bcd3ecab773 ("drm/meson: Fixes for drm_crtc_vblank_on/off support")
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ drivers/gpu/drm/meson/meson_crtc.c | 16 +++++++++++++---
+ 1 file changed, 13 insertions(+), 3 deletions(-)
 
-On 01/09/19 14:16, Thomas Gleixner wrote:
+diff --git a/drivers/gpu/drm/meson/meson_crtc.c b/drivers/gpu/drm/meson/meson_crtc.c
+index 75d97f1b2e8f..5bb432021caf 100644
+--- a/drivers/gpu/drm/meson/meson_crtc.c
++++ b/drivers/gpu/drm/meson/meson_crtc.c
+@@ -82,14 +82,12 @@ static const struct drm_crtc_funcs meson_crtc_funcs = {
+ 
+ };
+ 
+-static void meson_crtc_enable(struct drm_crtc *crtc)
++static void meson_crtc_setup(struct drm_crtc *crtc)
+ {
+ 	struct meson_crtc *meson_crtc = to_meson_crtc(crtc);
+ 	struct drm_crtc_state *crtc_state = crtc->state;
+ 	struct meson_drm *priv = meson_crtc->priv;
+ 
+-	DRM_DEBUG_DRIVER("\n");
+-
+ 	if (!crtc_state) {
+ 		DRM_ERROR("Invalid crtc_state\n");
+ 		return;
+@@ -98,6 +96,16 @@ static void meson_crtc_enable(struct drm_crtc *crtc)
+ 	/* Enable VPP Postblend */
+ 	writel(crtc_state->mode.hdisplay,
+ 	       priv->io_base + _REG(VPP_POSTBLEND_H_SIZE));
++}
++
++static void meson_crtc_enable(struct drm_crtc *crtc)
++{
++	struct meson_crtc *meson_crtc = to_meson_crtc(crtc);
++	struct meson_drm *priv = meson_crtc->priv;
++
++	DRM_DEBUG_DRIVER("\n");
++
++	meson_crtc_setup(crtc);
+ 
+ 	/* VD1 Preblend vertical start/end */
+ 	writel(FIELD_PREP(GENMASK(11, 0), 2303),
+@@ -121,6 +129,8 @@ static void meson_crtc_atomic_enable(struct drm_crtc *crtc,
+ 
+ 	if (!meson_crtc->enabled)
+ 		meson_crtc_enable(crtc);
++	else
++		meson_crtc_setup(crtc);
+ 
+ 	priv->viu.osd1_enabled = true;
+ }
+-- 
+2.19.2
 
-> On Wed, 9 Jan 2019, Paul Menzel wrote:
->> I get the same with microcode updates applied.
->>
->>     $ dmesg | grep 'microcode: CPU0: patch_level'
->>     [    3.809210] microcode: CPU0: patch_level=3D0x0600063e
->>     $ sudo modprobe msr
->>     $ sudo ./wrmsr 0x49 0x1
->>     wrmsr: CPU 0 cannot set MSR 0x00000049 to 0x0000000000000001
->>
->>> Could you please post /proc/cpuinfo from such a boot as well?
->=20
-> /proc/cpuinfo unfortunately does not contain the amd specific IBPB flag=
-,
-> but the dmesg of the original report says:
->=20
->   Spectre V2 : mitigation: Enabling conditional Indirect Branch Predict=
-ion Barrier
->=20
-> which means, that the CPUID bit is set.
->=20
-> Can you please provide the output of:
->=20
->   cpuid -1 -l 0x80000008 -r
->=20
-> On my AMD Opteron(TM) Processor 6276 with microcode 0x600063d loaded I =
-get:
->=20
->    0x80000008 0x00: eax=3D0x00003030 ebx=3D0x00000000 ecx=3D0x0000500f =
-edx=3D0x00000000
->=20
-> EBX is 0, which means that X86_FEATURE_AMD_IBPB is not enabled. So the
-> kernel does not try to use the speculation control MSR (0x49).
-
-With CPUID 20180519, I get the output below with both microcode update ve=
-rsions.
-
-0x600063d:
-
-    $ sudo ./cpuid -1 -l 0x80000008 -r
-    CPU:
-       0x80000008 0x00: eax=3D0x00003030 ebx=3D0x00000000 ecx=3D0x0000500=
-f edx=3D0x00000000
-
-0x600063e:
-
-    $ sudo ./cpuid -1 -l 0x80000008 -r
-    CPU:
-       0x80000008 0x00: eax=3D0x00003030 ebx=3D0x00000000 ecx=3D0x0000500=
-f edx=3D0x00000000
-
-
-Kind regards,
-
-Paul
-
-
---------------ms090202040209030801050305
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
-
-MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCC
-EFowggUSMIID+qADAgECAgkA4wvV+K8l2YEwDQYJKoZIhvcNAQELBQAwgYIxCzAJBgNVBAYT
-AkRFMSswKQYDVQQKDCJULVN5c3RlbXMgRW50ZXJwcmlzZSBTZXJ2aWNlcyBHbWJIMR8wHQYD
-VQQLDBZULVN5c3RlbXMgVHJ1c3QgQ2VudGVyMSUwIwYDVQQDDBxULVRlbGVTZWMgR2xvYmFs
-Um9vdCBDbGFzcyAyMB4XDTE2MDIyMjEzMzgyMloXDTMxMDIyMjIzNTk1OVowgZUxCzAJBgNV
-BAYTAkRFMUUwQwYDVQQKEzxWZXJlaW4genVyIEZvZXJkZXJ1bmcgZWluZXMgRGV1dHNjaGVu
-IEZvcnNjaHVuZ3NuZXR6ZXMgZS4gVi4xEDAOBgNVBAsTB0RGTi1QS0kxLTArBgNVBAMTJERG
-Ti1WZXJlaW4gQ2VydGlmaWNhdGlvbiBBdXRob3JpdHkgMjCCASIwDQYJKoZIhvcNAQEBBQAD
-ggEPADCCAQoCggEBAMtg1/9moUHN0vqHl4pzq5lN6mc5WqFggEcVToyVsuXPztNXS43O+FZs
-FVV2B+pG/cgDRWM+cNSrVICxI5y+NyipCf8FXRgPxJiZN7Mg9mZ4F4fCnQ7MSjLnFp2uDo0p
-eQcAIFTcFV9Kltd4tjTTwXS1nem/wHdN6r1ZB+BaL2w8pQDcNb1lDY9/Mm3yWmpLYgHurDg0
-WUU2SQXaeMpqbVvAgWsRzNI8qIv4cRrKO+KA3Ra0Z3qLNupOkSk9s1FcragMvp0049ENF4N1
-xDkesJQLEvHVaY4l9Lg9K7/AjsMeO6W/VRCrKq4Xl14zzsjz9AkH4wKGMUZrAcUQDBHHWekC
-AwEAAaOCAXQwggFwMA4GA1UdDwEB/wQEAwIBBjAdBgNVHQ4EFgQUk+PYMiba1fFKpZFK4OpL
-4qIMz+EwHwYDVR0jBBgwFoAUv1kgNgB5oKAia4zV8mHSuCzLgkowEgYDVR0TAQH/BAgwBgEB
-/wIBAjAzBgNVHSAELDAqMA8GDSsGAQQBga0hgiwBAQQwDQYLKwYBBAGBrSGCLB4wCAYGZ4EM
-AQICMEwGA1UdHwRFMEMwQaA/oD2GO2h0dHA6Ly9wa2kwMzM2LnRlbGVzZWMuZGUvcmwvVGVs
-ZVNlY19HbG9iYWxSb290X0NsYXNzXzIuY3JsMIGGBggrBgEFBQcBAQR6MHgwLAYIKwYBBQUH
-MAGGIGh0dHA6Ly9vY3NwMDMzNi50ZWxlc2VjLmRlL29jc3ByMEgGCCsGAQUFBzAChjxodHRw
-Oi8vcGtpMDMzNi50ZWxlc2VjLmRlL2NydC9UZWxlU2VjX0dsb2JhbFJvb3RfQ2xhc3NfMi5j
-ZXIwDQYJKoZIhvcNAQELBQADggEBAIcL/z4Cm2XIVi3WO5qYi3FP2ropqiH5Ri71sqQPrhE4
-eTizDnS6dl2e6BiClmLbTDPo3flq3zK9LExHYFV/53RrtCyD2HlrtrdNUAtmB7Xts5et6u5/
-MOaZ/SLick0+hFvu+c+Z6n/XUjkurJgARH5pO7917tALOxrN5fcPImxHhPalR6D90Bo0fa3S
-PXez7vTXTf/D6OWST1k+kEcQSrCFWMBvf/iu7QhCnh7U3xQuTY+8npTD5+32GPg8SecmqKc2
-2CzeIs2LgtjZeOJVEqM7h0S2EQvVDFKvaYwPBt/QolOLV5h7z/0HJPT8vcP9SpIClxvyt7bP
-ZYoaorVyGTkwggWNMIIEdaADAgECAgwcOtRQhH7u81j4jncwDQYJKoZIhvcNAQELBQAwgZUx
-CzAJBgNVBAYTAkRFMUUwQwYDVQQKEzxWZXJlaW4genVyIEZvZXJkZXJ1bmcgZWluZXMgRGV1
-dHNjaGVuIEZvcnNjaHVuZ3NuZXR6ZXMgZS4gVi4xEDAOBgNVBAsTB0RGTi1QS0kxLTArBgNV
-BAMTJERGTi1WZXJlaW4gQ2VydGlmaWNhdGlvbiBBdXRob3JpdHkgMjAeFw0xNjExMDMxNTI0
-NDhaFw0zMTAyMjIyMzU5NTlaMGoxCzAJBgNVBAYTAkRFMQ8wDQYDVQQIDAZCYXllcm4xETAP
-BgNVBAcMCE11ZW5jaGVuMSAwHgYDVQQKDBdNYXgtUGxhbmNrLUdlc2VsbHNjaGFmdDEVMBMG
-A1UEAwwMTVBHIENBIC0gRzAyMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnhx4
-59Lh4WqgOs/Md04XxU2yFtfM15ZuJV0PZP7BmqSJKLLPyqmOrADfNdJ5PIGBto2JBhtRRBHd
-G0GROOvTRHjzOga95WOTeura79T21FWwwAwa29OFnD3ZplQs6HgdwQrZWNi1WHNJxn/4mA19
-rNEBUc5urSIpZPvZi5XmlF3v3JHOlx3KWV7mUteB4pwEEfGTg4npPAJbp2o7arxQdoIq+Pu2
-OsvqhD7Rk4QeaX+EM1QS4lqd1otW4hE70h/ODPy1xffgbZiuotWQLC6nIwa65Qv6byqlIX0q
-Zuu99Vsu+r3sWYsL5SBkgecNI7fMJ5tfHrjoxfrKl/ErTAt8GQIDAQABo4ICBTCCAgEwEgYD
-VR0TAQH/BAgwBgEB/wIBATAOBgNVHQ8BAf8EBAMCAQYwKQYDVR0gBCIwIDANBgsrBgEEAYGt
-IYIsHjAPBg0rBgEEAYGtIYIsAQEEMB0GA1UdDgQWBBTEiKUH7rh7qgwTv9opdGNSG0lwFjAf
-BgNVHSMEGDAWgBST49gyJtrV8UqlkUrg6kviogzP4TCBjwYDVR0fBIGHMIGEMECgPqA8hjpo
-dHRwOi8vY2RwMS5wY2EuZGZuLmRlL2dsb2JhbC1yb290LWcyLWNhL3B1Yi9jcmwvY2Fjcmwu
-Y3JsMECgPqA8hjpodHRwOi8vY2RwMi5wY2EuZGZuLmRlL2dsb2JhbC1yb290LWcyLWNhL3B1
-Yi9jcmwvY2FjcmwuY3JsMIHdBggrBgEFBQcBAQSB0DCBzTAzBggrBgEFBQcwAYYnaHR0cDov
-L29jc3AucGNhLmRmbi5kZS9PQ1NQLVNlcnZlci9PQ1NQMEoGCCsGAQUFBzAChj5odHRwOi8v
-Y2RwMS5wY2EuZGZuLmRlL2dsb2JhbC1yb290LWcyLWNhL3B1Yi9jYWNlcnQvY2FjZXJ0LmNy
-dDBKBggrBgEFBQcwAoY+aHR0cDovL2NkcDIucGNhLmRmbi5kZS9nbG9iYWwtcm9vdC1nMi1j
-YS9wdWIvY2FjZXJ0L2NhY2VydC5jcnQwDQYJKoZIhvcNAQELBQADggEBABLpeD5FygzqOjj+
-/lAOy20UQOGWlx0RMuPcI4nuyFT8SGmK9lD7QCg/HoaJlfU/r78ex+SEide326evlFAoJXIF
-jVyzNltDhpMKrPIDuh2N12zyn1EtagqPL6hu4pVRzcBpl/F2HCvtmMx5K4WN1L1fmHWLcSap
-dhXLvAZ9RG/B3rqyULLSNN8xHXYXpmtvG0VGJAndZ+lj+BH7uvd3nHWnXEHC2q7iQlDUqg0a
-wIqWJgdLlx1Q8Dg/sodv0m+LN0kOzGvVDRCmowBdWGhhusD+duKV66pBl+qhC+4LipariWaM
-qK5ppMQROATjYeNRvwI+nDcEXr2vDaKmdbxgDVwwggWvMIIEl6ADAgECAgweKlJIhfynPMVG
-/KIwDQYJKoZIhvcNAQELBQAwajELMAkGA1UEBhMCREUxDzANBgNVBAgMBkJheWVybjERMA8G
-A1UEBwwITXVlbmNoZW4xIDAeBgNVBAoMF01heC1QbGFuY2stR2VzZWxsc2NoYWZ0MRUwEwYD
-VQQDDAxNUEcgQ0EgLSBHMDIwHhcNMTcxMTE0MTEzNDE2WhcNMjAxMTEzMTEzNDE2WjCBizEL
-MAkGA1UEBhMCREUxIDAeBgNVBAoMF01heC1QbGFuY2stR2VzZWxsc2NoYWZ0MTQwMgYDVQQL
-DCtNYXgtUGxhbmNrLUluc3RpdHV0IGZ1ZXIgbW9sZWt1bGFyZSBHZW5ldGlrMQ4wDAYDVQQL
-DAVNUElNRzEUMBIGA1UEAwwLUGF1bCBNZW56ZWwwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAw
-ggEKAoIBAQDIh/UR/AX/YQ48VWWDMLTYtXjYJyhRHMc81ZHMMoaoG66lWB9MtKRTnB5lovLZ
-enTIUyPsCrMhTqV9CWzDf6v9gOTWVxHEYqrUwK5H1gx4XoK81nfV8oGV4EKuVmmikTXiztGz
-peyDmOY8o/EFNWP7YuRkY/lPQJQBeBHYq9AYIgX4StuXu83nusq4MDydygVOeZC15ts0tv3/
-6WmibmZd1OZRqxDOkoBbY3Djx6lERohs3IKS6RKiI7e90rCSy9rtidJBOvaQS9wvtOSKPx0a
-+2pAgJEVzZFjOAfBcXydXtqXhcpOi2VCyl+7+LnnTz016JJLsCBuWEcB3kP9nJYNAgMBAAGj
-ggIxMIICLTAJBgNVHRMEAjAAMA4GA1UdDwEB/wQEAwIF4DAdBgNVHSUEFjAUBggrBgEFBQcD
-AgYIKwYBBQUHAwQwHQYDVR0OBBYEFHM0Mc3XjMLlhWpp4JufRELL4A/qMB8GA1UdIwQYMBaA
-FMSIpQfuuHuqDBO/2il0Y1IbSXAWMCAGA1UdEQQZMBeBFXBtZW56ZWxAbW9sZ2VuLm1wZy5k
-ZTB9BgNVHR8EdjB0MDigNqA0hjJodHRwOi8vY2RwMS5wY2EuZGZuLmRlL21wZy1nMi1jYS9w
-dWIvY3JsL2NhY3JsLmNybDA4oDagNIYyaHR0cDovL2NkcDIucGNhLmRmbi5kZS9tcGctZzIt
-Y2EvcHViL2NybC9jYWNybC5jcmwwgc0GCCsGAQUFBwEBBIHAMIG9MDMGCCsGAQUFBzABhido
-dHRwOi8vb2NzcC5wY2EuZGZuLmRlL09DU1AtU2VydmVyL09DU1AwQgYIKwYBBQUHMAKGNmh0
-dHA6Ly9jZHAxLnBjYS5kZm4uZGUvbXBnLWcyLWNhL3B1Yi9jYWNlcnQvY2FjZXJ0LmNydDBC
-BggrBgEFBQcwAoY2aHR0cDovL2NkcDIucGNhLmRmbi5kZS9tcGctZzItY2EvcHViL2NhY2Vy
-dC9jYWNlcnQuY3J0MEAGA1UdIAQ5MDcwDwYNKwYBBAGBrSGCLAEBBDARBg8rBgEEAYGtIYIs
-AQEEAwYwEQYPKwYBBAGBrSGCLAIBBAMGMA0GCSqGSIb3DQEBCwUAA4IBAQCQs6bUDROpFO2F
-Qz2FMgrdb39VEo8P3DhmpqkaIMC5ZurGbbAL/tAR6lpe4af682nEOJ7VW86ilsIJgm1j0ueY
-aOuL8jrN4X7IF/8KdZnnNnImW3QVni6TCcc+7+ggci9JHtt0IDCj5vPJBpP/dKXLCN4M+exl
-GXYpfHgxh8gclJPY1rquhQrihCzHfKB01w9h9tWZDVMtSoy9EUJFhCXw7mYUsvBeJwZesN2B
-fndPkrXx6XWDdU3S1LyKgHlLIFtarLFm2Hb5zAUR33h+26cN6ohcGqGEEzgIG8tXS8gztEaj
-1s2RyzmKd4SXTkKR3GhkZNVWy+gM68J7jP6zzN+cMYIDmjCCA5YCAQEwejBqMQswCQYDVQQG
-EwJERTEPMA0GA1UECAwGQmF5ZXJuMREwDwYDVQQHDAhNdWVuY2hlbjEgMB4GA1UECgwXTWF4
-LVBsYW5jay1HZXNlbGxzY2hhZnQxFTATBgNVBAMMDE1QRyBDQSAtIEcwMgIMHipSSIX8pzzF
-RvyiMA0GCWCGSAFlAwQCAQUAoIIB8TAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqG
-SIb3DQEJBTEPFw0xOTAxMDkxMzM1NTdaMC8GCSqGSIb3DQEJBDEiBCCFTJ/5rI0G79j0nrMC
-tuYZY1DKzYlV0+vwIDEMdoKHojBsBgkqhkiG9w0BCQ8xXzBdMAsGCWCGSAFlAwQBKjALBglg
-hkgBZQMEAQIwCgYIKoZIhvcNAwcwDgYIKoZIhvcNAwICAgCAMA0GCCqGSIb3DQMCAgFAMAcG
-BSsOAwIHMA0GCCqGSIb3DQMCAgEoMIGJBgkrBgEEAYI3EAQxfDB6MGoxCzAJBgNVBAYTAkRF
-MQ8wDQYDVQQIDAZCYXllcm4xETAPBgNVBAcMCE11ZW5jaGVuMSAwHgYDVQQKDBdNYXgtUGxh
-bmNrLUdlc2VsbHNjaGFmdDEVMBMGA1UEAwwMTVBHIENBIC0gRzAyAgweKlJIhfynPMVG/KIw
-gYsGCyqGSIb3DQEJEAILMXygejBqMQswCQYDVQQGEwJERTEPMA0GA1UECAwGQmF5ZXJuMREw
-DwYDVQQHDAhNdWVuY2hlbjEgMB4GA1UECgwXTWF4LVBsYW5jay1HZXNlbGxzY2hhZnQxFTAT
-BgNVBAMMDE1QRyBDQSAtIEcwMgIMHipSSIX8pzzFRvyiMA0GCSqGSIb3DQEBAQUABIIBAAxA
-CArbv5V6dhY3jS1oywTkFSjiZFFhOcyxOh6i8iAWZxoyx02gSHCSPWaSXLOSx6jLT2wTEBpk
-j0/XhTwg9PuE96jnHgngpknyGhfaeIL9bEHztuTle0NTSgADDbSOiP3FTd9cwJ0Q/FnwbpU3
-mrAmHeTsJefzuQ8Ejgm0jBk620N2j6pqPZgZBfs9aB2QPgCzzupqB1N0ds+u71co3oNKhhBD
-Bh09EK3khyKj+mevphpAT27zn5iInJx1G3VSJoih6dzKLbM+tsv22zWs8NvR40n7XqMl+HeY
-gPWoNJvnLnAMr/ZnbutIqhBCqB1uu6fVAf95nc3pyDZqSBEMwJAAAAAAAAA=
---------------ms090202040209030801050305--
