@@ -2,106 +2,80 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07B2FC43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 12:42:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 277F0C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 12:42:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D57FC20859
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 12:42:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 000C1206B6
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 12:42:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731021AbfAIMmw (ORCPT
+        id S1731011AbfAIMmv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 07:42:52 -0500
-Received: from vmicros1.altlinux.org ([194.107.17.57]:55916 "EHLO
-        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730006AbfAIMmu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 07:42:51 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:17100 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730249AbfAIMmu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 9 Jan 2019 07:42:50 -0500
-Received: from mua.local.altlinux.org (mua.local.altlinux.org [192.168.1.14])
-        by vmicros1.altlinux.org (Postfix) with ESMTP id AADD472CA5E;
-        Wed,  9 Jan 2019 15:42:47 +0300 (MSK)
-Received: by mua.local.altlinux.org (Postfix, from userid 508)
-        id 9D6FB7CCE38; Wed,  9 Jan 2019 15:42:47 +0300 (MSK)
-Date:   Wed, 9 Jan 2019 15:42:47 +0300
-From:   "Dmitry V. Levin" <ldv@altlinux.org>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Mark Salter <msalter@redhat.com>,
-        Elvira Khabirova <lineprinter@altlinux.org>,
-        Eugene Syromyatnikov <esyr@redhat.com>,
-        Aurelien Jacquiot <jacquiot.aurelien@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Andy Lutomirski <luto@kernel.org>, linux-c6x-dev@linux-c6x.org,
-        linux-audit@redhat.com, linux-kernel@vger.kernel.org
-Subject: [PATCH 03/14] c6x: define syscall_get_arch()
-Message-ID: <20190109124247.GC11981@altlinux.org>
-References: <20190109124044.GA11935@altlinux.org>
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 1E052B75AF1960A9566E;
+        Wed,  9 Jan 2019 20:42:46 +0800 (CST)
+Received: from localhost.localdomain (10.67.212.75) by
+ DGGEMS412-HUB.china.huawei.com (10.3.19.212) with Microsoft SMTP Server id
+ 14.3.408.0; Wed, 9 Jan 2019 20:42:39 +0800
+From:   John Garry <john.garry@huawei.com>
+To:     <jejb@linux.vnet.ibm.com>, <martin.petersen@oracle.com>
+CC:     <linuxarm@huawei.com>, <linux-kernel@vger.kernel.org>,
+        <linux-scsi@vger.kernel.org>, <dgilbert@interlog.com>,
+        John Garry <john.garry@huawei.com>
+Subject: [PATCH] scsi: hisi_sas: Use scsi lld debugfs folder
+Date:   Wed, 9 Jan 2019 20:43:34 +0800
+Message-ID: <1547037814-99911-1-git-send-email-john.garry@huawei.com>
+X-Mailer: git-send-email 2.8.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain
+X-Originating-IP: [10.67.212.75]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syscall_get_arch() is required to be implemented on all architectures
-in addition to already implemented syscall_get_nr(),
-syscall_get_arguments(), syscall_get_error(), and
-syscall_get_return_value() functions in order to extend the generic
-ptrace API with PTRACE_GET_SYSCALL_INFO request.
+Since we now have a dedicated folder for scsi llds in the debugfs tree,
+relocate the root of the driver debugfs folder to that same location.
 
-Acked-by: Mark Salter <msalter@redhat.com>
-Acked-by: Paul Moore <paul@paul-moore.com>
-Cc: Elvira Khabirova <lineprinter@altlinux.org>
-Cc: Eugene Syromyatnikov <esyr@redhat.com>
-Cc: Aurelien Jacquiot <jacquiot.aurelien@gmail.com>
-Cc: Oleg Nesterov <oleg@redhat.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: linux-c6x-dev@linux-c6x.org
-Cc: linux-audit@redhat.com
-Signed-off-by: Dmitry V. Levin <ldv@altlinux.org>
+Signed-off-by: John Garry <john.garry@huawei.com>
 ---
- arch/c6x/include/asm/syscall.h | 7 +++++++
- include/uapi/linux/audit.h     | 2 ++
- 2 files changed, 9 insertions(+)
+This patch depends on https://www.spinics.net/lists/linux-scsi/msg126764.html
 
-diff --git a/arch/c6x/include/asm/syscall.h b/arch/c6x/include/asm/syscall.h
-index ae2be315ee9c..39dbd1ef994c 100644
---- a/arch/c6x/include/asm/syscall.h
-+++ b/arch/c6x/include/asm/syscall.h
-@@ -11,6 +11,7 @@
- #ifndef __ASM_C6X_SYSCALL_H
- #define __ASM_C6X_SYSCALL_H
+diff --git a/drivers/scsi/hisi_sas/hisi_sas.h b/drivers/scsi/hisi_sas/hisi_sas.h
+index 6a1a5ad..ce527b7 100644
+--- a/drivers/scsi/hisi_sas/hisi_sas.h
++++ b/drivers/scsi/hisi_sas/hisi_sas.h
+@@ -26,6 +26,7 @@
+ #include <linux/property.h>
+ #include <linux/regmap.h>
+ #include <scsi/sas_ata.h>
++#include <scsi/scsi_dbg.h>
+ #include <scsi/libsas.h>
  
-+#include <uapi/linux/audit.h>
- #include <linux/err.h>
- #include <linux/sched.h>
+ #define HISI_SAS_MAX_PHYS	9
+diff --git a/drivers/scsi/hisi_sas/hisi_sas_main.c b/drivers/scsi/hisi_sas/hisi_sas_main.c
+index 3d24366..e27a06c 100644
+--- a/drivers/scsi/hisi_sas/hisi_sas_main.c
++++ b/drivers/scsi/hisi_sas/hisi_sas_main.c
+@@ -2985,7 +2985,8 @@ static __init int hisi_sas_init(void)
+ 		return -ENOMEM;
  
-@@ -120,4 +121,10 @@ static inline void syscall_set_arguments(struct task_struct *task,
- 	}
+ 	if (hisi_sas_debugfs_enable)
+-		hisi_sas_debugfs_dir = debugfs_create_dir("hisi_sas", NULL);
++		hisi_sas_debugfs_dir = debugfs_create_dir("hisi_sas",
++							  scsi_debugfs_lld);
+ 
+ 	return 0;
  }
- 
-+static inline int syscall_get_arch(void)
-+{
-+	return IS_ENABLED(CONFIG_CPU_BIG_ENDIAN)
-+		? AUDIT_ARCH_C6XBE : AUDIT_ARCH_C6X;
-+}
-+
- #endif /* __ASM_C6X_SYSCALLS_H */
-diff --git a/include/uapi/linux/audit.h b/include/uapi/linux/audit.h
-index 41d8fa80ebad..e3d0255b4fc2 100644
---- a/include/uapi/linux/audit.h
-+++ b/include/uapi/linux/audit.h
-@@ -381,6 +381,8 @@ enum {
- #define AUDIT_ARCH_ARCV2BE	(EM_ARCV2)
- #define AUDIT_ARCH_ARM		(EM_ARM|__AUDIT_ARCH_LE)
- #define AUDIT_ARCH_ARMEB	(EM_ARM)
-+#define AUDIT_ARCH_C6X		(EM_TI_C6000|__AUDIT_ARCH_LE)
-+#define AUDIT_ARCH_C6XBE	(EM_TI_C6000)
- #define AUDIT_ARCH_CRIS		(EM_CRIS|__AUDIT_ARCH_LE)
- #define AUDIT_ARCH_CSKY		(EM_CSKY|__AUDIT_ARCH_LE)
- #define AUDIT_ARCH_FRV		(EM_FRV)
 -- 
-ldv
+1.9.1
+
