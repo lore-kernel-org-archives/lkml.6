@@ -8,65 +8,68 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DE08C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 00:17:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7ADEC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 00:17:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B77820883
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 00:17:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 73AD6214C6
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 00:17:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="q5G56hB3"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aa+L8I0l"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728854AbfAIARA (ORCPT
+        id S1729734AbfAIARI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 19:17:00 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:35024 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729441AbfAIAQJ (ORCPT
+        Tue, 8 Jan 2019 19:17:08 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:34202 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729184AbfAIAQG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 19:16:09 -0500
-Received: by mail-pl1-f195.google.com with SMTP id p8so2688572plo.2;
-        Tue, 08 Jan 2019 16:16:09 -0800 (PST)
+        Tue, 8 Jan 2019 19:16:06 -0500
+Received: by mail-pf1-f194.google.com with SMTP id h3so2740750pfg.1;
+        Tue, 08 Jan 2019 16:16:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=+gWCj7jpvSU77lLytUOhuIltx3JiK4hVtYn+wZJtUfw=;
-        b=q5G56hB3/UtigqYXXaajaktbTSpAcYphGCWMngYN20YMS2sLaoqJ0btQpqQQtyernT
-         wZLxt+Gn/LBlidqla7kym+q5m5v3v4Jv/WkExVsRYmSchHWQcZUDIne/p6aSuDgGho9g
-         x0OyiMQhTagByfTgml8soqLgbEP0zYUQXNAzuagZgJtSz4VSrsOW1Q4KmuKgaNXhhhVO
-         OrY9WmxLy8KMMnS1ZwvfA8GIdJYSFIYvwyyRckAp9n/Iu2NNpzfI40P7z1W6oYg661gN
-         gi0EvIBN+EYTb23sjMzGh2t/VECoAT1J2HObhvJD7tHEz1qBHI3axPTnfYlwwvNfq3Pc
-         Y1Ng==
+        bh=4N7ojczW0kjHmDJMWNYmDjBpUir6wWRrzDKNFy4GszY=;
+        b=aa+L8I0l+KTm/oHuAjmnOpBvB+YZMp0v+6vsYA596AWQ+pbDaulLl5baa1hXaMFwa8
+         Pul79m65efTRuqigAbGN2Q+LygCxhHk4dOu8IwMPsjVymQAk3+rZ8LvzKpmvP4MbtsiG
+         prtAWqH4d3al5Kozw9aEXtM+SotDS7ywNr4vbQrlwzq+QLUJ3JBB2xor2gbP+S/USOM8
+         YnDmFMGR9p8w+CpMKZu5p36rum0VIG6DuFNucrZRPBUDVavCpLaDriFafu0Kd3Oy5tLf
+         Sko+piYZO8q6H95S9M2fIBW9OOXSpbHQrH55x7sF6U0PnlyDr4okrGKGznx1eIXM+dBw
+         qFIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=+gWCj7jpvSU77lLytUOhuIltx3JiK4hVtYn+wZJtUfw=;
-        b=q7Vc/JJvPQ3d/DZOVPyvWl3/wNv03dW5w01qA19hcsh7NAp4U1aYZEfHsQ1zPkaXcZ
-         dZTxT+BxJrqp+Qt/0/ReFzCEz6QtD11Z6ICyCFDqSFmmxYj/YHMzHTALI8YqdbbsWluw
-         aKbV1W1RwMiZqlnwNVvQTc5A7FjhbBl3KiF6w+a1dlGzavQEOLuA0Xpo4WxbMkGsqyyF
-         07cRsGDRlwjkdMdMgsUBDa62KiegGl/jbhnOYZCqBTMFhDXxyyDf3OxjDlBgKmfUa6Ys
-         qUcPw5LQXYAc5q/hFUFqwwb85Yt3o22V8s35YQlH4HDIOpuj8CgYvGbx4+klvTLH3+Mp
-         +j2A==
-X-Gm-Message-State: AJcUukdRbN/m2UBC3IrUjtkeWejfIw8IulzucMeprHTMTY5gmHxGV6It
-        0lVBg4gEK3wfV4XKc9EefWU8mq5A
-X-Google-Smtp-Source: ALg8bN7vwSQNPhHu8DLr+fcN9skgUteAg2/eBG1ARIAKhAYPSGytmUXbrMam4h/VdhQICMXin4nvcw==
-X-Received: by 2002:a17:902:7201:: with SMTP id ba1mr3845000plb.105.1546992968556;
-        Tue, 08 Jan 2019 16:16:08 -0800 (PST)
+        bh=4N7ojczW0kjHmDJMWNYmDjBpUir6wWRrzDKNFy4GszY=;
+        b=KUYIwRBvpgJrFg4fWZ/ha7pizwqaF5TUCgoytV/vy5SazyIWDE/uVfKSaV/bsyOUFH
+         1yLbc7w2rGADGgmSfmPmAj17ZF2dAYxp0ycmJQ9Cy5E4Ul7dfmUo+tfgHCUFwsGeKWJr
+         diJfrH6gwaNMuxqQFHdWqpC/v3Zw4eSn80xZESt410RR7WPBpCGLMeZDYhQnlGBAKfZi
+         nccH3WeCrkLpkhObCHlNIhD3vcQTMS9CGxAHdkPZpPI21LdSehdqSQo4z2Otb5Oy0a0k
+         ZOooQ0pHqJrPmQtwZBB24KBjf3k2vwe5wGWhx1BGMak9NrDoYwhWRrnWXFaCUE5/bHoY
+         M1xw==
+X-Gm-Message-State: AJcUukc8FflwIhtbpNdcK+NQBslwtlPTnjTgDaPiGfaDGiLyvCAVjKRa
+        DTMYp2zYWrLwW9hsqUA4zaLYpxEY
+X-Google-Smtp-Source: ALg8bN7Bj2WWpxqqr6BL3UhQ9pTW654aunbp1sYQCljap+aoBiFIX1ypM+UfSGsS0La6o/+stfIgpA==
+X-Received: by 2002:aa7:8045:: with SMTP id y5mr3795842pfm.62.1546992964123;
+        Tue, 08 Jan 2019 16:16:04 -0800 (PST)
 Received: from majic.sklembedded.com (c-98-210-181-167.hsd1.ca.comcast.net. [98.210.181.167])
-        by smtp.googlemail.com with ESMTPSA id 134sm83978490pgb.78.2019.01.08.16.16.07
+        by smtp.googlemail.com with ESMTPSA id 134sm83978490pgb.78.2019.01.08.16.16.02
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 08 Jan 2019 16:16:07 -0800 (PST)
+        Tue, 08 Jan 2019 16:16:03 -0800 (PST)
 From:   Steve Longerbeam <slongerbeam@gmail.com>
 To:     linux-media@vger.kernel.org
 Cc:     Steve Longerbeam <slongerbeam@gmail.com>,
         Philipp Zabel <p.zabel@pengutronix.de>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        dri-devel@lists.freedesktop.org (open list:DRM DRIVERS FOR FREESCALE
+        IMX), linux-kernel@vger.kernel.org (open list),
         devel@driverdev.osuosl.org (open list:STAGING SUBSYSTEM),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v6 06/12] media: imx-csi: Double crop height for alternate fields at sink
-Date:   Tue,  8 Jan 2019 16:15:45 -0800
-Message-Id: <20190109001551.16113-7-slongerbeam@gmail.com>
+        linux-fbdev@vger.kernel.org (open list:FRAMEBUFFER LAYER)
+Subject: [PATCH v6 03/12] gpu: ipu-v3: Add planar support to interlaced scan
+Date:   Tue,  8 Jan 2019 16:15:42 -0800
+Message-Id: <20190109001551.16113-4-slongerbeam@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190109001551.16113-1-slongerbeam@gmail.com>
 References: <20190109001551.16113-1-slongerbeam@gmail.com>
@@ -75,77 +78,113 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If the incoming sink field type is alternate, the reset crop height
-and crop height bounds must be set to twice the incoming height,
-because in alternate field mode, upstream will report only the
-lines for a single field, and the CSI captures the whole frame.
+To support interlaced scan with planar formats, cpmem SLUV must
+be programmed with the correct chroma line stride. For full and
+partial planar 4:2:2 (YUV422P, NV16), chroma line stride must
+be doubled. For full and partial planar 4:2:0 (YUV420, YVU420, NV12),
+chroma line stride must _not_ be doubled, since a single chroma line
+is shared by two luma lines.
 
 Signed-off-by: Steve Longerbeam <slongerbeam@gmail.com>
 Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+Acked-by: Philipp Zabel <p.zabel@pengutronix.de>
 ---
- drivers/staging/media/imx/imx-media-csi.c | 20 +++++++++++++++-----
- 1 file changed, 15 insertions(+), 5 deletions(-)
+ drivers/gpu/ipu-v3/ipu-cpmem.c              | 26 +++++++++++++++++++--
+ drivers/staging/media/imx/imx-ic-prpencvf.c |  3 ++-
+ drivers/staging/media/imx/imx-media-csi.c   |  3 ++-
+ include/video/imx-ipu-v3.h                  |  3 ++-
+ 4 files changed, 30 insertions(+), 5 deletions(-)
 
+diff --git a/drivers/gpu/ipu-v3/ipu-cpmem.c b/drivers/gpu/ipu-v3/ipu-cpmem.c
+index 163fadb8a33a..d047a6867c59 100644
+--- a/drivers/gpu/ipu-v3/ipu-cpmem.c
++++ b/drivers/gpu/ipu-v3/ipu-cpmem.c
+@@ -277,9 +277,10 @@ void ipu_cpmem_set_uv_offset(struct ipuv3_channel *ch, u32 u_off, u32 v_off)
+ }
+ EXPORT_SYMBOL_GPL(ipu_cpmem_set_uv_offset);
+ 
+-void ipu_cpmem_interlaced_scan(struct ipuv3_channel *ch, int stride)
++void ipu_cpmem_interlaced_scan(struct ipuv3_channel *ch, int stride,
++			       u32 pixelformat)
+ {
+-	u32 ilo, sly;
++	u32 ilo, sly, sluv;
+ 
+ 	if (stride < 0) {
+ 		stride = -stride;
+@@ -290,9 +291,30 @@ void ipu_cpmem_interlaced_scan(struct ipuv3_channel *ch, int stride)
+ 
+ 	sly = (stride * 2) - 1;
+ 
++	switch (pixelformat) {
++	case V4L2_PIX_FMT_YUV420:
++	case V4L2_PIX_FMT_YVU420:
++		sluv = stride / 2 - 1;
++		break;
++	case V4L2_PIX_FMT_NV12:
++		sluv = stride - 1;
++		break;
++	case V4L2_PIX_FMT_YUV422P:
++		sluv = stride - 1;
++		break;
++	case V4L2_PIX_FMT_NV16:
++		sluv = stride * 2 - 1;
++		break;
++	default:
++		sluv = 0;
++		break;
++	}
++
+ 	ipu_ch_param_write_field(ch, IPU_FIELD_SO, 1);
+ 	ipu_ch_param_write_field(ch, IPU_FIELD_ILO, ilo);
+ 	ipu_ch_param_write_field(ch, IPU_FIELD_SLY, sly);
++	if (sluv)
++		ipu_ch_param_write_field(ch, IPU_FIELD_SLUV, sluv);
+ };
+ EXPORT_SYMBOL_GPL(ipu_cpmem_interlaced_scan);
+ 
+diff --git a/drivers/staging/media/imx/imx-ic-prpencvf.c b/drivers/staging/media/imx/imx-ic-prpencvf.c
+index 28f41caba05d..af7224846bd5 100644
+--- a/drivers/staging/media/imx/imx-ic-prpencvf.c
++++ b/drivers/staging/media/imx/imx-ic-prpencvf.c
+@@ -412,7 +412,8 @@ static int prp_setup_channel(struct prp_priv *priv,
+ 	if (image.pix.field == V4L2_FIELD_NONE &&
+ 	    V4L2_FIELD_HAS_BOTH(infmt->field) &&
+ 	    channel == priv->out_ch)
+-		ipu_cpmem_interlaced_scan(channel, image.pix.bytesperline);
++		ipu_cpmem_interlaced_scan(channel, image.pix.bytesperline,
++					  image.pix.pixelformat);
+ 
+ 	ret = ipu_ic_task_idma_init(priv->ic, channel,
+ 				    image.pix.width, image.pix.height,
 diff --git a/drivers/staging/media/imx/imx-media-csi.c b/drivers/staging/media/imx/imx-media-csi.c
-index b276672cae1d..c40c3262038e 100644
+index c2a8d9cd31b7..da4808348845 100644
 --- a/drivers/staging/media/imx/imx-media-csi.c
 +++ b/drivers/staging/media/imx/imx-media-csi.c
-@@ -1142,6 +1142,8 @@ static void csi_try_crop(struct csi_priv *priv,
- 			 struct v4l2_mbus_framefmt *infmt,
- 			 struct v4l2_fwnode_endpoint *upstream_ep)
- {
-+	u32 in_height;
-+
- 	crop->width = min_t(__u32, infmt->width, crop->width);
- 	if (crop->left + crop->width > infmt->width)
- 		crop->left = infmt->width - crop->width;
-@@ -1149,6 +1151,10 @@ static void csi_try_crop(struct csi_priv *priv,
- 	crop->left &= ~0x3;
- 	crop->width &= ~0x7;
+@@ -512,7 +512,8 @@ static int csi_idmac_setup_channel(struct csi_priv *priv)
+ 	if (image.pix.field == V4L2_FIELD_NONE &&
+ 	    V4L2_FIELD_HAS_BOTH(infmt->field))
+ 		ipu_cpmem_interlaced_scan(priv->idmac_ch,
+-					  image.pix.bytesperline);
++					  image.pix.bytesperline,
++					  image.pix.pixelformat);
  
-+	in_height = infmt->height;
-+	if (infmt->field == V4L2_FIELD_ALTERNATE)
-+		in_height *= 2;
-+
- 	/*
- 	 * FIXME: not sure why yet, but on interlaced bt.656,
- 	 * changing the vertical cropping causes loss of vertical
-@@ -1158,12 +1164,12 @@ static void csi_try_crop(struct csi_priv *priv,
- 	if (upstream_ep->bus_type == V4L2_MBUS_BT656 &&
- 	    (V4L2_FIELD_HAS_BOTH(infmt->field) ||
- 	     infmt->field == V4L2_FIELD_ALTERNATE)) {
--		crop->height = infmt->height;
--		crop->top = (infmt->height == 480) ? 2 : 0;
-+		crop->height = in_height;
-+		crop->top = (in_height == 480) ? 2 : 0;
- 	} else {
--		crop->height = min_t(__u32, infmt->height, crop->height);
--		if (crop->top + crop->height > infmt->height)
--			crop->top = infmt->height - crop->height;
-+		crop->height = min_t(__u32, in_height, crop->height);
-+		if (crop->top + crop->height > in_height)
-+			crop->top = in_height - crop->height;
- 	}
- }
+ 	ipu_idmac_set_double_buffer(priv->idmac_ch, true);
  
-@@ -1403,6 +1409,8 @@ static void csi_try_fmt(struct csi_priv *priv,
- 		crop->top = 0;
- 		crop->width = sdformat->format.width;
- 		crop->height = sdformat->format.height;
-+		if (sdformat->format.field == V4L2_FIELD_ALTERNATE)
-+			crop->height *= 2;
- 		csi_try_crop(priv, crop, cfg, &sdformat->format, upstream_ep);
- 		compose->left = 0;
- 		compose->top = 0;
-@@ -1530,6 +1538,8 @@ static int csi_get_selection(struct v4l2_subdev *sd,
- 		sel->r.top = 0;
- 		sel->r.width = infmt->width;
- 		sel->r.height = infmt->height;
-+		if (infmt->field == V4L2_FIELD_ALTERNATE)
-+			sel->r.height *= 2;
- 		break;
- 	case V4L2_SEL_TGT_CROP:
- 		sel->r = *crop;
+diff --git a/include/video/imx-ipu-v3.h b/include/video/imx-ipu-v3.h
+index bbc8481f567d..c887f4bee5f8 100644
+--- a/include/video/imx-ipu-v3.h
++++ b/include/video/imx-ipu-v3.h
+@@ -258,7 +258,8 @@ void ipu_cpmem_set_stride(struct ipuv3_channel *ch, int stride);
+ void ipu_cpmem_set_high_priority(struct ipuv3_channel *ch);
+ void ipu_cpmem_set_buffer(struct ipuv3_channel *ch, int bufnum, dma_addr_t buf);
+ void ipu_cpmem_set_uv_offset(struct ipuv3_channel *ch, u32 u_off, u32 v_off);
+-void ipu_cpmem_interlaced_scan(struct ipuv3_channel *ch, int stride);
++void ipu_cpmem_interlaced_scan(struct ipuv3_channel *ch, int stride,
++			       u32 pixelformat);
+ void ipu_cpmem_set_axi_id(struct ipuv3_channel *ch, u32 id);
+ int ipu_cpmem_get_burstsize(struct ipuv3_channel *ch);
+ void ipu_cpmem_set_burstsize(struct ipuv3_channel *ch, int burstsize);
 -- 
 2.17.1
 
