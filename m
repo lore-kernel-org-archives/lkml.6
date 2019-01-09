@@ -2,102 +2,116 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27CD8C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 10:35:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5684C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 10:35:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DCAE821738
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 10:35:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 829BD21738
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 10:35:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g168KLbU"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="teFJFHpu"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729956AbfAIKfa (ORCPT
+        id S1730023AbfAIKf6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 05:35:30 -0500
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:38386 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727828AbfAIKfa (ORCPT
+        Wed, 9 Jan 2019 05:35:58 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:33804 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727828AbfAIKf6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 05:35:30 -0500
-Received: by mail-qt1-f196.google.com with SMTP id p17so7749260qtl.5;
-        Wed, 09 Jan 2019 02:35:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=s1DTfSsLWfiKQ3Qk4KvpFI3hjnQ31uNq337zO3QevBg=;
-        b=g168KLbU2XFvnVL3ARtgmlHuFP4vXLVQlJgYhwdMnQEVRTYNs9tq9u+FF78pAPnJs3
-         1KuLFb1Ppu+s2Ku7AOO60deQS2gdBA/DHaHpBwySbMdnOMwQzq3m4vidzqCdNomfPPBb
-         awdY57TJedBf5TRwjx23MgHQzm7tjFzArRyMupYkHHvft4fDnieAG9njH5Qxfs+NCaPX
-         fDrWdZ2Q2rpDm5qXmz0av67OopPzsuODJ/ShspeYZBDXWfXKHKiBO3nMuu/igSBJP1kT
-         r48/azMCyjK8HFMt01Qzve6QbAIk+c5nbzY/DG1sNdG6+Fc42xXMSN1q5BRo2duL9ss5
-         hU8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=s1DTfSsLWfiKQ3Qk4KvpFI3hjnQ31uNq337zO3QevBg=;
-        b=cqFf04SKpeCGFcv+ZmpupTaEvd8BkO5eihPY9HUkERrrly7hQg0SGnadUVd24X2OyK
-         3if/X2hz0LyELZG/NJSkWILso05zvJ20BO4/y42HW30m6LSFSKUqYIgGt8/whUZwObQz
-         J+Ire8ZFAHl7J7W0EG3NMDjxPykrWZGfzIluqFtPSM3/VolXnUuMIvDdk8jaHRcNLPIo
-         oYSYRcwsy6dsgOPDu7i63fdMTGNZPuFQev3Y98lnMp7CtZmUQAqp7rTwZ0dTUGqlOd6u
-         5S28/DkR3VZ0vJCdd9Efks7L+/HVQ4AGyfn5ZzrYy0bzvU4H/U3KvIwfTxi6bn6j/dW4
-         ZPMw==
-X-Gm-Message-State: AJcUukdn9dycKkeETvJ+eCRFJNIVwHN0YX1mYvp6Q4Kurto3TFLA/xov
-        tWdG5OlGttDwWGSZ40Mq+xCXHxtgDdV1V15MiJ1MinshXwQ=
-X-Google-Smtp-Source: ALg8bN5F/qD3QVzWhXGzM2PmKwdg3op8oP/ckcQ7EGqKce+pmFN/hJV4G1tyElJ7UxAVJVUOKk35FPzCPH84xaRmnwA=
-X-Received: by 2002:ac8:71d0:: with SMTP id i16mr5220180qtp.386.1547030129307;
- Wed, 09 Jan 2019 02:35:29 -0800 (PST)
+        Wed, 9 Jan 2019 05:35:58 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=DKgsdzVesd550B56YYW6BiVOUbTgiz3WrdBRaQWMslk=; b=teFJFHpubLE2+1NUpcxSxO5Kw
+        6azao4j+JZ9TMOVT3Ej94PwYU7Pry8nWqVdci9exHH4KNOsmHlvKjpm79Pe5XkVhplIoi7GLhOU4x
+        OYO83kv/6O7z+n3ekyLXOuOsAnFpgtUSCjTlW9DleRz7FzXGju2MK9t8gOQnOiF29YlaC1iImOQw8
+        BmMENYBnbNVpDNnRVrra3fYUhOTvQUl5Y/XR3eJRHMoDe0izoDNTgQZ6k5pBWG/XEBgx3zlGIofaH
+        4nxcG8MMmsKZzrkfUAWzcOFj6ToKLCzqO5Yjd0hkIWnDzekWsfX3mpMe6Jprn9sMxGmVMLZPN6Gwe
+        /i+E7la3g==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1ghBD8-0001Du-36; Wed, 09 Jan 2019 10:35:46 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 7B15020280450; Wed,  9 Jan 2019 11:35:44 +0100 (CET)
+Date:   Wed, 9 Jan 2019 11:35:44 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Nadav Amit <nadav.amit@gmail.com>
+Cc:     Andi Kleen <ak@linux.intel.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Edward Cree <ecree@solarflare.com>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Borislav Petkov <bp@alien8.de>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        songliubraving@fb.com
+Subject: Re: [RFC v2 0/6] x86: dynamic indirect branch promotion
+Message-ID: <20190109103544.GH1900@hirez.programming.kicks-ass.net>
+References: <87zhshe66w.fsf@linux.intel.com>
+ <20190107163227.GH14122@hirez.programming.kicks-ass.net>
+ <c4e836e8-1949-27f5-f6a0-ed860f590ec5@intel.com>
+ <20190108092559.GA6808@hirez.programming.kicks-ass.net>
+ <306d38fb-7ce6-a3ec-a351-6c117559ebaa@intel.com>
+ <20190108101058.GB6808@hirez.programming.kicks-ass.net>
+ <20190108172721.GN6118@tassilo.jf.intel.com>
+ <D1A153D5-D23B-45E6-9E7A-EB9CBAE84B7E@gmail.com>
+ <20190108190104.GC1900@hirez.programming.kicks-ass.net>
+ <7EB5F9ED-8743-4225-BE97-8D5C8D8E0F84@gmail.com>
 MIME-Version: 1.0
-References: <CALaQ_hoq+QfxGTi5aggfm6RehsiZOvmYk-Mz-Geu3TLdNrRXcg@mail.gmail.com>
- <824caf1d-f5db-a439-fc77-deda67df5bfc@linux.intel.com>
-In-Reply-To: <824caf1d-f5db-a439-fc77-deda67df5bfc@linux.intel.com>
-From:   Nathan Royce <nroycea+kernel@gmail.com>
-Date:   Wed, 9 Jan 2019 04:35:17 -0600
-Message-ID: <CALaQ_hrE9kX1F2sYab7rC6i15x1=vvJdOr4aTY3Oyx8w49sA7A@mail.gmail.com>
-Subject: Re: kernel: xhci_hcd 0000:00:14.0: ERROR unknown event type 37 -
- Kernel 4.19.13
-To:     Mathias Nyman <mathias.nyman@linux.intel.com>
-Cc:     linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-        Alan Stern <stern@rowland.harvard.edu>,
-        gregkh@linuxfoundation.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7EB5F9ED-8743-4225-BE97-8D5C8D8E0F84@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-You can ignore the last set of files with a sample of 1.
-I got a nice sample of like 150 about 6 hours ago.
-The link I included in the previous reply contains the same filenames,
-just updated.
-The journal timestamps (to correspond with the trace times) go from
-"[513438.430253] computername kernel: xhci_hcd 0000:00:14.0: ERROR
-unknown event type 37"
-to
-"[513438.796965] computername kernel: xhci_hcd 0000:00:14.0: ERROR
-unknown event type 37"
-That's 150 of them in less than 1/2 second.
+On Tue, Jan 08, 2019 at 12:47:42PM -0800, Nadav Amit wrote:
 
-On Wed, Jan 2, 2019 at 5:32 AM Mathias Nyman
-<mathias.nyman@linux.intel.com> wrote:
->
-> The event type 37 is a host controller event, most likely a event ring full error.
->
-> So there are probably so many events that we fill the event ring before we can handle them.
->
-> Could you take traces of this?
-> Note that the trace file will be huge.
->
-> mount -t debugfs none /sys/kernel/debug
-> echo 81920 > /sys/kernel/debug/tracing/buffer_size_kb
-> echo 1 > /sys/kernel/debug/tracing/events/xhci-hcd/enable
->
-> copy the traces somewhere safe once the error is triggered:
-> cp /sys/kernel/debug/tracing/trace  /<somewhere>
->
-> -Mathias
+> A general solution is more complicated, however, due to the racy nature of
+> cross-modifying code. There would need to be TSC recording of the time
+> before the modifications start and after they are done.
+> 
+> BTW: I am not sure that static-keys are much better. Their change also
+> affects the control flow, and they do affect the control flow.
+
+Any text_poke() user is a problem; which is why I suggested a
+PERF_RECORD_TEXT_POKE that emits the new instruction. Such records are
+timestamped and can be correlated to the trace.
+
+As to the racy nature of text_poke, yes, this is a wee bit tricky and
+might need some care. I _think_ we can make it work, but I'm not 100%
+sure on exactly how PT works, but something like:
+
+ - write INT3 byte
+ - IPI-SYNC
+
+and ensure the poke_handler preserves the existing control flow (which
+it currently does not, but should be possible).
+
+ - emit RECORD_TEXT_POKE with the new instruction
+
+at this point the actual control flow will be through the INT3 and
+handler and not hit the actual instruction, so the actual state is
+irrelevant.
+
+ - write instruction tail
+ - IPI-SYNC
+ - write first byte
+ - IPI-SYNC
+
+And at this point we start using the new instruction, but this is after
+the timestamp from the RECORD_TEXT_POKE event and decoding should work
+just fine.
