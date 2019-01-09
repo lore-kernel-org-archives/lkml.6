@@ -2,145 +2,102 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A552C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 18:17:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA976C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 18:19:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 08C0A206B6
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 18:17:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547057878;
-	bh=313J75pRSdWBx+s0b8l0AI9icPNGOqqYuBfcA0aYkkE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=2W/2U9zNvcyiExb5yJyIOZDoQOZ96c28Awt7PL/zSs8S2O3ccCm/MHHwEuwSq/apM
-	 FxypmW5SlUHI0KY+DjhOZTNj8d7vHEzusr4cnPTXkPoN4Bk3ShHl8SwnVt5xXrKrVD
-	 vSUgrL5iPi9Z8a/8yZQaTf0SlNhOwNSZXhTmpI/4=
+	by mail.kernel.org (Postfix) with ESMTP id 5B908214C6
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 18:19:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=chronox.de header.i=@chronox.de header.b="aK9yeqbT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726292AbfAISR5 (ORCPT
+        id S1726587AbfAISTC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 13:17:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53828 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726282AbfAISRy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 13:17:54 -0500
-Received: from earth.universe (dyndsl-095-033-009-186.ewe-ip-backbone.de [95.33.9.186])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C50FD20859;
-        Wed,  9 Jan 2019 18:17:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547057872;
-        bh=313J75pRSdWBx+s0b8l0AI9icPNGOqqYuBfcA0aYkkE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=IxD1sY1xWGN1Xj1uhaGkjogiFUVrTr+rTdaZlCkVb+QmL2oWJW9xMEbAn2WBmxQKh
-         JXjKYCvdoQ102NFbso0wQl/MRQFbMF0dqaMNCNXLSq+1lsLDDcsai50afnehBrRtUS
-         TcMwM8XaxxBuEDGjFWyrYtXmGtODKfb4jxYnc95o=
-Received: by earth.universe (Postfix, from userid 1000)
-        id F18763C08E2; Wed,  9 Jan 2019 19:17:50 +0100 (CET)
-Date:   Wed, 9 Jan 2019 19:17:50 +0100
-From:   Sebastian Reichel <sre@kernel.org>
-To:     Pavel Machek <pavel@ucw.cz>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Marcel Holtmann <marcel@holtmann.org>,
-        Tony Lindgren <tony@atomide.com>,
-        Rob Herring <robh@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-bluetooth@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 10/14] media: wl128x-radio: simplify
- fmc_prepare/fmc_release
-Message-ID: <20190109181750.lqcm2bhg4wubuavu@earth.universe>
-References: <20181221011752.25627-1-sre@kernel.org>
- <20181221011752.25627-11-sre@kernel.org>
- <20181222192934.GA15237@amd>
+        Wed, 9 Jan 2019 13:19:02 -0500
+Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.51]:31530 "EHLO
+        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726515AbfAISTC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 13:19:02 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1547057939;
+        s=strato-dkim-0002; d=chronox.de;
+        h=References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=p/Xb2WrPLDUmNRmCJ6VKjd0OUIzYPuko8yOedvGeWIs=;
+        b=aK9yeqbTBVWcKgyDSQeCmnjpnHBKS4QFdRQ37WYZm6uDN6iM2OAHo0HqD5PshLSQEc
+        gt8eA3Tn06SQXXJ+EfJbsRfbvypupT9UbpZpI4KikcvWrDNnFPybEgchjUMfWVsHewdk
+        8XvGgwgjhvRW/cjRm00Xp95iE7zXOyZWkJUFFI/QttbNP3iU5O/kZqp/39ZP15k18RSu
+        BEgMAgzMwYdivtWOz5Cmbz/E7NCzz7pzA6L7Oqe/TzWO/9GFPBC4ITB+3qn3XLQzY5Mc
+        HTrsGJQvA4ApFXAIhI97uL9WaEgJ+sbATBfb8E2HsZxbYibZKYJVGmLyAyXBKlD2ES6V
+        piTg==
+X-RZG-AUTH: ":P2ERcEykfu11Y98lp/T7+hdri+uKZK8TKWEqNyiHySGSa9k9xmwdNnzGHXPaLvSbdkg="
+X-RZG-CLASS-ID: mo00
+Received: from tauon.chronox.de
+        by smtp.strato.de (RZmta 44.9 DYNA|AUTH)
+        with ESMTPSA id 309bcfv09IIDSNk
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Wed, 9 Jan 2019 19:18:13 +0100 (CET)
+From:   Stephan Mueller <smueller@chronox.de>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "Lee, Chun-Yi" <joeyli.kernel@gmail.com>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Pavel Machek <pavel@ucw.cz>, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, keyrings@vger.kernel.org,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Chen Yu <yu.c.chen@intel.com>,
+        Oliver Neukum <oneukum@suse.com>,
+        Ryan Chen <yu.chen.surf@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Giovanni Gherdovich <ggherdovich@suse.cz>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Jann Horn <jannh@google.com>, Andy Lutomirski <luto@kernel.org>
+Subject: Re: [PATCH 1/5 v2] PM / hibernate: Create snapshot keys handler
+Date:   Wed, 09 Jan 2019 19:18:13 +0100
+Message-ID: <2049180.FbvvROCS3Z@tauon.chronox.de>
+In-Reply-To: <20190109173454.GB249140@gmail.com>
+References: <20190103143227.9138-1-jlee@suse.com> <2344329.gmPllosFfp@tauon.chronox.de> <20190109173454.GB249140@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="a7a3feumpr3jovsz"
-Content-Disposition: inline
-In-Reply-To: <20181222192934.GA15237@amd>
-User-Agent: NeoMutt/20180716
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Am Mittwoch, 9. Januar 2019, 18:34:55 CET schrieb Eric Biggers:
 
---a7a3feumpr3jovsz
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Eric,
 
-Hi Pavel,
+> That would not meet my performance requirements as I want to precompute
+> HKDF-Extract, and then do HKDF-Expand many times.  Also the HKDF-Expand part
+> should be thread-safe and not require allocating memory, especially not a
+> whole crypto_shash tfm every time.
+> 
+> So presumably with crypto_rng, crypto_rng_reset() would need to take the
+> input keyring material and salt and do HKDF-Extract (like my
+> fscrypt_init_hkdf()), and crypto_rng_generate() would need to take the
+> application-specific info string and do HKDF-Expand (like my
+> fscrypt_hkdf_expand()).
 
-On Sat, Dec 22, 2018 at 08:29:34PM +0100, Pavel Machek wrote:
-> On Fri 2018-12-21 02:17:48, Sebastian Reichel wrote:
-> > From: Sebastian Reichel <sebastian.reichel@collabora.com>
-> >=20
-> > Remove unused return code from fmc_prepare() and fmc_release() to
-> > simplify the code a bit.
->=20
->=20
-> >  /*
-> >   * This function will be called from FM V4L2 release function.
-> >   * Unregister from ST driver.
-> >   */
-> > -int fmc_release(struct fmdev *fmdev)
-> > +void fmc_release(struct fmdev *fmdev)
-> >  {
-> >  	static struct st_proto_s fm_st_proto;
-> >  	int ret;
-> > =20
-> >  	if (!test_bit(FM_CORE_READY, &fmdev->flag)) {
-> >  		fmdbg("FM Core is already down\n");
-> > -		return 0;
-> > +		return;
-> >  	}
-> >  	/* Service pending read */
-> >  	wake_up_interruptible(&fmdev->rx.rds.read_queue);
-> > @@ -1611,7 +1606,6 @@ int fmc_release(struct fmdev *fmdev)
-> >  		fmdbg("Successfully unregistered from ST\n");
-> > =20
-> >  	clear_bit(FM_CORE_READY, &fmdev->flag);
-> > -	return ret;
-> >  }
->=20
->=20
-> You probably leave unused variable (ret) here. I guess that's okay as
-> you remove it later in the series...?
+Great, that was the idea I had in mind as well. Maybe the example was not 
+right to convey that. Let me work on that.
+> 
+> It is ugly though.  Please also consider just having simple crypto_hkdf_*()
+> helper functions which wrap a HMAC tfm along the lines of my patch, rather
+> than shoehorning it into the crypto_rng API.
+> 
+> - Eric
 
-It's still being used after this patch (but indeed removed in a
-later patch).
 
-> Also... I'd kind of expect _prepare routine to return int. Even if it
-> currently does not do anything that could return error, I'd kind of
-> expect allocations being done there...
 
-well the driver is basically feature complete and all allocations
-happen in probe :)
+Ciao
+Stephan
 
--- Sebastian
 
---a7a3feumpr3jovsz
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlw2Os4ACgkQ2O7X88g7
-+pqZzg//bTzS3nZUi6Vb7quyzAZCP2Af55tTDRC/h7KzMPLcFFYdQi6m6lg3rUir
-gKRmQ7u+2a6CjclVTLAHfYUZ5au2MzUkhkoxcUPqVp6WJJDxCvnFHfyHBGoCVUXf
-5TGCOOF89GtohkSGoONEIYQZXIy+MAOTGpvmCIHkbIKWQ37BT1mxqsoAYGEQ51wb
-8qgQ0/hfhudtEqiP5qFQyxHJT3G3IXPuBQoBL/T/MZzkGP+XdL0KusXE4FNKUkgS
-Ex8cvUsu88t1VKxQyLmi8UDPpLS4kG8dybC2lX9NZUcvupZgD8/YXK7XtrmKAQbB
-NLFpAuIqvU5vsYRAuEGqMY5UxoLvdfVpNX4WhXk775bwuDJgwCWjusEyG7eBOx3A
-1+Pv/K0ABOHe9bvc9uGpVjXQM5mmlLrBDxYfSGr14MW6ydc7MKqsY+M7aQl1yz2H
-dYWAXVOaQY/vcFib8x6Ef2rPEbGTh1y8AaOm2rOTYP5NtWW/Z2b7UY8Egwbg/c7p
-rcmlYTgEW1M+suekjnJlHk9LErLmN2mv/GnI9tdp1r0LTe09SuYRFh1wPVNrdX//
-eVH7T900J2XHgvZDpDapwiuE0/rWgCeeWcIe4QIgIotWiygq8g1MLqbtkaL5SXyX
-WzLSTuoTxhA70QnT7C2LS57UADMDhXjjDqryLhnZSmdxhu0g+LQ=
-=/dmx
------END PGP SIGNATURE-----
-
---a7a3feumpr3jovsz--
