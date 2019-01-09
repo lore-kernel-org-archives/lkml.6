@@ -2,334 +2,177 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBCA9C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 19:16:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 175B3C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 19:18:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C73621738
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 19:16:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547061410;
-	bh=Iay99IRdm5RRuQ/wkTgH6zWukAxx9sRkd6mj/wuCZTU=;
-	h=Subject:From:To:Cc:Date:List-ID:From;
-	b=Ms1vKfs6wjiNmG3joBcTmUQ80/VO0sWrm+by1Zg7z6OGoGpJYXODqZ0aEPomvN3jd
-	 evOE1eHiyaxKQYduVNF+ncUf8rvHaawidDitTUP+IeImQz3vRMCLb5OpUgnRR9nB1X
-	 UvNEPJLowUtbA1xHo7hlea9vy1wExkM7eXYWJhx4=
+	by mail.kernel.org (Postfix) with ESMTP id E146E206B6
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 19:18:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728174AbfAITQu (ORCPT
+        id S1728178AbfAITSO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 14:16:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59220 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726469AbfAITQt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 14:16:49 -0500
-Received: from tzanussi-mobl (c-98-220-238-81.hsd1.il.comcast.net [98.220.238.81])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3C35A20685;
-        Wed,  9 Jan 2019 19:16:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547061407;
-        bh=Iay99IRdm5RRuQ/wkTgH6zWukAxx9sRkd6mj/wuCZTU=;
-        h=Subject:From:To:Cc:Date:From;
-        b=JcNOBjoGyFoN3EHTlIHv4ufk9c/a47VVzwSw6xAmoNc+c+I+DFGVktjw0iahxS9yI
-         Gmw0SoLGdi7Fgz56CT1Dl96G0mAeBgHhkH5MJikZiSu0QpkoJxCUOH9yyFseJAyBU8
-         rivJxYiQOwkjxI7vScrewnyq0dHnoz6sMJxKARE8=
-Message-ID: <1547061406.6258.4.camel@kernel.org>
-Subject: [ANNOUNCE] 3.18.129-rt111
-From:   Tom Zanussi <zanussi@kernel.org>
-To:     LKML <linux-kernel@vger.kernel.org>,
-        linux-rt-users <linux-rt-users@vger.kernel.org>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Carsten Emde <C.Emde@osadl.org>,
-        John Kacur <jkacur@redhat.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Daniel Wagner <daniel.wagner@siemens.com>,
-        Julia Cartwright <julia@ni.com>
-Date:   Wed, 09 Jan 2019 13:16:46 -0600
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.1-1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Wed, 9 Jan 2019 14:18:14 -0500
+Received: from out30-132.freemail.mail.aliyun.com ([115.124.30.132]:54230 "EHLO
+        out30-132.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727430AbfAITSN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 14:18:13 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R151e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04420;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0THtvvDg_1547061291;
+Received: from e19h19392.et15sqa.tbsite.net(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0THtvvDg_1547061291)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Thu, 10 Jan 2019 03:14:59 +0800
+From:   Yang Shi <yang.shi@linux.alibaba.com>
+To:     mhocko@suse.com, hannes@cmpxchg.org, shakeelb@google.com,
+        akpm@linux-foundation.org
+Cc:     yang.shi@linux.alibaba.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: [v3 PATCH 3/5] mm: memcontrol: introduce wipe_on_offline interface
+Date:   Thu, 10 Jan 2019 03:14:43 +0800
+Message-Id: <1547061285-100329-4-git-send-email-yang.shi@linux.alibaba.com>
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1547061285-100329-1-git-send-email-yang.shi@linux.alibaba.com>
+References: <1547061285-100329-1-git-send-email-yang.shi@linux.alibaba.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello RT Folks!
+We have some usecases which create and remove memcgs very frequently,
+and the tasks in the memcg may just access the files which are unlikely
+accessed by anyone else.  So, we prefer force_empty the memcg before
+rmdir'ing it to reclaim the page cache so that they don't get
+accumulated to incur unnecessary memory pressure.  Since the memory
+pressure may incur direct reclaim to harm some latency sensitive
+applications.
 
-I'm pleased to announce the 3.18.129-rt111 stable release.
+Force empty would help out such usecase, however force empty reclaims
+memory synchronously when writing to memory.force_empty.  It may take
+some time to return and the afterwards operations are blocked by it.
+Although this can be done in background, some usecases may need create
+new memcg with the same name right after the old one is deleted.  So,
+the creation might get blocked by the before reclaim/remove operation.
 
-You can get this release via the git tree at:
+Delaying memory reclaim in cgroup offline for such usecase sounds
+reasonable.  Introduced a new interface, called wipe_on_offline for both
+default and legacy hierarchy, which does memory reclaim in css offline
+kworker.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-stable-rt.git
+Writing to 1 would enable it, writing 0 would disable it.
 
-  branch: v3.18-rt
-  Head SHA1: abae91683efc5c482d2fbbad07010decde532360
-
-Or to build 3.18.129-rt111 directly, the following patches should be applied:
-
-  http://www.kernel.org/pub/linux/kernel/v3.x/linux-3.18.tar.xz
-
-  http://www.kernel.org/pub/linux/kernel/v3.x/patch-3.18.129.xz
-
-  http://www.kernel.org/pub/linux/kernel/projects/rt/3.18/patch-3.18.129-rt111.patch.xz
-
-
-You can also build from 3.18.129-rt110 by applying the incremental patch:
-
-  http://www.kernel.org/pub/linux/kernel/projects/rt/3.18/incr/patch-3.18.129-rt110-rt111.patch.xz
-
-Enjoy!
-   
-   Tom
-
-Changes from v3.18.129-rt110:
+Suggested-by: Michal Hocko <mhocko@suse.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Shakeel Butt <shakeelb@google.com>
+Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
 ---
-Daniel Bristot de Oliveira (1):
-      sched/core: Avoid __schedule() being called twice in a row
+ include/linux/memcontrol.h |  3 +++
+ mm/memcontrol.c            | 53 ++++++++++++++++++++++++++++++++++++++++++++--
+ 2 files changed, 54 insertions(+), 2 deletions(-)
 
-Kurt Kanzenbach (1):
-      tty: serial: pl011: explicitly initialize the flags variable
-
-Lukas Wunner (1):
-      pinctrl: bcm2835: Use raw spinlock for RT compatibility
-
-Sebastian Andrzej Siewior (5):
-      efi: Allow efi=runtime
-      efi: Disable runtime services on RT
-      crypto: cryptd - add a lock instead preempt_disable/local_bh_disable
-      work-simple: drop a shit statement in SWORK_EVENT_PENDING
-      drm/i915: disable tracing on -RT
-
-Tom Zanussi (1):
-      Linux 3.18.129-rt111
-
----
- crypto/cryptd.c                   | 18 ++++++++----------
- drivers/firmware/efi/efi.c        |  5 ++++-
- drivers/gpu/drm/i915/i915_trace.h |  4 ++++
- drivers/pinctrl/pinctrl-bcm2835.c | 16 ++++++++--------
- drivers/tty/serial/amba-pl011.c   |  2 +-
- kernel/sched/core.c               |  9 +++++++--
- kernel/sched/work-simple.c        |  2 +-
- localversion-rt                   |  2 +-
- 8 files changed, 34 insertions(+), 24 deletions(-)
----
-diff --git a/crypto/cryptd.c b/crypto/cryptd.c
-index 828ead458c09..ec32d9bf4651 100644
---- a/crypto/cryptd.c
-+++ b/crypto/cryptd.c
-@@ -36,6 +36,7 @@
- struct cryptd_cpu_queue {
- 	struct crypto_queue queue;
- 	struct work_struct work;
-+	spinlock_t qlock;
- };
+diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+index 83ae11c..2f1258a 100644
+--- a/include/linux/memcontrol.h
++++ b/include/linux/memcontrol.h
+@@ -311,6 +311,9 @@ struct mem_cgroup {
+ 	struct list_head event_list;
+ 	spinlock_t event_list_lock;
  
- struct cryptd_queue {
-@@ -97,6 +98,7 @@ static int cryptd_init_queue(struct cryptd_queue *queue,
- 		cpu_queue = per_cpu_ptr(queue->cpu_queue, cpu);
- 		crypto_init_queue(&cpu_queue->queue, max_cpu_qlen);
- 		INIT_WORK(&cpu_queue->work, cryptd_queue_worker);
-+		spin_lock_init(&cpu_queue->qlock);
- 	}
- 	return 0;
- }
-@@ -119,11 +121,12 @@ static int cryptd_enqueue_request(struct cryptd_queue *queue,
- 	int cpu, err;
- 	struct cryptd_cpu_queue *cpu_queue;
- 
--	cpu = get_cpu();
--	cpu_queue = this_cpu_ptr(queue->cpu_queue);
-+	cpu_queue = raw_cpu_ptr(queue->cpu_queue);
-+	spin_lock_bh(&cpu_queue->qlock);
-+	cpu = smp_processor_id();
- 	err = crypto_enqueue_request(&cpu_queue->queue, request);
- 	queue_work_on(cpu, kcrypto_wq, &cpu_queue->work);
--	put_cpu();
-+	spin_unlock_bh(&cpu_queue->qlock);
- 
- 	return err;
- }
-@@ -139,16 +142,11 @@ static void cryptd_queue_worker(struct work_struct *work)
- 	cpu_queue = container_of(work, struct cryptd_cpu_queue, work);
- 	/*
- 	 * Only handle one request at a time to avoid hogging crypto workqueue.
--	 * preempt_disable/enable is used to prevent being preempted by
--	 * cryptd_enqueue_request(). local_bh_disable/enable is used to prevent
--	 * cryptd_enqueue_request() being accessed from software interrupts.
- 	 */
--	local_bh_disable();
--	preempt_disable();
-+	spin_lock_bh(&cpu_queue->qlock);
- 	backlog = crypto_get_backlog(&cpu_queue->queue);
- 	req = crypto_dequeue_request(&cpu_queue->queue);
--	preempt_enable();
--	local_bh_enable();
-+	spin_unlock_bh(&cpu_queue->qlock);
- 
- 	if (!req)
- 		return;
-diff --git a/drivers/firmware/efi/efi.c b/drivers/firmware/efi/efi.c
-index 297066df6946..f2be407247e5 100644
---- a/drivers/firmware/efi/efi.c
-+++ b/drivers/firmware/efi/efi.c
-@@ -41,7 +41,7 @@ struct efi __read_mostly efi = {
- };
- EXPORT_SYMBOL(efi);
- 
--static bool disable_runtime;
-+static bool disable_runtime = IS_ENABLED(CONFIG_PREEMPT_RT_BASE);
- static int __init setup_noefi(char *arg)
- {
- 	disable_runtime = true;
-@@ -59,6 +59,9 @@ static int __init parse_efi_cmdline(char *str)
- 	if (parse_option_str(str, "noruntime"))
- 		disable_runtime = true;
- 
-+	if (parse_option_str(str, "runtime"))
-+		disable_runtime = false;
++	/* Reclaim as much as possible memory in offline kworker */
++	bool wipe_on_offline;
 +
- 	return 0;
+ 	struct mem_cgroup_per_node *nodeinfo[0];
+ 	/* WARNING: nodeinfo must be the last member here */
+ };
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index eaa3970..ff50810 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -2918,6 +2918,35 @@ static ssize_t mem_cgroup_force_empty_write(struct kernfs_open_file *of,
+ 	return mem_cgroup_force_empty(memcg, true) ?: nbytes;
  }
- early_param("efi", parse_efi_cmdline);
-diff --git a/drivers/gpu/drm/i915/i915_trace.h b/drivers/gpu/drm/i915/i915_trace.h
-index f5aa0067755a..3b37567b76c8 100644
---- a/drivers/gpu/drm/i915/i915_trace.h
-+++ b/drivers/gpu/drm/i915/i915_trace.h
-@@ -1,6 +1,10 @@
- #if !defined(_I915_TRACE_H_) || defined(TRACE_HEADER_MULTI_READ)
- #define _I915_TRACE_H_
  
-+#ifdef CONFIG_PREEMPT_RT_BASE
-+#define NOTRACE
-+#endif
++static int wipe_on_offline_show(struct seq_file *m, void *v)
++{
++	struct mem_cgroup *memcg = mem_cgroup_from_css(seq_css(m));
 +
- #include <linux/stringify.h>
- #include <linux/types.h>
- #include <linux/tracepoint.h>
-diff --git a/drivers/pinctrl/pinctrl-bcm2835.c b/drivers/pinctrl/pinctrl-bcm2835.c
-index eabba02f71f9..9a975a12b8e3 100644
---- a/drivers/pinctrl/pinctrl-bcm2835.c
-+++ b/drivers/pinctrl/pinctrl-bcm2835.c
-@@ -106,7 +106,7 @@ struct bcm2835_pinctrl {
- 	struct pinctrl_gpio_range gpio_range;
- 
- 	struct bcm2835_gpio_irqdata irq_data[BCM2835_NUM_BANKS];
--	spinlock_t irq_lock[BCM2835_NUM_BANKS];
-+	raw_spinlock_t irq_lock[BCM2835_NUM_BANKS];
++	seq_printf(m, "%lu\n", (unsigned long)memcg->wipe_on_offline);
++
++	return 0;
++}
++
++static int wipe_on_offline_write(struct cgroup_subsys_state *css,
++				 struct cftype *cft, u64 val)
++{
++	int ret = 0;
++
++	struct mem_cgroup *memcg = mem_cgroup_from_css(css);
++
++	if (mem_cgroup_is_root(memcg))
++		return -EINVAL;
++
++	if (val == 0)
++		memcg->wipe_on_offline = false;
++	else if (val == 1)
++		memcg->wipe_on_offline = true;
++	else
++		ret = -EINVAL;
++
++	return ret;
++}
++
+ static u64 mem_cgroup_hierarchy_read(struct cgroup_subsys_state *css,
+ 				     struct cftype *cft)
+ {
+@@ -4283,6 +4312,11 @@ static ssize_t memcg_write_event_control(struct kernfs_open_file *of,
+ 		.write = mem_cgroup_reset,
+ 		.read_u64 = mem_cgroup_read_u64,
+ 	},
++	{
++		.name = "wipe_on_offline",
++		.seq_show = wipe_on_offline_show,
++		.write_u64 = wipe_on_offline_write,
++	},
+ 	{ },	/* terminate */
  };
  
- static struct lock_class_key gpio_lock_class;
-@@ -465,10 +465,10 @@ static void bcm2835_gpio_irq_enable(struct irq_data *data)
- 	unsigned bank = GPIO_REG_OFFSET(gpio);
- 	unsigned long flags;
+@@ -4569,11 +4603,20 @@ static void mem_cgroup_css_offline(struct cgroup_subsys_state *css)
+ 	page_counter_set_min(&memcg->memory, 0);
+ 	page_counter_set_low(&memcg->memory, 0);
  
--	spin_lock_irqsave(&pc->irq_lock[bank], flags);
-+	raw_spin_lock_irqsave(&pc->irq_lock[bank], flags);
- 	set_bit(offset, &pc->enabled_irq_map[bank]);
- 	bcm2835_gpio_irq_config(pc, gpio, true);
--	spin_unlock_irqrestore(&pc->irq_lock[bank], flags);
-+	raw_spin_unlock_irqrestore(&pc->irq_lock[bank], flags);
- }
++	/*
++	 * Reclaim as much as possible memory when offlining.
++	 *
++	 * Do it after min/low is reset otherwise some memory might
++	 * be protected by min/low.
++	 */
++	if (memcg->wipe_on_offline)
++		mem_cgroup_force_empty(memcg, false);
++	else
++		drain_all_stock(memcg);
++
+ 	memcg_offline_kmem(memcg);
+ 	wb_memcg_offline(memcg);
  
- static void bcm2835_gpio_irq_disable(struct irq_data *data)
-@@ -479,10 +479,10 @@ static void bcm2835_gpio_irq_disable(struct irq_data *data)
- 	unsigned bank = GPIO_REG_OFFSET(gpio);
- 	unsigned long flags;
- 
--	spin_lock_irqsave(&pc->irq_lock[bank], flags);
-+	raw_spin_lock_irqsave(&pc->irq_lock[bank], flags);
- 	bcm2835_gpio_irq_config(pc, gpio, false);
- 	clear_bit(offset, &pc->enabled_irq_map[bank]);
--	spin_unlock_irqrestore(&pc->irq_lock[bank], flags);
-+	raw_spin_unlock_irqrestore(&pc->irq_lock[bank], flags);
- }
- 
- static int __bcm2835_gpio_irq_set_type_disabled(struct bcm2835_pinctrl *pc,
-@@ -584,14 +584,14 @@ static int bcm2835_gpio_irq_set_type(struct irq_data *data, unsigned int type)
- 	unsigned long flags;
- 	int ret;
- 
--	spin_lock_irqsave(&pc->irq_lock[bank], flags);
-+	raw_spin_lock_irqsave(&pc->irq_lock[bank], flags);
- 
- 	if (test_bit(offset, &pc->enabled_irq_map[bank]))
- 		ret = __bcm2835_gpio_irq_set_type_enabled(pc, gpio, type);
- 	else
- 		ret = __bcm2835_gpio_irq_set_type_disabled(pc, gpio, type);
- 
--	spin_unlock_irqrestore(&pc->irq_lock[bank], flags);
-+	raw_spin_unlock_irqrestore(&pc->irq_lock[bank], flags);
- 
- 	return ret;
- }
-@@ -1004,7 +1004,7 @@ static int bcm2835_pinctrl_probe(struct platform_device *pdev)
- 		pc->irq[i] = irq_of_parse_and_map(np, i);
- 		pc->irq_data[i].pc = pc;
- 		pc->irq_data[i].bank = i;
--		spin_lock_init(&pc->irq_lock[i]);
-+		raw_spin_lock_init(&pc->irq_lock[i]);
- 
- 		len = strlen(dev_name(pc->dev)) + 16;
- 		name = devm_kzalloc(pc->dev, len, GFP_KERNEL);
-diff --git a/drivers/tty/serial/amba-pl011.c b/drivers/tty/serial/amba-pl011.c
-index 5ef2c62bb904..dede68aa679e 100644
---- a/drivers/tty/serial/amba-pl011.c
-+++ b/drivers/tty/serial/amba-pl011.c
-@@ -1930,7 +1930,7 @@ pl011_console_write(struct console *co, const char *s, unsigned int count)
- {
- 	struct uart_amba_port *uap = amba_ports[co->index];
- 	unsigned int status, old_cr, new_cr;
--	unsigned long flags;
-+	unsigned long flags = 0;
- 	int locked = 1;
- 
- 	clk_enable(uap->clk);
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index d5534f439b4a..500c319fcfc5 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -3114,10 +3114,15 @@ static inline void sched_submit_work(struct task_struct *tsk)
- 	/*
- 	 * If a worker went to sleep, notify and ask workqueue whether
- 	 * it wants to wake up a task to maintain concurrency.
-+	 * As this function is called inside the schedule() context,
-+	 * we disable preemption to avoid it calling schedule() again
-+	 * in the possible wakeup of a kworker.
- 	 */
--	if (tsk->flags & PF_WQ_WORKER)
-+	if (tsk->flags & PF_WQ_WORKER) {
-+		preempt_disable();
- 		wq_worker_sleeping(tsk);
+-	drain_all_stock(memcg);
 -
-+		preempt_enable_no_resched();
-+	}
+ 	mem_cgroup_id_put(memcg);
+ }
  
- 	if (tsk_is_pi_blocked(tsk))
- 		return;
-diff --git a/kernel/sched/work-simple.c b/kernel/sched/work-simple.c
-index c996f755dba6..4284dd37aebe 100644
---- a/kernel/sched/work-simple.c
-+++ b/kernel/sched/work-simple.c
-@@ -11,7 +11,7 @@
- #include <linux/slab.h>
- #include <linux/spinlock.h>
+@@ -5694,6 +5737,12 @@ static ssize_t memory_oom_group_write(struct kernfs_open_file *of,
+ 		.seq_show = memory_oom_group_show,
+ 		.write = memory_oom_group_write,
+ 	},
++	{
++		.name = "wipe_on_offline",
++		.flags = CFTYPE_NOT_ON_ROOT,
++		.seq_show = wipe_on_offline_show,
++		.write_u64 = wipe_on_offline_write,
++	},
+ 	{ }	/* terminate */
+ };
  
--#define SWORK_EVENT_PENDING     (1 << 0)
-+#define SWORK_EVENT_PENDING     1
- 
- static DEFINE_MUTEX(worker_mutex);
- static struct sworker *glob_worker;
-diff --git a/localversion-rt b/localversion-rt
-index b3e668a8fb94..9969a4b69fad 100644
---- a/localversion-rt
-+++ b/localversion-rt
-@@ -1 +1 @@
---rt110
-+-rt111
+-- 
+1.8.3.1
+
