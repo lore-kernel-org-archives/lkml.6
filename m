@@ -2,131 +2,177 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38AA8C43444
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 08:24:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94BFAC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 08:27:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 079AC21741
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 08:24:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547022279;
-	bh=1CV8lqUW6V5Qu2jI5sPFZ0ipAsiH5cyttOry22UZSDM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=1rxnSnn8KbKrUBvZWWhVYFk7WSNqCKrNUiXDYk3pn30c4oHrfncNrJbgBk1ylVs3f
-	 tQZS3xjchiEH7LfNsfdbfeavvr4/wd6yLe77UZzPHrFM/sx5y3dXa++i7yx4ujvNcL
-	 s7NXaXi3Vwo6ZkMoaAMLaBuanW2MvF3D752TTwAI=
+	by mail.kernel.org (Postfix) with ESMTP id 6913821726
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 08:27:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729658AbfAIIYi (ORCPT
+        id S1729782AbfAII1J (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 03:24:38 -0500
-Received: from mail-lf1-f46.google.com ([209.85.167.46]:34827 "EHLO
-        mail-lf1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725865AbfAIIYh (ORCPT
+        Wed, 9 Jan 2019 03:27:09 -0500
+Received: from mail-out.m-online.net ([212.18.0.10]:40954 "EHLO
+        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725865AbfAII1I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 03:24:37 -0500
-Received: by mail-lf1-f46.google.com with SMTP id e26so4982595lfc.2;
-        Wed, 09 Jan 2019 00:24:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=vLanaI8a99gMLIUKf8jOB4ad4EZ0sLCvedts9QvaNnE=;
-        b=YJPn2TZbD295LfZbMtu89jipZ4ktUokJtCckQ82w6YDvfXaC3Ew6Yo/BRFOS2qLILK
-         Oc68hC8vYNyw2PcleZSqJemgghfHP8+bTwlqgA8LVa8Kbck4dlaI22NjMLp3nNOzpaj6
-         xxlR/m+gYM6ciSyiNgPzM/cPvzQLFfPlAyyiJ5DLw2r5/o7+dWgqw+tS0fWWy18UDGCC
-         KEPGhRDyFUGsY3klw+u/FVU8poX6K7bHBoaM9FfMysDIqnIvF7Dd40f6pClewhgIS0Hy
-         Ru6k5YDXcsNwhddKNQEwbd8k5ZwtIPtg1aCgKdlfUhykSwOgluljAYb89l/xQYTvBU1D
-         zX3A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=vLanaI8a99gMLIUKf8jOB4ad4EZ0sLCvedts9QvaNnE=;
-        b=R3NGaVN7bbPZiIz9FJjOsD/ftu8lBC5rdalfefMnAOO8Pqbr3+XJOnC10Lq3oaCYsV
-         PzEG5GQpq88MOlQAr9ur0cBt9Vt9jJXBGKeA6UbxMPJtZ2wvjfVtpVd1+aQRxUDHnHkF
-         cKW8savi4WTHc6LCcvOXNjMniY7kI53b2fdzLZf2dcS4MRGJygAFUvIiqwbCDnWm1ExM
-         jeHk0dVbh7mTjkiF1qJ7tisbYPk/RRerPKvPRJ8qJZaaXyFM9C7nETRfbrP7C10H5ijk
-         +/xP6YeIHSEyrEEMgnGPWFrWU4kWC1g435zF5+HIG14uDkfxlblqaXjXuu9IClfwH7Gk
-         KvsQ==
-X-Gm-Message-State: AJcUukcJqsrgxmzG4v6GWEcjnA75EoB2xiixcBVGpib3c3zthieniLyh
-        bR4R6D391XRwwdqu8FeEfx4=
-X-Google-Smtp-Source: ALg8bN7aUZcVGXkzsgV5E4WLftL1LpPpUvGDjlRd/Xgo1VtlrnbuKRubH01M9ig7qSQW9ViiwFWtzg==
-X-Received: by 2002:a19:24c6:: with SMTP id k189mr2478278lfk.77.1547022273984;
-        Wed, 09 Jan 2019 00:24:33 -0800 (PST)
-Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
-        by smtp.gmail.com with ESMTPSA id z6sm13701604lfd.50.2019.01.09.00.24.33
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 09 Jan 2019 00:24:33 -0800 (PST)
-Received: from johan by xi.terra with local (Exim 4.91)
-        (envelope-from <johan@kernel.org>)
-        id 1gh9AD-00056L-FH; Wed, 09 Jan 2019 09:24:37 +0100
-Date:   Wed, 9 Jan 2019 09:24:37 +0100
-From:   Johan Hovold <johan@kernel.org>
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Nikolaj Fogh <nikolajfogh@gmail.com>,
-        Johan Hovold <johan@kernel.org>, linux-usb@vger.kernel.org
-Subject: Re: [PATCH AUTOSEL 4.20 025/117] USB: serial: ftdi_sio: use rounding
- when calculating baud rate divisors
-Message-ID: <20190109082437.GA3389@localhost>
-References: <20190108192628.121270-1-sashal@kernel.org>
- <20190108192628.121270-25-sashal@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190108192628.121270-25-sashal@kernel.org>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+        Wed, 9 Jan 2019 03:27:08 -0500
+Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
+        by mail-out.m-online.net (Postfix) with ESMTP id 43ZMgC3RYFz1qxDK;
+        Wed,  9 Jan 2019 09:27:03 +0100 (CET)
+Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
+        by mail.m-online.net (Postfix) with ESMTP id 43ZMgC2F1qz1qsnL;
+        Wed,  9 Jan 2019 09:27:03 +0100 (CET)
+X-Virus-Scanned: amavisd-new at mnet-online.de
+Received: from mail.mnet-online.de ([192.168.8.182])
+        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
+        with ESMTP id xBvQsi6o18L9; Wed,  9 Jan 2019 09:27:01 +0100 (CET)
+X-Auth-Info: 1+rO4lRmIIukx0YPZJNK1lgwjqcb6gvY5S0Z71gKMp8=
+Received: from localhost.localdomain (85-222-111-42.dynamic.chello.pl [85.222.111.42])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.mnet-online.de (Postfix) with ESMTPSA;
+        Wed,  9 Jan 2019 09:27:01 +0100 (CET)
+From:   Lukasz Majewski <lukma@denx.de>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Mark Rutland <mark.rutland@arm.com>, linux-spi@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Esben Haabendal <eha@deif.com>,
+        =?UTF-8?q?Martin=20Hundeb=C3=B8ll?= <martin@geanix.com>,
+        Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Lukasz Majewski <lukma@denx.de>
+Subject: [PATCH v5] ARM: dspi: Provide support for DSPI slave mode operation (Vybryd vf610)
+Date:   Wed,  9 Jan 2019 09:26:44 +0100
+Message-Id: <20190109082644.14941-1-lukma@denx.de>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20180927150709.17010-1-lukma@denx.de>
+References: <20180927150709.17010-1-lukma@denx.de>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 08, 2019 at 02:24:53PM -0500, Sasha Levin wrote:
-> From: Nikolaj Fogh <nikolajfogh@gmail.com>
-> 
-> [ Upstream commit 6abd837104a3a8e1cda64fc4d7675f6c3ece9d8b ]
-> 
-> Improve baud-rate generation by using rounding-to-closest instead of
-> truncation in divisor calculation.
-> 
-> Results have been verified by logic analyzer on an FT232RT (232BM) chip.
-> The following table shows the wanted baud rate, the baud rate obtained
-> with the old method (truncation), with the new method (rounding) and the
-> baud rate generated by the windows 10 driver. The numbers in parentheses
-> is the error.
-> 
-> +- Wanted --+------ Old -------+------ New -------+------ Win -------+
-> |    9600   |    9600 (0.00%)  |    9604 (0.05%)  |    9605 (0.05%)  |
-> |   19200   |   19200 (0.00%)  |   19199 (0.01%)  |   19198 (0.01%)  |
-> |   38400   |   38395 (0.01%)  |   38431 (0.08%)  |   38394 (0.02%)  |
-> |   57600   |   57725 (0.22%)  |   57540 (0.10%)  |   57673 (0.13%)  |
-> |  115200   |  115307 (0.09%)  |  115330 (0.11%)  |  115320 (0.10%)  |
-> |  921600   |  919963 (0.18%)  |  920386 (0.13%)  |  920810 (0.09%)  |
-> |  961200   |  996512 (3.67%)  |  956480 (0.49%)  |  956937 (0.44%)  |
-> +-----------+------------------+------------------+------------------+
-> 
-> The error due to noise in the measurements is in the order of a few
-> tenths of a %. As can be seen, the baud rate is significantly improved
-> for some rates (e.g. 961200), and corresponds to the output given by the
-> windows driver.
-> 
-> The theoretical baud rate has been calculated for all baud rates from 1
-> to 3M, and as expected, the error is centered around 0, with a triangle
-> shape instead of a sawtooth, so the maximum error is decreased to half.
-> 
-> Signed-off-by: Nikolaj Fogh <nikolajfogh@gmail.com>
-> [ johan: edit commit message slightly ]
-> Signed-off-by: Johan Hovold <johan@kernel.org>
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
+The NXP's Vybryd vf610 can work as a SPI slave device (the CS and clock
+signals are provided by master).
 
-The stable tag was left out on purpose for this one to avoid breaking
-working setups which may have compensated and adapted to this driver
-behaviour which has been there since the driver was merged ages ago.
+It is possible to specify a single device to work in that mode. As we do
+use DMA for transferring data, the RX channel must be prepared for
+incoming data.
+Moreover, in slave mode we just set a subset of control fields in
+configuration registers (CTAR0, PUSHR).
 
-Johan
+For testing the spidev_test program has been used.
+Test script for this patch can be found here:
+https://github.com/lmajewski/tests-spi/blob/master/tests/spi/spi_tests.sh
+
+Signed-off-by: Lukasz Majewski <lukma@denx.de>
+---
+Changes for v5:
+
+- Rebase to v5.0-rc1 (no code changes needed)
+
+Changes for v4:
+
+- Rebase to v4.20-rc5 (no code changes needed)
+
+Changes for v3:
+
+- Rebase to v4.20-rc2 (no code changes needed)
+
+Changes for v2:
+
+- Remove patch which adds extra NXP specific DTS property to support slave
+mode and reuse the generic one (spi-slave)
+- Remove patch which brings back the mcr_register local copy. It is not
+needed as generic SPI slave infrastructure is used.
+- Rewrite the code to use spi_controller_is_slave() helper functions
+---
+ drivers/spi/spi-fsl-dspi.c | 40 ++++++++++++++++++++++++++++++----------
+ 1 file changed, 30 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/spi/spi-fsl-dspi.c b/drivers/spi/spi-fsl-dspi.c
+index 5e10dc5c93a5..348682be9dd5 100644
+--- a/drivers/spi/spi-fsl-dspi.c
++++ b/drivers/spi/spi-fsl-dspi.c
+@@ -233,6 +233,9 @@ static u32 dspi_pop_tx_pushr(struct fsl_dspi *dspi)
+ {
+ 	u16 cmd = dspi->tx_cmd, data = dspi_pop_tx(dspi);
+ 
++	if (spi_controller_is_slave(dspi->master))
++		return data;
++
+ 	if (dspi->len > 0)
+ 		cmd |= SPI_PUSHR_CMD_CONT;
+ 	return cmd << 16 | data;
+@@ -329,6 +332,11 @@ static int dspi_next_xfer_dma_submit(struct fsl_dspi *dspi)
+ 	dma_async_issue_pending(dma->chan_rx);
+ 	dma_async_issue_pending(dma->chan_tx);
+ 
++	if (spi_controller_is_slave(dspi->master)) {
++		wait_for_completion_interruptible(&dspi->dma->cmd_rx_complete);
++		return 0;
++	}
++
+ 	time_left = wait_for_completion_timeout(&dspi->dma->cmd_tx_complete,
+ 					DMA_COMPLETION_TIMEOUT);
+ 	if (time_left == 0) {
+@@ -798,14 +806,18 @@ static int dspi_setup(struct spi_device *spi)
+ 	ns_delay_scale(&pasc, &asc, sck_cs_delay, clkrate);
+ 
+ 	chip->ctar_val = SPI_CTAR_CPOL(spi->mode & SPI_CPOL ? 1 : 0)
+-		| SPI_CTAR_CPHA(spi->mode & SPI_CPHA ? 1 : 0)
+-		| SPI_CTAR_LSBFE(spi->mode & SPI_LSB_FIRST ? 1 : 0)
+-		| SPI_CTAR_PCSSCK(pcssck)
+-		| SPI_CTAR_CSSCK(cssck)
+-		| SPI_CTAR_PASC(pasc)
+-		| SPI_CTAR_ASC(asc)
+-		| SPI_CTAR_PBR(pbr)
+-		| SPI_CTAR_BR(br);
++		| SPI_CTAR_CPHA(spi->mode & SPI_CPHA ? 1 : 0);
++
++	if (!spi_controller_is_slave(dspi->master)) {
++		chip->ctar_val |= SPI_CTAR_LSBFE(spi->mode &
++						 SPI_LSB_FIRST ? 1 : 0)
++			| SPI_CTAR_PCSSCK(pcssck)
++			| SPI_CTAR_CSSCK(cssck)
++			| SPI_CTAR_PASC(pasc)
++			| SPI_CTAR_ASC(asc)
++			| SPI_CTAR_PBR(pbr)
++			| SPI_CTAR_BR(br);
++	}
+ 
+ 	spi_set_ctldata(spi, chip);
+ 
+@@ -970,8 +982,13 @@ static const struct regmap_config dspi_xspi_regmap_config[] = {
+ 
+ static void dspi_init(struct fsl_dspi *dspi)
+ {
+-	regmap_write(dspi->regmap, SPI_MCR, SPI_MCR_MASTER | SPI_MCR_PCSIS |
+-		     (dspi->devtype_data->xspi_mode ? SPI_MCR_XSPI : 0));
++	unsigned int mcr = SPI_MCR_PCSIS |
++		(dspi->devtype_data->xspi_mode ? SPI_MCR_XSPI : 0);
++
++	if (!spi_controller_is_slave(dspi->master))
++		mcr |= SPI_MCR_MASTER;
++
++	regmap_write(dspi->regmap, SPI_MCR, mcr);
+ 	regmap_write(dspi->regmap, SPI_SR, SPI_SR_CLEAR);
+ 	if (dspi->devtype_data->xspi_mode)
+ 		regmap_write(dspi->regmap, SPI_CTARE(0),
+@@ -1027,6 +1044,9 @@ static int dspi_probe(struct platform_device *pdev)
+ 		}
+ 		master->bus_num = bus_num;
+ 
++		if (of_property_read_bool(np, "spi-slave"))
++			master->slave = true;
++
+ 		dspi->devtype_data = of_device_get_match_data(&pdev->dev);
+ 		if (!dspi->devtype_data) {
+ 			dev_err(&pdev->dev, "can't get devtype_data\n");
+-- 
+2.11.0
+
