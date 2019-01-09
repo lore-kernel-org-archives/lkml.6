@@ -2,84 +2,181 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E4E0C43444
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 14:42:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC7B4C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 14:42:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4FDE5206BA
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 14:42:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 926D7206BA
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 14:42:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731686AbfAIOmT (ORCPT
+        id S1731704AbfAIOmn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 09:42:19 -0500
-Received: from mx2.suse.de ([195.135.220.15]:35120 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731544AbfAIOmT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 09:42:19 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id D457EAD3C;
-        Wed,  9 Jan 2019 14:42:16 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 77B101E11E5; Wed,  9 Jan 2019 15:42:15 +0100 (CET)
-Date:   Wed, 9 Jan 2019 15:42:15 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Pankaj Gupta <pagupta@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        qemu-devel@nongnu.org, linux-nvdimm@ml01.01.org,
-        linux-fsdevel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        linux-acpi@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-xfs@vger.kernel.org, jack@suse.cz, stefanha@redhat.com,
-        dan.j.williams@intel.com, riel@surriel.com, nilal@redhat.com,
-        kwolf@redhat.com, pbonzini@redhat.com, zwisler@kernel.org,
-        vishal.l.verma@intel.com, dave.jiang@intel.com, david@redhat.com,
-        jmoyer@redhat.com, xiaoguangrong.eric@gmail.com, hch@infradead.org,
-        mst@redhat.com, jasowang@redhat.com, lcapitulino@redhat.com,
-        imammedo@redhat.com, eblake@redhat.com, willy@infradead.org,
-        tytso@mit.edu, adilger.kernel@dilger.ca, darrick.wong@oracle.com,
-        rjw@rjwysocki.net
-Subject: Re: [PATCH v3 4/5] ext4: disable map_sync for virtio pmem
-Message-ID: <20190109144215.GI15397@quack2.suse.cz>
-References: <20190109135606.15401-1-pagupta@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190109135606.15401-1-pagupta@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Wed, 9 Jan 2019 09:42:43 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:45595 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731479AbfAIOmm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 09:42:42 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 2057D2078E; Wed,  9 Jan 2019 15:42:40 +0100 (CET)
+Received: from aptenodytes (aaubervilliers-681-1-45-241.w90-88.abo.wanadoo.fr [90.88.163.241])
+        by mail.bootlin.com (Postfix) with ESMTPSA id ACCA1206A7;
+        Wed,  9 Jan 2019 15:42:29 +0100 (CET)
+Message-ID: <9b8098a9fde4f7645ffe2da263cee038dd823e69.camel@bootlin.com>
+Subject: Re: [PATCH 2/2] media: cedrus: Allow using the current dst buffer
+ as reference
+From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+To:     Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
+        devel@driverdev.osuosl.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Chen-Yu Tsai <wens@csie.org>, Randy Li <ayaka@soulik.info>,
+        Ezequiel Garcia <ezequiel@collabora.com>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Date:   Wed, 09 Jan 2019 15:42:29 +0100
+In-Reply-To: <9a624f6a-0c38-f2c9-3f2d-2758f9a19299@xs4all.nl>
+References: <20190109141920.12677-1-paul.kocialkowski@bootlin.com>
+         <20190109141920.12677-2-paul.kocialkowski@bootlin.com>
+         <9a624f6a-0c38-f2c9-3f2d-2758f9a19299@xs4all.nl>
+Organization: Bootlin
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.3 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 09-01-19 19:26:05, Pankaj Gupta wrote:
-> Virtio pmem provides asynchronous host page cache flush
-> mechanism. We don't support 'MAP_SYNC' with virtio pmem 
-> and ext4. 
+Hi,
+
+On Wed, 2019-01-09 at 15:29 +0100, Hans Verkuil wrote:
+> On 01/09/19 15:19, Paul Kocialkowski wrote:
+> > It was reported that some cases of interleaved video decoding require
+> > using the current destination buffer as a reference. However, this is
+> > no longer possible after the move to vb2_find_timestamp because only
+> > dequeued and done buffers are considered.
+> > 
+> > Add a helper in our driver that also considers the current destination
+> > buffer before resorting to vb2_find_timestamp and use it in MPEG-2.
 > 
-> Signed-off-by: Pankaj Gupta <pagupta@redhat.com>
-...
-> @@ -371,6 +373,13 @@ static int ext4_file_mmap(struct file *file, struct vm_area_struct *vma)
->  	if (!IS_DAX(file_inode(file)) && (vma->vm_flags & VM_SYNC))
->  		return -EOPNOTSUPP;
->  
-> +	/* We don't support synchronous mappings with guest direct access
-> +	 * and virtio based host page cache flush mechanism.
-> +	 */
-> +	if (IS_DAX(file_inode(file)) && virtio_pmem_host_cache_enabled(dax_dev)
-> +						&& (vma->vm_flags & VM_SYNC))
-> +		return -EOPNOTSUPP;
-> +
+> This patch looks good, but can you also add checks to handle the case
+> when no buffer with the given timestamp was found? Probably should be done
+> in a third patch.
+> 
+> I suspect the driver will crash if an unknown timestamp is passed on to the
+> driver. I would really like to see that corner case fixed.
 
-Shouldn't there rather be some generic way of doing this? Having
-virtio_pmem_host_cache_enabled() check in filesystem code just looks like
-filesystem sniffing into details is should not care about... Maybe just
-naming this (or having a wrapper) dax_dev_map_sync_supported()?
+You're totally right and I think that more generarlly, the current code
+flow is rather fragile whenever something wrong happens in our setup()
+codec op. I think we should at least have that op return an error code
+and properly deal with it when that occurs.
 
-								Honza
+I am planning on making a cleanup series to fix that.
+
+Before using timestamps, reference buffer index validation was done in
+std_validate and now it's fully up to the driver. I wonder if it would
+be feasible to bring something back in there since all stateless
+drivers will face the same issue. The conditions set in
+cedrus_reference_index_find seem generic enough for that, but we should
+check that std_validate is not called too early, when the queue is in a
+different state (and the buffer might not be dequeud or done yet).
+
+What do you think?
+
+Cheers,
+
+Paul
+
+> > Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+> > ---
+> >  drivers/staging/media/sunxi/cedrus/cedrus_dec.c   | 13 +++++++++++++
+> >  drivers/staging/media/sunxi/cedrus/cedrus_dec.h   |  2 ++
+> >  drivers/staging/media/sunxi/cedrus/cedrus_mpeg2.c | 10 ++++++----
+> >  3 files changed, 21 insertions(+), 4 deletions(-)
+> > 
+> > diff --git a/drivers/staging/media/sunxi/cedrus/cedrus_dec.c b/drivers/staging/media/sunxi/cedrus/cedrus_dec.c
+> > index 443fb037e1cf..2c295286766c 100644
+> > --- a/drivers/staging/media/sunxi/cedrus/cedrus_dec.c
+> > +++ b/drivers/staging/media/sunxi/cedrus/cedrus_dec.c
+> > @@ -22,6 +22,19 @@
+> >  #include "cedrus_dec.h"
+> >  #include "cedrus_hw.h"
+> >  
+> > +int cedrus_reference_index_find(struct vb2_queue *queue,
+> > +				struct vb2_buffer *vb2_buf, u64 timestamp)
+> > +{
+> > +	/*
+> > +	 * Allow using the current capture buffer as reference, which can occur
+> > +	 * for field-coded pictures.
+> > +	 */
+> > +	if (vb2_buf->timestamp == timestamp)
+> > +		return vb2_buf->index;
+> > +	else
+> > +		return vb2_find_timestamp(queue, timestamp, 0);
+> > +}
+> > +
+> >  void cedrus_device_run(void *priv)
+> >  {
+> >  	struct cedrus_ctx *ctx = priv;
+> > diff --git a/drivers/staging/media/sunxi/cedrus/cedrus_dec.h b/drivers/staging/media/sunxi/cedrus/cedrus_dec.h
+> > index d1ae7903677b..8d0fc248220f 100644
+> > --- a/drivers/staging/media/sunxi/cedrus/cedrus_dec.h
+> > +++ b/drivers/staging/media/sunxi/cedrus/cedrus_dec.h
+> > @@ -16,6 +16,8 @@
+> >  #ifndef _CEDRUS_DEC_H_
+> >  #define _CEDRUS_DEC_H_
+> >  
+> > +int cedrus_reference_index_find(struct vb2_queue *queue,
+> > +				struct vb2_buffer *vb2_buf, u64 timestamp);
+> >  void cedrus_device_run(void *priv);
+> >  
+> >  #endif
+> > diff --git a/drivers/staging/media/sunxi/cedrus/cedrus_mpeg2.c b/drivers/staging/media/sunxi/cedrus/cedrus_mpeg2.c
+> > index cb45fda9aaeb..81c66a8aa1ac 100644
+> > --- a/drivers/staging/media/sunxi/cedrus/cedrus_mpeg2.c
+> > +++ b/drivers/staging/media/sunxi/cedrus/cedrus_mpeg2.c
+> > @@ -10,6 +10,7 @@
+> >  #include <media/videobuf2-dma-contig.h>
+> >  
+> >  #include "cedrus.h"
+> > +#include "cedrus_dec.h"
+> >  #include "cedrus_hw.h"
+> >  #include "cedrus_regs.h"
+> >  
+> > @@ -159,8 +160,8 @@ static void cedrus_mpeg2_setup(struct cedrus_ctx *ctx, struct cedrus_run *run)
+> >  	cedrus_write(dev, VE_DEC_MPEG_PICBOUNDSIZE, reg);
+> >  
+> >  	/* Forward and backward prediction reference buffers. */
+> > -	forward_idx = vb2_find_timestamp(cap_q,
+> > -					 slice_params->forward_ref_ts, 0);
+> > +	forward_idx = cedrus_reference_index_find(cap_q, &run->dst->vb2_buf,
+> > +						  slice_params->forward_ref_ts);
+> >  
+> >  	fwd_luma_addr = cedrus_dst_buf_addr(ctx, forward_idx, 0);
+> >  	fwd_chroma_addr = cedrus_dst_buf_addr(ctx, forward_idx, 1);
+> > @@ -168,8 +169,9 @@ static void cedrus_mpeg2_setup(struct cedrus_ctx *ctx, struct cedrus_run *run)
+> >  	cedrus_write(dev, VE_DEC_MPEG_FWD_REF_LUMA_ADDR, fwd_luma_addr);
+> >  	cedrus_write(dev, VE_DEC_MPEG_FWD_REF_CHROMA_ADDR, fwd_chroma_addr);
+> >  
+> > -	backward_idx = vb2_find_timestamp(cap_q,
+> > -					  slice_params->backward_ref_ts, 0);
+> > +	backward_idx = cedrus_reference_index_find(cap_q, &run->dst->vb2_buf,
+> > +						   slice_params->backward_ref_ts);
+> > +
+> >  	bwd_luma_addr = cedrus_dst_buf_addr(ctx, backward_idx, 0);
+> >  	bwd_chroma_addr = cedrus_dst_buf_addr(ctx, backward_idx, 1);
+> >  
+> > 
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Paul Kocialkowski, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
+
