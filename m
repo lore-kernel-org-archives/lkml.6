@@ -2,229 +2,88 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84B8AC43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 07:29:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 080BCC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 07:33:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 52518214C6
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 07:29:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C634220883
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 07:33:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729714AbfAIH34 (ORCPT
+        id S1729699AbfAIHdV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 02:29:56 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:34866 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728041AbfAIH34 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 02:29:56 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 6B3D520262;
-        Wed,  9 Jan 2019 07:29:55 +0000 (UTC)
-Received: from jason-ThinkPad-T450s.redhat.com (ovpn-12-123.pek2.redhat.com [10.72.12.123])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 9B8691019632;
-        Wed,  9 Jan 2019 07:29:49 +0000 (UTC)
-From:   Jason Wang <jasowang@redhat.com>
-To:     mst@redhat.com, jasowang@redhat.com
-Cc:     kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jintack Lim <jintack@cs.columbia.edu>
-Subject: [PATCH net V2] vhost: log dirty page correctly
-Date:   Wed,  9 Jan 2019 15:29:47 +0800
-Message-Id: <20190109072947.23240-1-jasowang@redhat.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Wed, 09 Jan 2019 07:29:55 +0000 (UTC)
+        Wed, 9 Jan 2019 02:33:21 -0500
+Received: from asrmicro.com ([210.13.118.86]:59723 "EHLO spam.asrmicro.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729543AbfAIHdV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 02:33:21 -0500
+Received: from mail2012.asrmicro.com (mail2012.asrmicro.com [10.1.24.123])
+        by spam.asrmicro.com with ESMTP id x097WZZA008562;
+        Wed, 9 Jan 2019 15:32:35 +0800 (GMT-8)
+        (envelope-from yizeng@asrmicro.com)
+Received: from localhost (10.1.166.151) by mail2012.asrmicro.com (10.1.24.123)
+ with Microsoft SMTP Server (TLS) id 15.0.847.32; Wed, 9 Jan 2019 15:33:08
+ +0800
+From:   Yi Zeng <yizeng@asrmicro.com>
+To:     <wsa@the-dreams.de>, <linux-i2c@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     Yi Zeng <yizeng@asrmicro.com>
+Subject: [PATCH v3] i2c: dev: prevent adapter retries and timeout being set as minus value
+Date:   Wed, 9 Jan 2019 15:33:07 +0800
+Message-ID: <e0fba81c63e03b58e15143638f0cc42678d07c61.1547018829.git.yizeng@asrmicro.com>
+X-Mailer: git-send-email 1.9.1
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.1.166.151]
+X-ClientProxiedBy: mail2012.asrmicro.com (10.1.24.123) To
+ mail2012.asrmicro.com (10.1.24.123)
+X-DNSRBL: 
+X-MAIL: spam.asrmicro.com x097WZZA008562
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Vhost dirty page logging API is designed to sync through GPA. But we
-try to log GIOVA when device IOTLB is enabled. This is wrong and may
-lead to missing data after migration.
+If set adapter->retries to minus value from user space via ioctl,
+will make __i2c_transfer and __i2c_smbus_xfer jump the calling to
+adapter->algo->master_xfer and adapter->algo->smbus_xfer that
+registered by the underlying bus drivers, and return value 0 to
+all the callers. The bus driver will never be accessed anymore by
+all users, besides, the users may still get successful return value
+without any error or information log print out.
 
-To solve this issue, when logging with device IOTLB enabled, we will:
+If set adapter->timeout to minus value from user space via ioctl,
+will make the retrying loop in __i2c_transfer and __i2c_smbus_xfer
+always break after the the first try, due to the time_after always
+returns true.
 
-1) reuse the device IOTLB translation result of GIOVA->HVA mapping to
-   get HVA, for writable descriptor, get HVA through iovec. For used
-   ring update, translate its GIOVA to HVA
-2) traverse the GPA->HVA mapping to get the possible GPA and log
-   through GPA. Pay attention this reverse mapping is not guaranteed
-   to be unique, so we should log each possible GPA in this case.
-
-This fix the failure of scp to guest during migration. In -next, we
-will probably support passing GIOVA->GPA instead of GIOVA->HVA.
-
-Fixes: 6b1e6cc7855b ("vhost: new device IOTLB API")
-Reported-by: Jintack Lim <jintack@cs.columbia.edu>
-Cc: Jintack Lim <jintack@cs.columbia.edu>
-Signed-off-by: Jason Wang <jasowang@redhat.com>
+Signed-off-by: Yi Zeng <yizeng@asrmicro.com>
 ---
-The patch is needed for stable.
-Changes from V1:
-- return error instead of warn
----
- drivers/vhost/net.c   |  3 +-
- drivers/vhost/vhost.c | 82 +++++++++++++++++++++++++++++++++++--------
- drivers/vhost/vhost.h |  3 +-
- 3 files changed, 72 insertions(+), 16 deletions(-)
+ drivers/i2c/i2c-dev.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
-index 36f3d0f49e60..bca86bf7189f 100644
---- a/drivers/vhost/net.c
-+++ b/drivers/vhost/net.c
-@@ -1236,7 +1236,8 @@ static void handle_rx(struct vhost_net *net)
- 		if (nvq->done_idx > VHOST_NET_BATCH)
- 			vhost_net_signal_used(nvq);
- 		if (unlikely(vq_log))
--			vhost_log_write(vq, vq_log, log, vhost_len);
-+			vhost_log_write(vq, vq_log, log, vhost_len,
-+					vq->iov, in);
- 		total_len += vhost_len;
- 		if (unlikely(vhost_exceeds_weight(++recv_pkts, total_len))) {
- 			vhost_poll_queue(&vq->poll);
-diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
-index 9f7942cbcbb2..ee095f08ffd4 100644
---- a/drivers/vhost/vhost.c
-+++ b/drivers/vhost/vhost.c
-@@ -1733,11 +1733,70 @@ static int log_write(void __user *log_base,
- 	return r;
- }
- 
-+static int log_write_hva(struct vhost_virtqueue *vq, u64 hva, u64 len)
-+{
-+	struct vhost_umem *umem = vq->umem;
-+	struct vhost_umem_node *u;
-+	u64 gpa;
-+	int r;
-+	bool hit = false;
-+
-+	list_for_each_entry(u, &umem->umem_list, link) {
-+		if (u->userspace_addr < hva &&
-+		    u->userspace_addr + u->size >=
-+		    hva + len) {
-+			gpa = u->start + hva - u->userspace_addr;
-+			r = log_write(vq->log_base, gpa, len);
-+			if (r < 0)
-+				return r;
-+			hit = true;
-+		}
-+	}
-+
-+	if (!hit)
-+		return -EFAULT;
-+
-+	return 0;
-+}
-+
-+static int log_used(struct vhost_virtqueue *vq, u64 used_offset, u64 len)
-+{
-+	struct iovec iov[64];
-+	int i, ret;
-+
-+	if (!vq->iotlb)
-+		return log_write(vq->log_base, vq->log_addr + used_offset, len);
-+
-+	ret = translate_desc(vq, (u64)(uintptr_t)vq->used + used_offset,
-+			     len, iov, 64, VHOST_ACCESS_WO);
-+	if (ret)
-+		return ret;
-+
-+	for (i = 0; i < ret; i++) {
-+		ret = log_write_hva(vq,	(u64)(uintptr_t)iov[i].iov_base,
-+				    iov[i].iov_len);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	return 0;
-+}
-+
- int vhost_log_write(struct vhost_virtqueue *vq, struct vhost_log *log,
--		    unsigned int log_num, u64 len)
-+		    unsigned int log_num, u64 len, struct iovec *iov, int count)
- {
- 	int i, r;
- 
-+	if (vq->iotlb) {
-+		for (i = 0; i < count; i++) {
-+			r = log_write_hva(vq, (u64)(uintptr_t)iov[i].iov_base,
-+					  iov[i].iov_len);
-+			if (r < 0)
-+				return r;
-+		}
-+		return 0;
-+	}
-+
- 	/* Make sure data written is seen before log. */
- 	smp_wmb();
- 	for (i = 0; i < log_num; ++i) {
-@@ -1769,9 +1828,8 @@ static int vhost_update_used_flags(struct vhost_virtqueue *vq)
- 		smp_wmb();
- 		/* Log used flag write. */
- 		used = &vq->used->flags;
--		log_write(vq->log_base, vq->log_addr +
--			  (used - (void __user *)vq->used),
--			  sizeof vq->used->flags);
-+		log_used(vq, (used - (void __user *)vq->used),
-+			 sizeof vq->used->flags);
- 		if (vq->log_ctx)
- 			eventfd_signal(vq->log_ctx, 1);
+diff --git a/drivers/i2c/i2c-dev.c b/drivers/i2c/i2c-dev.c
+index 1aca742..ccd76c7 100644
+--- a/drivers/i2c/i2c-dev.c
++++ b/drivers/i2c/i2c-dev.c
+@@ -470,9 +470,15 @@ static long i2cdev_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+ 					  data_arg.data);
  	}
-@@ -1789,9 +1847,8 @@ static int vhost_update_avail_event(struct vhost_virtqueue *vq, u16 avail_event)
- 		smp_wmb();
- 		/* Log avail event write */
- 		used = vhost_avail_event(vq);
--		log_write(vq->log_base, vq->log_addr +
--			  (used - (void __user *)vq->used),
--			  sizeof *vhost_avail_event(vq));
-+		log_used(vq, (used - (void __user *)vq->used),
-+			 sizeof *vhost_avail_event(vq));
- 		if (vq->log_ctx)
- 			eventfd_signal(vq->log_ctx, 1);
- 	}
-@@ -2191,10 +2248,8 @@ static int __vhost_add_used_n(struct vhost_virtqueue *vq,
- 		/* Make sure data is seen before log. */
- 		smp_wmb();
- 		/* Log used ring entry write. */
--		log_write(vq->log_base,
--			  vq->log_addr +
--			   ((void __user *)used - (void __user *)vq->used),
--			  count * sizeof *used);
-+		log_used(vq, ((void __user *)used - (void __user *)vq->used),
-+			 count * sizeof *used);
- 	}
- 	old = vq->last_used_idx;
- 	new = (vq->last_used_idx += count);
-@@ -2236,9 +2291,8 @@ int vhost_add_used_n(struct vhost_virtqueue *vq, struct vring_used_elem *heads,
- 		/* Make sure used idx is seen before log. */
- 		smp_wmb();
- 		/* Log used index update. */
--		log_write(vq->log_base,
--			  vq->log_addr + offsetof(struct vring_used, idx),
--			  sizeof vq->used->idx);
-+		log_used(vq, offsetof(struct vring_used, idx),
-+			 sizeof vq->used->idx);
- 		if (vq->log_ctx)
- 			eventfd_signal(vq->log_ctx, 1);
- 	}
-diff --git a/drivers/vhost/vhost.h b/drivers/vhost/vhost.h
-index 466ef7542291..1b675dad5e05 100644
---- a/drivers/vhost/vhost.h
-+++ b/drivers/vhost/vhost.h
-@@ -205,7 +205,8 @@ bool vhost_vq_avail_empty(struct vhost_dev *, struct vhost_virtqueue *);
- bool vhost_enable_notify(struct vhost_dev *, struct vhost_virtqueue *);
- 
- int vhost_log_write(struct vhost_virtqueue *vq, struct vhost_log *log,
--		    unsigned int log_num, u64 len);
-+		    unsigned int log_num, u64 len,
-+		    struct iovec *iov, int count);
- int vq_iotlb_prefetch(struct vhost_virtqueue *vq);
- 
- struct vhost_msg_node *vhost_new_msg(struct vhost_virtqueue *vq, int type);
+ 	case I2C_RETRIES:
++		if (arg > INT_MAX)
++			return -EINVAL;
++
+ 		client->adapter->retries = arg;
+ 		break;
+ 	case I2C_TIMEOUT:
++		if (arg > INT_MAX)
++			return -EINVAL;
++
+ 		/* For historical reasons, user-space sets the timeout
+ 		 * value in units of 10 ms.
+ 		 */
 -- 
-2.17.1
+1.9.1
 
