@@ -2,215 +2,144 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D57BC43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 20:13:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57C5FC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 20:14:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C6F6E214C6
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 20:13:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547064782;
-	bh=yLxA54+SzTazQno8DRTm2daLFbJhSCUi/LtuO/M+wlM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=xOBx3N/L6wC0dze7d+PjaU3E+c/XzksOCiWyao/gL0EKDrrnXwJtiQWc8v74VClAe
-	 dSIBh5yycJPjhMqOf0iCY1zn7QJHeEET38dS/hNW8YzcjDAWrtISni61YlSuBhAWh8
-	 eIi4m6ei4kHB934aTXb97S1AFrSGUm5TeXX6CWJY=
+	by mail.kernel.org (Postfix) with ESMTP id 1A02820859
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 20:14:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726553AbfAIUNB (ORCPT
+        id S1726583AbfAIUOn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 15:13:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48490 "EHLO mail.kernel.org"
+        Wed, 9 Jan 2019 15:14:43 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:43558 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726490AbfAIUNB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 15:13:01 -0500
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1726094AbfAIUOm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 15:14:42 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 636D9217F9
-        for <linux-kernel@vger.kernel.org>; Wed,  9 Jan 2019 20:12:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547064779;
-        bh=yLxA54+SzTazQno8DRTm2daLFbJhSCUi/LtuO/M+wlM=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=1OSQ+zB3+U2/akhIt8yiXoM+dDWy2PhECfyQ5mo6n9Tt1xQf4hSlZQ9YGpjPwHujl
-         upLh8hv1q7avPrB8Sbkibxx4nWFsg/4y+Z64H/9psB9Xhp6KvRBPKiqc6MG1ZIxEWi
-         VpoEHwtLK3XbVdaPzy1RDhzyCtPDc+C2H+A6/w8E=
-Received: by mail-wm1-f53.google.com with SMTP id m22so9734704wml.3
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jan 2019 12:12:59 -0800 (PST)
-X-Gm-Message-State: AJcUukd9Dvwhu0zSISfxCoyPWepG9qdLCwVaP8V6RYKp4CVUtqlKvn8I
-        68qiuf9iwaBujBMvV3XvqLqPOHHgQLeToKSVyZ66Vg==
-X-Google-Smtp-Source: ALg8bN5WFXublNjjA7UxiNLJUGJSG3kHjVnjvi5UsEueUIQRzOC5oidEzcdGP6qnRyPkrygafH6Ie7O6rMdHWUH9RYU=
-X-Received: by 2002:a7b:c7c7:: with SMTP id z7mr7515876wmk.74.1547064777701;
- Wed, 09 Jan 2019 12:12:57 -0800 (PST)
+        by mx1.redhat.com (Postfix) with ESMTPS id BEE00653C2;
+        Wed,  9 Jan 2019 20:14:40 +0000 (UTC)
+Received: from llong.remote.csb (dhcp-17-223.bos.redhat.com [10.18.17.223])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 35E155C5DF;
+        Wed,  9 Jan 2019 20:14:39 +0000 (UTC)
+Subject: Re: [PATCH v2 0/4] /proc/stat: Reduce irqs counting performance
+ overhead
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Daniel Colascione <dancol@google.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Randy Dunlap <rdunlap@infradead.org>
+References: <1547054628-12703-1-git-send-email-longman@redhat.com>
+ <20190109174403.GN6310@bombadil.infradead.org>
+ <f6302369-9eda-ef58-4f18-3dc9ffbc31f1@redhat.com>
+ <20190109182417.GO6310@bombadil.infradead.org>
+ <f0ae7bd8-5c5b-aefd-aff8-2719fc0edbaa@redhat.com>
+ <3f44cc18-4dd8-e313-26b9-1502b0b40507@redhat.com>
+ <20190109195944.GQ6310@bombadil.infradead.org>
+From:   Waiman Long <longman@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=longman@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ weim8xU=
+Organization: Red Hat
+Message-ID: <492604fe-a7d6-fdfe-6a8b-77423a739644@redhat.com>
+Date:   Wed, 9 Jan 2019 15:14:38 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <20190103143227.9138-1-jlee@suse.com> <4499700.LRS4F2YjjC@tauon.chronox.de>
- <20190108050358.llsox32hggn2jioe@gondor.apana.org.au> <1565399.7ulKdI1fm5@tauon.chronox.de>
- <D70458DE-712B-4767-8143-7DC9107689C3@amacapital.net> <1546994671.6077.10.camel@HansenPartnership.com>
- <CALCETrWTAYpWv73MgAz=NUfvJSLq965fWMYvJnDepJoRBsgt6Q@mail.gmail.com>
- <1547016579.2789.17.camel@HansenPartnership.com> <CALCETrWoSAf4hHCXvqVZhQ5YAMBaZzaBCfnb6sC8JPrSs6FRog@mail.gmail.com>
- <1547063189.2879.47.camel@HansenPartnership.com>
-In-Reply-To: <1547063189.2879.47.camel@HansenPartnership.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Wed, 9 Jan 2019 12:12:46 -0800
-X-Gmail-Original-Message-ID: <CALCETrWKUTKp1tO00fPcbtm5vu2b4CHJQ6XcmkrWJY9P1h+mzA@mail.gmail.com>
-Message-ID: <CALCETrWKUTKp1tO00fPcbtm5vu2b4CHJQ6XcmkrWJY9P1h+mzA@mail.gmail.com>
-Subject: Re: [PATCH 1/5 v2] PM / hibernate: Create snapshot keys handler
-To:     James Bottomley <James.Bottomley@hansenpartnership.com>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Stephan Mueller <smueller@chronox.de>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "Lee, Chun-Yi" <joeyli.kernel@gmail.com>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Pavel Machek <pavel@ucw.cz>,
-        LKML <linux-kernel@vger.kernel.org>, linux-pm@vger.kernel.org,
-        keyrings@vger.kernel.org,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Chen Yu <yu.c.chen@intel.com>,
-        Oliver Neukum <oneukum@suse.com>,
-        Ryan Chen <yu.chen.surf@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Giovanni Gherdovich <ggherdovich@suse.cz>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Jann Horn <jannh@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20190109195944.GQ6310@bombadil.infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Wed, 09 Jan 2019 20:14:41 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 9, 2019 at 11:46 AM James Bottomley
-<James.Bottomley@hansenpartnership.com> wrote:
+On 01/09/2019 02:59 PM, Matthew Wilcox wrote:
+> On Wed, Jan 09, 2019 at 01:54:36PM -0500, Waiman Long wrote:
+>> If you read patch 4, you can see that quite a bit of CPU cycles was
+>> spent looking up the radix tree to locate the IRQ descriptor for each of
+>> the interrupts. Those overhead will still be there even if I use percpu
+>> counters. So using percpu counter alone won't be as performant as this
+>> patch or my previous v1 patch.
+> Hm, if that's the overhead, then the radix tree (and the XArray) have
+> APIs that can reduce that overhead.  Right now, there's only one caller
+> of kstat_irqs_usr() (the proc code).  If we change that to fill an array
+> instead of returning a single value, it can look something like this:
 >
-> On Wed, 2019-01-09 at 10:34 -0800, Andy Lutomirski wrote:
-> > > > On Jan 8, 2019, at 10:49 PM, James Bottomley <James.Bottomley@han
-> > > > senpartnership.com> wrote:
-> > > >
-
-> >   If so, then a signature that the kernel would have prevented user
-> > code from generating is de facto an attestation that the kernel
-> > generated it (or that the kernel was compromised, which is sort of
-> > equivalent).
+> void kstat_irqs_usr(unsigned int *sums)
+> {
+> 	XA_STATE(xas, &irq_descs, 0);
+> 	struct irq_desc *desc;
 >
-> The TPM's idea of this is it polices by authorization.  Now one of the
-> things we can do here is add what's called locality based
-> authorization.  we have three non-uefi localities to play with and we
-> could enforce walling one off for the kernel only to use, so a kernel
-> key could come with a policy requiring use of the kernel locality for
-> use of the key.  That would give you an effective guarantee that only
-> the kernel could use this key.  Note the enforcement of locality would
-> require a key policy, which is easy for TPM 1.2, but requires the use
-> of a policy session for TPM 2.0 which means we'd have to improve our
-> policy session handling.
-
-Hmm.  On an *extremely* brief reading of what "locality" means, this
-seems entirely sensible.
-
-> >
-> > I=E2=80=99m not sure I follow. Here are the two properties I=E2=80=99d =
-like to see:
-> >
-> > 1. If you have an encrypted hibernation image, the only thing you
-> > should be able to do with it is to restore it. So only an actual
-> > Linux kernel in hibernation restore mode ought to be able to restore
-> > it.  We get this if the image can only be read with appropriate PCRs
-> > and then only by the kernel.  This way, you can=E2=80=99t just read out
-> > secrets from the image if you steal a laptop =E2=80=94 you have to actu=
-ally
-> > boot the thing.
+> 	xas_for_each(&xas, desc, ULONG_MAX) {
+> 		unsigned int sum = 0;
 >
-> Right, this we can do and if you use a TPM sealed encryption key, you
-> can guarantee the image will only restore on the same physical system.
-> You don't need PCRs for this, just the TPM and the locality
-> enforcement.
+> 		if (!desc->kstat_irqs)
+> 			continue;
+> 		for_each_possible_cpu(cpu)
+> 			sum += *per_cpu_ptr(desc->kstat_irqs, cpu);
 >
-> Note if someone has your laptop and the ability to boot their own
-> kernels, they could always corrupt the kernel into decrypting the image
-> or giving you the unsealed key, but there's no real way of preventing
-> that even with PCR sealing or lockdown, so the basis for the threat
-> model is very much my laptop in my possession running my kernel.
+> 		sums[xas->xa_index] = sum;
+> 	}
+> }
 
-I'm not entirely sure I agree.  With a TPM-aware bootloader, it really
-ought to be possible to seal to PCRs such that a corrupted kernel
-can't restore the image.  Obviously a *compromised* but otherwise
-valid kernel will be able to restore the image.
+OK, I will try something like that as a replacement of patch 4 to see
+how it compares with my current patch.
 
-But this is all barking up the wrong tree.  If you want your laptop to
-resist physical theft such that whoever stole it can boot it but can't
-directly extract any data, you want to use dm-crypt (or, haha, OPAL,
-but I just read a paper about some people who evaluated a bunch of
-drives and had a very hard time finding one that actually implemented
-OPAL in a usefully secure manner).  A LUKS replacement or wrapper that
-does something intelligent with the TPM would be great.  This kind of
-thing IMO does not belong in hibernation.
+Thanks,
+Longman
 
-IOW, I think we do get about as much as we would want if we just seal
-with a locality that only allows kernel use and ignore PCRs entirely.
-This makes it so that you need the ability to run ring 0 code to
-decrypt the image, which means that we get all the nice lockdown
-properties.
-
->
-> > 2. You shouldn=E2=80=99t be able to create an intentionally corrupt ima=
-ge
-> > that pwns you when you restore it unless you have already pwned the
-> > kernel.
->
-> So here there's a problem: the policy stated above governs key *use*
-> not key creation, so anyone can create a key that has a locality
-> restriction.  The way to guarantee that the key was created by
-> something that has access to the locality is to have a parent key with
-> a locality use policy (key creation requires parent key use
-> authorization).  Which means every system would have to create a
-> persistent parent key for the kernel to use (the kernel could do this
-> and it could be made NV resident for persistence, so it's not
-> impossible, just complicated).
-
-Why does anything here need to be persistent?  The kernel could create
-a locality-restricted key on the fly, use it to sign and/or seal the
-hibernation image, and write the wrapped key blob into the hibernation
-image.
-
- > I suppose that a good summary of my opinion is that there is no point
-> > to kernel support for encrypted hibernation images until lockdown is
-> > upstream.
->
-> I really don't think lockdown helps.  If we implement locality
-> isolation for the kernels use of keys, a properly functioning kernel
-> isn't going to be tricked into releasing one of its keys to userspace.
-> A buggy kernel might be exploited to cause it to give one up but that
-> would happen irrespective of lockdown and, of course, all bets are off
-> if the attacker can boot their own kernel.
->
-
-I'm not saying that lockdown helps.  I'm saying that encrypting the
-hibernation image in the kernel may be pointless until the kernel
-supports lockdown.  If we don't support lockdown, then user code can
-encrypt the hibernation image all by itself.  The code will be easier
-to understand, more flexible, and won't require a kernel upgrade :)
-
-Honestly, no one should be using resume=3D anyway.  Any distro with
-hibernation support worth its salt should support having the
-hibernation image on a dm-crypt volume, in which case it *must*
-support userspace-driven resume.  Of course, my laptop that's been
-upgraded through many Fedora revisions doesn't survive a
-hibernate/resume cycle, but that's not the kernel's fault.
-
---Andy
-
-P.S. One thing I do want to try is encrypted *swap*.  The keying for
-that is trivial -- the kernel can just make a key, store it in
-ordinary kernel memory, and use it to encrypt and decrypt swap pages
-as needed.  Getting replay protection or authentication may be tricky
-due to the need for metadata, but plain old AES-XTS or
-HPolyChaChaNotSpeckAnymore would be entirely straightforward and would
-get 90% of the benefit.  Sure, swap could live on dm-crypt too, but
-that's an administration mess, and offering a strong and cheap
-alternative to mlock() for crypto programs to protect their secrets
-would be fantastic and encrypted swap plus some API to verify that
-anonymous memory is, in fact, backed by encrypted swap would do the
-job.
