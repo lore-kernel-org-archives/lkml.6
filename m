@@ -2,77 +2,62 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 642EFC43444
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 11:16:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B103DC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 11:16:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B93A21783
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 11:16:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8AC0C21783
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 11:16:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730774AbfAILQN (ORCPT
+        id S1730801AbfAILQa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 06:16:13 -0500
-Received: from outbound-smtp26.blacknight.com ([81.17.249.194]:42469 "EHLO
-        outbound-smtp26.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730111AbfAILQM (ORCPT
+        Wed, 9 Jan 2019 06:16:30 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:33291 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730111AbfAILQa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 06:16:12 -0500
-Received: from mail.blacknight.com (pemlinmail03.blacknight.ie [81.17.254.16])
-        by outbound-smtp26.blacknight.com (Postfix) with ESMTPS id 12906B89F4
-        for <linux-kernel@vger.kernel.org>; Wed,  9 Jan 2019 11:16:11 +0000 (GMT)
-Received: (qmail 12389 invoked from network); 9 Jan 2019 11:16:11 -0000
-Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[37.228.229.96])
-  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 9 Jan 2019 11:16:10 -0000
-Date:   Wed, 9 Jan 2019 11:16:09 +0000
-From:   Mel Gorman <mgorman@techsingularity.net>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     David Rientjes <rientjes@google.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Vlastimil Babka <vbabka@suse.cz>, ying.huang@intel.com,
-        Dan Carpenter <dan.carpenter@oracle.com>, kirill@shutemov.name,
-        Linux-MM <linux-mm@kvack.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
-Subject: [PATCH] mm, compaction: Round-robin the order while searching the
- free lists for a target -fix
-Message-ID: <20190109111609.GW31517@techsingularity.net>
-References: <20190104125011.16071-1-mgorman@techsingularity.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Disposition: inline
-In-Reply-To: <20190104125011.16071-1-mgorman@techsingularity.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Wed, 9 Jan 2019 06:16:30 -0500
+Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
+        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
+        (envelope-from <p.zabel@pengutronix.de>)
+        id 1ghBqV-0003Xf-F1; Wed, 09 Jan 2019 12:16:27 +0100
+Message-ID: <1547032586.4160.3.camel@pengutronix.de>
+Subject: Re: [PATCH v6 12/12] media: imx.rst: Update doc to reflect fixes to
+ interlaced capture
+From:   Philipp Zabel <p.zabel@pengutronix.de>
+To:     Steve Longerbeam <slongerbeam@gmail.com>,
+        linux-media@vger.kernel.org
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Date:   Wed, 09 Jan 2019 12:16:26 +0100
+In-Reply-To: <20190109001551.16113-13-slongerbeam@gmail.com>
+References: <20190109001551.16113-1-slongerbeam@gmail.com>
+         <20190109001551.16113-13-slongerbeam@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dan Carpenter reported the following static checker warning:
+On Tue, 2019-01-08 at 16:15 -0800, Steve Longerbeam wrote:
+> Also add an example pipeline for unconverted capture with interweave
+> on SabreAuto.
+> 
+> Cleanup some language in various places in the process.
+> 
+> Signed-off-by: Steve Longerbeam <slongerbeam@gmail.com>
 
-        mm/compaction.c:1252 next_search_order()
-        warn: impossible condition '(cc->search_order < 0) => (0-u16max < 0)'
+Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
 
-While a negative order never makes sense, the control flow is
-easier if search_order is signed. This is a fix to the mmotm patch
-broken-out/mm-compaction-round-robin-the-order-while-searching-the-free-lists-for-a-target.patch
-
-Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
----
- mm/internal.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/mm/internal.h b/mm/internal.h
-index d028abd8a8f3..e74dbc257550 100644
---- a/mm/internal.h
-+++ b/mm/internal.h
-@@ -192,7 +192,7 @@ struct compact_control {
- 	unsigned long total_migrate_scanned;
- 	unsigned long total_free_scanned;
- 	unsigned short fast_search_fail;/* failures to use free list searches */
--	unsigned short search_order;	/* order to start a fast search at */
-+	short search_order;		/* order to start a fast search at */
- 	const gfp_t gfp_mask;		/* gfp mask of a direct compactor */
- 	int order;			/* order a direct compactor needs */
- 	int migratetype;		/* migratetype of direct compactor */
+regards
+Philipp
