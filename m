@@ -2,153 +2,213 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D444DC43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 20:52:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FE99C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 20:53:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A5D3721738
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 20:52:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EE906206B7
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 20:53:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=lca.pw header.i=@lca.pw header.b="Z2/k9DsO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727304AbfAIUwB (ORCPT
+        id S1727393AbfAIUxv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 15:52:01 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:34904 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726907AbfAIUwB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 15:52:01 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 4102381F0E;
-        Wed,  9 Jan 2019 20:52:00 +0000 (UTC)
-Received: from sirius.home.kraxel.org (ovpn-116-203.ams2.redhat.com [10.36.116.203])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 853875C57A;
-        Wed,  9 Jan 2019 20:51:59 +0000 (UTC)
-Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id BA42016E03; Wed,  9 Jan 2019 21:51:58 +0100 (CET)
-Date:   Wed, 9 Jan 2019 21:51:58 +0100
-From:   Gerd Hoffmann <kraxel@redhat.com>
-To:     Daniel Vetter <daniel@ffwll.ch>
-Cc:     dri-devel <dri-devel@lists.freedesktop.org>,
-        David Airlie <airlied@redhat.com>,
-        Oleksandr Andrushchenko <andr2000@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:DRM DRIVER FOR BOCHS VIRTUAL GPU" 
-        <virtualization@lists.linux-foundation.org>
-Subject: Re: [PATCH v2 15/15] drm/bochs: reserve bo for pin/unpin
-Message-ID: <20190109205158.qx7a2gfyprbvpok5@sirius.home.kraxel.org>
-References: <20190108112519.27473-1-kraxel@redhat.com>
- <20190108112519.27473-16-kraxel@redhat.com>
- <20190109101044.GS21184@phenom.ffwll.local>
- <20190109145443.l5yus2pgvxcl4zbt@sirius.home.kraxel.org>
- <CAKMK7uG0HCNso9rE9TivP2cVKMD1rNPC2wJH_+yu+CWGEh9XdQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKMK7uG0HCNso9rE9TivP2cVKMD1rNPC2wJH_+yu+CWGEh9XdQ@mail.gmail.com>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Wed, 09 Jan 2019 20:52:00 +0000 (UTC)
+        Wed, 9 Jan 2019 15:53:51 -0500
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:41597 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727306AbfAIUxu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 15:53:50 -0500
+Received: by mail-qt1-f194.google.com with SMTP id l12so9896012qtf.8
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Jan 2019 12:53:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lca.pw; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=HAWmnH5gA+NdcK3Sd3H+huaAiUs74EbVnEGzvD4+3Bs=;
+        b=Z2/k9DsOoS/Gw2DPIEhm1wDTy1rgW/FvVXHccPy2MYhWbWDE4gSNheaLML6ssWEdAj
+         W8UJQlKTmk+5OWWx0DEQQtzd/dLjRsjTjCat2Mn/kEEV52rS9xW1uiSXryF2dbtn6OUt
+         x56ydBZXzzgBiYYYID6paXu8L1+VMntvwFvwKujRBEoHH2I0enPPrKRaPTCy/VR18WvL
+         kS50r79lZ19d9yw9x5RsxN1bX2k4VQlqU34SYMOFTqn2xGpSCFTr3WbYPrmxcUA5NqQh
+         VgSaBD4M+aVjos18Plh7wcxv8VbbC0qme7N83BYbvho9opjnCQTOED61b9DfRHcJC8Ah
+         9y5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=HAWmnH5gA+NdcK3Sd3H+huaAiUs74EbVnEGzvD4+3Bs=;
+        b=EjFY1VMOwb8Yz13sKtoQxJIgNtDTxPQ9i2yKEvKmNfVhAixLzelaZcE855Knw47w2c
+         7H8VQve24PQ5FkHPwxZ3D/q4jZPuyMIX/TYdHOS+3UcI1GILMn0sSyzKh4ig5R6lO8yJ
+         MtTQk4pM77hk8TNnWq1lnUHpjeVuG2Kpg91CHHvHACG/qdXZ3qvxyz1XmFF4kkEsNhGT
+         y9ODcOhHYUnxx0KMweOknpqt0BIlOK8q3A0/yxal0WDU6e30676vvSPx/NtoTGsEQOXn
+         Tx6jUbLKTw+DP0/z4cBYTdXtBFfBJ+VOIvHHPY2jYlbqQl/u50lq4bcJb+WmwwafNK21
+         iQEQ==
+X-Gm-Message-State: AJcUukdeQKw9e2Z00WX+co0PJpH/EKNdFHpNSXXLGtOeVFObYAexaZkR
+        IYxOHEeuGKU9/UQTC+D+dNVsuQ==
+X-Google-Smtp-Source: ALg8bN4hKl24QV6BdY6fbK82M6QcD+uEDB5+RK6C+l9TfhWf/VAiBTr5HpAazhaMt22huNfaP21C4A==
+X-Received: by 2002:a0c:bf0d:: with SMTP id m13mr7195542qvi.139.1547067229040;
+        Wed, 09 Jan 2019 12:53:49 -0800 (PST)
+Received: from ovpn-120-55.rdu2.redhat.com (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
+        by smtp.gmail.com with ESMTPSA id b20sm43286725qkb.17.2019.01.09.12.53.48
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 09 Jan 2019 12:53:48 -0800 (PST)
+From:   Qian Cai <cai@lca.pw>
+To:     darrick.wong@oracle.com
+Cc:     dchinner@redhat.com, peterz@infradead.org, bfoster@redhat.com,
+        hch@lst.de, linux-xfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Qian Cai <cai@lca.pw>
+Subject: [PATCH] xfs: silence lockdep false positives when freezing
+Date:   Wed,  9 Jan 2019 15:53:29 -0500
+Message-Id: <20190109205329.2486-1-cai@lca.pw>
+X-Mailer: git-send-email 2.17.2 (Apple Git-113)
+In-Reply-To: <20190106225639.GU4205@dastard>
+References: <20190106225639.GU4205@dastard>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-  Hi,
+Easy to reproduce:
 
-> > If I understand things correctly it is valid to set all import/export
-> > callbacks (prime_handle_to_fd, prime_fd_to_handle,
-> > gem_prime_get_sg_table, gem_prime_import_sg_table) to NULL when not
-> > supporting dma-buf import/export and still advertise DRIVER_PRIME to
-> > indicate the other prime callbacks are supported (so generic fbdev
-> > emulation can use gem_prime_vmap etc).  Is that correct?
-> 
-> I'm not sure how much that's a good idea ... Never thought about it
-> tbh. All the fbdev/dma-buf stuff has plenty of hacks and
-> inconsistencies still, so I guess we can't make it much worse really.
+1. run LTP oom02 workload to let kswapd acquire this locking order:
+   fs_reclaim -> sb_internal.
 
-Setting prime_handle_to_fd + prime_fd_to_handle to NULL has the effect
-that drm stops advertising DRM_PRIME_CAP_{IMPORT,EXPORT} to userspace.
+ # grep -i fs_reclaim -C 3 /proc/lockdep_chains | grep -C 5 sb_internal
+[00000000826b9172] &type->s_umount_key#27
+[000000005fa8b2ac] sb_pagefaults
+[0000000033f1247e] sb_internal
+[000000009e9a9664] fs_reclaim
 
-Which looks better to me than telling userspace we support it then throw
-errors unconditionally when userspace tries to use that.
+2. freeze XFS.
+  # fsfreeze -f /home
 
-> > Is it possible to export TTM_PL_VRAM objects (with backing storage being
-> > a pci memory bar)?  If so, how?
-> 
-> Not really in general. amdgpu upcasts to amdgpu_bo (if it's amgpu BO)
-> and then knows the internals so it can do a proper pci peer2peer
-> mapping. Or at least there's been lots of patches floating around to
-> make that happen.
+Dave mentioned that this is due to a lockdep limitation - "IOWs, this is
+a false positive, caused by the fact that xfs_trans_alloc() is called
+from both above and below memory reclaim as well as within /every level/
+of freeze processing. Lockdep is unable to describe the staged flush
+logic in the freeze process that prevents deadlocks from occurring, and
+hence we will pretty much always see false positives in the freeze
+path....". Hence, just temporarily disable lockdep in that path.
 
-That is limited to bo sharing between two amdgpu devices, correct?
+======================================================
+WARNING: possible circular locking dependency detected
+5.0.0-rc1+ #60 Tainted: G        W
+------------------------------------------------------
+fsfreeze/4346 is trying to acquire lock:
+0000000026f1d784 (fs_reclaim){+.+.}, at: fs_reclaim_acquire.part.19+0x5/0x30
 
-> I think other drivers migrate the bo out of VRAM.
+but task is already holding lock:
+0000000072bfc54b (sb_internal){++++}, at: percpu_down_write+0xb4/0x650
 
-Well, that doesn't look too useful.  bochs and qxl virtual hardware
-can't access buffers outside VRAM.  So, while I could migrate the
-buffers to RAM (via memcpy) when exporting they would at the same time
-become unusable for the GPU ...
+which lock already depends on the new lock.
 
-> > On importing:
-> >
-> > Importing into TTM_PL_TT object looks easy again, at least when the
-> > object is actually stored in RAM.  What if not?
-> 
-> They are all supposed to be stored in RAM. Note that all current ttm
-> importers totally break the abstraction, by taking the sg list,
-> throwing the dma mapping away and assuming there's a struct page
-> backing it. Would be good if we could stop spreading that abuse - the
-> dma-buf interfaces have been modelled after the ttm bo interfaces, so
-> shouldn't be too hard to wire this up correctly.
+the existing dependency chain (in reverse order) is:
 
-Ok.  With virtio-gpu (where objects are backed by RAM pages anyway)
-wiring this up should be easy.
+-> #1 (sb_internal){++++}:
+       __lock_acquire+0x728/0x1200
+       lock_acquire+0x269/0x5a0
+       __sb_start_write+0x17f/0x260
+       xfs_trans_alloc+0x62b/0x9d0
+       xfs_setfilesize_trans_alloc+0xd4/0x360
+       xfs_submit_ioend+0x4af/0xa40
+       xfs_vm_writepage+0x10f/0x180
+       pageout.isra.2+0xbf2/0x26b0
+       shrink_page_list+0x3e16/0xae70
+       shrink_inactive_list+0x64f/0x1cd0
+       shrink_node_memcg+0x80a/0x2490
+       shrink_node+0x33d/0x13e0
+       balance_pgdat+0xa8f/0x18b0
+       kswapd+0x881/0x1120
+       kthread+0x32c/0x3f0
+       ret_from_fork+0x27/0x50
 
-But given there is no correct sample code I can look at it would be cool
-if you could give some more hints how this is supposed to work.  The
-gem_prime_import_sg_table() callback gets a sg list passed in after all,
-so I probably would have tried to take the sg list too ...
+-> #0 (fs_reclaim){+.+.}:
+       validate_chain.isra.14+0x11af/0x3b50
+       __lock_acquire+0x728/0x1200
+       lock_acquire+0x269/0x5a0
+       fs_reclaim_acquire.part.19+0x29/0x30
+       fs_reclaim_acquire+0x19/0x20
+       kmem_cache_alloc+0x3e/0x3f0
+       kmem_zone_alloc+0x79/0x150
+       xfs_trans_alloc+0xfa/0x9d0
+       xfs_sync_sb+0x86/0x170
+       xfs_log_sbcount+0x10f/0x140
+       xfs_quiesce_attr+0x134/0x270
+       xfs_fs_freeze+0x4a/0x70
+       freeze_super+0x1af/0x290
+       do_vfs_ioctl+0xedc/0x16c0
+       ksys_ioctl+0x41/0x80
+       __x64_sys_ioctl+0x73/0xa9
+       do_syscall_64+0x18f/0xd23
+       entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
-> > Importing into TTM_PL_VRAM:  Impossible I think, without copying over
-> > the data.  Should that be done?  If so, how?  Or is it better to just
-> > not support import then?
-> 
-> Hm, since you ask about TTM concepts and not what this means in terms
-> of dma-buf:
+other info that might help us debug this:
 
-Ok, more details on the quesion:
+ Possible unsafe locking scenario:
 
-dma-buf: whatever the driver gets passed into the
-gem_prime_import_sg_table() callback.
+       CPU0                    CPU1
+       ----                    ----
+  lock(sb_internal);
+                               lock(fs_reclaim);
+                               lock(sb_internal);
+  lock(fs_reclaim);
 
-import into TTM_PL_VRAM: qemu driver which supports VRAM storage only
-(bochs, qxl), so the buffer has to be stored there if we want do
-something with it (like scanning out to a crtc).
+ *** DEADLOCK ***
 
-> As long as you upcast to the ttm_bo you can do whatever
-> you want to really.
+4 locks held by fsfreeze/4346:
+ #0: 00000000b478ef56 (sb_writers#8){++++}, at: percpu_down_write+0xb4/0x650
+ #1: 000000001ec487a9 (&type->s_umount_key#28){++++}, at: freeze_super+0xda/0x290
+ #2: 000000003edbd5a0 (sb_pagefaults){++++}, at: percpu_down_write+0xb4/0x650
+ #3: 0000000072bfc54b (sb_internal){++++}, at: percpu_down_write+0xb4/0x650
 
-Well, if the dma-buf comes from another device (say export vgem bo, then
-try import into bochs/qxl/virtio) I can't upcast.
+stack backtrace:
+Call Trace:
+ dump_stack+0xe0/0x19a
+ print_circular_bug.isra.10.cold.34+0x2f4/0x435
+ check_prev_add.constprop.19+0xca1/0x15f0
+ validate_chain.isra.14+0x11af/0x3b50
+ __lock_acquire+0x728/0x1200
+ lock_acquire+0x269/0x5a0
+ fs_reclaim_acquire.part.19+0x29/0x30
+ fs_reclaim_acquire+0x19/0x20
+ kmem_cache_alloc+0x3e/0x3f0
+ kmem_zone_alloc+0x79/0x150
+ xfs_trans_alloc+0xfa/0x9d0
+ xfs_sync_sb+0x86/0x170
+ xfs_log_sbcount+0x10f/0x140
+ xfs_quiesce_attr+0x134/0x270
+ xfs_fs_freeze+0x4a/0x70
+ freeze_super+0x1af/0x290
+ do_vfs_ioctl+0xedc/0x16c0
+ ksys_ioctl+0x41/0x80
+ __x64_sys_ioctl+0x73/0xa9
+ do_syscall_64+0x18f/0xd23
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
-When the dma-buf comes from the same device drm_gem_prime_import_dev()
-will notice and take a shortcut (skip import, just increase refcount
-instead), so I don't have to worry about that case in the
-gem_prime_import_sg_table() callback.
+Signed-off-by: Qian Cai <cai@lca.pw>
+---
+ fs/xfs/libxfs/xfs_sb.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-> But with plain dma-buf this doesn't work right now
-> (least because ttm assumes it gets system RAM on import, in theory you
-> could put the peer2peer dma mapping into the sg list and it should
-> work).
-
-Well, qemu display devices don't have peer2peer dma support.
-So I guess the answer is "doesn't work".
-
-cheers,
-  Gerd
+diff --git a/fs/xfs/libxfs/xfs_sb.c b/fs/xfs/libxfs/xfs_sb.c
+index b5a82acd7dfe..ec83cb8289fa 100644
+--- a/fs/xfs/libxfs/xfs_sb.c
++++ b/fs/xfs/libxfs/xfs_sb.c
+@@ -965,8 +965,11 @@ xfs_sync_sb(
+ 	struct xfs_trans	*tp;
+ 	int			error;
+ 
++	/* Silence lockdep false positives in the freeze path. */
++	lockdep_off();
+ 	error = xfs_trans_alloc(mp, &M_RES(mp)->tr_sb, 0, 0,
+ 			XFS_TRANS_NO_WRITECOUNT, &tp);
++	lockdep_on();
+ 	if (error)
+ 		return error;
+ 
+-- 
+2.17.2 (Apple Git-113)
 
