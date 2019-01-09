@@ -2,94 +2,92 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1E62C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 18:01:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1C10C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 18:02:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7986F20685
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 18:01:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="kHrRpM+t"
+	by mail.kernel.org (Postfix) with ESMTP id B71D420685
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 18:02:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727311AbfAISBi (ORCPT
+        id S1727334AbfAISC2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 13:01:38 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:44508 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727127AbfAISBi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 13:01:38 -0500
-Received: by mail-wr1-f66.google.com with SMTP id z5so8569860wrt.11
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jan 2019 10:01:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=aa7DBW2jefMqiPG5SEMBLPrEapaMRoLwEi0UQnoTFU8=;
-        b=kHrRpM+tjApF6eo1Zoxeiztl2FiwR3WBHD4oQFYwP0nnI8i7B0paOQaj4rtScDvFqy
-         skEhNcLQEuVf86pFN4mklZeUyvysvXZzxr+h69qncZgJeLNS/e+e9QiVJ/QVK+9dxj8o
-         VdlLATOi4nSqcan2ERN7GSK0BlnsPJgu6fWkw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=aa7DBW2jefMqiPG5SEMBLPrEapaMRoLwEi0UQnoTFU8=;
-        b=sxBmsRshrGXU+zs6HkjKVsginl6aOtINmZZly+NK2x4sPlH1Jh8Sf53ckfQgzCCKmM
-         t8t4cxvHvxjZ0hA7OxaDYATzrXfeLaqCyiJLZA82Xd9pl2O5qTv8JCTmHmU4DAkxlb76
-         owhbnBqeCWs6zliVQ5Qo6Wcb3hkzegEZZwO7PEFBryYwtq30t8Bw4yi9tzJ1vCd6Poc7
-         f1Nx1JETZJD5YrAD3OHRhsrq7Y0Hqmm9SDJgz+lvt6lDDLTRt8CKkxMEbSHH24EYn2Pb
-         owspfIshE1+8XvFmEnLzIMpcZJq5b4hqKFvgG3HBq0lORxyRxbyG10v2XLBIM693HueV
-         I+rw==
-X-Gm-Message-State: AJcUukf+4/cK9DacNLt0hdgxjTnP1fLSQf/WwtKDSEH9pE97rUK6MXn0
-        Ji0NP3yn4KGW2fDX1U98dO8DzA==
-X-Google-Smtp-Source: ALg8bN5SuHaTfBgMv2bRDbK7T0AdBtnmzz8BQkudCteudChJPwuuOgeSXVXiyjbeDRrtjlC2w1JKvA==
-X-Received: by 2002:a5d:5208:: with SMTP id j8mr6265762wrv.188.1547056896228;
-        Wed, 09 Jan 2019 10:01:36 -0800 (PST)
-Received: from localhost.localdomain ([2a01:e0a:f:6020:1811:b2bc:9000:4c9])
-        by smtp.gmail.com with ESMTPSA id m193sm14880509wmb.26.2019.01.09.10.01.35
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 09 Jan 2019 10:01:35 -0800 (PST)
-From:   Vincent Guittot <vincent.guittot@linaro.org>
-To:     xuwei5@hisilicon.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linus.walleij@linaro.org
-Cc:     Vincent Guittot <vincent.guittot@linaro.org>
-Subject: [PATCH] arm64/hisilicon: fix SDcard detection
-Date:   Wed,  9 Jan 2019 19:01:32 +0100
-Message-Id: <1547056892-16527-1-git-send-email-vincent.guittot@linaro.org>
-X-Mailer: git-send-email 2.7.4
+        Wed, 9 Jan 2019 13:02:28 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:35112 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727111AbfAISC2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 13:02:28 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 4D799804EB;
+        Wed,  9 Jan 2019 18:02:28 +0000 (UTC)
+Received: from sky.random (ovpn-123-111.rdu2.redhat.com [10.10.123.111])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id C61D817AE4;
+        Wed,  9 Jan 2019 18:02:27 +0000 (UTC)
+Date:   Wed, 9 Jan 2019 13:02:25 -0500
+From:   Andrea Arcangeli <aarcange@redhat.com>
+To:     Mike Galbraith <efault@gmx.de>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/1] RFC: sched/fair: skip select_idle_sibling() in
+ presence of sync wakeups
+Message-ID: <20190109180225.GA28624@redhat.com>
+References: <20190109034941.28759-1-aarcange@redhat.com>
+ <1547007588.17100.17.camel@gmx.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1547007588.17100.17.camel@gmx.de>
+User-Agent: Mutt/1.11.1 (2018-12-01)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Wed, 09 Jan 2019 18:02:28 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-commit 89a5e15bcba8 ("gpio/mmc/of: Respect polarity in the device tree")
-has changed how cd_gpios phandle and cd-inverted are used to set gpio's flags.
+Hello Mike,
 
-Since this change, hikey960 SDcard is not detected anymore because flags
-are not set correctly. Updating cd-gpios to set GPIO_ACTIVE_LOW instead
-of high, fixes the problem.
+On Wed, Jan 09, 2019 at 05:19:48AM +0100, Mike Galbraith wrote:
+> On Tue, 2019-01-08 at 22:49 -0500, Andrea Arcangeli wrote:
+> > Hello,
+> > 
+> > we noticed some unexpected performance regressions in the scheduler by
+> > switching the guest CPU topology from "-smp 2,sockets=2,cores=1" to
+> > "-smp 2,sockets=1,cores=2".
+*snip*
+> > To test I used this trivial program.
+> 
+> Which highlights the problem.  That proggy really is synchronous, but
 
-Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
----
- arch/arm64/boot/dts/hisilicon/hi3660-hikey960.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Note that I wrote the program only after the guest scheduler
+regression was reported, purely in order to test the patch and to
+reproduce the customer issue more easily (so I could see the effect by
+just running top). The regression was reported by a real life customer
+workload AFIK and it was caused by the idle balancing dropping the
+sync information.
 
-diff --git a/arch/arm64/boot/dts/hisilicon/hi3660-hikey960.dts b/arch/arm64/boot/dts/hisilicon/hi3660-hikey960.dts
-index 4643546..4ef1642 100644
---- a/arch/arm64/boot/dts/hisilicon/hi3660-hikey960.dts
-+++ b/arch/arm64/boot/dts/hisilicon/hi3660-hikey960.dts
-@@ -582,7 +582,7 @@
- 	sd-uhs-sdr104;
- 	disable-wp;
- 	cd-inverted;
--	cd-gpios = <&gpio25 3 0>;
-+	cd-gpios = <&gpio25 3 GPIO_ACTIVE_LOW>;
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&sd_pmx_func
- 		     &sd_clk_cfg_func
--- 
-2.7.4
+If it was just the lat_ctx type of workload like the program I
+attached I wouldn't care either, but this was a localhost udp and tcp
+(both bandwidth and latency) test that showed improvement by not
+dropping to the sync information through idle core balancing during
+wakeups.
 
+There is no tuning to allow people to test the sync information with
+real workloads, the only way is to rebuild the kernel with SCHED_MC=n
+(which nobody should be doing because it has other drawbacks) or by
+altering the vCPU topology. So for now we're working to restore the
+standard only-sockets topology to shut off the idle balancing without
+having to patch the guest scheduler, but this looked like a more
+general problem that has room for improvement.
+
+Ideally we should detect when the sync information is worth keeping
+instead of always dropping it. Alternatively a sched_feat could be
+added to achieve it manually.
+
+Thanks,
+Andrea
