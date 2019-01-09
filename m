@@ -2,275 +2,122 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B25CAC43612
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 19:28:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4C26C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 19:28:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F3482075C
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 19:28:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547062114;
-	bh=6U1KDrcsevcvwGfBKYeJgIPM7++biLKhzOrw9JS7jkA=;
-	h=Subject:Cc:To:In-Reply-To:From:References:Date:List-ID:From;
-	b=ie5fcXcQEaRKsb0ybKJAkv492ep3kpVqH7g8OsIbbXZDOgZ6hqdHfbHoyGsYZ2yhh
-	 9dTt9pMDoYG7mkR2ykxT8NFPJZESbhdnzVZLoWIMYPxLoUoGx9lCqFCtmL12jr1EyP
-	 XCmeh3idnsvOcU+fheRz+G1yeZ8VRnM/KQZgjCwk=
+	by mail.kernel.org (Postfix) with ESMTP id 72F8521848
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 19:28:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fzVk4w82"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728381AbfAIT2e (ORCPT
+        id S1728431AbfAIT2h (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 14:28:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35634 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727826AbfAIT2d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 14:28:33 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 07B8A206BA;
-        Wed,  9 Jan 2019 19:28:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547062112;
-        bh=6U1KDrcsevcvwGfBKYeJgIPM7++biLKhzOrw9JS7jkA=;
-        h=Subject:Cc:To:In-Reply-To:From:References:Date:From;
-        b=wq46CGzb1bPdE9VvCLq/4GnDuGS5rm/SQUegpW13B/zxlqTCBmhyquq9KI2xlEmi+
-         MZbfVm3bZbwqO53q6kIXQNBvf+REIMe54j0V6AF4Tdknto3XtCX/4PxJ4ZUDLmXVwA
-         DnW+fkEUcxKudUJoOLsVz1Vk57fk7oEctIfmD8Z4=
-Content-Type: text/plain; charset="utf-8"
+        Wed, 9 Jan 2019 14:28:37 -0500
+Received: from mail-wm1-f41.google.com ([209.85.128.41]:55389 "EHLO
+        mail-wm1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727826AbfAIT2f (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 14:28:35 -0500
+Received: by mail-wm1-f41.google.com with SMTP id y139so8829414wmc.5;
+        Wed, 09 Jan 2019 11:28:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=JxS56qBpl3OhFSSMkg01eCan4LQUjzw+yOC5UR1STEw=;
+        b=fzVk4w82G48Iq8ct6VXxs0+tRfl7VlN6iKPKaFQt+UvhFLJ8rkPm/SrdmLIceyrhg7
+         niFaX8Vcubrag3T59zbZXbPqW4YDU9YZz/h0NL3ID4m/6FCNUDeC6mPKN1FOZ2wmvXtT
+         nmZReYBANQh6FoD6IqiAz6xsO0vkbLEm5WYRNN2hRc1RkBxG63tPmJVMmiGrvaV3Y56y
+         cqr4pX7jab5GSo7rxwUpAYow+MGECbEHrxhO40DV0C5z/0eiea8/KfIeXH0YWdxfMkPz
+         tb85m8zkbdkbC1z6Sv/pBV6JjU8vi5AzYpE7eXMAxqxr6h2xZ8HPXyEjCjFBfXiqjciF
+         Eakg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=JxS56qBpl3OhFSSMkg01eCan4LQUjzw+yOC5UR1STEw=;
+        b=qLchJkiYaNPNLuXO7BatQ2RquYXHUHnHBXubzQ9uIitwXSLCBGoFEY1KeKJo8MdRLv
+         Gjs1uTLk9KSJhtEZ1Kf0mDjDl2eqWmo0i8XSHmJSpFNoRt3s2Du526u0rku07L7SAOLr
+         zILTKtThTJZgIHlKzLAvnjTJAE33wldS61Yxe8GGs0/ASEbzRD5eu7HBG4Ysqft9D5km
+         mW31IrCPsdp6pepzImS17BmXqzwwZdYT0Ip7sCzDTKpTfnbT56tIQruuo+y8mzuIdW//
+         cHN2ns3qFuYFkPbQWdAjC7OXpRwqHZOQhE9ybi/lo3Fn2BDnyItY+b9fjevrGLq+0P2r
+         bidg==
+X-Gm-Message-State: AJcUukcAIB/4I4ME+TzS/Uh0MqSjrLeov5tFoM8oFma1vZglVj/xWnit
+        VE8kwsHkpkjbfLxQVxxFJRXepGpm
+X-Google-Smtp-Source: ALg8bN50/p/qBPBQ5wdOAPrjW3br2IW3kwaD9cWlnH4sFXl+Q8Q5FGG1MrGTanQTVb+Feet/ig52cg==
+X-Received: by 2002:a1c:ba89:: with SMTP id k131mr6769921wmf.85.1547062113287;
+        Wed, 09 Jan 2019 11:28:33 -0800 (PST)
+Received: from ?IPv6:2003:ea:8be2:e400:30af:bb11:dc41:cedc? (p200300EA8BE2E40030AFBB11DC41CEDC.dip0.t-ipconnect.de. [2003:ea:8be2:e400:30af:bb11:dc41:cedc])
+        by smtp.googlemail.com with ESMTPSA id n82sm14791353wma.42.2019.01.09.11.28.31
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 09 Jan 2019 11:28:32 -0800 (PST)
+Subject: Re: Regression in v4.20 with net phy soft reset changes
+To:     Tony Lindgren <tony@atomide.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     Andrew Lunn <andrew@lunn.ch>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Chris Healy <cphealy@gmail.com>,
+        Clemens Gruber <clemens.gruber@pqgruber.com>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
+        Keerthy <j-keerthy@ti.com>,
+        Murali Karicheri <m-karicheri2@ti.com>,
+        Rex Chang <rchang@ti.com>, Sekhar Nori <nsekhar@ti.com>,
+        Tero Kristo <t-kristo@ti.com>, WingMan Kwok <w-kwok2@ti.com>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org
+References: <20190109190650.GT5544@atomide.com>
+From:   Heiner Kallweit <hkallweit1@gmail.com>
+Message-ID: <a63ca542-db96-40ed-201d-59c609f565ce@gmail.com>
+Date:   Wed, 9 Jan 2019 20:28:21 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v1] clk: qcom: clk-rpmh: Add IPA clock support
-Cc:     David Dai <daidavid1@codeaurora.org>, georgi.djakov@linaro.org,
-        bjorn.andersson@linaro.org, evgreen@google.com,
-        tdas@codeaurora.org, elder@linaro.org
-To:     David Dai <daidavid1@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-In-Reply-To: <1544754904-18951-1-git-send-email-daidavid1@codeaurora.org>
-From:   Stephen Boyd <sboyd@kernel.org>
-User-Agent: alot/0.8
-References: <1544754904-18951-1-git-send-email-daidavid1@codeaurora.org>
-Message-ID: <154706211110.15366.8008755843113316822@swboyd.mtv.corp.google.com>
-Date:   Wed, 09 Jan 2019 11:28:31 -0800
+In-Reply-To: <20190109190650.GT5544@atomide.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting David Dai (2018-12-13 18:35:04)
-> The current clk-rpmh driver only supports on and off RPMh clock resources,
-> let's extend the current driver by add support for clocks that are managed
-> by a different type of RPMh resource known as Bus Clock Manager(BCM).
-> The BCM is a configurable shared resource aggregator that scales performa=
-nce
-> based on a preset of frequency points. The Qualcomm IP Accelerator (IPA) =
-clock
-> is an example of a resource that is managed by the BCM and this a require=
-ment
-> from the IPA driver in order to scale its core clock.
+On 09.01.2019 20:06, Tony Lindgren wrote:
+> Hi all,
+> 
+> Commit 6e2d85ec0559 ("net: phy: Stop with excessive soft reset") caused
+> a regression where suspend resume cycle fails to bring up Ethernet on at
+> least cpsw on am437x-sk-evm.
+> 
+What kind of PHY and which PHY driver is used with this board?
+I found one schematics of am437x where a KSZ9031RN PHY is used.
+Is it the same on your board?
 
-Please use this commit text instead:
+As described in the commit message of this commit you would have
+the option to implement the soft_reset callback in the PHY driver.
+Can you try to add .soft_reset = genphy_soft_reset to the
+KSZ9031 driver config in drivers/net/phy/micrel.c and check whether
+it fixes the issue?
 
-   =20
-The clk-rpmh driver only supports on and off RPMh clock resources. Let's
-extend the driver by add support for clocks that are managed by a
-different type of RPMh resource known as Bus Clock Manager(BCM). The BCM
-is a configurable shared resource aggregator that scales performance
-based on a set of frequency points. The Qualcomm IP Accelerator (IPA)
-clock is an example of a resource that is managed by the BCM and this a
-requirement from the IPA driver in order to scale its core clock.
-
->=20
-> Signed-off-by: David Dai <daidavid1@codeaurora.org>
-> ---
->  drivers/clk/qcom/clk-rpmh.c           | 141 ++++++++++++++++++++++++++++=
-++++++
->  include/dt-bindings/clock/qcom,rpmh.h |   1 +
->  2 files changed, 142 insertions(+)
->=20
-> diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
-> index 9f4fc77..ee78c4b 100644
-> --- a/drivers/clk/qcom/clk-rpmh.c
-> +++ b/drivers/clk/qcom/clk-rpmh.c
-> @@ -18,6 +18,31 @@
->  #define CLK_RPMH_ARC_EN_OFFSET         0
->  #define CLK_RPMH_VRM_EN_OFFSET         4
-> =20
-> +#define BCM_TCS_CMD_COMMIT_MASK                0x40000000
-> +#define BCM_TCS_CMD_VALID_SHIFT                29
-> +#define BCM_TCS_CMD_VOTE_MASK          0x3fff
-> +#define BCM_TCS_CMD_VOTE_SHIFT         0
-> +
-> +#define BCM_TCS_CMD(valid, vote)                               \
-> +       (BCM_TCS_CMD_COMMIT_MASK |                              \
-> +       ((valid) << BCM_TCS_CMD_VALID_SHIFT) |                  \
-> +       ((cpu_to_le32(vote) &                                   \
-
-Why?
-
-> +       BCM_TCS_CMD_VOTE_MASK) << BCM_TCS_CMD_VOTE_SHIFT))
-> +
-> +/**
-> + * struct bcm_db - Auxiliary data pertaining to each Bus Clock Manager(B=
-CM)
-> + * @unit: divisor used to convert Hz value to an RPMh msg
-> + * @width: multiplier used to convert Hz value to an RPMh msg
-> + * @vcd: virtual clock domain that this bcm belongs to
-> + * @reserved: reserved to pad the struct
-> + */
-> +struct bcm_db {
-> +       __le32 unit;
-> +       __le16 width;
-> +       u8 vcd;
-> +       u8 reserved;
-> +};
-> +
->  /**
->   * struct clk_rpmh - individual rpmh clock data structure
->   * @hw:                        handle between common and hardware-specif=
-ic interfaces
-> @@ -29,6 +54,7 @@
->   * @aggr_state:                rpmh clock aggregated state
->   * @last_sent_aggr_state: rpmh clock last aggr state sent to RPMh
->   * @valid_state_mask:  mask to determine the state of the rpmh clock
-> + * @aux_data:          data specific to the bcm rpmh resource
-
-But there isn't aux_data. Is this supposed to be unit? And what is unit
-going to be? 1000?
-
->   * @dev:               device to which it is attached
->   * @peer:              pointer to the clock rpmh sibling
->   */
-> @@ -42,6 +68,7 @@ struct clk_rpmh {
->         u32 aggr_state;
->         u32 last_sent_aggr_state;
->         u32 valid_state_mask;
-> +       u32 unit;
->         struct device *dev;
->         struct clk_rpmh *peer;
->  };
-> @@ -210,6 +248,91 @@ static unsigned long clk_rpmh_recalc_rate(struct clk=
-_hw *hw,
->         .recalc_rate    =3D clk_rpmh_recalc_rate,
->  };
-> =20
-> +static int clk_rpmh_bcm_send_cmd(struct clk_rpmh *c, bool enable)
-> +{
-> +       struct tcs_cmd cmd =3D { 0 };
-> +       u32 cmd_state;
-> +       int ret;
-> +
-> +       mutex_lock(&rpmh_clk_lock);
-> +
-> +       cmd_state =3D enable ? (c->aggr_state ? c->aggr_state : 1) : 0;
-
-Make this into an if statement instead of double ternary?
-
-	cmd_state =3D 0;
-	if (enable) {
-		cmd_state =3D 1;
-		if (c->aggr_state)
-			cmd_state =3D c->aggr_state;
-
-	}
-
-> +
-> +       if (c->last_sent_aggr_state =3D=3D cmd_state)
-> +               return 0;
-
-We just returned with a mutex held. Oops!
-
-> +
-> +       cmd.addr =3D c->res_addr;
-> +       cmd.data =3D BCM_TCS_CMD(enable, cmd_state);
-> +
-> +       ret =3D rpmh_write_async(c->dev, RPMH_ACTIVE_ONLY_STATE, &cmd, 1);
-> +       if (ret) {
-> +               dev_err(c->dev, "set active state of %s failed: (%d)\n",
-> +                       c->res_name, ret);
-> +               return ret;
-
-Again!
-
-> +       }
-> +
-> +       c->last_sent_aggr_state =3D cmd_state;
-> +
-> +       mutex_unlock(&rpmh_clk_lock);
-> +
-> +       return 0;
-> +}
-> +
-> +static int clk_rpmh_bcm_prepare(struct clk_hw *hw)
-> +{
-> +       struct clk_rpmh *c =3D to_clk_rpmh(hw);
-> +       int ret;
-> +
-> +       ret =3D clk_rpmh_bcm_send_cmd(c, true);
-> +
-> +       return ret;
-
-Just write return clk_rpmh_bcm_send_cmd(...)
-
-> +};
-> +
-> +static void clk_rpmh_bcm_unprepare(struct clk_hw *hw)
-> +{
-> +       struct clk_rpmh *c =3D to_clk_rpmh(hw);
-> +
-> +       clk_rpmh_bcm_send_cmd(c, false);
-> +};
-> +
-> +static int clk_rpmh_bcm_set_rate(struct clk_hw *hw, unsigned long rate,
-> +                                unsigned long parent_rate)
-> +{
-> +       struct clk_rpmh *c =3D to_clk_rpmh(hw);
-> +
-> +       c->aggr_state =3D rate / c->unit;
-> +       /*
-> +        * Since any non-zero value sent to hw would result in enabling t=
-he
-> +        * clock, only send the value if the clock has already been prepa=
-red.
-> +        */
-> +       if (clk_hw_is_prepared(hw))
-
-This is sad, but OK.
-
-> +               clk_rpmh_bcm_send_cmd(c, true);
-> +
-> +       return 0;
-> +};
-> +
-[...]
-> @@ -217,6 +340,7 @@ static unsigned long clk_rpmh_recalc_rate(struct clk_=
-hw *hw,
->  DEFINE_CLK_RPMH_VRM(sdm845, rf_clk1, rf_clk1_ao, "rfclka1", 1);
->  DEFINE_CLK_RPMH_VRM(sdm845, rf_clk2, rf_clk2_ao, "rfclka2", 1);
->  DEFINE_CLK_RPMH_VRM(sdm845, rf_clk3, rf_clk3_ao, "rfclka3", 1);
-> +DEFINE_CLK_RPMH_BCM(sdm845, ipa, "IP0");
-
-It's really IP0?! What was wrong with IPA?
-
-> =20
->  static struct clk_hw *sdm845_rpmh_clocks[] =3D {
->         [RPMH_CXO_CLK]          =3D &sdm845_bi_tcxo.hw,
-> @@ -275,6 +402,20 @@ static int clk_rpmh_probe(struct platform_device *pd=
-ev)
->                                 rpmh_clk->res_name);
->                         return -ENODEV;
->                 }
-> +
-> +               data =3D cmd_db_read_aux_data(rpmh_clk->res_name, &aux_da=
-ta_len);
-> +               if (IS_ERR(data)) {
-> +                       ret =3D PTR_ERR(data);
-> +                       dev_err(&pdev->dev,
-> +                               "error reading RPMh aux data for %s (%d)\=
-n",
-> +                               rpmh_clk->res_name, ret);
-> +                               return ret;
-
-Weird indent here.
+> Keerthy noticed this may not happen on the first resume, but usually
+> happens after few suspend resume cycles. The most working suspend resume
+> cycles I've seen with the commit above is three.
+> 
+> Any ideas what might be going wrong?
+> 
+> Note that unrelated to the commit above, there may be other issues too
+> as the cpsw phy LED seems to come on only after about five seconds with
+> about total of 10 seconds before the Ethernet is up again.
+> 
+> Regards,
+> 
+> Tony
+> 
+Heiner
