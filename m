@@ -2,128 +2,166 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24133C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 14:29:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02D17C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 14:29:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D9CF22070B
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 14:29:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="pIcRLesk"
+	by mail.kernel.org (Postfix) with ESMTP id CB37420859
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 14:29:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731378AbfAIO3q (ORCPT
+        id S1731435AbfAIO35 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 09:29:46 -0500
-Received: from mail-eopbgr750042.outbound.protection.outlook.com ([40.107.75.42]:11712
-        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730605AbfAIO3p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 09:29:45 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=FnxOn3ra6wEaZLCJjEXnB3sTohf+0+jqP82NeV+PpPo=;
- b=pIcRLeskPty3AO0Qf1KniXUrCw7Q7hLYJWkL7iyLKygbBQGRPse8YZewqUPNIw7SPntSh6U43388BQh7LFxIdRPPusJ7mgG/7A+jdm20pMBvus1Rv7wFRZJlZUY8iiBmg0n8fhGdbsxd2Wshi/31Nf1E2eQvP5RAe+gSbLhxO1w=
-Received: from MN2PR12MB3631.namprd12.prod.outlook.com (20.178.243.19) by
- MN2PR12MB3040.namprd12.prod.outlook.com (20.178.243.145) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1495.7; Wed, 9 Jan 2019 14:29:42 +0000
-Received: from MN2PR12MB3631.namprd12.prod.outlook.com
- ([fe80::1da6:b950:a28e:dae2]) by MN2PR12MB3631.namprd12.prod.outlook.com
- ([fe80::1da6:b950:a28e:dae2%5]) with mapi id 15.20.1495.011; Wed, 9 Jan 2019
- 14:29:42 +0000
-From:   "Lendacky, Thomas" <Thomas.Lendacky@amd.com>
-To:     Paul Menzel <pmenzel@molgen.mpg.de>,
-        Thomas Gleixner <tglx@linutronix.de>
-CC:     Jiri Kosina <jikos@kernel.org>, "x86@kernel.org" <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Borislav Petkov <bp@alien8.de>
-Subject: Re: General protection fault in `switch_mm_irqs_off()`
-Thread-Topic: General protection fault in `switch_mm_irqs_off()`
-Thread-Index: AQHUo629ixN4vswCO0W5h+67CHfr8qWfUYmAgAeOigCAABODAIAABY6AgAAPAYA=
-Date:   Wed, 9 Jan 2019 14:29:41 +0000
-Message-ID: <ea49acb9-8165-80a3-e6fe-b29123ad5795@amd.com>
-References: <784ab00e-ed72-c1bc-bc0c-31264deb7726@molgen.mpg.de>
- <alpine.LRH.2.00.1901041737290.28043@gjva.wvxbf.pm>
- <cb7ba667-562b-1e4c-f16e-7c11804bc98a@molgen.mpg.de>
- <alpine.DEB.2.21.1901091410500.1755@nanos.tec.linutronix.de>
- <5c38f377-f088-5684-91a5-c2cc2d64dbbd@molgen.mpg.de>
-In-Reply-To: <5c38f377-f088-5684-91a5-c2cc2d64dbbd@molgen.mpg.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: SN4PR0801CA0016.namprd08.prod.outlook.com
- (2603:10b6:803:29::26) To MN2PR12MB3631.namprd12.prod.outlook.com
- (2603:10b6:208:cc::19)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Thomas.Lendacky@amd.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [165.204.78.1]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MN2PR12MB3040;20:DNAbimW2tplPbfH00E/RiAix5kbue98g6R7RtYoA2PU0tX6yxzWk7BFgK96Co11S8gA70HKLHGmHUz4Mb+247KXhyAKHFEv3qYDYWcmv6gDOgeL0bWhE7UotxuQ4nkUSUxXadNMWcrE5Wy207svx713/hG+hnPidLa37yeKIokaSp9Z0gpFvkZnd/6Sg+iSLFYRGLbbQoNbp1KMNqAZ3/dycjidL2edZ8QM8Z/rbvsrnVzcurM6TrHTDXkXp5fZb
-x-ms-office365-filtering-correlation-id: f6c14be7-50f2-4257-f745-08d6763ee4c0
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:MN2PR12MB3040;
-x-ms-traffictypediagnostic: MN2PR12MB3040:
-x-microsoft-antispam-prvs: <MN2PR12MB3040DFC3C9F261CB02D67F99EC8B0@MN2PR12MB3040.namprd12.prod.outlook.com>
-x-forefront-prvs: 0912297777
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(346002)(396003)(136003)(366004)(39860400002)(189003)(199004)(36756003)(102836004)(31696002)(14454004)(6512007)(81166006)(81156014)(8676002)(11346002)(6246003)(99286004)(105586002)(8936002)(31686004)(72206003)(6436002)(5660300001)(229853002)(305945005)(7736002)(25786009)(53936002)(2616005)(54906003)(413944005)(52116002)(68736007)(26005)(256004)(2906002)(478600001)(4326008)(110136005)(6486002)(316002)(476003)(76176011)(93886005)(6506007)(97736004)(386003)(71190400001)(71200400001)(86362001)(486006)(186003)(14444005)(66066001)(3846002)(106356001)(53546011)(6116002)(446003)(81973001);DIR:OUT;SFP:1101;SCL:1;SRVR:MN2PR12MB3040;H:MN2PR12MB3631.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: eZIzYPbJpUZq8CkxWAw2UAG8TksJe3aTU3pnndq+jpdH7I0z5BGLqaGitJtnJ5rNGUKUEOmOY6/pUSvAirfOS2d9GdvUVdDk25BuMzoizKpD6m0htTQ2AsCR0jLp7SeXJz24gysN2hWcP8iGNe2G2O62NEebOc6c5boXeC+Bn2ZDdghTpE5vUOvINVwaqatMjRwfdq4T1szAvezz2liajSqvOXME3H+SbpbSpigyL6aY/u7KviOqIrbklW9SOVscwf5O5dGhvaOuDmCLf6MkWajKFtplExgXuIpX6PIGbtnueyRm4IUDCX5w3f6Fs0u5
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <0F6CBBA7486BFC40AC3D06C0A5FBEDD5@namprd12.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Wed, 9 Jan 2019 09:29:57 -0500
+Received: from lb3-smtp-cloud7.xs4all.net ([194.109.24.31]:55386 "EHLO
+        lb3-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730605AbfAIO35 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 09:29:57 -0500
+Received: from [IPv6:2001:420:44c1:2579:f8c4:4546:22d:c704] ([IPv6:2001:420:44c1:2579:f8c4:4546:22d:c704])
+        by smtp-cloud7.xs4all.net with ESMTPA
+        id hErYgk5pABDyIhErbgX5lK; Wed, 09 Jan 2019 15:29:55 +0100
+Subject: Re: [PATCH 2/2] media: cedrus: Allow using the current dst buffer as
+ reference
+To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        linux-media@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Chen-Yu Tsai <wens@csie.org>, Randy Li <ayaka@soulik.info>,
+        Ezequiel Garcia <ezequiel@collabora.com>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+References: <20190109141920.12677-1-paul.kocialkowski@bootlin.com>
+ <20190109141920.12677-2-paul.kocialkowski@bootlin.com>
+From:   Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <9a624f6a-0c38-f2c9-3f2d-2758f9a19299@xs4all.nl>
+Date:   Wed, 9 Jan 2019 15:29:44 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f6c14be7-50f2-4257-f745-08d6763ee4c0
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Jan 2019 14:29:42.1478
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB3040
+In-Reply-To: <20190109141920.12677-2-paul.kocialkowski@bootlin.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfHvQpieu/qhYiJABI7cDkWdbhBzdhR89AXpd3rc78imSyE5YzzwGte5E9IpIGNdUOJ61vx6mvqPuwg93UA6ZbcHEzajFmAAoY8wY2Xeo+76nStXZtvXo
+ A42cSvcQwNuqpbHultnZ+RGSx/T6o/cgfB/t0ht7c+ynVrwA6hz1+jk5EKiWty2gE1WmxLEpupOqlnoTFw9doWupcYOV2py3LIutLYQ8YsStyIDOvLy7G4gg
+ qPLJ0PaIn3b1+FbTy0IdwCMYDHxBEadtlwIGZOcrqT9/S6vYxEsLoRb4DaEBnt6j1MP5EEqx9J67atroa1wr2RN7iB/F7nRNAzFgWdX3kSt8K6GZPTIkxjc5
+ tIiEZtwj8lcNovcH/M67rIK9gOKkL12fu82b5GwQxv5Z84c1IGBFOY9wyVAale4AdqHtbO6bYJG/QpV0xpMZmHK28AtXBb7DA1uVxvwoSDhaNqt5DS5gYGNu
+ 3TUGlAELU1l+Vy/Ay8RwjPwBAKKf7/XDbUDKHqlAQgWLG6igfWQCCUMC5UGzMuSmgGY5YBqPssif95mcpJ5SwYhu1KyNCJHUoHP35x//WRVF12U0WhVSTy2y
+ eJk9G/j7dYn58Z3gkBcj/MIt5ND5bA/RqjtTcHnx4VGAF/oK+C/OzS+ZNuOaimRZSDZFvYR0awLiJd/rw6Mp8sTV4fLg8OcBIP+SCGaz1VSAEz6xdKwBPCOC
+ S9i7Pw0OEvt+cpU9NrN/kO9TgGqFnxw4S+EulPQgd+nrkSAKpmdMIU3y//IXfaw6rrIAz1RIhxsZBG13cWiMPLqiLrfKQ+ZcLkUYNAeWevLlSPPixQjkDnOE
+ cxmNGAvruG/GLhAu7yE=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gMS85LzE5IDc6MzUgQU0sIFBhdWwgTWVuemVsIHdyb3RlOg0KPiBEZWFyIFRob21hcywNCj4g
-DQo+IA0KPiBPbiAwMS8wOS8xOSAxNDoxNiwgVGhvbWFzIEdsZWl4bmVyIHdyb3RlOg0KPiANCj4+
-IE9uIFdlZCwgOSBKYW4gMjAxOSwgUGF1bCBNZW56ZWwgd3JvdGU6DQo+Pj4gSSBnZXQgdGhlIHNh
-bWUgd2l0aCBtaWNyb2NvZGUgdXBkYXRlcyBhcHBsaWVkLg0KPj4+DQo+Pj4gICAgICQgZG1lc2cg
-fCBncmVwICdtaWNyb2NvZGU6IENQVTA6IHBhdGNoX2xldmVsJw0KPj4+ICAgICBbICAgIDMuODA5
-MjEwXSBtaWNyb2NvZGU6IENQVTA6IHBhdGNoX2xldmVsPTB4MDYwMDA2M2UNCj4+PiAgICAgJCBz
-dWRvIG1vZHByb2JlIG1zcg0KPj4+ICAgICAkIHN1ZG8gLi93cm1zciAweDQ5IDB4MQ0KPj4+ICAg
-ICB3cm1zcjogQ1BVIDAgY2Fubm90IHNldCBNU1IgMHgwMDAwMDA0OSB0byAweDAwMDAwMDAwMDAw
-MDAwMDENCj4+Pg0KPj4+PiBDb3VsZCB5b3UgcGxlYXNlIHBvc3QgL3Byb2MvY3B1aW5mbyBmcm9t
-IHN1Y2ggYSBib290IGFzIHdlbGw/DQo+Pg0KPj4gL3Byb2MvY3B1aW5mbyB1bmZvcnR1bmF0ZWx5
-IGRvZXMgbm90IGNvbnRhaW4gdGhlIGFtZCBzcGVjaWZpYyBJQlBCIGZsYWcsDQo+PiBidXQgdGhl
-IGRtZXNnIG9mIHRoZSBvcmlnaW5hbCByZXBvcnQgc2F5czoNCj4+DQo+PiAgIFNwZWN0cmUgVjIg
-OiBtaXRpZ2F0aW9uOiBFbmFibGluZyBjb25kaXRpb25hbCBJbmRpcmVjdCBCcmFuY2ggUHJlZGlj
-dGlvbiBCYXJyaWVyDQo+Pg0KPj4gd2hpY2ggbWVhbnMsIHRoYXQgdGhlIENQVUlEIGJpdCBpcyBz
-ZXQuDQo+Pg0KPj4gQ2FuIHlvdSBwbGVhc2UgcHJvdmlkZSB0aGUgb3V0cHV0IG9mOg0KPj4NCj4+
-ICAgY3B1aWQgLTEgLWwgMHg4MDAwMDAwOCAtcg0KPj4NCj4+IE9uIG15IEFNRCBPcHRlcm9uKFRN
-KSBQcm9jZXNzb3IgNjI3NiB3aXRoIG1pY3JvY29kZSAweDYwMDA2M2QgbG9hZGVkIEkgZ2V0Og0K
-Pj4NCj4+ICAgIDB4ODAwMDAwMDggMHgwMDogZWF4PTB4MDAwMDMwMzAgZWJ4PTB4MDAwMDAwMDAg
-ZWN4PTB4MDAwMDUwMGYgZWR4PTB4MDAwMDAwMDANCj4+DQo+PiBFQlggaXMgMCwgd2hpY2ggbWVh
-bnMgdGhhdCBYODZfRkVBVFVSRV9BTURfSUJQQiBpcyBub3QgZW5hYmxlZC4gU28gdGhlDQo+PiBr
-ZXJuZWwgZG9lcyBub3QgdHJ5IHRvIHVzZSB0aGUgc3BlY3VsYXRpb24gY29udHJvbCBNU1IgKDB4
-NDkpLg0KPiANCj4gV2l0aCBDUFVJRCAyMDE4MDUxOSwgSSBnZXQgdGhlIG91dHB1dCBiZWxvdyB3
-aXRoIGJvdGggbWljcm9jb2RlIHVwZGF0ZSB2ZXJzaW9ucy4NCj4gDQo+IDB4NjAwMDYzZDoNCj4g
-DQo+ICAgICAkIHN1ZG8gLi9jcHVpZCAtMSAtbCAweDgwMDAwMDA4IC1yDQo+ICAgICBDUFU6DQo+
-ICAgICAgICAweDgwMDAwMDA4IDB4MDA6IGVheD0weDAwMDAzMDMwIGVieD0weDAwMDAwMDAwIGVj
-eD0weDAwMDA1MDBmIGVkeD0weDAwMDAwMDAwDQo+IA0KPiAweDYwMDA2M2U6DQo+IA0KPiAgICAg
-JCBzdWRvIC4vY3B1aWQgLTEgLWwgMHg4MDAwMDAwOCAtcg0KPiAgICAgQ1BVOg0KPiAgICAgICAg
-MHg4MDAwMDAwOCAweDAwOiBlYXg9MHgwMDAwMzAzMCBlYng9MHgwMDAwMDAwMCBlY3g9MHgwMDAw
-NTAwZiBlZHg9MHgwMDAwMDAwMA0KPiANCg0KSG1tbS4uLiBzbyBlYnggaXMgMCBmb3IgYm90aCB2
-ZXJzaW9ucywgc28gSSdtIG5vdCBzdXJlIGhvdyBJQlBCIGlzIGJlaW5nDQpzZXQuIFdoYXQncyB0
-aGUgQ1BVSUQgb3V0cHV0IGZvciAweDA3IChjcHVpZCAtMSAtbCAweDA3IC1yKT8NCg0KVGhhbmtz
-LA0KVG9tDQoNCj4gDQo+IEtpbmQgcmVnYXJkcywNCj4gDQo+IFBhdWwNCj4gDQo=
+On 01/09/19 15:19, Paul Kocialkowski wrote:
+> It was reported that some cases of interleaved video decoding require
+> using the current destination buffer as a reference. However, this is
+> no longer possible after the move to vb2_find_timestamp because only
+> dequeued and done buffers are considered.
+> 
+> Add a helper in our driver that also considers the current destination
+> buffer before resorting to vb2_find_timestamp and use it in MPEG-2.
+
+This patch looks good, but can you also add checks to handle the case
+when no buffer with the given timestamp was found? Probably should be done
+in a third patch.
+
+I suspect the driver will crash if an unknown timestamp is passed on to the
+driver. I would really like to see that corner case fixed.
+
+Regards,
+
+	Hans
+
+> 
+> Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+> ---
+>  drivers/staging/media/sunxi/cedrus/cedrus_dec.c   | 13 +++++++++++++
+>  drivers/staging/media/sunxi/cedrus/cedrus_dec.h   |  2 ++
+>  drivers/staging/media/sunxi/cedrus/cedrus_mpeg2.c | 10 ++++++----
+>  3 files changed, 21 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/staging/media/sunxi/cedrus/cedrus_dec.c b/drivers/staging/media/sunxi/cedrus/cedrus_dec.c
+> index 443fb037e1cf..2c295286766c 100644
+> --- a/drivers/staging/media/sunxi/cedrus/cedrus_dec.c
+> +++ b/drivers/staging/media/sunxi/cedrus/cedrus_dec.c
+> @@ -22,6 +22,19 @@
+>  #include "cedrus_dec.h"
+>  #include "cedrus_hw.h"
+>  
+> +int cedrus_reference_index_find(struct vb2_queue *queue,
+> +				struct vb2_buffer *vb2_buf, u64 timestamp)
+> +{
+> +	/*
+> +	 * Allow using the current capture buffer as reference, which can occur
+> +	 * for field-coded pictures.
+> +	 */
+> +	if (vb2_buf->timestamp == timestamp)
+> +		return vb2_buf->index;
+> +	else
+> +		return vb2_find_timestamp(queue, timestamp, 0);
+> +}
+> +
+>  void cedrus_device_run(void *priv)
+>  {
+>  	struct cedrus_ctx *ctx = priv;
+> diff --git a/drivers/staging/media/sunxi/cedrus/cedrus_dec.h b/drivers/staging/media/sunxi/cedrus/cedrus_dec.h
+> index d1ae7903677b..8d0fc248220f 100644
+> --- a/drivers/staging/media/sunxi/cedrus/cedrus_dec.h
+> +++ b/drivers/staging/media/sunxi/cedrus/cedrus_dec.h
+> @@ -16,6 +16,8 @@
+>  #ifndef _CEDRUS_DEC_H_
+>  #define _CEDRUS_DEC_H_
+>  
+> +int cedrus_reference_index_find(struct vb2_queue *queue,
+> +				struct vb2_buffer *vb2_buf, u64 timestamp);
+>  void cedrus_device_run(void *priv);
+>  
+>  #endif
+> diff --git a/drivers/staging/media/sunxi/cedrus/cedrus_mpeg2.c b/drivers/staging/media/sunxi/cedrus/cedrus_mpeg2.c
+> index cb45fda9aaeb..81c66a8aa1ac 100644
+> --- a/drivers/staging/media/sunxi/cedrus/cedrus_mpeg2.c
+> +++ b/drivers/staging/media/sunxi/cedrus/cedrus_mpeg2.c
+> @@ -10,6 +10,7 @@
+>  #include <media/videobuf2-dma-contig.h>
+>  
+>  #include "cedrus.h"
+> +#include "cedrus_dec.h"
+>  #include "cedrus_hw.h"
+>  #include "cedrus_regs.h"
+>  
+> @@ -159,8 +160,8 @@ static void cedrus_mpeg2_setup(struct cedrus_ctx *ctx, struct cedrus_run *run)
+>  	cedrus_write(dev, VE_DEC_MPEG_PICBOUNDSIZE, reg);
+>  
+>  	/* Forward and backward prediction reference buffers. */
+> -	forward_idx = vb2_find_timestamp(cap_q,
+> -					 slice_params->forward_ref_ts, 0);
+> +	forward_idx = cedrus_reference_index_find(cap_q, &run->dst->vb2_buf,
+> +						  slice_params->forward_ref_ts);
+>  
+>  	fwd_luma_addr = cedrus_dst_buf_addr(ctx, forward_idx, 0);
+>  	fwd_chroma_addr = cedrus_dst_buf_addr(ctx, forward_idx, 1);
+> @@ -168,8 +169,9 @@ static void cedrus_mpeg2_setup(struct cedrus_ctx *ctx, struct cedrus_run *run)
+>  	cedrus_write(dev, VE_DEC_MPEG_FWD_REF_LUMA_ADDR, fwd_luma_addr);
+>  	cedrus_write(dev, VE_DEC_MPEG_FWD_REF_CHROMA_ADDR, fwd_chroma_addr);
+>  
+> -	backward_idx = vb2_find_timestamp(cap_q,
+> -					  slice_params->backward_ref_ts, 0);
+> +	backward_idx = cedrus_reference_index_find(cap_q, &run->dst->vb2_buf,
+> +						   slice_params->backward_ref_ts);
+> +
+>  	bwd_luma_addr = cedrus_dst_buf_addr(ctx, backward_idx, 0);
+>  	bwd_chroma_addr = cedrus_dst_buf_addr(ctx, backward_idx, 1);
+>  
+> 
+
