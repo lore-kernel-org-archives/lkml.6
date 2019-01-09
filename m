@@ -2,144 +2,298 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3665C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 22:36:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0E35C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 22:36:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A651C206BB
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 22:36:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5AE532075C
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 22:36:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547073410;
+	bh=NVODrl36tVRwjwU3uYpAGfxPK2KVsqivgoJi//Yxz0A=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=j/otB4fWxBP8wMPssI5dzMshkJpsbKYJGTY0x1z9kXdVMguwuttiFWB+y7k4XWZ/L
+	 0r1lQMQKXh3gA3uFKpeJc6MfXCgPvg0XJOtqut14VMcB561p+C9fKGxPfIvlIcqUkX
+	 395PF8WVFMMFRgrCzUDCxSCqpAqpgM2Pe+7JvLTo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726907AbfAIWgh (ORCPT
+        id S1727096AbfAIWgt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 17:36:37 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:35002 "EHLO mx1.redhat.com"
+        Wed, 9 Jan 2019 17:36:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60462 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726221AbfAIWgg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 17:36:36 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1726936AbfAIWgr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 17:36:47 -0500
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 371A4806A8;
-        Wed,  9 Jan 2019 22:36:35 +0000 (UTC)
-Received: from [10.36.112.23] (ovpn-112-23.ams2.redhat.com [10.36.112.23])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 5305917AE4;
-        Wed,  9 Jan 2019 22:36:25 +0000 (UTC)
-Subject: Re: [PATCH tip/core/rcu 2/2] virt/kvm: Replace spin_is_locked() with
- lockdep
-To:     "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        linux-kernel@vger.kernel.org
-Cc:     mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
-        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
-        josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
-        rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
-        fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        kvm@vger.kernel.org
-References: <20190109222120.GA13904@linux.ibm.com>
- <20190109222144.14270-2-paulmck@linux.ibm.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- uUHgL9dKIfvpm+rNXRn9wAwGjk0X/A==
-Message-ID: <ac3ff130-748d-6fec-da97-0dbeb7521429@redhat.com>
-Date:   Wed, 9 Jan 2019 23:36:23 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        by mail.kernel.org (Postfix) with ESMTPSA id AB49B2075C;
+        Wed,  9 Jan 2019 22:36:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547073405;
+        bh=NVODrl36tVRwjwU3uYpAGfxPK2KVsqivgoJi//Yxz0A=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=xyjlDxsmsBfGaP1sVYqKA5ebVuGu8QzcYFbKfUVUD6NYqCIJ5Mlq8NfMtmn886vpF
+         hDtIShD29lMh73qVN1qWwrsKgpgYDGzBxlYrVr2tlA4TiDMTOA+ojvnxHkGcIgf0wZ
+         3yJLkCycqdEe5FvJ2pP71f3SnjnJzsAu9qBn6e3o=
+Received: by mail-wm1-f45.google.com with SMTP id g67so10009094wmd.2;
+        Wed, 09 Jan 2019 14:36:44 -0800 (PST)
+X-Gm-Message-State: AJcUukfVf6DydYFzTQthGnBilYsXrLu1aMHNkVeUupzu2LMQBnus7NTD
+        RRoy1GdGAgzqmjXEznPFvyGSHuyka9RSTxGM+xs=
+X-Google-Smtp-Source: ALg8bN4JLaklnBsZLevGFC0WuDFpoj6LltFJv9AwqwfjbOygPdEwKX8uavgvE6LoK/MJ+xCaC9hAjjJDpv9tbpkBJnA=
+X-Received: by 2002:a1c:4d12:: with SMTP id o18mr7697032wmh.92.1547073403098;
+ Wed, 09 Jan 2019 14:36:43 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20190109222144.14270-2-paulmck@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Wed, 09 Jan 2019 22:36:36 +0000 (UTC)
+References: <64a23e6f8751ee6f1387a611a9d5dba43694b0d0.1546999151.git.ryder.lee@mediatek.com>
+In-Reply-To: <64a23e6f8751ee6f1387a611a9d5dba43694b0d0.1546999151.git.ryder.lee@mediatek.com>
+From:   Sean Wang <sean.wang@kernel.org>
+Date:   Wed, 9 Jan 2019 14:38:00 -0800
+X-Gmail-Original-Message-ID: <CAGp9Lzo9K4CaY=0m4i9STC0dCVqzojAz8CKP5FBKtoVghnL+Aw@mail.gmail.com>
+Message-ID: <CAGp9Lzo9K4CaY=0m4i9STC0dCVqzojAz8CKP5FBKtoVghnL+Aw@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: mediatek: fix build errors for moore core when
+ CONFIG_OF is not enabled
+To:     Ryder Lee <ryder.lee@mediatek.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Weijie Gao <weijie.gao@mediatek.com>,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/01/19 23:21, Paul E. McKenney wrote:
-> lockdep_assert_held() is better suited to checking locking requirements,
-> since it only checks if the current thread holds the lock regardless of
-> whether someone else does. This is also a step towards possibly removing
-> spin_is_locked().
-> 
-> Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
-> Cc: Paolo Bonzini <pbonzini@redhat.com>
-> Cc: "Radim Krčmář" <rkrcmar@redhat.com>
-> Cc: <kvm@vger.kernel.org>
-> ---
->  virt/kvm/kvm_main.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-> index 1f888a103f78..ec758bb7eeba 100644
-> --- a/virt/kvm/kvm_main.c
-> +++ b/virt/kvm/kvm_main.c
-> @@ -4078,7 +4078,7 @@ static int kvm_suspend(void)
->  static void kvm_resume(void)
->  {
->  	if (kvm_usage_count) {
-> -		WARN_ON(raw_spin_is_locked(&kvm_count_lock));
-> +		lockdep_assert_held(&kvm_count_lock);
->  		hardware_enable_nolock(NULL);
->  	}
->  }
-> 
+On Tue, Jan 8, 2019 at 6:14 PM Ryder Lee <ryder.lee@mediatek.com> wrote:
+>
+> on i386 or x86_64:
+>
+> Lots of build errors for drivers/pinctrl/mediatek/pinctrl-moore.c when
+> CONFIG_OF is not enabled (but COMPILE_TEST is).
+>
+> first this:
+> WARNING: unmet direct dependencies detected for PINCTRL_MTK_MOORE
+>   Depends on [n]: PINCTRL [=y] && (ARCH_MEDIATEK || COMPILE_TEST [=y]) && OF [=n]
+>   Selected by [y]:
+>   - PINCTRL_MT7623 [=y] && PINCTRL [=y] && (ARCH_MEDIATEK || COMPILE_TEST [=y]) && (MACH_MT7623 || COMPILE_TEST [=y])
+>
+> and then:
+> ../drivers/pinctrl/mediatek/pinctrl-moore.c:22:44: error: array type has incomplete element type
+>  static const struct pinconf_generic_params mtk_custom_bindings[] = {
+>                                             ^
+> ../drivers/pinctrl/mediatek/pinctrl-moore.c: In function 'mtk_pinmux_set_mux':
+> ../drivers/pinctrl/mediatek/pinctrl-moore.c:46:2: error: implicit declaration of function 'pinmux_generic_get_function' [-Werror=implicit-function-declaration]
+>   func = pinmux_generic_get_function(pctldev, selector);
+>   ^
+> ../drivers/pinctrl/mediatek/pinctrl-moore.c:46:7: warning: assignment makes pointer from integer without a cast [enabled by default]
+>   func = pinmux_generic_get_function(pctldev, selector);
+>        ^
+> ../drivers/pinctrl/mediatek/pinctrl-moore.c:50:2: error: implicit declaration of function 'pinctrl_generic_get_group' [-Werror=implicit-function-declaration]
+>   grp = pinctrl_generic_get_group(pctldev, group);
+>   ^
+> ../drivers/pinctrl/mediatek/pinctrl-moore.c:50:6: warning: assignment makes pointer from integer without a cast [enabled by default]
+>   grp = pinctrl_generic_get_group(pctldev, group);
+>       ^
+> In file included from ../include/linux/printk.h:331:0,
+>                  from ../include/linux/kernel.h:14,
+>                  from ../include/linux/list.h:9,
+>                  from ../include/linux/kobject.h:19,
+>                  from ../include/linux/device.h:16,
+>                  from ../include/linux/gpio/driver.h:5,
+>                  from ../drivers/pinctrl/mediatek/pinctrl-moore.c:11:
+> ../drivers/pinctrl/mediatek/pinctrl-moore.c:55:7: error: dereferencing pointer to incomplete type
+>    func->name, grp->name);
+>        ^
+> ../include/linux/dynamic_debug.h:136:9: note: in definition of macro 'dynamic_dev_dbg'
+>        ##__VA_ARGS__);  \
+>          ^
+> ../drivers/pinctrl/mediatek/pinctrl-moore.c:54:2: note: in expansion of macro 'dev_dbg'
+>   dev_dbg(pctldev->dev, "enable function %s group %s\n",
+>   ^
+> ../drivers/pinctrl/mediatek/pinctrl-moore.c:55:18: error: dereferencing pointer to incomplete type
+>    func->name, grp->name);
+>                   ^
+> ../include/linux/dynamic_debug.h:136:9: note: in definition of macro 'dynamic_dev_dbg'
+>        ##__VA_ARGS__);  \
+>          ^
+> ../drivers/pinctrl/mediatek/pinctrl-moore.c:54:2: note: in expansion of macro 'dev_dbg'
+>   dev_dbg(pctldev->dev, "enable function %s group %s\n",
+>   ^
+> ../drivers/pinctrl/mediatek/pinctrl-moore.c:57:21: error: dereferencing pointer to incomplete type
+>   for (i = 0; i < grp->num_pins; i++) {
+>                      ^
+> ../drivers/pinctrl/mediatek/pinctrl-moore.c:59:23: error: dereferencing pointer to incomplete type
+>    int *pin_modes = grp->data;
+>                        ^
+> ../drivers/pinctrl/mediatek/pinctrl-moore.c:60:16: error: dereferencing pointer to incomplete type
+>    int pin = grp->pins[i];
+>                 ^
+> ../drivers/pinctrl/mediatek/pinctrl-moore.c: In function 'mtk_pinconf_group_get':
+> ../drivers/pinctrl/mediatek/pinctrl-moore.c:357:2: error: implicit declaration of function 'pinctrl_generic_get_group_pins' [-Werror=implicit-function-declaration]
+>   ret = pinctrl_generic_get_group_pins(pctldev, group, &pins, &npins);
+>   ^
+> ../drivers/pinctrl/mediatek/pinctrl-moore.c: At top level:
+> ../drivers/pinctrl/mediatek/pinctrl-moore.c:397:22: error: 'pinctrl_generic_get_group_count' undeclared here (not in a function)
+>   .get_groups_count = pinctrl_generic_get_group_count,
+>                       ^
+> ../drivers/pinctrl/mediatek/pinctrl-moore.c:398:20: error: 'pinctrl_generic_get_group_name' undeclared here (not in a function)
+>   .get_group_name = pinctrl_generic_get_group_name,
+>                     ^
+> ../drivers/pinctrl/mediatek/pinctrl-moore.c:399:20: error: 'pinctrl_generic_get_group_pins' undeclared here (not in a function)
+>   .get_group_pins = pinctrl_generic_get_group_pins,
+>                     ^
+> ../drivers/pinctrl/mediatek/pinctrl-moore.c:400:20: error: 'pinconf_generic_dt_node_to_map_all' undeclared here (not in a function)
+>   .dt_node_to_map = pinconf_generic_dt_node_to_map_all,
+>                     ^
+> ../drivers/pinctrl/mediatek/pinctrl-moore.c:401:17: error: 'pinconf_generic_dt_free_map' undeclared here (not in a function)
+>   .dt_free_map = pinconf_generic_dt_free_map,
+>                  ^
+> ../drivers/pinctrl/mediatek/pinctrl-moore.c:405:25: error: 'pinmux_generic_get_function_count' undeclared here (not in a function)
+>   .get_functions_count = pinmux_generic_get_function_count,
+>                          ^
+> ../drivers/pinctrl/mediatek/pinctrl-moore.c:406:23: error: 'pinmux_generic_get_function_name' undeclared here (not in a function)
+>   .get_function_name = pinmux_generic_get_function_name,
+>                        ^
+> ../drivers/pinctrl/mediatek/pinctrl-moore.c:407:25: error: 'pinmux_generic_get_function_groups' undeclared here (not in a function)
+>   .get_function_groups = pinmux_generic_get_function_groups,
+>                          ^
+> ../drivers/pinctrl/mediatek/pinctrl-moore.c: In function 'mtk_build_gpiochip':
+> ../drivers/pinctrl/mediatek/pinctrl-moore.c:521:6: error: 'struct gpio_chip' has no member named 'of_node'
+>   chip->of_node  = np;
+>       ^
+> ../drivers/pinctrl/mediatek/pinctrl-moore.c:522:6: error: 'struct gpio_chip' has no member named 'of_gpio_n_cells'
+>   chip->of_gpio_n_cells = 2;
+>       ^
+> ../drivers/pinctrl/mediatek/pinctrl-moore.c: In function 'mtk_build_groups':
+> ../drivers/pinctrl/mediatek/pinctrl-moore.c:552:16: error: invalid use of undefined type 'struct group_desc'
+>    const struct group_desc *group = hw->soc->grps + i;
+>                 ^
+> ../drivers/pinctrl/mediatek/pinctrl-moore.c:554:3: error: implicit declaration of function 'pinctrl_generic_add_group' [-Werror=implicit-function-declaration]
+>    err = pinctrl_generic_add_group(hw->pctrl, group->name,
+>    ^
+> ../drivers/pinctrl/mediatek/pinctrl-moore.c:554:51: error: dereferencing pointer to incomplete type
+>    err = pinctrl_generic_add_group(hw->pctrl, group->name,
+>                                                    ^
+> ../drivers/pinctrl/mediatek/pinctrl-moore.c:555:12: error: dereferencing pointer to incomplete type
+>        group->pins, group->num_pins,
+>             ^
+> ../drivers/pinctrl/mediatek/pinctrl-moore.c:555:25: error: dereferencing pointer to incomplete type
+>        group->pins, group->num_pins,
+>                          ^
+> ../drivers/pinctrl/mediatek/pinctrl-moore.c:556:12: error: dereferencing pointer to incomplete type
+>        group->data);
+>             ^
+> In file included from ../include/linux/gpio/driver.h:5:0,
+>                  from ../drivers/pinctrl/mediatek/pinctrl-moore.c:11:
+> ../drivers/pinctrl/mediatek/pinctrl-moore.c:559:10: error: dereferencing pointer to incomplete type
+>      group->name);
+>           ^
+> ../include/linux/device.h:1463:32: note: in definition of macro 'dev_err'
+>   _dev_err(dev, dev_fmt(fmt), ##__VA_ARGS__)
+>                                 ^
+> ../drivers/pinctrl/mediatek/pinctrl-moore.c: In function 'mtk_build_functions':
+> ../drivers/pinctrl/mediatek/pinctrl-moore.c:572:16: error: invalid use of undefined type 'struct function_desc'
+>    const struct function_desc *func = hw->soc->funcs + i;
+>                 ^
+> ../drivers/pinctrl/mediatek/pinctrl-moore.c:574:3: error: implicit declaration of function 'pinmux_generic_add_function' [-Werror=implicit-function-declaration]
+>    err = pinmux_generic_add_function(hw->pctrl, func->name,
+>    ^
+> ../drivers/pinctrl/mediatek/pinctrl-moore.c:574:52: error: dereferencing pointer to incomplete type
+>    err = pinmux_generic_add_function(hw->pctrl, func->name,
+>                                                     ^
+> ../drivers/pinctrl/mediatek/pinctrl-moore.c:575:13: error: dereferencing pointer to incomplete type
+>          func->group_names,
+>              ^
+> ../drivers/pinctrl/mediatek/pinctrl-moore.c:576:13: error: dereferencing pointer to incomplete type
+>          func->num_group_names,
+>              ^
+> ../drivers/pinctrl/mediatek/pinctrl-moore.c:577:13: error: dereferencing pointer to incomplete type
+>          func->data);
+>              ^
+> In file included from ../include/linux/gpio/driver.h:5:0,
+>                  from ../drivers/pinctrl/mediatek/pinctrl-moore.c:11:
+> ../drivers/pinctrl/mediatek/pinctrl-moore.c:580:9: error: dereferencing pointer to incomplete type
+>      func->name);
+>          ^
+> ../include/linux/device.h:1463:32: note: in definition of macro 'dev_err'
+>   _dev_err(dev, dev_fmt(fmt), ##__VA_ARGS__)
+>                                 ^
+> In file included from ../include/linux/kernel.h:15:0,
+>                  from ../include/linux/list.h:9,
+>                  from ../include/linux/kobject.h:19,
+>                  from ../include/linux/device.h:16,
+>                  from ../include/linux/gpio/driver.h:5,
+>                  from ../drivers/pinctrl/mediatek/pinctrl-moore.c:11:
+> ../drivers/pinctrl/mediatek/pinctrl-moore.c: In function 'mtk_moore_pinctrl_probe':
+> ../include/linux/build_bug.h:16:45: error: bit-field '<anonymous>' width not an integer constant
+>  #define BUILD_BUG_ON_ZERO(e) (sizeof(struct { int:(-!!(e)); }))
+>                                              ^
+> ../include/linux/compiler.h:349:28: note: in expansion of macro 'BUILD_BUG_ON_ZERO'
+>  #define __must_be_array(a) BUILD_BUG_ON_ZERO(__same_type((a), &(a)[0]))
+>                             ^
+> ../include/linux/kernel.h:72:59: note: in expansion of macro '__must_be_array'
+>  #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]) + __must_be_array(arr))
+>                                                            ^
+> ../drivers/pinctrl/mediatek/pinctrl-moore.c:643:31: note: in expansion of macro 'ARRAY_SIZE'
+>   mtk_desc.num_custom_params = ARRAY_SIZE(mtk_custom_bindings);
+>                                ^
+> ../drivers/pinctrl/mediatek/pinctrl-moore.c: At top level:
+> ../drivers/pinctrl/mediatek/pinctrl-moore.c:22:44: warning: 'mtk_custom_bindings' defined but not used [-Wunused-variable]
+>  static const struct pinconf_generic_params mtk_custom_bindings[] = {
+>                                             ^
+> cc1: some warnings being treated as errors
+> ../scripts/Makefile.build:276: recipe for target 'drivers/pinctrl/mediatek/pinctrl-moore.o' failed
+> make[4]: *** [drivers/pinctrl/mediatek/pinctrl-moore.o] Error 1
+>
+> Fixes: b5af33df50e9 ("pinctrl: mediatek: improve Kconfig dependencies")
+> Cc: stable@vger.kernel.org
+> Reported-by: Randy Dunlap <rdunlap@infradead.org>
+> Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
 
-Acked-by: Paolo Bonzini <pbonzini@redhat.com>
+The content looks good to me
+
+Acked-by: Sean Wang <sean.wang@kernel.org>
+
+Hi Linus,
+
+If you don't like such a long message, you can feel free trim it to a
+short one when you merge.
+
+Sean
+
+> ---
+>  drivers/pinctrl/mediatek/Kconfig | 3 +++
+>  1 file changed, 3 insertions(+)
+>
+> diff --git a/drivers/pinctrl/mediatek/Kconfig b/drivers/pinctrl/mediatek/Kconfig
+> index 1817786..a005cbc 100644
+> --- a/drivers/pinctrl/mediatek/Kconfig
+> +++ b/drivers/pinctrl/mediatek/Kconfig
+> @@ -45,12 +45,14 @@ config PINCTRL_MT2701
+>  config PINCTRL_MT7623
+>         bool "Mediatek MT7623 pin control with generic binding"
+>         depends on MACH_MT7623 || COMPILE_TEST
+> +       depends on OF
+>         default MACH_MT7623
+>         select PINCTRL_MTK_MOORE
+>
+>  config PINCTRL_MT7629
+>         bool "Mediatek MT7629 pin control"
+>         depends on MACH_MT7629 || COMPILE_TEST
+> +       depends on OF
+>         default MACH_MT7629
+>         select PINCTRL_MTK_MOORE
+>
+> @@ -92,6 +94,7 @@ config PINCTRL_MT6797
+>
+>  config PINCTRL_MT7622
+>         bool "MediaTek MT7622 pin control"
+> +       depends on OF
+>         depends on ARM64 || COMPILE_TEST
+>         default ARM64 && ARCH_MEDIATEK
+>         select PINCTRL_MTK_MOORE
+> --
+> 1.9.1
+>
