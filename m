@@ -2,298 +2,155 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0E35C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 22:36:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B7A0C43612
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 22:40:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5AE532075C
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 22:36:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547073410;
-	bh=NVODrl36tVRwjwU3uYpAGfxPK2KVsqivgoJi//Yxz0A=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=j/otB4fWxBP8wMPssI5dzMshkJpsbKYJGTY0x1z9kXdVMguwuttiFWB+y7k4XWZ/L
-	 0r1lQMQKXh3gA3uFKpeJc6MfXCgPvg0XJOtqut14VMcB561p+C9fKGxPfIvlIcqUkX
-	 395PF8WVFMMFRgrCzUDCxSCqpAqpgM2Pe+7JvLTo=
+	by mail.kernel.org (Postfix) with ESMTP id 585FE206B7
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 22:40:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=ragnatech-se.20150623.gappssmtp.com header.i=@ragnatech-se.20150623.gappssmtp.com header.b="B3/mYbeC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727096AbfAIWgt (ORCPT
+        id S1726467AbfAIWkn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 17:36:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60462 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726936AbfAIWgr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 17:36:47 -0500
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AB49B2075C;
-        Wed,  9 Jan 2019 22:36:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547073405;
-        bh=NVODrl36tVRwjwU3uYpAGfxPK2KVsqivgoJi//Yxz0A=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=xyjlDxsmsBfGaP1sVYqKA5ebVuGu8QzcYFbKfUVUD6NYqCIJ5Mlq8NfMtmn886vpF
-         hDtIShD29lMh73qVN1qWwrsKgpgYDGzBxlYrVr2tlA4TiDMTOA+ojvnxHkGcIgf0wZ
-         3yJLkCycqdEe5FvJ2pP71f3SnjnJzsAu9qBn6e3o=
-Received: by mail-wm1-f45.google.com with SMTP id g67so10009094wmd.2;
-        Wed, 09 Jan 2019 14:36:44 -0800 (PST)
-X-Gm-Message-State: AJcUukfVf6DydYFzTQthGnBilYsXrLu1aMHNkVeUupzu2LMQBnus7NTD
-        RRoy1GdGAgzqmjXEznPFvyGSHuyka9RSTxGM+xs=
-X-Google-Smtp-Source: ALg8bN4JLaklnBsZLevGFC0WuDFpoj6LltFJv9AwqwfjbOygPdEwKX8uavgvE6LoK/MJ+xCaC9hAjjJDpv9tbpkBJnA=
-X-Received: by 2002:a1c:4d12:: with SMTP id o18mr7697032wmh.92.1547073403098;
- Wed, 09 Jan 2019 14:36:43 -0800 (PST)
+        Wed, 9 Jan 2019 17:40:43 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:34936 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726113AbfAIWkn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 17:40:43 -0500
+Received: by mail-lf1-f67.google.com with SMTP id e26so6896295lfc.2
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Jan 2019 14:40:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ragnatech-se.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=im22EfXQHQJ4U3xWKaC+1Sotpdbrj20LNzueZ0EQoBQ=;
+        b=B3/mYbeC4Fjc/cEkVJD5slS0K76BgdsGoL67DTsWuvswKPQgkV2tHaCeQ3i+k6Urou
+         TH7pjiDEs4lV8/+omI9CWK/KuPRv1QY0DupJFzGPDwcA7WvWSLGwF/CEvw+j63YI1i2y
+         MJQXx7AzgBtcfArABZ/fwBbd5J5yLgbTSkHaXwRFg9eGeOQjqXTX9swaPLFbLAEohLUi
+         hFxUmrjdLcGtzcsBH87D6Vd9SPpN2zJVA+t2WzPqrzk4L0B68oZa5D/QFRcZMwcyHgaU
+         L1rEm7+NSe5hLV0Tva+funQyc6HYV7d6zwK986/PnftfQTzgDECKwMITyV0c69AurvuA
+         PM2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=im22EfXQHQJ4U3xWKaC+1Sotpdbrj20LNzueZ0EQoBQ=;
+        b=N7ycpNCLzbiVl1M8nKvRxPm9kCN8jSgxd5tpiez/xv/KWBwTeNpoA6HSOUzzzf8hkY
+         GY9g5yDmMbqjBJYZIeQRhyh8/fRi6mWhNk1Mck7oF0oO3mxrEgUz7KHFM4n8EZj4T+KF
+         oi+X/XEyC5UBHeE7DVbYiLLZvEl7gP0KQqlLc0P6byZ1iRHWg5g75luX3mmv4GONFLJn
+         ChPCZ+mXEscghbF5i8r7A3J4gvK/JeueJn/+i6OkTBL/CXBpGBZz5yHEl165wez+8shJ
+         nhPMBgk56QbnByaHmRTE0iu1PZHTD46z1hqo0CvHh6/R4cRq9Ch81jdaWUyTF4KH9ht3
+         09YQ==
+X-Gm-Message-State: AJcUukcNasyA63YiiUmHOBwi+EMHBwt7RVT/hs56/HnYk/d/8RVaQa8A
+        j3EK5TdC8AhoAWd6irHMWrdsLw==
+X-Google-Smtp-Source: ALg8bN6fCIdZpA9nuTIBF5dLvhu64xntX+o3jFs8alYz/n5rZS/wDjLlH79odYyMsi4TRX/482HVtg==
+X-Received: by 2002:a19:4bc9:: with SMTP id y192mr4351811lfa.49.1547073640822;
+        Wed, 09 Jan 2019 14:40:40 -0800 (PST)
+Received: from localhost (89-233-230-99.cust.bredband2.com. [89.233.230.99])
+        by smtp.gmail.com with ESMTPSA id s127sm14126874lfe.8.2019.01.09.14.40.39
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 09 Jan 2019 14:40:39 -0800 (PST)
+Date:   Wed, 9 Jan 2019 23:40:39 +0100
+From:   Niklas =?iso-8859-1?Q?S=F6derlund?= 
+        <niklas.soderlund@ragnatech.se>
+To:     Steve Longerbeam <slongerbeam@gmail.com>
+Cc:     linux-media@vger.kernel.org,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        "open list:MEDIA DRIVERS FOR RENESAS - VIN" 
+        <linux-renesas-soc@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH v2] media: rcar-vin: Allow independent VIN link
+ enablement
+Message-ID: <20190109224039.GD24252@bigcity.dyn.berto.se>
+References: <20190106212018.16519-1-slongerbeam@gmail.com>
 MIME-Version: 1.0
-References: <64a23e6f8751ee6f1387a611a9d5dba43694b0d0.1546999151.git.ryder.lee@mediatek.com>
-In-Reply-To: <64a23e6f8751ee6f1387a611a9d5dba43694b0d0.1546999151.git.ryder.lee@mediatek.com>
-From:   Sean Wang <sean.wang@kernel.org>
-Date:   Wed, 9 Jan 2019 14:38:00 -0800
-X-Gmail-Original-Message-ID: <CAGp9Lzo9K4CaY=0m4i9STC0dCVqzojAz8CKP5FBKtoVghnL+Aw@mail.gmail.com>
-Message-ID: <CAGp9Lzo9K4CaY=0m4i9STC0dCVqzojAz8CKP5FBKtoVghnL+Aw@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: mediatek: fix build errors for moore core when
- CONFIG_OF is not enabled
-To:     Ryder Lee <ryder.lee@mediatek.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Weijie Gao <weijie.gao@mediatek.com>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190106212018.16519-1-slongerbeam@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 8, 2019 at 6:14 PM Ryder Lee <ryder.lee@mediatek.com> wrote:
->
-> on i386 or x86_64:
->
-> Lots of build errors for drivers/pinctrl/mediatek/pinctrl-moore.c when
-> CONFIG_OF is not enabled (but COMPILE_TEST is).
->
-> first this:
-> WARNING: unmet direct dependencies detected for PINCTRL_MTK_MOORE
->   Depends on [n]: PINCTRL [=y] && (ARCH_MEDIATEK || COMPILE_TEST [=y]) && OF [=n]
->   Selected by [y]:
->   - PINCTRL_MT7623 [=y] && PINCTRL [=y] && (ARCH_MEDIATEK || COMPILE_TEST [=y]) && (MACH_MT7623 || COMPILE_TEST [=y])
->
-> and then:
-> ../drivers/pinctrl/mediatek/pinctrl-moore.c:22:44: error: array type has incomplete element type
->  static const struct pinconf_generic_params mtk_custom_bindings[] = {
->                                             ^
-> ../drivers/pinctrl/mediatek/pinctrl-moore.c: In function 'mtk_pinmux_set_mux':
-> ../drivers/pinctrl/mediatek/pinctrl-moore.c:46:2: error: implicit declaration of function 'pinmux_generic_get_function' [-Werror=implicit-function-declaration]
->   func = pinmux_generic_get_function(pctldev, selector);
->   ^
-> ../drivers/pinctrl/mediatek/pinctrl-moore.c:46:7: warning: assignment makes pointer from integer without a cast [enabled by default]
->   func = pinmux_generic_get_function(pctldev, selector);
->        ^
-> ../drivers/pinctrl/mediatek/pinctrl-moore.c:50:2: error: implicit declaration of function 'pinctrl_generic_get_group' [-Werror=implicit-function-declaration]
->   grp = pinctrl_generic_get_group(pctldev, group);
->   ^
-> ../drivers/pinctrl/mediatek/pinctrl-moore.c:50:6: warning: assignment makes pointer from integer without a cast [enabled by default]
->   grp = pinctrl_generic_get_group(pctldev, group);
->       ^
-> In file included from ../include/linux/printk.h:331:0,
->                  from ../include/linux/kernel.h:14,
->                  from ../include/linux/list.h:9,
->                  from ../include/linux/kobject.h:19,
->                  from ../include/linux/device.h:16,
->                  from ../include/linux/gpio/driver.h:5,
->                  from ../drivers/pinctrl/mediatek/pinctrl-moore.c:11:
-> ../drivers/pinctrl/mediatek/pinctrl-moore.c:55:7: error: dereferencing pointer to incomplete type
->    func->name, grp->name);
->        ^
-> ../include/linux/dynamic_debug.h:136:9: note: in definition of macro 'dynamic_dev_dbg'
->        ##__VA_ARGS__);  \
->          ^
-> ../drivers/pinctrl/mediatek/pinctrl-moore.c:54:2: note: in expansion of macro 'dev_dbg'
->   dev_dbg(pctldev->dev, "enable function %s group %s\n",
->   ^
-> ../drivers/pinctrl/mediatek/pinctrl-moore.c:55:18: error: dereferencing pointer to incomplete type
->    func->name, grp->name);
->                   ^
-> ../include/linux/dynamic_debug.h:136:9: note: in definition of macro 'dynamic_dev_dbg'
->        ##__VA_ARGS__);  \
->          ^
-> ../drivers/pinctrl/mediatek/pinctrl-moore.c:54:2: note: in expansion of macro 'dev_dbg'
->   dev_dbg(pctldev->dev, "enable function %s group %s\n",
->   ^
-> ../drivers/pinctrl/mediatek/pinctrl-moore.c:57:21: error: dereferencing pointer to incomplete type
->   for (i = 0; i < grp->num_pins; i++) {
->                      ^
-> ../drivers/pinctrl/mediatek/pinctrl-moore.c:59:23: error: dereferencing pointer to incomplete type
->    int *pin_modes = grp->data;
->                        ^
-> ../drivers/pinctrl/mediatek/pinctrl-moore.c:60:16: error: dereferencing pointer to incomplete type
->    int pin = grp->pins[i];
->                 ^
-> ../drivers/pinctrl/mediatek/pinctrl-moore.c: In function 'mtk_pinconf_group_get':
-> ../drivers/pinctrl/mediatek/pinctrl-moore.c:357:2: error: implicit declaration of function 'pinctrl_generic_get_group_pins' [-Werror=implicit-function-declaration]
->   ret = pinctrl_generic_get_group_pins(pctldev, group, &pins, &npins);
->   ^
-> ../drivers/pinctrl/mediatek/pinctrl-moore.c: At top level:
-> ../drivers/pinctrl/mediatek/pinctrl-moore.c:397:22: error: 'pinctrl_generic_get_group_count' undeclared here (not in a function)
->   .get_groups_count = pinctrl_generic_get_group_count,
->                       ^
-> ../drivers/pinctrl/mediatek/pinctrl-moore.c:398:20: error: 'pinctrl_generic_get_group_name' undeclared here (not in a function)
->   .get_group_name = pinctrl_generic_get_group_name,
->                     ^
-> ../drivers/pinctrl/mediatek/pinctrl-moore.c:399:20: error: 'pinctrl_generic_get_group_pins' undeclared here (not in a function)
->   .get_group_pins = pinctrl_generic_get_group_pins,
->                     ^
-> ../drivers/pinctrl/mediatek/pinctrl-moore.c:400:20: error: 'pinconf_generic_dt_node_to_map_all' undeclared here (not in a function)
->   .dt_node_to_map = pinconf_generic_dt_node_to_map_all,
->                     ^
-> ../drivers/pinctrl/mediatek/pinctrl-moore.c:401:17: error: 'pinconf_generic_dt_free_map' undeclared here (not in a function)
->   .dt_free_map = pinconf_generic_dt_free_map,
->                  ^
-> ../drivers/pinctrl/mediatek/pinctrl-moore.c:405:25: error: 'pinmux_generic_get_function_count' undeclared here (not in a function)
->   .get_functions_count = pinmux_generic_get_function_count,
->                          ^
-> ../drivers/pinctrl/mediatek/pinctrl-moore.c:406:23: error: 'pinmux_generic_get_function_name' undeclared here (not in a function)
->   .get_function_name = pinmux_generic_get_function_name,
->                        ^
-> ../drivers/pinctrl/mediatek/pinctrl-moore.c:407:25: error: 'pinmux_generic_get_function_groups' undeclared here (not in a function)
->   .get_function_groups = pinmux_generic_get_function_groups,
->                          ^
-> ../drivers/pinctrl/mediatek/pinctrl-moore.c: In function 'mtk_build_gpiochip':
-> ../drivers/pinctrl/mediatek/pinctrl-moore.c:521:6: error: 'struct gpio_chip' has no member named 'of_node'
->   chip->of_node  = np;
->       ^
-> ../drivers/pinctrl/mediatek/pinctrl-moore.c:522:6: error: 'struct gpio_chip' has no member named 'of_gpio_n_cells'
->   chip->of_gpio_n_cells = 2;
->       ^
-> ../drivers/pinctrl/mediatek/pinctrl-moore.c: In function 'mtk_build_groups':
-> ../drivers/pinctrl/mediatek/pinctrl-moore.c:552:16: error: invalid use of undefined type 'struct group_desc'
->    const struct group_desc *group = hw->soc->grps + i;
->                 ^
-> ../drivers/pinctrl/mediatek/pinctrl-moore.c:554:3: error: implicit declaration of function 'pinctrl_generic_add_group' [-Werror=implicit-function-declaration]
->    err = pinctrl_generic_add_group(hw->pctrl, group->name,
->    ^
-> ../drivers/pinctrl/mediatek/pinctrl-moore.c:554:51: error: dereferencing pointer to incomplete type
->    err = pinctrl_generic_add_group(hw->pctrl, group->name,
->                                                    ^
-> ../drivers/pinctrl/mediatek/pinctrl-moore.c:555:12: error: dereferencing pointer to incomplete type
->        group->pins, group->num_pins,
->             ^
-> ../drivers/pinctrl/mediatek/pinctrl-moore.c:555:25: error: dereferencing pointer to incomplete type
->        group->pins, group->num_pins,
->                          ^
-> ../drivers/pinctrl/mediatek/pinctrl-moore.c:556:12: error: dereferencing pointer to incomplete type
->        group->data);
->             ^
-> In file included from ../include/linux/gpio/driver.h:5:0,
->                  from ../drivers/pinctrl/mediatek/pinctrl-moore.c:11:
-> ../drivers/pinctrl/mediatek/pinctrl-moore.c:559:10: error: dereferencing pointer to incomplete type
->      group->name);
->           ^
-> ../include/linux/device.h:1463:32: note: in definition of macro 'dev_err'
->   _dev_err(dev, dev_fmt(fmt), ##__VA_ARGS__)
->                                 ^
-> ../drivers/pinctrl/mediatek/pinctrl-moore.c: In function 'mtk_build_functions':
-> ../drivers/pinctrl/mediatek/pinctrl-moore.c:572:16: error: invalid use of undefined type 'struct function_desc'
->    const struct function_desc *func = hw->soc->funcs + i;
->                 ^
-> ../drivers/pinctrl/mediatek/pinctrl-moore.c:574:3: error: implicit declaration of function 'pinmux_generic_add_function' [-Werror=implicit-function-declaration]
->    err = pinmux_generic_add_function(hw->pctrl, func->name,
->    ^
-> ../drivers/pinctrl/mediatek/pinctrl-moore.c:574:52: error: dereferencing pointer to incomplete type
->    err = pinmux_generic_add_function(hw->pctrl, func->name,
->                                                     ^
-> ../drivers/pinctrl/mediatek/pinctrl-moore.c:575:13: error: dereferencing pointer to incomplete type
->          func->group_names,
->              ^
-> ../drivers/pinctrl/mediatek/pinctrl-moore.c:576:13: error: dereferencing pointer to incomplete type
->          func->num_group_names,
->              ^
-> ../drivers/pinctrl/mediatek/pinctrl-moore.c:577:13: error: dereferencing pointer to incomplete type
->          func->data);
->              ^
-> In file included from ../include/linux/gpio/driver.h:5:0,
->                  from ../drivers/pinctrl/mediatek/pinctrl-moore.c:11:
-> ../drivers/pinctrl/mediatek/pinctrl-moore.c:580:9: error: dereferencing pointer to incomplete type
->      func->name);
->          ^
-> ../include/linux/device.h:1463:32: note: in definition of macro 'dev_err'
->   _dev_err(dev, dev_fmt(fmt), ##__VA_ARGS__)
->                                 ^
-> In file included from ../include/linux/kernel.h:15:0,
->                  from ../include/linux/list.h:9,
->                  from ../include/linux/kobject.h:19,
->                  from ../include/linux/device.h:16,
->                  from ../include/linux/gpio/driver.h:5,
->                  from ../drivers/pinctrl/mediatek/pinctrl-moore.c:11:
-> ../drivers/pinctrl/mediatek/pinctrl-moore.c: In function 'mtk_moore_pinctrl_probe':
-> ../include/linux/build_bug.h:16:45: error: bit-field '<anonymous>' width not an integer constant
->  #define BUILD_BUG_ON_ZERO(e) (sizeof(struct { int:(-!!(e)); }))
->                                              ^
-> ../include/linux/compiler.h:349:28: note: in expansion of macro 'BUILD_BUG_ON_ZERO'
->  #define __must_be_array(a) BUILD_BUG_ON_ZERO(__same_type((a), &(a)[0]))
->                             ^
-> ../include/linux/kernel.h:72:59: note: in expansion of macro '__must_be_array'
->  #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]) + __must_be_array(arr))
->                                                            ^
-> ../drivers/pinctrl/mediatek/pinctrl-moore.c:643:31: note: in expansion of macro 'ARRAY_SIZE'
->   mtk_desc.num_custom_params = ARRAY_SIZE(mtk_custom_bindings);
->                                ^
-> ../drivers/pinctrl/mediatek/pinctrl-moore.c: At top level:
-> ../drivers/pinctrl/mediatek/pinctrl-moore.c:22:44: warning: 'mtk_custom_bindings' defined but not used [-Wunused-variable]
->  static const struct pinconf_generic_params mtk_custom_bindings[] = {
->                                             ^
-> cc1: some warnings being treated as errors
-> ../scripts/Makefile.build:276: recipe for target 'drivers/pinctrl/mediatek/pinctrl-moore.o' failed
-> make[4]: *** [drivers/pinctrl/mediatek/pinctrl-moore.o] Error 1
->
-> Fixes: b5af33df50e9 ("pinctrl: mediatek: improve Kconfig dependencies")
-> Cc: stable@vger.kernel.org
-> Reported-by: Randy Dunlap <rdunlap@infradead.org>
-> Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
+Hi Steve,
 
-The content looks good to me
+Thanks for your patch, I think it looks good.
 
-Acked-by: Sean Wang <sean.wang@kernel.org>
+On 2019-01-06 13:20:18 -0800, Steve Longerbeam wrote:
+> There is a block of code in rvin_group_link_notify() that loops through
+> all entities in the media graph, and prevents enabling a link to a VIN
+> node if any entity is in use. This prevents enabling a VIN link even if
+> there is an in-use entity somewhere in the graph that is independent of
+> the link's pipeline.
+> 
+> For example, the code will prevent enabling a link from the first
+> rcar-csi2 receiver to a VIN node even if there is an enabled link
+> somewhere far upstream on the second independent rcar-csi2 receiver
+> pipeline.
+> 
+> If this code is meant to prevent modifying a link if any entity in the
+> graph is actively involved in streaming (because modifying the CHSEL
+> register fields can disrupt any/all running streams), then the entities
+> stream counts should be checked rather than the use counts.
+> 
+> (There is already such a check in __media_entity_setup_link() that verifies
+> the stream_count of the link's source and sink entities are both zero,
+> but that is insufficient, since there should be no running streams in
+> the entire graph).
+> 
+> Modify the media_device_for_each_entity() loop to check the entity
+> stream_count instead of the use_count, and elaborate on the comment.
+> VIN node links can now be enabled even if there are other independent
+> in-use entities that are not streaming.
+> 
+> Fixes: c0cc5aef31 ("media: rcar-vin: add link notify for Gen3")
+> 
+> Signed-off-by: Steve Longerbeam <slongerbeam@gmail.com>
 
-Hi Linus,
-
-If you don't like such a long message, you can feel free trim it to a
-short one when you merge.
-
-Sean
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
 > ---
->  drivers/pinctrl/mediatek/Kconfig | 3 +++
->  1 file changed, 3 insertions(+)
->
-> diff --git a/drivers/pinctrl/mediatek/Kconfig b/drivers/pinctrl/mediatek/Kconfig
-> index 1817786..a005cbc 100644
-> --- a/drivers/pinctrl/mediatek/Kconfig
-> +++ b/drivers/pinctrl/mediatek/Kconfig
-> @@ -45,12 +45,14 @@ config PINCTRL_MT2701
->  config PINCTRL_MT7623
->         bool "Mediatek MT7623 pin control with generic binding"
->         depends on MACH_MT7623 || COMPILE_TEST
-> +       depends on OF
->         default MACH_MT7623
->         select PINCTRL_MTK_MOORE
->
->  config PINCTRL_MT7629
->         bool "Mediatek MT7629 pin control"
->         depends on MACH_MT7629 || COMPILE_TEST
-> +       depends on OF
->         default MACH_MT7629
->         select PINCTRL_MTK_MOORE
->
-> @@ -92,6 +94,7 @@ config PINCTRL_MT6797
->
->  config PINCTRL_MT7622
->         bool "MediaTek MT7622 pin control"
-> +       depends on OF
->         depends on ARM64 || COMPILE_TEST
->         default ARM64 && ARCH_MEDIATEK
->         select PINCTRL_MTK_MOORE
-> --
-> 1.9.1
->
+> Changes in v2:
+> - bring back the media_device_for_each_entity() loop but check the
+>   stream_count not the use_count.
+> ---
+>  drivers/media/platform/rcar-vin/rcar-core.c | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+> index f0719ce24b97..6dd6b11c1b2b 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-core.c
+> +++ b/drivers/media/platform/rcar-vin/rcar-core.c
+> @@ -131,9 +131,13 @@ static int rvin_group_link_notify(struct media_link *link, u32 flags,
+>  	    !is_media_entity_v4l2_video_device(link->sink->entity))
+>  		return 0;
+>  
+> -	/* If any entity is in use don't allow link changes. */
+> +	/*
+> +	 * Don't allow link changes if any entity in the graph is
+> +	 * streaming, because modifying the CHSEL register fields
+> +	 * can disrupt running streams.
+> +	 */
+>  	media_device_for_each_entity(entity, &group->mdev)
+> -		if (entity->use_count)
+> +		if (entity->stream_count)
+>  			return -EBUSY;
+>  
+>  	mutex_lock(&group->lock);
+> -- 
+> 2.17.1
+> 
+
+-- 
+Regards,
+Niklas Söderlund
