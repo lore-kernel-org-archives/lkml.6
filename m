@@ -2,45 +2,45 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-10.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81E30C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 19:49:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41279C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 19:50:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C606217F9
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 19:49:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F1CCF2184B
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 19:50:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547063399;
-	bh=eLAjnVUmhoV9GoMzQl405VvCMXfbUS783aI4qStYw/Q=;
+	s=default; t=1547063407;
+	bh=VEfB4FiLuHfxut21HAau8VpJ2rgw8MLYnhC/9dRaAhc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
 	 References:List-ID:From;
-	b=XWcoezTuCBW1toawH0Wu9xYw3TanQ9nCAIPdv5LsP4OlSvvwgJxr1BNXOx1AKutv4
-	 CfEybo5CPo7PoP++YBlCe6emfqQQ7kBJgeZftImB3vS2Hl7th4cPv1/hMdN/bFSUvo
-	 38xq5yXl2uOSbBrIBQ9xtMP7SZkdOdVVKDEoX1gs=
+	b=kYbeGFtQLU/g5w/BYMTuxM9LPh6yzheSBP2oCV5qxCf2WIP08y4sFIAyiMvvZh+8D
+	 8aRloGkG9PrFUZSURiIdfBQzR8nzkBWnb4K8oQOdjFxYreaodNWVpy3QBs4v5KaOBV
+	 jD2IL/0+gAANtVoLfyD5V++Pqr/wwTY91i97SUXg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728590AbfAITt6 (ORCPT
+        id S1728619AbfAITuG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 14:49:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42614 "EHLO mail.kernel.org"
+        Wed, 9 Jan 2019 14:50:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42834 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728548AbfAITtz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 14:49:55 -0500
+        id S1728548AbfAITuC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 14:50:02 -0500
 Received: from localhost.localdomain (c-98-220-238-81.hsd1.il.comcast.net [98.220.238.81])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 630FF2173B;
-        Wed,  9 Jan 2019 19:49:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7569D2177B;
+        Wed,  9 Jan 2019 19:50:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547063393;
-        bh=eLAjnVUmhoV9GoMzQl405VvCMXfbUS783aI4qStYw/Q=;
+        s=default; t=1547063401;
+        bh=VEfB4FiLuHfxut21HAau8VpJ2rgw8MLYnhC/9dRaAhc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
          References:From;
-        b=hmTShscTQbXuzWWN3+gi68+0T5UyXUFzI93/fktyTv4sD87BnjtXffuwZD8XgXa+j
-         rX5RgCJskl9+XPauoZyGfPCJaxTnQ5iMqJKu09fB13CDqWdGJx38lVoEd0BLk8q3N3
-         m2DcArsxYMLAOOx86jx/9CD5BTOw2oWxGwiqZ61A=
+        b=E49OfnXO3ZRarTmViDT6uL43pOdkBM5eMQOpHx8aDmgfDiNEN8TyXT2dPCcR0LeC4
+         1dJupU4RVT/MZZuspW0++KT63FHkpLH2fbuVZanzdoMI0l/0rwMg+I7GzNQQhgaUZd
+         dQllXw64fbwRGK0f7LmKgob53IybL5lhwAVaRero=
 From:   Tom Zanussi <zanussi@kernel.org>
 To:     rostedt@goodmis.org
 Cc:     tglx@linutronix.de, mhiramat@kernel.org, namhyung@kernel.org,
@@ -48,9 +48,9 @@ Cc:     tglx@linutronix.de, mhiramat@kernel.org, namhyung@kernel.org,
         joel@joelfernandes.org, mathieu.desnoyers@efficios.com,
         julia@ni.com, linux-kernel@vger.kernel.org,
         linux-rt-users@vger.kernel.org
-Subject: [PATCH v11 03/15] tracing: Split up onmatch action data
-Date:   Wed,  9 Jan 2019 13:49:10 -0600
-Message-Id: <37949f9c6e89144e6ed553e75617ff6528b9b7eb.1547062835.git.tom.zanussi@linux.intel.com>
+Subject: [PATCH v11 06/15] tracing: Add hist trigger snapshot() action
+Date:   Wed,  9 Jan 2019 13:49:13 -0600
+Message-Id: <8235857137408addebf27311fdeed8d8fcc2d23a.1547062835.git.tom.zanussi@linux.intel.com>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <cover.1547062835.git.tom.zanussi@linux.intel.com>
 References: <cover.1547062835.git.tom.zanussi@linux.intel.com>
@@ -63,256 +63,466 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Tom Zanussi <tom.zanussi@linux.intel.com>
 
-Currently, the onmatch action data binds the onmatch action to data
-related to synthetic event generation.  Since we want to allow the
-onmatch handler to potentially invoke a different action, and because
-we expect other handlers to generate synthetic events, we need to
-separate the data related to these two functions.
+Add support for hist:handlerXXX($var).snapshot(), which will take a
+snapshot of the current trace buffer whenever handlerXXX is hit.
 
-Also rename the onmatch data to something more descriptive, and create
-and use common action data destroy function.
+As a first user, this also adds snapshot() action support for the
+onmax() handler i.e. hist:onmax($var).snapshot().
+
+Also, the hist trigger key printing is moved into a separate function
+so the snapshot() action can print a histogram key outside the
+histogram display - add and use hist_trigger_print_key() for that
+purpose.
 
 Signed-off-by: Tom Zanussi <tom.zanussi@linux.intel.com>
 ---
- kernel/trace/trace.c             |  12 ++++-
- kernel/trace/trace_events_hist.c | 103 ++++++++++++++++++++-------------------
- 2 files changed, 63 insertions(+), 52 deletions(-)
+ kernel/trace/trace.c             |   1 +
+ kernel/trace/trace_events_hist.c | 298 +++++++++++++++++++++++++++++++++++++--
+ 2 files changed, 287 insertions(+), 12 deletions(-)
 
 diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index 18b86c3974e1..188c4e06c1cc 100644
+index f936852ebe3d..fcc0f1a963e3 100644
 --- a/kernel/trace/trace.c
 +++ b/kernel/trace/trace.c
-@@ -4700,6 +4700,7 @@ static const char readme_msg[] =
- 	"\t            [:size=#entries]\n"
- 	"\t            [:pause][:continue][:clear]\n"
- 	"\t            [:name=histname1]\n"
-+	"\t            [:<handler>.<action>]\n"
- 	"\t            [if <filter>]\n\n"
- 	"\t    When a matching event is hit, an entry is added to a hash\n"
- 	"\t    table using the key(s) and value(s) named, and the value of a\n"
-@@ -4741,7 +4742,16 @@ static const char readme_msg[] =
- 	"\t    The enable_hist and disable_hist triggers can be used to\n"
- 	"\t    have one event conditionally start and stop another event's\n"
- 	"\t    already-attached hist trigger.  The syntax is analagous to\n"
--	"\t    the enable_event and disable_event triggers.\n"
-+	"\t    the enable_event and disable_event triggers.\n\n"
-+	"\t    Hist trigger handlers and actions are executed whenever a\n"
-+	"\t    a histogram entry is added or updated.  They take the form:\n\n"
-+	"\t        <handler>.<action>\n\n"
-+	"\t    The available handlers are:\n\n"
-+	"\t        onmatch(matching.event)  - invoke on addition or update\n"
-+	"\t        onmax(var)               - invoke if var exceeds current max\n\n"
-+	"\t    The available actions are:\n\n"
-+	"\t        <synthetic_event>(param list)        - generate synthetic event\n"
-+	"\t        save(field,...)                      - save current event fields\n"
+@@ -4900,6 +4900,7 @@ static const char readme_msg[] =
+ 	"\t    The available actions are:\n\n"
+ 	"\t        <synthetic_event>(param list)        - generate synthetic event\n"
+ 	"\t        save(field,...)                      - save current event fields\n"
++	"\t        snapshot()                           - snapshot the trace buffer\n"
  #endif
  ;
  
 diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
-index 2aeb716712d4..f0e9667a29c6 100644
+index d5c0b3f67804..568729d7c599 100644
 --- a/kernel/trace/trace_events_hist.c
 +++ b/kernel/trace/trace_events_hist.c
-@@ -405,21 +405,22 @@ struct action_data {
+@@ -403,12 +403,14 @@ enum handler_id {
+ enum action_id {
+ 	ACTION_SAVE = 1,
+ 	ACTION_TRACE,
++	ACTION_SNAPSHOT,
+ };
+ 
+ struct action_data {
+ 	enum handler_id		handler;
+ 	enum action_id		action;
+ 	char			*action_name;
++	void			*key;
+ 	action_fn_t		fn;
+ 
  	unsigned int		n_params;
- 	char			*params[SYNTH_FIELDS_MAX];
- 
-+	/*
-+	 * When a histogram trigger is hit, the values of any
-+	 * references to variables, including variables being passed
-+	 * as parameters to synthetic events, are collected into a
-+	 * var_ref_vals array.  This var_ref_idx is the index of the
-+	 * first param in the array to be passed to the synthetic
-+	 * event invocation.
-+	 */
-+	unsigned int		var_ref_idx;
-+	struct synth_event	*synth_event;
+@@ -459,10 +461,85 @@ struct action_data {
+ 			save_track_val_fn_t	save_val;
+ 			action_fn_t		save_data;
+ 			get_track_val_fn_t	get_val;
 +
- 	union {
- 		struct {
--			/*
--			 * When a histogram trigger is hit, the values of any
--			 * references to variables, including variables being passed
--			 * as parameters to synthetic events, are collected into a
--			 * var_ref_vals array.  This var_ref_idx is the index of the
--			 * first param in the array to be passed to the synthetic
--			 * event invocation.
--			 */
--			unsigned int		var_ref_idx;
--			char			*match_event;
--			char			*match_event_system;
--			struct synth_event	*synth_event;
--		} onmatch;
-+			char			*event;
-+			char			*event_system;
-+		} match_data;
++			struct cond_snapshot	cond_snapshot;
+ 		} track_data;
+ 	};
+ };
  
- 		struct {
- 			char			*var_str;
-@@ -1093,9 +1094,9 @@ static void action_trace(struct hist_trigger_data *hist_data,
- 			 struct ring_buffer_event *rbe,
- 			 struct action_data *data, u64 *var_ref_vals)
- {
--	struct synth_event *event = data->onmatch.synth_event;
-+	struct synth_event *event = data->synth_event;
- 
--	trace_synth(event, var_ref_vals, data->onmatch.var_ref_idx);
-+	trace_synth(event, var_ref_vals, data->var_ref_idx);
- }
- 
- struct hist_var_data {
-@@ -1656,8 +1657,8 @@ find_match_var(struct hist_trigger_data *hist_data, char *var_name)
- 		struct action_data *data = hist_data->actions[i];
- 
- 		if (data->handler == HANDLER_ONMATCH) {
--			char *system = data->onmatch.match_event_system;
--			char *event_name = data->onmatch.match_event;
-+			char *system = data->match_data.event_system;
-+			char *event_name = data->match_data.event;
- 
- 			file = find_var_file(tr, system, event_name, var_name);
- 			if (!file)
-@@ -3424,22 +3425,33 @@ static void onmax_save(struct hist_trigger_data *hist_data,
- 	update_max_vars(hist_data, elt, rbe, rec);
- }
- 
--static void onmax_destroy(struct action_data *data)
-+static void action_data_destroy(struct action_data *data)
- {
- 	unsigned int i;
- 
--	destroy_hist_field(data->onmax.max_var, 0);
--	destroy_hist_field(data->onmax.var, 0);
-+	lockdep_assert_held(&event_mutex);
- 
--	kfree(data->onmax.var_str);
- 	kfree(data->action_name);
- 
- 	for (i = 0; i < data->n_params; i++)
- 		kfree(data->params[i]);
- 
-+	if (data->synth_event)
-+		data->synth_event->ref--;
++struct track_data {
++	u64				track_val;
 +
- 	kfree(data);
- }
- 
-+static void onmax_destroy(struct action_data *data)
++	unsigned int			key_len;
++	void				*key;
++	struct tracing_map_elt		elt;
++	struct tracing_map_elt		*cur_elt;
++
++	struct action_data		*action_data;
++	struct hist_trigger_data	*hist_data;
++};
++
++struct hist_elt_data {
++	char *comm;
++	u64 *var_ref_vals;
++	char *field_var_str[SYNTH_FIELDS_MAX];
++};
++
++static void track_data_free(struct track_data *track_data)
 +{
-+	destroy_hist_field(data->onmax.max_var, 0);
-+	destroy_hist_field(data->onmax.var, 0);
++	struct hist_elt_data *elt_data;
 +
-+	kfree(data->onmax.var_str);
++	if (!track_data)
++		return;
 +
-+	action_data_destroy(data);
++	kfree(track_data->key);
++
++	elt_data = track_data->elt.private_data;
++	if (elt_data) {
++		kfree(elt_data->comm);
++		kfree(elt_data);
++	}
++
++	kfree(track_data);
 +}
 +
- static int action_create(struct hist_trigger_data *hist_data,
- 			 struct action_data *data);
++static struct track_data *track_data_alloc(unsigned int key_len,
++					   struct action_data *action_data,
++					   struct hist_trigger_data *hist_data)
++{
++	struct track_data *data = kzalloc(sizeof(*data), GFP_KERNEL);
++	unsigned int size = TASK_COMM_LEN;
++	struct hist_elt_data *elt_data;
++
++	if (!data)
++		return ERR_PTR(-ENOMEM);
++
++	data->key = kzalloc(key_len, GFP_KERNEL);
++	if (!data->key) {
++		track_data_free(data);
++		return ERR_PTR(-ENOMEM);
++	}
++
++	data->key_len = key_len;
++	data->action_data = action_data;
++	data->hist_data = hist_data;
++
++	elt_data = kzalloc(sizeof(*elt_data), GFP_KERNEL);
++	if (!elt_data) {
++		track_data_free(data);
++		return ERR_PTR(-ENOMEM);
++	}
++	data->elt.private_data = elt_data;
++
++	elt_data->comm = kzalloc(size, GFP_KERNEL);
++	if (!elt_data->comm) {
++		track_data_free(data);
++		return ERR_PTR(-ENOMEM);
++	}
++
++	return data;
++}
++
+ static char last_hist_cmd[MAX_FILTER_STR_VAL];
+ static char hist_err_str[MAX_FILTER_STR_VAL];
  
-@@ -3619,21 +3631,10 @@ static struct action_data *onmax_parse(char *str, enum handler_id handler)
- 
- static void onmatch_destroy(struct action_data *data)
- {
--	unsigned int i;
--
--	lockdep_assert_held(&event_mutex);
-+	kfree(data->match_data.event);
-+	kfree(data->match_data.event_system);
- 
--	kfree(data->onmatch.match_event);
--	kfree(data->onmatch.match_event_system);
--	kfree(data->action_name);
--
--	for (i = 0; i < data->n_params; i++)
--		kfree(data->params[i]);
--
--	if (data->onmatch.synth_event)
--		data->onmatch.synth_event->ref--;
--
--	kfree(data);
-+	action_data_destroy(data);
+@@ -1734,12 +1811,6 @@ static struct hist_field *find_event_var(struct hist_trigger_data *hist_data,
+ 	return hist_field;
  }
  
- static void destroy_field_var(struct field_var *field_var)
-@@ -3694,8 +3695,8 @@ trace_action_find_var(struct hist_trigger_data *hist_data,
- 	hist_field = find_target_event_var(hist_data, system, event, var);
- 	if (!hist_field) {
- 		if (!system && data->handler == HANDLER_ONMATCH) {
--			system = data->onmatch.match_event_system;
--			event = data->onmatch.match_event;
-+			system = data->match_data.event_system;
-+			event = data->match_data.event;
- 		}
+-struct hist_elt_data {
+-	char *comm;
+-	u64 *var_ref_vals;
+-	char *field_var_str[SYNTH_FIELDS_MAX];
+-};
+-
+ static u64 hist_field_var_ref(struct hist_field *hist_field,
+ 			      struct tracing_map_elt *elt,
+ 			      struct ring_buffer_event *rbe,
+@@ -3466,6 +3537,123 @@ static bool check_track_val(struct tracing_map_elt *elt,
+ 	return data->track_data.check_val(track_val, var_val);
+ }
  
- 		hist_field = find_event_var(hist_data, system, event, var);
-@@ -3734,8 +3735,8 @@ trace_action_create_field_var(struct hist_trigger_data *hist_data,
- 		 * event.
- 		 */
- 		if (!system && data->handler == HANDLER_ONMATCH) {
--			system = data->onmatch.match_event_system;
--			event = data->onmatch.match_event;
-+			system = data->match_data.event_system;
-+			event = data->match_data.event;
- 		}
++static void cond_snapshot_save_track_data(struct track_data *old_data,
++					  struct track_data *data)
++{
++	struct hist_elt_data *elt_data, *old_elt_data;
++	struct tracing_map_elt *elt;
++
++	old_data->track_val = data->track_val;
++
++	memcpy(old_data->key, data->key, old_data->key_len);
++	elt = data->cur_elt;
++	elt_data = elt->private_data;
++	old_elt_data = old_data->elt.private_data;
++
++	if (elt_data->comm)
++		memcpy(old_elt_data->comm, elt_data->comm, TASK_COMM_LEN);
++}
++
++static bool cond_snapshot_update(struct trace_array *tr, void *cond_data)
++{
++	/* called with tr->max_lock held */
++	struct track_data *old_data = tr->cond_snapshot->cond_data;
++	struct track_data *data = cond_data;
++	struct action_data *action_data = old_data->action_data;
++	bool updated;
++
++	if (!old_data)
++		return false;
++
++	updated = action_data->track_data.check_val(old_data->track_val, data->track_val);
++	if (!updated)
++		return false;
++
++	cond_snapshot_save_track_data(old_data, data);
++
++	return true;
++}
++
++static u64 get_track_val_snapshot(struct hist_trigger_data *hist_data,
++				  struct tracing_map_elt *elt,
++				  struct action_data *data)
++{
++	struct trace_event_file *file = hist_data->event_file;
++	struct track_data *track_data;
++
++	track_data = tracing_cond_snapshot_data(file->tr);
++	if (WARN_ON(!track_data))
++		return 0;
++
++	return track_data->track_val;
++}
++
++static void save_track_val_snapshot(struct hist_trigger_data *hist_data,
++				    struct tracing_map_elt *elt,
++				    struct action_data *data,
++				    unsigned int track_var_idx, u64 var_val)
++{
++	struct trace_event_file *file = hist_data->event_file;
++	struct track_data *track_data;
++
++	track_data = data->track_data.cond_snapshot.cond_data;
++	track_data->track_val = var_val;
++	memcpy(track_data->key, data->key, track_data->key_len);
++	track_data->cur_elt = elt;
++
++	tracing_snapshot_cond(file->tr, track_data);
++}
++
++static void hist_trigger_print_key(struct seq_file *m,
++				   struct hist_trigger_data *hist_data,
++				   void *key,
++				   struct tracing_map_elt *elt);
++
++static struct action_data *snapshot_action(struct hist_trigger_data *hist_data)
++{
++	unsigned int i;
++
++	if (!hist_data->n_actions)
++		return NULL;
++
++	for (i = 0; i < hist_data->n_actions; i++) {
++		struct action_data *data = hist_data->actions[i];
++
++		if (data->action == ACTION_SNAPSHOT)
++			return data;
++	}
++
++	return NULL;
++}
++
++static void track_data_snapshot_print(struct seq_file *m,
++				      struct hist_trigger_data *hist_data)
++{
++	struct trace_event_file *file = hist_data->event_file;
++	struct track_data *track_data;
++	struct action_data *action;
++
++	track_data = tracing_cond_snapshot_data(file->tr);
++	if (!track_data)
++		return;
++
++	if (!track_data->track_val)
++		return;
++
++	action = snapshot_action(hist_data);
++	if (!action)
++		return;
++
++	seq_puts(m, "\nSnapshot taken (see tracing/snapshot).  Details:\n");
++	seq_printf(m, "\ttriggering value { %s(%s) }: %10llu",
++		   action->handler == HANDLER_ONMAX ? "onmax" : "onchange",
++		   action->track_data.var_str, track_data->track_val);
++
++	seq_puts(m, "\ttriggered by event with key: ");
++	hist_trigger_print_key(m, hist_data, track_data->key, &track_data->elt);
++	seq_putc(m, '\n');
++}
++
+ static void track_data_print(struct seq_file *m,
+ 			     struct hist_trigger_data *hist_data,
+ 			     struct tracing_map_elt *elt,
+@@ -3477,6 +3665,9 @@ static void track_data_print(struct seq_file *m,
+ 	if (data->handler == HANDLER_ONMAX)
+ 		seq_printf(m, "\n\tmax: %10llu", track_val);
  
- 		/*
-@@ -3845,8 +3846,8 @@ static int trace_action_create(struct hist_trigger_data *hist_data,
- 		goto err;
- 	}
- 
--	data->onmatch.synth_event = event;
--	data->onmatch.var_ref_idx = var_ref_idx;
-+	data->synth_event = event;
-+	data->var_ref_idx = var_ref_idx;
-  out:
- 	return ret;
-  err:
-@@ -3932,14 +3933,14 @@ static struct action_data *onmatch_parse(struct trace_array *tr, char *str)
- 		goto free;
- 	}
- 
--	data->onmatch.match_event = kstrdup(match_event, GFP_KERNEL);
--	if (!data->onmatch.match_event) {
-+	data->match_data.event = kstrdup(match_event, GFP_KERNEL);
-+	if (!data->match_data.event) {
- 		ret = -ENOMEM;
- 		goto free;
- 	}
- 
--	data->onmatch.match_event_system = kstrdup(match_event_system, GFP_KERNEL);
--	if (!data->onmatch.match_event_system) {
-+	data->match_data.event_system = kstrdup(match_event_system, GFP_KERNEL);
-+	if (!data->match_data.event_system) {
- 		ret = -ENOMEM;
- 		goto free;
- 	}
-@@ -4510,8 +4511,8 @@ static void print_onmatch_spec(struct seq_file *m,
- 			       struct hist_trigger_data *hist_data,
++	if (data->action == ACTION_SNAPSHOT)
++		return;
++
+ 	for (i = 0; i < hist_data->n_save_vars; i++) {
+ 		struct hist_field *save_val = hist_data->save_vars[i]->val;
+ 		struct hist_field *save_var = hist_data->save_vars[i]->var;
+@@ -3527,9 +3718,20 @@ static void action_data_destroy(struct action_data *data)
+ static void track_data_destroy(struct hist_trigger_data *hist_data,
  			       struct action_data *data)
  {
--	seq_printf(m, ":onmatch(%s.%s).", data->onmatch.match_event_system,
--		   data->onmatch.match_event);
-+	seq_printf(m, ":onmatch(%s.%s).", data->match_data.event_system,
-+		   data->match_data.event);
++	struct trace_event_file *file = hist_data->event_file;
++
+ 	destroy_hist_field(data->track_data.track_var, 0);
+ 	destroy_hist_field(data->track_data.var_ref, 0);
  
- 	seq_printf(m, "%s(", data->action_name);
++	if (data->action == ACTION_SNAPSHOT) {
++		struct track_data *track_data;
++
++		track_data = tracing_cond_snapshot_data(file->tr);
++		tracing_snapshot_cond_disable(file->tr);
++		track_data_free(track_data);
++		track_data_free(data->track_data.cond_snapshot.cond_data);
++	}
++
+ 	kfree(data->track_data.var_str);
  
-@@ -4549,11 +4550,11 @@ static bool actions_match(struct hist_trigger_data *hist_data,
- 			return false;
+ 	action_data_destroy(data);
+@@ -3664,6 +3866,29 @@ static int action_parse(char *str, struct action_data *data,
+ 		data->fn = ontrack_action;
  
- 		if (data->handler == HANDLER_ONMATCH) {
--			if (strcmp(data->onmatch.match_event_system,
--				   data_test->onmatch.match_event_system) != 0)
-+			if (strcmp(data->match_data.event_system,
-+				   data_test->match_data.event_system) != 0)
- 				return false;
--			if (strcmp(data->onmatch.match_event,
--				   data_test->onmatch.match_event) != 0)
-+			if (strcmp(data->match_data.event,
-+				   data_test->match_data.event) != 0)
- 				return false;
- 		} else if (data->handler == HANDLER_ONMAX) {
- 			if (strcmp(data->onmax.var_str,
+ 		data->action = ACTION_SAVE;
++	} else if (str_has_prefix(action_name, "snapshot")) {
++		char *params = strsep(&str, ")");
++
++		if (!str) {
++			hist_err("action parsing: No closing paren found: %s", params);
++			ret = -EINVAL;
++			goto out;
++		}
++
++		if (handler == HANDLER_ONMAX)
++			data->track_data.check_val = check_track_val_max;
++		else {
++			hist_err("action parsing: Handler doesn't support action: ", action_name);
++			ret = -EINVAL;
++			goto out;
++		}
++
++		data->track_data.save_val = save_track_val_snapshot;
++		data->track_data.get_val = get_track_val_snapshot;
++
++		data->fn = ontrack_action;
++
++		data->action = ACTION_SNAPSHOT;
+ 	} else {
+ 		char *params = strsep(&str, ")");
+ 
+@@ -3962,6 +4187,8 @@ static int trace_action_create(struct hist_trigger_data *hist_data,
+ static int action_create(struct hist_trigger_data *hist_data,
+ 			 struct action_data *data)
+ {
++	struct trace_event_file *file = hist_data->event_file;
++	struct track_data *track_data;
+ 	struct field_var *field_var;
+ 	unsigned int i;
+ 	char *param;
+@@ -3970,6 +4197,32 @@ static int action_create(struct hist_trigger_data *hist_data,
+ 	if (data->action == ACTION_TRACE)
+ 		return trace_action_create(hist_data, data);
+ 
++	if (data->action == ACTION_SNAPSHOT) {
++		ret = tracing_alloc_snapshot_instance(file->tr);
++		if (ret)
++			goto out;
++
++		data->track_data.cond_snapshot.cond_data = track_data_alloc(hist_data->key_size, NULL, NULL);
++		if (IS_ERR(data->track_data.cond_snapshot.cond_data)) {
++			ret = PTR_ERR(data->track_data.cond_snapshot.cond_data);
++			goto out;
++		}
++
++		track_data = track_data_alloc(hist_data->key_size, data,
++					      hist_data);
++		if (IS_ERR(track_data)) {
++			ret = PTR_ERR(track_data);
++			goto out;
++		}
++
++		ret = tracing_snapshot_cond_enable(file->tr, track_data,
++						   cond_snapshot_update);
++		if (ret)
++			track_data_free(track_data);
++
++		goto out;
++	}
++
+ 	if (data->action == ACTION_SAVE) {
+ 		if (hist_data->n_save_vars) {
+ 			ret = -EEXIST;
+@@ -4567,11 +4820,17 @@ static void print_actions(struct seq_file *m,
+ 			  struct hist_trigger_data *hist_data,
+ 			  struct tracing_map_elt *elt)
+ {
++	struct action_data *snapshot_action = NULL;
+ 	unsigned int i;
+ 
+ 	for (i = 0; i < hist_data->n_actions; i++) {
+ 		struct action_data *data = hist_data->actions[i];
+ 
++		if (data->action == ACTION_SNAPSHOT) {
++			snapshot_action = data; /* we can only have one */
++			continue;
++		}
++
+ 		if (data->handler == HANDLER_ONMAX)
+ 			track_data_print(m, hist_data, elt, data);
+ 	}
+@@ -4876,13 +5135,15 @@ static inline void add_to_key(char *compound_key, void *key,
+ static void
+ hist_trigger_actions(struct hist_trigger_data *hist_data,
+ 		     struct tracing_map_elt *elt, void *rec,
+-		     struct ring_buffer_event *rbe, u64 *var_ref_vals)
++		     struct ring_buffer_event *rbe, u64 *var_ref_vals,
++		     void *key)
+ {
+ 	struct action_data *data;
+ 	unsigned int i;
+ 
+ 	for (i = 0; i < hist_data->n_actions; i++) {
+ 		data = hist_data->actions[i];
++		data->key = key;
+ 		data->fn(hist_data, elt, rec, rbe, data, var_ref_vals);
+ 	}
+ }
+@@ -4944,7 +5205,7 @@ static void event_hist_trigger(struct event_trigger_data *data, void *rec,
+ 	hist_trigger_elt_update(hist_data, elt, rec, rbe, var_ref_vals);
+ 
+ 	if (resolve_var_refs(hist_data, key, var_ref_vals, true))
+-		hist_trigger_actions(hist_data, elt, rec, rbe, var_ref_vals);
++		hist_trigger_actions(hist_data, elt, rec, rbe, var_ref_vals, key);
+ }
+ 
+ static void hist_trigger_stacktrace_print(struct seq_file *m,
+@@ -4965,10 +5226,10 @@ static void hist_trigger_stacktrace_print(struct seq_file *m,
+ 	}
+ }
+ 
+-static void
+-hist_trigger_entry_print(struct seq_file *m,
+-			 struct hist_trigger_data *hist_data, void *key,
+-			 struct tracing_map_elt *elt)
++static void hist_trigger_print_key(struct seq_file *m,
++				   struct hist_trigger_data *hist_data,
++				   void *key,
++				   struct tracing_map_elt *elt)
+ {
+ 	struct hist_field *key_field;
+ 	char str[KSYM_SYMBOL_LEN];
+@@ -5044,6 +5305,17 @@ hist_trigger_entry_print(struct seq_file *m,
+ 		seq_puts(m, " ");
+ 
+ 	seq_puts(m, "}");
++}
++
++static void hist_trigger_entry_print(struct seq_file *m,
++				     struct hist_trigger_data *hist_data,
++				     void *key,
++				     struct tracing_map_elt *elt)
++{
++	const char *field_name;
++	unsigned int i;
++
++	hist_trigger_print_key(m, hist_data, key, elt);
+ 
+ 	seq_printf(m, " hitcount: %10llu",
+ 		   tracing_map_read_sum(elt, HITCOUNT_IDX));
+@@ -5110,6 +5382,8 @@ static void hist_trigger_show(struct seq_file *m,
+ 	if (n_entries < 0)
+ 		n_entries = 0;
+ 
++	track_data_snapshot_print(m, hist_data);
++
+ 	seq_printf(m, "\nTotals:\n    Hits: %llu\n    Entries: %u\n    Dropped: %llu\n",
+ 		   (u64)atomic64_read(&hist_data->map->hits),
+ 		   n_entries, (u64)atomic64_read(&hist_data->map->drops));
 -- 
 2.14.1
 
