@@ -2,119 +2,99 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D29E1C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 20:50:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 006FAC43444
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 20:51:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9AED9214C6
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 20:50:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZaEuS2h6"
+	by mail.kernel.org (Postfix) with ESMTP id C9CC42075C
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 20:51:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727179AbfAIUux (ORCPT
+        id S1727235AbfAIUve (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 15:50:53 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:41584 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727113AbfAIUuw (ORCPT
+        Wed, 9 Jan 2019 15:51:34 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:37784 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727113AbfAIUvd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 15:50:52 -0500
-Received: by mail-lf1-f68.google.com with SMTP id c16so6678507lfj.8;
-        Wed, 09 Jan 2019 12:50:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=B42gs8Y3HgVHs+5T0aoIuishxfjjrxk1B5kiRgNNK0A=;
-        b=ZaEuS2h6aAzWZUhyZGtuHYMxWM2IR/3aPP/mXJgGz9Mof5VOWdbmdu4ooWc7lpieqi
-         GP79IUQjXd4I48tXilbh32g+03ufwIoscYAv+3GyD/fLnvoNfcWkwoREJSDxzDvvpxO7
-         YJ1RN6NQLhPRIttZ091xuKCPWZ65gYVRwP5Aet6uePpXCEuhyWMQZFYLd8LbNY4UyDD9
-         IUwfdaN1/7eeXsehtqPoWloKCT1D2TEhTtktl2irNaS/uZvSEkuCunbZdgxba8+JBEsi
-         5meg3K5AjwMv2AJQXI9WwFr1y2/TgZY6cZLdVuAOUA+tzBUU0JwdU4J5HLlUsRN0tYGs
-         U17g==
+        Wed, 9 Jan 2019 15:51:33 -0500
+Received: by mail-pg1-f196.google.com with SMTP id c25so3818930pgb.4;
+        Wed, 09 Jan 2019 12:51:32 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=B42gs8Y3HgVHs+5T0aoIuishxfjjrxk1B5kiRgNNK0A=;
-        b=SWnZ5qn3NsZObp+Z9RFqxpha7pzmAy/HdYhwUJf2z4IfFaDMdUHQXndmLFUUwfL7bm
-         k5lg3L+SvLa+cexTPlaC5vjrdbQoc7QjarXPDLUUfnRUK4vQ5mFWpBblXW2L56aCOIpz
-         9y3QBrpoHSh+4gQfRJmDONwqGgUt7pXF/h136SPGEebgJRarsWWYAVyvMQxJJj0kIZ95
-         azdTo+/6Sa+KiIRe+lx+tp8JDbOHptaR5BJhc3brGDDAN7iWQIqXChNC72y15gA401XN
-         wmxSIOY5qGIFpyvHMRMr068GU89rUE0SzjDpd0svy2KYYhnPT9Dcy1EJpZuYjP93icJS
-         ooYQ==
-X-Gm-Message-State: AJcUukdSjiTjO2XztNPOS0n8XOrjNdQbwuW/ykhCs/zFSP+YgZV8Cetb
-        gJKBURDcyoKbNHFWOvEK253BBJV9
-X-Google-Smtp-Source: ALg8bN4jWDbiVaQ6UqbalhDJl1H+6XAAhUcEYZ3FZ3nQCka3PW5vTUwBHXPvuJ1oO20kQNMfHDC3fg==
-X-Received: by 2002:a19:1994:: with SMTP id 142mr4590396lfz.134.1547067049570;
-        Wed, 09 Jan 2019 12:50:49 -0800 (PST)
-Received: from [192.168.1.18] (chc231.neoplus.adsl.tpnet.pl. [83.31.0.231])
-        by smtp.gmail.com with ESMTPSA id t18sm13710341lft.93.2019.01.09.12.50.47
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 09 Jan 2019 12:50:48 -0800 (PST)
-Subject: Re: [PATCH] media: s5p-jpeg: Correct step and max values for
- V4L2_CID_JPEG_RESTART_INTERVAL
-To:     =?UTF-8?Q?Pawe=c5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>,
-        andrzej.p@samsung.com
-Cc:     mchehab@kernel.org, s.nawrocki@samsung.com,
-        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-References: <20190109180041.31052-1-pawel.mikolaj.chmiel@gmail.com>
-From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Message-ID: <843c632a-0804-8a30-0002-a87b85de1ed3@gmail.com>
-Date:   Wed, 9 Jan 2019 21:50:45 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <20190109180041.31052-1-pawel.mikolaj.chmiel@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=mv6qB4UcQSszzDw4pkq6KXA+yj2suUtqattZixkiQsQ=;
+        b=ZyVwTLZVo5BXX9UzxCESiZJjZ35RzLLKA/ZhKvhQe+jjjcrNzGzsBa4Py8WrdjyLY3
+         fWvoxsfiUe8oWY6XpwNtXIJvPIrfz0u/SveP0qqiw+qnOSCXVAeBSDfqI37ev3CIoUS8
+         HMYIuevXGwgn9gcnrXE61O4M3yJJfiMGmwnY3IeBhwP7rO8lrMdb6HqE6J4pPrm5BPX5
+         wb4j1Qf1/+52bEfLpbgxSTUmnp4vvo8SCyQKC2Q23U3iOfKvYz90KUMbAAFj6u1R31Ri
+         rr6K8jZs3vm89j4yMTKlTpcP5zwe48QCvN/azdd4a4xPlJ1A/b8DxVIGM89O2FUM9CXz
+         BEfQ==
+X-Gm-Message-State: AJcUukcrYqTljaHUeHB0ygGDoqJsM4aRh3PD+YIN1ZNB1xTBjZurpHLH
+        xU36GflSc5j51759BJg6A3c=
+X-Google-Smtp-Source: ALg8bN74B4Cfu9sT7HzEkMYfur3FNmme2tybBly9s7Fs6RoZJE/zR9MKbaKyi8jFS6Sq4SqUibOeHg==
+X-Received: by 2002:a62:6204:: with SMTP id w4mr7544163pfb.5.1547067092008;
+        Wed, 09 Jan 2019 12:51:32 -0800 (PST)
+Received: from ?IPv6:2620:15c:2cd:203:5cdc:422c:7b28:ebb5? ([2620:15c:2cd:203:5cdc:422c:7b28:ebb5])
+        by smtp.gmail.com with ESMTPSA id u186sm109312823pfu.51.2019.01.09.12.51.29
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 09 Jan 2019 12:51:30 -0800 (PST)
+Message-ID: <1547067088.83374.41.camel@acm.org>
+Subject: Re: [PATCH v3] loop: drop caches if offset or block_size are changed
+From:   Bart Van Assche <bvanassche@acm.org>
+To:     Jaegeuk Kim <jaegeuk@kernel.org>, Jens Axboe <axboe@kernel.dk>
+Cc:     linux-kernel@vger.kernel.org, linux-block@vger.kernel.org
+Date:   Wed, 09 Jan 2019 12:51:28 -0800
+In-Reply-To: <20181218224139.GB31062@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20181214203223.7063-1-jaegeuk@kernel.org>
+         <20181217194236.GA50659@jaegeuk-macbookpro.roam.corp.google.com>
+         <29369548-df14-a5a7-2bee-a40b3479df68@kernel.dk>
+         <20181218224139.GB31062@jaegeuk-macbookpro.roam.corp.google.com>
+Content-Type: text/plain; charset="UTF-7"
+X-Mailer: Evolution 3.26.2-1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Paweł,
+On Tue, 2018-12-18 at 14:41 -0800, Jaegeuk Kim wrote:
++AD4 +AFs ... +AF0
 
-Thank you for the patch.
+Please post new versions of a patch as a new e-mail thread instead of
+as a reply to a previous e-mail.
 
-On 1/9/19 7:00 PM, Paweł Chmiel wrote:
-> This commit corrects max and step values for v4l2 control for
-> V4L2_CID_JPEG_RESTART_INTERVAL. Max should be 0xffff and step should be 1.
-> It was found by using v4l2-compliance tool and checking result of
-> VIDIOC_QUERY_EXT_CTRL/QUERYMENU test.
-> Previously it was complaining that step was bigger than difference
-> between max and min.
-> 
-> Fixes: 15f4bc3b1f42 ("[media] s5p-jpeg: Add JPEG controls support")
-> Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
-> ---
->   drivers/media/platform/s5p-jpeg/jpeg-core.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/platform/s5p-jpeg/jpeg-core.c b/drivers/media/platform/s5p-jpeg/jpeg-core.c
-> index 3f9000b70385..33e9927db9a0 100644
-> --- a/drivers/media/platform/s5p-jpeg/jpeg-core.c
-> +++ b/drivers/media/platform/s5p-jpeg/jpeg-core.c
-> @@ -2002,7 +2002,7 @@ static int s5p_jpeg_controls_create(struct s5p_jpeg_ctx *ctx)
->   
->   		v4l2_ctrl_new_std(&ctx->ctrl_handler, &s5p_jpeg_ctrl_ops,
->   				  V4L2_CID_JPEG_RESTART_INTERVAL,
-> -				  0, 3, 0xffff, 0);
-> +				  0, 0xffff, 1, 0);
->   		if (ctx->jpeg->variant->version == SJPEG_S5P)
->   			mask = ~0x06; /* 422, 420 */
->   	}
-> 
++AD4 +AFs ... +AF0
++AD4
++AD4  	if (lo-+AD4-lo+AF8-offset +ACEAPQ info-+AD4-lo+AF8-offset +AHwAfA
++AD4  	    lo-+AD4-lo+AF8-sizelimit +ACEAPQ info-+AD4-lo+AF8-sizelimit) +AHs
++AD4 +-		/+ACo kill+AF8-bdev should have truncated all the pages +ACo-/
++AD4 +-		if (lo-+AD4-lo+AF8-device-+AD4-bd+AF8-inode-+AD4-i+AF8-mapping-+AD4-nrpages) +AHs
++AD4 +-			err +AD0 -EAGAIN+ADs
++AD4 +-			goto exit+ADs
++AD4 +-		+AH0
 
-Reviewed-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Please add a pr+AF8-info() or pr+AF8-warn() statement here such that it becomes
+easy for the user to figure out why EAGAIN has been returned.
 
--- 
-Best regards,
-Jacek Anaszewski
++AD4  	blk+AF8-mq+AF8-freeze+AF8-queue(lo-+AD4-lo+AF8-queue)+ADs
++AD4  
++AD4 +-	/+ACo kill+AF8-bdev should have truncated all the pages +ACo-/
++AD4 +-	if (lo-+AD4-lo+AF8-queue-+AD4-limits.logical+AF8-block+AF8-size +ACEAPQ arg +ACYAJg
++AD4 +-			lo-+AD4-lo+AF8-device-+AD4-bd+AF8-inode-+AD4-i+AF8-mapping-+AD4-nrpages) +AHs
++AD4 +-		err +AD0 -EAGAIN+ADs
++AD4 +-		goto out+ADs
++AD4 +-	+AH0
+
+Same comment here. Additionally, please consider renaming the +ACI-out+ACI label
+into +ACI-unfreeze+ACI or so. I think that will make the use of label names more
+consistent with the rest of the block layer. Once these two comments are
+addressed, feel free to add:
+
+Reviewed-by: Bart Van Assche +ADw-bvanassche+AEA-acm.org+AD4
+
+
