@@ -2,177 +2,130 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CF8BC43444
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 23:39:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB50AC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 23:40:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC9E52075C
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 23:39:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ADBFB20661
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 23:40:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726680AbfAIXjK (ORCPT
+        id S1726744AbfAIXkw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 18:39:10 -0500
-Received: from gateway21.websitewelcome.com ([192.185.46.109]:49643 "EHLO
-        gateway21.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726505AbfAIXjK (ORCPT
+        Wed, 9 Jan 2019 18:40:52 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:33820 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726286AbfAIXkv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 18:39:10 -0500
-Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
-        by gateway21.websitewelcome.com (Postfix) with ESMTP id 79339400DAF7F
-        for <linux-kernel@vger.kernel.org>; Wed,  9 Jan 2019 17:39:08 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id hNREgJgQQ2PzOhNREgy0c3; Wed, 09 Jan 2019 17:39:08 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.130.205] (port=50446 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1ghNRD-002ypT-NB; Wed, 09 Jan 2019 17:39:07 -0600
-Date:   Wed, 9 Jan 2019 17:39:06 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Corey Minyard <minyard@acm.org>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     openipmi-developer@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] ipmi: msghandler: Fix potential Spectre v1 vulnerabilities
-Message-ID: <20190109233906.GA4170@embeddedor>
+        Wed, 9 Jan 2019 18:40:51 -0500
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x09NYBOE120046
+        for <linux-kernel@vger.kernel.org>; Wed, 9 Jan 2019 18:40:50 -0500
+Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2pwsdvu52s-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Jan 2019 18:40:50 -0500
+Received: from localhost
+        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Wed, 9 Jan 2019 23:40:49 -0000
+Received: from b01cxnp22035.gho.pok.ibm.com (9.57.198.25)
+        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 9 Jan 2019 23:40:44 -0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x09Nehxm22020320
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 9 Jan 2019 23:40:43 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 45BF3B205F;
+        Wed,  9 Jan 2019 23:40:43 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 25E51B2067;
+        Wed,  9 Jan 2019 23:40:43 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.88])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Wed,  9 Jan 2019 23:40:43 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 0D92B16C63FE; Wed,  9 Jan 2019 15:40:43 -0800 (PST)
+Date:   Wed, 9 Jan 2019 15:40:43 -0800
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     Andrea Parri <andrea.parri@amarulasolutions.com>
+Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        mingo@kernel.org, stern@rowland.harvard.edu,
+        parri.andrea@gmail.com, will.deacon@arm.com, peterz@infradead.org,
+        boqun.feng@gmail.com, npiggin@gmail.com, dhowells@redhat.com,
+        j.alglave@ucl.ac.uk, luc.maranget@inria.fr, akiyks@gmail.com,
+        willy@infradead.org
+Subject: Re: [PATCH RFC memory-model 0/6] LKMM updates
+Reply-To: paulmck@linux.ibm.com
+References: <20190109210706.GA27268@linux.ibm.com>
+ <20190109231852.GA4494@andrea>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.130.205
-X-Source-L: No
-X-Exim-ID: 1ghNRD-002ypT-NB
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.130.205]:50446
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 5
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <20190109231852.GA4494@andrea>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 19010923-0040-0000-0000-000004AF412E
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010375; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000274; SDB=6.01144189; UDB=6.00593882; IPR=6.00924451;
+ MB=3.00025056; MTD=3.00000008; XFM=3.00000015; UTC=2019-01-09 23:40:48
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19010923-0041-0000-0000-000008BA45CF
+Message-Id: <20190109234043.GD1215@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-09_11:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901090189
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-channel and addr->channel are indirectly controlled by user-space,
-hence leading to a potential exploitation of the Spectre variant 1
-vulnerability.
+On Thu, Jan 10, 2019 at 12:18:53AM +0100, Andrea Parri wrote:
+> On Wed, Jan 09, 2019 at 01:07:06PM -0800, Paul E. McKenney wrote:
+> > Hello!
+> > 
+> > This series contains updates for the Linux-kernel memory model:
+> > 
+> > 1-3.	Add SRCU support, courtesy of Alan Stern.
+> > 
+> > 4.	Update README for adding of SRCU support.
+> > 
+> > 5.	Update memory-barriers.txt on enforcing heavy ordering for
+> > 	port-I/O accesses, courtesy of Will Deacon.  This one needs
+> > 	an ack, preferably by someone from Intel.  Matthew Wilcox
+> > 	posted some feedback from an Intel manual here, which might
+> > 	be considered to be a close substitute, but...  ;-)
+> > 
+> > 	http://lkml.kernel.org/r/20181127192234.GF10377@bombadil.infradead.org
+> > 
+> > 6.	Update Documentation/explanation.txt to include SRCU support,
+> > 	courtesy of Alan Stern.
+> > 
+> > 7.	Dynamically check SRCU lock-to-unlock matching, courtesy of
+> > 	Luc Maranget.  This needs an ack.
+> 
+> It seems that
+> 
+>   1b52d0186177 ("tools/memory-model: Model smp_mb__after_unlock_lock()")
+>   
+> from linux-rcu/dev got lost; this also needs an ack (probably yours! ;D,
+> considered that, IIRC, you introduced the primitive and RCU is currently
+> its only user.)
 
-These issues were detected with the help of Smatch:
+That commit is in -tip:
 
-drivers/char/ipmi/ipmi_msghandler.c:1381 ipmi_set_my_address() warn: potential spectre issue 'user->intf->addrinfo' [w] (local cap)
-drivers/char/ipmi/ipmi_msghandler.c:1401 ipmi_get_my_address() warn: potential spectre issue 'user->intf->addrinfo' [r] (local cap)
-drivers/char/ipmi/ipmi_msghandler.c:1421 ipmi_set_my_LUN() warn: potential spectre issue 'user->intf->addrinfo' [w] (local cap)
-drivers/char/ipmi/ipmi_msghandler.c:1441 ipmi_get_my_LUN() warn: potential spectre issue 'user->intf->addrinfo' [r] (local cap)
-drivers/char/ipmi/ipmi_msghandler.c:2260 check_addr() warn: potential spectre issue 'intf->addrinfo' [r] (local cap)
+4607abbcf464 ("tools/memory-model: Model smp_mb__after_unlock_lock()")
 
-Fix this by sanitizing channel and addr->channel before using them to
-index user->intf->addrinfo and intf->addrinfo, correspondingly.
+So it has already left my -rcu tree.  ;-)
 
-Notice that given that speculation windows are large, the policy is
-to kill the speculation on the first load and not worry if it can be
-completed with a dependent load/store [1].
-
-[1] https://lore.kernel.org/lkml/20180423164740.GY17484@dhcp22.suse.cz/
-
-Cc: stable@vger.kernel.org
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/char/ipmi/ipmi_msghandler.c | 26 ++++++++++++++++++--------
- 1 file changed, 18 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/char/ipmi/ipmi_msghandler.c b/drivers/char/ipmi/ipmi_msghandler.c
-index 480d9bd7e1ab..557e98d9364d 100644
---- a/drivers/char/ipmi/ipmi_msghandler.c
-+++ b/drivers/char/ipmi/ipmi_msghandler.c
-@@ -32,6 +32,7 @@
- #include <linux/moduleparam.h>
- #include <linux/workqueue.h>
- #include <linux/uuid.h>
-+#include <linux/nospec.h>
- 
- #define IPMI_DRIVER_VERSION "39.2"
- 
-@@ -1375,10 +1376,12 @@ int ipmi_set_my_address(struct ipmi_user *user,
- 	if (!user)
- 		return -ENODEV;
- 
--	if (channel >= IPMI_MAX_CHANNELS)
-+	if (channel >= IPMI_MAX_CHANNELS) {
- 		rv = -EINVAL;
--	else
-+	} else {
-+		channel = array_index_nospec(channel, IPMI_MAX_CHANNELS);
- 		user->intf->addrinfo[channel].address = address;
-+	}
- 	release_ipmi_user(user, index);
- 
- 	return rv;
-@@ -1395,10 +1398,12 @@ int ipmi_get_my_address(struct ipmi_user *user,
- 	if (!user)
- 		return -ENODEV;
- 
--	if (channel >= IPMI_MAX_CHANNELS)
-+	if (channel >= IPMI_MAX_CHANNELS) {
- 		rv = -EINVAL;
--	else
-+	} else {
-+		channel = array_index_nospec(channel, IPMI_MAX_CHANNELS);
- 		*address = user->intf->addrinfo[channel].address;
-+	}
- 	release_ipmi_user(user, index);
- 
- 	return rv;
-@@ -1415,10 +1420,12 @@ int ipmi_set_my_LUN(struct ipmi_user *user,
- 	if (!user)
- 		return -ENODEV;
- 
--	if (channel >= IPMI_MAX_CHANNELS)
-+	if (channel >= IPMI_MAX_CHANNELS) {
- 		rv = -EINVAL;
--	else
-+	} else {
-+		channel = array_index_nospec(channel, IPMI_MAX_CHANNELS);
- 		user->intf->addrinfo[channel].lun = LUN & 0x3;
-+	}
- 	release_ipmi_user(user, index);
- 
- 	return rv;
-@@ -1435,10 +1442,12 @@ int ipmi_get_my_LUN(struct ipmi_user *user,
- 	if (!user)
- 		return -ENODEV;
- 
--	if (channel >= IPMI_MAX_CHANNELS)
-+	if (channel >= IPMI_MAX_CHANNELS) {
- 		rv = -EINVAL;
--	else
-+	} else {
-+		channel = array_index_nospec(channel, IPMI_MAX_CHANNELS);
- 		*address = user->intf->addrinfo[channel].lun;
-+	}
- 	release_ipmi_user(user, index);
- 
- 	return rv;
-@@ -2257,6 +2266,7 @@ static int check_addr(struct ipmi_smi  *intf,
- {
- 	if (addr->channel >= IPMI_MAX_CHANNELS)
- 		return -EINVAL;
-+	addr->channel = array_index_nospec(addr->channel, IPMI_MAX_CHANNELS);
- 	*lun = intf->addrinfo[addr->channel].lun;
- 	*saddr = intf->addrinfo[addr->channel].address;
- 	return 0;
--- 
-2.20.1
+							Thanx, Paul
 
