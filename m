@@ -2,340 +2,145 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4BFEC43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 18:17:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A552C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 18:17:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B7E3214C6
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 18:17:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CU9uQLFd"
+	by mail.kernel.org (Postfix) with ESMTP id 08C0A206B6
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 18:17:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547057878;
+	bh=313J75pRSdWBx+s0b8l0AI9icPNGOqqYuBfcA0aYkkE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=2W/2U9zNvcyiExb5yJyIOZDoQOZ96c28Awt7PL/zSs8S2O3ccCm/MHHwEuwSq/apM
+	 FxypmW5SlUHI0KY+DjhOZTNj8d7vHEzusr4cnPTXkPoN4Bk3ShHl8SwnVt5xXrKrVD
+	 vSUgrL5iPi9Z8a/8yZQaTf0SlNhOwNSZXhTmpI/4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727676AbfAISQ5 (ORCPT
+        id S1726292AbfAISR5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 13:16:57 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:43761 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727574AbfAISQy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 13:16:54 -0500
-Received: by mail-pg1-f195.google.com with SMTP id v28so3639109pgk.10;
-        Wed, 09 Jan 2019 10:16:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=MBi5JXMF6IAoyZuiQMt08z0S53KWX73DIBDJGZRLFh4=;
-        b=CU9uQLFd3+1UOLJdtcR2zB+MYDlURQz1+VxIMayLiAdWtDfB8yMWBp+ReG6iQ/g+kg
-         jZ+96ptlvHPg1iVzZMZzJrIb/Cgwt1taeptTvBl8Z24kymbJGpGv/mBOaJ649IDz77R/
-         T3MttzJKoMCt8fZ95D7AmLZxj+gu/CNhaQnAanRZXAzHGu9FisUSh49IPtqj7E9F3bUt
-         sy+qKAHH+PnN2vlfnox/nciBUOM1EPdzc+WbQN7MBWCdulCvn5K+fRE0vlo7G/is/6w9
-         dp8Ft0xJTP8Hock5rzkaZ68x9xRHnCDRsWnxkm+lLm7s/uz+JKH/rbqx3or5I3uUqVJ4
-         ushw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=MBi5JXMF6IAoyZuiQMt08z0S53KWX73DIBDJGZRLFh4=;
-        b=GB20DOHpEE3QnTxdm01bYnpCnTPaYJBTSYHNrLXdaQ+wd8D+cVbAmFW6DLsoLlftf8
-         Rx5+OAd8G1LS3ph62hfqTf6KkNGpA5qxRUTsaiGfyWR6AThTPHjPVcJWSR/cG5SPGput
-         Y3GZ1QoNMhhCPa0UUwp7KZGuNOrkXtI3u1pf5/4/NoEZDJ3VwIFj0Ikn9uJikOM54u7f
-         T3FutQnDH2JrRonL0ukAzCZFeO80bkxUpVC3Ok/pBuaHHONnoFkcDN59g/5cx7CumFyh
-         gt1lAAt+98cc40RPVzUzEjVkgN2we7TQFrUOvKz68UMREw+f1Ewnx0Ghq23syh3sWu5t
-         4l2g==
-X-Gm-Message-State: AJcUukf8rtZYgeQ/dzVk2c+pazPLSvIcrVdDhVNsPAL2QcgdPpb11YpY
-        HlHvCJzcn6UIFo45ZhWK43ugH9nh
-X-Google-Smtp-Source: ALg8bN535bbYb6udSijkPCxGXLbUArBhX801DKbTBRKww3xcADE67wPZRxveUuVpvQtYFBvc11DKvA==
-X-Received: by 2002:a63:e84c:: with SMTP id a12mr4138710pgk.241.1547057812758;
-        Wed, 09 Jan 2019 10:16:52 -0800 (PST)
-Received: from majic.sklembedded.com (c-98-210-181-167.hsd1.ca.comcast.net. [98.210.181.167])
-        by smtp.googlemail.com with ESMTPSA id h19sm97030004pfn.114.2019.01.09.10.16.51
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 09 Jan 2019 10:16:51 -0800 (PST)
-From:   Steve Longerbeam <slongerbeam@gmail.com>
-To:     linux-media@vger.kernel.org
-Cc:     Steve Longerbeam <slongerbeam@gmail.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Wed, 9 Jan 2019 13:17:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53828 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726282AbfAISRy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 13:17:54 -0500
+Received: from earth.universe (dyndsl-095-033-009-186.ewe-ip-backbone.de [95.33.9.186])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C50FD20859;
+        Wed,  9 Jan 2019 18:17:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547057872;
+        bh=313J75pRSdWBx+s0b8l0AI9icPNGOqqYuBfcA0aYkkE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=IxD1sY1xWGN1Xj1uhaGkjogiFUVrTr+rTdaZlCkVb+QmL2oWJW9xMEbAn2WBmxQKh
+         JXjKYCvdoQ102NFbso0wQl/MRQFbMF0dqaMNCNXLSq+1lsLDDcsai50afnehBrRtUS
+         TcMwM8XaxxBuEDGjFWyrYtXmGtODKfb4jxYnc95o=
+Received: by earth.universe (Postfix, from userid 1000)
+        id F18763C08E2; Wed,  9 Jan 2019 19:17:50 +0100 (CET)
+Date:   Wed, 9 Jan 2019 19:17:50 +0100
+From:   Sebastian Reichel <sre@kernel.org>
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Marcel Holtmann <marcel@holtmann.org>,
+        Tony Lindgren <tony@atomide.com>,
+        Rob Herring <robh@kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        dri-devel@lists.freedesktop.org (open list:DRM DRIVERS FOR FREESCALE
-        IMX), linux-kernel@vger.kernel.org (open list),
-        devel@driverdev.osuosl.org (open list:STAGING SUBSYSTEM),
-        linux-fbdev@vger.kernel.org (open list:FRAMEBUFFER LAYER)
-Subject: [PATCH v7 02/11] gpu: ipu-csi: Swap fields according to input/output field types
-Date:   Wed,  9 Jan 2019 10:16:32 -0800
-Message-Id: <20190109181642.19378-3-slongerbeam@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190109181642.19378-1-slongerbeam@gmail.com>
-References: <20190109181642.19378-1-slongerbeam@gmail.com>
+        linux-bluetooth@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 10/14] media: wl128x-radio: simplify
+ fmc_prepare/fmc_release
+Message-ID: <20190109181750.lqcm2bhg4wubuavu@earth.universe>
+References: <20181221011752.25627-1-sre@kernel.org>
+ <20181221011752.25627-11-sre@kernel.org>
+ <20181222192934.GA15237@amd>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="a7a3feumpr3jovsz"
+Content-Disposition: inline
+In-Reply-To: <20181222192934.GA15237@amd>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The function ipu_csi_init_interface() was inverting the F-bit for
-NTSC case, in the CCIR_CODE_1/2 registers. The result being that
-for NTSC bottom-top field order, the CSI would swap fields and
-capture in top-bottom order.
 
-Instead, base field swap on the field order of the input to the CSI,
-and the field order of the requested output. If the input/output
-fields are sequential but different, swap fields, otherwise do
-not swap. This requires passing both the input and output mbus
-frame formats to ipu_csi_init_interface().
+--a7a3feumpr3jovsz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Move this code to a new private function ipu_csi_set_bt_interlaced_codes()
-that programs the CCIR_CODE_1/2 registers for interlaced BT.656 (and
-possibly interlaced BT.1120 in the future).
+Hi Pavel,
 
-When detecting input video standard from the input frame width/height,
-make sure to double height if input field type is alternate, since
-in that case input height only includes lines for one field.
+On Sat, Dec 22, 2018 at 08:29:34PM +0100, Pavel Machek wrote:
+> On Fri 2018-12-21 02:17:48, Sebastian Reichel wrote:
+> > From: Sebastian Reichel <sebastian.reichel@collabora.com>
+> >=20
+> > Remove unused return code from fmc_prepare() and fmc_release() to
+> > simplify the code a bit.
+>=20
+>=20
+> >  /*
+> >   * This function will be called from FM V4L2 release function.
+> >   * Unregister from ST driver.
+> >   */
+> > -int fmc_release(struct fmdev *fmdev)
+> > +void fmc_release(struct fmdev *fmdev)
+> >  {
+> >  	static struct st_proto_s fm_st_proto;
+> >  	int ret;
+> > =20
+> >  	if (!test_bit(FM_CORE_READY, &fmdev->flag)) {
+> >  		fmdbg("FM Core is already down\n");
+> > -		return 0;
+> > +		return;
+> >  	}
+> >  	/* Service pending read */
+> >  	wake_up_interruptible(&fmdev->rx.rds.read_queue);
+> > @@ -1611,7 +1606,6 @@ int fmc_release(struct fmdev *fmdev)
+> >  		fmdbg("Successfully unregistered from ST\n");
+> > =20
+> >  	clear_bit(FM_CORE_READY, &fmdev->flag);
+> > -	return ret;
+> >  }
+>=20
+>=20
+> You probably leave unused variable (ret) here. I guess that's okay as
+> you remove it later in the series...?
 
-Signed-off-by: Steve Longerbeam <slongerbeam@gmail.com>
-Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
----
-Changes since v5:
-- Convert to const the infmt, outfmt, and mbus_cfg pointer args to
-  ipu_csi_init_interface(), suggested by Philipp Zabel.
-- Bring back if_fmt local var and don't copy outfmt to local stack in
-  csi_setup(), suggested by Philipp.
+It's still being used after this patch (but indeed removed in a
+later patch).
 
-Changes since v4:
-- Cleaned up some convoluted code in ipu_csi_init_interface(), suggested
-  by Philipp.
-- Fixed a regression in csi_setup(), caught by Philipp.
----
- drivers/gpu/ipu-v3/ipu-csi.c              | 126 +++++++++++++++-------
- drivers/staging/media/imx/imx-media-csi.c |   7 +-
- include/video/imx-ipu-v3.h                |   5 +-
- 3 files changed, 89 insertions(+), 49 deletions(-)
+> Also... I'd kind of expect _prepare routine to return int. Even if it
+> currently does not do anything that could return error, I'd kind of
+> expect allocations being done there...
 
-diff --git a/drivers/gpu/ipu-v3/ipu-csi.c b/drivers/gpu/ipu-v3/ipu-csi.c
-index aa0e30a2ba18..d1e575571a8d 100644
---- a/drivers/gpu/ipu-v3/ipu-csi.c
-+++ b/drivers/gpu/ipu-v3/ipu-csi.c
-@@ -325,12 +325,21 @@ static int mbus_code_to_bus_cfg(struct ipu_csi_bus_config *cfg, u32 mbus_code,
- 	return 0;
- }
- 
-+/* translate alternate field mode based on given standard */
-+static inline enum v4l2_field
-+ipu_csi_translate_field(enum v4l2_field field, v4l2_std_id std)
-+{
-+	return (field != V4L2_FIELD_ALTERNATE) ? field :
-+		((std & V4L2_STD_525_60) ?
-+		 V4L2_FIELD_SEQ_BT : V4L2_FIELD_SEQ_TB);
-+}
-+
- /*
-  * Fill a CSI bus config struct from mbus_config and mbus_framefmt.
-  */
- static int fill_csi_bus_cfg(struct ipu_csi_bus_config *csicfg,
--				 struct v4l2_mbus_config *mbus_cfg,
--				 struct v4l2_mbus_framefmt *mbus_fmt)
-+			    const struct v4l2_mbus_config *mbus_cfg,
-+			    const struct v4l2_mbus_framefmt *mbus_fmt)
- {
- 	int ret;
- 
-@@ -374,22 +383,76 @@ static int fill_csi_bus_cfg(struct ipu_csi_bus_config *csicfg,
- 	return 0;
- }
- 
-+static int
-+ipu_csi_set_bt_interlaced_codes(struct ipu_csi *csi,
-+				const struct v4l2_mbus_framefmt *infmt,
-+				const struct v4l2_mbus_framefmt *outfmt,
-+				v4l2_std_id std)
-+{
-+	enum v4l2_field infield, outfield;
-+	bool swap_fields;
-+
-+	/* get translated field type of input and output */
-+	infield = ipu_csi_translate_field(infmt->field, std);
-+	outfield = ipu_csi_translate_field(outfmt->field, std);
-+
-+	/*
-+	 * Write the H-V-F codes the CSI will match against the
-+	 * incoming data for start/end of active and blanking
-+	 * field intervals. If input and output field types are
-+	 * sequential but not the same (one is SEQ_BT and the other
-+	 * is SEQ_TB), swap the F-bit so that the CSI will capture
-+	 * field 1 lines before field 0 lines.
-+	 */
-+	swap_fields = (V4L2_FIELD_IS_SEQUENTIAL(infield) &&
-+		       V4L2_FIELD_IS_SEQUENTIAL(outfield) &&
-+		       infield != outfield);
-+
-+	if (!swap_fields) {
-+		/*
-+		 * Field0BlankEnd  = 110, Field0BlankStart  = 010
-+		 * Field0ActiveEnd = 100, Field0ActiveStart = 000
-+		 * Field1BlankEnd  = 111, Field1BlankStart  = 011
-+		 * Field1ActiveEnd = 101, Field1ActiveStart = 001
-+		 */
-+		ipu_csi_write(csi, 0x40596 | CSI_CCIR_ERR_DET_EN,
-+			      CSI_CCIR_CODE_1);
-+		ipu_csi_write(csi, 0xD07DF, CSI_CCIR_CODE_2);
-+	} else {
-+		dev_dbg(csi->ipu->dev, "capture field swap\n");
-+
-+		/* same as above but with F-bit inverted */
-+		ipu_csi_write(csi, 0xD07DF | CSI_CCIR_ERR_DET_EN,
-+			      CSI_CCIR_CODE_1);
-+		ipu_csi_write(csi, 0x40596, CSI_CCIR_CODE_2);
-+	}
-+
-+	ipu_csi_write(csi, 0xFF0000, CSI_CCIR_CODE_3);
-+
-+	return 0;
-+}
-+
-+
- int ipu_csi_init_interface(struct ipu_csi *csi,
--			   struct v4l2_mbus_config *mbus_cfg,
--			   struct v4l2_mbus_framefmt *mbus_fmt)
-+			   const struct v4l2_mbus_config *mbus_cfg,
-+			   const struct v4l2_mbus_framefmt *infmt,
-+			   const struct v4l2_mbus_framefmt *outfmt)
- {
- 	struct ipu_csi_bus_config cfg;
- 	unsigned long flags;
- 	u32 width, height, data = 0;
-+	v4l2_std_id std;
- 	int ret;
- 
--	ret = fill_csi_bus_cfg(&cfg, mbus_cfg, mbus_fmt);
-+	ret = fill_csi_bus_cfg(&cfg, mbus_cfg, infmt);
- 	if (ret < 0)
- 		return ret;
- 
- 	/* set default sensor frame width and height */
--	width = mbus_fmt->width;
--	height = mbus_fmt->height;
-+	width = infmt->width;
-+	height = infmt->height;
-+	if (infmt->field == V4L2_FIELD_ALTERNATE)
-+		height *= 2;
- 
- 	/* Set the CSI_SENS_CONF register remaining fields */
- 	data |= cfg.data_width << CSI_SENS_CONF_DATA_WIDTH_SHIFT |
-@@ -416,42 +479,22 @@ int ipu_csi_init_interface(struct ipu_csi *csi,
- 		ipu_csi_write(csi, 0xFF0000, CSI_CCIR_CODE_3);
- 		break;
- 	case IPU_CSI_CLK_MODE_CCIR656_INTERLACED:
--		if (mbus_fmt->width == 720 && mbus_fmt->height == 576) {
--			/*
--			 * PAL case
--			 *
--			 * Field0BlankEnd = 0x6, Field0BlankStart = 0x2,
--			 * Field0ActiveEnd = 0x4, Field0ActiveStart = 0
--			 * Field1BlankEnd = 0x7, Field1BlankStart = 0x3,
--			 * Field1ActiveEnd = 0x5, Field1ActiveStart = 0x1
--			 */
--			height = 625; /* framelines for PAL */
--
--			ipu_csi_write(csi, 0x40596 | CSI_CCIR_ERR_DET_EN,
--					  CSI_CCIR_CODE_1);
--			ipu_csi_write(csi, 0xD07DF, CSI_CCIR_CODE_2);
--			ipu_csi_write(csi, 0xFF0000, CSI_CCIR_CODE_3);
--		} else if (mbus_fmt->width == 720 && mbus_fmt->height == 480) {
--			/*
--			 * NTSC case
--			 *
--			 * Field0BlankEnd = 0x7, Field0BlankStart = 0x3,
--			 * Field0ActiveEnd = 0x5, Field0ActiveStart = 0x1
--			 * Field1BlankEnd = 0x6, Field1BlankStart = 0x2,
--			 * Field1ActiveEnd = 0x4, Field1ActiveStart = 0
--			 */
--			height = 525; /* framelines for NTSC */
--
--			ipu_csi_write(csi, 0xD07DF | CSI_CCIR_ERR_DET_EN,
--					  CSI_CCIR_CODE_1);
--			ipu_csi_write(csi, 0x40596, CSI_CCIR_CODE_2);
--			ipu_csi_write(csi, 0xFF0000, CSI_CCIR_CODE_3);
-+		if (width == 720 && height == 480) {
-+			std = V4L2_STD_NTSC;
-+			height = 525;
-+		} else if (width == 720 && height == 576) {
-+			std = V4L2_STD_PAL;
-+			height = 625;
- 		} else {
- 			dev_err(csi->ipu->dev,
--				"Unsupported CCIR656 interlaced video mode\n");
--			spin_unlock_irqrestore(&csi->lock, flags);
--			return -EINVAL;
-+				"Unsupported interlaced video mode\n");
-+			ret = -EINVAL;
-+			goto out_unlock;
- 		}
-+
-+		ret = ipu_csi_set_bt_interlaced_codes(csi, infmt, outfmt, std);
-+		if (ret)
-+			goto out_unlock;
- 		break;
- 	case IPU_CSI_CLK_MODE_CCIR1120_PROGRESSIVE_DDR:
- 	case IPU_CSI_CLK_MODE_CCIR1120_PROGRESSIVE_SDR:
-@@ -476,9 +519,10 @@ int ipu_csi_init_interface(struct ipu_csi *csi,
- 	dev_dbg(csi->ipu->dev, "CSI_ACT_FRM_SIZE = 0x%08X\n",
- 		ipu_csi_read(csi, CSI_ACT_FRM_SIZE));
- 
-+out_unlock:
- 	spin_unlock_irqrestore(&csi->lock, flags);
- 
--	return 0;
-+	return ret;
- }
- EXPORT_SYMBOL_GPL(ipu_csi_init_interface);
- 
-diff --git a/drivers/staging/media/imx/imx-media-csi.c b/drivers/staging/media/imx/imx-media-csi.c
-index 4223f8d418ae..c2a8d9cd31b7 100644
---- a/drivers/staging/media/imx/imx-media-csi.c
-+++ b/drivers/staging/media/imx/imx-media-csi.c
-@@ -679,12 +679,7 @@ static int csi_setup(struct csi_priv *priv)
- 		priv->upstream_ep.bus.parallel.flags :
- 		priv->upstream_ep.bus.mipi_csi2.flags;
- 
--	/*
--	 * we need to pass input frame to CSI interface, but
--	 * with translated field type from output format
--	 */
- 	if_fmt = *infmt;
--	if_fmt.field = outfmt->field;
- 	crop = priv->crop;
- 
- 	/*
-@@ -702,7 +697,7 @@ static int csi_setup(struct csi_priv *priv)
- 			     priv->crop.width == 2 * priv->compose.width,
- 			     priv->crop.height == 2 * priv->compose.height);
- 
--	ipu_csi_init_interface(priv->csi, &mbus_cfg, &if_fmt);
-+	ipu_csi_init_interface(priv->csi, &mbus_cfg, &if_fmt, outfmt);
- 
- 	ipu_csi_set_dest(priv->csi, priv->dest);
- 
-diff --git a/include/video/imx-ipu-v3.h b/include/video/imx-ipu-v3.h
-index e582e8e7527a..bbc8481f567d 100644
---- a/include/video/imx-ipu-v3.h
-+++ b/include/video/imx-ipu-v3.h
-@@ -354,8 +354,9 @@ int ipu_prg_channel_configure(struct ipuv3_channel *ipu_chan,
-  */
- struct ipu_csi;
- int ipu_csi_init_interface(struct ipu_csi *csi,
--			   struct v4l2_mbus_config *mbus_cfg,
--			   struct v4l2_mbus_framefmt *mbus_fmt);
-+			   const struct v4l2_mbus_config *mbus_cfg,
-+			   const struct v4l2_mbus_framefmt *infmt,
-+			   const struct v4l2_mbus_framefmt *outfmt);
- bool ipu_csi_is_interlaced(struct ipu_csi *csi);
- void ipu_csi_get_window(struct ipu_csi *csi, struct v4l2_rect *w);
- void ipu_csi_set_window(struct ipu_csi *csi, struct v4l2_rect *w);
--- 
-2.17.1
+well the driver is basically feature complete and all allocations
+happen in probe :)
 
+-- Sebastian
+
+--a7a3feumpr3jovsz
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlw2Os4ACgkQ2O7X88g7
++pqZzg//bTzS3nZUi6Vb7quyzAZCP2Af55tTDRC/h7KzMPLcFFYdQi6m6lg3rUir
+gKRmQ7u+2a6CjclVTLAHfYUZ5au2MzUkhkoxcUPqVp6WJJDxCvnFHfyHBGoCVUXf
+5TGCOOF89GtohkSGoONEIYQZXIy+MAOTGpvmCIHkbIKWQ37BT1mxqsoAYGEQ51wb
+8qgQ0/hfhudtEqiP5qFQyxHJT3G3IXPuBQoBL/T/MZzkGP+XdL0KusXE4FNKUkgS
+Ex8cvUsu88t1VKxQyLmi8UDPpLS4kG8dybC2lX9NZUcvupZgD8/YXK7XtrmKAQbB
+NLFpAuIqvU5vsYRAuEGqMY5UxoLvdfVpNX4WhXk775bwuDJgwCWjusEyG7eBOx3A
+1+Pv/K0ABOHe9bvc9uGpVjXQM5mmlLrBDxYfSGr14MW6ydc7MKqsY+M7aQl1yz2H
+dYWAXVOaQY/vcFib8x6Ef2rPEbGTh1y8AaOm2rOTYP5NtWW/Z2b7UY8Egwbg/c7p
+rcmlYTgEW1M+suekjnJlHk9LErLmN2mv/GnI9tdp1r0LTe09SuYRFh1wPVNrdX//
+eVH7T900J2XHgvZDpDapwiuE0/rWgCeeWcIe4QIgIotWiygq8g1MLqbtkaL5SXyX
+WzLSTuoTxhA70QnT7C2LS57UADMDhXjjDqryLhnZSmdxhu0g+LQ=
+=/dmx
+-----END PGP SIGNATURE-----
+
+--a7a3feumpr3jovsz--
