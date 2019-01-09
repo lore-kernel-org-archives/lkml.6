@@ -6,23 +6,23 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D91CC43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 12:43:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E6E0C43444
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 12:43:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F2A32206B6
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 12:43:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D2A2F20859
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 12:43:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731227AbfAIMnu (ORCPT
+        id S1731243AbfAIMnw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 07:43:50 -0500
-Received: from mx2.suse.de ([195.135.220.15]:42760 "EHLO mx1.suse.de"
+        Wed, 9 Jan 2019 07:43:52 -0500
+Received: from mx2.suse.de ([195.135.220.15]:42846 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731188AbfAIMno (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 07:43:44 -0500
+        id S1731199AbfAIMns (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 07:43:48 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id D1519AEF6;
-        Wed,  9 Jan 2019 12:43:42 +0000 (UTC)
+        by mx1.suse.de (Postfix) with ESMTP id 1C4F8AF8D;
+        Wed,  9 Jan 2019 12:43:45 +0000 (UTC)
 From:   Petr Mladek <pmladek@suse.com>
 To:     Jiri Kosina <jikos@kernel.org>,
         Josh Poimboeuf <jpoimboe@redhat.com>,
@@ -32,9 +32,9 @@ Cc:     Jason Baron <jbaron@akamai.com>,
         Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
         live-patching@vger.kernel.org, linux-kernel@vger.kernel.org,
         Petr Mladek <pmladek@suse.com>
-Subject: [PATCH v15 05/11] livepatch: Simplify API by removing registration step
-Date:   Wed,  9 Jan 2019 13:43:23 +0100
-Message-Id: <20190109124329.21991-6-pmladek@suse.com>
+Subject: [PATCH v15 08/11] livepatch: Remove Nop structures when unused
+Date:   Wed,  9 Jan 2019 13:43:26 +0100
+Message-Id: <20190109124329.21991-9-pmladek@suse.com>
 X-Mailer: git-send-email 2.13.7
 In-Reply-To: <20190109124329.21991-1-pmladek@suse.com>
 References: <20190109124329.21991-1-pmladek@suse.com>
@@ -43,894 +43,233 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The possibility to re-enable a registered patch was useful for immediate
-patches where the livepatch module had to stay until the system reboot.
-The improved consistency model allows to achieve the same result by
-unloading and loading the livepatch module again.
+Replaced patches are removed from the stack when the transition is
+finished. It means that Nop structures will never be needed again
+and can be removed. Why should we care?
 
-Also we are going to add a feature called atomic replace. It will allow
-to create a patch that would replace all already registered patches.
-The aim is to handle dependent patches more securely. It will obsolete
-the stack of patches that helped to handle the dependencies so far.
-Then it might be unclear when a cumulative patch re-enabling is safe.
+  + Nop structures give the impression that the function is patched
+    even though the ftrace handler has no effect.
 
-It would be complicated to support the many modes. Instead we could
-actually make the API and code easier to understand.
+  + Ftrace handlers do not come for free. They cause slowdown that might
+    be visible in some workloads. The ftrace-related slowdown might
+    actually be the reason why the function is no longer patched in
+    the new cumulative patch. One would expect that cumulative patch
+    would help solve these problems as well.
 
-Therefore, remove the two step public API. All the checks and init calls
-are moved from klp_register_patch() to klp_enabled_patch(). Also the patch
-is automatically freed, including the sysfs interface when the transition
-to the disabled state is completed.
+  + Cumulative patches are supposed to replace any earlier version of
+    the patch. The amount of NOPs depends on which version was replaced.
+    This multiplies the amount of scenarios that might happen.
 
-As a result, there is never a disabled patch on the top of the stack.
-Therefore we do not need to check the stack in __klp_enable_patch().
-And we could simplify the check in __klp_disable_patch().
+    One might say that NOPs are innocent. But there are even optimized
+    NOP instructions for different processors, for example, see
+    arch/x86/kernel/alternative.c. And klp_ftrace_handler() is much
+    more complicated.
 
-Also the API and logic is much easier. It is enough to call
-klp_enable_patch() in module_init() call. The patch can be disabled
-by writing '0' into /sys/kernel/livepatch/<patch>/enabled. Then the module
-can be removed once the transition finishes and sysfs interface is freed.
+  + It sounds natural to clean up a mess that is no longer needed.
+    It could only be worse if we do not do it.
 
-The only problem is how to free the structures and kobjects safely.
-The operation is triggered from the sysfs interface. We could not put
-the related kobject from there because it would cause lock inversion
-between klp_mutex and kernfs locks, see kn->count lockdep map.
+This patch allows to unpatch and free the dynamic structures independently
+when the transition finishes.
 
-Therefore, offload the free task to a workqueue. It is perfectly fine:
+The free part is a bit tricky because kobject free callbacks are called
+asynchronously. We could not wait for them easily. Fortunately, we do
+not have to. Any further access can be avoided by removing them from
+the dynamic lists.
 
-  + The patch can no longer be used in the livepatch operations.
-
-  + The module could not be removed until the free operation finishes
-    and module_put() is called.
-
-  + The operation is asynchronous already when the first
-    klp_try_complete_transition() fails and another call
-    is queued with a delay.
-
-Suggested-by: Josh Poimboeuf <jpoimboe@redhat.com>
 Signed-off-by: Petr Mladek <pmladek@suse.com>
 ---
- Documentation/livepatch/livepatch.txt        | 135 +++++--------
- include/linux/livepatch.h                    |   7 +-
- kernel/livepatch/core.c                      | 280 +++++++++------------------
- kernel/livepatch/core.h                      |   2 +
- kernel/livepatch/transition.c                |  19 +-
- samples/livepatch/livepatch-callbacks-demo.c |  13 +-
- samples/livepatch/livepatch-sample.c         |  13 +-
- samples/livepatch/livepatch-shadow-fix1.c    |  14 +-
- samples/livepatch/livepatch-shadow-fix2.c    |  14 +-
- 9 files changed, 168 insertions(+), 329 deletions(-)
+ kernel/livepatch/core.c       | 48 ++++++++++++++++++++++++++++++++++++++++---
+ kernel/livepatch/core.h       |  1 +
+ kernel/livepatch/patch.c      | 31 +++++++++++++++++++++++-----
+ kernel/livepatch/patch.h      |  1 +
+ kernel/livepatch/transition.c |  4 +++-
+ 5 files changed, 76 insertions(+), 9 deletions(-)
 
-diff --git a/Documentation/livepatch/livepatch.txt b/Documentation/livepatch/livepatch.txt
-index 2d7ed09dbd59..8f56490a4bb6 100644
---- a/Documentation/livepatch/livepatch.txt
-+++ b/Documentation/livepatch/livepatch.txt
-@@ -12,12 +12,11 @@ Table of Contents:
- 4. Livepatch module
-    4.1. New functions
-    4.2. Metadata
--   4.3. Livepatch module handling
- 5. Livepatch life-cycle
--   5.1. Registration
-+   5.1. Loading
-    5.2. Enabling
-    5.3. Disabling
--   5.4. Unregistration
-+   5.4. Removing
- 6. Sysfs
- 7. Limitations
- 
-@@ -298,117 +297,89 @@ into three levels:
-     see the "Consistency model" section.
- 
- 
--4.3. Livepatch module handling
--------------------------------
--
--The usual behavior is that the new functions will get used when
--the livepatch module is loaded. For this, the module init() function
--has to register the patch (struct klp_patch) and enable it. See the
--section "Livepatch life-cycle" below for more details about these
--two operations.
--
--Module removal is only safe when there are no users of the underlying
--functions. This is the reason why the force feature permanently disables
--the removal. The forced tasks entered the functions but we cannot say
--that they returned back.  Therefore it cannot be decided when the
--livepatch module can be safely removed. When the system is successfully
--transitioned to a new patch state (patched/unpatched) without being
--forced it is guaranteed that no task sleeps or runs in the old code.
--
--
- 5. Livepatch life-cycle
- =======================
- 
--Livepatching defines four basic operations that define the life cycle of each
--live patch: registration, enabling, disabling and unregistration.  There are
--several reasons why it is done this way.
--
--First, the patch is applied only when all patched symbols for already
--loaded objects are found. The error handling is much easier if this
--check is done before particular functions get redirected.
-+Livepatching can be described by four basic operations:
-+loading, enabling, disabling, removing.
- 
--Second, it might take some time until the entire system is migrated with
--the hybrid consistency model being used. The patch revert might block
--the livepatch module removal for too long. Therefore it is useful to
--revert the patch using a separate operation that might be called
--explicitly. But it does not make sense to remove all information until
--the livepatch module is really removed.
- 
-+5.1. Loading
-+------------
- 
--5.1. Registration
-------------------
-+The only reasonable way is to enable the patch when the livepatch kernel
-+module is being loaded. For this, klp_enable_patch() has to be called
-+in the module_init() callback. There are two main reasons:
- 
--Each patch first has to be registered using klp_register_patch(). This makes
--the patch known to the livepatch framework. Also it does some preliminary
--computing and checks.
-+First, only the module has an easy access to the related struct klp_patch.
- 
--In particular, the patch is added into the list of known patches. The
--addresses of the patched functions are found according to their names.
--The special relocations, mentioned in the section "New functions", are
--applied. The relevant entries are created under
--/sys/kernel/livepatch/<name>. The patch is rejected when any operation
--fails.
-+Second, the error code might be used to refuse loading the module when
-+the patch cannot get enabled.
- 
- 
- 5.2. Enabling
- -------------
- 
--Registered patches might be enabled either by calling klp_enable_patch() or
--by writing '1' to /sys/kernel/livepatch/<name>/enabled. The system will
--start using the new implementation of the patched functions at this stage.
-+The livepatch gets enabled by calling klp_enable_patch() from
-+the module_init() callback. The system will start using the new
-+implementation of the patched functions at this stage.
- 
--When a patch is enabled, livepatch enters into a transition state where
--tasks are converging to the patched state.  This is indicated by a value
--of '1' in /sys/kernel/livepatch/<name>/transition.  Once all tasks have
--been patched, the 'transition' value changes to '0'.  For more
--information about this process, see the "Consistency model" section.
-+First, the addresses of the patched functions are found according to their
-+names. The special relocations, mentioned in the section "New functions",
-+are applied. The relevant entries are created under
-+/sys/kernel/livepatch/<name>. The patch is rejected when any above
-+operation fails.
- 
--If an original function is patched for the first time, a function
--specific struct klp_ops is created and an universal ftrace handler is
--registered.
-+Second, livepatch enters into a transition state where tasks are converging
-+to the patched state. If an original function is patched for the first
-+time, a function specific struct klp_ops is created and an universal
-+ftrace handler is registered[*]. This stage is indicated by a value of '1'
-+in /sys/kernel/livepatch/<name>/transition. For more information about
-+this process, see the "Consistency model" section.
- 
--Functions might be patched multiple times. The ftrace handler is registered
--only once for the given function. Further patches just add an entry to the
--list (see field `func_stack`) of the struct klp_ops. The last added
--entry is chosen by the ftrace handler and becomes the active function
--replacement.
-+Finally, once all tasks have been patched, the 'transition' value changes
-+to '0'.
- 
--Note that the patches might be enabled in a different order than they were
--registered.
-+[*] Note that functions might be patched multiple times. The ftrace handler
-+    is registered only once for a given function. Further patches just add
-+    an entry to the list (see field `func_stack`) of the struct klp_ops.
-+    The right implementation is selected by the ftrace handler, see
-+    the "Consistency model" section.
- 
- 
- 5.3. Disabling
- --------------
- 
--Enabled patches might get disabled either by calling klp_disable_patch() or
--by writing '0' to /sys/kernel/livepatch/<name>/enabled. At this stage
--either the code from the previously enabled patch or even the original
--code gets used.
-+Enabled patches might get disabled by writing '0' to
-+/sys/kernel/livepatch/<name>/enabled.
- 
--When a patch is disabled, livepatch enters into a transition state where
--tasks are converging to the unpatched state.  This is indicated by a
--value of '1' in /sys/kernel/livepatch/<name>/transition.  Once all tasks
--have been unpatched, the 'transition' value changes to '0'.  For more
--information about this process, see the "Consistency model" section.
-+First, livepatch enters into a transition state where tasks are converging
-+to the unpatched state. The system starts using either the code from
-+the previously enabled patch or even the original one. This stage is
-+indicated by a value of '1' in /sys/kernel/livepatch/<name>/transition.
-+For more information about this process, see the "Consistency model"
-+section.
- 
--Here all the functions (struct klp_func) associated with the to-be-disabled
-+Second, once all tasks have been unpatched, the 'transition' value changes
-+to '0'. All the functions (struct klp_func) associated with the to-be-disabled
- patch are removed from the corresponding struct klp_ops. The ftrace handler
- is unregistered and the struct klp_ops is freed when the func_stack list
- becomes empty.
- 
--Patches must be disabled in exactly the reverse order in which they were
--enabled. It makes the problem and the implementation much easier.
-+Third, the sysfs interface is destroyed.
- 
-+Note that patches must be disabled in exactly the reverse order in which
-+they were enabled. It makes the problem and the implementation much easier.
- 
--5.4. Unregistration
---------------------
- 
--Disabled patches might be unregistered by calling klp_unregister_patch().
--This can be done only when the patch is disabled and the code is no longer
--used. It must be called before the livepatch module gets unloaded.
-+5.4. Removing
-+-------------
- 
--At this stage, all the relevant sys-fs entries are removed and the patch
--is removed from the list of known patches.
-+Module removal is only safe when there are no users of functions provided
-+by the module. This is the reason why the force feature permanently
-+disables the removal. Only when the system is successfully transitioned
-+to a new patch state (patched/unpatched) without being forced it is
-+guaranteed that no task sleeps or runs in the old code.
- 
- 
- 6. Sysfs
-diff --git a/include/linux/livepatch.h b/include/linux/livepatch.h
-index 6a9165d9b090..8f9c19c69744 100644
---- a/include/linux/livepatch.h
-+++ b/include/linux/livepatch.h
-@@ -139,11 +139,12 @@ struct klp_object {
-  * struct klp_patch - patch structure for live patching
-  * @mod:	reference to the live patch module
-  * @objs:	object entries for kernel objects to be patched
-- * @list:	list node for global list of registered patches
-+ * @list:	list node for global list of actively used patches
-  * @kobj:	kobject for sysfs resources
-  * @kobj_added: @kobj has been added and needs freeing
-  * @enabled:	the patch is enabled (but operation may be incomplete)
-  * @forced:	was involved in a forced transition
-+ * @free_work:	patch cleanup from workqueue-context
-  * @finish:	for waiting till it is safe to remove the patch module
-  */
- struct klp_patch {
-@@ -157,6 +158,7 @@ struct klp_patch {
- 	bool kobj_added;
- 	bool enabled;
- 	bool forced;
-+	struct work_struct free_work;
- 	struct completion finish;
- };
- 
-@@ -168,10 +170,7 @@ struct klp_patch {
- 	     func->old_name || func->new_func || func->old_sympos; \
- 	     func++)
- 
--int klp_register_patch(struct klp_patch *);
--int klp_unregister_patch(struct klp_patch *);
- int klp_enable_patch(struct klp_patch *);
--int klp_disable_patch(struct klp_patch *);
- 
- void arch_klp_init_object_loaded(struct klp_patch *patch,
- 				 struct klp_object *obj);
 diff --git a/kernel/livepatch/core.c b/kernel/livepatch/core.c
-index e77c5017ae0c..bd41b03a72d5 100644
+index ecb7660f1d8b..113645ee86b6 100644
 --- a/kernel/livepatch/core.c
 +++ b/kernel/livepatch/core.c
-@@ -45,7 +45,11 @@
-  */
- DEFINE_MUTEX(klp_mutex);
+@@ -611,11 +611,16 @@ static struct kobj_type klp_ktype_func = {
+ 	.sysfs_ops = &kobj_sysfs_ops,
+ };
  
--/* Registered patches */
-+/*
-+ * Actively used patches: enabled or in transition. Note that replaced
-+ * or disabled patches are not listed even though the related kernel
-+ * module still can be loaded.
-+ */
- LIST_HEAD(klp_patches);
- 
- static struct kobject *klp_root_kobj;
-@@ -83,17 +87,6 @@ static void klp_find_object_module(struct klp_object *obj)
- 	mutex_unlock(&module_mutex);
- }
- 
--static bool klp_is_patch_registered(struct klp_patch *patch)
--{
--	struct klp_patch *mypatch;
--
--	list_for_each_entry(mypatch, &klp_patches, list)
--		if (mypatch == patch)
--			return true;
--
--	return false;
--}
--
- static bool klp_initialized(void)
+-static void klp_free_funcs(struct klp_object *obj)
++static void __klp_free_funcs(struct klp_object *obj, bool nops_only)
  {
- 	return !!klp_root_kobj;
-@@ -292,7 +285,6 @@ static int klp_write_object_relocations(struct module *pmod,
-  * /sys/kernel/livepatch/<patch>/<object>/<function,sympos>
-  */
- static int __klp_disable_patch(struct klp_patch *patch);
--static int __klp_enable_patch(struct klp_patch *patch);
+ 	struct klp_func *func, *tmp_func;
  
- static ssize_t enabled_store(struct kobject *kobj, struct kobj_attribute *attr,
- 			     const char *buf, size_t count)
-@@ -309,40 +301,32 @@ static ssize_t enabled_store(struct kobject *kobj, struct kobj_attribute *attr,
- 
- 	mutex_lock(&klp_mutex);
- 
--	if (!klp_is_patch_registered(patch)) {
--		/*
--		 * Module with the patch could either disappear meanwhile or is
--		 * not properly initialized yet.
--		 */
--		ret = -EINVAL;
--		goto err;
--	}
--
- 	if (patch->enabled == enabled) {
- 		/* already in requested state */
- 		ret = -EINVAL;
--		goto err;
-+		goto out;
- 	}
- 
--	if (patch == klp_transition_patch) {
-+	/*
-+	 * Allow to reverse a pending transition in both ways. It might be
-+	 * necessary to complete the transition without forcing and breaking
-+	 * the system integrity.
-+	 *
-+	 * Do not allow to re-enable a disabled patch.
-+	 */
-+	if (patch == klp_transition_patch)
- 		klp_reverse_transition();
--	} else if (enabled) {
--		ret = __klp_enable_patch(patch);
--		if (ret)
--			goto err;
--	} else {
-+	else if (!enabled)
- 		ret = __klp_disable_patch(patch);
--		if (ret)
--			goto err;
--	}
-+	else
-+		ret = -EINVAL;
- 
-+out:
- 	mutex_unlock(&klp_mutex);
- 
-+	if (ret)
-+		return ret;
- 	return count;
--
--err:
--	mutex_unlock(&klp_mutex);
--	return ret;
- }
- 
- static ssize_t enabled_show(struct kobject *kobj,
-@@ -508,7 +492,7 @@ static void klp_free_objects(struct klp_patch *patch)
-  * The operation must be completed by calling klp_free_patch_finish()
-  * outside klp_mutex.
-  */
--static void klp_free_patch_start(struct klp_patch *patch)
-+void klp_free_patch_start(struct klp_patch *patch)
- {
- 	if (!list_empty(&patch->list))
- 		list_del(&patch->list);
-@@ -536,6 +520,23 @@ static void klp_free_patch_finish(struct klp_patch *patch)
- 		kobject_put(&patch->kobj);
- 		wait_for_completion(&patch->finish);
- 	}
+ 	klp_for_each_func_safe(obj, func, tmp_func) {
++		if (nops_only && !func->nop)
++			continue;
 +
-+	/* Put the module after the last access to struct klp_patch. */
-+	if (!patch->forced)
-+		module_put(patch->mod);
++		list_del(&func->node);
++
+ 		/* Might be called from klp_init_patch() error path. */
+ 		if (func->kobj_added) {
+ 			kobject_put(&func->kobj);
+@@ -640,12 +645,17 @@ static void klp_free_object_loaded(struct klp_object *obj)
+ 	}
+ }
+ 
+-static void klp_free_objects(struct klp_patch *patch)
++static void __klp_free_objects(struct klp_patch *patch, bool nops_only)
+ {
+ 	struct klp_object *obj, *tmp_obj;
+ 
+ 	klp_for_each_object_safe(patch, obj, tmp_obj) {
+-		klp_free_funcs(obj);
++		__klp_free_funcs(obj, nops_only);
++
++		if (nops_only && !obj->dynamic)
++			continue;
++
++		list_del(&obj->node);
+ 
+ 		/* Might be called from klp_init_patch() error path. */
+ 		if (obj->kobj_added) {
+@@ -656,6 +666,16 @@ static void klp_free_objects(struct klp_patch *patch)
+ 	}
+ }
+ 
++static void klp_free_objects(struct klp_patch *patch)
++{
++	__klp_free_objects(patch, false);
 +}
 +
-+/*
-+ * The livepatch might be freed from sysfs interface created by the patch.
-+ * This work allows to wait until the interface is destroyed in a separate
-+ * context.
-+ */
-+static void klp_free_patch_work_fn(struct work_struct *work)
++static void klp_free_objects_dynamic(struct klp_patch *patch)
 +{
-+	struct klp_patch *patch =
-+		container_of(work, struct klp_patch, free_work);
++	__klp_free_objects(patch, true);
++}
 +
-+	klp_free_patch_finish(patch);
- }
- 
- static int klp_init_func(struct klp_object *obj, struct klp_func *func)
-@@ -661,6 +662,7 @@ static int klp_init_patch_early(struct klp_patch *patch)
- 	patch->kobj_added = false;
- 	patch->enabled = false;
- 	patch->forced = false;
-+	INIT_WORK(&patch->free_work, klp_free_patch_work_fn);
- 	init_completion(&patch->finish);
- 
- 	klp_for_each_object(patch, obj) {
-@@ -673,6 +675,9 @@ static int klp_init_patch_early(struct klp_patch *patch)
- 			func->kobj_added = false;
- 	}
- 
-+	if (!try_module_get(patch->mod))
-+		return -ENODEV;
-+
- 	return 0;
- }
- 
-@@ -681,115 +686,22 @@ static int klp_init_patch(struct klp_patch *patch)
- 	struct klp_object *obj;
- 	int ret;
- 
--	mutex_lock(&klp_mutex);
--
--	ret = klp_init_patch_early(patch);
--	if (ret) {
--		mutex_unlock(&klp_mutex);
--		return ret;
--	}
--
- 	ret = kobject_init_and_add(&patch->kobj, &klp_ktype_patch,
- 				   klp_root_kobj, "%s", patch->mod->name);
--	if (ret) {
--		mutex_unlock(&klp_mutex);
-+	if (ret)
- 		return ret;
--	}
- 	patch->kobj_added = true;
- 
- 	klp_for_each_object(patch, obj) {
- 		ret = klp_init_object(patch, obj);
- 		if (ret)
--			goto free;
-+			return ret;
- 	}
- 
- 	list_add_tail(&patch->list, &klp_patches);
- 
--	mutex_unlock(&klp_mutex);
--
--	return 0;
--
--free:
--	klp_free_patch_start(patch);
--
--	mutex_unlock(&klp_mutex);
--
--	klp_free_patch_finish(patch);
--
--	return ret;
--}
--
--/**
-- * klp_unregister_patch() - unregisters a patch
-- * @patch:	Disabled patch to be unregistered
-- *
-- * Frees the data structures and removes the sysfs interface.
-- *
-- * Return: 0 on success, otherwise error
-- */
--int klp_unregister_patch(struct klp_patch *patch)
--{
--	int ret;
--
--	mutex_lock(&klp_mutex);
--
--	if (!klp_is_patch_registered(patch)) {
--		ret = -EINVAL;
--		goto err;
--	}
--
--	if (patch->enabled) {
--		ret = -EBUSY;
--		goto err;
--	}
--
--	klp_free_patch_start(patch);
--
--	mutex_unlock(&klp_mutex);
--
--	klp_free_patch_finish(patch);
--
- 	return 0;
--err:
--	mutex_unlock(&klp_mutex);
--	return ret;
--}
--EXPORT_SYMBOL_GPL(klp_unregister_patch);
--
--/**
-- * klp_register_patch() - registers a patch
-- * @patch:	Patch to be registered
-- *
-- * Initializes the data structure associated with the patch and
-- * creates the sysfs interface.
-- *
-- * There is no need to take the reference on the patch module here. It is done
-- * later when the patch is enabled.
-- *
-- * Return: 0 on success, otherwise error
-- */
--int klp_register_patch(struct klp_patch *patch)
--{
--	if (!patch || !patch->mod)
--		return -EINVAL;
--
--	if (!is_livepatch_module(patch->mod)) {
--		pr_err("module %s is not marked as a livepatch module\n",
--		       patch->mod->name);
--		return -EINVAL;
--	}
--
--	if (!klp_initialized())
--		return -ENODEV;
--
--	if (!klp_have_reliable_stack()) {
--		pr_err("This architecture doesn't have support for the livepatch consistency model.\n");
--		return -ENOSYS;
--	}
--
--	return klp_init_patch(patch);
- }
--EXPORT_SYMBOL_GPL(klp_register_patch);
- 
- static int __klp_disable_patch(struct klp_patch *patch)
- {
-@@ -802,8 +714,7 @@ static int __klp_disable_patch(struct klp_patch *patch)
- 		return -EBUSY;
- 
- 	/* enforce stacking: only the last enabled patch can be disabled */
--	if (!list_is_last(&patch->list, &klp_patches) &&
--	    list_next_entry(patch, list)->enabled)
-+	if (!list_is_last(&patch->list, &klp_patches))
- 		return -EBUSY;
- 
- 	klp_init_transition(patch, KLP_UNPATCHED);
-@@ -822,44 +733,12 @@ static int __klp_disable_patch(struct klp_patch *patch)
- 	smp_wmb();
- 
- 	klp_start_transition();
--	klp_try_complete_transition();
- 	patch->enabled = false;
-+	klp_try_complete_transition();
- 
- 	return 0;
- }
- 
--/**
-- * klp_disable_patch() - disables a registered patch
-- * @patch:	The registered, enabled patch to be disabled
-- *
-- * Unregisters the patched functions from ftrace.
-- *
-- * Return: 0 on success, otherwise error
-- */
--int klp_disable_patch(struct klp_patch *patch)
--{
--	int ret;
--
--	mutex_lock(&klp_mutex);
--
--	if (!klp_is_patch_registered(patch)) {
--		ret = -EINVAL;
--		goto err;
--	}
--
--	if (!patch->enabled) {
--		ret = -EINVAL;
--		goto err;
--	}
--
--	ret = __klp_disable_patch(patch);
--
--err:
--	mutex_unlock(&klp_mutex);
--	return ret;
--}
--EXPORT_SYMBOL_GPL(klp_disable_patch);
--
- static int __klp_enable_patch(struct klp_patch *patch)
- {
- 	struct klp_object *obj;
-@@ -871,17 +750,8 @@ static int __klp_enable_patch(struct klp_patch *patch)
- 	if (WARN_ON(patch->enabled))
- 		return -EINVAL;
- 
--	/* enforce stacking: only the first disabled patch can be enabled */
--	if (patch->list.prev != &klp_patches &&
--	    !list_prev_entry(patch, list)->enabled)
--		return -EBUSY;
--
--	/*
--	 * A reference is taken on the patch module to prevent it from being
--	 * unloaded.
--	 */
--	if (!try_module_get(patch->mod))
--		return -ENODEV;
-+	if (!patch->kobj_added)
-+		return -EINVAL;
- 
- 	pr_notice("enabling patch '%s'\n", patch->mod->name);
- 
-@@ -916,8 +786,8 @@ static int __klp_enable_patch(struct klp_patch *patch)
- 	}
- 
- 	klp_start_transition();
--	klp_try_complete_transition();
- 	patch->enabled = true;
-+	klp_try_complete_transition();
- 
- 	return 0;
- err:
-@@ -928,11 +798,15 @@ static int __klp_enable_patch(struct klp_patch *patch)
- }
- 
- /**
-- * klp_enable_patch() - enables a registered patch
-- * @patch:	The registered, disabled patch to be enabled
-+ * klp_enable_patch() - enable the livepatch
-+ * @patch:	patch to be enabled
-  *
-- * Performs the needed symbol lookups and code relocations,
-- * then registers the patched functions with ftrace.
-+ * Initializes the data structure associated with the patch, creates the sysfs
-+ * interface, performs the needed symbol lookups and code relocations,
-+ * registers the patched functions with ftrace.
-+ *
-+ * This function is supposed to be called from the livepatch module_init()
-+ * callback.
-  *
-  * Return: 0 on success, otherwise error
-  */
-@@ -940,17 +814,51 @@ int klp_enable_patch(struct klp_patch *patch)
- {
- 	int ret;
- 
-+	if (!patch || !patch->mod)
-+		return -EINVAL;
-+
-+	if (!is_livepatch_module(patch->mod)) {
-+		pr_err("module %s is not marked as a livepatch module\n",
-+		       patch->mod->name);
-+		return -EINVAL;
-+	}
-+
-+	if (!klp_initialized())
-+		return -ENODEV;
-+
-+	if (!klp_have_reliable_stack()) {
-+		pr_err("This architecture doesn't have support for the livepatch consistency model.\n");
-+		return -ENOSYS;
-+	}
-+
-+
- 	mutex_lock(&klp_mutex);
- 
--	if (!klp_is_patch_registered(patch)) {
--		ret = -EINVAL;
--		goto err;
-+	ret = klp_init_patch_early(patch);
-+	if (ret) {
-+		mutex_unlock(&klp_mutex);
-+		return ret;
- 	}
- 
-+	ret = klp_init_patch(patch);
-+	if (ret)
-+		goto err;
-+
- 	ret = __klp_enable_patch(patch);
-+	if (ret)
-+		goto err;
-+
-+	mutex_unlock(&klp_mutex);
-+
-+	return 0;
- 
- err:
-+	klp_free_patch_start(patch);
-+
- 	mutex_unlock(&klp_mutex);
-+
-+	klp_free_patch_finish(patch);
-+
- 	return ret;
- }
- EXPORT_SYMBOL_GPL(klp_enable_patch);
-diff --git a/kernel/livepatch/core.h b/kernel/livepatch/core.h
-index d0cb5390e247..d4eefc520c08 100644
---- a/kernel/livepatch/core.h
-+++ b/kernel/livepatch/core.h
-@@ -7,6 +7,8 @@
- extern struct mutex klp_mutex;
- extern struct list_head klp_patches;
- 
-+void klp_free_patch_start(struct klp_patch *patch);
-+
- static inline bool klp_is_object_loaded(struct klp_object *obj)
- {
- 	return !obj->name || obj->mod;
-diff --git a/kernel/livepatch/transition.c b/kernel/livepatch/transition.c
-index a4c921364003..c9917a24b3a4 100644
---- a/kernel/livepatch/transition.c
-+++ b/kernel/livepatch/transition.c
-@@ -134,13 +134,6 @@ static void klp_complete_transition(void)
- 	pr_notice("'%s': %s complete\n", klp_transition_patch->mod->name,
- 		  klp_target_state == KLP_PATCHED ? "patching" : "unpatching");
- 
--	/*
--	 * patch->forced set implies unbounded increase of module's ref count if
--	 * the module is disabled/enabled in a loop.
--	 */
--	if (!klp_transition_patch->forced && klp_target_state == KLP_UNPATCHED)
--		module_put(klp_transition_patch->mod);
--
- 	klp_target_state = KLP_UNDEFINED;
- 	klp_transition_patch = NULL;
- }
-@@ -357,6 +350,7 @@ void klp_try_complete_transition(void)
- {
- 	unsigned int cpu;
- 	struct task_struct *g, *task;
-+	struct klp_patch *patch;
- 	bool complete = true;
- 
- 	WARN_ON_ONCE(klp_target_state == KLP_UNDEFINED);
-@@ -405,7 +399,18 @@ void klp_try_complete_transition(void)
- 	}
- 
- 	/* we're done, now cleanup the data structures */
-+	patch = klp_transition_patch;
- 	klp_complete_transition();
-+
-+	/*
-+	 * It would make more sense to free the patch in
-+	 * klp_complete_transition() but it is called also
-+	 * from klp_cancel_transition().
-+	 */
-+	if (!patch->enabled) {
-+		klp_free_patch_start(patch);
-+		schedule_work(&patch->free_work);
-+	}
+ /*
+  * This function implements the free operations that can be called safely
+  * under klp_mutex.
+@@ -1085,6 +1105,28 @@ void klp_discard_replaced_patches(struct klp_patch *new_patch)
  }
  
  /*
-diff --git a/samples/livepatch/livepatch-callbacks-demo.c b/samples/livepatch/livepatch-callbacks-demo.c
-index 72f9e6d1387b..62d97953ad02 100644
---- a/samples/livepatch/livepatch-callbacks-demo.c
-+++ b/samples/livepatch/livepatch-callbacks-demo.c
-@@ -195,22 +195,11 @@ static struct klp_patch patch = {
++ * This function removes the dynamically allocated 'nop' functions.
++ *
++ * We could be pretty aggressive. NOPs do not change the existing
++ * behavior except for adding unnecessary delay by the ftrace handler.
++ *
++ * It is safe even when the transition was forced. The ftrace handler
++ * will see a valid ops->func_stack entry thanks to RCU.
++ *
++ * We could even free the NOPs structures. They must be the last entry
++ * in ops->func_stack. Therefore unregister_ftrace_function() is called.
++ * It does the same as klp_synchronize_transition() to make sure that
++ * nobody is inside the ftrace handler once the operation finishes.
++ *
++ * IMPORTANT: It must be called right after removing the replaced patches!
++ */
++void klp_discard_nops(struct klp_patch *new_patch)
++{
++	klp_unpatch_objects_dynamic(klp_transition_patch);
++	klp_free_objects_dynamic(klp_transition_patch);
++}
++
++/*
+  * Remove parts of patches that touch a given kernel module. The list of
+  * patches processed might be limited. When limit is NULL, all patches
+  * will be handled.
+diff --git a/kernel/livepatch/core.h b/kernel/livepatch/core.h
+index f6a853adcc00..e6200f38701f 100644
+--- a/kernel/livepatch/core.h
++++ b/kernel/livepatch/core.h
+@@ -9,6 +9,7 @@ extern struct list_head klp_patches;
  
- static int livepatch_callbacks_demo_init(void)
+ void klp_free_patch_start(struct klp_patch *patch);
+ void klp_discard_replaced_patches(struct klp_patch *new_patch);
++void klp_discard_nops(struct klp_patch *new_patch);
+ 
+ static inline bool klp_is_object_loaded(struct klp_object *obj)
  {
--	int ret;
--
--	ret = klp_register_patch(&patch);
--	if (ret)
--		return ret;
--	ret = klp_enable_patch(&patch);
--	if (ret) {
--		WARN_ON(klp_unregister_patch(&patch));
--		return ret;
--	}
--	return 0;
-+	return klp_enable_patch(&patch);
+diff --git a/kernel/livepatch/patch.c b/kernel/livepatch/patch.c
+index 0ff466ab4b5a..99cb3ad05eb4 100644
+--- a/kernel/livepatch/patch.c
++++ b/kernel/livepatch/patch.c
+@@ -246,15 +246,26 @@ static int klp_patch_func(struct klp_func *func)
+ 	return ret;
  }
  
- static void livepatch_callbacks_demo_exit(void)
+-void klp_unpatch_object(struct klp_object *obj)
++static void __klp_unpatch_object(struct klp_object *obj, bool nops_only)
  {
--	WARN_ON(klp_unregister_patch(&patch));
+ 	struct klp_func *func;
+ 
+-	klp_for_each_func(obj, func)
++	klp_for_each_func(obj, func) {
++		if (nops_only && !func->nop)
++			continue;
++
+ 		if (func->patched)
+ 			klp_unpatch_func(func);
++	}
+ 
+-	obj->patched = false;
++	if (obj->dynamic || !nops_only)
++		obj->patched = false;
++}
++
++
++void klp_unpatch_object(struct klp_object *obj)
++{
++	__klp_unpatch_object(obj, false);
  }
  
- module_init(livepatch_callbacks_demo_init);
-diff --git a/samples/livepatch/livepatch-sample.c b/samples/livepatch/livepatch-sample.c
-index 2d554dd930e2..01c9cf003ca2 100644
---- a/samples/livepatch/livepatch-sample.c
-+++ b/samples/livepatch/livepatch-sample.c
-@@ -69,22 +69,11 @@ static struct klp_patch patch = {
- 
- static int livepatch_init(void)
- {
--	int ret;
--
--	ret = klp_register_patch(&patch);
--	if (ret)
--		return ret;
--	ret = klp_enable_patch(&patch);
--	if (ret) {
--		WARN_ON(klp_unregister_patch(&patch));
--		return ret;
--	}
--	return 0;
-+	return klp_enable_patch(&patch);
+ int klp_patch_object(struct klp_object *obj)
+@@ -277,11 +288,21 @@ int klp_patch_object(struct klp_object *obj)
+ 	return 0;
  }
  
- static void livepatch_exit(void)
+-void klp_unpatch_objects(struct klp_patch *patch)
++static void __klp_unpatch_objects(struct klp_patch *patch, bool nops_only)
  {
--	WARN_ON(klp_unregister_patch(&patch));
+ 	struct klp_object *obj;
+ 
+ 	klp_for_each_object(patch, obj)
+ 		if (obj->patched)
+-			klp_unpatch_object(obj);
++			__klp_unpatch_object(obj, nops_only);
++}
++
++void klp_unpatch_objects(struct klp_patch *patch)
++{
++	__klp_unpatch_objects(patch, false);
++}
++
++void klp_unpatch_objects_dynamic(struct klp_patch *patch)
++{
++	__klp_unpatch_objects(patch, true);
  }
+diff --git a/kernel/livepatch/patch.h b/kernel/livepatch/patch.h
+index a9b16e513656..d5f2fbe373e0 100644
+--- a/kernel/livepatch/patch.h
++++ b/kernel/livepatch/patch.h
+@@ -30,5 +30,6 @@ struct klp_ops *klp_find_ops(void *old_func);
+ int klp_patch_object(struct klp_object *obj);
+ void klp_unpatch_object(struct klp_object *obj);
+ void klp_unpatch_objects(struct klp_patch *patch);
++void klp_unpatch_objects_dynamic(struct klp_patch *patch);
  
- module_init(livepatch_init);
-diff --git a/samples/livepatch/livepatch-shadow-fix1.c b/samples/livepatch/livepatch-shadow-fix1.c
-index 49b13553eaae..6b505b48a81f 100644
---- a/samples/livepatch/livepatch-shadow-fix1.c
-+++ b/samples/livepatch/livepatch-shadow-fix1.c
-@@ -152,25 +152,13 @@ static struct klp_patch patch = {
+ #endif /* _LIVEPATCH_PATCH_H */
+diff --git a/kernel/livepatch/transition.c b/kernel/livepatch/transition.c
+index f4c5908a9731..300273819674 100644
+--- a/kernel/livepatch/transition.c
++++ b/kernel/livepatch/transition.c
+@@ -85,8 +85,10 @@ static void klp_complete_transition(void)
+ 		 klp_transition_patch->mod->name,
+ 		 klp_target_state == KLP_PATCHED ? "patching" : "unpatching");
  
- static int livepatch_shadow_fix1_init(void)
- {
--	int ret;
--
--	ret = klp_register_patch(&patch);
--	if (ret)
--		return ret;
--	ret = klp_enable_patch(&patch);
--	if (ret) {
--		WARN_ON(klp_unregister_patch(&patch));
--		return ret;
--	}
--	return 0;
-+	return klp_enable_patch(&patch);
- }
+-	if (klp_transition_patch->replace && klp_target_state == KLP_PATCHED)
++	if (klp_transition_patch->replace && klp_target_state == KLP_PATCHED) {
+ 		klp_discard_replaced_patches(klp_transition_patch);
++		klp_discard_nops(klp_transition_patch);
++	}
  
- static void livepatch_shadow_fix1_exit(void)
- {
- 	/* Cleanup any existing SV_LEAK shadow variables */
- 	klp_shadow_free_all(SV_LEAK, livepatch_fix1_dummy_leak_dtor);
--
--	WARN_ON(klp_unregister_patch(&patch));
- }
- 
- module_init(livepatch_shadow_fix1_init);
-diff --git a/samples/livepatch/livepatch-shadow-fix2.c b/samples/livepatch/livepatch-shadow-fix2.c
-index b34c7bf83356..52de947b5526 100644
---- a/samples/livepatch/livepatch-shadow-fix2.c
-+++ b/samples/livepatch/livepatch-shadow-fix2.c
-@@ -129,25 +129,13 @@ static struct klp_patch patch = {
- 
- static int livepatch_shadow_fix2_init(void)
- {
--	int ret;
--
--	ret = klp_register_patch(&patch);
--	if (ret)
--		return ret;
--	ret = klp_enable_patch(&patch);
--	if (ret) {
--		WARN_ON(klp_unregister_patch(&patch));
--		return ret;
--	}
--	return 0;
-+	return klp_enable_patch(&patch);
- }
- 
- static void livepatch_shadow_fix2_exit(void)
- {
- 	/* Cleanup any existing SV_COUNTER shadow variables */
- 	klp_shadow_free_all(SV_COUNTER, NULL);
--
--	WARN_ON(klp_unregister_patch(&patch));
- }
- 
- module_init(livepatch_shadow_fix2_init);
+ 	if (klp_target_state == KLP_UNPATCHED) {
+ 		/*
 -- 
 2.13.7
 
