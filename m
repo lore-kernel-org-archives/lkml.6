@@ -7,40 +7,40 @@ X-Spam-Status: No, score=-13.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C97FC43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 19:50:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4492FC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 19:50:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5BA99218AE
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 19:50:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1331F2173B
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 19:50:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547063417;
-	bh=69H0Rau91m0BDUFzzGTW9uHGU5es4EwEUvCRAAl6Q70=;
+	s=default; t=1547063421;
+	bh=ZrMDhspZRqsHQCgIRprU3Q2jciZ8eMIG6Ar+7cGmCjc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
 	 References:List-ID:From;
-	b=JHcMdwGQQitkZT+rHfQ0/zNi/LGSZne7VSyVv7dCpOeQoFw3W8pqC8oYjX0htf22u
-	 Hgzf5IXskvdNP1UwroVxzMnw9CkYp1UAINccOpRZ2BPAJVzdISeRoNo5SzhiuxTbvM
-	 04u60CO2cjQgPO6QY00HDiaxS6kwVFEA5rJIMBGE=
+	b=EnKDgzcOgFTZPanbcq7bo6bW96YbHjwUXK6ZvAfhe9jDtx5ZTfPzd7hL2lk599ULk
+	 d6fApL/VRAWwlYxROWnOlHhZeDtTtaVhF+GG5fQ7fCKw2WGCrfC8RrNCY2gdWW4BHn
+	 8vV8fqEOZo+BMqjPIc3qcxerGLZ0acmcjLa/gEvw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728708AbfAITuP (ORCPT
+        id S1728728AbfAITuT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 14:50:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43114 "EHLO mail.kernel.org"
+        Wed, 9 Jan 2019 14:50:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43178 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728685AbfAITuN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 14:50:13 -0500
+        id S1728707AbfAITuP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 14:50:15 -0500
 Received: from localhost.localdomain (c-98-220-238-81.hsd1.il.comcast.net [98.220.238.81])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5B2BB21872;
-        Wed,  9 Jan 2019 19:50:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4776B20859;
+        Wed,  9 Jan 2019 19:50:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547063413;
-        bh=69H0Rau91m0BDUFzzGTW9uHGU5es4EwEUvCRAAl6Q70=;
+        s=default; t=1547063415;
+        bh=ZrMDhspZRqsHQCgIRprU3Q2jciZ8eMIG6Ar+7cGmCjc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
          References:From;
-        b=z9WXVTpnUkXspmweoJJdZN8MiUWn2q32beK9Tf4gNOR3gNU62pOFQnswNVzZU9D2S
-         +Iff934236hcFH/STiFOmktNs5VKfRhkJsHzVJIJprUoa8dkAenw+kfOJiKCWnfP9M
-         d+boXgPOfNEFW30vezQukqPryd0U0LhaUF3zhw1k=
+        b=FTEyUJxk1skPJfmxlcyGvzIxOtz57vdzYTctDhwQP7a08Wpn30MndJdcvRt1VbtkT
+         0YuDvpop/b/S+nX4jjuLN92ZoiQlgW2KwMKDUiJmS8+3dk4aaFkGKkR1XB4enC2QmN
+         WqwRFxwAZTpNGYl90dGK5L8i3ZiXaYZCw2100v+I=
 From:   Tom Zanussi <zanussi@kernel.org>
 To:     rostedt@goodmis.org
 Cc:     tglx@linutronix.de, mhiramat@kernel.org, namhyung@kernel.org,
@@ -48,9 +48,9 @@ Cc:     tglx@linutronix.de, mhiramat@kernel.org, namhyung@kernel.org,
         joel@joelfernandes.org, mathieu.desnoyers@efficios.com,
         julia@ni.com, linux-kernel@vger.kernel.org,
         linux-rt-users@vger.kernel.org
-Subject: [PATCH v11 13/15] tracing: Add hist trigger onchange() handler test case
-Date:   Wed,  9 Jan 2019 13:49:20 -0600
-Message-Id: <72844fa6fbc743be0ddf8f3766d662cea7322909.1547062835.git.tom.zanussi@linux.intel.com>
+Subject: [PATCH v11 14/15] tracing: Add alternative synthetic event trace action test case
+Date:   Wed,  9 Jan 2019 13:49:21 -0600
+Message-Id: <71cb1dbed93776a9976cf0c79ab074706ddd4073.1547062835.git.tom.zanussi@linux.intel.com>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <cover.1547062835.git.tom.zanussi@linux.intel.com>
 References: <cover.1547062835.git.tom.zanussi@linux.intel.com>
@@ -63,25 +63,24 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Tom Zanussi <tom.zanussi@linux.intel.com>
 
-Add a test case verifying the basic functionality of the
-hist:onchange($var) handler.
+Add a test case for the alternative trace(<synthetic_event, params)
+synthetic event generation syntax.
 
 Signed-off-by: Tom Zanussi <tom.zanussi@linux.intel.com>
-Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
 ---
- .../inter-event/trigger-onchange-action-hist.tc    | 28 ++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
- create mode 100644 tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-onchange-action-hist.tc
+ .../inter-event/trigger-trace-action-hist.tc       | 42 ++++++++++++++++++++++
+ 1 file changed, 42 insertions(+)
+ create mode 100644 tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-trace-action-hist.tc
 
-diff --git a/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-onchange-action-hist.tc b/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-onchange-action-hist.tc
+diff --git a/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-trace-action-hist.tc b/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-trace-action-hist.tc
 new file mode 100644
-index 000000000000..064a284e4e75
+index 000000000000..8021d60aafec
 --- /dev/null
-+++ b/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-onchange-action-hist.tc
-@@ -0,0 +1,28 @@
++++ b/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-trace-action-hist.tc
+@@ -0,0 +1,42 @@
 +#!/bin/sh
 +# SPDX-License-Identifier: GPL-2.0
-+# description: event trigger - test inter-event histogram trigger onchange action
++# description: event trigger - test inter-event histogram trigger trace action
 +
 +fail() { #msg
 +    echo $1
@@ -93,17 +92,31 @@ index 000000000000..064a284e4e75
 +    exit_unsupported
 +fi
 +
-+grep -q "onchange(var)" README || exit_unsupported # version issue
++if [ ! -f synthetic_events ]; then
++    echo "synthetic event is not supported"
++    exit_unsupported
++fi
 +
-+echo "Test onchange action"
++grep -q "trace(<synthetic_event>" README || exit_unsupported # version issue
 +
-+echo 'hist:keys=comm:newprio=prio:onchange($newprio).save(comm,prio) if comm=="ping"' >> /sys/kernel/debug/tracing/events/sched/sched_waking/trigger
++echo "Test create synthetic event"
 +
-+ping $LOCALHOST -c 3
-+nice -n 1 ping $LOCALHOST -c 3
++echo 'wakeup_latency  u64 lat pid_t pid char comm[16]' > synthetic_events
++if [ ! -d events/synthetic/wakeup_latency ]; then
++    fail "Failed to create wakeup_latency synthetic event"
++fi
 +
-+if ! grep -q "changed:" events/sched/sched_waking/hist; then
-+    fail "Failed to create onchange action inter-event histogram"
++echo "Test create histogram for synthetic event using trace action"
++echo "Test histogram variables,simple expression support and trace action"
++
++echo 'hist:keys=pid:ts0=common_timestamp.usecs if comm=="ping"' > events/sched/sched_wakeup/trigger
++echo 'hist:keys=next_pid:wakeup_lat=common_timestamp.usecs-$ts0:onmatch(sched.sched_wakeup).trace(wakeup_latency,$wakeup_lat,next_pid,next_comm) if next_comm=="ping"' > events/sched/sched_switch/trigger
++echo 'hist:keys=comm,pid,lat:wakeup_lat=lat:sort=lat' > events/synthetic/wakeup_latency/trigger
++
++ping $LOCALHOST -c 5
++
++if ! grep -q "ping" events/synthetic/wakeup_latency/hist; then
++    fail "Failed to create trace action inter-event histogram"
 +fi
 +
 +exit 0
