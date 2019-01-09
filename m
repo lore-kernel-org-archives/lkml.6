@@ -2,108 +2,162 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86A42C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 06:56:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37118C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 06:58:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D0EF20883
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 06:56:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0400120821
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 06:58:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="ASbMHLsl"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729713AbfAIG41 (ORCPT
+        id S1729714AbfAIG6c (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 01:56:27 -0500
-Received: from mail-it1-f196.google.com ([209.85.166.196]:35347 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728661AbfAIG40 (ORCPT
+        Wed, 9 Jan 2019 01:58:32 -0500
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:58004 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729209AbfAIG6c (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 01:56:26 -0500
-Received: by mail-it1-f196.google.com with SMTP id p197so9572015itp.0
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jan 2019 22:56:26 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=TUd/juat8ZoWZOT+ZeChopJYAhBwed+H0awVEc8O7pE=;
-        b=oiBocHiLycaWfXLwiWT4QqGa7w6p3E91vaeP5p/1fSspsszCEkfOyv+gWDoM5XM+I5
-         jAGbmFP9Y0UTmB/TH4IbHsgj2NUO0R1VOw/Fa7ma4IvG4laEDOzD1J5CJLgpYXWTQwBP
-         Ifsq2pmkF0CB3fp0OF9pG6sxOPxeZMybh0NG51HIQwwi8GALTO0qRrYzL+Ay5uvkscGz
-         DHlF3fDyjlVxo6DwKSw6GjCLT4/mIG7cHUixoBy0M9krByWvC/6ISSaaqFUD0+aLfGNS
-         JoEnn6qiR1yLjp7pTwtSwdMp/HUzISqPYXAmzBXGo4ZHDurzW8yCDBbMLcQZr71jfrZB
-         7ZOg==
-X-Gm-Message-State: AJcUukd8LozxU7epUyxkpNOkp9fnfEiZVA1WoHxQX8Eg6Gl6SSsPNlmc
-        qaoVlAVtzp+ya8SfA/TsHiGgw/0FCCwdT4NO/sJm8AWBseQHkw==
-X-Google-Smtp-Source: ALg8bN6NaXgK1WROMhMrmchmLmZcwNRmFiOJj7q2WKxA32cdM0vi4s4nmVgWYM5gScKoB+ERfj/n1taVu0tlBXOM8N8=
-X-Received: by 2002:a24:ce42:: with SMTP id v63mr3293361itg.136.1547016985542;
- Tue, 08 Jan 2019 22:56:25 -0800 (PST)
-MIME-Version: 1.0
-References: <20190109064302.26780-1-kasong@redhat.com>
-In-Reply-To: <20190109064302.26780-1-kasong@redhat.com>
-From:   Kairui Song <kasong@redhat.com>
-Date:   Wed, 9 Jan 2019 14:56:14 +0800
-Message-ID: <CACPcB9eB19F+FDBOypwKK1co+nA-GCpW2ophcwva9AL5Qq+jhA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] x86, kexec_file_load: Don't setup EFI info if EFI
- runtime is not enabled
-To:     linux-kernel@vger.kernel.org
-Cc:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
-        x86@kernel.org, Dave Young <dyoung@redhat.com>,
-        akpm@linux-foundation.org, kexec@lists.infradead.org,
-        Baoquan He <bhe@redhat.com>
+        Wed, 9 Jan 2019 01:58:32 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 75C108EE42E;
+        Tue,  8 Jan 2019 22:58:30 -0800 (PST)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id PmnL43oLfymR; Tue,  8 Jan 2019 22:58:30 -0800 (PST)
+Received: from [153.66.254.194] (unknown [50.35.68.20])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 891668EE0CD;
+        Tue,  8 Jan 2019 22:58:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1547017110;
+        bh=Y6wBS4NyjRVcBjBw4T9WK9b8P57p87P6kg4yLicGKo4=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=ASbMHLsls7Bn3yb2mVZ6vmCtPoPlxvxK1PBpJqwZi7MYn7H/XSj9gdnbMUPqcoCk/
+         sIx432fRIS+4UZyS1uixpYCdb5pCI4SAYm4/nKTWNe7Z7PCNiFrRVshCxWfFchm5vF
+         DfhDMVDJLPQ+3a51urQieezA3egnxXSibUUcYCoI=
+Message-ID: <1547017108.2789.24.camel@HansenPartnership.com>
+Subject: Re: [PATCH 1/5 v2] PM / hibernate: Create snapshot keys handler
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Stephan Mueller <smueller@chronox.de>
+Cc:     Andy Lutomirski <luto@amacapital.net>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "Lee, Chun-Yi" <joeyli.kernel@gmail.com>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Pavel Machek <pavel@ucw.cz>, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, keyrings@vger.kernel.org,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Chen Yu <yu.c.chen@intel.com>,
+        Oliver Neukum <oneukum@suse.com>,
+        Ryan Chen <yu.chen.surf@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Giovanni Gherdovich <ggherdovich@suse.cz>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Jann Horn <jannh@google.com>, Andy Lutomirski <luto@kernel.org>
+Date:   Tue, 08 Jan 2019 22:58:28 -0800
+In-Reply-To: <309406107.k3W2fMQUza@tauon.chronox.de>
+References: <20190103143227.9138-1-jlee@suse.com>
+         <D70458DE-712B-4767-8143-7DC9107689C3@amacapital.net>
+         <1546994671.6077.10.camel@HansenPartnership.com>
+         <309406107.k3W2fMQUza@tauon.chronox.de>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-CCing more people
+On Wed, 2019-01-09 at 07:45 +0100, Stephan Mueller wrote:
+> Am Mittwoch, 9. Januar 2019, 01:44:31 CET schrieb James Bottomley:
+> 
+> Hi James,
+> 
+> > Actually, it would be enormously helpful if we could reuse these
+> > pieces for the TPM as well. 
+> 
+> Could you please help me understand whether the KDFs in TPM are
+> directly usable as a standalone cipher primitive or does it go
+> together with additional  key generation operations?
 
-On Wed, Jan 9, 2019 at 2:45 PM Kairui Song <kasong@redhat.com> wrote:
->
-> Currenly with "efi=noruntime" in kernel command line, calling
-> kexec_file_load will raise below problem:
->
-> [   97.967067] BUG: unable to handle kernel NULL pointer dereference at 0000000000000000
-> [   97.967894] #PF error: [normal kernel read fault]
-> ...
-> [   97.980456] Call Trace:
-> [   97.980724]  efi_runtime_map_copy+0x28/0x30
-> [   97.981267]  bzImage64_load+0x688/0x872
-> [   97.981794]  arch_kexec_kernel_image_load+0x6d/0x70
-> [   97.982441]  kimage_file_alloc_init+0x13e/0x220
-> [   97.983035]  __x64_sys_kexec_file_load+0x144/0x290
-> [   97.983586]  do_syscall_64+0x55/0x1a0
-> [   97.983962]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
->
-> When efi runtime is not enabled, efi memmap is not mapped, so just skip
-> EFI info setup.
->
-> Suggested-by: Dave Young <dyoung@redhat.com>
-> Signed-off-by: Kairui Song <kasong@redhat.com>
-> ---
->  arch/x86/kernel/kexec-bzimage64.c | 3 +++
->  1 file changed, 3 insertions(+)
->
-> diff --git a/arch/x86/kernel/kexec-bzimage64.c b/arch/x86/kernel/kexec-bzimage64.c
-> index 0d5efa34f359..53917a3ebf94 100644
-> --- a/arch/x86/kernel/kexec-bzimage64.c
-> +++ b/arch/x86/kernel/kexec-bzimage64.c
-> @@ -167,6 +167,9 @@ setup_efi_state(struct boot_params *params, unsigned long params_load_addr,
->         struct efi_info *current_ei = &boot_params.efi_info;
->         struct efi_info *ei = &params->efi_info;
->
-> +       if (!efi_enabled(EFI_RUNTIME_SERVICES))
-> +               return 0;
-> +
->         if (!current_ei->efi_memmap_size)
->                 return 0;
->
-> --
-> 2.20.1
->
+They're used as generators ... which means they deterministically
+produce keys from what the TPM calls seeds so we can get crypto agility
+of TPM 2.0 ... well KDFa does.  KDFe is simply what NIST recommends you
+do when using EC for a shared key agreement ... and really we shouldn't
+be using ECDH in the kernel without it.
 
+> > It has two KDFs: KDFa, which is the CTR-KDF from
+> > SP800-108 and KDFe which is the SP800-56A KDF for elliptic curve
+> > one pass Diffie Hellman, so if we're going to do the former, I'd
+> > really like the latter as well.
+> > 
+> > The way the TPM parametrises input to both KDFs is
+> > 
+> > (hashAlg, key, label, contextU, contextV, bits)
+> > 
+> > Where
+> > 
+> > hashAlg  = the hash algorithm used as the PRF
+> > key      = the input parameter of variable bit size or
+> >            the x co-ordinate of the shared point
+> > label    = An ASCII string representing the use
+> > contextU = public input U
+> > contextV = public input V
+> > bits     = number of output bits
+> 
+> When implementing KDFs as an extension of the kernel crypto API's RNG
+> facility we currently have to handle the limitiation of the existing
+> API. The label/context data (and when considering RFC 5869 HKDF
+> requring IKM, salt and  additional information as input) currently
+> cannot directly be communicated  through the API.
+> 
+> The issue is that the RNG facility currently has the following
+> prototype defined:
+> 
+> int (*generate)(struct crypto_rng *tfm,
+>                         const u8 *src, unsigned int slen,
+>                         u8 *dst, unsigned int dlen);
+> 
+> The src pointer would need to take the label/context data.
 
--- 
-Best Regards,
-Kairui Song
+That's probably good enough.  For both KDFa and KDFe the label contextU
+and ContextV are concatenated, so in both cases a single source is
+probably good enough.  However, we also need to feed in the key somehow
+since it's usually used separately in the derivation functions.
+
+> Would it be appropriate, to implement a type cast to a structure from
+> the u8 pointer?
+> 
+> E.g. for the aforementioned label/context data, we could define
+> something like
+> 
+> struct crypto_kdf_ctr {
+> 	char *label;
+> 	size_t label_len;
+> 	u8 *contextU;
+> 	size_t contextU_len;
+> 	u8 *contextV;
+> 	size_t contextV_len;
+> };
+> 
+> And the implementation of the generate function for CTR KDF would
+> then have a  type cast along the following lines:
+> 
+> 	if (slen != sizeof(struct crypto_kdf_ctr))
+> 		return -EINVAL;
+> 	const struct crypto_kdf_ctr *kdf_ctr_input = (struct
+> crypto_kdf_ctr *)src;
+> 
+> 
+> For different KDFs, different structs would be needed.
+
+Actually, we probably just need the input key (or secret material), the
+concatenation and the number of output bits.
+
+James
+
