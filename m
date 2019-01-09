@@ -2,160 +2,188 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8D36C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 12:59:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12761C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 13:02:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 70C9120578
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 12:59:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D728420578
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 13:02:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ABFxu0l3"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HsTWTntf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730515AbfAIM7o (ORCPT
+        id S1730589AbfAINCy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 07:59:44 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:35326 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729721AbfAIM7n (ORCPT
+        Wed, 9 Jan 2019 08:02:54 -0500
+Received: from mail-it1-f193.google.com ([209.85.166.193]:38406 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729721AbfAINCx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 07:59:43 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=lQr2MMBoooeIZvC1sUfkR9ACXBzS1/uLXOD1DM7niPs=; b=ABFxu0l3NG6E2RiEmgS9ME/NS
-        RNmjfbTNoRRikIdd52//Me9ROpFO2MG7QwNNRQjGsmkPtL+pE0E6aC6etQvOmgZZhS66b15weNXQd
-        W1+6ELlKxmq+GS8nVzqL7DI2QNnRox9WwPmcl150gK3y9CgYpxJESbIAOHK5mXkte6F8edFUdR7+J
-        cDdRyIgeXAZ19rdXBtJr0ZSuh7Ons364DEKgM1iEYEfjC6+A6eL4EqUSs9jzTSB1JRnkBgi04QsOJ
-        d2Zmw4j9X19Xn7OX8qYhnd6/ESqntBWBtOzO4uPsw5fXECHy4P5w7TQwM66bg+ZDplwtfSFXQHz2I
-        DZgWXHpQQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1ghDSN-0000db-LI; Wed, 09 Jan 2019 12:59:39 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 7170520281DDA; Wed,  9 Jan 2019 13:59:38 +0100 (CET)
-Date:   Wed, 9 Jan 2019 13:59:38 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Song Liu <songliubraving@fb.com>
-Cc:     lkml <linux-kernel@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "acme@kernel.org" <acme@kernel.org>,
-        "ast@kernel.org" <ast@kernel.org>,
-        "daniel@iogearbox.net" <daniel@iogearbox.net>,
-        Kernel Team <Kernel-team@fb.com>,
-        Andi Kleen <andi@firstfloor.org>
-Subject: Re: [PATCH v5 perf, bpf-next 3/7] perf, bpf: introduce
- PERF_RECORD_BPF_EVENT
-Message-ID: <20190109125938.GJ1900@hirez.programming.kicks-ass.net>
-References: <20181220182904.4193196-1-songliubraving@fb.com>
- <20181220182904.4193196-4-songliubraving@fb.com>
- <20190108184116.GC30894@hirez.programming.kicks-ass.net>
- <77A478D9-F36F-443A-BBFD-F0C1FFE0DD90@fb.com>
- <20190108194310.GD1900@hirez.programming.kicks-ass.net>
- <A0C713E9-6ACE-4235-87C2-2653A8F22F7B@fb.com>
- <20190109101808.GG1900@hirez.programming.kicks-ass.net>
- <924AE46C-B2B9-4E17-A6FC-C678FEADC03B@fb.com>
+        Wed, 9 Jan 2019 08:02:53 -0500
+Received: by mail-it1-f193.google.com with SMTP id h65so10840034ith.3
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Jan 2019 05:02:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=YBhqaz16hN/CKMu7MZvL4stKncpfQ0HIEKA8wNOI4lo=;
+        b=HsTWTntfDqIb7e6WmbltjYYI3tqigk7ZkCmfAwpU/KSXjhwt+Vnnz4GUe2IIkiOa46
+         KukkG+8r8Pqvw1JluycYzrmtqG94jBKnqtoNbhczFxANqhQb1iVhQ/rv+xeANhCve32Z
+         7eNQOoQ3PzvVSMIn2+HqIsVoxuDIp/EGDIjyvOX2+Owi5OanQc8YKqC+7cV6PreRC4Wm
+         ma3rTmfJiscjchE7yYD3h1x6ebNIS/lIeiTH4wepAEbhUhdMnp6SELZkudtGypNqi4/e
+         M8TmffIs62nbghbTwwzuLvugbLh51VhWvKa4/VAIPiHswuTpTzWKNNtUJB6QU8904pKt
+         06Yg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=YBhqaz16hN/CKMu7MZvL4stKncpfQ0HIEKA8wNOI4lo=;
+        b=SXHgoOoBxdO/RK1jOHNRB3znavl/X/BsKakrW5/zlgx7sdjrFKj2//ZL7clic3pXUR
+         FWhApQQamdkXF+tGW0zWwiMAMNI+4YJf1W/JCQeKwV7datUuuxhtK2riHOUnouSkBPto
+         7GyH3pwQV9K1/yqTyaTYN6mBQWdBor25WeR6h6+eUVCvTZvPUI2ixo5wfb4Or2VLtsur
+         J+T5jSk7oel6Ppb7RU+/zyQiGhmhi5BB2HlRWKSnzfpPK6NWvY+aW8/OkwPQlQaRsVCF
+         D/rj057n2z4V9asq+mgciqF/ws/vp/9EZOZ+Y1J3yOuBMq1pCMJJmJgYMnH9373klacw
+         snPw==
+X-Gm-Message-State: AJcUukcI1sAthvttV1kE3SKzWo+CwZuf0J663n54rbMvtTN1WksM6C8E
+        HXkUfTOsFR8gNrLJMbmFZJq2XTqpo/XE2wvo3g==
+X-Google-Smtp-Source: ALg8bN6jZVtBQkoIL+gc2foVzNueQuCtYtBjioYQw3sdpf4SaFMhD/UMFv8bOLJKob2dcgytuCGinhA7fnSzqjJ8LhQ=
+X-Received: by 2002:a24:3282:: with SMTP id j124mr3974539ita.173.1547038972554;
+ Wed, 09 Jan 2019 05:02:52 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <924AE46C-B2B9-4E17-A6FC-C678FEADC03B@fb.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <1546848299-23628-1-git-send-email-kernelfans@gmail.com>
+ <20190108080538.GB4396@rapoport-lnx> <20190108090138.GB18718@MiWiFi-R3L-srv> <20190108154852.GC14063@rapoport-lnx>
+In-Reply-To: <20190108154852.GC14063@rapoport-lnx>
+From:   Pingfan Liu <kernelfans@gmail.com>
+Date:   Wed, 9 Jan 2019 21:02:41 +0800
+Message-ID: <CAFgQCTtVjwJ_Rfp8DcmzPx6uYPnOx7E_x=YjC+MQ=mx7W38HEw@mail.gmail.com>
+Subject: Re: [PATCHv5] x86/kdump: bugfix, make the behavior of crashkernel=X
+ consistent with kaslr
+To:     Mike Rapoport <rppt@linux.ibm.com>
+Cc:     Baoquan He <bhe@redhat.com>, linux-mm@kvack.org,
+        kexec@lists.infradead.org, Tang Chen <tangchen@cn.fujitsu.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Yaowei Bai <baiyaowei@cmss.chinamobile.com>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Daniel Vacek <neelx@redhat.com>,
+        Mathieu Malaterre <malat@debian.org>,
+        Stefan Agner <stefan@agner.ch>, Dave Young <dyoung@redhat.com>,
+        yinghai@kernel.org, vgoyal@redhat.com, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 09, 2019 at 11:32:50AM +0000, Song Liu wrote:
-> I was thinking about modifying the text in-place scenario. In this case, 
-> we can use something like
-> 
-> struct perf_record_text_modify {
->     u64 addr;
->     u_big_enough old_instr;
->     u_big_enough new_instr;
+On Tue, Jan 8, 2019 at 11:49 PM Mike Rapoport <rppt@linux.ibm.com> wrote:
+>
+> On Tue, Jan 08, 2019 at 05:01:38PM +0800, Baoquan He wrote:
+> > Hi Mike,
+> >
+> > On 01/08/19 at 10:05am, Mike Rapoport wrote:
+> > > I'm not thrilled by duplicating this code (yet again).
+> > > I liked the v3 of this patch [1] more, assuming we allow bottom-up mode to
+> > > allocate [0, kernel_start) unconditionally.
+> > > I'd just replace you first patch in v3 [2] with something like:
+> >
+> > In initmem_init(), we will restore the top-down allocation style anyway.
+> > While reserve_crashkernel() is called after initmem_init(), it's not
+> > appropriate to adjust memblock_find_in_range_node(), and we really want
+> > to find region bottom up for crashkernel reservation, no matter where
+> > kernel is loaded, better call __memblock_find_range_bottom_up().
+> >
+> > Create a wrapper to do the necessary handling, then call
+> > __memblock_find_range_bottom_up() directly, looks better.
+>
+> What bothers me is 'the necessary handling' which is already done in
+> several places in memblock in a similar, but yet slightly different way.
+>
+> memblock_find_in_range() and memblock_phys_alloc_nid() retry with different
+> MEMBLOCK_MIRROR, but memblock_phys_alloc_try_nid() does that only when
+> allocating from the specified node and does not retry when it falls back to
+> any node. And memblock_alloc_internal() has yet another set of fallbacks.
+>
+> So what should be the necessary handling in the wrapper for
+> __memblock_find_range_bottom_up() ?
+>
+Well, it is a hard choice.
+> BTW, even without any memblock modifications, retrying allocation in
+> reserve_crashkerenel() for different ranges, like the proposal at [1] would
+> also work, wouldn't it?
+>
+Yes, it can work. Then is it worth to expose the bottom-up allocation
+style beside for hotmovable purpose?
 
-char[15] for x86 ;-)
-
-Also, I don't think we need old, we should already have the old text,
-either from a previous event or from the initial kcore snapshot.
-
->     timestamp ;
-
-that lives in struct sample_id.
-
-> };
-> 
-> It is a fixed size record, and we don't need process it immediately 
-> in user space. At the end of perf run, a series of these events will 
-> help us reconstruct exact text at any time. 
-
-That works for text_poke users, see also:
-
-  https://lkml.kernel.org/r/20190109103544.GH1900@hirez.programming.kicks-ass.net
-
-But is useless for module / bpf / ftrace dynamic text.
-
-> > All we need is some means of ensuring the symbol is still there by the
-> > time we see the event and do the copy.
-> > 
-> > I think we can do this with a new ioctl() on /proc/kcore itself:
-> > 
-> > - when we have kcore open, we queue all text-free operations on list-1.
-> > 
-> > - when we close kcore, we drain all (text-free) list-* and perform the
-> >   pending frees immediately.
-> > 
-> > - on ioctl(KCORE_QC) we perform the pending free of list-3 and advance
-> >   list-2 to list-3 and list-1 to list-2.
-> > 
-> > Perf would then open kcore at the start of the record, make a complete
-> > copy and keep the FD open. At the end of every buffer process, we issue
-> > KCORE_QC IFF we observed a ksym unreg in that buffer.
-> 
-> Does this mean we need to scan every buffer before writing it to perf.data 
-> during perf-record? 
-
-Just like the BPF events, yes. Now for PT most of the actual data is not
-in the regular buffer, so it shouldn't be too horrible, but just like
-the BPF event, it can get its own buffer if it does become a problem.
-
-> Also, if we need ksym unreg here, I guess it is NOT really modifying text 
-> in-place, but creating new version and swap? Then can we include something 
-> like this in perf.data:
-> 
-> struct perf_record_text_modify {
->     u64 old_addr;
->     u64 new_addr;
->     u32 old_len; /* up to MAX_SIZE */
->     u32 new_len; /* up to MAX_SIZE */
->     u8 old_text[MAX_SIZE];
->     u8 new_text[MAX_SIZE];
->     timestamp ;
-> };
-> 
-> In this way, this record is embedded in perf.data, and doesn't require
-> extra processing during perf-record (only at the end of perf-record). 
-> This would work for text modifying case, as modifying text is simply
-> old-text to new-text.
->  
-> Similar solution would not work for BPF case, as bpf_prog_info is 
-> getting a lot more members in the near future. 
-> 
-> Does this make sense...?
-
-I don't think we actually need old_text here either. We're creating a
-new text mapping, there was nothing there before.
-
-But still, perf events are limited to 64k, so that means we cannot
-support symbols larger than that (although I suppose that would be
-fairly rare).
-
-Something like that could work, but I'm not sure it is actually better.
-Some PT person would have to play with things I suppose.
-
-
+Thanks,
+Pingfan
+> [1] http://lists.infradead.org/pipermail/kexec/2017-October/019571.html
+>
+> > Thanks
+> > Baoquan
+> >
+> > >
+> > > diff --git a/mm/memblock.c b/mm/memblock.c
+> > > index 7df468c..d1b30b9 100644
+> > > --- a/mm/memblock.c
+> > > +++ b/mm/memblock.c
+> > > @@ -274,24 +274,14 @@ phys_addr_t __init_memblock memblock_find_in_range_node(phys_addr_t size,
+> > >      * try bottom-up allocation only when bottom-up mode
+> > >      * is set and @end is above the kernel image.
+> > >      */
+> > > -   if (memblock_bottom_up() && end > kernel_end) {
+> > > -           phys_addr_t bottom_up_start;
+> > > -
+> > > -           /* make sure we will allocate above the kernel */
+> > > -           bottom_up_start = max(start, kernel_end);
+> > > -
+> > > +   if (memblock_bottom_up()) {
+> > >             /* ok, try bottom-up allocation first */
+> > > -           ret = __memblock_find_range_bottom_up(bottom_up_start, end,
+> > > +           ret = __memblock_find_range_bottom_up(start, end,
+> > >                                                   size, align, nid, flags);
+> > >             if (ret)
+> > >                     return ret;
+> > >
+> > >             /*
+> > > -            * we always limit bottom-up allocation above the kernel,
+> > > -            * but top-down allocation doesn't have the limit, so
+> > > -            * retrying top-down allocation may succeed when bottom-up
+> > > -            * allocation failed.
+> > > -            *
+> > >              * bottom-up allocation is expected to be fail very rarely,
+> > >              * so we use WARN_ONCE() here to see the stack trace if
+> > >              * fail happens.
+> > >
+> > > [1] https://lore.kernel.org/lkml/1545966002-3075-3-git-send-email-kernelfans@gmail.com/
+> > > [2] https://lore.kernel.org/lkml/1545966002-3075-2-git-send-email-kernelfans@gmail.com/
+> > >
+> > > > +
+> > > > + return ret;
+> > > > +}
+> > > > +
+> > > >  /**
+> > > >   * __memblock_find_range_top_down - find free area utility, in top-down
+> > > >   * @start: start of candidate range
+> > > > --
+> > > > 2.7.4
+> > > >
+> > >
+> > > --
+> > > Sincerely yours,
+> > > Mike.
+> > >
+> >
+>
+> --
+> Sincerely yours,
+> Mike.
+>
