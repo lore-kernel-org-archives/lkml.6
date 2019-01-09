@@ -2,152 +2,88 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B7A4C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 19:51:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DDF6C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 19:57:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EEB8B214C6
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 19:51:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547063510;
-	bh=OsA0utCZfyYV9YNN6vd8kJm4nnE+IBKjN6Og11Sj9lQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
-	 References:List-ID:From;
-	b=EpFWw42KmmF+b4jaA/tL2zU5OmTGXTKwlcojq9ina+9Df+Pv2muvU+5EIzsdvczoT
-	 sM4kwnOUsHCJOnNoiv2ybU6rQmxaGpZn5E9fq3NNvNLL+hXb7iJpX8b++9OJetsKOg
-	 972keDwyW+iVuZcPWUqt32HO7I+epl9d6xTQhRtA=
+	by mail.kernel.org (Postfix) with ESMTP id D3C432075C
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 19:57:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728867AbfAITvt (ORCPT
+        id S1728527AbfAIT5H (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 14:51:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42598 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728527AbfAITtw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 14:49:52 -0500
-Received: from localhost.localdomain (c-98-220-238-81.hsd1.il.comcast.net [98.220.238.81])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C6EF521738;
-        Wed,  9 Jan 2019 19:49:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547063391;
-        bh=OsA0utCZfyYV9YNN6vd8kJm4nnE+IBKjN6Og11Sj9lQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
-         References:From;
-        b=QocSyw8R2H9jNNn5AckuiJjK89/UIGjYEKr0ZIabWhwVu5pw5XvZFjVrxqYeoiUq0
-         1SCEhG5+eiw0Z/ySVQRK2ht7UOtw1WheuEBvgE4rk/bBGMvYDu+BpHdB+1HQifqMtF
-         nJtbkfqyf+tz3xSyRGijdRT7vK5h1aNrJLDN1zfs=
-From:   Tom Zanussi <zanussi@kernel.org>
-To:     rostedt@goodmis.org
-Cc:     tglx@linutronix.de, mhiramat@kernel.org, namhyung@kernel.org,
-        vedang.patel@intel.com, bigeasy@linutronix.de,
-        joel@joelfernandes.org, mathieu.desnoyers@efficios.com,
-        julia@ni.com, linux-kernel@vger.kernel.org,
-        linux-rt-users@vger.kernel.org
-Subject: [PATCH v11 02/15] tracing: Make hist trigger Documentation better reflect actions/handlers
-Date:   Wed,  9 Jan 2019 13:49:09 -0600
-Message-Id: <bd6078a4036ebb70e5c89020d91dda04a262cb83.1547062835.git.tom.zanussi@linux.intel.com>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <cover.1547062835.git.tom.zanussi@linux.intel.com>
-References: <cover.1547062835.git.tom.zanussi@linux.intel.com>
-In-Reply-To: <cover.1547062835.git.tom.zanussi@linux.intel.com>
-References: <cover.1547062835.git.tom.zanussi@linux.intel.com>
+        Wed, 9 Jan 2019 14:57:07 -0500
+Received: from wes1-so1-b.wedos.net ([46.28.106.43]:35227 "EHLO
+        wes1-so1.wedos.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727123AbfAIT5H (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 14:57:07 -0500
+Received: from localhost (ip4-46-39-182-135.cust.nbox.cz [46.39.182.135])
+        by wes1-so1.wedos.net (Postfix) with ESMTPSA id 43ZfzP174Gz4gD;
+        Wed,  9 Jan 2019 20:57:05 +0100 (CET)
+Date:   Wed, 9 Jan 2019 20:57:01 +0100
+From:   Otto Sabart <ottosabart@seberm.com>
+To:     linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        netdev@vger.kernel.org
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Jonathan Corbet <corbet@lwn.net>
+Subject: [PATCH 0/3] doc: networking: integrate scaling document into doc tree
+Message-ID: <cover.1547063330.git.ottosabart@seberm.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="8t9RHnE3ZwKMSgU+"
+Content-Disposition: inline
+X-PGP-Key: http://seberm.com/pubkey.asc
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tom Zanussi <tom.zanussi@linux.intel.com>
 
-The action/handler code refactoring didn't change the action/handler
-syntax, but did generalize it - the Documentation should reflect that.
+--8t9RHnE3ZwKMSgU+
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Tom Zanussi <tom.zanussi@linux.intel.com>
----
- Documentation/trace/histogram.rst | 56 ++++++++++++++++++++++++++++++---------
- 1 file changed, 43 insertions(+), 13 deletions(-)
+These patches integrate scaling document into documentation tree.
 
-diff --git a/Documentation/trace/histogram.rst b/Documentation/trace/histogram.rst
-index 7dda76503127..63e522107e59 100644
---- a/Documentation/trace/histogram.rst
-+++ b/Documentation/trace/histogram.rst
-@@ -25,7 +25,7 @@ Documentation written by Tom Zanussi
- 
-         hist:keys=<field1[,field2,...]>[:values=<field1[,field2,...]>]
-           [:sort=<field1[,field2,...]>][:size=#entries][:pause][:continue]
--          [:clear][:name=histname1] [if <filter>]
-+          [:clear][:name=histname1][:<handler>.<action>] [if <filter>]
- 
-   When a matching event is hit, an entry is added to a hash table
-   using the key(s) and value(s) named.  Keys and values correspond to
-@@ -1831,21 +1831,51 @@ and looks and behaves just like any other event::
- Like any other event, once a histogram is enabled for the event, the
- output can be displayed by reading the event's 'hist' file.
- 
--2.2.3 Hist trigger 'actions'
------------------------------
-+2.2.3 Hist trigger 'handlers' and 'actions'
-+-------------------------------------------
- 
--A hist trigger 'action' is a function that's executed whenever a
--histogram entry is added or updated.
-+A hist trigger 'action' is a function that's executed (in most cases
-+conditionally) whenever a histogram entry is added or updated.
- 
--The default 'action' if no special function is explicitly specified is
--as it always has been, to simply update the set of values associated
--with an entry.  Some applications, however, may want to perform
--additional actions at that point, such as generate another event, or
--compare and save a maximum.
-+When a histogram entry is added or updated, a hist trigger 'handler'
-+is what decides whether the corresponding action is actually invoked
-+or not.
- 
--The following additional actions are available.  To specify an action
--for a given event, simply specify the action between colons in the
--hist trigger specification.
-+Hist trigger handlers and actions are paired together in the general
-+form:
-+
-+  <handler>.<action>
-+
-+To specify a handler.action pair for a given event, simply specify
-+that handler.action pair between colons in the hist trigger
-+specification.
-+
-+In theory, any handler can be combined with any action, but in
-+practice, not every handler.action combination is currently supported;
-+if a given handler.action combination isn't supported, the hist
-+trigger will fail with -EINVAL;
-+
-+The default 'handler.action' if none is explicity specified is as it
-+always has been, to simply update the set of values associated with an
-+entry.  Some applications, however, may want to perform additional
-+actions at that point, such as generate another event, or compare and
-+save a maximum.
-+
-+The supported handlers and actions are listed below, and each is
-+described in more detail in the following paragraphs, in the context
-+of descriptions of some common and useful handler.action combinations.
-+
-+The available handlers are:
-+
-+  - onmatch(matching.event)    - invoke action on any addition or update
-+  - onmax(var)                 - invoke action if var exceeds current max
-+
-+The available actions are:
-+
-+  - <synthetic_event_name>(param list)         - generate synthetic event
-+  - save(field,...)                            - save current event fields
-+
-+The following commonly-used handler.action pairs are available:
- 
-   - onmatch(matching.event).<synthetic_event_name>(param list)
- 
--- 
-2.14.1
+There are no semantic changes.
 
+Otto Sabart (3):
+  doc: networking: prepare scaling document for conversion into RST
+  doc: networking: convert scaling doc into RST
+  doc: networking: add scaling doc into index file
+
+ Documentation/networking/index.rst            |   1 +
+ .../networking/{scaling.txt =3D> scaling.rst}   | 131 ++++++++++++------
+ 2 files changed, 86 insertions(+), 46 deletions(-)
+ rename Documentation/networking/{scaling.txt =3D> scaling.rst} (92%)
+
+--=20
+2.17.2
+
+
+--8t9RHnE3ZwKMSgU+
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEEb6VOpv2s03VHGoilgjuumfi+HjwFAlw2UgsACgkQgjuumfi+
+HjyL7xAApK3awdC5eWoqeoB05kl/DU5JamDMDug2JzzMacKG1KipWM76xYahkoQc
+dyi82ZeR96BcScyrF6eVygCzvn5ufvmEB2pFkHHWR3tDTIeQNBvTvlVuRTTTH9zA
+DUMEtPBE21ICkeOEorprHBr5KAfrmsFEI54jDpKFhNl64qy6M9a4/zPckj1uMouh
+/Dh2/WbOqosRWuNpXZg5gUd2392I/JRPY/34zaZNI5ieOBpdv59jlzdtx3wb+vxB
+rMh0f2bzMnxbS744RuTJ+986CMXDTtTgbYBaMLrRCA4Qs/yDPmac65xbkex3myCs
+iR1lkF77FhGHlqmer/Zg8dXhtouC1fy2tOWH7fOc1mMX7bhPotjbhc6VeJdZD/vf
+9+7C48bZpxyuYib4VgetcNXE/oVOAnIg7gcKoA70Hgz2FIIeQzwIXR9/WIWASB+p
+R4d26+Iwn0GDePUFTC19szwm96ot8zbF1wT19844hOMeM1XmpaTSjJx2038xUL5J
+p3f0eCTbVoC4OjNkjE12g9RojVjYC3S2xzGeEZRkzQyXESPT8FL3kAfreq6YTbos
+mhZYrgpwgEwJBZY3660/5VnfiYDV/uaF3NrouB22X/4TMuFjrkfh1GCLXFXVWTbE
+BbGexGDIHMfsrU84rqRuNzlrENolLi9OXGc0h/Lh7rS1F1Znfrs=
+=3ebX
+-----END PGP SIGNATURE-----
+
+--8t9RHnE3ZwKMSgU+--
