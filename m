@@ -2,122 +2,109 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8851DC43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 05:57:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88A77C43444
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 05:58:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 53A7720883
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 05:57:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 55BAB20883
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 05:58:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="JRMrjNqv"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="AkhXU0hx";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ggo5OvHD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729459AbfAIF5r (ORCPT
+        id S1729604AbfAIF65 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 00:57:47 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:34927 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725440AbfAIF5q (ORCPT
+        Wed, 9 Jan 2019 00:58:57 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:42198 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728469AbfAIF65 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 00:57:46 -0500
-Received: by mail-pg1-f195.google.com with SMTP id s198so2837490pgs.2
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jan 2019 21:57:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Aa1uCBP59MSaio3VSgOuyxVekJ64BN6jptSWeh729UM=;
-        b=JRMrjNqvaANp2nwjIVi+v62CRRtIdsNdmrS4Xik+9U7Ze3Q3sZ79s8pImwHbYTgQjS
-         Dv+rbhL7lHgHqTtv6NNNHHhY87BF4q3oM9eBrLFz9thIB3V/f8TqwV0lhqohwKlxYWDB
-         p07mbFI5okRzpWqPFYdIgURZ1V/O/oYdbhPO8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Aa1uCBP59MSaio3VSgOuyxVekJ64BN6jptSWeh729UM=;
-        b=INRmbTV8ze30bNIHgzI6lBZyiuX2WAo9msUxDJv47co3RuETsGRjZyIJD+Q9KCs41b
-         VeLXoQ8bZV+9JU6rwPPYLx+5ABFjyRCWern5l/UYvcx/IhM9+XfrfK3rcwVala/c7cMD
-         oFtHomSKZm0bRF6U4EDDMWQf3xuq59w8Srqp+8twDeQYeiWH12Q5wj0ASarawo87OCCW
-         7UvL325+1a30eeUy+VCmZM8413ZYuzrj/K56/J8vdNOLc4q8dKIlCNo7NLhJmXEOBVB1
-         skLCnSWz//+SW3u6BRgj/+u8WZIxcA+QrIGUzTUzNc/8ucEAP+acgjSyzyCt1wCUW7bu
-         O+yw==
-X-Gm-Message-State: AJcUukdd+YkGxCski5Br9OnuUZJXQWk8A7dDQaaEpXfBm6tuL7OdpbHn
-        7PWxlVm5GHUL4NI87HeQBq0QEg==
-X-Google-Smtp-Source: ALg8bN67dfDF9e4WDOng/a/8ks/+HlzffpdXluuxKI+qUAPC45qiOTRTz4GtqYR9pVsdAlmUUxwtnA==
-X-Received: by 2002:a63:a91a:: with SMTP id u26mr4147921pge.349.1547013465557;
-        Tue, 08 Jan 2019 21:57:45 -0800 (PST)
-Received: from pihsun-z840.tpe.corp.google.com ([2401:fa00:1:10:7889:7a43:f899:134c])
-        by smtp.googlemail.com with ESMTPSA id i1sm102627966pgb.46.2019.01.08.21.57.43
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 08 Jan 2019 21:57:44 -0800 (PST)
-From:   Pi-Hsun Shih <pihsun@chromium.org>
-Cc:     Pi-Hsun Shih <pihsun@chromium.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        linux-pm@vger.kernel.org (open list:THERMAL),
-        linux-arm-kernel@lists.infradead.org (moderated list:ARM/Mediatek SoC
-        support),
-        linux-mediatek@lists.infradead.org (moderated list:ARM/Mediatek SoC
-        support), linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] thermal: mtk: Allocate enough space for mtk_thermal.
-Date:   Wed,  9 Jan 2019 13:57:24 +0800
-Message-Id: <20190109055724.184692-1-pihsun@chromium.org>
-X-Mailer: git-send-email 2.20.1.97.g81188d93c3-goog
+        Wed, 9 Jan 2019 00:58:57 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 1FB0460907; Wed,  9 Jan 2019 05:58:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1547013536;
+        bh=77Ok9Dvzp9t7jBiP1bmDOBkahoOkN2/K66/dFUp9g/M=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=AkhXU0hxN0UsWSF/i7MQ1SP8qzZLLTfjRjdAELaykn7NZBUWR6K12d3Nnlxhw9Io2
+         5yFI2fEUoKsR/sdsf4BdFBuY+a6JideptwwA1/pfI5Pipx9LpQ4wayyvGpdcJ9g/Fs
+         R2JkaedokVzoLaFqIhxd5dAQveddCaZfULCovCTg=
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id E671C6089D;
+        Wed,  9 Jan 2019 05:58:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1547013533;
+        bh=77Ok9Dvzp9t7jBiP1bmDOBkahoOkN2/K66/dFUp9g/M=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=ggo5OvHDmfvpN549Lhkyyc1N4LiKBsrUQFYt/Q0tYboHnVFyZvBD9LLtqGERUpPj4
+         O0Sn76EmHX/ZoiSghU9D0TQtcAzkvhBGICeFdNthxv502uBHG+taDI41F0SU+rUTRQ
+         hHzdGUMzIByglUu+MecTJD8NMwpa9J+HLa607iAQ=
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Wed, 09 Jan 2019 11:28:52 +0530
+From:   Arun KS <arunks@codeaurora.org>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Alexander Duyck <alexander.h.duyck@linux.intel.com>,
+        arunks.linux@gmail.com, akpm@linux-foundation.org, vbabka@suse.cz,
+        osalvador@suse.de, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, getarunks@gmail.com
+Subject: Re: [PATCH v7] mm/page_alloc.c: memory_hotplug: free pages as higher
+ order
+In-Reply-To: <20190108181352.GI31793@dhcp22.suse.cz>
+References: <1546578076-31716-1-git-send-email-arunks@codeaurora.org>
+ <fb6465c99b3ada2c6af587a7eb00016d96d56f77.camel@linux.intel.com>
+ <20190108181352.GI31793@dhcp22.suse.cz>
+Message-ID: <bfb543b6e343c21c3e263a110f234e08@codeaurora.org>
+X-Sender: arunks@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The mtk_thermal struct contains a 'struct mtk_thermal_bank banks[];',
-but the allocation only allocates sizeof(struct mtk_thermal) bytes,
-which cause out of bound access with the ->banks[] member. Change it to
-a fixed size array instead.
+On 2019-01-08 23:43, Michal Hocko wrote:
+> On Tue 08-01-19 09:56:09, Alexander Duyck wrote:
+>> On Fri, 2019-01-04 at 10:31 +0530, Arun KS wrote:
+> [...]
+>> >  static int online_pages_range(unsigned long start_pfn, unsigned long nr_pages,
+>> >  			void *arg)
+>> >  {
+>> > -	unsigned long i;
+>> >  	unsigned long onlined_pages = *(unsigned long *)arg;
+>> > -	struct page *page;
+>> >
+>> >  	if (PageReserved(pfn_to_page(start_pfn)))
+>> > -		for (i = 0; i < nr_pages; i++) {
+>> > -			page = pfn_to_page(start_pfn + i);
+>> > -			(*online_page_callback)(page);
+>> > -			onlined_pages++;
+>> > -		}
+>> > +		onlined_pages = online_pages_blocks(start_pfn, nr_pages);
+>> 
+>> Shouldn't this be a "+=" instead of an "="? It seems like you are 
+>> going
+>> to lose your count otherwise.
+> 
+> You are right of course. I should have noticed during the review.
+> Thanks!
 
-Signed-off-by: Pi-Hsun Shih <pihsun@chromium.org>
----
- drivers/thermal/mtk_thermal.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+I think we don't need to. The caller function is setting onlined_pages = 
+0 before calling online_pages_range().
+And there are no other reference to online_pages_range other than from 
+online_pages().
 
-diff --git a/drivers/thermal/mtk_thermal.c b/drivers/thermal/mtk_thermal.c
-index 0691f260f6eabe..ea11edb3fcced6 100644
---- a/drivers/thermal/mtk_thermal.c
-+++ b/drivers/thermal/mtk_thermal.c
-@@ -159,6 +159,9 @@
- #define MT7622_NUM_SENSORS_PER_ZONE	1
- #define MT7622_TS1	0
- 
-+/* The maximum number of banks */
-+#define MAX_NUM_ZONES		8
-+
- struct mtk_thermal;
- 
- struct thermal_bank_cfg {
-@@ -178,7 +181,7 @@ struct mtk_thermal_data {
- 	const int *sensor_mux_values;
- 	const int *msr;
- 	const int *adcpnp;
--	struct thermal_bank_cfg bank_data[];
-+	struct thermal_bank_cfg bank_data[MAX_NUM_ZONES];
- };
- 
- struct mtk_thermal {
-@@ -197,7 +200,7 @@ struct mtk_thermal {
- 	s32 vts[MT8173_NUM_SENSORS];
- 
- 	const struct mtk_thermal_data *conf;
--	struct mtk_thermal_bank banks[];
-+	struct mtk_thermal_bank banks[MAX_NUM_ZONES];
- };
- 
- /* MT8173 thermal sensor data */
--- 
-2.20.1.97.g81188d93c3-goog
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/mm/memory_hotplug.c?h=v5.0-rc1#n845
 
+int __ref online_pages(unsigned long pfn, unsigned long nr_pages, int 
+online_type)
+{
+         unsigned long flags;
+         unsigned long onlined_pages = 0;
+
+Regards,
+Arun
