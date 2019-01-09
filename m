@@ -2,179 +2,150 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.9 required=3.0 tests=DATE_IN_PAST_24_48,FROM_WORDY,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86CB8C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 14:13:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BCF1C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 14:13:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 567E72075C
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 14:13:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E4EF120859
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 14:13:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="T6VQH5Lk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731378AbfAIONs (ORCPT
+        id S1730030AbfAIONu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 09:13:48 -0500
-Received: from mail1.bemta25.messagelabs.com ([195.245.230.1]:17688 "EHLO
-        mail1.bemta25.messagelabs.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731338AbfAIONp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 09:13:45 -0500
-Received: from [46.226.52.104] (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256 bits))
-        by server-1.bemta.az-a.eu-west-1.aws.symcld.net id 14/29-19156-391063C5; Wed, 09 Jan 2019 14:13:39 +0000
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupkleJIrShJLcpLzFFi42I5+MHzqO5kRrM
-  Yg3vXuS1Otexht7hy8RCTxdSHT9gs9p7/yGzx7UoHk8XlXXPYLDp39bNabPi+ltGBw2PD5yY2
-  j9ZLf9k8ds66y+6xYFOpx6ZVnWwe+94uY/NYv+Uqi8fnTXIBHFGsmXlJ+RUJrBlTbh5jLNgsV
-  bHmaQNTA+MBsS5GLg4hgXWMEnPO3GTtYuQEciokHjy5DmbzCmRKLL8+jx3E5hRwl3jZeIQZos
-  ZNYsruL0wgNpuAhcTkEw/Yuhg5OFgEVCT2XvIACQsLeEsc+/sbbIyIQBejxPmj3iC7mAUOMUr
-  s2ryTHWK+oMTJmU9YQGxmAQmJgy9eQM03kDi9oBEsLiFgLzH9/VVmkPkSAvoSjcdiIcKGEt9n
-  fYMqMZdY8XAB2wRGwVlIps5CMnUBI9MqRoukosz0jJLcxMwcXUMDA11DQyNdQ0sgtjDXS6zST
-  dRLLdUtTy0u0TXUSywv1iuuzE3OSdHLSy3ZxAiMopSCA7t3ML7vSj/EKMnBpCTKu+W7aYwQX1
-  J+SmVGYnFGfFFpTmrxIUYZDg4lCV4PBrMYIcGi1PTUirTMHGA8w6QlOHiURHj5gDEtxFtckJh
-  bnJkOkTrFqCglzsv5C2imAEgiozQPrg2WQi4xykoJ8zIyMDAI8RSkFuVmlqDKv2IU52BUEuYt
-  A9nOk5lXAjf9FdBiJqDFhxhNQBaXJCKkpBoYm/fwqBTferO1KK/uUhWbkvqEfyUmp+a9/3D7W
-  PPpXez9i5LniHZ1JD9J+df848Sn60zSr7tUHsyTWTerb/Pm9ZNcCr47hiR1v51ZdnFSg/mdXS
-  43JP9N8Ps0yb3lRe26l2zzp1cuSGL+Wnt0rZ/Sl3WhtRyNkXzP4zo+O7vxGjtIuTT0T7R6rMR
-  SnJFoqMVcVJwIAMxexKgcAwAA
-X-Env-Sender: Adam.Thomson.Opensource@diasemi.com
-X-Msg-Ref: server-4.tower-268.messagelabs.com!1547043218!1157657!3
-X-Originating-IP: [193.240.73.197]
-X-SYMC-ESS-Client-Auth: outbound-route-from=pass
-X-StarScan-Received: 
-X-StarScan-Version: 9.31.5; banners=-,-,-
-X-VirusChecked: Checked
-Received: (qmail 6222 invoked from network); 9 Jan 2019 14:13:39 -0000
-Received: from unknown (HELO sw-ex-cashub01.diasemi.com) (193.240.73.197)
-  by server-4.tower-268.messagelabs.com with AES128-SHA256 encrypted SMTP; 9 Jan 2019 14:13:39 -0000
-Received: from swsrvapps-01.diasemi.com (10.20.28.141) by
- SW-EX-CASHUB01.diasemi.com (10.20.16.140) with Microsoft SMTP Server id
- 14.3.382.0; Wed, 9 Jan 2019 14:13:37 +0000
-Received: by swsrvapps-01.diasemi.com (Postfix, from userid 22379)      id
- EB3623FB28; Mon,  7 Jan 2019 16:11:46 +0000 (GMT)
-Message-ID: <ac23ca274965f4c811c0bbbbfe953589a20610c2.1546876084.git.Adam.Thomson.Opensource@diasemi.com>
-In-Reply-To: <cover.1546876084.git.Adam.Thomson.Opensource@diasemi.com>
-References: <cover.1546876084.git.Adam.Thomson.Opensource@diasemi.com>
-From:   Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
-Date:   Mon, 7 Jan 2019 16:11:46 +0000
-Subject: [PATCH 1/2] ASoC: da7219: MCLK should be enabled before DAI clocks
-To:     Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Takashi Iwai <tiwai@suse.com>, Jaroslav Kysela <perex@perex.cz>
-CC:     Akshu Agrawal <Akshu.Agrawal@amd.com>,
-        Daniel Kurtz <djkurtz@google.com>,
-        <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>,
-        Support Opensource <support.opensource@diasemi.com>
+        Wed, 9 Jan 2019 09:13:50 -0500
+Received: from mail-eopbgr00049.outbound.protection.outlook.com ([40.107.0.49]:4544
+        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1731154AbfAIONq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 09:13:46 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=59szHa/J00T8soUfxZmHlJfS0uZ5kTQvpzaKv9KPxzQ=;
+ b=T6VQH5LkcMOKuPvYLPClyeQr85Xk6X3lLXXuechDz0q2PrNggGBX8ygnEHDdAm4lpqa3NhX1iMviU2PQs9yqocAmlCXdYWOtFNQN8fXLFcooFCEGSZ2MnIA2CUkV9F8YZ3OJbPt+89A6zEQPKh8iYwwwLzL+nYUoaL4aN6tTsds=
+Received: from AM6PR04MB4007.eurprd04.prod.outlook.com (52.135.161.10) by
+ AM6PR04MB5157.eurprd04.prod.outlook.com (20.177.34.161) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1495.9; Wed, 9 Jan 2019 14:13:39 +0000
+Received: from AM6PR04MB4007.eurprd04.prod.outlook.com
+ ([fe80::65e5:2a3b:b9a8:3cd9]) by AM6PR04MB4007.eurprd04.prod.outlook.com
+ ([fe80::65e5:2a3b:b9a8:3cd9%5]) with mapi id 15.20.1516.010; Wed, 9 Jan 2019
+ 14:13:39 +0000
+From:   Robert Chiras <robert.chiras@nxp.com>
+To:     Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Marek Vasut <marex@denx.de>
+CC:     Robert Chiras <robert.chiras@nxp.com>,
+        Stefan Agner <stefan@agner.ch>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        David Airlie <airlied@linux.ie>,
+        Anson Huang <anson.huang@nxp.com>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: [PATCH 00/10] Add support for DRM bridge and additional pixel formats
+Thread-Topic: [PATCH 00/10] Add support for DRM bridge and additional pixel
+ formats
+Thread-Index: AQHUqCWEXtisTM/gQke6JWnDvUfQ7A==
+Date:   Wed, 9 Jan 2019 14:13:39 +0000
+Message-ID: <1547043209-8283-1-git-send-email-robert.chiras@nxp.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: AM6P193CA0015.EURP193.PROD.OUTLOOK.COM
+ (2603:10a6:209:3e::28) To AM6PR04MB4007.eurprd04.prod.outlook.com
+ (2603:10a6:209:40::10)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=robert.chiras@nxp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-mailer: git-send-email 2.7.4
+x-originating-ip: [95.76.156.53]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AM6PR04MB5157;6:9Rcu/gdA9Vu9YF2/xczHuanyR/rOzPZ8JPWKNJFQVdkO42DWsPBXALaQTIxfYK6/mKR8GpIT5ZyTVVqazWZdNrUDK39w29O9fpF5lCwVUiaxUaJQaM2RrAZUiIAXnhZ+/Ha4xdW1xVvUSJ4/ZPYdiRxWxxYvvZidF5Kji2tK3JtZO9f1bEMRa3VM783VM63I2g8n0CEi5KWYfKkKOcKEftHRNfJ9MEu8cD33sGh2UJw76naNbazjnSys4jGl8AdEHd3kQC3zFhwlXzZG12iz0MdyBCS+HtKJ1JXzZyazbpJeSN1MI4bonUF+Xo9Ywe4nWvlDwLaNdYePD9m3iki7xnkBpfsCUouXOWng12HTgsoI/Q0Y7K7Blv0YKvazzeP4SohSei03JHRWiE9ww+HYxkEJYlU7G8kdwaRzTfdUHurxcUHbsRLRCiS71RUOo3SnprTtbTdmNw0+KAPpUXR5Rg==;5:EZ+V/kHwbjmvFOzQHBlVRbeyTl+n1oyKDYDc464cUWGqCN6uzSeOqluEyn14DCIalTHAmr2pBMmuXYMwb9UC3bGMbrWBtb2DQFWiHailHJxs04v2F0vZw0eNvAZiGEp+uL3q7M6sHfD6xFkifr3BYxq8tG/DtirPI2BRJeZco20ugIIaZerLjE4qij/xL2HHxHftO7wkD739xkF+HV7P1g==;7:LLk9vwN/QmpRBl8vqAKoG3hQoByVE42+96ZwXtPackV6DqnJYgy8crvIP0jVXMMjJEVEMTUozrtnhgKVImRjc3YeAThq+haKJixQwHiXHIwpObtaSanf3kl0YBSq1YR7wufsDDVW+6PqEt150dlfhQ==
+x-ms-office365-filtering-correlation-id: a9a3b2c1-a604-4f09-ef8b-08d6763ca6c3
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM6PR04MB5157;
+x-ms-traffictypediagnostic: AM6PR04MB5157:
+x-microsoft-antispam-prvs: <AM6PR04MB51575613BC5FC6CED344D863E38B0@AM6PR04MB5157.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(908002)(999002)(5005026)(6040522)(8220060)(2401047)(8121501046)(3231475)(944501520)(52105112)(3002001)(93006095)(93001095)(10201501046)(6055026)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123564045)(20161123558120)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:AM6PR04MB5157;BCL:0;PCL:0;RULEID:;SRVR:AM6PR04MB5157;
+x-forefront-prvs: 0912297777
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(39860400002)(346002)(366004)(136003)(376002)(199004)(189003)(50226002)(99286004)(110136005)(2616005)(256004)(316002)(86362001)(5024004)(14444005)(54906003)(305945005)(7736002)(8676002)(71190400001)(6486002)(71200400001)(8936002)(105586002)(97736004)(81166006)(81156014)(36756003)(106356001)(476003)(25786009)(486006)(6436002)(186003)(3846002)(6116002)(478600001)(68736007)(53936002)(102836004)(6512007)(14454004)(5660300001)(44832011)(52116002)(386003)(26005)(6506007)(2906002)(4326008)(66066001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR04MB5157;H:AM6PR04MB4007.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: n6jcM5ZjasixFuUr4n1oRBit/OnCkMJavEz4r45YFttQluH0/S8tOehH0wW+H17DqsJ42YlvIyjsFg4rHJkRqlwa4xgomcYA+MGJmOaxw6JIOh+7ft8/Tk1kXD1qSKfeDDZi1u2yJPnzsgQEx39/aGY1iXX6JredwgbJ/7Xvi6tNF+Ux0txipUxLi4VRy8OYqO/qEdiYlMV1JWcJf3fxfYmb+/eIkI4I7j23SW0FR0ZHIa/RLvqqzPgiQLxDsyhcPDB09CuSKjxNjxMaPAKqZPycI2gbw4dUJINoDv/tLJeMxvVvVXPb9q+UGG6UGTzE
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain
-X-KSE-AttachmentFiltering-Interceptor-Info: protection disabled
-X-KSE-ServerInfo: sw-ex-cashub01.diasemi.com, 9
-X-KSE-Antivirus-Interceptor-Info: scan successful
-X-KSE-Antivirus-Info: Clean, bases: 09/01/2019 12:09:00
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a9a3b2c1-a604-4f09-ef8b-08d6763ca6c3
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Jan 2019 14:13:38.1483
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR04MB5157
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For platforms using the Common Clock Framework to control the
-codec's DAI clocks, MCLK should be enabled prior to DAI clocks
-being turned on. For some platforms the codec is already
-provided with an MCLK reference and can therefore control MCLK
-itself as it needs to.
+This patchset improves the use of eLCDIF block on iMX 8 SoCs (like 8MQ, 8MM
+and 8QXP):
 
-To improve functionality MCLK is now added as a parent to the
-DAI clocks, if MCLK was provided, so that if they are enabled MCLK
-will automatically be enabled as a prerequisite by the CCF.
+1. Add support for drm_bridge
+On 8MQ and 8MM, the LCDIF block is not directly connected to a parallel
+display connector, where an LCD panel can be attached, but instead it is
+connected to DSI controller. Since this DSI stands between the display
+controller (eLCDIF) and the physical connector, the DSI can be implemented
+as a DRM bridge. So, in order to be able to connect the mxsfb driver to
+the DSI driver, the support for a drm_bridge was needed in mxsfb DRM
+driver (the actual driver for the eLCDIF block).
 
-Signed-off-by: Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
----
- sound/soc/codecs/da7219.c | 32 ++++++++++++++++++++++++--------
- 1 file changed, 24 insertions(+), 8 deletions(-)
+2. Add support for additional pixel formats
+Some of the pixel formats needed by Android were not implemented in this
+driver, but they were actually supported. So, add support for them.
 
-diff --git a/sound/soc/codecs/da7219.c b/sound/soc/codecs/da7219.c
-index e46e9f4..66dd4c2 100644
---- a/sound/soc/codecs/da7219.c
-+++ b/sound/soc/codecs/da7219.c
-@@ -1804,7 +1804,7 @@ static int da7219_dai_clks_is_prepared(struct clk_hw *hw)
- 	.is_prepared = da7219_dai_clks_is_prepared,
- };
- 
--static void da7219_register_dai_clks(struct snd_soc_component *component)
-+static int da7219_register_dai_clks(struct snd_soc_component *component)
- {
- 	struct device *dev = component->dev;
- 	struct da7219_priv *da7219 = snd_soc_component_get_drvdata(component);
-@@ -1812,9 +1812,17 @@ static void da7219_register_dai_clks(struct snd_soc_component *component)
- 	struct clk_init_data init = {};
- 	struct clk *dai_clks;
- 	struct clk_lookup *dai_clks_lookup;
-+	const char *parent_name;
-+
-+	if (da7219->mclk) {
-+		parent_name = __clk_get_name(da7219->mclk);
-+		init.parent_names = &parent_name;
-+		init.num_parents = 1;
-+	} else {
-+		init.parent_names = NULL;
-+		init.num_parents = 0;
-+	}
- 
--	init.parent_names = NULL;
--	init.num_parents = 0;
- 	init.name = pdata->dai_clks_name;
- 	init.ops = &da7219_dai_clks_ops;
- 	da7219->dai_clks_hw.init = &init;
-@@ -1823,7 +1831,7 @@ static void da7219_register_dai_clks(struct snd_soc_component *component)
- 	if (IS_ERR(dai_clks)) {
- 		dev_warn(dev, "Failed to register DAI clocks: %ld\n",
- 			 PTR_ERR(dai_clks));
--		return;
-+		return PTR_ERR(dai_clks);
- 	}
- 	da7219->dai_clks = dai_clks;
- 
-@@ -1835,13 +1843,18 @@ static void da7219_register_dai_clks(struct snd_soc_component *component)
- 		dai_clks_lookup = clkdev_create(dai_clks, pdata->dai_clks_name,
- 						"%s", dev_name(dev));
- 		if (!dai_clks_lookup)
--			dev_warn(dev, "Failed to create DAI clkdev");
-+			return -ENOMEM;
- 		else
- 			da7219->dai_clks_lookup = dai_clks_lookup;
- 	}
-+
-+	return 0;
- }
- #else
--static inline void da7219_register_dai_clks(struct snd_soc_component *component) {}
-+static inline int da7219_register_dai_clks(struct snd_soc_component *component)
-+{
-+	return 0;
-+}
- #endif /* CONFIG_COMMON_CLK */
- 
- static void da7219_handle_pdata(struct snd_soc_component *component)
-@@ -1854,8 +1867,6 @@ static void da7219_handle_pdata(struct snd_soc_component *component)
- 
- 		da7219->wakeup_source = pdata->wakeup_source;
- 
--		da7219_register_dai_clks(component);
+3. Few minor features and bug-fixing
+The addition of max-res DT property was actually needed in order to limit
+the bandwidth usage of the eLCDIF block. This is need on systems where
+multiple display controllers are presend and the memory bandwidth is not
+enough to handle all of them at maximum capacity (like it is the case on
+8MQ, where there are two display controllers: DCSS and eLCDIF).
+The rest of the patches are bug-fixes.
+
+
+Mirela Rabulea (2):
+  drm/mxsfb: Add support for new pixel formats in eLCDIF
+  drm/mxsfb: Signal mode changed when bpp changed
+
+Robert Chiras (8):
+  drm/mxsfb: Update mxsfb to support a bridge
+  dt-bindings: display: Add max-res property for mxsfb
+  drm/mxsfb: Add max-res property for MXSFB
+  drm/mxsfb: Update mxsfb with additional pixel formats
+  drm/mxsfb: Fix the vblank events
+  drm/mxsfb: Update mxsfb to support LCD reset
+  drm/mxsfb: Improve the axi clock usage
+  drm/mxsfb: Clear OUTSTANDING_REQS bits
+
+ .../devicetree/bindings/display/mxsfb.txt          |   6 +
+ drivers/gpu/drm/mxsfb/mxsfb_crtc.c                 | 215 +++++++++++++++++=
++---
+ drivers/gpu/drm/mxsfb/mxsfb_drv.c                  | 187 ++++++++++++++---=
 -
- 		/* Mic Bias voltages */
- 		switch (pdata->micbias_lvl) {
- 		case DA7219_MICBIAS_1_6V:
-@@ -1947,6 +1958,11 @@ static int da7219_probe(struct snd_soc_component *component)
- 		}
- 	}
- 
-+	/* Register CCF DAI clock control */
-+	ret = da7219_register_dai_clks(component);
-+	if (ret)
-+		return ret;
-+
- 	/* Default PC counter to free-running */
- 	snd_soc_component_update_bits(component, DA7219_PC_COUNT, DA7219_PC_FREERUN_MASK,
- 			    DA7219_PC_FREERUN_MASK);
--- 
-1.9.1
+ drivers/gpu/drm/mxsfb/mxsfb_drv.h                  |  11 +-
+ drivers/gpu/drm/mxsfb/mxsfb_out.c                  |  26 +--
+ drivers/gpu/drm/mxsfb/mxsfb_regs.h                 | 112 +++++++----
+ 6 files changed, 433 insertions(+), 124 deletions(-)
+
+--=20
+2.7.4
 
