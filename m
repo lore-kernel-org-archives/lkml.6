@@ -6,97 +6,82 @@ X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2869C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 06:22:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E404AC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 06:23:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7118121726
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 06:22:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9325620821
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 06:23:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="DeZW9ov3"
+	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="PMqHOeRS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729736AbfAIGWY (ORCPT
+        id S1729759AbfAIGXP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 01:22:24 -0500
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:43388 "EHLO
+        Wed, 9 Jan 2019 01:23:15 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:43434 "EHLO
         mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729435AbfAIGWY (ORCPT
+        with ESMTP id S1729435AbfAIGXP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 01:22:24 -0500
-Received: by mail-oi1-f195.google.com with SMTP id u18so5422612oie.10
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jan 2019 22:22:24 -0800 (PST)
+        Wed, 9 Jan 2019 01:23:15 -0500
+Received: by mail-oi1-f195.google.com with SMTP id u18so5423824oie.10
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jan 2019 22:23:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=intel-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=7BDh56Ne0m9NwfkO8MGWagziw1fa/CKUsA7ALVy7vV0=;
-        b=DeZW9ov3R3uzGLCs0Mb7VfPkzQMjPiyPO4r0e3YyoMz3qMmOJYcXDQMoLRhTvHu5/Z
-         mmsxgCdvls5qveq6qDR5g5mlPBg8PMOntGcNWlm3OHPL6EKm4WquNWnDT9ddGYI/TfWk
-         Ka/xw6LpxKyfZMXKGvDlDIpknEci7uhlUtfTO5+KoVTT5kIdP8VRXqOKZ8ti1zNNpJE1
-         eJo/yUiSFheWzU1GZ3QWfJAwFcdSmsHQ+0p7HyGMvC9fxv9xNCYgjRdhbnENGXRT7L0c
-         mlkW0ywjr5iYSwZ+uUpFZ0JuEfao+c1pjTX4dbsnpclGFZtFv7r/i4Z8QxSwt6GK0XME
-         le7g==
+        bh=ewuUfh3OpPgWumx4SUp4Z5JU9ushcNwkXaQdqrasjIA=;
+        b=PMqHOeRSdFReLz6VoQxlCrqO5f6XladkNCrfD6gJHHKHSCsYacnqyTjDMPW46RIWjd
+         BBj1YPimD9oNz01du7CL4SbwMSb7yZ6YPQV6bSK512k5Pxw73KFqVanlJOwIBa0EEIZn
+         v+QUhuMTCjpEo6JPpZSKnK5aUIUC+BrJePLRz8Nz7qRjkDsK/q/WeUCNglLslboNLsy0
+         7BWMYELfa6wbgMX/sHZeWOmx+11aeVPHjgMZdmcYugkVsgA9V93Ho0cJlJEl90AifE0R
+         uZnsyXEVqhBKtyUfKFINUYqbRThN9VZ5ht35puZk75G09IHRDM7EOtt6Mx9iTceV1pxo
+         fRxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=7BDh56Ne0m9NwfkO8MGWagziw1fa/CKUsA7ALVy7vV0=;
-        b=fDaerRtkM7Vew8NmOHeKEHQij7PXupsEh6OelCvqAtyMMi8HLX0zPsNsDlMDCbaDTo
-         HXdXCw6xaaa16kZH+NuBrHzxn7yJuHBDaxJl6o8jGobAYBoJSymkyniATbt5XzqqgH1R
-         aCb2pFBtA2+3YStiJVKmb7R0XTHJKB46AJoGXuCmwKEEbfhVCoCir4v7DeySiugF9GKj
-         mIiydvmYGoyzM7XbVRVV9xkpmQO2ssZNGr9Kx7PiShjqEJzt1noGq4mwVtjFj8jXG51w
-         YjgyQc25twLlVZJsqfaqolDZLDkgdzTMmm/Nvm1SbIMUw/7VnXhz3s3L5mpmeoRdpW27
-         QE1w==
-X-Gm-Message-State: AJcUukeX2eEuqHxJqE2Ulc0l9cif8r9MaJU3SVfHECuI+XZ49xyz5bWx
-        y95FJ4ZkekoPSCmWseid1htYyMrtPsyaZ4Dl+ZmZKQ==
-X-Google-Smtp-Source: ALg8bN7UCHx8I9KINibiCJo/Zoo97Ru2anEztHk+iLO0vHGkBaxbsG4LhQkqB5Jt/rgcIdc1B0YF+7EBXVNPa3bgVGU=
-X-Received: by 2002:aca:4307:: with SMTP id q7mr3249384oia.105.1547014943820;
- Tue, 08 Jan 2019 22:22:23 -0800 (PST)
+        bh=ewuUfh3OpPgWumx4SUp4Z5JU9ushcNwkXaQdqrasjIA=;
+        b=e6LpLLxUf6Cgqs/XyVcJKDzs6khNqS6FBpgGIOTiebb/e0ooyw1FKt9g5fmaKQUWIa
+         acCgijhp89pvu+UKt2boBq6KQYsTy+CkwrGRtfVZGTv5IDoDb7TcSvqeQJE9cqgy9EjO
+         B0dr4qmPGeuCPI987ild9fE3lXcg/wsTh0cSFbj3uzHM07kSRmcwhIwgrSABa/obkFAY
+         xhxfXxsTGdEbKppPWdfE+y2OL5Pa1Ctz0q52SguOSh1qBldZ+PW+nERnIDmehqhPOy0I
+         ZDxqvoxfJaSp5LJQxV5DCER+6xTkOA7fTlauEvGWs1ezGQll8KbFFsbz5d60AVsMlcrt
+         xBMw==
+X-Gm-Message-State: AJcUukcZx33jx+iGx0L1Z0aKBbR4bcaM/NOMOmAoEo1LqmXNK3vJ9v5u
+        RvmAAxTNHwZr6/118+YMl9tcM65OCb7DIZphflBeRA==
+X-Google-Smtp-Source: ALg8bN5Yy0TKXSKEo9Meu+AoNq53amEIgO3MYsPuaQUsC6URM3hysWRsLMHQ3gqrI37HHgVwlsT3aJ/xVMThzAzdtA4=
+X-Received: by 2002:aca:d78b:: with SMTP id o133mr2936572oig.232.1547014994542;
+ Tue, 08 Jan 2019 22:23:14 -0800 (PST)
 MIME-Version: 1.0
-References: <20190108045853.5471-1-natechancellor@gmail.com> <20190109050036.17322-1-natechancellor@gmail.com>
-In-Reply-To: <20190109050036.17322-1-natechancellor@gmail.com>
+References: <1546828416-3040-1-git-send-email-lixiaochun.2888@163.com> <1546828416-3040-2-git-send-email-lixiaochun.2888@163.com>
+In-Reply-To: <1546828416-3040-2-git-send-email-lixiaochun.2888@163.com>
 From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Tue, 8 Jan 2019 22:22:12 -0800
-Message-ID: <CAPcyv4iBUx66WNpZ5zRvT+Rn+ydPvwB40jbtdpoKLAVFDYh95w@mail.gmail.com>
-Subject: Re: [PATCH v2] nfit: Mark some functions as __maybe_unused
-To:     Nathan Chancellor <natechancellor@gmail.com>
-Cc:     Ross Zwisler <zwisler@kernel.org>,
-        Vishal Verma <vishal.l.verma@intel.com>,
+Date:   Tue, 8 Jan 2019 22:23:03 -0800
+Message-ID: <CAPcyv4gO-N8vJgZjKR3rMLivqOAxHAjCT-KoLEE4U6w3sk==-Q@mail.gmail.com>
+Subject: Re: [PATCH] ACPI/nfit: delete the redundant header file
+To:     Xiaochun Lee <lixiaochun.2888@163.com>
+Cc:     Linux ACPI <linux-acpi@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Ross Zwisler <zwisler@kernel.org>,
+        Vishal L Verma <vishal.l.verma@intel.com>,
         Dave Jiang <dave.jiang@intel.com>,
         "Rafael J. Wysocki" <rjw@rjwysocki.net>,
         Len Brown <lenb@kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Linux ACPI <linux-acpi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Xiaochun Lee <lixc17@lenovo.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 8, 2019 at 9:03 PM Nathan Chancellor
-<natechancellor@gmail.com> wrote:
+On Sun, Jan 6, 2019 at 6:33 PM Xiaochun Lee <lixiaochun.2888@163.com> wrote:
 >
-> On arm64 little endian allyesconfig:
+> From: Xiaochun Lee <lixc17@lenovo.com>
 >
-> drivers/acpi/nfit/intel.c:149:12: warning: unused function 'intel_security_unlock' [-Wunused-function]
-> static int intel_security_unlock(struct nvdimm *nvdimm,
->            ^
-> drivers/acpi/nfit/intel.c:230:12: warning: unused function 'intel_security_erase' [-Wunused-function]
-> static int intel_security_erase(struct nvdimm *nvdimm,
->            ^
-> drivers/acpi/nfit/intel.c:279:12: warning: unused function 'intel_security_query_overwrite' [-Wunused-function]
-> static int intel_security_query_overwrite(struct nvdimm *nvdimm)
->            ^
-> drivers/acpi/nfit/intel.c:316:12: warning: unused function 'intel_security_overwrite' [-Wunused-function]
-> static int intel_security_overwrite(struct nvdimm *nvdimm,
->            ^
-> 4 warnings generated.
+> The header file "intel.h" is repeated here, So delete one.
 >
-> Mark these functions as __maybe_unused because they are only used when
-> CONFIG_X86 is set.
->
-> Fixes: 4c6926a23b76 ("acpi/nfit, libnvdimm: Add unlock of nvdimm support for Intel DIMMs")
-> Suggested-by: Dan Williams <dan.j.williams@intel.com>
-> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+> Signed-off-by: Xiaochun Lee <lixc17@lenovo.com>
 
-Looks good, applied.
+Thanks, applied.
+
+By the way, no need for a cover letter if it's only one patch.
