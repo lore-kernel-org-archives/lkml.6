@@ -2,62 +2,139 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B103DC43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 11:16:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA32FC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 11:17:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8AC0C21783
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 11:16:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9ECEB218AF
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 11:17:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730801AbfAILQa (ORCPT
+        id S1730817AbfAILRI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 06:16:30 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:33291 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730111AbfAILQa (ORCPT
+        Wed, 9 Jan 2019 06:17:08 -0500
+Received: from eddie.linux-mips.org ([148.251.95.138]:52482 "EHLO
+        cvs.linux-mips.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730111AbfAILRI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 06:16:30 -0500
-Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
-        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
-        (envelope-from <p.zabel@pengutronix.de>)
-        id 1ghBqV-0003Xf-F1; Wed, 09 Jan 2019 12:16:27 +0100
-Message-ID: <1547032586.4160.3.camel@pengutronix.de>
-Subject: Re: [PATCH v6 12/12] media: imx.rst: Update doc to reflect fixes to
- interlaced capture
-From:   Philipp Zabel <p.zabel@pengutronix.de>
-To:     Steve Longerbeam <slongerbeam@gmail.com>,
-        linux-media@vger.kernel.org
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Date:   Wed, 09 Jan 2019 12:16:26 +0100
-In-Reply-To: <20190109001551.16113-13-slongerbeam@gmail.com>
-References: <20190109001551.16113-1-slongerbeam@gmail.com>
-         <20190109001551.16113-13-slongerbeam@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6-1+deb9u1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+        Wed, 9 Jan 2019 06:17:08 -0500
+Received: (from localhost user: 'ladis' uid#1021 fake: STDIN
+        (ladis@eddie.linux-mips.org)) by eddie.linux-mips.org
+        id S23993832AbfAILRFLEeRV (ORCPT <rfc822;linux-omap@vger.kernel.org>
+        + 2 others); Wed, 9 Jan 2019 12:17:05 +0100
+Date:   Wed, 9 Jan 2019 12:17:03 +0100
+From:   Ladislav Michl <ladis@linux-mips.org>
+To:     Vincent Guittot <vincent.guittot@linaro.org>
+Cc:     Tony Lindgren <tony@atomide.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        LAK <linux-arm-kernel@lists.infradead.org>,
+        linux-omap@vger.kernel.org
+Subject: Re: Regression in v5.0-rc1 with autosuspend hrtimers
+Message-ID: <20190109111703.GA28605@lenoch>
+References: <20190107233833.GI5544@atomide.com>
+ <CAKfTPtDBEmcsLotp-6K1KU1wM9Ba1EpMp3niXScRxYgzjs0nog@mail.gmail.com>
+ <20190108155354.GL5544@atomide.com>
+ <CAKfTPtCoOK-cYLXJ--sOfpVa9RVmzOAEN1+zB2qHMCzkJN0qaQ@mail.gmail.com>
+ <20190108213743.GN5544@atomide.com>
+ <20190109014218.GA8363@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190109014218.GA8363@linaro.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2019-01-08 at 16:15 -0800, Steve Longerbeam wrote:
-> Also add an example pipeline for unconverted capture with interweave
-> on SabreAuto.
+On Wed, Jan 09, 2019 at 02:42:18AM +0100, Vincent Guittot wrote:
+> Le Tuesday 08 Jan 2019 à 13:37:43 (-0800), Tony Lindgren a écrit :
+> > * Vincent Guittot <vincent.guittot@linaro.org> [190108 16:42]:
+> > > On Tue, 8 Jan 2019 at 16:53, Tony Lindgren <tony@atomide.com> wrote:
+> > > > Hmm so could it be that we now rely on timers that that may
+> > > > not be capable of waking up the system from idle states with
+> > > > hrtimer?
+> > > 
+> > > With nohz and hrtimer enabled,  timer relies on hrtimer to generate
+> > > the tick so you should use the same interrupt.
+> > 
+> > OK yeah looks like that part is working just fine.
+> > 
+> > Adding some printks and debugging over ssh, looks like
+> > omap8250_runtime_resume() gets called just fine based on a wakeirq,
+> > but then omap8250_runtime_suspend() runs immediately instead of
+> > waiting for the three second timeout.
+> > 
+> > Lowering the autosuspend_delay_ms to 2100 ms makes things work again.
+> > Anything higher than 2200 ms seems to somehow time out immediately
+> > now :)
 > 
-> Cleanup some language in various places in the process.
+> This is quite close to the max ns of an int on arm 32bits
 > 
-> Signed-off-by: Steve Longerbeam <slongerbeam@gmail.com>
+> Could you try the patch below ?
+> 
+> ---
+>  drivers/base/power/runtime.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/base/power/runtime.c b/drivers/base/power/runtime.c
+> index 7062469..44c5c76 100644
+> --- a/drivers/base/power/runtime.c
+> +++ b/drivers/base/power/runtime.c
+> @@ -141,7 +141,7 @@ u64 pm_runtime_autosuspend_expiration(struct device *dev)
+>  
+>  	last_busy = READ_ONCE(dev->power.last_busy);
+>  
+> -	expires = last_busy + autosuspend_delay * NSEC_PER_MSEC;
+> +	expires = last_busy + (u64)(autosuspend_delay) * NSEC_PER_MSEC;
+>  	if (expires <= now)
+>  		expires = 0;	/* Already expired. */
 
-Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+Hmm, comment above function states it returns "the expiration time in jiffies
+(adjusted to be nonzero)", so there's probably more to fix...
 
-regards
-Philipp
+You can also consider change like this (still does not return jiffies):
+diff --git a/drivers/base/power/runtime.c b/drivers/base/power/runtime.c
+index 70624695b6d5..c72eaf21a61c 100644
+--- a/drivers/base/power/runtime.c
++++ b/drivers/base/power/runtime.c
+@@ -129,23 +129,20 @@ static void pm_runtime_cancel_pending(struct device *dev)
+ u64 pm_runtime_autosuspend_expiration(struct device *dev)
+ {
+ 	int autosuspend_delay;
+-	u64 last_busy, expires = 0;
+-	u64 now = ktime_to_ns(ktime_get());
++	ktime_t expires;
+ 
+ 	if (!dev->power.use_autosuspend)
+-		goto out;
++		return 0;
+ 
+ 	autosuspend_delay = READ_ONCE(dev->power.autosuspend_delay);
+ 	if (autosuspend_delay < 0)
+-		goto out;
+-
+-	last_busy = READ_ONCE(dev->power.last_busy);
++		return 0;
+ 
+-	expires = last_busy + autosuspend_delay * NSEC_PER_MSEC;
+-	if (expires <= now)
+-		expires = 0;	/* Already expired. */
++	expires = ktime_add_ns(ms_to_ktime(autosuspend_delay),
++			       READ_ONCE(dev->power.last_busy));
++	if (expires <= ktime_get())
++		return 0;	/* Already expired. */
+ 
+- out:
+ 	return expires;
+ }
+ EXPORT_SYMBOL_GPL(pm_runtime_autosuspend_expiration);
+
+Regards,
+	ladis
