@@ -2,345 +2,214 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85A3AC43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 19:23:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6D2CC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 19:24:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 47D8E20663
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 19:23:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="i9MgSG8w"
+	by mail.kernel.org (Postfix) with ESMTP id 25C2320663
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 19:24:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728607AbfAITXt (ORCPT
+        id S1728361AbfAITYu convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 14:23:49 -0500
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:58922 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728261AbfAITXT (ORCPT
+        Wed, 9 Jan 2019 14:24:50 -0500
+Received: from coyote.holtmann.net ([212.227.132.17]:35076 "EHLO
+        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728182AbfAITYt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 14:23:19 -0500
-Received: from pps.filterd (m0001303.ppops.net [127.0.0.1])
-        by m0001303.ppops.net (8.16.0.27/8.16.0.27) with SMTP id x09JN4nH027945
-        for <linux-kernel@vger.kernel.org>; Wed, 9 Jan 2019 11:23:18 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-type; s=facebook; bh=tvQxHf97MfN5wGnQaCNr2AT88PBtkgtWMLLcHjbO15E=;
- b=i9MgSG8wAsCfn40MsK322JG1QGwbvq66aP+BBACSw9+IrRtaE6cOYQE0Utqe7cF2ImH+
- hHWaD5bH5+qtcmtiHUuUHUZnvCYDq0pEBuCHlntYUHAL17/ekWBA/Qz5DhbV9VBECz05
- ZCJ5bhCY6FaMIUDMlVVBUhwDUQEYetn/d9Y= 
-Received: from maileast.thefacebook.com ([199.201.65.23])
-        by m0001303.ppops.net with ESMTP id 2pwk0r8u85-13
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jan 2019 11:23:18 -0800
-Received: from mx-out.facebook.com (2620:10d:c0a1:3::13) by
- mail.thefacebook.com (2620:10d:c021:18::172) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA) id 15.1.1531.3;
- Wed, 9 Jan 2019 11:21:40 -0800
-Received: by devbig006.ftw2.facebook.com (Postfix, from userid 4523)
-        id B4D4E62E1B12; Wed,  9 Jan 2019 11:21:37 -0800 (PST)
-Smtp-Origin-Hostprefix: devbig
-From:   Song Liu <songliubraving@fb.com>
-Smtp-Origin-Hostname: devbig006.ftw2.facebook.com
-To:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>
-CC:     Song Liu <songliubraving@fb.com>, <peterz@infradead.org>,
-        <acme@kernel.org>, <ast@kernel.org>, <daniel@iogearbox.net>,
-        <kernel-team@fb.com>
-Smtp-Origin-Cluster: ftw2c04
-Subject: [PATCH v6 perf, bpf-next 7/7] perf tools: synthesize PERF_RECORD_* for loaded BPF programs
-Date:   Wed, 9 Jan 2019 11:21:11 -0800
-Message-ID: <20190109192111.130995-8-songliubraving@fb.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190109192111.130995-1-songliubraving@fb.com>
-References: <20190109192111.130995-1-songliubraving@fb.com>
-X-FB-Internal: Safe
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-09_10:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
-X-FB-Internal: Safe
+        Wed, 9 Jan 2019 14:24:49 -0500
+Received: from marcel-macpro.fritz.box (p4FF9FD60.dip0.t-ipconnect.de [79.249.253.96])
+        by mail.holtmann.org (Postfix) with ESMTPSA id 78C94CF357;
+        Wed,  9 Jan 2019 20:32:31 +0100 (CET)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
+Subject: Re: [PATCH 12/14] media: wl128x-radio: move from TI_ST to hci_ll
+ driver
+From:   Marcel Holtmann <marcel@holtmann.org>
+In-Reply-To: <20190109181156.yamhult6bpwkhx74@earth.universe>
+Date:   Wed, 9 Jan 2019 20:24:46 +0100
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Tony Lindgren <tony@atomide.com>,
+        Rob Herring <robh@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Pavel Machek <pavel@ucw.cz>, linux-bluetooth@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8BIT
+Message-Id: <0C9AD246-B511-4E59-888F-47EAB034D4BF@holtmann.org>
+References: <20181221011752.25627-1-sre@kernel.org>
+ <20181221011752.25627-13-sre@kernel.org>
+ <C85D80C9-2B00-4161-B934-9D70E2B173D0@holtmann.org>
+ <20190109181156.yamhult6bpwkhx74@earth.universe>
+To:     Sebastian Reichel <sre@kernel.org>
+X-Mailer: Apple Mail (2.3445.102.3)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch synthesize PERF_RECORD_KSYMBOL and PERF_RECORD_BPF_EVENT for
-BPF programs loaded before perf-record. This is achieved by gathering
-information about all BPF programs via sys_bpf.
+Hi Sebastian,
 
-Signed-off-by: Song Liu <songliubraving@fb.com>
----
- tools/perf/builtin-record.c |   6 ++
- tools/perf/util/bpf-event.c | 205 ++++++++++++++++++++++++++++++++++++
- tools/perf/util/bpf-event.h |   5 +
- 3 files changed, 216 insertions(+)
+>>> +static int ll_register_fm(struct ll_device *lldev)
+>>> +{
+>>> +	struct device *dev = &lldev->serdev->dev;
+>>> +	int err;
+>>> +
+>>> +	if (!of_device_is_compatible(dev->of_node, "ti,wl1281-st") &&
+>>> +	    !of_device_is_compatible(dev->of_node, "ti,wl1283-st") &&
+>>> +	    !of_device_is_compatible(dev->of_node, "ti,wl1285-st"))
+>>> +		return -ENODEV;
+>> 
+>> do we really want to hardcode this here? Isn't there some HCI
+>> vendor command or some better DT description that we can use to
+>> decide when to register this platform device.
+> 
+> I don't know if there is some way to identify the availability
+> based on some HCI vendor command. The public documentation from
+> the WiLink chips is pretty bad.
 
-diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
-index deaf9b902094..88ea11d57c6f 100644
---- a/tools/perf/builtin-record.c
-+++ b/tools/perf/builtin-record.c
-@@ -41,6 +41,7 @@
- #include "util/perf-hooks.h"
- #include "util/time-utils.h"
- #include "util/units.h"
-+#include "util/bpf-event.h"
- #include "asm/bug.h"
- 
- #include <errno.h>
-@@ -1082,6 +1083,11 @@ static int record__synthesize(struct record *rec, bool tail)
- 		return err;
- 	}
- 
-+	err = perf_event__synthesize_bpf_events(tool, process_synthesized_event,
-+						machine, opts);
-+	if (err < 0)
-+		pr_warning("Couldn't synthesize bpf events.\n");
-+
- 	err = __machine__synthesize_threads(machine, tool, &opts->target, rec->evlist->threads,
- 					    process_synthesized_event, opts->sample_address,
- 					    1);
-diff --git a/tools/perf/util/bpf-event.c b/tools/perf/util/bpf-event.c
-index f24f75506f51..ee60c8b1e636 100644
---- a/tools/perf/util/bpf-event.c
-+++ b/tools/perf/util/bpf-event.c
-@@ -1,10 +1,24 @@
- // SPDX-License-Identifier: GPL-2.0
- #include <errno.h>
- #include <bpf/bpf.h>
-+#include <bpf/btf.h>
-+#include <linux/btf.h>
- #include "bpf-event.h"
- #include "debug.h"
- #include "symbol.h"
- 
-+#define ptr_to_u64(ptr)    ((__u64)(unsigned long)(ptr))
-+
-+static int snprintf_hex(char *buf, size_t size, unsigned char *data, size_t len)
-+{
-+	int ret = 0;
-+	size_t i;
-+
-+	for (i = 0; i < len; i++)
-+		ret += snprintf(buf + ret, size - ret, "%02x", data[i]);
-+	return ret;
-+}
-+
- int machine__process_bpf_event(struct machine *machine __maybe_unused,
- 			       union perf_event *event,
- 			       struct perf_sample *sample __maybe_unused)
-@@ -13,3 +27,194 @@ int machine__process_bpf_event(struct machine *machine __maybe_unused,
- 		perf_event__fprintf_bpf_event(event, stderr);
- 	return 0;
- }
-+
-+/*
-+ * Synthesize PERF_RECORD_KSYMBOL and PERF_RECORD_BPF_EVENT for one bpf
-+ * program. One PERF_RECORD_BPF_EVENT is generated for the program. And
-+ * one PERF_RECORD_KSYMBOL is generated for each sub program.
-+ */
-+static int perf_event__synthesize_one_bpf_prog(struct perf_tool *tool,
-+					       perf_event__handler_t process,
-+					       struct machine *machine,
-+					       int fd,
-+					       union perf_event *event,
-+					       struct record_opts *opts)
-+{
-+	struct ksymbol_event *ksymbol_event = &event->ksymbol_event;
-+	struct bpf_event *bpf_event = &event->bpf_event;
-+	u32 sub_prog_cnt, i, func_info_rec_size;
-+	u8 (*prog_tags)[BPF_TAG_SIZE] = NULL;
-+	struct bpf_prog_info info = {};
-+	u32 info_len = sizeof(info);
-+	void *func_infos = NULL;
-+	u64 *prog_addrs = NULL;
-+	struct btf *btf = NULL;
-+	u32 *prog_lens = NULL;
-+	bool has_btf = false;
-+	int err = 0;
-+
-+	/* Call bpf_obj_get_info_by_fd() to get sizes of arrays */
-+	err = bpf_obj_get_info_by_fd(fd, &info, &info_len);
-+
-+	if (err || info_len < 192 /* need field prog_tags */)
-+		return -1;
-+
-+	/* number of ksyms, func_lengths, and tags should match */
-+	sub_prog_cnt = info.nr_jited_ksyms;
-+	if (sub_prog_cnt != info.nr_prog_tags ||
-+	    sub_prog_cnt != info.nr_jited_func_lens)
-+		return -1;
-+
-+	/* check BTF func info support */
-+	if (info.btf_id && info.nr_func_info && info.func_info_rec_size) {
-+		/* btf func info number should be same as sub_prog_cnt */
-+		if (sub_prog_cnt != info.nr_func_info)
-+			return -1;
-+		if (btf__get_from_id(info.btf_id, &btf))
-+			return -1;
-+		func_info_rec_size = info.func_info_rec_size;
-+		func_infos = malloc(sub_prog_cnt * func_info_rec_size);
-+		if (!func_infos)
-+			return -1;
-+		has_btf = true;
-+	}
-+
-+	/*
-+	 * We need address, length, and tag for each sub program.
-+	 * Allocate memory and call bpf_obj_get_info_by_fd() again
-+	 */
-+	prog_addrs = (u64 *)malloc(sizeof(u64) * sub_prog_cnt);
-+	prog_lens = (u32 *)malloc(sizeof(u64) * sub_prog_cnt);
-+	prog_tags = malloc(sizeof(u8) * BPF_TAG_SIZE * sub_prog_cnt);
-+
-+	err = !prog_addrs || !prog_lens || !prog_tags;
-+	if (err)
-+		goto out;
-+
-+	memset(&info, 0, sizeof(info));
-+	info.nr_jited_ksyms = sub_prog_cnt;
-+	info.nr_jited_func_lens = sub_prog_cnt;
-+	info.nr_prog_tags = sub_prog_cnt;
-+	info.jited_ksyms = ptr_to_u64(prog_addrs);
-+	info.jited_func_lens = ptr_to_u64(prog_lens);
-+	info.prog_tags = ptr_to_u64(prog_tags);
-+	info_len = sizeof(info);
-+	if (has_btf) {
-+		info.nr_func_info = sub_prog_cnt;
-+		info.func_info_rec_size = func_info_rec_size;
-+		info.func_info = ptr_to_u64(func_infos);
-+	}
-+
-+	err = bpf_obj_get_info_by_fd(fd, &info, &info_len);
-+	if (err)
-+		goto out;
-+
-+	/* Synthesize PERF_RECORD_KSYMBOL */
-+	for (i = 0; i < sub_prog_cnt; i++) {
-+		const struct bpf_func_info *finfo;
-+		const char *short_name = NULL;
-+		const struct btf_type *t;
-+		int name_len;
-+
-+		*ksymbol_event = (struct ksymbol_event){
-+			.header = {
-+				.type = PERF_RECORD_KSYMBOL,
-+				.size = sizeof(struct ksymbol_event),
-+			},
-+			.addr = prog_addrs[i],
-+			.len = prog_lens[i],
-+			.ksym_type = PERF_RECORD_KSYMBOL_TYPE_BPF,
-+			.flags = 0,
-+		};
-+		name_len = snprintf(ksymbol_event->name, KSYM_NAME_LEN,
-+				    "bpf_prog_");
-+		name_len += snprintf_hex(ksymbol_event->name + name_len,
-+					 KSYM_NAME_LEN - name_len,
-+					 prog_tags[i], BPF_TAG_SIZE);
-+		if (has_btf) {
-+			finfo = func_infos + i * info.func_info_rec_size;
-+			t = btf__type_by_id(btf, finfo->type_id);
-+			short_name = btf__name_by_offset(btf, t->name_off);
-+		} else if (i == 0 && sub_prog_cnt == 1) {
-+			/* no subprog */
-+			if (info.name[0])
-+				short_name = info.name;
-+		} else
-+			short_name = "F";
-+		if (short_name)
-+			name_len += snprintf(ksymbol_event->name + name_len,
-+					     KSYM_NAME_LEN - name_len,
-+					     "_%s", short_name);
-+
-+		ksymbol_event->header.size += PERF_ALIGN(name_len + 1,
-+							 sizeof(u64));
-+		err = perf_tool__process_synth_event(tool, event,
-+						     machine, process);
-+	}
-+
-+	/* Synthesize PERF_RECORD_BPF_EVENT */
-+	if (opts->bpf_event) {
-+		*bpf_event = (struct bpf_event){
-+			.header = {
-+				.type = PERF_RECORD_BPF_EVENT,
-+				.size = sizeof(struct bpf_event),
-+			},
-+			.type = PERF_BPF_EVENT_PROG_LOAD,
-+			.flags = 0,
-+			.id = info.id,
-+		};
-+		memcpy(bpf_event->tag, prog_tags[i], BPF_TAG_SIZE);
-+		err = perf_tool__process_synth_event(tool, event,
-+						     machine, process);
-+	}
-+
-+out:
-+	free(prog_tags);
-+	free(prog_lens);
-+	free(prog_addrs);
-+	free(func_infos);
-+	free(btf);
-+	return err ? -1 : 0;
-+}
-+
-+int perf_event__synthesize_bpf_events(struct perf_tool *tool,
-+				      perf_event__handler_t process,
-+				      struct machine *machine,
-+				      struct record_opts *opts)
-+{
-+	union perf_event *event;
-+	__u32 id = 0;
-+	int err;
-+	int fd;
-+
-+	event = malloc(sizeof(event->bpf_event) + KSYM_NAME_LEN);
-+	if (!event)
-+		return -1;
-+	while (true) {
-+		err = bpf_prog_get_next_id(id, &id);
-+		if (err) {
-+			if (errno == ENOENT) {
-+				err = 0;
-+				break;
-+			}
-+			pr_err("can't get next program: %s%s",
-+			       strerror(errno),
-+			       errno == EINVAL ? " -- kernel too old?" : "");
-+			err = -1;
-+			break;
-+		}
-+		fd = bpf_prog_get_fd_by_id(id);
-+		if (fd < 0) {
-+			pr_debug("Failed to get fd for prog_id %u\n", id);
-+			continue;
-+		}
-+
-+		err = perf_event__synthesize_one_bpf_prog(
-+			tool, process, machine, fd, event, opts);
-+		close(fd);
-+		if (err)
-+			break;
-+	}
-+	free(event);
-+	return err;
-+}
-diff --git a/tools/perf/util/bpf-event.h b/tools/perf/util/bpf-event.h
-index d5ca355dd298..38aee4040f12 100644
---- a/tools/perf/util/bpf-event.h
-+++ b/tools/perf/util/bpf-event.h
-@@ -8,4 +8,9 @@ int machine__process_bpf_event(struct machine *machine,
- 			       union perf_event *event,
- 			       struct perf_sample *sample);
- 
-+int perf_event__synthesize_bpf_events(struct perf_tool *tool,
-+				      perf_event__handler_t process,
-+				      struct machine *machine,
-+				      struct record_opts *opts);
-+
- #endif
--- 
-2.17.1
+can we have some boolean property in the DT file then instead of hardcoding this in the driver.
+
+> 
+>>> +	lldev->fmdev = platform_device_register_data(dev, "wl128x-fm",
+>>> +		PLATFORM_DEVID_AUTO, NULL, 0);
+>> 
+>> Fix the indentation please to following networking coding style.
+> 
+> Ok.
+> 
+> [...]
+> 
+>>> +static int ll_recv_radio(struct hci_dev *hdev, struct sk_buff *skb)
+>>> +{
+>>> +	struct hci_uart *hu = hci_get_drvdata(hdev);
+>>> +	struct serdev_device *serdev = hu->serdev;
+>>> +	struct ll_device *lldev = serdev_device_get_drvdata(serdev);
+>>> +
+>>> +	if (!lldev->fm_handler) {
+>>> +		kfree_skb(skb);
+>>> +		return -EINVAL;
+>>> +	}
+>>> +
+>>> +	/* Prepend skb with frame type */
+>>> +	memcpy(skb_push(skb, 1), &hci_skb_pkt_type(skb), 1);
+>>> +
+>>> +	lldev->fm_handler(lldev->fm_drvdata, skb);
+>> 
+>> So I have no idea why we bother adding the frame type here. What
+>> is the purpose. I think this is useless and we better fix the
+>> radio driver if that is what is expected.
+> 
+> That should be possible. I will change this before sending another
+> revision.
+> 
+>>> +	return 0;
+>>> +}
+> 
+> [...]
+> 
+>>> +int hci_ti_fm_send(struct device *dev, struct sk_buff *skb)
+>>> +{
+>>> +	struct serdev_device *serdev = to_serdev_device(dev);
+>>> +	struct ll_device *lldev = serdev_device_get_drvdata(serdev);
+>>> +	struct hci_uart *hu = &lldev->hu;
+>>> +	int ret;
+>>> +
+>>> +	hci_skb_pkt_type(skb) = HCILL_FM_RADIO;
+>>> +	ret = ll_enqueue_prefixed(hu, skb);
+>> 
+>> This is the same as above, lets have the radio driver not add this
+>> H:4 protocol type in the first place. It is really pointless that
+>> this driver tries to hack around it.
+> 
+> Yes, obviously both paths should follow the same logic.
+> 
+> [...]
+> 
+>>> diff --git a/include/linux/ti_wilink_st.h b/include/linux/ti_wilink_st.h
+>>> index f2293028ab9d..a9de5654b0cd 100644
+>>> --- a/include/linux/ti_wilink_st.h
+>>> +++ b/include/linux/ti_wilink_st.h
+>>> @@ -86,6 +86,8 @@ struct st_proto_s {
+>>> extern long st_register(struct st_proto_s *);
+>>> extern long st_unregister(struct st_proto_s *);
+>>> 
+>>> +void hci_ti_set_fm_handler(struct device *dev, void (*recv_handler) (void *, struct sk_buff *), void *drvdata);
+>>> +int hci_ti_fm_send(struct device *dev, struct sk_buff *skb);
+>> 
+>> This really needs to be put somewhere else if we are removing the
+>> TI Wilink driver. This header file has to be removed as well.
+> 
+> That header is already being used by the hci_ll driver (before this
+> patch) for some packet structures. I removed all WiLink specific
+> things in the patch removing the TI WiLink driver and kept it
+> otherwise.
+
+We need to move everything from ti_wilink_st.h that is used in hci_ll.c into that file.
+
+> 
+>> I wonder really if we are not better having the Bluetooth HCI core
+>> provide an abstraction for a vendor channel. So that the HCI
+>> packets actually can flow through HCI monitor and be recorded via
+>> btmon. This would also mean that the driver could do something
+>> like hci_vnd_chan_add() and hci_vnd_chan_del() and use a struct
+>> hci_vnd_chan for callback handler hci_vnd_chan_send() functions.
+> 
+> Was this question directed to me? I trust your decision how this
+> should be implemented. I'm missing the big picture from other BT
+> devices ;)
+> 
+> If I understood you correctly the suggestion is, that the TI BT
+> driver uses hci_recv_frame() for packet type 0x08 (LL_RECV_FM_RADIO).
+> Then the FM driver can call hci_vnd_chan_add() in its probe function
+> and hci_vnd_chan_del() in its remove function to register the receive
+> hook? Also the dump_tx_skb_data()/dump_rx_skb_data() could be
+> removed, since btmon can be used to see the packets? Sounds very
+> nice to me.
+> 
+>> On a side note, what is the protocol the TI FM radio is using
+>> anyway? Is that anywhere documented except the driver itself? Are
+>> they using HCI commands as well?
+> 
+> AFAIK there is no public documentation for the TI WiLink chips. At
+> least my only information source are the existing drivers. The
+> driver protocol can be seen in drivers/media/radio/wl128x/fmdrv_common.h:
+> 
+> struct fm_cmd_msg_hdr {
+> 	__u8 hdr;		/* Logical Channel-8 */
+> 	__u8 len;		/* Number of bytes follows */
+> 	__u8 op;		/* FM Opcode */
+> 	__u8 rd_wr;		/* Read/Write command */
+> 	__u8 dlen;		/* Length of payload */
+> } __attribute__ ((packed));
+> 
+> struct fm_event_msg_hdr {
+> 	__u8 header;		/* Logical Channel-8 */
+> 	__u8 len;		/* Number of bytes follows */
+> 	__u8 status;		/* Event status */
+> 	__u8 num_fm_hci_cmds;	/* Number of pkts the host allowed to send */
+> 	__u8 op;		/* FM Opcode */
+> 	__u8 rd_wr;		/* Read/Write command */
+> 	__u8 dlen;		/* Length of payload */
+> } __attribute__ ((packed));
+
+This is really a custom protocol (even if it kinda modeled after HCI commands/events) and it be really better the core allows to register skb_pkt_type() vendor channels so it just feeds this back into the driver. We need a bit of btmon mapping for this, but that shouldn’t be that hard.
+
+> Apart from the Bluetooth and FM part, the chips also support GPS
+> (packet type 0x9). The GPS feature is not used on Droid 4 stock
+> rom and seems to carry some TI specific protocol instead of NMEA.
+> Here is an old submission for this driver:
+> http://lkml.iu.edu/hypermail/linux/kernel/1005.0/00918.html
+> 
+> (I don't plan to work on the GPS part, but it provides some more
+> details about the WiLink chips protocol)
+
+We do have a GNSS subsystem now and could just as easily hook this up.
+
+Regards
+
+Marcel
 
