@@ -7,63 +7,63 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A998C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 01:28:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 755CFC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 01:29:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E877020821
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 01:28:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4199120821
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 01:29:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BmyKst1y"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="txthAS24"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729889AbfAIB2t (ORCPT
+        id S1729898AbfAIB3A (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 20:28:49 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:54991 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729573AbfAIB1k (ORCPT
+        Tue, 8 Jan 2019 20:29:00 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:47031 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729526AbfAIB1h (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 20:27:40 -0500
-Received: by mail-wm1-f65.google.com with SMTP id a62so5982187wmh.4;
-        Tue, 08 Jan 2019 17:27:38 -0800 (PST)
+        Tue, 8 Jan 2019 20:27:37 -0500
+Received: by mail-wr1-f65.google.com with SMTP id l9so5962068wrt.13;
+        Tue, 08 Jan 2019 17:27:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=BC3+WJwz5bC1eSK1d688gwyECtY9iawjGUtkLyo3zdQ=;
-        b=BmyKst1y6bzTDjnjH/hYn8nHQxsV06NwXW4+rUpGNkSvH6Z/crrBwQHgwKWQFp7sFl
-         ov9nubshL2eEJfoUe29e/ZiqB+uxLGvnczRxmvzaXTHuKSFuswl64hwKYWHX6E3r4i+n
-         36ERS32lx7Wl76Awvx9NWzJyGFOB5qiuNnpSRt8GTq2iCofzzoQ0xLHO4WhxdiWeaq6k
-         KaB6uWrqZRadWDNBZ4HVq5m77q/BnwFPGpcD/wOJne1JdVOqnOGzjyJgHe9s6FUTh9uC
-         /KfgWf6he7Svq5oymN8GqV3VYtpNjngXYo3XeZALWQnqz1B0NjfyGQrAuwSSNvYHYUnK
-         6Jrg==
+        bh=fAGKYpUHFH6IxKnG66w6623xEKHssEriDLH5eETIzro=;
+        b=txthAS24negzhm6/1RtYgmjDoc5S0LFxg8jvDWyj0fduYF6Q/81nOOzdAIWinNJs0L
+         D9VIbHJ4Fl0+AMYaWF+HWnyku3c5MwcLZEwy6Tjo8WLuW8w9M3L4PVS+ZJN3dDBclgre
+         MW3FsH8QROr37g6tVi3BxGsmeEiZG/fnhBb1+KUumfAhsL3sJowskHZN8H6L/ABBcoYq
+         N0EfXVJP5vV1Jhs1m2PeadXfI2Aq96HWQJhyV5VmLUdHpazPz6xmMcgieCRpt1emah34
+         /Qwha2xzui+VaXkG8SX40Dr7djEENVK5FcFdKw5CWsp4wbJrcSC7gyQtpjAoDpzFyJsz
+         9H1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
          :in-reply-to:references:mime-version:content-transfer-encoding;
-        bh=BC3+WJwz5bC1eSK1d688gwyECtY9iawjGUtkLyo3zdQ=;
-        b=NmZSMt3D/tLfn6hi+YVtzrup6go2rmMle1KPTEJK32Xi6c8NI5gRqV9d0Nq9IAh0RS
-         YjFkXNq9y2fRlQhAKm6WnoSEbD6e9MbyHjOkhW8jTIaSEAWKah3VE/cnGFBbROccRqFe
-         zVzs4G0f41Gs19YF8HgV+O8Qb9e6Dm2rb/NHpmPIAPgV7jZNqIevL7Y3FgXhZO6jymw1
-         fp37CdzPTzv4vFkeghtzvtYOvXZspFwYeRDkGWhuzuhyas0EU592aswVJYnafl1cjxYM
-         dbvRN4hGmozCfjmRhqlkD5+CSjmwasdf+IKQZPmYpmYYZBoNBbhw0vzfAyf41JJINBRN
-         1L1A==
-X-Gm-Message-State: AJcUukdzogn80lpwHtDhYkJMLdVR9vlktTtKU68ZwZjEUbOLpL1zf653
-        lgBk9Y9sVw476yjnTkzsUPI=
-X-Google-Smtp-Source: ALg8bN5Ov0LiUMvVCUU3vJOS7SwgecggYrqvloDKNN1Z3qiVaHMm+WvbJ4DMnQi9GLyb7GwHEObXkA==
-X-Received: by 2002:a1c:35ca:: with SMTP id c193mr3400342wma.146.1546997257288;
-        Tue, 08 Jan 2019 17:27:37 -0800 (PST)
+        bh=fAGKYpUHFH6IxKnG66w6623xEKHssEriDLH5eETIzro=;
+        b=tBdKB6n54ffWZ/aCJVqjCcMsT6nqnohSP/pNkMA0k9zKwJvtI1YfF8giYijqfzF3GI
+         XWBda/P/pK5g1o+nCeV14PVOdXYsa9rJIR2lcA4ARRo39D3G96qHE75En5UarWFUTtCN
+         ZJel4fRuW1V18yBpZv4QDCiezvWxdadgVtWYlqAsV+JicuI34xgWkHKnIWUVXIzfGQDz
+         KtCvvsQ3EJSy+Zu1+ZQKJ8GZ4BiEFupI6itNHmdAbfqlZ13Y2w9KkLUJGWM/wHrfte5u
+         F+eymN/T5agNt9uycaIjsoIR9DSwKneLg40ZTCI0m2ii8Bkv/iiIkMo8X9TGjxXcu10G
+         H2fw==
+X-Gm-Message-State: AJcUukcJWX5CP+iDNHamptcHI3KHrR3yLXQKLkr/qq6yWk8VdhJJ9iux
+        QV13XgF5CGiuBrvQBHN+cdOlt/n1xGM=
+X-Google-Smtp-Source: ALg8bN6PK+xHjd3xyj1KcozBbPVSnTVf01NP7m39CA4UsSFXH+ssG3f8/o9ZVHfqg90AcRXaRh4Apw==
+X-Received: by 2002:adf:d089:: with SMTP id y9mr3173540wrh.22.1546997255898;
+        Tue, 08 Jan 2019 17:27:35 -0800 (PST)
 Received: from beren.harmstone.com ([88.97.13.154])
-        by smtp.gmail.com with ESMTPSA id y34sm156915088wrd.68.2019.01.08.17.27.36
+        by smtp.gmail.com with ESMTPSA id y34sm156915088wrd.68.2019.01.08.17.27.35
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 08 Jan 2019 17:27:36 -0800 (PST)
+        Tue, 08 Jan 2019 17:27:35 -0800 (PST)
 From:   Mark Harmstone <mark@harmstone.com>
 Cc:     mark@harmstone.com, Chris Mason <clm@fb.com>,
         Josef Bacik <josef@toxicpanda.com>,
         David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [RFC PATCH 10/19] btrfs: allow reading encrypted inline extents
-Date:   Wed,  9 Jan 2019 01:26:52 +0000
-Message-Id: <20190109012701.26441-10-mark@harmstone.com>
+Subject: [RFC PATCH 09/19] btrfs: add btrfs.key property
+Date:   Wed,  9 Jan 2019 01:26:51 +0000
+Message-Id: <20190109012701.26441-9-mark@harmstone.com>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20190109012701.26441-1-mark@harmstone.com>
 References: <20190109012701.26441-1-mark@harmstone.com>
@@ -77,441 +77,143 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Signed-off-by: Mark Harmstone <mark@harmstone.com>
 ---
- fs/btrfs/encryption.c | 305 ++++++++++++++++++++++++++++++++++++++++++
- fs/btrfs/encryption.h |   3 +
- fs/btrfs/inode.c      |  72 +++++++++-
- 3 files changed, 379 insertions(+), 1 deletion(-)
+ fs/btrfs/btrfs_inode.h |  5 ++++
+ fs/btrfs/ctree.h       |  1 +
+ fs/btrfs/inode.c       |  1 +
+ fs/btrfs/props.c       | 68 ++++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 75 insertions(+)
 
-diff --git a/fs/btrfs/encryption.c b/fs/btrfs/encryption.c
-index 0803642c1ec9..a1c9a982b009 100644
---- a/fs/btrfs/encryption.c
-+++ b/fs/btrfs/encryption.c
-@@ -4,9 +4,314 @@
-  */
+diff --git a/fs/btrfs/btrfs_inode.h b/fs/btrfs/btrfs_inode.h
+index 97d91e55b70a..cf9f50bbe4ef 100644
+--- a/fs/btrfs/btrfs_inode.h
++++ b/fs/btrfs/btrfs_inode.h
+@@ -175,6 +175,11 @@ struct btrfs_inode {
+ 	 */
+ 	unsigned defrag_compress;
  
- #include <crypto/hash.h>
-+#include <keys/user-type.h>
- #include "ctree.h"
- #include "encryption.h"
++	/*
++	 * Salt of preferred encryption key
++	 */
++	u64 prop_key;
++
+ 	struct btrfs_delayed_node *delayed_node;
  
-+#define KEY_SIG_PREFIX "btrfs:"
-+#define KEY_SIG_LENGTH (sizeof(KEY_SIG_PREFIX) - 1 + 16)
+ 	/* File creation time. */
+diff --git a/fs/btrfs/ctree.h b/fs/btrfs/ctree.h
+index 4bab57e01e21..a1368c5c1236 100644
+--- a/fs/btrfs/ctree.h
++++ b/fs/btrfs/ctree.h
+@@ -1453,6 +1453,7 @@ do {                                                                   \
+ #define BTRFS_INODE_NOATIME		(1 << 9)
+ #define BTRFS_INODE_DIRSYNC		(1 << 10)
+ #define BTRFS_INODE_COMPRESS		(1 << 11)
++#define BTRFS_INODE_ENCRYPT		(1 << 12)
+ 
+ #define BTRFS_INODE_ROOT_ITEM_INIT	(1 << 31)
+ 
+diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
+index 9ea4c6f0352f..1d1084cf9289 100644
+--- a/fs/btrfs/inode.c
++++ b/fs/btrfs/inode.c
+@@ -9167,6 +9167,7 @@ struct inode *btrfs_alloc_inode(struct super_block *sb)
+ 	ei->runtime_flags = 0;
+ 	ei->prop_compress = BTRFS_COMPRESS_NONE;
+ 	ei->defrag_compress = BTRFS_COMPRESS_NONE;
++	ei->prop_key = 0;
+ 
+ 	ei->delayed_node = NULL;
+ 
+diff --git a/fs/btrfs/props.c b/fs/btrfs/props.c
+index e57a4edc88c4..ebe04194acbd 100644
+--- a/fs/btrfs/props.c
++++ b/fs/btrfs/props.c
+@@ -29,6 +29,12 @@ static int prop_compression_apply(struct inode *inode,
+ 				  size_t len);
+ static int prop_compression_extract(struct inode *inode, char *value);
+ 
++static int prop_key_validate(const char *value, size_t len);
++static int prop_key_apply(struct inode *inode,
++			  const char *value,
++			  size_t len);
++static int prop_key_extract(struct inode *inode, char *value);
 +
-+#define AES256_KEY_LENGTH 32
-+
-+static int derive_aes_key(u64 salt, char *data, unsigned int datalen,
-+			  char *aeskey)
+ static struct prop_handler prop_handlers[] = {
+ 	{
+ 		.xattr_name = XATTR_BTRFS_PREFIX "compression",
+@@ -37,6 +43,13 @@ static struct prop_handler prop_handlers[] = {
+ 		.extract = prop_compression_extract,
+ 		.inheritable = 1
+ 	},
++	{
++		.xattr_name = XATTR_BTRFS_PREFIX "key",
++		.validate = prop_key_validate,
++		.apply = prop_key_apply,
++		.extract = prop_key_extract,
++		.inheritable = 1
++	},
+ };
+ 
+ void __init btrfs_props_init(void)
+@@ -435,4 +448,59 @@ static int prop_compression_extract(struct inode *inode, char *value)
+ 	return -EINVAL;
+ }
+ 
++static int prop_key_validate(const char *value, size_t len)
 +{
-+	int ret;
-+	struct crypto_shash *shash;
-+	struct shash_desc *desc;
-+	char tmp[AES256_KEY_LENGTH];
++	unsigned int i;
 +
-+	shash = crypto_alloc_shash("sha256", 0, 0);
-+	if (IS_ERR(shash))
-+		return PTR_ERR(shash);
++	if (len != 16)
++		return -EINVAL;
 +
-+	desc = kmalloc(sizeof(struct shash_desc) + crypto_shash_descsize(shash),
-+		       GFP_KERNEL);
-+	if (!desc) {
-+		ret = -ENOMEM;
-+		goto free_shash;
++	for (i = 0; i < 16; i++) {
++		if (hex_to_bin(value[i]) == -1)
++			return -EINVAL;
 +	}
-+
-+	desc->tfm = shash;
-+	desc->flags = 0;
-+
-+	/* Get SHA256 of salted password */
-+
-+	ret = crypto_shash_init(desc);
-+	if (ret)
-+		goto free_desc;
-+
-+	salt = cpu_to_le64(salt);
-+
-+	ret = crypto_shash_update(desc, (u8 *)&salt, sizeof(salt));
-+	if (ret)
-+		goto free_desc;
-+
-+	ret = crypto_shash_update(desc, data, datalen);
-+	if (ret)
-+		goto free_desc;
-+
-+	ret = crypto_shash_final(desc, tmp);
-+	if (ret)
-+		goto free_desc;
-+
-+	/* SHA256 again */
-+
-+	ret = crypto_shash_init(desc);
-+	if (ret)
-+		goto free_desc;
-+
-+	ret = crypto_shash_update(desc, tmp, AES256_KEY_LENGTH);
-+	if (ret)
-+		goto free_desc;
-+
-+	ret = crypto_shash_final(desc, aeskey);
-+	if (ret)
-+		goto free_desc;
-+
-+	ret = 0;
-+
-+free_desc:
-+	kzfree(desc);
-+
-+free_shash:
-+	crypto_free_shash(shash);
-+
-+	return ret;
+ 
++	return 0;
 +}
 +
-+static int btrfs_load_key(struct btrfs_enc_key *k)
++static int prop_key_apply(struct inode *inode,
++			  const char *value,
++			  size_t len)
 +{
-+	struct key *key;
 +	u64 salt;
-+	char sig[KEY_SIG_LENGTH + 1];
-+	char key_id[BTRFS_ENCRYPTION_KEY_ID_LENGTH];
-+	char aeskey[AES256_KEY_LENGTH];
-+	struct user_key_payload *upayload;
-+	int ret;
 +
-+	if (k->loaded)
++	if (len == 0) {
++		BTRFS_I(inode)->flags &= ~BTRFS_INODE_ENCRYPT;
++		BTRFS_I(inode)->prop_key = 0;
++
 +		return 0;
-+
-+	salt = cpu_to_be64(k->key_number);
-+
-+	memcpy(sig, KEY_SIG_PREFIX, sizeof(KEY_SIG_PREFIX) - 1);
-+	bin2hex(sig + sizeof(KEY_SIG_PREFIX) - 1, &salt, sizeof(u64));
-+	sig[KEY_SIG_LENGTH] = 0;
-+
-+	key = request_key(&key_type_user, sig, NULL);
-+
-+	if (IS_ERR(key)) {
-+		key = request_key(&key_type_logon, sig, NULL);
-+
-+		if (IS_ERR(key))
-+			return -ENOKEY;
 +	}
 +
-+	down_read(&key->sem);
++	if (len != 16)
++		return -EINVAL;
 +
-+	upayload = user_key_payload_locked(key);
-+	if (IS_ERR_OR_NULL(upayload)) {
-+		ret = upayload ? PTR_ERR(upayload) : -EINVAL;
-+		goto out_key_put;
-+	}
++	if (hex2bin((u8 *)&salt, value, len / 2))
++		return -EINVAL;
 +
-+	ret = btrfs_get_key_id(k->key_number, upayload->data,
-+			       upayload->datalen, key_id);
-+	if (ret)
-+		goto out_key_put;
++	salt = be64_to_cpu(salt);
 +
-+	if (memcmp(key_id, k->key_id,
-+		   BTRFS_ENCRYPTION_KEY_ID_LENGTH)) {
-+		ret = -EINVAL;
-+		goto out_key_put;
-+	}
-+
-+	k->skcipher = crypto_alloc_skcipher("ctr(aes)", 0, 0);
-+	if (IS_ERR(k->skcipher)) {
-+		ret = PTR_ERR(k->skcipher);
-+		goto out_key_put;
-+	}
-+
-+	ret = derive_aes_key(k->key_number, upayload->data,
-+			     upayload->datalen, aeskey);
-+	if (ret) {
-+		crypto_free_skcipher(k->skcipher);
-+		goto out_key_put;
-+	}
-+
-+	ret = crypto_skcipher_setkey(k->skcipher, aeskey, 32);
-+	if (ret) {
-+		crypto_free_skcipher(k->skcipher);
-+		goto out_key_put;
-+	}
-+
-+	k->loaded = true;
-+
-+	ret = 0;
-+
-+out_key_put:
-+	up_read(&key->sem);
-+
-+	key_put(key);
-+
-+	return ret;
-+}
-+
-+static int find_key(struct btrfs_fs_info *fs_info, u64 key_number,
-+		    struct btrfs_enc_key **key)
-+{
-+	int ret;
-+	struct btrfs_enc_key *k = NULL, *k2;
-+
-+	down_write(&fs_info->key_sem);
-+
-+	list_for_each_entry(k2, &fs_info->key_list, key_list) {
-+		if (k2->key_number == key_number) {
-+			k = k2;
-+			break;
-+		}
-+	}
-+
-+	if (!k && fs_info->key_root) {
-+		struct btrfs_key key;
-+		struct btrfs_path *path;
-+		struct extent_buffer *leaf;
-+		int slot;
-+		u32 item_size;
-+		struct btrfs_encryption_key_item *item;
-+		char key_id[BTRFS_ENCRYPTION_KEY_ID_LENGTH];
-+
-+		path = btrfs_alloc_path();
-+		if (!path) {
-+			up_write(&fs_info->key_sem);
-+			return -ENOMEM;
-+		}
-+
-+		key.objectid = key_number;
-+		key.type = BTRFS_ENCRYPTION_KEY;
-+		key.offset = 0;
-+
-+		ret = btrfs_search_slot(NULL, fs_info->key_root, &key,
-+					path, 0,  0);
-+		if (ret < 0) {
-+			btrfs_free_path(path);
-+			up_write(&fs_info->key_sem);
-+			return ret;
-+		}
-+
-+		leaf = path->nodes[0];
-+		slot = path->slots[0];
-+		btrfs_item_key_to_cpu(leaf, &key, slot);
-+
-+		if (key.objectid != key_number ||
-+			key.type != BTRFS_ENCRYPTION_KEY) {
-+			btrfs_free_path(path);
-+			up_write(&fs_info->key_sem);
-+			return -ENOKEY;
-+		}
-+
-+		item_size = btrfs_item_size_nr(leaf, slot);
-+
-+		if (item_size != sizeof(struct btrfs_encryption_key_item)) {
-+			btrfs_free_path(path);
-+			up_write(&fs_info->key_sem);
-+			return -ENOKEY;
-+		}
-+
-+		item = btrfs_item_ptr(leaf, path->slots[0],
-+					struct btrfs_encryption_key_item);
-+
-+		read_eb_member(leaf, item,
-+				struct btrfs_encryption_key_item,
-+				key_id, key_id);
-+
-+		k = kmalloc(sizeof(*k), GFP_KERNEL);
-+		if (!k) {
-+			btrfs_free_path(path);
-+			up_write(&fs_info->key_sem);
-+			return -ENOMEM;
-+		}
-+
-+		memcpy(k->key_id, key_id, BTRFS_ENCRYPTION_KEY_ID_LENGTH);
-+		k->key_number = key.objectid;
-+		k->loaded = false;
-+		k->added = false;
-+		k->used = true;
-+		mutex_init(&k->lock);
-+
-+		list_add(&k->key_list, &fs_info->key_list);
-+
-+		btrfs_free_path(path);
-+	}
-+
-+	up_write(&fs_info->key_sem);
-+
-+	if (!k)
-+		return -ENOKEY;
-+
-+	if (!k->loaded) {
-+		mutex_lock(&k->lock);
-+		ret = btrfs_load_key(k);
-+		mutex_unlock(&k->lock);
-+
-+		if (ret)
-+			return ret;
-+	}
-+
-+	*key = k;
++	BTRFS_I(inode)->flags |= BTRFS_INODE_ENCRYPT;
++	BTRFS_I(inode)->prop_key = salt;
 +
 +	return 0;
 +}
 +
-+int btrfs_decrypt(struct btrfs_fs_info *fs_info,
-+		  unsigned char *data, size_t len)
++static int prop_key_extract(struct inode *inode, char *value)
 +{
-+	struct scatterlist sg;
-+	struct skcipher_request *req = NULL;
-+	int ret = -EFAULT;
-+	u64 key_number;
-+	struct btrfs_enc_key *key;
-+	struct btrfs_file_extent_inline_enc *eienc;
-+	char iv[BTRFS_ENCRYPTION_BLOCK_LENGTH];
++	u64 salt;
 +
-+	if (len <= sizeof(struct btrfs_file_extent_inline_enc))
++	if (BTRFS_I(inode)->prop_key == 0)
 +		return -EINVAL;
 +
-+	eienc = (struct btrfs_file_extent_inline_enc *)data;
++	salt = cpu_to_be64(BTRFS_I(inode)->prop_key);
++	bin2hex(value, &salt, sizeof(salt));
 +
-+	key_number = le64_to_cpu(eienc->key_number);
++	value[16] = 0;
 +
-+	ret = find_key(fs_info, key_number, &key);
-+	if (ret)
-+		return ret;
-+
-+	memcpy(iv, eienc->iv, BTRFS_ENCRYPTION_BLOCK_LENGTH);
-+
-+	len -= sizeof(struct btrfs_file_extent_inline_enc);
-+
-+	sg_init_one(&sg, data + sizeof(struct btrfs_file_extent_inline_enc),
-+		    len);
-+
-+	req = skcipher_request_alloc(key->skcipher, GFP_KERNEL);
-+	if (!req) {
-+		ret = -ENOMEM;
-+		goto out;
-+	}
-+
-+	skcipher_request_set_crypt(req, &sg, &sg, len, iv);
-+
-+	ret = crypto_skcipher_decrypt(req);
-+	if (ret < 0)
-+		goto out;
-+
-+out:
-+	if (req)
-+		skcipher_request_free(req);
-+	return ret;
++	return 0;
 +}
-+
-+
- int btrfs_get_key_id(u64 salt, char *password, unsigned int pwdlen,
- 		     char *key_id)
- {
-diff --git a/fs/btrfs/encryption.h b/fs/btrfs/encryption.h
-index adf35696373f..add7ee6d879d 100644
---- a/fs/btrfs/encryption.h
-+++ b/fs/btrfs/encryption.h
-@@ -30,6 +30,9 @@ struct btrfs_enc_key {
- 	struct mutex lock;
- };
- 
-+int btrfs_decrypt(struct btrfs_fs_info *fs_info,
-+		  unsigned char *data, size_t len);
-+
- int btrfs_get_key_id(u64 salt, char *password, unsigned int pwdlen,
- 		     char *key_id);
- 
-diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-index 1d1084cf9289..202a7458584f 100644
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -45,6 +45,7 @@
- #include "props.h"
- #include "qgroup.h"
- #include "dedupe.h"
-+#include "encryption.h"
- 
- struct btrfs_iget_args {
- 	struct btrfs_key *location;
-@@ -6757,6 +6758,66 @@ static noinline int uncompress_inline(struct btrfs_path *path,
- 	return ret;
- }
- 
-+static noinline int decrypt_inline(struct btrfs_fs_info *fs_info,
-+				   struct btrfs_path *path,
-+				   struct page *page,
-+				   size_t pg_offset, u64 extent_offset,
-+				   struct btrfs_file_extent_item *item,
-+				   int compress_type)
-+{
-+	int ret;
-+	struct extent_buffer *leaf = path->nodes[0];
-+	char *tmp;
-+	size_t max_size;
-+	unsigned long inline_size;
-+	unsigned long ptr;
-+	int encryption_type;
-+
-+	WARN_ON(pg_offset != 0);
-+	encryption_type = btrfs_file_extent_encryption(leaf, item);
-+	max_size = btrfs_file_extent_ram_bytes(leaf, item);
-+	inline_size = btrfs_file_extent_inline_item_len(leaf,
-+						btrfs_item_nr(path->slots[0]));
-+	tmp = kmalloc(inline_size, GFP_NOFS);
-+	if (!tmp)
-+		return -ENOMEM;
-+	ptr = btrfs_file_extent_inline_start(item);
-+
-+	read_extent_buffer(leaf, tmp, ptr, inline_size);
-+
-+	max_size = min_t(unsigned long, PAGE_SIZE, max_size);
-+	ret = btrfs_decrypt(fs_info, tmp, inline_size);
-+
-+	if (ret)
-+		goto end;
-+
-+	inline_size -= sizeof(struct btrfs_file_extent_inline_enc);
-+
-+	if (compress_type != BTRFS_COMPRESS_NONE) {
-+
-+		ret = btrfs_decompress(compress_type,
-+			tmp + sizeof(struct btrfs_file_extent_inline_enc),
-+			page, extent_offset, inline_size, max_size);
-+	} else {
-+		char *kaddr = kmap_atomic(page);
-+
-+		memcpy(kaddr + pg_offset,
-+		       tmp + sizeof(struct btrfs_file_extent_inline_enc) +
-+				extent_offset,
-+		       min(max_size, inline_size));
-+
-+		if (max_size + pg_offset < PAGE_SIZE)
-+			memset(kaddr + pg_offset + max_size, 0,
-+			       PAGE_SIZE - max_size - pg_offset);
-+
-+		kunmap_atomic(kaddr);
-+	}
-+
-+end:
-+	kfree(tmp);
-+	return ret;
-+}
-+
- /*
-  * a bit scary, this does extent mapping from logical file offset to the disk.
-  * the ugly parts come from merging extents from the disk with the in-ram
-@@ -6932,7 +6993,16 @@ struct extent_map *btrfs_get_extent(struct btrfs_inode *inode,
- 
- 		btrfs_set_path_blocking(path);
- 		if (!PageUptodate(page)) {
--			if (btrfs_file_extent_compression(leaf, item) !=
-+			if (btrfs_file_extent_encryption(leaf, item) !=
-+			    BTRFS_ENCRYPTION_NONE) {
-+				ret = decrypt_inline(fs_info, path, page,
-+				  pg_offset, extent_offset, item,
-+				  btrfs_file_extent_compression(leaf, item));
-+				if (ret) {
-+					err = ret;
-+					goto out;
-+				}
-+			} else if (btrfs_file_extent_compression(leaf, item) !=
- 			    BTRFS_COMPRESS_NONE) {
- 				ret = uncompress_inline(path, page, pg_offset,
- 							extent_offset, item);
 -- 
 2.19.2
 
