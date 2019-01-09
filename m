@@ -6,36 +6,34 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79B7DC43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 16:42:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D20E5C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 16:42:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 49C74206BB
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 16:42:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AA4DC206BB
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 16:42:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726887AbfAIQmD (ORCPT
+        id S1726570AbfAIQki (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 11:42:03 -0500
-Received: from mx2.suse.de ([195.135.220.15]:57620 "EHLO mx1.suse.de"
+        Wed, 9 Jan 2019 11:40:38 -0500
+Received: from mx2.suse.de ([195.135.220.15]:57510 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726586AbfAIQkk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 11:40:40 -0500
+        id S1726546AbfAIQki (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 11:40:38 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id DE35CAF91;
-        Wed,  9 Jan 2019 16:40:38 +0000 (UTC)
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 2F557AF58;
+        Wed,  9 Jan 2019 16:40:37 +0000 (UTC)
 From:   Roman Penyaev <rpenyaev@suse.de>
 Cc:     Roman Penyaev <rpenyaev@suse.de>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Davidlohr Bueso <dbueso@suse.de>,
-        Jason Baron <jbaron@akamai.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrea Parri <andrea.parri@amarulasolutions.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [RFC PATCH 06/15] epoll: introduce various of helpers for user structure lengths calculations
-Date:   Wed,  9 Jan 2019 17:40:16 +0100
-Message-Id: <20190109164025.24554-7-rpenyaev@suse.de>
+        Michal Hocko <mhocko@suse.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Joe Perches <joe@perches.com>,
+        "Luis R. Rodriguez" <mcgrof@kernel.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: [RFC PATCH 01/15] mm/vmalloc: add new 'alignment' field for vm_struct structure
+Date:   Wed,  9 Jan 2019 17:40:11 +0100
+Message-Id: <20190109164025.24554-2-rpenyaev@suse.de>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190109164025.24554-1-rpenyaev@suse.de>
 References: <20190109164025.24554-1-rpenyaev@suse.de>
@@ -47,99 +45,84 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Helpers for lengths-from-number and number-from-lengths calculations.
-Among them:
+I need a new alignment field for vm area in order to reallocate
+previously allocated area with the same alignment.
 
-  ep_polled_by_user()
-	- returns true if epoll was created with EPOLL_USERPOLL
+Patch for a new vrealloc() call will follow and this new call
+I want to keep as simple as possible, thus not to provide dozens
+of variants, like vrealloc_user(), which cares about alignment.
 
-  ep_user_ring_events_available()
-	- returns true if there is something in user ring buffer
+Current changes are just preparations.
+
+Worth to mention, that on archs were unsigned long is 64 bit
+this new field does not bloat vm_struct, because originally
+there was a padding between nr_pages and phys_addr.
 
 Signed-off-by: Roman Penyaev <rpenyaev@suse.de>
 Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Davidlohr Bueso <dbueso@suse.de>
-Cc: Jason Baron <jbaron@akamai.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Andrea Parri <andrea.parri@amarulasolutions.com>
-Cc: linux-fsdevel@vger.kernel.org
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>
+Cc: Joe Perches <joe@perches.com>
+Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>
+Cc: linux-mm@kvack.org
 Cc: linux-kernel@vger.kernel.org
 ---
- fs/eventpoll.c | 59 ++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 59 insertions(+)
+ include/linux/vmalloc.h |  1 +
+ mm/vmalloc.c            | 10 ++++++----
+ 2 files changed, 7 insertions(+), 4 deletions(-)
 
-diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-index 9ec682b6488f..ae288f62aa4c 100644
---- a/fs/eventpoll.c
-+++ b/fs/eventpoll.c
-@@ -438,6 +438,65 @@ static void ep_nested_calls_init(struct nested_calls *ncalls)
- 	spin_lock_init(&ncalls->lock);
- }
+diff --git a/include/linux/vmalloc.h b/include/linux/vmalloc.h
+index 398e9c95cd61..78210aa0bb43 100644
+--- a/include/linux/vmalloc.h
++++ b/include/linux/vmalloc.h
+@@ -38,6 +38,7 @@ struct vm_struct {
+ 	unsigned long		flags;
+ 	struct page		**pages;
+ 	unsigned int		nr_pages;
++	unsigned int		alignment;
+ 	phys_addr_t		phys_addr;
+ 	const void		*caller;
+ };
+diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+index e83961767dc1..4851b4a67f55 100644
+--- a/mm/vmalloc.c
++++ b/mm/vmalloc.c
+@@ -1347,12 +1347,14 @@ int map_vm_area(struct vm_struct *area, pgprot_t prot, struct page **pages)
+ EXPORT_SYMBOL_GPL(map_vm_area);
  
-+static inline unsigned int to_items_length(unsigned int nr)
-+{
-+	struct eventpoll *ep;
-+
-+	return (sizeof(*ep->user_header) +
-+		(nr << ilog2(sizeof(ep->user_header->items[0]))));
-+}
-+
-+static inline unsigned int to_index_length(unsigned int nr)
-+{
-+	struct eventpoll *ep;
-+
-+	return nr << ilog2(sizeof(*ep->user_index));
-+}
-+
-+static inline unsigned int to_items_bm_length(unsigned int nr)
-+{
-+	return ALIGN(nr, 8) >> 3;
-+}
-+
-+static inline unsigned int to_items_nr(unsigned int len)
-+{
-+	struct eventpoll *ep;
-+
-+	return (len - sizeof(*ep->user_header)) >>
-+		ilog2(sizeof(ep->user_header->items[0]));
-+}
-+
-+static inline unsigned int to_items_bm_nr(unsigned int len)
-+{
-+	return len << 3;
-+}
-+
-+static inline unsigned int ep_max_items_nr(struct eventpoll *ep)
-+{
-+	return to_items_nr(ep->header_length);
-+}
-+
-+static inline unsigned int ep_max_index_nr(struct eventpoll *ep)
-+{
-+	return ep->index_length >> ilog2(sizeof(*ep->user_index));
-+}
-+
-+static inline unsigned int ep_max_items_bm_nr(struct eventpoll *ep)
-+{
-+	return to_items_bm_nr(ep->items_bm_length);
-+}
-+
-+static inline bool ep_polled_by_user(struct eventpoll *ep)
-+{
-+	return !!ep->user_header;
-+}
-+
-+static inline bool ep_user_ring_events_available(struct eventpoll *ep)
-+{
-+	return ep_polled_by_user(ep) &&
-+		ep->user_header->head != ep->user_header->tail;
-+}
-+
- /**
-  * ep_events_available - Checks if ready events might be available.
-  *
+ static void setup_vmalloc_vm(struct vm_struct *vm, struct vmap_area *va,
+-			      unsigned long flags, const void *caller)
++			     unsigned int align, unsigned long flags,
++			     const void *caller)
+ {
+ 	spin_lock(&vmap_area_lock);
+ 	vm->flags = flags;
+ 	vm->addr = (void *)va->va_start;
+ 	vm->size = va->va_end - va->va_start;
++	vm->alignment = align;
+ 	vm->caller = caller;
+ 	va->vm = vm;
+ 	va->flags |= VM_VM_AREA;
+@@ -1399,7 +1401,7 @@ static struct vm_struct *__get_vm_area_node(unsigned long size,
+ 		return NULL;
+ 	}
+ 
+-	setup_vmalloc_vm(area, va, flags, caller);
++	setup_vmalloc_vm(area, va, align, flags, caller);
+ 
+ 	return area;
+ }
+@@ -2601,8 +2603,8 @@ struct vm_struct **pcpu_get_vm_areas(const unsigned long *offsets,
+ 
+ 	/* insert all vm's */
+ 	for (area = 0; area < nr_vms; area++)
+-		setup_vmalloc_vm(vms[area], vas[area], VM_ALLOC,
+-				 pcpu_get_vm_areas);
++		setup_vmalloc_vm(vms[area], vas[area], align,
++				 VM_ALLOC, pcpu_get_vm_areas);
+ 
+ 	kfree(vas);
+ 	return vms;
 -- 
 2.19.1
 
