@@ -2,140 +2,145 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68788C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 09:29:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01F7FC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 09:30:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 39A69206BB
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 09:29:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AAC07206BB
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 09:30:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NcnCwQlv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729964AbfAIJ3y convert rfc822-to-8bit (ORCPT
+        id S1730157AbfAIJaV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 04:29:54 -0500
-Received: from [223.203.96.18] ([223.203.96.18]:57136 "EHLO
-        barracuda02.hxt-semitech.com" rhost-flags-FAIL-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728041AbfAIJ3x (ORCPT
+        Wed, 9 Jan 2019 04:30:21 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:39971 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728041AbfAIJaV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 04:29:53 -0500
-X-ASG-Debug-ID: 1547026188-107606139f16e190001-xx1T2L
-Received: from HXTBJIDCEMVIW01.hxtcorp.net ([10.128.0.14]) by barracuda02.hxt-semitech.com with ESMTP id BEmb9ExinCQaW2e6 (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NO); Wed, 09 Jan 2019 17:29:49 +0800 (CST)
-X-Barracuda-Envelope-From: yuanyuan.zhao@hxt-semitech.com
-Received: from HXTBJIDCEMVIW02.hxtcorp.net (10.128.0.15) by
- HXTBJIDCEMVIW01.hxtcorp.net (10.128.0.14) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Wed, 9 Jan 2019 17:29:42 +0800
-Received: from HXTBJIDCEMVIW02.hxtcorp.net ([fe80::3e:f4ff:7927:a6f6]) by
- HXTBJIDCEMVIW02.hxtcorp.net ([fe80::3e:f4ff:7927:a6f6%12]) with mapi id
- 15.00.1395.000; Wed, 9 Jan 2019 17:29:42 +0800
-From:   "Zhao, Yuanyuan" <yuanyuan.zhao@hxt-semitech.com>
-To:     Marc Zyngier <marc.zyngier@arm.com>
-CC:     "tglx@linutronix.de" <tglx@linutronix.de>,
-        "jason@lakedaemon.net" <jason@lakedaemon.net>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "Zheng, Joey" <yu.zheng@hxt-semitech.com>,
-        "Wang, Dongsheng" <dongsheng.wang@hxt-semitech.com>
-Subject: RE: [RESEND 1/1] gic: its: Make sure a LPI is discarded before free.
-Thread-Topic: [RESEND 1/1] gic: its: Make sure a LPI is discarded before free.
-X-ASG-Orig-Subj: RE: [RESEND 1/1] gic: its: Make sure a LPI is discarded before free.
-Thread-Index: AQHUp+8DksFLG785G0++VUmPBlsY5qWmkCdg
-Date:   Wed, 9 Jan 2019 09:29:41 +0000
-Message-ID: <c81f42aa93904353bbeac590da7b0945@HXTBJIDCEMVIW02.hxtcorp.net>
-References: <e37e3f5e0146be65c60092a457ca5c82e25581a0.1545292748.git.yuanyuan.zhao@hxt-semitech.com>
- <20190109074324.6445118d@why.wild-wind.fr.eu.org>
-In-Reply-To: <20190109074324.6445118d@why.wild-wind.fr.eu.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.65.11.40]
-Content-Type: text/plain; charset="iso-2022-jp"
-Content-Transfer-Encoding: 8BIT
+        Wed, 9 Jan 2019 04:30:21 -0500
+Received: by mail-ed1-f68.google.com with SMTP id g22so6699235edr.7
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Jan 2019 01:30:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mail-followup-to:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=9bt6318KuI4Mb3GDgutajPT/Cvnzguj3ZEGYUBvG1Ss=;
+        b=NcnCwQlvTOMcQ3YvE48Ay6kxdnx/Eqlmsr7L7YX0p9mfk4yx2MDNdrjkIbU6MLMFM+
+         67jh7pZSJHhiiES6Y6NUezlrfKYV9d0UIMzrKoLoit84nBbTILHKqufHNhgOYwT7IOJ3
+         9gX12OZreu1gXhHzqnRmZ9jmWcWZMjDZmHQSD6Oh6p2mczMpIgAhJwDd5olZxVp+i3cs
+         ujRgmGKZtNd2rt7DWLG/x4xIIE7KjF/5D+dMaYD78IwNMHuSpRUTAj+EPBNhB0kNoC8n
+         HRSpKlxIBZs0RypA5raxqm4+BKOjRiQ0uyizV8I8faoMumGbnJ0qeIu4OPqgUP1LfKsq
+         Y7iA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=9bt6318KuI4Mb3GDgutajPT/Cvnzguj3ZEGYUBvG1Ss=;
+        b=A4UJ5WEE5CHK2wIU6EuLqM8XA9Y8ag47o1/T31yu5YUc1lhz6uTq0WImmqVCjFR2te
+         fA4iL/0zwk9dw/iCMvL4S/mdQpJd58ZTLxS7rv9l3F06k2hzCU5F9kgy9vxY91JbVSr7
+         e7nOAPLFgI2LqYZcwJ8HBMv9IMB2TIOgwSfHii8zdCH1LoGasKbU/m1p+lgMM+XmjWHu
+         QXuHA+/6Iim1e17I0gaWLs/jJhfBnAE2iq4sGuZwyCHSU1KVOwd8SVTF8bwHiyoDky72
+         q8+xQA2W7z29dmeJKygH7lJaZdGk5zu1hmH3qLgbEBw+draxrbhfnwXazsDK6RSh2ilI
+         dBzQ==
+X-Gm-Message-State: AJcUukfwLAhRn5X8/X0qno3Rh2Z2G4Gv8XDwF+nQpicSt5b1jqe3+DbH
+        M2uORBYwRHhnbcvwDqztHK05wj9mbNs=
+X-Google-Smtp-Source: ALg8bN5tYntkwYXLf0iUL1FoS5j1DYx1a7jcNUaEN2TycabtLhkRYTG+UALI3uX3EyUIKs6HXxiEKg==
+X-Received: by 2002:a17:906:474e:: with SMTP id j14-v6mr4823979ejs.55.1547026219498;
+        Wed, 09 Jan 2019 01:30:19 -0800 (PST)
+Received: from yubo-2 ([191.101.9.198])
+        by smtp.gmail.com with ESMTPSA id h51sm1297205edh.17.2019.01.09.01.30.17
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 09 Jan 2019 01:30:19 -0800 (PST)
+Date:   Wed, 9 Jan 2019 04:30:16 -0500
+From:   YU Bo <tsu.yubo@gmail.com>
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Joe Perches <joe@perches.com>, yuzibode@126.com
+Subject: Re: [PATCH V5 2/2] kobject: drop newline from msg string
+Message-ID: <20190109093014.cjheviy67szigzfg@yubo-2>
+Mail-Followup-To: "Rafael J. Wysocki" <rafael@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Joe Perches <joe@perches.com>, yuzibode@126.com
+References: <cover.1547024167.git.tsu.yubo@gmail.com>
+ <db8c353e82b944654fec17beb99d96bebff91864.1547024167.git.tsu.yubo@gmail.com>
+ <CAJZ5v0guQizE2mi3qv=0CVz9FYf6Kzv222Ff0RX1NyGuKAiucA@mail.gmail.com>
 MIME-Version: 1.0
-X-Barracuda-Connect: UNKNOWN[10.128.0.14]
-X-Barracuda-Start-Time: 1547026189
-X-Barracuda-Encrypted: ECDHE-RSA-AES256-SHA384
-X-Barracuda-URL: https://192.168.50.102:443/cgi-mod/mark.cgi
-X-Barracuda-Scan-Msg-Size: 2035
-X-Virus-Scanned: by bsmtpd at hxt-semitech.com
-X-Barracuda-BRTS-Status: 1
-X-Barracuda-Bayes: INNOCENT GLOBAL 0.5000 1.0000 0.0000
-X-Barracuda-Spam-Score: 0.60
-X-Barracuda-Spam-Status: No, SCORE=0.60 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=ISO2022JP_CHARSET, MARKETING_SUBJECT
-X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.65376
-        Rule breakdown below
-         pts rule name              description
-        ---- ---------------------- --------------------------------------------------
-        0.60 MARKETING_SUBJECT      Subject contains popular marketing words
-        -0.00 ISO2022JP_CHARSET      ISO-2022-JP message
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Disposition: inline
+In-Reply-To: <CAJZ5v0guQizE2mi3qv=0CVz9FYf6Kzv222Ff0RX1NyGuKAiucA@mail.gmail.com>
+User-Agent: NeoMutt/20180512-62-03f98a
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Marc:
-
-Thank you for your reply. 
-
-As you said, APIs such as free_irq will deactivate irq
-before free it. But deactivation is not forced by every API,
-for example irq_dispose_mapping.  So I think it's better to check 
-that irq was deactivated as expected.
-
-BRs,
-Yuanyuan
-
-
-> -----Original Message-----
-> From: Marc Zyngier [mailto:marc.zyngier@arm.com]
-> Sent: 2019年1月9日 15:43
-> To: Zhao, Yuanyuan <yuanyuan.zhao@hxt-semitech.com>
-> Cc: tglx@linutronix.de; jason@lakedaemon.net; linux-
-> kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org; Zheng, Joey
-> <yu.zheng@hxt-semitech.com>; Wang, Dongsheng <dongsheng.wang@hxt-
-> semitech.com>
-> Subject: Re: [RESEND 1/1] gic: its: Make sure a LPI is discarded before free.
-> 
-> On Wed, 9 Jan 2019 11:53:27 +0800
-> Zhao Yuanyuan <yuanyuan.zhao@hxt-semitech.com> wrote:
-> 
-> Hi Zhao,
-> 
-> > Its device will be removed after all events be freed.
-> > Undisarded events can lead to unpredictable behaviar.
-> >
-> > Signed-off-by: Zhao Yuanyuan <yuanyuan.zhao@hxt-semitech.com>
-> > ---
-> >  drivers/irqchip/irq-gic-v3-its.c | 4 ++++
-> >  1 file changed, 4 insertions(+)
-> >
-> > diff --git a/drivers/irqchip/irq-gic-v3-its.c
-> > b/drivers/irqchip/irq-gic-v3-its.c
-> > index db20e99..4fee008 100644
-> > --- a/drivers/irqchip/irq-gic-v3-its.c
-> > +++ b/drivers/irqchip/irq-gic-v3-its.c
-> > @@ -2572,6 +2572,10 @@ static void its_irq_domain_free(struct
-> irq_domain *domain, unsigned int virq,
-> >  								virq + i);
-> >  		u32 event = its_get_event_id(data);
-> >
-> > +		/* Discard irq before free */
-> > +		if (irqd_is_activated(d))
-> > +			its_send_discard(its_dev, event);
-> > +
-> >  		/* Mark interrupt index as unused */
-> >  		clear_bit(event, its_dev->event_map.lpi_map);
-> >
-> 
-> But we already do send a discard on deactivate, which logically happens
-> before we free the domain. So what are you fixing here?
-> 
-> Thanks,
-> 
-> 	M.
-> --
-> Without deviation from the norm, progress is not possible.
+On Wed, Jan 09, 2019 at 10:21:37AM +0100, Rafael J. Wysocki wrote:
+>On Wed, Jan 9, 2019 at 10:17 AM Bo YU <tsu.yubo@gmail.com> wrote:
+>>
+>> There is currently a missing terminating newline in non-switch case
+>> match when msg == NULL
+>>
+>> Signed-off-by: Bo YU <tsu.yubo@gmail.com>
+>
+>I have given you an R-by for this one already, so why haven't you added it here?
+Oh, i got it.This is the first time i encountered the circumstances.
+>
+>Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Thank you :)
+>
+>> ---
+>> Changes in V4:
+>> Recovery originly declaration, requested by Greg.
+>>
+>> Change in V3:
+>> Improve the commit log, requested by Rafael.
+>>
+>> Changes in V2:
+>> Drop newline from msg according to Joe's suggestion.
+>> ---
+>>  lib/kobject_uevent.c | 6 +++---
+>>  1 file changed, 3 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/lib/kobject_uevent.c b/lib/kobject_uevent.c
+>> index c87a96c4800e..f05802687ba4 100644
+>> --- a/lib/kobject_uevent.c
+>> +++ b/lib/kobject_uevent.c
+>> @@ -200,7 +200,7 @@ int kobject_synth_uevent(struct kobject *kobj, const char *buf, size_t count)
+>>
+>>         r = kobject_action_type(buf, count, &action, &action_args);
+>>         if (r) {
+>> -               msg = "unknown uevent action string\n";
+>> +               msg = "unknown uevent action string";
+>>                 goto out;
+>>         }
+>>
+>> @@ -212,7 +212,7 @@ int kobject_synth_uevent(struct kobject *kobj, const char *buf, size_t count)
+>>         r = kobject_action_args(action_args,
+>>                                 count - (action_args - buf), &env);
+>>         if (r == -EINVAL) {
+>> -               msg = "incorrect uevent action arguments\n";
+>> +               msg = "incorrect uevent action arguments";
+>>                 goto out;
+>>         }
+>>
+>> @@ -224,7 +224,7 @@ int kobject_synth_uevent(struct kobject *kobj, const char *buf, size_t count)
+>>  out:
+>>         if (r) {
+>>                 devpath = kobject_get_path(kobj, GFP_KERNEL);
+>> -               pr_warn("synth uevent: %s: %s",
+>> +               pr_warn("synth uevent: %s: %s\n",
+>>                        devpath ?: "unknown device",
+>>                        msg ?: "failed to send uevent");
+>>                 kfree(devpath);
+>> --
+>> 2.11.0
+>>
