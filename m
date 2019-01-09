@@ -2,168 +2,223 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 721B7C43444
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 13:44:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5AFBC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 13:44:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40F73206B6
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 13:44:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547041462;
-	bh=Om/kS8fV7w7Qh9/P3hSfXqDysye/oIbesa7uGYdloek=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=Ix9Tt3A2zwhBLdsicHkSaQ3jyjMlF0fXPmwxu/NAdZpYWk+x+tCR5PiNc4o59wQzF
-	 yj3t60PODrIlrc30/CIS3/es8mqYvtyOwe+bvVBuCtrZlVPnoDNM85amrXMNYkof2z
-	 FxjFY7Ryq1YxUefMEPWqGij8xXlceLyYwmk8U0Pg=
+	by mail.kernel.org (Postfix) with ESMTP id 9CF6F206B6
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 13:44:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="1qVaedeW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731016AbfAINoV (ORCPT
+        id S1731070AbfAINoh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 08:44:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42310 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729699AbfAINoU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 08:44:20 -0500
-Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 530E4206B6;
-        Wed,  9 Jan 2019 13:44:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547041459;
-        bh=Om/kS8fV7w7Qh9/P3hSfXqDysye/oIbesa7uGYdloek=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=YWuhr6lCXnw32NO/As+YA8SLZq+XKh7oUCJka9aRNDQ2NohcnWKD4jIJ3dPkBgrL7
-         vdZLPVoI0babODw602pjdD0++zEVhRsgHuJHn6ajO51MEcrxcisQ/WchCXLpouhsgw
-         KXhE0BkfHDhvTHDClkJZqludvLRwIzqZYMWVyUgU=
-Date:   Wed, 9 Jan 2019 08:44:18 -0500
-From:   Sasha Levin <sashal@kernel.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Theodore Tso <tytso@mit.edu>, stable@kernel.org
-Subject: Re: [PATCH 4.20 079/145] ext4: check for shutdown and r/o file
- system in ext4_write_inode()
-Message-ID: <20190109134418.GJ166797@sasha-vm>
-References: <20190107104437.308206189@linuxfoundation.org>
- <20190107104447.599996662@linuxfoundation.org>
- <20190107215606.GH166797@sasha-vm>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20190107215606.GH166797@sasha-vm>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Wed, 9 Jan 2019 08:44:37 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:39689 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727627AbfAINog (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 08:44:36 -0500
+Received: by mail-wm1-f66.google.com with SMTP id f81so8256878wmd.4
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Jan 2019 05:44:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=JEBXqUpS/wGintq8ltKUFwHDispDsI/Kg8/rpJ3o2s4=;
+        b=1qVaedeWtoHf5peQQnwniSJkL43QfYVuevm6yDv3d6l+p3LB6IKjneffXHSLE80+/v
+         IFqG+mRBUHUqzDatF/sPoGPT2P2AZTZct+7wYZAGiwFoav+7ts+OWfKqBzjSlrEb3Awx
+         nS+N/HOdsZb0zy9aUvG8y7CyNb7WYjawtomHmfs5ogwOivo4EnXQ71pBpLMvwfyvBfaN
+         RHTBG+pojqrg70N9fFldIQMhoAdZg8xIKTjtbLVf00wR62MSx6jSuh4UxW8VQ8BSqknY
+         V27hQxo0huw0RI7X3tk5DQR2Mbwc3RIrFCKPU6d2AAJoe2I2ms3KVnoqbXdfsi5TG1NF
+         nz0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=JEBXqUpS/wGintq8ltKUFwHDispDsI/Kg8/rpJ3o2s4=;
+        b=te8CqP8Ww7AugaqwZWgLuJkG90YEU41JsIqkQPkuLgKJd6ureuyddC0j2mr5W6oIiG
+         jSLhV9Nk40t2vXn5ev8Y4R3JwwP34Ootuy+1sIsvXlFBbiW9pyVTFhg/5Oq16zxV0ggm
+         4f2bG2GHiWt2c54gJnEgri3SCxaPWz6LgF1zdhmKkHZG15QL9r/HkVfYDrqTWK3zx75B
+         2Cxzwuyfq1CQ4J3fyWUzPHopzeh1JELDMdiyCZCeaJ3x9lnnjlY6w9QmtdItc+Je7a86
+         rbThBEBPA4mkClkYUJqYzwDfBMMtkF1iXQbr8EG4QgF6oyMKSSaYpfcYSnGinb2QN7KT
+         g8tQ==
+X-Gm-Message-State: AJcUukemHyt8Yu7y8f53jBidwfpviQ445HL/7xZcNurR/dDUdMjEbHkN
+        frJvfaGbcTJNBF39twHHpDs4dw==
+X-Google-Smtp-Source: ALg8bN5OBEGcZHAMzBi/GVcdHBBDTlrUkgd1hTGXS6ztTdsFcra8IX8ppbTjO1mSQOxrnFngXPJs6g==
+X-Received: by 2002:a1c:f613:: with SMTP id w19mr5740452wmc.0.1547041474447;
+        Wed, 09 Jan 2019 05:44:34 -0800 (PST)
+Received: from loys-ubuntu-BY1835A49200471.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.googlemail.com with ESMTPSA id y34sm161053815wrd.68.2019.01.09.05.44.33
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Wed, 09 Jan 2019 05:44:33 -0800 (PST)
+From:   Loys Ollivier <lollivier@baylibre.com>
+To:     devicetree@vger.kernel.org, Kevin Hilman <khilman@baylibre.com>,
+        linux-amlogic@lists.infradead.org
+Cc:     Loys Ollivier <lollivier@baylibre.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: [PATCH] arm64: dts: meson: Fix mmc cd-gpio polarity
+Date:   Wed,  9 Jan 2019 14:44:30 +0100
+Message-Id: <1547041470-6422-1-git-send-email-lollivier@baylibre.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 07, 2019 at 04:56:06PM -0500, Sasha Levin wrote:
->On Mon, Jan 07, 2019 at 01:31:56PM +0100, Greg Kroah-Hartman wrote:
->>4.20-stable review patch.  If anyone has any objections, please let me know.
->>
->>------------------
->>
->>From: Theodore Ts'o <tytso@mit.edu>
->>
->>commit 18f2c4fcebf2582f96cbd5f2238f4f354a0e4847 upstream.
->>
->>If the file system has been shut down or is read-only, then
->>ext4_write_inode() needs to bail out early.
->>
->>Also use jbd2_complete_transaction() instead of ext4_force_commit() so
->>we only force a commit if it is needed.
->>
->>Signed-off-by: Theodore Ts'o <tytso@mit.edu>
->>Cc: stable@kernel.org
->>Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->>
->>---
->>fs/ext4/inode.c |    9 +++++++--
->>1 file changed, 7 insertions(+), 2 deletions(-)
->>
->>--- a/fs/ext4/inode.c
->>+++ b/fs/ext4/inode.c
->>@@ -5400,9 +5400,13 @@ int ext4_write_inode(struct inode *inode
->>{
->>	int err;
->>
->>-	if (WARN_ON_ONCE(current->flags & PF_MEMALLOC))
->>+	if (WARN_ON_ONCE(current->flags & PF_MEMALLOC) ||
->>+	    sb_rdonly(inode->i_sb))
->>		return 0;
->>
->>+	if (unlikely(ext4_forced_shutdown(EXT4_SB(inode->i_sb))))
->>+		return -EIO;
->>+
->>	if (EXT4_SB(inode->i_sb)->s_journal) {
->>		if (ext4_journal_current_handle()) {
->>			jbd_debug(1, "called recursively, non-PF_MEMALLOC!\n");
->>@@ -5418,7 +5422,8 @@ int ext4_write_inode(struct inode *inode
->>		if (wbc->sync_mode != WB_SYNC_ALL || wbc->for_sync)
->>			return 0;
->>
->>-		err = ext4_force_commit(inode->i_sb);
->>+		err = jbd2_complete_transaction(EXT4_SB(inode->i_sb)->s_journal,
->>+						EXT4_I(inode)->i_sync_tid);
->>	} else {
->>		struct ext4_iloc iloc;
->
->Hi Ted,
->
->I'm not sure if this patch is the culprit or no, but testing with
->xfstests on 4.20.1-rc1 started failing generic/390 with:
->
->[ 3405.656893] run fstests generic/390 at 2019-01-07 20:26:55
->[ 3406.524380] EXT4-fs (nvme0n1p2): mounted filesystem without journal. Opts: acl,user_xattr
->[ 3406.731410] WARNING: CPU: 0 PID: 93128 at fs/ext4/ext4_jbd2.c:53 ext4_journal_check_start+0x121/0x190
->[ 3406.731418] CPU: 0 PID: 93128 Comm: fsstress Tainted: G    B   W         4.20.1-rc1+ #1
->[ 3406.731420] Hardware name: Microsoft Corporation Virtual Machine/Virtual Machine, BIOS 090007  05/18/2018
->[ 3406.731425] RIP: 0010:ext4_journal_check_start+0x121/0x190
->[ 3406.731430] Code: 4d 85 e4 74 1e 4c 89 e2 48 b8 00 00 00 00 00 fc ff df 48 c1 ea 03 80 3c 02 00 75 4f 41 f6 04 24 02 75 0b 31 c0 5b 41 5c 5d c3 <0f> 0b eb ab 48 c7 c1 60 b4 f9 a4 ba 3d 00 00 00 48 c7 c6 a0 b8 f9
->[ 3406.731432] RSP: 0018:ffff888f30317648 EFLAGS: 00010246
->[ 3406.731437] RAX: 0000000000000000 RBX: ffff888ee6ce12c8 RCX: 000000000000000c
->[ 3406.731440] RDX: 1ffff111dcd9c2a0 RSI: 0000000000000b33 RDI: ffff888ee6ce1500
->[ 3406.731442] RBP: ffff888f30317658 R08: 0000000000000000 R09: ffffed11db5f01a7
->[ 3406.731444] R10: 0000000000000001 R11: ffffed11db5f01a6 R12: ffff888ee6ce2ee8
->[ 3406.731447] R13: dffffc0000000000 R14: 0000000000000000 R15: ffff888f303178e0
->[ 3406.731450] FS:  00007fc015d5cb80(0000) GS:ffff888f6b800000(0000) knlGS:0000000000000000
->[ 3406.731452] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->[ 3406.731455] CR2: 0000557f34651000 CR3: 0000000f2c722000 CR4: 00000000003406f0
->[ 3406.731459] Call Trace:
->[ 3406.731465]  __ext4_journal_start_sb+0x95/0x380
->[ 3406.731479]  ext4_writepages+0x10e1/0x3170
->[ 3406.731567]  do_writepages+0xc7/0x120
->[ 3406.731577]  __filemap_fdatawrite_range+0x313/0x470
->[ 3406.731594]  file_write_and_wait_range+0x7c/0xd0
->[ 3406.731598]  __generic_file_fsync+0x6c/0x180
->[ 3406.731601]  ext4_sync_file+0x60b/0xf90
->[ 3406.731626]  vfs_fsync_range+0xf5/0x210
->[ 3406.731630]  do_fsync+0x3d/0x70
->[ 3406.731634]  __x64_sys_fdatasync+0x36/0x50
->[ 3406.731638]  do_syscall_64+0x153/0x460
->[ 3406.731666]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
->[ 3406.731669] RIP: 0033:0x7fc0152412c4
->[ 3406.731673] Code: 89 01 48 83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 48 8d 05 41 96 2d 00 8b 00 85 c0 75 13 b8 4b 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 3c f3 c3 66 90 53 89 fb 48 83 ec 10 e8 04 94
->[ 3406.731675] RSP: 002b:00007ffc445f72f8 EFLAGS: 00000246 ORIG_RAX: 000000000000004b
->[ 3406.731679] RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00007fc0152412c4
->[ 3406.731681] RDX: 00007ffc445f7250 RSI: 00007ffc445f7250 RDI: 0000000000000003
->[ 3406.731683] RBP: 0000000000000034 R08: 00007fc015515c40 R09: 0000000000000000
->[ 3406.731685] R10: 0000000000000000 R11: 0000000000000246 R12: 00000000000001f4
->[ 3406.731687] R13: 0000000051eb851f R14: 00007ffc445f73f6 R15: 0000557f33ad1930
->[ 3406.731690] ---[ end trace 698eba2a0467d312 ]---
->
->I'm also slightly confused here because this test is for ext4 without
->journal (see even "EXT4-fs (nvme0n1p2): mounted filesystem without
->journal") but for some reason it seems that this still goes to the
->journal?
+Commit 89a5e15bcba8 ("gpio/mmc/of: Respect polarity in the device tree")
+changed the behavior of "cd-inverted" to follow the device tree bindings
+specification.
+Lines specifying "cd-inverted" are now "acitve high".
 
-Following up on this, I can reproduce this failure somewhat reliably
-with 4.20.1-rc1 but can't with 4.20. If there's anything I can do to
-help debug this please let me know.
+Fix the SD card for meson by setting the cd-gpio as "active low" according
+to the boards specifications.
 
---
-Thanks,
-Sasha
+Fixes: 89a5e15bcba8 ("gpio/mmc/of: Respect polarity in the device tree")
+Signed-off-by: Loys Ollivier <lollivier@baylibre.com>
+---
+ arch/arm64/boot/dts/amlogic/meson-gxbb-nanopi-k2.dts           | 3 +--
+ arch/arm64/boot/dts/amlogic/meson-gxbb-nexbox-a95x.dts         | 3 +--
+ arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts            | 3 +--
+ arch/arm64/boot/dts/amlogic/meson-gxl-s905x-hwacom-amazetv.dts | 3 +--
+ arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts   | 3 +--
+ arch/arm64/boot/dts/amlogic/meson-gxl-s905x-nexbox-a95x.dts    | 3 +--
+ arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts          | 3 +--
+ arch/arm64/boot/dts/amlogic/meson-gxm-nexbox-a1.dts            | 3 +--
+ arch/arm64/boot/dts/amlogic/meson-gxm-rbox-pro.dts             | 3 +--
+ 9 files changed, 9 insertions(+), 18 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb-nanopi-k2.dts b/arch/arm64/boot/dts/amlogic/meson-gxbb-nanopi-k2.dts
+index 8cd50b75171d..ade2ee09ae96 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxbb-nanopi-k2.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-gxbb-nanopi-k2.dts
+@@ -305,8 +305,7 @@
+ 	max-frequency = <200000000>;
+ 	disable-wp;
+ 
+-	cd-gpios = <&gpio CARD_6 GPIO_ACTIVE_HIGH>;
+-	cd-inverted;
++	cd-gpios = <&gpio CARD_6 GPIO_ACTIVE_LOW>;
+ 
+ 	vmmc-supply = <&vddio_ao3v3>;
+ 	vqmmc-supply = <&vddio_tf>;
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb-nexbox-a95x.dts b/arch/arm64/boot/dts/amlogic/meson-gxbb-nexbox-a95x.dts
+index 4cf7f6e80c6a..25105ac96d55 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxbb-nexbox-a95x.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-gxbb-nexbox-a95x.dts
+@@ -238,8 +238,7 @@
+ 	max-frequency = <100000000>;
+ 	disable-wp;
+ 
+-	cd-gpios = <&gpio CARD_6 GPIO_ACTIVE_HIGH>;
+-	cd-inverted;
++	cd-gpios = <&gpio CARD_6 GPIO_ACTIVE_LOW>;
+ 
+ 	vmmc-supply = <&vddao_3v3>;
+ 	vqmmc-supply = <&vddio_card>;
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts b/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts
+index 2e1cd5e3a246..1cc9dc68ef00 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts
+@@ -258,8 +258,7 @@
+ 	max-frequency = <100000000>;
+ 	disable-wp;
+ 
+-	cd-gpios = <&gpio CARD_6 GPIO_ACTIVE_HIGH>;
+-	cd-inverted;
++	cd-gpios = <&gpio CARD_6 GPIO_ACTIVE_LOW>;
+ 
+ 	vmmc-supply = <&tflash_vdd>;
+ 	vqmmc-supply = <&tf_io>;
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-hwacom-amazetv.dts b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-hwacom-amazetv.dts
+index f1c410e2da2b..796baea7a0bf 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-hwacom-amazetv.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-hwacom-amazetv.dts
+@@ -131,8 +131,7 @@
+ 	max-frequency = <100000000>;
+ 	disable-wp;
+ 
+-	cd-gpios = <&gpio CARD_6 GPIO_ACTIVE_HIGH>;
+-	cd-inverted;
++	cd-gpios = <&gpio CARD_6 GPIO_ACTIVE_LOW>;
+ 
+ 	vmmc-supply = <&vddao_3v3>;
+ 	vqmmc-supply = <&vddio_card>;
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts
+index db293440e4ca..255cede7b447 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts
+@@ -238,8 +238,7 @@
+ 	max-frequency = <100000000>;
+ 	disable-wp;
+ 
+-	cd-gpios = <&gpio CARD_6 GPIO_ACTIVE_HIGH>;
+-	cd-inverted;
++	cd-gpios = <&gpio CARD_6 GPIO_ACTIVE_LOW>;
+ 
+ 	vmmc-supply = <&vcc_3v3>;
+ 	vqmmc-supply = <&vcc_card>;
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-nexbox-a95x.dts b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-nexbox-a95x.dts
+index 6739697be1de..9cbdb85fb591 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-nexbox-a95x.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-nexbox-a95x.dts
+@@ -183,8 +183,7 @@
+ 	max-frequency = <100000000>;
+ 	disable-wp;
+ 
+-	cd-gpios = <&gpio CARD_6 GPIO_ACTIVE_HIGH>;
+-	cd-inverted;
++	cd-gpios = <&gpio CARD_6 GPIO_ACTIVE_LOW>;
+ 
+ 	vmmc-supply = <&vddao_3v3>;
+ 	vqmmc-supply = <&vddio_card>;
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts b/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts
+index 3c3a667a8df8..3f086ed7de05 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts
+@@ -356,8 +356,7 @@
+ 	max-frequency = <100000000>;
+ 	disable-wp;
+ 
+-	cd-gpios = <&gpio CARD_6 GPIO_ACTIVE_HIGH>;
+-	cd-inverted;
++	cd-gpios = <&gpio CARD_6 GPIO_ACTIVE_LOW>;
+ 
+ 	vmmc-supply = <&vddao_3v3>;
+ 	vqmmc-supply = <&vddio_boot>;
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxm-nexbox-a1.dts b/arch/arm64/boot/dts/amlogic/meson-gxm-nexbox-a1.dts
+index f7a1cffab4a8..8acfd40090d2 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxm-nexbox-a1.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-gxm-nexbox-a1.dts
+@@ -147,8 +147,7 @@
+ 	max-frequency = <100000000>;
+ 	disable-wp;
+ 
+-	cd-gpios = <&gpio CARD_6 GPIO_ACTIVE_HIGH>;
+-	cd-inverted;
++	cd-gpios = <&gpio CARD_6 GPIO_ACTIVE_LOW>;
+ 
+ 	vmmc-supply = <&vddao_3v3>;
+ 	vqmmc-supply = <&vddio_boot>;
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gxm-rbox-pro.dts b/arch/arm64/boot/dts/amlogic/meson-gxm-rbox-pro.dts
+index 7212dc4531e4..7fa20a8ede17 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gxm-rbox-pro.dts
++++ b/arch/arm64/boot/dts/amlogic/meson-gxm-rbox-pro.dts
+@@ -170,8 +170,7 @@
+ 	max-frequency = <100000000>;
+ 	disable-wp;
+ 
+-	cd-gpios = <&gpio CARD_6 GPIO_ACTIVE_HIGH>;
+-	cd-inverted;
++	cd-gpios = <&gpio CARD_6 GPIO_ACTIVE_LOW>;
+ 
+ 	vmmc-supply = <&vddao_3v3>;
+ 	vqmmc-supply = <&vddio_boot>;
+-- 
+2.7.4
+
