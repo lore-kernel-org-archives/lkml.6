@@ -2,167 +2,103 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67E47C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 22:21:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A48A5C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 22:21:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3786E206B6
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 22:21:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mUV07l1/"
+	by mail.kernel.org (Postfix) with ESMTP id 7B164206B6
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 22:21:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727070AbfAIWVB (ORCPT
+        id S1727091AbfAIWV3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 17:21:01 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:35221 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726221AbfAIWVA (ORCPT
+        Wed, 9 Jan 2019 17:21:29 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:45910 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726221AbfAIWV2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 17:21:00 -0500
-Received: by mail-wr1-f66.google.com with SMTP id 96so9296846wrb.2
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jan 2019 14:20:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=XsoWdDkzT0sjnxj6ApB92bBmiRVQ8Jt4mee9E/08j3Y=;
-        b=mUV07l1/9lHF6tfSk/j/ylUsNo5bBDWP1aP0oshDjfduT3bWkd/5qTJVinwFqgdVZo
-         MqJed3xiw63vkkIufmfLXjhGk5lR6L2L1n0/QlV/GDxuPX972Qs6uWzTtfKjwcgonYay
-         W1uzcFotESLZx+tzRJpzXtYAwDHXpQAkiPJ/CUkz1P6CBTDylQf5U2zqz/C6b4Jx0u2B
-         m3wn/nBsSaildvpLB1WgK0nP965e99uIybqhUUrgF1rtaYZfeD8Rx1/g5rbpEQNpQhUy
-         t92LEHtEdZd06/Mfqpj/lzhU6uJvze0B+PgkNIYgFSvjwrv/6FuzO77vqZ5pnRm5ibJF
-         jwLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=XsoWdDkzT0sjnxj6ApB92bBmiRVQ8Jt4mee9E/08j3Y=;
-        b=Tz2wae6XhPrIInzaQUzBWucMC1P4m+Z9+3fv1Tr+punYcTY+lsUW+pGkC6l1K0gHI5
-         R5PqJKRqQjphZkqy8LstVfBAWi4/kLU4AUSO1VQJsqdXFiY0naMVlMTdvPaFXrMksL/o
-         6B4JCGimurZ/poWWzwJhb4mm7cXZjhRPXEZjx5rOdm9zWRSJQ5zxGdumExvI1q+bszyO
-         UwGB8030tY41nPngj+hVSl33T1M/ABIsKeAvTnmQwwCWNSBDDCoPzzSlbjO9hkUL/WTA
-         IW7f0SBdMXs8WgxaMIiDKajNGzfxea51B3X7dubOgyyoNc8zZaYXUl5tcygePH6pKkhG
-         +nfA==
-X-Gm-Message-State: AJcUukdHohOpWfUpX7J+zEopvuL0kliD8091/Vz9kzTR5PVSVlbWzsFy
-        MqiG9ssqz3f9WMptbBkYItZ0rXwH
-X-Google-Smtp-Source: ALg8bN7QZNHBJsMItKGDXxOb/V1SofZhboM2PTmEtaFifoPgHQntER4JjBzkk2QltqM9vizIm3BymA==
-X-Received: by 2002:a5d:49cd:: with SMTP id t13mr6768994wrs.144.1547072458211;
-        Wed, 09 Jan 2019 14:20:58 -0800 (PST)
-Received: from ?IPv6:2003:ea:8be2:e400:30af:bb11:dc41:cedc? (p200300EA8BE2E40030AFBB11DC41CEDC.dip0.t-ipconnect.de. [2003:ea:8be2:e400:30af:bb11:dc41:cedc])
-        by smtp.googlemail.com with ESMTPSA id k135sm17018292wmd.42.2019.01.09.14.20.56
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 09 Jan 2019 14:20:57 -0800 (PST)
-Subject: Re: Fix 80d20d35af1e ("nohz: Fix local_timer_softirq_pending()") may
- have revealed another problem
-From:   Heiner Kallweit <hkallweit1@gmail.com>
-To:     Frederic Weisbecker <frederic@kernel.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Anna-Maria Gleixner <anna-maria@linutronix.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Grygorii Strashko <grygorii.strashko@ti.com>
-References: <67ce38dc-1f00-55c6-f9ae-2dec00172cf6@gmail.com>
- <alpine.DEB.2.21.1808241000340.1668@nanos.tec.linutronix.de>
- <20180824143056.GC2730@lerouge>
- <d8fd3322-e982-2c9c-85e3-9b1770357520@gmail.com>
- <20180828022545.GA25943@lerouge>
- <alpine.DEB.2.21.1809271805190.8118@nanos.tec.linutronix.de>
- <20180928131855.GB8795@lerouge>
- <c472b6bf-e4af-d807-e63f-75211ce295bd@gmail.com>
- <20181227065321.GA3749@lerouge>
- <e838fa7f-f43f-7b3c-aae6-edb4f6734964@gmail.com>
- <20181228013109.GB3749@lerouge>
- <d9647487-28db-d138-ae3e-3fd0d2fbe589@gmail.com>
- <5aa51fc1-5a5c-0c61-5c28-0d9ca98e4514@gmail.com>
-Message-ID: <596c9dc3-5cf4-73e8-b3ea-40fcb8c5f711@gmail.com>
-Date:   Wed, 9 Jan 2019 23:20:50 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Wed, 9 Jan 2019 17:21:28 -0500
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x09MJMJF019599
+        for <linux-kernel@vger.kernel.org>; Wed, 9 Jan 2019 17:21:28 -0500
+Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2pwrhytuwc-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Jan 2019 17:21:27 -0500
+Received: from localhost
+        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Wed, 9 Jan 2019 22:21:26 -0000
+Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
+        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 9 Jan 2019 22:21:21 -0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x09MLK4o22741062
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 9 Jan 2019 22:21:20 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B240CB2065;
+        Wed,  9 Jan 2019 22:21:20 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 91BD4B2064;
+        Wed,  9 Jan 2019 22:21:20 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.88])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Wed,  9 Jan 2019 22:21:20 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 6A6D416C316A; Wed,  9 Jan 2019 14:21:20 -0800 (PST)
+Date:   Wed, 9 Jan 2019 14:21:20 -0800
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
+        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
+        josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
+        rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
+        fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org
+Subject: [PATCH tip/core/rcu 0/2] spin_is_locked() conversions for v5.1
+Reply-To: paulmck@linux.ibm.com
 MIME-Version: 1.0
-In-Reply-To: <5aa51fc1-5a5c-0c61-5c28-0d9ca98e4514@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 19010922-0072-0000-0000-000003E741F0
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010375; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000274; SDB=6.01144163; UDB=6.00595719; IPR=6.00924425;
+ MB=3.00025056; MTD=3.00000008; XFM=3.00000015; UTC=2019-01-09 22:21:25
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19010922-0073-0000-0000-00004ABF879C
+Message-Id: <20190109222120.GA13904@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-09_11:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=601 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901090178
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 28.12.2018 07:39, Heiner Kallweit wrote:
-> On 28.12.2018 07:34, Heiner Kallweit wrote:
->> On 28.12.2018 02:31, Frederic Weisbecker wrote:
->>> On Fri, Dec 28, 2018 at 12:11:12AM +0100, Heiner Kallweit wrote:
->>>>
->> [...]
->>>
->>> Interesting, the softirq is raised from hardirq but it's not handled in the end of
->>> the IRQ. Are you running threaded IRQS by any chance? If so I would expect ksoftirqd
->>> to handle the pending work before we go idle. However I can imagine a small window
->>> where such an expectation may not be met: if the softirq is raised after the ksoftirqd
->>> thread is parked (CPUHP_AP_SMPBOOT_THREADS), which is right before we disable the CPU
->>> (CPUHP_TEARDOWN_CPU).
->>>
->> I have a network driver (r8169) using NAPI which runs in softirq context AFAIK.
->> For testing purposes I sometimes trigger system suspend via network, so there is
->> network adapter activity when system suspends. Apart from that nothing really
->> exciting:
->>             CPU0       CPU1       CPU2       CPU3
->>    0:         43          0          0          0   IO-APIC    2-edge      timer
->>    1:          4          0          0          0   IO-APIC    1-edge      i8042
->>    8:          0          1          0          0   IO-APIC    8-fasteoi   rtc0
->>    9:          0          0          0          0   IO-APIC    9-fasteoi   acpi
->>   12:          0          0          0          5   IO-APIC   12-edge      i8042
->>  120:          0          0          0          0   PCI-MSI 311296-edge      PCIe PME
->>  121:          0          0          0          0   PCI-MSI 315392-edge      PCIe PME
->>  122:          0          0          0          0   PCI-MSI 327680-edge      PCIe PME
->>  123:          0          0       3328          0   PCI-MSI 294912-edge      ahci[0000:00:12.0]
->>  124:          0        133          0          0   PCI-MSI 344064-edge      xhci_hcd
->>  125:          0          0         32          0   PCI-MSI 245760-edge      mei_me
->>  127:        381          0          0          0   PCI-MSI 1572864-edge      enp3s0
->>  128:          0          0          0        236   PCI-MSI 32768-edge      i915
->>  129:          0        374          0          0   PCI-MSI 229376-edge      snd_hda_intel:card0
->>
->>> I don't know if we can afford to ignore a softirq even at this late stage. We should
->>> probably avoid leaking any. So here is a possible fix, if you don't mind trying:
->>>
->> I tested your patch and at least in the first minutes of testing couldn't reproduce
->> the issue any longer. I tested manual system suspend and the following script you
->> sent when we started to analyze the issue.
->>
-> 
-> Also after some more time the issue didn't occur again. So it seems your analysis
-> was right and also the approach to fix it. Thanks!
-> Will let you know in case the issue should pop up again under special
-> circumstances.
-> 
-Frederic, so far this fix didn't appear in linux-next, are you going to submit it?
+Hello!
 
-> 
->> Heiner
->>
->> --------------------------------------------------------------------------
->>
->> #!/bin/bash
->>
->> do_hotplug()
->> {
->> 	for i in $(seq 1 $2)
->> 	do
->> 		echo $1 > /sys/devices/system/cpu/cpu$i/online
->> 	done
->> }
->>
->> LAST_CPU=$(($(nproc)-1))
->>
->> while true
->> do
->> 	do_hotplug 0 $LAST_CPU
->> 	do_hotplug 1 $LAST_CPU
->> done
->>
-> 
+This series further de-emphasizes use spin_is_locked()-based warnings
+in favor of lockdep_assert_held().
+
+1.	Remove spin_is_locked() comment from include/asm-generic.
+
+2.	Replace spin_is_locked() with lockdep in virt/kvm.
+
+							Thanx, Paul
+
+------------------------------------------------------------------------
+
+ include/asm-generic/bug.h |    3 ---
+ virt/kvm/kvm_main.c       |    2 +-
+ 2 files changed, 1 insertion(+), 4 deletions(-)
 
