@@ -3,114 +3,100 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D98C6C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 16:49:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EFFFC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 16:50:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ABBA7206BB
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 16:49:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D937B20859
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 16:50:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726585AbfAIQtV (ORCPT
+        id S1726621AbfAIQuJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 11:49:21 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:52522 "EHLO mx1.redhat.com"
+        Wed, 9 Jan 2019 11:50:09 -0500
+Received: from muru.com ([72.249.23.125]:32784 "EHLO muru.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725785AbfAIQtR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 11:49:17 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 96C10C0C427A;
-        Wed,  9 Jan 2019 16:49:17 +0000 (UTC)
-Received: from krava (unknown [10.43.17.222])
-        by smtp.corp.redhat.com (Postfix) with SMTP id DF8C460C45;
-        Wed,  9 Jan 2019 16:49:15 +0000 (UTC)
-Date:   Wed, 9 Jan 2019 17:49:15 +0100
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Alexey Budankov <alexey.budankov@linux.intel.com>
-Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 2/4] perf record: bind the AIO user space buffers to
- nodes
-Message-ID: <20190109164915.GB19455@krava>
-References: <e8fccb5e-31b7-b3a0-74bf-490c2d439ab4@linux.intel.com>
- <e616e65f-bf53-e87e-b906-4fd9dce86380@linux.intel.com>
- <20190101214117.GI13760@krava>
- <d03c0f6b-57d8-773b-7d82-316c2bef2fb3@linux.intel.com>
+        id S1725785AbfAIQuI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 11:50:08 -0500
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id 5984F80C5;
+        Wed,  9 Jan 2019 16:50:13 +0000 (UTC)
+Date:   Wed, 9 Jan 2019 08:50:04 -0800
+From:   Tony Lindgren <tony@atomide.com>
+To:     Vincent Guittot <vincent.guittot@linaro.org>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        LAK <linux-arm-kernel@lists.infradead.org>,
+        Linux OMAP Mailing List <linux-omap@vger.kernel.org>,
+        Ladislav Michl <ladis@linux-mips.org>
+Subject: Re: Regression in v5.0-rc1 with autosuspend hrtimers
+Message-ID: <20190109165004.GQ5544@atomide.com>
+References: <20190107233833.GI5544@atomide.com>
+ <CAKfTPtDBEmcsLotp-6K1KU1wM9Ba1EpMp3niXScRxYgzjs0nog@mail.gmail.com>
+ <20190108155354.GL5544@atomide.com>
+ <CAKfTPtCoOK-cYLXJ--sOfpVa9RVmzOAEN1+zB2qHMCzkJN0qaQ@mail.gmail.com>
+ <20190108213743.GN5544@atomide.com>
+ <20190109014218.GA8363@linaro.org>
+ <20190109015124.GO5544@atomide.com>
+ <CAJZ5v0hi5sVESKPbZoniikOhNxdUDtJhQrs39Fib8B03MYoMMQ@mail.gmail.com>
+ <20190109162846.GP5544@atomide.com>
+ <CAKfTPtBzE9fqDgUOJ4uTj_Dtfe2KCp+R4FajAaQqpV02upQZJA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <d03c0f6b-57d8-773b-7d82-316c2bef2fb3@linux.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Wed, 09 Jan 2019 16:49:17 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAKfTPtBzE9fqDgUOJ4uTj_Dtfe2KCp+R4FajAaQqpV02upQZJA@mail.gmail.com>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 09, 2019 at 12:12:37PM +0300, Alexey Budankov wrote:
-> Hi,
+* Vincent Guittot <vincent.guittot@linaro.org> [190109 16:48]:
+> On Wed, 9 Jan 2019 at 17:28, Tony Lindgren <tony@atomide.com> wrote:
+> >
+> > * Rafael J. Wysocki <rafael@kernel.org> [190109 09:44]:
+> > > On Wed, Jan 9, 2019 at 2:51 AM Tony Lindgren <tony@atomide.com> wrote:
+> > > >
+> > > > * Vincent Guittot <vincent.guittot@linaro.org> [190109 01:42]:
+> > > > > Le Tuesday 08 Jan 2019 à 13:37:43 (-0800), Tony Lindgren a écrit :
+> > > > > > Lowering the autosuspend_delay_ms to 2100 ms makes things work again.
+> > > > > > Anything higher than 2200 ms seems to somehow time out immediately
+> > > > > > now :)
+> > > > >
+> > > > > This is quite close to the max ns of an int on arm 32bits
+> > > > >
+> > > > > Could you try the patch below ?
+> > > >
+> > > > Yup great thanks, that's it:
+> > > >
+> > > > Tested-by: Tony Lindgren <tony@atomide.com>
+> > >
+> > > Cool.  Thanks for getting to the bottom of this!
+> >
+> > No problem.
+> >
+> > One more thing I noticed: The 25% slack can get noticeable
+> > for larger values. For things like a 3 second uart console
+> > timeout slack of 750 ms is quite large variation.
+> >
+> > Should we have a limit of max 100 ms for the slack?
 > 
-> On 02.01.2019 0:41, Jiri Olsa wrote:
-> > On Mon, Dec 24, 2018 at 03:24:36PM +0300, Alexey Budankov wrote:
-> > 
-> > SNIP
-> > 
-> >> +static void perf_mmap__aio_free(void **data, size_t len __maybe_unused)
-> >> +{
-> >> +	zfree(data);
-> >> +}
-> >> +
-> >> +static void perf_mmap__aio_bind(void *data __maybe_unused, size_t len __maybe_unused,
-> >> +                                int cpu __maybe_unused, int affinity __maybe_unused)
-> >> +{
-> >> +}
-> >> +#endif
-> >> +
-> >>  static int perf_mmap__aio_mmap(struct perf_mmap *map, struct mmap_params *mp)
-> >>  {
-> >>  	int delta_max, i, prio;
-> >> @@ -177,11 +220,13 @@ static int perf_mmap__aio_mmap(struct perf_mmap *map, struct mmap_params *mp)
-> >>  		}
-> >>  		delta_max = sysconf(_SC_AIO_PRIO_DELTA_MAX);
-> >>  		for (i = 0; i < map->aio.nr_cblocks; ++i) {
-> >> -			map->aio.data[i] = malloc(perf_mmap__mmap_len(map));
-> >> +			size_t mmap_len = perf_mmap__mmap_len(map);
-> >> +			perf_mmap__aio_alloc(&(map->aio.data[i]), mmap_len);
-> >>  			if (!map->aio.data[i]) {
-> >>  				pr_debug2("failed to allocate data buffer area, error %m");
-> >>  				return -1;
-> >>  			}
-> >> +			perf_mmap__aio_bind(map->aio.data[i], mmap_len, map->cpu, mp->affinity);
-> > 
-> > this all does not work if bind fails.. I think we need to
-> > propagate the error value here and fail
-> 
-> Proceeding further from this point still makes sense because 
-> the buffer is available for operations and thread migration 
-> alone can bring performance benefits. So the error is not fatal 
-> and an explicit warning is implemented in v3. If you still think 
-> it is better to propagate error from here it can be implemented.
+> Keep in mind that when jiffies were used, expires was rounded to a
+> full second when delay was greater than a second. So you could already
+> have difference of up 990ms on arm before this patch
+> And i don't take into account the rework of timer infra which add
+> another level of variation, something like up to 640 ms more when the
+> timer is greater than 2880 ms for arm IIRC
 
-so if that fails that the aio buffers won't be bound to node,
-while mmaps are, so I guess the speedup is from there?
+I think it was rounded up earlier.
 
-if I use:
+Don't we get rounded down now also?
 
-# perf record --aio --affinity=node
+Regards,
 
-and see:
-  "failed to bind..."
-
-I can still see the benefit..? I guess the warning is ok then,
-another option seems confusing
-
-jirka
+Tony
