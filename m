@@ -2,314 +2,164 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12694C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 13:05:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8221C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 13:07:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD3CF20665
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 13:05:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7F26120665
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 13:07:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="i+r2m2pt"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730808AbfAINFQ (ORCPT
+        id S1730488AbfAINHM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 08:05:16 -0500
-Received: from foss.arm.com ([217.140.101.70]:43226 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729721AbfAINFQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 08:05:16 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 08317A78;
-        Wed,  9 Jan 2019 05:05:15 -0800 (PST)
-Received: from [10.1.196.72] (e119884-lin.cambridge.arm.com [10.1.196.72])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 92A9F3F6CF;
-        Wed,  9 Jan 2019 05:05:10 -0800 (PST)
-Subject: Re: [RFC][PATCH 2/3] arm64: Define
- Documentation/arm64/elf_at_flags.txt
-To:     Dave Martin <Dave.Martin@arm.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-        linux-mm@kvack.org, linux-arch@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Kostya Serebryany <kcc@google.com>,
-        Chintan Pandya <cpandya@codeaurora.org>,
-        Shuah Khan <shuah@kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        Jacob Bramley <Jacob.Bramley@arm.com>,
-        Evgeniy Stepanov <eugenis@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Lee Smith <Lee.Smith@arm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-References: <cover.1544445454.git.andreyknvl@google.com>
- <20181210143044.12714-1-vincenzo.frascino@arm.com>
- <20181210143044.12714-3-vincenzo.frascino@arm.com>
- <20181212173457.GA3505@e103592.cambridge.arm.com>
-From:   Vincenzo Frascino <vincenzo.frascino@arm.com>
-Message-ID: <0947d735-c572-834a-efd3-8377d698ac8c@arm.com>
-Date:   Wed, 9 Jan 2019 13:05:08 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <20181212173457.GA3505@e103592.cambridge.arm.com>
-Content-Type: text/plain; charset=utf-8
+        Wed, 9 Jan 2019 08:07:12 -0500
+Received: from esa2.microchip.iphmx.com ([68.232.149.84]:12611 "EHLO
+        esa2.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729603AbfAINHL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 08:07:11 -0500
+X-IronPort-AV: E=Sophos;i="5.56,457,1539673200"; 
+   d="scan'208";a="25104845"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa2.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 09 Jan 2019 06:07:10 -0700
+Received: from NAM02-CY1-obe.outbound.protection.outlook.com (10.10.215.89) by
+ email.microchip.com (10.10.76.107) with Microsoft SMTP Server (TLS) id
+ 14.3.352.0; Wed, 9 Jan 2019 06:07:09 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=microchiptechnology.onmicrosoft.com;
+ s=selector1-microchiptechnology-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=y+gBv1zSqp2gZfuvWSW7T2W4nask9PLQeN2EcB7r5dM=;
+ b=i+r2m2ptA/L/A02atSjhDft3B6EVC0UyCqEvnQLsoLZziZNe5P67f6/1m9NXtOyrhVoapyPIK/fig1Y2XyvFU+FVXkqwY8ffLJ0GVau9UxYvxTEdaqhEbekXOixRfCiqhGHE0rxq5XN+J/ryiNe2fGcurTKOWE9dpbMkRlb4SFo=
+Received: from DM5PR11MB1242.namprd11.prod.outlook.com (10.168.108.8) by
+ DM5PR11MB1914.namprd11.prod.outlook.com (10.175.87.19) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1495.9; Wed, 9 Jan 2019 13:07:06 +0000
+Received: from DM5PR11MB1242.namprd11.prod.outlook.com
+ ([fe80::d41b:896d:ae28:5a57]) by DM5PR11MB1242.namprd11.prod.outlook.com
+ ([fe80::d41b:896d:ae28:5a57%12]) with mapi id 15.20.1495.011; Wed, 9 Jan 2019
+ 13:07:06 +0000
+From:   <Eugen.Hristev@microchip.com>
+To:     <luis.oliveira@synopsys.com>, <linux-media@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     <joao.pinto@synopsys.com>, <festevam@gmail.com>,
+        <mchehab@kernel.org>, <gregkh@linuxfoundation.org>,
+        <davem@davemloft.net>, <akpm@linux-foundation.org>,
+        <arnd@arndb.de>, <hans.verkuil@cisco.com>,
+        <laurent.pinchart@ideasonboard.com>, <geert@linux-m68k.org>,
+        <narmstrong@baylibre.com>, <p.zabel@pengutronix.de>,
+        <treding@nvidia.com>, <maxime.ripard@bootlin.com>,
+        <todor.tomov@linaro.org>
+Subject: Re: [V3, 4/4] media: platform: dwc: Add MIPI CSI-2 controller driver
+Thread-Topic: [V3, 4/4] media: platform: dwc: Add MIPI CSI-2 controller driver
+Thread-Index: AQHUqBuhCcv9szjWl0qFFgx76hUWpA==
+Date:   Wed, 9 Jan 2019 13:07:06 +0000
+Message-ID: <4db76eb2-460f-c644-6dbd-370b07b2def8@microchip.com>
+References: <1539953556-35762-1-git-send-email-lolivei@synopsys.com>
+ <1539953556-35762-5-git-send-email-lolivei@synopsys.com>
+In-Reply-To: <1539953556-35762-5-git-send-email-lolivei@synopsys.com>
+Accept-Language: ro-RO, en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: VI1PR07CA0171.eurprd07.prod.outlook.com
+ (2603:10a6:802:3e::19) To DM5PR11MB1242.namprd11.prod.outlook.com
+ (2603:10b6:3:14::8)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Eugen.Hristev@microchip.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [94.177.32.154]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DM5PR11MB1914;6:iEQF/B5oC+3JqNo3mWZ2pye4zMwE827NDmhBZasRkH2ekPVcPUmPjJMIyniT/vlsaCiW09m0BdIuAcwlO5TA70tJ+7mgm4b5OYqrRarOCYHTowtshRAWM/QiRuQpOsNP/FINSX9E/BmMgcWn2sCAhqakESFPub5fVSrDJxAvLUsIs/NfLAqpsw/3Ifw7BIRxHgpO/eNLI6fcDzX59mCKhbknt+QbOEBOer8Vd9+LOz3EeO1PqPTm59xpqxr3s6KtGTSew2PR2DAo0tBjMB/upgIXzk5RX6etOUnqwKh6DHhYs4EcNYSMh8lnFuW5iefbX97PQ/2gZuW+VnTfztlVYaUBJxzAncnxiFZsnAlL9rKriOpfw/78YBitJKkrdSXZd+iBvgA+P0vBbAz/kZOFpoQFER2E8tMYvc62BANyRuOtgFfR7+vt3QaTWpnmVWjUO8NYzenYLPrcTvdUK73ZYQ==;5:swE8vRAa4z0kH79Pfz6G/aOI9ONhqvzbDVdYN+2x8lwPqTpUhspMhDb1hClfGHaAhhJrdAMdB0ku3mcR0pzIap7sVULCAr5wUo43h/vfganPffVKUHxuAlAOEy/bRSDWKSB/JNNL5MyhnXC7vQSpgETwlomjasSnPPVn3iucJk2wfg5Q3tjiAQ5OfcZT6izvSEgd03WFe4dlIFldurk8aA==;7:dUXJacNefxbWqP2G2Amob1Fi7JtGQRQ/vLLBEL8bGdBEwgJyqheacDkbHP4P68lrxSB+5sdi4Dc+Pc0f0DFfdj28TEF4w5FmKqxOX3/lQBlT/iav7C6M+GGVgm992ATeU3V9QkLMAH992MHNMBI8lA==
+x-ms-office365-filtering-correlation-id: 02cf984d-74c4-4f5c-bbfb-08d676335aec
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(2017052603328)(7153060)(7193020);SRVR:DM5PR11MB1914;
+x-ms-traffictypediagnostic: DM5PR11MB1914:
+x-microsoft-antispam-prvs: <DM5PR11MB19140995ABBE77C1FEA77975E88B0@DM5PR11MB1914.namprd11.prod.outlook.com>
+x-forefront-prvs: 0912297777
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(136003)(396003)(376002)(346002)(39860400002)(54534003)(199004)(189003)(106356001)(36756003)(305945005)(52116002)(105586002)(25786009)(11346002)(31686004)(3846002)(6116002)(2616005)(476003)(446003)(2906002)(256004)(4326008)(6246003)(53936002)(186003)(102836004)(26005)(6506007)(6512007)(39060400002)(386003)(53546011)(76176011)(14444005)(7736002)(2501003)(7416002)(478600001)(31696002)(54906003)(86362001)(110136005)(68736007)(8936002)(97736004)(6486002)(99286004)(66066001)(316002)(72206003)(6436002)(486006)(8676002)(81156014)(229853002)(5660300001)(71200400001)(71190400001)(2201001)(14454004)(81166006);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR11MB1914;H:DM5PR11MB1242.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: microchip.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: /0HUnnBrHTp6S1PyKBjrrEVJ+tXXqEplXdyxlb8H0HJVQIH5x4nuO6w9e3LKGj0q5r9RqG9cRMCJgJSWeBT0le46tMLp27HmMhwjPRqrYnxtGwCQOM0LONZw9bgJJ1vlF5s39e60wz3wZzJHzZcwwkUet2r59fo/vh7r4eLB01tAe25+oHi4W/or9Ua1NxTAskxdVdRODz5AeHBmBD2kW0++duTv2KzIjQ9u8f6cMIZczcZq8HZ94hvxOyLh7DuE1PRNNm5Z8cNKgfHAXvLzaoZgzN7hS+3cuCqLasRc9LepohIttz8aZvUTlQTQg6GI
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <F4E8609EE337F8499315817F1C172486@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-MS-Exchange-CrossTenant-Network-Message-Id: 02cf984d-74c4-4f5c-bbfb-08d676335aec
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Jan 2019 13:07:06.3189
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR11MB1914
+X-OriginatorOrg: microchip.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/12/2018 17:34, Dave Martin wrote:
-> On Mon, Dec 10, 2018 at 02:30:43PM +0000, Vincenzo Frascino wrote:
->> On arm64 the TCR_EL1.TBI0 bit has been set since Linux 3.x hence
->> the userspace (EL0) is allowed to set a non-zero value in the
->> top byte but the resulting pointers are not allowed at the
->> user-kernel syscall ABI boundary.
->>
->> With the relaxed ABI proposed through this document, it is now possible
->> to pass tagged pointers to the syscalls, when these pointers are in
->> memory ranges obtained by an anonymous (MAP_ANONYMOUS) mmap() or brk().
-> 
-> What about other anonymous memory such as the process stack?
->
-
-The process stack is set up by the kernel as a consequence of the exec* family
-of system calls in a way that should be transparent to the userspace.
-For what concerns the userspace applications, the ones that are aware of the
-AT_FLAGS[0] should assume that the stack is always tagged.
-
-> What about MAP_PRIVATE mappings of /dev/zero (i.e., oldskool "anonymous"
-> mappings)?
-> 
-
-MAP_PRIVATE of /dev/zero is equivalent to MAP_ANONYMOUS | MAP_PRIVATE, hence it
-should follow the same rule of MAP_ANONYMOUS obtained memory ranges.
-
-> I wonder whether this should really say MAP_PRIVATE rather than
-> MAP_ANONYMOUS.  There are two requirements here:
-> 
->  * the memory must be the exclusive property of a single process,
->    otherwise tagging it on-the-fly could break some other process;
-> 
-
-I think that it is responsibility of the userspace to tag or not a shared area.
-I do not think that we should exclude MAP_ANONYMOUS | MAP_SHARED because if such
-an area is tagged improperly by a userspace process, the kernel will be able to
-detect the issue and report it.
-
->  * the memory should be regular memory, i.e., not something like a
->    mapped device.  Since copy-on-write mappings of devices make little
->    sense, and we want writes to devices to propagate to the hardware
->    directly, MAP_PRIVATE doesn't make a lot of sense for such mappings.
-> 
-
-What we are trying to target with this ABI change are only pointers in NORMAL
-memory ranges. DEVICE memory should be untagged.
-
-...
-
-> I'm assuming here that tagging some currently shared copy-on-write pages
-> would throw a page fault and trigger a copy, so that we end up tagging
-> the calling process's private copy of the page.
-> 
-> I also don't see how the above requirements conflict with regular file-
-> backed mappings (which would need to work if you want to be able to
-> tag objects in .bss or .data etc.)
->
-
-I agree that we should look at the more general cases to make sure that we will
-not face any incompatibility in future, but, what I am proposing here, assumes
-that the memory areas that can be tagged are only the stack and the heap. This
-is because the features that will use it will be mostly looking for memory
-related errors in these areas.
-
->> This change in the ABI requires a mechanism to inform the userspace
->> that such an option is available.
->>
->> This patch specifies and documents the way on which AT_FLAGS can be
->> used to advertise this feature to the userspace.
->>
->> Cc: Catalin Marinas <catalin.marinas@arm.com>
->> Cc: Will Deacon <will.deacon@arm.com>
->> CC: Andrey Konovalov <andreyknvl@google.com>
->> Signed-off-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
->> ---
->>  Documentation/arm64/elf_at_flags.txt | 111 +++++++++++++++++++++++++++
->>  1 file changed, 111 insertions(+)
->>  create mode 100644 Documentation/arm64/elf_at_flags.txt
->>
->> diff --git a/Documentation/arm64/elf_at_flags.txt b/Documentation/arm64/elf_at_flags.txt
->> new file mode 100644
->> index 000000000000..153e657c058a
->> --- /dev/null
->> +++ b/Documentation/arm64/elf_at_flags.txt
->> @@ -0,0 +1,111 @@
->> +ARM64 ELF AT_FLAGS
->> +==================
->> +
->> +This document describes the usage and semantics of AT_FLAGS on arm64.
->> +
->> +1. Introduction
->> +---------------
->> +
->> +AT_FLAGS is part of the Auxiliary Vector, contains the flags and it
->> +is currently set to zero by the kernel on arm64.
->> +
->> +The auxiliary vector can be accessed by the userspace using the
->> +getauxval() API provided by the C library.
->> +getauxval() returns an unsigned long and when a flag is present in
->> +the AT_FLAGS, the corresponding bit in the returned value is set to 1.
->> +
->> +The AT_FLAGS with a "defined semantic" on arm64 are exposed to the
->> +userspace via user API (uapi/asm/atflags.h).
->> +The AT_FLAGS bits with "undefined semantics" are set to zero by default.
->> +This means that the AT_FLAGS bits to which this document does not assign
->> +an explicit meaning are to be intended reserved for future use.
->> +The kernel will populate all such bits with zero until meanings are
->> +assigned to them. If and when meanings are assigned, it is guaranteed
->> +that they will not impact the functional operation of existing userspace
->> +software. Userspace software should ignore any AT_FLAGS bit whose meaning
->> +is not defined when the software is written.
->> +
->> +The userspace software can test for features by acquiring the AT_FLAGS
->> +entry of the auxiliary vector, and testing whether a relevant flag
->> +is set.
->> +
->> +Example of a userspace test function:
->> +
->> +bool feature_x_is_present(void)
->> +{
->> +	unsigned long at_flags = getauxval(AT_FLAGS);
->> +	if (at_flags & FEATURE_X)
->> +		return true;
->> +
->> +	return false;
->> +}
->> +
->> +Where the software relies on a feature advertised by AT_FLAGS, it
->> +should check that the feature is present before attempting to
->> +use it.
->> +
->> +2. Features exposed via AT_FLAGS
->> +--------------------------------
->> +
->> +bit[0]: ARM64_AT_FLAGS_SYSCALL_TBI
->> +
->> +    On arm64 the TCR_EL1.TBI0 bit has been set since Linux 3.x hence
->> +    the userspace (EL0) is allowed to set a non-zero value in the top
->> +    byte but the resulting pointers are not allowed at the user-kernel
->> +    syscall ABI boundary.
->> +    When bit[0] is set to 1 the kernel is advertising to the userspace
->> +    that a relaxed ABI is supported hence this type of pointers are now
->> +    allowed to be passed to the syscalls, when these pointers are in
->> +    memory ranges obtained by anonymous (MAP_ANONYMOUS) mmap() or brk().
-> 
-> "TBI" is a slightly odd name.
-> 
-> The kernel seems not to be ignoring the top byte, otherwise how could
-> it make a difference whehter the memory is anonymous or something else?
-> 
-> (With memory tagging enabled, the top byte is also not architecturally
-> ignored.)
-> 
-
-The top-byte is ignored for MMU translations hence it can carry information that
-are relevant for other aspects. This means that the kernel can not ignore that
-the top-byte could be set.
-
->> +    In these cases the tag is preserved as the pointer goes through the
->> +    kernel. Only when the kernel needs to check if a pointer is coming
->> +    from userspace (i.e. access_ok()) an untag operation is required.
-> 
-> Does the last sentence belong here?  That's about kernel internals,
-> whereas the rest all seems user-facing.
-> 
-
-I put it here just to give an idea to the user on when the kernel is going to
-perform an untag operation. But if we want to keep the document completely
-user-facing, I am fine with removing it.
-
->> +
->> +3. ARM64_AT_FLAGS_SYSCALL_TBI
->> +-----------------------------
->> +
->> +When ARM64_AT_FLAGS_SYSCALL_TBI is enabled every syscalls can accept tagged
->> +pointers, when these pointers are in memory ranges obtained by an anonymous
->> +(MAP_ANONYMOUS) mmap() or brk().
->> +
->> +A definition of the meaning of tagged pointers on arm64 can be found in:
->> +Documentation/arm64/tagged-pointers.txt.
->> +
->> +When a pointer does not are in a memory range obtained by an anonymous mmap()
->> +or brk(), this can not be passed to a syscall if it is tagged.
->> +
->> +To be more explicit: a syscall can accept pointers whose memory range is
->> +obtained by a non-anonymous mmap() or brk() if and only if the tag encoded in
->> +the top-byte is 0x00.
->> +
->> +When a new syscall is added, this can accept tagged pointers if and only if
->> +these pointers are in memory ranges obtained by an anonymous (MAP_ANONYMOUS)
->> +mmap() or brk(). In all the other cases, the tag encoded in the top-byte is
->> +expected to be 0x00.
-> 
-> Does this apply to kernel interfaces that are not syscalls?
-> 
-
-Not at the moment, but it does not seem incompatible with a future extension.
-
-> And does it apply to ioctls in general (I think from discussions
-> elsewhere that it can't).
-> 
-
-Requiring that the pointers accepted by the syscalls belong to ranges that are
-obtained by anonymous mappings, should cover the drivers mmap() cases.
-
-> What about things that flow through the kernel, like an
-> si_value.sival_ptr that propagates from sigqueue(2) to the signal frame
-> of the signalled thread, or registered with the kernel via aio_read(2)?
-> 
-> This kind of thing is why I would like to define a set of rules for
-> making an educated guess about how the kernel should interpret
-> arbitrary arguments (in an ideal world).
-> 
-
-I think that to make an educated choice we need to restrict the problem we are
-trying to target (making sure that we do not take any assumption that could be
-incompatible with the general case) as a first step. Once we are confident that
-it works as expected we can try to extend it progressively.
-
-> 
-> With issues like this in the mix, it seems difficult to extract general
-> guarantees from ARM64_AT_FLAGS_SYSCALL_TBI.  If it means that just
-> certain specific uses of a few specific syscalls work with tagged
-> pointers, that may not be very useful by ifself?  It sounds like if
-> you are tagging memory at all, you suddenly need to port every random
-> library you're using.
-> 
-
-The ABI presented in this document seems quite general (it is not confined to
-specific syscalls). This means that an application that tags the memory can use
-any non tag aware random library as is (without porting it), as far as it
-sanitizes the pointers before and after calling it.
-
-> [...]
-> 
-> Cheers
-> ---Dave
-> 
-
--- 
-Regards,
-Vincenzo
+DQoNCk9uIDE5LjEwLjIwMTggMTU6NTIsIEx1aXMgT2xpdmVpcmEgd3JvdGU6DQo+IEFkZCB0aGUg
+U3lub3BzeXMgTUlQSSBDU0ktMiBjb250cm9sbGVyIGRyaXZlci4gVGhpcw0KPiBjb250cm9sbGVy
+IGRyaXZlciBpcyBkaXZpZGVkIGluIHBsYXRmb3JtIGRlcGVuZGVudCBmdW5jdGlvbnMNCj4gYW5k
+IGNvcmUgZnVuY3Rpb25zLiBJdCBhbHNvIGluY2x1ZGVzIGEgcGxhdGZvcm0gZm9yIGZ1dHVyZQ0K
+PiBEZXNpZ25XYXJlIGRyaXZlcnMuDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBMdWlzIE9saXZlaXJh
+IDxsb2xpdmVpQHN5bm9wc3lzLmNvbT4NCj4gLS0tDQo+IENoYW5nZWxvZw0KPiB2Mi1WMw0KPiAt
+IGV4cG9zZWQgSVBJIHNldHRpbmdzIHRvIHVzZXJzcGFjZQ0KPiAtIGZpeGVkIGhlYWRlcnMNCj4g
+DQo+ICAgTUFJTlRBSU5FUlMgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB8ICAxMSArDQo+
+ICAgZHJpdmVycy9tZWRpYS9wbGF0Zm9ybS9kd2MvS2NvbmZpZyAgICAgICB8ICAzMCArLQ0KPiAg
+IGRyaXZlcnMvbWVkaWEvcGxhdGZvcm0vZHdjL01ha2VmaWxlICAgICAgfCAgIDIgKw0KPiAgIGRy
+aXZlcnMvbWVkaWEvcGxhdGZvcm0vZHdjL2R3LWNzaS1wbGF0LmMgfCA2OTkgKysrKysrKysrKysr
+KysrKysrKysrKysrKysrKysrKw0KPiAgIGRyaXZlcnMvbWVkaWEvcGxhdGZvcm0vZHdjL2R3LWNz
+aS1wbGF0LmggfCAgNzcgKysrKw0KPiAgIGRyaXZlcnMvbWVkaWEvcGxhdGZvcm0vZHdjL2R3LW1p
+cGktY3NpLmMgfCA0OTQgKysrKysrKysrKysrKysrKysrKysrKw0KPiAgIGRyaXZlcnMvbWVkaWEv
+cGxhdGZvcm0vZHdjL2R3LW1pcGktY3NpLmggfCAyMDIgKysrKysrKysrDQo+ICAgaW5jbHVkZS9t
+ZWRpYS9kd2MvZHctbWlwaS1jc2ktcGx0ZnJtLmggICB8IDEwMiArKysrKw0KPiAgIDggZmlsZXMg
+Y2hhbmdlZCwgMTYxNiBpbnNlcnRpb25zKCspLCAxIGRlbGV0aW9uKC0pDQo+ICAgY3JlYXRlIG1v
+ZGUgMTAwNjQ0IGRyaXZlcnMvbWVkaWEvcGxhdGZvcm0vZHdjL2R3LWNzaS1wbGF0LmMNCj4gICBj
+cmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9tZWRpYS9wbGF0Zm9ybS9kd2MvZHctY3NpLXBsYXQu
+aA0KPiAgIGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL21lZGlhL3BsYXRmb3JtL2R3Yy9kdy1t
+aXBpLWNzaS5jDQo+ICAgY3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvbWVkaWEvcGxhdGZvcm0v
+ZHdjL2R3LW1pcGktY3NpLmgNCj4gICBjcmVhdGUgbW9kZSAxMDA2NDQgaW5jbHVkZS9tZWRpYS9k
+d2MvZHctbWlwaS1jc2ktcGx0ZnJtLmgNCj4gDQoNCltzbmlwXQ0KDQo+ICsvKiBWaWRlbyBmb3Jt
+YXRzIHN1cHBvcnRlZCBieSB0aGUgTUlQSSBDU0ktMiAqLw0KPiArY29uc3Qgc3RydWN0IG1pcGlf
+Zm10IGR3X21pcGlfY3NpX2Zvcm1hdHNbXSA9IHsNCj4gKwl7DQo+ICsJCS8qIFJBVyA4ICovDQo+
+ICsJCS5jb2RlID0gTUVESUFfQlVTX0ZNVF9TQkdHUjhfMVg4LA0KPiArCQkuZGVwdGggPSA4LA0K
+PiArCX0sDQo+ICsJew0KPiArCQkvKiBSQVcgMTAgKi8NCj4gKwkJLmNvZGUgPSBNRURJQV9CVVNf
+Rk1UX1NCR0dSMTBfMlg4X1BBREhJX0JFLA0KPiArCQkuZGVwdGggPSAxMCwNCj4gKwl9LA0KDQpI
+aSBMdWlzLA0KDQpBbnkgcmVhc29uIHdoeSBSQVcxMiBmb3JtYXQgaXMgbm90IGhhbmRsZWQgaGVy
+ZSA/DQoNCkhlcmUsIG5hbWVseSBNRURJQV9CVVNfRk1UX1NCR0dSMTJfMVgxMiBldGMuDQoNCj4g
+Kwl7DQo+ICsJCS8qIFJHQiA1NjUgKi8NCj4gKwkJLmNvZGUgPSBNRURJQV9CVVNfRk1UX1JHQjU2
+NV8yWDhfQkUsDQo+ICsJCS5kZXB0aCA9IDE2LA0KPiArCX0sDQo+ICsJew0KPiArCQkvKiBCR1Ig
+NTY1ICovDQo+ICsJCS5jb2RlID0gTUVESUFfQlVTX0ZNVF9SR0I1NjVfMlg4X0xFLA0KPiArCQku
+ZGVwdGggPSAxNiwNCj4gKwl9LA0KPiArCXsNCj4gKwkJLyogUkdCIDg4OCAqLw0KPiArCQkuY29k
+ZSA9IE1FRElBX0JVU19GTVRfUkdCODg4XzJYMTJfTEUsDQo+ICsJCS5kZXB0aCA9IDI0LA0KPiAr
+CX0sDQo+ICsJew0KPiArCQkvKiBCR1IgODg4ICovDQo+ICsJCS5jb2RlID0gTUVESUFfQlVTX0ZN
+VF9SR0I4ODhfMlgxMl9CRSwNCj4gKwkJLmRlcHRoID0gMjQsDQo+ICsJfSwNCj4gK307DQoNCltz
+bmlwXQ0KDQo+ICsNCj4gK3ZvaWQgZHdfbWlwaV9jc2lfc2V0X2lwaV9mbXQoc3RydWN0IG1pcGlf
+Y3NpX2RldiAqY3NpX2RldikNCj4gK3sNCj4gKwlzdHJ1Y3QgZGV2aWNlICpkZXYgPSBjc2lfZGV2
+LT5kZXY7DQo+ICsNCj4gKwlpZiAoY3NpX2Rldi0+aXBpX2R0KQ0KPiArCQlkd19taXBpX2NzaV93
+cml0ZShjc2lfZGV2LCByZWcuSVBJX0RBVEFfVFlQRSwgY3NpX2Rldi0+aXBpX2R0KTsNCj4gKwll
+bHNlIHsNCj4gKwkJc3dpdGNoIChjc2lfZGV2LT5mbXQtPmNvZGUpIHsNCj4gKwkJY2FzZSBNRURJ
+QV9CVVNfRk1UX1JHQjU2NV8yWDhfQkU6DQo+ICsJCWNhc2UgTUVESUFfQlVTX0ZNVF9SR0I1NjVf
+Mlg4X0xFOg0KPiArCQkJZHdfbWlwaV9jc2lfd3JpdGUoY3NpX2RldiwNCj4gKwkJCQkJcmVnLklQ
+SV9EQVRBX1RZUEUsIENTSV8yX1JHQjU2NSk7DQo+ICsJCQlkZXZfZGJnKGRldiwgIkRUOiBSR0Ig
+NTY1Iik7DQo+ICsJCQlicmVhazsNCj4gKw0KPiArCQljYXNlIE1FRElBX0JVU19GTVRfUkdCODg4
+XzJYMTJfTEU6DQo+ICsJCWNhc2UgTUVESUFfQlVTX0ZNVF9SR0I4ODhfMlgxMl9CRToNCj4gKwkJ
+CWR3X21pcGlfY3NpX3dyaXRlKGNzaV9kZXYsDQo+ICsJCQkJCXJlZy5JUElfREFUQV9UWVBFLCBD
+U0lfMl9SR0I4ODgpOw0KPiArCQkJZGV2X2RiZyhkZXYsICJEVDogUkdCIDg4OCIpOw0KPiArCQkJ
+YnJlYWs7DQo+ICsJCWNhc2UgTUVESUFfQlVTX0ZNVF9TQkdHUjEwXzJYOF9QQURISV9CRToNCj4g
+KwkJCWR3X21pcGlfY3NpX3dyaXRlKGNzaV9kZXYsDQo+ICsJCQkJCXJlZy5JUElfREFUQV9UWVBF
+LCBDU0lfMl9SQVcxMCk7DQo+ICsJCQlkZXZfZGJnKGRldiwgIkRUOiBSQVcgMTAiKTsNCj4gKwkJ
+CWJyZWFrOw0KPiArCQljYXNlIE1FRElBX0JVU19GTVRfU0JHR1I4XzFYODoNCj4gKwkJCWR3X21p
+cGlfY3NpX3dyaXRlKGNzaV9kZXYsDQo+ICsJCQkJCXJlZy5JUElfREFUQV9UWVBFLCBDU0lfMl9S
+QVc4KTsNCj4gKwkJCWRldl9kYmcoZGV2LCAiRFQ6IFJBVyA4Iik7DQo+ICsJCQlicmVhazsNCg0K
+U2FtZSBoZXJlLCBpbiBDU0lfMl9SQVcxMiBjYXNlIGl0IHdpbGwgZGVmYXVsdCB0byBhIFJHQjU2
+NSBjYXNlLg0KDQpUaGFua3MsDQoNCkV1Z2VuDQoNCg0KDQo+ICsJCWRlZmF1bHQ6DQo+ICsJCQlk
+d19taXBpX2NzaV93cml0ZShjc2lfZGV2LA0KPiArCQkJCQlyZWcuSVBJX0RBVEFfVFlQRSwgQ1NJ
+XzJfUkdCNTY1KTsNCj4gKwkJCWRldl9kYmcoZGV2LCAiRXJyb3IiKTsNCj4gKwkJCWJyZWFrOw0K
+PiArCQl9DQo+ICsJfQ0KPiArfQ0KPiArDQoNCltzbmlwXQ0K
