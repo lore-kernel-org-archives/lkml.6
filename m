@@ -2,168 +2,179 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87307C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 09:02:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A94B9C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 09:04:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B0AA214C6
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 09:02:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6EBFC206BB
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 09:04:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="VRIiQ1jU"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="cS8zatwB";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="NWmQT7gK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729732AbfAIJCs (ORCPT
+        id S1729826AbfAIJEg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 04:02:48 -0500
-Received: from esa1.microchip.iphmx.com ([68.232.147.91]:41040 "EHLO
-        esa1.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727387AbfAIJCr (ORCPT
+        Wed, 9 Jan 2019 04:04:36 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:52698 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729590AbfAIJEf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 04:02:47 -0500
-X-IronPort-AV: E=Sophos;i="5.56,456,1539673200"; 
-   d="scan'208";a="26175965"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa1.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 09 Jan 2019 02:02:46 -0700
-Received: from NAM03-DM3-obe.outbound.protection.outlook.com (10.10.215.89) by
- email.microchip.com (10.10.76.108) with Microsoft SMTP Server (TLS) id
- 14.3.352.0; Wed, 9 Jan 2019 02:02:46 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=microchiptechnology.onmicrosoft.com;
- s=selector1-microchiptechnology-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qHSJGpYCPczU6w8SjMvN+aMeiHa229Jwy8FMzUavX64=;
- b=VRIiQ1jUjoKT6QiQRqbQIWjEoBwnfhEtGI80SCt2C+ESuW/52nX3uzHfz/6I1yXX19+tRGF14aWhKANDqqvbtNz6lwybMZEZDca3IClOmFWhqkHVp/Lro4TejlG5WiuefAPdSgGawAV7vQmwgudTazCDpinLZQpJEyaTypEQ94s=
-Received: from MWHPR11MB1920.namprd11.prod.outlook.com (10.175.54.19) by
- MWHPR11MB1312.namprd11.prod.outlook.com (10.169.237.143) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1495.6; Wed, 9 Jan 2019 09:02:44 +0000
-Received: from MWHPR11MB1920.namprd11.prod.outlook.com
- ([fe80::e553:ff9d:8c0b:9627]) by MWHPR11MB1920.namprd11.prod.outlook.com
- ([fe80::e553:ff9d:8c0b:9627%6]) with mapi id 15.20.1516.010; Wed, 9 Jan 2019
- 09:02:44 +0000
-From:   <Claudiu.Beznea@microchip.com>
-To:     <u.kleine-koenig@pengutronix.de>
-CC:     <linux-pwm@vger.kernel.org>, <alexandre.belloni@bootlin.com>,
-        <corbet@lwn.net>, <linux-doc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <Ludovic.Desroches@microchip.com>,
-        <thierry.reding@gmail.com>, <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v8 1/6] pwm: extend PWM framework with PWM modes
-Thread-Topic: [PATCH v8 1/6] pwm: extend PWM framework with PWM modes
-Thread-Index: AQHUo2hjF9SHYVC+/UyvQjeBLKSGN6WhLe0AgAJimACAANRQAIAAu2iAgADWWwCAALa4AA==
-Date:   Wed, 9 Jan 2019 09:02:44 +0000
-Message-ID: <085ac33b-89ee-dcdb-6085-735ae5fa08cb@microchip.com>
-References: <1546522081-23659-1-git-send-email-claudiu.beznea@microchip.com>
- <1546522081-23659-2-git-send-email-claudiu.beznea@microchip.com>
- <20190105210522.ho2o2a4gc7r7ijeq@pengutronix.de>
- <67e881c5-0ea7-3d2f-5910-534729097d11@microchip.com>
- <20190107221040.uos5qlnkjmcayv73@pengutronix.de>
- <0ef0b4f1-45c3-0280-c1f0-6d499957f74c@microchip.com>
- <20190108220838.amrun6jsa24yeisg@pengutronix.de>
-In-Reply-To: <20190108220838.amrun6jsa24yeisg@pengutronix.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: CWLP265CA0032.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:401:11::20) To MWHPR11MB1920.namprd11.prod.outlook.com
- (2603:10b6:300:110::19)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Claudiu.Beznea@microchip.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [94.177.32.154]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MWHPR11MB1312;6:v1XRSUYmT3CwCCLp47jKCaONQwTb3uAXeRtABUKSqQnbI7+0RMLMcvMm0fXRP2MJgeeIeVZKFcCMmew6tMhiBr0a2B+IW57EY0vDw1sBBvr3EXcmoI/JI5ZcxQ0ZQAkWD7DBQoii7j7F8Iu33r+v4Wp5CgBZz0iI9YpRYM3wCuvzg9rbTbwvxcsFlAqJ6exl14xAYj3k8jJ55YD/JxRm2mBNCp2Y8IisB5EAQN1pDaE5uGiUagFypl3+z1ebRCGQUupge0MieacvnSLRGiN4z9fGowlL2f5lktaDun7lY2VdpzD5HlDUI/5JlnB/IlN1rrje9zSkFupxKSgkzY7YiANDAfNMVNnGjcPM3EnAiCLCOCoW2SlSIwSbcOhJsWFYxU4YMbsykjg9tPbu9Wyzr+9q88A+3cH5b5xHYwjTZ8Z4MZ3BHZyw82Zq+ME0P88MmkAu5JH7bu7evOkr7HrR9Q==;5:ag6vp+Br/0LuNMkKZpIPeFj2tJgLJ1lqCFyxRc/dM24kbpBjZLSIjheGzxwZv99TZPbioPlnwO91/d/gQl5j2SlWG5/9HNQAljRiITqpSpuWmSLHY5YzXzjs+qXwWM9Fn6r3sDgOV71Vp6FiO9jhaRj28amcewSFWLLrVCCU9z4YhvSMrfjeLrgO77YMzzamFmc+TvCvKa3MMhPdsz14Mg==;7:xX+frUZ+saQkB4FWuQ+q0Pq05l3pnmaXV6k7XaX4aeolT27IFlixQUJFqBja0hdTSlgWGtqnUWuoF5ob5fg1ARdl19uItajl8zLUOdQ5Kd5hg/SRfQo7IeVHAC/R+1EZaQhS3P08ioWsh6tOEhLaMw==
-x-ms-office365-filtering-correlation-id: f8f785b0-c447-4f59-3c9e-08d6761137bf
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(2017052603328)(7153060)(7193020);SRVR:MWHPR11MB1312;
-x-ms-traffictypediagnostic: MWHPR11MB1312:
-x-microsoft-antispam-prvs: <MWHPR11MB13126C0E4D507AA7056B2266878B0@MWHPR11MB1312.namprd11.prod.outlook.com>
-x-forefront-prvs: 0912297777
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(396003)(366004)(346002)(376002)(39860400002)(189003)(199004)(2906002)(186003)(71190400001)(71200400001)(3846002)(68736007)(81156014)(5660300001)(106356001)(8936002)(102836004)(31696002)(11346002)(81166006)(6506007)(486006)(6116002)(86362001)(6916009)(446003)(256004)(26005)(2616005)(476003)(8676002)(66066001)(54906003)(93886005)(25786009)(14454004)(39060400002)(4326008)(316002)(99286004)(53936002)(53546011)(7736002)(6436002)(386003)(6512007)(229853002)(305945005)(6486002)(36756003)(52116002)(97736004)(478600001)(6246003)(72206003)(76176011)(105586002)(31686004);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR11MB1312;H:MWHPR11MB1920.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: microchip.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: riIewCfSTN2dGFke9SBNo69PhEY+GeHi+uhCLxJtQYtGDeUMCfESyJj1nzns9g0CJU8xznywCRwx7DKaKnS27qw39dNsKrd3/rHm102CzllwO2jLR+q7tGzXhQZF4P9UJTLuI2jMrdo0TDz8hGANO+DxESjaST194U1d1kJyuLAEMYJ/QiBi8AnteNo3GGanheSwOWjCu1XNoPdRVS1l8JNzEkt7KNEPbgox9UTHrowvITps1ngY04dMV+98ONGa+J5P9Pv/BSMLPZ/RNWqzIBraVclN65BBWjQ0/bCFKmuh1+hCye8F4SVW18PbHGHw
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <346409511435DF4D8E17F9C9E23C6E41@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Wed, 9 Jan 2019 04:04:35 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 3A611608C6; Wed,  9 Jan 2019 09:04:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1547024674;
+        bh=+Fi1H0IxIObS1f03KmDc/FyaUhhW4moEZ86heVfCHMw=;
+        h=From:To:Cc:Subject:Date:From;
+        b=cS8zatwB4kRDSOASBo+EKAEFhDexJ4elbvPBUdHQo+Rm0/yxz2Pzd192zPUZGqqI7
+         2PHeHkS7puTkC5BDEPDrhhXQqR0JUxkdZrjpQ3yQ4PwN4x5gRDXOxHksZtpa0Jz6Iw
+         XB7sZ5tTi31ghyIAux/XOdjNtiT4vocSMbdZvJr0=
+Received: from blr-ubuntu-173.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: rnayak@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 2EB1360132;
+        Wed,  9 Jan 2019 09:04:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1547024672;
+        bh=+Fi1H0IxIObS1f03KmDc/FyaUhhW4moEZ86heVfCHMw=;
+        h=From:To:Cc:Subject:Date:From;
+        b=NWmQT7gKdgcfJiOgrr/sY10GvilctkvQGLHLxE/zgw2hBIE9d9asSMZNWn4PV0ZZC
+         K/aOIvedp3HmN9L9En/scm8JHZrbiyTs5P0VhD/rCs2hdLrxiSZLK0YENmySEB2aSy
+         oydtTS/5OzpJplZhGomILmcq6O+3OsWVLmxSTudw=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2EB1360132
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rnayak@codeaurora.org
+From:   Rajendra Nayak <rnayak@codeaurora.org>
+To:     andy.gross@linaro.org, robh@kernel.org, viresh.kumar@linaro.org,
+        sboyd@kernel.org, ulf.hansson@linaro.org, collinsd@codeaurora.org,
+        mka@chromium.org
+Cc:     devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, henryc.chen@mediatek.com,
+        Rajendra Nayak <rnayak@codeaurora.org>
+Subject: [PATCH v10 0/9] Add power domain driver for corners on msm8996/sdm845
+Date:   Wed,  9 Jan 2019 14:34:11 +0530
+Message-Id: <20190109090420.8100-1-rnayak@codeaurora.org>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: f8f785b0-c447-4f59-3c9e-08d6761137bf
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Jan 2019 09:02:44.3186
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR11MB1312
-X-OriginatorOrg: microchip.com
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQoNCk9uIDA5LjAxLjIwMTkgMDA6MDgsIFV3ZSBLbGVpbmUtS8O2bmlnIHdyb3RlOg0KPiBPbiBU
-dWUsIEphbiAwOCwgMjAxOSBhdCAwOToyMTozNEFNICswMDAwLCBDbGF1ZGl1LkJlem5lYUBtaWNy
-b2NoaXAuY29tIHdyb3RlOg0KPj4gSGkgVXdlLA0KPj4NCj4+IE9uIDA4LjAxLjIwMTkgMDA6MTAs
-IFV3ZSBLbGVpbmUtS8O2bmlnIHdyb3RlOg0KPj4+IEhlbGxvIENsYXVkaXUsDQo+Pj4NCj4+PiBP
-biBNb24sIEphbiAwNywgMjAxOSBhdCAwOTozMDo1NUFNICswMDAwLCBDbGF1ZGl1LkJlem5lYUBt
-aWNyb2NoaXAuY29tIHdyb3RlOg0KPj4+PiBPbiAwNS4wMS4yMDE5IDIzOjA1LCBVd2UgS2xlaW5l
-LUvDtm5pZyB3cm90ZToNCj4+Pj4+IE9uIFRodSwgSmFuIDAzLCAyMDE5IGF0IDAxOjI5OjQ0UE0g
-KzAwMDAsIENsYXVkaXUuQmV6bmVhQG1pY3JvY2hpcC5jb20gd3JvdGU6DQo+Pj4+Pj4gRnJvbTog
-Q2xhdWRpdSBCZXpuZWEgPGNsYXVkaXUuYmV6bmVhQG1pY3JvY2hpcC5jb20+DQo+Pj4+Pj4NCj4+
-Pj4+PiBBZGQgYmFzaWMgUFdNIG1vZGVzOiBub3JtYWwgYW5kIGNvbXBsZW1lbnRhcnkuIFRoZXNl
-IG1vZGVzIHNob3VsZA0KPj4+Pj4+IGRpZmZlcmVudGlhdGUgdGhlIHNpbmdsZSBvdXRwdXQgUFdN
-IGNoYW5uZWxzIGZyb20gdHdvIG91dHB1dHMgUFdNDQo+Pj4+Pj4gY2hhbm5lbHMuIFRoZXNlIG1v
-ZGVzIGNvdWxkIGJlIHNldCBhcyBmb2xsb3c6DQo+Pj4+Pj4gMS4gUFdNIGNoYW5uZWxzIHdpdGgg
-b25lIG91dHB1dCBwZXIgY2hhbm5lbDoNCj4+Pj4+PiAtIG5vcm1hbCBtb2RlDQo+Pj4+Pj4gMi4g
-UFdNIGNoYW5uZWxzIHdpdGggdHdvIG91dHB1dHMgcGVyIGNoYW5uZWw6DQo+Pj4+Pj4gLSBub3Jt
-YWwgbW9kZQ0KPj4+Pj4+IC0gY29tcGxlbWVudGFyeSBtb2RlDQo+Pj4+Pj4gU2luY2UgdXNlcnMg
-Y291bGQgdXNlIGEgUFdNIGNoYW5uZWwgd2l0aCB0d28gb3V0cHV0IGFzIG9uZSBvdXRwdXQgUFdN
-DQo+Pj4+Pj4gY2hhbm5lbCwgdGhlIFBXTSBub3JtYWwgbW9kZSBpcyBhbGxvd2VkIHRvIGJlIHNl
-dCBmb3IgUFdNIGNoYW5uZWxzIHdpdGgNCj4+Pj4+PiB0d28gb3V0cHV0czsgaW4gZmFjdCBQV00g
-bm9ybWFsIG1vZGUgc2hvdWxkIGJlIHN1cHBvcnRlZCBieSBhbGwgUFdNcy4NCj4+Pj4+DQo+Pj4+
-PiBJIHN0aWxsIHRoaW5rIHRoYXQgbXkgc3VnZ2VzdGlvbiB0aGF0IEkgc2VudCBpbiByZXBseSB0
-byB5b3VyIHY1IHVzaW5nDQo+Pj4+PiAuYWx0X2R1dHlfY3ljbGUgYW5kIC5hbHRfb2Zmc2V0IGlz
-IHRoZSBiZXR0ZXIgb25lIGFzIGl0IGlzIG1vcmUgZ2VuZXJpYy4NCj4+Pj4NCj4+Pj4gSSBsaWtl
-IGl0IGJldHRlciBteSB3YXksIEkgZXhwbGFpbmVkIG15c2VsZiB3aHkuDQo+Pj4NCj4+PiBJIGNv
-dWxkbid0IHJlYWxseSBmb2xsb3cgeW91ciBhcmd1bWVudCB0aG91Z2guIFlvdSBzZWVtZWQgdG8g
-YWNrbm93bGVkZ2UNCj4+PiB0aGF0IHVzaW5nIC5hbHRfZHV0eV9jeWNsZSBhbmQgLmFsdF9vZmZz
-ZXQgaXMgbW9yZSBnZW5lcmljLg0KPj4NCj4+IFRydWUgaXQgaXMgbW9yZSBnZW5lcmljIGluIHRo
-ZSB3YXkgdGhhdCBpdCBnaXZlcyB0aGUgcG9zc2liaWxpdHkgdG8NCj4+IGNvbmZpZ3VyZSBhbGwg
-a2luZCBvZiB3YXZlZm9ybXMuIEJ1dCBub3QgYWxsIGNvbnRyb2xsZXJzIHN1cHBvcnRzIHRoaXMu
-DQo+PiBUaGUgdXNlIGNhc2Ugb2YgdGhpcyB3b3VsZCBiZSB0byBoYXZlIGRlYWQtdGltZXMgd2l0
-aCBhbnkgdmFsdWVzLCByaWdodD8NCj4gDQo+IFdlbGwsIEkgZGlkbid0IHRhcmdldCB0aGF0LiBU
-aGUgbW9kZWwgSSBzdWdnZXN0ZWQgaXMganVzdCBhIGdlbmVyaWMgc2V0DQo+IG9mIHBhcmFtZXRl
-cnMgdGhhdCBhcmUgYWJsZSB0byBkZXNjcmliZSB0aGUgd2F2ZSBmb3JtcyBmb3IgYWxsIHRocmVl
-DQo+IG1vZGVzIHlvdSBzdWdnZXN0ZWQuIFRoYXQgaXQgYWxsb3dzIHRvIGV4cHJlc3MgZGVhZC10
-aW1lcyBpcyBqdXN0IGEgbmljZQ0KPiBieS1wcm9kdWN0Lg0KPiANCj4+Pj4+IEkgZmFpbCB0byBz
-ZWUgdGhlIHVwc2lkZSBvZiBzdG9yaW5nIHRoZSBtb2RlIGFzIDJebW9kZSBpbnN0ZWFkIG9mIGEN
-Cj4+Pj4+IHBsYWluIGVudW0gcHdtX21vZGUuIEdpdmVuIHRoYXQgc3RydWN0IHB3bV9zdGF0ZSBp
-cyB2aXNpYmxlIGZvciBwd20NCj4+Pj4+IHVzZXJzIGEgcGxhaW4gcHdtX21vZGUgd291bGQgYXQg
-bGVhc3QgYmUgbW9yZSBpbnR1aXRpdmUuDQo+Pj4+DQo+Pj4+IFRvIGhhdmUgYWxsIG1vZGVzIHN1
-cHBvcnRlZCBieSBhIGNvbnRyb2xsZXIgZ3JvdXBlZCBpbiBwd21fY2Fwczo6bW9kZXNfbXNrLg0K
-Pj4+DQo+Pj4gTXkgcXVlc3Rpb24gd2FzIG5vdCBhYm91dCBzdHJ1Y3QgcHdtX2NhcHM6Om1vZGVz
-X21zayBidXQgYWJvdXQNCj4+PiBzdHJ1Y3QgcHdtX3N0YXRlOjptb2RlYml0LiBBcyBzdHJ1Y3Qg
-cHdtX3N0YXRlIGhhcyB2aXNpYmlsaXR5IGV2ZW4NCj4+PiBvdXRzaWRlIG9mIHRoZSBwd20gQVBJ
-IChpLmUuIGl0IGlzIHVzZWQgYnkgY29uc3VtZXJzKSBpdCBpcyBiZW5lZmljaWFsDQo+Pj4gdG8g
-a2VlcCB0aGF0IHNpbXBsZS4gTGV0dGluZyBhIGNvbnN1bWVyIHBhc3MgaW4gdGhlIG1vZGUgaGUg
-d2FudHMgaXMNCj4+PiBlYXNpZXIgdG8gZXhwbGFpbiB0aGFuIHNldHRpbmcgYSBzaW5nbGUgYml0
-LiBBbHNvIGVycm9yIGNoZWNraW5nIHdpdGggYQ0KPj4+IHBsYWluIGVudW0gaXMgZWFzaWVyIGJl
-Y2F1c2UgeW91IGp1c3QgZG86DQo+Pj4NCj4+PiAJaWYgKG1vZGUgPj0gTU9ERV9DTlQpDQo+Pj4g
-CQllcnJvcigpDQo+Pj4NCj4+PiB3aGljaCBpcyBlYXN5IHRvIGdyYXNwLiBDb21wYXJlIHRoYXQg
-dG8NCj4+Pg0KPj4+IAlpZiAoIWlzX3Bvd2VyX29mX3R3byhtb2RlYml0KSB8fCBtb2RlYml0ID49
-IFBXTV9NT0RFX0JJVChDTlQpKQ0KPj4+IAkJZXJyb3IoKQ0KPj4+DQo+Pj4gKG1vZHVsbyBzeW50
-YWN0aWNhbCBjb3JyZWN0bmVzcykuDQo+Pg0KPj4gVGhlIHJlYXNvbiBJIGNob29zZSB0byBoYXZl
-IGl0IGFzIGJpdCB3YXMgdGhlIG1lbWNtcCgpIGF0IHRoZSBiZWdpbm5pbmcgb2YNCj4+IHB3bV9h
-cHBseV9zdGF0ZSgpIGFuZCB0byBhdm9pZCBzdGFydGluZyBlbnVtIHB3bV9tb2RlIGZyb20gMSBh
-bmQgdG8gYXZvaWQNCj4+IGhhdmluZyBiaXQgMCBvZiBwd21fY2Fwczo6bW9kZXNfbXNrIHVudXNl
-ZCAoaW4gdGhlIGRyaXZlciBJJ20gdXNpbmcNCj4+IFBXTV9NT0RFX0JJVCgpIG1hY3JvIHRvIGZp
-bGwgaW4gdGhlIGRyaXZlcidzIHN1cHBvcnRlZCBtb2RlcykuDQo+IA0KPiBEb2VzIHRoYXQgbWVh
-biB5b3UgYXJlIGNvbnZpbmNlZCBieSBteSBhcmd1bWVudD8NCg0KSSBrbm93IHdoYXQgeW91IGFy
-ZSB0YWxraW5nIGFib3V0LiBJIGJhbGFuY2VkIGluIGJldHdlZW4gdGhlc2UgdHdvIHBhdGhzDQp3
-aGlsZSBJIHdyb3RlIHRoZSBjb2RlLiBUaGUgYXBwcm9hY2ggSSBjaG9zZSBsb29rZWQgdG8gbWUg
-dG8gYmUgbW9yZSBlYXN5DQp0byByZWFkLiBOb3csIHNpbmNlIHRoZXJlIGlzIGFub3RoZXIgcGVy
-c29uICh5b3UpIHRoaW5raW5nIHRoZSBvdGhlcg0KYXBwcm9hY2ggaXMgYmVzdCwgSSdtIHRoaW5r
-aW5nIHRvIGNoYW5nZSBpdCBpbiB0aGUgbmV4dCB2ZXJzaW9uLg0KDQpUaGFuayB5b3UsDQpDbGF1
-ZGl1IEJlem5lYQ0KDQo+IA0KPiBCZXN0IHJlZ2FyZHMNCj4gVXdlDQo+IA0K
+Changes in v10:
+* Updated level bindings to include opp-level as an
+optional property using operating-points-v2, no new
+compatible for the OPP table
+* Updated the dev_pm_opp_get_level() helper as per
+suggestions from Viresh
+
+Changes in v9:
+* Updated qcom-opp bindings to be generic and usable across other SoCs 
+with similar needs (Like MediaTek)
+* Removed the simple_opp_to_performance_state() helper and added a
+dev_pm_opp_of_get_level() helper instead
+* Rebased on 5.0-rc1
+
+Changes in v8:
+* Patch 01/10: Bindings updated to mention opp-hz is optional
+* Patch 02/10: Fixed #power-domain-cells
+* All dependencies for 'Patch 10/10' are on their way to 4.21 via the pm tree
+
+Changes in v7:
+* Rebased on Andy's for-next, and used the updated cmd_db_read_aux_data()
+* Other minor fixes, all in 'PATCH 06/10' as suggested by Stephen
+
+Changes in v6:
+* OPP binding updates for qcom,level reviewed by Rob
+* DT bindings for rpmpd and rpmhpd updated to specify the
+OPP tables as child nodes of the power-controller itself
+* Removed some module specific remains from the drivers,
+now that they can only be built-in
+* Added a simple_opp_to_performance_state() helper
+
+Changes in v5:
+* First 6 patches are unchanged
+* Patch 7/8 adds the DT node for rpmh power-controller on sdm845 and the
+corresponding OPP tables for it to describe the performance states
+* Patch 8/8 adds a parent/child relationship across mx/cx and mx_ao/cx_ao
+as needed on sdm845 platform. This patch is dependent on the series from
+Viresh [1] which adds support to propogate performance states across the
+power domain hierarchy which is still being reviewed
+
+Changes in v4:
+* Included the patch to add qcom-opp bindings (dropped accidentally in v3)
+* merged the patches to add bindings for rpm and rpmh, added consumer binding example
+* Made the drivers built in, removed .remove
+* Added better description in changelog for PATCH 6/6
+* Updated rpmhpd_aggregate_corner() based on Davids feedback
+* rpmhpd_set_performance_state() returns max corner, in cases where its called
+with an INT_MAX
+* Dropped the patch to max vote on all corners at init, the patch did not
+work anyway, and it shouldn't be needed now
+
+Changes in v3:
+* Bindings split into seperate patches
+* Bindings updated to remove duplicate OPP table phandles
+* DT headers defining macros for Power domain indexes and OPP levels
+* Optimisations to use rpmh_write_async() whereever applicable
+* Fixed up handling of ACTIVE_ONLY/WAKE_ONLY/SLEEP voting for RPMh
+* Fixed the vlvl to hlvl conversions in set_performance
+* Other minor fixes based on review of v2
+* TODO: This series does not handle the case where all VDD_MX votes
+should be higher than VDD_CX from APPs, as pointed out
+by David Collins in v2. This needs support at genpd to propogate performance
+state up the parents, if we model these as Parent/Child to handle the
+interdependency.
+
+Changes in v2:
+* added a power domain driver for sdm845 which supports communicating to RPMh
+* dropped the changes to sdhc driver to move over to using OPP
+as there is active discussion on using OPP as the interface vs
+handling all of it in clock drivers
+* Other minor binding updates based on review of v1
+
+With performance state support for genpd/OPP merged, this is an effort
+to model a power domain driver to communicate corner/level
+values for qualcomm platforms to RPM (Remote Power Manager) and RPMh.
+
+[1] https://lkml.org/lkml/2018/11/26/333
+
+Rajendra Nayak (9):
+  dt-bindings: opp: Introduce opp-level bindings
+  OPP: Add support for parsing the 'opp-level' property
+  dt-bindings: power: Add qcom rpm power domain driver bindings
+  soc: qcom: rpmpd: Add a Power domain driver to model corners
+  soc: qcom: rpmpd: Add support for get/set performance state
+  arm64: dts: msm8996: Add rpmpd device node
+  soc: qcom: rpmhpd: Add RPMh power domain driver
+  arm64: dts: sdm845: Add rpmh powercontroller node
+  soc: qcom: rpmhpd: Mark mx as a parent for cx
+
+ Documentation/devicetree/bindings/opp/opp.txt |   5 +
+ .../devicetree/bindings/power/qcom,rpmpd.txt  | 145 +++++++
+ arch/arm64/boot/dts/qcom/msm8996.dtsi         |  34 ++
+ arch/arm64/boot/dts/qcom/sdm845.dtsi          |  51 +++
+ drivers/opp/core.c                            |  18 +
+ drivers/opp/of.c                              |   5 +-
+ drivers/opp/opp.h                             |   2 +
+ drivers/soc/qcom/Kconfig                      |  18 +
+ drivers/soc/qcom/Makefile                     |   2 +
+ drivers/soc/qcom/rpmhpd.c                     | 402 ++++++++++++++++++
+ drivers/soc/qcom/rpmpd.c                      | 317 ++++++++++++++
+ include/dt-bindings/power/qcom-rpmpd.h        |  39 ++
+ include/linux/pm_opp.h                        |   7 +
+ 13 files changed, 1044 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/power/qcom,rpmpd.txt
+ create mode 100644 drivers/soc/qcom/rpmhpd.c
+ create mode 100644 drivers/soc/qcom/rpmpd.c
+ create mode 100644 include/dt-bindings/power/qcom-rpmpd.h
+
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
+
