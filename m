@@ -2,134 +2,136 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 549BEC43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 01:17:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EEC5C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 01:25:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1AFB4206B6
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 01:17:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0C7EA2075C
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 01:25:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b="FOWS+QmW"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="qLpMAXKB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729168AbfAIBRo (ORCPT
+        id S1729184AbfAIBZw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 20:17:44 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:43833 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728403AbfAIBRn (ORCPT
+        Tue, 8 Jan 2019 20:25:52 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:45796 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728835AbfAIBZw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 20:17:43 -0500
-Received: by mail-ed1-f66.google.com with SMTP id f9so5920275eds.10
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jan 2019 17:17:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=arista.com; s=googlenew;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=B7GCluurlGsNgRNuMYUB6olUhE0pXre9Ty8eA3twLOk=;
-        b=FOWS+QmWNzU5oOcSAKYmqPvShE9/phlfUaxtL4r/ulsYAexmJi5WzE3heBG1D1I5Q1
-         iV5YMsdvdRqPM09CyfqPiZm/s8RiwDD7qUv2AwCglP+GCrLNiUcgJY3CGLFMmn8/MBj3
-         uDdOoZaiA49NcoYZ4m3Ek4tb+mM1GtBPKdwnMu1ei4+OkSiKe9xEaSY8oWQp/BfykFZB
-         Aecn/GFg5cFOT85Pb7PZNpj8T2Nm5lilKVslTDRwX514K6WgA51ouwMNOkA+2jo6F+1U
-         d+ghVeTBvDZToZgCrAQEZkzV44a8PubbT369VpUuvXhs1t4S1vEDxlkt3WCrbnXoPtow
-         FfkA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=B7GCluurlGsNgRNuMYUB6olUhE0pXre9Ty8eA3twLOk=;
-        b=fJ9f9SW34voRacxwIVZ/hJA5eHLsHB+fxNqqV06l9ZIlw2rkzcAM09gtkLZTh/sBae
-         DbfkI5g3OuzcbMTW+mrwT+45pwbIfyQFWbtkgWUxBgjqT5ytMlZ4T7PTw6xkNiao3UkY
-         5ErExmrUuHX+oz1DDkyfYY29OuzufSMg7D2Au8D5MAlK9JuWW20aI3XwxQFM0rjguiLz
-         ZjI7nAmVgXznerwPb2FTb6Snekg1TTJzoWe3TkMfCsfenKaz22+jbmhwjINrDwzXCMi1
-         3uYeUiw2eMIQjcJV18a361IgQUafjJ7skxDSAQZcHZYlmBDr2nS/Ztyx4utoj3IvOpop
-         3Qtg==
-X-Gm-Message-State: AJcUukeZqzm5miVQc/wxnF2Q7L32b4e2xViF6sV/h+f+EJuoRtMFzZhw
-        NkzxtkupHBmqgXtqoajudxCanUJy46E=
-X-Google-Smtp-Source: ALg8bN4jNxvAtbSTssHhzliyNmDvlHdm/JH9ILj2OPw2XM8Ux8TQ8F5jWciyHO6ShlN4RZKQ8cwo/g==
-X-Received: by 2002:a50:86c2:: with SMTP id 2mr4094544edu.34.1546996661787;
-        Tue, 08 Jan 2019 17:17:41 -0800 (PST)
-Received: from Mindolluin.ire.aristanetworks.com ([217.173.96.166])
-        by smtp.gmail.com with ESMTPSA id p22-v6sm384323ejb.76.2019.01.08.17.17.40
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 08 Jan 2019 17:17:41 -0800 (PST)
-From:   Dmitry Safonov <dima@arista.com>
-To:     linux-kernel@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     0x7f454c46@gmail.com, Dmitry Safonov <dima@arista.com>,
-        "Lukas F. Hartmann" <lukas@mntmn.com>, Jiri Slaby <jslaby@suse.com>
-Subject: [PATCH] tty: Don't hold ldisc lock in tty_reopen() if ldisc present
-Date:   Wed,  9 Jan 2019 01:17:40 +0000
-Message-Id: <20190109011740.13729-1-dima@arista.com>
-X-Mailer: git-send-email 2.20.1
+        Tue, 8 Jan 2019 20:25:52 -0500
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x091O0mE122455;
+        Wed, 9 Jan 2019 01:25:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=xM8IWqHOSj+73Zz5F/OaVEMSCY+NXIbMroPaQzX7ZY0=;
+ b=qLpMAXKB0S7emwm6na2jYsYuNTG6GnAWxZgfcacCutCspLQqouNOvBFpEBoiDYfEasaW
+ i2YdcH09ts52Aq0Cxxw8/TFLpemsYy1ZhPGhR4P6404xTEjzdUn/r908j/oQxkxX+7sA
+ binK2D/QXQ1MHCFknqGywUQmjr/28llWNCQWqqJ7Ib2cmgocRtFVxoeZQo8zqWUUPxA3
+ h+/9C4N6xeQyPf9oFfucB3+k7AK9vx/RbcKnmw89rPHpI1HrXQ2CyezvjAM36jiNsMU5
+ oBmVQv9Sx81FaBJkOArEG0krSH/vOfaug9S8G3hmRwoqR2kYnNQhfn8zG/AQGn2bAKGE FA== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by aserp2130.oracle.com with ESMTP id 2ptj3dy0bs-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 09 Jan 2019 01:25:46 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x091PjSk027040
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 9 Jan 2019 01:25:45 GMT
+Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x091Pj9o004034;
+        Wed, 9 Jan 2019 01:25:45 GMT
+Received: from [10.182.69.145] (/10.182.69.145)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 08 Jan 2019 17:25:45 -0800
+Subject: Re: [PATCH] net: nvidia: forcedeth: Fix two possible concurrency
+ use-after-free bugs
+To:     Jia-Ju Bai <baijiaju1990@gmail.com>, davem@davemloft.net,
+        keescook@chromium.org
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20190108124518.21986-1-baijiaju1990@gmail.com>
+ <27392ae0-2c0f-f099-05d8-f9cdbfbd313e@oracle.com>
+ <f9ab7ba3-573c-6703-1b01-37a9e0a9b769@gmail.com>
+From:   Yanjun Zhu <yanjun.zhu@oracle.com>
+Organization: Oracle Corporation
+Message-ID: <f87bd4b7-81d5-1f0c-137e-ecbc02753257@oracle.com>
+Date:   Wed, 9 Jan 2019 09:24:48 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
+In-Reply-To: <f9ab7ba3-573c-6703-1b01-37a9e0a9b769@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9130 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=681
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1901090008
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Try to get reference for ldisc during tty_reopen().
-If ldisc present, we don't need to do tty_ldisc_reinit() and lock the
-write side for line discipline semaphore.
-Effectively, it optimizes fast-path for tty_reopen(), but more
-importantly it won't interrupt ongoing IO on the tty as no ldisc change
-is needed.
-Fixes user-visible issue when tty_reopen() interrupted login process for
-user with a long password, observed and reported by Lukas.
 
-Fixes: c96cf923a98d ("tty: Don't block on IO when ldisc change is pending")
-Fixes: 83d817f41070 ("tty: Hold tty_ldisc_lock() during tty_reopen()")
-Cc: Jiri Slaby <jslaby@suse.com>
-Reported-by: Lukas F. Hartmann <lukas@mntmn.com>
-Tested-by: Lukas F. Hartmann <lukas@mntmn.com>
-Signed-off-by: Dmitry Safonov <dima@arista.com>
----
- drivers/tty/tty_io.c | 20 +++++++++++++-------
- 1 file changed, 13 insertions(+), 7 deletions(-)
+On 2019/1/8 20:57, Jia-Ju Bai wrote:
+>
+>
+> On 2019/1/8 20:54, Zhu Yanjun wrote:
+>>
+>> 在 2019/1/8 20:45, Jia-Ju Bai 写道:
+>>> In drivers/net/ethernet/nvidia/forcedeth.c, the functions
+>>> nv_start_xmit() and nv_start_xmit_optimized() can be concurrently
+>>> executed with nv_poll_controller().
+>>>
+>>> nv_start_xmit
+>>>    line 2321: prev_tx_ctx->skb = skb;
+>>>
+>>> nv_start_xmit_optimized
+>>>    line 2479: prev_tx_ctx->skb = skb;
+>>>
+>>> nv_poll_controller
+>>>    nv_do_nic_poll
+>>>      line 4134: spin_lock(&np->lock);
+>>>      nv_drain_rxtx
+>>>        nv_drain_tx
+>>>          nv_release_txskb
+>>>            line 2004: dev_kfree_skb_any(tx_skb->skb);
+>>>
+>>> Thus, two possible concurrency use-after-free bugs may occur.
+>>>
+>>> To fix these possible bugs,
+>>
+>>
+>> Does this really occur? Can you reproduce this ?
+>
+> This bug is not found by the real execution.
+> It is found by a static tool written by myself, and then I check it by 
+> manual code review.
 
-diff --git a/drivers/tty/tty_io.c b/drivers/tty/tty_io.c
-index bfe9ad85b362..23c6fd238422 100644
---- a/drivers/tty/tty_io.c
-+++ b/drivers/tty/tty_io.c
-@@ -1256,7 +1256,8 @@ static void tty_driver_remove_tty(struct tty_driver *driver, struct tty_struct *
- static int tty_reopen(struct tty_struct *tty)
- {
- 	struct tty_driver *driver = tty->driver;
--	int retval;
-+	struct tty_ldisc *ld;
-+	int retval = 0;
- 
- 	if (driver->type == TTY_DRIVER_TYPE_PTY &&
- 	    driver->subtype == PTY_TYPE_MASTER)
-@@ -1268,13 +1269,18 @@ static int tty_reopen(struct tty_struct *tty)
- 	if (test_bit(TTY_EXCLUSIVE, &tty->flags) && !capable(CAP_SYS_ADMIN))
- 		return -EBUSY;
- 
--	retval = tty_ldisc_lock(tty, 5 * HZ);
--	if (retval)
--		return retval;
-+	ld = tty_ldisc_ref_wait(tty);
-+	if (ld) {
-+		tty_ldisc_deref(ld);
-+	} else {
-+		retval = tty_ldisc_lock(tty, 5 * HZ);
-+		if (retval)
-+			return retval;
- 
--	if (!tty->ldisc)
--		retval = tty_ldisc_reinit(tty, tty->termios.c_line);
--	tty_ldisc_unlock(tty);
-+		if (!tty->ldisc)
-+			retval = tty_ldisc_reinit(tty, tty->termios.c_line);
-+		tty_ldisc_unlock(tty);
-+	}
- 
- 	if (retval == 0)
- 		tty->count++;
--- 
-2.20.1
+Before "line 2004: dev_kfree_skb_any(tx_skb->skb); ",
 
+"
+
+                 nv_disable_irq(dev);
+                 nv_napi_disable(dev);
+                 netif_tx_lock_bh(dev);
+                 netif_addr_lock(dev);
+                 spin_lock(&np->lock);
+                 /* stop engines */
+                 nv_stop_rxtx(dev);   <---this stop rxtx
+                 nv_txrx_reset(dev);
+"
+
+In this case, does nv_start_xmit or nv_start_xmit_optimized still work well?
+
+Zhu Yanjun
+
+>
+>
+> Best wishes,
+> Jia-Ju Bai
