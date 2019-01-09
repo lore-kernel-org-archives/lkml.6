@@ -2,90 +2,122 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 580C5C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 01:51:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E981BC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 01:51:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 258D321738
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 01:51:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B5ACC21726
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 01:51:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729403AbfAIBv2 (ORCPT
+        id S1729524AbfAIBvv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 20:51:28 -0500
-Received: from muru.com ([72.249.23.125]:60924 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728593AbfAIBv1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 20:51:27 -0500
-Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id 529638080;
-        Wed,  9 Jan 2019 01:51:33 +0000 (UTC)
-Date:   Tue, 8 Jan 2019 17:51:24 -0800
-From:   Tony Lindgren <tony@atomide.com>
-To:     Vincent Guittot <vincent.guittot@linaro.org>
-Cc:     "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        LAK <linux-arm-kernel@lists.infradead.org>,
-        linux-omap@vger.kernel.org
-Subject: Re: Regression in v5.0-rc1 with autosuspend hrtimers
-Message-ID: <20190109015124.GO5544@atomide.com>
-References: <20190107233833.GI5544@atomide.com>
- <CAKfTPtDBEmcsLotp-6K1KU1wM9Ba1EpMp3niXScRxYgzjs0nog@mail.gmail.com>
- <20190108155354.GL5544@atomide.com>
- <CAKfTPtCoOK-cYLXJ--sOfpVa9RVmzOAEN1+zB2qHMCzkJN0qaQ@mail.gmail.com>
- <20190108213743.GN5544@atomide.com>
- <20190109014218.GA8363@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190109014218.GA8363@linaro.org>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+        Tue, 8 Jan 2019 20:51:51 -0500
+Received: from relmlor1.renesas.com ([210.160.252.171]:5521 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728593AbfAIBvv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 20:51:51 -0500
+Date:   09 Jan 2019 10:51:48 +0900
+X-IronPort-AV: E=Sophos;i="5.56,455,1539615600"; 
+   d="scan'208";a="4703053"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 09 Jan 2019 10:51:48 +0900
+Received: from morimoto-PC.renesas.com (unknown [10.166.18.140])
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id F3135419AC72;
+        Wed,  9 Jan 2019 10:51:47 +0900 (JST)
+Message-ID: <87k1je38w7.wl-kuninori.morimoto.gx@renesas.com>
+From:   Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+To:     Jon Hunter <jonathanh@nvidia.com>
+Cc:     Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        <linux-tegra@vger.kernel.org>, Matthias Reichl <hias@horus.com>,
+        <alsa-devel@alsa-project.org>,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Takashi Iwai <tiwai@suse.com>, <linux-kernel@vger.kernel.org>,
+        Marcel Ziswiler <marcel@ziswiler.com>
+Subject: Re: [alsa-devel] [PATCH v1 3/3] ASoC: soc-core: fix platform name vs. of_node assignement
+In-Reply-To: <865d2a3e-bf6b-1f30-1179-7e922c0d0641@nvidia.com>
+References: <20181018111829.27056-1-marcel@ziswiler.com>
+        <20181018111829.27056-4-marcel@ziswiler.com>
+        <e25a7463-9ce0-d7f9-e77b-2bbaab2e0b25@nvidia.com>
+        <20181021112301.GC8554@sirena.org.uk>
+        <20181218174040.k7u26vnnoplllnwb@camel2.lan>
+        <952471da-b355-6471-6c19-5120d6704f81@nvidia.com>
+        <87lg3vuc7p.wl-kuninori.morimoto.gx@renesas.com>
+        <b5164c93-8be8-1c3d-9415-c895da6ad622@nvidia.com>
+        <d1e41ed2-da7c-b46c-bc6d-64cf3e536771@nvidia.com>
+        <865d2a3e-bf6b-1f30-1179-7e922c0d0641@nvidia.com>
+User-Agent: Wanderlust/2.15.9 Emacs/24.5 Mule/6.0
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Vincent Guittot <vincent.guittot@linaro.org> [190109 01:42]:
-> Le Tuesday 08 Jan 2019 à 13:37:43 (-0800), Tony Lindgren a écrit :
-> > Lowering the autosuspend_delay_ms to 2100 ms makes things work again.
-> > Anything higher than 2200 ms seems to somehow time out immediately
-> > now :)
-> 
-> This is quite close to the max ns of an int on arm 32bits
-> 
-> Could you try the patch below ?
 
-Yup great thanks, that's it:
+Hi Jon
 
-Tested-by: Tony Lindgren <tony@atomide.com>
+Thank you for your help
 
-> ---
->  drivers/base/power/runtime.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/base/power/runtime.c b/drivers/base/power/runtime.c
-> index 7062469..44c5c76 100644
-> --- a/drivers/base/power/runtime.c
-> +++ b/drivers/base/power/runtime.c
-> @@ -141,7 +141,7 @@ u64 pm_runtime_autosuspend_expiration(struct device *dev)
->  
->  	last_busy = READ_ONCE(dev->power.last_busy);
->  
-> -	expires = last_busy + autosuspend_delay * NSEC_PER_MSEC;
-> +	expires = last_busy + (u64)(autosuspend_delay) * NSEC_PER_MSEC;
->  	if (expires <= now)
->  		expires = 0;	/* Already expired. */
->  
-> -- 
-> 2.7.4
-> 
-> 
-> > 
-> > Regards,
-> > 
-> > Tony
+> > Yes so this does workaround the problem. However, per my previous
+> > comments, I would like to explore whether it is necessary to allocate
+> > the platform link component or if it can be static.
+
+OK, thanks.
+It *will* be static, but not yet.
+Thank you for your patch.
+I guess you worry about allocated memory leak when failed case ?
+It is using devm_kzalloc(), so all allocated memory will be automatically
+freed when card was detached.
+But indeed if driver gots -EPROBE_DEFER many times,
+it will allocate many unused platform.
+
+Here is the background of snd_soc_init_platform.
+
+Legacy dai_link was xxx_name/xxx_of_node style,
+but multi codec support starts to use snd_soc_dai_link_component style.
+OTOH Lars-Petter is thinking that current ALSA SoC is not good match
+for modern sound device.
+I guess, we need "multi xxx" support as 1st step for modern sound device.
+"multi codec" is already supported,
+"multi cpu"   patch was posted, but not yet accepted (or rejected ??).
+"multi platform" is no plan (?).
+These want to use snd_soc_dai_link_component style,
+because it is nice for multi xxx support style, I think.
+I think no one is planing for "multi platform" so far, thus,
+I posted snd_soc_dai_link_component style for it.
+# Maybe it should have num_platform, too.
+# all driver will have .num_platform = 1, thus I didn't added.
+# maybe it was my fault...
+
+The reason why platform/codec is allocating/copying by snd_soc_init_xxx
+so far is that it is glue for
+xxx_name/xxx_of_node (legacy style) <-> snd_soc_init_platform (modern style).
+
+I want to which to modern style immediately and remove legacy style.
+But as you know, we have too many ALSA SoC drivers now.
+So, if I posted "switch legacy style to modern style" patch
+for each (= for codec, for platform, for cpu), it will be patch-bomb,
+and Lars-Petter/Mark don't like it.
+Thus, I'm waiting "multi CPU" support patch.
+
+If CPU/Codec/Platform can be snd_soc_init_platform style,
+then, we can switch to modern style for all drivers.
+Then, all driver will have *static* platform.
+
+# So, I guess if your driver can switch to use
+# snd_soc_init_platform style directly, your problem can gone ?
+
+> Mark
+
+If there is no plan for "multi CPU" so far,
+I can post snd_soc_dai_link_component style for CPU.
+and post switch modern style for all drivers.
+Then, this issue can be solved ?
+
+Best regards
+---
+Kuninori Morimoto
