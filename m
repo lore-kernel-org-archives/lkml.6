@@ -2,95 +2,111 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86014C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 19:09:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B966C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 19:09:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 54E1B20685
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 19:09:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EFA9220685
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 19:09:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="TvU7YJv6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728143AbfAITJD (ORCPT
+        id S1728158AbfAITJL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 14:09:03 -0500
-Received: from wes1-so1-b.wedos.net ([46.28.106.43]:46001 "EHLO
-        wes1-so1.wedos.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726469AbfAITJD (ORCPT
+        Wed, 9 Jan 2019 14:09:11 -0500
+Received: from mail-io1-f68.google.com ([209.85.166.68]:41861 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726469AbfAITJL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 14:09:03 -0500
-Received: from localhost (ip4-46-39-182-135.cust.nbox.cz [46.39.182.135])
-        by wes1-so1.wedos.net (Postfix) with ESMTPSA id 43Zdvw0Plmz5X5;
-        Wed,  9 Jan 2019 20:09:00 +0100 (CET)
-Date:   Wed, 9 Jan 2019 20:08:56 +0100
-From:   Otto Sabart <ottosabart@seberm.com>
-To:     linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org
-Cc:     "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 1/1] doc: scsi: remove reference to tmscsim.txt file
-Message-ID: <ca9292ddbe567ae841b6c7e2d27e011ce078442d.1547059763.git.ottosabart@seberm.com>
+        Wed, 9 Jan 2019 14:09:11 -0500
+Received: by mail-io1-f68.google.com with SMTP id s22so6889324ioc.8
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Jan 2019 11:09:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=AXZT4VHugkGKeRGT88/HaZwrBVVB394UI+pwQ6ZW+10=;
+        b=TvU7YJv6x29/i+OJ0dQazYCO2iAP5BlCDpHNlVQRVV9MVuPxk9glN8i6XB6rXwEy8v
+         EYHp7R6LnmmWUvLRY+Xlr5DtTGdfXiPo3svTWtK4/woWin24l7UEF/fQ1kvg6yKevzqf
+         X7unrBjK32rfUEDPBnTrDfxTq4006yKtLxJ94=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=AXZT4VHugkGKeRGT88/HaZwrBVVB394UI+pwQ6ZW+10=;
+        b=Hn7AYR9z2JBf/oJMqv/izsq/6pA7XsT5RMjc0dTNHkDCI0esFssXGvxGP5Ji51MtYk
+         d43zlpm2/ztSMDndfmtijw1uujAdQSK1OaE/o7/7ZWVsSyR2+RpPTfYn97FcOOQBtBRV
+         XsqnwOQiivRk3txoFxthzY0CoY8zpgp/NlrgfbfhjXE0MwhnmNhNdOmIAuL26web30Xs
+         nNZyGcE1QtPyEGgm6jBubASmHtoqZ/ZibKTV2X58DPVv0Gg1VSKAgiPVi8qmirOi/hkn
+         7zvzqMQ/N8+JxRRjeXvM8HxoWPqdL+LFxGcu+RzEN7k0uUQxTdSGqG1KMd9KhaUOjVVN
+         rS7g==
+X-Gm-Message-State: AJcUuke0ADWCNJECIj6y6OUFGLh1N9RiG25oKPt29a/5X9CPkW5POLg8
+        QHRy+5FH43Bdo8ZyXqQXMDXe8N+WRyt3Qt2Z/cuX0A==
+X-Google-Smtp-Source: ALg8bN43NhDbxulZIkooIMEKFGCsP95uM/1+OrSso0V2jCiqcXt+OWR3aZKm/z26g+/bqd7EwK5n7PClknSDAqd504Y=
+X-Received: by 2002:a6b:c8c9:: with SMTP id y192mr4398413iof.183.1547060950226;
+ Wed, 09 Jan 2019 11:09:10 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="5vNYLRcllDrimb99"
-Content-Disposition: inline
-X-PGP-Key: http://seberm.com/pubkey.asc
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <1547056892-16527-1-git-send-email-vincent.guittot@linaro.org> <CACRpkdbA8cvoaG_5=JCrpQd2k1HYRxUjqGsoGJLLvroGGQukkA@mail.gmail.com>
+In-Reply-To: <CACRpkdbA8cvoaG_5=JCrpQd2k1HYRxUjqGsoGJLLvroGGQukkA@mail.gmail.com>
+From:   Vincent Guittot <vincent.guittot@linaro.org>
+Date:   Wed, 9 Jan 2019 20:08:59 +0100
+Message-ID: <CAKfTPtAaVXjm8sf1o=4yfRt_pyVU0T7H8jOatm6EreYVNoWj+w@mail.gmail.com>
+Subject: Re: [PATCH] arm64/hisilicon: fix SDcard detection
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Xu Wei <xuwei5@hisilicon.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, 9 Jan 2019 at 19:28, Linus Walleij <linus.walleij@linaro.org> wrote:
+>
+> Hi Vincent!
+>
+> On Wed, Jan 9, 2019 at 7:01 PM Vincent Guittot
+> <vincent.guittot@linaro.org> wrote:
+>
+> > commit 89a5e15bcba8 ("gpio/mmc/of: Respect polarity in the device tree")
+> > has changed how cd_gpios phandle and cd-inverted are used to set gpio's flags.
+> >
+> > Since this change, hikey960 SDcard is not detected anymore because flags
+> > are not set correctly. Updating cd-gpios to set GPIO_ACTIVE_LOW instead
+> > of high, fixes the problem.
+> >
+> > Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
+>
+> Please check if this patch fixes your problem:
+> https://marc.info/?l=linux-mmc&m=154637189021211&w=2
 
---5vNYLRcllDrimb99
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This fix the problem
 
-The tmscsim.txt doc file was removed in c121107d0f84.
+>
+> > --- a/arch/arm64/boot/dts/hisilicon/hi3660-hikey960.dts
+> > +++ b/arch/arm64/boot/dts/hisilicon/hi3660-hikey960.dts
+> > @@ -582,7 +582,7 @@
+> >         sd-uhs-sdr104;
+> >         disable-wp;
+> >         cd-inverted;
+> > -       cd-gpios = <&gpio25 3 0>;
+> > +       cd-gpios = <&gpio25 3 GPIO_ACTIVE_LOW>;
+>
+> This is also a good change, but the old device tree should
+> continue to work so we need to fix the real bug.
+>
+> If you also remove "cd-inverted" above, this patch should
+> hopefully still work and be fine to apply as well.
 
-Fixes: c121107d0f84 ("scsi: documentation: Obsolete documentation reference=
-s")
-Signed-off-by: Otto Sabart <ottosabart@seberm.com>
----
- drivers/scsi/Kconfig | 2 --
- 1 file changed, 2 deletions(-)
+ok. I'm going to send an update
 
-diff --git a/drivers/scsi/Kconfig b/drivers/scsi/Kconfig
-index f38882f6f37d..6cbc391689ad 100644
---- a/drivers/scsi/Kconfig
-+++ b/drivers/scsi/Kconfig
-@@ -1196,8 +1196,6 @@ config SCSI_AM53C974
- 	  PCscsi/PCnet (Am53/79C974) solutions.
- 	  This is a new implementation base on the generic esp_scsi driver.
-=20
--	  Documentation can be found in <file:Documentation/scsi/tmscsim.txt>.
--
- 	  Note that this driver does NOT support Tekram DC390W/U/F, which are
- 	  based on NCR/Symbios chips. Use "NCR53C8XX SCSI support" for those.
-=20
---=20
-2.17.2
-
-
---5vNYLRcllDrimb99
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEEb6VOpv2s03VHGoilgjuumfi+HjwFAlw2RskACgkQgjuumfi+
-Hjw3+g/+Jh1Q4kLq9CF9gScycehJ7G0m69m6N3NmMx8fk9N0OnbZ/AJ7ss/e2qBB
-LOogQEcer1egzYUdIe48IPZcV0hiwDstYaiTAjOWSA3v4GyvysxvzChVUtUztwuT
-Qmztb0vcIdCLNGZGLMMZXDCh4BqG7cdO3TKZpoM6jlE/yiUitScJ7BOGXnbdkEkG
-o6g+yWos7DajCaNKOxXIDCe7iSc2AIOLMmZg8D45EKX1+cn4JXXIQ9rUaDbxYlG+
-kaNGjrB0X8OKBODeqfh61WPfe44l4Vc0Mv/dY0W4Do1iZppp0Og47klsxDO3dz3k
-LPZIZfY0lMiV20tvEhRft0cm51HV/iScrzveYEVxi/ppgvQElXWZtEo1tjJVOlgh
-zqNspvDHQxfSvRkVcJhD1+hAvjl4183Ta6i6BctJ5+bKX5/28QY62gLKFU4P5g6y
-51e7q0P4eLzNlRYfAwdywONs8/H9oupowVVtsEal+L2YaoFsl2oJZWF8doU9filT
-kicF8ROH4xOHFJL/ftQ90FYrzoKZVnHHP5zz3tZO957ZzKNfiBWWhUGymNXExTAS
-xP4d43tuecCDiZD0GWFNcO+avNLq0ERJovJ0P0cPhhvkdt+pZA2Gj9nxfkv55Riy
-cn1inLpx2yO+8hwA+Bc9jdpmjwi9PAWXP7s+lkeePP2+n+4P98o=
-=vuIM
------END PGP SIGNATURE-----
-
---5vNYLRcllDrimb99--
+>
+> Yours,
+> Linus Walleij
