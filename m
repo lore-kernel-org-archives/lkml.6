@@ -2,73 +2,110 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97B29C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 12:42:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61EF4C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 12:42:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 67B3E206B6
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 12:42:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 39FD8206B6
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 12:42:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730949AbfAIMma (ORCPT
+        id S1730972AbfAIMmj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 07:42:30 -0500
-Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:47596 "EHLO
-        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1730125AbfAIMm3 (ORCPT
+        Wed, 9 Jan 2019 07:42:39 -0500
+Received: from vmicros1.altlinux.org ([194.107.17.57]:55558 "EHLO
+        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727828AbfAIMmi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 07:42:29 -0500
-Received: from valkosipuli.localdomain (valkosipuli.retiisi.org.uk [IPv6:2001:1bc8:1a6:d3d5::80:2])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by hillosipuli.retiisi.org.uk (Postfix) with ESMTPS id 74754634C7F;
-        Wed,  9 Jan 2019 14:41:10 +0200 (EET)
-Received: from sailus by valkosipuli.localdomain with local (Exim 4.89)
-        (envelope-from <sakari.ailus@retiisi.org.uk>)
-        id 1ghDAT-0002ZP-S1; Wed, 09 Jan 2019 14:41:09 +0200
-Date:   Wed, 9 Jan 2019 14:41:09 +0200
-From:   Sakari Ailus <sakari.ailus@iki.fi>
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-media@vger.kernel.org,
-        Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Chen-Yu Tsai <wens@csie.org>, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        Krzysztof Witos <kwitos@cadence.com>,
-        Rafal Ciepiela <rafalc@cadence.com>
-Subject: Re: [PATCH v4 8/9] phy: Add Cadence D-PHY support
-Message-ID: <20190109124109.e57pdt473346npng@valkosipuli.retiisi.org.uk>
-References: <cover.5d91ef683e3f432342f536e0f2fe239dbcebcb3e.1547026369.git-series.maxime.ripard@bootlin.com>
- <a089ce6aaefe6d2ddf6b17f5558ec7eb0ebf3774.1547026369.git-series.maxime.ripard@bootlin.com>
+        Wed, 9 Jan 2019 07:42:38 -0500
+Received: from mua.local.altlinux.org (mua.local.altlinux.org [192.168.1.14])
+        by vmicros1.altlinux.org (Postfix) with ESMTP id A21E272CA5E;
+        Wed,  9 Jan 2019 15:42:32 +0300 (MSK)
+Received: by mua.local.altlinux.org (Postfix, from userid 508)
+        id 97D4A7CCE38; Wed,  9 Jan 2019 15:42:32 +0300 (MSK)
+Date:   Wed, 9 Jan 2019 15:42:32 +0300
+From:   "Dmitry V. Levin" <ldv@altlinux.org>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Vineet Gupta <vgupta@synopsys.com>,
+        Elvira Khabirova <lineprinter@altlinux.org>,
+        Eugene Syromyatnikov <esyr@redhat.com>,
+        Alexey Brodkin <alexey.brodkin@synopsys.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        linux-snps-arc@lists.infradead.org, linux-audit@redhat.com,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 01/14] Move EM_ARCOMPACT and EM_ARCV2 to uapi/linux/elf-em.h
+Message-ID: <20190109124232.GA11981@altlinux.org>
+References: <20190109124044.GA11935@altlinux.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <a089ce6aaefe6d2ddf6b17f5558ec7eb0ebf3774.1547026369.git-series.maxime.ripard@bootlin.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 09, 2019 at 10:33:25AM +0100, Maxime Ripard wrote:
-> Cadence has designed a D-PHY that can be used by the, currently in tree,
-> DSI bridge (DRM), CSI Transceiver and CSI Receiver (v4l2) drivers.
-> 
-> Only the DSI driver has an ad-hoc driver for that phy at the moment, while
-> the v4l2 drivers are completely missing any phy support. In order to make
-> that phy support available to all these drivers, without having to
-> duplicate that code three times, let's create a generic phy framework
-> driver.
-> 
-> Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
+These should never have been defined in the arch tree to begin with, and
+now uapi/linux/audit.h header is going to use EM_ARCOMPACT and EM_ARCV2
+in order to define AUDIT_ARCH_ARCOMPACT and AUDIT_ARCH_ARCV2 which are
+needed to implement syscall_get_arch() which in turn is required to
+extend the generic ptrace API with PTRACE_GET_SYSCALL_INFO request.
 
-Reviewed-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Acked-by: Vineet Gupta <vgupta@synopsys.com>
+Acked-by: Paul Moore <paul@paul-moore.com>
+Cc: Elvira Khabirova <lineprinter@altlinux.org>
+Cc: Eugene Syromyatnikov <esyr@redhat.com>
+Cc: Alexey Brodkin <alexey.brodkin@synopsys.com>
+Cc: Oleg Nesterov <oleg@redhat.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: linux-snps-arc@lists.infradead.org
+Cc: linux-audit@redhat.com
+Signed-off-by: Dmitry V. Levin <ldv@altlinux.org>
+---
+ arch/arc/include/asm/elf.h  | 6 +-----
+ include/uapi/linux/elf-em.h | 2 ++
+ 2 files changed, 3 insertions(+), 5 deletions(-)
 
+diff --git a/arch/arc/include/asm/elf.h b/arch/arc/include/asm/elf.h
+index aa2d6da9d187..2b80c184c9c8 100644
+--- a/arch/arc/include/asm/elf.h
++++ b/arch/arc/include/asm/elf.h
+@@ -10,13 +10,9 @@
+ #define __ASM_ARC_ELF_H
+ 
+ #include <linux/types.h>
++#include <linux/elf-em.h>
+ #include <uapi/asm/elf.h>
+ 
+-/* These ELF defines belong to uapi but libc elf.h already defines them */
+-#define EM_ARCOMPACT		93
+-
+-#define EM_ARCV2		195	/* ARCv2 Cores */
+-
+ #define EM_ARC_INUSE		(IS_ENABLED(CONFIG_ISA_ARCOMPACT) ? \
+ 					EM_ARCOMPACT : EM_ARCV2)
+ 
+diff --git a/include/uapi/linux/elf-em.h b/include/uapi/linux/elf-em.h
+index 0c3000faedba..081675ed89cb 100644
+--- a/include/uapi/linux/elf-em.h
++++ b/include/uapi/linux/elf-em.h
+@@ -34,6 +34,7 @@
+ #define EM_M32R		88	/* Renesas M32R */
+ #define EM_MN10300	89	/* Panasonic/MEI MN10300, AM33 */
+ #define EM_OPENRISC     92     /* OpenRISC 32-bit embedded processor */
++#define EM_ARCOMPACT	93	/* ARCompact processor */
+ #define EM_XTENSA	94	/* Tensilica Xtensa Architecture */
+ #define EM_BLACKFIN     106     /* ADI Blackfin Processor */
+ #define EM_ALTERA_NIOS2	113	/* Altera Nios II soft-core processor */
+@@ -42,6 +43,7 @@
+ #define EM_TILEPRO	188	/* Tilera TILEPro */
+ #define EM_MICROBLAZE	189	/* Xilinx MicroBlaze */
+ #define EM_TILEGX	191	/* Tilera TILE-Gx */
++#define EM_ARCV2	195	/* ARCv2 Cores */
+ #define EM_RISCV	243	/* RISC-V */
+ #define EM_BPF		247	/* Linux BPF - in-kernel virtual machine */
+ #define EM_CSKY		252	/* C-SKY */
 -- 
-Sakari Ailus
+ldv
