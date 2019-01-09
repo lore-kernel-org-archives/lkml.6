@@ -2,142 +2,107 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12EC8C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 21:55:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B30CC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 22:02:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D3F59206B6
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 21:55:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="YyxycS+A"
+	by mail.kernel.org (Postfix) with ESMTP id 08EE0206B7
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 22:02:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727630AbfAIVzk (ORCPT
+        id S1727307AbfAIWCF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 16:55:40 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:39287 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725775AbfAIVzj (ORCPT
+        Wed, 9 Jan 2019 17:02:05 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60326 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725775AbfAIWCE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 16:55:39 -0500
-Received: by mail-pf1-f196.google.com with SMTP id r136so4274343pfc.6
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jan 2019 13:55:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=5Eexg7PVaWivfk6O8RpcNpABcP7SUyAO8ggltxz0kD4=;
-        b=YyxycS+A6kHhY/smYW8YVW88s4fESVwA+Rk8PyUVOFtLrKp/uZZc7qY38CGAvD8YWk
-         kJsvQwVhkUwZ0dtxPFkGrecc7JCxc3ydJy6owmGHGaeu0bVEbn6nOGyHX/ePbzd1ltBQ
-         8Zdl7NP0T+HU/DCDGtGVaVU9cn7SFqeZhgnOk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=5Eexg7PVaWivfk6O8RpcNpABcP7SUyAO8ggltxz0kD4=;
-        b=Zq8//Yc7xX0Ecqju0D55BGRUwhU3htlJG3mdBdGzhalMXDT74xCP5pU8/aPIahK4NX
-         H38QSsn/M8/ADXeEi9Dz3CxXWOAyYC2RNQ4gDQHOtWwH4UYx5Ubgq9Q9Mh3UpckkPZTX
-         q4wzmIW8mbKoDH8E+Jymmcf33KLujpNqRuBcbx+XPj2vpDWoIBCLKoS2is4tqnB3Z94d
-         cFH2o/h+vmDlcW3SWoDja/pYZbtxGg97b5SUIJVJ7Gytp51sOqSqk5Z+6TUxO+sI1/r0
-         pToypxmIhNkYuSm9Gq7IjhHVG2n6+LGv+m46VJTJGttM9nQ+87IPSj5xHoLTFWV0ZY6Z
-         A2XA==
-X-Gm-Message-State: AJcUukcA1JnrZEGSiT6i02PYo5JmBkgpQsorAagTMnqbLd8dOTlcHma5
-        wM/+F5r2kmbxnfgPgV+xgIxquQ==
-X-Google-Smtp-Source: ALg8bN6PFVdS8Eb60ystXNAKSJ/BHSVn8lSYXSdG61hO3iuK45wychvyitXu4MoVIprT1LJoJyjcLA==
-X-Received: by 2002:a62:ed0f:: with SMTP id u15mr7458365pfh.188.1547070938587;
-        Wed, 09 Jan 2019 13:55:38 -0800 (PST)
-Received: from google.com ([2620:15c:202:1:534:b7c0:a63c:460c])
-        by smtp.gmail.com with ESMTPSA id a18sm97849291pgj.30.2019.01.09.13.55.36
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 09 Jan 2019 13:55:37 -0800 (PST)
-Date:   Wed, 9 Jan 2019 13:55:34 -0800
-From:   Brian Norris <briannorris@chromium.org>
-To:     Rob Herring <robh+dt@kernel.org>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Sibi Sankar <sibis@codeaurora.org>,
-        David Brown <david.brown@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andy Gross <andy.gross@linaro.org>,
-        Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>,
-        Chris Lew <clew@codeaurora.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-arm-msm-owner@vger.kernel.org,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        "open list:REMOTE PROCESSOR (REMOTEPROC) SUBSYSTEM" 
-        <linux-remoteproc@vger.kernel.org>, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] dt-bindings: remoteproc: qcom: Add firmware
- bindings for Q6V5
-Message-ID: <20190109215532.GA178267@google.com>
-References: <20181228044819.5697-1-sibis@codeaurora.org>
- <20181228044819.5697-2-sibis@codeaurora.org>
- <20190103233014.GA181833@google.com>
- <20190103235043.GA195759@google.com>
- <20190104000145.GJ31596@builder>
- <20190104001158.GA200069@google.com>
- <20190105015430.GA67838@google.com>
- <CAL_JsqLbMNB6EzYCzmq5PBc9EvVmYifsoJBwymV621h385Hv0w@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAL_JsqLbMNB6EzYCzmq5PBc9EvVmYifsoJBwymV621h385Hv0w@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Wed, 9 Jan 2019 17:02:04 -0500
+Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8FDC1B55;
+        Wed,  9 Jan 2019 22:02:03 +0000 (UTC)
+Date:   Wed, 9 Jan 2019 14:02:01 -0800
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Qian Cai <cai@lca.pw>
+Cc:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
+        x86@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RESEND PATCH] x86_64: increase stack size for KASAN_EXTRA
+Message-Id: <20190109140201.4434ff87880ee29bdedb37cc@linux-foundation.org>
+In-Reply-To: <20190109215209.2903-1-cai@lca.pw>
+References: <20181228020639.80425-1-cai@lca.pw>
+        <20190109215209.2903-1-cai@lca.pw>
+X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 08, 2019 at 09:22:30AM -0600, Rob Herring wrote:
-> On Fri, Jan 4, 2019 at 7:54 PM Brian Norris <briannorris@chromium.org> wrote:
-> > To add to my thoughts, since I think maybe Sibi was a little unclear of
-> > my thoughts:
-> >
-> > One of my primary concerns with the existing approach is that it's
-> > basically a complete free-for-all. We should have some minimal standards
-> > (enforced in code) such that our DTB can never point us at something
-> > like /lib/firmware/<other-vendor>/foo.bin (or /lib/firmware/modem.mdt;
-> > or lots of other bad examples). This could probably be done simply by
-> > always prefixing 'qcom/' (I don't remember -- does request_firmware()
-> > follow '..'? e.g., 'firmware-name = "../bar/foo.bin"'.)
+On Wed,  9 Jan 2019 16:52:09 -0500 Qian Cai <cai@lca.pw> wrote:
+
+> If the kernel is configured with KASAN_EXTRA, the stack size is
+> increasted significantly due to enable this option will set
+> "-fstack-reuse" to "none" in GCC [1]. As the results, it could trigger
+> stack overrun quite often with 32k stack size compiled using GCC 8. For
+> example, this reproducer
 > 
-> We can write a schema to enforce some of this:
+> https://github.com/linux-test-project/ltp/blob/master/testcases/kernel/\
+> syscalls/madvise/madvise06.c
 > 
-> firmware-name:
->   pattern: "^\w.*"
-
-Are DT schemas ready to use/enforce? Or would this currently just be a
-suggestion? I'm out of the loop. But I guess that would be interesting.
-
-> And you can have a device specific schema to enforce a subdir and/or
-> filename(s).
+> could trigger a "corrupted stack end detected inside scheduler" very
+> reliably with CONFIG_SCHED_STACK_END_CHECK enabled.
 > 
-> I tend to think we should not put part of the path in drivers. No real
-> good reason other than we already allow that for other users of
-> 'firmware-name'.
-
-OK. (I was surprised you accepted paths at all. But if we're going down
-that road... *shrug*)
-
-> > As a bonus: it would be very nice if we can provide a little more
-> > structure by default, and avoid arbitrary hierarchy in the DTS. That's
-> > where I brought up ath10k's "variant" as an example; if we can use
-> > 'compatible' to capture most of this particular Hexagon core's
-> > properties, then we only leave a single level of variability to the DTS.
+> There are just too many functions that could have a large stack with
+> KASAN_EXTRA due to large local variables that have been called over and
+> over again without being able to reuse the stacks. Some noticiable ones
+> are,
 > 
-> Some bindings use compatible to determine/construct the firmware name.
-> If you want to restrict things, then that's probably how you should do
-> it IMO.
+> size
+> 7648 shrink_page_list
+> 3584 xfs_rmap_convert
+> 3312 migrate_page_move_mapping
+> 3312 dev_ethtool
+> 3200 migrate_misplaced_transhuge_page
+> 3168 copy_process
+> 
+> There are other 49 functions are over 2k in size while compiling kernel
+> with "-Wframe-larger-than=" even with a related minimal config on this
+> machine. Hence, it is too much work to change Makefiles for each object
+> to compile without "-fsanitize-address-use-after-scope" individually.
+> 
+> [1] https://gcc.gnu.org/bugzilla/show_bug.cgi?id=81715#c23
+> 
+> Although there is a patch in GCC 9 to help the situation, GCC 9 probably
+> won't be released in a few months and then it probably take another
+> 6-month to 1-year for all major distros to include it as a default.
+> Hence, the stack usage with KASAN_EXTRA can be revisited again in 2020
+> when GCC 9 is everywhere. Until then, this patch will help users avoid
+> stack overrun.
+> 
+> This has already been fixed for arm64 for the same reason via
+> 6e8830674ea (arm64: kasan: Increase stack size for KASAN_EXTRA).
 
-We already have reasons up-thread for why we can't get this exclusively
-from compatible.
+Sounds good.
 
-But if we were to partially construct and/or validate paths using
-compatible, then the time to do that is now. As soon as this is merged
-without such validation, then we're stuck.
+> --- a/arch/x86/include/asm/page_64_types.h
+> +++ b/arch/x86/include/asm/page_64_types.h
+> @@ -7,7 +7,11 @@
+>  #endif
+>  
+>  #ifdef CONFIG_KASAN
+> +#ifdef CONFIG_KASAN_EXTRA
+> +#define KASAN_STACK_ORDER 2
+> +#else
+>  #define KASAN_STACK_ORDER 1
+> +#endif
+>  #else
+>  #define KASAN_STACK_ORDER 0
+>  #endif
 
-Given the above, it seems like maybe the best we can do is put a
-recommendation into a DT schema pattern.
+I'm suspecting this logic could be performed in Kconfig, for all
+architectures.  Add a new always-defined CONFIG_KASAN_STACK_ORDER?
 
-Brian
