@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-13.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06B21C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 09:11:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21832C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 09:11:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B9FDD206BB
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 09:11:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DAA3F206BB
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 09:11:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="I2wkMG41"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ZR+KYUbQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730167AbfAIJLb (ORCPT
+        id S1730211AbfAIJLe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 04:11:31 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:48252 "EHLO
+        Wed, 9 Jan 2019 04:11:34 -0500
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:48260 "EHLO
         fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729926AbfAIJLa (ORCPT
+        with ESMTP id S1730147AbfAIJLb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 04:11:30 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x099BM5s055464;
-        Wed, 9 Jan 2019 03:11:22 -0600
+        Wed, 9 Jan 2019 04:11:31 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x099BPP7055470;
+        Wed, 9 Jan 2019 03:11:25 -0600
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1547025082;
-        bh=ldcte9NoiwgWZQQDr7hCoaXEK5wNb5WkJyiMlHWfUg0=;
+        s=ti-com-17Q1; t=1547025085;
+        bh=T95Y86NyeBidhSBq6WO8eyGDoXfesh1J731lMD15qnk=;
         h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=I2wkMG41/xVOWKmYmW0Ihrndf/XQFKzS9T3SGDbZFI3C5MDGGcAIsHToi1XiEI45W
-         5cBnh7T4JUzvYcX1WmprKWWbrj+HgpMmTL+LQrDKnWnrftNDNFtKONS8k9KPBPGPS1
-         pCcimfs4iILQ5W1eKz+N1kHN8A+k/bt/pB3eBgac=
-Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x099BMJx099844
+        b=ZR+KYUbQnR+P5Ee0UW0OzYmmpzlL/kGEyGKg/iLDdfx+jxzhs3Euwpm4udTrY5S3e
+         7Vp8zc0shlY2D5ZKkH1s1wGM1ASmy86XCNY7qec21GWEWSA3kG9T5/YGjGpLSSbQn7
+         M0d8YDXzj1/Kawok/kVA2rZ9G2eYI0zPw/Lx4a9Q=
+Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x099BP3O013404
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 9 Jan 2019 03:11:22 -0600
-Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+        Wed, 9 Jan 2019 03:11:25 -0600
+Received: from DLEE115.ent.ti.com (157.170.170.26) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Wed, 9
- Jan 2019 03:11:21 -0600
-Received: from dflp32.itg.ti.com (10.64.6.15) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_0,
+ Jan 2019 03:11:25 -0600
+Received: from dflp32.itg.ti.com (10.64.6.15) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_0,
  cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Wed, 9 Jan 2019 03:11:22 -0600
+ Wed, 9 Jan 2019 03:11:25 -0600
 Received: from a0132425.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x099BFBP017497;
-        Wed, 9 Jan 2019 03:11:19 -0600
+        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x099BFBQ017497;
+        Wed, 9 Jan 2019 03:11:22 -0600
 From:   Vignesh R <vigneshr@ti.com>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Rob Herring <robh+dt@kernel.org>
@@ -56,9 +56,9 @@ CC:     Jiri Slaby <jslaby@suse.com>, Vignesh R <vigneshr@ti.com>,
         Lokesh Vutla <lokeshvutla@ti.com>,
         <linux-serial@vger.kernel.org>, <linux-omap@vger.kernel.org>,
         <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH 1/3] serial: 8250_omap: Drop check for of_node
-Date:   Wed, 9 Jan 2019 14:42:04 +0530
-Message-ID: <20190109091206.25759-2-vigneshr@ti.com>
+Subject: [PATCH 2/3] dt-bindings: serial: omap_serial: add clocks entry
+Date:   Wed, 9 Jan 2019 14:42:05 +0530
+Message-ID: <20190109091206.25759-3-vigneshr@ti.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190109091206.25759-1-vigneshr@ti.com>
 References: <20190109091206.25759-1-vigneshr@ti.com>
@@ -71,111 +71,26 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-8250_omap is DT only driver so dev->of_node always exists. Drop check
-for existence of valid dev->of_node to simplify omap8250_probe().
+Document clocks property used to pass phandle to functional clk.
 
 Signed-off-by: Vignesh R <vigneshr@ti.com>
 ---
- drivers/tty/serial/8250/8250_omap.c | 63 +++++++++++++----------------
- 1 file changed, 28 insertions(+), 35 deletions(-)
+ Documentation/devicetree/bindings/serial/omap_serial.txt | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/tty/serial/8250/8250_omap.c b/drivers/tty/serial/8250/8250_omap.c
-index ad7ba7d0f28d..a74126569785 100644
---- a/drivers/tty/serial/8250/8250_omap.c
-+++ b/drivers/tty/serial/8250/8250_omap.c
-@@ -1134,10 +1134,12 @@ static int omap8250_probe(struct platform_device *pdev)
- {
- 	struct resource *regs = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	struct resource *irq = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
-+	struct device_node *np = pdev->dev.of_node;
- 	struct omap8250_priv *priv;
- 	struct uart_8250_port up;
- 	int ret;
- 	void __iomem *membase;
-+	const struct of_device_id *id;
+diff --git a/Documentation/devicetree/bindings/serial/omap_serial.txt b/Documentation/devicetree/bindings/serial/omap_serial.txt
+index c35d5ece1156..0a9b5444f4e6 100644
+--- a/Documentation/devicetree/bindings/serial/omap_serial.txt
++++ b/Documentation/devicetree/bindings/serial/omap_serial.txt
+@@ -22,6 +22,8 @@ Optional properties:
+ - dma-names : "rx" for receive channel, "tx" for transmit channel.
+ - rs485-rts-delay, rs485-rx-during-tx, linux,rs485-enabled-at-boot-time: see rs485.txt
+ - rs485-rts-active-high: drive RTS high when sending (default is low).
++- clocks: phandle to the functional clock as per
++  Documentation/devicetree/bindings/clock/clock-bindings.txt
  
- 	if (!regs || !irq) {
- 		dev_err(&pdev->dev, "missing registers or irq\n");
-@@ -1194,27 +1196,20 @@ static int omap8250_probe(struct platform_device *pdev)
- 	up.port.unthrottle = omap_8250_unthrottle;
- 	up.port.rs485_config = omap_8250_rs485_config;
+ Example:
  
--	if (pdev->dev.of_node) {
--		const struct of_device_id *id;
--
--		ret = of_alias_get_id(pdev->dev.of_node, "serial");
--
--		of_property_read_u32(pdev->dev.of_node, "clock-frequency",
--				     &up.port.uartclk);
--		priv->wakeirq = irq_of_parse_and_map(pdev->dev.of_node, 1);
--
--		id = of_match_device(of_match_ptr(omap8250_dt_ids), &pdev->dev);
--		if (id && id->data)
--			priv->habit |= *(u8 *)id->data;
--	} else {
--		ret = pdev->id;
--	}
-+	ret = of_alias_get_id(np, "serial");
- 	if (ret < 0) {
--		dev_err(&pdev->dev, "failed to get alias/pdev id\n");
-+		dev_err(&pdev->dev, "failed to get alias\n");
- 		return ret;
- 	}
- 	up.port.line = ret;
- 
-+	of_property_read_u32(np, "clock-frequency", &up.port.uartclk);
-+	priv->wakeirq = irq_of_parse_and_map(np, 1);
-+
-+	id = of_match_device(of_match_ptr(omap8250_dt_ids), &pdev->dev);
-+	if (id && id->data)
-+		priv->habit |= *(u8 *)id->data;
-+
- 	if (!up.port.uartclk) {
- 		up.port.uartclk = DEFAULT_CLK_SPEED;
- 		dev_warn(&pdev->dev,
-@@ -1242,25 +1237,23 @@ static int omap8250_probe(struct platform_device *pdev)
- 	omap_serial_fill_features_erratas(&up, priv);
- 	up.port.handle_irq = omap8250_no_handle_irq;
- #ifdef CONFIG_SERIAL_8250_DMA
--	if (pdev->dev.of_node) {
--		/*
--		 * Oh DMA support. If there are no DMA properties in the DT then
--		 * we will fall back to a generic DMA channel which does not
--		 * really work here. To ensure that we do not get a generic DMA
--		 * channel assigned, we have the the_no_dma_filter_fn() here.
--		 * To avoid "failed to request DMA" messages we check for DMA
--		 * properties in DT.
--		 */
--		ret = of_property_count_strings(pdev->dev.of_node, "dma-names");
--		if (ret == 2) {
--			up.dma = &priv->omap8250_dma;
--			priv->omap8250_dma.fn = the_no_dma_filter_fn;
--			priv->omap8250_dma.tx_dma = omap_8250_tx_dma;
--			priv->omap8250_dma.rx_dma = omap_8250_rx_dma;
--			priv->omap8250_dma.rx_size = RX_TRIGGER;
--			priv->omap8250_dma.rxconf.src_maxburst = RX_TRIGGER;
--			priv->omap8250_dma.txconf.dst_maxburst = TX_TRIGGER;
--		}
-+	/*
-+	 * Oh DMA support. If there are no DMA properties in the DT then
-+	 * we will fall back to a generic DMA channel which does not
-+	 * really work here. To ensure that we do not get a generic DMA
-+	 * channel assigned, we have the the_no_dma_filter_fn() here.
-+	 * To avoid "failed to request DMA" messages we check for DMA
-+	 * properties in DT.
-+	 */
-+	ret = of_property_count_strings(np, "dma-names");
-+	if (ret == 2) {
-+		up.dma = &priv->omap8250_dma;
-+		priv->omap8250_dma.fn = the_no_dma_filter_fn;
-+		priv->omap8250_dma.tx_dma = omap_8250_tx_dma;
-+		priv->omap8250_dma.rx_dma = omap_8250_rx_dma;
-+		priv->omap8250_dma.rx_size = RX_TRIGGER;
-+		priv->omap8250_dma.rxconf.src_maxburst = RX_TRIGGER;
-+		priv->omap8250_dma.txconf.dst_maxburst = TX_TRIGGER;
- 	}
- #endif
- 	ret = serial8250_register_8250_port(&up);
 -- 
 2.20.1
 
