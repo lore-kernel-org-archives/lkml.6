@@ -2,201 +2,211 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9489AC43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 01:29:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96A6FC43444
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 01:34:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6227E20821
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 01:29:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ljK5Z0em"
+	by mail.kernel.org (Postfix) with ESMTP id 5F9A320821
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 01:34:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729543AbfAIB3K (ORCPT
+        id S1729281AbfAIBeI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 20:29:10 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:33314 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729371AbfAIB1f (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 20:27:35 -0500
-Received: by mail-wr1-f67.google.com with SMTP id c14so6056025wrr.0;
-        Tue, 08 Jan 2019 17:27:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=/673uL4vlQMZBXJmxviPI34h12gFdF0Rlg9s5QdcR5o=;
-        b=ljK5Z0emcK72bH4yw6g/LKs6hBT112EBdIW2lGjy8rfyhL18kNMnTE+85XeP2MRAoX
-         j8d3qFmmtggvbUchps2nIGSuLqd9V2GibkVcRxFOaK7D82EqJ3z+YHz4QoG4TicVkxId
-         3+GfUq9qQlFGb78fcMEuS4K5GC/MFbdNUFjh1HsHXoS1i5PcLQKGA7AuEljfEABPB1JJ
-         jnKiQFq4n27B6XA3mISc4+tFrTeiqccGxWkec5lE1FPJNZzNJBqwcni/x1GP4Z72R56v
-         UMJaxfO/lyuw7URtaLHjLfTR7aPMkAuQYvNVAo2NMrwEbAa5L4+lsoMzcJ4RPlatajn5
-         ia7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
-         :in-reply-to:references:mime-version:content-transfer-encoding;
-        bh=/673uL4vlQMZBXJmxviPI34h12gFdF0Rlg9s5QdcR5o=;
-        b=LUMQ5KUEBG9sI79nFEtMIxtCAFhlIbzqQfag+QhACFhQhgl5MRL0k3GoAeM5or6JZy
-         8tr73Y98zEaSJDbofyLV80cWh4mEConVCVl9Mv+5C+x9swXlqak/vvpf3xcjse5s6tsY
-         aiMxkgwR/wndylxGdK6NMvw3C0y4lUKmmc1SFfQclPYEKFUl3EHomSfsDpNG4Al+ymPH
-         27wXm/XEM+tbahKSsHvDRnIBPaKdXbkrlbB618MobWixeCn0OnZEdJLkM2kI197f3eu0
-         VKf0eS7Z50mf+1JcbCsaUvkFzSVKC21NU2MKk4tXL3s3J0qm+T2HRIQXoHJ49H7SHTXy
-         wDlA==
-X-Gm-Message-State: AJcUukejgr0NFUkQ20Ao2HoFAfnMUjh4Y4tY8mYyKL6HxEGu/bjWA7Kz
-        54bIJf2bhMFJ7SRoeidhDKc=
-X-Google-Smtp-Source: ALg8bN6gCnmo+vXqrk2Ryc673oA9NKrFJ7KkRapkjmW9Nf0oJhdAqvTVPBUU9i4GBgRB6vJHzXPouA==
-X-Received: by 2002:adf:e54a:: with SMTP id z10mr3011799wrm.238.1546997253101;
-        Tue, 08 Jan 2019 17:27:33 -0800 (PST)
-Received: from beren.harmstone.com ([88.97.13.154])
-        by smtp.gmail.com with ESMTPSA id y34sm156915088wrd.68.2019.01.08.17.27.32
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 08 Jan 2019 17:27:32 -0800 (PST)
-From:   Mark Harmstone <mark@harmstone.com>
-Cc:     mark@harmstone.com, Chris Mason <clm@fb.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [RFC PATCH 07/19] btrfs: add new keys to key root when flushed
-Date:   Wed,  9 Jan 2019 01:26:49 +0000
-Message-Id: <20190109012701.26441-7-mark@harmstone.com>
-X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20190109012701.26441-1-mark@harmstone.com>
-References: <20190109012701.26441-1-mark@harmstone.com>
+        Tue, 8 Jan 2019 20:34:08 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:55736 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728253AbfAIBeI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 20:34:08 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 1F93937E85;
+        Wed,  9 Jan 2019 01:34:07 +0000 (UTC)
+Received: from dhcp-128-65.nay.redhat.com (ovpn-12-68.pek2.redhat.com [10.72.12.68])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 66A6960E3F;
+        Wed,  9 Jan 2019 01:33:59 +0000 (UTC)
+Date:   Wed, 9 Jan 2019 09:33:56 +0800
+From:   Dave Young <dyoung@redhat.com>
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     Kairui Song <kasong@redhat.com>, linux-kernel@vger.kernel.org,
+        dhowells@redhat.com, dwmw2@infradead.org,
+        jwboyer@fedoraproject.org, keyrings@vger.kernel.org,
+        jmorris@namei.org, serge@hallyn.com, bauerman@linux.ibm.com,
+        ebiggers@google.com, nayna@linux.ibm.com,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        kexec@lists.infradead.org
+Subject: Re: [RFC PATCH 1/1] KEYS, integrity: Link .platform keyring to
+ .secondary_trusted_keys
+Message-ID: <20190109013356.GA2610@dhcp-128-65.nay.redhat.com>
+References: <20190108081247.2266-1-kasong@redhat.com>
+ <20190108081247.2266-2-kasong@redhat.com>
+ <1546960680.19931.114.camel@linux.ibm.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+In-Reply-To: <1546960680.19931.114.camel@linux.ibm.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Wed, 09 Jan 2019 01:34:07 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Mark Harmstone <mark@harmstone.com>
----
- fs/btrfs/transaction.c | 79 +++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 78 insertions(+), 1 deletion(-)
+CC kexec list
+On 01/08/19 at 10:18am, Mimi Zohar wrote:
+> [Cc'ing the LSM and integrity mailing lists]
+> 
+> Repeating my comment on PATCH 0/1 here with the expanded set of
+> mailing lists.
+> 
+> The builtin and secondary keyrings have a signature change of trust
+> rooted in the signed kernel image.  Adding the pre-boot keys to the
+> secondary keyring breaks that signature chain of trust.
+> 
+> Please do NOT add the pre-boot "platform" keys to the secondary
+> keyring.
 
-diff --git a/fs/btrfs/transaction.c b/fs/btrfs/transaction.c
-index d1eeef9ec5da..a6c8d49b6962 100644
---- a/fs/btrfs/transaction.c
-+++ b/fs/btrfs/transaction.c
-@@ -19,6 +19,7 @@
- #include "volumes.h"
- #include "dev-replace.h"
- #include "qgroup.h"
-+#include "encryption.h"
- 
- #define BTRFS_ROOT_TRANS_TAG 0
- 
-@@ -520,7 +521,7 @@ start_transaction(struct btrfs_root *root, unsigned int num_items,
- 	 * and then we deadlock with somebody doing a freeze.
- 	 *
- 	 * If we are ATTACH, it means we just want to catch the current
--	 * transaction and commit it, so we needn't do sb_start_intwrite(). 
-+	 * transaction and commit it, so we needn't do sb_start_intwrite().
- 	 */
- 	if (type & __TRANS_FREEZABLE)
- 		sb_start_intwrite(fs_info->sb);
-@@ -1918,12 +1919,74 @@ btrfs_wait_pending_ordered(struct btrfs_transaction *cur_trans)
- 		   atomic_read(&cur_trans->pending_ordered) == 0);
- }
- 
-+static int flush_key(struct btrfs_trans_handle *trans,
-+		     struct btrfs_enc_key *k)
-+{
-+	struct btrfs_fs_info *fs_info = trans->fs_info;
-+	struct btrfs_path *path;
-+	struct btrfs_key key;
-+	struct extent_buffer *leaf;
-+	struct btrfs_encryption_key_item *item;
-+	int ret;
-+
-+	path = btrfs_alloc_path();
-+	if (!path)
-+		return -ENOMEM;
-+
-+	path->leave_spinning = 1;
-+
-+	if (!fs_info->key_root) {
-+		struct btrfs_root *root;
-+
-+		root = btrfs_create_tree(trans, fs_info,
-+					 BTRFS_KEY_TREE_OBJECTID);
-+
-+		if (IS_ERR(root)) {
-+			btrfs_free_path(path);
-+			return PTR_ERR(root);
-+		}
-+
-+		fs_info->key_root = root;
-+
-+		btrfs_set_fs_incompat(fs_info, ENCRYPTION);
-+	}
-+
-+	key.objectid = k->key_number;
-+	key.type = BTRFS_ENCRYPTION_KEY;
-+	key.offset = 0;
-+
-+	ret = btrfs_insert_empty_item(trans, fs_info->key_root, path, &key,
-+				      sizeof(struct btrfs_encryption_key_item));
-+
-+	if (ret) {
-+		btrfs_free_path(path);
-+		return ret;
-+	}
-+
-+	leaf = path->nodes[0];
-+
-+	btrfs_mark_buffer_dirty(leaf);
-+
-+	item = btrfs_item_ptr(leaf, path->slots[0],
-+			      struct btrfs_encryption_key_item);
-+
-+	write_eb_member(leaf, item, struct btrfs_encryption_key_item,
-+			key_id, k->key_id);
-+
-+	btrfs_free_path(path);
-+
-+	k->added = false;
-+
-+	return ret;
-+}
-+
- int btrfs_commit_transaction(struct btrfs_trans_handle *trans)
- {
- 	struct btrfs_fs_info *fs_info = trans->fs_info;
- 	struct btrfs_transaction *cur_trans = trans->transaction;
- 	struct btrfs_transaction *prev_trans = NULL;
- 	int ret;
-+	struct btrfs_enc_key *key;
- 
- 	/* Stop the commit early if ->aborted is set */
- 	if (unlikely(READ_ONCE(cur_trans->aborted))) {
-@@ -2071,6 +2134,20 @@ int btrfs_commit_transaction(struct btrfs_trans_handle *trans)
- 		ret = cur_trans->aborted;
- 		goto scrub_continue;
- 	}
-+
-+	down_read(&fs_info->key_sem);
-+
-+	list_for_each_entry(key, &fs_info->key_list, key_list) {
-+		if (key->added && key->used) {
-+			ret = flush_key(trans, key);
-+
-+			if (ret)
-+				goto scrub_continue;
-+		}
-+	}
-+
-+	up_read(&fs_info->key_sem);
-+
- 	/*
- 	 * the reloc mutex makes sure that we stop
- 	 * the balancing code from coming in and moving
--- 
-2.19.2
+If we regard kexec as a bootloader, it sounds natural to use the
+platform key to verify the signature with kexec_file_load syscall.
 
+It will be hard for user to manually sign a kernel and import the key
+then to reuse kexec_file_load.
+
+I think we do not care if platform key can be added to secondary or not,
+any suggestions how can kexec_file to use the platform key?
+
+> 
+> Mimi
+> 
+> 
+> On Tue, 2019-01-08 at 16:12 +0800, Kairui Song wrote:
+> > Currently kexec may need to verify the kerne image, and the kernel image
+> > could be signed with third part keys which are provided by paltform or
+> > firmware (eg. stored in MokListRT EFI variable). And the same time,
+> > kexec_file_load will only verify the image agains .builtin_trusted_keys
+> > or .secondary_trusted_keys according to configuration, but there is no
+> > way for kexec_file_load to verify the image against any third part keys
+> > mentioned above.
+> > 
+> > In ea93102f3224 ('integrity: Define a trusted platform keyring') a
+> > .platform keyring is introduced to store the keys provided by platform
+> > or firmware. And with a few following commits including 15ea0e1e3e185
+> > ('efi: Import certificates from UEFI Secure Boot'), now keys required to
+> > verify the image is being imported to .paltform keyring, and later
+> > IMA-appraisal could access the keyring and verify the image.
+> > 
+> > This patch links the .platform keyring to .secondary_trusted_keys so
+> > kexec_file_load could also leverage the .platform keyring to verify the
+> > kernel image.
+> > 
+> > Signed-off-by: Kairui Song <kasong@redhat.com>
+> > ---
+> >  certs/system_keyring.c          | 30 ++++++++++++++++++++++++++++++
+> >  include/keys/platform_keyring.h | 12 ++++++++++++
+> >  security/integrity/digsig.c     |  7 +++++++
+> >  3 files changed, 49 insertions(+)
+> >  create mode 100644 include/keys/platform_keyring.h
+> > 
+> > diff --git a/certs/system_keyring.c b/certs/system_keyring.c
+> > index 81728717523d..dcef0259e149 100644
+> > --- a/certs/system_keyring.c
+> > +++ b/certs/system_keyring.c
+> > @@ -18,12 +18,14 @@
+> >  #include <linux/verification.h>
+> >  #include <keys/asymmetric-type.h>
+> >  #include <keys/system_keyring.h>
+> > +#include <keys/platform_keyring.h>
+> >  #include <crypto/pkcs7.h>
+> >  
+> >  static struct key *builtin_trusted_keys;
+> >  #ifdef CONFIG_SECONDARY_TRUSTED_KEYRING
+> >  static struct key *secondary_trusted_keys;
+> >  #endif
+> > +static struct key *platform_keys = NULL;
+> >  
+> >  extern __initconst const u8 system_certificate_list[];
+> >  extern __initconst const unsigned long system_certificate_list_size;
+> > @@ -67,6 +69,12 @@ int restrict_link_by_builtin_and_secondary_trusted(
+> >  		/* Allow the builtin keyring to be added to the secondary */
+> >  		return 0;
+> >  
+> > +	if (type == &key_type_keyring &&
+> > +	    dest_keyring == secondary_trusted_keys &&
+> > +	    payload == &platform_keys->payload)
+> > +		/* Allow the platform keyring to be added to the secondary */
+> > +		return 0;
+> > +
+> >  	return restrict_link_by_signature(dest_keyring, type, payload,
+> >  					  secondary_trusted_keys);
+> >  }
+> > @@ -188,6 +196,28 @@ static __init int load_system_certificate_list(void)
+> >  }
+> >  late_initcall(load_system_certificate_list);
+> >  
+> > +#if defined(CONFIG_INTEGRITY_PLATFORM_KEYRING) && defined(CONFIG_SECONDARY_TRUSTED_KEYRING)
+> > +
+> > +/*
+> > + * Link .platform keyring to .secondary_trusted_key keyring
+> > + */
+> > +static __init int load_platform_certificate_list(void)
+> > +{
+> > +	int ret = 0;
+> > +	platform_keys = integrity_get_platform_keyring();
+> > +	if (!platform_keys) {
+> > +		return 0;
+> > +	}
+> > +	ret = key_link(secondary_trusted_keys, platform_keys);
+> > +	if (ret < 0) {
+> > +		pr_err("Failed to link platform keyring: %d", ret);
+> > +	}
+> > +	return 0;
+> > +}
+> > +late_initcall(load_platform_certificate_list);
+> > +
+> > +#endif
+> > +
+> >  #ifdef CONFIG_SYSTEM_DATA_VERIFICATION
+> >  
+> >  /**
+> > diff --git a/include/keys/platform_keyring.h b/include/keys/platform_keyring.h
+> > new file mode 100644
+> > index 000000000000..4f92ed6c0b42
+> > --- /dev/null
+> > +++ b/include/keys/platform_keyring.h
+> > @@ -0,0 +1,12 @@
+> > +#ifndef _KEYS_PLATFORM_KEYRING_H
+> > +#define _KEYS_PLATFORM_KEYRING_H
+> > +
+> > +#include <linux/key.h>
+> > +
+> > +#ifdef CONFIG_INTEGRITY_PLATFORM_KEYRING
+> > +
+> > +extern const struct key* __init integrity_get_platform_keyring(void);
+> > +
+> > +#endif /* CONFIG_INTEGRITY_PLATFORM_KEYRING */
+> > +
+> > +#endif /* _KEYS_SYSTEM_KEYRING_H */
+> > diff --git a/security/integrity/digsig.c b/security/integrity/digsig.c
+> > index f45d6edecf99..397758d4f12d 100644
+> > --- a/security/integrity/digsig.c
+> > +++ b/security/integrity/digsig.c
+> > @@ -176,3 +176,10 @@ int __init integrity_load_cert(const unsigned int id, const char *source,
+> >  	pr_info("Loading X.509 certificate: %s\n", source);
+> >  	return integrity_add_key(id, data, len, perm);
+> >  }
+> > +
+> > +#ifdef CONFIG_INTEGRITY_PLATFORM_KEYRING
+> > +struct key* __init integrity_get_platform_keyring(void)
+> > +{
+> > +	return keyring[INTEGRITY_KEYRING_PLATFORM];
+> > +}
+> > +#endif
+> 
+
+Thanks
+Dave
