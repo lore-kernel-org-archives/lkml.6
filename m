@@ -2,204 +2,146 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82963C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 15:40:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11647C43612
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 15:41:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 52A0C20859
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 15:40:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DF0B9206BA
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 15:41:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732381AbfAIPkf (ORCPT
+        id S1732396AbfAIPlE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 10:40:35 -0500
-Received: from lb1-smtp-cloud9.xs4all.net ([194.109.24.22]:42493 "EHLO
-        lb1-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731076AbfAIPke (ORCPT
+        Wed, 9 Jan 2019 10:41:04 -0500
+Received: from mail-it1-f197.google.com ([209.85.166.197]:44585 "EHLO
+        mail-it1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731076AbfAIPlE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 10:40:34 -0500
-Received: from [IPv6:2001:420:44c1:2579:f8c4:4546:22d:c704] ([IPv6:2001:420:44c1:2579:f8c4:4546:22d:c704])
-        by smtp-cloud9.xs4all.net with ESMTPA
-        id hFxngRQeSMWvEhFxrgTVe3; Wed, 09 Jan 2019 16:40:31 +0100
-Subject: Re: [PATCH 2/2] media: cedrus: Allow using the current dst buffer as
- reference
-To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        linux-media@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Chen-Yu Tsai <wens@csie.org>, Randy Li <ayaka@soulik.info>,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-References: <20190109141920.12677-1-paul.kocialkowski@bootlin.com>
- <20190109141920.12677-2-paul.kocialkowski@bootlin.com>
- <9a624f6a-0c38-f2c9-3f2d-2758f9a19299@xs4all.nl>
- <9b8098a9fde4f7645ffe2da263cee038dd823e69.camel@bootlin.com>
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <29500521-2c7d-aa34-abc9-2da1b110e774@xs4all.nl>
-Date:   Wed, 9 Jan 2019 16:40:15 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        Wed, 9 Jan 2019 10:41:04 -0500
+Received: by mail-it1-f197.google.com with SMTP id x82so7559640ita.9
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Jan 2019 07:41:03 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=0FAwe0lDjP8h9AUhvn2Qnn3m5Wlr+FezM1aTRHNNe88=;
+        b=C57lBQESoiSzGAlWTgmce8jgwQ94cCBtAoXCsQ//Xh40GO31+VIEGJCBmIO8q/DVbr
+         P4nWJxZF4TI5IADziqpFSK0/ZX+6fMZ8EwSy8CTrdrP0gF78Be3YTYXKDG1Lgy/TvtgM
+         f4+EcAmPj4XnqTnTcHOoFYDBTIIGgSdD1XE+RHWhagY1licOOCL9EOhcBilLEdZRsVbt
+         oc72BDv9QHEilGT2LADTa2hXihauQ6nm3PPCnDs1r3xdCGkDNQTLrRirJaNVjdybP3tb
+         8i1w6+ZaLO1HCW/JskaYplu5xW7586fp8dsc+wl/NxUgxWdA6Rfvy9FEOB/PFA2wX/wP
+         qlVA==
+X-Gm-Message-State: AJcUukcihOWQS4JA3I96JMD+Er54du2qwYzTyUl9EFR/WF3vfFHopLor
+        FR7WWMKgc+zh+2m73/euCy6FJm9SOe/GvDlxa0eLSd6W8Jfu
+X-Google-Smtp-Source: ALg8bN6wttTQvAK7SGRrEO04wL0ZUFXcEtMz0dwBEbNSTWgdaU7MzxOU7cYqe+wn6Numv8a7g4Mn8Lqi8GWTqwIkf5G5RRVAoT5S
 MIME-Version: 1.0
-In-Reply-To: <9b8098a9fde4f7645ffe2da263cee038dd823e69.camel@bootlin.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfOvEoN97jNgv+eHZfDRrBJOm6PuX5+vRzdqc0fKg91wtmq1VjwkOkLWpPZKWLp5FXbWkHICn+SO2k/VXSsmfiSxru+ilP7gAcUl60R5IKKXZGFSn74js
- DRQGMrkWOauuJIJvIkqVMIU7jnyv6lx7prlphMYZimwIeME1xlDa9vGZLJZ5AuZd93w0NPbLZc+POFPzp1JDJo8999ZUbXT8sC/5z/XVgOvTcje+u6fLaaKy
- /6sfmYhUZwhsBKXHwE6dYkE6gy+873f1iVUZljuNp530gXBPtbv2cP6nj81z3SD3z12gadukcsqqLTNVc7C9Enn+kvi36/gYaEXr9uRINpUoI+y3LpC6e8F4
- xJCnVX3ahwMttKxUwZUVHwjjsdpA9ESqjVh4dIhZYg4fRSPEevjhUDVFZF9fR6IiH95WNak7He5eQvmHgA2+C9eLAne3xUza1URh/CPnmUMFi+yhS3P6hMi6
- LncU3gbckmPUKabqOE8LYKkV+OTudGMPye2Hp4mOeFx+Qe/nKzjYd/A7LIpqYhheNLYjpHnEB7CzpGsFrCxOujTtei2HcLoVN0eqQv4HXggvp1yBh9v8zpuf
- nAZt+PfHD1EqbR9FzmpowCd7GSHzTNZD7j620GYh0ieHv4Za4tzklB9q1Y0Ja0DLCg8dTLSE6HsuaQWembCC7sbQJcp4pdoguA/EBGR5R9Ygbn1rS1Culd7R
- M3VTn0y0tnoGpTllvUWP8tAXDkZMlktsS/UwrrGQV0uR82Jnvlovo/hr89/K1vNL9KV8C9pih2nFMVVclH9CgQG0K64QIrioauJvssChS8Y7wUzPmyfqqHZI
- rDFPrPUTv7HyAiHfj14=
+X-Received: by 2002:a5d:8619:: with SMTP id f25mr1000594iol.31.1547048463274;
+ Wed, 09 Jan 2019 07:41:03 -0800 (PST)
+Date:   Wed, 09 Jan 2019 07:41:03 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000001a9aa0057f084a81@google.com>
+Subject: general protection fault in ebitmap_destroy
+From:   syzbot <syzbot+6664500f0f18f07a5c0e@syzkaller.appspotmail.com>
+To:     eparis@parisplace.org, linux-kernel@vger.kernel.org,
+        paul@paul-moore.com, peter.enderborg@sony.com, sds@tycho.nsa.gov,
+        selinux@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01/09/19 15:42, Paul Kocialkowski wrote:
-> Hi,
-> 
-> On Wed, 2019-01-09 at 15:29 +0100, Hans Verkuil wrote:
->> On 01/09/19 15:19, Paul Kocialkowski wrote:
->>> It was reported that some cases of interleaved video decoding require
->>> using the current destination buffer as a reference. However, this is
->>> no longer possible after the move to vb2_find_timestamp because only
->>> dequeued and done buffers are considered.
->>>
->>> Add a helper in our driver that also considers the current destination
->>> buffer before resorting to vb2_find_timestamp and use it in MPEG-2.
->>
->> This patch looks good, but can you also add checks to handle the case
->> when no buffer with the given timestamp was found? Probably should be done
->> in a third patch.
->>
->> I suspect the driver will crash if an unknown timestamp is passed on to the
->> driver. I would really like to see that corner case fixed.
-> 
-> You're totally right and I think that more generarlly, the current code
-> flow is rather fragile whenever something wrong happens in our setup()
-> codec op. I think we should at least have that op return an error code
-> and properly deal with it when that occurs.
-> 
-> I am planning on making a cleanup series to fix that.
-> 
-> Before using timestamps, reference buffer index validation was done in
-> std_validate and now it's fully up to the driver. I wonder if it would
-> be feasible to bring something back in there since all stateless
-> drivers will face the same issue. The conditions set in
-> cedrus_reference_index_find seem generic enough for that, but we should
-> check that std_validate is not called too early, when the queue is in a
-> different state (and the buffer might not be dequeud or done yet).
-> 
-> What do you think?
+Hello,
 
-I don't think you can do that. Say you queue a buffer that refers to a
-ref frame F, and F is a buffer that's been dequeued. When std_validate is
-called, this is fine and valid. Now later (but before the request is
-processed) buffer F is queued by the application. Now F is no longer valid.
+syzbot found the following crash on:
 
-So when the driver processes the request, it won't be able to find F anymore.
+HEAD commit:    a88cc8da0279 Merge branch 'akpm' (patches from Andrew)
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1722da4f400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=edf1c3031097c304
+dashboard link: https://syzkaller.appspot.com/bug?extid=6664500f0f18f07a5c0e
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12d43580c00000
 
-A more interesting question is what you should do if a reference frame isn't
-found. And should that be documented in the stateless decoder spec? (Or perhaps
-it's there already, I'm not sure).
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+6664500f0f18f07a5c0e@syzkaller.appspotmail.com
 
-Regards,
+SELinux: failed to load policy
+sel_write_load: 238 callbacks suppressed
+SELinux: failed to load policy
+kasan: CONFIG_KASAN_INLINE enabled
+kasan: GPF could be caused by NULL-ptr deref or user memory access
+general protection fault: 0000 [#1] PREEMPT SMP KASAN
+CPU: 0 PID: 9316 Comm: syz-executor2 Not tainted 5.0.0-rc1+ #16
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+RIP: 0010:ebitmap_destroy+0x32/0xf0 security/selinux/ss/ebitmap.c:334
+Code: 49 89 fd 41 54 53 e8 9d e6 36 fe 4d 85 ed 0f 84 99 00 00 00 e8 8f e6  
+36 fe 4c 89 ea 48 b8 00 00 00 00 00 fc ff df 48 c1 ea 03 <80> 3c 02 00 0f  
+85 98 00 00 00 49 be 00 00 00 00 00 fc ff df 4d 8b
+RSP: 0018:ffff88808967f5c0 EFLAGS: 00010202
+RAX: dffffc0000000000 RBX: ffff88808967f6a8 RCX: dffffc0000000000
+RDX: 0000000000000001 RSI: ffffffff834b1081 RDI: 0000000000000008
+RBP: ffff88808967f5e0 R08: ffff8880972a8140 R09: ffffed1015cc5b90
+R10: ffffed1015cc5b8f R11: ffff8880ae62dc7b R12: ffff888099d993c0
+R13: 0000000000000008 R14: ffff888099d993c0 R15: ffff88808967f648
+FS:  00007f70cd9e5700(0000) GS:ffff8880ae600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00000000015e7938 CR3: 0000000096c4a000 CR4: 00000000001406f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+  sens_destroy+0x49/0xa0 security/selinux/ss/policydb.c:735
+  sens_read+0x25d/0x460 security/selinux/ss/policydb.c:1636
+  policydb_read+0xed9/0x60d0 security/selinux/ss/policydb.c:2430
+  security_load_policy+0x423/0x1830 security/selinux/ss/services.c:2129
+  sel_write_load+0x25a/0x470 security/selinux/selinuxfs.c:565
+  __vfs_write+0x116/0xb40 fs/read_write.c:485
+  vfs_write+0x20c/0x580 fs/read_write.c:549
+  ksys_write+0x105/0x260 fs/read_write.c:598
+  __do_sys_write fs/read_write.c:610 [inline]
+  __se_sys_write fs/read_write.c:607 [inline]
+  __x64_sys_write+0x73/0xb0 fs/read_write.c:607
+  do_syscall_64+0x1a3/0x800 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x457ec9
+Code: 6d b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 3b b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f70cd9e4c78 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000457ec9
+RDX: 000000000000005c RSI: 0000000020000000 RDI: 0000000000000003
+RBP: 000000000073bf00 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007f70cd9e56d4
+R13: 00000000004c720f R14: 00000000004dc9a0 R15: 00000000ffffffff
+Modules linked in:
+---[ end trace 78ea480790940b53 ]---
+RIP: 0010:ebitmap_destroy+0x32/0xf0 security/selinux/ss/ebitmap.c:334
+Code: 49 89 fd 41 54 53 e8 9d e6 36 fe 4d 85 ed 0f 84 99 00 00 00 e8 8f e6  
+36 fe 4c 89 ea 48 b8 00 00 00 00 00 fc ff df 48 c1 ea 03 <80> 3c 02 00 0f  
+85 98 00 00 00 49 be 00 00 00 00 00 fc ff df 4d 8b
+RSP: 0018:ffff88808967f5c0 EFLAGS: 00010202
+RAX: dffffc0000000000 RBX: ffff88808967f6a8 RCX: dffffc0000000000
+RDX: 0000000000000001 RSI: ffffffff834b1081 RDI: 0000000000000008
+RBP: ffff88808967f5e0 R08: ffff8880972a8140 R09: ffffed1015cc5b90
+R10: ffffed1015cc5b8f R11: ffff8880ae62dc7b R12: ffff888099d993c0
+R13: 0000000000000008 R14: ffff888099d993c0 R15: ffff88808967f648
+FS:  00007f70cd9e5700(0000) GS:ffff8880ae700000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000000000073c000 CR3: 0000000096c4a000 CR4: 00000000001406e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 
-	Hans
 
-> 
-> Cheers,
-> 
-> Paul
-> 
->>> Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
->>> ---
->>>  drivers/staging/media/sunxi/cedrus/cedrus_dec.c   | 13 +++++++++++++
->>>  drivers/staging/media/sunxi/cedrus/cedrus_dec.h   |  2 ++
->>>  drivers/staging/media/sunxi/cedrus/cedrus_mpeg2.c | 10 ++++++----
->>>  3 files changed, 21 insertions(+), 4 deletions(-)
->>>
->>> diff --git a/drivers/staging/media/sunxi/cedrus/cedrus_dec.c b/drivers/staging/media/sunxi/cedrus/cedrus_dec.c
->>> index 443fb037e1cf..2c295286766c 100644
->>> --- a/drivers/staging/media/sunxi/cedrus/cedrus_dec.c
->>> +++ b/drivers/staging/media/sunxi/cedrus/cedrus_dec.c
->>> @@ -22,6 +22,19 @@
->>>  #include "cedrus_dec.h"
->>>  #include "cedrus_hw.h"
->>>  
->>> +int cedrus_reference_index_find(struct vb2_queue *queue,
->>> +				struct vb2_buffer *vb2_buf, u64 timestamp)
->>> +{
->>> +	/*
->>> +	 * Allow using the current capture buffer as reference, which can occur
->>> +	 * for field-coded pictures.
->>> +	 */
->>> +	if (vb2_buf->timestamp == timestamp)
->>> +		return vb2_buf->index;
->>> +	else
->>> +		return vb2_find_timestamp(queue, timestamp, 0);
->>> +}
->>> +
->>>  void cedrus_device_run(void *priv)
->>>  {
->>>  	struct cedrus_ctx *ctx = priv;
->>> diff --git a/drivers/staging/media/sunxi/cedrus/cedrus_dec.h b/drivers/staging/media/sunxi/cedrus/cedrus_dec.h
->>> index d1ae7903677b..8d0fc248220f 100644
->>> --- a/drivers/staging/media/sunxi/cedrus/cedrus_dec.h
->>> +++ b/drivers/staging/media/sunxi/cedrus/cedrus_dec.h
->>> @@ -16,6 +16,8 @@
->>>  #ifndef _CEDRUS_DEC_H_
->>>  #define _CEDRUS_DEC_H_
->>>  
->>> +int cedrus_reference_index_find(struct vb2_queue *queue,
->>> +				struct vb2_buffer *vb2_buf, u64 timestamp);
->>>  void cedrus_device_run(void *priv);
->>>  
->>>  #endif
->>> diff --git a/drivers/staging/media/sunxi/cedrus/cedrus_mpeg2.c b/drivers/staging/media/sunxi/cedrus/cedrus_mpeg2.c
->>> index cb45fda9aaeb..81c66a8aa1ac 100644
->>> --- a/drivers/staging/media/sunxi/cedrus/cedrus_mpeg2.c
->>> +++ b/drivers/staging/media/sunxi/cedrus/cedrus_mpeg2.c
->>> @@ -10,6 +10,7 @@
->>>  #include <media/videobuf2-dma-contig.h>
->>>  
->>>  #include "cedrus.h"
->>> +#include "cedrus_dec.h"
->>>  #include "cedrus_hw.h"
->>>  #include "cedrus_regs.h"
->>>  
->>> @@ -159,8 +160,8 @@ static void cedrus_mpeg2_setup(struct cedrus_ctx *ctx, struct cedrus_run *run)
->>>  	cedrus_write(dev, VE_DEC_MPEG_PICBOUNDSIZE, reg);
->>>  
->>>  	/* Forward and backward prediction reference buffers. */
->>> -	forward_idx = vb2_find_timestamp(cap_q,
->>> -					 slice_params->forward_ref_ts, 0);
->>> +	forward_idx = cedrus_reference_index_find(cap_q, &run->dst->vb2_buf,
->>> +						  slice_params->forward_ref_ts);
->>>  
->>>  	fwd_luma_addr = cedrus_dst_buf_addr(ctx, forward_idx, 0);
->>>  	fwd_chroma_addr = cedrus_dst_buf_addr(ctx, forward_idx, 1);
->>> @@ -168,8 +169,9 @@ static void cedrus_mpeg2_setup(struct cedrus_ctx *ctx, struct cedrus_run *run)
->>>  	cedrus_write(dev, VE_DEC_MPEG_FWD_REF_LUMA_ADDR, fwd_luma_addr);
->>>  	cedrus_write(dev, VE_DEC_MPEG_FWD_REF_CHROMA_ADDR, fwd_chroma_addr);
->>>  
->>> -	backward_idx = vb2_find_timestamp(cap_q,
->>> -					  slice_params->backward_ref_ts, 0);
->>> +	backward_idx = cedrus_reference_index_find(cap_q, &run->dst->vb2_buf,
->>> +						   slice_params->backward_ref_ts);
->>> +
->>>  	bwd_luma_addr = cedrus_dst_buf_addr(ctx, backward_idx, 0);
->>>  	bwd_chroma_addr = cedrus_dst_buf_addr(ctx, backward_idx, 1);
->>>  
->>>
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
