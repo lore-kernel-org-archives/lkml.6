@@ -2,68 +2,93 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A112C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 03:56:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2ADEC43612
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 03:56:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 671462070B
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 03:56:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=pobox.com header.i=@pobox.com header.b="lSXTqP2W"
+	by mail.kernel.org (Postfix) with ESMTP id 712C3214C6
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 03:56:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729543AbfAID4G (ORCPT
+        id S1729579AbfAID4u (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 22:56:06 -0500
-Received: from pb-smtp1.pobox.com ([64.147.108.70]:61926 "EHLO
-        pb-smtp1.pobox.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728278AbfAIDzt (ORCPT
+        Tue, 8 Jan 2019 22:56:50 -0500
+Received: from m9784.mail.qiye.163.com ([220.181.97.84]:53619 "EHLO
+        m9784.mail.qiye.163.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728278AbfAID4u (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 22:55:49 -0500
-Received: from pb-smtp1.pobox.com (unknown [127.0.0.1])
-        by pb-smtp1.pobox.com (Postfix) with ESMTP id A763B11930C;
-        Tue,  8 Jan 2019 22:55:47 -0500 (EST)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=pobox.com; h=from:to:cc
-        :subject:date:message-id:mime-version:content-transfer-encoding;
-         s=sasl; bh=sBOZAASX4pT+aW4/bJh8+i++wuo=; b=lSXTqP2W/E+EsJtUcSeI
-        dL1P5z0HetcK3VDatD5O3uB8WBgv0N0KesZkFF0wnEGqppteKntIo4sYetq8ZzhP
-        OOUbSuEUTG0lku0pd1DzC5u4E5pR4kuqYisUhzk+oogJUnrkoON0CQW73rV8MX3F
-        gEXUMycK7UgFL+FV42HMbqM=
-Received: from pb-smtp1.nyi.icgroup.com (unknown [127.0.0.1])
-        by pb-smtp1.pobox.com (Postfix) with ESMTP id 93872119302;
-        Tue,  8 Jan 2019 22:55:46 -0500 (EST)
-Received: from yoda.home (unknown [70.82.104.228])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by pb-smtp1.pobox.com (Postfix) with ESMTPSA id 0B7AC1192F9;
-        Tue,  8 Jan 2019 22:55:46 -0500 (EST)
-Received: from xanadu.home (xanadu.home [192.168.2.2])
-        by yoda.home (Postfix) with ESMTP id F36D12DA019C;
-        Tue,  8 Jan 2019 22:55:44 -0500 (EST)
-From:   Nicolas Pitre <nicolas.pitre@linaro.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Dave Mielke <Dave@mielke.cc>, linux-kernel@vger.kernel.org
-Subject: [PATCH 0/6] assorted console/vt/vcs fixes
-Date:   Tue,  8 Jan 2019 22:54:58 -0500
-Message-Id: <20190109035504.8413-1-nicolas.pitre@linaro.org>
-X-Mailer: git-send-email 2.20.1
+        Tue, 8 Jan 2019 22:56:50 -0500
+X-Greylist: delayed 475 seconds by postgrey-1.27 at vger.kernel.org; Tue, 08 Jan 2019 22:56:49 EST
+Received: from localhost (unknown [124.65.100.10])
+        by m9784.mail.qiye.163.com (Hmail) with ESMTPA id 5166441849;
+        Wed,  9 Jan 2019 11:48:52 +0800 (CST)
+Date:   Wed, 9 Jan 2019 11:48:52 +0800
+From:   WANG Chao <chao.wang@ucloud.cn>
+To:     Borislav Petkov <bp@suse.de>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Zhenzhong Duan <zhenzhong.duan@oracle.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        srinivas.eeda@oracle.com
+Subject: Re: [PATCH] treewide: replace RETPOLINE with CONFIG_RETPOLINE
+Message-ID: <20190109034852.GA51165@WANG-Chaos-MacBook-Pro.local>
+References: <20181210163725.95977-1-chao.wang@ucloud.cn>
+ <20181221093347.GA88654@WANG-Chaos-MacBook-Pro.local>
+ <20181221104705.GA4750@zn.tnic>
 MIME-Version: 1.0
-X-Pobox-Relay-ID: 7184D2A8-13C2-11E9-AB73-70EFDD2159A7-78420484!pb-smtp1.pobox.com
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181221104705.GA4750@zn.tnic>
+User-Agent: Mutt/1.11.1 (2018-12-01)
+X-HM-Spam-Status: e1kIGBQJHllBS1VLV1koWUFJQjdXWS1ZQUlXWQkOFx4IWUFZMjUtOjcyP0
+        FLVUtZBg++
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6Ngw6Mxw4DTkCLywOKhMiMBA1
+        HUswCjxVSlVKTk9MS0tOTEhJT0JCVTMWGhIXVRgTGhRVDBoVHDsOGBcUDh9VGBVFWVdZEgtZQVlK
+        SU9VTU5VSktLVUpLWVdZCAFZQUhJT0w3Bg++
+X-HM-Tid: 0a6830ba25fe2086kuqy5166441849
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Greg,
+On 12/21/18 at 11:47P, Borislav Petkov wrote:
+> On Fri, Dec 21, 2018 at 05:33:47PM +0800, WANG Chao wrote:
+> > On 12/11/18 at 12:37P, WANG Chao wrote:
+> > > Since commit 4cd24de3a098 ("x86/retpoline: Make CONFIG_RETPOLINE depend
+> > > on compiler support"), RETPOLINE has been replaced by CONFIG_RETPOLINE.
+> > > 
+> > > Fixes: 4cd24de3a098 ("x86/retpoline: Make CONFIG_RETPOLINE depend on compiler support")
+> > > Signed-off-by: WANG Chao <chao.wang@ucloud.cn>
+> > 
+> > ping ...
+> 
+> This one somehow slipped through the cracks... :-\
+> 
+> Ok, let's see: this could be relevant for the case when a module built
+> with a compiler which doesn't support retpolines, gets loaded on a
+> system which is built with retpolines.
+> 
+> Which is pretty seldom as the majority of setups out there should have
+> a retpoline-enabled compiler. And should not allow loading external
+> modules anyway, but that's a different story.
+> 
+> So, this close to the merge window, I'm inclined to delay this one after
+> it and have it take the x86/urgent fixes path. Unless someone screams
+> and says that patch breaks his system. I haven't seen any reports about
+> it so far so...
 
-Here's a few patches fixing various issues. The first 2 are most
-certainly stable material. I don't know if the other issues are serious e=
-nough to be stable worthy though.
-Please feel free to tag them as such if so.
+Hi, Boris.
 
+Please pick up this one in x86/urgent.
 
-Nicolas
-
+Thanks
+Chao
