@@ -6,24 +6,24 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17985C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 09:34:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06C88C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 09:34:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D649B214C6
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 09:34:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D4B5F20883
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 09:34:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730211AbfAIJdm (ORCPT
+        id S1730497AbfAIJeb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 04:33:42 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:37248 "EHLO mail.bootlin.com"
+        Wed, 9 Jan 2019 04:34:31 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:37275 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729284AbfAIJdl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 04:33:41 -0500
+        id S1729840AbfAIJdm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 04:33:42 -0500
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id A549B20A14; Wed,  9 Jan 2019 10:33:39 +0100 (CET)
+        id 7614C209EF; Wed,  9 Jan 2019 10:33:40 +0100 (CET)
 Received: from localhost (aaubervilliers-681-1-45-241.w90-88.abo.wanadoo.fr [90.88.163.241])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 73B5E209C2;
-        Wed,  9 Jan 2019 10:33:29 +0100 (CET)
+        by mail.bootlin.com (Postfix) with ESMTPSA id 3C4B420A0D;
+        Wed,  9 Jan 2019 10:33:30 +0100 (CET)
 From:   Maxime Ripard <maxime.ripard@bootlin.com>
 To:     Kishon Vijay Abraham I <kishon@ti.com>
 Cc:     Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
@@ -38,9 +38,9 @@ Cc:     Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         Rafal Ciepiela <rafalc@cadence.com>,
         Maxime Ripard <maxime.ripard@bootlin.com>,
         Sakari Ailus <sakari.ailus@iki.fi>
-Subject: [PATCH v4 1/9] phy: dphy: Remove unused header
-Date:   Wed,  9 Jan 2019 10:33:18 +0100
-Message-Id: <01f191c95d3655de1147076ed39484051c47114e.1547026369.git-series.maxime.ripard@bootlin.com>
+Subject: [PATCH v4 3/9] phy: dphy: Clarify lanes parameter documentation
+Date:   Wed,  9 Jan 2019 10:33:20 +0100
+Message-Id: <e905df5df30f577b3cb731bd1e2ca7e52300dfb3.1547026369.git-series.maxime.ripard@bootlin.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <cover.5d91ef683e3f432342f536e0f2fe239dbcebcb3e.1547026369.git-series.maxime.ripard@bootlin.com>
 References: <cover.5d91ef683e3f432342f536e0f2fe239dbcebcb3e.1547026369.git-series.maxime.ripard@bootlin.com>
@@ -51,27 +51,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The videomode.h header inclusion is an artifact from the patches
-development, remove it.
+The lanes parameter is not solely about the number of lanes, but it also
+carries the fact that those are the first lanes in use during the
+transmission.
+
+It was implicit so far, so make sure it's explicit now.
 
 Suggested-by: Sakari Ailus <sakari.ailus@iki.fi>
 Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
 ---
- include/linux/phy/phy-mipi-dphy.h | 2 --
- 1 file changed, 2 deletions(-)
+ include/linux/phy/phy-mipi-dphy.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/include/linux/phy/phy-mipi-dphy.h b/include/linux/phy/phy-mipi-dphy.h
-index c08aacc0ac35..9cf97cd1d303 100644
+index 627d28080d3a..a877ffee845d 100644
 --- a/include/linux/phy/phy-mipi-dphy.h
 +++ b/include/linux/phy/phy-mipi-dphy.h
-@@ -6,8 +6,6 @@
- #ifndef __PHY_MIPI_DPHY_H_
- #define __PHY_MIPI_DPHY_H_
- 
--#include <video/videomode.h>
--
- /**
-  * struct phy_configure_opts_mipi_dphy - MIPI D-PHY configuration set
-  *
+@@ -269,7 +269,8 @@ struct phy_configure_opts_mipi_dphy {
+ 	/**
+ 	 * @lanes:
+ 	 *
+-	 * Number of active data lanes used for the transmissions.
++	 * Number of active, consecutive, data lanes, starting from
++	 * lane 0, used for the transmissions.
+ 	 */
+ 	unsigned char		lanes;
+ };
 -- 
 git-series 0.9.1
