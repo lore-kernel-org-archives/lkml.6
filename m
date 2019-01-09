@@ -2,107 +2,100 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A399DC43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 21:34:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F27CCC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 21:36:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C12620685
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 21:34:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C7EAC20685
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 21:36:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726804AbfAIVeq (ORCPT
+        id S1726855AbfAIVgR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 16:34:46 -0500
-Received: from inva020.nxp.com ([92.121.34.13]:42442 "EHLO inva020.nxp.com"
+        Wed, 9 Jan 2019 16:36:17 -0500
+Received: from muru.com ([72.249.23.125]:32884 "EHLO muru.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726090AbfAIVep (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 16:34:45 -0500
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 67B221A00CD;
-        Wed,  9 Jan 2019 22:34:43 +0100 (CET)
-Received: from smtp.na-rdc02.nxp.com (inv1260.us-phx01.nxp.com [134.27.49.11])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 284421A0077;
-        Wed,  9 Jan 2019 22:34:43 +0100 (CET)
-Received: from someleo.am.freescale.net (someleo.am.freescale.net [10.81.33.49])
-        by inv1260.us-phx01.nxp.com (Postfix) with ESMTP id 6893E40CAF;
-        Wed,  9 Jan 2019 14:34:42 -0700 (MST)
-From:   Li Yang <leoyang.li@nxp.com>
-To:     arm@kernel.org
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        shawnguo@kernel.org
-Subject: [GIT PULL] updates to soc/fsl drivers for v5.1
-Date:   Wed,  9 Jan 2019 15:34:42 -0600
-Message-Id: <20190109213442.14821-1-leoyang.li@nxp.com>
-X-Mailer: git-send-email 2.17.1
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1726090AbfAIVgR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 16:36:17 -0500
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id 1CB7180C5;
+        Wed,  9 Jan 2019 21:36:21 +0000 (UTC)
+Date:   Wed, 9 Jan 2019 13:36:11 -0800
+From:   Tony Lindgren <tony@atomide.com>
+To:     Heiner Kallweit <hkallweit1@gmail.com>,
+        Sekhar Nori <nsekhar@ti.com>
+Cc:     Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Chris Healy <cphealy@gmail.com>,
+        Clemens Gruber <clemens.gruber@pqgruber.com>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
+        Keerthy <j-keerthy@ti.com>,
+        Murali Karicheri <m-karicheri2@ti.com>,
+        Rex Chang <rchang@ti.com>, Tero Kristo <t-kristo@ti.com>,
+        WingMan Kwok <w-kwok2@ti.com>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-omap@vger.kernel.org
+Subject: Re: Regression in v4.20 with net phy soft reset changes
+Message-ID: <20190109213611.GU5544@atomide.com>
+References: <20190109190650.GT5544@atomide.com>
+ <a63ca542-db96-40ed-201d-59c609f565ce@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a63ca542-db96-40ed-201d-59c609f565ce@gmail.com>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi arm-soc maintainers,
+Hi,
 
-Please help to look into the following changes and merge them if
-they look good.
+* Heiner Kallweit <hkallweit1@gmail.com> [190109 19:28]:
+> On 09.01.2019 20:06, Tony Lindgren wrote:
+> > Commit 6e2d85ec0559 ("net: phy: Stop with excessive soft reset") caused
+> > a regression where suspend resume cycle fails to bring up Ethernet on at
+> > least cpsw on am437x-sk-evm.
+> > 
+> What kind of PHY and which PHY driver is used with this board?
+> I found one schematics of am437x where a KSZ9031RN PHY is used.
+> Is it the same on your board?
 
+Yes that's the phy.
 
-The following changes since commit bfeffd155283772bbe78c6a05dec7c0128ee500c:
+> As described in the commit message of this commit you would have
+> the option to implement the soft_reset callback in the PHY driver.
+> Can you try to add .soft_reset = genphy_soft_reset to the
+> KSZ9031 driver config in drivers/net/phy/micrel.c and check whether
+> it fixes the issue?
 
-  Linux 5.0-rc1 (2019-01-06 17:08:20 -0800)
+Yes that seems to work based on a quick test of five suspend
+resume cycles.
 
-are available in the Git repository at:
+I wonder what all hardware this issue affects though?
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/leo/linux.git tags/soc-fsl-next-v5.1
+It's probably best that the network folks check what all
+hardare needs patching.
 
-for you to fetch changes up to ffe9670a44674ba38b7246e6134de297adad30a3:
+For TI hardware, Sekhar and TI network folks, can you guys
+please check the various TI SoCs for multiple suspend resume
+cycles with v5.0-rc1 and patch accordingly? See also below
+for something else to check, 10 seconds to resume a phy
+seems very long to me :)
 
-  soc: fsl: dpio: Change bpid type to u16 (2019-01-09 14:52:13 -0600)
+> > Keerthy noticed this may not happen on the first resume, but usually
+> > happens after few suspend resume cycles. The most working suspend resume
+> > cycles I've seen with the commit above is three.
+...
+> > Note that unrelated to the commit above, there may be other issues too
+> > as the cpsw phy LED seems to come on only after about five seconds with
+> > about total of 10 seconds before the Ethernet is up again.
 
-----------------------------------------------------------------
-NXP/FSL SoC driver updates for v5.1
+Regards,
 
-- Clean up the remove path in the dpio driver so that successive
-  bind/unbind commands behave properly
-- Add the ability to automatically create a device link between a
-  consumer device on the fsl-mc bus and a supplier one
-- Use devm_kstrdup_const() for RO data and prevent potential NULL
-  dereference on allocation failure in guts driver
-- Add prefetch to dpio dequeue to improve performance
-- Update the type of dpio APIs to align with buffer pool id register
-  field
-
-----------------------------------------------------------------
-Ioana Ciocoi Radulescu (2):
-      soc: fsl: dpio: Add prefetch instruction
-      soc: fsl: dpio: Change bpid type to u16
-
-Ioana Ciornei (6):
-      soc: fsl: dpio: cleanup the cpu array on dpaa2_io_down
-      soc: fsl: dpio: use a cpumask to identify which cpus are unused
-      soc: fsl: dpio: keep a per dpio device MC portal
-      soc: fsl: dpio: store a backpointer to the device backing the dpaa2_io
-      soc: fsl: dpio: add a device_link at dpaa2_io_service_register
-      bus: fsl-mc: automatically add a device_link on fsl_mc_[portal,object]_allocate
-
-Nicholas Mc Guire (1):
-      soc: fsl: guts: us devm_kstrdup_const() for RO data
-
-Roy Pledge (1):
-      soc: fsl: dpio: perform DPIO Reset on Probe
-
- drivers/bus/fsl-mc/fsl-mc-allocator.c            | 11 ++++++
- drivers/bus/fsl-mc/mc-io.c                       | 13 +++++++
- drivers/crypto/caam/caamalg_qi2.c                |  6 ++--
- drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.c |  9 ++---
- drivers/soc/fsl/dpio/dpio-cmd.h                  |  1 +
- drivers/soc/fsl/dpio/dpio-driver.c               | 41 ++++++++++++---------
- drivers/soc/fsl/dpio/dpio-service.c              | 46 +++++++++++++++++++++---
- drivers/soc/fsl/dpio/dpio.c                      | 23 ++++++++++++
- drivers/soc/fsl/dpio/dpio.h                      |  4 +++
- drivers/soc/fsl/guts.c                           |  3 +-
- include/linux/fsl/mc.h                           |  1 +
- include/soc/fsl/dpaa2-io.h                       | 15 +++++---
- 12 files changed, 138 insertions(+), 35 deletions(-)
+Tony
