@@ -2,101 +2,126 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3978C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 12:40:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD3A9C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 12:40:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9078220859
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 12:40:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="s4+87stl"
+	by mail.kernel.org (Postfix) with ESMTP id 86D4B20859
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 12:40:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730694AbfAIMk0 (ORCPT
+        id S1730773AbfAIMkz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 07:40:26 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:47940 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729919AbfAIMk0 (ORCPT
+        Wed, 9 Jan 2019 07:40:55 -0500
+Received: from vmicros1.altlinux.org ([194.107.17.57]:53666 "EHLO
+        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730609AbfAIMky (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 07:40:26 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x09CeMFl051496;
-        Wed, 9 Jan 2019 06:40:22 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1547037622;
-        bh=n7rP53C1I+KPeUkkzbx/weUeZp2I8+PfwHYQnGJ+2vk=;
-        h=From:To:CC:Subject:Date;
-        b=s4+87stloGK1BjDnCZbhE/WAPi2ID0mytlFKxmRavqJOM8VTW/vZmwjzjbhr/HYso
-         psR36GSlZPslsSL3LRKnHQWwQNo6y3j+buZz2+WrhIf5+caRYms4XZ1Mkc4nH0piUu
-         6NfYDVLsOjbNfu32VdUuByTmLeYtQK8SLOB8MJGc=
-Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x09CeMnf055344
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 9 Jan 2019 06:40:22 -0600
-Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Wed, 9
- Jan 2019 06:40:22 -0600
-Received: from dlep32.itg.ti.com (157.170.170.100) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Wed, 9 Jan 2019 06:40:22 -0600
-Received: from a0230074-OptiPlex-7010.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x09CeJOl010973;
-        Wed, 9 Jan 2019 06:40:19 -0600
-From:   Faiz Abbas <faiz_abbas@ti.com>
-To:     <linux-kernel@vger.kernel.org>, <linux-mmc@vger.kernel.org>
-CC:     <ulf.hansson@linaro.org>, <adrian.hunter@intel.com>,
-        <j-keerthy@ti.com>, <edubezval@gmail.com>, <olof@lixom.net>,
-        <faiz_abbas@ti.com>
-Subject: [PATCH] mmc: Fix Kconfig warnings on keystone_defconfig
-Date:   Wed, 9 Jan 2019 18:13:12 +0530
-Message-ID: <20190109124312.10154-1-faiz_abbas@ti.com>
-X-Mailer: git-send-email 2.19.2
+        Wed, 9 Jan 2019 07:40:54 -0500
+Received: from mua.local.altlinux.org (mua.local.altlinux.org [192.168.1.14])
+        by vmicros1.altlinux.org (Postfix) with ESMTP id EB1DA72CA5E;
+        Wed,  9 Jan 2019 15:40:44 +0300 (MSK)
+Received: by mua.local.altlinux.org (Postfix, from userid 508)
+        id DB66A7CCE38; Wed,  9 Jan 2019 15:40:44 +0300 (MSK)
+Date:   Wed, 9 Jan 2019 15:40:44 +0300
+From:   "Dmitry V. Levin" <ldv@altlinux.org>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Elvira Khabirova <lineprinter@altlinux.org>,
+        Eugene Syromyatnikov <esyr@redhat.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Andy Lutomirski <luto@kernel.org>, linux-audit@redhat.com,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 00/14] Prepare syscall_get_arch for PTRACE_GET_SYSCALL_INFO
+Message-ID: <20190109124044.GA11935@altlinux.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 961de0a856e3 ("mmc: sdhci-omap: Workaround errata regarding
-SDR104/HS200 tuning failures (i929)") added a select on TI_SOC_THERMAL
-for the driver to get temperature for tuning.
+syscall_get_arch() is required to be implemented on all architectures in order
+to extend the generic ptrace API with PTRACE_GET_SYSCALL_INFO request:
+syscall_get_arch() is going to be called from ptrace_request() along with
+syscall_get_nr(), syscall_get_arguments(), syscall_get_error(), and
+syscall_get_return_value() functions with a tracee as their argument.
 
-However, this causes the following warning on keystone_defconfig because
-keystone does not support TI_SOC_THERMAL:
+The primary intent is that the triple (audit_arch, syscall_nr, arg1..arg6)
+should describe what system call is being called and what its arguments are.
 
-"WARNING: unmet direct dependencies detected for TI_SOC_THERMAL"
+This patchset began as a series called "Prepare for PTRACE_GET_SYSCALL_INFO",
+then I merged it into a series called "ptrace: add PTRACE_GET_SYSCALL_INFO request"
+that also contains ptrace-specific changes.
 
-Fix this by changing the select to imply.
+The ptrace-specific part, however, needs more attention to workaround problems
+on niche architectures like alpha, while the syscall_get_arch() part is
+straightforward, so I decided to split it out into a separate patchset that
+just prepares syscall_get_arch() for PTRACE_GET_SYSCALL_INFO: it adds
+syscall_get_arch() to those architectures that haven't implemented it yet,
+and then adds "struct task_struct *" argument to syscall_get_arch()
+on all architectures.
 
-Fixes: 961de0a856e3 ("mmc: sdhci-omap: Workaround errata regarding
-SDR104/HS200 tuning failures (i929)")
-Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
----
- drivers/mmc/host/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+All patches from this patchset have been already reviewed, so it's ready
+to be merged without waiting for the ptrace-specific part.  As it's all
+about syscall_get_arch(), it should probably go via audit tree.
 
-diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
-index e26b8145efb3..bc61eefcb695 100644
---- a/drivers/mmc/host/Kconfig
-+++ b/drivers/mmc/host/Kconfig
-@@ -978,7 +978,7 @@ config MMC_SDHCI_OMAP
- 	tristate "TI SDHCI Controller Support"
- 	depends on MMC_SDHCI_PLTFM && OF
- 	select THERMAL
--	select TI_SOC_THERMAL
-+	imply TI_SOC_THERMAL
- 	help
- 	  This selects the Secure Digital Host Controller Interface (SDHCI)
- 	  support present in TI's DRA7 SOCs. The controller supports
+Dmitry V. Levin (14):
+  Move EM_ARCOMPACT and EM_ARCV2 to uapi/linux/elf-em.h
+  arc: define syscall_get_arch()
+  c6x: define syscall_get_arch()
+  h8300: define syscall_get_arch()
+  Move EM_HEXAGON to uapi/linux/elf-em.h
+  hexagon: define syscall_get_arch()
+  m68k: define syscall_get_arch()
+  Move EM_NDS32 to uapi/linux/elf-em.h
+  nds32: define syscall_get_arch()
+  nios2: define syscall_get_arch()
+  riscv: define syscall_get_arch()
+  Move EM_UNICORE to uapi/linux/elf-em.h
+  unicore32: define syscall_get_arch()
+  syscall_get_arch: add "struct task_struct *" argument
+
+ arch/alpha/include/asm/syscall.h      |  2 +-
+ arch/arc/include/asm/elf.h            |  6 +-----
+ arch/arc/include/asm/syscall.h        | 11 +++++++++++
+ arch/arm/include/asm/syscall.h        |  2 +-
+ arch/arm64/include/asm/syscall.h      |  4 ++--
+ arch/c6x/include/asm/syscall.h        |  7 +++++++
+ arch/csky/include/asm/syscall.h       |  2 +-
+ arch/h8300/include/asm/syscall.h      |  6 ++++++
+ arch/hexagon/include/asm/elf.h        |  6 +-----
+ arch/hexagon/include/asm/syscall.h    |  8 ++++++++
+ arch/ia64/include/asm/syscall.h       |  2 +-
+ arch/m68k/include/asm/syscall.h       | 12 ++++++++++++
+ arch/microblaze/include/asm/syscall.h |  2 +-
+ arch/mips/include/asm/syscall.h       |  6 +++---
+ arch/mips/kernel/ptrace.c             |  2 +-
+ arch/nds32/include/asm/elf.h          |  3 +--
+ arch/nds32/include/asm/syscall.h      |  9 +++++++++
+ arch/nios2/include/asm/syscall.h      |  6 ++++++
+ arch/openrisc/include/asm/syscall.h   |  2 +-
+ arch/parisc/include/asm/syscall.h     |  4 ++--
+ arch/powerpc/include/asm/syscall.h    | 10 ++++++++--
+ arch/riscv/include/asm/syscall.h      | 10 ++++++++++
+ arch/s390/include/asm/syscall.h       |  4 ++--
+ arch/sh/include/asm/syscall_32.h      |  2 +-
+ arch/sh/include/asm/syscall_64.h      |  2 +-
+ arch/sparc/include/asm/syscall.h      |  5 +++--
+ arch/unicore32/include/asm/elf.h      |  3 +--
+ arch/unicore32/include/asm/syscall.h  | 12 ++++++++++++
+ arch/x86/include/asm/syscall.h        |  8 +++++---
+ arch/x86/um/asm/syscall.h             |  2 +-
+ arch/xtensa/include/asm/syscall.h     |  2 +-
+ include/asm-generic/syscall.h         |  5 +++--
+ include/uapi/linux/audit.h            | 14 ++++++++++++++
+ include/uapi/linux/elf-em.h           |  6 ++++++
+ kernel/auditsc.c                      |  4 ++--
+ kernel/seccomp.c                      |  4 ++--
+ 36 files changed, 148 insertions(+), 47 deletions(-)
+ create mode 100644 arch/m68k/include/asm/syscall.h
+ create mode 100644 arch/unicore32/include/asm/syscall.h
+
 -- 
-2.19.2
-
+ldv
