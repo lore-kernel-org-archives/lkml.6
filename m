@@ -2,101 +2,70 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0492C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 10:57:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D5EBC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 10:57:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D31520883
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 10:57:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EH5GHziz"
+	by mail.kernel.org (Postfix) with ESMTP id 6A27420652
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 10:57:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547031478;
+	bh=5dMsOG2ooVJ/o0qyvBE9q6suGLBhEG63fYfJxNQNO2Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=16hWjt5zK0O/dc1fhbVWSk6v7t9AAD+i/Q5oAdJzGQz/muJ9FfxIAuGerHZi3NRGF
+	 ccH5plO0J8xYBW0DlhQJ4N1kReWoeyhs85tEc4G5SH6eUKcGjKCR6a1mCENzRIMj+w
+	 apcsmSsyEezrmiHgppsQ04g2kPqQhIuH629o2P9g=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730492AbfAIK5j (ORCPT
+        id S1730513AbfAIK55 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 05:57:39 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:39008 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730049AbfAIK5j (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 05:57:39 -0500
-Received: by mail-lj1-f196.google.com with SMTP id t9-v6so6108166ljh.6
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jan 2019 02:57:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Rp9agg0ydtjPWCMbWupsCarMyhx8m4ESfxME2ZSk+DA=;
-        b=EH5GHziz3rk+pFTEtsg3oXegyBPWDM52F5GBfkRPztlq+Na8k7XQbEsxJJgbGbx/UH
-         bFNwb3kvzeBMM7+WPcEXXkCrpx1InabW3WufWAFBTx1KeG/SvCl3yn/88ZF84tTh6dQ+
-         96ebs8FZGJvW/vHD5ZRLsA0/o+k5DRX5d/kCweQKbGpIq9AnxnWPxCpno9SV7UthBSns
-         dKLIea0xQH7B5FREngum/Tl5q1dQrVn3/QMki1upWD2yUETrdB8O2zZBdYqCu1SoxVgC
-         EibB3VyvZrvlasNQI5YLTD0UgDEMPoFxnxlTJkE5R0z90QQq/CSSRbAAnf+1+uGJ3rYQ
-         gXRg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Rp9agg0ydtjPWCMbWupsCarMyhx8m4ESfxME2ZSk+DA=;
-        b=Wfop9oWTV4YsVJuavaTJFnjwMVnrmCMRr31bLPhoU5KIpWegH4k1iMa1V3lYFpRX0y
-         6RQ3J0wPOn1oCEMXxl0qbuanP6Dt1Oo4v5Ttbp4GKLir+Zk7xJIIDQczVZ2zkMIfkYW/
-         nmBcpKXYk4ArkDgXz5zjgOMF73qbpDTxqulJSWCEhws5i+GTMW5WBXYC83XUimGqHE4k
-         Mg9xpeAuLVc8qlr6Vlsd11xFuA+m7WiJa6ntYfM2nNbm2y1kjbMnwIhXbUgMMGLn0ZZp
-         T9CWvjb3+6ou/OHjkX1FKt9XvZTG0VnRo6d5maAVpFHqHlmry2VIzf6ftIXwH/GSvCv9
-         qjEA==
-X-Gm-Message-State: AJcUukdRkMdk0E2twP1uKV35leYGr/xC8BEM8KBxHfpwk7SgPHOQ6hlL
-        zPfr5+xt/ejSV1cFR3mia6aleGdYwXaeAEUw2yU=
-X-Google-Smtp-Source: ALg8bN7H/Kkl4M9K40LCmH2lNQOAZ0A8ES4R7dCFTm5CRvAMF1270VEsTfh07va/D9EOoPREigJ2on2Z4lDb0NvYDMA=
-X-Received: by 2002:a2e:5054:: with SMTP id v20-v6mr3139695ljd.45.1547031456970;
- Wed, 09 Jan 2019 02:57:36 -0800 (PST)
+        Wed, 9 Jan 2019 05:57:57 -0500
+Received: from mx2.suse.de ([195.135.220.15]:51178 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730049AbfAIK55 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 05:57:57 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id DAF98ABCB;
+        Wed,  9 Jan 2019 10:57:55 +0000 (UTC)
+Date:   Wed, 9 Jan 2019 11:57:54 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Arun KS <arunks@codeaurora.org>
+Cc:     Alexander Duyck <alexander.h.duyck@linux.intel.com>,
+        arunks.linux@gmail.com, akpm@linux-foundation.org, vbabka@suse.cz,
+        osalvador@suse.de, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, getarunks@gmail.com
+Subject: Re: [PATCH v7] mm/page_alloc.c: memory_hotplug: free pages as higher
+ order
+Message-ID: <20190109105754.GR31793@dhcp22.suse.cz>
+References: <1546578076-31716-1-git-send-email-arunks@codeaurora.org>
+ <fb6465c99b3ada2c6af587a7eb00016d96d56f77.camel@linux.intel.com>
+ <20190108181352.GI31793@dhcp22.suse.cz>
+ <bfb543b6e343c21c3e263a110f234e08@codeaurora.org>
+ <20190109073718.GM31793@dhcp22.suse.cz>
+ <a053bd9b93e71baae042cdfc3432f945@codeaurora.org>
+ <20190109084031.GN31793@dhcp22.suse.cz>
+ <e005e71b125b9b8ddee668d1df9ad5ec@codeaurora.org>
 MIME-Version: 1.0
-References: <20171108223020.24487-1-linux@rasmusvillemoes.dk>
- <20181026232409.16100-1-linux@rasmusvillemoes.dk> <20181026232409.16100-2-linux@rasmusvillemoes.dk>
- <CANiq72kEdD3hoHaxukkdzEJt+e_nptyO1GdgfUqWnSAog3k=JQ@mail.gmail.com>
- <CANiq72=-2mrvBWHUcFCNsoQ_EbXQm4RmtOp061ngnGJx_Fyp0g@mail.gmail.com> <72ac8661-312c-8df9-358a-22ddb0a81f54@rasmusvillemoes.dk>
-In-Reply-To: <72ac8661-312c-8df9-358a-22ddb0a81f54@rasmusvillemoes.dk>
-From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date:   Wed, 9 Jan 2019 11:57:26 +0100
-Message-ID: <CANiq72=Z7ax5tLVsHmo+FjjEScoxcMMipq+QieFy0yy=HLzepg@mail.gmail.com>
-Subject: Re: [RFC PATCH 1/7] compiler_attributes.h: add __attribute__((format_arg))
- shorthand
-To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e005e71b125b9b8ddee668d1df9ad5ec@codeaurora.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rasmus,
+On Wed 09-01-19 16:12:48, Arun KS wrote:
+[...]
+> It will be called once per online of a section and the arg value is always
+> set to 0 while entering online_pages_range.
 
-On Fri, Nov 2, 2018 at 11:43 AM Rasmus Villemoes
-<linux@rasmusvillemoes.dk> wrote:
->
-> On 2018-11-02 11:36, Miguel Ojeda wrote:
-> > Hi Rasmus,
-> >
-> > On Sat, Oct 27, 2018 at 2:06 PM Miguel Ojeda
-> > <miguel.ojeda.sandonis@gmail.com> wrote:
-> >>
-> >> I did quick check and gcc >= 4.1, clang >= 3.0, icc >= 13 compilers
-> >> seem to support it (or at least recognize it, even if they just ignore
-> >> it), so we do not need to make it optional, no? Did I miss some case?
-> >
-> > compiler-attributes landed -- do you want to do the v2 of this (i.e.
-> > #defining it unconditionally) or you prefer I simply fix up the patch?
->
-> I'll wait a few more days for comments on fmtcheck(), and allow you to
-> do the 'optional'/'required' clarification in the meantime. I hope to
-> get fmtcheck() picked up for -next around -rc3 or so.
-
-Any news about fmtcheck()? The "Optional" clarification landed a few
-weeks ago, in case you wanted to know. Hopefully it is more clear now.
-
-Cheers,
-Miguel
+You rare right that this will be the case in the most simple scenario.
+But the point is that the callback can be called several times from
+walk_system_ram_range and then your current code wouldn't work properly.
+-- 
+Michal Hocko
+SUSE Labs
