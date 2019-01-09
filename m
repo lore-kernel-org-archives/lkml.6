@@ -7,41 +7,41 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73190C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 07:10:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7772C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 07:10:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 447B4214C6
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 07:10:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 72BF1214C6
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 07:10:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="dWuYk/CE"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="voWhR/5u"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729848AbfAIHJ7 (ORCPT
+        id S1729918AbfAIHKT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 02:09:59 -0500
+        Wed, 9 Jan 2019 02:10:19 -0500
 Received: from perceval.ideasonboard.com ([213.167.242.64]:50374 "EHLO
         perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729528AbfAIHJy (ORCPT
+        with ESMTP id S1729158AbfAIHJ4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 02:09:54 -0500
+        Wed, 9 Jan 2019 02:09:56 -0500
 Received: from localhost.localdomain (unknown [96.44.9.117])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 6904458E;
-        Wed,  9 Jan 2019 08:09:50 +0100 (CET)
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 6BE58D42;
+        Wed,  9 Jan 2019 08:09:53 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1547017791;
-        bh=ybMJEQV2MCdUaTe+2nKF1A6g8PZV6Po01rwD0CPnFXs=;
+        s=mail; t=1547017794;
+        bh=t6EMN6J4IEsfylQkX0jCAMkrPCIpFgpPt4+9mpfcXbE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dWuYk/CEGmvRrDf9LuECwkuYEwY3ELla0MldCGfNvFxFiJWTnHTqETXeFq68mvkG4
-         C+eYhPNfA0FeUrNMNvWy26GcIN30h8ku3nEx/Kpb9yi7GWFc9tmnerdLmSHtoQZqnD
-         MOho186KXdOM75GTXSpIqIHIpvfebl/Tksh83Wwg=
+        b=voWhR/5uqgKjQl6Smkl6BDfYPV9kXHvHOYDZhQvXs8ntOKqiVXAJWNpOZjFhEHds9
+         uA+Wrk1L5lvczY26t47QLhYPG5xxIBs+VBbM3lHZguqppqXrwNbIp5r747Vh1i5YL3
+         ndECFVtkX78b2zKpBdtO2Vgq3Lx6KqYamo2a01Gw=
 From:   Paul Elder <paul.elder@ideasonboard.com>
 To:     laurent.pinchart@ideasonboard.com, kieran.bingham@ideasonboard.com
 Cc:     Paul Elder <paul.elder@ideasonboard.com>, b-liu@ti.com,
         stern@rowland.harvard.edu, rogerq@ti.com, balbi@kernel.org,
         gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v5 2/6] usb: gadget: uvc: enqueue usb request in setup handler for control OUT
-Date:   Wed,  9 Jan 2019 02:08:52 -0500
-Message-Id: <20190109070856.27460-3-paul.elder@ideasonboard.com>
+Subject: [PATCH v5 4/6] usb: gadget: add mechanism to specify an explicit status stage
+Date:   Wed,  9 Jan 2019 02:08:54 -0500
+Message-Id: <20190109070856.27460-5-paul.elder@ideasonboard.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190109070856.27460-1-paul.elder@ideasonboard.com>
 References: <20190109070856.27460-1-paul.elder@ideasonboard.com>
@@ -52,93 +52,140 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently, for uvc class-specific control IN and OUT requests, in the
-setup handler a UVC_EVENT_SETUP with the setup control is enqueued to
-userspace. In response to this, the uvc function driver expects
-userspace to call ioctl UVCIOC_SEND_RESPONSE containing uvc request
-data.
+A usb gadget function driver may or may not want to delay the status
+stage of a control OUT request. An instance where it might want to is to
+asynchronously validate the data of a class-specific request.
 
-In the case of control IN this is fine, but for control OUT it causes a
-problem. Since the host sends data immediately after the setup stage
-completes, it is possible that the empty uvc request data is not
-enqueued in time for the UDC driver to put the data stage data into
-(this causes some UDC drivers, such as MUSB, to reply with a STALL).
-This problem is remedied by having the setup handler enqueue the empty
-uvc request data, instead of waiting for userspace to do it.
+A function driver that wants an explicit status stage should set the
+newly added explicit_status flag of the usb_request corresponding to the
+data stage. Later on, the function driver can explicitly complete the
+status stage by enqueueing a usb_request for ACK, or calling
+usb_ep_set_halt() for STALL.
+
+To support both explicit and implicit status stages, a UDC driver must
+call the newly added usb_gadget_control_complete function right before
+calling usb_gadget_giveback_request. To support the explicit status
+stage, it might then check what stage the usb_request was queued in, and
+for control IN ACK the host's zero-length data packet, or for control
+OUT send a zero-length DATA1 ACK packet.
 
 Signed-off-by: Paul Elder <paul.elder@ideasonboard.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+v4 Acked-by: Alan Stern <stern@rowland.harvard.edu>
+v1 Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 ---
-No change from v4
-No change from v3
-No change from v2
-No change from v1
+Changes from v4:
 
- drivers/usb/gadget/function/f_uvc.c    | 25 +++++++++++++++++++------
- drivers/usb/gadget/function/uvc_v4l2.c |  7 +++++++
- 2 files changed, 26 insertions(+), 6 deletions(-)
+- Change parameter of usb_gadget_control_complete to simply take a
+  usb_request
+- Make usb_gadget_control_complete do nothing if the request has no
+  length (ie. no data stage)
 
-diff --git a/drivers/usb/gadget/function/f_uvc.c b/drivers/usb/gadget/function/f_uvc.c
-index 723ca91e4f2a..36de51ac30ed 100644
---- a/drivers/usb/gadget/function/f_uvc.c
-+++ b/drivers/usb/gadget/function/f_uvc.c
-@@ -223,8 +223,6 @@ static int
- uvc_function_setup(struct usb_function *f, const struct usb_ctrlrequest *ctrl)
- {
- 	struct uvc_device *uvc = to_uvc(f);
--	struct v4l2_event v4l2_event;
--	struct uvc_event *uvc_event = (void *)&v4l2_event.u.data;
+Changes from v3:
+
+- More specific in commit message about what to do for udc driver acking
+- Set explicit_status in usb_gadget_control_complete
+- Make explicit_status type bool
+
+Changes from v2:
+
+Add status parameter to usb_gadget_control_complete, so that a
+usb_request is not queued if the status of the just given back request
+is nonzero.
+
+Changes from v1:
+
+Complete change of API. Now we use a flag that should be set in the
+usb_request that is queued for the data stage to signal to the UDC that
+we want to delay the status stage (as opposed to setting a flag in the
+UDC itself, that persists across all requests). We now also provide a
+function for UDC drivers to very easily allow implicit status stages, to
+mitigate the need to convert all function drivers to this new API at
+once, and to make it easier for UDC drivers to convert.
+
+ drivers/usb/gadget/udc/core.c | 34 ++++++++++++++++++++++++++++++++++
+ include/linux/usb/gadget.h    | 10 ++++++++++
+ 2 files changed, 44 insertions(+)
+
+diff --git a/drivers/usb/gadget/udc/core.c b/drivers/usb/gadget/udc/core.c
+index af88b48c1cea..57b2c2550537 100644
+--- a/drivers/usb/gadget/udc/core.c
++++ b/drivers/usb/gadget/udc/core.c
+@@ -894,6 +894,40 @@ EXPORT_SYMBOL_GPL(usb_gadget_giveback_request);
  
- 	if ((ctrl->bRequestType & USB_TYPE_MASK) != USB_TYPE_CLASS) {
- 		uvcg_info(f, "invalid request type\n");
-@@ -241,10 +239,25 @@ uvc_function_setup(struct usb_function *f, const struct usb_ctrlrequest *ctrl)
- 	uvc->event_setup_out = !(ctrl->bRequestType & USB_DIR_IN);
- 	uvc->event_length = le16_to_cpu(ctrl->wLength);
+ /* ------------------------------------------------------------------------- */
  
--	memset(&v4l2_event, 0, sizeof(v4l2_event));
--	v4l2_event.type = UVC_EVENT_SETUP;
--	memcpy(&uvc_event->req, ctrl, sizeof(uvc_event->req));
--	v4l2_event_queue(&uvc->vdev, &v4l2_event);
-+	if (uvc->event_setup_out) {
-+		struct usb_request *req = uvc->control_req;
++/**
++ * usb_gadget_control_complete - complete the status stage of a control
++ *	request, or delay it
++ * Context: in_interrupt()
++ *
++ * @gadget: gadget whose control request's status stage should be completed
++ * @request: usb request whose status stage should be completed
++ *
++ * This is called by device controller drivers before returning the completed
++ * request back to the gadget layer, to either complete or delay the status
++ * stage. It exits without doing anything if the request has a non-zero status,
++ * if it has zero length, or if its explicit_status flag is set.
++ */
++void usb_gadget_control_complete(struct usb_gadget *gadget,
++		struct usb_request *request)
++{
++	struct usb_request *req;
 +
-+		/*
-+		 * Enqueue the request immediately for control OUT as the
-+		 * host will start the data stage straight away.
-+		 */
-+		req->length = uvc->event_length;
-+		req->zero = 0;
-+		usb_ep_queue(f->config->cdev->gadget->ep0, req, GFP_KERNEL);
-+	} else {
-+		struct v4l2_event v4l2_event;
-+		struct uvc_event *uvc_event = (void *)&v4l2_event.u.data;
++	if (request->explicit_status || request->status || !request->length)
++		return;
 +
-+		memset(&v4l2_event, 0, sizeof(v4l2_event));
-+		v4l2_event.type = UVC_EVENT_SETUP;
-+		memcpy(&uvc_event->req, ctrl, sizeof(uvc_event->req));
-+		v4l2_event_queue(&uvc->vdev, &v4l2_event);
++	/* Send an implicit status-stage request for ep0 */
++	req = usb_ep_alloc_request(gadget->ep0, GFP_ATOMIC);
++	if (req) {
++		req->length = 0;
++		req->explicit_status = 1;
++		req->complete = usb_ep_free_request;
++		usb_ep_queue(gadget->ep0, req, GFP_ATOMIC);
 +	}
- 
- 	return 0;
- }
-diff --git a/drivers/usb/gadget/function/uvc_v4l2.c b/drivers/usb/gadget/function/uvc_v4l2.c
-index 7816ea9886e1..ac48f49d9f10 100644
---- a/drivers/usb/gadget/function/uvc_v4l2.c
-+++ b/drivers/usb/gadget/function/uvc_v4l2.c
-@@ -35,6 +35,13 @@ uvc_send_response(struct uvc_device *uvc, struct uvc_request_data *data)
- 	struct usb_composite_dev *cdev = uvc->func.config->cdev;
- 	struct usb_request *req = uvc->control_req;
- 
-+	/*
-+	 * For control OUT transfers the request has been enqueued synchronously
-+	 * by the setup handler, there's nothing to be done here.
-+	 */
-+	if (uvc->event_setup_out)
-+		return 0;
++}
++EXPORT_SYMBOL_GPL(usb_gadget_control_complete);
 +
- 	if (data->length < 0)
- 		return usb_ep_set_halt(cdev->gadget->ep0);
++/* ------------------------------------------------------------------------- */
++
+ /**
+  * gadget_find_ep_by_name - returns ep whose name is the same as sting passed
+  *	in second parameter or NULL if searched endpoint not found
+diff --git a/include/linux/usb/gadget.h b/include/linux/usb/gadget.h
+index e5cd84a0f84a..bf4f021ce139 100644
+--- a/include/linux/usb/gadget.h
++++ b/include/linux/usb/gadget.h
+@@ -73,6 +73,7 @@ struct usb_ep;
+  *	Note that for writes (IN transfers) some data bytes may still
+  *	reside in a device-side FIFO when the request is reported as
+  *	complete.
++ * @explicit_status: If true, delays the status stage
+  *
+  * These are allocated/freed through the endpoint they're used with.  The
+  * hardware's driver can add extra per-request data to the memory it returns,
+@@ -114,6 +115,8 @@ struct usb_request {
  
+ 	int			status;
+ 	unsigned		actual;
++
++	bool			explicit_status;
+ };
+ 
+ /*-------------------------------------------------------------------------*/
+@@ -850,6 +853,13 @@ extern void usb_gadget_giveback_request(struct usb_ep *ep,
+ 
+ /*-------------------------------------------------------------------------*/
+ 
++/* utility to complete or delay status stage */
++
++void usb_gadget_control_complete(struct usb_gadget *gadget,
++		struct usb_request *request);
++
++/*-------------------------------------------------------------------------*/
++
+ /* utility to find endpoint by name */
+ 
+ extern struct usb_ep *gadget_find_ep_by_name(struct usb_gadget *g,
 -- 
 2.20.1
 
