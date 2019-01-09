@@ -2,192 +2,97 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9824BC43444
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 12:44:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E8FDC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 12:44:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7136C206B6
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 12:44:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 793FC206B6
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 12:44:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731305AbfAIMol (ORCPT
+        id S1730721AbfAIMov (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 07:44:41 -0500
-Received: from mx2.suse.de ([195.135.220.15]:42802 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730721AbfAIMnq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 07:43:46 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 21916AF71;
-        Wed,  9 Jan 2019 12:43:44 +0000 (UTC)
-From:   Petr Mladek <pmladek@suse.com>
-To:     Jiri Kosina <jikos@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Miroslav Benes <mbenes@suse.cz>
-Cc:     Jason Baron <jbaron@akamai.com>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
-        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Petr Mladek <pmladek@suse.com>
-Subject: [PATCH v15 06/11] livepatch: Use lists to manage patches, objects and functions
-Date:   Wed,  9 Jan 2019 13:43:24 +0100
-Message-Id: <20190109124329.21991-7-pmladek@suse.com>
-X-Mailer: git-send-email 2.13.7
-In-Reply-To: <20190109124329.21991-1-pmladek@suse.com>
-References: <20190109124329.21991-1-pmladek@suse.com>
+        Wed, 9 Jan 2019 07:44:51 -0500
+Received: from vmicros1.altlinux.org ([194.107.17.57]:57688 "EHLO
+        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731187AbfAIMnp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 07:43:45 -0500
+Received: from mua.local.altlinux.org (mua.local.altlinux.org [192.168.1.14])
+        by vmicros1.altlinux.org (Postfix) with ESMTP id 967C372CA5E;
+        Wed,  9 Jan 2019 15:43:42 +0300 (MSK)
+Received: by mua.local.altlinux.org (Postfix, from userid 508)
+        id 7B57C7CCE38; Wed,  9 Jan 2019 15:43:42 +0300 (MSK)
+Date:   Wed, 9 Jan 2019 15:43:42 +0300
+From:   "Dmitry V. Levin" <ldv@altlinux.org>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Elvira Khabirova <lineprinter@altlinux.org>,
+        Eugene Syromyatnikov <esyr@redhat.com>,
+        Guan Xuetao <gxt@pku.edu.cn>, Oleg Nesterov <oleg@redhat.com>,
+        Andy Lutomirski <luto@kernel.org>, linux-audit@redhat.com,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 13/14] unicore32: define syscall_get_arch()
+Message-ID: <20190109124342.GM11981@altlinux.org>
+References: <20190109124044.GA11935@altlinux.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jason Baron <jbaron@akamai.com>
+syscall_get_arch() is required to be implemented on all architectures
+in addition to already implemented syscall_get_nr(),
+syscall_get_arguments(), syscall_get_error(), and
+syscall_get_return_value() functions in order to extend the generic
+ptrace API with PTRACE_GET_SYSCALL_INFO request.
 
-Currently klp_patch contains a pointer to a statically allocated array of
-struct klp_object and struct klp_objects contains a pointer to a statically
-allocated array of klp_func. In order to allow for the dynamic allocation
-of objects and functions, link klp_patch, klp_object, and klp_func together
-via linked lists. This allows us to more easily allocate new objects and
-functions, while having the iterator be a simple linked list walk.
-
-The static structures are added to the lists early. It allows to add
-the dynamically allocated objects before klp_init_object() and
-klp_init_func() calls. Therefore it reduces the further changes
-to the code.
-
-This patch does not change the existing behavior.
-
-Signed-off-by: Jason Baron <jbaron@akamai.com>
-[pmladek@suse.com: Initialize lists before init calls]
-Signed-off-by: Petr Mladek <pmladek@suse.com>
-Acked-by: Miroslav Benes <mbenes@suse.cz>
-Acked-by: Joe Lawrence <joe.lawrence@redhat.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Jiri Kosina <jikos@kernel.org>
+Acked-by: Paul Moore <paul@paul-moore.com>
+Cc: Elvira Khabirova <lineprinter@altlinux.org>
+Cc: Eugene Syromyatnikov <esyr@redhat.com>
+Cc: Guan Xuetao <gxt@pku.edu.cn>
+Cc: Oleg Nesterov <oleg@redhat.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: linux-audit@redhat.com
+Signed-off-by: Dmitry V. Levin <ldv@altlinux.org>
 ---
- include/linux/livepatch.h | 19 +++++++++++++++++--
- kernel/livepatch/core.c   |  9 +++++++--
- 2 files changed, 24 insertions(+), 4 deletions(-)
+ arch/unicore32/include/asm/syscall.h | 12 ++++++++++++
+ include/uapi/linux/audit.h           |  1 +
+ 2 files changed, 13 insertions(+)
+ create mode 100644 arch/unicore32/include/asm/syscall.h
 
-diff --git a/include/linux/livepatch.h b/include/linux/livepatch.h
-index 8f9c19c69744..e117e20ff771 100644
---- a/include/linux/livepatch.h
-+++ b/include/linux/livepatch.h
-@@ -24,6 +24,7 @@
- #include <linux/module.h>
- #include <linux/ftrace.h>
- #include <linux/completion.h>
-+#include <linux/list.h>
- 
- #if IS_ENABLED(CONFIG_LIVEPATCH)
- 
-@@ -42,6 +43,7 @@
-  *		can be found (optional)
-  * @old_func:	pointer to the function being patched
-  * @kobj:	kobject for sysfs resources
-+ * @node:	list node for klp_object func_list
-  * @stack_node:	list node for klp_ops func_stack list
-  * @old_size:	size of the old function
-  * @new_size:	size of the new function
-@@ -80,6 +82,7 @@ struct klp_func {
- 	/* internal */
- 	void *old_func;
- 	struct kobject kobj;
-+	struct list_head node;
- 	struct list_head stack_node;
- 	unsigned long old_size, new_size;
- 	bool kobj_added;
-@@ -117,6 +120,8 @@ struct klp_callbacks {
-  * @funcs:	function entries for functions to be patched in the object
-  * @callbacks:	functions to be executed pre/post (un)patching
-  * @kobj:	kobject for sysfs resources
-+ * @func_list:	dynamic list of the function entries
-+ * @node:	list node for klp_patch obj_list
-  * @mod:	kernel module associated with the patched object
-  *		(NULL for vmlinux)
-  * @kobj_added: @kobj has been added and needs freeing
-@@ -130,6 +135,8 @@ struct klp_object {
- 
- 	/* internal */
- 	struct kobject kobj;
-+	struct list_head func_list;
-+	struct list_head node;
- 	struct module *mod;
- 	bool kobj_added;
- 	bool patched;
-@@ -141,6 +148,7 @@ struct klp_object {
-  * @objs:	object entries for kernel objects to be patched
-  * @list:	list node for global list of actively used patches
-  * @kobj:	kobject for sysfs resources
-+ * @obj_list:	dynamic list of the object entries
-  * @kobj_added: @kobj has been added and needs freeing
-  * @enabled:	the patch is enabled (but operation may be incomplete)
-  * @forced:	was involved in a forced transition
-@@ -155,6 +163,7 @@ struct klp_patch {
- 	/* internal */
- 	struct list_head list;
- 	struct kobject kobj;
-+	struct list_head obj_list;
- 	bool kobj_added;
- 	bool enabled;
- 	bool forced;
-@@ -162,14 +171,20 @@ struct klp_patch {
- 	struct completion finish;
- };
- 
--#define klp_for_each_object(patch, obj) \
-+#define klp_for_each_object_static(patch, obj) \
- 	for (obj = patch->objs; obj->funcs || obj->name; obj++)
- 
--#define klp_for_each_func(obj, func) \
-+#define klp_for_each_object(patch, obj)	\
-+	list_for_each_entry(obj, &patch->obj_list, node)
+diff --git a/arch/unicore32/include/asm/syscall.h b/arch/unicore32/include/asm/syscall.h
+new file mode 100644
+index 000000000000..3a6b885476b4
+--- /dev/null
++++ b/arch/unicore32/include/asm/syscall.h
+@@ -0,0 +1,12 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef _ASM_UNICORE_SYSCALL_H
++#define _ASM_UNICORE_SYSCALL_H
 +
-+#define klp_for_each_func_static(obj, func) \
- 	for (func = obj->funcs; \
- 	     func->old_name || func->new_func || func->old_sympos; \
- 	     func++)
- 
-+#define klp_for_each_func(obj, func)	\
-+	list_for_each_entry(func, &obj->func_list, node)
++#include <uapi/linux/audit.h>
 +
- int klp_enable_patch(struct klp_patch *);
++static inline int syscall_get_arch(void)
++{
++	return AUDIT_ARCH_UNICORE;
++}
++
++#endif	/* _ASM_UNICORE_SYSCALL_H */
+diff --git a/include/uapi/linux/audit.h b/include/uapi/linux/audit.h
+index bcc0619b046f..3901c51c0b93 100644
+--- a/include/uapi/linux/audit.h
++++ b/include/uapi/linux/audit.h
+@@ -424,6 +424,7 @@ enum {
+ #define AUDIT_ARCH_TILEGX	(EM_TILEGX|__AUDIT_ARCH_64BIT|__AUDIT_ARCH_LE)
+ #define AUDIT_ARCH_TILEGX32	(EM_TILEGX|__AUDIT_ARCH_LE)
+ #define AUDIT_ARCH_TILEPRO	(EM_TILEPRO|__AUDIT_ARCH_LE)
++#define AUDIT_ARCH_UNICORE	(EM_UNICORE|__AUDIT_ARCH_LE)
+ #define AUDIT_ARCH_X86_64	(EM_X86_64|__AUDIT_ARCH_64BIT|__AUDIT_ARCH_LE)
+ #define AUDIT_ARCH_XTENSA	(EM_XTENSA)
  
- void arch_klp_init_object_loaded(struct klp_patch *patch,
-diff --git a/kernel/livepatch/core.c b/kernel/livepatch/core.c
-index bd41b03a72d5..37d0d3645fa6 100644
---- a/kernel/livepatch/core.c
-+++ b/kernel/livepatch/core.c
-@@ -659,20 +659,25 @@ static int klp_init_patch_early(struct klp_patch *patch)
- 		return -EINVAL;
- 
- 	INIT_LIST_HEAD(&patch->list);
-+	INIT_LIST_HEAD(&patch->obj_list);
- 	patch->kobj_added = false;
- 	patch->enabled = false;
- 	patch->forced = false;
- 	INIT_WORK(&patch->free_work, klp_free_patch_work_fn);
- 	init_completion(&patch->finish);
- 
--	klp_for_each_object(patch, obj) {
-+	klp_for_each_object_static(patch, obj) {
- 		if (!obj->funcs)
- 			return -EINVAL;
- 
-+		INIT_LIST_HEAD(&obj->func_list);
- 		obj->kobj_added = false;
-+		list_add_tail(&obj->node, &patch->obj_list);
- 
--		klp_for_each_func(obj, func)
-+		klp_for_each_func_static(obj, func) {
- 			func->kobj_added = false;
-+			list_add_tail(&func->node, &obj->func_list);
-+		}
- 	}
- 
- 	if (!try_module_get(patch->mod))
 -- 
-2.13.7
-
+ldv
