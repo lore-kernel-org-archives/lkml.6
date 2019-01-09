@@ -2,147 +2,79 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DATE_IN_FUTURE_06_12,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A048C43612
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 05:45:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68B9FC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 05:49:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DED6721726
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 05:45:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=gibson.dropbear.id.au header.i=@gibson.dropbear.id.au header.b="fW8gbm8t"
+	by mail.kernel.org (Postfix) with ESMTP id 33213214C6
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 05:49:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729679AbfAIFp2 (ORCPT
+        id S1729635AbfAIFto (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 00:45:28 -0500
-Received: from ozlabs.org ([203.11.71.1]:45695 "EHLO ozlabs.org"
+        Wed, 9 Jan 2019 00:49:44 -0500
+Received: from mxhk.zte.com.cn ([63.217.80.70]:28240 "EHLO mxhk.zte.com.cn"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725440AbfAIFp1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 00:45:27 -0500
-Received: by ozlabs.org (Postfix, from userid 1007)
-        id 43ZJ4j1TH9z9sDn; Wed,  9 Jan 2019 16:45:25 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-        d=gibson.dropbear.id.au; s=201602; t=1547012725;
-        bh=dAGTASLTIgkAVSaF8xZqBhN8yZJr+wjt0iFV5a+biC0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=fW8gbm8trgvs+Sg/XESO57kJm98E1N6LqvZckZEtPl56uDd2nd6lAdkPR+YXO7NAq
-         Zvhay2/DnFQ+Cff47kvpTRstWyJbSJXJz9Mt8wvHhoDe8QC4wbtoM4CKwYeo7D9CiO
-         7RiHaZX8fJQyburkpSOLpLSXal+4DUV477sVxL2w=
-Date:   Wed, 9 Jan 2019 16:30:45 +1100
-From:   David Gibson <david@gibson.dropbear.id.au>
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc:     Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
-        davem@davemloft.net, saeedm@mellanox.com, ogerlitz@mellanox.com,
-        tariqt@mellanox.com, bhelgaas@google.com,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        netdev@vger.kernel.org, alex.williamson@redhat.com,
-        linux-pci@vger.kernel.org, linux-rdma@vger.kernel.org,
-        sbest@redhat.com, paulus@samba.org,
-        Alexey Kardashevskiy <aik@au1.ibm.com>
-Subject: Re: [PATCH] PCI: Add no-D3 quirk for Mellanox ConnectX-[45]
-Message-ID: <20190109053045.GE6682@umbus.fritz.box>
-References: <20181206041951.22413-1-david@gibson.dropbear.id.au>
- <20181206064509.GM15544@mtr-leonro.mtl.com>
- <20190104034401.GA2801@umbus.fritz.box>
- <20190105175116.GB14238@ziepe.ca>
- <c1296ee9120a6a04dc75d0fdb2a641c722cb65d6.camel@kernel.crashing.org>
- <20190108040129.GE5336@ziepe.ca>
- <012d24d58a542ed44c8af9f517f1bd61ab912037.camel@kernel.crashing.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="wTWi5aaYRw9ix9vO"
-Content-Disposition: inline
-In-Reply-To: <012d24d58a542ed44c8af9f517f1bd61ab912037.camel@kernel.crashing.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1725440AbfAIFtn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 00:49:43 -0500
+Received: from mse01.zte.com.cn (unknown [10.30.3.20])
+        by Forcepoint Email with ESMTPS id 85BD6383F7A297B820D9;
+        Wed,  9 Jan 2019 13:49:41 +0800 (CST)
+Received: from notes_smtp.zte.com.cn ([10.30.1.239])
+        by mse01.zte.com.cn with ESMTP id x095nbHr025153;
+        Wed, 9 Jan 2019 13:49:37 +0800 (GMT-8)
+        (envelope-from peng.hao2@zte.com.cn)
+Received: from localhost.localdomain.localdomain ([10.74.120.59])
+          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
+          with ESMTP id 2019010913495850-21220444 ;
+          Wed, 9 Jan 2019 13:49:58 +0800 
+From:   Peng Hao <peng.hao2@zte.com.cn>
+To:     paulmck@linux.vnet.ibm.com, josh@joshtriplett.org
+Cc:     linux-kernel@vger.kernel.org, Peng Hao <peng.hao2@zte.com.cn>
+Subject: [PATCH]  rcu: Remove rcu_*_state declaration
+Date:   Wed, 9 Jan 2019 22:13:28 +0800
+Message-Id: <1547043208-11941-1-git-send-email-peng.hao2@zte.com.cn>
+X-Mailer: git-send-email 1.8.3.1
+X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
+ 21, 2013) at 2019-01-09 13:49:58,
+        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
+ 2019-01-09 13:49:30,
+        Serialize complete at 2019-01-09 13:49:30
+X-MAIL: mse01.zte.com.cn x095nbHr025153
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Because of just only one set of rcu_state, the declaration of
+rcu_sched_state/rcu_bh_state/rcu_preempt_state is unnecessary.
 
---wTWi5aaYRw9ix9vO
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
+---
+ kernel/rcu/tree.h | 7 -------
+ 1 file changed, 7 deletions(-)
 
-On Wed, Jan 09, 2019 at 04:09:02PM +1100, Benjamin Herrenschmidt wrote:
-> On Mon, 2019-01-07 at 21:01 -0700, Jason Gunthorpe wrote:
-> >=20
-> > > In a very cryptic way that requires manual parsing using non-public
-> > > docs sadly but yes. From the look of it, it's a completion timeout.
-> > >=20
-> > > Looks to me like we don't get a response to a config space access
-> > > during the change of D state. I don't know if it's the write of the D3
-> > > state itself or the read back though (it's probably detected on the
-> > > read back or a subsequent read, but that doesn't tell me which specif=
-ic
-> > > one failed).
-> >=20
-> > If it is just one card doing it (again, check you have latest
-> > firmware) I wonder if it is a sketchy PCI-E electrical link that is
-> > causing a long re-training cycle? Can you tell if the PCI-E link is
-> > permanently gone or does it eventually return?
->=20
-> No, it's 100% reproducable on systems with that specific card model,
-> not card instance, and maybe different systems/cards as well, I'll let
-> David & Alexey comment further on that.
+diff --git a/kernel/rcu/tree.h b/kernel/rcu/tree.h
+index 703e19f..9ea704c 100644
+--- a/kernel/rcu/tree.h
++++ b/kernel/rcu/tree.h
+@@ -401,13 +401,6 @@ struct rcu_state {
+ /*
+  * RCU implementation internal declarations:
+  */
+-extern struct rcu_state rcu_sched_state;
+-
+-extern struct rcu_state rcu_bh_state;
+-
+-#ifdef CONFIG_PREEMPT_RCU
+-extern struct rcu_state rcu_preempt_state;
+-#endif /* #ifdef CONFIG_PREEMPT_RCU */
+ 
+ int rcu_dynticks_snap(struct rcu_data *rdp);
+ 
+-- 
+1.8.3.1
 
-Well, it's 100% reproducable on a particular model of system
-(garrison) with a particular model of card.  I've had some suggestions
-that it fails with some other systems card card models, but nothing
-confirmed - the one other system model I've been able to try, which
-also had a newer card model didn't reproduce the problem.
-
-> > Does the card work in Gen 3 when it starts? Is there any indication of
-> > PCI-E link errors?
->=20
-> Nope.
->=20
-> > Everytime or sometimes?
-> >=20
-> > POWER 8 firmware is good? If the link does eventually come back, is
-> > the POWER8's D3 resumption timeout long enough?
-> >=20
-> > If this doesn't lead to an obvious conclusion you'll probably need to
-> > connect to IBM's Mellanox support team to get more information from
-> > the card side.
->=20
-> We are IBM :-) So far, it seems to be that the card is doing something
-> not quite right, but we don't know what. We might need to engage
-> Mellanox themselves.
-
-Possibly.  On the other hand, I've had it reported that this is a
-software regression at least with downstream red hat kernels.  I
-haven't yet been able to eliminate factors that might be confusing
-that, or try to find a working version upstream.
-
---=20
-David Gibson			| I'll have my music baroque, and my code
-david AT gibson.dropbear.id.au	| minimalist, thank you.  NOT _the_ _other_
-				| _way_ _around_!
-http://www.ozlabs.org/~dgibson
-
---wTWi5aaYRw9ix9vO
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEdfRlhq5hpmzETofcbDjKyiDZs5IFAlw1hwMACgkQbDjKyiDZ
-s5IDKw//XIQZh971MfpcSENald4kWBTfSHHlOD5+4Kl8H6zUpmr8Yo2nc97DnGdk
-oRzpnprxrbEZgCg43CSA/W4JYwczn1SIq4nEdXUW+byu1imVvI4Abwh2IpzUERy8
-L+anK4lQllJNrBZ66UPcAY7KUUec08STrBlwH61mFZp67ywsw2oQLkPdpwcz9HDj
-dPU1EoaMa+Cg+A7MRlzxofZ3bhZtOeIQJCMYdvBVVjJ/uU7iYZtemmUUjNJdag5F
-/cgQ2k8KmXg+ENWii2kx1Hj9jb2wmoRXfYmPh5k7bw9EApH9YGnaIQMKkHnqWJay
-oLJIxStqc/mn6Pu2QNrUbvKQuAy2mljMajR2IY9j2G9YUsMeRaeHyKUBG6ojSJ3h
-BbB0mj8Zb34Aj0R4HWM9yRdCv4muKywF/ddwSZKFRK9PXEJ0mMNqtq/HZ7Ztwvcm
-lRVrCc4UMFglYKxK6w5gz3gY3SPY3fKOeVBJXjtmL5nEP51QuMYicaK8APSnj8EN
-tsFy7BT7GR8uQtR6s6CMdId7YgZWiiM0nP7ji2Rr5xwtt7MDCQkgSgtv5f1g+5Oy
-6ikWNG1TRk88qozePzpooKUnoMaNTqcA7RZbOgrJOQ0m64lOyQ3jMQJPv8c4RJOD
-k+/QeDln5GduSMkIJEFyv8BIImVTm4u57d45DfCKZWRraeXBkXg=
-=jw4v
------END PGP SIGNATURE-----
-
---wTWi5aaYRw9ix9vO--
