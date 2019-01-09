@@ -2,130 +2,105 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A614C43612
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 21:23:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4B97C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 21:23:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 56E6B206B6
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 21:23:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 839CF206B6
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 21:23:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tayYLBcY"
+	dkim=pass (2048-bit key) header.d=cmpxchg-org.20150623.gappssmtp.com header.i=@cmpxchg-org.20150623.gappssmtp.com header.b="gQCkCkBR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726786AbfAIVXG (ORCPT
+        id S1726987AbfAIVXi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 16:23:06 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:37502 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725681AbfAIVXF (ORCPT
+        Wed, 9 Jan 2019 16:23:38 -0500
+Received: from mail-yb1-f196.google.com ([209.85.219.196]:33150 "EHLO
+        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725681AbfAIVXh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 16:23:05 -0500
-Received: by mail-wr1-f67.google.com with SMTP id s12so9170772wrt.4;
-        Wed, 09 Jan 2019 13:23:04 -0800 (PST)
+        Wed, 9 Jan 2019 16:23:37 -0500
+Received: by mail-yb1-f196.google.com with SMTP id o73so3602474ybc.0
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Jan 2019 13:23:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:openpgp:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=WyVu/NRnECiTL/w0ho0hXwTO7iGZz3QvzPjqC/1ztOw=;
-        b=tayYLBcYo1buPFxv18lL4G72eGTiAm5yaFYhHNzn8u0nv5K1+Jxu4263g5fhhjSL3Z
-         Cg0rD+apwzXMe7emcmVGz5Ff+g8OcmfWjWL3OuNUIXmS0dHTT45h4tYfvPF4xFNtDV8p
-         HOt1OQPV95dcDJ3vN1psVUUYF0Z4IrYK5pgjosaMLXEYGXzXHoevEh4LcgPzbbStRtVr
-         kRmDfWoKM2lpLhBZXl7cds58Xcdq8/gCoUF9diOi3eqgipJzkJsXVfq6ohy073G1gz9F
-         NVh1FTXCBWW+E/JoOXROYQjqlwW9Py+XPbkCOQNFeWp+G+CuY/bs3zb3f49Ect1T1qvh
-         o/cQ==
+        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=kfFoE86abS3p8Fs1VfcYmGgBPBRGbAxZVbI0XgjcWOE=;
+        b=gQCkCkBRANwch9nBpN2mXOwU5nTY9Yi9e5cM+ZfzTUzr15AuQShCmzvmumgREGnX0a
+         GNzAzRVC8wrd1gy1pYZlbBEHWestM29tSNpvivyYH2y7BmI5QiY+JH7CK6iYiIBb/FTh
+         LjlipZf2PfnTq9fQ0yQiX1Je5l6oE6plLwXlrwyYLddPE/WGNX6CYNK3nwT1OP/QEcXn
+         zIl3PDUlT0ksHLwqc7HEJYqeYfSbn+j1OGroY3omaplEMagiZRzf5ftf4HBMubUDOaqP
+         QHw7osyPDV5QaAZpmO4t503bVrHOvHCyqf6dyZtOGZr8P3qQflUWyG05fXHYCstdbOfu
+         eliA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=WyVu/NRnECiTL/w0ho0hXwTO7iGZz3QvzPjqC/1ztOw=;
-        b=A1bamjXH4ORmSHRCNyZMlORXSP3Qxp8Qiq7uaiNeA4SmFtiIEgS4rTtDZHalPa7W38
-         x2n9940KLRvCXr1WLXws0b0fvPMzdGoFMcs2Eozrf+BXyp5WGRGQ9jLzVELlKRk3BW7s
-         7hagmHqMhciuYnp95WIaDqUrxQ+ZlS7TarL1rgRcqy9yMmawGKuiC/+TjbHZGi4j79Q1
-         yqIJrIYR5OIAH5+G6WeNviIVbFV7ip/aGBM2RdIYz+WmFvViAkeiqMxeDOt9R50ClfSC
-         JifBBTDVj5zaGDszar5HtP0bsxgw1u9GIX5oNrHF916napckclff23fDslr5Z46OhbQV
-         3avQ==
-X-Gm-Message-State: AJcUukeKCHAWlnmVQR7kx4XCoFkyEUUUmvo8oAGFp3eS3gWrVnrIJtGZ
-        GSwtu1H/uWk19K2PVGupLnB+UYvQ
-X-Google-Smtp-Source: ALg8bN7KREseP0Zu9iaCDKbIB2bk1qGw36C/XatkyKI3FOdBzvCo1bp1qHIgRRMs8bNID/FSYXVZUw==
-X-Received: by 2002:adf:81b6:: with SMTP id 51mr6879686wra.240.1547068983784;
-        Wed, 09 Jan 2019 13:23:03 -0800 (PST)
-Received: from [192.168.1.4] (ip-86-49-110-70.net.upcbroadband.cz. [86.49.110.70])
-        by smtp.gmail.com with ESMTPSA id l20sm122848439wrb.93.2019.01.09.13.23.02
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 09 Jan 2019 13:23:02 -0800 (PST)
-Subject: Re: [PATCH v5 1/2] spi: Add Renesas R-Car Gen3 RPC-IF SPI controller
- driver
-To:     Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Mason Yang <masonccyang@mxic.com.tw>,
-        Mark Brown <broonie@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-spi <linux-spi@vger.kernel.org>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        juliensu@mxic.com.tw, Simon Horman <horms@verge.net.au>,
-        zhengxunli@mxic.com.tw
-References: <1546921020-20436-1-git-send-email-masonccyang@mxic.com.tw>
- <1546921020-20436-2-git-send-email-masonccyang@mxic.com.tw>
- <74a5fba6-a77e-f71b-ce49-405fee8e0fda@cogentembedded.com>
- <CAMuHMdUPsN-VMhbttVK19gL_nPdaCTHHC7Dn3ajPoVhMqDJf_w@mail.gmail.com>
- <a4373a7f-07c4-baff-30a3-d1f5a294e1bb@cogentembedded.com>
-From:   Marek Vasut <marek.vasut@gmail.com>
-Openpgp: preference=signencrypt
-Message-ID: <fcfcdc30-965e-ec63-17ce-006c500963d9@gmail.com>
-Date:   Wed, 9 Jan 2019 22:23:02 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=kfFoE86abS3p8Fs1VfcYmGgBPBRGbAxZVbI0XgjcWOE=;
+        b=pf2BFV15q/FCCTPzxzlWKxZM4cHApW6ZegRdIWcZzlQ43qeM4f+KttMNtGtkpJiaW2
+         PE5F4uFMfKGXJwRDtDna4224W/rtf8LyH21icRl0m7Iq3dYs7O7jN377SgAp8MBzXVu5
+         QMxstouzqzKprPwUzHG6G4+UupSiDgH7mRjzRG4pAXvJYY7NqwPl0J8uJKEOJAR04qHo
+         cCVuKJqRDndGMSnmAqyBlY1kQDVGiMIy3bQ0oIcM0j4ze40ONHnuLwUQA+WmESjgQbMI
+         sFugFpFSwWAInqPp7ZB6zEBzZy8c6x09PcOx4k3UVYwdLwxHgV+kiMm+U07nZJZ78HRC
+         sqmg==
+X-Gm-Message-State: AJcUukfahsoHWEonvqI21MPltLbXq9JRWEGtkpQgQvuy9Lze8BzaiMV6
+        /8t67syS83ufORXRUb3C2P6mdQ==
+X-Google-Smtp-Source: ALg8bN6ye/lNUL4fYCnvsTnc5SMLGZTPIs8R1YA9vf4m7tPeXHO+Vp6V0HmcfoDI3m4qMHxVEZKOqQ==
+X-Received: by 2002:a25:b321:: with SMTP id l33mr7119551ybj.280.1547069016441;
+        Wed, 09 Jan 2019 13:23:36 -0800 (PST)
+Received: from localhost ([2620:10d:c091:200::7:f15b])
+        by smtp.gmail.com with ESMTPSA id s185sm36693021yws.69.2019.01.09.13.23.35
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 09 Jan 2019 13:23:35 -0800 (PST)
+Date:   Wed, 9 Jan 2019 16:23:34 -0500
+From:   Johannes Weiner <hannes@cmpxchg.org>
+To:     Yang Shi <yang.shi@linux.alibaba.com>
+Cc:     mhocko@suse.com, shakeelb@google.com, akpm@linux-foundation.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC v3 PATCH 0/5] mm: memcontrol: do memory reclaim when
+ offlining
+Message-ID: <20190109212334.GA18978@cmpxchg.org>
+References: <1547061285-100329-1-git-send-email-yang.shi@linux.alibaba.com>
+ <20190109193247.GA16319@cmpxchg.org>
+ <d92912c7-511e-2ab5-39a6-38af3209fcaf@linux.alibaba.com>
 MIME-Version: 1.0
-In-Reply-To: <a4373a7f-07c4-baff-30a3-d1f5a294e1bb@cogentembedded.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d92912c7-511e-2ab5-39a6-38af3209fcaf@linux.alibaba.com>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/9/19 8:04 PM, Sergei Shtylyov wrote:
-> On 01/09/2019 09:49 PM, Geert Uytterhoeven wrote:
-> 
->>>> Add a driver for Renesas R-Car Gen3 RPC-IF SPI controller.
->>>>
->>>> Signed-off-by: Mason Yang <masonccyang@mxic.com.tw>
->>>
->>>    You now need to add:
->>>
->>> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
->>
->>>> --- a/drivers/spi/Kconfig
->>>> +++ b/drivers/spi/Kconfig
->>>> @@ -544,6 +544,12 @@ config SPI_RSPI
->>>>       help
->>>>         SPI driver for Renesas RSPI and QSPI blocks.
->>>>
->>>> +config SPI_RENESAS_RPC_IF
->>>
->>>    Since the driver is called without -IF suffix, I wouldn't use it in the
->>> Kconfig name either, the following is enough:
->>>
->>>> +     tristate "Renesas R-Car Gen3 RPC-IF SPI controller"
->>>> +     depends on ARCH_RENESAS || COMPILE_TEST
->>>
->>>    Judging on the compilation error reported by the 0-day bot about readq(),
->>> we now need to depend on 64BIT or something...
->>
->> IIRC, this hardware block is also used on RZ/A, which is 32-bit.
-> 
->   I'm not seeing it in the "RZ/A1H Group, RZ/A1M Group User’s Manual: Hardware"
-> Rev 3.00. What SoC did you have in mind?
+On Wed, Jan 09, 2019 at 12:36:11PM -0800, Yang Shi wrote:
+> As I mentioned above, if we know some page caches from some memcgs
+> are referenced one-off and unlikely shared, why just keep them
+> around to increase memory pressure?
 
-At least the GR Peach boots from this block, so that one :)
+It's just not clear to me that your scenarios are generic enough to
+justify adding two interfaces that we have to maintain forever, and
+that they couldn't be solved with existing mechanisms.
 
--- 
-Best regards,
-Marek Vasut
+Please explain:
+
+- Unmapped clean page cache isn't expensive to reclaim, certainly
+  cheaper than the IO involved in new application startup. How could
+  recycling clean cache be a prohibitive part of workload warmup?
+
+- Why you cannot temporarily raise the kswapd watermarks right before
+  an important application starts up (your answer was sorta handwavy)
+
+- Why you cannot use madvise/fadvise when an application whose cache
+  you won't reuse exits
+
+- Why you couldn't set memory.high or memory.max to 0 after the
+  application quits and before you call rmdir on the cgroup
+
+Adding a permanent kernel interface is a serious measure. I think you
+need to make a much better case for it, discuss why other options are
+not practical, and show that this will be a generally useful thing for
+cgroup users and not just a niche fix for very specific situations.
