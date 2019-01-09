@@ -2,128 +2,163 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C1E1C43444
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 06:50:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BA75C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 06:56:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A6A521741
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 06:50:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fiRHToAw"
+	by mail.kernel.org (Postfix) with ESMTP id CF8C220883
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 06:56:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729709AbfAIGuq (ORCPT
+        id S1729680AbfAIG4C (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 01:50:46 -0500
-Received: from mail-yb1-f174.google.com ([209.85.219.174]:42363 "EHLO
-        mail-yb1-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728661AbfAIGuq (ORCPT
+        Wed, 9 Jan 2019 01:56:02 -0500
+Received: from mail-it1-f194.google.com ([209.85.166.194]:32835 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728661AbfAIG4B (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 01:50:46 -0500
-Received: by mail-yb1-f174.google.com with SMTP id q145so2588098ybq.9;
-        Tue, 08 Jan 2019 22:50:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=0tUMof8I5+V6VNjLfsGunUyBc1kECZ3AICUiV/cVprY=;
-        b=fiRHToAw9WFQeAS9YoBUSBMY0ywdFsT73s/9K7VWwWS5wr9MCxw9aQc28ob3qFdgGz
-         jEnISwbMKV6FecUDNTZCqq/JimXeShVxHoLLzlMYMUkPx668lN154NHSE+oouPemqKiG
-         JrPh3yHGFhFcZYZvYoNqSWtfevg2ISxe3f4aJplm2I4xyuXWLu080ZGFBUHEN6SaaKKH
-         lX+BmZohpIiRv/p1g0FFIb4nmMtffUtt4WrJCYx25b8Gzx12E92acGQqy6c/scf1ox09
-         WrJWQFyfVF9ch6Uhv1LRLCcv1BCzYSPMMxxyQVWKEE2dTQ7AYB7RP/h4xHfD/WDSexls
-         pNgA==
+        Wed, 9 Jan 2019 01:56:01 -0500
+Received: by mail-it1-f194.google.com with SMTP id m8so11956171itk.0
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jan 2019 22:56:00 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=0tUMof8I5+V6VNjLfsGunUyBc1kECZ3AICUiV/cVprY=;
-        b=DdVbLCHJdWJTMV+BL+jLwnDAFhJc1/rBLQlBzQGH/tMEzyoeRuhvkNuU0ERdUgO0Zg
-         VXira61zMD6+DxU5kZtyIkG/W1ZQmCVR3iMyeRnpprkFueYrJ51gdjcDCnpRbHH8kRue
-         HHYBGW78wkr+mXxcodyhzlQ7PMsLyrCN0DeJjn129AqC3EDAC0WgcRMNaq4MBf0TFRc9
-         0U3t8ODqpG+IpbC0/JlwGEowfNu7FcbIxhBp+Mbp2hwxwx7PRqaK39XV0cjCNJXI/xoj
-         dWUf/1fy+l+uNfrxF5CmCJA8U58EjOb8UqUGZVhXVkvSzRcKMMqUd8Hs+tvCU0/wbREz
-         i0Rg==
-X-Gm-Message-State: AJcUukd9WvfwRM26R+b+yWXkfEP6JuUmz8k0IHVXCGlUeGORfTYS8JgL
-        9CuqhLIZ2eYpaJUVZDEBClYR4/U7UpmEyRHn7XAZ4MWP
-X-Google-Smtp-Source: ALg8bN7XOObGiCrbkBgQZrylIVKHH4OcIMB+0p5G3T825Kc0YqK9g4Y908CmMocJ5OwIGS2ReW70OjBss56un8NwOQA=
-X-Received: by 2002:a25:ba84:: with SMTP id s4mr4611428ybg.325.1547016644835;
- Tue, 08 Jan 2019 22:50:44 -0800 (PST)
+        bh=uqxheNDTbBo/VXGa6i8Z5NG+TW3Y21vOW+J5TKQOgbs=;
+        b=Icr8ftT2pyfAdDl8uZnnrGtaFFgFbwSxEX8VBQkr8bVxmVqVI+vQgNzlrPCvj3ydl7
+         9J/2dV9G8Xjlxr/+DmClvi9vXUSxJIIHTHfaITroF529md92T90WnTWmHd/msE0mU8X4
+         CUBshcHIeLC0h97mzqFK88gr7lfk30a1zgw1idSLlRW46EgYyloOCm1fbSajMbOW/wjW
+         ahvNXvpQUdfYOXzpsDmoLq4YzzPVC0ItBLerbegjmStK+cGMtYC1xHR3uagjgfMu1Y2h
+         MMEl/lBUUVE7l24U5ZrwSA+N+1ipDE3EfgiEwcIjT0zPaW3a+VljFjtRakjQyvJRNzWs
+         U6sw==
+X-Gm-Message-State: AJcUukffoNtQQ/4LrfRh6TlOcWYwmDD/ecAj6esa847H0TGpywTMHuUR
+        5Pef7p52qgusZh8ZHxJM1whPKZwF05joMtpPS8vm1BFEhyLRVw==
+X-Google-Smtp-Source: ALg8bN73YAgGA+cz3Xdcsfj5d9zHN+YpK8SwS2+7jtR/zO35nKZV9VLG8gn7DohaEzMfTwtycwjQcGe/opMenwx5BG8=
+X-Received: by 2002:a02:95e4:: with SMTP id b91mr2941097jai.15.1547016960274;
+ Tue, 08 Jan 2019 22:56:00 -0800 (PST)
 MIME-Version: 1.0
-References: <20190108192628.121270-1-sashal@kernel.org> <20190108192628.121270-16-sashal@kernel.org>
-In-Reply-To: <20190108192628.121270-16-sashal@kernel.org>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Wed, 9 Jan 2019 08:50:33 +0200
-Message-ID: <CAOQ4uxgwZjyoEOeRRj0eRsPR2+QmyUht0sErtZV=meKcPTDVcA@mail.gmail.com>
-Subject: Re: [PATCH AUTOSEL 4.20 016/117] fanotify: return only user requested
- event types in event mask
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        stable <stable@vger.kernel.org>,
-        Matthew Bobrowski <mbobrowski@mbobrowski.org>,
-        Jan Kara <jack@suse.cz>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+References: <20190109064727.27936-1-kasong@redhat.com>
+In-Reply-To: <20190109064727.27936-1-kasong@redhat.com>
+From:   Kairui Song <kasong@redhat.com>
+Date:   Wed, 9 Jan 2019 14:55:49 +0800
+Message-ID: <CACPcB9eaWRZ5y3xq23cOxJ0oUnVYK=7yRK7C-m1OP4YzMMbohw@mail.gmail.com>
+Subject: Re: [PATCH 2/2] x86, kexec_file_load: make it work with efi=noruntime
+ or efi=oldmap
+To:     linux-kernel@vger.kernel.org
+Cc:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
+        x86@kernel.org, Dave Young <dyoung@redhat.com>,
+        akpm@linux-foundation.org, robert.moore@intel.com,
+        erik.schmauss@intel.com, rafael.j.wysocki@intel.com,
+        lenb@kernel.org, kexec@lists.infradead.org,
+        Baoquan He <bhe@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 8, 2019 at 10:11 PM Sasha Levin <sashal@kernel.org> wrote:
+CCing more people
+
+On Wed, Jan 9, 2019 at 2:47 PM Kairui Song <kasong@redhat.com> wrote:
 >
-> From: Matthew Bobrowski <mbobrowski@mbobrowski.org>
+> When efi=noruntime or efi=oldmap is used, EFI services won't be available
+> in the second kernel, therefore the second kernel will not be able to get
+> the ACPI RSDP address from firmware by calling EFI services and won't
+> boot. Previously we are expecting the user to set the acpi_rsdp=<addr>
+> on kernel command line for second kernel as there was no way to pass RSDP
+> address to second kernel.
 >
-> [ Upstream commit 2d10b23082a7eb8be508b3789f2e7250a88a5ddb ]
+> After commit e6e094e053af ('x86/acpi, x86/boot: Take RSDP address from
+> boot params if available'), now it's possible to set a acpi_rsdp_addr
+> parameter in the boot_params passed to second kernel, this commit make
+> use of it, detect and set the RSDP address when it's required for second
+> kernel to boot.
 >
-> Modify fanotify_should_send_event() so that it now returns a mask for
-> an event that contains ONLY flags for the event types that have been
-> specifically requested by the user. Flags that may have been included
-> within the event mask, but have not been explicitly requested by the
-> user will not be present in the returned value.
+> Tested with an EFI enabled KVM VM with efi=noruntime.
 >
-> As an example, given the situation where a user requests events of type
-> FAN_OPEN. Traditionally, the event mask returned within an event that
-> occurred on a filesystem object that has been marked for monitoring and is
-> opened, will only ever have the FAN_OPEN bit set. With the introduction of
-> the new flags like FAN_OPEN_EXEC, and perhaps any other future event
-> flags, there is a possibility of the returned event mask containing more
-> than a single bit set, despite having only requested the single event type.
-> Prior to these modifications performed to fanotify_should_send_event(), a
-> user would have received a bundled event mask containing flags FAN_OPEN
-> and FAN_OPEN_EXEC in the instance that a file was opened for execution via
-> execve(), for example. This means that a user would receive event types
-> in the returned event mask that have not been requested. This runs the
-> possibility of breaking existing systems and causing other unforeseen
-> issues.
->
-> To mitigate this possibility, fanotify_should_send_event() has been
-> modified to return the event mask containing ONLY event types explicitly
-> requested by the user. This means that we will NOT report events that the
-> user did no set a mask for, and we will NOT report events that the user
-> has set an ignore mask for.
->
-> The function name fanotify_should_send_event() has also been updated so
-> that it's more relevant to what it has been designed to do.
->
-> Signed-off-by: Matthew Bobrowski <mbobrowski@mbobrowski.org>
-> Reviewed-by: Amir Goldstein <amir73il@gmail.com>
-> Signed-off-by: Jan Kara <jack@suse.cz>
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
+> Suggested-by: Dave Young <dyoung@redhat.com>
+> Signed-off-by: Kairui Song <kasong@redhat.com>
 > ---
+>  arch/x86/kernel/kexec-bzimage64.c | 21 +++++++++++++++++++++
+>  drivers/acpi/acpica/tbxfroot.c    |  3 +--
+>  include/acpi/acpixf.h             |  2 +-
+>  3 files changed, 23 insertions(+), 3 deletions(-)
+>
+> diff --git a/arch/x86/kernel/kexec-bzimage64.c b/arch/x86/kernel/kexec-bzimage64.c
+> index 53917a3ebf94..0a90dcbd041f 100644
+> --- a/arch/x86/kernel/kexec-bzimage64.c
+> +++ b/arch/x86/kernel/kexec-bzimage64.c
+> @@ -20,6 +20,7 @@
+>  #include <linux/mm.h>
+>  #include <linux/efi.h>
+>  #include <linux/verification.h>
+> +#include <linux/acpi.h>
+>
+>  #include <asm/bootparam.h>
+>  #include <asm/setup.h>
+> @@ -255,8 +256,28 @@ setup_boot_parameters(struct kimage *image, struct boot_params *params,
+>         /* Setup EFI state */
+>         setup_efi_state(params, params_load_addr, efi_map_offset, efi_map_sz,
+>                         efi_setup_data_offset);
+> +
+> +#ifdef CONFIG_ACPI
+> +       /* Setup ACPI RSDP pointer in case EFI is not available in second kernel */
+> +       if (!acpi_disabled && (!efi_enabled(EFI_RUNTIME_SERVICES) || efi_enabled(EFI_OLD_MEMMAP))) {
+> +               /* Copied from acpi_os_get_root_pointer accordingly */
+> +               params->acpi_rsdp_addr = boot_params.acpi_rsdp_addr;
+> +               if (!params->acpi_rsdp_addr) {
+> +                       if (efi_enabled(EFI_CONFIG_TABLES)) {
+> +                               if (efi.acpi20 != EFI_INVALID_TABLE_ADDR)
+> +                                       params->acpi_rsdp_addr = efi.acpi20;
+> +                               else if (efi.acpi != EFI_INVALID_TABLE_ADDR)
+> +                                       params->acpi_rsdp_addr = efi.acpi;
+> +                       } else if (IS_ENABLED(CONFIG_ACPI_LEGACY_TABLES_LOOKUP)) {
+> +                               acpi_find_root_pointer(&params->acpi_rsdp_addr);
+> +                       }
+> +               }
+> +               if (!params->acpi_rsdp_addr)
+> +                       pr_warn("RSDP is not available for second kernel\n");
+> +       }
+>  #endif
+>
+> +#endif
+>         /* Setup EDD info */
+>         memcpy(params->eddbuf, boot_params.eddbuf,
+>                                 EDDMAXNR * sizeof(struct edd_info));
+> diff --git a/drivers/acpi/acpica/tbxfroot.c b/drivers/acpi/acpica/tbxfroot.c
+> index 483d0ce5180a..dac1e34a931c 100644
+> --- a/drivers/acpi/acpica/tbxfroot.c
+> +++ b/drivers/acpi/acpica/tbxfroot.c
+> @@ -108,8 +108,7 @@ acpi_status acpi_tb_validate_rsdp(struct acpi_table_rsdp *rsdp)
+>   *
+>   ******************************************************************************/
+>
+> -acpi_status ACPI_INIT_FUNCTION
+> -acpi_find_root_pointer(acpi_physical_address *table_address)
+> +acpi_status acpi_find_root_pointer(acpi_physical_address *table_address)
+>  {
+>         u8 *table_ptr;
+>         u8 *mem_rover;
+> diff --git a/include/acpi/acpixf.h b/include/acpi/acpixf.h
+> index 7aa38b648564..869d75ecaf7d 100644
+> --- a/include/acpi/acpixf.h
+> +++ b/include/acpi/acpixf.h
+> @@ -474,7 +474,7 @@ ACPI_EXTERNAL_RETURN_STATUS(acpi_status ACPI_INIT_FUNCTION
+>  ACPI_EXTERNAL_RETURN_STATUS(acpi_status ACPI_INIT_FUNCTION
+>                             acpi_reallocate_root_table(void))
+>
+> -ACPI_EXTERNAL_RETURN_STATUS(acpi_status ACPI_INIT_FUNCTION
+> +ACPI_EXTERNAL_RETURN_STATUS(acpi_status
+>                             acpi_find_root_pointer(acpi_physical_address
+>                                                    *rsdp_address))
+>  ACPI_EXTERNAL_RETURN_STATUS(acpi_status
+> --
+> 2.20.1
+>
 
-Sasha,
 
-I have no objection to applying this patch to 4.20, but FYI, it does
-not fix anything.
-Before introducing FAN_OPEN_EXEC in 5.0-rc1, this patch has no visible effect.
-
-I don't mind if you apply it. It will make stable code closer to
-mainline, which is
-always a good thing IMO. And FWIW, I think that patch is quite trivial
-and low risk.
-
-Thanks,
-Amir.
+--
+Best Regards,
+Kairui Song
