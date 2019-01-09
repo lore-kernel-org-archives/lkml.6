@@ -2,120 +2,107 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61A79C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 10:18:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 212C3C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 10:18:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C71620883
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 10:18:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E58AD2064C
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 10:18:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=chronox.de header.i=@chronox.de header.b="p+yQ60WG"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="FzbfNtiH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730338AbfAIKSV (ORCPT
+        id S1730395AbfAIKSb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 05:18:21 -0500
-Received: from mo4-p01-ob.smtp.rzone.de ([81.169.146.166]:26017 "EHLO
-        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730303AbfAIKSU (ORCPT
+        Wed, 9 Jan 2019 05:18:31 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:52236 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730292AbfAIKSa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 05:18:20 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1547029095;
-        s=strato-dkim-0002; d=chronox.de;
-        h=References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=8Gpp2jSMjw9TDIVQ8ToVBHpCNa7x4sUYs9CLaHwsbeo=;
-        b=p+yQ60WG1fr6sW+UXfAh2M9cGjaQTTGC+JVTEZCujEPnkf7xI9a2EVFE3mP1DHwh08
-        /Df5zFE9oFTOGtmLK0VWfFObZxalPGshkiNDocGpt7MP5Su/xifZufLFYINjuasbN/7f
-        Lle233JAriSQmvo88YV+LHK3NIBNUprJUOdMKrRuJoGOq5Ooj2J308YnTVbof+7bPBKV
-        dr3DXAcdLhb7ywfvjSIC1NaOQ6SDcV5/guO8qox0SILG7dqxL0Hf+g3zOX2/xUzwN2eA
-        2N8FAvexEt2fujVc/TgJZGhTZ0qFZb1IUHSXSgrMOsmgNW1DEkHhWb98Zl5T1+OXgv0t
-        1UXQ==
-X-RZG-AUTH: ":P2ERcEykfu11Y98lp/T7+hdri+uKZK8TKWEqNyiHySGSa9k9x24dNoX176cAx2h1qXJ5"
-X-RZG-CLASS-ID: mo00
-Received: from tauon.chronox.de
-        by smtp.strato.de (RZmta 44.9 SBL|AUTH)
-        with ESMTPSA id 309bcfv09AHoPOB
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
-        (Client did not present a certificate);
-        Wed, 9 Jan 2019 11:17:50 +0100 (CET)
-From:   Stephan Mueller <smueller@chronox.de>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "Lee, Chun-Yi" <joeyli.kernel@gmail.com>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Pavel Machek <pavel@ucw.cz>, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, keyrings@vger.kernel.org,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Chen Yu <yu.c.chen@intel.com>,
-        Oliver Neukum <oneukum@suse.com>,
-        Ryan Chen <yu.chen.surf@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Giovanni Gherdovich <ggherdovich@suse.cz>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Jann Horn <jannh@google.com>, Andy Lutomirski <luto@kernel.org>
-Subject: Re: [PATCH 1/5 v2] PM / hibernate: Create snapshot keys handler
-Date:   Wed, 09 Jan 2019 11:17:45 +0100
-Message-ID: <2344329.gmPllosFfp@tauon.chronox.de>
-In-Reply-To: <20190109082103.GA8586@sol.localdomain>
-References: <20190103143227.9138-1-jlee@suse.com> <1894062.aDvIuj92vB@tauon.chronox.de> <20190109082103.GA8586@sol.localdomain>
+        Wed, 9 Jan 2019 05:18:30 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=4d+RGFz8Y4hV9bW1JAmHj60DlCEqv+/hXst1XUbRiy4=; b=FzbfNtiHaFbehfw1Nhc5qdLlV
+        BIokaetRf6ZK59XLCzINMtSNsYfqLUX+iJdisLEUVqcrRT9UdzdhCMRXbpj+P2cxsWIeDGkKzQu1r
+        lX87oF6Fnfp7kZ7640isIx6kEPEKKTzvttG0pCibStGRYPQ3PrBqpJioheZRqQI4Dez72eliEgBEr
+        n1FYe7Vy/4LErwzYzS+iNz6hJMf1Rp6sHlFDaOhKxJMO9PQujJX5Q/e6Ns24JrB42WDYOOEZ+MJFh
+        dgpI7O4x+YvETF5Zl5Uv43PXMEVjEFDNO5DCJAeJebKuKwvsOASZ+wTFEuF3aMtmfm8YylboerNX2
+        0fpXUWLVQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1ghAw7-000239-FY; Wed, 09 Jan 2019 10:18:11 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id D79CA2028A2D4; Wed,  9 Jan 2019 11:18:08 +0100 (CET)
+Date:   Wed, 9 Jan 2019 11:18:08 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Song Liu <songliubraving@fb.com>
+Cc:     lkml <linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "acme@kernel.org" <acme@kernel.org>,
+        "ast@kernel.org" <ast@kernel.org>,
+        "daniel@iogearbox.net" <daniel@iogearbox.net>,
+        Kernel Team <Kernel-team@fb.com>,
+        Andi Kleen <andi@firstfloor.org>
+Subject: Re: [PATCH v5 perf, bpf-next 3/7] perf, bpf: introduce
+ PERF_RECORD_BPF_EVENT
+Message-ID: <20190109101808.GG1900@hirez.programming.kicks-ass.net>
+References: <20181220182904.4193196-1-songliubraving@fb.com>
+ <20181220182904.4193196-4-songliubraving@fb.com>
+ <20190108184116.GC30894@hirez.programming.kicks-ass.net>
+ <77A478D9-F36F-443A-BBFD-F0C1FFE0DD90@fb.com>
+ <20190108194310.GD1900@hirez.programming.kicks-ass.net>
+ <A0C713E9-6ACE-4235-87C2-2653A8F22F7B@fb.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <A0C713E9-6ACE-4235-87C2-2653A8F22F7B@fb.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Mittwoch, 9. Januar 2019, 09:21:04 CET schrieb Eric Biggers:
+On Tue, Jan 08, 2019 at 11:54:04PM +0000, Song Liu wrote:
 
-Hi Eric,
+> I think Intel PT case is at instruction granularity (instead of ksymbol
+> granularity)? 
+
+Yes.
+
+> If this is true, modules, BPF, and PT could still share
+> the ksymbol record for basic profiling. And advanced use cases like 
+> annotation will depend on user space to record BPF_EVENT (and equivalent
+> for other cases) timely. But at least, the ksymbol is already there. 
 > 
-> FWIW, it's been very slow going since I've been working on other projects
-> and I also need to be very sure to get the API changes right, but I still
-> plan to change the KDF in fscrypt (a.k.a. ext4/f2fs/ubifs encryption) to
-> HKDF-SHA512 as part of a larger set of improvements to how fscrypt
-> encryption keys are managed. I sent the last patchset a year ago
-> (https://marc.info/?l=linux-fsdevel&m=150879493206257) but I'm working to
-> revive it.  In the work-in-progress version in my git tree, this is the
-> commit that adds a HKDF implementation as fs/crypto/hkdf.c:
-> https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git/commit/?i
-> d=e8a78767131c9717ee838f0c4e307948d65a4427 It basically just wraps a
-> crypto_shash for "hmac(sha512)".
-> 
-> I'd be fine with using a common implementation instead, provided that it
-> gives the same functionality, including supporting user-specified salt and
-> application-specific info strings, and isn't slower or more complex to use.
-> 
-> (This comment is solely on the tangential discussion about KDF
-> implementations; I've not looked at the hibernation image encryption stuff
-> yet.)
+> Does this make sense?  
 
-Thanks for the clarification. I have started a generic HKDF implementation for 
-the kernel crypto API which lead to the questions above. I would then also try 
-to provide a HKDF proposal.
+I'm not sure I follow; the idea was that on ksym events we copy out the
+instructions using kcore. The ksym event already has addr+len.
 
-To use the (H)KDF, I currently envision 2 calls apart from alloc/free. The 
-following code would serve as an example.
+All we need is some means of ensuring the symbol is still there by the
+time we see the event and do the copy.
 
- * Example without proper error handling:
- *      char *keying_material = "\x00\x11\x22\x33\x44\x55\x66\x77";
- *      char *label_context = "\xde\xad\xbe\xef\x00\xde\xad\xbe\xef";
- *      kdf = crypto_alloc_rng(name, 0, 0);
- *      crypto_rng_reset(kdf, keying_material, 8);
- *      crypto_rng_generate(kdf, label_context, 9, outbuf, outbuflen);
+I think we can do this with a new ioctl() on /proc/kcore itself:
 
-That hopefully should be simple enough.
+ - when we have kcore open, we queue all text-free operations on list-1.
 
-For HKDF, as mentioned, I would envision to use a struct instead of a char * 
-for the label_context to communicate IKM, Salt, and the label/info 
-information.
+ - when we close kcore, we drain all (text-free) list-* and perform the
+   pending frees immediately.
 
-Ciao
-Stephan
+ - on ioctl(KCORE_QC) we perform the pending free of list-3 and advance
+   list-2 to list-3 and list-1 to list-2.
 
+Perf would then open kcore at the start of the record, make a complete
+copy and keep the FD open. At the end of every buffer process, we issue
+KCORE_QC IFF we observed a ksym unreg in that buffer.
 
+We use 3 lists instead of 2 to guard against races, if there was a
+reg+unreg en-route but not yet visible in the buffer, then we don't want
+that free to be processed. The next buffer (read) will have the event(s)
+and all should be well.
