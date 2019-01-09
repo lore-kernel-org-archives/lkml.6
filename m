@@ -2,91 +2,93 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFE57C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 09:24:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4C1DC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 09:24:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 95EEF20821
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 09:24:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="FbHE1f6n"
+	by mail.kernel.org (Postfix) with ESMTP id 9C27420821
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 09:24:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547025898;
+	bh=bjDePeJ8DLI210p+D7vIBZ6DGbQtykhTgMDUXcNIRjE=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=tiKri0mSjLkGXfE1hwi/nftVdfk0K3NmlZXB9oyTe1sHag46rDrcJMU+pctaGJBb4
+	 Ep6hq+uoOWtSX/Sai8A700PT5I+59ZHnWq+zM/vMSHyHKNq0zwC99dxZzhLqmh03y1
+	 34A7dXEwIrjRCEbUXQi5QDFZIWBQaSgHBPXaz3NI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730255AbfAIJYJ (ORCPT
+        id S1730276AbfAIJY5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 04:24:09 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:44787 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729284AbfAIJYJ (ORCPT
+        Wed, 9 Jan 2019 04:24:57 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:44377 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728138AbfAIJY5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 04:24:09 -0500
-Received: by mail-pl1-f193.google.com with SMTP id e11so3310733plt.11
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jan 2019 01:24:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=dY2fCWGedJlYccsX3VNSSa4+uvQYYUehpvw6IRKQmHo=;
-        b=FbHE1f6nvGc2f7pCi/EQ00kDcAaKC+5F1Q5cQ9sq+spif/fKBY5AcqR8pTT6iKcFQo
-         vPYT668R6O6ZKzO+48fLfFdoFMY/DhTEOb60Neafhzfh12YVlB64Iq8Wktuve9CrpXQc
-         J8Np0kJFUOApnSD+f0kFk40vdQRZ0U3Lxo/aQ=
+        Wed, 9 Jan 2019 04:24:57 -0500
+Received: by mail-oi1-f196.google.com with SMTP id m6so5725831oig.11
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Jan 2019 01:24:56 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=dY2fCWGedJlYccsX3VNSSa4+uvQYYUehpvw6IRKQmHo=;
-        b=jfTRGchzrE0CO73/ygDSIjHOFnSgaW0ZYDw9QHlDkoVk/ZzJW82/NlZqhj4vpO/gML
-         nvfqsNg3sTUS1O6w7Hat6D0q+x5ltm2urSX024aKEywgoPcm8TFvX0G9N8KLHkbimzAv
-         wB7dLUDWNkzyh0X5tOoRTuUAtcNxwvUpjizVRm5dxvN7nuXEixteUIsxJtzTI5Xbep09
-         7wKd8ZLKBhaiXI69ssJ6nhFqdhe1qzmPzVz+UJnCH3PqNWjKwdhjS7Q2jRHz51FKRPwI
-         45Pu3lGLL2UueUoqEBujc9hdF/9bRBy6Ix2MGlSvVO+w+cxD/mBgSR10LYlA+/4sGzIj
-         6lUQ==
-X-Gm-Message-State: AJcUukd//Bv5ZSCbsKy5EK5rhYH3tahZAEMDY9YkQJIOzyRvOpS2B1kb
-        f3213eQkAGZaPPNg47f7CYXdYg==
-X-Google-Smtp-Source: ALg8bN5hzWFSo7jhyanjXL8BWMH0FlHG2rw0sA9yKOmQkbdBwNEJo20qYeOKZmib3vSgB5Ampud3YA==
-X-Received: by 2002:a17:902:6b87:: with SMTP id p7mr5369854plk.282.1547025848722;
-        Wed, 09 Jan 2019 01:24:08 -0800 (PST)
-Received: from localhost ([122.166.131.155])
-        by smtp.gmail.com with ESMTPSA id 85sm112691625pfw.17.2019.01.09.01.24.07
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 09 Jan 2019 01:24:08 -0800 (PST)
-Date:   Wed, 9 Jan 2019 14:54:06 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Rajendra Nayak <rnayak@codeaurora.org>
-Cc:     andy.gross@linaro.org, robh@kernel.org, sboyd@kernel.org,
-        ulf.hansson@linaro.org, collinsd@codeaurora.org, mka@chromium.org,
-        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, henryc.chen@mediatek.com
-Subject: Re: [PATCH v10 1/9] dt-bindings: opp: Introduce opp-level bindings
-Message-ID: <20190109092406.clpx57gmmtrj2vf4@vireshk-i7>
-References: <20190109090420.8100-1-rnayak@codeaurora.org>
- <20190109090420.8100-2-rnayak@codeaurora.org>
- <20190109090912.ciq4uzo5sjghyms2@vireshk-i7>
- <d48db4fd-0b6b-8963-048d-3304b850e28c@codeaurora.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=JVgvfTu4OpkhSyd0JI4qKR7THTvpO/6oht9sP0yaHk4=;
+        b=XjPph5bXbg/NuC/W2NiZKWkz5HazzG/mwcmMh6x+mTuhydKavVSsV1ygXay7CL2AXX
+         7Y1ju0HB+xhJJPOVxA4WZEJcn5x1jtSDQmf/qNCLUa8SySXhZfIam0X/+X/jmXCqatAV
+         082F4qiZN6oFukVg0XxUmKXbod2n8DCyiauFVLvvHOQIlG3AX3KuM4xHKpwP6JCVa+PZ
+         jNfpilcy4qhyDVRGY+3VAaOTy2yXLmHgijzb3wngaYiQCnfGH8RnH+7Wolx0kwadsrjF
+         X78AklIJznB35FF6SYAfIyi4mxjtyhbOYDp57Uctx/y8JGK2y3Dg4C2/BPiyJhQ9cXGm
+         m+Ew==
+X-Gm-Message-State: AJcUukculaQxHKHJtBSohvMZl0Af0x9iOBjeYb0Hj8WfvDwwBeCFq7E2
+        QMKOeopyf91YiXtXtCkiHVXnQZ+mngCn8SiymbdBlQ==
+X-Google-Smtp-Source: ALg8bN4QaZwm+zeFoPH9I5EcnQ9J2x8Qhuy8LlLx4s+Igo1HvZ0eGDFGMQbmJ0KEsWPam7A4bkFvmLUiCNjFJBSCZcw=
+X-Received: by 2002:a54:4d01:: with SMTP id v1mr3278032oix.246.1547025896568;
+ Wed, 09 Jan 2019 01:24:56 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d48db4fd-0b6b-8963-048d-3304b850e28c@codeaurora.org>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+References: <20190109073614.18999-1-ebiggers@kernel.org>
+In-Reply-To: <20190109073614.18999-1-ebiggers@kernel.org>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Wed, 9 Jan 2019 10:24:45 +0100
+Message-ID: <CAJZ5v0jkwANa_Yy98tmZmm0HgztGP5ATFy4FVUNxxkM2hkW7_A@mail.gmail.com>
+Subject: Re: [PATCH] kobject: make kset_get_ownership() 'static'
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09-01-19, 14:50, Rajendra Nayak wrote:
-> Sure, does this seem fine?
-> 
-> - opp-level: A value representing the performance level of the device,
->   expressed as a 32-bit big-endian integer.
+On Wed, Jan 9, 2019 at 8:38 AM Eric Biggers <ebiggers@kernel.org> wrote:
+>
+> From: Eric Biggers <ebiggers@google.com>
+>
+> kset_get_ownership() is only used in lib/kobject.c, so make it 'static'.
+>
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
 
-Not sure if you need to specify endian-ness here.
+Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-> I assume the changelog mentioning the motivation behind adding this is fine?
-
-Yeah, that would be fine. Just mention that one of the users of such a
-property is qcom/mtk ......
-
--- 
-viresh
+> ---
+>  lib/kobject.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/lib/kobject.c b/lib/kobject.c
+> index b72e00fd7d09e..aa89edcd2b63a 100644
+> --- a/lib/kobject.c
+> +++ b/lib/kobject.c
+> @@ -887,7 +887,7 @@ static void kset_release(struct kobject *kobj)
+>         kfree(kset);
+>  }
+>
+> -void kset_get_ownership(struct kobject *kobj, kuid_t *uid, kgid_t *gid)
+> +static void kset_get_ownership(struct kobject *kobj, kuid_t *uid, kgid_t *gid)
+>  {
+>         if (kobj->parent)
+>                 kobject_get_ownership(kobj->parent, uid, gid);
+> --
+> 2.20.1
+>
