@@ -2,197 +2,313 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C671C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 19:23:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 422ECC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 19:23:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 24658206BA
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 19:23:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F40C6206BA
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 19:23:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="NES1Yp9Y"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728516AbfAITXN (ORCPT
+        id S1728539AbfAITXU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 14:23:13 -0500
-Received: from ale.deltatee.com ([207.54.116.67]:59744 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727826AbfAITWu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 14:22:50 -0500
-Received: from cgy1-donard.priv.deltatee.com ([172.16.1.31])
-        by ale.deltatee.com with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <gunthorp@deltatee.com>)
-        id 1ghJR2-00053q-GI; Wed, 09 Jan 2019 12:22:49 -0700
-Received: from gunthorp by cgy1-donard.priv.deltatee.com with local (Exim 4.89)
-        (envelope-from <gunthorp@deltatee.com>)
-        id 1ghJR1-0001Vh-9C; Wed, 09 Jan 2019 12:22:39 -0700
-From:   Logan Gunthorpe <logang@deltatee.com>
-To:     linux-kernel@vger.kernel.org, linux-ntb@googlegroups.com,
-        Jon Mason <jdmason@kudzu.us>
-Cc:     Allen Hubbe <allenbh@gmail.com>, Dave Jiang <dave.jiang@intel.com>,
-        Serge Semin <fancer.lancer@gmail.com>,
-        Logan Gunthorpe <logang@deltatee.com>
-Date:   Wed,  9 Jan 2019 12:22:27 -0700
-Message-Id: <20190109192233.5752-3-logang@deltatee.com>
-X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20190109192233.5752-1-logang@deltatee.com>
-References: <20190109192233.5752-1-logang@deltatee.com>
+        Wed, 9 Jan 2019 14:23:20 -0500
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:58898 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728260AbfAITXS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 14:23:18 -0500
+Received: from pps.filterd (m0001303.ppops.net [127.0.0.1])
+        by m0001303.ppops.net (8.16.0.27/8.16.0.27) with SMTP id x09JN49Q027946
+        for <linux-kernel@vger.kernel.org>; Wed, 9 Jan 2019 11:23:17 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : in-reply-to : references : mime-version :
+ content-type; s=facebook; bh=p/IMRvpkCGVr9vb8MZj96EcjL7N4aG96fV/DCgucQAU=;
+ b=NES1Yp9Y5Ojcsh+wzBKd8+wWD77sncCgmAV1YuhGfP050TvXKbViDrwsTbBOA/pgn6y8
+ W9c6hhOzIsZCHzjdXkp2WRxPhgspK9zKhyrCG+TN+sl+iw7ZOkPgAc8CMn/RZbjIlgAO
+ RwaERcNdG3YQa+2LcJPhTZ8+UIBBOXWV+vY= 
+Received: from maileast.thefacebook.com ([199.201.65.23])
+        by m0001303.ppops.net with ESMTP id 2pwk0r8ua0-13
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Jan 2019 11:23:17 -0800
+Received: from mx-out.facebook.com (2620:10d:c0a1:3::13) by
+ mail.thefacebook.com (2620:10d:c021:18::172) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA) id 15.1.1531.3;
+ Wed, 9 Jan 2019 11:21:39 -0800
+Received: by devbig006.ftw2.facebook.com (Postfix, from userid 4523)
+        id 4B22262E1B80; Wed,  9 Jan 2019 11:21:37 -0800 (PST)
+Smtp-Origin-Hostprefix: devbig
+From:   Song Liu <songliubraving@fb.com>
+Smtp-Origin-Hostname: devbig006.ftw2.facebook.com
+To:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>
+CC:     Song Liu <songliubraving@fb.com>, <peterz@infradead.org>,
+        <acme@kernel.org>, <ast@kernel.org>, <daniel@iogearbox.net>,
+        <kernel-team@fb.com>
+Smtp-Origin-Cluster: ftw2c04
+Subject: [PATCH v6 perf, bpf-next 1/7] perf, bpf: Introduce PERF_RECORD_KSYMBOL
+Date:   Wed, 9 Jan 2019 11:21:05 -0800
+Message-ID: <20190109192111.130995-2-songliubraving@fb.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190109192111.130995-1-songliubraving@fb.com>
+References: <20190109192111.130995-1-songliubraving@fb.com>
+X-FB-Internal: Safe
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 172.16.1.31
-X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, linux-ntb@googlegroups.com, jdmason@kudzu.us, dave.jiang@intel.com, allenbh@gmail.com, fancer.lancer@gmail.com, logang@deltatee.com
-X-SA-Exim-Mail-From: gunthorp@deltatee.com
-Subject: [PATCH v3 2/8] NTB: Revert the change to use the NTB device dev for DMA allocations
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-09_10:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 417cf39cfea9 ("NTB: Set dma mask and dma coherent mask to NTB
-devices") started using the NTB device for DMA allocations which was
-turns out was wrong. If the IOMMU is enabled, such alloctanions will
-always fail with messages such as:
+For better performance analysis of dynamically JITed and loaded kernel
+functions, such as BPF programs, this patch introduces
+PERF_RECORD_KSYMBOL, a new perf_event_type that exposes kernel symbol
+register/unregister information to user space.
 
-  DMAR: Allocating domain for 0000:02:00.1 failed
+The following data structure is used for PERF_RECORD_KSYMBOL.
 
-This is because the IOMMU has not setup the device for such use.
+    /*
+     * struct {
+     *      struct perf_event_header        header;
+     *      u64                             addr;
+     *      u32                             len;
+     *      u16                             ksym_type;
+     *      u16                             flags;
+     *      char                            name[];
+     *      struct sample_id                sample_id;
+     * };
+     */
 
-Change the tools back to using the PCI device for allocations seeing
-it doesn't make sense to add an IOMMU group for the non-physical NTB
-device. Also remove the code that sets the DMA mask as it no longer
-makes sense to do this.
-
-Fixes: 7f46c8b3a552 ("NTB: ntb_tool: Add full multi-port NTB API support")
-Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
-Tested-by: Alexander Fomichev <fomichev.ru@gmail.com>
+Signed-off-by: Song Liu <songliubraving@fb.com>
 ---
- drivers/ntb/hw/amd/ntb_hw_amd.c    | 4 ----
- drivers/ntb/hw/idt/ntb_hw_idt.c    | 6 ------
- drivers/ntb/hw/intel/ntb_hw_gen1.c | 4 ----
- drivers/ntb/ntb.c                  | 1 -
- drivers/ntb/test/ntb_perf.c        | 7 +++----
- drivers/ntb/test/ntb_tool.c        | 6 +++---
- 6 files changed, 6 insertions(+), 22 deletions(-)
+ include/linux/perf_event.h      | 13 +++++
+ include/uapi/linux/perf_event.h | 26 ++++++++-
+ kernel/events/core.c            | 98 ++++++++++++++++++++++++++++++++-
+ 3 files changed, 135 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/ntb/hw/amd/ntb_hw_amd.c b/drivers/ntb/hw/amd/ntb_hw_amd.c
-index efb214fc545a..16c10dfe0919 100644
---- a/drivers/ntb/hw/amd/ntb_hw_amd.c
-+++ b/drivers/ntb/hw/amd/ntb_hw_amd.c
-@@ -1020,10 +1020,6 @@ static int amd_ntb_init_pci(struct amd_ntb_dev *ndev,
- 			goto err_dma_mask;
- 		dev_warn(&pdev->dev, "Cannot DMA consistent highmem\n");
- 	}
--	rc = dma_coerce_mask_and_coherent(&ndev->ntb.dev,
--					  dma_get_mask(&pdev->dev));
--	if (rc)
--		goto err_dma_mask;
- 
- 	ndev->self_mmio = pci_iomap(pdev, 0, 0);
- 	if (!ndev->self_mmio) {
-diff --git a/drivers/ntb/hw/idt/ntb_hw_idt.c b/drivers/ntb/hw/idt/ntb_hw_idt.c
-index 1dede87dd54f..30c29183f515 100644
---- a/drivers/ntb/hw/idt/ntb_hw_idt.c
-+++ b/drivers/ntb/hw/idt/ntb_hw_idt.c
-@@ -2667,12 +2667,6 @@ static int idt_init_pci(struct idt_ntb_dev *ndev)
- 		dev_warn(&pdev->dev,
- 			"Cannot set consistent DMA highmem bit mask\n");
- 	}
--	ret = dma_coerce_mask_and_coherent(&ndev->ntb.dev,
--					   dma_get_mask(&pdev->dev));
--	if (ret != 0) {
--		dev_err(&pdev->dev, "Failed to set NTB device DMA bit mask\n");
--		return ret;
--	}
- 
- 	/*
- 	 * Enable the device advanced error reporting. It's not critical to
-diff --git a/drivers/ntb/hw/intel/ntb_hw_gen1.c b/drivers/ntb/hw/intel/ntb_hw_gen1.c
-index 2ad263f708da..9128b32a562f 100644
---- a/drivers/ntb/hw/intel/ntb_hw_gen1.c
-+++ b/drivers/ntb/hw/intel/ntb_hw_gen1.c
-@@ -1770,10 +1770,6 @@ static int intel_ntb_init_pci(struct intel_ntb_dev *ndev, struct pci_dev *pdev)
- 			goto err_dma_mask;
- 		dev_warn(&pdev->dev, "Cannot DMA consistent highmem\n");
- 	}
--	rc = dma_coerce_mask_and_coherent(&ndev->ntb.dev,
--					  dma_get_mask(&pdev->dev));
--	if (rc)
--		goto err_dma_mask;
- 
- 	ndev->self_mmio = pci_iomap(pdev, 0, 0);
- 	if (!ndev->self_mmio) {
-diff --git a/drivers/ntb/ntb.c b/drivers/ntb/ntb.c
-index 2581ab724c34..dc82be2dcf47 100644
---- a/drivers/ntb/ntb.c
-+++ b/drivers/ntb/ntb.c
-@@ -315,4 +315,3 @@ static void __exit ntb_driver_exit(void)
- 	bus_unregister(&ntb_bus);
+diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
+index 1d5c551a5add..6b5f08db5ef3 100644
+--- a/include/linux/perf_event.h
++++ b/include/linux/perf_event.h
+@@ -1113,6 +1113,13 @@ static inline void perf_event_task_sched_out(struct task_struct *prev,
  }
- module_exit(ntb_driver_exit);
--
-diff --git a/drivers/ntb/test/ntb_perf.c b/drivers/ntb/test/ntb_perf.c
-index 2a9d6b0d1f19..9174085ddc13 100644
---- a/drivers/ntb/test/ntb_perf.c
-+++ b/drivers/ntb/test/ntb_perf.c
-@@ -559,7 +559,7 @@ static void perf_free_inbuf(struct perf_peer *peer)
- 		return;
  
- 	(void)ntb_mw_clear_trans(peer->perf->ntb, peer->pidx, peer->gidx);
--	dma_free_coherent(&peer->perf->ntb->dev, peer->inbuf_size,
-+	dma_free_coherent(&peer->perf->ntb->pdev->dev, peer->inbuf_size,
- 			  peer->inbuf, peer->inbuf_xlat);
- 	peer->inbuf = NULL;
+ extern void perf_event_mmap(struct vm_area_struct *vma);
++
++/* callback function to generate ksymbol name */
++typedef int (perf_ksymbol_get_name_f)(char *name, int name_len, void *data);
++extern void perf_event_ksymbol(u16 ksym_type, u64 addr, u32 len,
++			       bool unregister,
++			       perf_ksymbol_get_name_f get_name, void *data);
++
+ extern struct perf_guest_info_callbacks *perf_guest_cbs;
+ extern int perf_register_guest_info_callbacks(struct perf_guest_info_callbacks *callbacks);
+ extern int perf_unregister_guest_info_callbacks(struct perf_guest_info_callbacks *callbacks);
+@@ -1333,6 +1340,12 @@ static inline int perf_unregister_guest_info_callbacks
+ (struct perf_guest_info_callbacks *callbacks)				{ return 0; }
+ 
+ static inline void perf_event_mmap(struct vm_area_struct *vma)		{ }
++
++typedef int (perf_ksymbol_get_name_f)(char *name, int name_len, void *data);
++static inline void perf_event_ksymbol(u16 ksym_type, u64 addr, u32 len,
++				      bool unregister,
++				      perf_ksymbol_get_name_f get_name,
++				      void *data) 			{ }
+ static inline void perf_event_exec(void)				{ }
+ static inline void perf_event_comm(struct task_struct *tsk, bool exec)	{ }
+ static inline void perf_event_namespaces(struct task_struct *tsk)	{ }
+diff --git a/include/uapi/linux/perf_event.h b/include/uapi/linux/perf_event.h
+index 9de8780ac8d9..68c4da0227c5 100644
+--- a/include/uapi/linux/perf_event.h
++++ b/include/uapi/linux/perf_event.h
+@@ -372,7 +372,8 @@ struct perf_event_attr {
+ 				context_switch :  1, /* context switch data */
+ 				write_backward :  1, /* Write ring buffer from end to beginning */
+ 				namespaces     :  1, /* include namespaces data */
+-				__reserved_1   : 35;
++				ksymbol        :  1, /* include ksymbol events */
++				__reserved_1   : 34;
+ 
+ 	union {
+ 		__u32		wakeup_events;	  /* wakeup every n events */
+@@ -965,9 +966,32 @@ enum perf_event_type {
+ 	 */
+ 	PERF_RECORD_NAMESPACES			= 16,
+ 
++	/*
++	 * Record ksymbol register/unregister events:
++	 *
++	 * struct {
++	 *	struct perf_event_header	header;
++	 *	u64				addr;
++	 *	u32				len;
++	 *	u16				ksym_type;
++	 *	u16				flags;
++	 *	char				name[];
++	 *	struct sample_id		sample_id;
++	 * };
++	 */
++	PERF_RECORD_KSYMBOL			= 17,
++
+ 	PERF_RECORD_MAX,			/* non-ABI */
+ };
+ 
++enum perf_record_ksymbol_type {
++	PERF_RECORD_KSYMBOL_TYPE_UNKNOWN	= 0,
++	PERF_RECORD_KSYMBOL_TYPE_BPF		= 1,
++	PERF_RECORD_KSYMBOL_TYPE_MAX		/* non-ABI */
++};
++
++#define PERF_RECORD_KSYMBOL_FLAGS_UNREGISTER	(1 << 0)
++
+ #define PERF_MAX_STACK_DEPTH		127
+ #define PERF_MAX_CONTEXTS_PER_STACK	  8
+ 
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index 3cd13a30f732..ef27f2776999 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -385,6 +385,7 @@ static atomic_t nr_namespaces_events __read_mostly;
+ static atomic_t nr_task_events __read_mostly;
+ static atomic_t nr_freq_events __read_mostly;
+ static atomic_t nr_switch_events __read_mostly;
++static atomic_t nr_ksymbol_events __read_mostly;
+ 
+ static LIST_HEAD(pmus);
+ static DEFINE_MUTEX(pmus_lock);
+@@ -4235,7 +4236,7 @@ static bool is_sb_event(struct perf_event *event)
+ 
+ 	if (attr->mmap || attr->mmap_data || attr->mmap2 ||
+ 	    attr->comm || attr->comm_exec ||
+-	    attr->task ||
++	    attr->task || attr->ksymbol ||
+ 	    attr->context_switch)
+ 		return true;
+ 	return false;
+@@ -4305,6 +4306,8 @@ static void unaccount_event(struct perf_event *event)
+ 		dec = true;
+ 	if (has_branch_stack(event))
+ 		dec = true;
++	if (event->attr.ksymbol)
++		atomic_dec(&nr_ksymbol_events);
+ 
+ 	if (dec) {
+ 		if (!atomic_add_unless(&perf_sched_count, -1, 1))
+@@ -7650,6 +7653,97 @@ static void perf_log_throttle(struct perf_event *event, int enable)
+ 	perf_output_end(&handle);
  }
-@@ -588,8 +588,8 @@ static int perf_setup_inbuf(struct perf_peer *peer)
  
- 	perf_free_inbuf(peer);
++/*
++ * ksymbol register/unregister tracking
++ */
++
++struct perf_ksymbol_event {
++	const char	*name;
++	int		name_len;
++	struct {
++		struct perf_event_header        header;
++		u64				addr;
++		u32				len;
++		u16				ksym_type;
++		u16				flags;
++	} event_id;
++};
++
++static int perf_event_ksymbol_match(struct perf_event *event)
++{
++	return event->attr.ksymbol;
++}
++
++static void perf_event_ksymbol_output(struct perf_event *event, void *data)
++{
++	struct perf_ksymbol_event *ksymbol_event = data;
++	struct perf_output_handle handle;
++	struct perf_sample_data sample;
++	int ret;
++
++	if (!perf_event_ksymbol_match(event))
++		return;
++
++	perf_event_header__init_id(&ksymbol_event->event_id.header,
++				   &sample, event);
++	ret = perf_output_begin(&handle, event,
++				ksymbol_event->event_id.header.size);
++	if (ret)
++		return;
++
++	perf_output_put(&handle, ksymbol_event->event_id);
++	__output_copy(&handle, ksymbol_event->name, ksymbol_event->name_len);
++	perf_event__output_id_sample(event, &handle, &sample);
++
++	perf_output_end(&handle);
++}
++
++void perf_event_ksymbol(u16 ksym_type, u64 addr, u32 len, bool unregister,
++			perf_ksymbol_get_name_f get_name, void *data)
++{
++	struct perf_ksymbol_event ksymbol_event;
++	char name[KSYM_NAME_LEN];
++	u16 flags = 0;
++	int name_len;
++
++	if (!atomic_read(&nr_ksymbol_events))
++		return;
++
++	if (ksym_type >= PERF_RECORD_KSYMBOL_TYPE_MAX ||
++	    ksym_type == PERF_RECORD_KSYMBOL_TYPE_UNKNOWN)
++		goto err;
++
++	get_name(name, KSYM_NAME_LEN, data);
++	name_len = strlen(name) + 1;
++	while (!IS_ALIGNED(name_len, sizeof(u64)))
++		name[name_len++] = '\0';
++	BUILD_BUG_ON(KSYM_NAME_LEN % sizeof(u64));
++
++	if (unregister)
++		flags |= PERF_RECORD_KSYMBOL_FLAGS_UNREGISTER;
++
++	ksymbol_event = (struct perf_ksymbol_event){
++		.name = name,
++		.name_len = name_len,
++		.event_id = {
++			.header = {
++				.type = PERF_RECORD_KSYMBOL,
++				.size = sizeof(ksymbol_event.event_id) +
++					name_len,
++			},
++			.addr = addr,
++			.len = len,
++			.ksym_type = ksym_type,
++			.flags = flags,
++		},
++	};
++
++	perf_iterate_sb(perf_event_ksymbol_output, &ksymbol_event, NULL);
++	return;
++err:
++	WARN_ONCE(1, "%s: Invalid KSYMBOL type 0x%x\n", __func__, ksym_type);
++}
++
+ void perf_event_itrace_started(struct perf_event *event)
+ {
+ 	event->attach_state |= PERF_ATTACH_ITRACE;
+@@ -9900,6 +9994,8 @@ static void account_event(struct perf_event *event)
+ 		inc = true;
+ 	if (is_cgroup_event(event))
+ 		inc = true;
++	if (event->attr.ksymbol)
++		atomic_inc(&nr_ksymbol_events);
  
--	peer->inbuf = dma_alloc_coherent(&perf->ntb->dev, peer->inbuf_size,
--					 &peer->inbuf_xlat, GFP_KERNEL);
-+	peer->inbuf = dma_alloc_coherent(&perf->ntb->pdev->dev,
-+			peer->inbuf_size, &peer->inbuf_xlat, GFP_KERNEL);
- 	if (!peer->inbuf) {
- 		dev_err(&perf->ntb->dev, "Failed to alloc inbuf of %pa\n",
- 			&peer->inbuf_size);
-@@ -1512,4 +1512,3 @@ static void __exit perf_exit(void)
- 	destroy_workqueue(perf_wq);
- }
- module_exit(perf_exit);
--
-diff --git a/drivers/ntb/test/ntb_tool.c b/drivers/ntb/test/ntb_tool.c
-index ec5cf095cdb9..311d6ab8d016 100644
---- a/drivers/ntb/test/ntb_tool.c
-+++ b/drivers/ntb/test/ntb_tool.c
-@@ -590,7 +590,7 @@ static int tool_setup_mw(struct tool_ctx *tc, int pidx, int widx,
- 	inmw->size = min_t(resource_size_t, req_size, size);
- 	inmw->size = round_up(inmw->size, addr_align);
- 	inmw->size = round_up(inmw->size, size_align);
--	inmw->mm_base = dma_alloc_coherent(&tc->ntb->dev, inmw->size,
-+	inmw->mm_base = dma_alloc_coherent(&tc->ntb->pdev->dev, inmw->size,
- 					   &inmw->dma_base, GFP_KERNEL);
- 	if (!inmw->mm_base)
- 		return -ENOMEM;
-@@ -612,7 +612,7 @@ static int tool_setup_mw(struct tool_ctx *tc, int pidx, int widx,
- 	return 0;
- 
- err_free_dma:
--	dma_free_coherent(&tc->ntb->dev, inmw->size, inmw->mm_base,
-+	dma_free_coherent(&tc->ntb->pdev->dev, inmw->size, inmw->mm_base,
- 			  inmw->dma_base);
- 	inmw->mm_base = NULL;
- 	inmw->dma_base = 0;
-@@ -629,7 +629,7 @@ static void tool_free_mw(struct tool_ctx *tc, int pidx, int widx)
- 
- 	if (inmw->mm_base != NULL) {
- 		ntb_mw_clear_trans(tc->ntb, pidx, widx);
--		dma_free_coherent(&tc->ntb->dev, inmw->size,
-+		dma_free_coherent(&tc->ntb->pdev->dev, inmw->size,
- 				  inmw->mm_base, inmw->dma_base);
- 	}
- 
+ 	if (inc) {
+ 		/*
 -- 
-2.19.0
+2.17.1
 
