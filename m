@@ -6,24 +6,24 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4864CC43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 11:49:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2DC7C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 11:49:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E7552173B
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 11:49:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AA4D32173B
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 11:49:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730163AbfAILtb (ORCPT
+        id S1730292AbfAILtn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 06:49:31 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:56234 "EHLO
+        Wed, 9 Jan 2019 06:49:43 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:56219 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731099AbfAILsr (ORCPT
+        with ESMTP id S1731077AbfAILso (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 06:48:47 -0500
+        Wed, 9 Jan 2019 06:48:44 -0500
 Received: from localhost ([127.0.0.1] helo=bazinga.breakpoint.cc)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <bigeasy@linutronix.de>)
-        id 1ghCLh-0007Al-8F; Wed, 09 Jan 2019 12:48:41 +0100
+        id 1ghCLe-0007Al-Lf; Wed, 09 Jan 2019 12:48:39 +0100
 From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 To:     linux-kernel@vger.kernel.org
 Cc:     x86@kernel.org, Andy Lutomirski <luto@kernel.org>,
@@ -33,9 +33,9 @@ Cc:     x86@kernel.org, Andy Lutomirski <luto@kernel.org>,
         Rik van Riel <riel@surriel.com>,
         Dave Hansen <dave.hansen@linux.intel.com>,
         Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [PATCH 17/22] x86/fpu: Prepare copy_fpstate_to_sigframe() for TIF_NEED_FPU_LOAD
-Date:   Wed,  9 Jan 2019 12:47:39 +0100
-Message-Id: <20190109114744.10936-18-bigeasy@linutronix.de>
+Subject: [PATCH 15/22] x86/entry: Add TIF_NEED_FPU_LOAD
+Date:   Wed,  9 Jan 2019 12:47:37 +0100
+Message-Id: <20190109114744.10936-16-bigeasy@linutronix.de>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190109114744.10936-1-bigeasy@linutronix.de>
 References: <20190109114744.10936-1-bigeasy@linutronix.de>
@@ -46,39 +46,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rik van Riel <riel@surriel.com>
+Add TIF_NEED_FPU_LOAD. This is reserved for loading the FPU registers
+before returning to userland. This flag must not be set for systems
+without a FPU.
+If this flag is cleared, the CPU's FPU register hold the current content
+of current()'s FPU register. The in-memory copy (union fpregs_state) is
+not valid.
+If this flag is set, then all of CPU's FPU register may hold a random
+value (except for PKRU) and it is required to load the content of the
+FPU register on return to userland.
 
-The FPU registers need only to be saved if TIF_NEED_FPU_LOAD is not set.
-Otherwise this has been already done and can be skipped.
+It is introduced now, so we can add code handling it now before adding
+the main feature.
 
-Signed-off-by: Rik van Riel <riel@surriel.com>
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 ---
- arch/x86/kernel/fpu/signal.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+ arch/x86/include/asm/thread_info.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/x86/kernel/fpu/signal.c b/arch/x86/kernel/fpu/signal.c
-index bf4e6caad305e..a25be217f9a2c 100644
---- a/arch/x86/kernel/fpu/signal.c
-+++ b/arch/x86/kernel/fpu/signal.c
-@@ -156,7 +156,16 @@ int copy_fpstate_to_sigframe(void __user *buf, void __user *buf_fx, int size)
- 			sizeof(struct user_i387_ia32_struct), NULL,
- 			(struct _fpstate_32 __user *) buf) ? -1 : 1;
- 
--	copy_fpregs_to_fpstate(fpu);
-+	__fpregs_changes_begin();
-+	/*
-+	 * If we do not need to load the FPU registers at return to userspace
-+	 * then the CPU has the current state and we need to save it. Otherwise
-+	 * it is already done and we can skip it.
-+	 */
-+	if (!test_thread_flag(TIF_NEED_FPU_LOAD))
-+		copy_fpregs_to_fpstate(fpu);
-+
-+	__fpregs_changes_end();
- 
- 	if (using_compacted_format()) {
- 		copy_xstate_to_user(buf_fx, xsave, 0, size);
+diff --git a/arch/x86/include/asm/thread_info.h b/arch/x86/include/asm/thread_info.h
+index e0eccbcb8447d..f9453536f9bbc 100644
+--- a/arch/x86/include/asm/thread_info.h
++++ b/arch/x86/include/asm/thread_info.h
+@@ -88,6 +88,7 @@ struct thread_info {
+ #define TIF_USER_RETURN_NOTIFY	11	/* notify kernel of userspace return */
+ #define TIF_UPROBE		12	/* breakpointed or singlestepping */
+ #define TIF_PATCH_PENDING	13	/* pending live patching update */
++#define TIF_NEED_FPU_LOAD	14	/* load FPU on return to userspace */
+ #define TIF_NOCPUID		15	/* CPUID is not accessible in userland */
+ #define TIF_NOTSC		16	/* TSC is not accessible in userland */
+ #define TIF_IA32		17	/* IA32 compatibility process */
+@@ -117,6 +118,7 @@ struct thread_info {
+ #define _TIF_USER_RETURN_NOTIFY	(1 << TIF_USER_RETURN_NOTIFY)
+ #define _TIF_UPROBE		(1 << TIF_UPROBE)
+ #define _TIF_PATCH_PENDING	(1 << TIF_PATCH_PENDING)
++#define _TIF_NEED_FPU_LOAD	(1 << TIF_NEED_FPU_LOAD)
+ #define _TIF_NOCPUID		(1 << TIF_NOCPUID)
+ #define _TIF_NOTSC		(1 << TIF_NOTSC)
+ #define _TIF_IA32		(1 << TIF_IA32)
 -- 
 2.20.1
 
