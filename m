@@ -2,166 +2,95 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02D17C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 14:29:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42B58C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 14:30:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB37420859
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 14:29:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 04D42206B6
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 14:30:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jHOkUFD6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731435AbfAIO35 (ORCPT
+        id S1731475AbfAIOaH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 09:29:57 -0500
-Received: from lb3-smtp-cloud7.xs4all.net ([194.109.24.31]:55386 "EHLO
-        lb3-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730605AbfAIO35 (ORCPT
+        Wed, 9 Jan 2019 09:30:07 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:42668 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730605AbfAIOaG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 09:29:57 -0500
-Received: from [IPv6:2001:420:44c1:2579:f8c4:4546:22d:c704] ([IPv6:2001:420:44c1:2579:f8c4:4546:22d:c704])
-        by smtp-cloud7.xs4all.net with ESMTPA
-        id hErYgk5pABDyIhErbgX5lK; Wed, 09 Jan 2019 15:29:55 +0100
-Subject: Re: [PATCH 2/2] media: cedrus: Allow using the current dst buffer as
- reference
-To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        linux-media@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Chen-Yu Tsai <wens@csie.org>, Randy Li <ayaka@soulik.info>,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-References: <20190109141920.12677-1-paul.kocialkowski@bootlin.com>
- <20190109141920.12677-2-paul.kocialkowski@bootlin.com>
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <9a624f6a-0c38-f2c9-3f2d-2758f9a19299@xs4all.nl>
-Date:   Wed, 9 Jan 2019 15:29:44 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        Wed, 9 Jan 2019 09:30:06 -0500
+Received: by mail-pg1-f194.google.com with SMTP id d72so3380516pga.9;
+        Wed, 09 Jan 2019 06:30:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=1YivmbWvmWM/5PddXyPutTYxXpKE7Quk/Mg5cc5dBjY=;
+        b=jHOkUFD6sc6OVAqYjnP4gda8biXKSn62rDMeoUillDjWY/jkwDA8SLnrGeJl5rhjmH
+         lujSIRHXgYFCUcbfKsC6xknaTxDRSM1MuoFSKUwYMFZV5aVahjHtRKHrIOhwwRZOFaWp
+         ODRzDx1UYe6zCRw8W32vX6MFbHhLPfZG35UFIIJp5ghE0U7g0wfHEZuaC09Er8Awcp8V
+         mYXeh70xrpBCfgemEoG/ZLM+5V1taLEbPleLu5EeXUS6qvEWsodtalc6WVsRleIqN68Q
+         0jgw5DoOGZNr66fjCV1PJpJ0NX3jfhN0Gmg6S4iQP0Q9dYNeg1IqC/LYCp939/UH3NLv
+         nXyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=1YivmbWvmWM/5PddXyPutTYxXpKE7Quk/Mg5cc5dBjY=;
+        b=jDZt7XSfqH9XsxoZPuoToT5Ywb67FJXTyI3GnzDuZyceP7aqh7aBXrUcJZMAhQlAu2
+         KGMmWifqRAXtIwtS6US7ryau/kGi8xLUOK3poiO3n203fKW+z1NiFG5y58h+xhLRFbod
+         nORp84AzR03w2JftQWdd66RNlgm3ImbYI/KtWtb+iW/zX3D08VZ4RhN03X3qsG1sNgdi
+         5k4zKE5Lanzmh06Yo2Zri48y98geI4baQLXGfZl0VJOqU+8K2pxif4HzpMIO6Z1PAD4T
+         KdYRD8h6BXA3vctDsWVFlkV8uIfaunqhAJn+1hpkQZzVrDkuukvv8FEI/Qy9slN+BR0e
+         psvQ==
+X-Gm-Message-State: AJcUukfWAj/ykRhFRyAVWoQL3ADDN31T6oz7jj+dQsDeWq0vsSaUi3hj
+        FyiKV+GfzcCiSmm4AiRMYJg=
+X-Google-Smtp-Source: ALg8bN5hxKdJWmBwrsMdKL4Ad5YJ3LYmwT7oudxkUagK34Sol4Lr7qODWYpuTSv3Rm9RgriMTL59RQ==
+X-Received: by 2002:a62:1f9d:: with SMTP id l29mr6177338pfj.14.1547044204874;
+        Wed, 09 Jan 2019 06:30:04 -0800 (PST)
+Received: from hp-pavilion-15-notebook-pc-brajeswar ([2405:204:4099:c05a:9503:102e:b683:299f])
+        by smtp.gmail.com with ESMTPSA id 24sm306612693pfl.32.2019.01.09.06.30.02
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 09 Jan 2019 06:30:04 -0800 (PST)
+Date:   Wed, 9 Jan 2019 19:59:59 +0530
+From:   Brajeswar Ghosh <brajeswar.linux@gmail.com>
+To:     ohad@wizery.com, bjorn.andersson@linaro.org
+Cc:     jrdr.linux@gmail.com, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, sabyasachi.linux@gmail.com
+Subject: [PATCH] remoteproc/qcom_sysmon.c: Remove duplicate header
+Message-ID: <20190109142959.GA29659@hp-pavilion-15-notebook-pc-brajeswar>
 MIME-Version: 1.0
-In-Reply-To: <20190109141920.12677-2-paul.kocialkowski@bootlin.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfHvQpieu/qhYiJABI7cDkWdbhBzdhR89AXpd3rc78imSyE5YzzwGte5E9IpIGNdUOJ61vx6mvqPuwg93UA6ZbcHEzajFmAAoY8wY2Xeo+76nStXZtvXo
- A42cSvcQwNuqpbHultnZ+RGSx/T6o/cgfB/t0ht7c+ynVrwA6hz1+jk5EKiWty2gE1WmxLEpupOqlnoTFw9doWupcYOV2py3LIutLYQ8YsStyIDOvLy7G4gg
- qPLJ0PaIn3b1+FbTy0IdwCMYDHxBEadtlwIGZOcrqT9/S6vYxEsLoRb4DaEBnt6j1MP5EEqx9J67atroa1wr2RN7iB/F7nRNAzFgWdX3kSt8K6GZPTIkxjc5
- tIiEZtwj8lcNovcH/M67rIK9gOKkL12fu82b5GwQxv5Z84c1IGBFOY9wyVAale4AdqHtbO6bYJG/QpV0xpMZmHK28AtXBb7DA1uVxvwoSDhaNqt5DS5gYGNu
- 3TUGlAELU1l+Vy/Ay8RwjPwBAKKf7/XDbUDKHqlAQgWLG6igfWQCCUMC5UGzMuSmgGY5YBqPssif95mcpJ5SwYhu1KyNCJHUoHP35x//WRVF12U0WhVSTy2y
- eJk9G/j7dYn58Z3gkBcj/MIt5ND5bA/RqjtTcHnx4VGAF/oK+C/OzS+ZNuOaimRZSDZFvYR0awLiJd/rw6Mp8sTV4fLg8OcBIP+SCGaz1VSAEz6xdKwBPCOC
- S9i7Pw0OEvt+cpU9NrN/kO9TgGqFnxw4S+EulPQgd+nrkSAKpmdMIU3y//IXfaw6rrIAz1RIhxsZBG13cWiMPLqiLrfKQ+ZcLkUYNAeWevLlSPPixQjkDnOE
- cxmNGAvruG/GLhAu7yE=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01/09/19 15:19, Paul Kocialkowski wrote:
-> It was reported that some cases of interleaved video decoding require
-> using the current destination buffer as a reference. However, this is
-> no longer possible after the move to vb2_find_timestamp because only
-> dequeued and done buffers are considered.
-> 
-> Add a helper in our driver that also considers the current destination
-> buffer before resorting to vb2_find_timestamp and use it in MPEG-2.
+Remove linux/notifier.h which is included more than once
 
-This patch looks good, but can you also add checks to handle the case
-when no buffer with the given timestamp was found? Probably should be done
-in a third patch.
+Signed-off-by: Brajeswar Ghosh <brajeswar.linux@gmail.com>
+---
+ drivers/remoteproc/qcom_sysmon.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-I suspect the driver will crash if an unknown timestamp is passed on to the
-driver. I would really like to see that corner case fixed.
-
-Regards,
-
-	Hans
-
-> 
-> Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-> ---
->  drivers/staging/media/sunxi/cedrus/cedrus_dec.c   | 13 +++++++++++++
->  drivers/staging/media/sunxi/cedrus/cedrus_dec.h   |  2 ++
->  drivers/staging/media/sunxi/cedrus/cedrus_mpeg2.c | 10 ++++++----
->  3 files changed, 21 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/staging/media/sunxi/cedrus/cedrus_dec.c b/drivers/staging/media/sunxi/cedrus/cedrus_dec.c
-> index 443fb037e1cf..2c295286766c 100644
-> --- a/drivers/staging/media/sunxi/cedrus/cedrus_dec.c
-> +++ b/drivers/staging/media/sunxi/cedrus/cedrus_dec.c
-> @@ -22,6 +22,19 @@
->  #include "cedrus_dec.h"
->  #include "cedrus_hw.h"
->  
-> +int cedrus_reference_index_find(struct vb2_queue *queue,
-> +				struct vb2_buffer *vb2_buf, u64 timestamp)
-> +{
-> +	/*
-> +	 * Allow using the current capture buffer as reference, which can occur
-> +	 * for field-coded pictures.
-> +	 */
-> +	if (vb2_buf->timestamp == timestamp)
-> +		return vb2_buf->index;
-> +	else
-> +		return vb2_find_timestamp(queue, timestamp, 0);
-> +}
-> +
->  void cedrus_device_run(void *priv)
->  {
->  	struct cedrus_ctx *ctx = priv;
-> diff --git a/drivers/staging/media/sunxi/cedrus/cedrus_dec.h b/drivers/staging/media/sunxi/cedrus/cedrus_dec.h
-> index d1ae7903677b..8d0fc248220f 100644
-> --- a/drivers/staging/media/sunxi/cedrus/cedrus_dec.h
-> +++ b/drivers/staging/media/sunxi/cedrus/cedrus_dec.h
-> @@ -16,6 +16,8 @@
->  #ifndef _CEDRUS_DEC_H_
->  #define _CEDRUS_DEC_H_
->  
-> +int cedrus_reference_index_find(struct vb2_queue *queue,
-> +				struct vb2_buffer *vb2_buf, u64 timestamp);
->  void cedrus_device_run(void *priv);
->  
->  #endif
-> diff --git a/drivers/staging/media/sunxi/cedrus/cedrus_mpeg2.c b/drivers/staging/media/sunxi/cedrus/cedrus_mpeg2.c
-> index cb45fda9aaeb..81c66a8aa1ac 100644
-> --- a/drivers/staging/media/sunxi/cedrus/cedrus_mpeg2.c
-> +++ b/drivers/staging/media/sunxi/cedrus/cedrus_mpeg2.c
-> @@ -10,6 +10,7 @@
->  #include <media/videobuf2-dma-contig.h>
->  
->  #include "cedrus.h"
-> +#include "cedrus_dec.h"
->  #include "cedrus_hw.h"
->  #include "cedrus_regs.h"
->  
-> @@ -159,8 +160,8 @@ static void cedrus_mpeg2_setup(struct cedrus_ctx *ctx, struct cedrus_run *run)
->  	cedrus_write(dev, VE_DEC_MPEG_PICBOUNDSIZE, reg);
->  
->  	/* Forward and backward prediction reference buffers. */
-> -	forward_idx = vb2_find_timestamp(cap_q,
-> -					 slice_params->forward_ref_ts, 0);
-> +	forward_idx = cedrus_reference_index_find(cap_q, &run->dst->vb2_buf,
-> +						  slice_params->forward_ref_ts);
->  
->  	fwd_luma_addr = cedrus_dst_buf_addr(ctx, forward_idx, 0);
->  	fwd_chroma_addr = cedrus_dst_buf_addr(ctx, forward_idx, 1);
-> @@ -168,8 +169,9 @@ static void cedrus_mpeg2_setup(struct cedrus_ctx *ctx, struct cedrus_run *run)
->  	cedrus_write(dev, VE_DEC_MPEG_FWD_REF_LUMA_ADDR, fwd_luma_addr);
->  	cedrus_write(dev, VE_DEC_MPEG_FWD_REF_CHROMA_ADDR, fwd_chroma_addr);
->  
-> -	backward_idx = vb2_find_timestamp(cap_q,
-> -					  slice_params->backward_ref_ts, 0);
-> +	backward_idx = cedrus_reference_index_find(cap_q, &run->dst->vb2_buf,
-> +						   slice_params->backward_ref_ts);
-> +
->  	bwd_luma_addr = cedrus_dst_buf_addr(ctx, backward_idx, 0);
->  	bwd_chroma_addr = cedrus_dst_buf_addr(ctx, backward_idx, 1);
->  
-> 
+diff --git a/drivers/remoteproc/qcom_sysmon.c b/drivers/remoteproc/qcom_sysmon.c
+index e976a602b015..603b813151f2 100644
+--- a/drivers/remoteproc/qcom_sysmon.c
++++ b/drivers/remoteproc/qcom_sysmon.c
+@@ -7,7 +7,6 @@
+ #include <linux/notifier.h>
+ #include <linux/slab.h>
+ #include <linux/io.h>
+-#include <linux/notifier.h>
+ #include <linux/of_platform.h>
+ #include <linux/platform_device.h>
+ #include <linux/remoteproc/qcom_rproc.h>
+-- 
+2.17.1
 
