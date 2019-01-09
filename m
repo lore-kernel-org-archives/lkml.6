@@ -2,75 +2,131 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 159D5C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 09:20:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFEDDC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 09:20:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E606420821
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 09:20:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 747EF20821
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 09:20:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="HBI7G3cr";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="efSATSTn"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730184AbfAIJUS (ORCPT
+        id S1730364AbfAIJUx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 04:20:18 -0500
-Received: from mga07.intel.com ([134.134.136.100]:13930 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728041AbfAIJUP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 04:20:15 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Jan 2019 01:20:14 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,456,1539673200"; 
-   d="scan'208";a="105163016"
-Received: from ahunter-desktop.fi.intel.com ([10.237.72.56])
-  by orsmga007.jf.intel.com with ESMTP; 09 Jan 2019 01:20:13 -0800
-From:   Adrian Hunter <adrian.hunter@intel.com>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     Jiri Olsa <jolsa@redhat.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/6] perf tools: Fix split_kallsyms_for_kcore for trampoline symbols
-Date:   Wed,  9 Jan 2019 11:18:30 +0200
-Message-Id: <20190109091835.5570-2-adrian.hunter@intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190109091835.5570-1-adrian.hunter@intel.com>
-References: <20190109091835.5570-1-adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki, Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+        Wed, 9 Jan 2019 04:20:53 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:39480 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729713AbfAIJUu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 04:20:50 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 2BD1360A08; Wed,  9 Jan 2019 09:20:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1547025649;
+        bh=RashWsKvl2d68JP1rI3JQkblxVNq5Tvc6sKchFtp94I=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=HBI7G3cr8KlScNehHgZ5pH17zpmphjDL4iuiD6i1v0IS0b+tJNN3Ej+IV5/zElVjK
+         lq8P4ymURlJCjrM9OhrCsEIp/4GscnLw6ciKc3q3HH/3Bwvq54hJZ73Ik6Lqbq4a2U
+         fUjUtiIp/HEy0PctYPoWh9Xvod5G0RQsPRggUROE=
+Received: from [10.79.128.18] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: rnayak@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id CD0DE608CF;
+        Wed,  9 Jan 2019 09:20:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1547025648;
+        bh=RashWsKvl2d68JP1rI3JQkblxVNq5Tvc6sKchFtp94I=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=efSATSTnkQhu9756Eop6viLLfuhkWFvQqns+CwWHWfdVYrJm3r5QsS1Hazq2KJbzM
+         mFimkgvb1MM44CYIhwz3bVZfEv50fGJHgDjhGhlxeQTqg0cRR19Lrh7YGPYCAbmN1S
+         QrI6N88eS1IujuKaeehEDOc2jLvrkJ7bYY/KeGW4=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org CD0DE608CF
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rnayak@codeaurora.org
+Subject: Re: [PATCH v10 1/9] dt-bindings: opp: Introduce opp-level bindings
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     andy.gross@linaro.org, robh@kernel.org, sboyd@kernel.org,
+        ulf.hansson@linaro.org, collinsd@codeaurora.org, mka@chromium.org,
+        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, henryc.chen@mediatek.com
+References: <20190109090420.8100-1-rnayak@codeaurora.org>
+ <20190109090420.8100-2-rnayak@codeaurora.org>
+ <20190109090912.ciq4uzo5sjghyms2@vireshk-i7>
+From:   Rajendra Nayak <rnayak@codeaurora.org>
+Message-ID: <d48db4fd-0b6b-8963-048d-3304b850e28c@codeaurora.org>
+Date:   Wed, 9 Jan 2019 14:50:42 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.3
+MIME-Version: 1.0
+In-Reply-To: <20190109090912.ciq4uzo5sjghyms2@vireshk-i7>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Kallsyms symbols do not have a size, so the size becomes the distance to
-the next symbol. Consequently the recently added trampoline symbols end up
-with large sizes because the trampolines are some distance from one another
-and the main kernel map. However, symbols that end outside their map can
-disrupt the symbol tree because, after mapping, it can appear incorrectly
-that they overlap other symbols. Add logic to truncate symbol size to the
-end of the corresponding map.
 
-Fixes: d83212d5dd67 ("kallsyms, x86: Export addresses of PTI entry trampolines")
-Cc: stable@vger.kernel.org
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
----
- tools/perf/util/symbol.c | 2 ++
- 1 file changed, 2 insertions(+)
 
-diff --git a/tools/perf/util/symbol.c b/tools/perf/util/symbol.c
-index 01f2c7385e38..baf6498d1835 100644
---- a/tools/perf/util/symbol.c
-+++ b/tools/perf/util/symbol.c
-@@ -709,6 +709,8 @@ static int map_groups__split_kallsyms_for_kcore(struct map_groups *kmaps, struct
- 		}
- 
- 		pos->start -= curr_map->start - curr_map->pgoff;
-+		if (pos->end > curr_map->end)
-+			pos->end = curr_map->end;
- 		if (pos->end)
- 			pos->end -= curr_map->start - curr_map->pgoff;
- 		symbols__insert(&curr_map->dso->symbols, pos);
+On 1/9/2019 2:39 PM, Viresh Kumar wrote:
+> On 09-01-19, 14:34, Rajendra Nayak wrote:
+>> On some SoCs (especially from Qualcomm and MediaTek) an OPP
+>> node needs to describe an additional level/corner value
+>> that is then communicated to a remote microprocessor by the CPU, which
+>> then takes some actions (like adjusting voltage values across variousi
+>> rails) based on the value passed.
+>>
+>> Add opp-level as an additional property in the OPP node and describe it
+>> in the OPP bindings document.
+>>
+>> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+>> ---
+>>   Documentation/devicetree/bindings/opp/opp.txt | 5 +++++
+>>   1 file changed, 5 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/opp/opp.txt b/Documentation/devicetree/bindings/opp/opp.txt
+>> index c396c4c0af92..e83fb7cbfd58 100644
+>> --- a/Documentation/devicetree/bindings/opp/opp.txt
+>> +++ b/Documentation/devicetree/bindings/opp/opp.txt
+>> @@ -129,6 +129,11 @@ Optional properties:
+>>   - opp-microamp-<name>: Named opp-microamp property. Similar to
+>>     opp-microvolt-<name> property, but for microamp instead.
+>>   
+>> +- opp-level: On some SoC platforms an OPP node can describe a positive value
+>> +  representing a corner/level that's communicated with a remote microprocessor
+>> +  (usually called the power manager) which then translates it into a certain
+>> +  voltage on a voltage rail.
+>> +
+> 
+> This binding is generic enough and doesn't have anything to do with a
+> remote mp and so such statements should be avoided in here. And then
+> Linux can use it the way it wants.
+> 
+> Maybe just say that it describes the performance level of the device.
+> That's all.
+
+Sure, does this seem fine?
+
+- opp-level: A value representing the performance level of the device,
+   expressed as a 32-bit big-endian integer.
+
+I assume the changelog mentioning the motivation behind adding this is fine?
+
+> 
+>>   - clock-latency-ns: Specifies the maximum possible transition latency (in
+>>     nanoseconds) for switching to this OPP from any other OPP.
+>>   
+>> -- 
+>> QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+>> of Code Aurora Forum, hosted by The Linux Foundation
+> 
+
 -- 
-2.17.1
-
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
