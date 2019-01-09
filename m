@@ -7,37 +7,37 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FCB7C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 09:26:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8FE1C43444
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 09:27:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5351820821
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 09:26:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 97074214C6
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 09:27:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="zUuLhs05"
+	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="WOSheXtO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730357AbfAIJ04 (ORCPT
+        id S1730400AbfAIJ07 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 04:26:56 -0500
-Received: from mail-eopbgr750071.outbound.protection.outlook.com ([40.107.75.71]:34304
-        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
+        Wed, 9 Jan 2019 04:26:59 -0500
+Received: from mail-eopbgr770055.outbound.protection.outlook.com ([40.107.77.55]:8155
+        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728138AbfAIJ0o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 04:26:44 -0500
+        id S1729686AbfAIJ05 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 04:26:57 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gGRSmbpqn2qXUwZsO5NDYwjJXEl9up7pXrJ1pOCMA9M=;
- b=zUuLhs05+R4qKruqK7/cJf+c8H5qycalQwQslNR9nmmUzXia1qkci1djRKI14NXUyokS15fxcVsG9jFW/IwU/fCiqQuM1yGZAkyG/GhwfUYbWYCnWc33rw93a0RCMkAB+Bs0iWoJDvfoxhjCoUfuRZUg0lvlEx+k4DowrT6/DCM=
-Received: from MWHPR02CA0035.namprd02.prod.outlook.com (2603:10b6:301:60::24)
- by DM6PR02MB4330.namprd02.prod.outlook.com (2603:10b6:5:2a::27) with
- Microsoft SMTP Server (version=TLS1_2,
+ bh=Al1+5ZDCmqYuUgMFkT9gF+ZHEX75an7ZSf9ba8tJY+8=;
+ b=WOSheXtO80fzcXgEFxUHRTLQflmbGpZ3nOObZd4tpON/SEzqt/lIz9hX6M+z50k4LIhq20Kx/qIcaYbhASTmKlKbXQfeuUadHw7dnWr2To+5ow9TAV2Su6OVulSYA9C7lyKGF6ZChSHaDASJTz1pYtJeMRmgWKr59MjvAppOEuw=
+Received: from SN4PR0201CA0054.namprd02.prod.outlook.com
+ (2603:10b6:803:20::16) by MWHPR0201MB3516.namprd02.prod.outlook.com
+ (2603:10b6:301:77::13) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1495.6; Wed, 9 Jan
- 2019 09:26:36 +0000
-Received: from CY1NAM02FT014.eop-nam02.prod.protection.outlook.com
- (2a01:111:f400:7e45::205) by MWHPR02CA0035.outlook.office365.com
- (2603:10b6:301:60::24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1495.7 via Frontend
- Transport; Wed, 9 Jan 2019 09:26:35 +0000
+ 2019 09:26:38 +0000
+Received: from BL2NAM02FT049.eop-nam02.prod.protection.outlook.com
+ (2a01:111:f400:7e46::201) by SN4PR0201CA0054.outlook.office365.com
+ (2603:10b6:803:20::16) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1516.14 via Frontend
+ Transport; Wed, 9 Jan 2019 09:26:38 +0000
 Authentication-Results: spf=pass (sender IP is 149.199.60.100)
  smtp.mailfrom=xilinx.com; vger.kernel.org; dkim=none (message not signed)
  header.d=none;vger.kernel.org; dmarc=bestguesspass action=none
@@ -46,35 +46,35 @@ Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
  149.199.60.100 as permitted sender) receiver=protection.outlook.com;
  client-ip=149.199.60.100; helo=xsj-pvapsmtpgw02;
 Received: from xsj-pvapsmtpgw02 (149.199.60.100) by
- CY1NAM02FT014.mail.protection.outlook.com (10.152.75.142) with Microsoft SMTP
+ BL2NAM02FT049.mail.protection.outlook.com (10.152.77.118) with Microsoft SMTP
  Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.1471.13
- via Frontend Transport; Wed, 9 Jan 2019 09:26:35 +0000
-Received: from unknown-38-66.xilinx.com ([149.199.38.66]:51884 helo=xsj-pvapsmtp01)
+ via Frontend Transport; Wed, 9 Jan 2019 09:26:36 +0000
+Received: from unknown-38-66.xilinx.com ([149.199.38.66]:51891 helo=xsj-pvapsmtp01)
         by xsj-pvapsmtpgw02 with esmtp (Exim 4.63)
         (envelope-from <kalyani.akula@xilinx.com>)
-        id 1ghA8B-0000WX-0W; Wed, 09 Jan 2019 01:26:35 -0800
+        id 1ghA8B-0000WZ-3m; Wed, 09 Jan 2019 01:26:35 -0800
 Received: from [127.0.0.1] (helo=localhost)
         by xsj-pvapsmtp01 with smtp (Exim 4.63)
         (envelope-from <kalyani.akula@xilinx.com>)
-        id 1ghA85-0000jl-RA; Wed, 09 Jan 2019 01:26:29 -0800
-Received: from xsj-pvapsmtp01 (mailman.xilinx.com [149.199.38.66])
-        by xsj-smtp-dlp1.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id x099QSGj019294;
-        Wed, 9 Jan 2019 01:26:29 -0800
+        id 1ghA86-0000jl-0O; Wed, 09 Jan 2019 01:26:30 -0800
+Received: from xsj-pvapsmtp01 (xsj-smtp1.xilinx.com [149.199.38.66])
+        by xsj-smtp-dlp2.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id x099QSPA028521;
+        Wed, 9 Jan 2019 01:26:28 -0800
 Received: from [172.23.155.90] (helo=xhdengvm155090.xilinx.com)
         by xsj-pvapsmtp01 with esmtp (Exim 4.63)
         (envelope-from <kalyania@xilinx.com>)
-        id 1ghA84-0000iw-8g; Wed, 09 Jan 2019 01:26:28 -0800
+        id 1ghA84-0000iv-8A; Wed, 09 Jan 2019 01:26:28 -0800
 Received: by xhdengvm155090.xilinx.com (Postfix, from userid 23151)
-        id 639A8800EC; Wed,  9 Jan 2019 14:56:27 +0530 (IST)
+        id 606C5800EB; Wed,  9 Jan 2019 14:56:27 +0530 (IST)
 From:   Kalyani Akula <kalyani.akula@xilinx.com>
 To:     <herbert@gondor.apana.org.au>, <davem@davemloft.net>,
         <linux-crypto@vger.kernel.org>, <linux-kernel@vger.kernel.org>
 CC:     Kalyani Akula <kalyania@xilinx.com>,
         Sarat Chand Savitala <saratcha@xilinx.com>,
         Kalyani Akula <kalyani.akula@xilinx.com>
-Subject: [RFC PATCH V2 3/4] crypto: Add Xilinx SHA3 driver
-Date:   Wed, 9 Jan 2019 14:56:24 +0530
-Message-ID: <1547025985-7228-4-git-send-email-kalyani.akula@xilinx.com>
+Subject: [RFC PATCH V2 2/4] firmware: xilinx: Add ZynqMP sha_hash API for SHA3 functionality
+Date:   Wed, 9 Jan 2019 14:56:23 +0530
+Message-ID: <1547025985-7228-3-git-send-email-kalyani.akula@xilinx.com>
 X-Mailer: git-send-email 1.9.5
 In-Reply-To: <1547025985-7228-1-git-send-email-kalyani.akula@xilinx.com>
 References: <1547025985-7228-1-git-send-email-kalyani.akula@xilinx.com>
@@ -83,412 +83,128 @@ X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
 X-TM-AS-User-Approved-Sender: Yes;Yes
 X-EOPAttributedMessage: 0
 X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:149.199.60.100;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(39860400002)(136003)(396003)(376002)(346002)(2980300002)(199004)(189003)(2201001)(90966002)(54906003)(316002)(110136005)(42186006)(16586007)(81166006)(52956003)(106002)(81156014)(478600001)(336012)(106466001)(6666004)(103686004)(2616005)(305945005)(356004)(126002)(107886003)(426003)(8676002)(6266002)(476003)(8936002)(4326008)(50226002)(63266004)(446003)(11346002)(186003)(36386004)(26005)(14444005)(217873002)(36756003)(51416003)(76176011)(5660300001)(47776003)(48376002)(50466002)(486006)(44832011)(2906002)(107986001)(5001870100001);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR02MB4330;H:xsj-pvapsmtpgw02;FPR:;SPF:Pass;LANG:en;PTR:unknown-60-100.xilinx.com,xapps1.xilinx.com;A:1;MX:1;
-X-Microsoft-Exchange-Diagnostics: 1;CY1NAM02FT014;1:gFzo1ogfTKYSSG0wyUUjAy0Vm84lqzPobgYiEfApVDhnyJDEHRrpMW9RHWk/IS+RTM+6oHHoJ5hxe/WExylJRCm6+MQ14SbYiph5NIx7moDif+EiX05FKga/ldIWBlp1
+X-Forefront-Antispam-Report: CIP:149.199.60.100;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(136003)(376002)(346002)(39860400002)(396003)(2980300002)(199004)(189003)(305945005)(486006)(63266004)(4326008)(50466002)(44832011)(316002)(47776003)(106466001)(5660300001)(42186006)(356004)(6666004)(14444005)(126002)(217873002)(11346002)(51416003)(76176011)(2201001)(26005)(52956003)(336012)(186003)(446003)(426003)(2616005)(106002)(81166006)(48376002)(50226002)(8936002)(476003)(2906002)(478600001)(110136005)(16586007)(54906003)(36386004)(81156014)(6266002)(103686004)(36756003)(107886003)(90966002)(8676002)(107986001)(5001870100001);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR0201MB3516;H:xsj-pvapsmtpgw02;FPR:;SPF:Pass;LANG:en;PTR:xapps1.xilinx.com,unknown-60-100.xilinx.com;A:1;MX:1;
+X-Microsoft-Exchange-Diagnostics: 1;BL2NAM02FT049;1:cjvH/JWlpHdT+3pFuRINBkAk8SCUZm9Uyx78c1H3o/PmZ/P7Ks0DZw+yqJ4XICgGWPwXMlpGYz4mCn3KPQ+JhmUYB8wHj1/0AFKcyP2OYNrD9al00LVp29M0ZW2GIwOV
 MIME-Version: 1.0
 Content-Type: text/plain
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 33c4032c-1afe-4dec-05e6-08d676148d13
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600109)(711020)(4608076)(4709027)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060);SRVR:DM6PR02MB4330;
-X-Microsoft-Exchange-Diagnostics: 1;DM6PR02MB4330;3:YusPrhim77WP3iUYXerRZFeS5uGY0JepXWsxBC6xwha6/LNRpOcz++RCLV+ua0q9F90RUivN/0ohwgngrj94pUMKqLPWHGXgfI6JW6S3NUAZfihcxBptc1A6Y+DZ47E2taoAwzWdKz36986mKbfhN06FjX9x/rGpFo91iPO4vOX+aWPnyNZqxS09AMbEjsj5AspnYLj0Ibc+PKWq9oqmI5hF9oe4ZF6m8EXliuTyxRaegTWlJtJ3UzIVxFx2FjQLH+rQ/u3KtNVCEih5NFLWJG/o7M5l0ldVm8uX5+OOcVxknaq1qO7l958eng4HgyNp1Lcxqs0nD438497cmyRwZDIwDNqO/f9gQKG1T54Zn9J65fFuorR1rlnHh4gmlcm/;25:4xg5bsX9SCnkpwOBHXMroLwLHlK7lqLZg3oCEnH3xyq8wgPRISfBzhrM1AVLm5f84o+mt2M+/M9CVTgVku9IrOdA5ovqwFwrPQR5hl0RKbuiwlljUpVN36T0c0jct0i9RgItA+Oiokq5aJyf38bivA7E7/qtnAZVksoqSklJQ32ZIj8nUD4xuaLBqpeuUCtpogImPFZZcqhW7fzKdmAnoSRpvZsoW7Gbf0FHw+19fsT98FnCwCBW0oqvrgH9L4J68HyNZxkF0vPvyP5QUmW5Avvg16UhtpWc2jzlhAmJCPedwILgARU8pZqwp4Ow8OUm94Ld9VzoCjyRU3ZQMwZyYA==
-X-MS-TrafficTypeDiagnostic: DM6PR02MB4330:
-X-Microsoft-Exchange-Diagnostics: 1;DM6PR02MB4330;31:6KYA17SFchDXBS5pU/LxqILGHusEUnuOtFYE0D7V8supSgq7QIQfw0B+NrSDA5U+nOaolQgnzx/qMKE6gsZap+3dYSjXc9qQr+kGApCEQ7WztKRhyPwwMe3ros9OiF21Qj677s0JXTcy+eg2QybgB+riGfqFSUrf+2SumcgIWRUOhtdI7e2F9w7VjpZSHf8zDJDNClm3W2GPpyxqhC6/PFtB6qlKlDJktOMVtqkVIrM=;20:0cDtDiWtJoEEVhwIdsE11nRrKnpdNAIwva/e/4rD9NAhJUVM2dDVEdIrfkj1hiGILJ1/XNlARn/48gPxg06YZ+DLIMBf4WGyAo9VTgt6SsMMeYGzyreyhfGoePfjx/cYeIjUhLfa+Uh3Yb1tVgenQxdbhwu/a933Hsng+y7mE6hFhk6i5Wyog7Pc2P1MDCsRVyAfevQiS3fN51OBq0P3mn0dgQwsrSmGPOL28qwALP1R1xBL5MYRbcliZq0Xwp7zGN5gj+vzqfksJvK0afQM74l8t1/Iewoq9w8+XZrRUUSkJ4E7fsAYfgA0o9ptVSD0jQl16FC+9WXU5Lp0OPYmHCs+pd98DDLRyq0iNFeQiE+cMHB8lSELQFaMUPzJkl3wKyguMoP5bdYH+phjBPQMfe5coM7Y7+XFJnUur+MroRFqDLDmD456Fs57JOvlJ7BytRmPK0i05iyjFa9cW3LuC3286zjVScrz+lJSZCTmR8nSMyHqmBTDaAL+8b/2bqDU
+X-MS-Office365-Filtering-Correlation-Id: b8934132-f26d-4e58-fb44-08d676148e32
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(4608076)(4709027)(2017052603328)(7153060);SRVR:MWHPR0201MB3516;
+X-Microsoft-Exchange-Diagnostics: 1;MWHPR0201MB3516;3:JDDSUa2TN/6vOdRa7NLOGbo4l3pjOcBoFA3MRHLX0X7VuJCpNGS8cJnF02lQooTdVFQqptEzSK366y4nrj5yh9Qdp/drf6TmRz+bAg1iIQ/XV2x7qK4iJuOSBS4/xGGip5P+etE2JQD1XE0A8i9ePzDdVOYoBe3Q0V2KBoBfaPzNXlIkx3BM/i+IS5i82dk9myHNSSGLXHhZey11G7JecVkKkoTUowj8cae6czuDvrDwiW1khcKtl6Sg9J0fwxCrlKdiy3L0s4k0R6saDgHw8eYp8Ueoa/8NLW8YwkqnyoNYrs8D0QAeSQcAoW+/qyjpEFKnqlnoITbD8gJ3fFIUDmL8WHFkBHEfHNHq5gMFso5z6E00ZWB4zKnBpZ7YWogO;25:ndaGYPr213PtSmel8tShQ6Kk5HdmmvX4L6Nmc07XqXrxoD21zY6lp7MbzMS8X4PsifFZluvwbiZ1+pNSMLInraWoXCMbpOND/pUrsITEJdnoYQGUZnU3ibHTGsemGDYq3RfacRidVZG3Yw0wVq8taveWEsHTVkk4pWNnNX7GiTvMq/r9qM7VF0Kq7sGOCfFktXnaO03PlaM737r1a8Ffi/F+NIJsdFuUpNebZq+nq/FDzsq1p9pMhq0tpx7nlcCBc8MACIu6fVYRGWzbzj8AtlQSAK37F3EHX9vGy1ZGLFG2JQY/iMHP31LLerLvv4EQzPDNfBKxbmhUkvRWC1yXUQ==
+X-MS-TrafficTypeDiagnostic: MWHPR0201MB3516:
+X-Microsoft-Exchange-Diagnostics: 1;MWHPR0201MB3516;31:URhtZicDhEMefuDXFq0/q8L9x79uHecZQFvwwV7mvpS1Ua1xXOM3YnzkulIOySmH51uod/0XvE17luaenq6z1Nx1sDqBfRoXyVslGyEVRCVOR/1+5OQmZFfXqIX8ScVY0wHfg0CejTV0gGxRU7G+m2ide1fibHefhkUa4UFe4vdcqe4D5DNQQsK8AUNE4PrA2N8hBnxdCOTjnZUhJpaw2Do4zGUagVL8wGEebel8hvE=;20:3CBOzyMp0j+9fdnTU7GiXfPZh2Fz8xJUeP0wg6q/wQXsUglyicBfGOc69LlVJGhSXWTHRTvs4BV4qoV07oT4hlVG6W16xmEwiUBz0U4HSkcEnLEyl8zJhdJki7bGFp9FBeCAEOHK1/7yKYsjn7NaPOehIDFSk0GZy3tsHfXpXzQ+i2d3wH7u0wY0qOKMROQIT61RJNgJ/QEQXL7TqOAx8L/jxp13oWGrzuKHQkJSh8YECXGTNdIPDu6IG3SZ+M8HXtVrjINWy8XKmYf6M2KpsJ2Ft0yBPYn9wklRyMqjTZwKCN8hPF/UUPKsDxwauCDL67iuljk9j1gT0+KlkATuAi39lqWI0UkSMFofMwxZ7vgBaav0RBZjb/oVaZQmJT37Ez0fTqylcit+eCVZgsCuXb//7pAFBAGMw4CD9pNlGz17ekxGRKQLxQVR6jXFVRNdb6ElcyzcMoSIsl6lggGAOaVFS7YzkSjZrl4Q4YZe9/gpN4O6nluJGoPhZ3Ma2pP/
 X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-Microsoft-Antispam-PRVS: <DM6PR02MB4330A73366FEBEB32EB371CDAF8B0@DM6PR02MB4330.namprd02.prod.outlook.com>
-X-Microsoft-Exchange-Diagnostics: 1;DM6PR02MB4330;4:pi0JyQMHyjsuWH+ClJH27exV2/WbA6dkqqSFxmqAxJ8symydUsYm1KLC/QL0WikMOQ3BF6dWpCmVjDZSAsYFwVc/oVtrehcqPB/GkCTda+6ElmCWriivPx48IpeDlP3pTN4pockiw/BWSM+cJSYoAy+T/5xowoaPQTuMbfA9y6bapjcwcnvVN4ezdyc09+WEkUmaUaszxVQ1dKVaNNXHk/bwZfvKNC4dCdCo0hAEBCPBu9FVpnPvYK7hSbg+Aj8s5D0CTJfMGJGQYkFot8mZ5c6348pgwNkQxGzUOAC/q5NXzb8mbbKnmLniW2EBYUPr
+X-Microsoft-Antispam-PRVS: <MWHPR0201MB351658332DA1EE85506FA9BAAF8B0@MWHPR0201MB3516.namprd02.prod.outlook.com>
+X-Microsoft-Exchange-Diagnostics: 1;MWHPR0201MB3516;4:aRP4+5qlK3vdi9Tui+6WZSLE+r2Ju/L3a+3sbHr6MQJ7Gkt/YW8ck76Z6WyHX60T9lykTBiq7NicxkMKMq48zQaH+B0OiNTsusTbXuvef/dOzISJE+DF30NKNFDbaz2p2Wpa2KDbwcPLYdB7V3JtOZOH/ZS8qeq4cTT4fg0QiXa/WB4Nyeg81OT2OD8xsS0O1mvp3oVGqRUSl8lhp3BJ41T7pXQdxMBPWK71YjtVyj47S71gNWIE6sUZrgmLy993qUhywkXiPuF3JftipVsoJoz2KAmWO90vAP+tVcLUvI5J07mDo9oelgO9v2G2dPD1
 X-Forefront-PRVS: 0912297777
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DM6PR02MB4330;23:IzSqj8DRqIiFmogC9V9W0QyrwaWVCVrFhvf+V7Poz?=
- =?us-ascii?Q?qrMRVKIoXsI48YKu8qpZsoZcq4965qkKJg20bKRuS0M41hLt5k31JKYpF8F9?=
- =?us-ascii?Q?1NNOGA8atyHAheBJgE4DERFUIIRGv7e7fBdTXn9N3QsyoxSp7wVLjKcEzejQ?=
- =?us-ascii?Q?DzBrM9l5dUj+TXr99dMwvzLDErwfBDnkGYjmtFvaCFnG1Gux7E/kI4fG4bkp?=
- =?us-ascii?Q?cKIn8nJ0u3NRH62E7IvnEMobnw7sqfyq1hnX+zuVDAZBKVGwVrvmrhn7TkrL?=
- =?us-ascii?Q?YaHMeFwI5t2jbmW6DzUoQmxauGmcXVjyh5+jqmXkp78PRbci8lcIv8g032O1?=
- =?us-ascii?Q?3D9A8nWxfGS3vs3MoQVbV0mxe3oNJBcVw288Fqng2LWmqnx0IKYM29nq5Hj6?=
- =?us-ascii?Q?RaKIy+Xkx/qxXCjmhC6ekA9ypHgqJNM1rkzYKrldeSDUnof+d8pz5awgPYqq?=
- =?us-ascii?Q?3eGDGq+gijMfCHZHD8kbe9NNIgY8nDGxtpPHnAYPJDmHrajZ9KST9mT7YkTs?=
- =?us-ascii?Q?KsQBF0VwLFTUaRWnHX6bk3Ssg0igVb8jEbHzUnwCEJBICgZG5xt3jGJVDCXU?=
- =?us-ascii?Q?pDvgOeLL/OfjFPTJ6VABIN1h6Q91N7OlACGZ9He1MLgNR8LM8TvxOFCYMJ0P?=
- =?us-ascii?Q?ta5bnBdeeOyDjJ9XiURysrtB3LIvHDjfwxMWKdI86TGR7AmCfSmGsVezvfZ+?=
- =?us-ascii?Q?XoWt0QJZHosoWC5fCaLNbcjt2bPQB8VCXOYs3wwAifYudYLEqGomZRWDEkYs?=
- =?us-ascii?Q?ajBEIxAYg66lssjUspdfLcUmLzZ5oG8Bhuo1wL6IgrvYhBoYsUu8Rku7s33o?=
- =?us-ascii?Q?XKr6SGU7dkLDD30JnWqc2KAXhCY9VTJ4+/wLYpjhi8DMP4RYShH+D8Qpnq+l?=
- =?us-ascii?Q?gkHJI4eRS7IKD+7t5rtq3/pB2hlNxtXRI3sS0hfKTvfLA9ec2TjmCXKtdXJZ?=
- =?us-ascii?Q?V/BmDM3smKBesunQj88UCSYF5ksIrZYxFiZfMo/f2x7HHil2GZLUiVdIELWc?=
- =?us-ascii?Q?lK7OXFBf7MfDzdtn1+QDWimCd8+/FK3BX6i1Qq0cgLw83JSIyHkqJ67GwsJm?=
- =?us-ascii?Q?E8aOFeyM9nkWy4Mw6KLdV5oK7Ed0Z8QczFiTUnYKXVNpXdmIvTnzq3owyTmw?=
- =?us-ascii?Q?F8xXkyRjSXH+6dqoO+8iDq1V9w98eTNugjWNw4A3jNYnegss5o2iQSv7TQxJ?=
- =?us-ascii?Q?KyYNX0ZRLBHzeeP6/dBpgRtYsbJp0sxnXp43hnfRTiXEU/5BImWuueP8SYeI?=
- =?us-ascii?Q?mmRZL6tAopExT+12dE=3D?=
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;MWHPR0201MB3516;23:RU9ufDKI4u6Ujr5oR2ESbov/Aqk8amz6D8BkENr?=
+ =?us-ascii?Q?o1nidS6CSAwPGNWcQWTdNYlKEAd6rj482lxAIYdRgdvQTm41MN5AkDCtAPAR?=
+ =?us-ascii?Q?vZ7U+3WTWrwHZ+hQSJT9a964LfpM5GSf8R+IOtIMZ+yZPIhAmujIXxhFQcax?=
+ =?us-ascii?Q?Tzxf74DtzxoszM105YeHeENVA4Ya/CAhI/HIO/fl9DxCt/HJDROmfZR73FCe?=
+ =?us-ascii?Q?XnXlfpjhYyXMjdbX7HlRePpy75VxZRj4wwm75q3eaS6zB5pMdzeHhqyhS+Ea?=
+ =?us-ascii?Q?uyLz4gUeHqU6b57yeCNlqlQONnkp9DD4IcbfV9mLHWykB5P7YIOug6ldqlN+?=
+ =?us-ascii?Q?pRZ37QzYJtJmoiZZL/M0MLWEvJvz1LeHexevNjy3jy8DQqPstWfRTLDCGSTt?=
+ =?us-ascii?Q?MaTKNK6wKwrPTO66PhRLpgR1w7I6bH6KQlNuETM1o+SSd5Ivv5kz2cMXclYq?=
+ =?us-ascii?Q?XnE6xrCcEH01waP8FJgvrRPVClTCTFx76aQQ6F3h/FCgFmFBGb7S187GQyoe?=
+ =?us-ascii?Q?dl1cgwYt41sBCF0/TiTNCuoESB7J/71qnKWpWpPKdOra/WQn1XWwJXZmER+k?=
+ =?us-ascii?Q?HmS/adnLNjk+m0aKSQrBulG2kL9j6BN7xvCuZzCWWinNz6Qo2R0T6gXbgtH4?=
+ =?us-ascii?Q?EX2GyJ7VyTlIqcQ/SKdvAcD5PCQmk0j1js2WwFQNhig7IERPGBIe/LrxbuxD?=
+ =?us-ascii?Q?w9HXmX8VsAEUNDoM94/SQ+3njLIgQXiHnqJJfVhljSPq3LkEZB3lX7NO9QaE?=
+ =?us-ascii?Q?XoG1u0YJhIiUK0oZ+CKd3UgBfPM9yxa07CBD3WmWdDDrrXwaTdVxTra0kWkk?=
+ =?us-ascii?Q?NSYp4f67TWvBiwBH3kNjFMftV5VT0Bz4hPDxUgw2f0bN8pisYamhgbrBPcYM?=
+ =?us-ascii?Q?5Pg/WHH0YizXZpUhuMv/SlFM84TSpQeU6q51s1lLRv3UtPsVAb3feFWpzg+h?=
+ =?us-ascii?Q?6Kwtbms/yw0/nueaTEQw1DlQycpY0YyBfckD89BLOwgg6xhhXpOiYJZwVFh3?=
+ =?us-ascii?Q?2o6RDe5kYEZ2nPanFH/WlzFJpRB4nJiEegefuKNyDnVHYPMxfTcHiMYKBRJv?=
+ =?us-ascii?Q?RiV7kBdYxsco9AGv8+xlhAmNFDqXyNc70u6H54PuYJ5ojIXagY17d4sYDxm5?=
+ =?us-ascii?Q?tubB7+d0ULJXP9b8xa0cX1llyguKWns/Rcb6Wgt2G/GUDRA+25siX0rOMPAx?=
+ =?us-ascii?Q?G1Mg99RHNq43sQG7AKbaISiv/KXccxwy3i3E7410Nneeq8oX6CHtJ3Lo+hUO?=
+ =?us-ascii?Q?JqwkHn2EFIOrkfx1ngUU=3D?=
 X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam-Message-Info: 7ciSAkXcZnijImgHLFAx+DZYIlcIvZH1STdfa5pD6F/hVv3m76kqtDumbs/bXKEIUWafrxZAOAHuDDrGCOtGOngpurXKXPKhxu1rc2d0kEaKiYtgiO/ekVxIiSANdGWQqU7an47ZviMs91OFuguUVoPmJYM/2jOIuHl/sprMtaN4tJ4HN7D7yi48LSWL2Y3jLL1GTirGi6PiWJX8l6JTlJCubdOH1Rd+jZE0c3YdV4TznRiZCOM0bxIUzVcQgMrCq2UjSkdGF+3RLpltaR739FFWeydwgTEojOk/E2XbA7rJglELIIQyRGPCt9SQ7iFe
-X-Microsoft-Exchange-Diagnostics: 1;DM6PR02MB4330;6:MK/t5TfA3jkWeEpRHcZuzbNwgxpELxcYQp9zPiuMrSGcLCXfISyG86o+7qkbZJtbkkELg5akAXI34Uw2MPfkjk3n7MNvg+9cAILAJ+LkPiYa8LpK+kEml/EJWM3atjyawb9X+/Il6t36E7L8FBsPaP/vWtXYputKyO/HW/9wJhFFfxWIcnyFLsYMRq6DkZr+WrKsEnmL3PDV5iqIFHPmvUZaz+msdKoiE8QrQSV3k12joO9tmi+enAgD+Br6qEX9WF0qKMt6MA6Xu2WWfglWH8vWaATB5UueNAWk/L/MHFUfi/ByioZFm6lLRtcphE+C8qUrJehPs0DqiDnTgXEqiXOYdRXANmnObIAw14QNWNYhVJfexvP4fQJMhoKSnGIyBdIAVPbJ4jWhlnONs/QPDoSLaWLi0VY6gRADPn98HGHSLpkkel1qnXN0Ob4+9y+P+n7loehRteb5cM/u4YOY7Q==;5:/Dr4g/nkQvfuK/Ga8Bau6exoiEMGFVu+EJvJ5waTZaHRo+7syD3P+rSbieqPklAI4SOKW325rhr7efzUO6Eh10w3Mds1+eIFpZUMmirVdzNfusH7O0XlXq9wJa7UJy/JQt806Wbc0CIF4K+e0J8NtYAVNarBVZ8MZooHhnO46nOQrZMK9lZH+GY5ZbKbTt/oQbkSGoaEomlScNy5wMr9kg==;7:JQUsPQrzBCkISAZ+teuRmNbgfFKLnVJw81twtRZvMcq5erh3MXEi+4TUQLkZ1+pq0qRW5W0Iso3cffrNCIKaYdnfZyzLOv5sgJ43lU9bmGC2pwXFVwVdnX9fPfjEyCzRt5Ag4o1MF8X5+9xmpAh2LQ==
+X-Microsoft-Antispam-Message-Info: lc6qTu7QlPsbWHRItoxTTuzp9Jpfa67BeaYtid8Fs2XnYWR+YJRbkBWJR+plFJ9LQULPCM7fDhVGexJY1Y/6bOlJtnT7UtSckskH4H2kTGP5BUtrhTbsXZAkvBMjBAVXm9mf1AuW3JGy2+eYLNsiZgNUXTvweZTrR1JWd4wC9nyi64vBbKHbu2DqC/BsrVJSIYyFjXW2ERR1uRML6bYEcrjgBJpsyaEgvOichWnDeAJ90lk22UoraWwOBT4YMLBi46/oALs/fM/JxGuZ2JlP7XXTlg0zrswRMmJ5NkTwTvSL2x4MYl7Mi2/C6Sd/o7cd
+X-Microsoft-Exchange-Diagnostics: 1;MWHPR0201MB3516;6:I661GmTsRmaFJIoPMtrmE+zMEEUUJUgQOOnrpKfp5A58RXJa5lo+oSZrRa1jP+cUFoP3s6kUzOYZR4Eie5O9aeR39UJCxNBL2zg7tT6DbBzHpgPUT2Y9JjPIowqT/yFUGhRo5rsGisX6YPC+vANk9jAP25Nlzts31edKpHgwReJebKKdccp2Ama9PZGW7u3YWeYu0OhzqbIGT2XXlscgriCbRU4Hss1e3DOYxBIZ5YYRVt2kUlmPlCj0RvNcyQV3An19Ays3EAkZ1RSPyPa+Z2k+migy8bYcErHXayNTRVTn7YbSSwXzmrRESSS7Cel4ZGpkB7N0FmuRQQ+K5AxWXyH8mZdZ2ZJjPAQXJ6VLgO+I32PABUNiCLY4ycfieMzBJmGBrPve+xqyfZEVva0qg38WexlkcC7saphFoNwUuyo9rMsEMfUZi2Z0zupJSUM3WtcDHMBtNWk/3gcV5DXprw==;5:7DxhMR5w7Spje/7N/uqbMSqv5aTkwaBSgmTiMt6Qo1n8gCHDqcti/rZAWffpbuIvH/gcf+emL0JMqlEtu0ieEJe4uMP1OJHf8jGphmhkuIJjs84ZltCFxXzUp4j0m7zBWI+5CS8aDsMABGAYNfwH2Aj6y8q+TdO5QnHw3EK/rIymyLzFVkuCUkMKNlu0mEv9e8vU4DS3Gho5VUbsiaL29g==;7:ypUm0vNmgfZnWeJ+/o8tyFpHPXEWC7Y/po/1O60XPvqfGqYaF1WodkW1CGbihW56R43gNDcuVdbrm7NLNl7OfG1yT3GsuME+XPZzNK3v85bpZ37mO0wZ3fJzr50UuWnrmn6AAQXzqgeJy6sFXSnK0Q==
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
 X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jan 2019 09:26:35.4948
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jan 2019 09:26:36.0226
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 33c4032c-1afe-4dec-05e6-08d676148d13
+X-MS-Exchange-CrossTenant-Network-Message-Id: b8934132-f26d-4e58-fb44-08d676148e32
 X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.100];Helo=[xsj-pvapsmtpgw02]
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR02MB4330
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR0201MB3516
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds SHA3 driver support for the Xilinx
-ZynqMP SoC.
+Add ZynqMP firmware SHA_HASH API to compute SHA3 hash of given data.
 
 Signed-off-by: Kalyani Akula <kalyani.akula@xilinx.com>
 ---
- drivers/crypto/Kconfig      |   10 ++
- drivers/crypto/Makefile     |    1 +
- drivers/crypto/zynqmp-sha.c |  305 +++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 316 insertions(+), 0 deletions(-)
- create mode 100644 drivers/crypto/zynqmp-sha.c
+ drivers/firmware/xilinx/zynqmp.c     |   27 +++++++++++++++++++++++++++
+ include/linux/firmware/xlnx-zynqmp.h |    2 ++
+ 2 files changed, 29 insertions(+), 0 deletions(-)
 
-diff --git a/drivers/crypto/Kconfig b/drivers/crypto/Kconfig
-index 5a90075..b723e23 100644
---- a/drivers/crypto/Kconfig
-+++ b/drivers/crypto/Kconfig
-@@ -667,6 +667,16 @@ config CRYPTO_DEV_ROCKCHIP
- 	  This driver interfaces with the hardware crypto accelerator.
- 	  Supporting cbc/ecb chainmode, and aes/des/des3_ede cipher mode.
+diff --git a/drivers/firmware/xilinx/zynqmp.c b/drivers/firmware/xilinx/zynqmp.c
+index 9a1c72a..c51ecce 100644
+--- a/drivers/firmware/xilinx/zynqmp.c
++++ b/drivers/firmware/xilinx/zynqmp.c
+@@ -469,8 +469,35 @@ static int zynqmp_pm_ioctl(u32 node_id, u32 ioctl_id, u32 arg1, u32 arg2,
+ 				   arg1, arg2, out);
+ }
  
-+config CRYPTO_DEV_ZYNQMP_SHA3
-+	tristate "Support for Xilinx ZynqMP SHA3 hw accelerator"
-+	depends on ARCH_ZYNQMP || COMPILE_TEST
-+	select CRYPTO_HASH
-+	help
-+	  Xilinx ZynqMP has SHA3 engine used for secure hash calculation.
-+	  This driver interfaces with SHA3 hw engine.
-+	  Select this if you want to use the ZynqMP module
-+	  for SHA3 hash computation.
-+
- config CRYPTO_DEV_MEDIATEK
- 	tristate "MediaTek's EIP97 Cryptographic Engine driver"
- 	depends on (ARM && ARCH_MEDIATEK) || COMPILE_TEST
-diff --git a/drivers/crypto/Makefile b/drivers/crypto/Makefile
-index 8e7e225..64c29fe 100644
---- a/drivers/crypto/Makefile
-+++ b/drivers/crypto/Makefile
-@@ -47,3 +47,4 @@ obj-$(CONFIG_CRYPTO_DEV_BCM_SPU) += bcm/
- obj-$(CONFIG_CRYPTO_DEV_SAFEXCEL) += inside-secure/
- obj-$(CONFIG_CRYPTO_DEV_ARTPEC6) += axis/
- obj-y += hisilicon/
-+obj-$(CONFIG_CRYPTO_DEV_ZYNQMP_SHA3) += zynqmp-sha.o
-diff --git a/drivers/crypto/zynqmp-sha.c b/drivers/crypto/zynqmp-sha.c
-new file mode 100644
-index 0000000..56e83cf
---- /dev/null
-+++ b/drivers/crypto/zynqmp-sha.c
-@@ -0,0 +1,305 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Cryptographic API.
++/**
++ * zynqmp_pm_sha_hash - Access the SHA engine to calculate the hash
++ * @address:	Address of the data/ Address of output buffer where
++ *		hash should be stored.
++ * @size:	Size of the data.
++ * @flags:
++ *	BIT(0) - for initializing csudma driver and SHA3(Here address
++ *		 and size inputs can be NULL).
++ *	BIT(1) - to call Sha3_Update API which can be called multiple
++ *		 times when data is not contiguous.
++ *	BIT(2) - to get final hash of the whole updated data.
++ *		 Hash will be overwritten at provided address with
++ *		 48 bytes.
 + *
-+ * Support for Xilinx ZynqMP SHA3 HW Acceleration.
-+ *
-+ * Copyright (c) 2018 Xilinx Inc.
-+ *
++ * Return:	Returns status, either success or error code.
 + */
-+#include <asm/cacheflush.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/io.h>
-+#include <linux/platform_device.h>
-+#include <linux/device.h>
-+#include <linux/init.h>
-+#include <linux/scatterlist.h>
-+#include <linux/dma-mapping.h>
-+#include <linux/of_device.h>
-+#include <linux/crypto.h>
-+#include <linux/cryptohash.h>
-+#include <crypto/scatterwalk.h>
-+#include <crypto/algapi.h>
-+#include <crypto/sha.h>
-+#include <crypto/hash.h>
-+#include <crypto/internal/hash.h>
-+#include <linux/firmware/xlnx-zynqmp.h>
-+
-+#define ZYNQMP_SHA3_INIT	1
-+#define ZYNQMP_SHA3_UPDATE	2
-+#define ZYNQMP_SHA3_FINAL	4
-+
-+#define ZYNQMP_SHA_QUEUE_LENGTH	1
-+
-+struct zynqmp_sha_dev;
-+
-+/*
-+ * .statesize = sizeof(struct zynqmp_sha_reqctx) must be <= PAGE_SIZE / 8 as
-+ *  tested by the ahash_prepare_alg() function.
-+ */
-+struct zynqmp_sha_reqctx {
-+	struct zynqmp_sha_dev	*dd;
-+	unsigned long		flags;
-+};
-+
-+struct zynqmp_sha_ctx {
-+	struct zynqmp_sha_dev	*dd;
-+	unsigned long		flags;
-+};
-+
-+struct zynqmp_sha_dev {
-+	struct list_head	list;
-+	struct device		*dev;
-+	/* the lock protects queue and dev list*/
-+	spinlock_t		lock;
-+	int			err;
-+
-+	unsigned long		flags;
-+	struct crypto_queue	queue;
-+	struct ahash_request	*req;
-+};
-+
-+struct zynqmp_sha_drv {
-+	struct list_head	dev_list;
-+	/* the lock protects dev list*/
-+	spinlock_t		lock;
-+};
-+
-+static struct zynqmp_sha_drv zynqmp_sha = {
-+	.dev_list = LIST_HEAD_INIT(zynqmp_sha.dev_list),
-+	.lock = __SPIN_LOCK_UNLOCKED(zynqmp_sha.lock),
-+};
-+
-+static int zynqmp_sha_init(struct ahash_request *req)
++static int zynqmp_pm_sha_hash(const u64 address, const u32 size,
++			      const u32 flags)
 +{
-+	const struct zynqmp_eemi_ops *eemi_ops = zynqmp_pm_get_eemi_ops();
-+	struct zynqmp_sha_reqctx *ctx = ahash_request_ctx(req);
-+	struct crypto_ahash *tfm = crypto_ahash_reqtfm(req);
-+	struct zynqmp_sha_ctx *tctx = crypto_ahash_ctx(tfm);
-+	struct zynqmp_sha_dev *dd = NULL;
-+	struct zynqmp_sha_dev *tmp;
-+	int ret;
++	u32 lower_32_bits = (u32)address;
++	u32 upper_32_bits = (u32)(address >> 32);
 +
-+	if (!eemi_ops || !eemi_ops->sha_hash)
-+		return -ENOTSUPP;
-+
-+	spin_lock_bh(&zynqmp_sha.lock);
-+	if (!tctx->dd) {
-+		list_for_each_entry(tmp, &zynqmp_sha.dev_list, list) {
-+			dd = tmp;
-+			break;
-+		}
-+		tctx->dd = dd;
-+	} else {
-+		dd = tctx->dd;
-+	}
-+	spin_unlock_bh(&zynqmp_sha.lock);
-+
-+	ctx->dd = dd;
-+	dev_dbg(dd->dev, "init: digest size: %d\n",
-+		crypto_ahash_digestsize(tfm));
-+
-+	ret = eemi_ops->sha_hash(0, 0, ZYNQMP_SHA3_INIT);
-+
-+	return ret;
++	return zynqmp_pm_invoke_fn(PM_SECURE_SHA, upper_32_bits, lower_32_bits,
++				   size, flags, NULL);
 +}
 +
-+static int zynqmp_sha_update(struct ahash_request *req)
-+{
-+	const struct zynqmp_eemi_ops *eemi_ops = zynqmp_pm_get_eemi_ops();
-+	struct zynqmp_sha_ctx *tctx = crypto_tfm_ctx(req->base.tfm);
-+	struct zynqmp_sha_dev *dd = tctx->dd;
-+	size_t dma_size = req->nbytes;
-+	dma_addr_t dma_addr;
-+	char *kbuf;
-+	int ret;
-+
-+	if (!req->nbytes)
-+		return 0;
-+
-+	if (!eemi_ops || !eemi_ops->sha_hash)
-+		return -ENOTSUPP;
-+
-+	kbuf = dma_alloc_coherent(dd->dev, dma_size, &dma_addr, GFP_KERNEL);
-+	if (!kbuf)
-+		return -ENOMEM;
-+
-+	scatterwalk_map_and_copy(kbuf, req->src, 0, req->nbytes, 0);
-+	 __flush_cache_user_range((unsigned long)kbuf,
-+				  (unsigned long)kbuf + dma_size);
-+	ret = eemi_ops->sha_hash(dma_addr, req->nbytes, ZYNQMP_SHA3_UPDATE);
-+	dma_free_coherent(dd->dev, dma_size, kbuf, dma_addr);
-+
-+	return ret;
-+}
-+
-+static int zynqmp_sha_final(struct ahash_request *req)
-+{
-+	const struct zynqmp_eemi_ops *eemi_ops = zynqmp_pm_get_eemi_ops();
-+	struct zynqmp_sha_ctx *tctx = crypto_tfm_ctx(req->base.tfm);
-+	struct zynqmp_sha_dev *dd = tctx->dd;
-+	size_t dma_size = SHA384_DIGEST_SIZE;
-+	dma_addr_t dma_addr;
-+	char *kbuf;
-+	int ret;
-+
-+	if (!eemi_ops || !eemi_ops->sha_hash)
-+		return -ENOTSUPP;
-+
-+	kbuf = dma_alloc_coherent(dd->dev, dma_size, &dma_addr, GFP_KERNEL);
-+	if (!kbuf)
-+		return -ENOMEM;
-+
-+	ret = eemi_ops->sha_hash(dma_addr, dma_size, ZYNQMP_SHA3_FINAL);
-+	memcpy(req->result, kbuf, SHA384_DIGEST_SIZE);
-+	dma_free_coherent(dd->dev, dma_size, kbuf, dma_addr);
-+
-+	return ret;
-+}
-+
-+static int zynqmp_sha_finup(struct ahash_request *req)
-+{
-+	zynqmp_sha_update(req);
-+	zynqmp_sha_final(req);
-+
-+	return 0;
-+}
-+
-+static int zynqmp_sha_digest(struct ahash_request *req)
-+{
-+	zynqmp_sha_init(req);
-+	zynqmp_sha_update(req);
-+	zynqmp_sha_final(req);
-+
-+	return 0;
-+}
-+
-+static int zynqmp_sha_export(struct ahash_request *req, void *out)
-+{
-+	const struct zynqmp_sha_reqctx *ctx = ahash_request_ctx(req);
-+
-+	memcpy(out, ctx, sizeof(*ctx));
-+	return 0;
-+}
-+
-+static int zynqmp_sha_import(struct ahash_request *req, const void *in)
-+{
-+	struct zynqmp_sha_reqctx *ctx = ahash_request_ctx(req);
-+
-+	memcpy(ctx, in, sizeof(*ctx));
-+	return 0;
-+}
-+
-+static int zynqmp_sha_cra_init(struct crypto_tfm *tfm)
-+{
-+	crypto_ahash_set_reqsize(__crypto_ahash_cast(tfm),
-+				 sizeof(struct zynqmp_sha_reqctx));
-+
-+	return 0;
-+}
-+
-+static struct ahash_alg sha3_alg = {
-+	.init		= zynqmp_sha_init,
-+	.update		= zynqmp_sha_update,
-+	.final		= zynqmp_sha_final,
-+	.finup		= zynqmp_sha_finup,
-+	.digest		= zynqmp_sha_digest,
-+	.export		= zynqmp_sha_export,
-+	.import		= zynqmp_sha_import,
-+	.halg = {
-+		.digestsize	= SHA384_DIGEST_SIZE,
-+		.statesize	= sizeof(struct sha256_state),
-+		.base	= {
-+			.cra_name		= "xilinx-keccak-384",
-+			.cra_driver_name	= "zynqmp-keccak-384",
-+			.cra_priority		= 300,
-+			.cra_flags		= CRYPTO_ALG_ASYNC,
-+			.cra_blocksize		= SHA384_BLOCK_SIZE,
-+			.cra_ctxsize		= sizeof(struct zynqmp_sha_ctx),
-+			.cra_alignmask		= 0,
-+			.cra_module		= THIS_MODULE,
-+			.cra_init		= zynqmp_sha_cra_init,
-+		}
-+	}
-+};
-+
-+static const struct of_device_id zynqmp_sha_dt_ids[] = {
-+	{ .compatible = "xlnx,zynqmp-keccak-384" },
-+	{ /* sentinel */ }
-+};
-+
-+MODULE_DEVICE_TABLE(of, zynqmp_sha_dt_ids);
-+
-+static int zynqmp_sha_probe(struct platform_device *pdev)
-+{
-+	struct zynqmp_sha_dev *sha_dd;
-+	struct device *dev = &pdev->dev;
-+	int err;
-+
-+	sha_dd = devm_kzalloc(&pdev->dev, sizeof(*sha_dd), GFP_KERNEL);
-+	if (!sha_dd)
-+		return -ENOMEM;
-+
-+	sha_dd->dev = dev;
-+	platform_set_drvdata(pdev, sha_dd);
-+	INIT_LIST_HEAD(&sha_dd->list);
-+	spin_lock_init(&sha_dd->lock);
-+	crypto_init_queue(&sha_dd->queue, ZYNQMP_SHA_QUEUE_LENGTH);
-+	spin_lock(&zynqmp_sha.lock);
-+	list_add_tail(&sha_dd->list, &zynqmp_sha.dev_list);
-+	spin_unlock(&zynqmp_sha.lock);
-+
-+	err = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(44));
-+	if (err < 0) {
-+		dev_err(dev, "no usable DMA configuration");
-+		goto err_algs;
-+	}
-+
-+	err = crypto_register_ahash(&sha3_alg);
-+	if (err)
-+		goto err_algs;
-+
-+	return 0;
-+
-+err_algs:
-+	spin_lock(&zynqmp_sha.lock);
-+	list_del(&sha_dd->list);
-+	spin_unlock(&zynqmp_sha.lock);
-+	dev_err(dev, "initialization failed.\n");
-+
-+	return err;
-+}
-+
-+static int zynqmp_sha_remove(struct platform_device *pdev)
-+{
-+	static struct zynqmp_sha_dev *sha_dd;
-+
-+	sha_dd = platform_get_drvdata(pdev);
-+
-+	if (!sha_dd)
-+		return -ENODEV;
-+
-+	spin_lock(&zynqmp_sha.lock);
-+	list_del(&sha_dd->list);
-+	spin_unlock(&zynqmp_sha.lock);
-+
-+	crypto_unregister_ahash(&sha3_alg);
-+
-+	return 0;
-+}
-+
-+static struct platform_driver zynqmp_sha_driver = {
-+	.probe		= zynqmp_sha_probe,
-+	.remove		= zynqmp_sha_remove,
-+	.driver		= {
-+		.name	= "zynqmp-keccak-384",
-+		.of_match_table	= of_match_ptr(zynqmp_sha_dt_ids),
-+	},
-+};
-+
-+module_platform_driver(zynqmp_sha_driver);
-+
-+MODULE_DESCRIPTION("ZynqMP SHA3 hw acceleration support.");
-+MODULE_LICENSE("GPL");
-+MODULE_AUTHOR("Nava kishore Manne <navam@xilinx.com>");
+ static const struct zynqmp_eemi_ops eemi_ops = {
+ 	.get_api_version = zynqmp_pm_get_api_version,
++	.sha_hash = zynqmp_pm_sha_hash,
+ 	.query_data = zynqmp_pm_query_data,
+ 	.clock_enable = zynqmp_pm_clock_enable,
+ 	.clock_disable = zynqmp_pm_clock_disable,
+diff --git a/include/linux/firmware/xlnx-zynqmp.h b/include/linux/firmware/xlnx-zynqmp.h
+index 3c3c28e..72ffe09 100644
+--- a/include/linux/firmware/xlnx-zynqmp.h
++++ b/include/linux/firmware/xlnx-zynqmp.h
+@@ -34,6 +34,7 @@
+ 
+ enum pm_api_id {
+ 	PM_GET_API_VERSION = 1,
++	PM_SECURE_SHA = 26,
+ 	PM_IOCTL = 34,
+ 	PM_QUERY_DATA,
+ 	PM_CLOCK_ENABLE,
+@@ -102,6 +103,7 @@ struct zynqmp_eemi_ops {
+ 	int (*clock_setparent)(u32 clock_id, u32 parent_id);
+ 	int (*clock_getparent)(u32 clock_id, u32 *parent_id);
+ 	int (*ioctl)(u32 node_id, u32 ioctl_id, u32 arg1, u32 arg2, u32 *out);
++	int (*sha_hash)(const u64 address, const u32 size, const u32 flags);
+ };
+ 
+ #if IS_REACHABLE(CONFIG_ARCH_ZYNQMP)
 -- 
 1.7.1
 
