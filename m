@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40B5CC43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 19:57:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAE99C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 19:57:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 198F92177B
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 19:57:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8971821738
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 19:57:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728749AbfAIT5l (ORCPT
+        id S1728796AbfAIT55 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 14:57:41 -0500
-Received: from wes1-so1-b.wedos.net ([46.28.106.43]:32778 "EHLO
-        wes1-so1.wedos.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728395AbfAIT5j (ORCPT
+        Wed, 9 Jan 2019 14:57:57 -0500
+Received: from wes1-so2-b.wedos.net ([46.28.106.45]:54104 "EHLO
+        wes1-so2.wedos.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728395AbfAIT55 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 14:57:39 -0500
+        Wed, 9 Jan 2019 14:57:57 -0500
 Received: from localhost (ip4-46-39-182-135.cust.nbox.cz [46.39.182.135])
-        by wes1-so1.wedos.net (Postfix) with ESMTPSA id 43Zg011dh7z5nJ;
-        Wed,  9 Jan 2019 20:57:37 +0100 (CET)
-Date:   Wed, 9 Jan 2019 20:57:33 +0100
+        by wes1-so2.wedos.net (Postfix) with ESMTPSA id 43Zg0M4kyPzSp;
+        Wed,  9 Jan 2019 20:57:55 +0100 (CET)
+Date:   Wed, 9 Jan 2019 20:57:50 +0100
 From:   Otto Sabart <ottosabart@seberm.com>
 To:     linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
         netdev@vger.kernel.org
 Cc:     "David S. Miller" <davem@davemloft.net>,
         Jonathan Corbet <corbet@lwn.net>
-Subject: [PATCH 2/3] doc: networking: convert scaling doc into RST
-Message-ID: <ac9c5722a66e9ede3d8694cf97364226e9b8fa4f.1547063330.git.ottosabart@seberm.com>
+Subject: [PATCH 3/3] doc: networking: add scaling doc into index file
+Message-ID: <f34b41f5660f9c1d15ce44011929ea28d7f0cbe9.1547063330.git.ottosabart@seberm.com>
 References: <cover.1547063330.git.ottosabart@seberm.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="y0ulUmNC+osPPQO6"
+        protocol="application/pgp-signature"; boundary="J2SCkAp4GZ/dPZZf"
 Content-Disposition: inline
 In-Reply-To: <cover.1547063330.git.ottosabart@seberm.com>
 X-PGP-Key: http://seberm.com/pubkey.asc
@@ -45,50 +45,54 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---y0ulUmNC+osPPQO6
+--J2SCkAp4GZ/dPZZf
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Just rename the scaling file to be found by Sphinx.
-
-There are no references to "scaling.txt" file. Whole kernel tree was
-checked using:
-$ grep -r "scaling\.txt"
+Add reference to scaling document into main table of contents in network
+documentation.
 
 Signed-off-by: Otto Sabart <ottosabart@seberm.com>
 ---
- Documentation/networking/{scaling.txt =3D> scaling.rst} | 0
- 1 file changed, 0 insertions(+), 0 deletions(-)
- rename Documentation/networking/{scaling.txt =3D> scaling.rst} (100%)
+ Documentation/networking/index.rst | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/networking/scaling.txt b/Documentation/networkin=
-g/scaling.rst
-similarity index 100%
-rename from Documentation/networking/scaling.txt
-rename to Documentation/networking/scaling.rst
+diff --git a/Documentation/networking/index.rst b/Documentation/networking/=
+index.rst
+index 6a47629ef8ed..47552ea410fe 100644
+--- a/Documentation/networking/index.rst
++++ b/Documentation/networking/index.rst
+@@ -32,6 +32,7 @@ Contents:
+    alias
+    bridge
+    snmp_counter
++   scaling
+=20
+ .. only::  subproject
+=20
 --=20
 2.17.2
 
 
---y0ulUmNC+osPPQO6
+--J2SCkAp4GZ/dPZZf
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAEBCgAdFiEEb6VOpv2s03VHGoilgjuumfi+HjwFAlw2Ui0ACgkQgjuumfi+
-HjyaxQ//aNbUzZBevJCbgK4Bakpy93YGio9yKzC4NOX4d9TkXp7AubPGwxLZf+i6
-hIuhpdmsL5d0uflgKl5cB5tUbaG37Dn+/+5bDMBLS/XCmlIPFiefTypPxKkOPZI6
-f/YdgPhSvH7/8lorcYP+acJcg6u/AZBAKYq/z1Xly8D88Cem1AKDD7AWkgM5ml2x
-lZVkusPvUES0B4iAL/WS34XX3I2Cr2XBacbKmRRJrmr0NBPid+kwfhWVyESbLIBo
-B83o+eC8f37F5lpqFdr8N+YjxiCjCauGMPjWUiiFcaXiJ+7zUhqWOJY6TRgwbMyB
-B7nXDFIJLCgm6RbPP7E1MbQoHeSL3ou1rPuJ1M1JMlOVlOkWpco68JTGupz0ncFN
-aaWsZ2KhSVZtY7k9tXVxvnwmxWCVWtDR8fzy31SYZWxH1x9f7GTU0ryGgVBEd62a
-nlP5IB1aemc7lTykesJn260gpXxlelpC78K16bPqbbi2Z3FptXMsKFtyuWekRGXQ
-FbXII6u7nUEoiW+3RP9HYOuM2t7BDwun6Ui5gf4FDvgEfGbn/NK7W7CWAChBHFE2
-TtfwtQ9TJ+NnVXDCED5S+pD0XUx2dN5PYjr+x8xCG1C7Qyb+LLZnTTAUlAKekpVS
-cP2WuDetujHu+XDHr/qOCZimqoJPbfwSt7/7q3F+53zGCTLGkHg=
-=Pm0W
+iQIzBAEBCgAdFiEEb6VOpv2s03VHGoilgjuumfi+HjwFAlw2Uj4ACgkQgjuumfi+
+Hjx7cw/+LIeBVZstolB+lanf3FEmibkupG8LWFIT18eskF1hSXefOxE51aXl62gL
+PGgMtNjCIGe+eZqLRDn9M08rgJSa2X2Qn23XdEW/s3HVUAKkhWCi3RFrPUf9oM4J
+cjyhw9sGeewi6qWSTJRC/Rj/Zi4rMJEGI4Ql7VSHLscfsBs/98d5PYTgQkYlCmHI
+6PEb9/+tcBFsrqjbQ1QIH1nxctS+4y4xIAQhz3nZEQxpuzaxZ+Eks6RM8unbeldH
+YB6/9C6SY2BB9xm42pr4OTN+3p9+AUg35vZXpdDU9xYTxQZDCP0P3yjZlzfpAOHa
+Hfre+JPFws5NlFzMDCrfuSLzgGTjuNxreFEl5yoj+5RU3m5rOf1dNTrFesO2iv5k
+gl09Zs4PNuhDNPDEhAPwfJZmDba4uBR3NS1wJ7BM8UV0/fIGUtrkgvpYFkA3a21s
+OjkSAaZ6RBTU6ytaKaaGv6ISfql5+xxPYVGjKpL9OpPc4nKo/CEwANfHMUs8hK/y
+K14beKy01H9oZ4GmMY914dKik5VFQeRGLTyp8cW6Cn42Y4ONCxDsVX16yynUIaRI
+hl1ruuprGDuViwQ1K9HGrtXXLD81sUZbDD335yzVtdOfKOHut5VK6ZUI1QNUm1GX
+7MIe87fWtg24jViQdMXGty7eilO828Uz/Ad43HBai6LWY869Yyo=
+=VsWs
 -----END PGP SIGNATURE-----
 
---y0ulUmNC+osPPQO6--
+--J2SCkAp4GZ/dPZZf--
