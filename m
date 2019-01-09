@@ -2,42 +2,42 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D644BC43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 14:44:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2758C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 14:45:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A3A23214C6
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 14:44:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8EE8721841
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 14:45:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547045098;
-	bh=LAzpRkFrjHBrwRQNHGbADfrZz6bPbBwxN4Uv9ilLwe0=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=PoVA4dbSbkXRv53vTGuAHVVZDQlKYfoCVGyKIOUmmB0Jmpa28NLGUQ4I1ZzkxzNRW
-	 C+qZtoE+iSTbHeJVlWoXgc2OK+30Ss/xar3CTRIhELW5RI/0y55PyUpYpltuqewDj4
-	 Vo1Ue4BeYcji6+yvBH406q54HbZQj5GfttqL1fVY=
+	s=default; t=1547045104;
+	bh=LEtO+UoHqcmfND7IGEIzZ+sWE34NKxUVs5hJGrLWaGA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=KlYygX4MRxe5C3TPKl/guyAQ02JZ/Yhy/Wp9ZCqiPE9Xlpr4cG83T1tueo002OOBi
+	 TY6TUb5kfRQ6nEfyRRvqkt5WZxThlQZpNdcYEoQg3S1+2Cu+FtR6rpgXR82KHg5u/b
+	 2YnIgUUqYMw862A6tYolevkmNuCndjwsX9qAdXyg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731771AbfAIOo6 (ORCPT
+        id S1731808AbfAIOpD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 09:44:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48242 "EHLO mail.kernel.org"
+        Wed, 9 Jan 2019 09:45:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48294 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731752AbfAIOo5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 09:44:57 -0500
+        id S1731772AbfAIOpA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 09:45:00 -0500
 Received: from PC-kkoz.proceq.com (unknown [213.160.61.66])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E8C77206BA;
-        Wed,  9 Jan 2019 14:44:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D0CE820859;
+        Wed,  9 Jan 2019 14:44:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547045096;
-        bh=LAzpRkFrjHBrwRQNHGbADfrZz6bPbBwxN4Uv9ilLwe0=;
-        h=From:To:Cc:Subject:Date:From;
-        b=Be3BhZMUY+nkmcl2VBqwOLh3a9gArvMJ+o+0MHO3tLdQDwicvXjMVTE0KOmOVSe9J
-         hElCytUJFG6Ah2RXtI0Ey3s7UpojyAy0+vK9EIcWkD44PRjRe7jDBM8Ht1IEDTCrDO
-         pAd9iVaWWmz0FshDwS0GhZJeERxmuTtWGUcls/7I=
+        s=default; t=1547045100;
+        bh=LEtO+UoHqcmfND7IGEIzZ+sWE34NKxUVs5hJGrLWaGA=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=g+6F6/boTBXDWDztV/9RRVBR3X9f3bmcjbvT5yLutKleFcKhpgcZe9PARRwLX1rnR
+         oYe+bdc6ewoH10LqJSH5SHEPvkY/o+da/+8IgKQY4rA50mWq4EIwa5AnQjeUlTWFKO
+         HBhzIKqCnm5GoUYNH90+mceOMkJJPHncw3rgjsP8=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
         Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>,
@@ -45,75 +45,99 @@ To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
         linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
         devicetree@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v7 0/5] leds: trigger: Add pattern initialization from Device Tree
-Date:   Wed,  9 Jan 2019 15:44:44 +0100
-Message-Id: <1547045089-19128-1-git-send-email-krzk@kernel.org>
+Subject: [PATCH v7 2/5] leds: Add helper for getting default pattern from Device Tree
+Date:   Wed,  9 Jan 2019 15:44:46 +0100
+Message-Id: <1547045089-19128-3-git-send-email-krzk@kernel.org>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1547045089-19128-1-git-send-email-krzk@kernel.org>
+References: <1547045089-19128-1-git-send-email-krzk@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Multiple LED triggers might need to access default pattern so add a
+helper for that.
 
-Changes since v6:
-1. Drop goto from led_get_default_pattern() and rename "DeviceTree"
-   into "device tree".
-2. Add Pavel's ack to patch 1/5.
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ drivers/leds/led-core.c | 30 ++++++++++++++++++++++++++++++
+ include/linux/leds.h    | 13 +++++++++++++
+ 2 files changed, 43 insertions(+)
 
-Changes since v5:
-1. Drop the "classdev" prefix from helper for getting default pattern
-   and move the kerneldoc to header file (this was not fixed in v5 by
-   mistake).
-
-Changes since v4:
-1. Move helper to get default pattern from led-class.c to led-core.c and
-   rename it (build issue pointed by kbuild robot).
-
-Changes since v3:
-1. Add missing EXPORT_SYMBOL_GPL.
-2. Put pattern trigger format into common file - shared between
-   dt-bindings and sysfs.
-3. Use array of integers as led-pattern property (since it is bigger change
-   I did not add Pavel's ack to patch 2/5).
-4. Mention ms units for led-pattern bindings.
-
-Changes since v2:
-1. Drop Jacek's patches and my "led: triggers: Initialize
-   LED_INIT_DEFAULT_TRIGGER if trigger is brought after class".
-2. Follow Rob's advices about bindings - use "led-pattern" property
-   and generalize usage of it into to three triggers.
-3. New patches (2/5, 4/5 and 5/5).
-
-Changes since v1:
-1. Rebase on Jacek's patches.
-2. Add patch 3/5 for fixup of Jacek's solution.
-3. Drop first two patches from the series (applied).
-4. Patch 5/5: Use LED_INIT_DEFAULT_TRIGGER (suggested by Jacek Anaszewski).
-5. Patch 5/5: Return-on-error and log warning (suggested by Pavel Machek).
-
-
-Best regards,
-Krzysztof
-
-Krzysztof Kozlowski (5):
-  dt-bindings: leds: Add pattern initialization from Device Tree
-  leds: Add helper for getting default pattern from Device Tree
-  leds: trigger: pattern: Add pattern initialization from Device Tree
-  leds: trigger: oneshot: Add initialization from Device Tree
-  leds: trigger: timer: Add initialization from Device Tree
-
- .../ABI/testing/sysfs-class-led-trigger-pattern    | 51 +----------
- Documentation/devicetree/bindings/leds/common.txt  | 12 +++
- .../bindings/leds/leds-trigger-pattern.txt         | 49 +++++++++++
- drivers/leds/led-core.c                            | 30 +++++++
- drivers/leds/trigger/ledtrig-oneshot.c             | 38 ++++++++-
- drivers/leds/trigger/ledtrig-pattern.c             | 99 +++++++++++++++++-----
- drivers/leds/trigger/ledtrig-timer.c               | 34 ++++++++
- include/linux/leds.h                               | 13 +++
- 8 files changed, 257 insertions(+), 69 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/leds/leds-trigger-pattern.txt
-
+diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
+index ede4fa0ac2cc..e3da7c03da1b 100644
+--- a/drivers/leds/led-core.c
++++ b/drivers/leds/led-core.c
+@@ -16,7 +16,9 @@
+ #include <linux/list.h>
+ #include <linux/module.h>
+ #include <linux/mutex.h>
++#include <linux/of.h>
+ #include <linux/rwsem.h>
++#include <linux/slab.h>
+ #include "leds.h"
+ 
+ DECLARE_RWSEM(leds_list_lock);
+@@ -310,6 +312,34 @@ int led_update_brightness(struct led_classdev *led_cdev)
+ }
+ EXPORT_SYMBOL_GPL(led_update_brightness);
+ 
++u32 *led_get_default_pattern(struct led_classdev *led_cdev, unsigned int *size)
++{
++	struct device_node *np = dev_of_node(led_cdev->dev);
++	u32 *pattern;
++	int count;
++
++	if (!np)
++		return NULL;
++
++	count = of_property_count_u32_elems(np, "led-pattern");
++	if (count < 0)
++		return NULL;
++
++	pattern = kcalloc(count, sizeof(*pattern), GFP_KERNEL);
++	if (!pattern)
++		return NULL;
++
++	if (of_property_read_u32_array(np, "led-pattern", pattern, count)) {
++		kfree(pattern);
++		return NULL;
++	}
++
++	*size = count;
++
++	return pattern;
++}
++EXPORT_SYMBOL_GPL(led_get_default_pattern);
++
+ /* Caller must ensure led_cdev->led_access held */
+ void led_sysfs_disable(struct led_classdev *led_cdev)
+ {
+diff --git a/include/linux/leds.h b/include/linux/leds.h
+index 5263f87e1d2c..78204650fe2a 100644
+--- a/include/linux/leds.h
++++ b/include/linux/leds.h
+@@ -219,6 +219,19 @@ extern int led_set_brightness_sync(struct led_classdev *led_cdev,
+ extern int led_update_brightness(struct led_classdev *led_cdev);
+ 
+ /**
++ * led_get_default_pattern - return default pattern
++ *
++ * @led_cdev: the LED to get default pattern for
++ * @size:     pointer for storing the number of elements in returned array,
++ *            modified only if return != NULL
++ *
++ * Return:    Allocated array of integers with default pattern from device tree
++ *            or NULL.  Caller is responsible for kfree().
++ */
++extern u32 *led_get_default_pattern(struct led_classdev *led_cdev,
++				    unsigned int *size);
++
++/**
+  * led_sysfs_disable - disable LED sysfs interface
+  * @led_cdev: the LED to set
+  *
 -- 
 2.7.4
 
