@@ -2,115 +2,125 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83F9FC43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 03:46:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F5FEC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 03:49:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 43D462070B
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 03:46:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1E3F2214C6
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 03:49:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728984AbfAIDqU (ORCPT
+        id S1729132AbfAIDto (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 22:46:20 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:52418 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727828AbfAIDqT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 22:46:19 -0500
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x093irSh141246
-        for <linux-kernel@vger.kernel.org>; Tue, 8 Jan 2019 22:46:18 -0500
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2pw34un994-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jan 2019 22:46:17 -0500
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <ravi.bangoria@linux.ibm.com>;
-        Wed, 9 Jan 2019 03:46:16 -0000
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 9 Jan 2019 03:46:13 -0000
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x093kCAe54919184
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 9 Jan 2019 03:46:12 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 28CDC4C044;
-        Wed,  9 Jan 2019 03:46:12 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C52394C046;
-        Wed,  9 Jan 2019 03:46:09 +0000 (GMT)
-Received: from [9.199.40.219] (unknown [9.199.40.219])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed,  9 Jan 2019 03:46:09 +0000 (GMT)
-Subject: Re: perf trace syscall table generation for powerpc with syscall.tbl
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Hendrik Brueckner <brueckner@linux.vnet.ibm.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Thomas Richter <tmricht@linux.vnet.ibm.com>,
-        linuxppc-dev@lists.ozlabs.org, linux-perf-users@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20190108170440.GF28965@kernel.org>
-From:   Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Date:   Wed, 9 Jan 2019 09:17:25 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Tue, 8 Jan 2019 22:49:44 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:41280 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727857AbfAIDtn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 22:49:43 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 6AA083DDB8;
+        Wed,  9 Jan 2019 03:49:43 +0000 (UTC)
+Received: from sky.random (ovpn-120-73.rdu2.redhat.com [10.10.120.73])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id F033E608DD;
+        Wed,  9 Jan 2019 03:49:42 +0000 (UTC)
+From:   Andrea Arcangeli <aarcange@redhat.com>
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Mel Gorman <mgorman@techsingularity.net>
+Cc:     linux-kernel@vger.kernel.org
+Subject: [PATCH 1/1] sched/fair: skip select_idle_sibling() in presence of sync wakeups
+Date:   Tue,  8 Jan 2019 22:49:41 -0500
+Message-Id: <20190109034941.28759-2-aarcange@redhat.com>
+In-Reply-To: <20190109034941.28759-1-aarcange@redhat.com>
+References: <20190109034941.28759-1-aarcange@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20190108170440.GF28965@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 19010903-4275-0000-0000-000002FC3BBF
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19010903-4276-0000-0000-0000380A4876
-Message-Id: <aa2a9559-37c3-a21d-2801-6fbdfec35c9a@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-09_02:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901090029
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Wed, 09 Jan 2019 03:49:43 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Arnaldo,
+__wake_up_sync() gives a very explicit hint to the scheduler that the
+current task will immediately go to sleep and won't return running
+until after the waken tasks has started running again.
 
-Yes. I'm aware of it. Just that I was busy with something else so couldn't do it.
+This is common behavior for message passing through pipes or local
+sockets (AF_UNIX or through the loopback interface).
 
-Thanks for reminding :). Will post a patch soon.
+The scheduler does everything right up to the point it calls
+select_idle_sibling(). Up to that point the CPU selected for the next
+task that got a sync-wakeup could very well be the local CPU. That way
+the sync-waken task will start running immediately after the current
+task goes to sleep without requiring remote CPU wakeups.
 
-Ravi
+However when select_idle_sibling() is called (especially if
+SCHED_MC=y) if there's at least one idle core in the same package, the
+sync-waken task will be forcefully waken to run on a different idle
+core, in turn destroying the "sync" information and all work done up
+to that point.
 
-On 1/8/19 10:34 PM, Arnaldo Carvalho de Melo wrote:
-> Hi Ravi,
-> 
-> 	I noticed that in:
-> 
->   commit ab66dcc76d6ab8fae9d69d149ae38c42605e7fc5
->   Author: Firoz Khan <firoz.khan@linaro.org>
->   Date:   Mon Dec 17 16:10:36 2018 +0530
-> 
->     powerpc: generate uapi header and system call table files
-> 
-> powerpc now generates its syscall tables headers from a syscall.tbl just
-> like x86 and s390, could you please switch to using it, taking the x86
-> and s390 scripts as a starting point, then test on your systems
-> everything works?
-> 
-> Thanks,
-> 
-> - Arnaldo
-> 
+Without this patch under such a workload there will be two different
+CPUs at ~50% utilization and the __wake_up_sync() hint won't really
+provide much of benefit if compared to the regular non-sync
+wakeup. With this patch there will be a single CPU used at 100%
+utilization and that increases performance for those common workloads.
 
+Signed-off-by: Andrea Arcangeli <aarcange@redhat.com>
+---
+ kernel/sched/fair.c | 13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
+
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index d1907506318a..b2ac152a6935 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -691,7 +691,8 @@ static u64 sched_vslice(struct cfs_rq *cfs_rq, struct sched_entity *se)
+ #include "pelt.h"
+ #include "sched-pelt.h"
+ 
+-static int select_idle_sibling(struct task_struct *p, int prev_cpu, int cpu);
++static int select_idle_sibling(struct task_struct *p, int prev_cpu,
++			       int cpu, int target, int sync);
+ static unsigned long task_h_load(struct task_struct *p);
+ static unsigned long capacity_of(int cpu);
+ 
+@@ -1678,7 +1679,7 @@ static void task_numa_compare(struct task_numa_env *env,
+ 		 */
+ 		local_irq_disable();
+ 		env->dst_cpu = select_idle_sibling(env->p, env->src_cpu,
+-						   env->dst_cpu);
++						   -1, env->dst_cpu, 0);
+ 		local_irq_enable();
+ 	}
+ 
+@@ -6161,12 +6162,14 @@ static int select_idle_cpu(struct task_struct *p, struct sched_domain *sd, int t
+ /*
+  * Try and locate an idle core/thread in the LLC cache domain.
+  */
+-static int select_idle_sibling(struct task_struct *p, int prev, int target)
++static int select_idle_sibling(struct task_struct *p, int prev, int this_cpu,
++			       int target, int sync)
+ {
+ 	struct sched_domain *sd;
+ 	int i, recent_used_cpu;
+ 
+-	if (available_idle_cpu(target))
++	if (available_idle_cpu(target) ||
++	    (sync && target == this_cpu && cpu_rq(this_cpu)->nr_running == 1))
+ 		return target;
+ 
+ 	/*
+@@ -6649,7 +6652,7 @@ select_task_rq_fair(struct task_struct *p, int prev_cpu, int sd_flag, int wake_f
+ 	} else if (sd_flag & SD_BALANCE_WAKE) { /* XXX always ? */
+ 		/* Fast path */
+ 
+-		new_cpu = select_idle_sibling(p, prev_cpu, new_cpu);
++		new_cpu = select_idle_sibling(p, prev_cpu, cpu, new_cpu, sync);
+ 
+ 		if (want_affine)
+ 			current->recent_used_cpu = cpu;
