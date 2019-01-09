@@ -2,254 +2,109 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC820C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 06:13:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA32CC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 06:15:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 90DB4214C6
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 06:13:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6B9DC214C6
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 06:15:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729681AbfAIGNI (ORCPT
+        id S1729700AbfAIGPj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 01:13:08 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:48714 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725440AbfAIGNI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 01:13:08 -0500
-Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 4BB32A909AEB3A4953A9;
-        Wed,  9 Jan 2019 14:13:06 +0800 (CST)
-Received: from [127.0.0.1] (10.134.22.195) by DGGEMS404-HUB.china.huawei.com
- (10.3.19.204) with Microsoft SMTP Server id 14.3.408.0; Wed, 9 Jan 2019
- 14:13:03 +0800
-Subject: Re: [PATCH v2] f2fs: fix sbi->extent_list corruption issue
-To:     Jaegeuk Kim <jaegeuk@kernel.org>
-CC:     Sahitya Tummala <stummala@codeaurora.org>,
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>
-References: <1543207640-31033-1-git-send-email-stummala@codeaurora.org>
- <20190104080535.GB8475@codeaurora.org>
- <20190104203329.GA57873@jaegeuk-macbookpro.roam.corp.google.com>
- <0197c64e-6419-db96-d8a9-d17f446aa9c1@huawei.com>
- <20190109043801.GB55897@jaegeuk-macbookpro.roam.corp.google.com>
-From:   Chao Yu <yuchao0@huawei.com>
-Message-ID: <9e8fb00b-75e7-1f69-0255-26de800a6688@huawei.com>
-Date:   Wed, 9 Jan 2019 14:13:02 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20190109043801.GB55897@jaegeuk-macbookpro.roam.corp.google.com>
-Content-Type: text/plain; charset="windows-1252"
+        Wed, 9 Jan 2019 01:15:39 -0500
+Received: from mga09.intel.com ([134.134.136.24]:51375 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728469AbfAIGPi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 01:15:38 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Jan 2019 22:15:38 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,456,1539673200"; 
+   d="scan'208";a="124550719"
+Received: from fmsmsx106.amr.corp.intel.com ([10.18.124.204])
+  by orsmga002.jf.intel.com with ESMTP; 08 Jan 2019 22:15:37 -0800
+Received: from bgsmsx151.gar.corp.intel.com (10.224.48.42) by
+ FMSMSX106.amr.corp.intel.com (10.18.124.204) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Tue, 8 Jan 2019 22:15:37 -0800
+Received: from bgsmsx106.gar.corp.intel.com ([169.254.1.41]) by
+ BGSMSX151.gar.corp.intel.com ([169.254.3.74]) with mapi id 14.03.0415.000;
+ Wed, 9 Jan 2019 11:45:34 +0530
+From:   "Garnayak, Sarada Prasanna" <sarada.prasanna.garnayak@intel.com>
+To:     Kalle Valo <kvalo@codeaurora.org>
+CC:     "Berg, Johannes" <johannes.berg@intel.com>,
+        Jouni Malinen <j@w1.fi>,
+        Sergey Matyukevich <sergey.matyukevich.os@quantenna.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>
+Subject: RE: [RFC PATCH v1] cfg80211/nl80211: add support for AID assignment
+ by driver : https://patchwork.kernel.org/patch/10726899/
+Thread-Topic: [RFC PATCH v1] cfg80211/nl80211: add support for AID
+ assignment by driver : https://patchwork.kernel.org/patch/10726899/
+Thread-Index: AQHUp3Zo9Qbv3hcn4E20UENUpg1TcqWmdkcQ
+Date:   Wed, 9 Jan 2019 06:15:33 +0000
+Message-ID: <751CDD2CADF63344AAEAE35AACE235DCCD3488@BGSMSX106.gar.corp.intel.com>
+References: <751CDD2CADF63344AAEAE35AACE235DCCC3BCD@BGSMSX106.gar.corp.intel.com>
+ <87a7kbqd6s.fsf@kamboji.qca.qualcomm.com>
+In-Reply-To: <87a7kbqd6s.fsf@kamboji.qca.qualcomm.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMzk3MTI5MDMtN2E0Yi00MDM4LWIxYzktMmUyMmQ5MDlkNDIwIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiQW5mVVBTM28zaStpeXY1MlBiUVwvdnE2ZlNEV3NuRlBJbXdac1J0UkhyMkh2Uk15aXprXC9Lb3plVmRneUZET1BMIn0=
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-originating-ip: [10.223.10.10]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/1/9 12:38, Jaegeuk Kim wrote:
-> On 01/07, Chao Yu wrote:
->> On 2019/1/5 4:33, Jaegeuk Kim wrote:
->>> On 01/04, Sahitya Tummala wrote:
->>>> On Mon, Nov 26, 2018 at 10:17:20AM +0530, Sahitya Tummala wrote:
->>>>> When there is a failure in f2fs_fill_super() after/during
->>>>> the recovery of fsync'd nodes, it frees the current sbi and
->>>>> retries again. This time the mount is successful, but the files
->>>>> that got recovered before retry, still holds the extent tree,
->>>>> whose extent nodes list is corrupted since sbi and sbi->extent_list
->>>>> is freed up. The list_del corruption issue is observed when the
->>>>> file system is getting unmounted and when those recoverd files extent
->>>>> node is being freed up in the below context.
->>>>>
->>>>> list_del corruption. prev->next should be fffffff1e1ef5480, but was (null)
->>>>> <...>
->>>>> kernel BUG at kernel/msm-4.14/lib/list_debug.c:53!
->>>>> task: fffffff1f46f2280 task.stack: ffffff8008068000
->>>>> lr : __list_del_entry_valid+0x94/0xb4
->>>>> pc : __list_del_entry_valid+0x94/0xb4
->>>>> <...>
->>>>> Call trace:
->>>>> __list_del_entry_valid+0x94/0xb4
->>>>> __release_extent_node+0xb0/0x114
->>>>> __free_extent_tree+0x58/0x7c
->>>>> f2fs_shrink_extent_tree+0xdc/0x3b0
->>>>> f2fs_leave_shrinker+0x28/0x7c
->>>>> f2fs_put_super+0xfc/0x1e0
->>>>> generic_shutdown_super+0x70/0xf4
->>>>> kill_block_super+0x2c/0x5c
->>>>> kill_f2fs_super+0x44/0x50
->>>>> deactivate_locked_super+0x60/0x8c
->>>>> deactivate_super+0x68/0x74
->>>>> cleanup_mnt+0x40/0x78
->>>>> __cleanup_mnt+0x1c/0x28
->>>>> task_work_run+0x48/0xd0
->>>>> do_notify_resume+0x678/0xe98
->>>>> work_pending+0x8/0x14
->>>>>
->>>>> Fix this by cleaning up inodes, extent tree and nodes of those
->>>>> recovered files before freeing up sbi and before next retry.
->>>>>
->>>> Hi Jaegeuk, Chao,
->>>>
->>>> I have observed another scenario where the similar list corruption issue
->>>> can happen with sbi->inode_list as well. If recover_fsync_data()
->>>> fails at some point in write_checkpoint() due to some error and if
->>>> those recovered inodes are still dirty, then after the mount is
->>>> successful, this issue is observed when that dirty inode is under 
->>>> writeback.
->>>
->>> recover_fsync_data() does iget/iput in pair, and destroy_fsync_dnodes() drops
->>> its dirty list and call iput(), when there is an error. So, after then, there'd
->>> be no dirty inodes. If there's no error, checkpoint() flushes quota/dentry pages
->>> in dirty inodes as well. Can we check where this dirty inode came from?
->>
->> I guess it comes from:
->>
->> f2fs_recover_fsync_data()
->>
->> 	/* Needed for iput() to work correctly and not trash data */
->> 	sbi->sb->s_flags |= SB_ACTIVE;
->>
->> iput_final()
->>
->> 	if (!drop && (sb->s_flags & SB_ACTIVE)) {
->> 		inode_add_lru(inode);
->> 		spin_unlock(&inode->i_lock);
->> 		return;
->> 	}
->>
->> So dirty data in those inode can be remained after iput(), then meta/node
->> can be persisted during next checkpoint, if checkpoint failed due to error,
->> dirty inode remain in system. IIUC.
-> 
-> 
-> 749         err = recover_data(sbi, &inode_list, &tmp_inode_list, &dir_list);
-> 750         if (!err)
-> 751                 f2fs_bug_on(sbi, !list_empty(&inode_list));
-> 752         else {
-> 753                 /* restore s_flags to let iput() trash data */
-> 754                 sbi->sb->s_flags = s_flags;
-> 755         }
-> 
-> We deactivate sb before iput?
-
-We only restore s_flags in error path of recover_data? I remember Sahitya
-said his case is encountering error in later checkpoint()?
-
-Thanks,
-
-> 
->>
->>>
->>> Oh, one sceanrio can be an error by f2fs_disable_checkpoint() which will do GC.
->>>
->>>>
->>>> [   90.400500] list_del corruption. prev->next should be ffffffed1f566208, but was (null)
->>>> [   90.675349] Call trace:
->>>> [   90.677869]  __list_del_entry_valid+0x94/0xb4
->>>> [   90.682351]  remove_dirty_inode+0xac/0x114
->>>> [   90.686563]  __f2fs_write_data_pages+0x6a8/0x6c8
->>>> [   90.691302]  f2fs_write_data_pages+0x40/0x4c
->>>> [   90.695695]  do_writepages+0x80/0xf0
->>>> [   90.699372]  __writeback_single_inode+0xdc/0x4ac
->>>> [   90.704113]  writeback_sb_inodes+0x280/0x440
->>>> [   90.708501]  wb_writeback+0x1b8/0x3d0
->>>> [   90.712267]  wb_workfn+0x1a8/0x4d4
->>>> [   90.715765]  process_one_work+0x1c0/0x3d4
->>>> [   90.719883]  worker_thread+0x224/0x344
->>>> [   90.723739]  kthread+0x120/0x130
->>>> [   90.727055]  ret_from_fork+0x10/0x18
->>>>
->>>> I think it is better to cleanup those inodes completely before freeing sbi
->>>> and before next retry as done in this patch. Would you like to re-consider
->>>> this patch for this new issue?
->>>
->>> The patch was merged in mainline already.
->>> Could you take a look at this patch?
->>>
->>> >From cb1d20e640402beed300c2bdce79311ee8a781ad Mon Sep 17 00:00:00 2001
->>> From: Jaegeuk Kim <jaegeuk@kernel.org>
->>> Date: Fri, 4 Jan 2019 12:29:00 -0800
->>> Subject: [PATCH] f2fs: sync filesystem after roll-forward recovery
->>
->> You mean android kernel mainline?
-> 
-> I meant the previous patch was upstreamed. We need another patch to address this
-> second issue.
-> 
-> Thanks,
-> 
->>
->> Thanks,
->>
->>>
->>> Some works after roll-forward recovery can get an error which will release
->>> all the data structures. Let's flush them in order to make it clean.
->>>
->>> One possible corruption came from:
->>>
->>> [   90.400500] list_del corruption. prev->next should be ffffffed1f566208, but was (null)
->>> [   90.675349] Call trace:
->>> [   90.677869]  __list_del_entry_valid+0x94/0xb4
->>> [   90.682351]  remove_dirty_inode+0xac/0x114
->>> [   90.686563]  __f2fs_write_data_pages+0x6a8/0x6c8
->>> [   90.691302]  f2fs_write_data_pages+0x40/0x4c
->>> [   90.695695]  do_writepages+0x80/0xf0
->>> [   90.699372]  __writeback_single_inode+0xdc/0x4ac
->>> [   90.704113]  writeback_sb_inodes+0x280/0x440
->>> [   90.708501]  wb_writeback+0x1b8/0x3d0
->>> [   90.712267]  wb_workfn+0x1a8/0x4d4
->>> [   90.715765]  process_one_work+0x1c0/0x3d4
->>> [   90.719883]  worker_thread+0x224/0x344
->>> [   90.723739]  kthread+0x120/0x130
->>> [   90.727055]  ret_from_fork+0x10/0x18
->>>
->>> Reported-by: Sahitya Tummala <stummala@codeaurora.org>
->>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
->>> ---
->>>  fs/f2fs/super.c | 8 ++++++--
->>>  1 file changed, 6 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
->>> index 547cb7459be7..bb02186293a3 100644
->>> --- a/fs/f2fs/super.c
->>> +++ b/fs/f2fs/super.c
->>> @@ -3357,7 +3357,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
->>>  	if (test_opt(sbi, DISABLE_CHECKPOINT)) {
->>>  		err = f2fs_disable_checkpoint(sbi);
->>>  		if (err)
->>> -			goto free_meta;
->>> +			goto sync_free_meta;
->>>  	} else if (is_set_ckpt_flags(sbi, CP_DISABLED_FLAG)) {
->>>  		f2fs_enable_checkpoint(sbi);
->>>  	}
->>> @@ -3370,7 +3370,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
->>>  		/* After POR, we can run background GC thread.*/
->>>  		err = f2fs_start_gc_thread(sbi);
->>>  		if (err)
->>> -			goto free_meta;
->>> +			goto sync_free_meta;
->>>  	}
->>>  	kvfree(options);
->>>  
->>> @@ -3392,6 +3392,10 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
->>>  	f2fs_update_time(sbi, REQ_TIME);
->>>  	return 0;
->>>  
->>> +sync_free_meta:
->>> +	/* safe to flush all the data */
->>> +	sync_filesystem(sbi->sb);
->>> +
->>>  free_meta:
->>>  	/* flush dirty orphan inode objects */
->>>  	f2fs_sync_inode_meta(sbi);
->>>
-> 
-> .
-> 
-
+TXkgQmFkLCBPbndhcmRzIEkgd2lsbCBzdWJtaXQgYSBuZXcgdmVyc2lvbiBvZiB0aGUgUkZDIHBh
+dGNoIHRvIGFkZHJlc3MgdGhlIHJldmlld2VyIGNvbW1lbnRzIG9uIHByZXZpb3VzIFJGQyBwYXRj
+aCBhbmQgZm9yIHF1ZXJ5IG9yIHN1Z2dlc3Rpb25zLCBJIHdpbGwgZGVmaW5pdGVseSBjYyBMaW51
+eC13aXJlbGVzcyBpbiBteSBtYWlsIHdpdGhvdXQgYW55IGV4dGVybmFsIGxpbmsgb3IgYXR0YWNo
+bWVudC4NCg0KVGhhbmtzLA0KUHJhc2FubmENCg0KLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0N
+CkZyb206IEthbGxlIFZhbG8gW21haWx0bzprdmFsb0Bjb2RlYXVyb3JhLm9yZ10gDQpTZW50OiBU
+dWVzZGF5LCBKYW51YXJ5IDgsIDIwMTkgMTA6NTAgUE0NClRvOiBHYXJuYXlhaywgU2FyYWRhIFBy
+YXNhbm5hIDxzYXJhZGEucHJhc2FubmEuZ2FybmF5YWtAaW50ZWwuY29tPg0KQ2M6IEJlcmcsIEpv
+aGFubmVzIDxqb2hhbm5lcy5iZXJnQGludGVsLmNvbT47IEpvdW5pIE1hbGluZW4gPGpAdzEuZmk+
+OyBTZXJnZXkgTWF0eXVrZXZpY2ggPHNlcmdleS5tYXR5dWtldmljaC5vc0BxdWFudGVubmEuY29t
+PjsgbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZzsgbGludXgtd2lyZWxlc3NAdmdlci5rZXJu
+ZWwub3JnDQpTdWJqZWN0OiBSZTogW1JGQyBQQVRDSCB2MV0gY2ZnODAyMTEvbmw4MDIxMTogYWRk
+IHN1cHBvcnQgZm9yIEFJRCBhc3NpZ25tZW50IGJ5IGRyaXZlciA6IGh0dHBzOi8vcGF0Y2h3b3Jr
+Lmtlcm5lbC5vcmcvcGF0Y2gvMTA3MjY4OTkvDQoNCisgbGludXgtd2lyZWxlc3MNCg0KIkdhcm5h
+eWFrLCBTYXJhZGEgUHJhc2FubmEiIDxzYXJhZGEucHJhc2FubmEuZ2FybmF5YWtAaW50ZWwuY29t
+PiB3cml0ZXM6DQoNCj4gVGhhbmsgeW91IHNvIG11Y2ggZm9yIHJldmlld2luZyBteSBSRkMgcGF0
+Y2ggYW5kIGhlcmUgSSB3b3VsZCBsaWtlIHRvIA0KPiBhZGRyZXNzIHRoZSBiaWcgY29uY2VybnMv
+Y29tbWVudHMgYWJvdXQgdGhpcyBSRkMgcGF0Y2ggbGlrZQ0KPg0KPiDDmCBXaGF0IGFyZSB0aGUg
+ZXhhY3QgdXNlIGNhc2UgYW5kIHBvdGVudGlhbCB1c2VyIG9mIHRoaXMgcGF0Y2guDQo+DQo+IMOY
+IEhvdyB0aGUgSG9zdGFwZCB3aWxsIGhhbmRsZSB0aGlzIGdldCBhaWQgYW5kIGZyZWUgYWlkLg0K
+Pg0KPiDDmCBldGMuDQo+DQo+IEluIHRoZSBjdXJyZW50IGltcGxlbWVudGF0aW9uIGluIFdMQU4g
+U3RhY2ssIHRoZSBob3N0YXBkIGlzIGFzc2lnbmluZyANCj4gdGhlIEFJRCBmb3IgYSBzdGF0aW9u
+IGR1cmluZyBhc3NvY2lhdGlvbi4NCj4NCj4gQnV0IHdlIGhhdmUgYSBmZXcgV0xBTiBoYXJkd2Fy
+ZSB3aGljaCBpcyBtYWludGFpbmluZyB0aGUgQUlEIGluIHRoZSANCj4gV0xBTiBoYXJkd2FyZSBs
+ZXZlbCBpdHNlbGYgYW5kIHRoZSBmaXJtd2FyZSBjaGVja2luZyB0aGlzIEFJRCBpbiB0aGUgDQo+
+IGhhcmR3YXJlIGxldmVsIGFjY29yZGluZyB0byB0aGF0IHRoZSBmaXJtd2FyZSBpcyB0YWtpbmcg
+YWN0aW9uIG9uIA0KPiBzdGF0aW9uIG1hbmFnZW1lbnQNCj4NCj4gbGlrZSAoU3RhdGlvbiBEQiBt
+YW5hZ2VtZW50LCBCQSBhZ3JlZW1lbnQsIFNNUFMgYW5kIFRNIG1hbmFnZW1lbnQgDQo+IGZyYW1l
+IGV0Yy4uLi4pLiBGb3IgdGhpcyByZWFzb24sIHdlIG5lZWQgdGhlc2UgZ2V0X2FpZC9mcmVlX2Fp
+ZC4NCj4NCj4gQWxzbyBoZXJlIEkgYW0gYXR0YWNoaW5nIHRoZSBIb3N0YXBkIFJGQyBQYXRjaCBm
+b3IgdGhlIHNhbWUuIFBGQSANCj4gKGhvc3RhcGQgcGF0Y2gsIGNhbGwgZmxvdyBkaWFncmFtIGFu
+ZCBjb21tZW50cyBvbiB0aGlzIGtlcm5lbCBwYXRjaCkNCj4NCj4gUGxlYXNlIHJldmlldyB0aGUg
+Y2FsbCBmbG93IGJlbG93Og0KDQpZb3UgbWFkZSBmZXcgY3J1Y2lhbCBtaXN0YWtlczoNCg0KMS4g
+WW91IGRpZCBub3QgQ0MgbGludXgtd2lyZWxlc3MuDQoNCjIuIFlvdSBzdWJtaXR0ZWQgdGhlIG1l
+c3NhZ2UgYXMgSFRNTCBhbmQgb3VyIGxpc3RzIGF1dG9tYXRpY2FsbHkgZmlsdGVyDQogICB0aG9z
+ZS4NCg0KMy4gWW91IGF0dGFjaGVkIGEgcG93ZXJwb2ludCBmaWxlIGFuZCBJIHdvdWxkIGhvcGUg
+dGhhdCBvdXIgbGlzdHMNCiAgIGF1dG9tYXRpY2FsbHkgZmlsdGVyIHRob3NlIGFzIHdlbGwuIEF0
+IGxlYXN0IEknbSBub3QgZ29pbmcgdG8gb3Blbg0KICAgYW55IHJhbmRvbSBwb3dlcnBvaW50L3dv
+cmQgZmlsZXMgSSByZWNlaXZlIHZpYSBlbWFpbC4NCg0KLS0NCkthbGxlIFZhbG8NCg==
