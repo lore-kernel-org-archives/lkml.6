@@ -2,162 +2,192 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57811C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 06:20:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3860C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 06:21:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B20E21741
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 06:20:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 80D1B214C6
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 06:21:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hba7yK8a"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Qmw8yr1G";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="kXpB/Gds"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729705AbfAIGUL (ORCPT
+        id S1729724AbfAIGVD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 01:20:11 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:41217 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728469AbfAIGUL (ORCPT
+        Wed, 9 Jan 2019 01:21:03 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:53390 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729435AbfAIGVD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 01:20:11 -0500
-Received: by mail-lj1-f194.google.com with SMTP id k15-v6so5456062ljc.8;
-        Tue, 08 Jan 2019 22:20:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=unhJqH5dkl5zwyjOSBpErYG4HvgIPNC57FRiJi4Fosw=;
-        b=hba7yK8aJGWTFB74wgdRFgefPiaiqYvDkftZTCutJCN9whuxJZUw0l0hpve/nqdCYT
-         E595b/pGW8M76A2e0TtxC67STTIQlcLZV+EF7t0RFE7Kks886XI1CcjsVA3POQ0cTOud
-         YU0aONb/rxXCmdZCXiJnRu5ELCr7Tp+1vuCGFZWhp4zf4DryALtQeiDuEbuqoLGeSdAp
-         AoBgMrTGQdsw/pFc2A1ux4LsWbG21uVxgnsW2nSLKzkONWw1QsdoiwpEIM5ujHNX+D8P
-         uRRX2hZm0xezVUCNSdbqkSbEyBIPh6hIU0ziL7sysDbYjeu3zOSNEQGvCQ5fLkGIRUGh
-         aSQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=unhJqH5dkl5zwyjOSBpErYG4HvgIPNC57FRiJi4Fosw=;
-        b=d/FLA+l9JdtnxSBEc3RPhcdkYTTHH4Qd4rCtlE/ajue9V4n56uqToLlR3WM/Joj5Bx
-         7OdVu+umzVUrBdryTtYyGrTqasOwwh6wBhtFy5kJYtx9pexUfEXrDkMz2Avoa8e3wnem
-         sJbYkKHDUu1CvILixAAvhDkCYFisK0yE780Fv+jQtob3g5p0W2OFsnDFZIwrYbPaaqY5
-         th9psDeVlMIvqHyjASFGvwIlpJ8R1bCe+vzJZgXpVFfq0HcikjcZ1F4DxMoPHrCashC4
-         GTn1U5zNt7aR8jPmXeTsv/6pcP+otMXz36HBXPgzP5d+VQDYuoQu13TtamBZZ8TIB3yk
-         0vPw==
-X-Gm-Message-State: AJcUukcFUiE7mL6NBcaMp9WmBj/f+c4o2x4kT0oMg11k1ldoxUbouzMt
-        h0dBVjPqKm+dzQ4+lyY5TTy9NWhojlU=
-X-Google-Smtp-Source: ALg8bN6SbEVdOIAIYIBWNSuURhtNSh3QOnL8oYOkncJRbS5Vu3YUBHN7taiDZRM9GpBW+gDmQEjc+A==
-X-Received: by 2002:a2e:3218:: with SMTP id y24-v6mr2849213ljy.157.1547014807720;
-        Tue, 08 Jan 2019 22:20:07 -0800 (PST)
-Received: from ?IPv6:2001:14ba:8017:3300:884:4687:bd95:28f1? (dtynxhyyktvdkssp1gd4t-3.rev.dnainternet.fi. [2001:14ba:8017:3300:884:4687:bd95:28f1])
-        by smtp.googlemail.com with ESMTPSA id r7-v6sm14645354ljc.10.2019.01.08.22.20.05
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 08 Jan 2019 22:20:06 -0800 (PST)
-Subject: Re: [PATCH 2/2] leds: lp5024: Add the LP5024/18 RGB LED driver
-To:     Dan Murphy <dmurphy@ti.com>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>
-Cc:     robh+dt@kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
-References: <8740cfd6-a6b5-ad27-313b-984a9febf18a@ti.com>
- <20181219201047.GA23448@amd> <fd624cc1-9997-1cd5-c5cc-62e6897997cf@ti.com>
- <54f28115-0a7d-8e9c-3bec-6e91fb3981ec@gmail.com>
- <cd90f179-6c16-823f-496f-27f141e9c322@ti.com>
- <a72c11c0-949b-bdbc-df2c-4490e04a1065@gmail.com>
- <986b5105-2fdb-bd25-7c8a-ca8fd1ade821@gmail.com>
- <7f205102-e854-f1cb-cc03-1307d1cddc87@gmail.com>
- <c9f8965a-90f4-b456-8225-c70694c9f071@gmail.com>
- <cf6c0025-36e7-197b-b27a-1f31fb45cc38@gmail.com> <20190104201256.GA2931@amd>
- <a4e3a782-de76-ba91-3727-4db69cf27c3a@gmail.com>
- <90a2ed79-b437-af14-4538-430d8723cc6b@gmail.com>
- <d73aa021-509d-ad34-5871-76560e868d03@ti.com>
-From:   =?UTF-8?B?VmVzYSBKw6TDpHNrZWzDpGluZW4=?= <dachaac@gmail.com>
-Message-ID: <34e8b474-0a3e-f51b-aa8a-5b892102044d@gmail.com>
-Date:   Wed, 9 Jan 2019 08:20:04 +0200
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
- Gecko/20100101 Thunderbird/60.4.0
+        Wed, 9 Jan 2019 01:21:03 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 05604608A5; Wed,  9 Jan 2019 06:21:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1547014862;
+        bh=miqONhq/Mg6eo4l1CAoydxj1rmG3UAn+C7WxuNPSFqQ=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=Qmw8yr1GfhVdjLLAwXT9kF4pqh4BAWpnou8ePJzDYM04E2pa/ArzzW2JmHhpR03/X
+         0wXCTt4mt0H6NL9cWvXULP6ROd+DVfnQpofWDFXC4s/oZF+EtzNJpJvzYdjEUss7HW
+         3iDCf52YTGitK5cnFV1nzPbiDACXkmp0s0sIfVQs=
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id 98D6760265;
+        Wed,  9 Jan 2019 06:21:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1547014860;
+        bh=miqONhq/Mg6eo4l1CAoydxj1rmG3UAn+C7WxuNPSFqQ=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=kXpB/GdsIngirTjM3cIF7ooA6ctYe2tNsSg1ohjhZmEWhHJQCBubCC5mX03SPGw19
+         wj0eIH2XcZ00NalW+pR162NIWHfkPiI2QsamJcRJxHxJjbSAljpSkYcvOQkDJ/xcGz
+         V3xa5ihFLllFT5bqSOBjSQ7yPS5jxYnuIDPrFmaU=
 MIME-Version: 1.0
-In-Reply-To: <d73aa021-509d-ad34-5871-76560e868d03@ti.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Wed, 09 Jan 2019 11:51:00 +0530
+From:   Arun KS <arunks@codeaurora.org>
+To:     Alexander Duyck <alexander.h.duyck@linux.intel.com>
+Cc:     arunks.linux@gmail.com, akpm@linux-foundation.org,
+        mhocko@kernel.org, vbabka@suse.cz, osalvador@suse.de,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        getarunks@gmail.com
+Subject: Re: [PATCH v7] mm/page_alloc.c: memory_hotplug: free pages as higher
+ order
+In-Reply-To: <7c81c8bc741819e87e9a2a39a8b1b6d2f8d3423a.camel@linux.intel.com>
+References: <1546578076-31716-1-git-send-email-arunks@codeaurora.org>
+ <7c81c8bc741819e87e9a2a39a8b1b6d2f8d3423a.camel@linux.intel.com>
+Message-ID: <fdc656df7c54819f60d9a1682c84b14f@codeaurora.org>
+X-Sender: arunks@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Dan,
-
-On 07/01/2019 21.34, Dan Murphy wrote:
-> Vesa
+On 2019-01-09 03:47, Alexander Duyck wrote:
+> On Fri, 2019-01-04 at 10:31 +0530, Arun KS wrote:
+>> When freeing pages are done with higher order, time spent on 
+>> coalescing
+>> pages by buddy allocator can be reduced.  With section size of 256MB, 
+>> hot
+>> add latency of a single section shows improvement from 50-60 ms to 
+>> less
+>> than 1 ms, hence improving the hot add latency by 60 times.  Modify
+>> external providers of online callback to align with the change.
+>> 
+>> Signed-off-by: Arun KS <arunks@codeaurora.org>
+>> Acked-by: Michal Hocko <mhocko@suse.com>
+>> Reviewed-by: Oscar Salvador <osalvador@suse.de>
 > 
-> On 1/4/19 6:39 PM, Vesa Jääskeläinen wrote:
->> Hi Jacek,
->>
->> On 04/01/2019 23.37, Jacek Anaszewski wrote:
->>> But, aside from that hypothetic issue, we need a solution for
->>> LEDn_BRIGHTNESS feature of lp5024, i.e. setting color intensity
->>> via a single register write. How would you propose to address that?
->>
->> You could model it to something like this in device tree:
->>
->> led-module @ <i2c-address> {
->>      compatible = "lp5024";
->>
->>      // There is in hardware setup to use either linear or
->>      // logarithmic scaling:
->>      //enable-logarithmic-brightness;
->>
->>      led0 {
->>          // this will create led instance for LED0 in lp5024
->>          label = "lp-led0";
->>         
->>          // This specifies LED number within lp5024
->>          led-index = <0>;   // set output-base as 0*3 == 0
->>         
->>          element-red {
->>              // refers to OUT0
->>              output-offset = <0>;
->>          };
->>         
->>          element-green {
->>              // refers to OUT1
->>              output-offset = <1>;
->>          };
->>         
->>          element-blue {
->>              // refers to OUT2
->>              output-offset = <2>;
->>          };
->>         
->>      };
->>
->>      led1 {
->>          // this will create led instance for LED1 in lp5024
->>          label = "lp-led1";
->>         
->>          // This specifies LED number within lp5024
->>          led-index = <1>;   // set output-base as 1*3 == 3
->>
+> Sorry, ended up encountering a couple more things that have me a bit
+> confused.
 > 
-> Can we not use led-sources like I have done already?
+> [...]
+> 
+>> diff --git a/drivers/hv/hv_balloon.c b/drivers/hv/hv_balloon.c
+>> index 5301fef..211f3fe 100644
+>> --- a/drivers/hv/hv_balloon.c
+>> +++ b/drivers/hv/hv_balloon.c
+>> @@ -771,7 +771,7 @@ static void hv_mem_hot_add(unsigned long start, 
+>> unsigned long size,
+>>  	}
+>>  }
+>> 
+>> -static void hv_online_page(struct page *pg)
+>> +static int hv_online_page(struct page *pg, unsigned int order)
+>>  {
+>>  	struct hv_hotadd_state *has;
+>>  	unsigned long flags;
+>> @@ -783,10 +783,12 @@ static void hv_online_page(struct page *pg)
+>>  		if ((pfn < has->start_pfn) || (pfn >= has->end_pfn))
+>>  			continue;
+>> 
+>> -		hv_page_online_one(has, pg);
+>> +		hv_bring_pgs_online(has, pfn, (1UL << order));
+>>  		break;
+>>  	}
+>>  	spin_unlock_irqrestore(&dm_device.ha_lock, flags);
+>> +
+>> +	return 0;
+>>  }
+>> 
+>>  static int pfn_covered(unsigned long start_pfn, unsigned long 
+>> pfn_cnt)
+> 
+> So the question I have is why was a return value added to these
+> functions? They were previously void types and now they are int. What
+> is the return value expected other than 0?
 
-It was just for illustration of the idea. Names can be agreed. I have 
-nothing against led-sources name. I was just looking at datasheet to try 
-to undestand what it did and then tried to figure out if it could be 
-mapped the idea I have been playing with.
+Earlier with returning a void there was now way for an arch code to 
+denying onlining of this particular page. By using an int as return 
+type, we can implement this. In one of the boards I was using, there are 
+some pages which should not be onlined because they are used for other 
+purposes(like secure trust zone or hypervisor).
 
-> I really like to keep the DT nodes simple and re-use nodes that exist if possible.
+> 
+>> diff --git a/drivers/xen/balloon.c b/drivers/xen/balloon.c
+>> index ceb5048..95f888f 100644
+>> --- a/drivers/xen/balloon.c
+>> +++ b/drivers/xen/balloon.c
+>> @@ -345,8 +345,8 @@ static enum bp_state 
+>> reserve_additional_memory(void)
+>> 
+>>  	/*
+>>  	 * add_memory_resource() will call online_pages() which in its turn
+>> -	 * will call xen_online_page() callback causing deadlock if we don't
+>> -	 * release balloon_mutex here. Unlocking here is safe because the
+>> +	 * will call xen_bring_pgs_online() callback causing deadlock if we
+>> +	 * don't release balloon_mutex here. Unlocking here is safe because 
+>> the
+>>  	 * callers drop the mutex before trying again.
+>>  	 */
+>>  	mutex_unlock(&balloon_mutex);
+>> @@ -369,15 +369,22 @@ static enum bp_state 
+>> reserve_additional_memory(void)
+>>  	return BP_ECANCELED;
+>>  }
+>> 
+>> -static void xen_online_page(struct page *page)
+>> +static int xen_bring_pgs_online(struct page *pg, unsigned int order)
+> 
+> Why did we rename this function? I see it was added as a new function
+> in v3, however in v4 we ended up replacing it completely. So why not
+> just keep the same name and make it easier for us to identify that the
+> is the Xen version of the XXX_online_pages callback?
 
-I'll reply to Jacek's email about more clarifications of the idea.
+Point taken. Will send a patch.
 
-Thanks,
-Vesa Jääskeläinen
+> 
+> [...]
+> 
+>> +static int online_pages_blocks(unsigned long start, unsigned long 
+>> nr_pages)
+>> +{
+>> +	unsigned long end = start + nr_pages;
+>> +	int order, ret, onlined_pages = 0;
+>> +
+>> +	while (start < end) {
+>> +		order = min(MAX_ORDER - 1,
+>> +			get_order(PFN_PHYS(end) - PFN_PHYS(start)));
+>> +
+>> +		ret = (*online_page_callback)(pfn_to_page(start), order);
+>> +		if (!ret)
+>> +			onlined_pages += (1UL << order);
+>> +		else if (ret > 0)
+>> +			onlined_pages += ret;
+>> +
+> 
+> So if the ret > 0 it is supposed to represent how many pages were
+> onlined within a given block? What if the ret was negative? Really I am
+> not a fan of adding a return value to the online functions unless we
+> specifically document what the expected return values are supposed to
+> be. If we don't have any return values other than 0 there isn't much
+> point in having one anyway.
 
-> My code already maps and groups the outputs into the associated banks
+I ll document this.
 
+Regards,
+Arun
 
