@@ -2,112 +2,177 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7BF2C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 23:39:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CF8BC43444
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 23:39:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AED8120661
+	by mail.kernel.org (Postfix) with ESMTP id DC9E52075C
 	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 23:39:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="H3j7dJ+u"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726640AbfAIXeL (ORCPT
+        id S1726680AbfAIXjK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 18:34:11 -0500
-Received: from mail-lf1-f46.google.com ([209.85.167.46]:35326 "EHLO
-        mail-lf1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726146AbfAIXeK (ORCPT
+        Wed, 9 Jan 2019 18:39:10 -0500
+Received: from gateway21.websitewelcome.com ([192.185.46.109]:49643 "EHLO
+        gateway21.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726505AbfAIXjK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 18:34:10 -0500
-Received: by mail-lf1-f46.google.com with SMTP id e26so6975542lfc.2
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jan 2019 15:34:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Kihea9656pyrZLekdKJKkbc+TkTwWk+wlGPYP62NVDs=;
-        b=H3j7dJ+utHvOHiJP+4P/itsVuR3HAJBKrIunG8RM+JfHYw5EUICbpdOv0Ji44E9Zby
-         RyaIDz3n7mOy8mx2d4jdtWhVnNBf3iQP2UztKg1Qku8sWR7F/5wjJFb8WllKluP0jll0
-         bgeBuMwSVvM+X1Au59rOLXWdzfqzjZPyTGyPw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Kihea9656pyrZLekdKJKkbc+TkTwWk+wlGPYP62NVDs=;
-        b=GkO6xKuVepDCWuNJbUoKtbKp/ZDju4YlR6YnNOJMk66DQZxK/wRtit/SM014C7OSe6
-         ffv+lQL6nzUia0jdT73zBJRH3TLBHg9lHEvEKdeJLKBe9x3+1nl395cUAxz5m2vI4Jk+
-         DOUhOp5Hf/3ck0PkU2eQ3PNF5DBtlb9KF5zPKrIeARsj366RECx1gJ2wr6pjS00U57Lq
-         E/fa0lHT42IN1klJXaPMlrGfLRHTKSQ69k8jB8iwzhv8XtFHHeZvVJ/BPe5my1iHhCKu
-         gpZvYUMxhNwP1QaRSzcBlgjG5mYHED2TDuGB23Cj1hNTftCWpv5tpYoceJpWaXeENWPU
-         9ppQ==
-X-Gm-Message-State: AJcUukdI9EYoj8Gf5pSfvREKEEQnAReRvTOPuWSJpTvYRmAmUV8dDo/m
-        FEspz+OYRrO03fBalbrmWGeGW8qnHF8=
-X-Google-Smtp-Source: ALg8bN5WeUgmFrCleaT7j6UDu/wFYUIA9EyKant3ShDhs9mcr7FvgfFTf3QWvIBlamZCFly0r3hzgQ==
-X-Received: by 2002:ac2:4116:: with SMTP id b22mr4786941lfi.19.1547076848141;
-        Wed, 09 Jan 2019 15:34:08 -0800 (PST)
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com. [209.85.167.46])
-        by smtp.gmail.com with ESMTPSA id 11-v6sm14736469ljv.1.2019.01.09.15.34.06
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 09 Jan 2019 15:34:07 -0800 (PST)
-Received: by mail-lf1-f46.google.com with SMTP id n18so6971625lfh.6
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jan 2019 15:34:06 -0800 (PST)
-X-Received: by 2002:a19:c014:: with SMTP id q20mr4297785lff.16.1547076846414;
- Wed, 09 Jan 2019 15:34:06 -0800 (PST)
+        Wed, 9 Jan 2019 18:39:10 -0500
+Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
+        by gateway21.websitewelcome.com (Postfix) with ESMTP id 79339400DAF7F
+        for <linux-kernel@vger.kernel.org>; Wed,  9 Jan 2019 17:39:08 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id hNREgJgQQ2PzOhNREgy0c3; Wed, 09 Jan 2019 17:39:08 -0600
+X-Authority-Reason: nr=8
+Received: from [189.250.130.205] (port=50446 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1ghNRD-002ypT-NB; Wed, 09 Jan 2019 17:39:07 -0600
+Date:   Wed, 9 Jan 2019 17:39:06 -0600
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Corey Minyard <minyard@acm.org>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     openipmi-developer@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] ipmi: msghandler: Fix potential Spectre v1 vulnerabilities
+Message-ID: <20190109233906.GA4170@embeddedor>
 MIME-Version: 1.0
-References: <20190109203119.GR6310@bombadil.infradead.org>
-In-Reply-To: <20190109203119.GR6310@bombadil.infradead.org>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 9 Jan 2019 15:33:50 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wjjkLv-8oAZPLf=pp4z_-VFpWJw+wTJYevqq0bWWY=L9g@mail.gmail.com>
-Message-ID: <CAHk-=wjjkLv-8oAZPLf=pp4z_-VFpWJw+wTJYevqq0bWWY=L9g@mail.gmail.com>
-Subject: Re: [RFC] Use plan9 C extensions
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.130.205
+X-Source-L: No
+X-Exim-ID: 1ghNRD-002ypT-NB
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.130.205]:50446
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 5
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 9, 2019 at 12:31 PM Matthew Wilcox <willy@infradead.org> wrote:
->
-> While replacing idr_alloc_cyclic(), I've come across a situation in
-> which being able to depend on -fplan9-extensions is going to lead to
-> nicer code in the users.
+channel and addr->channel are indirectly controlled by user-space,
+hence leading to a potential exploitation of the Spectre variant 1
+vulnerability.
 
-Oh, no. Please don't.
+These issues were detected with the help of Smatch:
 
-The subset of the pla9 extensions that are called just "ms" extenions
-is fine. That's a reasonable thing, and is a very natural expansion of
-the unnamed structures we already have - namely being able to
-pre-declare that unnamed structure/union.
+drivers/char/ipmi/ipmi_msghandler.c:1381 ipmi_set_my_address() warn: potential spectre issue 'user->intf->addrinfo' [w] (local cap)
+drivers/char/ipmi/ipmi_msghandler.c:1401 ipmi_get_my_address() warn: potential spectre issue 'user->intf->addrinfo' [r] (local cap)
+drivers/char/ipmi/ipmi_msghandler.c:1421 ipmi_set_my_LUN() warn: potential spectre issue 'user->intf->addrinfo' [w] (local cap)
+drivers/char/ipmi/ipmi_msghandler.c:1441 ipmi_get_my_LUN() warn: potential spectre issue 'user->intf->addrinfo' [r] (local cap)
+drivers/char/ipmi/ipmi_msghandler.c:2260 check_addr() warn: potential spectre issue 'intf->addrinfo' [r] (local cap)
 
-But the full plan9 extensions are nasty, and makes it much too easy to
-write "convenient" code that is really hard to read as an outsider
-because of how the types are silently converted.
+Fix this by sanitizing channel and addr->channel before using them to
+index user->intf->addrinfo and intf->addrinfo, correspondingly.
 
-And I think what you want is explicitly that silent conversion.
+Notice that given that speculation windows are large, the policy is
+to kill the speculation on the first load and not worry if it can be
+completed with a dependent load/store [1].
 
-So no. Don't do it. Use a macro or a inline function that makes the
-conversion explicit so that it's shown when grepping.
+[1] https://lore.kernel.org/lkml/20180423164740.GY17484@dhcp22.suse.cz/
 
-The "one extra argument" is not a strong argument for something that
-simply isn't that common. The upsides of a nonstandard feature like
-that needs to be pretty compelling.
+Cc: stable@vger.kernel.org
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/char/ipmi/ipmi_msghandler.c | 26 ++++++++++++++++++--------
+ 1 file changed, 18 insertions(+), 8 deletions(-)
 
-We've used various gcc extensions since day #1 ("inline" being perhaps
-the biggest one that took _forever_ to become standard C), but these
-things need to have very strong arguments.
+diff --git a/drivers/char/ipmi/ipmi_msghandler.c b/drivers/char/ipmi/ipmi_msghandler.c
+index 480d9bd7e1ab..557e98d9364d 100644
+--- a/drivers/char/ipmi/ipmi_msghandler.c
++++ b/drivers/char/ipmi/ipmi_msghandler.c
+@@ -32,6 +32,7 @@
+ #include <linux/moduleparam.h>
+ #include <linux/workqueue.h>
+ #include <linux/uuid.h>
++#include <linux/nospec.h>
+ 
+ #define IPMI_DRIVER_VERSION "39.2"
+ 
+@@ -1375,10 +1376,12 @@ int ipmi_set_my_address(struct ipmi_user *user,
+ 	if (!user)
+ 		return -ENODEV;
+ 
+-	if (channel >= IPMI_MAX_CHANNELS)
++	if (channel >= IPMI_MAX_CHANNELS) {
+ 		rv = -EINVAL;
+-	else
++	} else {
++		channel = array_index_nospec(channel, IPMI_MAX_CHANNELS);
+ 		user->intf->addrinfo[channel].address = address;
++	}
+ 	release_ipmi_user(user, index);
+ 
+ 	return rv;
+@@ -1395,10 +1398,12 @@ int ipmi_get_my_address(struct ipmi_user *user,
+ 	if (!user)
+ 		return -ENODEV;
+ 
+-	if (channel >= IPMI_MAX_CHANNELS)
++	if (channel >= IPMI_MAX_CHANNELS) {
+ 		rv = -EINVAL;
+-	else
++	} else {
++		channel = array_index_nospec(channel, IPMI_MAX_CHANNELS);
+ 		*address = user->intf->addrinfo[channel].address;
++	}
+ 	release_ipmi_user(user, index);
+ 
+ 	return rv;
+@@ -1415,10 +1420,12 @@ int ipmi_set_my_LUN(struct ipmi_user *user,
+ 	if (!user)
+ 		return -ENODEV;
+ 
+-	if (channel >= IPMI_MAX_CHANNELS)
++	if (channel >= IPMI_MAX_CHANNELS) {
+ 		rv = -EINVAL;
+-	else
++	} else {
++		channel = array_index_nospec(channel, IPMI_MAX_CHANNELS);
+ 		user->intf->addrinfo[channel].lun = LUN & 0x3;
++	}
+ 	release_ipmi_user(user, index);
+ 
+ 	return rv;
+@@ -1435,10 +1442,12 @@ int ipmi_get_my_LUN(struct ipmi_user *user,
+ 	if (!user)
+ 		return -ENODEV;
+ 
+-	if (channel >= IPMI_MAX_CHANNELS)
++	if (channel >= IPMI_MAX_CHANNELS) {
+ 		rv = -EINVAL;
+-	else
++	} else {
++		channel = array_index_nospec(channel, IPMI_MAX_CHANNELS);
+ 		*address = user->intf->addrinfo[channel].lun;
++	}
+ 	release_ipmi_user(user, index);
+ 
+ 	return rv;
+@@ -2257,6 +2266,7 @@ static int check_addr(struct ipmi_smi  *intf,
+ {
+ 	if (addr->channel >= IPMI_MAX_CHANNELS)
+ 		return -EINVAL;
++	addr->channel = array_index_nospec(addr->channel, IPMI_MAX_CHANNELS);
+ 	*lun = intf->addrinfo[addr->channel].lun;
+ 	*saddr = intf->addrinfo[addr->channel].address;
+ 	return 0;
+-- 
+2.20.1
 
-"One extra argument" that could be hidden by a macro or a helper
-inline is simply not a strong argument.
-
-                      Linus
