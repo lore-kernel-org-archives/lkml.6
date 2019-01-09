@@ -2,84 +2,136 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF2FEC43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 12:20:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CAFC9C43444
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 12:20:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B99B20859
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 12:20:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A26DA20665
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 12:20:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730543AbfAIMUG (ORCPT
+        id S1730773AbfAIMUi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 07:20:06 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:37414 "EHLO mx1.redhat.com"
+        Wed, 9 Jan 2019 07:20:38 -0500
+Received: from relay.sw.ru ([185.231.240.75]:42302 "EHLO relay.sw.ru"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727828AbfAIMUG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 07:20:06 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 38FBF89AC6;
-        Wed,  9 Jan 2019 12:20:06 +0000 (UTC)
-Received: from [10.72.12.30] (ovpn-12-30.pek2.redhat.com [10.72.12.30])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1289C1001F5D;
-        Wed,  9 Jan 2019 12:20:01 +0000 (UTC)
-Subject: Re: [PATCH net-next V2 0/3] basic in order support for vhost_net
-To:     mst@redhat.com
-Cc:     kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190109080530.18572-1-jasowang@redhat.com>
-From:   Jason Wang <jasowang@redhat.com>
-Message-ID: <93632cde-bfc6-a284-c40c-d544d7c12d7c@redhat.com>
-Date:   Wed, 9 Jan 2019 20:19:58 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        id S1727828AbfAIMUg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 07:20:36 -0500
+Received: from [172.16.25.169] (helo=localhost.localdomain)
+        by relay.sw.ru with esmtp (Exim 4.91)
+        (envelope-from <ktkhai@virtuozzo.com>)
+        id 1ghCqO-0004gt-O2; Wed, 09 Jan 2019 15:20:24 +0300
+Subject: [PATCH 1/3] mm: Uncharge and keep page in pagecache on memcg reclaim
+From:   Kirill Tkhai <ktkhai@virtuozzo.com>
+To:     akpm@linux-foundation.org, hannes@cmpxchg.org,
+        josef@toxicpanda.com, jack@suse.cz, hughd@google.com,
+        ktkhai@virtuozzo.com, darrick.wong@oracle.com, mhocko@suse.com,
+        aryabinin@virtuozzo.com, guro@fb.com, mgorman@techsingularity.net,
+        shakeelb@google.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Date:   Wed, 09 Jan 2019 15:20:24 +0300
+Message-ID: <154703642447.32690.5604527676583713589.stgit@localhost.localdomain>
+In-Reply-To: <154703479840.32690.6504699919905946726.stgit@localhost.localdomain>
+References: <154703479840.32690.6504699919905946726.stgit@localhost.localdomain>
+User-Agent: StGit/0.18
 MIME-Version: 1.0
-In-Reply-To: <20190109080530.18572-1-jasowang@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Wed, 09 Jan 2019 12:20:06 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This patch makes __remove_mapping() not remove a page from
+pagecache on memcg reclaim. After all mappings are removed
+and refcounter is freezed, we uncharge page memcg. Further
+putback_lru_page() places page into root_mem_cgroup, so it
+remains in pagecache till global reclaim. This gives memcg
+tasks extra possibility to obtain page from pagecache
+instead of launching IO.
 
-On 2019/1/9 下午4:05, Jason Wang wrote:
-> Hi:
->
-> This series implement basic in order feature support for
-> vhost_net. This feature requires both driver and device to use
-> descriptors in order which can simplify the implementation and
-> optimizaton for both side. The series also implement a simple
-> optimization that avoid read available ring. Test shows 10%
-> performance improvement at most.
->
-> More optimizations could be done on top.
->
-> Changes from V1:
-> - no code changes
-> - add result of SMAP off
+Next patch makes pagecache_get_page() to recharge a page
+in case of its memcg is NULL (i.e., on first access after
+uncharging). It looks to be the only function, which is
+used by filesystems to obtain a pagecache page. Here we
+introduce AS_KEEP_MEMCG_RECLAIM flag to mark the filesystems,
+which are reviewed, that they really follow this way. It
+has a sense to keep pages in __remove_mapping() only for
+them. Later, we remove this flags after all filesystems are
+reviewed.
 
+Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
+---
+ include/linux/pagemap.h |    1 +
+ mm/vmscan.c             |   22 ++++++++++++++++++----
+ 2 files changed, 19 insertions(+), 4 deletions(-)
 
-Just notice the patch works only for some specific case e.g a buffer 
-only contain one descriptor. Will respin.
+diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+index 1020e6f40880..1b880da85868 100644
+--- a/include/linux/pagemap.h
++++ b/include/linux/pagemap.h
+@@ -29,6 +29,7 @@ enum mapping_flags {
+ 	AS_EXITING	= 4, 	/* final truncate in progress */
+ 	/* writeback related tags are not used */
+ 	AS_NO_WRITEBACK_TAGS = 5,
++	AS_KEEP_MEMCG_RECLAIM = 6,
+ };
+ 
+ /**
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index a714c4f800e9..7237603c8973 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -887,7 +887,7 @@ static pageout_t pageout(struct page *page, struct address_space *mapping,
+  * gets returned with a refcount of 0.
+  */
+ static int __remove_mapping(struct address_space *mapping, struct page *page,
+-			    bool reclaimed)
++			    bool reclaimed, bool memcg_reclaim)
+ {
+ 	unsigned long flags;
+ 	int refcount;
+@@ -963,7 +963,20 @@ static int __remove_mapping(struct address_space *mapping, struct page *page,
+ 		if (reclaimed && page_is_file_cache(page) &&
+ 		    !mapping_exiting(mapping) && !dax_mapping(mapping))
+ 			shadow = workingset_eviction(mapping, page);
+-		__delete_from_page_cache(page, shadow);
++#ifdef CONFIG_MEMCG
++		if (memcg_reclaim &&
++		    test_bit(AS_KEEP_MEMCG_RECLAIM, &mapping->flags)) {
++			/*
++			 * Page is not dirty/writeback/mapped, so we may avoid
++			 * taking mem_cgroup::move_lock for changing its memcg.
++			 * See mem_cgroup_move_account() for details.
++			 */
++			mem_cgroup_uncharge(page);
++			page_ref_unfreeze(page, refcount);
++			goto cannot_free;
++		} else
++#endif
++			__delete_from_page_cache(page, shadow);
+ 		xa_unlock_irqrestore(&mapping->i_pages, flags);
+ 
+ 		if (freepage != NULL)
+@@ -985,7 +998,7 @@ static int __remove_mapping(struct address_space *mapping, struct page *page,
+  */
+ int remove_mapping(struct address_space *mapping, struct page *page)
+ {
+-	if (__remove_mapping(mapping, page, false)) {
++	if (__remove_mapping(mapping, page, false, false)) {
+ 		/*
+ 		 * Unfreezing the refcount with 1 rather than 2 effectively
+ 		 * drops the pagecache ref for us without requiring another
+@@ -1458,7 +1471,8 @@ static unsigned long shrink_page_list(struct list_head *page_list,
+ 
+ 			count_vm_event(PGLAZYFREED);
+ 			count_memcg_page_event(page, PGLAZYFREED);
+-		} else if (!mapping || !__remove_mapping(mapping, page, true))
++		} else if (!mapping || !__remove_mapping(mapping, page, true,
++							!global_reclaim(sc)))
+ 			goto keep_locked;
+ 
+ 		unlock_page(page);
 
-Thanks
-
-
->
-> Jason Wang (3):
->    virtio: introduce in order feature bit
->    vhost_net: support in order feature
->    vhost: don't touch avail ring if in_order is negotiated
->
->   drivers/vhost/net.c                |  6 ++++--
->   drivers/vhost/vhost.c              | 19 ++++++++++++-------
->   include/uapi/linux/virtio_config.h |  6 ++++++
->   3 files changed, 22 insertions(+), 9 deletions(-)
->
