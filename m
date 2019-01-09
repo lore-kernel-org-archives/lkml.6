@@ -6,23 +6,23 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 732ABC43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 16:41:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0000AC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 16:42:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B9BF206BB
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 16:41:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BE0FA206BB
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 16:42:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726831AbfAIQlp (ORCPT
+        id S1726906AbfAIQmE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 11:41:45 -0500
-Received: from mx2.suse.de ([195.135.220.15]:57636 "EHLO mx1.suse.de"
+        Wed, 9 Jan 2019 11:42:04 -0500
+Received: from mx2.suse.de ([195.135.220.15]:57580 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726551AbfAIQkk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726571AbfAIQkk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 9 Jan 2019 11:40:40 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 4A596B012;
-        Wed,  9 Jan 2019 16:40:39 +0000 (UTC)
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 145B0AFD9;
+        Wed,  9 Jan 2019 16:40:38 +0000 (UTC)
 From:   Roman Penyaev <rpenyaev@suse.de>
 Cc:     Roman Penyaev <rpenyaev@suse.de>,
         Andrew Morton <akpm@linux-foundation.org>,
@@ -33,9 +33,9 @@ Cc:     Roman Penyaev <rpenyaev@suse.de>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Andrea Parri <andrea.parri@amarulasolutions.com>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [RFC PATCH 07/15] epoll: extend epitem struct with new members for polling from userspace
-Date:   Wed,  9 Jan 2019 17:40:17 +0100
-Message-Id: <20190109164025.24554-8-rpenyaev@suse.de>
+Subject: [RFC PATCH 04/15] epoll: move private helpers from a header to the source
+Date:   Wed,  9 Jan 2019 17:40:14 +0100
+Message-Id: <20190109164025.24554-5-rpenyaev@suse.de>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190109164025.24554-1-rpenyaev@suse.de>
 References: <20190109164025.24554-1-rpenyaev@suse.de>
@@ -47,19 +47,10 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
- ->bit
-       every epitem has an element inside user item array, this bit is
-       actually an index position of that user item array and also a
-       bit inside ep->items_bm
+Those helpers will access private eventpoll structure in future patches,
+so keep those helpers close to callers.
 
- ->ready_events
-       received events in the period when descriptor can't be polled
-       from userspace and ep->rdllist is used for keeping list of
-       ready items
-
- ->work
-      work for offloading polling from task context if epfd is polled
-      from userspace but driver does not provide pollflags on wakeup
+Nothing important here.
 
 Signed-off-by: Roman Penyaev <rpenyaev@suse.de>
 Cc: Andrew Morton <akpm@linux-foundation.org>
@@ -72,62 +63,55 @@ Cc: Andrea Parri <andrea.parri@amarulasolutions.com>
 Cc: linux-fsdevel@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org
 ---
- fs/eventpoll.c | 21 +++++++++++++++------
- 1 file changed, 15 insertions(+), 6 deletions(-)
+ fs/eventpoll.c                 | 13 +++++++++++++
+ include/uapi/linux/eventpoll.h | 12 ------------
+ 2 files changed, 13 insertions(+), 12 deletions(-)
 
 diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-index ae288f62aa4c..637b463587c1 100644
+index 4a0e98d87fcc..2cc183e86a29 100644
 --- a/fs/eventpoll.c
 +++ b/fs/eventpoll.c
-@@ -9,6 +9,8 @@
-  *
-  *  Davide Libenzi <davidel@xmailserver.org>
-  *
-+ *  Polling from userspace support by Roman Penyaev <rpenyaev@suse.de>
-+ *  (C) Copyright 2019 SUSE, All Rights Reserved
-  */
+@@ -466,6 +466,19 @@ static inline void ep_set_busy_poll_napi_id(struct epitem *epi)
  
- #include <linux/init.h>
-@@ -42,6 +44,7 @@
- #include <linux/seq_file.h>
- #include <linux/compat.h>
- #include <linux/rculist.h>
-+#include <linux/workqueue.h>
- #include <net/busy_poll.h>
+ #endif /* CONFIG_NET_RX_BUSY_POLL */
  
- /*
-@@ -176,6 +179,18 @@ struct epitem {
- 
- 	/* The structure that describe the interested events and the source fd */
- 	struct epoll_event event;
++#ifdef CONFIG_PM_SLEEP
++static inline void ep_take_care_of_epollwakeup(struct epoll_event *epev)
++{
++	if ((epev->events & EPOLLWAKEUP) && !capable(CAP_BLOCK_SUSPEND))
++		epev->events &= ~EPOLLWAKEUP;
++}
++#else
++static inline void ep_take_care_of_epollwakeup(struct epoll_event *epev)
++{
++	epev->events &= ~EPOLLWAKEUP;
++}
++#endif /* CONFIG_PM_SLEEP */
 +
-+	/* Bit in user bitmap for user polling */
-+	unsigned int bit;
-+
-+	/*
-+	 * Collect ready events for the period when descriptor is polled by user
-+	 * but events are routed to klists.
-+	 */
-+	__poll_t ready_events;
-+
-+	/* Work for offloading event callback */
-+	struct work_struct work;
- };
+ /**
+  * ep_call_nested - Perform a bound (possibly) nested call, by checking
+  *                  that the recursion limit is not exceeded, and that
+diff --git a/include/uapi/linux/eventpoll.h b/include/uapi/linux/eventpoll.h
+index 8a3432d0f0dc..39dfc29f0f52 100644
+--- a/include/uapi/linux/eventpoll.h
++++ b/include/uapi/linux/eventpoll.h
+@@ -79,16 +79,4 @@ struct epoll_event {
+ 	__u64 data;
+ } EPOLL_PACKED;
  
- #define EPOLL_USER_HEADER_SIZE  128
-@@ -2557,12 +2572,6 @@ static int __init eventpoll_init(void)
- 	ep_nested_calls_init(&poll_safewake_ncalls);
- #endif
- 
--	/*
--	 * We can have many thousands of epitems, so prevent this from
--	 * using an extra cache line on 64-bit (and smaller) CPUs
--	 */
--	BUILD_BUG_ON(sizeof(void *) <= 8 && sizeof(struct epitem) > 128);
--
- 	/* Allocates slab cache used to allocate "struct epitem" items */
- 	epi_cache = kmem_cache_create("eventpoll_epi", sizeof(struct epitem),
- 			0, SLAB_HWCACHE_ALIGN|SLAB_PANIC|SLAB_ACCOUNT, NULL);
+-#ifdef CONFIG_PM_SLEEP
+-static inline void ep_take_care_of_epollwakeup(struct epoll_event *epev)
+-{
+-	if ((epev->events & EPOLLWAKEUP) && !capable(CAP_BLOCK_SUSPEND))
+-		epev->events &= ~EPOLLWAKEUP;
+-}
+-#else
+-static inline void ep_take_care_of_epollwakeup(struct epoll_event *epev)
+-{
+-	epev->events &= ~EPOLLWAKEUP;
+-}
+-#endif
+ #endif /* _UAPI_LINUX_EVENTPOLL_H */
 -- 
 2.19.1
 
