@@ -2,113 +2,94 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 856A7C43612
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 07:52:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2817C43612
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 07:56:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5CF8A20821
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 07:52:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9044B20821
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 07:56:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HU5Asoec"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729663AbfAIHwH (ORCPT
+        id S1729281AbfAIH4o (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 02:52:07 -0500
-Received: from mail-vs1-f67.google.com ([209.85.217.67]:34149 "EHLO
-        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728112AbfAIHwG (ORCPT
+        Wed, 9 Jan 2019 02:56:44 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:37784 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725835AbfAIH4o (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 02:52:06 -0500
-Received: by mail-vs1-f67.google.com with SMTP id y27so4211148vsi.1;
-        Tue, 08 Jan 2019 23:52:06 -0800 (PST)
+        Wed, 9 Jan 2019 02:56:44 -0500
+Received: by mail-pf1-f194.google.com with SMTP id y126so3286617pfb.4;
+        Tue, 08 Jan 2019 23:56:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=NuotCnlYVlXItjpt3k9jNig+e1RnOIU9JZ22ELQvs7g=;
+        b=HU5AsoecWDqCJIQUJMvyCp5oGfb+CMvtV4avtjJySol/9PVX+kwc2qE0PG/MjB4xPV
+         qnTZVcdTvmNwvLF+qaVaYmFzsSDbfH6nAVH0ouC5S4Tr2q8tGp7OC8f5RR9ZPmlJDQ4O
+         L+Xi+GPRxXWH2un19NPcnlNkKQJ1o9i3I6WX5zs65X/V2lo+lIa7uGHJldqWbd+Ng4Ms
+         Aai8DMvZpMADIsRQYwHdGUpZuhGYUuFEylyyEXvm9IC5q4HkANR8xp66Sff7jgaSRkjX
+         ZxvubGSxNUMpYBl75eNTmBHf2LG5kOn0IB2CzJaQfQOUlgghOlbwgVFk8zuVNhUMOIGu
+         eEcQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=/00JG/LKDGXbS/7oDQfRERssheEGJxE8WucQTaYTm5w=;
-        b=dJzQerfpMHZPhEVFWFmJnXfpkjQdqhJuqkc0GQzNSWc4I0pxHPeR6oc9JOmehqbt46
-         SmNgfaboHuuCsXeryu6kr31z/xLQjhUi4mFxdIGCt2SShAG0NQzUCTSmvo3b2XxfwXu9
-         rz3YC1HalefVg0PkgIvTSJdwPgJ2lPzbRwvwnWqiytkCSZSRqtEuIwChqAuUB+6L7cBd
-         0rHGUaOE4WLlaBw7fooVxR561UNu3JqDjnuML4V7wJLvjwIFoC5nUIcqhB38Dq6mlDly
-         8BBk4KvBKK2GN3PBTPVecvmR1l7WV6J26+A2GEHYeOxsu0mCkLLhNnqicAo1baPS74bs
-         EWNw==
-X-Gm-Message-State: AJcUukd0YsJQ2jT/E9aiUsRBEVsbyaAFFD7xS3EnzlMZDStpts05S1DY
-        Dos6ikFn27VBTbheZSGao/Empo9hRgEMKmB1eUk=
-X-Google-Smtp-Source: ALg8bN4AJr240Okvh9pFg8QSuW3fNgqKIpk8Pm8sArvLNdvqCRasPIvjyRB0QT1yrGNGafwUjD6j9OFTJGcmDrZxdHg=
-X-Received: by 2002:a67:c202:: with SMTP id i2mr1878528vsj.11.1547020325550;
- Tue, 08 Jan 2019 23:52:05 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=NuotCnlYVlXItjpt3k9jNig+e1RnOIU9JZ22ELQvs7g=;
+        b=fmtSkqCWNIag4IeQfnMPkEPElrAhMEHoqsXRAGt0dBoIfbInO+qsfCSCzT7BCtxciN
+         IdacDPUfwV2qO5aUHZ0qc3vhEesPYE2TbOLkaqk5y59RrK+x6ge8VIthcdEzJAHrF7JG
+         ctNUoPn0uYasFccmlFELcEro73QGP3HcPw/chtKiDe7InGVX0LTsnSbAwbiPxcqnh7BP
+         xjI/HHPJw+nBJFMtvuE8bbikDbS7ktB7jYkZRZquVnu4CgJmYNekDkKDKE945zCYHCvn
+         8Suai4c8x0wvsDny0QniacAAKN0W45u71ucN9UmlARUtUXIlF3x+dCq2xtZM/1vInZmQ
+         P1Yw==
+X-Gm-Message-State: AJcUukc8MRy8epbNrBNpo6vu3HR2yuFBABAis8yJNrWuIgE15ugh82/5
+        UCB+llOyOWJ7dZY6jxrf65+zZzTc
+X-Google-Smtp-Source: ALg8bN6kzvHcQrKPpFUZWOjhtDWmLFRZKT48qj/vUfDfSGyZKHLJnHJsOkV8jMHa/4MgeNWNLHHK5A==
+X-Received: by 2002:a63:cf48:: with SMTP id b8mr4548762pgj.17.1547020603420;
+        Tue, 08 Jan 2019 23:56:43 -0800 (PST)
+Received: from localhost ([175.223.22.241])
+        by smtp.gmail.com with ESMTPSA id w128sm102632378pfw.79.2019.01.08.23.56.41
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 08 Jan 2019 23:56:42 -0800 (PST)
+Date:   Wed, 9 Jan 2019 16:56:39 +0900
+From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To:     Helge Deller <deller@gmx.de>
+Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        James Bottomley <jejb@linux.ibm.com>,
+        "James E . J . Bottomley" <jejb@parisc-linux.org>,
+        linux-parisc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Subject: Re: [PATCH] parisc: replace oops_in_progress manipulation with
+ bust_spinlocks()
+Message-ID: <20190109075639.GA16555@jagdpanzerIV>
+References: <20190107095612.7086-1-sergey.senozhatsky@gmail.com>
+ <d09f4a9a-f966-80d7-01e1-5d92401b5d7e@gmx.de>
+ <20190109053941.GA28834@jagdpanzerIV>
+ <3c7c981b-d99f-5230-c3af-2df7d59fafff@gmx.de>
 MIME-Version: 1.0
-References: <1546921020-20436-1-git-send-email-masonccyang@mxic.com.tw> <1546921020-20436-3-git-send-email-masonccyang@mxic.com.tw>
-In-Reply-To: <1546921020-20436-3-git-send-email-masonccyang@mxic.com.tw>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 9 Jan 2019 08:51:53 +0100
-Message-ID: <CAMuHMdW0vBrQm1_moRyTSa+1j5Nob83UNPu3phmrhZNECk7t2w@mail.gmail.com>
-Subject: Re: [PATCH v5 2/2] dt-bindings: spi: Document Renesas R-Car RPC-IF
- controller bindings
-To:     Mason Yang <masonccyang@mxic.com.tw>
-Cc:     Mark Brown <broonie@kernel.org>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-spi <linux-spi@vger.kernel.org>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        juliensu@mxic.com.tw, Simon Horman <horms@verge.net.au>,
-        zhengxunli@mxic.com.tw
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3c7c981b-d99f-5230-c3af-2df7d59fafff@gmx.de>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Mason,
+On (01/09/19 08:16), Helge Deller wrote:
+> I prefer that change.
+> In my role as admin of the parisc-linux.org domain I plan to retire
+> all @parisc-linux.org email addresses soon anyway.
 
-On Tue, Jan 8, 2019 at 5:17 AM Mason Yang <masonccyang@mxic.com.tw> wrote:
-> Document the bindings used by the Renesas R-Car Gen3 RPC-IF controller.
->
-> Signed-off-by: Mason Yang <masonccyang@mxic.com.tw>
+I see. Well, I can send a formal patch, but I think James
+would know better which one of his email addresses he'd
+prefer to use; so it seems that a patch from James would
+be more appropriate.
 
-Thanks for your patch!
-
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
-> @@ -0,0 +1,37 @@
-> +Renesas R-Car Gen3 RPC-IF controller Device Tree Bindings
-> +----------------------------------------------------------
-> +
-> +Required properties:
-> +- compatible: should be "renesas,r8a77995-rpc"
-
-Would it make sense to have a family-specific fallback "renesas,rcar-gen3-rpc",
-bseides the SoC-specific compatible value?
-</masonccyang@mxic.com.tw></masonccyang@mxic.com.tw>
-
-> +- #address-cells: should be 1
-> +- #size-cells: should be 0
-> +- reg: should contain 2 entries, one for the registers and one for the direct
-> +       mapping area
-> +- reg-names: should contain "regs" and "dirmap"
-> +- clock-names: should contain "rpc"
-> +- clocks: should contain 1 entries for the module's clock
-
-Doesn't the driver have a need to access the RPCD2 clock?
-At least on R-Car V3M, it needs to program the Divider Clock Register
-(DIVREG).
-
-> +- renesas,rpc-mode: should contain "spi" for rpc spi mode or
-> +                                  "hyperflash" for rpc hyperflash mode.
-
-Can't this be derived from the flash subnode?
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+	-ss
