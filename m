@@ -7,40 +7,40 @@ X-Spam-Status: No, score=-13.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7EB2C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 19:50:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA044C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 19:50:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 77428218A4
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 19:50:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A6A30218A4
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 19:50:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547063411;
-	bh=0kAK0tFAZSnIPth6D3BqF/ptRH/oVU7SV1k7/wzNJcM=;
+	s=default; t=1547063414;
+	bh=EkyHHZ1S8VTPJzcnInoUl/2fIwZOGTZcXHSRkuDRTSs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
 	 References:List-ID:From;
-	b=yYU3MnjqjOgmYda56GJDsLEAFIOeKYqWWnRrtkvYWkwjXXfoCMSRTXg7XqFUArtgk
-	 P1itDGo3JG/PHOkPsKahG9Hk3jCeIuk4cgftIk0VElaFKrIpfoxe1ck0Bc1v1y+9EA
-	 +VIgkFxuhUTQc31YXj3C7AnSepCJhtVrXcIDNgJU=
+	b=dwFAoB8H0fXDjyDSnMreieSni4Wq3ImKCvFE/hg1ifqrNSbNxaxFvMtY6jb2ec7av
+	 JGdAYxDNLohWtouZTbT2CoeavnrujUVaFJeTDGNXwFxWckpjBCsz8tOw7Fh7j47s41
+	 OrXXiL4Qhewhq1KeD26ij8sAdif1iqD2G4lrxEvo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728667AbfAITuK (ORCPT
+        id S1728690AbfAITuO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 14:50:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42940 "EHLO mail.kernel.org"
+        Wed, 9 Jan 2019 14:50:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43026 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728548AbfAITuH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 14:50:07 -0500
+        id S1728657AbfAITuL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 14:50:11 -0500
 Received: from localhost.localdomain (c-98-220-238-81.hsd1.il.comcast.net [98.220.238.81])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9F2F321841;
-        Wed,  9 Jan 2019 19:50:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E799A21848;
+        Wed,  9 Jan 2019 19:50:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547063406;
-        bh=0kAK0tFAZSnIPth6D3BqF/ptRH/oVU7SV1k7/wzNJcM=;
+        s=default; t=1547063409;
+        bh=EkyHHZ1S8VTPJzcnInoUl/2fIwZOGTZcXHSRkuDRTSs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
          References:From;
-        b=OLttoYuAmu8UiliXVSNYODPgu/b3LTsYOU43xx3OIDcz1ykNaO7KZJ8cu67EDn2sd
-         qFLr/pne17DvOq4xeK+53qZa2T9DE43ypyy1RnEIyOAlkDbZTn1uUjAMGxbP6Y431I
-         OakTUBeCiX+t+DUcg6cUSehwDKCOzp3TiWv3PH7E=
+        b=A/A1xnX7fMEqilyShgZ94NK1qivH4nezORP4EGIn23lLl3q4Gv7Jc/d283rnBqsjr
+         8zc2O8Okq/Fd9rWGOAQl71sPYiekvWPRvM/JzgI246Yi4KMCtW8Jm4qWcaHYdGEH9c
+         mLe2XJju7yNNlTLpvZHv41sU7gnWU1z3d7fQITtQ=
 From:   Tom Zanussi <zanussi@kernel.org>
 To:     rostedt@goodmis.org
 Cc:     tglx@linutronix.de, mhiramat@kernel.org, namhyung@kernel.org,
@@ -48,9 +48,9 @@ Cc:     tglx@linutronix.de, mhiramat@kernel.org, namhyung@kernel.org,
         joel@joelfernandes.org, mathieu.desnoyers@efficios.com,
         julia@ni.com, linux-kernel@vger.kernel.org,
         linux-rt-users@vger.kernel.org
-Subject: [PATCH v11 09/15] tracing: Add hist trigger onchange() handler Documentation
-Date:   Wed,  9 Jan 2019 13:49:16 -0600
-Message-Id: <2766fbf2b6f7d28f566e85448a7c7f24dbe907cb.1547062835.git.tom.zanussi@linux.intel.com>
+Subject: [PATCH v11 11/15] tracing: Add SPDX license GPL-2.0 license identifier to inter-event testcases
+Date:   Wed,  9 Jan 2019 13:49:18 -0600
+Message-Id: <ef4a933af01a90f3c01e068c6b565a4040605016.1547062835.git.tom.zanussi@linux.intel.com>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <cover.1547062835.git.tom.zanussi@linux.intel.com>
 References: <cover.1547062835.git.tom.zanussi@linux.intel.com>
@@ -63,129 +63,101 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Tom Zanussi <tom.zanussi@linux.intel.com>
 
-Add Documentation for the hist:onchange($var) handler.
+Apparently this directory was missed in the license cleanup process -
+add the missing identifiers to the trigger/inter-event test cases.
 
 Signed-off-by: Tom Zanussi <tom.zanussi@linux.intel.com>
 ---
- Documentation/trace/histogram.rst | 98 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 98 insertions(+)
+ .../ftrace/test.d/trigger/inter-event/trigger-extended-error-support.tc  | 1 +
+ .../ftrace/test.d/trigger/inter-event/trigger-field-variable-support.tc  | 1 +
+ .../test.d/trigger/inter-event/trigger-inter-event-combined-hist.tc      | 1 +
+ .../ftrace/test.d/trigger/inter-event/trigger-multi-actions-accept.tc    | 1 +
+ .../ftrace/test.d/trigger/inter-event/trigger-onmatch-action-hist.tc     | 1 +
+ .../test.d/trigger/inter-event/trigger-onmatch-onmax-action-hist.tc      | 1 +
+ .../ftrace/test.d/trigger/inter-event/trigger-onmax-action-hist.tc       | 1 +
+ .../test.d/trigger/inter-event/trigger-synthetic-event-createremove.tc   | 1 +
+ 8 files changed, 8 insertions(+)
 
-diff --git a/Documentation/trace/histogram.rst b/Documentation/trace/histogram.rst
-index 353317bc3825..79476c906b1a 100644
---- a/Documentation/trace/histogram.rst
-+++ b/Documentation/trace/histogram.rst
-@@ -1869,6 +1869,7 @@ The available handlers are:
+diff --git a/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-extended-error-support.tc b/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-extended-error-support.tc
+index 401104344593..9912616a8672 100644
+--- a/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-extended-error-support.tc
++++ b/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-extended-error-support.tc
+@@ -1,4 +1,5 @@
+ #!/bin/sh
++# SPDX-License-Identifier: GPL-2.0
+ # description: event trigger - test extended error support
  
-   - onmatch(matching.event)    - invoke action on any addition or update
-   - onmax(var)                 - invoke action if var exceeds current max
-+  - onchange(var)              - invoke action if var changes
  
- The available actions are:
+diff --git a/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-field-variable-support.tc b/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-field-variable-support.tc
+index f59b2a9a1f22..77be6e1f6e7b 100644
+--- a/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-field-variable-support.tc
++++ b/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-field-variable-support.tc
+@@ -1,4 +1,5 @@
+ #!/bin/sh
++# SPDX-License-Identifier: GPL-2.0
+ # description: event trigger - test field variable support
  
-@@ -2140,6 +2141,103 @@ The following commonly-used handler.action pairs are available:
-       <...>-2102  [005] d..4   309.875185: sched_wake_idle_without_ipi: cpu=1
-      <idle>-0     [001] d..3   309.875200: sched_switch: prev_comm=swapper/1 prev_pid=0 prev_prio=120 prev_state=S ==> next_comm=cyclictest next_pid=2103 next_prio=19
+ fail() { #msg
+diff --git a/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-inter-event-combined-hist.tc b/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-inter-event-combined-hist.tc
+index 524d9ce361e2..f3eb8aacec0e 100644
+--- a/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-inter-event-combined-hist.tc
++++ b/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-inter-event-combined-hist.tc
+@@ -1,4 +1,5 @@
+ #!/bin/sh
++# SPDX-License-Identifier: GPL-2.0
+ # description: event trigger - test inter-event combined histogram trigger
  
-+  - onchange(var).save(field,..	.)
-+
-+    The 'onchange(var).save(field,...)' hist trigger action is invoked
-+    whenever the value of 'var' associated with a histogram entry
-+    changes.
-+
-+    The end result is that the trace event fields specified as the
-+    onchange.save() params will be saved if 'var' changes for that
-+    hist trigger entry.  This allows context from the event that
-+    changed the value to be saved for later reference.  When the
-+    histogram is displayed, additional fields displaying the saved
-+    values will be printed.
-+
-+  - onchange(var).snapshot()
-+
-+    The 'onchange(var).snapshot()' hist trigger action is invoked
-+    whenever the value of 'var' associated with a histogram entry
-+    changes.
-+
-+    The end result is that a global snapshot of the trace buffer will
-+    be saved in the tracing/snapshot file if 'var' changes for any
-+    hist trigger entry.
-+
-+    Note that in this case the changed value is a global variable
-+    associated withe current trace instance.  The key of the specific
-+    trace event that caused the value to change and the global value
-+    itself are displayed, along with a message stating that a snapshot
-+    has been taken and where to find it.  The user can use the key
-+    information displayed to locate the corresponding bucket in the
-+    histogram for even more detail.
-+
-+    As an example the below defines a hist trigger on the tcp_probe
-+    event, keyed on dport.  Whenever a tcp_probe event occurs, the
-+    cwnd field is checked against the current value stored in the
-+    $cwnd variable.  If the value has changed, a snapshot is taken.
-+    As part of the setup, all the scheduler and tcp events are also
-+    enabled, which are the events that will show up in the snapshot
-+    when it is taken at some point:
-+
-+    # echo 1 > /sys/kernel/debug/tracing/events/sched/enable
-+    # echo 1 > /sys/kernel/debug/tracing/events/tcp/enable
-+
-+    # echo 'hist:keys=dport:cwnd=snd_cwnd: \
-+            onchange($cwnd).save(snd_wnd,srtt,rcv_wnd): \
-+	    onchange($cwnd).snapshot()' >> \
-+	    /sys/kernel/debug/tracing/events/tcp/tcp_probe/trigger
-+
-+    When the histogram is displayed, for each bucket the tracked value
-+    and the saved values corresponding to that value are displayed
-+    following the rest of the fields.
-+
-+    If a snaphot was taken, there is also a message indicating that,
-+    along with the value and event that triggered the snapshot:
-+
-+    # cat /sys/kernel/debug/tracing/events/tcp/tcp_probe/hist
-+      { dport:       1521 } hitcount:          8
-+	changed:         10  snd_wnd:      35456  srtt:     154262  rcv_wnd:      42112
-+
-+      { dport:         80 } hitcount:         23
-+	changed:         10  snd_wnd:      28960  srtt:      19604  rcv_wnd:      29312
-+
-+      { dport:       9001 } hitcount:        172
-+	changed:         10  snd_wnd:      48384  srtt:     260444  rcv_wnd:      55168
-+
-+      { dport:        443 } hitcount:        211
-+	changed:         10  snd_wnd:      26960  srtt:      17379  rcv_wnd:      28800
-+
-+    Snapshot taken (see tracing/snapshot).  Details:
-+        triggering value { onchange($cwnd) }:         10
-+        triggered by event with key: { dport:         80 }
-+
-+    Totals:
-+        Hits: 414
-+        Entries: 4
-+        Dropped: 0
-+
-+    In the above case, the event that triggered the snapshot has the
-+    key with dport == 80.  If you look at the bucket that has 80 as
-+    the key, you'll find the additional values save()'d along with the
-+    changed value for that bucket, which should be the same as the
-+    global changed value (since that was the same value that triggered
-+    the global snapshot).
-+
-+    And finally, looking at the snapshot data should show at or near
-+    the end the event that triggered the snapshot:
-+
-+    # cat /sys/kernel/debug/tracing/snapshot
-+
-+       gnome-shell-1261  [006] dN.3    49.823113: sched_stat_runtime: comm=gnome-shell pid=1261 runtime=49347 [ns] vruntime=1835730389 [ns]
-+     kworker/u16:4-773   [003] d..3    49.823114: sched_switch: prev_comm=kworker/u16:4 prev_pid=773 prev_prio=120 prev_state=R+ ==> next_comm=kworker/3:2 next_pid=135 next_prio=120
-+       gnome-shell-1261  [006] d..3    49.823114: sched_switch: prev_comm=gnome-shell prev_pid=1261 prev_prio=120 prev_state=R+ ==> next_comm=kworker/6:2 next_pid=387 next_prio=120
-+       kworker/3:2-135   [003] d..3    49.823118: sched_stat_runtime: comm=kworker/3:2 pid=135 runtime=5339 [ns] vruntime=17815800388 [ns]
-+       kworker/6:2-387   [006] d..3    49.823120: sched_stat_runtime: comm=kworker/6:2 pid=387 runtime=9594 [ns] vruntime=14589605367 [ns]
-+       kworker/6:2-387   [006] d..3    49.823122: sched_switch: prev_comm=kworker/6:2 prev_pid=387 prev_prio=120 prev_state=R+ ==> next_comm=gnome-shell next_pid=1261 next_prio=120
-+       kworker/3:2-135   [003] d..3    49.823123: sched_switch: prev_comm=kworker/3:2 prev_pid=135 prev_prio=120 prev_state=T ==> next_comm=swapper/3 next_pid=0 next_prio=120
-+            <idle>-0     [004] ..s7    49.823798: tcp_probe: src=10.0.0.10:54326 dest=23.215.104.193:80 mark=0x0 length=32 snd_nxt=0xe3ae2ff5 snd_una=0xe3ae2ecd snd_cwnd=10 ssthresh=2147483647 snd_wnd=28960 srtt=19604 rcv_wnd=29312
-+
- 3. User space creating a trigger
- --------------------------------
+ fail() { #msg
+diff --git a/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-multi-actions-accept.tc b/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-multi-actions-accept.tc
+index 4ddc546771b5..d281f056f980 100644
+--- a/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-multi-actions-accept.tc
++++ b/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-multi-actions-accept.tc
+@@ -1,4 +1,5 @@
+ #!/bin/sh
++# SPDX-License-Identifier: GPL-2.0
+ # description: event trigger - test multiple actions on hist trigger
  
+ fail() { #msg
+diff --git a/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-onmatch-action-hist.tc b/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-onmatch-action-hist.tc
+index 39fb65b0cd9f..a708f0e7858a 100644
+--- a/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-onmatch-action-hist.tc
++++ b/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-onmatch-action-hist.tc
+@@ -1,4 +1,5 @@
+ #!/bin/sh
++# SPDX-License-Identifier: GPL-2.0
+ # description: event trigger - test inter-event histogram trigger onmatch action
+ 
+ fail() { #msg
+diff --git a/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-onmatch-onmax-action-hist.tc b/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-onmatch-onmax-action-hist.tc
+index 81ab3939c96a..dfce6932d8be 100644
+--- a/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-onmatch-onmax-action-hist.tc
++++ b/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-onmatch-onmax-action-hist.tc
+@@ -1,4 +1,5 @@
+ #!/bin/sh
++# SPDX-License-Identifier: GPL-2.0
+ # description: event trigger - test inter-event histogram trigger onmatch-onmax action
+ 
+ fail() { #msg
+diff --git a/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-onmax-action-hist.tc b/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-onmax-action-hist.tc
+index 1180ab5f0845..0035995c2194 100644
+--- a/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-onmax-action-hist.tc
++++ b/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-onmax-action-hist.tc
+@@ -1,4 +1,5 @@
+ #!/bin/sh
++# SPDX-License-Identifier: GPL-2.0
+ # description: event trigger - test inter-event histogram trigger onmax action
+ 
+ fail() { #msg
+diff --git a/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-synthetic-event-createremove.tc b/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-synthetic-event-createremove.tc
+index 41128219231a..df44b14724a4 100644
+--- a/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-synthetic-event-createremove.tc
++++ b/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-synthetic-event-createremove.tc
+@@ -1,4 +1,5 @@
+ #!/bin/sh
++# SPDX-License-Identifier: GPL-2.0
+ # description: event trigger - test synthetic event create remove
+ 
+ fail() { #msg
 -- 
 2.14.1
 
