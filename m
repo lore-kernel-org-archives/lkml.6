@@ -2,267 +2,93 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2318C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 04:10:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 500A9C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 04:12:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B1C020883
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 04:10:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1D1EC20883
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 04:12:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729403AbfAIEKQ (ORCPT
+        id S1729550AbfAIEK7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 23:10:16 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:50128 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728651AbfAIEKQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 23:10:16 -0500
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 9973D369B7;
-        Wed,  9 Jan 2019 04:10:15 +0000 (UTC)
-Received: from redhat.com (ovpn-120-220.rdu2.redhat.com [10.10.120.220])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 3B909600C8;
-        Wed,  9 Jan 2019 04:10:11 +0000 (UTC)
-Date:   Tue, 8 Jan 2019 23:10:10 -0500
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Clark Williams <williams@redhat.com>,
-        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Luis =?iso-8859-1?Q?Cl=E1udio_Gon=E7alves?= <lclaudio@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Wang Nan <wangnan0@huawei.com>
-Subject: Re: [PATCH 16/16] tools include uapi: Sync linux/vhost.h with the
- kernel sources
-Message-ID: <20190108230822-mutt-send-email-mst@kernel.org>
-References: <20190108195910.17726-1-acme@kernel.org>
- <20190108195910.17726-17-acme@kernel.org>
+        Tue, 8 Jan 2019 23:10:59 -0500
+Received: from [223.203.96.18] ([223.203.96.18]:35253 "EHLO
+        barracuda02.hxt-semitech.com" rhost-flags-FAIL-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728398AbfAIEK7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 23:10:59 -0500
+X-Greylist: delayed 862 seconds by postgrey-1.27 at vger.kernel.org; Tue, 08 Jan 2019 23:10:58 EST
+X-ASG-Debug-ID: 1547006192-107606139f168010001-xx1T2L
+Received: from HXTBJIDCEMVIW02.hxtcorp.net ([10.128.0.15]) by barracuda02.hxt-semitech.com with ESMTP id 5EThfOD1x4QWd1H3 (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NO); Wed, 09 Jan 2019 11:56:33 +0800 (CST)
+X-Barracuda-Envelope-From: yuanyuan.zhao@hxt-semitech.com
+Received: from localhost.localdomain.localdomain (10.64.5.29) by
+ HXTBJIDCEMVIW02.hxtcorp.net (10.128.0.15) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Wed, 9 Jan 2019 11:56:26 +0800
+From:   Zhao Yuanyuan <yuanyuan.zhao@hxt-semitech.com>
+To:     <marc.zyngier@arm.com>
+CC:     <tglx@linutronix.de>, <jason@lakedaemon.net>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <yu.zheng@hxt-semitech.com>, <dongsheng.wang@hxt-semitech.com>,
+        Zhao Yuanyuan <yuanyuan.zhao@hxt-semitech.com>
+Subject: [RESEND 1/1] gic: its: Make sure a LPI is discarded before free.
+Date:   Wed, 9 Jan 2019 11:53:27 +0800
+X-ASG-Orig-Subj: [RESEND 1/1] gic: its: Make sure a LPI is discarded before free.
+Message-ID:
+ <e37e3f5e0146be65c60092a457ca5c82e25581a0.1545292748.git.yuanyuan.zhao@hxt-semitech.com>
+X-Mailer: git-send-email 1.8.3.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190108195910.17726-17-acme@kernel.org>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Wed, 09 Jan 2019 04:10:15 +0000 (UTC)
+Content-Type: text/plain
+X-Originating-IP: [10.64.5.29]
+X-ClientProxiedBy: HXTBJIDCEMVIW01.hxtcorp.net (10.128.0.14) To
+ HXTBJIDCEMVIW02.hxtcorp.net (10.128.0.15)
+X-Barracuda-Connect: UNKNOWN[10.128.0.15]
+X-Barracuda-Start-Time: 1547006193
+X-Barracuda-Encrypted: ECDHE-RSA-AES256-SHA384
+X-Barracuda-URL: https://192.168.50.102:443/cgi-mod/mark.cgi
+X-Barracuda-Scan-Msg-Size: 835
+X-Virus-Scanned: by bsmtpd at hxt-semitech.com
+X-Barracuda-BRTS-Status: 1
+X-Barracuda-Bayes: SPAM GLOBAL 0.9335 1.0000 3.5889
+X-Barracuda-Spam-Score: 4.19
+X-Barracuda-Spam-Status: No, SCORE=4.19 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=MARKETING_SUBJECT
+X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.65361
+        Rule breakdown below
+         pts rule name              description
+        ---- ---------------------- --------------------------------------------------
+        0.60 MARKETING_SUBJECT      Subject contains popular marketing words
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Message-ID: <20190109035327.inWbzG5B-UJhAbhnN9Gz4J2UZqENEk88m0yBbQxJPxk@z>
 
-On Tue, Jan 08, 2019 at 04:59:10PM -0300, Arnaldo Carvalho de Melo wrote:
-> From: Arnaldo Carvalho de Melo <acme@redhat.com>
-> 
-> To get the changes in:
-> 
->   4b86713236e4 ("vhost: split structs into a separate header file")
-> 
-> Silencing this perf build warning:
-> 
->   Warning: Kernel ABI header at 'tools/include/uapi/linux/vhost.h' differs from latest version at 'include/uapi/linux/vhost.h'
->   diff -u tools/include/uapi/linux/vhost.h include/uapi/linux/vhost.h
-> 
-> Those didn't touch things used in tools, i.e. the following continues
-> working:
-> 
->   $ tools/perf/trace/beauty/vhost_virtio_ioctl.sh
->   static const char *vhost_virtio_ioctl_cmds[] = {
->           [0x00] = "SET_FEATURES",
->           [0x01] = "SET_OWNER",
->           [0x02] = "RESET_OWNER",
->           [0x03] = "SET_MEM_TABLE",
->           [0x04] = "SET_LOG_BASE",
->           [0x07] = "SET_LOG_FD",
->           [0x10] = "SET_VRING_NUM",
->           [0x11] = "SET_VRING_ADDR",
->           [0x12] = "SET_VRING_BASE",
->           [0x13] = "SET_VRING_ENDIAN",
->           [0x14] = "GET_VRING_ENDIAN",
->           [0x20] = "SET_VRING_KICK",
->           [0x21] = "SET_VRING_CALL",
->           [0x22] = "SET_VRING_ERR",
->           [0x23] = "SET_VRING_BUSYLOOP_TIMEOUT",
->           [0x24] = "GET_VRING_BUSYLOOP_TIMEOUT",
->           [0x25] = "SET_BACKEND_FEATURES",
->           [0x30] = "NET_SET_BACKEND",
->           [0x40] = "SCSI_SET_ENDPOINT",
->           [0x41] = "SCSI_CLEAR_ENDPOINT",
->           [0x42] = "SCSI_GET_ABI_VERSION",
->           [0x43] = "SCSI_SET_EVENTS_MISSED",
->           [0x44] = "SCSI_GET_EVENTS_MISSED",
->           [0x60] = "VSOCK_SET_GUEST_CID",
->           [0x61] = "VSOCK_SET_RUNNING",
->   };
->   static const char *vhost_virtio_ioctl_read_cmds[] = {
->           [0x00] = "GET_FEATURES",
->           [0x12] = "GET_VRING_BASE",
->           [0x26] = "GET_BACKEND_FEATURES",
->   };
->   $
-> 
-> At some point in the eBPFication of perf, using something like:
-> 
-> 	# perf trace -e ioctl(cmd=VHOST_VRING*)
-> 
-> Will setup a BPF filter right at the raw_syscalls:sys_enter tracepoint,
-> i.e. filtering at the origin.
-> 
-> Cc: Adrian Hunter <adrian.hunter@intel.com>
-> Cc: Jiri Olsa <jolsa@kernel.org>
-> Cc: Luis Cláudio Gonçalves <lclaudio@redhat.com>
-> Cc: Michael S. Tsirkin <mst@redhat.com>
-> Cc: Namhyung Kim <namhyung@kernel.org>
-> Cc: Paolo Bonzini <pbonzini@redhat.com>
-> Cc: Wang Nan <wangnan0@huawei.com>
-> Link: https://lkml.kernel.org/n/tip-g28usrt7l59lwq3wuh8vzbig@git.kernel.org
-> Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-> ---
->  tools/include/uapi/linux/vhost.h | 113 +------------------------------
->  1 file changed, 2 insertions(+), 111 deletions(-)
-> diff --git a/tools/include/uapi/linux/vhost.h b/tools/include/uapi/linux/vhost.h
-> index 84c3de89696a..40d028eed645 100644
-> --- a/tools/include/uapi/linux/vhost.h
-> +++ b/tools/include/uapi/linux/vhost.h
-> @@ -11,94 +11,9 @@
->   * device configuration.
->   */
->  
-> +#include <linux/vhost_types.h>
+Its device will be removed after all events be freed.
+Undisarded events can lead to unpredictable behaviar.
 
+Signed-off-by: Zhao Yuanyuan <yuanyuan.zhao@hxt-semitech.com>
+---
+ drivers/irqchip/irq-gic-v3-its.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Don't you then also need to import vhost_types.h?
+diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
+index db20e99..4fee008 100644
+--- a/drivers/irqchip/irq-gic-v3-its.c
++++ b/drivers/irqchip/irq-gic-v3-its.c
+@@ -2572,6 +2572,10 @@ static void its_irq_domain_free(struct irq_domain *domain, unsigned int virq,
+ 								virq + i);
+ 		u32 event = its_get_event_id(data);
+ 
++		/* Discard irq before free */
++		if (irqd_is_activated(d))
++			its_send_discard(its_dev, event);
++
+ 		/* Mark interrupt index as unused */
+ 		clear_bit(event, its_dev->event_map.lpi_map);
+ 
+-- 
+1.8.3.1
 
->  #include <linux/types.h>
-> -#include <linux/compiler.h>
->  #include <linux/ioctl.h>
-> -#include <linux/virtio_config.h>
-> -#include <linux/virtio_ring.h>
-> -
-> -struct vhost_vring_state {
-> -	unsigned int index;
-> -	unsigned int num;
-> -};
-> -
-> -struct vhost_vring_file {
-> -	unsigned int index;
-> -	int fd; /* Pass -1 to unbind from file. */
-> -
-> -};
-> -
-> -struct vhost_vring_addr {
-> -	unsigned int index;
-> -	/* Option flags. */
-> -	unsigned int flags;
-> -	/* Flag values: */
-> -	/* Whether log address is valid. If set enables logging. */
-> -#define VHOST_VRING_F_LOG 0
-> -
-> -	/* Start of array of descriptors (virtually contiguous) */
-> -	__u64 desc_user_addr;
-> -	/* Used structure address. Must be 32 bit aligned */
-> -	__u64 used_user_addr;
-> -	/* Available structure address. Must be 16 bit aligned */
-> -	__u64 avail_user_addr;
-> -	/* Logging support. */
-> -	/* Log writes to used structure, at offset calculated from specified
-> -	 * address. Address must be 32 bit aligned. */
-> -	__u64 log_guest_addr;
-> -};
-> -
-> -/* no alignment requirement */
-> -struct vhost_iotlb_msg {
-> -	__u64 iova;
-> -	__u64 size;
-> -	__u64 uaddr;
-> -#define VHOST_ACCESS_RO      0x1
-> -#define VHOST_ACCESS_WO      0x2
-> -#define VHOST_ACCESS_RW      0x3
-> -	__u8 perm;
-> -#define VHOST_IOTLB_MISS           1
-> -#define VHOST_IOTLB_UPDATE         2
-> -#define VHOST_IOTLB_INVALIDATE     3
-> -#define VHOST_IOTLB_ACCESS_FAIL    4
-> -	__u8 type;
-> -};
-> -
-> -#define VHOST_IOTLB_MSG 0x1
-> -#define VHOST_IOTLB_MSG_V2 0x2
-> -
-> -struct vhost_msg {
-> -	int type;
-> -	union {
-> -		struct vhost_iotlb_msg iotlb;
-> -		__u8 padding[64];
-> -	};
-> -};
-> -
-> -struct vhost_msg_v2 {
-> -	__u32 type;
-> -	__u32 reserved;
-> -	union {
-> -		struct vhost_iotlb_msg iotlb;
-> -		__u8 padding[64];
-> -	};
-> -};
-> -
-> -struct vhost_memory_region {
-> -	__u64 guest_phys_addr;
-> -	__u64 memory_size; /* bytes */
-> -	__u64 userspace_addr;
-> -	__u64 flags_padding; /* No flags are currently specified. */
-> -};
-> -
-> -/* All region addresses and sizes must be 4K aligned. */
-> -#define VHOST_PAGE_SIZE 0x1000
-> -
-> -struct vhost_memory {
-> -	__u32 nregions;
-> -	__u32 padding;
-> -	struct vhost_memory_region regions[0];
-> -};
->  
->  /* ioctls */
->  
-> @@ -186,31 +101,7 @@ struct vhost_memory {
->   * device.  This can be used to stop the ring (e.g. for migration). */
->  #define VHOST_NET_SET_BACKEND _IOW(VHOST_VIRTIO, 0x30, struct vhost_vring_file)
->  
-> -/* Feature bits */
-> -/* Log all write descriptors. Can be changed while device is active. */
-> -#define VHOST_F_LOG_ALL 26
-> -/* vhost-net should add virtio_net_hdr for RX, and strip for TX packets. */
-> -#define VHOST_NET_F_VIRTIO_NET_HDR 27
-> -
-> -/* VHOST_SCSI specific definitions */
-> -
-> -/*
-> - * Used by QEMU userspace to ensure a consistent vhost-scsi ABI.
-> - *
-> - * ABI Rev 0: July 2012 version starting point for v3.6-rc merge candidate +
-> - *            RFC-v2 vhost-scsi userspace.  Add GET_ABI_VERSION ioctl usage
-> - * ABI Rev 1: January 2013. Ignore vhost_tpgt filed in struct vhost_scsi_target.
-> - *            All the targets under vhost_wwpn can be seen and used by guset.
-> - */
-> -
-> -#define VHOST_SCSI_ABI_VERSION	1
-> -
-> -struct vhost_scsi_target {
-> -	int abi_version;
-> -	char vhost_wwpn[224]; /* TRANSPORT_IQN_LEN */
-> -	unsigned short vhost_tpgt;
-> -	unsigned short reserved;
-> -};
-> +/* VHOST_SCSI specific defines */
->  
->  #define VHOST_SCSI_SET_ENDPOINT _IOW(VHOST_VIRTIO, 0x40, struct vhost_scsi_target)
->  #define VHOST_SCSI_CLEAR_ENDPOINT _IOW(VHOST_VIRTIO, 0x41, struct vhost_scsi_target)
-> -- 
-> 2.20.1
