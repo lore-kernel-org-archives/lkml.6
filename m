@@ -2,269 +2,146 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2F2DC43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 18:12:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88335C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 18:14:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 878CF20859
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 18:12:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 52CC821848
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 18:14:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="XSikKQ5b"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727472AbfAISMx (ORCPT
+        id S1727501AbfAISOy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 13:12:53 -0500
-Received: from smtp.nue.novell.com ([195.135.221.5]:50524 "EHLO
-        smtp.nue.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725775AbfAISMx (ORCPT
-        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
-        Wed, 9 Jan 2019 13:12:53 -0500
-Received: from linux-l9pv.suse (124-11-22-254.static.tfn.net.tw [124.11.22.254])
-        by smtp.nue.novell.com with ESMTP (TLS encrypted); Wed, 09 Jan 2019 19:12:13 +0100
-Date:   Thu, 10 Jan 2019 02:11:55 +0800
-From:   joeyli <jlee@suse.com>
-To:     James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Stephan Mueller <smueller@chronox.de>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "Lee, Chun-Yi" <joeyli.kernel@gmail.com>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Pavel Machek <pavel@ucw.cz>,
-        LKML <linux-kernel@vger.kernel.org>, linux-pm@vger.kernel.org,
-        keyrings@vger.kernel.org,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Chen Yu <yu.c.chen@intel.com>,
-        Oliver Neukum <oneukum@suse.com>,
-        Ryan Chen <yu.chen.surf@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Giovanni Gherdovich <ggherdovich@suse.cz>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Jann Horn <jannh@google.com>
-Subject: Re: [PATCH 1/5 v2] PM / hibernate: Create snapshot keys handler
-Message-ID: <20190109181155.GI9503@linux-l9pv.suse>
-References: <20190103143227.9138-1-jlee@suse.com>
- <4499700.LRS4F2YjjC@tauon.chronox.de>
- <20190108050358.llsox32hggn2jioe@gondor.apana.org.au>
- <1565399.7ulKdI1fm5@tauon.chronox.de>
- <D70458DE-712B-4767-8143-7DC9107689C3@amacapital.net>
- <1546994671.6077.10.camel@HansenPartnership.com>
- <CALCETrWTAYpWv73MgAz=NUfvJSLq965fWMYvJnDepJoRBsgt6Q@mail.gmail.com>
- <1547016579.2789.17.camel@HansenPartnership.com>
+        Wed, 9 Jan 2019 13:14:54 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:34873 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727476AbfAISOx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 13:14:53 -0500
+Received: by mail-pf1-f195.google.com with SMTP id z9so4040489pfi.2
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Jan 2019 10:14:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=kBcrxosn4rbMp/c4KQPE3xLOAJ6eQ+hMTdKu6lkHV4I=;
+        b=XSikKQ5bldok6k+L0AIV9rhQRClveXNnRn+vsWcSduU8EcK9AID9q+yC8M+DTPQt81
+         SZ0KkJmyyAh8VxVfYTWCPk6S6WY42g9nD578tJzrysMVfSdt+fcVbVH7jxTz+bw4TDCT
+         RpepIsmFsH2qrUva2ouI7k1woCKxhunBEUrdw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=kBcrxosn4rbMp/c4KQPE3xLOAJ6eQ+hMTdKu6lkHV4I=;
+        b=B3fKLQQt+xOKJf3rt6iUXlc5nAk+qRDdfptWsfBnbT4aXbABqjHe0PeQxycfOpECi5
+         s+0VZc/4Wn5a/YMI3j6MxuAnBK3JIpxtZF6RsBpOZwlTtsyNu8BGl1njWewrmBovlCVD
+         cupYTjRVQUSEA/8cwAzDbb4WTo4DY7XOcdWnQC820aYIJoVcx29tyob3HxTPn9BRgZNF
+         XziC2sq04dL8DsuT1R34cndCYNcENnUEklrBYQZ1fSO74FCccpzTfG99yjcTnXDxeFgY
+         /D2ygkuImPv0qU8TJWSZN6JF16mIEuUQOYxWfH4/eW6uCxUv+RoKDJ1n9DxESqOLl53/
+         PnVw==
+X-Gm-Message-State: AJcUukeJrjRuoaKC82q/Gm4Rj+fWZObayeTL1hOJ7jDVehmpnIdzMH2X
+        0femzwcc3gfOPhMrlqizyicy/Q==
+X-Google-Smtp-Source: ALg8bN4BWlmxKl79y/cSQ3SK4GMdI5fZuNaVxe70BYvRvdqggow+pliw95ioHIHzYyceE9Vzx2KysA==
+X-Received: by 2002:a63:6ecf:: with SMTP id j198mr6464677pgc.3.1547057692721;
+        Wed, 09 Jan 2019 10:14:52 -0800 (PST)
+Received: from localhost ([2620:15c:202:1:75a:3f6e:21d:9374])
+        by smtp.gmail.com with ESMTPSA id d21sm52850404pfo.162.2019.01.09.10.14.51
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 09 Jan 2019 10:14:51 -0800 (PST)
+Date:   Wed, 9 Jan 2019 10:14:51 -0800
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Quentin Perret <quentin.perret@arm.com>
+Cc:     peterz@infradead.org, rjw@rjwysocki.net,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        gregkh@linuxfoundation.org, mingo@redhat.com,
+        dietmar.eggemann@arm.com, morten.rasmussen@arm.com,
+        chris.redpath@arm.com, patrick.bellasi@arm.com,
+        valentin.schneider@arm.com, vincent.guittot@linaro.org,
+        thara.gopinath@linaro.org, viresh.kumar@linaro.org,
+        tkjos@google.com, joel@joelfernandes.org, smuckle@google.com,
+        adharmap@codeaurora.org, skannan@codeaurora.org,
+        pkondeti@codeaurora.org, juri.lelli@redhat.com,
+        edubezval@gmail.com, srinivas.pandruvada@linux.intel.com,
+        currojerez@riseup.net, javi.merino@kernel.org
+Subject: Re: [PATCH v10 15/15] OPTIONAL: cpufreq: dt: Register an Energy Model
+Message-ID: <20190109181451.GT261387@google.com>
+References: <20181203095628.11858-1-quentin.perret@arm.com>
+ <20181203095628.11858-16-quentin.perret@arm.com>
+ <20190108203813.GS261387@google.com>
+ <20190109105757.2rowxn3anzyycuod@queper01-lin>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1547016579.2789.17.camel@HansenPartnership.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20190109105757.2rowxn3anzyycuod@queper01-lin>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi James
+On Wed, Jan 09, 2019 at 10:57:57AM +0000, Quentin Perret wrote:
+> Hi Matthias ,
+> 
+> On Tuesday 08 Jan 2019 at 12:38:13 (-0800), Matthias Kaehlcke wrote:
+> > >  static int cpufreq_init(struct cpufreq_policy *policy)
+> > >  {
+> > > +	struct em_data_callback em_cb = EM_DATA_CB(of_est_power);
+> > >  	struct cpufreq_frequency_table *freq_table;
+> > >  	struct opp_table *opp_table = NULL;
+> > >  	struct private_data *priv;
+> > > @@ -160,7 +203,7 @@ static int cpufreq_init(struct cpufreq_policy *policy)
+> > >  	unsigned int transition_latency;
+> > >  	bool fallback = false;
+> > >  	const char *name;
+> > > -	int ret;
+> > > +	int ret, nr_opp;
+> > >  
+> > >  	cpu_dev = get_cpu_device(policy->cpu);
+> > >  	if (!cpu_dev) {
+> > > @@ -237,6 +280,7 @@ static int cpufreq_init(struct cpufreq_policy *policy)
+> > >  		ret = -EPROBE_DEFER;
+> > >  		goto out_free_opp;
+> > >  	}
+> > > +	nr_opp = ret;
+> > >  
+> > >  	if (fallback) {
+> > >  		cpumask_setall(policy->cpus);
+> > > @@ -280,6 +324,8 @@ static int cpufreq_init(struct cpufreq_policy *policy)
+> > >  	policy->cpuinfo.transition_latency = transition_latency;
+> > >  	policy->dvfs_possible_from_any_cpu = true;
+> > >  
+> > > +	em_register_perf_domain(policy->cpus, nr_opp, &em_cb);
+> > 
+> > Shouldn't there also be a function to unregister a perf domain to be
+> > called from cpufreq_exit()?
+> > 
+> > ->exit() is called on suspend when the CPUs are taken offline, and
+> > ->init() on resume, hence em_register_perf_domain() is called multiple
+> > times, but without doing any cleanup.
+> 
+> Right, but this is safe to do as em_register_perf_domain() checks for
+> the existence of the domain straight away. So the second time you call
+> this em_register_perf_domain() should just bail out. Are you seeing an
+> issue with this ?
+> 
+> As of now, the EM framework is really simple -- it justs allocates the
+> pd tables once during boot, and they stay in memory forever. While
+> arguably less than optimal, that makes things a whole lot easier to
+> manage on the client side (i.e. the scheduler) w/o needing RCU
+> protection or so.
 
-On Tue, Jan 08, 2019 at 10:49:39PM -0800, James Bottomley wrote:
-> On Tue, 2019-01-08 at 17:43 -0800, Andy Lutomirski wrote:
-> > [Adding Jarkko because this stuff relates to the TPM.]
-> > 
-> > On Tue, Jan 8, 2019 at 4:44 PM James Bottomley
-> > <James.Bottomley@hansenpartnership.com> wrote:
-> > > 
-> > > On Tue, 2019-01-08 at 15:54 -0800, Andy Lutomirski wrote:
-> > > > > On Jan 7, 2019, at 11:09 PM, Stephan Mueller <smueller@chronox.
-> > > > > de>
-> > > > > wrote:
-> > > > > 
-> > > > > Am Dienstag, 8. Januar 2019, 06:03:58 CET schrieb Herbert Xu:
-> > > > > 
-> > > > > Hi Herbert,
-> > > > > 
-> > > > > > Are we going to have multiple implementations for the same
-> > > > > > KDF? If not then the crypto API is not a good fit.  To
-> > > > > > consolidate multiple implementations of the same KDF, simply
-> > > > > > provide helpers for them.
-> > > > > 
-> > > > > It is unlikely to have multiple implementations of a KDF.
-> > > > > However, KDFs relate to hashes like block chaining modes to raw
-> > > > > block ciphers. Thus a KDF can be applied with different hashes.
-> > > > > 
-> > > > > My idea was to add template support to RNGs (because KDFs are
-> > > > > effectively a type of RNG since they produce an arbitrary
-> > > > > output from a fixed input). The KDFs would be a template
-> > > > > wrapping hashes.  For example, the CTR-KDF from SP800-108 could
-> > > > > be instantiated like kdf-ctr(sha256).
-> > > > > 
-> > > > > 
-> > > > 
-> > > > I think that, if the crypto API is going to grow a KDF facility,
-> > > > it should be done right. Have a key type or flag or whatever that
-> > > > says “this key may *only* be used to derive keys using such-and-
-> > > > such algorithm”, and have a helper to derive a key.  That helper
-> > > > should take some useful parameters and mix them in:
-> > > > 
-> > > > - What type of key is being derived?  ECDSA signing key?  HMAC
-> > > > key?  AES key?
-> > > > 
-> > > > - Can user code access the derived key?
-> > > > 
-> > > > - What is the key’s purpose?  “Encrypt and authenticate a
-> > > > hibernation image” would be a purpose.
-> > > > 
-> > > > - Number of bytes.
-> > > > 
-> > > > All of these parameters should be mixed in to the key derivation.
-> > > > 
-> > > > Also, an AE key, even for AES+HMAC, should be just one derived
-> > > > key.  If you need 512 bits, ask for a 512-bit key, not two 256-
-> > > > bit keys.
-> > > 
-> > > Actually, it would be enormously helpful if we could reuse these
-> > > pieces for the TPM as well.  It has two KDFs: KDFa, which is the
-> > > CTR-KDF from SP800-108 and KDFe which is the SP800-56A KDF for
-> > > elliptic curve one pass Diffie Hellman, so if we're going to do the
-> > > former, I'd really like the latter as well.
-> > > 
-> > > The way the TPM parametrises input to both KDFs is
-> > > 
-> > > (hashAlg, key, label, contextU, contextV, bits)
-> > > 
-> > > Where
-> > > 
-> > > hashAlg  = the hash algorithm used as the PRF
-> > > key      = the input parameter of variable bit size or
-> > >            the x co-ordinate of the shared point
-> > > label    = An ASCII string representing the use
-> > > contextU = public input U
-> > > contextV = public input V
-> > > bits     = number of output bits
-> > > 
-> > > Is that a good enough parametrisation (not the only way you
-> > > distinguish uses is with the label, which is not
-> > > recoverable)?  ContextU and ContextV are simply concatenated to
-> > > form the full Context of SP800-108, but we tend to need two
-> > > separate inputs (for KDFe they're the public x co-ordinates of the
-> > > points of the two inputs to ECDH for instance; in KDFa they're
-> > > usually the local and remote nonces).
-> > > 
-> > > The labels for TPM usage are things like "INTEGRITY" for HMAC keys
-> > > or "CFB" when generating an aes128-cfb session key. For KDFe, the
-> > > tpm seems to like the label "SECRET".  Although the TPM specifies
-> > > fixed short strings for the label, nothing prevents them being
-> > > longer like the purpose you state above (essentially we could mix
-> > > purpose, use and key type into the label and the contexts).
-> > > 
-> > 
-> > That really ought to cover anything the kernel needs.
-> > 
-> > But can you explain what's up with with KDFe?  The obvious searches
-> > end up with just warnings that the US currently has no government :(
-> 
-> You mean you can't find SP100-56A because NIST is a government entity
-> and it's discontinued its website because of the government shutdown? 
-> No idea, I only live here, you'll have to ask a real American.
-> 
-> ACM does have a copy:
-> 
-> http://delivery.acm.org/10.1145/2210000/2206270/SP800-56A_Revision1_Mar08-2007.pdf?ip=50.35.68.20&id=2206270&acc=OPEN&key=4D4702B0C3E38B35%2E4D4702B0C3E38B35%2E4D4702B0C3E38B35%2E6D218144511F3437&__acm__=1546993111_ed9c8bd24b2f838c829d428aac7f5d71
-> 
-> > Anyway, if we're talking about the TPM, it seems like the entire
-> > "trusted key" mechanism in the kernel is missing the point.  If I
-> > want to encrypt something like a hibernation image on a machine with
-> > a TPM, it makes essentially no sense to me that we would get a key
-> > with a known raw value that is merely TPM-backed (i.e. the "trusted
-> > key") and use that to decrypt the image.  The right way to do it is
-> > to the use the TPM as it was intended to be used: generate a single-
-> > use key that protects the hibernation image and seal *that* directly
-> > on the TPM, such that it can only be unsealed with appropriate PCR
-> > values.  Heck, we could even use one of the fancy NV counters such
-> > that we *can't* decrypt the image later on.  And using HMAC or any AE
-> > construction the normal way is also wrong -- we should *hash* the
-> > image and sign the hash directly on the TPM so that the restore code
-> > can validate the PCR values that were in place when the hibernation
-> > image was created.  [0]
-> 
-> Well, theoretically, trusted keys can be used for PCR sealed bundles,
-> at least in 1.2 ... I'm not sure the 2.0 one actually works because you
-> have to construct the policy session outside the kernel.
-> 
-> > In other words, I think that a kernel-based encrypted hibernation
-> > mechanism should create an image like this:
-> > 
-> > - wrapped key
-> > - instructions, if needed, for unwrapping
-> 
-> This sounds like the format we use for TPM resident keys, except it
-> would protect a TPM unseal bundle:
-> 
-> https://git.kernel.org/pub/scm/linux/kernel/git/jejb/openssl_tpm2_engine.git/tree/tpm2-asn.h
-> 
-> > - hash of the entire image except the hash and signature fields
-> > - signature of the hash
-> > 
-> > and the remainder is a regular hiberation image that is encrypted
-> > against the key.  No AE is needed -- just encryption.  And there's no
-> > trampoline, no weird per-page hashing, etc.  Of course, this also
-> > means that someone needs to audit the hibernation restore code to
-> > make sure that there's no way for a malicious image to gain code
-> > execution over the restoring kernel before the verification even
-> > runs.  Or some much more complicated hash can be used that supports
-> > incremental verification.
-> > 
-> > 
-> > (Also, do we have a sensible story of how the TPM interacts with
-> > hibernation at all?
-> 
-> Not really, no ... there is a TPM patch for LUKS, but trusted keys are
-> unused within the kernel.
->
+I think registering the perf domain only once is fine, since the info
+isn't supposed to change and will likely be used again after
+_exit(). However since we have em_cpu_get() I'd suggest to use it and
+only call em_register_perf_domain() if no perf domain is registered
+yet for the CPU. This makes it more evident that the registration is
+only done once and simplifies error handling (currently not done at
+all), since it's not necessary to check for the special case -EEXIST.
 
-The trusted key has be used to produce encrypted key for EVM:
-https://sourceforge.net/p/linux-ima/wiki/Home/#creating-trusted-and-evm-encrypted-keys 
- 
-> >   Presumably we should at least try to replay the PCR operations that
-> > have occurred so that we can massage the PCRs into the same state
-> > post-hibernation.  Also, do we have any way for the kernel to sign
-> > something with the TPM along with an attestation that the signature
-> > was requested *by the kernel*?  Something like a sub-hierarchy of
-> > keys that the kernel explicitly prevents userspace from accessing?)
-> 
-> We're just growing that now with the TPM asymmetric operations.
-> Attesting that the kernel requested the signature is harder.  The TPM
-> can attest to log entries (as it does for the UEFI log and IMA) and it
-> can certify keys, but that only proves they're TPM resident not who the
-> requestor was.  Effectively the latter is an assertion about who knows
-> the key authority, which is hard to prove.
-> 
-> > [0] If you take some data, run it through an authenticated encryption
-> > algorithm, and sign (key, nonce, tag), I think you're operating
-> > outside of the accepted security definitions if you expect this to
-> > guarantee that the data wasn't tampered with.  I'm reasonably
-> > confident that there are quite a few excellent AE algorithms that
-> > completely fail if used this like this.  In fact, pretty much all of
-> > the modern fast ones probably fail.  AE is for when the key is
-> > *secret*.
-> 
-> Well, I think here, if we were actually trying to solve the problem of
-> proving the hibernated image were the same one we would need to prove
-> some log of the kernel operation came to a particular value *after* the
-> hibernated image were restored ... it's not really possible to
-> condition key release which must occur before the restore on that
-> outcome, so it strikes me we need more than a simple release bound to
-> PCR values.
->
+Cheers
 
-hm... I am studying your information. But I have a question...
-
-If PCR is not capped and the root be compromised, is it possible that a
-sealed bundle also be compromised? 
-
-Is it possible that kernel can produce a sealed key with PCR by TPM when
-booting? Then kernel caps a PCR by a constant value before the root is
-available for userland. Then the sealed key can be exposed to userland
-or be attached on hibernate image. Even the root be compromised, the TPM
-trusted key is still secure.
-
-Thanks a lot!
-Joey Lee 
+Matthias
