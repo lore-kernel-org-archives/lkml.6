@@ -2,123 +2,161 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
+X-Spam-Status: No, score=-14.7 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23E06C43612
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 05:39:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD3D5C43444
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 05:44:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E6868214C6
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 05:39:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A182521738
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 05:44:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ux8cQIpX"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="T+BtHPWA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729662AbfAIFjr (ORCPT
+        id S1729588AbfAIFoo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 00:39:47 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:43842 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729572AbfAIFjr (ORCPT
+        Wed, 9 Jan 2019 00:44:44 -0500
+Received: from mail-yb1-f196.google.com ([209.85.219.196]:32964 "EHLO
+        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725440AbfAIFoo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 00:39:47 -0500
-Received: by mail-pg1-f194.google.com with SMTP id v28so2795707pgk.10;
-        Tue, 08 Jan 2019 21:39:46 -0800 (PST)
+        Wed, 9 Jan 2019 00:44:44 -0500
+Received: by mail-yb1-f196.google.com with SMTP id o73so2567804ybc.0
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jan 2019 21:44:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Fcp/99fnMkGR/s9JNz8s1K5nWFgNYA49MagXrcAXAEc=;
-        b=ux8cQIpXNcKsMg2Nok9PFHTlS+U0b7cie/ztAP0bXVA2TrYBgcnJtu5088tIvS6MkM
-         nl8EVpgUXedyVSjfQ5YM2E/5mks6OmU1N2jsOeDVWgpfKhJs0hWS8umRegkIRhGn+BI9
-         aQVxW2t6slVSQe0pPMePEIb9427EcKm+turuI/G017pQb1erTy4wQa4KoFPV0JpDgZSq
-         YtyAKA7Ye5C62S7sEcjYMrBwy5gXiD2AsBNmgytlB6hlO18SjikJ8JB08z105k7+yT78
-         G7luw5vTBdYH8Dxm0FLdXbZzlqHZHFDQf3JdlsO0o5QONaNPqZxPMxptBI9++c6G+cVj
-         uZmA==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=6nHgzPv8OHHMQOhvL9odj368V6gyeIizn/EW268BFmo=;
+        b=T+BtHPWAN7zFhlQJ3Vh7wdCJ+9Db2lsKHltj0bZCAebH1WiEy/bGepN15kGNiU6469
+         ma5r8vkSiWbBVxLwouI02LIchw3YoIyHYBRZwkB5Mi09ldoK0U4m4ykkg5iORhBPlrPh
+         g1WBZrFyVRuFCEyVU3B6VRzFk0aUui5Hr22SMVyzXMDfAkmF4CdNPksyjrJumw0d4q4D
+         93Ro/R63gHWvIeT4IwK7z2HTr+0dokmPc2Cwsj47wUMBzNlbRFkDi5tOyOnI90QT9+Wi
+         m9V53rJfzirHyQAUR3sIjq1htXAy4TLE2wChDX4H9psoaB26huD3zIy+8n0ZD0i+c+H+
+         0rEA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Fcp/99fnMkGR/s9JNz8s1K5nWFgNYA49MagXrcAXAEc=;
-        b=h2DujMLLs4uhx/X3c9zLZIEHwopVomPs5boTRabhM09nwzh59Ypy1LvNOhKne8nAtk
-         eMDzvmZsIulTL/0OPJQubhBKgIR7n5iawDwbL4OXHwlVUi7TEvLY0951a0eHrrdhSA15
-         iHAUK2qU4flRs9uTfhFvjoWes5TdVkVZZF/fUBxv4I2lUQonJOhf2FdCds1vc7bLjwMY
-         hOadYkzDWUuEoIyzyFTo+IQYNaKqTOUSyYuivQFi1PhEAZ4sr7eINqA+4LhSq4Q3kHLO
-         fJebUwHJf9U57M+/ay+RyXXPq78wTSOPdtmP04xCNZYc8MrLQr2lQ/Z43V+d+V3cnC7x
-         uxLQ==
-X-Gm-Message-State: AJcUukeGJmKIGFs5ZpzfiQk8jaV7I+5UAmTJAIKnlKHFx4cohzvCxqeP
-        LCb08k5lFrIBdTU8FP0kTbE=
-X-Google-Smtp-Source: ALg8bN7yojEPSHIc+ozAV/Fh0Bn+GMZWEzPt+SOWVDAJ4fdSKQ9i3Am0fngjC31PaV4TTiBM7k3i5g==
-X-Received: by 2002:a63:5455:: with SMTP id e21mr4222261pgm.316.1547012385769;
-        Tue, 08 Jan 2019 21:39:45 -0800 (PST)
-Received: from localhost ([175.223.22.241])
-        by smtp.gmail.com with ESMTPSA id z127sm111131466pfb.80.2019.01.08.21.39.44
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 08 Jan 2019 21:39:44 -0800 (PST)
-Date:   Wed, 9 Jan 2019 14:39:41 +0900
-From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To:     Helge Deller <deller@gmx.de>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        James Bottomley <jejb@linux.ibm.com>
-Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        "James E . J . Bottomley" <jejb@parisc-linux.org>,
-        linux-parisc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: Re: [PATCH] parisc: replace oops_in_progress manipulation with
- bust_spinlocks()
-Message-ID: <20190109053941.GA28834@jagdpanzerIV>
-References: <20190107095612.7086-1-sergey.senozhatsky@gmail.com>
- <d09f4a9a-f966-80d7-01e1-5d92401b5d7e@gmx.de>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=6nHgzPv8OHHMQOhvL9odj368V6gyeIizn/EW268BFmo=;
+        b=KFVDHoB6ckHsiWxZ/y42aAn1ZeZ15Es29Br5KMtmDP11dVcBL/WXEwOZiLXsLDJG8t
+         ce/c5rRotRI7t0bA6qovxAomnJ6y73WvKNxiAhQmnyfLgFRrvvnLlYI4fYAdRbShETuo
+         rmOJJwp99Jai5z/R10f8ycV+HZnsWAQPD3sdSw46A/zt7HGyw9Bq02b0Hw9Qpj/uUP0R
+         mwW+dshAtBgHEVc+oIzuh//fgsUFBEiJwP935aFvGMmWBHiWF9AJrcvbHbYzqHItvy4+
+         zBzqSM30O2GAThNE5I8kH/K5Rh/g/dUtbXVWaKUlegQ0qyi5eU7Bw4E6mgOywW8L6+Vx
+         N5bQ==
+X-Gm-Message-State: AJcUuke/k8tXp7kC/Af+Wbs+AjIxqf4wIrPYsLb5Ngk1DT9cb1HjO6xz
+        C75cU77ppkq+w91yuWihfLrOhuL1FfOs/pmEIApcAO0LpNI2og==
+X-Google-Smtp-Source: ALg8bN7WC9YarGVhTwVTk4rmmMzeT1JUxVUtrATiopraERlgM5IN/iq9S9pbXWCiF6mNWSpgMszQDXsj1t05ClcxXUw=
+X-Received: by 2002:a25:26c8:: with SMTP id m191mr4384247ybm.377.1547012683115;
+ Tue, 08 Jan 2019 21:44:43 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d09f4a9a-f966-80d7-01e1-5d92401b5d7e@gmx.de>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+References: <20190109040107.4110-1-riel@surriel.com> <CALvZod6=-kdUk23i7eOr5AO-_2Fk_BmJiL3QjSJ4S4QOs0xKkw@mail.gmail.com>
+In-Reply-To: <CALvZod6=-kdUk23i7eOr5AO-_2Fk_BmJiL3QjSJ4S4QOs0xKkw@mail.gmail.com>
+From:   Shakeel Butt <shakeelb@google.com>
+Date:   Tue, 8 Jan 2019 21:44:32 -0800
+Message-ID: <CALvZod5+QFLtn4D+xn2REy3sHUR5z3EsJQPGrfzWobK5wmRnjg@mail.gmail.com>
+Subject: Re: [PATCH] mm,slab,memcg: call memcg kmem put cache with same
+ condition as get
+To:     Rik van Riel <riel@surriel.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>, kernel-team@fb.com,
+        Linux MM <linux-mm@kvack.org>, stable@vger.kernel.org,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Christoph Lameter <cl@linux.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Johannes Weiner <hannes@cmpxchg.org>, Tejun Heo <tj@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (01/08/19 08:44), Helge Deller wrote:
-> Date: Tue, 8 Jan 2019 08:44:19 +0100
-> From: Helge Deller <deller@gmx.de>
-> To: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>, "James E . J .
->  Bottomley" <jejb@parisc-linux.org>
-> Cc: linux-parisc@vger.kernel.org, linux-kernel@vger.kernel.org, Sergey
->  Senozhatsky <sergey.senozhatsky@gmail.com>
-> Subject: Re: [PATCH] parisc: replace oops_in_progress manipulation with
->  bust_spinlocks()
-> Message-ID: <d09f4a9a-f966-80d7-01e1-5d92401b5d7e@gmx.de>
-> User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
->  Thunderbird/60.4.0
-> 
-> On 07.01.19 10:56, Sergey Senozhatsky wrote:
-> > Use bust_spinlocks() function to set oops_in_progress.
-> > 
-> > Signed-off-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-> 
-> I've added this patch to the parisc for-next tree.
+On Tue, Jan 8, 2019 at 9:36 PM Shakeel Butt <shakeelb@google.com> wrote:
+>
+> On Tue, Jan 8, 2019 at 8:01 PM Rik van Riel <riel@surriel.com> wrote:
+> >
+> > There is an imbalance between when slab_pre_alloc_hook calls
+> > memcg_kmem_get_cache and when slab_post_alloc_hook calls
+> > memcg_kmem_put_cache.
+> >
+>
+> Can you explain how there is an imbalance? If the returned kmem cache
+> from memcg_kmem_get_cache() is the memcg kmem cache then the refcnt of
+> memcg is elevated and the memcg_kmem_put_cache() will correctly
+> decrement the refcnt of the memcg.
+>
+> > This can cause a memcg kmem cache to be destroyed right as
+> > an object from that cache is being allocated,
 
-Thanks.
+Also please note that the memcg kmem caches are destroyed (if empty)
+on memcg offline. The css_tryget_online() within
+memcg_kmem_get_cache() will fail.
 
-BTW,
-    jejb at parisc-linux.org bounces. Shall it be replaced with
-HansenPartnership.com email address?
+See kernel/cgroup/cgroup.c
+* 2. When the percpu_ref is confirmed to be visible as killed on all CPUs
+ *    and thus css_tryget_online() is guaranteed to fail, the css can be
+ *    offlined by invoking offline_css().  After offlining, the base ref is
+ *    put.  Implemented in css_killed_work_fn().
 
----
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 7fc7813cd9c2..86b174dbe506 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -11511,7 +11511,7 @@ F:	Documentation/blockdev/paride.txt
- F:	drivers/block/paride/
- 
- PARISC ARCHITECTURE
--M:	"James E.J. Bottomley" <jejb@parisc-linux.org>
-+M:	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>
- M:	Helge Deller <deller@gmx.de>
- L:	linux-parisc@vger.kernel.org
- W:	http://www.parisc-linux.org/
+> > which is probably
+> > not good. It could lead to things like a memcg allocating new
+> > kmalloc slabs instead of using freed space in old ones, maybe
+> > memory leaks, and maybe oopses as a memcg kmalloc slab is getting
+> > destroyed on one CPU while another CPU is trying to do an allocation
+> > from that same memcg.
+> >
+> > The obvious fix would be to use the same condition for calling
+> > memcg_kmem_put_cache that we also use to decide whether to call
+> > memcg_kmem_get_cache.
+> >
+> > I am not sure how long this bug has been around, since the last
+> > changeset to touch that code - 452647784b2f ("mm: memcontrol: cleanup
+> >  kmem charge functions") - merely moved the bug from one location to
+> > another. I am still tagging that changeset, because the fix should
+> > automatically apply that far back.
+> >
+> > Signed-off-by: Rik van Riel <riel@surriel.com>
+> > Fixes: 452647784b2f ("mm: memcontrol: cleanup kmem charge functions")
+> > Cc: kernel-team@fb.com
+> > Cc: linux-mm@kvack.org
+> > Cc: stable@vger.kernel.org
+> > Cc: Alexey Dobriyan <adobriyan@gmail.com>
+> > Cc: Christoph Lameter <cl@linux.com>
+> > Cc: Pekka Enberg <penberg@kernel.org>
+> > Cc: Andrew Morton <akpm@linux-foundation.org>
+> > Cc: David Rientjes <rientjes@google.com>
+> > Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
+> > Cc: Johannes Weiner <hannes@cmpxchg.org>
+> > Cc: Tejun Heo <tj@kernel.org>
+> > ---
+> >  mm/slab.h | 3 ++-
+> >  1 file changed, 2 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/mm/slab.h b/mm/slab.h
+> > index 4190c24ef0e9..ab3d95bef8a0 100644
+> > --- a/mm/slab.h
+> > +++ b/mm/slab.h
+> > @@ -444,7 +444,8 @@ static inline void slab_post_alloc_hook(struct kmem_cache *s, gfp_t flags,
+> >                 p[i] = kasan_slab_alloc(s, object, flags);
+> >         }
+> >
+> > -       if (memcg_kmem_enabled())
+> > +       if (memcg_kmem_enabled() &&
+> > +           ((flags & __GFP_ACCOUNT) || (s->flags & SLAB_ACCOUNT)))
+>
+> I don't think these extra checks are needed. They are safe but not needed.
+>
+> >                 memcg_kmem_put_cache(s);
+> >  }
+> >
+> > --
+> > 2.17.1
+> >
+>
+> thanks,
+> Shakeel
