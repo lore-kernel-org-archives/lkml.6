@@ -2,119 +2,107 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DED4EC43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 10:08:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BE12C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 10:09:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B3ADC21738
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 10:08:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 150982183F
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 10:09:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547028541;
+	bh=JlUNL51OouCeDmPe3kPpWErOkSo3wlZchZn8tguNtxg=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:List-ID:From;
+	b=jtc0Hxc5lUbMmqedTUnGYgER5NWkAhJ8NaU7e4EvpADqXTgWt3JV7tvvZhpwsmCeL
+	 XvUjqJmmpLv907CVA14KGNLox6XfglAp053huPCHxsKDLcGgeK7XanVOXYqUhHDGJx
+	 xP1JG7mVmbqWtfg5BDOxGB1E5WhtX9D0/5mOu8xQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730167AbfAIKIf (ORCPT
+        id S1730190AbfAIKJA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 05:08:35 -0500
-Received: from mx2.suse.de ([195.135.220.15]:42732 "EHLO mx1.suse.de"
+        Wed, 9 Jan 2019 05:09:00 -0500
+Received: from mx2.suse.de ([195.135.220.15]:42840 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729603AbfAIKIf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 05:08:35 -0500
+        id S1729603AbfAIKJA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 05:09:00 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 0C169AEEB;
-        Wed,  9 Jan 2019 10:08:34 +0000 (UTC)
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id A306CAEEB;
+        Wed,  9 Jan 2019 10:08:58 +0000 (UTC)
+Date:   Wed, 9 Jan 2019 11:08:57 +0100 (CET)
+From:   Jiri Kosina <jikos@kernel.org>
+To:     Dave Chinner <david@fromorbit.com>
+cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Jann Horn <jannh@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Michal Hocko <mhocko@suse.com>, Linux-MM <linux-mm@kvack.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>
+Subject: Re: [PATCH] mm/mincore: allow for making sys_mincore() privileged
+In-Reply-To: <20190109043906.GF27534@dastard>
+Message-ID: <nycvar.YFH.7.76.1901091050560.16954@cbobk.fhfr.pm>
+References: <CAHk-=wg5Kk+r36=jcGBaLUj+gjopjgiW5eyvkdMqvn0jFkD_iQ@mail.gmail.com> <CAHk-=wiMQeCEKESWTmm15x79NjEjNwFvjZ=9XenxY7yH8zqa7A@mail.gmail.com> <20190106001138.GW6310@bombadil.infradead.org> <CAHk-=wiT=ov+6zYcnw_64ihYf74Amzqs67iVGtJMQq65PxiVYw@mail.gmail.com>
+ <CAHk-=wg1A44Roa8C4dmfdXLRLmNysEW36=3R7f+tzZzbcJ2d2g@mail.gmail.com> <CAHk-=wiqbKEC5jUXr3ax+oUuiRrp=QMv_ZnUfO-SPv=UNJ-OTw@mail.gmail.com> <20190108044336.GB27534@dastard> <CAHk-=wjvzEFQcTGJFh9cyV_MPQftNrjOLon8YMMxaX0G1TLqkg@mail.gmail.com>
+ <20190109022430.GE27534@dastard> <nycvar.YFH.7.76.1901090326460.16954@cbobk.fhfr.pm> <20190109043906.GF27534@dastard>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Wed, 09 Jan 2019 11:08:32 +0100
-From:   Roman Penyaev <rpenyaev@suse.de>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Michal Hocko <mhocko@suse.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Peter Zijlstra <peterz@infradead.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/1] mm/vmalloc: Make vmalloc_32_user() align base kernel
- virtual address to SHMLBA
-In-Reply-To: <20190108113603.ea664e55869346bcb30c1433@linux-foundation.org>
-References: <20190108110944.23591-1-rpenyaev@suse.de>
- <20190108113603.ea664e55869346bcb30c1433@linux-foundation.org>
-Message-ID: <c70e01ab1525e4b6778554209bb6edc1@suse.de>
-X-Sender: rpenyaev@suse.de
-User-Agent: Roundcube Webmail
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-01-08 20:36, Andrew Morton wrote:
-> On Tue,  8 Jan 2019 12:09:44 +0100 Roman Penyaev <rpenyaev@suse.de> 
-> wrote:
+On Wed, 9 Jan 2019, Dave Chinner wrote:
+
+> FWIW, I just realised that the easiest, most reliable way to invalidate 
+> the page cache over a file range is simply to do a O_DIRECT read on it. 
+
+Neat, good catch indeed. Still, it's only the invalidation part, but the 
+residency check is the crucial one.
+
+> > Rationale has been provided by Daniel Gruss in this thread -- if the 
+> > attacker is left with cache timing as the only available vector, he's 
+> > going to be much more successful with mounting hardware cache timing 
+> > attack anyway.
 > 
->> This patch repeats the original one from David S. Miller:
->> 
->>   2dca6999eed5 ("mm, perf_event: Make vmalloc_user() align base kernel 
->> virtual address to SHMLBA")
->> 
->> but for missed vmalloc_32_user() case, which also requires correct
->> alignment of virtual address on kernel side to avoid D-caches
->> aliases.  A bit of copy-paste from original patch to recover in
->> memory of what is all about:
->> 
->>   When a vmalloc'd area is mmap'd into userspace, some kind of
->>   co-ordination is necessary for this to work on platforms with cpu
->>   D-caches which can have aliases.
->> 
->>   Otherwise kernel side writes won't be seen properly in userspace
->>   and vice versa.
->> 
->>   If the kernel side mapping and the user side one have the same
->>   alignment, modulo SHMLBA, this can work as long as VM_SHARED is
->>   shared of VMA and for all current users this is true.  VM_SHARED
->>   will force SHMLBA alignment of the user side mmap on platforms with
->>   D-cache aliasing matters.
+> No, he said:
 > 
-> What are the user-visible runtime effects of this change?
-
-In simple words: proper alignment avoids possible difference in data,
-seen by different virtual mapings: userspace and kernel in our case.
-I.e. userspace reads cache line A, kernel writes to cache line B.
-Both cache lines correspond to the same physical memory (thus aliases).
-
-So this should fix data corruption for archs with vivt and vipt caches,
-e.g. armv6.  Personally I've never worked with this archs, I just 
-spotted
-the strange difference in code: for one case we do alignment, for 
-another
-- not.  I have a strong feeling that David simply missed 
-vmalloc_32_user()
-case.
-
+> "Restricting mincore() is sufficient to fix the hardware-agnostic
+> part."
 > 
-> Is a -stable backport needed?
+> That's not correct - preadv2(RWF_NOWAIT) is also hardware agnostic and 
+> provides exactly the same information about the page cache as mincore.  
 
-No, I do not think so.  The only one user of vmalloc_32_user() is 
-virtual
-frame buffer device drivers/video/fbdev/vfb.c, which has in the 
-description
-"The main use of this frame buffer device is testing and debugging the 
-frame
-buffer subsystem. Do NOT enable it for normal systems!".
+Yeah, preadv2(RWF_NOWAIT) is in the same teritory as mincore(), it has 
+"just" been overlooked. I can't speak for Daniel, but I believe he might 
+be ok with rephrasing the above as "Restricting mincore() and RWF_NOWAIT 
+is sufficient ...".
 
-And it seems to me that this vfb.c does not need 32bit addressable pages
-(vmalloc_32_user() case), because it is virtual device and should not 
-care
-about things like dma32 zones, etc.  Probably is better to clean the 
-code
-and switch vfb.c from vmalloc_32_user() to vmalloc_user() case and wipe 
-out
-vmalloc_32_user() from vmalloc.c completely.  But I'm not very much sure
-that this is worth to do, that's so minor, so we can leave it as is.
+> Timed read/mmap access loops for cache observation are also hardware 
+> agnostic, and on fast SSD based storage will only be marginally slower 
+> bandwidth than preadv2(RWF_NOWAIT).
+> 
+> Attackers will pick whatever leak vector we don't fix, so we either fix 
+> them all (which I think is probably impossible without removing caching 
+> altogether) 
 
---
-Roman
+We can't really fix the fact that it's possible to do the timing on the HW 
+caches though.
 
+> or we start thinking about how we need to isolate the page cache so that 
+> information isn't shared across important security boundaries (e.g. page 
+> cache contents are per-mount namespace).
 
+Umm, sorry for being dense, but how would that help that particular attack 
+scenario on a system that doesn't really employ any namespacing? (which I 
+still believe is a majority of the systems out there, but I might have 
+just missed the containers train long time ago :) ).
 
+-- 
+Jiri Kosina
+SUSE Labs
 
