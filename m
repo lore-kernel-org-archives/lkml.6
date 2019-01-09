@@ -2,109 +2,264 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CD66C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 21:26:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AD48C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 21:28:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D252B20859
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 21:26:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4D94D206BA
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 21:28:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qaubyXd2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726568AbfAIV0H (ORCPT
+        id S1726603AbfAIV20 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 16:26:07 -0500
-Received: from outbound-smtp25.blacknight.com ([81.17.249.193]:43405 "EHLO
-        outbound-smtp25.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725681AbfAIV0H (ORCPT
+        Wed, 9 Jan 2019 16:28:26 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:39432 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725681AbfAIV2Z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 16:26:07 -0500
-Received: from mail.blacknight.com (pemlinmail05.blacknight.ie [81.17.254.26])
-        by outbound-smtp25.blacknight.com (Postfix) with ESMTPS id 9C658B88AA
-        for <linux-kernel@vger.kernel.org>; Wed,  9 Jan 2019 21:26:05 +0000 (GMT)
-Received: (qmail 12084 invoked from network); 9 Jan 2019 21:26:05 -0000
-Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[37.228.229.96])
-  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 9 Jan 2019 21:26:05 -0000
-Date:   Wed, 9 Jan 2019 21:26:03 +0000
-From:   Mel Gorman <mgorman@techsingularity.net>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     David Rientjes <rientjes@google.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Vlastimil Babka <vbabka@suse.cz>, ying.huang@intel.com,
-        kirill@shutemov.name, Linux-MM <linux-mm@kvack.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] mm, compaction: Use free lists to quickly locate a
- migration target -fix
-Message-ID: <20190109212603.GY31517@techsingularity.net>
-References: <20190104125011.16071-1-mgorman@techsingularity.net>
- <20190109111344.GU31517@techsingularity.net>
- <20190109112731.7d189ba6a606ca8f84dc5fa2@linux-foundation.org>
+        Wed, 9 Jan 2019 16:28:25 -0500
+Received: by mail-wr1-f68.google.com with SMTP id t27so9154889wra.6;
+        Wed, 09 Jan 2019 13:28:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=nPNLKfQ2OLWPeiNiU73iZc/IDXOs2TIkOH4qXUr96aU=;
+        b=qaubyXd292Vs96fv5I3kihOBr/GMPUVSFh8AoI/Z6S/AUYVRoX18zIiRPzRHYxhnGY
+         lkiL8hFZC7bdbuAfdLQuQgHPZjd3rj7nJuFXpCTJ0qonDy2gm9EYUPpAe+rUkCZ7/lZu
+         wiPJCh410eTkK9quPVZbqy8DvKTWiVsmB3nX9JP6ONv6FfrsAhuLMlG+rMZCA8rQTez+
+         LVmK3JO78APii/zTIVPCWD4IFpJM78ZT3WoxN/fmidQ7myRsddfJqgtLPhnwrkoGedgw
+         OePEHrNzenlvPNLeL8jJ5rc0FV/JFUId+Nc9YKuCd22gxityRFSpIzH6m6tv3pq2tgyv
+         X30A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=nPNLKfQ2OLWPeiNiU73iZc/IDXOs2TIkOH4qXUr96aU=;
+        b=Jru6wnIse782dEnxznnYngCdSYa/p6mYxKG3sCMukDfo5lMm0XTHiv2LgAtObez72M
+         BZowj7D49mPsaViQOuoR1Y4uftNFXjphvu8azPmzqW1nO6dVJFIwkmvwXCOBy4TCkfth
+         zsYSUpF+sLWdIQoTE/UgnLQ/+NOfmB5/wEFxt3PqyLhWrr1DHGhAID/8PbEMAN4522nr
+         zkc5duwv9mIaIkSwiih443YJrTlgQ9AOG9Mof8ar3JGbVHXhMMJiBlxltVjciodK4w71
+         oc+SFauY/sa96fBRGkx72EBzaP3IzcnDXhOvQD31sDcOec09ZhnpSLAnDCScpoHYlrFL
+         81IQ==
+X-Gm-Message-State: AJcUukc3ZEyRP+8DrSCckSQC4edzqOyTBl7wBJ74hOGPJTY0o6tGEPDd
+        ZiGF/YB3bGGykuP8/lyYFEJ2A0Mp
+X-Google-Smtp-Source: ALg8bN75306g+GtPOwPys6cHFlHtPor29ohLmkl9+0kipknWnPO+YtgiWNbSNFOnOHyi47PfgDtePA==
+X-Received: by 2002:a05:6000:14f:: with SMTP id r15mr6908029wrx.53.1547069301786;
+        Wed, 09 Jan 2019 13:28:21 -0800 (PST)
+Received: from [192.168.1.18] (chc231.neoplus.adsl.tpnet.pl. [83.31.0.231])
+        by smtp.gmail.com with ESMTPSA id f192sm16618123wmd.12.2019.01.09.13.28.20
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 09 Jan 2019 13:28:21 -0800 (PST)
+Subject: Re: [PATCH 1/2] dt: bindings: lp5024: Introduce the lp5024 and lp5018
+ RGB driver
+To:     Dan Murphy <dmurphy@ti.com>, robh+dt@kernel.org, pavel@ucw.cz
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-leds@vger.kernel.org
+References: <20181219162626.12297-1-dmurphy@ti.com>
+ <20181219162626.12297-2-dmurphy@ti.com>
+ <dc2283f9-db85-1eaf-f046-3fbbd4adcace@gmail.com>
+ <2d2d5dcd-9c23-e901-daac-9b79aa5a5e82@ti.com>
+ <6c62956e-7789-58ba-5437-f2e033f2825c@gmail.com>
+ <366cbf6d-94fa-fea9-be58-07ddb09cff3a@ti.com>
+ <df59c10d-7038-cb4a-45f0-7420254c6398@gmail.com>
+ <ec0393b7-118e-1f3b-d5af-86ecdf66412a@ti.com>
+From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Message-ID: <ae700129-7b59-c92b-0c0a-b57a6f230ff7@gmail.com>
+Date:   Wed, 9 Jan 2019 22:28:18 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Disposition: inline
-In-Reply-To: <20190109112731.7d189ba6a606ca8f84dc5fa2@linux-foundation.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <ec0393b7-118e-1f3b-d5af-86ecdf66412a@ti.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 09, 2019 at 11:27:31AM -0800, Andrew Morton wrote:
-> On Wed, 9 Jan 2019 11:13:44 +0000 Mel Gorman <mgorman@techsingularity.net> wrote:
+On 1/9/19 10:12 PM, Dan Murphy wrote:
+> On 1/9/19 2:12 PM, Jacek Anaszewski wrote:
+>> Hi Dan,
+>>
+>> On 1/8/19 10:22 PM, Dan Murphy wrote:
+>>> On 1/8/19 3:16 PM, Jacek Anaszewski wrote:
+>>>> On 1/8/19 9:53 PM, Dan Murphy wrote:
+>>>>> Jacek
+>>>>>
+>>>>> On 1/8/19 2:33 PM, Jacek Anaszewski wrote:
+>>>>>> Dan,
+>>>>>>
+>>>>>> On 12/19/18 5:26 PM, Dan Murphy wrote:
+>>>>>>> Introduce the bindings for the Texas Instruments LP5024 and the LP5018
+>>>>>>> RGB LED device driver.  The LP5024/18 can control RGB LEDs individually
+>>>>>>> or as part of a control bank group.  These devices have the ability
+>>>>>>> to adjust the mixing control for the RGB LEDs to obtain different colors
+>>>>>>> independent of the overall brightness of the LED grouping.
+>>>>>>>
+>>>>>>> Datasheet:
+>>>>>>> http://www.ti.com/lit/ds/symlink/lp5024.pdf
+>>>>>>>
+>>>>>>> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+>>>>>>> ---
+>>>>>>>      .../devicetree/bindings/leds/leds-lp5024.txt  | 63 +++++++++++++++++++
+>>>>>>>      1 file changed, 63 insertions(+)
+>>>>>>>      create mode 100644 Documentation/devicetree/bindings/leds/leds-lp5024.txt
+>>>>>>>
+>>>>>>> diff --git a/Documentation/devicetree/bindings/leds/leds-lp5024.txt b/Documentation/devicetree/bindings/leds/leds-lp5024.txt
+>>>>>>> new file mode 100644
+>>>>>>> index 000000000000..9567aa6f7813
+>>>>>>> --- /dev/null
+>>>>>>> +++ b/Documentation/devicetree/bindings/leds/leds-lp5024.txt
+>>>>>>> @@ -0,0 +1,63 @@
+>>>>>>> +* Texas Instruments - LP5024/18 RGB LED driver
+>>>>>>> +
+>>>>>>> +The LM3692x is an ultra-compact, highly efficient,
+>>>>>>> +white-LED driver designed for LCD display backlighting.
+>>>>>>> +
+>>>>>>> +The main difference between the LP5024 and L5018 is the number of
+>>>>>>> +RGB LEDs they support.  The LP5024 supports twenty four strings while the
+>>>>>>> +LP5018 supports eighteen strings.
+>>>>>>> +
+>>>>>>> +Required properties:
+>>>>>>> +    - compatible:
+>>>>>>> +        "ti,lp5018"
+>>>>>>> +        "ti,lp5024"
+>>>>>>> +    - reg :  I2C slave address
+>>>>>>> +    - #address-cells : 1
+>>>>>>> +    - #size-cells : 0
+>>>>>>> +
+>>>>>>> +Optional properties:
+>>>>>>> +    - enable-gpios : gpio pin to enable/disable the device.
+>>>>>>> +    - vled-supply : LED supply
+>>>>>>> +
+>>>>>>> +Required child properties:
+>>>>>>> +    - reg : Is the child node iteration.
+>>>>>>> +    - led-sources : LP5024 - 0 - 7
+>>>>>>> +            LP5018 - 0 - 5
+>>>>>>> +            Declares the LED string or strings that the child node
+>>>>>>> +            will control.  If ti,control-bank is set then this
+>>>>>>> +            property will contain multiple LED IDs.
+>>>>>>> +
+>>>>>>> +Optional child properties:
+>>>>>>> +    - label : see Documentation/devicetree/bindings/leds/common.txt
+>>>>>>> +    - linux,default-trigger :
+>>>>>>> +       see Documentation/devicetree/bindings/leds/common.txt
+>>>>>>> +    - ti,control-bank : Indicates that the LED strings declared in the
+>>>>>>> +                led-sources property are grouped within a control
+>>>>>>> +                bank for brightness and mixing control.
+>>>>>>> +
+>>>>>>> +Example:
+>>>>>>> +
+>>>>>>> +led-controller@28 {
+>>>>>>> +    compatible = "ti,lp5024";
+>>>>>>> +    reg = <0x28>;
+>>>>>>> +    #address-cells = <1>;
+>>>>>>> +    #size-cells = <0>;
+>>>>>>> +
+>>>>>>> +    enable-gpios = <&gpio1 28 GPIO_ACTIVE_HIGH>;
+>>>>>>> +    vled-supply = <&vbatt>;
+>>>>>>> +
+>>>>>>> +    led@0 {
+>>>>>>> +        reg = <0>;
+>>>>>>> +        led-sources = <1>;
+>>>>>>> +    };
+>>>>>>> +
+>>>>>>> +    led@1 {
+>>>>>>> +        reg = <1>;
+>>>>>>> +        led-sources = <0 6>;
+>>>>>>> +        ti,control-bank;
+>>>>>>
+>>>>>> Do you really need ti,control-bank? Doesn't led-sources array size
+>>>>>> greater than 1 mean that the node describes control bank?
+>>>>>>
+>>>>>
+>>>>> That will work too.
+>>>>
+>>>>>> Also, does it make sense to have only two LEDs in the bank?
+>>>>>
+>>>>> The array can populate all 7 LEDs in a single node.  I only show 2 here as the example.
+>>>>> See the description above of the led-sources
+>>>>
+>>>> OK, I confused RGB LED modules with banks.
+>>>>
+>>>> Shouldn't we allow for defining either strings or RGB LED
+>>>> triplets somehow then?
+>>>>
+>>>
+>>> Well that is what this should be doing.  If you define a single LED in LED sources then
+>>> the triplet is controlled via the associated LEDx_brightness register.
+>>
+>> led-sources should map to iouts directly.
+>> So, for RGB LED modules I would expect:
+>>
+>> LED0: led-sources = <0 1 2>;
+>> LED1: led-sources = <3 4 5>;
+>> LED2: led-sources = <6 7 8>;
+>> and so on.
 > 
-> > Full compaction of a node passes in negative orders which can lead to array
-> > boundary issues. While it could be addressed in the control flow of the
-> > primary loop, it would be fragile so explicitly check for the condition.
-> > This is a fix for the mmotm patch
-> > broken-out/mm-compaction-use-free-lists-to-quickly-locate-a-migration-target.patch
-> > 
-> > ...
-> >
-> > --- a/mm/compaction.c
-> > +++ b/mm/compaction.c
-> > @@ -1206,6 +1206,10 @@ fast_isolate_freepages(struct compact_control *cc)
-> >  	bool scan_start = false;
-> >  	int order;
-> >  
-> > +	/* Full compaction passes in a negative order */
-> > +	if (order <= 0)
-> > +		return cc->free_pfn;
-> > +
-> >  	/*
-> >  	 * If starting the scan, use a deeper search and use the highest
-> >  	 * PFN found if a suitable one is not found.
+>>
+>> for banks:
+>>
+>> Bank A with iouts 0,3,6,9: led-sources<0 3 6 9>;
+>> Bank B with iouts 2,4,10:  led-sources<2 4 10>;
+>> Bank C with iouts 5,8,11,14,17: led-sources<5 8 11 14 17>;
+>>
 > 
-> `order' is uninitialized.
+> Ok the led-sources would need to be different then this as I don't define the sources for banks.
+> 
+> The led-sources for the banks and the individual groups will have different meanings within the same
+> document.  I was attempting to keep the led-sources mapped to the LEDx_brightness registers as opposed to
+> the hardware outputs since the RGB LEDs are controlled and grouped by a single brightness register and if banked then
+> it would be controlled by the bank brightness register.
+> 
+> Describing these in the DT seems wrought with potential issues as the data sheet defines what outputs map to what bank and LED
+> registers.
 
-Twice I managed to send out the wrong one :(
+Yes, that's why I mentioned the need for validation of led-sources.
+But they have to be iouts. This property was introduced specifically
+for such purposes.
 
----8<---
-mm, compaction: Use free lists to quickly locate a migration target -fix
+common LED bindings say:
 
-Full compaction of a node passes in negative orders which can lead to array
-boundary issues. While it could be addressed in the control flow of the
-primary loop, it would be fragile so explicitly check for the condition.
-This is a fix for the mmotm patch
-broken-out/mm-compaction-use-free-lists-to-quickly-locate-a-migration-target.patch
+- led-sources : List of device current outputs the LED is connected to. The
+                 outputs are identified by the numbers that must be defined
+                 in the LED device binding documentation.
 
-Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
----
- mm/compaction.c | 4 ++++
- 1 file changed, 4 insertions(+)
+>> We could additionally mark banks with ti,control-bank,
+> 
+> We would have to keep the ti,control-bank node based on the above.
+> 
+>> but I'm not sure if it would ease parsing, since
+>> you will have to validate iouts configuration anyway.
+>>
+>>> If you have multiple LED sources defined in the led-sources then those LEDs would be grouped in the bank.
+>>> I guess I need to provide some protection or a warning if a DT defines two banks because there is only one bank control.
+>>
+>> Does the hardware allow the IOUT to belong to an RGB LED module
+>> and to a bank in the same time?
+>>
+> 
+> No it does not.  LED_CONFIG0 sets the bit if it is control bank or not.
 
-diff --git a/mm/compaction.c b/mm/compaction.c
-index 9438f0564ed5..4b46ae96cc1b 100644
---- a/mm/compaction.c
-+++ b/mm/compaction.c
-@@ -1206,6 +1206,10 @@ fast_isolate_freepages(struct compact_control *cc)
- 	bool scan_start = false;
- 	int order;
- 
-+	/* Full compaction passes in a negative order */
-+	if (cc->order <= 0)
-+		return cc->free_pfn;
-+
- 	/*
- 	 * If starting the scan, use a deeper search and use the highest
- 	 * PFN found if a suitable one is not found.
+OK, so validation will also have to check if led-sources definitions
+are not mutually exclusive between child DT nodes. For consistency it
+would be really better if bank definitions also used led-sources.
+
+> Section 8.3.2 in the data sheet says
+> "When a channel is configured in
+> LED bank-control mode, the related color mixing and intensity control is governed by the bank control registers
+> (BANK_A_COLOR, BANK_B_COLOR, BANK_C_COLOR, and BANK_BRIGHTNESS) regardless of the inputs
+> on its own color-mixing and intensity-control registers."
+> 
+
+-- 
+Best regards,
+Jacek Anaszewski
