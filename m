@@ -2,181 +2,96 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E48C9C43612
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 05:24:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C00B6C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 05:32:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B1CE620883
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 05:24:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 82EB420821
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 05:32:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=zoho.com header.i=yehs2007@zoho.com header.b="f6bjgQsu"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729297AbfAIFYp convert rfc822-to-8bit (ORCPT
+        id S1729347AbfAIFcC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 00:24:45 -0500
-Received: from mga05.intel.com ([192.55.52.43]:64491 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726237AbfAIFYp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 00:24:45 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Jan 2019 21:24:44 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,456,1539673200"; 
-   d="scan'208";a="136607201"
-Received: from pgsmsx105.gar.corp.intel.com ([10.221.44.96])
-  by fmsmga001.fm.intel.com with ESMTP; 08 Jan 2019 21:24:40 -0800
-Received: from pgsmsx112.gar.corp.intel.com ([169.254.3.246]) by
- PGSMSX105.gar.corp.intel.com ([169.254.4.160]) with mapi id 14.03.0415.000;
- Wed, 9 Jan 2019 13:24:40 +0800
-From:   "Huang, Kai" <kai.huang@intel.com>
-To:     "Christopherson, Sean J" <sean.j.christopherson@intel.com>
-CC:     Andy Lutomirski <luto@kernel.org>,
-        Jethro Beekman <jethro@fortanix.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "x86@kernel.org" <x86@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        "Haitao Huang" <haitao.huang@linux.intel.com>,
-        "Dr . Greg Wettstein" <greg@enjellic.com>
-Subject: RE: x86/sgx: uapi change proposal
-Thread-Topic: x86/sgx: uapi change proposal
-Thread-Index: AQHUl3CouNmOMJQZHU2YX8Dh54+gQaWFODMAgAAIjACAAAbWAIAAVlWAgADM8wCAAnSJgIAc/6rw//+proCAAOdxMA==
-Date:   Wed, 9 Jan 2019 05:24:38 +0000
-Message-ID: <105F7BF4D0229846AF094488D65A0989355A58F1@PGSMSX112.gar.corp.intel.com>
-References: <20181214215729.4221-1-sean.j.christopherson@intel.com>
- <7706b2aa71312e1f0009958bcab24e1e9d8d1237.camel@linux.intel.com>
- <598cd050-f0b5-d18c-96a0-915f02525e3e@fortanix.com>
- <20181219091148.GA5121@linux.intel.com>
- <613c6814-4e71-38e5-444a-545f0e286df8@fortanix.com>
- <20181219144515.GA30909@linux.intel.com>
- <CALCETrW_8LnitFamYUU7POHFOJFxLO7ESFUdS=aeG_SOvHVPkw@mail.gmail.com>
- <20181221162825.GB26865@linux.intel.com>
- <105F7BF4D0229846AF094488D65A0989355A45B6@PGSMSX112.gar.corp.intel.com>
- <20190108220946.GA30462@linux.intel.com>
-In-Reply-To: <20190108220946.GA30462@linux.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiZTMwY2IwMTctM2I2Yi00Mjg2LWFkNDMtY2YxMGRkN2JhOWQ3IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiTTMrWnJ3XC96SUhCT25TT3JzNWRcL3dxSnlrR2kxcGNVem9USTJLajM0OWJlR1JxQWszR01EMFwvdUhXS1lqNXJxMCJ9
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [172.30.20.206]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-MIME-Version: 1.0
+        Wed, 9 Jan 2019 00:32:02 -0500
+Received: from sender-pp-092.zoho.com ([135.84.80.237]:25360 "EHLO
+        sender-pp-092.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728469AbfAIFcC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 00:32:02 -0500
+ARC-Seal: i=1; a=rsa-sha256; t=1547011904; cv=none; 
+        d=zoho.com; s=zohoarc; 
+        b=JPscTfC8Q82D0MvDJAPotP/NLecXfoCq0b1ssG1Xkzq/iDoNv7DCjfbksfxQl1g4eFboFgJwMa0ZCfGXzhVC7H2mUt8LBcU6ZRwxSS+t2RnQFdhTAtPuiUCNJDe2+nmHvxRAJKTd1N/9mZ+rFc9Pdobu2JsBdyo6IEcigKNDgsg=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com; s=zohoarc; 
+        t=1547011904; h=Cc:Date:From:Message-ID:Subject:To:ARC-Authentication-Results; 
+        bh=4lMfZZ/5tufo0Udnfw9vFuw1iI0gj/s3FGcicjIOBLQ=; 
+        b=MgqQqPjgNASGhGLaZJNY8r+qbc3Tt9oV2Nky9pawAfIdtcDVBb0SiwagnMz7/6g85smrm3yDhcOkUUobeI5ACiXiZuPxuTNPYpyDrOD8/BlW4Icw+Pk0lC8EgYTFedELOvDklTCVMIxk5PpJ+K1F3MtRoRZla0MdayqN5OqBdbs=
+ARC-Authentication-Results: i=1; mx.zoho.com;
+        dkim=pass  header.i=zoho.com;
+        spf=pass  smtp.mailfrom=yehs2007@zoho.com;
+        dmarc=pass header.from=<yehs2007@zoho.com> header.from=<yehs2007@zoho.com>
+DomainKey-Signature: a=rsa-sha1; q=dns; c=nofws; 
+  s=zapps768; d=zoho.com; 
+  h=from:to:cc:subject:date:message-id; 
+  b=hoH38629Q0xQv+b0zLKSdPaQ9w1ivbaGiUy7DCMg4PPL+/cpXGYIrnKh3hHbUwC2F+ILa6mMyWjg
+    YQNgMb0gWHoGYf7nr0LEyCqopO4ruBGtx+Y58Ni+fTm1a3zNy8oo  
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1547011904;
+        s=default; d=zoho.com; i=yehs2007@zoho.com;
+        h=From:To:Cc:Subject:Date:Message-Id; l=1000;
+        bh=4lMfZZ/5tufo0Udnfw9vFuw1iI0gj/s3FGcicjIOBLQ=;
+        b=f6bjgQsuLvVWYtKCdIKXDV/VUBlQfgDhlZMTwu0NWQcuoUk2CQIpSNI1VWJH7D/m
+        fYMcVyG/DvkB04WsmMoUriCu+Nm4UhBcAspNNEFAMGcmldbJf/ZZXuSjvADQ8U4U0HR
+        +kC9bnGmZeI5h6Hev6UJ2+14mxpkbJOz4BKaOOac=
+Received: from YEHS1XR956R00D1.lenovo.com (123.120.89.99 [123.120.89.99]) by mx.zohomail.com
+        with SMTPS id 15470119020141017.1832509629885; Tue, 8 Jan 2019 21:31:42 -0800 (PST)
+From:   Huaisheng Ye <yehs2007@zoho.com>
+To:     snitzer@redhat.com, agk@redhat.com
+Cc:     dan.j.williams@intel.com, hch@lst.de, jack@suse.cz, corbet@lwn.net,
+        dm-devel@redhat.com, linux-kernel@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-doc@vger.kernel.org,
+        chengnt@lenovo.com, Huaisheng Ye <yehs1@lenovo.com>
+Subject: [RFC PATCH v2 0/4] add parameter for pmem cache device init
+Date:   Wed,  9 Jan 2019 13:31:23 +0800
+Message-Id: <20190109053127.8128-1-yehs2007@zoho.com>
+X-Mailer: git-send-email 2.17.0.windows.1
+X-ZohoMailClient: External
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> On Tue, Jan 08, 2019 at 11:27:11AM -0800, Huang, Kai wrote:
-> > > >
-> > > > Can one of you explain why SGX_ENCLAVE_CREATE is better than just
-> > > > opening a new instance of /dev/sgx for each encalve?
-> > >
-> > > Directly associating /dev/sgx with an enclave means /dev/sgx can't
-> > > be used to provide ioctl()'s for other SGX-related needs, e.g. to
-> > > mmap() raw EPC and expose it a VM.  Proposed layout in the link
-> > > below.  I'll also respond to Jarkko's question about exposing EPC
-> > > through /dev/sgx instead of having KVM allocate it on behalf of the VM.
-> > >
-> > > https://lkml.kernel.org/r/20181218185349.GC30082@linux.intel.com
-> >
-> > Hi Sean,
-> >
-> > Sorry for replying to old email. But IMHO it is not a must that Qemu
-> > needs to open some /dev/sgx and allocate/mmap EPC for guest's virtual
-> > EPC slot, instead, KVM could create private slot, which is not visible
-> > to Qemu, for virtual EPC, and KVM could call core-SGX EPC allocation
-> > API directly.
-> 
-> That's possible, but it has several downsides.
-> 
->   - Duplicates a lot of code in KVM for managing memory regions.
+From: Huaisheng Ye <yehs1@lenovo.com>
 
-I don't see why there will be duplicated code. you can simply call __x86_set_memory_region to create private slot. It is KVM x86 equivalent to KVM_SET_USER_MEMORY_REGION from userspace. The only difference is Qemu is not aware of the private slot.
+This patch set could be used for dm-writecache when use persistent
+memory as cache data device.
 
->   - Artificially restricts userspace to a single EPC region, unless
->     even more code is duplicated to handle multiple private regions.
+Patch 1 and 2 go towards removing unused parameter and codes which
+actually doesn't really work.
 
-You can have multiple private slots, by calling __x86_set_memory_region for each EPC section. KVM receives EPC section/sections info from Qemu, via CPUID, or dedicated IOCTL (is this you are going to add?), and simply creates private EPC slot/slots.
+Patch 3 and 4 are targeted at solving problem fn ctr failed to work
+due to invalid magic or version, which is caused by the super block
+of pmem has messy data stored.
 
->   - Requires additional ioctls() or capabilities to probe EPC support
+Changes Since v1:
+	- add optional parameter reinit to avoid invalid magic or
+	  version.
+	[1]: https://lkml.org/lkml/2019/1/3/43
 
-No. EPC info is from Qemu at the beginning (size is given by parameter, base is calculated by Qemu), and actually it is Qemu notifies KVM EPC info, so I don't think we require additional ioctls or capabilities here.
+Huaisheng Ye (4):
+  dm-writecache: remove unused size to writecache_flush_region
+  dm-writecache: get rid of memory_data flush to writecache_flush_entry
+  dm-writecache: expand pmem_reinit for struct dm_writecache
+  Documentation/device-mapper: add optional parameter reinit
 
->   - Does not fit with Qemu/KVM's memory model, e.g. all other types of
->     memory are exposed to a guest through
-> KVM_SET_USER_MEMORY_REGION.
+ Documentation/device-mapper/writecache.txt |  4 ++++
+ drivers/md/dm-writecache.c                 | 19 +++++++++++--------
+ 2 files changed, 15 insertions(+), 8 deletions(-)
 
-EPC is different. I am not sure whether EPC needs to fit such model. There are already examples in KVM which uses private slot w/o using KVM_SET_USER_MEMORY_REGION, for example, APIC access page.
+-- 
+1.8.3.1
 
->   - Prevents userspace from debugging a guest's enclave.  I'm not saying
->     this is a likely scenario, but I also don't think we should preclude
->     it without good reason.
 
-I am not sure how important it is, so don't know whether this can be a justification. To me we don't need to consider this. Qemu normally doesn't access guest memory unless it has to (ie, for device model). 
-
->   - KVM is now responsible for managing the lifecycle of EPC, e.g. what
->     happens if an EPC cgroup limit is lowered on a running VM and
->     KVM can't gracefully reclaim EPC?  The userspace hypervisor should
->     ultimately decide how to handle such an event.
-
-Even using KVM_SET_USER_MEMORY_REGION, KVM is also responsible for managing the lifecycle of EPC, no? And "managing the lifecycle of EPC" you mean doesn't need to be "managing EPC itself" I suppose, since EPC should always be managed by core SGX code.
-
-I don't see the difference between private slot and KVM_SET_USER_MEMORY_REGION, in terms of how does KVM reclaim EPC, or how does KVM do when it fails to reclaim EPC. 
-
->   - SGX logic is split between SGX and KVM, e.g. VA page management for
->     oversubscription will likely be common to SGX and KVM.  From a long
->     term maintenance perspective, this means that changes to the EPC
->     management could potentially need to be Acked by KVM, and vice versa.
-
-I think most of the code should be in core SGX code under x86. KVM should only have the code that is specifically related to virtualization, ie, ENCLV.
-
-VA page allocation should be under code SGX code. KVM might need to call function such as alloc_va_page, etc, but this is not a problem. There are many other cases now.
-
-And this is not related to private slot vs KVM_SET_USER_MEMORY_REGION.
-
-> 
-> > I am not sure what's the good of allowing userspace to alloc/mmap a
-> > raw EPC region? Userspace is not allowed to touch EPC anyway, expect
-> > enclave code.
-> >
-> > To me KVM creates private EPC slot is cleaner than exposing
-> > /dev/sgx/epc and allowing userspace to map some raw EPC region.
-> 
-> Cleaner in the sense that it's faster to get basic support up and running since
-> there are fewer touchpoints, but there are long term ramifications to
-> cramming EPC management in KVM.
-> 
-> And at this point I'm not stating any absolutes, e.g. how EPC will be handled
-> by KVM.  What I'm pushing for is to not eliminate the possibility of having
-> the SGX subsystem own all EPC management, e.g. don't tie /dev/sgx to a
-> single enclave.
-
-I suppose "SGX subsystem" you mean here is core SGX code under x86. IMHO EPC should always be managed by such SGX subsystem, and KVM and SGX driver are just consumers (ie, calling EPC allocation function, etc).
-
-IMHO I think /dev/sgx (or whatever /dev/sgx/xxx) should be in SGX driver, but not SGX core code. For example, if we don't consider KVM EPC oversubscription here, theoretically we only need below code in core SGX code to make KVM SGX work:
-
-1) SGX feature detection. There should be some core structure (such as boot_cpu_data, etc) where KVM can query SGX capabilities, ie, whether FLC is available.
-2) EPC management. KVM simply calls EPC management APIs when it needs. For example, when EPC slot is created, we should populate all EPC pages, and fail to create VM if running out of EPC.
-3) Other code to deal with ENCLS, SGX data structure, etc, since we have agreed even with EPC static allocation, we should trap EINIT. 
-
-We probably even don't need code to deal with enclave, if only for KVM. Of course, in order to support KVM EPC oversubscription, we should also include enclave management code in core SGX code, but this doesn't necessary mean we should include /dev/sgx/xxx in core SGX code.
-
-It seems there still are lots of design issues we haven't got consensus in terms of how SGX  driver should be (or how SGX stack is supposed to work), but if we can focus on what core SGX code should really have (w/o involving SGX driver logic), we can at least get KVM SGX code working. After all, we also have window SGX support. 
-
-Thanks,
--Kai 
