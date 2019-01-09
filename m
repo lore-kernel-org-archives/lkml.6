@@ -2,178 +2,152 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67878C43444
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 10:06:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2724C43444
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 10:06:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40E1121738
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 10:06:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3F2EE21738
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 10:06:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="R92t7AeM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730062AbfAIKF7 (ORCPT
+        id S1730109AbfAIKGX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 05:05:59 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:56239 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729148AbfAIKF6 (ORCPT
+        Wed, 9 Jan 2019 05:06:23 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:44645 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728138AbfAIKGW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 05:05:58 -0500
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x09A4Xqi3907465
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Wed, 9 Jan 2019 02:04:33 -0800
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x09A4Tav3907460;
-        Wed, 9 Jan 2019 02:04:29 -0800
-Date:   Wed, 9 Jan 2019 02:04:29 -0800
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for WANG Chao <tipbot@zytor.com>
-Message-ID: <tip-e4f358916d528d479c3c12bd2fd03f2d5a576380@git.kernel.org>
-Cc:     keescook@chromium.org, chao.wang@ucloud.cn, jeyu@kernel.org,
-        jkosina@suse.cz, hpa@zytor.com, luc.vanoostenryck@gmail.com,
-        zhenzhong.duan@oracle.com, akpm@linux-foundation.org,
-        michal.lkml@markovi.net, arnd@arndb.de, mingo@kernel.org,
-        miguel.ojeda.sandonis@gmail.com, dwmw@amazon.co.uk, x86@kernel.org,
-        luto@kernel.org, ak@linux.intel.com, yamada.masahiro@socionext.com,
-        tglx@linutronix.de, linux-kernel@vger.kernel.org,
-        gor@linux.ibm.com, bp@suse.de, daniel@iogearbox.net,
-        tim.c.chen@linux.intel.com, stable@vger.kernel.org,
-        peterz@infradead.org, geert@linux-m68k.org, konrad.wilk@oracle.com
-Reply-To: konrad.wilk@oracle.com, geert@linux-m68k.org,
-          peterz@infradead.org, stable@vger.kernel.org,
-          tim.c.chen@linux.intel.com, daniel@iogearbox.net, bp@suse.de,
-          gor@linux.ibm.com, tglx@linutronix.de,
-          linux-kernel@vger.kernel.org, yamada.masahiro@socionext.com,
-          luto@kernel.org, ak@linux.intel.com, dwmw@amazon.co.uk,
-          x86@kernel.org, miguel.ojeda.sandonis@gmail.com,
-          mingo@kernel.org, arnd@arndb.de, michal.lkml@markovi.net,
-          akpm@linux-foundation.org, zhenzhong.duan@oracle.com,
-          luc.vanoostenryck@gmail.com, hpa@zytor.com, jeyu@kernel.org,
-          jkosina@suse.cz, chao.wang@ucloud.cn, keescook@chromium.org
-In-Reply-To: <20181210163725.95977-1-chao.wang@ucloud.cn>
-References: <20181210163725.95977-1-chao.wang@ucloud.cn>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/urgent] x86, modpost: Replace last remnants of RETPOLINE
- with CONFIG_RETPOLINE
-Git-Commit-ID: e4f358916d528d479c3c12bd2fd03f2d5a576380
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Wed, 9 Jan 2019 05:06:22 -0500
+Received: by mail-ed1-f68.google.com with SMTP id y56so6782937edd.11
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Jan 2019 02:06:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=XJSwsJ1anxIH19VzksMjGn/FK5l8eTorG+Tl0wytk9I=;
+        b=R92t7AeMq8I065xAzVNKei0dcBAnRaOH55PdCNXGvh0XfUUGNO9J+Jfmy8q/kATQjW
+         RyobE9vTRyiHUDjkBzgU6H1jq5ykCjGs39ezULeHa7A76x7YpOBe+rqiFd+RkhgCySBs
+         TKiLnQ2fzBd67HzF9b1HGWtUwzE4m196IIBjk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=XJSwsJ1anxIH19VzksMjGn/FK5l8eTorG+Tl0wytk9I=;
+        b=EUW0UYPAjMsyJ5pfujiqRXujwWQ50SckttLg7/LIL4GwRnU89DUKArJLdkkZI+hcJJ
+         yCphUZp3xQvHHx3gTRjl6ZeJtpyWXcK73ftJDWVkcjE9SUyHDOh3XwK+Gt6oyhBBgSLl
+         481wR/TXfKE9G0oKM5PBTonmkKQX9CIS4fP5Qwhppt0G+qjZAXeElKYgMgn0Mg9H2uQa
+         3DdmhR6QbTsmKklrF9Ar/r7l4Oz+kKa0Qq6Jn5p/J27/vtwXfOY5PAJ22d5QzPTeFnzb
+         ZEnojBApfYrLXc/I+zY2NvWdpLx4mB2vANJy0G4bRSH5P/ME3KbxYptXCiinZ3bMr7YF
+         gAbA==
+X-Gm-Message-State: AJcUukf5O/57aUg15ketj+wv40BvLkeqlrMhs8zjbXvfWPehI9efoVWq
+        uwvLpNTLjWs/rH0PAncqvQ5xyA==
+X-Google-Smtp-Source: ALg8bN6vbm9/qc3qJp/1xKFX0VK6iq6/CkSLDXj5V8oLlYKmVLZjEHVU+LQz9oaV36T1e/YTnAiTCg==
+X-Received: by 2002:a17:906:3e47:: with SMTP id t7-v6mr4918889eji.201.1547028380367;
+        Wed, 09 Jan 2019 02:06:20 -0800 (PST)
+Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
+        by smtp.gmail.com with ESMTPSA id r8sm786949edo.11.2019.01.09.02.06.19
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 09 Jan 2019 02:06:19 -0800 (PST)
+Date:   Wed, 9 Jan 2019 11:06:17 +0100
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Gerd Hoffmann <kraxel@redhat.com>
+Cc:     dri-devel@lists.freedesktop.org, David Airlie <airlied@redhat.com>,
+        andr2000@gmail.com, David Airlie <airlied@linux.ie>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:DRM DRIVER FOR BOCHS VIRTUAL GPU" 
+        <virtualization@lists.linux-foundation.org>
+Subject: Re: [PATCH v2 03/15] drm/bochs: atomic: add
+ atomic_flush+atomic_enable callbacks.
+Message-ID: <20190109100617.GR21184@phenom.ffwll.local>
+Mail-Followup-To: Gerd Hoffmann <kraxel@redhat.com>,
+        dri-devel@lists.freedesktop.org, David Airlie <airlied@redhat.com>,
+        andr2000@gmail.com, David Airlie <airlied@linux.ie>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:DRM DRIVER FOR BOCHS VIRTUAL GPU" <virtualization@lists.linux-foundation.org>
+References: <20190108112519.27473-1-kraxel@redhat.com>
+ <20190108112519.27473-4-kraxel@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20190108112519.27473-4-kraxel@redhat.com>
+X-Operating-System: Linux phenom 4.18.0-2-amd64 
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  e4f358916d528d479c3c12bd2fd03f2d5a576380
-Gitweb:     https://git.kernel.org/tip/e4f358916d528d479c3c12bd2fd03f2d5a576380
-Author:     WANG Chao <chao.wang@ucloud.cn>
-AuthorDate: Tue, 11 Dec 2018 00:37:25 +0800
-Committer:  Borislav Petkov <bp@suse.de>
-CommitDate: Wed, 9 Jan 2019 10:35:56 +0100
+On Tue, Jan 08, 2019 at 12:25:07PM +0100, Gerd Hoffmann wrote:
+> Conversion to atomic modesetting, step one.
+> Add atomic crtc helper callbacks.
+> 
+> Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+> ---
+>  drivers/gpu/drm/bochs/bochs_kms.c | 25 +++++++++++++++++++++++++
+>  1 file changed, 25 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/bochs/bochs_kms.c b/drivers/gpu/drm/bochs/bochs_kms.c
+> index f7e6d1a9b3..2cbd406b1f 100644
+> --- a/drivers/gpu/drm/bochs/bochs_kms.c
+> +++ b/drivers/gpu/drm/bochs/bochs_kms.c
+> @@ -115,6 +115,29 @@ static int bochs_crtc_page_flip(struct drm_crtc *crtc,
+>  	return 0;
+>  }
+>  
+> +static void bochs_crtc_atomic_enable(struct drm_crtc *crtc,
+> +				     struct drm_crtc_state *old_crtc_state)
+> +{
+> +}
 
-x86, modpost: Replace last remnants of RETPOLINE with CONFIG_RETPOLINE
+A patch to make this optional in the helpers would be neat.
+-Daniel
 
-Commit
+> +
+> +static void bochs_crtc_atomic_flush(struct drm_crtc *crtc,
+> +				    struct drm_crtc_state *old_crtc_state)
+> +{
+> +	struct drm_device *dev = crtc->dev;
+> +	struct drm_pending_vblank_event *event;
+> +
+> +	if (crtc->state && crtc->state->event) {
+> +		unsigned long irqflags;
+> +
+> +		spin_lock_irqsave(&dev->event_lock, irqflags);
+> +		event = crtc->state->event;
+> +		crtc->state->event = NULL;
+> +		drm_crtc_send_vblank_event(crtc, event);
+> +		spin_unlock_irqrestore(&dev->event_lock, irqflags);
+> +	}
+> +}
+> +
+> +
+>  /* These provide the minimum set of functions required to handle a CRTC */
+>  static const struct drm_crtc_funcs bochs_crtc_funcs = {
+>  	.set_config = drm_crtc_helper_set_config,
+> @@ -128,6 +151,8 @@ static const struct drm_crtc_helper_funcs bochs_helper_funcs = {
+>  	.mode_set_base = bochs_crtc_mode_set_base,
+>  	.prepare = bochs_crtc_prepare,
+>  	.commit = bochs_crtc_commit,
+> +	.atomic_enable = bochs_crtc_atomic_enable,
+> +	.atomic_flush = bochs_crtc_atomic_flush,
+>  };
+>  
+>  static const uint32_t bochs_formats[] = {
+> -- 
+> 2.9.3
+> 
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
 
-  4cd24de3a098 ("x86/retpoline: Make CONFIG_RETPOLINE depend on compiler support")
-
-replaced the RETPOLINE define with CONFIG_RETPOLINE checks. Remove the
-remaining pieces.
-
- [ bp: Massage commit message. ]
-
-Fixes: 4cd24de3a098 ("x86/retpoline: Make CONFIG_RETPOLINE depend on compiler support")
-Signed-off-by: WANG Chao <chao.wang@ucloud.cn>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Reviewed-by: Zhenzhong Duan <zhenzhong.duan@oracle.com>
-Reviewed-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Daniel Borkmann <daniel@iogearbox.net>
-Cc: David Woodhouse <dwmw@amazon.co.uk>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Jessica Yu <jeyu@kernel.org>
-Cc: Jiri Kosina <jkosina@suse.cz>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Cc: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-Cc: Michal Marek <michal.lkml@markovi.net>
-Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Tim Chen <tim.c.chen@linux.intel.com>
-Cc: Vasily Gorbik <gor@linux.ibm.com>
-Cc: linux-kbuild@vger.kernel.org
-Cc: srinivas.eeda@oracle.com
-Cc: stable <stable@vger.kernel.org>
-Cc: x86-ml <x86@kernel.org>
-Link: https://lkml.kernel.org/r/20181210163725.95977-1-chao.wang@ucloud.cn
----
- arch/x86/kernel/cpu/bugs.c   | 2 +-
- include/linux/compiler-gcc.h | 2 +-
- include/linux/module.h       | 2 +-
- scripts/mod/modpost.c        | 2 +-
- 4 files changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-index 8654b8b0c848..1de0f4170178 100644
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -215,7 +215,7 @@ static enum spectre_v2_mitigation spectre_v2_enabled __ro_after_init =
- static enum spectre_v2_user_mitigation spectre_v2_user __ro_after_init =
- 	SPECTRE_V2_USER_NONE;
- 
--#ifdef RETPOLINE
-+#ifdef CONFIG_RETPOLINE
- static bool spectre_v2_bad_module;
- 
- bool retpoline_module_ok(bool has_retpoline)
-diff --git a/include/linux/compiler-gcc.h b/include/linux/compiler-gcc.h
-index 5776da43da97..dd8268f5f5f0 100644
---- a/include/linux/compiler-gcc.h
-+++ b/include/linux/compiler-gcc.h
-@@ -68,7 +68,7 @@
-  */
- #define uninitialized_var(x) x = x
- 
--#ifdef RETPOLINE
-+#ifdef CONFIG_RETPOLINE
- #define __noretpoline __attribute__((__indirect_branch__("keep")))
- #endif
- 
-diff --git a/include/linux/module.h b/include/linux/module.h
-index 9a21fe3509af..8fa38d3e7538 100644
---- a/include/linux/module.h
-+++ b/include/linux/module.h
-@@ -828,7 +828,7 @@ static inline void module_bug_finalize(const Elf_Ehdr *hdr,
- static inline void module_bug_cleanup(struct module *mod) {}
- #endif	/* CONFIG_GENERIC_BUG */
- 
--#ifdef RETPOLINE
-+#ifdef CONFIG_RETPOLINE
- extern bool retpoline_module_ok(bool has_retpoline);
- #else
- static inline bool retpoline_module_ok(bool has_retpoline)
-diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
-index 0de2fb236640..26bf886bd168 100644
---- a/scripts/mod/modpost.c
-+++ b/scripts/mod/modpost.c
-@@ -2185,7 +2185,7 @@ static void add_intree_flag(struct buffer *b, int is_intree)
- /* Cannot check for assembler */
- static void add_retpoline(struct buffer *b)
- {
--	buf_printf(b, "\n#ifdef RETPOLINE\n");
-+	buf_printf(b, "\n#ifdef CONFIG_RETPOLINE\n");
- 	buf_printf(b, "MODULE_INFO(retpoline, \"Y\");\n");
- 	buf_printf(b, "#endif\n");
- }
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
