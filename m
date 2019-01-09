@@ -6,24 +6,24 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 611FFC43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 11:48:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F7BAC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 11:48:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3AF3E20665
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 11:48:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0B04920665
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 11:48:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731102AbfAILsq (ORCPT
+        id S1731139AbfAILsu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 06:48:46 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:56212 "EHLO
+        Wed, 9 Jan 2019 06:48:50 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:56240 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731051AbfAILso (ORCPT
+        with ESMTP id S1731111AbfAILst (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 06:48:44 -0500
+        Wed, 9 Jan 2019 06:48:49 -0500
 Received: from localhost ([127.0.0.1] helo=bazinga.breakpoint.cc)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <bigeasy@linutronix.de>)
-        id 1ghCLd-0007Al-5Q; Wed, 09 Jan 2019 12:48:37 +0100
+        id 1ghCLi-0007Al-94; Wed, 09 Jan 2019 12:48:42 +0100
 From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 To:     linux-kernel@vger.kernel.org
 Cc:     x86@kernel.org, Andy Lutomirski <luto@kernel.org>,
@@ -33,9 +33,9 @@ Cc:     x86@kernel.org, Andy Lutomirski <luto@kernel.org>,
         Rik van Riel <riel@surriel.com>,
         Dave Hansen <dave.hansen@linux.intel.com>,
         Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [PATCH 14/22] x86/fpu: Eager switch PKRU state
-Date:   Wed,  9 Jan 2019 12:47:36 +0100
-Message-Id: <20190109114744.10936-15-bigeasy@linutronix.de>
+Subject: [PATCH 18/22] x86/fpu: Update xstate's PKRU value on write_pkru()
+Date:   Wed,  9 Jan 2019 12:47:40 +0100
+Message-Id: <20190109114744.10936-19-bigeasy@linutronix.de>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190109114744.10936-1-bigeasy@linutronix.de>
 References: <20190109114744.10936-1-bigeasy@linutronix.de>
@@ -46,80 +46,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rik van Riel <riel@surriel.com>
+During the context switch the xstate is loaded which also includes the
+PKRU value.
+If xstate is restored on return to userland it is required that the
+PKRU value in xstate is the same as the one in the CPU.
 
-While most of a task's FPU state is only needed in user space, the
-protection keys need to be in place immediately after a context switch.
+Save the PKRU in xstate during modification.
 
-The reason is that any access to userspace memory while running in
-kernel mode also need to abide by the memory permissions specified in
-the protection keys.
-
-The "eager switch" is a preparation for loading the FPU state on return
-to userland. Instead of decoupling PKRU state from xstate I update PKRU
-within xstate on write operations by the kernel.
-
-The read/write_pkru() is moved to another header file so it can easily
-accessed from pgtable.h and fpu/internal.h.
-
-For user tasks we should always get the PKRU from the xsave area and it
-should not change anything because the PKRU value was loaded as part of
-FPU restore.
-For kernel kernel threads we now will have the default "allow
-everything" written.  Before this commit the kernel thread would end up
-with a random value which it inherited from the previous user task.
-
-Signed-off-by: Rik van Riel <riel@surriel.com>
-[bigeasy: save pkru to xstate, no cache, don't use __raw_xsave_addr()]
 Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 ---
- arch/x86/include/asm/fpu/internal.h | 20 ++++++++++++++++++--
- arch/x86/include/asm/fpu/xstate.h   |  1 +
- 2 files changed, 19 insertions(+), 2 deletions(-)
+ arch/x86/include/asm/pgtable.h | 20 ++++++++++++++++++--
+ 1 file changed, 18 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/include/asm/fpu/internal.h b/arch/x86/include/asm/fpu/internal.h
-index 795a0a2df135e..7191eb9686827 100644
---- a/arch/x86/include/asm/fpu/internal.h
-+++ b/arch/x86/include/asm/fpu/internal.h
-@@ -559,8 +559,24 @@ switch_fpu_prepare(struct fpu *old_fpu, int cpu)
-  */
- static inline void switch_fpu_finish(struct fpu *new_fpu, int cpu)
+diff --git a/arch/x86/include/asm/pgtable.h b/arch/x86/include/asm/pgtable.h
+index 40616e8052924..5eed44798ae95 100644
+--- a/arch/x86/include/asm/pgtable.h
++++ b/arch/x86/include/asm/pgtable.h
+@@ -23,6 +23,8 @@
+ 
+ #ifndef __ASSEMBLY__
+ #include <asm/x86_init.h>
++#include <asm/fpu/xstate.h>
++#include <asm/fpu/api.h>
+ 
+ extern pgd_t early_top_pgt[PTRS_PER_PGD];
+ int __init __early_make_pgtable(unsigned long address, pmdval_t pmd);
+@@ -133,8 +135,22 @@ static inline u32 read_pkru(void)
+ 
+ static inline void write_pkru(u32 pkru)
  {
--	if (static_cpu_has(X86_FEATURE_FPU))
--		__fpregs_load_activate(new_fpu, cpu);
+-	if (boot_cpu_has(X86_FEATURE_OSPKE))
+-		__write_pkru(pkru);
 +	struct pkru_state *pk;
-+	u32 pkru_val = 0;
 +
-+	if (!static_cpu_has(X86_FEATURE_FPU))
++	if (!boot_cpu_has(X86_FEATURE_OSPKE))
 +		return;
 +
-+	__fpregs_load_activate(new_fpu, cpu);
-+
-+	if (!cpu_feature_enabled(X86_FEATURE_OSPKE))
-+		return;
-+
-+	if (current->mm) {
-+		pk = get_xsave_addr(&new_fpu->state.xsave, XFEATURE_PKRU);
-+		WARN_ON_ONCE(!pk);
-+		if (pk)
-+			pkru_val = pk->pkru;
-+	}
-+	__write_pkru(pkru_val);
++	pk = get_xsave_addr(&current->thread.fpu.state.xsave, XFEATURE_PKRU);
++	/*
++	 * The PKRU value in xstate needs to be in sync with the value that is
++	 * written to the CPU. The FPU restore on return to userland would
++	 * otherwise load the previous value again.
++	 */
++	__fpregs_changes_begin();
++	if (pk)
++		pk->pkru = pkru;
++	__write_pkru(pkru);
++	__fpregs_changes_end();
  }
  
- /*
-diff --git a/arch/x86/include/asm/fpu/xstate.h b/arch/x86/include/asm/fpu/xstate.h
-index fbe41f808e5d8..4e18a837223ff 100644
---- a/arch/x86/include/asm/fpu/xstate.h
-+++ b/arch/x86/include/asm/fpu/xstate.h
-@@ -5,6 +5,7 @@
- #include <linux/types.h>
- #include <asm/processor.h>
- #include <linux/uaccess.h>
-+#include <asm/user.h>
- 
- /* Bit 63 of XCR0 is reserved for future expansion */
- #define XFEATURE_MASK_EXTEND	(~(XFEATURE_MASK_FPSSE | (1ULL << 63)))
+ static inline int pte_young(pte_t pte)
 -- 
 2.20.1
 
