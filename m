@@ -2,107 +2,76 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 212C3C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 10:18:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1C5EC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 10:20:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E58AD2064C
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 10:18:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="FzbfNtiH"
+	by mail.kernel.org (Postfix) with ESMTP id C69AC20883
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 10:20:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730395AbfAIKSb (ORCPT
+        id S1730390AbfAIKUP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 05:18:31 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:52236 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730292AbfAIKSa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 05:18:30 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=4d+RGFz8Y4hV9bW1JAmHj60DlCEqv+/hXst1XUbRiy4=; b=FzbfNtiHaFbehfw1Nhc5qdLlV
-        BIokaetRf6ZK59XLCzINMtSNsYfqLUX+iJdisLEUVqcrRT9UdzdhCMRXbpj+P2cxsWIeDGkKzQu1r
-        lX87oF6Fnfp7kZ7640isIx6kEPEKKTzvttG0pCibStGRYPQ3PrBqpJioheZRqQI4Dez72eliEgBEr
-        n1FYe7Vy/4LErwzYzS+iNz6hJMf1Rp6sHlFDaOhKxJMO9PQujJX5Q/e6Ns24JrB42WDYOOEZ+MJFh
-        dgpI7O4x+YvETF5Zl5Uv43PXMEVjEFDNO5DCJAeJebKuKwvsOASZ+wTFEuF3aMtmfm8YylboerNX2
-        0fpXUWLVQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1ghAw7-000239-FY; Wed, 09 Jan 2019 10:18:11 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id D79CA2028A2D4; Wed,  9 Jan 2019 11:18:08 +0100 (CET)
-Date:   Wed, 9 Jan 2019 11:18:08 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Song Liu <songliubraving@fb.com>
-Cc:     lkml <linux-kernel@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "acme@kernel.org" <acme@kernel.org>,
-        "ast@kernel.org" <ast@kernel.org>,
-        "daniel@iogearbox.net" <daniel@iogearbox.net>,
-        Kernel Team <Kernel-team@fb.com>,
-        Andi Kleen <andi@firstfloor.org>
-Subject: Re: [PATCH v5 perf, bpf-next 3/7] perf, bpf: introduce
- PERF_RECORD_BPF_EVENT
-Message-ID: <20190109101808.GG1900@hirez.programming.kicks-ass.net>
-References: <20181220182904.4193196-1-songliubraving@fb.com>
- <20181220182904.4193196-4-songliubraving@fb.com>
- <20190108184116.GC30894@hirez.programming.kicks-ass.net>
- <77A478D9-F36F-443A-BBFD-F0C1FFE0DD90@fb.com>
- <20190108194310.GD1900@hirez.programming.kicks-ass.net>
- <A0C713E9-6ACE-4235-87C2-2653A8F22F7B@fb.com>
+        Wed, 9 Jan 2019 05:20:15 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:54474 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730184AbfAIKUO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 05:20:14 -0500
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 80CD6139428BCF27773E;
+        Wed,  9 Jan 2019 18:20:12 +0800 (CST)
+Received: from [127.0.0.1] (10.177.223.23) by DGGEMS402-HUB.china.huawei.com
+ (10.3.19.202) with Microsoft SMTP Server id 14.3.408.0; Wed, 9 Jan 2019
+ 18:20:05 +0800
+Subject: Re: [PATCH v2 0/4] add support for MBIGEN generating message based
+ SPIs
+To:     Yang Yingliang <yangyingliang@huawei.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     <marc.zyngier@arm.com>, <tglx@linutronix.de>,
+        Linuxarm <linuxarm@huawei.com>
+References: <1540540280-26612-1-git-send-email-yangyingliang@huawei.com>
+From:   Hanjun Guo <guohanjun@huawei.com>
+Message-ID: <08646b86-8228-4920-00cb-6c3f44c4484b@huawei.com>
+Date:   Wed, 9 Jan 2019 18:18:10 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <A0C713E9-6ACE-4235-87C2-2653A8F22F7B@fb.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1540540280-26612-1-git-send-email-yangyingliang@huawei.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.223.23]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 08, 2019 at 11:54:04PM +0000, Song Liu wrote:
+Hi Marc,
 
-> I think Intel PT case is at instruction granularity (instead of ksymbol
-> granularity)? 
+Sorry for ping you...
 
-Yes.
+On 2018/10/26 15:51, Yang Yingliang wrote:
+> Now MBIGENs have pins that used to generate SPIs,
+> with
+> 5052875 ("irqchip/gic-v3: Add support for Message Based Interrupts as an MSI controller"),
+> we can support MBIGEN to generate message based SPIs by writing
+> GICD_SETSPIR. This patchset add support for MBIGEN generating
+> message based SPIs and a bugfix for MBI driver.
 
-> If this is true, modules, BPF, and PT could still share
-> the ksymbol record for basic profiling. And advanced use cases like 
-> annotation will depend on user space to record BPF_EVENT (and equivalent
-> for other cases) timely. But at least, the ksymbol is already there. 
+What's you suggestion for this patch set? We would like your input
+for next steps.
+
 > 
-> Does this make sense?  
+> 
+> Patch #1 is a bugfix for MBI driver.
 
-I'm not sure I follow; the idea was that on ksym events we copy out the
-instructions using kcore. The ksym event already has addr+len.
+At least this patch can be merged first as it's an obvious bug,
+without this patch, the MBI dirver can't work I think because
+the mutex lock is not initialized.
 
-All we need is some means of ensuring the symbol is still there by the
-time we see the event and do the copy.
+Thanks
+Hanjun
 
-I think we can do this with a new ioctl() on /proc/kcore itself:
-
- - when we have kcore open, we queue all text-free operations on list-1.
-
- - when we close kcore, we drain all (text-free) list-* and perform the
-   pending frees immediately.
-
- - on ioctl(KCORE_QC) we perform the pending free of list-3 and advance
-   list-2 to list-3 and list-1 to list-2.
-
-Perf would then open kcore at the start of the record, make a complete
-copy and keep the FD open. At the end of every buffer process, we issue
-KCORE_QC IFF we observed a ksym unreg in that buffer.
-
-We use 3 lists instead of 2 to guard against races, if there was a
-reg+unreg en-route but not yet visible in the buffer, then we don't want
-that free to be processed. The next buffer (read) will have the event(s)
-and all should be well.
