@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5B2CC43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 09:15:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79116C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 09:15:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8FD0420821
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 09:15:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5279920821
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 09:15:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730215AbfAIJPJ (ORCPT
+        id S1730223AbfAIJPY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 04:15:09 -0500
-Received: from mga11.intel.com ([192.55.52.93]:46260 "EHLO mga11.intel.com"
+        Wed, 9 Jan 2019 04:15:24 -0500
+Received: from mga18.intel.com ([134.134.136.126]:62032 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729798AbfAIJPJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 04:15:09 -0500
+        id S1727387AbfAIJPX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 04:15:23 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Jan 2019 01:15:08 -0800
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Jan 2019 01:15:22 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,456,1539673200"; 
-   d="scan'208";a="113311399"
+   d="scan'208";a="308838252"
 Received: from linux.intel.com ([10.54.29.200])
-  by fmsmga007.fm.intel.com with ESMTP; 09 Jan 2019 01:15:08 -0800
+  by fmsmga006.fm.intel.com with ESMTP; 09 Jan 2019 01:15:22 -0800
 Received: from [10.125.252.236] (abudanko-mobl.ccr.corp.intel.com [10.125.252.236])
-        by linux.intel.com (Postfix) with ESMTP id 70C98580490;
-        Wed,  9 Jan 2019 01:15:05 -0800 (PST)
+        by linux.intel.com (Postfix) with ESMTP id 6113758056F;
+        Wed,  9 Jan 2019 01:15:20 -0800 (PST)
 From:   Alexey Budankov <alexey.budankov@linux.intel.com>
 Subject: Re: [PATCH v2 4/4] perf record: implement --affinity=node|cpu option
 To:     Jiri Olsa <jolsa@redhat.com>
@@ -43,14 +43,14 @@ Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
         linux-kernel <linux-kernel@vger.kernel.org>
 References: <e8fccb5e-31b7-b3a0-74bf-490c2d439ab4@linux.intel.com>
  <b94a028a-131b-3b5c-1158-3f2d26ffb84d@linux.intel.com>
- <20190101213944.GG13760@krava>
+ <20190101213918.GC13760@krava>
 Organization: Intel Corp.
-Message-ID: <e3736ce2-3e5a-74f4-d6fd-a77c1307a8d4@linux.intel.com>
-Date:   Wed, 9 Jan 2019 12:15:04 +0300
+Message-ID: <58fb01b1-a522-3d2f-58fd-aaa975a49d84@linux.intel.com>
+Date:   Wed, 9 Jan 2019 12:15:19 +0300
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
  Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <20190101213944.GG13760@krava>
+In-Reply-To: <20190101213918.GC13760@krava>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -101,24 +101,6 @@ On 02.01.2019 0:39, Jiri Olsa wrote:
 >> +{
 >> +	struct record_opts *opts = (struct record_opts *)opt->value;
 >> +
-> 
-> please use:
-> 
-> 	if (unset)
-> 		return 0;
-> 
-> 	if (str) {
-> 		...
-> 	}
-
-Corrected in v3.
-
-Thanks,
-Alexey
-
-> 
-> jirka
-> 
 >> +	if (!unset) {
 >> +		if (str) {
 >> +			if (!strcasecmp(str, "node"))
@@ -140,6 +122,16 @@ Alexey
 >> +	OPT_CALLBACK(0, "affinity", &record.opts, "node|cpu",
 >> +		     "Set affinity mask of trace reading thread to NUMA node cpu mask or cpu of processed mmap buffer",
 >> +		     record__parse_affinity),
->>  	OPT_END()
->>  };
+> 
+> so this makes sense only when there's --aio and LIBNUMA
+> in place.. we should check for those and allow this only
+> for these
+
+Serial trace streaming also benefits from that.
+
+Thanks,
+Alexey
+
+> 
+> jirka
 > 
