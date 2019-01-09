@@ -2,162 +2,78 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 920FFC43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 20:58:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73AB5C43444
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 21:01:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 484F1206B7
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 20:58:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="B/KVOar9"
+	by mail.kernel.org (Postfix) with ESMTP id 407BC206BB
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 21:01:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727435AbfAIU6n (ORCPT
+        id S1727462AbfAIVBr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 15:58:43 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:56936 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726581AbfAIU6m (ORCPT
+        Wed, 9 Jan 2019 16:01:47 -0500
+Received: from ipmail06.adl6.internode.on.net ([150.101.137.145]:4806 "EHLO
+        ipmail06.adl6.internode.on.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726581AbfAIVBr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 15:58:42 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x09KwYMW127097;
-        Wed, 9 Jan 2019 14:58:34 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1547067514;
-        bh=11JL3HbB/yvg0M0A4ff1FAz0A0hjk9AqBcnLNrgbxQo=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=B/KVOar9H2sWKWovc137tx44qpxVNFzCuMUaaoSygfkxpbvfA71mpPotUMFXm00Ba
-         ZF2bMzTv7m7xGddb/YEJxstsNpxERRERF89VGIGjf96lEMsDwez1FKRkfdf7IEq0Bs
-         hli5bA+s1CCIJX6T5Bj+7cuNNvKptryGtC/AcZS0=
-Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x09KwXVU087016
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 9 Jan 2019 14:58:34 -0600
-Received: from DFLE102.ent.ti.com (10.64.6.23) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Wed, 9
- Jan 2019 14:58:33 -0600
-Received: from dlep32.itg.ti.com (157.170.170.100) by DFLE102.ent.ti.com
- (10.64.6.23) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Wed, 9 Jan 2019 14:58:33 -0600
-Received: from [172.22.122.36] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x09KwX9Z014488;
-        Wed, 9 Jan 2019 14:58:33 -0600
-Subject: Re: [RFC PATCH 1/3] can: m_can: Create m_can core to leverage common
- code
-To:     Wolfgang Grandegger <wg@grandegger.com>, <mkl@pengutronix.de>,
-        <davem@davemloft.net>
-CC:     <linux-can@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20181010142055.25271-1-dmurphy@ti.com>
- <20181010142055.25271-2-dmurphy@ti.com>
- <52811b27-00c0-f5e2-2b18-608ccf846723@grandegger.com>
- <349ef8be-f4c7-25cc-2c33-7ce1fd0b0f40@ti.com>
- <9003a544-83cf-7dce-7f14-4abd292d470e@grandegger.com>
-From:   Dan Murphy <dmurphy@ti.com>
-Message-ID: <b73e200c-8a6b-00e0-dabc-af3245cc36fd@ti.com>
-Date:   Wed, 9 Jan 2019 14:58:23 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.3
+        Wed, 9 Jan 2019 16:01:47 -0500
+Received: from ppp59-167-129-252.static.internode.on.net (HELO dastard) ([59.167.129.252])
+  by ipmail06.adl6.internode.on.net with ESMTP; 10 Jan 2019 07:31:17 +1030
+Received: from dave by dastard with local (Exim 4.80)
+        (envelope-from <david@fromorbit.com>)
+        id 1ghKyO-0001b0-1h; Thu, 10 Jan 2019 08:01:12 +1100
+Date:   Thu, 10 Jan 2019 08:01:12 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Qian Cai <cai@lca.pw>
+Cc:     darrick.wong@oracle.com, dchinner@redhat.com, peterz@infradead.org,
+        bfoster@redhat.com, hch@lst.de, linux-xfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] xfs: silence lockdep false positives when freezing
+Message-ID: <20190109210111.GZ4205@dastard>
+References: <20190106225639.GU4205@dastard>
+ <20190109205329.2486-1-cai@lca.pw>
 MIME-Version: 1.0
-In-Reply-To: <9003a544-83cf-7dce-7f14-4abd292d470e@grandegger.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190109205329.2486-1-cai@lca.pw>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Wolfgang
-
-On 11/3/18 5:45 AM, Wolfgang Grandegger wrote:
-> Hello Dan,
+On Wed, Jan 09, 2019 at 03:53:29PM -0500, Qian Cai wrote:
+> Easy to reproduce:
 > 
-> Am 31.10.2018 um 21:15 schrieb Dan Murphy:
->> Wolfgang
->>
->> Thanks for the review
->>
->> On 10/27/2018 09:19 AM, Wolfgang Grandegger wrote:
->>> Hello Dan,
->>>
->>> for the RFC, could you please just do the necessary changes to the
->>> existing code. We can discuss about better names, etc. later. For
->>> the review if the common code I quickly did:
->>>
->>>   mv m_can.c m_can_platform.c
->>>   mv m_can_core.c m_can.c
->>>
->>> The file names are similar to what we have for the C_CAN driver.
->>>
->>>   s/classdev/priv/
->>>   variable name s/m_can_dev/priv/
->>>
->>> Then your patch 1/3 looks as shown below. I'm going to comment on that
->>> one. The comments start with "***"....
->>>
->>
->> So you would like me to align the names with the c_can driver?
+> 1. run LTP oom02 workload to let kswapd acquire this locking order:
+>    fs_reclaim -> sb_internal.
 > 
-> That would be the obvious choice.
->> <snip>
->>>
->>> *** I didn't review the rest of the patch for now.
->>>
->>
->> snipped the code to reply to the comment.
->>
->>> Looking to the generic code, you didn't really change the way
->>> the driver is accessing the registers. Also the interrupt handling
->>> and rx polling is as it was before. Does that work properly using
->>> the SPI interface of the TCAN4x5x?
->>
->> I don't want to change any of that yet.  Maybe my cover letter was not clear
->> or did not go through.
->>
->> But the intention was just to break out the functionality to create a MCAN framework
->> that can be used by devices that contain the Bosch MCAN core and provider their own protocal to access
->> the registers in the device.
->>
->> I don't want to do any functional changes at this time on the IP code itself until we have a framework.
->> There should be no regression in the io mapped code.
->>
->> I did comment on the interrupt handling and asked if a threaded work queue would affect CAN timing.
->> For the original TCAN driver this was the way it was implemented.
+>  # grep -i fs_reclaim -C 3 /proc/lockdep_chains | grep -C 5 sb_internal
+> [00000000826b9172] &type->s_umount_key#27
+> [000000005fa8b2ac] sb_pagefaults
+> [0000000033f1247e] sb_internal
+> [000000009e9a9664] fs_reclaim
 > 
-> Do threaded interrupts with RX polling make sense? I think we need a
-> common interface allowing to select hard-irqs+napi or threaded-irqs.
+> 2. freeze XFS.
+>   # fsfreeze -f /home
 > 
+> Dave mentioned that this is due to a lockdep limitation - "IOWs, this is
+> a false positive, caused by the fact that xfs_trans_alloc() is called
+> from both above and below memory reclaim as well as within /every level/
+> of freeze processing. Lockdep is unable to describe the staged flush
+> logic in the freeze process that prevents deadlocks from occurring, and
+> hence we will pretty much always see false positives in the freeze
+> path....". Hence, just temporarily disable lockdep in that path.
 
-I have been working on this code for about a month now and I am *not happy* with the amount of change that needs
-to be done to make the m_can a framework.
+NACK. Turning off lockdep is not a solution, it just prevents
+lockdep from finding and reporting real issues.
 
-I can tx/rx frames from another CAN device to the TCAN part but I have not even touched the iomapped code.
+Cheers,
 
-The challenging part is that the m_can code that is currently available does not have to worry about atomic context because
-there is no peripheral waiting.  Since the TCAN is a peripheral device we need to take into about the hard waits in IRQ context
-as well as the atomic context.  Doing this creates many deltas in the base code that may break iomapped devices.  I have had to 
-add the thread_irqs and now I am in the midst of the issue you brought up with napi.  I would have to schedule a queue for perp devices
-and leave the non-threaded iomapped irq.
-
-At this point I think it may be wise to leave the m_can code alone as it is working and stable and just work on the TCAN driver as
-a standalone driver.  A framework would be nice but I think it would destablize the m_can driver which is embedded in many SoC's and
-we cannot possibly test everyone of them.
-
-What are your thoughts?
-
-Dan
-
-> Wolfgang.
-> 
-
-
+Dave.
 -- 
-------------------
-Dan Murphy
+Dave Chinner
+david@fromorbit.com
