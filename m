@@ -6,50 +6,50 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D24C8C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 21:50:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03D4BC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 21:50:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9FE7F2075C
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 21:50:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C22242075C
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 21:50:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727508AbfAIVuZ (ORCPT
+        id S1727574AbfAIVub (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 16:50:25 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:33724 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727096AbfAIVuT (ORCPT
+        Wed, 9 Jan 2019 16:50:31 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:37330 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726949AbfAIVuU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 16:50:19 -0500
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x09LnWHs025875
+        Wed, 9 Jan 2019 16:50:20 -0500
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x09LnTA0090090
         for <linux-kernel@vger.kernel.org>; Wed, 9 Jan 2019 16:50:18 -0500
-Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2pwq5ew6ps-1
+Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2pwn7ptumf-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jan 2019 16:50:17 -0500
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Jan 2019 16:50:18 -0500
 Received: from localhost
-        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Wed, 9 Jan 2019 21:50:16 -0000
-Received: from b01cxnp23034.gho.pok.ibm.com (9.57.198.29)
-        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Wed, 9 Jan 2019 21:50:17 -0000
+Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
+        by e13.ny.us.ibm.com (146.89.104.200) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
         Wed, 9 Jan 2019 21:50:11 -0000
 Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x09LoAJH21102766
+        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x09LoB9E23986358
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 9 Jan 2019 21:50:10 GMT
+        Wed, 9 Jan 2019 21:50:11 GMT
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 84619B2066;
+        by IMSVA (Postfix) with ESMTP id E6B66B206C;
         Wed,  9 Jan 2019 21:50:10 +0000 (GMT)
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 54FC3B2067;
+        by IMSVA (Postfix) with ESMTP id B7FE0B2070;
         Wed,  9 Jan 2019 21:50:10 +0000 (GMT)
 Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.88])
         by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
         Wed,  9 Jan 2019 21:50:10 +0000 (GMT)
 Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 2E25A16C63AD; Wed,  9 Jan 2019 13:50:10 -0800 (PST)
+        id 4B93316C63FE; Wed,  9 Jan 2019 13:50:10 -0800 (PST)
 From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
@@ -57,25 +57,28 @@ Cc:     mingo@kernel.org, jiangshanlai@gmail.com, dipankar@in.ibm.com,
         josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
         rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
         fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>
-Subject: [PATCH tip/core/rcu 03/10] rcutorture: Add grace period after CPU offline
-Date:   Wed,  9 Jan 2019 13:50:01 -0800
+        Willy Tarreau <w@1wt.eu>,
+        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Paul E . McKenney" <paulmck@linux.ibm.com>
+Subject: [PATCH tip/core/rcu 07/10] rcutorture/nolibc: Add a bit of documentation to explain how to use nolibc
+Date:   Wed,  9 Jan 2019 13:50:05 -0800
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190109214944.GA5610@linux.ibm.com>
 References: <20190109214944.GA5610@linux.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 19010921-0040-0000-0000-000004AF3828
+x-cbid: 19010921-0064-0000-0000-000003941277
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00010375; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000274; SDB=6.01144152; UDB=6.00593882; IPR=6.00924415;
- MB=3.00025056; MTD=3.00000008; XFM=3.00000015; UTC=2019-01-09 21:50:15
+ PH=3.00000004; SC=3.00000274; SDB=6.01144152; UDB=6.00595712; IPR=6.00924414;
+ MB=3.00025056; MTD=3.00000008; XFM=3.00000015; UTC=2019-01-09 21:50:16
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19010921-0041-0000-0000-000008BA3CB6
-Message-Id: <20190109215008.6401-3-paulmck@linux.ibm.com>
+x-cbparentid: 19010921-0065-0000-0000-00003BF96D96
+Message-Id: <20190109215008.6401-7-paulmck@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-09_10:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
  mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
  scancount=1 engine=8.0.1-1810050000 definitions=main-1901090173
@@ -84,118 +87,133 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Beyond a certain point in the CPU-hotplug offline process, timers get
-stranded on the outgoing CPU, and won't fire until that CPU comes back
-online, which might well be never.  This commit therefore adds a hook
-in torture_onoff_init() that is invoked from torture_offline(), which
-rcutorture uses to occasionally wait for a grace period.  This should
-result in failures for RCU implementations that rely on stranded timers
-eventually firing in the absence of the CPU coming back online.
+From: Willy Tarreau <w@1wt.eu>
 
-Reported-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Ingo rightfully asked for a bit more documentation in the nolibc header,
+so this patch adds some explanation about its purpose, how it's made, and
+how to use it.
+
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+Cc: Randy Dunlap <rdunlap@infradead.org>
+Signed-off-by: Willy Tarreau <w@1wt.eu>
 Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
+Reviewed-by: Joey Pabalinas <joeypabalinas@gmail.com>
+Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
 ---
- include/linux/torture.h      |  3 ++-
- kernel/locking/locktorture.c |  2 +-
- kernel/rcu/rcutorture.c      | 11 ++++++++++-
- kernel/torture.c             |  6 +++++-
- 4 files changed, 18 insertions(+), 4 deletions(-)
+ .../testing/selftests/rcutorture/bin/nolibc.h | 92 ++++++++++++++++---
+ 1 file changed, 79 insertions(+), 13 deletions(-)
 
-diff --git a/include/linux/torture.h b/include/linux/torture.h
-index 48fad21109fc..f2d3bcbf4337 100644
---- a/include/linux/torture.h
-+++ b/include/linux/torture.h
-@@ -50,11 +50,12 @@
- 	do { if (verbose) pr_alert("%s" TORTURE_FLAG "!!! %s\n", torture_type, s); } while (0)
- 
- /* Definitions for online/offline exerciser. */
-+typedef void torture_ofl_func(void);
- bool torture_offline(int cpu, long *n_onl_attempts, long *n_onl_successes,
- 		     unsigned long *sum_offl, int *min_onl, int *max_onl);
- bool torture_online(int cpu, long *n_onl_attempts, long *n_onl_successes,
- 		    unsigned long *sum_onl, int *min_onl, int *max_onl);
--int torture_onoff_init(long ooholdoff, long oointerval);
-+int torture_onoff_init(long ooholdoff, long oointerval, torture_ofl_func *f);
- void torture_onoff_stats(void);
- bool torture_onoff_failures(void);
- 
-diff --git a/kernel/locking/locktorture.c b/kernel/locking/locktorture.c
-index 7d0b0ed74404..c8b348097bb5 100644
---- a/kernel/locking/locktorture.c
-+++ b/kernel/locking/locktorture.c
-@@ -970,7 +970,7 @@ static int __init lock_torture_init(void)
- 	/* Prepare torture context. */
- 	if (onoff_interval > 0) {
- 		firsterr = torture_onoff_init(onoff_holdoff * HZ,
--					      onoff_interval * HZ);
-+					      onoff_interval * HZ, NULL);
- 		if (firsterr)
- 			goto unwind;
- 	}
-diff --git a/kernel/rcu/rcutorture.c b/kernel/rcu/rcutorture.c
-index 0955f3a20952..9eb9235c1ec9 100644
---- a/kernel/rcu/rcutorture.c
-+++ b/kernel/rcu/rcutorture.c
-@@ -2243,6 +2243,14 @@ static void rcu_test_debug_objects(void)
- #endif /* #else #ifdef CONFIG_DEBUG_OBJECTS_RCU_HEAD */
- }
- 
-+static void rcutorture_sync(void)
-+{
-+	static unsigned long n;
-+
-+	if (cur_ops->sync && !(++n & 0xfff))
-+		cur_ops->sync();
-+}
-+
- static int __init
- rcu_torture_init(void)
- {
-@@ -2404,7 +2412,8 @@ rcu_torture_init(void)
- 	firsterr = torture_shutdown_init(shutdown_secs, rcu_torture_cleanup);
- 	if (firsterr)
- 		goto unwind;
--	firsterr = torture_onoff_init(onoff_holdoff * HZ, onoff_interval);
-+	firsterr = torture_onoff_init(onoff_holdoff * HZ, onoff_interval,
-+				      rcutorture_sync);
- 	if (firsterr)
- 		goto unwind;
- 	firsterr = rcu_torture_stall_init();
-diff --git a/kernel/torture.c b/kernel/torture.c
-index bbf6d473e50c..a03ff722352b 100644
---- a/kernel/torture.c
-+++ b/kernel/torture.c
-@@ -75,6 +75,7 @@ static DEFINE_MUTEX(fullstop_mutex);
- static struct task_struct *onoff_task;
- static long onoff_holdoff;
- static long onoff_interval;
-+static torture_ofl_func *onoff_f;
- static long n_offline_attempts;
- static long n_offline_successes;
- static unsigned long sum_offline;
-@@ -118,6 +119,8 @@ bool torture_offline(int cpu, long *n_offl_attempts, long *n_offl_successes,
- 			pr_alert("%s" TORTURE_FLAG
- 				 "torture_onoff task: offlined %d\n",
- 				 torture_type, cpu);
-+		if (onoff_f)
-+			onoff_f();
- 		(*n_offl_successes)++;
- 		delta = jiffies - starttime;
- 		*sum_offl += delta;
-@@ -243,11 +246,12 @@ torture_onoff(void *arg)
- /*
-  * Initiate online-offline handling.
+diff --git a/tools/testing/selftests/rcutorture/bin/nolibc.h b/tools/testing/selftests/rcutorture/bin/nolibc.h
+index cfbbbad4bca4..1708e9f9f8aa 100644
+--- a/tools/testing/selftests/rcutorture/bin/nolibc.h
++++ b/tools/testing/selftests/rcutorture/bin/nolibc.h
+@@ -3,7 +3,85 @@
+  * Copyright (C) 2017-2018 Willy Tarreau <w@1wt.eu>
   */
--int torture_onoff_init(long ooholdoff, long oointerval)
-+int torture_onoff_init(long ooholdoff, long oointerval, torture_ofl_func *f)
- {
- #ifdef CONFIG_HOTPLUG_CPU
- 	onoff_holdoff = ooholdoff;
- 	onoff_interval = oointerval;
-+	onoff_f = f;
- 	if (onoff_interval <= 0)
- 		return 0;
- 	return torture_create_kthread(torture_onoff, NULL, onoff_task);
+ 
+-/* some archs (at least aarch64) don't expose the regular syscalls anymore by
++/*
++ * This file is designed to be used as a libc alternative for minimal programs
++ * with very limited requirements. It consists of a small number of syscall and
++ * type definitions, and the minimal startup code needed to call main().
++ * All syscalls are declared as static functions so that they can be optimized
++ * away by the compiler when not used.
++ *
++ * Syscalls are split into 3 levels:
++ *   - The lower level is the arch-specific syscall() definition, consisting in
++ *     assembly code in compound expressions. These are called my_syscall0() to
++ *     my_syscall6() depending on the number of arguments. The MIPS
++ *     implementation is limited to 5 arguments. All input arguments are cast
++ *     to a long stored in a register. These expressions always return the
++ *     syscall's return value as a signed long value which is often either a
++ *     pointer or the negated errno value.
++ *
++ *   - The second level is mostly architecture-independent. It is made of
++ *     static functions called sys_<name>() which rely on my_syscallN()
++ *     depending on the syscall definition. These functions are responsible
++ *     for exposing the appropriate types for the syscall arguments (int,
++ *     pointers, etc) and for setting the appropriate return type (often int).
++ *     A few of them are architecture-specific because the syscalls are not all
++ *     mapped exactly the same among architectures. For example, some archs do
++ *     not implement select() and need pselect6() instead, so the sys_select()
++ *     function will have to abstract this.
++ *
++ *   - The third level is the libc call definition. It exposes the lower raw
++ *     sys_<name>() calls in a way that looks like what a libc usually does,
++ *     takes care of specific input values, and of setting errno upon error.
++ *     There can be minor variations compared to standard libc calls. For
++ *     example the open() call always takes 3 args here.
++ *
++ * The errno variable is declared static and unused. This way it can be
++ * optimized away if not used. However this means that a program made of
++ * multiple C files may observe different errno values (one per C file). For
++ * the type of programs this project targets it usually is not a problem. The
++ * resulting program may even be reduced by defining the NOLIBC_IGNORE_ERRNO
++ * macro, in which case the errno value will never be assigned.
++ *
++ * Some stdint-like integer types are defined. These are valid on all currently
++ * supported architectures, because signs are enforced, ints are assumed to be
++ * 32 bits, longs the size of a pointer and long long 64 bits. If more
++ * architectures have to be supported, this may need to be adapted.
++ *
++ * Some macro definitions like the O_* values passed to open(), and some
++ * structures like the sys_stat struct depend on the architecture.
++ *
++ * The definitions start with the architecture-specific parts, which are picked
++ * based on what the compiler knows about the target architecture, and are
++ * completed with the generic code. Since it is the compiler which sets the
++ * target architecture, cross-compiling normally works out of the box without
++ * having to specify anything.
++ *
++ * Finally some very common libc-level functions are provided. It is the case
++ * for a few functions usually found in string.h, ctype.h, or stdlib.h. Nothing
++ * is currently provided regarding stdio emulation.
++ *
++ * The macro NOLIBC is always defined, so that it is possible for a program to
++ * check this macro to know if it is being built against and decide to disable
++ * some features or simply not to include some standard libc files.
++ *
++ * Ideally this file should be split in multiple files for easier long term
++ * maintenance, but provided as a single file as it is now, it's quite
++ * convenient to use. Maybe some variations involving a set of includes at the
++ * top could work.
++ *
++ * A simple static executable may be built this way :
++ *      $ gcc -fno-asynchronous-unwind-tables -fno-ident -s -Os -nostdlib \
++ *            -static -include nolibc.h -lgcc -o hello hello.c
++ *
++ * A very useful calling convention table may be found here :
++ *      http://man7.org/linux/man-pages/man2/syscall.2.html
++ *
++ * This doc is quite convenient though not necessarily up to date :
++ *      https://w3challs.com/syscalls/
++ *
++ */
++
++/* Some archs (at least aarch64) don't expose the regular syscalls anymore by
+  * default, either because they have an "_at" replacement, or because there are
+  * more modern alternatives. For now we'd rather still use them.
+  */
+@@ -19,18 +97,6 @@
+ 
+ #define NOLIBC
+ 
+-/* Build a static executable this way :
+- *      $ gcc -fno-asynchronous-unwind-tables -fno-ident -s -Os -nostdlib \
+- *            -static -include nolibc.h -lgcc -o hello hello.c
+- *
+- * Useful calling convention table found here :
+- *      http://man7.org/linux/man-pages/man2/syscall.2.html
+- *
+- * This doc is even better :
+- *      https://w3challs.com/syscalls/
+- */
+-
+-
+ /* this way it will be removed if unused */
+ static int errno;
+ 
 -- 
 2.17.1
 
