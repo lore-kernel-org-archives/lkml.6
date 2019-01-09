@@ -2,223 +2,199 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5AFBC43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 13:44:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4F0AC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 13:51:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9CF6F206B6
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 13:44:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="1qVaedeW"
+	by mail.kernel.org (Postfix) with ESMTP id 8FD4A206B7
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 13:51:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731070AbfAINoh (ORCPT
+        id S1730783AbfAINvD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 08:44:37 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:39689 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727627AbfAINog (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 08:44:36 -0500
-Received: by mail-wm1-f66.google.com with SMTP id f81so8256878wmd.4
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jan 2019 05:44:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id;
-        bh=JEBXqUpS/wGintq8ltKUFwHDispDsI/Kg8/rpJ3o2s4=;
-        b=1qVaedeWtoHf5peQQnwniSJkL43QfYVuevm6yDv3d6l+p3LB6IKjneffXHSLE80+/v
-         IFqG+mRBUHUqzDatF/sPoGPT2P2AZTZct+7wYZAGiwFoav+7ts+OWfKqBzjSlrEb3Awx
-         nS+N/HOdsZb0zy9aUvG8y7CyNb7WYjawtomHmfs5ogwOivo4EnXQ71pBpLMvwfyvBfaN
-         RHTBG+pojqrg70N9fFldIQMhoAdZg8xIKTjtbLVf00wR62MSx6jSuh4UxW8VQ8BSqknY
-         V27hQxo0huw0RI7X3tk5DQR2Mbwc3RIrFCKPU6d2AAJoe2I2ms3KVnoqbXdfsi5TG1NF
-         nz0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=JEBXqUpS/wGintq8ltKUFwHDispDsI/Kg8/rpJ3o2s4=;
-        b=te8CqP8Ww7AugaqwZWgLuJkG90YEU41JsIqkQPkuLgKJd6ureuyddC0j2mr5W6oIiG
-         jSLhV9Nk40t2vXn5ev8Y4R3JwwP34Ootuy+1sIsvXlFBbiW9pyVTFhg/5Oq16zxV0ggm
-         4f2bG2GHiWt2c54gJnEgri3SCxaPWz6LgF1zdhmKkHZG15QL9r/HkVfYDrqTWK3zx75B
-         2Cxzwuyfq1CQ4J3fyWUzPHopzeh1JELDMdiyCZCeaJ3x9lnnjlY6w9QmtdItc+Je7a86
-         rbThBEBPA4mkClkYUJqYzwDfBMMtkF1iXQbr8EG4QgF6oyMKSSaYpfcYSnGinb2QN7KT
-         g8tQ==
-X-Gm-Message-State: AJcUukemHyt8Yu7y8f53jBidwfpviQ445HL/7xZcNurR/dDUdMjEbHkN
-        frJvfaGbcTJNBF39twHHpDs4dw==
-X-Google-Smtp-Source: ALg8bN5OBEGcZHAMzBi/GVcdHBBDTlrUkgd1hTGXS6ztTdsFcra8IX8ppbTjO1mSQOxrnFngXPJs6g==
-X-Received: by 2002:a1c:f613:: with SMTP id w19mr5740452wmc.0.1547041474447;
-        Wed, 09 Jan 2019 05:44:34 -0800 (PST)
-Received: from loys-ubuntu-BY1835A49200471.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.googlemail.com with ESMTPSA id y34sm161053815wrd.68.2019.01.09.05.44.33
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 09 Jan 2019 05:44:33 -0800 (PST)
-From:   Loys Ollivier <lollivier@baylibre.com>
-To:     devicetree@vger.kernel.org, Kevin Hilman <khilman@baylibre.com>,
-        linux-amlogic@lists.infradead.org
-Cc:     Loys Ollivier <lollivier@baylibre.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH] arm64: dts: meson: Fix mmc cd-gpio polarity
-Date:   Wed,  9 Jan 2019 14:44:30 +0100
-Message-Id: <1547041470-6422-1-git-send-email-lollivier@baylibre.com>
-X-Mailer: git-send-email 2.7.4
+        Wed, 9 Jan 2019 08:51:03 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:42058 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730380AbfAINvC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 08:51:02 -0500
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 8B66B3DE04;
+        Wed,  9 Jan 2019 13:51:01 +0000 (UTC)
+Received: from dhcp201-121.englab.pnq.redhat.com (dhcp-10-65-161-145.pnq.redhat.com [10.65.161.145])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B3A7B600C9;
+        Wed,  9 Jan 2019 13:50:28 +0000 (UTC)
+From:   Pankaj Gupta <pagupta@redhat.com>
+To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        qemu-devel@nongnu.org, linux-nvdimm@ml01.01.org,
+        linux-fsdevel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        linux-acpi@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-xfs@vger.kernel.org
+Cc:     jack@suse.cz, stefanha@redhat.com, dan.j.williams@intel.com,
+        riel@surriel.com, nilal@redhat.com, kwolf@redhat.com,
+        pbonzini@redhat.com, zwisler@kernel.org, vishal.l.verma@intel.com,
+        dave.jiang@intel.com, david@redhat.com, jmoyer@redhat.com,
+        xiaoguangrong.eric@gmail.com, hch@infradead.org, mst@redhat.com,
+        jasowang@redhat.com, lcapitulino@redhat.com, imammedo@redhat.com,
+        eblake@redhat.com, willy@infradead.org, tytso@mit.edu,
+        adilger.kernel@dilger.ca, darrick.wong@oracle.com,
+        rjw@rjwysocki.net, pagupta@redhat.com
+Subject: [PATCH v3 0/5] kvm "virtio pmem" device
+Date:   Wed,  9 Jan 2019 19:20:19 +0530
+Message-Id: <20190109135024.14093-1-pagupta@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Wed, 09 Jan 2019 13:51:02 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 89a5e15bcba8 ("gpio/mmc/of: Respect polarity in the device tree")
-changed the behavior of "cd-inverted" to follow the device tree bindings
-specification.
-Lines specifying "cd-inverted" are now "acitve high".
+ This patch series has implementation for "virtio pmem". 
+ "virtio pmem" is fake persistent memory(nvdimm) in guest 
+ which allows to bypass the guest page cache. This also
+ implements a VIRTIO based asynchronous flush mechanism.  
+ 
+ Sharing guest kernel driver in this patchset with the 
+ changes suggested in v2. Tested with Qemu side device 
+ emulation for virtio-pmem [6]. 
+ 
+ Details of project idea for 'virtio pmem' flushing interface 
+ is shared [3] & [4].
 
-Fix the SD card for meson by setting the cd-gpio as "active low" according
-to the boards specifications.
+ Implementation is divided into two parts:
+ New virtio pmem guest driver and qemu code changes for new 
+ virtio pmem paravirtualized device.
 
-Fixes: 89a5e15bcba8 ("gpio/mmc/of: Respect polarity in the device tree")
-Signed-off-by: Loys Ollivier <lollivier@baylibre.com>
----
- arch/arm64/boot/dts/amlogic/meson-gxbb-nanopi-k2.dts           | 3 +--
- arch/arm64/boot/dts/amlogic/meson-gxbb-nexbox-a95x.dts         | 3 +--
- arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts            | 3 +--
- arch/arm64/boot/dts/amlogic/meson-gxl-s905x-hwacom-amazetv.dts | 3 +--
- arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts   | 3 +--
- arch/arm64/boot/dts/amlogic/meson-gxl-s905x-nexbox-a95x.dts    | 3 +--
- arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts          | 3 +--
- arch/arm64/boot/dts/amlogic/meson-gxm-nexbox-a1.dts            | 3 +--
- arch/arm64/boot/dts/amlogic/meson-gxm-rbox-pro.dts             | 3 +--
- 9 files changed, 9 insertions(+), 18 deletions(-)
+1. Guest virtio-pmem kernel driver
+---------------------------------
+   - Reads persistent memory range from paravirt device and 
+     registers with 'nvdimm_bus'.  
+   - 'nvdimm/pmem' driver uses this information to allocate 
+     persistent memory region and setup filesystem operations 
+     to the allocated memory. 
+   - virtio pmem driver implements asynchronous flushing 
+     interface to flush from guest to host.
 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb-nanopi-k2.dts b/arch/arm64/boot/dts/amlogic/meson-gxbb-nanopi-k2.dts
-index 8cd50b75171d..ade2ee09ae96 100644
---- a/arch/arm64/boot/dts/amlogic/meson-gxbb-nanopi-k2.dts
-+++ b/arch/arm64/boot/dts/amlogic/meson-gxbb-nanopi-k2.dts
-@@ -305,8 +305,7 @@
- 	max-frequency = <200000000>;
- 	disable-wp;
- 
--	cd-gpios = <&gpio CARD_6 GPIO_ACTIVE_HIGH>;
--	cd-inverted;
-+	cd-gpios = <&gpio CARD_6 GPIO_ACTIVE_LOW>;
- 
- 	vmmc-supply = <&vddio_ao3v3>;
- 	vqmmc-supply = <&vddio_tf>;
-diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb-nexbox-a95x.dts b/arch/arm64/boot/dts/amlogic/meson-gxbb-nexbox-a95x.dts
-index 4cf7f6e80c6a..25105ac96d55 100644
---- a/arch/arm64/boot/dts/amlogic/meson-gxbb-nexbox-a95x.dts
-+++ b/arch/arm64/boot/dts/amlogic/meson-gxbb-nexbox-a95x.dts
-@@ -238,8 +238,7 @@
- 	max-frequency = <100000000>;
- 	disable-wp;
- 
--	cd-gpios = <&gpio CARD_6 GPIO_ACTIVE_HIGH>;
--	cd-inverted;
-+	cd-gpios = <&gpio CARD_6 GPIO_ACTIVE_LOW>;
- 
- 	vmmc-supply = <&vddao_3v3>;
- 	vqmmc-supply = <&vddio_card>;
-diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts b/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts
-index 2e1cd5e3a246..1cc9dc68ef00 100644
---- a/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts
-+++ b/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts
-@@ -258,8 +258,7 @@
- 	max-frequency = <100000000>;
- 	disable-wp;
- 
--	cd-gpios = <&gpio CARD_6 GPIO_ACTIVE_HIGH>;
--	cd-inverted;
-+	cd-gpios = <&gpio CARD_6 GPIO_ACTIVE_LOW>;
- 
- 	vmmc-supply = <&tflash_vdd>;
- 	vqmmc-supply = <&tf_io>;
-diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-hwacom-amazetv.dts b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-hwacom-amazetv.dts
-index f1c410e2da2b..796baea7a0bf 100644
---- a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-hwacom-amazetv.dts
-+++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-hwacom-amazetv.dts
-@@ -131,8 +131,7 @@
- 	max-frequency = <100000000>;
- 	disable-wp;
- 
--	cd-gpios = <&gpio CARD_6 GPIO_ACTIVE_HIGH>;
--	cd-inverted;
-+	cd-gpios = <&gpio CARD_6 GPIO_ACTIVE_LOW>;
- 
- 	vmmc-supply = <&vddao_3v3>;
- 	vqmmc-supply = <&vddio_card>;
-diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts
-index db293440e4ca..255cede7b447 100644
---- a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts
-+++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts
-@@ -238,8 +238,7 @@
- 	max-frequency = <100000000>;
- 	disable-wp;
- 
--	cd-gpios = <&gpio CARD_6 GPIO_ACTIVE_HIGH>;
--	cd-inverted;
-+	cd-gpios = <&gpio CARD_6 GPIO_ACTIVE_LOW>;
- 
- 	vmmc-supply = <&vcc_3v3>;
- 	vqmmc-supply = <&vcc_card>;
-diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-nexbox-a95x.dts b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-nexbox-a95x.dts
-index 6739697be1de..9cbdb85fb591 100644
---- a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-nexbox-a95x.dts
-+++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-nexbox-a95x.dts
-@@ -183,8 +183,7 @@
- 	max-frequency = <100000000>;
- 	disable-wp;
- 
--	cd-gpios = <&gpio CARD_6 GPIO_ACTIVE_HIGH>;
--	cd-inverted;
-+	cd-gpios = <&gpio CARD_6 GPIO_ACTIVE_LOW>;
- 
- 	vmmc-supply = <&vddao_3v3>;
- 	vqmmc-supply = <&vddio_card>;
-diff --git a/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts b/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts
-index 3c3a667a8df8..3f086ed7de05 100644
---- a/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts
-+++ b/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts
-@@ -356,8 +356,7 @@
- 	max-frequency = <100000000>;
- 	disable-wp;
- 
--	cd-gpios = <&gpio CARD_6 GPIO_ACTIVE_HIGH>;
--	cd-inverted;
-+	cd-gpios = <&gpio CARD_6 GPIO_ACTIVE_LOW>;
- 
- 	vmmc-supply = <&vddao_3v3>;
- 	vqmmc-supply = <&vddio_boot>;
-diff --git a/arch/arm64/boot/dts/amlogic/meson-gxm-nexbox-a1.dts b/arch/arm64/boot/dts/amlogic/meson-gxm-nexbox-a1.dts
-index f7a1cffab4a8..8acfd40090d2 100644
---- a/arch/arm64/boot/dts/amlogic/meson-gxm-nexbox-a1.dts
-+++ b/arch/arm64/boot/dts/amlogic/meson-gxm-nexbox-a1.dts
-@@ -147,8 +147,7 @@
- 	max-frequency = <100000000>;
- 	disable-wp;
- 
--	cd-gpios = <&gpio CARD_6 GPIO_ACTIVE_HIGH>;
--	cd-inverted;
-+	cd-gpios = <&gpio CARD_6 GPIO_ACTIVE_LOW>;
- 
- 	vmmc-supply = <&vddao_3v3>;
- 	vqmmc-supply = <&vddio_boot>;
-diff --git a/arch/arm64/boot/dts/amlogic/meson-gxm-rbox-pro.dts b/arch/arm64/boot/dts/amlogic/meson-gxm-rbox-pro.dts
-index 7212dc4531e4..7fa20a8ede17 100644
---- a/arch/arm64/boot/dts/amlogic/meson-gxm-rbox-pro.dts
-+++ b/arch/arm64/boot/dts/amlogic/meson-gxm-rbox-pro.dts
-@@ -170,8 +170,7 @@
- 	max-frequency = <100000000>;
- 	disable-wp;
- 
--	cd-gpios = <&gpio CARD_6 GPIO_ACTIVE_HIGH>;
--	cd-inverted;
-+	cd-gpios = <&gpio CARD_6 GPIO_ACTIVE_LOW>;
- 
- 	vmmc-supply = <&vddao_3v3>;
- 	vqmmc-supply = <&vddio_boot>;
--- 
-2.7.4
+2. Qemu virtio-pmem device
+---------------------------------
+   - Creates virtio pmem device and exposes a memory range to 
+     KVM guest. 
+   - At host side this is file backed memory which acts as 
+     persistent memory. 
+   - Qemu side flush uses aio thread pool API's and virtio 
+     for asynchronous guest multi request handling. 
+
+   David Hildenbrand CCed also posted a modified version[6] of 
+   qemu virtio-pmem code based on updated Qemu memory device API. 
+
+ Virtio-pmem errors handling:
+ ----------------------------------------
+  Checked behaviour of virtio-pmem for below types of errors
+  Need suggestions on expected behaviour for handling these errors?
+
+  - Hardware Errors: Uncorrectable recoverable Errors: 
+  a] virtio-pmem: 
+    - As per current logic if error page belongs to Qemu process, 
+      host MCE handler isolates(hwpoison) that page and send SIGBUS. 
+      Qemu SIGBUS handler injects exception to KVM guest. 
+    - KVM guest then isolates the page and send SIGBUS to guest 
+      userspace process which has mapped the page. 
+  
+  b] Existing implementation for ACPI pmem driver: 
+    - Handles such errors with MCE notifier and creates a list 
+      of bad blocks. Read/direct access DAX operation return EIO 
+      if accessed memory page fall in bad block list.
+    - It also starts backgound scrubbing.  
+    - Similar functionality can be reused in virtio-pmem with MCE 
+      notifier but without scrubbing(no ACPI/ARS)? Need inputs to 
+      confirm if this behaviour is ok or needs any change?
+
+Changes from PATCH v2: [1]
+- Disable MAP_SYNC for ext4 & XFS filesystems - [Dan] 
+- Use name 'virtio pmem' in place of 'fake dax' 
+
+Changes from PATCH v1: [2]
+- 0-day build test for build dependency on libnvdimm 
+
+ Changes suggested by - [Dan Williams]
+- Split the driver into two parts virtio & pmem  
+- Move queuing of async block request to block layer
+- Add "sync" parameter in nvdimm_flush function
+- Use indirect call for nvdimm_flush
+- Don’t move declarations to common global header e.g nd.h
+- nvdimm_flush() return 0 or -EIO if it fails
+- Teach nsio_rw_bytes() that the flush can fail
+- Rename nvdimm_flush() to generic_nvdimm_flush()
+- Use 'nd_region->provider_data' for long dereferencing
+- Remove virtio_pmem_freeze/restore functions
+- Remove BSD license text with SPDX license text
+
+- Add might_sleep() in virtio_pmem_flush - [Luiz]
+- Make spin_lock_irqsave() narrow
+
+Changes from RFC v3
+- Rebase to latest upstream - Luiz
+- Call ndregion->flush in place of nvdimm_flush- Luiz
+- kmalloc return check - Luiz
+- virtqueue full handling - Stefan
+- Don't map entire virtio_pmem_req to device - Stefan
+- request leak, correct sizeof req- Stefan
+- Move declaration to virtio_pmem.c
+
+Changes from RFC v2:
+- Add flush function in the nd_region in place of switching
+  on a flag - Dan & Stefan
+- Add flush completion function with proper locking and wait
+  for host side flush completion - Stefan & Dan
+- Keep userspace API in uapi header file - Stefan, MST
+- Use LE fields & New device id - MST
+- Indentation & spacing suggestions - MST & Eric
+- Remove extra header files & add licensing - Stefan
+
+Changes from RFC v1:
+- Reuse existing 'pmem' code for registering persistent 
+  memory and other operations instead of creating an entirely 
+  new block driver.
+- Use VIRTIO driver to register memory information with 
+  nvdimm_bus and create region_type accordingly. 
+- Call VIRTIO flush from existing pmem driver.
+
+Pankaj Gupta (5):
+   libnvdimm: nd_region flush callback support
+   virtio-pmem: Add virtio-pmem guest driver
+   libnvdimm: add nd_region buffered dax_dev flag
+   ext4: disable map_sync for virtio pmem
+   xfs: disable map_sync for virtio pmem
+
+[2] https://lkml.org/lkml/2018/8/31/407
+[3] https://www.spinics.net/lists/kvm/msg149761.html
+[4] https://www.spinics.net/lists/kvm/msg153095.html  
+[5] https://lkml.org/lkml/2018/8/31/413
+[6] https://marc.info/?l=qemu-devel&m=153555721901824&w=2
+
+ drivers/acpi/nfit/core.c         |    4 -
+ drivers/dax/super.c              |   17 +++++
+ drivers/nvdimm/claim.c           |    6 +
+ drivers/nvdimm/nd.h              |    1 
+ drivers/nvdimm/pmem.c            |   15 +++-
+ drivers/nvdimm/region_devs.c     |   45 +++++++++++++-
+ drivers/nvdimm/virtio_pmem.c     |   84 ++++++++++++++++++++++++++
+ drivers/virtio/Kconfig           |   10 +++
+ drivers/virtio/Makefile          |    1 
+ drivers/virtio/pmem.c            |  125 +++++++++++++++++++++++++++++++++++++++
+ fs/ext4/file.c                   |   11 +++
+ fs/xfs/xfs_file.c                |    8 ++
+ include/linux/dax.h              |    9 ++
+ include/linux/libnvdimm.h        |   11 +++
+ include/linux/virtio_pmem.h      |   60 ++++++++++++++++++
+ include/uapi/linux/virtio_ids.h  |    1 
+ include/uapi/linux/virtio_pmem.h |   10 +++
+ 17 files changed, 406 insertions(+), 12 deletions(-)
 
