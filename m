@@ -2,91 +2,144 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D5C6C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 19:21:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21923C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 19:21:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1ACD7206BA
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 19:21:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EB873206BA
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 19:21:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728340AbfAITVV (ORCPT
+        id S1728273AbfAITVE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 14:21:21 -0500
-Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:34069 "EHLO
-        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728279AbfAITVF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 14:21:05 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R131e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04452;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0THtvvDg_1547061291;
-Received: from e19h19392.et15sqa.tbsite.net(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0THtvvDg_1547061291)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Thu, 10 Jan 2019 03:14:59 +0800
-From:   Yang Shi <yang.shi@linux.alibaba.com>
-To:     mhocko@suse.com, hannes@cmpxchg.org, shakeelb@google.com,
-        akpm@linux-foundation.org
-Cc:     yang.shi@linux.alibaba.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: [v3 PATCH 2/5] mm: memcontrol: add may_swap parameter to mem_cgroup_force_empty()
-Date:   Thu, 10 Jan 2019 03:14:42 +0800
-Message-Id: <1547061285-100329-3-git-send-email-yang.shi@linux.alibaba.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1547061285-100329-1-git-send-email-yang.shi@linux.alibaba.com>
-References: <1547061285-100329-1-git-send-email-yang.shi@linux.alibaba.com>
+        Wed, 9 Jan 2019 14:21:04 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:47450 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728253AbfAITVB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 14:21:01 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 8D395A9707;
+        Wed,  9 Jan 2019 19:21:00 +0000 (UTC)
+Received: from llong.com (dhcp-17-223.bos.redhat.com [10.18.17.223])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 5164B6090D;
+        Wed,  9 Jan 2019 19:20:59 +0000 (UTC)
+From:   Waiman Long <longman@redhat.com>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Daniel Colascione <dancol@google.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Waiman Long <longman@redhat.com>
+Subject: [PATCH v3 1/4] /proc/stat: Extract irqs counting code into show_stat_irqs()
+Date:   Wed,  9 Jan 2019 14:20:45 -0500
+Message-Id: <1547061648-16080-2-git-send-email-longman@redhat.com>
+In-Reply-To: <1547061648-16080-1-git-send-email-longman@redhat.com>
+References: <1547061648-16080-1-git-send-email-longman@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Wed, 09 Jan 2019 19:21:00 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-mem_cgroup_force_empty() will be reused by the following patch which
-does memory reclaim when offlining.  It is unnecessary to do swap in that
-path, but force_empty still needs keep intact since it is also used by
-other usecases per Shakeel.
+The code that generates the "intr" line of /proc/stat is now moved
+from show_stat() into a new function - show_stat_irqs(). There is no
+functional change.
 
-So, introduce may_swap parameter to mem_cgroup_force_empty().  This is
-the preparation for the following patch.
-
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Shakeel Butt <shakeelb@google.com>
-Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
+Signed-off-by: Waiman Long <longman@redhat.com>
+Reviewed-by: Kees Cook <keescook@chromium.org>
 ---
- mm/memcontrol.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ fs/proc/stat.c | 39 +++++++++++++++++++++++++++++----------
+ 1 file changed, 29 insertions(+), 10 deletions(-)
 
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index af7f18b..eaa3970 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -2878,7 +2878,7 @@ static inline bool memcg_has_children(struct mem_cgroup *memcg)
-  *
-  * Caller is responsible for holding css reference for memcg.
-  */
--static int mem_cgroup_force_empty(struct mem_cgroup *memcg)
-+static int mem_cgroup_force_empty(struct mem_cgroup *memcg, bool may_swap)
+diff --git a/fs/proc/stat.c b/fs/proc/stat.c
+index 535eda7..4b06f1b 100644
+--- a/fs/proc/stat.c
++++ b/fs/proc/stat.c
+@@ -79,12 +79,38 @@ static u64 get_iowait_time(int cpu)
+ 
+ #endif
+ 
++static u64 compute_stat_irqs_sum(void)
++{
++	int i;
++	u64 sum = 0;
++
++	for_each_possible_cpu(i) {
++		sum += kstat_cpu_irqs_sum(i);
++		sum += arch_irq_stat_cpu(i);
++	}
++	sum += arch_irq_stat();
++	return sum;
++}
++
++/*
++ * Print out the "intr" line of /proc/stat.
++ */
++static void show_stat_irqs(struct seq_file *p)
++{
++	int i;
++
++	seq_put_decimal_ull(p, "intr ", compute_stat_irqs_sum());
++	for_each_irq_nr(i)
++		seq_put_decimal_ull(p, " ", kstat_irqs_usr(i));
++
++	seq_putc(p, '\n');
++}
++
+ static int show_stat(struct seq_file *p, void *v)
  {
- 	int nr_retries = MEM_CGROUP_RECLAIM_RETRIES;
+ 	int i, j;
+ 	u64 user, nice, system, idle, iowait, irq, softirq, steal;
+ 	u64 guest, guest_nice;
+-	u64 sum = 0;
+ 	u64 sum_softirq = 0;
+ 	unsigned int per_softirq_sums[NR_SOFTIRQS] = {0};
+ 	struct timespec64 boottime;
+@@ -105,8 +131,6 @@ static int show_stat(struct seq_file *p, void *v)
+ 		steal += kcpustat_cpu(i).cpustat[CPUTIME_STEAL];
+ 		guest += kcpustat_cpu(i).cpustat[CPUTIME_GUEST];
+ 		guest_nice += kcpustat_cpu(i).cpustat[CPUTIME_GUEST_NICE];
+-		sum += kstat_cpu_irqs_sum(i);
+-		sum += arch_irq_stat_cpu(i);
  
-@@ -2895,7 +2895,7 @@ static int mem_cgroup_force_empty(struct mem_cgroup *memcg)
- 			return -EINTR;
+ 		for (j = 0; j < NR_SOFTIRQS; j++) {
+ 			unsigned int softirq_stat = kstat_softirqs_cpu(j, i);
+@@ -115,7 +139,6 @@ static int show_stat(struct seq_file *p, void *v)
+ 			sum_softirq += softirq_stat;
+ 		}
+ 	}
+-	sum += arch_irq_stat();
  
- 		progress = try_to_free_mem_cgroup_pages(memcg, 1,
--							GFP_KERNEL, true);
-+							GFP_KERNEL, may_swap);
- 		if (!progress) {
- 			nr_retries--;
- 			/* maybe some writeback is necessary */
-@@ -2915,7 +2915,7 @@ static ssize_t mem_cgroup_force_empty_write(struct kernfs_open_file *of,
+ 	seq_put_decimal_ull(p, "cpu  ", nsec_to_clock_t(user));
+ 	seq_put_decimal_ull(p, " ", nsec_to_clock_t(nice));
+@@ -154,14 +177,10 @@ static int show_stat(struct seq_file *p, void *v)
+ 		seq_put_decimal_ull(p, " ", nsec_to_clock_t(guest_nice));
+ 		seq_putc(p, '\n');
+ 	}
+-	seq_put_decimal_ull(p, "intr ", (unsigned long long)sum);
+-
+-	/* sum again ? it could be updated? */
+-	for_each_irq_nr(j)
+-		seq_put_decimal_ull(p, " ", kstat_irqs_usr(j));
++	show_stat_irqs(p);
  
- 	if (mem_cgroup_is_root(memcg))
- 		return -EINVAL;
--	return mem_cgroup_force_empty(memcg) ?: nbytes;
-+	return mem_cgroup_force_empty(memcg, true) ?: nbytes;
- }
- 
- static u64 mem_cgroup_hierarchy_read(struct cgroup_subsys_state *css,
+ 	seq_printf(p,
+-		"\nctxt %llu\n"
++		"ctxt %llu\n"
+ 		"btime %llu\n"
+ 		"processes %lu\n"
+ 		"procs_running %lu\n"
 -- 
 1.8.3.1
 
