@@ -2,214 +2,88 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6D2CC43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 19:24:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F292DC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 19:26:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 25C2320663
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 19:24:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BB0F820663
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 19:26:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728361AbfAITYu convert rfc822-to-8bit (ORCPT
+        id S1728363AbfAIT0j (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 14:24:50 -0500
-Received: from coyote.holtmann.net ([212.227.132.17]:35076 "EHLO
-        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728182AbfAITYt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 14:24:49 -0500
-Received: from marcel-macpro.fritz.box (p4FF9FD60.dip0.t-ipconnect.de [79.249.253.96])
-        by mail.holtmann.org (Postfix) with ESMTPSA id 78C94CF357;
-        Wed,  9 Jan 2019 20:32:31 +0100 (CET)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
-Subject: Re: [PATCH 12/14] media: wl128x-radio: move from TI_ST to hci_ll
- driver
-From:   Marcel Holtmann <marcel@holtmann.org>
-In-Reply-To: <20190109181156.yamhult6bpwkhx74@earth.universe>
-Date:   Wed, 9 Jan 2019 20:24:46 +0100
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Tony Lindgren <tony@atomide.com>,
-        Rob Herring <robh@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Pavel Machek <pavel@ucw.cz>, linux-bluetooth@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-omap@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8BIT
-Message-Id: <0C9AD246-B511-4E59-888F-47EAB034D4BF@holtmann.org>
-References: <20181221011752.25627-1-sre@kernel.org>
- <20181221011752.25627-13-sre@kernel.org>
- <C85D80C9-2B00-4161-B934-9D70E2B173D0@holtmann.org>
- <20190109181156.yamhult6bpwkhx74@earth.universe>
-To:     Sebastian Reichel <sre@kernel.org>
-X-Mailer: Apple Mail (2.3445.102.3)
+        Wed, 9 Jan 2019 14:26:39 -0500
+Received: from mga03.intel.com ([134.134.136.65]:31174 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727826AbfAIT0i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 14:26:38 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Jan 2019 11:26:38 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,458,1539673200"; 
+   d="scan'208";a="265833413"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.154])
+  by orsmga004.jf.intel.com with ESMTP; 09 Jan 2019 11:26:37 -0800
+Date:   Wed, 9 Jan 2019 11:26:37 -0800
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Mike Galbraith <efault@gmx.de>
+Cc:     Adam Borowski <kilobyte@angband.pl>, kvm <kvm@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Subject: Re: 5.0-rc1 KVM inspired "BUG: Bad page state in process" spew
+Message-ID: <20190109192637.GA1697@linux.intel.com>
+References: <1547012338.4926.11.camel@gmx.de>
+ <20190109144257.erwh52326ucgc5tw@angband.pl>
+ <1547046196.31155.1.camel@gmx.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1547046196.31155.1.camel@gmx.de>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sebastian,
+On Wed, Jan 09, 2019 at 04:03:16PM +0100, Mike Galbraith wrote:
+> On Wed, 2019-01-09 at 15:42 +0100, Adam Borowski wrote:
+> > On Wed, Jan 09, 2019 at 06:38:58AM +0100, Mike Galbraith wrote:
+> > > KVM seems to be busted in master ATM.  All I have to do to have host
+> > > start screaming and maybe exploding (if the guest doesn't do so first)
+> > > is to try to install a (obese in this case) kernel over nfs mount of
+> > > the host in a guest.
+> > > 
+> > > Kernel producing the spew below is 3bd6e94, config attached.
+> > 
+> > I get same, except that the BUGs were preceded by a bunch of warnings,
+> 
+> Yeah, I was in too much of a rush...
+> 
+> > > homer: # grep BUG: /netconsole.log
+> > > [ 1531.909703] BUG: Bad page state in process X  pfn:100491
+> > > [ 1531.958141] BUG: Bad page state in process systemd-journal  pfn:100412
+> > > [ 1532.662359] BUG: Bad page state in process X  pfn:10043f
+> > > [ 1532.664033] BUG: Bad page state in process X  pfn:10044d
+> > > [ 1532.686433] BUG: Bad page state in process systemd-journal  pfn:1027b0
+> > 
+> > the first one being:
+> > 
+> > Jan  9 00:41:22 umbar kernel: [74122.790461] WARNING: CPU: 2 PID: 26769 at arch/x86/kvm/mmu.c:830 mmu_spte_clear_track_bits+0x7e/0x100
+> 
+> ...I also get oodles of those.
 
->>> +static int ll_register_fm(struct ll_device *lldev)
->>> +{
->>> +	struct device *dev = &lldev->serdev->dev;
->>> +	int err;
->>> +
->>> +	if (!of_device_is_compatible(dev->of_node, "ti,wl1281-st") &&
->>> +	    !of_device_is_compatible(dev->of_node, "ti,wl1283-st") &&
->>> +	    !of_device_is_compatible(dev->of_node, "ti,wl1285-st"))
->>> +		return -ENODEV;
->> 
->> do we really want to hardcode this here? Isn't there some HCI
->> vendor command or some better DT description that we can use to
->> decide when to register this platform device.
-> 
-> I don't know if there is some way to identify the availability
-> based on some HCI vendor command. The public documentation from
-> the WiLink chips is pretty bad.
+There's also a bugzilla bug that's probably the same thing:
+https://bugzilla.kernel.org/show_bug.cgi?id=202189.
 
-can we have some boolean property in the DT file then instead of hardcoding this in the driver.
+I'm 99.9% confident this is only manifests when reclaiming from the guest,
+i.e. host is swapping out a VM's memory.  The WARNING is complaining that
+KVM is trying to reclaim a page before it has been removed from KVM's MMU,
+i.e. a use-after-free scenario is imminent, and the stack trace shows the
+kernel is reclaming.  The bug also listed host swapping as a possible
+requirement, and last but not least, I was only able to reproduce this by
+forcing reclaim.
 
-> 
->>> +	lldev->fmdev = platform_device_register_data(dev, "wl128x-fm",
->>> +		PLATFORM_DEVID_AUTO, NULL, 0);
->> 
->> Fix the indentation please to following networking coding style.
-> 
-> Ok.
-> 
-> [...]
-> 
->>> +static int ll_recv_radio(struct hci_dev *hdev, struct sk_buff *skb)
->>> +{
->>> +	struct hci_uart *hu = hci_get_drvdata(hdev);
->>> +	struct serdev_device *serdev = hu->serdev;
->>> +	struct ll_device *lldev = serdev_device_get_drvdata(serdev);
->>> +
->>> +	if (!lldev->fm_handler) {
->>> +		kfree_skb(skb);
->>> +		return -EINVAL;
->>> +	}
->>> +
->>> +	/* Prepend skb with frame type */
->>> +	memcpy(skb_push(skb, 1), &hci_skb_pkt_type(skb), 1);
->>> +
->>> +	lldev->fm_handler(lldev->fm_drvdata, skb);
->> 
->> So I have no idea why we bother adding the frame type here. What
->> is the purpose. I think this is useless and we better fix the
->> radio driver if that is what is expected.
-> 
-> That should be possible. I will change this before sending another
-> revision.
-> 
->>> +	return 0;
->>> +}
-> 
-> [...]
-> 
->>> +int hci_ti_fm_send(struct device *dev, struct sk_buff *skb)
->>> +{
->>> +	struct serdev_device *serdev = to_serdev_device(dev);
->>> +	struct ll_device *lldev = serdev_device_get_drvdata(serdev);
->>> +	struct hci_uart *hu = &lldev->hu;
->>> +	int ret;
->>> +
->>> +	hci_skb_pkt_type(skb) = HCILL_FM_RADIO;
->>> +	ret = ll_enqueue_prefixed(hu, skb);
->> 
->> This is the same as above, lets have the radio driver not add this
->> H:4 protocol type in the first place. It is really pointless that
->> this driver tries to hack around it.
-> 
-> Yes, obviously both paths should follow the same logic.
-> 
-> [...]
-> 
->>> diff --git a/include/linux/ti_wilink_st.h b/include/linux/ti_wilink_st.h
->>> index f2293028ab9d..a9de5654b0cd 100644
->>> --- a/include/linux/ti_wilink_st.h
->>> +++ b/include/linux/ti_wilink_st.h
->>> @@ -86,6 +86,8 @@ struct st_proto_s {
->>> extern long st_register(struct st_proto_s *);
->>> extern long st_unregister(struct st_proto_s *);
->>> 
->>> +void hci_ti_set_fm_handler(struct device *dev, void (*recv_handler) (void *, struct sk_buff *), void *drvdata);
->>> +int hci_ti_fm_send(struct device *dev, struct sk_buff *skb);
->> 
->> This really needs to be put somewhere else if we are removing the
->> TI Wilink driver. This header file has to be removed as well.
-> 
-> That header is already being used by the hci_ll driver (before this
-> patch) for some packet structures. I removed all WiLink specific
-> things in the patch removing the TI WiLink driver and kept it
-> otherwise.
-
-We need to move everything from ti_wilink_st.h that is used in hci_ll.c into that file.
-
-> 
->> I wonder really if we are not better having the Bluetooth HCI core
->> provide an abstraction for a vendor channel. So that the HCI
->> packets actually can flow through HCI monitor and be recorded via
->> btmon. This would also mean that the driver could do something
->> like hci_vnd_chan_add() and hci_vnd_chan_del() and use a struct
->> hci_vnd_chan for callback handler hci_vnd_chan_send() functions.
-> 
-> Was this question directed to me? I trust your decision how this
-> should be implemented. I'm missing the big picture from other BT
-> devices ;)
-> 
-> If I understood you correctly the suggestion is, that the TI BT
-> driver uses hci_recv_frame() for packet type 0x08 (LL_RECV_FM_RADIO).
-> Then the FM driver can call hci_vnd_chan_add() in its probe function
-> and hci_vnd_chan_del() in its remove function to register the receive
-> hook? Also the dump_tx_skb_data()/dump_rx_skb_data() could be
-> removed, since btmon can be used to see the packets? Sounds very
-> nice to me.
-> 
->> On a side note, what is the protocol the TI FM radio is using
->> anyway? Is that anywhere documented except the driver itself? Are
->> they using HCI commands as well?
-> 
-> AFAIK there is no public documentation for the TI WiLink chips. At
-> least my only information source are the existing drivers. The
-> driver protocol can be seen in drivers/media/radio/wl128x/fmdrv_common.h:
-> 
-> struct fm_cmd_msg_hdr {
-> 	__u8 hdr;		/* Logical Channel-8 */
-> 	__u8 len;		/* Number of bytes follows */
-> 	__u8 op;		/* FM Opcode */
-> 	__u8 rd_wr;		/* Read/Write command */
-> 	__u8 dlen;		/* Length of payload */
-> } __attribute__ ((packed));
-> 
-> struct fm_event_msg_hdr {
-> 	__u8 header;		/* Logical Channel-8 */
-> 	__u8 len;		/* Number of bytes follows */
-> 	__u8 status;		/* Event status */
-> 	__u8 num_fm_hci_cmds;	/* Number of pkts the host allowed to send */
-> 	__u8 op;		/* FM Opcode */
-> 	__u8 rd_wr;		/* Read/Write command */
-> 	__u8 dlen;		/* Length of payload */
-> } __attribute__ ((packed));
-
-This is really a custom protocol (even if it kinda modeled after HCI commands/events) and it be really better the core allows to register skb_pkt_type() vendor channels so it just feeds this back into the driver. We need a bit of btmon mapping for this, but that shouldn’t be that hard.
-
-> Apart from the Bluetooth and FM part, the chips also support GPS
-> (packet type 0x9). The GPS feature is not used on Droid 4 stock
-> rom and seems to carry some TI specific protocol instead of NMEA.
-> Here is an old submission for this driver:
-> http://lkml.iu.edu/hypermail/linux/kernel/1005.0/00918.html
-> 
-> (I don't plan to work on the GPS part, but it provides some more
-> details about the WiLink chips protocol)
-
-We do have a GNSS subsystem now and could just as easily hook this up.
-
-Regards
-
-Marcel
-
+I'll try to bisect.
