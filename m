@@ -2,125 +2,102 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 774EAC43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 10:33:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27CD8C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 10:35:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D54B21738
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 10:33:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DCAE821738
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 10:35:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g168KLbU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729934AbfAIKdj (ORCPT
+        id S1729956AbfAIKfa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 05:33:39 -0500
-Received: from foss.arm.com ([217.140.101.70]:40528 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727828AbfAIKdi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 05:33:38 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 05A99A78;
-        Wed,  9 Jan 2019 02:33:38 -0800 (PST)
-Received: from [10.1.196.62] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E592F3F70D;
-        Wed,  9 Jan 2019 02:33:36 -0800 (PST)
-Subject: Re: [PATCH v2 0/4] add support for MBIGEN generating message based
- SPIs
-To:     Hanjun Guo <guohanjun@huawei.com>,
-        Yang Yingliang <yangyingliang@huawei.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     tglx@linutronix.de, Linuxarm <linuxarm@huawei.com>
-References: <1540540280-26612-1-git-send-email-yangyingliang@huawei.com>
- <08646b86-8228-4920-00cb-6c3f44c4484b@huawei.com>
-From:   Marc Zyngier <marc.zyngier@arm.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=marc.zyngier@arm.com; prefer-encrypt=mutual; keydata=
- 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
-Organization: ARM Ltd
-Message-ID: <f36ee487-8cd6-4672-a8b2-d41f42e83c90@arm.com>
-Date:   Wed, 9 Jan 2019 10:33:35 +0000
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        Wed, 9 Jan 2019 05:35:30 -0500
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:38386 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727828AbfAIKfa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 05:35:30 -0500
+Received: by mail-qt1-f196.google.com with SMTP id p17so7749260qtl.5;
+        Wed, 09 Jan 2019 02:35:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=s1DTfSsLWfiKQ3Qk4KvpFI3hjnQ31uNq337zO3QevBg=;
+        b=g168KLbU2XFvnVL3ARtgmlHuFP4vXLVQlJgYhwdMnQEVRTYNs9tq9u+FF78pAPnJs3
+         1KuLFb1Ppu+s2Ku7AOO60deQS2gdBA/DHaHpBwySbMdnOMwQzq3m4vidzqCdNomfPPBb
+         awdY57TJedBf5TRwjx23MgHQzm7tjFzArRyMupYkHHvft4fDnieAG9njH5Qxfs+NCaPX
+         fDrWdZ2Q2rpDm5qXmz0av67OopPzsuODJ/ShspeYZBDXWfXKHKiBO3nMuu/igSBJP1kT
+         r48/azMCyjK8HFMt01Qzve6QbAIk+c5nbzY/DG1sNdG6+Fc42xXMSN1q5BRo2duL9ss5
+         hU8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=s1DTfSsLWfiKQ3Qk4KvpFI3hjnQ31uNq337zO3QevBg=;
+        b=cqFf04SKpeCGFcv+ZmpupTaEvd8BkO5eihPY9HUkERrrly7hQg0SGnadUVd24X2OyK
+         3if/X2hz0LyELZG/NJSkWILso05zvJ20BO4/y42HW30m6LSFSKUqYIgGt8/whUZwObQz
+         J+Ire8ZFAHl7J7W0EG3NMDjxPykrWZGfzIluqFtPSM3/VolXnUuMIvDdk8jaHRcNLPIo
+         oYSYRcwsy6dsgOPDu7i63fdMTGNZPuFQev3Y98lnMp7CtZmUQAqp7rTwZ0dTUGqlOd6u
+         5S28/DkR3VZ0vJCdd9Efks7L+/HVQ4AGyfn5ZzrYy0bzvU4H/U3KvIwfTxi6bn6j/dW4
+         ZPMw==
+X-Gm-Message-State: AJcUukdn9dycKkeETvJ+eCRFJNIVwHN0YX1mYvp6Q4Kurto3TFLA/xov
+        tWdG5OlGttDwWGSZ40Mq+xCXHxtgDdV1V15MiJ1MinshXwQ=
+X-Google-Smtp-Source: ALg8bN5F/qD3QVzWhXGzM2PmKwdg3op8oP/ckcQ7EGqKce+pmFN/hJV4G1tyElJ7UxAVJVUOKk35FPzCPH84xaRmnwA=
+X-Received: by 2002:ac8:71d0:: with SMTP id i16mr5220180qtp.386.1547030129307;
+ Wed, 09 Jan 2019 02:35:29 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <08646b86-8228-4920-00cb-6c3f44c4484b@huawei.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <CALaQ_hoq+QfxGTi5aggfm6RehsiZOvmYk-Mz-Geu3TLdNrRXcg@mail.gmail.com>
+ <824caf1d-f5db-a439-fc77-deda67df5bfc@linux.intel.com>
+In-Reply-To: <824caf1d-f5db-a439-fc77-deda67df5bfc@linux.intel.com>
+From:   Nathan Royce <nroycea+kernel@gmail.com>
+Date:   Wed, 9 Jan 2019 04:35:17 -0600
+Message-ID: <CALaQ_hrE9kX1F2sYab7rC6i15x1=vvJdOr4aTY3Oyx8w49sA7A@mail.gmail.com>
+Subject: Re: kernel: xhci_hcd 0000:00:14.0: ERROR unknown event type 37 -
+ Kernel 4.19.13
+To:     Mathias Nyman <mathias.nyman@linux.intel.com>
+Cc:     linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+        Alan Stern <stern@rowland.harvard.edu>,
+        gregkh@linuxfoundation.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Hanjun,
+You can ignore the last set of files with a sample of 1.
+I got a nice sample of like 150 about 6 hours ago.
+The link I included in the previous reply contains the same filenames,
+just updated.
+The journal timestamps (to correspond with the trace times) go from
+"[513438.430253] computername kernel: xhci_hcd 0000:00:14.0: ERROR
+unknown event type 37"
+to
+"[513438.796965] computername kernel: xhci_hcd 0000:00:14.0: ERROR
+unknown event type 37"
+That's 150 of them in less than 1/2 second.
 
-On 09/01/2019 10:18, Hanjun Guo wrote:
-> Hi Marc,
-> 
-> Sorry for ping you...
-> 
-> On 2018/10/26 15:51, Yang Yingliang wrote:
->> Now MBIGENs have pins that used to generate SPIs,
->> with
->> 5052875 ("irqchip/gic-v3: Add support for Message Based Interrupts as an MSI controller"),
->> we can support MBIGEN to generate message based SPIs by writing
->> GICD_SETSPIR. This patchset add support for MBIGEN generating
->> message based SPIs and a bugfix for MBI driver.
-> 
-> What's you suggestion for this patch set? We would like your input
-> for next steps.
-> 
->>
->>
->> Patch #1 is a bugfix for MBI driver.
-> 
-> At least this patch can be merged first as it's an obvious bug,
-> without this patch, the MBI dirver can't work I think because
-> the mutex lock is not initialized.
-
-I dropped the ball on that one. Let me have a quick look.
-
-Thanks,
-
-	M.
--- 
-Jazz is not dead. It just smells funny...
+On Wed, Jan 2, 2019 at 5:32 AM Mathias Nyman
+<mathias.nyman@linux.intel.com> wrote:
+>
+> The event type 37 is a host controller event, most likely a event ring full error.
+>
+> So there are probably so many events that we fill the event ring before we can handle them.
+>
+> Could you take traces of this?
+> Note that the trace file will be huge.
+>
+> mount -t debugfs none /sys/kernel/debug
+> echo 81920 > /sys/kernel/debug/tracing/buffer_size_kb
+> echo 1 > /sys/kernel/debug/tracing/events/xhci-hcd/enable
+>
+> copy the traces somewhere safe once the error is triggered:
+> cp /sys/kernel/debug/tracing/trace  /<somewhere>
+>
+> -Mathias
