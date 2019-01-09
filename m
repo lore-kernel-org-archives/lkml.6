@@ -2,180 +2,199 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C278EC43444
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 14:47:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F9F8C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 14:48:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8AB8A20883
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 14:47:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547045223;
-	bh=xxg+kR1oTq0IsGkU8vQtFaA1sUkZPLwuJWdGx+8let4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=PDqbjcRCeuWTFrOqRkIIbjLBljykS7LaF7pbb4ex4a82vo1wadD8qxA1cLHrM4MR5
-	 NGL4bDLHkILknisz0iBkEvoIIADVByk/eL93e7zRvYH/5GVXTLllbf/Y5/Y2+srsfq
-	 Sin7iGnElkFr/KN74rfRGxyteSQRucInO5oL329k=
+	by mail.kernel.org (Postfix) with ESMTP id 3D312206BA
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 14:48:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731843AbfAIOrD (ORCPT
+        id S1731910AbfAIOsA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 09:47:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49086 "EHLO mail.kernel.org"
+        Wed, 9 Jan 2019 09:48:00 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:1901 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731784AbfAIOrC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 09:47:02 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1731694AbfAIOsA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 09:48:00 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AB0AD206BA;
-        Wed,  9 Jan 2019 14:47:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547045221;
-        bh=xxg+kR1oTq0IsGkU8vQtFaA1sUkZPLwuJWdGx+8let4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=wQ7mqPW34iT3EXU1eGGJtnzWiHAPM9i/arimWeam+4tsK90GYEKRTKmS7M1UfDGQH
-         e7kwJ2cObYXlr+YUZnHuddKhJ1JONJmNwKCv1Zm9n7R0Kd/mIYdPbQ785WAlkkrNIa
-         1urk7tQktpMMedR9LwZnBKErYvYFQHBimVV4/ImI=
-Date:   Wed, 9 Jan 2019 15:46:58 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Jinpu Wang <jinpuwang@gmail.com>
-Cc:     Guenter Roeck <linux@roeck-us.net>,
-        LKML <linux-kernel@vger.kernel.org>,
-        torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        shuah@kernel.org, patches@kernelci.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        lkft-triage@lists.linaro.org,
-        "v3.14+, only the raid10 part" <stable@vger.kernel.org>
-Subject: Re: [PATCH 4.14 000/101] 4.14.92-stable review
-Message-ID: <20190109144658.GF29274@kroah.com>
-References: <20190107105330.372621917@linuxfoundation.org>
- <d86ef960-dd47-b282-5432-4ecbdd4e0daf@roeck-us.net>
- <20190108122542.GA4801@kroah.com>
- <CAD9gYJ+P6SFzDVDUMJRESUEYFNC1GhP+C76__rj2w1HzXPEtDw@mail.gmail.com>
+        by mx1.redhat.com (Postfix) with ESMTPS id C5DA32579;
+        Wed,  9 Jan 2019 14:47:58 +0000 (UTC)
+Received: from dhcp201-121.englab.pnq.redhat.com (dhcp-10-65-161-12.pnq.redhat.com [10.65.161.12])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 752FF5D76B;
+        Wed,  9 Jan 2019 14:47:39 +0000 (UTC)
+From:   Pankaj Gupta <pagupta@redhat.com>
+To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        qemu-devel@nongnu.org, linux-nvdimm@ml01.01.org,
+        linux-fsdevel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        linux-acpi@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-xfs@vger.kernel.org
+Cc:     jack@suse.cz, stefanha@redhat.com, dan.j.williams@intel.com,
+        riel@surriel.com, nilal@redhat.com, kwolf@redhat.com,
+        pbonzini@redhat.com, zwisler@kernel.org, vishal.l.verma@intel.com,
+        dave.jiang@intel.com, david@redhat.com, jmoyer@redhat.com,
+        xiaoguangrong.eric@gmail.com, hch@infradead.org, mst@redhat.com,
+        jasowang@redhat.com, lcapitulino@redhat.com, imammedo@redhat.com,
+        eblake@redhat.com, willy@infradead.org, tytso@mit.edu,
+        adilger.kernel@dilger.ca, darrick.wong@oracle.com,
+        rjw@rjwysocki.net, pagupta@redhat.com
+Subject: [PATCH v3 0/5] kvm "virtio pmem" device
+Date:   Wed,  9 Jan 2019 20:17:31 +0530
+Message-Id: <20190109144736.17452-1-pagupta@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAD9gYJ+P6SFzDVDUMJRESUEYFNC1GhP+C76__rj2w1HzXPEtDw@mail.gmail.com>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Wed, 09 Jan 2019 14:47:59 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 09, 2019 at 12:40:11PM +0100, Jinpu Wang wrote:
-> Greg Kroah-Hartman <gregkh@linuxfoundation.org> 于2019年1月8日周二 下午1:28写道：
-> >
-> > On Mon, Jan 07, 2019 at 08:59:12PM -0800, Guenter Roeck wrote:
-> >
-> > Should all now be fixed up.
-> >
-> > I hope, this set of releases has been a pain...
-> >
-> > greg k-h
-> 
-> I had build failure below, looks related to 0fe69354b888 ("crypto:
-> testmgr - add AES-CFB tests")
-> In file included from crypto/testmgr.c:54:0:
-> crypto/testmgr.h:16039:3: error: unknown field 'ptext' specified in initializer
->    .ptext = "\x6b\xc1\xbe\xe2\x2e\x40\x9f\x96"
->    ^
-> crypto/testmgr.h:16047:3: error: unknown field 'ctext' specified in initializer
->    .ctext = "\x3b\x3f\xd9\x2e\xb7\x2d\xad\x20"
->    ^
-> crypto/testmgr.h:16055:3: error: unknown field 'len' specified in initializer
->    .len = 64,
->    ^
-> crypto/testmgr.h:16055:3: warning: initialization makes pointer from
-> integer without a cast
-> crypto/testmgr.h:16055:3: warning: (near initialization for
-> 'aes_cfb_tv_template[0].result')
-> crypto/testmgr.h:16063:3: error: unknown field 'ptext' specified in initializer
->    .ptext = "\x6b\xc1\xbe\xe2\x2e\x40\x9f\x96"
->    ^
-> crypto/testmgr.h:16071:3: error: unknown field 'ctext' specified in initializer
->    .ctext = "\xcd\xc8\x0d\x6f\xdd\xf1\x8c\xab"
->    ^
-> crypto/testmgr.h:16079:3: error: unknown field 'len' specified in initializer
->    .len = 64,
->    ^
-> crypto/testmgr.h:16079:3: warning: initialization makes pointer from
-> integer without a cast
-> crypto/testmgr.h:16079:3: warning: (near initialization for
-> 'aes_cfb_tv_template[1].result')
-> crypto/testmgr.h:16088:3: error: unknown field 'ptext' specified in initializer
->    .ptext = "\x6b\xc1\xbe\xe2\x2e\x40\x9f\x96"
->    ^
-> crypto/testmgr.h:16096:3: error: unknown field 'ctext' specified in initializer
->    .ctext = "\xdc\x7e\x84\xbf\xda\x79\x16\x4b"
->    ^
-> crypto/testmgr.h:16104:3: error: unknown field 'len' specified in initializer
->    .len = 64,
->    ^
-> crypto/testmgr.h:16104:3: warning: initialization makes pointer from
-> integer without a cast
-> crypto/testmgr.h:16104:3: warning: (near initialization for
-> 'aes_cfb_tv_template[2].result')
->   CC [M]  drivers/infiniband/sw/rxe/rxe_hw_counters.o
->   CC      drivers/pci/pcie/portdrv_bus.o
->   CC      lib/devres.o
-> crypto/testmgr.c:2633:4: error: unknown field 'vecs' specified in initializer
->     .cipher = __VECS(aes_cfb_tv_template)
->     ^
-> crypto/testmgr.c:2633:4: warning: missing braces around initializer
-> [-Wmissing-braces]
-> crypto/testmgr.c:2633:4: warning: (near initialization for
-> 'alg_test_descs[36].suite.cipher.enc') [-Wmissing-braces]
-> crypto/testmgr.c:2633:4: error: unknown field 'count' specified in initializer
-> In file included from ./include/linux/kernel.h:15:0,
->                  from ./include/linux/crypto.h:21,
->                  from ./include/crypto/aead.h:16,
->                  from crypto/testmgr.c:23:
-> ./include/linux/build_bug.h:30:45: warning: initialization makes
-> pointer from integer without a cast
->  #define BUILD_BUG_ON_ZERO(e) (sizeof(struct { int:(-!!(e)); }))
->                                              ^
-> ./include/linux/compiler-gcc.h:65:28: note: in expansion of macro
-> 'BUILD_BUG_ON_ZERO'
->  #define __must_be_array(a) BUILD_BUG_ON_ZERO(__same_type((a), &(a)[0]))
->                             ^
-> ./include/linux/kernel.h:71:59: note: in expansion of macro '__must_be_array'
->  #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]) + __must_be_array(arr))
->                                                            ^
-> crypto/testmgr.c:2347:43: note: in expansion of macro 'ARRAY_SIZE'
->  #define __VECS(tv) { .vecs = tv, .count = ARRAY_SIZE(tv) }
->                                            ^
-> crypto/testmgr.c:2633:14: note: in expansion of macro '__VECS'
->     .cipher = __VECS(aes_cfb_tv_template)
->               ^
-> ./include/linux/build_bug.h:30:45: warning: (near initialization for
-> 'alg_test_descs[36].suite.cipher.dec.vecs')
->  #define BUILD_BUG_ON_ZERO(e) (sizeof(struct { int:(-!!(e)); }))
->                                              ^
-> ./include/linux/compiler-gcc.h:65:28: note: in expansion of macro
-> 'BUILD_BUG_ON_ZERO'
->  #define __must_be_array(a) BUILD_BUG_ON_ZERO(__same_type((a), &(a)[0]))
->                             ^
-> ./include/linux/kernel.h:71:59: note: in expansion of macro '__must_be_array'
->  #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]) + __must_be_array(arr))
->                                                            ^
-> crypto/testmgr.c:2347:43: note: in expansion of macro 'ARRAY_SIZE'
->  #define __VECS(tv) { .vecs = tv, .count = ARRAY_SIZE(tv) }
->                                            ^
-> crypto/testmgr.c:2633:14: note: in expansion of macro '__VECS'
->     .cipher = __VECS(aes_cfb_tv_template)
->               ^
->   CC [M]  drivers/md/dm-snap.o
-> scripts/Makefile.build:326: recipe for target 'crypto/testmgr.o' failed
-> make[4]: *** [crypto/testmgr.o] Error 1
-> Makefile:1045: recipe for target 'crypto' failed
-> make[3]: *** [crypto] Error 2
+ This patch series has implementation for "virtio pmem". 
+ "virtio pmem" is fake persistent memory(nvdimm) in guest 
+ which allows to bypass the guest page cache. This also
+ implements a VIRTIO based asynchronous flush mechanism.  
+ 
+ Sharing guest kernel driver in this patchset with the 
+ changes suggested in v2. Tested with Qemu side device 
+ emulation for virtio-pmem [6]. 
+ 
+ Details of project idea for 'virtio pmem' flushing interface 
+ is shared [3] & [4].
 
-You are right, that totally does not build.  Odd that no one else's
-tests caught this :(
+ Implementation is divided into two parts:
+ New virtio pmem guest driver and qemu code changes for new 
+ virtio pmem paravirtualized device.
 
-Anyway, thanks for this, I've dropped the patch from 4.14.y now.
+1. Guest virtio-pmem kernel driver
+---------------------------------
+   - Reads persistent memory range from paravirt device and 
+     registers with 'nvdimm_bus'.  
+   - 'nvdimm/pmem' driver uses this information to allocate 
+     persistent memory region and setup filesystem operations 
+     to the allocated memory. 
+   - virtio pmem driver implements asynchronous flushing 
+     interface to flush from guest to host.
 
-greg k-h
+2. Qemu virtio-pmem device
+---------------------------------
+   - Creates virtio pmem device and exposes a memory range to 
+     KVM guest. 
+   - At host side this is file backed memory which acts as 
+     persistent memory. 
+   - Qemu side flush uses aio thread pool API's and virtio 
+     for asynchronous guest multi request handling. 
+
+   David Hildenbrand CCed also posted a modified version[6] of 
+   qemu virtio-pmem code based on updated Qemu memory device API. 
+
+ Virtio-pmem errors handling:
+ ----------------------------------------
+  Checked behaviour of virtio-pmem for below types of errors
+  Need suggestions on expected behaviour for handling these errors?
+
+  - Hardware Errors: Uncorrectable recoverable Errors: 
+  a] virtio-pmem: 
+    - As per current logic if error page belongs to Qemu process, 
+      host MCE handler isolates(hwpoison) that page and send SIGBUS. 
+      Qemu SIGBUS handler injects exception to KVM guest. 
+    - KVM guest then isolates the page and send SIGBUS to guest 
+      userspace process which has mapped the page. 
+  
+  b] Existing implementation for ACPI pmem driver: 
+    - Handles such errors with MCE notifier and creates a list 
+      of bad blocks. Read/direct access DAX operation return EIO 
+      if accessed memory page fall in bad block list.
+    - It also starts backgound scrubbing.  
+    - Similar functionality can be reused in virtio-pmem with MCE 
+      notifier but without scrubbing(no ACPI/ARS)? Need inputs to 
+      confirm if this behaviour is ok or needs any change?
+
+Changes from PATCH v2: [1]
+- Disable MAP_SYNC for ext4 & XFS filesystems - [Dan] 
+- Use name 'virtio pmem' in place of 'fake dax' 
+
+Changes from PATCH v1: [2]
+- 0-day build test for build dependency on libnvdimm 
+
+ Changes suggested by - [Dan Williams]
+- Split the driver into two parts virtio & pmem  
+- Move queuing of async block request to block layer
+- Add "sync" parameter in nvdimm_flush function
+- Use indirect call for nvdimm_flush
+- Don’t move declarations to common global header e.g nd.h
+- nvdimm_flush() return 0 or -EIO if it fails
+- Teach nsio_rw_bytes() that the flush can fail
+- Rename nvdimm_flush() to generic_nvdimm_flush()
+- Use 'nd_region->provider_data' for long dereferencing
+- Remove virtio_pmem_freeze/restore functions
+- Remove BSD license text with SPDX license text
+
+- Add might_sleep() in virtio_pmem_flush - [Luiz]
+- Make spin_lock_irqsave() narrow
+
+Changes from RFC v3
+- Rebase to latest upstream - Luiz
+- Call ndregion->flush in place of nvdimm_flush- Luiz
+- kmalloc return check - Luiz
+- virtqueue full handling - Stefan
+- Don't map entire virtio_pmem_req to device - Stefan
+- request leak, correct sizeof req- Stefan
+- Move declaration to virtio_pmem.c
+
+Changes from RFC v2:
+- Add flush function in the nd_region in place of switching
+  on a flag - Dan & Stefan
+- Add flush completion function with proper locking and wait
+  for host side flush completion - Stefan & Dan
+- Keep userspace API in uapi header file - Stefan, MST
+- Use LE fields & New device id - MST
+- Indentation & spacing suggestions - MST & Eric
+- Remove extra header files & add licensing - Stefan
+
+Changes from RFC v1:
+- Reuse existing 'pmem' code for registering persistent 
+  memory and other operations instead of creating an entirely 
+  new block driver.
+- Use VIRTIO driver to register memory information with 
+  nvdimm_bus and create region_type accordingly. 
+- Call VIRTIO flush from existing pmem driver.
+
+Pankaj Gupta (5):
+   libnvdimm: nd_region flush callback support
+   virtio-pmem: Add virtio-pmem guest driver
+   libnvdimm: add nd_region buffered dax_dev flag
+   ext4: disable map_sync for virtio pmem
+   xfs: disable map_sync for virtio pmem
+
+[2] https://lkml.org/lkml/2018/8/31/407
+[3] https://www.spinics.net/lists/kvm/msg149761.html
+[4] https://www.spinics.net/lists/kvm/msg153095.html  
+[5] https://lkml.org/lkml/2018/8/31/413
+[6] https://marc.info/?l=qemu-devel&m=153555721901824&w=2
+
+ drivers/acpi/nfit/core.c         |    4 -
+ drivers/dax/super.c              |   17 +++++
+ drivers/nvdimm/claim.c           |    6 +
+ drivers/nvdimm/nd.h              |    1 
+ drivers/nvdimm/pmem.c            |   15 +++-
+ drivers/nvdimm/region_devs.c     |   45 +++++++++++++-
+ drivers/nvdimm/virtio_pmem.c     |   84 ++++++++++++++++++++++++++
+ drivers/virtio/Kconfig           |   10 +++
+ drivers/virtio/Makefile          |    1 
+ drivers/virtio/pmem.c            |  125 +++++++++++++++++++++++++++++++++++++++
+ fs/ext4/file.c                   |   11 +++
+ fs/xfs/xfs_file.c                |    8 ++
+ include/linux/dax.h              |    9 ++
+ include/linux/libnvdimm.h        |   11 +++
+ include/linux/virtio_pmem.h      |   60 ++++++++++++++++++
+ include/uapi/linux/virtio_ids.h  |    1 
+ include/uapi/linux/virtio_pmem.h |   10 +++
+ 17 files changed, 406 insertions(+), 12 deletions(-)
+
