@@ -2,75 +2,103 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C904C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 10:48:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F68EC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 10:51:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 765BC21848
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 10:48:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F1B1E20883
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 10:51:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730339AbfAIKsm (ORCPT
+        id S1730392AbfAIKvr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 05:48:42 -0500
-Received: from cloudserver094114.home.pl ([79.96.170.134]:63384 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726915AbfAIKsm (ORCPT
+        Wed, 9 Jan 2019 05:51:47 -0500
+Received: from g2t1383g.austin.hpe.com ([15.233.16.89]:15719 "EHLO
+        g2t1383g.austin.hpe.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729607AbfAIKvp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 05:48:42 -0500
-Received: from 79.184.254.168.ipv4.supernova.orange.pl (79.184.254.168) (HELO aspire.rjw.lan)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.183)
- id 5f78d8957010fbd6; Wed, 9 Jan 2019 11:48:39 +0100
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Sinan Kaya <okaya@kernel.org>, Andy Shevchenko <andy@infradead.org>
-Cc:     linux-next@vger.kernel.org, linux-acpi@vger.kernel.org,
-        Darren Hart <dvhart@infradead.org>,
-        "open list:X86 PLATFORM DRIVERS" 
-        <platform-driver-x86@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v6 05/11] platform/x86: intel_pmc: Make PCI dependency explicit
-Date:   Wed, 09 Jan 2019 11:47:54 +0100
-Message-ID: <3184241.VH7flF4h5P@aspire.rjw.lan>
-In-Reply-To: <20190105100606.6673-6-okaya@kernel.org>
-References: <20190105100606.6673-1-okaya@kernel.org> <20190105100606.6673-6-okaya@kernel.org>
+        Wed, 9 Jan 2019 05:51:45 -0500
+Received: from g4t3428.houston.hpe.com (g4t3428.houston.hpe.com [15.241.140.76])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by g2t1383g.austin.hpe.com (Postfix) with ESMTPS id 3F2051177;
+        Wed,  9 Jan 2019 10:46:03 +0000 (UTC)
+Received: from sarge.linuxathome.me (unknown [16.214.81.200])
+        by g4t3428.houston.hpe.com (Postfix) with ESMTP id A500C55;
+        Wed,  9 Jan 2019 10:46:03 +0000 (UTC)
+From:   Hedi Berriche <hedi.berriche@hpe.com>
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>
+Cc:     x86@kernel.org, linux-efi@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Hedi Berriche <hedi.berriche@hpe.com>,
+        Russ Anderson <rja@hpe.com>, Mike Travis <mike.travis@hpe.com>,
+        Dimitri Sivanich <sivanich@hpe.com>,
+        Steve Wahl <steve.wahl@hpe.com>
+Subject: [PATCH 2/3] x86/platform/UV: kill uv_bios_call_reentrant() as it has no callers
+Date:   Wed,  9 Jan 2019 10:45:40 +0000
+Message-Id: <20190109104541.25733-3-hedi.berriche@hpe.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190109104541.25733-1-hedi.berriche@hpe.com>
+References: <20190109104541.25733-1-hedi.berriche@hpe.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Saturday, January 5, 2019 11:06:00 AM CET Sinan Kaya wrote:
-> After 'commit 5d32a66541c4 ("PCI/ACPI: Allow ACPI to be built without
-> CONFIG_PCI set")' dependencies on CONFIG_PCI that previously were
-> satisfied implicitly through dependencies on CONFIG_ACPI have to be
-> specified directly. Code relies on PCI for execution. Specify this
-> in the Kconfig.
-> 
-> Fixes: 5d32a66541c46 ("PCI/ACPI: Allow ACPI to be built without CONFIG_PCI set")
-> Signed-off-by: Sinan Kaya <okaya@kernel.org>
-> ---
->  drivers/platform/x86/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
-> index b36ea14b41ad..7afb96cb1cd6 100644
-> --- a/drivers/platform/x86/Kconfig
-> +++ b/drivers/platform/x86/Kconfig
-> @@ -1174,7 +1174,7 @@ config INTEL_SMARTCONNECT
->  
->  config INTEL_PMC_IPC
->  	tristate "Intel PMC IPC Driver"
-> -	depends on ACPI
-> +	depends on ACPI && PCI
->  	---help---
->  	This driver provides support for PMC control on some Intel platforms.
->  	The PMC is an ARC processor which defines IPC commands for communication
+uv_bios_call_reentrant() has no callers nor is it exported, kill it.
 
-Andy, you had some reservations regarding this patch IIRC.
+Signed-off-by: Hedi Berriche <hedi.berriche@hpe.com>
+Reviewed-by: Russ Anderson <rja@hpe.com>
+Reviewed-by: Mike Travis <mike.travis@hpe.com>
+Reviewed-by: Dimitri Sivanich <sivanich@hpe.com>
+Reviewed-by: Steve Wahl <steve.wahl@hpe.com>
+---
+ arch/x86/include/asm/uv/bios.h |  1 -
+ arch/x86/platform/uv/bios_uv.c | 12 ------------
+ 2 files changed, 13 deletions(-)
 
-Should I apply it?
+diff --git a/arch/x86/include/asm/uv/bios.h b/arch/x86/include/asm/uv/bios.h
+index e652a7cc6186..4eee646544b2 100644
+--- a/arch/x86/include/asm/uv/bios.h
++++ b/arch/x86/include/asm/uv/bios.h
+@@ -140,7 +140,6 @@ enum uv_memprotect {
+  */
+ extern s64 uv_bios_call(enum uv_bios_cmd, u64, u64, u64, u64, u64);
+ extern s64 uv_bios_call_irqsave(enum uv_bios_cmd, u64, u64, u64, u64, u64);
+-extern s64 uv_bios_call_reentrant(enum uv_bios_cmd, u64, u64, u64, u64, u64);
+ 
+ extern s64 uv_bios_get_sn_info(int, int *, long *, long *, long *, long *);
+ extern s64 uv_bios_freq_base(u64, u64 *);
+diff --git a/arch/x86/platform/uv/bios_uv.c b/arch/x86/platform/uv/bios_uv.c
+index 4a6a5a26c582..cd05af157763 100644
+--- a/arch/x86/platform/uv/bios_uv.c
++++ b/arch/x86/platform/uv/bios_uv.c
+@@ -66,18 +66,6 @@ s64 uv_bios_call_irqsave(enum uv_bios_cmd which, u64 a1, u64 a2, u64 a3,
+ 	return ret;
+ }
+ 
+-s64 uv_bios_call_reentrant(enum uv_bios_cmd which, u64 a1, u64 a2, u64 a3,
+-					u64 a4, u64 a5)
+-{
+-	s64 ret;
+-
+-	preempt_disable();
+-	ret = uv_bios_call(which, a1, a2, a3, a4, a5);
+-	preempt_enable();
+-
+-	return ret;
+-}
+-
+ 
+ long sn_partition_id;
+ EXPORT_SYMBOL_GPL(sn_partition_id);
+-- 
+2.20.0
 
