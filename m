@@ -2,77 +2,134 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF8C2C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 16:08:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B51EC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 16:08:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A2377206BB
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 16:08:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 122B1206BB
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 16:08:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732559AbfAIQIC (ORCPT
+        id S1732573AbfAIQIP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 11:08:02 -0500
-Received: from mga06.intel.com ([134.134.136.31]:50598 "EHLO mga06.intel.com"
+        Wed, 9 Jan 2019 11:08:15 -0500
+Received: from relay.sw.ru ([185.231.240.75]:50220 "EHLO relay.sw.ru"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731882AbfAIQIC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 11:08:02 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Jan 2019 08:08:01 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,458,1539673200"; 
-   d="scan'208";a="116777757"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
-  by orsmga003.jf.intel.com with ESMTP; 09 Jan 2019 08:08:00 -0800
-Received: from andy by smile with local (Exim 4.92-RC4)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1ghGOd-00082g-Eh; Wed, 09 Jan 2019 18:07:59 +0200
-Date:   Wed, 9 Jan 2019 18:07:59 +0200
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Thomas Tai <thomas.tai@oracle.com>, linux-kernel@vger.kernel.org,
-        Tyler Baicar <tbaicar@codeaurora.org>
-Subject: Re: [PATCH v1] ras: Use consistent types for UUIDs
-Message-ID: <20190109160759.GI9170@smile.fi.intel.com>
-References: <20180713131027.77362-1-andriy.shevchenko@linux.intel.com>
- <20181005073305.GB24224@lst.de>
+        id S1731882AbfAIQIO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 11:08:14 -0500
+Received: from [172.16.25.169]
+        by relay.sw.ru with esmtp (Exim 4.91)
+        (envelope-from <ktkhai@virtuozzo.com>)
+        id 1ghGOo-0007H8-Cg; Wed, 09 Jan 2019 19:08:10 +0300
+Subject: Re: [PATCH RFC 0/3] mm: Reduce IO by improving algorithm of memcg
+ pagecache pages eviction
+To:     Josef Bacik <josef@toxicpanda.com>
+Cc:     akpm@linux-foundation.org, hannes@cmpxchg.org, jack@suse.cz,
+        hughd@google.com, darrick.wong@oracle.com, mhocko@suse.com,
+        aryabinin@virtuozzo.com, guro@fb.com, mgorman@techsingularity.net,
+        shakeelb@google.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+References: <154703479840.32690.6504699919905946726.stgit@localhost.localdomain>
+ <20190109154932.tpc27dk2hzeycqex@MacBook-Pro-91.local>
+From:   Kirill Tkhai <ktkhai@virtuozzo.com>
+Message-ID: <e7dc9a15-9438-cc15-c898-36eca325118a@virtuozzo.com>
+Date:   Wed, 9 Jan 2019 19:08:09 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181005073305.GB24224@lst.de>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190109154932.tpc27dk2hzeycqex@MacBook-Pro-91.local>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 05, 2018 at 09:33:05AM +0200, Christoph Hellwig wrote:
-> On Fri, Jul 13, 2018 at 04:10:27PM +0300, Andy Shevchenko wrote:
-> > The commit
-> > 
-> >   297b64c74385 ("ras: acpi / apei: generate trace event for unrecognized CPER section")
-> > 
-> > brought inconsistency in UUID types which are used across the RAS subsystem.
-> > 
-> > Fix this by moving to use guid_t everywhere.
+Hi, Josef,
+
+On 09.01.2019 18:49, Josef Bacik wrote:
+> On Wed, Jan 09, 2019 at 03:20:18PM +0300, Kirill Tkhai wrote:
+>> On nodes without memory overcommit, it's common a situation,
+>> when memcg exceeds its limit and pages from pagecache are
+>> shrinked on reclaim, while node has a lot of free memory.
+>> Further access to the pages requires real device IO, while
+>> IO causes time delays, worse powerusage, worse throughput
+>> for other users of the device, etc.
+>>
+>> Cleancache is not a good solution for this problem, since
+>> it implies copying of page on every cleancache_put_page()
+>> and cleancache_get_page(). Also, it requires introduction
+>> of internal per-cleancache_ops data structures to manage
+>> cached pages and their inodes relationships, which again
+>> introduces overhead.
+>>
+>> This patchset introduces another solution. It introduces
+>> a new scheme for evicting memcg pages:
+>>
+>>   1)__remove_mapping() uncharges unmapped page memcg
+>>     and leaves page in pagecache on memcg reclaim;
+>>
+>>   2)putback_lru_page() places page into root_mem_cgroup
+>>     list, since its memcg is NULL. Page may be evicted
+>>     on global reclaim (and this will be easily, as
+>>     page is not mapped, so shrinker will shrink it
+>>     with 100% probability of success);
+>>
+>>   3)pagecache_get_page() charges page into memcg of
+>>     a task, which takes it first.
+>>
+>> Below is small test, which shows profit of the patchset.
+>>
+>> Create memcg with limit 20M (exact value does not matter much):
+>>   $ mkdir /sys/fs/cgroup/memory/ct
+>>   $ echo 20M > /sys/fs/cgroup/memory/ct/memory.limit_in_bytes
+>>   $ echo $$ > /sys/fs/cgroup/memory/ct/tasks
+>>
+>> Then twice read 1GB file:
+>>   $ time cat file_1gb > /dev/null
+>>
+>> Before (2 iterations):
+>>   1)0.01user 0.82system 0:11.16elapsed 7%CPU
+>>   2)0.01user 0.91system 0:11.16elapsed 8%CPU
+>>
+>> After (2 iterations):
+>>   1)0.01user 0.57system 0:11.31elapsed 5%CPU
+>>   2)0.00user 0.28system 0:00.28elapsed 100%CPU
+>>
+>> With the patch set applied, we have file pages are cached
+>> during the second read, so the result is 39 times faster.
+>>
+>> This may be useful for slow disks, NFS, nodes without
+>> overcommit by memory, in case of two memcg access the same
+>> files, etc.
+>>
 > 
-> Looks good,
-> 
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
+> This isn't going to work for us (Facebook).  The whole reason the hard limit
+> exists is to keep different groups from messing up other groups.  Page cache
+> reclaim is not free, most of our pain and most of the reason we use cgroups
+> is to limit the effect of flooding the machine with pagecache from different
+> groups.
 
-Thanks, Christoph.
+I understand the problem.
 
-Tomas, Tyler, any comments from your side?
-I can push it through my tree if it looks abandon, or if Christoph is okay
-through UUID one.
+> Memory leaks happen few and far between, but chef doing a yum
+> update in the system container happens regularly.  If you talk about suddenly
+> orphaning these pages to the root container it still creates pressure on the
+> main workload, pressure that results in it having to take time from what it's
+> doing and free up memory instead.
 
--- 
-With Best Regards,
-Andy Shevchenko
+Could you please to clarify additional pressure, which introduces the patchset?
+The number of actions, which are needed to evict a pagecache page, remain almost
+the same: we just delay __delete_from_page_cache() to global reclaim. Global
+reclaim should not introduce much pressure, since it's the iteration on a single
+memcg (we should not dive into hell of children memcg, since root memcg reclaim
+should be successful and free enough pages, should't we?).
 
+Also, what is about implementing this as static key option? What about linking
+orphaned pagecache pages into separate list, which is easy-to-iterate?
+
+Thanks,
+Kirill
 
