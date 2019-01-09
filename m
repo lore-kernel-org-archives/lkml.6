@@ -2,176 +2,100 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 831ABC43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 22:08:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DF50C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 22:11:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A403206B7
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 22:08:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="H9LnA4gl"
+	by mail.kernel.org (Postfix) with ESMTP id 30E8B20685
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 22:11:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727565AbfAIWIx (ORCPT
+        id S1727472AbfAIWLO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 17:08:53 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:43856 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726599AbfAIWIw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 17:08:52 -0500
-Received: from zn.tnic (p200300EC2BEA10006802B5941DDA3DDE.dip0.t-ipconnect.de [IPv6:2003:ec:2bea:1000:6802:b594:1dda:3dde])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 6DD361EC027A;
-        Wed,  9 Jan 2019 23:08:51 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1547071731;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=Q6DP2BmRrr4pfYlYlCnGunrzad5k8+WLSO7ADjQQvbY=;
-        b=H9LnA4glwBvAp8RP+VuP92TlAJ8hEbxfCQ9clKW5ZYFFIFLVR48+4RwFmGrheEkplVMVpW
-        NNnBmbOUCOlDKqIGmB4zRBk85o41hVxME2GexyYhCixtUyNPvuwi9wqwLgdFc2/tVnJdOx
-        GCHL1X3TL+GMRyDIzqM1gMEyrC26lgs=
-Date:   Wed, 9 Jan 2019 23:08:43 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     "S, Shirish" <Shirish.S@amd.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        "maintainer : X86 ARCHITECTURE" <x86@kernel.org>,
-        Tony Luck <tony.luck@intel.com>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        "open list : X86 ARCHITECTURE" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/2] x86/mce/amd: Ensure quirks are applied in resume
- path as well
-Message-ID: <20190109220843.GK15665@zn.tnic>
-References: <1546857399-2926-1-git-send-email-shirish.s@amd.com>
- <1546857399-2926-3-git-send-email-shirish.s@amd.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <1546857399-2926-3-git-send-email-shirish.s@amd.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Wed, 9 Jan 2019 17:11:14 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:47092 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726513AbfAIWLM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 17:11:12 -0500
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x09MAPpL142038
+        for <linux-kernel@vger.kernel.org>; Wed, 9 Jan 2019 17:11:11 -0500
+Received: from e33.co.us.ibm.com (e33.co.us.ibm.com [32.97.110.151])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2pwsdvr9d9-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Jan 2019 17:11:11 -0500
+Received: from localhost
+        by e33.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <stefanb@linux.vnet.ibm.com>;
+        Wed, 9 Jan 2019 22:11:10 -0000
+Received: from b03cxnp07029.gho.boulder.ibm.com (9.17.130.16)
+        by e33.co.us.ibm.com (192.168.1.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 9 Jan 2019 22:11:07 -0000
+Received: from b03ledav005.gho.boulder.ibm.com (b03ledav005.gho.boulder.ibm.com [9.17.130.236])
+        by b03cxnp07029.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x09MB6TT22479014
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 9 Jan 2019 22:11:06 GMT
+Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 460E0BE726;
+        Wed,  9 Jan 2019 22:11:06 +0000 (GMT)
+Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E3BDFBE71A;
+        Wed,  9 Jan 2019 22:11:05 +0000 (GMT)
+Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
+        by b03ledav005.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Wed,  9 Jan 2019 22:11:05 +0000 (GMT)
+From:   Stefan Berger <stefanb@linux.vnet.ibm.com>
+To:     linux-integrity@vger.kernel.org, jarkko.sakkinen@linux.intel.com
+Cc:     linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>
+Subject: [PATCH 0/5] Extend TPM PPI interface to support revision 1.3
+Date:   Wed,  9 Jan 2019 17:10:58 -0500
+X-Mailer: git-send-email 2.17.2
+X-TM-AS-GCONF: 00
+x-cbid: 19010922-0036-0000-0000-00000A783D20
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010375; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000274; SDB=6.01144159; UDB=6.00595717; IPR=6.00924421;
+ MB=3.00025056; MTD=3.00000008; XFM=3.00000015; UTC=2019-01-09 22:11:09
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19010922-0037-0000-0000-00004A4858F6
+Message-Id: <20190109221103.1897677-1-stefanb@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-09_11:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901090176
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 07, 2019 at 10:37:24AM +0000, S, Shirish wrote:
-> This patch adds threshold quirk applicable for family 15
+This series of patches extends the TPM subsystem's PPI support to
+support TPM PPI revision 1.3 where more commands are supported (up to 101)
+and the TPM 2 command code '23' takes an additional parameter.
 
-Same issue with "This patch" here.
+For the command code '23' see this document here on document page 39:
+https://trustedcomputinggroup.org/wp-content/uploads/Physical-Presence-Interface_1-30_0-52.pdf
 
-> in resume path as well, since mce_amd_feature_init()
-> does not have quirks applied when originating from mce_syscore_resume(),
-> resulting in the below message at every successful resume:
-> 
-> "[Firmware Bug]: cpu 0, invalid threshold interrupt offset ..."
-> 
-> Signed-off-by: Shirish S <shirish.s@amd.com>
-> ---
->  arch/x86/kernel/cpu/mce/amd.c | 34 ++++++++++++++++++++++++++++++++++
->  1 file changed, 34 insertions(+)
-> 
-> diff --git a/arch/x86/kernel/cpu/mce/amd.c b/arch/x86/kernel/cpu/mce/amd.c
-> index 89298c8..27cbf66 100644
-> --- a/arch/x86/kernel/cpu/mce/amd.c
-> +++ b/arch/x86/kernel/cpu/mce/amd.c
-> @@ -545,6 +545,34 @@ prepare_threshold_block(unsigned int bank, unsigned int block, u32 addr,
->  	return offset;
->  }
->  
-> +void disable_err_thresholding(struct cpuinfo_x86 *c)
-> +{
-> +	int i;
-> +	u64 hwcr;
-> +	bool need_toggle;
-> +	u32 msrs[] = {
-> +		0x00000413, /* MC4_MISC0 */
-> +		0xc0000408, /* MC4_MISC1 */
-> +	};
-> +
-> +	if (c->x86_model >= 0x10 && c->x86_model <= 0x7f) {
+   Stefan
 
-You can save yourself an indentation level by reversing the logic here:
+Stefan Berger (5):
+  tpm: ppi: pass function revision ID to tpm_eval_dsm()
+  tpm: ppi: rename TPM_PPI_REVISION_ID to TPM_PPI_REVISION_1
+  tpm: ppi: Display up to 101 operations as define for version 1.3
+  tpm: ppi: Possibly show command parameter if TPM PPI 1.3 is used
+  tpm: ppi: Enable submission of optional command parameter for PPI 1.3
 
-	if (c->x86 != 0x15)
-		return;
-
-Also, I'm wondering if you simply can't do
-
-	if (c->x86_model < 0x10)
-		return;
-
-The assumption being that all the models - even after 0x7f - are highly
-unlikely to get MC4_MISC thresholding supported, all of a sudden. Might
-wanna run it by HW guys first though.
-
-> +		rdmsrl(MSR_K7_HWCR, hwcr);
-> +
-> +		/* McStatusWrEn has to be set */
-> +		need_toggle = !(hwcr & BIT(18));
-> +
-> +		if (need_toggle)
-> +			wrmsrl(MSR_K7_HWCR, hwcr | BIT(18));
-> +
-> +		/* Clear CntP bit safely */
-> +		for (i = 0; i < ARRAY_SIZE(msrs); i++)
-> +			msr_clear_bit(msrs[i], 62);
-> +
-> +		/* restore old settings */
-> +		if (need_toggle)
-> +			wrmsrl(MSR_K7_HWCR, hwcr);
-> +	}
-
-So you copied the same code from __mcheck_cpu_apply_quirks().
-
-No.
-
-In a first patch, you carve that CntP clearing code in a separate
-function disable_err_thresholding() like you've done before.
-
-Then, in a second patch, you call it from mce/amd.c and you move all the
-family/model checks inside the function so that you have a sole
-
-	disable_err_thresholding();
-
-calls where you need them.
-
-You don't have to pass in struct cpuinfo_x86 *c - you can use
-boot_cpu_data in the function.
-
-> +}
->  /* cpu init entry point, called from mce.c with preempt off */
->  void mce_amd_feature_init(struct cpuinfo_x86 *c)
->  {
-> @@ -552,6 +580,12 @@ void mce_amd_feature_init(struct cpuinfo_x86 *c)
->  	unsigned int bank, block, cpu = smp_processor_id();
->  	int offset = -1;
->  
-> +	/* Disable error thresholding bank in S3 resume path as well,
-
-What S3 resume path? That's the CPU init path.
-
-Also, kernel comments style is:
-
-	/*
-	 * A sentence ending with a full-stop.
-	 * Another sentence. ...
-	 * More sentences. ...
-	 */
-
-
-Good luck!
-
-:-)
+ drivers/char/tpm/tpm_ppi.c | 78 ++++++++++++++++++++++++++++----------
+ 1 file changed, 58 insertions(+), 20 deletions(-)
 
 -- 
-Regards/Gruss,
-    Boris.
+2.17.1
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
