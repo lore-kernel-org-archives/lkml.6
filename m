@@ -2,61 +2,87 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1FB4C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 02:13:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC41BC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 02:13:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 74F4020821
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 02:13:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=memeware.net header.i=@memeware.net header.b="Rj/gVtCf"
+	by mail.kernel.org (Postfix) with ESMTP id A146620821
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 02:13:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729566AbfAICNT (ORCPT
+        id S1728962AbfAICN6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 21:13:19 -0500
-Received: from cock.li ([185.100.85.212]:60522 "EHLO cock.li"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728389AbfAICNT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 21:13:19 -0500
-MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=memeware.net; s=mail;
-        t=1546999996; bh=x3aSledKQTvwGRGs+CT/WSwDg7dHDPaDVykhMkwc/fA=;
-        h=Date:From:To:Subject:From;
-        b=Rj/gVtCf9spkPwdNuUDUsqzwmyZm1Hq9gL4ddfk0FA/bh4n7gDak4IcTkWZfYcsGw
-         2045w6puXvcRo5z3O9ZodiMk+hUIbEKEXTJi96M5hqwXhe/xsykzYuPHq1gpLYoL+U
-         QCchpy+mVN8/IvBsAiof9FI24VVtvNDPWGTf5SytP4GiJ+c+lBE0cJPuvaHmmfXKqK
-         dj2CtM7O8y071crCuYi5Taq57aohwQZONpW21XFCH9zU3MvQ9uqePARoVML8FYZrLo
-         nves0r0ucxCXKHnWdDkKCRTxQo28tkVWADUODqhXNHNxyJjLt13XtTotIjKHLZBwML
-         EsmG+jC8dRpZA==
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
+        Tue, 8 Jan 2019 21:13:58 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:17093 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728112AbfAICN6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 21:13:58 -0500
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id B28D6BA19D91DA99A7B9;
+        Wed,  9 Jan 2019 10:13:55 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS407-HUB.china.huawei.com (10.3.19.207) with Microsoft SMTP Server id
+ 14.3.408.0; Wed, 9 Jan 2019 10:13:47 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        "Jorge Sanjuan" <jorge.sanjuan@codethink.co.uk>,
+        Ruslan Bilovol <ruslan.bilovol@gmail.com>,
+        Andrew Chant <achant@google.com>
+CC:     YueHaibing <yuehaibing@huawei.com>, <alsa-devel@alsa-project.org>,
+        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
+Subject: [PATCH -next] ALSA: usb-audio: Remove set but not used variable 'first_ch_bits'
+Date:   Wed, 9 Jan 2019 02:20:16 +0000
+Message-ID: <1547000416-144563-1-git-send-email-yuehaibing@huawei.com>
+X-Mailer: git-send-email 1.8.3.1
+Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
-Date:   Wed, 09 Jan 2019 02:13:16 +0000
-From:   vsnsdualce@memeware.net
-To:     linux-kernel@vger.kernel.org
-Subject: (Video): Regarding Linux: yes you can rescind license to use your
- code.
-Message-ID: <7c16a041d0fbc3b149811557b859312b@memeware.net>
-X-Sender: vsnsdualce@memeware.net
-User-Agent: Roundcube Webmail/1.3.6
+MIME-Version: 1.0
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-One note: The audio/videos are explained in American.
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Those who enjoy English may read the lengthy explanations given here 
-previously. American was chosen for the audio/video for those who do not 
-like reading. Hopefully this choice of dialect will be most 
-understandable for The People.
+sound/usb/mixer.c: In function 'parse_audio_feature_unit':
+sound/usb/mixer.c:1838:28: warning:
+ variable 'first_ch_bits' set but not used [-Wunused-but-set-variable]
 
-Video: https://openload.co/f/mT_AH3xmIUM/TruthAboutLinuxandGPLv2__.mp4
-Audio: https://ufile.io/sdhpl
+It never used since 2.6
 
-(Note: these will only be up for 30 days so re-post them somewhere else 
-perhaps.)
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ sound/usb/mixer.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
+
+diff --git a/sound/usb/mixer.c b/sound/usb/mixer.c
+index e7d441d..8ad1a24 100644
+--- a/sound/usb/mixer.c
++++ b/sound/usb/mixer.c
+@@ -1835,7 +1835,7 @@ static int parse_audio_feature_unit(struct mixer_build *state, int unitid,
+ {
+ 	int channels, i, j;
+ 	struct usb_audio_term iterm;
+-	unsigned int master_bits, first_ch_bits;
++	unsigned int master_bits;
+ 	int err, csize;
+ 	struct uac_feature_unit_descriptor *hdr = _ftr;
+ 	__u8 *bmaControls;
+@@ -1926,10 +1926,6 @@ static int parse_audio_feature_unit(struct mixer_build *state, int unitid,
+ 		break;
+ 
+ 	}
+-	if (channels > 0)
+-		first_ch_bits = snd_usb_combine_bytes(bmaControls + csize, csize);
+-	else
+-		first_ch_bits = 0;
+ 
+ 	if (state->mixer->protocol == UAC_VERSION_1) {
+ 		/* check all control types */
+
+
 
