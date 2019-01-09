@@ -2,220 +2,152 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CCBEC43612
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 16:54:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3244C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 16:55:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5FE2206BA
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 16:54:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5B976206BB
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 16:55:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fiq3ebHI"
+	dkim=pass (1024-bit key) header.d=mit.edu header.i=@mit.edu header.b="hneD5Jvg"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726554AbfAIQyU (ORCPT
+        id S1726579AbfAIQzT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 11:54:20 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:45485 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726072AbfAIQyT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 11:54:19 -0500
-Received: by mail-ed1-f66.google.com with SMTP id d39so7837912edb.12;
-        Wed, 09 Jan 2019 08:54:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=iRHQV9UA/tZd6I5vbS1Nt1Z2XPAnN4P+UZiKxF8EUGM=;
-        b=fiq3ebHIoJVFnpgMFF1EmQRC6XmDzWcNvCoiaLr71A+W0oA3amFM9V5S3/dKRBl8A2
-         nOU+HardShTMPosIQdydQBcsk2Q6c6/p32kdgB/cqs3dOYwlHetkIo0UB/Pj+5QIi7ep
-         IZDy6393bmlQPQl1HNHlAma6ssKNEZMJHr8OH/1pLqau6iDYAvumTHukuht1qIEUf+Tf
-         kTvsXnZEh+cCfUOKp1eFYS1NrZCEUY3BKHmuwXzk5EiJj1Y7tQ3U0FBV87AgT4an004P
-         QWNhlYq3oOPck0ODWPfoF2abHOqrC0ZqTcLKADlR8K+RpJR7yImHHAaSRzaOppz8iFsB
-         RClw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=iRHQV9UA/tZd6I5vbS1Nt1Z2XPAnN4P+UZiKxF8EUGM=;
-        b=aTFx2rE58kb56Uau+ONZfBwsuPwaVsDm4iFtd2wh8CX2pLplshEiV/p7HV5sxBYOyf
-         cS2F/NfScQwnuLvEW4dGODIoiGiakcdDIDp/kI4UusoaIZerqZm5zukdzpCubc4uE/NT
-         WPswRfISK9zvnkwv5uVIWULSWZwRB9MGxY98wdWcbOuhqPahcGN/WAxxHoEopuJNVCVS
-         F07IqDoQtisSZmkzXN2heyy1qt0zwCy9bcyD11qUWeuagpC+NbipDNCViP0GpXFyQCZH
-         xQhhTNXCsWkEEPFUALWIkqDRfUraumofLIV+Pdoys3BaZPesQwo8LfHuzuDwO6BUgriA
-         78mA==
-X-Gm-Message-State: AJcUukeqJYOH8n10ybWYrLLhK8u32DqU1jvZujnnPafH2Jrw5VWw+W4Y
-        blOli9L4pQySmqSPNdryOowaFOzn
-X-Google-Smtp-Source: ALg8bN6CaKEKkAjfWrzQgGI1EHaVrgbyqcZBKg7FnVF9FjlFxDDvikoJhrA7kMlJNAbbJA/4Knibrw==
-X-Received: by 2002:a50:8863:: with SMTP id c32mr6382356edc.156.1547052856530;
-        Wed, 09 Jan 2019 08:54:16 -0800 (PST)
-Received: from ziggy.stardust ([37.223.147.38])
-        by smtp.gmail.com with ESMTPSA id b49sm1400255edb.73.2019.01.09.08.54.14
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 09 Jan 2019 08:54:15 -0800 (PST)
-Subject: Re: [PATCH 4/9] drm/mediatek: fix the rate and divder of hdmi phy for
- MT2701
-To:     chunhui dai <chunhui.dai@mediatek.com>,
-        --to=Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, CK Hu <ck.hu@mediatek.com>
-Cc:     Philipp Zabel <p.zabel@pengutronix.de>,
-        David Airlie <airlied@linux.ie>,
-        Sean Wang <sean.wang@mediatek.com>,
-        Ryder Lee <ryder.lee@mediatek.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org,
-        dri-devel@lists.freedesktop.org, srv_heupstream@mediatek.com,
-        bibby.hsieh@mediatek.com, jamesjj.liao@mediatek.com,
-        jitao.shi@mediatek.com
-References: <1546585439-30455-1-git-send-email-chunhui.dai@mediatek.com>
- <1546585439-30455-5-git-send-email-chunhui.dai@mediatek.com>
-From:   Matthias Brugger <matthias.bgg@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=matthias.bgg@gmail.com; prefer-encrypt=mutual; keydata=
- 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
- jrHWeQEI2ucSKsNa8FllDmG/fQ==
-Message-ID: <a3e37dde-2bab-be02-27ec-d15784bd560b@gmail.com>
-Date:   Wed, 9 Jan 2019 17:54:13 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.3
+        Wed, 9 Jan 2019 11:55:19 -0500
+Received: from mail-eopbgr800115.outbound.protection.outlook.com ([40.107.80.115]:34256
+        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726072AbfAIQzS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 11:55:18 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=eOyeOb/ZnaVRojQNtVkIT+8tktpMDRMo/ScHLDs+7w4=;
+ b=hneD5JvgGOW8rsMW6S986ALToWt4L7SB6Rmzbk+fAY+8+sIDwzeuDr7kVMmp9lYq645lDbdTMSdxKRPtv03D7mYppyPBZtq++VYzNnjcVsmmvWPy2NXxDlRojZwb1ogCfP4alKfnORzHTQodTLNErco7g4XWmIBSAeJWO97ud+I=
+Received: from SN2PR01CA0066.prod.exchangelabs.com (2603:10b6:800::34) by
+ DM5PR0101MB2954.prod.exchangelabs.com (2603:10b6:4:2b::16) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1495.8; Wed, 9 Jan 2019 16:55:12 +0000
+Received: from BY2NAM03FT036.eop-NAM03.prod.protection.outlook.com
+ (2a01:111:f400:7e4a::209) by SN2PR01CA0066.outlook.office365.com
+ (2603:10b6:800::34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1495.9 via Frontend
+ Transport; Wed, 9 Jan 2019 16:55:12 +0000
+Received-SPF: Pass (protection.outlook.com: domain of mit.edu designates
+ 18.9.28.11 as permitted sender) receiver=protection.outlook.com;
+ client-ip=18.9.28.11; helo=outgoing.mit.edu;
+Received: from outgoing.mit.edu (18.9.28.11) by
+ BY2NAM03FT036.mail.protection.outlook.com (10.152.85.141) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.1471.13 via Frontend Transport; Wed, 9 Jan 2019 16:55:09 +0000
+Received: from callcc.thunk.org (guestnat-104-133-0-100.corp.google.com [104.133.0.100] (may be forged))
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x09Gt5mC014675
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 9 Jan 2019 11:55:07 -0500
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 1DF537A02E7; Wed,  9 Jan 2019 11:55:05 -0500 (EST)
+Date:   Wed, 9 Jan 2019 11:55:05 -0500
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     "Yang, Shunyong" <shunyong.yang@hxt-semitech.com>
+CC:     Vinod Koul <vkoul@kernel.org>,
+        "andy.gross@linaro.org" <andy.gross@linaro.org>,
+        "david.brown@linaro.org" <david.brown@linaro.org>,
+        Sinan Kaya <okaya@kernel.org>,
+        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
+        "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Zheng, Joey" <yu.zheng@hxt-semitech.com>
+Subject: Re: About some mail lost and random unsubscribe issues on this
+ dmaengine list
+Message-ID: <20190109165505.GC26670@mit.edu>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        "Yang, Shunyong" <shunyong.yang@hxt-semitech.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        "andy.gross@linaro.org" <andy.gross@linaro.org>,
+        "david.brown@linaro.org" <david.brown@linaro.org>,
+        Sinan Kaya <okaya@kernel.org>,
+        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
+        "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Zheng, Joey" <yu.zheng@hxt-semitech.com>
+References: <81c9fe2de4b5dac1d5b974f5305e35bf1cf5d127.1544156508.git.shunyong.yang@hxt-semitech.com>
+ <ea6c6317dabffdcfa28cdb391b50edce98ce875d.1544156508.git.shunyong.yang@hxt-semitech.com>
+ <88ef21bd-4e4f-8cce-39b3-53da45740f0f@kernel.org>
+ <79da1c31d3e14e6e91cf6a7cc0fea31a@HXTBJIDCEMVIW01.hxtcorp.net>
+ <16bbdd233f1d45249eb2f6592418efd5@HXTBJIDCEMVIW02.hxtcorp.net>
+ <b607a505d2974e1d879ba7d7c3488f85@HXTBJIDCEMVIW02.hxtcorp.net>
+ <20190109065851.GW13372@vkoul-mobl.Dlink>
+ <e3a2d37d7bce44eb8d3a726a8f69c8d7@HXTBJIDCEMVIW02.hxtcorp.net>
 MIME-Version: 1.0
-In-Reply-To: <1546585439-30455-5-git-send-email-chunhui.dai@mediatek.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <e3a2d37d7bce44eb8d3a726a8f69c8d7@HXTBJIDCEMVIW02.hxtcorp.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-EOPAttributedMessage: 0
+X-Forefront-Antispam-Report: CIP:18.9.28.11;IPV:CAL;SCL:-1;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10019020)(346002)(136003)(39860400002)(396003)(376002)(2980300002)(189003)(199004)(478600001)(26826003)(486006)(16586007)(5660300001)(58126008)(6916009)(103686004)(36756003)(316002)(42186006)(786003)(106002)(36906005)(106466001)(47776003)(54906003)(23726003)(305945005)(52956003)(26005)(356004)(246002)(76176011)(8936002)(93886005)(6346003)(86362001)(1076003)(2616005)(11346002)(75432002)(46406003)(2906002)(8676002)(97756001)(33656002)(88552002)(186003)(126002)(446003)(476003)(336012)(90966002)(6246003)(6266002)(50466002)(229853002)(4326008)(18370500001)(42866002);DIR:OUT;SFP:1102;SCL:1;SRVR:DM5PR0101MB2954;H:outgoing.mit.edu;FPR:;SPF:Pass;LANG:en;PTR:outgoing-auth-1.mit.edu;MX:1;A:1;
+X-Microsoft-Exchange-Diagnostics: 1;BY2NAM03FT036;1:qXhH/NRglbJ/+XhDKwXIg0KGNXJcsRRhgzBN2VdtSlIpXmycccfl2FCeZcFLA32zun/dSaY8Cv9zd1eVOM9iaiDNt8FOYUvnAt7ZbHpBe/vreVgO01aXHcHHE/pYo2uP
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: c0cfa292-e3e7-46a5-67cc-08d676533896
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(4608076)(4709027)(2017052603328)(7153060);SRVR:DM5PR0101MB2954;
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR0101MB2954;3:C13Z9O4pe3DdI3duSBDcK58VYs/Uwjkc/XZYGXjnYrZpes1w+DhTBAm744HxBElGAkI4Frvo7lciUQq6P2juQ1l5iUHpbu2gwJ/DlSNn9TpQYWEcF6okfFmYEm5R8mlMGRHrcNjuuJzYSbB24ZZFHc21t5opQkOg2ziwGHPr8lL0xaWMaW5Gd+AETOtmBOuRWSH8xOvuuYm/KrinULMyan9uJzrYgs2AjFowt7o55froe498ZhMCxAvZmlklemFgJQj9l/zg0sZBLCGWbKhWh0lBWrNkvQHT/aKO/71UCU8Ouw82I/KPcHNvlw/ogx2RR4WpBnQsqB5nfEeFmrhfQQuE90B+kTIX5NfBHQrlrHnwkwred/vzOwYLYepPe4Ah;25:CLyM75FSew8bOPXYEQLvJ1mv12vTOEbsSDwMu+no3e4F0GXYlRo7McCfduhG8/uziJGijr0gtpfcYBpHoX/8tdo0nvNtKSukfNktCpSZELgS5RzYhJYQZHKpB3S7douuguIfNoWvm9pU7EtROTMOrD7oPiDclOFPoI3RMnWqpuT67Kb8+8vkgQCHRX5TweHt/U7tXwHZx4uBVbeVFTOnz9ansBAxGia+xyntFWKWwF3qRjznzD2tH6EsTaaZsdU1wZr0tdYP2MSVClGj/9B87y0aPvDSLNc6035lZv6rK6B6PZf5h+sTHBOTutgT5xHsWbB8dgk/6lSbWOkUcqu8ag==
+X-MS-TrafficTypeDiagnostic: DM5PR0101MB2954:
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR0101MB2954;31:gT6rkC7HmVdnxpiFEuw2Bup6hnlr8QYeAx078Zm9IzK1cfSggs2xrVPRTT9ZCQQo/VZryYBVQlJ7DctWlkyvV/6NRIh5vKOqGC0mEgbEb2U3oSf0A5tR/4GdGw+qOnvk9Ol2BpoQktBHt0i6pbhQV6Fz3oAxLdDTDePNWGjPsAo1BUMNW2RGKp9lsnRX6849Z7KuHUheEqiiIKFXA2Ngb9wc333wVEqxALrUz8mxDJg=;20:PuYqd/UwiaUOTbc1I+yU5Yn2q0xyslfOy11cC+qMiCJA+6StEu8rB3mDHNP9v5UazT72wD73zdS/xpCN2ZDDdfSlvBByUEE6diRwkqYBbC26sBNWme4IyyvskS0e8ElagwbtPETcJT4XpCyod/+gwkPQIcgEVTM1d3bdNf9/uLpKm49/2mgrycA4s1IWrVNhWKTaiwxw2QxdBBUpeeRenFjMsQ8UCFga7XGNkDMWAyaVb+5GyBX3E50GLUBX/Tj9aYrUWCWs5DnXWc1vjTHD3NjYE8KoOL24WHyG1lweaLL0uUyJgnbXMTd1lvfm2anoR98Df4osiOvJuXsg6RwJmVq8+Z2R9X/jkrrxcsObxsiZ4R5EgHasuARybn+qCDpKewLTBx8WZC01lRzeXg30jBG3bSN5dzGybgz2uNIJVr08/nl3P08rbM5JGdI2OY1DvrXp9QWwSwNgQaqygAfzx9rte2oLmRN9x7TWwQL7lK9rl6lWCm56+ElUitLCavBX
+X-Microsoft-Antispam-PRVS: <DM5PR0101MB2954EAE9C2A632F912218744B58B0@DM5PR0101MB2954.prod.exchangelabs.com>
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR0101MB2954;4:aCLIUoFL5ioi0KKMnU1YiSnWCuJzj8t30o4v4jjvAiEjnJZGMFnE1yX/P3wc69ZkRjyKlayjycxe9J48Qkas/Ihyv/FEnb2p+iBW/ASrvADt9HSN6tHYER+FlYNVb14p0CLUIa11OPGeaxgHPgp8nxAXh8q0VmqQMG0jqQhZwkcSHX9Kdm8+8BR+M7whURhAsE+BBCIeHynCIsMr/uyITbATwivyVNl6te2+DvIY/qWCe2/r7QXa8T9zTxmxkcuR8i8X/OaBwdwF4xEGSZqdbHnzRURQus/oX9ZQ8Tmn7+oojuDKM4KY6q/rXkYV1kCz
+X-Forefront-PRVS: 0912297777
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DM5PR0101MB2954;23:UXyWq7gTbcG4qUq0MvpNgUkE7/oHjrFp68Yc8/7?=
+ =?us-ascii?Q?PxVol9J1qq7Gl/ivvTNklhW7F0UjJGLrOEsUTj+xmK3nTulrOKnmGoSGva3R?=
+ =?us-ascii?Q?qhvK4Y6SXnFBqR/FQd8DXqqI1NaMXGb4co4eDuevwmuBaeN6hNYyHUZqR7Rc?=
+ =?us-ascii?Q?b3mA1bxnoSCpzoNcM+f+hiUfS8JqQzZaJZ84LSkDS53zZukxDwBonvTrfdRX?=
+ =?us-ascii?Q?EgZQqXgf5Q2DzOnp7ZI0gGoJoHfqqKl2NyIMKyOBmhsJkRA9HncBO0Kw79pM?=
+ =?us-ascii?Q?MtvmqBMEkubtbK9MCinQTChGMe53xeoQRyZugfgLpliIvvkZ/92LkYBfkBB+?=
+ =?us-ascii?Q?wcUrY+Gn/G0DqjaNVyytGdbYyT/pgnUDBHhiujIe8JLfuxWhS+CJw66PDsLw?=
+ =?us-ascii?Q?bI9KSv8wWUhgGeP2Be8LUTYuaY30rFRUNkEC4W9kGoRZv/z8Kp4fv3J91KTC?=
+ =?us-ascii?Q?2BSeoDTAzwqHBkxhgyJ21V3HxHD1stV0zwuj5yTYEsfwNY2y2HVxbKzm/yj5?=
+ =?us-ascii?Q?mqOj+GgTmA6FNXllNw0sFjw49ol87332o6hCUQIIUj3tgTGVzOoWsUWVm2vP?=
+ =?us-ascii?Q?hDp5RZtz1/C9N2uDx9QYmn7Zfa9tAMfrN7uKb4ptBuRnCKZN7UBe83V3rIdB?=
+ =?us-ascii?Q?TTXeLNgKAVLFsnSfX5MUirgiZU5qsd4qgbn0EIVBGt7fGP4h+RCqzIxgy/eU?=
+ =?us-ascii?Q?h87Igymf37ygkoUGDyJ4ZOxD34pFo0xRRVsqHvVboioC3SCuX4H2M2k7phWj?=
+ =?us-ascii?Q?moi2j8IuKdBdaIAu2+nvFHb6OU/8iY3vY7mUUq2Oo/Lz90oPhaKeYDgqgbdP?=
+ =?us-ascii?Q?SC5qHWfN89ej8fO2At7s9tXi7EsEPIGGGRvkTC7yvOXUHdDA2xgwTWHKavKf?=
+ =?us-ascii?Q?G+XeY6Hqu3H20bjCbQZA3beB6gVAuQzc938Twfwb9gJUQ4lh50WCbleVuJqZ?=
+ =?us-ascii?Q?Nw4NVjDYVi0iq8WmiJrtZzRB30VUbfZbYChuiPNiIe5QcUJ8VPcIef5ZhSG3?=
+ =?us-ascii?Q?O8hbAk7ZGdk3cw/3Y/zT4lFwqxql1rnvVWWShCf/P4mLxbxKQ9qcA1Kh/fce?=
+ =?us-ascii?Q?0qpPmJb0/WjtNmw3ip3au+SRL1gsPBqmayea0nA4iGZRsHIqnAkynnIE9N9z?=
+ =?us-ascii?Q?218RSYTF0GhbblyFNf5elMeegl9PAGMR/JnzWdvbJGl6qd+cBGvFkiOpfVPR?=
+ =?us-ascii?Q?95OwUSMI6erJd/QDjERUN/VcGtaMDzkjLHI+XRHlH9Nd5QMn78FLlQuoV+X6?=
+ =?us-ascii?Q?Dtwt2ceh5EEK/7Eb9opV950g2KzuLQlnqMGNL57dCSHURwRejs2JTnHEfdjq?=
+ =?us-ascii?Q?w3w=3D=3D?=
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam-Message-Info: saRZJUUU/r6gaYy/8I+/21HVq4XM0U7Fv29wVj9A4oGau19xQkj4vJnEhcd1VBoRYnTln/eK1lrj+2MA2gu5aFoi03A5QwdI1m24Aiad5HcsYieHpVkvADTM6i5YjbVlLNVx8nsAhhldByGHb/h5RsPszE67HT7rWhFNFpeKTdyzn/h2AuxaUnBWdk11D6YuIHn8fZTFNs+rn9PETyyg/Aldj70H3OCOR+jxkhr3L5JrhnChjUnqemQdPEcti0k471NDYIop3ky2jeuBCQvLnGikH9o60i9a+wrSN6xorJlUKD2bxTl5G2/c0wChM+Ic
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR0101MB2954;6:13Is+B25JNUn+uQdWWqsKPgp6izupNOKfB1nkumrb1xe8PXfVh9kV9uNXQTF7OmtPSzJZf7dyHW8F46PxbwAep+cnVeS4rUvahKHBG3Q1YG/PNlnu0nE9am9cMToMKzv7ygQcP59bzOnvOI650Wp8jLB+5ahk8Yy7Nr4jiCr69O3YBaiWn0mwqZAdGG7M3I+b/CThssTzlXT3ol1byc73sTIWHpI7IQ6wuHmQH8ygIRULwAbqz/gZEPnLerM55o6m/bP6U4vIA/5qlmRY2/B7Wg3dr6gV8wRsnVPAi5BalHic/L11dIxUbd7yUTh3dB7JTkC3gcXPX2emJxv2mf0wa/5y5wGZWMNaCDH9KsOYExftdG1lPFyQi7MmK+gipEPAgVjrVLtwvZ2l4tO+2z9xciuoQ2d4cj++mQyVPgsma00cChAU4GZSX607QiP1vSiLNQ40DiARVw0pKvhTLFgCw==;5:Bpysa5ptsf/Wbsk3dJJdKP1RBUA1GpjKa+wVDdXWDPwqEHrGbHDNNK5/v3Ur3pYf1LQSg0ei+Cc7TNwUoaVuOGPUffGbRozyfTTKkwiLBQCkdJ7iUBr+xgIT/RyufNPuwjBgfWZhn4oGdJrViKp6UwsQbKvBx4HmTjySwdWm+VxGMSH26zMnYKKMR7wBuFdFoPeEX5MkVmMMsnkSynmVVg==;7:LNIdwZyIP7f8fxUte2ZY14JNypWsD6nXzhW1v9ygcM3UIWKZDGAT3q3/shHm3M8v+wENBwIIW89TgsOz52VNEyhVt8QtN6xz4WtvYIJpBWGAhJA/gUdKmdnquDm45rHYl2/mDVyptnb34g3aoBBhaQ==
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-OriginatorOrg: mit.edu
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jan 2019 16:55:09.4184
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: c0cfa292-e3e7-46a5-67cc-08d676533896
+X-MS-Exchange-CrossTenant-Id: 64afd9ba-0ecf-4acf-bc36-935f6235ba8b
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=64afd9ba-0ecf-4acf-bc36-935f6235ba8b;Ip=[18.9.28.11];Helo=[outgoing.mit.edu]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR0101MB2954
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Jan 09, 2019 at 07:51:11AM +0000, Yang, Shunyong wrote:
+> Hi, Vinod,
+>   Thanks for your information. I will check with our IT.
+> Shunyong.
 
+The usual answer is generally over-enthuastic application of anti-SPAM
+techniques, especially DMARC, which is fundamentally mailing-list hostile.
 
-On 04/01/2019 08:03, chunhui dai wrote:
-> fix the rate and divder of hdmi phy for MT2701.
+Cheers,
 
-This is a bug? Then we would need a fixes tag.
-Otherwise you should explain in the commit, that you need to change the
-calculation due to previous commits.
-
-Regards,
-Matthias
-
-> 
-> Signed-off-by: chunhui dai <chunhui.dai@mediatek.com>
-> ---
->  drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c b/drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c
-> index a28a32d..10b6235 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c
-> +++ b/drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c
-> @@ -114,8 +114,8 @@ static int mtk_hdmi_pll_set_rate(struct clk_hw *hw, unsigned long rate,
->  
->  	if (rate <= 64000000)
->  		pos_div = 3;
-> -	else if (rate <= 12800000)
-> -		pos_div = 1;
-> +	else if (rate <= 128000000)
-> +		pos_div = 2;
->  	else
->  		pos_div = 1;
->  
-> 
+					- Ted
