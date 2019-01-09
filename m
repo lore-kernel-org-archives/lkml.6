@@ -2,71 +2,82 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79626C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 19:28:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59EDBC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 19:32:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B02E21738
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 19:28:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="AscLUH9m";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="AFkn4l0i"
+	by mail.kernel.org (Postfix) with ESMTP id 252E32075C
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 19:32:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728467AbfAIT2t (ORCPT
+        id S1728177AbfAITcP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 14:28:49 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:48246 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727826AbfAIT2t (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 14:28:49 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 0C74A609CD; Wed,  9 Jan 2019 19:28:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1547062128;
-        bh=gz/RW69cV/3MnbCSx5rOIAbS706C6JlpwqF6HQBxYuo=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=AscLUH9mJgr+CwKmm1KVCtVh07gA6UHm2Mo64BADNQ8fUofzYzjC3usEiOBNxVqvb
-         ckwtwfSuaCcSKZk7mXhQ5iP+l4WD5gZ3CXWji/3AJFGghhA7m7ehL0XC2yIoXjI/7d
-         jkf3rCj6wknMGUl9pkVemhYP/G+E5kYyfmMlDCX8=
-Received: from [10.226.60.81] (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: jhugo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id CC7BF609D1;
-        Wed,  9 Jan 2019 19:28:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1547062127;
-        bh=gz/RW69cV/3MnbCSx5rOIAbS706C6JlpwqF6HQBxYuo=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=AFkn4l0irQrsCXk6Bscce1BxbBeZbzc3uREd4NLHaUsnXxHekmjMzvP76OKppaaH5
-         1KIXnse6maog9VYtTKjKJPm8hYTp3OUguWdKuTLOV1mzTLrOz8XRn0Utr9OOuxd+Ql
-         hVtMQqFSEU/AoLj8JpAxuaSS/1yW80+KXkV9EGAc=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org CC7BF609D1
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
-Subject: Re: [PATCH v1 2/6] clk: qcom: Skip halt checks on
- gcc_usb3_phy_pipe_clk for 8998
-To:     Stephen Boyd <sboyd@kernel.org>, mturquette@baylibre.com
-Cc:     bjorn.andersson@linaro.org, andy.gross@linaro.org,
-        david.brown@linaro.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kishon@ti.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, gregkh@linuxfoundation.org,
-        balbi@kernel.org, linux-usb@vger.kernel.org
-References: <1546620615-2389-1-git-send-email-jhugo@codeaurora.org>
- <154706034090.15366.11081837995313995010@swboyd.mtv.corp.google.com>
-From:   Jeffrey Hugo <jhugo@codeaurora.org>
-Message-ID: <d99bd2ac-4c35-470e-e19d-e90f091cad4b@codeaurora.org>
-Date:   Wed, 9 Jan 2019 12:28:44 -0700
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Wed, 9 Jan 2019 14:32:15 -0500
+Received: from mga05.intel.com ([192.55.52.43]:23052 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726614AbfAITcO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 14:32:14 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Jan 2019 11:32:13 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,458,1539673200"; 
+   d="scan'208";a="265834753"
+Received: from djiang5-desk3.ch.intel.com ([143.182.136.93])
+  by orsmga004.jf.intel.com with ESMTP; 09 Jan 2019 11:32:13 -0800
+Subject: Re: [PATCH v3 0/8] Fix breakage caused by the NTB multi-port patchset
+To:     Logan Gunthorpe <logang@deltatee.com>,
+        linux-kernel@vger.kernel.org, linux-ntb@googlegroups.com,
+        Jon Mason <jdmason@kudzu.us>
+Cc:     Allen Hubbe <allenbh@gmail.com>,
+        Serge Semin <fancer.lancer@gmail.com>
+References: <20190109192233.5752-1-logang@deltatee.com>
+From:   Dave Jiang <dave.jiang@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.jiang@intel.com; prefer-encrypt=mutual; keydata=
+ xsPuBE6TbysRDACKOBHZT4ez/3/idMBVQP+cMIJAWfTTLqbHVYLdHMHh4h6IXWLqWgc9AYTx
+ /ajdOrBVGSK9kMuvqRi0iRO1QLOMUAIc2n/44vh/3Fe54QYfgbndeXhHZi7YEwjiTCbpQ336
+ pS0rS2qQaA8GzFwu96OslLI05j9Ygaqy73qmuk3wxomIYiu9a97aN3oVv1RyTp6gJK1NWT3J
+ On17P1yWUYPvY3KJtpVqnRLkLZeOIiOahgf9+qiYqPhKQI1Ycx4YhbqkNmDG1VqdMtEWREZO
+ DpTti6oecydN37MW1Y+YSzWYDVLWfoLUr2tBveGCRLf/U2n+Tm2PlJR0IZq+BhtuIUVcRLQW
+ vI+XenR8j3vHVNHs9UXW/FPB8Xb5fwY2bJniZ+B4G67nwelhMNWe7H9IcEaI7Eo32fZk+9fo
+ x6GDAhdT0pEetwuhkmI0YYD7cQj1mEx1oEbzX2p/HRW9sHTSv0V2zKbkPvii3qgvCoDb1uLd
+ 4661UoSG0CYaAx8TwBxUqjsBAO9FXDhLHZJadyHmWp64xQGnNgBathuqoSsIWgQWBpfhDACA
+ OYftX52Wp4qc3ZT06NPzGTV35xr4DVftxxUHiwzB/bzARfK8tdoW4A44gN3P03DAu+UqLoqm
+ UP/e8gSLEjoaebjMu8c2iuOhk1ayHkDPc2gugTgLLBWPkhvIEV4rUV9C7TsgAAvNNDAe8X00
+ Tu1m01A4ToLpYsNWEtM9ZRdKXSo6YS45DFRhel29ZRz24j4ZNIxN9Bee/fn7FrL4HgO01yH+
+ QULDAtU87AkVoBdU5xBJVj7tGosuV+ia4UCWXjTzb+ERek2503OvNq4xqche3RMoZLsSHiOj
+ 5PjMNX4EA6pf5kRWdNutjmAsXrpZrnviWMPy+zHUzHIw/gaI00lHMjS0P99A7ay/9BjtsIBx
+ lJZ09Kp6SE0EiZpFIxB5D0ji6rHu3Qblwq+WjM2+1pydVxqt2vt7+IZgEB4Qm6rml835UB89
+ TTkMtiIXJ+hMC/hajIuFSah+CDkfagcrt1qiaVoEAs/1cCuAER+h5ClMnLZPPxNxphsqkXxn
+ 3MVJcMEL/iaMimP3oDXJoK3O+u3gC3p55A/LYZJ7hP9lHTT4MtgwmgBp9xPeVFWx3rwQOKix
+ SPONHlkjfvn4dUHmaOmJyKgtt5htpox+XhBkuCZ5UWpQ40/GyVypWyBXtqNx/0IKByXy4QVm
+ QjUL/U2DchYhW+2w8rghIhkuHX2YOdldyEvXkzN8ysGR31TDwshg600k4Q/UF/MouC2ZNeMa
+ y8I0whHBFTwSjN5T1F9cvko4PsHNB3QH4M4tbArwn4RzSX6Hfxoq59ziyI4Et6sE5SyiVEZQ
+ DhKZ8VU61uUaYHDdid8xKU4sV5IFCERIoIwieEAkITNvCdFtuXl9gugzld7IHbOTRaGy4M+M
+ gOyAvSe5ysBrXhY+B0d+EYif1I8s4PbnkH2xehof++lQuy3+1TZcweSx1f/uF6d92ZDkvJzQ
+ QbkicMLaPy0IS5XIMkkpD1zIO0jeaHcTm3uzB9k8N9y4tA2ELWVR/iFZigrtrwpIJtJLUieB
+ 89EOJLR6xbksSrFhQ80oRGF2ZSBKaWFuZyAoV29yaykgPGRhdmUuamlhbmdAaW50ZWwuY29t
+ PsJ9BBMRCAAlAhsjBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAUCUZEwDwIZAQAKCRBkFcTx
+ ZqO5Ps8HAP4kF/KAor80fNwT7osSHGG5rLFPR/Yc5V0QpqkU8DhZDgEAoStRa/a6Mtq3Ri1H
+ B84kFIqSQ9ME5049k6k1K7wdXcvOwE0ETpNvKxAEANGHLx0q/R99wzbVdnRthIZttNQ6M4R8
+ AAtEypE9JG3PLrEd9MUB5wf0fB/2Jypec3x935mRW3Zt1i+TrzjQDzMV5RyTtpWI7PwIh5IZ
+ 0h4OV2yQHFVViHi6lubCRypQYiMzTmEKua3LeBGvUR9vVmpPJZ/UP6VajKqywjPHYBwLAAMF
+ A/9B/PdGc1sZHno0ezuwZO2J9BOsvASNUzamO9to5P9VHTA6UqRvyfXJpNxLF1HjT4ax7Xn4
+ wGr6V1DCG3JYBmwIZjfinrLINKEK43L+sLbVVi8Mypc32HhNx/cPewROY2vPb4U7y3jhPBtt
+ lt0ZMb75Lh7zY3TnGLOx1AEzmqwZSMJhBBgRCAAJBQJOk28rAhsMAAoJEGQVxPFmo7k+qiUB
+ AKH0QWC+BBBn3pa9tzOz5hTrup+GIzf5TcuCsiAjISEqAPkBTGk5iiGrrHkxsz8VulDVpNxk
+ o6nmKbYpUAltQObU2w==
+Message-ID: <57aae0aa-fb12-b686-9835-b5dc60d97878@intel.com>
+Date:   Wed, 9 Jan 2019 12:32:12 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-In-Reply-To: <154706034090.15366.11081837995313995010@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20190109192233.5752-1-logang@deltatee.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -74,27 +85,69 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/9/2019 11:59 AM, Stephen Boyd wrote:
-> Quoting Jeffrey Hugo (2019-01-04 08:50:15)
->> The gcc_usb3_phy_pipe_clk is generated by the phy, but is also used by
->> the phy during init.  The clock needs to be enabled during the init
->> sequence, but may not be fully active until after the init sequence is
->> complete.  This causes a catch-22 if the clock status is checked during
->> enable.  As a result, skip the checks to avoid the troubling situation.
-> 
-> I will ask again, is anyone going to fix this in the phy driver? In
-> theory it isn't needed if the phy driver can do things differently, but
-> last time I checked I was told that the phy team said it had to be done
-> this way.
-> 
 
-Interesting.  I was unaware of past discussion(s) on this.  Thank you 
-for taking the change, but I'll try having a look to see if maybe I can 
-prove your theory going forward.
 
--- 
-Jeffrey Hugo
-Qualcomm Datacenter Technologies as an affiliate of Qualcomm 
-Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the
-Code Aurora Forum, a Linux Foundation Collaborative Project.
+On 1/9/19 12:22 PM, Logan Gunthorpe wrote:
+> Hey,
+> 
+> I'm resending this because I've recently found out that the change we
+> made to use the NTB struct device in DMA allocations is wrong and
+> needs to be reverted. Turns out that, when running with an IOMMU,
+> dma_alloc_coherent() will always fail if you pass it the NTB struct
+> device. This is because the device has not been assigned an IOMMU
+> group and the Intel IOMMU at least expect the devices to be on the PCI
+> bus and be able to find a proper bus-dev-fn number through a struct
+> pci device. Therefore, we must revert the change and I've changed
+> patch 2 to do this and remove the no longer necessary DMA mask
+> adjustments.
+
+For the revert, I think we should cc stable as well.
+
+> 
+> I'm not sure if we can get past the impass in getting this series merged:
+> I still maintain every patch in this series is necessary to fix a
+> regression and there's no way to add port numbers to switchtec in the
+> crosslink configuration so it can't be fixed in the other way that was
+> suggested.
+> 
+> Logan
+> 
+> --
+> 
+> Changes since v2:
+> - Rebased on v5.0-rc1
+> - Modify Patch 2 to revert back to using the PCI struct device
+>   instead of the NTB struct device in DMA calls
+> - Collected Allen's Acks
+> - Collected Alexander's Tested-By
+> 
+> Changes since v1:
+> - Rebased onto ntb-next (there was a minor conflict in a recent change
+>   to the intel driver)
+> - Collected Dave's Ack
+> 
+> --
+> 
+> Logan Gunthorpe (8):
+>   NTB: ntb_tool: reading the link file should not end in a NULL byte
+>   NTB: Revert the change to use the NTB device dev for DMA allocations
+>   NTB: Fix the default port and peer numbers for legacy drivers
+>   NTB: ntb_pingpong: Choose doorbells based on port number
+>   NTB: perf: Don't require one more memory window than number of peers
+>   NTB: perf: Fix support for hardware that doesn't have port numbers
+>   NTB: perf: Fix race condition when run with ntb_test
+>   NTB: ntb_test: Fix bug when counting remote files
+> 
+>  drivers/ntb/hw/amd/ntb_hw_amd.c         |  4 ----
+>  drivers/ntb/hw/idt/ntb_hw_idt.c         |  6 -----
+>  drivers/ntb/hw/intel/ntb_hw_gen1.c      |  4 ----
+>  drivers/ntb/ntb.c                       |  9 ++------
+>  drivers/ntb/test/ntb_perf.c             | 29 +++++++++++++++++++------
+>  drivers/ntb/test/ntb_pingpong.c         | 14 +++++-------
+>  drivers/ntb/test/ntb_tool.c             |  9 ++++----
+>  tools/testing/selftests/ntb/ntb_test.sh |  2 +-
+>  8 files changed, 35 insertions(+), 42 deletions(-)
+> 
+> --
+> 2.19.0
+> 
