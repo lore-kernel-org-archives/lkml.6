@@ -2,132 +2,147 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.7 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.7 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2045BC43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 05:35:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4AAAC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 05:37:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DFA0C21848
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 05:35:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6C2AD20821
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 05:37:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SuY/z/BO"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gRbk6JCm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729485AbfAIFfu (ORCPT
+        id S1729600AbfAIFhF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 00:35:50 -0500
-Received: from mail-io1-f43.google.com ([209.85.166.43]:41014 "EHLO
-        mail-io1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727387AbfAIFfu (ORCPT
+        Wed, 9 Jan 2019 00:37:05 -0500
+Received: from mail-yw1-f65.google.com ([209.85.161.65]:41172 "EHLO
+        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726237AbfAIFhE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 00:35:50 -0500
-Received: by mail-io1-f43.google.com with SMTP id s22so5083765ioc.8
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jan 2019 21:35:49 -0800 (PST)
+        Wed, 9 Jan 2019 00:37:04 -0500
+Received: by mail-yw1-f65.google.com with SMTP id f65so2518678ywc.8
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jan 2019 21:37:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=/WVHyTuBrX2Rn5yLapMfjo88L7PXGhBB2wQv9lPJLEU=;
-        b=SuY/z/BO2DWvTXym37KH8V9PADURSCmY0mMUoO4f4xmcl63689UWrvJQ8FEUKeg36K
-         5NkjRCJpQ4cPfmLojdIX2Y4EZm6oxnxmWU9+GkywRKdI0CTf99R7QiYUskkq48piUr9F
-         zZY7l3CUrt+5sB2Rd0G7v60aLi5gw4k6bXcaxbRKA8eFyNF2IaPuGAXocXxfD8eDaMZZ
-         gmWQvsVlhxo0rEfjFPSImwOEBMQZRcYrSMYMN6raJSNmJpeIvwTBdQle/KF5ASBlhBK7
-         ak0xGRuwPG9va+VCZLdPp4wHAJB8WGKe89ndM+FluFic2ZYPWD05ViviZIvmL+t7TRdO
-         j4KA==
+        bh=vwQxFHxz+8PmQyG66B5Bjl07PiypQuWXpFzP5iBeaM8=;
+        b=gRbk6JCmU2CIyHjhyHknRGFjIUVAKs8xvIdigwAVIuSKyCvxBfKWmEVjYCcWtobprT
+         CFjC+9Ysm2Sfi+DZMJXPWo/LbwpFsCQwO7e6qGJRBeaO93PU6iaYHnw5x1UZnSeAD2gK
+         8qhsPxU2Yt26YHYZNGhCTkdYvFn8i/7MCumbpFWJxnozabI+0tD5qT543MX104MNw1Qj
+         LXMeGwoPePRaiii4eIRn3hoHYT/lBwz/3Jkfx/rheYyfrwh22/9QBPdxhQg4rPIcxWo9
+         /Ug7ua5VVJP59LjSnuhLi8I02u5nIcio6baD8MHHu/SLdbQyFb8a23b+CQ/Y3YvV4V0j
+         2Xjw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=/WVHyTuBrX2Rn5yLapMfjo88L7PXGhBB2wQv9lPJLEU=;
-        b=ijtTNDnan6aed+zwm0hMtpX3NWGS3txEb6tJJY78d168AGr6hWJ3OgIwAaC2nnLRCc
-         Ci2pWuGbaQTWQFrYOC7I2rRbY+iGECKSoMhuz5JsbVRie1OQHTMsdUiup7MfJIJ0BWM/
-         lc1bxYGmMJV6x9rn84NShGNk2NRWu5yR7xux6FigAuMmhjhbIynedkJN2Gx4YmIVHbxW
-         8dh6cDycWcf02W3Rzr3yC1UVpxMWUEKWaX4J4CKIDFridAYFyJS2O3tkXDsZxT9r2dwt
-         GVKHrQlyieonWsKo005KyP+JQA2Xq/eF6Y9HVQls4M/tXCeeGy0JsT7qdhxgqg/0k1tW
-         Cv/A==
-X-Gm-Message-State: AJcUukcwicwmfBZuIV7Vt/v1Q3UVXWeaiTol+qNzk/ZMCzcqeuUJZd+g
-        /PnAEJbIKsa73ebkidYM8hMbESGX93miecy82CmXsA==
-X-Google-Smtp-Source: ALg8bN6Uai4JR3vMpEO619EBRqHhw+++41b0Xap2GSekLGu8hdb6EOQwp8GsWzIrv4Fk2Yuncsx5DQUqr2+gzMWp6O4=
-X-Received: by 2002:a5d:9456:: with SMTP id x22mr2509083ior.282.1547012149087;
- Tue, 08 Jan 2019 21:35:49 -0800 (PST)
+        bh=vwQxFHxz+8PmQyG66B5Bjl07PiypQuWXpFzP5iBeaM8=;
+        b=mmPcIzHEqexRRSAAYkzttdgIxaaU3WumtfaCc5oLqHI+WHXSQe5XNO54VAuzvAcnyQ
+         1oI3yh1PhZSSH3qNDWi74wlmIe3bcvQCMGEDgL0Q8Pv8Dy4/NUFhkjO6g3tARHjJhn5p
+         C9XcxxE6pvz5mH9ObZBZtj9l6q8Eml+WON4QRCRJef4IewzynU6l9HXF0w/bjNlFIEn7
+         JJPNsCjPDMBWCKnxgQcgZAriTtpdqs5ZPdGQpWQj62JCWvawMTBbgGSOEk1VmFXLAH9d
+         fSudYMweRzsRGm0mkbjHOsvWjvjTUjwH7rB7E2b5QhP4uaegJJ/UzRHYCjEAxW+25nOf
+         AT/A==
+X-Gm-Message-State: AJcUukd7qXOxpCQq49lcy97ZhVmB6DOh+e95gD9l/J4Q7sUX5ErnsgJ8
+        t22CIS9BiLraMIts72iAdhHb6DVTgwflf2VtSPqsGg==
+X-Google-Smtp-Source: ALg8bN69HzwcjQgfkTDmg9mJXNVwwm85Eeo0s32ItOAKgn1RGoRtq2+sreNKXEGKTRMIl4fv8vrRuuhE1TopsLiEz0M=
+X-Received: by 2002:a81:29d5:: with SMTP id p204mr4406394ywp.285.1547012223494;
+ Tue, 08 Jan 2019 21:37:03 -0800 (PST)
 MIME-Version: 1.0
-References: <CAOMFOmU=t9YbE68YpoQn0Ug0XN1F+0iuJp9J=htCRRrbdaPSVA@mail.gmail.com>
- <20190109000214.GA5907@andrea> <CAOMFOmUSttpLyeiRLjxw4rSN0tOiAq1jbwK=kRdCkuOKPOC3Rg@mail.gmail.com>
-In-Reply-To: <CAOMFOmUSttpLyeiRLjxw4rSN0tOiAq1jbwK=kRdCkuOKPOC3Rg@mail.gmail.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Wed, 9 Jan 2019 06:35:37 +0100
-Message-ID: <CACT4Y+ZaoB7t7DYwrdf6cQ3m_n5=Jz5800zEdpF1oT070bt66A@mail.gmail.com>
-Subject: Re: seqcount usage in xt_replace_table()
-To:     Anatol Pomozov <anatol.pomozov@gmail.com>
-Cc:     Andrea Parri <andrea.parri@amarulasolutions.com>,
-        Florian Westphal <fw@strlen.de>,
-        Paul McKenney <paulmck@linux.ibm.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Andrey Konovalov <andreyknvl@google.com>
+References: <20190109040107.4110-1-riel@surriel.com>
+In-Reply-To: <20190109040107.4110-1-riel@surriel.com>
+From:   Shakeel Butt <shakeelb@google.com>
+Date:   Tue, 8 Jan 2019 21:36:52 -0800
+Message-ID: <CALvZod6=-kdUk23i7eOr5AO-_2Fk_BmJiL3QjSJ4S4QOs0xKkw@mail.gmail.com>
+Subject: Re: [PATCH] mm,slab,memcg: call memcg kmem put cache with same
+ condition as get
+To:     Rik van Riel <riel@surriel.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>, kernel-team@fb.com,
+        Linux MM <linux-mm@kvack.org>, stable@vger.kernel.org,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Christoph Lameter <cl@linux.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Johannes Weiner <hannes@cmpxchg.org>, Tejun Heo <tj@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 9, 2019 at 1:36 AM Anatol Pomozov <anatol.pomozov@gmail.com> wrote:
+On Tue, Jan 8, 2019 at 8:01 PM Rik van Riel <riel@surriel.com> wrote:
 >
-> Hello
+> There is an imbalance between when slab_pre_alloc_hook calls
+> memcg_kmem_get_cache and when slab_post_alloc_hook calls
+> memcg_kmem_put_cache.
 >
-> On Tue, Jan 8, 2019 at 4:02 PM Andrea Parri
-> <andrea.parri@amarulasolutions.com> wrote:
-> >
-> > Hi Anatol,
-> >
-> > On Tue, Jan 08, 2019 at 11:33:39AM -0800, Anatol Pomozov wrote:
-> > > Hello folks,
-> > >
-> > > A bit of context what I am doing. I am trying to port KTSAN (Kernel
-> > > Thread Sanitizer) tool to v4.20. That tool tracks shared data usage
-> > > and makes sure it is accessed in a thread-safe manner.
-> >
-> > Interesting!  FYI, some LKMM's maintainers (Paul included) had and
-> > continued to have some "fun" discussing topics related to "thread-
-> > safe memory accesses": I'm sure that they'll be very interested in
-> > such work of yours and eager to discuss your results.
->
-> Thread Sanitizer is a great tool to find thread-safety issues with
-> user-space code. The tool been developed by a team of smart people
-> from Google [1].
->
-> KTSAN is an attempt to bring the same ideas to Linux kernel [2]. A
-> bunch of work been done there but the project is still at
-> proof-of-concept point.
->
-> I am not a part of Google's dynamic tools team. But I've decided to
-> pick something to do during the New Year holidays so started porting
-> KTSAN from v4.2 to v4.20. The work is "almost completed" but I need to
-> fix a few crashes [3].
->
-> [1] https://github.com/google/sanitizers
-> [2] https://github.com/google/ktsan/wiki
-> [3] https://github.com/anatol/linux/tree/ktsan_4.20
 
+Can you explain how there is an imbalance? If the returned kmem cache
+from memcg_kmem_get_cache() is the memcg kmem cache then the refcnt of
+memcg is elevated and the memcg_kmem_put_cache() will correctly
+decrement the refcnt of the memcg.
 
-For completeness, at the time we also had to add
-read_seqcount_cancel() function to dynamically mark all seqcount read
-regions. It can be used here too, start read region and immediately
-end it. Less clear than raw_read_seqcount_nocritical(), but also less
-API surface.
+> This can cause a memcg kmem cache to be destroyed right as
+> an object from that cache is being allocated, which is probably
+> not good. It could lead to things like a memcg allocating new
+> kmalloc slabs instead of using freed space in old ones, maybe
+> memory leaks, and maybe oopses as a memcg kmalloc slab is getting
+> destroyed on one CPU while another CPU is trying to do an allocation
+> from that same memcg.
+>
+> The obvious fix would be to use the same condition for calling
+> memcg_kmem_put_cache that we also use to decide whether to call
+> memcg_kmem_get_cache.
+>
+> I am not sure how long this bug has been around, since the last
+> changeset to touch that code - 452647784b2f ("mm: memcontrol: cleanup
+>  kmem charge functions") - merely moved the bug from one location to
+> another. I am still tagging that changeset, because the fix should
+> automatically apply that far back.
+>
+> Signed-off-by: Rik van Riel <riel@surriel.com>
+> Fixes: 452647784b2f ("mm: memcontrol: cleanup kmem charge functions")
+> Cc: kernel-team@fb.com
+> Cc: linux-mm@kvack.org
+> Cc: stable@vger.kernel.org
+> Cc: Alexey Dobriyan <adobriyan@gmail.com>
+> Cc: Christoph Lameter <cl@linux.com>
+> Cc: Pekka Enberg <penberg@kernel.org>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: David Rientjes <rientjes@google.com>
+> Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
+> Cc: Johannes Weiner <hannes@cmpxchg.org>
+> Cc: Tejun Heo <tj@kernel.org>
+> ---
+>  mm/slab.h | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/mm/slab.h b/mm/slab.h
+> index 4190c24ef0e9..ab3d95bef8a0 100644
+> --- a/mm/slab.h
+> +++ b/mm/slab.h
+> @@ -444,7 +444,8 @@ static inline void slab_post_alloc_hook(struct kmem_cache *s, gfp_t flags,
+>                 p[i] = kasan_slab_alloc(s, object, flags);
+>         }
+>
+> -       if (memcg_kmem_enabled())
+> +       if (memcg_kmem_enabled() &&
+> +           ((flags & __GFP_ACCOUNT) || (s->flags & SLAB_ACCOUNT)))
 
-/**
- * read_seqcount_cancel - cancel a seq-read critical section
- * @s: pointer to seqcount_t
- *
- * This is a no-op except for ktsan, it needs to know scopes of seq-read
- * critical sections. The sections are denoted either by begin->retry or
- * by begin->cancel.
- */
-static inline void read_seqcount_cancel(const seqcount_t *s)
-{
-        ktsan_seqcount_end(s);
-}
+I don't think these extra checks are needed. They are safe but not needed.
 
-https://github.com/google/ktsan/blob/tsan/include/linux/seqlock.h#L235-L246
+>                 memcg_kmem_put_cache(s);
+>  }
+>
+> --
+> 2.17.1
+>
+
+thanks,
+Shakeel
