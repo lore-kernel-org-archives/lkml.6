@@ -3,52 +3,45 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9718C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 13:42:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E32EC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 13:42:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A9C0D206B6
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 13:42:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 07CE1206B6
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 13:42:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731242AbfAINmh (ORCPT
+        id S1731263AbfAINml (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 08:42:37 -0500
-Received: from mxout014.mail.hostpoint.ch ([217.26.49.174]:49467 "EHLO
-        mxout014.mail.hostpoint.ch" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730795AbfAINme (ORCPT
+        Wed, 9 Jan 2019 08:42:41 -0500
+Received: from mxout017.mail.hostpoint.ch ([217.26.49.177]:42886 "EHLO
+        mxout017.mail.hostpoint.ch" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730561AbfAINmi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 08:42:34 -0500
+        Wed, 9 Jan 2019 08:42:38 -0500
 Received: from [10.0.2.45] (helo=asmtp012.mail.hostpoint.ch)
-        by mxout014.mail.hostpoint.ch with esmtp (Exim 4.91 (FreeBSD))
+        by mxout017.mail.hostpoint.ch with esmtp (Exim 4.91 (FreeBSD))
         (envelope-from <dev@pschenker.ch>)
-        id 1ghE7o-0007Zg-8M; Wed, 09 Jan 2019 14:42:28 +0100
+        id 1ghE7q-0002PM-38; Wed, 09 Jan 2019 14:42:30 +0100
 Received: from 252.222.41.212.static.wline.lns.sme.cust.swisscom.ch ([212.41.222.252] helo=philippe-pc.toradex.int)
         by asmtp012.mail.hostpoint.ch with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
         (Exim 4.91 (FreeBSD))
         (envelope-from <dev@pschenker.ch>)
-        id 1ghE7o-0006KA-24; Wed, 09 Jan 2019 14:42:28 +0100
+        id 1ghE7p-0006KA-Tk; Wed, 09 Jan 2019 14:42:30 +0100
 X-Authenticated-Sender-Id: dev@pschenker.ch
 From:   Philippe Schenker <dev@pschenker.ch>
 To:     jic23@kernel.org, marcel.ziswiler@toradex.com, stefan@agner.ch
 Cc:     robh@kernel.org, alexandre.torgue@st.com, shawnguo@kernel.org,
         dmitry.torokhov@gmail.com, thierry.reding@gmail.com,
         mcoquelin.stm32@gmail.com, digetx@gmail.com, lee.jones@linaro.org,
-        Max Krummenacher <max.krummenacher@toradex.com>,
         Philippe Schenker <philippe.schenker@toradex.com>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        devicetree@vger.kernel.org, linux-iio@vger.kernel.org,
-        Hartmut Knaack <knaack.h@gmx.de>, linux-input@vger.kernel.org,
+        devicetree@vger.kernel.org, Jonathan Hunter <jonathanh@nvidia.com>,
         linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org,
-        Lars-Peter Clausen <lars@metafoo.de>
-Subject: [PATCH v6 6/8] iio: adc: add STMPE ADC devicetree bindings
-Date:   Wed,  9 Jan 2019 14:42:05 +0100
-Message-Id: <20190109134208.5660-7-dev@pschenker.ch>
+        linux-tegra@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>
+Subject: [PATCH v6 8/8] ARM: dts: Add stmpe-adc DT node to Toradex T30 modules
+Date:   Wed,  9 Jan 2019 14:42:07 +0100
+Message-Id: <20190109134208.5660-9-dev@pschenker.ch>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190109134208.5660-1-dev@pschenker.ch>
 References: <20190109134208.5660-1-dev@pschenker.ch>
@@ -59,217 +52,175 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stefan Agner <stefan@agner.ch>
+From: Philippe Schenker <philippe.schenker@toradex.com>
 
-This adds the devicetree bindings for the STMPE ADC. This also corrects
-a typo in st,sample-time it is rather "6 -> 124 clocks" according
-to the datasheet and not 144.
-We need to use the naming stmpe_adc in devicetree because this is given
-by the mfd device.
+Add the stmpe-adc DT node as found on Toradex T30 modules
 
-Signed-off-by: Stefan Agner <stefan@agner.ch>
-Signed-off-by: Max Krummenacher <max.krummenacher@toradex.com>
 Signed-off-by: Philippe Schenker <philippe.schenker@toradex.com>
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
 
 ---
 
 Changes in v6:
- - Added Rob's Reviewed-by
+ - Just realized that the comment for st,norequest-mask was at the wrong
+   place, fixed.
+ - Added also tegra30-apalis-v1.1.dtsi, as I forgot that.
 
-Changes in v5:
- - Made a one column list
- - Cleared note about precedence
- - Changed example to a full STMPE811 device with MFD, touchscreen, and the new
-   stmpe_adc driver.
- - Added Jonathan Cameron's Reviewed-by
-
+Changes in v5: None
 Changes in v4:
- - Put reformatting in a separate precursor patch.
+ - New separate commit to hold T30 devicetree changes
 
-Changes in v3:
- - Reformatted documentation for touchscreen to use tabs and have a better
-   overview of the settings.
- - Added note which adc-settings will take precedence.
- - changed typo in sample-time setting from 144 clocks to 124 clocks, as stated
-   in the datasheet.
+Changes in v3: None
+Changes in v2: None
 
-Changes in v2:
- - Moved the bindings for ADC to the overlying mfd.
- - Reformatted for better readability
+ arch/arm/boot/dts/tegra30-apalis-v1.1.dtsi | 22 ++++++++++++++--------
+ arch/arm/boot/dts/tegra30-apalis.dtsi      | 22 ++++++++++++++--------
+ arch/arm/boot/dts/tegra30-colibri.dtsi     | 22 ++++++++++++++--------
+ 3 files changed, 42 insertions(+), 24 deletions(-)
 
- .../devicetree/bindings/iio/adc/stmpe-adc.txt | 21 +++++
- .../bindings/input/touchscreen/stmpe.txt      | 88 +++++++++++++------
- .../devicetree/bindings/mfd/stmpe.txt         | 14 +++
- 3 files changed, 98 insertions(+), 25 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/iio/adc/stmpe-adc.txt
-
-diff --git a/Documentation/devicetree/bindings/iio/adc/stmpe-adc.txt b/Documentation/devicetree/bindings/iio/adc/stmpe-adc.txt
-new file mode 100644
-index 000000000000..480e66422625
---- /dev/null
-+++ b/Documentation/devicetree/bindings/iio/adc/stmpe-adc.txt
-@@ -0,0 +1,21 @@
-+STMPE ADC driver
-+----------------
-+
-+Required properties:
-+ - compatible: "st,stmpe-adc"
-+
-+Optional properties:
-+Note that the ADC is shared with the STMPE touchscreen. ADC related settings
-+have to be done in the mfd.
-+- st,norequest-mask: bitmask specifying which ADC channels should _not_ be
-+  requestable due to different usage (e.g. touch)
-+
-+Node name must be stmpe_adc and should be child node of stmpe node to
-+which it belongs.
-+
-+Example:
-+
-+	stmpe_adc {
-+		compatible = "st,stmpe-adc";
-+		st,norequest-mask = <0x0F>; /* dont use ADC CH3-0 */
-+	};
-diff --git a/Documentation/devicetree/bindings/input/touchscreen/stmpe.txt b/Documentation/devicetree/bindings/input/touchscreen/stmpe.txt
-index bf66a55a7de5..c549924603d2 100644
---- a/Documentation/devicetree/bindings/input/touchscreen/stmpe.txt
-+++ b/Documentation/devicetree/bindings/input/touchscreen/stmpe.txt
-@@ -5,24 +5,6 @@ Required properties:
-  - compatible: "st,stmpe-ts"
+diff --git a/arch/arm/boot/dts/tegra30-apalis-v1.1.dtsi b/arch/arm/boot/dts/tegra30-apalis-v1.1.dtsi
+index 02f8126481a2..8b7a827d604d 100644
+--- a/arch/arm/boot/dts/tegra30-apalis-v1.1.dtsi
++++ b/arch/arm/boot/dts/tegra30-apalis-v1.1.dtsi
+@@ -994,11 +994,17 @@
+ 			id = <0>;
+ 			blocks = <0x5>;
+ 			irq-trigger = <0x1>;
++			/* 3.25 MHz ADC clock speed */
++			st,adc-freq = <1>;
++			/* 12-bit ADC */
++			st,mod-12b = <1>;
++			/* internal ADC reference */
++			st,ref-sel = <0>;
++			/* ADC converstion time: 80 clocks */
++			st,sample-time = <4>;
  
- Optional properties:
--- st,sample-time	: ADC conversion time in number of clock.
--				0 -> 36 clocks
--				1 -> 44 clocks
--				2 -> 56 clocks
--				3 -> 64 clocks
--				4 -> 80 clocks (recommended)
--				5 -> 96 clocks
--				6 -> 144 clocks
--- st,mod-12b		: ADC Bit mode
--				0 -> 10bit ADC
--				1 -> 12bit ADC
--- st,ref-sel		: ADC reference source
--				0 -> internal
--				1 -> external
--- st,adc-freq		: ADC Clock speed
--				0 -> 1.625 MHz
--				1 -> 3.25 MHz
--				2 || 3 -> 6.5 MHz
- - st,ave-ctrl		: Sample average control
- 				0 -> 1 sample
- 				1 -> 2 samples
-@@ -52,20 +34,76 @@ Optional properties:
- 				0 -> 20 mA (typical 35mA max)
- 				1 -> 50 mA (typical 80 mA max)
- 
-+Optional properties common with MFD (deprecated):
-+ - st,sample-time	: ADC conversion time in number of clock.
-+				0 -> 36 clocks
-+				1 -> 44 clocks
-+				2 -> 56 clocks
-+				3 -> 64 clocks
-+				4 -> 80 clocks (recommended)
-+				5 -> 96 clocks
-+				6 -> 124 clocks
-+ - st,mod-12b		: ADC Bit mode
-+				0 -> 10bit ADC
-+				1 -> 12bit ADC
-+ - st,ref-sel		: ADC reference source
-+				0 -> internal
-+				1 -> external
-+ - st,adc-freq		: ADC Clock speed
-+				0 -> 1.625 MHz
-+				1 -> 3.25 MHz
-+				2 || 3 -> 6.5 MHz
+ 			stmpe_touchscreen {
+ 				compatible = "st,stmpe-ts";
+-				/* 3.25 MHz ADC clock speed */
+-				st,adc-freq = <1>;
+ 				/* 8 sample average control */
+ 				st,ave-ctrl = <3>;
+ 				/* 7 length fractional part in z */
+@@ -1008,17 +1014,17 @@
+ 				 * current limit value
+ 				 */
+ 				st,i-drive = <1>;
+-				/* 12-bit ADC */
+-				st,mod-12b = <1>;
+-				/* internal ADC reference */
+-				st,ref-sel = <0>;
+-				/* ADC converstion time: 80 clocks */
+-				st,sample-time = <4>;
+ 				/* 1 ms panel driver settling time */
+ 				st,settling = <3>;
+ 				/* 5 ms touch detect interrupt delay */
+ 				st,touch-det-delay = <5>;
+ 			};
 +
- Node name must be stmpe_touchscreen and should be child node of stmpe node to
- which it belongs.
++			stmpe_adc {
++				compatible = "st,stmpe-adc";
++				/* forbid to use ADC channels 3-0 (touch) */
++				st,norequest-mask = <0x0F>;
++			};
+ 		};
  
-+Note that common ADC settings of stmpe_touchscreen (child) will take precedence
-+over the settings done in MFD.
+ 		/*
+diff --git a/arch/arm/boot/dts/tegra30-apalis.dtsi b/arch/arm/boot/dts/tegra30-apalis.dtsi
+index 7f112f192fe9..c18f6f61d764 100644
+--- a/arch/arm/boot/dts/tegra30-apalis.dtsi
++++ b/arch/arm/boot/dts/tegra30-apalis.dtsi
+@@ -976,11 +976,17 @@
+ 			id = <0>;
+ 			blocks = <0x5>;
+ 			irq-trigger = <0x1>;
++			/* 3.25 MHz ADC clock speed */
++			st,adc-freq = <1>;
++			/* 12-bit ADC */
++			st,mod-12b = <1>;
++			/* internal ADC reference */
++			st,ref-sel = <0>;
++			/* ADC converstion time: 80 clocks */
++			st,sample-time = <4>;
+ 
+ 			stmpe_touchscreen {
+ 				compatible = "st,stmpe-ts";
+-				/* 3.25 MHz ADC clock speed */
+-				st,adc-freq = <1>;
+ 				/* 8 sample average control */
+ 				st,ave-ctrl = <3>;
+ 				/* 7 length fractional part in z */
+@@ -990,17 +996,17 @@
+ 				 * current limit value
+ 				 */
+ 				st,i-drive = <1>;
+-				/* 12-bit ADC */
+-				st,mod-12b = <1>;
+-				/* internal ADC reference */
+-				st,ref-sel = <0>;
+-				/* ADC converstion time: 80 clocks */
+-				st,sample-time = <4>;
+ 				/* 1 ms panel driver settling time */
+ 				st,settling = <3>;
+ 				/* 5 ms touch detect interrupt delay */
+ 				st,touch-det-delay = <5>;
+ 			};
 +
- Example:
++			stmpe_adc {
++				compatible = "st,stmpe-adc";
++				/* forbid to use ADC channels 3-0 (touch) */
++				st,norequest-mask = <0x0F>;
++			};
+ 		};
  
-+stmpe811@41 {
-+	compatible = "st,stmpe811";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_touch_int>;
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+	reg = <0x41>;
-+	interrupts = <10 IRQ_TYPE_LEVEL_LOW>;
-+	interrupt-parent = <&gpio4>;
-+	interrupt-controller;
-+	id = <0>;
-+	blocks = <0x5>;
-+	irq-trigger = <0x1>;
-+	/* Common ADC settings */
-+	/* 3.25 MHz ADC clock speed */
-+	st,adc-freq = <1>;
-+	/* 12-bit ADC */
-+	st,mod-12b = <1>;
-+	/* internal ADC reference */
-+	st,ref-sel = <0>;
-+	/* ADC converstion time: 80 clocks */
-+	st,sample-time = <4>;
+ 		/*
+diff --git a/arch/arm/boot/dts/tegra30-colibri.dtsi b/arch/arm/boot/dts/tegra30-colibri.dtsi
+index 35af03ca9e90..1f9198bb24ff 100644
+--- a/arch/arm/boot/dts/tegra30-colibri.dtsi
++++ b/arch/arm/boot/dts/tegra30-colibri.dtsi
+@@ -845,11 +845,18 @@
+ 			id = <0>;
+ 			blocks = <0x5>;
+ 			irq-trigger = <0x1>;
++			/* 3.25 MHz ADC clock speed */
++			st,adc-freq = <1>;
++			/* 12-bit ADC */
++			st,mod-12b = <1>;
++			/* internal ADC reference */
++			st,ref-sel = <0>;
++			/* ADC converstion time: 80 clocks */
++			st,sample-time = <4>;
++			/* forbid to use ADC channels 3-0 (touch) */
+ 
+ 			stmpe_touchscreen {
+ 				compatible = "st,stmpe-ts";
+-				/* 3.25 MHz ADC clock speed */
+-				st,adc-freq = <1>;
+ 				/* 8 sample average control */
+ 				st,ave-ctrl = <3>;
+ 				/* 7 length fractional part in z */
+@@ -859,17 +866,16 @@
+ 				 * current limit value
+ 				 */
+ 				st,i-drive = <1>;
+-				/* 12-bit ADC */
+-				st,mod-12b = <1>;
+-				/* internal ADC reference */
+-				st,ref-sel = <0>;
+-				/* ADC converstion time: 80 clocks */
+-				st,sample-time = <4>;
+ 				/* 1 ms panel driver settling time */
+ 				st,settling = <3>;
+ 				/* 5 ms touch detect interrupt delay */
+ 				st,touch-det-delay = <5>;
+ 			};
 +
- 	stmpe_touchscreen {
- 		compatible = "st,stmpe-ts";
--		st,sample-time = <4>;
--		st,mod-12b = <1>;
--		st,ref-sel = <0>;
--		st,adc-freq = <1>;
--		st,ave-ctrl = <1>;
--		st,touch-det-delay = <2>;
--		st,settling = <2>;
-+		reg = <0>;
-+		/* 8 sample average control */
-+		st,ave-ctrl = <3>;
-+		/* 5 ms touch detect interrupt delay */
-+		st,touch-det-delay = <5>;
-+		/* 1 ms panel driver settling time */
-+		st,settling = <3>;
-+		/* 7 length fractional part in z */
- 		st,fraction-z = <7>;
-+		/*
-+		 * 50 mA typical 80 mA max touchscreen drivers
-+		 * current limit value
-+		 */
- 		st,i-drive = <1>;
- 	};
-+	stmpe_adc {
-+		compatible = "st,stmpe-adc";
-+		st,norequest-mask = <0x0F>;
-+	};
-+};
-diff --git a/Documentation/devicetree/bindings/mfd/stmpe.txt b/Documentation/devicetree/bindings/mfd/stmpe.txt
-index a46e7177195d..d4408a417193 100644
---- a/Documentation/devicetree/bindings/mfd/stmpe.txt
-+++ b/Documentation/devicetree/bindings/mfd/stmpe.txt
-@@ -14,6 +14,20 @@ Optional properties:
-  - st,autosleep-timeout		: Valid entries (ms); 4, 16, 32, 64, 128, 256, 512 and 1024
-  - irq-gpio			: If present, which GPIO to use for event IRQ
++			stmpe_adc {
++				compatible = "st,stmpe-adc";
++				st,norequest-mask = <0x0F>;
++			};
+ 		};
  
-+Optional properties for devices with touch and ADC (STMPE811|STMPE610):
-+ - st,sample-time		: ADC conversion time in number of clock.
-+					0 -> 36 clocks		4 -> 80 clocks (recommended)
-+					1 -> 44 clocks		5 -> 96 clocks
-+					2 -> 56 clocks		6 -> 124 clocks
-+					3 -> 64 clocks
-+ - st,mod-12b			: ADC Bit mode
-+					0 -> 10bit ADC		1 -> 12bit ADC
-+ - st,ref-sel			: ADC reference source
-+					0 -> internal		1 -> external
-+ - st,adc-freq			: ADC Clock speed
-+					0 -> 1.625 MHz		2 || 3 -> 6.5 MHz
-+					1 -> 3.25 MHz
-+
- Example:
- 
- 	stmpe1601: stmpe1601@40 {
+ 		/*
 -- 
 2.20.1
 
