@@ -2,140 +2,101 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED183C43444
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 12:40:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3978C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 12:40:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C3434206B6
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 12:40:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9078220859
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 12:40:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="s4+87stl"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730607AbfAIMkW (ORCPT
+        id S1730694AbfAIMk0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 07:40:22 -0500
-Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:47518 "EHLO
-        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729919AbfAIMkV (ORCPT
+        Wed, 9 Jan 2019 07:40:26 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:47940 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729919AbfAIMk0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 07:40:21 -0500
-Received: from valkosipuli.localdomain (valkosipuli.retiisi.org.uk [IPv6:2001:1bc8:1a6:d3d5::80:2])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by hillosipuli.retiisi.org.uk (Postfix) with ESMTPS id 57F4C634C7F;
-        Wed,  9 Jan 2019 14:39:02 +0200 (EET)
-Received: from sailus by valkosipuli.localdomain with local (Exim 4.89)
-        (envelope-from <sakari.ailus@retiisi.org.uk>)
-        id 1ghD8P-0002ZH-N5; Wed, 09 Jan 2019 14:39:01 +0200
-Date:   Wed, 9 Jan 2019 14:39:01 +0200
-From:   Sakari Ailus <sakari.ailus@iki.fi>
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-media@vger.kernel.org,
-        Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Chen-Yu Tsai <wens@csie.org>, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        Krzysztof Witos <kwitos@cadence.com>,
-        Rafal Ciepiela <rafalc@cadence.com>
-Subject: Re: [PATCH v4 7/9] dt-bindings: phy: Move the Cadence D-PHY bindings
-Message-ID: <20190109123901.u7oqb65rykanh543@valkosipuli.retiisi.org.uk>
-References: <cover.5d91ef683e3f432342f536e0f2fe239dbcebcb3e.1547026369.git-series.maxime.ripard@bootlin.com>
- <0c38b838f08b741b5b24a65886134104c5bdc69a.1547026369.git-series.maxime.ripard@bootlin.com>
+        Wed, 9 Jan 2019 07:40:26 -0500
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x09CeMFl051496;
+        Wed, 9 Jan 2019 06:40:22 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1547037622;
+        bh=n7rP53C1I+KPeUkkzbx/weUeZp2I8+PfwHYQnGJ+2vk=;
+        h=From:To:CC:Subject:Date;
+        b=s4+87stloGK1BjDnCZbhE/WAPi2ID0mytlFKxmRavqJOM8VTW/vZmwjzjbhr/HYso
+         psR36GSlZPslsSL3LRKnHQWwQNo6y3j+buZz2+WrhIf5+caRYms4XZ1Mkc4nH0piUu
+         6NfYDVLsOjbNfu32VdUuByTmLeYtQK8SLOB8MJGc=
+Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x09CeMnf055344
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 9 Jan 2019 06:40:22 -0600
+Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Wed, 9
+ Jan 2019 06:40:22 -0600
+Received: from dlep32.itg.ti.com (157.170.170.100) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Wed, 9 Jan 2019 06:40:22 -0600
+Received: from a0230074-OptiPlex-7010.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x09CeJOl010973;
+        Wed, 9 Jan 2019 06:40:19 -0600
+From:   Faiz Abbas <faiz_abbas@ti.com>
+To:     <linux-kernel@vger.kernel.org>, <linux-mmc@vger.kernel.org>
+CC:     <ulf.hansson@linaro.org>, <adrian.hunter@intel.com>,
+        <j-keerthy@ti.com>, <edubezval@gmail.com>, <olof@lixom.net>,
+        <faiz_abbas@ti.com>
+Subject: [PATCH] mmc: Fix Kconfig warnings on keystone_defconfig
+Date:   Wed, 9 Jan 2019 18:13:12 +0530
+Message-ID: <20190109124312.10154-1-faiz_abbas@ti.com>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0c38b838f08b741b5b24a65886134104c5bdc69a.1547026369.git-series.maxime.ripard@bootlin.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Maxime,
+Commit 961de0a856e3 ("mmc: sdhci-omap: Workaround errata regarding
+SDR104/HS200 tuning failures (i929)") added a select on TI_SOC_THERMAL
+for the driver to get temperature for tuning.
 
-On Wed, Jan 09, 2019 at 10:33:24AM +0100, Maxime Ripard wrote:
-> The Cadence D-PHY bindings was defined as part of the DSI block so far.
-> However, since it's now going to be a separate driver, we need to move the
-> binding to a file of its own.
-> 
-> Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
+However, this causes the following warning on keystone_defconfig because
+keystone does not support TI_SOC_THERMAL:
 
-Reviewed-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+"WARNING: unmet direct dependencies detected for TI_SOC_THERMAL"
 
-Could you also send this to the devicetree list, please?
+Fix this by changing the select to imply.
 
-> ---
->  Documentation/devicetree/bindings/display/bridge/cdns,dsi.txt | 21 +-------
->  Documentation/devicetree/bindings/phy/cdns,dphy.txt           | 20 +++++++-
->  2 files changed, 20 insertions(+), 21 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/phy/cdns,dphy.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/display/bridge/cdns,dsi.txt b/Documentation/devicetree/bindings/display/bridge/cdns,dsi.txt
-> index f5725bb6c61c..525a4bfd8634 100644
-> --- a/Documentation/devicetree/bindings/display/bridge/cdns,dsi.txt
-> +++ b/Documentation/devicetree/bindings/display/bridge/cdns,dsi.txt
-> @@ -31,28 +31,7 @@ Required subnodes:
->  - one subnode per DSI device connected on the DSI bus. Each DSI device should
->    contain a reg property encoding its virtual channel.
->  
-> -Cadence DPHY
-> -============
-> -
-> -Cadence DPHY block.
-> -
-> -Required properties:
-> -- compatible: should be set to "cdns,dphy".
-> -- reg: physical base address and length of the DPHY registers.
-> -- clocks: DPHY reference clocks.
-> -- clock-names: must contain "psm" and "pll_ref".
-> -- #phy-cells: must be set to 0.
-> -
-> -
->  Example:
-> -	dphy0: dphy@fd0e0000{
-> -		compatible = "cdns,dphy";
-> -		reg = <0x0 0xfd0e0000 0x0 0x1000>;
-> -		clocks = <&psm_clk>, <&pll_ref_clk>;
-> -		clock-names = "psm", "pll_ref";
-> -		#phy-cells = <0>;
-> -	};
-> -
->  	dsi0: dsi@fd0c0000 {
->  		compatible = "cdns,dsi";
->  		reg = <0x0 0xfd0c0000 0x0 0x1000>;
-> diff --git a/Documentation/devicetree/bindings/phy/cdns,dphy.txt b/Documentation/devicetree/bindings/phy/cdns,dphy.txt
-> new file mode 100644
-> index 000000000000..1095bc4e72d9
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/phy/cdns,dphy.txt
-> @@ -0,0 +1,20 @@
-> +Cadence DPHY
-> +============
-> +
-> +Cadence DPHY block.
-> +
-> +Required properties:
-> +- compatible: should be set to "cdns,dphy".
-> +- reg: physical base address and length of the DPHY registers.
-> +- clocks: DPHY reference clocks.
-> +- clock-names: must contain "psm" and "pll_ref".
-> +- #phy-cells: must be set to 0.
-> +
-> +Example:
-> +	dphy0: dphy@fd0e0000{
-> +		compatible = "cdns,dphy";
-> +		reg = <0x0 0xfd0e0000 0x0 0x1000>;
-> +		clocks = <&psm_clk>, <&pll_ref_clk>;
-> +		clock-names = "psm", "pll_ref";
-> +		#phy-cells = <0>;
-> +	};
-> -- 
-> git-series 0.9.1
+Fixes: 961de0a856e3 ("mmc: sdhci-omap: Workaround errata regarding
+SDR104/HS200 tuning failures (i929)")
+Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
+---
+ drivers/mmc/host/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
+index e26b8145efb3..bc61eefcb695 100644
+--- a/drivers/mmc/host/Kconfig
++++ b/drivers/mmc/host/Kconfig
+@@ -978,7 +978,7 @@ config MMC_SDHCI_OMAP
+ 	tristate "TI SDHCI Controller Support"
+ 	depends on MMC_SDHCI_PLTFM && OF
+ 	select THERMAL
+-	select TI_SOC_THERMAL
++	imply TI_SOC_THERMAL
+ 	help
+ 	  This selects the Secure Digital Host Controller Interface (SDHCI)
+ 	  support present in TI's DRA7 SOCs. The controller supports
 -- 
-Sakari Ailus
+2.19.2
+
