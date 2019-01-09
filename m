@@ -2,123 +2,113 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFC42C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 18:05:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F986C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 18:08:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A0AA320859
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 18:05:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="S78HqNN5"
+	by mail.kernel.org (Postfix) with ESMTP id D40B1214C6
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 18:08:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727443AbfAISFR (ORCPT
+        id S1727464AbfAISI1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 13:05:17 -0500
-Received: from mo4-p02-ob.smtp.rzone.de ([85.215.255.82]:11347 "EHLO
-        mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727111AbfAISFR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 13:05:17 -0500
-X-Greylist: delayed 603 seconds by postgrey-1.27 at vger.kernel.org; Wed, 09 Jan 2019 13:05:16 EST
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1547057115;
-        s=strato-dkim-0002; d=goldelico.com;
-        h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=wysRQKKoplqUxoirt3IpkaAX49muiYxSK1V8wy9PtjU=;
-        b=S78HqNN5xl2L2qjYi+YYs+bXeVCcScD/6MlSR/kr7Q3V0AU31ox6WUFTBpXfU4LkkP
-        UGj3W0eXhgPHm1iHh0ibr6naWDJvmI3GOlvM4kNSiKwEW7Hf1szXSNR+Os++TQ9st7UC
-        56VHV7ZIkkQf1niGr23licLf5qSMUWGnDY9uXEkga0NEptBYCeNKvvNnJiwrP+76k54G
-        bPG6fx+Tt7P0MRjUPXg3ZxzxWl1vcMvjG2ffo8uSS3gBT+IGEtsv1BWgxCBBuY8v+Gox
-        K6H4IsMV9bFRnDTno6i5ygFz10ntVIGmJxwqf4Q708mN+5H17T9875ssKGcn5yH5HDDX
-        K1Zg==
-X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMgPgp8VKxflSZ1P34KBj5Qpw97WFDlSZXA4PLVY="
-X-RZG-CLASS-ID: mo00
-Received: from imac.fritz.box
-        by smtp.strato.de (RZmta 44.9 AUTH)
-        with ESMTPSA id 608499v09I56SBE
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
-        (Client did not present a certificate);
-        Wed, 9 Jan 2019 19:05:06 +0100 (CET)
-Content-Type: text/plain; charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
-Subject: Re: [PATCH v2] arm: dts: gta04: add bluetooth serdev driver flags
-From:   "H. Nikolaus Schaller" <hns@goldelico.com>
-In-Reply-To: <20190109185751.3268420b@aktux>
-Date:   Wed, 9 Jan 2019 19:05:05 +0100
-Cc:     Tony Lindgren <tony@atomide.com>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Rob Herring <robh@kernel.org>,
-        =?utf-8?Q?Beno=C3=AEt_Cousson?= <bcousson@baylibre.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-kernel@vger.kernel.org,
-        linux-omap <linux-omap@vger.kernel.org>,
-        letux-kernel@openphoenux.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <209232E2-690B-4805-9F09-79B7EEB1EEDB@goldelico.com>
-References: <913cd7034be0d05c01148cbcedbb663454772b03.1547056071.git.hns@goldelico.com> <20190109185751.3268420b@aktux>
-To:     Andreas Kemnade <andreas@kemnade.info>
-X-Mailer: Apple Mail (2.3124)
+        Wed, 9 Jan 2019 13:08:27 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:51970 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725775AbfAISI0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 13:08:26 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id BF1A37F3EA;
+        Wed,  9 Jan 2019 18:08:25 +0000 (UTC)
+Received: from colo-mx.corp.redhat.com (colo-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.21])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 4B3085D75D;
+        Wed,  9 Jan 2019 18:08:25 +0000 (UTC)
+Received: from zmail21.collab.prod.int.phx2.redhat.com (zmail21.collab.prod.int.phx2.redhat.com [10.5.83.24])
+        by colo-mx.corp.redhat.com (Postfix) with ESMTP id 7CF9A3F954;
+        Wed,  9 Jan 2019 18:08:24 +0000 (UTC)
+Date:   Wed, 9 Jan 2019 13:08:24 -0500 (EST)
+From:   Pankaj Gupta <pagupta@redhat.com>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        qemu-devel@nongnu.org, linux-nvdimm@ml01.01.org,
+        linux-fsdevel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org,
+        linux-acpi@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-xfs@vger.kernel.org, jack@suse.cz, stefanha@redhat.com,
+        dan j williams <dan.j.williams@intel.com>, riel@surriel.com,
+        nilal@redhat.com, kwolf@redhat.com, pbonzini@redhat.com,
+        zwisler@kernel.org, vishal l verma <vishal.l.verma@intel.com>,
+        dave jiang <dave.jiang@intel.com>, david@redhat.com,
+        jmoyer@redhat.com,
+        xiaoguangrong eric <xiaoguangrong.eric@gmail.com>,
+        hch@infradead.org, mst@redhat.com, jasowang@redhat.com,
+        lcapitulino@redhat.com, imammedo@redhat.com, eblake@redhat.com,
+        willy@infradead.org, tytso@mit.edu,
+        adilger kernel <adilger.kernel@dilger.ca>, rjw@rjwysocki.net
+Message-ID: <739751810.61274195.1547057304156.JavaMail.zimbra@redhat.com>
+In-Reply-To: <20190109162654.GW12689@magnolia>
+References: <20190109144736.17452-1-pagupta@redhat.com> <20190109144736.17452-6-pagupta@redhat.com> <20190109162654.GW12689@magnolia>
+Subject: Re: [PATCH v3 5/5] xfs: disable map_sync for virtio pmem
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.67.116.35, 10.4.195.20]
+Thread-Topic: disable map_sync for virtio pmem
+Thread-Index: /ZsbeUyQdaKN0/+N725z2SUxPGgcrQ==
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Wed, 09 Jan 2019 18:08:26 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andreas,
 
-> Am 09.01.2019 um 18:57 schrieb Andreas Kemnade <andreas@kemnade.info>:
->=20
-> Hi,
->=20
-> On Wed,  9 Jan 2019 18:47:52 +0100
-> "H. Nikolaus Schaller" <hns@goldelico.com> wrote:
->=20
->> From: Andreas Kemnade <andreas@kemnade.info>
->>=20
->> gta04a[34] have bluetooth chips which simply understand
->> h4 protocol.
->>=20
->> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
->=20
-> what about upstreaming the full patch based on mainline and not your
-> on-top-of-other-stuff rebased version of this patch?
+> > Virtio pmem provides asynchronous host page cache flush
+> > mechanism. we don't support 'MAP_SYNC' with virtio pmem
+> > and xfs.
+> > 
+> > Signed-off-by: Pankaj Gupta <pagupta@redhat.com>
+> > ---
+> >  fs/xfs/xfs_file.c | 8 ++++++++
+> >  1 file changed, 8 insertions(+)
+> > 
+> > diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
+> > index e474250..eae4aa4 100644
+> > --- a/fs/xfs/xfs_file.c
+> > +++ b/fs/xfs/xfs_file.c
+> > @@ -1190,6 +1190,14 @@ xfs_file_mmap(
+> >  	if (!IS_DAX(file_inode(filp)) && (vma->vm_flags & VM_SYNC))
+> >  		return -EOPNOTSUPP;
+> >  
+> > +	/* We don't support synchronous mappings with guest direct access
+> > +	 * and virtio based host page cache mechanism.
+> > +	 */
+> > +	if (IS_DAX(file_inode(filp)) && virtio_pmem_host_cache_enabled(
+> 
+> Echoing what Jan said, this ought to be some sort of generic function
+> that tells us whether or not memory mapped from the dax device will
+> always still be accessible even after a crash (i.e. supports MAP_SYNC).
 
-What do you mean? This patch is basically based on mainline (v5.0-rc1),
-but I did not want to push it now, but a different one in the same patch
-stack and this happened due to an still unknown error in my send-mail =
-tool
-which picked the wrong one after doing a test.
+o.k
+> 
+> What if the underlying file on the host is itself on pmem and can be
+> MAP_SYNC'd?  Shouldn't the guest be able to use MAP_SYNC as well?
 
-So please simply ignore the noise and don't worry about this patch.
+Guest MAP_SYNC on actual host pmem will sync guest metadata, as guest 
+writes are persistent on actual pmem. Host side Qemu MAP_SYNC enabling
+work for pmem is in progress. It will make sure metadata at host side
+is in consistent state after a crash or any other metadata corruption 
+operation.
 
-BR,
-Nikolaus
+For virtio-pmem, we are emulating pmem device over regular storage on
+host side. Guest need to call fsync followed by write to make sure
+guest metadata is in consistent state(or journalled). Host backing file
+data & metadata will also be persistent after guest to host fsync.
 
->=20
-> Regards,
-> Andreas
->=20
->> ---
->> arch/arm/boot/dts/omap3-gta04.dtsi | 2 ++
->> 1 file changed, 2 insertions(+)
->>=20
->> diff --git a/arch/arm/boot/dts/omap3-gta04.dtsi =
-b/arch/arm/boot/dts/omap3-gta04.dtsi
->> index 499e3b0e920b..ec7b1e31c07e 100644
->> --- a/arch/arm/boot/dts/omap3-gta04.dtsi
->> +++ b/arch/arm/boot/dts/omap3-gta04.dtsi
->> @@ -722,6 +722,8 @@
->>=20
->> 	bluetooth: bluetooth {
->> 		compatible =3D "wi2wi,w2cbw003-bluetooth";
->> +		speed =3D <3000000>;
->> +		flow;
->> 		vdd-supply =3D <&vaux4>;
->> 	};
->> };
->=20
+Thanks,
+Pankaj
 
