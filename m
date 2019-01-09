@@ -2,146 +2,139 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88335C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 18:14:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3118C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 18:14:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 52CC821848
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 18:14:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="XSikKQ5b"
+	by mail.kernel.org (Postfix) with ESMTP id 9C28420859
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 18:14:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727501AbfAISOy (ORCPT
+        id S1727517AbfAISO6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 13:14:54 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:34873 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727476AbfAISOx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 13:14:53 -0500
-Received: by mail-pf1-f195.google.com with SMTP id z9so4040489pfi.2
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jan 2019 10:14:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=kBcrxosn4rbMp/c4KQPE3xLOAJ6eQ+hMTdKu6lkHV4I=;
-        b=XSikKQ5bldok6k+L0AIV9rhQRClveXNnRn+vsWcSduU8EcK9AID9q+yC8M+DTPQt81
-         SZ0KkJmyyAh8VxVfYTWCPk6S6WY42g9nD578tJzrysMVfSdt+fcVbVH7jxTz+bw4TDCT
-         RpepIsmFsH2qrUva2ouI7k1woCKxhunBEUrdw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=kBcrxosn4rbMp/c4KQPE3xLOAJ6eQ+hMTdKu6lkHV4I=;
-        b=B3fKLQQt+xOKJf3rt6iUXlc5nAk+qRDdfptWsfBnbT4aXbABqjHe0PeQxycfOpECi5
-         s+0VZc/4Wn5a/YMI3j6MxuAnBK3JIpxtZF6RsBpOZwlTtsyNu8BGl1njWewrmBovlCVD
-         cupYTjRVQUSEA/8cwAzDbb4WTo4DY7XOcdWnQC820aYIJoVcx29tyob3HxTPn9BRgZNF
-         XziC2sq04dL8DsuT1R34cndCYNcENnUEklrBYQZ1fSO74FCccpzTfG99yjcTnXDxeFgY
-         /D2ygkuImPv0qU8TJWSZN6JF16mIEuUQOYxWfH4/eW6uCxUv+RoKDJ1n9DxESqOLl53/
-         PnVw==
-X-Gm-Message-State: AJcUukeJrjRuoaKC82q/Gm4Rj+fWZObayeTL1hOJ7jDVehmpnIdzMH2X
-        0femzwcc3gfOPhMrlqizyicy/Q==
-X-Google-Smtp-Source: ALg8bN4BWlmxKl79y/cSQ3SK4GMdI5fZuNaVxe70BYvRvdqggow+pliw95ioHIHzYyceE9Vzx2KysA==
-X-Received: by 2002:a63:6ecf:: with SMTP id j198mr6464677pgc.3.1547057692721;
-        Wed, 09 Jan 2019 10:14:52 -0800 (PST)
-Received: from localhost ([2620:15c:202:1:75a:3f6e:21d:9374])
-        by smtp.gmail.com with ESMTPSA id d21sm52850404pfo.162.2019.01.09.10.14.51
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 09 Jan 2019 10:14:51 -0800 (PST)
-Date:   Wed, 9 Jan 2019 10:14:51 -0800
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Quentin Perret <quentin.perret@arm.com>
-Cc:     peterz@infradead.org, rjw@rjwysocki.net,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        gregkh@linuxfoundation.org, mingo@redhat.com,
-        dietmar.eggemann@arm.com, morten.rasmussen@arm.com,
-        chris.redpath@arm.com, patrick.bellasi@arm.com,
-        valentin.schneider@arm.com, vincent.guittot@linaro.org,
-        thara.gopinath@linaro.org, viresh.kumar@linaro.org,
-        tkjos@google.com, joel@joelfernandes.org, smuckle@google.com,
-        adharmap@codeaurora.org, skannan@codeaurora.org,
-        pkondeti@codeaurora.org, juri.lelli@redhat.com,
-        edubezval@gmail.com, srinivas.pandruvada@linux.intel.com,
-        currojerez@riseup.net, javi.merino@kernel.org
-Subject: Re: [PATCH v10 15/15] OPTIONAL: cpufreq: dt: Register an Energy Model
-Message-ID: <20190109181451.GT261387@google.com>
-References: <20181203095628.11858-1-quentin.perret@arm.com>
- <20181203095628.11858-16-quentin.perret@arm.com>
- <20190108203813.GS261387@google.com>
- <20190109105757.2rowxn3anzyycuod@queper01-lin>
+        Wed, 9 Jan 2019 13:14:58 -0500
+Received: from mga11.intel.com ([192.55.52.93]:37801 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727476AbfAISO5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 13:14:57 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Jan 2019 10:14:56 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,458,1539673200"; 
+   d="scan'208";a="124726543"
+Received: from linux.intel.com ([10.54.29.200])
+  by orsmga002.jf.intel.com with ESMTP; 09 Jan 2019 10:14:56 -0800
+Received: from [10.252.18.78] (abudanko-mobl.ccr.corp.intel.com [10.252.18.78])
+        by linux.intel.com (Postfix) with ESMTP id D20415802E1;
+        Wed,  9 Jan 2019 10:14:53 -0800 (PST)
+Subject: Re: [PATCH v2 2/4] perf record: bind the AIO user space buffers to
+ nodes
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+References: <e8fccb5e-31b7-b3a0-74bf-490c2d439ab4@linux.intel.com>
+ <e616e65f-bf53-e87e-b906-4fd9dce86380@linux.intel.com>
+ <20190101214117.GI13760@krava>
+ <d03c0f6b-57d8-773b-7d82-316c2bef2fb3@linux.intel.com>
+ <20190109164915.GB19455@krava>
+From:   Alexey Budankov <alexey.budankov@linux.intel.com>
+Organization: Intel Corp.
+Message-ID: <69e3aa8e-ab49-7e97-7988-435aa6b0b211@linux.intel.com>
+Date:   Wed, 9 Jan 2019 21:14:52 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
+In-Reply-To: <20190109164915.GB19455@krava>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190109105757.2rowxn3anzyycuod@queper01-lin>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 09, 2019 at 10:57:57AM +0000, Quentin Perret wrote:
-> Hi Matthias ,
+On 09.01.2019 19:49, Jiri Olsa wrote:
+> On Wed, Jan 09, 2019 at 12:12:37PM +0300, Alexey Budankov wrote:
+>> Hi,
+>>
+>> On 02.01.2019 0:41, Jiri Olsa wrote:
+>>> On Mon, Dec 24, 2018 at 03:24:36PM +0300, Alexey Budankov wrote:
+>>>
+>>> SNIP
+>>>
+>>>> +static void perf_mmap__aio_free(void **data, size_t len __maybe_unused)
+>>>> +{
+>>>> +	zfree(data);
+>>>> +}
+>>>> +
+>>>> +static void perf_mmap__aio_bind(void *data __maybe_unused, size_t len __maybe_unused,
+>>>> +                                int cpu __maybe_unused, int affinity __maybe_unused)
+>>>> +{
+>>>> +}
+>>>> +#endif
+>>>> +
+>>>>  static int perf_mmap__aio_mmap(struct perf_mmap *map, struct mmap_params *mp)
+>>>>  {
+>>>>  	int delta_max, i, prio;
+>>>> @@ -177,11 +220,13 @@ static int perf_mmap__aio_mmap(struct perf_mmap *map, struct mmap_params *mp)
+>>>>  		}
+>>>>  		delta_max = sysconf(_SC_AIO_PRIO_DELTA_MAX);
+>>>>  		for (i = 0; i < map->aio.nr_cblocks; ++i) {
+>>>> -			map->aio.data[i] = malloc(perf_mmap__mmap_len(map));
+>>>> +			size_t mmap_len = perf_mmap__mmap_len(map);
+>>>> +			perf_mmap__aio_alloc(&(map->aio.data[i]), mmap_len);
+>>>>  			if (!map->aio.data[i]) {
+>>>>  				pr_debug2("failed to allocate data buffer area, error %m");
+>>>>  				return -1;
+>>>>  			}
+>>>> +			perf_mmap__aio_bind(map->aio.data[i], mmap_len, map->cpu, mp->affinity);
+>>>
+>>> this all does not work if bind fails.. I think we need to
+>>> propagate the error value here and fail
+>>
+>> Proceeding further from this point still makes sense because 
+>> the buffer is available for operations and thread migration 
+>> alone can bring performance benefits. So the error is not fatal 
+>> and an explicit warning is implemented in v3. If you still think 
+>> it is better to propagate error from here it can be implemented.
 > 
-> On Tuesday 08 Jan 2019 at 12:38:13 (-0800), Matthias Kaehlcke wrote:
-> > >  static int cpufreq_init(struct cpufreq_policy *policy)
-> > >  {
-> > > +	struct em_data_callback em_cb = EM_DATA_CB(of_est_power);
-> > >  	struct cpufreq_frequency_table *freq_table;
-> > >  	struct opp_table *opp_table = NULL;
-> > >  	struct private_data *priv;
-> > > @@ -160,7 +203,7 @@ static int cpufreq_init(struct cpufreq_policy *policy)
-> > >  	unsigned int transition_latency;
-> > >  	bool fallback = false;
-> > >  	const char *name;
-> > > -	int ret;
-> > > +	int ret, nr_opp;
-> > >  
-> > >  	cpu_dev = get_cpu_device(policy->cpu);
-> > >  	if (!cpu_dev) {
-> > > @@ -237,6 +280,7 @@ static int cpufreq_init(struct cpufreq_policy *policy)
-> > >  		ret = -EPROBE_DEFER;
-> > >  		goto out_free_opp;
-> > >  	}
-> > > +	nr_opp = ret;
-> > >  
-> > >  	if (fallback) {
-> > >  		cpumask_setall(policy->cpus);
-> > > @@ -280,6 +324,8 @@ static int cpufreq_init(struct cpufreq_policy *policy)
-> > >  	policy->cpuinfo.transition_latency = transition_latency;
-> > >  	policy->dvfs_possible_from_any_cpu = true;
-> > >  
-> > > +	em_register_perf_domain(policy->cpus, nr_opp, &em_cb);
-> > 
-> > Shouldn't there also be a function to unregister a perf domain to be
-> > called from cpufreq_exit()?
-> > 
-> > ->exit() is called on suspend when the CPUs are taken offline, and
-> > ->init() on resume, hence em_register_perf_domain() is called multiple
-> > times, but without doing any cleanup.
+> so if that fails that the aio buffers won't be bound to node,
+> while mmaps are, so I guess the speedup is from there?
 > 
-> Right, but this is safe to do as em_register_perf_domain() checks for
-> the existence of the domain straight away. So the second time you call
-> this em_register_perf_domain() should just bail out. Are you seeing an
-> issue with this ?
+> if I use:
 > 
-> As of now, the EM framework is really simple -- it justs allocates the
-> pd tables once during boot, and they stay in memory forever. While
-> arguably less than optimal, that makes things a whole lot easier to
-> manage on the client side (i.e. the scheduler) w/o needing RCU
-> protection or so.
+> # perf record --aio --affinity=node
+> 
+> and see:
+>   "failed to bind..."
+> 
+> I can still see the benefit..? I guess the warning is ok then,
 
-I think registering the perf domain only once is fine, since the info
-isn't supposed to change and will likely be used again after
-_exit(). However since we have em_cpu_get() I'd suggest to use it and
-only call em_register_perf_domain() if no perf domain is registered
-yet for the CPU. This makes it more evident that the registration is
-only done once and simplifies error handling (currently not done at
-all), since it's not necessary to check for the special case -EEXIST.
+It still can bring benefits. kernel buffers are allocated locally, 
+tool thread migrates to make sure it reads data locally from the buffers.
+Even if aio buffers failed to be mapped locally, what is quite rare case,
+--affinity=node could still be not slower than without thread migration.
 
-Cheers
+> another option seems confusing
 
-Matthias
+Do you mean --affinity=cpu?
+
+So, well, that cases - bind fail + affinity=node or affinity=cpu - could 
+be tested, of course, but it looks simpler and safer to implement error 
+reporting and stop, because, again, the cases are quite rare. 
+So let's stay on the safer side, in v4. :)
+
+Thanks,
+Alexey
+
+> 
+> jirka
+> 
