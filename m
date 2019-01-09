@@ -2,110 +2,82 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 079A5C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 11:17:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D90DC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 11:19:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C4FB921783
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 11:17:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="C+WwaQSZ";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Dn0NNZfG"
+	by mail.kernel.org (Postfix) with ESMTP id 142B220660
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 11:19:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730837AbfAILRk (ORCPT
+        id S1730416AbfAILTz convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 06:17:40 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:40904 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730111AbfAILRk (ORCPT
+        Wed, 9 Jan 2019 06:19:55 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:55410 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729933AbfAILTy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 06:17:40 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 9D3D3608CF; Wed,  9 Jan 2019 11:17:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1547032659;
-        bh=JU0ssnZNWz4auGPtPCG85Rk1lG4OaE62ftTmLt6Qjbc=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-        b=C+WwaQSZt3qcoQwkQyKnOHO0tdbiEui4/WWwU05Vl5WAx4BpA6fidEnCSS+sw6Meb
-         IWg1ou2h670gp1Z2rgIe20M3fdG+5yQBoiYWLF8GPpQJomQ2d55lRkDzWk3jklZiy0
-         M2CS9I8JECLoQmZiWFvguasGvratFD2JE2K1USwU=
-Received: from x230.qca.qualcomm.com (unknown [83.145.195.18])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 730196095E;
-        Wed,  9 Jan 2019 11:17:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1547032656;
-        bh=JU0ssnZNWz4auGPtPCG85Rk1lG4OaE62ftTmLt6Qjbc=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-        b=Dn0NNZfG74Mt8ZSstkyZTDhvaqo5uI4FIz240+VLNypJqZwd4fPBYX0AxMd4m2ITa
-         ddVrULCejXQWOikWIb+XFP+dsu2Pqao/7CCSeN9TYzrXhD8yhOWVAbZSiMY6RH7Tzj
-         pxWLIz9/Z5gwwsjZVKiYoSSMHFqHkFFQMbXRKGII=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 730196095E
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-From:   Kalle Valo <kvalo@codeaurora.org>
-To:     Arend Van Spriel <arend.vanspriel@broadcom.com>
-Cc:     Kangjie Lu <kjlu@umn.edu>, pakki001@umn.edu,
-        Franky Lin <franky.lin@broadcom.com>,
-        Hante Meuleman <hante.meuleman@broadcom.com>,
-        Chi-Hsien Lin <chi-hsien.lin@cypress.com>,
-        Wright Feng <wright.feng@cypress.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Pieter-Paul Giesberts <pieter-paul.giesberts@broadcom.com>,
-        linux-wireless@vger.kernel.org,
-        brcm80211-dev-list.pdl@broadcom.com,
-        brcm80211-dev-list@cypress.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: brcm80211: add a check for the status of usb_register
-References: <20181226012227.70524-1-kjlu@umn.edu>
-        <87zhsbqeuu.fsf@kamboji.qca.qualcomm.com>
-        <7ddb04d4-f45f-2b41-12da-d17e8f8c1173@broadcom.com>
-Date:   Wed, 09 Jan 2019 13:17:28 +0200
-In-Reply-To: <7ddb04d4-f45f-2b41-12da-d17e8f8c1173@broadcom.com> (Arend Van
-        Spriel's message of "Wed, 9 Jan 2019 09:28:19 +0100")
-Message-ID: <87r2dmcc6v.fsf@codeaurora.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
+        Wed, 9 Jan 2019 06:19:54 -0500
+Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
+        (envelope-from <bigeasy@linutronix.de>)
+        id 1ghBto-00066B-B1; Wed, 09 Jan 2019 12:19:52 +0100
+Date:   Wed, 9 Jan 2019 12:19:52 +0100
+From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To:     Marc Dionne <marc.c.dionne@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        x86@kernel.org
+Subject: Re: x86/fpu: Don't export __kernel_fpu_{begin,end}()
+Message-ID: <20190109111951.5zvnj7ls6jv56p2u@linutronix.de>
+References: <git-mailbomb-linux-master-12209993e98c5fa1855c467f22a24e3d5b8be205@kernel.org>
+ <CAB9dFdsZb-sZixeOzrt8F50h1pnUK2W2Cxx8+xjhgd0=6xs7iw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <CAB9dFdsZb-sZixeOzrt8F50h1pnUK2W2Cxx8+xjhgd0=6xs7iw@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Arend Van Spriel <arend.vanspriel@broadcom.com> writes:
+On 2019-01-07 18:08:26 [-0400], Marc Dionne wrote:
+> On Thu, Dec 27, 2018 at 11:20 AM Linux Kernel Mailing List
+> <linux-kernel@vger.kernel.org> wrote:
+> >
+> > Commit:     12209993e98c5fa1855c467f22a24e3d5b8be205
+> >     x86/fpu: Don't export __kernel_fpu_{begin,end}()
+> >
+…
+> >     With EFI gone as the last user of __kernel_fpu_{begin|end}(), both can
+> >     be made static and not exported anymore.
+> >
+> This commit removes an exported function pair that is currently used
+> by out of tree modules, while the replacement pair
+> (kernel_fpu_begin/end) is EXPORT_SYMBOL_GPL.  So this is making
+> existing functionality GPL only, which will probably be an issue for
+> several out of tree modules that use the fpu.
+> 
+> Could kernel_fpu_begin/end be made plain EXPORT_SYMBOL?
 
-> On 1/8/2019 5:43 PM, Kalle Valo wrote:
->> Kangjie Lu <kjlu@umn.edu> writes:
->>
->>> usb_register() may fail, so let's check its status and issue an error
->>> message if it fails.
->>>
->>> Signed-off-by: Kangjie Lu <kjlu@umn.edu>
->>> ---
->>>   drivers/net/wireless/broadcom/brcm80211/brcmfmac/usb.c | 6 +++++-
->>
->> The title prefix should be "brcmfmac: " but I can fix that.
->
-> Hi Kalle,
->
-> I wanted to ack this patch, but can not locate it in my email not in
-> linux-wireless patchwork. Was it posted to the networking list only?
+It can be used by OOT modules as long as they are not under a
+proprietary license. The change here is not for me to decide, I added
+the x86 maintainers to make their decision. I can make a patch if they
+say so.
 
-I do see it on linux-wireless patchwork:
+On the other hand could we just drop EXPORT_SYMBOL_GPL? I doubt this
+helps in any way yet please correct me if I am wrong. 
+The kernel is GPL and everything links to it should be GPL compatible. People
+that don't specify a GPL compatible license either use wrapper around their
+binary blob or use EXPORT_SYMBOL functions. The latter group complains each
+time a function is not available anymore and we end up changing it to
+EXPORT_SYMBOL.
+So what do we gain from that EXPORT_SYMBOL_GPL?
 
-https://patchwork.kernel.org/patch/10742769/
+> Marc
 
-> Using scripts/get_maintainer.pl with the patch would reveal the lists
-> to post to in order of preference. For wireless driver changes I
-> refrain to linux-wireless only, but that is a personal choice I guess.
-
-Yeah, I guess in general wireless patches are just noise for netdev
-people.
-
--- 
-Kalle Valo
+Sebastian
