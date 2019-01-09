@@ -2,164 +2,100 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E13FC43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 12:29:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B740C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 12:29:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E921D20665
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 12:29:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ex+AJ+0F"
+	by mail.kernel.org (Postfix) with ESMTP id 4344F20665
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 12:29:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730095AbfAIM3P (ORCPT
+        id S1730247AbfAIM3p (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 07:29:15 -0500
-Received: from mail-io1-f41.google.com ([209.85.166.41]:39003 "EHLO
-        mail-io1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728186AbfAIM3P (ORCPT
+        Wed, 9 Jan 2019 07:29:45 -0500
+Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:47434 "EHLO
+        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728186AbfAIM3o (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 07:29:15 -0500
-Received: by mail-io1-f41.google.com with SMTP id k7so5848889iob.6
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jan 2019 04:29:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=xz9XvYQlPvtu4VoTjEIXbUhWo6snBECT8rAgO58gWDg=;
-        b=ex+AJ+0FKnLs9vD70L3Xo63cVdbFSWEkgkHY0G3o8fuUfepJSFscTI6WUu/cavuEWk
-         fdxRFiujxgZoK5kuUN9ZVmXFE//KW4Cx/C2yENDCBAc1ujXV4tA3HAkciW5iFR1YUZBj
-         GPUd4LkQ/b3ztba8UstVzPEKqPE06IRw92TDGYxDwLQYPwqoTymh6tCDdANACDFt52rR
-         rH5/Glv4TaAc5kBJmY3KHVcMArOvOnl1znFc8dzPooEHK+HBGuk1MZBspZx4E67gDXid
-         zAfYSbEctwH81CM3PZE5LrbC0nbQkK/dn8y20zWN236qJuysxzq7ngFVYeRkQLD4L8Yb
-         7nCg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=xz9XvYQlPvtu4VoTjEIXbUhWo6snBECT8rAgO58gWDg=;
-        b=D4M0XyL/Bkg0oKQkj8NICQQDnY38HYLU1CSZQ7Rp7gQlyCLCyKpatksiruIn5LOafY
-         7ssAcUh0wgoqM0uYXPnMCGoIpViXTApSJU0Xz8GZEt4GbsChdeJI2BilBmtv6zZSCJXK
-         jldAWln12xqBkBcy49YvYT/YfG0oaP6m8nHhD49+any4cLjN+7T/kxE42Be0wha3TdxV
-         F3UXc99Y8tTblAHuG/TaE+4Y6wBwSQC9b4H69QEGe+1zGQK7FJUPSgWcAyDqG5Mwc2At
-         IMivswkHzmiVrcdCZiFNMJVuyGmJonDMHtPqUktSbJcZbyKbtbHF7+9e6KdUu6Aik/Ck
-         FuRg==
-X-Gm-Message-State: AJcUukeLlMmru4URcNsJCnBEzRVDBe05I9Ewd6HZGFQkR1ldTsQYUBzT
-        SF2mnUWrbftctpxUF22FDiBkc+nXrroE0Gtw2gagXA==
-X-Google-Smtp-Source: ALg8bN6lu20Dy2TMqL70IOmfmpZ0loSv8YGjTy01I7L0EI7kGUXcK4sOHp8ckGfQK+UvZurLUE2xfAmM0X7VLWExIKo=
-X-Received: by 2002:a5d:9456:: with SMTP id x22mr3070950ior.282.1547036953894;
- Wed, 09 Jan 2019 04:29:13 -0800 (PST)
+        Wed, 9 Jan 2019 07:29:44 -0500
+Received: from valkosipuli.localdomain (valkosipuli.retiisi.org.uk [IPv6:2001:1bc8:1a6:d3d5::80:2])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by hillosipuli.retiisi.org.uk (Postfix) with ESMTPS id 4B9EE634C7F;
+        Wed,  9 Jan 2019 14:28:25 +0200 (EET)
+Received: from sailus by valkosipuli.localdomain with local (Exim 4.89)
+        (envelope-from <sakari.ailus@retiisi.org.uk>)
+        id 1ghCy8-0002Z9-KI; Wed, 09 Jan 2019 14:28:24 +0200
+Date:   Wed, 9 Jan 2019 14:28:24 +0200
+From:   Sakari Ailus <sakari.ailus@iki.fi>
+To:     Maxime Ripard <maxime.ripard@bootlin.com>
+Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-media@vger.kernel.org,
+        Archit Taneja <architt@codeaurora.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Chen-Yu Tsai <wens@csie.org>, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        Krzysztof Witos <kwitos@cadence.com>,
+        Rafal Ciepiela <rafalc@cadence.com>
+Subject: Re: [PATCH v4 0/9] phy: Add configuration interface for MIPI D-PHY
+ devices
+Message-ID: <20190109122824.vcxpcmiunball5rq@valkosipuli.retiisi.org.uk>
+References: <cover.5d91ef683e3f432342f536e0f2fe239dbcebcb3e.1547026369.git-series.maxime.ripard@bootlin.com>
 MIME-Version: 1.0
-References: <CAOMFOmU=t9YbE68YpoQn0Ug0XN1F+0iuJp9J=htCRRrbdaPSVA@mail.gmail.com>
- <20190109000214.GA5907@andrea> <CAOMFOmUSttpLyeiRLjxw4rSN0tOiAq1jbwK=kRdCkuOKPOC3Rg@mail.gmail.com>
- <20190109112432.GA6351@andrea> <CACT4Y+YAr1XuwAy1qRL678VHZjzsbAQ05o1zoN9ZfC0muYzK8g@mail.gmail.com>
- <20190109121126.GA7141@andrea>
-In-Reply-To: <20190109121126.GA7141@andrea>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Wed, 9 Jan 2019 13:29:02 +0100
-Message-ID: <CACT4Y+azpzvjmUTdWj6H4qe4mELx924pGrY_VFZD9Hi+4VMj5g@mail.gmail.com>
-Subject: Re: seqcount usage in xt_replace_table()
-To:     Andrea Parri <andrea.parri@amarulasolutions.com>
-Cc:     Anatol Pomozov <anatol.pomozov@gmail.com>,
-        Florian Westphal <fw@strlen.de>,
-        Paul McKenney <paulmck@linux.ibm.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        Will Deacon <will.deacon@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.5d91ef683e3f432342f536e0f2fe239dbcebcb3e.1547026369.git-series.maxime.ripard@bootlin.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 9, 2019 at 1:11 PM Andrea Parri
-<andrea.parri@amarulasolutions.com> wrote:
->
-> On Wed, Jan 09, 2019 at 12:55:27PM +0100, Dmitry Vyukov wrote:
-> > On Wed, Jan 9, 2019 at 12:24 PM Andrea Parri
-> > <andrea.parri@amarulasolutions.com> wrote:
-> > >
-> > > On Tue, Jan 08, 2019 at 04:36:46PM -0800, Anatol Pomozov wrote:
-> > > > Hello
-> > > >
-> > > > On Tue, Jan 8, 2019 at 4:02 PM Andrea Parri
-> > > > <andrea.parri@amarulasolutions.com> wrote:
-> > > > >
-> > > > > Hi Anatol,
-> > > > >
-> > > > > On Tue, Jan 08, 2019 at 11:33:39AM -0800, Anatol Pomozov wrote:
-> > > > > > Hello folks,
-> > > > > >
-> > > > > > A bit of context what I am doing. I am trying to port KTSAN (Kernel
-> > > > > > Thread Sanitizer) tool to v4.20. That tool tracks shared data usage
-> > > > > > and makes sure it is accessed in a thread-safe manner.
-> > > > >
-> > > > > Interesting!  FYI, some LKMM's maintainers (Paul included) had and
-> > > > > continued to have some "fun" discussing topics related to "thread-
-> > > > > safe memory accesses": I'm sure that they'll be very interested in
-> > > > > such work of yours and eager to discuss your results.
-> > > >
-> > > > Thread Sanitizer is a great tool to find thread-safety issues with
-> > > > user-space code. The tool been developed by a team of smart people
-> > > > from Google [1].
-> > > >
-> > > > KTSAN is an attempt to bring the same ideas to Linux kernel [2]. A
-> > > > bunch of work been done there but the project is still at
-> > > > proof-of-concept point.
-> > >
-> > > Yes, I have been aware of these tools since at least  ;-)
-> > >
-> > >   https://groups.google.com/forum/#!msg/ktsan/bVZ1c6H2NE0/Dxrw55bfBAAJ
-> > >
-> > >
-> > > >
-> > > > I am not a part of Google's dynamic tools team. But I've decided to
-> > > > pick something to do during the New Year holidays so started porting
-> > > > KTSAN from v4.2 to v4.20. The work is "almost completed" but I need to
-> > > > fix a few crashes [3].
-> > >
-> > > I guess my first reaction would remain
-> > >
-> > >   "it's kind of hard (to use an euphemism) to review 7,582 additions
-> > >   or so for a data race detector without a clear/an accepted (by the
-> > >   community) notion of data race..."
-> >
-> > Tsan's notion of a data race is basically the C/C++'s notion:
-> > concurrent/unsynchronized non-atomic access in different threads at
-> > least one of which is a write.
->
-> Yeah, I think that this notion needs to be detailed, discussed,
-> documented, and discussed again. ;-)
->
->
-> > Tremendous (for such a project) benefits of automatic data race
-> > detection is a good motivation to finally agree on and accept a
-> > practically useful notion of a data race.
->
-> Agreed.
+On Wed, Jan 09, 2019 at 10:33:17AM +0100, Maxime Ripard wrote:
+> Hi,
+> 
+> Here is a set of patches to allow the phy framework consumers to test and
+> apply runtime configurations.
+> 
+> This is needed to support more phy classes that require tuning based on
+> parameters depending on the current use case of the device, in addition to
+> the power state management already provided by the current functions.
+> 
+> A first test bed for that API are the MIPI D-PHY devices. There's a number
+> of solutions that have been used so far to support these phy, most of the
+> time being an ad-hoc driver in the consumer.
+> 
+> That approach has a big shortcoming though, which is that this is quite
+> difficult to deal with consumers integrated with multiple variants of phy,
+> of multiple consumers integrated with the same phy.
+> 
+> The latter case can be found in the Cadence DSI bridge, and the CSI
+> transceiver and receivers. All of them are integrated with the same phy, or
+> can be integrated with different phy, depending on the implementation.
+> 
+> I've looked at all the MIPI DSI drivers I could find, and gathered all the
+> parameters I could find. The interface should be complete, and most of the
+> drivers can be converted in the future. The current set converts two of
+> them: the above mentionned Cadence DSI driver so that the v4l2 drivers can
+> use them, and the Allwinner MIPI-DSI driver.
+> 
+> Let me know what you think,
+> Maxime
+> 
+> Changes from v3
+>   - Rebased on 5.0-rc1
+>   - Added the fixes suggested by Sakari
 
+Thanks!
 
-While having a 100% formal definition of a data race upfront would be
-useful, I don't think this is a hard requirement for deployment of
-KTSAN. What I think is required is:
-1. Agree that the overall direction is right.
-2. Agree that we want to enable data race detection and resolve
-problems as they appear in a practical manner (rather than block whole
-effort on every small thing).
-We deployed TSAN in user-space in much larger code bases than kernel,
-and while we had the C/C++ formal definition of a data race, practical
-and legacy matters were similar to that of the kernel (lots of legacy
-code, different opinions, etc). Doing both things in tandem (defining
-a memory model and deploying a data race detector) can actually have
-benefits as a race detector may point to under-defined or
-impractically defined areas, and will otherwise help to validate that
-the model works and is useful.
-KTSAN is not fixed as well. We adopted it as we gathered more
-knowledge and understanding of the kernel. So it's not that we have to
-commit to something upfront.
+For patches 1--3:
+
+Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+
+-- 
+Sakari Ailus
