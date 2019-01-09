@@ -2,105 +2,109 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4B97C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 21:23:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CD66C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 21:26:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 839CF206B6
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 21:23:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cmpxchg-org.20150623.gappssmtp.com header.i=@cmpxchg-org.20150623.gappssmtp.com header.b="gQCkCkBR"
+	by mail.kernel.org (Postfix) with ESMTP id D252B20859
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 21:26:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726987AbfAIVXi (ORCPT
+        id S1726568AbfAIV0H (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 16:23:38 -0500
-Received: from mail-yb1-f196.google.com ([209.85.219.196]:33150 "EHLO
-        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725681AbfAIVXh (ORCPT
+        Wed, 9 Jan 2019 16:26:07 -0500
+Received: from outbound-smtp25.blacknight.com ([81.17.249.193]:43405 "EHLO
+        outbound-smtp25.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725681AbfAIV0H (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 16:23:37 -0500
-Received: by mail-yb1-f196.google.com with SMTP id o73so3602474ybc.0
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jan 2019 13:23:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=kfFoE86abS3p8Fs1VfcYmGgBPBRGbAxZVbI0XgjcWOE=;
-        b=gQCkCkBRANwch9nBpN2mXOwU5nTY9Yi9e5cM+ZfzTUzr15AuQShCmzvmumgREGnX0a
-         GNzAzRVC8wrd1gy1pYZlbBEHWestM29tSNpvivyYH2y7BmI5QiY+JH7CK6iYiIBb/FTh
-         LjlipZf2PfnTq9fQ0yQiX1Je5l6oE6plLwXlrwyYLddPE/WGNX6CYNK3nwT1OP/QEcXn
-         zIl3PDUlT0ksHLwqc7HEJYqeYfSbn+j1OGroY3omaplEMagiZRzf5ftf4HBMubUDOaqP
-         QHw7osyPDV5QaAZpmO4t503bVrHOvHCyqf6dyZtOGZr8P3qQflUWyG05fXHYCstdbOfu
-         eliA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=kfFoE86abS3p8Fs1VfcYmGgBPBRGbAxZVbI0XgjcWOE=;
-        b=pf2BFV15q/FCCTPzxzlWKxZM4cHApW6ZegRdIWcZzlQ43qeM4f+KttMNtGtkpJiaW2
-         PE5F4uFMfKGXJwRDtDna4224W/rtf8LyH21icRl0m7Iq3dYs7O7jN377SgAp8MBzXVu5
-         QMxstouzqzKprPwUzHG6G4+UupSiDgH7mRjzRG4pAXvJYY7NqwPl0J8uJKEOJAR04qHo
-         cCVuKJqRDndGMSnmAqyBlY1kQDVGiMIy3bQ0oIcM0j4ze40ONHnuLwUQA+WmESjgQbMI
-         sFugFpFSwWAInqPp7ZB6zEBzZy8c6x09PcOx4k3UVYwdLwxHgV+kiMm+U07nZJZ78HRC
-         sqmg==
-X-Gm-Message-State: AJcUukfahsoHWEonvqI21MPltLbXq9JRWEGtkpQgQvuy9Lze8BzaiMV6
-        /8t67syS83ufORXRUb3C2P6mdQ==
-X-Google-Smtp-Source: ALg8bN6ye/lNUL4fYCnvsTnc5SMLGZTPIs8R1YA9vf4m7tPeXHO+Vp6V0HmcfoDI3m4qMHxVEZKOqQ==
-X-Received: by 2002:a25:b321:: with SMTP id l33mr7119551ybj.280.1547069016441;
-        Wed, 09 Jan 2019 13:23:36 -0800 (PST)
-Received: from localhost ([2620:10d:c091:200::7:f15b])
-        by smtp.gmail.com with ESMTPSA id s185sm36693021yws.69.2019.01.09.13.23.35
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 09 Jan 2019 13:23:35 -0800 (PST)
-Date:   Wed, 9 Jan 2019 16:23:34 -0500
-From:   Johannes Weiner <hannes@cmpxchg.org>
-To:     Yang Shi <yang.shi@linux.alibaba.com>
-Cc:     mhocko@suse.com, shakeelb@google.com, akpm@linux-foundation.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC v3 PATCH 0/5] mm: memcontrol: do memory reclaim when
- offlining
-Message-ID: <20190109212334.GA18978@cmpxchg.org>
-References: <1547061285-100329-1-git-send-email-yang.shi@linux.alibaba.com>
- <20190109193247.GA16319@cmpxchg.org>
- <d92912c7-511e-2ab5-39a6-38af3209fcaf@linux.alibaba.com>
+        Wed, 9 Jan 2019 16:26:07 -0500
+Received: from mail.blacknight.com (pemlinmail05.blacknight.ie [81.17.254.26])
+        by outbound-smtp25.blacknight.com (Postfix) with ESMTPS id 9C658B88AA
+        for <linux-kernel@vger.kernel.org>; Wed,  9 Jan 2019 21:26:05 +0000 (GMT)
+Received: (qmail 12084 invoked from network); 9 Jan 2019 21:26:05 -0000
+Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[37.228.229.96])
+  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 9 Jan 2019 21:26:05 -0000
+Date:   Wed, 9 Jan 2019 21:26:03 +0000
+From:   Mel Gorman <mgorman@techsingularity.net>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     David Rientjes <rientjes@google.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Vlastimil Babka <vbabka@suse.cz>, ying.huang@intel.com,
+        kirill@shutemov.name, Linux-MM <linux-mm@kvack.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] mm, compaction: Use free lists to quickly locate a
+ migration target -fix
+Message-ID: <20190109212603.GY31517@techsingularity.net>
+References: <20190104125011.16071-1-mgorman@techsingularity.net>
+ <20190109111344.GU31517@techsingularity.net>
+ <20190109112731.7d189ba6a606ca8f84dc5fa2@linux-foundation.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-15
 Content-Disposition: inline
-In-Reply-To: <d92912c7-511e-2ab5-39a6-38af3209fcaf@linux.alibaba.com>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+In-Reply-To: <20190109112731.7d189ba6a606ca8f84dc5fa2@linux-foundation.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 09, 2019 at 12:36:11PM -0800, Yang Shi wrote:
-> As I mentioned above, if we know some page caches from some memcgs
-> are referenced one-off and unlikely shared, why just keep them
-> around to increase memory pressure?
+On Wed, Jan 09, 2019 at 11:27:31AM -0800, Andrew Morton wrote:
+> On Wed, 9 Jan 2019 11:13:44 +0000 Mel Gorman <mgorman@techsingularity.net> wrote:
+> 
+> > Full compaction of a node passes in negative orders which can lead to array
+> > boundary issues. While it could be addressed in the control flow of the
+> > primary loop, it would be fragile so explicitly check for the condition.
+> > This is a fix for the mmotm patch
+> > broken-out/mm-compaction-use-free-lists-to-quickly-locate-a-migration-target.patch
+> > 
+> > ...
+> >
+> > --- a/mm/compaction.c
+> > +++ b/mm/compaction.c
+> > @@ -1206,6 +1206,10 @@ fast_isolate_freepages(struct compact_control *cc)
+> >  	bool scan_start = false;
+> >  	int order;
+> >  
+> > +	/* Full compaction passes in a negative order */
+> > +	if (order <= 0)
+> > +		return cc->free_pfn;
+> > +
+> >  	/*
+> >  	 * If starting the scan, use a deeper search and use the highest
+> >  	 * PFN found if a suitable one is not found.
+> 
+> `order' is uninitialized.
 
-It's just not clear to me that your scenarios are generic enough to
-justify adding two interfaces that we have to maintain forever, and
-that they couldn't be solved with existing mechanisms.
+Twice I managed to send out the wrong one :(
 
-Please explain:
+---8<---
+mm, compaction: Use free lists to quickly locate a migration target -fix
 
-- Unmapped clean page cache isn't expensive to reclaim, certainly
-  cheaper than the IO involved in new application startup. How could
-  recycling clean cache be a prohibitive part of workload warmup?
+Full compaction of a node passes in negative orders which can lead to array
+boundary issues. While it could be addressed in the control flow of the
+primary loop, it would be fragile so explicitly check for the condition.
+This is a fix for the mmotm patch
+broken-out/mm-compaction-use-free-lists-to-quickly-locate-a-migration-target.patch
 
-- Why you cannot temporarily raise the kswapd watermarks right before
-  an important application starts up (your answer was sorta handwavy)
+Signed-off-by: Mel Gorman <mgorman@techsingularity.net>
+---
+ mm/compaction.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-- Why you cannot use madvise/fadvise when an application whose cache
-  you won't reuse exits
-
-- Why you couldn't set memory.high or memory.max to 0 after the
-  application quits and before you call rmdir on the cgroup
-
-Adding a permanent kernel interface is a serious measure. I think you
-need to make a much better case for it, discuss why other options are
-not practical, and show that this will be a generally useful thing for
-cgroup users and not just a niche fix for very specific situations.
+diff --git a/mm/compaction.c b/mm/compaction.c
+index 9438f0564ed5..4b46ae96cc1b 100644
+--- a/mm/compaction.c
++++ b/mm/compaction.c
+@@ -1206,6 +1206,10 @@ fast_isolate_freepages(struct compact_control *cc)
+ 	bool scan_start = false;
+ 	int order;
+ 
++	/* Full compaction passes in a negative order */
++	if (cc->order <= 0)
++		return cc->free_pfn;
++
+ 	/*
+ 	 * If starting the scan, use a deeper search and use the highest
+ 	 * PFN found if a suitable one is not found.
