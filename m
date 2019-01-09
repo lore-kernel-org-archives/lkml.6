@@ -2,254 +2,269 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BEF18C43612
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 18:12:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2F2DC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 18:12:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 875A820859
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 18:12:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547057522;
-	bh=B3ZQRE0vzPsu3HpmF9S75jYi6+M3LDQWmmULNmut2nQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=snKpVvTG8tb0/aSUMq4iduREL+W4rcI4Ol2gZsV+iRdXpn/vujHnETTr22URl2A0Q
-	 bDA6a69CSOcoVxaUHgdDNqIcZBBt0zD981HJWjaBidzu1tyE0fO2qTg9akBMfniQas
-	 AJfiwxjraKErIBCxBxM7Ds0+1ViE5ggY09Uzt400=
+	by mail.kernel.org (Postfix) with ESMTP id 878CF20859
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 18:12:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727386AbfAISMB (ORCPT
+        id S1727472AbfAISMx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 13:12:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49636 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725775AbfAISMB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 13:12:01 -0500
-Received: from earth.universe (dyndsl-095-033-009-186.ewe-ip-backbone.de [95.33.9.186])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 59C8F20859;
-        Wed,  9 Jan 2019 18:11:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547057519;
-        bh=B3ZQRE0vzPsu3HpmF9S75jYi6+M3LDQWmmULNmut2nQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=1UEkZ9S2dITcPwpWWZT6yzIDcyWLHt27jtDSSZNck+G42R3CMSbWvCTuBKyGSfktL
-         Fh5vcRP//Ejh6w3vudxU86cwe682C1OQLIVMH57wQ7l+QjNzuCqphy7UkijSr+6NK3
-         4HeDur1nnzbukhFw5sB40SIeqBQ7YQmK2t0+lCRk=
-Received: by earth.universe (Postfix, from userid 1000)
-        id CBBE43C08E2; Wed,  9 Jan 2019 19:11:56 +0100 (CET)
-Date:   Wed, 9 Jan 2019 19:11:56 +0100
-From:   Sebastian Reichel <sre@kernel.org>
-To:     Marcel Holtmann <marcel@holtmann.org>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Tony Lindgren <tony@atomide.com>,
-        Rob Herring <robh@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Pavel Machek <pavel@ucw.cz>, linux-bluetooth@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-omap@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 12/14] media: wl128x-radio: move from TI_ST to hci_ll
- driver
-Message-ID: <20190109181156.yamhult6bpwkhx74@earth.universe>
-References: <20181221011752.25627-1-sre@kernel.org>
- <20181221011752.25627-13-sre@kernel.org>
- <C85D80C9-2B00-4161-B934-9D70E2B173D0@holtmann.org>
+        Wed, 9 Jan 2019 13:12:53 -0500
+Received: from smtp.nue.novell.com ([195.135.221.5]:50524 "EHLO
+        smtp.nue.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725775AbfAISMx (ORCPT
+        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
+        Wed, 9 Jan 2019 13:12:53 -0500
+Received: from linux-l9pv.suse (124-11-22-254.static.tfn.net.tw [124.11.22.254])
+        by smtp.nue.novell.com with ESMTP (TLS encrypted); Wed, 09 Jan 2019 19:12:13 +0100
+Date:   Thu, 10 Jan 2019 02:11:55 +0800
+From:   joeyli <jlee@suse.com>
+To:     James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Stephan Mueller <smueller@chronox.de>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "Lee, Chun-Yi" <joeyli.kernel@gmail.com>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Pavel Machek <pavel@ucw.cz>,
+        LKML <linux-kernel@vger.kernel.org>, linux-pm@vger.kernel.org,
+        keyrings@vger.kernel.org,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Chen Yu <yu.c.chen@intel.com>,
+        Oliver Neukum <oneukum@suse.com>,
+        Ryan Chen <yu.chen.surf@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Giovanni Gherdovich <ggherdovich@suse.cz>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Jann Horn <jannh@google.com>
+Subject: Re: [PATCH 1/5 v2] PM / hibernate: Create snapshot keys handler
+Message-ID: <20190109181155.GI9503@linux-l9pv.suse>
+References: <20190103143227.9138-1-jlee@suse.com>
+ <4499700.LRS4F2YjjC@tauon.chronox.de>
+ <20190108050358.llsox32hggn2jioe@gondor.apana.org.au>
+ <1565399.7ulKdI1fm5@tauon.chronox.de>
+ <D70458DE-712B-4767-8143-7DC9107689C3@amacapital.net>
+ <1546994671.6077.10.camel@HansenPartnership.com>
+ <CALCETrWTAYpWv73MgAz=NUfvJSLq965fWMYvJnDepJoRBsgt6Q@mail.gmail.com>
+ <1547016579.2789.17.camel@HansenPartnership.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="3p5tmadscirikk3y"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <C85D80C9-2B00-4161-B934-9D70E2B173D0@holtmann.org>
-User-Agent: NeoMutt/20180716
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1547016579.2789.17.camel@HansenPartnership.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi James
 
---3p5tmadscirikk3y
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Tue, Jan 08, 2019 at 10:49:39PM -0800, James Bottomley wrote:
+> On Tue, 2019-01-08 at 17:43 -0800, Andy Lutomirski wrote:
+> > [Adding Jarkko because this stuff relates to the TPM.]
+> > 
+> > On Tue, Jan 8, 2019 at 4:44 PM James Bottomley
+> > <James.Bottomley@hansenpartnership.com> wrote:
+> > > 
+> > > On Tue, 2019-01-08 at 15:54 -0800, Andy Lutomirski wrote:
+> > > > > On Jan 7, 2019, at 11:09 PM, Stephan Mueller <smueller@chronox.
+> > > > > de>
+> > > > > wrote:
+> > > > > 
+> > > > > Am Dienstag, 8. Januar 2019, 06:03:58 CET schrieb Herbert Xu:
+> > > > > 
+> > > > > Hi Herbert,
+> > > > > 
+> > > > > > Are we going to have multiple implementations for the same
+> > > > > > KDF? If not then the crypto API is not a good fit.  To
+> > > > > > consolidate multiple implementations of the same KDF, simply
+> > > > > > provide helpers for them.
+> > > > > 
+> > > > > It is unlikely to have multiple implementations of a KDF.
+> > > > > However, KDFs relate to hashes like block chaining modes to raw
+> > > > > block ciphers. Thus a KDF can be applied with different hashes.
+> > > > > 
+> > > > > My idea was to add template support to RNGs (because KDFs are
+> > > > > effectively a type of RNG since they produce an arbitrary
+> > > > > output from a fixed input). The KDFs would be a template
+> > > > > wrapping hashes.  For example, the CTR-KDF from SP800-108 could
+> > > > > be instantiated like kdf-ctr(sha256).
+> > > > > 
+> > > > > 
+> > > > 
+> > > > I think that, if the crypto API is going to grow a KDF facility,
+> > > > it should be done right. Have a key type or flag or whatever that
+> > > > says “this key may *only* be used to derive keys using such-and-
+> > > > such algorithm”, and have a helper to derive a key.  That helper
+> > > > should take some useful parameters and mix them in:
+> > > > 
+> > > > - What type of key is being derived?  ECDSA signing key?  HMAC
+> > > > key?  AES key?
+> > > > 
+> > > > - Can user code access the derived key?
+> > > > 
+> > > > - What is the key’s purpose?  “Encrypt and authenticate a
+> > > > hibernation image” would be a purpose.
+> > > > 
+> > > > - Number of bytes.
+> > > > 
+> > > > All of these parameters should be mixed in to the key derivation.
+> > > > 
+> > > > Also, an AE key, even for AES+HMAC, should be just one derived
+> > > > key.  If you need 512 bits, ask for a 512-bit key, not two 256-
+> > > > bit keys.
+> > > 
+> > > Actually, it would be enormously helpful if we could reuse these
+> > > pieces for the TPM as well.  It has two KDFs: KDFa, which is the
+> > > CTR-KDF from SP800-108 and KDFe which is the SP800-56A KDF for
+> > > elliptic curve one pass Diffie Hellman, so if we're going to do the
+> > > former, I'd really like the latter as well.
+> > > 
+> > > The way the TPM parametrises input to both KDFs is
+> > > 
+> > > (hashAlg, key, label, contextU, contextV, bits)
+> > > 
+> > > Where
+> > > 
+> > > hashAlg  = the hash algorithm used as the PRF
+> > > key      = the input parameter of variable bit size or
+> > >            the x co-ordinate of the shared point
+> > > label    = An ASCII string representing the use
+> > > contextU = public input U
+> > > contextV = public input V
+> > > bits     = number of output bits
+> > > 
+> > > Is that a good enough parametrisation (not the only way you
+> > > distinguish uses is with the label, which is not
+> > > recoverable)?  ContextU and ContextV are simply concatenated to
+> > > form the full Context of SP800-108, but we tend to need two
+> > > separate inputs (for KDFe they're the public x co-ordinates of the
+> > > points of the two inputs to ECDH for instance; in KDFa they're
+> > > usually the local and remote nonces).
+> > > 
+> > > The labels for TPM usage are things like "INTEGRITY" for HMAC keys
+> > > or "CFB" when generating an aes128-cfb session key. For KDFe, the
+> > > tpm seems to like the label "SECRET".  Although the TPM specifies
+> > > fixed short strings for the label, nothing prevents them being
+> > > longer like the purpose you state above (essentially we could mix
+> > > purpose, use and key type into the label and the contexts).
+> > > 
+> > 
+> > That really ought to cover anything the kernel needs.
+> > 
+> > But can you explain what's up with with KDFe?  The obvious searches
+> > end up with just warnings that the US currently has no government :(
+> 
+> You mean you can't find SP100-56A because NIST is a government entity
+> and it's discontinued its website because of the government shutdown? 
+> No idea, I only live here, you'll have to ask a real American.
+> 
+> ACM does have a copy:
+> 
+> http://delivery.acm.org/10.1145/2210000/2206270/SP800-56A_Revision1_Mar08-2007.pdf?ip=50.35.68.20&id=2206270&acc=OPEN&key=4D4702B0C3E38B35%2E4D4702B0C3E38B35%2E4D4702B0C3E38B35%2E6D218144511F3437&__acm__=1546993111_ed9c8bd24b2f838c829d428aac7f5d71
+> 
+> > Anyway, if we're talking about the TPM, it seems like the entire
+> > "trusted key" mechanism in the kernel is missing the point.  If I
+> > want to encrypt something like a hibernation image on a machine with
+> > a TPM, it makes essentially no sense to me that we would get a key
+> > with a known raw value that is merely TPM-backed (i.e. the "trusted
+> > key") and use that to decrypt the image.  The right way to do it is
+> > to the use the TPM as it was intended to be used: generate a single-
+> > use key that protects the hibernation image and seal *that* directly
+> > on the TPM, such that it can only be unsealed with appropriate PCR
+> > values.  Heck, we could even use one of the fancy NV counters such
+> > that we *can't* decrypt the image later on.  And using HMAC or any AE
+> > construction the normal way is also wrong -- we should *hash* the
+> > image and sign the hash directly on the TPM so that the restore code
+> > can validate the PCR values that were in place when the hibernation
+> > image was created.  [0]
+> 
+> Well, theoretically, trusted keys can be used for PCR sealed bundles,
+> at least in 1.2 ... I'm not sure the 2.0 one actually works because you
+> have to construct the policy session outside the kernel.
+> 
+> > In other words, I think that a kernel-based encrypted hibernation
+> > mechanism should create an image like this:
+> > 
+> > - wrapped key
+> > - instructions, if needed, for unwrapping
+> 
+> This sounds like the format we use for TPM resident keys, except it
+> would protect a TPM unseal bundle:
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/jejb/openssl_tpm2_engine.git/tree/tpm2-asn.h
+> 
+> > - hash of the entire image except the hash and signature fields
+> > - signature of the hash
+> > 
+> > and the remainder is a regular hiberation image that is encrypted
+> > against the key.  No AE is needed -- just encryption.  And there's no
+> > trampoline, no weird per-page hashing, etc.  Of course, this also
+> > means that someone needs to audit the hibernation restore code to
+> > make sure that there's no way for a malicious image to gain code
+> > execution over the restoring kernel before the verification even
+> > runs.  Or some much more complicated hash can be used that supports
+> > incremental verification.
+> > 
+> > 
+> > (Also, do we have a sensible story of how the TPM interacts with
+> > hibernation at all?
+> 
+> Not really, no ... there is a TPM patch for LUKS, but trusted keys are
+> unused within the kernel.
+>
 
-Hi Marcel,
+The trusted key has be used to produce encrypted key for EVM:
+https://sourceforge.net/p/linux-ima/wiki/Home/#creating-trusted-and-evm-encrypted-keys 
+ 
+> >   Presumably we should at least try to replay the PCR operations that
+> > have occurred so that we can massage the PCRs into the same state
+> > post-hibernation.  Also, do we have any way for the kernel to sign
+> > something with the TPM along with an attestation that the signature
+> > was requested *by the kernel*?  Something like a sub-hierarchy of
+> > keys that the kernel explicitly prevents userspace from accessing?)
+> 
+> We're just growing that now with the TPM asymmetric operations.
+> Attesting that the kernel requested the signature is harder.  The TPM
+> can attest to log entries (as it does for the UEFI log and IMA) and it
+> can certify keys, but that only proves they're TPM resident not who the
+> requestor was.  Effectively the latter is an assertion about who knows
+> the key authority, which is hard to prove.
+> 
+> > [0] If you take some data, run it through an authenticated encryption
+> > algorithm, and sign (key, nonce, tag), I think you're operating
+> > outside of the accepted security definitions if you expect this to
+> > guarantee that the data wasn't tampered with.  I'm reasonably
+> > confident that there are quite a few excellent AE algorithms that
+> > completely fail if used this like this.  In fact, pretty much all of
+> > the modern fast ones probably fail.  AE is for when the key is
+> > *secret*.
+> 
+> Well, I think here, if we were actually trying to solve the problem of
+> proving the hibernated image were the same one we would need to prove
+> some log of the kernel operation came to a particular value *after* the
+> hibernated image were restored ... it's not really possible to
+> condition key release which must occur before the restore on that
+> outcome, so it strikes me we need more than a simple release bound to
+> PCR values.
+>
 
-First of all thanks for your review.
+hm... I am studying your information. But I have a question...
 
-On Sun, Dec 23, 2018 at 04:56:47PM +0100, Marcel Holtmann wrote:
-> Hi Sebastian,
+If PCR is not capped and the root be compromised, is it possible that a
+sealed bundle also be compromised? 
 
-[...]
+Is it possible that kernel can produce a sealed key with PCR by TPM when
+booting? Then kernel caps a PCR by a constant value before the root is
+available for userland. Then the sealed key can be exposed to userland
+or be attached on hibernate image. Even the root be compromised, the TPM
+trusted key is still secure.
 
-> > +static int ll_register_fm(struct ll_device *lldev)
-> > +{
-> > +	struct device *dev =3D &lldev->serdev->dev;
-> > +	int err;
-> > +
-> > +	if (!of_device_is_compatible(dev->of_node, "ti,wl1281-st") &&
-> > +	    !of_device_is_compatible(dev->of_node, "ti,wl1283-st") &&
-> > +	    !of_device_is_compatible(dev->of_node, "ti,wl1285-st"))
-> > +		return -ENODEV;
->=20
-> do we really want to hardcode this here? Isn't there some HCI
-> vendor command or some better DT description that we can use to
-> decide when to register this platform device.
-
-I don't know if there is some way to identify the availability
-based on some HCI vendor command. The public documentation from
-the WiLink chips is pretty bad.
-
-> > +	lldev->fmdev =3D platform_device_register_data(dev, "wl128x-fm",
-> > +		PLATFORM_DEVID_AUTO, NULL, 0);
->=20
-> Fix the indentation please to following networking coding style.
-
-Ok.
-
-[...]
-
-> > +static int ll_recv_radio(struct hci_dev *hdev, struct sk_buff *skb)
-> > +{
-> > +	struct hci_uart *hu =3D hci_get_drvdata(hdev);
-> > +	struct serdev_device *serdev =3D hu->serdev;
-> > +	struct ll_device *lldev =3D serdev_device_get_drvdata(serdev);
-> > +
-> > +	if (!lldev->fm_handler) {
-> > +		kfree_skb(skb);
-> > +		return -EINVAL;
-> > +	}
-> > +
-> > +	/* Prepend skb with frame type */
-> > +	memcpy(skb_push(skb, 1), &hci_skb_pkt_type(skb), 1);
-> > +
-> > +	lldev->fm_handler(lldev->fm_drvdata, skb);
->=20
-> So I have no idea why we bother adding the frame type here. What
-> is the purpose. I think this is useless and we better fix the
-> radio driver if that is what is expected.
-
-That should be possible. I will change this before sending another
-revision.
-
-> > +	return 0;
-> > +}
-
-[...]
-
-> > +int hci_ti_fm_send(struct device *dev, struct sk_buff *skb)
-> > +{
-> > +	struct serdev_device *serdev =3D to_serdev_device(dev);
-> > +	struct ll_device *lldev =3D serdev_device_get_drvdata(serdev);
-> > +	struct hci_uart *hu =3D &lldev->hu;
-> > +	int ret;
-> > +
-> > +	hci_skb_pkt_type(skb) =3D HCILL_FM_RADIO;
-> > +	ret =3D ll_enqueue_prefixed(hu, skb);
->=20
-> This is the same as above, lets have the radio driver not add this
-> H:4 protocol type in the first place. It is really pointless that
-> this driver tries to hack around it.
-
-Yes, obviously both paths should follow the same logic.
-
-[...]
-
-> > diff --git a/include/linux/ti_wilink_st.h b/include/linux/ti_wilink_st.h
-> > index f2293028ab9d..a9de5654b0cd 100644
-> > --- a/include/linux/ti_wilink_st.h
-> > +++ b/include/linux/ti_wilink_st.h
-> > @@ -86,6 +86,8 @@ struct st_proto_s {
-> > extern long st_register(struct st_proto_s *);
-> > extern long st_unregister(struct st_proto_s *);
-> >=20
-> > +void hci_ti_set_fm_handler(struct device *dev, void (*recv_handler) (v=
-oid *, struct sk_buff *), void *drvdata);
-> > +int hci_ti_fm_send(struct device *dev, struct sk_buff *skb);
->=20
-> This really needs to be put somewhere else if we are removing the
-> TI Wilink driver. This header file has to be removed as well.
-
-That header is already being used by the hci_ll driver (before this
-patch) for some packet structures. I removed all WiLink specific
-things in the patch removing the TI WiLink driver and kept it
-otherwise.
-
-> I wonder really if we are not better having the Bluetooth HCI core
-> provide an abstraction for a vendor channel. So that the HCI
-> packets actually can flow through HCI monitor and be recorded via
-> btmon. This would also mean that the driver could do something
-> like hci_vnd_chan_add() and hci_vnd_chan_del() and use a struct
-> hci_vnd_chan for callback handler hci_vnd_chan_send() functions.
-
-Was this question directed to me? I trust your decision how this
-should be implemented. I'm missing the big picture from other BT
-devices ;)
-
-If I understood you correctly the suggestion is, that the TI BT
-driver uses hci_recv_frame() for packet type 0x08 (LL_RECV_FM_RADIO).
-Then the FM driver can call hci_vnd_chan_add() in its probe function
-and hci_vnd_chan_del() in its remove function to register the receive
-hook? Also the dump_tx_skb_data()/dump_rx_skb_data() could be
-removed, since btmon can be used to see the packets? Sounds very
-nice to me.
-
-> On a side note, what is the protocol the TI FM radio is using
-> anyway? Is that anywhere documented except the driver itself? Are
-> they using HCI commands as well?
-
-AFAIK there is no public documentation for the TI WiLink chips. At
-least my only information source are the existing drivers. The
-driver protocol can be seen in drivers/media/radio/wl128x/fmdrv_common.h:
-
-struct fm_cmd_msg_hdr {
-	__u8 hdr;		/* Logical Channel-8 */
-	__u8 len;		/* Number of bytes follows */
-	__u8 op;		/* FM Opcode */
-	__u8 rd_wr;		/* Read/Write command */
-	__u8 dlen;		/* Length of payload */
-} __attribute__ ((packed));
-
-struct fm_event_msg_hdr {
-	__u8 header;		/* Logical Channel-8 */
-	__u8 len;		/* Number of bytes follows */
-	__u8 status;		/* Event status */
-	__u8 num_fm_hci_cmds;	/* Number of pkts the host allowed to send */
-	__u8 op;		/* FM Opcode */
-	__u8 rd_wr;		/* Read/Write command */
-	__u8 dlen;		/* Length of payload */
-} __attribute__ ((packed));
-
-Apart from the Bluetooth and FM part, the chips also support GPS
-(packet type 0x9). The GPS feature is not used on Droid 4 stock
-rom and seems to carry some TI specific protocol instead of NMEA.
-Here is an old submission for this driver:
-http://lkml.iu.edu/hypermail/linux/kernel/1005.0/00918.html
-
-(I don't plan to work on the GPS part, but it provides some more
-details about the WiLink chips protocol)
-
--- Sebastian
-
---3p5tmadscirikk3y
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlw2OWkACgkQ2O7X88g7
-+poWpBAAl/CofpIfp0Fv/sEJulTAp4GRc9bhb78UhUJvmMZxKQ0TFD3C6aZyVTnU
-/QtNymeNQeXibTnHgd+2R34emUuO4eRksWy+DhG5fgFK9vmdeUhiiN705ZHqftX/
-U7uPzgVgNJRHjZ3A8SLp0UyP5kbNSANI4suoqGWRCLcwntxoYEwfY6bS/LmN1squ
-hc+9OJzRcIP4PkWsXIa6IDskyVwYA07Sh/1CwcTZooMhx7NRfcQTflyWi0b5t6ok
-0q6J/2r7ybPqnx3rq4u/PiWLr6j8ReKqJzwDur4R2vp+5vbr+uDDlE+ARJn+2sxS
-s6iUw3O6/TPao1DkDVFjXFl1ff203C/62F6+2c2XFVP+vt0hJboQx8m0hMQBXE6/
-g8E1i2pGJYzG5epRVktnMwtkVpITY/+/Ay93XbdCy1yLgktZYO42SS9x5qhqAHu5
-NoBcH73Lhiyt2J4Po3Og4J7IlETXmAD9lb1tyYoltuLo/XorZ6Cr5U8I42/0Qafx
-0mamyoGLsYFCRJS88tzud4ypVhmNyyL+r+9/gBtlKEhDczrgHgN8pvvvO91gyQ0z
-4DDf2Z5L431ghIU5KambjAyVHmGZH17Lap2/86DYMLvUPlxXrcV9r0N32TTwMrQN
-K4mYRKbAfVm8qgUtYK2lgx1Fu7OmC6BjKHmcIfgQJDX2lTYEeLo=
-=kBKw
------END PGP SIGNATURE-----
-
---3p5tmadscirikk3y--
+Thanks a lot!
+Joey Lee 
