@@ -4,65 +4,66 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53F10C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 01:27:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9595C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 01:27:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2130720821
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 01:27:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 77A1A205C9
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 01:27:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KZnWVwX6"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DFECkZe8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729729AbfAIB1x (ORCPT
+        id S1729751AbfAIB14 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 20:27:53 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:36692 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729698AbfAIB1u (ORCPT
+        Tue, 8 Jan 2019 20:27:56 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:46019 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729685AbfAIB1t (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 20:27:50 -0500
-Received: by mail-wr1-f67.google.com with SMTP id u4so6021867wrp.3;
-        Tue, 08 Jan 2019 17:27:49 -0800 (PST)
+        Tue, 8 Jan 2019 20:27:49 -0500
+Received: by mail-wr1-f65.google.com with SMTP id t6so5962694wrr.12;
+        Tue, 08 Jan 2019 17:27:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=eu8YGlhuvRnxMnAUAS9Ae7ho2XqM5HTbQGR4QdPi7hE=;
-        b=KZnWVwX61+mAQhekiakSF4VoPknhUSZTnbemgwQLv2TtanYvbYS3zAYe3ehvsu1jKu
-         Ng9ZikyBfELTkzpncGOsFD2tXBXda0IQIpIh/1UDArON6DUjGfflmVSskEdq/IEwZjyz
-         5dKNLQubn0YT/NA9v53BY19nA03inW5VLWsHiABHd3xEPO33ZzaQswERw73YTIYY5QjP
-         hTPYl5X5D/XoQnemYw+k3aOmczKjKjCSvHXi7wX1kP7Uws+tb1YNPOPm5XIHig0V2UQV
-         1G4wc/SDnDeVHAv9OE+i1fDT3oq55ABt9dB9l4UUKcuP6IjaW4Qkp7MPPfEK+AhrVADR
-         fqIw==
+        bh=X1CzxfoRB3z94dMUde/0tctDv45BKK0+G6IeHmGf5XI=;
+        b=DFECkZe8Gec9k9yYAxPYdPPCZLJfkfpP4jkAl6DYiZN+0Kd/zPJsZ0AIU2fGbDDqLJ
+         2qhsHRt2KcJ4NvPTl6atiiTsBh0ZPIIbC+lruS3YlVikHmFfxeQqk2kKctYHf3FecIei
+         rPskZ0PWyf3xX95UKIOXu8OTrLOdJEWHkkBCGV+85bxKo7mJn2in2iGbRBYrhTAtja6J
+         KQ7aQJCdKc7gyLaElV0nDzSnlSNnMCb0RW5j9l2/SjVlpjqarqXFlBUeDpovd2sOqADa
+         mcj8Lnl6ytxsdNQNdF44F3KieEBzkkJv7ZXk5pwTD1QLiVvtSpreJKnDKSri47e6EfpC
+         R9Cw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
          :in-reply-to:references:mime-version:content-transfer-encoding;
-        bh=eu8YGlhuvRnxMnAUAS9Ae7ho2XqM5HTbQGR4QdPi7hE=;
-        b=cVJt0/fRlkLwDIy1UM+p6wDnanouCBe06O+HD/qDJt9EwWQ8PP37j6u5zggGDxgWxm
-         weLjaTLC+rkjl4mfbQ3J+6+fqfULObgtpR4fL5Ez1W2bgHxhn242D0PDdmeA7Ad112If
-         ndba459FKnsWNpPmGsLCbLkP1rVlPoORl7loSMq8KgPEm9QkbM65HytcRbxRKBnZfB4o
-         ujahiJVS8C2Ho1U6XrdjTUpB6RZLQF6UX/b0QjtbXspTanDuC8GH4/vPMY2FdxRumM/W
-         a4Z0vbDwySA6ByhJgzmSGAiXHbGIbj3fTc077C0vob2ZeWV7XREe7e0qZlB2r17kdLo2
-         KlaA==
-X-Gm-Message-State: AJcUukfOIY9OQc0wZxY3p7RuPkXmiLuacCZ0ccbaZPE0k74qwnqHup7H
-        gJOzPCqtWBoCLluJQydsTK6cjXQ9KRc=
-X-Google-Smtp-Source: ALg8bN4yy4pkoXHsGtnRWH2T6iivY8MFzeF0QsqWcwCY5OkkZgBbco/TLQEHg18FxVPlCwtnOQRVxA==
-X-Received: by 2002:adf:b102:: with SMTP id l2mr3008134wra.296.1546997269048;
-        Tue, 08 Jan 2019 17:27:49 -0800 (PST)
+        bh=X1CzxfoRB3z94dMUde/0tctDv45BKK0+G6IeHmGf5XI=;
+        b=VcYMQjs9rCivMcZRXhvpEMwtwrPB2sRqZHb1sZLPsWK5ktfxhbpkuYH/52uYER2AUn
+         aOwozRCcahKHlYEp6XtBsOKiX4NCMmb3rWp2vF6pT34c/14nFIe7yYrHkuqLrtQuOmGQ
+         wkA10wJVKv2j7D3+uuAvSRFJUzhcdpvsYBO8MS9xrOKSSxqptTXmdUd5AXRHfIyelNqc
+         ZVEz5rEadxLCGLxraifnlb3Iz0dKrutmb8cNSIVlpiYWTMSISF509UaWUkHhoOshyE5O
+         ba7OmVcwlbiUamBwjTknITnj1L/cmexu9ikj3qIAuVe/LA21lUraSN6Cp1yyUdW20ByD
+         3SrQ==
+X-Gm-Message-State: AJcUukeBZ883jZLho6HuFjS4PuRonZ++EPh9VPBTezODCMJDfbfT8YzS
+        sq2iAVlgzBWxePYHeD1F9IY=
+X-Google-Smtp-Source: ALg8bN4/RNeQ/Amh1uaqj1zlXKVOAI0OT2AM2dyxHYVHi90OOkml98ILpuVpPuM2pJTgmmkvASsJgw==
+X-Received: by 2002:adf:8342:: with SMTP id 60mr2932552wrd.212.1546997267737;
+        Tue, 08 Jan 2019 17:27:47 -0800 (PST)
 Received: from beren.harmstone.com ([88.97.13.154])
-        by smtp.gmail.com with ESMTPSA id y34sm156915088wrd.68.2019.01.08.17.27.48
+        by smtp.gmail.com with ESMTPSA id y34sm156915088wrd.68.2019.01.08.17.27.47
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 08 Jan 2019 17:27:48 -0800 (PST)
+        Tue, 08 Jan 2019 17:27:47 -0800 (PST)
 From:   Mark Harmstone <mark@harmstone.com>
 Cc:     mark@harmstone.com, Chris Mason <clm@fb.com>,
         Josef Bacik <josef@toxicpanda.com>,
         David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [RFC PATCH 18/19] btrfs: return encrypted flag to statx
-Date:   Wed,  9 Jan 2019 01:27:00 +0000
-Message-Id: <20190109012701.26441-18-mark@harmstone.com>
+Subject: [RFC PATCH 17/19] btrfs: don't allow direct IO of encrypted extents
+Date:   Wed,  9 Jan 2019 01:26:59 +0000
+Message-Id: <20190109012701.26441-17-mark@harmstone.com>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20190109012701.26441-1-mark@harmstone.com>
 References: <20190109012701.26441-1-mark@harmstone.com>
@@ -76,29 +77,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Signed-off-by: Mark Harmstone <mark@harmstone.com>
 ---
- fs/btrfs/inode.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ fs/btrfs/inode.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
 diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-index 8f58f492abc8..beaeeafe467a 100644
+index f8bc7174f7e3..8f58f492abc8 100644
 --- a/fs/btrfs/inode.c
 +++ b/fs/btrfs/inode.c
-@@ -9637,11 +9637,14 @@ static int btrfs_getattr(const struct path *path, struct kstat *stat,
- 		stat->attributes |= STATX_ATTR_IMMUTABLE;
- 	if (bi_flags & BTRFS_INODE_NODUMP)
- 		stat->attributes |= STATX_ATTR_NODUMP;
-+	if (bi_flags & BTRFS_INODE_ENCRYPT)
-+		stat->attributes |= STATX_ATTR_ENCRYPTED;
+@@ -7945,6 +7945,17 @@ static int btrfs_get_blocks_direct(struct inode *inode, sector_t iblock,
+ 		goto unlock_err;
+ 	}
  
- 	stat->attributes_mask |= (STATX_ATTR_APPEND |
- 				  STATX_ATTR_COMPRESSED |
- 				  STATX_ATTR_IMMUTABLE |
--				  STATX_ATTR_NODUMP);
-+				  STATX_ATTR_NODUMP |
-+				  STATX_ATTR_ENCRYPTED);
- 
- 	generic_fillattr(inode, stat);
- 	stat->dev = BTRFS_I(inode)->root->anon_dev;
++	/*
++	 * Fallback to buffered IO if we have an encrypted inode,
++	 * as we would need to change what's in memory.
++	 */
++	if ((create && inode_need_encrypt(inode)) ||
++		test_bit(EXTENT_FLAG_ENCRYPTED, &em->flags)) {
++		free_extent_map(em);
++		ret = -ENOTBLK;
++		goto unlock_err;
++	}
++
+ 	if (create) {
+ 		ret = btrfs_get_blocks_direct_write(&em, bh_result, inode,
+ 						    dio_data, start, len);
 -- 
 2.19.2
 
