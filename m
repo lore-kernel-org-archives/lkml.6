@@ -1,94 +1,122 @@
 Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=1.3 required=3.0 tests=DATE_IN_PAST_24_48,FROM_WORDY,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE4F3C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 14:15:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF1A8C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 14:18:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B7D57206BB
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 14:15:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 86042206BB
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 14:18:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731626AbfAIOPM (ORCPT
+        id S1731341AbfAIOSx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 09:15:12 -0500
-Received: from mail1.bemta25.messagelabs.com ([195.245.230.1]:17688 "EHLO
-        mail1.bemta25.messagelabs.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731169AbfAIONn (ORCPT
+        Wed, 9 Jan 2019 09:18:53 -0500
+Received: from www262.sakura.ne.jp ([202.181.97.72]:50058 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731169AbfAIOSx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 09:13:43 -0500
-Received: from [46.226.52.104] (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256 bits))
-        by server-1.bemta.az-a.eu-west-1.aws.symcld.net id 80/29-19156-391063C5; Wed, 09 Jan 2019 14:13:39 +0000
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrIIsWRWlGSWpSXmKPExsVy8IPnUd3JjGY
-  xBg8PMVmcatnDbnHlIpA19eETNou95z8yW3y70sFkcXnXHDaLzl39rBYbvq9ldODw2PC5ic2j
-  9dJfNo+ds+6yeyzYVOqxaVUnm8e+t8vYPNZvucri8XmTXABHFGtmXlJ+RQJrxqF9V1gLdrNVn
-  Dr6jKmBcQ1rFyMXh5DAOkaJOWduAjmcQE6FxP2151lAbF4BN4mmLceZQGw2AQuJyScesIHYLA
-  IqEn2n54HFhQUCJGa2/gSrFxHoYpQ4f9QbZCizwCFGiV2bd7JDDBKUODnzCVgRs4CExMEXL5g
-  hlhlInF7QCBaXELCXmP7+KlCcA8jWl2g8FgsRNpT4PusbVIm5xIqHC9gmMPLPQjJ1FpKpCxiZ
-  VjGaJxVlpmeU5CZm5ugaGhjoGhoa6RpaGuuamuslVukm6qWW6panFpfoGuollhfrFVfmJuek6
-  OWllmxiBEZFSsFByx2Mp5anH2KU5GBSEuXd8t00RogvKT+lMiOxOCO+qDQntfgQowwHh5IErw
-  eDWYyQYFFqempFWmYOMD5h0hIcPEoivHzAGBXiLS5IzC3OTIdInWJUlBLn5fwFNFMAJJFRmgf
-  XBksJlxhlpYR5GRkYGIR4ClKLcjNLUOVfMYpzMCoJ85aBbOfJzCuBm/4KaDET0OJDjCYgi0sS
-  EVJSDYxCrhxLW4oTOWU2pHlvDrTb727Jpn16v7GWXHGv2+7qVzGp5YLZL5J4aiOZvCKzgpvmK
-  zleLldV0+fYZnPuz94keQvdcvWQU3G7stfP+LHly9TeqUdFthruZ/Daw8c9P3nPW++sxUnbt7
-  AwRH59e6z1rHnHpUvfzl15N2XXxIXWG3pyDFdOKVBiKc5INNRiLipOBAANITDmBAMAAA==
-X-Env-Sender: Adam.Thomson.Opensource@diasemi.com
-X-Msg-Ref: server-4.tower-268.messagelabs.com!1547043218!1157657!2
-X-Originating-IP: [193.240.73.197]
-X-SYMC-ESS-Client-Auth: outbound-route-from=pass
-X-StarScan-Received: 
-X-StarScan-Version: 9.31.5; banners=-,-,-
-X-VirusChecked: Checked
-Received: (qmail 6204 invoked from network); 9 Jan 2019 14:13:39 -0000
-Received: from unknown (HELO sw-ex-cashub01.diasemi.com) (193.240.73.197)
-  by server-4.tower-268.messagelabs.com with AES128-SHA256 encrypted SMTP; 9 Jan 2019 14:13:39 -0000
-Received: from swsrvapps-01.diasemi.com (10.20.28.141) by
- SW-EX-CASHUB01.diasemi.com (10.20.16.140) with Microsoft SMTP Server id
- 14.3.382.0; Wed, 9 Jan 2019 14:13:37 +0000
-Received: by swsrvapps-01.diasemi.com (Postfix, from userid 22379)      id
- B6F1A3FADD; Tue,  8 Jan 2019 09:13:26 +0000 (GMT)
-Message-ID: <cover.1546876084.git.Adam.Thomson.Opensource@diasemi.com>
-From:   Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
-Date:   Tue, 8 Jan 2019 09:13:26 +0000
-Subject: [PATCH 0/2] ASoC: da7219: Improvements to DAI clocks handling in driver
-To:     Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Takashi Iwai <tiwai@suse.com>, Jaroslav Kysela <perex@perex.cz>
-CC:     Akshu Agrawal <Akshu.Agrawal@amd.com>,
-        Daniel Kurtz <djkurtz@google.com>,
-        <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>,
-        Support Opensource <support.opensource@diasemi.com>
+        Wed, 9 Jan 2019 09:18:53 -0500
+Received: from fsav104.sakura.ne.jp (fsav104.sakura.ne.jp [27.133.134.231])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x09EIpRv033111;
+        Wed, 9 Jan 2019 23:18:51 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav104.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav104.sakura.ne.jp);
+ Wed, 09 Jan 2019 23:18:51 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav104.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank126126163036.bbtec.net [126.126.163.36])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x09EIkRs032906
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
+        Wed, 9 Jan 2019 23:18:51 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Subject: Re: WARNING: locking bug in lock_downgrade
+To:     peterz@infradead.org, "mingo@redhat.com" <mingo@redhat.com>
+References: <00000000000043ae20057b974f14@google.com>
+ <f0acc6af-cdd5-0e46-bca5-2e2a9a4c983e@linux.alibaba.com>
+ <69273d51-c129-6b0f-35eb-d98655476ff9@redhat.com>
+Cc:     Waiman Long <longman@redhat.com>,
+        Yang Shi <yang.shi@linux.alibaba.com>,
+        syzbot <syzbot+53383ae265fb161ef488@syzkaller.appspotmail.com>,
+        akpm@linux-foundation.org, kirill.shutemov@linux.intel.com,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux@dominikbrodowski.net, mhocko@suse.com, rientjes@google.com,
+        syzkaller-bugs@googlegroups.com, vbabka@suse.cz,
+        boqun.feng@gmail.com
+From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Message-ID: <d61e0a3e-a71e-9e42-7a56-d6fcfc0f6b63@I-love.SAKURA.ne.jp>
+Date:   Wed, 9 Jan 2019 23:18:44 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-KSE-AttachmentFiltering-Interceptor-Info: protection disabled
-X-KSE-ServerInfo: sw-ex-cashub01.diasemi.com, 9
-X-KSE-Antivirus-Interceptor-Info: scan successful
-X-KSE-Antivirus-Info: Clean, bases: 09/01/2019 12:09:00
+In-Reply-To: <69273d51-c129-6b0f-35eb-d98655476ff9@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Message-ID: <20190108091326.K8v-L4ZHbMTY_5WfNoGvwg0BbTIF3yqepQA80yDBEaM@z>
 
-This small patchset provides improvements to CCF based clock handling relating
-to the DAI clocks. In the first patch MCLK is made parent of DAI clocks, if MCLK
-has been provided to the driver, which means that MCLK will automatically be
-enabled as a prerequisite to DAI clocks. The second patch adds the ability to
-read the WCLK rate provided by the codec when DAI clocks are featured. This is
-more useful than the returned rate simply being the rate of the parent clock,
-which in this case would be MCLK.
+On 2018/12/14 4:46, Waiman Long wrote:
+> On 12/12/2018 08:14 PM, Yang Shi wrote:
+>> By looking into lockdep code, I'm not sure if lockdep may get confused
+>> by such sequence or not?
+>>
+>>
+>> Any hint is appreciated.
+>>
+>>
+>> Regards,
+>>
+>> Yang 
+> 
+> The warning was printed because hlock->read was set when doing the
+> downgrade_write(). So it is either downgrade_write() was called a second
+> time or a read lock was held originally. It is hard to tell what is the
+> root cause without a reproducer.
+> 
+> Cheers,
+> Longman
+> 
 
-Adam Thomson (2):
-  ASoC: da7219: MCLK should be enabled before DAI clocks
-  ASoC: da7219: Add recalc_rate function to return DAI clock rate
+Comparing with output from
 
- sound/soc/codecs/da7219.c | 77 ++++++++++++++++++++++++++++++++++++++++-------
- sound/soc/codecs/da7219.h |  1 +
- 2 files changed, 67 insertions(+), 11 deletions(-)
+        struct rw_semaphore *sem = &current->mm->mmap_sem;
 
--- 
-1.9.1
+        down_write(sem);
+        pr_warn("mmap_sem: count=%ld current=%px, owner=%px\n", atomic_long_read(&sem->count), current, READ_ONCE(sem->owner));
+        /* mmap_sem: count=-4294967295 current=ffff88813095ca80, owner=ffff88813095ca80 */
+        downgrade_write(sem);
+        pr_warn("mmap_sem: count=%ld current=%px, owner=%px\n", atomic_long_read(&sem->count), current, READ_ONCE(sem->owner));
+        /* mmap_sem: count=1 current=ffff88813095ca80, owner=ffff88813095ca83 */
+        up_read(sem);
+        pr_warn("mmap_sem: count=%ld current=%px, owner=%px\n", atomic_long_read(&sem->count), current, READ_ONCE(sem->owner));
+        /* mmap_sem: count=0 current=ffff88813095ca80, owner=0000000000000003 */
+
+what we got with debug printk() patch
+
+  https://syzkaller.appspot.com/text?tag=CrashLog&x=169dbb9b400000
+
+  [ 2580.337550][ T3645] mmap_sem: hlock->read=1 count=-4294967295 current=ffff888050e04140, owner=ffff888050e04140
+  [ 2580.353526][ T3645] ------------[ cut here ]------------
+  [ 2580.367859][ T3645] downgrading a read lock
+  [ 2580.367935][ T3645] WARNING: CPU: 1 PID: 3645 at kernel/locking/lockdep.c:3572 lock_downgrade+0x35d/0xbe0
+  [ 2580.382206][ T3645] Kernel panic - not syncing: panic_on_warn set ...
+
+  https://syzkaller.appspot.com/text?tag=CrashLog&x=1542da4f400000
+
+  [  386.342585][T16698] mmap_sem: hlock->read=1 count=-4294967295 current=ffff8880512ae180, owner=ffff8880512ae180
+  [  386.348586][T16698] ------------[ cut here ]------------
+  [  386.357203][T16698] downgrading a read lock
+  [  386.357294][T16698] WARNING: CPU: 1 PID: 16698 at kernel/locking/lockdep.c:3572 lock_downgrade+0x35d/0xbe0
+  [  386.372148][T16698] Kernel panic - not syncing: panic_on_warn set ...
+
+indicates that lockdep is saying that "current->mm->mmap_sem is held for read"
+while "struct rw_semaphore" is saying that "current->mm->mmap_sem is held for write".
+Something made lockdep confused. Possibly a lockdep bug.
 
