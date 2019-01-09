@@ -2,148 +2,202 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2463C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 17:10:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1067FC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 17:11:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71858206B7
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 17:10:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547053826;
-	bh=mT7Oi4L4p1/Fj3PHNHBarq5qzTkgNA2phF6bApyB9OM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=Pm1YlGbiL6LeHe2PrJndjAAf9rCopeJE8/mviTcDbbTuqT+cljpi7S3gWBRPftsxH
-	 VaPCW8TKqkP1EGh1DJhwpEcq8zEIvxmMRQB/o9qxN3PkplO7h3jS06GFfy++dpzbVZ
-	 MEtgVXhggx+8L9E+PWow0Kw6XyUmal6uwKkR4wWk=
+	by mail.kernel.org (Postfix) with ESMTP id CCB2C20685
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 17:11:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726846AbfAIRKZ (ORCPT
+        id S1726854AbfAIRLB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 12:10:25 -0500
-Received: from mx2.suse.de ([195.135.220.15]:35732 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726516AbfAIRKZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 12:10:25 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 17804AF03;
-        Wed,  9 Jan 2019 17:10:23 +0000 (UTC)
-Date:   Wed, 9 Jan 2019 18:10:21 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Kirill Tkhai <ktkhai@virtuozzo.com>
-Cc:     akpm@linux-foundation.org, hannes@cmpxchg.org,
-        josef@toxicpanda.com, jack@suse.cz, hughd@google.com,
-        darrick.wong@oracle.com, aryabinin@virtuozzo.com, guro@fb.com,
-        mgorman@techsingularity.net, shakeelb@google.com,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC 0/3] mm: Reduce IO by improving algorithm of memcg
- pagecache pages eviction
-Message-ID: <20190109171021.GY31793@dhcp22.suse.cz>
-References: <154703479840.32690.6504699919905946726.stgit@localhost.localdomain>
- <20190109141113.GW31793@dhcp22.suse.cz>
- <e9b64635-87cf-f330-acea-0ca681a2528e@virtuozzo.com>
+        Wed, 9 Jan 2019 12:11:01 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:50826 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726422AbfAIRLB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 12:11:01 -0500
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x09H90l9196275
+        for <linux-kernel@vger.kernel.org>; Wed, 9 Jan 2019 12:10:59 -0500
+Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2pwjvsfcw8-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Jan 2019 12:10:59 -0500
+Received: from localhost
+        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Wed, 9 Jan 2019 17:10:58 -0000
+Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
+        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 9 Jan 2019 17:10:55 -0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x09HAsfh22413490
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 9 Jan 2019 17:10:54 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 56E24B2065;
+        Wed,  9 Jan 2019 17:10:54 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3046DB205F;
+        Wed,  9 Jan 2019 17:10:54 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.88])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Wed,  9 Jan 2019 17:10:54 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id CB32F16C6335; Wed,  9 Jan 2019 09:10:53 -0800 (PST)
+Date:   Wed, 9 Jan 2019 09:10:53 -0800
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     Dmitry Vyukov <dvyukov@google.com>
+Cc:     Andrea Parri <andrea.parri@amarulasolutions.com>,
+        Anatol Pomozov <anatol.pomozov@gmail.com>,
+        Florian Westphal <fw@strlen.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Will Deacon <will.deacon@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Subject: Re: seqcount usage in xt_replace_table()
+Reply-To: paulmck@linux.ibm.com
+References: <CAOMFOmU=t9YbE68YpoQn0Ug0XN1F+0iuJp9J=htCRRrbdaPSVA@mail.gmail.com>
+ <20190109000214.GA5907@andrea>
+ <CAOMFOmUSttpLyeiRLjxw4rSN0tOiAq1jbwK=kRdCkuOKPOC3Rg@mail.gmail.com>
+ <20190109112432.GA6351@andrea>
+ <CACT4Y+YAr1XuwAy1qRL678VHZjzsbAQ05o1zoN9ZfC0muYzK8g@mail.gmail.com>
+ <20190109121126.GA7141@andrea>
+ <CACT4Y+azpzvjmUTdWj6H4qe4mELx924pGrY_VFZD9Hi+4VMj5g@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <e9b64635-87cf-f330-acea-0ca681a2528e@virtuozzo.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CACT4Y+azpzvjmUTdWj6H4qe4mELx924pGrY_VFZD9Hi+4VMj5g@mail.gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 19010917-0052-0000-0000-0000037598BC
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010373; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000274; SDB=6.01144059; UDB=6.00595657; IPR=6.00924321;
+ MB=3.00025052; MTD=3.00000008; XFM=3.00000015; UTC=2019-01-09 17:10:58
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19010917-0053-0000-0000-00005F66F989
+Message-Id: <20190109171053.GY1215@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-09_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901090142
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 09-01-19 18:43:05, Kirill Tkhai wrote:
-> Hi, Michal,
+On Wed, Jan 09, 2019 at 01:29:02PM +0100, Dmitry Vyukov wrote:
+> On Wed, Jan 9, 2019 at 1:11 PM Andrea Parri
+> <andrea.parri@amarulasolutions.com> wrote:
+> >
+> > On Wed, Jan 09, 2019 at 12:55:27PM +0100, Dmitry Vyukov wrote:
+> > > On Wed, Jan 9, 2019 at 12:24 PM Andrea Parri
+> > > <andrea.parri@amarulasolutions.com> wrote:
+> > > >
+> > > > On Tue, Jan 08, 2019 at 04:36:46PM -0800, Anatol Pomozov wrote:
+> > > > > Hello
+> > > > >
+> > > > > On Tue, Jan 8, 2019 at 4:02 PM Andrea Parri
+> > > > > <andrea.parri@amarulasolutions.com> wrote:
+> > > > > >
+> > > > > > Hi Anatol,
+> > > > > >
+> > > > > > On Tue, Jan 08, 2019 at 11:33:39AM -0800, Anatol Pomozov wrote:
+> > > > > > > Hello folks,
+> > > > > > >
+> > > > > > > A bit of context what I am doing. I am trying to port KTSAN (Kernel
+> > > > > > > Thread Sanitizer) tool to v4.20. That tool tracks shared data usage
+> > > > > > > and makes sure it is accessed in a thread-safe manner.
+> > > > > >
+> > > > > > Interesting!  FYI, some LKMM's maintainers (Paul included) had and
+> > > > > > continued to have some "fun" discussing topics related to "thread-
+> > > > > > safe memory accesses": I'm sure that they'll be very interested in
+> > > > > > such work of yours and eager to discuss your results.
+> > > > >
+> > > > > Thread Sanitizer is a great tool to find thread-safety issues with
+> > > > > user-space code. The tool been developed by a team of smart people
+> > > > > from Google [1].
+> > > > >
+> > > > > KTSAN is an attempt to bring the same ideas to Linux kernel [2]. A
+> > > > > bunch of work been done there but the project is still at
+> > > > > proof-of-concept point.
+> > > >
+> > > > Yes, I have been aware of these tools since at least  ;-)
+> > > >
+> > > >   https://groups.google.com/forum/#!msg/ktsan/bVZ1c6H2NE0/Dxrw55bfBAAJ
+> > > >
+> > > >
+> > > > >
+> > > > > I am not a part of Google's dynamic tools team. But I've decided to
+> > > > > pick something to do during the New Year holidays so started porting
+> > > > > KTSAN from v4.2 to v4.20. The work is "almost completed" but I need to
+> > > > > fix a few crashes [3].
+> > > >
+> > > > I guess my first reaction would remain
+> > > >
+> > > >   "it's kind of hard (to use an euphemism) to review 7,582 additions
+> > > >   or so for a data race detector without a clear/an accepted (by the
+> > > >   community) notion of data race..."
+> > >
+> > > Tsan's notion of a data race is basically the C/C++'s notion:
+> > > concurrent/unsynchronized non-atomic access in different threads at
+> > > least one of which is a write.
+> >
+> > Yeah, I think that this notion needs to be detailed, discussed,
+> > documented, and discussed again. ;-)
+> >
+> >
+> > > Tremendous (for such a project) benefits of automatic data race
+> > > detection is a good motivation to finally agree on and accept a
+> > > practically useful notion of a data race.
+> >
+> > Agreed.
 > 
-> On 09.01.2019 17:11, Michal Hocko wrote:
-> > On Wed 09-01-19 15:20:18, Kirill Tkhai wrote:
-> >> On nodes without memory overcommit, it's common a situation,
-> >> when memcg exceeds its limit and pages from pagecache are
-> >> shrinked on reclaim, while node has a lot of free memory.
-> > 
-> > Yes, that is the semantic of the hard limit. If the system is not
-> > overcommitted then the hard limit can be used to prevent unexpected
-> > direct reclaim from unrelated activity.
-> 
-> According to Documentation/admin-guide/cgroup-v2.rst:
-> 
->   memory.max
->         Memory usage hard limit.  This is the final protection
->         mechanism.  If a cgroup's memory usage reaches this limit and
->         can't be reduced, the OOM killer is invoked in the cgroup.
->         Under certain circumstances, the usage may go over the limit
->         temporarily.
-> 
-> There is nothing about direct reclaim in another memcg. I don't think
-> we break something here.
+> While having a 100% formal definition of a data race upfront would be
+> useful, I don't think this is a hard requirement for deployment of
+> KTSAN. What I think is required is:
+> 1. Agree that the overall direction is right.
+> 2. Agree that we want to enable data race detection and resolve
+> problems as they appear in a practical manner (rather than block whole
+> effort on every small thing).
+> We deployed TSAN in user-space in much larger code bases than kernel,
+> and while we had the C/C++ formal definition of a data race, practical
+> and legacy matters were similar to that of the kernel (lots of legacy
+> code, different opinions, etc). Doing both things in tandem (defining
+> a memory model and deploying a data race detector) can actually have
+> benefits as a race detector may point to under-defined or
+> impractically defined areas, and will otherwise help to validate that
+> the model works and is useful.
+> KTSAN is not fixed as well. We adopted it as we gathered more
+> knowledge and understanding of the kernel. So it's not that we have to
+> commit to something upfront.
 
-Others in the thread have pointed that out already. What is a hard limit
-in one memcg is an isolateion protection in another one. Especially when
-the system is not overcommited.
+In any case, there might well be some differences in approach between
+KTSAN and LKMM due to input size differences:  One would expect LKMM
+to be able to tolerate a more computationally intensive definition as
+a consequence of KTSAN's ability to process much larger code bases.
 
-> File pages are accounted to memcg, and this guarantees, that single
-> memcg won't occupy all system memory by its unevictible page cache.
-> But the suggested patchset follows the same way. Pages, which remain
-> in pagecache, are easy-to-be-evicted, since they are not dirty and
-> not under writeback. System can drop them fast and in foreseeable time.
-> This is cardinal thing about the patchset: remained pages do not
-> introduce principal burden on system memory or reclaim time.
+But I nevertheless believe that it would be good to have these differences
+be a matter of conscious choice rather than a matter of chance.  ;-)
 
-What does prevent that the page cache is easily reclaimable? Aka clean
-and ready to be dropped? Not to mention that even when the reclaim is
-fast it is not free. Especially when you do not expect that because you
-haven't reached your hard limit and the admin made sure that hard limits
-do not overcommit.
+My guess is that LKMM picks its starting point (which might take some
+additional time), then KTSAN critiques it, and then we work out what
+differences should result in a change to one or the other (or both)
+and which differences are inherent in the different workloads that LKMM
+and KTSAN are presented with.
 
-[...]
+Seem reasonable?
 
-> > But this also means that any hard limited memcg can fill up all the
-> > memory and break the above assumption about the isolation from direct
-> > reclaim. Not to mention the OOM or is there anything you do anything
-> > about preventing that?
-> 
-> This is discussed thing. We may add such the pages into tail of LRU list
-> instead of head. We may introduce one more separate list to link such
-> the pages only, and fastly evict them in case of global reclaim. I don't
-> think there is a problem.
->  
-> > That beig said, I do not think we want to or even can change the
-> > semantic of the hard limit and break existing setups.
-> 
-> Using the original description and the comments I gave in this message,
-> could you please to clarify the way we break existing setups?
+							Thanx, Paul
 
-isolation as explained above.
-
-> > I am still
-> > interested to hear more about more detailed/specific usecases that might
-> > benefit from this behavior. Why do those users even use hard limit at
-> > all? To protect from anon memory leaks?
-> 
-> In multi-user machine people want to have size of available to container
-> memory equal to the size, which they pay. So, hard limit is needed to prevent
-> one container to occupy all system memory via slowly-evictible writeback
-> pages, unevictible anon pages, etc. You can't fastly allocate a page,
-> in case of many pages are under writeback, this operation is very slow.
-> 
-> (But unmapped pagecache pages introduced by patchset is another thing:
->  you just need to take not sleeping spinlock to call __delete_from_page_cache()
->  only. This is fast)
-> 
-> Multi-user machine may have more memory, than sum of all containers hard
-> limit. This may be used as an optimization just to reduce disk IO. There
-> is no contradiction to sane sense here. And it's not a rare situation.
-> In our kernel we have cleancache driver for handling this situation, but
-> cleancache is not the best solution like I wrote.
-> 
-> Not overcommited system is likely case for the patchset, while the below
-> is a little less likely:
-
-I beliave Johannes has explained that you are trying to use the hard
-limit in a wrong way for something it is not designed for.
-
--- 
-Michal Hocko
-SUSE Labs
