@@ -2,106 +2,78 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6D3EC43444
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 17:22:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9771C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 17:23:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 696D9206B7
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 17:22:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547054531;
-	bh=x59Z4BaZlWUuL8ZjCtMQUTLKgd25tvlyk9JJkaGK9vo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=stzSfbFNn0DymdMkZDhLb0Ywzc76aBxJ5iLKkRDetxGb2uG1Ng6NQfS7K5dkeYg6c
-	 g3oWEJ67wlKW1bKO/fPqOGnVgUrhKCfGn9nvehjBXqusIIepT5nu6W+PtpLcixqyJn
-	 FNXUF/mjrDJw57dvfwi8TmrrsGU8HfJI2BqM2wlo=
+	by mail.kernel.org (Postfix) with ESMTP id C2B1020859
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 17:23:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726894AbfAIRWK (ORCPT
+        id S1726918AbfAIRXA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 12:22:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57546 "EHLO mail.kernel.org"
+        Wed, 9 Jan 2019 12:23:00 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:46942 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726574AbfAIRWK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 12:22:10 -0500
-Received: from gmail.com (unknown [104.132.1.77])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726574AbfAIRXA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 12:23:00 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2FDDC20660;
-        Wed,  9 Jan 2019 17:22:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547054529;
-        bh=x59Z4BaZlWUuL8ZjCtMQUTLKgd25tvlyk9JJkaGK9vo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=tNpXLBGGzhW8WA1SFmmuo/Y9jMCLorRZLSJUgtq2E1wopZyTWamEsZJvHdnFvQBYh
-         AqulMYNj90GnfpadUfF44PUlsy3lzYehOSHI8gDaHYstqv2jRX8TDrlqb06CTH5YSN
-         87+vmH41fmr+enu1tUySHC2yGo/1phsJUFYAJZPA=
-Date:   Wed, 9 Jan 2019 09:22:07 -0800
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Kalyani Akula <kalyani.akula@xilinx.com>
-Cc:     herbert@gondor.apana.org.au, davem@davemloft.net,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Kalyani Akula <kalyania@xilinx.com>,
-        Sarat Chand Savitala <saratcha@xilinx.com>
-Subject: Re: [RFC PATCH 2/3] crypto: Add Xilinx SHA3 driver
-Message-ID: <20190109172206.GA249140@gmail.com>
-References: <1546851776-3456-1-git-send-email-kalyani.akula@xilinx.com>
- <1546851776-3456-3-git-send-email-kalyani.akula@xilinx.com>
- <20190107165606.GA2077@gmail.com>
+        by mx1.redhat.com (Postfix) with ESMTPS id 3AB377E9CF;
+        Wed,  9 Jan 2019 17:23:00 +0000 (UTC)
+Received: from vitty.brq.redhat.com (unknown [10.43.2.155])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 383755C5DF;
+        Wed,  9 Jan 2019 17:22:58 +0000 (UTC)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     kvm@vger.kernel.org
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        linux-kernel@vger.kernel.org, Andrew Jones <drjones@redhat.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Jim Mattson <jmattson@google.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>
+Subject: [PATCH] x86/kvm/nVMX: don't skip emulated instruction twice when vmptr address is not backed
+Date:   Wed,  9 Jan 2019 18:22:56 +0100
+Message-Id: <20190109172256.16711-1-vkuznets@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190107165606.GA2077@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Wed, 09 Jan 2019 17:23:00 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 07, 2019 at 08:56:07AM -0800, Eric Biggers wrote:
-> Hi Kalyani,
-> 
-> On Mon, Jan 07, 2019 at 02:32:55PM +0530, Kalyani Akula wrote:
-> > This patch adds SHA3 driver suuport for the Xilinx
-> > ZynqMP SoC.
-> > 
-> > Signed-off-by: Kalyani Akula <kalyani.akula@xilinx.com>
-> [...]
-> > +
-> > +static struct ahash_alg sha3_alg = {
-> > +	.init		= zynqmp_sha_init,
-> > +	.update		= zynqmp_sha_update,
-> > +	.final		= zynqmp_sha_final,
-> > +	.finup		= zynqmp_sha_finup,
-> > +	.digest		= zynqmp_sha_digest,
-> > +	.export		= zynqmp_sha_export,
-> > +	.import		= zynqmp_sha_import,
-> > +	.halg = {
-> > +		.digestsize	= SHA384_DIGEST_SIZE,
-> > +		.statesize	= sizeof(struct sha256_state),
-> > +		.base	= {
-> > +			.cra_name		= "xilinx-keccak-384",
-> > +			.cra_driver_name	= "zynqmp-keccak-384",
-> > +			.cra_priority		= 300,
-> > +			.cra_flags		= CRYPTO_ALG_ASYNC,
-> > +			.cra_blocksize		= SHA384_BLOCK_SIZE,
-> > +			.cra_ctxsize		= sizeof(struct zynqmp_sha_ctx),
-> > +			.cra_alignmask		= 0,
-> > +			.cra_module		= THIS_MODULE,
-> > +			.cra_init		= zynqmp_sha_cra_init,
-> > +		}
-> > +	}
-> > +};
-> 
-> cra_name needs to match an algorithm that has a generic implementation.
-> It should be "sha3-384", or is your hardware not compatible?
-> Also does your hardware not support sha3-256 and sha3-512?
-> 
-> - Eric
+Since commit 09abb5e3e5e50 ("KVM: nVMX: call kvm_skip_emulated_instruction
+in nested_vmx_{fail,succeed}") nested_vmx_failValid() results in
+kvm_skip_emulated_instruction() so doing it again in handle_vmptrld() when
+vmptr address is not backed is wrong, we end up advancing RIP twice.
 
-Hi Kalyani, this was not addressed in v2.
+Fixes: fca91f6d60b6e ("kvm: nVMX: Set VM instruction error for VMPTRLD of unbacked page")
+Reported-by: Cornelia Huck <cohuck@redhat.com>
+Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+---
+ arch/x86/kvm/vmx/nested.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-- Eric
+diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
+index 3170e291215d..2616bd2c7f2c 100644
+--- a/arch/x86/kvm/vmx/nested.c
++++ b/arch/x86/kvm/vmx/nested.c
+@@ -4540,9 +4540,8 @@ static int handle_vmptrld(struct kvm_vcpu *vcpu)
+ 			 * given physical address won't match the required
+ 			 * VMCS12_REVISION identifier.
+ 			 */
+-			nested_vmx_failValid(vcpu,
++			return nested_vmx_failValid(vcpu,
+ 				VMXERR_VMPTRLD_INCORRECT_VMCS_REVISION_ID);
+-			return kvm_skip_emulated_instruction(vcpu);
+ 		}
+ 		new_vmcs12 = kmap(page);
+ 		if (new_vmcs12->hdr.revision_id != VMCS12_REVISION ||
+-- 
+2.20.1
+
