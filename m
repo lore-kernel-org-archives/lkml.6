@@ -2,96 +2,133 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03477C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 01:41:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 814ECC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 01:42:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D0D1220821
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 01:41:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 51B282146F
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 01:42:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Sk7aKVYM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729612AbfAIBlr convert rfc822-to-8bit (ORCPT
+        id S1729667AbfAIBmX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 20:41:47 -0500
-Received: from mx01.hxt-semitech.com ([223.203.96.7]:55465 "EHLO
-        barracuda.hxt-semitech.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729099AbfAIBlr (ORCPT
+        Tue, 8 Jan 2019 20:42:23 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:46955 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729617AbfAIBmW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 20:41:47 -0500
-X-ASG-Debug-ID: 1546997741-093b7e2d887eff0001-xx1T2L
-Received: from HXTBJIDCEMVIW02.hxtcorp.net ([10.128.0.15]) by barracuda.hxt-semitech.com with ESMTP id 5xEdSqT50cy5IZQn (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NO); Wed, 09 Jan 2019 09:35:41 +0800 (CST)
-X-Barracuda-Envelope-From: shunyong.yang@hxt-semitech.com
-Received: from HXTBJIDCEMVIW02.hxtcorp.net (10.128.0.15) by
- HXTBJIDCEMVIW02.hxtcorp.net (10.128.0.15) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Wed, 9 Jan 2019 09:35:34 +0800
-Received: from HXTBJIDCEMVIW02.hxtcorp.net ([fe80::3e:f4ff:7927:a6f6]) by
- HXTBJIDCEMVIW02.hxtcorp.net ([fe80::3e:f4ff:7927:a6f6%12]) with mapi id
- 15.00.1395.000; Wed, 9 Jan 2019 09:35:34 +0800
-From:   "Yang, Shunyong" <shunyong.yang@hxt-semitech.com>
-To:     "vkoul@kernel.org" <vkoul@kernel.org>
-CC:     "andy.gross@linaro.org" <andy.gross@linaro.org>,
-        "david.brown@linaro.org" <david.brown@linaro.org>,
-        Sinan Kaya <okaya@kernel.org>,
-        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
-        "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Zheng, Joey" <yu.zheng@hxt-semitech.com>
-Subject: About some mail lost and random unsubscribe  issues on this dmaengine
- list
-Thread-Topic: About some mail lost and random unsubscribe  issues on this
- dmaengine list
-X-ASG-Orig-Subj: About some mail lost and random unsubscribe  issues on this dmaengine
- list
-Thread-Index: AQHUp7udaPqeOMKVUkqGIWsA4iAm4g==
-Date:   Wed, 9 Jan 2019 01:35:34 +0000
-Message-ID: <b607a505d2974e1d879ba7d7c3488f85@HXTBJIDCEMVIW02.hxtcorp.net>
-References: <81c9fe2de4b5dac1d5b974f5305e35bf1cf5d127.1544156508.git.shunyong.yang@hxt-semitech.com>
- <ea6c6317dabffdcfa28cdb391b50edce98ce875d.1544156508.git.shunyong.yang@hxt-semitech.com>
- <88ef21bd-4e4f-8cce-39b3-53da45740f0f@kernel.org>
- <79da1c31d3e14e6e91cf6a7cc0fea31a@HXTBJIDCEMVIW01.hxtcorp.net>
- <16bbdd233f1d45249eb2f6592418efd5@HXTBJIDCEMVIW02.hxtcorp.net>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.64.6.209]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Tue, 8 Jan 2019 20:42:22 -0500
+Received: by mail-wr1-f65.google.com with SMTP id l9so5982663wrt.13
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jan 2019 17:42:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=b/HJvCgn5Z6ktlShmUJqvAiBoympcmpPOmkEoT0hzHc=;
+        b=Sk7aKVYMj7EOy8H9fRgOY7SyUoYBkUiHa9t7rsxy4dLzC1VfBlNl6SY/Kr2TfgaIqV
+         fBrt6z/zam8TRrYygQEfOJYYR3TLOcmMu6tETI+0P5B4kUOTV80SPRY1lH7vjlbADCzH
+         udIqu6ZIU5P/yf+QBVG3z6mzbsn7m722l/50w=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=b/HJvCgn5Z6ktlShmUJqvAiBoympcmpPOmkEoT0hzHc=;
+        b=IFd3B0ukmsmppJQVoc342NSmgfWjzplAMat/OVBwvq3H8QEtjDez19ZGnxrfwoTqx6
+         atvgirK/u5sfu8MuQxLFSkT/7bpNwDXqO12U5Ok5jHY5jTlShwK7HQd3VnfmGUK46uQb
+         DT+0mPNoeMhPA1XEutPolrwUBuHcG4LQjjoE/zJwqLiWtVrHeJwnV089QBGmQ+7POMkP
+         YIE7Kb0TXVgjcKaaWGMPa1/SQmq6ps0RXzYDAnVwJGxAsmzCOj2Y6YYsP1g1goqCT76Y
+         vLDsscyOVZ7o3xGSvuEZ8IBkjTTQrndspghY78EmWnihIED2exJd+BbSe14E8hDt2gzM
+         Uo0w==
+X-Gm-Message-State: AJcUukdxChCGC5bIOBWsrNrBBGUPJDwlBL38r6zGgg2jsatZg9+xNCxJ
+        e+jIlCDX4O1juBuMIcpUbc4JuA==
+X-Google-Smtp-Source: ALg8bN68p7cOe+vxysUeacG+9RLxll6UW+RojJnTZhd+9ifwoJfa9dseDZUZD5Zyand7EbWegT8sAw==
+X-Received: by 2002:adf:81c4:: with SMTP id 62mr2941156wra.266.1546998140673;
+        Tue, 08 Jan 2019 17:42:20 -0800 (PST)
+Received: from linaro.org ([2a01:e0a:f:6020:99e2:bc56:9ad9:69c5])
+        by smtp.gmail.com with ESMTPSA id c14sm10756601wme.13.2019.01.08.17.42.19
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 08 Jan 2019 17:42:19 -0800 (PST)
+Date:   Wed, 9 Jan 2019 02:42:18 +0100
+From:   Vincent Guittot <vincent.guittot@linaro.org>
+To:     Tony Lindgren <tony@atomide.com>
+Cc:     "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        LAK <linux-arm-kernel@lists.infradead.org>,
+        linux-omap@vger.kernel.org
+Subject: Re: Regression in v5.0-rc1 with autosuspend hrtimers
+Message-ID: <20190109014218.GA8363@linaro.org>
+References: <20190107233833.GI5544@atomide.com>
+ <CAKfTPtDBEmcsLotp-6K1KU1wM9Ba1EpMp3niXScRxYgzjs0nog@mail.gmail.com>
+ <20190108155354.GL5544@atomide.com>
+ <CAKfTPtCoOK-cYLXJ--sOfpVa9RVmzOAEN1+zB2qHMCzkJN0qaQ@mail.gmail.com>
+ <20190108213743.GN5544@atomide.com>
 MIME-Version: 1.0
-X-Barracuda-Connect: UNKNOWN[10.128.0.15]
-X-Barracuda-Start-Time: 1546997741
-X-Barracuda-Encrypted: ECDHE-RSA-AES256-SHA384
-X-Barracuda-URL: https://192.168.50.101:443/cgi-mod/mark.cgi
-X-Virus-Scanned: by bsmtpd at hxt-semitech.com
-X-Barracuda-BRTS-Status: 1
-X-Barracuda-Bayes: INNOCENT GLOBAL 0.1256 1.0000 -1.2412
-X-Barracuda-Spam-Score: -1.24
-X-Barracuda-Spam-Status: No, SCORE=-1.24 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=
-X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.65355
-        Rule breakdown below
-         pts rule name              description
-        ---- ---------------------- --------------------------------------------------
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190108213743.GN5544@atomide.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Vinod and All,
-  I found, somtimes, I cannot received some mails from this mailing
-list. For example, I sent my v2 series on 7th, Jan,
+Le Tuesday 08 Jan 2019 à 13:37:43 (-0800), Tony Lindgren a écrit :
+> * Vincent Guittot <vincent.guittot@linaro.org> [190108 16:42]:
+> > On Tue, 8 Jan 2019 at 16:53, Tony Lindgren <tony@atomide.com> wrote:
+> > > Hmm so could it be that we now rely on timers that that may
+> > > not be capable of waking up the system from idle states with
+> > > hrtimer?
+> > 
+> > With nohz and hrtimer enabled,  timer relies on hrtimer to generate
+> > the tick so you should use the same interrupt.
+> 
+> OK yeah looks like that part is working just fine.
+> 
+> Adding some printks and debugging over ssh, looks like
+> omap8250_runtime_resume() gets called just fine based on a wakeirq,
+> but then omap8250_runtime_suspend() runs immediately instead of
+> waiting for the three second timeout.
+> 
+> Lowering the autosuspend_delay_ms to 2100 ms makes things work again.
+> Anything higher than 2200 ms seems to somehow time out immediately
+> now :)
 
-https://patchwork.kernel.org/project/linux-dmaengine/list/?series=62713
+This is quite close to the max ns of an int on arm 32bits
 
-It appeared on patchwork.kernel.org but I haven't received it in this
-mailing list.
+Could you try the patch below ?
 
-And I found randomly, a month or two months, I am unsubscribed from this
-list automatically. Then I have to re-subscribe the list.
+---
+ drivers/base/power/runtime.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Have someone met similar problem as me? Or maybe I missed some necessary
-settings?
+diff --git a/drivers/base/power/runtime.c b/drivers/base/power/runtime.c
+index 7062469..44c5c76 100644
+--- a/drivers/base/power/runtime.c
++++ b/drivers/base/power/runtime.c
+@@ -141,7 +141,7 @@ u64 pm_runtime_autosuspend_expiration(struct device *dev)
+ 
+ 	last_busy = READ_ONCE(dev->power.last_busy);
+ 
+-	expires = last_busy + autosuspend_delay * NSEC_PER_MSEC;
++	expires = last_busy + (u64)(autosuspend_delay) * NSEC_PER_MSEC;
+ 	if (expires <= now)
+ 		expires = 0;	/* Already expired. */
+ 
+-- 
+2.7.4
 
-Shunyong.
-Thanks.
+
+> 
+> Regards,
+> 
+> Tony
