@@ -2,129 +2,132 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D97DC43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 02:21:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A75FC43444
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 02:24:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B5D420821
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 02:21:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D610E218C3
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 02:24:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729403AbfAICVc convert rfc822-to-8bit (ORCPT
+        id S1729326AbfAICYf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 21:21:32 -0500
-Received: from [223.203.96.18] ([223.203.96.18]:24153 "EHLO
-        barracuda02.hxt-semitech.com" rhost-flags-FAIL-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728403AbfAICVc (ORCPT
+        Tue, 8 Jan 2019 21:24:35 -0500
+Received: from ipmail07.adl2.internode.on.net ([150.101.137.131]:24420 "EHLO
+        ipmail07.adl2.internode.on.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728253AbfAICYe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 21:21:32 -0500
-X-Greylist: delayed 665 seconds by postgrey-1.27 at vger.kernel.org; Tue, 08 Jan 2019 21:21:26 EST
-X-ASG-Debug-ID: 1546999814-107606139f166050001-xx1T2L
-Received: from HXTBJIDCEMVIW01.hxtcorp.net ([10.128.0.14]) by barracuda02.hxt-semitech.com with ESMTP id xJ5qzBrsFgVJJzdm (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NO); Wed, 09 Jan 2019 10:10:14 +0800 (CST)
-X-Barracuda-Envelope-From: dongsheng.wang@hxt-semitech.com
-Received: from HXTBJIDCEMVIW02.hxtcorp.net (10.128.0.15) by
- HXTBJIDCEMVIW01.hxtcorp.net (10.128.0.14) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Wed, 9 Jan 2019 10:10:08 +0800
-Received: from HXTBJIDCEMVIW02.hxtcorp.net ([fe80::3e:f4ff:7927:a6f6]) by
- HXTBJIDCEMVIW02.hxtcorp.net ([fe80::3e:f4ff:7927:a6f6%12]) with mapi id
- 15.00.1395.000; Wed, 9 Jan 2019 10:10:08 +0800
-From:   "Wang, Dongsheng" <dongsheng.wang@hxt-semitech.com>
-To:     Adrian Hunter <adrian.hunter@intel.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Sinan Kaya <okaya@kernel.org>
-CC:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        "ACPI Devel Maling List" <linux-acpi@vger.kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Paul Cercueil <paul@crapouillou.net>,
-        "Geert Uytterhoeven" <geert@linux-m68k.org>,
-        Faiz Abbas <faiz_abbas@ti.com>,
-        "Chunyan Zhang" <chunyan.zhang@unisoc.com>,
-        Jisheng Zhang <Jisheng.Zhang@synaptics.com>,
-        Ludovic Barre <ludovic.barre@st.com>,
-        "Arnd Bergmann" <arnd@arndb.de>,
-        Alex Smith <alex.smith@imgtec.com>,
-        Chris Brandt <chris.brandt@renesas.com>,
-        "open list:MULTIMEDIA CARD (MMC), SECURE DIGITAL (SD) AND..." 
-        <linux-mmc@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Shah Nehal-Bakulchandra <Nehal-bakulchandra.Shah@amd.com>,
-        Philip Elcan <pelcan@codeaurora.org>
-Subject: Re: [PATCH v6 09/11] mmc: sdhci-acpi: Make PCI dependency explicit
-Thread-Topic: [PATCH v6 09/11] mmc: sdhci-acpi: Make PCI dependency explicit
-X-ASG-Orig-Subj: Re: [PATCH v6 09/11] mmc: sdhci-acpi: Make PCI dependency explicit
-Thread-Index: AQHUpoamtDDrGkzszECfCCh3iabD7g==
-Date:   Wed, 9 Jan 2019 02:10:08 +0000
-Message-ID: <532b0481985641138516730fe01290d9@HXTBJIDCEMVIW02.hxtcorp.net>
-References: <20190105100606.6673-1-okaya@kernel.org>
- <20190105100606.6673-10-okaya@kernel.org>
- <CAJZ5v0gXM3d0uuaQPyeafVS3S1tNbo0gY5TMskpQptNGvmVKzA@mail.gmail.com>
- <39fa9438-8928-5a1b-2a86-617df39e4c73@intel.com>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.64.6.208]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Tue, 8 Jan 2019 21:24:34 -0500
+Received: from ppp59-167-129-252.static.internode.on.net (HELO dastard) ([59.167.129.252])
+  by ipmail07.adl2.internode.on.net with ESMTP; 09 Jan 2019 12:54:31 +1030
+Received: from dave by dastard with local (Exim 4.80)
+        (envelope-from <david@fromorbit.com>)
+        id 1gh3Xi-0000Ox-8Y; Wed, 09 Jan 2019 13:24:30 +1100
+Date:   Wed, 9 Jan 2019 13:24:30 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Matthew Wilcox <willy@infradead.org>, Jann Horn <jannh@google.com>,
+        Jiri Kosina <jikos@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Michal Hocko <mhocko@suse.com>, Linux-MM <linux-mm@kvack.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>
+Subject: Re: [PATCH] mm/mincore: allow for making sys_mincore() privileged
+Message-ID: <20190109022430.GE27534@dastard>
+References: <CAG48ez2jAp9xkPXQmVXm0PqNrFGscg9BufQRem2UD8FGX-YzPw@mail.gmail.com>
+ <CAHk-=whL4sZiM=JcdQAYQvHm7h7xEtVUh+gYGYhoSk4vi38tXg@mail.gmail.com>
+ <CAHk-=wg5Kk+r36=jcGBaLUj+gjopjgiW5eyvkdMqvn0jFkD_iQ@mail.gmail.com>
+ <CAHk-=wiMQeCEKESWTmm15x79NjEjNwFvjZ=9XenxY7yH8zqa7A@mail.gmail.com>
+ <20190106001138.GW6310@bombadil.infradead.org>
+ <CAHk-=wiT=ov+6zYcnw_64ihYf74Amzqs67iVGtJMQq65PxiVYw@mail.gmail.com>
+ <CAHk-=wg1A44Roa8C4dmfdXLRLmNysEW36=3R7f+tzZzbcJ2d2g@mail.gmail.com>
+ <CAHk-=wiqbKEC5jUXr3ax+oUuiRrp=QMv_ZnUfO-SPv=UNJ-OTw@mail.gmail.com>
+ <20190108044336.GB27534@dastard>
+ <CAHk-=wjvzEFQcTGJFh9cyV_MPQftNrjOLon8YMMxaX0G1TLqkg@mail.gmail.com>
 MIME-Version: 1.0
-X-Barracuda-Connect: UNKNOWN[10.128.0.14]
-X-Barracuda-Start-Time: 1546999814
-X-Barracuda-Encrypted: ECDHE-RSA-AES256-SHA384
-X-Barracuda-URL: https://192.168.50.102:443/cgi-mod/mark.cgi
-X-Barracuda-Scan-Msg-Size: 1437
-X-Virus-Scanned: by bsmtpd at hxt-semitech.com
-X-Barracuda-BRTS-Status: 1
-X-Barracuda-Bayes: INNOCENT GLOBAL 0.4800 1.0000 0.0000
-X-Barracuda-Spam-Score: 0.00
-X-Barracuda-Spam-Status: No, SCORE=0.00 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=
-X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.65355
-        Rule breakdown below
-         pts rule name              description
-        ---- ---------------------- --------------------------------------------------
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wjvzEFQcTGJFh9cyV_MPQftNrjOLon8YMMxaX0G1TLqkg@mail.gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/1/7 20:43, Adrian Hunter wrote:
-> On 7/01/19 1:17 PM, Rafael J. Wysocki wrote:
->> On Sat, Jan 5, 2019 at 11:06 AM Sinan Kaya <okaya@kernel.org> wrote:
->>> After 'commit 5d32a66541c4 ("PCI/ACPI: Allow ACPI to be built without
->>> CONFIG_PCI set")' dependencies on CONFIG_PCI that previously were
->>> satisfied implicitly through dependencies on CONFIG_ACPI have to be
->>> specified directly. This driver relies on IOSF_MBI and IOSF_MBI depends
->>> on PCI. For this reason, add a direct dependency to CONFIG_PCI here.
->>>
->>> Fixes: 5d32a66541c46 ("PCI/ACPI: Allow ACPI to be built without CONFIG_PCI set")
->>> Signed-off-by: Sinan Kaya <okaya@kernel.org>
->>> ---
->>>  drivers/mmc/host/Kconfig | 2 +-
->>>  1 file changed, 1 insertion(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
->>> index e26b8145efb3..1b9401fe94c0 100644
->>> --- a/drivers/mmc/host/Kconfig
->>> +++ b/drivers/mmc/host/Kconfig
->>> @@ -116,7 +116,7 @@ config MMC_RICOH_MMC
->>>
->>>  config MMC_SDHCI_ACPI
->>>         tristate "SDHCI support for ACPI enumerated SDHCI controllers"
->>> -       depends on MMC_SDHCI && ACPI
->>> +       depends on MMC_SDHCI && ACPI && PCI
->>>         select IOSF_MBI if X86
->>>         help
->>>           This selects support for ACPI enumerated SDHCI controllers,
->>> --
->> Any objections against this one from anyone?
-> + QCOM and AMD contributors
->
-No issue with QCOM.
+On Tue, Jan 08, 2019 at 09:57:49AM -0800, Linus Torvalds wrote:
+> On Mon, Jan 7, 2019 at 8:43 PM Dave Chinner <david@fromorbit.com> wrote:
+> >
+> > So, I read the paper and before I was half way through it I figured
+> > there are a bunch of other similar page cache invalidation attacks
+> > we can perform without needing mincore. i.e. Focussing on mmap() and
+> > mincore() misses the wider issues we have with global shared caches.
+> 
+> Oh, agreed, and that was discussed in the original report too.
+> 
+> The thing is, you can also depend on our pre-faulting of pages in the
+> page fault handler, and use that to get the cached status of nearby
+> pages. So do something like "fault one page, then do mincore() to see
+> how many pages near it were mapped". See our "do_fault_around()"
+> logic.
 
-Cheers
-Dongsheng
+Observing fault-around could help you detect what code an application is
+running, but it's not necessary (and can be turned off). Also, such
+an it observation is not dependent on using mincore. neither
+fault-around nor mincore are required functionality to exploit the
+information leaks.
 
+And, FWIW, fault-around actually destroys the information in the
+exfiltration channel described in the paper because it perturbs the
+carefully constructed page cache residency pattern that encodes the
+message.
+
+> But mincore is certainly the easiest interface, and the one that
+> doesn't require much effort or setup.
+
+Off the top of my head, here's a few vectors for reading the page
+cache residency state without perturbing the page cache residency
+pattern:
+	- mincore
+	- preadv2(RWF_NOWAIT)
+	- fadvise(POSIX_FADV_RANDOM); timed read(2) syscalls
+	- madvise(MADV_RANDOM); timed read of first byte in each page
+
+i.e. mincore is a messenger, but it's not the only trivial
+observation technique available. The only difference between mincore
+and the others will be the observation latency and hence channel
+bandwidth.
+
+IOWs, the question we need to focus on now is not "does breaking
+mincore affect anyone", it is "how the hell do we mitigate and
+isolate an information leak exposed by fundamental OS functionality
+that *everything* depends on for performance"?
+
+> It's also the one where our old
+> behavior was actually arguably simply stupid and actively wrong (ie
+> "in caches" isn't even strictly speaking a valid question, since the
+> caches in question may be invalid).
+
+This is irrelevant to the problem reported. Sure, mincore may be
+an awful interface, but it's semantics are not the cause of the
+information leak. You're just shooting the messenger...
+
+> I do think that the RWF_NOWAIT case might also be interesting to look at.
+
+As are all the other mechanisms you can use to observer page cache
+residency without perturbing it's state.
+
+Keep in mind that the researchers documented a remote observation
+technique that leaked the information across the network to a remote
+host, so this leak has much, much wider scope than changing mincore
+can address...
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
