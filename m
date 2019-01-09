@@ -6,36 +6,33 @@ X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7A5EC43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 19:07:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86014C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 19:09:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE5DF20859
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 19:07:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 54E1B20685
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 19:09:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728129AbfAITHu (ORCPT
+        id S1728143AbfAITJD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 14:07:50 -0500
-Received: from wes1-so2-b.wedos.net ([46.28.106.45]:43957 "EHLO
-        wes1-so2.wedos.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726469AbfAITHu (ORCPT
+        Wed, 9 Jan 2019 14:09:03 -0500
+Received: from wes1-so1-b.wedos.net ([46.28.106.43]:46001 "EHLO
+        wes1-so1.wedos.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726469AbfAITJD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 14:07:50 -0500
+        Wed, 9 Jan 2019 14:09:03 -0500
 Received: from localhost (ip4-46-39-182-135.cust.nbox.cz [46.39.182.135])
-        by wes1-so2.wedos.net (Postfix) with ESMTPSA id 43ZdtW5RxkzqC;
-        Wed,  9 Jan 2019 20:07:47 +0100 (CET)
-Date:   Wed, 9 Jan 2019 20:07:41 +0100
+        by wes1-so1.wedos.net (Postfix) with ESMTPSA id 43Zdvw0Plmz5X5;
+        Wed,  9 Jan 2019 20:09:00 +0100 (CET)
+Date:   Wed, 9 Jan 2019 20:08:56 +0100
 From:   Otto Sabart <ottosabart@seberm.com>
-To:     linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org,
-        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
-Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 1/1] doc: gpio-mvebu: fix broken reference to
- cp110-system-controller0.txt file
-Message-ID: <8fd140950dd0bb859f9a48d8b25fb919cbb3cc6b.1547059503.git.ottosabart@seberm.com>
+To:     linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org
+Cc:     "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 1/1] doc: scsi: remove reference to tmscsim.txt file
+Message-ID: <ca9292ddbe567ae841b6c7e2d27e011ce078442d.1547059763.git.ottosabart@seberm.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="4Ckj6UjgE2iN1+kY"
+        protocol="application/pgp-signature"; boundary="5vNYLRcllDrimb99"
 Content-Disposition: inline
 X-PGP-Key: http://seberm.com/pubkey.asc
 User-Agent: Mutt/1.10.1 (2018-07-13)
@@ -45,58 +42,55 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---4Ckj6UjgE2iN1+kY
+--5vNYLRcllDrimb99
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-The cp110-system-controller0.txt file was renamed to
-cp110-system-controller.txt.
+The tmscsim.txt doc file was removed in c121107d0f84.
 
-Fixes: 4aa5496980e4 ("dt-bindings: cp110: rename cp110 syscon file")
+Fixes: c121107d0f84 ("scsi: documentation: Obsolete documentation reference=
+s")
 Signed-off-by: Otto Sabart <ottosabart@seberm.com>
 ---
- Documentation/devicetree/bindings/gpio/gpio-mvebu.txt | 2 --
+ drivers/scsi/Kconfig | 2 --
  1 file changed, 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/gpio/gpio-mvebu.txt b/Docume=
-ntation/devicetree/bindings/gpio/gpio-mvebu.txt
-index 38ca2201e8ae..2e097b57f170 100644
---- a/Documentation/devicetree/bindings/gpio/gpio-mvebu.txt
-+++ b/Documentation/devicetree/bindings/gpio/gpio-mvebu.txt
-@@ -14,8 +14,6 @@ Required properties:
+diff --git a/drivers/scsi/Kconfig b/drivers/scsi/Kconfig
+index f38882f6f37d..6cbc391689ad 100644
+--- a/drivers/scsi/Kconfig
++++ b/drivers/scsi/Kconfig
+@@ -1196,8 +1196,6 @@ config SCSI_AM53C974
+ 	  PCscsi/PCnet (Am53/79C974) solutions.
+ 	  This is a new implementation base on the generic esp_scsi driver.
 =20
-     "marvell,armada-8k-gpio" should be used for the Armada 7K and 8K
-     SoCs (either from AP or CP), see
--    Documentation/devicetree/bindings/arm/marvell/cp110-system-controller0=
-=2Etxt
--    and
-     Documentation/devicetree/bindings/arm/marvell/ap806-system-controller.=
-txt
-     for specific details about the offset property.
+-	  Documentation can be found in <file:Documentation/scsi/tmscsim.txt>.
+-
+ 	  Note that this driver does NOT support Tekram DC390W/U/F, which are
+ 	  based on NCR/Symbios chips. Use "NCR53C8XX SCSI support" for those.
 =20
 --=20
 2.17.2
 
 
---4Ckj6UjgE2iN1+kY
+--5vNYLRcllDrimb99
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAEBCgAdFiEEb6VOpv2s03VHGoilgjuumfi+HjwFAlw2Rn4ACgkQgjuumfi+
-Hjxfiw/9Fk7Ox0asGlTrDCjLScq8iEd1p1iAgMz26Ut5NKHWaKqBEGajxQIhQnUN
-utxLjTWH8QDcGItpbzvTYcnKrF+mRhcpDvHZ/O8dhac5ZYA7qcA/106aRB/MSogh
-u3/GeVNokIGUtXi8xepJvm9vmYnhdgqOild8hxc9Frr1x26ORpgPBbWurcf7YFZJ
-SET3fv86kPjPWaLakjT67ULGPhhX5RxJv8M4QllsyLJfvBntrxH5ACMovdTciV8A
-PBEWQQ1gMlD4cCnrvviuG/ySZig0JCG2DcYWaZsp8yOw+zYFExavgSHkoxESFC/P
-1UoVldOmp5QKGOMYfrD4SjysZJnaLhsw/kJVGDwTiHtXc5iYd95Jercp47Vmd8TJ
-u2bkmgEIVlCkAiMjZBuYlxr0HI6kISe55V+FqCtco3q8/ZUQCnUOsL3gkFDMtepq
-2fvD9Lw9Crr3lrcnCZVLJYMAZ8oKxNSQCuMCZjMiHeJyE7T1yNJbK80QruG4tKO1
-k504yGakideglEWAXUJaKuevEBGALwxLBZu+EkMFdBHPGLcbALNcfAIhbdniX6lQ
-o6+XZkHxrU4hxnyZtnFJTucPSQ1oLcCqgEF5PtasXnhCmTWF6wGsc0EN4tWWIq0E
-pWvNLfoaHb4CS4PeDSP04GA63D1A6t7FSH+fHmhswgUS2PpoQ1U=
-=/a7b
+iQIzBAEBCgAdFiEEb6VOpv2s03VHGoilgjuumfi+HjwFAlw2RskACgkQgjuumfi+
+Hjw3+g/+Jh1Q4kLq9CF9gScycehJ7G0m69m6N3NmMx8fk9N0OnbZ/AJ7ss/e2qBB
+LOogQEcer1egzYUdIe48IPZcV0hiwDstYaiTAjOWSA3v4GyvysxvzChVUtUztwuT
+Qmztb0vcIdCLNGZGLMMZXDCh4BqG7cdO3TKZpoM6jlE/yiUitScJ7BOGXnbdkEkG
+o6g+yWos7DajCaNKOxXIDCe7iSc2AIOLMmZg8D45EKX1+cn4JXXIQ9rUaDbxYlG+
+kaNGjrB0X8OKBODeqfh61WPfe44l4Vc0Mv/dY0W4Do1iZppp0Og47klsxDO3dz3k
+LPZIZfY0lMiV20tvEhRft0cm51HV/iScrzveYEVxi/ppgvQElXWZtEo1tjJVOlgh
+zqNspvDHQxfSvRkVcJhD1+hAvjl4183Ta6i6BctJ5+bKX5/28QY62gLKFU4P5g6y
+51e7q0P4eLzNlRYfAwdywONs8/H9oupowVVtsEal+L2YaoFsl2oJZWF8doU9filT
+kicF8ROH4xOHFJL/ftQ90FYrzoKZVnHHP5zz3tZO957ZzKNfiBWWhUGymNXExTAS
+xP4d43tuecCDiZD0GWFNcO+avNLq0ERJovJ0P0cPhhvkdt+pZA2Gj9nxfkv55Riy
+cn1inLpx2yO+8hwA+Bc9jdpmjwi9PAWXP7s+lkeePP2+n+4P98o=
+=vuIM
 -----END PGP SIGNATURE-----
 
---4Ckj6UjgE2iN1+kY--
+--5vNYLRcllDrimb99--
