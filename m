@@ -2,219 +2,121 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A6DAC43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 17:26:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 876A6C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 17:26:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5BC8B214C6
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 17:26:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 539E6214C6
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 17:26:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PEAT+dLA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726932AbfAIR00 (ORCPT
+        id S1726974AbfAIR0q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 12:26:26 -0500
-Received: from eddie.linux-mips.org ([148.251.95.138]:57772 "EHLO
-        cvs.linux-mips.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726787AbfAIR00 (ORCPT
+        Wed, 9 Jan 2019 12:26:46 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:40017 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726933AbfAIR0p (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 12:26:26 -0500
-Received: (from localhost user: 'ladis' uid#1021 fake: STDIN
-        (ladis@eddie.linux-mips.org)) by eddie.linux-mips.org
-        id S23993997AbfAIR0YHuWuZ (ORCPT <rfc822;linux-omap@vger.kernel.org>
-        + 2 others); Wed, 9 Jan 2019 18:26:24 +0100
-Date:   Wed, 9 Jan 2019 18:26:23 +0100
-From:   Ladislav Michl <ladis@linux-mips.org>
-To:     Vincent Guittot <vincent.guittot@linaro.org>
-Cc:     Tony Lindgren <tony@atomide.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        LAK <linux-arm-kernel@lists.infradead.org>,
-        linux-omap@vger.kernel.org
-Subject: Re: Regression in v5.0-rc1 with autosuspend hrtimers
-Message-ID: <20190109172623.GB1711@lenoch>
-References: <20190108213743.GN5544@atomide.com>
- <20190109014218.GA8363@linaro.org>
- <20190109111703.GA28605@lenoch>
- <CAKfTPtBvzZvJNxBRMbGbNFBYG0-pAR-P7X2=KrBWH01OMWvJYA@mail.gmail.com>
- <20190109115824.GA1353@lenoch>
- <CAKfTPtAAgYYW8A1LDg18bM=5vCAMDbQ05APp9QWSaifW=F0SgQ@mail.gmail.com>
- <20190109133337.GA13579@lenoch>
- <CAKfTPtAsENRKh_wTFXCLW2_MdMBug+tV2KtjC7x6RigN7hgPmw@mail.gmail.com>
- <20190109160736.GA7416@lenoch>
- <CAKfTPtBnNA6knrsHsZXeaotBSn5mS12xNWNUKdSwZ1EUvueQkA@mail.gmail.com>
+        Wed, 9 Jan 2019 12:26:45 -0500
+Received: by mail-wm1-f66.google.com with SMTP id f188so9134011wmf.5;
+        Wed, 09 Jan 2019 09:26:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=AnunFOoNxnEJmU+FNN7KCIuhxpIQkCZn8JHGbLCsl1w=;
+        b=PEAT+dLAkQ5toeyje8cEz3ubIKF2QhjQisj5S/RiCNcRwwTff1FRtPzdX7Q1nn0h9X
+         odiyeyw9PQL3ku2enHgvcRStsUqz8qCUqVEnrMC8HTASFtUgEaebLSXaFaRshveWVndv
+         mrCmYOsXF50gd9Q4e2Y+GcJVUfu9/n+8UtnaKAZ34bT/CTysMxcBd1ZoZxleFtoJ9rtL
+         OcKTGcMKmBYOZDz23I67zyh9vaNhgvNPeLBHS5bnrAFS+x0SFxitKplwixHTcJ3Q5z7c
+         DrgHN7K7K0VFzM4jmPqQL3SRYfOjprDnDUhoUP+EBOt4kmmhl5eCqpETNjJzOFrlKxFG
+         +T1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=AnunFOoNxnEJmU+FNN7KCIuhxpIQkCZn8JHGbLCsl1w=;
+        b=B1z3gYX15XnYlzNwH2+VEa3GXdcijPIE3FGYokJLrNtyASCjKTt2knT4XaKEU46DFP
+         oq/EJeg6TmtQWA1nu5zuogO4SEeknd7VmvKO8BPggydioUd3U5MCKbMazaRmbx8HGACW
+         lICna0KhtVfPFiNVUKGwe2o/9FqmqLxsNTxGBlEG6rylpWQIDhdsM2d5kzUsKu3lGRe7
+         Ax6u0nej2zTHZGWlJ6fSdMbSPi0z55NpzEX48v30xt41ui1U2pQjeinNxMtfdLLlueS8
+         MD8MUCVnjkAf5BnqdmzvQCIvEPweonBEf6O4TN7pExsxae4RSfadJ8r97BAt5TasbjhF
+         KQLw==
+X-Gm-Message-State: AJcUukftb0r6La79sbWHODTkEltsL1U7ffIWKD+gILqWP+yPJowSK24G
+        78v10b9IlMoAPGqHsfLhN2RvI+7A
+X-Google-Smtp-Source: ALg8bN5sdaAJzrcWA41rxkb8Dq20amC5HWdaWz0OCrfNRbU8B5Ka6iVdy648IieQFLrvyZO4Lby59g==
+X-Received: by 2002:a1c:2902:: with SMTP id p2mr6446227wmp.19.1547054803514;
+        Wed, 09 Jan 2019 09:26:43 -0800 (PST)
+Received: from [172.30.90.141] (sjewanfw1-nat.mentorg.com. [139.181.7.34])
+        by smtp.gmail.com with ESMTPSA id a6sm12638966wmh.10.2019.01.09.09.26.41
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 09 Jan 2019 09:26:42 -0800 (PST)
+Subject: Re: [PATCH v6 05/12] media: imx-csi: Input connections to CSI should
+ be optional
+To:     Philipp Zabel <p.zabel@pengutronix.de>, linux-media@vger.kernel.org
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "open list:STAGING SUBSYSTEM" <devel@driverdev.osuosl.org>,
+        open list <linux-kernel@vger.kernel.org>
+References: <20190109001551.16113-1-slongerbeam@gmail.com>
+ <20190109001551.16113-6-slongerbeam@gmail.com>
+ <1547032417.4160.2.camel@pengutronix.de>
+From:   Steve Longerbeam <slongerbeam@gmail.com>
+Message-ID: <a68dc0db-a37c-2976-9d48-b9da4619aa33@gmail.com>
+Date:   Wed, 9 Jan 2019 09:26:39 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKfTPtBnNA6knrsHsZXeaotBSn5mS12xNWNUKdSwZ1EUvueQkA@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1547032417.4160.2.camel@pengutronix.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 09, 2019 at 05:32:31PM +0100, Vincent Guittot wrote:
-> On Wed, 9 Jan 2019 at 17:07, Ladislav Michl <ladis@linux-mips.org> wrote:
-> >
-> > On Wed, Jan 09, 2019 at 03:12:25PM +0100, Vincent Guittot wrote:
-> > > Please keep all thread list when replying :-)
-> >
-> > Ahh, sorry for that...
-> > [snip]
-> > > On Wed, 9 Jan 2019 at 14:33, Ladislav Michl <ladis@linux-mips.org> wrote:
-> > > > I agree, but it doea all the magic correctly, so you won't need
-> > > > to touch that code is ktime_t changes (I know, unlikely..)
-> > >
-> > > But the current implementation doesn't care of any changes in ktime_t
-> > > as it uses raw ns
-> >
-> > Fair enough, so let's go back to:
-> 
-> This one looks good for me
 
-Lets split is for 'comments fix' patch, which was just send and 'the rest'.
-Now, 'the rest' can either be v2 of your "PM/runtime: Fix autosuspend_delay on
-32bits arch" or will wait for 5.1. You decide :)
 
-> > diff --git a/drivers/base/power/runtime.c b/drivers/base/power/runtime.c
-> > index 70624695b6d5..e61ee9b47a26 100644
-> > --- a/drivers/base/power/runtime.c
-> > +++ b/drivers/base/power/runtime.c
-> > @@ -121,7 +121,7 @@ static void pm_runtime_cancel_pending(struct device *dev)
-> >   * Compute the autosuspend-delay expiration time based on the device's
-> >   * power.last_busy time.  If the delay has already expired or is disabled
-> >   * (negative) or the power.use_autosuspend flag isn't set, return 0.
-> > - * Otherwise return the expiration time in jiffies (adjusted to be nonzero).
-> > + * Otherwise return the expiration time in nanoseconds (adjusted to be nonzero).
-> >   *
-> >   * This function may be called either with or without dev->power.lock held.
-> >   * Either way it can be racy, since power.last_busy may be updated at any time.
-> > @@ -129,24 +129,21 @@ static void pm_runtime_cancel_pending(struct device *dev)
-> >  u64 pm_runtime_autosuspend_expiration(struct device *dev)
-> >  {
-> >         int autosuspend_delay;
-> > -       u64 last_busy, expires = 0;
-> > -       u64 now = ktime_to_ns(ktime_get());
-> > +       u64 expires;
-> >
-> >         if (!dev->power.use_autosuspend)
-> > -               goto out;
-> > +               return 0;
-> >
-> >         autosuspend_delay = READ_ONCE(dev->power.autosuspend_delay);
-> >         if (autosuspend_delay < 0)
-> > -               goto out;
-> > -
-> > -       last_busy = READ_ONCE(dev->power.last_busy);
-> > +               return 0;
-> >
-> > -       expires = last_busy + autosuspend_delay * NSEC_PER_MSEC;
-> > -       if (expires <= now)
-> > -               expires = 0;    /* Already expired. */
-> > +       expires  = READ_ONCE(dev->power.last_busy);
-> > +       expires += NSEC_PER_MSEC * (u64)autosuspend_delay;
-> > +       if (expires > ktime_to_ns(ktime_get()))
-> > +               return expires; /* Expires in the future */
-> >
-> > - out:
-> > -       return expires;
-> > +       return 0;
-> >  }
-> >  EXPORT_SYMBOL_GPL(pm_runtime_autosuspend_expiration);
-> >
-> > Which gives for arm:
-> > 00000480 <pm_runtime_autosuspend_expiration>:
-> >      480:       e92d41f0        push    {r4, r5, r6, r7, r8, lr}
-> >      484:       e5d030d1        ldrb    r3, [r0, #209]  ; 0xd1
-> >      488:       e3130004        tst     r3, #4
-> >      48c:       0a00000c        beq     4c4 <pm_runtime_autosuspend_expiration+0x44>
-> >      490:       e59030e4        ldr     r3, [r0, #228]  ; 0xe4
-> >      494:       e3530000        cmp     r3, #0
-> >      498:       ba000009        blt     4c4 <pm_runtime_autosuspend_expiration+0x44>
-> >      49c:       e28050e8        add     r5, r0, #232    ; 0xe8
-> >      4a0:       e8950030        ldm     r5, {r4, r5}
-> >      4a4:       e59f2030        ldr     r2, [pc, #48]   ; 4dc <pm_runtime_autosuspend_expiration+0x5c>
-> >      4a8:       e0e54392        smlal   r4, r5, r2, r3
-> >      4ac:       ebfffffe        bl      0 <ktime_get>
-> >      4b0:       e1550001        cmp     r5, r1
-> >      4b4:       01540000        cmpeq   r4, r0
-> >      4b8:       e1a06004        mov     r6, r4
-> >      4bc:       e1a07005        mov     r7, r5
-> >      4c0:       8a000001        bhi     4cc <pm_runtime_autosuspend_expiration+0x4c>
-> >      4c4:       e3a06000        mov     r6, #0
-> >      4c8:       e3a07000        mov     r7, #0
-> >      4cc:       e1a00006        mov     r0, r6
-> >      4d0:       e1a01007        mov     r1, r7
-> >      4d4:       e8bd41f0        pop     {r4, r5, r6, r7, r8, lr}
-> >      4d8:       e12fff1e        bx      lr
-> >      4dc:       000f4240        .word   0x000f4240
-> >
-> > And x86:
-> > 0000000000000230 <pm_runtime_autosuspend_expiration.part.0>:
-> >      230:       8b 87 a4 01 00 00       mov    0x1a4(%rdi),%eax
-> >      236:       53                      push   %rbx
-> >      237:       85 c0                   test   %eax,%eax
-> >      239:       78 1e                   js     259 <pm_runtime_autosuspend_expiration.part.0+0x29>
-> >      23b:       48 63 d8                movslq %eax,%rbx
-> >      23e:       48 8b 97 a8 01 00 00    mov    0x1a8(%rdi),%rdx
-> >      245:       48 69 db 40 42 0f 00    imul   $0xf4240,%rbx,%rbx
-> >      24c:       48 01 d3                add    %rdx,%rbx
-> >      24f:       e8 00 00 00 00          callq  254 <pm_runtime_autosuspend_expiration.part.0+0x24>
-> >      254:       48 39 c3                cmp    %rax,%rbx
-> >      257:       77 02                   ja     25b <pm_runtime_autosuspend_expiration.part.0+0x2b>
-> >      259:       31 db                   xor    %ebx,%ebx
-> >      25b:       48 89 d8                mov    %rbx,%rax
-> >      25e:       5b                      pop    %rbx
-> >      25f:       c3                      retq
-> >
-> > 00000000000002a0 <pm_runtime_autosuspend_expiration>:
-> >      2a0:       f6 87 91 01 00 00 04    testb  $0x4,0x191(%rdi)
-> >      2a7:       74 02                   je     2ab <pm_runtime_autosuspend_expiration+0xb>
-> >      2a9:       eb 85                   jmp    230 <pm_runtime_autosuspend_expiration.part.0>
-> >      2ab:       31 c0                   xor    %eax,%eax
-> >      2ad:       c3                      retq
-> >      2ae:       66 90                   xchg   %ax,%ax
-> >
-> >
-> > [snip]
-> > > > Well, main concern was not to call ktime_get at the beginning of function
-> > > > as it is not too cheap.
-> > >
-> > > Doesn't the compiler optimize that to just before the test ?
-> >
-> > No (compare with above). And it is also almost certain that someone will run
-> > script and send "...do not needlesly initialize..." patch :)
-> >
-> > gcc version 8.2.1 20181130 (OSELAS.Toolchain-2018.12.0 8-20181130)
-> >
-> > 00000110 <pm_runtime_autosuspend_expiration>:
-> >      110:       e92d41f0        push    {r4, r5, r6, r7, r8, lr}
-> >      114:       e1a06000        mov     r6, r0
-> >      118:       ebfffffe        bl      0 <ktime_get>
-> >      11c:       e5d630d1        ldrb    r3, [r6, #209]  ; 0xd1
-> >      120:       e3130004        tst     r3, #4
-> >      124:       0a00000d        beq     160 <pm_runtime_autosuspend_expiration+0x50>
-> >      128:       e596c0e4        ldr     ip, [r6, #228]  ; 0xe4
-> >      12c:       e35c0000        cmp     ip, #0
-> >      130:       ba00000a        blt     160 <pm_runtime_autosuspend_expiration+0x50>
-> >      134:       e28630e8        add     r3, r6, #232    ; 0xe8
-> >      138:       e893000c        ldm     r3, {r2, r3}
-> >      13c:       e1a05001        mov     r5, r1
-> >      140:       e1a04000        mov     r4, r0
-> >      144:       e59f002c        ldr     r0, [pc, #44]   ; 178 <pm_runtime_autosuspend_expiration+0x68>
-> >      148:       e0010c90        mul     r1, r0, ip
-> >      14c:       e0926001        adds    r6, r2, r1
-> >      150:       e0a37fc1        adc     r7, r3, r1, asr #31
-> >      154:       e1550007        cmp     r5, r7
-> >      158:       01540006        cmpeq   r4, r6
-> >      15c:       3a000001        bcc     168 <pm_runtime_autosuspend_expiration+0x58>
-> >      160:       e3a06000        mov     r6, #0
-> >      164:       e3a07000        mov     r7, #0
-> >      168:       e1a00006        mov     r0, r6
-> >      16c:       e1a01007        mov     r1, r7
-> >      170:       e8bd41f0        pop     {r4, r5, r6, r7, r8, lr}
-> >      174:       e12fff1e        bx      lr
-> >      178:       000f4240        .word   0x000f4240
+On 1/9/19 3:13 AM, Philipp Zabel wrote:
+> On Tue, 2019-01-08 at 16:15 -0800, Steve Longerbeam wrote:
+>> Some imx platforms do not have fwnode connections to all CSI input
+>> ports, and should not be treated as an error. This includes the
+>> imx6q SabreAuto, which has no connections to ipu1_csi1 and ipu2_csi0.
+>> Return -ENOTCONN in imx_csi_parse_endpoint() so that v4l2-fwnode
+>> endpoint parsing will not treat an unconnected endpoint as an error.
+>>
+>> Fixes: c893500a16baf ("media: imx: csi: Register a subdev notifier")
+>>
+>> Signed-off-by: Steve Longerbeam <slongerbeam@gmail.com>
+>> ---
+>>   drivers/staging/media/imx/imx-media-csi.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/staging/media/imx/imx-media-csi.c b/drivers/staging/media/imx/imx-media-csi.c
+>> index e3a4f39dbf73..b276672cae1d 100644
+>> --- a/drivers/staging/media/imx/imx-media-csi.c
+>> +++ b/drivers/staging/media/imx/imx-media-csi.c
+>> @@ -1815,7 +1815,7 @@ static int imx_csi_parse_endpoint(struct device *dev,
+>>   				  struct v4l2_fwnode_endpoint *vep,
+>>   				  struct v4l2_async_subdev *asd)
+>>   {
+>> -	return fwnode_device_is_available(asd->match.fwnode) ? 0 : -EINVAL;
+>> +	return fwnode_device_is_available(asd->match.fwnode) ? 0 : -ENOTCONN;
+>>   }
+>>   
+>>   static int imx_csi_async_register(struct csi_priv *priv)
+> Is this something that should be applied as a fix, separately from this
+> series?
+
+Yes. I'll submit it separately and send a v7 of this series without it.
+
+Steve
+
+
