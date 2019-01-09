@@ -2,95 +2,83 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02256C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 10:21:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7090C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 10:27:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CCD2A2064C
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 10:21:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 818D221872
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 10:27:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547029643;
+	bh=6UdRO6Tf7AMjF5v9Te1XpTI0EujpWzfpznZJgcjJ7UA=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=t/Xnk4HjyH48iZku1IOd5YMeMau3c+AUNrRrYvotiDqa0XDR5Pr7FvmPE2oVTXy/v
+	 aEMfkv5TAfLqniM7TRpbJ4HZ6VCMq5hho0chjbH3m4suGJ8kqA4+/CU01Gg78NeKDE
+	 SxyHNGlAB7i6cTDt7h54U33DDLB7/OF3UsZTn01w=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730441AbfAIKVn (ORCPT
+        id S1730449AbfAIK1W (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 05:21:43 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:39210 "EHLO mail.bootlin.com"
+        Wed, 9 Jan 2019 05:27:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57316 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729964AbfAIKVm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 05:21:42 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 1F2F020898; Wed,  9 Jan 2019 11:21:40 +0100 (CET)
-Received: from localhost (aaubervilliers-681-1-45-241.w90-88.abo.wanadoo.fr [90.88.163.241])
-        by mail.bootlin.com (Postfix) with ESMTPSA id AD9D120A1D;
-        Wed,  9 Jan 2019 11:20:49 +0100 (CET)
-Date:   Wed, 9 Jan 2019 11:20:49 +0100
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Chen-Yu Tsai <wens@csie.org>
-Cc:     Jernej Skrabec <jernej.skrabec@siol.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Subject: Re: [PATCH] ARM: dts: sun8i: h3: Add ethernet0 alias to Beelink X2
-Message-ID: <20190109102049.npk77pxtxru4tcyb@flea>
-References: <20190108191840.16007-1-jernej.skrabec@siol.net>
- <20190109101228.alsaaw6s57dbapfe@flea>
- <CAGb2v64QM9gyPTtpw0C0fpANW5R9DEsWFSDA_tJPYhdgF_FAhQ@mail.gmail.com>
+        id S1729814AbfAIK1W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 05:27:22 -0500
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 464ED21741;
+        Wed,  9 Jan 2019 10:27:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547029641;
+        bh=6UdRO6Tf7AMjF5v9Te1XpTI0EujpWzfpznZJgcjJ7UA=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=ttPHatCC2PW+Ga2hQYbNCH731y2SaP4mHMBsIs4UYwszIWFbyacwcnTGjht4Ijsc3
+         el2i648hbpX2nf27bdCFSyXFsS59PePxMHohHHLtTEiVR8viwRmXJBRhP8T80z8iRK
+         S9LVJT6/Ad/eOH4fUNqmbwWOxSgoDcrVcECF9vBU=
+Received: by mail-lj1-f179.google.com with SMTP id c19-v6so6018597lja.5;
+        Wed, 09 Jan 2019 02:27:21 -0800 (PST)
+X-Gm-Message-State: AJcUukcBmZAaybeyvd765b9v29IIrB9Qzk9C02Oka3gD2R1ECkYH/PdV
+        AS2Pfmbjsx2CQhFlUDxmH+Mco+qR3sLwbzPQEyM=
+X-Google-Smtp-Source: ALg8bN4dTJCF2aqcXfn0A9E7z4KPjzNDUsO5E4Z7d89fZt0kVfzOjlQEgynwFkU4xzjPtQp7CEtO1vX0QB/t1XOW9mk=
+X-Received: by 2002:a2e:551:: with SMTP id 78-v6mr2920278ljf.82.1547029639411;
+ Wed, 09 Jan 2019 02:27:19 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="mkj2k5z2j34krmbx"
-Content-Disposition: inline
-In-Reply-To: <CAGb2v64QM9gyPTtpw0C0fpANW5R9DEsWFSDA_tJPYhdgF_FAhQ@mail.gmail.com>
-User-Agent: NeoMutt/20180716
+References: <20190108200509.30494-1-pawel.mikolaj.chmiel@gmail.com> <20190108200509.30494-3-pawel.mikolaj.chmiel@gmail.com>
+In-Reply-To: <20190108200509.30494-3-pawel.mikolaj.chmiel@gmail.com>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+Date:   Wed, 9 Jan 2019 11:27:08 +0100
+X-Gmail-Original-Message-ID: <CAJKOXPcqcyimyUBD5ka60FZCeehqkE=GNH8YYYkgQpJ4=yQ3nw@mail.gmail.com>
+Message-ID: <CAJKOXPcqcyimyUBD5ka60FZCeehqkE=GNH8YYYkgQpJ4=yQ3nw@mail.gmail.com>
+Subject: Re: [PATCH 2/4] cpufreq: s5pv210: Don't flood kernel log after
+ cpufreq change
+To:     =?UTF-8?Q?Pawe=C5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
+Cc:     kgene@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        linux@armlinux.org.uk, viresh.kumar@linaro.org, rjw@rjwysocki.net,
+        linux-arm-kernel@lists.infradead.org,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, 8 Jan 2019 at 21:05, Pawe=C5=82 Chmiel
+<pawel.mikolaj.chmiel@gmail.com> wrote:
+>
+> This commit replaces printk with pr_debug, so we don't flood kernel log.
+>
+> Signed-off-by: Pawe=C5=82 Chmiel <pawel.mikolaj.chmiel@gmail.com>
+> ---
+>  drivers/cpufreq/s5pv210-cpufreq.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
---mkj2k5z2j34krmbx
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-On Wed, Jan 09, 2019 at 06:13:24PM +0800, Chen-Yu Tsai wrote:
-> On Wed, Jan 9, 2019 at 6:12 PM Maxime Ripard <maxime.ripard@bootlin.com> =
-wrote:
-> >
-> > On Tue, Jan 08, 2019 at 08:18:40PM +0100, Jernej Skrabec wrote:
-> > > Because "ethernet0" alias is missing, U-Boot doesn't generate board
-> > > specific MAC address. Effect of this is random MAC address every boot
-> > > and thus new IP address is assigned to the board.
-> > >
-> > > Fix this by adding alias.
-> > >
-> > > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> >
-> > Applied, thanks!
-> > Maxime
->=20
-> Might we add a fixes tag, so the patch gets backported?
-
-It's done, thanks for the suggestion!
-Maxime
-
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---mkj2k5z2j34krmbx
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXDXLAQAKCRDj7w1vZxhR
-xRhyAQDIcRHuTOixnaioB3IrRwVWG+S5j6m/zbAtmcJ3832tCgEAroU7bsx43+oL
-M10O81HgPW+/7Us9jOpc86koW4FV/A4=
-=JI+r
------END PGP SIGNATURE-----
-
---mkj2k5z2j34krmbx--
+Best regards,
+Krzysztof
