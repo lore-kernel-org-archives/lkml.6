@@ -2,37 +2,38 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51CB4C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 09:12:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62E59C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 09:13:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1743A20821
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 09:12:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 32B5420821
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 09:13:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730237AbfAIJMl (ORCPT
+        id S1730095AbfAIJNz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 04:12:41 -0500
-Received: from mga03.intel.com ([134.134.136.65]:31584 "EHLO mga03.intel.com"
+        Wed, 9 Jan 2019 04:13:55 -0500
+Received: from mga17.intel.com ([192.55.52.151]:35449 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727387AbfAIJMk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 04:12:40 -0500
+        id S1727387AbfAIJNy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 04:13:54 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Jan 2019 01:12:40 -0800
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Jan 2019 01:13:53 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,456,1539673200"; 
-   d="scan'208";a="290103427"
+   d="scan'208";a="108470244"
 Received: from linux.intel.com ([10.54.29.200])
-  by orsmga005.jf.intel.com with ESMTP; 09 Jan 2019 01:12:40 -0800
+  by orsmga008.jf.intel.com with ESMTP; 09 Jan 2019 01:13:53 -0800
 Received: from [10.125.252.236] (abudanko-mobl.ccr.corp.intel.com [10.125.252.236])
-        by linux.intel.com (Postfix) with ESMTP id 48DA058056F;
-        Wed,  9 Jan 2019 01:12:38 -0800 (PST)
+        by linux.intel.com (Postfix) with ESMTP id CF2C158056F;
+        Wed,  9 Jan 2019 01:13:50 -0800 (PST)
 From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-Subject: Re: [PATCH v2 2/4] perf record: bind the AIO user space buffers to
- nodes
+Subject: Re: [PATCH v2 3/4] perf record: apply affinity masks when reading
+ mmap buffers
 To:     Jiri Olsa <jolsa@redhat.com>
 Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
         Ingo Molnar <mingo@redhat.com>,
@@ -42,15 +43,15 @@ Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
         Andi Kleen <ak@linux.intel.com>,
         linux-kernel <linux-kernel@vger.kernel.org>
 References: <e8fccb5e-31b7-b3a0-74bf-490c2d439ab4@linux.intel.com>
- <e616e65f-bf53-e87e-b906-4fd9dce86380@linux.intel.com>
- <20190101214117.GI13760@krava>
+ <4b7b902b-01b7-7a3f-eee2-e7fc8433322c@linux.intel.com>
+ <20190101213932.GE13760@krava>
 Organization: Intel Corp.
-Message-ID: <d03c0f6b-57d8-773b-7d82-316c2bef2fb3@linux.intel.com>
-Date:   Wed, 9 Jan 2019 12:12:37 +0300
+Message-ID: <94e6b67e-441c-89cb-eb10-1c8d135d8840@linux.intel.com>
+Date:   Wed, 9 Jan 2019 12:13:49 +0300
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
  Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <20190101214117.GI13760@krava>
+In-Reply-To: <20190101213932.GE13760@krava>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -61,50 +62,63 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Hi,
 
-On 02.01.2019 0:41, Jiri Olsa wrote:
-> On Mon, Dec 24, 2018 at 03:24:36PM +0300, Alexey Budankov wrote:
+On 02.01.2019 0:39, Jiri Olsa wrote:
+> On Mon, Dec 24, 2018 at 03:27:17PM +0300, Alexey Budankov wrote:
 > 
 > SNIP
 > 
->> +static void perf_mmap__aio_free(void **data, size_t len __maybe_unused)
->> +{
->> +	zfree(data);
->> +}
->> +
->> +static void perf_mmap__aio_bind(void *data __maybe_unused, size_t len __maybe_unused,
->> +                                int cpu __maybe_unused, int affinity __maybe_unused)
->> +{
->> +}
->> +#endif
->> +
->>  static int perf_mmap__aio_mmap(struct perf_mmap *map, struct mmap_params *mp)
+>> diff --git a/tools/perf/util/mmap.c b/tools/perf/util/mmap.c
+>> index 742fa9a8e498..a2095e4eda4b 100644
+>> --- a/tools/perf/util/mmap.c
+>> +++ b/tools/perf/util/mmap.c
+>> @@ -361,6 +361,7 @@ void perf_mmap__munmap(struct perf_mmap *map)
+>>  
+>>  int perf_mmap__mmap(struct perf_mmap *map, struct mmap_params *mp, int fd, int cpu)
 >>  {
->>  	int delta_max, i, prio;
->> @@ -177,11 +220,13 @@ static int perf_mmap__aio_mmap(struct perf_mmap *map, struct mmap_params *mp)
->>  		}
->>  		delta_max = sysconf(_SC_AIO_PRIO_DELTA_MAX);
->>  		for (i = 0; i < map->aio.nr_cblocks; ++i) {
->> -			map->aio.data[i] = malloc(perf_mmap__mmap_len(map));
->> +			size_t mmap_len = perf_mmap__mmap_len(map);
->> +			perf_mmap__aio_alloc(&(map->aio.data[i]), mmap_len);
->>  			if (!map->aio.data[i]) {
->>  				pr_debug2("failed to allocate data buffer area, error %m");
->>  				return -1;
->>  			}
->> +			perf_mmap__aio_bind(map->aio.data[i], mmap_len, map->cpu, mp->affinity);
+>> +	int c, nr_cpus, node;
+>>  	/*
+>>  	 * The last one will be done at perf_mmap__consume(), so that we
+>>  	 * make sure we don't prevent tools from consuming every last event in
+>> @@ -389,6 +390,17 @@ int perf_mmap__mmap(struct perf_mmap *map, struct mmap_params *mp, int fd, int c
+>>  	map->cpu = cpu;
+>>  
+>>  	CPU_ZERO(&map->affinity_mask);
+>> +	if (mp->affinity == PERF_AFFINITY_NODE && cpu__max_node() > 1) {
+>> +		nr_cpus = cpu_map__nr(mp->cpu_map);
+>> +		node = cpu__get_node(map->cpu);
+>> +		for (c = 0; c < nr_cpus; c++) {
+>> +			if (cpu__get_node(c) == node) {
 > 
-> this all does not work if bind fails.. I think we need to
-> propagate the error value here and fail
+> the 'c' is just an index here, I think you need to
+> use the real cpu value from the mp->cpu_map->map[c]
 
-Proceeding further from this point still makes sense because 
-the buffer is available for operations and thread migration 
-alone can bring performance benefits. So the error is not fatal 
-and an explicit warning is implemented in v3. If you still think 
-it is better to propagate error from here it can be implemented.
+Well, yes, mapping c index to online cpu index is more generic. 
+Corrected in v3. Thanks!
 
-Thanks,
 Alexey
 
 > 
 > jirka
+> 
+>> +				CPU_SET(c, &map->affinity_mask);
+>> +			}
+>> +		}
+>> +	} else if (mp->affinity == PERF_AFFINITY_CPU) {
+>> +		CPU_SET(map->cpu, &map->affinity_mask);
+>> +	}
+>>  
+>>  	if (auxtrace_mmap__mmap(&map->auxtrace_mmap,
+>>  				&mp->auxtrace_mp, map->base, fd))
+>> diff --git a/tools/perf/util/mmap.h b/tools/perf/util/mmap.h
+>> index e566c19b242b..b3f724fad22e 100644
+>> --- a/tools/perf/util/mmap.h
+>> +++ b/tools/perf/util/mmap.h
+>> @@ -72,6 +72,7 @@ enum bkw_mmap_state {
+>>  struct mmap_params {
+>>  	int			    prot, mask, nr_cblocks, affinity;
+>>  	struct auxtrace_mmap_params auxtrace_mp;
+>> +	const struct cpu_map	    *cpu_map;
+>>  };
+>>  
+>>  int perf_mmap__mmap(struct perf_mmap *map, struct mmap_params *mp, int fd, int cpu);
 > 
