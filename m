@@ -3,160 +3,122 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67DEFC43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 16:08:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 078D6C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 16:09:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F44A20859
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 16:08:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BC92820859
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 16:09:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732579AbfAIQIU (ORCPT
+        id S1732590AbfAIQJM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 11:08:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36120 "EHLO mail.kernel.org"
+        Wed, 9 Jan 2019 11:09:12 -0500
+Received: from mga17.intel.com ([192.55.52.151]:12599 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731508AbfAIQIT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 11:08:19 -0500
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 23921206BB;
-        Wed,  9 Jan 2019 16:08:18 +0000 (UTC)
-Date:   Wed, 9 Jan 2019 11:08:16 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Masami Hiramatsu <mhiramat@kernel.org>
-Cc:     Ingo Molnar <mingo@redhat.com>, peterz@infradead.org,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Andrea Righi <righi.andrea@gmail.com>, stable@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] x86/kprobes: Fix to avoid kretprobe recursion
-Message-ID: <20190109110816.72a7ae85@gandalf.local.home>
-In-Reply-To: <154692272225.1133.799265848498671353.stgit@devbox>
-References: <154692263564.1133.17363562046971295490.stgit@devbox>
-        <154692272225.1133.799265848498671353.stgit@devbox>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        id S1732027AbfAIQJM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 11:09:12 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Jan 2019 08:09:11 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,458,1539673200"; 
+   d="scan'208";a="116778211"
+Received: from ahduyck-desk1.jf.intel.com ([10.7.198.76])
+  by orsmga003.jf.intel.com with ESMTP; 09 Jan 2019 08:09:11 -0800
+Message-ID: <fa89d216da811e97428ad155770bcca5eddecc37.camel@linux.intel.com>
+Subject: Re: [PATCH v7] mm/page_alloc.c: memory_hotplug: free pages as
+ higher order
+From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
+To:     Arun KS <arunks@codeaurora.org>
+Cc:     arunks.linux@gmail.com, akpm@linux-foundation.org,
+        mhocko@kernel.org, vbabka@suse.cz, osalvador@suse.de,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        getarunks@gmail.com
+Date:   Wed, 09 Jan 2019 08:09:11 -0800
+In-Reply-To: <fdc656df7c54819f60d9a1682c84b14f@codeaurora.org>
+References: <1546578076-31716-1-git-send-email-arunks@codeaurora.org>
+         <7c81c8bc741819e87e9a2a39a8b1b6d2f8d3423a.camel@linux.intel.com>
+         <fdc656df7c54819f60d9a1682c84b14f@codeaurora.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-2.fc28) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue,  8 Jan 2019 13:45:22 +0900
-Masami Hiramatsu <mhiramat@kernel.org> wrote:
+On Wed, 2019-01-09 at 11:51 +0530, Arun KS wrote:
+> On 2019-01-09 03:47, Alexander Duyck wrote:
+> > On Fri, 2019-01-04 at 10:31 +0530, Arun KS wrote:
+> > > When freeing pages are done with higher order, time spent on 
+> > > coalescing
+> > > pages by buddy allocator can be reduced.  With section size of 256MB, 
+> > > hot
+> > > add latency of a single section shows improvement from 50-60 ms to 
+> > > less
+> > > than 1 ms, hence improving the hot add latency by 60 times.  Modify
+> > > external providers of online callback to align with the change.
+> > > 
+> > > Signed-off-by: Arun KS <arunks@codeaurora.org>
+> > > Acked-by: Michal Hocko <mhocko@suse.com>
+> > > Reviewed-by: Oscar Salvador <osalvador@suse.de>
+> > 
+> > Sorry, ended up encountering a couple more things that have me a bit
+> > confused.
+> > 
+> > [...]
+> > 
+> > > diff --git a/drivers/hv/hv_balloon.c b/drivers/hv/hv_balloon.c
+> > > index 5301fef..211f3fe 100644
+> > > --- a/drivers/hv/hv_balloon.c
+> > > +++ b/drivers/hv/hv_balloon.c
+> > > @@ -771,7 +771,7 @@ static void hv_mem_hot_add(unsigned long start, 
+> > > unsigned long size,
+> > >  	}
+> > >  }
+> > > 
+> > > -static void hv_online_page(struct page *pg)
+> > > +static int hv_online_page(struct page *pg, unsigned int order)
+> > >  {
+> > >  	struct hv_hotadd_state *has;
+> > >  	unsigned long flags;
+> > > @@ -783,10 +783,12 @@ static void hv_online_page(struct page *pg)
+> > >  		if ((pfn < has->start_pfn) || (pfn >= has->end_pfn))
+> > >  			continue;
+> > > 
+> > > -		hv_page_online_one(has, pg);
+> > > +		hv_bring_pgs_online(has, pfn, (1UL << order));
+> > >  		break;
+> > >  	}
+> > >  	spin_unlock_irqrestore(&dm_device.ha_lock, flags);
+> > > +
+> > > +	return 0;
+> > >  }
+> > > 
+> > >  static int pfn_covered(unsigned long start_pfn, unsigned long 
+> > > pfn_cnt)
+> > 
+> > So the question I have is why was a return value added to these
+> > functions? They were previously void types and now they are int. What
+> > is the return value expected other than 0?
+> 
+> Earlier with returning a void there was now way for an arch code to 
+> denying onlining of this particular page. By using an int as return 
+> type, we can implement this. In one of the boards I was using, there are 
+> some pages which should not be onlined because they are used for other 
+> purposes(like secure trust zone or hypervisor).
 
-> Fix to avoid kretprobe recursion loop by setting a dummy
-> kprobes to current_kprobe per-cpu variable.
-> 
-> This bug has been introduced with the asm-coded trampoline
-> code, since previously it used another kprobe for hooking
-> the function return placeholder (which only has a nop) and
-> trampoline handler was called from that kprobe.
-> 
-> This revives the old lost kprobe again.
-> 
-> With this fix, we don't see deadlock anymore.
-> 
-> # echo "r:event_1 __fdget" >> kprobe_events
-> # echo "r:event_2 _raw_spin_lock_irqsave" >> kprobe_events
-> # echo 1 > events/kprobes/enable
-> 
-> And you can see that all inner-called kretprobe are skipped.
-> 
-> # cat kprobe_profile
->   event_1                                  235               0
->   event_2                                19375           19612
-> 
-> The 1st column is recorded count and the 2nd is missed count.
-> Above shows (event_1 rec) + (event_2 rec) ~= (event_2 missed)
+So where is the code using that? I don't see any functions in the
+kernel that are returning anything other than 0. Maybe you should hold
+off on changing the return type and make that a separate patch to be
+enabled when you add the new functions that can return non-zero values.
 
-I don't quite understand the above. Is the miss count because we missed
-event_2 events for both event_1 and event_2?
+That way if someone wants to backport this they are just getting the
+bits needed to enable the improved hot-plug times without adding the
+extra overhead for changing the return type.
 
- trace raw_spin_lock()
-    handler calls raw_spin_lock()
-          trace raw_spin_lock() [ skip ]
-
-I'm also guessing that the 2 extra (19612 - (235 + 19375) = 2) are
-possibly due to the displaying being racy?
-
-> 
-> Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-> Reported-by: Andrea Righi <righi.andrea@gmail.com>
-> Fixes: c9becf58d935 ("[PATCH] kretprobe: kretprobe-booster")
-> Cc: stable@vger.kernel.org
-> ---
->  arch/x86/kernel/kprobes/core.c |   22 ++++++++++++++++++++--
->  1 file changed, 20 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/x86/kernel/kprobes/core.c b/arch/x86/kernel/kprobes/core.c
-> index 69b6400d1ce2..f4b954ff5b89 100644
-> --- a/arch/x86/kernel/kprobes/core.c
-> +++ b/arch/x86/kernel/kprobes/core.c
-> @@ -749,11 +749,16 @@ asm(
->  NOKPROBE_SYMBOL(kretprobe_trampoline);
->  STACK_FRAME_NON_STANDARD(kretprobe_trampoline);
->  
-> +static struct kprobe kretprobe_kprobe = {
-> +	.addr = (void *)kretprobe_trampoline,
-> +};
-> +
->  /*
->   * Called from kretprobe_trampoline
->   */
->  static __used void *trampoline_handler(struct pt_regs *regs)
->  {
-> +	struct kprobe_ctlblk *kcb;
->  	struct kretprobe_instance *ri = NULL;
->  	struct hlist_head *head, empty_rp;
->  	struct hlist_node *tmp;
-> @@ -763,6 +768,17 @@ static __used void *trampoline_handler(struct pt_regs *regs)
->  	void *frame_pointer;
->  	bool skipped = false;
->  
-> +	preempt_disable();
-> +
-> +	/*
-> +	 * Set a dummy kprobe for avoiding kretprobe recursion.
-> +	 * Since kretprobe never run in kprobe handler, kprobe must not
-> +	 * be running at this point.
-> +	 */
-> +	kcb = get_kprobe_ctlblk();
-> +	__this_cpu_write(current_kprobe, &kretprobe_kprobe);
-
-If an interrupt comes in here, is this still safe, if the interrupt
-handler has a kretprobe too?
-
--- Steve
-
-> +	kcb->kprobe_status = KPROBE_HIT_ACTIVE;
-> +
->  	INIT_HLIST_HEAD(&empty_rp);
->  	kretprobe_hash_lock(current, &head, &flags);
->  	/* fixup registers */
-> @@ -838,10 +854,9 @@ static __used void *trampoline_handler(struct pt_regs *regs)
->  		orig_ret_address = (unsigned long)ri->ret_addr;
->  		if (ri->rp && ri->rp->handler) {
->  			__this_cpu_write(current_kprobe, &ri->rp->kp);
-> -			get_kprobe_ctlblk()->kprobe_status = KPROBE_HIT_ACTIVE;
->  			ri->ret_addr = correct_ret_addr;
->  			ri->rp->handler(ri, regs);
-> -			__this_cpu_write(current_kprobe, NULL);
-> +			__this_cpu_write(current_kprobe, &kretprobe_kprobe);
->  		}
->  
->  		recycle_rp_inst(ri, &empty_rp);
-> @@ -857,6 +872,9 @@ static __used void *trampoline_handler(struct pt_regs *regs)
->  
->  	kretprobe_hash_unlock(current, &flags);
->  
-> +	__this_cpu_write(current_kprobe, NULL);
-> +	preempt_enable();
-> +
->  	hlist_for_each_entry_safe(ri, tmp, &empty_rp, hlist) {
->  		hlist_del(&ri->hlist);
->  		kfree(ri);
 
