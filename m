@@ -2,102 +2,116 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8ADF7C43612
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 04:01:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5A73C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 04:01:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B39C214C6
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 04:01:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4E72820883
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 04:01:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=pobox.com header.i=@pobox.com header.b="a3lYeLFy"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729333AbfAIEB0 (ORCPT
+        id S1729435AbfAIEBx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 23:01:26 -0500
-Received: from shelob.surriel.com ([96.67.55.147]:39782 "EHLO
-        shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728483AbfAIEB0 (ORCPT
+        Tue, 8 Jan 2019 23:01:53 -0500
+Received: from pb-smtp21.pobox.com ([173.228.157.53]:59751 "EHLO
+        pb-smtp21.pobox.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728483AbfAIEBw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 23:01:26 -0500
-Received: from imladris.surriel.com ([96.67.55.152])
-        by shelob.surriel.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.91)
-        (envelope-from <riel@shelob.surriel.com>)
-        id 1gh53I-0006Hz-B2; Tue, 08 Jan 2019 23:01:12 -0500
-From:   Rik van Riel <riel@surriel.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Rik van Riel <riel@surriel.com>, kernel-team@fb.com,
-        linux-mm@kvack.org, stable@vger.kernel.org,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Johannes Weiner <hannes@cmpxchg.org>, Tejun Heo <tj@kernel.org>
-Subject: [PATCH] mm,slab,memcg: call memcg kmem put cache with same condition as get
-Date:   Tue,  8 Jan 2019 23:01:07 -0500
-Message-Id: <20190109040107.4110-1-riel@surriel.com>
-X-Mailer: git-send-email 2.17.1
+        Tue, 8 Jan 2019 23:01:52 -0500
+X-Greylist: delayed 360 seconds by postgrey-1.27 at vger.kernel.org; Tue, 08 Jan 2019 23:01:51 EST
+Received: from pb-smtp21.pobox.com (unknown [127.0.0.1])
+        by pb-smtp21.pobox.com (Postfix) with ESMTP id 20A1E4D5FF;
+        Tue,  8 Jan 2019 22:55:51 -0500 (EST)
+        (envelope-from nicolas.pitre@linaro.org)
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=pobox.com; h=from:to:cc
+        :subject:date:message-id:in-reply-to:references:mime-version
+        :content-transfer-encoding; s=sasl; bh=zys7wzfBEXI8WLsQRJK2ztCU7
+        R8=; b=a3lYeLFy7EbcTJGngJRCZXzWIerFwm5osXoz1Caw0aMbhcPJ2HiS5BfLz
+        duHedGMFUOFBCa4zLYEUX/9LOUVLRczB9jlubgg6cgLQjvb51pL/r2fVb/7JeAD2
+        2jCqLkU3LU+lzLEWkRuTbwx118uCUoK0cpzrSVPPMo30A+QKas=
+Received: from pb-smtp21.sea.icgroup.com (unknown [127.0.0.1])
+        by pb-smtp21.pobox.com (Postfix) with ESMTP id 193254D5FE;
+        Tue,  8 Jan 2019 22:55:51 -0500 (EST)
+        (envelope-from nicolas.pitre@linaro.org)
+Received: from yoda.home (unknown [70.82.104.228])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by pb-smtp21.pobox.com (Postfix) with ESMTPSA id 1B1314D5FD;
+        Tue,  8 Jan 2019 22:55:48 -0500 (EST)
+        (envelope-from nicolas.pitre@linaro.org)
+Received: from xanadu.home (xanadu.home [192.168.2.2])
+        by yoda.home (Postfix) with ESMTP id 1562C2DA06F5;
+        Tue,  8 Jan 2019 22:55:46 -0500 (EST)
+From:   Nicolas Pitre <nicolas.pitre@linaro.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Dave Mielke <Dave@mielke.cc>, linux-kernel@vger.kernel.org
+Subject: [PATCH 6/6] vcs: fasync(): make it consistent with poll()
+Date:   Tue,  8 Jan 2019 22:55:04 -0500
+Message-Id: <20190109035504.8413-7-nicolas.pitre@linaro.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190109035504.8413-1-nicolas.pitre@linaro.org>
+References: <20190109035504.8413-1-nicolas.pitre@linaro.org>
+MIME-Version: 1.0
+X-Pobox-Relay-ID: 72BF9086-13C2-11E9-959D-90A5DACCD188-78420484!pb-smtp21.pobox.com
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is an imbalance between when slab_pre_alloc_hook calls
-memcg_kmem_get_cache and when slab_post_alloc_hook calls
-memcg_kmem_put_cache.
+We use POLLPRI not POLLIN to wait for data with poll() as there is
+never any incoming data stream per se. Let's use the same semantic
+with fasync() for consistency, including the fact that a vt may go away.
 
-This can cause a memcg kmem cache to be destroyed right as
-an object from that cache is being allocated, which is probably
-not good. It could lead to things like a memcg allocating new
-kmalloc slabs instead of using freed space in old ones, maybe
-memory leaks, and maybe oopses as a memcg kmalloc slab is getting
-destroyed on one CPU while another CPU is trying to do an allocation
-from that same memcg.
+No known user space ever relied on the SIGIO reason so far, let alone
+FASYNC, so the risk of breakage is pretty much nonexistent.
 
-The obvious fix would be to use the same condition for calling
-memcg_kmem_put_cache that we also use to decide whether to call
-memcg_kmem_get_cache.
-
-I am not sure how long this bug has been around, since the last
-changeset to touch that code - 452647784b2f ("mm: memcontrol: cleanup
- kmem charge functions") - merely moved the bug from one location to
-another. I am still tagging that changeset, because the fix should
-automatically apply that far back.
-
-Signed-off-by: Rik van Riel <riel@surriel.com>
-Fixes: 452647784b2f ("mm: memcontrol: cleanup kmem charge functions")
-Cc: kernel-team@fb.com
-Cc: linux-mm@kvack.org
-Cc: stable@vger.kernel.org
-Cc: Alexey Dobriyan <adobriyan@gmail.com>
-Cc: Christoph Lameter <cl@linux.com>
-Cc: Pekka Enberg <penberg@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: David Rientjes <rientjes@google.com>
-Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Tejun Heo <tj@kernel.org>
+Signed-off-by: Nicolas Pitre <nico@linaro.org>
 ---
- mm/slab.h | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/tty/vt/vc_screen.c | 15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
 
-diff --git a/mm/slab.h b/mm/slab.h
-index 4190c24ef0e9..ab3d95bef8a0 100644
---- a/mm/slab.h
-+++ b/mm/slab.h
-@@ -444,7 +444,8 @@ static inline void slab_post_alloc_hook(struct kmem_cache *s, gfp_t flags,
- 		p[i] = kasan_slab_alloc(s, object, flags);
- 	}
- 
--	if (memcg_kmem_enabled())
-+	if (memcg_kmem_enabled() &&
-+	    ((flags & __GFP_ACCOUNT) || (s->flags & SLAB_ACCOUNT)))
- 		memcg_kmem_put_cache(s);
+diff --git a/drivers/tty/vt/vc_screen.c b/drivers/tty/vt/vc_screen.c
+index 1bbe2a30cd..1d887113ff 100644
+--- a/drivers/tty/vt/vc_screen.c
++++ b/drivers/tty/vt/vc_screen.c
+@@ -93,9 +93,18 @@ vcs_notifier(struct notifier_block *nb, unsigned long =
+code, void *_param)
+ 	struct vcs_poll_data *poll =3D
+ 		container_of(nb, struct vcs_poll_data, notifier);
+ 	int currcons =3D poll->cons_num;
+-
+-	if (code !=3D VT_UPDATE && code !=3D VT_DEALLOCATE)
++	int fa_band;
++
++	switch (code) {
++	case VT_UPDATE:
++		fa_band =3D POLL_PRI;
++		break;
++	case VT_DEALLOCATE:
++		fa_band =3D POLL_HUP;
++		break;
++	default:
+ 		return NOTIFY_DONE;
++	}
+=20
+ 	if (currcons =3D=3D 0)
+ 		currcons =3D fg_console;
+@@ -106,7 +115,7 @@ vcs_notifier(struct notifier_block *nb, unsigned long=
+ code, void *_param)
+=20
+ 	poll->event =3D code;
+ 	wake_up_interruptible(&poll->waitq);
+-	kill_fasync(&poll->fasync, SIGIO, POLL_IN);
++	kill_fasync(&poll->fasync, SIGIO, fa_band);
+ 	return NOTIFY_OK;
  }
- 
--- 
-2.17.1
+=20
+--=20
+2.20.1
 
