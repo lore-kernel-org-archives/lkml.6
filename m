@@ -2,262 +2,168 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25DCCC43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 13:43:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 721B7C43444
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 13:44:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E8D8B20660
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 13:43:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 40F73206B6
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 13:44:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547041462;
+	bh=Om/kS8fV7w7Qh9/P3hSfXqDysye/oIbesa7uGYdloek=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=Ix9Tt3A2zwhBLdsicHkSaQ3jyjMlF0fXPmwxu/NAdZpYWk+x+tCR5PiNc4o59wQzF
+	 yj3t60PODrIlrc30/CIS3/es8mqYvtyOwe+bvVBuCtrZlVPnoDNM85amrXMNYkof2z
+	 FxjFY7Ryq1YxUefMEPWqGij8xXlceLyYwmk8U0Pg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731353AbfAINnY (ORCPT
+        id S1731016AbfAINoV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 08:43:24 -0500
-Received: from mxout014.mail.hostpoint.ch ([217.26.49.174]:49435 "EHLO
-        mxout014.mail.hostpoint.ch" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730610AbfAINma (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 08:42:30 -0500
-Received: from [10.0.2.45] (helo=asmtp012.mail.hostpoint.ch)
-        by mxout014.mail.hostpoint.ch with esmtp (Exim 4.91 (FreeBSD))
-        (envelope-from <dev@pschenker.ch>)
-        id 1ghE7k-0007Wt-Sd; Wed, 09 Jan 2019 14:42:24 +0100
-Received: from 252.222.41.212.static.wline.lns.sme.cust.swisscom.ch ([212.41.222.252] helo=philippe-pc.toradex.int)
-        by asmtp012.mail.hostpoint.ch with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.91 (FreeBSD))
-        (envelope-from <dev@pschenker.ch>)
-        id 1ghE7k-0006KA-Mb; Wed, 09 Jan 2019 14:42:24 +0100
-X-Authenticated-Sender-Id: dev@pschenker.ch
-From:   Philippe Schenker <dev@pschenker.ch>
-To:     jic23@kernel.org, marcel.ziswiler@toradex.com, stefan@agner.ch
-Cc:     robh@kernel.org, alexandre.torgue@st.com, shawnguo@kernel.org,
-        dmitry.torokhov@gmail.com, thierry.reding@gmail.com,
-        mcoquelin.stm32@gmail.com, digetx@gmail.com, lee.jones@linaro.org,
-        Max Krummenacher <max.krummenacher@toradex.com>,
-        Philippe Schenker <philippe.schenker@toradex.com>,
-        linux-kernel@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v6 3/8] mfd: stmpe: preparations for STMPE ADC driver
-Date:   Wed,  9 Jan 2019 14:42:02 +0100
-Message-Id: <20190109134208.5660-4-dev@pschenker.ch>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190109134208.5660-1-dev@pschenker.ch>
-References: <20190109134208.5660-1-dev@pschenker.ch>
+        Wed, 9 Jan 2019 08:44:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42310 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729699AbfAINoU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 08:44:20 -0500
+Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 530E4206B6;
+        Wed,  9 Jan 2019 13:44:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547041459;
+        bh=Om/kS8fV7w7Qh9/P3hSfXqDysye/oIbesa7uGYdloek=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=YWuhr6lCXnw32NO/As+YA8SLZq+XKh7oUCJka9aRNDQ2NohcnWKD4jIJ3dPkBgrL7
+         vdZLPVoI0babODw602pjdD0++zEVhRsgHuJHn6ajO51MEcrxcisQ/WchCXLpouhsgw
+         KXhE0BkfHDhvTHDClkJZqludvLRwIzqZYMWVyUgU=
+Date:   Wed, 9 Jan 2019 08:44:18 -0500
+From:   Sasha Levin <sashal@kernel.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Theodore Tso <tytso@mit.edu>, stable@kernel.org
+Subject: Re: [PATCH 4.20 079/145] ext4: check for shutdown and r/o file
+ system in ext4_write_inode()
+Message-ID: <20190109134418.GJ166797@sasha-vm>
+References: <20190107104437.308206189@linuxfoundation.org>
+ <20190107104447.599996662@linuxfoundation.org>
+ <20190107215606.GH166797@sasha-vm>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20190107215606.GH166797@sasha-vm>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stefan Agner <stefan@agner.ch>
+On Mon, Jan 07, 2019 at 04:56:06PM -0500, Sasha Levin wrote:
+>On Mon, Jan 07, 2019 at 01:31:56PM +0100, Greg Kroah-Hartman wrote:
+>>4.20-stable review patch.  If anyone has any objections, please let me know.
+>>
+>>------------------
+>>
+>>From: Theodore Ts'o <tytso@mit.edu>
+>>
+>>commit 18f2c4fcebf2582f96cbd5f2238f4f354a0e4847 upstream.
+>>
+>>If the file system has been shut down or is read-only, then
+>>ext4_write_inode() needs to bail out early.
+>>
+>>Also use jbd2_complete_transaction() instead of ext4_force_commit() so
+>>we only force a commit if it is needed.
+>>
+>>Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+>>Cc: stable@kernel.org
+>>Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>>
+>>---
+>>fs/ext4/inode.c |    9 +++++++--
+>>1 file changed, 7 insertions(+), 2 deletions(-)
+>>
+>>--- a/fs/ext4/inode.c
+>>+++ b/fs/ext4/inode.c
+>>@@ -5400,9 +5400,13 @@ int ext4_write_inode(struct inode *inode
+>>{
+>>	int err;
+>>
+>>-	if (WARN_ON_ONCE(current->flags & PF_MEMALLOC))
+>>+	if (WARN_ON_ONCE(current->flags & PF_MEMALLOC) ||
+>>+	    sb_rdonly(inode->i_sb))
+>>		return 0;
+>>
+>>+	if (unlikely(ext4_forced_shutdown(EXT4_SB(inode->i_sb))))
+>>+		return -EIO;
+>>+
+>>	if (EXT4_SB(inode->i_sb)->s_journal) {
+>>		if (ext4_journal_current_handle()) {
+>>			jbd_debug(1, "called recursively, non-PF_MEMALLOC!\n");
+>>@@ -5418,7 +5422,8 @@ int ext4_write_inode(struct inode *inode
+>>		if (wbc->sync_mode != WB_SYNC_ALL || wbc->for_sync)
+>>			return 0;
+>>
+>>-		err = ext4_force_commit(inode->i_sb);
+>>+		err = jbd2_complete_transaction(EXT4_SB(inode->i_sb)->s_journal,
+>>+						EXT4_I(inode)->i_sync_tid);
+>>	} else {
+>>		struct ext4_iloc iloc;
+>
+>Hi Ted,
+>
+>I'm not sure if this patch is the culprit or no, but testing with
+>xfstests on 4.20.1-rc1 started failing generic/390 with:
+>
+>[ 3405.656893] run fstests generic/390 at 2019-01-07 20:26:55
+>[ 3406.524380] EXT4-fs (nvme0n1p2): mounted filesystem without journal. Opts: acl,user_xattr
+>[ 3406.731410] WARNING: CPU: 0 PID: 93128 at fs/ext4/ext4_jbd2.c:53 ext4_journal_check_start+0x121/0x190
+>[ 3406.731418] CPU: 0 PID: 93128 Comm: fsstress Tainted: G    B   W         4.20.1-rc1+ #1
+>[ 3406.731420] Hardware name: Microsoft Corporation Virtual Machine/Virtual Machine, BIOS 090007  05/18/2018
+>[ 3406.731425] RIP: 0010:ext4_journal_check_start+0x121/0x190
+>[ 3406.731430] Code: 4d 85 e4 74 1e 4c 89 e2 48 b8 00 00 00 00 00 fc ff df 48 c1 ea 03 80 3c 02 00 75 4f 41 f6 04 24 02 75 0b 31 c0 5b 41 5c 5d c3 <0f> 0b eb ab 48 c7 c1 60 b4 f9 a4 ba 3d 00 00 00 48 c7 c6 a0 b8 f9
+>[ 3406.731432] RSP: 0018:ffff888f30317648 EFLAGS: 00010246
+>[ 3406.731437] RAX: 0000000000000000 RBX: ffff888ee6ce12c8 RCX: 000000000000000c
+>[ 3406.731440] RDX: 1ffff111dcd9c2a0 RSI: 0000000000000b33 RDI: ffff888ee6ce1500
+>[ 3406.731442] RBP: ffff888f30317658 R08: 0000000000000000 R09: ffffed11db5f01a7
+>[ 3406.731444] R10: 0000000000000001 R11: ffffed11db5f01a6 R12: ffff888ee6ce2ee8
+>[ 3406.731447] R13: dffffc0000000000 R14: 0000000000000000 R15: ffff888f303178e0
+>[ 3406.731450] FS:  00007fc015d5cb80(0000) GS:ffff888f6b800000(0000) knlGS:0000000000000000
+>[ 3406.731452] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>[ 3406.731455] CR2: 0000557f34651000 CR3: 0000000f2c722000 CR4: 00000000003406f0
+>[ 3406.731459] Call Trace:
+>[ 3406.731465]  __ext4_journal_start_sb+0x95/0x380
+>[ 3406.731479]  ext4_writepages+0x10e1/0x3170
+>[ 3406.731567]  do_writepages+0xc7/0x120
+>[ 3406.731577]  __filemap_fdatawrite_range+0x313/0x470
+>[ 3406.731594]  file_write_and_wait_range+0x7c/0xd0
+>[ 3406.731598]  __generic_file_fsync+0x6c/0x180
+>[ 3406.731601]  ext4_sync_file+0x60b/0xf90
+>[ 3406.731626]  vfs_fsync_range+0xf5/0x210
+>[ 3406.731630]  do_fsync+0x3d/0x70
+>[ 3406.731634]  __x64_sys_fdatasync+0x36/0x50
+>[ 3406.731638]  do_syscall_64+0x153/0x460
+>[ 3406.731666]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+>[ 3406.731669] RIP: 0033:0x7fc0152412c4
+>[ 3406.731673] Code: 89 01 48 83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 48 8d 05 41 96 2d 00 8b 00 85 c0 75 13 b8 4b 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 3c f3 c3 66 90 53 89 fb 48 83 ec 10 e8 04 94
+>[ 3406.731675] RSP: 002b:00007ffc445f72f8 EFLAGS: 00000246 ORIG_RAX: 000000000000004b
+>[ 3406.731679] RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00007fc0152412c4
+>[ 3406.731681] RDX: 00007ffc445f7250 RSI: 00007ffc445f7250 RDI: 0000000000000003
+>[ 3406.731683] RBP: 0000000000000034 R08: 00007fc015515c40 R09: 0000000000000000
+>[ 3406.731685] R10: 0000000000000000 R11: 0000000000000246 R12: 00000000000001f4
+>[ 3406.731687] R13: 0000000051eb851f R14: 00007ffc445f73f6 R15: 0000557f33ad1930
+>[ 3406.731690] ---[ end trace 698eba2a0467d312 ]---
+>
+>I'm also slightly confused here because this test is for ext4 without
+>journal (see even "EXT4-fs (nvme0n1p2): mounted filesystem without
+>journal") but for some reason it seems that this still goes to the
+>journal?
 
-This prepares the MFD for the STMPE ADC driver. This commit introduces
-devicetree settings that are used by the ADC and adds an init function.
-Common ADC settings that are shared with the touchscreen driver can now
-reside in the overlying MFD.
+Following up on this, I can reproduce this failure somewhat reliably
+with 4.20.1-rc1 but can't with 4.20. If there's anything I can do to
+help debug this please let me know.
 
-Signed-off-by: Stefan Agner <stefan@agner.ch>
-Signed-off-by: Max Krummenacher <max.krummenacher@toradex.com>
-Signed-off-by: Philippe Schenker <philippe.schenker@toradex.com>
-Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
-
----
-
-Changes in v6: None
-Changes in v5:
- - Added Lee Jone's Ack
- - Changed author of commit. Previous patch versions author was wrong
-   by mistake.
-
-Changes in v4:
- - New patch: split mfd changes into this precursor patch
- - Export the added stmpe811_adc_commmon_init function
- - Disabling adc when mfd is removed
-
-Changes in v3: None
-Changes in v2:
- - Move code to setup ADC to MFD device, as it is used by both drivers
-   adc and touchscreen
-
- drivers/mfd/Kconfig       |  3 +-
- drivers/mfd/stmpe.c       | 68 +++++++++++++++++++++++++++++++++++++++
- include/linux/mfd/stmpe.h | 10 ++++++
- 3 files changed, 80 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-index 8c5dfdce4326..bba159e8eaa4 100644
---- a/drivers/mfd/Kconfig
-+++ b/drivers/mfd/Kconfig
-@@ -1204,7 +1204,7 @@ config MFD_STMPE
- 
- 	  Currently supported devices are:
- 
--		STMPE811: GPIO, Touchscreen
-+		STMPE811: GPIO, Touchscreen, ADC
- 		STMPE1601: GPIO, Keypad
- 		STMPE1801: GPIO, Keypad
- 		STMPE2401: GPIO, Keypad
-@@ -1217,6 +1217,7 @@ config MFD_STMPE
- 		GPIO: stmpe-gpio
- 		Keypad: stmpe-keypad
- 		Touchscreen: stmpe-ts
-+		ADC: stmpe-adc
- 
- menu "STMicroelectronics STMPE Interface Drivers"
- depends on MFD_STMPE
-diff --git a/drivers/mfd/stmpe.c b/drivers/mfd/stmpe.c
-index 566caca4efd8..f582531a8f3e 100644
---- a/drivers/mfd/stmpe.c
-+++ b/drivers/mfd/stmpe.c
-@@ -463,6 +463,28 @@ static const struct mfd_cell stmpe_ts_cell = {
- 	.num_resources	= ARRAY_SIZE(stmpe_ts_resources),
- };
- 
-+/*
-+ * ADC (STMPE811)
-+ */
-+
-+static struct resource stmpe_adc_resources[] = {
-+	{
-+		.name	= "STMPE_TEMP_SENS",
-+		.flags	= IORESOURCE_IRQ,
-+	},
-+	{
-+		.name	= "STMPE_ADC",
-+		.flags	= IORESOURCE_IRQ,
-+	},
-+};
-+
-+static const struct mfd_cell stmpe_adc_cell = {
-+	.name		= "stmpe-adc",
-+	.of_compatible	= "st,stmpe-adc",
-+	.resources	= stmpe_adc_resources,
-+	.num_resources	= ARRAY_SIZE(stmpe_adc_resources),
-+};
-+
- /*
-  * STMPE811 or STMPE610
-  */
-@@ -497,6 +519,11 @@ static struct stmpe_variant_block stmpe811_blocks[] = {
- 		.irq	= STMPE811_IRQ_TOUCH_DET,
- 		.block	= STMPE_BLOCK_TOUCHSCREEN,
- 	},
-+	{
-+		.cell	= &stmpe_adc_cell,
-+		.irq	= STMPE811_IRQ_TEMP_SENS,
-+		.block	= STMPE_BLOCK_ADC,
-+	},
- };
- 
- static int stmpe811_enable(struct stmpe *stmpe, unsigned int blocks,
-@@ -517,6 +544,35 @@ static int stmpe811_enable(struct stmpe *stmpe, unsigned int blocks,
- 				enable ? 0 : mask);
- }
- 
-+int stmpe811_adc_common_init(struct stmpe *stmpe)
-+{
-+	int ret;
-+	u8 adc_ctrl1, adc_ctrl1_mask;
-+
-+	adc_ctrl1 = STMPE_SAMPLE_TIME(stmpe->sample_time) |
-+		    STMPE_MOD_12B(stmpe->mod_12b) |
-+		    STMPE_REF_SEL(stmpe->ref_sel);
-+	adc_ctrl1_mask = STMPE_SAMPLE_TIME(0xff) | STMPE_MOD_12B(0xff) |
-+			 STMPE_REF_SEL(0xff);
-+
-+	ret = stmpe_set_bits(stmpe, STMPE811_REG_ADC_CTRL1,
-+			adc_ctrl1_mask, adc_ctrl1);
-+	if (ret) {
-+		dev_err(stmpe->dev, "Could not setup ADC\n");
-+		return ret;
-+	}
-+
-+	ret = stmpe_set_bits(stmpe, STMPE811_REG_ADC_CTRL2,
-+			STMPE_ADC_FREQ(0xff), STMPE_ADC_FREQ(stmpe->adc_freq));
-+	if (ret) {
-+		dev_err(stmpe->dev, "Could not setup ADC\n");
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(stmpe811_adc_common_init);
-+
- static int stmpe811_get_altfunc(struct stmpe *stmpe, enum stmpe_block block)
- {
- 	/* 0 for touchscreen, 1 for GPIO */
-@@ -1325,6 +1381,7 @@ int stmpe_probe(struct stmpe_client_info *ci, enum stmpe_partnum partnum)
- 	struct device_node *np = ci->dev->of_node;
- 	struct stmpe *stmpe;
- 	int ret;
-+	u32 val;
- 
- 	pdata = devm_kzalloc(ci->dev, sizeof(*pdata), GFP_KERNEL);
- 	if (!pdata)
-@@ -1342,6 +1399,15 @@ int stmpe_probe(struct stmpe_client_info *ci, enum stmpe_partnum partnum)
- 	mutex_init(&stmpe->irq_lock);
- 	mutex_init(&stmpe->lock);
- 
-+	if (!of_property_read_u32(np, "st,sample-time", &val))
-+		stmpe->sample_time = val;
-+	if (!of_property_read_u32(np, "st,mod-12b", &val))
-+		stmpe->mod_12b = val;
-+	if (!of_property_read_u32(np, "st,ref-sel", &val))
-+		stmpe->ref_sel = val;
-+	if (!of_property_read_u32(np, "st,adc-freq", &val))
-+		stmpe->adc_freq = val;
-+
- 	stmpe->dev = ci->dev;
- 	stmpe->client = ci->client;
- 	stmpe->pdata = pdata;
-@@ -1433,6 +1499,8 @@ int stmpe_remove(struct stmpe *stmpe)
- 	if (!IS_ERR(stmpe->vcc))
- 		regulator_disable(stmpe->vcc);
- 
-+	__stmpe_disable(stmpe, STMPE_BLOCK_ADC);
-+
- 	mfd_remove_devices(stmpe->dev);
- 
- 	return 0;
-diff --git a/include/linux/mfd/stmpe.h b/include/linux/mfd/stmpe.h
-index c0353f6431f9..07f55aac9390 100644
---- a/include/linux/mfd/stmpe.h
-+++ b/include/linux/mfd/stmpe.h
-@@ -21,6 +21,9 @@
- #define STMPE_I_DRIVE(x)	(x & 0x1)
- #define STMPE_OP_MODE(x)	((x & 0x7) << 1)
- 
-+#define STMPE811_REG_ADC_CTRL1	0x20
-+#define STMPE811_REG_ADC_CTRL2	0x21
-+
- struct device;
- struct regulator;
- 
-@@ -134,6 +137,12 @@ struct stmpe {
- 	u8 ier[2];
- 	u8 oldier[2];
- 	struct stmpe_platform_data *pdata;
-+
-+	/* For devices that use an ADC */
-+	u8 sample_time;
-+	u8 mod_12b;
-+	u8 ref_sel;
-+	u8 adc_freq;
- };
- 
- extern int stmpe_reg_write(struct stmpe *stmpe, u8 reg, u8 data);
-@@ -147,6 +156,7 @@ extern int stmpe_set_altfunc(struct stmpe *stmpe, u32 pins,
- 			     enum stmpe_block block);
- extern int stmpe_enable(struct stmpe *stmpe, unsigned int blocks);
- extern int stmpe_disable(struct stmpe *stmpe, unsigned int blocks);
-+extern int stmpe811_adc_common_init(struct stmpe *stmpe);
- 
- #define STMPE_GPIO_NOREQ_811_TOUCH	(0xf0)
- 
--- 
-2.20.1
-
+--
+Thanks,
+Sasha
