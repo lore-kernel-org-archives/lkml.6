@@ -3,85 +3,150 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E287C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 10:13:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CB44C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 10:14:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C06C20883
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 10:13:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6664B2064C
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 10:14:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730310AbfAIKNn (ORCPT
+        id S1730346AbfAIKOD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 05:13:43 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:45309 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729749AbfAIKNm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 05:13:42 -0500
-Received: by mail-ed1-f67.google.com with SMTP id d39so6784909edb.12;
-        Wed, 09 Jan 2019 02:13:41 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=n7yQbhSiniQkONQT8QwDM7yKGzR8/XPXa9/njSg9+oE=;
-        b=QXejNRdgcFEnHXEz9pgobfCES06gogbTeRqmBpK3anC25e7nYj5AFWz6Z9hv6ogxOa
-         NqItM8HR2vFHp/+Nu4CCHSr2R8FUdV/a8drXqp70xvY5zySDAsA3XO/aUUlI0QyIpGkI
-         4SOfOH7Jix7Y/hFJowtl2L1UcWumTyzsTTLXyFbBAmeeyXgrqP4VAapxs/y2+5BN1z5M
-         Z9qUmqQ3yvl87dzKwVCdQ3BXDDhewanBIxpk5LII49nnWT4fC0P0grO6l4tr6f657dmS
-         K8+P7Uz/PjSkyyU8aZXcDBFR/Juti3m+PYAFIXYv9H/qbBUl3bN/L+j+UEJEr5VhewFk
-         WWyg==
-X-Gm-Message-State: AJcUukemmNVctSU/iizRgLnTFaMYNFQ15QbNab/h/joK61+uXipWkIP+
-        086hXXarBcoNimk1INftsLjr/HAvR7M=
-X-Google-Smtp-Source: ALg8bN5TpVTJK5qWK2mV9Rl1q9L090wHgfGCOot2gJCyjFYT1Kj8TdTk3MQr1v3MdC9Kf8p5Yy1DFA==
-X-Received: by 2002:a50:8f86:: with SMTP id y6mr5560142edy.131.1547028820334;
-        Wed, 09 Jan 2019 02:13:40 -0800 (PST)
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com. [209.85.221.53])
-        by smtp.gmail.com with ESMTPSA id n3-v6sm582856ejd.35.2019.01.09.02.13.39
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 09 Jan 2019 02:13:39 -0800 (PST)
-Received: by mail-wr1-f53.google.com with SMTP id x10so7012262wrs.8;
-        Wed, 09 Jan 2019 02:13:39 -0800 (PST)
-X-Received: by 2002:adf:a1d2:: with SMTP id v18mr4272475wrv.87.1547028819339;
- Wed, 09 Jan 2019 02:13:39 -0800 (PST)
+        Wed, 9 Jan 2019 05:14:03 -0500
+Received: from foss.arm.com ([217.140.101.70]:40130 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730314AbfAIKOC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 05:14:02 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7071B80D
+        for <linux-kernel@vger.kernel.org>; Wed,  9 Jan 2019 02:14:02 -0800 (PST)
+Received: from mail-io1-f53.google.com (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5496D3F70D
+        for <linux-kernel@vger.kernel.org>; Wed,  9 Jan 2019 02:14:02 -0800 (PST)
+Received: by mail-io1-f53.google.com with SMTP id m19so5589911ioh.3
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Jan 2019 02:14:02 -0800 (PST)
+X-Gm-Message-State: AJcUuke3sPYtypTMeqh2Wbj3HRpe/OT1gz5sEFV/Tgu6r/zR8dLa3/5P
+        w7VxpEcLlrSo2pZUXZyLzWGAdBS+2qz7garB+38=
+X-Google-Smtp-Source: ALg8bN4rS9je0ssN9b9Lgrez3YdeI51sDvjbjeHJqVX3jBo8reJXIsHK0pDA/yf1dPMY/68kf+ccQV8QOB02LmhtxBA=
+X-Received: by 2002:a6b:b717:: with SMTP id h23mr3180991iof.14.1547028841575;
+ Wed, 09 Jan 2019 02:14:01 -0800 (PST)
 MIME-Version: 1.0
-References: <20190108191840.16007-1-jernej.skrabec@siol.net> <20190109101228.alsaaw6s57dbapfe@flea>
-In-Reply-To: <20190109101228.alsaaw6s57dbapfe@flea>
-From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Wed, 9 Jan 2019 18:13:24 +0800
-X-Gmail-Original-Message-ID: <CAGb2v64QM9gyPTtpw0C0fpANW5R9DEsWFSDA_tJPYhdgF_FAhQ@mail.gmail.com>
-Message-ID: <CAGb2v64QM9gyPTtpw0C0fpANW5R9DEsWFSDA_tJPYhdgF_FAhQ@mail.gmail.com>
-Subject: Re: [PATCH] ARM: dts: sun8i: h3: Add ethernet0 alias to Beelink X2
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     Jernej Skrabec <jernej.skrabec@siol.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
+References: <1545119810-12182-1-git-send-email-amit.kachhap@arm.com>
+ <1545119810-12182-4-git-send-email-amit.kachhap@arm.com> <49474d5f-6f4e-b57d-4b45-94c16d85136c@arm.com>
+In-Reply-To: <49474d5f-6f4e-b57d-4b45-94c16d85136c@arm.com>
+From:   Amit Daniel Kachhap <amit.kachhap@arm.com>
+Date:   Wed, 9 Jan 2019 15:43:50 +0530
+X-Gmail-Original-Message-ID: <CADGdYn7t7-vXNmQxBUxnCWq5UxG8uGJraCnRxjDgwvC0V6y8jA@mail.gmail.com>
+Message-ID: <CADGdYn7t7-vXNmQxBUxnCWq5UxG8uGJraCnRxjDgwvC0V6y8jA@mail.gmail.com>
+Subject: Re: [PATCH v4 3/6] arm64/kvm: add a userspace option to enable
+ pointer authentication
+To:     James Morse <james.morse@arm.com>
+Cc:     LAK <linux-arm-kernel@lists.infradead.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Kristina Martsenko <kristina.martsenko@arm.com>,
+        kvmarm@lists.cs.columbia.edu,
+        Ramana Radhakrishnan <ramana.radhakrishnan@arm.com>,
+        Dave Martin <Dave.Martin@arm.com>, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 9, 2019 at 6:12 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
->
-> On Tue, Jan 08, 2019 at 08:18:40PM +0100, Jernej Skrabec wrote:
-> > Because "ethernet0" alias is missing, U-Boot doesn't generate board
-> > specific MAC address. Effect of this is random MAC address every boot
-> > and thus new IP address is assigned to the board.
-> >
-> > Fix this by adding alias.
-> >
-> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
->
-> Applied, thanks!
-> Maxime
+Hi,
 
-Might we add a fixes tag, so the patch gets backported?
+On Sat, Jan 5, 2019 at 12:05 AM James Morse <james.morse@arm.com> wrote:
+>
+> Hi Amit,
+>
+> On 18/12/2018 07:56, Amit Daniel Kachhap wrote:
+> > This feature will allow the KVM guest to allow the handling of
+> > pointer authentication instructions or to treat them as undefined
+> > if not set. It uses the existing vcpu API KVM_ARM_VCPU_INIT to
+> > supply this parameter instead of creating a new API.
+> >
+> > A new register is not created to pass this parameter via
+> > SET/GET_ONE_REG interface as just a flag (KVM_ARM_VCPU_PTRAUTH)
+> > supplied is enough to select this feature.
+>
+> What is the motivation for doing this? Doesn't ptrauth 'just' need turning on?
+> It doesn't need additional setup to be useable, or rely on some qemu support to
+> work properly. There isn't any hidden state that can't be migrated in the usual way.
+> Is it just because we don't want to commit to the ABI?
+This allows migration of guest to non pointer authenticated supported
+systems and hides the extra ptrauth registers.
+Basically this suggestion was given by Christoffer
+(https://lore.kernel.org/lkml/20180206123847.GY21802@cbox/).
+ I don't have strong reservation to have this option and can be
+dropped if this doesn't make sense.
+>
+>
+> > diff --git a/Documentation/arm64/pointer-authentication.txt b/Documentation/arm64/pointer-authentication.txt
+> > index 5baca42..8c0f338 100644
+> > --- a/Documentation/arm64/pointer-authentication.txt
+> > +++ b/Documentation/arm64/pointer-authentication.txt
+> > @@ -87,7 +87,8 @@ used to get and set the keys for a thread.
+> >  Virtualization
+> >  --------------
+> >
+> > -Pointer authentication is not currently supported in KVM guests. KVM
+> > -will mask the feature bits from ID_AA64ISAR1_EL1, and attempted use of
+> > -the feature will result in an UNDEFINED exception being injected into
+> > -the guest.
+> > +Pointer authentication is enabled in KVM guest when virtual machine is
+> > +created by passing a flag (KVM_ARM_VCPU_PTRAUTH) requesting this feature
+> > +to be enabled. Without this flag, pointer authentication is not enabled
+> > +in KVM guests and attempted use of the feature will result in an UNDEFINED
+> > +exception being injected into the guest.
+>
+> > diff --git a/Documentation/virtual/kvm/api.txt b/Documentation/virtual/kvm/api.txt
+> > index cd209f7..e20583a 100644
+> > --- a/Documentation/virtual/kvm/api.txt
+> > +++ b/Documentation/virtual/kvm/api.txt
+> > @@ -2634,6 +2634,10 @@ Possible features:
+> >         Depends on KVM_CAP_ARM_PSCI_0_2.
+> >       - KVM_ARM_VCPU_PMU_V3: Emulate PMUv3 for the CPU.
+> >         Depends on KVM_CAP_ARM_PMU_V3.
+> > +     - KVM_ARM_VCPU_PTRAUTH: Emulate Pointer authentication for the CPU.
+> > +       Depends on KVM_CAP_ARM_PTRAUTH and only on arm64 architecture. If
+> > +       set, then the KVM guest allows the execution of pointer authentication
+> > +       instructions or treats them as undefined if not set.
+>
+> > diff --git a/arch/arm64/kvm/hyp/ptrauth-sr.c b/arch/arm64/kvm/hyp/ptrauth-sr.c
+> > index 1bfaf74..03999bb 100644
+> > --- a/arch/arm64/kvm/hyp/ptrauth-sr.c
+> > +++ b/arch/arm64/kvm/hyp/ptrauth-sr.c
+> > @@ -71,3 +71,19 @@ void __hyp_text __ptrauth_switch_to_host(struct kvm_vcpu *vcpu,
+> >       __ptrauth_save_state(guest_ctxt);
+> >       __ptrauth_restore_state(host_ctxt);
+> >  }
+> > +
+> > +/**
+> > + * kvm_arm_vcpu_ptrauth_allowed - checks if ptrauth feature is present in vcpu
+> > + *
+> > + * @vcpu: The VCPU pointer
+> > + *
+> > + * This function will be used to enable/disable ptrauth in guest as configured
+> > + * by the KVM userspace API.
+> > + */
+> > +bool kvm_arm_vcpu_ptrauth_allowed(struct kvm_vcpu *vcpu)
+> > +{
+> > +     if (test_bit(KVM_ARM_VCPU_PTRAUTH, vcpu->arch.features))
+> > +             return true;
+> > +     else
+> > +             return false;
+> > +}
+>
+> Can't you return the result of test_bit() directly?
+ok.
+>
+>
+> Thanks,
+>
+> James
 
-ChenYu
+//Amit
