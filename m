@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DF0AC43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 23:00:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5103CC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 23:00:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0768A206B6
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 23:00:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1C8C6206B6
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 23:00:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726875AbfAIXAA (ORCPT
+        id S1726936AbfAIXAE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 18:00:00 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:45066 "EHLO mx1.redhat.com"
+        Wed, 9 Jan 2019 18:00:04 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:41022 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726280AbfAIW75 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 17:59:57 -0500
+        id S1726831AbfAIXAA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 18:00:00 -0500
 Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id CA61D73A71;
-        Wed,  9 Jan 2019 22:59:56 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 23374C05FFE0;
+        Wed,  9 Jan 2019 22:59:59 +0000 (UTC)
 Received: from treble.redhat.com (ovpn-125-32.rdu2.redhat.com [10.10.125.32])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 139DB1001F57;
-        Wed,  9 Jan 2019 22:59:53 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id EE19510A1820;
+        Wed,  9 Jan 2019 22:59:56 +0000 (UTC)
 From:   Josh Poimboeuf <jpoimboe@redhat.com>
 To:     x86@kernel.org
 Cc:     linux-kernel@vger.kernel.org,
@@ -46,221 +46,191 @@ Cc:     linux-kernel@vger.kernel.org,
         Rasmus Villemoes <linux@rasmusvillemoes.dk>,
         Edward Cree <ecree@solarflare.com>,
         Daniel Bristot de Oliveira <bristot@redhat.com>
-Subject: [PATCH v3 2/6] static_call: Add basic static call infrastructure
-Date:   Wed,  9 Jan 2019 16:59:37 -0600
-Message-Id: <a01f733889ebf4bc447507ab8041a60378eaa89f.1547073843.git.jpoimboe@redhat.com>
+Subject: [PATCH v3 3/6] x86/static_call: Add out-of-line static call implementation
+Date:   Wed,  9 Jan 2019 16:59:38 -0600
+Message-Id: <30f0713894a415f13e0f0ea3d40595416db2f6d7.1547073843.git.jpoimboe@redhat.com>
 In-Reply-To: <cover.1547073843.git.jpoimboe@redhat.com>
 References: <cover.1547073843.git.jpoimboe@redhat.com>
 X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Wed, 09 Jan 2019 22:59:57 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Wed, 09 Jan 2019 22:59:59 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Static calls are a replacement for global function pointers.  They use
-code patching to allow direct calls to be used instead of indirect
-calls.  They give the flexibility of function pointers, but with
-improved performance.  This is especially important for cases where
-retpolines would otherwise be used, as retpolines can significantly
-impact performance.
+Add the x86 out-of-line static call implementation.  For each key, a
+permanent trampoline is created which is the destination for all static
+calls for the given key.  The trampoline has a direct jump which gets
+patched by static_call_update() when the destination function changes.
 
-The concept and code are an extension of previous work done by Ard
-Biesheuvel and Steven Rostedt:
-
-  https://lkml.kernel.org/r/20181005081333.15018-1-ard.biesheuvel@linaro.org
-  https://lkml.kernel.org/r/20181006015110.653946300@goodmis.org
-
-There are two implementations, depending on arch support:
-
-1) out-of-line: patched trampolines (CONFIG_HAVE_STATIC_CALL)
-2) basic function pointers
-
-For more details, see the comments in include/linux/static_call.h.
+This relies on the fact that call destinations can be atomically updated
+as long as they don't cross cache line boundaries.
 
 Signed-off-by: Josh Poimboeuf <jpoimboe@redhat.com>
 ---
- arch/Kconfig                      |   3 +
- include/linux/static_call.h       | 135 ++++++++++++++++++++++++++++++
- include/linux/static_call_types.h |  13 +++
- 3 files changed, 151 insertions(+)
- create mode 100644 include/linux/static_call.h
- create mode 100644 include/linux/static_call_types.h
+ arch/x86/Kconfig                   |  1 +
+ arch/x86/include/asm/static_call.h | 27 +++++++++++++++++++++
+ arch/x86/kernel/Makefile           |  1 +
+ arch/x86/kernel/static_call.c      | 38 ++++++++++++++++++++++++++++++
+ arch/x86/kernel/vmlinux.lds.S      |  1 +
+ include/asm-generic/vmlinux.lds.h  | 15 ++++++++++++
+ 6 files changed, 83 insertions(+)
+ create mode 100644 arch/x86/include/asm/static_call.h
+ create mode 100644 arch/x86/kernel/static_call.c
 
-diff --git a/arch/Kconfig b/arch/Kconfig
-index 4cfb6de48f79..7e469a693da3 100644
---- a/arch/Kconfig
-+++ b/arch/Kconfig
-@@ -885,6 +885,9 @@ config HAVE_ARCH_PREL32_RELOCATIONS
- 	  architectures, and don't require runtime relocation on relocatable
- 	  kernels.
- 
-+config HAVE_STATIC_CALL
-+	bool
-+
- source "kernel/gcov/Kconfig"
- 
- source "scripts/gcc-plugins/Kconfig"
-diff --git a/include/linux/static_call.h b/include/linux/static_call.h
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index 6185d4f33296..421097322f1b 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -190,6 +190,7 @@ config X86
+ 	select HAVE_FUNCTION_ARG_ACCESS_API
+ 	select HAVE_STACKPROTECTOR		if CC_HAS_SANE_STACKPROTECTOR
+ 	select HAVE_STACK_VALIDATION		if X86_64
++	select HAVE_STATIC_CALL
+ 	select HAVE_RSEQ
+ 	select HAVE_SYSCALL_TRACEPOINTS
+ 	select HAVE_UNSTABLE_SCHED_CLOCK
+diff --git a/arch/x86/include/asm/static_call.h b/arch/x86/include/asm/static_call.h
 new file mode 100644
-index 000000000000..9e85c479cd11
+index 000000000000..fab5facade03
 --- /dev/null
-+++ b/include/linux/static_call.h
-@@ -0,0 +1,135 @@
++++ b/arch/x86/include/asm/static_call.h
+@@ -0,0 +1,27 @@
 +/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _LINUX_STATIC_CALL_H
-+#define _LINUX_STATIC_CALL_H
++#ifndef _ASM_STATIC_CALL_H
++#define _ASM_STATIC_CALL_H
++
++#include <asm/asm-offsets.h>
 +
 +/*
-+ * Static call support
++ * This trampoline is used for out-of-line static calls.  It has a direct jump
++ * which gets patched by static_call_update().
 + *
-+ * Static calls use code patching to hard-code function pointers into direct
-+ * branch instructions.  They give the flexibility of function pointers, but
-+ * with improved performance.  This is especially important for cases where
-+ * retpolines would otherwise be used, as retpolines can significantly impact
-+ * performance.
++ * Trampolines are placed in the .static_call.text section to prevent two-byte
++ * tail calls to the trampoline and two-byte jumps from the trampoline.
 + *
-+ *
-+ * API overview:
-+ *
-+ *   DECLARE_STATIC_CALL(key, func);
-+ *   DEFINE_STATIC_CALL(key, func);
-+ *   static_call(key, args...);
-+ *   static_call_update(key, func);
-+ *
-+ *
-+ * Usage example:
-+ *
-+ *   # Start with the following functions (with identical prototypes):
-+ *   int func_a(int arg1, int arg2);
-+ *   int func_b(int arg1, int arg2);
-+ *
-+ *   # Define a 'my_key' reference, associated with func_a() by default
-+ *   DEFINE_STATIC_CALL(my_key, func_a);
-+ *
-+ *   # Call func_a()
-+ *   static_call(my_key, arg1, arg2);
-+ *
-+ *   # Update 'my_key' to point to func_b()
-+ *   static_call_update(my_key, func_b);
-+ *
-+ *   # Call func_b()
-+ *   static_call(my_key, arg1, arg2);
-+ *
-+ *
-+ * Implementation details:
-+ *
-+ *    This requires some arch-specific code (CONFIG_HAVE_STATIC_CALL).
-+ *    Otherwise basic indirect calls are used (with function pointers).
-+ *
-+ *    Each static_call() site calls into a trampoline associated with the key.
-+ *    The trampoline has a direct branch to the default function.  Updates to a
-+ *    key will modify the trampoline's branch destination.
++ * IMPORTANT: The JMP instruction's 4-byte destination must never cross
++ *            cacheline boundaries!  The patching code relies on that to ensure
++ *            atomic updates.
 + */
++#define ARCH_DEFINE_STATIC_CALL_TRAMP(key, func)			\
++	asm(".pushsection .static_call.text, \"ax\"		\n"	\
++	    ".align 8						\n"	\
++	    ".globl " STATIC_CALL_TRAMP_STR(key) "		\n"	\
++	    ".type " STATIC_CALL_TRAMP_STR(key) ", @function	\n"	\
++	    STATIC_CALL_TRAMP_STR(key) ":			\n"	\
++	    "jmp " #func "					\n"	\
++	    ".popsection					\n")
 +
-+#include <linux/types.h>
-+#include <linux/cpu.h>
-+#include <linux/static_call_types.h>
++#endif /* _ASM_STATIC_CALL_H */
+diff --git a/arch/x86/kernel/Makefile b/arch/x86/kernel/Makefile
+index 00b7e27bc2b7..f1329a79fd3b 100644
+--- a/arch/x86/kernel/Makefile
++++ b/arch/x86/kernel/Makefile
+@@ -63,6 +63,7 @@ obj-y			+= tsc.o tsc_msr.o io_delay.o rtc.o
+ obj-y			+= pci-iommu_table.o
+ obj-y			+= resource.o
+ obj-y			+= irqflags.o
++obj-y			+= static_call.o
+ 
+ obj-y				+= process.o
+ obj-y				+= fpu/
+diff --git a/arch/x86/kernel/static_call.c b/arch/x86/kernel/static_call.c
+new file mode 100644
+index 000000000000..e6ef53fbce20
+--- /dev/null
++++ b/arch/x86/kernel/static_call.c
+@@ -0,0 +1,38 @@
++// SPDX-License-Identifier: GPL-2.0
++#include <linux/static_call.h>
++#include <linux/memory.h>
++#include <linux/bug.h>
++#include <asm/text-patching.h>
++#include <asm/nospec-branch.h>
 +
-+#ifdef CONFIG_HAVE_STATIC_CALL
-+#include <asm/static_call.h>
-+extern void arch_static_call_transform(void *site, void *tramp, void *func);
-+#endif
++#define CALL_INSN_SIZE 5
 +
-+
-+#define DECLARE_STATIC_CALL(key, func)					\
-+	extern struct static_call_key key;				\
-+	extern typeof(func) STATIC_CALL_TRAMP(key)
-+
-+
-+#if defined(CONFIG_HAVE_STATIC_CALL)
-+
-+struct static_call_key {
-+	void *func, *tramp;
-+};
-+
-+#define DEFINE_STATIC_CALL(key, _func)					\
-+	DECLARE_STATIC_CALL(key, _func);				\
-+	struct static_call_key key = {					\
-+		.func = _func,						\
-+		.tramp = STATIC_CALL_TRAMP(key),			\
-+	};								\
-+	ARCH_DEFINE_STATIC_CALL_TRAMP(key, _func)
-+
-+#define static_call(key, args...) STATIC_CALL_TRAMP(key)(args)
-+
-+static inline void __static_call_update(struct static_call_key *key, void *func)
++void __ref arch_static_call_transform(void *site, void *tramp, void *func)
 +{
-+	cpus_read_lock();
-+	WRITE_ONCE(key->func, func);
-+	arch_static_call_transform(NULL, key->tramp, func);
-+	cpus_read_unlock();
-+}
++	s32 dest_relative;
++	unsigned char opcode;
++	void *(*poker)(void *, const void *, size_t);
++	void *insn = tramp;
 +
-+#define static_call_update(key, func)					\
-+({									\
-+	BUILD_BUG_ON(!__same_type(func, STATIC_CALL_TRAMP(key)));	\
-+	__static_call_update(&key, func);				\
-+})
++	mutex_lock(&text_mutex);
 +
-+#define EXPORT_STATIC_CALL(key)						\
-+	EXPORT_SYMBOL(STATIC_CALL_TRAMP(key))
-+
-+#define EXPORT_STATIC_CALL_GPL(key)					\
-+	EXPORT_SYMBOL_GPL(STATIC_CALL_TRAMP(key))
-+
-+
-+#else /* Generic implementation */
-+
-+struct static_call_key {
-+	void *func;
-+};
-+
-+#define DEFINE_STATIC_CALL(key, _func)					\
-+	DECLARE_STATIC_CALL(key, _func);				\
-+	struct static_call_key key = {					\
-+		.func = _func,						\
++	/*
++	 * For x86-64, a 32-bit cross-modifying write to a call destination is
++	 * safe as long as it's within a cache line.
++	 */
++	opcode = *(unsigned char *)insn;
++	if (opcode != 0xe8 && opcode != 0xe9) {
++		WARN_ONCE(1, "unexpected static call insn opcode 0x%x at %pS",
++			  opcode, insn);
++		goto done;
 +	}
 +
-+#define static_call(key, args...)					\
-+	((typeof(STATIC_CALL_TRAMP(key))*)(key.func))(args)
++	dest_relative = (long)(func) - (long)(insn + CALL_INSN_SIZE);
 +
-+static inline void __static_call_update(struct static_call_key *key, void *func)
-+{
-+	WRITE_ONCE(key->func, func);
++	poker = early_boot_irqs_disabled ? text_poke_early : text_poke;
++	poker(insn + 1, &dest_relative, sizeof(dest_relative));
++
++done:
++	mutex_unlock(&text_mutex);
 +}
++EXPORT_SYMBOL_GPL(arch_static_call_transform);
+diff --git a/arch/x86/kernel/vmlinux.lds.S b/arch/x86/kernel/vmlinux.lds.S
+index 0d618ee634ac..17470e88ac40 100644
+--- a/arch/x86/kernel/vmlinux.lds.S
++++ b/arch/x86/kernel/vmlinux.lds.S
+@@ -128,6 +128,7 @@ SECTIONS
+ 		CPUIDLE_TEXT
+ 		LOCK_TEXT
+ 		KPROBES_TEXT
++		STATIC_CALL_TEXT
+ 		ALIGN_ENTRY_TEXT_BEGIN
+ 		ENTRY_TEXT
+ 		IRQENTRY_TEXT
+diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
+index 3d7a6a9c2370..f2981a0161f2 100644
+--- a/include/asm-generic/vmlinux.lds.h
++++ b/include/asm-generic/vmlinux.lds.h
+@@ -320,6 +320,7 @@
+ 	__start_ro_after_init = .;					\
+ 	*(.data..ro_after_init)						\
+ 	JUMP_TABLE_DATA							\
++	STATIC_CALL_SITES						\
+ 	__end_ro_after_init = .;
+ #endif
+ 
+@@ -530,6 +531,10 @@
+ 		*(.kprobes.text)					\
+ 		__kprobes_text_end = .;
+ 
++#define STATIC_CALL_TEXT						\
++		ALIGN_FUNCTION();					\
++		*(.static_call.text)
 +
-+#define static_call_update(key, func)					\
-+({									\
-+	BUILD_BUG_ON(!__same_type(func, STATIC_CALL_TRAMP(key)));	\
-+	__static_call_update(&key, func);				\
-+})
+ #define ENTRY_TEXT							\
+ 		ALIGN_FUNCTION();					\
+ 		__entry_text_start = .;					\
+@@ -725,6 +730,16 @@
+ #define BUG_TABLE
+ #endif
+ 
++#ifdef CONFIG_HAVE_STATIC_CALL_INLINE
++#define STATIC_CALL_SITES						\
++	. = ALIGN(8);							\
++	__start_static_call_sites = .;					\
++	KEEP(*(.static_call_sites))					\
++	__stop_static_call_sites = .;
++#else
++#define STATIC_CALL_SITES
++#endif
 +
-+#define EXPORT_STATIC_CALL(key) EXPORT_SYMBOL(key)
-+#define EXPORT_STATIC_CALL_GPL(key) EXPORT_SYMBOL_GPL(key)
-+
-+#endif /* CONFIG_HAVE_STATIC_CALL_INLINE */
-+
-+#endif /* _LINUX_STATIC_CALL_H */
-diff --git a/include/linux/static_call_types.h b/include/linux/static_call_types.h
-new file mode 100644
-index 000000000000..0baaf3f02476
---- /dev/null
-+++ b/include/linux/static_call_types.h
-@@ -0,0 +1,13 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _STATIC_CALL_TYPES_H
-+#define _STATIC_CALL_TYPES_H
-+
-+#include <linux/stringify.h>
-+
-+#define STATIC_CALL_TRAMP_PREFIX ____static_call_tramp_
-+#define STATIC_CALL_TRAMP_PREFIX_STR __stringify(STATIC_CALL_TRAMP_PREFIX)
-+
-+#define STATIC_CALL_TRAMP(key) __PASTE(STATIC_CALL_TRAMP_PREFIX, key)
-+#define STATIC_CALL_TRAMP_STR(key) __stringify(STATIC_CALL_TRAMP(key))
-+
-+#endif /* _STATIC_CALL_TYPES_H */
+ #ifdef CONFIG_UNWINDER_ORC
+ #define ORC_UNWIND_TABLE						\
+ 	. = ALIGN(4);							\
 -- 
 2.17.2
 
