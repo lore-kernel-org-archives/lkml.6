@@ -2,226 +2,148 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC735C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 17:09:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2463C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 17:10:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A8B120685
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 17:09:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="ONP5rfI8"
+	by mail.kernel.org (Postfix) with ESMTP id 71858206B7
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 17:10:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547053826;
+	bh=mT7Oi4L4p1/Fj3PHNHBarq5qzTkgNA2phF6bApyB9OM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=Pm1YlGbiL6LeHe2PrJndjAAf9rCopeJE8/mviTcDbbTuqT+cljpi7S3gWBRPftsxH
+	 VaPCW8TKqkP1EGh1DJhwpEcq8zEIvxmMRQB/o9qxN3PkplO7h3jS06GFfy++dpzbVZ
+	 MEtgVXhggx+8L9E+PWow0Kw6XyUmal6uwKkR4wWk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726798AbfAIRJ5 (ORCPT
+        id S1726846AbfAIRKZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 12:09:57 -0500
-Received: from mail.kmu-office.ch ([178.209.48.109]:52492 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726448AbfAIRJ4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 12:09:56 -0500
-Received: from webmail.kmu-office.ch (unknown [IPv6:2a02:418:6a02::a3])
-        by mail.kmu-office.ch (Postfix) with ESMTPSA id 504125C125C;
-        Wed,  9 Jan 2019 18:09:53 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
-        t=1547053793;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=CjRzAZghHk79A1shu2HqK0ha4Nak12CDGKiEv7f1VFE=;
-        b=ONP5rfI8aMblcX+7UjgcnagZczJ8FnkH8BRCQq4lbsm3tF0fzGosrpoQDCekDSb5YC1VIJ
-        tcXSgLeMCz1eIY9RZqPADmdr/XVALhaaD1Gq8J9CFNNppQMVhRJpU2cQn4/DmTL85Mx2g5
-        E0PXSvPHODy9muO/UsEWdY++pzIYUf4=
+        Wed, 9 Jan 2019 12:10:25 -0500
+Received: from mx2.suse.de ([195.135.220.15]:35732 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726516AbfAIRKZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 12:10:25 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 17804AF03;
+        Wed,  9 Jan 2019 17:10:23 +0000 (UTC)
+Date:   Wed, 9 Jan 2019 18:10:21 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Kirill Tkhai <ktkhai@virtuozzo.com>
+Cc:     akpm@linux-foundation.org, hannes@cmpxchg.org,
+        josef@toxicpanda.com, jack@suse.cz, hughd@google.com,
+        darrick.wong@oracle.com, aryabinin@virtuozzo.com, guro@fb.com,
+        mgorman@techsingularity.net, shakeelb@google.com,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC 0/3] mm: Reduce IO by improving algorithm of memcg
+ pagecache pages eviction
+Message-ID: <20190109171021.GY31793@dhcp22.suse.cz>
+References: <154703479840.32690.6504699919905946726.stgit@localhost.localdomain>
+ <20190109141113.GW31793@dhcp22.suse.cz>
+ <e9b64635-87cf-f330-acea-0ca681a2528e@virtuozzo.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Date:   Wed, 09 Jan 2019 18:09:53 +0100
-From:   Stefan Agner <stefan@agner.ch>
-To:     Robert Chiras <robert.chiras@nxp.com>
-Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Marek Vasut <marex@denx.de>, Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        David Airlie <airlied@linux.ie>,
-        Anson Huang <anson.huang@nxp.com>,
-        dri-devel@lists.freedesktop.org, dl-linux-imx <linux-imx@nxp.com>,
-        kernel@pengutronix.de, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 09/10] drm/mxsfb: Improve the axi clock usage
-In-Reply-To: <1547043209-8283-10-git-send-email-robert.chiras@nxp.com>
-References: <1547043209-8283-1-git-send-email-robert.chiras@nxp.com>
- <1547043209-8283-10-git-send-email-robert.chiras@nxp.com>
-Message-ID: <6265abab29249f3a7a6758870c9b31ff@agner.ch>
-X-Sender: stefan@agner.ch
-User-Agent: Roundcube Webmail/1.3.7
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e9b64635-87cf-f330-acea-0ca681a2528e@virtuozzo.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09.01.2019 15:13, Robert Chiras wrote:
-> Currently, the enable of the axi clock return status is ignored, causing
-> issues when the enable fails then we try to disable it. Therefore, it is
-> better to check the return status and disable it only when enable
-> succeeded.
-> Also, remove the helper functions around clk_axi, since we can directly
-> use the clk API function for enable/disable the clock. Those functions
-> are already checking for NULL clk and returning 0 if that's the case.
-
-Can we maybe even use the runtime PM system for that (adding two
-callbacks for SET_RUNTIME_PM_OPS)?
-
-I suggested it a while ago, but did not looked deeper into it:
-https://lkml.org/lkml/2018/8/1/300
-
-Since we basically enable on mxsfb_crtc_enable and disable on
-mxsfb_crtc_disable, I think it would be pretty much the same thing.
-
---
-Stefan
-
-
+On Wed 09-01-19 18:43:05, Kirill Tkhai wrote:
+> Hi, Michal,
 > 
-> Signed-off-by: Robert Chiras <robert.chiras@nxp.com>
-> Acked-by: Leonard Crestez <leonard.crestez@nxp.com>
-> ---
->  drivers/gpu/drm/mxsfb/mxsfb_crtc.c |  8 ++++----
->  drivers/gpu/drm/mxsfb/mxsfb_drv.c  | 32 +++++++++++++-------------------
->  drivers/gpu/drm/mxsfb/mxsfb_drv.h  |  3 ---
->  3 files changed, 17 insertions(+), 26 deletions(-)
+> On 09.01.2019 17:11, Michal Hocko wrote:
+> > On Wed 09-01-19 15:20:18, Kirill Tkhai wrote:
+> >> On nodes without memory overcommit, it's common a situation,
+> >> when memcg exceeds its limit and pages from pagecache are
+> >> shrinked on reclaim, while node has a lot of free memory.
+> > 
+> > Yes, that is the semantic of the hard limit. If the system is not
+> > overcommitted then the hard limit can be used to prevent unexpected
+> > direct reclaim from unrelated activity.
 > 
-> diff --git a/drivers/gpu/drm/mxsfb/mxsfb_crtc.c
-> b/drivers/gpu/drm/mxsfb/mxsfb_crtc.c
-> index 8d1b6a6..b9437c7 100644
-> --- a/drivers/gpu/drm/mxsfb/mxsfb_crtc.c
-> +++ b/drivers/gpu/drm/mxsfb/mxsfb_crtc.c
-> @@ -411,7 +411,7 @@ void mxsfb_crtc_enable(struct mxsfb_drm_private *mxsfb)
->  {
->  	dma_addr_t paddr;
+> According to Documentation/admin-guide/cgroup-v2.rst:
+> 
+>   memory.max
+>         Memory usage hard limit.  This is the final protection
+>         mechanism.  If a cgroup's memory usage reaches this limit and
+>         can't be reduced, the OOM killer is invoked in the cgroup.
+>         Under certain circumstances, the usage may go over the limit
+>         temporarily.
+> 
+> There is nothing about direct reclaim in another memcg. I don't think
+> we break something here.
+
+Others in the thread have pointed that out already. What is a hard limit
+in one memcg is an isolateion protection in another one. Especially when
+the system is not overcommited.
+
+> File pages are accounted to memcg, and this guarantees, that single
+> memcg won't occupy all system memory by its unevictible page cache.
+> But the suggested patchset follows the same way. Pages, which remain
+> in pagecache, are easy-to-be-evicted, since they are not dirty and
+> not under writeback. System can drop them fast and in foreseeable time.
+> This is cardinal thing about the patchset: remained pages do not
+> introduce principal burden on system memory or reclaim time.
+
+What does prevent that the page cache is easily reclaimable? Aka clean
+and ready to be dropped? Not to mention that even when the reclaim is
+fast it is not free. Especially when you do not expect that because you
+haven't reached your hard limit and the admin made sure that hard limits
+do not overcommit.
+
+[...]
+
+> > But this also means that any hard limited memcg can fill up all the
+> > memory and break the above assumption about the isolation from direct
+> > reclaim. Not to mention the OOM or is there anything you do anything
+> > about preventing that?
+> 
+> This is discussed thing. We may add such the pages into tail of LRU list
+> instead of head. We may introduce one more separate list to link such
+> the pages only, and fastly evict them in case of global reclaim. I don't
+> think there is a problem.
 >  
-> -	mxsfb_enable_axi_clk(mxsfb);
-> +	clk_prepare_enable(mxsfb->clk_axi);
->  	writel(0, mxsfb->base + LCDC_CTRL);
->  	mxsfb_crtc_mode_set_nofb(mxsfb);
->  
-> @@ -428,7 +428,7 @@ void mxsfb_crtc_enable(struct mxsfb_drm_private *mxsfb)
->  void mxsfb_crtc_disable(struct mxsfb_drm_private *mxsfb)
->  {
->  	mxsfb_disable_controller(mxsfb);
-> -	mxsfb_disable_axi_clk(mxsfb);
-> +	clk_disable_unprepare(mxsfb->clk_axi);
->  }
->  
->  void mxsfb_plane_atomic_update(struct mxsfb_drm_private *mxsfb,
-> @@ -456,9 +456,9 @@ void mxsfb_plane_atomic_update(struct
-> mxsfb_drm_private *mxsfb,
->  
->  	paddr = mxsfb_get_fb_paddr(mxsfb);
->  	if (paddr) {
-> -		mxsfb_enable_axi_clk(mxsfb);
-> +		clk_prepare_enable(mxsfb->clk_axi);
->  		writel(paddr, mxsfb->base + mxsfb->devdata->next_buf);
-> -		mxsfb_disable_axi_clk(mxsfb);
-> +		clk_disable_unprepare(mxsfb->clk_axi);
->  	}
->  
->  	if (!fb || !old_fb)
-> diff --git a/drivers/gpu/drm/mxsfb/mxsfb_drv.c
-> b/drivers/gpu/drm/mxsfb/mxsfb_drv.c
-> index 135b8e1..5e18353 100644
-> --- a/drivers/gpu/drm/mxsfb/mxsfb_drv.c
-> +++ b/drivers/gpu/drm/mxsfb/mxsfb_drv.c
-> @@ -103,18 +103,6 @@ drm_pipe_to_mxsfb_drm_private(struct
-> drm_simple_display_pipe *pipe)
->  	return container_of(pipe, struct mxsfb_drm_private, pipe);
->  }
->  
-> -void mxsfb_enable_axi_clk(struct mxsfb_drm_private *mxsfb)
-> -{
-> -	if (mxsfb->clk_axi)
-> -		clk_prepare_enable(mxsfb->clk_axi);
-> -}
-> -
-> -void mxsfb_disable_axi_clk(struct mxsfb_drm_private *mxsfb)
-> -{
-> -	if (mxsfb->clk_axi)
-> -		clk_disable_unprepare(mxsfb->clk_axi);
-> -}
-> -
->  /**
->   * mxsfb_atomic_helper_check - validate state object
->   * @dev: DRM device
-> @@ -237,25 +225,31 @@ static void mxsfb_pipe_update(struct
-> drm_simple_display_pipe *pipe,
->  static int mxsfb_pipe_enable_vblank(struct drm_simple_display_pipe *pipe)
->  {
->  	struct mxsfb_drm_private *mxsfb = drm_pipe_to_mxsfb_drm_private(pipe);
-> +	int ret = 0;
-> +
-> +	ret = clk_prepare_enable(mxsfb->clk_axi);
-> +	if (ret)
-> +		return ret;
->  
->  	/* Clear and enable VBLANK IRQ */
-> -	mxsfb_enable_axi_clk(mxsfb);
->  	writel(CTRL1_CUR_FRAME_DONE_IRQ, mxsfb->base + LCDC_CTRL1 + REG_CLR);
->  	writel(CTRL1_CUR_FRAME_DONE_IRQ_EN, mxsfb->base + LCDC_CTRL1 + REG_SET);
-> -	mxsfb_disable_axi_clk(mxsfb);
-> +	clk_disable_unprepare(mxsfb->clk_axi);
->  
-> -	return 0;
-> +	return ret;
->  }
->  
->  static void mxsfb_pipe_disable_vblank(struct drm_simple_display_pipe *pipe)
->  {
->  	struct mxsfb_drm_private *mxsfb = drm_pipe_to_mxsfb_drm_private(pipe);
->  
-> +	if (clk_prepare_enable(mxsfb->clk_axi))
-> +		return;
-> +
->  	/* Disable and clear VBLANK IRQ */
-> -	mxsfb_enable_axi_clk(mxsfb);
->  	writel(CTRL1_CUR_FRAME_DONE_IRQ_EN, mxsfb->base + LCDC_CTRL1 + REG_CLR);
->  	writel(CTRL1_CUR_FRAME_DONE_IRQ, mxsfb->base + LCDC_CTRL1 + REG_CLR);
-> -	mxsfb_disable_axi_clk(mxsfb);
-> +	clk_disable_unprepare(mxsfb->clk_axi);
->  }
->  
->  static struct drm_simple_display_pipe_funcs mxsfb_funcs = {
-> @@ -440,7 +434,7 @@ static irqreturn_t mxsfb_irq_handler(int irq, void *data)
->  	struct mxsfb_drm_private *mxsfb = drm->dev_private;
->  	u32 reg;
->  
-> -	mxsfb_enable_axi_clk(mxsfb);
-> +	clk_prepare_enable(mxsfb->clk_axi);
->  
->  	reg = readl(mxsfb->base + LCDC_CTRL1);
->  
-> @@ -449,7 +443,7 @@ static irqreturn_t mxsfb_irq_handler(int irq, void *data)
->  
->  	writel(CTRL1_CUR_FRAME_DONE_IRQ, mxsfb->base + LCDC_CTRL1 + REG_CLR);
->  
-> -	mxsfb_disable_axi_clk(mxsfb);
-> +	clk_disable_unprepare(mxsfb->clk_axi);
->  
->  	return IRQ_HANDLED;
->  }
-> diff --git a/drivers/gpu/drm/mxsfb/mxsfb_drv.h
-> b/drivers/gpu/drm/mxsfb/mxsfb_drv.h
-> index c15b4f9..ce98411 100644
-> --- a/drivers/gpu/drm/mxsfb/mxsfb_drv.h
-> +++ b/drivers/gpu/drm/mxsfb/mxsfb_drv.h
-> @@ -47,9 +47,6 @@ struct mxsfb_drm_private {
->  int mxsfb_setup_crtc(struct drm_device *dev);
->  int mxsfb_create_output(struct drm_device *dev);
->  
-> -void mxsfb_enable_axi_clk(struct mxsfb_drm_private *mxsfb);
-> -void mxsfb_disable_axi_clk(struct mxsfb_drm_private *mxsfb);
-> -
->  void mxsfb_crtc_enable(struct mxsfb_drm_private *mxsfb);
->  void mxsfb_crtc_disable(struct mxsfb_drm_private *mxsfb);
->  void mxsfb_plane_atomic_update(struct mxsfb_drm_private *mxsfb,
+> > That beig said, I do not think we want to or even can change the
+> > semantic of the hard limit and break existing setups.
+> 
+> Using the original description and the comments I gave in this message,
+> could you please to clarify the way we break existing setups?
+
+isolation as explained above.
+
+> > I am still
+> > interested to hear more about more detailed/specific usecases that might
+> > benefit from this behavior. Why do those users even use hard limit at
+> > all? To protect from anon memory leaks?
+> 
+> In multi-user machine people want to have size of available to container
+> memory equal to the size, which they pay. So, hard limit is needed to prevent
+> one container to occupy all system memory via slowly-evictible writeback
+> pages, unevictible anon pages, etc. You can't fastly allocate a page,
+> in case of many pages are under writeback, this operation is very slow.
+> 
+> (But unmapped pagecache pages introduced by patchset is another thing:
+>  you just need to take not sleeping spinlock to call __delete_from_page_cache()
+>  only. This is fast)
+> 
+> Multi-user machine may have more memory, than sum of all containers hard
+> limit. This may be used as an optimization just to reduce disk IO. There
+> is no contradiction to sane sense here. And it's not a rare situation.
+> In our kernel we have cleancache driver for handling this situation, but
+> cleancache is not the best solution like I wrote.
+> 
+> Not overcommited system is likely case for the patchset, while the below
+> is a little less likely:
+
+I beliave Johannes has explained that you are trying to use the hard
+limit in a wrong way for something it is not designed for.
+
+-- 
+Michal Hocko
+SUSE Labs
