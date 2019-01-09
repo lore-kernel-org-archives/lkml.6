@@ -2,121 +2,158 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6056BC43444
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 00:58:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1783C43612
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 01:01:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0EF8121773
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 00:58:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7DACA21783
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 01:01:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=candelatech.com header.i=@candelatech.com header.b="Pu8jtDqg"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OJdGXjxk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729184AbfAIA6a (ORCPT
+        id S1729202AbfAIBBM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 19:58:30 -0500
-Received: from mail2.candelatech.com ([208.74.158.173]:37724 "EHLO
-        mail2.candelatech.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727829AbfAIA6a (ORCPT
+        Tue, 8 Jan 2019 20:01:12 -0500
+Received: from mail-io1-f68.google.com ([209.85.166.68]:36588 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727829AbfAIBBM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 19:58:30 -0500
-Received: from [192.168.100.195] (firewall.candelatech.com [50.251.239.81])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail2.candelatech.com (Postfix) with ESMTPSA id AA52140A5CB;
-        Tue,  8 Jan 2019 16:58:26 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail2.candelatech.com AA52140A5CB
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=candelatech.com;
-        s=default; t=1546995507;
-        bh=H9WRq+ofNBsd2b+/IChDtHEgZ9k2lnLKvsUnSt3VsEU=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=Pu8jtDqg7i6KNEJ7p1kdEU7dqDz4/Fp75s8ESf6LWLMdzIpS8PcpEsStT5KwVl2WA
-         S5TZgM/otgdsK6uWZdeJPrzkuQhFlYw/2TSo8s/t4CvX92hOGUonScIX4i9bLms/Sj
-         bnsXeu8vNNXDY5qpAUrTpf2Iaaqu086GY7dPiRqg=
-Subject: Re: [PATCH] x86/speculation: Add document to describe Spectre and its
- mitigations
-To:     Tim Chen <tim.c.chen@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     Jiri Kosina <jikos@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Andi Kleen <ak@linux.intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Asit Mallick <asit.k.mallick@intel.com>,
-        Arjan van de Ven <arjan@linux.intel.com>,
-        Jon Masters <jcm@redhat.com>,
-        Waiman Long <longman9394@gmail.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org,
-        x86@kernel.org, stable@vger.kernel.org
-References: <64efec3fda40c0758601bf9b1480a35d76d3c487.1545413988.git.tim.c.chen@linux.intel.com>
- <1c7923ec-70aa-25d4-3de1-f1b1768bb80b@candelatech.com>
- <fdf4e1cd-9b28-75c7-6846-6d0f5b816936@linux.intel.com>
- <5d45f3ef-a91f-815a-f532-62e75899e697@candelatech.com>
- <0d89b5a0-01d3-4927-ce59-fd9dc24c53b3@linux.intel.com>
-From:   Ben Greear <greearb@candelatech.com>
-Organization: Candela Technologies
-Message-ID: <234fe108-1cdd-b97e-4c19-a0be6d5858d5@candelatech.com>
-Date:   Tue, 8 Jan 2019 16:58:26 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        Tue, 8 Jan 2019 20:01:12 -0500
+Received: by mail-io1-f68.google.com with SMTP id m19so4732035ioh.3;
+        Tue, 08 Jan 2019 17:01:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=GLBOEFW1BhFjPn/VvwGPbj8DpAhgGskTf+W4ne2TdMw=;
+        b=OJdGXjxkhZTQtX4JfOQs2JCwWwI23LWlpkzbdXpAOovmlh9CPS6tj+yvlCEup40cJ+
+         1xoOo/6wNgcr691iBTD3zxSm1JZrm62APL8Ot2Ta6kOWxDzvQcB/3YPl9e/pM9wYMbmV
+         M9Rj0Qr3AJm6J3U/6BnqjQ2KP1vGYUpjLqZBKDnGS2onpV8NnO++j3D7VlYKynKMoITC
+         6mG3nO+6oQFJsznVPkntwcYhbs5n7TAuolxyWeBNhaKhLrbIKKrq/aJwZwyshRaj5qL0
+         e9xGFJsMF5YAsebFlEc1A1igqGxHJnYi0C9LIrNyAcEqmJIz74KHQ0iuzj9pis8zes5E
+         LkOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=GLBOEFW1BhFjPn/VvwGPbj8DpAhgGskTf+W4ne2TdMw=;
+        b=rpUVX3z3z0WI2v6mk/dM4cPpNAwQeGdUoDyAcoKBnlkAXiMAankdt6Y+9Ijg06A81Z
+         bghT8fvqjYoI9wCjcJOhtKkUQxqMBRMaAV5hcRkHu2MrrFgut9huXaeM6T3LTJo3PMVq
+         0dP6/ixzLC8CgBW7UXtdEsBUcgxgwC5zNIW/DOUPeBZbP1dyMiHd9ETvDVJ9Bwuud92S
+         CFY8Mi9C5O7aAvRjTl3ZgxzGZaEo5oozeCHVEUmL8eZLDOR736sm9nEtX/V4PMfBphTg
+         7V+JcAnunx+YBEAgZidlja+VCDrKimaqyXjghrMv4rx78LBXNwDQxzhwz+79QxZq2VXD
+         dK7g==
+X-Gm-Message-State: AJcUukdq3dEFxviKYvkKs5UFbKlhDFzu17tcsSIsquT4tRuCLVG7O+WW
+        Kjwgjr+eXnhnhraR6NEjxGR+x8zQLjtHV/5DaL0=
+X-Google-Smtp-Source: ALg8bN5JOGUwXRFTSZbixwnXLfLvw6SzZun/iyX7h1Do+bRYcNnqGYIpRXVv5EI8IIE+PviDVlDMHpGEt1iYaDlek2A=
+X-Received: by 2002:a6b:db17:: with SMTP id t23mr2605267ioc.262.1546995669925;
+ Tue, 08 Jan 2019 17:01:09 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <0d89b5a0-01d3-4927-ce59-fd9dc24c53b3@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20190108223024.GA147017@google.com>
+In-Reply-To: <20190108223024.GA147017@google.com>
+From:   Oliver <oohall@gmail.com>
+Date:   Wed, 9 Jan 2019 12:00:58 +1100
+Message-ID: <CAOSf1CFRjynR_qCOH=RXGEqpV6PuhHwzCHhKsniNPojEcif8rg@mail.gmail.com>
+Subject: Re: Kconfig label updates
+To:     Bjorn Helgaas <helgaas@kernel.org>
+Cc:     Tyrel Datwyler <tyreld@linux.vnet.ibm.com>,
+        linux-s390@vger.kernel.org,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Paul Mackerras <paulus@samba.org>, linux-pci@vger.kernel.org,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/7/19 9:57 AM, Tim Chen wrote:
-> On 12/31/18 8:22 AM, Ben Greear wrote:
->>
->>
->> On 12/21/2018 05:17 PM, Tim Chen wrote:
->>>
->>> If you don't worry about security and performance is paramount, then
->>> boot with "nospectre_v2".  That's explained in the document.
->>
->> There seem to be lots of different variants of this type of problem.  It was not clear
->> to me that just doing nospectre_v2 would be sufficient to get back full performance.
-> 
-> The performance penalty comes from retpoline penalizing indirect branch predictions in kernel.
-> With nospectre_v2, retpoline is disabled so you should get all the performance
-> back from spectre mitigation.
-> 
-> This does not disable kernel page table isolation for meltdown mitigation, which also
-> needs to be turned off if you want to get the full performance back.  That's somewhat
-> beyond the scope of this doc on Spectre.
+On Wed, Jan 9, 2019 at 9:31 AM Bjorn Helgaas <helgaas@kernel.org> wrote:
+>
+> Hi,
+>
+> I want to update the PCI Kconfig labels so they're more consistent and
+> useful to users, something like the patch below.  IIUC, the items
+> below are all IBM-related; please correct me if not.
+>
+> I'd also like to expand (or remove) "RPA" because Google doesn't find
+> anything about "IBM RPA", except Robotic Process Automation, which I
+> think must be something else.
+>
+> Is there some text expansion of RPA that we could use that would be
+> meaningful to a user, i.e., something he/she might find on a nameplate
+> or in a user manual?
 
-The two bug families (spectre and meltdown) are conflated in my mind, at least.
+"RISC Platform Architecture" apparently. I couldn't find any
+documentation written in the last decade that uses the term so it's
+probably a hold-over from when pseries and iseries had separate
+hardware platforms. Replacing "RPA" with "pseries" would be the least
+confusing way to handle it.
 
-For those of us who do not really understand this stuff in detail, it would
-be good to at least mention some notes about Meltdown I think.
-
->> And anyway, I would like to compile the kernel to not need that command-line option,
->> so I am still interesting in what compile options need to be set to what values...
->>
-> 
-> If you just want to disable spectre mitigation, setting CONFIG_RETPOLINE=n should do
-> the  trick.  If you also want to disable meltdown mitigation,
-> set CONFIG_PAGE_TABLE_ISOLATION=n.
-
-Ok, are there any other CONFIG options that relate to fixing security bugs that
-have noticeable performance impacts or are these two the complete list?
-
-Thanks,
-Ben
-
--- 
-Ben Greear <greearb@candelatech.com>
-Candela Technologies Inc  http://www.candelatech.com
-
+> Ideally the PCI Kconfig labels would match the terms used in
+> arch/.../Kconfig, e.g.,
+>
+>   config PPC_POWERNV
+>     bool "IBM PowerNV (Non-Virtualized) platform support"
+>
+>   config PPC_PSERIES
+>     bool "IBM pSeries & new (POWER5-based) iSeries"
+>
+>   config MARCH_Z900
+>     bool "IBM zSeries model z800 and z900"
+>
+>   config MARCH_Z9_109
+>     bool "IBM System z9"
+>
+> Bjorn
+>
+>
+> diff --git a/drivers/pci/hotplug/Kconfig b/drivers/pci/hotplug/Kconfig
+> index e9f78eb390d2..1c1d145bfd84 100644
+> --- a/drivers/pci/hotplug/Kconfig
+> +++ b/drivers/pci/hotplug/Kconfig
+> @@ -112,7 +112,7 @@ config HOTPLUG_PCI_SHPC
+>           When in doubt, say N.
+>
+>  config HOTPLUG_PCI_POWERNV
+> -       tristate "PowerPC PowerNV PCI Hotplug driver"
+> +       tristate "IBM PowerNV PCI Hotplug driver"
+>         depends on PPC_POWERNV && EEH
+>         select OF_DYNAMIC
+>         help
+> @@ -125,10 +125,11 @@ config HOTPLUG_PCI_POWERNV
+>           When in doubt, say N.
+>
+>  config HOTPLUG_PCI_RPA
+> -       tristate "RPA PCI Hotplug driver"
+> +       tristate "IBM Power Systems RPA PCI Hotplug driver"
+>         depends on PPC_PSERIES && EEH
+>         help
+>           Say Y here if you have a RPA system that supports PCI Hotplug.
+> +         This includes the earlier pSeries and iSeries.
+>
+>           To compile this driver as a module, choose M here: the
+>           module will be called rpaphp.
+> @@ -136,7 +137,7 @@ config HOTPLUG_PCI_RPA
+>           When in doubt, say N.
+>
+>  config HOTPLUG_PCI_RPA_DLPAR
+> -       tristate "RPA Dynamic Logical Partitioning for I/O slots"
+> +       tristate "IBM RPA Dynamic Logical Partitioning for I/O slots"
+>         depends on HOTPLUG_PCI_RPA
+>         help
+>           Say Y here if your system supports Dynamic Logical Partitioning
+> @@ -157,7 +158,7 @@ config HOTPLUG_PCI_SGI
+>           When in doubt, say N.
+>
+>  config HOTPLUG_PCI_S390
+> -       bool "System z PCI Hotplug Support"
+> +       bool "IBM System z PCI Hotplug Support"
+>         depends on S390 && 64BIT
+>         help
+>           Say Y here if you want to use the System z PCI Hotplug
