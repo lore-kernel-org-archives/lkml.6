@@ -2,97 +2,90 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF06DC43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 18:51:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC526C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 18:52:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AEDC720661
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 18:51:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9999A20685
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 18:52:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RdZpE3R8"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="AN3mZJFL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727961AbfAISvb (ORCPT
+        id S1727826AbfAISw3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 13:51:31 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:32783 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726465AbfAISvb (ORCPT
+        Wed, 9 Jan 2019 13:52:29 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:42594 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727509AbfAISw3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 13:51:31 -0500
-Received: by mail-pf1-f193.google.com with SMTP id c123so4092220pfb.0
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jan 2019 10:51:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=YkoW1gL7hsj7KTI0vvS0qJj0mnhFctPDX2a+8UMkWZM=;
-        b=RdZpE3R8r9PA0FA6JlF36WOe5jmAnwGttpGcV7Mov59p9TAFekp2UBTbxAXfFvFJnH
-         kXBWSgbX9rCIjVlYNhS8q0wC9a894rwbJ0KtHOxMMCRcqhpmyfTr9KbgkL5VX7cwib3a
-         n6roDZlfDMdB5neTUkyawPJizZ/7AH/9JnH8ppIGc6raUZRAqx8CRxZfJoJIPc+Jq4Sq
-         yB+vTPXt/tyqnoBCir3wHn7yTVUZpIIG0KxfnlxoMacRk3BPlLIfMmOKnARz6mRU6QJH
-         E/RJcExb7RXnAxpBq4GtculEGn7QfI3oGa//8aalXHck7Qk4uOXUIJ6So+OfdwxrMI5b
-         cjkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=YkoW1gL7hsj7KTI0vvS0qJj0mnhFctPDX2a+8UMkWZM=;
-        b=Xwcjoz3mcyeKdiDDvW9HBQQPLH63iphVZTs4czpgBg5pBbo+t20Un1ZBwbRJsPFOZn
-         t++ZBGkyCMxyzQN9H/f0XHwlTPtJgu+IqRfuL28ZheNn/vdbbiIFWN6joYgSVwKi4Cgh
-         Dy+Z0ReETBpA8OqAQuy1toi50H6XefKziTVXwTBjO3HAIXuFRaOugO8jf+8Zu4LhwtRQ
-         3jY/lAuhcqwC+SCxule1H7tSbhM33oPd6D3+bngDGJpFcbs7NimRUvl7/eQkqlApYU25
-         jSHnHLpydr0Rcai58GBO03j1PC2LRnZXRKo/nrT/CtBLZALNihq4MkTJWyhIowssZZdy
-         hF7g==
-X-Gm-Message-State: AJcUukdEgdwugNFUaV1S1S1lYxZszMh3khDqP5D1joe5LKiefgum9C+H
-        su/tlNEWz3iiGFu6HHFibglNu7S/P+o=
-X-Google-Smtp-Source: ALg8bN5rmpsZbWPc64pmrg1Un4Y9lJ7ysfzaRgsWYO5SlnmmWxoian7KLyrePmNjLH8E8pmsfBqsLw==
-X-Received: by 2002:a62:5d0c:: with SMTP id r12mr7374759pfb.0.1547059890083;
-        Wed, 09 Jan 2019 10:51:30 -0800 (PST)
-Received: from Ideapad-330S ([49.206.13.149])
-        by smtp.gmail.com with ESMTPSA id r66sm114392116pfk.157.2019.01.09.10.51.28
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 09 Jan 2019 10:51:29 -0800 (PST)
-Date:   Thu, 10 Jan 2019 00:21:24 +0530
-From:   b-ak <anur.bhargav@gmail.com>
-To:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ASoC: tlv320aic32x4: SND_SOC_DAPM_MICBIAS is deprecated
-Message-ID: <20190109185124.GA15153@Ideapad-330S>
-References: <20190109171121.GA12810@Ideapad-330S>
- <20190109183836.GI10405@sirena.org.uk>
+        Wed, 9 Jan 2019 13:52:29 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=U2tJOKmfBfUUwyh8MJKfpx+dnOTnMFtidJcdpk03Bxo=; b=AN3mZJFLUXP+w9IHfF9qJ7PVv
+        sW1t6n68/86Y80b/wyfDLVpC7z4+F8Le7rElrKuUfEtDC4EpJZjNt0wbgo62XGDEoFMeeZtESkkhp
+        Ly4MzYmaJA1O5y6HL4eJBDsKQsdqf3vfEBeG4st8ADg/AxRvmS+9MxLMtZMrv/MzPtRLJnqon62j+
+        Uz/jadhf5+k6SdsC1bqIVt5sSHxCi8BVfBpH8nrWoc1kY40nPQTaohrlio2uZ//Lx6Q3aPVEGhD7B
+        akm/yzVdeIhsp9PfELxWM6vkIU0YZq5ZKrYCP1R8i7gQi4dQAo6E3Yn2l1tqugB+HBXxumgktsB3I
+        kQg4kpMYQ==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1ghIxm-0003Vg-Ma; Wed, 09 Jan 2019 18:52:26 +0000
+Date:   Wed, 9 Jan 2019 10:52:26 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Waiman Long <longman@redhat.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Daniel Colascione <dancol@google.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: [PATCH v2 0/4] /proc/stat: Reduce irqs counting performance
+ overhead
+Message-ID: <20190109185226.GP6310@bombadil.infradead.org>
+References: <1547054628-12703-1-git-send-email-longman@redhat.com>
+ <20190109174403.GN6310@bombadil.infradead.org>
+ <f6302369-9eda-ef58-4f18-3dc9ffbc31f1@redhat.com>
+ <20190109182417.GO6310@bombadil.infradead.org>
+ <f0ae7bd8-5c5b-aefd-aff8-2719fc0edbaa@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190109183836.GI10405@sirena.org.uk>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <f0ae7bd8-5c5b-aefd-aff8-2719fc0edbaa@redhat.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 09, 2019 at 06:38:36PM +0000, Mark Brown wrote:
-> On Wed, Jan 09, 2019 at 10:41:21PM +0530, b-ak wrote:
-> > SND_SOC_DAPM_MICBIAS is deprecated, replace it with SND_SOC_DAPM_SUPPLY.
-> > 
-> > MICBIAS voltage wasn't supplied to the microphone with the older
-> > SND_SOC_DAPM_MICBIAS widget, hence the microphone wouldn't work.
-> > 
-> > This patch fixes the problem.
+On Wed, Jan 09, 2019 at 01:37:23PM -0500, Waiman Long wrote:
+> On 01/09/2019 01:24 PM, Matthew Wilcox wrote:
+> > Did you even try just using the general purpose infrastructure that's
+> > in place?  If that shows a performance problem _then_ it's time to make
+> > this special snowflake just a little more special.  Not before.
 > 
-> Note that the reason we've not done that already for everything is that
-> the DAPM graph needs updating for the new routing in machine drivers as
-> the two widgets are wired differently.  However this is fine here as
-> there aren't any in tree users I can see so I'll apply, thanks!
+> I have looked into the percpu counter code. There are two aspects that I
+> don't like to introduce to the interrupt handler's code path for
+> updating the counts.
+> 
+> 1) There is a raw spinlock in the percpu_counter structure that may need
+> to be acquired in the update path. This can be a performance drag
+> especially if lockdep is enabled.
+> 
+> 2) The percpu_counter structure is 40 bytes in size on 64-bit systems
+> compared with just 8 bytes for the percpu count pointer and an
+> additional 4 bytes that I introduced in patch 2. With thousands of irq
+> descriptors, it can consume quite a lot more memory. Memory consumption
+> was a point that you brought up in one of your previous mails.
 
-Hello Mark,
-
-Thank you so much for that.
-
-And can you please point me to some documentation of the new updates talking about the
-differences in the routing?
-
-- Bhargav
-
+Then _argue that_.  Don't just go off and do something random without
+explaining to the rest of us why we're wrong.
