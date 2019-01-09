@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4248C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 17:47:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE8C9C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 17:48:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 75BF2206B6
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 17:47:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 902C3206B6
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 17:48:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727269AbfAIRr6 (ORCPT
+        id S1727303AbfAIRsC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 12:47:58 -0500
-Received: from mga05.intel.com ([192.55.52.43]:11233 "EHLO mga05.intel.com"
+        Wed, 9 Jan 2019 12:48:02 -0500
+Received: from mga11.intel.com ([192.55.52.93]:34830 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727218AbfAIRrx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 12:47:53 -0500
+        id S1727271AbfAIRsA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 12:48:00 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Jan 2019 09:47:52 -0800
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Jan 2019 09:47:58 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,458,1539673200"; 
-   d="scan'208";a="115485602"
+   d="scan'208";a="115485622"
 Received: from unknown (HELO localhost.lm.intel.com) ([10.232.112.69])
-  by fmsmga008.fm.intel.com with ESMTP; 09 Jan 2019 09:47:51 -0800
+  by fmsmga008.fm.intel.com with ESMTP; 09 Jan 2019 09:47:58 -0800
 From:   Keith Busch <keith.busch@intel.com>
 To:     linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
         linux-mm@kvack.org
@@ -36,9 +36,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Dave Hansen <dave.hansen@intel.com>,
         Dan Williams <dan.j.williams@intel.com>,
         Keith Busch <keith.busch@intel.com>
-Subject: [PATCHv3 03/13] acpi/hmat: Parse and report heterogeneous memory
-Date:   Wed,  9 Jan 2019 10:43:31 -0700
-Message-Id: <20190109174341.19818-4-keith.busch@intel.com>
+Subject: [PATCHv3 06/13] acpi/hmat: Register processor domain to its memory
+Date:   Wed,  9 Jan 2019 10:43:34 -0700
+Message-Id: <20190109174341.19818-7-keith.busch@intel.com>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <20190109174341.19818-1-keith.busch@intel.com>
 References: <20190109174341.19818-1-keith.busch@intel.com>
@@ -47,236 +47,226 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Systems may provide different memory types and export this information
-in the ACPI Heterogeneous Memory Attribute Table (HMAT). Parse these
-tables provided by the platform and report the memory access and caching
-attributes.
+If the HMAT Subsystem Address Range provides a valid processor proximity
+domain for a memory domain, or a processor domain with the highest
+performing access exists, register the memory target with that initiator
+so this relationship will be visible under the node's sysfs directory.
+
+Since HMAT requires valid address ranges have an equivalent SRAT entry,
+verify each memory target satisfies this requirement.
 
 Signed-off-by: Keith Busch <keith.busch@intel.com>
 ---
- drivers/acpi/Kconfig  |   8 +++
- drivers/acpi/Makefile |   1 +
- drivers/acpi/hmat.c   | 180 ++++++++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 189 insertions(+)
- create mode 100644 drivers/acpi/hmat.c
+ drivers/acpi/hmat.c | 143 +++++++++++++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 136 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/acpi/Kconfig b/drivers/acpi/Kconfig
-index 7b65a807b3dd..b102d9f544ee 100644
---- a/drivers/acpi/Kconfig
-+++ b/drivers/acpi/Kconfig
-@@ -326,6 +326,14 @@ config ACPI_NUMA
- 	depends on (X86 || IA64 || ARM64)
- 	default y if IA64_GENERIC || IA64_SGI_SN2 || ARM64
- 
-+config ACPI_HMAT
-+	bool "ACPI Heterogeneous Memory Attribute Table Support"
-+	depends on ACPI_NUMA
-+	help
-+	 Parses representation of the ACPI Heterogeneous Memory Attributes
-+	 Table (HMAT) and set the memory node relationships and access
-+	 attributes.
-+
- config ACPI_CUSTOM_DSDT_FILE
- 	string "Custom DSDT Table file to include"
- 	default ""
-diff --git a/drivers/acpi/Makefile b/drivers/acpi/Makefile
-index 7c6afc111d76..2a435dcfaa9c 100644
---- a/drivers/acpi/Makefile
-+++ b/drivers/acpi/Makefile
-@@ -55,6 +55,7 @@ acpi-$(CONFIG_X86)		+= x86/apple.o
- acpi-$(CONFIG_X86)		+= x86/utils.o
- acpi-$(CONFIG_DEBUG_FS)		+= debugfs.o
- acpi-$(CONFIG_ACPI_NUMA)	+= numa.o
-+acpi-$(CONFIG_ACPI_HMAT)	+= hmat.o
- acpi-$(CONFIG_ACPI_PROCFS_POWER) += cm_sbs.o
- acpi-y				+= acpi_lpat.o
- acpi-$(CONFIG_ACPI_LPIT)	+= acpi_lpit.o
 diff --git a/drivers/acpi/hmat.c b/drivers/acpi/hmat.c
-new file mode 100644
-index 000000000000..833a783868d5
---- /dev/null
+index 833a783868d5..efb33c74d1a3 100644
+--- a/drivers/acpi/hmat.c
 +++ b/drivers/acpi/hmat.c
-@@ -0,0 +1,180 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Heterogeneous Memory Attributes Table (HMAT) representation
-+ *
-+ * Copyright (c) 2018, Intel Corporation.
-+ */
+@@ -17,6 +17,43 @@
+ #include <linux/slab.h>
+ #include <linux/sysfs.h>
+ 
++static LIST_HEAD(targets);
 +
-+#include <acpi/acpi_numa.h>
-+#include <linux/acpi.h>
-+#include <linux/bitops.h>
-+#include <linux/cpu.h>
-+#include <linux/device.h>
-+#include <linux/init.h>
-+#include <linux/list.h>
-+#include <linux/module.h>
-+#include <linux/node.h>
-+#include <linux/slab.h>
-+#include <linux/sysfs.h>
++struct memory_target {
++	struct list_head node;
++	unsigned int memory_pxm;
++	unsigned long p_nodes[BITS_TO_LONGS(MAX_NUMNODES)];
++};
 +
-+static __init const char *hmat_data_type(u8 type)
++static __init struct memory_target *find_mem_target(unsigned int m)
++{
++	struct memory_target *t;
++
++	list_for_each_entry(t, &targets, node)
++		if (t->memory_pxm == m)
++			return t;
++	return NULL;
++}
++
++static __init void alloc_memory_target(unsigned int mem_pxm)
++{
++	struct memory_target *t;
++
++	if (pxm_to_node(mem_pxm) == NUMA_NO_NODE)
++		return;
++
++	t = find_mem_target(mem_pxm);
++	if (t)
++		return;
++
++	t = kzalloc(sizeof(*t), GFP_KERNEL);
++	if (!t)
++		return;
++
++	t->memory_pxm = mem_pxm;
++	list_add_tail(&t->node, &targets);
++}
++
+ static __init const char *hmat_data_type(u8 type)
+ {
+ 	switch (type) {
+@@ -53,11 +90,30 @@ static __init const char *hmat_data_type_suffix(u8 type)
+ 	};
+ }
+ 
++static __init void hmat_update_access(u8 type, u32 value, u32 *best)
 +{
 +	switch (type) {
 +	case ACPI_HMAT_ACCESS_LATENCY:
-+		return "Access Latency";
-+	case ACPI_HMAT_READ_LATENCY:
-+		return "Read Latency";
-+	case ACPI_HMAT_WRITE_LATENCY:
-+		return "Write Latency";
-+	case ACPI_HMAT_ACCESS_BANDWIDTH:
-+		return "Access Bandwidth";
-+	case ACPI_HMAT_READ_BANDWIDTH:
-+		return "Read Bandwidth";
-+	case ACPI_HMAT_WRITE_BANDWIDTH:
-+		return "Write Bandwidth";
-+	default:
-+		return "Reserved";
-+	};
-+}
-+
-+static __init const char *hmat_data_type_suffix(u8 type)
-+{
-+	switch (type) {
-+	case ACPI_HMAT_ACCESS_LATENCY:
 +	case ACPI_HMAT_READ_LATENCY:
 +	case ACPI_HMAT_WRITE_LATENCY:
-+		return " nsec";
++		if (!*best || *best > value)
++			*best = value;
++		break;
 +	case ACPI_HMAT_ACCESS_BANDWIDTH:
 +	case ACPI_HMAT_READ_BANDWIDTH:
 +	case ACPI_HMAT_WRITE_BANDWIDTH:
-+		return " MB/s";
-+	default:
-+		return "";
-+	};
++		if (!*best || *best < value)
++			*best = value;
++		break;
++	}
 +}
 +
-+static __init int hmat_parse_locality(union acpi_subtable_headers *header,
-+				      const unsigned long end)
-+{
-+	struct acpi_hmat_locality *loc = (void *)header;
-+	unsigned int init, targ, total_size, ipds, tpds;
-+	u32 *inits, *targs, value;
-+	u16 *entries;
-+	u8 type;
+ static __init int hmat_parse_locality(union acpi_subtable_headers *header,
+ 				      const unsigned long end)
+ {
++	struct memory_target *t;
+ 	struct acpi_hmat_locality *loc = (void *)header;
+-	unsigned int init, targ, total_size, ipds, tpds;
++	unsigned int init, targ, pass, p_node, total_size, ipds, tpds;
+ 	u32 *inits, *targs, value;
+ 	u16 *entries;
+ 	u8 type;
+@@ -87,12 +143,28 @@ static __init int hmat_parse_locality(union acpi_subtable_headers *header,
+ 	targs = &inits[ipds];
+ 	entries = (u16 *)(&targs[tpds]);
+ 	for (targ = 0; targ < tpds; targ++) {
+-		for (init = 0; init < ipds; init++) {
+-			value = entries[init * tpds + targ];
+-			value = (value * loc->entry_base_unit) / 10;
+-			pr_info("  Initiator-Target[%d-%d]:%d%s\n",
+-				inits[init], targs[targ], value,
+-				hmat_data_type_suffix(type));
++		u32 best = 0;
 +
-+	if (loc->header.length < sizeof(*loc)) {
-+		pr_err("HMAT: Unexpected locality header length: %d\n",
-+			loc->header.length);
-+		return -EINVAL;
-+	}
++		t = find_mem_target(targs[targ]);
++		for (pass = 0; pass < 2; pass++) {
++			for (init = 0; init < ipds; init++) {
++				value = entries[init * tpds + targ];
++				value = (value * loc->entry_base_unit) / 10;
 +
-+	type = loc->data_type;
-+	ipds = loc->number_of_initiator_Pds;
-+	tpds = loc->number_of_target_Pds;
-+	total_size = sizeof(*loc) + sizeof(*entries) * ipds * tpds +
-+		     sizeof(*inits) * ipds + sizeof(*targs) * tpds;
-+	if (loc->header.length < total_size) {
-+		pr_err("HMAT: Unexpected locality header length:%d, minimum required:%d\n",
-+			loc->header.length, total_size);
-+		return -EINVAL;
-+	}
++				if (!pass) {
++					hmat_update_access(type, value, &best);
++					pr_info("  Initiator-Target[%d-%d]:%d%s\n",
++						inits[init], targs[targ], value,
++						hmat_data_type_suffix(type));
++					continue;
++				}
 +
-+	pr_info("HMAT: Locality: Flags:%02x Type:%s Initiator Domains:%d Target Domains:%d Base:%lld\n",
-+		loc->flags, hmat_data_type(type), ipds, tpds,
-+		loc->entry_base_unit);
++				if (!t)
++					continue;
++				p_node = pxm_to_node(inits[init]);
++				if (p_node != NUMA_NO_NODE && value == best)
++					set_bit(p_node, t->p_nodes);
++			}
+ 		}
+ 	}
+ 	return 0;
+@@ -122,6 +194,7 @@ static int __init hmat_parse_address_range(union acpi_subtable_headers *header,
+ 					   const unsigned long end)
+ {
+ 	struct acpi_hmat_address_range *spa = (void *)header;
++	struct memory_target *t = NULL;
+ 
+ 	if (spa->header.length != sizeof(*spa)) {
+ 		pr_err("HMAT: Unexpected address range header length: %d\n",
+@@ -131,6 +204,23 @@ static int __init hmat_parse_address_range(union acpi_subtable_headers *header,
+ 	pr_info("HMAT: Memory (%#llx length %#llx) Flags:%04x Processor Domain:%d Memory Domain:%d\n",
+ 		spa->physical_address_base, spa->physical_address_length,
+ 		spa->flags, spa->processor_PD, spa->memory_PD);
 +
-+	inits = (u32 *)(loc + 1);
-+	targs = &inits[ipds];
-+	entries = (u16 *)(&targs[tpds]);
-+	for (targ = 0; targ < tpds; targ++) {
-+		for (init = 0; init < ipds; init++) {
-+			value = entries[init * tpds + targ];
-+			value = (value * loc->entry_base_unit) / 10;
-+			pr_info("  Initiator-Target[%d-%d]:%d%s\n",
-+				inits[init], targs[targ], value,
-+				hmat_data_type_suffix(type));
++	if (spa->flags & ACPI_HMAT_MEMORY_PD_VALID) {
++		t = find_mem_target(spa->memory_PD);
++		if (!t) {
++			pr_warn("HMAT: Memory Domain missing from SRAT\n");
++			return -EINVAL;
 +		}
 +	}
-+	return 0;
-+}
++	if (t && spa->flags & ACPI_HMAT_PROCESSOR_PD_VALID) {
++		int p_node = pxm_to_node(spa->processor_PD);
 +
-+static __init int hmat_parse_cache(union acpi_subtable_headers *header,
-+				   const unsigned long end)
-+{
-+	struct acpi_hmat_cache *cache = (void *)header;
-+	u32 attrs;
-+
-+	if (cache->header.length < sizeof(*cache)) {
-+		pr_err("HMAT: Unexpected cache header length: %d\n",
-+			cache->header.length);
-+		return -EINVAL;
++		if (p_node == NUMA_NO_NODE) {
++			pr_warn("HMAT: Invalid Processor Domain\n");
++			return -EINVAL;
++		}
++		set_bit(p_node, t->p_nodes);
 +	}
-+
-+	attrs = cache->cache_attributes;
-+	pr_info("HMAT: Cache: Domain:%d Size:%llu Attrs:%08x SMBIOS Handles:%d\n",
-+		cache->memory_PD, cache->cache_size, attrs,
-+		cache->number_of_SMBIOShandles);
-+
-+	return 0;
-+}
-+
-+static int __init hmat_parse_address_range(union acpi_subtable_headers *header,
-+					   const unsigned long end)
+ 	return 0;
+ }
+ 
+@@ -154,6 +244,33 @@ static int __init hmat_parse_subtable(union acpi_subtable_headers *header,
+ 	}
+ }
+ 
++static __init int srat_parse_mem_affinity(union acpi_subtable_headers *header,
++					  const unsigned long end)
 +{
-+	struct acpi_hmat_address_range *spa = (void *)header;
++	struct acpi_srat_mem_affinity *ma = (void *)header;
 +
-+	if (spa->header.length != sizeof(*spa)) {
-+		pr_err("HMAT: Unexpected address range header length: %d\n",
-+			spa->header.length);
++	if (!ma)
 +		return -EINVAL;
-+	}
-+	pr_info("HMAT: Memory (%#llx length %#llx) Flags:%04x Processor Domain:%d Memory Domain:%d\n",
-+		spa->physical_address_base, spa->physical_address_length,
-+		spa->flags, spa->processor_PD, spa->memory_PD);
-+	return 0;
-+}
-+
-+static int __init hmat_parse_subtable(union acpi_subtable_headers *header,
-+				      const unsigned long end)
-+{
-+	struct acpi_hmat_structure *hdr = (void *)header;
-+
-+	if (!hdr)
-+		return -EINVAL;
-+
-+	switch (hdr->type) {
-+	case ACPI_HMAT_TYPE_ADDRESS_RANGE:
-+		return hmat_parse_address_range(header, end);
-+	case ACPI_HMAT_TYPE_LOCALITY:
-+		return hmat_parse_locality(header, end);
-+	case ACPI_HMAT_TYPE_CACHE:
-+		return hmat_parse_cache(header, end);
-+	default:
-+		return -EINVAL;
-+	}
-+}
-+
-+static __init int hmat_init(void)
-+{
-+	struct acpi_table_header *tbl;
-+	enum acpi_hmat_type i;
-+	acpi_status status;
-+
-+	if (srat_disabled())
++	if (!(ma->flags & ACPI_SRAT_MEM_ENABLED))
 +		return 0;
++	alloc_memory_target(ma->proximity_domain);
++	return 0;
++}
 +
-+	status = acpi_get_table(ACPI_SIG_HMAT, 0, &tbl);
++static __init void hmat_register_targets(void)
++{
++	struct memory_target *t, *next;
++	unsigned m, p;
++
++	list_for_each_entry_safe(t, next, &targets, node) {
++		list_del(&t->node);
++		m = pxm_to_node(t->memory_pxm);
++		for_each_set_bit(p, t->p_nodes, MAX_NUMNODES)
++			register_memory_node_under_compute_node(m, p, 0);
++		kfree(t);
++	}
++}
++
+ static __init int hmat_init(void)
+ {
+ 	struct acpi_table_header *tbl;
+@@ -163,6 +280,17 @@ static __init int hmat_init(void)
+ 	if (srat_disabled())
+ 		return 0;
+ 
++	status = acpi_get_table(ACPI_SIG_SRAT, 0, &tbl);
 +	if (ACPI_FAILURE(status))
 +		return 0;
 +
-+	for (i = ACPI_HMAT_TYPE_ADDRESS_RANGE; i < ACPI_HMAT_TYPE_RESERVED; i++) {
-+		if (acpi_table_parse_entries(ACPI_SIG_HMAT,
-+					     sizeof(struct acpi_table_hmat), i,
-+					     hmat_parse_subtable, 0) < 0)
-+			goto out_put;
-+	}
-+out_put:
++	if (acpi_table_parse_entries(ACPI_SIG_SRAT,
++				sizeof(struct acpi_table_srat),
++				ACPI_SRAT_TYPE_MEMORY_AFFINITY,
++				srat_parse_mem_affinity, 0) < 0)
++		goto out_put;
 +	acpi_put_table(tbl);
-+	return 0;
-+}
-+subsys_initcall(hmat_init);
++
+ 	status = acpi_get_table(ACPI_SIG_HMAT, 0, &tbl);
+ 	if (ACPI_FAILURE(status))
+ 		return 0;
+@@ -173,6 +301,7 @@ static __init int hmat_init(void)
+ 					     hmat_parse_subtable, 0) < 0)
+ 			goto out_put;
+ 	}
++	hmat_register_targets();
+ out_put:
+ 	acpi_put_table(tbl);
+ 	return 0;
 -- 
 2.14.4
 
