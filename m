@@ -2,145 +2,97 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A1DEC43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 03:24:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A759C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 03:25:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B6052146F
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 03:24:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2788720883
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 03:25:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="nzVO7vkw"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DLzq0nM4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729144AbfAIDX7 (ORCPT
+        id S1729184AbfAIDZW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 22:23:59 -0500
-Received: from mail-eopbgr80071.outbound.protection.outlook.com ([40.107.8.71]:41801
-        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727828AbfAIDX6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 22:23:58 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7PQB948Nyuc2TvE2rGc4GIwP0Bq5+dROBy4ZYZ8+wIM=;
- b=nzVO7vkw6zqn4ngmMDCspeko6H/xMrr9KjMPzV4hTWRfORh9N2ZYW7GJSspPRoilSlaZMgu754VSEc60TwbkikHQDB3Sj09lZwGgne27wQrjCApnc7eVZdZUGSilUWeOi67xf52yvEGt4i58qr5duftJsOGI0v3WPMZBwX1kTFo=
-Received: from AM5PR0402MB2865.eurprd04.prod.outlook.com (10.175.41.148) by
- AM5PR0402MB2738.eurprd04.prod.outlook.com (10.175.40.148) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1516.13; Wed, 9 Jan 2019 03:23:54 +0000
-Received: from AM5PR0402MB2865.eurprd04.prod.outlook.com
- ([fe80::1c0c:51da:f585:5626]) by AM5PR0402MB2865.eurprd04.prod.outlook.com
- ([fe80::1c0c:51da:f585:5626%2]) with mapi id 15.20.1495.011; Wed, 9 Jan 2019
- 03:23:54 +0000
-From:   Ran Wang <ran.wang_1@nxp.com>
-To:     Alan Stern <stern@rowland.harvard.edu>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Rajesh Bhagat <rajesh.bhagat@nxp.com>
-Subject: RE: [PATCH 1/3] usb: kconfig: remove dependency FSL_SOC for ehci fsl
- driver
-Thread-Topic: [PATCH 1/3] usb: kconfig: remove dependency FSL_SOC for ehci fsl
- driver
-Thread-Index: AQHUpxgBkJ5uhq9XMUWhOXrVWOpG3KWli3mAgAC7iCA=
-Date:   Wed, 9 Jan 2019 03:23:54 +0000
-Message-ID: <AM5PR0402MB286583217B668F4B50A213ACF18B0@AM5PR0402MB2865.eurprd04.prod.outlook.com>
-References: <20190108060426.11581-1-ran.wang_1@nxp.com>
- <Pine.LNX.4.44L0.1901081110550.1355-100000@iolanthe.rowland.org>
-In-Reply-To: <Pine.LNX.4.44L0.1901081110550.1355-100000@iolanthe.rowland.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=ran.wang_1@nxp.com; 
-x-originating-ip: [223.104.3.158]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM5PR0402MB2738;6:5xUJNgxnWiGsa1HB2aLavT0qpEvlaIQtXCeZPAYAjycthCUt+4XeQTAmseyB/qIY9oHmND/6nE8JZW09HcNHVYyn3ZX3E0PRoPysXFiD1HDsEEB5soQtXyyyuuYFQk4fPXBt3FDoM3qzNRwUd9D/507gnCNG0a7Dq5d5MTMgNZSxJYW1zbyXswFaGFRLLm3xVmRraehcomq5BN9oJ2ZdYQ3yXGtXgiVQUpVcphFcCLlFLWy57itJfXb80fh7jizGOiB9ZqhQJB/GzIeao4o3TDIi1YToxewoF6Sgi6oLLbMWutbAVGa2g3YSU2YbaVdO8DnIF9rSEyf9EJLICeeAf6HkywBGaS3Njbn/j98UgrSja2pnfV9+2p1j6MbPVo08+prsKlivo18T969lEnt8QYX50KfjTB8XanFTslfigLyopJytXY+Iz2NcxqrPgVJMHH2kfg4AGk44XlLwy4O0ow==;5:vrhQlDDDCqNQGIMc/juqCUjK9Y82n9ibK7+x5vKJUoLgIvkyx/ztuZr7u/gq5OG7HbDHPmV3bcFsC0KyYFeMXgeASJeIvaZTyRvUy+qBCHUdYcua45uMjTu2fJs6W2LxGRGcTYk83rdw50x3swgdLNXvBaYF9cseSbADw/zcWGDo3uu7iHWy2qS+KKeRvGPaebBHuN91Z2L/QH76yKatVg==;7:M1rLDEv79mokzdc84KAQ7690D6e3n3qQPMddXM6oWlbTnPOjwsthnDYu9KEPcYbGYjgQWe8Jhn9Dp30N+QUWpWTNsx+/mwPRPyDj4MqWrGx2fFK/qs3wg1jmxVsRntM0g4AorVACmZSxA79GGI3bkA==
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: d0c312a3-d602-4698-5d4c-08d675e1e23a
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM5PR0402MB2738;
-x-ms-traffictypediagnostic: AM5PR0402MB2738:
-x-microsoft-antispam-prvs: <AM5PR0402MB273852815E6923FA2B253EDEF18B0@AM5PR0402MB2738.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(908002)(999002)(5005026)(6040522)(8220060)(2401047)(8121501046)(3231475)(944501520)(52105112)(3002001)(93006095)(93001095)(10201501046)(6055026)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(20161123560045)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:AM5PR0402MB2738;BCL:0;PCL:0;RULEID:;SRVR:AM5PR0402MB2738;
-x-forefront-prvs: 0912297777
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(396003)(39860400002)(366004)(136003)(376002)(13464003)(199004)(189003)(33656002)(6916009)(54906003)(6116002)(486006)(3846002)(5660300001)(53936002)(97736004)(2171002)(316002)(55016002)(229853002)(99286004)(74316002)(68736007)(7696005)(6246003)(76176011)(8936002)(256004)(478600001)(6436002)(4326008)(9686003)(25786009)(105586002)(53546011)(81166006)(81156014)(71190400001)(305945005)(14454004)(71200400001)(2906002)(186003)(476003)(26005)(446003)(86362001)(102836004)(66066001)(7736002)(8676002)(106356001)(6506007)(11346002)(575784001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM5PR0402MB2738;H:AM5PR0402MB2865.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: zi0P6TOADRCYWoFS6HuE4ipGo/I1ByF7oXycgv4ot1rJOtg4TmupyYjl1pXo2A739Ry5CfUbj5jp8mDPxS2M4Wn4Mg23Wm2CMs93pGlEJlmJ6OddXb0eKkcqNlIUP+veVjXF/93rKhbGCjS56uDHyaroNQHjO7I3fWAK5aWrsTDagxu0cb/rA3yoyJj/jorXxS5p13WxFUYuTAcdljbDi1VKyU+K11Ty8lpa+R6JNn87AknDF7A4kdDhi86C08CTuIdiaQOfKliprAA1EoD0nd4t2chli1j1XPt7QAl3+4c+vzlsRwj6ej9Q62oMZhzS
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Tue, 8 Jan 2019 22:25:22 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:44625 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727828AbfAIDZV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 22:25:21 -0500
+Received: by mail-pg1-f196.google.com with SMTP id t13so2649716pgr.11;
+        Tue, 08 Jan 2019 19:25:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=0ZaESGZ3DWR6K/cxMbCNQ7xXLmeAeWLAg5uKrlD7nss=;
+        b=DLzq0nM4e58zkGMWwlXuWaohAARDTN0l4k8fmYpM7I8cuuiydfTcAct1lVd3BDj+fd
+         LKRcSSRgm+e1OTcrxmBefEhUd1NtMOt1QemS3Tyc274azPW8tXM1IWl1Di1jCDJ/tTGb
+         VhYY3qUSg1/D3usP85BKsdlyHTdJ+gChrnjiUOeHMaOielwO8mHin/lIcL0K6vUDb9lE
+         CJ26v8hgRXLYnAg974AuwzV6IcSdt+Pp6yo/J/0nDGJGueTz27TUvRRzqIR1NZPINC+u
+         ig3qW7yp3j7ROiLtsAjkhLTLPU3TJoHt5CQAw4MGtFcZyKnhQ1LwwyHCbOTmmS9xz9h+
+         XDwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=0ZaESGZ3DWR6K/cxMbCNQ7xXLmeAeWLAg5uKrlD7nss=;
+        b=sF8YC+E8EleUtCobKxV/L9mCVT+Bk5HyAiGczPOEqokvnXrkoqNihK9ZdoskUG0kVP
+         13qZbC0lTtMuQLBMKKRj0AAIk9D8qeO6hdsuqlE88yD2/G9LuG9IbSGu+zdQhhu9uXkr
+         bhtAI7ROwvYv2PUhnVo0NAs8wa3OuIymUGvNrUdOo97TdBtZHXHnSeB8R0REZsRMNJL5
+         6xf4DjXNxxCwdOJHuxB75de6Z00XbwXo49smg2XRv+C80OHWoyzMql0y/5Nh+Rwrs3LT
+         sbJenc5cgvsuU7ODX8MnEp2/eCQ/614Uf3QsjXV4jM9WqD00jw1q0jJgLp+5DHi7j5DU
+         wzTw==
+X-Gm-Message-State: AJcUukd+eUMgIHPpCejKxVNLWpg5AnNBgT6uEQ+66moMmzHRaKhS4h88
+        OjL++WWWE5W/qrma80CJ6LjlTdlr
+X-Google-Smtp-Source: ALg8bN7+4Zf1q7pboqkBw450C/WUjs+/i30Vi9woI5D3ULEV117LJYnJmb8qpHjZKh1KipCbakhC7g==
+X-Received: by 2002:a62:6dc7:: with SMTP id i190mr4326578pfc.166.1547004320678;
+        Tue, 08 Jan 2019 19:25:20 -0800 (PST)
+Received: from ?IPv6:2402:f000:1:1501:200:5efe:166.111.71.59? ([2402:f000:1:1501:200:5efe:a66f:473b])
+        by smtp.gmail.com with ESMTPSA id e128sm104427973pfe.67.2019.01.08.19.25.18
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 08 Jan 2019 19:25:20 -0800 (PST)
+Subject: Re: [PATCH] net: nvidia: forcedeth: Fix two possible concurrency
+ use-after-free bugs
+To:     Yanjun Zhu <yanjun.zhu@oracle.com>, davem@davemloft.net,
+        keescook@chromium.org
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20190108124518.21986-1-baijiaju1990@gmail.com>
+ <27392ae0-2c0f-f099-05d8-f9cdbfbd313e@oracle.com>
+ <f9ab7ba3-573c-6703-1b01-37a9e0a9b769@gmail.com>
+ <f87bd4b7-81d5-1f0c-137e-ecbc02753257@oracle.com>
+ <a1a71d06-9c1c-7e18-0e24-103fa89facf2@gmail.com>
+ <a861dacb-c992-13d7-5458-09445183655b@oracle.com>
+ <54c2efce-18ac-46d4-7fb5-8510699b528e@gmail.com>
+ <cb47b5e1-bac9-b44b-8b47-9e654c7cffc1@oracle.com>
+From:   Jia-Ju Bai <baijiaju1990@gmail.com>
+Message-ID: <b35bda34-e507-5af9-051d-5d15c804db68@gmail.com>
+Date:   Wed, 9 Jan 2019 11:25:14 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d0c312a3-d602-4698-5d4c-08d675e1e23a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Jan 2019 03:23:54.2133
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM5PR0402MB2738
+In-Reply-To: <cb47b5e1-bac9-b44b-8b47-9e654c7cffc1@oracle.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Alan,
 
-> -----Original Message-----
-> From: Alan Stern <stern@rowland.harvard.edu>
-> Sent: Wednesday, January 09, 2019 00:12
-> To: Ran Wang <ran.wang_1@nxp.com>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>; linux-
-> usb@vger.kernel.org; linux-kernel@vger.kernel.org; Rajesh Bhagat
-> <rajesh.bhagat@nxp.com>
-> Subject: Re: [PATCH 1/3] usb: kconfig: remove dependency FSL_SOC for ehci
-> fsl driver
->=20
-> On Tue, 8 Jan 2019, Ran Wang wrote:
->=20
-> > From: Rajesh Bhagat <rajesh.bhagat@nxp.com>
-> >
-> > CONFIG_USB_EHCI_FSL is not dependent on FSL_SOC, it can be built on
-> > non-PPC platforms.
-> >
-> > Signed-off-by: Rajesh Bhagat <rajesh.bhagat@nxp.com>
-> > Signed-off-by: Ran Wang <ran.wang_1@nxp.com>
-> > ---
-> >  drivers/usb/host/Kconfig |    4 ++--
-> >  1 files changed, 2 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/usb/host/Kconfig b/drivers/usb/host/Kconfig index
-> > 16758b1..53cbc0c 100644
-> > --- a/drivers/usb/host/Kconfig
-> > +++ b/drivers/usb/host/Kconfig
-> > @@ -179,8 +179,8 @@ config XPS_USB_HCD_XILINX
-> >  		devices only.
-> >
-> >  config USB_EHCI_FSL
-> > -	tristate "Support for Freescale PPC on-chip EHCI USB controller"
-> > -	depends on FSL_SOC
-> > +	tristate "Support for Freescale on-chip EHCI USB controller"
-> > +	depends on USB_EHCI_HCD
->=20
-> This line is not needed.  The entire entry lies within an "if USB_EHCI_HC=
-D"
-> block.
 
-Got it, will remove it in next version, thanks.
+On 2019/1/9 11:24, Yanjun Zhu wrote:
+>
+> If you have forcedeth NIC, you can make tests with it.:-)
 
-Regards,
-Ran
+Ah, I would like to, but I do not have the hardware...
 
-> Alan Stern
->=20
-> >  	select USB_EHCI_ROOT_HUB_TT
-> >  	---help---
-> >  	  Variation of ARC USB block used in some Freescale chips.
-> >
 
+Best wishes,
+Jia-Ju Bai
