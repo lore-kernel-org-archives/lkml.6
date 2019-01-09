@@ -2,402 +2,179 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BED9C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 10:01:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E2F3C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 10:04:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B8A821738
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 10:01:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4330621738
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 10:04:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730016AbfAIKBX (ORCPT
+        id S1730017AbfAIKEP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 05:01:23 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:39660 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729281AbfAIKBX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 05:01:23 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8DD8E1596
-        for <linux-kernel@vger.kernel.org>; Wed,  9 Jan 2019 02:01:21 -0800 (PST)
-Received: from mail-it1-f171.google.com (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 65EC73F819
-        for <linux-kernel@vger.kernel.org>; Wed,  9 Jan 2019 02:01:21 -0800 (PST)
-Received: by mail-it1-f171.google.com with SMTP id i145so10818688ita.4
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jan 2019 02:01:21 -0800 (PST)
-X-Gm-Message-State: AJcUukc6XNJrqQR2U1cCup7jPdYOvjjnU1dN5bjItyodGzTQDJeywPh2
-        qWNc645YSOk5dk1Y5eqXc2Uu4jSsUG8wgmyCFag=
-X-Google-Smtp-Source: ALg8bN6FYiX38G0iQ0fSrA57jva53F05RuXFpGx6heWJgn91eGMHaBx5UPpUFse/Tns/JM/SmjbPKn5hSP56u/idBiA=
-X-Received: by 2002:a02:4c55:: with SMTP id a82mr3530085jab.29.1547028080476;
- Wed, 09 Jan 2019 02:01:20 -0800 (PST)
+        Wed, 9 Jan 2019 05:04:15 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:32957 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729148AbfAIKEO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 05:04:14 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x09A3sbi3905848
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Wed, 9 Jan 2019 02:03:54 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x09A3s1r3905845;
+        Wed, 9 Jan 2019 02:03:54 -0800
+Date:   Wed, 9 Jan 2019 02:03:54 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Borislav Petkov <tipbot@zytor.com>
+Message-ID: <tip-90802938f7e88045ace123e105e22e8c3e7f9c7e@git.kernel.org>
+Cc:     mingo@kernel.org, tglx@linutronix.de, linux-kernel@vger.kernel.org,
+        hpa@zytor.com, tony.luck@intel.com, torvalds@linux-foundation.org,
+        reinette.chatre@intel.com, james.morse@arm.com, bp@suse.de,
+        babu.moger@amd.com, fenghua.yu@intel.com
+Reply-To: hpa@zytor.com, tony.luck@intel.com, james.morse@arm.com,
+          torvalds@linux-foundation.org, reinette.chatre@intel.com,
+          babu.moger@amd.com, fenghua.yu@intel.com, bp@suse.de,
+          mingo@kernel.org, tglx@linutronix.de,
+          linux-kernel@vger.kernel.org
+In-Reply-To: <20190108171401.GC12235@zn.tnic>
+References: <20190108171401.GC12235@zn.tnic>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/urgent] x86/cache: Rename config option to
+ CONFIG_X86_RESCTRL
+Git-Commit-ID: 90802938f7e88045ace123e105e22e8c3e7f9c7e
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-References: <1545119810-12182-1-git-send-email-amit.kachhap@arm.com>
- <1545119810-12182-3-git-send-email-amit.kachhap@arm.com> <a50e3bdf-5e92-e0c3-76ab-ca49b1f4a715@arm.com>
-In-Reply-To: <a50e3bdf-5e92-e0c3-76ab-ca49b1f4a715@arm.com>
-From:   Amit Daniel Kachhap <amit.kachhap@arm.com>
-Date:   Wed, 9 Jan 2019 15:31:08 +0530
-X-Gmail-Original-Message-ID: <CADGdYn6XTxv980DTrWfaWE4=9BQkq3=T=Ukuby_KFZ9q7+0T3w@mail.gmail.com>
-Message-ID: <CADGdYn6XTxv980DTrWfaWE4=9BQkq3=T=Ukuby_KFZ9q7+0T3w@mail.gmail.com>
-Subject: Re: [PATCH v4 2/6] arm64/kvm: context-switch ptrauth registers
-To:     James Morse <james.morse@arm.com>
-Cc:     LAK <linux-arm-kernel@lists.infradead.org>,
-        Christoffer Dall <christoffer.dall@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Andrew Jones <drjones@redhat.com>,
-        Dave Martin <Dave.Martin@arm.com>,
-        Ramana Radhakrishnan <ramana.radhakrishnan@arm.com>,
-        kvmarm@lists.cs.columbia.edu,
-        Kristina Martsenko <kristina.martsenko@arm.com>,
-        linux-kernel@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Commit-ID:  90802938f7e88045ace123e105e22e8c3e7f9c7e
+Gitweb:     https://git.kernel.org/tip/90802938f7e88045ace123e105e22e8c3e7f9c7e
+Author:     Borislav Petkov <bp@suse.de>
+AuthorDate: Tue, 8 Jan 2019 17:38:29 +0100
+Committer:  Borislav Petkov <bp@suse.de>
+CommitDate: Wed, 9 Jan 2019 10:29:03 +0100
 
-On Sat, Jan 5, 2019 at 12:05 AM James Morse <james.morse@arm.com> wrote:
->
-> Hi Amit,
->
-> On 18/12/2018 07:56, Amit Daniel Kachhap wrote:
-> > When pointer authentication is supported, a guest may wish to use it.
-> > This patch adds the necessary KVM infrastructure for this to work, with
-> > a semi-lazy context switch of the pointer auth state.
-> >
-> > Pointer authentication feature is only enabled when VHE is built
-> > into the kernel and present into CPU implementation so only VHE code
-> > paths are modified.
-> >
-> > When we schedule a vcpu, we disable guest usage of pointer
-> > authentication instructions and accesses to the keys. While these are
-> > disabled, we avoid context-switching the keys. When we trap the guest
-> > trying to use pointer authentication functionality, we change to eagerly
-> > context-switching the keys, and enable the feature. The next time the
-> > vcpu is scheduled out/in, we start again.
->
-> Why start again?
-> Taking the trap at all suggests the guest knows about pointer-auth, if it uses
-> it, its probably in some context switch code. It would be good to avoid trapping
-> that.
-This is a pointer to the earlier discussion
-https://lore.kernel.org/lkml/20180409125818.GE10904@cbox/.
-It seems there is some agreement reached to flip ptrauth status in
-every vcpu load/unload
-as this would cater to both ptrauth enabled/disabled application.
->
->
-> > Pointer authentication consists of address authentication and generic
-> > authentication, and CPUs in a system might have varied support for
-> > either. Where support for either feature is not uniform, it is hidden
-> > from guests via ID register emulation, as a result of the cpufeature
-> > framework in the host.
-> >
-> > Unfortunately, address authentication and generic authentication cannot
-> > be trapped separately, as the architecture provides a single EL2 trap
-> > covering both. If we wish to expose one without the other, we cannot
-> > prevent a (badly-written) guest from intermittently using a feature
-> > which is not uniformly supported (when scheduled on a physical CPU which
-> > supports the relevant feature).
->
-> Yuck!
-:)
->
->
-> > When the guest is scheduled on a
-> > physical CPU lacking the feature, these attemts will result in an UNDEF
->
-> (attempts)
-ok.
->
-> > being taken by the guest.
->
-> Can we only expose the feature to a guest if both address and generic
-> authentication are supported? (and hide it from the id register otherwise).
->
-> This avoids having to know if this cpu supports address/generic when the system
-> doesn't. We would need to scrub the values to avoid guest-values being left
-> loaded when something else is running.
-Yes it can be done. Currently it is done indirectly by userspace
-option. Agree with you on this.
->
->
-> > diff --git a/arch/arm64/include/asm/cpufeature.h b/arch/arm64/include/asm/cpufeature.h
-> > index 1c8393f..ac7d496 100644
-> > --- a/arch/arm64/include/asm/cpufeature.h
-> > +++ b/arch/arm64/include/asm/cpufeature.h
-> > @@ -526,6 +526,12 @@ static inline bool system_supports_generic_auth(void)
-> >               cpus_have_const_cap(ARM64_HAS_GENERIC_AUTH);
-> >  }
-> >
-> > +static inline bool system_supports_ptrauth(void)
-> > +{
-> > +     return IS_ENABLED(CONFIG_ARM64_PTR_AUTH) &&
-> > +             cpus_have_const_cap(ARM64_HAS_ADDRESS_AUTH);
-> > +}
->
-> (mainline has a system_supports_address_auth(), I guess this will be folded
-> around a bit during the rebase).
->
-> system_supports_ptrauth() that checks the two architected algorithm caps?
-yes. I will add.
->
->
-> > diff --git a/arch/arm64/kvm/handle_exit.c b/arch/arm64/kvm/handle_exit.c
-> > index ab35929..5c47a8f47 100644
-> > --- a/arch/arm64/kvm/handle_exit.c
-> > +++ b/arch/arm64/kvm/handle_exit.c
-> > @@ -174,19 +174,25 @@ static int handle_sve(struct kvm_vcpu *vcpu, struct kvm_run *run)
-> >  }
-> >
-> >  /*
-> > + * Handle the guest trying to use a ptrauth instruction, or trying to access a
-> > + * ptrauth register. This trap should not occur as we enable ptrauth during
-> > + * vcpu schedule itself but is anyway kept here for any unfortunate scenario.
->
-> ... so we don't need this? Or if it ever runs its indicative of a bug?
-Sorry This comment is confusing and is leftover of last V3 version.
->
->
-> > + */
-> > +void kvm_arm_vcpu_ptrauth_trap(struct kvm_vcpu *vcpu)
-> > +{
-> > +     if (system_supports_ptrauth())
-> > +             kvm_arm_vcpu_ptrauth_enable(vcpu);
-> > +     else
-> > +             kvm_inject_undefined(vcpu);
-> > +}
-> > +
-> > +/*
-> >   * Guest usage of a ptrauth instruction (which the guest EL1 did not turn into
-> > - * a NOP).
-> > + * a NOP), or guest EL1 access to a ptrauth register.
-> >   */
-> >  static int kvm_handle_ptrauth(struct kvm_vcpu *vcpu, struct kvm_run *run)
-> >  {
-> > -     /*
-> > -      * We don't currently support ptrauth in a guest, and we mask the ID
-> > -      * registers to prevent well-behaved guests from trying to make use of
-> > -      * it.
-> > -      *
-> > -      * Inject an UNDEF, as if the feature really isn't present.
-> > -      */
-> > -     kvm_inject_undefined(vcpu);
-> > +     kvm_arm_vcpu_ptrauth_trap(vcpu);
-> >       return 1;
-> >  }
->
-> > diff --git a/arch/arm64/kvm/hyp/ptrauth-sr.c b/arch/arm64/kvm/hyp/ptrauth-sr.c
-> > new file mode 100644
-> > index 0000000..1bfaf74
-> > --- /dev/null
-> > +++ b/arch/arm64/kvm/hyp/ptrauth-sr.c
-> > @@ -0,0 +1,73 @@
->
-> > +{
-> > +     return vcpu->arch.hcr_el2 & (HCR_API | HCR_APK);
-> > +}
->
-> (If you include the the IS_ENABLED() in here too, the compiler can work out
-> pointer-auth was compiled out and prune all the unused static functions.)
-ok.
->
->
-> > +#define __ptrauth_save_key(regs, key)                                                \
-> > +({                                                                           \
-> > +     regs[key ## KEYLO_EL1] = read_sysreg_s(SYS_ ## key ## KEYLO_EL1);       \
-> > +     regs[key ## KEYHI_EL1] = read_sysreg_s(SYS_ ## key ## KEYHI_EL1);       \
-> > +})
->
-> (shame we can't re-use the arch code's macros for these)
->
->
-> > +static __always_inline void __hyp_text __ptrauth_save_state(struct kvm_cpu_context *ctxt)
-> > +{
-> > +     __ptrauth_save_key(ctxt->sys_regs, APIA);
-> > +     __ptrauth_save_key(ctxt->sys_regs, APIB);
-> > +     __ptrauth_save_key(ctxt->sys_regs, APDA);
-> > +     __ptrauth_save_key(ctxt->sys_regs, APDB);
->
-> > +     __ptrauth_save_key(ctxt->sys_regs, APGA);
->
-> I thought the generic authentication bits had a separate ID-register-field/cap?
-> But you only checked address-auth above. Is it possible the CPU doesn't have
-> this register?
-Yes it may be possible and generic ptrauth userspace patches by
-Kristina has a separate
-check for generic key. I will add a similar check here.
->
-> (but I think we should only support this if both generic&address are supported)
->
->
-> > +}
->
-> > +void __hyp_text __ptrauth_switch_to_guest(struct kvm_vcpu *vcpu,
-> > +                                       struct kvm_cpu_context *host_ctxt,
-> > +                                       struct kvm_cpu_context *guest_ctxt)
-> > +{
-> > +     if (!__ptrauth_is_enabled(vcpu))
-> > +             return;
-> > +
-> > +     __ptrauth_save_state(host_ctxt);
-> > +     __ptrauth_restore_state(guest_ctxt);
-> > +}
-> > +
-> > +void __hyp_text __ptrauth_switch_to_host(struct kvm_vcpu *vcpu,
-> > +                                      struct kvm_cpu_context *host_ctxt,
-> > +                                      struct kvm_cpu_context *guest_ctxt)
-> > +{
-> > +     if (!__ptrauth_is_enabled(vcpu))
-> > +             return;
-> > +
-> > +     __ptrauth_save_state(guest_ctxt);
-> > +     __ptrauth_restore_state(host_ctxt);
-> > +}
->
->
-> > diff --git a/arch/arm64/kvm/hyp/switch.c b/arch/arm64/kvm/hyp/switch.c
-> > index 85a2a5c..6c57552 100644
-> > --- a/arch/arm64/kvm/hyp/switch.c
-> > +++ b/arch/arm64/kvm/hyp/switch.c
-> > @@ -508,6 +508,8 @@ int kvm_vcpu_run_vhe(struct kvm_vcpu *vcpu)
-> >       sysreg_restore_guest_state_vhe(guest_ctxt);
-> >       __debug_switch_to_guest(vcpu);
-> >
-> > +     __ptrauth_switch_to_guest(vcpu, host_ctxt, guest_ctxt);
-> > +
-> >       __set_guest_arch_workaround_state(vcpu);
-> >
-> >       do {
-> > @@ -519,6 +521,8 @@ int kvm_vcpu_run_vhe(struct kvm_vcpu *vcpu)
-> >
-> >       __set_host_arch_workaround_state(vcpu);
-> >
-> > +     __ptrauth_switch_to_host(vcpu, host_ctxt, guest_ctxt);
-> > +
-> >       sysreg_save_guest_state_vhe(guest_ctxt);
-> >
-> >       __deactivate_traps(vcpu);
->
-> This is deep in the world-switch code, meaning we save/restore 10 sysregs for
-> every entry/exit. As the kernel isn't using pointer-auth, wouldn't it be better
-> to defer the save/restore to the preempt notifier using kvm_arch_vcpu_load()?
->
-> I've seen the discussion that the kernel may start using this 'soon':
-> lore.kernel.org/r/20181112223212.5o4ipc5kt5ziuupt@localhost
->
-> (does anyone know when soon is?)
-One version is already posted and next version is worked upon.
->
-> ... but it doesn't today, and save/restoring these in C becomes impossible when
-> that happens, which the arch code is doing too, so we aren't inventing a new
-> problem.
-Save and restore of key possible in C function with GCC function attribute like
-sign-return-address=none. I left the switch function as of now and
-only this change is needed
-to enable it for kernel ptrauth.
->
->
-> probable-tangent: {
-> If the kernel starts using ptrauth, it will need to switch these registers in
-> the entry asm, and in __cpu_switch_to()... there will be new asm macro's to do this.
->
-> Can we make it so that the same series that does that, can easily do KVM too?
-Yes it should be possible.
->
-> If we use the preempt-notifier stuff the GET/SET_ONE_REG code knows that today
-> the ptrauth values are always loaded on the cpu, it doesn't need to look in the
-> sys_reg_descs[] array.
-> This means the preempt notifier could save/restore them to a struct ptrauth_keys
-> in struct kvm_vcpu_arch. This lets us use the arch codes __ptrauth_key_install()
-> and ptrauth_keys_switch() helpers today, instead of duplicating them because the
-> layout is slightly different.
-Since vcpu is a thread so keys are allocated using the current user
-ptrauth patches and
-I can see in guest switch that has keys are present in guest context.
-Do you see advantage
-in allocating keys in the above way?
->
-> Once these become asm macros, the same structure is already in use, so we can
-> (cough) probably feed it a different base pointer for guest-entry/ret_to_user.
-> guest-exit would almost be the same as kernel_enter, its only the
-> save-guest-values that would be specific to kvm.
-yes reusing will be better.
->
-> (oh, and the GET/SET_ONE_REG code would need to know to look elsewhere for the
-> guest values, but it looks like your patch 5 is already doing some of this).
-ok.
->
-> }
->
->
-> > diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
-> > index 1ca592d..6af6c7d 100644
-> > --- a/arch/arm64/kvm/sys_regs.c
-> > +++ b/arch/arm64/kvm/sys_regs.c
-> > @@ -986,6 +986,32 @@ static bool access_pmuserenr(struct kvm_vcpu *vcpu, struct sys_reg_params *p,
-> >       { SYS_DESC(SYS_PMEVTYPERn_EL0(n)),                                      \
-> >         access_pmu_evtyper, reset_unknown, (PMEVTYPER0_EL0 + n), }
-> >
-> > +
-> > +void kvm_arm_vcpu_ptrauth_enable(struct kvm_vcpu *vcpu)
-> > +{
-> > +     vcpu->arch.hcr_el2 |= (HCR_API | HCR_APK);
-> > +}
-> > +
-> > +void kvm_arm_vcpu_ptrauth_disable(struct kvm_vcpu *vcpu)
-> > +{
-> > +     vcpu->arch.hcr_el2 &= ~(HCR_API | HCR_APK);
-> > +}
-> > +
->
-> > @@ -1040,14 +1066,6 @@ static u64 read_id_reg(struct sys_reg_desc const *r, bool raz)
-> >                       kvm_debug("SVE unsupported for guests, suppressing\n");
-> >
-> >               val &= ~(0xfUL << ID_AA64PFR0_SVE_SHIFT);
-> > -     } else if (id == SYS_ID_AA64ISAR1_EL1) {
-> > -             const u64 ptrauth_mask = (0xfUL << ID_AA64ISAR1_APA_SHIFT) |
-> > -                                      (0xfUL << ID_AA64ISAR1_API_SHIFT) |
-> > -                                      (0xfUL << ID_AA64ISAR1_GPA_SHIFT) |
-> > -                                      (0xfUL << ID_AA64ISAR1_GPI_SHIFT);
->
-> Don't we still want to remove the imp-def bits? and the APA/GPA bits if we
-> decide there is incomplete support.
-I think it was decided to enable all features even though they are not
-supported. I cannot find the link though.
->
->
-> > -             if (val & ptrauth_mask)
-> > -                     kvm_debug("ptrauth unsupported for guests, suppressing\n");
-> > -             val &= ~ptrauth_mask;
-> >       } else if (id == SYS_ID_AA64MMFR1_EL1) {
-> >               if (val & (0xfUL << ID_AA64MMFR1_LOR_SHIFT))
-> >                       kvm_debug("LORegions unsupported for guests, suppressing\n");
->
->
-> > diff --git a/virt/kvm/arm/arm.c b/virt/kvm/arm/arm.c
-> > index feda456..1f3b6ed 100644
-> > --- a/virt/kvm/arm/arm.c
-> > +++ b/virt/kvm/arm/arm.c
-> > @@ -388,6 +388,8 @@ void kvm_arch_vcpu_load(struct kvm_vcpu *vcpu, int cpu)
-> >               vcpu_clear_wfe_traps(vcpu);
-> >       else
-> >               vcpu_set_wfe_traps(vcpu);
-> > +
-> > +     kvm_arm_vcpu_ptrauth_config(vcpu);
->
-> (doesn't this unconfigure ptrauth?!)
-ok will change the name to something like kvm_arm_vcpu_ptrauth_reset.
->
-> >  }
->
-> Thanks,
->
-> James
+x86/cache: Rename config option to CONFIG_X86_RESCTRL
 
-//Amit
+CONFIG_RESCTRL is too generic. The final goal is to have a generic
+option called like this which is selected by the arch-specific ones
+CONFIG_X86_RESCTRL and CONFIG_ARM64_RESCTRL. The generic one will
+cover the resctrl filesystem and other generic and shared bits of
+functionality.
+
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Suggested-by: Ingo Molnar <mingo@kernel.org>
+Requested-by: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Babu Moger <babu.moger@amd.com>
+Cc: Fenghua Yu <fenghua.yu@intel.com>
+Cc: James Morse <james.morse@arm.com>
+Cc: Reinette Chatre <reinette.chatre@intel.com>
+Cc: Tony Luck <tony.luck@intel.com>
+Cc: x86@kernel.org
+Link: http://lkml.kernel.org/r/20190108171401.GC12235@zn.tnic
+---
+ Documentation/x86/resctrl_ui.txt     | 2 +-
+ arch/x86/Kconfig                     | 2 +-
+ arch/x86/include/asm/resctrl_sched.h | 4 ++--
+ arch/x86/kernel/cpu/Makefile         | 2 +-
+ arch/x86/kernel/cpu/resctrl/Makefile | 4 ++--
+ include/linux/sched.h                | 2 +-
+ 6 files changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/Documentation/x86/resctrl_ui.txt b/Documentation/x86/resctrl_ui.txt
+index d9aed8303984..e8e8d14d3c4e 100644
+--- a/Documentation/x86/resctrl_ui.txt
++++ b/Documentation/x86/resctrl_ui.txt
+@@ -9,7 +9,7 @@ Fenghua Yu <fenghua.yu@intel.com>
+ Tony Luck <tony.luck@intel.com>
+ Vikas Shivappa <vikas.shivappa@intel.com>
+ 
+-This feature is enabled by the CONFIG_RESCTRL and the X86 /proc/cpuinfo
++This feature is enabled by the CONFIG_X86_RESCTRL and the x86 /proc/cpuinfo
+ flag bits:
+ RDT (Resource Director Technology) Allocation - "rdt_a"
+ CAT (Cache Allocation Technology) - "cat_l3", "cat_l2"
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index 6185d4f33296..15af091611e2 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -446,7 +446,7 @@ config RETPOLINE
+ 	  branches. Requires a compiler with -mindirect-branch=thunk-extern
+ 	  support for full protection. The kernel may run slower.
+ 
+-config RESCTRL
++config X86_RESCTRL
+ 	bool "Resource Control support"
+ 	depends on X86 && (CPU_SUP_INTEL || CPU_SUP_AMD)
+ 	select KERNFS
+diff --git a/arch/x86/include/asm/resctrl_sched.h b/arch/x86/include/asm/resctrl_sched.h
+index 54990fe2a3ae..40ebddde6ac2 100644
+--- a/arch/x86/include/asm/resctrl_sched.h
++++ b/arch/x86/include/asm/resctrl_sched.h
+@@ -2,7 +2,7 @@
+ #ifndef _ASM_X86_RESCTRL_SCHED_H
+ #define _ASM_X86_RESCTRL_SCHED_H
+ 
+-#ifdef CONFIG_RESCTRL
++#ifdef CONFIG_X86_RESCTRL
+ 
+ #include <linux/sched.h>
+ #include <linux/jump_label.h>
+@@ -88,6 +88,6 @@ static inline void resctrl_sched_in(void)
+ 
+ static inline void resctrl_sched_in(void) {}
+ 
+-#endif /* CONFIG_RESCTRL */
++#endif /* CONFIG_X86_RESCTRL */
+ 
+ #endif /* _ASM_X86_RESCTRL_SCHED_H */
+diff --git a/arch/x86/kernel/cpu/Makefile b/arch/x86/kernel/cpu/Makefile
+index ac78f90aea56..b6fa0869f7aa 100644
+--- a/arch/x86/kernel/cpu/Makefile
++++ b/arch/x86/kernel/cpu/Makefile
+@@ -39,7 +39,7 @@ obj-$(CONFIG_CPU_SUP_UMC_32)		+= umc.o
+ obj-$(CONFIG_X86_MCE)			+= mce/
+ obj-$(CONFIG_MTRR)			+= mtrr/
+ obj-$(CONFIG_MICROCODE)			+= microcode/
+-obj-$(CONFIG_RESCTRL)			+= resctrl/
++obj-$(CONFIG_X86_RESCTRL)		+= resctrl/
+ 
+ obj-$(CONFIG_X86_LOCAL_APIC)		+= perfctr-watchdog.o
+ 
+diff --git a/arch/x86/kernel/cpu/resctrl/Makefile b/arch/x86/kernel/cpu/resctrl/Makefile
+index 6895049ceef7..1cabe6fd8e11 100644
+--- a/arch/x86/kernel/cpu/resctrl/Makefile
++++ b/arch/x86/kernel/cpu/resctrl/Makefile
+@@ -1,4 +1,4 @@
+ # SPDX-License-Identifier: GPL-2.0
+-obj-$(CONFIG_RESCTRL)	+= core.o rdtgroup.o monitor.o
+-obj-$(CONFIG_RESCTRL)	+= ctrlmondata.o pseudo_lock.o
++obj-$(CONFIG_X86_RESCTRL)	+= core.o rdtgroup.o monitor.o
++obj-$(CONFIG_X86_RESCTRL)	+= ctrlmondata.o pseudo_lock.o
+ CFLAGS_pseudo_lock.o = -I$(src)
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index 89541d248893..224666226e87 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -995,7 +995,7 @@ struct task_struct {
+ 	/* cg_list protected by css_set_lock and tsk->alloc_lock: */
+ 	struct list_head		cg_list;
+ #endif
+-#ifdef CONFIG_RESCTRL
++#ifdef CONFIG_X86_RESCTRL
+ 	u32				closid;
+ 	u32				rmid;
+ #endif
