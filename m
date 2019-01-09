@@ -2,141 +2,120 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20679C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 13:11:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83388C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 13:15:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E55F1206B6
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 13:11:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4C60D206B6
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 13:15:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547039746;
+	bh=z//edLbGg4F9Mpz5jOfUW8hSMaDIEorXN1kc21Yl+/E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=n7E8iPRVAN2xS5xZmuWwUXyTyqpkyioQcO3vzL45++IaLDajH2WNGTUGWKB4VCk5l
+	 2LVrcq+1qe6KO+X6GkVNoDgA894FwxG8hl/Oj9EHo1tURQPjp1usQeIcQdhzntAVF+
+	 f1leW181RCiz5m3vY+RItGhs1/7x8m6/MvtNKJTE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731034AbfAINLo convert rfc822-to-8bit (ORCPT
+        id S1731041AbfAINPp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 08:11:44 -0500
-Received: from gloria.sntech.de ([185.11.138.130]:45912 "EHLO gloria.sntech.de"
+        Wed, 9 Jan 2019 08:15:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52906 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730249AbfAINLo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 08:11:44 -0500
-Received: from ip5f5a6320.dynamic.kabel-deutschland.de ([95.90.99.32] helo=diego.localnet)
-        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <heiko@sntech.de>)
-        id 1ghDe0-0005T9-3q; Wed, 09 Jan 2019 14:11:40 +0100
-From:   Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To:     Stefan Mavrodiev <stefan.mavrodiev@gmail.com>
-Cc:     Stefan Mavrodiev <stefan@olimex.com>,
-        linux-rockchip@lists.infradead.org,
-        Lee Jones <lee.jones@linaro.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/1] mfd: rk808: Prepare rk805 for poweroff
-Date:   Wed, 09 Jan 2019 14:11:39 +0100
-Message-ID: <3397477.pQfoUNday9@diego>
-In-Reply-To: <489e70a8-dbe7-e248-972e-c7de4e0f2c1a@gmail.com>
-References: <1538465910-27233-1-git-send-email-stefan@olimex.com> <1917869.4NZ4yPfKWV@diego> <489e70a8-dbe7-e248-972e-c7de4e0f2c1a@gmail.com>
+        id S1730249AbfAINPo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 08:15:44 -0500
+Received: from quaco.ghostprotocols.net (unknown [179.97.41.186])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id BEDEC20675;
+        Wed,  9 Jan 2019 13:15:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547039743;
+        bh=z//edLbGg4F9Mpz5jOfUW8hSMaDIEorXN1kc21Yl+/E=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=N4rrE7qPc9F4VssSOcWmXL/kxZfNSCoEpoMK79koOIqfVgoBBeTF9nrewhPdzrSnj
+         0Qic2IitTNCs1zku+lS8VqLDU4xcwDI/el6XPODctNLI/WY4j6bPbudPBvjUh7KfAs
+         ncN1OVan6lKuYinzToVlVYOaimS2EBRfJBf/1Tdc=
+Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
+        id AE1C940355; Wed,  9 Jan 2019 10:15:40 -0300 (-03)
+Date:   Wed, 9 Jan 2019 10:15:40 -0300
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Laura Abbott <labbott@redhat.com>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH] tools uapi asm: Update asm-generic/unistd.h
+Message-ID: <20190109131540.GC25192@kernel.org>
+References: <20190108221758.14546-1-labbott@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190108221758.14546-1-labbott@redhat.com>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Mittwoch, 9. Januar 2019, 14:10:34 CET schrieb Stefan Mavrodiev:
-> On 1/9/19 3:07 PM, Heiko Stübner wrote:
-> > Hi Stefan, Lee,
-> > 
-> > Am Dienstag, 2. Oktober 2018, 09:38:29 CET schrieb Stefan Mavrodiev:
-> >> RK805 has SLEEP signal, which can put the device into SLEEP or OFF
-> >> mode. The default is SLEEP mode.
-> >> 
-> >> However, when the kernel performs power-off (actually the ATF) the
-> >> device will not go fully off and this will result in higher power
-> >> consumption and inability to wake the device with RTC alarm.
-> >> 
-> >> The solution is to enable pm_power_off_prepare function, which will
-> >> configure SLEEP pin for OFF function.
-> >> 
-> >> Signed-off-by: Stefan Mavrodiev <stefan@olimex.com>
-> > 
-> > just found this while cleaning my inbox and this change looks
-> > significant and it seems hasn't been applied yet.
-> > 
-> > I guess this is still relevant, right?
+Em Tue, Jan 08, 2019 at 02:17:58PM -0800, Laura Abbott escreveu:
+> Commit 4e21565b7fd4 ("asm-generic: add kexec_file_load system
+> call to unistd.h") added the system call to the generic header
+> but not to the perf copy resulting a compile failure on aarch64
+
+Humm, that shouldn't happen, i.e. kernel developers don't have to update
+anything in tools/ as part of their normal kernel development workflows.
+
+They can if they wish, but are not required, so the build failure was
+due to something else or a pre-existing bug where tools/ living stuff
+used things outside tools/.
+
+> When running mksyscalltbl
+
+Lemme try this on my Orangi PI zero... 
+
+- Arnaldo
+
+> BUILDSTDERR: <stdin>: In function 'main':
+> BUILDSTDERR: <stdin>:273:44: error: '__NR_kexec_file_load' undeclared (first use in this function)
+> BUILDSTDERR: <stdin>:273:44: note: each undeclared identifier is reported only once for each function it appears in
 > 
-> Yes, but I guess it's out-of-sync with the latest kernel.
+> Fix this by syncing up.
+> 
+> Fixes: 4e21565b7fd4 ("asm-generic: add kexec_file_load system call to unistd.h")
+> Signed-off-by: Laura Abbott <labbott@redhat.com>
+> ---
+> Found this on Fedora when compiling 5.0-rc1, I hadn't seen a patch
+> queued yet.
+> ---
+>  tools/include/uapi/asm-generic/unistd.h | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/tools/include/uapi/asm-generic/unistd.h b/tools/include/uapi/asm-generic/unistd.h
+> index c7f3321fbe43..d90127298f12 100644
+> --- a/tools/include/uapi/asm-generic/unistd.h
+> +++ b/tools/include/uapi/asm-generic/unistd.h
+> @@ -738,9 +738,11 @@ __SYSCALL(__NR_statx,     sys_statx)
+>  __SC_COMP(__NR_io_pgetevents, sys_io_pgetevents, compat_sys_io_pgetevents)
+>  #define __NR_rseq 293
+>  __SYSCALL(__NR_rseq, sys_rseq)
+> +#define __NR_kexec_file_load 294
+> +__SYSCALL(__NR_kexec_file_load,     sys_kexec_file_load)
+>  
+>  #undef __NR_syscalls
+> -#define __NR_syscalls 294
+> +#define __NR_syscalls 295
+>  
+>  /*
+>   * 32 bit systems traditionally used different
+> -- 
+> 2.20.1
 
-you could rebase and resend it :-)
+-- 
 
-
-> >> ---
-> >> 
-> >>   drivers/mfd/rk808.c | 24 ++++++++++++++++++++++++
-> >>   1 file changed, 24 insertions(+)
-> >> 
-> >> diff --git a/drivers/mfd/rk808.c b/drivers/mfd/rk808.c
-> >> index 216fbf6..50f3f78 100644
-> >> --- a/drivers/mfd/rk808.c
-> >> +++ b/drivers/mfd/rk808.c
-> >> @@ -387,6 +387,25 @@ static void rk805_device_shutdown(void)
-> >> 
-> >>   		dev_err(&rk808_i2c_client->dev, "power off error!\n");
-> >>   
-> >>   }
-> >> 
-> >> +static void rk805_device_shutdown_prepare(void)
-> >> +{
-> >> +	int ret;
-> >> +	struct rk808 *rk808 = i2c_get_clientdata(rk808_i2c_client);
-> >> +
-> >> +	if (!rk808) {
-> >> +		dev_warn(&rk808_i2c_client->dev,
-> >> +			 "have no rk805, so do nothing here\n");
-> >> +
-> >> +		return;
-> >> +	}
-> >> +
-> >> +	ret = regmap_update_bits(rk808->regmap,
-> >> +				 RK805_GPIO_IO_POL_REG,
-> >> +				 SLP_SD_MSK, SHUTDOWN_FUN);
-> >> +	if (ret)
-> >> +		dev_err(&rk808_i2c_client->dev, "power off error!\n");
-> >> +}
-> >> +
-> >> 
-> >>   static void rk808_device_shutdown(void)
-> >>   {
-> >>   
-> >>   	int ret;
-> >> 
-> >> @@ -549,6 +568,10 @@ static int rk808_probe(struct i2c_client *client,
-> >> 
-> >>   	if (pm_off && !pm_power_off) {
-> >>   	
-> >>   		rk808_i2c_client = client;
-> >>   		pm_power_off = pm_pwroff_fn;
-> >> 
-> >> +	} else if (pm_off && !pm_power_off_prepare &&
-> >> +		   rk808->variant == RK805_ID) {
-> >> +		rk808_i2c_client = client;
-> >> +		pm_power_off_prepare = rk805_device_shutdown_prepare;
-> >> 
-> >>   	}
-> >>   	
-> >>   	return 0;
-> >> 
-> >> @@ -564,6 +587,7 @@ static int rk808_remove(struct i2c_client *client)
-> >> 
-> >>   	regmap_del_irq_chip(client->irq, rk808->irq_data);
-> >>   	pm_power_off = NULL;
-> >> 
-> >> +	pm_power_off_prepare = NULL;
-> >> 
-> >>   	return 0;
-> >>   
-> >>   }
-
-
-
-
+- Arnaldo
