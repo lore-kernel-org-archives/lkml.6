@@ -7,40 +7,40 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18350C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 07:11:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2419DC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 07:11:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE23B214C6
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 07:11:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DE25920821
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 07:11:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="IK8L3t/n"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="UlDs0ogz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730017AbfAIHLE (ORCPT
+        id S1730082AbfAIHLJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 02:11:04 -0500
-Received: from perceval.ideasonboard.com ([213.167.242.64]:50458 "EHLO
+        Wed, 9 Jan 2019 02:11:09 -0500
+Received: from perceval.ideasonboard.com ([213.167.242.64]:50468 "EHLO
         perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729986AbfAIHLB (ORCPT
+        with ESMTP id S1729986AbfAIHLF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 02:11:01 -0500
+        Wed, 9 Jan 2019 02:11:05 -0500
 Received: from localhost.localdomain (unknown [96.44.9.117])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 20283586;
-        Wed,  9 Jan 2019 08:10:59 +0100 (CET)
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 11271586;
+        Wed,  9 Jan 2019 08:11:02 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1547017860;
-        bh=ef3JcGcK988dlprFJ+Vxh9N9Bm3TcEizRPSoR9vwbGQ=;
+        s=mail; t=1547017864;
+        bh=a5G7l2WFn87tf48IRsdLBdFsPElClHFvUVyGvH2CEAc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IK8L3t/nyO2C2GqYG/LEPj3AwcZdZoHxzflaXKh1hzbmgvYk/e6hMatFpTwakv6gL
-         HkG0WORNsFnRjCHKOJ43RAUhLJQk+jl+xfYVep6RNRtWPFyaMjrph2hMikKHZwOrN2
-         qHiR0Nma2wz9DrWh4q2Dd3JpcQUnJM9gIu80cIAM=
+        b=UlDs0ogzPg/Va86jalS+ea757H7+i5W7by+NZCDfCi6dARkjQAXPK3t9FtC803gJv
+         OnTb95UWwXawFKHlv57xRkMpcHpxL/yX3CBrfzGTkeuud+8Kj6NgVGrbhXeRAMOvpL
+         H09meUIl9JsVc6o2LLF0UonS4wPrP4oP4bm0OYVI=
 From:   Paul Elder <paul.elder@ideasonboard.com>
 To:     laurent.pinchart@ideasonboard.com, kieran.bingham@ideasonboard.com
 Cc:     Paul Elder <paul.elder@ideasonboard.com>, rogerq@ti.com,
         balbi@kernel.org, gregkh@linuxfoundation.org,
         linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 1/4] usb: gadget: uvc: synchronize streamon/off with uvc_function_set_alt
-Date:   Wed,  9 Jan 2019 02:10:36 -0500
-Message-Id: <20190109071039.27702-2-paul.elder@ideasonboard.com>
+Subject: [PATCH v3 4/4] usb: gadget: uvc: remove unused/duplicate function prototypes from uvc.h
+Date:   Wed,  9 Jan 2019 02:10:39 -0500
+Message-Id: <20190109071039.27702-5-paul.elder@ideasonboard.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190109071039.27702-1-paul.elder@ideasonboard.com>
 References: <20190109071039.27702-1-paul.elder@ideasonboard.com>
@@ -51,194 +51,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If the streamon ioctl is issued while the stream is already on, then the
-kernel BUGs. This happens at the BUG_ON in uvc_video_alloc_requests
-within the call stack from the ioctl handler for VIDIOC_STREAMON.
-
-This could happen when uvc_function_set_alt 0 races and wins against
-uvc_v4l2_streamon, or when userspace neglects to issue the
-VIDIOC_STREAMOFF ioctl.
-
-To fix this, add two more uvc states: starting and stopping. Use these
-to prevent the racing, and to detect when VIDIOC_STREAMON is issued
-without previously issuing VIDIOC_STREAMOFF.
+Defined in uvc.h, uvc_endpoint_stream doesn't exist, and
+uvc_function_connect, uvc_function_disconnect, and
+uvc_function_setup_continue have duplicates in f_uvc.h.
+Remove these four function prototypes from uvc.h
 
 Signed-off-by: Paul Elder <paul.elder@ideasonboard.com>
 ---
-Changes in v3:
+ drivers/usb/gadget/function/uvc.h | 10 ----------
+ 1 file changed, 10 deletions(-)
 
-- add state guard to uvc_function_set_alt 1
-- add documentation for newly added uvc states
-- reorder uvc states to more or less follow the flow diagram
-- add more state guards to ioctl handlers for streamon and streamoff
-
-Changes in v2: Nothing
-
- drivers/usb/gadget/function/f_uvc.c    | 17 ++++++++----
- drivers/usb/gadget/function/uvc.h      | 37 ++++++++++++++++++++++++++
- drivers/usb/gadget/function/uvc_v4l2.c | 26 ++++++++++++++++--
- 3 files changed, 73 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/usb/gadget/function/f_uvc.c b/drivers/usb/gadget/function/f_uvc.c
-index 8c99392df593..2ec3b73b2b75 100644
---- a/drivers/usb/gadget/function/f_uvc.c
-+++ b/drivers/usb/gadget/function/f_uvc.c
-@@ -317,26 +317,31 @@ uvc_function_set_alt(struct usb_function *f, unsigned interface, unsigned alt)
- 
- 	switch (alt) {
- 	case 0:
--		if (uvc->state != UVC_STATE_STREAMING)
-+		if (uvc->state != UVC_STATE_STREAMING &&
-+		    uvc->state != UVC_STATE_STARTING)
- 			return 0;
- 
- 		if (uvc->video.ep)
- 			usb_ep_disable(uvc->video.ep);
- 
-+		uvc->state = UVC_STATE_STOPPING;
-+
- 		memset(&v4l2_event, 0, sizeof(v4l2_event));
- 		v4l2_event.type = UVC_EVENT_STREAMOFF;
- 		v4l2_event_queue(&uvc->vdev, &v4l2_event);
- 
--		uvc->state = UVC_STATE_CONNECTED;
- 		return 0;
- 
- 	case 1:
--		if (uvc->state != UVC_STATE_CONNECTED)
--			return 0;
--
- 		if (!uvc->video.ep)
- 			return -EINVAL;
- 
-+		if (uvc->state == UVC_STATE_STOPPING)
-+			return -EINVAL;
-+
-+		if (uvc->state != UVC_STATE_CONNECTED)
-+			return 0;
-+
- 		uvcg_info(f, "reset UVC\n");
- 		usb_ep_disable(uvc->video.ep);
- 
-@@ -346,6 +351,8 @@ uvc_function_set_alt(struct usb_function *f, unsigned interface, unsigned alt)
- 			return ret;
- 		usb_ep_enable(uvc->video.ep);
- 
-+		uvc->state = UVC_STATE_STARTING;
-+
- 		memset(&v4l2_event, 0, sizeof(v4l2_event));
- 		v4l2_event.type = UVC_EVENT_STREAMON;
- 		v4l2_event_queue(&uvc->vdev, &v4l2_event);
 diff --git a/drivers/usb/gadget/function/uvc.h b/drivers/usb/gadget/function/uvc.h
-index 099d650082e5..f183e349499c 100644
+index f183e349499c..671020c8a836 100644
 --- a/drivers/usb/gadget/function/uvc.h
 +++ b/drivers/usb/gadget/function/uvc.h
-@@ -101,10 +101,47 @@ struct uvc_video {
- 	unsigned int fid;
- };
+@@ -185,14 +185,4 @@ struct uvc_file_handle {
+ #define to_uvc_file_handle(handle) \
+ 	container_of(handle, struct uvc_file_handle, vfh)
  
-+/**
-+ * enum uvc_state - the states of a struct uvc_device
-+ * @UVC_STATE_DISCONNECTED: not connected state
-+ *			    - transition to connected state on .set_alt
-+ * @UVC_STATE_CONNECTED:    connected state
-+ *			    - transition to disconnected state on .disable
-+ *			      and alloc
-+ *			    - transition to starting state on .set_alt 1
-+ * @UVC_STATE_STARTING:     starting state
-+ *			    - transition to streaming state on streamon ioctl
-+ *			    - transition to stopping state on set_alt 0
-+ * @UVC_STATE_STREAMING:    streaming state
-+ *			    - transition to stopping state on .set_alt 0
-+ * @UVC_STATE_STOPPING:     stopping state
-+ *			    - transition to connected on streamoff ioctl
-+ *
-+ * Diagram of state transitions:
-+ *
-+ *                  disable
-+ *   +---------------------------+
-+ *   v                           |
-+ * +--------------+  set_alt   +-----------+
-+ * | DISCONNECTED | ---------> | CONNECTED |
-+ * +--------------+            +-----------+
-+ *                                |     ^
-+ *                 set_alt 1      |     |     streamoff
-+ *         +----------------------+     --------------------+
-+ *         V                                                |
-+ *  +----------+  streamon   +-----------+  set_alt 0   +----------+
-+ *  | STARTING | ----------> | STREAMING | -----------> | STOPPING |
-+ *  +----------+             +-----------+              +----------+
-+ *         |                                                ^
-+ *         |                   set_alt 0                    |
-+ *         +------------------------------------------------+
-+ */
- enum uvc_state {
- 	UVC_STATE_DISCONNECTED,
- 	UVC_STATE_CONNECTED,
-+	UVC_STATE_STARTING,
- 	UVC_STATE_STREAMING,
-+	UVC_STATE_STOPPING,
- };
- 
- struct uvc_device {
-diff --git a/drivers/usb/gadget/function/uvc_v4l2.c b/drivers/usb/gadget/function/uvc_v4l2.c
-index a1183eccee22..97e624214287 100644
---- a/drivers/usb/gadget/function/uvc_v4l2.c
-+++ b/drivers/usb/gadget/function/uvc_v4l2.c
-@@ -197,17 +197,24 @@ uvc_v4l2_streamon(struct file *file, void *fh, enum v4l2_buf_type type)
- 	if (type != video->queue.queue.type)
- 		return -EINVAL;
- 
-+	if (uvc->state == UVC_STATE_STREAMING)
-+		return 0;
-+
-+	if (uvc->state != UVC_STATE_STARTING)
-+		return -EINVAL;
-+
- 	/* Enable UVC video. */
- 	ret = uvcg_video_enable(video, 1);
- 	if (ret < 0)
- 		return ret;
- 
-+	uvc->state = UVC_STATE_STREAMING;
-+
- 	/*
- 	 * Complete the alternate setting selection setup phase now that
- 	 * userspace is ready to provide video frames.
- 	 */
- 	uvc_function_setup_continue(uvc);
--	uvc->state = UVC_STATE_STREAMING;
- 
- 	return 0;
- }
-@@ -218,11 +225,26 @@ uvc_v4l2_streamoff(struct file *file, void *fh, enum v4l2_buf_type type)
- 	struct video_device *vdev = video_devdata(file);
- 	struct uvc_device *uvc = video_get_drvdata(vdev);
- 	struct uvc_video *video = &uvc->video;
-+	int ret;
- 
- 	if (type != video->queue.queue.type)
- 		return -EINVAL;
- 
--	return uvcg_video_enable(video, 0);
-+	/*
-+	 * Check for connected state also because we want to reset buffers
-+	 * if this is called when the stream is already off.
-+	 */
-+	if (uvc->state != UVC_STATE_STOPPING &&
-+	    uvc->state != UVC_STATE_CONNECTED)
-+		return 0;
-+
-+	ret = uvcg_video_enable(video, 0);
-+	if (ret < 0)
-+		return ret;
-+
-+	uvc->state = UVC_STATE_CONNECTED;
-+
-+	return 0;
- }
- 
- static int
+-/* ------------------------------------------------------------------------
+- * Functions
+- */
+-
+-extern void uvc_function_setup_continue(struct uvc_device *uvc);
+-extern void uvc_endpoint_stream(struct uvc_device *dev);
+-
+-extern void uvc_function_connect(struct uvc_device *uvc);
+-extern void uvc_function_disconnect(struct uvc_device *uvc);
+-
+ #endif /* _UVC_GADGET_H_ */
 -- 
 2.20.1
 
