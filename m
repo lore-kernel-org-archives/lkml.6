@@ -2,114 +2,158 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7942C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 16:16:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9CFEC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 16:17:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8084206BB
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 16:16:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="o0tKtF4y"
+	by mail.kernel.org (Postfix) with ESMTP id C394720859
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 16:17:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732642AbfAIQQz (ORCPT
+        id S1732654AbfAIQRM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 11:16:55 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:45139 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731219AbfAIQQz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 11:16:55 -0500
-Received: by mail-lf1-f65.google.com with SMTP id b20so6037340lfa.12
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jan 2019 08:16:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=guTeVeqW9KLhp8/c6KawSHCWPSc4BbHsuX5EpTBXe4Q=;
-        b=o0tKtF4yQrmQxwfrlRXVheuHHZtBgHvb3NozqG4C0b4owVYXoP8CXsWB2hn1LzrbkL
-         Cu78l0TfbmiJIHHA7NBpRZBy2GQPHVZ68EMv4zAUnSPxButnaO3gbLgK6rpQA5yUkGjJ
-         Zb9M8nyYhYDADOePrU+MGnv2oEn1qcrqEjAsIBE3nNidMD4gU04E8KiajvoCa2A6RuhC
-         gWIigZ643mRaEHMsDAJXyYr/Ob9ivq0WzF8k9QmvCc4hFhcLVvxBHnJfVeNRlx6egG1/
-         ERrMa4A8XcxoS41mrfdKlhatMtB1TzVzxJugo9rp4lgVxNK46DvXdv8cMC+7A+V4BMJc
-         VkBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=guTeVeqW9KLhp8/c6KawSHCWPSc4BbHsuX5EpTBXe4Q=;
-        b=fDGNTd4Dcg+yQ6fIdNF37q3KvY/qduBSv9rCuic7w6sckBH59kwkKaU2ADLQ3phz76
-         cFrEJRCQtMDWQlTgzif2YYlHjDV9+IF5L18DbE/04P70NmJVKgOrtjF/VvsVDTW62YDJ
-         drsim0+CAvR1l3jWpTaBfi/FiYh20pVAmE3pvwflJUkOnjLVdJhYr2zAN51glmc0lLfD
-         KVVwP8O79V1P2InUFVTsGBmJDL8fw8iE9b50aH/KdYAkKnjG/My1k514CozzS2MAFpPV
-         dJWRAXyc5YgWxvZ+M5rDcv8O/2YEcyvnx/gOBjRzbj1PrpChWJWd6798Ccpw5U2BgaL+
-         pJOw==
-X-Gm-Message-State: AJcUukehwz6qr5fogQTnbU00dh07K8hJopwQ6e828KGFgm56vfXHrJnA
-        cNa99fhiWTY63m/gUIrjsLnev44Az92JEZVu2Mc=
-X-Google-Smtp-Source: ALg8bN6L/1v9lG/onJDkftwo5CLjSVh6yjnoXg6BMYTz1TsHsWSZwZtjHWHD4JJDm4oN2uTJ0xf5zCWDrGqYkoopjAs=
-X-Received: by 2002:a19:c70a:: with SMTP id x10mr3764528lff.88.1547050612929;
- Wed, 09 Jan 2019 08:16:52 -0800 (PST)
-MIME-Version: 1.0
-References: <20190109161916.GA23410@jordon-HP-15-Notebook-PC>
-In-Reply-To: <20190109161916.GA23410@jordon-HP-15-Notebook-PC>
-From:   Souptick Joarder <jrdr.linux@gmail.com>
-Date:   Wed, 9 Jan 2019 21:50:44 +0530
-Message-ID: <CAFqt6zbeHPs359c03q8wCENfW5DJ3W6_ber78fCmoQzYcUhpCQ@mail.gmail.com>
-Subject: Re: [PATCH] include/linux/hmm.h: Convert to use vm_fault_t
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     jglisse@redhat.com, Linux-MM <linux-mm@kvack.org>,
-        linux-kernel@vger.kernel.org, Matthew Wilcox <willy@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>
+        Wed, 9 Jan 2019 11:17:12 -0500
+Received: from mga01.intel.com ([192.55.52.88]:65156 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731219AbfAIQRM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 11:17:12 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Jan 2019 08:17:11 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,458,1539673200"; 
+   d="scan'208";a="105258001"
+Received: from ahduyck-desk1.jf.intel.com ([10.7.198.76])
+  by orsmga007.jf.intel.com with ESMTP; 09 Jan 2019 08:17:11 -0800
+Message-ID: <54c280dbd0ff8e17a6c465778c98e2dbbbde7918.camel@linux.intel.com>
+Subject: Re: [PATCH v8] mm/page_alloc.c: memory_hotplug: free pages as
+ higher order
+From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
+To:     Arun KS <arunks@codeaurora.org>, arunks.linux@gmail.com,
+        akpm@linux-foundation.org, mhocko@kernel.org, vbabka@suse.cz,
+        osalvador@suse.de, linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Cc:     getarunks@gmail.com
+Date:   Wed, 09 Jan 2019 08:17:11 -0800
+In-Reply-To: <1547032395-24582-1-git-send-email-arunks@codeaurora.org>
+References: <1547032395-24582-1-git-send-email-arunks@codeaurora.org>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-2.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 9, 2019 at 9:45 PM Souptick Joarder <jrdr.linux@gmail.com> wrote:
->
-> convert to use vm_fault_t type as return type for
-> fault handler.
->
-> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
-
-kbuild reported a warning during testing of final vm_fault_t patch integrated
-in mm tree.
-
-[auto build test WARNING on linus/master]
-[also build test WARNING on v5.0-rc1 next-20190109]
-[if your patch is applied to the wrong git tree, please drop us a note
-to help improve the system]
-
-url:    https://github.com/0day-ci/linux/commits/Souptick-Joarder/mm-Create-the-new-vm_fault_t-type/20190109-154216
-
->> kernel/memremap.c:46:34: warning: incorrect type in return expression (different base types)
-   kernel/memremap.c:46:34:    expected restricted vm_fault_t
-   kernel/memremap.c:46:34:    got int
-
-This patch has fixed the warning.
-
+On Wed, 2019-01-09 at 16:43 +0530, Arun KS wrote:
+> When freeing pages are done with higher order, time spent on coalescing
+> pages by buddy allocator can be reduced.  With section size of 256MB, hot
+> add latency of a single section shows improvement from 50-60 ms to less
+> than 1 ms, hence improving the hot add latency by 60 times.  Modify
+> external providers of online callback to align with the change.
+> 
+> Signed-off-by: Arun KS <arunks@codeaurora.org>
+> Acked-by: Michal Hocko <mhocko@suse.com>
+> Reviewed-by: Oscar Salvador <osalvador@suse.de>
 > ---
->  include/linux/hmm.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/include/linux/hmm.h b/include/linux/hmm.h
-> index 66f9ebb..7c5ace3 100644
-> --- a/include/linux/hmm.h
-> +++ b/include/linux/hmm.h
-> @@ -468,7 +468,7 @@ struct hmm_devmem_ops {
->          * Note that mmap semaphore is held in read mode at least when this
->          * callback occurs, hence the vma is valid upon callback entry.
->          */
-> -       int (*fault)(struct hmm_devmem *devmem,
-> +       vm_fault_t (*fault)(struct hmm_devmem *devmem,
->                      struct vm_area_struct *vma,
->                      unsigned long addr,
->                      const struct page *page,
-> --
-> 1.9.1
->
+> Changes since v7:
+> - Rebased to 5.0-rc1.
+> - Fixed onlined_pages accounting.
+> - Added comment for return value of online_page_callback.
+> - Renamed xen_bring_pgs_online to xen_online_pages.
+
+As far as the renaming you should try to be consistent. If you aren't
+going to rename generic_online_page or hv_online_page I wouldn't bother
+with renaming xen_online_page. I would stick with the name
+xen_online_page since it is a single high order page that you are
+freeing.
+
+> 
+> Changes since v6:
+> - Rebased to 4.20
+> - Changelog updated.
+> - No improvement seen on arm64, hence removed removal of prefetch.
+> 
+> Changes since v5:
+> - Rebased to 4.20-rc1.
+> - Changelog updated.
+> 
+> Changes since v4:
+> - As suggested by Michal Hocko,
+> - Simplify logic in online_pages_block() by using get_order().
+> - Seperate out removal of prefetch from __free_pages_core().
+> 
+> Changes since v3:
+> - Renamed _free_pages_boot_core -> __free_pages_core.
+> - Removed prefetch from __free_pages_core.
+> - Removed xen_online_page().
+> 
+> Changes since v2:
+> - Reuse code from __free_pages_boot_core().
+> 
+> Changes since v1:
+> - Removed prefetch().
+> 
+> Changes since RFC:
+> - Rebase.
+> - As suggested by Michal Hocko remove pages_per_block.
+> - Modifed external providers of online_page_callback.
+> 
+> v7: https://lore.kernel.org/patchwork/patch/1028908/
+> v6: https://lore.kernel.org/patchwork/patch/1007253/
+> v5: https://lore.kernel.org/patchwork/patch/995739/
+> v4: https://lore.kernel.org/patchwork/patch/995111/
+> v3: https://lore.kernel.org/patchwork/patch/992348/
+> v2: https://lore.kernel.org/patchwork/patch/991363/
+> v1: https://lore.kernel.org/patchwork/patch/989445/
+> RFC: https://lore.kernel.org/patchwork/patch/984754/
+> ---
+>  drivers/hv/hv_balloon.c        |  6 +++--
+>  drivers/xen/balloon.c          | 21 +++++++++++------
+>  include/linux/memory_hotplug.h |  2 +-
+>  mm/internal.h                  |  1 +
+>  mm/memory_hotplug.c            | 51 +++++++++++++++++++++++++++++++-----------
+>  mm/page_alloc.c                |  8 +++----
+>  6 files changed, 62 insertions(+), 27 deletions(-)
+> 
+> diff --git a/drivers/hv/hv_balloon.c b/drivers/hv/hv_balloon.c
+> index 5301fef..211f3fe 100644
+> --- a/drivers/hv/hv_balloon.c
+> +++ b/drivers/hv/hv_balloon.c
+> @@ -771,7 +771,7 @@ static void hv_mem_hot_add(unsigned long start, unsigned long size,
+>  	}
+>  }
+>  
+> -static void hv_online_page(struct page *pg)
+> +static int hv_online_page(struct page *pg, unsigned int order)
+>  {
+>  	struct hv_hotadd_state *has;
+>  	unsigned long flags;
+> @@ -783,10 +783,12 @@ static void hv_online_page(struct page *pg)
+>  		if ((pfn < has->start_pfn) || (pfn >= has->end_pfn))
+>  			continue;
+>  
+> -		hv_page_online_one(has, pg);
+> +		hv_bring_pgs_online(has, pfn, (1UL << order));
+>  		break;
+>  	}
+>  	spin_unlock_irqrestore(&dm_device.ha_lock, flags);
+> +
+> +	return 0;
+>  }
+>  
+
+I would hold off on adding return values until you actually have code
+that uses them. It will make things easier if somebody has to backport
+this to a stable branch and avoid adding complexity until it is needed.
+
+Also the patch description doesn't really explain that it is doing this
+so it might be better to break it off into a separate patch so you can
+call out exactly why you are adding a return value in the patch
+description.
+
+- Alex
+
