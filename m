@@ -2,85 +2,157 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7059C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 15:41:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC5C6C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 15:43:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BDF7A206BA
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 15:41:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A694C206BB
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 15:43:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732410AbfAIPlL (ORCPT
+        id S1731840AbfAIPnN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 10:41:11 -0500
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:34994 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731076AbfAIPlK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 10:41:10 -0500
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 4AD3E807EF; Wed,  9 Jan 2019 16:41:03 +0100 (CET)
-Date:   Wed, 9 Jan 2019 16:41:08 +0100
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v7 3/5] leds: trigger: pattern: Add pattern
- initialization from Device Tree
-Message-ID: <20190109154108.GB5938@amd>
-References: <1547045089-19128-1-git-send-email-krzk@kernel.org>
- <1547045089-19128-4-git-send-email-krzk@kernel.org>
+        Wed, 9 Jan 2019 10:43:13 -0500
+Received: from relay.sw.ru ([185.231.240.75]:49364 "EHLO relay.sw.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731722AbfAIPnN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 10:43:13 -0500
+Received: from [172.16.25.169]
+        by relay.sw.ru with esmtp (Exim 4.91)
+        (envelope-from <ktkhai@virtuozzo.com>)
+        id 1ghG0Y-0007B8-I3; Wed, 09 Jan 2019 18:43:06 +0300
+Subject: Re: [PATCH RFC 0/3] mm: Reduce IO by improving algorithm of memcg
+ pagecache pages eviction
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     akpm@linux-foundation.org, hannes@cmpxchg.org,
+        josef@toxicpanda.com, jack@suse.cz, hughd@google.com,
+        darrick.wong@oracle.com, aryabinin@virtuozzo.com, guro@fb.com,
+        mgorman@techsingularity.net, shakeelb@google.com,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <154703479840.32690.6504699919905946726.stgit@localhost.localdomain>
+ <20190109141113.GW31793@dhcp22.suse.cz>
+From:   Kirill Tkhai <ktkhai@virtuozzo.com>
+Message-ID: <e9b64635-87cf-f330-acea-0ca681a2528e@virtuozzo.com>
+Date:   Wed, 9 Jan 2019 18:43:05 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="i0/AhcQY5QxfSsSZ"
-Content-Disposition: inline
-In-Reply-To: <1547045089-19128-4-git-send-email-krzk@kernel.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20190109141113.GW31793@dhcp22.suse.cz>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi, Michal,
 
---i0/AhcQY5QxfSsSZ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 09.01.2019 17:11, Michal Hocko wrote:
+> On Wed 09-01-19 15:20:18, Kirill Tkhai wrote:
+>> On nodes without memory overcommit, it's common a situation,
+>> when memcg exceeds its limit and pages from pagecache are
+>> shrinked on reclaim, while node has a lot of free memory.
+> 
+> Yes, that is the semantic of the hard limit. If the system is not
+> overcommitted then the hard limit can be used to prevent unexpected
+> direct reclaim from unrelated activity.
 
-On Wed 2019-01-09 15:44:47, Krzysztof Kozlowski wrote:
-> Allow initialization of pattern used in pattern trigger from Device Tree
-> property.
->=20
-> This is especially useful for embedded systems where the pattern trigger
-> would be used to indicate the process of boot status in a nice,
-> user-friendly blinking way.  This initialization pattern will be used
-> till user-space is brought up and sets its own pattern, indicating the
-> boot status is for example finished.
->=20
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+According to Documentation/admin-guide/cgroup-v2.rst:
 
-Acked-by: Pavel Machek <pavel@ucw.cz>
+  memory.max
+        Memory usage hard limit.  This is the final protection
+        mechanism.  If a cgroup's memory usage reaches this limit and
+        can't be reduced, the OOM killer is invoked in the cgroup.
+        Under certain circumstances, the usage may go over the limit
+        temporarily.
 
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+There is nothing about direct reclaim in another memcg. I don't think
+we break something here.
 
---i0/AhcQY5QxfSsSZ
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+File pages are accounted to memcg, and this guarantees, that single
+memcg won't occupy all system memory by its unevictible page cache.
+But the suggested patchset follows the same way. Pages, which remain
+in pagecache, are easy-to-be-evicted, since they are not dirty and
+not under writeback. System can drop them fast and in foreseeable time.
+This is cardinal thing about the patchset: remained pages do not
+introduce principal burden on system memory or reclaim time.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+>> Further access to the pages requires real device IO, while
+>> IO causes time delays, worse powerusage, worse throughput
+>> for other users of the device, etc.
+> 
+> It is to be expected that a memory throttled usage will have this side
+> effect IMO.
+> 
+>> Cleancache is not a good solution for this problem, since
+>> it implies copying of page on every cleancache_put_page()
+>> and cleancache_get_page(). Also, it requires introduction
+>> of internal per-cleancache_ops data structures to manage
+>> cached pages and their inodes relationships, which again
+>> introduces overhead.
+>>
+>> This patchset introduces another solution. It introduces
+>> a new scheme for evicting memcg pages:
+>>
+>>   1)__remove_mapping() uncharges unmapped page memcg
+>>     and leaves page in pagecache on memcg reclaim;
+>>
+>>   2)putback_lru_page() places page into root_mem_cgroup
+>>     list, since its memcg is NULL. Page may be evicted
+>>     on global reclaim (and this will be easily, as
+>>     page is not mapped, so shrinker will shrink it
+>>     with 100% probability of success);
+>>
+>>   3)pagecache_get_page() charges page into memcg of
+>>     a task, which takes it first.
+> 
+> But this also means that any hard limited memcg can fill up all the
+> memory and break the above assumption about the isolation from direct
+> reclaim. Not to mention the OOM or is there anything you do anything
+> about preventing that?
 
-iEYEARECAAYFAlw2FhQACgkQMOfwapXb+vKcUgCgohbkeHnCP18YSC1qlsDtxTQy
-m1kAn3WHuXsCb5gNdzyspRVitGW7RYbK
-=7ZVt
------END PGP SIGNATURE-----
+This is discussed thing. We may add such the pages into tail of LRU list
+instead of head. We may introduce one more separate list to link such
+the pages only, and fastly evict them in case of global reclaim. I don't
+think there is a problem.
+ 
+> That beig said, I do not think we want to or even can change the
+> semantic of the hard limit and break existing setups.
 
---i0/AhcQY5QxfSsSZ--
+Using the original description and the comments I gave in this message,
+could you please to clarify the way we break existing setups?
+
+> I am still
+> interested to hear more about more detailed/specific usecases that might
+> benefit from this behavior. Why do those users even use hard limit at
+> all? To protect from anon memory leaks?
+
+In multi-user machine people want to have size of available to container
+memory equal to the size, which they pay. So, hard limit is needed to prevent
+one container to occupy all system memory via slowly-evictible writeback
+pages, unevictible anon pages, etc. You can't fastly allocate a page,
+in case of many pages are under writeback, this operation is very slow.
+
+(But unmapped pagecache pages introduced by patchset is another thing:
+ you just need to take not sleeping spinlock to call __delete_from_page_cache()
+ only. This is fast)
+
+Multi-user machine may have more memory, than sum of all containers hard
+limit. This may be used as an optimization just to reduce disk IO. There
+is no contradiction to sane sense here. And it's not a rare situation.
+In our kernel we have cleancache driver for handling this situation, but
+cleancache is not the best solution like I wrote.
+
+Not overcommited system is likely case for the patchset, while the below
+is a little less likely:
+
+> Do different memcgs share the page cache heavily?
+
+People may use NFS server from different containers. They may want
+to have low priority userspace workers and high priority main task,
+and they may want to reduce the workers memory consumption. These
+are the cases.
+
+Kirill
