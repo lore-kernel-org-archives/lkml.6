@@ -2,269 +2,212 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C2C6C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 07:19:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B512C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 07:20:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E98EB2070B
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 07:19:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 14BF520821
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 07:20:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="HMz499Gz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729960AbfAIHTW (ORCPT
+        id S1729793AbfAIHUX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 02:19:22 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:48867 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725835AbfAIHTV (ORCPT
+        Wed, 9 Jan 2019 02:20:23 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:39675 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725835AbfAIHUW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 02:19:21 -0500
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x097JB893856903
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 8 Jan 2019 23:19:11 -0800
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x097JBbm3856900;
-        Tue, 8 Jan 2019 23:19:11 -0800
-Date:   Tue, 8 Jan 2019 23:19:11 -0800
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-g28usrt7l59lwq3wuh8vzbig@git.kernel.org>
-Cc:     pbonzini@redhat.com, linux-kernel@vger.kernel.org,
-        wangnan0@huawei.com, mingo@kernel.org, acme@redhat.com,
-        tglx@linutronix.de, jolsa@kernel.org, hpa@zytor.com,
-        namhyung@kernel.org, lclaudio@redhat.com, adrian.hunter@intel.com,
-        mst@redhat.com
-Reply-To: mst@redhat.com, lclaudio@redhat.com, adrian.hunter@intel.com,
-          hpa@zytor.com, namhyung@kernel.org, tglx@linutronix.de,
-          jolsa@kernel.org, mingo@kernel.org, acme@redhat.com,
-          wangnan0@huawei.com, pbonzini@redhat.com,
-          linux-kernel@vger.kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] tools include uapi: Sync linux/vhost.h with the
- kernel sources
-Git-Commit-ID: ee412f14693a3fe2645b3528603dfd37dd05118a
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Wed, 9 Jan 2019 02:20:22 -0500
+Received: by mail-wr1-f68.google.com with SMTP id t27so6522426wra.6
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jan 2019 23:20:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :content-transfer-encoding:user-agent;
+        bh=EFRzN3RmtL19hzC8H91jMcdWOUHVgudbfi8b7VFWUug=;
+        b=HMz499GziYozWQHK+nWsRrf3fM8lUxQkuz9EHoHvQYjSmgt4Bn41GJuid6k73OlDTf
+         +hB5X0TyhaRbrX0euv1r9ZSbJiC8Z34nypj4j6EwjkogSPg6JfhlqUBNwVpqOlbQjxVQ
+         +Tdlt5U44K4GcQYhlVjpP3RBt0X7bUqgVZLYk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:content-transfer-encoding:user-agent;
+        bh=EFRzN3RmtL19hzC8H91jMcdWOUHVgudbfi8b7VFWUug=;
+        b=L4KcAbtaOg7wokVmOPr8Oypeaxlp+MzF+/jGWWlIHKrlOTzp1x7x/88aJavnMbhG5O
+         dIPyu3u+MZs6B3Hb9jtf0Lj2onz+kZNtMBZqrOBrzls4NnCI4vGYaBl8157acz49+cNV
+         vcjAING8a+nGIpmHul6JvTCcUBxdfoqopz+Tn2Oy1TpALYqYlp/CF3X70oeRYBQsy9f4
+         cNPWf7PBKbb1wpIwt2vhCywEWODgnZvSYnDLK6XqerWVqF7u3jPRxsIO0cKguz0+fBeJ
+         HGbSScYzIc2HPtfRtfYoHpVH3M0adpy5MOgBbaNnUDMiGx9ZPJvmPThECkBeX0mVAXth
+         F1Hw==
+X-Gm-Message-State: AJcUukdHJ/p81DYnnLP0M5tvqyqjZvm1gbVFkiVrFI1xVYFpLQE5n9tv
+        E1fQo2WaOPgjxSGGAOCEAPsvHw==
+X-Google-Smtp-Source: ALg8bN5ErtXRqV/wc/QD+C2PUtwMaSiYvjsKfWOe2jEftm0fGK+cxDsXOPZorkpQLtVV/pYoN2XK6A==
+X-Received: by 2002:a5d:45d0:: with SMTP id b16mr3705386wrs.86.1547018419954;
+        Tue, 08 Jan 2019 23:20:19 -0800 (PST)
+Received: from dell ([2.27.35.240])
+        by smtp.gmail.com with ESMTPSA id j24sm64211372wrd.86.2019.01.08.23.20.18
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 08 Jan 2019 23:20:18 -0800 (PST)
+Date:   Wed, 9 Jan 2019 07:20:18 +0000
+From:   Lee Jones <lee.jones@linaro.org>
+To:     torvalds@linux-foundation.org
+Cc:     linux-kernel@vger.kernel.org
+Subject: [GIT PULL] MFD for v5.1
+Message-ID: <20190109072018.GB27286@dell>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  ee412f14693a3fe2645b3528603dfd37dd05118a
-Gitweb:     https://git.kernel.org/tip/ee412f14693a3fe2645b3528603dfd37dd05118a
-Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Tue, 8 Jan 2019 13:53:23 -0300
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Tue, 8 Jan 2019 14:09:33 -0300
+Good morning Linus,
 
-tools include uapi: Sync linux/vhost.h with the kernel sources
+Please accept my apologies for the lateness.
 
-To get the changes in:
+Christmas holidays, yada yada yada! :)
 
-  4b86713236e4 ("vhost: split structs into a separate header file")
+The following changes since commit 651022382c7f8da46cb4872a545ee1da6d097d2a:
 
-Silencing this perf build warning:
+  Linux 4.20-rc1 (2018-11-04 15:37:52 -0800)
 
-  Warning: Kernel ABI header at 'tools/include/uapi/linux/vhost.h' differs from latest version at 'include/uapi/linux/vhost.h'
-  diff -u tools/include/uapi/linux/vhost.h include/uapi/linux/vhost.h
+are available in the Git repository at:
 
-Those didn't touch things used in tools, i.e. the following continues
-working:
+  git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git tags/mfd-next-4.21
 
-  $ tools/perf/trace/beauty/vhost_virtio_ioctl.sh
-  static const char *vhost_virtio_ioctl_cmds[] = {
-          [0x00] = "SET_FEATURES",
-          [0x01] = "SET_OWNER",
-          [0x02] = "RESET_OWNER",
-          [0x03] = "SET_MEM_TABLE",
-          [0x04] = "SET_LOG_BASE",
-          [0x07] = "SET_LOG_FD",
-          [0x10] = "SET_VRING_NUM",
-          [0x11] = "SET_VRING_ADDR",
-          [0x12] = "SET_VRING_BASE",
-          [0x13] = "SET_VRING_ENDIAN",
-          [0x14] = "GET_VRING_ENDIAN",
-          [0x20] = "SET_VRING_KICK",
-          [0x21] = "SET_VRING_CALL",
-          [0x22] = "SET_VRING_ERR",
-          [0x23] = "SET_VRING_BUSYLOOP_TIMEOUT",
-          [0x24] = "GET_VRING_BUSYLOOP_TIMEOUT",
-          [0x25] = "SET_BACKEND_FEATURES",
-          [0x30] = "NET_SET_BACKEND",
-          [0x40] = "SCSI_SET_ENDPOINT",
-          [0x41] = "SCSI_CLEAR_ENDPOINT",
-          [0x42] = "SCSI_GET_ABI_VERSION",
-          [0x43] = "SCSI_SET_EVENTS_MISSED",
-          [0x44] = "SCSI_GET_EVENTS_MISSED",
-          [0x60] = "VSOCK_SET_GUEST_CID",
-          [0x61] = "VSOCK_SET_RUNNING",
-  };
-  static const char *vhost_virtio_ioctl_read_cmds[] = {
-          [0x00] = "GET_FEATURES",
-          [0x12] = "GET_VRING_BASE",
-          [0x26] = "GET_BACKEND_FEATURES",
-  };
-  $
+for you to fetch changes up to 3f2d347e851ef4464dea49504cde85e5eef67b2d:
 
-At some point in the eBPFication of perf, using something like:
+  mfd: exynos-lpass: Enable UART module support (2019-01-03 08:32:42 +0000)
 
-	# perf trace -e ioctl(cmd=VHOST_VRING*)
+----------------------------------------------------------------
+ - New Device Support
+   - Add support for Power Supply to AXP813
+   - Add support for GPIO, ADC, AC and Battery Power Supply to AXP803
+   - Add support for UART to Exynos LPASS
 
-Will setup a BPF filter right at the raw_syscalls:sys_enter tracepoint,
-i.e. filtering at the origin.
+ - Fix-ups
+   - Use supplied MACROS; ti_am335x_tscadc
+   - Trivial spelling/whitespace/alignment; tmio, axp20x, rave-sp
+   - Regmap changes; bd9571mwv, wm5110-tables
+   - Kconfig dependencies; MFD_AT91_USART
+   - Supply shared data for child-devices; madera-core
+   - Use new of_node_name_eq() API call; max77620, stmpe
+   - Use managed resources (devm_*); tps65218
+   - Comment descriptions; ingenic-tcu
+   - Coding style; madera-core
 
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Luis Cláudio Gonçalves <lclaudio@redhat.com>
-Cc: Michael S. Tsirkin <mst@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-g28usrt7l59lwq3wuh8vzbig@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/include/uapi/linux/vhost.h | 113 +--------------------------------------
- 1 file changed, 2 insertions(+), 111 deletions(-)
+ - Bug Fixes
+   - Fix section mismatches; twl-core, db8500-prcmu
+   - Correct error path related issues; mt6397-core, ab8500-core, mc13xxx-core
+   - IRQ related fixes; tps6586x
+   - Ensure proper initialisation sequence; qcom_rpm
+   - Repair potential memory leak; cros_ec_dev
 
-diff --git a/tools/include/uapi/linux/vhost.h b/tools/include/uapi/linux/vhost.h
-index 84c3de89696a..40d028eed645 100644
---- a/tools/include/uapi/linux/vhost.h
-+++ b/tools/include/uapi/linux/vhost.h
-@@ -11,94 +11,9 @@
-  * device configuration.
-  */
- 
-+#include <linux/vhost_types.h>
- #include <linux/types.h>
--#include <linux/compiler.h>
- #include <linux/ioctl.h>
--#include <linux/virtio_config.h>
--#include <linux/virtio_ring.h>
--
--struct vhost_vring_state {
--	unsigned int index;
--	unsigned int num;
--};
--
--struct vhost_vring_file {
--	unsigned int index;
--	int fd; /* Pass -1 to unbind from file. */
--
--};
--
--struct vhost_vring_addr {
--	unsigned int index;
--	/* Option flags. */
--	unsigned int flags;
--	/* Flag values: */
--	/* Whether log address is valid. If set enables logging. */
--#define VHOST_VRING_F_LOG 0
--
--	/* Start of array of descriptors (virtually contiguous) */
--	__u64 desc_user_addr;
--	/* Used structure address. Must be 32 bit aligned */
--	__u64 used_user_addr;
--	/* Available structure address. Must be 16 bit aligned */
--	__u64 avail_user_addr;
--	/* Logging support. */
--	/* Log writes to used structure, at offset calculated from specified
--	 * address. Address must be 32 bit aligned. */
--	__u64 log_guest_addr;
--};
--
--/* no alignment requirement */
--struct vhost_iotlb_msg {
--	__u64 iova;
--	__u64 size;
--	__u64 uaddr;
--#define VHOST_ACCESS_RO      0x1
--#define VHOST_ACCESS_WO      0x2
--#define VHOST_ACCESS_RW      0x3
--	__u8 perm;
--#define VHOST_IOTLB_MISS           1
--#define VHOST_IOTLB_UPDATE         2
--#define VHOST_IOTLB_INVALIDATE     3
--#define VHOST_IOTLB_ACCESS_FAIL    4
--	__u8 type;
--};
--
--#define VHOST_IOTLB_MSG 0x1
--#define VHOST_IOTLB_MSG_V2 0x2
--
--struct vhost_msg {
--	int type;
--	union {
--		struct vhost_iotlb_msg iotlb;
--		__u8 padding[64];
--	};
--};
--
--struct vhost_msg_v2 {
--	__u32 type;
--	__u32 reserved;
--	union {
--		struct vhost_iotlb_msg iotlb;
--		__u8 padding[64];
--	};
--};
--
--struct vhost_memory_region {
--	__u64 guest_phys_addr;
--	__u64 memory_size; /* bytes */
--	__u64 userspace_addr;
--	__u64 flags_padding; /* No flags are currently specified. */
--};
--
--/* All region addresses and sizes must be 4K aligned. */
--#define VHOST_PAGE_SIZE 0x1000
--
--struct vhost_memory {
--	__u32 nregions;
--	__u32 padding;
--	struct vhost_memory_region regions[0];
--};
- 
- /* ioctls */
- 
-@@ -186,31 +101,7 @@ struct vhost_memory {
-  * device.  This can be used to stop the ring (e.g. for migration). */
- #define VHOST_NET_SET_BACKEND _IOW(VHOST_VIRTIO, 0x30, struct vhost_vring_file)
- 
--/* Feature bits */
--/* Log all write descriptors. Can be changed while device is active. */
--#define VHOST_F_LOG_ALL 26
--/* vhost-net should add virtio_net_hdr for RX, and strip for TX packets. */
--#define VHOST_NET_F_VIRTIO_NET_HDR 27
--
--/* VHOST_SCSI specific definitions */
--
--/*
-- * Used by QEMU userspace to ensure a consistent vhost-scsi ABI.
-- *
-- * ABI Rev 0: July 2012 version starting point for v3.6-rc merge candidate +
-- *            RFC-v2 vhost-scsi userspace.  Add GET_ABI_VERSION ioctl usage
-- * ABI Rev 1: January 2013. Ignore vhost_tpgt filed in struct vhost_scsi_target.
-- *            All the targets under vhost_wwpn can be seen and used by guset.
-- */
--
--#define VHOST_SCSI_ABI_VERSION	1
--
--struct vhost_scsi_target {
--	int abi_version;
--	char vhost_wwpn[224]; /* TRANSPORT_IQN_LEN */
--	unsigned short vhost_tpgt;
--	unsigned short reserved;
--};
-+/* VHOST_SCSI specific defines */
- 
- #define VHOST_SCSI_SET_ENDPOINT _IOW(VHOST_VIRTIO, 0x40, struct vhost_scsi_target)
- #define VHOST_SCSI_CLEAR_ENDPOINT _IOW(VHOST_VIRTIO, 0x41, struct vhost_scsi_target)
+----------------------------------------------------------------
+Beomho Seo (1):
+      mfd: exynos-lpass: Enable UART module support
+
+Charles Keepax (1):
+      mfd: wm5110: Add missing ASRC rate register
+
+Chen-Yu Tsai (1):
+      mfd: axp20x: Re-align MFD cell entries
+
+Cheng-Yi Chiang (1):
+      mfd: cros_ec: Add commands to control codec
+
+Dan Carpenter (1):
+      mfd: ab8500-core: Return zero in get_register_interruptible()
+
+Dien Pham (1):
+      mfd: bd9571mwv: Add volatile register to make DVFS work
+
+Enric Balletbo i Serra (1):
+      mfd: cros_ec_dev: Add missing mfd_remove_devices() call in remove
+
+Geert Uytterhoeven (1):
+      mfd: tmio: Typo s/use use/use/
+
+Jean Delvare (1):
+      mfd: at91-usart: Add platform dependency
+
+Jonathan Hunter (1):
+      mfd: tps6586x: Handle interrupts on suspend
+
+Jonathan Marek (1):
+      mfd: qcom_rpm: write fw_version to CTRL_REG
+
+Kangjie Lu (1):
+      mfd: mc13xxx: Fix a missing check of a register-read failure
+
+Keerthy (1):
+      mfd: tps65218: Use devm_regmap_add_irq_chip and clean up error path in probe()
+
+Nathan Chancellor (2):
+      mfd: twl-core: Fix section annotations on {,un}protect_pm_master
+      mfd: db8500-prcmu: Fix some section annotations
+
+Nicolas Boichat (1):
+      mfd: mt6397: Do not call irq_domain_remove if PMIC unsupported
+
+Oskari Lemmela (2):
+      mfd: axp20x: Add AC power supply cell for AXP813
+      mfd: axp20x: Add supported cells for AXP803
+
+Paul Cercueil (1):
+      mfd: ingenic-tcu: Fix bit field description in header
+
+Richard Fitzgerald (2):
+      mfd: madera: Add shared data for accessory detection
+      mfd: madera: Remove spurious semicolon in while loop
+
+Rob Herring (1):
+      mfd: Use of_node_name_eq() for node name comparisons
+
+Vignesh R (2):
+      mfd: ti_am335x_tscadc: Use PLATFORM_DEVID_AUTO while registering mfd cells
+      iio: adc: ti_am335x_tscadc: Improve accuracy of measurement
+
+Yangtao Li (1):
+      mfd: rave-sp: Fix typo in rave_sp_checksum comment
+
+ drivers/iio/adc/ti_am335x_adc.c      |   5 +-
+ drivers/mfd/Kconfig                  |   1 +
+ drivers/mfd/ab8500-core.c            |   2 +-
+ drivers/mfd/axp20x.c                 | 126 +++++++++++++++++++----------------
+ drivers/mfd/bd9571mwv.c              |   1 +
+ drivers/mfd/cros_ec_dev.c            |   1 +
+ drivers/mfd/db8500-prcmu.c           |   4 +-
+ drivers/mfd/exynos-lpass.c           |   4 +-
+ drivers/mfd/madera-core.c            |   5 +-
+ drivers/mfd/max77620.c               |   2 +-
+ drivers/mfd/mc13xxx-core.c           |   4 +-
+ drivers/mfd/mt6397-core.c            |   3 +-
+ drivers/mfd/qcom_rpm.c               |   4 ++
+ drivers/mfd/rave-sp.c                |   2 +-
+ drivers/mfd/stmpe.c                  |  12 ++--
+ drivers/mfd/ti_am335x_tscadc.c       |   5 +-
+ drivers/mfd/tps65218.c               |  24 +------
+ drivers/mfd/tps6586x.c               |  24 +++++++
+ drivers/mfd/twl-core.c               |   4 +-
+ drivers/mfd/wm5110-tables.c          |   2 +
+ include/linux/mfd/cros_ec_commands.h |  94 ++++++++++++++++++++++++++
+ include/linux/mfd/ingenic-tcu.h      |   2 +-
+ include/linux/mfd/madera/core.h      |   7 ++
+ include/linux/mfd/ti_am335x_tscadc.h |   4 ++
+ include/linux/mfd/tmio.h             |   2 +-
+ 25 files changed, 244 insertions(+), 100 deletions(-)
+
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
