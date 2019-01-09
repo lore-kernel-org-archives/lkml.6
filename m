@@ -2,121 +2,86 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 876A6C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 17:26:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FC1EC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 17:27:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 539E6214C6
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 17:26:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PEAT+dLA"
+	by mail.kernel.org (Postfix) with ESMTP id E7993214C6
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 17:27:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726974AbfAIR0q (ORCPT
+        id S1726989AbfAIR1k (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 12:26:46 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:40017 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726933AbfAIR0p (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 12:26:45 -0500
-Received: by mail-wm1-f66.google.com with SMTP id f188so9134011wmf.5;
-        Wed, 09 Jan 2019 09:26:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=AnunFOoNxnEJmU+FNN7KCIuhxpIQkCZn8JHGbLCsl1w=;
-        b=PEAT+dLAkQ5toeyje8cEz3ubIKF2QhjQisj5S/RiCNcRwwTff1FRtPzdX7Q1nn0h9X
-         odiyeyw9PQL3ku2enHgvcRStsUqz8qCUqVEnrMC8HTASFtUgEaebLSXaFaRshveWVndv
-         mrCmYOsXF50gd9Q4e2Y+GcJVUfu9/n+8UtnaKAZ34bT/CTysMxcBd1ZoZxleFtoJ9rtL
-         OcKTGcMKmBYOZDz23I67zyh9vaNhgvNPeLBHS5bnrAFS+x0SFxitKplwixHTcJ3Q5z7c
-         DrgHN7K7K0VFzM4jmPqQL3SRYfOjprDnDUhoUP+EBOt4kmmhl5eCqpETNjJzOFrlKxFG
-         +T1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=AnunFOoNxnEJmU+FNN7KCIuhxpIQkCZn8JHGbLCsl1w=;
-        b=B1z3gYX15XnYlzNwH2+VEa3GXdcijPIE3FGYokJLrNtyASCjKTt2knT4XaKEU46DFP
-         oq/EJeg6TmtQWA1nu5zuogO4SEeknd7VmvKO8BPggydioUd3U5MCKbMazaRmbx8HGACW
-         lICna0KhtVfPFiNVUKGwe2o/9FqmqLxsNTxGBlEG6rylpWQIDhdsM2d5kzUsKu3lGRe7
-         Ax6u0nej2zTHZGWlJ6fSdMbSPi0z55NpzEX48v30xt41ui1U2pQjeinNxMtfdLLlueS8
-         MD8MUCVnjkAf5BnqdmzvQCIvEPweonBEf6O4TN7pExsxae4RSfadJ8r97BAt5TasbjhF
-         KQLw==
-X-Gm-Message-State: AJcUukftb0r6La79sbWHODTkEltsL1U7ffIWKD+gILqWP+yPJowSK24G
-        78v10b9IlMoAPGqHsfLhN2RvI+7A
-X-Google-Smtp-Source: ALg8bN5sdaAJzrcWA41rxkb8Dq20amC5HWdaWz0OCrfNRbU8B5Ka6iVdy648IieQFLrvyZO4Lby59g==
-X-Received: by 2002:a1c:2902:: with SMTP id p2mr6446227wmp.19.1547054803514;
-        Wed, 09 Jan 2019 09:26:43 -0800 (PST)
-Received: from [172.30.90.141] (sjewanfw1-nat.mentorg.com. [139.181.7.34])
-        by smtp.gmail.com with ESMTPSA id a6sm12638966wmh.10.2019.01.09.09.26.41
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 09 Jan 2019 09:26:42 -0800 (PST)
-Subject: Re: [PATCH v6 05/12] media: imx-csi: Input connections to CSI should
- be optional
-To:     Philipp Zabel <p.zabel@pengutronix.de>, linux-media@vger.kernel.org
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "open list:STAGING SUBSYSTEM" <devel@driverdev.osuosl.org>,
-        open list <linux-kernel@vger.kernel.org>
-References: <20190109001551.16113-1-slongerbeam@gmail.com>
- <20190109001551.16113-6-slongerbeam@gmail.com>
- <1547032417.4160.2.camel@pengutronix.de>
-From:   Steve Longerbeam <slongerbeam@gmail.com>
-Message-ID: <a68dc0db-a37c-2976-9d48-b9da4619aa33@gmail.com>
-Date:   Wed, 9 Jan 2019 09:26:39 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Wed, 9 Jan 2019 12:27:40 -0500
+Received: from mga17.intel.com ([192.55.52.151]:21466 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726767AbfAIR1j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 12:27:39 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Jan 2019 09:27:39 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,458,1539673200"; 
+   d="scan'208";a="116799032"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.154])
+  by orsmga003.jf.intel.com with ESMTP; 09 Jan 2019 09:27:38 -0800
+Date:   Wed, 9 Jan 2019 09:27:38 -0800
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc:     kvm@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        linux-kernel@vger.kernel.org, Andrew Jones <drjones@redhat.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Jim Mattson <jmattson@google.com>
+Subject: Re: [PATCH] x86/kvm/nVMX: don't skip emulated instruction twice when
+ vmptr address is not backed
+Message-ID: <20190109172738.GC1821@linux.intel.com>
+References: <20190109172256.16711-1-vkuznets@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <1547032417.4160.2.camel@pengutronix.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190109172256.16711-1-vkuznets@redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Jan 09, 2019 at 06:22:56PM +0100, Vitaly Kuznetsov wrote:
+> Since commit 09abb5e3e5e50 ("KVM: nVMX: call kvm_skip_emulated_instruction
+> in nested_vmx_{fail,succeed}") nested_vmx_failValid() results in
+> kvm_skip_emulated_instruction() so doing it again in handle_vmptrld() when
+> vmptr address is not backed is wrong, we end up advancing RIP twice.
+> 
+> Fixes: fca91f6d60b6e ("kvm: nVMX: Set VM instruction error for VMPTRLD of unbacked page")
+> Reported-by: Cornelia Huck <cohuck@redhat.com>
+> Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
 
+Reviewed-by: Sean Christopherson <sean.j.christopherson@intel.com>
 
-On 1/9/19 3:13 AM, Philipp Zabel wrote:
-> On Tue, 2019-01-08 at 16:15 -0800, Steve Longerbeam wrote:
->> Some imx platforms do not have fwnode connections to all CSI input
->> ports, and should not be treated as an error. This includes the
->> imx6q SabreAuto, which has no connections to ipu1_csi1 and ipu2_csi0.
->> Return -ENOTCONN in imx_csi_parse_endpoint() so that v4l2-fwnode
->> endpoint parsing will not treat an unconnected endpoint as an error.
->>
->> Fixes: c893500a16baf ("media: imx: csi: Register a subdev notifier")
->>
->> Signed-off-by: Steve Longerbeam <slongerbeam@gmail.com>
->> ---
->>   drivers/staging/media/imx/imx-media-csi.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/staging/media/imx/imx-media-csi.c b/drivers/staging/media/imx/imx-media-csi.c
->> index e3a4f39dbf73..b276672cae1d 100644
->> --- a/drivers/staging/media/imx/imx-media-csi.c
->> +++ b/drivers/staging/media/imx/imx-media-csi.c
->> @@ -1815,7 +1815,7 @@ static int imx_csi_parse_endpoint(struct device *dev,
->>   				  struct v4l2_fwnode_endpoint *vep,
->>   				  struct v4l2_async_subdev *asd)
->>   {
->> -	return fwnode_device_is_available(asd->match.fwnode) ? 0 : -EINVAL;
->> +	return fwnode_device_is_available(asd->match.fwnode) ? 0 : -ENOTCONN;
->>   }
->>   
->>   static int imx_csi_async_register(struct csi_priv *priv)
-> Is this something that should be applied as a fix, separately from this
-> series?
-
-Yes. I'll submit it separately and send a v7 of this series without it.
-
-Steve
-
-
+> ---
+>  arch/x86/kvm/vmx/nested.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
+> index 3170e291215d..2616bd2c7f2c 100644
+> --- a/arch/x86/kvm/vmx/nested.c
+> +++ b/arch/x86/kvm/vmx/nested.c
+> @@ -4540,9 +4540,8 @@ static int handle_vmptrld(struct kvm_vcpu *vcpu)
+>  			 * given physical address won't match the required
+>  			 * VMCS12_REVISION identifier.
+>  			 */
+> -			nested_vmx_failValid(vcpu,
+> +			return nested_vmx_failValid(vcpu,
+>  				VMXERR_VMPTRLD_INCORRECT_VMCS_REVISION_ID);
+> -			return kvm_skip_emulated_instruction(vcpu);
+>  		}
+>  		new_vmcs12 = kmap(page);
+>  		if (new_vmcs12->hdr.revision_id != VMCS12_REVISION ||
+> -- 
+> 2.20.1
+> 
