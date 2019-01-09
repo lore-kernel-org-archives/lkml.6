@@ -2,154 +2,148 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F8B3C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 04:20:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78CC4C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 04:31:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF0AC206BA
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 04:20:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4838E2070B
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 04:31:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729191AbfAIEUC (ORCPT
+        id S1729069AbfAIEbR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 23:20:02 -0500
-Received: from mout.gmx.net ([212.227.17.22]:34319 "EHLO mout.gmx.net"
+        Tue, 8 Jan 2019 23:31:17 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:58298 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728112AbfAIEUC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 23:20:02 -0500
-Received: from homer.simpson.net ([185.191.218.82]) by mail.gmx.com (mrgmx102
- [212.227.17.168]) with ESMTPSA (Nemesis) id 0MXmpv-1gkXAI3hrD-00WjQE; Wed, 09
- Jan 2019 05:19:49 +0100
-Message-ID: <1547007588.17100.17.camel@gmx.de>
-Subject: Re: [PATCH 0/1] RFC: sched/fair: skip select_idle_sibling() in
- presence of sync wakeups
-From:   Mike Galbraith <efault@gmx.de>
-To:     Andrea Arcangeli <aarcange@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Mel Gorman <mgorman@techsingularity.net>
-Cc:     linux-kernel@vger.kernel.org
-Date:   Wed, 09 Jan 2019 05:19:48 +0100
-In-Reply-To: <20190109034941.28759-1-aarcange@redhat.com>
-References: <20190109034941.28759-1-aarcange@redhat.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:dAGivHZOz0RikDyG6uDqALGgP9m0Nf0x55k23/WgKBKYdXj6/vA
- U8D2PXvZGLf3fk7VFpvPGvb8wzpB/hrzvjZNgWuEWSBu81jCXi9eDgunEbs34WdXtWy449K
- 403cWcaH3B9LCsCoy+67MFtM3vVT6BpoF2xbfoCpRbgUKAeANRQZ67XpT2TmmN3mDhIAdYF
- mPra51HNXhQxlu3bSX6oA==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:1wP4dotvAZA=:aFGGfzibjfEBtubZ+5fWGa
- R9Gt8wtUGuvNO0m1xNjUV3dsRA1qV4ywId2wG/d7Fc07PqMDuDPyQjHSOEkbkB7piErzEUSLh
- DuehdWkdVS++EAdR5ECsewsmvNjgRXiPDbYA0vC0Jsv/KJIgDdSpC22gV2S1TIxdDTHgipBmW
- Vv6NUUix4Umw66oZaz8tauo1E8c5Q12/Io063Sizj5yKttmps5JYhKzA7kkqpwYTSvVNJChP9
- 0I9qSl2EsNQX7QtOY2Figla1U0XMk08xM5PvNUEg0vzH5g6xg9QDQzbLwcmU5zTVHzrADZNSi
- 0jzST4aUyxw8yPDVvpj0sme0AUN+MZ03uPgRX701iAAXQlWnPBjadN1JvJ7AVaXL3hXaX4wJk
- NHcDdrwrG4vo2/h5lJ7inHp4vBnBHLwrjHuabv0+hn5QzduwWtw8qMVhkFDmBIk3N//w5WjQl
- 4txzcQ6T2rLSR+YuoAROhl0i/S9Y+dqy/I+n1N3fOejhH22t2s1vxqhtTP3VpQPTV0jZOrV+W
- yIMbeDnv5EGpLs5w8HKqBAWHSoXLhGZybxXHxtCdSms6leH5XBYG0s0BQ0jRP0Bawy9NRF/bf
- fUJ7N+egHhNbHHGVmQFZl21DYmpG74tK2xOqmzpUbhawW7z1HTCtntDQZsYiVO/ui8DyFQ17k
- HU80+KaVDqTBbrvLR2m56klu+5937lLDTFRCO+J0sBNWSfgCQQ6AYcw1A2776LWH2VhWYHxAB
- riv45W0mr3lzNuPMx+nUx/t0u9hT49Z5mn0bJ93ouDscZiW5nMwnSNxMyZAkCtamh+LOMw8OZ
- Ld9zkPqvNVygtpuEblVr2J3Ay/ccqFvEE/kRsJrGvFy8AmHuF8ikA7S9Lz47ooRktAKnBiLjl
- 0cq/Wb1KevizWveLpbwRTf/XPiWWGzRNxOCkeWP8Lg4xtNTETj8jzTFMNthfy+
+        id S1727828AbfAIEbR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 23:31:17 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 540A4D4E56;
+        Wed,  9 Jan 2019 04:31:16 +0000 (UTC)
+Received: from redhat.com (ovpn-120-220.rdu2.redhat.com [10.10.120.220])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 27DC35D9CA;
+        Wed,  9 Jan 2019 04:31:15 +0000 (UTC)
+Date:   Tue, 8 Jan 2019 23:31:14 -0500
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     Jason Wang <jasowang@redhat.com>, KVM list <kvm@vger.kernel.org>,
+        virtualization@lists.linux-foundation.org,
+        Netdev <netdev@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        David Miller <davem@davemloft.net>,
+        Linus Torvalds <torvalds@linuxfoundation.org>
+Subject: __get_user slower than get_user (was Re: [RFC PATCH V3 0/5] Hi:)
+Message-ID: <20190108232459-mutt-send-email-mst@kernel.org>
+References: <20190102154038-mutt-send-email-mst@kernel.org>
+ <0efd115a-a7fb-54bf-5376-59d047a15fd3@redhat.com>
+ <20190106221832-mutt-send-email-mst@kernel.org>
+ <c15a17b3-b604-a105-af44-a7e6dfd79801@redhat.com>
+ <20190106230224-mutt-send-email-mst@kernel.org>
+ <CAPcyv4iXFy0jfoQ_jQYq2yA7cqu4_Jcap4mvQesRRrV-hahGvQ@mail.gmail.com>
+ <20190107084853-mutt-send-email-mst@kernel.org>
+ <CAPcyv4jf-4=2oGJrdvMBeRiAJnQoKbYhwZDD+5ZEH+xgDaOzRQ@mail.gmail.com>
+ <20190107172517-mutt-send-email-mst@kernel.org>
+ <CAPcyv4iQMQxZC8ehr2OP8_rqpuCeSWn5xyKN64JSyfR8_r7eOg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAPcyv4iQMQxZC8ehr2OP8_rqpuCeSWn5xyKN64JSyfR8_r7eOg@mail.gmail.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Wed, 09 Jan 2019 04:31:16 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2019-01-08 at 22:49 -0500, Andrea Arcangeli wrote:
-> Hello,
+On Mon, Jan 07, 2019 at 02:44:24PM -0800, Dan Williams wrote:
+> On Mon, Jan 7, 2019 at 2:25 PM Michael S. Tsirkin <mst@redhat.com> wrote:
+> >
+> > On Mon, Jan 07, 2019 at 01:39:15PM -0800, Dan Williams wrote:
+> > > On Mon, Jan 7, 2019 at 6:11 AM Michael S. Tsirkin <mst@redhat.com> wrote:
+> > > >
+> > > > On Sun, Jan 06, 2019 at 11:15:20PM -0800, Dan Williams wrote:
+> > > > > On Sun, Jan 6, 2019 at 8:17 PM Michael S. Tsirkin <mst@redhat.com> wrote:
+> > > > > >
+> > > > > > On Mon, Jan 07, 2019 at 11:53:41AM +0800, Jason Wang wrote:
+> > > > > > >
+> > > > > > > On 2019/1/7 上午11:28, Michael S. Tsirkin wrote:
+> > > > > > > > On Mon, Jan 07, 2019 at 10:19:03AM +0800, Jason Wang wrote:
+> > > > > > > > > On 2019/1/3 上午4:47, Michael S. Tsirkin wrote:
+> > > > > > > > > > On Sat, Dec 29, 2018 at 08:46:51PM +0800, Jason Wang wrote:
+> > > > > > > > > > > This series tries to access virtqueue metadata through kernel virtual
+> > > > > > > > > > > address instead of copy_user() friends since they had too much
+> > > > > > > > > > > overheads like checks, spec barriers or even hardware feature
+> > > > > > > > > > > toggling.
+> > > > > > > > > > Will review, thanks!
+> > > > > > > > > > One questions that comes to mind is whether it's all about bypassing
+> > > > > > > > > > stac/clac.  Could you please include a performance comparison with
+> > > > > > > > > > nosmap?
+> > > > > > > > > >
+> > > > > > > > > On machine without SMAP (Sandy Bridge):
+> > > > > > > > >
+> > > > > > > > > Before: 4.8Mpps
+> > > > > > > > >
+> > > > > > > > > After: 5.2Mpps
+> > > > > > > > OK so would you say it's really unsafe versus safe accesses?
+> > > > > > > > Or would you say it's just a better written code?
+> > > > > > >
+> > > > > > >
+> > > > > > > It's the effect of removing speculation barrier.
+> > > > > >
+> > > > > >
+> > > > > > You mean __uaccess_begin_nospec introduced by
+> > > > > > commit 304ec1b050310548db33063e567123fae8fd0301
+> > > > > > ?
+> > > > > >
+> > > > > > So fundamentally we do access_ok checks when supplying
+> > > > > > the memory table to the kernel thread, and we should
+> > > > > > do the spec barrier there.
+> > > > > >
+> > > > > > Then we can just create and use a variant of uaccess macros that does
+> > > > > > not include the barrier?
+> > > > > >
+> > > > > > Or, how about moving the barrier into access_ok?
+> > > > > > This way repeated accesses with a single access_ok get a bit faster.
+> > > > > > CC Dan Williams on this idea.
+> > > > >
+> > > > > It would be interesting to see how expensive re-doing the address
+> > > > > limit check is compared to the speculation barrier. I.e. just switch
+> > > > > vhost_get_user() to use get_user() rather than __get_user(). That will
+> > > > > sanitize the pointer in the speculative path without a barrier.
+> > > >
+> > > > Hmm it's way cheaper even though IIRC it's measureable.
+> > > > Jason, would you like to try?
+> > > > Although frankly __get_user being slower than get_user feels very wrong.
+> > > > Not yet sure what to do exactly but would you agree?
+> > >
+> > > Agree. __get_user() being faster than get_user() defeats the whole
+> > > point of converting code paths to the access_ok() + __get_user()
+> > > pattern.
+> >
+> > Did you mean the reverse?
 > 
-> we noticed some unexpected performance regressions in the scheduler by
-> switching the guest CPU topology from "-smp 2,sockets=2,cores=1" to
-> "-smp 2,sockets=1,cores=2".
-> 
-> With sockets=2,cores=1 localhost message passing (pipes, AF_UNIX etc..)
-> runs serially at 100% CPU load of a single vcpu with optimal
-> performance. With sockets=1,cores=2 the load is spread across both
-> vcpus and performance is reduced.
-> 
-> With SCHED_MC=n on older kernels the problem goes away (but that's far
-> from ideal for heavily multithreaded workloads which then regress)
-> because that basically disables the last part of select_idle_sibling().
-> 
-> On bare metal with SCHED_MC=y on any recent multicore CPU the
-> scheduler (as expected) behaves like sockets=1,cores=2, so it won't
-> run the tasks serially.
-> 
-> The reason is that select_idle_sibling() can disregard the "sync" hint
-> and all decisions done up to that point and at the last minute it can
-> decide to move the waken task to an arbitrary idle core.
-> 
-> To test the above theory I implemented this patch which seems to
-> confirm the reason the tasks won't run serially anymore with
-> sockets=1,cores=2 is select_idle_sibling() overriding the "sync" hint.
-> 
-> You worked on the wake_affine() before so you may want to review this
-> issue, if you agree these sync workloads should run serially even in
-> presence of idle cores in the system. I don't know if the current
-> behavior is on purpose but if it is, it'd be interesting to know
-> why. This is just a RFC.
-> 
-> To test I used this trivial program.
+> Hmm, no... I'll rephrase: __get_user() should have lower overhead than
+> get_user().
 
-Which highlights the problem.  That proggy really is synchronous, but
-the sync hint is applied to many MANY real world cases where this is
-not the case at all.  Sure, you can make things like pipe_test and
-nearly nonexistent payload TCP_RR numbers look gorgeous, but that
-demolishes concurrency for real applications.
+Right ...
 
-Even when any given wakeup really is a truly synchronous wakeup, does,
-say, an application sending a byte down a pipe necessarily mean it's
-not going to then execute in parallel with the recipient of that byte? 
-I think not.  IMO, the sync hint should die.  The only time it is a win
-is for applications that do essentially nothing but context switch.  I
-don't think the real world plays a lot of high speed ping pong.
+Linus, given that you just changed all users of access_ok anyway, do
+you still think that the access_ok() conversion to return a speculation
+sanitized pointer or NULL is too big a conversion?
 
-> /*
->  *  pipe-loop.c
->  *
->  *  Copyright (C) 2019 Red Hat, Inc.
->  *
->  *  This work is licensed under the terms of the GNU GPL, version 2.
->  */
-> 
-> #include <stdio.h>
-> #include <unistd.h>
-> #include <sys/types.h>
-> #include <sys/wait.h>
-> 
-> int main(int argc, char ** argv)
-> {
-> 	char buf[1];
-> 	int n = 1000000;
-> 
-> 	int pipe1[2], pipe2[2];
-> 
-> 	pipe(pipe1);
-> 	pipe(pipe2);
-> 
-> 	if (fork()) {
-> 		while (n--) {
-> 			read(pipe1[0], buf, 1);
-> 			write(pipe2[1], buf, 1);
-> 		}
-> 		wait(NULL);
-> 	} else {
-> 		while (n--) {
-> 			write(pipe1[1], buf, 1);
-> 			read(pipe2[0], buf, 1);
-> 		}
-> 	}
-> 
-> 	return 0;
-> }
-> 
-> Andrea Arcangeli (1):
->   sched/fair: skip select_idle_sibling() in presence of sync wakeups
-> 
->  kernel/sched/fair.c | 13 ++++++++-----
->  1 file changed, 8 insertions(+), 5 deletions(-)
+It was previously discarded here:
+https://lkml.org/lkml/2018/1/17/929
+but at that point we didn't have numbers and there was an understandable
+rush to ship something safe.
+
+At this point I think that vhost can show very measureable gains from
+this conversion.
+
+Thanks,
+
+-- 
+MST
