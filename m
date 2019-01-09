@@ -2,145 +2,142 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A322C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 12:35:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A2B5C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 12:37:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B612206B6
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 12:35:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DD7AC206B6
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 12:37:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730497AbfAIMfy (ORCPT
+        id S1730561AbfAIMhR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 07:35:54 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:56752 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730438AbfAIMfw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 07:35:52 -0500
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x09CXlF1053732
-        for <linux-kernel@vger.kernel.org>; Wed, 9 Jan 2019 07:35:51 -0500
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2pwg0su3cv-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jan 2019 07:35:50 -0500
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <pmorel@linux.ibm.com>;
-        Wed, 9 Jan 2019 12:35:48 -0000
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 9 Jan 2019 12:35:45 -0000
-Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x09CZhHA196922
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 9 Jan 2019 12:35:43 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id BAAAF42045;
-        Wed,  9 Jan 2019 12:35:43 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2DBAD4204C;
-        Wed,  9 Jan 2019 12:35:43 +0000 (GMT)
-Received: from [9.152.224.140] (unknown [9.152.224.140])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed,  9 Jan 2019 12:35:43 +0000 (GMT)
-Reply-To: pmorel@linux.ibm.com
-Subject: Re: [PATCH v5 14/15] KVM: s390: add and wire function
- gib_alert_irq_handler()
-To:     mimu@linux.ibm.com, KVM Mailing List <kvm@vger.kernel.org>
-Cc:     Linux-S390 Mailing List <linux-s390@vger.kernel.org>,
-        linux-kernel@vger.kernel.org,
+        Wed, 9 Jan 2019 07:37:17 -0500
+Received: from ozlabs.org ([203.11.71.1]:50549 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730438AbfAIMhR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 07:37:17 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 43ZTCs0zQVz9sDL;
+        Wed,  9 Jan 2019 23:37:13 +1100 (AEDT)
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Bjorn Helgaas <helgaas@kernel.org>,
+        Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
+Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
         Martin Schwidefsky <schwidefsky@de.ibm.com>,
         Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        David Hildenbrand <david@redhat.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Halil Pasic <pasic@linux.ibm.com>
-References: <20181219191756.57973-1-mimu@linux.ibm.com>
- <20181219191756.57973-15-mimu@linux.ibm.com>
- <7dfe72db-97d2-9f33-68f7-acf8ec5ddc5e@linux.ibm.com>
- <fd2efaed-24d5-4397-b79c-1f64dc80a9e4@linux.ibm.com>
-From:   Pierre Morel <pmorel@linux.ibm.com>
-Date:   Wed, 9 Jan 2019 13:35:42 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        linux-pci@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: Kconfig label updates
+In-Reply-To: <20190108223024.GA147017@google.com>
+References: <20190108223024.GA147017@google.com>
+Date:   Wed, 09 Jan 2019 23:37:09 +1100
+Message-ID: <87tviiroqy.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-In-Reply-To: <fd2efaed-24d5-4397-b79c-1f64dc80a9e4@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19010912-0016-0000-0000-000002427FC6
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19010912-0017-0000-0000-0000329C98F7
-Message-Id: <97f1294f-cbb3-a54b-6abf-29471b69946e@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-09_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=949 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901090106
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/01/2019 11:06, Michael Mueller wrote:
-> 
-> 
-> On 03.01.19 16:16, Pierre Morel wrote:
->> On 19/12/2018 20:17, Michael Mueller wrote:
->>> The patch implements a handler for GIB alert interruptions
->>> on the host. Its task is to alert guests that interrupts are
->>> pending for them.
->>>
+Hi Bjorn,
 
-...snip...
+Bjorn Helgaas <helgaas@kernel.org> writes:
+> Hi,
+>
+> I want to update the PCI Kconfig labels so they're more consistent and
+> useful to users, something like the patch below.  IIUC, the items
+> below are all IBM-related; please correct me if not.
+>
+> I'd also like to expand (or remove) "RPA" because Google doesn't find
+> anything about "IBM RPA", except Robotic Process Automation, which I
+> think must be something else.
 
->>>   {
->>>       u32 final, next_alert, origin = 0UL;
->>>       struct kvm_s390_gisa *gisa;
->>> @@ -3091,7 +3092,10 @@ void kvm_s390_gisa_clear(struct kvm *kvm)
->>>   {
->>>       if (!kvm->arch.gisa)
->>>           return;
->>> +    if (set_iam(kvm->arch.gisa, 0) == -EBUSY)
->>> +        process_gib_alert_list();
->>
->> We call process_gib_alert_list() from different contexts shouldn't we 
->> protect the calls?
-> 
-> That should not be necessary as the xcgh() guarantees that both
-> instances will work on gib alert lists with disjunctive gisas.
+Yeah I think just remove it, it's not a well known term and is unlikely
+to help anyone these days.
 
-Here is how I see the problem:
+It stands for "RISC Platform Architecture", which was some kind of
+specification for Power machines back in the day, but from what I can
+tell it was never used in marketing or manuals much (hence so few hits
+on Google).
 
-A CPU get the GAL IRQ and start processing the ALERT list.
+> Is there some text expansion of RPA that we could use that would be
+> meaningful to a user, i.e., something he/she might find on a nameplate
+> or in a user manual?
 
-On another guest we clear floating interrupt...
-we call gisa_clear()
-we return from set_iam with -EBUSY, meaning the GISA is in alert list.
-   -> we call process_gib_alert_list()
-   -> since the list has been disjunct by the GAL IRQ routine we return
-      immediately
-   -> we nullify the GISA while it has not been handled by the IRQ
-      routine
+No I don't think so.
 
-!! if my assumption is right, we loose all GISA following the GISA we 
-just nullified.
+> Ideally the PCI Kconfig labels would match the terms used in
+> arch/.../Kconfig, e.g.,
+>
+>   config PPC_POWERNV
+>     bool "IBM PowerNV (Non-Virtualized) platform support"
+>
+>   config PPC_PSERIES
+>     bool "IBM pSeries & new (POWER5-based) iSeries"
+
+TBH these are pretty unhelpful too. PowerNV is not a marketing name and
+so doesn't appear anywhere much in official manuals or brochures and
+it's also used on non-IBM branded machines. And pSeries & iSeries were
+marketing names but are no longer used.
+
+We should probably update that text, but we can do that later, rather
+than blocking this patch.
+
+> diff --git a/drivers/pci/hotplug/Kconfig b/drivers/pci/hotplug/Kconfig
+> index e9f78eb390d2..1c1d145bfd84 100644
+> --- a/drivers/pci/hotplug/Kconfig
+> +++ b/drivers/pci/hotplug/Kconfig
+> @@ -112,7 +112,7 @@ config HOTPLUG_PCI_SHPC
+>  	  When in doubt, say N.
+>  
+>  config HOTPLUG_PCI_POWERNV
+> -	tristate "PowerPC PowerNV PCI Hotplug driver"
+> +	tristate "IBM PowerNV PCI Hotplug driver"
+
+This is used in non-IBM machines as well.
+
+So perhaps: ?
+
+	tristate "IBM/OpenPower PowerNV (bare metal) PCI Hotplug driver"
+
+> @@ -125,10 +125,11 @@ config HOTPLUG_PCI_POWERNV
+>  	  When in doubt, say N.
+>  
+>  config HOTPLUG_PCI_RPA
+> -	tristate "RPA PCI Hotplug driver"
+> +	tristate "IBM Power Systems RPA PCI Hotplug driver"
+
+I think just drop RPA here.
+
+>  	depends on PPC_PSERIES && EEH
+>  	help
+>  	  Say Y here if you have a RPA system that supports PCI Hotplug.
+
+s/RPA/IBM Power Systems/
+
+> +	  This includes the earlier pSeries and iSeries.
+
+To be complete:
+	  This includes the earlier System p, System i, pSeries and iSeries.
+
+>  
+>  	  To compile this driver as a module, choose M here: the
+>  	  module will be called rpaphp.
+> @@ -136,7 +137,7 @@ config HOTPLUG_PCI_RPA
+>  	  When in doubt, say N.
+>  
+>  config HOTPLUG_PCI_RPA_DLPAR
+> -	tristate "RPA Dynamic Logical Partitioning for I/O slots"
+> +	tristate "IBM RPA Dynamic Logical Partitioning for I/O slots"
+
+Again just drop RPA.
 
 
-Regards,
-Pierre
-
-
-
--- 
-Pierre Morel
-Linux/KVM/QEMU in Böblingen - Germany
-
+cheers
