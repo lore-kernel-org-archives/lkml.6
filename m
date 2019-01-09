@@ -2,139 +2,110 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA32FC43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 11:17:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 079A5C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 11:17:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9ECEB218AF
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 11:17:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C4FB921783
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 11:17:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="C+WwaQSZ";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Dn0NNZfG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730817AbfAILRI (ORCPT
+        id S1730837AbfAILRk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 06:17:08 -0500
-Received: from eddie.linux-mips.org ([148.251.95.138]:52482 "EHLO
-        cvs.linux-mips.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730111AbfAILRI (ORCPT
+        Wed, 9 Jan 2019 06:17:40 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:40904 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730111AbfAILRk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 06:17:08 -0500
-Received: (from localhost user: 'ladis' uid#1021 fake: STDIN
-        (ladis@eddie.linux-mips.org)) by eddie.linux-mips.org
-        id S23993832AbfAILRFLEeRV (ORCPT <rfc822;linux-omap@vger.kernel.org>
-        + 2 others); Wed, 9 Jan 2019 12:17:05 +0100
-Date:   Wed, 9 Jan 2019 12:17:03 +0100
-From:   Ladislav Michl <ladis@linux-mips.org>
-To:     Vincent Guittot <vincent.guittot@linaro.org>
-Cc:     Tony Lindgren <tony@atomide.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        LAK <linux-arm-kernel@lists.infradead.org>,
-        linux-omap@vger.kernel.org
-Subject: Re: Regression in v5.0-rc1 with autosuspend hrtimers
-Message-ID: <20190109111703.GA28605@lenoch>
-References: <20190107233833.GI5544@atomide.com>
- <CAKfTPtDBEmcsLotp-6K1KU1wM9Ba1EpMp3niXScRxYgzjs0nog@mail.gmail.com>
- <20190108155354.GL5544@atomide.com>
- <CAKfTPtCoOK-cYLXJ--sOfpVa9RVmzOAEN1+zB2qHMCzkJN0qaQ@mail.gmail.com>
- <20190108213743.GN5544@atomide.com>
- <20190109014218.GA8363@linaro.org>
+        Wed, 9 Jan 2019 06:17:40 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 9D3D3608CF; Wed,  9 Jan 2019 11:17:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1547032659;
+        bh=JU0ssnZNWz4auGPtPCG85Rk1lG4OaE62ftTmLt6Qjbc=;
+        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+        b=C+WwaQSZt3qcoQwkQyKnOHO0tdbiEui4/WWwU05Vl5WAx4BpA6fidEnCSS+sw6Meb
+         IWg1ou2h670gp1Z2rgIe20M3fdG+5yQBoiYWLF8GPpQJomQ2d55lRkDzWk3jklZiy0
+         M2CS9I8JECLoQmZiWFvguasGvratFD2JE2K1USwU=
+Received: from x230.qca.qualcomm.com (unknown [83.145.195.18])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 730196095E;
+        Wed,  9 Jan 2019 11:17:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1547032656;
+        bh=JU0ssnZNWz4auGPtPCG85Rk1lG4OaE62ftTmLt6Qjbc=;
+        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+        b=Dn0NNZfG74Mt8ZSstkyZTDhvaqo5uI4FIz240+VLNypJqZwd4fPBYX0AxMd4m2ITa
+         ddVrULCejXQWOikWIb+XFP+dsu2Pqao/7CCSeN9TYzrXhD8yhOWVAbZSiMY6RH7Tzj
+         pxWLIz9/Z5gwwsjZVKiYoSSMHFqHkFFQMbXRKGII=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 730196095E
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+From:   Kalle Valo <kvalo@codeaurora.org>
+To:     Arend Van Spriel <arend.vanspriel@broadcom.com>
+Cc:     Kangjie Lu <kjlu@umn.edu>, pakki001@umn.edu,
+        Franky Lin <franky.lin@broadcom.com>,
+        Hante Meuleman <hante.meuleman@broadcom.com>,
+        Chi-Hsien Lin <chi-hsien.lin@cypress.com>,
+        Wright Feng <wright.feng@cypress.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Pieter-Paul Giesberts <pieter-paul.giesberts@broadcom.com>,
+        linux-wireless@vger.kernel.org,
+        brcm80211-dev-list.pdl@broadcom.com,
+        brcm80211-dev-list@cypress.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: brcm80211: add a check for the status of usb_register
+References: <20181226012227.70524-1-kjlu@umn.edu>
+        <87zhsbqeuu.fsf@kamboji.qca.qualcomm.com>
+        <7ddb04d4-f45f-2b41-12da-d17e8f8c1173@broadcom.com>
+Date:   Wed, 09 Jan 2019 13:17:28 +0200
+In-Reply-To: <7ddb04d4-f45f-2b41-12da-d17e8f8c1173@broadcom.com> (Arend Van
+        Spriel's message of "Wed, 9 Jan 2019 09:28:19 +0100")
+Message-ID: <87r2dmcc6v.fsf@codeaurora.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190109014218.GA8363@linaro.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 09, 2019 at 02:42:18AM +0100, Vincent Guittot wrote:
-> Le Tuesday 08 Jan 2019 à 13:37:43 (-0800), Tony Lindgren a écrit :
-> > * Vincent Guittot <vincent.guittot@linaro.org> [190108 16:42]:
-> > > On Tue, 8 Jan 2019 at 16:53, Tony Lindgren <tony@atomide.com> wrote:
-> > > > Hmm so could it be that we now rely on timers that that may
-> > > > not be capable of waking up the system from idle states with
-> > > > hrtimer?
-> > > 
-> > > With nohz and hrtimer enabled,  timer relies on hrtimer to generate
-> > > the tick so you should use the same interrupt.
-> > 
-> > OK yeah looks like that part is working just fine.
-> > 
-> > Adding some printks and debugging over ssh, looks like
-> > omap8250_runtime_resume() gets called just fine based on a wakeirq,
-> > but then omap8250_runtime_suspend() runs immediately instead of
-> > waiting for the three second timeout.
-> > 
-> > Lowering the autosuspend_delay_ms to 2100 ms makes things work again.
-> > Anything higher than 2200 ms seems to somehow time out immediately
-> > now :)
-> 
-> This is quite close to the max ns of an int on arm 32bits
-> 
-> Could you try the patch below ?
-> 
-> ---
->  drivers/base/power/runtime.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/base/power/runtime.c b/drivers/base/power/runtime.c
-> index 7062469..44c5c76 100644
-> --- a/drivers/base/power/runtime.c
-> +++ b/drivers/base/power/runtime.c
-> @@ -141,7 +141,7 @@ u64 pm_runtime_autosuspend_expiration(struct device *dev)
->  
->  	last_busy = READ_ONCE(dev->power.last_busy);
->  
-> -	expires = last_busy + autosuspend_delay * NSEC_PER_MSEC;
-> +	expires = last_busy + (u64)(autosuspend_delay) * NSEC_PER_MSEC;
->  	if (expires <= now)
->  		expires = 0;	/* Already expired. */
+Arend Van Spriel <arend.vanspriel@broadcom.com> writes:
 
-Hmm, comment above function states it returns "the expiration time in jiffies
-(adjusted to be nonzero)", so there's probably more to fix...
+> On 1/8/2019 5:43 PM, Kalle Valo wrote:
+>> Kangjie Lu <kjlu@umn.edu> writes:
+>>
+>>> usb_register() may fail, so let's check its status and issue an error
+>>> message if it fails.
+>>>
+>>> Signed-off-by: Kangjie Lu <kjlu@umn.edu>
+>>> ---
+>>>   drivers/net/wireless/broadcom/brcm80211/brcmfmac/usb.c | 6 +++++-
+>>
+>> The title prefix should be "brcmfmac: " but I can fix that.
+>
+> Hi Kalle,
+>
+> I wanted to ack this patch, but can not locate it in my email not in
+> linux-wireless patchwork. Was it posted to the networking list only?
 
-You can also consider change like this (still does not return jiffies):
-diff --git a/drivers/base/power/runtime.c b/drivers/base/power/runtime.c
-index 70624695b6d5..c72eaf21a61c 100644
---- a/drivers/base/power/runtime.c
-+++ b/drivers/base/power/runtime.c
-@@ -129,23 +129,20 @@ static void pm_runtime_cancel_pending(struct device *dev)
- u64 pm_runtime_autosuspend_expiration(struct device *dev)
- {
- 	int autosuspend_delay;
--	u64 last_busy, expires = 0;
--	u64 now = ktime_to_ns(ktime_get());
-+	ktime_t expires;
- 
- 	if (!dev->power.use_autosuspend)
--		goto out;
-+		return 0;
- 
- 	autosuspend_delay = READ_ONCE(dev->power.autosuspend_delay);
- 	if (autosuspend_delay < 0)
--		goto out;
--
--	last_busy = READ_ONCE(dev->power.last_busy);
-+		return 0;
- 
--	expires = last_busy + autosuspend_delay * NSEC_PER_MSEC;
--	if (expires <= now)
--		expires = 0;	/* Already expired. */
-+	expires = ktime_add_ns(ms_to_ktime(autosuspend_delay),
-+			       READ_ONCE(dev->power.last_busy));
-+	if (expires <= ktime_get())
-+		return 0;	/* Already expired. */
- 
-- out:
- 	return expires;
- }
- EXPORT_SYMBOL_GPL(pm_runtime_autosuspend_expiration);
+I do see it on linux-wireless patchwork:
 
-Regards,
-	ladis
+https://patchwork.kernel.org/patch/10742769/
+
+> Using scripts/get_maintainer.pl with the patch would reveal the lists
+> to post to in order of preference. For wireless driver changes I
+> refrain to linux-wireless only, but that is a personal choice I guess.
+
+Yeah, I guess in general wireless patches are just noise for netdev
+people.
+
+-- 
+Kalle Valo
