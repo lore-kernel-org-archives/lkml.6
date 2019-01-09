@@ -7,49 +7,49 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 838B7C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 21:02:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBFF3C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 21:03:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4387C206BB
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 21:02:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8F3E5206BB
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 21:03:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=mailprotect.be header.i=@mailprotect.be header.b="S6P3eIca"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=mailprotect.be header.i=@mailprotect.be header.b="KVt2k9B1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727553AbfAIVCz (ORCPT
+        id S1727709AbfAIVDA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 16:02:55 -0500
-Received: from out002.mailprotect.be ([83.217.72.86]:52169 "EHLO
-        out002.mailprotect.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727469AbfAIVCx (ORCPT
+        Wed, 9 Jan 2019 16:03:00 -0500
+Received: from com-out001.mailprotect.be ([83.217.72.83]:54767 "EHLO
+        com-out001.mailprotect.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727564AbfAIVC5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 16:02:53 -0500
+        Wed, 9 Jan 2019 16:02:57 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=mailprotect.be; s=mail; h=Content-Transfer-Encoding:MIME-Version:References
         :In-Reply-To:Message-Id:Date:Subject:Cc:To:From:reply-to:sender:bcc:
-        content-type; bh=cRHB6v+5M3SL4PGCzCmOYFq5nIo0S/bAGV5jvR/m8Qg=; b=S6P3eIcanpcD
-        AUyBPggcYjDKqIzJvo8JmqgvJnbwJQF041RPxLRk460dQTKlUbzqU23zUvdQK7eDCjCtZhQKe9yCE
-        iZ/w29CY36+7AikLf7QSj/Rg3R0Usb8eCD7K6np8scUNDYmsruhrfmJxMuYSqyFdHz47vOnVaDBn3
-        +JJqqj20OY7slcKhTErZByQXle8gTu5/n02n0r1bQIEjixODz18+mC5bDSthQZwRb9aH8beX6moZ5
-        /cFFr4xbg+5GamzrL1m9KabuUsHy2YNQy7mMWJRgruOGv0Eui+Jms1qyB91CCio9wF/9NAX1i4e2C
-        55Q4m6hXArZrmUi9TEtxIw==;
+        content-type; bh=iuUsc6zJ0vwXLb6BgBGbjHLgykSdQFcmoF7XL4pAlgw=; b=KVt2k9B1VUPi
+        sRcTldsLFDrvJAk13O1P5YgsAvtwpfwk3gN+RfFlYfshphsFhTo7juzugKaIgLBWq3lONjYL2KQZ5
+        Y0aNnX1E7V4Mq/PVJqnCYlrZKbHEa3lyOUPO/2znF1QHyJ8VHGf2VW2Z0E/T9JMTS5aKksZfhy1Oq
+        hk66C253IOZ6Umnvf1gptOgUPltrwoCqWAqrUYioHDdoW8VzT1QKlzOPep079IUN476psC1sYwbfn
+        +DRAQYZxjPVV9xuw20TS01pETdgAmrRbOueIZkdBfVVM/Eb8yx/T7IVMweRERuS1zuPwZAvoRaLSp
+        sfxQk6MohDg8RdHCq90s8g==;
 Received: from smtp-auth.mailprotect.be ([178.208.39.159])
-        by com-mpt-out002.mailprotect.be with esmtp (Exim 4.89)
+        by com-mpt-out001.mailprotect.be with esmtp (Exim 4.89)
         (envelope-from <bvanassche@acm.org>)
-        id 1ghKzr-0009DF-81; Wed, 09 Jan 2019 22:02:43 +0100
+        id 1ghKzt-0009FE-Fa; Wed, 09 Jan 2019 22:02:46 +0100
 Received: from desktop-bart.svl.corp.google.com (unknown [104.133.8.89])
         (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by smtp-auth.mailprotect.be (Postfix) with ESMTPSA id 1A127C07CD;
-        Wed,  9 Jan 2019 22:02:37 +0100 (CET)
+        by smtp-auth.mailprotect.be (Postfix) with ESMTPSA id A8374C1632;
+        Wed,  9 Jan 2019 22:02:27 +0100 (CET)
 From:   Bart Van Assche <bvanassche@acm.org>
 To:     peterz@infradead.org
 Cc:     mingo@redhat.com, tj@kernel.org, longman@redhat.com,
         johannes.berg@intel.com, linux-kernel@vger.kernel.org,
         Bart Van Assche <bvanassche@acm.org>,
         Johannes Berg <johannes@sipsolutions.net>
-Subject: [PATCH v6 10/16] locking/lockdep: Introduce lockdep_next_lockchain() and lock_chain_count()
-Date:   Wed,  9 Jan 2019 13:01:58 -0800
-Message-Id: <20190109210204.192109-11-bvanassche@acm.org>
+Subject: [PATCH v6 05/16] locking/lockdep: Initialize the locks_before and locks_after lists earlier
+Date:   Wed,  9 Jan 2019 13:01:53 -0800
+Message-Id: <20190109210204.192109-6-bvanassche@acm.org>
 X-Mailer: git-send-email 2.20.1.97.g81188d93c3-goog
 In-Reply-To: <20190109210204.192109-1-bvanassche@acm.org>
 References: <20190109210204.192109-1-bvanassche@acm.org>
@@ -62,20 +62,20 @@ Authentication-Results: mailprotect.be; auth=pass smtp.auth=178.208.39.128/27@ma
 X-SpamExperts-Outgoing-Class: ham
 X-SpamExperts-Outgoing-Evidence: Combined (0.01)
 X-Recommended-Action: accept
-X-Filter-ID: EX5BVjFpneJeBchSMxfU5vr+MVtpjktRCjFUZUKSUQt602E9L7XzfQH6nu9C/Fh9KJzpNe6xgvOx
+X-Filter-ID: EX5BVjFpneJeBchSMxfU5o9zf9PBf68SVjqFrlFZ2OB602E9L7XzfQH6nu9C/Fh9KJzpNe6xgvOx
  q3u0UDjvO1tLifGj39bI0bcPyaJsYTb/+zriNZuqQk0xRpGwjn+MTR8dtByWYYhgj25jR+mEA3YO
  AtfhCcV13BpIh8lqRXSSiFVwqwU9VgKUrYQ0lqWyFDaym8oavoPYsm7m1mVEGf0/5ST3nkt5XYDK
  YAuRpmF7E2F3eqKXiTd2ECUghryWXlqwG31yUGf3t09vBVYS71V1Pk0aHudBU1wyWVTA5OYS1waI
- XXCBiQFDV0yen8nGcSeERs4TOTnIH1kc1IWc5eLazqbUYkjl7F1LyK0RORqM+52BNrKIKoSNp67Z
- WA7eSNgvEAWLFiDAlQR6Wu0I/iWDegq4fQ11AxLVlrI7DVH6GzPz+r852EXXeYX4ImMyzDg6HYuT
+ XXCBiQFDV0yen8nGcSeERs4TOTnIH1kc1IWc5eLazqbUYkjl7F1LyK0RORrTxLIdSVWJrx/Eeywb
+ iefNSNgvEAWLFiDAlQR6Wu0I/iWDegq4fQ11AxLVlrI7DVFg5Rj2g0fgHrO2rAGaVRcnzDg6HYuT
  CyYgL61SIkBTYXPEvhymCNb22qmKERGbL1SqvGGff0htQqhQf0/aDrhpLM4xnCPpmyyS7jgD9Nen
  VVoB/PLX+rmdznc91veCJAwpCI+5VHpzDqRcT2+GtIE8SRAgmLDKAcp9i+Q+BEiSUj07SNjVkl0P
  Pj+OUYZX3/1fKPQPEuPra72LpiTN2rUT6Y9xm3kmEG6YzhU+GhpkbBQllJXXeGX8fAMzPNqrCG8d
  f68W0InH/+bTMKNm38MHmfnhF9U/dVeZ9xbDBH3UiCDt3yfQxlhCaKc8coJFU+8pOMQJvQ/Ck3ii
- U+4DQAj38VcpxSBd167NiiR0DMS/T4GvZUhi7BJ7QOeRk66G/m8jRjgifve2wm5/91NPphLv+z+B
- LZcNbgROkcUUt9xVJMkbDexj3GNq3Ba9L8bPF+CqltsYPx2OGpapJQwbU6lxiSPQp1QN34zBsoOP
+ U+4DQAj38VcpxSBd167NiiR0DMS/T4GvZUhi7BJ7QOeRk66G/m8FNKZFrpMP+RrTJ6+mm5EZEQeN
+ PcBB6odLSr/ChNgKLqhjFwpQYlsFWNUsWIwUyC+qltsYPx2OGpapJQwbU6lxiSPQp1QN34zBsoOP
  LAVTMEsOC75ReJHeVybconOP07vieGH1wwKQhUuVJ6kr80wTGaiTXW7z2lMqAnbumOwh0pBt+CpM
- AQh13vqug5h3Dxw3R6uDCaZaKNta3utckIYDWOxZERl7aun/zIs3KN8kA5IAiDKO1d3jsySf+J0s
+ AQh13vqug5h3DxzHe+r3QY5RFJnMVG+JUUlCBsv9S6pKs4R9DleXORbXTpIAiDKO1d3jsySf+J0s
  zc1uD9pAwuLhqtxw5exj8Aw7fqb5R4VemuUI6bcEARsm0JyPNwoZFF/BeruF9IPYgMLyX2cd5RrN
  VWdImRunoKaV5Izq4VabSfIGUY8RJ38dSGEP+JYPRX76oPSBtBBPLYw1mZQfhvSXPX1npIQpGBE7
  MnJiHvQ8gQs8eCOaG4DvtrnB4hxWBV/7jCqhcJq0hur2OKHH5lr9xXvSM4nM3avg
@@ -85,104 +85,87 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch does not change any functionality but makes the next patch in
-this series easier to read.
+This patch does not change any functionality. A later patch will reuse
+lock classes that have been freed. In combination with that patch this
+patch wil have the effect of initializing lock class order lists once
+instead of every time a lock class structure is reinitialized.
 
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Waiman Long <longman@redhat.com>
 Cc: Johannes Berg <johannes@sipsolutions.net>
 Signed-off-by: Bart Van Assche <bvanassche@acm.org>
 ---
- kernel/locking/lockdep.c           | 16 +++++++++++++++-
- kernel/locking/lockdep_internals.h |  3 ++-
- kernel/locking/lockdep_proc.c      | 12 ++++++------
- 3 files changed, 23 insertions(+), 8 deletions(-)
+ kernel/locking/lockdep.c | 29 +++++++++++++++++++++++++++--
+ 1 file changed, 27 insertions(+), 2 deletions(-)
 
 diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-index 5e8a3a17bb94..ef3809e21fa9 100644
+index e52ce8745cba..5ca5904ad489 100644
 --- a/kernel/locking/lockdep.c
 +++ b/kernel/locking/lockdep.c
-@@ -2110,7 +2110,7 @@ check_prevs_add(struct task_struct *curr, struct held_lock *next)
- 	return 0;
- }
- 
--unsigned long nr_lock_chains;
-+static unsigned long nr_lock_chains;
- struct lock_chain lock_chains[MAX_LOCKDEP_CHAINS];
- int nr_chain_hlocks;
- static u16 chain_hlocks[MAX_LOCKDEP_CHAIN_HLOCKS];
-@@ -2244,6 +2244,20 @@ static int check_no_collision(struct task_struct *curr,
- 	return 1;
+@@ -735,6 +735,25 @@ static bool assign_lock_key(struct lockdep_map *lock)
+ 	return true;
  }
  
 +/*
-+ * Given an index that is >= -1, return the index of the next lock chain.
-+ * Return -2 if there is no next lock chain.
++ * Initialize the lock_classes[] array elements.
 + */
-+long lockdep_next_lockchain(long i)
++static void init_data_structures_once(void)
 +{
-+	return i + 1 < nr_lock_chains ? i + 1 : -2;
-+}
++	static bool initialization_happened;
++	int i;
 +
-+unsigned long lock_chain_count(void)
-+{
-+	return nr_lock_chains;
++	if (likely(initialization_happened))
++		return;
++
++	initialization_happened = true;
++
++	for (i = 0; i < ARRAY_SIZE(lock_classes); i++) {
++		INIT_LIST_HEAD(&lock_classes[i].locks_after);
++		INIT_LIST_HEAD(&lock_classes[i].locks_before);
++	}
 +}
 +
  /*
-  * Adds a dependency chain into chain hashtable. And must be called with
-  * graph_lock held.
-diff --git a/kernel/locking/lockdep_internals.h b/kernel/locking/lockdep_internals.h
-index 88c847a41c8a..ba8a4ac7bd04 100644
---- a/kernel/locking/lockdep_internals.h
-+++ b/kernel/locking/lockdep_internals.h
-@@ -96,7 +96,8 @@ struct lock_class *lock_chain_get_class(struct lock_chain *chain, int i);
+  * Register a lock's class in the hash-table, if the class is not present
+  * yet. Otherwise we look it up. We cache the result in the lock object
+@@ -775,6 +794,8 @@ register_lock_class(struct lockdep_map *lock, unsigned int subclass, int force)
+ 			goto out_unlock_set;
+ 	}
  
- extern unsigned long nr_lock_classes;
- extern unsigned long nr_list_entries;
--extern unsigned long nr_lock_chains;
-+long lockdep_next_lockchain(long i);
-+unsigned long lock_chain_count(void);
- extern int nr_chain_hlocks;
- extern unsigned long nr_stack_trace_entries;
- 
-diff --git a/kernel/locking/lockdep_proc.c b/kernel/locking/lockdep_proc.c
-index 3d31f9b0059e..9c49ec645d8b 100644
---- a/kernel/locking/lockdep_proc.c
-+++ b/kernel/locking/lockdep_proc.c
-@@ -104,18 +104,18 @@ static const struct seq_operations lockdep_ops = {
- #ifdef CONFIG_PROVE_LOCKING
- static void *lc_start(struct seq_file *m, loff_t *pos)
- {
-+	if (*pos < 0)
-+		return NULL;
++	init_data_structures_once();
 +
- 	if (*pos == 0)
- 		return SEQ_START_TOKEN;
+ 	/*
+ 	 * Allocate a new key from the static array, and add it to
+ 	 * the hash:
+@@ -793,8 +814,8 @@ register_lock_class(struct lockdep_map *lock, unsigned int subclass, int force)
+ 	class->key = key;
+ 	class->name = lock->name;
+ 	class->subclass = subclass;
+-	INIT_LIST_HEAD(&class->locks_before);
+-	INIT_LIST_HEAD(&class->locks_after);
++	WARN_ON_ONCE(!list_empty(&class->locks_before));
++	WARN_ON_ONCE(!list_empty(&class->locks_after));
+ 	class->name_version = count_matching_names(class);
+ 	/*
+ 	 * We use RCU's safe list-add method to make
+@@ -4167,6 +4188,8 @@ void lockdep_free_key_range(void *start, unsigned long size)
+ 	int i;
+ 	int locked;
  
--	if (*pos - 1 < nr_lock_chains)
--		return lock_chains + (*pos - 1);
--
--	return NULL;
-+	return lock_chains + (*pos - 1);
- }
++	init_data_structures_once();
++
+ 	raw_local_irq_save(flags);
+ 	locked = graph_lock();
  
- static void *lc_next(struct seq_file *m, void *v, loff_t *pos)
- {
--	(*pos)++;
-+	*pos = lockdep_next_lockchain(*pos - 1) + 1;
- 	return lc_start(m, pos);
- }
+@@ -4230,6 +4253,8 @@ void lockdep_reset_lock(struct lockdep_map *lock)
+ 	unsigned long flags;
+ 	int j, locked;
  
-@@ -268,7 +268,7 @@ static int lockdep_stats_show(struct seq_file *m, void *v)
++	init_data_structures_once();
++
+ 	raw_local_irq_save(flags);
+ 	locked = graph_lock();
  
- #ifdef CONFIG_PROVE_LOCKING
- 	seq_printf(m, " dependency chains:             %11lu [max: %lu]\n",
--			nr_lock_chains, MAX_LOCKDEP_CHAINS);
-+			lock_chain_count(), MAX_LOCKDEP_CHAINS);
- 	seq_printf(m, " dependency chain hlocks:       %11d [max: %lu]\n",
- 			nr_chain_hlocks, MAX_LOCKDEP_CHAIN_HLOCKS);
- #endif
 -- 
 2.20.1.97.g81188d93c3-goog
 
