@@ -2,234 +2,209 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 035BAC43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 15:16:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05D69C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 15:17:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 827FE206B6
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 15:16:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C6607206B6
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 15:17:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="CcynShqy"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="VLI1IOjL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732189AbfAIPQ1 (ORCPT
+        id S1732216AbfAIPRL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 10:16:27 -0500
-Received: from conssluserg-02.nifty.com ([210.131.2.81]:19999 "EHLO
-        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730725AbfAIPQ1 (ORCPT
+        Wed, 9 Jan 2019 10:17:11 -0500
+Received: from mail-vk1-f195.google.com ([209.85.221.195]:41477 "EHLO
+        mail-vk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730725AbfAIPRK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 10:16:27 -0500
-Received: from mail-vs1-f46.google.com (mail-vs1-f46.google.com [209.85.217.46]) (authenticated)
-        by conssluserg-02.nifty.com with ESMTP id x09FGHYc032054
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 00:16:18 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com x09FGHYc032054
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1547046978;
-        bh=CMBcGzQwmWu36K540QIdLA4arIn9ojOmjuSY185U9iU=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=CcynShqyfBbcXvGHzR1MyIU/c//1TLk71mFq2JONBRu7riNX/kwmQVV4n/eE5aoao
-         HIHPyaUz6KSwQPHs/GWqibqlYy3lv3rX0BDqXcz+ebbXmegQ6E763JsZF7QUM5JfHF
-         xgcVCWrr15slJuL5HBq8oQ9RWRg7vm4YTOR0dFVYcerKpwAqbSPcoeWNwTr8ObMYyv
-         MfzT+nruVRbG8POcz6b0Th8s3om2yC8ohcfBzRBvcDbNbLp9I/4rG3m0sBy2mEOAVJ
-         xRm+hizmZHAN/++pRAW2o8Ck7+N28LGaTcMwWqZkMYdSU9liKGJFzr+BfL1+coPVy0
-         ZgDpnLRncAa6Q==
-X-Nifty-SrcIP: [209.85.217.46]
-Received: by mail-vs1-f46.google.com with SMTP id v205so4956458vsc.3
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jan 2019 07:16:17 -0800 (PST)
-X-Gm-Message-State: AJcUukftHxFaoTL6lTO/rqbBhDriBX9Lfn9WMcH9g3cfQB/OSkVvrtYK
-        JCI4Hyqak61bWQG8IKHhXtXiD4HlKpWivg/wYNI=
-X-Google-Smtp-Source: ALg8bN4AXTo93OV06vwo+E6tmBjBdLLRlv9t97lYLFaYBzUU0gpiKlEg3ryroeqWCdkCOobg6y3htQ9UAA5JO1oTsEo=
-X-Received: by 2002:a67:5f03:: with SMTP id t3mr2644042vsb.155.1547046976689;
- Wed, 09 Jan 2019 07:16:16 -0800 (PST)
+        Wed, 9 Jan 2019 10:17:10 -0500
+Received: by mail-vk1-f195.google.com with SMTP id t127so1732125vke.8
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Jan 2019 07:17:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=wQyqmC0gu61Qarv1hQhLAtGsvcLURGacNluwzCkEZB0=;
+        b=VLI1IOjLXvqruH3GGhbDAxUssjVcLPNDHV1Sxeo1aWKVJClMYuwbgsEacK2It5QT25
+         vgQhF6AxLYK4B+Ep90NS4VVylbzey3+I8PkaclGMpKVDaZ8ms4cHw7HBvSCZF4ogW0MJ
+         pswXBtnEST6VZhAlWdjNRTY6aI6ttFLo2qW1Y=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=wQyqmC0gu61Qarv1hQhLAtGsvcLURGacNluwzCkEZB0=;
+        b=m1gfnSfUx/wwozFROedGS3qyLMyoZmSh6uc48+EItV9a+KgYsTsqkPdHf7tzZXjENs
+         JlEl0ksjvgrJJjo6E27vqgj8G3z9WLgg92clwNKkinR+TMg92kA72pT1KcN2MzkrIqaW
+         b/7sWQ/qTR209UdHyjwwga5ZdQsIXCDIOrEBYbvSLeyauw7kDpDsvj9EL2uldq1KoSi/
+         QAvRMuBx0XLs5INIrS+SXT4GYq0pq7Pm9ddFKGcgxFeeFOnR9iYve/zRval4ZAlAQ5g1
+         SrmaDOuRWGV6+49deVPjCFwLF/BoWdltCjYt9UPpUKJnPKy46xsdf0zFthzR/ftXNxVg
+         rEFQ==
+X-Gm-Message-State: AJcUukftU6OWm2ao+KdXgfIsNiBoq4xcZd/s/7DKfsgSetXNrNr4s9gm
+        METrxRjTlLaEuE1AGJSrHqMFnu3WbmA=
+X-Google-Smtp-Source: ALg8bN4Xoz8ibdvvVlIC9S3NRnM1pyg/t63mhhXcz0ZqS6PoxLHWs17B9l1srU7u7yTvGuU+IiR0ng==
+X-Received: by 2002:a1f:9ec9:: with SMTP id h192mr2407019vke.68.1547047028319;
+        Wed, 09 Jan 2019 07:17:08 -0800 (PST)
+Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com. [209.85.217.43])
+        by smtp.gmail.com with ESMTPSA id r8sm20935709uan.0.2019.01.09.07.17.06
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 09 Jan 2019 07:17:07 -0800 (PST)
+Received: by mail-vs1-f43.google.com with SMTP id v205so4958631vsc.3
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Jan 2019 07:17:06 -0800 (PST)
+X-Received: by 2002:a67:2c13:: with SMTP id s19mr2629580vss.172.1547047026185;
+ Wed, 09 Jan 2019 07:17:06 -0800 (PST)
 MIME-Version: 1.0
-References: <CAK7LNAT+5eOFc64SG2SKCOThVVsz6S2NPBpemdcjCcZX_zds2Q@mail.gmail.com>
- <mhng-aacb9594-f17b-4728-91f7-e2804e6a3dbc@palmer-si-x1c4> <mvmd0p5g9ot.fsf@suse.de>
-In-Reply-To: <mvmd0p5g9ot.fsf@suse.de>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Thu, 10 Jan 2019 00:15:40 +0900
-X-Gmail-Original-Message-ID: <CAK7LNASWOPhAJ1_xRj5A5mgEFp-V2rVtRu7ZDGEJwTE4iVAK0w@mail.gmail.com>
-Message-ID: <CAK7LNASWOPhAJ1_xRj5A5mgEFp-V2rVtRu7ZDGEJwTE4iVAK0w@mail.gmail.com>
-Subject: Re: [PATCH] riscv: remove redundant kernel-space generic-y
-To:     Andreas Schwab <schwab@suse.de>
-Cc:     Palmer Dabbelt <palmer@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>, alankao@andestech.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        linux-riscv@lists.infradead.org, Jim Wilson <jimw@sifive.com>
+References: <8593f7faf89812a9987d44d9ae615d64dca4d77f.1544800744.git.christophe.leroy@c-s.fr>
+ <CAGXu5jKeGp_z_69SybtkSaE381Ui7aXCxp9yBxv=TS0=hSsm-A@mail.gmail.com> <2d2e8cef-dd12-75e8-4779-fe4437e2169c@c-s.fr>
+In-Reply-To: <2d2e8cef-dd12-75e8-4779-fe4437e2169c@c-s.fr>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Wed, 9 Jan 2019 07:16:55 -0800
+X-Gmail-Original-Message-ID: <CAGXu5jKUArQAkirjTTrPM-xayT1aYEGzmyveDZwrLuqmvRqD+A@mail.gmail.com>
+Message-ID: <CAGXu5jKUArQAkirjTTrPM-xayT1aYEGzmyveDZwrLuqmvRqD+A@mail.gmail.com>
+Subject: Re: [PATCH] lkdtm: Add a tests for NULL pointer dereference
+To:     Christophe Leroy <christophe.leroy@c-s.fr>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        PowerPC <linuxppc-dev@lists.ozlabs.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 10, 2019 at 12:01 AM Andreas Schwab <schwab@suse.de> wrote:
+On Tue, Jan 8, 2019 at 10:31 PM Christophe Leroy
+<christophe.leroy@c-s.fr> wrote:
 >
-> On Jan 08 2019, Palmer Dabbelt <palmer@sifive.com> wrote:
 >
-> > On Fri, 04 Jan 2019 07:03:20 PST (-0800), yamada.masahiro@socionext.com wrote:
-> >> On Fri, Jan 4, 2019 at 11:16 AM Palmer Dabbelt <palmer@sifive.com> wrote:
-> >>>
-> >>> On Sun, 16 Dec 2018 06:11:11 PST (-0800), yamada.masahiro@socionext.com wrote:
-> >>> > This commit removes redundant generic-y defines in
-> >>> > arch/riscv/include/asm/Kbuild.
-> >>> >
-> >>> > [1] It is redundant to define the same generic-y in both
-> >>> >     arch/$(ARCH)/include/asm/Kbuild and
-> >>> >     arch/$(ARCH)/include/uapi/asm/Kbuild.
-> >>> >
-> >>> >     Remove the following generic-y:
-> >>> >
-> >>> >       errno.h
-> >>> >       fcntl.h
-> >>> >       ioctl.h
-> >>> >       ioctls.h
-> >>> >       ipcbuf.h
-> >>> >       mman.h
-> >>> >       msgbuf.h
-> >>> >       param.h
-> >>> >       poll.h
-> >>> >       posix_types.h
-> >>> >       resource.h
-> >>> >       sembuf.h
-> >>> >       setup.h
-> >>> >       shmbuf.h
-> >>> >       signal.h
-> >>> >       socket.h
-> >>> >       sockios.h
-> >>> >       stat.h
-> >>> >       statfs.h
-> >>> >       swab.h
-> >>> >       termbits.h
-> >>> >       termios.h
-> >>> >       types.h
-> >>> >
-> >>> > [2] It is redundant to define generic-y when arch-specific
-> >>> >     implementation exists in arch/$(ARCH)/include/asm/*.h
-> >>> >
-> >>> >     Remove the following generic-y:
-> >>> >
-> >>> >       cacheflush.h
-> >>> >       dma-mapping.h
-> >>> >       module.h
-> >>> >
-> >>> > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> >>> > ---
-> >>> >
-> >>> >  arch/riscv/include/asm/Kbuild | 26 --------------------------
-> >>> >  1 file changed, 26 deletions(-)
-> >>> >
-> >>> > diff --git a/arch/riscv/include/asm/Kbuild b/arch/riscv/include/asm/Kbuild
-> >>> > index 6a646d9..f7068f3 100644
-> >>> > --- a/arch/riscv/include/asm/Kbuild
-> >>> > +++ b/arch/riscv/include/asm/Kbuild
-> >>> > @@ -1,5 +1,4 @@
-> >>> >  generic-y += bugs.h
-> >>> > -generic-y += cacheflush.h
-> >>> >  generic-y += checksum.h
-> >>> >  generic-y += compat.h
-> >>> >  generic-y += cputime.h
-> >>> > @@ -7,18 +6,12 @@ generic-y += device.h
-> >>> >  generic-y += div64.h
-> >>> >  generic-y += dma.h
-> >>> >  generic-y += dma-contiguous.h
-> >>> > -generic-y += dma-mapping.h
-> >>> >  generic-y += emergency-restart.h
-> >>> > -generic-y += errno.h
-> >>> >  generic-y += exec.h
-> >>> >  generic-y += fb.h
-> >>> > -generic-y += fcntl.h
-> >>> >  generic-y += hardirq.h
-> >>> >  generic-y += hash.h
-> >>> >  generic-y += hw_irq.h
-> >>> > -generic-y += ioctl.h
-> >>> > -generic-y += ioctls.h
-> >>> > -generic-y += ipcbuf.h
-> >>> >  generic-y += irq_regs.h
-> >>> >  generic-y += irq_work.h
-> >>> >  generic-y += kdebug.h
-> >>> > @@ -27,34 +20,15 @@ generic-y += kvm_para.h
-> >>> >  generic-y += local.h
-> >>> >  generic-y += local64.h
-> >>> >  generic-y += mm-arch-hooks.h
-> >>> > -generic-y += mman.h
-> >>> > -generic-y += module.h
-> >>> > -generic-y += msgbuf.h
-> >>> >  generic-y += mutex.h
-> >>> > -generic-y += param.h
-> >>> >  generic-y += percpu.h
-> >>> > -generic-y += poll.h
-> >>> > -generic-y += posix_types.h
-> >>> >  generic-y += preempt.h
-> >>> > -generic-y += resource.h
-> >>> >  generic-y += scatterlist.h
-> >>> >  generic-y += sections.h
-> >>> > -generic-y += sembuf.h
-> >>> >  generic-y += serial.h
-> >>> > -generic-y += setup.h
-> >>> > -generic-y += shmbuf.h
-> >>> >  generic-y += shmparam.h
-> >>> > -generic-y += signal.h
-> >>> > -generic-y += socket.h
-> >>> > -generic-y += sockios.h
-> >>> > -generic-y += stat.h
-> >>> > -generic-y += statfs.h
-> >>> > -generic-y += swab.h
-> >>> > -generic-y += termbits.h
-> >>> > -generic-y += termios.h
-> >>> >  generic-y += topology.h
-> >>> >  generic-y += trace_clock.h
-> >>> > -generic-y += types.h
-> >>> >  generic-y += unaligned.h
-> >>> >  generic-y += user.h
-> >>> >  generic-y += vga.h
-> >>>
-> >>> Thanks.  These just sort of collected there because I hadn't trimmed them.  Is
-> >>> there a script that checks these?
+>
+> Le 09/01/2019 =C3=A0 02:14, Kees Cook a =C3=A9crit :
+> > On Fri, Dec 14, 2018 at 7:26 AM Christophe Leroy
+> > <christophe.leroy@c-s.fr> wrote:
 > >>
-> >>
-> >> No script is available for now, but
-> >> I'd like to turn on warnings to catch some cases:
-> >> https://patchwork.kernel.org/patch/10746823/
-> >>
-> >>
-> >> BTW, can I apply this to my tree
-> >> along with other cleanups?
+> >> Introduce lkdtm tests for NULL pointer dereference: check
+> >> access or exec at NULL address.
 > >
-> > Acked-by: Palmer Dabbelt <palmer@sifive.com>
+> > Why is this not already covered by the existing tests? (Is there
+> > something special about NULL that is being missed?) I'd expect SMAP
+> > and SMEP to cover NULL as well.
 >
-> arch/riscv/include/asm/dma-mapping.h no longer exists.
+> Most arches print a different message whether the faulty address is
+> above or under PAGE_SIZE. Below is exemple from x86:
 >
-> In file included from ./include/linux/skbuff.h:34,
->                  from ./include/net/net_namespace.h:36,
->                  from ./include/linux/inet.h:46,
->                  from ./include/linux/sunrpc/msg_prot.h:204,
->                  from ./include/linux/sunrpc/auth.h:16,
->                  from ./include/linux/nfs_fs.h:31,
->                  from init/do_mounts.c:22:
-> ./include/linux/dma-mapping.h:261:10: fatal error: asm/dma-mapping.h: No such file or directory
->  #include <asm/dma-mapping.h>
->           ^~~~~~~~~~~~~~~~~~~
-> compilation terminated.
-> make[1]: *** [scripts/Makefile.build:277: init/do_mounts.o] Error 1
+>         pr_alert("BUG: unable to handle kernel %s at %px\n",
+>                  address < PAGE_SIZE ? "NULL pointer dereference" : "pagi=
+ng request",
+>                  (void *)address);
+>
+>
+> Until recently, the powerpc arch didn't do it. When I implemented it
+> (https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commi=
+t/?id=3D49a502ea23bf9dec47f8f3c3960909ff409cd1bb),
+> I needed a way to test it and couldn't find an existing one, hence this
+> new LKDTM test.
+>
+> But maybe I missed something ?
+
+Okay, gotcha. You're getting more complete reporting coverage. Sounds
+good to me. Thanks!
+
+Acked-by: Kees Cook <keescook@chromium.org>
+
+-Kees
+
+>
+> Christophe
+>
+> >
+> > -Kees
+> >
+> >>
+> >> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+> >> ---
+> >>   drivers/misc/lkdtm/core.c  |  2 ++
+> >>   drivers/misc/lkdtm/lkdtm.h |  2 ++
+> >>   drivers/misc/lkdtm/perms.c | 18 ++++++++++++++++++
+> >>   3 files changed, 22 insertions(+)
+> >>
+> >> diff --git a/drivers/misc/lkdtm/core.c b/drivers/misc/lkdtm/core.c
+> >> index bc76756b7eda..36910e1d5c09 100644
+> >> --- a/drivers/misc/lkdtm/core.c
+> >> +++ b/drivers/misc/lkdtm/core.c
+> >> @@ -157,7 +157,9 @@ static const struct crashtype crashtypes[] =3D {
+> >>          CRASHTYPE(EXEC_VMALLOC),
+> >>          CRASHTYPE(EXEC_RODATA),
+> >>          CRASHTYPE(EXEC_USERSPACE),
+> >> +       CRASHTYPE(EXEC_NULL),
+> >>          CRASHTYPE(ACCESS_USERSPACE),
+> >> +       CRASHTYPE(ACCESS_NULL),
+> >>          CRASHTYPE(WRITE_RO),
+> >>          CRASHTYPE(WRITE_RO_AFTER_INIT),
+> >>          CRASHTYPE(WRITE_KERN),
+> >> diff --git a/drivers/misc/lkdtm/lkdtm.h b/drivers/misc/lkdtm/lkdtm.h
+> >> index 3c6fd327e166..b69ee004a3f7 100644
+> >> --- a/drivers/misc/lkdtm/lkdtm.h
+> >> +++ b/drivers/misc/lkdtm/lkdtm.h
+> >> @@ -45,7 +45,9 @@ void lkdtm_EXEC_KMALLOC(void);
+> >>   void lkdtm_EXEC_VMALLOC(void);
+> >>   void lkdtm_EXEC_RODATA(void);
+> >>   void lkdtm_EXEC_USERSPACE(void);
+> >> +void lkdtm_EXEC_NULL(void);
+> >>   void lkdtm_ACCESS_USERSPACE(void);
+> >> +void lkdtm_ACCESS_NULL(void);
+> >>
+> >>   /* lkdtm_refcount.c */
+> >>   void lkdtm_REFCOUNT_INC_OVERFLOW(void);
+> >> diff --git a/drivers/misc/lkdtm/perms.c b/drivers/misc/lkdtm/perms.c
+> >> index fa54add6375a..62f76d506f04 100644
+> >> --- a/drivers/misc/lkdtm/perms.c
+> >> +++ b/drivers/misc/lkdtm/perms.c
+> >> @@ -164,6 +164,11 @@ void lkdtm_EXEC_USERSPACE(void)
+> >>          vm_munmap(user_addr, PAGE_SIZE);
+> >>   }
+> >>
+> >> +void lkdtm_EXEC_NULL(void)
+> >> +{
+> >> +       execute_location(NULL, CODE_AS_IS);
+> >> +}
+> >> +
+> >>   void lkdtm_ACCESS_USERSPACE(void)
+> >>   {
+> >>          unsigned long user_addr, tmp =3D 0;
+> >> @@ -195,6 +200,19 @@ void lkdtm_ACCESS_USERSPACE(void)
+> >>          vm_munmap(user_addr, PAGE_SIZE);
+> >>   }
+> >>
+> >> +void lkdtm_ACCESS_NULL(void)
+> >> +{
+> >> +       unsigned long tmp;
+> >> +       unsigned long *ptr =3D (unsigned long *)NULL;
+> >> +
+> >> +       pr_info("attempting bad read at %px\n", ptr);
+> >> +       tmp =3D *ptr;
+> >> +       tmp +=3D 0xc0dec0de;
+> >> +
+> >> +       pr_info("attempting bad write at %px\n", ptr);
+> >> +       *ptr =3D tmp;
+> >> +}
+> >> +
+> >>   void __init lkdtm_perms_init(void)
+> >>   {
+> >>          /* Make sure we can write to __ro_after_init values during __=
+init */
+> >> --
+> >> 2.13.3
+> >>
+> >
+> >
 
 
-Looks like you tested v1,
-which I sent before c5cd037d1c8044fbd131c57822a67a1576eb16e9 was applied.
 
-
-I picked up v2:
-https://patchwork.kernel.org/patch/10746819/
-
-Now, it is already in Linus tree.
-8c4fa8b8d48326353afaf6934edd5f1cc49ee90b
-
-
-
-
---
-Best Regards
-Masahiro Yamada
+--=20
+Kees Cook
