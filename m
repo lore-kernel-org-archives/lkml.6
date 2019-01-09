@@ -2,178 +2,161 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EBA1C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 02:03:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05A06C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 02:05:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D31DD206BB
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 02:03:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="poQIYTSe"
+	by mail.kernel.org (Postfix) with ESMTP id C70B7214C6
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 02:05:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1546999508;
+	bh=Ickqk2IZkIG8p04SgQek3hIsU1ZxkvWNSEhuLaJp8Mw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=iaU3NTZOcGTrG9zBypsycOfbZwYuI8PGQ0CIsrfBYz4xJOdtAdI69Pokw12pmS/fo
+	 OzQXs2cSk/UVCcb/kbxAyMbSBUYB7qa3x4kLGneTKcLMWZxF+uGSqF4mPqCe32Prvv
+	 vrtRxaCkHf7lL5qQEQkWk48PqUoZWdqfPxpCmjNM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729646AbfAICDh (ORCPT
+        id S1729422AbfAICFI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 21:03:37 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:46093 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729152AbfAICDh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 21:03:37 -0500
-Received: by mail-pl1-f194.google.com with SMTP id t13so2780023ply.13;
-        Tue, 08 Jan 2019 18:03:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=Zq+022OUiAcpEDpkSUFVyaVWu7HbsGwR/IRWCAVsXzk=;
-        b=poQIYTSeUR1rGwcnNq9bcu8XFVL0WyWS2pQlQvEppQlNbnisuMLwYMw2G0UPgJXzCo
-         aotIo7Jn6Sxaxb9jLN4ut8ShsuJXlatldrsVi0y3E35LCcFB1ao4+mrHVtW0o6uQF4yz
-         QD2sXJ5HgLyh1qAKVjIjK5OK90pEcsT+vP2JLES6Ds+NRnvqdC9iQFUQrpykyA+CtGI4
-         QwZZcTH0WJYbn6ZpmCv/ADZikZxOEpiqOXH2fStrpayNQRZZ42FTnQvfUkh2CbCVdfSp
-         bMQnHrQ3qOjoPTMrHqtORj7SYQ+k1tmQTtakGOM8HDwGwVGwOEx548HjFBtAU0gnfejM
-         M7Jg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=Zq+022OUiAcpEDpkSUFVyaVWu7HbsGwR/IRWCAVsXzk=;
-        b=VJ43fI6yl2Ic8P5b6uZHzwgcSqPcFRQ3FpobdwYiwgkt5bn7J+I+2Hy8UwTDTrvP3C
-         zGluw4j2feKP3H8UIKmrOaHPuRNhkzexg1//EGKGdWvZexm68Aa9pYC5PCC3E7wGGowI
-         mtXNZjcNL1MBlAkVeHx4k8trwo6XJBI3W1REC0vgiv0U5HkEC0BfxdBZByOH9xxtI/Bu
-         PEaXaKH16834KhQnxQo83p4sZfl1nHpp9hhdoERx3fTMpV05o2tU47YDwz5iGAifhMcJ
-         2CgrNLXnrUVNyf3RqLFaBTjnrA/ZpExsfY8Su+Q84JE7euLrnl6s7n006a+ioGaQ5q3r
-         fPGg==
-X-Gm-Message-State: AJcUukdBQy8YYIkvR0tb/6e8PiCqiMzOR/QLN6BvD/+/h+DgBu1v9t4p
-        zU2lfLOimC7LeuOnDRe+gZEUElqD
-X-Google-Smtp-Source: ALg8bN6sNoXs8MNLhrC8ua+Hs7qGfdAlXKrXq8HR8FqG27EA3Rb9jkX+f54suOpcV5RsVqdw7JaHpw==
-X-Received: by 2002:a17:902:8d8e:: with SMTP id v14mr4123795plo.133.1546999416043;
-        Tue, 08 Jan 2019 18:03:36 -0800 (PST)
-Received: from ?IPv6:2402:f000:1:1501:200:5efe:166.111.71.59? ([2402:f000:1:1501:200:5efe:a66f:473b])
-        by smtp.gmail.com with ESMTPSA id 6sm148891698pfv.30.2019.01.08.18.03.33
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 08 Jan 2019 18:03:35 -0800 (PST)
-Subject: Re: [PATCH] net: nvidia: forcedeth: Fix two possible concurrency
- use-after-free bugs
-To:     Yanjun Zhu <yanjun.zhu@oracle.com>, davem@davemloft.net,
-        keescook@chromium.org
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190108124518.21986-1-baijiaju1990@gmail.com>
- <27392ae0-2c0f-f099-05d8-f9cdbfbd313e@oracle.com>
- <f9ab7ba3-573c-6703-1b01-37a9e0a9b769@gmail.com>
- <f87bd4b7-81d5-1f0c-137e-ecbc02753257@oracle.com>
-From:   Jia-Ju Bai <baijiaju1990@gmail.com>
-Message-ID: <a1a71d06-9c1c-7e18-0e24-103fa89facf2@gmail.com>
-Date:   Wed, 9 Jan 2019 10:03:30 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
-MIME-Version: 1.0
-In-Reply-To: <f87bd4b7-81d5-1f0c-137e-ecbc02753257@oracle.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+        Tue, 8 Jan 2019 21:05:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46650 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729148AbfAICFH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 8 Jan 2019 21:05:07 -0500
+Received: from devnote (p103030-mobac01.tokyo.ocn.ne.jp [153.233.94.30])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 21085206BB;
+        Wed,  9 Jan 2019 02:05:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1546999506;
+        bh=Ickqk2IZkIG8p04SgQek3hIsU1ZxkvWNSEhuLaJp8Mw=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=2AigcZnMw1WQlONJhKEoRIJcREnBHjp7eqluXdmyCKIr5U8I9VVFR0H+7GAI1ciyO
+         ciZqVwHQOi0ZHkjJ5/tblVIwzgGKd4/ZIRQ3rFcBsXeJgO9KBL2XUdsEDRFA4lfVZM
+         keNRAWE9I4zF9m49i5lO0uXSP3vB0vU1wVbZZVWA=
+Date:   Wed, 9 Jan 2019 11:05:00 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     James Morse <james.morse@arm.com>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Pratyush Anand <panand@redhat.com>,
+        "David A . Long" <dave.long@linaro.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/3] arm64: kprobes: Move extable address check into
+ arch_prepare_kprobe()
+Message-Id: <20190109110500.b4b5049f4c67dfc85b9ced4e@kernel.org>
+In-Reply-To: <b4109104-c438-f4c2-352a-d8b0ec47db37@arm.com>
+References: <154502881646.30629.9938335052821665530.stgit@devbox>
+        <154502884653.30629.3172839440883293817.stgit@devbox>
+        <aec51c10-d744-df0f-1216-d3372e779cb1@arm.com>
+        <20190108113953.8bc0cc7d196ddba370377217@kernel.org>
+        <b4109104-c438-f4c2-352a-d8b0ec47db37@arm.com>
+X-Mailer: Sylpheed 3.5.0 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi James,
+
+On Tue, 8 Jan 2019 17:13:36 +0000
+James Morse <james.morse@arm.com> wrote:
+
+> Hi!
+> 
+> On 08/01/2019 02:39, Masami Hiramatsu wrote:
+> > On Thu, 3 Jan 2019 17:05:18 +0000
+> > James Morse <james.morse@arm.com> wrote:
+> >> On 17/12/2018 06:40, Masami Hiramatsu wrote:
+> >>> Move extable address check into arch_prepare_kprobe() from
+> >>> arch_within_kprobe_blacklist().
+> >>
+> >> I'm trying to work out the pattern for what should go in the blacklist, and what
+> >> should be rejected by the arch code.
+> >>
+> >> It seems address-ranges should be blacklisted as the contents don't matter.
+> >> easy-example: the idmap text.
+> > 
+> > Yes, more precisely, the code smaller than a function (symbol), it must be
+> > rejected by arch_prepare_kprobe(), since blacklist is poplated based on
+> > kallsyms.
+> 
+> Ah, okay, so the pattern is the blacklist should only be for whole symbols,
+> (which explains why its usually based on sections).
+
+Correct. Actually, the blacklist is generated based on the symbol info
+from symbol address.
+
+> I see kprobe_add_ksym_blacklist() would go wrong if you give it something like:
+> platform_drv_probe+0x50/0xb0, as it will log platform_drv_probe+0x50 as the
+> start_addr and platform_drv_probe+0x50+0xb0 as the end.
+
+Yes, it expects given address is the entry of a symbol.
+
+> 
+> But how does anything from the arch code's blacklist get into the
+> kprobe_blacklist list?
+
+It should be done via arch_populate_kprobe_blacklist().
+
+> 
+> We don't have an arch_populate_kprobe_blacklist(), so rely on
+> within_kprobe_blacklist() calling arch_within_kprobe_blacklist() with the
+> address, as well as walking kprobe_blacklist.
+> 
+> Is this cleanup ahead of a series that does away with
+> arch_within_kprobe_blacklist() so that debugfs list is always complete?
+
+Right, after this cleanup, I will send arch_populate_kprobe_blacklist()
+patch for arm64 and others. My plan is to move all arch_within_kprobe_blacklist()
+to arch_populate_kprobe_blacklist() so that user can get more precise blacklist
+via debugfs.
 
 
-On 2019/1/9 9:24, Yanjun Zhu wrote:
->
-> On 2019/1/8 20:57, Jia-Ju Bai wrote:
->>
->>
->> On 2019/1/8 20:54, Zhu Yanjun wrote:
->>>
->>> 在 2019/1/8 20:45, Jia-Ju Bai 写道:
->>>> In drivers/net/ethernet/nvidia/forcedeth.c, the functions
->>>> nv_start_xmit() and nv_start_xmit_optimized() can be concurrently
->>>> executed with nv_poll_controller().
->>>>
->>>> nv_start_xmit
->>>>    line 2321: prev_tx_ctx->skb = skb;
->>>>
->>>> nv_start_xmit_optimized
->>>>    line 2479: prev_tx_ctx->skb = skb;
->>>>
->>>> nv_poll_controller
->>>>    nv_do_nic_poll
->>>>      line 4134: spin_lock(&np->lock);
->>>>      nv_drain_rxtx
->>>>        nv_drain_tx
->>>>          nv_release_txskb
->>>>            line 2004: dev_kfree_skb_any(tx_skb->skb);
->>>>
->>>> Thus, two possible concurrency use-after-free bugs may occur.
->>>>
->>>> To fix these possible bugs,
->>>
->>>
->>> Does this really occur? Can you reproduce this ?
->>
->> This bug is not found by the real execution.
->> It is found by a static tool written by myself, and then I check it 
->> by manual code review.
->
-> Before "line 2004: dev_kfree_skb_any(tx_skb->skb); ",
->
-> "
->
->                 nv_disable_irq(dev);
->                 nv_napi_disable(dev);
->                 netif_tx_lock_bh(dev);
->                 netif_addr_lock(dev);
->                 spin_lock(&np->lock);
->                 /* stop engines */
->                 nv_stop_rxtx(dev);   <---this stop rxtx
->                 nv_txrx_reset(dev);
-> "
->
-> In this case, does nv_start_xmit or nv_start_xmit_optimized still work 
-> well?
->
+> > As I pointed, the exception_table contains some range of code which inside
+> > functions, must be smaller than function.
+> > Since those instructions are expected to cause exception (that is main reason
+> > why it can not be probed on arm64), I thought such situation was similar to
+> > the limitation of instruction.
+> > 
+> > So I think below will be better.
+> > ----
+> > Please do not blacklisting instructions on exception_table,
+> > since those are smaller than one function.
+> > ----
+> 
+> I keep tripping over this because the exception_table lists addresses that are
+> allowed to fault. Nothing looks at the instruction, and we happily kprobe the
+> same instruction elsewhere.
 
-nv_stop_rxtx() calls nv_stop_tx(dev).
+Thanks!
 
-static void nv_stop_tx(struct net_device *dev)
-{
-     struct fe_priv *np = netdev_priv(dev);
-     u8 __iomem *base = get_hwbase(dev);
-     u32 tx_ctrl = readl(base + NvRegTransmitterControl);
+> 
+> (based on my assumptions about where you are going next!,), How about:
+> | The blacklist is exposed via debugfs as a list of symbols. extable entries are
+> | smaller, so must be filtered out by arch_prepare_kprobe().
 
-     if (!np->mac_in_use)
-         tx_ctrl &= ~NVREG_XMITCTL_START;
-     else
-         tx_ctrl |= NVREG_XMITCTL_TX_PATH_EN;
-     writel(tx_ctrl, base + NvRegTransmitterControl);
-     if (reg_delay(dev, NvRegTransmitterStatus, NVREG_XMITSTAT_BUSY, 0,
-               NV_TXSTOP_DELAY1, NV_TXSTOP_DELAY1MAX))
-         netdev_info(dev, "%s: TransmitterStatus remained busy\n",
-                 __func__);
+This looks much better for me too :)
+Should I resend with the description?
 
-     udelay(NV_TXSTOP_DELAY2);
-     if (!np->mac_in_use)
-         writel(readl(base + NvRegTransmitPoll) & 
-NVREG_TRANSMITPOLL_MAC_ADDR_REV,
-                base + NvRegTransmitPoll);
-}
+Thank you!
 
-nv_stop_tx() seems to only write registers to stop transmitting for 
-hardware.
-But it does not wait until nv_start_xmit() and nv_start_xmit_optimized() 
-finish execution.
-Maybe netif_stop_queue() should be used here to stop transmitting for 
-network layer, but this function does not seem to wait, either.
-Do you know any function that can wait until ".ndo_start_xmit" finish 
-execution?
+> 
+> (only we currently have more than one blacklist...)
+> 
+> 
+> Thanks,
+> 
+> James
 
 
-Best wishes,
-Jia-Ju Bai
-
-
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
