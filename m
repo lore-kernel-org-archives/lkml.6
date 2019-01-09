@@ -3,96 +3,123 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2212C43444
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 17:12:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F41ACC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 17:14:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C00D220685
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 17:12:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CDF1320660
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 17:14:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726824AbfAIRMZ (ORCPT
+        id S1726747AbfAIRO3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 12:12:25 -0500
-Received: from mx2.suse.de ([195.135.220.15]:36066 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726419AbfAIRMY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 12:12:24 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 70E9AAF58;
-        Wed,  9 Jan 2019 17:12:23 +0000 (UTC)
-From:   Thomas Bogendoerfer <tbogendoerfer@suse.de>
-To:     Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>, linux-mips@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] MIPS: jazz: fix 64bit build
-Date:   Wed,  9 Jan 2019 18:12:16 +0100
-Message-Id: <20190109171216.19992-1-tbogendoerfer@suse.de>
-X-Mailer: git-send-email 2.13.7
+        Wed, 9 Jan 2019 12:14:29 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:35546 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726292AbfAIRO2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 12:14:28 -0500
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: eballetbo)
+        with ESMTPSA id 4EA9526024A
+From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     kernel@collabora.com, bleung@chromium.org, heiko@sntech.de,
+        groeck@google.com, kieran.bingham@ideasonboard.com,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        linux-rockchip@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v2] phy: phy-rockchip-inno-usb2: drop reading the utmi-avalid property
+Date:   Wed,  9 Jan 2019 18:14:15 +0100
+Message-Id: <20190109171415.9954-1-enric.balletbo@collabora.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-64bit JAZZ builds failed with
+That property is no used in mainline and is not documented. The only
+board using that property is the rk33-99-evb-rev1 and -rev2 in the
+vendor kernel. The existence of a further -rev3 (which also looks way
+better cared for compared rev1+2) indicates that the older ones are
+probably some sort of preproduction models, where some wiring (on the soc
+or board) may have gone wrong.
 
-linux-next/arch/mips/jazz/jazzdma.c: In function ‘vdma_init’:
-/linux-next/arch/mips/jazz/jazzdma.c:77:30: error: implicit declaration of function ‘KSEG1ADDR’; did you mean ‘CKSEG1ADDR’? [-Werror=implicit-function-declaration]
-  pgtbl = (VDMA_PGTBL_ENTRY *)KSEG1ADDR(pgtbl);
-                              ^~~~~~~~~
-                              CKSEG1ADDR
-/linux-next/arch/mips/jazz/jazzdma.c:77:10: error: cast to pointer from integer of different size [-Werror=int-to-pointer-cast]
-  pgtbl = (VDMA_PGTBL_ENTRY *)KSEG1ADDR(pgtbl);
-          ^
-In file included from /linux-next/arch/mips/include/asm/barrier.h:11:0,
-                 from /linux-next/include/linux/compiler.h:248,
-                 from /linux-next/include/linux/kernel.h:10,
-                 from /linux-next/arch/mips/jazz/jazzdma.c:11:
-/linux-next/arch/mips/include/asm/addrspace.h:41:29: error: cast from pointer to integer of different size [-Werror=pointer-to-int-cast]
- #define _ACAST32_  (_ATYPE_)(_ATYPE32_) /* widen if necessary */
-                             ^
-/linux-next/arch/mips/include/asm/addrspace.h:53:25: note: in expansion of macro ‘_ACAST32_’
- #define CPHYSADDR(a)  ((_ACAST32_(a)) & 0x1fffffff)
-                         ^~~~~~~~~
-/linux-next/arch/mips/jazz/jazzdma.c:84:44: note: in expansion of macro ‘CPHYSADDR’
-  r4030_write_reg32(JAZZ_R4030_TRSTBL_BASE, CPHYSADDR(pgtbl));
+It is also not clear why this is a hardware-description or a DT
+property, so, as noboby seems to care of this just drop reading that
+property.
 
-Using correct casts and CKSEG1ADDR when dealing with the pgtbl setup
-fixes this.
-
-Signed-off-by: Thomas Bogendoerfer <tbogendoerfer@suse.de>
+Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 ---
- arch/mips/jazz/jazzdma.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+Hi all,
 
-diff --git a/arch/mips/jazz/jazzdma.c b/arch/mips/jazz/jazzdma.c
-index 6256d35dbf4d..bedb5047aff3 100644
---- a/arch/mips/jazz/jazzdma.c
-+++ b/arch/mips/jazz/jazzdma.c
-@@ -74,14 +74,15 @@ static int __init vdma_init(void)
- 						    get_order(VDMA_PGTBL_SIZE));
- 	BUG_ON(!pgtbl);
- 	dma_cache_wback_inv((unsigned long)pgtbl, VDMA_PGTBL_SIZE);
--	pgtbl = (VDMA_PGTBL_ENTRY *)KSEG1ADDR(pgtbl);
-+	pgtbl = (VDMA_PGTBL_ENTRY *)CKSEG1ADDR((unsigned long)pgtbl);
+This patch was send for the first time within these series [1], but
+might have more sense sent alone as doesn't depedends on the rest of
+the series, so, remove from these series and send a second version
+that can be applied independently.
+
+Best regards,
+Enric
+
+[1] https://lkml.org/lkml/2018/8/15/141
+
+Changes in v2:
+- Split from the first version and send as a separate patch.
+- Include the research that Heiko did in the commit message.
+
+ drivers/phy/rockchip/phy-rockchip-inno-usb2.c | 15 ++-------------
+ 1 file changed, 2 insertions(+), 13 deletions(-)
+
+diff --git a/drivers/phy/rockchip/phy-rockchip-inno-usb2.c b/drivers/phy/rockchip/phy-rockchip-inno-usb2.c
+index a1f2253d60c1..ba07121c3eff 100644
+--- a/drivers/phy/rockchip/phy-rockchip-inno-usb2.c
++++ b/drivers/phy/rockchip/phy-rockchip-inno-usb2.c
+@@ -168,9 +168,6 @@ struct rockchip_usb2phy_cfg {
+  * @phy: generic phy.
+  * @port_id: flag for otg port or host port.
+  * @suspended: phy suspended flag.
+- * @utmi_avalid: utmi avalid status usage flag.
+- *	true	- use avalid to get vbus status
+- *	false	- use bvalid to get vbus status
+  * @vbus_attached: otg device vbus status.
+  * @bvalid_irq: IRQ number assigned for vbus valid rise detection.
+  * @ls_irq: IRQ number assigned for linestate detection.
+@@ -189,7 +186,6 @@ struct rockchip_usb2phy_port {
+ 	struct phy	*phy;
+ 	unsigned int	port_id;
+ 	bool		suspended;
+-	bool		utmi_avalid;
+ 	bool		vbus_attached;
+ 	int		bvalid_irq;
+ 	int		ls_irq;
+@@ -545,12 +541,8 @@ static void rockchip_usb2phy_otg_sm_work(struct work_struct *work)
+ 	unsigned long delay;
+ 	bool vbus_attach, sch_work, notify_charger;
  
+-	if (rport->utmi_avalid)
+-		vbus_attach = property_enabled(rphy->grf,
+-					       &rport->port_cfg->utmi_avalid);
+-	else
+-		vbus_attach = property_enabled(rphy->grf,
+-					       &rport->port_cfg->utmi_bvalid);
++	vbus_attach = property_enabled(rphy->grf,
++				       &rport->port_cfg->utmi_bvalid);
+ 
+ 	sch_work = false;
+ 	notify_charger = false;
+@@ -1024,9 +1016,6 @@ static int rockchip_usb2phy_otg_port_init(struct rockchip_usb2phy *rphy,
+ 	INIT_DELAYED_WORK(&rport->chg_work, rockchip_chg_detect_work);
+ 	INIT_DELAYED_WORK(&rport->otg_sm_work, rockchip_usb2phy_otg_sm_work);
+ 
+-	rport->utmi_avalid =
+-		of_property_read_bool(child_np, "rockchip,utmi-avalid");
+-
  	/*
- 	 * Clear the R4030 translation table
- 	 */
- 	vdma_pgtbl_init();
- 
--	r4030_write_reg32(JAZZ_R4030_TRSTBL_BASE, CPHYSADDR(pgtbl));
-+	r4030_write_reg32(JAZZ_R4030_TRSTBL_BASE,
-+			  CPHYSADDR((unsigned long)pgtbl));
- 	r4030_write_reg32(JAZZ_R4030_TRSTBL_LIM, VDMA_PGTBL_SIZE);
- 	r4030_write_reg32(JAZZ_R4030_TRSTBL_INV, 0);
- 
+ 	 * Some SoCs use one interrupt with otg-id/otg-bvalid/linestate
+ 	 * interrupts muxed together, so probe the otg-mux interrupt first,
 -- 
-2.13.7
+2.20.1
 
