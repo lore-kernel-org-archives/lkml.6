@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE8C9C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 17:48:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 606E2C43444
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 17:48:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 902C3206B6
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 17:48:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2941320665
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 17:48:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727303AbfAIRsC (ORCPT
+        id S1727323AbfAIRsE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 12:48:02 -0500
-Received: from mga11.intel.com ([192.55.52.93]:34830 "EHLO mga11.intel.com"
+        Wed, 9 Jan 2019 12:48:04 -0500
+Received: from mga11.intel.com ([192.55.52.93]:34827 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727271AbfAIRsA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 12:48:00 -0500
+        id S1727275AbfAIRsB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 12:48:01 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Jan 2019 09:47:58 -0800
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Jan 2019 09:47:59 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,458,1539673200"; 
-   d="scan'208";a="115485622"
+   d="scan'208";a="115485629"
 Received: from unknown (HELO localhost.lm.intel.com) ([10.232.112.69])
-  by fmsmga008.fm.intel.com with ESMTP; 09 Jan 2019 09:47:58 -0800
+  by fmsmga008.fm.intel.com with ESMTP; 09 Jan 2019 09:47:59 -0800
 From:   Keith Busch <keith.busch@intel.com>
 To:     linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
         linux-mm@kvack.org
@@ -36,9 +36,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Dave Hansen <dave.hansen@intel.com>,
         Dan Williams <dan.j.williams@intel.com>,
         Keith Busch <keith.busch@intel.com>
-Subject: [PATCHv3 06/13] acpi/hmat: Register processor domain to its memory
-Date:   Wed,  9 Jan 2019 10:43:34 -0700
-Message-Id: <20190109174341.19818-7-keith.busch@intel.com>
+Subject: [PATCHv3 08/13] Documentation/ABI: Add node performance attributes
+Date:   Wed,  9 Jan 2019 10:43:36 -0700
+Message-Id: <20190109174341.19818-9-keith.busch@intel.com>
 X-Mailer: git-send-email 2.13.6
 In-Reply-To: <20190109174341.19818-1-keith.busch@intel.com>
 References: <20190109174341.19818-1-keith.busch@intel.com>
@@ -47,226 +47,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If the HMAT Subsystem Address Range provides a valid processor proximity
-domain for a memory domain, or a processor domain with the highest
-performing access exists, register the memory target with that initiator
-so this relationship will be visible under the node's sysfs directory.
-
-Since HMAT requires valid address ranges have an equivalent SRAT entry,
-verify each memory target satisfies this requirement.
+Add descriptions for memory class initiator performance access attributes.
 
 Signed-off-by: Keith Busch <keith.busch@intel.com>
 ---
- drivers/acpi/hmat.c | 143 +++++++++++++++++++++++++++++++++++++++++++++++++---
- 1 file changed, 136 insertions(+), 7 deletions(-)
+ Documentation/ABI/stable/sysfs-devices-node | 28 ++++++++++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
 
-diff --git a/drivers/acpi/hmat.c b/drivers/acpi/hmat.c
-index 833a783868d5..efb33c74d1a3 100644
---- a/drivers/acpi/hmat.c
-+++ b/drivers/acpi/hmat.c
-@@ -17,6 +17,43 @@
- #include <linux/slab.h>
- #include <linux/sysfs.h>
- 
-+static LIST_HEAD(targets);
+diff --git a/Documentation/ABI/stable/sysfs-devices-node b/Documentation/ABI/stable/sysfs-devices-node
+index a9c47b4b0eee..74cfc80cabf6 100644
+--- a/Documentation/ABI/stable/sysfs-devices-node
++++ b/Documentation/ABI/stable/sysfs-devices-node
+@@ -114,3 +114,31 @@ Description:
+ 		The node list of memory targets that this initiator node has
+ 		class "Y" access. Memory accesses from this node to nodes not
+ 		in this list may have differet performance.
 +
-+struct memory_target {
-+	struct list_head node;
-+	unsigned int memory_pxm;
-+	unsigned long p_nodes[BITS_TO_LONGS(MAX_NUMNODES)];
-+};
++What:		/sys/devices/system/node/nodeX/classY/read_bandwidth
++Date:		December 2018
++Contact:	Keith Busch <keith.busch@intel.com>
++Description:
++		This node's read bandwidth in MB/s available to memory
++		initiators in nodes found in this class's initiators_nodelist.
 +
-+static __init struct memory_target *find_mem_target(unsigned int m)
-+{
-+	struct memory_target *t;
++What:		/sys/devices/system/node/nodeX/classY/read_latency
++Date:		December 2018
++Contact:	Keith Busch <keith.busch@intel.com>
++Description:
++		This node's read latency in nanosecondss available to memory
++		initiators in nodes found in this class's initiators_nodelist.
 +
-+	list_for_each_entry(t, &targets, node)
-+		if (t->memory_pxm == m)
-+			return t;
-+	return NULL;
-+}
++What:		/sys/devices/system/node/nodeX/classY/write_bandwidth
++Date:		December 2018
++Contact:	Keith Busch <keith.busch@intel.com>
++Description:
++		This node's write bandwidth in MB/s available to memory
++		initiators in nodes found in this class's initiators_nodelist.
 +
-+static __init void alloc_memory_target(unsigned int mem_pxm)
-+{
-+	struct memory_target *t;
-+
-+	if (pxm_to_node(mem_pxm) == NUMA_NO_NODE)
-+		return;
-+
-+	t = find_mem_target(mem_pxm);
-+	if (t)
-+		return;
-+
-+	t = kzalloc(sizeof(*t), GFP_KERNEL);
-+	if (!t)
-+		return;
-+
-+	t->memory_pxm = mem_pxm;
-+	list_add_tail(&t->node, &targets);
-+}
-+
- static __init const char *hmat_data_type(u8 type)
- {
- 	switch (type) {
-@@ -53,11 +90,30 @@ static __init const char *hmat_data_type_suffix(u8 type)
- 	};
- }
- 
-+static __init void hmat_update_access(u8 type, u32 value, u32 *best)
-+{
-+	switch (type) {
-+	case ACPI_HMAT_ACCESS_LATENCY:
-+	case ACPI_HMAT_READ_LATENCY:
-+	case ACPI_HMAT_WRITE_LATENCY:
-+		if (!*best || *best > value)
-+			*best = value;
-+		break;
-+	case ACPI_HMAT_ACCESS_BANDWIDTH:
-+	case ACPI_HMAT_READ_BANDWIDTH:
-+	case ACPI_HMAT_WRITE_BANDWIDTH:
-+		if (!*best || *best < value)
-+			*best = value;
-+		break;
-+	}
-+}
-+
- static __init int hmat_parse_locality(union acpi_subtable_headers *header,
- 				      const unsigned long end)
- {
-+	struct memory_target *t;
- 	struct acpi_hmat_locality *loc = (void *)header;
--	unsigned int init, targ, total_size, ipds, tpds;
-+	unsigned int init, targ, pass, p_node, total_size, ipds, tpds;
- 	u32 *inits, *targs, value;
- 	u16 *entries;
- 	u8 type;
-@@ -87,12 +143,28 @@ static __init int hmat_parse_locality(union acpi_subtable_headers *header,
- 	targs = &inits[ipds];
- 	entries = (u16 *)(&targs[tpds]);
- 	for (targ = 0; targ < tpds; targ++) {
--		for (init = 0; init < ipds; init++) {
--			value = entries[init * tpds + targ];
--			value = (value * loc->entry_base_unit) / 10;
--			pr_info("  Initiator-Target[%d-%d]:%d%s\n",
--				inits[init], targs[targ], value,
--				hmat_data_type_suffix(type));
-+		u32 best = 0;
-+
-+		t = find_mem_target(targs[targ]);
-+		for (pass = 0; pass < 2; pass++) {
-+			for (init = 0; init < ipds; init++) {
-+				value = entries[init * tpds + targ];
-+				value = (value * loc->entry_base_unit) / 10;
-+
-+				if (!pass) {
-+					hmat_update_access(type, value, &best);
-+					pr_info("  Initiator-Target[%d-%d]:%d%s\n",
-+						inits[init], targs[targ], value,
-+						hmat_data_type_suffix(type));
-+					continue;
-+				}
-+
-+				if (!t)
-+					continue;
-+				p_node = pxm_to_node(inits[init]);
-+				if (p_node != NUMA_NO_NODE && value == best)
-+					set_bit(p_node, t->p_nodes);
-+			}
- 		}
- 	}
- 	return 0;
-@@ -122,6 +194,7 @@ static int __init hmat_parse_address_range(union acpi_subtable_headers *header,
- 					   const unsigned long end)
- {
- 	struct acpi_hmat_address_range *spa = (void *)header;
-+	struct memory_target *t = NULL;
- 
- 	if (spa->header.length != sizeof(*spa)) {
- 		pr_err("HMAT: Unexpected address range header length: %d\n",
-@@ -131,6 +204,23 @@ static int __init hmat_parse_address_range(union acpi_subtable_headers *header,
- 	pr_info("HMAT: Memory (%#llx length %#llx) Flags:%04x Processor Domain:%d Memory Domain:%d\n",
- 		spa->physical_address_base, spa->physical_address_length,
- 		spa->flags, spa->processor_PD, spa->memory_PD);
-+
-+	if (spa->flags & ACPI_HMAT_MEMORY_PD_VALID) {
-+		t = find_mem_target(spa->memory_PD);
-+		if (!t) {
-+			pr_warn("HMAT: Memory Domain missing from SRAT\n");
-+			return -EINVAL;
-+		}
-+	}
-+	if (t && spa->flags & ACPI_HMAT_PROCESSOR_PD_VALID) {
-+		int p_node = pxm_to_node(spa->processor_PD);
-+
-+		if (p_node == NUMA_NO_NODE) {
-+			pr_warn("HMAT: Invalid Processor Domain\n");
-+			return -EINVAL;
-+		}
-+		set_bit(p_node, t->p_nodes);
-+	}
- 	return 0;
- }
- 
-@@ -154,6 +244,33 @@ static int __init hmat_parse_subtable(union acpi_subtable_headers *header,
- 	}
- }
- 
-+static __init int srat_parse_mem_affinity(union acpi_subtable_headers *header,
-+					  const unsigned long end)
-+{
-+	struct acpi_srat_mem_affinity *ma = (void *)header;
-+
-+	if (!ma)
-+		return -EINVAL;
-+	if (!(ma->flags & ACPI_SRAT_MEM_ENABLED))
-+		return 0;
-+	alloc_memory_target(ma->proximity_domain);
-+	return 0;
-+}
-+
-+static __init void hmat_register_targets(void)
-+{
-+	struct memory_target *t, *next;
-+	unsigned m, p;
-+
-+	list_for_each_entry_safe(t, next, &targets, node) {
-+		list_del(&t->node);
-+		m = pxm_to_node(t->memory_pxm);
-+		for_each_set_bit(p, t->p_nodes, MAX_NUMNODES)
-+			register_memory_node_under_compute_node(m, p, 0);
-+		kfree(t);
-+	}
-+}
-+
- static __init int hmat_init(void)
- {
- 	struct acpi_table_header *tbl;
-@@ -163,6 +280,17 @@ static __init int hmat_init(void)
- 	if (srat_disabled())
- 		return 0;
- 
-+	status = acpi_get_table(ACPI_SIG_SRAT, 0, &tbl);
-+	if (ACPI_FAILURE(status))
-+		return 0;
-+
-+	if (acpi_table_parse_entries(ACPI_SIG_SRAT,
-+				sizeof(struct acpi_table_srat),
-+				ACPI_SRAT_TYPE_MEMORY_AFFINITY,
-+				srat_parse_mem_affinity, 0) < 0)
-+		goto out_put;
-+	acpi_put_table(tbl);
-+
- 	status = acpi_get_table(ACPI_SIG_HMAT, 0, &tbl);
- 	if (ACPI_FAILURE(status))
- 		return 0;
-@@ -173,6 +301,7 @@ static __init int hmat_init(void)
- 					     hmat_parse_subtable, 0) < 0)
- 			goto out_put;
- 	}
-+	hmat_register_targets();
- out_put:
- 	acpi_put_table(tbl);
- 	return 0;
++What:		/sys/devices/system/node/nodeX/classY/write_latency
++Date:		December 2018
++Contact:	Keith Busch <keith.busch@intel.com>
++Description:
++		This node's write latency in nanosecondss available to memory
++		initiators in nodes found in this class's initiators_nodelist.
 -- 
 2.14.4
 
