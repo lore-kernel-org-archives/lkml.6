@@ -7,63 +7,63 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 755CFC43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 01:29:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9489AC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 01:29:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4199120821
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 01:29:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6227E20821
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 01:29:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="txthAS24"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ljK5Z0em"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729898AbfAIB3A (ORCPT
+        id S1729543AbfAIB3K (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 20:29:00 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:47031 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729526AbfAIB1h (ORCPT
+        Tue, 8 Jan 2019 20:29:10 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:33314 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729371AbfAIB1f (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 20:27:37 -0500
-Received: by mail-wr1-f65.google.com with SMTP id l9so5962068wrt.13;
-        Tue, 08 Jan 2019 17:27:36 -0800 (PST)
+        Tue, 8 Jan 2019 20:27:35 -0500
+Received: by mail-wr1-f67.google.com with SMTP id c14so6056025wrr.0;
+        Tue, 08 Jan 2019 17:27:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=fAGKYpUHFH6IxKnG66w6623xEKHssEriDLH5eETIzro=;
-        b=txthAS24negzhm6/1RtYgmjDoc5S0LFxg8jvDWyj0fduYF6Q/81nOOzdAIWinNJs0L
-         D9VIbHJ4Fl0+AMYaWF+HWnyku3c5MwcLZEwy6Tjo8WLuW8w9M3L4PVS+ZJN3dDBclgre
-         MW3FsH8QROr37g6tVi3BxGsmeEiZG/fnhBb1+KUumfAhsL3sJowskHZN8H6L/ABBcoYq
-         N0EfXVJP5vV1Jhs1m2PeadXfI2Aq96HWQJhyV5VmLUdHpazPz6xmMcgieCRpt1emah34
-         /Qwha2xzui+VaXkG8SX40Dr7djEENVK5FcFdKw5CWsp4wbJrcSC7gyQtpjAoDpzFyJsz
-         9H1g==
+        bh=/673uL4vlQMZBXJmxviPI34h12gFdF0Rlg9s5QdcR5o=;
+        b=ljK5Z0emcK72bH4yw6g/LKs6hBT112EBdIW2lGjy8rfyhL18kNMnTE+85XeP2MRAoX
+         j8d3qFmmtggvbUchps2nIGSuLqd9V2GibkVcRxFOaK7D82EqJ3z+YHz4QoG4TicVkxId
+         3+GfUq9qQlFGb78fcMEuS4K5GC/MFbdNUFjh1HsHXoS1i5PcLQKGA7AuEljfEABPB1JJ
+         jnKiQFq4n27B6XA3mISc4+tFrTeiqccGxWkec5lE1FPJNZzNJBqwcni/x1GP4Z72R56v
+         UMJaxfO/lyuw7URtaLHjLfTR7aPMkAuQYvNVAo2NMrwEbAa5L4+lsoMzcJ4RPlatajn5
+         ia7A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
          :in-reply-to:references:mime-version:content-transfer-encoding;
-        bh=fAGKYpUHFH6IxKnG66w6623xEKHssEriDLH5eETIzro=;
-        b=tBdKB6n54ffWZ/aCJVqjCcMsT6nqnohSP/pNkMA0k9zKwJvtI1YfF8giYijqfzF3GI
-         XWBda/P/pK5g1o+nCeV14PVOdXYsa9rJIR2lcA4ARRo39D3G96qHE75En5UarWFUTtCN
-         ZJel4fRuW1V18yBpZv4QDCiezvWxdadgVtWYlqAsV+JicuI34xgWkHKnIWUVXIzfGQDz
-         KtCvvsQ3EJSy+Zu1+ZQKJ8GZ4BiEFupI6itNHmdAbfqlZ13Y2w9KkLUJGWM/wHrfte5u
-         F+eymN/T5agNt9uycaIjsoIR9DSwKneLg40ZTCI0m2ii8Bkv/iiIkMo8X9TGjxXcu10G
-         H2fw==
-X-Gm-Message-State: AJcUukcJWX5CP+iDNHamptcHI3KHrR3yLXQKLkr/qq6yWk8VdhJJ9iux
-        QV13XgF5CGiuBrvQBHN+cdOlt/n1xGM=
-X-Google-Smtp-Source: ALg8bN6PK+xHjd3xyj1KcozBbPVSnTVf01NP7m39CA4UsSFXH+ssG3f8/o9ZVHfqg90AcRXaRh4Apw==
-X-Received: by 2002:adf:d089:: with SMTP id y9mr3173540wrh.22.1546997255898;
-        Tue, 08 Jan 2019 17:27:35 -0800 (PST)
+        bh=/673uL4vlQMZBXJmxviPI34h12gFdF0Rlg9s5QdcR5o=;
+        b=LUMQ5KUEBG9sI79nFEtMIxtCAFhlIbzqQfag+QhACFhQhgl5MRL0k3GoAeM5or6JZy
+         8tr73Y98zEaSJDbofyLV80cWh4mEConVCVl9Mv+5C+x9swXlqak/vvpf3xcjse5s6tsY
+         aiMxkgwR/wndylxGdK6NMvw3C0y4lUKmmc1SFfQclPYEKFUl3EHomSfsDpNG4Al+ymPH
+         27wXm/XEM+tbahKSsHvDRnIBPaKdXbkrlbB618MobWixeCn0OnZEdJLkM2kI197f3eu0
+         VKf0eS7Z50mf+1JcbCsaUvkFzSVKC21NU2MKk4tXL3s3J0qm+T2HRIQXoHJ49H7SHTXy
+         wDlA==
+X-Gm-Message-State: AJcUukejgr0NFUkQ20Ao2HoFAfnMUjh4Y4tY8mYyKL6HxEGu/bjWA7Kz
+        54bIJf2bhMFJ7SRoeidhDKc=
+X-Google-Smtp-Source: ALg8bN6gCnmo+vXqrk2Ryc673oA9NKrFJ7KkRapkjmW9Nf0oJhdAqvTVPBUU9i4GBgRB6vJHzXPouA==
+X-Received: by 2002:adf:e54a:: with SMTP id z10mr3011799wrm.238.1546997253101;
+        Tue, 08 Jan 2019 17:27:33 -0800 (PST)
 Received: from beren.harmstone.com ([88.97.13.154])
-        by smtp.gmail.com with ESMTPSA id y34sm156915088wrd.68.2019.01.08.17.27.35
+        by smtp.gmail.com with ESMTPSA id y34sm156915088wrd.68.2019.01.08.17.27.32
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 08 Jan 2019 17:27:35 -0800 (PST)
+        Tue, 08 Jan 2019 17:27:32 -0800 (PST)
 From:   Mark Harmstone <mark@harmstone.com>
 Cc:     mark@harmstone.com, Chris Mason <clm@fb.com>,
         Josef Bacik <josef@toxicpanda.com>,
         David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [RFC PATCH 09/19] btrfs: add btrfs.key property
-Date:   Wed,  9 Jan 2019 01:26:51 +0000
-Message-Id: <20190109012701.26441-9-mark@harmstone.com>
+Subject: [RFC PATCH 07/19] btrfs: add new keys to key root when flushed
+Date:   Wed,  9 Jan 2019 01:26:49 +0000
+Message-Id: <20190109012701.26441-7-mark@harmstone.com>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <20190109012701.26441-1-mark@harmstone.com>
 References: <20190109012701.26441-1-mark@harmstone.com>
@@ -77,143 +77,126 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Signed-off-by: Mark Harmstone <mark@harmstone.com>
 ---
- fs/btrfs/btrfs_inode.h |  5 ++++
- fs/btrfs/ctree.h       |  1 +
- fs/btrfs/inode.c       |  1 +
- fs/btrfs/props.c       | 68 ++++++++++++++++++++++++++++++++++++++++++
- 4 files changed, 75 insertions(+)
+ fs/btrfs/transaction.c | 79 +++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 78 insertions(+), 1 deletion(-)
 
-diff --git a/fs/btrfs/btrfs_inode.h b/fs/btrfs/btrfs_inode.h
-index 97d91e55b70a..cf9f50bbe4ef 100644
---- a/fs/btrfs/btrfs_inode.h
-+++ b/fs/btrfs/btrfs_inode.h
-@@ -175,6 +175,11 @@ struct btrfs_inode {
+diff --git a/fs/btrfs/transaction.c b/fs/btrfs/transaction.c
+index d1eeef9ec5da..a6c8d49b6962 100644
+--- a/fs/btrfs/transaction.c
++++ b/fs/btrfs/transaction.c
+@@ -19,6 +19,7 @@
+ #include "volumes.h"
+ #include "dev-replace.h"
+ #include "qgroup.h"
++#include "encryption.h"
+ 
+ #define BTRFS_ROOT_TRANS_TAG 0
+ 
+@@ -520,7 +521,7 @@ start_transaction(struct btrfs_root *root, unsigned int num_items,
+ 	 * and then we deadlock with somebody doing a freeze.
+ 	 *
+ 	 * If we are ATTACH, it means we just want to catch the current
+-	 * transaction and commit it, so we needn't do sb_start_intwrite(). 
++	 * transaction and commit it, so we needn't do sb_start_intwrite().
  	 */
- 	unsigned defrag_compress;
- 
-+	/*
-+	 * Salt of preferred encryption key
-+	 */
-+	u64 prop_key;
-+
- 	struct btrfs_delayed_node *delayed_node;
- 
- 	/* File creation time. */
-diff --git a/fs/btrfs/ctree.h b/fs/btrfs/ctree.h
-index 4bab57e01e21..a1368c5c1236 100644
---- a/fs/btrfs/ctree.h
-+++ b/fs/btrfs/ctree.h
-@@ -1453,6 +1453,7 @@ do {                                                                   \
- #define BTRFS_INODE_NOATIME		(1 << 9)
- #define BTRFS_INODE_DIRSYNC		(1 << 10)
- #define BTRFS_INODE_COMPRESS		(1 << 11)
-+#define BTRFS_INODE_ENCRYPT		(1 << 12)
- 
- #define BTRFS_INODE_ROOT_ITEM_INIT	(1 << 31)
- 
-diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-index 9ea4c6f0352f..1d1084cf9289 100644
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -9167,6 +9167,7 @@ struct inode *btrfs_alloc_inode(struct super_block *sb)
- 	ei->runtime_flags = 0;
- 	ei->prop_compress = BTRFS_COMPRESS_NONE;
- 	ei->defrag_compress = BTRFS_COMPRESS_NONE;
-+	ei->prop_key = 0;
- 
- 	ei->delayed_node = NULL;
- 
-diff --git a/fs/btrfs/props.c b/fs/btrfs/props.c
-index e57a4edc88c4..ebe04194acbd 100644
---- a/fs/btrfs/props.c
-+++ b/fs/btrfs/props.c
-@@ -29,6 +29,12 @@ static int prop_compression_apply(struct inode *inode,
- 				  size_t len);
- static int prop_compression_extract(struct inode *inode, char *value);
- 
-+static int prop_key_validate(const char *value, size_t len);
-+static int prop_key_apply(struct inode *inode,
-+			  const char *value,
-+			  size_t len);
-+static int prop_key_extract(struct inode *inode, char *value);
-+
- static struct prop_handler prop_handlers[] = {
- 	{
- 		.xattr_name = XATTR_BTRFS_PREFIX "compression",
-@@ -37,6 +43,13 @@ static struct prop_handler prop_handlers[] = {
- 		.extract = prop_compression_extract,
- 		.inheritable = 1
- 	},
-+	{
-+		.xattr_name = XATTR_BTRFS_PREFIX "key",
-+		.validate = prop_key_validate,
-+		.apply = prop_key_apply,
-+		.extract = prop_key_extract,
-+		.inheritable = 1
-+	},
- };
- 
- void __init btrfs_props_init(void)
-@@ -435,4 +448,59 @@ static int prop_compression_extract(struct inode *inode, char *value)
- 	return -EINVAL;
+ 	if (type & __TRANS_FREEZABLE)
+ 		sb_start_intwrite(fs_info->sb);
+@@ -1918,12 +1919,74 @@ btrfs_wait_pending_ordered(struct btrfs_transaction *cur_trans)
+ 		   atomic_read(&cur_trans->pending_ordered) == 0);
  }
  
-+static int prop_key_validate(const char *value, size_t len)
++static int flush_key(struct btrfs_trans_handle *trans,
++		     struct btrfs_enc_key *k)
 +{
-+	unsigned int i;
++	struct btrfs_fs_info *fs_info = trans->fs_info;
++	struct btrfs_path *path;
++	struct btrfs_key key;
++	struct extent_buffer *leaf;
++	struct btrfs_encryption_key_item *item;
++	int ret;
 +
-+	if (len != 16)
-+		return -EINVAL;
++	path = btrfs_alloc_path();
++	if (!path)
++		return -ENOMEM;
 +
-+	for (i = 0; i < 16; i++) {
-+		if (hex_to_bin(value[i]) == -1)
-+			return -EINVAL;
++	path->leave_spinning = 1;
++
++	if (!fs_info->key_root) {
++		struct btrfs_root *root;
++
++		root = btrfs_create_tree(trans, fs_info,
++					 BTRFS_KEY_TREE_OBJECTID);
++
++		if (IS_ERR(root)) {
++			btrfs_free_path(path);
++			return PTR_ERR(root);
++		}
++
++		fs_info->key_root = root;
++
++		btrfs_set_fs_incompat(fs_info, ENCRYPTION);
 +	}
++
++	key.objectid = k->key_number;
++	key.type = BTRFS_ENCRYPTION_KEY;
++	key.offset = 0;
++
++	ret = btrfs_insert_empty_item(trans, fs_info->key_root, path, &key,
++				      sizeof(struct btrfs_encryption_key_item));
++
++	if (ret) {
++		btrfs_free_path(path);
++		return ret;
++	}
++
++	leaf = path->nodes[0];
++
++	btrfs_mark_buffer_dirty(leaf);
++
++	item = btrfs_item_ptr(leaf, path->slots[0],
++			      struct btrfs_encryption_key_item);
++
++	write_eb_member(leaf, item, struct btrfs_encryption_key_item,
++			key_id, k->key_id);
++
++	btrfs_free_path(path);
++
++	k->added = false;
++
++	return ret;
++}
++
+ int btrfs_commit_transaction(struct btrfs_trans_handle *trans)
+ {
+ 	struct btrfs_fs_info *fs_info = trans->fs_info;
+ 	struct btrfs_transaction *cur_trans = trans->transaction;
+ 	struct btrfs_transaction *prev_trans = NULL;
+ 	int ret;
++	struct btrfs_enc_key *key;
  
-+	return 0;
-+}
+ 	/* Stop the commit early if ->aborted is set */
+ 	if (unlikely(READ_ONCE(cur_trans->aborted))) {
+@@ -2071,6 +2134,20 @@ int btrfs_commit_transaction(struct btrfs_trans_handle *trans)
+ 		ret = cur_trans->aborted;
+ 		goto scrub_continue;
+ 	}
 +
-+static int prop_key_apply(struct inode *inode,
-+			  const char *value,
-+			  size_t len)
-+{
-+	u64 salt;
++	down_read(&fs_info->key_sem);
 +
-+	if (len == 0) {
-+		BTRFS_I(inode)->flags &= ~BTRFS_INODE_ENCRYPT;
-+		BTRFS_I(inode)->prop_key = 0;
++	list_for_each_entry(key, &fs_info->key_list, key_list) {
++		if (key->added && key->used) {
++			ret = flush_key(trans, key);
 +
-+		return 0;
++			if (ret)
++				goto scrub_continue;
++		}
 +	}
 +
-+	if (len != 16)
-+		return -EINVAL;
++	up_read(&fs_info->key_sem);
 +
-+	if (hex2bin((u8 *)&salt, value, len / 2))
-+		return -EINVAL;
-+
-+	salt = be64_to_cpu(salt);
-+
-+	BTRFS_I(inode)->flags |= BTRFS_INODE_ENCRYPT;
-+	BTRFS_I(inode)->prop_key = salt;
-+
-+	return 0;
-+}
-+
-+static int prop_key_extract(struct inode *inode, char *value)
-+{
-+	u64 salt;
-+
-+	if (BTRFS_I(inode)->prop_key == 0)
-+		return -EINVAL;
-+
-+	salt = cpu_to_be64(BTRFS_I(inode)->prop_key);
-+	bin2hex(value, &salt, sizeof(salt));
-+
-+	value[16] = 0;
-+
-+	return 0;
-+}
+ 	/*
+ 	 * the reloc mutex makes sure that we stop
+ 	 * the balancing code from coming in and moving
 -- 
 2.19.2
 
