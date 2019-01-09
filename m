@@ -2,133 +2,107 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22CD7C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 16:56:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBDFFC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 16:57:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E7170206BA
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 16:55:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Q+3x8aGD"
+	by mail.kernel.org (Postfix) with ESMTP id B8CFD206BA
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 16:57:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547053050;
+	bh=wfdEjxpAJ4QXeepN+OPAmEvEbCGPVY4MGjfiwIUCrhQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=d8yifjcnXYJqO4AOz2y42/MJ2ilSaQ3S3cHR0QUhNreKTG678aV49sjawXG0iKpQB
+	 UtiH4Vh3aO7GErbSy7GByP/etNW9mbEHIL0DxLEEJDpPUBJasOdEKM7Cokl4CoMukC
+	 94rNQSOhX2Q319Ufs5zmnPrHDj1RPj++7OqbSZPs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726674AbfAIQz7 (ORCPT
+        id S1726688AbfAIQ5a (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 11:55:59 -0500
-Received: from mail-io1-f65.google.com ([209.85.166.65]:37417 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726072AbfAIQz6 (ORCPT
+        Wed, 9 Jan 2019 11:57:30 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:43008 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726072AbfAIQ53 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 11:55:58 -0500
-Received: by mail-io1-f65.google.com with SMTP id g8so6569953iok.4
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jan 2019 08:55:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=kki7GX0S+t7hj/hdc6mJj5VtGMKtQZTAwoWP5KR8oJA=;
-        b=Q+3x8aGDd/+bdRQp6N+2ZpUI327wJoexTa/6+Tyqu20NnYA2zzh8tCkcaO1tkFHKnA
-         jjLaNk/rS/r2luVOoDyyGqM/ujcSa3DbAgotT3KDq99s784yRD8jrMB5+48pj9RmkFwS
-         313Ft4ncFR0AyqIIXs4fx2bP7U2xt8BaK5IcA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=kki7GX0S+t7hj/hdc6mJj5VtGMKtQZTAwoWP5KR8oJA=;
-        b=Uf8qoEM7yl5OZM/eT/IquBbfNZC61yYIh1ZA15CnltKrw8FcNP/0OIMCHNzw7pjAQv
-         EIZgw2El963UCl7gxI3o/qHrCIKXcDOXVZ3RdTdlDTkSoLBoaood1zFnWAEfANiVOfvA
-         UR7oNi0ym4ieEZzFHkU9qZoMPPQPyRvvMubEeytnPXQCscR6g6r1jIGHDjNagdo/QV1u
-         T8ErGXYy6aQE0a9hXbZQbVNGFFmJoOYLq/wJuHKlAt94nUXk4JnhZSk34bxcEQG5N0Wa
-         o/0vMW2YleD711xYVqTgVl2XQuFIUBo7BkmgYXrzeXDAL+Fc2XCO2n8oHUtQl5oGAL4o
-         yFKg==
-X-Gm-Message-State: AJcUukdhe8QMtidQws2qr6oB7c+FlrvpZ6F/gAWsUcTtdBLaKj2d2JGF
-        ufv0MsJI1hcUOsOER4btOkuGZLrtsNAh+axRyH0TAlb5yWJe6g==
-X-Google-Smtp-Source: ALg8bN61k2I49EIfEaI7zbl2JZ1N1JnLQc4jMeV2GRJPyIicfNIkneVXL61psqRGnawj9on/bi2MeTTm70cokk+5RzM=
-X-Received: by 2002:a6b:c8c9:: with SMTP id y192mr4101980iof.183.1547052957562;
- Wed, 09 Jan 2019 08:55:57 -0800 (PST)
+        Wed, 9 Jan 2019 11:57:29 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=GvYq4vyRjqFQymgiui7P+XqGYvBX6YU3Js1Sl+P4P8Q=; b=sfXCxRNHaZrSJ5ywr7tXNaRp2
+        iPb7mhy5LZSpXOuZzqUuq4CskicaTM+3BPwgalfUPkdw7F9L5QbgyL9zQNi9BgsDIXz5nOhzzdaWt
+        0/DuPqVeFRYz2GsZN2bAyd/GteJo6FnVlqjVtxYz9pgnFhLOKp6Ma6V+Dzq7cW1lRS6zg=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1ghHAB-00009u-EC; Wed, 09 Jan 2019 16:57:07 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id D8D831127528; Wed,  9 Jan 2019 16:57:06 +0000 (GMT)
+Date:   Wed, 9 Jan 2019 16:57:06 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Claudiu.Beznea@microchip.com
+Cc:     Nicolas.Ferre@microchip.com, alexandre.belloni@bootlin.com,
+        Ludovic.Desroches@microchip.com, linux@armlinux.org.uk,
+        lgirdwood@gmail.com, rjw@rjwysocki.net, pavel@ucw.cz,
+        len.brown@intel.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+Subject: Re: [PATCH v2 2/3] regulator: core: add helper to check if regulator
+ is disabled in suspend
+Message-ID: <20190109165706.GG10405@sirena.org.uk>
+References: <1546944944-13911-1-git-send-email-claudiu.beznea@microchip.com>
+ <1546944944-13911-3-git-send-email-claudiu.beznea@microchip.com>
 MIME-Version: 1.0
-References: <20190107233833.GI5544@atomide.com> <CAKfTPtDBEmcsLotp-6K1KU1wM9Ba1EpMp3niXScRxYgzjs0nog@mail.gmail.com>
- <20190108155354.GL5544@atomide.com> <CAKfTPtCoOK-cYLXJ--sOfpVa9RVmzOAEN1+zB2qHMCzkJN0qaQ@mail.gmail.com>
- <20190108213743.GN5544@atomide.com> <20190109014218.GA8363@linaro.org>
- <20190109015124.GO5544@atomide.com> <CAJZ5v0hi5sVESKPbZoniikOhNxdUDtJhQrs39Fib8B03MYoMMQ@mail.gmail.com>
- <20190109162846.GP5544@atomide.com> <CAKfTPtBzE9fqDgUOJ4uTj_Dtfe2KCp+R4FajAaQqpV02upQZJA@mail.gmail.com>
- <20190109165004.GQ5544@atomide.com>
-In-Reply-To: <20190109165004.GQ5544@atomide.com>
-From:   Vincent Guittot <vincent.guittot@linaro.org>
-Date:   Wed, 9 Jan 2019 17:55:46 +0100
-Message-ID: <CAKfTPtD4ZnRDKF6wG_AdX-5+R0cW0=uwj9Ww6y7O0xocuL+bkQ@mail.gmail.com>
-Subject: Re: Regression in v5.0-rc1 with autosuspend hrtimers
-To:     Tony Lindgren <tony@atomide.com>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        LAK <linux-arm-kernel@lists.infradead.org>,
-        Linux OMAP Mailing List <linux-omap@vger.kernel.org>,
-        Ladislav Michl <ladis@linux-mips.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="KR/qxknboQ7+Tpez"
+Content-Disposition: inline
+In-Reply-To: <1546944944-13911-3-git-send-email-claudiu.beznea@microchip.com>
+X-Cookie: VMS version 2.0 ==>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 9 Jan 2019 at 17:50, Tony Lindgren <tony@atomide.com> wrote:
->
-> * Vincent Guittot <vincent.guittot@linaro.org> [190109 16:48]:
-> > On Wed, 9 Jan 2019 at 17:28, Tony Lindgren <tony@atomide.com> wrote:
-> > >
-> > > * Rafael J. Wysocki <rafael@kernel.org> [190109 09:44]:
-> > > > On Wed, Jan 9, 2019 at 2:51 AM Tony Lindgren <tony@atomide.com> wro=
-te:
-> > > > >
-> > > > > * Vincent Guittot <vincent.guittot@linaro.org> [190109 01:42]:
-> > > > > > Le Tuesday 08 Jan 2019 =C3=A0 13:37:43 (-0800), Tony Lindgren a=
- =C3=A9crit :
-> > > > > > > Lowering the autosuspend_delay_ms to 2100 ms makes things wor=
-k again.
-> > > > > > > Anything higher than 2200 ms seems to somehow time out immedi=
-ately
-> > > > > > > now :)
-> > > > > >
-> > > > > > This is quite close to the max ns of an int on arm 32bits
-> > > > > >
-> > > > > > Could you try the patch below ?
-> > > > >
-> > > > > Yup great thanks, that's it:
-> > > > >
-> > > > > Tested-by: Tony Lindgren <tony@atomide.com>
-> > > >
-> > > > Cool.  Thanks for getting to the bottom of this!
-> > >
-> > > No problem.
-> > >
-> > > One more thing I noticed: The 25% slack can get noticeable
-> > > for larger values. For things like a 3 second uart console
-> > > timeout slack of 750 ms is quite large variation.
-> > >
-> > > Should we have a limit of max 100 ms for the slack?
-> >
-> > Keep in mind that when jiffies were used, expires was rounded to a
-> > full second when delay was greater than a second. So you could already
-> > have difference of up 990ms on arm before this patch
-> > And i don't take into account the rework of timer infra which add
-> > another level of variation, something like up to 640 ms more when the
-> > timer is greater than 2880 ms for arm IIRC
->
-> I think it was rounded up earlier.
->
-> Don't we get rounded down now also?
 
-We still round up. In hrtimer we have :
-timer->_softexpires =3D time;
-timer->node.expires =3D ktime_add_safe(time, delta);
-so the hrtimer will expire between "time" and "time+delta"
+--KR/qxknboQ7+Tpez
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->
-> Regards,
->
-> Tony
+On Tue, Jan 08, 2019 at 10:56:32AM +0000, Claudiu.Beznea@microchip.com wrot=
+e:
+> From: Claudiu Beznea <claudiu.beznea@microchip.com>
+>=20
+> Add helper to check if regulator will be disabled in suspend.
+>=20
+> Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
+
+This feels like it's the wrong way round - if this is configurable I'd
+expect something to configure the suspend mode and then for that to
+arrange to configure the regulator appropriately (along with anything
+else that needs doing) rather than to infer the configuration from the
+regulator state which feels fragile.  But based on the cover letter
+that's kind of like what the initial proposal about target states was so
+perhaps this is the way we end up going...  this certainly looks a lot
+less impactful that the target state stuff though.
+
+--KR/qxknboQ7+Tpez
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlw2J+IACgkQJNaLcl1U
+h9DcRQf/f2syn6A2vAA52taqMOX2yicco2vyAygNn47KH3gVlPg1zONPpEQpIgbA
+bLBFQrcsF6qDNKhaFtuyoAf6OhTW0Zhx7GMGpiUAeGO1MhG4YH1KYw+bGMG6BxW6
+QwaIOK15x1wagCtuI+837xmUUaWDHESLog4uvgpg7lEjZxfeXgsiPc9pCkLlrI2o
+2ed96DyT4s/wHdwz61gi5INpScrynAEfzkyHhluYnHVES+6yS52E3NhipLgqbIj8
+EhunSZJQFh+QpM3AG5ithO237q3mvPsKV0tUmBjWRZsuL/xrUlqd26J7iDye/52r
+CZzk8FIhWeH/0fODpyARFAjqacYa5Q==
+=Oh5J
+-----END PGP SIGNATURE-----
+
+--KR/qxknboQ7+Tpez--
