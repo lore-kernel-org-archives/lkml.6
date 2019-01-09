@@ -2,105 +2,110 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CCACC43612
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 10:47:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78226C43612
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 10:48:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4516920883
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 10:47:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="jKe6fte8"
+	by mail.kernel.org (Postfix) with ESMTP id 50C7C21773
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 10:48:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730205AbfAIKrt (ORCPT
+        id S1730239AbfAIKsI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 05:47:49 -0500
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:11869 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729607AbfAIKrt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 05:47:49 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c35d1430001>; Wed, 09 Jan 2019 02:47:31 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Wed, 09 Jan 2019 02:47:48 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Wed, 09 Jan 2019 02:47:48 -0800
-Received: from [10.21.132.148] (10.124.1.5) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 9 Jan
- 2019 10:47:45 +0000
-Subject: Re: [PATCH 4.14 000/101] 4.14.92-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-        <ben.hutchings@codethink.co.uk>, <lkft-triage@lists.linaro.org>,
-        <stable@vger.kernel.org>, linux-tegra <linux-tegra@vger.kernel.org>
-References: <20190107105330.372621917@linuxfoundation.org>
- <20190108121905.GC3884@kroah.com>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <c146718b-5fbc-aff5-9236-54037234bf88@nvidia.com>
-Date:   Wed, 9 Jan 2019 10:47:44 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Wed, 9 Jan 2019 05:48:08 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:36992 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726915AbfAIKsI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 05:48:08 -0500
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id EC9A789ADB;
+        Wed,  9 Jan 2019 10:48:07 +0000 (UTC)
+Received: from ws.net.home (ovpn-116-60.ams2.redhat.com [10.36.116.60])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 04117600C3;
+        Wed,  9 Jan 2019 10:48:06 +0000 (UTC)
+Date:   Wed, 9 Jan 2019 11:48:04 +0100
+From:   Karel Zak <kzak@redhat.com>
+To:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        util-linux@vger.kernel.org
+Subject: [ANNOUNCE] util-linux v2.33.1
+Message-ID: <20190109104804.qeryw2xyp7j42mhc@ws.net.home>
 MIME-Version: 1.0
-In-Reply-To: <20190108121905.GC3884@kroah.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL104.nvidia.com (172.18.146.11) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1547030851; bh=q8AapqPTxAPvsg6ENx6SVkXViivykNfMHeAchfZ0r+0=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=jKe6fte8n4luSsflUO0BMwlj0zdLNA9MYh1TDXNwOIkSCdR87XbyWdt2xyWI2QUnh
-         A2GHwW/2D1KO8Rm/DJwc99qwatRv8P8z2vQDv/5V3HHhXkDASd7nCQKUQR0ipb05Gq
-         SsTyGQNK+oPQIvH2X6c7P1xR3GvUpp1N69TW5BkCX1QAxgb4XjWRUlch9J8+QSwC24
-         F0xMwlMwN12U9k8MxLARRDNouLU7ub52yqJZ7i1o33Um+PyJWSD/0GdOW+dUW9eLPv
-         y60xhtgxqXIvBUrDWGyKJyGVkD9mGVOuuWipOyeGOSrU2fR9Ms24L6siM1qZ/Xagx0
-         PnnixoIKqhUwQ==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: NeoMutt/20180716-1022-6b9065-dirty
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Wed, 09 Jan 2019 10:48:08 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-On 08/01/2019 12:19, Greg Kroah-Hartman wrote:
-> On Mon, Jan 07, 2019 at 01:31:48PM +0100, Greg Kroah-Hartman wrote:
->> This is the start of the stable review cycle for the 4.14.92 release.
->> There are 101 patches in this series, all will be posted as a response
->> to this one.  If anyone has any issues with these being applied, please
->> let me know.
->>
->> Responses should be made by Wed Jan  9 10:53:00 UTC 2019.
->> Anything received after that time might be too late.
->>
->> The whole patch series can be found in one patch at:
->> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.92-rc1.gz
-> 
-> -rc3 is out to hopefully fix the last reported build issue:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.92-rc3.gz
+The util-linux stable release v2.33.1 is available at
+                                        
+  http://www.kernel.org/pub/linux/utils/util-linux/v2.33/
+                                        
+Feedback and bug reports, as always, are welcomed.
+                                        
+  Karel        
 
-All tests are passing for Tegra ...
 
-Test results for stable-v4.14:
-    8 builds:	8 pass, 0 fail
-    16 boots:	16 pass, 0 fail
-    14 tests:	14 pass, 0 fail
+util-linux 2.33.1 Release Notes
+===============================
 
-Linux version:	4.14.92-rc3-gd679908
-Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
-                tegra210-p2371-2180, tegra30-cardhu-a04
-
-Cheers
-Jon
+agetty:
+   - Return old behavior with empty logname  [Stanislav Brabec]
+   - fix output of escaped characters  [Christian Hesse]
+   - fix portability issues  [Samuel Thibault]
+build-sys:
+   - do not require crypt()  [Karel Zak]
+   - do not require dirfd()  [Karel Zak]
+   - make fdisk, sfdisk, cfdisk optional (enabled by default)  [Carlos Santos]
+chmem:
+   - add initilizer [clang]  [Sami Kerola]
+choom:
+   - fix negative adjust score usage  [Karel Zak]
+dmesg:
+   - correct "-n, --console-level level" example in manual page  [Jean-Philippe ROMAIN]
+docs:
+   - add link to mail list archive  [Sami Kerola]
+   - update AUTHORS file  [Karel Zak]
+fstrim:
+   - Add Documentation key to fstrim.service  [Andreas Henriksson]
+   - fix usage()  [Karel Zak]
+include/c:
+   - re-add type checking in container_of()  [Ruediger Meier]
+libblkid:
+   - (ntfs) fix compiler warning [-Wpedantic]  [Karel Zak]
+   - fix detection of dm-integrity superblock  [Milan Broz]
+   - stratis  correct byte order  [Tony Asleson]
+libmount:
+   - (umount) make mnt_stat_mountpoin() usable for relative paths  [Karel Zak]
+libuuid:
+   - fix man page typos  [Seth Girvan]
+mkswap:
+   - fix page size warning message  [Noel Cragg]
+   - use dd(1) in example rather than fallocate(1)  [Karel Zak]
+po:
+   - merge changes  [Karel Zak]
+   - update es.po (from translationproject.org)  [Antonio Ceballos Roa]
+   - update sv.po (from translationproject.org)  [Sebastian Rasmussen]
+setarch:
+   - fix obscure sparc32bash use-case  [Karel Zak]
+tests:
+   - check for tar and {b,g}zip  [Karel Zak]
+   - enlarge backing file for fstab-btrfs  [Karel Zak]
+   - make lsns-netnsid portable  [Karel Zak]
+   - run oids test only when uuidgen tool was built  [Thomas Deutschmann]
+umount:
+   - fix --quiet  [Karel Zak]
+uuidd:
+   - Add Documentation key to uuidd.service  [Andreas Henriksson]
 
 -- 
-nvpublic
+ Karel Zak  <kzak@redhat.com>
+ http://karelzak.blogspot.com
