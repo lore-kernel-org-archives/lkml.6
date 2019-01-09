@@ -6,23 +6,23 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EE17C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 16:41:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 732ABC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 16:41:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E67B206BB
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 16:41:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4B9BF206BB
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 16:41:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726850AbfAIQlr (ORCPT
+        id S1726831AbfAIQlp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 11:41:47 -0500
-Received: from mx2.suse.de ([195.135.220.15]:57600 "EHLO mx1.suse.de"
+        Wed, 9 Jan 2019 11:41:45 -0500
+Received: from mx2.suse.de ([195.135.220.15]:57636 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726579AbfAIQkk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726551AbfAIQkk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 9 Jan 2019 11:40:40 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 7EEEDAFF4;
-        Wed,  9 Jan 2019 16:40:38 +0000 (UTC)
+        by mx1.suse.de (Postfix) with ESMTP id 4A596B012;
+        Wed,  9 Jan 2019 16:40:39 +0000 (UTC)
 From:   Roman Penyaev <rpenyaev@suse.de>
 Cc:     Roman Penyaev <rpenyaev@suse.de>,
         Andrew Morton <akpm@linux-foundation.org>,
@@ -33,9 +33,9 @@ Cc:     Roman Penyaev <rpenyaev@suse.de>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Andrea Parri <andrea.parri@amarulasolutions.com>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [RFC PATCH 05/15] epoll: introduce user header structure and user index for polling from userspace
-Date:   Wed,  9 Jan 2019 17:40:15 +0100
-Message-Id: <20190109164025.24554-6-rpenyaev@suse.de>
+Subject: [RFC PATCH 07/15] epoll: extend epitem struct with new members for polling from userspace
+Date:   Wed,  9 Jan 2019 17:40:17 +0100
+Message-Id: <20190109164025.24554-8-rpenyaev@suse.de>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190109164025.24554-1-rpenyaev@suse.de>
 References: <20190109164025.24554-1-rpenyaev@suse.de>
@@ -47,16 +47,19 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This one introduces main user structures: user header and user index.
-Header describes current state of epoll, head and tail of the index
-ring, epoll items at the end of the structure.
+ ->bit
+       every epitem has an element inside user item array, this bit is
+       actually an index position of that user item array and also a
+       bit inside ep->items_bm
 
-Index table is a ring, which is controlled by head and tail from the
-user header.  Ring consists of u32 indeces, pointing to items in header,
-which have been ready for polling.
+ ->ready_events
+       received events in the period when descriptor can't be polled
+       from userspace and ep->rdllist is used for keeping list of
+       ready items
 
-Userspace has to call epoll_create1(EPOLL_USERPOLL) in order to start
-using polling from user side.
+ ->work
+      work for offloading polling from task context if epfd is polled
+      from userspace but driver does not provide pollflags on wakeup
 
 Signed-off-by: Roman Penyaev <rpenyaev@suse.de>
 Cc: Andrew Morton <akpm@linux-foundation.org>
@@ -69,188 +72,62 @@ Cc: Andrea Parri <andrea.parri@amarulasolutions.com>
 Cc: linux-fsdevel@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org
 ---
- fs/eventpoll.c                 | 107 ++++++++++++++++++++++++++++++++-
- include/uapi/linux/eventpoll.h |   3 +-
- 2 files changed, 106 insertions(+), 4 deletions(-)
+ fs/eventpoll.c | 21 +++++++++++++++------
+ 1 file changed, 15 insertions(+), 6 deletions(-)
 
 diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-index 2cc183e86a29..9ec682b6488f 100644
+index ae288f62aa4c..637b463587c1 100644
 --- a/fs/eventpoll.c
 +++ b/fs/eventpoll.c
-@@ -178,6 +178,42 @@ struct epitem {
+@@ -9,6 +9,8 @@
+  *
+  *  Davide Libenzi <davidel@xmailserver.org>
+  *
++ *  Polling from userspace support by Roman Penyaev <rpenyaev@suse.de>
++ *  (C) Copyright 2019 SUSE, All Rights Reserved
+  */
+ 
+ #include <linux/init.h>
+@@ -42,6 +44,7 @@
+ #include <linux/seq_file.h>
+ #include <linux/compat.h>
+ #include <linux/rculist.h>
++#include <linux/workqueue.h>
+ #include <net/busy_poll.h>
+ 
+ /*
+@@ -176,6 +179,18 @@ struct epitem {
+ 
+ 	/* The structure that describe the interested events and the source fd */
  	struct epoll_event event;
++
++	/* Bit in user bitmap for user polling */
++	unsigned int bit;
++
++	/*
++	 * Collect ready events for the period when descriptor is polled by user
++	 * but events are routed to klists.
++	 */
++	__poll_t ready_events;
++
++	/* Work for offloading event callback */
++	struct work_struct work;
  };
  
-+#define EPOLL_USER_HEADER_SIZE  128
-+#define EPOLL_USER_HEADER_MAGIC 0xeb01eb01
-+
-+enum {
-+	EPOLL_USER_POLL_INACTIVE = 0, /* user poll disactivated */
-+	EPOLL_USER_POLL_ACTIVE   = 1, /* user can continue busy polling */
-+
-+	/*
-+	 * Always keep some slots ahead to be able to consume new events
-+	 * from many threads, i.e. if N threads consume ring from userspace,
-+	 * we have to keep N free slots ahead to avoid ring overlap.
-+	 *
-+	 * Probably this number should be reported to userspace in header.
-+	 */
-+	EPOLL_USER_EXTRA_INDEX_NR = 16 /* how many extra indeces keep in ring */
-+};
-+
-+struct user_epitem {
-+	unsigned int ready_events;
-+	struct epoll_event event;
-+};
-+
-+struct user_header {
-+	unsigned int magic;          /* epoll user header magic */
-+	unsigned int state;          /* epoll ring state */
-+	unsigned int header_length;  /* length of the header + items */
-+	unsigned int index_length;   /* length of the index ring */
-+	unsigned int max_items_nr;   /* max num of items slots */
-+	unsigned int max_index_nr;   /* max num of items indeces, always pow2 */
-+	unsigned int head;           /* updated by userland */
-+	unsigned int tail;           /* updated by kernel */
-+	unsigned int padding[24];    /* Header size is 128 bytes */
-+
-+	struct user_epitem items[];
-+};
-+
- /*
-  * This structure is stored inside the "private_data" member of the file
-  * structure and represents the main data structure for the eventpoll
-@@ -222,6 +258,36 @@ struct eventpoll {
+ #define EPOLL_USER_HEADER_SIZE  128
+@@ -2557,12 +2572,6 @@ static int __init eventpoll_init(void)
+ 	ep_nested_calls_init(&poll_safewake_ncalls);
+ #endif
  
- 	struct file *file;
- 
-+	/* User header with array of items */
-+	struct user_header *user_header;
-+
-+	/* User index, which acts as a ring of coming events */
-+	unsigned int *user_index;
-+
-+	/* Actual length of user header, always aligned on page */
-+	unsigned int header_length;
-+
-+	/* Actual length of user index, always aligned on page */
-+	unsigned int index_length;
-+
-+	/* Number of event items */
-+	unsigned int items_nr;
-+
-+	/* Items bitmap, is used to get a free bit for new registered epi */
-+	unsigned long *items_bm;
-+
-+	/* Removed items bitmap, is used to postpone bit put */
-+	unsigned long *removed_items_bm;
-+
-+	/* Length of both items bitmaps, always aligned on page */
-+	unsigned int items_bm_length;
-+
-+	/*
-+	 * Where events are routed: to kernel lists or to user ring.
-+	 * Always false for epfd created without EPOLL_USERPOLL.
-+	 */
-+	bool events_to_uring;
-+
- 	/* used to optimize loop detection check */
- 	int visited;
- 	struct list_head visited_list_link;
-@@ -876,6 +942,10 @@ static void ep_free(struct eventpoll *ep)
- 	mutex_destroy(&ep->mtx);
- 	free_uid(ep->user);
- 	wakeup_source_unregister(ep->ws);
-+	vfree(ep->user_header);
-+	vfree(ep->user_index);
-+	vfree(ep->items_bm);
-+	vfree(ep->removed_items_bm);
- 	kfree(ep);
- }
- 
-@@ -1028,7 +1098,7 @@ void eventpoll_release_file(struct file *file)
- 	mutex_unlock(&epmutex);
- }
- 
--static int ep_alloc(struct eventpoll **pep)
-+static int ep_alloc(struct eventpoll **pep, int flags)
- {
- 	int error;
- 	struct user_struct *user;
-@@ -1040,6 +1110,31 @@ static int ep_alloc(struct eventpoll **pep)
- 	if (unlikely(!ep))
- 		goto free_uid;
- 
-+	if (flags & EPOLL_USERPOLL) {
-+		ep->user_header = vmalloc_user(PAGE_SIZE);
-+		ep->user_index = vmalloc_user(PAGE_SIZE);
-+		ep->items_bm = vzalloc(PAGE_SIZE);
-+		ep->removed_items_bm = vzalloc(PAGE_SIZE);
-+		ep->events_to_uring = true;
-+		if (!ep->user_header || !ep->user_index)
-+			goto free_ep;
-+		if (!ep->items_bm || !ep->removed_items_bm)
-+			goto free_ep;
-+
-+		ep->header_length   = PAGE_SIZE;
-+		ep->index_length    = PAGE_SIZE;
-+		ep->items_bm_length = PAGE_SIZE;
-+
-+		*ep->user_header = (typeof(*ep->user_header)) {
-+			.magic         = EPOLL_USER_HEADER_MAGIC,
-+			.state         = EPOLL_USER_POLL_ACTIVE,
-+			.header_length = ep->header_length,
-+			.index_length  = ep->index_length,
-+			.max_items_nr  = ep_max_items_nr(ep),
-+			.max_index_nr  = ep_max_index_nr(ep),
-+		};
-+	}
-+
- 	mutex_init(&ep->mtx);
- 	rwlock_init(&ep->lock);
- 	init_waitqueue_head(&ep->wq);
-@@ -1053,6 +1148,12 @@ static int ep_alloc(struct eventpoll **pep)
- 
- 	return 0;
- 
-+free_ep:
-+	vfree(ep->user_header);
-+	vfree(ep->user_index);
-+	vfree(ep->items_bm);
-+	vfree(ep->removed_items_bm);
-+	kfree(ep);
- free_uid:
- 	free_uid(user);
- 	return error;
-@@ -2066,12 +2167,12 @@ static int do_epoll_create(int flags)
- 	/* Check the EPOLL_* constant for consistency.  */
- 	BUILD_BUG_ON(EPOLL_CLOEXEC != O_CLOEXEC);
- 
--	if (flags & ~EPOLL_CLOEXEC)
-+	if (flags & ~(EPOLL_CLOEXEC | EPOLL_USERPOLL))
- 		return -EINVAL;
- 	/*
- 	 * Create the internal data structure ("struct eventpoll").
- 	 */
--	error = ep_alloc(&ep);
-+	error = ep_alloc(&ep, flags);
- 	if (error < 0)
- 		return error;
- 	/*
-diff --git a/include/uapi/linux/eventpoll.h b/include/uapi/linux/eventpoll.h
-index 39dfc29f0f52..b0a565f6c6c3 100644
---- a/include/uapi/linux/eventpoll.h
-+++ b/include/uapi/linux/eventpoll.h
-@@ -20,7 +20,8 @@
- #include <linux/types.h>
- 
- /* Flags for epoll_create1.  */
--#define EPOLL_CLOEXEC O_CLOEXEC
-+#define EPOLL_CLOEXEC  O_CLOEXEC
-+#define EPOLL_USERPOLL 1
- 
- /* Valid opcodes to issue to sys_epoll_ctl() */
- #define EPOLL_CTL_ADD 1
+-	/*
+-	 * We can have many thousands of epitems, so prevent this from
+-	 * using an extra cache line on 64-bit (and smaller) CPUs
+-	 */
+-	BUILD_BUG_ON(sizeof(void *) <= 8 && sizeof(struct epitem) > 128);
+-
+ 	/* Allocates slab cache used to allocate "struct epitem" items */
+ 	epi_cache = kmem_cache_create("eventpoll_epi", sizeof(struct epitem),
+ 			0, SLAB_HWCACHE_ALIGN|SLAB_PANIC|SLAB_ACCOUNT, NULL);
 -- 
 2.19.1
 
