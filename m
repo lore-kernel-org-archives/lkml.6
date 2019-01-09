@@ -2,85 +2,332 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 063CEC43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 11:11:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 171ACC43444
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 11:13:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C8E5221773
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 11:11:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D5B64217F9
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 11:13:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730732AbfAILLz (ORCPT
+        id S1730740AbfAILNX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 06:11:55 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:40215 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730569AbfAILLy (ORCPT
+        Wed, 9 Jan 2019 06:13:23 -0500
+Received: from alexa-out-blr-02.qualcomm.com ([103.229.18.198]:7299 "EHLO
+        alexa-out-blr.qualcomm.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1730569AbfAILNX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 06:11:54 -0500
-Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
-        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
-        (envelope-from <p.zabel@pengutronix.de>)
-        id 1ghBm0-00032G-H6; Wed, 09 Jan 2019 12:11:48 +0100
-Message-ID: <1547032306.4160.0.camel@pengutronix.de>
-Subject: Re: [PATCH v6 02/12] gpu: ipu-csi: Swap fields according to
- input/output field types
-From:   Philipp Zabel <p.zabel@pengutronix.de>
-To:     Steve Longerbeam <slongerbeam@gmail.com>,
-        linux-media@vger.kernel.org
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        "open list:DRM DRIVERS FOR FREESCALE IMX" 
-        <dri-devel@lists.freedesktop.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:STAGING SUBSYSTEM" <devel@driverdev.osuosl.org>,
-        "open list:FRAMEBUFFER LAYER" <linux-fbdev@vger.kernel.org>
-Date:   Wed, 09 Jan 2019 12:11:46 +0100
-In-Reply-To: <20190109001551.16113-3-slongerbeam@gmail.com>
-References: <20190109001551.16113-1-slongerbeam@gmail.com>
-         <20190109001551.16113-3-slongerbeam@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6-1+deb9u1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+        Wed, 9 Jan 2019 06:13:23 -0500
+X-IronPort-AV: E=Sophos;i="5.56,457,1539628200"; 
+   d="scan'208";a="299179"
+Received: from ironmsg02-blr.qualcomm.com ([10.86.208.131])
+  by alexa-out-blr.qualcomm.com with ESMTP/TLS/AES256-SHA; 09 Jan 2019 16:43:20 +0530
+X-IronPort-AV: E=McAfee;i="5900,7806,9130"; a="5872641"
+Received: from blr-ubuntu-104.ap.qualcomm.com (HELO blr-ubuntu-104.qualcomm.com) ([10.79.40.64])
+  by ironmsg02-blr.qualcomm.com with ESMTP; 09 Jan 2019 16:43:20 +0530
+Received: by blr-ubuntu-104.qualcomm.com (Postfix, from userid 346745)
+        id 78E5039DC; Wed,  9 Jan 2019 16:43:18 +0530 (IST)
+From:   Arun KS <arunks@codeaurora.org>
+To:     arunks.linux@gmail.com, alexander.h.duyck@linux.intel.com,
+        akpm@linux-foundation.org, mhocko@kernel.org, vbabka@suse.cz,
+        osalvador@suse.de, linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Cc:     getarunks@gmail.com, Arun KS <arunks@codeaurora.org>
+Subject: [PATCH v8] mm/page_alloc.c: memory_hotplug: free pages as higher order
+Date:   Wed,  9 Jan 2019 16:43:15 +0530
+Message-Id: <1547032395-24582-1-git-send-email-arunks@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2019-01-08 at 16:15 -0800, Steve Longerbeam wrote:
-> The function ipu_csi_init_interface() was inverting the F-bit for
-> NTSC case, in the CCIR_CODE_1/2 registers. The result being that
-> for NTSC bottom-top field order, the CSI would swap fields and
-> capture in top-bottom order.
-> 
-> Instead, base field swap on the field order of the input to the CSI,
-> and the field order of the requested output. If the input/output
-> fields are sequential but different, swap fields, otherwise do
-> not swap. This requires passing both the input and output mbus
-> frame formats to ipu_csi_init_interface().
-> 
-> Move this code to a new private function ipu_csi_set_bt_interlaced_codes()
-> that programs the CCIR_CODE_1/2 registers for interlaced BT.656 (and
-> possibly interlaced BT.1120 in the future).
-> 
-> When detecting input video standard from the input frame width/height,
-> make sure to double height if input field type is alternate, since
-> in that case input height only includes lines for one field.
-> 
-> Signed-off-by: Steve Longerbeam <slongerbeam@gmail.com>
-> Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+When freeing pages are done with higher order, time spent on coalescing
+pages by buddy allocator can be reduced.  With section size of 256MB, hot
+add latency of a single section shows improvement from 50-60 ms to less
+than 1 ms, hence improving the hot add latency by 60 times.  Modify
+external providers of online callback to align with the change.
 
-Also
-Acked-by: Philipp Zabel <p.zabel@pengutronix.de>
-to be merged via the media tree
+Signed-off-by: Arun KS <arunks@codeaurora.org>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Reviewed-by: Oscar Salvador <osalvador@suse.de>
+---
+Changes since v7:
+- Rebased to 5.0-rc1.
+- Fixed onlined_pages accounting.
+- Added comment for return value of online_page_callback.
+- Renamed xen_bring_pgs_online to xen_online_pages.
 
-regards
-Philipp
+Changes since v6:
+- Rebased to 4.20
+- Changelog updated.
+- No improvement seen on arm64, hence removed removal of prefetch.
+
+Changes since v5:
+- Rebased to 4.20-rc1.
+- Changelog updated.
+
+Changes since v4:
+- As suggested by Michal Hocko,
+- Simplify logic in online_pages_block() by using get_order().
+- Seperate out removal of prefetch from __free_pages_core().
+
+Changes since v3:
+- Renamed _free_pages_boot_core -> __free_pages_core.
+- Removed prefetch from __free_pages_core.
+- Removed xen_online_page().
+
+Changes since v2:
+- Reuse code from __free_pages_boot_core().
+
+Changes since v1:
+- Removed prefetch().
+
+Changes since RFC:
+- Rebase.
+- As suggested by Michal Hocko remove pages_per_block.
+- Modifed external providers of online_page_callback.
+
+v7: https://lore.kernel.org/patchwork/patch/1028908/
+v6: https://lore.kernel.org/patchwork/patch/1007253/
+v5: https://lore.kernel.org/patchwork/patch/995739/
+v4: https://lore.kernel.org/patchwork/patch/995111/
+v3: https://lore.kernel.org/patchwork/patch/992348/
+v2: https://lore.kernel.org/patchwork/patch/991363/
+v1: https://lore.kernel.org/patchwork/patch/989445/
+RFC: https://lore.kernel.org/patchwork/patch/984754/
+---
+ drivers/hv/hv_balloon.c        |  6 +++--
+ drivers/xen/balloon.c          | 21 +++++++++++------
+ include/linux/memory_hotplug.h |  2 +-
+ mm/internal.h                  |  1 +
+ mm/memory_hotplug.c            | 51 +++++++++++++++++++++++++++++++-----------
+ mm/page_alloc.c                |  8 +++----
+ 6 files changed, 62 insertions(+), 27 deletions(-)
+
+diff --git a/drivers/hv/hv_balloon.c b/drivers/hv/hv_balloon.c
+index 5301fef..211f3fe 100644
+--- a/drivers/hv/hv_balloon.c
++++ b/drivers/hv/hv_balloon.c
+@@ -771,7 +771,7 @@ static void hv_mem_hot_add(unsigned long start, unsigned long size,
+ 	}
+ }
+ 
+-static void hv_online_page(struct page *pg)
++static int hv_online_page(struct page *pg, unsigned int order)
+ {
+ 	struct hv_hotadd_state *has;
+ 	unsigned long flags;
+@@ -783,10 +783,12 @@ static void hv_online_page(struct page *pg)
+ 		if ((pfn < has->start_pfn) || (pfn >= has->end_pfn))
+ 			continue;
+ 
+-		hv_page_online_one(has, pg);
++		hv_bring_pgs_online(has, pfn, (1UL << order));
+ 		break;
+ 	}
+ 	spin_unlock_irqrestore(&dm_device.ha_lock, flags);
++
++	return 0;
+ }
+ 
+ static int pfn_covered(unsigned long start_pfn, unsigned long pfn_cnt)
+diff --git a/drivers/xen/balloon.c b/drivers/xen/balloon.c
+index ceb5048..116a042 100644
+--- a/drivers/xen/balloon.c
++++ b/drivers/xen/balloon.c
+@@ -345,7 +345,7 @@ static enum bp_state reserve_additional_memory(void)
+ 
+ 	/*
+ 	 * add_memory_resource() will call online_pages() which in its turn
+-	 * will call xen_online_page() callback causing deadlock if we don't
++	 * will call xen_online_pages() callback causing deadlock if we don't
+ 	 * release balloon_mutex here. Unlocking here is safe because the
+ 	 * callers drop the mutex before trying again.
+ 	 */
+@@ -369,15 +369,22 @@ static enum bp_state reserve_additional_memory(void)
+ 	return BP_ECANCELED;
+ }
+ 
+-static void xen_online_page(struct page *page)
++static int xen_online_pages(struct page *pg, unsigned int order)
+ {
+-	__online_page_set_limits(page);
++	unsigned long i, size = (1 << order);
++	unsigned long start_pfn = page_to_pfn(pg);
++	struct page *p;
+ 
++	pr_debug("Online %lu pages starting at pfn 0x%lx\n", size, start_pfn);
+ 	mutex_lock(&balloon_mutex);
+-
+-	__balloon_append(page);
+-
++	for (i = 0; i < size; i++) {
++		p = pfn_to_page(start_pfn + i);
++		__online_page_set_limits(p);
++		__balloon_append(p);
++	}
+ 	mutex_unlock(&balloon_mutex);
++
++	return 0;
+ }
+ 
+ static int xen_memory_notifier(struct notifier_block *nb, unsigned long val, void *v)
+@@ -702,7 +709,7 @@ static int __init balloon_init(void)
+ 	balloon_stats.max_retry_count = RETRY_UNLIMITED;
+ 
+ #ifdef CONFIG_XEN_BALLOON_MEMORY_HOTPLUG
+-	set_online_page_callback(&xen_online_page);
++	set_online_page_callback(&xen_online_pages);
+ 	register_memory_notifier(&xen_memory_nb);
+ 	register_sysctl_table(xen_root);
+ #endif
+diff --git a/include/linux/memory_hotplug.h b/include/linux/memory_hotplug.h
+index 07da5c6..d56bfba 100644
+--- a/include/linux/memory_hotplug.h
++++ b/include/linux/memory_hotplug.h
+@@ -87,7 +87,7 @@ extern int test_pages_in_a_zone(unsigned long start_pfn, unsigned long end_pfn,
+ 	unsigned long *valid_start, unsigned long *valid_end);
+ extern void __offline_isolated_pages(unsigned long, unsigned long);
+ 
+-typedef void (*online_page_callback_t)(struct page *page);
++typedef int (*online_page_callback_t)(struct page *page, unsigned int order);
+ 
+ extern int set_online_page_callback(online_page_callback_t callback);
+ extern int restore_online_page_callback(online_page_callback_t callback);
+diff --git a/mm/internal.h b/mm/internal.h
+index f4a7bb0..536bc2a 100644
+--- a/mm/internal.h
++++ b/mm/internal.h
+@@ -163,6 +163,7 @@ static inline struct page *pageblock_pfn_to_page(unsigned long start_pfn,
+ extern int __isolate_free_page(struct page *page, unsigned int order);
+ extern void memblock_free_pages(struct page *page, unsigned long pfn,
+ 					unsigned int order);
++extern void __free_pages_core(struct page *page, unsigned int order);
+ extern void prep_compound_page(struct page *page, unsigned int order);
+ extern void post_alloc_hook(struct page *page, unsigned int order,
+ 					gfp_t gfp_flags);
+diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+index b9a667d..573d9c32 100644
+--- a/mm/memory_hotplug.c
++++ b/mm/memory_hotplug.c
+@@ -47,7 +47,7 @@
+  * and restore_online_page_callback() for generic callback restore.
+  */
+ 
+-static void generic_online_page(struct page *page);
++static int generic_online_page(struct page *page, unsigned int order);
+ 
+ static online_page_callback_t online_page_callback = generic_online_page;
+ static DEFINE_MUTEX(online_page_callback_lock);
+@@ -656,30 +656,55 @@ void __online_page_free(struct page *page)
+ }
+ EXPORT_SYMBOL_GPL(__online_page_free);
+ 
+-static void generic_online_page(struct page *page)
++static int generic_online_page(struct page *page, unsigned int order)
+ {
+-	__online_page_set_limits(page);
+-	__online_page_increment_counters(page);
+-	__online_page_free(page);
++	__free_pages_core(page, order);
++	totalram_pages_add(1UL << order);
++#ifdef CONFIG_HIGHMEM
++	if (PageHighMem(page))
++		totalhigh_pages_add(1UL << order);
++#endif
++	return 0;
++}
++
++static int online_pages_blocks(unsigned long start, unsigned long nr_pages)
++{
++	unsigned long end = start + nr_pages;
++	int order, ret, onlined_pages = 0;
++
++	while (start < end) {
++		order = min(MAX_ORDER - 1,
++			get_order(PFN_PHYS(end) - PFN_PHYS(start)));
++
++		/*
++		 * External callback providers can deny onlining pages. So check
++		 * for return value.
++		 * zero		: if all pages are onlined.
++		 * positive	: if only few pages are onlined.
++		 * negative	: if none of the pages are onlined.
++		 */
++		ret = (*online_page_callback)(pfn_to_page(start), order);
++		if (!ret)
++			onlined_pages += (1UL << order);
++		else if (ret > 0)
++			onlined_pages += ret;
++
++		start += (1UL << order);
++	}
++	return onlined_pages;
+ }
+ 
+ static int online_pages_range(unsigned long start_pfn, unsigned long nr_pages,
+ 			void *arg)
+ {
+-	unsigned long i;
+ 	unsigned long onlined_pages = *(unsigned long *)arg;
+-	struct page *page;
+ 
+ 	if (PageReserved(pfn_to_page(start_pfn)))
+-		for (i = 0; i < nr_pages; i++) {
+-			page = pfn_to_page(start_pfn + i);
+-			(*online_page_callback)(page);
+-			onlined_pages++;
+-		}
++		onlined_pages = online_pages_blocks(start_pfn, nr_pages);
+ 
+ 	online_mem_sections(start_pfn, start_pfn + nr_pages);
+ 
+-	*(unsigned long *)arg = onlined_pages;
++	*(unsigned long *)arg += onlined_pages;
+ 	return 0;
+ }
+ 
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index d295c9b..883212a 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -1303,7 +1303,7 @@ static void __free_pages_ok(struct page *page, unsigned int order)
+ 	local_irq_restore(flags);
+ }
+ 
+-static void __init __free_pages_boot_core(struct page *page, unsigned int order)
++void __free_pages_core(struct page *page, unsigned int order)
+ {
+ 	unsigned int nr_pages = 1 << order;
+ 	struct page *p = page;
+@@ -1382,7 +1382,7 @@ void __init memblock_free_pages(struct page *page, unsigned long pfn,
+ {
+ 	if (early_page_uninitialised(pfn))
+ 		return;
+-	return __free_pages_boot_core(page, order);
++	__free_pages_core(page, order);
+ }
+ 
+ /*
+@@ -1472,14 +1472,14 @@ static void __init deferred_free_range(unsigned long pfn,
+ 	if (nr_pages == pageblock_nr_pages &&
+ 	    (pfn & (pageblock_nr_pages - 1)) == 0) {
+ 		set_pageblock_migratetype(page, MIGRATE_MOVABLE);
+-		__free_pages_boot_core(page, pageblock_order);
++		__free_pages_core(page, pageblock_order);
+ 		return;
+ 	}
+ 
+ 	for (i = 0; i < nr_pages; i++, page++, pfn++) {
+ 		if ((pfn & (pageblock_nr_pages - 1)) == 0)
+ 			set_pageblock_migratetype(page, MIGRATE_MOVABLE);
+-		__free_pages_boot_core(page, 0);
++		__free_pages_core(page, 0);
+ 	}
+ }
+ 
+-- 
+1.9.1
+
