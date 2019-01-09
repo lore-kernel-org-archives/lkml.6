@@ -2,180 +2,91 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7295FC43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 19:21:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D5C6C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 19:21:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4ADE9206BA
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 19:21:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1ACD7206BA
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 19:21:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728326AbfAITVN (ORCPT
+        id S1728340AbfAITVV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 14:21:13 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:47698 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728289AbfAITVF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 14:21:21 -0500
+Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:34069 "EHLO
+        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728279AbfAITVF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 9 Jan 2019 14:21:05 -0500
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id CADC887642;
-        Wed,  9 Jan 2019 19:21:04 +0000 (UTC)
-Received: from llong.com (dhcp-17-223.bos.redhat.com [10.18.17.223])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 781D4608F2;
-        Wed,  9 Jan 2019 19:21:03 +0000 (UTC)
-From:   Waiman Long <longman@redhat.com>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Daniel Colascione <dancol@google.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Waiman Long <longman@redhat.com>
-Subject: [PATCH v3 4/4] /proc/stat: Call kstat_irqs_usr() only for active IRQs
-Date:   Wed,  9 Jan 2019 14:20:48 -0500
-Message-Id: <1547061648-16080-5-git-send-email-longman@redhat.com>
-In-Reply-To: <1547061648-16080-1-git-send-email-longman@redhat.com>
-References: <1547061648-16080-1-git-send-email-longman@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Wed, 09 Jan 2019 19:21:05 +0000 (UTC)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R131e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04452;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0THtvvDg_1547061291;
+Received: from e19h19392.et15sqa.tbsite.net(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0THtvvDg_1547061291)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Thu, 10 Jan 2019 03:14:59 +0800
+From:   Yang Shi <yang.shi@linux.alibaba.com>
+To:     mhocko@suse.com, hannes@cmpxchg.org, shakeelb@google.com,
+        akpm@linux-foundation.org
+Cc:     yang.shi@linux.alibaba.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: [v3 PATCH 2/5] mm: memcontrol: add may_swap parameter to mem_cgroup_force_empty()
+Date:   Thu, 10 Jan 2019 03:14:42 +0800
+Message-Id: <1547061285-100329-3-git-send-email-yang.shi@linux.alibaba.com>
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1547061285-100329-1-git-send-email-yang.shi@linux.alibaba.com>
+References: <1547061285-100329-1-git-send-email-yang.shi@linux.alibaba.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-After skipping the percpu summation of non-active IRQs on a 4-socket
-Broadwell system with about 3k IRQs, about half of the CPU cycles were
-spent in the kstat_irqs() call. The majority of which were used to look
-up the IRQ descriptors for the corresponding IRQ numbers.
+mem_cgroup_force_empty() will be reused by the following patch which
+does memory reclaim when offlining.  It is unnecessary to do swap in that
+path, but force_empty still needs keep intact since it is also used by
+other usecases per Shakeel.
 
-We can recoup a lot of those lost cycles by calling kstat_irqs_usr()
-only for those IRQs that are active. A bitmap is now used to keep track
-of the list of the active IRQs. Changes in nr_active_irqs count will
-cause the code to rescan all the IRQs and repopulate the bitmap.
+So, introduce may_swap parameter to mem_cgroup_force_empty().  This is
+the preparation for the following patch.
 
-On the same 4-socket server, the introduction of this patch further
-reduces the system time of reading /proc/stat 5k times from 8.048s
-to 5.817s. This is a another time reduction of 28%.
-
-Signed-off-by: Waiman Long <longman@redhat.com>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Shakeel Butt <shakeelb@google.com>
+Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
 ---
- fs/proc/stat.c | 84 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 84 insertions(+)
+ mm/memcontrol.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/fs/proc/stat.c b/fs/proc/stat.c
-index 4b06f1b..24a7af6 100644
---- a/fs/proc/stat.c
-+++ b/fs/proc/stat.c
-@@ -93,6 +93,25 @@ static u64 compute_stat_irqs_sum(void)
- }
- 
- /*
-+ * Write the given number of space separated '0' into the sequence file.
-+ */
-+static void write_zeros(struct seq_file *p, int cnt)
-+{
-+	/* String of 16 '0's */
-+	static const char zeros[] = " 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0";
-+
-+	while (cnt > 0) {
-+		if (cnt >= 16) {
-+			seq_write(p, zeros, 32);
-+			cnt -= 16;
-+		} else {
-+			seq_write(p, zeros, 2 * cnt);
-+			cnt = 0;
-+		}
-+	}
-+}
-+
-+/*
-  * Print out the "intr" line of /proc/stat.
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index af7f18b..eaa3970 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -2878,7 +2878,7 @@ static inline bool memcg_has_children(struct mem_cgroup *memcg)
+  *
+  * Caller is responsible for holding css reference for memcg.
   */
- static void show_stat_irqs(struct seq_file *p)
-@@ -100,9 +119,74 @@ static void show_stat_irqs(struct seq_file *p)
- 	int i;
+-static int mem_cgroup_force_empty(struct mem_cgroup *memcg)
++static int mem_cgroup_force_empty(struct mem_cgroup *memcg, bool may_swap)
+ {
+ 	int nr_retries = MEM_CGROUP_RECLAIM_RETRIES;
  
- 	seq_put_decimal_ull(p, "intr ", compute_stat_irqs_sum());
-+
-+	if (IS_ENABLED(CONFIG_SMP) && (nr_cpu_ids >= 10) && (nr_irqs >= 256)) {
-+		/*
-+		 * On systems with 10 or more CPUs and 256 or more IRQs,
-+		 * we used a bitmap to keep track of the number of active
-+		 * IRQs and call kstat_irqs_usr() only for those IRQs.
-+		 * The bitmap will be refreshed whenever nr_active_irqs
-+		 * changes.
-+		 */
-+		extern atomic_t nr_active_irqs;
-+		static DEFINE_MUTEX(irqs_mutex);
-+		static int last_irq = -1;
-+		static int bitmap_size, active_irqs;
-+		static unsigned long *bitmap;
-+		int current_irqs = atomic_read(&nr_active_irqs);
-+
-+		mutex_lock(&irqs_mutex);
-+		if (current_irqs != active_irqs) {
-+			/*
-+			 * Rescan all the IRQs for active ones.
-+			 */
-+			if (nr_irqs > bitmap_size) {
-+				static unsigned long *new_bitmap;
-+				static int new_size;
-+
-+				new_size = BITS_TO_LONGS(nr_irqs)*sizeof(long);
-+				new_bitmap = (unsigned long *)krealloc(bitmap,
-+						new_size, GFP_KERNEL);
-+				if (!new_bitmap)
-+					goto fallback;
-+				bitmap = new_bitmap;
-+				bitmap_size = new_size;
-+			}
-+			memset(bitmap, 0, bitmap_size/BITS_PER_BYTE);
-+			last_irq = -1;
-+			for_each_irq_nr(i) {
-+				int cnt = kstat_irqs_usr(i);
-+
-+				if (cnt) {
-+					bitmap_set(bitmap, 0, i);
-+					last_irq = i;
-+				}
-+				seq_put_decimal_ull(p, " ", cnt);
-+			}
-+			active_irqs = current_irqs;
-+			mutex_unlock(&irqs_mutex);
-+			goto out;
-+		}
-+		/*
-+		 * Retrieve counts from active IRQs only.
-+		 */
-+		for (i = 0; i <= last_irq; i++) {
-+			int next = find_next_bit(bitmap, last_irq + 1, i);
-+
-+			if (next > i)
-+				write_zeros(p, next - i);
-+			i = next;
-+			seq_put_decimal_ull(p, " ", kstat_irqs_usr(i));
-+		}
-+		mutex_unlock(&irqs_mutex);
-+		write_zeros(p, nr_irqs - i);
-+		goto out;
-+	}
-+fallback:
- 	for_each_irq_nr(i)
- 		seq_put_decimal_ull(p, " ", kstat_irqs_usr(i));
+@@ -2895,7 +2895,7 @@ static int mem_cgroup_force_empty(struct mem_cgroup *memcg)
+ 			return -EINTR;
  
-+out:
- 	seq_putc(p, '\n');
+ 		progress = try_to_free_mem_cgroup_pages(memcg, 1,
+-							GFP_KERNEL, true);
++							GFP_KERNEL, may_swap);
+ 		if (!progress) {
+ 			nr_retries--;
+ 			/* maybe some writeback is necessary */
+@@ -2915,7 +2915,7 @@ static ssize_t mem_cgroup_force_empty_write(struct kernfs_open_file *of,
+ 
+ 	if (mem_cgroup_is_root(memcg))
+ 		return -EINVAL;
+-	return mem_cgroup_force_empty(memcg) ?: nbytes;
++	return mem_cgroup_force_empty(memcg, true) ?: nbytes;
  }
  
+ static u64 mem_cgroup_hierarchy_read(struct cgroup_subsys_state *css,
 -- 
 1.8.3.1
 
