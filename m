@@ -2,140 +2,209 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AA92C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 00:46:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C563C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 00:47:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D147A20821
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 00:46:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 08ADD20821
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 00:47:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="Bqd/XiwS"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="biTJKxV9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729198AbfAIAqa (ORCPT
+        id S1729222AbfAIArl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 19:46:30 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:45060 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728469AbfAIAqa (ORCPT
+        Tue, 8 Jan 2019 19:47:41 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:39791 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728112AbfAIArk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 19:46:30 -0500
-Received: by mail-ot1-f66.google.com with SMTP id 32so5222654ota.12
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jan 2019 16:46:29 -0800 (PST)
+        Tue, 8 Jan 2019 19:47:40 -0500
+Received: by mail-pf1-f195.google.com with SMTP id r136so2756885pfc.6;
+        Tue, 08 Jan 2019 16:47:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=HtTT53Z4RiPetJJelUtKNLzl3kIY5mvjgwGyfEY6q5g=;
-        b=Bqd/XiwS8IopsT72fnCioVA0Rp3sH0NgGHI/dN3V9z1ndmqCf1/O1XBz2RgqO5qfRE
-         ubIdjusVLpk/GPngxp/C7U2zWGovfEVb45Z3Vzg5AUrW1nKL1sheyTFzamADI9VQaMw8
-         gqlGRVINM0fuw9N6PeOZ6Mnp3CbQjA77xsyNGklpehXSYxS625aRGHXxnqUSxfv3xCaO
-         fyZc3BRGydKPjPJ0ZwQL0fDhkl4Ty9ej6WV9m0zevBRHjn8h1K43Em2CMMmJtdZ9EOB/
-         OTdBgVBKXWinmtGPdv4g4mCBo3oVRXgY2ovWaCkY9Cc5Z67mw9GbYjkMIsCWOqaqUj7d
-         yZ3Q==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=mJ5Cg8m5AuiE6k8X70rqtyhMp/Uyh1+t2vNRSuissbo=;
+        b=biTJKxV915/Gp2IzkYRWpIgNjxRVrZ7BjPUstBMjYfzT1f0DEzZ7/t9FyyZkXBcf2n
+         o/brH4ZzbhEVOhPxVtTx2I77KwYudn+xsSo6VX0498eeXaW7+RtaDbQaqOuVQWMmfwvk
+         R35x+yDJmdnawnn8VO6WfrL/mTFHjTIyU2sDeFP9KEZn2mpIYx6PsLxQ07ZWSBxE5ZeG
+         Q/gLcU3OGoCQ9khLEhzwc7sxC5rGkhiX5DJuV3HULowQw4UUEbSxU8uAwB6bbOB/EF88
+         mToIZx1QtyKVvDbZbfy/nlaD7hBrdcl/oPVBDpLxFUZHGu5rAPcYIta/6tBFnlPSlLcr
+         DJGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=HtTT53Z4RiPetJJelUtKNLzl3kIY5mvjgwGyfEY6q5g=;
-        b=IVWBHurGAN2QqbkNulqTYO8i9F39GnvCa1fUr3QIeZozJ8mPVgR9FnzAfcIAPqkXtp
-         mGHohpcxHItpSUPRGSw89Is+m7SJqaiD8fkBSYf+scu5/9eXNgixYEES4650hiHqa6jn
-         2AltTWSNqz8TlWWOASJP0GdPmreizEIm4vvzGxKZB/XXo2BvPu3LYFwK0aO/+Ytyo6vs
-         G/O1JckTokxWIQZGX98Cb6ITe7+cP7jpW02Clx6RccS33/MYUP8ogJcrs6VY/LmIWb8R
-         pZnMp3JqgVS9Ry0N8HURuie18ywerD3Vjfq6hXpU7Ntd5VCpa+y3bTvGURJrdtE8sygM
-         AQ5Q==
-X-Gm-Message-State: AJcUukcOjH6cyfNYd9fwPsBYLlrhX/+Gm/mfA925Iwco8Wi5qi5HWMF9
-        E5o7yl9TNcZ2so6v9ZKhTeJR3B4vRmSoNdr4mo+Orw==
-X-Google-Smtp-Source: ALg8bN5Ei5hNaopJXX/7AqEuZ0y5PnxuZd3NqxqbL4GH4nhYNQOaw7zxrTFhrTXqvd3q3/vSnLd/sRVUGe6Jys9HNzI=
-X-Received: by 2002:a9d:5cc2:: with SMTP id r2mr2645637oti.367.1546994789198;
- Tue, 08 Jan 2019 16:46:29 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=mJ5Cg8m5AuiE6k8X70rqtyhMp/Uyh1+t2vNRSuissbo=;
+        b=mI0g5chzVfftoUiuXdA3ebvcU8mvOAK+hIR3FwniGxnNdTmOW4GT+VrR9jAcQGkRAC
+         ImieZbKB2GvlLlHonaBasunMz9wmtxYJIveYwZwXGuHyey7Bv9PyaQ0qxlg1OtkAqQBk
+         p7yYWM19VUZPvjsk90C237kwIgX5OLXi0osU9D3kp/zRC9k1CQ2voSTEdUNtU2s4gWcO
+         gDutwwNzy8Ild5OQxJv4gDTvPAU3m42gk4hzW5AHgq9v73Kwe091IDTxWs1jzq9RV8gL
+         JPzYd/EAU2n0C1EN5JrmLIKZXQ/EMx3qO2Hfz07g6ypKcXuPoMSdtJrjD80gwi1ZvSHv
+         erBA==
+X-Gm-Message-State: AJcUuke3AXZYNAl7cS6uWh98Gn7Kceocp0cNKxLsfKa0a7Wgu28px9c4
+        sDPPBkg1UYE870MygCkj/CUwImVJ
+X-Google-Smtp-Source: ALg8bN7w+52kmP9ZmPWG0sYUQeMswfz43DLndniS/K9e/iFJTF6gXww8qoym8ab7I5TeUx3Ua3osfw==
+X-Received: by 2002:a63:6cc8:: with SMTP id h191mr3356149pgc.366.1546994858404;
+        Tue, 08 Jan 2019 16:47:38 -0800 (PST)
+Received: from localhost.localdomain ([203.205.141.123])
+        by smtp.googlemail.com with ESMTPSA id w88sm122704725pfk.11.2019.01.08.16.47.36
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 08 Jan 2019 16:47:37 -0800 (PST)
+From:   Wanpeng Li <kernellwp@gmail.com>
+X-Google-Original-From: Wanpeng Li <wanpengli@tencent.com>
+To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>
+Subject: [PATCH RESEND] KVM: MMU: Introduce single thread to zap collapsible sptes
+Date:   Wed,  9 Jan 2019 08:47:33 +0800
+Message-Id: <1546994853-22302-1-git-send-email-wanpengli@tencent.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-References: <CAGXu5jKUP9o-ZgW5Wa5-9DHeQNZ5VA3cLBCJ0P7AVkTQ5tqHtQ@mail.gmail.com>
- <CAPcyv4iZZEM3D8vta_sge7a4iMgPZ5a1AnunXa4DKUaWauZk1g@mail.gmail.com>
- <CAGXu5j+z_yRPgE0HO=Sjo_VwwDDPJ+VLxbxwKgbb2cUAB5jmwg@mail.gmail.com>
- <CAPcyv4jhFGMzBrWHS_9q0Fe2MersRXz31VG3H2dJfujx1CJGhQ@mail.gmail.com>
- <CAGXu5jKrhvUduv_XUYF94YM=bBfPGNkPrZ_EkvRKB0pDY_6uOw@mail.gmail.com> <CAPcyv4jQ1Og_mEVjb77xdM263MugzK7_yrR_zi498JFrOrhSrg@mail.gmail.com>
-In-Reply-To: <CAPcyv4jQ1Og_mEVjb77xdM263MugzK7_yrR_zi498JFrOrhSrg@mail.gmail.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Tue, 8 Jan 2019 16:46:17 -0800
-Message-ID: <CAPcyv4if2YwyYSn9XLKHQXX2oe+nX2idvNx79M2s1j4FMftkBg@mail.gmail.com>
-Subject: Re: nvdimm crash at boot
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Dave Jiang <dave.jiang@intel.com>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 8, 2019 at 4:02 PM Dan Williams <dan.j.williams@intel.com> wrote:
->
-> On Tue, Jan 8, 2019 at 3:55 PM Kees Cook <keescook@chromium.org> wrote:
-> >
-> > On Tue, Jan 8, 2019 at 3:54 PM Dan Williams <dan.j.williams@intel.com> wrote:
-> > >
-> > > On Tue, Jan 8, 2019 at 3:34 PM Kees Cook <keescook@chromium.org> wrote:
-> > > >
-> > > > On Tue, Jan 8, 2019 at 3:28 PM Dan Williams <dan.j.williams@intel.com> wrote:
-> > > > > Ah, thanks for the report! The key difference is that you don't define
-> > > > > a "label area", so the driver bails out early and never initializes
-> > > > > the security state.
-> > > > >
-> > > > > This should fix it up.
-> > > > >
-> > > > > diff --git a/drivers/nvdimm/dimm_devs.c b/drivers/nvdimm/dimm_devs.c
-> > > > > index 4890310df874..636cdb06ee17 100644
-> > > > > --- a/drivers/nvdimm/dimm_devs.c
-> > > > > +++ b/drivers/nvdimm/dimm_devs.c
-> > > > > @@ -514,7 +514,7 @@ static umode_t nvdimm_visible(struct kobject
-> > > > > *kobj, struct attribute *a, int n)
-> > > > >
-> > > > >         if (a != &dev_attr_security.attr)
-> > > > >                 return a->mode;
-> > > > > -       if (nvdimm->sec.state < 0)
-> > > > > +       if (!nvdimm->sec.ops || nvdimm->sec.state < 0)
-> > > > >                 return 0;
-> > > > >         /* Are there any state mutation ops? */
-> > > > >         if (nvdimm->sec.ops->freeze || nvdimm->sec.ops->disable
-> > > >
-> > > > Okay, cool. I wasn't sure if that test needed a deeper check. :)
-> > > >
-> > > > Fixes: 37833fb7989a9 ("acpi/nfit, libnvdimm: Add freeze security
-> > > > support to Intel nvdimm")
-> > > > Tested-by: Kees Cook <keescook@chromium.org>
-> > > >
-> > >
-> > > Actually, looking closer this should have been avoided by the fact
-> > > that __nvdimm_create() initializes the security state early and that
-> > > nvdimm->sec.state should have saved us.
-> > >
-> > > I'll dig a bit deeper with your qemu config.
-> >
-> > Maybe something goes weird with pstore stealing the region?
->
-> No, pstore is off the hook. I was just able to reproduce locally and
-> I'm not doing anything with pstore.
+From: Wanpeng Li <wanpengli@tencent.com>
 
-Huh, this fixes it:
+Last year guys from huawei reported that the call of memory_global_dirty_log_start/stop() 
+takes 13s for 4T memory and cause guest freeze too long which increases the unacceptable 
+migration downtime. [1] [2]
 
-diff --git a/include/linux/libnvdimm.h b/include/linux/libnvdimm.h
-index 5440f11b0907..7315977b64da 100644
---- a/include/linux/libnvdimm.h
-+++ b/include/linux/libnvdimm.h
-@@ -160,6 +160,7 @@ static inline struct nd_blk_region_desc *to_blk_region_desc(
+Guangrong pointed out:
+
+| collapsible_sptes zaps 4k mappings to make memory-read happy, it is not
+| required by the semanteme of KVM_SET_USER_MEMORY_REGION and it is not
+| urgent for vCPU's running, it could be done in a separate thread and use
+| lock-break technology.
+
+Several TB memory guest is common now after NVDIMM is deployed in cloud environment.
+This patch utilizes worker thread to zap collapsible sptes in order to lazy collapse 
+small sptes into large sptes during roll-back after live migration fails.
+
+[1] https://lists.gnu.org/archive/html/qemu-devel/2017-04/msg05249.html
+[2] https://www.mail-archive.com/qemu-devel@nongnu.org/msg449994.html
+
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Radim Krčmář <rkrcmar@redhat.com>
+Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
+---
+Note:
+I ever consider to add a list of memslots to be zapped, delete from the list
+and add in kvm_mmu_zap_collapsible_sptes(). However, i observe a lot of races 
+here, the memslot can disappear/modify underneath before the worker thread
+start to zap even if i introduce lock to protect the list. This patch delays 
+the worker thread by 60s(to assume memory_global_dirty_log_stop can absolutely 
+complete) to coalesce all the zap requirements after live migration fails.
+
+ arch/x86/include/asm/kvm_host.h |  3 +++
+ arch/x86/kvm/mmu.c              | 37 ++++++++++++++++++++++++++++++++-----
+ arch/x86/kvm/x86.c              |  4 ++++
+ 3 files changed, 39 insertions(+), 5 deletions(-)
+
+diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+index fbda5a9..dde32f9 100644
+--- a/arch/x86/include/asm/kvm_host.h
++++ b/arch/x86/include/asm/kvm_host.h
+@@ -892,6 +892,8 @@ struct kvm_arch {
+ 	u64 master_cycle_now;
+ 	struct delayed_work kvmclock_update_work;
+ 	struct delayed_work kvmclock_sync_work;
++	struct delayed_work kvm_mmu_zap_collapsible_sptes_work;
++	bool zap_in_progress;
+ 
+ 	struct kvm_xen_hvm_config xen_hvm_config;
+ 
+@@ -1247,6 +1249,7 @@ void kvm_mmu_zap_all(struct kvm *kvm);
+ void kvm_mmu_invalidate_mmio_sptes(struct kvm *kvm, struct kvm_memslots *slots);
+ unsigned int kvm_mmu_calculate_mmu_pages(struct kvm *kvm);
+ void kvm_mmu_change_mmu_pages(struct kvm *kvm, unsigned int kvm_nr_mmu_pages);
++void zap_collapsible_sptes_fn(struct work_struct *work);
+ 
+ int load_pdptrs(struct kvm_vcpu *vcpu, struct kvm_mmu *mmu, unsigned long cr3);
+ bool pdptrs_changed(struct kvm_vcpu *vcpu);
+diff --git a/arch/x86/kvm/mmu.c b/arch/x86/kvm/mmu.c
+index 7c03c0f..fe87dd3 100644
+--- a/arch/x86/kvm/mmu.c
++++ b/arch/x86/kvm/mmu.c
+@@ -5679,14 +5679,41 @@ static bool kvm_mmu_zap_collapsible_spte(struct kvm *kvm,
+ 	return need_tlb_flush;
  }
+ 
++void zap_collapsible_sptes_fn(struct work_struct *work)
++{
++	struct kvm_memory_slot *memslot;
++	struct kvm_memslots *slots;
++	struct delayed_work *dwork = to_delayed_work(work);
++	struct kvm_arch *ka = container_of(dwork, struct kvm_arch,
++					   kvm_mmu_zap_collapsible_sptes_work);
++	struct kvm *kvm = container_of(ka, struct kvm, arch);
++	int i;
++
++	mutex_lock(&kvm->slots_lock);
++	for (i = 0; i < KVM_ADDRESS_SPACE_NUM; i++) {
++		spin_lock(&kvm->mmu_lock);
++		slots = __kvm_memslots(kvm, i);
++		kvm_for_each_memslot(memslot, slots) {
++			slot_handle_leaf(kvm, (struct kvm_memory_slot *)memslot,
++				kvm_mmu_zap_collapsible_spte, true);
++			if (need_resched() || spin_needbreak(&kvm->mmu_lock))
++				cond_resched_lock(&kvm->mmu_lock);
++		}
++		spin_unlock(&kvm->mmu_lock);
++	}
++	kvm->arch.zap_in_progress = false;
++	mutex_unlock(&kvm->slots_lock);
++}
++
++#define KVM_MMU_ZAP_DELAYED (60 * HZ)
+ void kvm_mmu_zap_collapsible_sptes(struct kvm *kvm,
+ 				   const struct kvm_memory_slot *memslot)
+ {
+-	/* FIXME: const-ify all uses of struct kvm_memory_slot.  */
+-	spin_lock(&kvm->mmu_lock);
+-	slot_handle_leaf(kvm, (struct kvm_memory_slot *)memslot,
+-			 kvm_mmu_zap_collapsible_spte, true);
+-	spin_unlock(&kvm->mmu_lock);
++	if (!kvm->arch.zap_in_progress) {
++		kvm->arch.zap_in_progress = true;
++		schedule_delayed_work(&kvm->arch.kvm_mmu_zap_collapsible_sptes_work,
++			KVM_MMU_ZAP_DELAYED);
++	}
+ }
+ 
+ void kvm_mmu_slot_leaf_clear_dirty(struct kvm *kvm,
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index d029377..c2af289 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -9019,6 +9019,9 @@ int kvm_arch_init_vm(struct kvm *kvm, unsigned long type)
+ 
+ 	INIT_DELAYED_WORK(&kvm->arch.kvmclock_update_work, kvmclock_update_fn);
+ 	INIT_DELAYED_WORK(&kvm->arch.kvmclock_sync_work, kvmclock_sync_fn);
++	INIT_DELAYED_WORK(&kvm->arch.kvm_mmu_zap_collapsible_sptes_work,
++			zap_collapsible_sptes_fn);
++	kvm->arch.zap_in_progress = false;
+ 
+ 	kvm_hv_init_vm(kvm);
+ 	kvm_page_track_init(kvm);
+@@ -9064,6 +9067,7 @@ void kvm_arch_sync_events(struct kvm *kvm)
+ {
+ 	cancel_delayed_work_sync(&kvm->arch.kvmclock_sync_work);
+ 	cancel_delayed_work_sync(&kvm->arch.kvmclock_update_work);
++	cancel_delayed_work_sync(&kvm->arch.kvm_mmu_zap_collapsible_sptes_work);
+ 	kvm_free_pit(kvm);
+ }
+ 
+-- 
+2.7.4
 
- enum nvdimm_security_state {
-+       NVDIMM_SECURITY_ERROR = -1,
-        NVDIMM_SECURITY_DISABLED,
-        NVDIMM_SECURITY_UNLOCKED,
-        NVDIMM_SECURITY_LOCKED,
-
-Apparently I was wrong to think an enum was a signed int without
-actually making a signed value a possibility. I would have a expected
-the compiler to give me a "statement has no effect" for testing for a
-negative value against an effectively unsigned quantity.
