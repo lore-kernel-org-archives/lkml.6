@@ -2,124 +2,192 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3A42C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 13:41:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEA6CC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 13:42:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A3DB20883
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 13:41:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ssi.gouv.fr header.i=@ssi.gouv.fr header.b="RoMGK8Hv"
+	by mail.kernel.org (Postfix) with ESMTP id C513C206B6
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 13:42:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730557AbfAINlJ (ORCPT
+        id S1730818AbfAINmb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 08:41:09 -0500
-Received: from smtp-out.ssi.gouv.fr ([86.65.182.90]:63276 "EHLO
-        smtp-out.ssi.gouv.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729603AbfAINlI (ORCPT
+        Wed, 9 Jan 2019 08:42:31 -0500
+Received: from mxout012.mail.hostpoint.ch ([217.26.49.172]:22487 "EHLO
+        mxout012.mail.hostpoint.ch" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730584AbfAINma (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 08:41:08 -0500
-Received: from smtp-out.ssi.gouv.fr (localhost [127.0.0.1])
-        by smtp-out.ssi.gouv.fr (Postfix) with ESMTP id E9262D0006C;
-        Wed,  9 Jan 2019 14:41:13 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ssi.gouv.fr;
-        s=20160407; t=1547041274;
-        bh=H2Is0Q2VN22XBooqXUOSb5VIZ4HVQHkcukWlRAPTp1s=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To:From:Subject;
-        b=RoMGK8HvWM8GNKEsVGubLVPZIHc4Q2DRA/jnTE33DG16oWnu89Iag+oHvOzc73KBq
-         b06HqB02wINgPuFcY6UVLlNRae0QZn1dTVoJEGiOo4lsOYNgEXY2ZyMKVh+kT3kCaR
-         2yqJD9P3CIRKKHhqQ7uNFm4faithFGxt5t6oC6+c/y30yVZKM2fessSiTt+0G5aQv6
-         jRUP918avPzGx/TvZEwF1ERmLzifNulJYFGenTZ46kvf+OK+JWLZjvYV2FTxM7Z+Z+
-         CO85JFozPsqq7z/2i0etRkdyZCTQ5Vtj4hUnXvN3YRqV45p8SBhDpyg67mcy1hT9zY
-         MgqHBlwMSpkag==
-Subject: Re: [RFC PATCH v1 3/5] Yama: Enforces noexec mounts or file
- executability through O_MAYEXEC
-To:     Kees Cook <keescook@chromium.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        James Morris <jmorris@namei.org>
-CC:     Jann Horn <jannh@google.com>,
-        =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Matthew Garrett <mjg59@google.com>,
-        Michael Kerrisk-manpages <mtk.manpages@gmail.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        <philippe.trebuchet@ssi.gouv.fr>, Shuah Khan <shuah@kernel.org>,
-        <thibaut.sautereau@ssi.gouv.fr>, <vincent.strubel@ssi.gouv.fr>,
-        Perez Yves-Alexis <yves-alexis.perez@ssi.gouv.fr>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        Andy Lutomirski <luto@kernel.org>
-References: <20181212081712.32347-1-mic@digikod.net>
- <20181212081712.32347-4-mic@digikod.net>
- <CAG48ez3SAW8EyaJ9T1U3qPoRhYwe4CCyL9bAxuc3GxjrXipi-A@mail.gmail.com>
- <f13bf750-f418-343c-baa6-9eee6e0f5e19@ssi.gouv.fr>
- <CAG48ez00CpXOOJPLgpQd_e0gG2KgYb1p8bwssA8FDOugHTxRAA@mail.gmail.com>
- <0f7d39f8-035b-8566-94c9-ea836b280e24@ssi.gouv.fr>
- <CAGXu5jKHPE6WfbXpiwzm=vRbgJ-rCePxsrYmVzZ1+RURp-6nJg@mail.gmail.com>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mickael.salaun@ssi.gouv.fr>
-Message-ID: <58c59dbb-ae6b-ce06-d679-175b3ed6f652@ssi.gouv.fr>
-Date:   Wed, 9 Jan 2019 14:41:12 +0100
-User-Agent: Mozilla/5.0 (X11; Linux i686; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Wed, 9 Jan 2019 08:42:30 -0500
+Received: from [10.0.2.45] (helo=asmtp012.mail.hostpoint.ch)
+        by mxout012.mail.hostpoint.ch with esmtp (Exim 4.91 (FreeBSD))
+        (envelope-from <dev@pschenker.ch>)
+        id 1ghE7j-000DGa-Me; Wed, 09 Jan 2019 14:42:23 +0100
+Received: from 252.222.41.212.static.wline.lns.sme.cust.swisscom.ch ([212.41.222.252] helo=philippe-pc.toradex.int)
+        by asmtp012.mail.hostpoint.ch with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.91 (FreeBSD))
+        (envelope-from <dev@pschenker.ch>)
+        id 1ghE7j-0006KA-Gg; Wed, 09 Jan 2019 14:42:23 +0100
+X-Authenticated-Sender-Id: dev@pschenker.ch
+From:   Philippe Schenker <dev@pschenker.ch>
+To:     jic23@kernel.org, marcel.ziswiler@toradex.com, stefan@agner.ch
+Cc:     robh@kernel.org, alexandre.torgue@st.com, shawnguo@kernel.org,
+        dmitry.torokhov@gmail.com, thierry.reding@gmail.com,
+        mcoquelin.stm32@gmail.com, digetx@gmail.com, lee.jones@linaro.org,
+        Philippe Schenker <philippe.schenker@toradex.com>,
+        linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v6 2/8] mfd: stmpe: Move ADC related defines to header of mfd
+Date:   Wed,  9 Jan 2019 14:42:01 +0100
+Message-Id: <20190109134208.5660-3-dev@pschenker.ch>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190109134208.5660-1-dev@pschenker.ch>
+References: <20190109134208.5660-1-dev@pschenker.ch>
 MIME-Version: 1.0
-In-Reply-To: <CAGXu5jKHPE6WfbXpiwzm=vRbgJ-rCePxsrYmVzZ1+RURp-6nJg@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Philippe Schenker <philippe.schenker@toradex.com>
 
-On 09/01/2019 00:30, Kees Cook wrote:
-> On Tue, Jan 8, 2019 at 5:29 AM Mickaël Salaün
-> <mickael.salaun@ssi.gouv.fr> wrote:
->>
->>
->> On 03/01/2019 12:17, Jann Horn wrote:
->>> On Thu, Dec 13, 2018 at 3:49 PM Mickaël Salaün
->>> <mickael.salaun@ssi.gouv.fr> wrote:
->>>> On 12/12/2018 18:09, Jann Horn wrote:
->>>>> On Wed, Dec 12, 2018 at 9:18 AM Mickaël Salaün <mic@digikod.net> wrote:
->>>>>> Enable to either propagate the mount options from the underlying VFS
->>>>>> mount to prevent execution, or to propagate the file execute permission.
->>>>>> This may allow a script interpreter to check execution permissions
->>>>>> before reading commands from a file.
->>>>>>
->>>>>> The main goal is to be able to protect the kernel by restricting
->>>>>> arbitrary syscalls that an attacker could perform with a crafted binary
->>>>>> or certain script languages.  It also improves multilevel isolation
->>>>>> by reducing the ability of an attacker to use side channels with
->>>>>> specific code.  These restrictions can natively be enforced for ELF
->>>>>> binaries (with the noexec mount option) but require this kernel
->>>>>> extension to properly handle scripts (e.g., Python, Perl).
-> 
-> I like this idea, but I think it shouldn't live in Yama (since it is
-> currently intended to be a ptrace-policy-only LSM). It was
-> _originally_ designed to do various DAC improvements, but the
-> agreement was that those should live directly in the VFS instead (i.e.
-> the symlink, hardlink and now fifo and regular file defenses).
-> 
-> This should likely go in similarly. (But if not, it could also be its own LSM.)
-> 
+Move defines that are ADC related to the header of the overlying mfd,
+so they can be used from multiple sub-devices.
 
-I think that Yama is quite handy and make sense here, but I'm fine
-putting this knob elsewhere. However, I was thinking, for a future patch
-series, to add another sysctl to lock this choice, i.e. generalizing the
-way Yama can lock the ptrace_scope.
+Signed-off-by: Philippe Schenker <philippe.schenker@toradex.com>
+Acked-by: Lee Jones <lee.jones@linaro.org>
+Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-What matter here is the ability for an LSM to use this O_MAYEXEC flag.
-Yama is a good place to showcase this feature and I think it is cleaner
-to leverage the LSM framework to put new (optional) security features. I
-can easily create a new LSM but it would be pretty similar to Yama...
-What do you think about it James and Al?
+---
 
-Side question: wouldn't it be better to use a 0600 mode (instead of
-0644) for this kind of sysctl?
+Changes in v6: None
+Changes in v5:
+ - Changed author of commit to use correct email
+
+Changes in v4:
+ - Added Lee Jone's Ack
+ - Added Dmitry Torokhov's Ack
+
+Changes in v3: None
+Changes in v2:
+ - This is a new added commit. Separate commit for moving the defines
+   out of drivers/input/touchscreen/stmpe-ts.c to overlying mfd-device
+   drivers/mfd/stmpe.c
+ - Pre-fix defines with STMPE_
+
+ drivers/input/touchscreen/stmpe-ts.c | 34 +++++++++++-----------------
+ include/linux/mfd/stmpe.h            | 11 +++++++++
+ 2 files changed, 24 insertions(+), 21 deletions(-)
+
+diff --git a/drivers/input/touchscreen/stmpe-ts.c b/drivers/input/touchscreen/stmpe-ts.c
+index 2a78e27b4495..c5d9006588a2 100644
+--- a/drivers/input/touchscreen/stmpe-ts.c
++++ b/drivers/input/touchscreen/stmpe-ts.c
+@@ -49,17 +49,6 @@
+ 
+ #define STMPE_IRQ_TOUCH_DET		0
+ 
+-#define SAMPLE_TIME(x)			((x & 0xf) << 4)
+-#define MOD_12B(x)			((x & 0x1) << 3)
+-#define REF_SEL(x)			((x & 0x1) << 1)
+-#define ADC_FREQ(x)			(x & 0x3)
+-#define AVE_CTRL(x)			((x & 0x3) << 6)
+-#define DET_DELAY(x)			((x & 0x7) << 3)
+-#define SETTLING(x)			(x & 0x7)
+-#define FRACTION_Z(x)			(x & 0x7)
+-#define I_DRIVE(x)			(x & 0x1)
+-#define OP_MODE(x)			((x & 0x7) << 1)
+-
+ #define STMPE_TS_NAME			"stmpe-ts"
+ #define XY_MASK				0xfff
+ 
+@@ -213,9 +202,10 @@ static int stmpe_init_hw(struct stmpe_touch *ts)
+ 		return ret;
+ 	}
+ 
+-	adc_ctrl1 = SAMPLE_TIME(ts->sample_time) | MOD_12B(ts->mod_12b) |
+-		REF_SEL(ts->ref_sel);
+-	adc_ctrl1_mask = SAMPLE_TIME(0xff) | MOD_12B(0xff) | REF_SEL(0xff);
++	adc_ctrl1 = STMPE_SAMPLE_TIME(ts->sample_time) |
++		    STMPE_MOD_12B(ts->mod_12b) | STMPE_REF_SEL(ts->ref_sel);
++	adc_ctrl1_mask = STMPE_SAMPLE_TIME(0xff) | STMPE_MOD_12B(0xff) |
++			 STMPE_REF_SEL(0xff);
+ 
+ 	ret = stmpe_set_bits(stmpe, STMPE_REG_ADC_CTRL1,
+ 			adc_ctrl1_mask, adc_ctrl1);
+@@ -225,15 +215,17 @@ static int stmpe_init_hw(struct stmpe_touch *ts)
+ 	}
+ 
+ 	ret = stmpe_set_bits(stmpe, STMPE_REG_ADC_CTRL2,
+-			ADC_FREQ(0xff), ADC_FREQ(ts->adc_freq));
++			STMPE_ADC_FREQ(0xff), STMPE_ADC_FREQ(ts->adc_freq));
+ 	if (ret) {
+ 		dev_err(dev, "Could not setup ADC\n");
+ 		return ret;
+ 	}
+ 
+-	tsc_cfg = AVE_CTRL(ts->ave_ctrl) | DET_DELAY(ts->touch_det_delay) |
+-			SETTLING(ts->settling);
+-	tsc_cfg_mask = AVE_CTRL(0xff) | DET_DELAY(0xff) | SETTLING(0xff);
++	tsc_cfg = STMPE_AVE_CTRL(ts->ave_ctrl) |
++		  STMPE_DET_DELAY(ts->touch_det_delay) |
++		  STMPE_SETTLING(ts->settling);
++	tsc_cfg_mask = STMPE_AVE_CTRL(0xff) | STMPE_DET_DELAY(0xff) |
++		       STMPE_SETTLING(0xff);
+ 
+ 	ret = stmpe_set_bits(stmpe, STMPE_REG_TSC_CFG, tsc_cfg_mask, tsc_cfg);
+ 	if (ret) {
+@@ -242,14 +234,14 @@ static int stmpe_init_hw(struct stmpe_touch *ts)
+ 	}
+ 
+ 	ret = stmpe_set_bits(stmpe, STMPE_REG_TSC_FRACTION_Z,
+-			FRACTION_Z(0xff), FRACTION_Z(ts->fraction_z));
++			STMPE_FRACTION_Z(0xff), STMPE_FRACTION_Z(ts->fraction_z));
+ 	if (ret) {
+ 		dev_err(dev, "Could not config touch\n");
+ 		return ret;
+ 	}
+ 
+ 	ret = stmpe_set_bits(stmpe, STMPE_REG_TSC_I_DRIVE,
+-			I_DRIVE(0xff), I_DRIVE(ts->i_drive));
++			STMPE_I_DRIVE(0xff), STMPE_I_DRIVE(ts->i_drive));
+ 	if (ret) {
+ 		dev_err(dev, "Could not config touch\n");
+ 		return ret;
+@@ -263,7 +255,7 @@ static int stmpe_init_hw(struct stmpe_touch *ts)
+ 	}
+ 
+ 	ret = stmpe_set_bits(stmpe, STMPE_REG_TSC_CTRL,
+-			OP_MODE(0xff), OP_MODE(OP_MOD_XYZ));
++			STMPE_OP_MODE(0xff), STMPE_OP_MODE(OP_MOD_XYZ));
+ 	if (ret) {
+ 		dev_err(dev, "Could not set mode\n");
+ 		return ret;
+diff --git a/include/linux/mfd/stmpe.h b/include/linux/mfd/stmpe.h
+index 4a827af17e59..c0353f6431f9 100644
+--- a/include/linux/mfd/stmpe.h
++++ b/include/linux/mfd/stmpe.h
+@@ -10,6 +10,17 @@
+ 
+ #include <linux/mutex.h>
+ 
++#define STMPE_SAMPLE_TIME(x)	((x & 0xf) << 4)
++#define STMPE_MOD_12B(x)	((x & 0x1) << 3)
++#define STMPE_REF_SEL(x)	((x & 0x1) << 1)
++#define STMPE_ADC_FREQ(x)	(x & 0x3)
++#define STMPE_AVE_CTRL(x)	((x & 0x3) << 6)
++#define STMPE_DET_DELAY(x)	((x & 0x7) << 3)
++#define STMPE_SETTLING(x)	(x & 0x7)
++#define STMPE_FRACTION_Z(x)	(x & 0x7)
++#define STMPE_I_DRIVE(x)	(x & 0x1)
++#define STMPE_OP_MODE(x)	((x & 0x7) << 1)
++
+ struct device;
+ struct regulator;
+ 
+-- 
+2.20.1
+
