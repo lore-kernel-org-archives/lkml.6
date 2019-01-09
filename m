@@ -2,162 +2,120 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.7 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09E64C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 17:38:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A73DBC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 17:38:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C151A214C6
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 17:38:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PCmVpAsT"
+	by mail.kernel.org (Postfix) with ESMTP id 825F9206B7
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 17:38:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727020AbfAIRiG (ORCPT
+        id S1727059AbfAIRiP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 12:38:06 -0500
-Received: from mail-yw1-f66.google.com ([209.85.161.66]:35451 "EHLO
-        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726629AbfAIRiF (ORCPT
+        Wed, 9 Jan 2019 12:38:15 -0500
+Received: from gateway21.websitewelcome.com ([192.185.45.210]:40323 "EHLO
+        gateway21.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726952AbfAIRiP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 12:38:05 -0500
-Received: by mail-yw1-f66.google.com with SMTP id h32so3288475ywk.2
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jan 2019 09:38:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=00fTbS3NCEslFjaEEkgF4Su3Ks4m2l6BsBiP5Boa2l0=;
-        b=PCmVpAsT+zT4tvr3NYlV7WkaIrd9SDdr0dOP0bDElU4rjd0kgShYNDaJsWYaMATLVM
-         mWhX3zIqkfy2vURZrofhnbYPUt78gWs35gBHEvEV/9o9/OUJZJ9hnpMhAtp9WT2+SGPG
-         yQiUiwrRl9dKDm5KkL+pKXUNKQxGIuQ61Mp45bV9a8BteD03F8ouB8lIpATOHSA7RUTQ
-         zD7kfiigA5E6jUpgnrSJDgZzUA5EY8uFejYCcJ4Jgq1/F5uHMCMzKSwCtfwikHGl/lek
-         JqSG7s8ChVg/+6DrZr90++om9d8bky1bZG7kS58De6g0V4RvyLG9gr+KlWn60dr4rZu2
-         DlzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=00fTbS3NCEslFjaEEkgF4Su3Ks4m2l6BsBiP5Boa2l0=;
-        b=ExfzdczWJkZ2XRXnqaSQjCejpz8LYD+/8keBvXZfkmu56fzJiS0TWbLXb0xWwSphmd
-         3zvUap0UNNudTycFEJquJ1bvWl+9MBoGhgicWTYxyGtStZZFW1WjQp9elv7Nca66HyrC
-         W/5LB47MTZYpRs+IBTcwVlosYevnqkEK1hFZO3R8+rLPvkjZD3xQ8LoWTEwXj4A/tjrT
-         gfHQlThz396mgUfaeAsAYBkG7RT5J2rZnIhgKP8cQOW4RGChH55urvk+7+dXkyXNZJkr
-         UaSvLe2LpQUsBMqfTs8lKy7zptBvJZxsO8Dm6DJNeDdUVvJay7wrtGpJTDic0NX3jfrd
-         /1KA==
-X-Gm-Message-State: AJcUukeIH1VzDs3gtIKkilXlFCwKAXYsnmVoPgknrlfWex9j0pqLmN9x
-        ipPjkxJUCLMvpfhUCLj4FC4OcgV90fl0o4wvoX7/wA==
-X-Google-Smtp-Source: ALg8bN57H/xAyC2kQEXdOlJi75TH6rsY4BdsLEvYyP7t3iV+HBl4QZZqqeG4geAxtznaNW6/dV4ksjIoDfRK7ntaGWM=
-X-Received: by 2002:a81:60c4:: with SMTP id u187mr6514817ywb.345.1547055483981;
- Wed, 09 Jan 2019 09:38:03 -0800 (PST)
+        Wed, 9 Jan 2019 12:38:15 -0500
+Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
+        by gateway21.websitewelcome.com (Postfix) with ESMTP id BE476400D100E
+        for <linux-kernel@vger.kernel.org>; Wed,  9 Jan 2019 11:38:14 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id hHnygqWnh90onhHnygKXXY; Wed, 09 Jan 2019 11:38:14 -0600
+X-Authority-Reason: nr=8
+Received: from [189.250.130.205] (port=53326 helo=[192.168.43.131])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1ghHny-003t8H-DJ; Wed, 09 Jan 2019 11:38:14 -0600
+Subject: Re: [PATCH] drivers: qcom: rpmh: use struct_size() in kzalloc()
+To:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>
+Cc:     linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20181224062235.GA27815@embeddedor.com>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Message-ID: <a3aeb9ae-6054-103f-db28-6ac3c0800e50@embeddedor.com>
+Date:   Wed, 9 Jan 2019 11:38:13 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-References: <154703479840.32690.6504699919905946726.stgit@localhost.localdomain>
-In-Reply-To: <154703479840.32690.6504699919905946726.stgit@localhost.localdomain>
-From:   Shakeel Butt <shakeelb@google.com>
-Date:   Wed, 9 Jan 2019 09:37:52 -0800
-Message-ID: <CALvZod63z5_m-izxFh4XQvjcALqffkZ5G91-KsyOuAC4wvN3Wg@mail.gmail.com>
-Subject: Re: [PATCH RFC 0/3] mm: Reduce IO by improving algorithm of memcg
- pagecache pages eviction
-To:     Kirill Tkhai <ktkhai@virtuozzo.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Johannes Weiner <hannes@cmpxchg.org>, josef@toxicpanda.com,
-        Jan Kara <jack@suse.cz>, Hugh Dickins <hughd@google.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Roman Gushchin <guro@fb.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Linux MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20181224062235.GA27815@embeddedor.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.130.205
+X-Source-L: No
+X-Exim-ID: 1ghHny-003t8H-DJ
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.43.131]) [189.250.130.205]:53326
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 10
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Kirill,
+Hi,
 
-On Wed, Jan 9, 2019 at 4:20 AM Kirill Tkhai <ktkhai@virtuozzo.com> wrote:
->
-> On nodes without memory overcommit, it's common a situation,
-> when memcg exceeds its limit and pages from pagecache are
-> shrinked on reclaim, while node has a lot of free memory.
-> Further access to the pages requires real device IO, while
-> IO causes time delays, worse powerusage, worse throughput
-> for other users of the device, etc.
->
-> Cleancache is not a good solution for this problem, since
-> it implies copying of page on every cleancache_put_page()
-> and cleancache_get_page(). Also, it requires introduction
-> of internal per-cleancache_ops data structures to manage
-> cached pages and their inodes relationships, which again
-> introduces overhead.
->
-> This patchset introduces another solution. It introduces
-> a new scheme for evicting memcg pages:
->
->   1)__remove_mapping() uncharges unmapped page memcg
->     and leaves page in pagecache on memcg reclaim;
->
->   2)putback_lru_page() places page into root_mem_cgroup
->     list, since its memcg is NULL. Page may be evicted
->     on global reclaim (and this will be easily, as
->     page is not mapped, so shrinker will shrink it
->     with 100% probability of success);
->
->   3)pagecache_get_page() charges page into memcg of
->     a task, which takes it first.
->
+Friendly ping:
 
-From what I understand from the proposal, on memcg reclaim, the file
-pages are uncharged but kept in the memory and if they are accessed
-again (either through mmap or syscall), they will be charged again but
-to the requesting memcg. Also it is assumed that the global reclaim of
-such uncharged file pages is very fast and deterministic. Is that
-right?
+Who can ack or review this patch, please?
 
-Shakeel
+Thanks
+--
+Gustavo
 
-> Below is small test, which shows profit of the patchset.
->
-> Create memcg with limit 20M (exact value does not matter much):
->   $ mkdir /sys/fs/cgroup/memory/ct
->   $ echo 20M > /sys/fs/cgroup/memory/ct/memory.limit_in_bytes
->   $ echo $$ > /sys/fs/cgroup/memory/ct/tasks
->
-> Then twice read 1GB file:
->   $ time cat file_1gb > /dev/null
->
-> Before (2 iterations):
->   1)0.01user 0.82system 0:11.16elapsed 7%CPU
->   2)0.01user 0.91system 0:11.16elapsed 8%CPU
->
-> After (2 iterations):
->   1)0.01user 0.57system 0:11.31elapsed 5%CPU
->   2)0.00user 0.28system 0:00.28elapsed 100%CPU
->
-> With the patch set applied, we have file pages are cached
-> during the second read, so the result is 39 times faster.
->
-> This may be useful for slow disks, NFS, nodes without
-> overcommit by memory, in case of two memcg access the same
-> files, etc.
->
+
+On 12/24/18 12:22 AM, Gustavo A. R. Silva wrote:
+> One of the more common cases of allocation size calculations is finding
+> the size of a structure that has a zero-sized array at the end, along
+> with memory for some number of elements for that array. For example:
+> 
+> struct foo {
+>      int stuff;
+>      void *entry[];
+> };
+> 
+> instance = kzalloc(sizeof(struct foo) + sizeof(void *) * count, GFP_KERNEL);
+> 
+> Instead of leaving these open-coded and prone to type mistakes, we can
+> now use the new struct_size() helper:
+> 
+> instance = kzalloc(struct_size(instance, entry, count), GFP_KERNEL);
+> 
+> This issue was detected with the help of Coccinelle.
+> 
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 > ---
->
-> Kirill Tkhai (3):
->       mm: Uncharge and keep page in pagecache on memcg reclaim
->       mm: Recharge page memcg on first get from pagecache
->       mm: Pass FGP_NOWAIT in generic_file_buffered_read and enable ext4
->
->
->  fs/ext4/inode.c         |    1 +
->  include/linux/pagemap.h |    1 +
->  mm/filemap.c            |   38 ++++++++++++++++++++++++++++++++++++--
->  mm/vmscan.c             |   22 ++++++++++++++++++----
->  4 files changed, 56 insertions(+), 6 deletions(-)
->
-> --
-> Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
+>   drivers/soc/qcom/rpmh.c | 3 +--
+>   1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/drivers/soc/qcom/rpmh.c b/drivers/soc/qcom/rpmh.c
+> index c7beb6841289..12c057a0b325 100644
+> --- a/drivers/soc/qcom/rpmh.c
+> +++ b/drivers/soc/qcom/rpmh.c
+> @@ -362,8 +362,7 @@ int rpmh_write_batch(const struct device *dev, enum rpmh_state state,
+>   	if (!count)
+>   		return -EINVAL;
+>   
+> -	req = kzalloc(sizeof(*req) + count * sizeof(req->rpm_msgs[0]),
+> -		      GFP_ATOMIC);
+> +	req = kzalloc(struct_size(req, rpm_msgs, count), GFP_ATOMIC);
+>   	if (!req)
+>   		return -ENOMEM;
+>   	req->count = count;
+> 
