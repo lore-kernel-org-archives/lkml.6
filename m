@@ -6,52 +6,50 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BA75C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 06:56:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86A42C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 06:56:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF8C220883
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 06:56:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5D0EF20883
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 06:56:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729680AbfAIG4C (ORCPT
+        id S1729713AbfAIG41 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 01:56:02 -0500
-Received: from mail-it1-f194.google.com ([209.85.166.194]:32835 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728661AbfAIG4B (ORCPT
+        Wed, 9 Jan 2019 01:56:27 -0500
+Received: from mail-it1-f196.google.com ([209.85.166.196]:35347 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728661AbfAIG40 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 01:56:01 -0500
-Received: by mail-it1-f194.google.com with SMTP id m8so11956171itk.0
-        for <linux-kernel@vger.kernel.org>; Tue, 08 Jan 2019 22:56:00 -0800 (PST)
+        Wed, 9 Jan 2019 01:56:26 -0500
+Received: by mail-it1-f196.google.com with SMTP id p197so9572015itp.0
+        for <linux-kernel@vger.kernel.org>; Tue, 08 Jan 2019 22:56:26 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=uqxheNDTbBo/VXGa6i8Z5NG+TW3Y21vOW+J5TKQOgbs=;
-        b=Icr8ftT2pyfAdDl8uZnnrGtaFFgFbwSxEX8VBQkr8bVxmVqVI+vQgNzlrPCvj3ydl7
-         9J/2dV9G8Xjlxr/+DmClvi9vXUSxJIIHTHfaITroF529md92T90WnTWmHd/msE0mU8X4
-         CUBshcHIeLC0h97mzqFK88gr7lfk30a1zgw1idSLlRW46EgYyloOCm1fbSajMbOW/wjW
-         ahvNXvpQUdfYOXzpsDmoLq4YzzPVC0ItBLerbegjmStK+cGMtYC1xHR3uagjgfMu1Y2h
-         MMEl/lBUUVE7l24U5ZrwSA+N+1ipDE3EfgiEwcIjT0zPaW3a+VljFjtRakjQyvJRNzWs
-         U6sw==
-X-Gm-Message-State: AJcUukffoNtQQ/4LrfRh6TlOcWYwmDD/ecAj6esa847H0TGpywTMHuUR
-        5Pef7p52qgusZh8ZHxJM1whPKZwF05joMtpPS8vm1BFEhyLRVw==
-X-Google-Smtp-Source: ALg8bN73YAgGA+cz3Xdcsfj5d9zHN+YpK8SwS2+7jtR/zO35nKZV9VLG8gn7DohaEzMfTwtycwjQcGe/opMenwx5BG8=
-X-Received: by 2002:a02:95e4:: with SMTP id b91mr2941097jai.15.1547016960274;
- Tue, 08 Jan 2019 22:56:00 -0800 (PST)
+        bh=TUd/juat8ZoWZOT+ZeChopJYAhBwed+H0awVEc8O7pE=;
+        b=oiBocHiLycaWfXLwiWT4QqGa7w6p3E91vaeP5p/1fSspsszCEkfOyv+gWDoM5XM+I5
+         jAGbmFP9Y0UTmB/TH4IbHsgj2NUO0R1VOw/Fa7ma4IvG4laEDOzD1J5CJLgpYXWTQwBP
+         Ifsq2pmkF0CB3fp0OF9pG6sxOPxeZMybh0NG51HIQwwi8GALTO0qRrYzL+Ay5uvkscGz
+         DHlF3fDyjlVxo6DwKSw6GjCLT4/mIG7cHUixoBy0M9krByWvC/6ISSaaqFUD0+aLfGNS
+         JoEnn6qiR1yLjp7pTwtSwdMp/HUzISqPYXAmzBXGo4ZHDurzW8yCDBbMLcQZr71jfrZB
+         7ZOg==
+X-Gm-Message-State: AJcUukd8LozxU7epUyxkpNOkp9fnfEiZVA1WoHxQX8Eg6Gl6SSsPNlmc
+        qaoVlAVtzp+ya8SfA/TsHiGgw/0FCCwdT4NO/sJm8AWBseQHkw==
+X-Google-Smtp-Source: ALg8bN6NaXgK1WROMhMrmchmLmZcwNRmFiOJj7q2WKxA32cdM0vi4s4nmVgWYM5gScKoB+ERfj/n1taVu0tlBXOM8N8=
+X-Received: by 2002:a24:ce42:: with SMTP id v63mr3293361itg.136.1547016985542;
+ Tue, 08 Jan 2019 22:56:25 -0800 (PST)
 MIME-Version: 1.0
-References: <20190109064727.27936-1-kasong@redhat.com>
-In-Reply-To: <20190109064727.27936-1-kasong@redhat.com>
+References: <20190109064302.26780-1-kasong@redhat.com>
+In-Reply-To: <20190109064302.26780-1-kasong@redhat.com>
 From:   Kairui Song <kasong@redhat.com>
-Date:   Wed, 9 Jan 2019 14:55:49 +0800
-Message-ID: <CACPcB9eaWRZ5y3xq23cOxJ0oUnVYK=7yRK7C-m1OP4YzMMbohw@mail.gmail.com>
-Subject: Re: [PATCH 2/2] x86, kexec_file_load: make it work with efi=noruntime
- or efi=oldmap
+Date:   Wed, 9 Jan 2019 14:56:14 +0800
+Message-ID: <CACPcB9eB19F+FDBOypwKK1co+nA-GCpW2ophcwva9AL5Qq+jhA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] x86, kexec_file_load: Don't setup EFI info if EFI
+ runtime is not enabled
 To:     linux-kernel@vger.kernel.org
 Cc:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
         x86@kernel.org, Dave Young <dyoung@redhat.com>,
-        akpm@linux-foundation.org, robert.moore@intel.com,
-        erik.schmauss@intel.com, rafael.j.wysocki@intel.com,
-        lenb@kernel.org, kexec@lists.infradead.org,
+        akpm@linux-foundation.org, kexec@lists.infradead.org,
         Baoquan He <bhe@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
@@ -61,104 +59,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 CCing more people
 
-On Wed, Jan 9, 2019 at 2:47 PM Kairui Song <kasong@redhat.com> wrote:
+On Wed, Jan 9, 2019 at 2:45 PM Kairui Song <kasong@redhat.com> wrote:
 >
-> When efi=noruntime or efi=oldmap is used, EFI services won't be available
-> in the second kernel, therefore the second kernel will not be able to get
-> the ACPI RSDP address from firmware by calling EFI services and won't
-> boot. Previously we are expecting the user to set the acpi_rsdp=<addr>
-> on kernel command line for second kernel as there was no way to pass RSDP
-> address to second kernel.
+> Currenly with "efi=noruntime" in kernel command line, calling
+> kexec_file_load will raise below problem:
 >
-> After commit e6e094e053af ('x86/acpi, x86/boot: Take RSDP address from
-> boot params if available'), now it's possible to set a acpi_rsdp_addr
-> parameter in the boot_params passed to second kernel, this commit make
-> use of it, detect and set the RSDP address when it's required for second
-> kernel to boot.
+> [   97.967067] BUG: unable to handle kernel NULL pointer dereference at 0000000000000000
+> [   97.967894] #PF error: [normal kernel read fault]
+> ...
+> [   97.980456] Call Trace:
+> [   97.980724]  efi_runtime_map_copy+0x28/0x30
+> [   97.981267]  bzImage64_load+0x688/0x872
+> [   97.981794]  arch_kexec_kernel_image_load+0x6d/0x70
+> [   97.982441]  kimage_file_alloc_init+0x13e/0x220
+> [   97.983035]  __x64_sys_kexec_file_load+0x144/0x290
+> [   97.983586]  do_syscall_64+0x55/0x1a0
+> [   97.983962]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
 >
-> Tested with an EFI enabled KVM VM with efi=noruntime.
+> When efi runtime is not enabled, efi memmap is not mapped, so just skip
+> EFI info setup.
 >
 > Suggested-by: Dave Young <dyoung@redhat.com>
 > Signed-off-by: Kairui Song <kasong@redhat.com>
 > ---
->  arch/x86/kernel/kexec-bzimage64.c | 21 +++++++++++++++++++++
->  drivers/acpi/acpica/tbxfroot.c    |  3 +--
->  include/acpi/acpixf.h             |  2 +-
->  3 files changed, 23 insertions(+), 3 deletions(-)
+>  arch/x86/kernel/kexec-bzimage64.c | 3 +++
+>  1 file changed, 3 insertions(+)
 >
 > diff --git a/arch/x86/kernel/kexec-bzimage64.c b/arch/x86/kernel/kexec-bzimage64.c
-> index 53917a3ebf94..0a90dcbd041f 100644
+> index 0d5efa34f359..53917a3ebf94 100644
 > --- a/arch/x86/kernel/kexec-bzimage64.c
 > +++ b/arch/x86/kernel/kexec-bzimage64.c
-> @@ -20,6 +20,7 @@
->  #include <linux/mm.h>
->  #include <linux/efi.h>
->  #include <linux/verification.h>
-> +#include <linux/acpi.h>
+> @@ -167,6 +167,9 @@ setup_efi_state(struct boot_params *params, unsigned long params_load_addr,
+>         struct efi_info *current_ei = &boot_params.efi_info;
+>         struct efi_info *ei = &params->efi_info;
 >
->  #include <asm/bootparam.h>
->  #include <asm/setup.h>
-> @@ -255,8 +256,28 @@ setup_boot_parameters(struct kimage *image, struct boot_params *params,
->         /* Setup EFI state */
->         setup_efi_state(params, params_load_addr, efi_map_offset, efi_map_sz,
->                         efi_setup_data_offset);
+> +       if (!efi_enabled(EFI_RUNTIME_SERVICES))
+> +               return 0;
 > +
-> +#ifdef CONFIG_ACPI
-> +       /* Setup ACPI RSDP pointer in case EFI is not available in second kernel */
-> +       if (!acpi_disabled && (!efi_enabled(EFI_RUNTIME_SERVICES) || efi_enabled(EFI_OLD_MEMMAP))) {
-> +               /* Copied from acpi_os_get_root_pointer accordingly */
-> +               params->acpi_rsdp_addr = boot_params.acpi_rsdp_addr;
-> +               if (!params->acpi_rsdp_addr) {
-> +                       if (efi_enabled(EFI_CONFIG_TABLES)) {
-> +                               if (efi.acpi20 != EFI_INVALID_TABLE_ADDR)
-> +                                       params->acpi_rsdp_addr = efi.acpi20;
-> +                               else if (efi.acpi != EFI_INVALID_TABLE_ADDR)
-> +                                       params->acpi_rsdp_addr = efi.acpi;
-> +                       } else if (IS_ENABLED(CONFIG_ACPI_LEGACY_TABLES_LOOKUP)) {
-> +                               acpi_find_root_pointer(&params->acpi_rsdp_addr);
-> +                       }
-> +               }
-> +               if (!params->acpi_rsdp_addr)
-> +                       pr_warn("RSDP is not available for second kernel\n");
-> +       }
->  #endif
+>         if (!current_ei->efi_memmap_size)
+>                 return 0;
 >
-> +#endif
->         /* Setup EDD info */
->         memcpy(params->eddbuf, boot_params.eddbuf,
->                                 EDDMAXNR * sizeof(struct edd_info));
-> diff --git a/drivers/acpi/acpica/tbxfroot.c b/drivers/acpi/acpica/tbxfroot.c
-> index 483d0ce5180a..dac1e34a931c 100644
-> --- a/drivers/acpi/acpica/tbxfroot.c
-> +++ b/drivers/acpi/acpica/tbxfroot.c
-> @@ -108,8 +108,7 @@ acpi_status acpi_tb_validate_rsdp(struct acpi_table_rsdp *rsdp)
->   *
->   ******************************************************************************/
->
-> -acpi_status ACPI_INIT_FUNCTION
-> -acpi_find_root_pointer(acpi_physical_address *table_address)
-> +acpi_status acpi_find_root_pointer(acpi_physical_address *table_address)
->  {
->         u8 *table_ptr;
->         u8 *mem_rover;
-> diff --git a/include/acpi/acpixf.h b/include/acpi/acpixf.h
-> index 7aa38b648564..869d75ecaf7d 100644
-> --- a/include/acpi/acpixf.h
-> +++ b/include/acpi/acpixf.h
-> @@ -474,7 +474,7 @@ ACPI_EXTERNAL_RETURN_STATUS(acpi_status ACPI_INIT_FUNCTION
->  ACPI_EXTERNAL_RETURN_STATUS(acpi_status ACPI_INIT_FUNCTION
->                             acpi_reallocate_root_table(void))
->
-> -ACPI_EXTERNAL_RETURN_STATUS(acpi_status ACPI_INIT_FUNCTION
-> +ACPI_EXTERNAL_RETURN_STATUS(acpi_status
->                             acpi_find_root_pointer(acpi_physical_address
->                                                    *rsdp_address))
->  ACPI_EXTERNAL_RETURN_STATUS(acpi_status
 > --
 > 2.20.1
 >
 
 
---
+-- 
 Best Regards,
 Kairui Song
