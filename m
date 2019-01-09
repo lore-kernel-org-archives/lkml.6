@@ -3,162 +3,131 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4101EC43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 00:44:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BFD1C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 00:45:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F11D220821
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 00:44:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0991120821
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 00:45:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="j8N/MBbn"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="COKPMSZp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729094AbfAIAof (ORCPT
+        id S1729168AbfAIApY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 8 Jan 2019 19:44:35 -0500
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:55646 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728348AbfAIAoe (ORCPT
+        Tue, 8 Jan 2019 19:45:24 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:38118 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727829AbfAIApX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 8 Jan 2019 19:44:34 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 3B2378EE42E;
-        Tue,  8 Jan 2019 16:44:33 -0800 (PST)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id KHomr7pM1keH; Tue,  8 Jan 2019 16:44:33 -0800 (PST)
-Received: from [153.66.254.194] (unknown [50.35.68.20])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 43CB98EE0CD;
-        Tue,  8 Jan 2019 16:44:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1546994672;
-        bh=z5+d8DHLJ0gC18Ea1bZtZf+3A8M4EyUIZWv69mZ8sqk=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=j8N/MBbnjm/9Z5p/H29CMU+FljfT5XyRXjDassQUw47QTGBb25C4VYGh6uA5UnUqY
-         tWlJofvQVNUdHAd3L8vz+3dvirjPVZTxdLCApNnaExbASUV72A3rMhAEJv6Ppa1SnA
-         ng/6bhp8tiMgU/NZzaMRdx2mp1bdx7b4AueamdSI=
-Message-ID: <1546994671.6077.10.camel@HansenPartnership.com>
-Subject: Re: [PATCH 1/5 v2] PM / hibernate: Create snapshot keys handler
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     Andy Lutomirski <luto@amacapital.net>,
-        Stephan Mueller <smueller@chronox.de>
-Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
-        "Lee, Chun-Yi" <joeyli.kernel@gmail.com>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Pavel Machek <pavel@ucw.cz>, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, keyrings@vger.kernel.org,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Chen Yu <yu.c.chen@intel.com>,
-        Oliver Neukum <oneukum@suse.com>,
-        Ryan Chen <yu.chen.surf@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Giovanni Gherdovich <ggherdovich@suse.cz>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Jann Horn <jannh@google.com>, Andy Lutomirski <luto@kernel.org>
-Date:   Tue, 08 Jan 2019 16:44:31 -0800
-In-Reply-To: <D70458DE-712B-4767-8143-7DC9107689C3@amacapital.net>
-References: <20190103143227.9138-1-jlee@suse.com>
-         <4499700.LRS4F2YjjC@tauon.chronox.de>
-         <20190108050358.llsox32hggn2jioe@gondor.apana.org.au>
-         <1565399.7ulKdI1fm5@tauon.chronox.de>
-         <D70458DE-712B-4767-8143-7DC9107689C3@amacapital.net>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Tue, 8 Jan 2019 19:45:23 -0500
+Received: by mail-oi1-f195.google.com with SMTP id a77so4934590oii.5;
+        Tue, 08 Jan 2019 16:45:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=hpEhIkdCxrovNApXUNn2sYxFeYUbibi+cons5pYN6HY=;
+        b=COKPMSZpYK1Ct4l2vRoC3lwEB302d542NZ4RYu7iVdnlx8BWrAJmq1Dz1XqYvvH2j5
+         vrIuTXdDaojmQ+s6TAGxFusTkBxxcDeBX16QbxL5qOt9/e1aqBsUSOkWe/sCsrUpds7T
+         PFzxJVL0haSEI1cRv9zmlkR6vm4H4xd7edzp1iDQ63L5Y62Vcl+6PS0FxKue3Ju4zRSA
+         1MJVoLDo4iyFq5z6p+Tl8jh3Ngckihj5Rk9S2EI/Ex15+rhvvhBC3pqACSKSQHtdRa00
+         y+rJFgQKN9UVkDp5TQeQDxHCxw0127WHWiIDknLylxZvqw0JVTRsD9gQFdI3dw9PuQfa
+         gmwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:subject:to:references:from:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=hpEhIkdCxrovNApXUNn2sYxFeYUbibi+cons5pYN6HY=;
+        b=UVoM1FChdLF9CPtuppf/qwiyE0bhCTQTk26f3HQ911JIzdZ9MSs3HHJSKOjFUJMRFc
+         oMK9Ddc9w5r+BCluO6Qq4BJVoJ2k2DxO4DTcvVz5alLDTIuESVm4eli+TvX1HSBIpzYE
+         ROeggGqF9My8tQf3PjRMWeHq+jYosAKrRgm+pKeNS3cw2N/N6PPh5bNwNZDKbV+qJPam
+         e6roJraYERwVN9DY/HaWHs+anC07ZxVTtEQ7zQDKnCFP5XmoNXW85/gojqrX94rgGUyA
+         Rf24bO87hazZ9xfXI6LCHSui1/6hcR0O4BO2pXoqYaeB8tvXc1pjYIBOFowAll8tKo+x
+         nnkA==
+X-Gm-Message-State: AJcUukflWbX0LAldnJbZmLr/iUrnnSMmoSUVNvFi7YfIppcDDpVF3/5q
+        x5DGjyar4x045o6QRMzxie5lDv0E
+X-Google-Smtp-Source: ALg8bN5OjjUJ5Gb9xpWnEoCv62mHA6ijStGvCQtozqeAL+oZzMGK7/eJba38oyIrpwangGLkk463Tw==
+X-Received: by 2002:aca:490c:: with SMTP id w12mr2644937oia.8.1546994722786;
+        Tue, 08 Jan 2019 16:45:22 -0800 (PST)
+Received: from [192.168.1.112] (cpe-24-31-245-230.kc.res.rr.com. [24.31.245.230])
+        by smtp.gmail.com with ESMTPSA id q131sm32883814oih.1.2019.01.08.16.45.21
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 08 Jan 2019 16:45:22 -0800 (PST)
+Subject: Re: [PATCH v4 0/4] rtlwifi: Fix issues with rtl8723ae
+To:     Bernd Edlinger <bernd.edlinger@hotmail.de>,
+        Ping-Ke Shih <pkshih@realtek.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Andrew Lunn <andrew@lunn.ch>
+References: <AM6PR07MB560811200F9507F8DB95488AE48A0@AM6PR07MB5608.eurprd07.prod.outlook.com>
+From:   Larry Finger <Larry.Finger@lwfinger.net>
+Message-ID: <2353d9ae-0def-9a02-e6d0-25351e283128@lwfinger.net>
+Date:   Tue, 8 Jan 2019 18:45:21 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.3
+MIME-Version: 1.0
+In-Reply-To: <AM6PR07MB560811200F9507F8DB95488AE48A0@AM6PR07MB5608.eurprd07.prod.outlook.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2019-01-08 at 15:54 -0800, Andy Lutomirski wrote:
-> > On Jan 7, 2019, at 11:09 PM, Stephan Mueller <smueller@chronox.de>
-> > wrote:
-> > 
-> > Am Dienstag, 8. Januar 2019, 06:03:58 CET schrieb Herbert Xu:
-> > 
-> > Hi Herbert,
-> > 
-> > > Are we going to have multiple implementations for the same KDF?
-> > > If not then the crypto API is not a good fit.  To consolidate
-> > > multiple implementations of the same KDF, simply provide helpers
-> > > for them.
-> > 
-> > It is unlikely to have multiple implementations of a KDF. However,
-> > KDFs relate to hashes like block chaining modes to raw block
-> > ciphers. Thus a KDF can be applied with different hashes.
-> > 
-> > My idea was to add template support to RNGs (because KDFs are
-> > effectively a type of RNG since they produce an arbitrary output
-> > from a fixed input). The KDFs would be a template wrapping hashes.
-> > For example, the CTR-KDF from SP800-108 could be instantiated like
-> > kdf-ctr(sha256).
-> > 
-> > 
+On 1/8/19 4:49 PM, Bernd Edlinger wrote:
+> Currently the rtl8723ae driver is broken (since v4.7).
 > 
-> I think that, if the crypto API is going to grow a KDF facility, it
-> should be done right. Have a key type or flag or whatever that says
-> “this key may *only* be used to derive keys using such-and-such
-> algorithm”, and have a helper to derive a key.  That helper should
-> take some useful parameters and mix them in:
+> Connection to AP is lost very often, especially when
+> the signal level is not very good.
 > 
-> - What type of key is being derived?  ECDSA signing key?  HMAC
-> key?  AES key?
+> The main issue is the power save mode is basically
+> not working, and seems to trigger a firmware bug.
+> So I had to take out the FW LPS mode handling.
 > 
-> - Can user code access the derived key?
+> While debugging the driver I found a couple related issues,
+> for instance that the signal level in dm.undec_sm_pwdb
+> is no longer accurate (may be even much too high) when no more
+> packets are received, and it increases the likelihood to receive
+> something if the input gain is set to maximum.
 > 
-> - What is the key’s purpose?  “Encrypt and authenticate a hibernation
-> image” would be a purpose.
+> The patch was tested with the rtl8723ae PCI card in my laptop
+> against a FRITZ!Box 7590 AP -- the WiFi connection works now
+> very reliable for me.
 > 
-> - Number of bytes.
+> ChangeLog:
 > 
-> All of these parameters should be mixed in to the key derivation.
+> v2: Adjusts the defaults of swlps and fwlps module
+> parameters to match the firmware capabilities instead of removing
+> the whole code, so it can be easily re-activated once a firmware
+> update is available.
 > 
-> Also, an AE key, even for AES+HMAC, should be just one derived
-> key.  If you need 512 bits, ask for a 512-bit key, not two 256-bit
-> keys.
+> v3: Make the title of each patch fit in one line.
+> 
+> v4: Try to fix the line endings the message body.
+>      Which is an exchange server issue.
+>      The patch does not change at all.
+> 
+> Bernd Edlinger (4):
+>    rtl8723ae: Take the FW LPS mode handling out
+>    rtl8723ae: Dont use old data for input gain control
+>    rtl8723ae: Re-introduce the adaptive rate control
+>    rtlwifi: Don't clear num_rx_inperiod too early
+> 
+>   drivers/net/wireless/realtek/rtlwifi/base.c        |  4 +-
+>   drivers/net/wireless/realtek/rtlwifi/core.c        |  2 +
+>   .../net/wireless/realtek/rtlwifi/rtl8723ae/dm.c    | 95 +++++++++++++++++++++-
+>   .../net/wireless/realtek/rtlwifi/rtl8723ae/sw.c    |  8 +-
+>   4 files changed, 101 insertions(+), 8 deletions(-)
 
-Actually, it would be enormously helpful if we could reuse these pieces
-for the TPM as well.  It has two KDFs: KDFa, which is the CTR-KDF from
-SP800-108 and KDFe which is the SP800-56A KDF for elliptic curve one
-pass Diffie Hellman, so if we're going to do the former, I'd really
-like the latter as well.
+This version applied OK.
 
-The way the TPM parametrises input to both KDFs is
+Larry
 
-(hashAlg, key, label, contextU, contextV, bits)
-
-Where
-
-hashAlg  = the hash algorithm used as the PRF
-key      = the input parameter of variable bit size or
-           the x co-ordinate of the shared point
-label    = An ASCII string representing the use
-contextU = public input U
-contextV = public input V
-bits     = number of output bits
-
-Is that a good enough parametrisation (not the only way you distinguish
-uses is with the label, which is not recoverable)?  ContextU and
-ContextV are simply concatenated to form the full Context of SP800-108, 
-but we tend to need two separate inputs (for KDFe they're the public x
-co-ordinates of the points of the two inputs to ECDH for instance; in
-KDFa they're usually the local and remote nonces).
-
-The labels for TPM usage are things like "INTEGRITY" for HMAC keys or
-"CFB" when generating an aes128-cfb session key. For KDFe, the tpm
-seems to like the label "SECRET".  Although the TPM specifies fixed
-short strings for the label, nothing prevents them being longer like
-the purpose you state above (essentially we could mix purpose, use and
-key type into the label and the contexts).
-
-From the point of view of accelerators, the only thing you really need
-to know is the hash algorthim (PRF), because everything else above is
-an input to the function, so I suppose it makes sense to name them as
-kdf-X(PRF)  where X would be ctr or ecdh and PRF would be a hash.
-
-James
 
