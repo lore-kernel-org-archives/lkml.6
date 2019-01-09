@@ -2,156 +2,156 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-16.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4B49C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 12:49:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 145FDC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 12:49:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C7FC206B6
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 12:49:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="ULa2hxDU"
+	by mail.kernel.org (Postfix) with ESMTP id D33AC206B6
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 12:49:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547038186;
+	bh=0JQXQ8tg6rrUbMMD7jsJhDyhhhq6Ta8O+t+Js54LyDE=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
+	b=xSb0iAkzfRpTN2daHu6c4nB4gUCkS0GI8Qo3vKogkxz5dDAoKGP2UKamE0hb/bt49
+	 r6XA0qphL2Bf6WvY0Lh5C/dhLQujKHrwUvB4BWoG40Xf/ADjgeRO5hdcHWxB1ofY+s
+	 OH4Ac9+ckRH5yjZ/ttH2ydkPb04DZH5/1mB4+P4I=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730528AbfAIMtD (ORCPT
+        id S1730729AbfAIMtp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 07:49:03 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:43912 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729732AbfAIMtD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 07:49:03 -0500
-Received: from zn.tnic (p200300EC2BEA1000E56F05EB9FFDE1E7.dip0.t-ipconnect.de [IPv6:2003:ec:2bea:1000:e56f:5eb:9ffd:e1e7])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id A905D1EC014B;
-        Wed,  9 Jan 2019 13:49:01 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1547038141;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=Sj6ddva6iFOtF3top2ruh0n1QXiQQrYhiUkE8TXk4H8=;
-        b=ULa2hxDUOie8DioGGU527C8w3pttybcdDzEvnpxAjufs5Xsh9r8+x6OesIRH6KcNg3txqN
-        NoZWdt4PK75L0veDWDTURzmzcSUIIr4kSowUITFBx4nhb0pC0s+EoeUuX2QyvuV8eebZb2
-        u2mZUMMGUCAVyduN5wTZScftuNXtf04=
-Date:   Wed, 9 Jan 2019 13:48:53 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Chao Fan <fanc.fnst@cn.fujitsu.com>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, tglx@linutronix.de,
-        mingo@redhat.com, hpa@zytor.com, keescook@chromium.org,
-        bhe@redhat.com, msys.mizuma@gmail.com, indou.takao@jp.fujitsu.com,
-        caoj.fnst@cn.fujitsu.com
-Subject: Re: [PATCH v15 1/6] x86/boot: Copy kstrtoull() to boot/string.c
- instead of using simple_strtoull()
-Message-ID: <20190109124853.GD15665@zn.tnic>
-References: <20190107032243.25324-1-fanc.fnst@cn.fujitsu.com>
- <20190107032243.25324-2-fanc.fnst@cn.fujitsu.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190107032243.25324-2-fanc.fnst@cn.fujitsu.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Wed, 9 Jan 2019 07:49:45 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:50298 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730075AbfAIMtp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 07:49:45 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
+        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
+        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+        List-Archive; bh=XMqI1r2Y8+Gc6wIK9C2Ro2ygAakrwmUjqcZGiBbe6go=; b=Q5VwZk2So0H1
+        9jiGQXEoyWGP0Y2J0ZjON+UIO/leS4FuF7WH9sSjspsta6KgvGSSxQbnyKXl02wG9gwZXGDHudfRe
+        egwywS/kZFzEFxzjrvBK/9LvdeVMeCBb4MTcrIHzgQml7rp81X+u68D5vjg9rEzE+iAgqrrRLQ7nm
+        8mKew=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1ghDI6-0007yM-Tb; Wed, 09 Jan 2019 12:49:02 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 672EB1127528; Wed,  9 Jan 2019 12:49:02 +0000 (GMT)
+From:   Mark Brown <broonie@kernel.org>
+To:     Ajit Pandey <ajitp@codeaurora.org>
+Cc:     Rohit kumar <rohitkr@codeaurora.org>,
+        Mark Brown <broonie@kernel.org>, plai@codeaurora.org,
+        bgoswami@codeaurora.org, asishb@codeaurora.org,
+        lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz,
+        tiwai@suse.com, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org, rohkumar@qti.qualcomm.com,
+        srinivas.kandagatla@linaro.org, vinod.koul@linaro.org,
+        Rohit kumar <rohitkr@codeaurora.org>,
+        alsa-devel@alsa-project.org
+Subject: Applied "ASoC: soc-core: defer card probe until all component is added to list" to the asoc tree
+In-Reply-To:  <1547023627-30312-1-git-send-email-rohitkr@codeaurora.org>
+X-Patchwork-Hint: ignore
+Message-Id: <20190109124902.672EB1127528@debutante.sirena.org.uk>
+Date:   Wed,  9 Jan 2019 12:49:02 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 07, 2019 at 11:22:38AM +0800, Chao Fan wrote:
-> Copy kstrtoull() and necessary functions from lib/kstrtox.c to
-> boot/string.c so that code in boot/ can use kstrtoull() and the old
-> simple_strtoull() can be replaced.
-> 
-> In boot/string.c, using div_u64() from math64.h directly will cause the
-> dividend handled as 64-bit value and bring ld error. The solution is to
-> separate the dividend to upper and lower in boot/string.o. So copy the
-> useful div_u64() and div_u64_rem() to boot/string.c also. To avoid
-> redefinition in i386, rename them as __div_u64() and __div_u64_rem().
-> 
-> Signed-off-by: Chao Fan <fanc.fnst@cn.fujitsu.com>
-> ---
->  arch/x86/boot/string.c | 137 +++++++++++++++++++++++++++++++++++++++++
->  arch/x86/boot/string.h |   2 +
->  2 files changed, 139 insertions(+)
+The patch
 
-...
+   ASoC: soc-core: defer card probe until all component is added to list
 
-> +static inline char _tolower(const char c)
-> +{
-> +	return c | 0x20;
-> +}
-> +
-> +const char *_parse_integer_fixup_radix(const char *s, unsigned int *base)
+has been applied to the asoc tree at
 
-static
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
-> +{
-> +	if (*base == 0) {
-> +		if (s[0] == '0') {
-> +			if (_tolower(s[1]) == 'x' && isxdigit(s[2]))
-> +				*base = 16;
-> +			else
-> +				*base = 8;
-> +		} else
-> +			*base = 10;
-> +	}
-> +	if (*base == 16 && s[0] == '0' && _tolower(s[1]) == 'x')
-> +		s += 2;
-> +	return s;
-> +}
-> +
-> +/*
-> + * Convert non-negative integer string representation in explicitly given radix
-> + * to an integer.
-> + * Return number of characters consumed maybe or-ed with overflow bit.
-> + * If overflow occurs, result integer (incorrect) is still returned.
-> + *
-> + * Don't you dare use this function.
-> + */
-> +unsigned int _parse_integer(const char *s, unsigned int base, unsigned long long *p)
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-static
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-> +{
-> +	unsigned long long res;
-> +	unsigned int rv;
-> +
-> +	res = 0;
-> +	rv = 0;
-> +	while (1) {
-> +		unsigned int c = *s;
-> +		unsigned int lc = c | 0x20; /* don't tolower() this line */
-> +		unsigned int val;
-> +
-> +		if ('0' <= c && c <= '9')
-> +			val = c - '0';
-> +		else if ('a' <= lc && lc <= 'f')
-> +			val = lc - 'a' + 10;
-> +		else
-> +			break;
-> +
-> +		if (val >= base)
-> +			break;
-> +		/*
-> +		 * Check for overflow only if we are within range of
-> +		 * it in the max base we support (16)
-> +		 */
-> +		if (unlikely(res & (~0ull << 60))) {
-> +			if (res > __div_u64(ULLONG_MAX - val, base))
-> +				rv |= KSTRTOX_OVERFLOW;
-> +		}
-> +		res = res * base + val;
-> +		rv++;
-> +		s++;
-> +	}
-> +	*p = res;
-> +	return rv;
-> +}
- 
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 8780cf1142a59568a3aa77959cbd76b2edb6fd81 Mon Sep 17 00:00:00 2001
+From: Ajit Pandey <ajitp@codeaurora.org>
+Date: Wed, 9 Jan 2019 14:17:07 +0530
+Subject: [PATCH] ASoC: soc-core: defer card probe until all component is added
+ to list
+
+DAI component probe is not called if it is not present
+in component list during sound card registration.
+Check if component is available in component list for
+platform and cpu dai before soundcard registration.
+
+Signed-off-by: Ajit Pandey <ajitp@codeaurora.org>
+Signed-off-by: Rohit kumar <rohitkr@codeaurora.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/soc-core.c | 17 ++++++++++++++++-
+ 1 file changed, 16 insertions(+), 1 deletion(-)
+
+diff --git a/sound/soc/soc-core.c b/sound/soc/soc-core.c
+index 0462b3ec977a..eec92f17dd15 100644
+--- a/sound/soc/soc-core.c
++++ b/sound/soc/soc-core.c
+@@ -1027,7 +1027,6 @@ static int snd_soc_init_platform(struct snd_soc_card *card,
+ 				 struct snd_soc_dai_link *dai_link)
+ {
+ 	struct snd_soc_dai_link_component *platform = dai_link->platform;
+-
+ 	/*
+ 	 * FIXME
+ 	 *
+@@ -1129,6 +1128,14 @@ static int soc_init_dai_link(struct snd_soc_card *card,
+ 			link->name);
+ 		return -EINVAL;
+ 	}
++
++	/*
++	 * Defer card registartion if platform dai component is not added to
++	 * component list.
++	 */
++	if (!soc_find_component(link->platform->of_node, link->platform->name))
++		return -EPROBE_DEFER;
++
+ 	/*
+ 	 * CPU device may be specified by either name or OF node, but
+ 	 * can be left unspecified, and will be matched based on DAI
+@@ -1140,6 +1147,14 @@ static int soc_init_dai_link(struct snd_soc_card *card,
+ 			link->name);
+ 		return -EINVAL;
+ 	}
++
++	/*
++	 * Defer card registartion if cpu dai component is not added to
++	 * component list.
++	 */
++	if (!soc_find_component(link->cpu_of_node, link->cpu_name))
++		return -EPROBE_DEFER;
++
+ 	/*
+ 	 * At least one of CPU DAI name or CPU device name/node must be
+ 	 * specified
 -- 
-Regards/Gruss,
-    Boris.
+2.20.1
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
