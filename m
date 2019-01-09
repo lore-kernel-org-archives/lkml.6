@@ -2,77 +2,84 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34DCEC43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 16:50:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3805AC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 16:52:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF6EE21841
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 16:50:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="pRDLhDvj"
+	by mail.kernel.org (Postfix) with ESMTP id F0C2A217F9
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 16:52:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726635AbfAIQuU (ORCPT
+        id S1726422AbfAIQwA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 11:50:20 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:44844 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726374AbfAIQuU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 11:50:20 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=ETngWk8bFl869vpKnbrNqNk9X0Z5yXpd3HneLST4RvU=; b=pRDLhDvjcileXGVBKYB8uTKxe
-        IxXzRpOmIdUlW1XPp6moJHJkf5vC3Scjg7Z+4ppbZt2375YW/Sc0T9qUYjD53zF3Jx6DByLgQC4aP
-        YfJeOSXUGGzH6m9acPZJPb0ZnZcQcvHiSybmqfKpYBXy4XeQRd/3lwpnKpjhaRuCzfxU70tq63oS9
-        hP4ZUq1fXFPp7Q/PpTl9Kgrc2BT3MkUTnlf1LpKxvmMzInjgY/3P1dinGCNsbXw4SNsn+YFqhBPdT
-        v+yW0msrOWySwVv2SoC2N9Y9bFCJtaRGWTcbluIDGs6UoNQX3Iy0QQHkStnJJD280weJc3npLSjHv
-        Ex/xKbbwQ==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1ghH3R-0003Xh-G0; Wed, 09 Jan 2019 16:50:09 +0000
-Date:   Wed, 9 Jan 2019 08:50:09 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Roman Penyaev <rpenyaev@suse.de>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Joe Perches <joe@perches.com>,
-        "Luis R. Rodriguez" <mcgrof@kernel.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 03/15] mm/vmalloc: introduce new vrealloc() call and
- its subsidiary reach analog
-Message-ID: <20190109165009.GM6310@bombadil.infradead.org>
-References: <20190109164025.24554-1-rpenyaev@suse.de>
- <20190109164025.24554-4-rpenyaev@suse.de>
+        Wed, 9 Jan 2019 11:52:00 -0500
+Received: from smtp.nue.novell.com ([195.135.221.5]:50298 "EHLO
+        smtp.nue.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725468AbfAIQwA (ORCPT
+        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
+        Wed, 9 Jan 2019 11:52:00 -0500
+Received: from linux-l9pv.suse (124-11-22-254.static.tfn.net.tw [124.11.22.254])
+        by smtp.nue.novell.com with ESMTP (TLS encrypted); Wed, 09 Jan 2019 17:51:50 +0100
+Date:   Thu, 10 Jan 2019 00:51:39 +0800
+From:   joeyli <jlee@suse.com>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Pavel Machek <pavel@ucw.cz>,
+        "Lee, Chun-Yi" <joeyli.kernel@gmail.com>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        LKML <linux-kernel@vger.kernel.org>, linux-pm@vger.kernel.org,
+        keyrings@vger.kernel.org,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Chen Yu <yu.c.chen@intel.com>,
+        Oliver Neukum <oneukum@suse.com>,
+        Ryan Chen <yu.chen.surf@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Giovanni Gherdovich <ggherdovich@suse.cz>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Jann Horn <jannh@google.com>
+Subject: Re: [PATCH 0/5 v2][RFC] Encryption and authentication for hibernate
+ snapshot image
+Message-ID: <20190109165139.GH9503@linux-l9pv.suse>
+References: <20190103143227.9138-1-jlee@suse.com>
+ <20190106181026.GA15256@amd>
+ <20190107173743.GC4210@linux-l9pv.suse>
+ <CALCETrWHjn_WN1WRc2pbFPB+H-ZL_1y=8dhhHoVqA53Q7Pj5vA@mail.gmail.com>
+ <20190109163958.GG9503@linux-l9pv.suse>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190109164025.24554-4-rpenyaev@suse.de>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190109163958.GG9503@linux-l9pv.suse>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 09, 2019 at 05:40:13PM +0100, Roman Penyaev wrote:
-> Basically vrealloc() repeats glibc realloc() with only one big difference:
-> old area is not freed, i.e. caller is responsible for calling vfree() in
-> case of successfull reallocation.
+On Thu, Jan 10, 2019 at 12:39:58AM +0800, joeyli wrote:
+> Hi Andy,
+>
+[...snip] 
+> 
+> Let's why I encrypt/decrypt data pages one by one, then I copy the
+^^^^^^^ That's why
 
-Ouch.  Don't call it the same thing when you're providing such different
-semantics.  I agree with you that the new semantics are useful ones,
-I just want it called something else.  Maybe vcopy()?  vclone()?
+> encrypt/decrypt data from buffer page (only one buffer page reserved
+> for encrypt/decrypt) to original page. I encreypt pages one by one, but
+> I HMAC and verify the whole snapshot image by update mode.
+> 
+[...snip]
+>  
+> > Why are you manually supporting three different key types?  Can’t you
+> > just somehow support all key types?  And shouldn’t you be verifying
+> 
+> I only supported two key typs in my patch set, user defined key and
+> TPM trusted key. The EFI secure boot did not accept by EFI subsystem.
+                   ^^^^^^^^^^^^^^^^^^^ EFI secure key
+   https://lkml.org/lkml/2018/8/5/10
 
-> + *	Do not forget to call vfree() passing old address.  But careful,
-> + *	calling vfree() from interrupt will cause vfree_deferred() call,
-> + *	which in its turn uses freed address as a temporal pointer for a
+Sorry for I produced too many typo when feeling sleepy...
 
-"temporary", not temporal.
-
-> + *	llist element, i.e. memory will be corrupted.
+Thanks a lot!
+Joey Lee
