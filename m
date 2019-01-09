@@ -2,162 +2,99 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37118C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 06:58:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FEF3C43612
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 06:59:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0400120821
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 06:58:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="ASbMHLsl"
+	by mail.kernel.org (Postfix) with ESMTP id 63F2C214C6
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 06:59:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547017162;
+	bh=A9w0LPu83gBFePHY+iqmHc55cvLL7i6bwgBMqxeWnEI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=kHYf17wzr27VNe/dej03aZyHlFIgqjgY/+vKmRa3DAumqb1D4yBIywkfoetXmfQE+
+	 D4zPz0vkKAvIfVwuPlv2xbYDzij0LvLov51O6+fGMvIbpjGF1h30jOGerbEk5oC7u2
+	 wnFBG/LI0u2YEsOWgkWxMYkXwl3h+K4AnAR4752U=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729714AbfAIG6c (ORCPT
+        id S1729745AbfAIG7V (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 01:58:32 -0500
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:58004 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729209AbfAIG6c (ORCPT
+        Wed, 9 Jan 2019 01:59:21 -0500
+Received: from mail-wm1-f54.google.com ([209.85.128.54]:37436 "EHLO
+        mail-wm1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728661AbfAIG7V (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 01:58:32 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 75C108EE42E;
-        Tue,  8 Jan 2019 22:58:30 -0800 (PST)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id PmnL43oLfymR; Tue,  8 Jan 2019 22:58:30 -0800 (PST)
-Received: from [153.66.254.194] (unknown [50.35.68.20])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 891668EE0CD;
-        Tue,  8 Jan 2019 22:58:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1547017110;
-        bh=Y6wBS4NyjRVcBjBw4T9WK9b8P57p87P6kg4yLicGKo4=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=ASbMHLsls7Bn3yb2mVZ6vmCtPoPlxvxK1PBpJqwZi7MYn7H/XSj9gdnbMUPqcoCk/
-         sIx432fRIS+4UZyS1uixpYCdb5pCI4SAYm4/nKTWNe7Z7PCNiFrRVshCxWfFchm5vF
-         DfhDMVDJLPQ+3a51urQieezA3egnxXSibUUcYCoI=
-Message-ID: <1547017108.2789.24.camel@HansenPartnership.com>
-Subject: Re: [PATCH 1/5 v2] PM / hibernate: Create snapshot keys handler
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     Stephan Mueller <smueller@chronox.de>
-Cc:     Andy Lutomirski <luto@amacapital.net>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "Lee, Chun-Yi" <joeyli.kernel@gmail.com>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Pavel Machek <pavel@ucw.cz>, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, keyrings@vger.kernel.org,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Chen Yu <yu.c.chen@intel.com>,
-        Oliver Neukum <oneukum@suse.com>,
-        Ryan Chen <yu.chen.surf@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Giovanni Gherdovich <ggherdovich@suse.cz>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Jann Horn <jannh@google.com>, Andy Lutomirski <luto@kernel.org>
-Date:   Tue, 08 Jan 2019 22:58:28 -0800
-In-Reply-To: <309406107.k3W2fMQUza@tauon.chronox.de>
-References: <20190103143227.9138-1-jlee@suse.com>
-         <D70458DE-712B-4767-8143-7DC9107689C3@amacapital.net>
-         <1546994671.6077.10.camel@HansenPartnership.com>
-         <309406107.k3W2fMQUza@tauon.chronox.de>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Wed, 9 Jan 2019 01:59:21 -0500
+Received: by mail-wm1-f54.google.com with SMTP id g67so6886602wmd.2;
+        Tue, 08 Jan 2019 22:59:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=27G32GgIx1P/0mBxkoRYgIgE3vqJB/3jc9Xyom0KbZA=;
+        b=IljnuDGyGSzzQmeyMLa5yReVOhkD+jUUacNI/l/6Ols+83XtuHNF9Hq9J+u+r1CeJ7
+         8NNTlLQdz9TkER73ESH0gGzsZODuRN36nvAmDj7Chtn7FHT3Gi+R08jnR3ixlhu/Q8U0
+         3Fvn2IzKuQ9k8jbDyeH13BMg9spJ9MrQ0B06Xb5gGRB/xxPqttqucX6w0PkuT3msg5oF
+         agbfsBra7s7pZUbpaTCCGOxJG72cu0DhyYeLzYC2rJpI3WGbmKymeiYj8ntdhlpDvMwc
+         gxYKRJYuzMsgvihTpv63fyEBmhaJpZ/mL+t5u4x/yDrZyZSx6q6yrw1Bu96Mt4oFsx1g
+         p/6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=27G32GgIx1P/0mBxkoRYgIgE3vqJB/3jc9Xyom0KbZA=;
+        b=WQouZCaMjeoni1paQoHyHc0a5rrs5B+0lkjZ6ccrhGHXgj5qpIrsobC8wcuK/OP0jc
+         0nTfBf8ZSud0n6BBwFtJE5WVU5t6YcKw362zL3eHCYH9xhPjZZCyfSC9os6OrgAMstE7
+         MVDwoE+dR/sYMKamUBs0qSYd0yBboSMMRIraooipk2v2+pm6mKdXQmPAjirihnF60B0n
+         MftN9v+ScN0U4u78sjvydpSMLjejGqn5g52Mbpx+sYLhA5Xs8AOLdMjJelNP+yVu5tkv
+         GkyDEgd/cQ4PDoXrDvYiHLiFU5y/RJm2m6vn/jt5u+wlrWajrmESla3NtgpOY2xs1Rna
+         g66g==
+X-Gm-Message-State: AJcUukc8hvyK9HgKxvZujnDTjdFdkSu/OwsNnPS/5/XUyZvWUxzIzMJR
+        /jDtEkjbRMvvXTVTug0g5L0=
+X-Google-Smtp-Source: ALg8bN6pFIbPrOLmsxsCjT3YBjGE0pEpmbiUgbZ80en+hlOObuTnhlEDpP8z3Ci70FEdo+uAz2EcwA==
+X-Received: by 2002:a1c:2c6:: with SMTP id 189mr4111866wmc.21.1547017159445;
+        Tue, 08 Jan 2019 22:59:19 -0800 (PST)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id i192sm10535496wmg.7.2019.01.08.22.59.18
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 08 Jan 2019 22:59:18 -0800 (PST)
+Date:   Wed, 9 Jan 2019 07:59:16 +0100
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     James Morris <jmorris@namei.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Ingo Molnar <mingo@elte.hu>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>
+Subject: Re: [GIT PULL] seccomp: build fix for v5.0-rc2
+Message-ID: <20190109065916.GA29753@gmail.com>
+References: <alpine.LRH.2.21.1901090803120.24546@namei.org>
+ <CAGXu5j+wvi9t-oHf4cX999aYWMhmTJ1zA1mKuNQEB_n5ixiC5w@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAGXu5j+wvi9t-oHf4cX999aYWMhmTJ1zA1mKuNQEB_n5ixiC5w@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2019-01-09 at 07:45 +0100, Stephan Mueller wrote:
-> Am Mittwoch, 9. Januar 2019, 01:44:31 CET schrieb James Bottomley:
-> 
-> Hi James,
-> 
-> > Actually, it would be enormously helpful if we could reuse these
-> > pieces for the TPM as well. 
-> 
-> Could you please help me understand whether the KDFs in TPM are
-> directly usable as a standalone cipher primitive or does it go
-> together with additional  key generation operations?
 
-They're used as generators ... which means they deterministically
-produce keys from what the TPM calls seeds so we can get crypto agility
-of TPM 2.0 ... well KDFa does.  KDFe is simply what NIST recommends you
-do when using EC for a shared key agreement ... and really we shouldn't
-be using ECDH in the kernel without it.
+* Kees Cook <keescook@chromium.org> wrote:
 
-> > It has two KDFs: KDFa, which is the CTR-KDF from
-> > SP800-108 and KDFe which is the SP800-56A KDF for elliptic curve
-> > one pass Diffie Hellman, so if we're going to do the former, I'd
-> > really like the latter as well.
-> > 
-> > The way the TPM parametrises input to both KDFs is
-> > 
-> > (hashAlg, key, label, contextU, contextV, bits)
-> > 
-> > Where
-> > 
-> > hashAlg  = the hash algorithm used as the PRF
-> > key      = the input parameter of variable bit size or
-> >            the x co-ordinate of the shared point
-> > label    = An ASCII string representing the use
-> > contextU = public input U
-> > contextV = public input V
-> > bits     = number of output bits
+> This was already picked up by x86-urgent...
 > 
-> When implementing KDFs as an extension of the kernel crypto API's RNG
-> facility we currently have to handle the limitiation of the existing
-> API. The label/context data (and when considering RFC 5869 HKDF
-> requring IKM, salt and  additional information as input) currently
-> cannot directly be communicated  through the API.
-> 
-> The issue is that the RNG facility currently has the following
-> prototype defined:
-> 
-> int (*generate)(struct crypto_rng *tfm,
->                         const u8 *src, unsigned int slen,
->                         u8 *dst, unsigned int dlen);
-> 
-> The src pointer would need to take the label/context data.
+> -Kees
 
-That's probably good enough.  For both KDFa and KDFe the label contextU
-and ContextV are concatenated, so in both cases a single source is
-probably good enough.  However, we also need to feed in the key somehow
-since it's usually used separately in the derivation functions.
+I'm fine with both routes - if Linus pulls this I'll zap the x86/urgent 
+one.
 
-> Would it be appropriate, to implement a type cast to a structure from
-> the u8 pointer?
-> 
-> E.g. for the aforementioned label/context data, we could define
-> something like
-> 
-> struct crypto_kdf_ctr {
-> 	char *label;
-> 	size_t label_len;
-> 	u8 *contextU;
-> 	size_t contextU_len;
-> 	u8 *contextV;
-> 	size_t contextV_len;
-> };
-> 
-> And the implementation of the generate function for CTR KDF would
-> then have a  type cast along the following lines:
-> 
-> 	if (slen != sizeof(struct crypto_kdf_ctr))
-> 		return -EINVAL;
-> 	const struct crypto_kdf_ctr *kdf_ctr_input = (struct
-> crypto_kdf_ctr *)src;
-> 
-> 
-> For different KDFs, different structs would be needed.
+Thanks,
 
-Actually, we probably just need the input key (or secret material), the
-concatenation and the number of output bits.
-
-James
-
+	Ingo
