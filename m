@@ -3,104 +3,93 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42C14C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 18:00:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1E62C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 18:01:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 136C720685
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 18:00:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7986F20685
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 18:01:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nN3l1YHT"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="kHrRpM+t"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727277AbfAISAv (ORCPT
+        id S1727311AbfAISBi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 13:00:51 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:40343 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727007AbfAISAu (ORCPT
+        Wed, 9 Jan 2019 13:01:38 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:44508 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727127AbfAISBi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 13:00:50 -0500
-Received: by mail-lf1-f67.google.com with SMTP id v5so6325475lfe.7;
-        Wed, 09 Jan 2019 10:00:48 -0800 (PST)
+        Wed, 9 Jan 2019 13:01:38 -0500
+Received: by mail-wr1-f66.google.com with SMTP id z5so8569860wrt.11
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Jan 2019 10:01:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=f/Exw1NcVYYqGrDV4q3XAZMtf+t2lHH10SHKVIs+s0M=;
-        b=nN3l1YHTwyNvgXU5aHouPLyz5RKleujjsUrUQZNpon475ZWiOOpJhVfzvr8J8jmsyo
-         4J80CT+b2kpk0JndsiBspEE2vT08vfhyAM8SZVxkeRTpqrE+fZI3qhAHWCyeCLZZXdw7
-         HJuNtqnIKTOJiT+q1ZvS0vh87pBnDs8B2HWKr462Hk/xGzwy7gVb+C6tqI2j0rBi1BwK
-         2WQu75lAirxUOH+Vwvou68ojYlRqFHKaRzPSJ4gRa5+5rj7DyoRX7yhttS/3hO/qz6dP
-         LTPlb/LnyO6SwXkP2Xp3VgG7tsmX97plEXlJHE56QAbKQ+w2O0qvTtVSWndptRT4KCuF
-         K4Sg==
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=aa7DBW2jefMqiPG5SEMBLPrEapaMRoLwEi0UQnoTFU8=;
+        b=kHrRpM+tjApF6eo1Zoxeiztl2FiwR3WBHD4oQFYwP0nnI8i7B0paOQaj4rtScDvFqy
+         skEhNcLQEuVf86pFN4mklZeUyvysvXZzxr+h69qncZgJeLNS/e+e9QiVJ/QVK+9dxj8o
+         VdlLATOi4nSqcan2ERN7GSK0BlnsPJgu6fWkw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=f/Exw1NcVYYqGrDV4q3XAZMtf+t2lHH10SHKVIs+s0M=;
-        b=bkxAhdSPLFtfHGHMxxTAZquGM6CA9kn3Mem8ydeCGqxBZv9lvI0Z9tKShduobbKfwS
-         z8HubQTJekWTA01PH/iL1tdy4ZwIlRg6v2fCvpmslRFKfcMWN2xvXR//YzY3OqyZmi/I
-         tCq3OEgNnYNBN3Z67qVdnICwTz4Os/2tGWbNkByaEqWcRNfJa37QH7TEWtJ8CniCCh8k
-         hKz4EKriCdUxxgOgmQaBbxp/XjBiO6Xxs8KVsyW9RDWtxemAzgXOmZ9o7hSJMyGnUkfz
-         55A7GY/ASOYC6zn2b1fJD8xd/k/tMiB+F1uk3EI1ySlEDIvEa4IhG7cDB218e/9xKEBR
-         HQxQ==
-X-Gm-Message-State: AJcUukdW9NY5QVzPfZ1IQF8UbOwi+lmkxTd1nFD1yv2UEJ947qcApUmu
-        /z07zEcjyLoxaY7o/wWtt7wzxdu8CHP5OA==
-X-Google-Smtp-Source: ALg8bN5fQjwNwyGqcTdgDv8HuAV34HEznubOvmzRp6xS1BVxGJxxbr7M5qR87k+TaO5am3Uy05NqNQ==
-X-Received: by 2002:a19:660a:: with SMTP id a10mr4350637lfc.146.1547056847286;
-        Wed, 09 Jan 2019 10:00:47 -0800 (PST)
-Received: from localhost.localdomain ([2a02:a315:5445:5300:c1c3:bc43:64cd:2432])
-        by smtp.googlemail.com with ESMTPSA id p67sm13817510lfe.14.2019.01.09.10.00.45
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 09 Jan 2019 10:00:46 -0800 (PST)
-From:   =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
-To:     andrzej.p@samsung.com
-Cc:     jacek.anaszewski@gmail.com, mchehab@kernel.org,
-        s.nawrocki@samsung.com, linux-arm-kernel@lists.infradead.org,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org,
-        =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
-Subject: [PATCH] media: s5p-jpeg: Correct step and max values for V4L2_CID_JPEG_RESTART_INTERVAL
-Date:   Wed,  9 Jan 2019 19:00:41 +0100
-Message-Id: <20190109180041.31052-1-pawel.mikolaj.chmiel@gmail.com>
-X-Mailer: git-send-email 2.17.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=aa7DBW2jefMqiPG5SEMBLPrEapaMRoLwEi0UQnoTFU8=;
+        b=sxBmsRshrGXU+zs6HkjKVsginl6aOtINmZZly+NK2x4sPlH1Jh8Sf53ckfQgzCCKmM
+         t8t4cxvHvxjZ0hA7OxaDYATzrXfeLaqCyiJLZA82Xd9pl2O5qTv8JCTmHmU4DAkxlb76
+         owhbnBqeCWs6zliVQ5Qo6Wcb3hkzegEZZwO7PEFBryYwtq30t8Bw4yi9tzJ1vCd6Poc7
+         f1Nx1JETZJD5YrAD3OHRhsrq7Y0Hqmm9SDJgz+lvt6lDDLTRt8CKkxMEbSHH24EYn2Pb
+         owspfIshE1+8XvFmEnLzIMpcZJq5b4hqKFvgG3HBq0lORxyRxbyG10v2XLBIM693HueV
+         I+rw==
+X-Gm-Message-State: AJcUukf+4/cK9DacNLt0hdgxjTnP1fLSQf/WwtKDSEH9pE97rUK6MXn0
+        Ji0NP3yn4KGW2fDX1U98dO8DzA==
+X-Google-Smtp-Source: ALg8bN5SuHaTfBgMv2bRDbK7T0AdBtnmzz8BQkudCteudChJPwuuOgeSXVXiyjbeDRrtjlC2w1JKvA==
+X-Received: by 2002:a5d:5208:: with SMTP id j8mr6265762wrv.188.1547056896228;
+        Wed, 09 Jan 2019 10:01:36 -0800 (PST)
+Received: from localhost.localdomain ([2a01:e0a:f:6020:1811:b2bc:9000:4c9])
+        by smtp.gmail.com with ESMTPSA id m193sm14880509wmb.26.2019.01.09.10.01.35
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Wed, 09 Jan 2019 10:01:35 -0800 (PST)
+From:   Vincent Guittot <vincent.guittot@linaro.org>
+To:     xuwei5@hisilicon.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linus.walleij@linaro.org
+Cc:     Vincent Guittot <vincent.guittot@linaro.org>
+Subject: [PATCH] arm64/hisilicon: fix SDcard detection
+Date:   Wed,  9 Jan 2019 19:01:32 +0100
+Message-Id: <1547056892-16527-1-git-send-email-vincent.guittot@linaro.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This commit corrects max and step values for v4l2 control for
-V4L2_CID_JPEG_RESTART_INTERVAL. Max should be 0xffff and step should be 1.
-It was found by using v4l2-compliance tool and checking result of
-VIDIOC_QUERY_EXT_CTRL/QUERYMENU test.
-Previously it was complaining that step was bigger than difference
-between max and min.
+commit 89a5e15bcba8 ("gpio/mmc/of: Respect polarity in the device tree")
+has changed how cd_gpios phandle and cd-inverted are used to set gpio's flags.
 
-Fixes: 15f4bc3b1f42 ("[media] s5p-jpeg: Add JPEG controls support")
-Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
+Since this change, hikey960 SDcard is not detected anymore because flags
+are not set correctly. Updating cd-gpios to set GPIO_ACTIVE_LOW instead
+of high, fixes the problem.
+
+Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
 ---
- drivers/media/platform/s5p-jpeg/jpeg-core.c | 2 +-
+ arch/arm64/boot/dts/hisilicon/hi3660-hikey960.dts | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/platform/s5p-jpeg/jpeg-core.c b/drivers/media/platform/s5p-jpeg/jpeg-core.c
-index 3f9000b70385..33e9927db9a0 100644
---- a/drivers/media/platform/s5p-jpeg/jpeg-core.c
-+++ b/drivers/media/platform/s5p-jpeg/jpeg-core.c
-@@ -2002,7 +2002,7 @@ static int s5p_jpeg_controls_create(struct s5p_jpeg_ctx *ctx)
- 
- 		v4l2_ctrl_new_std(&ctx->ctrl_handler, &s5p_jpeg_ctrl_ops,
- 				  V4L2_CID_JPEG_RESTART_INTERVAL,
--				  0, 3, 0xffff, 0);
-+				  0, 0xffff, 1, 0);
- 		if (ctx->jpeg->variant->version == SJPEG_S5P)
- 			mask = ~0x06; /* 422, 420 */
- 	}
+diff --git a/arch/arm64/boot/dts/hisilicon/hi3660-hikey960.dts b/arch/arm64/boot/dts/hisilicon/hi3660-hikey960.dts
+index 4643546..4ef1642 100644
+--- a/arch/arm64/boot/dts/hisilicon/hi3660-hikey960.dts
++++ b/arch/arm64/boot/dts/hisilicon/hi3660-hikey960.dts
+@@ -582,7 +582,7 @@
+ 	sd-uhs-sdr104;
+ 	disable-wp;
+ 	cd-inverted;
+-	cd-gpios = <&gpio25 3 0>;
++	cd-gpios = <&gpio25 3 GPIO_ACTIVE_LOW>;
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&sd_pmx_func
+ 		     &sd_clk_cfg_func
 -- 
-2.17.1
+2.7.4
 
