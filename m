@@ -2,97 +2,97 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAE99C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 19:57:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1495CC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 19:59:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8971821738
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 19:57:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CC764214C6
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 19:59:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="B8Erarbt"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728796AbfAIT55 (ORCPT
+        id S1728662AbfAIT7r (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 14:57:57 -0500
-Received: from wes1-so2-b.wedos.net ([46.28.106.45]:54104 "EHLO
-        wes1-so2.wedos.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728395AbfAIT55 (ORCPT
+        Wed, 9 Jan 2019 14:59:47 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:39534 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728476AbfAIT7q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 14:57:57 -0500
-Received: from localhost (ip4-46-39-182-135.cust.nbox.cz [46.39.182.135])
-        by wes1-so2.wedos.net (Postfix) with ESMTPSA id 43Zg0M4kyPzSp;
-        Wed,  9 Jan 2019 20:57:55 +0100 (CET)
-Date:   Wed, 9 Jan 2019 20:57:50 +0100
-From:   Otto Sabart <ottosabart@seberm.com>
-To:     linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        netdev@vger.kernel.org
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Jonathan Corbet <corbet@lwn.net>
-Subject: [PATCH 3/3] doc: networking: add scaling doc into index file
-Message-ID: <f34b41f5660f9c1d15ce44011929ea28d7f0cbe9.1547063330.git.ottosabart@seberm.com>
-References: <cover.1547063330.git.ottosabart@seberm.com>
+        Wed, 9 Jan 2019 14:59:46 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=en7Ss+BCNM5Jzlzw5YDF53rYHwwJu5fXjdv9zfRg/1E=; b=B8ErarbtXzYTcMIScThY8xjPm
+        p2wwTC3Dx9YVZM5Xv/O+nPfDtzyQVlXc3+F11yIFpBHcvJgnHm1dQMOKGPjm8NHdaLAX27ffWsOaU
+        /LmXTjA32Vn1JV87jj6jIqNJRXEnuhgRB1mOJie2+s2NRkzuGKEkE2ori6wLhUbtd9u5d8n1a2lwW
+        ukaOIrrgnjqmZ2m1vqZny4z0Lqb2enHvZ7BbVhGMLl25/HeCpbmhuHK5FNbigHlf2Gw53/OX9E2rJ
+        4ifhXfDufYEuk1evtE7NO/ltTxZCgOIqG1hB8Wa6a8yai2pPEO//96lMBksZP6CsIFLfa2gEkNja8
+        MELZC2OYg==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1ghK0u-0003Tu-IF; Wed, 09 Jan 2019 19:59:44 +0000
+Date:   Wed, 9 Jan 2019 11:59:44 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Waiman Long <longman@redhat.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Daniel Colascione <dancol@google.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: [PATCH v2 0/4] /proc/stat: Reduce irqs counting performance
+ overhead
+Message-ID: <20190109195944.GQ6310@bombadil.infradead.org>
+References: <1547054628-12703-1-git-send-email-longman@redhat.com>
+ <20190109174403.GN6310@bombadil.infradead.org>
+ <f6302369-9eda-ef58-4f18-3dc9ffbc31f1@redhat.com>
+ <20190109182417.GO6310@bombadil.infradead.org>
+ <f0ae7bd8-5c5b-aefd-aff8-2719fc0edbaa@redhat.com>
+ <3f44cc18-4dd8-e313-26b9-1502b0b40507@redhat.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="J2SCkAp4GZ/dPZZf"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <cover.1547063330.git.ottosabart@seberm.com>
-X-PGP-Key: http://seberm.com/pubkey.asc
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <3f44cc18-4dd8-e313-26b9-1502b0b40507@redhat.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Jan 09, 2019 at 01:54:36PM -0500, Waiman Long wrote:
+> If you read patch 4, you can see that quite a bit of CPU cycles was
+> spent looking up the radix tree to locate the IRQ descriptor for each of
+> the interrupts. Those overhead will still be there even if I use percpu
+> counters. So using percpu counter alone won't be as performant as this
+> patch or my previous v1 patch.
 
---J2SCkAp4GZ/dPZZf
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hm, if that's the overhead, then the radix tree (and the XArray) have
+APIs that can reduce that overhead.  Right now, there's only one caller
+of kstat_irqs_usr() (the proc code).  If we change that to fill an array
+instead of returning a single value, it can look something like this:
 
-Add reference to scaling document into main table of contents in network
-documentation.
+void kstat_irqs_usr(unsigned int *sums)
+{
+	XA_STATE(xas, &irq_descs, 0);
+	struct irq_desc *desc;
 
-Signed-off-by: Otto Sabart <ottosabart@seberm.com>
----
- Documentation/networking/index.rst | 1 +
- 1 file changed, 1 insertion(+)
+	xas_for_each(&xas, desc, ULONG_MAX) {
+		unsigned int sum = 0;
 
-diff --git a/Documentation/networking/index.rst b/Documentation/networking/=
-index.rst
-index 6a47629ef8ed..47552ea410fe 100644
---- a/Documentation/networking/index.rst
-+++ b/Documentation/networking/index.rst
-@@ -32,6 +32,7 @@ Contents:
-    alias
-    bridge
-    snmp_counter
-+   scaling
-=20
- .. only::  subproject
-=20
---=20
-2.17.2
+		if (!desc->kstat_irqs)
+			continue;
+		for_each_possible_cpu(cpu)
+			sum += *per_cpu_ptr(desc->kstat_irqs, cpu);
 
-
---J2SCkAp4GZ/dPZZf
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEEb6VOpv2s03VHGoilgjuumfi+HjwFAlw2Uj4ACgkQgjuumfi+
-Hjx7cw/+LIeBVZstolB+lanf3FEmibkupG8LWFIT18eskF1hSXefOxE51aXl62gL
-PGgMtNjCIGe+eZqLRDn9M08rgJSa2X2Qn23XdEW/s3HVUAKkhWCi3RFrPUf9oM4J
-cjyhw9sGeewi6qWSTJRC/Rj/Zi4rMJEGI4Ql7VSHLscfsBs/98d5PYTgQkYlCmHI
-6PEb9/+tcBFsrqjbQ1QIH1nxctS+4y4xIAQhz3nZEQxpuzaxZ+Eks6RM8unbeldH
-YB6/9C6SY2BB9xm42pr4OTN+3p9+AUg35vZXpdDU9xYTxQZDCP0P3yjZlzfpAOHa
-Hfre+JPFws5NlFzMDCrfuSLzgGTjuNxreFEl5yoj+5RU3m5rOf1dNTrFesO2iv5k
-gl09Zs4PNuhDNPDEhAPwfJZmDba4uBR3NS1wJ7BM8UV0/fIGUtrkgvpYFkA3a21s
-OjkSAaZ6RBTU6ytaKaaGv6ISfql5+xxPYVGjKpL9OpPc4nKo/CEwANfHMUs8hK/y
-K14beKy01H9oZ4GmMY914dKik5VFQeRGLTyp8cW6Cn42Y4ONCxDsVX16yynUIaRI
-hl1ruuprGDuViwQ1K9HGrtXXLD81sUZbDD335yzVtdOfKOHut5VK6ZUI1QNUm1GX
-7MIe87fWtg24jViQdMXGty7eilO828Uz/Ad43HBai6LWY869Yyo=
-=VsWs
------END PGP SIGNATURE-----
-
---J2SCkAp4GZ/dPZZf--
+		sums[xas->xa_index] = sum;
+	}
+}
