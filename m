@@ -2,108 +2,135 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 119C2C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 17:47:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31CD0C43444
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 17:47:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D782520656
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 17:47:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="MLC1Ijw3";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="NIaJPO57"
+	by mail.kernel.org (Postfix) with ESMTP id 08FDC206B7
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 17:47:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727131AbfAIRrc (ORCPT
+        id S1727143AbfAIRrg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 12:47:32 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:58684 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726918AbfAIRrb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 12:47:31 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 2EF7A608CD; Wed,  9 Jan 2019 17:47:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1547056050;
-        bh=0gyYLuNtvHYhM3xrhaPPKd29npznhL5tuk39VI27em0=;
-        h=From:To:Cc:Subject:Date:From;
-        b=MLC1Ijw3LT0hVJUYkGRTD2Z0CAq2nhSfU8KySc5Kbd7DqSW1zOn50qL3P7VkX4zdN
-         Us2XWYZcbNY/K8ay6UFnNAOm4v+dkbNUIJujAbeOxVpX6YOzA/MBmc+OoTWAYY4e1M
-         LvUhCDLw+sbMrFZ2/C/gt/GjByc6tAOEBZirmif4=
-Received: from blr-ubuntu-253.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: saiprakash.ranjan@codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 4E09C6050D;
-        Wed,  9 Jan 2019 17:47:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1547056047;
-        bh=0gyYLuNtvHYhM3xrhaPPKd29npznhL5tuk39VI27em0=;
-        h=From:To:Cc:Subject:Date:From;
-        b=NIaJPO57LZljsVWqPPR08VplgWmrs2A0n+aCxaRhZpt6ETr2QvSTK6ymIHZreaJyW
-         mYPNBRHGrqJ9Jd5IPuAPPjCUzrr2fnE5pxoKZHKNB+NGsrpXrV3hSr4BDqFD+tTvrR
-         m5SunLbhvTRBDvVJVMKfbOSdoUBki8hT6csjHcMA=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4E09C6050D
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=saiprakash.ranjan@codeaurora.org
-From:   Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Leo Yan <leo.yan@linaro.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        devicetree@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>
-Cc:     Rajendra Nayak <rnayak@codeaurora.org>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Sibi Sankar <sibis@codeaurora.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org,
-        Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
-Subject: [PATCH 0/3] Add coresight support for SDM845
-Date:   Wed,  9 Jan 2019 23:16:46 +0530
-Message-Id: <cover.1547054308.git.saiprakash.ranjan@codeaurora.org>
-X-Mailer: git-send-email 2.19.2
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Wed, 9 Jan 2019 12:47:36 -0500
+Received: from mga14.intel.com ([192.55.52.115]:43600 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727082AbfAIRrf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 12:47:35 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Jan 2019 09:47:34 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,458,1539673200"; 
+   d="scan'208";a="115485491"
+Received: from unknown (HELO localhost.lm.intel.com) ([10.232.112.69])
+  by fmsmga008.fm.intel.com with ESMTP; 09 Jan 2019 09:47:33 -0800
+From:   Keith Busch <keith.busch@intel.com>
+To:     linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+        linux-mm@kvack.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rafael Wysocki <rafael@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Keith Busch <keith.busch@intel.com>
+Subject: [PATCHv3 00/13] Heterogeneuos memory node attributes
+Date:   Wed,  9 Jan 2019 10:43:28 -0700
+Message-Id: <20190109174341.19818-1-keith.busch@intel.com>
+X-Mailer: git-send-email 2.13.6
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch series adds support for coresight on SDM845. 
+Verstion three adding heterogeneous memory attributes to existing node
+sysfs subsystem.
 
-* Patch 1 adds device tree nodes for SDM845 coresight components.
+== Background ==
 
-* Patch 2 enables support for ETMv4.2 and enables SDM845 to make
-  use of same driver(etm4x).
+Platforms may provide multiple types of cpu attached system memory. The
+memory ranges for each type may have different characteristics that
+applications may wish to know about when considering what node they want
+their memory allocated from. 
 
-* Patch 3 is a trivial removal of duplicate header file.
+It had previously been difficult to describe these setups as memory
+rangers were generally lumped into the NUMA node of the CPUs. New
+platform attributes have been created and in use today that describe
+the more complex memory hierarchies that can be created.
 
-Patch 1 and 2 depends on below AOSS QMP patches by Bjorn:
- https://patchwork.kernel.org/patch/10749469/ 
- https://patchwork.kernel.org/patch/10749481/
- https://patchwork.kernel.org/patch/10749479/
- https://patchwork.kernel.org/patch/10749475/ 
+This series' objective is to provide the attributes from such systems
+that are useful for applications to know about, and readily usable with
+existing tools and libraries.
 
-This patch series has been tested on SDM845 MTP.
+== Changes since v2 ==
 
-Sai Prakash Ranjan (3):
-  arm64: dts: qcom: sdm845: Add Coresight support
-  coresight: etm4x: Add support to enable ETMv4.2
-  arm64: dts: qcom: sdm845: Remove the duplicate header inclusion
+  Fixed the arch specific build breakage from modifying the acpi table
+  parsing. This one has been in a public tree for 0-day and no failures
+  reported after several weeks.
 
- .../arm64/boot/dts/qcom/sdm845-coresight.dtsi | 437 ++++++++++++++++++
- arch/arm64/boot/dts/qcom/sdm845.dtsi          |   3 +-
- drivers/hwtracing/coresight/coresight-etm4x.c |   2 +-
- drivers/hwtracing/coresight/coresight-etm4x.h |   2 +-
- 4 files changed, 441 insertions(+), 3 deletions(-)
- create mode 100644 arch/arm64/boot/dts/qcom/sdm845-coresight.dtsi
+  The HMAT parsing rules is split in its own patch. This was originally
+  intended to be a starting point to enable auto-detect a use for
+  enabling memory randomization:
+
+    https://lkml.org/lkml/2018/12/17/1116
+
+  But will leave them split for separate consideration and bring
+  randomization auto-enable back when these settle.
+
+  The previous version's node interface allowed expressing the
+  relationship only among the best locality nodes, called "primary"
+  initiators and targets. Based on public and private feedback, the
+  interface has been augmented to allow registering nodes under a "class"
+  hierarchy. If a subsystem wishes to express node relationships beyond
+  the best, they may create additional access classes. The HMAT subsystem
+  this series only registers the best performing class, "class0".
+
+  Various changelog and documentation updates and clarifications.
+
+Keith Busch (13):
+  acpi: Create subtable parsing infrastructure
+  acpi: Add HMAT to generic parsing tables
+  acpi/hmat: Parse and report heterogeneous memory
+  node: Link memory nodes to their compute nodes
+  Documentation/ABI: Add new node sysfs attributes
+  acpi/hmat: Register processor domain to its memory
+  node: Add heterogenous memory access attributes
+  Documentation/ABI: Add node performance attributes
+  acpi/hmat: Register performance attributes
+  node: Add memory caching attributes
+  Documentation/ABI: Add node cache attributes
+  acpi/hmat: Register memory side cache attributes
+  doc/mm: New documentation for memory performance
+
+ Documentation/ABI/stable/sysfs-devices-node   |  87 +++++-
+ Documentation/admin-guide/mm/numaperf.rst     | 184 +++++++++++++
+ arch/arm64/kernel/acpi_numa.c                 |   2 +-
+ arch/arm64/kernel/smp.c                       |   4 +-
+ arch/ia64/kernel/acpi.c                       |  12 +-
+ arch/x86/kernel/acpi/boot.c                   |  36 +--
+ drivers/acpi/Kconfig                          |   9 +
+ drivers/acpi/Makefile                         |   1 +
+ drivers/acpi/hmat.c                           | 375 ++++++++++++++++++++++++++
+ drivers/acpi/numa.c                           |  16 +-
+ drivers/acpi/scan.c                           |   4 +-
+ drivers/acpi/tables.c                         |  76 +++++-
+ drivers/base/Kconfig                          |   8 +
+ drivers/base/node.c                           | 317 +++++++++++++++++++++-
+ drivers/irqchip/irq-gic-v2m.c                 |   2 +-
+ drivers/irqchip/irq-gic-v3-its-pci-msi.c      |   2 +-
+ drivers/irqchip/irq-gic-v3-its-platform-msi.c |   2 +-
+ drivers/irqchip/irq-gic-v3-its.c              |   6 +-
+ drivers/irqchip/irq-gic-v3.c                  |  10 +-
+ drivers/irqchip/irq-gic.c                     |   4 +-
+ drivers/mailbox/pcc.c                         |   2 +-
+ include/linux/acpi.h                          |   6 +-
+ include/linux/node.h                          |  70 ++++-
+ 23 files changed, 1170 insertions(+), 65 deletions(-)
+ create mode 100644 Documentation/admin-guide/mm/numaperf.rst
+ create mode 100644 drivers/acpi/hmat.c
 
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+2.14.4
 
