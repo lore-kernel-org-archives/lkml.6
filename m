@@ -2,313 +2,112 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 422ECC43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 19:23:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC39FC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 19:23:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F40C6206BA
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 19:23:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="NES1Yp9Y"
+	by mail.kernel.org (Postfix) with ESMTP id 6DE9D21738
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 19:23:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728539AbfAITXU (ORCPT
+        id S1728569AbfAITXY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 14:23:20 -0500
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:58898 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728260AbfAITXS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 14:23:18 -0500
-Received: from pps.filterd (m0001303.ppops.net [127.0.0.1])
-        by m0001303.ppops.net (8.16.0.27/8.16.0.27) with SMTP id x09JN49Q027946
-        for <linux-kernel@vger.kernel.org>; Wed, 9 Jan 2019 11:23:17 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-type; s=facebook; bh=p/IMRvpkCGVr9vb8MZj96EcjL7N4aG96fV/DCgucQAU=;
- b=NES1Yp9Y5Ojcsh+wzBKd8+wWD77sncCgmAV1YuhGfP050TvXKbViDrwsTbBOA/pgn6y8
- W9c6hhOzIsZCHzjdXkp2WRxPhgspK9zKhyrCG+TN+sl+iw7ZOkPgAc8CMn/RZbjIlgAO
- RwaERcNdG3YQa+2LcJPhTZ8+UIBBOXWV+vY= 
-Received: from maileast.thefacebook.com ([199.201.65.23])
-        by m0001303.ppops.net with ESMTP id 2pwk0r8ua0-13
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jan 2019 11:23:17 -0800
-Received: from mx-out.facebook.com (2620:10d:c0a1:3::13) by
- mail.thefacebook.com (2620:10d:c021:18::172) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA) id 15.1.1531.3;
- Wed, 9 Jan 2019 11:21:39 -0800
-Received: by devbig006.ftw2.facebook.com (Postfix, from userid 4523)
-        id 4B22262E1B80; Wed,  9 Jan 2019 11:21:37 -0800 (PST)
-Smtp-Origin-Hostprefix: devbig
-From:   Song Liu <songliubraving@fb.com>
-Smtp-Origin-Hostname: devbig006.ftw2.facebook.com
-To:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>
-CC:     Song Liu <songliubraving@fb.com>, <peterz@infradead.org>,
-        <acme@kernel.org>, <ast@kernel.org>, <daniel@iogearbox.net>,
-        <kernel-team@fb.com>
-Smtp-Origin-Cluster: ftw2c04
-Subject: [PATCH v6 perf, bpf-next 1/7] perf, bpf: Introduce PERF_RECORD_KSYMBOL
-Date:   Wed, 9 Jan 2019 11:21:05 -0800
-Message-ID: <20190109192111.130995-2-songliubraving@fb.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190109192111.130995-1-songliubraving@fb.com>
-References: <20190109192111.130995-1-songliubraving@fb.com>
-X-FB-Internal: Safe
+        Wed, 9 Jan 2019 14:23:24 -0500
+Received: from ale.deltatee.com ([207.54.116.67]:59698 "EHLO ale.deltatee.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728449AbfAITWs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 14:22:48 -0500
+Received: from cgy1-donard.priv.deltatee.com ([172.16.1.31])
+        by ale.deltatee.com with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <gunthorp@deltatee.com>)
+        id 1ghJR2-00053s-GD; Wed, 09 Jan 2019 12:22:46 -0700
+Received: from gunthorp by cgy1-donard.priv.deltatee.com with local (Exim 4.89)
+        (envelope-from <gunthorp@deltatee.com>)
+        id 1ghJR1-0001Vn-F6; Wed, 09 Jan 2019 12:22:39 -0700
+From:   Logan Gunthorpe <logang@deltatee.com>
+To:     linux-kernel@vger.kernel.org, linux-ntb@googlegroups.com,
+        Jon Mason <jdmason@kudzu.us>
+Cc:     Allen Hubbe <allenbh@gmail.com>, Dave Jiang <dave.jiang@intel.com>,
+        Serge Semin <fancer.lancer@gmail.com>,
+        Logan Gunthorpe <logang@deltatee.com>
+Date:   Wed,  9 Jan 2019 12:22:29 -0700
+Message-Id: <20190109192233.5752-5-logang@deltatee.com>
+X-Mailer: git-send-email 2.19.0
+In-Reply-To: <20190109192233.5752-1-logang@deltatee.com>
+References: <20190109192233.5752-1-logang@deltatee.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-09_10:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
-X-FB-Internal: Safe
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 172.16.1.31
+X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, linux-ntb@googlegroups.com, jdmason@kudzu.us, dave.jiang@intel.com, allenbh@gmail.com, fancer.lancer@gmail.com, logang@deltatee.com
+X-SA-Exim-Mail-From: gunthorp@deltatee.com
+Subject: [PATCH v3 4/8] NTB: ntb_pingpong: Choose doorbells based on port number
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For better performance analysis of dynamically JITed and loaded kernel
-functions, such as BPF programs, this patch introduces
-PERF_RECORD_KSYMBOL, a new perf_event_type that exposes kernel symbol
-register/unregister information to user space.
+This commit fixes pingpong support for existing drivers that do not
+implement ntb_default_port_number() and ntb_default_peer_port_number().
+This is required for hardware (like the crosslink topology of
+switchtec) which cannot assign reasonable port numbers to each port due
+to its perfect symmetry.
 
-The following data structure is used for PERF_RECORD_KSYMBOL.
+Instead of picking the doorbell to use based on the the index of the
+peer, we use the peer's port number. This is a bit clearer and easier
+to understand.
 
-    /*
-     * struct {
-     *      struct perf_event_header        header;
-     *      u64                             addr;
-     *      u32                             len;
-     *      u16                             ksym_type;
-     *      u16                             flags;
-     *      char                            name[];
-     *      struct sample_id                sample_id;
-     * };
-     */
-
-Signed-off-by: Song Liu <songliubraving@fb.com>
+Fixes: c7aeb0afdcc2 ("NTB: ntb_pp: Add full multi-port NTB API support")
+Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
+Acked-by: Allen Hubbe <allenbh@gmail.com>
+Tested-by: Alexander Fomichev <fomichev.ru@gmail.com>
 ---
- include/linux/perf_event.h      | 13 +++++
- include/uapi/linux/perf_event.h | 26 ++++++++-
- kernel/events/core.c            | 98 ++++++++++++++++++++++++++++++++-
- 3 files changed, 135 insertions(+), 2 deletions(-)
+ drivers/ntb/test/ntb_pingpong.c | 14 ++++++--------
+ 1 file changed, 6 insertions(+), 8 deletions(-)
 
-diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
-index 1d5c551a5add..6b5f08db5ef3 100644
---- a/include/linux/perf_event.h
-+++ b/include/linux/perf_event.h
-@@ -1113,6 +1113,13 @@ static inline void perf_event_task_sched_out(struct task_struct *prev,
+diff --git a/drivers/ntb/test/ntb_pingpong.c b/drivers/ntb/test/ntb_pingpong.c
+index 65865e460ab8..18d00eec7b02 100644
+--- a/drivers/ntb/test/ntb_pingpong.c
++++ b/drivers/ntb/test/ntb_pingpong.c
+@@ -121,15 +121,14 @@ static int pp_find_next_peer(struct pp_ctx *pp)
+ 	link = ntb_link_is_up(pp->ntb, NULL, NULL);
+ 
+ 	/* Find next available peer */
+-	if (link & pp->nmask) {
++	if (link & pp->nmask)
+ 		pidx = __ffs64(link & pp->nmask);
+-		out_db = BIT_ULL(pidx + 1);
+-	} else if (link & pp->pmask) {
++	else if (link & pp->pmask)
+ 		pidx = __ffs64(link & pp->pmask);
+-		out_db = BIT_ULL(pidx);
+-	} else {
++	else
+ 		return -ENODEV;
+-	}
++
++	out_db = BIT_ULL(ntb_peer_port_number(pp->ntb, pidx));
+ 
+ 	spin_lock(&pp->lock);
+ 	pp->out_pidx = pidx;
+@@ -303,7 +302,7 @@ static void pp_init_flds(struct pp_ctx *pp)
+ 			break;
+ 	}
+ 
+-	pp->in_db = BIT_ULL(pidx);
++	pp->in_db = BIT_ULL(lport);
+ 	pp->pmask = GENMASK_ULL(pidx, 0) >> 1;
+ 	pp->nmask = GENMASK_ULL(pcnt - 1, pidx);
+ 
+@@ -435,4 +434,3 @@ static void __exit pp_exit(void)
+ 	debugfs_remove_recursive(pp_dbgfs_topdir);
  }
- 
- extern void perf_event_mmap(struct vm_area_struct *vma);
-+
-+/* callback function to generate ksymbol name */
-+typedef int (perf_ksymbol_get_name_f)(char *name, int name_len, void *data);
-+extern void perf_event_ksymbol(u16 ksym_type, u64 addr, u32 len,
-+			       bool unregister,
-+			       perf_ksymbol_get_name_f get_name, void *data);
-+
- extern struct perf_guest_info_callbacks *perf_guest_cbs;
- extern int perf_register_guest_info_callbacks(struct perf_guest_info_callbacks *callbacks);
- extern int perf_unregister_guest_info_callbacks(struct perf_guest_info_callbacks *callbacks);
-@@ -1333,6 +1340,12 @@ static inline int perf_unregister_guest_info_callbacks
- (struct perf_guest_info_callbacks *callbacks)				{ return 0; }
- 
- static inline void perf_event_mmap(struct vm_area_struct *vma)		{ }
-+
-+typedef int (perf_ksymbol_get_name_f)(char *name, int name_len, void *data);
-+static inline void perf_event_ksymbol(u16 ksym_type, u64 addr, u32 len,
-+				      bool unregister,
-+				      perf_ksymbol_get_name_f get_name,
-+				      void *data) 			{ }
- static inline void perf_event_exec(void)				{ }
- static inline void perf_event_comm(struct task_struct *tsk, bool exec)	{ }
- static inline void perf_event_namespaces(struct task_struct *tsk)	{ }
-diff --git a/include/uapi/linux/perf_event.h b/include/uapi/linux/perf_event.h
-index 9de8780ac8d9..68c4da0227c5 100644
---- a/include/uapi/linux/perf_event.h
-+++ b/include/uapi/linux/perf_event.h
-@@ -372,7 +372,8 @@ struct perf_event_attr {
- 				context_switch :  1, /* context switch data */
- 				write_backward :  1, /* Write ring buffer from end to beginning */
- 				namespaces     :  1, /* include namespaces data */
--				__reserved_1   : 35;
-+				ksymbol        :  1, /* include ksymbol events */
-+				__reserved_1   : 34;
- 
- 	union {
- 		__u32		wakeup_events;	  /* wakeup every n events */
-@@ -965,9 +966,32 @@ enum perf_event_type {
- 	 */
- 	PERF_RECORD_NAMESPACES			= 16,
- 
-+	/*
-+	 * Record ksymbol register/unregister events:
-+	 *
-+	 * struct {
-+	 *	struct perf_event_header	header;
-+	 *	u64				addr;
-+	 *	u32				len;
-+	 *	u16				ksym_type;
-+	 *	u16				flags;
-+	 *	char				name[];
-+	 *	struct sample_id		sample_id;
-+	 * };
-+	 */
-+	PERF_RECORD_KSYMBOL			= 17,
-+
- 	PERF_RECORD_MAX,			/* non-ABI */
- };
- 
-+enum perf_record_ksymbol_type {
-+	PERF_RECORD_KSYMBOL_TYPE_UNKNOWN	= 0,
-+	PERF_RECORD_KSYMBOL_TYPE_BPF		= 1,
-+	PERF_RECORD_KSYMBOL_TYPE_MAX		/* non-ABI */
-+};
-+
-+#define PERF_RECORD_KSYMBOL_FLAGS_UNREGISTER	(1 << 0)
-+
- #define PERF_MAX_STACK_DEPTH		127
- #define PERF_MAX_CONTEXTS_PER_STACK	  8
- 
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 3cd13a30f732..ef27f2776999 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -385,6 +385,7 @@ static atomic_t nr_namespaces_events __read_mostly;
- static atomic_t nr_task_events __read_mostly;
- static atomic_t nr_freq_events __read_mostly;
- static atomic_t nr_switch_events __read_mostly;
-+static atomic_t nr_ksymbol_events __read_mostly;
- 
- static LIST_HEAD(pmus);
- static DEFINE_MUTEX(pmus_lock);
-@@ -4235,7 +4236,7 @@ static bool is_sb_event(struct perf_event *event)
- 
- 	if (attr->mmap || attr->mmap_data || attr->mmap2 ||
- 	    attr->comm || attr->comm_exec ||
--	    attr->task ||
-+	    attr->task || attr->ksymbol ||
- 	    attr->context_switch)
- 		return true;
- 	return false;
-@@ -4305,6 +4306,8 @@ static void unaccount_event(struct perf_event *event)
- 		dec = true;
- 	if (has_branch_stack(event))
- 		dec = true;
-+	if (event->attr.ksymbol)
-+		atomic_dec(&nr_ksymbol_events);
- 
- 	if (dec) {
- 		if (!atomic_add_unless(&perf_sched_count, -1, 1))
-@@ -7650,6 +7653,97 @@ static void perf_log_throttle(struct perf_event *event, int enable)
- 	perf_output_end(&handle);
- }
- 
-+/*
-+ * ksymbol register/unregister tracking
-+ */
-+
-+struct perf_ksymbol_event {
-+	const char	*name;
-+	int		name_len;
-+	struct {
-+		struct perf_event_header        header;
-+		u64				addr;
-+		u32				len;
-+		u16				ksym_type;
-+		u16				flags;
-+	} event_id;
-+};
-+
-+static int perf_event_ksymbol_match(struct perf_event *event)
-+{
-+	return event->attr.ksymbol;
-+}
-+
-+static void perf_event_ksymbol_output(struct perf_event *event, void *data)
-+{
-+	struct perf_ksymbol_event *ksymbol_event = data;
-+	struct perf_output_handle handle;
-+	struct perf_sample_data sample;
-+	int ret;
-+
-+	if (!perf_event_ksymbol_match(event))
-+		return;
-+
-+	perf_event_header__init_id(&ksymbol_event->event_id.header,
-+				   &sample, event);
-+	ret = perf_output_begin(&handle, event,
-+				ksymbol_event->event_id.header.size);
-+	if (ret)
-+		return;
-+
-+	perf_output_put(&handle, ksymbol_event->event_id);
-+	__output_copy(&handle, ksymbol_event->name, ksymbol_event->name_len);
-+	perf_event__output_id_sample(event, &handle, &sample);
-+
-+	perf_output_end(&handle);
-+}
-+
-+void perf_event_ksymbol(u16 ksym_type, u64 addr, u32 len, bool unregister,
-+			perf_ksymbol_get_name_f get_name, void *data)
-+{
-+	struct perf_ksymbol_event ksymbol_event;
-+	char name[KSYM_NAME_LEN];
-+	u16 flags = 0;
-+	int name_len;
-+
-+	if (!atomic_read(&nr_ksymbol_events))
-+		return;
-+
-+	if (ksym_type >= PERF_RECORD_KSYMBOL_TYPE_MAX ||
-+	    ksym_type == PERF_RECORD_KSYMBOL_TYPE_UNKNOWN)
-+		goto err;
-+
-+	get_name(name, KSYM_NAME_LEN, data);
-+	name_len = strlen(name) + 1;
-+	while (!IS_ALIGNED(name_len, sizeof(u64)))
-+		name[name_len++] = '\0';
-+	BUILD_BUG_ON(KSYM_NAME_LEN % sizeof(u64));
-+
-+	if (unregister)
-+		flags |= PERF_RECORD_KSYMBOL_FLAGS_UNREGISTER;
-+
-+	ksymbol_event = (struct perf_ksymbol_event){
-+		.name = name,
-+		.name_len = name_len,
-+		.event_id = {
-+			.header = {
-+				.type = PERF_RECORD_KSYMBOL,
-+				.size = sizeof(ksymbol_event.event_id) +
-+					name_len,
-+			},
-+			.addr = addr,
-+			.len = len,
-+			.ksym_type = ksym_type,
-+			.flags = flags,
-+		},
-+	};
-+
-+	perf_iterate_sb(perf_event_ksymbol_output, &ksymbol_event, NULL);
-+	return;
-+err:
-+	WARN_ONCE(1, "%s: Invalid KSYMBOL type 0x%x\n", __func__, ksym_type);
-+}
-+
- void perf_event_itrace_started(struct perf_event *event)
- {
- 	event->attach_state |= PERF_ATTACH_ITRACE;
-@@ -9900,6 +9994,8 @@ static void account_event(struct perf_event *event)
- 		inc = true;
- 	if (is_cgroup_event(event))
- 		inc = true;
-+	if (event->attr.ksymbol)
-+		atomic_inc(&nr_ksymbol_events);
- 
- 	if (inc) {
- 		/*
+ module_exit(pp_exit);
+-
 -- 
-2.17.1
+2.19.0
 
