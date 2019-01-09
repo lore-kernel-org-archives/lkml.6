@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF3A3C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 09:20:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A956CC43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 09:20:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A8808214C6
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 09:20:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 764A420821
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 09:20:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730314AbfAIJUZ (ORCPT
+        id S1730298AbfAIJUY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 04:20:25 -0500
+        Wed, 9 Jan 2019 04:20:24 -0500
 Received: from mga07.intel.com ([134.134.136.100]:13930 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730014AbfAIJUW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 04:20:22 -0500
+        id S1730281AbfAIJUU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 04:20:20 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Jan 2019 01:20:22 -0800
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Jan 2019 01:20:20 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,456,1539673200"; 
-   d="scan'208";a="105163058"
+   d="scan'208";a="105163049"
 Received: from ahunter-desktop.fi.intel.com ([10.237.72.56])
-  by orsmga007.jf.intel.com with ESMTP; 09 Jan 2019 01:20:20 -0800
+  by orsmga007.jf.intel.com with ESMTP; 09 Jan 2019 01:20:18 -0800
 From:   Adrian Hunter <adrian.hunter@intel.com>
 To:     Arnaldo Carvalho de Melo <acme@kernel.org>
 Cc:     Jiri Olsa <jolsa@redhat.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH 5/6] perf thread-stack: Improve thread_stack__no_call_return()
-Date:   Wed,  9 Jan 2019 11:18:34 +0200
-Message-Id: <20190109091835.5570-6-adrian.hunter@intel.com>
+Subject: [PATCH 4/6] perf thread-stack: Represent jmps to the start of a different symbol
+Date:   Wed,  9 Jan 2019 11:18:33 +0200
+Message-Id: <20190109091835.5570-5-adrian.hunter@intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190109091835.5570-1-adrian.hunter@intel.com>
 References: <20190109091835.5570-1-adrian.hunter@intel.com>
@@ -43,155 +43,201 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Improve thread_stack__no_call_return() to better handle 'returns' that do
-not match the stack i.e. 'no call'. See code comments for details.
-The example below shows how retpolines are affected:
+The compiler might optimize a call/ret combination by making it a jmp.
+However the thread-stack does not presently cater for that, so that such
+control flow is not visible in the call graph. Make it visible by recording
+on the stack a branch to the start of a different symbol. Note, that means
+when a ret pops the stack, all jmps must be popped off first.
 
 Example:
 
-$ cat simple-retpoline.c
+$ cat jmp-to-fn.c
 __attribute__((noinline)) int bar(void)
 {
         return -1;
 }
 
-int foo(void)
+__attribute__((noinline)) int foo(void)
 {
         return bar() + 1;
 }
 
-__attribute__((indirect_branch("thunk"))) int main()
+int main()
 {
-        int (*volatile fn)(void) = foo;
-
-        fn();
-        return fn();
+        return foo();
 }
-$ gcc -ggdb3 -Wall -Wextra -O2 -o simple-retpoline simple-retpoline.c
-$ objdump -d simple-retpoline
+$ gcc -ggdb3 -Wall -Wextra -O2 -o jmp-to-fn jmp-to-fn.c
+$ objdump -d jmp-to-fn
 <SNIP>
 0000000000001040 <main>:
-    1040:       48 83 ec 18             sub    $0x18,%rsp
-    1044:       48 8d 05 25 01 00 00    lea    0x125(%rip),%rax        # 1170 <foo>
-    104b:       48 89 44 24 08          mov    %rax,0x8(%rsp)
-    1050:       48 8b 44 24 08          mov    0x8(%rsp),%rax
-    1055:       e8 1f 01 00 00          callq  1179 <__x86_indirect_thunk_rax>
-    105a:       48 8b 44 24 08          mov    0x8(%rsp),%rax
-    105f:       48 83 c4 18             add    $0x18,%rsp
-    1063:       e9 11 01 00 00          jmpq   1179 <__x86_indirect_thunk_rax>
+    1040:       31 c0                   xor    %eax,%eax
+    1042:       e9 09 01 00 00          jmpq   1150 <foo>
 <SNIP>
-0000000000001160 <bar>:
-    1160:       b8 ff ff ff ff          mov    $0xffffffff,%eax
-    1165:       c3                      retq
+0000000000001140 <bar>:
+    1140:       b8 ff ff ff ff          mov    $0xffffffff,%eax
+    1145:       c3                      retq
 <SNIP>
-0000000000001170 <foo>:
-    1170:       e8 eb ff ff ff          callq  1160 <bar>
-    1175:       83 c0 01                add    $0x1,%eax
-    1178:       c3                      retq
-0000000000001179 <__x86_indirect_thunk_rax>:
-    1179:       e8 07 00 00 00          callq  1185 <__x86_indirect_thunk_rax+0xc>
-    117e:       f3 90                   pause
-    1180:       0f ae e8                lfence
-    1183:       eb f9                   jmp    117e <__x86_indirect_thunk_rax+0x5>
-    1185:       48 89 04 24             mov    %rax,(%rsp)
-    1189:       c3                      retq
+0000000000001150 <foo>:
+    1150:       31 c0                   xor    %eax,%eax
+    1152:       e8 e9 ff ff ff          callq  1140 <bar>
+    1157:       83 c0 01                add    $0x1,%eax
+    115a:       c3                      retq
 <SNIP>
-$ perf record -o simple-retpoline.perf.data -e intel_pt/cyc/u ./simple-retpoline
+$ perf record -o jmp-to-fn.perf.data -e intel_pt/cyc/u ./jmp-to-fn
 [ perf record: Woken up 1 times to write data ]
-[ perf record: Captured and wrote 0,017 MB simple-retpoline.perf.data ]
-$ perf script -i simple-retpoline.perf.data --itrace=be -s ~/libexec/perf-core/scripts/python/export-to-sqlite.py simple-retpoline.db branches calls
-2019-01-08 14:03:37.851655 Creating database...
-2019-01-08 14:03:37.863256 Writing records...
-2019-01-08 14:03:38.069750 Adding indexes
-2019-01-08 14:03:38.078799 Done
-$ ~/libexec/perf-core/scripts/python/exported-sql-viewer.py simple-retpoline.db
+[ perf record: Captured and wrote 0,017 MB jmp-to-fn.perf.data ]
+$ perf script -i jmp-to-fn.perf.data --itrace=be -s ~/libexec/perf-core/scripts/python/export-to-sqlite.py jmp-to-fn.db branches calls
+2019-01-08 13:24:58.783069 Creating database...
+2019-01-08 13:24:58.794650 Writing records...
+2019-01-08 13:24:59.008050 Adding indexes
+2019-01-08 13:24:59.015802 Done
+$  ~/libexec/perf-core/scripts/python/exported-sql-viewer.py jmp-to-fn.db
 
 Before:
 
     main
-        -> __x86_indirect_thunk_rax
-            -> __x86_indirect_thunk_rax
-                -> __x86_indirect_thunk_rax
-                    -> bar
+        -> bar
 
 After:
 
     main
-        -> __x86_indirect_thunk_rax
-            -> __x86_indirect_thunk_rax
-                -> foo
-                    -> bar
+        -> foo
+            -> bar
 
 Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
 ---
- tools/perf/util/thread-stack.c | 49 +++++++++++++++++++++++++++++++---
- 1 file changed, 46 insertions(+), 3 deletions(-)
+ .../scripts/python/export-to-postgresql.py    |  2 +-
+ tools/perf/scripts/python/export-to-sqlite.py |  2 +-
+ tools/perf/util/thread-stack.c                | 30 +++++++++++++++++--
+ tools/perf/util/thread-stack.h                |  3 ++
+ 4 files changed, 33 insertions(+), 4 deletions(-)
 
+diff --git a/tools/perf/scripts/python/export-to-postgresql.py b/tools/perf/scripts/python/export-to-postgresql.py
+index 0564dd7377f2..30130213da7e 100644
+--- a/tools/perf/scripts/python/export-to-postgresql.py
++++ b/tools/perf/scripts/python/export-to-postgresql.py
+@@ -478,7 +478,7 @@ if perf_db_export_calls:
+ 			'branch_count,'
+ 			'call_id,'
+ 			'return_id,'
+-			'CASE WHEN flags=1 THEN \'no call\' WHEN flags=2 THEN \'no return\' WHEN flags=3 THEN \'no call/return\' ELSE \'\' END AS flags,'
++			'CASE WHEN flags=0 THEN \'\' WHEN flags=1 THEN \'no call\' WHEN flags=2 THEN \'no return\' WHEN flags=3 THEN \'no call/return\' WHEN flags=6 THEN \'jump\' ELSE flags END AS flags,'
+ 			'parent_call_path_id'
+ 		' FROM calls INNER JOIN call_paths ON call_paths.id = call_path_id')
+ 
+diff --git a/tools/perf/scripts/python/export-to-sqlite.py b/tools/perf/scripts/python/export-to-sqlite.py
+index 245caf2643ed..ed237f2ed03f 100644
+--- a/tools/perf/scripts/python/export-to-sqlite.py
++++ b/tools/perf/scripts/python/export-to-sqlite.py
+@@ -320,7 +320,7 @@ if perf_db_export_calls:
+ 			'branch_count,'
+ 			'call_id,'
+ 			'return_id,'
+-			'CASE WHEN flags=1 THEN \'no call\' WHEN flags=2 THEN \'no return\' WHEN flags=3 THEN \'no call/return\' ELSE \'\' END AS flags,'
++			'CASE WHEN flags=0 THEN \'\' WHEN flags=1 THEN \'no call\' WHEN flags=2 THEN \'no return\' WHEN flags=3 THEN \'no call/return\' WHEN flags=6 THEN \'jump\' ELSE flags END AS flags,'
+ 			'parent_call_path_id'
+ 		' FROM calls INNER JOIN call_paths ON call_paths.id = call_path_id')
+ 
 diff --git a/tools/perf/util/thread-stack.c b/tools/perf/util/thread-stack.c
-index f52c0f90915d..632c07a125ab 100644
+index 7f8eff018c16..f52c0f90915d 100644
 --- a/tools/perf/util/thread-stack.c
 +++ b/tools/perf/util/thread-stack.c
-@@ -638,14 +638,57 @@ static int thread_stack__no_call_return(struct thread *thread,
- 	else
- 		parent = root;
+@@ -38,6 +38,7 @@
+  * @cp: call path
+  * @no_call: a 'call' was not seen
+  * @trace_end: a 'call' but trace ended
++ * @non_call: a branch but not a 'call' to the start of a different symbol
+  */
+ struct thread_stack_entry {
+ 	u64 ret_addr;
+@@ -47,6 +48,7 @@ struct thread_stack_entry {
+ 	struct call_path *cp;
+ 	bool no_call;
+ 	bool trace_end;
++	bool non_call;
+ };
  
--	/* This 'return' had no 'call', so push and pop top of stack */
--	cp = call_path__findnew(cpr, parent, fsym, ip, ks);
-+	if (parent->sym == from_al->sym) {
+ /**
+@@ -268,6 +270,8 @@ static int thread_stack__call_return(struct thread *thread,
+ 		cr.flags |= CALL_RETURN_NO_CALL;
+ 	if (no_return)
+ 		cr.flags |= CALL_RETURN_NO_RETURN;
++	if (tse->non_call)
++		cr.flags |= CALL_RETURN_NON_CALL;
+ 
+ 	return crp->process(&cr, crp->data);
+ }
+@@ -510,6 +514,7 @@ static int thread_stack__push_cp(struct thread_stack *ts, u64 ret_addr,
+ 	tse->cp = cp;
+ 	tse->no_call = no_call;
+ 	tse->trace_end = trace_end;
++	tse->non_call = false;
+ 
+ 	return 0;
+ }
+@@ -531,14 +536,16 @@ static int thread_stack__pop_cp(struct thread *thread, struct thread_stack *ts,
+ 							 timestamp, ref, false);
+ 	}
+ 
+-	if (ts->stack[ts->cnt - 1].ret_addr == ret_addr) {
++	if (ts->stack[ts->cnt - 1].ret_addr == ret_addr &&
++	    !ts->stack[ts->cnt - 1].non_call) {
+ 		return thread_stack__call_return(thread, ts, --ts->cnt,
+ 						 timestamp, ref, false);
+ 	} else {
+ 		size_t i = ts->cnt - 1;
+ 
+ 		while (i--) {
+-			if (ts->stack[i].ret_addr != ret_addr)
++			if (ts->stack[i].ret_addr != ret_addr ||
++			    ts->stack[i].non_call)
+ 				continue;
+ 			i += 1;
+ 			while (ts->cnt > i) {
+@@ -757,6 +764,25 @@ int thread_stack__process(struct thread *thread, struct comm *comm,
+ 		err = thread_stack__trace_begin(thread, ts, sample->time, ref);
+ 	} else if (sample->flags & PERF_IP_FLAG_TRACE_END) {
+ 		err = thread_stack__trace_end(ts, sample, ref);
++	} else if (sample->flags & PERF_IP_FLAG_BRANCH &&
++		   from_al->sym != to_al->sym && to_al->sym &&
++		   to_al->addr == to_al->sym->start) {
++		struct call_path_root *cpr = ts->crp->cpr;
++		struct call_path *cp;
++
 +		/*
-+		 * At the bottom of the stack, assume the missing 'call' was
-+		 * before the trace started. So, pop the current symbol and push
-+		 * the 'to' symbol.
++		 * The compiler might optimize a call/ret combination by making
++		 * it a jmp. Make that visible by recording on the stack a
++		 * branch to the start of a different symbol. Note, that means
++		 * when a ret pops the stack, all jmps must be popped off first.
 +		 */
-+		if (ts->cnt == 1) {
-+			err = thread_stack__call_return(thread, ts, --ts->cnt,
-+							tm, ref, false);
-+			if (err)
-+				return err;
-+		}
-+
-+		if (!ts->cnt) {
-+			cp = call_path__findnew(cpr, root, tsym, addr, ks);
-+
-+			return thread_stack__push_cp(ts, addr, tm, ref, cp,
-+						     true, false);
-+		}
-+
-+		/*
-+		 * Otherwise assume the 'return' is being used as a jump (e.g.
-+		 * retpoline) and just push the 'to' symbol.
-+		 */
-+		cp = call_path__findnew(cpr, parent, tsym, addr, ks);
-+
-+		err = thread_stack__push_cp(ts, 0, tm, ref, cp, true, false);
++		cp = call_path__findnew(cpr, ts->stack[ts->cnt - 1].cp,
++					to_al->sym, sample->addr,
++					ts->kernel_start);
++		err = thread_stack__push_cp(ts, 0, sample->time, ref, cp, false,
++					    false);
 +		if (!err)
 +			ts->stack[ts->cnt - 1].non_call = true;
-+
-+		return err;
-+	}
-+
-+	/*
-+	 * Assume 'parent' has not yet returned, so push 'to', and then push and
-+	 * pop 'from'.
-+	 */
-+
-+	cp = call_path__findnew(cpr, parent, tsym, addr, ks);
+ 	}
  
- 	err = thread_stack__push_cp(ts, addr, tm, ref, cp, true, false);
- 	if (err)
- 		return err;
+ 	return err;
+diff --git a/tools/perf/util/thread-stack.h b/tools/perf/util/thread-stack.h
+index 1f626f4a1c40..b7c04e19ad41 100644
+--- a/tools/perf/util/thread-stack.h
++++ b/tools/perf/util/thread-stack.h
+@@ -35,10 +35,13 @@ struct call_path;
+  *
+  * CALL_RETURN_NO_CALL: 'return' but no matching 'call'
+  * CALL_RETURN_NO_RETURN: 'call' but no matching 'return'
++ * CALL_RETURN_NON_CALL: a branch but not a 'call' to the start of a different
++ *                       symbol
+  */
+ enum {
+ 	CALL_RETURN_NO_CALL	= 1 << 0,
+ 	CALL_RETURN_NO_RETURN	= 1 << 1,
++	CALL_RETURN_NON_CALL	= 1 << 2,
+ };
  
--	return thread_stack__pop_cp(thread, ts, addr, tm, ref, tsym);
-+	cp = call_path__findnew(cpr, cp, fsym, ip, ks);
-+
-+	err = thread_stack__push_cp(ts, ip, tm, ref, cp, true, false);
-+	if (err)
-+		return err;
-+
-+	return thread_stack__call_return(thread, ts, --ts->cnt, tm, ref, false);
- }
- 
- static int thread_stack__trace_begin(struct thread *thread,
+ /**
 -- 
 2.17.1
 
