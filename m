@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-12.0 required=3.0
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04AC5C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 07:15:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7AC2C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 07:16:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C547B20821
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 07:15:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9052A2070B
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 07:16:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729857AbfAIHPZ (ORCPT
+        id S1729389AbfAIHQM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 02:15:25 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:43443 "EHLO
+        Wed, 9 Jan 2019 02:16:12 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:34481 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725835AbfAIHPZ (ORCPT
+        with ESMTP id S1725835AbfAIHQM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 02:15:25 -0500
+        Wed, 9 Jan 2019 02:16:12 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x097F0fJ3856082
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x097FajZ3856372
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 8 Jan 2019 23:15:00 -0800
+        Tue, 8 Jan 2019 23:15:36 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x097F0o03856078;
-        Tue, 8 Jan 2019 23:15:00 -0800
-Date:   Tue, 8 Jan 2019 23:15:00 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x097FaxT3856369;
+        Tue, 8 Jan 2019 23:15:36 -0800
+Date:   Tue, 8 Jan 2019 23:15:36 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Tzvetomir Stoyanov <tipbot@zytor.com>
-Message-ID: <tip-f87ce7c43f36d4abff91b19edadd23939f99ff98@git.kernel.org>
-Cc:     linux-kernel@vger.kernel.org, rostedt@goodmis.org,
-        namhyung@kernel.org, akpm@linux-foundation.org,
-        tstoyanov@vmware.com, mingo@kernel.org, jolsa@redhat.com,
-        tglx@linutronix.de, acme@redhat.com, hpa@zytor.com
-Reply-To: rostedt@goodmis.org, linux-kernel@vger.kernel.org, hpa@zytor.com,
-          tglx@linutronix.de, acme@redhat.com, jolsa@redhat.com,
-          mingo@kernel.org, tstoyanov@vmware.com,
-          akpm@linux-foundation.org, namhyung@kernel.org
-In-Reply-To: <20181201040852.628034497@goodmis.org>
-References: <20181201040852.628034497@goodmis.org>
+Message-ID: <tip-4104e604277016b3e6a7d120368054f9d2716953@git.kernel.org>
+Cc:     linux-kernel@vger.kernel.org, tstoyanov@vmware.com,
+        jolsa@redhat.com, hpa@zytor.com, mingo@kernel.org,
+        rostedt@goodmis.org, namhyung@kernel.org, acme@redhat.com,
+        akpm@linux-foundation.org, tglx@linutronix.de
+Reply-To: hpa@zytor.com, mingo@kernel.org, linux-kernel@vger.kernel.org,
+          jolsa@redhat.com, tstoyanov@vmware.com, acme@redhat.com,
+          akpm@linux-foundation.org, tglx@linutronix.de,
+          rostedt@goodmis.org, namhyung@kernel.org
+In-Reply-To: <20181201040852.767549746@goodmis.org>
+References: <20181201040852.767549746@goodmis.org>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] tools lib traceevent: Changed return logic of
- tep_register_event_handler() API
-Git-Commit-ID: f87ce7c43f36d4abff91b19edadd23939f99ff98
+Subject: [tip:perf/urgent] tools lib traceevent: Rename
+ tep_is_file_bigendian() to tep_file_bigendian()
+Git-Commit-ID: 4104e604277016b3e6a7d120368054f9d2716953
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -59,87 +59,79 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  f87ce7c43f36d4abff91b19edadd23939f99ff98
-Gitweb:     https://git.kernel.org/tip/f87ce7c43f36d4abff91b19edadd23939f99ff98
+Commit-ID:  4104e604277016b3e6a7d120368054f9d2716953
+Gitweb:     https://git.kernel.org/tip/4104e604277016b3e6a7d120368054f9d2716953
 Author:     Tzvetomir Stoyanov <tstoyanov@vmware.com>
-AuthorDate: Fri, 30 Nov 2018 23:08:11 -0500
+AuthorDate: Fri, 30 Nov 2018 23:08:12 -0500
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitDate: Tue, 8 Jan 2019 13:28:13 -0300
 
-tools lib traceevent: Changed return logic of tep_register_event_handler() API
+tools lib traceevent: Rename tep_is_file_bigendian() to tep_file_bigendian()
 
 In order to make libtraceevent into a proper library, its API
 should be straightforward.
 
-The tep_register_event_handler() functions returns -1 in case it
-successfully registers the new event handler. Such return code is used
-by the other library APIs in case of an error.
+After a discussion with Steven Rostedt, we decided to rename a few APIs,
+to have more intuitive names.
 
-To unify the return logic of tep_register_event_handler() with the other
-APIs, this patch introduces enum tep_reg_handler, which is used by this
-function as return value, to handle all possible successful return
-cases.
+This patch renames tep_is_file_bigendian() to tep_file_bigendian().
 
 Signed-off-by: Tzvetomir Stoyanov <tstoyanov@vmware.com>
 Cc: Andrew Morton <akpm@linux-foundation.org>
 Cc: Jiri Olsa <jolsa@redhat.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Link: http://lkml.kernel.org/r/20181201040852.628034497@goodmis.org
+Link: http://lkml.kernel.org/r/20181201040852.767549746@goodmis.org
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/lib/traceevent/event-parse.c | 10 ++++++++--
- tools/lib/traceevent/event-parse.h |  5 +++++
- 2 files changed, 13 insertions(+), 2 deletions(-)
+ tools/lib/traceevent/event-parse-api.c | 4 ++--
+ tools/lib/traceevent/event-parse.h     | 2 +-
+ tools/lib/traceevent/plugin_kvm.c      | 2 +-
+ 3 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/tools/lib/traceevent/event-parse.c b/tools/lib/traceevent/event-parse.c
-index a850342baf86..54d94054eef0 100644
---- a/tools/lib/traceevent/event-parse.c
-+++ b/tools/lib/traceevent/event-parse.c
-@@ -6632,6 +6632,12 @@ static struct tep_event *search_event(struct tep_handle *pevent, int id,
-  *
-  * If @id is >= 0, then it is used to find the event.
-  * else @sys_name and @event_name are used.
-+ *
-+ * Returns:
-+ *  TEP_REGISTER_SUCCESS_OVERWRITE if an existing handler is overwritten
-+ *  TEP_REGISTER_SUCCESS if a new handler is registered successfully
-+ *  negative TEP_ERRNO_... in case of an error
-+ *
-  */
- int tep_register_event_handler(struct tep_handle *pevent, int id,
- 			       const char *sys_name, const char *event_name,
-@@ -6649,7 +6655,7 @@ int tep_register_event_handler(struct tep_handle *pevent, int id,
- 
- 	event->handler = func;
- 	event->context = context;
--	return 0;
-+	return TEP_REGISTER_SUCCESS_OVERWRITE;
- 
-  not_found:
- 	/* Save for later use. */
-@@ -6679,7 +6685,7 @@ int tep_register_event_handler(struct tep_handle *pevent, int id,
- 	pevent->handlers = handle;
- 	handle->context = context;
- 
--	return -1;
-+	return TEP_REGISTER_SUCCESS;
+diff --git a/tools/lib/traceevent/event-parse-api.c b/tools/lib/traceevent/event-parse-api.c
+index 8b31c0e00ba3..d463761a58f4 100644
+--- a/tools/lib/traceevent/event-parse-api.c
++++ b/tools/lib/traceevent/event-parse-api.c
+@@ -194,13 +194,13 @@ void tep_set_page_size(struct tep_handle *pevent, int _page_size)
  }
  
- static int handle_matches(struct event_handler *handler, int id,
+ /**
+- * tep_is_file_bigendian - get if the file is in big endian order
++ * tep_file_bigendian - get if the file is in big endian order
+  * @pevent: a handle to the tep_handle
+  *
+  * This returns if the file is in big endian order
+  * If @pevent is NULL, 0 is returned.
+  */
+-int tep_is_file_bigendian(struct tep_handle *pevent)
++int tep_file_bigendian(struct tep_handle *pevent)
+ {
+ 	if(pevent)
+ 		return pevent->file_bigendian;
 diff --git a/tools/lib/traceevent/event-parse.h b/tools/lib/traceevent/event-parse.h
-index 77a4a1dd4b4d..ac377ae99008 100644
+index ac377ae99008..bd1bd9a27839 100644
 --- a/tools/lib/traceevent/event-parse.h
 +++ b/tools/lib/traceevent/event-parse.h
-@@ -485,6 +485,11 @@ int tep_print_func_field(struct trace_seq *s, const char *fmt,
- 			 struct tep_event *event, const char *name,
- 			 struct tep_record *record, int err);
+@@ -559,7 +559,7 @@ int tep_get_long_size(struct tep_handle *pevent);
+ void tep_set_long_size(struct tep_handle *pevent, int long_size);
+ int tep_get_page_size(struct tep_handle *pevent);
+ void tep_set_page_size(struct tep_handle *pevent, int _page_size);
+-int tep_is_file_bigendian(struct tep_handle *pevent);
++int tep_file_bigendian(struct tep_handle *pevent);
+ void tep_set_file_bigendian(struct tep_handle *pevent, enum tep_endian endian);
+ int tep_is_host_bigendian(struct tep_handle *pevent);
+ void tep_set_host_bigendian(struct tep_handle *pevent, enum tep_endian endian);
+diff --git a/tools/lib/traceevent/plugin_kvm.c b/tools/lib/traceevent/plugin_kvm.c
+index 754050eea467..64b9c25a1fd3 100644
+--- a/tools/lib/traceevent/plugin_kvm.c
++++ b/tools/lib/traceevent/plugin_kvm.c
+@@ -389,7 +389,7 @@ static int kvm_mmu_print_role(struct trace_seq *s, struct tep_record *record,
+ 	 * We can only use the structure if file is of the same
+ 	 * endianness.
+ 	 */
+-	if (tep_is_file_bigendian(event->pevent) ==
++	if (tep_file_bigendian(event->pevent) ==
+ 	    tep_is_host_bigendian(event->pevent)) {
  
-+enum tep_reg_handler {
-+	TEP_REGISTER_SUCCESS = 0,
-+	TEP_REGISTER_SUCCESS_OVERWRITE,
-+};
-+
- int tep_register_event_handler(struct tep_handle *pevent, int id,
- 			       const char *sys_name, const char *event_name,
- 			       tep_event_handler_func func, void *context);
+ 		trace_seq_printf(s, "%u q%u%s %s%s %spae %snxe %swp%s%s%s",
