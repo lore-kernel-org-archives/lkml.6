@@ -2,107 +2,131 @@ Return-Path: <SRS0=Tk4m=PR=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BE12C43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 10:09:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0748C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 10:10:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 150982183F
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 10:09:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547028541;
-	bh=JlUNL51OouCeDmPe3kPpWErOkSo3wlZchZn8tguNtxg=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:List-ID:From;
-	b=jtc0Hxc5lUbMmqedTUnGYgER5NWkAhJ8NaU7e4EvpADqXTgWt3JV7tvvZhpwsmCeL
-	 XvUjqJmmpLv907CVA14KGNLox6XfglAp053huPCHxsKDLcGgeK7XanVOXYqUhHDGJx
-	 xP1JG7mVmbqWtfg5BDOxGB1E5WhtX9D0/5mOu8xQ=
+	by mail.kernel.org (Postfix) with ESMTP id B8EF821738
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 10:10:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730190AbfAIKJA (ORCPT
+        id S1730102AbfAIKKf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 05:09:00 -0500
-Received: from mx2.suse.de ([195.135.220.15]:42840 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729603AbfAIKJA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 05:09:00 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id A306CAEEB;
-        Wed,  9 Jan 2019 10:08:58 +0000 (UTC)
-Date:   Wed, 9 Jan 2019 11:08:57 +0100 (CET)
-From:   Jiri Kosina <jikos@kernel.org>
-To:     Dave Chinner <david@fromorbit.com>
-cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Jann Horn <jannh@google.com>,
+        Wed, 9 Jan 2019 05:10:35 -0500
+Received: from foss.arm.com ([217.140.101.70]:39890 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729281AbfAIKKe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 05:10:34 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B738480D;
+        Wed,  9 Jan 2019 02:10:33 -0800 (PST)
+Received: from [10.1.196.72] (e119884-lin.cambridge.arm.com [10.1.196.72])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CC3893F70D;
+        Wed,  9 Jan 2019 02:10:27 -0800 (PST)
+Subject: Re: [PATCH v3 1/3] kasan, arm64: use ARCH_SLAB_MINALIGN instead of
+ manual aligning
+To:     Andrey Konovalov <andreyknvl@google.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Christoph Lameter <cl@linux.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Michal Hocko <mhocko@suse.com>, Linux-MM <linux-mm@kvack.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>
-Subject: Re: [PATCH] mm/mincore: allow for making sys_mincore() privileged
-In-Reply-To: <20190109043906.GF27534@dastard>
-Message-ID: <nycvar.YFH.7.76.1901091050560.16954@cbobk.fhfr.pm>
-References: <CAHk-=wg5Kk+r36=jcGBaLUj+gjopjgiW5eyvkdMqvn0jFkD_iQ@mail.gmail.com> <CAHk-=wiMQeCEKESWTmm15x79NjEjNwFvjZ=9XenxY7yH8zqa7A@mail.gmail.com> <20190106001138.GW6310@bombadil.infradead.org> <CAHk-=wiT=ov+6zYcnw_64ihYf74Amzqs67iVGtJMQq65PxiVYw@mail.gmail.com>
- <CAHk-=wg1A44Roa8C4dmfdXLRLmNysEW36=3R7f+tzZzbcJ2d2g@mail.gmail.com> <CAHk-=wiqbKEC5jUXr3ax+oUuiRrp=QMv_ZnUfO-SPv=UNJ-OTw@mail.gmail.com> <20190108044336.GB27534@dastard> <CAHk-=wjvzEFQcTGJFh9cyV_MPQftNrjOLon8YMMxaX0G1TLqkg@mail.gmail.com>
- <20190109022430.GE27534@dastard> <nycvar.YFH.7.76.1901090326460.16954@cbobk.fhfr.pm> <20190109043906.GF27534@dastard>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        Mark Rutland <mark.rutland@arm.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Dave Martin <dave.martin@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Paul Lawrence <paullawrence@google.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        kasan-dev@googlegroups.com, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-sparse@vger.kernel.org, linux-mm@kvack.org,
+        linux-kbuild@vger.kernel.org
+Cc:     Kostya Serebryany <kcc@google.com>,
+        Evgeniy Stepanov <eugenis@google.com>,
+        Lee Smith <Lee.Smith@arm.com>,
+        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
+        Jacob Bramley <Jacob.Bramley@arm.com>,
+        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
+        Jann Horn <jannh@google.com>,
+        Mark Brand <markbrand@google.com>,
+        Chintan Pandya <cpandya@codeaurora.org>,
+        Vishwath Mohan <vishwath@google.com>
+References: <cover.1546540962.git.andreyknvl@google.com>
+ <52ddd881916bcc153a9924c154daacde78522227.1546540962.git.andreyknvl@google.com>
+From:   Vincenzo Frascino <vincenzo.frascino@arm.com>
+Message-ID: <fc93e5a4-fa54-98a1-ea5f-4708568d7857@arm.com>
+Date:   Wed, 9 Jan 2019 10:10:26 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <52ddd881916bcc153a9924c154daacde78522227.1546540962.git.andreyknvl@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 9 Jan 2019, Dave Chinner wrote:
-
-> FWIW, I just realised that the easiest, most reliable way to invalidate 
-> the page cache over a file range is simply to do a O_DIRECT read on it. 
-
-Neat, good catch indeed. Still, it's only the invalidation part, but the 
-residency check is the crucial one.
-
-> > Rationale has been provided by Daniel Gruss in this thread -- if the 
-> > attacker is left with cache timing as the only available vector, he's 
-> > going to be much more successful with mounting hardware cache timing 
-> > attack anyway.
+On 03/01/2019 18:45, Andrey Konovalov wrote:
+> Instead of changing cache->align to be aligned to KASAN_SHADOW_SCALE_SIZE
+> in kasan_cache_create() we can reuse the ARCH_SLAB_MINALIGN macro.
 > 
-> No, he said:
+> Suggested-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
+> Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
+> ---
+>  arch/arm64/include/asm/cache.h | 6 ++++++
+>  mm/kasan/common.c              | 2 --
+>  2 files changed, 6 insertions(+), 2 deletions(-)
 > 
-> "Restricting mincore() is sufficient to fix the hardware-agnostic
-> part."
+> diff --git a/arch/arm64/include/asm/cache.h b/arch/arm64/include/asm/cache.h
+> index 13dd42c3ad4e..eb43e09c1980 100644
+> --- a/arch/arm64/include/asm/cache.h
+> +++ b/arch/arm64/include/asm/cache.h
+> @@ -58,6 +58,12 @@
+>   */
+>  #define ARCH_DMA_MINALIGN	(128)
+>  
+> +#ifdef CONFIG_KASAN_SW_TAGS
+> +#define ARCH_SLAB_MINALIGN	(1ULL << KASAN_SHADOW_SCALE_SHIFT)
+> +#else
+> +#define ARCH_SLAB_MINALIGN	__alignof__(unsigned long long)
+> +#endif
+> +
+
+Could you please remove the "#else" case here, because it is redundant (it is
+defined in linux/slab.h as ifndef) and could be misleading in future?
+
+>  #ifndef __ASSEMBLY__
+>  
+>  #include <linux/bitops.h>
+> diff --git a/mm/kasan/common.c b/mm/kasan/common.c
+> index 03d5d1374ca7..44390392d4c9 100644
+> --- a/mm/kasan/common.c
+> +++ b/mm/kasan/common.c
+> @@ -298,8 +298,6 @@ void kasan_cache_create(struct kmem_cache *cache, unsigned int *size,
+>  		return;
+>  	}
+>  
+> -	cache->align = round_up(cache->align, KASAN_SHADOW_SCALE_SIZE);
+> -
+>  	*flags |= SLAB_KASAN;
+>  }
+>  
 > 
-> That's not correct - preadv2(RWF_NOWAIT) is also hardware agnostic and 
-> provides exactly the same information about the page cache as mincore.  
-
-Yeah, preadv2(RWF_NOWAIT) is in the same teritory as mincore(), it has 
-"just" been overlooked. I can't speak for Daniel, but I believe he might 
-be ok with rephrasing the above as "Restricting mincore() and RWF_NOWAIT 
-is sufficient ...".
-
-> Timed read/mmap access loops for cache observation are also hardware 
-> agnostic, and on fast SSD based storage will only be marginally slower 
-> bandwidth than preadv2(RWF_NOWAIT).
-> 
-> Attackers will pick whatever leak vector we don't fix, so we either fix 
-> them all (which I think is probably impossible without removing caching 
-> altogether) 
-
-We can't really fix the fact that it's possible to do the timing on the HW 
-caches though.
-
-> or we start thinking about how we need to isolate the page cache so that 
-> information isn't shared across important security boundaries (e.g. page 
-> cache contents are per-mount namespace).
-
-Umm, sorry for being dense, but how would that help that particular attack 
-scenario on a system that doesn't really employ any namespacing? (which I 
-still believe is a majority of the systems out there, but I might have 
-just missed the containers train long time ago :) ).
 
 -- 
-Jiri Kosina
-SUSE Labs
-
+Regards,
+Vincenzo
