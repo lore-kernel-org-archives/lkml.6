@@ -6,42 +6,49 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEA6CC43387
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 13:42:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9718C43387
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 13:42:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C513C206B6
-	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 13:42:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A9C0D206B6
+	for <linux-kernel@archiver.kernel.org>; Wed,  9 Jan 2019 13:42:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730818AbfAINmb (ORCPT
+        id S1731242AbfAINmh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 08:42:31 -0500
-Received: from mxout012.mail.hostpoint.ch ([217.26.49.172]:22487 "EHLO
-        mxout012.mail.hostpoint.ch" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730584AbfAINma (ORCPT
+        Wed, 9 Jan 2019 08:42:37 -0500
+Received: from mxout014.mail.hostpoint.ch ([217.26.49.174]:49467 "EHLO
+        mxout014.mail.hostpoint.ch" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730795AbfAINme (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 08:42:30 -0500
+        Wed, 9 Jan 2019 08:42:34 -0500
 Received: from [10.0.2.45] (helo=asmtp012.mail.hostpoint.ch)
-        by mxout012.mail.hostpoint.ch with esmtp (Exim 4.91 (FreeBSD))
+        by mxout014.mail.hostpoint.ch with esmtp (Exim 4.91 (FreeBSD))
         (envelope-from <dev@pschenker.ch>)
-        id 1ghE7j-000DGa-Me; Wed, 09 Jan 2019 14:42:23 +0100
+        id 1ghE7o-0007Zg-8M; Wed, 09 Jan 2019 14:42:28 +0100
 Received: from 252.222.41.212.static.wline.lns.sme.cust.swisscom.ch ([212.41.222.252] helo=philippe-pc.toradex.int)
         by asmtp012.mail.hostpoint.ch with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
         (Exim 4.91 (FreeBSD))
         (envelope-from <dev@pschenker.ch>)
-        id 1ghE7j-0006KA-Gg; Wed, 09 Jan 2019 14:42:23 +0100
+        id 1ghE7o-0006KA-24; Wed, 09 Jan 2019 14:42:28 +0100
 X-Authenticated-Sender-Id: dev@pschenker.ch
 From:   Philippe Schenker <dev@pschenker.ch>
 To:     jic23@kernel.org, marcel.ziswiler@toradex.com, stefan@agner.ch
 Cc:     robh@kernel.org, alexandre.torgue@st.com, shawnguo@kernel.org,
         dmitry.torokhov@gmail.com, thierry.reding@gmail.com,
         mcoquelin.stm32@gmail.com, digetx@gmail.com, lee.jones@linaro.org,
+        Max Krummenacher <max.krummenacher@toradex.com>,
         Philippe Schenker <philippe.schenker@toradex.com>,
-        linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        devicetree@vger.kernel.org, linux-iio@vger.kernel.org,
+        Hartmut Knaack <knaack.h@gmx.de>, linux-input@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
         linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v6 2/8] mfd: stmpe: Move ADC related defines to header of mfd
-Date:   Wed,  9 Jan 2019 14:42:01 +0100
-Message-Id: <20190109134208.5660-3-dev@pschenker.ch>
+        linux-arm-kernel@lists.infradead.org,
+        Lars-Peter Clausen <lars@metafoo.de>
+Subject: [PATCH v6 6/8] iio: adc: add STMPE ADC devicetree bindings
+Date:   Wed,  9 Jan 2019 14:42:05 +0100
+Message-Id: <20190109134208.5660-7-dev@pschenker.ch>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190109134208.5660-1-dev@pschenker.ch>
 References: <20190109134208.5660-1-dev@pschenker.ch>
@@ -52,142 +59,217 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Philippe Schenker <philippe.schenker@toradex.com>
+From: Stefan Agner <stefan@agner.ch>
 
-Move defines that are ADC related to the header of the overlying mfd,
-so they can be used from multiple sub-devices.
+This adds the devicetree bindings for the STMPE ADC. This also corrects
+a typo in st,sample-time it is rather "6 -> 124 clocks" according
+to the datasheet and not 144.
+We need to use the naming stmpe_adc in devicetree because this is given
+by the mfd device.
 
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+Signed-off-by: Max Krummenacher <max.krummenacher@toradex.com>
 Signed-off-by: Philippe Schenker <philippe.schenker@toradex.com>
-Acked-by: Lee Jones <lee.jones@linaro.org>
-Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
 
 ---
 
-Changes in v6: None
+Changes in v6:
+ - Added Rob's Reviewed-by
+
 Changes in v5:
- - Changed author of commit to use correct email
+ - Made a one column list
+ - Cleared note about precedence
+ - Changed example to a full STMPE811 device with MFD, touchscreen, and the new
+   stmpe_adc driver.
+ - Added Jonathan Cameron's Reviewed-by
 
 Changes in v4:
- - Added Lee Jone's Ack
- - Added Dmitry Torokhov's Ack
+ - Put reformatting in a separate precursor patch.
 
-Changes in v3: None
+Changes in v3:
+ - Reformatted documentation for touchscreen to use tabs and have a better
+   overview of the settings.
+ - Added note which adc-settings will take precedence.
+ - changed typo in sample-time setting from 144 clocks to 124 clocks, as stated
+   in the datasheet.
+
 Changes in v2:
- - This is a new added commit. Separate commit for moving the defines
-   out of drivers/input/touchscreen/stmpe-ts.c to overlying mfd-device
-   drivers/mfd/stmpe.c
- - Pre-fix defines with STMPE_
+ - Moved the bindings for ADC to the overlying mfd.
+ - Reformatted for better readability
 
- drivers/input/touchscreen/stmpe-ts.c | 34 +++++++++++-----------------
- include/linux/mfd/stmpe.h            | 11 +++++++++
- 2 files changed, 24 insertions(+), 21 deletions(-)
+ .../devicetree/bindings/iio/adc/stmpe-adc.txt | 21 +++++
+ .../bindings/input/touchscreen/stmpe.txt      | 88 +++++++++++++------
+ .../devicetree/bindings/mfd/stmpe.txt         | 14 +++
+ 3 files changed, 98 insertions(+), 25 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/iio/adc/stmpe-adc.txt
 
-diff --git a/drivers/input/touchscreen/stmpe-ts.c b/drivers/input/touchscreen/stmpe-ts.c
-index 2a78e27b4495..c5d9006588a2 100644
---- a/drivers/input/touchscreen/stmpe-ts.c
-+++ b/drivers/input/touchscreen/stmpe-ts.c
-@@ -49,17 +49,6 @@
- 
- #define STMPE_IRQ_TOUCH_DET		0
- 
--#define SAMPLE_TIME(x)			((x & 0xf) << 4)
--#define MOD_12B(x)			((x & 0x1) << 3)
--#define REF_SEL(x)			((x & 0x1) << 1)
--#define ADC_FREQ(x)			(x & 0x3)
--#define AVE_CTRL(x)			((x & 0x3) << 6)
--#define DET_DELAY(x)			((x & 0x7) << 3)
--#define SETTLING(x)			(x & 0x7)
--#define FRACTION_Z(x)			(x & 0x7)
--#define I_DRIVE(x)			(x & 0x1)
--#define OP_MODE(x)			((x & 0x7) << 1)
--
- #define STMPE_TS_NAME			"stmpe-ts"
- #define XY_MASK				0xfff
- 
-@@ -213,9 +202,10 @@ static int stmpe_init_hw(struct stmpe_touch *ts)
- 		return ret;
- 	}
- 
--	adc_ctrl1 = SAMPLE_TIME(ts->sample_time) | MOD_12B(ts->mod_12b) |
--		REF_SEL(ts->ref_sel);
--	adc_ctrl1_mask = SAMPLE_TIME(0xff) | MOD_12B(0xff) | REF_SEL(0xff);
-+	adc_ctrl1 = STMPE_SAMPLE_TIME(ts->sample_time) |
-+		    STMPE_MOD_12B(ts->mod_12b) | STMPE_REF_SEL(ts->ref_sel);
-+	adc_ctrl1_mask = STMPE_SAMPLE_TIME(0xff) | STMPE_MOD_12B(0xff) |
-+			 STMPE_REF_SEL(0xff);
- 
- 	ret = stmpe_set_bits(stmpe, STMPE_REG_ADC_CTRL1,
- 			adc_ctrl1_mask, adc_ctrl1);
-@@ -225,15 +215,17 @@ static int stmpe_init_hw(struct stmpe_touch *ts)
- 	}
- 
- 	ret = stmpe_set_bits(stmpe, STMPE_REG_ADC_CTRL2,
--			ADC_FREQ(0xff), ADC_FREQ(ts->adc_freq));
-+			STMPE_ADC_FREQ(0xff), STMPE_ADC_FREQ(ts->adc_freq));
- 	if (ret) {
- 		dev_err(dev, "Could not setup ADC\n");
- 		return ret;
- 	}
- 
--	tsc_cfg = AVE_CTRL(ts->ave_ctrl) | DET_DELAY(ts->touch_det_delay) |
--			SETTLING(ts->settling);
--	tsc_cfg_mask = AVE_CTRL(0xff) | DET_DELAY(0xff) | SETTLING(0xff);
-+	tsc_cfg = STMPE_AVE_CTRL(ts->ave_ctrl) |
-+		  STMPE_DET_DELAY(ts->touch_det_delay) |
-+		  STMPE_SETTLING(ts->settling);
-+	tsc_cfg_mask = STMPE_AVE_CTRL(0xff) | STMPE_DET_DELAY(0xff) |
-+		       STMPE_SETTLING(0xff);
- 
- 	ret = stmpe_set_bits(stmpe, STMPE_REG_TSC_CFG, tsc_cfg_mask, tsc_cfg);
- 	if (ret) {
-@@ -242,14 +234,14 @@ static int stmpe_init_hw(struct stmpe_touch *ts)
- 	}
- 
- 	ret = stmpe_set_bits(stmpe, STMPE_REG_TSC_FRACTION_Z,
--			FRACTION_Z(0xff), FRACTION_Z(ts->fraction_z));
-+			STMPE_FRACTION_Z(0xff), STMPE_FRACTION_Z(ts->fraction_z));
- 	if (ret) {
- 		dev_err(dev, "Could not config touch\n");
- 		return ret;
- 	}
- 
- 	ret = stmpe_set_bits(stmpe, STMPE_REG_TSC_I_DRIVE,
--			I_DRIVE(0xff), I_DRIVE(ts->i_drive));
-+			STMPE_I_DRIVE(0xff), STMPE_I_DRIVE(ts->i_drive));
- 	if (ret) {
- 		dev_err(dev, "Could not config touch\n");
- 		return ret;
-@@ -263,7 +255,7 @@ static int stmpe_init_hw(struct stmpe_touch *ts)
- 	}
- 
- 	ret = stmpe_set_bits(stmpe, STMPE_REG_TSC_CTRL,
--			OP_MODE(0xff), OP_MODE(OP_MOD_XYZ));
-+			STMPE_OP_MODE(0xff), STMPE_OP_MODE(OP_MOD_XYZ));
- 	if (ret) {
- 		dev_err(dev, "Could not set mode\n");
- 		return ret;
-diff --git a/include/linux/mfd/stmpe.h b/include/linux/mfd/stmpe.h
-index 4a827af17e59..c0353f6431f9 100644
---- a/include/linux/mfd/stmpe.h
-+++ b/include/linux/mfd/stmpe.h
-@@ -10,6 +10,17 @@
- 
- #include <linux/mutex.h>
- 
-+#define STMPE_SAMPLE_TIME(x)	((x & 0xf) << 4)
-+#define STMPE_MOD_12B(x)	((x & 0x1) << 3)
-+#define STMPE_REF_SEL(x)	((x & 0x1) << 1)
-+#define STMPE_ADC_FREQ(x)	(x & 0x3)
-+#define STMPE_AVE_CTRL(x)	((x & 0x3) << 6)
-+#define STMPE_DET_DELAY(x)	((x & 0x7) << 3)
-+#define STMPE_SETTLING(x)	(x & 0x7)
-+#define STMPE_FRACTION_Z(x)	(x & 0x7)
-+#define STMPE_I_DRIVE(x)	(x & 0x1)
-+#define STMPE_OP_MODE(x)	((x & 0x7) << 1)
+diff --git a/Documentation/devicetree/bindings/iio/adc/stmpe-adc.txt b/Documentation/devicetree/bindings/iio/adc/stmpe-adc.txt
+new file mode 100644
+index 000000000000..480e66422625
+--- /dev/null
++++ b/Documentation/devicetree/bindings/iio/adc/stmpe-adc.txt
+@@ -0,0 +1,21 @@
++STMPE ADC driver
++----------------
 +
- struct device;
- struct regulator;
++Required properties:
++ - compatible: "st,stmpe-adc"
++
++Optional properties:
++Note that the ADC is shared with the STMPE touchscreen. ADC related settings
++have to be done in the mfd.
++- st,norequest-mask: bitmask specifying which ADC channels should _not_ be
++  requestable due to different usage (e.g. touch)
++
++Node name must be stmpe_adc and should be child node of stmpe node to
++which it belongs.
++
++Example:
++
++	stmpe_adc {
++		compatible = "st,stmpe-adc";
++		st,norequest-mask = <0x0F>; /* dont use ADC CH3-0 */
++	};
+diff --git a/Documentation/devicetree/bindings/input/touchscreen/stmpe.txt b/Documentation/devicetree/bindings/input/touchscreen/stmpe.txt
+index bf66a55a7de5..c549924603d2 100644
+--- a/Documentation/devicetree/bindings/input/touchscreen/stmpe.txt
++++ b/Documentation/devicetree/bindings/input/touchscreen/stmpe.txt
+@@ -5,24 +5,6 @@ Required properties:
+  - compatible: "st,stmpe-ts"
  
+ Optional properties:
+-- st,sample-time	: ADC conversion time in number of clock.
+-				0 -> 36 clocks
+-				1 -> 44 clocks
+-				2 -> 56 clocks
+-				3 -> 64 clocks
+-				4 -> 80 clocks (recommended)
+-				5 -> 96 clocks
+-				6 -> 144 clocks
+-- st,mod-12b		: ADC Bit mode
+-				0 -> 10bit ADC
+-				1 -> 12bit ADC
+-- st,ref-sel		: ADC reference source
+-				0 -> internal
+-				1 -> external
+-- st,adc-freq		: ADC Clock speed
+-				0 -> 1.625 MHz
+-				1 -> 3.25 MHz
+-				2 || 3 -> 6.5 MHz
+ - st,ave-ctrl		: Sample average control
+ 				0 -> 1 sample
+ 				1 -> 2 samples
+@@ -52,20 +34,76 @@ Optional properties:
+ 				0 -> 20 mA (typical 35mA max)
+ 				1 -> 50 mA (typical 80 mA max)
+ 
++Optional properties common with MFD (deprecated):
++ - st,sample-time	: ADC conversion time in number of clock.
++				0 -> 36 clocks
++				1 -> 44 clocks
++				2 -> 56 clocks
++				3 -> 64 clocks
++				4 -> 80 clocks (recommended)
++				5 -> 96 clocks
++				6 -> 124 clocks
++ - st,mod-12b		: ADC Bit mode
++				0 -> 10bit ADC
++				1 -> 12bit ADC
++ - st,ref-sel		: ADC reference source
++				0 -> internal
++				1 -> external
++ - st,adc-freq		: ADC Clock speed
++				0 -> 1.625 MHz
++				1 -> 3.25 MHz
++				2 || 3 -> 6.5 MHz
++
+ Node name must be stmpe_touchscreen and should be child node of stmpe node to
+ which it belongs.
+ 
++Note that common ADC settings of stmpe_touchscreen (child) will take precedence
++over the settings done in MFD.
++
+ Example:
+ 
++stmpe811@41 {
++	compatible = "st,stmpe811";
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_touch_int>;
++	#address-cells = <1>;
++	#size-cells = <0>;
++	reg = <0x41>;
++	interrupts = <10 IRQ_TYPE_LEVEL_LOW>;
++	interrupt-parent = <&gpio4>;
++	interrupt-controller;
++	id = <0>;
++	blocks = <0x5>;
++	irq-trigger = <0x1>;
++	/* Common ADC settings */
++	/* 3.25 MHz ADC clock speed */
++	st,adc-freq = <1>;
++	/* 12-bit ADC */
++	st,mod-12b = <1>;
++	/* internal ADC reference */
++	st,ref-sel = <0>;
++	/* ADC converstion time: 80 clocks */
++	st,sample-time = <4>;
++
+ 	stmpe_touchscreen {
+ 		compatible = "st,stmpe-ts";
+-		st,sample-time = <4>;
+-		st,mod-12b = <1>;
+-		st,ref-sel = <0>;
+-		st,adc-freq = <1>;
+-		st,ave-ctrl = <1>;
+-		st,touch-det-delay = <2>;
+-		st,settling = <2>;
++		reg = <0>;
++		/* 8 sample average control */
++		st,ave-ctrl = <3>;
++		/* 5 ms touch detect interrupt delay */
++		st,touch-det-delay = <5>;
++		/* 1 ms panel driver settling time */
++		st,settling = <3>;
++		/* 7 length fractional part in z */
+ 		st,fraction-z = <7>;
++		/*
++		 * 50 mA typical 80 mA max touchscreen drivers
++		 * current limit value
++		 */
+ 		st,i-drive = <1>;
+ 	};
++	stmpe_adc {
++		compatible = "st,stmpe-adc";
++		st,norequest-mask = <0x0F>;
++	};
++};
+diff --git a/Documentation/devicetree/bindings/mfd/stmpe.txt b/Documentation/devicetree/bindings/mfd/stmpe.txt
+index a46e7177195d..d4408a417193 100644
+--- a/Documentation/devicetree/bindings/mfd/stmpe.txt
++++ b/Documentation/devicetree/bindings/mfd/stmpe.txt
+@@ -14,6 +14,20 @@ Optional properties:
+  - st,autosleep-timeout		: Valid entries (ms); 4, 16, 32, 64, 128, 256, 512 and 1024
+  - irq-gpio			: If present, which GPIO to use for event IRQ
+ 
++Optional properties for devices with touch and ADC (STMPE811|STMPE610):
++ - st,sample-time		: ADC conversion time in number of clock.
++					0 -> 36 clocks		4 -> 80 clocks (recommended)
++					1 -> 44 clocks		5 -> 96 clocks
++					2 -> 56 clocks		6 -> 124 clocks
++					3 -> 64 clocks
++ - st,mod-12b			: ADC Bit mode
++					0 -> 10bit ADC		1 -> 12bit ADC
++ - st,ref-sel			: ADC reference source
++					0 -> internal		1 -> external
++ - st,adc-freq			: ADC Clock speed
++					0 -> 1.625 MHz		2 || 3 -> 6.5 MHz
++					1 -> 3.25 MHz
++
+ Example:
+ 
+ 	stmpe1601: stmpe1601@40 {
 -- 
 2.20.1
 
