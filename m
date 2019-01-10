@@ -2,158 +2,303 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0F0EC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 01:15:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B2F0C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 01:15:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B007A214C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 01:15:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5889B21738
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 01:15:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727081AbfAJBPk (ORCPT
+        id S1727132AbfAJBP4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 20:15:40 -0500
-Received: from ipmail02.adl2.internode.on.net ([150.101.137.139]:22439 "EHLO
-        ipmail02.adl2.internode.on.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726833AbfAJBPh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 20:15:37 -0500
-Received: from ppp59-167-129-252.static.internode.on.net (HELO dastard) ([59.167.129.252])
-  by ipmail02.adl2.internode.on.net with ESMTP; 10 Jan 2019 11:45:33 +1030
-Received: from dave by dastard with local (Exim 4.80)
-        (envelope-from <david@fromorbit.com>)
-        id 1ghOwX-0001qM-Bd; Thu, 10 Jan 2019 12:15:33 +1100
-Date:   Thu, 10 Jan 2019 12:15:33 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Jiri Kosina <jikos@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Jann Horn <jannh@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Michal Hocko <mhocko@suse.com>, Linux-MM <linux-mm@kvack.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>
-Subject: Re: [PATCH] mm/mincore: allow for making sys_mincore() privileged
-Message-ID: <20190110011533.GI27534@dastard>
-References: <20190106001138.GW6310@bombadil.infradead.org>
- <CAHk-=wiT=ov+6zYcnw_64ihYf74Amzqs67iVGtJMQq65PxiVYw@mail.gmail.com>
- <CAHk-=wg1A44Roa8C4dmfdXLRLmNysEW36=3R7f+tzZzbcJ2d2g@mail.gmail.com>
- <CAHk-=wiqbKEC5jUXr3ax+oUuiRrp=QMv_ZnUfO-SPv=UNJ-OTw@mail.gmail.com>
- <20190108044336.GB27534@dastard>
- <CAHk-=wjvzEFQcTGJFh9cyV_MPQftNrjOLon8YMMxaX0G1TLqkg@mail.gmail.com>
- <20190109022430.GE27534@dastard>
- <nycvar.YFH.7.76.1901090326460.16954@cbobk.fhfr.pm>
- <20190109043906.GF27534@dastard>
- <nycvar.YFH.7.76.1901091050560.16954@cbobk.fhfr.pm>
+        Wed, 9 Jan 2019 20:15:56 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:57216 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726458AbfAJBP4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 20:15:56 -0500
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 9731AB0CBD9C7FC06C7D;
+        Thu, 10 Jan 2019 09:15:52 +0800 (CST)
+Received: from [127.0.0.1] (10.134.22.195) by DGGEMS411-HUB.china.huawei.com
+ (10.3.19.211) with Microsoft SMTP Server id 14.3.408.0; Thu, 10 Jan 2019
+ 09:15:43 +0800
+Subject: Re: [PATCH] staging: erofs: clean up erofs_map_blocks_iter
+To:     Gao Xiang <gaoxiang25@huawei.com>, <linux-erofs@lists.ozlabs.org>
+CC:     <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
+        Miao Xie <miaoxie@huawei.com>
+References: <20190109094654.39285-1-yuchao0@huawei.com>
+ <30dd9369-268d-2faf-1b44-dddec2c480b1@huawei.com>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <a098fd2d-500e-856f-e8b3-9e673b8152ae@huawei.com>
+Date:   Thu, 10 Jan 2019 09:15:42 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <nycvar.YFH.7.76.1901091050560.16954@cbobk.fhfr.pm>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <30dd9369-268d-2faf-1b44-dddec2c480b1@huawei.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 09, 2019 at 11:08:57AM +0100, Jiri Kosina wrote:
-> On Wed, 9 Jan 2019, Dave Chinner wrote:
+Hi Xiang,
+
+Thanks for the review, let me fix them all and send v2. :)
+
+Thanks,
+
+On 2019/1/9 19:54, Gao Xiang wrote:
+> Hi Chao,
 > 
-> > FWIW, I just realised that the easiest, most reliable way to invalidate 
-> > the page cache over a file range is simply to do a O_DIRECT read on it. 
+> On 2019/1/9 17:46, Chao Yu wrote:
+>> This patch cleans up erofs_map_blocks* function and structure family,
+>> just simply the code, no logic change.
+>>
+>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
+>> ---
+>>  drivers/staging/erofs/data.c      | 40 +++++++------------------------
+>>  drivers/staging/erofs/internal.h  | 16 ++++++-------
+>>  drivers/staging/erofs/unzip_vle.c | 30 +++++++++++------------
+>>  3 files changed, 31 insertions(+), 55 deletions(-)
+>>
+>> diff --git a/drivers/staging/erofs/data.c b/drivers/staging/erofs/data.c
+>> index 5a55f0bfdfbb..1baa59cf11b5 100644
+>> --- a/drivers/staging/erofs/data.c
+>> +++ b/drivers/staging/erofs/data.c
+>> @@ -165,43 +165,19 @@ static int erofs_map_blocks_flatmode(struct inode *inode,
+>>  	return err;
+>>  }
+>>  
+>> -#ifdef CONFIG_EROFS_FS_ZIP
+>> -extern int z_erofs_map_blocks_iter(struct inode *,
+>> -				   struct erofs_map_blocks *,
+>> -				   struct page **, int);
+>> -#endif
+>> -
+>> -int erofs_map_blocks_iter(struct inode *inode,
+>> -			  struct erofs_map_blocks *map,
+>> -			  struct page **mpage_ret, int flags)
+>> -{
+>> -	/* by default, reading raw data never use erofs_map_blocks_iter */
+>> -	if (unlikely(!is_inode_layout_compression(inode))) {
+>> -		if (*mpage_ret)
+>> -			put_page(*mpage_ret);
+>> -		*mpage_ret = NULL;
+>> -
+>> -		return erofs_map_blocks(inode, map, flags);
+>> -	}
+>> -
+>> -#ifdef CONFIG_EROFS_FS_ZIP
+>> -	return z_erofs_map_blocks_iter(inode, map, mpage_ret, flags);
+>> -#else
+>> -	/* data compression is not available */
+>> -	return -ENOTSUPP;
+>> -#endif
+>> -}
+>> -
+>>  int erofs_map_blocks(struct inode *inode,
+>>  		     struct erofs_map_blocks *map, int flags)
+>>  {
+>>  	if (unlikely(is_inode_layout_compression(inode))) {
+>> -		struct page *mpage = NULL;
+>> -		int err;
+>> +		int err = -ENOTSUPP;
+>>  
+>> -		err = erofs_map_blocks_iter(inode, map, &mpage, flags);
+>> -		if (mpage)
+>> -			put_page(mpage);
+>> +#ifdef CONFIG_EROFS_FS_ZIP
+>> +		map->mpage = NULL;
 > 
-> Neat, good catch indeed. Still, it's only the invalidation part, but the 
-> residency check is the crucial one.
+> remove this line? since z_erofs_map_blocks_iter will do put_page internally
+> if mpage != NULL.
 > 
-> > > Rationale has been provided by Daniel Gruss in this thread -- if the 
-> > > attacker is left with cache timing as the only available vector, he's 
-> > > going to be much more successful with mounting hardware cache timing 
-> > > attack anyway.
-> > 
-> > No, he said:
-> > 
-> > "Restricting mincore() is sufficient to fix the hardware-agnostic
-> > part."
-> > 
-> > That's not correct - preadv2(RWF_NOWAIT) is also hardware agnostic and 
-> > provides exactly the same information about the page cache as mincore.  
+>> +
+>> +		err = z_erofs_map_blocks_iter(inode, map, flags);
+>> +#endif
+>> +		if (map->mpage)
+>> +			put_page(map->mpage);
 > 
-> Yeah, preadv2(RWF_NOWAIT) is in the same teritory as mincore(), it has 
-> "just" been overlooked. I can't speak for Daniel, but I believe he might 
-> be ok with rephrasing the above as "Restricting mincore() and RWF_NOWAIT 
-> is sufficient ...".
-
-Good luck with restricting RWF_NOWAIT. I eagerly await all the
-fstests that exercise both the existing and new behaviours to
-demonstrate they work correctly.
-
-> > Timed read/mmap access loops for cache observation are also hardware 
-> > agnostic, and on fast SSD based storage will only be marginally slower 
-> > bandwidth than preadv2(RWF_NOWAIT).
-> > 
-> > Attackers will pick whatever leak vector we don't fix, so we either fix 
-> > them all (which I think is probably impossible without removing caching 
-> > altogether) 
 > 
-> We can't really fix the fact that it's possible to do the timing on the HW 
-> caches though.
-
-We can't really fix the fact that it's possible to do the timing on
-the page cache, either.
-
-> > or we start thinking about how we need to isolate the page cache so that 
-> > information isn't shared across important security boundaries (e.g. page 
-> > cache contents are per-mount namespace).
+> 		if (map->mpage) {
+> 			put_page(map->mpage);
+>                         map->mpage = NULL;
+> 		}
 > 
-> Umm, sorry for being dense, but how would that help that particular attack 
-> scenario on a system that doesn't really employ any namespacing?
+> 
+>>  		return err;
+>>  	}
+>>  	return erofs_map_blocks_flatmode(inode, map, flags);
+>> diff --git a/drivers/staging/erofs/internal.h b/drivers/staging/erofs/internal.h
+>> index e049d00c087a..740961fc565f 100644
+>> --- a/drivers/staging/erofs/internal.h
+>> +++ b/drivers/staging/erofs/internal.h
+>> @@ -461,8 +461,16 @@ struct erofs_map_blocks {
+>>  	u64 m_plen, m_llen;
+>>  
+>>  	unsigned int m_flags;
+>> +
+>> +	struct page *mpage;
+>>  };
+>>  
+>> +#ifdef CONFIG_EROFS_FS_ZIP
+>> +extern int z_erofs_map_blocks_iter(struct inode *,
+>> +				   struct erofs_map_blocks *,
+>> +				   int);
+> 
+> #else
+> 
+> static inline z_erofs_map_blocks_iter(struct inode *, ...) { return -ENOTSUPP;}
+> 
+>  --- therefore redundant CONFIG_EROFS_FS_ZIPs could be removed.
+> 
+> #endif
+> 
+>> +#endif
+>> +
+>>  /* Flags used by erofs_map_blocks() */
+>>  #define EROFS_GET_BLOCKS_RAW    0x0001
+>>  
+>> @@ -522,14 +530,6 @@ static inline struct page *erofs_get_meta_page_nofail(struct super_block *sb,
+>>  }
+>>  
+>>  extern int erofs_map_blocks(struct inode *, struct erofs_map_blocks *, int);
+>> -extern int erofs_map_blocks_iter(struct inode *, struct erofs_map_blocks *,
+>> -	struct page **, int);
+>> -
+>> -struct erofs_map_blocks_iter {
+>> -	struct erofs_map_blocks map;
+>> -	struct page *mpage;
+>> -};
+>> -
+>>  
+>>  static inline struct page *
+>>  erofs_get_inline_page(struct inode *inode,
+>> diff --git a/drivers/staging/erofs/unzip_vle.c b/drivers/staging/erofs/unzip_vle.c
+>> index 4ac1099a39c6..30340afaa504 100644
+>> --- a/drivers/staging/erofs/unzip_vle.c
+>> +++ b/drivers/staging/erofs/unzip_vle.c
+>> @@ -636,7 +636,7 @@ struct z_erofs_vle_frontend {
+>>  	struct inode *const inode;
+>>  
+>>  	struct z_erofs_vle_work_builder builder;
+>> -	struct erofs_map_blocks_iter m_iter;
+>> +	struct erofs_map_blocks map;
+>>  
+>>  	z_erofs_vle_owned_workgrp_t owned_head;
+>>  
+>> @@ -647,8 +647,9 @@ struct z_erofs_vle_frontend {
+>>  
+>>  #define VLE_FRONTEND_INIT(__i) { \
+>>  	.inode = __i, \
+>> -	.m_iter = { \
+>> -		{ .m_llen = 0, .m_plen = 0 }, \
+>> +	.map = { \
+>> +		.m_llen = 0, \
+>> +		.m_plen = 0, \
+>>  		.mpage = NULL \
+>>  	}, \
+>>  	.builder = VLE_WORK_BUILDER_INIT(), \
+>> @@ -681,8 +682,7 @@ static int z_erofs_do_read_page(struct z_erofs_vle_frontend *fe,
+>>  {
+>>  	struct super_block *const sb = fe->inode->i_sb;
+>>  	struct erofs_sb_info *const sbi __maybe_unused = EROFS_SB(sb);
+>> -	struct erofs_map_blocks_iter *const m = &fe->m_iter;
+>> -	struct erofs_map_blocks *const map = &m->map;
+>> +	struct erofs_map_blocks *const map = &fe->map;
+>>  	struct z_erofs_vle_work_builder *const builder = &fe->builder;
+>>  	const loff_t offset = page_offset(page);
+>>  
+>> @@ -715,7 +715,7 @@ static int z_erofs_do_read_page(struct z_erofs_vle_frontend *fe,
+>>  
+>>  	map->m_la = offset + cur;
+>>  	map->m_llen = 0;
+>> -	err = erofs_map_blocks_iter(fe->inode, map, &m->mpage, 0);
+>> +	err = erofs_map_blocks(fe->inode, map, 0);
+> 
+> should use z_erofs_map_blocks_iter then rather than erofs_map_blocks
+> 
+> Thanks,
+> Gao Xiang
+> 
+>>  	if (unlikely(err))
+>>  		goto err_out;
+>>  
+>> @@ -1484,8 +1484,8 @@ static int z_erofs_vle_normalaccess_readpage(struct file *file,
+>>  
+>>  	z_erofs_submit_and_unzip(&f, &pagepool, true);
+>>  out:
+>> -	if (f.m_iter.mpage)
+>> -		put_page(f.m_iter.mpage);
+>> +	if (f.map.mpage)
+>> +		put_page(f.map.mpage);
+>>  
+>>  	/* clean up the remaining free pages */
+>>  	put_pages_list(&pagepool);
+>> @@ -1555,8 +1555,8 @@ static int z_erofs_vle_normalaccess_readpages(struct file *filp,
+>>  
+>>  	z_erofs_submit_and_unzip(&f, &pagepool, sync);
+>>  
+>> -	if (f.m_iter.mpage)
+>> -		put_page(f.m_iter.mpage);
+>> +	if (f.map.mpage)
+>> +		put_page(f.map.mpage);
+>>  
+>>  	/* clean up the remaining free pages */
+>>  	put_pages_list(&pagepool);
+>> @@ -1701,14 +1701,14 @@ vle_get_logical_extent_head(const struct vle_map_blocks_iter_ctx *ctx,
+>>  
+>>  int z_erofs_map_blocks_iter(struct inode *inode,
+>>  	struct erofs_map_blocks *map,
+>> -	struct page **mpage_ret, int flags)
+>> +	int flags)
+>>  {
+>>  	void *kaddr;
+>>  	const struct vle_map_blocks_iter_ctx ctx = {
+>>  		.inode = inode,
+>>  		.sb = inode->i_sb,
+>>  		.clusterbits = EROFS_I_SB(inode)->clusterbits,
+>> -		.mpage_ret = mpage_ret,
+>> +		.mpage_ret = &map->mpage,
+>>  		.kaddr_ret = &kaddr
+>>  	};
+>>  	const unsigned int clustersize = 1 << ctx.clusterbits;
+>> @@ -1722,7 +1722,7 @@ int z_erofs_map_blocks_iter(struct inode *inode,
+>>  
+>>  	/* initialize `pblk' to keep gcc from printing foolish warnings */
+>>  	erofs_blk_t mblk, pblk = 0;
+>> -	struct page *mpage = *mpage_ret;
+>> +	struct page *mpage = map->mpage;
+>>  	struct z_erofs_vle_decompressed_index *di;
+>>  	unsigned int cluster_type, logical_cluster_ofs;
+>>  	int err = 0;
+>> @@ -1758,7 +1758,7 @@ int z_erofs_map_blocks_iter(struct inode *inode,
+>>  			err = PTR_ERR(mpage);
+>>  			goto out;
+>>  		}
+>> -		*mpage_ret = mpage;
+>> +		map->mpage = mpage;
+>>  	} else {
+>>  		lock_page(mpage);
+>>  		DBG_BUGON(!PageUptodate(mpage));
+>> @@ -1818,7 +1818,7 @@ int z_erofs_map_blocks_iter(struct inode *inode,
+>>  		/* get the correspoinding first chunk */
+>>  		err = vle_get_logical_extent_head(&ctx, lcn, &ofs,
+>>  						  &pblk, &map->m_flags);
+>> -		mpage = *mpage_ret;
+>> +		mpage = map->mpage;
+>>  
+>>  		if (unlikely(err)) {
+>>  			if (mpage)
+>>
+> 
+> .
+> 
 
-What's your security boundary?
-
-The "detect what code an app is running" exploit is based on
-invalidating and then observing how shared, non-user-owned files
-mapped with execute privileges change cache residency.
-
-If the security boundary is within the local container, should users
-inside that container be allowed to invalidate the cache of
-executable files and libraries they don't own? In this case, we
-can't stop observation, because that only require read permissions
-and high precision timing, hence the only thing that can be done
-here is prevent non-owners from invalidating the page cache.
-
-If the security boundary is a namespace or guest VM, then permission
-checks don't work - the user may own the file within that container.
-This problem now is that the page cache is observable and
-controllable from both sides of the fence. Hence the only way to
-prevent observation of the code being run in a different namespace
-is to prevent the page being shared across both containers.
-
-The exfiltration exploit requires the page cache to be observable
-and controllable on both sides of the security boundary. Should
-users be able to observe and control the cached pages accessed by a
-different container? KSM page deduplication lessons say no. This is
-an even harder problem, because page cache residency can be observed
-from remote machines....
-
-What scares me is that new features being proposed could make our
-exposure a whole lot worse. e.g. the recent virtio-pmem ("fake-dax")
-proposal will directly share host page cache pages into guest VMs w/
-DAX capability. i.e. the guest directly accesses the host page
-cache.  This opens up the potential for host page cache timing
-attacks from the guest VMs, and potential guest to guest
-observation/exploitation is possible if the same files are mapped
-into multiple guests....
-
-IOws the two questions here are simply: "What's your security
-boundary?" and "Is the page cache visible and controllable on both
-sides?".
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
