@@ -2,188 +2,221 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 310CCC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 17:47:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A35FC43612
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 17:47:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E81C6214DA
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 17:47:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5434620685
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 17:47:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="BTHDQUQy"
+	dkim=pass (1024-bit key) header.d=wavesemi.onmicrosoft.com header.i=@wavesemi.onmicrosoft.com header.b="BXrqa24N"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730484AbfAJRrW (ORCPT
+        id S1730586AbfAJRrr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 12:47:22 -0500
-Received: from mailout3.samsung.com ([203.254.224.33]:13075 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729827AbfAJRrV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 12:47:21 -0500
-Received: from epcas2p4.samsung.com (unknown [182.195.41.56])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20190110174719epoutp03f0e5fd2bef0778aa5f997345e35fa94b~4jdnztz_-1621016210epoutp034;
-        Thu, 10 Jan 2019 17:47:19 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20190110174719epoutp03f0e5fd2bef0778aa5f997345e35fa94b~4jdnztz_-1621016210epoutp034
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1547142439;
-        bh=LNLKliPqqbdQ7yDDQDuVE6HuhFZ9/AtdFy837tOQyGU=;
-        h=Subject:To:Cc:From:Date:In-reply-to:References:From;
-        b=BTHDQUQys774cXZ3/v7mYXQvpNg6sBdhYBr/sAL+5pQZXnZ4t5OcAN0ViNp/ptdj9
-         /oEkHsFw8FbkeQDM9pu/5iZnc/U5OA16Tu7AoBKBRnS351WmOP4ZEE2U4g0HEic0QE
-         B6Or+hcPIGKMJ5NOPvBtrXJ3goC8NfjeWf5hNOio=
-Received: from epsmges2p4.samsung.com (unknown [182.195.42.72]) by
-        epcas2p1.samsung.com (KnoxPortal) with ESMTP id
-        20190110174718epcas2p14f13c48a67624dd93c4df805a56c92d6~4jdnh96Z40871708717epcas2p1_;
-        Thu, 10 Jan 2019 17:47:18 +0000 (GMT)
-Received: from epcas2p1.samsung.com ( [182.195.41.53]) by
-        epsmges2p4.samsung.com (Symantec Messaging Gateway) with SMTP id
-        DA.D7.04055.625873C5; Fri, 11 Jan 2019 02:47:18 +0900 (KST)
-Received: from epsmgms2p2new.samsung.com (unknown [182.195.42.143]) by
-        epcas2p2.samsung.com (KnoxPortal) with ESMTP id
-        20190110174716epcas2p263397b69517d4c588c24750bb0b71937~4jdlsycWN2752927529epcas2p29;
-        Thu, 10 Jan 2019 17:47:16 +0000 (GMT)
-X-AuditID: b6c32a48-3a9ff70000000fd7-83-5c3785263e39
-Received: from epmmp2 ( [203.254.227.17]) by epsmgms2p2new.samsung.com
-        (Symantec Messaging Gateway) with SMTP id C1.3B.03627.425873C5; Fri, 11 Jan
-        2019 02:47:16 +0900 (KST)
-MIME-version: 1.0
-Content-type: text/plain; charset="utf-8"
-Received: from [106.116.147.40] by mmp2.samsung.com (Oracle Communications
-        Messaging Server 7.0.5.31.0 64bit (built May  5 2014)) with ESMTPA id
-        <0PL400GOMMQOTQ80@mmp2.samsung.com>; Fri, 11 Jan 2019 02:47:16 +0900 (KST)
-Subject: Re: [PATCH 4/4] dt-bindings: mfd: max8998: Add charger subnode
- binding
-To:     =?UTF-8?Q?Pawe=c5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>,
-        Sebastian Reichel <sre@kernel.org>
-Cc:     lgirdwood@gmail.com, broonie@kernel.org, lee.jones@linaro.org,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org
-From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
-Message-id: <5765349a-c94d-49c1-45b5-ab7ac09f9923@samsung.com>
-Date:   Thu, 10 Jan 2019 18:47:11 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
-        Thunderbird/60.2.1
-In-reply-to: <2089055.mctyXeETjz@acerlaptop>
-Content-language: en-GB
-Content-transfer-encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprGKsWRmVeSWpSXmKPExsWy7bCmqa5aq3mMQUOPscXUh0/YLOYfOcdq
-        cf/rUUaLb1c6mCwu75rDZvG59wijxdLrF5ksfhzvY7Zo3XuE3eL07hIHLo8189YweuycdZfd
-        Y9OqTjaPO9f2sHl83iQXwBrFZZOSmpNZllqkb5fAlXG4aR1jwR+JigdPVjE3MPaKdDFyckgI
-        mEj8vfWSsYuRi0NIYAejxOJHrawQzndGidvzm4AyHGBVqzcXQcQ3ABU9OckI0s0rICjxY/I9
-        FhCbWUBT4sWXSSwQRfcZJRY9m8MG0iwsECjxY2sySI2IQIbEoc5vTCA1zAKHGSXeHTzABJJg
-        EzCU6D3aBzXUTuLSuSXsIDaLgKrEr4Z3zCC2qECERMf91WwgNqeAjsSsOcuYIRaLSxy7f5MR
-        wpaXOHjlOdgREgKv2SQatixggvjTRWLTwslQtrDEq+Nb2CFsaYlnqzYyQtjVEru2dzNDNHcw
-        SrRc2M4MkbCWOHz8IivEBj6JjsN/2SHBwivR0SYEUeIh0X2+mx3i+11MEm37DzFNYJSdhRRK
-        s5BCaRaSw2chOXwBI8sqRrHUguLc9NRiowITveLE3OLSvHS95PzcTYzg1KLlsYPxwDmfQ4wC
-        HIxKPLwdvuYxQqyJZcWVuYcYJTiYlUR47yw3ixHiTUmsrEotyo8vKs1JLT7EKM3BoiTO+1B6
-        brSQQHpiSWp2ampBahFMlomDU6qBUUeLJfJ+qKTc/wnfhSISph85/tbDYhnTysr5vxrm3Hvw
-        cc38Ods27lrBo+nTaSqWPnkCe+vksgMML/R6Fjc+8n+/vDkr4/WUrTHSXy88/6/db2onzLk5
-        SeeRxJ9PXulHOXrfa79M5nq7J/j6gXWrepl1fWu/fHzW/eDPpZ1v4ozT442PT1y0qliJpTgj
-        0VCLuag4EQCfPOrHKQMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrJLMWRmVeSWpSXmKPExsVy+t9jQV2VVvMYg6WrTSymPnzCZjH/yDlW
-        i/tfjzJafLvSwWRxedccNovPvUcYLZZev8hk8eN4H7NF694j7Band5c4cHmsmbeG0WPnrLvs
-        HptWdbJ53Lm2h83j8ya5ANYoLpuU1JzMstQifbsErozDTesYC/5IVDx4soq5gbFXpIuRg0NC
-        wERi9eaiLkYuDiGBdYwS65/8YOxi5OTgFRCU+DH5HgtIDbOAusSUKbkQNQ8ZJQ7OO80CUiMs
-        4C8xbWofE4gtIpAhsXvCCiaQImaBw4wSa85cZYfo2MUkMfXVUrCpbAKGEr1H+6A22ElcOreE
-        HcRmEVCV+NXwjhnEFhWIkDj7ch1YDaeAjsSsOcvA4swC4hLH7t9khLDlJQ5eec4ygVFgFpJj
-        ZyEcOwtJxywkHQsYWVYxSqYWFOem5xYbFRjlpZbrFSfmFpfmpesl5+duYgRGyLbDWv07GB8v
-        iT/EKMDBqMTD2+FrHiPEmlhWXJl7iFGCg1lJhPfOcrMYId6UxMqq1KL8+KLSnNTiQ4zSHCxK
-        4rz8+ccihQTSE0tSs1NTC1KLYLJMHJxSDYxxTIwOvKX5r9a33/aXOTS7r4Gnjq3i/s3oPP3/
-        YSUV4dlxB+8qhlw8tSt/Z4H4Evvbx+7n8N0+zOwgpu14MyZbL8Alu3HO+V+eE5mP5jHecj5x
-        RlRgyaG095Ue587LTfr7TJ0h7GqOcm/5bPfOx1duL5vlcDc5T+oH00Nfq3PL49YuWbxynY4S
-        S3FGoqEWc1FxIgBfTG9xjAIAAA==
-X-CMS-MailID: 20190110174716epcas2p263397b69517d4c588c24750bb0b71937
-X-Msg-Generator: CA
-CMS-TYPE: 102P
-X-CMS-RootMailID: 20180501144322epcas2p39f8413a212ad5d3ec7b06f0a164d0908
-References: <1524844982-4714-1-git-send-email-pawel.mikolaj.chmiel@gmail.com>
-        <1524844982-4714-5-git-send-email-pawel.mikolaj.chmiel@gmail.com>
-        <20180501124540.3icpjevaxp44ew2e@earth.universe>
-        <CGME20180501144322epcas2p39f8413a212ad5d3ec7b06f0a164d0908@epcas2p3.samsung.com>
-        <2089055.mctyXeETjz@acerlaptop>
+        Thu, 10 Jan 2019 12:47:47 -0500
+Received: from mail-eopbgr810112.outbound.protection.outlook.com ([40.107.81.112]:58784
+        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729827AbfAJRrr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 12:47:47 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=wavesemi.onmicrosoft.com; s=selector1-wavecomp-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=M7cBH1Ni7zVd4/qc1qHR9+k4YMDMgq9lck8etJOPXEw=;
+ b=BXrqa24N1avEQV9jD8NtH8wKmRmF3X+I+HJbrJ29KK4/N7lELCix1/ocio2WxdSUAS6v8IipZ3CdRPJ/phsMvRXB8hk6Z4mVpqSfBlTFdlm0a7fnexrsNT4jhPJA2Pe08Y16YUcI4Eu3HoBpEmAt0bhK6yUSxXSA91YEmuL4pig=
+Received: from MWHPR2201MB1277.namprd22.prod.outlook.com (10.174.162.17) by
+ MWHPR2201MB1486.namprd22.prod.outlook.com (10.174.170.147) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1516.15; Thu, 10 Jan 2019 17:47:42 +0000
+Received: from MWHPR2201MB1277.namprd22.prod.outlook.com
+ ([fe80::595e:ffcc:435b:9110]) by MWHPR2201MB1277.namprd22.prod.outlook.com
+ ([fe80::595e:ffcc:435b:9110%4]) with mapi id 15.20.1516.015; Thu, 10 Jan 2019
+ 17:47:42 +0000
+From:   Paul Burton <paul.burton@mips.com>
+To:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+CC:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        Paul Burton <pburton@wavecomp.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Rich Felker <dalias@libc.org>,
+        David Daney <david.daney@cavium.com>
+Subject: [4.9 PATCH] MIPS: math-emu: Write-protect delay slot emulation pages
+Thread-Topic: [4.9 PATCH] MIPS: math-emu: Write-protect delay slot emulation
+ pages
+Thread-Index: AQHUqQyVbRbwT2bLTUqKA8xpxehvCg==
+Date:   Thu, 10 Jan 2019 17:47:42 +0000
+Message-ID: <20190110174724.24713-1-paul.burton@mips.com>
+References: <154685090718637@kroah.com>
+In-Reply-To: <154685090718637@kroah.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: BYAPR01CA0009.prod.exchangelabs.com (2603:10b6:a02:80::22)
+ To MWHPR2201MB1277.namprd22.prod.outlook.com (2603:10b6:301:24::17)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=pburton@wavecomp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [67.207.99.198]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;MWHPR2201MB1486;6:Bi4yOSVF3BhypQmoW8oEpQSU+AV3ot0nHVBlzfyXCNN6SGz4rLdSghgEyNrpYCoQcF9KHX50VNKbS4Vu7xNAf3NZkm30QlzPPsr4NW7L6PI8RbwJn2jzUXpRLRuLdGcdv9Jc9rTJGuZzRcZgEX7ScnBtmQ+fos2C4C+ZjV8AMSR2QiVioQZ+V+83zFXcH8PW/GhY+m8skvTW/tspYj2uaihgMtBEJNBKOZNSmYFiDrfKakvN2ewAkRXTaiHf0+vp17IU5Ac9LF94y8XOeA5LnxjHf+5aZyY20YXFdd0BIDVnOFuZJKtGo0wz/dVs6r7MrLVh955uABG2GikPfUcq/lVfIayjE+HXXnV5wyA+zQDNkkkzyvcBTCZnMkCrjhSM5mMeu7ILeYmoXi1vhEyXtTSiS2N9qTbK+9rBXBVKb0IjLLl9am5y98pr1dEUTB7kDZO51IlTn/8TXhfSDBvmuw==;5:rczbvAAD0tXIoFURVmchOeGC89MlGsLy2y+OWxhIpriev8Sjaz5zp613jhVVXj6yUx6TT1BY4vd8a98sWqhjbdvLGNfaCxqbql4TTe3ABjNeLoF3rBi2KNREzavtbItULT4wAI3DtY+VhiPA34P6WtSBpQvgWxClSs5DmH6WfDoF1QAA4aS1sJfQ+i4LDMkpyBME6efmLNaZXnv9Umlzvw==;7:JL8aAR4OgOPcK4rdbJiptnluXLvuRj4ZQdrnye6Tlhw5GoDyPKLOTRiFKYoCQ9d1VUYsBCJ8Ub017z8VBol2hq5EZyP7v1K6d6yExHvdfIa1luT6wESK7NQZ6jUQ0eQYvUC00uOfEVs0EZgsuuOsUA==
+x-ms-office365-filtering-correlation-id: 93162ff8-b7a6-4608-cbba-08d67723b835
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(2017052603328)(7153060)(7193020);SRVR:MWHPR2201MB1486;
+x-ms-traffictypediagnostic: MWHPR2201MB1486:
+x-microsoft-antispam-prvs: <MWHPR2201MB1486A886C16C42AB7712A909C1840@MWHPR2201MB1486.namprd22.prod.outlook.com>
+x-forefront-prvs: 0913EA1D60
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39840400004)(366004)(376002)(346002)(396003)(136003)(199004)(189003)(54906003)(478600001)(316002)(14454004)(8936002)(81156014)(3846002)(1730700003)(6116002)(81166006)(2906002)(8676002)(36756003)(53936002)(6512007)(105586002)(106356001)(2351001)(4326008)(575784001)(97736004)(66066001)(5660300001)(6486002)(6436002)(25786009)(5640700003)(567974002)(68736007)(7736002)(44832011)(71200400001)(71190400001)(305945005)(256004)(14444005)(99286004)(11346002)(486006)(6506007)(446003)(42882007)(6916009)(476003)(2616005)(386003)(76176011)(1076003)(52116002)(186003)(102836004)(2501003)(26005);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR2201MB1486;H:MWHPR2201MB1277.namprd22.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: wavecomp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: 0Wnkf898C3ZW/3lRfv439H3nHj6LlbnyCnD8jvZfcOxIYzotxRI7h9dDv5SCsmSLrCa5gMD059A23UtNawypNTvlYhX93IM/P7GVxULGYEsCdNqjYiLD8DRUYYGlocuhXrX+tCvOq5vK4kp942Kn4Koz2d2UJP5xfzY9J688D0mMasu+qGY8Yzde2UJhLLqBKUCz611FKWXOJBEETG+G8fGteMNvVIREAmlmDc2GulR7hU2iDkRSmgJ2L4hxfLF9aVRkQ8C7p+p1x+vxZQrV6FTF4R5Q9N8KtWLSoJkrvB37R1VctTfV9stzBMoWArjN0Synn6Qg+MC/32ORJoux/w3G4IOS24h6EglWsTOoR+mwozl3tDYLnqPrFE4DyuAULi2njmyC7gXoOX9CZBKSxtaM+eG0V+zqC2lxICiYCkAwSV2QAMfqWE4fEuGwEP62HnTF+ljJ+zufICPyLKL/jQ==
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: mips.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 93162ff8-b7a6-4608-cbba-08d67723b835
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Jan 2019 17:47:42.0370
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 463607d3-1db3-40a0-8a29-970c56230104
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR2201MB1486
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+commit adcc81f148d733b7e8e641300c5590a2cdc13bf3 upstream.
 
-On 5/1/18 16:43, Paweł Chmiel wrote:
-> On Tuesday, May 1, 2018 2:45:40 PM CEST Sebastian Reichel wrote:
->> On Fri, Apr 27, 2018 at 06:03:02PM +0200, Paweł Chmiel wrote:
->>> This patch adds devicetree bindings documentation for
->>> battery charging controller as the subnode of MAX8998 PMIC.
->>> It's based on current behavior of driver.
->>>
->>> Fixes: ee999fb3f17f ("mfd: max8998: Add support for Device Tree")
->>> Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
->>> ---
->>>  Documentation/devicetree/bindings/mfd/max8998.txt | 22 ++++++++++++++++++++++
->>>  1 file changed, 22 insertions(+)
+Mapping the delay slot emulation page as both writeable & executable
+presents a security risk, in that if an exploit can write to & jump into
+the page then it can be used as an easy way to execute arbitrary code.
 
->>> --- a/Documentation/devicetree/bindings/mfd/max8998.txt
->>> +++ b/Documentation/devicetree/bindings/mfd/max8998.txt
->>> @@ -50,6 +50,21 @@ Additional properties required if max8998,pmic-buck2-dvs-gpio is defined:
->>>  - max8998,pmic-buck2-dvs-voltage: An array of 2 voltage values in microvolts
->>>    for buck2 regulator that can be selected using dvs gpio.
->>>  
->>> +Charger: Configuration for battery charging controller should be added
->>> +inside a child node named 'charger'.
->>> +  Required properties:
->>> +  - max8998,charge-eoc: Setup "End of Charge". If value equals 0,
->>> +    remain value set from bootloader or default value will be used.
->>> +    Valid values: 0, 10 - 45
->>> +
->>> +  - max8998,charge-restart: Setup "Charge Restart Level". If value equals 0,
->>> +    remain value set from bootloader or default value will be used.
->>> +    Valid values: -1, 0, 100, 150, 200
+Prevent this by mapping the page read-only for userland, and using
+access_process_vm() with the FOLL_FORCE flag to write to it from
+mips_dsemul().
 
-Perhaps change the property name to max8998,charge-restart-threshold, 
-in include/linux/mfd/max8998.h we have:
+This will likely be less efficient due to copy_to_user_page() performing
+cache maintenance on a whole page, rather than a single line as in the
+previous use of flush_cache_sigtramp(). However this delay slot
+emulation code ought not to be running in any performance critical paths
+anyway so this isn't really a problem, and we can probably do better in
+copy_to_user_page() anyway in future.
 
- * @restart: Restart Level in mV: 100, 150, 200, and -1 for disable.
- *   If it equals 0, leave it unchanged.
+A major advantage of this approach is that the fix is small & simple to
+backport to stable kernels.
 
-Then we could make it an optional property:
+Reported-by: Andy Lutomirski <luto@kernel.org>
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Fixes: 432c6bacbd0c ("MIPS: Use per-mm page to execute branch delay slot in=
+structions")
+Cc: stable@vger.kernel.org # v4.8+
+Cc: linux-mips@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: Rich Felker <dalias@libc.org>
+Cc: David Daney <david.daney@cavium.com>
+---
+ arch/mips/kernel/vdso.c     |  4 ++--
+ arch/mips/math-emu/dsemul.c | 38 +++++++++++++++++++------------------
+ 2 files changed, 22 insertions(+), 20 deletions(-)
 
- - max8998,charge-restart-threshold: Charge restart threshold in millivolts. 
-   Valid values are: 0, 100, 150, 200. If the value equals 0 the charger 
-   restart will be disabled.
+diff --git a/arch/mips/kernel/vdso.c b/arch/mips/kernel/vdso.c
+index e88344e3d508..c6297a03d945 100644
+--- a/arch/mips/kernel/vdso.c
++++ b/arch/mips/kernel/vdso.c
+@@ -111,8 +111,8 @@ int arch_setup_additional_pages(struct linux_binprm *bp=
+rm, int uses_interp)
+=20
+ 	/* Map delay slot emulation page */
+ 	base =3D mmap_region(NULL, STACK_TOP, PAGE_SIZE,
+-			   VM_READ|VM_WRITE|VM_EXEC|
+-			   VM_MAYREAD|VM_MAYWRITE|VM_MAYEXEC,
++			   VM_READ | VM_EXEC |
++			   VM_MAYREAD | VM_MAYWRITE | VM_MAYEXEC,
+ 			   0);
+ 	if (IS_ERR_VALUE(base)) {
+ 		ret =3D base;
+diff --git a/arch/mips/math-emu/dsemul.c b/arch/mips/math-emu/dsemul.c
+index 4a094f7acb3d..7b4329861056 100644
+--- a/arch/mips/math-emu/dsemul.c
++++ b/arch/mips/math-emu/dsemul.c
+@@ -211,8 +211,9 @@ int mips_dsemul(struct pt_regs *regs, mips_instruction =
+ir,
+ {
+ 	int isa16 =3D get_isa16_mode(regs->cp0_epc);
+ 	mips_instruction break_math;
+-	struct emuframe __user *fr;
+-	int err, fr_idx;
++	unsigned long fr_uaddr;
++	struct emuframe fr;
++	int fr_idx, ret;
+=20
+ 	/* NOP is easy */
+ 	if (ir =3D=3D 0)
+@@ -247,27 +248,31 @@ int mips_dsemul(struct pt_regs *regs, mips_instructio=
+n ir,
+ 		fr_idx =3D alloc_emuframe();
+ 	if (fr_idx =3D=3D BD_EMUFRAME_NONE)
+ 		return SIGBUS;
+-	fr =3D &dsemul_page()[fr_idx];
+=20
+ 	/* Retrieve the appropriately encoded break instruction */
+ 	break_math =3D BREAK_MATH(isa16);
+=20
+ 	/* Write the instructions to the frame */
+ 	if (isa16) {
+-		err =3D __put_user(ir >> 16,
+-				 (u16 __user *)(&fr->emul));
+-		err |=3D __put_user(ir & 0xffff,
+-				  (u16 __user *)((long)(&fr->emul) + 2));
+-		err |=3D __put_user(break_math >> 16,
+-				  (u16 __user *)(&fr->badinst));
+-		err |=3D __put_user(break_math & 0xffff,
+-				  (u16 __user *)((long)(&fr->badinst) + 2));
++		union mips_instruction _emul =3D {
++			.halfword =3D { ir >> 16, ir }
++		};
++		union mips_instruction _badinst =3D {
++			.halfword =3D { break_math >> 16, break_math }
++		};
++
++		fr.emul =3D _emul.word;
++		fr.badinst =3D _badinst.word;
+ 	} else {
+-		err =3D __put_user(ir, &fr->emul);
+-		err |=3D __put_user(break_math, &fr->badinst);
++		fr.emul =3D ir;
++		fr.badinst =3D break_math;
+ 	}
+=20
+-	if (unlikely(err)) {
++	/* Write the frame to user memory */
++	fr_uaddr =3D (unsigned long)&dsemul_page()[fr_idx];
++	ret =3D access_process_vm(current, fr_uaddr, &fr, sizeof(fr),
++				FOLL_FORCE | FOLL_WRITE);
++	if (unlikely(ret !=3D sizeof(fr))) {
+ 		MIPS_FPU_EMU_INC_STATS(errors);
+ 		free_emuframe(fr_idx, current->mm);
+ 		return SIGBUS;
+@@ -279,10 +284,7 @@ int mips_dsemul(struct pt_regs *regs, mips_instruction=
+ ir,
+ 	atomic_set(&current->thread.bd_emu_frame, fr_idx);
+=20
+ 	/* Change user register context to execute the frame */
+-	regs->cp0_epc =3D (unsigned long)&fr->emul | isa16;
+-
+-	/* Ensure the icache observes our newly written frame */
+-	flush_cache_sigtramp((unsigned long)&fr->emul);
++	regs->cp0_epc =3D fr_uaddr | isa16;
+=20
+ 	return 0;
+ }
+--=20
+2.20.1
 
-If the property is missing the charger restart threshold configuration would
-be left unchanged.
-
->>> +  - max8998,charge-timeout: Setup "Charge Full Timeout". If value equals 0,
->>> +    remain value set from bootloader or default value will be used.
->>> +    Valid values: -1, 0, 5, 6, 7
->>
->> What are those values? seconds?
->>
-> Honestly i don't know. I've just documented values accepted currently 
-> by charger driver, so we can use it from devicetree.
-> I couldn't find any max8998 datasheet with this information (units, possible 
-> values etc for those properties).
-
-The charge timeout is in hours, as described in include/linux/mfd/max8998.h:
-
-
-"* @timeout: Full Timeout in hours: 5, 6, 7, and -1 for disable.
- *   If it equals 0, leave it unchanged.
- *   Otherwise, leave it unchanged."
-
-We could change description of the property to something along the lines of:
-
-Optional properties:
-
-  - max8998,charge-timeout: Charge timeout in hours. Valid values are:
-    0, 5, 6, 7. If the value is 0 the charge timer will be disabled.
-
-Then if the property is missing the driver will leave charge timer configuration
-unchanged.
-
--- 
-Regards,
-Sylwester
