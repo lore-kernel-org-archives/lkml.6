@@ -2,168 +2,206 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73DFDC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 12:00:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36331C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 12:02:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3AB33214C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 12:00:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="iWBIZLBr"
+	by mail.kernel.org (Postfix) with ESMTP id F10E721783
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 12:02:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547121754;
+	bh=wl7w4ILeytw2T1W1IfyV7T/7MtKx8iAJk4i8gklPMjE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=qM4RZlR5jegg3uLg54W8YQ/t0thNDGGGpeMfUSiLZ0ovpqLOszzPbqSb6wdNc2iJE
+	 ZoK3MbBd+RYJ120mtePKP0UYEgsHJIpreBgrJUH3hvhOHvOBFCm+Fqsjcppp7N0x4n
+	 OPYbV9/s0k8rOUZJX6iwyoUwRCt0Us+cJIMToBqE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727968AbfAJMA3 (ORCPT
+        id S1728083AbfAJMCd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 07:00:29 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:40076 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726612AbfAJMA3 (ORCPT
+        Thu, 10 Jan 2019 07:02:33 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:43050 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726612AbfAJMCc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 07:00:29 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0ABwwSg122111;
-        Thu, 10 Jan 2019 12:00:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
- mime-version : subject : from : in-reply-to : date : cc :
- content-transfer-encoding : message-id : references : to;
- s=corp-2018-07-02; bh=GWqeNjykrBmumfAFDBHANaR0ima2Sl2zZcSGnQ8ONmU=;
- b=iWBIZLBrhCrsOI7OYtbwW0Q5u7cRK4J3NxFAqOyKhxu2kQ7LOom/dUKecOT6MrWRKPcc
- UscqFxl27UtYao3lDLj7Qp45tnS4H042+fGy2rbi0HI1R48897Uo6VXVx96qQz6vRkdE
- vQjuGdaqY95LgLM4lhONOa8Kybn6qTimdnaJpB0lhVlzh9e1QfYdQ10w1ZFBzjFE0deu
- byHVSpbtXoqnCyO7UMYBz9gUfa+WHU3LLMrDC+GJj9fEegvPvnlPVvUDRfITCsCrP70N
- jGKWoSAaM4fGoAilow0YSMQyTARtWyylFeTeTeYykUc0Q2wes6vSN5R2plysBvqORW9L qg== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by userp2120.oracle.com with ESMTP id 2ptn7r6m8v-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 10 Jan 2019 12:00:17 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x0AC0GxX024006
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 10 Jan 2019 12:00:16 GMT
-Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x0AC0Ee1029162;
-        Thu, 10 Jan 2019 12:00:15 GMT
-Received: from [192.168.0.110] (/73.243.10.6)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 10 Jan 2019 04:00:14 -0800
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
-Subject: Re: [v3 PATCH 5/5] doc: memcontrol: add description for
- wipe_on_offline
-From:   William Kucharski <william.kucharski@oracle.com>
-In-Reply-To: <1547061285-100329-6-git-send-email-yang.shi@linux.alibaba.com>
-Date:   Thu, 10 Jan 2019 05:00:13 -0700
-Cc:     Michal Hocko <mhocko@suse.com>, hannes@cmpxchg.org,
-        shakeelb@google.com, akpm@linux-foundation.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <0746F690-2C0C-4041-842A-19CEB28A5E45@oracle.com>
-References: <1547061285-100329-1-git-send-email-yang.shi@linux.alibaba.com>
- <1547061285-100329-6-git-send-email-yang.shi@linux.alibaba.com>
-To:     Yang Shi <yang.shi@linux.alibaba.com>
-X-Mailer: Apple Mail (2.3445.102.3)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9131 signatures=668680
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1901100099
+        Thu, 10 Jan 2019 07:02:32 -0500
+Received: by mail-lf1-f68.google.com with SMTP id u18so8082417lff.10;
+        Thu, 10 Jan 2019 04:02:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=FfPic8K1SjxZf9AKhGO/Zg3kvZjFTXQnItiVNIW+L08=;
+        b=bHu+5QRI35+OBDzkXTe0nF0gmRDUosRt6+4axlG5yYKiuEZXlnD47K63RWmxex2L5I
+         N9RF59PBpn7zLbeHKSBT5ZJ/1UDPH4VLAQ2NugwigTnJ/mnpe1eqjWbmQEFkFqJQTnAH
+         xWgC2N2Gl74TT/h+ONSOwngNde17gufJKo4/vEwm7WmOF8nKRNzSWKDJQetkCuwP0oeg
+         BcxMrT5AwzCUNIVk4xn9Dwd4ODNVstPNNABecqeKzQuQdvX6p5fFUSIKfSc4J58DYPK5
+         tBuAL15B6h0oVpkE6dhwqVkB0NyJ3CkeuAXnKLxFoF6+e1PhRKlqT22RPQ8ePZpUtZP8
+         LDnw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=FfPic8K1SjxZf9AKhGO/Zg3kvZjFTXQnItiVNIW+L08=;
+        b=d2JV5SzPzONX+kcOMUpBFPSMQ6Xe24DAqCBFg1IBKRPzufJ+bWtvlLC9vJIOmfzrDZ
+         LMeTninyqcnHizH9n4tJbfwiExbYoDBQOZgettPX5yY4Tv754ixTFb89DL93UN88fIG4
+         gNd3YOFm0UiBavTxWBLQLqirARXLJnoWreRqugs2gYDvA1dvNZclNG73l9YU0ewgIY4K
+         b2GtSkf6xTHS42NcC1lsE0JN4G/Xuyt+ubnczleaQE/ugWb0XWSkb3st88SKT++kKqIG
+         ARjZxu/uP/YdZqCwi0g9i+eNo+SwveeOQNwIK2CfWP5zUykAV/FG6S67WeCZFBa5FMIz
+         8CSA==
+X-Gm-Message-State: AJcUukeHBoSJyHK4PawRi0Glzs/4bIgDYwA/btdAnQD491kh+/uOow9L
+        Nzhwuu2T0Kx2RmzsnXSGXwA=
+X-Google-Smtp-Source: ALg8bN4CH4ka0vKvQt5fOdKT559QejkHt0hNcA3NH/phjiBX9GeZVx10HavYchIlbWTFriLN+V0V2Q==
+X-Received: by 2002:ac2:4343:: with SMTP id o3mr5911233lfl.129.1547121750057;
+        Thu, 10 Jan 2019 04:02:30 -0800 (PST)
+Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
+        by smtp.gmail.com with ESMTPSA id d5sm14052501lfi.65.2019.01.10.04.02.28
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 10 Jan 2019 04:02:29 -0800 (PST)
+Received: from johan by xi.terra with local (Exim 4.91)
+        (envelope-from <johan@kernel.org>)
+        id 1ghZ2a-0002gM-Kx; Thu, 10 Jan 2019 13:02:28 +0100
+Date:   Thu, 10 Jan 2019 13:02:28 +0100
+From:   Johan Hovold <johan@kernel.org>
+To:     Andreas Kemnade <andreas@kemnade.info>
+Cc:     johan@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Discussions about the Letux Kernel 
+        <letux-kernel@openphoenux.org>
+Subject: Re: [PATCH v2 1/5] gnss: sirf: write data to gnss only when the gnss
+ device is open
+Message-ID: <20190110120228.GB3430@localhost>
+References: <20181209195150.5192-1-andreas@kemnade.info>
+ <20181209195150.5192-2-andreas@kemnade.info>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181209195150.5192-2-andreas@kemnade.info>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Just a few grammar corrections since this is going into Documentation:
-
-
-> On Jan 9, 2019, at 12:14 PM, Yang Shi <yang.shi@linux.alibaba.com> =
-wrote:
->=20
-> Add desprition of wipe_on_offline interface in cgroup documents.
-Add a description of the wipe_on_offline interface to the cgroup =
-documents.
-
-> Cc: Michal Hocko <mhocko@suse.com>
-> Cc: Johannes Weiner <hannes@cmpxchg.org>
-> Cc: Shakeel Butt <shakeelb@google.com>
-> Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
+On Sun, Dec 09, 2018 at 08:51:46PM +0100, Andreas Kemnade wrote:
+> The api forbids writing data there otherwise. Prepare for the
+> serdev_open()/close() being a part of runtime pm.
+> 
+> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
 > ---
-> Documentation/admin-guide/cgroup-v2.rst |  9 +++++++++
-> Documentation/cgroup-v1/memory.txt      | 10 ++++++++++
-> 2 files changed, 19 insertions(+)
->=20
-> diff --git a/Documentation/admin-guide/cgroup-v2.rst =
-b/Documentation/admin-guide/cgroup-v2.rst
-> index 0290c65..e4ef08c 100644
-> --- a/Documentation/admin-guide/cgroup-v2.rst
-> +++ b/Documentation/admin-guide/cgroup-v2.rst
-> @@ -1303,6 +1303,15 @@ PAGE_SIZE multiple when read back.
->         memory pressure happens. If you want to avoid that, =
-force_empty will be
->         useful.
->=20
-> +  memory.wipe_on_offline
-> +
-> +        This is similar to force_empty, but it just does memory =
-reclaim
-> +        asynchronously in css offline kworker.
-> +
-> +        Writing into 1 will enable it, disable it by writing into 0.
-Writing a 1 will enable it; writing a 0 will disable it.
+> Changes in v2:
+>  add locking
+> 
+>  drivers/gnss/sirf.c | 28 +++++++++++++++++++++++++++-
+>  1 file changed, 27 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gnss/sirf.c b/drivers/gnss/sirf.c
+> index 2c22836d3ffd..ba663de1db49 100644
+> --- a/drivers/gnss/sirf.c
+> +++ b/drivers/gnss/sirf.c
+> @@ -35,6 +35,12 @@ struct sirf_data {
+>  	struct gpio_desc *wakeup;
+>  	int irq;
+>  	bool active;
+> +	/*
+> +	 * There might be races between returning data and closing the gnss
+> +	 * device.
+> +	 */
 
-> +
-> +        It would reclaim as much as possible memory just as what =
-force_empty does.
-It will reclaim as much memory as possible, just as force_empty does.
+Please drop this comment, which is too verbose. The mutex protects the
+opened flag, and that could be indicated using a new line above the
+mutex and below the flag, or using a short comment before the mutex.
 
-> +
->=20
-> Usage Guidelines
-> ~~~~~~~~~~~~~~~~
-> diff --git a/Documentation/cgroup-v1/memory.txt =
-b/Documentation/cgroup-v1/memory.txt
-> index 8e2cb1d..1c6e1ca 100644
-> --- a/Documentation/cgroup-v1/memory.txt
-> +++ b/Documentation/cgroup-v1/memory.txt
-> @@ -71,6 +71,7 @@ Brief summary of control files.
->  memory.stat			 # show various statistics
->  memory.use_hierarchy		 # set/show hierarchical account enabled
->  memory.force_empty		 # trigger forced page reclaim
-> + memory.wipe_on_offline		 # trigger forced page reclaim =
-when offlining
->  memory.pressure_level		 # set memory pressure =
-notifications
->  memory.swappiness		 # set/show swappiness parameter of =
-vmscan
-> 				 (See sysctl's vm.swappiness)
-> @@ -581,6 +582,15 @@ hierarchical_<counter>=3D<counter pages> N0=3D<node=
- 0 pages> N1=3D<node 1 pages> ...
->=20
-> The "total" count is sum of file + anon + unevictable.
->=20
-> +5.7 wipe_on_offline
-> +
-> +This is similar to force_empty, but it just does memory reclaim =
-asynchronously
-> +in css offline kworker.
-> +
-> +Writing into 1 will enable it, disable it by writing into 0.
-Writing a 1 will enable it; writing a 0 will disable it.
+> +	struct mutex gdev_mutex;
 
-> +
-> +It would reclaim as much as possible memory just as what force_empty =
-does.
-It will reclaim as much memory as possible, just as force_empty does.
+Please rename "mutex". We should be able to reuse this for the serdev
+open count as well, right?
 
-> +
-> 6. Hierarchy support
->=20
-> The memory controller supports a deep hierarchy and hierarchical =
-accounting.
-> --=20
-> 1.8.3.1
->=20
+> +	bool opened;
 
+Rename "open" (i.e. same tense as "active").
+
+And just add a newline here too.
+
+>  	wait_queue_head_t power_wait;
+>  };
+>  
+> @@ -44,6 +50,7 @@ static int sirf_open(struct gnss_device *gdev)
+>  	struct serdev_device *serdev = data->serdev;
+>  	int ret;
+>  
+> +	data->opened = true;
+
+Always hold the mutex when manipulating the open flag so we don't have
+to worry about ordering issues.
+
+>  	ret = serdev_device_open(serdev);
+>  	if (ret)
+>  		return ret;
+> @@ -55,6 +62,7 @@ static int sirf_open(struct gnss_device *gdev)
+>  	if (ret < 0) {
+>  		dev_err(&gdev->dev, "failed to runtime resume: %d\n", ret);
+>  		pm_runtime_put_noidle(&serdev->dev);
+> +		data->opened = false;
+
+And to avoid problems on error paths.
+
+>  		goto err_close;
+>  	}
+>  
+> @@ -74,6 +82,9 @@ static void sirf_close(struct gnss_device *gdev)
+>  	serdev_device_close(serdev);
+>  
+>  	pm_runtime_put(&serdev->dev);
+
+Add a newline here.
+
+> +	mutex_lock(&data->gdev_mutex);
+> +	data->opened = false;
+> +	mutex_unlock(&data->gdev_mutex);
+>  }
+>  
+>  static int sirf_write_raw(struct gnss_device *gdev, const unsigned char *buf,
+> @@ -105,8 +116,22 @@ static int sirf_receive_buf(struct serdev_device *serdev,
+>  {
+>  	struct sirf_data *data = serdev_device_get_drvdata(serdev);
+>  	struct gnss_device *gdev = data->gdev;
+> +	int ret = 0;
+> +
+> +	/*
+> +	 * we might come here everytime when runtime is resumed
+> +	 * and data is received. Two cases are possible
+> +	 * 1. device is opened during initialisation
+> +	 * 2. kernel is compiled without runtime pm
+> +	 *    and device is opened all the time
+> +	 */
+
+This comments makes little sense with the current code. Please remove.
+
+> +	mutex_lock(&data->gdev_mutex);
+> +	if (data->opened)
+> +		ret = gnss_insert_raw(gdev, buf, count);
+>  
+
+No new line (or add one after mutex_lock() above).
+
+> -	return gnss_insert_raw(gdev, buf, count);
+> +	mutex_unlock(&data->gdev_mutex);
+> +
+> +	return ret;
+>  }
+>  
+>  static const struct serdev_device_ops sirf_serdev_ops = {
+> @@ -275,6 +300,7 @@ static int sirf_probe(struct serdev_device *serdev)
+>  	data->serdev = serdev;
+>  	data->gdev = gdev;
+>  
+> +	mutex_init(&data->gdev_mutex);
+>  	init_waitqueue_head(&data->power_wait);
+>  
+>  	serdev_device_set_drvdata(serdev, data);
+
+Johan
