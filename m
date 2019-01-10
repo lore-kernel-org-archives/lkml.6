@@ -2,179 +2,87 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7514AC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 10:32:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C255C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 10:32:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F7EB214C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 10:32:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="LqPmW0Fd"
+	by mail.kernel.org (Postfix) with ESMTP id DAB5B214C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 10:32:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728167AbfAJKb7 (ORCPT
+        id S1728194AbfAJKcw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 05:31:59 -0500
-Received: from mail-eopbgr10070.outbound.protection.outlook.com ([40.107.1.70]:13907
-        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726951AbfAJKb7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 05:31:59 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=naNLwtoqv7J17+VK+hJEASA7Fi7TKGWC4TLLjp1FWDU=;
- b=LqPmW0FdnLTFAGX5aI0NuRYMBb8OHy4Q7gsb0+B51EuRV/3xyjW58jo69Nr7ExFm9vBPpOHMvmJFCTGvlSLvBSS1Gzp+Y4RPGY3L9khb+rGW2ZqdA+ffj6FJ5On/4fQ5FKiNxu9ayh63svVkkcRrZ5H7Krr2OB1C3qyMzl9B9r8=
-Received: from VI1PR04MB4431.eurprd04.prod.outlook.com (20.177.55.159) by
- VI1PR04MB5920.eurprd04.prod.outlook.com (20.178.205.82) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1516.14; Thu, 10 Jan 2019 10:31:52 +0000
-Received: from VI1PR04MB4431.eurprd04.prod.outlook.com
- ([fe80::39b7:fa32:e307:a294]) by VI1PR04MB4431.eurprd04.prod.outlook.com
- ([fe80::39b7:fa32:e307:a294%2]) with mapi id 15.20.1495.011; Thu, 10 Jan 2019
- 10:31:52 +0000
-From:   Peng Ma <peng.ma@nxp.com>
-To:     Peng Ma <peng.ma@nxp.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "axboe@kernel.dk" <axboe@kernel.dk>
-CC:     Leo Li <leoyang.li@nxp.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-ide@vger.kernel.org" <linux-ide@vger.kernel.org>,
-        Andy Tang <andy.tang@nxp.com>
-Subject: RE: [PATCH 1/2] ahci: qoriq: add lx2160 platforms support
-Thread-Topic: [PATCH 1/2] ahci: qoriq: add lx2160 platforms support
-Thread-Index: AQHUqMzHrHO4D1Z/Q0GdToE49HezEKWoS/7w
-Date:   Thu, 10 Jan 2019 10:31:52 +0000
-Message-ID: <VI1PR04MB44311C4FCA7DE543941E84B0ED840@VI1PR04MB4431.eurprd04.prod.outlook.com>
-References: <20190110100533.33333-1-peng.ma@nxp.com>
-In-Reply-To: <20190110100533.33333-1-peng.ma@nxp.com>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=peng.ma@nxp.com; 
-x-originating-ip: [119.31.174.73]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;VI1PR04MB5920;6:V13WEA/i0iqc0gVYigHU5cx1+U18wb16bDs9+42mBkjvfBzS7iZgBUGMI/pxX4CbXFgf5FmvM4MztQd78Mb7VWQhvhyEncjmEYyI2y8G/2sxWWhasrYENg2OU70Brstp6itvQ35Z7q25pUVMqOdqI0jjIAt8NakjPeO1Lzzpa1MN9AJCGn2gsrq8KXfRHtpXbyQdG1h1cNVI+NlfKuUbgypOWKkqtI+pi/T1ymVM/NkVPbcNqtBJGLUfDT+HYpzf84oYiGq08dYukCJLKHmdZQvtrKjI3362K7z7nTyxnADTlUYO80ykLOiLNE+7xHzomC09yl/9QinQsoezhqz48VWFlJcDIlMhgah/IcbErk4LJnl8ofsOg0MaYCLypX+HDAHuQM/lI4RcwR3zg2M9f+FH5Ox5epuzmLn7Bn2JFa7QbnXjtjhAfIonoCid4fnKsDSeQF204ZUHN6uWXJgpLw==;5:4VxUIB1FtzJe/xyeRdFHOeQMpOd9WwVk1cjTiW7QMgKx+ZoA5LnRFWPX942ERyPyk6CuomOuSbzBJ8yH3JKrutGOA4P3YJjhlDcZ4EvBsrCKQ3VioUoB2KVbEdz/UtGRxQebuZqbBx4lGf4rukOts9dZrNdlG1ct/XXV5MJ6cjVT6hN6CQD+AfLIVCKVwmXebiBW6e6NHhTQ966QbTUsuQ==;7:ApPGFVt/a4QM3OM5qB9mygXnhKptJV9RRnegz1X5uBkVMDSI/Ye6nS4p/dFLGNjmRUo2Bt55d6UIFGT1dnWoYghajkuTvM1oYoP16AeSnPx6e8gdyG4u9o+3lVbJC23hO0LUUvvwtrjCSdGZu8DWWg==
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 4f713b92-ae48-47e6-c778-08d676e6d5e0
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB5920;
-x-ms-traffictypediagnostic: VI1PR04MB5920:
-x-microsoft-antispam-prvs: <VI1PR04MB592017922AD537BAAED25216ED840@VI1PR04MB5920.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(3230021)(908002)(999002)(5005026)(6040522)(8220060)(2401047)(8121501046)(3002001)(10201501046)(3231475)(944501520)(4982022)(52105112)(93006095)(93001095)(6055026)(6041310)(20161123564045)(20161123560045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:VI1PR04MB5920;BCL:0;PCL:0;RULEID:;SRVR:VI1PR04MB5920;
-x-forefront-prvs: 0913EA1D60
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(136003)(376002)(39860400002)(396003)(366004)(189003)(199004)(13464003)(14454004)(7736002)(4326008)(5660300001)(86362001)(966005)(2201001)(25786009)(478600001)(68736007)(6306002)(9686003)(81166006)(8936002)(567974002)(305945005)(2906002)(33656002)(66066001)(74316002)(8676002)(81156014)(6246003)(186003)(256004)(26005)(105586002)(3846002)(476003)(446003)(11346002)(53936002)(54906003)(486006)(55016002)(44832011)(316002)(6436002)(2501003)(76176011)(99286004)(6506007)(110136005)(102836004)(6116002)(97736004)(71200400001)(7696005)(106356001)(71190400001)(229853002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB5920;H:VI1PR04MB4431.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: XH9+Oahc6jM6BZo3xghnqhqjiC6uMsMIbsHd94SixekG+HM4sXJmHDAdrvGZMrbzYua6VNYMEFKGpc+bYktUKAbKX4XKOcC1CQLjn/0kgwTEfLyxSUecLG97QriJFZ375ZAnz6DHlkeqycaXEQ9p0AeLGpCrFnU0B2zfyP1nYL2kz+uZH+H1qpbox5H46sLIqS8re6+RxkU0CYqiuf11qqf1H2oR4CLgjsXExgLyPk9LxoCV7e+cJphHLRZ+MLO2IFM+HQ44JC7cAcAOKbrHKYsv7vfrfxiS78ylKzVofkRXBDwWCse2IypAAzRPWi3S
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
+        Thu, 10 Jan 2019 05:32:52 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:44098 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726951AbfAJKcv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 05:32:51 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 60C0C7970A;
+        Thu, 10 Jan 2019 10:32:51 +0000 (UTC)
+Received: from vitty.brq.redhat.com.redhat.com (unknown [10.43.2.155])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id E466A672C4;
+        Thu, 10 Jan 2019 10:32:48 +0000 (UTC)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     Tony Luck <tony.luck@gmail.com>, Borislav Petkov <bp@alien8.de>
+Cc:     Reinette Chatre <reinette.chatre@intel.com>,
+        Babu Moger <Babu.Moger@amd.com>, X86-ML <x86@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        =?utf-8?Q?Jan_H=2E_Sch=C3=B6nherr?= <jschoenh@amazon.de>,
+        David Duncan <davdunc@amazon.com>
+Subject: Re: [PATCH] x86/intel_rdt: use rdmsr_safe() to workaround AWS host issue
+In-Reply-To: <CA+8MBbLh2JyWg=AF-cftrCfDB8QgRwJ2sKV-S24Jqtu_y1qZrg@mail.gmail.com>
+References: <20181220134046.7916-1-vkuznets@redhat.com> <20181220161722.GD31403@zn.tnic> <51dcb13a-4751-47f5-1e01-f6731a2c6f3c@intel.com> <20521afe-09af-7acf-6f32-3f6e9a971091@intel.com> <20190109113915.GB15665@zn.tnic> <87bm4qoww4.fsf@vitty.brq.redhat.com> <20190109121445.GC15665@zn.tnic> <CA+8MBbLh2JyWg=AF-cftrCfDB8QgRwJ2sKV-S24Jqtu_y1qZrg@mail.gmail.com>
+Date:   Thu, 10 Jan 2019 11:32:47 +0100
+Message-ID: <87woncol9s.fsf@vitty.brq.redhat.com>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4f713b92-ae48-47e6-c778-08d676e6d5e0
-X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Jan 2019 10:31:52.1243
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB5920
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Thu, 10 Jan 2019 10:32:51 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgSmVuc6OsDQoNCglJIHNlbmQgdGhlIHNhdGEgcGF0Y2hzIHRvIHRoZSB1cHN0cmVhbSBwYXRj
-aHdvcmsgd2l0aCAuL3NjcmlwdHMvZ2V0X21haW50YWluZXIucGwsIGJ1dCBJIGZpbmQgbXkgcGF0
-Y2ggb24gaHR0cDovL3BhdGNod29yay5vemxhYnMub3JnL3Byb2plY3QvbGludXgtaWRlL2xpc3Qv
-ICwgSSBzYXcgdGhlIE1BSU5UQUlORVJTLCB0aGUgZHJpdmVyL2F0YS8qIHNob3VsZCBiZSBvbiBo
-dHRwczovL3BhdGNod29yay5rZXJuZWwub3JnL3Byb2plY3QvbGludXgtYmxvY2svbGlzdC8gLiBj
-b3VsZCB5b3UgcGxlYXNlIGhlbHAgbWUgd2hhdCB0aGUgcGF0Y2h3b3JrIGlzIHJpZ2h0Lg0KCVRo
-YW5rcyBhIGxvdC4NCg0KQmVzdCBSZWdhcmRzLA0KUGVuZw0KDQo+LS0tLS1PcmlnaW5hbCBNZXNz
-YWdlLS0tLS0NCj5Gcm9tOiBQZW5nIE1hIDxwZW5nLm1hQG54cC5jb20+DQo+U2VudDogMjAxOcTq
-MdTCMTDI1SAxODowNg0KPlRvOiBzaGF3bmd1b0BrZXJuZWwub3JnOyBheGJvZUBrZXJuZWwuZGsN
-Cj5DYzogTGVvIExpIDxsZW95YW5nLmxpQG54cC5jb20+OyByb2JoK2R0QGtlcm5lbC5vcmc7DQo+
-bWFyay5ydXRsYW5kQGFybS5jb207IGxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9y
-ZzsNCj5kZXZpY2V0cmVlQHZnZXIua2VybmVsLm9yZzsgbGludXgta2VybmVsQHZnZXIua2VybmVs
-Lm9yZzsNCj5saW51eC1pZGVAdmdlci5rZXJuZWwub3JnOyBQZW5nIE1hIDxwZW5nLm1hQG54cC5j
-b20+DQo+U3ViamVjdDogW1BBVENIIDEvMl0gYWhjaTogcW9yaXE6IGFkZCBseDIxNjAgcGxhdGZv
-cm1zIHN1cHBvcnQNCj4NCj5MeDIxNjBhIGlzIGEgbmV3IGludHJvZHVjZWQgc29jIHdoaWNoIHN1
-cHBvcnRzIEFUQTMuMCBhbmQgQ2xlYW4gdXAgc29tZQ0KPmNvZGUNCj4NCj5TaWduZWQtb2ZmLWJ5
-OiBQZW5nIE1hIDxwZW5nLm1hQG54cC5jb20+DQo+LS0tDQo+IGRyaXZlcnMvYXRhL2FoY2lfcW9y
-aXEuYyB8ICAgNDQgKysrKysrKysrKysrLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0N
-Cj4gMSBmaWxlcyBjaGFuZ2VkLCAxMiBpbnNlcnRpb25zKCspLCAzMiBkZWxldGlvbnMoLSkNCj4N
-Cj5kaWZmIC0tZ2l0IGEvZHJpdmVycy9hdGEvYWhjaV9xb3JpcS5jIGIvZHJpdmVycy9hdGEvYWhj
-aV9xb3JpcS5jIGluZGV4DQo+Y2U1OTI1My4uMTk5NGJmMiAxMDA2NDQNCj4tLS0gYS9kcml2ZXJz
-L2F0YS9haGNpX3FvcmlxLmMNCj4rKysgYi9kcml2ZXJzL2F0YS9haGNpX3FvcmlxLmMNCj5AQCAt
-NTcsNyArNTcsNyBAQCBlbnVtIGFoY2lfcW9yaXFfdHlwZSB7DQo+IAlBSENJX0xTMjA4MEEsDQo+
-IAlBSENJX0xTMTA0NkEsDQo+IAlBSENJX0xTMTA4OEEsDQo+LQlBSENJX0xTMjA4OEEsDQo+KwlB
-SENJX0xYMjE2MEEsDQo+IH07DQo+DQo+IHN0cnVjdCBhaGNpX3FvcmlxX3ByaXYgew0KPkBAIC03
-Myw3ICs3Myw3IEBAIHN0cnVjdCBhaGNpX3FvcmlxX3ByaXYgew0KPiAJeyAuY29tcGF0aWJsZSA9
-ICJmc2wsbHMyMDgwYS1haGNpIiwgLmRhdGEgPSAodm9pZCAqKUFIQ0lfTFMyMDgwQX0sDQo+IAl7
-IC5jb21wYXRpYmxlID0gImZzbCxsczEwNDZhLWFoY2kiLCAuZGF0YSA9ICh2b2lkICopQUhDSV9M
-UzEwNDZBfSwNCj4gCXsgLmNvbXBhdGlibGUgPSAiZnNsLGxzMTA4OGEtYWhjaSIsIC5kYXRhID0g
-KHZvaWQgKilBSENJX0xTMTA4OEF9LA0KPi0JeyAuY29tcGF0aWJsZSA9ICJmc2wsbHMyMDg4YS1h
-aGNpIiwgLmRhdGEgPSAodm9pZCAqKUFIQ0lfTFMyMDg4QX0sDQo+Kwl7IC5jb21wYXRpYmxlID0g
-ImZzbCxseDIxNjBhLWFoY2kiLCAuZGF0YSA9ICh2b2lkICopQUhDSV9MWDIxNjBBfSwNCj4gCXt9
-LA0KPiB9Ow0KPiBNT0RVTEVfREVWSUNFX1RBQkxFKG9mLCBhaGNpX3FvcmlxX29mX21hdGNoKTsg
-QEAgLTE3NCwxMiArMTc0LDEwDQo+QEAgc3RhdGljIGludCBhaGNpX3FvcmlxX3BoeV9pbml0KHN0
-cnVjdCBhaGNpX2hvc3RfcHJpdiAqaHByaXYpDQo+IAkJd3JpdGVsKExTMTAyMUFfUE9SVF9QSFk0
-LCByZWdfYmFzZSArIFBPUlRfUEhZNCk7DQo+IAkJd3JpdGVsKExTMTAyMUFfUE9SVF9QSFk1LCBy
-ZWdfYmFzZSArIFBPUlRfUEhZNSk7DQo+IAkJd3JpdGVsKEFIQ0lfUE9SVF9UUkFOU19DRkcsIHJl
-Z19iYXNlICsgUE9SVF9UUkFOUyk7DQo+LQkJaWYgKHFwcml2LT5pc19kbWFjb2hlcmVudCkNCj4t
-CQkJd3JpdGVsKEFIQ0lfUE9SVF9BWElDQ19DRkcsDQo+LQkJCQkJcmVnX2Jhc2UgKyBMUzEwMjFB
-X0FYSUNDX0FERFIpOw0KPiAJCWJyZWFrOw0KPg0KPiAJY2FzZSBBSENJX0xTMTA0M0E6DQo+Kwlj
-YXNlIEFIQ0lfTFMxMDQ2QToNCj4gCQlpZiAoIXFwcml2LT5lY2NfYWRkcikNCj4gCQkJcmV0dXJu
-IC1FSU5WQUw7DQo+IAkJd3JpdGVsKHJlYWRsKHFwcml2LT5lY2NfYWRkcikgfCBFQ0NfRElTX0FS
-TVY4X0NIMiwgQEAgLTE4OCw4DQo+KzE4Niw2IEBAIHN0YXRpYyBpbnQgYWhjaV9xb3JpcV9waHlf
-aW5pdChzdHJ1Y3QgYWhjaV9ob3N0X3ByaXYgKmhwcml2KQ0KPiAJCXdyaXRlbChBSENJX1BPUlRf
-UEhZMl9DRkcsIHJlZ19iYXNlICsgUE9SVF9QSFkyKTsNCj4gCQl3cml0ZWwoQUhDSV9QT1JUX1BI
-WTNfQ0ZHLCByZWdfYmFzZSArIFBPUlRfUEhZMyk7DQo+IAkJd3JpdGVsKEFIQ0lfUE9SVF9UUkFO
-U19DRkcsIHJlZ19iYXNlICsgUE9SVF9UUkFOUyk7DQo+LQkJaWYgKHFwcml2LT5pc19kbWFjb2hl
-cmVudCkNCj4tCQkJd3JpdGVsKEFIQ0lfUE9SVF9BWElDQ19DRkcsIHJlZ19iYXNlICsgUE9SVF9B
-WElDQyk7DQo+IAkJYnJlYWs7DQo+DQo+IAljYXNlIEFIQ0lfTFMyMDgwQToNCj5AQCAtMTk3LDI0
-ICsxOTMsMTAgQEAgc3RhdGljIGludCBhaGNpX3FvcmlxX3BoeV9pbml0KHN0cnVjdCBhaGNpX2hv
-c3RfcHJpdg0KPipocHJpdikNCj4gCQl3cml0ZWwoQUhDSV9QT1JUX1BIWTJfQ0ZHLCByZWdfYmFz
-ZSArIFBPUlRfUEhZMik7DQo+IAkJd3JpdGVsKEFIQ0lfUE9SVF9QSFkzX0NGRywgcmVnX2Jhc2Ug
-KyBQT1JUX1BIWTMpOw0KPiAJCXdyaXRlbChBSENJX1BPUlRfVFJBTlNfQ0ZHLCByZWdfYmFzZSAr
-IFBPUlRfVFJBTlMpOw0KPi0JCWlmIChxcHJpdi0+aXNfZG1hY29oZXJlbnQpDQo+LQkJCXdyaXRl
-bChBSENJX1BPUlRfQVhJQ0NfQ0ZHLCByZWdfYmFzZSArIFBPUlRfQVhJQ0MpOw0KPi0JCWJyZWFr
-Ow0KPi0NCj4tCWNhc2UgQUhDSV9MUzEwNDZBOg0KPi0JCWlmICghcXByaXYtPmVjY19hZGRyKQ0K
-Pi0JCQlyZXR1cm4gLUVJTlZBTDsNCj4tCQl3cml0ZWwocmVhZGwocXByaXYtPmVjY19hZGRyKSB8
-IEVDQ19ESVNfQVJNVjhfQ0gyLA0KPi0JCQkJcXByaXYtPmVjY19hZGRyKTsNCj4tCQl3cml0ZWwo
-QUhDSV9QT1JUX1BIWV8xX0NGRywgcmVnX2Jhc2UgKyBQT1JUX1BIWTEpOw0KPi0JCXdyaXRlbChB
-SENJX1BPUlRfUEhZMl9DRkcsIHJlZ19iYXNlICsgUE9SVF9QSFkyKTsNCj4tCQl3cml0ZWwoQUhD
-SV9QT1JUX1BIWTNfQ0ZHLCByZWdfYmFzZSArIFBPUlRfUEhZMyk7DQo+LQkJd3JpdGVsKEFIQ0lf
-UE9SVF9UUkFOU19DRkcsIHJlZ19iYXNlICsgUE9SVF9UUkFOUyk7DQo+LQkJaWYgKHFwcml2LT5p
-c19kbWFjb2hlcmVudCkNCj4tCQkJd3JpdGVsKEFIQ0lfUE9SVF9BWElDQ19DRkcsIHJlZ19iYXNl
-ICsgUE9SVF9BWElDQyk7DQo+IAkJYnJlYWs7DQo+DQo+IAljYXNlIEFIQ0lfTFMxMDg4QToNCj4r
-CWNhc2UgQUhDSV9MWDIxNjBBOg0KPiAJCWlmICghcXByaXYtPmVjY19hZGRyKQ0KPiAJCQlyZXR1
-cm4gLUVJTlZBTDsNCj4gCQl3cml0ZWwocmVhZGwocXByaXYtPmVjY19hZGRyKSB8IEVDQ19ESVNf
-TFMxMDg4QSwgQEAgLTIyMywxOA0KPisyMDUsMTYgQEAgc3RhdGljIGludCBhaGNpX3FvcmlxX3Bo
-eV9pbml0KHN0cnVjdCBhaGNpX2hvc3RfcHJpdiAqaHByaXYpDQo+IAkJd3JpdGVsKEFIQ0lfUE9S
-VF9QSFkyX0NGRywgcmVnX2Jhc2UgKyBQT1JUX1BIWTIpOw0KPiAJCXdyaXRlbChBSENJX1BPUlRf
-UEhZM19DRkcsIHJlZ19iYXNlICsgUE9SVF9QSFkzKTsNCj4gCQl3cml0ZWwoQUhDSV9QT1JUX1RS
-QU5TX0NGRywgcmVnX2Jhc2UgKyBQT1JUX1RSQU5TKTsNCj4tCQlpZiAocXByaXYtPmlzX2RtYWNv
-aGVyZW50KQ0KPi0JCQl3cml0ZWwoQUhDSV9QT1JUX0FYSUNDX0NGRywgcmVnX2Jhc2UgKyBQT1JU
-X0FYSUNDKTsNCj4gCQlicmVhazsNCj4rCX0NCj4NCj4tCWNhc2UgQUhDSV9MUzIwODhBOg0KPi0J
-CXdyaXRlbChBSENJX1BPUlRfUEhZXzFfQ0ZHLCByZWdfYmFzZSArIFBPUlRfUEhZMSk7DQo+LQkJ
-d3JpdGVsKEFIQ0lfUE9SVF9QSFkyX0NGRywgcmVnX2Jhc2UgKyBQT1JUX1BIWTIpOw0KPi0JCXdy
-aXRlbChBSENJX1BPUlRfUEhZM19DRkcsIHJlZ19iYXNlICsgUE9SVF9QSFkzKTsNCj4tCQl3cml0
-ZWwoQUhDSV9QT1JUX1RSQU5TX0NGRywgcmVnX2Jhc2UgKyBQT1JUX1RSQU5TKTsNCj4tCQlpZiAo
-cXByaXYtPmlzX2RtYWNvaGVyZW50KQ0KPi0JCQl3cml0ZWwoQUhDSV9QT1JUX0FYSUNDX0NGRywg
-cmVnX2Jhc2UgKyBQT1JUX0FYSUNDKTsNCj4tCQlicmVhazsNCj4rCWlmIChxcHJpdi0+aXNfZG1h
-Y29oZXJlbnQpIHsNCj4rCQlpZiAocXByaXYtPnR5cGUgPT0gQUhDSV9MUzEwMjFBKQ0KPisJCQl3
-cml0ZWwoQUhDSV9QT1JUX0FYSUNDX0NGRywNCj4rCQkJICAgICAgIHJlZ19iYXNlICsgTFMxMDIx
-QV9BWElDQ19BRERSKTsNCj4rCQllbHNlDQo+KwkJCXdyaXRlbChBSENJX1BPUlRfQVhJQ0NfQ0ZH
-LA0KPisJCQkgICAgICAgcmVnX2Jhc2UgKyBQT1JUX0FYSUNDKTsNCj4gCX0NCj4NCj4gCXJldHVy
-biAwOw0KPi0tDQo+MS43LjENCg0K
+Tony Luck <tony.luck@gmail.com> writes:
+
+> On Wed, Jan 9, 2019 at 5:00 AM Borislav Petkov <bp@alien8.de> wrote:
+>>
+>> On Wed, Jan 09, 2019 at 01:09:31PM +0100, Vitaly Kuznetsov wrote:
+>> > Hm, why is that? In theory, hypervisors can pass through or emulate the
+>> > required MSRs...
+>>
+>> ...and when the theory becomes reality we'll remove the check.
+>
+> In practice that may be a long time coming. We don't have many CLOSIDs, or
+> bits in a cache mask, at the h/w level. If you start trying to
+> subdivide those resources to pass a subset to a guest, then you'll
+> quickly find that you have no flexibility in the guest to do anything
+> useful.  It would only work if you limited to two, or perhaps three
+> guests.
+
+Running a single guest on a physical CPU is a very common scenario. In
+fact, sharing cores is very rare for public clouds: e.g. all worthy
+instance types on AWS/Azure give you dedicated cores and I don't see why
+hypervisor can't pass through resctl features.
+
+The other thing is: how can we be sure that there's no hypervisor
+exposing these feature already? Even if open-source hypervisors like
+KVM/Xen don't do it it doesn't prove anything: there are numerous
+proprietary hypervisors and who knows what they do.
+
+The original issue which triggered the discussion was discovered on AWS
+Xen where the host is buggy and I suggested a simple short-term
+workaround, I'm no expert in rdt/qos so I'm leaving this up to the
+maintainers to decide which fix deserves to go in (if any).
+
+-- 
+Vitaly
