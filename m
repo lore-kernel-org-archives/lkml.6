@@ -2,384 +2,391 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 180CCC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 15:12:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D194AC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 15:12:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C70CD214C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 15:12:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 87CC2214DA
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 15:12:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B/bVunkj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729410AbfAJPMK (ORCPT
+        id S1729724AbfAJPMN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 10:12:10 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:53146 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729680AbfAJPMF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 10:12:13 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:54465 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729654AbfAJPMF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 10 Jan 2019 10:12:05 -0500
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 43b8c22lNKz9v0fB;
-        Thu, 10 Jan 2019 16:12:02 +0100 (CET)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id YMo_OkLTOflI; Thu, 10 Jan 2019 16:12:02 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 43b8c22C1nz9v0f8;
-        Thu, 10 Jan 2019 16:12:02 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id C4BA78B8A1;
-        Thu, 10 Jan 2019 16:12:03 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id ORDVklM2Fy5T; Thu, 10 Jan 2019 16:12:03 +0100 (CET)
-Received: from po16846vm.idsi0.si.c-s.fr (unknown [192.168.4.90])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 640DC8B89F;
-        Thu, 10 Jan 2019 16:12:03 +0100 (CET)
-Received: by po16846vm.idsi0.si.c-s.fr (Postfix, from userid 0)
-        id 1DE716BF21; Thu, 10 Jan 2019 15:12:03 +0000 (UTC)
-Message-Id: <2d765aa2f633cf8a9d85d0e220d0687fef740ced.1547132681.git.christophe.leroy@c-s.fr>
-In-Reply-To: <cover.1547132681.git.christophe.leroy@c-s.fr>
-References: <cover.1547132681.git.christophe.leroy@c-s.fr>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH v2 12/15] powerpc/mm/32s: Use BATs for STRICT_KERNEL_RWX
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>, j.neuschaefer@gmx.net
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date:   Thu, 10 Jan 2019 15:12:03 +0000 (UTC)
+Received: by mail-wm1-f68.google.com with SMTP id a62so11618364wmh.4;
+        Thu, 10 Jan 2019 07:12:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=dPEbKitF72oIdQ/RPl+3EGdYs90w0SygyRQzJLY8dAo=;
+        b=B/bVunkj4jcuMecOMYSesDt/pR5zdfw/hUFo3YY3mjBz94C8deePMnbxGVoLrrPl7h
+         VhdLiKnTiVJGHaCMJ6+3k24iD4qO1sAClabjRMLxQ7J0xw5CA1HXIzbezTgiWo0mhthx
+         ELao7cWp6T3I4XHPkjwLjfhxu6Vek4Mcy/yW0uPbRPLVV7c4BBs6WLXnUi+hBfH8UDDB
+         pkjmUrw4wGw/l7R9XNwLBvFC7tfACQWUDA3fqwmvyS3vQh7KnOQs4vW70d8Z7cJjAqhl
+         kRWmebz2+Di1gEMrz1NzDKFC+N+TqT+6sLtXSp+EY1Iji575w0gS5MEuMvHSSsgX5L9Z
+         i1PQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=dPEbKitF72oIdQ/RPl+3EGdYs90w0SygyRQzJLY8dAo=;
+        b=aBSiypdMQrIhIIvZqB1+qKY2HqoQplzKfGJU4x520AzyesLxXXnpcyoRw+8C9N3GRd
+         W0DQCYrJEv5jpB16AyjRVkKZx1GmPyavcpaZ10dX4uovUnucTQx8ukWIvrPdiogocD34
+         emOKzoc+MLx7uW4AbYha6QjWreyeh/dPDFL+ptdI1mtS6gF8trkQ08lsXTFsOhFrA1S+
+         THOIiiaCov5T32yXwrRYMLTXEwvP9Qu8N5tvO++G76hymWOxDU8LYZFsGX3FU2JCifeg
+         Dcq8VseU1qFXrUYcDAKwcpI0vNX3tR+aTKiLtoRvCvnySAsjgmbxh82BEpZIyTeY3bEp
+         1wGQ==
+X-Gm-Message-State: AJcUukfbdsXX/fx6kZC3SDdOasQ6LhZPZNnstcrn1ufRNaaQY8hZs4QC
+        6uhAvhk4grrP66gzjzthyi0=
+X-Google-Smtp-Source: ALg8bN5PjscPstWpvwgjkyYIkR7plY8A2il5EESK95ukzB6+muKl03Wi+Z5q7WVECPvatY2lea8XYg==
+X-Received: by 2002:a1c:1902:: with SMTP id 2mr10505115wmz.150.1547133122585;
+        Thu, 10 Jan 2019 07:12:02 -0800 (PST)
+Received: from localhost (pD9E51040.dip0.t-ipconnect.de. [217.229.16.64])
+        by smtp.gmail.com with ESMTPSA id j33sm90727273wre.91.2019.01.10.07.12.01
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 10 Jan 2019 07:12:01 -0800 (PST)
+Date:   Thu, 10 Jan 2019 16:12:00 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>
+Cc:     adrian.hunter@intel.com, ulf.hansson@linaro.org,
+        jonathanh@nvidia.com, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org
+Subject: Re: [PATCH V7 2/2] mmc: tegra: HW Command Queue Support for Tegra
+ SDMMC
+Message-ID: <20190110151200.GD25353@ulmo>
+References: <1546457808-18270-1-git-send-email-skomatineni@nvidia.com>
+ <1546457808-18270-3-git-send-email-skomatineni@nvidia.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="IDYEmSnFhs3mNXr+"
+Content-Disposition: inline
+In-Reply-To: <1546457808-18270-3-git-send-email-skomatineni@nvidia.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Today, STRICT_KERNEL_RWX is based on the use of regular pages
-to map kernel pages.
 
-On Book3s 32, it has three consequences:
-- Using pages instead of BAT for mapping kernel linear memory severely
-impacts performance.
-- Exec protection is not effective because no-execute cannot be set at
-page level (except on 603 which doesn't have hash tables)
-- Write protection is not effective because PP bits do not provide RO
-mode for kernel-only pages (except on 603 which handles it in software
-via PAGE_DIRTY)
+--IDYEmSnFhs3mNXr+
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On the 603+, we have:
-- Independent IBAT and DBAT allowing limitation of exec parts.
-- NX bit can be set in segment registers to forbit execution on memory
-mapped by pages.
-- RO mode on DBATs even for kernel-only blocks.
+On Wed, Jan 02, 2019 at 11:36:48AM -0800, Sowjanya Komatineni wrote:
+> This patch adds HW Command Queue for supported Tegra SDMMC
+> controllers.
+>=20
+> As per SD Host 4.20 Spec for Host Control 1 Register, DMA Select
+> options supported are
+>=20
+> With Host Version 4 Enable =3D 0,
+> b'00:SDMA, b'10:32-bit ADMA2, b'11:64-bit ADMA2
+>=20
+> With Host Version 4 Enable =3D 1,
+> b'00:SDMA, b'10:ADMA2, b'11:ADMA3
+> Support for 32-bit or 64-bit system addressing of DMAs is selected
+> thru 64-bit Addressing in Host Control 2 register.
+>=20
+> ADMA3 performs integrated descriptor and each command descriptor
+> is followed by ADMA2 descriptor. Command queuing need to fetch
+> command and transfer descriptors so need ADMA3 DMA Type.
+>=20
+> Tegra SDMMC Host design prevents write access to BLOCK_COUNT
+> registers when CQE is enabled to prevent SW from updating block
+> size during Command Queue mode so need tegra specific sdhci
+> cqe callback.
+>=20
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+> ---
+>  drivers/mmc/host/Kconfig       |   1 +
+>  drivers/mmc/host/sdhci-tegra.c | 107 +++++++++++++++++++++++++++++++++++=
++++++-
+>  drivers/mmc/host/sdhci.c       |  16 ++++--
+>  drivers/mmc/host/sdhci.h       |   1 +
+>  4 files changed, 120 insertions(+), 5 deletions(-)
+>=20
+> diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
+> index 1b58739d9744..5aa2de2c7609 100644
+> --- a/drivers/mmc/host/Kconfig
+> +++ b/drivers/mmc/host/Kconfig
+> @@ -250,6 +250,7 @@ config MMC_SDHCI_TEGRA
+>  	depends on ARCH_TEGRA
+>  	depends on MMC_SDHCI_PLTFM
+>  	select MMC_SDHCI_IO_ACCESSORS
+> +	select MMC_CQHCI
+>  	help
+>  	  This selects the Tegra SD/MMC controller. If you have a Tegra
+>  	  platform with SD or MMC devices, say Y or M here.
+> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegr=
+a.c
+> index 7b95d088fdef..7beecd1da94a 100644
+> --- a/drivers/mmc/host/sdhci-tegra.c
+> +++ b/drivers/mmc/host/sdhci-tegra.c
+> @@ -33,6 +33,7 @@
+>  #include <linux/ktime.h>
+> =20
+>  #include "sdhci-pltfm.h"
+> +#include "cqhci.h"
+> =20
+>  /* Tegra SDHOST controller vendor register definitions */
+>  #define SDHCI_TEGRA_VENDOR_CLOCK_CTRL			0x100
+> @@ -89,6 +90,9 @@
+>  #define NVQUIRK_NEEDS_PAD_CONTROL			BIT(7)
+>  #define NVQUIRK_DIS_CARD_CLK_CONFIG_TAP			BIT(8)
+> =20
+> +/* SDMMC CQE Base Address for Tegra Host Ver 4.1 and Higher */
+> +#define SDHCI_TEGRA_CQE_BASE_ADDR			0xF000
+> +
+>  struct sdhci_tegra_soc_data {
+>  	const struct sdhci_pltfm_data *pdata;
+>  	u32 nvquirks;
+> @@ -128,6 +132,7 @@ struct sdhci_tegra {
+>  	u32 default_tap;
+>  	u32 default_trim;
+>  	u32 dqs_trim;
+> +	bool enable_hwcq;
+>  };
+> =20
+>  static u16 tegra_sdhci_readw(struct sdhci_host *host, int reg)
+> @@ -836,6 +841,49 @@ static void tegra_sdhci_voltage_switch(struct sdhci_=
+host *host)
+>  		tegra_host->pad_calib_required =3D true;
+>  }
+> =20
+> +static void sdhci_tegra_cqe_enable(struct mmc_host *mmc)
+> +{
+> +	struct cqhci_host *cq_host =3D mmc->cqe_private;
+> +	u32 cqcfg =3D 0;
+> +
+> +	/* Tegra SDMMC Controller design prevents write access to BLOCK_COUNT
+> +	 * registers when CQE is enabled.
+> +	 */
 
-On the 601, there is nothing much we can do other than warn the user
-about it, because:
-- BATs are common to instructions and data.
-- BAT do not provide RO mode for kernel-only blocks.
-- segment registers don't have the NX bit.
+Block comments usually have the opening /* on a line by itself.
 
-In order to use IBAT for exec protection, this patch:
-- Aligns _etext to BAT block sizes (128kb)
-- Set NX bit in kernel segment register (Except on vmalloc area when
-CONFIG_MODULES is selected)
-- Maps kernel text with IBATs.
+> +	cqcfg =3D cqhci_readl(cq_host, CQHCI_CFG);
+> +	if (cqcfg & CQHCI_ENABLE)
+> +		cqhci_writel(cq_host, (cqcfg & ~CQHCI_ENABLE), CQHCI_CFG);
+> +
+> +	sdhci_cqe_enable(mmc);
+> +
+> +	if (cqcfg & CQHCI_ENABLE)
+> +		cqhci_writel(cq_host, cqcfg, CQHCI_CFG);
+> +
+> +}
 
-In order to use DBAT for exec protection, this patch:
-- Aligns RW DATA to BAT block sizes (4M)
-- Maps kernel RO area with write prohibited DBATs
-- Maps remaining memory with remaining DBATs
+Extra blank line above.
 
-Here is what we get with this patch on a 832x when activating
-STRICT_KERNEL_RWX:
-
-Symbols:
-c0000000 T _stext
-c0680000 R __start_rodata
-c0680000 R _etext
-c0800000 T __init_begin
-c0800000 T _sinittext
-
-~# cat /sys/kernel/debug/block_address_translation
----[ Instruction Block Address Translation ]---
-0: 0xc0000000-0xc03fffff 0x00000000 Kernel EXEC coherent
-1: 0xc0400000-0xc05fffff 0x00400000 Kernel EXEC coherent
-2: 0xc0600000-0xc067ffff 0x00600000 Kernel EXEC coherent
-3:         -
-4:         -
-5:         -
-6:         -
-7:         -
-
----[ Data Block Address Translation ]---
-0: 0xc0000000-0xc07fffff 0x00000000 Kernel RO coherent
-1: 0xc0800000-0xc0ffffff 0x00800000 Kernel RW coherent
-2: 0xc1000000-0xc1ffffff 0x01000000 Kernel RW coherent
-3: 0xc2000000-0xc3ffffff 0x02000000 Kernel RW coherent
-4: 0xc4000000-0xc7ffffff 0x04000000 Kernel RW coherent
-5: 0xc8000000-0xcfffffff 0x08000000 Kernel RW coherent
-6: 0xd0000000-0xdfffffff 0x10000000 Kernel RW coherent
-7:         -
-
-~# cat /sys/kernel/debug/segment_registers
----[ User Segments ]---
-0x00000000-0x0fffffff Kern key 1 User key 1 VSID 0xa085d0
-0x10000000-0x1fffffff Kern key 1 User key 1 VSID 0xa086e1
-0x20000000-0x2fffffff Kern key 1 User key 1 VSID 0xa087f2
-0x30000000-0x3fffffff Kern key 1 User key 1 VSID 0xa08903
-0x40000000-0x4fffffff Kern key 1 User key 1 VSID 0xa08a14
-0x50000000-0x5fffffff Kern key 1 User key 1 VSID 0xa08b25
-0x60000000-0x6fffffff Kern key 1 User key 1 VSID 0xa08c36
-0x70000000-0x7fffffff Kern key 1 User key 1 VSID 0xa08d47
-0x80000000-0x8fffffff Kern key 1 User key 1 VSID 0xa08e58
-0x90000000-0x9fffffff Kern key 1 User key 1 VSID 0xa08f69
-0xa0000000-0xafffffff Kern key 1 User key 1 VSID 0xa0907a
-0xb0000000-0xbfffffff Kern key 1 User key 1 VSID 0xa0918b
-
----[ Kernel Segments ]---
-0xc0000000-0xcfffffff Kern key 0 User key 1 No Exec VSID 0x000ccc
-0xd0000000-0xdfffffff Kern key 0 User key 1 No Exec VSID 0x000ddd
-0xe0000000-0xefffffff Kern key 0 User key 1 No Exec VSID 0x000eee
-0xf0000000-0xffffffff Kern key 0 User key 1 No Exec VSID 0x000fff
-
-Aligning _etext to 128kb allows to map up to 32Mb text with 8 IBATs:
-16Mb + 8Mb + 4Mb + 2Mb + 1Mb + 512kb + 256kb + 128kb (+ 128kb) = 32Mb
-(A 9th IBAT is unneeded as 32Mb would need only a single 32Mb block)
-
-Aligning data to 4M allows to map up to 512Mb data with 8 DBATs:
-16Mb + 8Mb + 4Mb + 4Mb + 32Mb + 64Mb + 128Mb + 256Mb = 512Mb
-
-Because some processors only have 4 BATs and because some targets need
-DBATs for mapping other areas, the following patch will allow to
-modify _etext and data alignment.
-
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
----
- arch/powerpc/Kconfig                         |  2 +
- arch/powerpc/include/asm/book3s/32/pgtable.h | 11 ++++
- arch/powerpc/mm/init_32.c                    |  4 +-
- arch/powerpc/mm/mmu_decl.h                   |  8 +++
- arch/powerpc/mm/pgtable_32.c                 | 10 +++-
- arch/powerpc/mm/ppc_mmu_32.c                 | 87 ++++++++++++++++++++++++++--
- 6 files changed, 112 insertions(+), 10 deletions(-)
-
-diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
-index 52d401a9f1a3..1828fefd99f9 100644
---- a/arch/powerpc/Kconfig
-+++ b/arch/powerpc/Kconfig
-@@ -733,11 +733,13 @@ config THREAD_SHIFT
- 
- config ETEXT_SHIFT
- 	int
-+	default 17 if STRICT_KERNEL_RWX && PPC_BOOK3S_32
- 	default PPC_PAGE_SHIFT
- 
- config DATA_SHIFT
- 	int
- 	default 24 if STRICT_KERNEL_RWX && PPC64
-+	default 22 if STRICT_KERNEL_RWX && PPC_BOOK3S_32
- 	default PPC_PAGE_SHIFT
- 
- config FORCE_MAX_ZONEORDER
-diff --git a/arch/powerpc/include/asm/book3s/32/pgtable.h b/arch/powerpc/include/asm/book3s/32/pgtable.h
-index 49d76adb9bc5..aa8406b8f7ba 100644
---- a/arch/powerpc/include/asm/book3s/32/pgtable.h
-+++ b/arch/powerpc/include/asm/book3s/32/pgtable.h
-@@ -174,7 +174,18 @@ static inline bool pte_user(pte_t pte)
-  * of RAM.  -- Cort
-  */
- #define VMALLOC_OFFSET (0x1000000) /* 16M */
-+
-+/*
-+ * With CONFIG_STRICT_KERNEL_RWX, kernel segments are set NX. But when modules
-+ * are used, NX cannot be set on VMALLOC space. So vmalloc VM space and linear
-+ * memory shall not share segments.
-+ */
-+#if defined(CONFIG_STRICT_KERNEL_RWX) && defined(CONFIG_MODULES)
-+#define VMALLOC_START ((_ALIGN((long)high_memory, 256L << 20) + VMALLOC_OFFSET) & \
-+		       ~(VMALLOC_OFFSET - 1))
-+#else
- #define VMALLOC_START ((((long)high_memory + VMALLOC_OFFSET) & ~(VMALLOC_OFFSET-1)))
-+#endif
- #define VMALLOC_END	ioremap_bot
- 
- #ifndef __ASSEMBLY__
-diff --git a/arch/powerpc/mm/init_32.c b/arch/powerpc/mm/init_32.c
-index ee5a430b9a18..bc28995a37ea 100644
---- a/arch/powerpc/mm/init_32.c
-+++ b/arch/powerpc/mm/init_32.c
-@@ -108,10 +108,8 @@ static void __init MMU_setup(void)
- 		__map_without_bats = 1;
- 		__map_without_ltlbs = 1;
- 	}
--	if (strict_kernel_rwx_enabled()) {
--		__map_without_bats = 1;
-+	if (strict_kernel_rwx_enabled())
- 		__map_without_ltlbs = 1;
--	}
- }
- 
- /*
-diff --git a/arch/powerpc/mm/mmu_decl.h b/arch/powerpc/mm/mmu_decl.h
-index 61730023dde3..98fc94affc29 100644
---- a/arch/powerpc/mm/mmu_decl.h
-+++ b/arch/powerpc/mm/mmu_decl.h
-@@ -165,3 +165,11 @@ unsigned long p_block_mapped(phys_addr_t pa);
- static inline phys_addr_t v_block_mapped(unsigned long va) { return 0; }
- static inline unsigned long p_block_mapped(phys_addr_t pa) { return 0; }
- #endif
-+
-+#if defined(CONFIG_PPC_BOOK3S_32)
-+void mmu_mark_initmem_nx(void);
-+void mmu_mark_rodata_ro(void);
-+#else
-+static inline void mmu_mark_initmem_nx(void) { }
-+static inline void mmu_mark_rodata_ro(void) { }
-+#endif
-diff --git a/arch/powerpc/mm/pgtable_32.c b/arch/powerpc/mm/pgtable_32.c
-index 94bd7d013557..a3ad09c6e277 100644
---- a/arch/powerpc/mm/pgtable_32.c
-+++ b/arch/powerpc/mm/pgtable_32.c
-@@ -351,7 +351,10 @@ void mark_initmem_nx(void)
- 	unsigned long numpages = PFN_UP((unsigned long)_einittext) -
- 				 PFN_DOWN((unsigned long)_sinittext);
- 
--	change_page_attr(page, numpages, PAGE_KERNEL);
-+	if (v_block_mapped((unsigned long)_stext) + 1)
-+		mmu_mark_initmem_nx();
-+	else
-+		change_page_attr(page, numpages, PAGE_KERNEL);
- }
- 
- #ifdef CONFIG_STRICT_KERNEL_RWX
-@@ -360,6 +363,11 @@ void mark_rodata_ro(void)
- 	struct page *page;
- 	unsigned long numpages;
- 
-+	if (v_block_mapped((unsigned long)_sinittext)) {
-+		mmu_mark_rodata_ro();
-+		return;
-+	}
-+
- 	page = virt_to_page(_stext);
- 	numpages = PFN_UP((unsigned long)_etext) -
- 		   PFN_DOWN((unsigned long)_stext);
-diff --git a/arch/powerpc/mm/ppc_mmu_32.c b/arch/powerpc/mm/ppc_mmu_32.c
-index b690bf01312c..d9cdc744ed2e 100644
---- a/arch/powerpc/mm/ppc_mmu_32.c
-+++ b/arch/powerpc/mm/ppc_mmu_32.c
-@@ -32,6 +32,7 @@
- #include <asm/mmu.h>
- #include <asm/machdep.h>
- #include <asm/code-patching.h>
-+#include <asm/sections.h>
- 
- #include "mmu_decl.h"
- 
-@@ -138,15 +139,10 @@ static void clearibat(int index)
- 	bat[0].batl = 0;
- }
- 
--unsigned long __init mmu_mapin_ram(unsigned long base, unsigned long top)
-+unsigned long __init __mmu_mapin_ram(unsigned long base, unsigned long top)
+> +
+> +static void sdhci_tegra_dumpregs(struct mmc_host *mmc)
+> +{
+> +	sdhci_dumpregs(mmc_priv(mmc));
+> +}
+> +
+> +static u32 sdhci_tegra_cqhci_irq(struct sdhci_host *host, u32 intmask)
+> +{
+> +	int cmd_error =3D 0;
+> +	int data_error =3D 0;
+> +
+> +	if (!sdhci_cqe_irq(host, intmask, &cmd_error, &data_error))
+> +		return intmask;
+> +
+> +	cqhci_irq(host->mmc, intmask, cmd_error, data_error);
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct cqhci_host_ops sdhci_tegra_cqhci_ops =3D {
+> +	.enable	=3D sdhci_tegra_cqe_enable,
+> +	.disable =3D sdhci_cqe_disable,
+> +	.dumpregs =3D sdhci_tegra_dumpregs,
+> +};
+> +
+>  static const struct sdhci_ops tegra_sdhci_ops =3D {
+>  	.get_ro     =3D tegra_sdhci_get_ro,
+>  	.read_w     =3D tegra_sdhci_readw,
+> @@ -989,6 +1037,7 @@ static const struct sdhci_ops tegra186_sdhci_ops =3D=
  {
- 	int idx;
- 
--	if (__map_without_bats) {
--		printk(KERN_DEBUG "RAM mapped without BATs\n");
--		return 0;
--	}
--
- 	while ((idx = find_free_bat()) != -1 && base != top) {
- 		unsigned int size = block_size(base, top);
- 
-@@ -159,6 +155,85 @@ unsigned long __init mmu_mapin_ram(unsigned long base, unsigned long top)
- 	return base;
- }
- 
-+unsigned long __init mmu_mapin_ram(unsigned long base, unsigned long top)
-+{
-+	int done;
-+	unsigned long border = (unsigned long)__init_begin - PAGE_OFFSET;
-+
-+	if (__map_without_bats) {
-+		pr_debug("RAM mapped without BATs\n");
-+		return 0;
-+	}
-+
-+	if (!strict_kernel_rwx_enabled() || base >= border || top <= border)
-+		return __mmu_mapin_ram(base, top);
-+
-+	done = __mmu_mapin_ram(base, border);
-+	if (done != border - base)
-+		return done;
-+
-+	return done + __mmu_mapin_ram(border, top);
-+}
-+
-+void mmu_mark_initmem_nx(void)
-+{
-+	int nb = mmu_has_feature(MMU_FTR_USE_HIGH_BATS) ? 8 : 4;
-+	int i;
-+	unsigned long base = (unsigned long)_stext - PAGE_OFFSET;
-+	unsigned long top = (unsigned long)_etext - PAGE_OFFSET;
-+	unsigned long size;
-+
-+	if (cpu_has_feature(CPU_FTR_601))
-+		return;
-+
-+	for (i = 0; i < nb - 1 && base < top && top - base > (128 << 10);) {
-+		size = block_size(base, top);
-+		setibat(i++, PAGE_OFFSET + base, base, size, PAGE_KERNEL_TEXT);
-+		base += size;
-+	}
-+	if (base < top) {
-+		size = block_size(base, top);
-+		size = max(size, 128UL << 10);
-+		if ((top - base) > size) {
-+			if (strict_kernel_rwx_enabled())
-+				pr_warn("Kernel _etext not properly aligned\n");
-+			size <<= 1;
-+		}
-+		setibat(i++, PAGE_OFFSET + base, base, size, PAGE_KERNEL_TEXT);
-+		base += size;
-+	}
-+	for (; i < nb; i++)
-+		clearibat(i);
-+
-+	update_bats();
-+
-+	for (i = TASK_SIZE >> 28; i < 16; i++) {
-+		/* Do not set NX on VM space for modules */
-+		if (IS_ENABLED(CONFIG_MODULES) &&
-+		    (VMALLOC_START & 0xf0000000) == i << 28)
-+			break;
-+		mtsrin(mfsrin(i << 28) | 0x10000000, i << 28);
-+	}
-+}
-+
-+void mmu_mark_rodata_ro(void)
-+{
-+	int nb = mmu_has_feature(MMU_FTR_USE_HIGH_BATS) ? 8 : 4;
-+	int i;
-+
-+	if (cpu_has_feature(CPU_FTR_601))
-+		return;
-+
-+	for (i = 0; i < nb; i++) {
-+		struct ppc_bat *bat = BATS[i];
-+
-+		if (bat_addrs[i].start < (unsigned long)__init_begin)
-+			bat[1].batl = (bat[1].batl & ~BPP_RW) | BPP_RX;
-+	}
-+
-+	update_bats();
-+}
-+
- /*
-  * Set up one of the I/D BAT (block address translation) register pairs.
-  * The parameters are not checked; in particular size must be a power
--- 
-2.13.3
+>  	.set_uhs_signaling =3D tegra_sdhci_set_uhs_signaling,
+>  	.voltage_switch =3D tegra_sdhci_voltage_switch,
+>  	.get_max_clock =3D tegra_sdhci_get_max_clock,
+> +	.irq =3D sdhci_tegra_cqhci_irq,
+>  };
+> =20
+>  static const struct sdhci_pltfm_data sdhci_tegra186_pdata =3D {
+> @@ -1030,6 +1079,55 @@ static const struct of_device_id sdhci_tegra_dt_ma=
+tch[] =3D {
+>  };
+>  MODULE_DEVICE_TABLE(of, sdhci_tegra_dt_match);
+> =20
+> +static int sdhci_tegra_add_host(struct sdhci_host *host)
+> +{
+> +	struct sdhci_pltfm_host *pltfm_host =3D sdhci_priv(host);
+> +	struct sdhci_tegra *tegra_host =3D sdhci_pltfm_priv(pltfm_host);
+> +	struct cqhci_host *cq_host;
+> +	bool dma64;
+> +	int ret;
+> +
+> +	if (!tegra_host->enable_hwcq)
+> +		return sdhci_add_host(host);
+> +
+> +	host->v4_mode =3D true;
+> +
+> +	ret =3D sdhci_setup_host(host);
+> +	if (ret)
+> +		return ret;
+> +
+> +	host->mmc->caps2 |=3D MMC_CAP2_CQE | MMC_CAP2_CQE_DCMD;
+> +
+> +	cq_host =3D devm_kzalloc(host->mmc->parent,
+> +				sizeof(*cq_host), GFP_KERNEL);
+> +	if (!cq_host) {
+> +		ret =3D -ENOMEM;
+> +		goto cleanup;
+> +	}
+> +
+> +	cq_host->mmio =3D host->ioaddr + SDHCI_TEGRA_CQE_BASE_ADDR;
+> +	cq_host->ops =3D &sdhci_tegra_cqhci_ops;
+> +
+> +	dma64 =3D host->flags & SDHCI_USE_64_BIT_DMA;
+> +	if (dma64)
+> +		cq_host->caps |=3D CQHCI_TASK_DESC_SZ_128;
+> +
+> +	ret =3D cqhci_init(cq_host, host->mmc, dma64);
+> +	if (ret)
+> +		goto cleanup;
+> +
+> +	ret =3D __sdhci_add_host(host);
+> +	if (ret)
+> +		goto cleanup;
+> +
+> +	return 0;
+> +
+> +cleanup:
+> +	sdhci_cleanup_host(host);
+> +	return ret;
+> +
+> +}
 
+Gratuituous blank line above.
+
+> +
+>  static int sdhci_tegra_probe(struct platform_device *pdev)
+>  {
+>  	const struct of_device_id *match;
+> @@ -1039,6 +1137,7 @@ static int sdhci_tegra_probe(struct platform_device=
+ *pdev)
+>  	struct sdhci_tegra *tegra_host;
+>  	struct clk *clk;
+>  	int rc;
+> +	struct resource *iomem;
+> =20
+>  	match =3D of_match_device(sdhci_tegra_dt_match, &pdev->dev);
+>  	if (!match)
+> @@ -1056,6 +1155,12 @@ static int sdhci_tegra_probe(struct platform_devic=
+e *pdev)
+>  	tegra_host->pad_control_available =3D false;
+>  	tegra_host->soc_data =3D soc_data;
+> =20
+> +	iomem =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +	if (resource_size(iomem) > SDHCI_TEGRA_CQE_BASE_ADDR)
+> +		tegra_host->enable_hwcq =3D true;
+> +	else
+> +		tegra_host->enable_hwcq =3D false;
+> +
+>  	if (soc_data->nvquirks & NVQUIRK_NEEDS_PAD_CONTROL) {
+>  		rc =3D tegra_sdhci_init_pinctrl_info(&pdev->dev, tegra_host);
+>  		if (rc =3D=3D 0)
+> @@ -1117,7 +1222,7 @@ static int sdhci_tegra_probe(struct platform_device=
+ *pdev)
+> =20
+>  	usleep_range(2000, 4000);
+> =20
+> -	rc =3D sdhci_add_host(host);
+> +	rc =3D sdhci_tegra_add_host(host);
+>  	if (rc)
+>  		goto err_add_host;
+> =20
+> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+> index fde984d10619..c368230c364d 100644
+> --- a/drivers/mmc/host/sdhci.c
+> +++ b/drivers/mmc/host/sdhci.c
+> @@ -3308,10 +3308,18 @@ void sdhci_cqe_enable(struct mmc_host *mmc)
+> =20
+>  	ctrl =3D sdhci_readb(host, SDHCI_HOST_CONTROL);
+>  	ctrl &=3D ~SDHCI_CTRL_DMA_MASK;
+> -	if (host->flags & SDHCI_USE_64_BIT_DMA)
+> -		ctrl |=3D SDHCI_CTRL_ADMA64;
+> -	else
+> -		ctrl |=3D SDHCI_CTRL_ADMA32;
+> +	/* As per SD Host 4.20 Spec, Host with V4 Mode enable supports ADMA3
+> +	 * DMA type. ADMA3 performs integrated descriptor which is needed for
+> +	 * cmd queuing as it need to fetch both cmd and transfer descriptors.
+> +	 */
+
+Correct block comment style, please.
+
+Thanks,
+Thierry
+
+> +	if (host->v4_mode) {
+> +		ctrl |=3D SDHCI_CTRL_ADMA3;
+> +	} else {
+> +		if (host->flags & SDHCI_USE_64_BIT_DMA)
+> +			ctrl |=3D SDHCI_CTRL_ADMA64;
+> +		else
+> +			ctrl |=3D SDHCI_CTRL_ADMA32;
+> +	}
+>  	sdhci_writeb(host, ctrl, SDHCI_HOST_CONTROL);
+> =20
+>  	sdhci_writew(host, SDHCI_MAKE_BLKSZ(host->sdma_boundary, 512),
+> diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
+> index b001cf4d3d7e..6e2a08f92645 100644
+> --- a/drivers/mmc/host/sdhci.h
+> +++ b/drivers/mmc/host/sdhci.h
+> @@ -88,6 +88,7 @@
+>  #define   SDHCI_CTRL_ADMA1	0x08
+>  #define   SDHCI_CTRL_ADMA32	0x10
+>  #define   SDHCI_CTRL_ADMA64	0x18
+> +#define   SDHCI_CTRL_ADMA3	0x18
+>  #define   SDHCI_CTRL_8BITBUS	0x20
+>  #define  SDHCI_CTRL_CDTEST_INS	0x40
+>  #define  SDHCI_CTRL_CDTEST_EN	0x80
+> --=20
+> 2.7.4
+>=20
+
+--IDYEmSnFhs3mNXr+
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlw3YMAACgkQ3SOs138+
+s6EH4Q//SVN4JRdUhc2pJvduFUs4enZhMmbqPjP1BDEUTgAgzOWTBgrtmYRYVXkA
+kBSuux1xvohOgua4RapPquYWOoreJFPLCfkCt3uE+maLKDWRFtDbTXKPk7WjSAEs
+vMVLRpUT3RAksUUzhvLCupS2RjezDF3JxEZAoUwYTNdLheWrhNykHDVjNMbyeV74
+6WLXs7oG+Md8ziG2dz/ROqRahISQtKU1dcY9rKdogVadFX3ck0+IaOj/5NeEH5b3
+UWAtheAaUHFeKkGbMYPXsFvYsinOstRBb6av63r+kOem/dNtl7YN5rXPKAh4zYI/
+GylHsq/aBU4mm4BtfuVAcTM/GipGtPw+nLXkTAYMmM2aHDAIe9BkMMR0zZ48C3M/
+iCcUjiqRtTjcW3xWzrckQqy7UfLUxV+eVXXiL9wvq3ukM/wLRYRUQbL2WB7BR7kj
+fDotSPQowhN0LJLFr3Dnn0d1w+JQxO2BVuftrfiLzpagJ/DrVm41kqshv0zQ+2PX
+dQtbzThuEQvdpt/L3zUXVvhunxaUusLXEsrA4qfUm9iiuvoc6C0SDi3hwQO/287W
+5WXBpZNLu3qbC0Sf8heuaBFp3aUkxKObT7caCdkp6eTx9msQvTUW6OHz1z0h3DR2
+3eiQSgvUCqMa98C8il1gBhYXZrYkTuGkl/Imz+ZthQZMG+jkJug=
+=6/7V
+-----END PGP SIGNATURE-----
+
+--IDYEmSnFhs3mNXr+--
