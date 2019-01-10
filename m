@@ -2,286 +2,106 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CB68C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 14:07:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E650C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 14:08:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E144420660
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 14:07:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E8BCE214DA
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 14:08:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729119AbfAJOH4 (ORCPT
+        id S1729136AbfAJOIw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 09:07:56 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:50824 "EHLO mx1.redhat.com"
+        Thu, 10 Jan 2019 09:08:52 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:43385 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728181AbfAJOHz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 09:07:55 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        id S1728923AbfAJOIv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 09:08:51 -0500
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C25F880F9F;
-        Thu, 10 Jan 2019 14:07:54 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id A429A356F8;
+        Thu, 10 Jan 2019 14:08:50 +0000 (UTC)
 Received: from redhat.com (ovpn-123-72.rdu2.redhat.com [10.10.123.72])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id CAE2068B2B;
-        Thu, 10 Jan 2019 14:07:53 +0000 (UTC)
-Date:   Thu, 10 Jan 2019 09:07:53 -0500
+        by smtp.corp.redhat.com (Postfix) with SMTP id F33F3601A7;
+        Thu, 10 Jan 2019 14:08:23 +0000 (UTC)
+Date:   Thu, 10 Jan 2019 09:08:22 -0500
 From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Jason Wang <jasowang@redhat.com>
-Cc:     kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jintack Lim <jintack@cs.columbia.edu>
-Subject: Re: [PATCH net V2] vhost: log dirty page correctly
-Message-ID: <20190110090610-mutt-send-email-mst@kernel.org>
-References: <20190109072947.23240-1-jasowang@redhat.com>
- <20190109091937-mutt-send-email-mst@kernel.org>
- <8704a816-ec70-8e56-b141-3f17c41bb999@redhat.com>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Jason Wang <jasowang@redhat.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Andrea Parri <andrea.parri@amarulasolutions.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Akira Yokosawa <akiyks@gmail.com>,
+        Daniel Lustig <dlustig@nvidia.com>, linux-arch@vger.kernel.org,
+        Network Development <netdev@vger.kernel.org>,
+        virtualization@lists.linux-foundation.org,
+        Eli Friedman <efriedma@codeaurora.org>,
+        Joe Perches <joe@perches.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        linux-sparse@vger.kernel.org,
+        Eric Christopher <echristo@google.com>
+Subject: Re: [PATCH RFC 1/4] include/linux/compiler*.h: fix OPTIMIZER_HIDE_VAR
+Message-ID: <20190110090804-mutt-send-email-mst@kernel.org>
+References: <20190102205715.14054-1-mst@redhat.com>
+ <20190102205715.14054-2-mst@redhat.com>
+ <CAKwvOdk3b6mnpTEEyY-JFrej8K12w9oTMLqi7q5aNiRMyJo6Ow@mail.gmail.com>
+ <CANiq72nEiw8+cZNnBOwF1ehv232ZJe5qzhdbaTEg0rOoV2p4sg@mail.gmail.com>
+ <20190109213543-mutt-send-email-mst@kernel.org>
+ <20190110134139.GE1743@kadam>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <8704a816-ec70-8e56-b141-3f17c41bb999@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Thu, 10 Jan 2019 14:07:54 +0000 (UTC)
+In-Reply-To: <20190110134139.GE1743@kadam>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Thu, 10 Jan 2019 14:08:51 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 10, 2019 at 08:37:17PM +0800, Jason Wang wrote:
-> 
-> On 2019/1/9 下午10:25, Michael S. Tsirkin wrote:
-> > On Wed, Jan 09, 2019 at 03:29:47PM +0800, Jason Wang wrote:
-> > > Vhost dirty page logging API is designed to sync through GPA. But we
-> > > try to log GIOVA when device IOTLB is enabled. This is wrong and may
-> > > lead to missing data after migration.
+On Thu, Jan 10, 2019 at 04:41:39PM +0300, Dan Carpenter wrote:
+> On Wed, Jan 09, 2019 at 09:36:41PM -0500, Michael S. Tsirkin wrote:
+> > On Wed, Jan 09, 2019 at 11:35:52AM +0100, Miguel Ojeda wrote:
+> > > On Tue, Jan 8, 2019 at 6:44 PM Nick Desaulniers <ndesaulniers@google.com> wrote:
+> > > >
+> > > > Also for more context, see:
+> > > > commit 7829fb09a2b4 ("lib: make memzero_explicit more robust against
+> > > > dead store elimination")
 > > > 
-> > > To solve this issue, when logging with device IOTLB enabled, we will:
+> > > By the way, shouldn't that barrier_data() be directly in compiler.h
+> > > too, since it is for both gcc & clang?
 > > > 
-> > > 1) reuse the device IOTLB translation result of GIOVA->HVA mapping to
-> > >     get HVA, for writable descriptor, get HVA through iovec. For used
-> > >     ring update, translate its GIOVA to HVA
-> > > 2) traverse the GPA->HVA mapping to get the possible GPA and log
-> > >     through GPA. Pay attention this reverse mapping is not guaranteed
-> > >     to be unique, so we should log each possible GPA in this case.
+> > > > Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+> > > >
+> > > > + Miguel
+> > > > Miguel, would you mind taking this into your compiler-attributes tree?
 > > > 
-> > > This fix the failure of scp to guest during migration. In -next, we
-> > > will probably support passing GIOVA->GPA instead of GIOVA->HVA.
-> > > 
-> > > Fixes: 6b1e6cc7855b ("vhost: new device IOTLB API")
-> > > Reported-by: Jintack Lim <jintack@cs.columbia.edu>
-> > > Cc: Jintack Lim <jintack@cs.columbia.edu>
-> > > Signed-off-by: Jason Wang <jasowang@redhat.com>
-> > > ---
-> > > The patch is needed for stable.
-> > > Changes from V1:
-> > > - return error instead of warn
-> > > ---
-> > >   drivers/vhost/net.c   |  3 +-
-> > >   drivers/vhost/vhost.c | 82 +++++++++++++++++++++++++++++++++++--------
-> > >   drivers/vhost/vhost.h |  3 +-
-> > >   3 files changed, 72 insertions(+), 16 deletions(-)
-> > > 
-> > > diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
-> > > index 36f3d0f49e60..bca86bf7189f 100644
-> > > --- a/drivers/vhost/net.c
-> > > +++ b/drivers/vhost/net.c
-> > > @@ -1236,7 +1236,8 @@ static void handle_rx(struct vhost_net *net)
-> > >   		if (nvq->done_idx > VHOST_NET_BATCH)
-> > >   			vhost_net_signal_used(nvq);
-> > >   		if (unlikely(vq_log))
-> > > -			vhost_log_write(vq, vq_log, log, vhost_len);
-> > > +			vhost_log_write(vq, vq_log, log, vhost_len,
-> > > +					vq->iov, in);
-> > >   		total_len += vhost_len;
-> > >   		if (unlikely(vhost_exceeds_weight(++recv_pkts, total_len))) {
-> > >   			vhost_poll_queue(&vq->poll);
-> > > diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
-> > > index 9f7942cbcbb2..ee095f08ffd4 100644
-> > > --- a/drivers/vhost/vhost.c
-> > > +++ b/drivers/vhost/vhost.c
-> > > @@ -1733,11 +1733,70 @@ static int log_write(void __user *log_base,
-> > >   	return r;
-> > >   }
-> > > +static int log_write_hva(struct vhost_virtqueue *vq, u64 hva, u64 len)
-> > > +{
-> > > +	struct vhost_umem *umem = vq->umem;
-> > > +	struct vhost_umem_node *u;
-> > > +	u64 gpa;
-> > > +	int r;
-> > > +	bool hit = false;
-> > > +
-> > > +	list_for_each_entry(u, &umem->umem_list, link) {
-> > > +		if (u->userspace_addr < hva &&
-> > > +		    u->userspace_addr + u->size >=
-> > > +		    hva + len) {
-> > So this tries to see that the GPA range is completely within
-> > the GVA region. Does this have to be the case?
+> > > Sure, at least we get quickly some linux-next time.
+> > 
+> > 
+> > BTW why linux-next? shouldn't this go into 5.0 and stable? It's a bugfix after all.
+> > 
 > 
+> It doesn't hurt to put things in linux-next for a week and then 5.0 and
+> -stable.  Not a lot of testing happens on linux-next, but some does.
 > 
-> You mean e.g a buffer that crosses the boundary of two memory regions?
+> regards,
+> dan carpenter
 
-Yes - where hva and gva could be contigious.
+I misunderstood. Sure that makes sense.
 
-
-> 
-> > And if yes why not return 0 below instead of hit = true?
-> 
-> 
-> I think it's safe but not sure for the case like two GPAs can map to same
-> HVA?
-
-Oh I see. Yes that's possible. Document the motivation?
-
-> 
-> > I'm also a bit concerned about overflow when addr + len is on a 64 bit
-> > boundary.  Why not check add + size - 1 and hva + len - 1 instead?
-> 
-> 
-> Let me fix this.
-> 
-> 
-> > 
-> > 
-> > > +			gpa = u->start + hva - u->userspace_addr;
-> > > +			r = log_write(vq->log_base, gpa, len);
-> > > +			if (r < 0)
-> > > +				return r;
-> > > +			hit = true;
-> > > +		}
-> > > +	}
-> > > +
-> > > +	if (!hit)
-> > > +		return -EFAULT;
-> > > +
-> > > +	return 0;
-> > > +}
-> > > +
-> > > +static int log_used(struct vhost_virtqueue *vq, u64 used_offset, u64 len)
-> > > +{
-> > > +	struct iovec iov[64];
-> > > +	int i, ret;
-> > > +
-> > > +	if (!vq->iotlb)
-> > > +		return log_write(vq->log_base, vq->log_addr + used_offset, len);
-> > > +
-> > > +	ret = translate_desc(vq, (u64)(uintptr_t)vq->used + used_offset,
-> > > +			     len, iov, 64, VHOST_ACCESS_WO);
-> > 
-> > We don't need the cast to u64 here do we?
-> > 
-> > > +	if (ret)
-> > > +		return ret;
-> > > +
-> > > +	for (i = 0; i < ret; i++) {
-> > > +		ret = log_write_hva(vq,	(u64)(uintptr_t)iov[i].iov_base,
-> > 
-> > We don't need the cast to u64 here do we?
-> > 
-> > > +				    iov[i].iov_len);
-> > > +		if (ret)
-> > > +			return ret;
-> > > +	}
-> > > +
-> > > +	return 0;
-> > > +}
-> > > +
-> > >   int vhost_log_write(struct vhost_virtqueue *vq, struct vhost_log *log,
-> > > -		    unsigned int log_num, u64 len)
-> > > +		    unsigned int log_num, u64 len, struct iovec *iov, int count)
-> > >   {
-> > >   	int i, r;
-> > > +	if (vq->iotlb) {
-> > > +		for (i = 0; i < count; i++) {
-> > > +			r = log_write_hva(vq, (u64)(uintptr_t)iov[i].iov_base,
-> > > +					  iov[i].iov_len);
-> > 
-> > We don't need the cast to u64 here do we?
-> 
-> 
-> Let me remove the unnecessary u64 cast.
-> 
-> 
-> > 
-> > > +			if (r < 0)
-> > > +				return r;
-> > > +		}
-> > > +		return 0;
-> > > +	}
-> > > +
-> > >   	/* Make sure data written is seen before log. */
-> > >   	smp_wmb();
-> > Shouldn't the wmb be before log_write_hva too?
-> 
-> 
-> Yes.
-> 
-> Thanks
-> 
-> > 
-> > >   	for (i = 0; i < log_num; ++i) {
-> > > @@ -1769,9 +1828,8 @@ static int vhost_update_used_flags(struct vhost_virtqueue *vq)
-> > >   		smp_wmb();
-> > >   		/* Log used flag write. */
-> > >   		used = &vq->used->flags;
-> > > -		log_write(vq->log_base, vq->log_addr +
-> > > -			  (used - (void __user *)vq->used),
-> > > -			  sizeof vq->used->flags);
-> > > +		log_used(vq, (used - (void __user *)vq->used),
-> > > +			 sizeof vq->used->flags);
-> > >   		if (vq->log_ctx)
-> > >   			eventfd_signal(vq->log_ctx, 1);
-> > >   	}
-> > > @@ -1789,9 +1847,8 @@ static int vhost_update_avail_event(struct vhost_virtqueue *vq, u16 avail_event)
-> > >   		smp_wmb();
-> > >   		/* Log avail event write */
-> > >   		used = vhost_avail_event(vq);
-> > > -		log_write(vq->log_base, vq->log_addr +
-> > > -			  (used - (void __user *)vq->used),
-> > > -			  sizeof *vhost_avail_event(vq));
-> > > +		log_used(vq, (used - (void __user *)vq->used),
-> > > +			 sizeof *vhost_avail_event(vq));
-> > >   		if (vq->log_ctx)
-> > >   			eventfd_signal(vq->log_ctx, 1);
-> > >   	}
-> > > @@ -2191,10 +2248,8 @@ static int __vhost_add_used_n(struct vhost_virtqueue *vq,
-> > >   		/* Make sure data is seen before log. */
-> > >   		smp_wmb();
-> > >   		/* Log used ring entry write. */
-> > > -		log_write(vq->log_base,
-> > > -			  vq->log_addr +
-> > > -			   ((void __user *)used - (void __user *)vq->used),
-> > > -			  count * sizeof *used);
-> > > +		log_used(vq, ((void __user *)used - (void __user *)vq->used),
-> > > +			 count * sizeof *used);
-> > >   	}
-> > >   	old = vq->last_used_idx;
-> > >   	new = (vq->last_used_idx += count);
-> > > @@ -2236,9 +2291,8 @@ int vhost_add_used_n(struct vhost_virtqueue *vq, struct vring_used_elem *heads,
-> > >   		/* Make sure used idx is seen before log. */
-> > >   		smp_wmb();
-> > >   		/* Log used index update. */
-> > > -		log_write(vq->log_base,
-> > > -			  vq->log_addr + offsetof(struct vring_used, idx),
-> > > -			  sizeof vq->used->idx);
-> > > +		log_used(vq, offsetof(struct vring_used, idx),
-> > > +			 sizeof vq->used->idx);
-> > >   		if (vq->log_ctx)
-> > >   			eventfd_signal(vq->log_ctx, 1);
-> > >   	}
-> > > diff --git a/drivers/vhost/vhost.h b/drivers/vhost/vhost.h
-> > > index 466ef7542291..1b675dad5e05 100644
-> > > --- a/drivers/vhost/vhost.h
-> > > +++ b/drivers/vhost/vhost.h
-> > > @@ -205,7 +205,8 @@ bool vhost_vq_avail_empty(struct vhost_dev *, struct vhost_virtqueue *);
-> > >   bool vhost_enable_notify(struct vhost_dev *, struct vhost_virtqueue *);
-> > >   int vhost_log_write(struct vhost_virtqueue *vq, struct vhost_log *log,
-> > > -		    unsigned int log_num, u64 len);
-> > > +		    unsigned int log_num, u64 len,
-> > > +		    struct iovec *iov, int count);
-> > >   int vq_iotlb_prefetch(struct vhost_virtqueue *vq);
-> > >   struct vhost_msg_node *vhost_new_msg(struct vhost_virtqueue *vq, int type);
-> > > -- 
-> > > 2.17.1
+-- 
+MST
