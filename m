@@ -2,129 +2,144 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7F65C43612
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 23:54:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0F6FC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 23:54:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 820D420872
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 23:54:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8CDF620872
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 23:54:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NKUyujU/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730562AbfAJXyI (ORCPT
+        id S1730591AbfAJXyc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 18:54:08 -0500
-Received: from mga06.intel.com ([134.134.136.31]:47789 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727799AbfAJXyI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 18:54:08 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jan 2019 15:54:07 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,463,1539673200"; 
-   d="scan'208";a="309414047"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.154])
-  by fmsmga006.fm.intel.com with ESMTP; 10 Jan 2019 15:54:06 -0800
-Date:   Thu, 10 Jan 2019 15:54:06 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     "Huang, Kai" <kai.huang@intel.com>,
-        Jethro Beekman <jethro@fortanix.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Thu, 10 Jan 2019 18:54:32 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:41037 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727705AbfAJXyb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 18:54:31 -0500
+Received: by mail-pl1-f196.google.com with SMTP id u6so5880130plm.8;
+        Thu, 10 Jan 2019 15:54:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=9OSJXwq+5tHO1JQDm4KQG1s2hskv8QIur7ekeZsRXkg=;
+        b=NKUyujU/HW6Jul/7mEtDclb690I9Mkqs4AQTiqyhim0/HhOTNB5FC/A1ujHYUxRtnY
+         Klq3zq+w5odZCBy96NIIde4A5VA9ow4Sy02iRtIdxg8qC7V2nPfg/flQ0XrlH41SZVge
+         UNqEO/T4zz3qbjoU2cBsDS6hNzn8QvOa4/IgtiZRa2ApN3zbJ2etKTDeUOaEYrk88Tux
+         X1bNidEJMzk+e1kJ+9kxoeP/TF3Byu2UjWWnsRFkntCQ6usFRWp1UqFVKKIWtAWFM5/7
+         6Qb+pJnLJbXfX5Z4F/CIRsyw6o5cilIRmSD93ONvYBM7jl5EI0t49mgt6iXLEba+3hKY
+         M1UQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=9OSJXwq+5tHO1JQDm4KQG1s2hskv8QIur7ekeZsRXkg=;
+        b=RQqtnTYaxPbJVlBeZ4D9qELoyuk+FEusp+BwkH0sLlxLgBUAJsER/jTuMUPJCBy0aw
+         NCXn88x52fMl+xPBL9ahYCBTS6EJ0zZ/FAhJGaunL9ZE9K61uOEW9rYayDmDkCQW0e1I
+         GKhEsCL6mfiy8Zmsra/7b1fBhr22HDZDHoXQMnCQnyEEyTChOCh+dErYLIVVtggNlARp
+         n4lVmJekumO/g/p+Ir/huLz7E1la1DJHGQth5BxAcd6qmqIAk1RI2VsiaBLA6+AHNNzA
+         Jt3YLwFAuf5JZlTn8E8Bue1LdppBAMRYEyJCph3GCI0PIDnwICEeZtmGpaP3sst5qwzT
+         6Dwg==
+X-Gm-Message-State: AJcUukeASUHPYRez24yTG7GkB9ItIm16gOJgcRAeOWeUUY73vI0vOyMu
+        fgoc3g1z2HaiBHjzvvWuPJw=
+X-Google-Smtp-Source: ALg8bN4wLm8yKI8ZaVpCWfmkGv4jymJG3QiJEV0onwiLNmN/ZkEDJPA8s7vMNUR5XQzNbkgxQkQdaA==
+X-Received: by 2002:a17:902:3f81:: with SMTP id a1mr12223329pld.258.1547164471091;
+        Thu, 10 Jan 2019 15:54:31 -0800 (PST)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id j197sm116689262pgc.76.2019.01.10.15.54.29
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 10 Jan 2019 15:54:29 -0800 (PST)
+Date:   Thu, 10 Jan 2019 15:54:28 -0800
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Firoz Khan <firoz.khan@linaro.org>
+Cc:     Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        linux-sh@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "x86@kernel.org" <x86@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Haitao Huang <haitao.huang@linux.intel.com>,
-        "Dr . Greg Wettstein" <greg@enjellic.com>
-Subject: Re: x86/sgx: uapi change proposal
-Message-ID: <20190110235406.GB2365@linux.intel.com>
-References: <20181219091148.GA5121@linux.intel.com>
- <613c6814-4e71-38e5-444a-545f0e286df8@fortanix.com>
- <20181219144515.GA30909@linux.intel.com>
- <CALCETrW_8LnitFamYUU7POHFOJFxLO7ESFUdS=aeG_SOvHVPkw@mail.gmail.com>
- <20181221162825.GB26865@linux.intel.com>
- <105F7BF4D0229846AF094488D65A0989355A45B6@PGSMSX112.gar.corp.intel.com>
- <20190108220946.GA30462@linux.intel.com>
- <CALCETrU7Zb8L8eTYZg3bAB1Gfw1orUfeQmXjVy1_R-kfBeweVA@mail.gmail.com>
- <20190109163135.GA1821@linux.intel.com>
- <CALCETrW2wPq_umu6jNzCMvR6kphTZhcEody6ok64yyLWvfrvTg@mail.gmail.com>
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        y2038@lists.linaro.org, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org, arnd@arndb.de, deepa.kernel@gmail.com,
+        marcin.juszkiewicz@linaro.org
+Subject: Re: [PATCH 2/2] sh: generate uapi header and syscall table header
+ files
+Message-ID: <20190110235428.GA10016@roeck-us.net>
+References: <1546443445-21075-1-git-send-email-firoz.khan@linaro.org>
+ <1546443445-21075-3-git-send-email-firoz.khan@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CALCETrW2wPq_umu6jNzCMvR6kphTZhcEody6ok64yyLWvfrvTg@mail.gmail.com>
+In-Reply-To: <1546443445-21075-3-git-send-email-firoz.khan@linaro.org>
 User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 10, 2019 at 01:34:44PM -0800, Andy Lutomirski wrote:
-> >> On Jan 9, 2019, at 8:31 AM, Sean Christopherson <sean.j.christopherson@intel.com> wrote:
-> >>
-> >> On Tue, Jan 08, 2019 at 02:54:11PM -0800, Andy Lutomirski wrote:
-> >
-> >> I do think it makes sense to have QEMU delegate the various ENCLS
-> >> operations (especially EINIT) to the regular SGX interface, which will
-> >> mean that VM guests will have exactly the same access controls applied
-> >> as regular user programs, which is probably what we want.
-> >
-> > To what end?  Except for EINIT, none of the ENCLS leafs are interesting
-> > from a permissions perspective.  Trapping and re-executing ENCLS leafs
-> > is painful, e.g. most leafs have multiple virtual addresses that need to
-> > be translated.  And routing everything through the regular interface
-> > would make SGX even slower than it already is, e.g. every ENCLS would
-> > take an additional ~900 cycles just to handle the VM-Exit, and that's
-> > not accounting for any additional overhead in the SGX code, e.g. using
-> > the regular interface would mean superfluous locks, etc...
+On Wed, Jan 02, 2019 at 09:07:25PM +0530, Firoz Khan wrote:
+> Unified system call table generation script must be run to
+> generate unistd_32.h and syscall_table.h files. This patch
+> will have changes which will invokes the script.
 > 
-> Trapping EINIT is what I have in mind.
-
-Phew, had me worried :-)
-
-> >
-> > Couldn't we require the same privilege/capability for VMs and and EINIT
-> > tokens?  I.e. /dev/sgx/virtualmachine can only be opened by a user that
-> > can also generate tokens.
+> This patch will generate unistd_32.h and syscall_table.h
+> files by the syscall table generation script invoked by
+> sh/Makefile and the generated files against the removed
+> files must be identical.
 > 
-> Hmm, maybe.  Or we can use Jarkko’s securityfs attribute thingy.
+> The generated uapi header file will be included in uapi/-
+> asm/unistd.h and generated system call table header file
+> will be included by kernel/syscall_32.S file.
 > 
-> Concretely, I think there are two things we care about:
-> 
-> First, if the host enforces some policy as to which enclaves can
-> launch, then it should apply the same policy to guests — otherwise KVM
-> lets programs do an end run around the policy. So, in the initial
-> incarnation of this, QEMU should probably have to open the provision
-> attribute fd if it wants its guest to be able to EINIT a provisioning
-> enclave.  When someone inevitably adds an EINIT LSM hook, the KVM
-> interface should also call it.
+> Signed-off-by: Firoz Khan <firoz.khan@linaro.org>
 
-Sort of.  A guest that is running under KVM (i.e. VMX) is much more
-contained than a random userspace program.  A rogue enclave in a VMX
-guest can attack the guest kernel/OS, but barring a bug (or more likely,
-several major bugs) elsewhere in the virtualization stack the enclave
-can't do anything nasty to the host.  An enclave would let someone hide
-code, but enclaves are even more restricted than cpl3, i.e. there's not
-a lot it can do without coordinating with unencrypted code in the guest.
+Have you tested this patch ?
 
-And if someone has sufficient permissions to run a KVM guest, they're
-much more likely to do something malcious in the guest kernel, not an
-enclave.
+Building sh:defconfig ... failed
+--------------
+Error log:
+make[2]: *** No rule to make target
+'/opt/buildbot/slave/next-next/build/scripts/syscalltbl.sh',
+	needed by 'arch/sh/include/generated/asm/syscall_table.h'.  Stop.
 
-All that aside, I don't see any justification for singling out SGX for
-extra scrutiny, there are other ways for a user with KVM permissions to
-hide malicious code in guest (and at cpl0!), e.g. AMD's SEV{-ES}.
+This affects all 'sh' builds. Not surprisingly, reverting the patch fixes
+the problem.
 
-> Second, the normal enclave interface won't allow user code to supply
-> an EINITTOKEN, so the KVM interface will presumably need to be
-> different, unless we're going to emulate EINIT by ignoring the token.
-> That seems like a very strange thing to do.
+Guenter
+
+---
+# bad: [6cab33afc3dd17bd9922c99a828f5680b4667cd9] Add linux-next specific files for 20190110
+# good: [bfeffd155283772bbe78c6a05dec7c0128ee500c] Linux 5.0-rc1
+git bisect start 'HEAD' 'v5.0-rc1'
+# good: [45daa05b201d684d42a186970731a9e39f75beb7] Merge remote-tracking branch 'mtd/mtd/next'
+git bisect good 45daa05b201d684d42a186970731a9e39f75beb7
+# good: [62d9bf7cbfd16d41f30de4439d7349c70d99923b] Merge remote-tracking branch 'tip/auto-latest'
+git bisect good 62d9bf7cbfd16d41f30de4439d7349c70d99923b
+# good: [cff8f6ab40ac1f5681ba37a663382d0c5d1b07d1] Merge remote-tracking branch 'vhost/linux-next'
+git bisect good cff8f6ab40ac1f5681ba37a663382d0c5d1b07d1
+# bad: [ed7209d69de4c01d589b030c34412d093aac3801] mm: initialize MAX_ORDER_NR_PAGES at a time instead of doing larger sections
+git bisect bad ed7209d69de4c01d589b030c34412d093aac3801
+# bad: [8fd9cdac0385dcec3534d79bf6ad29e33a6cfe1f] vmalloc: add test driver to analyse vmalloc allocator
+git bisect bad 8fd9cdac0385dcec3534d79bf6ad29e33a6cfe1f
+# good: [e804aa1e321d349514c121c3bff66dee1cff3dd5] sh: remove nargs from __SYSCALL
+git bisect good e804aa1e321d349514c121c3bff66dee1cff3dd5
+# bad: [7f3303ead0bd6fc02ca0d5a2e6a3ce8f653afbea] mm: reuse only-pte-mapped KSM page in do_wp_page()
+git bisect bad 7f3303ead0bd6fc02ca0d5a2e6a3ce8f653afbea
+# bad: [7dc035ee0653362ae11187152ac5942e230fb523] fs/file.c: initialize init_files.resize_wait
+git bisect bad 7dc035ee0653362ae11187152ac5942e230fb523
+# bad: [539eec285bc3a61570493f08fca6d84e09e77d3c] ocfs2: clear zero in unaligned direct IO
+git bisect bad 539eec285bc3a61570493f08fca6d84e09e77d3c
+# bad: [63ef58895f79a7dea083dff346a6504b87e1a7dc] lib/debugobjects.c: move printk out of db lock critical sections
+git bisect bad 63ef58895f79a7dea083dff346a6504b87e1a7dc
+# bad: [60a47bb1b736b2be71ff6f256693595af5c707e8] sh: generate uapi header and syscall table header files
+git bisect bad 60a47bb1b736b2be71ff6f256693595af5c707e8
+# first bad commit: [60a47bb1b736b2be71ff6f256693595af5c707e8] sh: generate uapi header and syscall table header files
