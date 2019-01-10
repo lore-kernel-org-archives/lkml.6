@@ -2,96 +2,118 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA767C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 16:28:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7506EC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 16:28:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 92966214DA
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 16:28:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4E1192173B
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 16:28:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729434AbfAJQ2L (ORCPT
+        id S1729364AbfAJQ2S (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 11:28:11 -0500
-Received: from mout.kundenserver.de ([212.227.17.13]:35285 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728277AbfAJQ2I (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 11:28:08 -0500
-Received: from wuerfel.lan ([109.192.41.194]) by mrelayeu.kundenserver.de
- (mreue108 [212.227.15.145]) with ESMTPA (Nemesis) id
- 1N3bfB-1hOpxi10ex-010gXM; Thu, 10 Jan 2019 17:25:21 +0100
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     y2038@lists.linaro.org, linux-api@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Arnd Bergmann <arnd@arndb.de>, ink@jurassic.park.msu.ru,
-        mattst88@gmail.com, linux@armlinux.org.uk, catalin.marinas@arm.com,
-        will.deacon@arm.com, tony.luck@intel.com, fenghua.yu@intel.com,
-        geert@linux-m68k.org, monstr@monstr.eu, paul.burton@mips.com,
-        deller@gmx.de, mpe@ellerman.id.au, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, dalias@libc.org, davem@davemloft.net,
-        luto@kernel.org, tglx@linutronix.de, mingo@redhat.com,
-        hpa@zytor.com, x86@kernel.org, jcmvbkbc@gmail.com,
-        firoz.khan@linaro.org, ebiederm@xmission.com,
-        deepa.kernel@gmail.com, linux@dominikbrodowski.net,
-        akpm@linux-foundation.org, dave@stgolabs.net,
-        linux-alpha@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-ia64@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org
-Subject: [PATCH 12/15] sparc64: fix sparc_ipc type conversion
-Date:   Thu, 10 Jan 2019 17:24:32 +0100
-Message-Id: <20190110162435.309262-13-arnd@arndb.de>
-X-Mailer: git-send-email 2.20.0
-In-Reply-To: <20190110162435.309262-1-arnd@arndb.de>
-References: <20190110162435.309262-1-arnd@arndb.de>
+        Thu, 10 Jan 2019 11:28:18 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:9448 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727906AbfAJQ2Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 11:28:16 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 84007C0BF2A2;
+        Thu, 10 Jan 2019 16:28:15 +0000 (UTC)
+Received: from treble (ovpn-125-32.rdu2.redhat.com [10.10.125.32])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 8254427C5B;
+        Thu, 10 Jan 2019 16:28:12 +0000 (UTC)
+Date:   Thu, 10 Jan 2019 10:28:10 -0600
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     Nadav Amit <namit@vmware.com>
+Cc:     X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Jason Baron <jbaron@akamai.com>, Jiri Kosina <jkosina@suse.cz>,
+        David Laight <David.Laight@ACULAB.COM>,
+        Borislav Petkov <bp@alien8.de>,
+        Julia Cartwright <julia@ni.com>, Jessica Yu <jeyu@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Edward Cree <ecree@solarflare.com>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>
+Subject: Re: [PATCH v3 3/6] x86/static_call: Add out-of-line static call
+ implementation
+Message-ID: <20190110162810.fgrmezgecvbekloe@treble>
+References: <cover.1547073843.git.jpoimboe@redhat.com>
+ <30f0713894a415f13e0f0ea3d40595416db2f6d7.1547073843.git.jpoimboe@redhat.com>
+ <B4C5F8DE-5337-47F1-AD59-93B375A323C2@vmware.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:8LjwLF71onD7Un3igtIcMvlIPZOlhlWUzQRoDccuK5lL0rN5NIV
- 3nd9PCzb2nQdqQGzIkmdHxgElT6H3c8JzOETRrNb/eN8Z8I6WwBRWsQELv4pGUHfxbWt0fM
- GzgRAOsetyOd9IeatPWWGPu/dnvSY6mChK/iYK7FaIyDgWu+fwsSDLwxUJrfQ/jg0vOF2D0
- ftdh9RqhNUIobjsFwQMQw==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:s8zXH90QMCw=:+hTFXoQYh8mxeKimTxGxqF
- B15Jc3L5v0MiV6tI6llMIqx0rxi62AMEjpKJYLfABiIOuBA0OZNI4pqIHG+Lr2AozjOp2vyOO
- oEy7CktmKfYEPLF7mWOjP+1OqUEiX/b63rkbD9BsntlgUUVtQQgfQq2ToMomFxkNGDuvNlzkx
- luhRPvWjxFkLPWrvmv9VwAUYmySUTIFTEPLmGFxmanA/9C5oKIcgC6zaxsb0jejPmoUN27iDh
- aI9l07d5W/psSP746zO6UKwmb20CBnpgbYUBv4q9vTjCvzgq09qXojGdBuCAtPthHP5fo3Q5B
- qYnD91TYbaM1kgyxVo1rIi9cM5oS3Qj3kwk2u9DIW9E3jTHeECrsgiYg7hk2f3uoOeyzRGPoJ
- jxmPSH7+m+JIyCsYirjUZl61OPqhGg+hS1q2EQqvSsEfAQotaR0D819svXVDZ610jlTej5NfT
- FIEhJdTp2bS2mBK75c7MWdtXbEv8qQ4czm0NbjvIlpi+vsc9I9jWSuLyRiiUZOTJEtov84nAS
- xGHqWmBtkTP0Nz2e4o2ZUnNg6lB3j8uN7h5Ynt1L9vXfI7xNdfgdZkDib+7gyFKruD9aty/xF
- JXvb6QH3haQd3X3624R1ncC0ZWInsyb2fM3JzOnuaPCaD7/FZkTlb0fVBcdgcFtU3Gx1T0GrF
- 1rV3kz54uhPnX0uyH1Tg114rcmdAL5fposyPDBa+BLOHTnliVs2l1fk26274baGkuCyK+rzch
- FBT4zGaPABq987gfcJdg6qe33BoaIXhKLLr2OA==
+In-Reply-To: <B4C5F8DE-5337-47F1-AD59-93B375A323C2@vmware.com>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Thu, 10 Jan 2019 16:28:16 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-__kernel_timespec and timespec are currently the same type, but once
-they are different, the type cast has to be changed here.
+On Thu, Jan 10, 2019 at 12:16:34AM +0000, Nadav Amit wrote:
+> > On Jan 9, 2019, at 2:59 PM, Josh Poimboeuf <jpoimboe@redhat.com> wrote:
+> > 
+> 
+> <snip>
+> 
+> > +
+> > +void __ref arch_static_call_transform(void *site, void *tramp, void *func)
+> > +{
+> > +	s32 dest_relative;
+> > +	unsigned char opcode;
+> > +	void *(*poker)(void *, const void *, size_t);
+> > +	void *insn = tramp;
+> > +
+> > +	mutex_lock(&text_mutex);
+> > +
+> > +	/*
+> > +	 * For x86-64, a 32-bit cross-modifying write to a call destination is
+> > +	 * safe as long as it's within a cache line.
+> > +	 */
+> > +	opcode = *(unsigned char *)insn;
+> > +	if (opcode != 0xe8 && opcode != 0xe9) {
+> > +		WARN_ONCE(1, "unexpected static call insn opcode 0x%x at %pS",
+> > +			  opcode, insn);
+> > +		goto done;
+> > +	}
+> > +
+> > +	dest_relative = (long)(func) - (long)(insn + CALL_INSN_SIZE);
+> > +
+> > +	poker = early_boot_irqs_disabled ? text_poke_early : text_poke;
+> > +	poker(insn + 1, &dest_relative, sizeof(dest_relative));
+> > +
+> > +done:
+> > +	mutex_unlock(&text_mutex);
+> > +}
+> > +EXPORT_SYMBOL_GPL(arch_static_call_transform);
+> 
+> Err… I was rewriting __jump_label_transform(), so if this code duplication can
+> be avoided, this would be great.
+> 
+> (See https://lkml.org/lkml/2018/11/14/72 )
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- arch/sparc/kernel/sys_sparc_64.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I don't see much code duplication, because __jump_label_transform() uses
+text_poke_bp(), whereas this uses text_poke().
 
-diff --git a/arch/sparc/kernel/sys_sparc_64.c b/arch/sparc/kernel/sys_sparc_64.c
-index 274ed0b9b3e0..1c079e7bab09 100644
---- a/arch/sparc/kernel/sys_sparc_64.c
-+++ b/arch/sparc/kernel/sys_sparc_64.c
-@@ -344,7 +344,7 @@ SYSCALL_DEFINE6(sparc_ipc, unsigned int, call, int, first, unsigned long, second
- 			goto out;
- 		case SEMTIMEDOP:
- 			err = sys_semtimedop(first, ptr, (unsigned int)second,
--				(const struct timespec __user *)
-+				(const struct __kernel_timespec __user *)
- 					     (unsigned long) fifth);
- 			goto out;
- 		case SEMGET:
+It's true they both fall back to text_poke_early(), but I don't see any
+opportunities for sharing code there, unless we decide to go back to
+using breakpoints.
+
 -- 
-2.20.0
-
+Josh
