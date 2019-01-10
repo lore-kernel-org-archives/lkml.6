@@ -2,158 +2,183 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B149C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 14:16:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF575C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 14:18:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 42407214C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 14:16:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AC0D42177B
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 14:18:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="vxlHSybG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728154AbfAJOQH (ORCPT
+        id S1728342AbfAJOS6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 09:16:07 -0500
-Received: from foss.arm.com ([217.140.101.70]:36622 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727391AbfAJOQG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 09:16:06 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 09F831596;
-        Thu, 10 Jan 2019 06:16:06 -0800 (PST)
-Received: from [10.1.197.45] (e112298-lin.cambridge.arm.com [10.1.197.45])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E75C03F5AF;
-        Thu, 10 Jan 2019 06:16:03 -0800 (PST)
-Subject: Re: [PATCH v3 4/7] arm64: add sysfs vulnerability show for meltdown
-To:     Jeremy Linton <jeremy.linton@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Cc:     catalin.marinas@arm.com, will.deacon@arm.com, marc.zyngier@arm.com,
-        suzuki.poulose@arm.com, dave.martin@arm.com,
-        shankerd@codeaurora.org, linux-kernel@vger.kernel.org,
-        ykaukab@suse.de, mlangsdo@redhat.com, steven.price@arm.com,
-        stefan.wahren@i2se.com
-References: <20190109235544.2992426-1-jeremy.linton@arm.com>
- <20190109235544.2992426-5-jeremy.linton@arm.com>
- <8c8b564a-1d65-bc18-73fb-58b349a47800@arm.com>
- <7e843245-56c0-d7c1-38ba-27ff231a500a@arm.com>
-From:   Julien Thierry <julien.thierry@arm.com>
-Message-ID: <fbcfae96-6cca-2a7a-a91b-8ffcc1a4c803@arm.com>
-Date:   Thu, 10 Jan 2019 14:16:01 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 10 Jan 2019 09:18:58 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:53230 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727653AbfAJOS5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 09:18:57 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0AEIekd041451;
+        Thu, 10 Jan 2019 08:18:40 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1547129920;
+        bh=sw50tcgNgr1jaX/gPIw/5Ma8kA6L6qkYhNC/N0csP+4=;
+        h=Date:From:To:CC:Subject:References:In-Reply-To;
+        b=vxlHSybGhcEZY3I2CZWey/z8a5EebITUJAKAS62UBQuqdEE7PXhj4xWmMl+gwo3yF
+         ql7fQvg2y7JQHfEj7KFWLjZbn0qfcYY3E5kWagiPxnuNOdVKp4QVFYJbFFeAhrXuXY
+         tObLczOCe58y1ssmcIbcx6ZrB5rS9Z9IXPfbMWxM=
+Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0AEIeTH099515
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 10 Jan 2019 08:18:40 -0600
+Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Thu, 10
+ Jan 2019 08:18:40 -0600
+Received: from dflp32.itg.ti.com (10.64.6.15) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Thu, 10 Jan 2019 08:18:40 -0600
+Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0AEIeuk024405;
+        Thu, 10 Jan 2019 08:18:40 -0600
+Date:   Thu, 10 Jan 2019 08:18:40 -0600
+From:   Bin Liu <b-liu@ti.com>
+To:     Min Guo <min.guo@mediatek.com>
+CC:     Rob Herring <robh+dt@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        <chunfeng.yun@mediatek.com>, <linux-usb@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        Yonglong Wu <yonglong.wu@mediatek.com>
+Subject: Re: [PATCH 4/4] usb: musb: Add support for MediaTek musb controller
+Message-ID: <20190110141840.GA18026@uda0271908>
+Mail-Followup-To: Bin Liu <b-liu@ti.com>, Min Guo <min.guo@mediatek.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Alan Stern <stern@rowland.harvard.edu>, chunfeng.yun@mediatek.com,
+        linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org,
+        Yonglong Wu <yonglong.wu@mediatek.com>
+References: <1545896066-897-1-git-send-email-min.guo@mediatek.com>
+ <1545896066-897-5-git-send-email-min.guo@mediatek.com>
+ <20190108154441.GG25910@uda0271908>
+ <1547037068.4433.122.camel@mhfsdcap03>
+ <20190109140144.GI25910@uda0271908>
+ <1547105062.4433.144.camel@mhfsdcap03>
 MIME-Version: 1.0
-In-Reply-To: <7e843245-56c0-d7c1-38ba-27ff231a500a@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <1547105062.4433.144.camel@mhfsdcap03>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Min,
 
+Please briefly summarize the controller differences in the commit log,
+such as
 
-On 10/01/2019 14:10, Jeremy Linton wrote:
-> Hi Julien,
+- WIC interrupt registers;
+- data toggle bit;
+- no dedicated DMA interrupt line;
+
+so that we can quickly understand the core driver is modified
+accordingly to handle the differences.
+
+On Thu, Jan 10, 2019 at 03:24:22PM +0800, Min Guo wrote:
+> Hi Bin,
+
+[snip]
+
+> > > > > +		musb_writeb(mbase, MUSB_INTRUSB,
+> > > > > +			musb_readb(mbase, MUSB_INTRUSB));
+> > > > 
+> > > > For this clearing register bit operation, please create platform hooks
+> > > > musb_clearb() and musb_clearw() in struct musb_platform_ops instead,
+> > > > then follow how musb_readb() pointer is assigned in
+> > > > musb_init_controller() to use the W1C version for mtk platform.
+> > > 
+> > > I have tried implementing musb_readb(), musb_readw() interface with
+> > > interrupt status W1C function in struct musb_platform_ops. But this
+> > > interface will require a global variable to hold MAC basic address for
+> > > judgment, and then special handling of the interrupt state. A global
+> > > variable will make the driver work with only a single instance, so it
+> > > can't work on some MTK platforms which have two instances.
+> > 
+> > I didn't mean to modify musb_read*(), but
+> > 
+> > > How about creating musb_clearb/w() as following:
+> > > void (*clearb)(void __iomem *addr, unsigned offset, u8 data);
+> > > void (*clearw)(void __iomem *addr, unsigned offset, u16 data);
+> > 
+> > this is what I was asking for, similar to what musb_readb/w() is
+> > implemented.
 > 
-> On 01/10/2019 03:23 AM, Julien Thierry wrote:
->> Hi Jeremy,
->>
->> On 09/01/2019 23:55, Jeremy Linton wrote:
->>> Display the mitigation status if active, otherwise
->>> assume the cpu is safe unless it doesn't have CSV3
->>> and isn't in our whitelist.
->>>
->>> Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
->>> ---
->>>   arch/arm64/kernel/cpufeature.c | 32 +++++++++++++++++++++++++++-----
->>>   1 file changed, 27 insertions(+), 5 deletions(-)
->>>
->>> diff --git a/arch/arm64/kernel/cpufeature.c
->>> b/arch/arm64/kernel/cpufeature.c
->>> index ab784d7a0083..ef7bbc49ef78 100644
->>> --- a/arch/arm64/kernel/cpufeature.c
->>> +++ b/arch/arm64/kernel/cpufeature.c
->>> @@ -944,8 +944,12 @@ has_useable_cnp(const struct
->>> arm64_cpu_capabilities *entry, int scope)
->>>       return has_cpuid_feature(entry, scope);
->>>   }
->>>   +/* default value is invalid until unmap_kernel_at_el0() runs */
->>> +static bool __meltdown_safe = true;
->>> +
->>>   #ifdef CONFIG_UNMAP_KERNEL_AT_EL0
->>>   static int __kpti_forced; /* 0: not forced, >0: forced on, <0:
->>> forced off */
->>> +extern uint arm64_requested_vuln_attrs;
->>>     static bool is_cpu_meltdown_safe(void)
->>>   {
->>> @@ -972,6 +976,14 @@ static bool unmap_kernel_at_el0(const struct
->>> arm64_cpu_capabilities *entry,
->>>   {
->>>       char const *str = "command line option";
->>>   +    bool meltdown_safe = is_cpu_meltdown_safe() ||
->>> +        has_cpuid_feature(entry, scope);
->>> +
->>> +    if (!meltdown_safe)
->>> +        __meltdown_safe = false;
->>> +
->>> +    arm64_requested_vuln_attrs |= VULN_MELTDOWN;
->>> +
->>>       /*
->>>        * For reasons that aren't entirely clear, enabling KPTI on Cavium
->>>        * ThunderX leads to apparent I-cache corruption of kernel
->>> text, which
->>> @@ -993,11 +1005,7 @@ static bool unmap_kernel_at_el0(const struct
->>> arm64_cpu_capabilities *entry,
->>>       if (IS_ENABLED(CONFIG_RANDOMIZE_BASE))
->>>           return true;
->>>   -    if (is_cpu_meltdown_safe())
->>> -        return false;
->>> -
->>> -    /* Defer to CPU feature registers */
->>> -    return !has_cpuid_feature(entry, scope);
->>> +    return !meltdown_safe;
->>>   }
->>>     static void
->>> @@ -2065,3 +2073,17 @@ static int __init enable_mrs_emulation(void)
->>>   }
->>>     core_initcall(enable_mrs_emulation);
->>> +
->>> +#ifdef CONFIG_GENERIC_CPU_VULNERABILITIES
->>> +ssize_t cpu_show_meltdown(struct device *dev, struct
->>> device_attribute *attr,
->>> +        char *buf)
->>> +{
->>> +    if (arm64_kernel_unmapped_at_el0())
->>> +        return sprintf(buf, "Mitigation: KPTI\n");
->>> +
->>> +    if (__meltdown_safe)
->>> +        return sprintf(buf, "Not affected\n");
->>
->> An issue I see is that we don't even bother to check it that CPUs are
->> meltdown safe if CONFIG_UNMAP_KERNEL_AT_EL0 is not defined but here
->> we'll advertise that the system is meltdown safe.
-> 
-> That check isn't necessary anymore because the sysfs attribute is only
-> populated if unmap_kernel_at_el0() runs (assuming I haven't messed
-> something up). That was Dave/Will's suggestions in the last thread about
-> how to handle this case.
-> 
+> I will prepare a patch for musb_clearb/w().
 
-Oh right, I missed that bit. Sorry for the noise.
+This doesn't have to be a separate patch.
 
->>
->> I think that checking whether we know that CPUs are meltdown safe should
->> be separated from whether mitigation is applied.
->>
->> Someone who knows thinks their CPUs are in the white list might want to
->> compile out code that does the kpti, but it would be good to give them a
->> proper diagnostic whether they were wrong or not.
->>
->> Cheers,
->>
+> > > > > +		musb_writew(mbase, MUSB_INTRRX,
+> > > > > +			musb_readw(mbase, MUSB_INTRRX));
+> > > > > +		musb_writew(mbase, MUSB_INTRTX,
+> > > > > +			musb_readw(mbase, MUSB_INTRTX));
+> > > > > +	}
+
+[snip]
+
+> > > > > +	/* MediaTek controller has private toggle register */
+> > > > 
+> > > > only one toggle register for all endpoints? how does it handle
+> > > > difference toggle values for different endpoints?
+> > > 
+> > > MediaTek controller has separate registers to describe TX/RX toggle.
+> > 
+> > Is it one register per endpoint?
 > 
+> MUSB_RXTOG/MUSB_TXTOG is common register, each bit reflects the toggle
+> state of an endpoint. bit[0] not used,bit[1~8] corresponds to ep[1~8]
+> 
+> > > 
+> > > > > +	if (musb->ops->quirks & MUSB_MTK_QUIRKS) {
+> > > > > +		u16 toggle;
+> > > > > +		u8 epnum = qh->hw_ep->epnum;
+> > > > > +
+> > > > > +		if (is_in)
+> > > > > +			toggle = musb_readl(musb->mregs, MUSB_RXTOG);
+> > 
+> > this line seems telling there is just *one* register for all endpoints.
+> 
+> Yes, all endpoint share this register, endpoint and bit are one-to-one
+> correspondence.
 
--- 
-Julien Thierry
+Okay, thanks. Sorry I missed the bit operation in the code below.
+
+> 
+> > > > 
+> > > > should use musb_readw() instead? MUSB_RXTOG seems to be 16bit.
+> > > 
+> > > Ok
+> > > 
+> > > > > +		else
+> > > > > +			toggle = musb_readl(musb->mregs, MUSB_TXTOG);
+> > > > > +
+> > > > > +		csr = toggle & (1 << epnum);
+
+Regards,
+-Bin.
