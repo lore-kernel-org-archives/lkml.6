@@ -2,134 +2,76 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E060C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 23:02:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 124C7C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 23:06:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EFDE7208E3
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 23:02:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Qp6e728s"
+	by mail.kernel.org (Postfix) with ESMTP id D4F37208E3
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 23:06:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547161597;
+	bh=eKvOq4NCk4wPWMAcHIFanyfg7O5t8WfBBTE64xC8bHs=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=AlVXkKo7nz12z1pePbtXnnXL4tZTBaZqm10KeFVEIwSpSUszyYPfgGSVipk0aPhCF
+	 4Xs9TUkHR7OKQj/mPHJzZnsScnEkhcMCQwAxsY5ZYFNitvEexvei0M48QOZFb4hr24
+	 7lEjsa3DM76Q2o6WAUCXDpUgf+Qwb3cUFKQ8oOIU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729831AbfAJXCh (ORCPT
+        id S1729864AbfAJXGh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 18:02:37 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:53365 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727780AbfAJXCg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 18:02:36 -0500
-Received: by mail-wm1-f68.google.com with SMTP id d15so622536wmb.3
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 15:02:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=GlaCDxp2tYvSHa6OYIji/kX9OoBtlQV2g5VIyfTGO/Q=;
-        b=Qp6e728s01K2ogXDu4YtDwILtrgfT7o8Qd6XjLbql66Q5MrFQ9kI22uIBXK/yxybvo
-         VsZEkJw+z2TMoS9Uvzl2JF1lR9wuAHZ9IJIhoqNY4a8p4W87oTLDTqsQ5kRCmY20laOq
-         QQ3aasr1LlUbj3NNBL7FMDG97PygPT9IxIqN0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=GlaCDxp2tYvSHa6OYIji/kX9OoBtlQV2g5VIyfTGO/Q=;
-        b=JaV2NcH9MQODGBeBO722pS5ejWEV3u9dx7jiA2E2iTiZsYEnsLkFNdmM4IcE4rok/K
-         BPFmaQNFdpRJa9jTgg7VaPzYBxr+gs9TYgr8FW2gPUC5s6tMtCECEJoOt9fkeME64/kQ
-         5YSsbwIyOMWSdOqPgmfgBKp9nsTtWPfTFwVo9/lGEsZ/WFXw1MMD9dQKI3siWQomjjVu
-         yfsJ9wHRVMUyA+PRP8H54cY/aRf+Pxgvl2Gy30GMTWpbCZlVpLN8Dt+KUn4trAAhLNtn
-         koizDyFD/ZlcS3xbp7IKp+24mpukw/apq+uFpMwV/B/2R2tMbLE81Y7xZLbbeJbdc4N6
-         IKtQ==
-X-Gm-Message-State: AJcUukeBGEGsVy4JiDyfIy0fEB/iN+/MjHNrnoSwCozPFjngv1SxLBRc
-        Ti3cw+s09PHhes4aR2nv/1x5DJ1YjYjN/h6jI2lwlw==
-X-Google-Smtp-Source: ALg8bN5J4SXNVUb7vVdJzlvccZ7i7EJI0ee9cGQpEUuVnPeTjgKc9ojhuIZhw9Y6Ggfimsta3oyez/YQlYkpNBsGjDk=
-X-Received: by 2002:a1c:6657:: with SMTP id a84mr42693wmc.23.1547161353041;
- Thu, 10 Jan 2019 15:02:33 -0800 (PST)
-MIME-Version: 1.0
-From:   John Stultz <john.stultz@linaro.org>
-Date:   Thu, 10 Jan 2019 15:02:21 -0800
-Message-ID: <CALAqxLURfQcSy2w7F7NCPtGaChka4U5LmvufLd0VZ73S=AzHkA@mail.gmail.com>
-Subject: ufshcd_queuecommand() triggering after ufshcd_suspend()?
-To:     Sahitya Tummala <stummala@codeaurora.org>,
-        Christoph Hellwig <hch@lst.de>, Wei Li <liwei213@huawei.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc:     Evan Green <evgreen@chromium.org>,
-        Avri Altman <avri.altman@wdc.com>,
-        Vijay Viswanath <vviswana@codeaurora.org>,
-        lkml <linux-kernel@vger.kernel.org>, linux-scsi@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 10 Jan 2019 18:06:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50154 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728300AbfAJXGg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 18:06:36 -0500
+Received: from localhost.localdomain (user-0ccsrjt.cable.mindspring.com [24.206.110.125])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7D8B4208E3;
+        Thu, 10 Jan 2019 23:06:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547161596;
+        bh=eKvOq4NCk4wPWMAcHIFanyfg7O5t8WfBBTE64xC8bHs=;
+        h=From:To:Cc:Subject:Date:From;
+        b=DewEyD3QBYmMBcEEiozzj2ISh6WBs1XMekrSMXXXYj7dgPEr/VL/r25A7+HA0jB+T
+         XKRrFXba7wCz0/2Piy8kpo6tAJT7bg0CcIlteOu4jY4Uqw1yatOQN1w1M9YVzsCrf4
+         YRwr0cARQHVv8UqTgRYcdGXMTHCcxDj+2aPwoTsg=
+From:   Alan Tull <atull@kernel.org>
+To:     Moritz Fischer <mdf@kernel.org>
+Cc:     Dinh Nguyen <dinguyen@kernel.org>, Alan Tull <atull@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-fpga@vger.kernel.org
+Subject: [PATCH] fpga: altera_freeze_bridge: remove restriction to socfpga
+Date:   Thu, 10 Jan 2019 17:06:26 -0600
+Message-Id: <20190110230626.4130-1-atull@kernel.org>
+X-Mailer: git-send-email 2.16.2
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hey all,
-  Frequently, since support for the HiKey960's UFS code landed in
-4.19, I've noticed the following warning on reboot:
+The Altera Freeze Bridge should not be restricted to ARCH_SOCFPGA
+since it can be used on other platforms such as Stratix10.
 
-[   23.086860] WARNING: CPU: 0 PID: 2507 at
-drivers/scsi/ufs/ufshcd.c:2460 ufshcd_queuecommand+0x59c/0x5a8
-[   23.096256] Modules linked in:
-[   23.099313] CPU: 0 PID: 2507 Comm: kworker/0:1H Tainted: G S
-        5.0.0-rc1-00068-g3f81a19 #273
-[   23.108873] Hardware name: HiKey960 (DT)
-[   23.112802] Workqueue: kblockd blk_mq_requeue_work
-[   23.117591] pstate: 80400005 (Nzcv daif +PAN -UAO)
-[   23.122378] pc : ufshcd_queuecommand+0x59c/0x5a8
-[   23.126990] lr : ufshcd_queuecommand+0x58c/0x5a8
-[   23.131600] sp : ffffff8015e1ba80
-[   23.134907] x29: ffffff8015e1ba80 x28: ffffffc217f94048
-[   23.140214] x27: 0000000000000010 x26: ffffffc217a7c8b8
-[   23.145520] x25: ffffffc217a7c000 x24: ffffffc217a7ceb0
-[   23.150827] x23: 0000000000000000 x22: ffffffc217a7c808
-[   23.156133] x21: ffffffc217f94120 x20: 0000000000000010
-[   23.161440] x19: ffffff801186d000 x18: ffffff801186db08
-[   23.166746] x17: 0000000000000000 x16: 0000000000000000
-[   23.172053] x15: ffffff8095e1b7c7 x14: 692064616574736e
-[   23.177360] x13: 6928204e4f5f534b x12: 4c43203d21206574
-[   23.182666] x11: 6174732e676e6974 x10: 61675f6b6c633e2d
-[   23.187973] x9 : 61626820646e616d x8 : 6d6f636575657571
-[   23.193280] x7 : 0000000000000000 x6 : ffffff801186e000
-[   23.198586] x5 : ffffff801186e270 x4 : ffffff8010096dc0
-[   23.203894] x3 : 0000000000010000 x2 : 47dd99afde511d00
-[   23.209201] x1 : 0000000000000000 x0 : 0000000000000000
-[   23.214509] Call trace:
-[   23.216952]  ufshcd_queuecommand+0x59c/0x5a8
-[   23.221220]  scsi_queue_rq+0x5b4/0x880
-[   23.224964]  blk_mq_dispatch_rq_list+0xb0/0x510
-[   23.229492]  blk_mq_sched_dispatch_requests+0xf4/0x198
-[   23.234626]  __blk_mq_run_hw_queue+0xb4/0x120
-[   23.238978]  __blk_mq_delay_run_hw_queue+0x110/0x200
-[   23.243937]  blk_mq_run_hw_queue+0xb8/0x118
-[   23.248114]  blk_mq_run_hw_queues+0x58/0x78
-[   23.252291]  blk_mq_requeue_work+0x140/0x168
-[   23.256560]  process_one_work+0x158/0x468
-[   23.260564]  worker_thread+0x50/0x460
-[   23.264222]  kthread+0x104/0x130
-[   23.267447]  ret_from_fork+0x10/0x1c
-[   23.271017] ---[ end trace 45f1ee04059cdf00 ]---
+Signed-off-by: Alan Tull <atull@kernel.org>
+---
+ drivers/fpga/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Since the warning is triggering from the WARN_ON(hba->clk_gating.state
-!= CLKS_ON) line, I annotated the clk_gating.state changes, and am
-seeing on reboot:
-  vdc: Waited 0ms for vold
-  sd 0:0:0:3: [sdd] Synchronizing SCSI cache
-  sd 0:0:0:2: [sdc] Synchronizing SCSI cache
-  sd 0:0:0:1: [sdb] Synchronizing SCSI cache
-  sd 0:0:0:0: [sda] Synchronizing SCSI cache
-  ufshcd_suspend: setting clk_gating.state CLKS_OFF
-  ufshcd_queuecommand hba->clk_gating.state != CLKS_ON (instead its 0)
-<warning splat>
+diff --git a/drivers/fpga/Kconfig b/drivers/fpga/Kconfig
+index 0bb7b5c..0bdbd3d 100644
+--- a/drivers/fpga/Kconfig
++++ b/drivers/fpga/Kconfig
+@@ -104,7 +104,7 @@ config SOCFPGA_FPGA_BRIDGE
+ 
+ config ALTERA_FREEZE_BRIDGE
+ 	tristate "Altera FPGA Freeze Bridge"
+-	depends on ARCH_SOCFPGA && FPGA_BRIDGE
++	depends on FPGA_BRIDGE
+ 	help
+ 	  Say Y to enable drivers for Altera FPGA Freeze bridges.  A
+ 	  freeze bridge is a bridge that exists in the FPGA fabric to
+-- 
+2.7.4
 
-So it seems like ufshcd_suspend() is has run, but then the workqueue
-(occasionally) fires afterwards triggering the issue.
-
-Maybe should something in ufshcd_queuecommand be checking the
-clk_gating.is_suspended flag before proceeding?
-
-Other ideas?  The logic all seems to be in the generic code, but I'm
-not sure if maybe the ufs-hisi.c code is mis-managing something?
-
-thanks
--john
