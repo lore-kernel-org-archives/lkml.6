@@ -2,45 +2,42 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-6.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0638AC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 22:46:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E01C3C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 22:46:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C0397214C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 22:46:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A46B2214C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 22:46:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="daz1XW/U"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="WAcTVK8z"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729626AbfAJWqH (ORCPT
+        id S1729673AbfAJWqL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 17:46:07 -0500
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:18594 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727634AbfAJWqG (ORCPT
+        Thu, 10 Jan 2019 17:46:11 -0500
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:17261 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728008AbfAJWqI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 17:46:06 -0500
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c37cb140000>; Thu, 10 Jan 2019 14:45:40 -0800
+        Thu, 10 Jan 2019 17:46:08 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c37cb1c0000>; Thu, 10 Jan 2019 14:45:48 -0800
 Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Thu, 10 Jan 2019 14:46:05 -0800
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Thu, 10 Jan 2019 14:46:06 -0800
 X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Thu, 10 Jan 2019 14:46:05 -0800
-Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL105.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 10 Jan
- 2019 22:46:05 +0000
-Received: from HQMAIL102.nvidia.com (172.18.146.10) by HQMAIL109.nvidia.com
- (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 10 Jan
- 2019 22:46:04 +0000
-Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL102.nvidia.com
- (172.18.146.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
- Transport; Thu, 10 Jan 2019 22:46:05 +0000
+        by hqpgpgate101.nvidia.com on Thu, 10 Jan 2019 14:46:06 -0800
+Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL104.nvidia.com
+ (172.18.146.11) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 10 Jan
+ 2019 22:46:06 +0000
+Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
+ Transport; Thu, 10 Jan 2019 22:46:06 +0000
 Received: from skomatineni-linux.nvidia.com (Not Verified[10.110.103.52]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5c37cb2c0005>; Thu, 10 Jan 2019 14:46:04 -0800
+        id <B5c37cb2d0001>; Thu, 10 Jan 2019 14:46:05 -0800
 From:   Sowjanya Komatineni <skomatineni@nvidia.com>
 To:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
         <mperttunen@nvidia.com>, <thierry.reding@gmail.com>,
@@ -50,65 +47,217 @@ CC:     <anrao@nvidia.com>, <devicetree@vger.kernel.org>,
         <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linux-mmc@vger.kernel.org>,
         Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [PATCH V4 1/3] dt-bindings: mmc: tegra: Add pinctrl for SDMMC drive strengths
-Date:   Thu, 10 Jan 2019 14:46:01 -0800
-Message-ID: <1547160363-25323-1-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH V4 2/3] arm64: dts: tegra: Add SDMMC Auto-cal settings
+Date:   Thu, 10 Jan 2019 14:46:02 -0800
+Message-ID: <1547160363-25323-2-git-send-email-skomatineni@nvidia.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1547160363-25323-1-git-send-email-skomatineni@nvidia.com>
+References: <1547160363-25323-1-git-send-email-skomatineni@nvidia.com>
 X-NVConfidentiality: public
 MIME-Version: 1.0
 Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1547160340; bh=bcwV4dxjZ88cRI7fIL79yp172szgzNqAoTuw9XEiVEc=;
+        t=1547160348; bh=RWM2GTbeptX66p5GbZKMEkVtwxSPrW64qCpcXMVM4iw=;
         h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         X-NVConfidentiality:MIME-Version:Content-Type;
-        b=daz1XW/UKJdG5uxFVnLxnBdp8kw5Vh0vdeQi2eL7TCSH+QeCKYvM+5gdGRRc42u/p
-         wam4jgmePvn96b/Orq62dNtFWyguTPvf9CAn8haYzQzf8cSAso2mObFMyQTzfW4nH5
-         Bb+pUzWvda/AlpVbTPL0MrXFj9zCwgMwKAb0rDfjMZOPKSM3r4LwinA9foFY3Ox8ZH
-         O1ZJnyYdcSyywdZseqgXx8SB12WKoZ3i+MxTZ2QK+y+IFRCXTsiXr6WvlDldgvI5iF
-         1yJoMDnm75OUBRyjclIFR86u10zbJohuP2lsmYaAsrpwdHFH1YUadxE17Abp0XRDKv
-         n+BKt6pbw2pnQ==
+         In-Reply-To:References:X-NVConfidentiality:MIME-Version:
+         Content-Type;
+        b=WAcTVK8zDKCBSP8fN1I70X5rcIa9PAOg3WVj4GnZPU6VwgOZNr2moA1UPRGLUwIIk
+         uPpJ1cKiwKx4ReIutRYTexJzyJMshQ6SPPDKw7BhS6kZKiExrLfM1Ur+PPmLgyZxKR
+         SAM+y0LOq/3jdvSFxrhRRFND0cUv8GO7zHL8CFrq1UWlNk5LwaxVPaAnHAlt7dv4ll
+         4PSgpFJV8HyOJF1Wbm/4KV29XCOHf9AOhg1VmQzKkTZOzqtHUq7uU97RpZLgqrjVah
+         rNpuzEvgRiv0Lbo7XY6nDjmnVTvVnSqI5WEd0j3lBJ8+iZ+z/FWFUlZdD0e3FzluQC
+         2jAhuG7zqmQ7A==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add pinctrls for 3V3 and 1V8 pad drive strength configuration for
-Tegra210 sdmmc.
+Add SDMMC initial pad offsets used by auto calibration process.
 
-Tegra210 sdmmc has pad configuration registers in pinmux register
-domain and handled thru pinctrl to pinmux device node.
+Add SDMMC fixed drive strengths for Tegra210, Tegra186 and
+Tegra194 which are used when calibration timeouts.
 
-Tegra186 and Tegra194 has pad configuration register with in the
-SDMMC register domain itself and are handles thru drive strength
-properties in sdmmc device node.
+Fixed drive strengths are based on Pre SI Analysis of the pads.
 
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ arch/arm64/boot/dts/nvidia/tegra186.dtsi |  2 ++
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi | 34 +++++++++++++++++++
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi | 57 ++++++++++++++++++++++++++++++--
+ 3 files changed, 91 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt b/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt
-index 32b4b4e41923..2cecdc71d94c 100644
---- a/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt
-+++ b/Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt
-@@ -39,12 +39,16 @@ sdhci@c8000200 {
- 	bus-width = <8>;
- };
+diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+index 22815db4a3ed..169aee59ceac 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+@@ -315,6 +315,8 @@
+ 		nvidia,pad-autocal-pull-down-offset-hs400 = <0x05>;
+ 		nvidia,pad-autocal-pull-up-offset-1v8-timeout = <0x0a>;
+ 		nvidia,pad-autocal-pull-down-offset-1v8-timeout = <0x0a>;
++		nvidia,pad-autocal-pull-up-offset-3v3-timeout = <0x0a>;
++		nvidia,pad-autocal-pull-down-offset-3v3-timeout = <0x0a>;
+ 		nvidia,default-tap = <0x5>;
+ 		nvidia,default-trim = <0x9>;
+ 		nvidia,dqs-trim = <63>;
+diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+index 6dfa1ca0b851..596a36705c0f 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+@@ -303,6 +303,17 @@
+ 			clock-names = "sdhci";
+ 			resets = <&bpmp TEGRA194_RESET_SDMMC1>;
+ 			reset-names = "sdhci";
++			nvidia,pad-autocal-pull-up-offset-3v3-timeout =
++									<0x07>;
++			nvidia,pad-autocal-pull-down-offset-3v3-timeout =
++									<0x07>;
++			nvidia,pad-autocal-pull-up-offset-1v8-timeout = <0x06>;
++			nvidia,pad-autocal-pull-down-offset-1v8-timeout =
++									<0x07>;
++			nvidia,pad-autocal-pull-up-offset-sdr104 = <0x00>;
++			nvidia,pad-autocal-pull-down-offset-sdr104 = <0x00>;
++			nvidia,default-tap = <0x9>;
++			nvidia,default-trim = <0x5>;
+ 			status = "disabled";
+ 		};
  
--Optional properties for Tegra210 and Tegra186:
-+Optional properties for Tegra210, Tegra186 and Tegra194:
- - pinctrl-names, pinctrl-0, pinctrl-1 : Specify pad voltage
-   configurations. Valid pinctrl-names are "sdmmc-3v3" and "sdmmc-1v8"
-   for controllers supporting multiple voltage levels. The order of names
-   should correspond to the pin configuration states in pinctrl-0 and
-   pinctrl-1.
-+- pinctrl-names : "sdmmc-3v3-drv" and "sdmmc-1v8-drv" are applicable for
-+  Tegra210 where pad config registers are in the pinmux register domain
-+  for pull-up-strength and pull-down-strength values configuration when
-+  using pads at 3V3 and 1V8 levels.
- - nvidia,only-1-8-v : The presence of this property indicates that the
-   controller operates at a 1.8 V fixed I/O voltage.
- - nvidia,pad-autocal-pull-up-offset-3v3,
+@@ -314,6 +325,18 @@
+ 			clock-names = "sdhci";
+ 			resets = <&bpmp TEGRA194_RESET_SDMMC3>;
+ 			reset-names = "sdhci";
++			nvidia,pad-autocal-pull-up-offset-1v8 = <0x00>;
++			nvidia,pad-autocal-pull-down-offset-1v8 = <0x7a>;
++			nvidia,pad-autocal-pull-up-offset-3v3-timeout = <0x07>;
++			nvidia,pad-autocal-pull-down-offset-3v3-timeout =
++									<0x07>;
++			nvidia,pad-autocal-pull-up-offset-1v8-timeout = <0x06>;
++			nvidia,pad-autocal-pull-down-offset-1v8-timeout =
++									<0x07>;
++			nvidia,pad-autocal-pull-up-offset-sdr104 = <0x00>;
++			nvidia,pad-autocal-pull-down-offset-sdr104 = <0x00>;
++			nvidia,default-tap = <0x9>;
++			nvidia,default-trim = <0x5>;
+ 			status = "disabled";
+ 		};
+ 
+@@ -325,6 +348,17 @@
+ 			clock-names = "sdhci";
+ 			resets = <&bpmp TEGRA194_RESET_SDMMC4>;
+ 			reset-names = "sdhci";
++			nvidia,pad-autocal-pull-up-offset-hs400 = <0x00>;
++			nvidia,pad-autocal-pull-down-offset-hs400 = <0x00>;
++			nvidia,pad-autocal-pull-up-offset-1v8-timeout = <0x0a>;
++			nvidia,pad-autocal-pull-down-offset-1v8-timeout =
++									<0x0a>;
++			nvidia,pad-autocal-pull-up-offset-3v3-timeout = <0x0a>;
++			nvidia,pad-autocal-pull-down-offset-3v3-timeout =
++									<0x0a>;
++			nvidia,default-tap = <0x8>;
++			nvidia,default-trim = <0x14>;
++			nvidia,dqs-trim = <40>;
+ 			status = "disabled";
+ 		};
+ 
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+index 2205d66b0443..41408df9d4e9 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+@@ -476,6 +476,48 @@
+ 		compatible = "nvidia,tegra210-pinmux";
+ 		reg = <0x0 0x700008d4 0x0 0x29c>, /* Pad control registers */
+ 		      <0x0 0x70003000 0x0 0x294>; /* Mux registers */
++		sdmmc1_3v3_drv: sdmmc1-3v3-drv {
++			sdmmc1 {
++				nvidia,pins = "drive_sdmmc1";
++				nvidia,pull-down-strength = <0x8>;
++				nvidia,pull-up-strength = <0x8>;
++			};
++		};
++		sdmmc1_1v8_drv: sdmmc1-1v8-drv {
++			sdmmc1 {
++				nvidia,pins = "drive_sdmmc1";
++				nvidia,pull-down-strength = <0x4>;
++				nvidia,pull-up-strength = <0x3>;
++			};
++		};
++		sdmmc2_1v8_drv: sdmmc2-1v8-drv {
++			sdmmc2 {
++				nvidia,pins = "drive_sdmmc2";
++				nvidia,pull-down-strength = <0x10>;
++				nvidia,pull-up-strength = <0x10>;
++			};
++		};
++		sdmmc3_3v3_drv: sdmmc3-3v3-drv {
++			sdmmc3 {
++				nvidia,pins = "drive_sdmmc3";
++				nvidia,pull-down-strength = <0x8>;
++				nvidia,pull-up-strength = <0x8>;
++			};
++		};
++		sdmmc3_1v8_drv: sdmmc3-1v8-drv {
++			sdmmc3 {
++				nvidia,pins = "drive_sdmmc3";
++				nvidia,pull-down-strength = <0x4>;
++				nvidia,pull-up-strength = <0x3>;
++			};
++		};
++		sdmmc4_1v8_drv: sdmmc4-1v8-drv {
++			sdmmc4 {
++				nvidia,pins = "drive_sdmmc4";
++				nvidia,pull-down-strength = <0x10>;
++				nvidia,pull-up-strength = <0x10>;
++			};
++		};
+ 	};
+ 
+ 	/*
+@@ -1050,9 +1092,12 @@
+ 		clock-names = "sdhci";
+ 		resets = <&tegra_car 14>;
+ 		reset-names = "sdhci";
+-		pinctrl-names = "sdmmc-3v3", "sdmmc-1v8";
++		pinctrl-names = "sdmmc-3v3", "sdmmc-1v8",
++				"sdmmc-3v3-drv", "sdmmc-1v8-drv";
+ 		pinctrl-0 = <&sdmmc1_3v3>;
+ 		pinctrl-1 = <&sdmmc1_1v8>;
++		pinctrl-2 = <&sdmmc1_3v3_drv>;
++		pinctrl-3 = <&sdmmc1_1v8_drv>;
+ 		nvidia,pad-autocal-pull-up-offset-3v3 = <0x00>;
+ 		nvidia,pad-autocal-pull-down-offset-3v3 = <0x7d>;
+ 		nvidia,pad-autocal-pull-up-offset-1v8 = <0x7b>;
+@@ -1075,6 +1120,8 @@
+ 		clock-names = "sdhci";
+ 		resets = <&tegra_car 9>;
+ 		reset-names = "sdhci";
++		pinctrl-names = "sdmmc-1v8-drv";
++		pinctrl-0 = <&sdmmc2_1v8_drv>;
+ 		nvidia,pad-autocal-pull-up-offset-1v8 = <0x05>;
+ 		nvidia,pad-autocal-pull-down-offset-1v8 = <0x05>;
+ 		nvidia,default-tap = <0x8>;
+@@ -1090,9 +1137,12 @@
+ 		clock-names = "sdhci";
+ 		resets = <&tegra_car 69>;
+ 		reset-names = "sdhci";
+-		pinctrl-names = "sdmmc-3v3", "sdmmc-1v8";
++		pinctrl-names = "sdmmc-3v3", "sdmmc-1v8",
++				"sdmmc-3v3-drv", "sdmmc-1v8-drv";
+ 		pinctrl-0 = <&sdmmc3_3v3>;
+ 		pinctrl-1 = <&sdmmc3_1v8>;
++		pinctrl-2 = <&sdmmc3_3v3_drv>;
++		pinctrl-3 = <&sdmmc3_1v8_drv>;
+ 		nvidia,pad-autocal-pull-up-offset-3v3 = <0x00>;
+ 		nvidia,pad-autocal-pull-down-offset-3v3 = <0x7d>;
+ 		nvidia,pad-autocal-pull-up-offset-1v8 = <0x7b>;
+@@ -1110,6 +1160,9 @@
+ 		clock-names = "sdhci";
+ 		resets = <&tegra_car 15>;
+ 		reset-names = "sdhci";
++		pinctrl-names = "sdmmc-3v3-drv", "sdmmc-1v8-drv";
++		pinctrl-0 = <&sdmmc4_1v8_drv>;
++		pinctrl-1 = <&sdmmc4_1v8_drv>;
+ 		nvidia,pad-autocal-pull-up-offset-1v8 = <0x05>;
+ 		nvidia,pad-autocal-pull-down-offset-1v8 = <0x05>;
+ 		nvidia,default-tap = <0x8>;
 -- 
 2.7.4
 
