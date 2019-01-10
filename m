@@ -2,197 +2,123 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=0.1 required=3.0 tests=DKIM_ADSP_ALL,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82929C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 18:02:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D393C43612
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 18:03:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 563872064C
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 18:02:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5E9BE206B7
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 18:03:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730798AbfAJSCU (ORCPT
+        id S1730782AbfAJSDs convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 13:02:20 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:59742 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729480AbfAJSCU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 13:02:20 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id D70B4C0587F9;
-        Thu, 10 Jan 2019 18:02:18 +0000 (UTC)
-Received: from redhat.com (unknown [10.20.6.215])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1F7D45C8B3;
-        Thu, 10 Jan 2019 18:02:17 +0000 (UTC)
-Date:   Thu, 10 Jan 2019 13:02:15 -0500
-From:   Jerome Glisse <jglisse@redhat.com>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Fengguang Wu <fengguang.wu@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        kvm@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Fan Du <fan.du@intel.com>, Yao Yuan <yuan.yao@intel.com>,
-        Peng Dong <dongx.peng@intel.com>,
-        Huang Ying <ying.huang@intel.com>,
-        Liu Jingqi <jingqi.liu@intel.com>,
-        Dong Eddie <eddie.dong@intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Zhang Yi <yi.z.zhang@linux.intel.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Mel Gorman <mgorman@suse.de>,
-        Andrea Arcangeli <aarcange@redhat.com>
-Subject: Re: [RFC][PATCH v2 00/21] PMEM NUMA node and hotness
- accounting/migration
-Message-ID: <20190110180215.GE4394@redhat.com>
-References: <20181226131446.330864849@intel.com>
- <20181227203158.GO16738@dhcp22.suse.cz>
- <20181228050806.ewpxtwo3fpw7h3lq@wfg-t540p.sh.intel.com>
- <20181228084105.GQ16738@dhcp22.suse.cz>
- <20181228094208.7lgxhha34zpqu4db@wfg-t540p.sh.intel.com>
- <20181228121515.GS16738@dhcp22.suse.cz>
- <20181228133111.zromvopkfcg3m5oy@wfg-t540p.sh.intel.com>
- <20181228195224.GY16738@dhcp22.suse.cz>
- <20190110162556.GC4394@redhat.com>
- <20190110165001.GP31793@dhcp22.suse.cz>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190110165001.GP31793@dhcp22.suse.cz>
-User-Agent: Mutt/1.10.0 (2018-05-17)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Thu, 10 Jan 2019 18:02:19 +0000 (UTC)
+        Thu, 10 Jan 2019 13:03:48 -0500
+Received: from sender-of-o53.zoho.com ([135.84.80.218]:21844 "EHLO
+        sender-of-o53.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729882AbfAJSDs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 13:03:48 -0500
+ARC-Seal: i=1; a=rsa-sha256; t=1547143414; cv=none; 
+        d=zoho.com; s=zohoarc; 
+        b=DVtAxO5WSBtmXzJLx4Eojn1xzilIxH4TitwMkjRjLT9uOoBLDxaAUdPbGnSod+toWJKTsugi+4nYudWDyPcdvuH11ngtExXAWzO/j1ZEbFSPeISd6EL8del/jlCq1C1LLaW/JP9ENuZFzDrgJ4yVznRjYRNFNvBVcEk5wN/df+o=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com; s=zohoarc; 
+        t=1547143414; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To:ARC-Authentication-Results; 
+        bh=I4sIXm4byiLK7cWi4d+oOqh3fjuUZRa2fzgEc/PopCI=; 
+        b=CBG2acyGQ0v2zHfvw47I08p0xk9I/DYsT0OyPf0sM2k2Z1r3Nf7IizE29TEKZDCNUmDwmGGRCbafpQy0jX5SoCqTaPAxr+xD6CUNjIC4cCjtgzarxJTBOHQJOlr3fy6sTZWgSy6Y4YzGDLAmNju8CrImORel2WPX1XibJA98gI0=
+ARC-Authentication-Results: i=1; mx.zoho.com;
+        dkim=pass  header.i=mniewoehner.de;
+        spf=pass  smtp.mailfrom=linux@mniewoehner.de;
+        dmarc=pass header.from=<linux@mniewoehner.de> header.from=<linux@mniewoehner.de>
+Received: from z3r0 (31.187.91.78 [31.187.91.78]) by mx.zohomail.com
+        with SMTPS id 1547143412184265.1848318416826; Thu, 10 Jan 2019 10:03:32 -0800 (PST)
+Message-ID: <6a7c871bc6aeaa780114a937741f46223ca7e961.camel@mniewoehner.de>
+Subject: Re: tpm_tis TPM2.0 not detected on cold boot
+From:   Michael =?ISO-8859-1?Q?Niew=F6hner?= <linux@mniewoehner.de>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     Mimi Zohar <zohar@linux.ibm.com>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        peterhuewe@gmx.de, jgg@ziepe.ca, arnd@arndb.de,
+        linux-integrity@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        Ken Goldman <kgold@linux.ibm.com>
+In-Reply-To: <20190110172806.GD6589@linux.intel.com>
+References: <ef7e773b01a5e6153b84628f74fc67092a2f9b0e.camel@gmail.com>
+         <1f281756bb1f041e55be8dd090670a1a7b1d1c94.camel@mniewoehner.de>
+         <1545519232.3940.115.camel@linux.ibm.com>
+         <e7ec38d7cade9aa76384aa2781eab307d2cd5a7b.camel@mniewoehner.de>
+         <20190103132737.GD10491@linux.intel.com>
+         <6c1bf9815bfcb5d2bc0cfedfc49c7feda0173dc9.camel@mniewoehner.de>
+         <20190103150434.GC17015@linux.intel.com>
+         <5aa2fc082b6b0657574918b025005ad569da6412.camel@mniewoehner.de>
+         <c1f5f53cdaaaad6cc80c2b10172a69f0301d3e0e.camel@mniewoehner.de>
+         <5ee514be264361a8f1ed4a4ad823ad72dd7dce23.camel@mniewoehner.de>
+         <20190110172806.GD6589@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Date:   Thu, 10 Jan 2019 19:03:28 +0100
+Mime-Version: 1.0
+User-Agent: Evolution 3.30.3 
+Content-Transfer-Encoding: 8BIT
+X-ZohoMailClient: External
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 10, 2019 at 05:50:01PM +0100, Michal Hocko wrote:
-> On Thu 10-01-19 11:25:56, Jerome Glisse wrote:
-> > On Fri, Dec 28, 2018 at 08:52:24PM +0100, Michal Hocko wrote:
-> > > [Ccing Mel and Andrea]
-> > > 
-> > > On Fri 28-12-18 21:31:11, Wu Fengguang wrote:
-> > > > > > > I haven't looked at the implementation yet but if you are proposing a
-> > > > > > > special cased zone lists then this is something CDM (Coherent Device
-> > > > > > > Memory) was trying to do two years ago and there was quite some
-> > > > > > > skepticism in the approach.
-> > > > > > 
-> > > > > > It looks we are pretty different than CDM. :)
-> > > > > > We creating new NUMA nodes rather than CDM's new ZONE.
-> > > > > > The zonelists modification is just to make PMEM nodes more separated.
-> > > > > 
-> > > > > Yes, this is exactly what CDM was after. Have a zone which is not
-> > > > > reachable without explicit request AFAIR. So no, I do not think you are
-> > > > > too different, you just use a different terminology ;)
-> > > > 
-> > > > Got it. OK.. The fall back zonelists patch does need more thoughts.
-> > > > 
-> > > > In long term POV, Linux should be prepared for multi-level memory.
-> > > > Then there will arise the need to "allocate from this level memory".
-> > > > So it looks good to have separated zonelists for each level of memory.
-> > > 
-> > > Well, I do not have a good answer for you here. We do not have good
-> > > experiences with those systems, I am afraid. NUMA is with us for more
-> > > than a decade yet our APIs are coarse to say the least and broken at so
-> > > many times as well. Starting a new API just based on PMEM sounds like a
-> > > ticket to another disaster to me.
-> > > 
-> > > I would like to see solid arguments why the current model of numa nodes
-> > > with fallback in distances order cannot be used for those new
-> > > technologies in the beginning and develop something better based on our
-> > > experiences that we gain on the way.
-> > 
-> > I see several issues with distance. First it does fully abstract the
-> > underlying topology and this might be problematic, for instance if
-> > you memory with different characteristic in same node like persistent
-> > memory connected to some CPU then it might be faster for that CPU to
-> > access that persistent memory has it has dedicated link to it than to
-> > access some other remote memory for which the CPU might have to share
-> > the link with other CPUs or devices.
-> > 
-> > Second distance is no longer easy to compute when you are not trying
-> > to answer what is the fastest memory for CPU-N but rather asking what
-> > is the fastest memory for CPU-N and device-M ie when you are trying to
-> > find the best memory for a group of CPUs/devices. The answer can
-> > changes drasticly depending on members of the groups.
+On Thu, 2019-01-10 at 19:28 +0200, Jarkko Sakkinen wrote:
+> On Fri, Jan 04, 2019 at 04:28:24PM +0100, Michael NiewÃ¶hner wrote:
+> > root@debian:~# tpm2_pcrlist
+> > ERROR:tcti:src/util/io.c:102:write_all() failed to write to fd 3: Operation
+> > not
+> > permitted 
+> > ERROR:tcti:src/tss2-tcti/tcti-device.c:86:tcti_device_transmit() wrong
+> > number of
+> > bytes written. Expected 22, wrote 0. 
+> > ERROR: GetCapability: Get PCR allocation status Error. TPM
+> > Error:0xa000a......
+> > ERROR: Unable to run tpm2_pcrlist
+> > root@debian:~# tpm2_pcrlist; tpm2_pcrlist 
+> > sha1 :
+> >   0  : 1ebb2be3b7103a09b5caeeb5827c1242cd6632ec
+> >   1  : 425e833da73cb511150d6ffcf6fac64e9a6feb58
+> >   2  : b2a83b0ebf2f8374299a5b2bdfc31ea955ad7236
+> >   3  : b2a83b0ebf2f8374299a5b2bdfc31ea955ad7236
+> >   4  : d13c141b174afbb568773adf1f39940a2df47c7d
+> >   5  : 756a3647403ab141ec2c1ac7325854f4a93f6efd
+> > ......
 > 
-> While you might be right, I would _really_ appreciate to start with a
-> simpler model and go to a more complex one based on realy HW and real
-> experiences than start with an overly complicated and over engineered
-> approach from scratch.
+> So the sympton is that it from time to time works and time to time
+> fails.
+
+Not exactly. It only works on the second of two directly consecutive calls. 
+
 > 
-> > Some advance programmer already do graph matching ie they match the
-> > graph of their program dataset/computation with the topology graph
-> > of the computer they run on to determine what is best placement both
-> > for threads and memory.
+> Can't recall whether you had interrupts enabled or disabled for the
+> TPM chip (depending on whether you use IRQs or polling you'd have
+> to tweak the code from a different place), but you could tweak
+> directly the TPM2_DURATION_* constants in drivers/char/tpm/tpm.h:
 > 
-> And those can still use our mempolicy API to describe their needs. If
-> existing API is not sufficient then let's talk about which pieces are
-> missing.
-
-I understand people don't want the fully topology thing but device memory
-can not be expose as a NUMA node hence at very least we need something
-that is not NUMA node only and most likely an API that does not use bitmask
-as front facing userspace API. So some kind of UID for memory, one for
-each type of memory on each node (and also for each device memory). It
-can be a 1 to 1 match with NUMA node id for all regular NUMA node memory
-with extra id for device memory (for instance by setting the high bit on
-the UID for device memory).
-
-
-> > > I would be especially interested about a possibility of the memory
-> > > migration idea during a memory pressure and relying on numa balancing to
-> > > resort the locality on demand rather than hiding certain NUMA nodes or
-> > > zones from the allocator and expose them only to the userspace.
-> > 
-> > For device memory we have more things to think of like:
-> >     - memory not accessible by CPU
-> >     - non cache coherent memory (yet still useful in some case if
-> >       application explicitly ask for it)
-> >     - device driver want to keep full control over memory as older
-> >       application like graphic for GPU, do need contiguous physical
-> >       memory and other tight control over physical memory placement
+> enum tpm2_timeouts {
+> 	TPM2_TIMEOUT_A          =    750,
+> 	TPM2_TIMEOUT_B          =   2000,
+> 	TPM2_TIMEOUT_C          =    200,
+> 	TPM2_TIMEOUT_D          =     30,
+> 	TPM2_DURATION_SHORT     =     20,
+> 	TPM2_DURATION_MEDIUM    =    750,
+> 	TPM2_DURATION_LONG      =   2000,
+> 	TPM2_DURATION_LONG_LONG = 300000,
+> 	TPM2_DURATION_DEFAULT   = 120000,
+> };
 > 
-> Again, I believe that HMM is to target those non-coherent or
-> non-accessible memory and I do not think it is helpful to put them into
-> the mix here.
-
-HMM is the kernel plumbing it does not expose anything to userspace.
-While right now for nouveau the plan is to expose API through nouveau
-ioctl this does not scale/work for multiple devices or when you mix
-and match different devices. A single API that can handle both device
-memory and regular memory would be much more useful. Long term at least
-that's what i would like to see.
+> Set SHORT, LONG and MEDIUM to lets say 3000 and lets see if that
+> makes a difference or not.
+> /Jarkko
 
 
-> > So if we are talking about something to replace NUMA i would really
-> > like for that to be inclusive of device memory (which can itself be
-> > a hierarchy of different memory with different characteristics).
-> 
-> I think we should build on the existing NUMA infrastructure we have.
-> Developing something completely new is not going to happen anytime soon
-> and I am not convinced the result would be that much better either.
+I have already tried this but there was not any difference.
 
-The issue with NUMA is that i do not see a way to add device memory as
-node as the memory need to be fully manage by the device driver. Also
-the number of nodes might get out of hands (think 32 devices per CPU
-so with 1024 CPU that's 2^15 max nodes ...) this leads to node mask
-taking a full page.
+Michael
 
-Also the whole NUMA access tracking does not work with devices (it can
-be added but right now it is non existent). Forcing page fault to track
-access is highly disruptive for GPU while the hw can provide much better
-informations without fault and CPU counters might also be something we
-might want to use rather than faulting.
 
-I am not saying something new will solve all the issues we have today
-with NUMA, actualy i don't believe we can solve all of them. But it
-could at least be more flexible in terms of what memory program can
-bind to.
-
-Cheers,
-Jérôme
