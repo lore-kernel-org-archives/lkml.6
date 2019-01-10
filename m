@@ -2,170 +2,97 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 447EBC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 14:13:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AE01C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 14:13:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0FAAF20657
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 14:13:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0409721773
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 14:13:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547129621;
+	bh=1sldYsptnm2ML4CrM5FD5fCzPXm6p0Jel6+1UqpnmAI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=NsshADjK4bT+1tlh/Hfax8LRWch95ZuCatsFyDmjpvO6AzBeYxDBn/N83wFgVdJ13
+	 KdI5E5aUoGNgVvn1Qjf//Eq7GRGxbdercktnBHFZ8qIITBhf3d75kREqpTsi6X14v7
+	 Q7C8D6lew2BGz8hZWUqc6s+jeVemAzpaFnhht1VM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727935AbfAJONF (ORCPT
+        id S1728127AbfAJONj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 09:13:05 -0500
-Received: from mga02.intel.com ([134.134.136.20]:33049 "EHLO mga02.intel.com"
+        Thu, 10 Jan 2019 09:13:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34216 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727759AbfAJOND (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 09:13:03 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jan 2019 06:13:02 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,461,1539673200"; 
-   d="scan'208";a="113688826"
-Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.56]) ([10.237.72.56])
-  by fmsmga007.fm.intel.com with ESMTP; 10 Jan 2019 06:12:59 -0800
-Subject: Re: [PATCH 1/2] mmc: sdhci: Properly set DMA mask
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
-        Sowjanya Komatineni <skomatineni@nvidia.com>,
-        Krishna Reddy <vdumpa@nvidia.com>, linux-mmc@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190104104753.3383-1-thierry.reding@gmail.com>
-From:   Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <a960e9a7-ff86-b000-1319-df85741fb380@intel.com>
-Date:   Thu, 10 Jan 2019 16:11:33 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        id S1727905AbfAJONj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 09:13:39 -0500
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 941C721773
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 14:13:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547129618;
+        bh=1sldYsptnm2ML4CrM5FD5fCzPXm6p0Jel6+1UqpnmAI=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=xfFc9Ga5XgGR6K6QFSmj7hxdov7LlAKhKJK3hg0uyhd9yHINj87YEPlkUt9CM4ZPb
+         EtFMzd4ua/VszMSIhjybE2qHrTRqxw3eNvGcLqrhb9MX1whfiwLdICAIbg9O49c3E2
+         Z/l8BZ/ksdfJvOAz2cKh5vmtDT8eP/DJWcfG1yHU=
+Received: by mail-qt1-f179.google.com with SMTP id p17so12904467qtl.5
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 06:13:38 -0800 (PST)
+X-Gm-Message-State: AJcUukd/QKBOytpJzPcouwohB/zy8UI3NEYMif/TIzp9d4pvYUmEMmca
+        Mm0veDD+JOKwPFVY31aL+0Vmaw/3oSiK3cXbeg==
+X-Google-Smtp-Source: ALg8bN5VfTGq/y4LEy5Z+7xjKRE1uUlO7J6hshnGDv9lQNQnvc2SGfDfNe1jWVZvR2+yGjXZVWcC/cjA5d3N50SC7kA=
+X-Received: by 2002:a37:7682:: with SMTP id r124mr9420446qkc.79.1547129617823;
+ Thu, 10 Jan 2019 06:13:37 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20190104104753.3383-1-thierry.reding@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <CGME20190110082256eucas1p1bb0685cb83aa0a865f2391e43512b417@eucas1p1.samsung.com>
+ <f936ab2a7c34974c67ade29e97fe15bb5781ac39.camel@perches.com> <87d0p47wh9.fsf%l.stelmach@samsung.com>
+In-Reply-To: <87d0p47wh9.fsf%l.stelmach@samsung.com>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Thu, 10 Jan 2019 08:13:26 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqKt-ujsB-t9A=4dEAjqrvcquUG+qF3tFg1YCqmup_5wcw@mail.gmail.com>
+Message-ID: <CAL_JsqKt-ujsB-t9A=4dEAjqrvcquUG+qF3tFg1YCqmup_5wcw@mail.gmail.com>
+Subject: Re: [PATCH 1/1] MAINTAINERS: fix bad file reference into Documentation
+To:     =?UTF-8?Q?=C5=81ukasz_Stelmach?= <l.stelmach@samsung.com>
+Cc:     Otto Sabart <ottosabart@seberm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Joe Perches <joe@perches.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 4/01/19 12:47 PM, Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
-> 
-> The implementation of sdhci_set_dma_mask() is conflating two things: on
-> one hand it uses the SDHCI_USE_64_BIT_DMA flag to determine whether or
-> not to use the 64-bit addressing capability of the controller and on the
-> other hand it also uses that flag to set a DMA mask for the controller's
-> parent device.
-> 
-> However, a controller supporting 64-bit addressing doesn't mean that it
-> needs to support addressing 64 bits of address range. It's perfectly
-> acceptable to use 64-bit addressing for a 32-bit address range or even
-> smaller, even if that makes little sense, considering the extra overhead
-> of the 64-bit addressing descriptors.
-> 
-> But it is fairly common for hardware to support somewhere between 32 and
-> 64 bits of address range. Tegra124 and Tegra210, for example, support 34
-> bits and the newer Tegra186 and Tegra194 support 40 bits. The latter can
-> also use an IOMMU for address translation, which has an input address
-> range of 48 bits. This causes problems with the current algorithm in the
-> SDHCI core for choosing the DMA mask. If the DMA mask is set to 64 bits,
-> the DMA memory allocations can (and usually do because the allocator
-> starts from the top) end up beyond the 40 bit boundary addressable by
-> the SDHCI controller, causing IOMMU faults.
-> 
-> For Tegra specifically this problem is currently worked around by
-> setting the SDHCI_QUIRK2_BROKEN_64_BIT_DMA quirk. This causes the DMA
-> mask to always be set to 32 bits and therefore all allocations will fit
-> within the range addressable by the controller.
-> 
-> This commit reworks the code in sdhci_set_dma_mask() to fix the above
-> issue. The rationale behind this change is that the SDHCI controller
-> driver should be the authoritative source of the DMA mask setting. The
-> SDHCI core has no way of knowing what the individual SDHCI controllers
-> are capable of. So instead of overriding the DMA mask depending on
-> whether or not 64-bit addressing mode is used, the DMA mask is only
-> modified if absolutely necessary. On one hand, if the controller can
-> only address 32 bits of memory or less, we disable use of 64-bit
-> addressing mode because it is not needed. On the other hand, we also
-> want to make sure that if we don't support 64-bit addressing mode, such
-> as in the case where the BROKEN_64_BIT_DMA quirk is set, we do restrict
-> the DMA mask to fit the capabilities. The latter is an inconsistency by
-> the driver, so we warn about it to make sure it will be addressed in the
-> driver.
+On Thu, Jan 10, 2019 at 2:23 AM =C5=81ukasz Stelmach <l.stelmach@samsung.co=
+m> wrote:
+>
+> It was <2019-01-09 =C5=9Bro 20:35>, when Joe Perches wrote:
+> > On Wed, 2019-01-09 at 20:09 +0100, Otto Sabart wrote:
+> >> There is no `samsung,exynos5250-trng.txt` file in the documentation an=
+d
+> >> I do not think it ever existed.
+> >
+> > There was a patch for this
+> >
+> > https://patchwork.kernel.org/patch/10623153/
+> >
+> > But is is still unapplied...
+> >
+> >> diff --git a/MAINTAINERS b/MAINTAINERS
+> > []
+> >> @@ -13309,7 +13309,6 @@ M:   =C5=81ukasz Stelmach <l.stelmach@samsung.=
+com>
+> >>  L:  linux-samsung-soc@vger.kernel.org
+> >>  S:  Maintained
+> >>  F:  drivers/char/hw_random/exynos-trng.c
+> >> -F:  Documentation/devicetree/bindings/rng/samsung,exynos5250-trng.txt
+>
+> + Rob Herring
 
-sdhci_set_dma_mask() was added because people did want sdhci to set the DMA
-mask.  Also using 64-bit DMA even with 32-bit systems has the advantage of
-reducing exposure to problems i.e. the same logic is used with the same SoC
-irrespective of whether or not it is in 32-bit compatibility mode.  So the
-policy for sdhci is always to use 64-bit DMA if it is supported.
+Please resend the above patch. If I've acked it, then I'm assuming
+it's going in via the driver tree. But I'll apply it if you tell me to
+instead.
 
-I suggest we add a new sdhci op for ->set_dma_mask() and call that instead
-of sdhci_set_dma_mask() if it is not NULL.
-
-> 
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
-> ---
->  drivers/mmc/host/sdhci.c | 36 ++++++++++++++++++++++--------------
->  1 file changed, 22 insertions(+), 14 deletions(-)
-> 
-> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-> index 7c6c93e85b7e..01f81e96be23 100644
-> --- a/drivers/mmc/host/sdhci.c
-> +++ b/drivers/mmc/host/sdhci.c
-> @@ -3499,27 +3499,35 @@ static int sdhci_set_dma_mask(struct sdhci_host *host)
->  {
->  	struct mmc_host *mmc = host->mmc;
->  	struct device *dev = mmc_dev(mmc);
-> -	int ret = -EINVAL;
-> +	u64 dma_mask = dma_get_mask(dev);
-> +	u64 dma32 = DMA_BIT_MASK(32);
-> +	int ret = 0;
->  
->  	if (host->quirks2 & SDHCI_QUIRK2_BROKEN_64_BIT_DMA)
->  		host->flags &= ~SDHCI_USE_64_BIT_DMA;
->  
-> -	/* Try 64-bit mask if hardware is capable  of it */
-> -	if (host->flags & SDHCI_USE_64_BIT_DMA) {
-> -		ret = dma_set_mask_and_coherent(dev, DMA_BIT_MASK(64));
-> -		if (ret) {
-> -			pr_warn("%s: Failed to set 64-bit DMA mask.\n",
-> -				mmc_hostname(mmc));
-> -			host->flags &= ~SDHCI_USE_64_BIT_DMA;
-> -		}
-> +	/*
-> +	 * Hardware that can't address more than the 32-bit address range does
-> +	 * not need to use 64-bit addressing mode, even if it supports it.
-> +	 */
-> +	if ((host->flags & SDHCI_USE_64_BIT_DMA) && (dma_mask <= dma32)) {
-> +		pr_debug("%s: controller needs addresses <= 32-bits\n",
-> +			mmc_hostname(mmc));
-> +		host->flags &= ~SDHCI_USE_64_BIT_DMA;
->  	}
->  
-> -	/* 32-bit mask as default & fallback */
-> -	if (ret) {
-> -		ret = dma_set_mask_and_coherent(dev, DMA_BIT_MASK(32));
-> +	/*
-> +	 * If the hardware doesn't support 64-bit addressing, make sure to
-> +	 * restrict the DMA mask so we don't get buffers allocated beyond the
-> +	 * 32-bit boundary.
-> +	 */
-> +	if (!(host->flags & SDHCI_USE_64_BIT_DMA) && (dma_mask > dma32)) {
-> +		WARN(1, "64-bit DMA not supported, DMA mask %llx\n", dma_mask);
-> +
-> +		ret = dma_set_mask_and_coherent(dev, dma32);
->  		if (ret)
-> -			pr_warn("%s: Failed to set 32-bit DMA mask.\n",
-> -				mmc_hostname(mmc));
-> +			pr_warn("%s: failed to set 32-bit DMA mask: %d\n",
-> +				mmc_hostname(mmc), ret);
->  	}
->  
->  	return ret;
-> 
-
+Rob
