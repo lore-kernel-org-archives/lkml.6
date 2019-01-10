@@ -3,192 +3,187 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14246C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 07:53:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD746C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 07:53:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D1C8120685
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 07:53:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8D87E20685
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 07:53:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727414AbfAJHxi (ORCPT
+        id S1727469AbfAJHxy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 02:53:38 -0500
-Received: from mailproxy07.manitu.net ([217.11.48.71]:59290 "EHLO
-        mailproxy07.manitu.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726369AbfAJHxi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 02:53:38 -0500
-X-Greylist: delayed 562 seconds by postgrey-1.27 at vger.kernel.org; Thu, 10 Jan 2019 02:53:37 EST
-Received: from [192.168.178.20] (aftr-88-217-180-208.dynamic.mnet-online.de [88.217.180.208])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: wg@grandegger.com)
-        by mailproxy07.manitu.net (Postfix) with ESMTPSA id CF20BC810D;
-        Thu, 10 Jan 2019 08:47:23 +0100 (CET)
-Subject: Re: [RFC PATCH 1/3] can: m_can: Create m_can core to leverage common
- code
-To:     Dan Murphy <dmurphy@ti.com>, mkl@pengutronix.de,
-        davem@davemloft.net
-Cc:     linux-can@vger.kernel.org, netdev@vger.kernel.org,
+        Thu, 10 Jan 2019 02:53:54 -0500
+Received: from mga11.intel.com ([192.55.52.93]:50862 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726137AbfAJHxx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 02:53:53 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Jan 2019 23:53:51 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,460,1539673200"; 
+   d="scan'208";a="265988923"
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.56]) ([10.237.72.56])
+  by orsmga004.jf.intel.com with ESMTP; 09 Jan 2019 23:53:49 -0800
+Subject: Re: [PATCH 6/6] perf thread-stack: Hide x86 retpolines
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
         linux-kernel@vger.kernel.org
-References: <20181010142055.25271-1-dmurphy@ti.com>
- <20181010142055.25271-2-dmurphy@ti.com>
- <52811b27-00c0-f5e2-2b18-608ccf846723@grandegger.com>
- <349ef8be-f4c7-25cc-2c33-7ce1fd0b0f40@ti.com>
- <9003a544-83cf-7dce-7f14-4abd292d470e@grandegger.com>
- <b73e200c-8a6b-00e0-dabc-af3245cc36fd@ti.com>
-From:   Wolfgang Grandegger <wg@grandegger.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=wg@grandegger.com; prefer-encrypt=mutual; keydata=
- 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
- 8QEfHnPzgykCs2DOOQ==
-Message-ID: <69d3a046-2d55-06e0-fba7-c9a0d20e6daa@grandegger.com>
-Date:   Thu, 10 Jan 2019 08:44:13 +0100
+References: <20190109091835.5570-1-adrian.hunter@intel.com>
+ <20190109091835.5570-7-adrian.hunter@intel.com> <20190109153842.GB2515@krava>
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <47f172fe-479b-323b-3d81-c3017b997244@intel.com>
+Date:   Thu, 10 Jan 2019 09:52:23 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <b73e200c-8a6b-00e0-dabc-af3245cc36fd@ti.com>
+In-Reply-To: <20190109153842.GB2515@krava>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Dan,
-
-sorry for my late response on that topic...
-
-Am 09.01.19 um 21:58 schrieb Dan Murphy:
-> Wolfgang
-> 
-> On 11/3/18 5:45 AM, Wolfgang Grandegger wrote:
->> Hello Dan,
+On 9/01/19 5:38 PM, Jiri Olsa wrote:
+> On Wed, Jan 09, 2019 at 11:18:35AM +0200, Adrian Hunter wrote:
+>> x86 retpoline functions pollute the call graph by showing up everywhere
+>> there is an indirect branch, but they do not really mean anything. Make
+>> changes so that the default retpoline functions will no longer appear in
+>> the call graph. Note this only affects the call graph, since all the
+>> original branches are left unchanged.
 >>
->> Am 31.10.2018 um 21:15 schrieb Dan Murphy:
->>> Wolfgang
->>>
->>> Thanks for the review
->>>
->>> On 10/27/2018 09:19 AM, Wolfgang Grandegger wrote:
->>>> Hello Dan,
->>>>
->>>> for the RFC, could you please just do the necessary changes to the
->>>> existing code. We can discuss about better names, etc. later. For
->>>> the review if the common code I quickly did:
->>>>
->>>>   mv m_can.c m_can_platform.c
->>>>   mv m_can_core.c m_can.c
->>>>
->>>> The file names are similar to what we have for the C_CAN driver.
->>>>
->>>>   s/classdev/priv/
->>>>   variable name s/m_can_dev/priv/
->>>>
->>>> Then your patch 1/3 looks as shown below. I'm going to comment on that
->>>> one. The comments start with "***"....
->>>>
->>>
->>> So you would like me to align the names with the c_can driver?
+>> This does not handle function return thunks, nor is there any improvement
+>> for the handling of inline thunks or extern thunks.
 >>
->> That would be the obvious choice.
->>> <snip>
->>>>
->>>> *** I didn't review the rest of the patch for now.
->>>>
->>>
->>> snipped the code to reply to the comment.
->>>
->>>> Looking to the generic code, you didn't really change the way
->>>> the driver is accessing the registers. Also the interrupt handling
->>>> and rx polling is as it was before. Does that work properly using
->>>> the SPI interface of the TCAN4x5x?
->>>
->>> I don't want to change any of that yet.  Maybe my cover letter was not clear
->>> or did not go through.
->>>
->>> But the intention was just to break out the functionality to create a MCAN framework
->>> that can be used by devices that contain the Bosch MCAN core and provider their own protocal to access
->>> the registers in the device.
->>>
->>> I don't want to do any functional changes at this time on the IP code itself until we have a framework.
->>> There should be no regression in the io mapped code.
->>>
->>> I did comment on the interrupt handling and asked if a threaded work queue would affect CAN timing.
->>> For the original TCAN driver this was the way it was implemented.
+>> Example:
 >>
->> Do threaded interrupts with RX polling make sense? I think we need a
->> common interface allowing to select hard-irqs+napi or threaded-irqs.
+>> $ cat simple-retpoline.c
+>> __attribute__((noinline)) int bar(void)
+>> {
+>>         return -1;
+>> }
+>>
+>> int foo(void)
+>> {
+>>         return bar() + 1;
+>> }
+>>
+>> __attribute__((indirect_branch("thunk"))) int main()
+>> {
+>>         int (*volatile fn)(void) = foo;
+>>
+>>         fn();
+>>         return fn();
+>> }
+>> $ gcc -ggdb3 -Wall -Wextra -O2 -o simple-retpoline simple-retpoline.c
+>> $ objdump -d simple-retpoline
+>> <SNIP>
+>> 0000000000001040 <main>:
+>>     1040:       48 83 ec 18             sub    $0x18,%rsp
+>>     1044:       48 8d 05 25 01 00 00    lea    0x125(%rip),%rax        # 1170 <foo>
+>>     104b:       48 89 44 24 08          mov    %rax,0x8(%rsp)
+>>     1050:       48 8b 44 24 08          mov    0x8(%rsp),%rax
+>>     1055:       e8 1f 01 00 00          callq  1179 <__x86_indirect_thunk_rax>
+>>     105a:       48 8b 44 24 08          mov    0x8(%rsp),%rax
+>>     105f:       48 83 c4 18             add    $0x18,%rsp
+>>     1063:       e9 11 01 00 00          jmpq   1179 <__x86_indirect_thunk_rax>
+>> <SNIP>
+>> 0000000000001160 <bar>:
+>>     1160:       b8 ff ff ff ff          mov    $0xffffffff,%eax
+>>     1165:       c3                      retq
+>> <SNIP>
+>> 0000000000001170 <foo>:
+>>     1170:       e8 eb ff ff ff          callq  1160 <bar>
+>>     1175:       83 c0 01                add    $0x1,%eax
+>>     1178:       c3                      retq
+>> 0000000000001179 <__x86_indirect_thunk_rax>:
+>>     1179:       e8 07 00 00 00          callq  1185 <__x86_indirect_thunk_rax+0xc>
+>>     117e:       f3 90                   pause
+>>     1180:       0f ae e8                lfence
+>>     1183:       eb f9                   jmp    117e <__x86_indirect_thunk_rax+0x5>
+>>     1185:       48 89 04 24             mov    %rax,(%rsp)
+>>     1189:       c3                      retq
+>> <SNIP>
+>> $ perf record -o simple-retpoline.perf.data -e intel_pt/cyc/u ./simple-retpoline
+>> [ perf record: Woken up 1 times to write data ]
+>> [ perf record: Captured and wrote 0,017 MB simple-retpoline.perf.data ]
+>> $ perf script -i simple-retpoline.perf.data --itrace=be -s ~/libexec/perf-core/scripts/python/export-to-sqlite.py simple-retpoline.db branches calls
+>> 2019-01-08 14:03:37.851655 Creating database...
+>> 2019-01-08 14:03:37.863256 Writing records...
+>> 2019-01-08 14:03:38.069750 Adding indexes
+>> 2019-01-08 14:03:38.078799 Done
+>> $ ~/libexec/perf-core/scripts/python/exported-sql-viewer.py simple-retpoline.db
+>>
+>> Before:
+>>
+>>     main
+>>         -> __x86_indirect_thunk_rax
+>>             -> __x86_indirect_thunk_rax
+>>                 -> foo
+>>                     -> bar
+>>
+>> After:
+>>
+>>     main
+>>         -> foo
+>>             -> bar
 >>
 > 
-> I have been working on this code for about a month now and I am *not happy* with the amount of change that needs
-> to be done to make the m_can a framework.
+> hi,
+> I still see them in kernel report.. after a while the output is shifted
+> too far right out of the screen due to (I guess) this call/ret imbalance
 > 
-> I can tx/rx frames from another CAN device to the TCAN part but I have not even touched the iomapped code.
 > 
-> The challenging part is that the m_can code that is currently available does not have to worry about atomic context because
-> there is no peripheral waiting.  Since the TCAN is a peripheral device we need to take into about the hard waits in IRQ context
-> as well as the atomic context.  Doing this creates many deltas in the base code that may break iomapped devices.  I have had to 
-> add the thread_irqs and now I am in the midst of the issue you brought up with napi.  I would have to schedule a queue for perp devices
-> and leave the non-threaded iomapped irq.
+> [root@krava perf]# ./perf-with-kcore record pt -e intel_pt/cyc/k -a -- sleep 1
+> [root@krava perf]# ./perf-with-kcore script pt --call-trace -C 0
+>             Xorg  2115 [000]  5850.032452321:  cbr: 36 freq: 3621 MHz (171%)
+>             Xorg  2115 [000]  5850.032452351: ([kernel.kallsyms])           __list_add_valid
+>             Xorg  2115 [000]  5850.032452380: ([kernel.kallsyms])           perf_pmu_enable.part.101
+>             Xorg  2115 [000]  5850.032452380: ([kernel.kallsyms])               __indirect_thunk_start
+>             Xorg  2115 [000]  5850.032452415: ([kernel.kallsyms])           __indirect_thunk_start
+>             Xorg  2115 [000]  5850.032452415: ([kernel.kallsyms])               __indirect_thunk_start
+>             Xorg  2115 [000]  5850.032452442: ([kernel.kallsyms])           __list_add_valid
+>             Xorg  2115 [000]  5850.032452457: ([kernel.kallsyms])           rb_next
+>             Xorg  2115 [000]  5850.032452494: ([kernel.kallsyms])           __x86_indirect_thunk_r12
+>             Xorg  2115 [000]  5850.032452494: ([kernel.kallsyms])               __x86_indirect_thunk_r12
+>             Xorg  2115 [000]  5850.032452535: ([kernel.kallsyms])                   group_sched_in
+>             Xorg  2115 [000]  5850.032452535: ([kernel.kallsyms])                       __indirect_thunk_start
+>             Xorg  2115 [000]  5850.032452535: ([kernel.kallsyms])                           __indirect_thunk_start
+>             Xorg  2115 [000]  5850.032452548: ([kernel.kallsyms])                       event_sched_in.isra.113
+>             Xorg  2115 [000]  5850.032452548: ([kernel.kallsyms])                           perf_event_set_state.part.70
+>             Xorg  2115 [000]  5850.032452548: ([kernel.kallsyms])                               perf_event_update_time
+>             Xorg  2115 [000]  5850.032452562: ([kernel.kallsyms])                           perf_log_itrace_start
+>             Xorg  2115 [000]  5850.032452562: ([kernel.kallsyms])                           __indirect_thunk_start
+>             Xorg  2115 [000]  5850.032452562: ([kernel.kallsyms])                               __indirect_thunk_start
+>             Xorg  2115 [000]  5850.032452600: ([kernel.kallsyms])                                   perf_event_update_userpage
+>             Xorg  2115 [000]  5850.032452600: ([kernel.kallsyms])                                       calc_timer_values
+>             Xorg  2115 [000]  5850.032452600: ([kernel.kallsyms])                                           sched_clock_cpu
+>             Xorg  2115 [000]  5850.032452600: ([kernel.kallsyms])                                               sched_clock
+>             Xorg  2115 [000]  5850.032452600: ([kernel.kallsyms])                                                   native_sched_clock
+>             Xorg  2115 [000]  5850.032452793: ([kernel.kallsyms])                                       __indirect_thunk_start
+>             Xorg  2115 [000]  5850.032452793: ([kernel.kallsyms])                                           __indirect_thunk_start
+>             Xorg  2115 [000]  5850.032452867: ([kernel.kallsyms])                                       arch_perf_update_userpage
+>             Xorg  2115 [000]  5850.032452867: ([kernel.kallsyms])                                           using_native_sched_clock
+>             Xorg  2115 [000]  5850.032452867: ([kernel.kallsyms])                                           sched_clock_stable
+>             Xorg  2115 [000]  5850.032452867: ([kernel.kallsyms])                                           cyc2ns_read_begin
+>             Xorg  2115 [000]  5850.032453157: ([kernel.kallsyms])                                           cyc2ns_read_end
+>             Xorg  2115 [000]  5850.032453194: ([kernel.kallsyms])                       __indirect_thunk_start
+>             Xorg  2115 [000]  5850.032453194: ([kernel.kallsyms])                           __indirect_thunk_start
+>             Xorg  2115 [000]  5850.032453206: ([kernel.kallsyms])                   __list_add_valid
 > 
-> At this point I think it may be wise to leave the m_can code alone as it is working and stable and just work on the TCAN driver as
-> a standalone driver.  A framework would be nice but I think it would destablize the m_can driver which is embedded in many SoC's and
-> we cannot possibly test everyone of them.
+> 
+> jirka
+> 
 
-Unfortunately, I do not have m_can hardware at hand.
-
-> What are your thoughts?
-
-What we need is a common set of functions doing tx, rx, error and state
-handling. This will requires substantial changes to the existing
-io-mapped m_can driver, of course. I still believe it's worth the
-effort, but I agree that it's difficult for you to re-write and test the
-existing m_can driver.
-
-What about implementing such a set of common functions plus the SPI
-specific part for your TCAN device. What do you/others think?
-
-Wolfgang.
+These patches are for db export and the context-sensitive call chain report
+in the exported-sql-viewer.py python script.  The callchains you see above
+are done at a lower level, before symbol resolution.  If you don't want to
+see the thunks you can grep them out.  But more work is needed on them too.
+I'll add it to the TODO list.
