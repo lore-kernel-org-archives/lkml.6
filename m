@@ -2,94 +2,115 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D390C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 00:48:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66071C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 00:51:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F86421738
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 00:48:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UIkprkLk"
+	by mail.kernel.org (Postfix) with ESMTP id 38025214DA
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 00:51:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726823AbfAJAsg (ORCPT
+        id S1726846AbfAJAvX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 19:48:36 -0500
-Received: from mail-lf1-f41.google.com ([209.85.167.41]:37101 "EHLO
-        mail-lf1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726496AbfAJAsf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 19:48:35 -0500
-Received: by mail-lf1-f41.google.com with SMTP id y11so7065918lfj.4;
-        Wed, 09 Jan 2019 16:48:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=mflB1soHoVBBXWMcJ8FoEowlzUk5Hn/TsWZzOjsw/w4=;
-        b=UIkprkLkRZho9Ne8FWKdK3jnZ2NFs/ut2cQROiFRZkiJoNgr63AMovmJvH/NOJpZli
-         fuPQ5dymmvQ49giJzncQtT42HS+zDSMyuFVB/SAddHuo4mDkVDwje4bmGd0Kvkh9nXPW
-         +H2MzYzg7M3Jiee1fsV0dOJWFusAWpF1jwmD+BRcmw0hxyqtcJNprzZcBpO99d3U6XXk
-         2hOIZMWN+YY2a+qzf1vhhMnS2MfgLb+NuT9C4JROKiEUZTXC00+mKndxIwLNAei11qqJ
-         phrUtWd3HnyvcCkx/UlEqd2SccXrhSr0Mq8rhL8y8MYOyNUgtDLwuZr4E+mPEUimbuWu
-         rzmw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=mflB1soHoVBBXWMcJ8FoEowlzUk5Hn/TsWZzOjsw/w4=;
-        b=DXexO74WJ4RjvV5IDnMvNU+oAUwUIS6mZfCzbeKIRW64Bj41r+FfrPyitZllCOHocg
-         FKVCiLtFxmUCUBAe5/K/OsRJIWFSNM/0OnF5NklZ0wrk86oPiSu+jOICTXpimnXxwCbT
-         K+nAzIeuXYoC3lmhsaioBFGjrjDK7XQwJ/nm8egHa3SVrb49ppVdJanmFyMg0rKfTX8a
-         0fsXqJqepeamlUNK5HKZQEipDuCCdljol9c67xsxzsEq8rEPf6zQlwS/GOllo6kNmfOJ
-         /MeOxXssBj7phKsmXY0BzBo3TjvALsJ2yOagK4e0TgnLLC9h2ct4zJKR7rMY+VVUf1Rk
-         jmGg==
-X-Gm-Message-State: AJcUuke6siP3eiCN8y+LjqJP+/6RxxJcTM+h7geiUhHRSNUDlDDk7FCR
-        Qio7LbzLUq/bNy168W3SjSJ7vttry9xOE6uYkIA=
-X-Google-Smtp-Source: ALg8bN7IXkeUf12JslbyX6qY9etajoITQh3jn31x4YDVi19GaKkkIW6qjDyg+ITlG0cUftZ9ii79axijWjNVmxS4Drs=
-X-Received: by 2002:a19:a60c:: with SMTP id p12mr4953141lfe.63.1547081313494;
- Wed, 09 Jan 2019 16:48:33 -0800 (PST)
+        Wed, 9 Jan 2019 19:51:23 -0500
+Received: from mga18.intel.com ([134.134.136.126]:29409 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726458AbfAJAvW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 19:51:22 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Jan 2019 16:51:22 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,459,1539673200"; 
+   d="scan'208";a="108696460"
+Received: from sjchrist-coffee.jf.intel.com ([10.54.74.154])
+  by orsmga008.jf.intel.com with ESMTP; 09 Jan 2019 16:51:22 -0800
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     linux-mm@kvack.org, leozinho29_eu@hotmail.com,
+        Mike Galbraith <efault@gmx.de>,
+        Adam Borowski <kilobyte@angband.pl>,
+        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        Jan Kara <jack@suse.cz>,
+        Matthew Wilcox <mawilcox@microsoft.com>,
+        Ross Zwisler <zwisler@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Felix Kuehling <felix.kuehling@amd.com>,
+        Ralph Campbell <rcampbell@nvidia.com>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH] mm/mmu_notifier: mm/rmap.c: Fix a mmu_notifier range bug in try_to_unmap_one
+Date:   Wed,  9 Jan 2019 16:51:17 -0800
+Message-Id: <20190110005117.18282-1-sean.j.christopherson@intel.com>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
-From:   Ian Kumlien <ian.kumlien@gmail.com>
-Date:   Thu, 10 Jan 2019 01:48:22 +0100
-Message-ID: <CAA85sZt=Q4b_tn_vDx3g1ap7GNrXsHQk7Jki1T+zPbqVot90jg@mail.gmail.com>
-Subject: [BUG] moving fq back to clock monotonic breaks my setup
-To:     edumazet@google.com
-Cc:     Linux Kernel Network Developers <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+The conversion to use a structure for mmu_notifier_invalidate_range_*()
+unintentionally changed the usage in try_to_unmap_one() to init the
+'struct mmu_notifier_range' with vma->vm_start instead of @address,
+i.e. it invalidates the wrong address range.  Revert to the correct
+address range.
 
-Just been trough ~5+ hours of bisecting and eventually actually found
-the culprit =)
+Manifests as KVM use-after-free WARNINGs and subsequent "BUG: Bad page
+state in process X" errors when reclaiming from a KVM guest due to KVM
+removing the wrong pages from its own mappings.
 
-commit fb420d5d91c1274d5966917725e71f27ed092a85 (refs/bisect/bad)
-Author: Eric Dumazet <edumazet@google.com>
-Date:   Fri Sep 28 10:28:44 2018 -0700
+Reported-by: leozinho29_eu@hotmail.com
+Reported-by: Mike Galbraith <efault@gmx.de>
+Reported-by: Adam Borowski <kilobyte@angband.pl>
+Cc: Jérôme Glisse <jglisse@redhat.com>
+Cc: Christian König <christian.koenig@amd.com>
+Cc: Jan Kara <jack@suse.cz>
+Cc: Matthew Wilcox <mawilcox@microsoft.com>
+Cc: Ross Zwisler <zwisler@kernel.org>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Radim Krčmář <rkrcmar@redhat.com>
+Cc: Michal Hocko <mhocko@kernel.org>
+Cc: Felix Kuehling <felix.kuehling@amd.com>
+Cc: Ralph Campbell <rcampbell@nvidia.com>
+Cc: John Hubbard <jhubbard@nvidia.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: ac46d4f3c432 ("mm/mmu_notifier: use structure for invalidate_range_start/end calls v2")
+Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+---
 
-    tcp/fq: move back to CLOCK_MONOTONIC
+FWIW, I looked through all other calls to mmu_notifier_range_init() in
+the patch and didn't spot any other unintentional functional changes.
 
-[--8<--]
+ mm/rmap.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-So this might be because my setup might be "odd".
+diff --git a/mm/rmap.c b/mm/rmap.c
+index 68a1a5b869a5..0454ecc29537 100644
+--- a/mm/rmap.c
++++ b/mm/rmap.c
+@@ -1371,8 +1371,8 @@ static bool try_to_unmap_one(struct page *page, struct vm_area_struct *vma,
+ 	 * Note that the page can not be free in this function as call of
+ 	 * try_to_unmap() must hold a reference on the page.
+ 	 */
+-	mmu_notifier_range_init(&range, vma->vm_mm, vma->vm_start,
+-				min(vma->vm_end, vma->vm_start +
++	mmu_notifier_range_init(&range, vma->vm_mm, address,
++				min(vma->vm_end, address +
+ 				    (PAGE_SIZE << compound_order(page))));
+ 	if (PageHuge(page)) {
+ 		/*
+-- 
+2.19.2
 
-Basically I have a firewall with four nics that uses two of those nics
-to handle my normal
-internet connection (firewall/MASQ/NAT) and the other two are assigned
-to one bridge each.
-
-The firewall is also my local caching DNS server and DHCP server,
-which is also used by the VM:s...
-But with 4.20 DHCP replies disappeared before entering the bridge - i
-couldn't even see them in
-tcpdump! (all nics are ixgbe on a atom soc)
-
-I'm currently running a kernel with that patch reversed but I'm also
-wondering about possible ways
-forward since I'm reverting a fix from someone else...
