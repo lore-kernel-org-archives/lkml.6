@@ -2,157 +2,346 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C0A4C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 08:23:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD1B8C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 08:24:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3834120657
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 08:23:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="kJrGQIRF"
+	by mail.kernel.org (Postfix) with ESMTP id 7E94420675
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 08:24:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727617AbfAJIXA (ORCPT
+        id S1727675AbfAJIY4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 03:23:00 -0500
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:37760 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726137AbfAJIXA (ORCPT
+        Thu, 10 Jan 2019 03:24:56 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:53157 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727262AbfAJIYz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 03:23:00 -0500
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20190110082257euoutp021cad96aaaf489234630d0a8ccf96b3fb~4bw3q4Qx23258832588euoutp02x;
-        Thu, 10 Jan 2019 08:22:57 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20190110082257euoutp021cad96aaaf489234630d0a8ccf96b3fb~4bw3q4Qx23258832588euoutp02x
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1547108577;
-        bh=6+FRAixNa2B8vE3lCnJEiIWQ9c3z4z0f2PjubTw3Cm8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kJrGQIRFWXRZrc4zNhyLBq/0WofLt4tejj4Pb8ci87lkkQAYQ9jaYf+0Q/ivaCKDB
-         eDUP97uGfevgVpUF6ox01jSkkI+NVwHfZrG+8p9Ie8J8uHaSTqp7pfeAnzhD3VoVUt
-         M3fwxzj7phx6G9d5TBbyBXGqCN9bYX9rVzZ5mIeM=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20190110082257eucas1p15d026a0992bdaa5eacd293b43a700225~4bw3VDevA2126821268eucas1p1b;
-        Thu, 10 Jan 2019 08:22:57 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id 16.BA.04806.0E0073C5; Thu, 10
-        Jan 2019 08:22:56 +0000 (GMT)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20190110082256eucas1p1bb0685cb83aa0a865f2391e43512b417~4bw2mi-ZC2489924899eucas1p1B;
-        Thu, 10 Jan 2019 08:22:56 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20190110082256eusmtrp1f9c0d63aa1197c1f166b63ac31881889~4bw2XkjXV0278902789eusmtrp1G;
-        Thu, 10 Jan 2019 08:22:56 +0000 (GMT)
-X-AuditID: cbfec7f5-34dff700000012c6-fb-5c3700e0f873
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 90.4B.04128.0E0073C5; Thu, 10
-        Jan 2019 08:22:56 +0000 (GMT)
-Received: from localhost (unknown [106.120.51.46]) by eusmtip2.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20190110082255eusmtip246a2a3073e6cad67a15da2ff69ba19c1~4bw2L_Q8N1651816518eusmtip2F;
-        Thu, 10 Jan 2019 08:22:55 +0000 (GMT)
-From:   =?utf-8?Q?=C5=81ukasz_Stelmach?= <l.stelmach@samsung.com>
-To:     <robh+dt@kernel.org>
-Cc:     Otto Sabart <ottosabart@seberm.com>, linux-kernel@vger.kernel.org,
-        Joe Perches <joe@perches.com>
-Subject: Re: [PATCH 1/1] MAINTAINERS: fix bad file reference into
- Documentation
-Date:   Thu, 10 Jan 2019 09:22:42 +0100
-In-Reply-To: <f936ab2a7c34974c67ade29e97fe15bb5781ac39.camel@perches.com>
-        (Joe Perches's message of "Wed, 09 Jan 2019 11:35:45 -0800")
-Message-ID: <87d0p47wh9.fsf%l.stelmach@samsung.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
+        Thu, 10 Jan 2019 03:24:55 -0500
+X-UUID: b48ebcbf60974a43ad01e0954853a00a-20190110
+X-UUID: b48ebcbf60974a43ad01e0954853a00a-20190110
+Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw01.mediatek.com
+        (envelope-from <long.cheng@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 650511360; Thu, 10 Jan 2019 16:24:47 +0800
+Received: from MTKCAS32.mediatek.inc (172.27.4.184) by mtkmbs01n1.mediatek.inc
+ (172.21.101.68) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 10 Jan
+ 2019 16:24:46 +0800
+Received: from [10.17.3.153] (10.17.3.153) by MTKCAS32.mediatek.inc
+ (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Thu, 10 Jan 2019 16:24:45 +0800
+Message-ID: <1547108685.3831.21.camel@mhfsdcap03>
+Subject: Re: [PATCH v9 1/2] dmaengine: 8250_mtk_dma: add MediaTek uart DMA
+ support
+From:   Long Cheng <long.cheng@mediatek.com>
+To:     Nicolas Boichat <drinkcat@chromium.org>
+CC:     Vinod Koul <vkoul@kernel.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Rob Herring" <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "Ryder Lee" <ryder.lee@mediatek.com>,
+        Sean Wang <sean.wang@kernel.org>,
+        "Matthias Brugger" <matthias.bgg@gmail.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        Sean Wang <sean.wang@mediatek.com>,
+        <dmaengine@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        "linux-arm Mailing List" <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        <linux-serial@vger.kernel.org>, <srv_heupstream@mediatek.com>,
+        Yingjoe Chen <yingjoe.chen@mediatek.com>,
+        YT Shen <yt.shen@mediatek.com>,
+        Zhenbao Liu <zhenbao.liu@mediatek.com>,
+        Long Cheng <long.cheng@mediatek.com>
+Date:   Thu, 10 Jan 2019 16:24:45 +0800
+In-Reply-To: <CANMq1KB=yuEJxUdi8M9deDhAv24WZ-4h+26cFq7AzBi8uyd88Q@mail.gmail.com>
+References: <1546395178-8880-1-git-send-email-long.cheng@mediatek.com>
+         <1546395178-8880-2-git-send-email-long.cheng@mediatek.com>
+         <CANMq1KB=yuEJxUdi8M9deDhAv24WZ-4h+26cFq7AzBi8uyd88Q@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-="; micalg="pgp-sha256";
-        protocol="application/pgp-signature"
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrPKsWRmVeSWpSXmKPExsWy7djPc7oPGMxjDDpnW1rMvv+YxeLyrjls
-        Fq/Ov2CzaN17hN2BxWPTqk42jy+rrjF77Fn4ksXj8ya5AJYoLpuU1JzMstQifbsEroyVNyMK
-        lnBXTOj6xtzA+JWzi5GTQ0LAROLSjx7WLkYuDiGBFYwS5263QTlfGCXm3FnNDFIlJPCZUWLu
-        Dmm4jr9t7BBFyxkl1s+4yAzhPGeUeD/tGBNIFZuAvUT/kX0sILaIgITEoVfngMZycDALpEvM
-        negNEhYWCJTomPIYbAGLgKpE48JNjCBzOAU6GCWmH/0J1ssrYCyxbtlzNhBbVMBS4l7fXTaI
-        uKDEyZlPwGqYBXIlZp5/A9YsIbCKXaJ34i8miFNdJNbPXc8OYQtLvDq+BcqWkTg9uYcFwi6X
-        +HGjjxWiuYVRYvGETqgia4k/qyayQdiOEncO3GUB+UBCgE/ixltBiMV8EpO2TWeGCPNKdLQJ
-        QVSrSKzr3wM1Xkqi99UKRgjbQ+Lxxd/Q4J3DKPH3wSeWCYwKs5D8MwvJP7PA4aUpsX6XPkRY
-        W2LZwtfMELatxLp171kWMLKuYhRPLS3OTU8tNs5LLdcrTswtLs1L10vOz93ECEw6p/8d/7qD
-        cd+fpEOMAhyMSjy8Cf9MY4RYE8uKK3MPMaoATXq0YfUFRimWvPy8VCUR3jvLzWKEeFMSK6tS
-        i/Lji0pzUosPMUpzsCiJ81YzPIgWEkhPLEnNTk0tSC2CyTJxcEo1MOq1XNu1Xm2PshWXct+D
-        pC1Hwi3jjlWcXLajMLeDP3aGMfttxRCr/v1NW8re30oP2FTxseWt4I8POpftZzzc+IwtaONN
-        wyOKjiz8Shv1SyfMfqUsLPqzbNkj0Ygk84/62rVf3fkeX7n7Y9sesdoilpduM8+05/G6+asf
-        26G24vOr5cU6VX0fbJVYijMSDbWYi4oTAZ3u9GxCAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrGIsWRmVeSWpSXmKPExsVy+t/xe7oPGMxjDC7tYbWYff8xi8XlXXPY
-        LF6df8Fm0br3CLsDi8emVZ1sHl9WXWP22LPwJYvH501yASxRejZF+aUlqQoZ+cUltkrRhhZG
-        eoaWFnpGJpZ6hsbmsVZGpkr6djYpqTmZZalF+nYJehkrb0YULOGumND1jbmB8StnFyMnh4SA
-        icSlv23sILaQwFJGibuXjboYOYDiUhIr56ZDlAhL/LnWxdbFyAVU8pRRorn7FhNIgk3AXqL/
-        yD4WEFtEQELi0KtzrCA2s0CqxKFdz8FqhAX8JToabzBCzPeQ+LbhGlg9i4CqROPCTYwgQzkF
-        OhglZp1qBSviFTCWWLfsORuILSpgKXGv7y4bRFxQ4uTMJywQC7Ilvq5+zjyBUWAWktQsJKlZ
-        QD8wC2hKrN+lDxHWlli28DUzhG0rsW7de5YFjKyrGEVSS4tz03OLjfSKE3OLS/PS9ZLzczcx
-        AuNl27GfW3Ywdr0LPsQowMGoxMOb8M80Rog1say4MvcQowrQmEcbVl9glGLJy89LVRLhvbPc
-        LEaINyWxsiq1KD++qDQntfgQoynQoxOZpUST84ExnlcSb2hqaG5haWhubG5sZqEkznveoDJK
-        SCA9sSQ1OzW1ILUIpo+Jg1OqgXGvfOgu7f7KGUIWXnnfmDzE7vgtu7Eq6HbEkWXiRdMtT930
-        WVr8Kew464253qopJo9EC+YIMc9Y0xc3O6DptIDSbZ9G29fG65bunsnnOOMHu5r/w1yGTVKG
-        mze6m6XuD3i87F/1ns3n1fYLF+eI+jNUpB10SKmTTzFjKvtwXZy1SM1ohvdtdiWW4oxEQy3m
-        ouJEAGxDbPe5AgAA
-X-CMS-MailID: 20190110082256eucas1p1bb0685cb83aa0a865f2391e43512b417
-X-Msg-Generator: CA
-X-RootMTR: 20190110082256eucas1p1bb0685cb83aa0a865f2391e43512b417
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20190110082256eucas1p1bb0685cb83aa0a865f2391e43512b417
-References: <f936ab2a7c34974c67ade29e97fe15bb5781ac39.camel@perches.com>
-        <CGME20190110082256eucas1p1bb0685cb83aa0a865f2391e43512b417@eucas1p1.samsung.com>
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+On Thu, 2019-01-03 at 09:39 +0800, Nicolas Boichat wrote:
+> On Wed, Jan 2, 2019 at 10:13 AM Long Cheng <long.cheng@mediatek.com> wrote:
+> >
 
-It was <2019-01-09 =C5=9Bro 20:35>, when Joe Perches wrote:
-> On Wed, 2019-01-09 at 20:09 +0100, Otto Sabart wrote:
->> There is no `samsung,exynos5250-trng.txt` file in the documentation and
->> I do not think it ever existed.
->
-> There was a patch for this
->
-> https://patchwork.kernel.org/patch/10623153/
->
-> But is is still unapplied...
->
->> diff --git a/MAINTAINERS b/MAINTAINERS
-> []
->> @@ -13309,7 +13309,6 @@ M:	=C5=81ukasz Stelmach <l.stelmach@samsung.com>
->>  L:	linux-samsung-soc@vger.kernel.org
->>  S:	Maintained
->>  F:	drivers/char/hw_random/exynos-trng.c
->> -F:	Documentation/devicetree/bindings/rng/samsung,exynos5250-trng.txt
+.....
 
-+ Rob Herring
+> > +/* interrupt trigger level for tx */
+> > +#define VFF_TX_THRE(n)         ((n) * 7 / 8)
+> > +/* interrupt trigger level for rx */
+> > +#define VFF_RX_THRE(n)         ((n) * 3 / 4)
+> > +
+> > +#define VFF_RING_SIZE  0xffffU
+> 
+> Well, the size is actually 0x10000. Maybe call this VFF_RING_SIZE_MASK?
+> 
 
-=2D-=20
-=C5=81ukasz Stelmach
-Samsung R&D Institute Poland
-Samsung Electronics
+the max length is 0xffff.  the bit 16 is wrap bit. our buffer is ring
+buffer. So not mask.
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
+> > +/* invert this bit when wrap ring head again*/
+> > +#define VFF_RING_WRAP  0x10000U
+> > +
+> > +       writel(val, c->base + reg);
+> > +}
+> > +
 
------BEGIN PGP SIGNATURE-----
+......
 
-iQEzBAEBCAAdFiEEXpuyqjq9kGEVr9UQsK4enJilgBAFAlw3ANIACgkQsK4enJil
-gBCSGgf+KgChboB16JEBC9goGP1qx0Rog0mG/qk9oHT/R9N5mshsQPjcv9tZx6pN
-Fui7DCYf3Y8cJw7T3EDoKqI1+YtC6vJBfvmdveRvMquckOJzcycZXL9OBeQqT0fQ
-KDX5rnD+LxL2qZHG2xQXlBAzYQpSTrv5mTPbVvf7D8dpoFHs+CffxFLJ3VgZ3Ppj
-+/dLzXhPiDzLX7mvQeQvXqMtQZ4uoHRODWIYS0yHEIW3eAFr9mJ7iVpfewGgx04o
-mnTV0NVMfT5+EyH5ufDMHGSDo6cOy7ZbW0bvi47hWAyF8i1I+FZQqN6x/KH5PWTW
-R2lLDF1+CcdAqEwx30NixiFGoOVjJg==
-=gbGC
------END PGP SIGNATURE-----
---=-=-=--
+> > +static void mtk_uart_apdma_start_tx(struct mtk_chan *c)
+> > +{
+> > +       unsigned int len, send, left, wpt, d_wpt, tmp;
+> > +       int ret;
+> > +
+> > +       left = mtk_uart_apdma_read(c, VFF_LEFT_SIZE);
+> > +       if (!left) {
+> > +               mtk_uart_apdma_write(c, VFF_INT_EN, VFF_TX_INT_EN_B);
+> > +               return;
+> > +       }
+> > +
+> > +       /* Wait 1sec for flush,  can't sleep*/
+> 
+> nit: one space after ',', period after 'sleep', space before '*'.
+> 
+> > +       ret = readx_poll_timeout(readl, c->base + VFF_FLUSH, tmp,
+> > +                       tmp != VFF_FLUSH_B, 0, 1000000);
+> > +       if (ret)
+> > +               dev_warn(c->vc.chan.device->dev, "tx: fail, debug=0x%x\n",
+> > +                       mtk_uart_apdma_read(c, VFF_DEBUG_STATUS));
+> 
+> Why do we need to wait for flush now? The previous implementation did
+> not require this...
+> 
+
+because our HW buffer is cyclic. at one tx, if the size of data is
+bigger, data maybe cover. So must wait flush finish. confirm the data is
+right. like 128 bytes size, small length can't reproduce the issue.
+
+> > +
+> > +       send = min_t(unsigned int, left, c->desc->avail_len);
+> > +       wpt = mtk_uart_apdma_read(c, VFF_WPT);
+> > +       len = mtk_uart_apdma_read(c, VFF_LEN);
+> > +
+> > +       d_wpt = wpt + send;
+> > +       if ((d_wpt & VFF_RING_SIZE) >= len) {
+> 
+> I don't get why you need to add "& VFF_RING_SIZE". If wpt + send >
+> VFF_RING_SIZE, don't you need to toggle VFF_RING_WRAP too?
+
+the longest actual length is VFF_RING_SIZE. one cyclic, will set bit[16]
+to ~bit[16]. the bit[0 ~ 15] is actual address. So need get rid of
+bit[16]
+
+> 
+> > +               d_wpt = d_wpt - len;
+> > +               d_wpt = d_wpt ^ VFF_RING_WRAP;
+> > +       }
+> > +       mtk_uart_apdma_write(c, VFF_WPT, d_wpt);
+> > +
+> > +       c->desc->avail_len -= send;
+> > +
+> > +       mtk_uart_apdma_write(c, VFF_INT_EN, VFF_TX_INT_EN_B);
+> > +       if (mtk_uart_apdma_read(c, VFF_FLUSH) == 0U)
+> > +               mtk_uart_apdma_write(c, VFF_FLUSH, VFF_FLUSH_B);
+> > +}
+> 
+> (thanks for the rest of the changes, this looks much more readable)
+> 
+> > +
+......
+
+> > +
+> > +static int mtk_uart_apdma_device_pause(struct dma_chan *chan)
+> > +{
+> > +       /* just for check caps pass */
+> > +       return 0;
+> > +}
+> 
+> This is still not right... Hopefully somebody more familiar with the
+> DMA subsystem can weigh in, but maybe it's enough to wait for the
+> current transfer to be flushed and temporarily disable interrupts?
+> e.g. call mtk_uart_apdma_terminate_all above?
+> 
+
+i had review the 8250 UART framework. just check the function pointer,
+not use. and our HW can't support the feature. So i just keep it at
+first version.
+
+> > +
+> > +static int mtk_uart_apdma_device_resume(struct dma_chan *chan)
+> > +{
+> > +       /* just for check caps pass */
+> > +       return 0;
+> > +}
+> 
+> Drop this one since you don't really need it.
+> 
+
+ok, i will remove it.
+
+> > +
+> > +static void mtk_uart_apdma_free(struct mtk_uart_apdmadev *mtkd)
+> > +{
+> > +       while (list_empty(&mtkd->ddev.channels) == 0) {
+> 
+> !list_empty(
+> 
+> > +               struct mtk_chan *c = list_first_entry(&mtkd->ddev.channels,
+> > +                       struct mtk_chan, vc.chan.device_node);
+> > +
+> > +               list_del(&c->vc.chan.device_node);
+> > +               tasklet_kill(&c->vc.task);
+> > +       }
+> > +}
+> > +
+> > +static const struct of_device_id mtk_uart_apdma_match[] = {
+> > +       { .compatible = "mediatek,mt6577-uart-dma", },
+> > +       { /* sentinel */ },
+> > +};
+> > +MODULE_DEVICE_TABLE(of, mtk_uart_apdma_match);
+> > +
+> > +static int mtk_uart_apdma_probe(struct platform_device *pdev)
+> > +{
+> > +       struct mtk_uart_apdmadev *mtkd;
+> > +       struct resource *res;
+> > +       struct mtk_chan *c;
+> > +       unsigned int i;
+> > +       int rc;
+> > +
+> > +       mtkd = devm_kzalloc(&pdev->dev, sizeof(*mtkd), GFP_KERNEL);
+> > +       if (!mtkd)
+> > +               return -ENOMEM;
+> > +
+> > +       mtkd->clk = devm_clk_get(&pdev->dev, NULL);
+> > +       if (IS_ERR(mtkd->clk)) {
+> > +               dev_err(&pdev->dev, "No clock specified\n");
+> > +               rc = PTR_ERR(mtkd->clk);
+> > +               return rc;
+> > +       }
+> > +
+> > +       if (of_property_read_bool(pdev->dev.of_node, "dma-33bits"))
+> > +               mtkd->support_33bits = true;
+> 
+> I don't think this should be a device tree property. Typically we'd
+> have multiple compatible strings for (slightly) different HW blocks,
+> and enable 33bits only on HW that have support.
+> 
+> See how it's done in drivers/i2c/busses/i2c-mt65xx.c, for example.
+> 
+
+in MediaTek, not all IC can support 33bit. So i want to configure by DT.
+So don't need to modify code in New IC.
+
+> > +
+> > +       rc = dma_set_mask_and_coherent(&pdev->dev,
+> > +                               DMA_BIT_MASK(32 | mtkd->support_33bits));
+> 
+> I'd feel a little more confortable if you used a variable instead:
+> 
+> int dma_bits = 32;
+> 
+> if (support_33bits)
+>    dma_bits = 33;
+> 
+> ..., DMA_BIT_MASK(dma_bits));
+> 
+
+OK, i can modify it. thanks.
+
+> > +       if (rc)
+> > +               return rc;
+> > +
+> > +       dma_cap_set(DMA_SLAVE, mtkd->ddev.cap_mask);
+> > +       mtkd->ddev.device_alloc_chan_resources =
+> > +                               mtk_uart_apdma_alloc_chan_resources;
+> > +       mtkd->ddev.device_free_chan_resources =
+> > +                               mtk_uart_apdma_free_chan_resources;
+> > +       mtkd->ddev.device_tx_status = mtk_uart_apdma_tx_status;
+> > +       mtkd->ddev.device_issue_pending = mtk_uart_apdma_issue_pending;
+> > +       mtkd->ddev.device_prep_slave_sg = mtk_uart_apdma_prep_slave_sg;
+> > +       mtkd->ddev.device_config = mtk_uart_apdma_slave_config;
+> > +       mtkd->ddev.device_pause = mtk_uart_apdma_device_pause;
+> > +       mtkd->ddev.device_resume = mtk_uart_apdma_device_resume;
+> > +       mtkd->ddev.device_terminate_all = mtk_uart_apdma_terminate_all;
+> > +       mtkd->ddev.src_addr_widths = BIT(DMA_SLAVE_BUSWIDTH_1_BYTE);
+> > +       mtkd->ddev.dst_addr_widths = BIT(DMA_SLAVE_BUSWIDTH_1_BYTE);
+> > +       mtkd->ddev.directions = BIT(DMA_DEV_TO_MEM) | BIT(DMA_MEM_TO_DEV);
+> > +       mtkd->ddev.residue_granularity = DMA_RESIDUE_GRANULARITY_SEGMENT;
+> > +       mtkd->ddev.dev = &pdev->dev;
+> > +       INIT_LIST_HEAD(&mtkd->ddev.channels);
+> > +
+> > +       for (i = 0; i < MTK_UART_APDMA_CHANNELS; i++) {
+> > +               c = devm_kzalloc(mtkd->ddev.dev, sizeof(*c), GFP_KERNEL);
+> > +               if (!c) {
+> > +                       rc = -ENODEV;
+> > +                       goto err_no_dma;
+> > +               }
+> > +
+> > +               res = platform_get_resource(pdev, IORESOURCE_MEM, i);
+> > +               if (!res) {
+> > +                       rc = -ENODEV;
+> > +                       goto err_no_dma;
+> > +               }
+> > +
+> > +               c->base = devm_ioremap_resource(&pdev->dev, res);
+> > +               if (IS_ERR(c->base)) {
+> > +                       rc = PTR_ERR(c->base);
+> > +                       goto err_no_dma;
+> > +               }
+> > +               c->requested = false;
+> > +               c->vc.desc_free = mtk_uart_apdma_desc_free;
+> > +               vchan_init(&c->vc, &mtkd->ddev);
+> > +
+> > +               mtkd->dma_irq[i] = platform_get_irq(pdev, i);
+> > +               if ((int)mtkd->dma_irq[i] < 0) {
+> > +                       dev_err(&pdev->dev, "failed to get IRQ[%d]\n", i);
+> > +                       rc = -EINVAL;
+> > +                       goto err_no_dma;
+> > +               }
+> > +       }
+> > +
+> > +       pm_runtime_enable(&pdev->dev);
+> > +       pm_runtime_set_active(&pdev->dev);
+> > +
+> > +       rc = dma_async_device_register(&mtkd->ddev);
+> > +       if (rc)
+> > +               goto rpm_disable;
+> > +
+> > +       platform_set_drvdata(pdev, mtkd);
+> > +
+> > +       if (pdev->dev.of_node) {
+> > +               /* Device-tree DMA controller registration */
+> > +               rc = of_dma_controller_register(pdev->dev.of_node,
+> > +                                               of_dma_xlate_by_chan_id,
+> > +                                               mtkd);
+> > +               if (rc)
+> > +                       goto dma_remove;
+> > +       }
+> > +
+> > +       return rc;
+> > +
+> > +dma_remove:
+> > +       dma_async_device_unregister(&mtkd->ddev);
+> > +rpm_disable:
+> > +       pm_runtime_disable(&pdev->dev);
+> > +err_no_dma:
+> > +       mtk_uart_apdma_free(mtkd);
+> > +       return rc;
+> > +}
+> > +
+
+......
+
+
