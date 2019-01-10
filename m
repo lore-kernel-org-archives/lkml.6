@@ -7,56 +7,56 @@ X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86807C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 00:28:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE915C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 00:29:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E68F21738
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 00:28:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 97FE3214C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 00:29:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="hXdR3RmE"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="jBXbW8L6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726761AbfAJA2W (ORCPT
+        id S1726907AbfAJA3p (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 19:28:22 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:38307 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726590AbfAJA2V (ORCPT
+        Wed, 9 Jan 2019 19:29:45 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:35436 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726541AbfAJA3p (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 19:28:21 -0500
-Received: by mail-pg1-f195.google.com with SMTP id g189so4037701pgc.5
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jan 2019 16:28:20 -0800 (PST)
+        Wed, 9 Jan 2019 19:29:45 -0500
+Received: by mail-pf1-f194.google.com with SMTP id z9so4457394pfi.2
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Jan 2019 16:29:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=mime-version:content-transfer-encoding:subject:cc:to:in-reply-to
          :from:user-agent:references:message-id:date;
-        bh=8eBGWXckAb/SIpb7ck6qGfkx7wOiPVDSozVWyaBmSlg=;
-        b=hXdR3RmEevrr14XpABoUDwtEkVMf/CezZImacygYi+n5IwUDq/Zb/p1PbhaW43GVRn
-         6nZutfaLPiOuXyco9BQl7gE985yyDbDKz6PTX/oOPRk0oHXsj/rO7z+jztV7pG73yIJu
-         g4fmzb2+QbRPV60ZeoBCGen3s/MsMjzCDRrsk=
+        bh=rsEGMz8QdrVpRtN7S/g6VkwnFcLYBhawxwRr9F8P3No=;
+        b=jBXbW8L63zHBTwq0FnK69WR81No0ZS+LeuDUReHwfFoo3BAuq/yShzAJXSpNPlfroV
+         uAotuMBnPiPZ6qihin+GlD7a9xNEewVX2DuCy9VsQMZdxpIj11GGEInnedGMlZb8xndc
+         wrt0kVnwucba5JavjRb1UgbAxMNXirQ3w3+Qo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:content-transfer-encoding:subject
          :cc:to:in-reply-to:from:user-agent:references:message-id:date;
-        bh=8eBGWXckAb/SIpb7ck6qGfkx7wOiPVDSozVWyaBmSlg=;
-        b=OVLFWEY5UycP5Lsk29XubifwUslvtGTH1mWSAN4ypn0nkCVkGDJOhBuv3J6kKB559D
-         5ejbKuP3c5RPvSiw5ffCyg7ES3Er+/4UrB9HP+j8IMhKEjUO+4bt3ptsITHTUl3IjCrz
-         BpsTBqx7u3DftufGO8MZrOOZju7RyrNCme/Ih4OaB1rxEVDmI3rEoSYycRgbp3WW7TBc
-         yLCIjVWCuuRHiJ5KxMGbnAuCc0ambn+Bv5hCDotBQONBYj4/zUnLkPfwsi+bN6Hluj6x
-         mQVD4F+zkYay7BzExkX0pymAh9sy5skTNuz779D8Gh1A+Jcqk4duhdCBRVxRpESaBNKk
-         asGA==
-X-Gm-Message-State: AJcUukeA0pjoSpP5dGVSEJHM9PHRdzHfNDrLuICBq0bXtpA9un4B2XqU
-        pQUQxjaa2Rchc65699HFTZdULQ==
-X-Google-Smtp-Source: ALg8bN7zVfGKluboNNOvPv2WfOhP27kIopy4TTazy6qSiuuF6CchwF9VSlTRmdhxw4uHYZ5VOmNYXg==
-X-Received: by 2002:a63:b81a:: with SMTP id p26mr7471353pge.433.1547080100377;
-        Wed, 09 Jan 2019 16:28:20 -0800 (PST)
+        bh=rsEGMz8QdrVpRtN7S/g6VkwnFcLYBhawxwRr9F8P3No=;
+        b=cM5172hHzXXQ8Vbb7f/Y2oWf1wgsI3DMCj/c1LLu97FYVZdlr3GYsQ76bucpStiJJs
+         4hWZuEsFDkdHW+nzWzM/JE6aM53LXqTHTcJidfZwcBv+sunYFBNnynQ9NP8USc2Jdc8O
+         X/1MwQLNlUGod8J/uCtVbOgHUUAou3ESylcuHtxqCp8F4S9Ofop9vlS8WiqErscD7RMl
+         uF99A/wdM1YJd+JM17ntd3TqL8EHHR8nQqhzVwSP9R7gP9pw+Pdyi2mPJ1sdNEFCeRAn
+         hilU9DZTq5YSaeDXipFXeOLSXJhwifE377JC/yCX8b4aX9d9wB4D3v7gNF6OKceJZCSm
+         Ck/A==
+X-Gm-Message-State: AJcUukfp2/ygw679/YIii/r3xhy5yTWCr6nDPP1MBe9bmRdKkgzEg8/Y
+        lp6uxL/IB7HYRDD5lkNSL6FWag==
+X-Google-Smtp-Source: ALg8bN5PmO0rZ0+7Ks1TZnZJX9RGa7bmnQ2oxR9p8UZbRthRJzWuTfjx41UU61TBXrQ7zmimR51M0A==
+X-Received: by 2002:a63:4c4e:: with SMTP id m14mr5207559pgl.173.1547080184806;
+        Wed, 09 Jan 2019 16:29:44 -0800 (PST)
 Received: from localhost ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id f32sm89968438pgf.80.2019.01.09.16.28.19
+        by smtp.gmail.com with ESMTPSA id 24sm309686177pfl.32.2019.01.09.16.29.44
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 09 Jan 2019 16:28:19 -0800 (PST)
+        Wed, 09 Jan 2019 16:29:44 -0800 (PST)
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v1 7/7] arm64: dts: sdm845: wireup the thermal trip points to cpufreq
+Subject: Re: [PATCH v1 6/7] arm64: dts: sdm845: Increase alert trip point to 95 degrees
 Cc:     linux-arm-msm@vger.kernel.org, bjorn.andersson@linaro.org,
         viresh.kumar@linaro.org, edubezval@gmail.com,
         andy.gross@linaro.org, tdas@codeaurora.org, dianders@chromium.org,
@@ -65,27 +65,26 @@ Cc:     linux-arm-msm@vger.kernel.org, bjorn.andersson@linaro.org,
         Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org
 To:     Amit Kucheria <amit.kucheria@linaro.org>,
         linux-kernel@vger.kernel.org
-In-Reply-To: <6c5b26e65be18222587724e066fc2e39b9f60397.1547078153.git.amit.kucheria@linaro.org>
+In-Reply-To: <041258d65883df964890249a24d2a4788c419304.1547078153.git.amit.kucheria@linaro.org>
 From:   Stephen Boyd <swboyd@chromium.org>
 User-Agent: alot/0.8
-References: <cover.1547078153.git.amit.kucheria@linaro.org> <6c5b26e65be18222587724e066fc2e39b9f60397.1547078153.git.amit.kucheria@linaro.org>
-Message-ID: <154708009884.15366.3039982038291126570@swboyd.mtv.corp.google.com>
-Date:   Wed, 09 Jan 2019 16:28:18 -0800
+References: <cover.1547078153.git.amit.kucheria@linaro.org> <041258d65883df964890249a24d2a4788c419304.1547078153.git.amit.kucheria@linaro.org>
+Message-ID: <154708018331.15366.11574628155253134835@swboyd.mtv.corp.google.com>
+Date:   Wed, 09 Jan 2019 16:29:43 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Amit Kucheria (2019-01-09 16:00:56)
-> Since the big and little cpus are in the same frequency domain, use all
-
-Oh? I thought the big and little cpus were in different frequency
-domains and voltage domains. Maybe that's what you're saying here but
-I'm misunderstanding. So change the wording a bit to be more clear?
-
-> of them for mitigation in the cooling-map. At the lower trip points we
-> restrict ourselves to throttling only a few OPPs. At higher trip
-> temperatures, allow ourselves to be throttled to any extent.
+Quoting Amit Kucheria (2019-01-09 16:00:55)
+> 75 degrees is too aggressive for throttling the CPU. After speaking to
+> Qualcomm engineers, increase it to 95 degrees.
 >=20
 > Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
+> ---
+>  arch/arm64/boot/dts/qcom/sdm845.dtsi | 16 ++++++++--------
+
+Is the plan that these are some defaults that would be adjusted by board
+variants? Just curious why we have anything in here and don't punt it
+all to each board dts file.
 
