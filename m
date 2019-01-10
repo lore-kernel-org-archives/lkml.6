@@ -2,103 +2,114 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2790C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 17:58:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65E13C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 17:59:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BEDB8208E3
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 17:58:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3D949214DA
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 17:59:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730603AbfAJR6C (ORCPT
+        id S1730700AbfAJR7K (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 12:58:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59482 "EHLO mail.kernel.org"
+        Thu, 10 Jan 2019 12:59:10 -0500
+Received: from shell.v3.sk ([90.176.6.54]:58535 "EHLO shell.v3.sk"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729480AbfAJR6B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 12:58:01 -0500
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 14ACE2064C;
-        Thu, 10 Jan 2019 17:57:58 +0000 (UTC)
-Date:   Thu, 10 Jan 2019 12:57:57 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Josh Poimboeuf <jpoimboe@redhat.com>,
-        Nadav Amit <namit@vmware.com>, X86 ML <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Jason Baron <jbaron@akamai.com>, Jiri Kosina <jkosina@suse.cz>,
-        David Laight <David.Laight@ACULAB.COM>,
-        Borislav Petkov <bp@alien8.de>,
-        Julia Cartwright <julia@ni.com>, Jessica Yu <jeyu@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Edward Cree <ecree@solarflare.com>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>
-Subject: Re: [PATCH v3 5/6] x86/alternative: Use a single access in
- text_poke() where possible
-Message-ID: <20190110125757.1c8d2870@gandalf.local.home>
-In-Reply-To: <20190110174257.GE16556@linux.intel.com>
-References: <cover.1547073843.git.jpoimboe@redhat.com>
-        <279b8003f7f0a6831d090ab822d37bc958f974de.1547073843.git.jpoimboe@redhat.com>
-        <8138A1EE-359D-4CD2-8E96-5BF00313AB3B@vmware.com>
-        <20190110172004.wuh45xoafynfm2df@treble>
-        <20190110123243.3b9e0856@gandalf.local.home>
-        <20190110174257.GE16556@linux.intel.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1729882AbfAJR7K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 12:59:10 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id CB1581002F3;
+        Thu, 10 Jan 2019 18:59:05 +0100 (CET)
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id 6Di5iCeP8c-U; Thu, 10 Jan 2019 18:59:01 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id 677A61002F4;
+        Thu, 10 Jan 2019 18:58:58 +0100 (CET)
+X-Virus-Scanned: amavisd-new at zimbra.v3.sk
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id C0jK_DAWrPma; Thu, 10 Jan 2019 18:58:55 +0100 (CET)
+Received: from belphegor.brq.redhat.com (nat-pool-brq-t.redhat.com [213.175.37.10])
+        by zimbra.v3.sk (Postfix) with ESMTPSA id 8F9001002F9;
+        Thu, 10 Jan 2019 18:58:54 +0100 (CET)
+From:   Lubomir Rintel <lkundrak@v3.sk>
+To:     Andy Shevchenko <andy@infradead.org>,
+        Darren Hart <dvhart@infradead.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Mark Rutland <mark.rutland@arm.com>,
+        platform-driver-x86@vger.kernel.org, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Lubomir Rintel <lkundrak@v3.sk>
+Subject: [PATCH v5 05/10] Platform: OLPC: Use BIT() and GENMASK() for event masks
+Date:   Thu, 10 Jan 2019 18:58:40 +0100
+Message-Id: <20190110175845.1203986-6-lkundrak@v3.sk>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190110175845.1203986-1-lkundrak@v3.sk>
+References: <20190110175845.1203986-1-lkundrak@v3.sk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 10 Jan 2019 09:42:57 -0800
-Sean Christopherson <sean.j.christopherson@intel.com> wrote:
+Just a cosmetic tidy-up.
 
-> On Thu, Jan 10, 2019 at 12:32:43PM -0500, Steven Rostedt wrote:
-> > On Thu, 10 Jan 2019 11:20:04 -0600
-> > Josh Poimboeuf <jpoimboe@redhat.com> wrote:
-> > 
-> >   
-> > > > While I can't find a reason for hypervisors to emulate this instruction,
-> > > > smarter people might find ways to turn it into a security exploit.    
-> > > 
-> > > Interesting point... but I wonder if it's a realistic concern.  BTW,
-> > > text_poke_bp() also relies on undocumented behavior.  
-> > 
-> > But we did get an official OK from Intel that it will work. Took a bit
-> > of arm twisting to get them to do so, but they did. And it really is
-> > pretty robust.  
-> 
-> Did we (they?) list any caveats for this behavior?  E.g. I'm fairly
-> certain atomicity guarantees go out the window if WC memtype is used.
+Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
 
-Note, the text_poke_bp() process was this: (nothing to do with atomic
-guarantees)
+---
+Changes since v1:
+- This patch was added to the set.
 
-add breakpoint (one byte) to instruction.
+ include/linux/olpc-ec.h | 23 ++++++++++++-----------
+ 1 file changed, 12 insertions(+), 11 deletions(-)
 
-Sync all cores (send an IPI to each one).
+diff --git a/include/linux/olpc-ec.h b/include/linux/olpc-ec.h
+index 7fa3d27f7fee..f7b6a7eda232 100644
+--- a/include/linux/olpc-ec.h
++++ b/include/linux/olpc-ec.h
+@@ -2,6 +2,8 @@
+ #ifndef _LINUX_OLPC_EC_H
+ #define _LINUX_OLPC_EC_H
+=20
++#include <linux/bits.h>
++
+ /* XO-1 EC commands */
+ #define EC_FIRMWARE_REV			0x08
+ #define EC_WRITE_SCI_MASK		0x1b
+@@ -17,17 +19,16 @@
+ #define EC_EXT_SCI_QUERY		0x85
+=20
+ /* SCI source values */
+-#define EC_SCI_SRC_EMPTY        0x00
+-#define EC_SCI_SRC_GAME         0x01
+-#define EC_SCI_SRC_BATTERY      0x02
+-#define EC_SCI_SRC_BATSOC       0x04
+-#define EC_SCI_SRC_BATERR       0x08
+-#define EC_SCI_SRC_EBOOK        0x10    /* XO-1 only */
+-#define EC_SCI_SRC_WLAN         0x20    /* XO-1 only */
+-#define EC_SCI_SRC_ACPWR        0x40
+-#define EC_SCI_SRC_BATCRIT      0x80
+-#define EC_SCI_SRC_GPWAKE       0x100   /* XO-1.5 only */
+-#define EC_SCI_SRC_ALL          0x1FF
++#define EC_SCI_SRC_GAME         BIT(0)
++#define EC_SCI_SRC_BATTERY      BIT(1)
++#define EC_SCI_SRC_BATSOC       BIT(2)
++#define EC_SCI_SRC_BATERR       BIT(3)
++#define EC_SCI_SRC_EBOOK        BIT(4)    /* XO-1 only */
++#define EC_SCI_SRC_WLAN         BIT(5)    /* XO-1 only */
++#define EC_SCI_SRC_ACPWR        BIT(6)
++#define EC_SCI_SRC_BATCRIT      BIT(7)
++#define EC_SCI_SRC_GPWAKE       BIT(8)   /* XO-1.5 only */
++#define EC_SCI_SRC_ALL          GENMASK(8, 0)
+=20
+ struct platform_device;
+=20
+--=20
+2.20.1
 
-change the back half of the instruction (the rest of the instruction
-after the breakpoint).
-
-Sync all cores
-
-Remove the breakpoint with the new byte of the new instruction.
-
-
-What atomicity guarantee does the above require?
-
--- Steve
