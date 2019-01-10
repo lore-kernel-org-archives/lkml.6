@@ -2,85 +2,90 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72369C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 15:51:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CE4BC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 15:53:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 341F9206B7
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 15:51:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="xt0FFsix"
+	by mail.kernel.org (Postfix) with ESMTP id 2A620206B7
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 15:53:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729614AbfAJPvz (ORCPT
+        id S1729742AbfAJPxX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 10:51:55 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:47560 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728196AbfAJPvy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 10:51:54 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=P/yTMXkLu9gvc+z9xe7moubzeShd0sYXGXbDLnyUI+s=; b=xt0FFsixmVLdFd40SYkBLjTt2
-        dLYPWB32hoHPjLRsChxb4qhF2om57OvrKmJs0PZBgun8U3fbGKZm+ofn9w1Wglmc7M1W3b9OmC1nI
-        Wc1+jdL4/rFET+MTXcp64yRcXFxNWXQZ+pjKl7+iEUbRTmLIFT0RgrhY5+TuiUQIplSnoogdfNw56
-        l86GHKN49cQ52IDkkeh9LyjNc+/suOW9+7xoY6SLtAGElWo65QgSIfuI71O5eb+K+W6+vtJS9aWK+
-        pqCkE9tjsV8zlkFRrO8mI3sJbh1gwFfSu0zXybbIW20X+ny/d/3eMey+zfNOrj0qSRuzAvKDwGqwd
-        HZggSOQQw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1ghccS-000577-Qx; Thu, 10 Jan 2019 15:51:45 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 85F4C20815190; Thu, 10 Jan 2019 16:51:42 +0100 (CET)
-Date:   Thu, 10 Jan 2019 16:51:42 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Bart Van Assche <bvanassche@acm.org>
-Cc:     mingo@redhat.com, tj@kernel.org, longman@redhat.com,
-        johannes.berg@intel.com, linux-kernel@vger.kernel.org,
-        Johannes Berg <johannes@sipsolutions.net>
-Subject: Re: [PATCH v5 11/15] locking/lockdep: Check data structure
- consistency
-Message-ID: <20190110155142.GI30894@hirez.programming.kicks-ass.net>
-References: <20181217213002.73776-1-bvanassche@acm.org>
- <20181217213002.73776-12-bvanassche@acm.org>
+        Thu, 10 Jan 2019 10:53:23 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:51418 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728795AbfAJPxX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 10:53:23 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id C44CE4CEA4;
+        Thu, 10 Jan 2019 15:53:21 +0000 (UTC)
+Received: from redhat.com (unknown [10.20.6.215])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 9F9108164C;
+        Thu, 10 Jan 2019 15:53:19 +0000 (UTC)
+Date:   Thu, 10 Jan 2019 10:53:17 -0500
+From:   Jerome Glisse <jglisse@redhat.com>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Jonathan Cameron <jonathan.cameron@huawei.com>,
+        Fengguang Wu <fengguang.wu@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        kvm@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Fan Du <fan.du@intel.com>, Yao Yuan <yuan.yao@intel.com>,
+        Peng Dong <dongx.peng@intel.com>,
+        Huang Ying <ying.huang@intel.com>,
+        Liu Jingqi <jingqi.liu@intel.com>,
+        Dong Eddie <eddie.dong@intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Zhang Yi <yi.z.zhang@linux.intel.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Mel Gorman <mgorman@suse.de>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        linux-accelerators@lists.ozlabs.org
+Subject: Re: [RFC][PATCH v2 00/21] PMEM NUMA node and hotness
+ accounting/migration
+Message-ID: <20190110155317.GB4394@redhat.com>
+References: <20181226131446.330864849@intel.com>
+ <20181227203158.GO16738@dhcp22.suse.cz>
+ <20181228050806.ewpxtwo3fpw7h3lq@wfg-t540p.sh.intel.com>
+ <20181228084105.GQ16738@dhcp22.suse.cz>
+ <20181228094208.7lgxhha34zpqu4db@wfg-t540p.sh.intel.com>
+ <20181228121515.GS16738@dhcp22.suse.cz>
+ <20181228133111.zromvopkfcg3m5oy@wfg-t540p.sh.intel.com>
+ <20181228195224.GY16738@dhcp22.suse.cz>
+ <20190102122110.00000206@huawei.com>
+ <20190108145256.GX31793@dhcp22.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20181217213002.73776-12-bvanassche@acm.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190108145256.GX31793@dhcp22.suse.cz>
+User-Agent: Mutt/1.10.0 (2018-05-17)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Thu, 10 Jan 2019 15:53:22 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Dec 17, 2018 at 01:29:58PM -0800, Bart Van Assche wrote:
-> Debugging lockdep data structure inconsistencies is challenging. Add
-> disabled code that verifies data structure consistency at runtime.
+On Tue, Jan 08, 2019 at 03:52:56PM +0100, Michal Hocko wrote:
+> On Wed 02-01-19 12:21:10, Jonathan Cameron wrote:
+> [...]
+> > So ideally I'd love this set to head in a direction that helps me tick off
+> > at least some of the above usecases and hopefully have some visibility on
+> > how to address the others moving forwards,
 > 
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Waiman Long <longman@redhat.com>
-> Cc: Johannes Berg <johannes@sipsolutions.net>
-> Signed-off-by: Bart Van Assche <bvanassche@acm.org>
-> ---
->  kernel/locking/lockdep.c | 183 +++++++++++++++++++++++++++++++++++++++
->  1 file changed, 183 insertions(+)
-> 
-> diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-> index 3a63142d4764..d411660572e1 100644
-> --- a/kernel/locking/lockdep.c
-> +++ b/kernel/locking/lockdep.c
-> @@ -74,6 +74,8 @@ module_param(lock_stat, int, 0644);
->  #define lock_stat 0
->  #endif
->  
-> +static bool check_data_structure_consistency;
+> Is it sufficient to have such a memory marked as movable (aka only have
+> ZONE_MOVABLE)? That should rule out most of the kernel allocations and
+> it fits the "balance by migration" concept.
 
-Should this maybe be CONFIG_DEBUG_LOCKDEP ?
+This would not work for GPU, GPU driver really want to be in total
+control of their memory yet sometimes they want to migrate some part
+of the process to their memory.
+
+Cheers,
+Jérôme
