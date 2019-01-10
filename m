@@ -2,206 +2,146 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36331C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 12:02:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 908FEC43444
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 12:05:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F10E721783
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 12:02:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5BED5214C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 12:05:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547121754;
-	bh=wl7w4ILeytw2T1W1IfyV7T/7MtKx8iAJk4i8gklPMjE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=qM4RZlR5jegg3uLg54W8YQ/t0thNDGGGpeMfUSiLZ0ovpqLOszzPbqSb6wdNc2iJE
-	 ZoK3MbBd+RYJ120mtePKP0UYEgsHJIpreBgrJUH3hvhOHvOBFCm+Fqsjcppp7N0x4n
-	 OPYbV9/s0k8rOUZJX6iwyoUwRCt0Us+cJIMToBqE=
+	s=default; t=1547121907;
+	bh=YN5kXd+pLKbV6zQQBMxxgDLF0RsvrRB3oaJf6oQyQ+4=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
+	b=dJh3XkMbejOkelhwFzz+GawnXIfI5iS8HFSF0xv8fpJp670BWrN7ovwZTG1c25G8D
+	 c0KccrG3d29fwUIqRbJKDpdOuyk3VRXAvef9VXIgZCLMhsZ2EyaEq2Pe6kchrj9nd0
+	 DJXOScdLI0au85kRP+9gqLJn8ocn2K8woqcXlflA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728083AbfAJMCd (ORCPT
+        id S1728162AbfAJMFG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 07:02:33 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:43050 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726612AbfAJMCc (ORCPT
+        Thu, 10 Jan 2019 07:05:06 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:50214 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728088AbfAJMFF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 07:02:32 -0500
-Received: by mail-lf1-f68.google.com with SMTP id u18so8082417lff.10;
-        Thu, 10 Jan 2019 04:02:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=FfPic8K1SjxZf9AKhGO/Zg3kvZjFTXQnItiVNIW+L08=;
-        b=bHu+5QRI35+OBDzkXTe0nF0gmRDUosRt6+4axlG5yYKiuEZXlnD47K63RWmxex2L5I
-         N9RF59PBpn7zLbeHKSBT5ZJ/1UDPH4VLAQ2NugwigTnJ/mnpe1eqjWbmQEFkFqJQTnAH
-         xWgC2N2Gl74TT/h+ONSOwngNde17gufJKo4/vEwm7WmOF8nKRNzSWKDJQetkCuwP0oeg
-         BcxMrT5AwzCUNIVk4xn9Dwd4ODNVstPNNABecqeKzQuQdvX6p5fFUSIKfSc4J58DYPK5
-         tBuAL15B6h0oVpkE6dhwqVkB0NyJ3CkeuAXnKLxFoF6+e1PhRKlqT22RPQ8ePZpUtZP8
-         LDnw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=FfPic8K1SjxZf9AKhGO/Zg3kvZjFTXQnItiVNIW+L08=;
-        b=d2JV5SzPzONX+kcOMUpBFPSMQ6Xe24DAqCBFg1IBKRPzufJ+bWtvlLC9vJIOmfzrDZ
-         LMeTninyqcnHizH9n4tJbfwiExbYoDBQOZgettPX5yY4Tv754ixTFb89DL93UN88fIG4
-         gNd3YOFm0UiBavTxWBLQLqirARXLJnoWreRqugs2gYDvA1dvNZclNG73l9YU0ewgIY4K
-         b2GtSkf6xTHS42NcC1lsE0JN4G/Xuyt+ubnczleaQE/ugWb0XWSkb3st88SKT++kKqIG
-         ARjZxu/uP/YdZqCwi0g9i+eNo+SwveeOQNwIK2CfWP5zUykAV/FG6S67WeCZFBa5FMIz
-         8CSA==
-X-Gm-Message-State: AJcUukeHBoSJyHK4PawRi0Glzs/4bIgDYwA/btdAnQD491kh+/uOow9L
-        Nzhwuu2T0Kx2RmzsnXSGXwA=
-X-Google-Smtp-Source: ALg8bN4CH4ka0vKvQt5fOdKT559QejkHt0hNcA3NH/phjiBX9GeZVx10HavYchIlbWTFriLN+V0V2Q==
-X-Received: by 2002:ac2:4343:: with SMTP id o3mr5911233lfl.129.1547121750057;
-        Thu, 10 Jan 2019 04:02:30 -0800 (PST)
-Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
-        by smtp.gmail.com with ESMTPSA id d5sm14052501lfi.65.2019.01.10.04.02.28
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 10 Jan 2019 04:02:29 -0800 (PST)
-Received: from johan by xi.terra with local (Exim 4.91)
-        (envelope-from <johan@kernel.org>)
-        id 1ghZ2a-0002gM-Kx; Thu, 10 Jan 2019 13:02:28 +0100
-Date:   Thu, 10 Jan 2019 13:02:28 +0100
-From:   Johan Hovold <johan@kernel.org>
-To:     Andreas Kemnade <andreas@kemnade.info>
-Cc:     johan@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Discussions about the Letux Kernel 
-        <letux-kernel@openphoenux.org>
-Subject: Re: [PATCH v2 1/5] gnss: sirf: write data to gnss only when the gnss
- device is open
-Message-ID: <20190110120228.GB3430@localhost>
-References: <20181209195150.5192-1-andreas@kemnade.info>
- <20181209195150.5192-2-andreas@kemnade.info>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181209195150.5192-2-andreas@kemnade.info>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+        Thu, 10 Jan 2019 07:05:05 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
+        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
+        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+        List-Archive; bh=N1M+86eqy0R7Kit/K+nZRQKvoSzJj/WXI8KqdOW37WQ=; b=JGC1pLBG1UTr
+        yITaE9TUOd+3Bjg2EvoMEEDF8qCYxW501gOv0ICWabSt0ZpLoGYzx+tZucCJRLkkUCZM6/cJgblg8
+        uvj5Kbna0UbusdDW3aRWoXVor5JhfIy7oaASVxoYmBnXxKmAQVohv+7nSE4kHw7HEQuB7SW6TQ6vi
+        P6zYU=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1ghZ4r-0003QK-9h; Thu, 10 Jan 2019 12:04:49 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id B36591127052; Thu, 10 Jan 2019 12:04:48 +0000 (GMT)
+From:   Mark Brown <broonie@kernel.org>
+To:     Rohit kumar <rohitkr@codeaurora.org>
+Cc:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Ajit Pandey <ajitp@codeaurora.org>,
+        Mark Brown <broonie@kernel.org>, plai@codeaurora.org,
+        bgoswami@codeaurora.org, asishb@codeaurora.org,
+        lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz,
+        tiwai@suse.com, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org, rohkumar@qti.qualcomm.com,
+        srinivas.kandagatla@linaro.org, vinod.koul@linaro.org,
+        Ajit Pandey <ajitp@codeaurora.org>, alsa-devel@alsa-project.org
+Subject: Applied "ASoC: soc-core: Hold client_mutex around soc_init_dai_link()" to the asoc tree
+In-Reply-To:  <1547110961-23670-1-git-send-email-rohitkr@codeaurora.org>
+X-Patchwork-Hint: ignore
+Message-Id: <20190110120448.B36591127052@debutante.sirena.org.uk>
+Date:   Thu, 10 Jan 2019 12:04:48 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Dec 09, 2018 at 08:51:46PM +0100, Andreas Kemnade wrote:
-> The api forbids writing data there otherwise. Prepare for the
-> serdev_open()/close() being a part of runtime pm.
-> 
-> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
-> ---
-> Changes in v2:
->  add locking
-> 
->  drivers/gnss/sirf.c | 28 +++++++++++++++++++++++++++-
->  1 file changed, 27 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gnss/sirf.c b/drivers/gnss/sirf.c
-> index 2c22836d3ffd..ba663de1db49 100644
-> --- a/drivers/gnss/sirf.c
-> +++ b/drivers/gnss/sirf.c
-> @@ -35,6 +35,12 @@ struct sirf_data {
->  	struct gpio_desc *wakeup;
->  	int irq;
->  	bool active;
-> +	/*
-> +	 * There might be races between returning data and closing the gnss
-> +	 * device.
-> +	 */
+The patch
 
-Please drop this comment, which is too verbose. The mutex protects the
-opened flag, and that could be indicated using a new line above the
-mutex and below the flag, or using a short comment before the mutex.
+   ASoC: soc-core: Hold client_mutex around soc_init_dai_link()
 
-> +	struct mutex gdev_mutex;
+has been applied to the asoc tree at
 
-Please rename "mutex". We should be able to reuse this for the serdev
-open count as well, right?
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
-> +	bool opened;
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-Rename "open" (i.e. same tense as "active").
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-And just add a newline here too.
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
->  	wait_queue_head_t power_wait;
->  };
->  
-> @@ -44,6 +50,7 @@ static int sirf_open(struct gnss_device *gdev)
->  	struct serdev_device *serdev = data->serdev;
->  	int ret;
->  
-> +	data->opened = true;
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
-Always hold the mutex when manipulating the open flag so we don't have
-to worry about ordering issues.
+Thanks,
+Mark
 
->  	ret = serdev_device_open(serdev);
->  	if (ret)
->  		return ret;
-> @@ -55,6 +62,7 @@ static int sirf_open(struct gnss_device *gdev)
->  	if (ret < 0) {
->  		dev_err(&gdev->dev, "failed to runtime resume: %d\n", ret);
->  		pm_runtime_put_noidle(&serdev->dev);
-> +		data->opened = false;
+From 04eb1efcd614d6f067b76a355b3a3599667959dc Mon Sep 17 00:00:00 2001
+From: Rohit kumar <rohitkr@codeaurora.org>
+Date: Thu, 10 Jan 2019 14:32:41 +0530
+Subject: [PATCH] ASoC: soc-core: Hold client_mutex around soc_init_dai_link()
 
-And to avoid problems on error paths.
+soc_init_dai_link() calls soc_find_component() which needs
+to be within client_mutex lock. Add client_mutex lock around
+soc_init_dai_link() in snd_soc_register_card() to avoid
+lockdep warning.
 
->  		goto err_close;
->  	}
->  
-> @@ -74,6 +82,9 @@ static void sirf_close(struct gnss_device *gdev)
->  	serdev_device_close(serdev);
->  
->  	pm_runtime_put(&serdev->dev);
+Fixes: 8780cf1142a5 ("ASoC: soc-core: defer card probe until all component is added to list")
+Reported-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Rohit kumar <rohitkr@codeaurora.org>
+Signed-off-by: Ajit Pandey <ajitp@codeaurora.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/soc-core.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Add a newline here.
+diff --git a/sound/soc/soc-core.c b/sound/soc/soc-core.c
+index eec92f17dd15..0934b36645b3 100644
+--- a/sound/soc/soc-core.c
++++ b/sound/soc/soc-core.c
+@@ -1027,6 +1027,7 @@ static int snd_soc_init_platform(struct snd_soc_card *card,
+ 				 struct snd_soc_dai_link *dai_link)
+ {
+ 	struct snd_soc_dai_link_component *platform = dai_link->platform;
++
+ 	/*
+ 	 * FIXME
+ 	 *
+@@ -2754,15 +2755,18 @@ int snd_soc_register_card(struct snd_soc_card *card)
+ 	if (!card->name || !card->dev)
+ 		return -EINVAL;
+ 
++	mutex_lock(&client_mutex);
+ 	for_each_card_prelinks(card, i, link) {
+ 
+ 		ret = soc_init_dai_link(card, link);
+ 		if (ret) {
+ 			dev_err(card->dev, "ASoC: failed to init link %s\n",
+ 				link->name);
++			mutex_unlock(&client_mutex);
+ 			return ret;
+ 		}
+ 	}
++	mutex_unlock(&client_mutex);
+ 
+ 	dev_set_drvdata(card->dev, card);
+ 
+-- 
+2.20.1
 
-> +	mutex_lock(&data->gdev_mutex);
-> +	data->opened = false;
-> +	mutex_unlock(&data->gdev_mutex);
->  }
->  
->  static int sirf_write_raw(struct gnss_device *gdev, const unsigned char *buf,
-> @@ -105,8 +116,22 @@ static int sirf_receive_buf(struct serdev_device *serdev,
->  {
->  	struct sirf_data *data = serdev_device_get_drvdata(serdev);
->  	struct gnss_device *gdev = data->gdev;
-> +	int ret = 0;
-> +
-> +	/*
-> +	 * we might come here everytime when runtime is resumed
-> +	 * and data is received. Two cases are possible
-> +	 * 1. device is opened during initialisation
-> +	 * 2. kernel is compiled without runtime pm
-> +	 *    and device is opened all the time
-> +	 */
-
-This comments makes little sense with the current code. Please remove.
-
-> +	mutex_lock(&data->gdev_mutex);
-> +	if (data->opened)
-> +		ret = gnss_insert_raw(gdev, buf, count);
->  
-
-No new line (or add one after mutex_lock() above).
-
-> -	return gnss_insert_raw(gdev, buf, count);
-> +	mutex_unlock(&data->gdev_mutex);
-> +
-> +	return ret;
->  }
->  
->  static const struct serdev_device_ops sirf_serdev_ops = {
-> @@ -275,6 +300,7 @@ static int sirf_probe(struct serdev_device *serdev)
->  	data->serdev = serdev;
->  	data->gdev = gdev;
->  
-> +	mutex_init(&data->gdev_mutex);
->  	init_waitqueue_head(&data->power_wait);
->  
->  	serdev_device_set_drvdata(serdev, data);
-
-Johan
