@@ -2,249 +2,124 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4ABCEC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 18:44:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51C99C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 18:46:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0201F206B7
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 18:44:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 22495206B7
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 18:46:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WNDnYi+a"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QpCjGaIB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728637AbfAJSov (ORCPT
+        id S1728781AbfAJSq1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 13:44:51 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:36681 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727000AbfAJSou (ORCPT
+        Thu, 10 Jan 2019 13:46:27 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:44956 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727000AbfAJSq1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 13:44:50 -0500
-Received: by mail-lj1-f195.google.com with SMTP id g11-v6so10655891ljk.3;
-        Thu, 10 Jan 2019 10:44:48 -0800 (PST)
+        Thu, 10 Jan 2019 13:46:27 -0500
+Received: by mail-pl1-f196.google.com with SMTP id e11so5558996plt.11;
+        Thu, 10 Jan 2019 10:46:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=TkzAt28ocByCpmQ8mlPfMrPj1s7vTr35cr959FjSyoo=;
-        b=WNDnYi+azyPBUyYjXyTwP8Fbk37Y4HVhIq5FPYG23BpdsbikxoIEkPAcp8SU1EKdXJ
-         MKqvK465HIAF6Q3kuUS2AiGgjyFVkIl3D6ZqCc8wQ84yIhzxPg1HIheMFJvTGNaE1Q3O
-         X50YftWJSRAK3WFZvBt22JZDmJ1w3t1S8ymIUw7921XzmkfAvuigJzi46/zoaTnOqS1o
-         /rMGEcUhTsqevLrsE3UXH8vpw5XcClv1B+JA/Qdko7D/MolvNJ/5Vmz5WB2IoJeRvdoV
-         gf89vUGH8oeh6NPXazBYUkGJnkY+7yJVjpU+zOo+8bhCb+L7Meq0mZUDkhByOp/p2+ML
-         UliA==
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=qdmfkEPHzANqefEUYiYiWKHzOhmx+tGvDPxNGGEwQ9s=;
+        b=QpCjGaIBZ5OSeTSuf2Xf4FjR/PCtMtZzsYEfDj0q9BKjAmGE6dt4/aUbTozuZCcGri
+         mUc4rw2305ZBHlOEKwu5gMYwIF5LughMsFDN9wRRlzlyDiVdfVohYujaYO3n5C7/ho+K
+         Xvz7JK7NHcy4CjKWmAQ1kbcfeQlW+HYtLOSa8W/4JesvIyXVzkcdLDh2Hmt1/ysKc+L5
+         jIH7Me6urGKn0ucEWzLFI6j9VSFCBIvySNzj7T+zasQnL+3Xze9aAKLR9wctx/XystSg
+         AEeJFI1CFSTxqMIMTkWsIuTvwWgFvsVtX1O5Rj6WvZlZzq1xeMGEjIGE1RByoJGNJkwN
+         qAWw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=TkzAt28ocByCpmQ8mlPfMrPj1s7vTr35cr959FjSyoo=;
-        b=P/2adr5nwemalfgFeeBVjUQtnvyM6bYN9g2WRzvEe/kGI5KTZNKcT4G9QHZ8ABRlwJ
-         3FEX6wve3srL4DxDj72U0e/7HV0vQNm8WYv3khzop5A4La+Bs628W+3bOihLnQpNERNg
-         eZdpfI2qGQ39fgAks9Y2RysIFaWveKyK4VdSNWJG0Lk8m1WOI9PaS9g2MBdTgApz8dJl
-         evlJHhXqCuXI4UI4cVmgwpmngAOGMYiipK1J4KJ5KFhwkRLG24wvH4RBJo1MXfqHfvu+
-         4CJLIvkF8bdwiv3FNvolvPKZa2KW5maGm6/k2rU0aSdeEIZZmsgL1l+NpiO1dtSuwaUm
-         RvUg==
-X-Gm-Message-State: AJcUukdU2CMvPOgtW9BCzxDuuohdmv605UorzWa3BXJ/sNQnR0885Hcf
-        D+eNB8nK1c0qz807O6MUYBbWB1kO
-X-Google-Smtp-Source: ALg8bN6HKF0WNG8MD/Qnal3sO7A5QVoyx70BSjaKCinIY3W05aePfHdApIgo1JuxwbXIZ89apF6f7w==
-X-Received: by 2002:a2e:80d3:: with SMTP id r19-v6mr6559163ljg.151.1547145886598;
-        Thu, 10 Jan 2019 10:44:46 -0800 (PST)
-Received: from [192.168.1.18] (che161.neoplus.adsl.tpnet.pl. [83.31.2.161])
-        by smtp.gmail.com with ESMTPSA id g17sm14423061lfg.78.2019.01.10.10.44.44
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=qdmfkEPHzANqefEUYiYiWKHzOhmx+tGvDPxNGGEwQ9s=;
+        b=d+XJd7d5Xw1YRM2kt6WMIDdjiIUw7UyV0PcnWGkN14LbFkkzKhcdv4KMW0yNc/aw/O
+         LlD9Fjo/IgPZvGXX1qW09qWJXvmOdNdqMM7dPJgPHoV6M3cStahfg0NTS30VS2hyygpP
+         Wby1XgBhmEfirQPMoQTN6QNkdkzZt27S7Henq6Xob2t3rqDib7pDhGTT1NkqE94jAp/X
+         98RJ+5ReWyjJKH3SRiGFblWSn0BLlpf5JaUtBPnqESTxVvWfvlq9piX6d0rB9SZrjDLD
+         o7jr4/8YNfrWXttIiTrIboFwzTBXsrGIIzb9cEcNxOvLSLqvMQGQJ2RphoVogUopO4G/
+         S6Cg==
+X-Gm-Message-State: AJcUukcyBOpfqlLpOuieB+0B1JsD3Zn2HVWG9by3NToluahvpqTHRb4U
+        8YBZmLoX2wW8xU07kl/JdhYZoy31
+X-Google-Smtp-Source: ALg8bN75GJHWo2OJGdMVpmRNYxOHGc6XdcEpMtYhQb9HG3yBlhlLl3JiQkYUz5IkQwl51HSRiNTI+g==
+X-Received: by 2002:a17:902:b406:: with SMTP id x6mr10925298plr.329.1547145986435;
+        Thu, 10 Jan 2019 10:46:26 -0800 (PST)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id w185sm113287305pfb.135.2019.01.10.10.46.25
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 10 Jan 2019 10:44:45 -0800 (PST)
-Subject: Re: [PATCH 1/2] dt: bindings: lp5024: Introduce the lp5024 and lp5018
- RGB driver
-To:     Dan Murphy <dmurphy@ti.com>, robh+dt@kernel.org, pavel@ucw.cz
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-leds@vger.kernel.org
-References: <20181219162626.12297-1-dmurphy@ti.com>
- <20181219162626.12297-2-dmurphy@ti.com>
- <dc2283f9-db85-1eaf-f046-3fbbd4adcace@gmail.com>
- <2d2d5dcd-9c23-e901-daac-9b79aa5a5e82@ti.com>
- <6c62956e-7789-58ba-5437-f2e033f2825c@gmail.com>
- <366cbf6d-94fa-fea9-be58-07ddb09cff3a@ti.com>
- <df59c10d-7038-cb4a-45f0-7420254c6398@gmail.com>
- <ec0393b7-118e-1f3b-d5af-86ecdf66412a@ti.com>
- <ae700129-7b59-c92b-0c0a-b57a6f230ff7@gmail.com>
- <adcd7987-f7fc-ae1f-9aa4-cebcbf01ad58@ti.com>
-From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Message-ID: <1702dfd6-b08f-c1ff-e46d-1366618bedb0@gmail.com>
-Date:   Thu, 10 Jan 2019 19:44:43 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Thu, 10 Jan 2019 10:46:25 -0800 (PST)
+Date:   Thu, 10 Jan 2019 10:46:24 -0800
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Xiaoting Liu <xiaoting.liu@hxt-semitech.com>
+Cc:     jdelvare@suse.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        openbmc@lists.ozlabs.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, shunyong.yang@hxt-semitech.com,
+        dongsheng.wang@hxt-semitech.com
+Subject: Re: [PATCH v3 2/4] dt-bindings: hwmon: add dps650ab documentation
+Message-ID: <20190110184624.GC9010@roeck-us.net>
+References: <cover.1546918172.git.xiaoting.liu@hxt-semitech.com>
+ <0527fcf7155ea12a2a1be680b3617691e6e26d72.1546918172.git.xiaoting.liu@hxt-semitech.com>
 MIME-Version: 1.0
-In-Reply-To: <adcd7987-f7fc-ae1f-9aa4-cebcbf01ad58@ti.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0527fcf7155ea12a2a1be680b3617691e6e26d72.1546918172.git.xiaoting.liu@hxt-semitech.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Dan,
-
-On 1/9/19 10:31 PM, Dan Murphy wrote:
-> Jacek
+On Thu, Jan 10, 2019 at 10:24:33AM +0800, Xiaoting Liu wrote:
+> Bindings for Delta Electronics DPS-650-AB power supply.
 > 
-> On 1/9/19 3:28 PM, Jacek Anaszewski wrote:
->> On 1/9/19 10:12 PM, Dan Murphy wrote:
->>> On 1/9/19 2:12 PM, Jacek Anaszewski wrote:
->>>> Hi Dan,
->>>>
->>>> On 1/8/19 10:22 PM, Dan Murphy wrote:
->>>>> On 1/8/19 3:16 PM, Jacek Anaszewski wrote:
->>>>>> On 1/8/19 9:53 PM, Dan Murphy wrote:
->>>>>>> Jacek
->>>>>>>
->>>>>>> On 1/8/19 2:33 PM, Jacek Anaszewski wrote:
->>>>>>>> Dan,
->>>>>>>>
->>>>>>>> On 12/19/18 5:26 PM, Dan Murphy wrote:
->>>>>>>>> Introduce the bindings for the Texas Instruments LP5024 and the LP5018
->>>>>>>>> RGB LED device driver.  The LP5024/18 can control RGB LEDs individually
->>>>>>>>> or as part of a control bank group.  These devices have the ability
->>>>>>>>> to adjust the mixing control for the RGB LEDs to obtain different colors
->>>>>>>>> independent of the overall brightness of the LED grouping.
->>>>>>>>>
->>>>>>>>> Datasheet:
->>>>>>>>> http://www.ti.com/lit/ds/symlink/lp5024.pdf
->>>>>>>>>
->>>>>>>>> Signed-off-by: Dan Murphy <dmurphy@ti.com>
->>>>>>>>> ---
->>>>>>>>>       .../devicetree/bindings/leds/leds-lp5024.txt  | 63 +++++++++++++++++++
->>>>>>>>>       1 file changed, 63 insertions(+)
->>>>>>>>>       create mode 100644 Documentation/devicetree/bindings/leds/leds-lp5024.txt
->>>>>>>>>
->>>>>>>>> diff --git a/Documentation/devicetree/bindings/leds/leds-lp5024.txt b/Documentation/devicetree/bindings/leds/leds-lp5024.txt
->>>>>>>>> new file mode 100644
->>>>>>>>> index 000000000000..9567aa6f7813
->>>>>>>>> --- /dev/null
->>>>>>>>> +++ b/Documentation/devicetree/bindings/leds/leds-lp5024.txt
->>>>>>>>> @@ -0,0 +1,63 @@
->>>>>>>>> +* Texas Instruments - LP5024/18 RGB LED driver
->>>>>>>>> +
->>>>>>>>> +The LM3692x is an ultra-compact, highly efficient,
->>>>>>>>> +white-LED driver designed for LCD display backlighting.
->>>>>>>>> +
->>>>>>>>> +The main difference between the LP5024 and L5018 is the number of
->>>>>>>>> +RGB LEDs they support.  The LP5024 supports twenty four strings while the
->>>>>>>>> +LP5018 supports eighteen strings.
->>>>>>>>> +
->>>>>>>>> +Required properties:
->>>>>>>>> +    - compatible:
->>>>>>>>> +        "ti,lp5018"
->>>>>>>>> +        "ti,lp5024"
->>>>>>>>> +    - reg :  I2C slave address
->>>>>>>>> +    - #address-cells : 1
->>>>>>>>> +    - #size-cells : 0
->>>>>>>>> +
->>>>>>>>> +Optional properties:
->>>>>>>>> +    - enable-gpios : gpio pin to enable/disable the device.
->>>>>>>>> +    - vled-supply : LED supply
->>>>>>>>> +
->>>>>>>>> +Required child properties:
->>>>>>>>> +    - reg : Is the child node iteration.
->>>>>>>>> +    - led-sources : LP5024 - 0 - 7
->>>>>>>>> +            LP5018 - 0 - 5
->>>>>>>>> +            Declares the LED string or strings that the child node
->>>>>>>>> +            will control.  If ti,control-bank is set then this
->>>>>>>>> +            property will contain multiple LED IDs.
->>>>>>>>> +
->>>>>>>>> +Optional child properties:
->>>>>>>>> +    - label : see Documentation/devicetree/bindings/leds/common.txt
->>>>>>>>> +    - linux,default-trigger :
->>>>>>>>> +       see Documentation/devicetree/bindings/leds/common.txt
->>>>>>>>> +    - ti,control-bank : Indicates that the LED strings declared in the
->>>>>>>>> +                led-sources property are grouped within a control
->>>>>>>>> +                bank for brightness and mixing control.
->>>>>>>>> +
->>>>>>>>> +Example:
->>>>>>>>> +
->>>>>>>>> +led-controller@28 {
->>>>>>>>> +    compatible = "ti,lp5024";
->>>>>>>>> +    reg = <0x28>;
->>>>>>>>> +    #address-cells = <1>;
->>>>>>>>> +    #size-cells = <0>;
->>>>>>>>> +
->>>>>>>>> +    enable-gpios = <&gpio1 28 GPIO_ACTIVE_HIGH>;
->>>>>>>>> +    vled-supply = <&vbatt>;
->>>>>>>>> +
->>>>>>>>> +    led@0 {
->>>>>>>>> +        reg = <0>;
->>>>>>>>> +        led-sources = <1>;
->>>>>>>>> +    };
->>>>>>>>> +
->>>>>>>>> +    led@1 {
->>>>>>>>> +        reg = <1>;
->>>>>>>>> +        led-sources = <0 6>;
->>>>>>>>> +        ti,control-bank;
->>>>>>>>
->>>>>>>> Do you really need ti,control-bank? Doesn't led-sources array size
->>>>>>>> greater than 1 mean that the node describes control bank?
->>>>>>>>
->>>>>>>
->>>>>>> That will work too.
->>>>>>
->>>>>>>> Also, does it make sense to have only two LEDs in the bank?
->>>>>>>
->>>>>>> The array can populate all 7 LEDs in a single node.  I only show 2 here as the example.
->>>>>>> See the description above of the led-sources
->>>>>>
->>>>>> OK, I confused RGB LED modules with banks.
->>>>>>
->>>>>> Shouldn't we allow for defining either strings or RGB LED
->>>>>> triplets somehow then?
->>>>>>
->>>>>
->>>>> Well that is what this should be doing.  If you define a single LED in LED sources then
->>>>> the triplet is controlled via the associated LEDx_brightness register.
->>>>
->>>> led-sources should map to iouts directly.
->>>> So, for RGB LED modules I would expect:
->>>>
->>>> LED0: led-sources = <0 1 2>;
->>>> LED1: led-sources = <3 4 5>;
->>>> LED2: led-sources = <6 7 8>;
->>>> and so on.
->>>
->>>>
->>>> for banks:
->>>>
->>>> Bank A with iouts 0,3,6,9: led-sources<0 3 6 9>;
->>>> Bank B with iouts 2,4,10:  led-sources<2 4 10>;
->>>> Bank C with iouts 5,8,11,14,17: led-sources<5 8 11 14 17>;
->>>>
->>>
->>> Ok the led-sources would need to be different then this as I don't define the sources for banks.
->>>
->>> The led-sources for the banks and the individual groups will have different meanings within the same
->>> document.  I was attempting to keep the led-sources mapped to the LEDx_brightness registers as opposed to
->>> the hardware outputs since the RGB LEDs are controlled and grouped by a single brightness register and if banked then
->>> it would be controlled by the bank brightness register.
->>>
->>> Describing these in the DT seems wrought with potential issues as the data sheet defines what outputs map to what bank and LED
->>> registers.
->>
->> Yes, that's why I mentioned the need for validation of led-sources.
->> But they have to be iouts. This property was introduced specifically
->> for such purposes.
->>
-> 
-> Yes Pavel also mentioned that as well.
-> 
-> I will look into validating the sources.  But there will be no mapping of the sources to the output that is done
-> in the hardware.  This would just be a data sheet mapping since the outputs are not configurable.
+> Signed-off-by: Xiaoting Liu <xiaoting.liu@hxt-semitech.com>
 
-Hmm, isn't the mapping defined in the hardware via LED_CONFIG0 register?
-I have an impression that it defines whether LED belongs to an RGB LED
-module or to a bank. Basing on that I created my DT example above.
+Waiting for DT maintainer Ack to apply. Note that you did not copy
+linux-hwmon@vger.kernel.org. As a result, it _may_ get lost since
+https://patchwork.kernel.org/project/linux-hwmon/list/ is my primary
+means to track hwmon patches, and it isn't there.
+If I don't the patch after the Ack, please resend and remember
+to include the hwmon mailing list.
 
--- 
-Best regards,
-Jacek Anaszewski
+Thanks,
+Guenter
+
+> ---
+> v3:
+>   Change patch commit message.
+>   Add vendor delta to the compatible property.
+> ---
+> v2:
+>   Change the patch subject.
+> ---
+>  Documentation/devicetree/bindings/hwmon/dps650ab.txt | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/hwmon/dps650ab.txt b/Documentation/devicetree/bindings/hwmon/dps650ab.txt
+> new file mode 100644
+> index 000000000000..32d89e4f4956
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/hwmon/dps650ab.txt
+> @@ -0,0 +1,11 @@
+> +Bindings for Delta Electronics DPS-650-AB power supply
+> +
+> +Required properties:
+> +- compatible : "delta,dps650ab"
+> +- reg        : I2C address, one of 0x58, 0x59.
+> +
+> +Example:
+> +	dps650ab@58 {
+> +		    compatible = "delta,dps650ab";
+> +		    reg = <0x58>;
+> +	};
+> -- 
+> 1.8.3.1
+> 
