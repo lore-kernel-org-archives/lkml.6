@@ -2,106 +2,134 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24D7BC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 20:53:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 729DCC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 20:54:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E9B0420685
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 20:53:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 393CF20685
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 20:54:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CjrkIM7B"
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="glH1iuYZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730788AbfAJUxX (ORCPT
+        id S1730463AbfAJUyq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 15:53:23 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:40469 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730574AbfAJUxU (ORCPT
+        Thu, 10 Jan 2019 15:54:46 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:36380 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730090AbfAJUyq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 15:53:20 -0500
-Received: by mail-lf1-f67.google.com with SMTP id v5so9302703lfe.7;
-        Thu, 10 Jan 2019 12:53:18 -0800 (PST)
+        Thu, 10 Jan 2019 15:54:46 -0500
+Received: by mail-pg1-f194.google.com with SMTP id n2so5322505pgm.3
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 12:54:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
+        d=sifive.com; s=google;
+        h=date:subject:in-reply-to:in-reply-to:cc:from:to:message-id
          :mime-version:content-transfer-encoding;
-        bh=KjuAmgjHlhPWg7vZv/M0TlOMAshH0WF7o8w6mNSkFXw=;
-        b=CjrkIM7BBTZSRBJobpknJiZPTJU+pWStblRgDCGvIVSFYmeF8Dnz0JCLPNXYGFBJ2c
-         5o+YvOuESHL8dY4RS8c0o1kAfJBaNzYdocDRTiLa/ADvs14oRcmd0AGMp2qJpf0bW0ZE
-         trmGj2gXokwcGmxiik/0Y20U1LZIkXI0EvzltO+MVeXJSPKRaeptRxqJ21ZlpWH99ZUv
-         f+hRpNmVObSMIbaQHg7ehKLsqrndLkWJSTIPk9n3oNLEx41eZj3qBohamSs6bb5Pi4mL
-         ulTRXpuIQ/fJBwFMyutuCklpBALlN3FbTiUwRPH92EX0T6WTNAWuYzLtrJoTL/EPYC5M
-         xP7w==
+        bh=chBp/UJxnNpR33iIZVktfED5fzc5gbgR9UsUskuYUtU=;
+        b=glH1iuYZk6oVDfYbYSwfvuDH7AgwH48SrUC5v93H6iTKUxdAo9ygM/PJGD8KoROHfb
+         WUm6pwqVvp3IYVwNLwmQNl+1/68HyQugfMrfxVZGy476GhPXvjJLuREYwISYRoTuLMkI
+         w08ptM+ju0X/qIPfSck3AhvnD2y7mEDcOMFj216ZcF8XgNSlD1yd86bhZkUnOd3dfdBQ
+         HWDJnHRcZTLat4wqT/ejwfv1umsu5xg3PR5P55zo6SZrAFHDJOKQqDATTjac+r6uwiSy
+         UNS2/ieAKUQlkbrwBT02TTvDNpq8I+J2XI9exKaNGukzkHtarMxIPu6M3LPLcYx3QgMg
+         fmpg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=KjuAmgjHlhPWg7vZv/M0TlOMAshH0WF7o8w6mNSkFXw=;
-        b=RoZd1W1Q94T8AckG9rhR7HNtINi199VbRKRT/h0jjH5TV6sxmPiaeWUapJwkb/mafP
-         ds009RiX2Halj3Hi9EtWAq0tA3CXejFr7L1qwLtNRE/6KVAILe1PIqm7Ri2IRU/AqOeS
-         Nd4HTh2KHRMT8pJimlviqn0fLC6L2FMWtxR9Lfn5KI/6qaAKmlIthbQt2TmSdje9Vz3F
-         R22SodNVW0ZhSpT87rP67VqjsGmuUMP89WE0n4i4oFdvVCTx06D+wEmHw0pKHBYf88cc
-         e0sNYtDmfq3eq0d6Rko4PwTf1zToOaJmOXdYB5a4P+N86j+p1uPFFww4tm8LNpFiKsvw
-         18IA==
-X-Gm-Message-State: AJcUukdvKJ1O70YHG8IRwVXO2rjh93yqN0g2kT/5ICAohCCSadtvdVZf
-        bSGJDt42C9o8/4pTqA28fTw=
-X-Google-Smtp-Source: ALg8bN7adZ008RPmP0J1BWFEJu9/vRj31EhA6mkS1SlBCjLbIJYaMRKGnl7f69G+9tJtXMhStxu3Mw==
-X-Received: by 2002:a19:a9d2:: with SMTP id s201mr6402487lfe.154.1547153598199;
-        Thu, 10 Jan 2019 12:53:18 -0800 (PST)
-Received: from localhost.localdomain ([2a02:a315:5445:5300:5dc1:592c:c674:2869])
-        by smtp.googlemail.com with ESMTPSA id z7-v6sm15389690lji.42.2019.01.10.12.53.16
+        h=x-gm-message-state:date:subject:in-reply-to:in-reply-to:cc:from:to
+         :message-id:mime-version:content-transfer-encoding;
+        bh=chBp/UJxnNpR33iIZVktfED5fzc5gbgR9UsUskuYUtU=;
+        b=FdxVmX5t7/rsVBU0LxLypFzVrQbV4Z+QrXVAbJB2XZ87Jgdc+S/cYtYO5fgELVWI7F
+         B0lyuHpQ1XlMe370aGuVsEpR3ZYhhMzSl5PZo7tKUvO94fnBSp/Qh1O4a5hXV2ybW5ot
+         5pDaobP/OphuGExPvZZYTVZ5I+D41MgEejO64k0LdctN/aa5FvP8tMBSggMMvo+rIxmV
+         BhEARe+zCMLEPe9hefzfNmoU8/dH1TN3xr7av9n2QvqWBQvj+LOhSY9f8Ho2k958EH+q
+         HW9zyJDi4KGZESNK35at24By+K3UFkniXXnh3DCAWzGLRKJxnwXOt6vdfqBLMyJlJg9c
+         2XKw==
+X-Gm-Message-State: AJcUukf/dAdJllk4tujMojLTtxFH0udCkrPLRfkOpo0jQ2utZOMoVDo4
+        DZUtvMWwfHQi76a9qBBwAa8BxA==
+X-Google-Smtp-Source: ALg8bN5RBxFmh1I+e/aFlQnq1tmywMaJAYiUv558ldgWbIsEutV3BYGgnwlr0K+qGgwBFqIEyXU3Tg==
+X-Received: by 2002:a63:955a:: with SMTP id t26mr10889818pgn.449.1547153684841;
+        Thu, 10 Jan 2019 12:54:44 -0800 (PST)
+Received: from localhost ([12.206.222.5])
+        by smtp.gmail.com with ESMTPSA id 125sm98192116pfg.39.2019.01.10.12.54.43
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 10 Jan 2019 12:53:17 -0800 (PST)
-From:   =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
-To:     kgene@kernel.org
-Cc:     krzk@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        linux@armlinux.org.uk, viresh.kumar@linaro.org, rjw@rjwysocki.net,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
-Subject: [PATCH v2 4/4] ARM: defconfig: s5pv210: Add cpufreq support
-Date:   Thu, 10 Jan 2019 21:52:15 +0100
-Message-Id: <20190110205215.22030-5-pawel.mikolaj.chmiel@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190110205215.22030-1-pawel.mikolaj.chmiel@gmail.com>
-References: <20190110205215.22030-1-pawel.mikolaj.chmiel@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+        Thu, 10 Jan 2019 12:54:44 -0800 (PST)
+Date:   Thu, 10 Jan 2019 12:54:44 -0800 (PST)
+X-Google-Original-Date: Thu, 10 Jan 2019 12:54:42 PST (-0800)
+Subject:     Re: [PATCH] tty/serial: emit CR before NL in RISC-V SBL console
+In-Reply-To: <mvm7efcedop.fsf@suse.de>
+In-Reply-To: <CAAhSdy0suSgKpdz+NUrXzS9Ozp75hMC6ovW4yLf5s0KYJwwocw@mail.gmail.com>
+CC:     Greg KH <gregkh@linuxfoundation.org>, jslaby@suse.com,
+        aou@eecs.berkeley.edu, atish.patra@wdc.com,
+        Christoph Hellwig <hch@infradead.org>, robh@kernel.org,
+        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-serial@vger.kernel.org
+From:   Palmer Dabbelt <palmer@sifive.com>
+To:     schwab@suse.de, anup@brainfault.org
+Message-ID: <mhng-e8479556-154c-443f-9d41-dc182aafa2ae@palmer-si-x1c4>
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This commit enables cpufreq support for all s5pv210 devices.
+On Thu, 10 Jan 2019 07:26:46 PST (-0800), schwab@suse.de wrote:
+> On Jan 10 2019, Anup Patel <anup@brainfault.org> wrote:
+>
+>> Instead of doing '\n' handling here, we should do it in BBL or
+>> OpenSBI (i.e. SBI runtime firmware) otherwise all users of
+>> SBI_CONSOLE_PUTCHAR (namely, Linux, FreeBSD,
+>> FreeRTOS, U-Boot S-mode, etc) will endup having '\n'
+>> handling.
+>
+> I don't think the serial driver should do NLCR handling on its own,
+> without being instructed by the tty layer.  Since the earlycon does not
+> have a tty layer, it needs to handle it explicitly.
 
-Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
----
- arch/arm/configs/s5pv210_defconfig | 6 ++++++
- 1 file changed, 6 insertions(+)
+I think it's best if we have the SBI interfaces be defined to be bit-exact.  It
+does mean that everyone who uses the interfaces needs to do this handling, but
+I think that's actually a feature because it'll be subtly different everywhere.
 
-diff --git a/arch/arm/configs/s5pv210_defconfig b/arch/arm/configs/s5pv210_defconfig
-index 951196bdf008..fd4f28aabda6 100644
---- a/arch/arm/configs/s5pv210_defconfig
-+++ b/arch/arm/configs/s5pv210_defconfig
-@@ -11,6 +11,12 @@ CONFIG_ARCH_S5PV210=y
- CONFIG_VMSPLIT_2G=y
- CONFIG_ARM_APPENDED_DTB=y
- CONFIG_CMDLINE="root=/dev/ram0 rw ramdisk=8192 initrd=0x20800000,8M console=ttySAC1,115200 init=/linuxrc"
-+CONFIG_CPU_FREQ=y
-+CONFIG_CPU_FREQ_STAT=y
-+CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND=y
-+CONFIG_CPU_FREQ_GOV_POWERSAVE=m
-+CONFIG_CPU_FREQ_GOV_USERSPACE=m
-+CONFIG_CPU_FREQ_GOV_CONSERVATIVE=m
- CONFIG_VFP=y
- CONFIG_NEON=y
- CONFIG_MODULES=y
--- 
-2.17.1
+This also has the advantage of being compatible with what we currently do in
+BBL and what we current expect in Linux everywhere but this earlycon driver
+(and will do assuming we merge this patch).
 
+On Thu, 10 Jan 2019 08:17:07 PST (-0800), anup@brainfault.org wrote:
+> On Thu, Jan 10, 2019 at 8:56 PM Andreas Schwab <schwab@suse.de> wrote:
+>>
+>> On Jan 10 2019, Anup Patel <anup@brainfault.org> wrote:
+>>
+>> > Instead of doing '\n' handling here, we should do it in BBL or
+>> > OpenSBI (i.e. SBI runtime firmware) otherwise all users of
+>> > SBI_CONSOLE_PUTCHAR (namely, Linux, FreeBSD,
+>> > FreeRTOS, U-Boot S-mode, etc) will endup having '\n'
+>> > handling.
+>>
+>> I don't think the serial driver should do NLCR handling on its own,
+>> without being instructed by the tty layer.  Since the earlycon does not
+>> have a tty layer, it needs to handle it explicitly.
+>
+> I tried to investigate more. What you suggest is correct
+> but we should use uart_console_write() API.
+>
+> Instead of explicitly doing NLCR here, we should do
+> something as follows:
+>
+> static void sbi_putc(struct uart_port *port, int c)
+> {
+>     sbi_console_putchar(c);
+> }
+>
+> static void sbi_console_write(struct console *con,
+>                                                const char *s, unsigned n)
+> {
+>     struct earlycon_device *dev = con->data;
+>     uart_console_write(&dev->port, s, n, sbi_putc);
+> }
+>
+> The uart_console_write() does the NLCR handling.
+
+That does look cleaner.  I'll expect a v2 :)
