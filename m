@@ -2,80 +2,72 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DACAC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 04:42:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4CC6C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 04:59:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D120C20879
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 04:42:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ABA51206B7
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 04:59:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="XbP+bcl4";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="WVBVz5nl"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="NlzPkN+f";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="PDunOwZu"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727269AbfAJEmy (ORCPT
+        id S1727237AbfAJE72 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 23:42:54 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:41944 "EHLO
+        Wed, 9 Jan 2019 23:59:28 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:49106 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726846AbfAJEmy (ORCPT
+        with ESMTP id S1726883AbfAJE71 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 23:42:54 -0500
+        Wed, 9 Jan 2019 23:59:27 -0500
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id A93D96089D; Thu, 10 Jan 2019 04:42:53 +0000 (UTC)
+        id B42136079B; Thu, 10 Jan 2019 04:59:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1547095373;
-        bh=yKZxbKxuH76RPO64h06mP584lP5CvpNQXbQHIafW3a8=;
+        s=default; t=1547096366;
+        bh=0Sv+vQYiq+r2Uti0vsESec2TG5QC92SR4T8SPWjwMQc=;
         h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=XbP+bcl4uac0j+ATjJpgnQZPmeo3V8FSZmKvkYrdH7JOYnuX+/m1B38mLzJfxNUTS
-         09EidbkJAgxFsGxVo+rAjclBdlI0S8cW6KwoXEeJgyoOyqhcIx3EDlS7asc+p7qeQx
-         5m12iFyEb0s6qf7pUUIoT6d6xXQ973xshwlj9P94=
+        b=NlzPkN+f4N0b8j04D0AgKqTpfJDH8PDOxIJZ66OilhJWLM3RQoC22XWMB6c4e8hhn
+         4+k4MtBUVEUHPbrV5XsKm/kSbxtaxnDMKRWpzg/P5qZj9DXjKZRmyxT72pFD5WAX1c
+         LI4JS/31Rw0f45WPrqHPATIXwKgdV4ZzdSoeBdac=
 Received: from [10.79.129.145] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: saiprakash.ranjan@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 112CD60386;
-        Thu, 10 Jan 2019 04:42:47 +0000 (UTC)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id D17E260265;
+        Thu, 10 Jan 2019 04:59:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1547095372;
-        bh=yKZxbKxuH76RPO64h06mP584lP5CvpNQXbQHIafW3a8=;
+        s=default; t=1547096365;
+        bh=0Sv+vQYiq+r2Uti0vsESec2TG5QC92SR4T8SPWjwMQc=;
         h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=WVBVz5nlRsrquHn9hKBAwhVd4b8rLJGNaThbLpHisUSDpP4QeNbGHcmDdDwiINFwb
-         i5FxAcTbKCfOYDgABrD2+0ev+2XRU9svK5vyY71UYwMj9zN9v24zEgCartFaTTTMVT
-         vjCuqyVQgMecsw49j5F1j0/dyDOrLgFW640sPR/8=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 112CD60386
+        b=PDunOwZu1lPW4RFPViFoRu5ZTgrsTquSUnT5xN0PN1FsSFpEiwURUlkAmEtsyXtiQ
+         BecBFBCSI2k+ECC8aZkRo/Gf8Ish+L72dPgYOHrva1DDpYwAHoiOudAQRHrgp0SLgk
+         TvfBoPrq301/ZTE8JDbmcyUJ8atn0qFNhMCEeYUc=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D17E260265
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=saiprakash.ranjan@codeaurora.org
-Subject: Re: [PATCH 3/3] arm64: dts: qcom: sdm845: Remove the duplicate header
- inclusion
-To:     Doug Anderson <dianders@chromium.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <andy.gross@linaro.org>
-Cc:     Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
+Subject: Re: [PATCH v2 3/7] soc: qcom: Add AOSS QMP genpd provider
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <andy.gross@linaro.org>,
         David Brown <david.brown@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
-        Sibi Sankar <sibis@codeaurora.org>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Leo Yan <leo.yan@linaro.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-References: <cover.1547054308.git.saiprakash.ranjan@codeaurora.org>
- <5f400b3a15cab5dd071e4a129d38cb21e7123b78.1547054308.git.saiprakash.ranjan@codeaurora.org>
- <CAD=FV=UgFwVdsTuaQhVA9q18Ns8n278A4mx=TrvuOW3mmZm84A@mail.gmail.com>
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     Russell King <linux@armlinux.org.uk>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Arun Kumar Neelakantam <aneela@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20190106080915.4493-1-bjorn.andersson@linaro.org>
+ <20190106080915.4493-4-bjorn.andersson@linaro.org>
 From:   Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
-Message-ID: <b8762c0d-45f2-7f32-2d13-ce1bd1274e0a@codeaurora.org>
-Date:   Thu, 10 Jan 2019 10:12:45 +0530
+Message-ID: <b9c970f1-2c2e-6e4f-acad-838054db14db@codeaurora.org>
+Date:   Thu, 10 Jan 2019 10:29:18 +0530
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
  Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <CAD=FV=UgFwVdsTuaQhVA9q18Ns8n278A4mx=TrvuOW3mmZm84A@mail.gmail.com>
+In-Reply-To: <20190106080915.4493-4-bjorn.andersson@linaro.org>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -84,17 +76,27 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Doug,
+Hi Bjorn,
 
-On 1/10/2019 4:27 AM, Doug Anderson wrote:
+On 1/6/2019 1:39 PM, Bjorn Andersson wrote:
+> The AOSS QMP genpd provider implements control over power-related
+> resources related to low-power state associated with the remoteprocs in
+> the system as well as control over a set of clocks related to debug
+> hardware in the SoC.
 > 
-> This was on my TODO list, but you beat me to it.  This could land any
-> time and is completely separate from the other patches in this series.
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> ---
 > 
-> Reviewed-by: Douglas Anderson <dianders@chromium.org>
+> Changes since v1:
+> - Drop compatible, as the QMP DT node is flattened
+> - Correct size of send
 > 
 
-Thanks for the review. Sorry I missed keeping you and Bjorn in CC.
+Thanks for the patch. I tested QDSS functionality with this on SDM845
+and it works fine. Also posted the patch for the same here:
+  - https://lore.kernel.org/patchwork/patch/1030510/
+
+Tested-by: Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
 
 -- 
 QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
