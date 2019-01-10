@@ -2,106 +2,108 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05117C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 18:26:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E1DDC43444
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 18:29:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D1AFD214DA
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 18:26:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 35629208E3
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 18:29:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547144993;
+	bh=P/Ud3w6lytm1dJiHF0n3F3ulBpQDfj6Q2QXw2tnB8EA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=n+jGPHk7f02bNfPG+vRFe2lwioiUrcYJd/hROLnZYYj06AG4LcjbChf1N8oIaitzn
+	 ggao59VMGgiJcUrMWr7nB4oEqUbelEBefWK41o20Zbal+BjkZQtxWiPBu3ZX/y+gGn
+	 0EXS17r1YpHKLOSN4B5mvmS+/XKQFuIPCdtNe4SA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731142AbfAJS0d (ORCPT
+        id S1731057AbfAJS3w (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 13:26:33 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:17132 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730625AbfAJS0d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 13:26:33 -0500
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 8B6B6B2D781288A6371F;
-        Fri, 11 Jan 2019 02:26:30 +0800 (CST)
-Received: from localhost (10.202.226.46) by DGGEMS402-HUB.china.huawei.com
- (10.3.19.202) with Microsoft SMTP Server id 14.3.408.0; Fri, 11 Jan 2019
- 02:26:25 +0800
-Date:   Thu, 10 Jan 2019 18:26:10 +0000
-From:   Jonathan Cameron <jonathan.cameron@huawei.com>
-To:     Michal Hocko <mhocko@kernel.org>
-CC:     Fengguang Wu <fengguang.wu@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        <kvm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        Fan Du <fan.du@intel.com>, Yao Yuan <yuan.yao@intel.com>,
-        Peng Dong <dongx.peng@intel.com>,
-        Huang Ying <ying.huang@intel.com>,
-        Liu Jingqi <jingqi.liu@intel.com>,
-        Dong Eddie <eddie.dong@intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Zhang Yi <yi.z.zhang@linux.intel.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        "Mel Gorman" <mgorman@suse.de>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        <linux-accelerators@lists.ozlabs.org>
-Subject: Re: [RFC][PATCH v2 00/21] PMEM NUMA node and hotness
- accounting/migration
-Message-ID: <20190110182610.00004250@huawei.com>
-In-Reply-To: <20190108145256.GX31793@dhcp22.suse.cz>
-References: <20181226131446.330864849@intel.com>
-        <20181227203158.GO16738@dhcp22.suse.cz>
-        <20181228050806.ewpxtwo3fpw7h3lq@wfg-t540p.sh.intel.com>
-        <20181228084105.GQ16738@dhcp22.suse.cz>
-        <20181228094208.7lgxhha34zpqu4db@wfg-t540p.sh.intel.com>
-        <20181228121515.GS16738@dhcp22.suse.cz>
-        <20181228133111.zromvopkfcg3m5oy@wfg-t540p.sh.intel.com>
-        <20181228195224.GY16738@dhcp22.suse.cz>
-        <20190102122110.00000206@huawei.com>
-        <20190108145256.GX31793@dhcp22.suse.cz>
-Organization: Huawei
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; i686-w64-mingw32)
+        Thu, 10 Jan 2019 13:29:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44958 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727684AbfAJS3w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 13:29:52 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5578B20874;
+        Thu, 10 Jan 2019 18:29:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547144991;
+        bh=P/Ud3w6lytm1dJiHF0n3F3ulBpQDfj6Q2QXw2tnB8EA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ykoQ1pKakRYls0c581PAQVONsRcVeFElcVAoSotCubH410tM5iMNvtBEU23Ue85Fn
+         BACKKRYTwPv+1toN0r0Apvyzb1+9CrLidiYtvqDE4PbMxb4t8efoQ8atQPEJWRplFe
+         1y3oiasrWKfRZDjIukKsw0QpkSNr7M8LL5RrmwvE=
+Date:   Thu, 10 Jan 2019 19:29:48 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Christoph Biedl <linux-kernel.bfrz@manchmal.in-ulm.de>,
+        Breno Leitao <leitao@debian.org>
+Cc:     Guenter Roeck <linux@roeck-us.net>, linux-kernel@vger.kernel.org,
+        torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH 4.19 000/170] 4.19.14-stable review
+Message-ID: <20190110182948.GB7748@kroah.com>
+References: <20190107104452.953560660@linuxfoundation.org>
+ <20190108230731.GC20519@roeck-us.net>
+ <20190109143811.GB29274@kroah.com>
+ <20190109194048.GA11505@roeck-us.net>
+ <20190110065207.GA17195@kroah.com>
+ <20190110131743.GE20217@kroah.com>
+ <1547130295@msgid.manchmal.in-ulm.de>
+ <1547133048@msgid.manchmal.in-ulm.de>
+ <20190110154039.GA26814@roeck-us.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.226.46]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190110154039.GA26814@roeck-us.net>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 8 Jan 2019 15:52:56 +0100
-Michal Hocko <mhocko@kernel.org> wrote:
+On Thu, Jan 10, 2019 at 07:40:39AM -0800, Guenter Roeck wrote:
+> On Thu, Jan 10, 2019 at 04:15:40PM +0100, Christoph Biedl wrote:
+> > Christoph Biedl wrote...
+> > 
+> > > Sorry for not getting back to you earlier. Building yesterday's
+> > > release (v4.19.14) *failed*, bisect led to
+> > >
+> > > | commit a9935a12768851762089fda8e5a9daaf0231808e (HEAD)
+> > > | Author: Breno Leitao <leitao@debian.org>
+> > > | Date:   Mon Nov 26 18:12:00 2018 -0200
+> > > |
+> > > |     powerpc/tm: Unset MSR[TS] if not recheckpointing
+> > >
+> > > Reverting that commit seems to be sufficient, build passes then.
+> > >
+> > > Additionally, neither 4.20 nor 5.0-rc1 show this problem. The
+> > > | commit 6f5b9f018f4c7686fd944d920209d1382d320e4e upstream.
+> > > builds as well, so I'll try to find the missing prerequisite next.
+> > 
+> > Cherry-picking
+> > 
+> > | commit 5c784c8414fba11b62e12439f11e109fb5751f38
+> > | Author: Breno Leitao <leitao@debian.org>
+> > | Date:   Thu Aug 16 14:21:07 2018 -0300
+> > |
+> > |     powerpc/tm: Remove msr_tm_active()
+> > 
+> > makes the build pass. Bruno, does this make sense?
+> > 
+> As I had reported and suggested well before the release.
+> According to Greg those responsible for the patch series rejected that.
 
-> On Wed 02-01-19 12:21:10, Jonathan Cameron wrote:
-> [...]
-> > So ideally I'd love this set to head in a direction that helps me tick off
-> > at least some of the above usecases and hopefully have some visibility on
-> > how to address the others moving forwards,  
-> 
-> Is it sufficient to have such a memory marked as movable (aka only have
-> ZONE_MOVABLE)? That should rule out most of the kernel allocations and
-> it fits the "balance by migration" concept.
+Ok, Breno and Christoph, what should I do here?  Should I drop this
+patch in the tree or add this new one?  Ideally I can fix this soon as I
+don't like having broken trees out there...
 
-Yes, to some degree. That's exactly what we are doing, though a things currently
-stand I think you have to turn it on via a kernel command line and mark it
-hotpluggable in ACPI. Given it my or may not actually be hotpluggable
-that's less than elegant.
+thanks,
 
-Let's randomly decide not to explore that one further for a few more weeks.
-la la la la
-
-If we have general balancing by migration then things are definitely
-heading in a useful direction as long as 'hot' takes into account the
-main user not being a CPU.  You are right that migration dealing with
-the movable kernel allocations is a nice side effect though which I
-hadn't thought about.  Long run we might end up with everything where
-it should be after some level of burn in period. A generic version of
-this proposal is looking nicer and nicer!
-
-Thanks,
-
-Jonathan
-
-
-
-
-
+greg k-h
