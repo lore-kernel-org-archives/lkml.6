@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 576ACC43612
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 17:59:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B98E6C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 18:00:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 37BB1208E3
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 17:59:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 937C4208E3
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 18:00:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730943AbfAJR7w (ORCPT
+        id S1730969AbfAJSAL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 12:59:52 -0500
-Received: from shell.v3.sk ([90.176.6.54]:58583 "EHLO shell.v3.sk"
+        Thu, 10 Jan 2019 13:00:11 -0500
+Received: from shell.v3.sk ([90.176.6.54]:58529 "EHLO shell.v3.sk"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730750AbfAJR7T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 12:59:19 -0500
+        id S1729480AbfAJR7K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 12:59:10 -0500
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 497091002F5;
-        Thu, 10 Jan 2019 18:59:17 +0100 (CET)
+        by zimbra.v3.sk (Postfix) with ESMTP id E1D241002F7;
+        Thu, 10 Jan 2019 18:59:04 +0100 (CET)
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id wtSn1BSFsvzF; Thu, 10 Jan 2019 18:59:06 +0100 (CET)
+        with ESMTP id PzyG_0JlMs-I; Thu, 10 Jan 2019 18:58:56 +0100 (CET)
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id EF22D100306;
-        Thu, 10 Jan 2019 18:59:00 +0100 (CET)
+        by zimbra.v3.sk (Postfix) with ESMTP id 3FF2E1002FB;
+        Thu, 10 Jan 2019 18:58:55 +0100 (CET)
 X-Virus-Scanned: amavisd-new at zimbra.v3.sk
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id yq6oPVIWhROU; Thu, 10 Jan 2019 18:58:56 +0100 (CET)
+        with ESMTP id MA-jPCPI_amu; Thu, 10 Jan 2019 18:58:53 +0100 (CET)
 Received: from belphegor.brq.redhat.com (nat-pool-brq-t.redhat.com [213.175.37.10])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id 621BE1002FD;
-        Thu, 10 Jan 2019 18:58:55 +0100 (CET)
+        by zimbra.v3.sk (Postfix) with ESMTPSA id 2E5921002F1;
+        Thu, 10 Jan 2019 18:58:53 +0100 (CET)
 From:   Lubomir Rintel <lkundrak@v3.sk>
 To:     Andy Shevchenko <andy@infradead.org>,
         Darren Hart <dvhart@infradead.org>
@@ -44,10 +44,10 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         platform-driver-x86@vger.kernel.org, linux-pm@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
-        Lubomir Rintel <lkundrak@v3.sk>
-Subject: [PATCH v5 08/10] power: supply: olpc_battery: Allow building the driver on non-x86
-Date:   Thu, 10 Jan 2019 18:58:43 +0100
-Message-Id: <20190110175845.1203986-9-lkundrak@v3.sk>
+        Lubomir Rintel <lkundrak@v3.sk>, Pavel Machek <pavel@ucw.cz>
+Subject: [PATCH v5 01/10] dt-bindings: olpc,xo1.75-ec: Add OLPC XO-1.75 EC bindings
+Date:   Thu, 10 Jan 2019 18:58:36 +0100
+Message-Id: <20190110175845.1203986-2-lkundrak@v3.sk>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190110175845.1203986-1-lkundrak@v3.sk>
 References: <20190110175845.1203986-1-lkundrak@v3.sk>
@@ -58,28 +58,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With the recent changes to the driver and addition of OLPC XO-1.75 EC
-driver it is possible to use this driver on ARM-based XO laptops as
-well.
+The OLPC XO-1.75 Embedded Controller is a SPI master that uses extra
+signals for handshaking. It needs to know when is the slave (Linux)
+side's TX FIFO ready for transfer (the ready-gpio signal on the SPI
+controller node) and when does it wish to respond with a command (the
+cmd-gpio property).
 
 Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
----
- drivers/power/supply/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Acked-by: Pavel Machek <pavel@ucw.cz>
 
-diff --git a/drivers/power/supply/Kconfig b/drivers/power/supply/Kconfig
-index e901b9879e7e..66e4d1958de3 100644
---- a/drivers/power/supply/Kconfig
-+++ b/drivers/power/supply/Kconfig
-@@ -151,7 +151,7 @@ config BATTERY_PMU
-=20
- config BATTERY_OLPC
- 	tristate "One Laptop Per Child battery"
--	depends on X86_32 && OLPC
-+	depends on OLPC_EC
- 	help
- 	  Say Y to enable support for the battery on the OLPC laptop.
-=20
+---
+Changes since v1:
+- s/cmd-gpio/cmd-gpios/
+- s/ready-gpio/ready-gpios/ in the documentation paragraph
+- Remove status =3D "okay" from the example
+
+ .../bindings/misc/olpc,xo1.75-ec.txt          | 23 +++++++++++++++++++
+ 1 file changed, 23 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/misc/olpc,xo1.75-ec=
+.txt
+
+diff --git a/Documentation/devicetree/bindings/misc/olpc,xo1.75-ec.txt b/=
+Documentation/devicetree/bindings/misc/olpc,xo1.75-ec.txt
+new file mode 100644
+index 000000000000..8c4d649cdd8f
+--- /dev/null
++++ b/Documentation/devicetree/bindings/misc/olpc,xo1.75-ec.txt
+@@ -0,0 +1,23 @@
++OLPC XO-1.75 Embedded Controller
++
++Required properties:
++- compatible: Should be "olpc,xo1.75-ec".
++- cmd-gpios: gpio specifier of the CMD pin
++
++The embedded controller requires the SPI controller driver to signal rea=
+diness
++to receive a transfer (that is, when TX FIFO contains the response data)=
+ by
++strobing the ACK pin with the ready signal. See the "ready-gpios" proper=
+ty of the
++SSP binding as documented in:
++<Documentation/devicetree/bindings/spi/spi-pxa2xx.txt>.
++
++Example:
++	&ssp3 {
++		spi-slave;
++		ready-gpios =3D <&gpio 125 GPIO_ACTIVE_HIGH>;
++
++		slave {
++			compatible =3D "olpc,xo1.75-ec";
++			spi-cpha;
++			cmd-gpios =3D <&gpio 155 GPIO_ACTIVE_HIGH>;
++		};
++	};
 --=20
 2.20.1
 
