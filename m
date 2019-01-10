@@ -2,82 +2,127 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E984C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 08:11:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 404BCC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 08:13:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A9E6206B7
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 08:11:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 13203214DA
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 08:13:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727713AbfAJILT (ORCPT
+        id S1727665AbfAJIN2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 03:11:19 -0500
-Received: from a.mx.secunet.com ([62.96.220.36]:44682 "EHLO a.mx.secunet.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727414AbfAJILS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 03:11:18 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by a.mx.secunet.com (Postfix) with ESMTP id 814B9200AA;
-        Thu, 10 Jan 2019 09:11:16 +0100 (CET)
-X-Virus-Scanned: by secunet
-Received: from a.mx.secunet.com ([127.0.0.1])
-        by localhost (a.mx.secunet.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id zYJv8RnuE05S; Thu, 10 Jan 2019 09:11:16 +0100 (CET)
-Received: from mail-essen-01.secunet.de (mail-essen-01.secunet.de [10.53.40.204])
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by a.mx.secunet.com (Postfix) with ESMTPS id 254032006F;
-        Thu, 10 Jan 2019 09:11:16 +0100 (CET)
-Received: from gauss2.secunet.de (10.182.7.193) by mail-essen-01.secunet.de
- (10.53.40.204) with Microsoft SMTP Server id 14.3.408.0; Thu, 10 Jan 2019
- 09:11:15 +0100
-Received: by gauss2.secunet.de (Postfix, from userid 1000)      id AFFEB31805AD;
- Thu, 10 Jan 2019 09:11:15 +0100 (CET)
-Date:   Thu, 10 Jan 2019 09:11:15 +0100
-From:   Steffen Klassert <steffen.klassert@secunet.com>
-To:     Su Yanjun <suyj.fnst@cn.fujitsu.com>
-CC:     <herbert@gondor.apana.org.au>, <davem@davemloft.net>,
-        <kuznet@ms2.inr.ac.ru>, <yoshfuji@linux-ipv6.org>,
-        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <suyanjun218@gmail.com>
-Subject: Re: [PATCH v2] vti4: Fix a ipip packet processing bug in 'IPCOMP'
- virtual tunnel
-Message-ID: <20190110081115.GM3581@gauss3.secunet.de>
-References: <1546828280-26039-1-git-send-email-suyj.fnst@cn.fujitsu.com>
+        Thu, 10 Jan 2019 03:13:28 -0500
+Received: from mx0a-00010702.pphosted.com ([148.163.156.75]:57148 "EHLO
+        mx0b-00010702.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726137AbfAJIN2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 03:13:28 -0500
+Received: from pps.filterd (m0098780.ppops.net [127.0.0.1])
+        by mx0a-00010702.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0A8BUeA006932;
+        Thu, 10 Jan 2019 02:13:26 -0600
+Received: from ni.com (skprod3.natinst.com [130.164.80.24])
+        by mx0a-00010702.pphosted.com with ESMTP id 2pwdxm4437-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 10 Jan 2019 02:13:26 -0600
+Received: from us-aus-exch1.ni.corp.natinst.com (us-aus-exch1.ni.corp.natinst.com [130.164.68.11])
+        by us-aus-skprod3.natinst.com (8.16.0.27/8.16.0.27) with ESMTPS id x0A8DPIG013518
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Thu, 10 Jan 2019 02:13:25 -0600
+Received: from us-aus-exhub2.ni.corp.natinst.com (130.164.68.32) by
+ us-aus-exch1.ni.corp.natinst.com (130.164.68.11) with Microsoft SMTP Server
+ (TLS) id 15.0.1395.4; Thu, 10 Jan 2019 02:13:24 -0600
+Received: from my-pen-rd24.apac.corp.natinst.com (130.164.49.7) by
+ us-aus-exhub2.ni.corp.natinst.com (130.164.68.32) with Microsoft SMTP Server
+ id 15.0.1395.4 via Frontend Transport; Thu, 10 Jan 2019 02:13:23 -0600
+From:   Guan Yung Tseng <guan.yung.tseng@ni.com>
+To:     <gregkh@linuxfoundation.org>
+CC:     <linux-serial@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        "Guan Yung Tseng" <guan.yung.tseng@ni.com>
+Subject: [PATCH] 8250_pci.c: Only check for communication class in serial_pci_guess_board
+Date:   Thu, 10 Jan 2019 16:12:12 +0800
+Message-ID: <1547107932-3714-1-git-send-email-guan.yung.tseng@ni.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <1546828280-26039-1-git-send-email-suyj.fnst@cn.fujitsu.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-G-Data-MailSecurity-for-Exchange-State: 0
-X-G-Data-MailSecurity-for-Exchange-Error: 0
-X-G-Data-MailSecurity-for-Exchange-Sender: 23
-X-G-Data-MailSecurity-for-Exchange-Server: d65e63f7-5c15-413f-8f63-c0d707471c93
-X-EXCLAIMER-MD-CONFIG: 2c86f778-e09b-4440-8b15-867914633a10
-X-G-Data-MailSecurity-for-Exchange-Guid: 82F089C0-8112-4198-8458-7653549539FA
-X-G-Data-MailSecurity-for-Exchange-ProcessedOnRouted: True
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-10_04:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jan 06, 2019 at 09:31:20PM -0500, Su Yanjun wrote:
-> Recently we run a network test over ipcomp virtual tunnel.We find that
-> if a ipv4 packet needs fragment, then the peer can't receive
-> it.
-> 
-> We deep into the code and find that when packet need fragment the smaller
-> fragment will be encapsulated by ipip not ipcomp. So when the ipip packet
-> goes into xfrm, it's skb->dev is not properly set. The ipv4 reassembly code
-> always set skb'dev to the last fragment's dev. After ipv4 defrag processing,
-> when the kernel rp_filter parameter is set, the skb will be drop by -EXDEV
-> error.
-> 
-> This patch adds compatible support for the ipip process in ipcomp virtual tunnel.
-> 
-> Signed-off-by: Su Yanjun <suyj.fnst@cn.fujitsu.com>
+Some multiport serial cards, such as the NI PXI-8430/2, NI PXI-8430/8,
+and NI PXI-8432/4 use PCI_CLASS_COMMUNICATION_OTHER and this fail the
+serial_pci_is_class_communication test added in the commit 7d8905d06405
+("serial: 8250_pci: Enable device after we check black list").
 
-Patch applied, thanks!
+Since these devices are correctly listed in serial_pci_tbl, we
+shouldn't need to check the PCI class IDs. This change relocates the
+class checking solely into "serial_pci_guess_board" where it had been
+before so that the class-check doesn't hinder initialization.
+
+Signed-off-by: Guan Yung Tseng <guan.yung.tseng@ni.com>
+---
+ drivers/tty/serial/8250/8250_pci.c | 28 +++++++++-------------------
+ 1 file changed, 9 insertions(+), 19 deletions(-)
+
+diff --git a/drivers/tty/serial/8250/8250_pci.c b/drivers/tty/serial/8250/8250_pci.c
+index 4986b4a..e33a869 100644
+--- a/drivers/tty/serial/8250/8250_pci.c
++++ b/drivers/tty/serial/8250/8250_pci.c
+@@ -3382,21 +3382,6 @@ static const struct pci_device_id blacklist[] = {
+ 	{ PCI_VDEVICE(COMMTECH, PCI_ANY_ID), },
+ };
+ 
+-static int serial_pci_is_class_communication(struct pci_dev *dev)
+-{
+-	/*
+-	 * If it is not a communications device or the programming
+-	 * interface is greater than 6, give up.
+-	 */
+-	if ((((dev->class >> 8) != PCI_CLASS_COMMUNICATION_SERIAL) &&
+-	     ((dev->class >> 8) != PCI_CLASS_COMMUNICATION_MULTISERIAL) &&
+-	     ((dev->class >> 8) != PCI_CLASS_COMMUNICATION_MODEM)) ||
+-	    (dev->class & 0xff) > 6)
+-		return -ENODEV;
+-
+-	return 0;
+-}
+-
+ static int serial_pci_is_blacklisted(struct pci_dev *dev)
+ {
+ 	const struct pci_device_id *bldev;
+@@ -3427,6 +3412,15 @@ serial_pci_guess_board(struct pci_dev *dev, struct pciserial_board *board)
+ 	int num_iomem, num_port, first_port = -1, i;
+ 
+ 	/*
++	 * If it is not a communications device or the programming
++	 * interface is greater than 6, give up.
++	 *
++	 */
++	if ((((dev->class >> 8) != PCI_CLASS_COMMUNICATION_SERIAL) &&
++	     ((dev->class >> 8) != PCI_CLASS_COMMUNICATION_MODEM)) ||
++	    (dev->class & 0xff) > 6)
++		return -ENODEV;
++	/*
+ 	 * Should we try to make guesses for multiport serial devices later?
+ 	 */
+ 	if ((dev->class >> 8) == PCI_CLASS_COMMUNICATION_MULTISERIAL)
+@@ -3652,10 +3646,6 @@ pciserial_init_one(struct pci_dev *dev, const struct pci_device_id *ent)
+ 
+ 	board = &pci_boards[ent->driver_data];
+ 
+-	rc = serial_pci_is_class_communication(dev);
+-	if (rc)
+-		return rc;
+-
+ 	rc = serial_pci_is_blacklisted(dev);
+ 	if (rc)
+ 		return rc;
+-- 
+2.7.4
+
