@@ -2,84 +2,93 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 219BDC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 01:36:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB28FC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 01:38:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF5462183F
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 01:36:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8124D21738
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 01:38:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="XKzfijqD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726881AbfAJBgw (ORCPT
+        id S1726950AbfAJBix (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 20:36:52 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:49448 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726425AbfAJBgw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 20:36:52 -0500
-Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 1BA8E3B41715D1F1D4A2;
-        Thu, 10 Jan 2019 09:36:50 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS411-HUB.china.huawei.com (10.3.19.211) with Microsoft SMTP Server id
- 14.3.408.0; Thu, 10 Jan 2019 09:36:44 +0800
-From:   Wei Yongjun <weiyongjun1@huawei.com>
-To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
-        Jie Yang <yang.jie@linux.intel.com>,
-        "Mark Brown" <broonie@kernel.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>
-CC:     Wei Yongjun <weiyongjun1@huawei.com>,
-        <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>
-Subject: [PATCH -next v2] ASoC: Intel: bytcht_es8316: use correct drvdata in snd_byt_cht_es8316_mc_remove()
-Date:   Thu, 10 Jan 2019 01:43:09 +0000
-Message-ID: <1547084589-40006-1-git-send-email-weiyongjun1@huawei.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1547023011-8321-1-git-send-email-weiyongjun1@huawei.com>
-References: <1547023011-8321-1-git-send-email-weiyongjun1@huawei.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
+        Wed, 9 Jan 2019 20:38:53 -0500
+Received: from mail.efficios.com ([167.114.142.138]:42958 "EHLO
+        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726425AbfAJBix (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 20:38:53 -0500
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id A8B20B0A19;
+        Wed,  9 Jan 2019 20:38:51 -0500 (EST)
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
+        with ESMTP id t4t5C14ljMoD; Wed,  9 Jan 2019 20:38:51 -0500 (EST)
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id 3E643B0A12;
+        Wed,  9 Jan 2019 20:38:51 -0500 (EST)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 3E643B0A12
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+        s=default; t=1547084331;
+        bh=13z99JCYWudhdbdFNt9pspv0ZHzH8UIAfO1+OTfP/pc=;
+        h=Date:From:To:Message-ID:MIME-Version;
+        b=XKzfijqDzh5BPukRi4DGSrrJyOhClKtcJcnCSeABs/2tEThrafDDAuZWOiG03GrGB
+         x6wZo2rsnPF2Ms5L/YMBXnhxt/skGuA9Sx4xR6pOj6xHgRaGMBeYQztupIM+jWvK6L
+         njn7IudRPvxZqgwmKCz+Fwf+j8RN+242xvOV2yDgZqi9I9FNe3b/Ps1hENW2QxPniY
+         L+wa+3doT7fLQuUyh24KLFODt607x4nQkZiVzv95IXHwkzolbjtt6vCD+5Bq5c0Jjl
+         62Zt7/3QpCJV4WiUZgB7FL+eLXQmbgK9L3nKaQDxKJT8cPU6XbkRdguNnoawuQgydV
+         w1aX9TF2c4Jtg==
+X-Virus-Scanned: amavisd-new at efficios.com
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
+        with ESMTP id IJXMPDABKdVN; Wed,  9 Jan 2019 20:38:51 -0500 (EST)
+Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
+        by mail.efficios.com (Postfix) with ESMTP id 26F57B0A0B;
+        Wed,  9 Jan 2019 20:38:51 -0500 (EST)
+Date:   Wed, 9 Jan 2019 20:38:51 -0500 (EST)
+From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To:     "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        rostedt <rostedt@goodmis.org>
+Message-ID: <2103471967.794.1547084331086.JavaMail.zimbra@efficios.com>
+Subject: Possible use of RCU while in extended QS: idle vs RCU read-side in
+ interrupt vs rcu_eqs_exit
 MIME-Version: 1.0
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [167.114.142.138]
+X-Mailer: Zimbra 8.8.10_GA_3716 (ZimbraWebClient - FF52 (Linux)/8.8.10_GA_3041)
+Thread-Index: hxTKI2Xu74Wy4EXX1gypHP2vNvrAVg==
+Thread-Topic: Possible use of RCU while in extended QS: idle vs RCU read-side in interrupt vs rcu_eqs_exit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The snd_byt_cht_es8316_mc_remove() use the platform drvdata as a type
-of 'struct byt_cht_es8316_private', but snd_byt_cht_es8316_mc_probe()
-set it to 'struct snd_soc_card', as suggested by Dan Carpenter, fix
-the usage in snd_byt_cht_es8316_mc_remove().
+Hi Paul,
 
-Fixes: 0d3e91da0750 ("ASoC: Intel: bytcht_es8316: Add external speaker mux support")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
----
-v1 -> v2: fix snd_byt_cht_es8316_mc_remove() instead, suggested by Dan.
----
- sound/soc/intel/boards/bytcht_es8316.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+I've had a user report that trace_sched_waking() appears to be
+invoked while !rcu_is_watching() in some situation, so I started
+digging into the scheduler idle code.
 
-diff --git a/sound/soc/intel/boards/bytcht_es8316.c b/sound/soc/intel/boards/bytcht_es8316.c
-index cdf2061..fa9c4cf 100644
---- a/sound/soc/intel/boards/bytcht_es8316.c
-+++ b/sound/soc/intel/boards/bytcht_es8316.c
-@@ -544,7 +544,8 @@ static int snd_byt_cht_es8316_mc_probe(struct platform_device *pdev)
- 
- static int snd_byt_cht_es8316_mc_remove(struct platform_device *pdev)
- {
--	struct byt_cht_es8316_private *priv = platform_get_drvdata(pdev);
-+	struct snd_soc_card *card = platform_get_drvdata(pdev);
-+	struct byt_cht_es8316_private *priv = snd_soc_card_get_drvdata(card);
- 
- 	gpiod_put(priv->speaker_en_gpio);
- 	return 0;
+It appears that interrupts are re-enabled before rcu_eqs_exit() is
+invoked when exiting idle code from the scheduler.
 
+I wonder what happens if an interrupt handler (including scheduler code)
+happens to issue a RCU read-side critical section before rcu_eqs_exit()
+is called ? Is there some code on interrupt entry that ensures rcu eqs
+state is exited in such scenario ?
 
+Thanks,
 
+Mathieu
+
+-- 
+Mathieu Desnoyers
+EfficiOS Inc.
+http://www.efficios.com
