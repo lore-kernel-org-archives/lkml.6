@@ -2,126 +2,94 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 874E6C43444
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 00:40:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E8DEC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 00:41:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5EB3B214C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 00:40:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A010B21738
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 00:41:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="HwJVWDD4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726834AbfAJAkm (ORCPT
+        id S1726848AbfAJAlX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 19:40:42 -0500
-Received: from mga07.intel.com ([134.134.136.100]:41474 "EHLO mga07.intel.com"
+        Wed, 9 Jan 2019 19:41:23 -0500
+Received: from ozlabs.org ([203.11.71.1]:53131 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726615AbfAJAkm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 19:40:42 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Jan 2019 16:40:41 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,459,1539673200"; 
-   d="scan'208";a="309104230"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.154])
-  by fmsmga006.fm.intel.com with ESMTP; 09 Jan 2019 16:40:40 -0800
-Date:   Wed, 9 Jan 2019 16:40:40 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     "Huang, Kai" <kai.huang@intel.com>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Jethro Beekman <jethro@fortanix.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "x86@kernel.org" <x86@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Haitao Huang <haitao.huang@linux.intel.com>,
-        "Dr . Greg Wettstein" <greg@enjellic.com>
-Subject: Re: x86/sgx: uapi change proposal
-Message-ID: <20190110004040.GD1697@linux.intel.com>
-References: <20181219091148.GA5121@linux.intel.com>
- <613c6814-4e71-38e5-444a-545f0e286df8@fortanix.com>
- <20181219144515.GA30909@linux.intel.com>
- <CALCETrW_8LnitFamYUU7POHFOJFxLO7ESFUdS=aeG_SOvHVPkw@mail.gmail.com>
- <20181221162825.GB26865@linux.intel.com>
- <105F7BF4D0229846AF094488D65A0989355A45B6@PGSMSX112.gar.corp.intel.com>
- <20190108220946.GA30462@linux.intel.com>
- <105F7BF4D0229846AF094488D65A0989355A58F1@PGSMSX112.gar.corp.intel.com>
- <20190109171625.GB1821@linux.intel.com>
- <105F7BF4D0229846AF094488D65A0989355A994F@PGSMSX112.gar.corp.intel.com>
+        id S1726286AbfAJAlW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 19:41:22 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 43ZnHM3nKFz9sLw;
+        Thu, 10 Jan 2019 11:41:19 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1547080879;
+        bh=ZyupXi9BFPbujHDlWgxQ6ASZE+TobPl1L2fer6A9zM8=;
+        h=Date:From:To:Cc:Subject:From;
+        b=HwJVWDD4XYMshsmch9k6WS3nO1f7AP6gsASHl6Gkgo7FRUNF605Oby3JHg09k1hhj
+         VMAERaon535n8gXHavHcP0uVyKchBqzhX2oxS63UpWD63P2i5Wwj62aWB2BXBln561
+         5X9i6dEP8tK2GXpyEh5+XGr7hGPDLTRfTDCWb3auZmHJWWZpxL3aBhcli2AjImU+Nm
+         l/4SdX6PW1fZb2AUGHAumVCi3LWBF6HtKlExhHRi3M0ZeyJZamvEPD87tCHEZ1Gxp2
+         rV+sLri7AeH+FP4yBE/FtuAWkQnoPrGn/2MwqVtDHjK5quQ7zfZy3dIeqeuPPaLrNt
+         /a+TmxB+G662Q==
+Date:   Thu, 10 Jan 2019 11:41:13 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: linux-next: build warning after merge of the spi tree
+Message-ID: <20190110114113.206c0650@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <105F7BF4D0229846AF094488D65A0989355A994F@PGSMSX112.gar.corp.intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/nv.Io.SxpMXN4dhoRe5XDBC"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 09, 2019 at 04:21:19PM -0800, Huang, Kai wrote:
-> > > > That's possible, but it has several downsides.
-> > > >
-> > > >   - Duplicates a lot of code in KVM for managing memory regions.
-> > >
-> > > I don't see why there will be duplicated code. you can simply call
-> > > __x86_set_memory_region to create private slot. It is KVM x86
-> > > equivalent to KVM_SET_USER_MEMORY_REGION from userspace. The only
-> > > difference is Qemu is not aware of the private slot.
-> > 
-> > What about when we allow removing an EPC region?  At that point you'd be
-> > fully duplicating KVM_SET_USER_MEMORY_REGION.  And that's not a purely
-> > theoretical idea, it's something I'd like to support in the future, e.g.
-> > via the WIP virtio-mem interface.
-> 
-> OK. Isn't virtio-balloon good enough for us? 
-> 
-> Removing EPC is not consistent with hardware behaviour, but if you really
-> want to support then should also be fine since we are not strictly
-> following HW spec anyway.
+--Sig_/nv.Io.SxpMXN4dhoRe5XDBC
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Even if virtio-balloon is sufficient from a performance perspective, the
-virtio-mem approach can provide unique capabilities, e.g. hotplugging
-EPC into a VM or "I'm done with SGX, have all of my EPC back".
+Hi Mark,
 
-> > 
-> > https://events.linuxfoundation.org/wp-content/uploads/2017/12/virtio-
-> > mem-Paravirtualized-Memory-David-Hildenbrand-Red-Hat-1.pdf
-> > 
-> > > No. EPC info is from Qemu at the beginning (size is given by
-> > > parameter, base is calculated by Qemu), and actually it is Qemu
-> > > notifies KVM EPC info, so I don't think we require additional ioctls or
-> > capabilities here.
-> > 
-> > How does Qemu know KVM supports virtual EPC?  Probing /dev/sgx doesn't
-> > convey any information about KVM support.  Maybe you could report it via
-> > KVM_GET_SUPPORTED_CPUID, but that would be problematic for Qemu
-> > since it would have to create vCPUs before initializing the machine.
-> 
-> KVM_GET_SUPPORTED_CPUID is the one. I don't think KVM_GET_SUPPORTED_CPUID
-> require creating vcpu prior, since it is global thing that platform  supports. No?
+After merging the spi tree, today's linux-next build (arm
+multi_v7_defconfig) produced this warning:
 
-It's not a KVM requirement, but rather Qemu's code flow.  It sets up the
-"machine" and then creates the vCPUs.  The CPUID info is a CPU capability
-and so isn't necessarily available when the "machine" is being created.
+drivers/spi/spi-davinci.c: In function 'davinci_spi_setup':
+drivers/spi/spi-davinci.c:426:21: warning: unused variable 'master' [-Wunus=
+ed-variable]
+  struct spi_master *master =3D spi->master;
+                     ^~~~~~
 
-> > 
-> > The other aspect of private memslots is that they are not exposed to L2,
-> > because again, from the guest's perspective, they do not exist.  We can
-> > obviously hackaround that restriction, but it's yet another hint that shoving
-> > EPC into a private memslot is the wrong approach.
-> 
-> But guest is aware of SGX and EPC so I don't see why it cannot be exposed
-> to L2 even with private slot.
+Introduced by commit
 
-It's not that it can't be done, but rather we'd have to explicitly tell
-KVM "this private slot isn't really private, expose it to L2".  See
-commit 3a2936dedd20 ("kvm: mmu: Don't expose private memslots to L2").
+  101a68e74fe0 ("spi: davinci: Convert to use CS GPIO descriptors")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/nv.Io.SxpMXN4dhoRe5XDBC
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlw2lKkACgkQAVBC80lX
+0GyIYQf+PUv+XgHMsQ08i3ot1I9lPw/rNPtWAUqSi7n9W11c/NawKaxx8s5zYzSh
+ZaYXLgQWniImQwSn3S3QQOsb+U0/kkk7wX7cE5hgbsQSnHpLzAAysm6EmLBB/5lL
+T8xEYLT73ch3nbNaPDVn/KLG+T16KIb1UuVdI1fupfqATez/uvtLVPQ7P7GLblML
+6uSLpspUPGEB127KHeYTXDJdFCv90A0VfHjJKTqaZF0ZMT351OuVfDkZBgmiO1Qo
+nBqSX2PsUM9RxVtsAQDQlanhcBQXwhwSFsZ6xkUKTBLW1MpEDduCi5K69LHxqQAz
+dPdFk4Q5dx7lPPbAmcAH+mYndduUdQ==
+=N72P
+-----END PGP SIGNATURE-----
+
+--Sig_/nv.Io.SxpMXN4dhoRe5XDBC--
