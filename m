@@ -2,182 +2,158 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 958FEC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 01:15:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0F0EC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 01:15:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5DB74214C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 01:15:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="EXH+uSYb"
+	by mail.kernel.org (Postfix) with ESMTP id B007A214C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 01:15:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726962AbfAJBPg (ORCPT
+        id S1727081AbfAJBPk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 20:15:36 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:42399 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726618AbfAJBPg (ORCPT
+        Wed, 9 Jan 2019 20:15:40 -0500
+Received: from ipmail02.adl2.internode.on.net ([150.101.137.139]:22439 "EHLO
+        ipmail02.adl2.internode.on.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726833AbfAJBPh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 20:15:36 -0500
-Received: by mail-pl1-f195.google.com with SMTP id y1so4390294plp.9
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jan 2019 17:15:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Lad6h/nPiENbJsEoNn3u6dkP3Hq5OGHS1HI01m1Hc5s=;
-        b=EXH+uSYbr/U8J5ZP0FceUKAgIVP5RVzDxlxIJXG9eRgd+tPMdPQxX7t1xnswy4wccg
-         3y/HmMELwnBo4/w2F4iBbaj04KSf/amq+o7vtUK9w+dJR5plvw5jKAfhBDy/rxWGs8xH
-         VvWFuAoFU3oUGYXSnLjSjK65Vrs7JcaABC3wA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Lad6h/nPiENbJsEoNn3u6dkP3Hq5OGHS1HI01m1Hc5s=;
-        b=RsxGKF+WIaRAOSBASqgfOv5TRm5dBdlQWAuXo8GnPrv2LT/DxSE+SSZzf/y7T8a6It
-         8ectW0BSqxb8bLjwoHZ3VaKAdIAsveTwRFT3KwL5kLmPKDGp4sVZ7+yMlSfZrDzeMEtS
-         pZFB3jmxmR64T/YGgN93dMdMO8m4ZcVJr4prIosFfimMm9yPE+4s54FG3agHNsqlO3y9
-         o20aEXhBHRZp//4R0Ptfc62P/nt3PXua9gb5eLmP7LdHWBT2qffa4ghclIBZJqRRYzL+
-         2DEmK3wOFg8dJqef9VElavH/4rRoH3Ai/Z8fKbdc0U/JyPqL1qnLMmuUzUm+Mx7dV6x2
-         h10Q==
-X-Gm-Message-State: AJcUukco6jC/wA+d30l0YAYUMC06ff7zPiJyA6Dt9X0DUS9zVXfx63GO
-        7JLoQA9hqU7XsjMuqPLCNZtuVw==
-X-Google-Smtp-Source: ALg8bN7rzLoiYJt6eP94MSYYdTQlQFrLxqzsNHcQep64h2nwZ9iow8YbaQYDW1LOXNd/HRuQHFQyZA==
-X-Received: by 2002:a17:902:64c1:: with SMTP id y1mr8234626pli.64.1547082935051;
-        Wed, 09 Jan 2019 17:15:35 -0800 (PST)
-Received: from localhost ([2620:15c:202:1:75a:3f6e:21d:9374])
-        by smtp.gmail.com with ESMTPSA id g136sm119475142pfb.154.2019.01.09.17.15.34
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 09 Jan 2019 17:15:34 -0800 (PST)
-Date:   Wed, 9 Jan 2019 17:15:33 -0800
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Amit Kucheria <amit.kucheria@linaro.org>
-Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        bjorn.andersson@linaro.org, viresh.kumar@linaro.org,
-        edubezval@gmail.com, andy.gross@linaro.org, tdas@codeaurora.org,
-        swboyd@chromium.org, dianders@chromium.org,
-        David Brown <david.brown@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>
-Subject: Re: [PATCH v1 6/7] arm64: dts: sdm845: Increase alert trip point to
- 95 degrees
-Message-ID: <20190110011533.GV261387@google.com>
-References: <cover.1547078153.git.amit.kucheria@linaro.org>
- <041258d65883df964890249a24d2a4788c419304.1547078153.git.amit.kucheria@linaro.org>
+        Wed, 9 Jan 2019 20:15:37 -0500
+Received: from ppp59-167-129-252.static.internode.on.net (HELO dastard) ([59.167.129.252])
+  by ipmail02.adl2.internode.on.net with ESMTP; 10 Jan 2019 11:45:33 +1030
+Received: from dave by dastard with local (Exim 4.80)
+        (envelope-from <david@fromorbit.com>)
+        id 1ghOwX-0001qM-Bd; Thu, 10 Jan 2019 12:15:33 +1100
+Date:   Thu, 10 Jan 2019 12:15:33 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Jiri Kosina <jikos@kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Jann Horn <jannh@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Michal Hocko <mhocko@suse.com>, Linux-MM <linux-mm@kvack.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>
+Subject: Re: [PATCH] mm/mincore: allow for making sys_mincore() privileged
+Message-ID: <20190110011533.GI27534@dastard>
+References: <20190106001138.GW6310@bombadil.infradead.org>
+ <CAHk-=wiT=ov+6zYcnw_64ihYf74Amzqs67iVGtJMQq65PxiVYw@mail.gmail.com>
+ <CAHk-=wg1A44Roa8C4dmfdXLRLmNysEW36=3R7f+tzZzbcJ2d2g@mail.gmail.com>
+ <CAHk-=wiqbKEC5jUXr3ax+oUuiRrp=QMv_ZnUfO-SPv=UNJ-OTw@mail.gmail.com>
+ <20190108044336.GB27534@dastard>
+ <CAHk-=wjvzEFQcTGJFh9cyV_MPQftNrjOLon8YMMxaX0G1TLqkg@mail.gmail.com>
+ <20190109022430.GE27534@dastard>
+ <nycvar.YFH.7.76.1901090326460.16954@cbobk.fhfr.pm>
+ <20190109043906.GF27534@dastard>
+ <nycvar.YFH.7.76.1901091050560.16954@cbobk.fhfr.pm>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <041258d65883df964890249a24d2a4788c419304.1547078153.git.amit.kucheria@linaro.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <nycvar.YFH.7.76.1901091050560.16954@cbobk.fhfr.pm>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Amit,
-
-On Thu, Jan 10, 2019 at 05:30:55AM +0530, Amit Kucheria wrote:
-> 75 degrees is too aggressive for throttling the CPU. After speaking to
-> Qualcomm engineers, increase it to 95 degrees.
+On Wed, Jan 09, 2019 at 11:08:57AM +0100, Jiri Kosina wrote:
+> On Wed, 9 Jan 2019, Dave Chinner wrote:
 > 
-> Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
-> ---
->  arch/arm64/boot/dts/qcom/sdm845.dtsi | 16 ++++++++--------
->  1 file changed, 8 insertions(+), 8 deletions(-)
+> > FWIW, I just realised that the easiest, most reliable way to invalidate 
+> > the page cache over a file range is simply to do a O_DIRECT read on it. 
 > 
-> diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> index c27cbd3bcb0a..29e823b0caf4 100644
-> --- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> @@ -1692,7 +1692,7 @@
->  
->  			trips {
->  				cpu_alert0: trip0 {
-> -					temperature = <75000>;
-> +					temperature = <95000>;
->  					hysteresis = <2000>;
->  					type = "passive";
->  				};
-> @@ -1713,7 +1713,7 @@
->  
->  			trips {
->  				cpu_alert1: trip0 {
-> -					temperature = <75000>;
-> +					temperature = <95000>;
->  					hysteresis = <2000>;
->  					type = "passive";
->  				};
-> @@ -1734,7 +1734,7 @@
->  
->  			trips {
->  				cpu_alert2: trip0 {
-> -					temperature = <75000>;
-> +					temperature = <95000>;
->  					hysteresis = <2000>;
->  					type = "passive";
->  				};
-> @@ -1755,7 +1755,7 @@
->  
->  			trips {
->  				cpu_alert3: trip0 {
-> -					temperature = <75000>;
-> +					temperature = <95000>;
->  					hysteresis = <2000>;
->  					type = "passive";
->  				};
-> @@ -1776,7 +1776,7 @@
->  
->  			trips {
->  				cpu_alert4: trip0 {
-> -					temperature = <75000>;
-> +					temperature = <95000>;
->  					hysteresis = <2000>;
->  					type = "passive";
->  				};
-> @@ -1797,7 +1797,7 @@
->  
->  			trips {
->  				cpu_alert5: trip0 {
-> -					temperature = <75000>;
-> +					temperature = <95000>;
->  					hysteresis = <2000>;
->  					type = "passive";
->  				};
-> @@ -1818,7 +1818,7 @@
->  
->  			trips {
->  				cpu_alert6: trip0 {
-> -					temperature = <75000>;
-> +					temperature = <95000>;
->  					hysteresis = <2000>;
->  					type = "passive";
->  				};
-> @@ -1839,7 +1839,7 @@
->  
->  			trips {
->  				cpu_alert7: trip0 {
-> -					temperature = <75000>;
-> +					temperature = <95000>;
->  					hysteresis = <2000>;
->  					type = "passive";
->  				};
+> Neat, good catch indeed. Still, it's only the invalidation part, but the 
+> residency check is the crucial one.
+> 
+> > > Rationale has been provided by Daniel Gruss in this thread -- if the 
+> > > attacker is left with cache timing as the only available vector, he's 
+> > > going to be much more successful with mounting hardware cache timing 
+> > > attack anyway.
+> > 
+> > No, he said:
+> > 
+> > "Restricting mincore() is sufficient to fix the hardware-agnostic
+> > part."
+> > 
+> > That's not correct - preadv2(RWF_NOWAIT) is also hardware agnostic and 
+> > provides exactly the same information about the page cache as mincore.  
+> 
+> Yeah, preadv2(RWF_NOWAIT) is in the same teritory as mincore(), it has 
+> "just" been overlooked. I can't speak for Daniel, but I believe he might 
+> be ok with rephrasing the above as "Restricting mincore() and RWF_NOWAIT 
+> is sufficient ...".
 
-The change itself looks good to me, however I wonder if it would be
-worth to eliminate redundancy and merge the current 8 thermal zones
-into 2, one for the Silver and one for the Gold cluster (as done by
-http://crrev.com/c/1381752). There is a single cooling device for
-each cluster, so it's not clear to me if there is any gain from having
-a separate thermal zone for each CPU. If it is important to monitor
-the temperatures of the individual cores this can still be done by
-configuring the thermal zone of the cluster with multiple thermal
-sensors.
+Good luck with restricting RWF_NOWAIT. I eagerly await all the
+fstests that exercise both the existing and new behaviours to
+demonstrate they work correctly.
 
-Cheers
+> > Timed read/mmap access loops for cache observation are also hardware 
+> > agnostic, and on fast SSD based storage will only be marginally slower 
+> > bandwidth than preadv2(RWF_NOWAIT).
+> > 
+> > Attackers will pick whatever leak vector we don't fix, so we either fix 
+> > them all (which I think is probably impossible without removing caching 
+> > altogether) 
+> 
+> We can't really fix the fact that it's possible to do the timing on the HW 
+> caches though.
 
-Matthias
+We can't really fix the fact that it's possible to do the timing on
+the page cache, either.
+
+> > or we start thinking about how we need to isolate the page cache so that 
+> > information isn't shared across important security boundaries (e.g. page 
+> > cache contents are per-mount namespace).
+> 
+> Umm, sorry for being dense, but how would that help that particular attack 
+> scenario on a system that doesn't really employ any namespacing?
+
+What's your security boundary?
+
+The "detect what code an app is running" exploit is based on
+invalidating and then observing how shared, non-user-owned files
+mapped with execute privileges change cache residency.
+
+If the security boundary is within the local container, should users
+inside that container be allowed to invalidate the cache of
+executable files and libraries they don't own? In this case, we
+can't stop observation, because that only require read permissions
+and high precision timing, hence the only thing that can be done
+here is prevent non-owners from invalidating the page cache.
+
+If the security boundary is a namespace or guest VM, then permission
+checks don't work - the user may own the file within that container.
+This problem now is that the page cache is observable and
+controllable from both sides of the fence. Hence the only way to
+prevent observation of the code being run in a different namespace
+is to prevent the page being shared across both containers.
+
+The exfiltration exploit requires the page cache to be observable
+and controllable on both sides of the security boundary. Should
+users be able to observe and control the cached pages accessed by a
+different container? KSM page deduplication lessons say no. This is
+an even harder problem, because page cache residency can be observed
+from remote machines....
+
+What scares me is that new features being proposed could make our
+exposure a whole lot worse. e.g. the recent virtio-pmem ("fake-dax")
+proposal will directly share host page cache pages into guest VMs w/
+DAX capability. i.e. the guest directly accesses the host page
+cache.  This opens up the potential for host page cache timing
+attacks from the guest VMs, and potential guest to guest
+observation/exploitation is possible if the same files are mapped
+into multiple guests....
+
+IOws the two questions here are simply: "What's your security
+boundary?" and "Is the page cache visible and controllable on both
+sides?".
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
