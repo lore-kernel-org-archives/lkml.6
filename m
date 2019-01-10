@@ -2,345 +2,205 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 691C6C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 22:46:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99631C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 22:46:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D8342064C
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 22:46:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 56A522064C
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 22:46:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="auDn7acO"
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="ldXLa73h"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729707AbfAJWqO (ORCPT
+        id S1729762AbfAJWqe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 17:46:14 -0500
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:5880 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727634AbfAJWqJ (ORCPT
+        Thu, 10 Jan 2019 17:46:34 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:42082 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729721AbfAJWqe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 17:46:09 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c37cb220000>; Thu, 10 Jan 2019 14:45:54 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Thu, 10 Jan 2019 14:46:07 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Thu, 10 Jan 2019 14:46:07 -0800
-Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 10 Jan
- 2019 22:46:07 +0000
-Received: from HQMAIL102.nvidia.com (172.18.146.10) by HQMAIL111.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 10 Jan
- 2019 22:46:06 +0000
-Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL102.nvidia.com
- (172.18.146.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
- Transport; Thu, 10 Jan 2019 22:46:07 +0000
-Received: from skomatineni-linux.nvidia.com (Not Verified[10.110.103.52]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5c37cb2e0002>; Thu, 10 Jan 2019 14:46:06 -0800
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-To:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <mperttunen@nvidia.com>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>, <adrian.hunter@intel.com>,
-        <ulf.hansson@linaro.org>
-CC:     <anrao@nvidia.com>, <devicetree@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-mmc@vger.kernel.org>,
-        Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [PATCH V4 3/3] mmc: tegra: SDMMC pads auto-calibration
-Date:   Thu, 10 Jan 2019 14:46:03 -0800
-Message-ID: <1547160363-25323-3-git-send-email-skomatineni@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1547160363-25323-1-git-send-email-skomatineni@nvidia.com>
-References: <1547160363-25323-1-git-send-email-skomatineni@nvidia.com>
-X-NVConfidentiality: public
+        Thu, 10 Jan 2019 17:46:34 -0500
+Received: by mail-ed1-f65.google.com with SMTP id y20so11548441edw.9
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 14:46:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=doJgnFEbyNdmbkluOBGPL+4AnOydbSENU7NuuREeT0U=;
+        b=ldXLa73ho8qlXN8jWGy6jxV9fLj0djJ5bTbhqNxyWGc+XsJk3J/idl3zvZ7BVcP9Cg
+         z/XDMHcFMH9efGxmO04N7smpoent7syuJlaj0tTGsISzPRduE8yuHrt0rJ9s9aRINNvE
+         7lHw7YNKjQf8tS5AzPNbO5NpKLPRIOt8gSMq8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=doJgnFEbyNdmbkluOBGPL+4AnOydbSENU7NuuREeT0U=;
+        b=h4o/5X93VGXMxG8lUIfWEu5DFqpRKH3QrPi8ixxFkPZP4ByYMlPbS7uxSvnknq69GV
+         /Bx1cXdIwsNtXGsH4Z9ln1WmucDpJZlULm7gvEQjhhf1+bpzJlJMS8C4XewMju+1c7ih
+         npZcLnP1X3rtDSINh2pXPT1y5emMof5k6T8e6T7ygk4dlkG22oaKC6gLlm6DjKwUythy
+         fCl94WAPgsMFh9DXpADzuivLyZ6bIg/xqe12cNhqJQr6I6TgM+lB4iwgETB/FemrSXm2
+         Ff0JcIMmjItymnZQftPIiibr1bWDUr+tsBx4dPIdx7zNpCoVL8So+6y/SVho0kg8ODkK
+         ItQw==
+X-Gm-Message-State: AJcUukdH1Eqs218UupZ9GqMOodxF4uvKjKXe2IzmEUWIf3CAYjq5+ECd
+        3sbQ0ijZT/usO3TM5wZOU9Vvmw==
+X-Google-Smtp-Source: ALg8bN4AJx09gcNqY7FsFxIvO/UoNO/bJt7GEIkO18xtA1NEVShpRH8atJAqrRzUiKhY68zoNpOpow==
+X-Received: by 2002:a17:906:b387:: with SMTP id o7-v6mr10200662ejz.124.1547160391191;
+        Thu, 10 Jan 2019 14:46:31 -0800 (PST)
+Received: from andrea ([89.22.71.151])
+        by smtp.gmail.com with ESMTPSA id v12-v6sm1259204ejk.58.2019.01.10.14.46.29
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 10 Jan 2019 14:46:30 -0800 (PST)
+Date:   Thu, 10 Jan 2019 23:46:22 +0100
+From:   Andrea Parri <andrea.parri@amarulasolutions.com>
+To:     "Paul E. McKenney" <paulmck@linux.ibm.com>
+Cc:     Alan Stern <stern@rowland.harvard.edu>,
+        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        mingo@kernel.org, parri.andrea@gmail.com, will.deacon@arm.com,
+        peterz@infradead.org, boqun.feng@gmail.com, npiggin@gmail.com,
+        dhowells@redhat.com, j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
+        akiyks@gmail.com, willy@infradead.org
+Subject: Re: [PATCH RFC memory-model 0/6] LKMM updates
+Message-ID: <20190110224622.GA3701@andrea>
+References: <20190110143137.GJ1215@linux.ibm.com>
+ <Pine.LNX.4.44L0.1901101039360.1497-100000@iolanthe.rowland.org>
+ <20190110163126.GS1215@linux.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1547160354; bh=l8ylXVApvfz/NljI+JgYgZ2AZJxio88pEbpvgslJdck=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         In-Reply-To:References:X-NVConfidentiality:MIME-Version:
-         Content-Type;
-        b=auDn7acOsvSPU1s4cgDY5lPrucj6AllgmRyBhF+lq+F1ZBar/aow6d1tGGZgFMiyf
-         2UJHyOCw8edbcJhzNWdEe6bDF1/ioPJb/6LS+rpPeioRncPvQL83JnVil+5emNIcjj
-         Hhih2wjmWo9sqINRsz/h87Pnf+yUyxFkItThEndQzrkjQYc06cBgT8fA4xYRmov66o
-         J1EG4ZA2h75Swq1AjG/bTa9c+/8giW1zIPRqHzbku88uoFwzO3YClaKrzVHN/Hji/U
-         K/z/1s6BMZT7O9A+seKJREn2+uXkkI5TJN8FR8dUjNMf3oxc+VcsppxE+9UMK4QHPE
-         lQjq3Dvmz/S/A==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190110163126.GS1215@linux.ibm.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Program initial drive code offsets which will be used by auto
-calibration process.
+On Thu, Jan 10, 2019 at 08:31:26AM -0800, Paul E. McKenney wrote:
+> On Thu, Jan 10, 2019 at 10:41:23AM -0500, Alan Stern wrote:
+> > On Thu, 10 Jan 2019, Paul E. McKenney wrote:
+> > 
+> > > On Thu, Jan 10, 2019 at 09:40:24AM +0100, Andrea Parri wrote:
+> > > > > > > > It seems that
+> > > > > > > > 
+> > > > > > > >   1b52d0186177 ("tools/memory-model: Model smp_mb__after_unlock_lock()")
+> > > > > > > >   
+> > > > > > > > from linux-rcu/dev got lost; this also needs an ack (probably yours! ;D,
+> > > > > > > > considered that, IIRC, you introduced the primitive and RCU is currently
+> > > > > > > > its only user.)
+> > > > > > > 
+> > > > > > > That commit is in -tip:
+> > > > > > > 
+> > > > > > > 4607abbcf464 ("tools/memory-model: Model smp_mb__after_unlock_lock()")
+> > > > > > > 
+> > > > > > > So it has already left my -rcu tree.  ;-)
+> > > > > > 
+> > > > > > Oh, you're right: now I see the commit (e.g., with "git show"), but I
+> > > > > > don't see the corresponding changes applied to the tree.
+> > > > > > 
+> > > > > >   https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/commit/?h=locking/core&id=4607abbcf464ea2be14da444215d05c73025cf6e
+> > > > > >   https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/tree/tools/memory-model/linux-kernel.bell?h=locking/core
+> > > > > > 
+> > > > > > Is this expected?
+> > > > > 
+> > > > > Are you asking why it is in -tip but not in mainline?  I am not sure,
+> > > > > but given that the merge window was over the holiday season and that
+> > > > > the length of the merge window proved to be shorter than many people
+> > > > > expected it to be, I am not too surprised.  ;-)
+> > > > 
+> > > > Mmh, let me try again:
+> > > > 
+> > > >   $ git clone git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git
+> > > >   $ cd tip
+> > > >   $ git checkout -b locking/core origin/locking/core
+> > > > 
+> > > >   $ git show 4607abbcf464
+> > > >   commit 4607abbcf464ea2be14da444215d05c73025cf6e
+> > > >   Author: Andrea Parri <andrea.parri@amarulasolutions.com>
+> > > >   Date:   Mon Dec 3 15:04:49 2018 -0800
+> > > > 
+> > > >       tools/memory-model: Model smp_mb__after_unlock_lock()
+> > > > 
+> > > >   $ cd tools/memory-model
+> > > >   $ herd7 -conf linux-kernel.cfg after-unlock-lock-same-cpu.litmus
+> > > >   File "after-unlock-lock-same-cpu.litmus": Unknown macro smp_mb__after_unlock_lock (User error)
+> > > > 
+> > > >   [aka, linux-kernel.def in tip:locking/core does not have the
+> > > >    smp_mb__after_unlock_lock() added by 4607abbcf464]
+> > > 
+> > > Color me confused:
+> > > 
+> > > ------------------------------------------------------------------------
+> > > 
+> > > $ git checkout 4607abbcf464Checking out files: 100% (18397/18397), done.
+> > > Previous HEAD position was 4e284b1bf15a rcu: Remove wrapper definitions for obsolete RCU update functions
+> > > HEAD is now at 4607abbcf464 tools/memory-model: Model smp_mb__after_unlock_lock()
+> > > $ grep smp_mb__after_unlock_lock tools/memory-model/linux-kernel.def 
+> > > smp_mb__after_unlock_lock() { __fence{after-unlock-lock}; }
+> > > 
+> > > ------------------------------------------------------------------------
+> > > 
+> > > In addition, it handles this litmus test just fine:
+> > > 
+> > > ------------------------------------------------------------------------
+> > > 
+> > > C MP+polocks
+> > > 
+> > > (*
+> > >  * Result: Never
+> > >  *
+> > >  * This litmus test demonstrates how lock acquisitions and releases can
+> > >  * stand in for smp_load_acquire() and smp_store_release(), respectively.
+> > >  * In other words, when holding a given lock (or indeed after releasing a
+> > >  * given lock), a CPU is not only guaranteed to see the accesses that other
+> > >  * CPUs made while previously holding that lock, it is also guaranteed
+> > >  * to see all prior accesses by those other CPUs.
+> > >  *)
+> > > 
+> > > {}
+> > > 
+> > > P0(int *x, int *y, spinlock_t *mylock)
+> > > {
+> > > 	WRITE_ONCE(*x, 1);
+> > > 	spin_lock(mylock);
+> > > 	smp_mb__after_unlock_lock();
+> > > 	WRITE_ONCE(*y, 1);
+> > > 	spin_unlock(mylock);
+> > > }
+> > > 
+> > > P1(int *x, int *y, spinlock_t *mylock)
+> > > {
+> > > 	int r0;
+> > > 	int r1;
+> > > 
+> > > 	spin_lock(mylock);
+> > > 	r0 = READ_ONCE(*y);
+> > > 	spin_unlock(mylock);
+> > > 	r1 = READ_ONCE(*x);
+> > > }
+> > > 
+> > > exists (1:r0=1 /\ 1:r1=0)
+> > > 
+> > > ------------------------------------------------------------------------
+> > > 
+> > > Again, color me confused.
+> > 
+> > Andrea's point is that while the 1b52d0186177 commit is present in the
+> > tip repository, it isn't in the locking/core branch.
+> 
+> That commit is still in tip/master, so it has not been lost or
+> forgotten.  ;-)
 
-Program fixed drive strengths for SDMMC pads in pad control
-register when auto cal timeouts.
-Fixed settings are based on Pre-SI analysis of the pad design.
+Sounds reassuring!  ;-)
 
-Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
----
- drivers/mmc/host/sdhci-tegra.c | 160 ++++++++++++++++++++++++++++++-----------
- 1 file changed, 119 insertions(+), 41 deletions(-)
+So, up to today, I've been using tip:locking/core as a reference for our
+"almost/tentative-upstream" LKMM changes; well, your reply suggests that
+I should have known better... thank you for the patience,
 
-diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-index e6ace31e2a41..7d681a8fa4ba 100644
---- a/drivers/mmc/host/sdhci-tegra.c
-+++ b/drivers/mmc/host/sdhci-tegra.c
-@@ -75,6 +75,7 @@
- #define SDHCI_TEGRA_SDMEM_COMP_PADCTRL_VREF_SEL_MASK	0x0000000f
- #define SDHCI_TEGRA_SDMEM_COMP_PADCTRL_VREF_SEL_VAL	0x7
- #define SDHCI_TEGRA_SDMEM_COMP_PADCTRL_E_INPUT_E_PWRD	BIT(31)
-+#define SDHCI_COMP_PADCTRL_DRVUPDN_OFFSET_MASK		0x07FFF000
- 
- #define SDHCI_TEGRA_AUTO_CAL_STATUS			0x1ec
- #define SDHCI_TEGRA_AUTO_CAL_ACTIVE			BIT(31)
-@@ -121,6 +122,8 @@ struct sdhci_tegra {
- 	struct pinctrl *pinctrl_sdmmc;
- 	struct pinctrl_state *pinctrl_state_3v3;
- 	struct pinctrl_state *pinctrl_state_1v8;
-+	struct pinctrl_state *pinctrl_state_3v3_drv;
-+	struct pinctrl_state *pinctrl_state_1v8_drv;
- 
- 	struct sdhci_tegra_autocal_offsets autocal_offsets;
- 	ktime_t last_calib;
-@@ -411,6 +414,76 @@ static void tegra_sdhci_set_pad_autocal_offset(struct sdhci_host *host,
- 	sdhci_writel(host, reg, SDHCI_TEGRA_AUTO_CAL_CONFIG);
- }
- 
-+static int tegra_sdhci_set_padctrl(struct sdhci_host *host, int voltage,
-+				   bool state_drvupdn)
-+{
-+	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-+	struct sdhci_tegra *tegra_host = sdhci_pltfm_priv(pltfm_host);
-+	struct sdhci_tegra_autocal_offsets *offsets =
-+						&tegra_host->autocal_offsets;
-+	struct pinctrl_state *pinctrl_drvupdn = NULL;
-+	int ret = 0;
-+	u8 drvup = 0, drvdn = 0;
-+	u32 reg;
-+
-+	if (!state_drvupdn) {
-+		/* PADS Drive Strength */
-+		if (voltage == MMC_SIGNAL_VOLTAGE_180) {
-+			if (tegra_host->pinctrl_state_1v8_drv) {
-+				pinctrl_drvupdn =
-+					tegra_host->pinctrl_state_1v8_drv;
-+			} else {
-+				drvup = offsets->pull_up_1v8_timeout;
-+				drvdn = offsets->pull_down_1v8_timeout;
-+			}
-+		} else {
-+			if (tegra_host->pinctrl_state_3v3_drv) {
-+				pinctrl_drvupdn =
-+					tegra_host->pinctrl_state_3v3_drv;
-+			} else {
-+				drvup = offsets->pull_up_3v3_timeout;
-+				drvdn = offsets->pull_down_3v3_timeout;
-+			}
-+		}
-+
-+		if (pinctrl_drvupdn != NULL) {
-+			ret = pinctrl_select_state(tegra_host->pinctrl_sdmmc,
-+							pinctrl_drvupdn);
-+			if (ret < 0)
-+				dev_err(mmc_dev(host->mmc),
-+					"failed pads drvupdn, ret: %d\n", ret);
-+		} else if ((drvup) || (drvdn)) {
-+			reg = sdhci_readl(host,
-+					SDHCI_TEGRA_SDMEM_COMP_PADCTRL);
-+			reg &= ~SDHCI_COMP_PADCTRL_DRVUPDN_OFFSET_MASK;
-+			reg |= (drvup << 20) | (drvdn << 12);
-+			sdhci_writel(host, reg,
-+					SDHCI_TEGRA_SDMEM_COMP_PADCTRL);
-+		}
-+
-+	} else {
-+		/* Dual Voltage PADS Voltage selection */
-+		if (!tegra_host->pad_control_available)
-+			return 0;
-+
-+		if (voltage == MMC_SIGNAL_VOLTAGE_180) {
-+			ret = pinctrl_select_state(tegra_host->pinctrl_sdmmc,
-+						tegra_host->pinctrl_state_1v8);
-+			if (ret < 0)
-+				dev_err(mmc_dev(host->mmc),
-+					"setting 1.8V failed, ret: %d\n", ret);
-+		} else {
-+			ret = pinctrl_select_state(tegra_host->pinctrl_sdmmc,
-+						tegra_host->pinctrl_state_3v3);
-+			if (ret < 0)
-+				dev_err(mmc_dev(host->mmc),
-+					"setting 3.3V failed, ret: %d\n", ret);
-+		}
-+	}
-+
-+	return ret;
-+}
-+
- static void tegra_sdhci_pad_autocalib(struct sdhci_host *host)
- {
- 	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-@@ -437,6 +510,7 @@ static void tegra_sdhci_pad_autocalib(struct sdhci_host *host)
- 			pdpu = offsets.pull_down_3v3 << 8 | offsets.pull_up_3v3;
- 	}
- 
-+	/* Set initial offset before auto-calibration */
- 	tegra_sdhci_set_pad_autocal_offset(host, pdpu);
- 
- 	card_clk_enabled = tegra_sdhci_configure_card_clk(host, false);
-@@ -460,19 +534,15 @@ static void tegra_sdhci_pad_autocalib(struct sdhci_host *host)
- 	if (ret) {
- 		dev_err(mmc_dev(host->mmc), "Pad autocal timed out\n");
- 
--		if (ios->signal_voltage == MMC_SIGNAL_VOLTAGE_180)
--			pdpu = offsets.pull_down_1v8_timeout << 8 |
--			       offsets.pull_up_1v8_timeout;
--		else
--			pdpu = offsets.pull_down_3v3_timeout << 8 |
--			       offsets.pull_up_3v3_timeout;
--
--		/* Disable automatic calibration and use fixed offsets */
-+		/* Disable automatic cal and use fixed Drive Strengths */
- 		reg = sdhci_readl(host, SDHCI_TEGRA_AUTO_CAL_CONFIG);
- 		reg &= ~SDHCI_AUTO_CAL_ENABLE;
- 		sdhci_writel(host, reg, SDHCI_TEGRA_AUTO_CAL_CONFIG);
- 
--		tegra_sdhci_set_pad_autocal_offset(host, pdpu);
-+		ret = tegra_sdhci_set_padctrl(host, ios->signal_voltage, false);
-+		if (ret < 0)
-+			dev_err(mmc_dev(host->mmc),
-+				"Setting drive strengths failed: %d\n", ret);
- 	}
- }
- 
-@@ -511,26 +581,46 @@ static void tegra_sdhci_parse_pad_autocal_dt(struct sdhci_host *host)
- 	err = device_property_read_u32(host->mmc->parent,
- 			"nvidia,pad-autocal-pull-up-offset-3v3-timeout",
- 			&autocal->pull_up_3v3_timeout);
--	if (err)
-+	if (err) {
-+		if (!IS_ERR(tegra_host->pinctrl_state_3v3) &&
-+			(tegra_host->pinctrl_state_3v3_drv == NULL))
-+			pr_warn("%s: Missing autocal timeout 3v3-pad drvs\n",
-+				mmc_hostname(host->mmc));
- 		autocal->pull_up_3v3_timeout = 0;
-+	}
- 
- 	err = device_property_read_u32(host->mmc->parent,
- 			"nvidia,pad-autocal-pull-down-offset-3v3-timeout",
- 			&autocal->pull_down_3v3_timeout);
--	if (err)
-+	if (err) {
-+		if (!IS_ERR(tegra_host->pinctrl_state_3v3) &&
-+			(tegra_host->pinctrl_state_3v3_drv == NULL))
-+			pr_warn("%s: Missing autocal timeout 3v3-pad drvs\n",
-+				mmc_hostname(host->mmc));
- 		autocal->pull_down_3v3_timeout = 0;
-+	}
- 
- 	err = device_property_read_u32(host->mmc->parent,
- 			"nvidia,pad-autocal-pull-up-offset-1v8-timeout",
- 			&autocal->pull_up_1v8_timeout);
--	if (err)
-+	if (err) {
-+		if (!IS_ERR(tegra_host->pinctrl_state_1v8) &&
-+			(tegra_host->pinctrl_state_1v8_drv == NULL))
-+			pr_warn("%s: Missing autocal timeout 1v8-pad drvs\n",
-+				mmc_hostname(host->mmc));
- 		autocal->pull_up_1v8_timeout = 0;
-+	}
- 
- 	err = device_property_read_u32(host->mmc->parent,
- 			"nvidia,pad-autocal-pull-down-offset-1v8-timeout",
- 			&autocal->pull_down_1v8_timeout);
--	if (err)
-+	if (err) {
-+		if (!IS_ERR(tegra_host->pinctrl_state_1v8) &&
-+			(tegra_host->pinctrl_state_1v8_drv == NULL))
-+			pr_warn("%s: Missing autocal timeout 1v8-pad drvs\n",
-+				mmc_hostname(host->mmc));
- 		autocal->pull_down_1v8_timeout = 0;
-+	}
- 
- 	err = device_property_read_u32(host->mmc->parent,
- 			"nvidia,pad-autocal-pull-up-offset-sdr104",
-@@ -743,32 +833,6 @@ static int tegra_sdhci_execute_tuning(struct sdhci_host *host, u32 opcode)
- 	return mmc_send_tuning(host->mmc, opcode, NULL);
- }
- 
--static int tegra_sdhci_set_padctrl(struct sdhci_host *host, int voltage)
--{
--	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
--	struct sdhci_tegra *tegra_host = sdhci_pltfm_priv(pltfm_host);
--	int ret;
--
--	if (!tegra_host->pad_control_available)
--		return 0;
--
--	if (voltage == MMC_SIGNAL_VOLTAGE_180) {
--		ret = pinctrl_select_state(tegra_host->pinctrl_sdmmc,
--					   tegra_host->pinctrl_state_1v8);
--		if (ret < 0)
--			dev_err(mmc_dev(host->mmc),
--				"setting 1.8V failed, ret: %d\n", ret);
--	} else {
--		ret = pinctrl_select_state(tegra_host->pinctrl_sdmmc,
--					   tegra_host->pinctrl_state_3v3);
--		if (ret < 0)
--			dev_err(mmc_dev(host->mmc),
--				"setting 3.3V failed, ret: %d\n", ret);
--	}
--
--	return ret;
--}
--
- static int sdhci_tegra_start_signal_voltage_switch(struct mmc_host *mmc,
- 						   struct mmc_ios *ios)
- {
-@@ -778,7 +842,7 @@ static int sdhci_tegra_start_signal_voltage_switch(struct mmc_host *mmc,
- 	int ret = 0;
- 
- 	if (ios->signal_voltage == MMC_SIGNAL_VOLTAGE_330) {
--		ret = tegra_sdhci_set_padctrl(host, ios->signal_voltage);
-+		ret = tegra_sdhci_set_padctrl(host, ios->signal_voltage, true);
- 		if (ret < 0)
- 			return ret;
- 		ret = sdhci_start_signal_voltage_switch(mmc, ios);
-@@ -786,7 +850,7 @@ static int sdhci_tegra_start_signal_voltage_switch(struct mmc_host *mmc,
- 		ret = sdhci_start_signal_voltage_switch(mmc, ios);
- 		if (ret < 0)
- 			return ret;
--		ret = tegra_sdhci_set_padctrl(host, ios->signal_voltage);
-+		ret = tegra_sdhci_set_padctrl(host, ios->signal_voltage, true);
- 	}
- 
- 	if (tegra_host->pad_calib_required)
-@@ -805,6 +869,20 @@ static int tegra_sdhci_init_pinctrl_info(struct device *dev,
- 		return -1;
- 	}
- 
-+	tegra_host->pinctrl_state_1v8_drv = pinctrl_lookup_state(
-+				tegra_host->pinctrl_sdmmc, "sdmmc-1v8-drv");
-+	if (IS_ERR(tegra_host->pinctrl_state_1v8_drv)) {
-+		if (PTR_ERR(tegra_host->pinctrl_state_1v8_drv) == -ENODEV)
-+			tegra_host->pinctrl_state_1v8_drv = NULL;
-+	}
-+
-+	tegra_host->pinctrl_state_3v3_drv = pinctrl_lookup_state(
-+				tegra_host->pinctrl_sdmmc, "sdmmc-3v3-drv");
-+	if (IS_ERR(tegra_host->pinctrl_state_3v3_drv)) {
-+		if (PTR_ERR(tegra_host->pinctrl_state_3v3_drv) == -ENODEV)
-+			tegra_host->pinctrl_state_3v3_drv = NULL;
-+	}
-+
- 	tegra_host->pinctrl_state_3v3 =
- 		pinctrl_lookup_state(tegra_host->pinctrl_sdmmc, "sdmmc-3v3");
- 	if (IS_ERR(tegra_host->pinctrl_state_3v3)) {
--- 
-2.7.4
+  Andrea
 
+
+> 
+> 							Thanx, Paul
+> 
