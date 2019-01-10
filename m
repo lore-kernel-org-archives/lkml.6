@@ -2,93 +2,88 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADA94C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 20:24:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD90AC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 20:25:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D623213F2
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 20:24:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 894A4208E3
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 20:25:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="GaCjm/pW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729849AbfAJUY5 (ORCPT
+        id S1729985AbfAJUZl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 15:24:57 -0500
-Received: from smtprelay0037.hostedemail.com ([216.40.44.37]:49969 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726560AbfAJUY5 (ORCPT
+        Thu, 10 Jan 2019 15:25:41 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:51422 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727750AbfAJUZl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 15:24:57 -0500
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay01.hostedemail.com (Postfix) with ESMTP id 12AE9100E86C1;
-        Thu, 10 Jan 2019 20:24:56 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: bike43_82460749f3861
-X-Filterd-Recvd-Size: 2235
-Received: from XPS-9350.home (unknown [47.151.153.53])
-        (Authenticated sender: joe@perches.com)
-        by omf20.hostedemail.com (Postfix) with ESMTPA;
-        Thu, 10 Jan 2019 20:24:55 +0000 (UTC)
-Message-ID: <d3c1a0a9a29f6edfb36d97889d3498e1968500c0.camel@perches.com>
-Subject: Re: [PATCH] checkpatch: allow reporting C99 style comments
-From:   Joe Perches <joe@perches.com>
-To:     Vadim Bendebury <vbendeb@chromium.org>,
-        linux-kernel@vger.kernel.org
-Cc:     apw@canonical.com
-Date:   Thu, 10 Jan 2019 12:24:53 -0800
-In-Reply-To: <20190110050117.55349-1-vbendeb@chromium.org>
-References: <20190110050117.55349-1-vbendeb@chromium.org>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.30.1-1build1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Thu, 10 Jan 2019 15:25:41 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=Jog9ZwrILLUqYnYEM9yeKYKLdJpnoiz07dnT1UexYGE=; b=GaCjm/pWe5FgFqzGylW36JSuR
+        w7j55huQNZGwupGWfX4BGLueRjgeK52utJbgYLT7kgUX5tp4N1JpdhF0GqHPpWmjWPk9fXyfms3ed
+        y7YHRBCZmXsRv0Yo36PbZDpFr7iJ/brdxCOIp+Bl9fUKtqXhlWrknAO2HhpJKlW2na/liadrci1XX
+        /0dR9U5gBh4dzywQ2pkKart0smy6VEFlyQcsMqMpU2rRVFQvx3OiDxD/buSI0WEGWqprnhdQ9TCZy
+        oJAQEEIUGRJ45RyVTbac+XoBZ9mc7sJ2VVPos8cNFkoSH6KE1GPnLpMbaQ1FzkWklshY6NFgNypYa
+        0apYNOGvg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=worktop.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1ghgtU-00071q-1C; Thu, 10 Jan 2019 20:25:36 +0000
+Received: by worktop.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 823F59844AF; Thu, 10 Jan 2019 21:25:33 +0100 (CET)
+Date:   Thu, 10 Jan 2019 21:25:33 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Florian Westphal <fw@strlen.de>
+Cc:     Anatol Pomozov <anatol.pomozov@gmail.com>,
+        Dmitry Vyukov <dvyukov@google.com>, paulmck@linux.ibm.com,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: seqcount usage in xt_replace_table()
+Message-ID: <20190110202533.GK2861@worktop.programming.kicks-ass.net>
+References: <CAOMFOmU=t9YbE68YpoQn0Ug0XN1F+0iuJp9J=htCRRrbdaPSVA@mail.gmail.com>
+ <20190108223746.shuwx3ro7cgwz7hh@breakpoint.cc>
+ <20190110124123.GA21224@hirez.programming.kicks-ass.net>
+ <20190110144812.mkbokbj2iyryj6lv@breakpoint.cc>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190110144812.mkbokbj2iyryj6lv@breakpoint.cc>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2019-01-09 at 21:01 -0800, Vadim Bendebury wrote:
-> Presently C99 style comments are removed unconditionally before actual
-> patch validity check happens. This is a problem for some third party
-> projects which use checkpatch.pl but do not allow C99 style comments.
+On Thu, Jan 10, 2019 at 03:48:12PM +0100, Florian Westphal wrote:
+> Peter Zijlstra <peterz@infradead.org> wrote:
+> > Is performance a concern in this path? There is no comment justifying
+> > this 'creative' stuff.
 > 
-> This patch adds yet another variable, named C99_COMMENT_TOLERANCE. If
-> it is included in the --ignore command line or config file options
-> list, C99 comments in the patch are reported as errors.
+> We have to wait until all cpus are done with current iptables ruleset.
 > 
-> Tested by processing a patch with a C99 style comment, it passes the
-> check just fine unless '--ignore C99_COMMENT_TOLERANCE' is present in
-> .checkpatch.conf.
+> Before this 'creative' change, this relied on get_counters
+> synchronization.  And that caused wait times of 30 seconds or more on
+> busy systems.
+> 
+> I have no objections swapping this with a synchronize_rcu() if that
+> makes it easier.
 
-I'm not a big fan of the name but I can't think of
-anything much better.
+Would using synchronize_rcu() not also mean you can get rid of that
+xt_write_recseq*() stuff entirely?
 
-And the location of the added test isn't good.
+Anyway, synchronize_rcu() can also take a little while, but I don't
+think anywere near 30 seconds.
 
-> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-[]
-> @@ -61,7 +61,6 @@ my $codespellfile = "/usr/share/codespell/dictionary.txt";
->  my $conststructsfile = "$D/const_structs.checkpatch";
->  my $typedefsfile = "";
->  my $color = "auto";
-> -my $allow_c99_comments = 1;
+> (synchronize_rcu might be confusing though, as we don't use rcu
+>  for table->private), and one 'has to know' that all the netfilter
+>  hooks, including the iptables eval loop, run with rcu_read_lock
+>  held).
 
-Keep this here.
- 
->  sub help {
->  	my ($exitcode) = @_;
-> @@ -1250,6 +1249,8 @@ sub sanitise_line {
->  	my $off = 0;
->  	my $c;
->  
-> +	my $allow_c99_comments = !defined $ignore_type{"C99_COMMENT_TOLERANCE"};
-> +
-
-And add this test as a new line near line 1015 like
-
- my $vname;
-+$allow_c99_comments = !defined $ignore_type{"C99_COMMENT_TOLERANCE"};
- for my $filename (@ARGV) {
-
-
+A comment can help there, right?
