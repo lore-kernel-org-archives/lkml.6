@@ -2,125 +2,164 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.7 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0590AC43444
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 05:53:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18E24C43612
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 06:02:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C8DD021738
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 05:53:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DC09021773
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 06:02:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NpKKOH5n"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="B98ApLHW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727276AbfAJFxj (ORCPT
+        id S1727273AbfAJGCl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 00:53:39 -0500
-Received: from mail-yb1-f194.google.com ([209.85.219.194]:34345 "EHLO
-        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727142AbfAJFxj (ORCPT
+        Thu, 10 Jan 2019 01:02:41 -0500
+Received: from mail.andi.de1.cc ([85.214.239.24]:36634 "EHLO
+        h2641619.stratoserver.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725536AbfAJGCk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 00:53:39 -0500
-Received: by mail-yb1-f194.google.com with SMTP id w186so3094319ybg.1
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jan 2019 21:53:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=vLElFRyIcUvvx4RziwEI+XY+P+q4djNY2jdC1xfWvCw=;
-        b=NpKKOH5nook8Z9YjK7LypJawLMCyczbGcAVgjM8C6EsG0sOmoTTejfx4YEcpZnB0IU
-         ILOZcfMzvVbJSco7xqeIy7JNO0FJhnQjfa8fTWK5o3usgSiELfTgJ7X8INpiXMtBlT4s
-         L2RFedJEJcHmL5PHDmezhFBmWhdnqVSpfgjoad8q7CkQHfOfRBbs6YtcHzHBSHYzikF1
-         oKIS/0UDrCZFASYZcqfivHOIcPa1n3A5E+7Vi+TLsbLDgnFrYERMClRe9ZspMRFxVm6o
-         a6UVjf+qNWv0VHZAcbn36UxbYm8cTjlGBQnP42vPR9CQ90Io+2Vbd0VOGR9zefeEJQ7I
-         kDdA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=vLElFRyIcUvvx4RziwEI+XY+P+q4djNY2jdC1xfWvCw=;
-        b=JwjTRTNVN8qK+gZ/5aEfPhGNkoTYFx7d3nn+MkP+UkB9y1JQheBy9OBl6U6z6fWz4/
-         kgeAkKucRqbQDZZQe31JIkLWni8rnACTfsm9f1SyAMzn4+s6lPzq8QplThF6zMcIBMvp
-         3qrfZGBP9BrqkZWIfMZo1s4U5uFu7dNBS/LW2qklPToAcvf2qp1Bqq66D2x8zIvBUksn
-         BOGQHXl7JTXZkstyJytvm5C/PO6iiJvzmXDT5bRtkZX5ywtSvMza39OMWmlR5XtIkjiJ
-         M6JGEhHAia3Un7wVZlSfHRp5crX/IYDoV2kQInK4h+ouAMv4YrlFPK5UGpS3LwHpQSHj
-         0BFg==
-X-Gm-Message-State: AJcUukdxlLw0lCzCvilyDAhKEYkoMBXTAuC8vxZdxP8yuHKTAxfuWOvj
-        lvZZU4NWQYxIJ5De87zHi4dZPYW++cInlzP4SMWyPQ==
-X-Google-Smtp-Source: ALg8bN4W+igM6CnjW3opAi59a6C+JT4U1TFKQig0J4U+HZJnkbSg7EFR2Wzo2cG4MS8OhaUDE7TQMFKxgfebUGpjnNU=
-X-Received: by 2002:a25:ca08:: with SMTP id a8mr8323890ybg.127.1547099617584;
- Wed, 09 Jan 2019 21:53:37 -0800 (PST)
-MIME-Version: 1.0
-References: <CAA85sZt=Q4b_tn_vDx3g1ap7GNrXsHQk7Jki1T+zPbqVot90jg@mail.gmail.com>
-In-Reply-To: <CAA85sZt=Q4b_tn_vDx3g1ap7GNrXsHQk7Jki1T+zPbqVot90jg@mail.gmail.com>
-From:   Eric Dumazet <edumazet@google.com>
-Date:   Wed, 9 Jan 2019 21:53:26 -0800
-Message-ID: <CANn89iLkciYGn7GyKc2QitSjjTms58_GKFqjOJ=6G8wEFi=SJA@mail.gmail.com>
-Subject: Re: [BUG] moving fq back to clock monotonic breaks my setup
-To:     ian.kumlien@gmail.com, netdev <netdev@vger.kernel.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 10 Jan 2019 01:02:40 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=kemnade.info; s=20180802; h=Message-Id:Date:Subject:Cc:To:From:Sender:
+        Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=ELnuXEy+ZyRvfofCf0p0AbrqJf7RUAii+SnFu9UC6bs=; b=B98ApLHWImDhvZ6TSyjudCZmXj
+        PcyMMCq8csk6e2+CRvRz4NjqJ/buIeI9O7q7pxV5qvBt+O4QPeZ6PZAR53bHEOBmdE0bJD+F4exWr
+        sgm9E1v/Wzf/AybQr178vXxpEcIxK6Om+ZDQ5pRNgjNE+vOBPLksQ6YLhr8uRH5OecdE=;
+Received: from hsvpn29.hotsplots.net ([185.46.137.7] helo=localhost)
+        by h2641619.stratoserver.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <andreas@kemnade.info>)
+        id 1ghTQH-0002Hv-Ew; Thu, 10 Jan 2019 07:02:33 +0100
+Received: from andi by localhost with local (Exim 4.89)
+        (envelope-from <andreas@kemnade.info>)
+        id 1ghTQE-0004PQ-PL; Thu, 10 Jan 2019 07:02:31 +0100
+From:   Andreas Kemnade <andreas@kemnade.info>
+To:     laurent.pinchart@ideasonboard.com, mchehab@kernel.org,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-omap <linux-omap@vger.kernel.org>,
+        Discussions about the Letux Kernel 
+        <letux-kernel@openphoenux.org>
+Cc:     Andreas Kemnade <andreas@kemnade.info>
+Subject: [PATCH RFC] media: omap3isp: Fix high idle current
+Date:   Thu, 10 Jan 2019 07:01:36 +0100
+Message-Id: <20190110060136.16896-1-andreas@kemnade.info>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 9, 2019 at 4:48 PM Ian Kumlien <ian.kumlien@gmail.com> wrote:
->
-> Hi,
->
-> Just been trough ~5+ hours of bisecting and eventually actually found
-> the culprit =)
->
-> commit fb420d5d91c1274d5966917725e71f27ed092a85 (refs/bisect/bad)
-> Author: Eric Dumazet <edumazet@google.com>
-> Date:   Fri Sep 28 10:28:44 2018 -0700
->
->     tcp/fq: move back to CLOCK_MONOTONIC
->
-> [--8<--]
->
-> So this might be because my setup might be "odd".
->
-> Basically I have a firewall with four nics that uses two of those nics
-> to handle my normal
-> internet connection (firewall/MASQ/NAT) and the other two are assigned
-> to one bridge each.
->
-> The firewall is also my local caching DNS server and DHCP server,
-> which is also used by the VM:s...
-> But with 4.20 DHCP replies disappeared before entering the bridge - i
-> couldn't even see them in
-> tcpdump! (all nics are ixgbe on a atom soc)
->
-> I'm currently running a kernel with that patch reversed but I'm also
-> wondering about possible ways
-> forward since I'm reverting a fix from someone else...
+On the GTA04, current consumption rose by about 30mA when the omap3_isp
+module was loaded and the v4l device was not accessed and even no
+camera attached.
+Module removal fixed it again. Slowing down the removal process reveals
+that calling isp_detach_iommu() is required to have low
+current. So isp_attach/detach_iommu() to moved to the get()/put()
+functions.
+This all has strange side effects. The hwmod seems to be accessible
+using /dev/mem if the iommu calls in their original place. With
+the modified placement it is not.
+In a very old setup with a 3.7 kernel which
+has the iommu calls at the same place as our current kernel,
+the memory is not accessible.
+Note: isp_get()/put() calls seem to be balanced.
 
-I suggest you use netdev@ mailing list instead of lkml
+But at the current wonky gta04 setup (with a not upstreamed
+image sensor driver)which also has other problems, CAM
+reports address holes. So I have no clear idea whether this patch
+is right or not.
 
-Then, we probably need to clear skb->tstamp in more paths (you are
-mentioning bridge ...)
+Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+---
+ drivers/media/platform/omap3isp/isp.c | 28 +++++++++++++++-------------
+ 1 file changed, 15 insertions(+), 13 deletions(-)
 
-See commit 8203e2d844d34af247a151d8ebd68553a6e91785 for reference.
+diff --git a/drivers/media/platform/omap3isp/isp.c b/drivers/media/platform/omap3isp/isp.c
+index 13f2828d880d..b837ca5604ad 100644
+--- a/drivers/media/platform/omap3isp/isp.c
++++ b/drivers/media/platform/omap3isp/isp.c
+@@ -88,6 +88,10 @@ static void isp_save_ctx(struct isp_device *isp);
+ 
+ static void isp_restore_ctx(struct isp_device *isp);
+ 
++static int isp_attach_iommu(struct isp_device *isp);
++
++static void isp_detach_iommu(struct isp_device *isp);
++
+ static const struct isp_res_mapping isp_res_maps[] = {
+ 	{
+ 		.isp_rev = ISP_REVISION_2_0,
+@@ -1407,6 +1411,14 @@ static struct isp_device *__omap3isp_get(struct isp_device *isp, bool irq)
+ 		__isp = NULL;
+ 		goto out;
+ 	}
++	/* IOMMU */
++	if (isp_attach_iommu(isp) < 0) {
++		dev_err(isp->dev, "unable to attach to IOMMU\n");
++		isp_disable_clocks(isp);
++		__isp = NULL;
++		goto out;
++	}
++
+ 
+ 	/* We don't want to restore context before saving it! */
+ 	if (isp->has_context)
+@@ -1453,6 +1465,7 @@ static void __omap3isp_put(struct isp_device *isp, bool save_ctx)
+ 		if (!media_entity_enum_empty(&isp->crashed) ||
+ 		    isp->stop_failure)
+ 			isp_reset(isp);
++		isp_detach_iommu(isp);
+ 		isp_disable_clocks(isp);
+ 	}
+ 	mutex_unlock(&isp->isp_mutex);
+@@ -1999,10 +2012,6 @@ static int isp_remove(struct platform_device *pdev)
+ 	isp_cleanup_modules(isp);
+ 	isp_xclk_cleanup(isp);
+ 
+-	__omap3isp_get(isp, false);
+-	isp_detach_iommu(isp);
+-	__omap3isp_put(isp, false);
+-
+ 	media_entity_enum_cleanup(&isp->crashed);
+ 	v4l2_async_notifier_cleanup(&isp->notifier);
+ 
+@@ -2313,19 +2322,12 @@ static int isp_probe(struct platform_device *pdev)
+ 	isp->mmio_hist_base_phys =
+ 		mem->start + isp_res_maps[m].offset[OMAP3_ISP_IOMEM_HIST];
+ 
+-	/* IOMMU */
+-	ret = isp_attach_iommu(isp);
+-	if (ret < 0) {
+-		dev_err(&pdev->dev, "unable to attach to IOMMU\n");
+-		goto error_isp;
+-	}
+-
+ 	/* Interrupt */
+ 	ret = platform_get_irq(pdev, 0);
+ 	if (ret <= 0) {
+ 		dev_err(isp->dev, "No IRQ resource\n");
+ 		ret = -ENODEV;
+-		goto error_iommu;
++		goto error_isp;
+ 	}
+ 	isp->irq_num = ret;
+ 
+@@ -2339,7 +2341,7 @@ static int isp_probe(struct platform_device *pdev)
+ 	/* Entities */
+ 	ret = isp_initialize_modules(isp);
+ 	if (ret < 0)
+-		goto error_iommu;
++		goto error_isp;
+ 
+ 	ret = isp_register_entities(isp);
+ 	if (ret < 0)
+-- 
+2.11.0
 
-Can you try :
-
-diff --git a/net/bridge/br_forward.c b/net/bridge/br_forward.c
-index 5372e2042adfe20d3cd039c29057535b2413be61..bd4fa141420c92a44716bd93fcd8aa3d3310203a
-100644
---- a/net/bridge/br_forward.c
-+++ b/net/bridge/br_forward.c
-@@ -53,6 +53,7 @@ int br_dev_queue_push_xmit(struct net *net, struct
-sock *sk, struct sk_buff *skb
-                skb_set_network_header(skb, depth);
-        }
-
-+       skb->tstamp = 0;
-        dev_queue_xmit(skb);
-
-        return 0;
-
-Thanks.
