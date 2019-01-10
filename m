@@ -2,127 +2,119 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC90CC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 17:14:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48A07C43612
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 17:15:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 94F7420874
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 17:14:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="JIWm5JHT"
+	by mail.kernel.org (Postfix) with ESMTP id 1E87120874
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 17:15:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729480AbfAJROh (ORCPT
+        id S1729538AbfAJRPJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 12:14:37 -0500
-Received: from mail-vs1-f68.google.com ([209.85.217.68]:36287 "EHLO
-        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728918AbfAJROh (ORCPT
+        Thu, 10 Jan 2019 12:15:09 -0500
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:45199 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729474AbfAJRPI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 12:14:37 -0500
-Received: by mail-vs1-f68.google.com with SMTP id v205so7474493vsc.3
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 09:14:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Vy7pN6aDzFrDAzH1p4yOc3Z4zZXfqcqoGwMPJMXmmLM=;
-        b=JIWm5JHTv7uv3F9kiaXoFZdazgwTJf9+6BMPBtupiq6d0P41Jn0QQ/RmiJuB+/54c+
-         j8JcnzizAU0YqPGWQU0AisDLpQmeclmBoF/ghS2HUm4rnafrWP6x8sQ1neEulWuU9Fyp
-         VCwtjbHcCUt5fHF/O5E/e84tkE8ChQOnvoqDg=
+        Thu, 10 Jan 2019 12:15:08 -0500
+Received: by mail-qt1-f193.google.com with SMTP id e5so14010849qtr.12;
+        Thu, 10 Jan 2019 09:15:06 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=Vy7pN6aDzFrDAzH1p4yOc3Z4zZXfqcqoGwMPJMXmmLM=;
-        b=Inql/VjQhKGk6bZea2/5V3BcBlh3LBlj7DZFFDggV5k60iBLb9WYJT8GFudxOq1UI2
-         zsKoQi7iekyH3dRcwgbUgGAXLg5XhOX76YmhZRBNd9nyaTH/wM11ApXlu4te0J00bl76
-         bhpxQnak+IgnKu8lNPvnZcHR93osDL6J7HNrFYytZd9cuQGlbu+wYON2AGrq4OQCH9+H
-         SQk1wIrHiSnVO0/SkzqjIVTWFssdEM5qv8UAeAUErGafyKKCspIN3d1udeHw10KDaPOi
-         IYdSjCxvBW1+JjCUtk6bfAQBiv3MoUQPxt/zeElQVB1m5Dg2W+VmIzLt1Yw505OvqC9x
-         7Y7g==
-X-Gm-Message-State: AJcUukdPBlRJFRZQj4pQLNsLrHD7dR/ED8b26VkNSi8JvQtR3bABCICu
-        ZpESSWG6c62RNNFceWOREbWZX2DenYg=
-X-Google-Smtp-Source: ALg8bN4IAO9OjLNCqk/TqNDxRvuJwKjw5fZ35ZFXt/txsXfwI3sUfNxcb68CrLjn96NA2ZhQRIuh9A==
-X-Received: by 2002:a67:3509:: with SMTP id c9mr4560621vsa.33.1547140475418;
-        Thu, 10 Jan 2019 09:14:35 -0800 (PST)
-Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com. [209.85.217.42])
-        by smtp.gmail.com with ESMTPSA id k200sm29434492vke.9.2019.01.10.09.14.34
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 10 Jan 2019 09:14:34 -0800 (PST)
-Received: by mail-vs1-f42.google.com with SMTP id p74so7499181vsc.0
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 09:14:34 -0800 (PST)
-X-Received: by 2002:a67:da93:: with SMTP id w19mr4635027vsj.144.1547140473614;
- Thu, 10 Jan 2019 09:14:33 -0800 (PST)
+        bh=Vi+SvwsycUKtGhpMC3QEpN/Bk6bKq1AfTBDWYF1k7VQ=;
+        b=hf/Qw2NMREqLD0cU2L5PwYV6N3JVMoymHdz6WPZ4m0wF+QIVmbrGaDTsAVhbXHq03N
+         4zvyj8yMQlqAAkoSnTfjpTSDoKlE5/4DeDyYXqDanBk2XFUaWvhIweXT6lMTXFx35g0e
+         UT6Q4jr945WYh8e637Kj6ObPedDpTpUpbSu1VWf/sLwt+8cdb9NgCHp83IDvOkmf35kJ
+         eKcb0zmFQdz2u9d1PfJDI48UvC9AqA5sGgyzEGK2O3Pq7/Hinbi03TI30LWQ9v0sRygF
+         tpFBRAWbmX7y40RN9bhyROcWqdgIZzIjE6dh7nnXGRgWA0sbqle/1qVCFu6heqQN4uaR
+         L3zw==
+X-Gm-Message-State: AJcUukdDu2iSUzrpLirdpfVetnMplsuyAWY8r/S6gdyK0on1eVhuVsN5
+        e8yeoyAjDUQCUQcx+uFu9ACFiAKJ518JEpQ5pUI=
+X-Google-Smtp-Source: ALg8bN4AdylggnguSr7egu7xIPGdOjTe436nAOiytiob3A7SfzgpinZUkBcCe85tXDNMw1nvzwC1nAoiCh7sWU6vHE4=
+X-Received: by 2002:ac8:1d12:: with SMTP id d18mr10355152qtl.343.1547140506273;
+ Thu, 10 Jan 2019 09:15:06 -0800 (PST)
 MIME-Version: 1.0
-References: <cover.1547078153.git.amit.kucheria@linaro.org>
- <041258d65883df964890249a24d2a4788c419304.1547078153.git.amit.kucheria@linaro.org>
- <154708018331.15366.11574628155253134835@swboyd.mtv.corp.google.com>
-In-Reply-To: <154708018331.15366.11574628155253134835@swboyd.mtv.corp.google.com>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Thu, 10 Jan 2019 09:14:20 -0800
-X-Gmail-Original-Message-ID: <CAD=FV=V8WM68Rrsc6adnV6Q9c1N8hoH2TzNLWUsuWg33d7ZpOg@mail.gmail.com>
-Message-ID: <CAD=FV=V8WM68Rrsc6adnV6Q9c1N8hoH2TzNLWUsuWg33d7ZpOg@mail.gmail.com>
-Subject: Re: [PATCH v1 6/7] arm64: dts: sdm845: Increase alert trip point to
- 95 degrees
-To:     Stephen Boyd <swboyd@chromium.org>
-Cc:     Amit Kucheria <amit.kucheria@linaro.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Andy Gross <andy.gross@linaro.org>,
-        Taniya Das <tdas@codeaurora.org>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        David Brown <david.brown@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org
+References: <20190110162435.309262-1-arnd@arndb.de> <20190110162435.309262-8-arnd@arndb.de>
+ <20190110163908.GC31683@fuggles.cambridge.arm.com>
+In-Reply-To: <20190110163908.GC31683@fuggles.cambridge.arm.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Thu, 10 Jan 2019 18:14:50 +0100
+Message-ID: <CAK8P3a27hYDL+yjO+DFe8n_C_dyjGNKcKOcWz-p3Pc1LwcxKjw@mail.gmail.com>
+Subject: Re: [PATCH 07/15] ARM: add kexec_file_load system call number
+To:     Will Deacon <will.deacon@arm.com>
+Cc:     y2038 Mailman List <y2038@lists.linaro.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+        Matt Turner <mattst88@gmail.com>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Michal Simek <monstr@monstr.eu>,
+        Paul Burton <paul.burton@mips.com>,
+        Helge Deller <deller@gmx.de>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Rich Felker <dalias@libc.org>,
+        David Miller <davem@davemloft.net>,
+        Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        Firoz Khan <firoz.khan@linaro.org>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        alpha <linux-alpha@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-ia64@vger.kernel.org,
+        linux-m68k <linux-m68k@lists.linux-m68k.org>,
+        linux-mips@vger.kernel.org,
+        Parisc List <linux-parisc@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        Linux-sh list <linux-sh@vger.kernel.org>,
+        sparclinux <sparclinux@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On Wed, Jan 9, 2019 at 4:29 PM Stephen Boyd <swboyd@chromium.org> wrote:
+On Thu, Jan 10, 2019 at 5:39 PM Will Deacon <will.deacon@arm.com> wrote:
 >
-> Quoting Amit Kucheria (2019-01-09 16:00:55)
-> > 75 degrees is too aggressive for throttling the CPU. After speaking to
-> > Qualcomm engineers, increase it to 95 degrees.
-> >
-> > Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
-> > ---
-> >  arch/arm64/boot/dts/qcom/sdm845.dtsi | 16 ++++++++--------
+> > diff --git a/arch/arm64/include/asm/unistd32.h b/arch/arm64/include/asm/unistd32.h
+> > index 355fe2bc035b..19f3f58b6146 100644
+> > --- a/arch/arm64/include/asm/unistd32.h
+> > +++ b/arch/arm64/include/asm/unistd32.h
+> > @@ -823,6 +823,8 @@ __SYSCALL(__NR_rseq, sys_rseq)
+> >  __SYSCALL(__NR_io_pgetevents, compat_sys_io_pgetevents)
+> >  #define __NR_migrate_pages 400
+> >  __SYSCALL(__NR_migrate_pages, sys_migrate_pages)
+> > +#define __NR_kexec_file_load 401
+> > +__SYSCALL(__NR_kexec_file_load, sys_kexec_file_load)
 >
-> Is the plan that these are some defaults that would be adjusted by board
-> variants? Just curious why we have anything in here and don't punt it
-> all to each board dts file.
+> Hmm, I wonder if we need a compat wrapper for this, or are we assuming
+> that the early entry code has already zero-extended the long and pointer
+> arguments?
 
-My preference would be that the SoC device tree file should contain
-thermal numbers that are important to pay attention to for the safety
-/ proper operation of the SoC.  ...then individual boards could (if
-they needed to) override with lower values to control, for instance,
-skin temperature.
+Yes, that is generally the assumption for compat syscalls.
 
-From experience with previous boards, if you've got enough an off-SoC
-thermistors then those are the ones you'd want to monitor to control
-skin temperature.  It's OK if the SoC spikes up quite high as long as
-that heat has somewhere to go (like a heat pipe).  The sensors that
-are part of Amit's patch are on-chip.
+s390 needs some extra magic to do a 31-to-64 extension on pointer
+arguments, and I think sometimes we need a special wrapper to
+do sign-extension of 32-bit arguments into 64-bit, but the arguments
+here should not need that.
 
-...if you've got a board without external thermistors and are using
-the SoC's on-chip sensors as a proxy for the heat in the overall
-system then you might want to lower your values in the board device
-tree file.  You won't be able to have as many short term spikes, but
-that's what you gotta do without the extra sensors.
-
-
-Sound sane?
-
--Doug
+     Arnd
