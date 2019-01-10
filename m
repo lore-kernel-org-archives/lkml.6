@@ -2,100 +2,296 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C948C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 05:31:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC911C43444
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 05:35:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B23C21738
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 05:31:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="kBtZyQmn"
+	by mail.kernel.org (Postfix) with ESMTP id 9A02220879
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 05:35:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726968AbfAJFbm (ORCPT
+        id S1727015AbfAJFfv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 00:31:42 -0500
-Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.50]:32254 "EHLO
-        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725782AbfAJFbm (ORCPT
+        Thu, 10 Jan 2019 00:35:51 -0500
+Received: from alexa-out-blr-02.qualcomm.com ([103.229.18.198]:21224 "EHLO
+        alexa-out-blr.qualcomm.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725782AbfAJFfv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 00:31:42 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1547098300;
-        s=strato-dkim-0002; d=goldelico.com;
-        h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=8N6lYespEPyDCyHZjmKSILkug9GjXLIl+0aqj5JnK3E=;
-        b=kBtZyQmnn2dIwlG0uugnizb4htGE7L+hdaFseC6T7dHcqXEFkG/UxpdAxpuyaIQFtI
-        L/LZ0yoaZhQ8pYj0tJwIRv7UEMpB7tNTGEgbT00k6r+oY/XQeUlyoUNcjwXBwYR4yPMe
-        NIyAppoejInLswfpn2tS+JGLH/bFeS/N6ENJF/xWfZ5nhUc6OB0TEdssQDzMzV5pVWI+
-        EW5Bwf1qv8Sq3Nq3nOyBTDkWZXUZYSC66W1WT5zvfVBpaV8q/cPwV+FvhPpD+9xdLALF
-        6R+ei/d6QgCPAAnf/PLos8fUmyV+PW/IzjeGNzsFo+EtXVDHg1d8Wiz6UKQeoPfTQACs
-        hXQA==
-X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMgPgp8VKxflSZ1P34KBj4Qpw9iZeHmMmw4rtlQ=="
-X-RZG-CLASS-ID: mo00
-Received: from imac.fritz.box
-        by smtp.strato.de (RZmta 44.9 DYNA|AUTH)
-        with ESMTPSA id 608499v0A5VWT9A
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
-        (Client did not present a certificate);
-        Thu, 10 Jan 2019 06:31:32 +0100 (CET)
-Content-Type: text/plain; charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
-Subject: Re: [PATCH v2] ARM: dts: omap3-gta04: Fix graph_port warning
-From:   "H. Nikolaus Schaller" <hns@goldelico.com>
-In-Reply-To: <20190109213903.GV5544@atomide.com>
-Date:   Thu, 10 Jan 2019 06:31:31 +0100
-Cc:     Rob Herring <robh@kernel.org>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        =?utf-8?Q?Beno=C3=AEt_Cousson?= <bcousson@baylibre.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-omap <linux-omap@vger.kernel.org>,
-        Discussions about the Letux Kernel 
-        <letux-kernel@openphoenux.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <8674356B-8688-49B6-AB72-16A991124A73@goldelico.com>
-References: <97349a696b43af65d62b5d8e795ec3771b5e78bd.1547060514.git.hns@goldelico.com> <CAL_JsqLhGGx_amtDSZh3OJ+Tq-Oziu450NOt4Z+aoQMt-JY46Q@mail.gmail.com> <20190109213903.GV5544@atomide.com>
-To:     Tony Lindgren <tony@atomide.com>
-X-Mailer: Apple Mail (2.3124)
+        Thu, 10 Jan 2019 00:35:51 -0500
+X-IronPort-AV: E=Sophos;i="5.56,459,1539628200"; 
+   d="scan'208";a="299950"
+Received: from ironmsg03-blr.qualcomm.com ([10.86.208.132])
+  by alexa-out-blr.qualcomm.com with ESMTP/TLS/AES256-SHA; 10 Jan 2019 11:05:45 +0530
+X-IronPort-AV: E=McAfee;i="5900,7806,9131"; a="2665209"
+Received: from blr-ubuntu-104.ap.qualcomm.com (HELO blr-ubuntu-104.qualcomm.com) ([10.79.40.64])
+  by ironmsg03-blr.qualcomm.com with ESMTP; 10 Jan 2019 11:05:45 +0530
+Received: by blr-ubuntu-104.qualcomm.com (Postfix, from userid 346745)
+        id A8C1339E1; Thu, 10 Jan 2019 11:05:44 +0530 (IST)
+From:   Arun KS <arunks@codeaurora.org>
+To:     arunks.linux@gmail.com, alexander.h.duyck@linux.intel.com,
+        akpm@linux-foundation.org, mhocko@kernel.org, vbabka@suse.cz,
+        osalvador@suse.de, linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Cc:     getarunks@gmail.com, Arun KS <arunks@codeaurora.org>
+Subject: [PATCH v9] mm/page_alloc.c: memory_hotplug: free pages as higher order
+Date:   Thu, 10 Jan 2019 11:05:43 +0530
+Message-Id: <1547098543-26452-1-git-send-email-arunks@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+When freeing pages are done with higher order, time spent on coalescing
+pages by buddy allocator can be reduced.  With section size of 256MB, hot
+add latency of a single section shows improvement from 50-60 ms to less
+than 1 ms, hence improving the hot add latency by 60 times.  Modify
+external providers of online callback to align with the change.
 
-> Am 09.01.2019 um 22:39 schrieb Tony Lindgren <tony@atomide.com>:
->=20
-> * Rob Herring <robh@kernel.org> [190109 19:38]:
->> On Wed, Jan 9, 2019 at 1:02 PM H. Nikolaus Schaller =
-<hns@goldelico.com> wrote:
->>>=20
->>> From: Tony Lindgren <tony@atomide.com>
->>>=20
->>> We're currently getting a warning with make dtbs:
->>>=20
->>> arch/arm/boot/dts/omap3-gta04.dtsi:720.7-727.4: Warning =
-(graph_port):
->>> /ocp@68000000/dss@48050000/encoder@48050c0 0/port: graph node unit
->>> address error, expected "0"
->>>=20
->>> Tested-by: H. Nikolaus Schaller <hns@goldelico.com>
->>> Signed-off-by: Tony Lindgren <tony@atomide.com>
->>=20
->> Acked-by: Rob Herring <robh@kernel.org>
->=20
-> Nikolaus, care to reply with your Signed-off-by since
-> you also edited the patch?
+Signed-off-by: Arun KS <arunks@codeaurora.org>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Reviewed-by: Oscar Salvador <osalvador@suse.de>
+---
+Changes since v8:
+- Remove return type change for online_page_callback.
+- Use consistent names for external online_page providers.
+- Fix onlined_pages accounting.
 
-Sorry, I forgot (too busy with other topics)...
+Changes since v7:
+- Rebased to 5.0-rc1.
+- Fixed onlined_pages accounting.
+- Added comment for return value of online_page_callback.
+- Renamed xen_bring_pgs_online to xen_online_pages.
 
-Here:
+Changes since v6:
+- Rebased to 4.20
+- Changelog updated.
+- No improvement seen on arm64, hence removed removal of prefetch.
 
-Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
+Changes since v5:
+- Rebased to 4.20-rc1.
+- Changelog updated.
 
-BR and thanks,
-Nikolaus
+Changes since v4:
+- As suggested by Michal Hocko,
+- Simplify logic in online_pages_block() by using get_order().
+- Seperate out removal of prefetch from __free_pages_core().
+
+Changes since v3:
+- Renamed _free_pages_boot_core -> __free_pages_core.
+- Removed prefetch from __free_pages_core.
+- Removed xen_online_page().
+
+Changes since v2:
+- Reuse code from __free_pages_boot_core().
+
+Changes since v1:
+- Removed prefetch().
+
+Changes since RFC:
+- Rebase.
+- As suggested by Michal Hocko remove pages_per_block.
+- Modifed external providers of online_page_callback.
+
+v8: https://lore.kernel.org/patchwork/patch/1030332/
+v7: https://lore.kernel.org/patchwork/patch/1028908/
+v6: https://lore.kernel.org/patchwork/patch/1007253/
+v5: https://lore.kernel.org/patchwork/patch/995739/
+v4: https://lore.kernel.org/patchwork/patch/995111/
+v3: https://lore.kernel.org/patchwork/patch/992348/
+v2: https://lore.kernel.org/patchwork/patch/991363/
+v1: https://lore.kernel.org/patchwork/patch/989445/
+RFC: https://lore.kernel.org/patchwork/patch/984754/
+---
+---
+ drivers/hv/hv_balloon.c        |  4 ++--
+ drivers/xen/balloon.c          | 15 ++++++++++-----
+ include/linux/memory_hotplug.h |  2 +-
+ mm/internal.h                  |  1 +
+ mm/memory_hotplug.c            | 37 +++++++++++++++++++++++++------------
+ mm/page_alloc.c                |  8 ++++----
+ 6 files changed, 43 insertions(+), 24 deletions(-)
+
+diff --git a/drivers/hv/hv_balloon.c b/drivers/hv/hv_balloon.c
+index 5301fef..55d79f8 100644
+--- a/drivers/hv/hv_balloon.c
++++ b/drivers/hv/hv_balloon.c
+@@ -771,7 +771,7 @@ static void hv_mem_hot_add(unsigned long start, unsigned long size,
+ 	}
+ }
+ 
+-static void hv_online_page(struct page *pg)
++static void hv_online_page(struct page *pg, unsigned int order)
+ {
+ 	struct hv_hotadd_state *has;
+ 	unsigned long flags;
+@@ -783,7 +783,7 @@ static void hv_online_page(struct page *pg)
+ 		if ((pfn < has->start_pfn) || (pfn >= has->end_pfn))
+ 			continue;
+ 
+-		hv_page_online_one(has, pg);
++		hv_bring_pgs_online(has, pfn, (1UL << order));
+ 		break;
+ 	}
+ 	spin_unlock_irqrestore(&dm_device.ha_lock, flags);
+diff --git a/drivers/xen/balloon.c b/drivers/xen/balloon.c
+index ceb5048..d107447 100644
+--- a/drivers/xen/balloon.c
++++ b/drivers/xen/balloon.c
+@@ -369,14 +369,19 @@ static enum bp_state reserve_additional_memory(void)
+ 	return BP_ECANCELED;
+ }
+ 
+-static void xen_online_page(struct page *page)
++static void xen_online_page(struct page *page, unsigned int order)
+ {
+-	__online_page_set_limits(page);
++	unsigned long i, size = (1 << order);
++	unsigned long start_pfn = page_to_pfn(page);
++	struct page *p;
+ 
++	pr_debug("Online %lu pages starting at pfn 0x%lx\n", size, start_pfn);
+ 	mutex_lock(&balloon_mutex);
+-
+-	__balloon_append(page);
+-
++	for (i = 0; i < size; i++) {
++		p = pfn_to_page(start_pfn + i);
++		__online_page_set_limits(p);
++		__balloon_append(p);
++	}
+ 	mutex_unlock(&balloon_mutex);
+ }
+ 
+diff --git a/include/linux/memory_hotplug.h b/include/linux/memory_hotplug.h
+index 07da5c6..e368730 100644
+--- a/include/linux/memory_hotplug.h
++++ b/include/linux/memory_hotplug.h
+@@ -87,7 +87,7 @@ extern int test_pages_in_a_zone(unsigned long start_pfn, unsigned long end_pfn,
+ 	unsigned long *valid_start, unsigned long *valid_end);
+ extern void __offline_isolated_pages(unsigned long, unsigned long);
+ 
+-typedef void (*online_page_callback_t)(struct page *page);
++typedef void (*online_page_callback_t)(struct page *page, unsigned int order);
+ 
+ extern int set_online_page_callback(online_page_callback_t callback);
+ extern int restore_online_page_callback(online_page_callback_t callback);
+diff --git a/mm/internal.h b/mm/internal.h
+index f4a7bb0..536bc2a 100644
+--- a/mm/internal.h
++++ b/mm/internal.h
+@@ -163,6 +163,7 @@ static inline struct page *pageblock_pfn_to_page(unsigned long start_pfn,
+ extern int __isolate_free_page(struct page *page, unsigned int order);
+ extern void memblock_free_pages(struct page *page, unsigned long pfn,
+ 					unsigned int order);
++extern void __free_pages_core(struct page *page, unsigned int order);
+ extern void prep_compound_page(struct page *page, unsigned int order);
+ extern void post_alloc_hook(struct page *page, unsigned int order,
+ 					gfp_t gfp_flags);
+diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+index b9a667d..77dff24 100644
+--- a/mm/memory_hotplug.c
++++ b/mm/memory_hotplug.c
+@@ -47,7 +47,7 @@
+  * and restore_online_page_callback() for generic callback restore.
+  */
+ 
+-static void generic_online_page(struct page *page);
++static void generic_online_page(struct page *page, unsigned int order);
+ 
+ static online_page_callback_t online_page_callback = generic_online_page;
+ static DEFINE_MUTEX(online_page_callback_lock);
+@@ -656,26 +656,39 @@ void __online_page_free(struct page *page)
+ }
+ EXPORT_SYMBOL_GPL(__online_page_free);
+ 
+-static void generic_online_page(struct page *page)
++static void generic_online_page(struct page *page, unsigned int order)
+ {
+-	__online_page_set_limits(page);
+-	__online_page_increment_counters(page);
+-	__online_page_free(page);
++	__free_pages_core(page, order);
++	totalram_pages_add(1UL << order);
++#ifdef CONFIG_HIGHMEM
++	if (PageHighMem(page))
++		totalhigh_pages_add(1UL << order);
++#endif
++}
++
++static int online_pages_blocks(unsigned long start, unsigned long nr_pages)
++{
++	unsigned long end = start + nr_pages;
++	int order, ret, onlined_pages = 0;
++
++	while (start < end) {
++		order = min(MAX_ORDER - 1,
++			get_order(PFN_PHYS(end) - PFN_PHYS(start)));
++		(*online_page_callback)(pfn_to_page(start), order);
++
++		onlined_pages += (1UL << order);
++		start += (1UL << order);
++	}
++	return onlined_pages;
+ }
+ 
+ static int online_pages_range(unsigned long start_pfn, unsigned long nr_pages,
+ 			void *arg)
+ {
+-	unsigned long i;
+ 	unsigned long onlined_pages = *(unsigned long *)arg;
+-	struct page *page;
+ 
+ 	if (PageReserved(pfn_to_page(start_pfn)))
+-		for (i = 0; i < nr_pages; i++) {
+-			page = pfn_to_page(start_pfn + i);
+-			(*online_page_callback)(page);
+-			onlined_pages++;
+-		}
++		onlined_pages += online_pages_blocks(start_pfn, nr_pages);
+ 
+ 	online_mem_sections(start_pfn, start_pfn + nr_pages);
+ 
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index d295c9b..883212a 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -1303,7 +1303,7 @@ static void __free_pages_ok(struct page *page, unsigned int order)
+ 	local_irq_restore(flags);
+ }
+ 
+-static void __init __free_pages_boot_core(struct page *page, unsigned int order)
++void __free_pages_core(struct page *page, unsigned int order)
+ {
+ 	unsigned int nr_pages = 1 << order;
+ 	struct page *p = page;
+@@ -1382,7 +1382,7 @@ void __init memblock_free_pages(struct page *page, unsigned long pfn,
+ {
+ 	if (early_page_uninitialised(pfn))
+ 		return;
+-	return __free_pages_boot_core(page, order);
++	__free_pages_core(page, order);
+ }
+ 
+ /*
+@@ -1472,14 +1472,14 @@ static void __init deferred_free_range(unsigned long pfn,
+ 	if (nr_pages == pageblock_nr_pages &&
+ 	    (pfn & (pageblock_nr_pages - 1)) == 0) {
+ 		set_pageblock_migratetype(page, MIGRATE_MOVABLE);
+-		__free_pages_boot_core(page, pageblock_order);
++		__free_pages_core(page, pageblock_order);
+ 		return;
+ 	}
+ 
+ 	for (i = 0; i < nr_pages; i++, page++, pfn++) {
+ 		if ((pfn & (pageblock_nr_pages - 1)) == 0)
+ 			set_pageblock_migratetype(page, MIGRATE_MOVABLE);
+-		__free_pages_boot_core(page, 0);
++		__free_pages_core(page, 0);
+ 	}
+ }
+ 
+-- 
+1.9.1
 
