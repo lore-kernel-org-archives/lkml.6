@@ -7,73 +7,75 @@ X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46C5DC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 21:11:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43B3AC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 21:11:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B3AE2173B
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 21:11:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E1F9C213F2
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 21:11:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="C3B2yu91"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="iLvlkH6S"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731092AbfAJVLR (ORCPT
+        id S1731123AbfAJVLW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 16:11:17 -0500
-Received: from aserp2130.oracle.com ([141.146.126.79]:39168 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729343AbfAJVLO (ORCPT
+        Thu, 10 Jan 2019 16:11:22 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:52002 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731066AbfAJVLR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 16:11:14 -0500
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0AL9168187109;
-        Thu, 10 Jan 2019 21:10:32 GMT
+        Thu, 10 Jan 2019 16:11:17 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0AL8p1H192893;
+        Thu, 10 Jan 2019 21:10:20 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : in-reply-to :
  references; s=corp-2018-07-02;
- bh=jM+XBJTvfFY9YOS7nm1GskqZaJnifsuOk+60I+M12Vk=;
- b=C3B2yu91Lrtl2z5lJo84if6WdFpkmA5XRuSlyQpmPar3mlc/WZUiZLxo0YSosTAHg1oF
- IbzRl+nE8n2cCq0uiPwuTVkSNI4tCdFPvJHcHpSFbnrgZuBqF8FKISs338kVazs3DHxy
- Y74mURefBkUqEK5hk8x9gNLCu74Glj42Oq2bTWxQrViRo/1eeY83SmFf/JgULoW4gl7C
- wCFLiUELZT2rnL5BqakUUdf2j58dPCc+UZ8gylgvVnG55E4GNzVfJg3YIT8R7+fsfYFW
- x9yd2KGgdif0YRDrUmz2D3G+h051c6TTrynk9ds3tZWEpy6tXhkLXfAX6hJeRoyhoorN cw== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by aserp2130.oracle.com with ESMTP id 2ptj3e9th9-1
+ bh=2WjKXUXlduh+4gXlgg+9YzVZNqCynpwL4YEjEIxTm8I=;
+ b=iLvlkH6Stvvcg+Ctof8TpYoApkwhIj3uuBQcE0dlH8wWt/hv7+KdWl5qyHFZgSwIXI9h
+ adxe3VO6BMtzYxP6JYXFBOHQbZBl/zF8kpTid0XqfUM+1VMxkjQmu1F9bw8u48LFAtTn
+ RCcHQ9SJeFpsWGlaIOfHCw0t6K+82WlTWVoRIXlQj1faSaDt4J28JMU2xKGBPUgopdF5
+ vAQU3apAZBbI0Dv/KS7NHPueMDX1iFqDx2EUSa4Bt2LjR6vWHkfMnm9ukN3+mzxcKspE
+ tvG+xYzUSvNDPORfv78EUKih8YpBsGG9H3QRDrDi2gxeLzW3jJMRvSUJp8wnMsMXq8Pi lQ== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by userp2120.oracle.com with ESMTP id 2ptn7r9f3b-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 10 Jan 2019 21:10:32 +0000
+        Thu, 10 Jan 2019 21:10:20 +0000
 Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x0ALAVnh028601
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x0ALAJtJ008640
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 10 Jan 2019 21:10:31 GMT
+        Thu, 10 Jan 2019 21:10:19 GMT
 Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x0ALAUXW003892;
-        Thu, 10 Jan 2019 21:10:30 GMT
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x0ALAIJK003714;
+        Thu, 10 Jan 2019 21:10:18 GMT
 Received: from concerto.internal (/24.9.64.241)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 10 Jan 2019 13:10:30 -0800
+        with ESMTP ; Thu, 10 Jan 2019 13:10:17 -0800
 From:   Khalid Aziz <khalid.aziz@oracle.com>
 To:     juergh@gmail.com, tycho@tycho.ws, jsteckli@amazon.de,
         ak@linux.intel.com, torvalds@linux-foundation.org,
         liran.alon@oracle.com, keescook@google.com, konrad.wilk@oracle.com
-Cc:     Tycho Andersen <tycho@docker.com>, deepa.srinivasan@oracle.com,
-        chris.hyser@oracle.com, tyhicks@canonical.com, dwmw@amazon.co.uk,
+Cc:     Juerg Haefliger <juerg.haefliger@canonical.com>,
+        deepa.srinivasan@oracle.com, chris.hyser@oracle.com,
+        tyhicks@canonical.com, dwmw@amazon.co.uk,
         andrew.cooper3@citrix.com, jcm@redhat.com,
         boris.ostrovsky@oracle.com, kanth.ghatraju@oracle.com,
         joao.m.martins@oracle.com, jmattson@google.com,
         pradeep.vincent@oracle.com, john.haxby@oracle.com,
         tglx@linutronix.de, kirill.shutemov@linux.intel.com, hch@lst.de,
         steven.sistare@oracle.com, kernel-hardening@lists.openwall.com,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, x86@kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org, x86@kernel.org,
+        Tycho Andersen <tycho@docker.com>,
+        Marco Benatto <marco.antonio.780@gmail.com>,
         Khalid Aziz <khalid.aziz@oracle.com>
-Subject: [RFC PATCH v7 09/16] mm: add a user_virt_to_phys symbol
-Date:   Thu, 10 Jan 2019 14:09:41 -0700
-Message-Id: <c9a409397fc608f7ae6297597d9ea3d21eeb3b38.1547153058.git.khalid.aziz@oracle.com>
+Subject: [RFC PATCH v7 03/16] mm, x86: Add support for eXclusive Page Frame Ownership (XPFO)
+Date:   Thu, 10 Jan 2019 14:09:35 -0700
+Message-Id: <231b09ba6bbcccc82ba001177c9d5ebcc8a4a11c.1547153058.git.khalid.aziz@oracle.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <cover.1547153058.git.khalid.aziz@oracle.com>
 References: <cover.1547153058.git.khalid.aziz@oracle.com>
 In-Reply-To: <cover.1547153058.git.khalid.aziz@oracle.com>
 References: <cover.1547153058.git.khalid.aziz@oracle.com>
 X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9132 signatures=668680
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
  phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
  adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.0.1-1810050000 definitions=main-1901100164
@@ -82,122 +84,719 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tycho Andersen <tycho@docker.com>
+From: Juerg Haefliger <juerg.haefliger@canonical.com>
 
-We need someting like this for testing XPFO. Since it's architecture
-specific, putting it in the test code is slightly awkward, so let's make it
-an arch-specific symbol and export it for use in LKDTM.
+This patch adds support for XPFO which protects against 'ret2dir' kernel
+attacks. The basic idea is to enforce exclusive ownership of page frames
+by either the kernel or userspace, unless explicitly requested by the
+kernel. Whenever a page destined for userspace is allocated, it is
+unmapped from physmap (the kernel's page table). When such a page is
+reclaimed from userspace, it is mapped back to physmap.
 
-v6: * add a definition of user_virt_to_phys in the !CONFIG_XPFO case
+Additional fields in the page_ext struct are used for XPFO housekeeping,
+specifically:
+  - two flags to distinguish user vs. kernel pages and to tag unmapped
+    pages.
+  - a reference counter to balance kmap/kunmap operations.
+  - a lock to serialize access to the XPFO fields.
 
-CC: linux-arm-kernel@lists.infradead.org
+This patch is based on the work of Vasileios P. Kemerlis et al. who
+published their work in this paper:
+  http://www.cs.columbia.edu/~vpk/papers/ret2dir.sec14.pdf
+
+v6: * use flush_tlb_kernel_range() instead of __flush_tlb_one, so we flush
+      the tlb entry on all CPUs when unmapping it in kunmap
+    * handle lookup_page_ext()/lookup_xpfo() returning NULL
+    * drop lots of BUG()s in favor of WARN()
+    * don't disable irqs in xpfo_kmap/xpfo_kunmap, export
+      __split_large_page so we can do our own alloc_pages(GFP_ATOMIC) to
+      pass it
+
 CC: x86@kernel.org
+Suggested-by: Vasileios P. Kemerlis <vpk@cs.columbia.edu>
+Signed-off-by: Juerg Haefliger <juerg.haefliger@canonical.com>
 Signed-off-by: Tycho Andersen <tycho@docker.com>
-Tested-by: Marco Benatto <marco.antonio.780@gmail.com>
+Signed-off-by: Marco Benatto <marco.antonio.780@gmail.com>
+[jsteckli@amazon.de: rebased from v4.13 to v4.19]
+Signed-off-by: Julian Stecklina <jsteckli@amazon.de>
 Signed-off-by: Khalid Aziz <khalid.aziz@oracle.com>
 ---
- arch/x86/mm/xpfo.c   | 57 ++++++++++++++++++++++++++++++++++++++++++++
- include/linux/xpfo.h |  8 +++++++
- 2 files changed, 65 insertions(+)
+ .../admin-guide/kernel-parameters.txt         |   2 +
+ arch/x86/Kconfig                              |   1 +
+ arch/x86/include/asm/pgtable.h                |  26 ++
+ arch/x86/mm/Makefile                          |   2 +
+ arch/x86/mm/pageattr.c                        |  23 +-
+ arch/x86/mm/xpfo.c                            | 114 +++++++++
+ include/linux/highmem.h                       |  15 +-
+ include/linux/xpfo.h                          |  47 ++++
+ mm/Makefile                                   |   1 +
+ mm/page_alloc.c                               |   2 +
+ mm/page_ext.c                                 |   4 +
+ mm/xpfo.c                                     | 222 ++++++++++++++++++
+ security/Kconfig                              |  19 ++
+ 13 files changed, 456 insertions(+), 22 deletions(-)
+ create mode 100644 arch/x86/mm/xpfo.c
+ create mode 100644 include/linux/xpfo.h
+ create mode 100644 mm/xpfo.c
 
-diff --git a/arch/x86/mm/xpfo.c b/arch/x86/mm/xpfo.c
-index d1f04ea533cd..bcdb2f2089d2 100644
---- a/arch/x86/mm/xpfo.c
-+++ b/arch/x86/mm/xpfo.c
-@@ -112,3 +112,60 @@ inline void xpfo_flush_kernel_tlb(struct page *page, int order)
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index aefd358a5ca3..c4c62599f216 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -2982,6 +2982,8 @@
  
- 	flush_tlb_kernel_range(kaddr, kaddr + (1 << order) * size);
+ 	nox2apic	[X86-64,APIC] Do not enable x2APIC mode.
+ 
++	noxpfo		[X86-64] Disable XPFO when CONFIG_XPFO is on.
++
+ 	cpu0_hotplug	[X86] Turn on CPU0 hotplug feature when
+ 			CONFIG_BOOTPARAM_HOTPLUG_CPU0 is off.
+ 			Some features depend on CPU0. Known dependencies are:
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index 8689e794a43c..d69d8cc6e57e 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -207,6 +207,7 @@ config X86
+ 	select USER_STACKTRACE_SUPPORT
+ 	select VIRT_TO_BUS
+ 	select X86_FEATURE_NAMES		if PROC_FS
++	select ARCH_SUPPORTS_XPFO		if X86_64
+ 
+ config INSTRUCTION_DECODER
+ 	def_bool y
+diff --git a/arch/x86/include/asm/pgtable.h b/arch/x86/include/asm/pgtable.h
+index 40616e805292..ad2d1792939d 100644
+--- a/arch/x86/include/asm/pgtable.h
++++ b/arch/x86/include/asm/pgtable.h
+@@ -1437,6 +1437,32 @@ static inline bool arch_has_pfn_modify_check(void)
+ 	return boot_cpu_has_bug(X86_BUG_L1TF);
  }
-+
-+/* Convert a user space virtual address to a physical address.
-+ * Shamelessly copied from slow_virt_to_phys() and lookup_address() in
-+ * arch/x86/mm/pageattr.c
+ 
++/*
++ * The current flushing context - we pass it instead of 5 arguments:
 + */
-+phys_addr_t user_virt_to_phys(unsigned long addr)
++struct cpa_data {
++	unsigned long	*vaddr;
++	pgd_t		*pgd;
++	pgprot_t	mask_set;
++	pgprot_t	mask_clr;
++	unsigned long	numpages;
++	int		flags;
++	unsigned long	pfn;
++	unsigned	force_split 		: 1,
++			force_static_prot	: 1;
++	int		curpage;
++	struct page	**pages;
++};
++
++
++int
++should_split_large_page(pte_t *kpte, unsigned long address,
++			struct cpa_data *cpa);
++extern spinlock_t cpa_lock;
++int
++__split_large_page(struct cpa_data *cpa, pte_t *kpte, unsigned long address,
++		   struct page *base);
++
+ #include <asm-generic/pgtable.h>
+ #endif	/* __ASSEMBLY__ */
+ 
+diff --git a/arch/x86/mm/Makefile b/arch/x86/mm/Makefile
+index 4b101dd6e52f..93b0fdaf4a99 100644
+--- a/arch/x86/mm/Makefile
++++ b/arch/x86/mm/Makefile
+@@ -53,3 +53,5 @@ obj-$(CONFIG_PAGE_TABLE_ISOLATION)		+= pti.o
+ obj-$(CONFIG_AMD_MEM_ENCRYPT)	+= mem_encrypt.o
+ obj-$(CONFIG_AMD_MEM_ENCRYPT)	+= mem_encrypt_identity.o
+ obj-$(CONFIG_AMD_MEM_ENCRYPT)	+= mem_encrypt_boot.o
++
++obj-$(CONFIG_XPFO)		+= xpfo.o
+diff --git a/arch/x86/mm/pageattr.c b/arch/x86/mm/pageattr.c
+index a1bcde35db4c..84002442ab61 100644
+--- a/arch/x86/mm/pageattr.c
++++ b/arch/x86/mm/pageattr.c
+@@ -26,23 +26,6 @@
+ #include <asm/pat.h>
+ #include <asm/set_memory.h>
+ 
+-/*
+- * The current flushing context - we pass it instead of 5 arguments:
+- */
+-struct cpa_data {
+-	unsigned long	*vaddr;
+-	pgd_t		*pgd;
+-	pgprot_t	mask_set;
+-	pgprot_t	mask_clr;
+-	unsigned long	numpages;
+-	int		flags;
+-	unsigned long	pfn;
+-	unsigned	force_split		: 1,
+-			force_static_prot	: 1;
+-	int		curpage;
+-	struct page	**pages;
+-};
+-
+ enum cpa_warn {
+ 	CPA_CONFLICT,
+ 	CPA_PROTECT,
+@@ -57,7 +40,7 @@ static const int cpa_warn_level = CPA_PROTECT;
+  * entries change the page attribute in parallel to some other cpu
+  * splitting a large page entry along with changing the attribute.
+  */
+-static DEFINE_SPINLOCK(cpa_lock);
++DEFINE_SPINLOCK(cpa_lock);
+ 
+ #define CPA_FLUSHTLB 1
+ #define CPA_ARRAY 2
+@@ -869,7 +852,7 @@ static int __should_split_large_page(pte_t *kpte, unsigned long address,
+ 	return 0;
+ }
+ 
+-static int should_split_large_page(pte_t *kpte, unsigned long address,
++int should_split_large_page(pte_t *kpte, unsigned long address,
+ 				   struct cpa_data *cpa)
+ {
+ 	int do_split;
+@@ -919,7 +902,7 @@ static void split_set_pte(struct cpa_data *cpa, pte_t *pte, unsigned long pfn,
+ 	set_pte(pte, pfn_pte(pfn, ref_prot));
+ }
+ 
+-static int
++int
+ __split_large_page(struct cpa_data *cpa, pte_t *kpte, unsigned long address,
+ 		   struct page *base)
+ {
+diff --git a/arch/x86/mm/xpfo.c b/arch/x86/mm/xpfo.c
+new file mode 100644
+index 000000000000..d1f04ea533cd
+--- /dev/null
++++ b/arch/x86/mm/xpfo.c
+@@ -0,0 +1,114 @@
++/*
++ * Copyright (C) 2017 Hewlett Packard Enterprise Development, L.P.
++ * Copyright (C) 2016 Brown University. All rights reserved.
++ *
++ * Authors:
++ *   Juerg Haefliger <juerg.haefliger@hpe.com>
++ *   Vasileios P. Kemerlis <vpk@cs.brown.edu>
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms of the GNU General Public License version 2 as published by
++ * the Free Software Foundation.
++ */
++
++#include <linux/mm.h>
++
++#include <asm/tlbflush.h>
++
++extern spinlock_t cpa_lock;
++
++/* Update a single kernel page table entry */
++inline void set_kpte(void *kaddr, struct page *page, pgprot_t prot)
 +{
-+	phys_addr_t phys_addr;
-+	unsigned long offset;
-+	pgd_t *pgd;
-+	p4d_t *p4d;
-+	pud_t *pud;
-+	pmd_t *pmd;
-+	pte_t *pte;
++	unsigned int level;
++	pgprot_t msk_clr;
++	pte_t *pte = lookup_address((unsigned long)kaddr, &level);
 +
-+	pgd = pgd_offset(current->mm, addr);
-+	if (pgd_none(*pgd))
-+		return 0;
-+
-+	p4d = p4d_offset(pgd, addr);
-+	if (p4d_none(*p4d))
-+		return 0;
-+
-+	if (p4d_large(*p4d) || !p4d_present(*p4d)) {
-+		phys_addr = (unsigned long)p4d_pfn(*p4d) << PAGE_SHIFT;
-+		offset = addr & ~P4D_MASK;
-+		goto out;
++	if (unlikely(!pte)) {
++		WARN(1, "xpfo: invalid address %p\n", kaddr);
++		return;
 +	}
 +
-+	pud = pud_offset(p4d, addr);
-+	if (pud_none(*pud))
-+		return 0;
++	switch (level) {
++	case PG_LEVEL_4K:
++		set_pte_atomic(pte, pfn_pte(page_to_pfn(page), canon_pgprot(prot)));
++		break;
++	case PG_LEVEL_2M:
++	case PG_LEVEL_1G: {
++		struct cpa_data cpa = { };
++		int do_split;
 +
-+	if (pud_large(*pud) || !pud_present(*pud)) {
-+		phys_addr = (unsigned long)pud_pfn(*pud) << PAGE_SHIFT;
-+		offset = addr & ~PUD_MASK;
-+		goto out;
++		if (level == PG_LEVEL_2M)
++			msk_clr = pmd_pgprot(*(pmd_t*)pte);
++		else
++			msk_clr = pud_pgprot(*(pud_t*)pte);
++
++		cpa.vaddr = kaddr;
++		cpa.pages = &page;
++		cpa.mask_set = prot;
++		cpa.mask_clr = msk_clr;
++		cpa.numpages = 1;
++		cpa.flags = 0;
++		cpa.curpage = 0;
++		cpa.force_split = 0;
++
++
++		do_split = should_split_large_page(pte, (unsigned long)kaddr,
++						   &cpa);
++		if (do_split) {
++			struct page *base;
++
++			base = alloc_pages(GFP_ATOMIC, 0);
++			if (!base) {
++				WARN(1, "xpfo: failed to split large page\n");
++				break;
++			}
++
++			if (!debug_pagealloc_enabled())
++				spin_lock(&cpa_lock);
++			if  (__split_large_page(&cpa, pte, (unsigned long)kaddr, base) < 0)
++				WARN(1, "xpfo: failed to split large page\n");
++			if (!debug_pagealloc_enabled())
++				spin_unlock(&cpa_lock);
++		}
++
++		break;
++	}
++	case PG_LEVEL_512G:
++		/* fallthrough, splitting infrastructure doesn't
++		 * support 512G pages. */
++	default:
++		WARN(1, "xpfo: unsupported page level %x\n", level);
 +	}
 +
-+	pmd = pmd_offset(pud, addr);
-+	if (pmd_none(*pmd))
-+		return 0;
-+
-+	if (pmd_large(*pmd) || !pmd_present(*pmd)) {
-+		phys_addr = (unsigned long)pmd_pfn(*pmd) << PAGE_SHIFT;
-+		offset = addr & ~PMD_MASK;
-+		goto out;
-+	}
-+
-+	pte =  pte_offset_kernel(pmd, addr);
-+	phys_addr = (phys_addr_t)pte_pfn(*pte) << PAGE_SHIFT;
-+	offset = addr & ~PAGE_MASK;
-+
-+out:
-+	return (phys_addr_t)(phys_addr | offset);
 +}
-+EXPORT_SYMBOL(user_virt_to_phys);
++
++inline void xpfo_flush_kernel_tlb(struct page *page, int order)
++{
++	int level;
++	unsigned long size, kaddr;
++
++	kaddr = (unsigned long)page_address(page);
++
++	if (unlikely(!lookup_address(kaddr, &level))) {
++		WARN(1, "xpfo: invalid address to flush %lx %d\n", kaddr, level);
++		return;
++	}
++
++	switch (level) {
++	case PG_LEVEL_4K:
++		size = PAGE_SIZE;
++		break;
++	case PG_LEVEL_2M:
++		size = PMD_SIZE;
++		break;
++	case PG_LEVEL_1G:
++		size = PUD_SIZE;
++		break;
++	default:
++		WARN(1, "xpfo: unsupported page level %x\n", level);
++		return;
++	}
++
++	flush_tlb_kernel_range(kaddr, kaddr + (1 << order) * size);
++}
+diff --git a/include/linux/highmem.h b/include/linux/highmem.h
+index 0690679832d4..1fdae929e38b 100644
+--- a/include/linux/highmem.h
++++ b/include/linux/highmem.h
+@@ -8,6 +8,7 @@
+ #include <linux/mm.h>
+ #include <linux/uaccess.h>
+ #include <linux/hardirq.h>
++#include <linux/xpfo.h>
+ 
+ #include <asm/cacheflush.h>
+ 
+@@ -56,24 +57,34 @@ static inline struct page *kmap_to_page(void *addr)
+ #ifndef ARCH_HAS_KMAP
+ static inline void *kmap(struct page *page)
+ {
++	void *kaddr;
++
+ 	might_sleep();
+-	return page_address(page);
++	kaddr = page_address(page);
++	xpfo_kmap(kaddr, page);
++	return kaddr;
+ }
+ 
+ static inline void kunmap(struct page *page)
+ {
++	xpfo_kunmap(page_address(page), page);
+ }
+ 
+ static inline void *kmap_atomic(struct page *page)
+ {
++	void *kaddr;
++
+ 	preempt_disable();
+ 	pagefault_disable();
+-	return page_address(page);
++	kaddr = page_address(page);
++	xpfo_kmap(kaddr, page);
++	return kaddr;
+ }
+ #define kmap_atomic_prot(page, prot)	kmap_atomic(page)
+ 
+ static inline void __kunmap_atomic(void *addr)
+ {
++	xpfo_kunmap(addr, virt_to_page(addr));
+ 	pagefault_enable();
+ 	preempt_enable();
+ }
 diff --git a/include/linux/xpfo.h b/include/linux/xpfo.h
-index 0c26836a24e1..d4b38ab8a633 100644
---- a/include/linux/xpfo.h
+new file mode 100644
+index 000000000000..a39259ce0174
+--- /dev/null
 +++ b/include/linux/xpfo.h
-@@ -23,6 +23,10 @@ struct page;
- 
- #ifdef CONFIG_XPFO
- 
-+#include <linux/dma-mapping.h>
+@@ -0,0 +1,47 @@
++/*
++ * Copyright (C) 2017 Docker, Inc.
++ * Copyright (C) 2017 Hewlett Packard Enterprise Development, L.P.
++ * Copyright (C) 2016 Brown University. All rights reserved.
++ *
++ * Authors:
++ *   Juerg Haefliger <juerg.haefliger@hpe.com>
++ *   Vasileios P. Kemerlis <vpk@cs.brown.edu>
++ *   Tycho Andersen <tycho@docker.com>
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms of the GNU General Public License version 2 as published by
++ * the Free Software Foundation.
++ */
++
++#ifndef _LINUX_XPFO_H
++#define _LINUX_XPFO_H
 +
 +#include <linux/types.h>
++#include <linux/dma-direction.h>
 +
- extern struct page_ext_operations page_xpfo_ops;
- 
- void set_kpte(void *kaddr, struct page *page, pgprot_t prot);
-@@ -48,6 +52,8 @@ void xpfo_temp_unmap(const void *addr, size_t size, void **mapping,
- 
- bool xpfo_enabled(void);
- 
-+phys_addr_t user_virt_to_phys(unsigned long addr);
++struct page;
 +
- #else /* !CONFIG_XPFO */
- 
- static inline void xpfo_kmap(void *kaddr, struct page *page) { }
-@@ -72,6 +78,8 @@ static inline void xpfo_temp_unmap(const void *addr, size_t size,
- 
- static inline bool xpfo_enabled(void) { return false; }
- 
-+static inline phys_addr_t user_virt_to_phys(unsigned long addr) { return 0; }
++#ifdef CONFIG_XPFO
 +
- #endif /* CONFIG_XPFO */
++extern struct page_ext_operations page_xpfo_ops;
++
++void set_kpte(void *kaddr, struct page *page, pgprot_t prot);
++void xpfo_dma_map_unmap_area(bool map, const void *addr, size_t size,
++				    enum dma_data_direction dir);
++void xpfo_flush_kernel_tlb(struct page *page, int order);
++
++void xpfo_kmap(void *kaddr, struct page *page);
++void xpfo_kunmap(void *kaddr, struct page *page);
++void xpfo_alloc_pages(struct page *page, int order, gfp_t gfp);
++void xpfo_free_pages(struct page *page, int order);
++
++#else /* !CONFIG_XPFO */
++
++static inline void xpfo_kmap(void *kaddr, struct page *page) { }
++static inline void xpfo_kunmap(void *kaddr, struct page *page) { }
++static inline void xpfo_alloc_pages(struct page *page, int order, gfp_t gfp) { }
++static inline void xpfo_free_pages(struct page *page, int order) { }
++
++#endif /* CONFIG_XPFO */
++
++#endif /* _LINUX_XPFO_H */
+diff --git a/mm/Makefile b/mm/Makefile
+index d210cc9d6f80..e99e1e6ae5ae 100644
+--- a/mm/Makefile
++++ b/mm/Makefile
+@@ -99,3 +99,4 @@ obj-$(CONFIG_HARDENED_USERCOPY) += usercopy.o
+ obj-$(CONFIG_PERCPU_STATS) += percpu-stats.o
+ obj-$(CONFIG_HMM) += hmm.o
+ obj-$(CONFIG_MEMFD_CREATE) += memfd.o
++obj-$(CONFIG_XPFO) += xpfo.o
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index e95b5b7c9c3d..08e277790b5f 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -1038,6 +1038,7 @@ static __always_inline bool free_pages_prepare(struct page *page,
+ 	kernel_poison_pages(page, 1 << order, 0);
+ 	kernel_map_pages(page, 1 << order, 0);
+ 	kasan_free_pages(page, order);
++	xpfo_free_pages(page, order);
  
- #endif /* _LINUX_XPFO_H */
+ 	return true;
+ }
+@@ -1915,6 +1916,7 @@ inline void post_alloc_hook(struct page *page, unsigned int order,
+ 	kernel_map_pages(page, 1 << order, 1);
+ 	kernel_poison_pages(page, 1 << order, 1);
+ 	kasan_alloc_pages(page, order);
++	xpfo_alloc_pages(page, order, gfp_flags);
+ 	set_page_owner(page, order, gfp_flags);
+ }
+ 
+diff --git a/mm/page_ext.c b/mm/page_ext.c
+index ae44f7adbe07..38e5013dcb9a 100644
+--- a/mm/page_ext.c
++++ b/mm/page_ext.c
+@@ -8,6 +8,7 @@
+ #include <linux/kmemleak.h>
+ #include <linux/page_owner.h>
+ #include <linux/page_idle.h>
++#include <linux/xpfo.h>
+ 
+ /*
+  * struct page extension
+@@ -68,6 +69,9 @@ static struct page_ext_operations *page_ext_ops[] = {
+ #if defined(CONFIG_IDLE_PAGE_TRACKING) && !defined(CONFIG_64BIT)
+ 	&page_idle_ops,
+ #endif
++#ifdef CONFIG_XPFO
++	&page_xpfo_ops,
++#endif
+ };
+ 
+ static unsigned long total_usage;
+diff --git a/mm/xpfo.c b/mm/xpfo.c
+new file mode 100644
+index 000000000000..bff24afcaa2e
+--- /dev/null
++++ b/mm/xpfo.c
+@@ -0,0 +1,222 @@
++/*
++ * Copyright (C) 2017 Docker, Inc.
++ * Copyright (C) 2017 Hewlett Packard Enterprise Development, L.P.
++ * Copyright (C) 2016 Brown University. All rights reserved.
++ *
++ * Authors:
++ *   Juerg Haefliger <juerg.haefliger@hpe.com>
++ *   Vasileios P. Kemerlis <vpk@cs.brown.edu>
++ *   Tycho Andersen <tycho@docker.com>
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms of the GNU General Public License version 2 as published by
++ * the Free Software Foundation.
++ */
++
++#include <linux/mm.h>
++#include <linux/module.h>
++#include <linux/page_ext.h>
++#include <linux/xpfo.h>
++
++#include <asm/tlbflush.h>
++
++/* XPFO page state flags */
++enum xpfo_flags {
++	XPFO_PAGE_USER,		/* Page is allocated to user-space */
++	XPFO_PAGE_UNMAPPED,	/* Page is unmapped from the linear map */
++};
++
++/* Per-page XPFO house-keeping data */
++struct xpfo {
++	unsigned long flags;	/* Page state */
++	bool inited;		/* Map counter and lock initialized */
++	atomic_t mapcount;	/* Counter for balancing map/unmap requests */
++	spinlock_t maplock;	/* Lock to serialize map/unmap requests */
++};
++
++DEFINE_STATIC_KEY_FALSE(xpfo_inited);
++
++static bool xpfo_disabled __initdata;
++
++static int __init noxpfo_param(char *str)
++{
++	xpfo_disabled = true;
++
++	return 0;
++}
++
++early_param("noxpfo", noxpfo_param);
++
++static bool __init need_xpfo(void)
++{
++	if (xpfo_disabled) {
++		printk(KERN_INFO "XPFO disabled\n");
++		return false;
++	}
++
++	return true;
++}
++
++static void init_xpfo(void)
++{
++	printk(KERN_INFO "XPFO enabled\n");
++	static_branch_enable(&xpfo_inited);
++}
++
++struct page_ext_operations page_xpfo_ops = {
++	.size = sizeof(struct xpfo),
++	.need = need_xpfo,
++	.init = init_xpfo,
++};
++
++static inline struct xpfo *lookup_xpfo(struct page *page)
++{
++	struct page_ext *page_ext = lookup_page_ext(page);
++
++	if (unlikely(!page_ext)) {
++		WARN(1, "xpfo: failed to get page ext");
++		return NULL;
++	}
++
++	return (void *)page_ext + page_xpfo_ops.offset;
++}
++
++void xpfo_alloc_pages(struct page *page, int order, gfp_t gfp)
++{
++	int i, flush_tlb = 0;
++	struct xpfo *xpfo;
++
++	if (!static_branch_unlikely(&xpfo_inited))
++		return;
++
++	for (i = 0; i < (1 << order); i++)  {
++		xpfo = lookup_xpfo(page + i);
++		if (!xpfo)
++			continue;
++
++		WARN(test_bit(XPFO_PAGE_UNMAPPED, &xpfo->flags),
++		     "xpfo: unmapped page being allocated\n");
++
++		/* Initialize the map lock and map counter */
++		if (unlikely(!xpfo->inited)) {
++			spin_lock_init(&xpfo->maplock);
++			atomic_set(&xpfo->mapcount, 0);
++			xpfo->inited = true;
++		}
++		WARN(atomic_read(&xpfo->mapcount),
++		     "xpfo: already mapped page being allocated\n");
++
++		if ((gfp & GFP_HIGHUSER) == GFP_HIGHUSER) {
++			/*
++			 * Tag the page as a user page and flush the TLB if it
++			 * was previously allocated to the kernel.
++			 */
++			if (!test_and_set_bit(XPFO_PAGE_USER, &xpfo->flags))
++				flush_tlb = 1;
++		} else {
++			/* Tag the page as a non-user (kernel) page */
++			clear_bit(XPFO_PAGE_USER, &xpfo->flags);
++		}
++	}
++
++	if (flush_tlb)
++		xpfo_flush_kernel_tlb(page, order);
++}
++
++void xpfo_free_pages(struct page *page, int order)
++{
++	int i;
++	struct xpfo *xpfo;
++
++	if (!static_branch_unlikely(&xpfo_inited))
++		return;
++
++	for (i = 0; i < (1 << order); i++) {
++		xpfo = lookup_xpfo(page + i);
++		if (!xpfo || unlikely(!xpfo->inited)) {
++			/*
++			 * The page was allocated before page_ext was
++			 * initialized, so it is a kernel page.
++			 */
++			continue;
++		}
++
++		/*
++		 * Map the page back into the kernel if it was previously
++		 * allocated to user space.
++		 */
++		if (test_and_clear_bit(XPFO_PAGE_USER, &xpfo->flags)) {
++			clear_bit(XPFO_PAGE_UNMAPPED, &xpfo->flags);
++			set_kpte(page_address(page + i), page + i,
++				 PAGE_KERNEL);
++		}
++	}
++}
++
++void xpfo_kmap(void *kaddr, struct page *page)
++{
++	struct xpfo *xpfo;
++
++	if (!static_branch_unlikely(&xpfo_inited))
++		return;
++
++	xpfo = lookup_xpfo(page);
++
++	/*
++	 * The page was allocated before page_ext was initialized (which means
++	 * it's a kernel page) or it's allocated to the kernel, so nothing to
++	 * do.
++	 */
++	if (!xpfo || unlikely(!xpfo->inited) ||
++	    !test_bit(XPFO_PAGE_USER, &xpfo->flags))
++		return;
++
++	spin_lock(&xpfo->maplock);
++
++	/*
++	 * The page was previously allocated to user space, so map it back
++	 * into the kernel. No TLB flush required.
++	 */
++	if ((atomic_inc_return(&xpfo->mapcount) == 1) &&
++	    test_and_clear_bit(XPFO_PAGE_UNMAPPED, &xpfo->flags))
++		set_kpte(kaddr, page, PAGE_KERNEL);
++
++	spin_unlock(&xpfo->maplock);
++}
++EXPORT_SYMBOL(xpfo_kmap);
++
++void xpfo_kunmap(void *kaddr, struct page *page)
++{
++	struct xpfo *xpfo;
++
++	if (!static_branch_unlikely(&xpfo_inited))
++		return;
++
++	xpfo = lookup_xpfo(page);
++
++	/*
++	 * The page was allocated before page_ext was initialized (which means
++	 * it's a kernel page) or it's allocated to the kernel, so nothing to
++	 * do.
++	 */
++	if (!xpfo || unlikely(!xpfo->inited) ||
++	    !test_bit(XPFO_PAGE_USER, &xpfo->flags))
++		return;
++
++	spin_lock(&xpfo->maplock);
++
++	/*
++	 * The page is to be allocated back to user space, so unmap it from the
++	 * kernel, flush the TLB and tag it as a user page.
++	 */
++	if (atomic_dec_return(&xpfo->mapcount) == 0) {
++		WARN(test_bit(XPFO_PAGE_UNMAPPED, &xpfo->flags),
++		     "xpfo: unmapping already unmapped page\n");
++		set_bit(XPFO_PAGE_UNMAPPED, &xpfo->flags);
++		set_kpte(kaddr, page, __pgprot(0));
++		xpfo_flush_kernel_tlb(page, 0);
++	}
++
++	spin_unlock(&xpfo->maplock);
++}
++EXPORT_SYMBOL(xpfo_kunmap);
+diff --git a/security/Kconfig b/security/Kconfig
+index d9aa521b5206..8d0e4e303551 100644
+--- a/security/Kconfig
++++ b/security/Kconfig
+@@ -6,6 +6,25 @@ menu "Security options"
+ 
+ source security/keys/Kconfig
+ 
++config ARCH_SUPPORTS_XPFO
++	bool
++
++config XPFO
++	bool "Enable eXclusive Page Frame Ownership (XPFO)"
++	default n
++	depends on ARCH_SUPPORTS_XPFO
++	select PAGE_EXTENSION
++	help
++	  This option offers protection against 'ret2dir' kernel attacks.
++	  When enabled, every time a page frame is allocated to user space, it
++	  is unmapped from the direct mapped RAM region in kernel space
++	  (physmap). Similarly, when a page frame is freed/reclaimed, it is
++	  mapped back to physmap.
++
++	  There is a slight performance impact when this option is enabled.
++
++	  If in doubt, say "N".
++
+ config SECURITY_DMESG_RESTRICT
+ 	bool "Restrict unprivileged access to the kernel syslog"
+ 	default n
 -- 
 2.17.1
 
