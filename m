@@ -2,369 +2,324 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-11.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51DBEC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 20:43:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9EBAC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 20:44:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 08BA62173B
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 20:43:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7F9372177E
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 20:44:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="i9r9pZMy"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="W+yHQOdT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730539AbfAJUnc (ORCPT
+        id S1730568AbfAJUoM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 15:43:32 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:34683 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729743AbfAJUnb (ORCPT
+        Thu, 10 Jan 2019 15:44:12 -0500
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:38830 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729533AbfAJUoM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 15:43:31 -0500
-Received: by mail-pl1-f193.google.com with SMTP id w4so5695696plz.1
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 12:43:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=MlVRuFhTrNu0KXk8JqI1GhYIzZhWP/FlsvzARGr2cTM=;
-        b=i9r9pZMyAZ3jQWYpj/kWPL8622GJeUk06eHSgCs/73GMGA8JVGtieRJl3C/jX9HoT8
-         85flvWYiljKU/FTYq4VU2ZrKbafMnYAcRhec3wyFaoG3kC2dwNG7H9cZ5JM8LJx/j3QS
-         B//Vov/9OguHUe0HAh8eQJdetGVOqY2kyDtPA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=MlVRuFhTrNu0KXk8JqI1GhYIzZhWP/FlsvzARGr2cTM=;
-        b=oHtY4nEzMDcY4ln6TYVBLOljwxv6ecEhk0ShcBOIPyz13aTYzUTp04KflpZncs1YqS
-         7sWGg65FCJZTFVyDU+RNnLPNn2ilSkZyRseu8X6sTRRZ0+gfBa18u5/exb7mvqR+fTYY
-         5FoMOxdtOWj3b5VtijHxcQMWZP9CJRM/olUgX4dFkg+TC4fuaxXZsGYE4/xJZqBARugn
-         ij3WQvm56yaQ6xOsGHFxVclvOf0dOObRaHbbCOA8HCziTpbmuWLhpm35SLW0M2VfEh2o
-         xlZ5WTOAzuO4FhDyZIZFnE5EaN6ACI2JZMW4c6ad9N7eFazOWtQdypCDDwr+5Llh8S3E
-         8NTg==
-X-Gm-Message-State: AJcUukc/HtLZL31fz1sCtFGjmvAoNe7ra0sJHY+4pIGJNSSIz3HtjmZ5
-        0/hLBwEA7v/lOvHIm6Jd1NuOnw==
-X-Google-Smtp-Source: ALg8bN6whaZe76k7IwSuB2ZhYe51XZP08TV3DFH7jGRgAsWt5N0ON9h8SRh6M0u40SJ3tErAjUBsig==
-X-Received: by 2002:a17:902:9a98:: with SMTP id w24mr11807602plp.213.1547153010753;
-        Thu, 10 Jan 2019 12:43:30 -0800 (PST)
-Received: from localhost ([2620:15c:202:1:75a:3f6e:21d:9374])
-        by smtp.gmail.com with ESMTPSA id m67sm144532127pfb.25.2019.01.10.12.43.29
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 10 Jan 2019 12:43:29 -0800 (PST)
-Date:   Thu, 10 Jan 2019 12:43:28 -0800
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Balakrishna Godavarthi <bgodavar@codeaurora.org>
-Cc:     Marcel Holtmann <marcel@holtmann.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org,
-        hemantg@codeaurora.org, linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v7 4/4] Bluetooth: btqca: inject command complete event
- during fw download
-Message-ID: <20190110204328.GA261387@google.com>
-References: <20181228114819.17479-1-bgodavar@codeaurora.org>
- <20181228114819.17479-5-bgodavar@codeaurora.org>
- <2C799DB5-8033-45B5-A790-A16F73641645@holtmann.org>
- <de93a7b7169a0cfb8f28f5d8e5138dc7@codeaurora.org>
- <1FC4CC11-B070-4ACF-9107-857A4D392876@holtmann.org>
- <1ec946b46301124c90aa12abffeca176@codeaurora.org>
- <20190102221510.GQ261387@google.com>
- <c34d44c656cf38a25dbfc9c6a1dd8106@codeaurora.org>
+        Thu, 10 Jan 2019 15:44:12 -0500
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0AKi6k6085756;
+        Thu, 10 Jan 2019 14:44:06 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1547153046;
+        bh=oN5JaOSbFcWVkhcvQbESM7bAK3B9VplE+N5t+PhuZvk=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=W+yHQOdTFFUOScekQRBdNnRbj8foOMBKA/JNAsX2rskFDv53I2SIhm3U+vFh5PAdO
+         e9o7wJqCDZYHSBjUbAA2q1jmoEY0BKfqxzJdDmPJtYj7vyJ6mfFp6U8qiP3fj6dxyY
+         vlSF5rjq8godKfhZT0R+eVvFLvUTv8KuJewzOWxg=
+Received: from DLEE102.ent.ti.com (dlee102.ent.ti.com [157.170.170.32])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0AKi6UM119605
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 10 Jan 2019 14:44:06 -0600
+Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Thu, 10
+ Jan 2019 14:44:05 -0600
+Received: from dflp33.itg.ti.com (10.64.6.16) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Thu, 10 Jan 2019 14:44:05 -0600
+Received: from [172.22.105.16] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0AKi5Ti002305;
+        Thu, 10 Jan 2019 14:44:05 -0600
+Subject: Re: [PATCH 1/2] dt: bindings: lp5024: Introduce the lp5024 and lp5018
+ RGB driver
+To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        <robh+dt@kernel.org>, <pavel@ucw.cz>
+CC:     <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-leds@vger.kernel.org>
+References: <20181219162626.12297-1-dmurphy@ti.com>
+ <20181219162626.12297-2-dmurphy@ti.com>
+ <dc2283f9-db85-1eaf-f046-3fbbd4adcace@gmail.com>
+ <2d2d5dcd-9c23-e901-daac-9b79aa5a5e82@ti.com>
+ <6c62956e-7789-58ba-5437-f2e033f2825c@gmail.com>
+ <366cbf6d-94fa-fea9-be58-07ddb09cff3a@ti.com>
+ <df59c10d-7038-cb4a-45f0-7420254c6398@gmail.com>
+ <ec0393b7-118e-1f3b-d5af-86ecdf66412a@ti.com>
+ <ae700129-7b59-c92b-0c0a-b57a6f230ff7@gmail.com>
+ <adcd7987-f7fc-ae1f-9aa4-cebcbf01ad58@ti.com>
+ <1702dfd6-b08f-c1ff-e46d-1366618bedb0@gmail.com>
+ <72112839-11d4-54be-df94-b2322f77cb0f@ti.com>
+ <8b126077-c200-ed34-03b7-6d43a22fb0c9@gmail.com>
+From:   Dan Murphy <dmurphy@ti.com>
+Message-ID: <92cc81dc-7280-8bf0-9536-9c4d990eaf3b@ti.com>
+Date:   Thu, 10 Jan 2019 14:43:54 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.3
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+In-Reply-To: <8b126077-c200-ed34-03b7-6d43a22fb0c9@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <c34d44c656cf38a25dbfc9c6a1dd8106@codeaurora.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Balakrishna,
+Jacek
 
-On Thu, Jan 10, 2019 at 08:30:43PM +0530, Balakrishna Godavarthi wrote:
-> Hi Matthias,
+On 1/10/19 1:57 PM, Jacek Anaszewski wrote:
+> Dan,
 > 
-> On 2019-01-03 03:45, Matthias Kaehlcke wrote:
-> > On Mon, Dec 31, 2018 at 11:34:46AM +0530, Balakrishna Godavarthi wrote:
-> > > Hi Marcel,
-> > > 
-> > > On 2018-12-30 13:40, Marcel Holtmann wrote:
-> > > > Hi Balakrishna,
-> > > >
-> > > > > > > Latest qualcomm chips are not sending an command complete event for
-> > > > > > > every firmware packet sent to chip. They only respond with a vendor
-> > > > > > > specific event for the last firmware packet. This optimization will
-> > > > > > > decrease the BT ON time. Due to this we are seeing a timeout error
-> > > > > > > message logs on the console during firmware download. Now we are
-> > > > > > > injecting a command complete event once we receive an vendor
-> > > > > > > specific
-> > > > > > > event for the last RAM firmware packet.
-> > > > > > > Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
-> > > > > > > ---
-> > > > > > > drivers/bluetooth/btqca.c | 39
-> > > > > > > ++++++++++++++++++++++++++++++++++++++-
-> > > > > > > drivers/bluetooth/btqca.h |  3 +++
-> > > > > > > 2 files changed, 41 insertions(+), 1 deletion(-)
-> > > > > > > diff --git a/drivers/bluetooth/btqca.c b/drivers/bluetooth/btqca.c
-> > > > > > > index ec9e03a6b778..0b533f65f652 100644
-> > > > > > > --- a/drivers/bluetooth/btqca.c
-> > > > > > > +++ b/drivers/bluetooth/btqca.c
-> > > > > > > @@ -144,6 +144,7 @@ static void qca_tlv_check_data(struct
-> > > > > > > rome_config *config,
-> > > > > > > 		 * In case VSE is skipped, only the last segment is acked.
-> > > > > > > 		 */
-> > > > > > > 		config->dnld_mode = tlv_patch->download_mode;
-> > > > > > > +		config->dnld_type = config->dnld_mode;
-> > > > > > > 		BT_DBG("Total Length           : %d bytes",
-> > > > > > > 		       le32_to_cpu(tlv_patch->total_size));
-> > > > > > > @@ -264,6 +265,31 @@ static int qca_tlv_send_segment(struct
-> > > > > > > hci_dev *hdev, int seg_size,
-> > > > > > > 	return err;
-> > > > > > > }
-> > > > > > > +static int qca_inject_cmd_complete_event(struct hci_dev *hdev)
-> > > > > > > +{
-> > > > > > > +	struct hci_event_hdr *hdr;
-> > > > > > > +	struct hci_ev_cmd_complete *evt;
-> > > > > > > +	struct sk_buff *skb;
-> > > > > > > +
-> > > > > > > +	skb = bt_skb_alloc(sizeof(*hdr) + sizeof(*evt) + 1, GFP_KERNEL);
-> > > > > > > +	if (!skb)
-> > > > > > > +		return -ENOMEM;
-> > > > > > > +
-> > > > > > > +	hdr = skb_put(skb, sizeof(*hdr));
-> > > > > > > +	hdr->evt = HCI_EV_CMD_COMPLETE;
-> > > > > > > +	hdr->plen = sizeof(*evt) + 1;
-> > > > > > > +
-> > > > > > > +	evt = skb_put(skb, sizeof(*evt));
-> > > > > > > +	evt->ncmd = 1;
-> > > > > > > +	evt->opcode = HCI_OP_NOP;
-> > 
-> > After looking a bit more at it I realize HCI_OP_NOP is not a good
-> > value in this case:
-> > 
-> > static void hci_cmd_complete_evt(...)
-> > {
-> >   ...
-> > 
-> >   if (*opcode != HCI_OP_NOP)
-> >     cancel_delayed_work(&hdev->cmd_timer);
-> > 
-> >   ...
-> > }
-> > 
-> > https://elixir.bootlin.com/linux/v4.19/source/net/bluetooth/hci_event.c#L3351
-> > 
-> > Cancelling the command timeout is precisely what we want. Not sure why
-> > the patch with HCI_OP_NOP makes the timeouts go away in most cases
-> > (but not e.g. when inserting an msleep(1000) after downloading the
-> > NVM.
-> > 
-> > I suggest to pass the opcode of the command to be completed.
-> > 
-> > > > > > > +
-> > > > > > > +	skb_put_u8(skb, QCA_HCI_CC_SUCCESS);
-> > > > > > > +
-> > > > > > > +	hci_skb_pkt_type(skb) = HCI_EVENT_PKT;
-> > > > > > > +
-> > > > > > > +	return hci_recv_frame(hdev, skb);
-> > > > > > > +}
-> > > > > > > +
-> > > > > > > static int qca_download_firmware(struct hci_dev *hdev,
-> > > > > > > 				  struct rome_config *config)
-> > > > > > > {
-> > > > > > > @@ -297,11 +323,22 @@ static int
-> > > > > > > qca_download_firmware(struct hci_dev *hdev,
-> > > > > > > 		ret = qca_tlv_send_segment(hdev, segsize, segment,
-> > > > > > > 					    config->dnld_mode);
-> > > > > > > 		if (ret)
-> > > > > > > -			break;
-> > > > > > > +			goto out;
-> > > > > > > 		segment += segsize;
-> > > > > > > 	}
-> > > > > > > +	/* Latest qualcomm chipsets are not sending a command
-> > > > > > > complete event
-> > > > > > > +	 * for every fw packet sent. They only respond with a
-> > > > > > > vendor specific
-> > > > > > > +	 * event for the last packet. This optimization in the chip will
-> > > > > > > +	 * decrease the BT in initialization time. Here we will
-> > > > > > > inject a command
-> > > > > > > +	 * complete event to avoid a command timeout error message.
-> > > > > > > +	 */
-> > > > > > > +	if ((config->dnld_type == ROME_SKIP_EVT_VSE_CC ||
-> > > > > > > +	    config->dnld_type == ROME_SKIP_EVT_VSE))
-> > > > > > > +		return qca_inject_cmd_complete_event(hdev);
-> > > > > > > +
-> > > > > > have you actually considered using __hci_cmd_send in that case. It is
-> > > > > > allowed for vendor OGF to use that command. I see you actually do use
-> > > > > > it and now I am failing to understand what this is for.
-> > > > > [Bala]: thanks for reviewing the change.
-> > > > >
-> > > > > __hci_cmd_send() can be used only to send the command to the chip.
-> > > > > it will not wait for the response for the command sent.
-> > > > >
-> > > > > as you know that every vendor command sent to chip will respond with
-> > > > > vendor specific event and command complete event.
-> > > > > but in our case chip will only respond with vendor specific event
-> > > > > only. so we are injecting command complete event.
-> > > >
-> > > > and __hci_cmd_sync_ev is also not working for you? However since you
-> > > > are not waiting for the vendor event anyway and just injecting
-> > > > cmd_complete, I wonder what’s the difference in just using
-> > > > __hci_cmd_send and not bothering to wait or inject at all. I am
-> > > > failing to see where this injection makes a difference.
-> > > >
-> > > > For me it is a big difference if we are injecting one event like in
-> > > > the case of Intel compared to injecting one for every command. It will
-> > > > show a wrong picture in btmon and that is a bad idea.
-> > > >
-> > > > Regards
-> > > >
-> > > > Marcel
-> > > 
-> > > [Bala]: here is the use case, when ever we download the fw packets
-> > > i.e. RAM
-> > > image, for every command sent(i.e. fw packet) from
-> > > the host chip will respond with an vendor specific event and command
-> > > complete event.
-> > > 
-> > > the above is taking more time to setup the BT device. then we came
-> > > up with
-> > > solution where we enable flags in fw file (i.e. RAM image header)
-> > > whether to wait for event to be received or sent the total packets
-> > > and wait
-> > > for the events for the last packet.
-> > > 
-> > > So currently we are handling both the cases in the code. i.e wait
-> > > for event
-> > > for all packet or wait for an event for the last packet.
-> > > 
-> > > but in the second case i.e. wait for event for the last packet sent,
-> > > we are
-> > > only receiving an vendor specific event from chip which holds the
-> > > status of
-> > > fw download.
-> > > 
-> > > so as __hci_cmd_sync_ev() requires an command complete event. so we
-> > > are
-> > > injecting it after the vendor specific event received for the last
-> > > packet.
-> > > 
-> > > This helps to overcome 0xfc00 timeout error logging on console.
-> > 
-> > Some more details:
-> > 
-> > The timeout error is actually from reading the 'SoC version', which
-> > uses the same command code as the firmware download
-> > (EDL_PATCH_CMD_OPCODE). Without reading the 'SoC version' it would be
-> > from the command to write the first firmware segment.
-> > 
-> > If the download of a firmware binary takes >= 2s (HCI_CMD_TIMEOUT) the
-> > timeout would still occur. If necessary this could be mitigated by
-> > injecting some command complete events during the firmware download,
-> > though I expect Marcel wouldn't be overly happy with that, since it
-> > would affect btmon even more.
-> > 
-> > Regards
-> > 
-> > Matthias
+> On 1/10/19 8:22 PM, Dan Murphy wrote:
+>> Jacek
+>>
+>> On 1/10/19 12:44 PM, Jacek Anaszewski wrote:
+>>> Hi Dan,
+>>>
+>>> On 1/9/19 10:31 PM, Dan Murphy wrote:
+>>>> Jacek
+>>>>
+>>>> On 1/9/19 3:28 PM, Jacek Anaszewski wrote:
+>>>>> On 1/9/19 10:12 PM, Dan Murphy wrote:
+>>>>>> On 1/9/19 2:12 PM, Jacek Anaszewski wrote:
+>>>>>>> Hi Dan,
+>>>>>>>
+>>>>>>> On 1/8/19 10:22 PM, Dan Murphy wrote:
+>>>>>>>> On 1/8/19 3:16 PM, Jacek Anaszewski wrote:
+>>>>>>>>> On 1/8/19 9:53 PM, Dan Murphy wrote:
+>>>>>>>>>> Jacek
+>>>>>>>>>>
+>>>>>>>>>> On 1/8/19 2:33 PM, Jacek Anaszewski wrote:
+>>>>>>>>>>> Dan,
+>>>>>>>>>>>
+>>>>>>>>>>> On 12/19/18 5:26 PM, Dan Murphy wrote:
+>>>>>>>>>>>> Introduce the bindings for the Texas Instruments LP5024 and the LP5018
+>>>>>>>>>>>> RGB LED device driver.  The LP5024/18 can control RGB LEDs individually
+>>>>>>>>>>>> or as part of a control bank group.  These devices have the ability
+>>>>>>>>>>>> to adjust the mixing control for the RGB LEDs to obtain different colors
+>>>>>>>>>>>> independent of the overall brightness of the LED grouping.
+>>>>>>>>>>>>
+>>>>>>>>>>>> Datasheet:
+>>>>>>>>>>>> http://www.ti.com/lit/ds/symlink/lp5024.pdf
+>>>>>>>>>>>>
+>>>>>>>>>>>> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+>>>>>>>>>>>> ---
+>>>>>>>>>>>>        .../devicetree/bindings/leds/leds-lp5024.txt  | 63 +++++++++++++++++++
+>>>>>>>>>>>>        1 file changed, 63 insertions(+)
+>>>>>>>>>>>>        create mode 100644 Documentation/devicetree/bindings/leds/leds-lp5024.txt
+>>>>>>>>>>>>
+>>>>>>>>>>>> diff --git a/Documentation/devicetree/bindings/leds/leds-lp5024.txt b/Documentation/devicetree/bindings/leds/leds-lp5024.txt
+>>>>>>>>>>>> new file mode 100644
+>>>>>>>>>>>> index 000000000000..9567aa6f7813
+>>>>>>>>>>>> --- /dev/null
+>>>>>>>>>>>> +++ b/Documentation/devicetree/bindings/leds/leds-lp5024.txt
+>>>>>>>>>>>> @@ -0,0 +1,63 @@
+>>>>>>>>>>>> +* Texas Instruments - LP5024/18 RGB LED driver
+>>>>>>>>>>>> +
+>>>>>>>>>>>> +The LM3692x is an ultra-compact, highly efficient,
+>>>>>>>>>>>> +white-LED driver designed for LCD display backlighting.
+>>>>>>>>>>>> +
+>>>>>>>>>>>> +The main difference between the LP5024 and L5018 is the number of
+>>>>>>>>>>>> +RGB LEDs they support.  The LP5024 supports twenty four strings while the
+>>>>>>>>>>>> +LP5018 supports eighteen strings.
+>>>>>>>>>>>> +
+>>>>>>>>>>>> +Required properties:
+>>>>>>>>>>>> +    - compatible:
+>>>>>>>>>>>> +        "ti,lp5018"
+>>>>>>>>>>>> +        "ti,lp5024"
+>>>>>>>>>>>> +    - reg :  I2C slave address
+>>>>>>>>>>>> +    - #address-cells : 1
+>>>>>>>>>>>> +    - #size-cells : 0
+>>>>>>>>>>>> +
+>>>>>>>>>>>> +Optional properties:
+>>>>>>>>>>>> +    - enable-gpios : gpio pin to enable/disable the device.
+>>>>>>>>>>>> +    - vled-supply : LED supply
+>>>>>>>>>>>> +
+>>>>>>>>>>>> +Required child properties:
+>>>>>>>>>>>> +    - reg : Is the child node iteration.
+>>>>>>>>>>>> +    - led-sources : LP5024 - 0 - 7
+>>>>>>>>>>>> +            LP5018 - 0 - 5
+>>>>>>>>>>>> +            Declares the LED string or strings that the child node
+>>>>>>>>>>>> +            will control.  If ti,control-bank is set then this
+>>>>>>>>>>>> +            property will contain multiple LED IDs.
+>>>>>>>>>>>> +
+>>>>>>>>>>>> +Optional child properties:
+>>>>>>>>>>>> +    - label : see Documentation/devicetree/bindings/leds/common.txt
+>>>>>>>>>>>> +    - linux,default-trigger :
+>>>>>>>>>>>> +       see Documentation/devicetree/bindings/leds/common.txt
+>>>>>>>>>>>> +    - ti,control-bank : Indicates that the LED strings declared in the
+>>>>>>>>>>>> +                led-sources property are grouped within a control
+>>>>>>>>>>>> +                bank for brightness and mixing control.
+>>>>>>>>>>>> +
+>>>>>>>>>>>> +Example:
+>>>>>>>>>>>> +
+>>>>>>>>>>>> +led-controller@28 {
+>>>>>>>>>>>> +    compatible = "ti,lp5024";
+>>>>>>>>>>>> +    reg = <0x28>;
+>>>>>>>>>>>> +    #address-cells = <1>;
+>>>>>>>>>>>> +    #size-cells = <0>;
+>>>>>>>>>>>> +
+>>>>>>>>>>>> +    enable-gpios = <&gpio1 28 GPIO_ACTIVE_HIGH>;
+>>>>>>>>>>>> +    vled-supply = <&vbatt>;
+>>>>>>>>>>>> +
+>>>>>>>>>>>> +    led@0 {
+>>>>>>>>>>>> +        reg = <0>;
+>>>>>>>>>>>> +        led-sources = <1>;
+>>>>>>>>>>>> +    };
+>>>>>>>>>>>> +
+>>>>>>>>>>>> +    led@1 {
+>>>>>>>>>>>> +        reg = <1>;
+>>>>>>>>>>>> +        led-sources = <0 6>;
+>>>>>>>>>>>> +        ti,control-bank;
+>>>>>>>>>>>
+>>>>>>>>>>> Do you really need ti,control-bank? Doesn't led-sources array size
+>>>>>>>>>>> greater than 1 mean that the node describes control bank?
+>>>>>>>>>>>
+>>>>>>>>>>
+>>>>>>>>>> That will work too.
+>>>>>>>>>
+>>>>>>>>>>> Also, does it make sense to have only two LEDs in the bank?
+>>>>>>>>>>
+>>>>>>>>>> The array can populate all 7 LEDs in a single node.  I only show 2 here as the example.
+>>>>>>>>>> See the description above of the led-sources
+>>>>>>>>>
+>>>>>>>>> OK, I confused RGB LED modules with banks.
+>>>>>>>>>
+>>>>>>>>> Shouldn't we allow for defining either strings or RGB LED
+>>>>>>>>> triplets somehow then?
+>>>>>>>>>
+>>>>>>>>
+>>>>>>>> Well that is what this should be doing.  If you define a single LED in LED sources then
+>>>>>>>> the triplet is controlled via the associated LEDx_brightness register.
+>>>>>>>
+>>>>>>> led-sources should map to iouts directly.
+>>>>>>> So, for RGB LED modules I would expect:
+>>>>>>>
+>>>>>>> LED0: led-sources = <0 1 2>;
+>>>>>>> LED1: led-sources = <3 4 5>;
+>>>>>>> LED2: led-sources = <6 7 8>;
+>>>>>>> and so on.
+>>>>>>
+>>>>>>>
+>>>>>>> for banks:
+>>>>>>>
+>>>>>>> Bank A with iouts 0,3,6,9: led-sources<0 3 6 9>;
+>>>>>>> Bank B with iouts 2,4,10:  led-sources<2 4 10>;
+>>>>>>> Bank C with iouts 5,8,11,14,17: led-sources<5 8 11 14 17>;
+>>>>>>>
+>>>>>>
+>>>>>> Ok the led-sources would need to be different then this as I don't define the sources for banks.
+>>>>>>
+>>>>>> The led-sources for the banks and the individual groups will have different meanings within the same
+>>>>>> document.  I was attempting to keep the led-sources mapped to the LEDx_brightness registers as opposed to
+>>>>>> the hardware outputs since the RGB LEDs are controlled and grouped by a single brightness register and if banked then
+>>>>>> it would be controlled by the bank brightness register.
+>>>>>>
+>>>>>> Describing these in the DT seems wrought with potential issues as the data sheet defines what outputs map to what bank and LED
+>>>>>> registers.
+>>>>>
+>>>>> Yes, that's why I mentioned the need for validation of led-sources.
+>>>>> But they have to be iouts. This property was introduced specifically
+>>>>> for such purposes.
+>>>>>
+>>>>
+>>>> Yes Pavel also mentioned that as well.
+>>>>
+>>>> I will look into validating the sources.  But there will be no mapping of the sources to the output that is done
+>>>> in the hardware.  This would just be a data sheet mapping since the outputs are not configurable.
+>>>
+>>> Hmm, isn't the mapping defined in the hardware via LED_CONFIG0 register?
+>>> I have an impression that it defines whether LED belongs to an RGB LED
+>>> module or to a bank. Basing on that I created my DT example above.
+>>>
+>>
+>> Yes so if you turn on the bank control for LED0 and LED1 then
+>> out 0, 3 are mapped to BANK A
+>> out 1, 4 are mapped to BANK B
 > 
-> [Bala]: Basically every vendor specific command we sent to chip,
-> chip should respond with an vendor specific event followed by an command
-> complete event
-> or some times it will only respond with an command complete event.
-> but in any case command complete event is mandatory to all the command we
-> sent to the chip.
-
-Is this ("command complete event is mandatory to all the command we
-sent to the chip") a description of what the chip actually does, or
-what it should be doing according to the spec?
-
-As mentioned earlier, the timeout we see originates from reading the
-SoC version:
-
-diff --git a/drivers/bluetooth/btqca.c b/drivers/bluetooth/btqca.c
-index 0b533f65f652fc..1e484e61799571 100644
---- a/drivers/bluetooth/btqca.c
-+++ b/drivers/bluetooth/btqca.c
-@@ -400,6 +400,10 @@ int qca_uart_setup(struct hci_dev *hdev, uint8_t baudrate,
-                return err;
-        }
-
-+       printk("DBG: ZZZzzzzzzz\n");
-+       msleep(2500);
-+       printk("DBG: good morning!\n");
-+
-        /* Download NVM configuration */
-        config.type = TLV_TYPE_NVM;
-        if (soc_type == QCA_WCN3990)
-
-When you boot with this patch you'll see something like this:
-
-[   15.531365] DBG: reading SoC version
-[   15.544963] DBG: ZZZzzzzzzz
-[   17.590282] Bluetooth: hci0: command 0xfc00 tx timeout
-[   18.099110] DBG: good morning!
-
-> In our case, we have an two fw files i.e. *.tlv and *.bin.
-> tlv is an RAM image of the chip where as bin is an nvm image of the chip. so
-> tlv will be of
-> more size which require an  lot more time to dump the file in to chip,
-> while dumping the tlv, we divide tlv as packet of size 245 bytes and send
-> them as an command packet to the chip. chip should respond with an  command
-> complete event.
-> then only we will send the next packet. but size of the tlv is large, to
-> optimize this we will
-> not wait for the either an vendor specific event or an command complete
-> event.
-
-Let's make sure we have an accurate picture, which of the following is
-correct:
-
-1. the chip sends a command complete event after each packet, as an
-optimization the BT driver doesn't wait for it
-
-2. as an optimization the chip does not send a command complete event
-and the driver has to deal with it
-
-My understanding is that it's 2), but the wording above seems to
-describe 1)
-
-> But as we need to be on the sync, i.e. whether are we sending an correct
-> packets or not,
-> for the last fw packet we sent to the chip.. chip will to do an CRC check
-> for the total no of packets received and respond with an vendor specific
-> event.
+> Just noticed that I made a mistake in my example, it should have been:
 > 
-> We decode the vendor specific event and decide whether the fw download is
-> success or not.  here we send an fw packet as command so stack expects an
-> command complete event.
-> where this is missing from the chip. this is  expected behavior from chip.
+> Bank B with iouts 1,4,10:  led-sources<1 4 10>;
 > 
-> So currently i am inject an command complete event after receiving an vendor
-> event for the last packet of the tlv.
+>> out 2, 5 are mapped to BANK C
+> 
+> Correct.
+> 
+>> All done automatically in the hardware and the LED0_BRIGHTNESS and LED1_BRIGHTNESS registers have no affect on the brightness
+> 
+> That's right.
+> 
+>> If we grouped the LEDs into a bank the led-sources would look more like this
+>> led-sources = < 0 1 2 3 4 5 >;
+> 
+> Why? This would be a mix of three banks. Like you listed above.
+> I'm still interpreting led-sources elements as iout identifiers.
+> 
 
-And the same for the .bin if I'm not mistaken.
+I am as well but as I tried to explain that if you define OUT0 as bank controlled then OUT1 and OUT2 are also bank controlled
+within the hardware.  We have no control of that.  If BIT(0) and BIT(1) are set in the LED_CONFIG0 register then OUT0, 1, 2, 3, 4 and 5 are all bank controlled.
 
-> This we inject only once for the last command packet sent to the chip.
-> i don't think this will effect the btmon.
+These OUTPUTs will appear as a single RGB LED grouping.
 
-I don't know enough about btmon to comment on that, in any case Marcel
-raised concerns.
+>> ti,control-bank; // But this can be omitted as led-sources is greater then 3
+>>
+>> non-banked case would be
+>> led-sources = < 0 1 2 >;
+> 
+> Agreed here. It would be LED0 RGB LED module.
+>> But the actual OUT numbers don't matter in the bank case unless we do the validation.  There would need to be an algorithim
+>> that translates these output to the correct LEDx register and CONFIG0 bits.  Basically if OUT0 is mapped to the bank then OUT1 and OUT2
+>> are inherently mapped to the bank.  
+> 
+> To three separate banks, right?
+> OUT0 - bank A, OUT1 - bank B, OUT2 - bank C.
 
-And I think my comment that triggered this disucssion remains true:
+Yes but there is no BANK output pin just like there is no dedicated LEDn output pin.  The banks are grouped internally to the device
+so again if OUT0 and OUT3 are defined as banked then 1, 2, 4, and 5 are all mapped to the bank.  1 BANK brightness register and 3 bank
+color adjustment registers.
 
-> If the download of a firmware binary takes >= 2s (HCI_CMD_TIMEOUT) the
-> timeout would still occur. If necessary this could be mitigated by
-> injecting some command complete events during the firmware download.
+> 
+>> They cannot be separated so the device theoretically treats the RGB group as a single LED.  And
+>> when banked it treats the groups of RGBs that are defined as a single LED.
+>>
+>> This is why it was easier use the LEDx out as the virtual out as we only need to define the group number(s) that are controled by the
+>> LED file presented to the user space.
+> 
+> I suspect there is logical clash here due to interpreting
+> led-sources elements as iouts in one case and LEDn modules
+> in the other case.
+> 
 
-Not sure it's a likely case, it might be an issue with larger firmware
-files and/or slower UART speeds.
+Yes.  When the RGBs are banked you have to think of them as a single RGB LED cluster and not as separate RGB LED clusters.
+As you know the brightness is controlled by the single BANK_BRIGHTNESS register.  So identifying each output in the led-sources is
+misleading as the hardware does this all on the chip.  This is why I just mapped each output to the Virtual LEDx module.
 
-Thanks
+If you define LED0 and LED1 as banked then OUT0->5 are banked and it would be considered a single virtual output.
 
-Matthias
+LED_CONFIG0 even uses the modular approach to define what is banked and what is not.  With the modular approach to led-sources
+the mapping of the sources to the CONFIG register become 1-1.
+
+1 = LED7 bank control mode enabled
+0 = LED7 independent control mode enabled
+
+-- 
+------------------
+Dan Murphy
