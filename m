@@ -2,113 +2,107 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F4CBC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 15:17:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54332C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 15:19:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D81B214C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 15:17:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=brainfault-org.20150623.gappssmtp.com header.i=@brainfault-org.20150623.gappssmtp.com header.b="CLGlrGmU"
+	by mail.kernel.org (Postfix) with ESMTP id 27CF9214C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 15:19:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729534AbfAJPRF (ORCPT
+        id S1729579AbfAJPT6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 10:17:05 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:43087 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728154AbfAJPRE (ORCPT
+        Thu, 10 Jan 2019 10:19:58 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:33407 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727753AbfAJPT6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 10:17:04 -0500
-Received: by mail-wr1-f68.google.com with SMTP id r10so11783976wrs.10
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 07:17:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=gLob20iXtV9X7gzcBBmME2TKZCOWr+JMlcZgUCIIS/8=;
-        b=CLGlrGmU/fE47yJC3vvgHYxs6IZbObwxvuEHj2kbL3oe8qZD9l53a/Kwe6Bk2FgaIp
-         9xhXyueKPowmdUuSEU5VVuaL9D3TX/FsHNn/9hmmHiPlZdA0sWWZukhEQbqEhECiYsIN
-         WT7jeR7AlwUyeyq/73ARJzgv/tk53UEQriCNroVKgClb78mcXnhyAhCF7TBMr5giV8ru
-         43gf+XkYWee9+UBCgjHTcsMqHlYzZdcxFKq3t/5zvI1Jj9jyXKUoVvHXZeuTmrVJz8/f
-         OCW9mq4yDCJlx+DeIK7DQCFh1XDaRkaehXQ6nPBEWN43lj+zZGHTXrXbCpLFZjKAtcZ4
-         Gwng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=gLob20iXtV9X7gzcBBmME2TKZCOWr+JMlcZgUCIIS/8=;
-        b=owV3kEE/tENAsedsBjG5SmewKelC6ySnpeAazrj0QfpQLDKUlNX2LM8BBpmGZqRaWK
-         e+F+1l1IrV6vC0kcllt0nDTSBWzx7VhUdizOvJyIp3cPo2/XBWkp4Ya9lnkHWHOsvjUv
-         +rn02x0MDwAG98bt1kfjzhbv+hcqnujiLjPD/B/DyBC8BtByAGSRA139CEc8LrdygpGb
-         PkTo0XuNlxGPr+zlPpr9dP7gNsuc2tGlmKWogWp9lwi/dxvSWFsDXB6rwJyKweq39UJw
-         sm3IT1JcdqzCBoxkBfa0QHxlcnQhpgBYlooMdVUKCpqaMkyDr9h0lErbpJ62/xpjB1nD
-         WGUg==
-X-Gm-Message-State: AJcUukeV2NPtCrnnpuhHsqfg95bGHnO1CgMbQkwmlvaimEMwGjCXzrlL
-        sWmGGpj5SyrnvThsTT/URwV9V7UgBkneSfiFLWwtyw==
-X-Google-Smtp-Source: ALg8bN5ZocbycUhIhtxfAD5g5576IxpG75CRbU0PSgI/nKYxXHffObzlesBrmjU9pCsreCJcH7UYxVmM8Mc0OYhKeHs=
-X-Received: by 2002:adf:f5d1:: with SMTP id k17mr10352859wrp.59.1547133422301;
- Thu, 10 Jan 2019 07:17:02 -0800 (PST)
+        Thu, 10 Jan 2019 10:19:58 -0500
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <ore@pengutronix.de>)
+        id 1ghc7f-0005Pv-Fk; Thu, 10 Jan 2019 16:19:55 +0100
+Received: from ore by ptx.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ore@pengutronix.de>)
+        id 1ghc7d-0005Pt-Qi; Thu, 10 Jan 2019 16:19:53 +0100
+Date:   Thu, 10 Jan 2019 16:19:53 +0100
+From:   Oleksij Rempel <o.rempel@pengutronix.de>
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Jiri Slaby <jslaby@suse.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        lkml <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v1 3/3] drivers/tty: increase priority for
+ tty_buffer_worker
+Message-ID: <20190110151953.qpat4t7lat6plfk6@pengutronix.de>
+References: <20190110101232.9398-1-o.rempel@pengutronix.de>
+ <20190110101232.9398-4-o.rempel@pengutronix.de>
+ <CAADWXX_G7X6QkNuqnpMyr+MGP+nUhqPaifJrfC=m57mhJu2jdg@mail.gmail.com>
 MIME-Version: 1.0
-References: <20181204135507.3706-1-anup@brainfault.org> <20181204135507.3706-2-anup@brainfault.org>
- <mvmbm4oehd5.fsf_-_@suse.de>
-In-Reply-To: <mvmbm4oehd5.fsf_-_@suse.de>
-From:   Anup Patel <anup@brainfault.org>
-Date:   Thu, 10 Jan 2019 20:46:51 +0530
-Message-ID: <CAAhSdy3-SaP7RBbgx7kZgkkxeN2W-Ue8QDFXkOgFG5GiAg52-g@mail.gmail.com>
-Subject: Re: [PATCH] tty/serial: emit CR before NL in RISC-V SBL console
-To:     Andreas Schwab <schwab@suse.de>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Atish Patra <atish.patra@wdc.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Rob Herring <robh@kernel.org>, linux-riscv@lists.infradead.org,
-        "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>,
-        linux-serial@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAADWXX_G7X6QkNuqnpMyr+MGP+nUhqPaifJrfC=m57mhJu2jdg@mail.gmail.com>
+X-Sent-From: Pengutronix Hildesheim
+X-URL:  http://www.pengutronix.de/
+X-IRC:  #ptxdist @freenode
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-Uptime: 16:08:28 up 212 days, 17 min, 159 users,  load average: 0.08, 0.27,
+ 0.23
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 10, 2019 at 7:37 PM Andreas Schwab <schwab@suse.de> wrote:
->
-> Signed-off-by: Andreas Schwab <schwab@suse.de>
-> ---
->  drivers/tty/serial/earlycon-riscv-sbi.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/tty/serial/earlycon-riscv-sbi.c b/drivers/tty/serial/earlycon-riscv-sbi.c
-> index e1a551aae3..9c51b945b5 100644
-> --- a/drivers/tty/serial/earlycon-riscv-sbi.c
-> +++ b/drivers/tty/serial/earlycon-riscv-sbi.c
-> @@ -15,8 +15,11 @@ static void sbi_console_write(struct console *con,
->  {
->         int i;
->
-> -       for (i = 0; i < n; ++i)
-> +       for (i = 0; i < n; ++i) {
-> +               if (s[i] == '\n')
-> +                       sbi_console_putchar('\r');
+On Thu, Jan 10, 2019 at 04:54:53AM -0800, Linus Torvalds wrote:
+> On Thu, Jan 10, 2019 at 2:12 AM Oleksij Rempel <o.rempel@pengutronix.de> wrote:
+> >
+> > sched_priority = 1 is enough to dramatically reduce latency
+> > on have system load produced by tasks with default user space prio.
+> 
+> .. and is this perhaps a way for a user to then make the system spend
+> inordinate amounts of time in the tty layer, and hurting other people?
+> I'm thinking threads using pty's etc as a way to make the system
+> unresponsive.
+> 
+> We have *never* had good results with random priority modifications.
+> People used to do this for the X server, and it helped in very
+> specific cases, and hurt enormously in others.
+> 
+> Why would anybody use a tty interface with a l;oopback adapter and
+> care about latency?
+> 
+> I can kind of see why you want to do this from a theoretical point,
+> but from a *practical* point of view it seems pointless. Why not use
+> more appropriate models like networking or pipes etc. IOW, I think you
+> should describe what you *really* are doing much more.
+> 
+> "hackbench with a loopback serial adapter" really doesn't sound like
+> something that should worry a lot of people.
 
-Instead of doing '\n' handling here, we should do it in BBL or
-OpenSBI (i.e. SBI runtime firmware) otherwise all users of
-SBI_CONSOLE_PUTCHAR (namely, Linux, FreeBSD,
-FreeRTOS, U-Boot S-mode, etc) will endup having '\n'
-handling.
+yes, you right.
 
-Currently, the BBL does not handle it but we have already
-handled this in upcoming OpenSBI.
+> My gut feel is that if somebody still cares deeply about serial line
+> latency, they should look at trying to see if they can do some of the
+> work directly without the bounce to the workqueue. We use workqueues
+> for a reason, but it's possible that some of it could be avoided at
+> least in special cases... And yours sounds like a special case.
 
-The SBI_CONSOLE_PUTCHAR is comparable to ARM
-semihosting early prints (refer, tty/serial/earlycon-arm-semihost.c).
-Even in ARM semihosting early prints the '\n' is not explicitly
-handled.
+It is for industrial low latency RS-422 based application. The loopback
+test is just easy way to test/reproduce it without additional hardware.
 
-Regards,
-Anup
+What is good, mainlineable way to implement it? 
+
+-- 
+Pengutronix e.K.                           |                             |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
