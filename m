@@ -2,155 +2,384 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5248CC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 15:13:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DADAC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 15:13:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2CB56214C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 15:13:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 41BBF214DA
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 15:13:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729802AbfAJPND (ORCPT
+        id S1729805AbfAJPNR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 10:13:03 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:40327 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729555AbfAJPLp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 10:11:45 -0500
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 43b8bd5mvmz9v115;
-        Thu, 10 Jan 2019 16:11:41 +0100 (CET)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id 1UJEwtcL4gGg; Thu, 10 Jan 2019 16:11:41 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 43b8bd54jrz9v113;
-        Thu, 10 Jan 2019 16:11:41 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 3249F8B89F;
-        Thu, 10 Jan 2019 16:11:43 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id HNLwrVavCuLu; Thu, 10 Jan 2019 16:11:43 +0100 (CET)
-Received: from po16846vm.idsi0.si.c-s.fr (unknown [192.168.4.90])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 00C338B898;
-        Thu, 10 Jan 2019 16:11:42 +0100 (CET)
-Received: by po16846vm.idsi0.si.c-s.fr (Postfix, from userid 0)
-        id CFCC06BF21; Thu, 10 Jan 2019 15:11:42 +0000 (UTC)
-Message-Id: <01e24dde7671275d9191cbe7f431a961b6dc95f5.1547132681.git.christophe.leroy@c-s.fr>
-In-Reply-To: <cover.1547132681.git.christophe.leroy@c-s.fr>
-References: <cover.1547132681.git.christophe.leroy@c-s.fr>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH v2 02/15] powerpc/mm/32s: rework mmu_mapin_ram()
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>, j.neuschaefer@gmx.net
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date:   Thu, 10 Jan 2019 15:11:42 +0000 (UTC)
+        Thu, 10 Jan 2019 10:13:17 -0500
+Received: from smtp.nue.novell.com ([195.135.221.5]:45951 "EHLO
+        smtp.nue.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729428AbfAJPNR (ORCPT
+        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
+        Thu, 10 Jan 2019 10:13:17 -0500
+Received: from linux-l9pv.suse (124-11-22-254.static.tfn.net.tw [124.11.22.254])
+        by smtp.nue.novell.com with ESMTP (TLS encrypted); Thu, 10 Jan 2019 16:13:08 +0100
+Date:   Thu, 10 Jan 2019 23:12:56 +0800
+From:   joeyli <jlee@suse.com>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Pavel Machek <pavel@ucw.cz>,
+        "Lee, Chun-Yi" <joeyli.kernel@gmail.com>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        LKML <linux-kernel@vger.kernel.org>, linux-pm@vger.kernel.org,
+        keyrings@vger.kernel.org,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Chen Yu <yu.c.chen@intel.com>,
+        Oliver Neukum <oneukum@suse.com>,
+        Ryan Chen <yu.chen.surf@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Giovanni Gherdovich <ggherdovich@suse.cz>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Jann Horn <jannh@google.com>
+Subject: Re: [PATCH 0/5 v2][RFC] Encryption and authentication for hibernate
+ snapshot image
+Message-ID: <20190110151256.GN3599@linux-l9pv.suse>
+References: <20190103143227.9138-1-jlee@suse.com>
+ <20190106181026.GA15256@amd>
+ <20190107173743.GC4210@linux-l9pv.suse>
+ <CALCETrWHjn_WN1WRc2pbFPB+H-ZL_1y=8dhhHoVqA53Q7Pj5vA@mail.gmail.com>
+ <20190109163958.GG9503@linux-l9pv.suse>
+ <CALCETrUprUNLci+tQ+P7PV3PvS4ruxz5jrGH3R_FDV4SFp3r9g@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CALCETrUprUNLci+tQ+P7PV3PvS4ruxz5jrGH3R_FDV4SFp3r9g@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch reworks mmu_mapin_ram() to be more generic and map as much
-blocks as possible. It now supports blocks not starting at address 0.
+On Wed, Jan 09, 2019 at 10:47:42AM -0800, Andy Lutomirski wrote:
+> On Wed, Jan 9, 2019 at 8:40 AM joeyli <jlee@suse.com> wrote:
+> >
+> > Hi Andy,
+> >
+> > Thanks for your review!
+> >
+> > On Tue, Jan 08, 2019 at 01:41:48PM -0800, Andy Lutomirski wrote:
+> > > > On Jan 7, 2019, at 9:37 AM, joeyli <jlee@suse.com> wrote:
+> > > >
+> > > > Hi Pavel,
+> > > >
+> > > > Thanks for your review!
+> > > >
+> > > >> On Sun, Jan 06, 2019 at 07:10:27PM +0100, Pavel Machek wrote:
+> > > >> Hi!
+> > > >>
+> > > >>> This patchset is the implementation of encryption and authentication
+> > > >>> for hibernate snapshot image. The image will be encrypted by AES and
+> > > >>> authenticated by HMAC.
+> > > >>
+> > > >> Ok, so you encrypt.
+> > > >
+> > > > Yes, encryption and authentication.
+> > > >
+> > > >>> The hibernate function can be used to snapshot memory pages to an image,
+> > > >>> then kernel restores the image to memory space in a appropriate time.
+> > > >>> There have secrets in snapshot image and cracker may modifies it for
+> > > >>> hacking system. Encryption and authentication of snapshot image can protect
+> > > >>> the system.
+> > > >>>
+> > > >>> Hibernate function requests the master key through key retention service.
+> > > >>> The snapshot master key can be a trusted key or a user defined key. The
+> > > >>> name of snapshot master key is fixed to "swsusp-kmk". User should loads
+> > > >>> swsusp-kmk to kernel by keyctl tool before the hibernation resume.
+> > > >>> e.g. The swsusp-kmk must be loaded before systemd-hibernate-resume
+> > > >>
+> > > >> But if userspace has a key, encryption is useless against root.
+> > > >
+> > > > Yes, but this concern is not only for hibernation encryption. This patch
+> > > > set does not provide solution against this concern.
+> > > >
+> > > > The purpose of this patch set is to encrypt and authenticate hibernate
+> > > > snapshot image in kernel space. It also requests key through keyring
+> > > > mechanism. Which means that we can easy to adapt to new key type from
+> > > > keyring in the future.
+> > > >
+> > > > Currently TPM trusted key or user defined key types are not against
+> > > > root. Even using the TPM trusted key, it still can be unsealed by root
+> > > > before the PCRs be capped (unless we capped PCRs in kernel).
+> > > >
+> > > > My solution for keeping the secret by kernel is the EFI secure key type:
+> > > >    https://lkml.org/lkml/2018/8/5/31
+> > > >
+> > > > But the EFI boot variable doesn't design for keeping secret, so Windows
+> > > > and OEM/ODM do not use boot variable to keep secret. So this idea can
+> > > > not be accepted. We must think other key type against root.
+> > > >
+> > > >>> The TPM trusted key type is preferred to be the master key. But user
+> > > >>> defined key can also be used for testing or when the platform doesn't
+> > > >>> have TPM. User must be aware that the security of user key relies on
+> > > >>> user space. If the root account be compromised, then the user key will
+> > > >>> easy to be grabbed.
+> > > >>
+> > > >> In the TPM case, does userland have access to the key?
+> > > >
+> > > > In the TPM case, userland can only touch the sealed key blob. So userland
+> > > > doesn't know the real secret. But it has risk that root unseals the key
+> > > > before PCRs be capped.
+> > > >
+> > > >> Please explain your security goals.
+> > > >
+> > > > My security goals:
+> > > >
+> > > > - Encrypt and authicate hibernate snapshot image in kernel space. Userspace
+> > > >  can only touch an encrypted and signed snapshot image.
+> > >
+> > > Signed?
+> > >
+> > > I’m not entirely convinced that the keyring mechanism is what you
+> > > want. ISTM that there are two goals here:
+> > >
+> > > a) Encryption: it should be as hard as can reasonably be arranged to
+> > > extract secrets from a hibernation image.
+> > >
+> > > b) Authentication part 1: it should not be possible for someone in
+> > > possession of a turned-off machine to tamper with the hibernation
+> > > image such that the image, when booted, will leak its secrets. This
+> > > should protect against attackers who don’t know the encryption key.
+> > >
+> > > c) Authentication part 2: it should be to verify, to the extent
+> > > practical, that the image came from the same machine and was really
+> > > created using hibernation.  Or maybe by the same user.
+> > >
+> > > For (a) and (b), using an AE mode where the key is protected in some
+> > > reasonable way.  Joey, why are you using HMAC?  Please tell me you’re
+> > > at least doing encrypt-then-MAC.  But why not use a real AE mode like
+> > > AES-GCM?
+> >
+> > The reason for using HMAC is the history for development. My first patch
+> > set is only for hibernate authentication. Then I added encryption code on
+> > top of my authentication patches in last version.
+> >
+> > I am doing encrypt-then-MAC. My code ecrypts each page by AES then HMAC
+> > whole snapshot image. I feed encrypted data pages one by one to
+> > crypto_shash_update() API for calculating the hash for whole image.
+> 
+> ...
+> 
+> I think you should write down a clear description of the data format.
 
-It scans DBATs array to find free ones instead of forcing the use of
-BAT2 and BAT3.
+Hibernation allocates free pages for building snapshot image. Those free
+pages are scattered in memory. So kernel marks those page numbers on a
+bitmap to locate them. Because this image buffer is discontinuous, so I
+use update mode hashing whole image.
 
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
----
- arch/powerpc/mm/ppc_mmu_32.c | 61 +++++++++++++++++++++++++++++---------------
- 1 file changed, 40 insertions(+), 21 deletions(-)
+> A general problem with crypto is that the fact that it appears to work
+> doesn't mean it's secure at all, and it's very hard to follow the
+> code.  Especially in Linux using the crypto API -- code using the
+> crypto API tends to be mostly boilerplate.
+>
 
-diff --git a/arch/powerpc/mm/ppc_mmu_32.c b/arch/powerpc/mm/ppc_mmu_32.c
-index b260ced065b4..b8a8d55f51a6 100644
---- a/arch/powerpc/mm/ppc_mmu_32.c
-+++ b/arch/powerpc/mm/ppc_mmu_32.c
-@@ -73,39 +73,58 @@ unsigned long p_block_mapped(phys_addr_t pa)
- 	return 0;
- }
+hm... Do you mean that the implementation of HMAC in crypto cannot be
+trusted? I hope at least that I can trust the update mode for normal
+hash like SHA256 or SHA512?
  
-+static int find_free_bat(void)
-+{
-+	int b;
-+
-+	if (cpu_has_feature(CPU_FTR_601)) {
-+		for (b = 0; b < 4; b++) {
-+			struct ppc_bat *bat = BATS[b];
-+
-+			if (!(bat[0].batl & 0x40))
-+				return b;
-+		}
-+	} else {
-+		int n = mmu_has_feature(MMU_FTR_USE_HIGH_BATS) ? 8 : 4;
-+
-+		for (b = 0; b < n; b++) {
-+			struct ppc_bat *bat = BATS[b];
-+
-+			if (!(bat[1].batu & 3))
-+				return b;
-+		}
-+	}
-+	return -1;
-+}
-+
-+static unsigned int block_size(unsigned long base, unsigned long top)
-+{
-+	unsigned int max_size = (cpu_has_feature(CPU_FTR_601) ? 8 : 256) << 20;
-+	unsigned int base_shift = (fls(base) - 1) & 31;
-+	unsigned int block_shift = (fls(top - base) - 1) & 31;
-+
-+	return min3(max_size, 1U << base_shift, 1U << block_shift);
-+}
-+
- unsigned long __init mmu_mapin_ram(unsigned long base, unsigned long top)
- {
--	unsigned long tot, bl, done;
--	unsigned long max_size = (256<<20);
-+	int idx;
- 
- 	if (__map_without_bats) {
- 		printk(KERN_DEBUG "RAM mapped without BATs\n");
- 		return 0;
- 	}
- 
--	/* Set up BAT2 and if necessary BAT3 to cover RAM. */
-+	while ((idx = find_free_bat()) != -1 && base != top) {
-+		unsigned int size = block_size(base, top);
- 
--	/* Make sure we don't map a block larger than the
--	   smallest alignment of the physical address. */
--	tot = top;
--	for (bl = 128<<10; bl < max_size; bl <<= 1) {
--		if (bl * 2 > tot)
-+		if (size < 128 << 10)
- 			break;
-+		setbat(idx, PAGE_OFFSET + base, base, size, PAGE_KERNEL_X);
-+		base += size;
- 	}
- 
--	setbat(2, PAGE_OFFSET, 0, bl, PAGE_KERNEL_X);
--	done = (unsigned long)bat_addrs[2].limit - PAGE_OFFSET + 1;
--	if ((done < tot) && !bat_addrs[3].limit) {
--		/* use BAT3 to cover a bit more */
--		tot -= done;
--		for (bl = 128<<10; bl < max_size; bl <<= 1)
--			if (bl * 2 > tot)
--				break;
--		setbat(3, PAGE_OFFSET+done, done, bl, PAGE_KERNEL_X);
--		done = (unsigned long)bat_addrs[3].limit - PAGE_OFFSET + 1;
--	}
--
--	return done;
-+	return base;
- }
- 
- /*
--- 
-2.13.3
+> >
+> > >
+> > >
+> > > I reviewed the code a bit.  Here are some thoughts:
+> > >
+> 
+> >
+> > > You’re explicitly checking that it’s not zero, and I don’t see why.
+> > >
+> >
+> > That's because I use trampoline page to forward the key from boot
+> > kernel to resume kernel for next hibernation cycle. When resuming,
+> > the empty key means that the boot kernel didn't forward valid key
+> > to resume kernel. Then the key initial failed, hibernation can not
+> > be triggered in next cycle.
+> >
+> 
+> This seems like a poor design.  If you need some indication of "there
+> is no key", then implement that.  Don't use a special all-zero value
+> to mean something special.
+>
 
+OK, I will use other way to detect the state of key. 
+ 
+> >
+> > > the acceptable usage of trusted keys?
+> > >
+> >
+> > Sorry for I didn't capture the meaning of "acceptable usage". The trusted
+> > key already be unsealed by TPM when the key be enrolled by keyctl tool.
+> > So my code just extract the unsealed key data (the random number) for
+> > encryption.
+> 
+> If someone creates a trusted key that is used for asymmetric crypto or
+> perhaps a trusted key that is intended to be used for, say, an HMAC
+> key, you should not also use it to derive hibernation keys.  This is
+> what I mean by "acceptable usage".
+>
+
+When keyring is producing encrypted key, the trusted key be used to
+derive the encrypt key and authenticate key to encrypt and hmac sign
+a encrypted key. So trusted key can be used in symmetric crypto.
+ 
+> >
+> > > You are using a non-ephemeral key and generating a fresh IV each time.
+> > > This is probably okay, but it’s needlessly fragile. Just generate an
+> > > entirely fresh key each time, please.  You also seem to be doing
+> > > encrypt-and-MAC, which is not generally considered acceptable. And
+> >
+> > I have thought about using one time key before. But that means I need
+> > attach the key with snapshot image. Keyring API doesn't provide interface
+> > for other kernel subsystem to feed an encrypted key blob, so I choice
+> > to use non-ephemeral key that's enrolled by userland through keyctl. I
+> > can change to one time key if keyring subsystem allows to be modified.
+> 
+> I don't see what this has to do with the keyring API.  If you want a
+> one time key in the hibernation code, generate a one-time key in the
+> hibernation code and wrap the key accordingly.
+>
+
+When using trusted key, the keyring subsystem helps to deal TPM. On the
+other hand, I want that hibernate can easy to support other key types. e.g.
+user defined key can also be used when debugging or development.
+
+If hibernation direct deals with TPM to seal the hibernation key. Then
+yes, we don't need keyring as the abstract layer for hibernation key.
+ 
+> 
+> >
+> > The encrypt-and-MAC is not acceptable? I am OK to change to other way
+> > just I hope that I can encrypt/decrypt page one by one for the reason
+> > that I just mentioned.
+> >
+> > > you’re not authenticating everything — just the data. This seems very
+> > > weak.
+> > >
+> >
+> > Is it too weak? Why?
+> >
+> > There have three parts of an snapshot image:
+> >         image header :: page table pages :: data pages
+> >
+> > The real data are in data pages. I thought that encrypt/hmac data pages
+> > can protect sensitive data in pages and also avoid those pages be arbitrary
+> > modified. IMHO arbitrary modifing page table pages is easy to cause
+> > resume kernel crashed.
+> 
+> First you need to define *why* you're authenticating anything.  But I
+> would guess that under any reasonable security model, a tampered-with
+> image should not be able to take over the system.  And, if you don't
+> protect the page tables, then it's probably quite easy to tamper with
+> an image such that the HMAC is unaffected but the image takes over the
+> system.
+>
+
+OK, I will protect page tables and also fields in image header.
+ 
+> I think that, if this series goes in at all, it should authenticate
+> the *entire* image.  (But you still have to define what "authentic"
+> even means.  "It passed an HMAC check" is not a good definition.)
+>
+
+I thought that the authentic of image means that the image should not
+be tampered. I will try to protect whole image.
+ 
+> >
+> > > Can you explain the trampoline?  It looks like you are using it to
+> > > tell the resumed kernel that it was tampered with. If so, NAK to that.
+> > > Just abort.
+> > >
+> >
+> > The main job of trampoline page is using by boot kernel to forward
+> > key to resume kernel for next hibernation cycle. The authorization result
+> > is just an add on.
+> >
+> > In resume process, the key will be loaded in early boot stage. Either in
+> > EFI stub (EFI secure key type, be rejected by EFI subsystem) or initrd. On
+> > the other hand, PCRs may capped after TPM trusted key be loaded. So resume
+> > kernel has no chance to load or unseal key again. The only way to get the
+> > unsealed/decrypted key is from boot kernel.
+> >
+> > The trampoline page is an empty page that it's pre-reserved in snapshot image
+> > when hibernation. When resuming, this trampoline page will be written by boot
+> > kernel to fill unsealed key. Then resume kernel will check the trampoline
+> > page to take the key. If the key is empty(zero), which means that boot
+> > kernel didn't forward valid key because some reasons. Either the key is
+> > broken (EFI key be erased) or userspace didn't enroll key to boot kernel.
+> > That's why I check the zero key in code.
+> 
+> I don't follow this at all.  After reading the code, I couldn't figure
+> out which stage generates the trampoline, which stage reads the
+> trampoline, and where there are any keys at all in the trampoline.
+>
+
+Very thinks for your review to my code...
+ 
+> There are effectively three kernels:
+> 
+> a) The kernel that gets hibernated and generates the hibernation
+> image.  This kernel obviously has access to all the keying
+> information, although some of that information may actually be
+> resident on the TPM and not in memory.
+> 
+> b) The boot kernel that reads the hibernation image.
+> 
+> c) The resumed kernel.  This kernel has the same code as (a) but
+> possibly different PCRs.
+> 
+> If the encryption is going to protect anything at all, then kernel (b)
+
+Sorry for I forgot mention in previous mail...
+
+Here is the point. I developed authentication before encryption, so the
+image is not encrypted in early version. In my original design, I try
+to avoid that hibernate key be snapshotted to image. So I erased
+hibernate key from kernel (a), which means that the kernel (b) should
+forwards hibernate key to kernel (c). Otherwise next hibernate cycle
+will be failed because no key.
+
+You are right. When the snpashot image be encrypted, the key doesn't
+need to be erased. Then kernel (b) doesn't need to forward key to kernel
+(c). 
+
+I will remove trampoline. But, I still have a question when using PCRs
+with hibernate as below...
+
+> needs to have a way to get the key, which is presumably done using the
+> TPM, since it's not obvious to me that there's any other credible way
+> to do it.  (A passphrase could also make sense, but then you'd just
+> put the hibernation image on a dm-crypt volume and the problem is
+> solved.)  Kernel (c) shouldn't need to do any crypto, since, by the
+> time any code in kernel (c) executes at all, you've already decrypted
+> everything and you've effectively committed to trusting the
+> hibernation image.
+> 
+> If something goes wrong when you hibernate a second time, this means
+> that the first hibernation screwed up and corrupted something, e.g.
+> PCRs.  That should be fixed independently of this series IMO.
+> 
+
+For kernel lockdown situation, if PCRs are not capped, which means
+that a sealed bundle can be unsealed by root. If root be compromised
+then the sealed key can also be compromised.
+
+I was thinking if kernel generates a sealed key when booting, then
+kernel capped the PCR with a constant value[1] before the userspace
+is available. Then the sealed key can not be unsealed by compromised
+root. 
+
+In this case, kernel (b) will do the job to produce the sealed key
+before PCR be capped. Then the key must be forwarded by kernel (b)
+to kernel (c).
+
+[1]
+Using constant value for capping but not random number is for other
+subsystem or userland can continue to use the PCR.
+
+Thanks a lot!
+Joey Lee
