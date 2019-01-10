@@ -2,76 +2,52 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FC4AC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 03:09:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF91CC43444
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 03:17:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6384F2173B
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 03:09:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Tv8H/vdq"
+	by mail.kernel.org (Postfix) with ESMTP id 9FA7A21783
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 03:17:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547090243;
+	bh=pIeK3c4tC8cvCELbLlBXG6zOM4HitYtNfIgsBDsgVvQ=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=19q3lq/v/a7U6e7Mn/ZunviG1RCz0n1I6rVjKrwd0a8ZIpVJ0vrGxrsnI0hk0qyay
+	 Gw+8xeg1D3CThV/2twlkHVBBf5MoOWc97KN71bnOtGhJEu7faDCjiJalotpxd8CYmA
+	 KMW7MwZVLEn6Qe8QzWnTZyj/lQ1RjljHEAzljWEU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727150AbfAJDJR (ORCPT
+        id S1727111AbfAJDRX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 22:09:17 -0500
-Received: from mail-it1-f196.google.com ([209.85.166.196]:34085 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726875AbfAJDJR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 22:09:17 -0500
-Received: by mail-it1-f196.google.com with SMTP id x124so14300403itd.1
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jan 2019 19:09:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=feEpNlqpnoPxpeqMd/XrOoCASnhVqa5NxR5fyRNqcco=;
-        b=Tv8H/vdqTuaSxx6YM7Tw7ztGe3HG+L/n4C482Wi5x1By3kaM1qCnpEIfvnqdP5T2qY
-         n4B+UCkE0CK2HWMreDyQ0g7BL22CUf86NgcZN6/gbQb9t8lRTN+MH9y/6Npy4Kr824lo
-         pCW5ay6gwu1oDtDQXfHBe75mGSUwVptoAITTxjLTTONFPseTtVIssVGpvZO23MT8RnDV
-         T7khCLNzXzqh0RYFavFyzXU5DwCA4S6NjyTTRQcGLHVeTKTNi8trYXP88L40ldCCwhkg
-         v/zitaBmQXlVj/+QJcXpKc98EPpEMmyy5PJC4/7n0Ddd1zepbGxGZtxbaPMqKHTIvC3p
-         i75A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=feEpNlqpnoPxpeqMd/XrOoCASnhVqa5NxR5fyRNqcco=;
-        b=fAJPoxOnT0uaAJ2E38EEWxuA/DXL5NcwmDpc7RdjYacmcjjb4gBL2TgwASRobc0oC2
-         yx5OYeCziL/OyCxcS87zAglwGo2Fl5h84Ulynr/VkARjx8x3/AZqvLkf+wZRc02TBjji
-         e6vrUE1Pw9TkwgHzUqBWzY1SfwIJhlvoBwOoX1ZOzLYKvk3AUvLshTFcoL6JTf5M+n2B
-         K+Ch/244+QVUXzx3z3cnUxJMnLaxPvWgWqJlkpDHOCUTAw59S/Qu7DLvglLUhCDA5tty
-         U2IkIQTPv07WSkBGUEiYeZRL+sr8g4mjJfHUN7myV99vo5OW2+ZpiFsKuRRf2w6y3qVD
-         HfJA==
-X-Gm-Message-State: AJcUukc2j59BIuNiw232Kn/BDclbPigdVUNIw1AIXJntUixTUdwF2MCr
-        ZDqap8o4c40ftnN1HZdjDtlC7w==
-X-Google-Smtp-Source: ALg8bN535z86xgPNeQ/xvWw3MWLM89G+i8xX+OMvHXHYdqDsqzJ41tdIRkaJNKC3AYPClZ5zQDSF+w==
-X-Received: by 2002:a24:cc05:: with SMTP id x5mr6032700itf.82.1547089756085;
-        Wed, 09 Jan 2019 19:09:16 -0800 (PST)
-Received: from yuzhao.bld.corp.google.com ([2620:15c:183:0:a0c3:519e:9276:fc96])
-        by smtp.gmail.com with ESMTPSA id n124sm8977731itn.4.2019.01.09.19.09.14
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 09 Jan 2019 19:09:15 -0800 (PST)
-From:   Yu Zhao <yuzhao@google.com>
-To:     Matthew Wilcox <willy@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Dave Chinner <david@fromorbit.com>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>
-Cc:     Johannes Weiner <hannes@cmpxchg.org>,
-        Souptick Joarder <jrdr.linux@gmail.com>,
-        Hugh Dickins <hughd@google.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Yu Zhao <yuzhao@google.com>
-Subject: [PATCH] mm/shmem: make find_get_pages_range() work for huge page
-Date:   Wed,  9 Jan 2019 20:08:38 -0700
-Message-Id: <20190110030838.84446-1-yuzhao@google.com>
-X-Mailer: git-send-email 2.20.1.97.g81188d93c3-goog
+        Wed, 9 Jan 2019 22:17:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43894 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726637AbfAJDRW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 22:17:22 -0500
+Received: from localhost (unknown [104.132.1.85])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 93E7D2075C;
+        Thu, 10 Jan 2019 03:17:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547090241;
+        bh=pIeK3c4tC8cvCELbLlBXG6zOM4HitYtNfIgsBDsgVvQ=;
+        h=From:To:Cc:Subject:Date:From;
+        b=EF8PLJPQxhyfZPIuYaG/f7LmVnekIMFRvsjPwP5jhYa4UE+hPY+HOEdyPJSCGmLN6
+         4lF/0d1Hgmj+HCrjvnR/12A+GG7wPF8q6ExN9ZNuX2BQqJyKyHnjFeqhE/BJaKQ7Na
+         Rf9xsQJXcRmPqJFH6qpB2lvj8DdqdMQaEXIte3eo=
+From:   Jaegeuk Kim <jaegeuk@kernel.org>
+To:     linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net
+Cc:     jaegeuk@kernel.org, Jens Axboe <axboe@kernel.dk>,
+        linux-block@vger.kernel.org
+Subject: [PATCH] loop: drop caches if offset or block_size are changed
+Date:   Wed,  9 Jan 2019 19:17:14 -0800
+Message-Id: <20190110031714.39000-1-jaegeuk@kernel.org>
+X-Mailer: git-send-email 2.19.0.605.g01d371f741-goog
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -79,40 +55,97 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-find_get_pages_range() and find_get_pages_range_tag() already
-correctly increment reference count on head when seeing compound
-page, but they may still use page index from tail. Page index
-from tail is always zero, so these functions don't work on huge
-shmem. This hasn't been a problem because, AFAIK, nobody calls
-these functions on (huge) shmem. Fix them anyway just in case.
+If we don't drop caches used in old offset or block_size, we can get old data
+from new offset/block_size, which gives unexpected data to user.
 
-Signed-off-by: Yu Zhao <yuzhao@google.com>
+For example, Martijn found a loopback bug in the below scenario.
+1) LOOP_SET_FD loads first two pages on loop file
+2) LOOP_SET_STATUS64 changes the offset on the loop file
+3) mount is failed due to the cached pages having wrong superblock
+
+Cc: Jens Axboe <axboe@kernel.dk>
+Cc: linux-block@vger.kernel.org
+Reported-by: Martijn Coenen <maco@google.com>
+Reviewed-by: Bart Van Assche <bvanassche@acm.org>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 ---
- mm/filemap.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/block/loop.c | 35 +++++++++++++++++++++++++++++++++--
+ 1 file changed, 33 insertions(+), 2 deletions(-)
 
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 81adec8ee02c..cf5fd773314a 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -1704,7 +1704,7 @@ unsigned find_get_pages_range(struct address_space *mapping, pgoff_t *start,
+diff --git a/drivers/block/loop.c b/drivers/block/loop.c
+index b8a0720d3653..cf5538942834 100644
+--- a/drivers/block/loop.c
++++ b/drivers/block/loop.c
+@@ -1190,6 +1190,12 @@ loop_set_status(struct loop_device *lo, const struct loop_info64 *info)
+ 		goto out_unlock;
+ 	}
  
- 		pages[ret] = page;
- 		if (++ret == nr_pages) {
--			*start = page->index + 1;
-+			*start = xas.xa_index + 1;
- 			goto out;
- 		}
- 		continue;
-@@ -1850,7 +1850,7 @@ unsigned find_get_pages_range_tag(struct address_space *mapping, pgoff_t *index,
++	if (lo->lo_offset != info->lo_offset ||
++	    lo->lo_sizelimit != info->lo_sizelimit) {
++		sync_blockdev(lo->lo_device);
++		kill_bdev(lo->lo_device);
++	}
++
+ 	/* I/O need to be drained during transfer transition */
+ 	blk_mq_freeze_queue(lo->lo_queue);
  
- 		pages[ret] = page;
- 		if (++ret == nr_pages) {
--			*index = page->index + 1;
-+			*index = xas.xa_index + 1;
- 			goto out;
- 		}
- 		continue;
+@@ -1218,6 +1224,14 @@ loop_set_status(struct loop_device *lo, const struct loop_info64 *info)
+ 
+ 	if (lo->lo_offset != info->lo_offset ||
+ 	    lo->lo_sizelimit != info->lo_sizelimit) {
++		/* kill_bdev should have truncated all the pages */
++		if (lo->lo_device->bd_inode->i_mapping->nrpages) {
++			err = -EAGAIN;
++			pr_warn("%s: loop%d (%s) has still dirty pages (nrpages=%lu)\n",
++				__func__, lo->lo_number, lo->lo_file_name,
++				lo->lo_device->bd_inode->i_mapping->nrpages);
++			goto out_unfreeze;
++		}
+ 		if (figure_loop_size(lo, info->lo_offset, info->lo_sizelimit)) {
+ 			err = -EFBIG;
+ 			goto out_unfreeze;
+@@ -1443,22 +1457,39 @@ static int loop_set_dio(struct loop_device *lo, unsigned long arg)
+ 
+ static int loop_set_block_size(struct loop_device *lo, unsigned long arg)
+ {
++	int err = 0;
++
+ 	if (lo->lo_state != Lo_bound)
+ 		return -ENXIO;
+ 
+ 	if (arg < 512 || arg > PAGE_SIZE || !is_power_of_2(arg))
+ 		return -EINVAL;
+ 
++	if (lo->lo_queue->limits.logical_block_size != arg) {
++		sync_blockdev(lo->lo_device);
++		kill_bdev(lo->lo_device);
++	}
++
+ 	blk_mq_freeze_queue(lo->lo_queue);
+ 
++	/* kill_bdev should have truncated all the pages */
++	if (lo->lo_queue->limits.logical_block_size != arg &&
++			lo->lo_device->bd_inode->i_mapping->nrpages) {
++		err = -EAGAIN;
++		pr_warn("%s: loop%d (%s) has still dirty pages (nrpages=%lu)\n",
++			__func__, lo->lo_number, lo->lo_file_name,
++			lo->lo_device->bd_inode->i_mapping->nrpages);
++		goto out_unfreeze;
++	}
++
+ 	blk_queue_logical_block_size(lo->lo_queue, arg);
+ 	blk_queue_physical_block_size(lo->lo_queue, arg);
+ 	blk_queue_io_min(lo->lo_queue, arg);
+ 	loop_update_dio(lo);
+-
++out_unfreeze:
+ 	blk_mq_unfreeze_queue(lo->lo_queue);
+ 
+-	return 0;
++	return err;
+ }
+ 
+ static int lo_simple_ioctl(struct loop_device *lo, unsigned int cmd,
 -- 
-2.20.1.97.g81188d93c3-goog
+2.19.0.605.g01d371f741-goog
 
