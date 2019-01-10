@@ -2,150 +2,103 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF91CC43444
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 03:17:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AD36C43612
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 03:18:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9FA7A21783
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 03:17:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547090243;
-	bh=pIeK3c4tC8cvCELbLlBXG6zOM4HitYtNfIgsBDsgVvQ=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=19q3lq/v/a7U6e7Mn/ZunviG1RCz0n1I6rVjKrwd0a8ZIpVJ0vrGxrsnI0hk0qyay
-	 Gw+8xeg1D3CThV/2twlkHVBBf5MoOWc97KN71bnOtGhJEu7faDCjiJalotpxd8CYmA
-	 KMW7MwZVLEn6Qe8QzWnTZyj/lQ1RjljHEAzljWEU=
+	by mail.kernel.org (Postfix) with ESMTP id 360C92173B
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 03:18:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=tycho-ws.20150623.gappssmtp.com header.i=@tycho-ws.20150623.gappssmtp.com header.b="OoCKftlD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727111AbfAJDRX (ORCPT
+        id S1727200AbfAJDSp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 22:17:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43894 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726637AbfAJDRW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 22:17:22 -0500
-Received: from localhost (unknown [104.132.1.85])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 93E7D2075C;
-        Thu, 10 Jan 2019 03:17:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547090241;
-        bh=pIeK3c4tC8cvCELbLlBXG6zOM4HitYtNfIgsBDsgVvQ=;
-        h=From:To:Cc:Subject:Date:From;
-        b=EF8PLJPQxhyfZPIuYaG/f7LmVnekIMFRvsjPwP5jhYa4UE+hPY+HOEdyPJSCGmLN6
-         4lF/0d1Hgmj+HCrjvnR/12A+GG7wPF8q6ExN9ZNuX2BQqJyKyHnjFeqhE/BJaKQ7Na
-         Rf9xsQJXcRmPqJFH6qpB2lvj8DdqdMQaEXIte3eo=
-From:   Jaegeuk Kim <jaegeuk@kernel.org>
-To:     linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net
-Cc:     jaegeuk@kernel.org, Jens Axboe <axboe@kernel.dk>,
-        linux-block@vger.kernel.org
-Subject: [PATCH] loop: drop caches if offset or block_size are changed
-Date:   Wed,  9 Jan 2019 19:17:14 -0800
-Message-Id: <20190110031714.39000-1-jaegeuk@kernel.org>
-X-Mailer: git-send-email 2.19.0.605.g01d371f741-goog
+        Wed, 9 Jan 2019 22:18:45 -0500
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:37465 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727137AbfAJDSp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 22:18:45 -0500
+Received: by mail-yw1-f66.google.com with SMTP id h193so3848816ywc.4
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Jan 2019 19:18:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tycho-ws.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=HA5zyPOtM4vpmUe/kE+QiX1RJ0sEYJCbfLsl40THKV8=;
+        b=OoCKftlDJzygWNgvYBaP3buuWxH7z7kBCjggWEKlvmRng4H5xLHD8HA8NApLxHswsU
+         rNULTiMYdDNtIRKWJgWAf1J1OI3mGHNEECJiUXn8Y3s4NvJLUnjI5yIqFEmvtlX2IdVN
+         CtE3TmImFz/bJlwavFuVkB40oCBFiv+hL5pE/1Uq/ktn2I4Yk7wo+te+vSwZFtSG9YPt
+         vOy2xjHbe/dTou4DiQAWBz3A0G1TdAtmYCQPF4oL97FHz0scuHJhYXAzz7ZqedEnDWi6
+         Ae2srZWRUaciv+sbM0vvcs1VWFofrF+O6rfO0a1drTj34VxnenJeRvIYuLaOs+zFUgLO
+         tOQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=HA5zyPOtM4vpmUe/kE+QiX1RJ0sEYJCbfLsl40THKV8=;
+        b=K1/vWPCFTd9PPkZWhSgCPCPcyk5TIZxiOxVQHHtGMhjXeLBC2f1O51lTxZSwLiOlMj
+         cPFAvTFFHHRixRXlX46Js0CL9pTYpdabzz2XWJsAvNKtIkV/yHiI907IQd3mIlyDQ+G4
+         3gFmdr1B7kOIAhW5x4lBtG/4Ol3XICKJ8ToyeSdGExIPaD52foXusgQUbJiW/9ss1hvd
+         V3dbyGAopHzB0xoSaMESYrCS9Tsm9MrXJPRxpwPIDglQ5SHx9UZWiopEOa+ijjwlM5+i
+         aeRXIdL3xQF3rPLciVNfeOMhqd/FwvSYDePFAjsbQTfjdHIFeAOQo6ivuw68728ljV8r
+         LpUw==
+X-Gm-Message-State: AJcUukccYj0GxP7QjCLFEWGnQY7iZLH+vnPgPV8gX4/sFrUVPpb9k0vQ
+        0PjHyEOzclHPsEmwZ/zkD8yexQ==
+X-Google-Smtp-Source: ALg8bN4VVPykalmlELDvfKbxQSHq+dg6kMh8zXnKySaMCMixApNQXY9r4fmQa9Hj8RvGTkkQ71IzsA==
+X-Received: by 2002:a81:320e:: with SMTP id y14mr8300727ywy.49.1547090323838;
+        Wed, 09 Jan 2019 19:18:43 -0800 (PST)
+Received: from cisco ([128.107.241.175])
+        by smtp.gmail.com with ESMTPSA id g84sm34846911ywg.9.2019.01.09.19.18.41
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 09 Jan 2019 19:18:42 -0800 (PST)
+Date:   Wed, 9 Jan 2019 20:18:39 -0700
+From:   Tycho Andersen <tycho@tycho.ws>
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     Kees Cook <keescook@chromium.org>,
+        James Morris <jmorris@namei.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Ingo Molnar <mingo@elte.hu>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>
+Subject: Re: [GIT PULL] seccomp: build fix for v5.0-rc2
+Message-ID: <20190110031839.GD28330@cisco>
+References: <alpine.LRH.2.21.1901090803120.24546@namei.org>
+ <CAGXu5j+wvi9t-oHf4cX999aYWMhmTJ1zA1mKuNQEB_n5ixiC5w@mail.gmail.com>
+ <20190109065916.GA29753@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190109065916.GA29753@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If we don't drop caches used in old offset or block_size, we can get old data
-from new offset/block_size, which gives unexpected data to user.
+On Wed, Jan 09, 2019 at 07:59:16AM +0100, Ingo Molnar wrote:
+> 
+> * Kees Cook <keescook@chromium.org> wrote:
+> 
+> > This was already picked up by x86-urgent...
+> > 
+> > -Kees
+> 
+> I'm fine with both routes - if Linus pulls this I'll zap the x86/urgent 
+> one.
 
-For example, Martijn found a loopback bug in the below scenario.
-1) LOOP_SET_FD loads first two pages on loop file
-2) LOOP_SET_STATUS64 changes the offset on the loop file
-3) mount is failed due to the cached pages having wrong superblock
+The patches are different actually. I've confirmed the one in
+x86/urgent is correct, and this one is from the initial thread where I
+was just guessing. The difference is HOSTCFLAGS vs. HOSTLDFLAGS for .o
+files. So I think we should drop this and just keep the one in
+x86/urgent.
 
-Cc: Jens Axboe <axboe@kernel.dk>
-Cc: linux-block@vger.kernel.org
-Reported-by: Martijn Coenen <maco@google.com>
-Reviewed-by: Bart Van Assche <bvanassche@acm.org>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
----
- drivers/block/loop.c | 35 +++++++++++++++++++++++++++++++++--
- 1 file changed, 33 insertions(+), 2 deletions(-)
+Thanks,
 
-diff --git a/drivers/block/loop.c b/drivers/block/loop.c
-index b8a0720d3653..cf5538942834 100644
---- a/drivers/block/loop.c
-+++ b/drivers/block/loop.c
-@@ -1190,6 +1190,12 @@ loop_set_status(struct loop_device *lo, const struct loop_info64 *info)
- 		goto out_unlock;
- 	}
- 
-+	if (lo->lo_offset != info->lo_offset ||
-+	    lo->lo_sizelimit != info->lo_sizelimit) {
-+		sync_blockdev(lo->lo_device);
-+		kill_bdev(lo->lo_device);
-+	}
-+
- 	/* I/O need to be drained during transfer transition */
- 	blk_mq_freeze_queue(lo->lo_queue);
- 
-@@ -1218,6 +1224,14 @@ loop_set_status(struct loop_device *lo, const struct loop_info64 *info)
- 
- 	if (lo->lo_offset != info->lo_offset ||
- 	    lo->lo_sizelimit != info->lo_sizelimit) {
-+		/* kill_bdev should have truncated all the pages */
-+		if (lo->lo_device->bd_inode->i_mapping->nrpages) {
-+			err = -EAGAIN;
-+			pr_warn("%s: loop%d (%s) has still dirty pages (nrpages=%lu)\n",
-+				__func__, lo->lo_number, lo->lo_file_name,
-+				lo->lo_device->bd_inode->i_mapping->nrpages);
-+			goto out_unfreeze;
-+		}
- 		if (figure_loop_size(lo, info->lo_offset, info->lo_sizelimit)) {
- 			err = -EFBIG;
- 			goto out_unfreeze;
-@@ -1443,22 +1457,39 @@ static int loop_set_dio(struct loop_device *lo, unsigned long arg)
- 
- static int loop_set_block_size(struct loop_device *lo, unsigned long arg)
- {
-+	int err = 0;
-+
- 	if (lo->lo_state != Lo_bound)
- 		return -ENXIO;
- 
- 	if (arg < 512 || arg > PAGE_SIZE || !is_power_of_2(arg))
- 		return -EINVAL;
- 
-+	if (lo->lo_queue->limits.logical_block_size != arg) {
-+		sync_blockdev(lo->lo_device);
-+		kill_bdev(lo->lo_device);
-+	}
-+
- 	blk_mq_freeze_queue(lo->lo_queue);
- 
-+	/* kill_bdev should have truncated all the pages */
-+	if (lo->lo_queue->limits.logical_block_size != arg &&
-+			lo->lo_device->bd_inode->i_mapping->nrpages) {
-+		err = -EAGAIN;
-+		pr_warn("%s: loop%d (%s) has still dirty pages (nrpages=%lu)\n",
-+			__func__, lo->lo_number, lo->lo_file_name,
-+			lo->lo_device->bd_inode->i_mapping->nrpages);
-+		goto out_unfreeze;
-+	}
-+
- 	blk_queue_logical_block_size(lo->lo_queue, arg);
- 	blk_queue_physical_block_size(lo->lo_queue, arg);
- 	blk_queue_io_min(lo->lo_queue, arg);
- 	loop_update_dio(lo);
--
-+out_unfreeze:
- 	blk_mq_unfreeze_queue(lo->lo_queue);
- 
--	return 0;
-+	return err;
- }
- 
- static int lo_simple_ioctl(struct loop_device *lo, unsigned int cmd,
--- 
-2.19.0.605.g01d371f741-goog
-
+Tycho
