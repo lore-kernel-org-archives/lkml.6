@@ -6,134 +6,101 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE61FC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 08:29:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2F79C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 08:29:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A576206B6
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 08:29:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8B883206B6
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 08:29:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727973AbfAJI3y (ORCPT
+        id S1727989AbfAJI34 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 03:29:54 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:53644 "EHLO mx1.redhat.com"
+        Thu, 10 Jan 2019 03:29:56 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:60142 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727694AbfAJI2v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727401AbfAJI2v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 10 Jan 2019 03:28:51 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 66741E1F05;
+        by mx1.redhat.com (Postfix) with ESMTPS id 12CAC7AE80;
         Thu, 10 Jan 2019 08:28:51 +0000 (UTC)
 Received: from sirius.home.kraxel.org (ovpn-116-203.ams2.redhat.com [10.36.116.203])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id B812F672C7;
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 8BE0926380;
         Thu, 10 Jan 2019 08:28:46 +0000 (UTC)
 Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id 109C49D87; Thu, 10 Jan 2019 09:28:46 +0100 (CET)
+        id D8CD39D86; Thu, 10 Jan 2019 09:28:45 +0100 (CET)
 From:   Gerd Hoffmann <kraxel@redhat.com>
 To:     dri-devel@lists.freedesktop.org, David Airlie <airlied@redhat.com>
 Cc:     andr2000@gmail.com, Gerd Hoffmann <kraxel@redhat.com>,
         David Airlie <airlied@linux.ie>,
         virtualization@lists.linux-foundation.org (open list:DRM DRIVER FOR
         BOCHS VIRTUAL GPU), linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v3 02/15] drm/bochs: split bochs_hw_setmode
-Date:   Thu, 10 Jan 2019 09:28:32 +0100
-Message-Id: <20190110082845.3453-3-kraxel@redhat.com>
+Subject: [PATCH v3 01/15] drm/bochs: encoder cleanup
+Date:   Thu, 10 Jan 2019 09:28:31 +0100
+Message-Id: <20190110082845.3453-2-kraxel@redhat.com>
 In-Reply-To: <20190110082845.3453-1-kraxel@redhat.com>
 References: <20190110082845.3453-1-kraxel@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Thu, 10 Jan 2019 08:28:51 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Thu, 10 Jan 2019 08:28:51 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Create a separate bochs_hw_setformat function to configure
-the framebuffer format (actually just the byteorder).
+Most unused callbacks can be NULL pointers these days.
+Drop a bunch of empty encoder callbacks.
 
 Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
 Reviewed-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
 Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
 ---
- drivers/gpu/drm/bochs/bochs.h     |  5 +++--
- drivers/gpu/drm/bochs/bochs_hw.c  | 19 ++++++++++++-------
- drivers/gpu/drm/bochs/bochs_kms.c |  3 ++-
- 3 files changed, 17 insertions(+), 10 deletions(-)
+ drivers/gpu/drm/bochs/bochs_kms.c | 26 --------------------------
+ 1 file changed, 26 deletions(-)
 
-diff --git a/drivers/gpu/drm/bochs/bochs.h b/drivers/gpu/drm/bochs/bochs.h
-index fb38c8b857..4dc1b6384e 100644
---- a/drivers/gpu/drm/bochs/bochs.h
-+++ b/drivers/gpu/drm/bochs/bochs.h
-@@ -121,8 +121,9 @@ int bochs_hw_init(struct drm_device *dev);
- void bochs_hw_fini(struct drm_device *dev);
- 
- void bochs_hw_setmode(struct bochs_device *bochs,
--		      struct drm_display_mode *mode,
--		      const struct drm_format_info *format);
-+		      struct drm_display_mode *mode);
-+void bochs_hw_setformat(struct bochs_device *bochs,
-+			const struct drm_format_info *format);
- void bochs_hw_setbase(struct bochs_device *bochs,
- 		      int x, int y, u64 addr);
- int bochs_hw_load_edid(struct bochs_device *bochs);
-diff --git a/drivers/gpu/drm/bochs/bochs_hw.c b/drivers/gpu/drm/bochs/bochs_hw.c
-index d0b4e1cee8..3e04b2f0ec 100644
---- a/drivers/gpu/drm/bochs/bochs_hw.c
-+++ b/drivers/gpu/drm/bochs/bochs_hw.c
-@@ -204,8 +204,7 @@ void bochs_hw_fini(struct drm_device *dev)
- }
- 
- void bochs_hw_setmode(struct bochs_device *bochs,
--		      struct drm_display_mode *mode,
--		      const struct drm_format_info *format)
-+		      struct drm_display_mode *mode)
- {
- 	bochs->xres = mode->hdisplay;
- 	bochs->yres = mode->vdisplay;
-@@ -213,12 +212,8 @@ void bochs_hw_setmode(struct bochs_device *bochs,
- 	bochs->stride = mode->hdisplay * (bochs->bpp / 8);
- 	bochs->yres_virtual = bochs->fb_size / bochs->stride;
- 
--	DRM_DEBUG_DRIVER("%dx%d @ %d bpp, format %c%c%c%c, vy %d\n",
-+	DRM_DEBUG_DRIVER("%dx%d @ %d bpp, vy %d\n",
- 			 bochs->xres, bochs->yres, bochs->bpp,
--			 (format->format >>  0) & 0xff,
--			 (format->format >>  8) & 0xff,
--			 (format->format >> 16) & 0xff,
--			 (format->format >> 24) & 0xff,
- 			 bochs->yres_virtual);
- 
- 	bochs_vga_writeb(bochs, 0x3c0, 0x20); /* unblank */
-@@ -236,6 +231,16 @@ void bochs_hw_setmode(struct bochs_device *bochs,
- 
- 	bochs_dispi_write(bochs, VBE_DISPI_INDEX_ENABLE,
- 			  VBE_DISPI_ENABLED | VBE_DISPI_LFB_ENABLED);
-+}
-+
-+void bochs_hw_setformat(struct bochs_device *bochs,
-+			const struct drm_format_info *format)
-+{
-+	DRM_DEBUG_DRIVER("format %c%c%c%c\n",
-+			 (format->format >>  0) & 0xff,
-+			 (format->format >>  8) & 0xff,
-+			 (format->format >> 16) & 0xff,
-+			 (format->format >> 24) & 0xff);
- 
- 	switch (format->format) {
- 	case DRM_FORMAT_XRGB8888:
 diff --git a/drivers/gpu/drm/bochs/bochs_kms.c b/drivers/gpu/drm/bochs/bochs_kms.c
-index c8ce54498d..f7e6d1a9b3 100644
+index f87c284dd9..c8ce54498d 100644
 --- a/drivers/gpu/drm/bochs/bochs_kms.c
 +++ b/drivers/gpu/drm/bochs/bochs_kms.c
-@@ -80,7 +80,8 @@ static int bochs_crtc_mode_set(struct drm_crtc *crtc,
- 	if (WARN_ON(crtc->primary->fb == NULL))
- 		return -EINVAL;
- 
--	bochs_hw_setmode(bochs, mode, crtc->primary->fb->format);
-+	bochs_hw_setmode(bochs, mode);
-+	bochs_hw_setformat(bochs, crtc->primary->fb->format);
- 	bochs_crtc_mode_set_base(crtc, x, y, old_fb);
- 	return 0;
+@@ -170,31 +170,6 @@ static void bochs_crtc_init(struct drm_device *dev)
+ 	drm_crtc_helper_add(crtc, &bochs_helper_funcs);
  }
+ 
+-static void bochs_encoder_mode_set(struct drm_encoder *encoder,
+-				   struct drm_display_mode *mode,
+-				   struct drm_display_mode *adjusted_mode)
+-{
+-}
+-
+-static void bochs_encoder_dpms(struct drm_encoder *encoder, int state)
+-{
+-}
+-
+-static void bochs_encoder_prepare(struct drm_encoder *encoder)
+-{
+-}
+-
+-static void bochs_encoder_commit(struct drm_encoder *encoder)
+-{
+-}
+-
+-static const struct drm_encoder_helper_funcs bochs_encoder_helper_funcs = {
+-	.dpms = bochs_encoder_dpms,
+-	.mode_set = bochs_encoder_mode_set,
+-	.prepare = bochs_encoder_prepare,
+-	.commit = bochs_encoder_commit,
+-};
+-
+ static const struct drm_encoder_funcs bochs_encoder_encoder_funcs = {
+ 	.destroy = drm_encoder_cleanup,
+ };
+@@ -207,7 +182,6 @@ static void bochs_encoder_init(struct drm_device *dev)
+ 	encoder->possible_crtcs = 0x1;
+ 	drm_encoder_init(dev, encoder, &bochs_encoder_encoder_funcs,
+ 			 DRM_MODE_ENCODER_DAC, NULL);
+-	drm_encoder_helper_add(encoder, &bochs_encoder_helper_funcs);
+ }
+ 
+ 
 -- 
 2.9.3
 
