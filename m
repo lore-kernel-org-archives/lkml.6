@@ -2,129 +2,73 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AE61C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 14:39:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51C15C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 14:40:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 19417214C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 14:39:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547131177;
-	bh=5BNyugRz8d1gPadvL8INWxqbZ5iNPe7pWOFusNzLEFI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=gjubhLrghRqxYGkiGa+ZKZd8gv2QYmTXljao2BlEmxfMUsrXwUpg3jz7qJIUNY9Nu
-	 bfN37SVPYzsSKWTbgwkuRKvK9Xs0rcjWsVyYM9+/e6AQqqPF1noauAOaXnWF5sxxxS
-	 yOpOUdTvOVHF2Lcjb1tb7zD0+nojQsgbPLTjHMAc=
+	by mail.kernel.org (Postfix) with ESMTP id E993A2177B
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 14:39:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="hvlOvVws"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729224AbfAJOjg (ORCPT
+        id S1729237AbfAJOj7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 09:39:36 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:36221 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729192AbfAJOjb (ORCPT
+        Thu, 10 Jan 2019 09:39:59 -0500
+Received: from mail-wr1-f47.google.com ([209.85.221.47]:44040 "EHLO
+        mail-wr1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729185AbfAJOj6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 09:39:31 -0500
-Received: by mail-lj1-f196.google.com with SMTP id g11-v6so9925645ljk.3;
-        Thu, 10 Jan 2019 06:39:30 -0800 (PST)
+        Thu, 10 Jan 2019 09:39:58 -0500
+Received: by mail-wr1-f47.google.com with SMTP id z5so11611838wrt.11
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 06:39:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+        d=szeredi.hu; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=lbwFhDKs8so7z3+IhjwLcg0f0wkFKnbHQOkf+Ze6x/s=;
-        b=WmV+nrdiM6R8RORywIf8In7pH3niQUdoVLVKl++S7yFhIEzznUQrBueQa3Pou5BnHD
-         JOnuc/iVvNg/O/cMIGkg5eGLww5ZmeqBir4kd6LtuZWXtnmqSr8Cl63z9W/Uii0d69/B
-         MjOziQTQQ+1doBTyPgCOULs0FXsk1nZYdjSDQ+vVRFg/ofEZcgAIl9Zj1RLbW0Spn/O9
-         EuSzBmOZy/uMVGIBGYnfQ7wPsFHbj0XzRjKYxSMNMG0P6/0cea4YXqpYa/DFFh/VFWM4
-         49QHhvpcOWPHoo0/efUq3RZfZn+bSJvq665P0HnjIjrxHYGgPtket+sHs++5RpWVmjPO
-         G9wg==
+        bh=Kzg27uxb+xEHYgPgeNc8NpEl4+SWzCqglL6SmtY7nZ4=;
+        b=hvlOvVwshs3RDYCpJxCnP0L3mm6artLnXh0nKZ5t0JqDYjk5er3m1Z3Lw9vtJnGl+G
+         R62BeKdqujn5YI0CaCEkoF/U+XrHZiLuDULxOXNygRSUDYCzBbu2l3DT5ODAuk0G1YQ8
+         wwvLgaXyeao0F/oBL6lWuLfL/tGww8iwFQ+QQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=lbwFhDKs8so7z3+IhjwLcg0f0wkFKnbHQOkf+Ze6x/s=;
-        b=JVZRRUtrQNpL6529dNoUTSxlvrFj/9t324yKlByidcPbDeT6yYqiDVwLGcq9pXUwND
-         T329ZnvoFdWkD7DCqo3GW0CkZwLXJ3yAHWj3or6e0vuFS5VjUIcZPTdS+HJGVC9OWQFD
-         i9W+fbjdEOim9/Q2rAnNEGEjodGxUHXHTG4bRU3omhCCPDVRWBhlQ0eBlXMOpS21z7cE
-         QHMVMZVDDH7OMZxeTv4EFrdbCsugx15tH6KIRk4j7T1dVR98VcF9RQqBgH/iMCbMxcos
-         9pRaPegCK9yAUku04qPneNVrMzPjYFFH2kDMSawALHfqTexzAuHBD8wR2kkaE5qyvv31
-         UU0w==
-X-Gm-Message-State: AJcUukf5Lh5TddhdteLiYEEHb1f5za4YrWpqnZk6vd48BUFptW7TFzBl
-        b97Znu8hCpDu4Bn+qtLA6Sw=
-X-Google-Smtp-Source: ALg8bN636rCDfB8gv8cTY90AGF9FcEimIVdkMPaTRVYJ+nIaGxvR7rBui+OEx8u6KK7miFvRbai5kA==
-X-Received: by 2002:a2e:e02:: with SMTP id 2-v6mr4034704ljo.10.1547131169178;
-        Thu, 10 Jan 2019 06:39:29 -0800 (PST)
-Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
-        by smtp.gmail.com with ESMTPSA id b81-v6sm15283790ljb.7.2019.01.10.06.39.28
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 10 Jan 2019 06:39:28 -0800 (PST)
-Received: from johan by xi.terra with local (Exim 4.91)
-        (envelope-from <johan@kernel.org>)
-        id 1ghbUW-0001yd-9F; Thu, 10 Jan 2019 15:39:28 +0100
-Date:   Thu, 10 Jan 2019 15:39:28 +0100
-From:   Johan Hovold <johan@kernel.org>
-To:     Balakrishna Godavarthi <bgodavar@codeaurora.org>
-Cc:     Johan Hovold <johan@kernel.org>, marcel@holtmann.org,
-        johan.hedberg@gmail.com, mka@chromium.org,
-        linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org,
-        hemantg@codeaurora.org, linux-arm-msm@vger.kernel.org,
-        Johan Hovold <jhovold@gmail.com>
-Subject: Re: [PATCH v5 2/5] Bluetooth: hci_qca: Deassert RTS while baudrate
- change command
-Message-ID: <20190110143928.GE3430@localhost>
-References: <20181220144639.15928-1-bgodavar@codeaurora.org>
- <20181220144639.15928-3-bgodavar@codeaurora.org>
- <20190109145224.GN14782@localhost>
- <b5160d8862b49f0369fa58610516d354@codeaurora.org>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Kzg27uxb+xEHYgPgeNc8NpEl4+SWzCqglL6SmtY7nZ4=;
+        b=lfK3iSrVejFzNiO6TxufW5htqmXPiW7c8io5AOm7ijeXrgQvL5RSxOHPwMi5vNTvYR
+         yLPCPZSMx/5eITCSNaMI2BmhiEtI/ATuH8Po61xA30CcPEYvfU3MJq04usBVESMEKkLZ
+         GgoNO72rxZDgcocno2rvT5xYSQ2LRZclgrhfPCDF6VI8LpUQLm1LnJyWXyiSaSnKBg9c
+         QLWpu/AEleikwzxIEw1cf4b8xChMpPdC2/Jh5ty4bHB86Nfjp/Oz1eI6ia8qKh5YY/vX
+         J8p6qizwwy8GHGIZQqr7+KiqKjJ/XfQFTOnxIxEeewAH03O1rklWvro1wx3lXHtRIR6l
+         BKGg==
+X-Gm-Message-State: AJcUukeNxAANz1xvDcxD14Z4E8zHVuHdXl6XBfcuo13/rWN/XvqglHdX
+        fNNWBaIJlZVmWYsVbgzk9xndUQ==
+X-Google-Smtp-Source: ALg8bN5BfBC86yL3lLBBffO7PiikTYe8NDCcWwDqSbD66BU4gWZyubfPLVVqQgUAlu6IukQPNS6SUw==
+X-Received: by 2002:a5d:40c1:: with SMTP id b1mr9955469wrq.133.1547131196945;
+        Thu, 10 Jan 2019 06:39:56 -0800 (PST)
+Received: from veci.piliscsaba.redhat.com (catv-212-96-48-140.catv.broadband.hu. [212.96.48.140])
+        by smtp.gmail.com with ESMTPSA id h1sm12318406wmb.0.2019.01.10.06.39.55
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 10 Jan 2019 06:39:55 -0800 (PST)
+Date:   Thu, 10 Jan 2019 15:39:53 +0100
+From:   Miklos Szeredi <miklos@szeredi.hu>
+To:     syzbot <syzbot+c1e36d30ee3416289cc0@syzkaller.appspotmail.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
+Subject: Re: general protection fault in fuse_dev_do_write
+Message-ID: <20190110143953.GB23837@veci.piliscsaba.redhat.com>
+References: <000000000000f7af8605773cc09f@google.com>
+ <000000000000a4360105773d6c8b@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <b5160d8862b49f0369fa58610516d354@codeaurora.org>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+In-Reply-To: <000000000000a4360105773d6c8b@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 10, 2019 at 08:04:12PM +0530, Balakrishna Godavarthi wrote:
-> Hi Johan,
-> 
-> On 2019-01-09 20:22, Johan Hovold wrote:
-> > On Thu, Dec 20, 2018 at 08:16:36PM +0530, Balakrishna Godavarthi wrote:
-> >> This patch will help to stop frame reassembly errors while changing
-> >> the baudrate. This is because host send a change baudrate request
-> >> command to the chip with 115200 bps, Whereas chip will change their
-> >> UART clocks to the enable for new baudrate and sends the response
-> >> for the change request command with newer baudrate, On host side
-> >> we are still operating in 115200 bps which results of reading garbage
-> >> data. Here we are pulling RTS line, so that chip we will wait to send 
-> >> data
-> >> to host until host change its baudrate.
-
-> >> +		/* Deassert RTS while changing the baudrate of chip and host.
-> >> +		 * This will prevent chip from transmitting its response with
-> >> +		 * the new baudrate while the host port is still operating at
-> >> +		 * the old speed.
-> >> +		 */
-> >> +		qcadev = serdev_device_get_drvdata(hu->serdev);
-> >> +		if (qcadev->btsoc_type == QCA_WCN3990)
-> >> +			serdev_device_set_rts(hu->serdev, false);
-> >> +
-> > 
-> > This may not do what you want unless you also disable hardware flow
-> > control.
-
-> Here my requirement here is to block the chip to send its data before
-> HOST changes it is baudrate. So if i disable flow control lines of
-> HOST which will be in low state.  so that the chip will send it data
-> before HOST change the baudrate of HOST. which results in frame
-> reassembly error.
-
-Not sure I understand what you're trying to say above. My point is that
-you cannot reliable control RTS when you have automatic flow control
-enabled (i.e. it is managed by hardware and it's state reflects whether
-there's room in the UART receive FIFO).
-
-Johan
+#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git 9c6432f41365
