@@ -2,93 +2,226 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 999DFC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 03:04:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8464EC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 03:05:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6BB23214DA
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 03:04:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5276B214DA
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 03:05:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727189AbfAJDEm (ORCPT
+        id S1727286AbfAJDEq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 22:04:42 -0500
-Received: from sci-ig2.spreadtrum.com ([222.66.158.135]:49599 "EHLO
-        SHSQR01.spreadtrum.com" rhost-flags-OK-FAIL-OK-OK) by vger.kernel.org
-        with ESMTP id S1726541AbfAJDEm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 22:04:42 -0500
-Received: from ig2.spreadtrum.com (bjmbx01.spreadtrum.com [10.0.64.7])
-        by SHSQR01.spreadtrum.com with ESMTPS id x0A31w5X043523
-        (version=TLSv1 cipher=AES256-SHA bits=256 verify=NO);
-        Thu, 10 Jan 2019 11:02:00 +0800 (CST)
-        (envelope-from Chunyan.Zhang@unisoc.com)
-Received: from localhost (10.0.93.106) by BJMBX01.spreadtrum.com (10.0.64.7)
- with Microsoft SMTP Server (TLS) id 15.0.847.32; Thu, 10 Jan 2019 11:02:09
- +0800
-From:   Chunyan Zhang <chunyan.zhang@unisoc.com>
-To:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>
-CC:     Vincent Wang <vincent.wang@unisoc.com>,
-        Quentin Perret <quentin.perret@arm.com>,
-        <linux-kernel@vger.kernel.org>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Chunyan Zhang <chunyan.zhang@unisoc.com>
-Subject: [PATCH V2] sched/cpufreq: calculate util / cap in advance in map_util_freq()
-Date:   Thu, 10 Jan 2019 11:02:05 +0800
-Message-ID: <1547089325-15691-1-git-send-email-chunyan.zhang@unisoc.com>
-X-Mailer: git-send-email 2.7.4
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.0.93.106]
-X-ClientProxiedBy: SHCAS02.spreadtrum.com (10.0.1.202) To
- BJMBX01.spreadtrum.com (10.0.64.7)
-X-MAIL: SHSQR01.spreadtrum.com x0A31w5X043523
+        Wed, 9 Jan 2019 22:04:46 -0500
+Received: from mga03.intel.com ([134.134.136.65]:11611 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726541AbfAJDEp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 22:04:45 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Jan 2019 19:04:45 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,459,1539673200"; 
+   d="scan'208";a="115608351"
+Received: from allen-box.sh.intel.com ([10.239.161.122])
+  by fmsmga008.fm.intel.com with ESMTP; 09 Jan 2019 19:04:42 -0800
+From:   Lu Baolu <baolu.lu@linux.intel.com>
+To:     Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Kirti Wankhede <kwankhede@nvidia.com>
+Cc:     ashok.raj@intel.com, sanjay.k.kumar@intel.com,
+        jacob.jun.pan@intel.com, kevin.tian@intel.com,
+        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
+        yi.l.liu@intel.com, yi.y.sun@intel.com, peterx@redhat.com,
+        tiwei.bie@intel.com, Zeng@vger.kernel.org,
+        Xin <xin.zeng@intel.com>, iommu@lists.linux-foundation.org,
+        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lu Baolu <baolu.lu@linux.intel.com>
+Subject: [PATCH v5 0/8] vfio/mdev: IOMMU aware mediated device
+Date:   Thu, 10 Jan 2019 11:00:19 +0800
+Message-Id: <20190110030027.31447-1-baolu.lu@linux.intel.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vincent Wang <vincent.wang@unisoc.com>
+Hi,
 
-When a task that is in_iowait state is enqueued, cpufreq_update_util()
-will be invoked with SCHED_CPUFREQ_IOWAIT flag. In this case,the value
-of util and cap, which are parameters used in map_util_freq(), will be
-cpu frequency, instead of cpu util and capactiy.
+The Mediate Device is a framework for fine-grained physical device
+sharing across the isolated domains. Currently the mdev framework
+is designed to be independent of the platform IOMMU support. As the
+result, the DMA isolation relies on the mdev parent device in a
+vendor specific way.
 
-For some 32bit architectures, the size of unsigned long is 32. When
-calculating freq, there may be an overflow error in this expression:
+There are several cases where a mediated device could be protected
+and isolated by the platform IOMMU. For example, Intel vt-d rev3.0
+[1] introduces a new translation mode called 'scalable mode', which
+enables PASID-granular translations. The vt-d scalable mode is the
+key ingredient for Scalable I/O Virtualization [2] [3] which allows
+sharing a device in minimal possible granularity (ADI - Assignable
+Device Interface).
 
-freq = (freq + (freq >> 2)) * util / cap;
+A mediated device backed by an ADI could be protected and isolated
+by the IOMMU since 1) the parent device supports tagging an unique
+PASID to all DMA traffic out of the mediated device; and 2) the DMA
+translation unit (IOMMU) supports the PASID granular translation.
+We can apply IOMMU protection and isolation to this kind of devices
+just as what we are doing with an assignable PCI device.
 
-This patch will fix this overflow risk by calulating util / cap in advance,
-whether they be frequency or util.
+In order to distinguish the IOMMU-capable mediated devices from those
+which still need to rely on parent devices, this patch set adds one
+new member in struct mdev_device.
 
-Signed-off-by: Vincent Wang <vincent.wang@unisoc.com>
-Signed-off-by: Chunyan Zhang <chunyan.zhang@unisoc.com>
----
-Changes from V1:
-* Rebased onto v5.0-rc1;
-* Addressed comments from Quentin Perret.
----
- include/linux/sched/cpufreq.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+* iommu_device
+  - This, if set, indicates that the mediated device could
+    be fully isolated and protected by IOMMU via attaching
+    an iommu domain to this device. If empty, it indicates
+    using vendor defined isolation.
 
-diff --git a/include/linux/sched/cpufreq.h b/include/linux/sched/cpufreq.h
-index afa940c..3f93c32 100644
---- a/include/linux/sched/cpufreq.h
-+++ b/include/linux/sched/cpufreq.h
-@@ -24,7 +24,7 @@ void cpufreq_remove_update_util_hook(int cpu);
- static inline unsigned long map_util_freq(unsigned long util,
- 					unsigned long freq, unsigned long cap)
- {
--	return (freq + (freq >> 2)) * util / cap;
-+	return ((freq + (freq >> 2)) * ((util << 10) / cap)) >> 10;
- }
- #endif /* CONFIG_CPU_FREQ */
- 
+Below helpers are added to set and get above iommu device in mdev core
+implementation.
+
+* mdev_set/get_iommu_device(dev, iommu_device)
+  - Set or get the iommu device which represents this mdev
+    in IOMMU's device scope. Drivers don't need to set the
+    iommu device if it uses vendor defined isolation.
+
+The mdev parent device driver could opt-in that the mdev could be
+fully isolated and protected by the IOMMU when the mdev is being
+created by invoking mdev_set_iommu_device() in its @create().
+
+In the vfio_iommu_type1_attach_group(), a domain allocated through
+iommu_domain_alloc() will be attached to the mdev iommu device if
+an iommu device has been set. Otherwise, the dummy external domain
+will be used and all the DMA isolation and protection are routed to
+parent driver as the result.
+
+On IOMMU side, a basic requirement is allowing to attach multiple
+domains to a PCI device if the device advertises the capability
+and the IOMMU hardware supports finer granularity translations than
+the normal PCI Source ID based translation.
+
+As the result, a PCI device could work in two modes: normal mode
+and auxiliary mode. In the normal mode, a pci device could be
+isolated in the Source ID granularity; the pci device itself could
+be assigned to a user application by attaching a single domain
+to it. In the auxiliary mode, a pci device could be isolated in
+finer granularity, hence subsets of the device could be assigned
+to different user level application by attaching a different domain
+to each subset.
+
+Below APIs are introduced in iommu generic layer for aux-domain
+purpose:
+
+* iommu_dev_has_feature(dev, IOMMU_DEV_FEAT_AUX)
+  - Check whether both IOMMU and device support IOMMU aux
+    domain feature. Below aux-domain specific interfaces
+    are available only after this returns true.
+
+* iommu_dev_enable/disable_feature(dev, IOMMU_DEV_FEAT_AUX)
+  - Enable/disable device specific aux-domain feature.
+
+* iommu_aux_attach_device(domain, dev)
+  - Attaches @domain to @dev in the auxiliary mode. Multiple
+    domains could be attached to a single device in the
+    auxiliary mode with each domain representing an isolated
+    address space for an assignable subset of the device.
+
+* iommu_aux_detach_device(domain, dev)
+  - Detach @domain which has been attached to @dev in the
+    auxiliary mode.
+
+* iommu_aux_get_pasid(domain, dev)
+  - Return ID used for finer-granularity DMA translation.
+    For the Intel Scalable IOV usage model, this will be
+    a PASID. The device which supports Scalable IOV needs
+    to write this ID to the device register so that DMA
+    requests could be tagged with a right PASID prefix.
+
+In order for the ease of discussion, sometimes we call "a domain in
+auxiliary mode' or simply 'an auxiliary domain' when a domain is
+attached to a device for finer granularity translations. But we need
+to keep in mind that this doesn't mean there is a differnt domain
+type. A same domain could be bound to a device for Source ID based
+translation, and bound to another device for finer granularity
+translation at the same time.
+
+This patch series extends both IOMMU and vfio components to support
+mdev device passing through when it could be isolated and protected
+by the IOMMU units. The first part of this series (PATCH 1/08~5/08)
+adds the interfaces and implementation of the multiple domains per
+device. The second part (PATCH 6/08~8/08) adds the iommu device
+attribute to each mdev, determines isolation type according to the
+existence of an iommu device when attaching group in vfio type1 iommu
+module, and attaches the domain to iommu aware mediated devices.
+
+References:
+[1] https://software.intel.com/en-us/download/intel-virtualization-technology-for-directed-io-architecture-specification
+[2] https://software.intel.com/en-us/download/intel-scalable-io-virtualization-technical-specification
+[3] https://schd.ws/hosted_files/lc32018/00/LC3-SIOV-final.pdf
+
+Best regards,
+Lu Baolu
+
+Change log:
+  v4->v5:
+  - The iommu APIs have been updated with Joerg's proposal posted
+    here https://www.spinics.net/lists/iommu/msg31874.html.
+  - Some typos in commit message and comments have been fixed.
+  - PATCH 3/8 was split from 4/8 to ease code review.
+  - mdev->domain was removed and could bring back when there's a
+    real consumer.
+  - Other code review comments I received during v4 review period
+    except the EXPORT_SYMBOL vs. EXPORT_SYMBOL_GPL in PATCH 6/8.
+  - Rebase all patches to 5.0-rc1.
+
+  v3->v4:
+  - Use aux domain specific interfaces for domain attach and detach.
+  - Rebase all patches to 4.20-rc1.
+
+  v2->v3:
+  - Remove domain type enum and use a pointer on mdev_device instead.
+  - Add a generic interface for getting/setting per device iommu
+    attributions. And use it for query aux domain capability, enable
+    aux domain and disable aux domain purpose.
+  - Reuse iommu_domain_get_attr() to retrieve the id in a aux domain.
+  - We discussed the impact of the default domain implementation
+    on reusing iommu_at(de)tach_device() interfaces. We agreed
+    that reusing iommu_at(de)tach_device() interfaces is the right
+    direction and we could tweak the code to remove the impact.
+    https://www.spinics.net/lists/kvm/msg175285.html  
+  - Removed the RFC tag since no objections received.
+  - This patch has been submitted separately.
+    https://www.spinics.net/lists/kvm/msg173936.html
+
+  v1->v2:
+  - Rewrite the patches with the concept of auxiliary domains.
+
+Lu Baolu (8):
+  iommu: Add APIs for multiple domains per device
+  iommu/vt-d: Add per-device IOMMU feature ops entries
+  iommu/vt-d: Move common code out of iommu_attch_device()
+  iommu/vt-d: Aux-domain specific domain attach/detach
+  iommu/vt-d: Return ID associated with an auxiliary domain
+  vfio/mdev: Add iommu related member in mdev_device
+  vfio/type1: Add domain at(de)taching group helpers
+  vfio/type1: Handle different mdev isolation type
+
+ drivers/iommu/intel-iommu.c      | 304 ++++++++++++++++++++++++++++---
+ drivers/iommu/iommu.c            |  80 ++++++++
+ drivers/vfio/mdev/mdev_core.c    |  18 ++
+ drivers/vfio/mdev/mdev_private.h |   1 +
+ drivers/vfio/vfio_iommu_type1.c  | 132 ++++++++++++--
+ include/linux/intel-iommu.h      |  11 ++
+ include/linux/iommu.h            |  61 +++++++
+ include/linux/mdev.h             |  14 ++
+ 8 files changed, 585 insertions(+), 36 deletions(-)
+
 -- 
-2.7.4
+2.17.1
 
