@@ -2,167 +2,131 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62D85C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 10:06:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B2B5C43612
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 10:07:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 34BA6206B6
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 10:06:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 15E992173B
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 10:07:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728122AbfAJKGl (ORCPT
+        id S1727975AbfAJKH0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 05:06:41 -0500
-Received: from relay.sw.ru ([185.231.240.75]:56384 "EHLO relay.sw.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727328AbfAJKGk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 05:06:40 -0500
-Received: from [172.16.25.169]
-        by relay.sw.ru with esmtp (Exim 4.91)
-        (envelope-from <ktkhai@virtuozzo.com>)
-        id 1ghXEM-0003LF-JW; Thu, 10 Jan 2019 13:06:30 +0300
-Subject: Re: [PATCH RFC 0/3] mm: Reduce IO by improving algorithm of memcg
- pagecache pages eviction
-To:     Josef Bacik <josef@toxicpanda.com>
-Cc:     akpm@linux-foundation.org, hannes@cmpxchg.org, jack@suse.cz,
-        hughd@google.com, darrick.wong@oracle.com, mhocko@suse.com,
-        aryabinin@virtuozzo.com, guro@fb.com, mgorman@techsingularity.net,
-        shakeelb@google.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-References: <154703479840.32690.6504699919905946726.stgit@localhost.localdomain>
- <20190109154932.tpc27dk2hzeycqex@MacBook-Pro-91.local>
- <e7dc9a15-9438-cc15-c898-36eca325118a@virtuozzo.com>
- <20190109163353.pxb574odzfwdbcfe@macbook-pro-91.dhcp.thefacebook.com>
-From:   Kirill Tkhai <ktkhai@virtuozzo.com>
-Message-ID: <e8cf89d3-f71a-4d9d-3ea0-18157f7da722@virtuozzo.com>
-Date:   Thu, 10 Jan 2019 13:06:29 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
-MIME-Version: 1.0
-In-Reply-To: <20190109163353.pxb574odzfwdbcfe@macbook-pro-91.dhcp.thefacebook.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Thu, 10 Jan 2019 05:07:26 -0500
+Received: from mx2.suse.de ([195.135.220.15]:36044 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727328AbfAJKH0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 05:07:26 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id A72FAACD1;
+        Thu, 10 Jan 2019 10:07:24 +0000 (UTC)
+From:   Juergen Gross <jgross@suse.com>
+To:     linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
+        x86@kernel.org
+Cc:     boris.ostrovsky@oracle.com, sstabellini@kernel.org, hpa@zytor.com,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+        hans@knorrie.org, Juergen Gross <jgross@suse.com>,
+        stable@vger.kernel.org
+Subject: [PATCH] xen: Fix x86 sched_clock() interface for xen
+Date:   Thu, 10 Jan 2019 11:07:22 +0100
+Message-Id: <20190110100722.11216-1-jgross@suse.com>
+X-Mailer: git-send-email 2.16.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09.01.2019 19:33, Josef Bacik wrote:
-> On Wed, Jan 09, 2019 at 07:08:09PM +0300, Kirill Tkhai wrote:
->> Hi, Josef,
->>
->> On 09.01.2019 18:49, Josef Bacik wrote:
->>> On Wed, Jan 09, 2019 at 03:20:18PM +0300, Kirill Tkhai wrote:
->>>> On nodes without memory overcommit, it's common a situation,
->>>> when memcg exceeds its limit and pages from pagecache are
->>>> shrinked on reclaim, while node has a lot of free memory.
->>>> Further access to the pages requires real device IO, while
->>>> IO causes time delays, worse powerusage, worse throughput
->>>> for other users of the device, etc.
->>>>
->>>> Cleancache is not a good solution for this problem, since
->>>> it implies copying of page on every cleancache_put_page()
->>>> and cleancache_get_page(). Also, it requires introduction
->>>> of internal per-cleancache_ops data structures to manage
->>>> cached pages and their inodes relationships, which again
->>>> introduces overhead.
->>>>
->>>> This patchset introduces another solution. It introduces
->>>> a new scheme for evicting memcg pages:
->>>>
->>>>   1)__remove_mapping() uncharges unmapped page memcg
->>>>     and leaves page in pagecache on memcg reclaim;
->>>>
->>>>   2)putback_lru_page() places page into root_mem_cgroup
->>>>     list, since its memcg is NULL. Page may be evicted
->>>>     on global reclaim (and this will be easily, as
->>>>     page is not mapped, so shrinker will shrink it
->>>>     with 100% probability of success);
->>>>
->>>>   3)pagecache_get_page() charges page into memcg of
->>>>     a task, which takes it first.
->>>>
->>>> Below is small test, which shows profit of the patchset.
->>>>
->>>> Create memcg with limit 20M (exact value does not matter much):
->>>>   $ mkdir /sys/fs/cgroup/memory/ct
->>>>   $ echo 20M > /sys/fs/cgroup/memory/ct/memory.limit_in_bytes
->>>>   $ echo $$ > /sys/fs/cgroup/memory/ct/tasks
->>>>
->>>> Then twice read 1GB file:
->>>>   $ time cat file_1gb > /dev/null
->>>>
->>>> Before (2 iterations):
->>>>   1)0.01user 0.82system 0:11.16elapsed 7%CPU
->>>>   2)0.01user 0.91system 0:11.16elapsed 8%CPU
->>>>
->>>> After (2 iterations):
->>>>   1)0.01user 0.57system 0:11.31elapsed 5%CPU
->>>>   2)0.00user 0.28system 0:00.28elapsed 100%CPU
->>>>
->>>> With the patch set applied, we have file pages are cached
->>>> during the second read, so the result is 39 times faster.
->>>>
->>>> This may be useful for slow disks, NFS, nodes without
->>>> overcommit by memory, in case of two memcg access the same
->>>> files, etc.
->>>>
->>>
->>> This isn't going to work for us (Facebook).  The whole reason the hard limit
->>> exists is to keep different groups from messing up other groups.  Page cache
->>> reclaim is not free, most of our pain and most of the reason we use cgroups
->>> is to limit the effect of flooding the machine with pagecache from different
->>> groups.
->>
->> I understand the problem.
->>
->>> Memory leaks happen few and far between, but chef doing a yum
->>> update in the system container happens regularly.  If you talk about suddenly
->>> orphaning these pages to the root container it still creates pressure on the
->>> main workload, pressure that results in it having to take time from what it's
->>> doing and free up memory instead.
->>
->> Could you please to clarify additional pressure, which introduces the patchset?
->> The number of actions, which are needed to evict a pagecache page, remain almost
->> the same: we just delay __delete_from_page_cache() to global reclaim. Global
->> reclaim should not introduce much pressure, since it's the iteration on a single
->> memcg (we should not dive into hell of children memcg, since root memcg reclaim
->> should be successful and free enough pages, should't we?).
-> 
-> If we go into global reclaim at all.  If we're unable to allocate a page as the
-> most important cgroup we start shrinking ourselves first right?  And then
-> eventually end up in global reclaim, right?  So it may be easily enough
-> reclaimed, but we're going to waste a lot of time getting there in the meantime,
-> which means latency that's hard to pin down.
-> 
-> And secondly this allows hard limited cgroups to essentially leak pagecache into
-> the whole system, creating waaaaaaay more memory pressure than what I think you
-> intend.  Your logic is that we'll exceed our limit, evict some pagecache to the
-> root cgroup, and we avoid a OOM and everything is ok.  However what will really
-> happen is some user is going to do dd if=/dev/zero of=file and we'll just
-> happily keep shoving these pages off into the root cg and suddenly we have 100gb
-> of useless pagecache that we have to reclaim.  Yeah we just have to delete it
-> from the root, but thats only once we get to that part, before that there's a
-> bunch of latency inducing work that has to be done to get to deleting the pages.
+Commit f94c8d11699759 ("sched/clock, x86/tsc: Rework the x86 'unstable'
+sched_clock() interface") broke Xen guest time handling across
+migration:
 
-Yeah, but what does introduce the most latency in setup? Do I understand correctly
-that hard limit on your setup allows all alloc_pages() calls to go thru get_page_from_freelist()
-path, so most allocations do not dive into __alloc_pages_slowpath()?
+[  187.249951] Freezing user space processes ... (elapsed 0.001 seconds) done.
+[  187.251137] OOM killer disabled.
+[  187.251137] Freezing remaining freezable tasks ... (elapsed 0.001 seconds) done.
+[  187.252299] suspending xenstore...
+[  187.266987] xen:grant_table: Grant tables using version 1 layout
+[18446743811.706476] OOM killer enabled.
+[18446743811.706478] Restarting tasks ... done.
+[18446743811.720505] Setting capacity to 16777216
 
->>
->> Also, what is about implementing this as static key option? What about linking
->> orphaned pagecache pages into separate list, which is easy-to-iterate?
-> 
-> Yeah if we have a way to short-circuit the normal reclaim path and just go to
-> evicting these easily evicted pages then that would make it more palatable.  But
-> I'd like to see testing to verify that this faster way really is faster and
-> doesn't induce latency on other protected workloads.  We put hard limits on
-> groups we don't care about, we want those things to die in a fire.  The excess
-> IO from re-reading those pages is mitigated with io.latency, and eventually
-> io.weight for proportional control, so really isn't an argument for keeping
-> pages around.  Thanks,
-> 
-> Josef
-> 
+Fix that by setting xen_sched_clock_offset at resume time to ensure a
+monotonic clock value.
+
+Fixes: f94c8d11699759 ("sched/clock, x86/tsc: Rework the x86 'unstable' sched_clock() interface")
+Cc: <stable@vger.kernel.org> # 4.11
+Reported-by: Hans van Kranenburg <hans@knorrie.org>
+Signed-off-by: Juergen Gross <jgross@suse.com>
+---
+ arch/x86/xen/suspend.c |  4 ++++
+ arch/x86/xen/time.c    | 11 +++++++++++
+ arch/x86/xen/xen-ops.h |  2 ++
+ 3 files changed, 17 insertions(+)
+
+diff --git a/arch/x86/xen/suspend.c b/arch/x86/xen/suspend.c
+index 1d83152c761b..45fc9caf3880 100644
+--- a/arch/x86/xen/suspend.c
++++ b/arch/x86/xen/suspend.c
+@@ -67,6 +67,8 @@ void xen_arch_resume(void)
+ {
+ 	int cpu;
+ 
++	xen_clocksource_resume();
++
+ 	on_each_cpu(xen_vcpu_notify_restore, NULL, 1);
+ 
+ 	for_each_online_cpu(cpu)
+@@ -81,4 +83,6 @@ void xen_arch_suspend(void)
+ 		xen_pmu_finish(cpu);
+ 
+ 	on_each_cpu(xen_vcpu_notify_suspend, NULL, 1);
++
++	xen_clocksource_suspend();
+ }
+diff --git a/arch/x86/xen/time.c b/arch/x86/xen/time.c
+index 72bf446c3fee..117ce958ffe6 100644
+--- a/arch/x86/xen/time.c
++++ b/arch/x86/xen/time.c
+@@ -32,6 +32,7 @@
+ #define TIMER_SLOP	100000
+ 
+ static u64 xen_sched_clock_offset __read_mostly;
++static u64 xen_clock_value_saved;
+ 
+ /* Get the TSC speed from Xen */
+ static unsigned long xen_tsc_khz(void)
+@@ -54,6 +55,16 @@ static u64 xen_clocksource_read(void)
+ 	return ret;
+ }
+ 
++void xen_clocksource_suspend(void)
++{
++	xen_clock_value_saved = xen_clocksource_read() - xen_sched_clock_offset;
++}
++
++void xen_clocksource_resume(void)
++{
++	xen_sched_clock_offset = xen_clocksource_read() - xen_clock_value_saved;
++}
++
+ static u64 xen_clocksource_get_cycles(struct clocksource *cs)
+ {
+ 	return xen_clocksource_read();
+diff --git a/arch/x86/xen/xen-ops.h b/arch/x86/xen/xen-ops.h
+index 0e60bd918695..a17d3bdab6b8 100644
+--- a/arch/x86/xen/xen-ops.h
++++ b/arch/x86/xen/xen-ops.h
+@@ -63,6 +63,8 @@ void __init xen_build_dynamic_phys_to_machine(void);
+ void __init xen_vmalloc_p2m_tree(void);
+ 
+ void xen_init_irq_ops(void);
++void xen_clocksource_suspend(void);
++void xen_clocksource_resume(void);
+ void xen_setup_timer(int cpu);
+ void xen_setup_runstate_info(int cpu);
+ void xen_teardown_timer(int cpu);
+-- 
+2.16.4
+
