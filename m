@@ -2,119 +2,92 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88562C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 19:59:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1ED9BC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 20:00:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 61B6620665
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 19:59:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DEE8020665
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 20:00:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=maine.edu header.i=@maine.edu header.b="Mfxapa+m"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729809AbfAJT7K (ORCPT
+        id S1728343AbfAJUAR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 14:59:10 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:48296 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726369AbfAJT7I (ORCPT
+        Thu, 10 Jan 2019 15:00:17 -0500
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:39103 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726242AbfAJUAQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 14:59:08 -0500
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x0AJrXJ8080213
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 14:59:07 -0500
-Received: from e34.co.us.ibm.com (e34.co.us.ibm.com [32.97.110.152])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2pxbw1swnf-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 14:59:07 -0500
-Received: from localhost
-        by e34.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <jejb@linux.ibm.com>;
-        Thu, 10 Jan 2019 19:59:06 -0000
-Received: from b03cxnp08025.gho.boulder.ibm.com (9.17.130.17)
-        by e34.co.us.ibm.com (192.168.1.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 10 Jan 2019 19:59:03 -0000
-Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
-        by b03cxnp08025.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0AJx2RQ29163636
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 10 Jan 2019 19:59:02 GMT
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0A1B57805E;
-        Thu, 10 Jan 2019 19:59:02 +0000 (GMT)
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 78B8D7805C;
-        Thu, 10 Jan 2019 19:59:00 +0000 (GMT)
-Received: from [153.66.254.194] (unknown [9.85.186.19])
-        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Thu, 10 Jan 2019 19:59:00 +0000 (GMT)
-Subject: Re: PROBLEM: syzkaller found / pool corruption-overwrite / page in
- user-area or NULL
-From:   James Bottomley <jejb@linux.ibm.com>
-To:     Esme <esploit@protonmail.ch>,
-        "dgilbert@interlog.com" <dgilbert@interlog.com>,
-        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-mm@kvack.org
-Cc:     "security@kernel.org" <security@kernel.org>
-Date:   Thu, 10 Jan 2019 11:58:59 -0800
-In-Reply-To: <t78EEfgpy3uIwPUvqvmuQEYEWKG9avWzjUD3EyR93Qaf_tfx1gqt4XplrqMgdxR1U9SsrVdA7G9XeUZacgUin0n6lBzoxJHVJ9Ko0yzzrxI=@protonmail.ch>
-References: <t78EEfgpy3uIwPUvqvmuQEYEWKG9avWzjUD3EyR93Qaf_tfx1gqt4XplrqMgdxR1U9SsrVdA7G9XeUZacgUin0n6lBzoxJHVJ9Ko0yzzrxI=@protonmail.ch>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 19011019-0016-0000-0000-00000972EB19
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010380; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000274; SDB=6.01144587; UDB=6.00595975; IPR=6.00924852;
- MB=3.00025072; MTD=3.00000008; XFM=3.00000015; UTC=2019-01-10 19:59:04
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19011019-0017-0000-0000-000041B91A3C
-Message-Id: <1547150339.2814.9.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-10_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901100154
+        Thu, 10 Jan 2019 15:00:16 -0500
+Received: by mail-qt1-f196.google.com with SMTP id u47so15065865qtj.6
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 12:00:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=maine.edu; s=google;
+        h=from:date:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=zZz6iFxFd0zHVciM6mZTeJ3dcHBk0+YQR+R9eHIq71M=;
+        b=Mfxapa+mz3Nh1ecJCPgldeskv/PAxvmTX6s6tHxIQeuoki+/JbkquSTQ3FcjKznlJC
+         o151a6O399J9bkqSh3XpDi9tK/lPAXO1YlBTgz3TMfj3J5YamcUUBHii3IZ8rT8Gn3PF
+         KnFGxd7r4exHkb45NEGVuAcajWS7WVTAtLX/0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=zZz6iFxFd0zHVciM6mZTeJ3dcHBk0+YQR+R9eHIq71M=;
+        b=NhxzwjDaI0LveWocqBN332kpm1eCLdbBlQcRFGa4WD3VSlo+YRTvbx3mc3FtGP7Qby
+         ILZqCgVz0Pa1KnDrB2/cy5CG0J4A08sZ+Sqq0gDA9PKxYMeq/75JuflxnPJ8yxtxHFJ0
+         /b9bJQrClBbdXsKnkzHqb4ledz9m53+4bPJcoq4iIv0b8cX+JkWC5ZywZOZWMZmGaZnu
+         IgLYAq5uPGhbAtex0q2Q4gCN5dTCqD+3tO2dnUpkHgQMJf166EUN+OwBVNp8oEq3vzga
+         UugfORRjf8sLoyQg2qOpwuOQn8+c+DRHDqauMKL3aP3WSwJac9oeovHtX68akMUsfcip
+         shXQ==
+X-Gm-Message-State: AJcUukdBUmZAPa15f+l6BRBssmcXmOemLkPkL4/0PZqGVu8NAUZD1k3x
+        Vo9WNBbB6ghmirWJmmDmYnLjMg==
+X-Google-Smtp-Source: ALg8bN7kUOn43CXIORG/S5uaUpyWG4o2i24BKSkko1ly/MXpQZElLztxqzASYLETJskaqQp7Iq8EMg==
+X-Received: by 2002:aed:36c1:: with SMTP id f59mr10998453qtb.250.1547150415518;
+        Thu, 10 Jan 2019 12:00:15 -0800 (PST)
+Received: from macbook-air (weaver.eece.maine.edu. [130.111.218.23])
+        by smtp.gmail.com with ESMTPSA id 32sm51810396qto.55.2019.01.10.12.00.14
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 10 Jan 2019 12:00:14 -0800 (PST)
+From:   Vince Weaver <vincent.weaver@maine.edu>
+X-Google-Original-From: Vince Weaver <vince@maine.edu>
+Date:   Thu, 10 Jan 2019 15:00:11 -0500 (EST)
+X-X-Sender: vince@macbook-air
+To:     Peter Zijlstra <peterz@infradead.org>
+cc:     linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>
+Subject: Re: perf: rdpmc bug when viewing all procs on remote cpu
+In-Reply-To: <alpine.DEB.2.21.1901101246340.3358@macbook-air>
+Message-ID: <alpine.DEB.2.21.1901101500030.3717@macbook-air>
+References: <alpine.DEB.2.21.1901101229010.3358@macbook-air> <alpine.DEB.2.21.1901101246340.3358@macbook-air>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2019-01-10 at 19:12 +0000, Esme wrote:
-> Sorry for the resend some mail servers rejected the mime type.
+On Thu, 10 Jan 2019, Vince Weaver wrote:
+
+> On Thu, 10 Jan 2019, Vince Weaver wrote:
 > 
-> Hi, I've been getting more into Kernel stuff lately and forged ahead
-> with some syzkaller bug finding.  I played with reducing it further
-> as you can see from the attached c code but am moving on and hope to
-> get better about this process moving forward as I'm still building
-> out my test systems/debugging tools.
+> > However if you create an all-process attached to CPU event:
+> > 	perf_event_open(attr, -1, X, -1, 0);
+> > the mmap event index is set as if this were a valid event and so the rdpmc
+> > succeeds even though it shouldn't (we're trying to read an event value
+> > on a remote cpu with a local rdpmc).
 > 
-> Attached is the report and C repro that still triggers on a fresh git
-> pull as of a few minutes ago, if you need anything else please let me
-> know.
-> Esme
-> 
-> Linux syzkaller 5.0.0-rc1+ #5 SMP Tue Jan 8 20:39:33 EST 2019 x86_64
-> GNU/Linux
+> For a test case, try the
+> 	tests/rdpmc/rdpmc_attach_other_cpu
+> test found in my perf_event_tests suite
+> 	git clone https://github.com/deater/perf_event_tests
 
-I'm not sure I'm reading this right, but it seems that a simple
-allocation inside block/scsi_ioctl.h
+and that was a cut-and-paste error, I meant
+	tests/rdpmc/rdpmc_attach_global_cpu
+and I was wrong, it does affect AMD machines too.
 
-	buffer = kzalloc(bytes, q->bounce_gfp | GFP_USER| __GFP_NOWARN);
-
-(where bytes is < 4k) caused a slub padding check failure on free. 
-From the internal details, the freeing entity seems to be KASAN as part
-of its quarantine reduction (albeit triggered by this kzalloc).  I'm
-not remotely familiar with what KASAN is doing, but it seems the memory
-corruption problem is somewhere within the KASAN tracking?
-
-I added linux-mm in case they can confirm this diagnosis or give me a
-pointer to what might be wrong in scsi.
-
-James
-
+Vince
