@@ -2,160 +2,83 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 624F4C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 21:29:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FDD1C43612
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 21:31:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 261FD20652
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 21:29:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="aNXZ2OJv"
+	by mail.kernel.org (Postfix) with ESMTP id 50B8F2173B
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 21:31:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547155894;
+	bh=UosNmrR5QIxWfpcE8QQUXjOOm8vPR5a0dT3ricU7TvE=;
+	h=Date:From:To:Cc:Subject:List-ID:From;
+	b=pSz1EKPe8WEZFHUo60SCjJuRKvobMBOHXCLineSrP0Wr4usT3iRmTzB+QS1xFrWpM
+	 iDhqFSNGsZQKYhuWnoW/4I8/cl7OA9pzAeHGKbqHbTIYN9cwupqYVvWKkFwoRYzc4o
+	 nLqYoLXEbZylVygG5186TEXl5td8cPxZYVYRt97Y=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728988AbfAJV3k (ORCPT
+        id S1729034AbfAJVbd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 16:29:40 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:32990 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728943AbfAJV3j (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 16:29:39 -0500
-Received: by mail-ot1-f68.google.com with SMTP id i20so11341708otl.0
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 13:29:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=86T4nAEAR2Gerci2yDzFI28cHZhy38n5W4JM5FBd67Q=;
-        b=aNXZ2OJv4lGdZUFtY0qFcQH46WAlTZPVrWsQ7R2/7JgRhq6BqlVA6eSqGksN/XwG5k
-         zvQ9Xvj0JIw6FHM8MQgI2JoZIGKHAVjUtRnPzJHRzNkM3JcacX2ycOVsJdPiPjv+bm5F
-         2Kyl8UNqwj+uyM6atFdhtn/dl1WLbkYo7ZrVnDUqfpUMBn6sWYuSuZd5sUrAcgRaHTkK
-         o+O3uHsSyNn3jgj3ezB7uQIasjLJK2OGfwxqrmHo5IQv6RxSMQUM+qB46zy7Z4lo2Vfn
-         fIC5DhlSzCMButhYflQf5vR0FrccsMWSr9U6JnNcn5MdHtJzZxpqcRU9//lmsAUD8SWe
-         hYCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=86T4nAEAR2Gerci2yDzFI28cHZhy38n5W4JM5FBd67Q=;
-        b=BQuBBRrsfDGCITDNLC0MjjJlsj6cv8M3+lu41lfLBcz5T2oeYRuNFCF9qShPdpvcrh
-         Wej0/0Dzf1AJM+puaL+/qT0i8doUldcE3MyS5Ab0sGAmMj2fNz8gy0/7wix8LOB7qHXU
-         nGVSMjOMkPXE9EyOfqOMXqv9BX3XqwXkfSVHbgLc78/F4Zym9GoDO2BRX0fDZCNmQHnI
-         SwnEVityV2Slu0kA2Uv9FEmu3ksniGfKxrwGKTrVbACSdevLNF1w5fARBRfCaWfebVLB
-         UnPxtGiaa+p8sUXYtycE2hXWDD9RqhK0LDqr6rnzhgBHxTntFlIsKc21eUGQzeMe3S2h
-         bXiA==
-X-Gm-Message-State: AJcUukezqgMvkS0fCPywxcMTfmkJPNJSHUy0iLlzj2my8TEYsUrA7sdo
-        KXPfN+HTOmc1Qja386Wi3t6WaciyZAmti+lgx/wMkQ==
-X-Google-Smtp-Source: ALg8bN7x7casDXvUdv89UF5nNU1E+sgmMJdshHOV8kDoMWaWVulEN4fBUOF2DGXBRNUjl6+d9Pi37DIQD4TuCI2E1ww=
-X-Received: by 2002:a9d:7dd5:: with SMTP id k21mr8192664otn.214.1547155778669;
- Thu, 10 Jan 2019 13:29:38 -0800 (PST)
+        Thu, 10 Jan 2019 16:31:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42260 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728800AbfAJVbd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 16:31:33 -0500
+Received: from localhost (unknown [64.22.249.253])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5B7A920652;
+        Thu, 10 Jan 2019 21:31:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547155892;
+        bh=UosNmrR5QIxWfpcE8QQUXjOOm8vPR5a0dT3ricU7TvE=;
+        h=Date:From:To:Cc:Subject:From;
+        b=MREBCYflO32gjAqS+4aqbS/DMDlJDhsw2E+aJENDhKbIhDixRHrFj1KScGiK7d2Pe
+         gzn9aPqRlxN2vXT9piGIGMUWA8YRoPc7QRkHP24hVA5xVtcr0E6jvC9wU0bVx9GaTp
+         hN4OxRtnqhN7Z3q37UvmwPm3POdNNJcw+IWFz5+Q=
+Date:   Thu, 10 Jan 2019 15:31:31 -0600
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Corentin Labbe <clabbe@baylibre.com>
+Subject: [GIT PULL] PCI fixes for v5.0
+Message-ID: <20190110213131.GA86782@google.com>
 MIME-Version: 1.0
-References: <154690326478.676627.103843791978176914.stgit@dwillia2-desk3.amr.corp.intel.com>
- <154690327057.676627.18166704439241470885.stgit@dwillia2-desk3.amr.corp.intel.com>
- <20190110105638.GJ28934@suse.de>
-In-Reply-To: <20190110105638.GJ28934@suse.de>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Thu, 10 Jan 2019 13:29:27 -0800
-Message-ID: <CAPcyv4gkSBW5Te0RZLrkxzufyVq56-7pHu__YfffBiWhoqg7Yw@mail.gmail.com>
-Subject: Re: [PATCH v7 1/3] mm: Shuffle initial free memory to improve
- memory-side-cache utilization
-To:     Mel Gorman <mgorman@suse.de>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Kees Cook <keescook@chromium.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Keith Busch <keith.busch@intel.com>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 10, 2019 at 2:57 AM Mel Gorman <mgorman@suse.de> wrote:
->
-> On Mon, Jan 07, 2019 at 03:21:10PM -0800, Dan Williams wrote:
-> > Randomization of the page allocator improves the average utilization of
-> > a direct-mapped memory-side-cache. Memory side caching is a platform
-> > capability that Linux has been previously exposed to in HPC
-> > (high-performance computing) environments on specialty platforms. In
-> > that instance it was a smaller pool of high-bandwidth-memory relative to
-> > higher-capacity / lower-bandwidth DRAM. Now, this capability is going to
-> > be found on general purpose server platforms where DRAM is a cache in
-> > front of higher latency persistent memory [1].
-> >
->
-> So I glanced through the series and while I won't nak it, I'm not a
-> major fan either so I won't ack it either.
+PCI fixes:
 
-Thanks for taking a look, some more comments / advocacy below...
-because I'm not sure what Andrew will do with a "meh" response
-compared to an ack.
+  - Fix Amlogic Meson host controller driver build failure (Corentin Labbe)
 
-> While there are merits to
-> randomisation in terms of cache coloring, it may not be robust. IIRC, the
-> main strength of randomisation vs being smart was "it's simple and usually
-> doesn't fall apart completely". In particular I'd worry that compaction
-> will undo all the randomisation work by moving related pages into the same
-> direct-mapped lines. Furthermore, the runtime list management of "randomly
-> place and head or tail of list" will have variable and non-deterministic
-> outcomes and may also be undone by either high-order merging or compaction.
 
-It's a fair point. To date we have not been able to measure the
-average performance degrading over time (pages becoming more ordered)
-but that said I think it would take more resources and time than I
-have available for that trend to present. If it did present that would
-only speak to a need to be more aggressive on the runtime
-re-randomization. I think there's a case to be made to start simple
-and only get more aggressive with evidence.
+The following changes since commit bfeffd155283772bbe78c6a05dec7c0128ee500c:
 
-Note that higher order merging is not a current concern since the
-implementation is already randomizing on MAX_ORDER sized pages. Since
-memory side caches are so large there's no worry about a 4MB
-randomization boundary.
+  Linux 5.0-rc1 (2019-01-06 17:08:20 -0800)
 
-However, for the (unproven) security use case where folks want to
-experiment with randomizing on smaller granularity, they should be
-wary of this (/me nudges Kees).
+are available in the Git repository at:
 
-> As bad as it is, an ideal world would have a proper cache-coloring
-> allocation algorithm but they previously failed as the runtime overhead
-> exceeded the actual benefit, particularly as fully associative caches
-> became more popular and there was no universal "one solution fits all". One
-> hatchet job around it may be to have per-task free-lists that put free
-> pages into buckets with the obvious caveat that those lists would need
-> draining and secondary locking. A caveat of that is that there may need
-> to be arch and/or driver hooks to detect how the colors are managed which
-> could also turn into a mess.
+  git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git tags/pci-v5.0-fixes-1
 
-We (Dave, I and others that took a look at this) started here, and the
-"mess" looked daunting compared to randomization. Also a mess without
-much more incremental benefit.
+for you to fetch changes up to a3869d43c9800cf39496615361c83635fa3e7c82:
 
-We also settled on a numa_emulation based approach for the cases where
-an administrator knows they have a workload that can fit in the
-cache... more on that below:
+  PCI: amlogic: Fix build failure due to missing gpio header (2019-01-08 09:01:44 -0600)
 
-> The big plus of the series is that it's relatively simple and appears to
-> be isolated enough that it only has an impact when the necessary hardware
-> in place. It will deal with some cases but I'm not sure it'll survive
-> long-term, particularly if HPC continues to report in the field that
-> reboots are necessary to reshufffle the lists (taken from your linked
-> documents). That workaround of running STREAM before a job starts and
-> rebooting the machine if the performance SLAs are not met is horrid.
+----------------------------------------------------------------
+pci-v5.0-fixes-1
 
-That workaround is horrid, and we have a separate solution for it
-merged in commit cc9aec03e58f "x86/numa_emulation: Introduce uniform
-split capability". When an administrator knows in advance that a
-workload will fit in cache they can use this capability to run the
-workload in a numa node that is guaranteed to not have cache conflicts
-with itself.
+----------------------------------------------------------------
+Corentin Labbe (1):
+      PCI: amlogic: Fix build failure due to missing gpio header
 
-Whereas randomization benefits the general cache-overcommit case. The
-uniform numa split case addresses those niche users that can manually
-time schedule jobs with different working set sizes... without needing
-to reboot.
+ drivers/pci/controller/dwc/pci-meson.c | 1 +
+ 1 file changed, 1 insertion(+)
