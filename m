@@ -2,132 +2,155 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2945BC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 20:32:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67939C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 20:33:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 00E7F20879
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 20:32:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3C44920879
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 20:33:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730349AbfAJUcR (ORCPT
+        id S1729355AbfAJUdM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 15:32:17 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:58278 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728847AbfAJUcQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 15:32:16 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 5AF30DC901;
-        Thu, 10 Jan 2019 20:32:15 +0000 (UTC)
-Received: from treble (ovpn-125-32.rdu2.redhat.com [10.10.125.32])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1FB4B1054FAE;
-        Thu, 10 Jan 2019 20:32:09 +0000 (UTC)
-Date:   Thu, 10 Jan 2019 14:32:07 -0600
-From:   Josh Poimboeuf <jpoimboe@redhat.com>
-To:     Nadav Amit <namit@vmware.com>
-Cc:     X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Jason Baron <jbaron@akamai.com>, Jiri Kosina <jkosina@suse.cz>,
-        David Laight <David.Laight@ACULAB.COM>,
-        Borislav Petkov <bp@alien8.de>,
-        Julia Cartwright <julia@ni.com>, Jessica Yu <jeyu@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Edward Cree <ecree@solarflare.com>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>
-Subject: Re: [PATCH v3 0/6] Static calls
-Message-ID: <20190110203207.3k43gt4kcvry7us7@treble>
-References: <cover.1547073843.git.jpoimboe@redhat.com>
- <A42784EF-3215-4ED9-8D35-1A2C38A0711F@vmware.com>
- <20190110164401.g747vifrppbhbo3o@treble>
- <D8481FBB-4873-43B2-9187-C0896E859191@vmware.com>
- <20190110181807.irh2b7fk6at43rdl@treble>
- <3F89FB6B-DA8B-4C71-B825-2B7EB86F274E@vmware.com>
+        Thu, 10 Jan 2019 15:33:12 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:54470 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728195AbfAJUdL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 15:33:11 -0500
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x0AKSutg134103
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 15:33:09 -0500
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2px9yy0xgc-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 15:33:09 -0500
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <heiko.carstens@de.ibm.com>;
+        Thu, 10 Jan 2019 20:33:07 -0000
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 10 Jan 2019 20:32:57 -0000
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0AKWunm27590674
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 10 Jan 2019 20:32:56 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 53D39AE055;
+        Thu, 10 Jan 2019 20:32:56 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E9552AE051;
+        Thu, 10 Jan 2019 20:32:54 +0000 (GMT)
+Received: from osiris (unknown [9.145.24.85])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Thu, 10 Jan 2019 20:32:54 +0000 (GMT)
+Date:   Thu, 10 Jan 2019 21:32:53 +0100
+From:   Heiko Carstens <heiko.carstens@de.ibm.com>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     y2038@lists.linaro.org, linux-api@vger.kernel.org,
+        linux-kernel@vger.kernel.org, ink@jurassic.park.msu.ru,
+        mattst88@gmail.com, linux@armlinux.org.uk, catalin.marinas@arm.com,
+        will.deacon@arm.com, tony.luck@intel.com, fenghua.yu@intel.com,
+        geert@linux-m68k.org, monstr@monstr.eu, paul.burton@mips.com,
+        deller@gmx.de, mpe@ellerman.id.au, schwidefsky@de.ibm.com,
+        dalias@libc.org, davem@davemloft.net, luto@kernel.org,
+        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        x86@kernel.org, jcmvbkbc@gmail.com, firoz.khan@linaro.org,
+        ebiederm@xmission.com, deepa.kernel@gmail.com,
+        linux@dominikbrodowski.net, akpm@linux-foundation.org,
+        dave@stgolabs.net, linux-alpha@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
+        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+        sparclinux@vger.kernel.org
+Subject: Re: [PATCH 14/15] arch: add split IPC system calls where needed
+References: <20190110162435.309262-1-arnd@arndb.de>
+ <20190110162435.309262-15-arnd@arndb.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+In-Reply-To: <20190110162435.309262-15-arnd@arndb.de>
+X-TM-AS-GCONF: 00
+x-cbid: 19011020-0020-0000-0000-000003049552
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19011020-0021-0000-0000-000021559AEC
+Message-Id: <20190110203253.GA3676@osiris>
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <3F89FB6B-DA8B-4C71-B825-2B7EB86F274E@vmware.com>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Thu, 10 Jan 2019 20:32:16 +0000 (UTC)
+Content-Disposition: inline
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-10_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=753 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901100158
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 10, 2019 at 07:45:26PM +0000, Nadav Amit wrote:
-> >> I’m not GCC expert either and writing this code was not making me full of
-> >> joy, etc.. I’ll be happy that my code would be reviewed, but it does work. I
-> >> don’t think an early pass is needed, as long as hardware registers were not
-> >> allocated.
-> >> 
-> >>> Would it work with more than 5 arguments, where args get passed on the
-> >>> stack?
-> >> 
-> >> It does.
-> >> 
-> >>> At the very least, it would (at least partially) defeat the point of the
-> >>> callee-saved paravirt ops.
-> >> 
-> >> Actually, I think you can even deal with callee-saved functions and remove
-> >> all the (terrible) macros. You would need to tell the extension not to
-> >> clobber the registers through a new attribute.
-> > 
-> > Ok, it does sound interesting then.  I assume you'll be sharing the
-> > code?
+On Thu, Jan 10, 2019 at 05:24:34PM +0100, Arnd Bergmann wrote:
+> The IPC system call handling is highly inconsistent across architectures,
+> some use sys_ipc, some use separate calls, and some use both.  We also
+> have some architectures that require passing IPC_64 in the flags, and
+> others that set it implicitly.
 > 
-> Of course. If this what is going to convince, I’ll make a small version for
-> PV callee-saved first.
-
-It wasn't *only* the PV callee-saved part which interested me, so if you
-already have something which implements the other parts, I'd still like
-to see it.
-
-> >>> What if we just used a plugin in a simpler fashion -- to do call site
-> >>> alignment, if necessary, to ensure the instruction doesn't cross
-> >>> cacheline boundaries.  This could be done in a later pass, with no side
-> >>> effects other than code layout.  And it would allow us to avoid
-> >>> breakpoints altogether -- again, assuming somebody can verify that
-> >>> intra-cacheline call destination writes are atomic with respect to
-> >>> instruction decoder reads.
-> >> 
-> >> The plugin should not be able to do so. Layout of the bytecode is done by
-> >> the assembler, so I don’t think a plugin would help you with this one.
-> > 
-> > Actually I think we could use .bundle_align_mode for this purpose:
-> > 
-> >  https://na01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fsourceware.org%2Fbinutils%2Fdocs-2.31%2Fas%2FBundle-directives.html&amp;data=02%7C01%7Cnamit%40vmware.com%7Cfa29fb8be208498d039008d67727fe30%7Cb39138ca3cee4b4aa4d6cd83d9dd62f0%7C0%7C0%7C636827411004664549&amp;sdata=elDuAVOsSlidG7pZSZfjbhrgnMOHeX6AWKs0hJM4cCE%3D&amp;reserved=0
+> For the additon of a y2083 safe semtimedop() system call, I chose to only
+> support the separate entry points, but that requires first supporting
+> the regular ones with their own syscall numbers.
 > 
-> Hm… I don’t understand what you have in mind (i.e., when would this
-> assembly directives would be emitted).
+> The IPC_64 is now implied by the new semctl/shmctl/msgctl system
+> calls even on the architectures that require passing it with the ipc()
+> multiplexer.
+> 
+> I'm not adding the new semtimedop() or semop() on 32-bit architectures,
+> those will get implemented using the new semtimedop_time64() version
+> that gets added along with the other time64 calls.
+> Three 64-bit architectures (powerpc, s390 and sparc) get semtimedop().
+> 
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+> One aspect here that might be a bit controversial is the use of
+> the same system call numbers across all architectures, synchronizing
+> all of them with the x86-32 numbers. With the new syscall.tbl
+> files, I hope we can just keep doing that in the future, and no
+> longer require the architecture maintainers to assign a number.
+> 
+> This is mainly useful for implementers of the C libraries: if
+> we can add future system calls everywhere at the same time, using
+> a particular version of the kernel headers also guarantees that
+> the system call number macro is visible.
 
-For example, it could replace
+> diff --git a/arch/s390/kernel/syscalls/syscall.tbl b/arch/s390/kernel/syscalls/syscall.tbl
+> index 022fc099b628..428cf512a757 100644
+> --- a/arch/s390/kernel/syscalls/syscall.tbl
+> +++ b/arch/s390/kernel/syscalls/syscall.tbl
+> @@ -391,3 +391,15 @@
+>  381  common	kexec_file_load		sys_kexec_file_load		compat_sys_kexec_file_load
+>  382  common	io_pgetevents		sys_io_pgetevents		compat_sys_io_pgetevents
+>  383  common	rseq			sys_rseq			compat_sys_rseq
+> +# room for arch specific syscalls
+> +392	64	semtimedop		sys_semtimedop			-
+> +393  common	semget			sys_semget			sys_semget
+...
+> +395  common	shmget			sys_shmget			sys_shmget
+...
+> +398  common	shmdt			sys_shmdt 			sys_shmdt
+> +399  common	msgget			sys_msgget			sys_msgget
 
-  callq ____static_call_tramp_my_key
+These four need compat system call wrappers, unfortunately... (well,
+actually only shmget and shmdt require them, but let's add them for
+all four). See arch/s390/kernel/compat_wrapper.c
 
-with
+I'm afraid this compat special handling will be even more annoying in
+the future, since s390 will be the only architecture which requires
+this special handling.
 
-  .bundle_align_mode 6
-  callq ____static_call_tramp_my_key
-  .bundle_align_mode 0
+_Maybe_ it would make sense to automatically generate a weak compat
+system call wrapper for s390 with the SYSCALL_DEFINE macros, but that
+probably won't work in all cases.
 
-which ensures the instruction is within a cache line, aligning it with
-NOPs if necessary.  That would allow my current implementation to
-upgrade out-of-line calls to inline calls 100% of the time, instead of
-95% of the time.
-
--- 
-Josh
