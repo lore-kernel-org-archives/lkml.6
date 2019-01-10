@@ -2,147 +2,107 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35764C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 04:20:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CE5DC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 04:20:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F278E21773
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 04:20:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 530F021773
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 04:20:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=lca.pw header.i=@lca.pw header.b="HFHUGH2B"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727189AbfAJEUg (ORCPT
+        id S1727291AbfAJEUw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 23:20:36 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:39226 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726846AbfAJEUg (ORCPT
+        Wed, 9 Jan 2019 23:20:52 -0500
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:38583 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726877AbfAJEUw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 23:20:36 -0500
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x0A4JiCT035502
-        for <linux-kernel@vger.kernel.org>; Wed, 9 Jan 2019 23:20:36 -0500
-Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2pwxaq19dk-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jan 2019 23:20:35 -0500
-Received: from localhost
-        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Thu, 10 Jan 2019 04:20:34 -0000
-Received: from b01cxnp22034.gho.pok.ibm.com (9.57.198.24)
-        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 10 Jan 2019 04:20:29 -0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0A4KSvg11600094
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 10 Jan 2019 04:20:28 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 10C83B2065;
-        Thu, 10 Jan 2019 04:20:28 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E0F5BB2068;
-        Thu, 10 Jan 2019 04:20:27 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.85.186.123])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Thu, 10 Jan 2019 04:20:27 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id A5C1A16C641B; Wed,  9 Jan 2019 20:20:27 -0800 (PST)
-Date:   Wed, 9 Jan 2019 20:20:27 -0800
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     Andrea Parri <andrea.parri@amarulasolutions.com>
-Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        mingo@kernel.org, stern@rowland.harvard.edu,
-        parri.andrea@gmail.com, will.deacon@arm.com, peterz@infradead.org,
-        boqun.feng@gmail.com, npiggin@gmail.com, dhowells@redhat.com,
-        j.alglave@ucl.ac.uk, luc.maranget@inria.fr, akiyks@gmail.com,
-        willy@infradead.org
-Subject: Re: [PATCH RFC memory-model 0/6] LKMM updates
-Reply-To: paulmck@linux.ibm.com
-References: <20190109210706.GA27268@linux.ibm.com>
- <20190109231852.GA4494@andrea>
- <20190109234043.GD1215@linux.ibm.com>
- <20190110003952.GA4354@andrea>
+        Wed, 9 Jan 2019 23:20:52 -0500
+Received: by mail-qt1-f195.google.com with SMTP id p17so11049076qtl.5
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Jan 2019 20:20:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lca.pw; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=euwfbUi1+DZNCNvyYFGLfj3vzX8TKIN0HdwO02YbTp0=;
+        b=HFHUGH2BZEsbBV6cYvax2ofYe4aCylB2ll0jZg11JnAnivLosq8bd1TK+8MrLCiSic
+         nCt4LI1Wyeyf4b4AtLSp0luqYG6sT65sbO0/77vgIuQ4ck05OGqyxIoJYGP7pmtJ1SH0
+         0+KDkN75UkgAASUKIyTxVZt/QmzzwhSE/177wgTxOg6seX4dbLVkd1Ku2VEog2QM2pfu
+         7H9ADpAtgXHfj7hVbK31QphMfFN1OTELIWP1XyZR3C1tvTv6FwFn0L8RKWrARXlEmXDY
+         4QggEQqXgW73vsTJPrW2H6a+nGd22lPDV2dh4eU4ugamgQg/sLjuROa2Q9gbVioWo7Z+
+         qdPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=euwfbUi1+DZNCNvyYFGLfj3vzX8TKIN0HdwO02YbTp0=;
+        b=fedvrT7RkVo/xAXx7Kbw3SrfW4+yaE+crpot1Fkj3A+S1COiI2DMLClKrc/Z84FHri
+         a6B9zWJXL4InpOWjHkntgMfAZ2HtNLIcsTqldn95ReiVS/dEg4veAu0AhrxL2cVH24C5
+         r7dCmQXNFIXMnGmNwVNXdip6yc1lAz1AamMtBXvvutbbPoVU4kBxoPdXwonyTcUwo/+y
+         SB+feN9Zygc8La/+eqPQR4Rxg6M38M05B9VBCBnRlAv8P9UmD3zXcpP6IfRRZKHfwD3d
+         0gmjCUpsN21wigq2g9ZAMfk+G8I4vkVHwLDwvbsbHxTBjIUsqP9uVeWoM8Z5NbvVGnBy
+         WoJQ==
+X-Gm-Message-State: AJcUukcIl4syF2iyDiKxZfZCtKt5oEaB1XeZhfeDe9AxdpehqjWbOVa4
+        Q38/B+DIc0a52ghClY6SkfSvKAEQXqHZyw==
+X-Google-Smtp-Source: ALg8bN5C6fsA6T9rze2VS6nNmrbrfxjOPsSTU5T/kkzxLiknK0YWU0hpRPM0in7Crsck4VoXwv/Taw==
+X-Received: by 2002:a0c:fa46:: with SMTP id k6mr8189255qvo.36.1547094050904;
+        Wed, 09 Jan 2019 20:20:50 -0800 (PST)
+Received: from ovpn-120-55.rdu2.redhat.com (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
+        by smtp.gmail.com with ESMTPSA id s24sm16027146qkl.48.2019.01.09.20.20.50
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 09 Jan 2019 20:20:50 -0800 (PST)
+Subject: Re: [RESEND PATCH] x86_64: increase stack size for KASAN_EXTRA
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
+        x86@kernel.org, linux-kernel@vger.kernel.org
+References: <20181228020639.80425-1-cai@lca.pw>
+ <20190109215209.2903-1-cai@lca.pw>
+ <20190109140201.4434ff87880ee29bdedb37cc@linux-foundation.org>
+From:   Qian Cai <cai@lca.pw>
+Message-ID: <291d9d64-9eb7-517e-9ae7-30e8cc3f672a@lca.pw>
+Date:   Wed, 9 Jan 2019 23:20:49 -0500
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
+ Gecko/20100101 Thunderbird/60.3.3
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190110003952.GA4354@andrea>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 19011004-0052-0000-0000-0000037618C9
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010376; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000274; SDB=6.01144277; UDB=6.00595791; IPR=6.00924543;
- MB=3.00025059; MTD=3.00000008; XFM=3.00000015; UTC=2019-01-10 04:20:33
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19011004-0053-0000-0000-00005F68BBD6
-Message-Id: <20190110042027.GG1215@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-10_02:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901100034
+In-Reply-To: <20190109140201.4434ff87880ee29bdedb37cc@linux-foundation.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 10, 2019 at 01:39:52AM +0100, Andrea Parri wrote:
-> On Wed, Jan 09, 2019 at 03:40:43PM -0800, Paul E. McKenney wrote:
-> > On Thu, Jan 10, 2019 at 12:18:53AM +0100, Andrea Parri wrote:
-> > > On Wed, Jan 09, 2019 at 01:07:06PM -0800, Paul E. McKenney wrote:
-> > > > Hello!
-> > > > 
-> > > > This series contains updates for the Linux-kernel memory model:
-> > > > 
-> > > > 1-3.	Add SRCU support, courtesy of Alan Stern.
-> > > > 
-> > > > 4.	Update README for adding of SRCU support.
-> > > > 
-> > > > 5.	Update memory-barriers.txt on enforcing heavy ordering for
-> > > > 	port-I/O accesses, courtesy of Will Deacon.  This one needs
-> > > > 	an ack, preferably by someone from Intel.  Matthew Wilcox
-> > > > 	posted some feedback from an Intel manual here, which might
-> > > > 	be considered to be a close substitute, but...  ;-)
-> > > > 
-> > > > 	http://lkml.kernel.org/r/20181127192234.GF10377@bombadil.infradead.org
-> > > > 
-> > > > 6.	Update Documentation/explanation.txt to include SRCU support,
-> > > > 	courtesy of Alan Stern.
-> > > > 
-> > > > 7.	Dynamically check SRCU lock-to-unlock matching, courtesy of
-> > > > 	Luc Maranget.  This needs an ack.
-> > > 
-> > > It seems that
-> > > 
-> > >   1b52d0186177 ("tools/memory-model: Model smp_mb__after_unlock_lock()")
-> > >   
-> > > from linux-rcu/dev got lost; this also needs an ack (probably yours! ;D,
-> > > considered that, IIRC, you introduced the primitive and RCU is currently
-> > > its only user.)
-> > 
-> > That commit is in -tip:
-> > 
-> > 4607abbcf464 ("tools/memory-model: Model smp_mb__after_unlock_lock()")
-> > 
-> > So it has already left my -rcu tree.  ;-)
-> 
-> Oh, you're right: now I see the commit (e.g., with "git show"), but I
-> don't see the corresponding changes applied to the tree.
-> 
->   https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/commit/?h=locking/core&id=4607abbcf464ea2be14da444215d05c73025cf6e
->   https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/tree/tools/memory-model/linux-kernel.bell?h=locking/core
-> 
-> Is this expected?
 
-Are you asking why it is in -tip but not in mainline?  I am not sure,
-but given that the merge window was over the holiday season and that
-the length of the merge window proved to be shorter than many people
-expected it to be, I am not too surprised.  ;-)
 
-							Thanx, Paul
+On 1/9/19 5:02 PM, Andrew Morton wrote:
+>> --- a/arch/x86/include/asm/page_64_types.h
+>> +++ b/arch/x86/include/asm/page_64_types.h
+>> @@ -7,7 +7,11 @@
+>>  #endif
+>>  
+>>  #ifdef CONFIG_KASAN
+>> +#ifdef CONFIG_KASAN_EXTRA
+>> +#define KASAN_STACK_ORDER 2
+>> +#else
+>>  #define KASAN_STACK_ORDER 1
+>> +#endif
+>>  #else
+>>  #define KASAN_STACK_ORDER 0
+>>  #endif
+> 
+> I'm suspecting this logic could be performed in Kconfig, for all
+> architectures.  Add a new always-defined CONFIG_KASAN_STACK_ORDER?
+> 
 
+Sounds doable, but KASAN only support x86_64, arm64, s390 and xtensa so far. I
+am not sure I care about the later two nor I have any way to test them if they
+suffer the same problem.
+
+I'll keep looking if more arches start to implement KASAN, and then might be a
+good time to reduce all those code duplication.
