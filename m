@@ -7,56 +7,56 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E059C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 17:53:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53445C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 17:54:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F075214DA
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 17:53:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 02DE620685
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 17:54:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i1RThkTT"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="n3qqNcXD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730765AbfAJRxQ (ORCPT
+        id S1730715AbfAJRyh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 12:53:16 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:44065 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730484AbfAJRxQ (ORCPT
+        Thu, 10 Jan 2019 12:54:37 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:36280 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729923AbfAJRyh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 12:53:16 -0500
-Received: by mail-pf1-f193.google.com with SMTP id u6so5621902pfh.11
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 09:53:15 -0800 (PST)
+        Thu, 10 Jan 2019 12:54:37 -0500
+Received: by mail-pl1-f196.google.com with SMTP id g9so5510637plo.3
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 09:54:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=hVejyvs9A53KrarDvO1FMxLD8SN/vfd4CKoIab7G/4s=;
-        b=i1RThkTTQ1LdyqquG4cIT++iA135UxS1N7MwKdQj8zSCVOzyToXl2p/FKzHcNG4uGh
-         ZgoWPjQScg8GXZnpqMxv3moJCI0ukMMQRZ/J0qbYLGk5JytLdRIcPVYtaT/O6FEvsfxV
-         7jm981dOD4DWANLV+Ix8/dRHkEM7CSn9RBCHzmScwYdZbeGtPJRmzC3cCa40uDRxHBq4
-         Vei3jdRwuNrGnRdH+lNLY79wIhD/l0251Z9koZL33dGA3r4rp9X76nnpxPtEg9AeKTbk
-         Yqmo/sE1Rod8DEaFa9LP+V3zpWY/Euqf81B2Fcw3dW9UppB8QKMP3PHimo+LPF7Y5p5y
-         pykQ==
+        bh=NHTwvck+Jt6RaZcbWn6iXe8TX60XlSaJ2zzIWgaHONs=;
+        b=n3qqNcXDbMiJv4QZRX5qqF6TKqocwGcEKGiOPwrHUgUT41xrd6c8Bfk6qsFkPh5IUh
+         CWM2+oonsYKZIwxXISgJ0YyA7dWEiOda2pCmxHHmg3grQPWSS2TCHzNVOR8kzEsISJAo
+         IBmXxS5ubTiasBVE33eK4JE2rWgmqAQobSGKFC/otooEYFaFbDe5grKunuVVJF2XpG+6
+         JQB9pNTS1xhfO1TAnGsV60+zK6YtC5pFpLDFQdn2hLRwBeuEJzSIlbKYh6K29IqNe1JX
+         FsevhEEhnluQ+vWbpdcgtZFn6xOVXT5dv+PIPuFftQvBD9m0X2kuGP1hhWk3zTP6NOX6
+         uXMA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=hVejyvs9A53KrarDvO1FMxLD8SN/vfd4CKoIab7G/4s=;
-        b=eA4y7MbszHy5hLWms+X+I7PpFvDS3hXgYfOn6HlXJN94YqmIsn+S2EiylisshujORt
-         0OcSVruDPHDcVnrXF59nhHk+KitddVNPdGUeqTaFdfJiEfxTZu4DaDqoesyP9R2yVxu4
-         H72DJGIxPl4H9QoKptRQsnio3LZE9o75BSmWNwCS1fSWQnIyFGVHaQjGK7ZoKPzsrU2I
-         jyileaPdUq9SvlDmCJwXiYhW8IMcsnzO7i43W9TrvKzOK3DDGw4u83DtrrICNYwJ5YmP
-         hAEtypdunDf6ot2wxe3cNlD5ynXSzdDeQ39GYbeFMLOGSe7z9tBuyMb2dIMUYgk1kx/M
-         7uWA==
-X-Gm-Message-State: AJcUukcTVC3ygcKOiwXy2c/TkBQa1su1Z6/maS9bxw/8dN1MoY5oR54F
-        c3CnM3ObzdVTtOKlcL5gQ7U=
-X-Google-Smtp-Source: ALg8bN4UmnUYkRcM7Asb0G5uL4Nd50H9PgtrQkglWQeGibLEXfXxUvpxFZGylE4V3tO1zmeDsYrZKw==
-X-Received: by 2002:a63:1e56:: with SMTP id p22mr10198925pgm.126.1547142794777;
-        Thu, 10 Jan 2019 09:53:14 -0800 (PST)
+        bh=NHTwvck+Jt6RaZcbWn6iXe8TX60XlSaJ2zzIWgaHONs=;
+        b=OQpl1RKJXbkC5XvHmkfFnSTMEMPljjubVyVHvOpaWcEHnDxWOmvVmLFLr+mb7zGO96
+         xvFGYfLJbit4Rh51sSZorUZ1/87t0LltvENPvPVeZwIfVtEdd1rUVoWnDv8O22QixP3p
+         Tu4azTdHaQSOyOpBYWkzwB/4OqHNiExmbKY8UPvdO6ShEE+UdSmL5D3aYlp1Vnofgbss
+         /+GwavmmvO69s7bIJC8VeVJNyxLmG8A0xqZuJNyIBvybWv2muKSJ0PRqB5qHSpzOxB/M
+         nEVWMSncgXpUWNB6mUj8JEzUSA2uXHM9d34XiMNFdXD0fpie2QwhA0ZCRULIYTiUUybh
+         3+sQ==
+X-Gm-Message-State: AJcUukcKo1oXiM2z+qbrReB5LuI6R+4NIWPzV9zmHQQfgRjEt3mBnvWn
+        0yt2RwNatjuHBrXsLorGPpA=
+X-Google-Smtp-Source: ALg8bN7uGagM0fpsuV422KMIR9fbp6CRtDBWt6WbjfxgbhPqyQ1J+m1TrLCpdDYdmvqXgT9XFeDP3w==
+X-Received: by 2002:a17:902:b406:: with SMTP id x6mr10757636plr.329.1547142876295;
+        Thu, 10 Jan 2019 09:54:36 -0800 (PST)
 Received: from nishad ([106.51.25.107])
-        by smtp.gmail.com with ESMTPSA id f62sm92162987pgc.67.2019.01.10.09.53.11
+        by smtp.gmail.com with ESMTPSA id h74sm142265855pfd.35.2019.01.10.09.54.32
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 10 Jan 2019 09:53:14 -0800 (PST)
-Date:   Thu, 10 Jan 2019 23:23:07 +0530
+        Thu, 10 Jan 2019 09:54:35 -0800 (PST)
+Date:   Thu, 10 Jan 2019 23:24:28 +0530
 From:   Nishad Kamdar <nishadkamdar@gmail.com>
 To:     Johan Hovold <johan@kernel.org>
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -65,9 +65,10 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         greybus-dev@lists.linaro.org, devel@driverdev.osuosl.org,
         linux-kernel@vger.kernel.org,
         Nishad Kamdar <nishadkamdar@gmail.com>
-Subject: [PATCH v5 3/3] staging: greybus: arche-platform: Switch to the gpio
- descriptor interface
-Message-ID: <35b03691b11f4c6a8441e6952457f8359b0655aa.1547141413.git.nishadkamdar@gmail.com>
+Subject: [PATCH v5 1/3] staging: greybus: gpio: switch GPIO portions to use
+ GPIOLIB_IRQCHIP
+Message-ID:
+ <8685966c02d3e209b8a1881c5a12d85d9b556edc.1547141413.git.nishadkamdar@gmail.com>
 References: <cover.1547141413.git.nishadkamdar@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -78,273 +79,281 @@ Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Message-ID: <20190110175428._5YC1EyzeXHlzW6pPtScJBNxTns2yWQH9KGxve5Km0A@z>
 
-Use the gpiod interface instead of the deprecated old non-descriptor
-interface while continuing to ignore gpio flags from device tree in
-"svc_reset_onoff()" for now.
+Convert the GPIO driver to use the GPIO irqchip library
+GPIOLIB_IRQCHIP instead of reimplementing the same.
 
 Signed-off-by: Nishad Kamdar <nishadkamdar@gmail.com>
 ---
 Changes in v5:
-  - Change the commit message.
-  - Restore the names of the gpio device-tree properties without
-    the "-gpio" suffix.
+ - Restore "struct irq_chip irqc" in "struct gb_gpio_controller"
+   This is because we cannot use the gpio-chip irqchip, as that
+   will register the irqchip automatically and possibly in an
+   incompatible way.
 Changes in v4:
- - Move 'gpio_desc *svc_sysboot' below the reset flag
-   as it is more logical to have reset flag below
-   reset gpio.
- - Remove a few unnecessary line breaks.
+ - Remove changes related to conversion to gpiochip_get_data() to
+   include it as a new patch.
+ - Remove the 'struct irq_chip' field from 'struct gb_gpio_controller'
+   as struct gpio_chip will have an irqchip whenever
+   CONFIG_GPIOLIB_IRQCHIP is selected.
+ - Update the TODO file as per the changes.
 Changes in v3:
- - Add this patch to a patchset.
+ - Combine patches as into a patch series.
 Changes in v2:
- - Move comment to the same line as to what it applies to.
+ - Retained irq.h and irqdomain.h headers.
+ - Dropped function gb_gpio_irqchip_add() and
+   called gpiochip_irqchip_add() from probe().
+ - Referred https://lkml.kernel.org/r/1476054589-28422-1-git-send-email-linus.walleij@linaro.org.
 ---
- drivers/staging/greybus/arche-platform.c | 124 ++++++++---------------
- 1 file changed, 41 insertions(+), 83 deletions(-)
+ drivers/staging/greybus/Kconfig |   1 +
+ drivers/staging/greybus/TODO    |   2 -
+ drivers/staging/greybus/gpio.c  | 156 ++------------------------------
+ 3 files changed, 11 insertions(+), 148 deletions(-)
 
-diff --git a/drivers/staging/greybus/arche-platform.c b/drivers/staging/greybus/arche-platform.c
-index 4c36e88766e7..77ac474e2423 100644
---- a/drivers/staging/greybus/arche-platform.c
-+++ b/drivers/staging/greybus/arche-platform.c
-@@ -8,10 +8,9 @@
- 
- #include <linux/clk.h>
- #include <linux/delay.h>
--#include <linux/gpio.h>
-+#include <linux/gpio/consumer.h>
- #include <linux/init.h>
+diff --git a/drivers/staging/greybus/Kconfig b/drivers/staging/greybus/Kconfig
+index ab096bcef98c..b571e4e8060b 100644
+--- a/drivers/staging/greybus/Kconfig
++++ b/drivers/staging/greybus/Kconfig
+@@ -148,6 +148,7 @@ if GREYBUS_BRIDGED_PHY
+ config GREYBUS_GPIO
+ 	tristate "Greybus GPIO Bridged PHY driver"
+ 	depends on GPIOLIB
++	select GPIOLIB_IRQCHIP
+ 	---help---
+ 	  Select this option if you have a device that follows the
+ 	  Greybus GPIO Bridged PHY Class specification.
+diff --git a/drivers/staging/greybus/TODO b/drivers/staging/greybus/TODO
+index 3b90a5711998..31f1f2cb401c 100644
+--- a/drivers/staging/greybus/TODO
++++ b/drivers/staging/greybus/TODO
+@@ -1,5 +1,3 @@
+ * Convert all uses of the old GPIO API from <linux/gpio.h> to the
+   GPIO descriptor API in <linux/gpio/consumer.h> and look up GPIO
+   lines from device tree or ACPI.
+-* Convert the GPIO driver to use the GPIO irqchip library
+-  GPIOLIB_IRQCHIP instead of reimplementing the same.
+diff --git a/drivers/staging/greybus/gpio.c b/drivers/staging/greybus/gpio.c
+index e110681e6f86..3151004d26fb 100644
+--- a/drivers/staging/greybus/gpio.c
++++ b/drivers/staging/greybus/gpio.c
+@@ -9,9 +9,9 @@
+ #include <linux/kernel.h>
  #include <linux/module.h>
--#include <linux/of_gpio.h>
- #include <linux/of_platform.h>
- #include <linux/pinctrl/consumer.h>
- #include <linux/platform_device.h>
-@@ -45,14 +44,14 @@ enum svc_wakedetect_state {
+ #include <linux/slab.h>
+-#include <linux/gpio.h>
+ #include <linux/irq.h>
+ #include <linux/irqdomain.h>
++#include <linux/gpio/driver.h>
+ #include <linux/mutex.h>
  
- struct arche_platform_drvdata {
- 	/* Control GPIO signals to and from AP <=> SVC */
--	int svc_reset_gpio;
-+	struct gpio_desc *svc_reset;
- 	bool is_reset_act_hi;
--	int svc_sysboot_gpio;
--	int wake_detect_gpio; /* bi-dir,maps to WAKE_MOD & WAKE_FRAME signals */
-+	struct gpio_desc *svc_sysboot;
-+	struct gpio_desc *wake_detect; /* bi-dir,maps to WAKE_MOD & WAKE_FRAME signals */
+ #include "greybus.h"
+@@ -39,11 +39,6 @@ struct gb_gpio_controller {
  
- 	enum arche_platform_state state;
+ 	struct gpio_chip	chip;
+ 	struct irq_chip		irqc;
+-	struct irq_chip		*irqchip;
+-	struct irq_domain	*irqdomain;
+-	unsigned int		irq_base;
+-	irq_flow_handler_t	irq_handler;
+-	unsigned int		irq_default_type;
+ 	struct mutex		irq_lock;
+ };
+ #define gpio_chip_to_gb_gpio_controller(chip) \
+@@ -391,7 +386,7 @@ static int gb_gpio_request_handler(struct gb_operation *op)
+ 		return -EINVAL;
+ 	}
  
--	int svc_refclk_req;
-+	struct gpio_desc *svc_refclk_req;
- 	struct clk *svc_ref_clk;
- 
- 	struct pinctrl *pinctrl;
-@@ -85,9 +84,9 @@ static void arche_platform_set_wake_detect_state(
- 	arche_pdata->wake_detect_state = state;
+-	irq = irq_find_mapping(ggc->irqdomain, event->which);
++	irq = irq_find_mapping(ggc->chip.irq.domain, event->which);
+ 	if (!irq) {
+ 		dev_err(dev, "failed to find IRQ\n");
+ 		return -EINVAL;
+@@ -506,135 +501,6 @@ static int gb_gpio_controller_setup(struct gb_gpio_controller *ggc)
+ 	return ret;
  }
  
--static inline void svc_reset_onoff(unsigned int gpio, bool onoff)
-+static inline void svc_reset_onoff(struct gpio_desc *gpio, bool onoff)
- {
--	gpio_set_value(gpio, onoff);
-+	gpiod_set_raw_value(gpio, onoff);
- }
- 
- static int apb_cold_boot(struct device *dev, void *data)
-@@ -116,7 +115,6 @@ static int apb_poweroff(struct device *dev, void *data)
- static void arche_platform_wd_irq_en(struct arche_platform_drvdata *arche_pdata)
- {
- 	/* Enable interrupt here, to read event back from SVC */
--	gpio_direction_input(arche_pdata->wake_detect_gpio);
- 	enable_irq(arche_pdata->wake_detect_irq);
- }
- 
-@@ -160,7 +158,7 @@ static irqreturn_t arche_platform_wd_irq(int irq, void *devid)
- 
- 	spin_lock_irqsave(&arche_pdata->wake_lock, flags);
- 
--	if (gpio_get_value(arche_pdata->wake_detect_gpio)) {
-+	if (gpiod_get_value(arche_pdata->wake_detect)) {
- 		/* wake/detect rising */
- 
- 		/*
-@@ -224,10 +222,9 @@ arche_platform_coldboot_seq(struct arche_platform_drvdata *arche_pdata)
- 
- 	dev_info(arche_pdata->dev, "Booting from cold boot state\n");
- 
--	svc_reset_onoff(arche_pdata->svc_reset_gpio,
--			arche_pdata->is_reset_act_hi);
-+	svc_reset_onoff(arche_pdata->svc_reset, arche_pdata->is_reset_act_hi);
- 
--	gpio_set_value(arche_pdata->svc_sysboot_gpio, 0);
-+	gpiod_set_value(arche_pdata->svc_sysboot, 0);
- 	usleep_range(100, 200);
- 
- 	ret = clk_prepare_enable(arche_pdata->svc_ref_clk);
-@@ -238,8 +235,7 @@ arche_platform_coldboot_seq(struct arche_platform_drvdata *arche_pdata)
- 	}
- 
- 	/* bring SVC out of reset */
--	svc_reset_onoff(arche_pdata->svc_reset_gpio,
--			!arche_pdata->is_reset_act_hi);
-+	svc_reset_onoff(arche_pdata->svc_reset, !arche_pdata->is_reset_act_hi);
- 
- 	arche_platform_set_state(arche_pdata, ARCHE_PLATFORM_STATE_ACTIVE);
- 
-@@ -259,10 +255,9 @@ arche_platform_fw_flashing_seq(struct arche_platform_drvdata *arche_pdata)
- 
- 	dev_info(arche_pdata->dev, "Switching to FW flashing state\n");
- 
--	svc_reset_onoff(arche_pdata->svc_reset_gpio,
--			arche_pdata->is_reset_act_hi);
-+	svc_reset_onoff(arche_pdata->svc_reset, arche_pdata->is_reset_act_hi);
- 
--	gpio_set_value(arche_pdata->svc_sysboot_gpio, 1);
-+	gpiod_set_value(arche_pdata->svc_sysboot, 1);
- 
- 	usleep_range(100, 200);
- 
-@@ -273,8 +268,7 @@ arche_platform_fw_flashing_seq(struct arche_platform_drvdata *arche_pdata)
- 		return ret;
- 	}
- 
--	svc_reset_onoff(arche_pdata->svc_reset_gpio,
--			!arche_pdata->is_reset_act_hi);
-+	svc_reset_onoff(arche_pdata->svc_reset,	!arche_pdata->is_reset_act_hi);
- 
- 	arche_platform_set_state(arche_pdata, ARCHE_PLATFORM_STATE_FW_FLASHING);
- 
-@@ -305,8 +299,7 @@ arche_platform_poweroff_seq(struct arche_platform_drvdata *arche_pdata)
- 	clk_disable_unprepare(arche_pdata->svc_ref_clk);
- 
- 	/* As part of exit, put APB back in reset state */
--	svc_reset_onoff(arche_pdata->svc_reset_gpio,
--			arche_pdata->is_reset_act_hi);
-+	svc_reset_onoff(arche_pdata->svc_reset,	arche_pdata->is_reset_act_hi);
- 
- 	arche_platform_set_state(arche_pdata, ARCHE_PLATFORM_STATE_OFF);
- }
-@@ -435,6 +428,7 @@ static int arche_platform_probe(struct platform_device *pdev)
- 	struct device *dev = &pdev->dev;
- 	struct device_node *np = dev->of_node;
- 	int ret;
-+	unsigned int flags;
- 
- 	arche_pdata = devm_kzalloc(&pdev->dev, sizeof(*arche_pdata),
- 				   GFP_KERNEL);
-@@ -444,61 +438,33 @@ static int arche_platform_probe(struct platform_device *pdev)
- 	/* setup svc reset gpio */
- 	arche_pdata->is_reset_act_hi = of_property_read_bool(np,
- 							     "svc,reset-active-high");
--	arche_pdata->svc_reset_gpio = of_get_named_gpio(np,
--							"svc,reset-gpio",
--							0);
--	if (!gpio_is_valid(arche_pdata->svc_reset_gpio)) {
--		dev_err(dev, "failed to get reset-gpio\n");
--		return arche_pdata->svc_reset_gpio;
--	}
--	ret = devm_gpio_request(dev, arche_pdata->svc_reset_gpio, "svc-reset");
--	if (ret) {
--		dev_err(dev, "failed to request svc-reset gpio:%d\n", ret);
--		return ret;
--	}
--	ret = gpio_direction_output(arche_pdata->svc_reset_gpio,
--				    arche_pdata->is_reset_act_hi);
--	if (ret) {
--		dev_err(dev, "failed to set svc-reset gpio dir:%d\n", ret);
-+	if (arche_pdata->is_reset_act_hi)
-+		flags = GPIOD_OUT_HIGH;
-+	else
-+		flags = GPIOD_OUT_LOW;
-+
-+	arche_pdata->svc_reset = devm_gpiod_get(dev, "svc,reset", flags);
-+	if (IS_ERR(arche_pdata->svc_reset)) {
-+		ret = PTR_ERR(arche_pdata->svc_reset);
-+		dev_err(dev, "failed to request svc-reset GPIO:%d\n", ret);
- 		return ret;
- 	}
- 	arche_platform_set_state(arche_pdata, ARCHE_PLATFORM_STATE_OFF);
- 
--	arche_pdata->svc_sysboot_gpio = of_get_named_gpio(np,
--							  "svc,sysboot-gpio",
--							  0);
--	if (!gpio_is_valid(arche_pdata->svc_sysboot_gpio)) {
--		dev_err(dev, "failed to get sysboot gpio\n");
--		return arche_pdata->svc_sysboot_gpio;
--	}
--	ret = devm_gpio_request(dev, arche_pdata->svc_sysboot_gpio, "sysboot0");
--	if (ret) {
--		dev_err(dev, "failed to request sysboot0 gpio:%d\n", ret);
--		return ret;
--	}
--	ret = gpio_direction_output(arche_pdata->svc_sysboot_gpio, 0);
--	if (ret) {
--		dev_err(dev, "failed to set svc-reset gpio dir:%d\n", ret);
-+	arche_pdata->svc_sysboot = devm_gpiod_get(dev, "svc,sysboot",
-+						  GPIOD_OUT_LOW);
-+	if (IS_ERR(arche_pdata->svc_sysboot)) {
-+		ret = PTR_ERR(arche_pdata->svc_sysboot);
-+		dev_err(dev, "failed to request sysboot0 GPIO: %d\n", ret);
- 		return ret;
- 	}
- 
- 	/* setup the clock request gpio first */
--	arche_pdata->svc_refclk_req = of_get_named_gpio(np,
--							"svc,refclk-req-gpio",
--							0);
--	if (!gpio_is_valid(arche_pdata->svc_refclk_req)) {
--		dev_err(dev, "failed to get svc clock-req gpio\n");
--		return arche_pdata->svc_refclk_req;
--	}
--	ret = devm_gpio_request(dev, arche_pdata->svc_refclk_req,
--				"svc-clk-req");
--	if (ret) {
--		dev_err(dev, "failed to request svc-clk-req gpio: %d\n", ret);
--		return ret;
--	}
--	ret = gpio_direction_input(arche_pdata->svc_refclk_req);
--	if (ret) {
--		dev_err(dev, "failed to set svc-clk-req gpio dir :%d\n", ret);
-+	arche_pdata->svc_refclk_req = devm_gpiod_get(dev, "svc,refclk-req",
-+						     GPIOD_IN);
-+	if (IS_ERR(arche_pdata->svc_refclk_req)) {
-+		ret = PTR_ERR(arche_pdata->svc_refclk_req);
-+		dev_err(dev, "failed to request svc-clk-req GPIO: %d\n", ret);
- 		return ret;
- 	}
- 
-@@ -515,19 +481,11 @@ static int arche_platform_probe(struct platform_device *pdev)
- 	arche_pdata->num_apbs = of_get_child_count(np);
- 	dev_dbg(dev, "Number of APB's available - %d\n", arche_pdata->num_apbs);
- 
--	arche_pdata->wake_detect_gpio = of_get_named_gpio(np,
--							  "svc,wake-detect-gpio",
--							  0);
--	if (arche_pdata->wake_detect_gpio < 0) {
--		dev_err(dev, "failed to get wake detect gpio\n");
--		return arche_pdata->wake_detect_gpio;
+-/**
+- * gb_gpio_irq_map() - maps an IRQ into a GB gpio irqchip
+- * @d: the irqdomain used by this irqchip
+- * @irq: the global irq number used by this GB gpio irqchip irq
+- * @hwirq: the local IRQ/GPIO line offset on this GB gpio
+- *
+- * This function will set up the mapping for a certain IRQ line on a
+- * GB gpio by assigning the GB gpio as chip data, and using the irqchip
+- * stored inside the GB gpio.
+- */
+-static int gb_gpio_irq_map(struct irq_domain *domain, unsigned int irq,
+-			   irq_hw_number_t hwirq)
+-{
+-	struct gpio_chip *chip = domain->host_data;
+-	struct gb_gpio_controller *ggc = gpio_chip_to_gb_gpio_controller(chip);
+-
+-	irq_set_chip_data(irq, ggc);
+-	irq_set_chip_and_handler(irq, ggc->irqchip, ggc->irq_handler);
+-	irq_set_noprobe(irq);
+-	/*
+-	 * No set-up of the hardware will happen if IRQ_TYPE_NONE
+-	 * is passed as default type.
+-	 */
+-	if (ggc->irq_default_type != IRQ_TYPE_NONE)
+-		irq_set_irq_type(irq, ggc->irq_default_type);
+-
+-	return 0;
+-}
+-
+-static void gb_gpio_irq_unmap(struct irq_domain *d, unsigned int irq)
+-{
+-	irq_set_chip_and_handler(irq, NULL, NULL);
+-	irq_set_chip_data(irq, NULL);
+-}
+-
+-static const struct irq_domain_ops gb_gpio_domain_ops = {
+-	.map	= gb_gpio_irq_map,
+-	.unmap	= gb_gpio_irq_unmap,
+-};
+-
+-/**
+- * gb_gpio_irqchip_remove() - removes an irqchip added to a gb_gpio_controller
+- * @ggc: the gb_gpio_controller to remove the irqchip from
+- *
+- * This is called only from gb_gpio_remove()
+- */
+-static void gb_gpio_irqchip_remove(struct gb_gpio_controller *ggc)
+-{
+-	unsigned int offset;
+-
+-	/* Remove all IRQ mappings and delete the domain */
+-	if (ggc->irqdomain) {
+-		for (offset = 0; offset < (ggc->line_max + 1); offset++)
+-			irq_dispose_mapping(irq_find_mapping(ggc->irqdomain,
+-							     offset));
+-		irq_domain_remove(ggc->irqdomain);
 -	}
 -
--	ret = devm_gpio_request(dev, arche_pdata->wake_detect_gpio,
--				"wake detect");
--	if (ret) {
--		dev_err(dev, "Failed requesting wake_detect gpio %d\n",
--			arche_pdata->wake_detect_gpio);
-+	arche_pdata->wake_detect = devm_gpiod_get(dev, "svc,wake-detect",
-+						  GPIOD_IN);
-+	if (IS_ERR(arche_pdata->wake_detect)) {
-+		ret = PTR_ERR(arche_pdata->wake_detect);
-+		dev_err(dev, "Failed requesting wake_detect GPIO %d\n", ret);
- 		return ret;
+-	if (ggc->irqchip)
+-		ggc->irqchip = NULL;
+-}
+-
+-/**
+- * gb_gpio_irqchip_add() - adds an irqchip to a gpio chip
+- * @chip: the gpio chip to add the irqchip to
+- * @irqchip: the irqchip to add to the adapter
+- * @first_irq: if not dynamically assigned, the base (first) IRQ to
+- * allocate gpio irqs from
+- * @handler: the irq handler to use (often a predefined irq core function)
+- * @type: the default type for IRQs on this irqchip, pass IRQ_TYPE_NONE
+- * to have the core avoid setting up any default type in the hardware.
+- *
+- * This function closely associates a certain irqchip with a certain
+- * gpio chip, providing an irq domain to translate the local IRQs to
+- * global irqs, and making sure that the gpio chip
+- * is passed as chip data to all related functions. Driver callbacks
+- * need to use container_of() to get their local state containers back
+- * from the gpio chip passed as chip data. An irqdomain will be stored
+- * in the gpio chip that shall be used by the driver to handle IRQ number
+- * translation. The gpio chip will need to be initialized and registered
+- * before calling this function.
+- */
+-static int gb_gpio_irqchip_add(struct gpio_chip *chip,
+-			       struct irq_chip *irqchip,
+-			       unsigned int first_irq,
+-			       irq_flow_handler_t handler,
+-			       unsigned int type)
+-{
+-	struct gb_gpio_controller *ggc;
+-	unsigned int offset;
+-	unsigned int irq_base;
+-
+-	if (!chip || !irqchip)
+-		return -EINVAL;
+-
+-	ggc = gpio_chip_to_gb_gpio_controller(chip);
+-
+-	ggc->irqchip = irqchip;
+-	ggc->irq_handler = handler;
+-	ggc->irq_default_type = type;
+-	ggc->irqdomain = irq_domain_add_simple(NULL,
+-					       ggc->line_max + 1, first_irq,
+-					       &gb_gpio_domain_ops, chip);
+-	if (!ggc->irqdomain) {
+-		ggc->irqchip = NULL;
+-		return -EINVAL;
+-	}
+-
+-	/*
+-	 * Prepare the mapping since the irqchip shall be orthogonal to
+-	 * any gpio calls. If the first_irq was zero, this is
+-	 * necessary to allocate descriptors for all IRQs.
+-	 */
+-	for (offset = 0; offset < (ggc->line_max + 1); offset++) {
+-		irq_base = irq_create_mapping(ggc->irqdomain, offset);
+-		if (offset == 0)
+-			ggc->irq_base = irq_base;
+-	}
+-
+-	return 0;
+-}
+-
+-static int gb_gpio_to_irq(struct gpio_chip *chip, unsigned int offset)
+-{
+-	struct gb_gpio_controller *ggc = gpio_chip_to_gb_gpio_controller(chip);
+-
+-	return irq_find_mapping(ggc->irqdomain, offset);
+-}
+-
+ static int gb_gpio_probe(struct gbphy_device *gbphy_dev,
+ 			 const struct gbphy_device_id *id)
+ {
+@@ -694,7 +560,6 @@ static int gb_gpio_probe(struct gbphy_device *gbphy_dev,
+ 	gpio->get = gb_gpio_get;
+ 	gpio->set = gb_gpio_set;
+ 	gpio->set_config = gb_gpio_set_config;
+-	gpio->to_irq = gb_gpio_to_irq;
+ 	gpio->base = -1;		/* Allocate base dynamically */
+ 	gpio->ngpio = ggc->line_max + 1;
+ 	gpio->can_sleep = true;
+@@ -703,24 +568,24 @@ static int gb_gpio_probe(struct gbphy_device *gbphy_dev,
+ 	if (ret)
+ 		goto exit_line_free;
+ 
+-	ret = gb_gpio_irqchip_add(gpio, irqc, 0,
+-				  handle_level_irq, IRQ_TYPE_NONE);
++	ret = gpiochip_add(gpio);
+ 	if (ret) {
+-		dev_err(&gbphy_dev->dev, "failed to add irq chip: %d\n", ret);
++		dev_err(&gbphy_dev->dev, "failed to add gpio chip: %d\n", ret);
+ 		goto exit_line_free;
  	}
  
-@@ -538,7 +496,7 @@ static int arche_platform_probe(struct platform_device *pdev)
- 	spin_lock_init(&arche_pdata->wake_lock);
- 	mutex_init(&arche_pdata->platform_state_mutex);
- 	arche_pdata->wake_detect_irq =
--		gpio_to_irq(arche_pdata->wake_detect_gpio);
-+		gpiod_to_irq(arche_pdata->wake_detect);
+-	ret = gpiochip_add(gpio);
++	ret = gpiochip_irqchip_add(gpio, irqc, 0, handle_level_irq,
++				   IRQ_TYPE_NONE);
+ 	if (ret) {
+-		dev_err(&gbphy_dev->dev, "failed to add gpio chip: %d\n", ret);
+-		goto exit_gpio_irqchip_remove;
++		dev_err(&gbphy_dev->dev, "failed to add irq chip: %d\n", ret);
++		goto exit_gpiochip_remove;
+ 	}
  
- 	ret = devm_request_threaded_irq(dev, arche_pdata->wake_detect_irq,
- 					arche_platform_wd_irq,
+ 	gbphy_runtime_put_autosuspend(gbphy_dev);
+ 	return 0;
+ 
+-exit_gpio_irqchip_remove:
+-	gb_gpio_irqchip_remove(ggc);
++exit_gpiochip_remove:
++	gpiochip_remove(gpio);
+ exit_line_free:
+ 	kfree(ggc->lines);
+ exit_connection_disable:
+@@ -744,7 +609,6 @@ static void gb_gpio_remove(struct gbphy_device *gbphy_dev)
+ 
+ 	gb_connection_disable_rx(connection);
+ 	gpiochip_remove(&ggc->chip);
+-	gb_gpio_irqchip_remove(ggc);
+ 	gb_connection_disable(connection);
+ 	gb_connection_destroy(connection);
+ 	kfree(ggc->lines);
 -- 
 2.17.1
 
