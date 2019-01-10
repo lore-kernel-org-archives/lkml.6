@@ -2,187 +2,105 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD3CCC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 17:25:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7101BC43612
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 17:28:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F72F214DA
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 17:25:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="iAFsu+4R"
+	by mail.kernel.org (Postfix) with ESMTP id 47BBE20675
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 17:28:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730213AbfAJRZR (ORCPT
+        id S1729905AbfAJR2N (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 12:25:17 -0500
-Received: from mail.efficios.com ([167.114.142.138]:56240 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729823AbfAJRZP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 12:25:15 -0500
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id C7F8BAF9CA;
-        Thu, 10 Jan 2019 12:25:13 -0500 (EST)
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
-        with ESMTP id ITDOvO0uAJ5p; Thu, 10 Jan 2019 12:25:13 -0500 (EST)
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 237D4AF9C3;
-        Thu, 10 Jan 2019 12:25:13 -0500 (EST)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 237D4AF9C3
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1547141113;
-        bh=hvYUZ9QjaJPqvytVtpzu7Pv2Pp4Nf8ojphZJIQfPkkA=;
-        h=Date:From:To:Message-ID:MIME-Version;
-        b=iAFsu+4RT9JCRSBChxSeEtiGoC3F3ev3LaUJ2DVwM+jPkTFzZFGgpTDcNFFckClFd
-         f0U5sf5RVw3Aq1DADVUser3upxe5CPxlJNpn/vDIpLCYTGjlJJxdlqB+pNQL+yq/+d
-         /Vnn+Qyc5E9ixtvfDY804lEOJkpyH96FI0Z0TgoVDUBNii+8H5TjRbIdVwMyZiylfj
-         2K/z23JCyGjU43YcHorArT62AM+pnAILy8UU/br6kqBAbU+KIT4G4QkCEWTq45Zps9
-         XrFDc6s40AaIyzg3ldSHL3jfInuVXdh9zC3ug8Fg61Dgg/Za0BNn72OZ1KPZRz5dMJ
-         E30o2B5ZFo0IA==
-X-Virus-Scanned: amavisd-new at efficios.com
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
-        with ESMTP id EzSgvaXcXjNs; Thu, 10 Jan 2019 12:25:13 -0500 (EST)
-Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
-        by mail.efficios.com (Postfix) with ESMTP id 0F3E9AF9BC;
-        Thu, 10 Jan 2019 12:25:13 -0500 (EST)
-Date:   Thu, 10 Jan 2019 12:25:13 -0500 (EST)
-From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To:     rostedt <rostedt@goodmis.org>
-Cc:     "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Thu, 10 Jan 2019 12:28:13 -0500
+Received: from mga07.intel.com ([134.134.136.100]:8928 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729519AbfAJR2N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 12:28:13 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jan 2019 09:28:12 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,462,1539673200"; 
+   d="scan'208";a="115795203"
+Received: from vanderss-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.254.152])
+  by fmsmga008.fm.intel.com with ESMTP; 10 Jan 2019 09:28:08 -0800
+Date:   Thu, 10 Jan 2019 19:28:06 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Michael =?iso-8859-1?Q?Niew=F6hner?= <linux@mniewoehner.de>
+Cc:     Mimi Zohar <zohar@linux.ibm.com>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        peterhuewe@gmx.de, jgg@ziepe.ca, arnd@arndb.de,
+        linux-integrity@vger.kernel.org,
         linux-kernel <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>
-Message-ID: <1083900143.1198.1547141113001.JavaMail.zimbra@efficios.com>
-In-Reply-To: <600900741.1177.1547140315581.JavaMail.zimbra@efficios.com>
-References: <2103471967.794.1547084331086.JavaMail.zimbra@efficios.com> <20190110110839.7daeef3d@gandalf.local.home> <1884815641.993.1547138653377.JavaMail.zimbra@efficios.com> <600900741.1177.1547140315581.JavaMail.zimbra@efficios.com>
-Subject: Re: Possible use of RCU while in extended QS: idle vs RCU read-side
- in interrupt vs rcu_eqs_exit
+        Nayna Jain <nayna@linux.ibm.com>,
+        Ken Goldman <kgold@linux.ibm.com>
+Subject: Re: tpm_tis TPM2.0 not detected on cold boot
+Message-ID: <20190110172806.GD6589@linux.intel.com>
+References: <ef7e773b01a5e6153b84628f74fc67092a2f9b0e.camel@gmail.com>
+ <1f281756bb1f041e55be8dd090670a1a7b1d1c94.camel@mniewoehner.de>
+ <1545519232.3940.115.camel@linux.ibm.com>
+ <e7ec38d7cade9aa76384aa2781eab307d2cd5a7b.camel@mniewoehner.de>
+ <20190103132737.GD10491@linux.intel.com>
+ <6c1bf9815bfcb5d2bc0cfedfc49c7feda0173dc9.camel@mniewoehner.de>
+ <20190103150434.GC17015@linux.intel.com>
+ <5aa2fc082b6b0657574918b025005ad569da6412.camel@mniewoehner.de>
+ <c1f5f53cdaaaad6cc80c2b10172a69f0301d3e0e.camel@mniewoehner.de>
+ <5ee514be264361a8f1ed4a4ad823ad72dd7dce23.camel@mniewoehner.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [167.114.142.138]
-X-Mailer: Zimbra 8.8.10_GA_3716 (ZimbraWebClient - FF52 (Linux)/8.8.10_GA_3745)
-Thread-Topic: Possible use of RCU while in extended QS: idle vs RCU read-side in interrupt vs rcu_eqs_exit
-Thread-Index: 27wp/p4E6gUF7FLK8PORZvci3aR5Z84PIFV8D5IKZ4Y=
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <5ee514be264361a8f1ed4a4ad823ad72dd7dce23.camel@mniewoehner.de>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------ On Jan 10, 2019, at 9:11 AM, Mathieu Desnoyers mathieu.desnoyers@efficios.com wrote:
+On Fri, Jan 04, 2019 at 04:28:24PM +0100, Michael Niewöhner wrote:
+> root@debian:~# tpm2_pcrlist
+> ERROR:tcti:src/util/io.c:102:write_all() failed to write to fd 3: Operation not
+> permitted 
+> ERROR:tcti:src/tss2-tcti/tcti-device.c:86:tcti_device_transmit() wrong number of
+> bytes written. Expected 22, wrote 0. 
+> ERROR: GetCapability: Get PCR allocation status Error. TPM Error:0xa000a......
+> ERROR: Unable to run tpm2_pcrlist
+> root@debian:~# tpm2_pcrlist; tpm2_pcrlist 
+> sha1 :
+>   0  : 1ebb2be3b7103a09b5caeeb5827c1242cd6632ec
+>   1  : 425e833da73cb511150d6ffcf6fac64e9a6feb58
+>   2  : b2a83b0ebf2f8374299a5b2bdfc31ea955ad7236
+>   3  : b2a83b0ebf2f8374299a5b2bdfc31ea955ad7236
+>   4  : d13c141b174afbb568773adf1f39940a2df47c7d
+>   5  : 756a3647403ab141ec2c1ac7325854f4a93f6efd
+> ......
 
-> ----- On Jan 10, 2019, at 8:44 AM, Mathieu Desnoyers
-> mathieu.desnoyers@efficios.com wrote:
-> 
->> ----- On Jan 10, 2019, at 8:08 AM, rostedt rostedt@goodmis.org wrote:
->> 
->>> On Wed, 9 Jan 2019 20:38:51 -0500 (EST)
->>> Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
->>> 
->>>> Hi Paul,
->>>> 
->>>> I've had a user report that trace_sched_waking() appears to be
->>>> invoked while !rcu_is_watching() in some situation, so I started
->>>> digging into the scheduler idle code.
->>> 
->>> I'm wondering if this isn't a bug. Do you have the backtrace for where
->>> trace_sched_waking() was called without rcu watching?
->> 
->> I strongly suspect a bug as well. I'm awaiting a reproducer from the
->> user whom reported this issue so I can add a WARN_ON_ONCE(!rcu_is_watching())
->> in the scheduler code near trace_sched_waking() and gather a backtrace.
->> 
->> It still has to be confirmed, but I suspect this have been triggered
->> within a HyperV guest. It may therefore be related to a virtualized environment.
->> 
->> I'll try to ask more specifically on which environment this was encountered.
-> 
-> So it ends up it happens directly on hardware on a Linux laptop. Here is
-> the stacktrace:
-> 
-> vmlinux!try_to_wake_up
-> vmlinux!default_wake_function
-> vmlinux!pollwake
-> vmlinux!__wake_up_common
-> vmlinux!__wake_up_common_lock
-> vmlinux!__wake_up
-> vmlinux!perf_event_wakeup
-> vmlinux!perf_pending_event
-> vmlinux!irq_work_run_list
-> vmlinux!irq_work_run
-> vmlinux!smp_irq_work_iterrupt
-> vmlinux!irq_work_interrupt
-> vmlinux!finish_task_switch
-> vmlinux!__schedule
-> vmlinux!schedule_idle
-> vmlinux!do_idle
-> vmlinux!cpu_startup_entry
-> vmlinux!start_secondary
-> vmlinux!secondary_startup_64
-> 
-> Does it raise any red flag ?
+So the sympton is that it from time to time works and time to time
+fails.
 
-Based on this backtrace, I think I start to get a better understanding
-of the situation.
+Can't recall whether you had interrupts enabled or disabled for the
+TPM chip (depending on whether you use IRQs or polling you'd have
+to tweak the code from a different place), but you could tweak
+directly the TPM2_DURATION_* constants in drivers/char/tpm/tpm.h:
 
-The initial problem reported to me was that ftrace was showing some sched_waking
-events in its trace that were missed by perf.
+enum tpm2_timeouts {
+	TPM2_TIMEOUT_A          =    750,
+	TPM2_TIMEOUT_B          =   2000,
+	TPM2_TIMEOUT_C          =    200,
+	TPM2_TIMEOUT_D          =     30,
+	TPM2_DURATION_SHORT     =     20,
+	TPM2_DURATION_MEDIUM    =    750,
+	TPM2_DURATION_LONG      =   2000,
+	TPM2_DURATION_LONG_LONG = 300000,
+	TPM2_DURATION_DEFAULT   = 120000,
+};
 
-I presumed this was because of the !rcu_is_watching() check, but I think I was
-wrong.
+Set SHORT, LONG and MEDIUM to lets say 3000 and lets see if that
+makes a difference or not.
 
-This backtrace seems to show that perf is itself triggering a sched_waking()
-event. It there is probably a check that discards nested events within perf,
-which would discard this from perf traces, but ftrace (and lttng) would trace
-it just fine.
-
-Thoughts ?
-
-Thanks,
-
-Mathieu
-
-
-> 
-> Thanks,
-> 
-> Mathieu
-> 
->> 
->> Thanks,
->> 
->> Mathieu
->> 
->>> 
->>> -- Steve
->>> 
->>>> 
->>>> It appears that interrupts are re-enabled before rcu_eqs_exit() is
->>>> invoked when exiting idle code from the scheduler.
->>>> 
->>>> I wonder what happens if an interrupt handler (including scheduler code)
->>>> happens to issue a RCU read-side critical section before rcu_eqs_exit()
->>>> is called ? Is there some code on interrupt entry that ensures rcu eqs
->>>> state is exited in such scenario ?
->>>> 
->>>> Thanks,
->>>> 
->>>> Mathieu
->> 
->> --
->> Mathieu Desnoyers
->> EfficiOS Inc.
->> http://www.efficios.com
-> 
-> --
-> Mathieu Desnoyers
-> EfficiOS Inc.
-> http://www.efficios.com
-
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-http://www.efficios.com
+/Jarkko
