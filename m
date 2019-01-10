@@ -2,303 +2,140 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B2F0C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 01:15:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C930C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 01:16:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5889B21738
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 01:15:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D6F2D214C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 01:16:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727132AbfAJBP4 (ORCPT
+        id S1727182AbfAJBQF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 20:15:56 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:57216 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726458AbfAJBP4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 20:15:56 -0500
-Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 9731AB0CBD9C7FC06C7D;
-        Thu, 10 Jan 2019 09:15:52 +0800 (CST)
-Received: from [127.0.0.1] (10.134.22.195) by DGGEMS411-HUB.china.huawei.com
- (10.3.19.211) with Microsoft SMTP Server id 14.3.408.0; Thu, 10 Jan 2019
- 09:15:43 +0800
-Subject: Re: [PATCH] staging: erofs: clean up erofs_map_blocks_iter
-To:     Gao Xiang <gaoxiang25@huawei.com>, <linux-erofs@lists.ozlabs.org>
-CC:     <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
-        Miao Xie <miaoxie@huawei.com>
-References: <20190109094654.39285-1-yuchao0@huawei.com>
- <30dd9369-268d-2faf-1b44-dddec2c480b1@huawei.com>
-From:   Chao Yu <yuchao0@huawei.com>
-Message-ID: <a098fd2d-500e-856f-e8b3-9e673b8152ae@huawei.com>
-Date:   Thu, 10 Jan 2019 09:15:42 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <30dd9369-268d-2faf-1b44-dddec2c480b1@huawei.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+        Wed, 9 Jan 2019 20:16:05 -0500
+Received: from relmlor1.renesas.com ([210.160.252.171]:18818 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726458AbfAJBQF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 20:16:05 -0500
+Date:   10 Jan 2019 10:16:03 +0900
+X-IronPort-AV: E=Sophos;i="5.56,459,1539615600"; 
+   d="scan'208";a="4801258"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 10 Jan 2019 10:16:03 +0900
+Received: from morimoto-PC.renesas.com (unknown [10.166.18.140])
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 10A794136351;
+        Thu, 10 Jan 2019 10:16:03 +0900 (JST)
+Message-ID: <875zuxb9uy.wl-kuninori.morimoto.gx@renesas.com>
+From:   Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Jon Hunter <jonathanh@nvidia.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        linux-tegra@vger.kernel.org, Matthias Reichl <hias@horus.com>,
+        alsa-devel@alsa-project.org,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        Takashi Iwai <tiwai@suse.com>, linux-kernel@vger.kernel.org,
+        Marcel Ziswiler <marcel@ziswiler.com>
+Subject: Re: [alsa-devel] [PATCH v1 3/3] ASoC: soc-core: fix platform name vs. of_node assignement
+In-Reply-To: <20190109141439.GE10405@sirena.org.uk>
+References: <20181218174040.k7u26vnnoplllnwb@camel2.lan>
+        <952471da-b355-6471-6c19-5120d6704f81@nvidia.com>
+        <87lg3vuc7p.wl-kuninori.morimoto.gx@renesas.com>
+        <b5164c93-8be8-1c3d-9415-c895da6ad622@nvidia.com>
+        <d1e41ed2-da7c-b46c-bc6d-64cf3e536771@nvidia.com>
+        <865d2a3e-bf6b-1f30-1179-7e922c0d0641@nvidia.com>
+        <87k1je38w7.wl-kuninori.morimoto.gx@renesas.com>
+        <0660a471-3698-2059-4494-ad146518a4ed@nvidia.com>
+        <20190109125340.GD10405@sirena.org.uk>
+        <52f5f2cf-9260-f9c5-f73d-3c3d5debc86b@nvidia.com>
+        <20190109141439.GE10405@sirena.org.uk>
+User-Agent: Wanderlust/2.15.9 Emacs/24.5 Mule/6.0
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Xiang,
 
-Thanks for the review, let me fix them all and send v2. :)
+Hi Mark, Jon
 
-Thanks,
+> No. Offline you had suggested using kmalloc and not devm_kzalloc and so
+> I was worried in that case about a memory leak. Right now I am only
+> concerned about an invalid pointer that is not being handled correctly.
 
-On 2019/1/9 19:54, Gao Xiang wrote:
-> Hi Chao,
-> 
-> On 2019/1/9 17:46, Chao Yu wrote:
->> This patch cleans up erofs_map_blocks* function and structure family,
->> just simply the code, no logic change.
->>
->> Signed-off-by: Chao Yu <yuchao0@huawei.com>
->> ---
->>  drivers/staging/erofs/data.c      | 40 +++++++------------------------
->>  drivers/staging/erofs/internal.h  | 16 ++++++-------
->>  drivers/staging/erofs/unzip_vle.c | 30 +++++++++++------------
->>  3 files changed, 31 insertions(+), 55 deletions(-)
->>
->> diff --git a/drivers/staging/erofs/data.c b/drivers/staging/erofs/data.c
->> index 5a55f0bfdfbb..1baa59cf11b5 100644
->> --- a/drivers/staging/erofs/data.c
->> +++ b/drivers/staging/erofs/data.c
->> @@ -165,43 +165,19 @@ static int erofs_map_blocks_flatmode(struct inode *inode,
->>  	return err;
->>  }
->>  
->> -#ifdef CONFIG_EROFS_FS_ZIP
->> -extern int z_erofs_map_blocks_iter(struct inode *,
->> -				   struct erofs_map_blocks *,
->> -				   struct page **, int);
->> -#endif
->> -
->> -int erofs_map_blocks_iter(struct inode *inode,
->> -			  struct erofs_map_blocks *map,
->> -			  struct page **mpage_ret, int flags)
->> -{
->> -	/* by default, reading raw data never use erofs_map_blocks_iter */
->> -	if (unlikely(!is_inode_layout_compression(inode))) {
->> -		if (*mpage_ret)
->> -			put_page(*mpage_ret);
->> -		*mpage_ret = NULL;
->> -
->> -		return erofs_map_blocks(inode, map, flags);
->> -	}
->> -
->> -#ifdef CONFIG_EROFS_FS_ZIP
->> -	return z_erofs_map_blocks_iter(inode, map, mpage_ret, flags);
->> -#else
->> -	/* data compression is not available */
->> -	return -ENOTSUPP;
->> -#endif
->> -}
->> -
->>  int erofs_map_blocks(struct inode *inode,
->>  		     struct erofs_map_blocks *map, int flags)
->>  {
->>  	if (unlikely(is_inode_layout_compression(inode))) {
->> -		struct page *mpage = NULL;
->> -		int err;
->> +		int err = -ENOTSUPP;
->>  
->> -		err = erofs_map_blocks_iter(inode, map, &mpage, flags);
->> -		if (mpage)
->> -			put_page(mpage);
->> +#ifdef CONFIG_EROFS_FS_ZIP
->> +		map->mpage = NULL;
-> 
-> remove this line? since z_erofs_map_blocks_iter will do put_page internally
-> if mpage != NULL.
-> 
->> +
->> +		err = z_erofs_map_blocks_iter(inode, map, flags);
->> +#endif
->> +		if (map->mpage)
->> +			put_page(map->mpage);
-> 
-> 
-> 		if (map->mpage) {
-> 			put_page(map->mpage);
->                         map->mpage = NULL;
-> 		}
-> 
-> 
->>  		return err;
->>  	}
->>  	return erofs_map_blocks_flatmode(inode, map, flags);
->> diff --git a/drivers/staging/erofs/internal.h b/drivers/staging/erofs/internal.h
->> index e049d00c087a..740961fc565f 100644
->> --- a/drivers/staging/erofs/internal.h
->> +++ b/drivers/staging/erofs/internal.h
->> @@ -461,8 +461,16 @@ struct erofs_map_blocks {
->>  	u64 m_plen, m_llen;
->>  
->>  	unsigned int m_flags;
->> +
->> +	struct page *mpage;
->>  };
->>  
->> +#ifdef CONFIG_EROFS_FS_ZIP
->> +extern int z_erofs_map_blocks_iter(struct inode *,
->> +				   struct erofs_map_blocks *,
->> +				   int);
-> 
-> #else
-> 
-> static inline z_erofs_map_blocks_iter(struct inode *, ...) { return -ENOTSUPP;}
-> 
->  --- therefore redundant CONFIG_EROFS_FS_ZIPs could be removed.
-> 
-> #endif
-> 
->> +#endif
->> +
->>  /* Flags used by erofs_map_blocks() */
->>  #define EROFS_GET_BLOCKS_RAW    0x0001
->>  
->> @@ -522,14 +530,6 @@ static inline struct page *erofs_get_meta_page_nofail(struct super_block *sb,
->>  }
->>  
->>  extern int erofs_map_blocks(struct inode *, struct erofs_map_blocks *, int);
->> -extern int erofs_map_blocks_iter(struct inode *, struct erofs_map_blocks *,
->> -	struct page **, int);
->> -
->> -struct erofs_map_blocks_iter {
->> -	struct erofs_map_blocks map;
->> -	struct page *mpage;
->> -};
->> -
->>  
->>  static inline struct page *
->>  erofs_get_inline_page(struct inode *inode,
->> diff --git a/drivers/staging/erofs/unzip_vle.c b/drivers/staging/erofs/unzip_vle.c
->> index 4ac1099a39c6..30340afaa504 100644
->> --- a/drivers/staging/erofs/unzip_vle.c
->> +++ b/drivers/staging/erofs/unzip_vle.c
->> @@ -636,7 +636,7 @@ struct z_erofs_vle_frontend {
->>  	struct inode *const inode;
->>  
->>  	struct z_erofs_vle_work_builder builder;
->> -	struct erofs_map_blocks_iter m_iter;
->> +	struct erofs_map_blocks map;
->>  
->>  	z_erofs_vle_owned_workgrp_t owned_head;
->>  
->> @@ -647,8 +647,9 @@ struct z_erofs_vle_frontend {
->>  
->>  #define VLE_FRONTEND_INIT(__i) { \
->>  	.inode = __i, \
->> -	.m_iter = { \
->> -		{ .m_llen = 0, .m_plen = 0 }, \
->> +	.map = { \
->> +		.m_llen = 0, \
->> +		.m_plen = 0, \
->>  		.mpage = NULL \
->>  	}, \
->>  	.builder = VLE_WORK_BUILDER_INIT(), \
->> @@ -681,8 +682,7 @@ static int z_erofs_do_read_page(struct z_erofs_vle_frontend *fe,
->>  {
->>  	struct super_block *const sb = fe->inode->i_sb;
->>  	struct erofs_sb_info *const sbi __maybe_unused = EROFS_SB(sb);
->> -	struct erofs_map_blocks_iter *const m = &fe->m_iter;
->> -	struct erofs_map_blocks *const map = &m->map;
->> +	struct erofs_map_blocks *const map = &fe->map;
->>  	struct z_erofs_vle_work_builder *const builder = &fe->builder;
->>  	const loff_t offset = page_offset(page);
->>  
->> @@ -715,7 +715,7 @@ static int z_erofs_do_read_page(struct z_erofs_vle_frontend *fe,
->>  
->>  	map->m_la = offset + cur;
->>  	map->m_llen = 0;
->> -	err = erofs_map_blocks_iter(fe->inode, map, &m->mpage, 0);
->> +	err = erofs_map_blocks(fe->inode, map, 0);
-> 
-> should use z_erofs_map_blocks_iter then rather than erofs_map_blocks
-> 
-> Thanks,
-> Gao Xiang
-> 
->>  	if (unlikely(err))
->>  		goto err_out;
->>  
->> @@ -1484,8 +1484,8 @@ static int z_erofs_vle_normalaccess_readpage(struct file *file,
->>  
->>  	z_erofs_submit_and_unzip(&f, &pagepool, true);
->>  out:
->> -	if (f.m_iter.mpage)
->> -		put_page(f.m_iter.mpage);
->> +	if (f.map.mpage)
->> +		put_page(f.map.mpage);
->>  
->>  	/* clean up the remaining free pages */
->>  	put_pages_list(&pagepool);
->> @@ -1555,8 +1555,8 @@ static int z_erofs_vle_normalaccess_readpages(struct file *filp,
->>  
->>  	z_erofs_submit_and_unzip(&f, &pagepool, sync);
->>  
->> -	if (f.m_iter.mpage)
->> -		put_page(f.m_iter.mpage);
->> +	if (f.map.mpage)
->> +		put_page(f.map.mpage);
->>  
->>  	/* clean up the remaining free pages */
->>  	put_pages_list(&pagepool);
->> @@ -1701,14 +1701,14 @@ vle_get_logical_extent_head(const struct vle_map_blocks_iter_ctx *ctx,
->>  
->>  int z_erofs_map_blocks_iter(struct inode *inode,
->>  	struct erofs_map_blocks *map,
->> -	struct page **mpage_ret, int flags)
->> +	int flags)
->>  {
->>  	void *kaddr;
->>  	const struct vle_map_blocks_iter_ctx ctx = {
->>  		.inode = inode,
->>  		.sb = inode->i_sb,
->>  		.clusterbits = EROFS_I_SB(inode)->clusterbits,
->> -		.mpage_ret = mpage_ret,
->> +		.mpage_ret = &map->mpage,
->>  		.kaddr_ret = &kaddr
->>  	};
->>  	const unsigned int clustersize = 1 << ctx.clusterbits;
->> @@ -1722,7 +1722,7 @@ int z_erofs_map_blocks_iter(struct inode *inode,
->>  
->>  	/* initialize `pblk' to keep gcc from printing foolish warnings */
->>  	erofs_blk_t mblk, pblk = 0;
->> -	struct page *mpage = *mpage_ret;
->> +	struct page *mpage = map->mpage;
->>  	struct z_erofs_vle_decompressed_index *di;
->>  	unsigned int cluster_type, logical_cluster_ofs;
->>  	int err = 0;
->> @@ -1758,7 +1758,7 @@ int z_erofs_map_blocks_iter(struct inode *inode,
->>  			err = PTR_ERR(mpage);
->>  			goto out;
->>  		}
->> -		*mpage_ret = mpage;
->> +		map->mpage = mpage;
->>  	} else {
->>  		lock_page(mpage);
->>  		DBG_BUGON(!PageUptodate(mpage));
->> @@ -1818,7 +1818,7 @@ int z_erofs_map_blocks_iter(struct inode *inode,
->>  		/* get the correspoinding first chunk */
->>  		err = vle_get_logical_extent_head(&ctx, lcn, &ofs,
->>  						  &pblk, &map->m_flags);
->> -		mpage = *mpage_ret;
->> +		mpage = map->mpage;
->>  
->>  		if (unlikely(err)) {
->>  			if (mpage)
->>
-> 
-> .
-> 
+I'm sorry I was confused/misunderstood, kmalloc idea was wrong.
 
+> I would like someone to explain what multi-platform means? Even if a
+> soundcard supports multiple platforms, there is only one platform you
+> are using at any time so ...
+(snip)
+> ... I don't understand why you would ever need a 'num_platform' as the
+> machine driver just needs to understand which platform is using it at
+> any given time. Right?
+
+As Mark explained, "platform" on ALSA SoC means "DMA",
+and we might have multiple DMA sound sysytem (= multi-platform) in the future.
+Currently, all driver/sysytem is using single DMA for 1 sound card.
+
+> > # So, I guess if your driver can switch to use
+> > # snd_soc_init_platform style directly, your problem can gone ?
+> 
+> Yes that is an alternative and I can convert all the Tegra machine
+> drivers to use this now. However, that will not solve the problem for
+> non-Tegra devices and everyone will have to do this.
+
+Yeah I agree.
+But my concern is that the same problem happen on codec side too,
+by same logic, because snd_soc_init_multicodec() is overwriting
+dai_link too.
+Your posted patch solved platform side only, I think.
+
+> > >> Yes that is an alternative and I can convert all the Tegra machine
+> > >> drivers to use this now. However, that will not solve the problem for
+> > >> non-Tegra devices and everyone will have to do this.
+> 
+> > > We're going to have to go through another round of conversions that
+> > > touch everything at some point no matter what :/
+> 
+> > Do you have a preference here? Do you think that we can fix-up the
+> > soc-core or should I go ahead and migrate the Tegra machine driver to
+> > workaround this issue now?
+> 
+> We're going to need to migrate Tegra regardless so it'd be good to do
+> that whatever happens, I'm intending to try to properly review the patch
+> today.
+
+As I mentioned above, I think we have same issue on codec side too.
+exchanging *platform to platform doesn't solve all issues.
+And we need to exchange all driver again if we had multi-platform
+support in the future (I don't know when it can happen though...)
+
+My posted quick-patch can solve "dirty pointer" issue,
+but it can't solve "memory leak" issue.
+This issue will be solved if all driver can switch to
+modern style, but it needs more time.
+Are these correct ?
+
+So, how about this ?
+
+I will try to add snd_soc_dai_link_component support for CPU,
+and switch all driver to use modern style for v5.1 (or v5.2 ?).
+Until then, as temporary solution, we can use above quick-patch style.
+
+And to avoid "memory leak crash" attach,
+it temporary have bind dai_link limitation (max 5time?).
+If it goes to max limitation, ALSA SoC doesn't allow to try again.
+In such case, all related CPU/Codec driver need to rmmod/unbind,
+and insmod/bind again.
+Then, the limitation will be 0 cleared. You can try bind again.
+
+It can solve "dirty pointer" issue, "memory leak" issue,
+and "memory leak attack" issue.
+The problem is that code can be dirty temporary.
+But it will be removed if all driver can be swtich to modern style.
+
+Best regards
+---
+Kuninori Morimoto
