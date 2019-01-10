@@ -3,103 +3,166 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B6F5C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 10:03:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62D85C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 10:06:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D69A2173B
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 10:03:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 34BA6206B6
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 10:06:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728049AbfAJKDx (ORCPT
+        id S1728122AbfAJKGl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 05:03:53 -0500
-Received: from mx2.suse.de ([195.135.220.15]:35496 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727780AbfAJKDx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 05:03:53 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 97673ACD1;
-        Thu, 10 Jan 2019 10:03:51 +0000 (UTC)
+        Thu, 10 Jan 2019 05:06:41 -0500
+Received: from relay.sw.ru ([185.231.240.75]:56384 "EHLO relay.sw.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727328AbfAJKGk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 05:06:40 -0500
+Received: from [172.16.25.169]
+        by relay.sw.ru with esmtp (Exim 4.91)
+        (envelope-from <ktkhai@virtuozzo.com>)
+        id 1ghXEM-0003LF-JW; Thu, 10 Jan 2019 13:06:30 +0300
+Subject: Re: [PATCH RFC 0/3] mm: Reduce IO by improving algorithm of memcg
+ pagecache pages eviction
+To:     Josef Bacik <josef@toxicpanda.com>
+Cc:     akpm@linux-foundation.org, hannes@cmpxchg.org, jack@suse.cz,
+        hughd@google.com, darrick.wong@oracle.com, mhocko@suse.com,
+        aryabinin@virtuozzo.com, guro@fb.com, mgorman@techsingularity.net,
+        shakeelb@google.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+References: <154703479840.32690.6504699919905946726.stgit@localhost.localdomain>
+ <20190109154932.tpc27dk2hzeycqex@MacBook-Pro-91.local>
+ <e7dc9a15-9438-cc15-c898-36eca325118a@virtuozzo.com>
+ <20190109163353.pxb574odzfwdbcfe@macbook-pro-91.dhcp.thefacebook.com>
+From:   Kirill Tkhai <ktkhai@virtuozzo.com>
+Message-ID: <e8cf89d3-f71a-4d9d-3ea0-18157f7da722@virtuozzo.com>
+Date:   Thu, 10 Jan 2019 13:06:29 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
+In-Reply-To: <20190109163353.pxb574odzfwdbcfe@macbook-pro-91.dhcp.thefacebook.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-Date:   Thu, 10 Jan 2019 11:03:51 +0100
-From:   Roman Penyaev <rpenyaev@suse.de>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Davidlohr Bueso <dbueso@suse.de>,
-        Jason Baron <jbaron@akamai.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Andrea Parri <andrea.parri@amarulasolutions.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH 09/15] epoll: introduce stand-alone helpers for
- polling from userspace
-In-Reply-To: <CAHk-=whD=pjn4myRysuyeAiNOxv49XVQuJaE7Xd6ZBEMf6eXtA@mail.gmail.com>
-References: <20190109164025.24554-1-rpenyaev@suse.de>
- <20190109164025.24554-10-rpenyaev@suse.de>
- <CAHk-=whD=pjn4myRysuyeAiNOxv49XVQuJaE7Xd6ZBEMf6eXtA@mail.gmail.com>
-Message-ID: <6f86fe7564d3bb088c2c73f8d699bc71@suse.de>
-X-Sender: rpenyaev@suse.de
-User-Agent: Roundcube Webmail
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-01-09 18:29, Linus Torvalds wrote:
-> On Wed, Jan 9, 2019 at 8:40 AM Roman Penyaev <rpenyaev@suse.de> wrote:
->> 
->> ep_vrealloc*()
->>     realloc user header, user index or bitmap memory
+On 09.01.2019 19:33, Josef Bacik wrote:
+> On Wed, Jan 09, 2019 at 07:08:09PM +0300, Kirill Tkhai wrote:
+>> Hi, Josef,
+>>
+>> On 09.01.2019 18:49, Josef Bacik wrote:
+>>> On Wed, Jan 09, 2019 at 03:20:18PM +0300, Kirill Tkhai wrote:
+>>>> On nodes without memory overcommit, it's common a situation,
+>>>> when memcg exceeds its limit and pages from pagecache are
+>>>> shrinked on reclaim, while node has a lot of free memory.
+>>>> Further access to the pages requires real device IO, while
+>>>> IO causes time delays, worse powerusage, worse throughput
+>>>> for other users of the device, etc.
+>>>>
+>>>> Cleancache is not a good solution for this problem, since
+>>>> it implies copying of page on every cleancache_put_page()
+>>>> and cleancache_get_page(). Also, it requires introduction
+>>>> of internal per-cleancache_ops data structures to manage
+>>>> cached pages and their inodes relationships, which again
+>>>> introduces overhead.
+>>>>
+>>>> This patchset introduces another solution. It introduces
+>>>> a new scheme for evicting memcg pages:
+>>>>
+>>>>   1)__remove_mapping() uncharges unmapped page memcg
+>>>>     and leaves page in pagecache on memcg reclaim;
+>>>>
+>>>>   2)putback_lru_page() places page into root_mem_cgroup
+>>>>     list, since its memcg is NULL. Page may be evicted
+>>>>     on global reclaim (and this will be easily, as
+>>>>     page is not mapped, so shrinker will shrink it
+>>>>     with 100% probability of success);
+>>>>
+>>>>   3)pagecache_get_page() charges page into memcg of
+>>>>     a task, which takes it first.
+>>>>
+>>>> Below is small test, which shows profit of the patchset.
+>>>>
+>>>> Create memcg with limit 20M (exact value does not matter much):
+>>>>   $ mkdir /sys/fs/cgroup/memory/ct
+>>>>   $ echo 20M > /sys/fs/cgroup/memory/ct/memory.limit_in_bytes
+>>>>   $ echo $$ > /sys/fs/cgroup/memory/ct/tasks
+>>>>
+>>>> Then twice read 1GB file:
+>>>>   $ time cat file_1gb > /dev/null
+>>>>
+>>>> Before (2 iterations):
+>>>>   1)0.01user 0.82system 0:11.16elapsed 7%CPU
+>>>>   2)0.01user 0.91system 0:11.16elapsed 8%CPU
+>>>>
+>>>> After (2 iterations):
+>>>>   1)0.01user 0.57system 0:11.31elapsed 5%CPU
+>>>>   2)0.00user 0.28system 0:00.28elapsed 100%CPU
+>>>>
+>>>> With the patch set applied, we have file pages are cached
+>>>> during the second read, so the result is 39 times faster.
+>>>>
+>>>> This may be useful for slow disks, NFS, nodes without
+>>>> overcommit by memory, in case of two memcg access the same
+>>>> files, etc.
+>>>>
+>>>
+>>> This isn't going to work for us (Facebook).  The whole reason the hard limit
+>>> exists is to keep different groups from messing up other groups.  Page cache
+>>> reclaim is not free, most of our pain and most of the reason we use cgroups
+>>> is to limit the effect of flooding the machine with pagecache from different
+>>> groups.
+>>
+>> I understand the problem.
+>>
+>>> Memory leaks happen few and far between, but chef doing a yum
+>>> update in the system container happens regularly.  If you talk about suddenly
+>>> orphaning these pages to the root container it still creates pressure on the
+>>> main workload, pressure that results in it having to take time from what it's
+>>> doing and free up memory instead.
+>>
+>> Could you please to clarify additional pressure, which introduces the patchset?
+>> The number of actions, which are needed to evict a pagecache page, remain almost
+>> the same: we just delay __delete_from_page_cache() to global reclaim. Global
+>> reclaim should not introduce much pressure, since it's the iteration on a single
+>> memcg (we should not dive into hell of children memcg, since root memcg reclaim
+>> should be successful and free enough pages, should't we?).
 > 
-> What? No.
+> If we go into global reclaim at all.  If we're unable to allocate a page as the
+> most important cgroup we start shrinking ourselves first right?  And then
+> eventually end up in global reclaim, right?  So it may be easily enough
+> reclaimed, but we're going to waste a lot of time getting there in the meantime,
+> which means latency that's hard to pin down.
 > 
-> This is wrong, it's much too complicated. And because your
-> 'vrealloc()' doesn't follow the normal realloc rules, it looks both
-> confusing and buggy, and people have to remember that "oh, vrealloc()
-> isn't actually vrealloc(), it's really vdupalloc()".
+> And secondly this allows hard limited cgroups to essentially leak pagecache into
+> the whole system, creating waaaaaaay more memory pressure than what I think you
+> intend.  Your logic is that we'll exceed our limit, evict some pagecache to the
+> root cgroup, and we avoid a OOM and everything is ok.  However what will really
+> happen is some user is going to do dd if=/dev/zero of=file and we'll just
+> happily keep shoving these pages off into the root cg and suddenly we have 100gb
+> of useless pagecache that we have to reclaim.  Yeah we just have to delete it
+> from the root, but thats only once we get to that part, before that there's a
+> bunch of latency inducing work that has to be done to get to deleting the pages.
+
+Yeah, but what does introduce the most latency in setup? Do I understand correctly
+that hard limit on your setup allows all alloc_pages() calls to go thru get_page_from_freelist()
+path, so most allocations do not dive into __alloc_pages_slowpath()?
+
+>>
+>> Also, what is about implementing this as static key option? What about linking
+>> orphaned pagecache pages into separate list, which is easy-to-iterate?
 > 
-> Your other patch to allow users to apparently also do mremap of these
-> things seems entirely wrongheaded too. Especially when you then have
-> magical rules for vm_pgoff, which is one of the things that unmapping
-> parts of a mmap will touch.
+> Yeah if we have a way to short-circuit the normal reclaim path and just go to
+> evicting these easily evicted pages then that would make it more palatable.  But
+> I'd like to see testing to verify that this faster way really is faster and
+> doesn't induce latency on other protected workloads.  We put hard limits on
+> groups we don't care about, we want those things to die in a fire.  The excess
+> IO from re-reading those pages is mitigated with io.latency, and eventually
+> io.weight for proportional control, so really isn't an argument for keeping
+> pages around.  Thanks,
 > 
-> So I say no, no, no. This is all *much* too complicated, and the
-> interfaces are mis-designed to be overly generous to people doing odd
-> and pointless things.
+> Josef
 > 
-> If you can't have a fixed-size user buffer that stays in one place,
-> don't even bother.
-
-I agree that set of "rules" for this interface is indeed complicated.
-The goal was to solve the problem with a constantly changing set of
-items (which can be increased / decreased from another thread) without
-adding new ctl calls or any limitations.
-
-To fix the size of a user buffer is seems easy to do.  One way is still
-to support expand with, say, epoll_ctl(EPOLL_CTL_EXPAND) call and user
-has to react explicitly on ENOSPC from epoll_ctl(EPOLL_CTL_ADD).  Thus
-reallocation happens, but by user request.
-
-Another way seems much simpler but has a limitation: user has to specify
-expected max limit passing the value to a new epoll_create syscall, e.g.
-epoll_create2(EPOLL_USERPOLL, 1000). Further attempt to add 1001 
-descriptor
-will end with ENOSPC. Period. No magic under the hood. Another 1001
-descriptor can be added to a new epoll, which can be nested then (what
-is forbidden for "polled from user" descriptors in current 
-implementation,
-but should not be difficult to allow). Then yes, no remapping / 
-reallocating.
-But this epoll nesting thing ... Which personally I do not like.
-
-What do you think?
-
---
-Roman
