@@ -2,168 +2,70 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FF7CC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 13:06:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 054E5C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 13:06:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2A41020879
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 13:06:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D2E1920879
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 13:06:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728712AbfAJNGD (ORCPT
+        id S1728753AbfAJNGh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 08:06:03 -0500
-Received: from mx2.suse.de ([195.135.220.15]:34354 "EHLO mx1.suse.de"
+        Thu, 10 Jan 2019 08:06:37 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:53350 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726560AbfAJNGC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 08:06:02 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id AC44AAD18;
-        Thu, 10 Jan 2019 13:06:00 +0000 (UTC)
-Date:   Thu, 10 Jan 2019 14:05:59 +0100 (CET)
-From:   Miroslav Benes <mbenes@suse.cz>
-To:     Petr Mladek <pmladek@suse.com>
-cc:     Jiri Kosina <jikos@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Jason Baron <jbaron@akamai.com>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
-        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jessica Yu <jeyu@kernel.org>
-Subject: Re: [PATCH v15 07/11] livepatch: Add atomic replace
-In-Reply-To: <20190109124329.21991-8-pmladek@suse.com>
-Message-ID: <alpine.LSU.2.21.1901101405370.15065@pobox.suse.cz>
-References: <20190109124329.21991-1-pmladek@suse.com> <20190109124329.21991-8-pmladek@suse.com>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        id S1728200AbfAJNGh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 08:06:37 -0500
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 24B9D5C6C32557A9C501;
+        Thu, 10 Jan 2019 21:06:35 +0800 (CST)
+Received: from localhost (10.177.31.96) by DGGEMS404-HUB.china.huawei.com
+ (10.3.19.204) with Microsoft SMTP Server id 14.3.408.0; Thu, 10 Jan 2019
+ 21:06:28 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <pablo@netfilter.org>, <kadlec@blackhole.kfki.hu>, <fw@strlen.de>,
+        <davem@davemloft.net>
+CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <netfilter-devel@vger.kernel.org>, <coreteam@netfilter.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH] netfilter: nat: Update comment of get_unique_tuple
+Date:   Thu, 10 Jan 2019 21:06:18 +0800
+Message-ID: <20190110130618.25344-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain
+X-Originating-IP: [10.177.31.96]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 9 Jan 2019, Petr Mladek wrote:
+Replace outdated __ip_conntrack_confirm in comment.
 
-> From: Jason Baron <jbaron@akamai.com>
-> 
-> Sometimes we would like to revert a particular fix. Currently, this
-> is not easy because we want to keep all other fixes active and we
-> could revert only the last applied patch.
-> 
-> One solution would be to apply new patch that implemented all
-> the reverted functions like in the original code. It would work
-> as expected but there will be unnecessary redirections. In addition,
-> it would also require knowing which functions need to be reverted at
-> build time.
-> 
-> Another problem is when there are many patches that touch the same
-> functions. There might be dependencies between patches that are
-> not enforced on the kernel side. Also it might be pretty hard to
-> actually prepare the patch and ensure compatibility with the other
-> patches.
-> 
-> Atomic replace && cumulative patches:
-> 
-> A better solution would be to create cumulative patch and say that
-> it replaces all older ones.
-> 
-> This patch adds a new "replace" flag to struct klp_patch. When it is
-> enabled, a set of 'nop' klp_func will be dynamically created for all
-> functions that are already being patched but that will no longer be
-> modified by the new patch. They are used as a new target during
-> the patch transition.
-> 
-> The idea is to handle Nops' structures like the static ones. When
-> the dynamic structures are allocated, we initialize all values that
-> are normally statically defined.
-> 
-> The only exception is "new_func" in struct klp_func. It has to point
-> to the original function and the address is known only when the object
-> (module) is loaded. Note that we really need to set it. The address is
-> used, for example, in klp_check_stack_func().
-> 
-> Nevertheless we still need to distinguish the dynamically allocated
-> structures in some operations. For this, we add "nop" flag into
-> struct klp_func and "dynamic" flag into struct klp_object. They
-> need special handling in the following situations:
-> 
->   + The structures are added into the lists of objects and functions
->     immediately. In fact, the lists were created for this purpose.
-> 
->   + The address of the original function is known only when the patched
->     object (module) is loaded. Therefore it is copied later in
->     klp_init_object_loaded().
-> 
->   + The ftrace handler must not set PC to func->new_func. It would cause
->     infinite loop because the address points back to the beginning of
->     the original function.
-> 
->   + The various free() functions must free the structure itself.
-> 
-> Note that other ways to detect the dynamic structures are not considered
-> safe. For example, even the statically defined struct klp_object might
-> include empty funcs array. It might be there just to run some callbacks.
-> 
-> Also note that the safe iterator must be used in the free() functions.
-> Otherwise already freed structures might get accessed.
-> 
-> Special callbacks handling:
-> 
-> The callbacks from the replaced patches are _not_ called by intention.
-> It would be pretty hard to define a reasonable semantic and implement it.
-> 
-> It might even be counter-productive. The new patch is cumulative. It is
-> supposed to include most of the changes from older patches. In most cases,
-> it will not want to call pre_unpatch() post_unpatch() callbacks from
-> the replaced patches. It would disable/break things for no good reasons.
-> Also it should be easier to handle various scenarios in a single script
-> in the new patch than think about interactions caused by running many
-> scripts from older patches. Not to say that the old scripts even would
-> not expect to be called in this situation.
-> 
-> Removing replaced patches:
-> 
-> One nice effect of the cumulative patches is that the code from the
-> older patches is no longer used. Therefore the replaced patches can
-> be removed. It has several advantages:
-> 
->   + Nops' structs will no longer be necessary and might be removed.
->     This would save memory, restore performance (no ftrace handler),
->     allow clear view on what is really patched.
-> 
->   + Disabling the patch will cause using the original code everywhere.
->     Therefore the livepatch callbacks could handle only one scenario.
->     Note that the complication is already complex enough when the patch
->     gets enabled. It is currently solved by calling callbacks only from
->     the new cumulative patch.
-> 
->   + The state is clean in both the sysfs interface and lsmod. The modules
->     with the replaced livepatches might even get removed from the system.
-> 
-> Some people actually expected this behavior from the beginning. After all
-> a cumulative patch is supposed to "completely" replace an existing one.
-> It is like when a new version of an application replaces an older one.
-> 
-> This patch does the first step. It removes the replaced patches from
-> the list of patches. It is safe. The consistency model ensures that
-> they are no longer used. By other words, each process works only with
-> the structures from klp_transition_patch.
-> 
-> The removal is done by a special function. It combines actions done by
-> __disable_patch() and klp_complete_transition(). But it is a fast
-> track without all the transaction-related stuff.
-> 
-> Signed-off-by: Jason Baron <jbaron@akamai.com>
-> [pmladek@suse.com: Split, reuse existing code, simplified]
-> Signed-off-by: Petr Mladek <pmladek@suse.com>
-> Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-> Cc: Jessica Yu <jeyu@kernel.org>
-> Cc: Jiri Kosina <jikos@kernel.org>
-> Cc: Miroslav Benes <mbenes@suse.cz>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ net/netfilter/nf_nat_core.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Acked-by: Miroslav Benes <mbenes@suse.cz>
+diff --git a/net/netfilter/nf_nat_core.c b/net/netfilter/nf_nat_core.c
+index d159e9e..f54a8db 100644
+--- a/net/netfilter/nf_nat_core.c
++++ b/net/netfilter/nf_nat_core.c
+@@ -460,7 +460,8 @@ static void nf_nat_l4proto_unique_tuple(struct nf_conntrack_tuple *tuple,
+  * and NF_INET_LOCAL_OUT, we change the destination to map into the
+  * range. It might not be possible to get a unique tuple, but we try.
+  * At worst (or if we race), we will end up with a final duplicate in
+- * __ip_conntrack_confirm and drop the packet. */
++ * __nf_conntrack_confirm and drop the packet.
++ */
+ static void
+ get_unique_tuple(struct nf_conntrack_tuple *tuple,
+ 		 const struct nf_conntrack_tuple *orig_tuple,
+-- 
+2.7.0
 
-Miroslav
+
