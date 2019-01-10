@@ -2,132 +2,124 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 449C4C43612
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 17:02:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D14D0C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 17:03:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1532420685
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 17:02:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="mx3G+nBq"
+	by mail.kernel.org (Postfix) with ESMTP id AB06B2177B
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 17:03:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729109AbfAJRC3 (ORCPT
+        id S1729286AbfAJRDG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 12:02:29 -0500
-Received: from aserp2130.oracle.com ([141.146.126.79]:49128 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727836AbfAJRC2 (ORCPT
+        Thu, 10 Jan 2019 12:03:06 -0500
+Received: from mail-io1-f71.google.com ([209.85.166.71]:35595 "EHLO
+        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727943AbfAJRDG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 12:02:28 -0500
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0AGxTLh179520;
-        Thu, 10 Jan 2019 17:02:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=jnCKMZoBc1lLvLQ8sW1g6t1cZ7Wd/SFilvKOlPJEmag=;
- b=mx3G+nBqOr0JDGW/7kptr3FQzgsNCuSesb4LdwjoI1v2B9t/McMmpbCpCt10UjhBp9+h
- 0Gh4bQp68MQElFuBqfRKlooy1a/B6c+Q5I+z9LTjDxRAsfnS5XPVcDwehl2+v1zvmhMU
- OsuDzRdLeopTkrmOVogRdntuo/KbWeng7ZLoKDHyHq2cFVHhMyL3NxbLeIiFqVCn20vZ
- 3i5uQmJXaBfhi/NKc4sesipxHAx/4o+rQG8S0BQj0b9MXWgrcMIMS/XxkL0VIxgOtCao
- mnZOKpkZzs+juVmhixXF+1bg1IyE36uiXl+fxVGFO2n8JpcKeTBBxnRFMkuBEWRArcjv GQ== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by aserp2130.oracle.com with ESMTP id 2ptj3e8nad-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 10 Jan 2019 17:02:09 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x0AH28OL029311
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 10 Jan 2019 17:02:08 GMT
-Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x0AH27jl002612;
-        Thu, 10 Jan 2019 17:02:07 GMT
-Received: from char.us.oracle.com (/10.152.32.25)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 10 Jan 2019 09:02:07 -0800
-Received: by char.us.oracle.com (Postfix, from userid 1000)
-        id B9DC56A0126; Thu, 10 Jan 2019 12:02:05 -0500 (EST)
-Date:   Thu, 10 Jan 2019 12:02:05 -0500
-From:   Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-To:     Joerg Roedel <joro@8bytes.org>
-Cc:     "Michael S . Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>, Jens Axboe <axboe@kernel.dk>,
-        virtualization@lists.linux-foundation.org,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        iommu@lists.linux-foundation.org, jfehlig@suse.com,
-        jon.grimm@amd.com, brijesh.singh@amd.com, hch@lst.de,
-        Joerg Roedel <jroedel@suse.de>
-Subject: Re: [PATCH 1/3] swiotlb: Export maximum allocation size
-Message-ID: <20190110170205.GB27546@char.us.oracle.com>
-References: <20190110134433.15672-1-joro@8bytes.org>
- <20190110134433.15672-2-joro@8bytes.org>
+        Thu, 10 Jan 2019 12:03:06 -0500
+Received: by mail-io1-f71.google.com with SMTP id x12so10453692ioj.2
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 09:03:05 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=q3/b7ctL3EfmnlaMuYGMLe973HhALm+0afuZshfPZ3o=;
+        b=pdOoEomw3ck+wNaq0kMa6pTZ86vkhs2r3FAVAOyc1Acz2MshC0u0mgF8SXdOwokLMF
+         Fr5rLCwKGXBProCw5qN0GmSe7TBdNRxbV7L49O8qzUDAr6/J0d/oE04qJe8TXJarC2zO
+         q7v7xVf9Dzfyv2aiVPzt8G7McKrINYmfUuHX987CeDFzCvCfhSudjswX0GAKIkMwQvTp
+         BMb1Wdcke6BdgJEFA3kzSAO+AgyzWij1rwQGe9ABo5SALle8+Bd+RJv0ztnhBboIE6Vq
+         66/lMish+rX3RvdjtsCTWJxE86gqijfFSPonK72yoNbE1clkAOQTnqBrQFWVSwixR+fs
+         Lxbw==
+X-Gm-Message-State: AJcUukdTvtzjTCfJxEkHW9kPg3Tg95LZILftpRhsTdbzggWwXdgELGan
+        EWfGDLgQ1eQL4Z2M8yBqBKznteauJ6c5eNzbiqmo0ZG8u0lr
+X-Google-Smtp-Source: ALg8bN5S1Gqk1xvS8TeAi0E79BDxF/BPl2kRDAyq52cNGYKNbpWaSnHMDRipQXXzLCAPHF5nKDS+mTWX6JiYBqwWHmVGcudKDGdD
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190110134433.15672-2-joro@8bytes.org>
-User-Agent: Mutt/1.8.3 (2017-05-23)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9131 signatures=668680
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1901100133
+X-Received: by 2002:a24:4ac3:: with SMTP id k186mr4745912itb.37.1547139784707;
+ Thu, 10 Jan 2019 09:03:04 -0800 (PST)
+Date:   Thu, 10 Jan 2019 09:03:04 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000491844057f1d8d2f@google.com>
+Subject: KASAN: null-ptr-deref Read in reclaim_high
+From:   syzbot <syzbot+fa11f9da42b46cea3b4a@syzkaller.appspotmail.com>
+To:     cgroups@vger.kernel.org, hannes@cmpxchg.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        mhocko@kernel.org, syzkaller-bugs@googlegroups.com,
+        vdavydov.dev@gmail.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 10, 2019 at 02:44:31PM +0100, Joerg Roedel wrote:
-> From: Joerg Roedel <jroedel@suse.de>
-> 
-> The SWIOTLB implementation has a maximum size it can
-> allocate dma-handles for. This needs to be exported so that
-> device drivers don't try to allocate larger chunks.
-> 
-> This is especially important for block device drivers like
-> virtio-blk, that might do DMA through SWIOTLB.
+Hello,
 
-Why not use swiotlb_nr_tbl ? That is how drivers/gpu/drm use to figure if they
-need to limit the size of pages.
-> 
-> Signed-off-by: Joerg Roedel <jroedel@suse.de>
-> ---
->  include/linux/swiotlb.h | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
-> 
-> diff --git a/include/linux/swiotlb.h b/include/linux/swiotlb.h
-> index 7c007ed7505f..0bcc80a97036 100644
-> --- a/include/linux/swiotlb.h
-> +++ b/include/linux/swiotlb.h
-> @@ -72,6 +72,11 @@ static inline bool is_swiotlb_buffer(phys_addr_t paddr)
->  	return paddr >= io_tlb_start && paddr < io_tlb_end;
->  }
->  
-> +static inline size_t swiotlb_max_alloc_size(void)
-> +{
-> +	return ((1UL << IO_TLB_SHIFT) * IO_TLB_SEGSIZE);
-> +}
-> +
->  bool swiotlb_map(struct device *dev, phys_addr_t *phys, dma_addr_t *dma_addr,
->  		size_t size, enum dma_data_direction dir, unsigned long attrs);
->  void __init swiotlb_exit(void);
-> @@ -95,6 +100,13 @@ static inline unsigned int swiotlb_max_segment(void)
->  {
->  	return 0;
->  }
-> +
-> +static inline size_t swiotlb_max_alloc_size(void)
-> +{
-> +	/* There is no limit when SWIOTLB isn't used */
-> +	return ~0UL;
-> +}
-> +
->  #endif /* CONFIG_SWIOTLB */
->  
->  extern void swiotlb_print_info(void);
-> -- 
-> 2.17.1
-> 
+syzbot found the following crash on:
+
+HEAD commit:    6cab33afc3dd Add linux-next specific files for 20190110
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=178b287b400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=611f89e5b6868db
+dashboard link: https://syzkaller.appspot.com/bug?extid=fa11f9da42b46cea3b4a
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14259017400000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=141630a0c00000
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+fa11f9da42b46cea3b4a@syzkaller.appspotmail.com
+
+==================================================================
+BUG: KASAN: null-ptr-deref in atomic64_read  
+include/generated/atomic-instrumented.h:836 [inline]
+BUG: KASAN: null-ptr-deref in atomic_long_read  
+include/generated/atomic-long.h:28 [inline]
+BUG: KASAN: null-ptr-deref in page_counter_read  
+include/linux/page_counter.h:47 [inline]
+BUG: KASAN: null-ptr-deref in reclaim_high.constprop.0+0xa6/0x1e0  
+mm/memcontrol.c:2149
+Read of size 8 at addr 0000000000000138 by task syz-executor037/7964
+
+CPU: 1 PID: 7964 Comm: syz-executor037 Not tainted 5.0.0-rc1-next-20190110  
+#9
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1db/0x2d0 lib/dump_stack.c:113
+  kasan_report.cold+0x5/0x40 mm/kasan/report.c:321
+  check_memory_region_inline mm/kasan/generic.c:185 [inline]
+  check_memory_region+0x123/0x190 mm/kasan/generic.c:191
+  kasan_check_read+0x11/0x20 mm/kasan/common.c:100
+  atomic64_read include/generated/atomic-instrumented.h:836 [inline]
+  atomic_long_read include/generated/atomic-long.h:28 [inline]
+  page_counter_read include/linux/page_counter.h:47 [inline]
+  reclaim_high.constprop.0+0xa6/0x1e0 mm/memcontrol.c:2149
+  mem_cgroup_handle_over_high+0xc1/0x180 mm/memcontrol.c:2178
+  tracehook_notify_resume include/linux/tracehook.h:190 [inline]
+  exit_to_usermode_loop+0x299/0x3b0 arch/x86/entry/common.c:166
+  prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
+  syscall_return_slowpath+0x519/0x5f0 arch/x86/entry/common.c:268
+  ret_from_fork+0x15/0x50 arch/x86/entry/entry_64.S:344
+RIP: 0033:0x44034a
+Code: Bad RIP value.
+RSP: 002b:00007ffc31cd3040 EFLAGS: 00000246 ORIG_RAX: 0000000000000038
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: 000000000044034a
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000001200011
+RBP: 00007ffc31cd3060 R08: 0000000000000001 R09: 0000000002027880
+R10: 0000000002027b50 R11: 0000000000000246 R12: 0000000000000001
+R13: 000000000000cc59 R14: 0000000000000000 R15: 0000000000000000
+==================================================================
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
