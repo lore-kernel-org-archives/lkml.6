@@ -2,86 +2,81 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14A26C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 06:54:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7CF7C43612
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 06:56:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D1E44214DA
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 06:54:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AEEC92177B
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 06:56:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547103267;
-	bh=XmV08IZ0mlgrH8IgaXgXI/TS47sK+N09DPWVyqjHFrc=;
+	s=default; t=1547103393;
+	bh=ambIUa63oWMuzaBHBJr7P+giFeFZ6JMLR3X0nFetp6Y=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=wVB2xR50+PUyEI7kMmAaO2uj9WI7yltMViGEmXFZ0+mNBJOOQ+IQJCpDx+zpVRDcc
-	 4kAqRGsco7hyXj0kvg5q/XCrOpyn1SnPEN5XloQ/iyw7cMxQncxpczKM5wuzMgoHz/
-	 BfYGMEU+LCe3kvyHq6AtqDfmf2i7+FVS8T7eR/Rw=
+	b=0PrY6S2Tc5OlnZZn1XyHiT793URHNu2r6Gfo/3ISEzDaoaIL+YT0QhhXKTxMcRVV0
+	 TDLOdsIDK7ogOozicHzwi18+EXJScd6Gmcy5Y6ZOQtnKdBkreDAkRSvb+qkoRpCEEQ
+	 hB/sITgkATsSn0Df+XyP/O0fCjx8PVa6HI59pSJo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727333AbfAJGy0 (ORCPT
+        id S1727397AbfAJG4d (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 01:54:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44870 "EHLO mail.kernel.org"
+        Thu, 10 Jan 2019 01:56:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45050 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725536AbfAJGy0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 01:54:26 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1725536AbfAJG4c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 01:56:32 -0500
+Received: from dragon (61-216-91-114.HINET-IP.hinet.net [61.216.91.114])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 96565214DA;
-        Thu, 10 Jan 2019 06:54:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5DA0D214DA;
+        Thu, 10 Jan 2019 06:56:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547103266;
-        bh=XmV08IZ0mlgrH8IgaXgXI/TS47sK+N09DPWVyqjHFrc=;
+        s=default; t=1547103392;
+        bh=ambIUa63oWMuzaBHBJr7P+giFeFZ6JMLR3X0nFetp6Y=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=JdJM3vKcKZl+wFEsbXsdL0Rxryefb51puNnfMu2OfzGceQROkp0HzXjPKHqV6EwjW
-         q/DxDAA6W+sTOkcclr0AgyJGfpNz7RzYeQ8pF7whQ6OWVVxgpNdO0E7jEoN6RkgDRp
-         03BIco1HmG381Hmo2RUgRglvayGanjj4ELJ3JsRw=
-Date:   Thu, 10 Jan 2019 07:54:23 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     linux-kernel@microsoft.com, kys@microsoft.com,
-        haiyangz@microsoft.com, sthemmin@microsoft.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] Hyper-V commits for 5.0
-Message-ID: <20190110065423.GA28646@kroah.com>
-References: <20190110025613.1E42020665@mail.kernel.org>
+        b=lZhRZpmLyakkGj5WmxyDf8HuIvZIHJmQq3C30BCeVNfBKKMB+t+etAfgHrAPnIZZB
+         uWMWY3NnzgGoNh1MD6NBnmR8Ka8dR80JUfH5dDgt6Zpjxaec7iGXqGPA7Tz7t8S7gu
+         CLzfdEkSY7fXhgJrvlGB61KM34/XcyJF/OtEqUVo=
+Date:   Thu, 10 Jan 2019 14:56:21 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Anson Huang <anson.huang@nxp.com>
+Cc:     "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>
+Subject: Re: [PATCH 3/3] ARM: dts: imx7ulp: add HSRUN mode clocks
+Message-ID: <20190110065619.GB25218@dragon>
+References: <1544176659-32022-1-git-send-email-Anson.Huang@nxp.com>
+ <1544176659-32022-3-git-send-email-Anson.Huang@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190110025613.1E42020665@mail.kernel.org>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+In-Reply-To: <1544176659-32022-3-git-send-email-Anson.Huang@nxp.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 09, 2019 at 09:56:12PM -0500, Sasha Levin wrote:
-> -----BEGIN PGP SIGNED MESSAGE-----
-> Hash: SHA512
+On Fri, Dec 07, 2018 at 10:03:39AM +0000, Anson Huang wrote:
+> i.MX7ULP can switch CPU between RUN mode and HSRUN mode
+> by programming SMC1 register, different clock sources
+> will be used for CPU in different modes, so SMC1 can be
+> abstracted as a clock controller for CPU clock switch,
+> this patch adds support for it.
 > 
-> The following changes since commit bfeffd155283772bbe78c6a05dec7c0128ee500c:
-> 
->   Linux 5.0-rc1 (2019-01-06 17:08:20 -0800)
-> 
-> are available in the Git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/hyperv/linux.git tags/hyperv-fixes-signed
-> 
-> for you to fetch changes up to b5679cebf780c6f1c2451a73bf1842a4409840e7:
-> 
->   vmbus: fix subchannel removal (2019-01-09 19:20:31 -0500)
-> 
-> - ----------------------------------------------------------------
-> hyperv-fixes-signed
-> 
-> - ----------------------------------------------------------------
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 
-That's a horrible merge request message :(
-
-Please provide at least some hint as to what is in this pull request, I
-can't take this as-is, sorry.
-
-greg k-h
+Applied, thanks.
