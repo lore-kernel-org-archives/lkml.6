@@ -2,87 +2,98 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 303C3C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 13:44:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C116BC43444
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 13:44:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 003052183F
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 13:44:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547127860;
-	bh=OolbA9aGphu2cjQZEXQLcUdpYRZzKQHPy0SRTPOcFJA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=qM/s2gToH7y4Lo9tSw7rqtKGnzlLP2RowSnPYbjldzRgmAnbprA+Vwi8/y9zXgnYV
-	 7RM+GykaUnaxF+xqwcrRCTpK8Fi0lebQbvEdM08UuzyhToPymm0ST1wBCCbPC6H9JJ
-	 FZig8oWdeZe5xztyUBZ5FTRybXXovJIfn0cn5k6E=
+	by mail.kernel.org (Postfix) with ESMTP id 914E320879
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 13:44:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729041AbfAJNoT (ORCPT
+        id S1729077AbfAJNoi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 08:44:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45372 "EHLO mail.kernel.org"
+        Thu, 10 Jan 2019 08:44:38 -0500
+Received: from 8bytes.org ([81.169.241.247]:56510 "EHLO theia.8bytes.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728848AbfAJNoS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 08:44:18 -0500
-Received: from dragon (61-216-91-114.HINET-IP.hinet.net [61.216.91.114])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C17EC20879;
-        Thu, 10 Jan 2019 13:44:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547127858;
-        bh=OolbA9aGphu2cjQZEXQLcUdpYRZzKQHPy0SRTPOcFJA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=UFw8CK5KSL8a0kDnIMAxgneW/G9iDqkWN/YdMUMpoJ5C0ZR5pjPAfczXN6gubumLX
-         Os4OSgZTeei45D2gG4T8a6Y6TRDomlgKBCwYPFWLPEnxGoG4ZnhSODjScJOaIvoQlD
-         xan72CEzwJ3b7P3rEHdvEH2luIMlMQS3j/o5TT+c=
-Date:   Thu, 10 Jan 2019 21:44:04 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     =?utf-8?B?Vm9rw6HEjQ==?= Michal <Michal.Vokac@ysoft.com>
-Cc:     Rob Herring <robh@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Kumar Gala <kumar.gala@linaro.org>,
-        ARM-SoC Maintainers <arm@kernel.org>,
-        Sean Hudson <darknighte@darknighte.com>,
-        Frank Rowand <frowand.list@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Grant Likely <grant.likely@arm.com>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v2 18/34] dt-bindings: arm: Convert FSL board/soc
- bindings to json-schema
-Message-ID: <20190110134402.GB30487@dragon>
-References: <20181203213223.16986-1-robh@kernel.org>
- <20181203213223.16986-19-robh@kernel.org>
- <20181206023140.GZ3987@dragon>
- <CAL_JsqK5nBdk-MiuTPMxr9oXqXnLqeMU3vtZi6AnT9V35_W55A@mail.gmail.com>
- <20181208015835.GM3987@dragon>
- <20190110064256.GA25218@dragon>
- <dc0ef959-78a0-2a32-c0f9-e8da11e035e6@ysoft.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <dc0ef959-78a0-2a32-c0f9-e8da11e035e6@ysoft.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+        id S1729048AbfAJNoh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 08:44:37 -0500
+Received: by theia.8bytes.org (Postfix, from userid 1000)
+        id 852EC22E; Thu, 10 Jan 2019 14:44:35 +0100 (CET)
+From:   Joerg Roedel <joro@8bytes.org>
+To:     "Michael S . Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        virtualization@lists.linux-foundation.org,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        iommu@lists.linux-foundation.org, jfehlig@suse.com,
+        jon.grimm@amd.com, brijesh.singh@amd.com, hch@lst.de,
+        Joerg Roedel <jroedel@suse.de>
+Subject: [PATCH 2/3] virtio: Introduce virtio_max_dma_size()
+Date:   Thu, 10 Jan 2019 14:44:32 +0100
+Message-Id: <20190110134433.15672-3-joro@8bytes.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190110134433.15672-1-joro@8bytes.org>
+References: <20190110134433.15672-1-joro@8bytes.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 10, 2019 at 10:44:03AM +0000, Vokáč Michal wrote:
-...
-> > What happened to this?  It seems the patch did not hit v5.0-rc1.
-> 
-> Hi Shawn,
-> Rob actually asked you a similar question two days ago..
-> 
-> https://lkml.org/lkml/2019/1/8/754
+From: Joerg Roedel <jroedel@suse.de>
 
-Oops, it seems there were some miscommunication between Rob and me.  Let
-me fix this by queuing this patch on my tree now.
+This function returns the maximum segment size for a single
+dma transaction of a virtio device. The possible limit comes
+from the SWIOTLB implementation in the Linux kernel, that
+has an upper limit of (currently) 256kb of contiguous
+memory it can map.
 
-Shawn
+The functions return the lower limie when SWIOTLB is used for DMA
+transactions of the device and -1U otherwise.
+
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
+---
+ drivers/virtio/virtio_ring.c | 11 +++++++++++
+ include/linux/virtio.h       |  2 ++
+ 2 files changed, 13 insertions(+)
+
+diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
+index cd7e755484e3..c8d229da203e 100644
+--- a/drivers/virtio/virtio_ring.c
++++ b/drivers/virtio/virtio_ring.c
+@@ -266,6 +266,17 @@ static bool vring_use_dma_api(struct virtio_device *vdev)
+ 	return false;
+ }
+ 
++size_t virtio_max_dma_size(struct virtio_device *vdev)
++{
++	const struct dma_map_ops *ops = get_dma_ops(&vdev->dev);
++	size_t max_segment_size = -1U;
++
++	if (vring_use_dma_api(vdev) && dma_is_direct(ops))
++		max_segment_size = swiotlb_max_alloc_size();
++
++	return max_segment_size;
++}
++
+ static void *vring_alloc_queue(struct virtio_device *vdev, size_t size,
+ 			      dma_addr_t *dma_handle, gfp_t flag)
+ {
+diff --git a/include/linux/virtio.h b/include/linux/virtio.h
+index fa1b5da2804e..673fe3ef3607 100644
+--- a/include/linux/virtio.h
++++ b/include/linux/virtio.h
+@@ -157,6 +157,8 @@ int virtio_device_freeze(struct virtio_device *dev);
+ int virtio_device_restore(struct virtio_device *dev);
+ #endif
+ 
++size_t virtio_max_dma_size(struct virtio_device *vdev);
++
+ #define virtio_device_for_each_vq(vdev, vq) \
+ 	list_for_each_entry(vq, &vdev->vqs, list)
+ 
+-- 
+2.17.1
+
