@@ -2,389 +2,229 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30E5CC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 21:07:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63B35C43444
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 21:10:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DBBF9208E3
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 21:07:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 21E14208E3
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 21:10:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="peRyjRin"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="2J5Tv54q"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729315AbfAJVHo (ORCPT
+        id S1729601AbfAJVKt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 16:07:44 -0500
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:53936 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727846AbfAJVHn (ORCPT
+        Thu, 10 Jan 2019 16:10:49 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:38594 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729343AbfAJVKs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 16:07:43 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0AL7bbx105061;
-        Thu, 10 Jan 2019 15:07:37 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1547154457;
-        bh=p8Y9mqkD/9UPg4RGcSAFNb5yhGAqFvvovT0Eu68vXa4=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=peRyjRinyxsvRzgnrssD4U3/YFGxex1IT56t1wrJlDK4fsXUhfIUQ2bQ3x2705IQ6
-         EBQ5sOk+RJ82isgPbv8Z3EHdRuex/ZbHUnFoY038mQ/9CPbtmfPEY6p6aVuYOlTHMo
-         znY1v2tciWgForxuz9GEIBjV/88rrNO5ScYAcXq4=
-Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0AL7bKW011973
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 10 Jan 2019 15:07:37 -0600
-Received: from DFLE113.ent.ti.com (10.64.6.34) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Thu, 10
- Jan 2019 15:07:37 -0600
-Received: from dflp32.itg.ti.com (10.64.6.15) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Thu, 10 Jan 2019 15:07:37 -0600
-Received: from [172.22.105.16] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0AL7bVM029212;
-        Thu, 10 Jan 2019 15:07:37 -0600
-Subject: Re: Generic RGB LED support was Re: [PATCH 2/2] leds: lp5024: Add the
- LP5024/18 RGB LED driver
-To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>
-CC:     =?UTF-8?B?VmVzYSBKw6TDpHNrZWzDpGluZW4=?= <dachaac@gmail.com>,
-        <robh+dt@kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-leds@vger.kernel.org>
-References: <986b5105-2fdb-bd25-7c8a-ca8fd1ade821@gmail.com>
- <7f205102-e854-f1cb-cc03-1307d1cddc87@gmail.com>
- <c9f8965a-90f4-b456-8225-c70694c9f071@gmail.com>
- <cf6c0025-36e7-197b-b27a-1f31fb45cc38@gmail.com> <20190104201256.GA2931@amd>
- <a4e3a782-de76-ba91-3727-4db69cf27c3a@gmail.com> <20190104220726.GA12395@amd>
- <4cf79414-578e-eea7-4f46-fc8789206988@gmail.com> <20190105123146.GA16354@amd>
- <8044cdd9-b9b3-fddd-6106-184b906859e2@gmail.com> <20190105221254.GA22322@amd>
- <dac50714-9caf-2496-3208-fb62f886e31f@gmail.com>
- <70366f2a-aafd-174f-73ec-a8117133b7af@gmail.com>
- <b027299c-a24a-abeb-8f92-97c32c13290b@ti.com>
- <2c3425b0-70af-1f38-35ee-0af857bf0539@gmail.com>
- <a388f510-d0a4-e88b-cfa4-8c9f45f7252a@ti.com>
- <63713076-b111-316d-7e60-9b799ff22c0a@gmail.com>
- <f323ce2c-01f9-f474-4071-96c3c4ef2b24@ti.com>
- <0a163b0c-eabc-6cf0-c605-28622af3d31d@ti.com>
- <1594152a-4f57-e258-5c9c-e1b158c72932@gmail.com>
- <5972a548-89cd-18ab-4f62-dd26057cf444@ti.com>
- <155f0473-0be0-e8a2-7873-607e4e495a03@gmail.com>
-From:   Dan Murphy <dmurphy@ti.com>
-Message-ID: <2d9299d9-b557-0608-50ba-1069e27e3802@ti.com>
-Date:   Thu, 10 Jan 2019 15:07:26 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.3
-MIME-Version: 1.0
-In-Reply-To: <155f0473-0be0-e8a2-7873-607e4e495a03@gmail.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        Thu, 10 Jan 2019 16:10:48 -0500
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0AL8rRw187057;
+        Thu, 10 Jan 2019 21:10:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id; s=corp-2018-07-02;
+ bh=JDJoZD2EIKANFxPEYRygSfFIJ9iOJNE0dGwXm4NZjdk=;
+ b=2J5Tv54qxbxR5QvLQqBI3iDhoLfLGdcO5W8crUhx7wlVqhiGV3K8pAkk2SPaFpx4lyUP
+ +T3gNZ5GivaWCpAlVQB/O0dxfnjQAhbdSsnkCXK1QKLy3j6s7jqQnbr7xRKHa02w2HMR
+ 56EIJChxZYAwVPjLn+d2XK/unU+fdVvftO4adTLkjMecycFP9mSkGkw+DEyLq8zUwBPe
+ ju52rBo8QJHBKacZ1hm+RUgelbX2H6JGnXYh5c79hCz4nC7nUojzTzJ7HCvEjgFoc8Fr
+ 5Q1AgGJDIS+kF0/IM5w+sjf32pN+C5TkzKlQaDAa7+s3PwwM+fGFLEICjSiQWNDo7txv 6Q== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by aserp2130.oracle.com with ESMTP id 2ptj3e9tfg-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 10 Jan 2019 21:10:09 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x0ALA81p010006
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 10 Jan 2019 21:10:08 GMT
+Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x0ALA5cV003581;
+        Thu, 10 Jan 2019 21:10:05 GMT
+Received: from concerto.internal (/24.9.64.241)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 10 Jan 2019 13:10:04 -0800
+From:   Khalid Aziz <khalid.aziz@oracle.com>
+To:     juergh@gmail.com, tycho@tycho.ws, jsteckli@amazon.de,
+        ak@linux.intel.com, torvalds@linux-foundation.org,
+        liran.alon@oracle.com, keescook@google.com, konrad.wilk@oracle.com
+Cc:     Khalid Aziz <khalid.aziz@oracle.com>, deepa.srinivasan@oracle.com,
+        chris.hyser@oracle.com, tyhicks@canonical.com, dwmw@amazon.co.uk,
+        andrew.cooper3@citrix.com, jcm@redhat.com,
+        boris.ostrovsky@oracle.com, kanth.ghatraju@oracle.com,
+        joao.m.martins@oracle.com, jmattson@google.com,
+        pradeep.vincent@oracle.com, john.haxby@oracle.com,
+        tglx@linutronix.de, kirill.shutemov@linux.intel.com, hch@lst.de,
+        steven.sistare@oracle.com, kernel-hardening@lists.openwall.com,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: [RFC PATCH v7 00/16] Add support for eXclusive Page Frame Ownership
+Date:   Thu, 10 Jan 2019 14:09:32 -0700
+Message-Id: <cover.1547153058.git.khalid.aziz@oracle.com>
+X-Mailer: git-send-email 2.17.1
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9132 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1901100164
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/10/19 3:02 PM, Jacek Anaszewski wrote:
-> On 1/10/19 8:58 PM, Dan Murphy wrote:
->> On 1/10/19 1:23 PM, Jacek Anaszewski wrote:
->>> Dan,
->>>
->>> On 1/10/19 1:46 PM, Dan Murphy wrote:
->>>> Jacek
->>>>
->>>> On 1/8/19 3:25 PM, Dan Murphy wrote:
->>>>> Jacek
->>>>>
->>>>> On 1/8/19 3:18 PM, Jacek Anaszewski wrote:
->>>>>> Hi Dan,
->>>>>>
->>>>>> On 1/7/19 10:14 PM, Dan Murphy wrote:
->>>>>>> Jacek
->>>>>>>
->>>>>>> On 1/7/19 2:59 PM, Jacek Anaszewski wrote:
->>>>>>>> Dan,
->>>>>>>>
->>>>>>>> On 1/7/19 8:36 PM, Dan Murphy wrote:
->>>>>>>>> Jacek
->>>>>>>>>
->>>>>>>>> On 1/7/19 1:13 PM, Jacek Anaszewski wrote:
->>>>>>>>>> On 1/6/19 4:52 PM, Jacek Anaszewski wrote:
->>>>>>>>>>> Hi Pavel,
->>>>>>>>>>>
->>>>>>>>>>> On 1/5/19 11:12 PM, Pavel Machek wrote:
->>>>>>>>>>>> Hi!
->>>>>>>>>>>>
->>>>>>>>>>>>>> Grab yourself an RGB LED and play with it; you'll see what the
->>>>>>>>>>>>>> problems are. It is hard to explain colors over email...
->>>>>>>>>>>>>
->>>>>>>>>>>>> Video [0] gives some overview of lp5024 capabilities.
->>>>>>>>>>>>>
->>>>>>>>>>>>> I don't see any problems in exposing separate red,green,blue
->>>>>>>>>>>>> files and brightness for the devices with hardware support for
->>>>>>>>>>>>> that.
->>>>>>>>>>>>
->>>>>>>>>>>> Well, that's what we do today, as three separate LEDs, right?
->>>>>>>>>>>
->>>>>>>>>>> No. It doesn't allow for setting color intensity by having
->>>>>>>>>>> the color fixed beforehand. Below is relevant excerpt from
->>>>>>>>>>> the lp5024 documentation. This is not something that can be
->>>>>>>>>>> mapped to RGB color space, but rather to HSV/HSL, with the
->>>>>>>>>>> reservation that the hardware implementation uses PWM
->>>>>>>>>>> for setting color intensity.
->>>>>>>>>>>
->>>>>>>>>>> <quote>
->>>>>>>>>>> 8.3.1.2 Independent Intensity Control Per RGB LED Module
->>>>>>>>>>>
->>>>>>>>>>> When color is fixed, the independent intensity-control is used to
->>>>>>>>>>> achieve accurate and flexible dimming control for every RGB LED module.
->>>>>>>>>>>
->>>>>>>>>>> 8.3.1.2.1 Intensity-Control Register Configuration
->>>>>>>>>>>
->>>>>>>>>>> Every three consecutive output channels are assigned to their respective
->>>>>>>>>>> intensity-control register (LEDx_BRIGHTNESS). For example, OUT0, OUT1,
->>>>>>>>>>> and OUT2 are assigned to LED0_BRIGHTNESS, so it is recommended to
->>>>>>>>>>> connect the RGB LEDs in the sequence as shown in Table 1. The LP50xx
->>>>>>>>>>> device allows 256-step intensity control for each RGB LED module, which
->>>>>>>>>>> helps achieve a smooth dimming effect.
->>>>>>>>>>> </quote>
->>>>>>>>>>>
->>>>>>>>>>>> I don't have problem with that, either; other drivers already do
->>>>>>>>>>>> that. He's free to use existing same interface.
->>>>>>>>>>>>
->>>>>>>>>>>> But that is insufficient, as it does not allow simple stuff, such as
->>>>>>>>>>>> turning led "white".
->>>>>>>>>>>>
->>>>>>>>>>>> So... perhaps we should agree on requirements, first, and then we can
->>>>>>>>>>>> discuss solutions?
->>>>>>>>>>>>
->>>>>>>>>>>> Requirements for RGB LED interface:
->>>>>>>>>>>>
->>>>>>>>>>>> 1) Userspace should be able to set the white color
->>>>>>>>>>>>
->>>>>>>>>>>> 2) Userspace should be able to arbitrary color from well known list
->>>>>>>>>>>> and it should approximately match what would CRT, LCD or OLED monitor display
->>>>>>>>>>>
->>>>>>>>>>> The difference is that monitor display driver is pre-calibrated
->>>>>>>>>>> for given display by the manufacturer. With the LED controllers the
->>>>>>>>>>> manufacturer has no control over what LEDs will be connected to the
->>>>>>>>>>> iouts. Therefore it should be not surprising that colors produced
->>>>>>>>>>> by custom LEDs are not as user would expect when comparing to
->>>>>>>>>>> the RGB color displayed on the monitor display.
->>>>>>>>>>>
->>>>>>>>>>> TI provides "Various LED Ring Lighting Patterns Reference Design" [0]
->>>>>>>>>>> that show how to produce various patterns with use of the reference
->>>>>>>>>>> board with LED ring built using sixteen 19-337/R6GHBHC-A01/2T LEDs [1].
->>>>>>>>>>>
->>>>>>>>>>> Document [0] mentions also specific "Design considerations" in the
->>>>>>>>>>> chapter 2.2:
->>>>>>>>>>>
->>>>>>>>>>> <quote>
->>>>>>>>>>> Several considerations are taken into account for this particular design:
->>>>>>>>>>> • LED map (ring) for meeting the requirement of popular human-machine interaction style.
->>>>>>>>>>> • LED size, numbers and the diffuse design for meeting lighting pattern uniformity.
->>>>>>>>>>> • Analog dimming in the difference ambient light lux without losing dimming resolution in lighting pattern.
->>>>>>>>>>>
->>>>>>>>>>> These considerations apply to most human-machine interaction end equipment with day and night vision
->>>>>>>>>>> designs in some way, but the designer must decide the particular considerations to take into account for a
->>>>>>>>>>> specific design.
->>>>>>>>>>> </quote>
->>>>>>>>>>>
->>>>>>>>>>> This renders your requirement 2) infeasible with use of custom LEDs
->>>>>>>>>>> any fixed algorithm, since the final effect will always heavily depend
->>>>>>>>>>
->>>>>>>>>> Typo here: s/any fixed/and fixed/
->>>>>>>>>>
->>>>>>>>>>> on the LED circuit design.
->>>>>>>>>>>
->>>>>>>>>>>>
->>>>>>>>>>>>          2a) LEDs probably slightly change color as they age. That's out of
->>>>>>>>>>>>          scope, unless the variation is much greater than on monitors.
->>>>>>>>>>>>
->>>>>>>>>>>>          2b) Manufacturing differences cause small color variation. Again,
->>>>>>>>>>>>          that's out of scope, unless the variation is much greater than on
->>>>>>>>>>>>          monitors.
->>>>>>>>>>>>
->>>>>>>>>>>> Nice to have features:
->>>>>>>>>>>>
->>>>>>>>>>>> 3) Full range of available colors/intensities should be available to
->>>>>>>>>>>> userspace
->>>>>>>>>>>>
->>>>>>>>>>>> 4) Interface should work well with existing triggers
->>>>>>>>>>>>
->>>>>>>>>>>> 5) It would be nice if userland knew how many lumens are produced at
->>>>>>>>>>>> each wavelength for each setting (again, minus aging and manufacturing
->>>>>>>>>>>> variations).
->>>>>>>>>>>>
->>>>>>>>>>>> 6) Complexity of math in kernel should be low, and preferably it
->>>>>>>>>>>> should be integer or fixed point
->>>>>>>>>>>>
->>>>>>>>>>>> Problems:
->>>>>>>>>>>>
->>>>>>>>>>>> a) RGB LEDs are usually not balanced. Setting 100% PWM on
->>>>>>>>>>>> red/green/blue channels will result in nothing close to white
->>>>>>>>>>>> light. In fact, to get white light on N900, blue and green channel's
->>>>>>>>>>>> PWM needs to be set pretty low, as in 5%.
->>>>>>>>>>>>
->>>>>>>>>>>> b) LED class does not define any relation between "brightness" in
->>>>>>>>>>>> sysfs and ammount of light in lumens. Some drivers use close to linear
->>>>>>>>>>>> relation, some use exponential relation. Human eyes percieve logarithm
->>>>>>>>>>>> of lumens. RGB color model uses even more complex function.
->>>>>>>>>>>>
->>>>>>>>>>>> c) Except for white LEDs, LEDs are basically sources of single
->>>>>>>>>>>> wavelength of light, while CRTs and LCDs produce broader
->>>>>>>>>>>> spectrums.
->>>>>>>>>>>>
->>>>>>>>>>>> d) RG, RGBW and probably other LED combinations exist.
->>>>>>>>>>>>
->>>>>>>>>>>> e) Not all "red" LEDs will produce same wavelength. Similar
->>>>>>>>>>>> differences will exist for other colors.
->>>>>>>>>>>>
->>>>>>>>>>>> f) We have existing RGB LEDs represented as three separate
->>>>>>>>>>>> monochromatic LEDs in sysfs.
->>>>>>>>>>>
->>>>>>>>>>> One general question: do you have any solutions in store?
->>>>>>>>>>>
->>>>>>>>>>> [0] http://www.ti.com/lit/ug/tiduee6/tiduee6.pdf
->>>>>>>>>>> [1] http://www.everlight.com/file/ProductFile/19-337-R6GHBHC-A01-2T.pdf
->>>>>>>>>>>
->>>>>>>>>>
->>>>>>>>>
->>>>>>>>> I just wanted to point out that there are 4 total devices right now that use the same mapping
->>>>>>>>>
->>>>>>>>> LP5018, LP5024, LP5030 and the LP5036.
->>>>>>>>>
->>>>>>>>> I can implement what ever we would like to I just need to know what to design against.
->>>>>>>>
->>>>>>>> As you can see from the discussion in this thread it may take some
->>>>>>>> time to work out the interface satisfying everyone. I made some design
->>>>>>>> proposal, but Pavel had no warm word for it. It would be easier if
->>>>>>>> we had more opinions.
->>>>>>>
->>>>>>> I got it from the threads and just the time invested in the FW and HSV.
->>>>>>>
->>>>>>>>
->>>>>>>> How do you feel about using brightness file for setting LEDn_BRIGHTNESS?
->>>>>>>
->>>>>>> I am using that now.  The brightness file will adjust the overall brightness of the LED group
->>>>>>> or bank pending on how the LEDs are grouped in the DT file.
->>>>>>>
->>>>>>>>
->>>>>>>> Does increasing LEDn_BRIGHTNESS value (i.e. color intensity) feel like
->>>>>>>> increasing color lightness (i.e. the pattern presented in the video [0]
->>>>>>>> starting from 1:22)?
->>>>>>>
->>>>>>> No unfortunately this is why I introduced the new files to control the individual RGB intensities
->>>>>>> so that the designers can set, tune, create color variations or patterns like the video.
->>>>>>>
->>>>>>> The RGB group brightness would be independent based on lighting conditions, enclosures and diffusers.
->>>>>>> So you could technically be changing color and overall brightness virtually simultaneously
->>>>>>
->>>>>> Oh, so this is surprising. Now it gets even more obscure to me.
->>>>>>
->>>>>> It would be really helpful if we could see a video showing
->>>>>> the LED effects with regard to the applied settings.
->>>>>
->>>>> Well I am doing a test off the command line to ensure the user space can interface with the RGB LED.
->>>>>
->>>>> I can ping someone in product development to see the application of this device if that would help.
->>>>> We did give them a test driver to work on their features but told them the driver is not final until it
->>>>> is in the mainline kernel
->>>>>
->>>>> Dan
->>>>>
->>>>>>
->>>>>>>>> But keep in mind I still need to invest my time in the other TI-lmu patches on my list to complete.
->>>>>>>>
->>>>>>>> Do what you deem most suitable for you. We are here only to help
->>>>>>>> merging the patches, but keeping in mind that kernel interface once
->>>>>>>> introduced must be preserved forever. Therefore we need to do our
->>>>>>>> best to make the best possible design decisions.
->>>>>>>>
->>>>>>>> [0] https://www.youtube.com/watch?v=qdt-alh8i6E
->>>>>>>>
->>>>>>>
->>>>>>> I understand.  Maybe I can make the files generic to use for either control or individual control.
->>>>>>>
->>>>>>> We can probably define new ABI's until either HSV or DT frameworks get going.  And them make the file presentation
->>>>>>> configurable and default to the new files.
->>>>>>
->>>>>> I am leaning towards it. Just commented on your patches.
->>>>>>
->>>>>
->>>>>
->>>>
->>>> Asked the HW team for videos this is what they sent
->>>> https://training.ti.com/lp50x-led-drivers-achieve-optimal-color-brightness-zero-audible-noise
->>>> https://training.ti.com/how-configuring-led-brightness-color-and-patterns-lp50x-gui-tool
->>>>
->>>> Not sure how helpful these would be
->>>
->>> Thank you for the videos - they are helpful, and they confirm my first
->>> impression regarding the LEDn_BRIGHTNESS effect. In is shown in the
->>> second video starting from 3:37.
->>>
->>> This is the same what I was asking about previously (video [0] from
->>> previous message starting from 1:22). For me this looks similarly
->>> to increasing V of HSV or L of HSL [1].
->>>
->>> You denied, so either we interpret colors differently, or there was
->>> some misunderstanding.
->>>
->>> [1] http://hslpicker.com
->>>
->>
->> Well I did indicate later that I could work on implementing against the HSV/RGB framework and fit that into
-> 
-> I just wanted to make sure that brightness file semantics fits
-> for this particular LEDn_BRIGHTNESS feature.
-> Now it is clear to me - yes it does.
-> 
-> For RGB LED modules brightness file would map to LEDn_BRIGHTNESS and
-> red,green,blue files would map to OUTn_COLOR registers.
-> 
-> For banks brightness file would map to BANK_BRIGHTNESS and
-> red,green,blue files would map to BANK_n_COLOR.
-> 
-> I wouldn't bother with cases when someone connects LEDs of
-> other colors - he is on his own then.
-> 
-> If you want to have the driver merged quickly then you can
-> use this interface. We will convert it to LED RGB class once
-> it is ready. I presume that the interface I outlined will be
-> supported by one of the brightness-mode's - I like the name
-> proposed by Vesa.
-> 
-> Effectively - no need to implement HSV algorithm in your driver.
-> 
+I am continuing to build on the work Juerg, Tycho and Julian have done
+on XPFO. After the last round of updates, we were seeing very
+significant performance penalties when stale TLB entries were flushed
+actively after an XPFO TLB update. Benchmark for measuring performance
+is kernel build using parallel make. To get full protection from
+ret2dir attackes, we must flush stale TLB entries. Performance
+penalty from flushing stale TLB entries goes up as the number of
+cores goes up. On a desktop class machine with only 4 cores,
+enabling TLB flush for stale entries causes system time for "make
+-j4" to go up by a factor of 2.614x but on a larger machine with 96
+cores, system time with "make -j60" goes up by a factor of 26.366x!
+I have been working on reducing this performance penalty.
 
-Not quickly merged.  I would prefer it to be correct.
+I implemented a solution to reduce performance penalty and
+that has had large impact. When XPFO code flushes stale TLB entries,
+it does so for all CPUs on the system which may include CPUs that
+may not have any matching TLB entries or may never be scheduled to
+run the userspace task causing TLB flush. Problem is made worse by
+the fact that if number of entries being flushed exceeds
+tlb_single_page_flush_ceiling, it results in a full TLB flush on
+every CPU. A rogue process can launch a ret2dir attack only from a
+CPU that has dual mapping for its pages in physmap in its TLB. We
+can hence defer TLB flush on a CPU until a process that would have
+caused a TLB flush is scheduled on that CPU. I have added a cpumask
+to task_struct which is then used to post pending TLB flush on CPUs
+other than the one a process is running on. This cpumask is checked
+when a process migrates to a new CPU and TLB is flushed at that
+time. I measured system time for parallel make with unmodified 4.20
+kernel, 4.20 with XPFO patches before this optimization and then
+again after applying this optimization. Here are the results:
 
-So you are saying I need to present brightness, red, blue and green files to the user space?
+Hardware: 96-core Intel Xeon Platinum 8160 CPU @ 2.10GHz, 768 GB RAM
+make -j60 all
 
-That would work for me.
+4.20				915.183s
+4.20+XPFO			24129.354s	26.366x
+4.20+XPFO+Deferred flush	1216.987s	 1.330xx
 
-There were a few proposals in a very lengthy chain so I want to be clear on the interfaces.
 
-Dan
+Hardware: 4-core Intel Core i5-3550 CPU @ 3.30GHz, 8G RAM
+make -j4 all
 
->> the LP5024 driver.  Only issue I see is mapping of the LED color to the correct output.  I know what is recommended
->> in the data sheet but that does not mean that is what the developers will do.  We cannot always guarantee that
->> the red LEDs will be on OUT0, OUT3, OUT6 or on BANK A
->>
->> But it is not part of the LED class yet I would have to pull in the patch to enable it.
->>
->> What is the thought on this?  Would the HSV/RGB class be pulled in as a part of the LP5024 driver?
->> I don't want to put to much effort into code that will have to wait.
->>
->> Dan
->>
-> 
+4.20				607.671s
+4.20+XPFO			1588.646s	2.614x
+4.20+XPFO+Deferred flush	794.473s	1.307xx
 
+30+% overhead is still very high and there is room for improvement.
+Dave Hansen had suggested batch updating TLB entries and Tycho had
+created an initial implementation but I have not been able to get
+that to work correctly. I am still working on it and I suspect we
+will see a noticeable improvement in performance with that. In the
+code I added, I post a pending full TLB flush to all other CPUs even
+when number of TLB entries being flushed on current CPU does not
+exceed tlb_single_page_flush_ceiling. There has to be a better way
+to do this. I just haven't found an efficient way to implemented
+delayed limited TLB flush on other CPUs.
+
+I am not entirely sure if switch_mm_irqs_off() is indeed the right
+place to perform the pending TLB flush for a CPU. Any feedback on
+that will be very helpful. Delaying full TLB flushes on other CPUs
+seems to help tremendously, so if there is a better way to implement
+the same thing than what I have done in patch 16, I am open to
+ideas.
+
+Performance with this patch set is good enough to use these as
+starting point for further refinement before we merge it into main
+kernel, hence RFC.
+
+Since not flushing stale TLB entries creates a false sense of
+security, I would recommend making TLB flush mandatory and eliminate
+the "xpfotlbflush" kernel parameter (patch "mm, x86: omit TLB
+flushing by default for XPFO page table modifications").
+
+What remains to be done beyond this patch series:
+
+1. Performance improvements
+2. Remove xpfotlbflush parameter
+3. Re-evaluate the patch "arm64/mm: Add support for XPFO to swiotlb"
+   from Juerg. I dropped it for now since swiotlb code for ARM has
+   changed a lot in 4.20.
+4. Extend the patch "xpfo, mm: Defer TLB flushes for non-current
+   CPUs" to other architectures besides x86.
+
+
+---------------------------------------------------------
+
+Juerg Haefliger (5):
+  mm, x86: Add support for eXclusive Page Frame Ownership (XPFO)
+  swiotlb: Map the buffer if it was unmapped by XPFO
+  arm64/mm: Add support for XPFO
+  arm64/mm, xpfo: temporarily map dcache regions
+  lkdtm: Add test for XPFO
+
+Julian Stecklina (4):
+  mm, x86: omit TLB flushing by default for XPFO page table
+    modifications
+  xpfo, mm: remove dependency on CONFIG_PAGE_EXTENSION
+  xpfo, mm: optimize spinlock usage in xpfo_kunmap
+  EXPERIMENTAL: xpfo, mm: optimize spin lock usage in xpfo_kmap
+
+Khalid Aziz (2):
+  xpfo, mm: Fix hang when booting with "xpfotlbflush"
+  xpfo, mm: Defer TLB flushes for non-current CPUs (x86 only)
+
+Tycho Andersen (5):
+  mm: add MAP_HUGETLB support to vm_mmap
+  x86: always set IF before oopsing from page fault
+  xpfo: add primitives for mapping underlying memory
+  arm64/mm: disable section/contiguous mappings if XPFO is enabled
+  mm: add a user_virt_to_phys symbol
+
+ .../admin-guide/kernel-parameters.txt         |   2 +
+ arch/arm64/Kconfig                            |   1 +
+ arch/arm64/mm/Makefile                        |   2 +
+ arch/arm64/mm/flush.c                         |   7 +
+ arch/arm64/mm/mmu.c                           |   2 +-
+ arch/arm64/mm/xpfo.c                          |  58 ++++
+ arch/x86/Kconfig                              |   1 +
+ arch/x86/include/asm/pgtable.h                |  26 ++
+ arch/x86/include/asm/tlbflush.h               |   1 +
+ arch/x86/mm/Makefile                          |   2 +
+ arch/x86/mm/fault.c                           |  10 +
+ arch/x86/mm/pageattr.c                        |  23 +-
+ arch/x86/mm/tlb.c                             |  27 ++
+ arch/x86/mm/xpfo.c                            | 171 ++++++++++++
+ drivers/misc/lkdtm/Makefile                   |   1 +
+ drivers/misc/lkdtm/core.c                     |   3 +
+ drivers/misc/lkdtm/lkdtm.h                    |   5 +
+ drivers/misc/lkdtm/xpfo.c                     | 194 ++++++++++++++
+ include/linux/highmem.h                       |  15 +-
+ include/linux/mm.h                            |   2 +
+ include/linux/mm_types.h                      |   8 +
+ include/linux/page-flags.h                    |  13 +
+ include/linux/sched.h                         |   9 +
+ include/linux/xpfo.h                          |  90 +++++++
+ include/trace/events/mmflags.h                |  10 +-
+ kernel/dma/swiotlb.c                          |   3 +-
+ mm/Makefile                                   |   1 +
+ mm/mmap.c                                     |  19 +-
+ mm/page_alloc.c                               |   3 +
+ mm/util.c                                     |  32 +++
+ mm/xpfo.c                                     | 247 ++++++++++++++++++
+ security/Kconfig                              |  29 ++
+ 32 files changed, 974 insertions(+), 43 deletions(-)
+ create mode 100644 arch/arm64/mm/xpfo.c
+ create mode 100644 arch/x86/mm/xpfo.c
+ create mode 100644 drivers/misc/lkdtm/xpfo.c
+ create mode 100644 include/linux/xpfo.h
+ create mode 100644 mm/xpfo.c
 
 -- 
-------------------
-Dan Murphy
+2.17.1
+
