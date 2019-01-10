@@ -2,102 +2,120 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BA08C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 19:01:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD797C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 19:03:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F410621841
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 19:01:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A7384208E3
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 19:03:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729118AbfAJTB5 (ORCPT
+        id S1729216AbfAJTDu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 14:01:57 -0500
-Received: from mout.gmx.net ([212.227.17.20]:33763 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728572AbfAJTB5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 14:01:57 -0500
-Received: from [91.14.65.202] ([91.14.65.202]) by web-mail.gmx.net
- (3c-app-gmx-bs35.server.lan [172.19.170.87]) (via HTTP); Thu, 10 Jan 2019
- 20:01:37 +0100
+        Thu, 10 Jan 2019 14:03:50 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:57780 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728297AbfAJTDt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 14:03:49 -0500
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x0AIx0XT068949
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 14:03:47 -0500
+Received: from e15.ny.us.ibm.com (e15.ny.us.ibm.com [129.33.205.205])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2px9mvpfd8-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 14:03:47 -0500
+Received: from localhost
+        by e15.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Thu, 10 Jan 2019 19:03:46 -0000
+Received: from b01cxnp22033.gho.pok.ibm.com (9.57.198.23)
+        by e15.ny.us.ibm.com (146.89.104.202) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 10 Jan 2019 19:03:41 -0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0AJ3e1Q16908306
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 10 Jan 2019 19:03:40 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 67741B2064;
+        Thu, 10 Jan 2019 19:03:40 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4725CB205F;
+        Thu, 10 Jan 2019 19:03:40 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.88])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Thu, 10 Jan 2019 19:03:40 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 2EDD916C5F90; Thu, 10 Jan 2019 11:03:41 -0800 (PST)
+Date:   Thu, 10 Jan 2019 11:03:41 -0800
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     Alan Stern <stern@rowland.harvard.edu>
+Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        mingo@kernel.org, parri.andrea@gmail.com, will.deacon@arm.com,
+        peterz@infradead.org, boqun.feng@gmail.com, npiggin@gmail.com,
+        dhowells@redhat.com, j.alglave@ucl.ac.uk, luc.maranget@inria.fr,
+        akiyks@gmail.com, willy@infradead.org
+Subject: Re: [PATCH RFC memory-model 0/6] LKMM updates
+Reply-To: paulmck@linux.ibm.com
+References: <20190109210706.GA27268@linux.ibm.com>
+ <Pine.LNX.4.44L0.1901101046480.1497-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
-Message-ID: <trinity-0da588a3-1277-4421-ad6b-1f6aeb129dd6-1547146897687@3c-app-gmx-bs35>
-From:   "Frank Wunderlich" <frank-w@public-files.de>
-To:     "Daniel Vetter" <daniel@ffwll.ch>
-Cc:     "CK Hu" <ck.hu@mediatek.com>,
-        "Philipp Zabel" <p.zabel@pengutronix.de>,
-        "David Airlie" <airlied@linux.ie>,
-        "Matthias Brugger" <matthias.bgg@gmail.com>,
-        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        "Linux ARM" <linux-arm-kernel@lists.infradead.org>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-mediatek@lists.infradead.org>,
-        "Alexander Ryabchenko" <d3adme4t@gmail.com>
-Subject: Aw: Re: [PATCH] drm/mediatek: Add MTK Framebuffer-Device (mt7623)
-Content-Type: text/plain; charset=UTF-8
-Date:   Thu, 10 Jan 2019 20:01:37 +0100
-Importance: normal
-Sensitivity: Normal
-In-Reply-To: <CAKMK7uEqxz4TAt_iwEC+dMWboVxCeCduyABsSwD0Ns7k=Z_UWA@mail.gmail.com>
-References: <20190102084917.4049-1-frank-w@public-files.de>
- <20190107103640.GH21184@phenom.ffwll.local>
- <CAKMK7uEqxz4TAt_iwEC+dMWboVxCeCduyABsSwD0Ns7k=Z_UWA@mail.gmail.com>
-X-UI-Message-Type: mail
-X-Priority: 3
-X-Provags-ID: V03:K1:xedABUXpNk/nNIw+pzn6H/6zhL8w0LyGmHIfFGWyhpMYu2A/+dCAzn6j9eXepGOFzS24L
- JV/TUt0pKZMfDb4/x9wsMXXNjJkKGUfZD9MFnaOjF1qyz1G+7LpRFjAn5xFwKhK8f2Ti1/1iuRhL
- OTYVw0t/pIHNXEu41Ax/n9IMA8SzqjPJXCYlw+Cr3IuGvFdilFbfsRU5DcCcGgDGbtJkAA1PjAg9
- sYfnCpRG6Rhy5W8P2LvX8vVGKVuKvq2fl7tux3uHtHmp8SUDa50zNti33p1QaVSgpqrz0LKyuvPi
- a4=
-X-UI-Out-Filterresults: notjunk:1;V03:K0:lqvXuVTiSD8=:DRKehKc2DdRFIpMmuNF02M
- XCSxz5gW/zZ9h9D6KeaZjQ4tQJj039IaoTzsJRSKjLMLoSQxbxPlsf9s8vfBnyHBlHOjTaLKl
- cOmB6ACA2677K6JZ92GDCmikdyWPwvk+Rvj194TN5qTOB70CgPNDCIwPd2q5xKOV7B19keZdQ
- qdqTLLse+BpP+tCKrF2VS+faT/0qh4XN9+tSMKZRF7+DnyF7Wme4PAVcgvIXjpL4ytQ73gvNj
- J6ig/WRoBa7BDXRT0Gi7PAcJbOaZ+o1kq+XmW5a4OFOT3nyc1Xz80f6qKBQRx9cCElKMvSUsW
- LgWOxysay4FT81G3xOy+fdiQiY3Gbl3e4RBS1HTM12pLGLto+F+RAPpSbkyofe/XYKTSjtORq
- 02ASACd0WCObgtmB3T7zKHeOEX/fMcpMcsfTCUkVIcgdwoVYnYk+qXZv+RkxTJHWkn1Ku9NdW
- K3mZDcstElJKjXLY9DymO4LBBrYA0Sw2G3olDCZXCywkLXIpX/Vc8+v9J65XmbMIOUpVPS3iI
- 0VSdc+nvZhYcweDQYEWev3xmQbwfwzd4WhKU/OVOiyLDAADJdIhc+AmME8Wyt+iGGX1cbLQpR
- XiFv2PdCN/O0A=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Pine.LNX.4.44L0.1901101046480.1497-100000@iolanthe.rowland.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 19011019-0068-0000-0000-00000380C73E
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010380; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000274; SDB=6.01144569; UDB=6.00595964; IPR=6.00924833;
+ MB=3.00025072; MTD=3.00000008; XFM=3.00000015; UTC=2019-01-10 19:03:45
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19011019-0069-0000-0000-000047155B09
+Message-Id: <20190110190341.GV1215@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-10_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=1 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901100147
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Daniel,
-
-> > Would be good to use the new generic fbdev emulation code here, for even
-> > less code. Or at least know why this isn't possible to use for mtk (and
-> > maybe address that in the core code). Hand-rolling fbdev code shouldn't be
-> > needed anymore.
+On Thu, Jan 10, 2019 at 10:47:26AM -0500, Alan Stern wrote:
+> On Wed, 9 Jan 2019, Paul E. McKenney wrote:
 > 
-> Back on the mailing list, no private replies please:
+> > Hello!
+> > 
+> > This series contains updates for the Linux-kernel memory model:
+> > 
+> > 1-3.	Add SRCU support, courtesy of Alan Stern.
+> > 
+> > 4.	Update README for adding of SRCU support.
+> > 
+> > 5.	Update memory-barriers.txt on enforcing heavy ordering for
+> > 	port-I/O accesses, courtesy of Will Deacon.  This one needs
+> > 	an ack, preferably by someone from Intel.  Matthew Wilcox
+> > 	posted some feedback from an Intel manual here, which might
+> > 	be considered to be a close substitute, but...  ;-)
+> > 
+> > 	http://lkml.kernel.org/r/20181127192234.GF10377@bombadil.infradead.org
+> > 
+> > 6.	Update Documentation/explanation.txt to include SRCU support,
+> > 	courtesy of Alan Stern.
+> > 
+> > 7.	Dynamically check SRCU lock-to-unlock matching, courtesy of
+> > 	Luc Maranget.  This needs an ack.
+> 
+> Does this one still need an ack?  If so, you may apply mine.
 
-i don't wanted to spam all people with dumb questions ;)
+Applied, thank you!
 
-> For examples please grep for drm_fbdev_generic_setup(). There's also a
-> still in-flight series from Gerd Hoffmann to convert over bochs. That,
-> plus all the kerneldoc linked from there should get you started.
-> -Daniel
+							Thanx, Paul
 
-this is one of google best founds if i search for drm_fbdev_generic_setup:
-
-https://lkml.org/lkml/2018/12/19/305
-
-not very helpful...
-
-so i tried kernel-doc
-
-https://www.kernel.org/doc/html/latest/gpu/drm-kms-helpers.html?highlight=drm_fbdev_generic_setup#c.drm_fbdev_generic_setup
-
-which is nice function-reference but i've found no generic workflow
-
-as the posted driver is "only" a driver ported from kernel 4.4 by Alexander, i don't know if this new framework can be used and which parts need to be changed. I only try to bring his code Mainline....
-Maybe CK Hu can help here because driver is originally from him and he knows internals. Or maybe you can help here?
-
-i personally make my first steps as spare-time kernel-developer :)
-
-regards Frank
