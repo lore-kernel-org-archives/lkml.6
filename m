@@ -2,137 +2,146 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F4C7C43444
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 17:38:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2331CC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 17:39:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3CC2420675
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 17:38:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EA55B208E3
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 17:39:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tuh8eZQ6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730434AbfAJRix (ORCPT
+        id S1730488AbfAJRjv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 12:38:53 -0500
-Received: from mga09.intel.com ([134.134.136.24]:7306 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729890AbfAJRix (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 12:38:53 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jan 2019 09:38:51 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,462,1539673200"; 
-   d="scan'208";a="113735511"
-Received: from vanderss-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.254.152])
-  by fmsmga007.fm.intel.com with ESMTP; 10 Jan 2019 09:38:47 -0800
-Date:   Thu, 10 Jan 2019 19:38:45 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>
-Cc:     zohar@linux.ibm.com, david.safford@ge.com, monty.wiseman@ge.com,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com
-Subject: Re: [PATCH v7 1/5] tpm: dynamically allocate the allocated_banks
- array
-Message-ID: <20190110173845.GG6589@linux.intel.com>
-References: <20181213102945.30946-1-roberto.sassu@huawei.com>
- <20181213102945.30946-2-roberto.sassu@huawei.com>
- <20181220145500.GA10652@linux.intel.com>
- <0900a894-e17b-edc8-fa30-db7d16665082@huawei.com>
- <20181222000321.GB8954@linux.intel.com>
- <7cc91a22-b09b-8bdc-c225-adff68e1f69e@huawei.com>
+        Thu, 10 Jan 2019 12:39:51 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:36844 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729890AbfAJRju (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 12:39:50 -0500
+Received: by mail-wr1-f65.google.com with SMTP id u4so12368239wrp.3
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 09:39:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=irOkNdKGnGKV4MKWUHOaZlcsapchqvro1r7W9fjm8nE=;
+        b=tuh8eZQ6TG0E2a21sC1juhkXfN4SZ/eDVt9IAN29cgdlO4uB0JPbEY7KpqRwDRuadN
+         JlqA5oI7j2h+KXsXb4/bpQ+IwoL1jO3ghBl1FvOMElWmC2ajS7veNaPPaqtjWxZ040x3
+         blHQHb1n3wZE/c9xA7KNCxZO8+Ve5p8K08DyUOk4H+IdYC9FUw9tuAlrxjR0yjFAp/hX
+         skflag0fnOvqDX5kxzNFWbxzI3QyqyuHCiEZRR434JToXgjlTZmzwJigIa1eDJa5JoFn
+         fSDv30xgBLEBu22MmDIK/xhz4c+bt2fHswgqIJwZCB4Ezrb0FCet7Qd9+axDsNNPTiSU
+         kg7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=irOkNdKGnGKV4MKWUHOaZlcsapchqvro1r7W9fjm8nE=;
+        b=IcgF5twyTCq2OxEtfHoN7cjUnpgsXeDr8yFiIQ2jfQlWjJ1wlOaMxZGw7EBD7KzQvz
+         tBF7YTYJx3byQFxIErSnotzTaz5ntowcRUnkMZSqNDM/ZPuaMaZazqzWyc2C44H3vWZ8
+         KjqRsNR6+Q1NABsRGkf8rkUQ6O7nR7xO+A5jMgaT2kk8cYEnbpTkJh5INhVSx0A8qasR
+         w6EWJ6i+OTI5pL2xqjoV/mvhqvlyjEpn14g8c+5QJz3SGM7XseCIj8TTrchQPhK81H5U
+         fmlik4xa8lo9j7TgXb+vxKGb7/Ci5yCJHMqldNU/vMNPDe252lUtgGsKiXuWkoStr3Qt
+         3/NA==
+X-Gm-Message-State: AJcUukffS7ZZQFkdocK8r7IpDlRIC4aVHX5GPQa2rv1oGssP+T+mqV7c
+        MlMTLg43BXIpPZGPGwgRaZDC16aHbg==
+X-Google-Smtp-Source: ALg8bN64ES443wfqY0MQF0KQ341Vd1+N7SalgKsll/kmF54+8nB1dfLwPqMKgKcc19NyrgPEAeek7Q==
+X-Received: by 2002:adf:c612:: with SMTP id n18mr9874066wrg.174.1547141988567;
+        Thu, 10 Jan 2019 09:39:48 -0800 (PST)
+Received: from localhost (host89-130-dynamic.43-79-r.retail.telecomitalia.it. [79.43.130.89])
+        by smtp.gmail.com with ESMTPSA id c8sm51844622wrx.42.2019.01.10.09.39.47
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 10 Jan 2019 09:39:48 -0800 (PST)
+Date:   Thu, 10 Jan 2019 18:39:47 +0100
+From:   Andrea Righi <righi.andrea@gmail.com>
+To:     Steven Rostedt <rostedt@goodmis.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>
+Cc:     Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org
+Subject: [PATCH] tracing/kprobes: fix NULL pointer dereference in
+ trace_kprobe_create()
+Message-ID: <20190110173947.GA19243@xps-13>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <7cc91a22-b09b-8bdc-c225-adff68e1f69e@huawei.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 07, 2019 at 11:06:33AM +0100, Roberto Sassu wrote:
-> On 12/22/2018 1:03 AM, Jarkko Sakkinen wrote:
-> > On Fri, Dec 21, 2018 at 10:40:09AM +0100, Roberto Sassu wrote:
-> > > On 12/20/2018 3:55 PM, Jarkko Sakkinen wrote:
-> > > > On Thu, Dec 13, 2018 at 11:29:41AM +0100, Roberto Sassu wrote:
-> > > > > This patch renames active_banks (member of tpm_chip) to allocated_banks,
-> > > > > stores the number of allocated PCR banks in nr_allocated_banks (new member
-> > > > > of tpm_chip), and replaces the static array with a pointer to a dynamically
-> > > > > allocated array.
-> > > > > 
-> > > > > tpm2_get_pcr_allocation() determines if a PCR bank is allocated by checking
-> > > > > the mask in the TPML_PCR_SELECTION structure returned by the TPM for
-> > > > > TPM2_Get_Capability(). If a bank is not allocated, the TPM returns that
-> > > > > bank in TPML_PCR_SELECTION, with all bits in the mask set to zero. In this
-> > > > > case, the bank is not included in chip->allocated_banks, to avoid that TPM
-> > > > > driver users unnecessarily calculate a digest for that bank.
-> > > > > 
-> > > > > One PCR bank with algorithm set to SHA1 is always allocated for TPM 1.x.
-> > > > > 
-> > > > > As a consequence of the introduction of nr_allocated_banks,
-> > > > > tpm_pcr_extend() does not check anymore if the algorithm stored in tpm_chip
-> > > > > is equal to zero.
-> > > > > 
-> > > > > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> > > > > Tested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> > > > > ---
-> > > > >    drivers/char/tpm/tpm-chip.c      |  1 +
-> > > > >    drivers/char/tpm/tpm-interface.c | 18 +++++++++--------
-> > > > >    drivers/char/tpm/tpm.h           |  3 ++-
-> > > > >    drivers/char/tpm/tpm1-cmd.c      | 10 ++++++++++
-> > > > >    drivers/char/tpm/tpm2-cmd.c      | 34 ++++++++++++++++++++++----------
-> > > > >    5 files changed, 47 insertions(+), 19 deletions(-)
-> > > > > 
-> > > > > diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
-> > > > > index 32db84683c40..ce851c62bb68 100644
-> > > > > --- a/drivers/char/tpm/tpm-chip.c
-> > > > > +++ b/drivers/char/tpm/tpm-chip.c
-> > > > > @@ -160,6 +160,7 @@ static void tpm_dev_release(struct device *dev)
-> > > > >    	kfree(chip->log.bios_event_log);
-> > > > >    	kfree(chip->work_space.context_buf);
-> > > > >    	kfree(chip->work_space.session_buf);
-> > > > > +	kfree(chip->allocated_banks);
-> > > > >    	kfree(chip);
-> > > > >    }
-> > > > > diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-> > > > > index d9439f9abe78..7b80919228be 100644
-> > > > > --- a/drivers/char/tpm/tpm-interface.c
-> > > > > +++ b/drivers/char/tpm/tpm-interface.c
-> > > > > @@ -488,8 +488,7 @@ EXPORT_SYMBOL_GPL(tpm_pcr_read);
-> > > > >    int tpm_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, const u8 *hash)
-> > > > >    {
-> > > > >    	int rc;
-> > > > > -	struct tpm2_digest digest_list[ARRAY_SIZE(chip->active_banks)];
-> > > > > -	u32 count = 0;
-> > > > > +	struct tpm2_digest *digest_list;
-> > > > >    	int i;
-> > > > >    	chip = tpm_find_get_ops(chip);
-> > > > > @@ -497,16 +496,19 @@ int tpm_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, const u8 *hash)
-> > > > >    		return -ENODEV;
-> > > > >    	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
-> > > > > -		memset(digest_list, 0, sizeof(digest_list));
-> > > > > +		digest_list = kcalloc(chip->nr_allocated_banks,
-> > > > > +				      sizeof(*digest_list), GFP_KERNEL);
-> > > > > +		if (!digest_list)
-> > > > > +			return -ENOMEM;
-> > > > 
-> > > > You could preallocate digest list and place it to struct tpm_chip
-> > > > instead of doing it everytime tpm_pcr_extend() called.
-> > > 
-> > > This part will be removed with patch 5/5.
-> > 
-> > Even if it did, it does not make this patch unbroken.
-> 
-> Can two calls to tpm_pcr_extend() be executed at the same time?
-> 
-> If yes, the digest list should be protected by a mutex.
+It is possible to trigger a NULL pointer dereference by writing an
+incorrectly formatted string to krpobe_events (omitting the symbol).
 
-Good question: the answer is no. Mutex locking is done inside the
-transmit flow ATM.
+Example:
 
-/Jarkko
+ echo "r:event_1 " >> /sys/kernel/debug/tracing/kprobe_events
+
+That triggers this:
+
+ BUG: unable to handle kernel NULL pointer dereference at 0000000000000000
+ #PF error: [normal kernel read fault]
+ PGD 0 P4D 0
+ Oops: 0000 [#1] SMP PTI
+ CPU: 6 PID: 1757 Comm: bash Not tainted 5.0.0-rc1+ #125
+ Hardware name: Dell Inc. XPS 13 9370/0F6P3V, BIOS 1.5.1 08/09/2018
+ RIP: 0010:kstrtoull+0x2/0x20
+ Code: 28 00 00 00 75 17 48 83 c4 18 5b 41 5c 5d c3 b8 ea ff ff ff eb e1 b8 de ff ff ff eb da e8 d6 36 bb ff 66 0f 1f 44 00 00 31 c0 <80> 3f 2b 55 48 89 e5 0f 94 c0 48 01 c7 e8 5c ff ff ff 5d c3 66 2e
+ RSP: 0018:ffffb5d482e57cb8 EFLAGS: 00010246
+ RAX: 0000000000000000 RBX: 0000000000000001 RCX: ffffffff82b12720
+ RDX: ffffb5d482e57cf8 RSI: 0000000000000000 RDI: 0000000000000000
+ RBP: ffffb5d482e57d70 R08: ffffa0c05e5a7080 R09: ffffa0c05e003980
+ R10: 0000000000000000 R11: 0000000040000000 R12: ffffa0c04fe87b08
+ R13: 0000000000000001 R14: 000000000000000b R15: ffffa0c058d749e1
+ FS:  00007f137c7f7740(0000) GS:ffffa0c05e580000(0000) knlGS:0000000000000000
+ CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+ CR2: 0000000000000000 CR3: 0000000497d46004 CR4: 00000000003606e0
+ Call Trace:
+  ? trace_kprobe_create+0xb6/0x840
+  ? _cond_resched+0x19/0x40
+  ? _cond_resched+0x19/0x40
+  ? __kmalloc+0x62/0x210
+  ? argv_split+0x8f/0x140
+  ? trace_kprobe_create+0x840/0x840
+  ? trace_kprobe_create+0x840/0x840
+  create_or_delete_trace_kprobe+0x11/0x30
+  trace_run_command+0x50/0x90
+  trace_parse_run_command+0xc1/0x160
+  probes_write+0x10/0x20
+  __vfs_write+0x3a/0x1b0
+  ? apparmor_file_permission+0x1a/0x20
+  ? security_file_permission+0x31/0xf0
+  ? _cond_resched+0x19/0x40
+  vfs_write+0xb1/0x1a0
+  ksys_write+0x55/0xc0
+  __x64_sys_write+0x1a/0x20
+  do_syscall_64+0x5a/0x120
+  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+Fix by doing the proper argument check when a NULL symbol is passed in
+trace_kprobe_create().
+
+Signed-off-by: Andrea Righi <righi.andrea@gmail.com>
+---
+ kernel/trace/trace_kprobe.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/kernel/trace/trace_kprobe.c b/kernel/trace/trace_kprobe.c
+index 5c19b8c41c7e..76410ceeff50 100644
+--- a/kernel/trace/trace_kprobe.c
++++ b/kernel/trace/trace_kprobe.c
+@@ -644,6 +644,8 @@ static int trace_kprobe_create(int argc, const char *argv[])
+ 
+ 	/* try to parse an address. if that fails, try to read the
+ 	 * input as a symbol. */
++	if (!argv[1])
++		return -EINVAL;
+ 	if (kstrtoul(argv[1], 0, (unsigned long *)&addr)) {
+ 		/* Check whether uprobe event specified */
+ 		if (strchr(argv[1], '/') && strchr(argv[1], ':'))
+-- 
+2.17.1
+
