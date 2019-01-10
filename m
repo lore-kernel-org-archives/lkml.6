@@ -2,391 +2,252 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,NORMAL_HTTP_TO_IP,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D194AC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 15:12:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D68AEC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 15:12:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 87CC2214DA
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 15:12:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B/bVunkj"
+	by mail.kernel.org (Postfix) with ESMTP id A3388214DA
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 15:12:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729724AbfAJPMN (ORCPT
+        id S1729736AbfAJPMP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 10:12:13 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:54465 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729654AbfAJPMF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 10:12:05 -0500
-Received: by mail-wm1-f68.google.com with SMTP id a62so11618364wmh.4;
-        Thu, 10 Jan 2019 07:12:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=dPEbKitF72oIdQ/RPl+3EGdYs90w0SygyRQzJLY8dAo=;
-        b=B/bVunkj4jcuMecOMYSesDt/pR5zdfw/hUFo3YY3mjBz94C8deePMnbxGVoLrrPl7h
-         VhdLiKnTiVJGHaCMJ6+3k24iD4qO1sAClabjRMLxQ7J0xw5CA1HXIzbezTgiWo0mhthx
-         ELao7cWp6T3I4XHPkjwLjfhxu6Vek4Mcy/yW0uPbRPLVV7c4BBs6WLXnUi+hBfH8UDDB
-         pkjmUrw4wGw/l7R9XNwLBvFC7tfACQWUDA3fqwmvyS3vQh7KnOQs4vW70d8Z7cJjAqhl
-         kRWmebz2+Di1gEMrz1NzDKFC+N+TqT+6sLtXSp+EY1Iji575w0gS5MEuMvHSSsgX5L9Z
-         i1PQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=dPEbKitF72oIdQ/RPl+3EGdYs90w0SygyRQzJLY8dAo=;
-        b=aBSiypdMQrIhIIvZqB1+qKY2HqoQplzKfGJU4x520AzyesLxXXnpcyoRw+8C9N3GRd
-         W0DQCYrJEv5jpB16AyjRVkKZx1GmPyavcpaZ10dX4uovUnucTQx8ukWIvrPdiogocD34
-         emOKzoc+MLx7uW4AbYha6QjWreyeh/dPDFL+ptdI1mtS6gF8trkQ08lsXTFsOhFrA1S+
-         THOIiiaCov5T32yXwrRYMLTXEwvP9Qu8N5tvO++G76hymWOxDU8LYZFsGX3FU2JCifeg
-         Dcq8VseU1qFXrUYcDAKwcpI0vNX3tR+aTKiLtoRvCvnySAsjgmbxh82BEpZIyTeY3bEp
-         1wGQ==
-X-Gm-Message-State: AJcUukfbdsXX/fx6kZC3SDdOasQ6LhZPZNnstcrn1ufRNaaQY8hZs4QC
-        6uhAvhk4grrP66gzjzthyi0=
-X-Google-Smtp-Source: ALg8bN5PjscPstWpvwgjkyYIkR7plY8A2il5EESK95ukzB6+muKl03Wi+Z5q7WVECPvatY2lea8XYg==
-X-Received: by 2002:a1c:1902:: with SMTP id 2mr10505115wmz.150.1547133122585;
-        Thu, 10 Jan 2019 07:12:02 -0800 (PST)
-Received: from localhost (pD9E51040.dip0.t-ipconnect.de. [217.229.16.64])
-        by smtp.gmail.com with ESMTPSA id j33sm90727273wre.91.2019.01.10.07.12.01
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 10 Jan 2019 07:12:01 -0800 (PST)
-Date:   Thu, 10 Jan 2019 16:12:00 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc:     adrian.hunter@intel.com, ulf.hansson@linaro.org,
-        jonathanh@nvidia.com, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org
-Subject: Re: [PATCH V7 2/2] mmc: tegra: HW Command Queue Support for Tegra
- SDMMC
-Message-ID: <20190110151200.GD25353@ulmo>
-References: <1546457808-18270-1-git-send-email-skomatineni@nvidia.com>
- <1546457808-18270-3-git-send-email-skomatineni@nvidia.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="IDYEmSnFhs3mNXr+"
-Content-Disposition: inline
-In-Reply-To: <1546457808-18270-3-git-send-email-skomatineni@nvidia.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Thu, 10 Jan 2019 10:12:15 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:27136 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729704AbfAJPMJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 10:12:09 -0500
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 43b8c6315rz9v0fF;
+        Thu, 10 Jan 2019 16:12:06 +0100 (CET)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id cLdCENG9OLwS; Thu, 10 Jan 2019 16:12:06 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 43b8c628hsz9v0f8;
+        Thu, 10 Jan 2019 16:12:06 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id C4F2A8B8A0;
+        Thu, 10 Jan 2019 16:12:07 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id yNLKDSW5i6XA; Thu, 10 Jan 2019 16:12:07 +0100 (CET)
+Received: from po16846vm.idsi0.si.c-s.fr (unknown [192.168.4.90])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 7E3768B89F;
+        Thu, 10 Jan 2019 16:12:07 +0100 (CET)
+Received: by po16846vm.idsi0.si.c-s.fr (Postfix, from userid 0)
+        id 29C976BF21; Thu, 10 Jan 2019 15:12:07 +0000 (UTC)
+Message-Id: <a2a5bdf662a72875c66fbf8c2ec2ec5186d5433c.1547132681.git.christophe.leroy@c-s.fr>
+In-Reply-To: <cover.1547132681.git.christophe.leroy@c-s.fr>
+References: <cover.1547132681.git.christophe.leroy@c-s.fr>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH v2 14/15] powerpc/8xx: don't disable large TLBs with
+ CONFIG_STRICT_KERNEL_RWX
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>, j.neuschaefer@gmx.net
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Date:   Thu, 10 Jan 2019 15:12:07 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This patch implements handling of STRICT_KERNEL_RWX with
+large TLBs directly in the TLB miss handlers.
 
---IDYEmSnFhs3mNXr+
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+To do so, etext and sinittext are aligned on 512kB boundaries
+and the miss handlers use 512kB pages instead of 8Mb pages for
+addresses close to the boundaries.
 
-On Wed, Jan 02, 2019 at 11:36:48AM -0800, Sowjanya Komatineni wrote:
-> This patch adds HW Command Queue for supported Tegra SDMMC
-> controllers.
->=20
-> As per SD Host 4.20 Spec for Host Control 1 Register, DMA Select
-> options supported are
->=20
-> With Host Version 4 Enable =3D 0,
-> b'00:SDMA, b'10:32-bit ADMA2, b'11:64-bit ADMA2
->=20
-> With Host Version 4 Enable =3D 1,
-> b'00:SDMA, b'10:ADMA2, b'11:ADMA3
-> Support for 32-bit or 64-bit system addressing of DMAs is selected
-> thru 64-bit Addressing in Host Control 2 register.
->=20
-> ADMA3 performs integrated descriptor and each command descriptor
-> is followed by ADMA2 descriptor. Command queuing need to fetch
-> command and transfer descriptors so need ADMA3 DMA Type.
->=20
-> Tegra SDMMC Host design prevents write access to BLOCK_COUNT
-> registers when CQE is enabled to prevent SW from updating block
-> size during Command Queue mode so need tegra specific sdhci
-> cqe callback.
->=20
-> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-> ---
->  drivers/mmc/host/Kconfig       |   1 +
->  drivers/mmc/host/sdhci-tegra.c | 107 +++++++++++++++++++++++++++++++++++=
-+++++-
->  drivers/mmc/host/sdhci.c       |  16 ++++--
->  drivers/mmc/host/sdhci.h       |   1 +
->  4 files changed, 120 insertions(+), 5 deletions(-)
->=20
-> diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
-> index 1b58739d9744..5aa2de2c7609 100644
-> --- a/drivers/mmc/host/Kconfig
-> +++ b/drivers/mmc/host/Kconfig
-> @@ -250,6 +250,7 @@ config MMC_SDHCI_TEGRA
->  	depends on ARCH_TEGRA
->  	depends on MMC_SDHCI_PLTFM
->  	select MMC_SDHCI_IO_ACCESSORS
-> +	select MMC_CQHCI
->  	help
->  	  This selects the Tegra SD/MMC controller. If you have a Tegra
->  	  platform with SD or MMC devices, say Y or M here.
-> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegr=
-a.c
-> index 7b95d088fdef..7beecd1da94a 100644
-> --- a/drivers/mmc/host/sdhci-tegra.c
-> +++ b/drivers/mmc/host/sdhci-tegra.c
-> @@ -33,6 +33,7 @@
->  #include <linux/ktime.h>
-> =20
->  #include "sdhci-pltfm.h"
-> +#include "cqhci.h"
-> =20
->  /* Tegra SDHOST controller vendor register definitions */
->  #define SDHCI_TEGRA_VENDOR_CLOCK_CTRL			0x100
-> @@ -89,6 +90,9 @@
->  #define NVQUIRK_NEEDS_PAD_CONTROL			BIT(7)
->  #define NVQUIRK_DIS_CARD_CLK_CONFIG_TAP			BIT(8)
-> =20
-> +/* SDMMC CQE Base Address for Tegra Host Ver 4.1 and Higher */
-> +#define SDHCI_TEGRA_CQE_BASE_ADDR			0xF000
-> +
->  struct sdhci_tegra_soc_data {
->  	const struct sdhci_pltfm_data *pdata;
->  	u32 nvquirks;
-> @@ -128,6 +132,7 @@ struct sdhci_tegra {
->  	u32 default_tap;
->  	u32 default_trim;
->  	u32 dqs_trim;
-> +	bool enable_hwcq;
->  };
-> =20
->  static u16 tegra_sdhci_readw(struct sdhci_host *host, int reg)
-> @@ -836,6 +841,49 @@ static void tegra_sdhci_voltage_switch(struct sdhci_=
-host *host)
->  		tegra_host->pad_calib_required =3D true;
->  }
-> =20
-> +static void sdhci_tegra_cqe_enable(struct mmc_host *mmc)
-> +{
-> +	struct cqhci_host *cq_host =3D mmc->cqe_private;
-> +	u32 cqcfg =3D 0;
-> +
-> +	/* Tegra SDMMC Controller design prevents write access to BLOCK_COUNT
-> +	 * registers when CQE is enabled.
-> +	 */
+It sets RO PP flags for addresses under sinittext.
 
-Block comments usually have the opening /* on a line by itself.
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+---
+ arch/powerpc/Kconfig                         |  2 ++
+ arch/powerpc/include/asm/nohash/32/mmu-8xx.h |  3 ++-
+ arch/powerpc/kernel/head_8xx.S               | 33 ++++++++++++++++++++++++++--
+ arch/powerpc/mm/8xx_mmu.c                    | 31 +++++++++++++++++++++++++-
+ arch/powerpc/mm/init_32.c                    |  2 +-
+ arch/powerpc/mm/mmu_decl.h                   |  2 +-
+ 6 files changed, 67 insertions(+), 6 deletions(-)
 
-> +	cqcfg =3D cqhci_readl(cq_host, CQHCI_CFG);
-> +	if (cqcfg & CQHCI_ENABLE)
-> +		cqhci_writel(cq_host, (cqcfg & ~CQHCI_ENABLE), CQHCI_CFG);
-> +
-> +	sdhci_cqe_enable(mmc);
-> +
-> +	if (cqcfg & CQHCI_ENABLE)
-> +		cqhci_writel(cq_host, cqcfg, CQHCI_CFG);
-> +
-> +}
-
-Extra blank line above.
-
-> +
-> +static void sdhci_tegra_dumpregs(struct mmc_host *mmc)
-> +{
-> +	sdhci_dumpregs(mmc_priv(mmc));
-> +}
-> +
-> +static u32 sdhci_tegra_cqhci_irq(struct sdhci_host *host, u32 intmask)
-> +{
-> +	int cmd_error =3D 0;
-> +	int data_error =3D 0;
-> +
-> +	if (!sdhci_cqe_irq(host, intmask, &cmd_error, &data_error))
-> +		return intmask;
-> +
-> +	cqhci_irq(host->mmc, intmask, cmd_error, data_error);
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct cqhci_host_ops sdhci_tegra_cqhci_ops =3D {
-> +	.enable	=3D sdhci_tegra_cqe_enable,
-> +	.disable =3D sdhci_cqe_disable,
-> +	.dumpregs =3D sdhci_tegra_dumpregs,
-> +};
-> +
->  static const struct sdhci_ops tegra_sdhci_ops =3D {
->  	.get_ro     =3D tegra_sdhci_get_ro,
->  	.read_w     =3D tegra_sdhci_readw,
-> @@ -989,6 +1037,7 @@ static const struct sdhci_ops tegra186_sdhci_ops =3D=
+diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
+index 3f6365f29c65..18744290c078 100644
+--- a/arch/powerpc/Kconfig
++++ b/arch/powerpc/Kconfig
+@@ -745,6 +745,7 @@ config ETEXT_SHIFT
+ 	int "_etext shift" if ETEXT_SHIFT_BOOL
+ 	range 17 28 if STRICT_KERNEL_RWX && PPC_BOOK3S_32
+ 	default 17 if STRICT_KERNEL_RWX && PPC_BOOK3S_32
++	default 19 if STRICT_KERNEL_RWX && PPC_8xx
+ 	default PPC_PAGE_SHIFT
+ 	help
+ 	  On Book3S 32 (603+), IBATs are used to map kernel text.
+@@ -765,6 +766,7 @@ config DATA_SHIFT
+ 	default 24 if STRICT_KERNEL_RWX && PPC64
+ 	range 17 28 if STRICT_KERNEL_RWX && PPC_BOOK3S_32
+ 	default 22 if STRICT_KERNEL_RWX && PPC_BOOK3S_32
++	default 19 if STRICT_KERNEL_RWX && PPC_8xx
+ 	default PPC_PAGE_SHIFT
+ 	help
+ 	  On Book3S 32 (603+), DBATs are used to map kernel text and rodata RO.
+diff --git a/arch/powerpc/include/asm/nohash/32/mmu-8xx.h b/arch/powerpc/include/asm/nohash/32/mmu-8xx.h
+index b0f764c827c0..0a1a3fc54e54 100644
+--- a/arch/powerpc/include/asm/nohash/32/mmu-8xx.h
++++ b/arch/powerpc/include/asm/nohash/32/mmu-8xx.h
+@@ -231,9 +231,10 @@ static inline unsigned int mmu_psize_to_shift(unsigned int mmu_psize)
+ }
+ 
+ /* patch sites */
+-extern s32 patch__itlbmiss_linmem_top;
++extern s32 patch__itlbmiss_linmem_top, patch__itlbmiss_linmem_top8;
+ extern s32 patch__dtlbmiss_linmem_top, patch__dtlbmiss_immr_jmp;
+ extern s32 patch__fixupdar_linmem_top;
++extern s32 patch__dtlbmiss_romem_top, patch__dtlbmiss_romem_top8;
+ 
+ extern s32 patch__itlbmiss_exit_1, patch__itlbmiss_exit_2;
+ extern s32 patch__dtlbmiss_exit_1, patch__dtlbmiss_exit_2, patch__dtlbmiss_exit_3;
+diff --git a/arch/powerpc/kernel/head_8xx.S b/arch/powerpc/kernel/head_8xx.S
+index c3f776fda984..f095c3c18455 100644
+--- a/arch/powerpc/kernel/head_8xx.S
++++ b/arch/powerpc/kernel/head_8xx.S
+@@ -405,10 +405,20 @@ InstructionTLBMiss:
+ #ifndef CONFIG_PIN_TLB_TEXT
+ ITLBMissLinear:
+ 	mtcr	r11
++#ifdef CONFIG_STRICT_KERNEL_RWX
++	patch_site	0f, patch__itlbmiss_linmem_top8
++
++	mfspr	r10, SPRN_SRR0
++0:	subis	r11, r10, (PAGE_OFFSET - 0x80000000)@ha
++	rlwinm	r11, r11, 4, MI_PS8MEG ^ MI_PS512K
++	ori	r11, r11, MI_PS512K | MI_SVALID
++	rlwinm	r10, r10, 0, 0x0ff80000	/* 8xx supports max 256Mb RAM */
++#else
+ 	/* Set 8M byte page and mark it valid */
+ 	li	r11, MI_PS8MEG | MI_SVALID
+-	mtspr	SPRN_MI_TWC, r11
+ 	rlwinm	r10, r10, 20, 0x0f800000	/* 8xx supports max 256Mb RAM */
++#endif
++	mtspr	SPRN_MI_TWC, r11
+ 	ori	r10, r10, 0xf0 | MI_SPS16K | _PAGE_SH | _PAGE_DIRTY | \
+ 			  _PAGE_PRESENT
+ 	mtspr	SPRN_MI_RPN, r10	/* Update TLB entry */
+@@ -525,10 +535,29 @@ DTLBMissIMMR:
+ 
+ DTLBMissLinear:
+ 	mtcr	r11
++	rlwinm	r10, r10, 20, 0x0f800000	/* 8xx supports max 256Mb RAM */
++#ifdef CONFIG_STRICT_KERNEL_RWX
++	patch_site	0f, patch__dtlbmiss_romem_top8
++
++0:	subis	r11, r10, (PAGE_OFFSET - 0x80000000)@ha
++	rlwinm	r11, r11, 0, 0xff800000
++	neg	r10, r11
++	or	r11, r11, r10
++	rlwinm	r11, r11, 4, MI_PS8MEG ^ MI_PS512K
++	ori	r11, r11, MI_PS512K | MI_SVALID
++	mfspr	r10, SPRN_MD_EPN
++	rlwinm	r10, r10, 0, 0x0ff80000	/* 8xx supports max 256Mb RAM */
++#else
+ 	/* Set 8M byte page and mark it valid */
+ 	li	r11, MD_PS8MEG | MD_SVALID
++#endif
+ 	mtspr	SPRN_MD_TWC, r11
+-	rlwinm	r10, r10, 20, 0x0f800000	/* 8xx supports max 256Mb RAM */
++#ifdef CONFIG_STRICT_KERNEL_RWX
++	patch_site	0f, patch__dtlbmiss_romem_top
++
++0:	subis	r11, r10, 0
++	rlwimi	r10, r11, 11, _PAGE_RO
++#endif
+ 	ori	r10, r10, 0xf0 | MD_SPS16K | _PAGE_SH | _PAGE_DIRTY | \
+ 			  _PAGE_PRESENT
+ 	mtspr	SPRN_MD_RPN, r10	/* Update TLB entry */
+diff --git a/arch/powerpc/mm/8xx_mmu.c b/arch/powerpc/mm/8xx_mmu.c
+index b542dd0bff9c..0024ceb77852 100644
+--- a/arch/powerpc/mm/8xx_mmu.c
++++ b/arch/powerpc/mm/8xx_mmu.c
+@@ -94,11 +94,20 @@ static void __init mmu_mapin_immr(void)
+ 		map_kernel_page(v + offset, p + offset, PAGE_KERNEL_NCG);
+ }
+ 
+-static void __init mmu_patch_cmp_limit(s32 *site, unsigned long mapped)
++static void mmu_patch_cmp_limit(s32 *site, unsigned long mapped)
  {
->  	.set_uhs_signaling =3D tegra_sdhci_set_uhs_signaling,
->  	.voltage_switch =3D tegra_sdhci_voltage_switch,
->  	.get_max_clock =3D tegra_sdhci_get_max_clock,
-> +	.irq =3D sdhci_tegra_cqhci_irq,
->  };
-> =20
->  static const struct sdhci_pltfm_data sdhci_tegra186_pdata =3D {
-> @@ -1030,6 +1079,55 @@ static const struct of_device_id sdhci_tegra_dt_ma=
-tch[] =3D {
->  };
->  MODULE_DEVICE_TABLE(of, sdhci_tegra_dt_match);
-> =20
-> +static int sdhci_tegra_add_host(struct sdhci_host *host)
-> +{
-> +	struct sdhci_pltfm_host *pltfm_host =3D sdhci_priv(host);
-> +	struct sdhci_tegra *tegra_host =3D sdhci_pltfm_priv(pltfm_host);
-> +	struct cqhci_host *cq_host;
-> +	bool dma64;
-> +	int ret;
-> +
-> +	if (!tegra_host->enable_hwcq)
-> +		return sdhci_add_host(host);
-> +
-> +	host->v4_mode =3D true;
-> +
-> +	ret =3D sdhci_setup_host(host);
-> +	if (ret)
-> +		return ret;
-> +
-> +	host->mmc->caps2 |=3D MMC_CAP2_CQE | MMC_CAP2_CQE_DCMD;
-> +
-> +	cq_host =3D devm_kzalloc(host->mmc->parent,
-> +				sizeof(*cq_host), GFP_KERNEL);
-> +	if (!cq_host) {
-> +		ret =3D -ENOMEM;
-> +		goto cleanup;
-> +	}
-> +
-> +	cq_host->mmio =3D host->ioaddr + SDHCI_TEGRA_CQE_BASE_ADDR;
-> +	cq_host->ops =3D &sdhci_tegra_cqhci_ops;
-> +
-> +	dma64 =3D host->flags & SDHCI_USE_64_BIT_DMA;
-> +	if (dma64)
-> +		cq_host->caps |=3D CQHCI_TASK_DESC_SZ_128;
-> +
-> +	ret =3D cqhci_init(cq_host, host->mmc, dma64);
-> +	if (ret)
-> +		goto cleanup;
-> +
-> +	ret =3D __sdhci_add_host(host);
-> +	if (ret)
-> +		goto cleanup;
-> +
-> +	return 0;
-> +
-> +cleanup:
-> +	sdhci_cleanup_host(host);
-> +	return ret;
-> +
-> +}
+ 	modify_instruction_site(site, 0xffff, (unsigned long)__va(mapped) >> 16);
+ }
+ 
++static void mmu_patch_addis(s32 *site, long simm)
++{
++	unsigned int instr = *(unsigned int *)patch_site_addr(site);
++
++	instr &= 0xffff0000;
++	instr |= ((unsigned long)simm) >> 16;
++	patch_instruction_site(site, instr);
++}
++
+ unsigned long __init mmu_mapin_ram(unsigned long base, unsigned long top)
+ {
+ 	unsigned long mapped;
+@@ -135,6 +144,26 @@ unsigned long __init mmu_mapin_ram(unsigned long base, unsigned long top)
+ 	return mapped;
+ }
+ 
++void mmu_mark_initmem_nx(void)
++{
++	if (IS_ENABLED(CONFIG_STRICT_KERNEL_RWX) && CONFIG_ETEXT_SHIFT < 23)
++		mmu_patch_addis(&patch__itlbmiss_linmem_top8,
++				-((long)_etext & ~(LARGE_PAGE_SIZE_8M - 1)));
++	if (!IS_ENABLED(CONFIG_PIN_TLB_TEXT))
++		mmu_patch_cmp_limit(&patch__itlbmiss_linmem_top, __pa(_etext));
++}
++
++#ifdef CONFIG_STRICT_KERNEL_RWX
++void mmu_mark_rodata_ro(void)
++{
++	if (CONFIG_DATA_SHIFT < 23)
++		mmu_patch_addis(&patch__dtlbmiss_romem_top8,
++				-__pa(((unsigned long)_sinittext) &
++				      ~(LARGE_PAGE_SIZE_8M - 1)));
++	mmu_patch_addis(&patch__dtlbmiss_romem_top, -__pa(_sinittext));
++}
++#endif
++
+ void __init setup_initial_memory_limit(phys_addr_t first_memblock_base,
+ 				       phys_addr_t first_memblock_size)
+ {
+diff --git a/arch/powerpc/mm/init_32.c b/arch/powerpc/mm/init_32.c
+index bc28995a37ea..41a3513cadc9 100644
+--- a/arch/powerpc/mm/init_32.c
++++ b/arch/powerpc/mm/init_32.c
+@@ -108,7 +108,7 @@ static void __init MMU_setup(void)
+ 		__map_without_bats = 1;
+ 		__map_without_ltlbs = 1;
+ 	}
+-	if (strict_kernel_rwx_enabled())
++	if (strict_kernel_rwx_enabled() && !IS_ENABLED(CONFIG_PPC_8xx))
+ 		__map_without_ltlbs = 1;
+ }
+ 
+diff --git a/arch/powerpc/mm/mmu_decl.h b/arch/powerpc/mm/mmu_decl.h
+index 98fc94affc29..74ff61dabcb1 100644
+--- a/arch/powerpc/mm/mmu_decl.h
++++ b/arch/powerpc/mm/mmu_decl.h
+@@ -166,7 +166,7 @@ static inline phys_addr_t v_block_mapped(unsigned long va) { return 0; }
+ static inline unsigned long p_block_mapped(phys_addr_t pa) { return 0; }
+ #endif
+ 
+-#if defined(CONFIG_PPC_BOOK3S_32)
++#if defined(CONFIG_PPC_BOOK3S_32) || defined(CONFIG_PPC_8xx)
+ void mmu_mark_initmem_nx(void);
+ void mmu_mark_rodata_ro(void);
+ #else
+-- 
+2.13.3
 
-Gratuituous blank line above.
-
-> +
->  static int sdhci_tegra_probe(struct platform_device *pdev)
->  {
->  	const struct of_device_id *match;
-> @@ -1039,6 +1137,7 @@ static int sdhci_tegra_probe(struct platform_device=
- *pdev)
->  	struct sdhci_tegra *tegra_host;
->  	struct clk *clk;
->  	int rc;
-> +	struct resource *iomem;
-> =20
->  	match =3D of_match_device(sdhci_tegra_dt_match, &pdev->dev);
->  	if (!match)
-> @@ -1056,6 +1155,12 @@ static int sdhci_tegra_probe(struct platform_devic=
-e *pdev)
->  	tegra_host->pad_control_available =3D false;
->  	tegra_host->soc_data =3D soc_data;
-> =20
-> +	iomem =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +	if (resource_size(iomem) > SDHCI_TEGRA_CQE_BASE_ADDR)
-> +		tegra_host->enable_hwcq =3D true;
-> +	else
-> +		tegra_host->enable_hwcq =3D false;
-> +
->  	if (soc_data->nvquirks & NVQUIRK_NEEDS_PAD_CONTROL) {
->  		rc =3D tegra_sdhci_init_pinctrl_info(&pdev->dev, tegra_host);
->  		if (rc =3D=3D 0)
-> @@ -1117,7 +1222,7 @@ static int sdhci_tegra_probe(struct platform_device=
- *pdev)
-> =20
->  	usleep_range(2000, 4000);
-> =20
-> -	rc =3D sdhci_add_host(host);
-> +	rc =3D sdhci_tegra_add_host(host);
->  	if (rc)
->  		goto err_add_host;
-> =20
-> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-> index fde984d10619..c368230c364d 100644
-> --- a/drivers/mmc/host/sdhci.c
-> +++ b/drivers/mmc/host/sdhci.c
-> @@ -3308,10 +3308,18 @@ void sdhci_cqe_enable(struct mmc_host *mmc)
-> =20
->  	ctrl =3D sdhci_readb(host, SDHCI_HOST_CONTROL);
->  	ctrl &=3D ~SDHCI_CTRL_DMA_MASK;
-> -	if (host->flags & SDHCI_USE_64_BIT_DMA)
-> -		ctrl |=3D SDHCI_CTRL_ADMA64;
-> -	else
-> -		ctrl |=3D SDHCI_CTRL_ADMA32;
-> +	/* As per SD Host 4.20 Spec, Host with V4 Mode enable supports ADMA3
-> +	 * DMA type. ADMA3 performs integrated descriptor which is needed for
-> +	 * cmd queuing as it need to fetch both cmd and transfer descriptors.
-> +	 */
-
-Correct block comment style, please.
-
-Thanks,
-Thierry
-
-> +	if (host->v4_mode) {
-> +		ctrl |=3D SDHCI_CTRL_ADMA3;
-> +	} else {
-> +		if (host->flags & SDHCI_USE_64_BIT_DMA)
-> +			ctrl |=3D SDHCI_CTRL_ADMA64;
-> +		else
-> +			ctrl |=3D SDHCI_CTRL_ADMA32;
-> +	}
->  	sdhci_writeb(host, ctrl, SDHCI_HOST_CONTROL);
-> =20
->  	sdhci_writew(host, SDHCI_MAKE_BLKSZ(host->sdma_boundary, 512),
-> diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
-> index b001cf4d3d7e..6e2a08f92645 100644
-> --- a/drivers/mmc/host/sdhci.h
-> +++ b/drivers/mmc/host/sdhci.h
-> @@ -88,6 +88,7 @@
->  #define   SDHCI_CTRL_ADMA1	0x08
->  #define   SDHCI_CTRL_ADMA32	0x10
->  #define   SDHCI_CTRL_ADMA64	0x18
-> +#define   SDHCI_CTRL_ADMA3	0x18
->  #define   SDHCI_CTRL_8BITBUS	0x20
->  #define  SDHCI_CTRL_CDTEST_INS	0x40
->  #define  SDHCI_CTRL_CDTEST_EN	0x80
-> --=20
-> 2.7.4
->=20
-
---IDYEmSnFhs3mNXr+
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlw3YMAACgkQ3SOs138+
-s6EH4Q//SVN4JRdUhc2pJvduFUs4enZhMmbqPjP1BDEUTgAgzOWTBgrtmYRYVXkA
-kBSuux1xvohOgua4RapPquYWOoreJFPLCfkCt3uE+maLKDWRFtDbTXKPk7WjSAEs
-vMVLRpUT3RAksUUzhvLCupS2RjezDF3JxEZAoUwYTNdLheWrhNykHDVjNMbyeV74
-6WLXs7oG+Md8ziG2dz/ROqRahISQtKU1dcY9rKdogVadFX3ck0+IaOj/5NeEH5b3
-UWAtheAaUHFeKkGbMYPXsFvYsinOstRBb6av63r+kOem/dNtl7YN5rXPKAh4zYI/
-GylHsq/aBU4mm4BtfuVAcTM/GipGtPw+nLXkTAYMmM2aHDAIe9BkMMR0zZ48C3M/
-iCcUjiqRtTjcW3xWzrckQqy7UfLUxV+eVXXiL9wvq3ukM/wLRYRUQbL2WB7BR7kj
-fDotSPQowhN0LJLFr3Dnn0d1w+JQxO2BVuftrfiLzpagJ/DrVm41kqshv0zQ+2PX
-dQtbzThuEQvdpt/L3zUXVvhunxaUusLXEsrA4qfUm9iiuvoc6C0SDi3hwQO/287W
-5WXBpZNLu3qbC0Sf8heuaBFp3aUkxKObT7caCdkp6eTx9msQvTUW6OHz1z0h3DR2
-3eiQSgvUCqMa98C8il1gBhYXZrYkTuGkl/Imz+ZthQZMG+jkJug=
-=6/7V
------END PGP SIGNATURE-----
-
---IDYEmSnFhs3mNXr+--
