@@ -6,155 +6,70 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9563CC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 08:29:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64688C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 08:29:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71BC1206B6
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 08:29:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 40531206B6
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 08:29:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727851AbfAJI3E (ORCPT
+        id S1727833AbfAJI3D (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 03:29:04 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:52080 "EHLO mx1.redhat.com"
+        Thu, 10 Jan 2019 03:29:03 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:46848 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727781AbfAJI2z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 03:28:55 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        id S1727777AbfAJI2y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 03:28:54 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 3786096E9;
-        Thu, 10 Jan 2019 08:28:55 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id AD44D7BDB4;
+        Thu, 10 Jan 2019 08:28:54 +0000 (UTC)
 Received: from sirius.home.kraxel.org (ovpn-116-203.ams2.redhat.com [10.36.116.203])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C99EC10A1858;
-        Thu, 10 Jan 2019 08:28:51 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 2600A5D6AA;
+        Thu, 10 Jan 2019 08:28:50 +0000 (UTC)
 Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id 2D1319983; Thu, 10 Jan 2019 09:28:47 +0100 (CET)
+        id AE4899C73; Thu, 10 Jan 2019 09:28:46 +0100 (CET)
 From:   Gerd Hoffmann <kraxel@redhat.com>
 To:     dri-devel@lists.freedesktop.org, David Airlie <airlied@redhat.com>
 Cc:     andr2000@gmail.com, Gerd Hoffmann <kraxel@redhat.com>,
         David Airlie <airlied@linux.ie>,
         virtualization@lists.linux-foundation.org (open list:DRM DRIVER FOR
         BOCHS VIRTUAL GPU), linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v3 11/15] drm/bochs: move ttm_bo_(un)reserve calls into bochs_bo_{pin,unpin}
-Date:   Thu, 10 Jan 2019 09:28:41 +0100
-Message-Id: <20190110082845.3453-12-kraxel@redhat.com>
+Subject: [PATCH v3 08/15] drm/bochs: atomic: set DRIVER_ATOMIC
+Date:   Thu, 10 Jan 2019 09:28:38 +0100
+Message-Id: <20190110082845.3453-9-kraxel@redhat.com>
 In-Reply-To: <20190110082845.3453-1-kraxel@redhat.com>
 References: <20190110082845.3453-1-kraxel@redhat.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Thu, 10 Jan 2019 08:28:55 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Thu, 10 Jan 2019 08:28:54 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Conversion to atomic modesetting, final step.
+Set the DRIVER_ATOMIC flag.
+
 Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+Reviewed-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
 Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
 ---
- drivers/gpu/drm/bochs/bochs_fbdev.c |  8 --------
- drivers/gpu/drm/bochs/bochs_kms.c   | 14 +-------------
- drivers/gpu/drm/bochs/bochs_mm.c    |  8 ++++++++
- 3 files changed, 9 insertions(+), 21 deletions(-)
+ drivers/gpu/drm/bochs/bochs_drv.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/bochs/bochs_fbdev.c b/drivers/gpu/drm/bochs/bochs_fbdev.c
-index 92feb817ff..ccf783b038 100644
---- a/drivers/gpu/drm/bochs/bochs_fbdev.c
-+++ b/drivers/gpu/drm/bochs/bochs_fbdev.c
-@@ -77,14 +77,9 @@ static int bochsfb_create(struct drm_fb_helper *helper,
+diff --git a/drivers/gpu/drm/bochs/bochs_drv.c b/drivers/gpu/drm/bochs/bochs_drv.c
+index f3dd66ae99..278f9d2e7f 100644
+--- a/drivers/gpu/drm/bochs/bochs_drv.c
++++ b/drivers/gpu/drm/bochs/bochs_drv.c
+@@ -81,7 +81,7 @@ static const struct file_operations bochs_fops = {
+ };
  
- 	bo = gem_to_bochs_bo(gobj);
- 
--	ret = ttm_bo_reserve(&bo->bo, true, false, NULL);
--	if (ret)
--		return ret;
--
- 	ret = bochs_bo_pin(bo, TTM_PL_FLAG_VRAM);
- 	if (ret) {
- 		DRM_ERROR("failed to pin fbcon\n");
--		ttm_bo_unreserve(&bo->bo);
- 		return ret;
- 	}
- 
-@@ -92,12 +87,9 @@ static int bochsfb_create(struct drm_fb_helper *helper,
- 			  &bo->kmap);
- 	if (ret) {
- 		DRM_ERROR("failed to kmap fbcon\n");
--		ttm_bo_unreserve(&bo->bo);
- 		return ret;
- 	}
- 
--	ttm_bo_unreserve(&bo->bo);
--
- 	/* init fb device */
- 	info = drm_fb_helper_alloc_fbi(helper);
- 	if (IS_ERR(info)) {
-diff --git a/drivers/gpu/drm/bochs/bochs_kms.c b/drivers/gpu/drm/bochs/bochs_kms.c
-index f663c54185..fc856a02a2 100644
---- a/drivers/gpu/drm/bochs/bochs_kms.c
-+++ b/drivers/gpu/drm/bochs/bochs_kms.c
-@@ -92,34 +92,22 @@ static int bochs_plane_prepare_fb(struct drm_plane *plane,
- 				struct drm_plane_state *new_state)
- {
- 	struct bochs_bo *bo;
--	int ret;
- 
- 	if (!new_state->fb)
- 		return 0;
- 	bo = gem_to_bochs_bo(new_state->fb->obj[0]);
--
--	ret = ttm_bo_reserve(&bo->bo, true, false, NULL);
--	if (ret)
--		return ret;
--	ret = bochs_bo_pin(bo, TTM_PL_FLAG_VRAM);
--	ttm_bo_unreserve(&bo->bo);
--	return ret;
-+	return bochs_bo_pin(bo, TTM_PL_FLAG_VRAM);
- }
- 
- static void bochs_plane_cleanup_fb(struct drm_plane *plane,
- 				   struct drm_plane_state *old_state)
- {
- 	struct bochs_bo *bo;
--	int ret;
- 
- 	if (!old_state->fb)
- 		return;
- 	bo = gem_to_bochs_bo(old_state->fb->obj[0]);
--	ret = ttm_bo_reserve(&bo->bo, true, false, NULL);
--	if (ret)
--		return;
- 	bochs_bo_unpin(bo);
--	ttm_bo_unreserve(&bo->bo);
- }
- 
- static const struct drm_plane_helper_funcs bochs_plane_helper_funcs = {
-diff --git a/drivers/gpu/drm/bochs/bochs_mm.c b/drivers/gpu/drm/bochs/bochs_mm.c
-index 5a0e092847..fcbf35456d 100644
---- a/drivers/gpu/drm/bochs/bochs_mm.c
-+++ b/drivers/gpu/drm/bochs/bochs_mm.c
-@@ -223,7 +223,11 @@ int bochs_bo_pin(struct bochs_bo *bo, u32 pl_flag)
- 	bochs_ttm_placement(bo, pl_flag);
- 	for (i = 0; i < bo->placement.num_placement; i++)
- 		bo->placements[i].flags |= TTM_PL_FLAG_NO_EVICT;
-+	ret = ttm_bo_reserve(&bo->bo, true, false, NULL);
-+	if (ret)
-+		return ret;
- 	ret = ttm_bo_validate(&bo->bo, &bo->placement, &ctx);
-+	ttm_bo_unreserve(&bo->bo);
- 	if (ret)
- 		return ret;
- 
-@@ -247,7 +251,11 @@ int bochs_bo_unpin(struct bochs_bo *bo)
- 
- 	for (i = 0; i < bo->placement.num_placement; i++)
- 		bo->placements[i].flags &= ~TTM_PL_FLAG_NO_EVICT;
-+	ret = ttm_bo_reserve(&bo->bo, true, false, NULL);
-+	if (ret)
-+		return ret;
- 	ret = ttm_bo_validate(&bo->bo, &bo->placement, &ctx);
-+	ttm_bo_unreserve(&bo->bo);
- 	if (ret)
- 		return ret;
- 
+ static struct drm_driver bochs_driver = {
+-	.driver_features	= DRIVER_GEM | DRIVER_MODESET,
++	.driver_features	= DRIVER_GEM | DRIVER_MODESET | DRIVER_ATOMIC,
+ 	.fops			= &bochs_fops,
+ 	.name			= "bochs-drm",
+ 	.desc			= "bochs dispi vga interface (qemu stdvga)",
 -- 
 2.9.3
 
