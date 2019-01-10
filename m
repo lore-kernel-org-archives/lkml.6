@@ -2,139 +2,156 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E30D7C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 17:41:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35109C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 17:42:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B85B320675
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 17:41:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0574A21783
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 17:42:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547142125;
+	bh=DcwRp4geh15gjmpDaSUBHFzXU/i/OwLPXS3EmX1LQwA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=jYzPc5xpnUaKqOe4g132uHV0RxdahXhBFILnU2Y4GDfOZCEEBygOHS/E1QDVTGV/9
+	 SJ7nJQQuXui/YEi6K64CO/O623ZciNEdvMHP+0ojsn2DrbffTnZvAE5FJ/4H+h+TI+
+	 uVGoxUfImRqnp1/Snjt9QzyGryrL3GbMMfSwvRGI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730469AbfAJRlF (ORCPT
+        id S1730521AbfAJRmE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 12:41:05 -0500
-Received: from mail-it1-f197.google.com ([209.85.166.197]:42520 "EHLO
-        mail-it1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730183AbfAJRlF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 12:41:05 -0500
-Received: by mail-it1-f197.google.com with SMTP id g7so11733777itg.7
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 09:41:04 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=nRtk8w+0oDvIHpE8NGWDlETPglaUAsRlbSgmxbpAtnY=;
-        b=lsWVAHyWDDEYQvm8zELtl/l/uyiES1gjJ7YokISojMJEKdiuSWpAh0Anu7eCQPvv+A
-         cUWGZUWUIilCkF9eSWyiEwpAt5bW9MArWgpVGIbrGROI2vtcaINlHr4/hVlKnCSnvszh
-         DccKitRi7mLgVl+uw25h+n3cRQaPMwHZtGyxRYxfLds7nT7Q2CVox2U76MbfhpLdDC54
-         p+wJcuvAGXW0oWxK3LW5N3SUue5X/jYJtNrAyOilhdixbqd319rZgZaZ4twzjKEsZ2mT
-         PxERVWIcK2IDMeHmAv5Yr9713HzotKpgkLGRGMC+9CZNqEsWbDGiRAOoq7HMHgD3m5H7
-         PP7A==
-X-Gm-Message-State: AJcUukc7WAKF1naRxAN6r6rwqN8HU90lAzy74GItLBwU+dqLYE3VA+L+
-        vq/kwxm4ftSp/0gkwmbEDn1FGQmIpMFtmYnQshOKuvkP7HJw
-X-Google-Smtp-Source: ALg8bN5UALuMCEalr5+t24UcBKiHKEDBNxsmYm/VbRVGNUOIIzf3o7GXAenp/1OETLPYwjotF7Um8a3cIyvfPR1PVYrtjPGFNul+
+        Thu, 10 Jan 2019 12:42:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51732 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729890AbfAJRmD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 12:42:03 -0500
+Received: from earth.universe (host-091-097-085-127.ewe-ip-backbone.de [91.97.85.127])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8761420685;
+        Thu, 10 Jan 2019 17:42:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547142122;
+        bh=DcwRp4geh15gjmpDaSUBHFzXU/i/OwLPXS3EmX1LQwA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=z0YfJeTBkQ+A3FTSuWLZgZR3/fp5HLmoKRkcyt66p/2ojMri9B+3ZadNAqD8jqByw
+         UH79eALqI+bofOzbJ8x5bn0LdYrWD+F/oD6k/qDYWywHDVXWnUiSw2ACm/yK2l57kH
+         vE7bVgnMM3RfTc4d8/MH8XPtb2s71I9utdz8gNCM=
+Received: by earth.universe (Postfix, from userid 1000)
+        id 973C33C08E2; Thu, 10 Jan 2019 18:42:00 +0100 (CET)
+Date:   Thu, 10 Jan 2019 18:42:00 +0100
+From:   Sebastian Reichel <sre@kernel.org>
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Marcel Holtmann <marcel@holtmann.org>,
+        Tony Lindgren <tony@atomide.com>,
+        Rob Herring <robh@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-bluetooth@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 00/14] Add support for FM radio in hcill and kill TI_ST
+Message-ID: <20190110174200.dtabgkcsvci7ptf5@earth.universe>
+References: <20181221011752.25627-1-sre@kernel.org>
+ <20181222200827.GC15237@amd>
 MIME-Version: 1.0
-X-Received: by 2002:a5e:8707:: with SMTP id y7mr5051663ioj.30.1547142064355;
- Thu, 10 Jan 2019 09:41:04 -0800 (PST)
-Date:   Thu, 10 Jan 2019 09:41:04 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000029bf02057f1e1596@google.com>
-Subject: general protection fault in gro_cells_destroy
-From:   syzbot <syzbot+6fe674089f9deb9f7726@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, edumazet@google.com,
-        linux-kernel@vger.kernel.org, lorenzo.bianconi@redhat.com,
-        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="izgndclbtthitgpl"
+Content-Disposition: inline
+In-Reply-To: <20181222200827.GC15237@amd>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
 
-syzbot found the following crash on:
+--izgndclbtthitgpl
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-HEAD commit:    b71acb0e3721 Merge branch 'linus' of git://git.kernel.org/..
-git tree:       net-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=14314bab400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b03c5892bb940c76
-dashboard link: https://syzkaller.appspot.com/bug?extid=6fe674089f9deb9f7726
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+Hi,
 
-Unfortunately, I don't have any reproducer for this crash yet.
+On Sat, Dec 22, 2018 at 09:08:28PM +0100, Pavel Machek wrote:
+> Merry Christmas!
+>=20
+> > This moves all remaining users of the legacy TI_ST driver to hcill (pat=
+ches
+> > 1-3). Then patches 4-7 convert wl128x-radio driver to a standard platfo=
+rm
+> > device driver with support for multiple instances. Patch 7 will result =
+in
+> > (userless) TI_ST driver no longer supporting radio at runtime. Patch 8-=
+11 do
+> > some cleanups in the wl128x-radio driver. Finally patch 12 removes the =
+TI_ST
+> > specific parts from wl128x-radio and adds the required infrastructure t=
+o use it
+> > with the serdev hcill driver instead. The remaining patches 13 and 14 r=
+emove
+> > the old TI_ST code.
+> >=20
+> > The new code has been tested on the Motorola Droid 4. For testing the a=
+udio
+> > should be configured to route Ext to Speaker or Headphone. Then you nee=
+d to
+> > plug headphone, since its cable is used as antenna. For testing there i=
+s a
+> > 'radio' utility packages in Debian. When you start the utility you need=
+ to
+> > specify a frequency, since initial get_frequency returns an error:
+> >=20
+> > $ radio -f 100.0
+>=20
+> Ok, it seems  the driver does not work built-in, due to firmware issue:
+>=20
+> root@devuan:/home/user# dmesg | grep wl12
+> [    1.018951] reg-fixed-voltage regulator-wl12xx: GPIO lookup for
+> consumer (null)
+> [    1.026550] reg-fixed-voltage regulator-wl12xx: using device tree
+> for GPIO lookup
+> [    1.034271] of_get_named_gpiod_flags: can't parse 'gpios' property
+> of node '/regulator-wl12xx[0]'
+> [    1.043487] of_get_named_gpiod_flags: parsed 'gpio' property of
+> node '/regulator-wl12xx[0]' - status (0)
+> [    4.151885] wl12xx_driver wl12xx.1.auto: Direct firmware load for
+> ti-connectivity/wl128x-nvs.bin failed with error -2
+> [   11.368286] vwl1271: disabling
+> root@devuan:/home/user# find /lib/firmware/ | grep wl128
+> /lib/firmware/ti-connectivity/wl128x-fw-5-plt.bin
+> /lib/firmware/ti-connectivity/wl128x-fw-5-mr.bin
+> /lib/firmware/ti-connectivity/wl128x-fw-5-sr.bin
+> /lib/firmware/ti-connectivity/wl128x-nvs.bin
+> root@devuan:/home/user#
+>
+> Ideas welcome... ... ... am I supposed to compile wl128-nvs.bin into
+> the kernel using EXTRA_FIRMWARE?
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+6fe674089f9deb9f7726@syzkaller.appspotmail.com
+This is due to the driver loading before the rootfs is available.
+You can workaround this without touching your kernel configuration by
+rebinding the driver via sysfs: https://lwn.net/Articles/143397/
 
-kasan: CONFIG_KASAN_INLINE enabled
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-general protection fault: 0000 [#1] PREEMPT SMP KASAN
-CPU: 1 PID: 14812 Comm: kworker/u4:8 Not tainted 4.20.0+ #3
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Workqueue: netns cleanup_net
-RIP: 0010:__skb_unlink include/linux/skbuff.h:1924 [inline]
-RIP: 0010:__skb_dequeue include/linux/skbuff.h:1941 [inline]
-RIP: 0010:__skb_queue_purge include/linux/skbuff.h:2655 [inline]
-RIP: 0010:gro_cells_destroy net/core/gro_cells.c:89 [inline]
-RIP: 0010:gro_cells_destroy+0x19d/0x360 net/core/gro_cells.c:78
-Code: 03 42 80 3c 20 00 0f 85 53 01 00 00 48 8d 7a 08 49 8b 47 08 49 c7 07  
-00 00 00 00 48 89 f9 49 c7 47 08 00 00 00 00 48 c1 e9 03 <42> 80 3c 21 00  
-0f 85 10 01 00 00 48 89 c1 48 89 42 08 48 c1 e9 03
-RSP: 0018:ffff888069e674b0 EFLAGS: 00010202
-RAX: 0000000000000000 RBX: ffffe8ffffc30a98 RCX: 0000000000000001
-RDX: 0000000000000000 RSI: ffffffff8634f68a RDI: 0000000000000008
-RBP: ffff888069e67510 R08: ffff88806a2666c0 R09: fffffbfff1460a79
-R10: fffffbfff1460a78 R11: ffffffff8a3053c3 R12: dffffc0000000000
-R13: 0000000000000000 R14: ffffe8ffffc30aa8 R15: ffffe8ffffc38a90
-FS:  0000000000000000(0000) GS:ffff8880ae700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fef1a1b8db8 CR3: 00000000930be000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  ip_tunnel_dev_free+0x19/0x60 net/ipv4/ip_tunnel.c:969
-  netdev_run_todo+0x647/0xae0 net/core/dev.c:8885
-  rtnl_unlock+0xe/0x10 net/core/rtnetlink.c:117
-  ip_tunnel_delete_nets+0x4df/0x6d0 net/ipv4/ip_tunnel.c:1083
-  ipgre_exit_batch_net+0x23/0x30 net/ipv4/ip_gre.c:1062
-  ops_exit_list.isra.0+0x105/0x160 net/core/net_namespace.c:156
-  cleanup_net+0x51d/0xb10 net/core/net_namespace.c:551
-  process_one_work+0xd0c/0x1ce0 kernel/workqueue.c:2153
-  worker_thread+0x143/0x14a0 kernel/workqueue.c:2296
-  kthread+0x357/0x430 kernel/kthread.c:246
-  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
-Modules linked in:
----[ end trace 2f40089cb2525ccd ]---
-RIP: 0010:__skb_unlink include/linux/skbuff.h:1924 [inline]
-RIP: 0010:__skb_dequeue include/linux/skbuff.h:1941 [inline]
-RIP: 0010:__skb_queue_purge include/linux/skbuff.h:2655 [inline]
-RIP: 0010:gro_cells_destroy net/core/gro_cells.c:89 [inline]
-RIP: 0010:gro_cells_destroy+0x19d/0x360 net/core/gro_cells.c:78
-Code: 03 42 80 3c 20 00 0f 85 53 01 00 00 48 8d 7a 08 49 8b 47 08 49 c7 07  
-00 00 00 00 48 89 f9 49 c7 47 08 00 00 00 00 48 c1 e9 03 <42> 80 3c 21 00  
-0f 85 10 01 00 00 48 89 c1 48 89 42 08 48 c1 e9 03
-RSP: 0018:ffff888069e674b0 EFLAGS: 00010202
-RAX: 0000000000000000 RBX: ffffe8ffffc30a98 RCX: 0000000000000001
-RDX: 0000000000000000 RSI: ffffffff8634f68a RDI: 0000000000000008
-RBP: ffff888069e67510 R08: ffff88806a2666c0 R09: fffffbfff1460a79
-R10: fffffbfff1460a78 R11: ffffffff8a3053c3 R12: dffffc0000000000
-R13: 0000000000000000 R14: ffffe8ffffc30aa8 R15: ffffe8ffffc38a90
-FS:  0000000000000000(0000) GS:ffff8880ae700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fef1a1b8db8 CR3: 00000000930be000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+-- Sebastian
 
+--izgndclbtthitgpl
+Content-Type: application/pgp-signature; name="signature.asc"
 
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+-----BEGIN PGP SIGNATURE-----
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
+iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlw3g+UACgkQ2O7X88g7
++pp02A/+LdobdlOclsOQ8qABdONlxr5vq+1EKYO1Ndt4hVsVlwFnwdgiYe8hePbP
+Jwm7B54dSKqNB6PvM+R2+Z8wdx9Dj5J7yeFEZTukU+HvVlydS+DC+puJeMAxl34C
+pxciUELVgRWb5bAjvEAkGxCVCgl3g46O2rlP5SCGT+wK3+U70QweN5JuYCHUOuZl
+4bmfFvJJsAUsgWT/7skv7sFYxkeYtf6sVd8t4B3kuEhz3zygglFT6vJ23Mz1GSKn
+7txon8q33fRIuGtFgxDdqluXK6p/Jey5UvVck2CGoy2CI2D44B6FcpcwsuMQ2lS5
+qq+rzBUlR6PptlDp490VM0AfJjSpqVj+kZ4VJJOAZJhHSVV8C8NZ0SNMLMqkxWRo
+ype8zG3qk8OA+NffHxe/eYO/HRySixTM/3uRe23SLrtzESy4crUBsED3erxHdLLd
+yIMVAkEOBLh7zDonKzhRAxAbWp1vc7HTJ90EQ1PeD9i+nSYlQWTLsKIp/ClYikk5
+eOaQ5BsojO/9MSH+yoJ/+kUbmtCvo1e4hFD2EJ3S6p2yxJ1qjMK8QuKeSpuW4hYE
+veV79BoXBmfn0qYUze2PICUDrtjAZW0DYeD1qfxJFjt0In2ajyR42ZrOkhWgwxSO
+DcreKJaLjVFe4hPRp9DuzpdNAaLWeKDHfXlLEEa0BQ2uP2wwdLw=
+=pHLn
+-----END PGP SIGNATURE-----
+
+--izgndclbtthitgpl--
