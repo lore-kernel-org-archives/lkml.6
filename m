@@ -2,160 +2,215 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5AF4C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 16:50:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28F83C43612
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 16:51:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B2705206B7
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 16:50:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EC903214DA
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 16:51:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547139005;
-	bh=q8fYFTrPx9cmO69JfD9O4VbF+Vfa7tH2rF0jZ6J5R6I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=Mj/ofN/Ho93T9qkpNXVQpZBZ2hFv0k9ilPSV0x+VnXGkS7PLKGuk6EsMwRHSCt/pN
-	 Wtx64ql/237gFDhPAuoRj0JqVKJzsnKTwbHg1VmBRZAOgC1VBXINh3nUT5jQ7NN12w
-	 NGZQUV0y3lE2KEqWJJBLG8cwPOpZ5/hhhkMrZ1pM=
+	s=default; t=1547139089;
+	bh=UCzZipSGL4rPfoPvtiVXh5c4Jyg3yXqRifk4LJwX3Yk=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=Eaujv0Sh3yoTcg3yjnjyXrOZm4yRA5Mk58Pd1U/ZYorcn6u/Fx0enHxoLxQSChQXc
+	 X9vJrsWcYhoGniBtrIIeqtxmNQ0mwoCEAIPni1mCFDN7J0tpDRA/kx/Dc/JAntZa8i
+	 oMNMCC0Suzz2MheIS23a8scCoQ3Dq7LQPGIdtNwI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728929AbfAJQuF (ORCPT
+        id S1728959AbfAJQv2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 11:50:05 -0500
-Received: from mx2.suse.de ([195.135.220.15]:50250 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728781AbfAJQuE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 11:50:04 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 7D2F7AE22;
-        Thu, 10 Jan 2019 16:50:02 +0000 (UTC)
-Date:   Thu, 10 Jan 2019 17:50:01 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Jerome Glisse <jglisse@redhat.com>
-Cc:     Fengguang Wu <fengguang.wu@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        kvm@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Fan Du <fan.du@intel.com>, Yao Yuan <yuan.yao@intel.com>,
-        Peng Dong <dongx.peng@intel.com>,
-        Huang Ying <ying.huang@intel.com>,
-        Liu Jingqi <jingqi.liu@intel.com>,
-        Dong Eddie <eddie.dong@intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Zhang Yi <yi.z.zhang@linux.intel.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Mel Gorman <mgorman@suse.de>,
-        Andrea Arcangeli <aarcange@redhat.com>
-Subject: Re: [RFC][PATCH v2 00/21] PMEM NUMA node and hotness
- accounting/migration
-Message-ID: <20190110165001.GP31793@dhcp22.suse.cz>
-References: <20181226131446.330864849@intel.com>
- <20181227203158.GO16738@dhcp22.suse.cz>
- <20181228050806.ewpxtwo3fpw7h3lq@wfg-t540p.sh.intel.com>
- <20181228084105.GQ16738@dhcp22.suse.cz>
- <20181228094208.7lgxhha34zpqu4db@wfg-t540p.sh.intel.com>
- <20181228121515.GS16738@dhcp22.suse.cz>
- <20181228133111.zromvopkfcg3m5oy@wfg-t540p.sh.intel.com>
- <20181228195224.GY16738@dhcp22.suse.cz>
- <20190110162556.GC4394@redhat.com>
+        Thu, 10 Jan 2019 11:51:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43426 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728458AbfAJQv1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 11:51:27 -0500
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id EA82C214DA;
+        Thu, 10 Jan 2019 16:51:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547139086;
+        bh=UCzZipSGL4rPfoPvtiVXh5c4Jyg3yXqRifk4LJwX3Yk=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=Hiq+dqNNe7wfnau1jOI9lMetzqNVmmd9CBnA9E5tSdjEaVmmwkx/rg6JaVDc/gobX
+         +G/fwcjW9xR4xHzHegf1WcTWz36fip8ySDtMHF4bN+mqeAUjMLORm4VLUDyzpbZScF
+         iT/GzFtU3TltYScLpxywMFXDwcgG9CEj/4Xe0QxM=
+Received: by mail-qt1-f169.google.com with SMTP id n32so13845106qte.11;
+        Thu, 10 Jan 2019 08:51:25 -0800 (PST)
+X-Gm-Message-State: AJcUukdrmrP7s/SQB+OhpHfwPxqP8IqnYotS4Wp9dWqMqeXZ78HziMK9
+        Ajuw0mFPqyT4XuT9U6dZPeDKrk7djqXWYbzDVQ==
+X-Google-Smtp-Source: ALg8bN6LG9B3+RiLsvtijLZr3wFF+a0s7yo67cOrm+gwffNkwUyUaFQMA/ru2l+3xnr1uTdgZgq8VCflW2GtzLpr/BU=
+X-Received: by 2002:a0c:9e05:: with SMTP id p5mr10433777qve.246.1547139085119;
+ Thu, 10 Jan 2019 08:51:25 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190110162556.GC4394@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190110080821.30280-1-manivannan.sadhasivam@linaro.org> <20190110080821.30280-4-manivannan.sadhasivam@linaro.org>
+In-Reply-To: <20190110080821.30280-4-manivannan.sadhasivam@linaro.org>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Thu, 10 Jan 2019 10:51:12 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqL9iRbSss5nDq5OAoo-_OsZJf8KS9KGOgxQL1Xfk6f3dg@mail.gmail.com>
+Message-ID: <CAL_JsqL9iRbSss5nDq5OAoo-_OsZJf8KS9KGOgxQL1Xfk6f3dg@mail.gmail.com>
+Subject: Re: [PATCH 3/3] arm64: dts: freescale: Add devicetree for Oxalis
+To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc:     Shawn Guo <shawnguo@kernel.org>, Yang-Leo Li <leoyang.li@nxp.com>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>, devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        a.tropschug@ebs-systart.com, m.bittner@ebs-systart.com,
+        Amit Kucheria <amit.kucheria@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 10-01-19 11:25:56, Jerome Glisse wrote:
-> On Fri, Dec 28, 2018 at 08:52:24PM +0100, Michal Hocko wrote:
-> > [Ccing Mel and Andrea]
-> > 
-> > On Fri 28-12-18 21:31:11, Wu Fengguang wrote:
-> > > > > > I haven't looked at the implementation yet but if you are proposing a
-> > > > > > special cased zone lists then this is something CDM (Coherent Device
-> > > > > > Memory) was trying to do two years ago and there was quite some
-> > > > > > skepticism in the approach.
-> > > > > 
-> > > > > It looks we are pretty different than CDM. :)
-> > > > > We creating new NUMA nodes rather than CDM's new ZONE.
-> > > > > The zonelists modification is just to make PMEM nodes more separated.
-> > > > 
-> > > > Yes, this is exactly what CDM was after. Have a zone which is not
-> > > > reachable without explicit request AFAIR. So no, I do not think you are
-> > > > too different, you just use a different terminology ;)
-> > > 
-> > > Got it. OK.. The fall back zonelists patch does need more thoughts.
-> > > 
-> > > In long term POV, Linux should be prepared for multi-level memory.
-> > > Then there will arise the need to "allocate from this level memory".
-> > > So it looks good to have separated zonelists for each level of memory.
-> > 
-> > Well, I do not have a good answer for you here. We do not have good
-> > experiences with those systems, I am afraid. NUMA is with us for more
-> > than a decade yet our APIs are coarse to say the least and broken at so
-> > many times as well. Starting a new API just based on PMEM sounds like a
-> > ticket to another disaster to me.
-> > 
-> > I would like to see solid arguments why the current model of numa nodes
-> > with fallback in distances order cannot be used for those new
-> > technologies in the beginning and develop something better based on our
-> > experiences that we gain on the way.
-> 
-> I see several issues with distance. First it does fully abstract the
-> underlying topology and this might be problematic, for instance if
-> you memory with different characteristic in same node like persistent
-> memory connected to some CPU then it might be faster for that CPU to
-> access that persistent memory has it has dedicated link to it than to
-> access some other remote memory for which the CPU might have to share
-> the link with other CPUs or devices.
-> 
-> Second distance is no longer easy to compute when you are not trying
-> to answer what is the fastest memory for CPU-N but rather asking what
-> is the fastest memory for CPU-N and device-M ie when you are trying to
-> find the best memory for a group of CPUs/devices. The answer can
-> changes drasticly depending on members of the groups.
+On Thu, Jan 10, 2019 at 2:08 AM Manivannan Sadhasivam
+<manivannan.sadhasivam@linaro.org> wrote:
+>
+> Add devicetree support for Oxalis SoM board from EBS-SYSTART. This
+> board is one of the 96Boards Enterprise Edition platform. Below are some
+> of the key features of this board:
+>
+> * SoC: NXP Layerscape LS1012A
+> * RAM: 1GB DDR3L
+> * PMU: NXP VR5100
+> * Storage: 64MByte SPI Flash for bootloader and RCW, MicroSD Card, SATA
+> * Connectivity: 2x Ethernet
+> * USB: 2x USB3.0
+>
+> More information about this board can be found in 96Boards product
+> page: https://www.96boards.org/product/oxalis/
+>
+> Ethernet and SPI flash are not supported yet!
+>
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> ---
+>  arch/arm64/boot/dts/freescale/Makefile        |  1 +
+>  .../boot/dts/freescale/fsl-ls1012a-oxalis.dts | 96 +++++++++++++++++++
+>  2 files changed, 97 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/freescale/fsl-ls1012a-oxalis.dts
+>
+> diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
+> index f9be2426f83c..d8152cc06b3f 100644
+> --- a/arch/arm64/boot/dts/freescale/Makefile
+> +++ b/arch/arm64/boot/dts/freescale/Makefile
+> @@ -1,6 +1,7 @@
+>  # SPDX-License-Identifier: GPL-2.0
+>  dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls1012a-frdm.dtb
+>  dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls1012a-frwy.dtb
+> +dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls1012a-oxalis.dtb
+>  dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls1012a-qds.dtb
+>  dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls1012a-rdb.dtb
+>  dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls1028a-qds.dtb
+> diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1012a-oxalis.dts b/arch/arm64/boot/dts/freescale/fsl-ls1012a-oxalis.dts
+> new file mode 100644
+> index 000000000000..760a3e258c96
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/freescale/fsl-ls1012a-oxalis.dts
+> @@ -0,0 +1,96 @@
+> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+> +/*
+> + * Device Tree file for Oxalis
+> + *
+> + * Copyright (c) 2019 Manivannan Sadhasivam
+> + *
+> + */
+> +
+> +/dts-v1/;
+> +
+> +#include "fsl-ls1012a.dtsi"
+> +
+> +/ {
+> +       model = "Oxalis";
+> +       compatible = "ebs-systart,oxalis", "fsl,ls1012a";
+> +
+> +       sys_mclk: clock-mclk {
+> +               compatible = "fixed-clock";
+> +               #clock-cells = <0>;
+> +               clock-frequency = <25000000>;
+> +       };
+> +
+> +       reg_1p8v: regulator-1p8v {
+> +               compatible = "regulator-fixed";
+> +               regulator-name = "1P8V";
+> +               regulator-min-microvolt = <1800000>;
+> +               regulator-max-microvolt = <1800000>;
+> +               regulator-always-on;
+> +       };
+> +
+> +       sound {
+> +               compatible = "simple-audio-card";
+> +               simple-audio-card,format = "i2s";
+> +               simple-audio-card,widgets =
+> +                       "Microphone", "Microphone Jack",
+> +                       "Headphone", "Headphone Jack",
+> +                       "Speaker", "Speaker Ext",
+> +                       "Line", "Line In Jack";
+> +               simple-audio-card,routing =
+> +                       "MIC_IN", "Microphone Jack",
+> +                       "Microphone Jack", "Mic Bias",
+> +                       "LINE_IN", "Line In Jack",
+> +                       "Headphone Jack", "HP_OUT",
+> +                       "Speaker Ext", "LINE_OUT";
+> +
+> +               simple-audio-card,cpu {
+> +                       sound-dai = <&sai2>;
+> +                       frame-master;
+> +                       bitclock-master;
+> +               };
+> +
+> +               simple-audio-card,codec {
+> +                       sound-dai = <&codec>;
+> +                       frame-master;
+> +                       bitclock-master;
+> +                       system-clock-frequency = <25000000>;
+> +               };
+> +       };
+> +};
+> +
+> +&duart0 {
+> +       status = "okay";
+> +};
+> +
+> +&duart1 {
+> +       status = "okay";
+> +};
+> +
+> +&esdhc1 {
+> +       status = "okay";
+> +};
+> +
+> +&i2c0 {
+> +       status = "okay";
+> +
+> +       codec: sgtl5000@a {
 
-While you might be right, I would _really_ appreciate to start with a
-simpler model and go to a more complex one based on realy HW and real
-experiences than start with an overly complicated and over engineered
-approach from scratch.
+Use generic node names:
 
-> Some advance programmer already do graph matching ie they match the
-> graph of their program dataset/computation with the topology graph
-> of the computer they run on to determine what is best placement both
-> for threads and memory.
+audio-codec@a
 
-And those can still use our mempolicy API to describe their needs. If
-existing API is not sufficient then let's talk about which pieces are
-missing.
-
-> > I would be especially interested about a possibility of the memory
-> > migration idea during a memory pressure and relying on numa balancing to
-> > resort the locality on demand rather than hiding certain NUMA nodes or
-> > zones from the allocator and expose them only to the userspace.
-> 
-> For device memory we have more things to think of like:
->     - memory not accessible by CPU
->     - non cache coherent memory (yet still useful in some case if
->       application explicitly ask for it)
->     - device driver want to keep full control over memory as older
->       application like graphic for GPU, do need contiguous physical
->       memory and other tight control over physical memory placement
-
-Again, I believe that HMM is to target those non-coherent or
-non-accessible memory and I do not think it is helpful to put them into
-the mix here.
-
-> So if we are talking about something to replace NUMA i would really
-> like for that to be inclusive of device memory (which can itself be
-> a hierarchy of different memory with different characteristics).
-
-I think we should build on the existing NUMA infrastructure we have.
-Developing something completely new is not going to happen anytime soon
-and I am not convinced the result would be that much better either.
--- 
-Michal Hocko
-SUSE Labs
+> +               #sound-dai-cells = <0>;
+> +               compatible = "fsl,sgtl5000";
+> +               reg = <0xa>;
+> +               VDDA-supply = <&reg_1p8v>;
+> +               VDDIO-supply = <&reg_1p8v>;
+> +               clocks = <&sys_mclk>;
+> +       };
+> +};
+> +
+> +&i2c1 {
+> +       status = "okay";
+> +};
+> +
+> +&sai2 {
+> +       status = "okay";
+> +};
+> +
+> +&sata {
+> +       status = "okay";
+> +};
+> --
+> 2.17.1
+>
