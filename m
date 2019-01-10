@@ -5,149 +5,90 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 340FDC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 23:40:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E232C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 23:40:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F19DD214C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 23:40:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EADD4214C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 23:40:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730372AbfAJXkG (ORCPT
+        id S1730390AbfAJXkL convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 18:40:06 -0500
+        Thu, 10 Jan 2019 18:40:11 -0500
 Received: from mga17.intel.com ([192.55.52.151]:11649 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729424AbfAJXkG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 18:40:06 -0500
+        id S1729424AbfAJXkH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 18:40:07 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jan 2019 15:40:06 -0800
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jan 2019 15:40:07 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,463,1539673200"; 
-   d="scan'208";a="126725268"
-Received: from ray.jf.intel.com (HELO [10.7.201.19]) ([10.7.201.19])
-  by orsmga001.jf.intel.com with ESMTP; 10 Jan 2019 15:40:04 -0800
-Subject: Re: [RFC PATCH v7 00/16] Add support for eXclusive Page Frame
- Ownership
-To:     Khalid Aziz <khalid.aziz@oracle.com>, juergh@gmail.com,
-        tycho@tycho.ws, jsteckli@amazon.de, ak@linux.intel.com,
-        torvalds@linux-foundation.org, liran.alon@oracle.com,
-        keescook@google.com, konrad.wilk@oracle.com
-Cc:     deepa.srinivasan@oracle.com, chris.hyser@oracle.com,
-        tyhicks@canonical.com, dwmw@amazon.co.uk,
-        andrew.cooper3@citrix.com, jcm@redhat.com,
-        boris.ostrovsky@oracle.com, kanth.ghatraju@oracle.com,
-        joao.m.martins@oracle.com, jmattson@google.com,
-        pradeep.vincent@oracle.com, john.haxby@oracle.com,
-        tglx@linutronix.de, kirill.shutemov@linux.intel.com, hch@lst.de,
-        steven.sistare@oracle.com, kernel-hardening@lists.openwall.com,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>
-References: <cover.1547153058.git.khalid.aziz@oracle.com>
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-Message-ID: <31fe7522-0a59-94c8-663e-049e9ad2bff6@intel.com>
-Date:   Thu, 10 Jan 2019 15:40:04 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <cover.1547153058.git.khalid.aziz@oracle.com>
-Content-Type: text/plain; charset=utf-8
+   d="scan'208";a="309411675"
+Received: from fmsmsx107.amr.corp.intel.com ([10.18.124.205])
+  by fmsmga006.fm.intel.com with ESMTP; 10 Jan 2019 15:40:07 -0800
+Received: from fmsmsx124.amr.corp.intel.com (10.18.125.39) by
+ fmsmsx107.amr.corp.intel.com (10.18.124.205) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Thu, 10 Jan 2019 15:40:02 -0800
+Received: from fmsmsx121.amr.corp.intel.com ([169.254.6.18]) by
+ fmsmsx124.amr.corp.intel.com ([169.254.8.80]) with mapi id 14.03.0415.000;
+ Thu, 10 Jan 2019 15:40:02 -0800
+From:   "Chen, Tim C" <tim.c.chen@intel.com>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Yang Shi <yang.shi@linux.alibaba.com>
+CC:     "Huang, Ying" <ying.huang@intel.com>,
+        "minchan@kernel.org" <minchan@kernel.org>,
+        "daniel.m.jordan@oracle.com" <daniel.m.jordan@oracle.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [v5 PATCH 1/2] mm: swap: check if swap backing device is
+ congested or not
+Thread-Topic: [v5 PATCH 1/2] mm: swap: check if swap backing device is
+ congested or not
+Thread-Index: AQHUo5qpOoFpUagMFk+moCKgkvnZWaWpuDWA//96P7A=
+Date:   Thu, 10 Jan 2019 23:40:01 +0000
+Message-ID: <045D8A5597B93E4EBEDDCBF1FC15F5097E16F8E2@fmsmsx121.amr.corp.intel.com>
+References: <1546543673-108536-1-git-send-email-yang.shi@linux.alibaba.com>
+ <20190110153147.1baf4c88bf0dd3b8a78aad08@linux-foundation.org>
+In-Reply-To: <20190110153147.1baf4c88bf0dd3b8a78aad08@linux-foundation.org>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiODIzZjViMTAtMjQzZi00MGZhLWFhOTgtZWViNjllOWUxZjAwIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiMTVpdFVMTFR1QlNObVcrNUlHRUZPZTNOaWpNakhmc0xiXC83dE1yRWlES21cLzBHYlwvMHhrd09JUG9NSGl3Y0FKUyJ9
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-originating-ip: [10.1.200.107]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-First of all, thanks for picking this back up.  It looks to be going in
-a very positive direction!
+> >
+> > +	if (si->flags & (SWP_BLKDEV | SWP_FS)) {
+> 
+> I re-read your discussion with Tim and I must say the reasoning behind this
+> test remain foggy.
 
-On 1/10/19 1:09 PM, Khalid Aziz wrote:
-> I implemented a solution to reduce performance penalty and
-> that has had large impact. When XPFO code flushes stale TLB entries,
-> it does so for all CPUs on the system which may include CPUs that
-> may not have any matching TLB entries or may never be scheduled to
-> run the userspace task causing TLB flush.
-...
-> A rogue process can launch a ret2dir attack only from a CPU that has 
-> dual mapping for its pages in physmap in its TLB. We can hence defer 
-> TLB flush on a CPU until a process that would have caused a TLB
-> flush is scheduled on that CPU.
+I was worried that the dereference
 
-This logic is a bit suspect to me.  Imagine a situation where we have
-two attacker processes: one which is causing page to go from
-kernel->user (and be unmapped from the kernel) and a second process that
-*was* accessing that page.
+inode = si->swap_file->f_mapping->host;
 
-The second process could easily have the page's old TLB entry.  It could
-abuse that entry as long as that CPU doesn't context switch
-(switch_mm_irqs_off()) or otherwise flush the TLB entry.
+is not always safe for corner cases.
 
-As for where to flush the TLB...  As you know, using synchronous IPIs is
-obviously the most bulletproof from a mitigation perspective.  If you
-can batch the IPIs, you can get the overhead down, but you need to do
-the flushes for a bunch of pages at once, which I think is what you were
-exploring but haven't gotten working yet.
+So the test makes sure that the dereference is valid.
 
-Anything else you do will have *some* reduced mitigation value, which
-isn't a deal-breaker (to me at least).  Some ideas:
+> 
+> What goes wrong if we just remove it?
 
-Take a look at the SWITCH_TO_KERNEL_CR3 in head_64.S.  Every time that
-gets called, we've (potentially) just done a user->kernel transition and
-might benefit from flushing the TLB.  We're always doing a CR3 write (on
-Meltdown-vulnerable hardware) and it can do a full TLB flush based on if
-X86_CR3_PCID_NOFLUSH_BIT is set.  So, when you need a TLB flush, you
-would set a bit that ADJUST_KERNEL_CR3 would see on the next
-user->kernel transition on *each* CPU.  Potentially, multiple TLB
-flushes could be coalesced this way.  The downside of this is that
-you're exposed to the old TLB entries if a flush is needed while you are
-already *in* the kernel.
+If the dereference to get inode is always safe, we can remove it.
 
-You could also potentially do this from C code, like in the syscall
-entry code, or in sensitive places, like when you're returning from a
-guest after a VMEXIT in the kvm code.
+
+Thanks.
+
+Tim
