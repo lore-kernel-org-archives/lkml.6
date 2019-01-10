@@ -2,124 +2,151 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C7FCC43612
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 05:05:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 886CBC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 05:06:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1AAF0217F9
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 05:05:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4CA73206B7
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 05:06:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="x/MJ23j7"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="hUOC/ctN";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="RROKgi3i"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726883AbfAJFFq (ORCPT
+        id S1727137AbfAJFGr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 00:05:46 -0500
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:51792 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725379AbfAJFFp (ORCPT
+        Thu, 10 Jan 2019 00:06:47 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:55058 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725379AbfAJFGr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 00:05:45 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0A55POb069779;
-        Wed, 9 Jan 2019 23:05:25 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1547096725;
-        bh=W/zRbojufLf1d/jOTblk09RhR0/gwepqMYhy3lCVlZ8=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=x/MJ23j7mvl+W1t588zFYCKCWqOK/kg6zCQZ7JT0cGhHqDZ/IgN3CD1+FxfTwBbIJ
-         S1ldvEQkefKGJQcQpm07c9tX40N2hIdPgU7ylGIl0GUCRDrRQoLu2QytYMmY3FDaCQ
-         xdcWcBKaPrbEC0Q3hS9Z2dPBciqcPtsk5Qww1T5E=
-Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0A55PMO060796
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 9 Jan 2019 23:05:25 -0600
-Received: from DLEE108.ent.ti.com (157.170.170.38) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Wed, 9
- Jan 2019 23:05:24 -0600
-Received: from dlep32.itg.ti.com (157.170.170.100) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Wed, 9 Jan 2019 23:05:24 -0600
-Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0A55KHB023335;
-        Wed, 9 Jan 2019 23:05:21 -0600
-Subject: Re: [PATCH 00/15] PCI: endpoint: Cleanup EPC features
-To:     Heiko Stuebner <heiko@sntech.de>
-CC:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Alan Douglas <adouglas@cadence.com>,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Cyrille Pitchen <cyrille.pitchen@free-electrons.com>,
-        Jia-Ju Bai <baijiaju1990@gmail.com>,
-        <linux-omap@vger.kernel.org>, <linux-pci@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-rockchip@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>
-References: <20190107064148.10152-1-kishon@ti.com> <1936135.agpnLP3rXd@phil>
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <ce1e4bab-5c7c-5593-d28f-2187a04baef6@ti.com>
-Date:   Thu, 10 Jan 2019 10:35:00 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 10 Jan 2019 00:06:47 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id A771160386; Thu, 10 Jan 2019 05:06:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1547096805;
+        bh=57avjh3+prGYKb+5K6LC4AcsgPmO9s9egCZIcvDISOE=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=hUOC/ctNJPnZ/7O7d/Kq68gI+/dPlwgw8jiXSphrVpL0xv71FxMwqCJBI9lhfi44K
+         yrhZASefomh9wIJzTZxrSXEgCZkZgabyHwyo9gpohAfLc4htmIPIePjFmbGE1uZO1a
+         7RTyUR4EMvK8Cjur2XwMZqEPyzjafTIRJgh23bMM=
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id 61C2960265;
+        Thu, 10 Jan 2019 05:06:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1547096803;
+        bh=57avjh3+prGYKb+5K6LC4AcsgPmO9s9egCZIcvDISOE=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=RROKgi3i5xU8iKSQnhaVVa+z2wDGchD771iVHknjda58Ad5bPYYM3yLMcXvULYuCo
+         SO8OHmI9ce13voX4t6uqql5Vk+FKYHYG6VXp9AZJnGo6x5XsNiJocadDysjg9gFy73
+         onizsL8LETSah8P37qr6fZUhxdUxHkm8FmTvH2uo=
 MIME-Version: 1.0
-In-Reply-To: <1936135.agpnLP3rXd@phil>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
 Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Date:   Thu, 10 Jan 2019 10:36:43 +0530
+From:   Arun KS <arunks@codeaurora.org>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Michal Hocko <mhocko@kernel.org>,
+        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
+        arunks.linux@gmail.com, vbabka@suse.cz, osalvador@suse.de,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        getarunks@gmail.com
+Subject: Re: [PATCH v7] mm/page_alloc.c: memory_hotplug: free pages as higher
+ order
+In-Reply-To: <20190109105652.40e24fa969a2bb7a58e097a8@linux-foundation.org>
+References: <1546578076-31716-1-git-send-email-arunks@codeaurora.org>
+ <fb6465c99b3ada2c6af587a7eb00016d96d56f77.camel@linux.intel.com>
+ <20190108181352.GI31793@dhcp22.suse.cz>
+ <bfb543b6e343c21c3e263a110f234e08@codeaurora.org>
+ <20190109073718.GM31793@dhcp22.suse.cz>
+ <a053bd9b93e71baae042cdfc3432f945@codeaurora.org>
+ <20190109084031.GN31793@dhcp22.suse.cz>
+ <e005e71b125b9b8ddee668d1df9ad5ec@codeaurora.org>
+ <20190109105754.GR31793@dhcp22.suse.cz>
+ <2efb06e91d9af48bf3d1d38bd50e0458@codeaurora.org>
+ <20190109105652.40e24fa969a2bb7a58e097a8@linux-foundation.org>
+Message-ID: <51ebe46608c1b502bb7985498f29302d@codeaurora.org>
+X-Sender: arunks@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Heiko,
-
-On 07/01/19 8:05 PM, Heiko Stuebner wrote:
-> Am Montag, 7. Januar 2019, 07:41:33 CET schrieb Kishon Vijay Abraham I:
->> Hi Lorenzo,
->>
->> The Endpoint controller driver uses features member in 'struct pci_epc'
->> to advertise the list of supported features to the endpoint function
->> driver.
->>
->> There are a few shortcomings with this approach.
->>   *) Certain endpoint controllers support fixed size BAR (e.g. TI's
->>      AM654 uses Designware configuration with fixed size BAR). The
->>      size of each BARs cannot be passed to the endpoint function
->>      driver.
->>   *) Too many macros for handling EPC features.
->>      (EPC_FEATURE_NO_LINKUP_NOTIFIER, EPC_FEATURE_BAR_MASK,
->>       EPC_FEATURE_MSIX_AVAILABLE, EPC_FEATURE_SET_BAR,
->>       EPC_FEATURE_GET_BAR)
->>   *) Endpoint controllers are directly modifying struct pci_epc
->>      members. (I have plans to move struct pci_epc to
->>      drivers/pci/endpoint so that pci_epc members are referenced
->>      only by endpoint core).
->>
->> To overcome the above shortcomings, introduced pci_epc_get_features()
->> API, pci_epc_features structure and a ->get_features() callback.
->>
->> Also added a patch to set BAR flags in pci_epf_alloc_space and
->> remove it from pci-epf-test function driver.
->>
->> Tested on TI's DRA7xx platform.
+On 2019-01-10 00:26, Andrew Morton wrote:
+> On Wed, 09 Jan 2019 16:36:36 +0530 Arun KS <arunks@codeaurora.org> 
+> wrote:
 > 
-> While I don't have that much PCI experience and hence cannot judge
-> this cleanup as a whole, I can at least say, that my Rockchip rk3399
-> still does find its PCIE-connected wifi card, so this series on rk3399
+>> On 2019-01-09 16:27, Michal Hocko wrote:
+>> > On Wed 09-01-19 16:12:48, Arun KS wrote:
+>> > [...]
+>> >> It will be called once per online of a section and the arg value is
+>> >> always
+>> >> set to 0 while entering online_pages_range.
+>> >
+>> > You rare right that this will be the case in the most simple scenario.
+>> > But the point is that the callback can be called several times from
+>> > walk_system_ram_range and then your current code wouldn't work
+>> > properly.
+>> 
+>> Thanks. Will use +=
 > 
-> Tested-by: Heiko Stuebner <heiko@sntech.de>
+> The v8 patch
+> https://lore.kernel.org/lkml/1547032395-24582-1-git-send-email-arunks@codeaurora.org/T/#u
+> 
+> (which you apparently sent 7 minutes after typing the above) still has
+> 
+>  static int online_pages_range(unsigned long start_pfn, unsigned long 
+> nr_pages,
+>  			void *arg)
+>  {
+> -	unsigned long i;
+>  	unsigned long onlined_pages = *(unsigned long *)arg;
+> -	struct page *page;
+> 
+>  	if (PageReserved(pfn_to_page(start_pfn)))
+> -		for (i = 0; i < nr_pages; i++) {
+> -			page = pfn_to_page(start_pfn + i);
+> -			(*online_page_callback)(page);
+> -			onlined_pages++;
+> -		}
+> +		onlined_pages = online_pages_blocks(start_pfn, nr_pages);
+> 
+> 
+> Even then the code makes no sense.
+> 
+> static int online_pages_range(unsigned long start_pfn, unsigned long 
+> nr_pages,
+> 			void *arg)
+> {
+> 	unsigned long onlined_pages = *(unsigned long *)arg;
+> 
+> 	if (PageReserved(pfn_to_page(start_pfn)))
+> 		onlined_pages += online_pages_blocks(start_pfn, nr_pages);
+> 
+> 	online_mem_sections(start_pfn, start_pfn + nr_pages);
+> 
+> 	*(unsigned long *)arg += onlined_pages;
+> 	return 0;
+> }
+> 
+> Either the final assignment should be
+> 
+> 	*(unsigned long *)arg = onlined_pages;
+> 
+> or the initialization should be
+> 
+> 	unsigned long onlined_pages = 0;
+> 
+> 
+> 
+> This is becoming a tad tiresome and I'd prefer not to have to check up
+> on such things.  Can we please get this right?
 
-Thank you for testing this series with PCIe controller configured in RC mode.
-It would be great if it could be tested with EP mode too.
+Sorry about that. Will fix it.
 
-Thanks for the help.
-
-Cheers
-Kishon
+Regards,
+Arun
