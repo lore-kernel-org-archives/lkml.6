@@ -2,396 +2,127 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 109E1C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 13:42:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4801C43444
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 13:42:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8A6A20879
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 13:42:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8432620879
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 13:42:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="XjxK1ipu"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729001AbfAJNmg (ORCPT
+        id S1729030AbfAJNmw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 08:42:36 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:41830 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728892AbfAJNmf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 08:42:35 -0500
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 70EDEFF01CD5013CBA50;
-        Thu, 10 Jan 2019 21:22:26 +0800 (CST)
-Received: from linux-ioko.site (10.71.200.31) by
- DGGEMS413-HUB.china.huawei.com (10.3.19.213) with Microsoft SMTP Server id
- 14.3.408.0; Thu, 10 Jan 2019 21:22:20 +0800
-From:   "Wei Hu (Xavier)" <xavier.huwei@huawei.com>
-To:     <dledford@redhat.com>, <jgg@ziepe.ca>
-CC:     <linux-rdma@vger.kernel.org>, <xavier.huwei@huawei.com>,
-        <lijun_nudt@163.com>, <oulijun@huawei.com>,
-        <liudongdong3@huawei.com>, <liuyixian@huawei.com>,
-        <zhangxiping3@huawei.com>, <linuxarm@huawei.com>,
-        <linux-kernel@vger.kernel.org>, <xavier_huwei@163.com>
-Subject: [PATCH rdma-rc 1/3] RDMA/hns: Fix the Oops during rmmod or insmod ko when reset occurs
-Date:   Thu, 10 Jan 2019 21:57:41 +0800
-Message-ID: <1547128663-69220-2-git-send-email-xavier.huwei@huawei.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1547128663-69220-1-git-send-email-xavier.huwei@huawei.com>
-References: <1547128663-69220-1-git-send-email-xavier.huwei@huawei.com>
+        Thu, 10 Jan 2019 08:42:52 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:39750 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728919AbfAJNmw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 08:42:52 -0500
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0ADcjFd193867;
+        Thu, 10 Jan 2019 13:42:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=UfXZEiC++YYzx6hQjwXCQSKZEfHaOn/f3XquOBw4btk=;
+ b=XjxK1ipuhd7W1votCS6aLJuAxXo9I6T5cw+eEoZ18nuL7FZ4tvrjnfryZ/dUaGUoR1e8
+ 3Rx4dodWrvjhYN9xlKxc0h2WR0yDM+Yq8afrgd7E6XhZOluJxEVWGLthYcjZHm6SGNUn
+ jGo0G9ZmiW63MHPy63agwxQfHfdt/yR7ogEYSf+CM+AUtVdzFS7Q/ircz4TokiPyjBib
+ D7+rBRNdc2M/VFrYSEqBzxWstlhvhMicurfZjKaIak0yGBflNamOsUlmfGmzM1O60Wv5
+ bSbtqQ9xracjNHJsumf0UAUDvNcPmvZMZa5VooimpZYSS2Sfmrsj6BhKeHwr0LRSwR2r PA== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by aserp2130.oracle.com with ESMTP id 2ptj3e7dxs-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 10 Jan 2019 13:42:07 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x0ADg6me025459
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 10 Jan 2019 13:42:06 GMT
+Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x0ADg0Wu013477;
+        Thu, 10 Jan 2019 13:42:00 GMT
+Received: from kadam (/197.157.0.17)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 10 Jan 2019 05:42:00 -0800
+Date:   Thu, 10 Jan 2019 16:41:39 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Jason Wang <jasowang@redhat.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Andrea Parri <andrea.parri@amarulasolutions.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Akira Yokosawa <akiyks@gmail.com>,
+        Daniel Lustig <dlustig@nvidia.com>, linux-arch@vger.kernel.org,
+        Network Development <netdev@vger.kernel.org>,
+        virtualization@lists.linux-foundation.org,
+        Eli Friedman <efriedma@codeaurora.org>,
+        Joe Perches <joe@perches.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        linux-sparse@vger.kernel.org,
+        Eric Christopher <echristo@google.com>
+Subject: Re: [PATCH RFC 1/4] include/linux/compiler*.h: fix OPTIMIZER_HIDE_VAR
+Message-ID: <20190110134139.GE1743@kadam>
+References: <20190102205715.14054-1-mst@redhat.com>
+ <20190102205715.14054-2-mst@redhat.com>
+ <CAKwvOdk3b6mnpTEEyY-JFrej8K12w9oTMLqi7q5aNiRMyJo6Ow@mail.gmail.com>
+ <CANiq72nEiw8+cZNnBOwF1ehv232ZJe5qzhdbaTEg0rOoV2p4sg@mail.gmail.com>
+ <20190109213543-mutt-send-email-mst@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.71.200.31]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190109213543-mutt-send-email-mst@kernel.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9131 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=774
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1901100109
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In the reset process, the hns3 NIC driver notifies the RoCE driver
-to perform reset related processing by calling the .reset_notify()
-interface registered by the RoCE driver in hip08 SoC.
+On Wed, Jan 09, 2019 at 09:36:41PM -0500, Michael S. Tsirkin wrote:
+> On Wed, Jan 09, 2019 at 11:35:52AM +0100, Miguel Ojeda wrote:
+> > On Tue, Jan 8, 2019 at 6:44 PM Nick Desaulniers <ndesaulniers@google.com> wrote:
+> > >
+> > > Also for more context, see:
+> > > commit 7829fb09a2b4 ("lib: make memzero_explicit more robust against
+> > > dead store elimination")
+> > 
+> > By the way, shouldn't that barrier_data() be directly in compiler.h
+> > too, since it is for both gcc & clang?
+> > 
+> > > Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+> > >
+> > > + Miguel
+> > > Miguel, would you mind taking this into your compiler-attributes tree?
+> > 
+> > Sure, at least we get quickly some linux-next time.
+> 
+> 
+> BTW why linux-next? shouldn't this go into 5.0 and stable? It's a bugfix after all.
+> 
 
-In the current version, if a reset occurs simultaneously during
-the execution of rmmod or insmod ko, there may be Oops error as below:
+It doesn't hurt to put things in linux-next for a week and then 5.0 and
+-stable.  Not a lot of testing happens on linux-next, but some does.
 
-[  650.375307] Internal error: Oops: 86000007 [#1] PREEMPT SMP
-[  650.381223] Modules linked in: hns_roce(O) hns3(O) hclge(O) hnae3(O) [last unloaded: hns_roce_hw_v2]
-[  650.391279] CPU: 0 PID: 14 Comm: kworker/0:1 Tainted: G           O      4.19.0-ge00d540 #1
-[  650.399875] Hardware name: Huawei Technologies Co., Ltd.
-[  650.411393] Workqueue: events hclge_reset_service_task [hclge]
-[  650.417576] pstate: 60c00009 (nZCv daif +PAN +UAO)
-[  650.422618] pc : 0xffff00000100b0b8
-[  650.426282] lr : 0xffff00000100aea0
-[  650.429914] sp : ffff000009afbab0
-[  650.433388] x29: ffff000009afbab0 x28: 0000000000000800
-[  650.439012] x27: 0000000000007ff0 x26: ffff80002f90c004
-[  650.444599] x25: 00000000000007ff x24: ffff000008f97000
-[  650.450165] x23: ffff80003efee0a8 x22: 0000000000001000
-[  650.455730] x21: ffff80002f917ff0 x20: ffff8000286ea070
-[  650.461289] x19: 0000000000000800 x18: 0000000000000400
-[  650.466868] x17: 00000000c4d3225d x16: 00000000000021b8
-[  650.472423] x15: 0000000000000400 x14: 0000000000000400
-[  650.477990] x13: 0000000000000000 x12: ffff80003fac6e30
-[  650.483552] x11: 0000800036303000 x10: 0000000000000001
-[  650.489103] x9 : 0000000000000000 x8 : ffff80003016d000
-[  650.494662] x7 : 0000000000000000 x6 : 000000000000003f
-[  650.500218] x5 : 0000000000000040 x4 : 0000000000000000
-[  650.505783] x3 : 0000000000000004 x2 : 00000000000007ff
-[  650.511349] x1 : 0000000000000000 x0 : 0000000000000000
-[  650.517002] Process kworker/0:1 (pid: 14, stack limit = 0x00000000af8f0ad9)
-[  650.524164] Call trace:
-[  650.526814]  0xffff00000100b0b8
-[  650.530108]  0xffff00000100b3a0
-[  650.534336]  hns_roce_init+0x624/0xc88 [hns_roce]
-[  650.539196]  0xffff000001002df8
-[  650.542488]  0xffff000001006960
-[  650.546032]  hclge_notify_roce_client+0x74/0xe0 [hclge]
-[  650.551637]  hclge_reset_service_task+0xa58/0xbc0 [hclge]
-[  650.557479]  process_one_work+0x1e4/0x458
-[  650.561738]  worker_thread+0x40/0x450
-[  650.565662]  kthread+0x12c/0x130
-[  650.569247]  ret_from_fork+0x10/0x18
-[  650.573235] Code: bad PC value
-[  650.576663] ---[ end trace 97e6a2fe783337a8 ]---
-
-In the reset process, we will release the resources firstly,
-and after the hardware reset is completed, we will reapply
-resources and reconfigure the hardware. We can solve this
-bug by avoiding simultaneous installation or uninstallation
-and reset process.
-
-Fixes: cb7a94c9c808 ("RDMA/hns: Add reset process for RoCE in hip08")
-Signed-off-by: Wei Hu (Xavier) <xavier.huwei@huawei.com>
----
- drivers/infiniband/hw/hns/hns_roce_device.h |  21 +++++
- drivers/infiniband/hw/hns/hns_roce_hw_v2.c  | 136 +++++++++++++++++++++++++---
- drivers/infiniband/hw/hns/hns_roce_hw_v2.h  |   7 ++
- 3 files changed, 151 insertions(+), 13 deletions(-)
-
-diff --git a/drivers/infiniband/hw/hns/hns_roce_device.h b/drivers/infiniband/hw/hns/hns_roce_device.h
-index 509e467..f4cac63 100644
---- a/drivers/infiniband/hw/hns/hns_roce_device.h
-+++ b/drivers/infiniband/hw/hns/hns_roce_device.h
-@@ -216,6 +216,26 @@ enum {
- 	HNS_ROCE_DB_PER_PAGE = PAGE_SIZE / 4
- };
- 
-+enum hns_roce_reset_stage {
-+	HNS_ROCE_STATE_NON_RST,
-+	HNS_ROCE_STATE_RST_BEF_DOWN,
-+	HNS_ROCE_STATE_RST_DOWN,
-+	HNS_ROCE_STATE_RST_UNINIT,
-+	HNS_ROCE_STATE_RST_INIT,
-+	HNS_ROCE_STATE_RST_INITED,
-+};
-+
-+enum hns_roce_instance_state {
-+	HNS_ROCE_STATE_NON_INIT,
-+	HNS_ROCE_STATE_INIT,
-+	HNS_ROCE_STATE_INITED,
-+	HNS_ROCE_STATE_UNINIT,
-+};
-+
-+enum {
-+	HNS_ROCE_RST_DIRECT_RETURN		= 0,
-+};
-+
- #define HNS_ROCE_CMD_SUCCESS			1
- 
- #define HNS_ROCE_PORT_DOWN			0
-@@ -898,6 +918,7 @@ struct hns_roce_dev {
- 	spinlock_t		bt_cmd_lock;
- 	bool			active;
- 	bool			is_reset;
-+	unsigned long		reset_cnt;
- 	struct hns_roce_ib_iboe iboe;
- 
- 	struct list_head        pgdir_list;
-diff --git a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
-index 3a66945..dadb685 100644
---- a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
-+++ b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
-@@ -5800,6 +5800,7 @@ static int hns_roce_v2_post_srq_recv(struct ib_srq *ibsrq,
- static int hns_roce_hw_v2_get_cfg(struct hns_roce_dev *hr_dev,
- 				  struct hnae3_handle *handle)
- {
-+	struct hns_roce_v2_priv *priv = hr_dev->priv;
- 	const struct pci_device_id *id;
- 	int i;
- 
-@@ -5830,10 +5831,13 @@ static int hns_roce_hw_v2_get_cfg(struct hns_roce_dev *hr_dev,
- 	hr_dev->cmd_mod = 1;
- 	hr_dev->loop_idc = 0;
- 
-+	hr_dev->reset_cnt = handle->ae_algo->ops->ae_dev_reset_cnt(handle);
-+	priv->handle = handle;
-+
- 	return 0;
- }
- 
--static int hns_roce_hw_v2_init_instance(struct hnae3_handle *handle)
-+static int __hns_roce_hw_v2_init_instance(struct hnae3_handle *handle)
- {
- 	struct hns_roce_dev *hr_dev;
- 	int ret;
-@@ -5850,7 +5854,6 @@ static int hns_roce_hw_v2_init_instance(struct hnae3_handle *handle)
- 
- 	hr_dev->pci_dev = handle->pdev;
- 	hr_dev->dev = &handle->pdev->dev;
--	handle->priv = hr_dev;
- 
- 	ret = hns_roce_hw_v2_get_cfg(hr_dev, handle);
- 	if (ret) {
-@@ -5864,6 +5867,8 @@ static int hns_roce_hw_v2_init_instance(struct hnae3_handle *handle)
- 		goto error_failed_get_cfg;
- 	}
- 
-+	handle->priv = hr_dev;
-+
- 	return 0;
- 
- error_failed_get_cfg:
-@@ -5875,7 +5880,7 @@ static int hns_roce_hw_v2_init_instance(struct hnae3_handle *handle)
- 	return ret;
- }
- 
--static void hns_roce_hw_v2_uninit_instance(struct hnae3_handle *handle,
-+static void __hns_roce_hw_v2_uninit_instance(struct hnae3_handle *handle,
- 					   bool reset)
- {
- 	struct hns_roce_dev *hr_dev = (struct hns_roce_dev *)handle->priv;
-@@ -5883,24 +5888,111 @@ static void hns_roce_hw_v2_uninit_instance(struct hnae3_handle *handle,
- 	if (!hr_dev)
- 		return;
- 
-+	handle->priv = NULL;
- 	hns_roce_exit(hr_dev);
- 	kfree(hr_dev->priv);
- 	ib_dealloc_device(&hr_dev->ib_dev);
- }
- 
-+static int hns_roce_hw_v2_init_instance(struct hnae3_handle *handle)
-+{
-+	const struct hnae3_ae_ops *ops = handle->ae_algo->ops;
-+	struct device *dev = &handle->pdev->dev;
-+	int ret;
-+
-+	handle->rinfo.instance_state = HNS_ROCE_STATE_INIT;
-+
-+	if (ops->ae_dev_resetting(handle) || ops->get_hw_reset_stat(handle)) {
-+		handle->rinfo.instance_state = HNS_ROCE_STATE_NON_INIT;
-+		goto reset_chk_err;
-+	}
-+
-+	ret = __hns_roce_hw_v2_init_instance(handle);
-+	if (ret) {
-+		handle->rinfo.instance_state = HNS_ROCE_STATE_NON_INIT;
-+		dev_err(dev, "RoCE instance init failed! ret = %d\n", ret);
-+		if (ops->ae_dev_resetting(handle) ||
-+		    ops->get_hw_reset_stat(handle))
-+			goto reset_chk_err;
-+		else
-+			return ret;
-+	}
-+
-+	handle->rinfo.instance_state = HNS_ROCE_STATE_INITED;
-+
-+
-+	return 0;
-+
-+reset_chk_err:
-+	dev_err(dev, "Device is busy in resetting state.\n"
-+		     "please retry later.\n");
-+
-+	return -EBUSY;
-+}
-+
-+static void hns_roce_hw_v2_uninit_instance(struct hnae3_handle *handle,
-+					   bool reset)
-+{
-+	const struct hnae3_ae_ops *ops = handle->ae_algo->ops;
-+	struct device *dev = &handle->pdev->dev;
-+	struct hns_roce_dev *hr_dev;
-+	unsigned long end;
-+
-+	if (handle->rinfo.instance_state != HNS_ROCE_STATE_INITED)
-+		return;
-+
-+	handle->rinfo.instance_state = HNS_ROCE_STATE_UNINIT;
-+	hr_dev = (struct hns_roce_dev *)handle->priv;
-+	if (!hr_dev)
-+		return;
-+
-+	/* Check the status of the current software reset process, if in
-+	 * software reset process, wait until software reset process finished,
-+	 * in order to ensure that reset process and this function will not call
-+	 * __hns_roce_hw_v2_uninit_instance at the same time.
-+	 * If a timeout occurs, it indicates that the network subsystem has
-+	 * encountered a serious error and cannot be recovered from the reset
-+	 * processing.
-+	 */
-+	if (ops->ae_dev_resetting(handle)) {
-+		dev_warn(dev, "Device is busy in resetting state. waiting.\n");
-+		end = msecs_to_jiffies(HNS_ROCE_V2_RST_PRC_MAX_TIME) + jiffies;
-+		while (ops->ae_dev_resetting(handle) &&
-+		       time_before(jiffies, end))
-+			msleep(20);
-+
-+		if (!ops->ae_dev_resetting(handle) ||
-+		    ops->ae_dev_reset_cnt(handle) != hr_dev->reset_cnt)
-+			dev_warn(dev, "Device completed reset.\n");
-+		else {
-+			dev_warn(dev, "Device is still resetting! timeout!\n"
-+				      "Unrecoverable failure!\n");
-+			return;
-+		}
-+	}
-+
-+	__hns_roce_hw_v2_uninit_instance(handle, reset);
-+
-+	handle->rinfo.instance_state = HNS_ROCE_STATE_NON_INIT;
-+}
- static int hns_roce_hw_v2_reset_notify_down(struct hnae3_handle *handle)
- {
--	struct hns_roce_dev *hr_dev = (struct hns_roce_dev *)handle->priv;
-+	struct hns_roce_dev *hr_dev;
- 	struct ib_event event;
- 
--	if (!hr_dev) {
--		dev_err(&handle->pdev->dev,
--			"Input parameter handle->priv is NULL!\n");
--		return -EINVAL;
-+	if (handle->rinfo.instance_state != HNS_ROCE_STATE_INITED) {
-+		set_bit(HNS_ROCE_RST_DIRECT_RETURN, &handle->rinfo.state);
-+		return 0;
- 	}
- 
-+	handle->rinfo.reset_state = HNS_ROCE_STATE_RST_DOWN;
-+	clear_bit(HNS_ROCE_RST_DIRECT_RETURN, &handle->rinfo.state);
-+
-+	hr_dev = (struct hns_roce_dev *)handle->priv;
-+	if (!hr_dev)
-+		return 0;
-+
- 	hr_dev->active = false;
--	hr_dev->is_reset = true;
- 
- 	event.event = IB_EVENT_DEVICE_FATAL;
- 	event.device = &hr_dev->ib_dev;
-@@ -5912,17 +6004,29 @@ static int hns_roce_hw_v2_reset_notify_down(struct hnae3_handle *handle)
- 
- static int hns_roce_hw_v2_reset_notify_init(struct hnae3_handle *handle)
- {
-+	struct device *dev = &handle->pdev->dev;
- 	int ret;
- 
--	ret = hns_roce_hw_v2_init_instance(handle);
-+	if (test_and_clear_bit(HNS_ROCE_RST_DIRECT_RETURN,
-+			       &handle->rinfo.state)) {
-+		handle->rinfo.reset_state = HNS_ROCE_STATE_RST_INITED;
-+		return 0;
-+	}
-+
-+	handle->rinfo.reset_state = HNS_ROCE_STATE_RST_INIT;
-+
-+	dev_info(&handle->pdev->dev, "In reset process RoCE client reinit.\n");
-+	ret = __hns_roce_hw_v2_init_instance(handle);
- 	if (ret) {
- 		/* when reset notify type is HNAE3_INIT_CLIENT In reset notify
- 		 * callback function, RoCE Engine reinitialize. If RoCE reinit
- 		 * failed, we should inform NIC driver.
- 		 */
- 		handle->priv = NULL;
--		dev_err(&handle->pdev->dev,
--			"In reset process RoCE reinit failed %d.\n", ret);
-+		dev_err(dev, "In reset process RoCE reinit failed %d.\n", ret);
-+	} else {
-+		handle->rinfo.reset_state = HNS_ROCE_STATE_RST_INITED;
-+		dev_info(dev, "Reset done, RoCE client reinit finished.\n");
- 	}
- 
- 	return ret;
-@@ -5930,8 +6034,14 @@ static int hns_roce_hw_v2_reset_notify_init(struct hnae3_handle *handle)
- 
- static int hns_roce_hw_v2_reset_notify_uninit(struct hnae3_handle *handle)
- {
-+	if (test_bit(HNS_ROCE_RST_DIRECT_RETURN, &handle->rinfo.state))
-+		return 0;
-+
-+	handle->rinfo.reset_state = HNS_ROCE_STATE_RST_UNINIT;
-+	dev_info(&handle->pdev->dev, "In reset process RoCE client uninit.\n");
- 	msleep(100);
--	hns_roce_hw_v2_uninit_instance(handle, false);
-+	__hns_roce_hw_v2_uninit_instance(handle, false);
-+
- 	return 0;
- }
- 
-diff --git a/drivers/infiniband/hw/hns/hns_roce_hw_v2.h b/drivers/infiniband/hw/hns/hns_roce_hw_v2.h
-index b72d044..8def828 100644
---- a/drivers/infiniband/hw/hns/hns_roce_hw_v2.h
-+++ b/drivers/infiniband/hw/hns/hns_roce_hw_v2.h
-@@ -90,6 +90,12 @@
- #define HNS_ROCE_V2_UC_RC_SGE_NUM_IN_WQE	2
- #define HNS_ROCE_V2_RSV_QPS			8
- 
-+/* The longest time for software reset process in NIC subsystem, if a timeout
-+ * occurs, it indicates that the network subsystem has encountered a serious
-+ * error and cannot be recovered from the reset processing.
-+ */
-+#define HNS_ROCE_V2_RST_PRC_MAX_TIME           300000
-+
- #define HNS_ROCE_CONTEXT_HOP_NUM		1
- #define HNS_ROCE_MTT_HOP_NUM			1
- #define HNS_ROCE_CQE_HOP_NUM			1
-@@ -1546,6 +1552,7 @@ struct hns_roce_link_table_entry {
- #define HNS_ROCE_LINK_TABLE_NXT_PTR_M GENMASK(31, 20)
- 
- struct hns_roce_v2_priv {
-+	struct hnae3_handle *handle;
- 	struct hns_roce_v2_cmq cmq;
- 	struct hns_roce_link_table tsq;
- 	struct hns_roce_link_table tpq;
--- 
-1.9.1
+regards,
+dan carpenter
 
