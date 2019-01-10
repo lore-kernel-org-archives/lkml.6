@@ -2,125 +2,215 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2302C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 12:08:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7675C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 12:09:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 941E7214C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 12:08:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547122084;
-	bh=GHlPz/F7miCS2CBeWT25aeoKwH5qAAu0cROnDiz7ak8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=bu6cep6XjfHtukB3nOS/fbfeFg5cheoMzmzyTPiz1rluJYuDBau0oanmVCCz+O16h
-	 HGGYU3WdS7R+EZjxWs/PkYIN7E29a8f5ziJzJymWt9pYLpCLddku+7rkClGWUDrDK+
-	 TLk/CB0+P9AusjQn9Hr5Nyzol7f8sa7pYFilkR+U=
+	by mail.kernel.org (Postfix) with ESMTP id 75C26214C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 12:09:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728416AbfAJMID (ORCPT
+        id S1728471AbfAJMJm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 07:08:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56504 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727535AbfAJMIB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 07:08:01 -0500
-Received: from earth.universe (host-091-097-085-127.ewe-ip-backbone.de [91.97.85.127])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A4CBB2173B;
-        Thu, 10 Jan 2019 12:08:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547122080;
-        bh=GHlPz/F7miCS2CBeWT25aeoKwH5qAAu0cROnDiz7ak8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=kfZDSk3GxBeQXp9ULU20zlEK1X04co5Ff1cq3dvTe6RYb0N1r0tCDLyDcyThL8Vh6
-         HBakn/AJxjqqZ35dBiwb1bU6Wc2SxKLRpNOdwKjZ4LUU4wFciTaGNGQBfg8+NlL/X5
-         MCF44cZ1LDJPzO9cR+vUli87g96QuusWt5aQT8ZY=
-Received: by earth.universe (Postfix, from userid 1000)
-        id 613833C08E2; Thu, 10 Jan 2019 13:07:58 +0100 (CET)
-Date:   Thu, 10 Jan 2019 13:07:58 +0100
-From:   Sebastian Reichel <sre@kernel.org>
-To:     Tony Lindgren <tony@atomide.com>
-Cc:     Vignesh R <vigneshr@ti.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>, Jiri Slaby <jslaby@suse.com>,
-        Lokesh Vutla <lokeshvutla@ti.com>,
-        linux-serial@vger.kernel.org, linux-omap@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] serial: 8250_omap: Drop check for of_node
-Message-ID: <20190110120758.bz63neey5ztepw4m@earth.universe>
-References: <20190109091206.25759-1-vigneshr@ti.com>
- <20190109091206.25759-2-vigneshr@ti.com>
- <20190109214403.GW5544@atomide.com>
+        Thu, 10 Jan 2019 07:09:42 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:59550 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727391AbfAJMJm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 07:09:42 -0500
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 27B96DE8FB657DE1C470;
+        Thu, 10 Jan 2019 20:09:39 +0800 (CST)
+Received: from [127.0.0.1] (10.142.68.147) by DGGEMS401-HUB.china.huawei.com
+ (10.3.19.201) with Microsoft SMTP Server id 14.3.408.0; Thu, 10 Jan 2019
+ 20:09:35 +0800
+Subject: Re: [RFC RESEND PATCH] kvm: arm64: export memory error recovery
+ capability to user space
+To:     James Morse <james.morse@arm.com>,
+        Peter Maydell <peter.maydell@linaro.org>
+CC:     =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Christoffer Dall <christoffer.dall@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        "Will Deacon" <will.deacon@arm.com>,
+        kvm-devel <kvm@vger.kernel.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        lkml - Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        arm-mail-list <linux-arm-kernel@lists.infradead.org>
+References: <0184EA26B2509940AA629AE1405DD7F201FFC21E@dggema523-mbx.china.huawei.com>
+ <c01e3ed0-f66c-f7df-295a-70b44bad49ff@arm.com>
+ <CAFEAcA8No4tti6o9oErdfGKyHqRTfXebO4fuEOhBApFAxw=LOg@mail.gmail.com>
+ <1d73ec5a-b58d-1e00-b681-53cd80cba999@arm.com>
+From:   gengdongjiu <gengdongjiu@huawei.com>
+Message-ID: <63a1ad58-b4db-c266-1077-0a3d0a3975d0@huawei.com>
+Date:   Thu, 10 Jan 2019 20:09:34 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="u5tx4nodvh2iwfgy"
-Content-Disposition: inline
-In-Reply-To: <20190109214403.GW5544@atomide.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <1d73ec5a-b58d-1e00-b681-53cd80cba999@arm.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.142.68.147]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi James/Peter,
+   thanks for this discussion, and sorry for my late response due to vacation.
 
---u5tx4nodvh2iwfgy
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 2018/12/22 2:17, James Morse wrote:
+> Hi Peter,
+> 
+> On 19/12/2018 19:02, Peter Maydell wrote:
+>> On Mon, 17 Dec 2018 at 15:56, James Morse <james.morse@arm.com> wrote:
+>>> I don't think this really matters. Its only the NMIlike notifications that the
+>>> guest doesn't have to register or poll. The ones we support today extend the
+>>> architectures existing behaviour: you would have taken an external-abort on a
+>>> real system, whether you know about the additional metadata doesn't matter to Qemu.
+>>
+>> Consider the case where we booted the guest using a DTB and no ACPI
+>> table at all -- we certainly can't just call QEMU code that tries to
+>> add entries to a nonexistent table.
+> 
+> Sure, because you know which of the two sets of firmware-table you're providing.
+> 
+> I'm taking the behaviour of physical machines as the template for what we should
+> do here. I can boot a DT-only kernel on Seattle. Firmware has no idea I did
+> this, it will still take DRAM uncorrected-error IRQs in firmware, and generate
+> CPER records in the POLLed areas. But the kernel will never look, because it
+> booted with DT.
+> What happens if the kernel goes on to access the corrupt location? It either
+> gets corrupt values back, or an external abort, depending on the design of the
+> memory-controller.
+> 
+> X-gene uses an IRQ for its firmware-first notification. Booted with DT that
+> interrupt can be asserted, but as the OS has didn't know to register it, its
+> never taken. We eventually get the same corrupt-values/external-abort behaviour.
+> 
+> KVM/Linux is acting as the memory controller using stage2. When an error is
+> detected by the host it unmaps the page from stage2, and refuses to map it again
+> until its fixed up in Qemu's memory map (which can happen automatically). If the
+> kernel can't fix it itself, the AO signal is like the DRAM-IRQ above, and the AR
+> like the external abort.
+> We don't have a parallel to the 'gets corrupt values back' behaviour as Linux
+> will always unmap hwpoison pages from user-space/guests.
+> 
+> If the host-kernel wasn't build with CONFIG_MEMORY_FAILURE, its like the memory
+> controller doesn't support any of the above. I think knowing this is the closest
+> to what you want.
+> 
+> 
+>> My main point is that there
+>> needs to be logic in Dongjiu's QEMU patches that checks more than
+>> just "does this KVM feature exist". I'm not sufficiently familiar
+>> with all this RAS stuff to be certain what those checks should
+>> be and what the right choices are; I just know we need to check
+>> *something*...
+> 
+> I think this is the crux of where we don't see this the same way.
+> The v8.2 RAS stuff is new, RAS support on arm64 is not. Kernel support arrived
+> at roughly the same time, but not CPU support. There are v8.0 systems that
+> support RAS. There are DT systems that can do the same with edac drivers.
+> The physical v8.0 systems that do this, are doing it without any extra CPU support.
+> 
+> I think x86's behaviour here includes some history, which we don't have.
+>>From the order of the HEST entries, it looks like the machine-check stuff came
+> first, then firmware-first using a 'GHES' entry in that table.
+> I think Qemu on x86 only supports the emulated machine check stuff, so it needs
+> to check KVM has the widget to do this.
+> If Qemu on x86 supported firmware-first, I don't think there would be anything
+> to check. (details below)
 
-Hi,
+Peter, I summarize James's main idea, James think QEMU does not needs to check *something* if Qemu support firmware-first.
+What do we do for your comments?
 
-On Wed, Jan 09, 2019 at 01:44:03PM -0800, Tony Lindgren wrote:
-> * Vignesh R <vigneshr@ti.com> [190109 09:11]:
-> > 8250_omap is DT only driver so dev->of_node always exists. Drop check
-> > for existence of valid dev->of_node to simplify omap8250_probe().
->=20
-> That part seems safe to me now.
->=20
-> > --- a/drivers/tty/serial/8250/8250_omap.c
-> > +++ b/drivers/tty/serial/8250/8250_omap.c
-> ...
-> > -		const struct of_device_id *id;
-> > -
-> > -		ret =3D of_alias_get_id(pdev->dev.of_node, "serial");
-> > -
-> > -		of_property_read_u32(pdev->dev.of_node, "clock-frequency",
-> > -				     &up.port.uartclk);
-> > -		priv->wakeirq =3D irq_of_parse_and_map(pdev->dev.of_node, 1);
-> > -
-> > -		id =3D of_match_device(of_match_ptr(omap8250_dt_ids), &pdev->dev);
-> > -		if (id && id->data)
-> > -			priv->habit |=3D *(u8 *)id->data;
->=20
-> But this part it seems we still need to keep around
-> as we still have lots of clock-frequency references
-> in the *.dtsi files. Or am I missing something?
+> 
+> 
+>>>> Let us see the X86's QEMU logic:
+>>>> 1. Before the vCPU created, it will set a default env->mcg_cap value with
+>>>
+>>>> MCE_CAP_DEF flag, MCG_SER_P means it expected the guest CPU model supports
+>>>> RAS error recovery.[1] 2. when the vCPU initialize, it will check whether host
+>>>> kernel support this feature[2]. Only when host kernel and default env->mcg_cap
+>>>> value all expected this feature, then it will setup vCPU support RAS error
+>>>> recovery[3].
+>>>
+>>> This looks like KVM exposing a CPU capability to Qemu, which then configures the
+>>> behaviour KVM gives to the guest. This doesn't tell you anything about what the
+>>> guest supports.
+>>
+>> It tells you what the *guest CPU* supports, which for x86 is a combination
+>> of (a) what did the user/machine model ask for and (b) what can KVM
+>> actually implement. I don't much care whether the guest OS supports
+>> anything or not, that's its business... but it does seem odd to me
+>> that the equivalent Arm code is not similarly saying "what were we
+>> asked for, and what can we do?".
+> 
+> The flow is something like:
+> For AO, generate CPER records, and notify the OS via NOTIFY_POLL (which isn't
+> really a notification) or some flavour of IRQ.
+> To do this, Qemu needs to be able to write to its reserved area of guest memory,
+> and possibly trigger an interrupt.
+> 
+> For AR, generate CPER records and notify the OS via external abort. (the
+> presence of the CPER records makes this NOTIFY_SEA or NOTIFY_SEI).
+> To do this, Qemu again needs to be able to write to guest memory, set guest
+> registers (KVM_SET_ONE_REG()). If it wants to inject an
+> SError-Interrupt/Asynchronous-external-abort while the guest has it masked, it
+> needs KVM_SET_VCPU_EVENTS().
+> 
+> Nothing here depends on the CPU or kernel configuration. This is all ACPI stuff,
+> so its the same on x86. (The only difference is external-abort becomes NMI,
+> which is probably done through SET_VCPU_EVENTS())
+> 
+> What were we asked for? Qemu wants to know if it can write to guest memory,
+> guest registers (for synchronous external abort) and trigger interrupts. It has
+> always been able to do these things.
+> 
+> 
+>> I think one question here which it would be good to answer is:
+>> if we are modelling a guest and we haven't specifically provided
+>> it an ACPI table to tell it about memory errors, what do we do
+>> when we get a sigbus from the host? We have basically two choices:
+>>  (1) send the guest an SError (aka asynchronous external abort)
+>>      anyway (with no further info about what the memory error is)
+> 
+> For an AR signal an external abort is valid. Its up to the implementation
+> whether these are synchronous or asynchronous. Qemu can only take a signal for
+> something that was synchronous, so you can choose between the two.
+> Synchronous external abort is marginally better as an unaware OS knows its
+> affects this thread, and may be able to kill it.
+> SError with an imp-def ESR is indistinguishable from 'part of the soc fell out',
+> and should always result in a panic().
+> 
+> 
+>>  (2) just stop QEMU (as we would for a memory error in QEMU's
+>>      own memory)
+> 
+> This is also valid. A machine may take external-abort to EL3 and then
+> reboot/crash/burn.
+> 
+> 
+> Just in case this is the deeper issue: I keep picking on memory-errors, what
+> about CPU errors?
+> Linux can't handle these at all, unless they are also memory errors. If we take
+> an imprecise abort from a guest KVM can't tell Qemu using signals. We don't have
+> any mechanism to tell user-space about imprecise exceptions. In this case KVM
+> throws an imp-def SError back at the affected vcpu, these are allowed to be
+> imprecise, as this is the closest thing we have.
+> 
+> This does mean that any AO/AR signal Qemu gets is a memory error.
+> 
+> 
+> Happy New Year,
+> 
+> James
+> 
+> .
+> 
 
-It's re-added a couple of lines later. Only the indent was removed.
-
--- Sebastian
-
---u5tx4nodvh2iwfgy
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlw3NZsACgkQ2O7X88g7
-+pr5IBAAhmNLhHoG54gdNETgXhIRD+prbisTAvMlT5EQjZRR0o0X//uoTI8Hw+Z6
-Yh46FgkTU7rj++fpvAHfSbSOsMLklT7dsU6r8OQqc/4szPAoJPa+Fp2eDi3QOQKo
-f12NEqD42+i2R4Ah789ctstIek5z0YIBL4dK92ubKbEHSqMp0/u214+JHGnVM7Jx
-Zw5r+ibBYPjMEU8xVKe3993mEU5MyTQhOlRSSMBwiDcxqyckle+IUZugr91lr0dG
-Mluv1LK7wupwbk/a/YD7gagiZN2kuyXRzwxE6J/hRHl1wchj4ald2SRvmxYUpEW/
-6BtldqSPd3HDsxRwxYhfztg9JIJZy1zDYILTRT93bKH3SHQTUcBP+JNva69zVik6
-BeV6kLfXo47dSv2GGK4HcGD4Ryggh6P7UyrP3seFg7FM5LS7a9fSPPEONoWyt5ew
-1WUNusbG0/VK9XMpo3lWBL3xEg0mSUO0Ov+9sKCHQcNQhZIAqJb9i4SSbe9dCoOa
-rJ5pRG54NHOZQAX2JcWSur54kDNGAVcHT4tyApGmrtqAbIOe6cAFopKPJ7mzD8uj
-Od5/QGcmSPg1YDaT+NPniXTc95dwK0JIOy4C5mXR7mUE0L30tvj8MwXyBYJZXj2b
-4qLnkr0hJRKkOblwysOSqeCPCMcO6sF+0qPiQg9uBesI3FvPUWg=
-=kRf9
------END PGP SIGNATURE-----
-
---u5tx4nodvh2iwfgy--
