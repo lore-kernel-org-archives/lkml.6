@@ -2,115 +2,213 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC2A7C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 07:55:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E7F0C43444
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 07:57:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD77520685
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 07:55:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RraR06AC"
+	by mail.kernel.org (Postfix) with ESMTP id 20E69206B7
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 07:57:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727697AbfAJHzo (ORCPT
+        id S1727478AbfAJH5J (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 02:55:44 -0500
-Received: from mail-it1-f193.google.com ([209.85.166.193]:51682 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726137AbfAJHzn (ORCPT
+        Thu, 10 Jan 2019 02:57:09 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:39564 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726137AbfAJH5I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 02:55:43 -0500
-Received: by mail-it1-f193.google.com with SMTP id w18so15983956ite.1;
-        Wed, 09 Jan 2019 23:55:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=Yov8D8gjWhHIk/2X+MdgDF7F0r4fp0ReXoEM3MeFAxY=;
-        b=RraR06AC/7qgLypkw/Kx5hZk6MdG1ggq119b/mzHf3G9LY+Lh8sakgHAbX8UNvUmPf
-         Ir+J2Dz/DE/3q0jXGQB3vzOO8S2AaaFwrH9dfnn7CkAMh+vRyty+C6omAuqFf9G+J2kc
-         Xi5rpx2l2htLjRFJggx27Yk24NAdUN+iO1tes9PpwDhcYqQBxSj9mhSnZGtnbWdbK/cB
-         VNJHJXJnJe642jAPgXiwqmY4/LkuUFkx1xzpu2qfvdISNaQ4pB7Tvw6+ufbYWlgpXz1o
-         XZA21Zl8lx+YTF8p4prtV2qIc7ztaq7NRO7P3ZJiPv14Ni0foxGoRfZEkFnQdfl/fGgQ
-         HKjg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=Yov8D8gjWhHIk/2X+MdgDF7F0r4fp0ReXoEM3MeFAxY=;
-        b=kFq/Wj1lQyxlcvp85N1DD5jpul6vj90BN+bjKtRmX1SJRJygBuAT4DTvRcR7JMv6nH
-         NGYdGrdtcjZK7NHc2ku+1SeJIX1KD8NAVPZ9N87G4p3xvxaRdYrw9sTfOd2mEIeMa6T3
-         bqfSkmYEME+Dyfg+huJCDPc+ayFPBSsUHNUWncx1sIYzAhsG6bciWCgctTGMnvPsPWzj
-         20ULoJ5+IKBmXxB2yxw05E9Tkxvp0mxomESN3NabEmZkbgVkVzW8jb1b/wb6+6XkNJx9
-         wKFN5H/auOPiBo+Qadx3YiyQ0g8GzzULEPvjlx4pu8re/HRqwT1CnK7ti2Xxz2H2EG2g
-         Cg+g==
-X-Gm-Message-State: AJcUukdhUDYOzXUDCq//sVmyP4Rh2w42mO5ON0IKwc/Tolk0adF1vkfe
-        CT1RgOFCtQCA9iqi49vdVTAnchyajURx4K4zJ8U=
-X-Google-Smtp-Source: ALg8bN6BdBASQyZr3JOAize8EhSV0zHdzwrPhboERUcM1OXmPnmxdRZINyRfeHSyYAh23sghjlFH/HHPy8y8horEIjc=
-X-Received: by 2002:a24:b34f:: with SMTP id z15mr6062922iti.61.1547106942285;
- Wed, 09 Jan 2019 23:55:42 -0800 (PST)
+        Thu, 10 Jan 2019 02:57:08 -0500
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x0A7s0Ee073440
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 02:57:07 -0500
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2px131ah63-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 02:57:07 -0500
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
+        Thu, 10 Jan 2019 07:57:04 -0000
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 10 Jan 2019 07:56:57 -0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0A7uu6k1704262
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 10 Jan 2019 07:56:56 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 96566A4051;
+        Thu, 10 Jan 2019 07:56:56 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0874BA4040;
+        Thu, 10 Jan 2019 07:56:55 +0000 (GMT)
+Received: from rapoport-lnx (unknown [9.148.8.152])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Thu, 10 Jan 2019 07:56:54 +0000 (GMT)
+Date:   Thu, 10 Jan 2019 09:56:53 +0200
+From:   Mike Rapoport <rppt@linux.ibm.com>
+To:     Pingfan Liu <kernelfans@gmail.com>
+Cc:     Baoquan He <bhe@redhat.com>, linux-mm@kvack.org,
+        kexec@lists.infradead.org, Tang Chen <tangchen@cn.fujitsu.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Yaowei Bai <baiyaowei@cmss.chinamobile.com>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Daniel Vacek <neelx@redhat.com>,
+        Mathieu Malaterre <malat@debian.org>,
+        Stefan Agner <stefan@agner.ch>, Dave Young <dyoung@redhat.com>,
+        yinghai@kernel.org, vgoyal@redhat.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCHv5] x86/kdump: bugfix, make the behavior of crashkernel=X
+ consistent with kaslr
+References: <1546848299-23628-1-git-send-email-kernelfans@gmail.com>
+ <20190108080538.GB4396@rapoport-lnx>
+ <20190108090138.GB18718@MiWiFi-R3L-srv>
+ <20190108154852.GC14063@rapoport-lnx>
+ <CAFgQCTtVjwJ_Rfp8DcmzPx6uYPnOx7E_x=YjC+MQ=mx7W38HEw@mail.gmail.com>
 MIME-Version: 1.0
-References: <20190108200509.30494-1-pawel.mikolaj.chmiel@gmail.com>
- <20190108200509.30494-5-pawel.mikolaj.chmiel@gmail.com> <20190110070208.lvnrcd2nld3zthmk@vireshk-i7>
-In-Reply-To: <20190110070208.lvnrcd2nld3zthmk@vireshk-i7>
-From:   =?UTF-8?Q?Pawe=C5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
-Date:   Thu, 10 Jan 2019 08:55:31 +0100
-Message-ID: <CAKpie0TvS4bzdv82m8T24GaH_DrGsjdznCSQcugtt9DqKss_sg@mail.gmail.com>
-Subject: Re: [PATCH 4/4] ARM: defconfig: s5pv210: Add cpufreq support
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux@armlinux.org.uk,
-        rjw@rjwysocki.net,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        "moderated list:SAMSUNG SOC CLOCK DRIVERS" 
-        <linux-samsung-soc@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-pm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAFgQCTtVjwJ_Rfp8DcmzPx6uYPnOx7E_x=YjC+MQ=mx7W38HEw@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 19011007-0012-0000-0000-000002E5C63B
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19011007-0013-0000-0000-0000211CCB47
+Message-Id: <20190110075652.GB32036@rapoport-lnx>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-10_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901100065
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-czw., 10 sty 2019 o 08:02 Viresh Kumar <viresh.kumar@linaro.org> napisa=C5=
-=82(a):
->
-> On 08-01-19, 21:05, Pawe=C5=82 Chmiel wrote:
-> > This commit enables cpufreq support for all s5pv210 devices.
+Hi Pingfan,
+
+On Wed, Jan 09, 2019 at 09:02:41PM +0800, Pingfan Liu wrote:
+> On Tue, Jan 8, 2019 at 11:49 PM Mike Rapoport <rppt@linux.ibm.com> wrote:
 > >
-> > Signed-off-by: Pawe=C5=82 Chmiel <pawel.mikolaj.chmiel@gmail.com>
-> > ---
-> >  arch/arm/configs/s5pv210_defconfig | 6 ++++++
-> >  1 file changed, 6 insertions(+)
+> > On Tue, Jan 08, 2019 at 05:01:38PM +0800, Baoquan He wrote:
+> > > Hi Mike,
+> > >
+> > > On 01/08/19 at 10:05am, Mike Rapoport wrote:
+> > > > I'm not thrilled by duplicating this code (yet again).
+> > > > I liked the v3 of this patch [1] more, assuming we allow bottom-up mode to
+> > > > allocate [0, kernel_start) unconditionally.
+> > > > I'd just replace you first patch in v3 [2] with something like:
+> > >
+> > > In initmem_init(), we will restore the top-down allocation style anyway.
+> > > While reserve_crashkernel() is called after initmem_init(), it's not
+> > > appropriate to adjust memblock_find_in_range_node(), and we really want
+> > > to find region bottom up for crashkernel reservation, no matter where
+> > > kernel is loaded, better call __memblock_find_range_bottom_up().
+> > >
+> > > Create a wrapper to do the necessary handling, then call
+> > > __memblock_find_range_bottom_up() directly, looks better.
 > >
-> > diff --git a/arch/arm/configs/s5pv210_defconfig b/arch/arm/configs/s5pv=
-210_defconfig
-> > index 951196bdf008..fd4f28aabda6 100644
-> > --- a/arch/arm/configs/s5pv210_defconfig
-> > +++ b/arch/arm/configs/s5pv210_defconfig
-> > @@ -11,6 +11,12 @@ CONFIG_ARCH_S5PV210=3Dy
-> >  CONFIG_VMSPLIT_2G=3Dy
-> >  CONFIG_ARM_APPENDED_DTB=3Dy
-> >  CONFIG_CMDLINE=3D"root=3D/dev/ram0 rw ramdisk=3D8192 initrd=3D0x208000=
-00,8M console=3DttySAC1,115200 init=3D/linuxrc"
-> > +CONFIG_CPU_FREQ=3Dy
-> > +CONFIG_CPU_FREQ_STAT=3Dy
-> > +CONFIG_CPU_FREQ_DEFAULT_GOV_ONDEMAND=3Dy
-> > +CONFIG_CPU_FREQ_GOV_POWERSAVE=3Dm
-> > +CONFIG_CPU_FREQ_GOV_USERSPACE=3Dm
-> > +CONFIG_CPU_FREQ_GOV_CONSERVATIVE=3Dm
->
-> You don't want to use schedutil ? That is the default governor for
-> everyone now a days.
-schedutil depends on SMP, which is not enabled on s5pv210 (it has only
-one cpu core).
->
-> --
-> viresh
+> > What bothers me is 'the necessary handling' which is already done in
+> > several places in memblock in a similar, but yet slightly different way.
+> >
+> > memblock_find_in_range() and memblock_phys_alloc_nid() retry with different
+> > MEMBLOCK_MIRROR, but memblock_phys_alloc_try_nid() does that only when
+> > allocating from the specified node and does not retry when it falls back to
+> > any node. And memblock_alloc_internal() has yet another set of fallbacks.
+> >
+> > So what should be the necessary handling in the wrapper for
+> > __memblock_find_range_bottom_up() ?
+> >
+> Well, it is a hard choice.
+> > BTW, even without any memblock modifications, retrying allocation in
+> > reserve_crashkerenel() for different ranges, like the proposal at [1] would
+> > also work, wouldn't it?
+> >
+> Yes, it can work. Then is it worth to expose the bottom-up allocation
+> style beside for hotmovable purpose?
+
+Some architectures use bottom-up as a "compatability" mode with bootmem.
+And, I believe, powerpc and s390 use bottom-up to make some of the
+allocations close to the kernel.
+ 
+> Thanks,
+> Pingfan
+> > [1] http://lists.infradead.org/pipermail/kexec/2017-October/019571.html
+> >
+> > > Thanks
+> > > Baoquan
+> > >
+> > > >
+> > > > diff --git a/mm/memblock.c b/mm/memblock.c
+> > > > index 7df468c..d1b30b9 100644
+> > > > --- a/mm/memblock.c
+> > > > +++ b/mm/memblock.c
+> > > > @@ -274,24 +274,14 @@ phys_addr_t __init_memblock memblock_find_in_range_node(phys_addr_t size,
+> > > >      * try bottom-up allocation only when bottom-up mode
+> > > >      * is set and @end is above the kernel image.
+> > > >      */
+> > > > -   if (memblock_bottom_up() && end > kernel_end) {
+> > > > -           phys_addr_t bottom_up_start;
+> > > > -
+> > > > -           /* make sure we will allocate above the kernel */
+> > > > -           bottom_up_start = max(start, kernel_end);
+> > > > -
+> > > > +   if (memblock_bottom_up()) {
+> > > >             /* ok, try bottom-up allocation first */
+> > > > -           ret = __memblock_find_range_bottom_up(bottom_up_start, end,
+> > > > +           ret = __memblock_find_range_bottom_up(start, end,
+> > > >                                                   size, align, nid, flags);
+> > > >             if (ret)
+> > > >                     return ret;
+> > > >
+> > > >             /*
+> > > > -            * we always limit bottom-up allocation above the kernel,
+> > > > -            * but top-down allocation doesn't have the limit, so
+> > > > -            * retrying top-down allocation may succeed when bottom-up
+> > > > -            * allocation failed.
+> > > > -            *
+> > > >              * bottom-up allocation is expected to be fail very rarely,
+> > > >              * so we use WARN_ONCE() here to see the stack trace if
+> > > >              * fail happens.
+> > > >
+> > > > [1] https://lore.kernel.org/lkml/1545966002-3075-3-git-send-email-kernelfans@gmail.com/
+> > > > [2] https://lore.kernel.org/lkml/1545966002-3075-2-git-send-email-kernelfans@gmail.com/
+> > > >
+> > > > > +
+> > > > > + return ret;
+> > > > > +}
+> > > > > +
+> > > > >  /**
+> > > > >   * __memblock_find_range_top_down - find free area utility, in top-down
+> > > > >   * @start: start of candidate range
+> > > > > --
+> > > > > 2.7.4
+> > > > >
+> > > >
+> > > > --
+> > > > Sincerely yours,
+> > > > Mike.
+> > > >
+> > >
+> >
+> > --
+> > Sincerely yours,
+> > Mike.
+> >
+> 
+
+-- 
+Sincerely yours,
+Mike.
+
