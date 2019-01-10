@@ -2,94 +2,174 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E8DEC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 00:41:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F4C5C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 00:44:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A010B21738
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 00:41:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="HwJVWDD4"
+	by mail.kernel.org (Postfix) with ESMTP id 48381214DA
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 00:44:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726848AbfAJAlX (ORCPT
+        id S1726729AbfAJAo3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 19:41:23 -0500
-Received: from ozlabs.org ([203.11.71.1]:53131 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726286AbfAJAlW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 19:41:22 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43ZnHM3nKFz9sLw;
-        Thu, 10 Jan 2019 11:41:19 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1547080879;
-        bh=ZyupXi9BFPbujHDlWgxQ6ASZE+TobPl1L2fer6A9zM8=;
-        h=Date:From:To:Cc:Subject:From;
-        b=HwJVWDD4XYMshsmch9k6WS3nO1f7AP6gsASHl6Gkgo7FRUNF605Oby3JHg09k1hhj
-         VMAERaon535n8gXHavHcP0uVyKchBqzhX2oxS63UpWD63P2i5Wwj62aWB2BXBln561
-         5X9i6dEP8tK2GXpyEh5+XGr7hGPDLTRfTDCWb3auZmHJWWZpxL3aBhcli2AjImU+Nm
-         l/4SdX6PW1fZb2AUGHAumVCi3LWBF6HtKlExhHRi3M0ZeyJZamvEPD87tCHEZ1Gxp2
-         rV+sLri7AeH+FP4yBE/FtuAWkQnoPrGn/2MwqVtDHjK5quQ7zfZy3dIeqeuPPaLrNt
-         /a+TmxB+G662Q==
-Date:   Thu, 10 Jan 2019 11:41:13 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: linux-next: build warning after merge of the spi tree
-Message-ID: <20190110114113.206c0650@canb.auug.org.au>
+        Wed, 9 Jan 2019 19:44:29 -0500
+Received: from ipmail01.adl6.internode.on.net ([150.101.137.136]:61418 "EHLO
+        ipmail01.adl6.internode.on.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726496AbfAJAo3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 19:44:29 -0500
+Received: from ppp59-167-129-252.static.internode.on.net (HELO dastard) ([59.167.129.252])
+  by ipmail01.adl6.internode.on.net with ESMTP; 10 Jan 2019 11:14:26 +1030
+Received: from dave by dastard with local (Exim 4.80)
+        (envelope-from <david@fromorbit.com>)
+        id 1ghOSO-0001oD-Or; Thu, 10 Jan 2019 11:44:24 +1100
+Date:   Thu, 10 Jan 2019 11:44:24 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Jiri Kosina <jikos@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Jann Horn <jannh@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Michal Hocko <mhocko@suse.com>, Linux-MM <linux-mm@kvack.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>
+Subject: Re: [PATCH] mm/mincore: allow for making sys_mincore() privileged
+Message-ID: <20190110004424.GH27534@dastard>
+References: <20190106001138.GW6310@bombadil.infradead.org>
+ <CAHk-=wiT=ov+6zYcnw_64ihYf74Amzqs67iVGtJMQq65PxiVYw@mail.gmail.com>
+ <CAHk-=wg1A44Roa8C4dmfdXLRLmNysEW36=3R7f+tzZzbcJ2d2g@mail.gmail.com>
+ <CAHk-=wiqbKEC5jUXr3ax+oUuiRrp=QMv_ZnUfO-SPv=UNJ-OTw@mail.gmail.com>
+ <20190108044336.GB27534@dastard>
+ <CAHk-=wjvzEFQcTGJFh9cyV_MPQftNrjOLon8YMMxaX0G1TLqkg@mail.gmail.com>
+ <20190109022430.GE27534@dastard>
+ <nycvar.YFH.7.76.1901090326460.16954@cbobk.fhfr.pm>
+ <20190109043906.GF27534@dastard>
+ <CAHk-=wic28fSkwmPbBHZcJ3BGbiftprNy861M53k+=OAB9n0=w@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/nv.Io.SxpMXN4dhoRe5XDBC"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wic28fSkwmPbBHZcJ3BGbiftprNy861M53k+=OAB9n0=w@mail.gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/nv.Io.SxpMXN4dhoRe5XDBC
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Wed, Jan 09, 2019 at 10:25:43AM -0800, Linus Torvalds wrote:
+> On Tue, Jan 8, 2019 at 8:39 PM Dave Chinner <david@fromorbit.com> wrote:
+> >
+> > FWIW, I just realised that the easiest, most reliable way to
+> > invalidate the page cache over a file range is simply to do a
+> > O_DIRECT read on it.
+> 
+> If that's the case, that's actually an O_DIRECT bug.
+>
+> It should only invalidate the caches on write.
 
-Hi Mark,
+Sounds nice from a theoretical POV, but reality has taught us
+very different lessons.
 
-After merging the spi tree, today's linux-next build (arm
-multi_v7_defconfig) produced this warning:
+FWIW, a quick check of XFS's history so you understand how long this
+behaviour has been around. It was introduced in the linux port in
+2001 as direct IO support was being added:
 
-drivers/spi/spi-davinci.c: In function 'davinci_spi_setup':
-drivers/spi/spi-davinci.c:426:21: warning: unused variable 'master' [-Wunus=
-ed-variable]
-  struct spi_master *master =3D spi->master;
-                     ^~~~~~
+commit e837eac23662afae603aaaef7c94bc839c1b8f67
+Author: Steve Lord <lord@sgi.com>
+Date:   Mon Mar 5 16:47:52 2001 +0000
 
-Introduced by commit
+    Add bounds checking for direct I/O, do the cache invalidation for
+    data coherency on direct I/O.
 
-  101a68e74fe0 ("spi: davinci: Convert to use CS GPIO descriptors")
+This was basically a direct port of the flush+invalidation code in
+the Irix direct IO path, which was introduced in 1995:
 
---=20
+    > revision 1.149
+    > date: 1995/08/11 20:09:44;  author: ajs;  state: Exp;  lines: +70 -2
+    > 280514 Adding page cache flusing calls to make direct
+    > I/O coherent with buffered I/O.
+
+IOWs, history tells us that invalidation for direct IO reads has
+been done on XFS for almost 25 years.  I know for certain that there
+have been applications out there that depend on this
+invalidation-on-read behaviour (another of those "reality bites"
+lessons) so we can't just remove it because you *think* it is a bug.
+
+i.e. we *could* remove the invalidation on read, but this we have a
+major behavioural change to the XFS direct IO path. This means we
+need to determine if we've just awoken sleeping data corruption
+krakens as well as determine if there are any performance
+regressions that result from the behavioural change.
+
+Which brings me to validation.  If the recent
+clone/dedupe/copy_file_range() debacle has taught me anything, it's
+that validating a "simple" IO path mechanism is going to take months
+worth of machine time before we have any confidence that the change
+is not going to expose users to new data corruption problems.
+
+That's the difficulty here - it only takes 5 minutes to change
+the code, but there's months of machine time needed to determine if
+it's really safe to make that code change. Testing has a nasty habit
+of finding invalid assumptions; when those are assumptions about
+data coherency and integrity we can't test them on our users.
+
+And, really, this would be just another band-aid over a symptom of
+the information leak - it doesn't prevent users from being able to
+control page cache invalidation. It just removes one method, just
+like hacking mincore only removes one method of observing the page
+cache.  And, like mincore(), there's every chance it impacts on
+userspace in a negative manner and so we need to be very careful
+here.
+
+> On reads, it wants to either _flush_ any direct caches before the
+> read, or just take the data from the caches. At no point is
+> "invalidate" a valid model.
+> 
+> Of course, I'm not in the least bit shocked if O_DIRECT is buggy like
+> this. But looking at least at the ext4 routine, the read just does
+> 
+>         ret = filemap_write_and_wait_range(mapping, iocb->ki_pos,
+> 
+> and I don't see any invalidation.
+
+I wouldn't look at ext4 as an example of a reliable, problem free
+direct IO implementation because, historically speaking, it's been a
+series of nasty hacks (*cough* mount -o dioread_nolock *cough*) and
+been far worse than XFS from data integrity, performance and
+reliability perspectives.
+
+IMO, "because ext4" has been a poor reason for justifying anything
+for a long time, not the least when talking about features that
+didn't even originate in extN....
+
+> Can you actually point to such a thing? Let's get that fixed, because
+> it's completely wrong regardless of this whole mincore issue.
+
+The biggest problem that remains today is that we have no mechanism
+for serialising page faults against DIO. If we leave pages cached in
+memory while we have a AIO+DIO read (or write!) in progress, we can
+dirty the page and run a buffered read before the AIO+DIO read
+returns. This now leaves us in the state where where the AIO+DIO
+read returns different (stale) data to a buffered read that has
+already completed because it hit the dirty page cache.  i.e. we
+still have nasty page cache vs direct IO coherency problems, and
+they are largely unsolvable because of the limitations of the core
+kernel infrastructure architecture.
+
+Yes, you can argue that userspace is doing an insane thing, but
+every so often we come across coherency issues like this that are
+out of a user's control (e.g. backup scan vs app accesses) and we do
+our best to ensure that they don't cause problems given the
+constraints we have.  Invalidating the page cache on dio reads
+mostly mitigates these coherency race conditions and that's why it's
+still there in the XFS code paths...
+
 Cheers,
-Stephen Rothwell
 
---Sig_/nv.Io.SxpMXN4dhoRe5XDBC
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlw2lKkACgkQAVBC80lX
-0GyIYQf+PUv+XgHMsQ08i3ot1I9lPw/rNPtWAUqSi7n9W11c/NawKaxx8s5zYzSh
-ZaYXLgQWniImQwSn3S3QQOsb+U0/kkk7wX7cE5hgbsQSnHpLzAAysm6EmLBB/5lL
-T8xEYLT73ch3nbNaPDVn/KLG+T16KIb1UuVdI1fupfqATez/uvtLVPQ7P7GLblML
-6uSLpspUPGEB127KHeYTXDJdFCv90A0VfHjJKTqaZF0ZMT351OuVfDkZBgmiO1Qo
-nBqSX2PsUM9RxVtsAQDQlanhcBQXwhwSFsZ6xkUKTBLW1MpEDduCi5K69LHxqQAz
-dPdFk4Q5dx7lPPbAmcAH+mYndduUdQ==
-=N72P
------END PGP SIGNATURE-----
-
---Sig_/nv.Io.SxpMXN4dhoRe5XDBC--
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
