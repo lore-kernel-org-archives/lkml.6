@@ -2,126 +2,309 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-11.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C44D7C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 15:42:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8CABC43444
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 15:43:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 916D62177B
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 15:42:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6D1E4206B7
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 15:43:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547134980;
+	bh=FXJ1iz5WNG0QSy1AsNfGXNwrMpOWSySM4sx4zxKTb7E=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=WA9rOL1KWIADIvwtgPp+ZkqSL6XX+w3UgtfgO03cO45RfR3BIJ72lWXdj/M2flYyx
+	 HU9koG+HkqiX8cplA+taJEqMoLvMg+EmsxfUtd0R3dYfworCM2pDHWsaY7LtdLXOM8
+	 lgHsafn0XC6fbTWRAjkSpcFDOKDbaJZNA6PzNRSY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729631AbfAJPmC (ORCPT
+        id S1729636AbfAJPm7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 10:42:02 -0500
-Received: from szxga03-in.huawei.com ([45.249.212.189]:6530 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728643AbfAJPmB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 10:42:01 -0500
-Received: from DGGEMA401-HUB.china.huawei.com (unknown [172.30.72.55])
-        by Forcepoint Email with ESMTP id 19B0056BF031F82B2727;
-        Thu, 10 Jan 2019 23:41:56 +0800 (CST)
-Received: from DGGEMA422-HUB.china.huawei.com (10.1.198.155) by
- DGGEMA401-HUB.china.huawei.com (10.3.20.42) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Thu, 10 Jan 2019 23:41:55 +0800
-Received: from DGGEMA523-MBX.china.huawei.com ([169.254.5.180]) by
- dggema422-hub.china.huawei.com ([10.1.198.155]) with mapi id 14.03.0399.000;
- Thu, 10 Jan 2019 23:41:50 +0800
-From:   gengdongjiu <gengdongjiu@huawei.com>
-To:     Peter Maydell <peter.maydell@linaro.org>
-CC:     James Morse <james.morse@arm.com>,
-        =?utf-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Christoffer Dall <christoffer.dall@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        "Catalin Marinas" <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        kvm-devel <kvm@vger.kernel.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        lkml - Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        arm-mail-list <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [RFC RESEND PATCH] kvm: arm64: export memory error recovery
- capability to user space
-Thread-Topic: [RFC RESEND PATCH] kvm: arm64: export memory error recovery
- capability to user space
-Thread-Index: AdSo8Hp33+98LQYESeSIe29UjvqzCwACkt3A
-Date:   Thu, 10 Jan 2019 15:41:49 +0000
-Message-ID: <0184EA26B2509940AA629AE1405DD7F202045458@dggema523-mbx.china.huawei.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.45.56.182]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Thu, 10 Jan 2019 10:42:59 -0500
+Received: from mail-oi1-f169.google.com ([209.85.167.169]:32995 "EHLO
+        mail-oi1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727819AbfAJPm7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 10:42:59 -0500
+Received: by mail-oi1-f169.google.com with SMTP id c206so9645153oib.0;
+        Thu, 10 Jan 2019 07:42:58 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=FIo17yS5foLiDNl25sS9lgnD+T4jl/8vOevtYNc+rHg=;
+        b=SJn9gLTR/G2deuQU4MmtQyxsJSrjFlMdfLmgC7+DzuXAlaC+dM2+Om8B2YrKgIMiCo
+         ey/8NvULG+miD/z5IjfHtyq4guQWAmfOJ5mHS7pNEo12JgIxeL4CAOuq+g1STYrhC0Ef
+         jDEIfpd/unP3TfyiHCMhFNzqyWeimdZC7bJ+prv66gHdWPSNHMHfRU2aqRg4TCfN9WND
+         lF8DNy2XF2fcUj9pmle13rnjDWN2/mYt4UQcgzEZVu1BpdOh0jM2egl4I8Pp1gLf4Qz1
+         hMyvsrImNEYFZP+BkiCTWJSJQcRxTBn3njBL4oVS5J9pzwSSUIjj0g1e1dPW7z7jM2Z0
+         UZRA==
+X-Gm-Message-State: AJcUukfEIiPCUryVAFU1P13CG9Hc9w2/S2ZoXhcUSbPGcwrRjlHURtZN
+        9tVHlUOTcC7pF09ad3RozRDwEN1Um7WJRolB2rI=
+X-Google-Smtp-Source: ALg8bN45YzZ84yRuu2JFJW2+KLgiak9oXM78BJ+vuQKTjJfCiae4e7/XKMlIuHwjb2QJ9i0rgQ4HDbWdNMN4ZlzWykw=
+X-Received: by 2002:aca:b642:: with SMTP id g63mr6418177oif.195.1547134977996;
+ Thu, 10 Jan 2019 07:42:57 -0800 (PST)
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+References: <20190109174341.19818-1-keith.busch@intel.com> <20190109174341.19818-4-keith.busch@intel.com>
+In-Reply-To: <20190109174341.19818-4-keith.busch@intel.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Thu, 10 Jan 2019 16:42:46 +0100
+Message-ID: <CAJZ5v0jk7ML21zxGwf9GaGNK8tP1LAs6Rd9NTK5O9HbzYeyPLA@mail.gmail.com>
+Subject: Re: [PATCHv3 03/13] acpi/hmat: Parse and report heterogeneous memory
+To:     Keith Busch <keith.busch@intel.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rafael Wysocki <rafael@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Dan Williams <dan.j.williams@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiANCj4gT24gVGh1LCAxMCBKYW4gMjAxOSBhdCAxMjowOSwgZ2VuZ2RvbmdqaXUgPGdlbmdkb25n
-aml1QGh1YXdlaS5jb20+IHdyb3RlOg0KPiA+IFBldGVyLCBJIHN1bW1hcml6ZSBKYW1lcydzIG1h
-aW4gaWRlYSwgSmFtZXMgdGhpbmsgUUVNVSBkb2VzIG5vdCANCj4gPiBuZWVkcyB0byBjaGVjayAq
-c29tZXRoaW5nKiBpZiBRZW11IHN1cHBvcnQgZmlybXdhcmUtZmlyc3QuDQo+ID4gV2hhdCBkbyB3
-ZSBkbyBmb3IgeW91ciBjb21tZW50cz8NCj4gDQo+IFVubGVzcyBJJ20gbWlzc2luZyBzb21ldGhp
-bmcsIHRoZSBjb2RlIGluIHlvdXIgbW9zdCByZWNlbnQgcGF0Y2hzZXQgDQo+IGF0dGVtcHRzIHRv
-IHVwZGF0ZSBhbiBBQ1BJIHRhYmxlIHdoZW4gaXQgZ2V0cyB0aGUgU0lHQlVTIGZyb20gdGhlIGhv
-c3QgDQo+IGtlcm5lbCB3aXRob3V0IGRvaW5nIGFueXRoaW5nIHRvIGNoZWNrIHdoZXRoZXIgaXQg
-aGFzIGV2ZXIgY3JlYXRlZCB0aGUgQUNQSSB0YWJsZSAoYW5kIHNldCB1cCB0aGUgUUVNVSBnbG9i
-YWwgdmFyaWFibGUgdGhhdCB0ZWxscyB0aGUgY29kZSB3aGVyZSBpdCBpcyBpbiB0aGUgZ3Vlc3Qg
-bWVtb3J5KSBpbiB0aGUgZmlyc3QgcGxhY2UuDQoNCndoZW4gUUVNVSB2ZXJzaW9uIGlzIGdyZWF0
-ZXIgdGhhbiBzb21lIHZlcnNpb24sIGl0IHdpbGwgZGVmYXVsdCBjcmVhdGUgdGhlIEFQRUkgdGFi
-bGUuIEJ1dCBvbmx5IHdoZW4gdGhlIGd1ZXN0IGlzIGJvb3RlZCBieSBVRUZJLCBpdCB3aWxsIHN1
-cHBvcnQgdG8gcmVjb3JkIHRoZSBDUEVSIHRvIGd1ZXN0IG1lbW9yeS4gDQpJbiBteSB0ZXN0LCBJ
-IGJvb3QgZ3Vlc3QgdXNpbmcgVUVGSSwgc28gaXQgaXMgbm8gcHJvYmxlbSwgSSB3aWxsIGNoZWNr
-IHdoZXRoZXIgdGhpcyBib290aW5nIHVzZXMgVUVGSSBiZWZvcmUgdXBkYXRlIHRoZSBBQ1BJIHRh
-YmxlLg0KDQo+IEkgZG9uJ3Qgc2VlIGhvdyB0aGF0IGNhbiB3b3JrLgkNCj4gDQo+ID4gPj4gSSB0
-aGluayBvbmUgcXVlc3Rpb24gaGVyZSB3aGljaCBpdCB3b3VsZCBiZSBnb29kIHRvIGFuc3dlciBp
-czoNCj4gPiA+PiBpZiB3ZSBhcmUgbW9kZWxsaW5nIGEgZ3Vlc3QgYW5kIHdlIGhhdmVuJ3Qgc3Bl
-Y2lmaWNhbGx5IHByb3ZpZGVkIA0KPiA+ID4+IGl0IGFuIEFDUEkgdGFibGUgdG8gdGVsbCBpdCBh
-Ym91dCBtZW1vcnkgZXJyb3JzLCB3aGF0IGRvIHdlIGRvIA0KPiA+ID4+IHdoZW4gd2UgZ2V0IGEg
-c2lnYnVzIGZyb20gdGhlIGhvc3Q/IFdlIGhhdmUgYmFzaWNhbGx5IHR3byBjaG9pY2VzOg0KPiA+
-ID4+ICAoMSkgc2VuZCB0aGUgZ3Vlc3QgYW4gU0Vycm9yIChha2EgYXN5bmNocm9ub3VzIGV4dGVy
-bmFsIGFib3J0KQ0KPiA+ID4+ICAgICAgYW55d2F5ICh3aXRoIG5vIGZ1cnRoZXIgaW5mbyBhYm91
-dCB3aGF0IHRoZSBtZW1vcnkgZXJyb3IgaXMpDQo+ID4gPg0KPiA+ID4gRm9yIGFuIEFSIHNpZ25h
-bCBhbiBleHRlcm5hbCBhYm9ydCBpcyB2YWxpZC4gSXRzIHVwIHRvIHRoZSANCj4gPiA+IGltcGxl
-bWVudGF0aW9uIHdoZXRoZXIgdGhlc2UgYXJlIHN5bmNocm9ub3VzIG9yIGFzeW5jaHJvbm91cy4g
-UWVtdSANCj4gPiA+IGNhbiBvbmx5IHRha2UgYSBzaWduYWwgZm9yIHNvbWV0aGluZyB0aGF0IHdh
-cyBzeW5jaHJvbm91cywgc28geW91IGNhbiBjaG9vc2UgYmV0d2VlbiB0aGUgdHdvLg0KPiA+ID4g
-U3luY2hyb25vdXMgZXh0ZXJuYWwgYWJvcnQgaXMgbWFyZ2luYWxseSBiZXR0ZXIgYXMgYW4gdW5h
-d2FyZSBPUyANCj4gPiA+IGtub3dzIGl0cyBhZmZlY3RzIHRoaXMgdGhyZWFkLCBhbmQgbWF5IGJl
-IGFibGUgdG8ga2lsbCBpdC4NCj4gPiA+IFNFcnJvciB3aXRoIGFuIGltcC1kZWYgRVNSIGlzIGlu
-ZGlzdGluZ3Vpc2hhYmxlIGZyb20gJ3BhcnQgb2YgdGhlIA0KPiA+ID4gc29jIGZlbGwgb3V0Jywg
-YW5kIHNob3VsZCBhbHdheXMgcmVzdWx0IGluIGEgcGFuaWMoKS4NCj4gPiA+DQo+ID4gPg0KPiA+
-ID4+ICAoMikganVzdCBzdG9wIFFFTVUgKGFzIHdlIHdvdWxkIGZvciBhIG1lbW9yeSBlcnJvciBp
-biBRRU1VJ3MNCj4gPiA+PiAgICAgIG93biBtZW1vcnkpDQo+ID4gPg0KPiA+ID4gVGhpcyBpcyBh
-bHNvIHZhbGlkLiBBIG1hY2hpbmUgbWF5IHRha2UgZXh0ZXJuYWwtYWJvcnQgdG8gRUwzIGFuZCAN
-Cj4gPiA+IHRoZW4gcmVib290L2NyYXNoL2J1cm4uDQo+IA0KPiBXZSBzaG91bGQgZGVjaWRlIHdo
-aWNoIG9mIHRoZXNlIHdlIHdhbnQgdG8gZG8sIGFuZCBoYXZlIGEgY29tbWVudCANCj4gZXhwbGFp
-bmluZyB3aGF0IHdlJ3JlIGRvaW5nLiBJZiBJJ20gcmVhZGluZyB5b3VyIGN1cnJlbnQgcGF0Y2hz
-ZXQgY29ycmVjdGx5LCBpdCBkb2VzIG5laXRoZXIgLS0gaWYgaXQgY2FuJ3QgcmVjb3JkIHRoZSBm
-YXVsdCBpbiB0aGUgQUNQSSB0YWJsZSBpdCBqdXN0IGlnbm9yZXMgaXQgd2l0aG91dCBlaXRoZXIg
-c3RvcHBpbmcgUUVNVSBvciBkZWxpdmVyaW5nIGFuIFNFcnJvci4NCg0KSmFtZXMgbWF5IG5vdCBr
-bm93IG15IGRldGFpbGVkIGltcGxlbWVudGF0aW9uIGluIHRoZSBRRU1VLiBJbiBteSBwYXRjaCwg
-SSBvbmx5IGhhbmRsZSB0aGUgQlVTX01DRUVSUl9BUiBTSUdCVVMgc2lnbmFsKHN5bmNocm9ub3Vz
-IHNpZ25hbCkuIHdoZW4gdGhlIFNJR0JVUyBpcyBCVVNfTUNFRVJSX0FSLCBpdCB3aWxsIGRlbGl2
-ZXIgYSBzeW5jaHJvbm91cyBleGNlcHRpb24gYWJvcnQuDQpKYW1lcyBzYWlkIGl0IG5lZWRzIHRv
-IGRlbGl2ZXIgYW4gU0Vycm9yIHdoZW4gdGhlIEJVU19NQ0VFUlJfT1IgU0lHQlVTIHNpZ25hbChh
-c3luY2hyb25vdXMgc2lnbmFsKSwgYnV0IEkgZG8gbm90IGhhbmRsZSB0aGUgdGhpcyBjYXNlIGJl
-Y2F1c2UgUUVNVSBtYWluIHRocmVhZCB3aWxsIG1hc2sgdGhpcyBhc3luY2hyb25vdXMgc2lnbmFs
-Lg0KDQpJZiB0aGUgbWVtb3J5IGVycm9yIGlzIGJlbG9uZyB0byBRRU1VIGl0c2VsZiwgSSBqdXN0
-IHByaW50IGFuIGVycm9yIGxvZ1syXS4gSWYgeW91IHRoaW5rLCBpdCBzaG91bGQgc3RvcCBRRU1V
-IGZvciB0aGlzIGNhc2UsIEkgd2lsbCBjaGFuZ2UgaXQuDQoNCnZvaWQga3ZtX2FyY2hfb25fc2ln
-YnVzX3ZjcHUoQ1BVU3RhdGUgKmMsIGludCBjb2RlLCB2b2lkICphZGRyKSB7DQoJLi4uLi4uLi4u
-Li4uLi4uLi4uDQogICAJaWYgKGNvZGUgPT0gQlVTX01DRUVSUl9BUikgew0KICAgIAlrdm1fY3B1
-X3N5bmNocm9uaXplX3N0YXRlKGMpOw0KICAgICAgIAlpZiAoZ2hlc19yZWNvcmRfZXJyb3JzKEFD
-UElfSEVTVF9OT1RJRllfU0VBLCBwYWRkcikpIHsNCiAgICAgCQlrdm1faW5qZWN0X2FybV9zZWEo
-Yyk7DQogICAgIAl9IGVsc2Ugew0KICAgICAgIAkJZnByaW50ZihzdGRlcnIsICJmYWlsZWQgdG8g
-cmVjb3JkIHRoZSBlcnJvclxuIik7DQogICAgICAgCX0NCgl9DQpbMl0JZnByaW50ZihzdGRlcnIs
-ICJIYXJkd2FyZSBtZW1vcnkgZXJyb3IgZm9yIG1lbW9yeSB1c2VkIGJ5ICINCiAgICAgICAgICAg
-ICAgICAiUUVNVSBpdHNlbGYgaW5zdGVhZCBvZiBndWVzdCBzeXN0ZW0hXG4iKTsgDQp9DQoNCj4g
-DQo+IEkgdGhpbmsgSSBmYXZvdXIgb3B0aW9uICgyKSBoZXJlLg0KPiANCj4gdGhhbmtzDQo+IC0t
-IFBNTQ0K
+On Wed, Jan 9, 2019 at 6:47 PM Keith Busch <keith.busch@intel.com> wrote:
+>
+> Systems may provide different memory types and export this information
+> in the ACPI Heterogeneous Memory Attribute Table (HMAT). Parse these
+> tables provided by the platform and report the memory access and caching
+> attributes.
+>
+> Signed-off-by: Keith Busch <keith.busch@intel.com>
+
+While this is generally fine by me, it's another piece of code going
+under drivers/acpi/ just because it happens to use ACPI to extract
+some information from the platform firmware.
+
+Isn't there any better place for it?
+
+> ---
+>  drivers/acpi/Kconfig  |   8 +++
+>  drivers/acpi/Makefile |   1 +
+>  drivers/acpi/hmat.c   | 180 ++++++++++++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 189 insertions(+)
+>  create mode 100644 drivers/acpi/hmat.c
+>
+> diff --git a/drivers/acpi/Kconfig b/drivers/acpi/Kconfig
+> index 7b65a807b3dd..b102d9f544ee 100644
+> --- a/drivers/acpi/Kconfig
+> +++ b/drivers/acpi/Kconfig
+> @@ -326,6 +326,14 @@ config ACPI_NUMA
+>         depends on (X86 || IA64 || ARM64)
+>         default y if IA64_GENERIC || IA64_SGI_SN2 || ARM64
+>
+> +config ACPI_HMAT
+> +       bool "ACPI Heterogeneous Memory Attribute Table Support"
+> +       depends on ACPI_NUMA
+> +       help
+> +        Parses representation of the ACPI Heterogeneous Memory Attributes
+> +        Table (HMAT) and set the memory node relationships and access
+> +        attributes.
+> +
+>  config ACPI_CUSTOM_DSDT_FILE
+>         string "Custom DSDT Table file to include"
+>         default ""
+> diff --git a/drivers/acpi/Makefile b/drivers/acpi/Makefile
+> index 7c6afc111d76..2a435dcfaa9c 100644
+> --- a/drivers/acpi/Makefile
+> +++ b/drivers/acpi/Makefile
+> @@ -55,6 +55,7 @@ acpi-$(CONFIG_X86)            += x86/apple.o
+>  acpi-$(CONFIG_X86)             += x86/utils.o
+>  acpi-$(CONFIG_DEBUG_FS)                += debugfs.o
+>  acpi-$(CONFIG_ACPI_NUMA)       += numa.o
+> +acpi-$(CONFIG_ACPI_HMAT)       += hmat.o
+>  acpi-$(CONFIG_ACPI_PROCFS_POWER) += cm_sbs.o
+>  acpi-y                         += acpi_lpat.o
+>  acpi-$(CONFIG_ACPI_LPIT)       += acpi_lpit.o
+> diff --git a/drivers/acpi/hmat.c b/drivers/acpi/hmat.c
+> new file mode 100644
+> index 000000000000..833a783868d5
+> --- /dev/null
+> +++ b/drivers/acpi/hmat.c
+> @@ -0,0 +1,180 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Heterogeneous Memory Attributes Table (HMAT) representation
+> + *
+> + * Copyright (c) 2018, Intel Corporation.
+> + */
+> +
+> +#include <acpi/acpi_numa.h>
+> +#include <linux/acpi.h>
+> +#include <linux/bitops.h>
+> +#include <linux/cpu.h>
+> +#include <linux/device.h>
+> +#include <linux/init.h>
+> +#include <linux/list.h>
+> +#include <linux/module.h>
+> +#include <linux/node.h>
+> +#include <linux/slab.h>
+> +#include <linux/sysfs.h>
+> +
+> +static __init const char *hmat_data_type(u8 type)
+> +{
+> +       switch (type) {
+> +       case ACPI_HMAT_ACCESS_LATENCY:
+> +               return "Access Latency";
+> +       case ACPI_HMAT_READ_LATENCY:
+> +               return "Read Latency";
+> +       case ACPI_HMAT_WRITE_LATENCY:
+> +               return "Write Latency";
+> +       case ACPI_HMAT_ACCESS_BANDWIDTH:
+> +               return "Access Bandwidth";
+> +       case ACPI_HMAT_READ_BANDWIDTH:
+> +               return "Read Bandwidth";
+> +       case ACPI_HMAT_WRITE_BANDWIDTH:
+> +               return "Write Bandwidth";
+> +       default:
+> +               return "Reserved";
+> +       };
+> +}
+> +
+> +static __init const char *hmat_data_type_suffix(u8 type)
+> +{
+> +       switch (type) {
+> +       case ACPI_HMAT_ACCESS_LATENCY:
+> +       case ACPI_HMAT_READ_LATENCY:
+> +       case ACPI_HMAT_WRITE_LATENCY:
+> +               return " nsec";
+> +       case ACPI_HMAT_ACCESS_BANDWIDTH:
+> +       case ACPI_HMAT_READ_BANDWIDTH:
+> +       case ACPI_HMAT_WRITE_BANDWIDTH:
+> +               return " MB/s";
+> +       default:
+> +               return "";
+> +       };
+> +}
+> +
+> +static __init int hmat_parse_locality(union acpi_subtable_headers *header,
+> +                                     const unsigned long end)
+> +{
+> +       struct acpi_hmat_locality *loc = (void *)header;
+> +       unsigned int init, targ, total_size, ipds, tpds;
+> +       u32 *inits, *targs, value;
+> +       u16 *entries;
+> +       u8 type;
+> +
+> +       if (loc->header.length < sizeof(*loc)) {
+> +               pr_err("HMAT: Unexpected locality header length: %d\n",
+> +                       loc->header.length);
+> +               return -EINVAL;
+> +       }
+> +
+> +       type = loc->data_type;
+> +       ipds = loc->number_of_initiator_Pds;
+> +       tpds = loc->number_of_target_Pds;
+> +       total_size = sizeof(*loc) + sizeof(*entries) * ipds * tpds +
+> +                    sizeof(*inits) * ipds + sizeof(*targs) * tpds;
+> +       if (loc->header.length < total_size) {
+> +               pr_err("HMAT: Unexpected locality header length:%d, minimum required:%d\n",
+> +                       loc->header.length, total_size);
+> +               return -EINVAL;
+> +       }
+> +
+> +       pr_info("HMAT: Locality: Flags:%02x Type:%s Initiator Domains:%d Target Domains:%d Base:%lld\n",
+> +               loc->flags, hmat_data_type(type), ipds, tpds,
+> +               loc->entry_base_unit);
+> +
+> +       inits = (u32 *)(loc + 1);
+> +       targs = &inits[ipds];
+> +       entries = (u16 *)(&targs[tpds]);
+> +       for (targ = 0; targ < tpds; targ++) {
+> +               for (init = 0; init < ipds; init++) {
+> +                       value = entries[init * tpds + targ];
+> +                       value = (value * loc->entry_base_unit) / 10;
+> +                       pr_info("  Initiator-Target[%d-%d]:%d%s\n",
+> +                               inits[init], targs[targ], value,
+> +                               hmat_data_type_suffix(type));
+> +               }
+> +       }
+> +       return 0;
+> +}
+> +
+> +static __init int hmat_parse_cache(union acpi_subtable_headers *header,
+> +                                  const unsigned long end)
+> +{
+> +       struct acpi_hmat_cache *cache = (void *)header;
+> +       u32 attrs;
+> +
+> +       if (cache->header.length < sizeof(*cache)) {
+> +               pr_err("HMAT: Unexpected cache header length: %d\n",
+> +                       cache->header.length);
+> +               return -EINVAL;
+> +       }
+> +
+> +       attrs = cache->cache_attributes;
+> +       pr_info("HMAT: Cache: Domain:%d Size:%llu Attrs:%08x SMBIOS Handles:%d\n",
+> +               cache->memory_PD, cache->cache_size, attrs,
+> +               cache->number_of_SMBIOShandles);
+> +
+> +       return 0;
+> +}
+> +
+> +static int __init hmat_parse_address_range(union acpi_subtable_headers *header,
+> +                                          const unsigned long end)
+> +{
+> +       struct acpi_hmat_address_range *spa = (void *)header;
+> +
+> +       if (spa->header.length != sizeof(*spa)) {
+> +               pr_err("HMAT: Unexpected address range header length: %d\n",
+> +                       spa->header.length);
+> +               return -EINVAL;
+> +       }
+> +       pr_info("HMAT: Memory (%#llx length %#llx) Flags:%04x Processor Domain:%d Memory Domain:%d\n",
+> +               spa->physical_address_base, spa->physical_address_length,
+> +               spa->flags, spa->processor_PD, spa->memory_PD);
+> +       return 0;
+> +}
+> +
+> +static int __init hmat_parse_subtable(union acpi_subtable_headers *header,
+> +                                     const unsigned long end)
+> +{
+> +       struct acpi_hmat_structure *hdr = (void *)header;
+> +
+> +       if (!hdr)
+> +               return -EINVAL;
+> +
+> +       switch (hdr->type) {
+> +       case ACPI_HMAT_TYPE_ADDRESS_RANGE:
+> +               return hmat_parse_address_range(header, end);
+> +       case ACPI_HMAT_TYPE_LOCALITY:
+> +               return hmat_parse_locality(header, end);
+> +       case ACPI_HMAT_TYPE_CACHE:
+> +               return hmat_parse_cache(header, end);
+> +       default:
+> +               return -EINVAL;
+> +       }
+> +}
+> +
+> +static __init int hmat_init(void)
+> +{
+> +       struct acpi_table_header *tbl;
+> +       enum acpi_hmat_type i;
+> +       acpi_status status;
+> +
+> +       if (srat_disabled())
+> +               return 0;
+> +
+> +       status = acpi_get_table(ACPI_SIG_HMAT, 0, &tbl);
+> +       if (ACPI_FAILURE(status))
+> +               return 0;
+> +
+> +       for (i = ACPI_HMAT_TYPE_ADDRESS_RANGE; i < ACPI_HMAT_TYPE_RESERVED; i++) {
+> +               if (acpi_table_parse_entries(ACPI_SIG_HMAT,
+> +                                            sizeof(struct acpi_table_hmat), i,
+> +                                            hmat_parse_subtable, 0) < 0)
+> +                       goto out_put;
+> +       }
+> +out_put:
+> +       acpi_put_table(tbl);
+> +       return 0;
+> +}
+> +subsys_initcall(hmat_init);
+> --
+> 2.14.4
+>
