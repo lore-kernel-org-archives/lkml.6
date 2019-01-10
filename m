@@ -2,101 +2,129 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2FEDC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 12:12:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08335C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 12:12:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 90C1E214C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 12:12:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547122325;
-	bh=i4iZSxZ10gxDNhXlh5D3J0I2xe7ygS2mZhYbL0uaIOk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=AZpzUZYIoP4/arkXVHxdduKkijG1nFW7ztRlyYLzOLgqgo2tSDuh5xEqsGY29NUml
-	 7wWYzAkU9ZJGJdkIQAYNXnu/QTKCg+H9hJrYhf6yHNV09Na83mfsU2JwraM46RSvn8
-	 Ar/frWwCjzFbpoyho7pAdZH1BdcclFfBzLmGUHwo=
+	by mail.kernel.org (Postfix) with ESMTP id CAFF7214C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 12:12:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="VpiCVzuU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728419AbfAJMME (ORCPT
+        id S1728356AbfAJMMh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 07:12:04 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:39337 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727968AbfAJMMD (ORCPT
+        Thu, 10 Jan 2019 07:12:37 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:34852 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727847AbfAJMMg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 07:12:03 -0500
-Received: by mail-lj1-f194.google.com with SMTP id t9-v6so9498810ljh.6;
-        Thu, 10 Jan 2019 04:12:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=YxhrnZ5bEH6f7GA2TAG7cN5Vn3RAYe9CQ34I/qGgfZg=;
-        b=A1gOcEiS4HbS333fxf0VlGkdwHWLXmgHLzZedw0mdLQ4mGRH5bIQiXDl0+gpihoSsC
-         msLUZqmgqUw+MgbX21wr42U5xJj2ffXUJCbMm3w1qarEhca5KzOxWmwT0094DI2O8a0r
-         8E9PmTX2P4KJyvxDtmYVuU2dktAjAXylFNLFW1Iz75ZK1PcYJVUkSCFFw3tziHaVcdc+
-         aaVcBBfU7ky7zrnauWaHKPtcufmAAZGkTkDg4Ar04wW5PeYejRQv1p4edMWttDi0V3cu
-         CHR2dGRcnNGfKV4XkEj3LC5OJX3YBJ2p9NqlLcj6g8H9/9GQlj00h8KC9F4V7ejuGkwf
-         tLog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=YxhrnZ5bEH6f7GA2TAG7cN5Vn3RAYe9CQ34I/qGgfZg=;
-        b=DeUldwvNhfHiq03PKGtOmFVlt+yCxv96u9CYU4+g6XDC4xSbz0598F/KrRm/iVaoUd
-         5jkCU2lpobvUmVhQDObZKk4umvJsS0wp+sQqR8x8jaNsawtXjUnRTUY8MXUEFpjqF//O
-         BcOd0EFh5YUa2jUJV/STUUM5ipS8AaQLnZKaLcyIKQeD6SiojKz4hg7w8z/u7HOBh6o2
-         tNGcDOI6YeukQod+GW5uzXc7YHimCz1w0qddLNCtUJAtakZ+VAX7FpufDP0er1UhPPlL
-         7BNWB6MqwDXFVw/wz7rZIN+eIUHfqVTOsb0nlIxste4myRCVRh49OQqOPGyCciqNKLNd
-         3ndA==
-X-Gm-Message-State: AJcUukfQiz0MRCqGRBkZ3gjgTccl8+6+ZXy66ko0Fi+Z32nqui86fvdp
-        nlKiTFD2Y79W0goRrTRzYeb8ADUb
-X-Google-Smtp-Source: ALg8bN5lrXY5nOsVwL76hoihKbDWrveZB92TXxWzR8z4xl7C/ePrhA8NY9c9xy1/maqaL8BNeHVd7g==
-X-Received: by 2002:a2e:95c6:: with SMTP id y6-v6mr5642019ljh.59.1547122321267;
-        Thu, 10 Jan 2019 04:12:01 -0800 (PST)
-Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
-        by smtp.gmail.com with ESMTPSA id r7-v6sm15252242ljc.10.2019.01.10.04.12.00
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 10 Jan 2019 04:12:00 -0800 (PST)
-Received: from johan by xi.terra with local (Exim 4.91)
-        (envelope-from <johan@kernel.org>)
-        id 1ghZBo-0002jR-5S; Thu, 10 Jan 2019 13:12:00 +0100
-Date:   Thu, 10 Jan 2019 13:12:00 +0100
-From:   Johan Hovold <johan@kernel.org>
-To:     Andreas Kemnade <andreas@kemnade.info>
-Cc:     johan@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Discussions about the Letux Kernel 
-        <letux-kernel@openphoenux.org>
-Subject: Re: [PATCH v2 3/5] dt-bindings: gnss: add w2sg0004 compatible string
-Message-ID: <20190110121200.GC3430@localhost>
-References: <20181209195150.5192-1-andreas@kemnade.info>
- <20181209195150.5192-4-andreas@kemnade.info>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181209195150.5192-4-andreas@kemnade.info>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+        Thu, 10 Jan 2019 07:12:36 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0AC41L2126227;
+        Thu, 10 Jan 2019 12:12:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
+ mime-version : subject : from : in-reply-to : date : cc :
+ content-transfer-encoding : message-id : references : to;
+ s=corp-2018-07-02; bh=f8thXKqGmXAcAg92JOqwvN4UTlK63hLPBTTcunmF/Yk=;
+ b=VpiCVzuUhmx7SBCUVoFZ7XNr/F1TepG0jas0tBYO4wSywiG0VKuqrHQGbXF4ATcbOOam
+ ENiwcr49XCkeHXiGdWUu+wjNwXk9fcptxpLVhw1AvMfhNqa4pBSUFPEUyrAEJ/q6jVrK
+ 3jtcO3Cv8weW8SAISSfzhNv/qtUmNlL0v+3OOa3n64J7ane0n8R7UxALUtEH0DAmegUs
+ +IHDZaJxTUezbPiQvxjRDd2fWwz9AFPLv0lnfPlyljnqxW5JaanH5HRnigY0ZoTxZx+D
+ q1PWOxrLjNmk8kh23VkshejivJk9FOJP6+gOj+B/oAm1rFCLzEZ/wyFxEJlmgYJ2D1PJ bw== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by userp2120.oracle.com with ESMTP id 2ptn7r6p1t-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 10 Jan 2019 12:12:20 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x0ACCK8O020518
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 10 Jan 2019 12:12:20 GMT
+Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x0ACCJBO002576;
+        Thu, 10 Jan 2019 12:12:19 GMT
+Received: from [192.168.0.110] (/73.243.10.6)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 10 Jan 2019 04:12:18 -0800
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
+Subject: Re: [PATCH] mm: memcontrol: use struct_size() in kmalloc()
+From:   William Kucharski <william.kucharski@oracle.com>
+In-Reply-To: <20190104183726.GA6374@embeddedor>
+Date:   Thu, 10 Jan 2019 05:12:17 -0700
+Cc:     Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        cgroups@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <8B12C965-1406-4464-96FF-B9C04187DD7D@oracle.com>
+References: <20190104183726.GA6374@embeddedor>
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+X-Mailer: Apple Mail (2.3445.102.3)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9131 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1901100100
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Dec 09, 2018 at 08:51:48PM +0100, Andreas Kemnade wrote:
-> Add w2sg0004 compatible string since devices without wakeup
-> pins are now supported.
-> 
-> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+
+
+> On Jan 4, 2019, at 11:37 AM, Gustavo A. R. Silva =
+<gustavo@embeddedor.com> wrote:
+>=20
+> One of the more common cases of allocation size calculations is =
+finding
+> the size of a structure that has a zero-sized array at the end, along
+> with memory for some number of elements for that array. For example:
+>=20
+> struct foo {
+>    int stuff;
+>    void *entry[];
+> };
+>=20
+> instance =3D kmalloc(sizeof(struct foo) + sizeof(void *) * count, =
+GFP_KERNEL);
+>=20
+> Instead of leaving these open-coded and prone to type mistakes, we can
+> now use the new struct_size() helper:
+>=20
+> instance =3D kmalloc(struct_size(instance, entry, count), GFP_KERNEL);
+>=20
+> This code was detected with the help of Coccinelle.
+>=20
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 > ---
-> Changes in v2:
->  - reordering of entries
-> With the original order there was a
-> Reviewed-by: Rob Herring <robh@kernel.org>
+> mm/memcontrol.c | 3 +--
+> 1 file changed, 1 insertion(+), 2 deletions(-)
+>=20
+> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> index af7f18b32389..ad256cf7da47 100644
+> --- a/mm/memcontrol.c
+> +++ b/mm/memcontrol.c
+> @@ -3626,8 +3626,7 @@ static int =
+__mem_cgroup_usage_register_event(struct mem_cgroup *memcg,
+> 	size =3D thresholds->primary ? thresholds->primary->size + 1 : =
+1;
+>=20
+> 	/* Allocate memory for new array of thresholds */
+> -	new =3D kmalloc(sizeof(*new) + size * sizeof(struct =
+mem_cgroup_threshold),
+> -			GFP_KERNEL);
+> +	new =3D kmalloc(struct_size(new, entries, size), GFP_KERNEL);
+> 	if (!new) {
+> 		ret =3D -ENOMEM;
+> 		goto unlock;
+> --=20
+> 2.20.1
+>=20
 
-You can keep that and add my
-
-Reviewed-by: Johan Hovold <johan@kernel.org>
-
-too.
+Reviewed-by: William Kucharski <william.kucharski@oracle.com>=
