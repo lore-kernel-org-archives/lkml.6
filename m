@@ -2,121 +2,171 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 897CFC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 09:26:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FD18C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 09:26:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 51C93206B6
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 09:26:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ingics-com.20150623.gappssmtp.com header.i=@ingics-com.20150623.gappssmtp.com header.b="xf5ZbMJh"
+	by mail.kernel.org (Postfix) with ESMTP id 3DB8C214C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 09:26:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727863AbfAJJ03 (ORCPT
+        id S1727890AbfAJJ0k (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 04:26:29 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:34451 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727780AbfAJJ03 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 04:26:29 -0500
-Received: by mail-pg1-f195.google.com with SMTP id j10so4606553pga.1
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 01:26:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ingics-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id;
-        bh=99uW8qSbYlplz1kdDTYJ062EIilv2Ag6Pm0Aw3d5iD0=;
-        b=xf5ZbMJhZHBHYvo/cKv8ZfJEWswkteLaLOWcT8gIFGSwRtqdZXZJzGmxoMwMDn7apK
-         xCMiZX4UTsFIcBxK8pvd2LH6sfjsKTwQllfycjda69p7Xe1oUMklxCMqR/wJ26I5tZmh
-         YicDNtRbFeon6Ab7VJgoVw5ApKfjM8Ej5r7F2YxQ3MSenqOgyMt6B+d3H7m336dKbVUl
-         eyuHl70oycpMt5LbNpck3jFchi58RpyI1Fl+WG/f+y8ao8ZaZ8JkwtDGTKtZD/6TuNqa
-         JcqpDEooP3EzqukZKgtTq3YxoVRW8c1Por92T+jVkri1fZ1lXa3HgvkeeAbb4RAnlYds
-         eSIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=99uW8qSbYlplz1kdDTYJ062EIilv2Ag6Pm0Aw3d5iD0=;
-        b=W6Fs4CsAvyDK26GUdqFE1OBMdI8dcB0CQj5fNOvULB0mNBQaDz91m7dqFtq3UZaOK8
-         vLTNA6ZaGB0Oq6O7BljD2lvIIBhu/jDrhRZQxlZrZCYaWQk3XODKPCDYXtS7N4IVs91H
-         sn1qjS7Z/p8B8wEUmjWMFlUYIQT/SDGO/IeFxREmyVlDpymegIWfPwYdtFiCo+hIMUCQ
-         HtxHjH/d4z4WsnC931HsJ0Mh6qfk+DHQgf/XUMAB1KKFHTWaO2kyyYRx/xDE4fkZtv9R
-         bxrdXGvVdsoQhC/0MRbGzpsz2nnkZ6f+nhUMpwosXPJ48OEZsy44iPxd9CwY7Vq+nHgm
-         8rYw==
-X-Gm-Message-State: AJcUukeLlLjwYwEnRIHUHp4CWXagGSvwh7cYjZqop/8QqUNlP+RCKTpc
-        1HeZofACzkFYvqHCD/lpqwwrqQ==
-X-Google-Smtp-Source: ALg8bN7aogmIhyfYWtxXfdlL1yZYEx74nu53nopuQ6phO0MrJG/MXKPoVVSBWNdVdml8MVHRZZpSGw==
-X-Received: by 2002:a63:e302:: with SMTP id f2mr8789421pgh.320.1547112387906;
-        Thu, 10 Jan 2019 01:26:27 -0800 (PST)
-Received: from localhost.localdomain (36-239-240-185.dynamic-ip.hinet.net. [36.239.240.185])
-        by smtp.gmail.com with ESMTPSA id v13sm100615881pff.20.2019.01.10.01.26.24
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 10 Jan 2019 01:26:26 -0800 (PST)
-From:   Axel Lin <axel.lin@ingics.com>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Wenyou Yang <wenyou.yang@atmel.com>,
-        Zubair Lutfullah Kakakhel <Zubair.Kakakhel@imgtec.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        linux-kernel@vger.kernel.org, Axel Lin <axel.lin@ingics.com>
-Subject: [PATCH] regulator: act8865: Fix act8600_sudcdc_voltage_ranges setting
-Date:   Thu, 10 Jan 2019 17:26:16 +0800
-Message-Id: <20190110092616.14669-1-axel.lin@ingics.com>
-X-Mailer: git-send-email 2.17.1
+        Thu, 10 Jan 2019 04:26:40 -0500
+Received: from mx2.suse.de ([195.135.220.15]:57480 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726255AbfAJJ0k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 04:26:40 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id DB78FAE85;
+        Thu, 10 Jan 2019 09:26:37 +0000 (UTC)
+Subject: Re: [PATCHi v2] mm: put_and_wait_on_page_locked() while page is
+ migrated
+To:     Hugh Dickins <hughd@google.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Baoquan He <bhe@redhat.com>, Michal Hocko <mhocko@suse.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        David Hildenbrand <david@redhat.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        David Herrmann <dh.herrmann@gmail.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        Kan Liang <kan.liang@intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Christoph Lameter <cl@linux.com>,
+        Nick Piggin <npiggin@gmail.com>, pifang@redhat.com,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+References: <alpine.LSU.2.11.1811241858540.4415@eggly.anvils>
+ <CAHk-=wjeqKYevxGnfCM4UkxX8k8xfArzM6gKkG3BZg1jBYThVQ@mail.gmail.com>
+ <alpine.LSU.2.11.1811251900300.1278@eggly.anvils>
+ <alpine.LSU.2.11.1811261121330.1116@eggly.anvils>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Openpgp: preference=signencrypt
+Message-ID: <fccdbef6-00cf-38ad-3aa0-9466c9b83176@suse.cz>
+Date:   Thu, 10 Jan 2019 10:26:36 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.3
+MIME-Version: 1.0
+In-Reply-To: <alpine.LSU.2.11.1811261121330.1116@eggly.anvils>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The act8600_sudcdc_voltage_ranges setting does not match the datasheet.
+On 11/26/18 8:27 PM, Hugh Dickins wrote:
+> Waiting on a page migration entry has used wait_on_page_locked() all
+> along since 2006: but you cannot safely wait_on_page_locked() without
+> holding a reference to the page, and that extra reference is enough to
+> make migrate_page_move_mapping() fail with -EAGAIN, when a racing task
+> faults on the entry before migrate_page_move_mapping() gets there.
+> 
+> And that failure is retried nine times, amplifying the pain when
+> trying to migrate a popular page.  With a single persistent faulter,
+> migration sometimes succeeds; with two or three concurrent faulters,
+> success becomes much less likely (and the more the page was mapped,
+> the worse the overhead of unmapping and remapping it on each try).
+> 
+> This is especially a problem for memory offlining, where the outer
+> level retries forever (or until terminated from userspace), because
+> a heavy refault workload can trigger an endless loop of migration
+> failures.  wait_on_page_locked() is the wrong tool for the job.
+> 
+> David Herrmann (but was he the first?) noticed this issue in 2014:
+> https://marc.info/?l=linux-mm&m=140110465608116&w=2
+> 
+> Tim Chen started a thread in August 2017 which appears relevant:
+> https://marc.info/?l=linux-mm&m=150275941014915&w=2
+> where Kan Liang went on to implicate __migration_entry_wait():
+> https://marc.info/?l=linux-mm&m=150300268411980&w=2
+> and the thread ended up with the v4.14 commits:
+> 2554db916586 ("sched/wait: Break up long wake list walk")
+> 11a19c7b099f ("sched/wait: Introduce wakeup boomark in wake_up_page_bit")
+> 
+> Baoquan He reported "Memory hotplug softlock issue" 14 November 2018:
+> https://marc.info/?l=linux-mm&m=154217936431300&w=2
+> 
+> We have all assumed that it is essential to hold a page reference while
+> waiting on a page lock: partly to guarantee that there is still a struct
+> page when MEMORY_HOTREMOVE is configured, but also to protect against
+> reuse of the struct page going to someone who then holds the page locked
+> indefinitely, when the waiter can reasonably expect timely unlocking.
+> 
+> But in fact, so long as wait_on_page_bit_common() does the put_page(),
+> and is careful not to rely on struct page contents thereafter, there is
+> no need to hold a reference to the page while waiting on it.  That does
+> mean that this case cannot go back through the loop: but that's fine for
+> the page migration case, and even if used more widely, is limited by the
+> "Stop walking if it's locked" optimization in wake_page_function().
+> 
+> Add interface put_and_wait_on_page_locked() to do this, using "behavior"
+> enum in place of "lock" arg to wait_on_page_bit_common() to implement it.
+> No interruptible or killable variant needed yet, but they might follow:
+> I have a vague notion that reporting -EINTR should take precedence over
+> return from wait_on_page_bit_common() without knowing the page state,
+> so arrange it accordingly - but that may be nothing but pedantic.
+> 
+> __migration_entry_wait() still has to take a brief reference to the
+> page, prior to calling put_and_wait_on_page_locked(): but now that it
+> is dropped before waiting, the chance of impeding page migration is
+> very much reduced.  Should we perhaps disable preemption across this?
+> 
+> shrink_page_list()'s __ClearPageLocked(): that was a surprise!  This
+> survived a lot of testing before that showed up.  PageWaiters may have
+> been set by wait_on_page_bit_common(), and the reference dropped, just
+> before shrink_page_list() succeeds in freezing its last page reference:
+> in such a case, unlock_page() must be used.  Follow the suggestion from
+> Michal Hocko, just revert a978d6f52106 ("mm: unlockless reclaim") now:
+> that optimization predates PageWaiters, and won't buy much these days;
+> but we can reinstate it for the !PageWaiters case if anyone notices.
+> 
+> It does raise the question: should vmscan.c's is_page_cache_freeable()
+> and __remove_mapping() now treat a PageWaiters page as if an extra
+> reference were held?  Perhaps, but I don't think it matters much, since
+> shrink_page_list() already had to win its trylock_page(), so waiters are
+> not very common there: I noticed no difference when trying the bigger
+> change, and it's surely not needed while put_and_wait_on_page_locked()
+> is only used for page migration.
+> 
+> Reported-and-tested-by: Baoquan He <bhe@redhat.com>
+> Signed-off-by: Hugh Dickins <hughd@google.com>
+> Acked-by: Michal Hocko <mhocko@suse.com>
+> Reviewed-by: Andrea Arcangeli <aarcange@redhat.com>
 
-The problems in below entry:
-  REGULATOR_LINEAR_RANGE(19000000, 191, 255, 400000),
+For the record, anyone backporting this to older kernels should make
+sure to also include 605ca5ede764 ("mm/huge_memory.c: reorder operations
+in __split_huge_page_tail()") or they are in for a lot of fun, like me.
 
-1. The off-by-one min_sel causes wrong volatage calculation.
-   The min_sel should be 192.
-2. According to the datasheet[1] Table 7. (on page 43):
-   The selector 248 (0b11111000) ~ 255 (0b11111111) are 41.400V.
+Long story [1] short, Konstantin was correct in 605ca5ede764 changelog,
+although it wasn't the main known issue he was fixing:
 
-Also fix off-by-one for ACT8600_SUDCDC_VOLTAGE_NUM.
+  clear_compound_head() also must be called before unfreezing page
+  reference because after successful get_page_unless_zero() might follow
+  put_page() which needs correct compound_head().
 
-[1] https://active-semi.com/wp-content/uploads/ACT8600_Datasheet.pdf
+Which is exactly what happens in __migration_entry_wait():
 
-Fixes: df3a950e4e73 ("regulator: act8865: Add act8600 support")
-Signed-off-by: Axel Lin <axel.lin@ingics.com>
----
-Hi Wenyou and Zubair,
-I don't have this h/w for test, so please help to review and test the patch.
-Thanks,
-Axel
+        if (!get_page_unless_zero(page))
+                goto out;
+        pte_unmap_unlock(ptep, ptl);
+        put_and_wait_on_page_locked(page); -> does put_page(page)
 
- drivers/regulator/act8865-regulator.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+while waiting on the THP split (which inserts those migration entries)
+to finish. Before put_and_wait_on_page_locked() it would wait first, and
+only then do put_page() on a page that's no longer tail page, so it
+would work out despite the dangerous get_page_unless_zero() on a tail
+page. Now it doesn't :)
 
-diff --git a/drivers/regulator/act8865-regulator.c b/drivers/regulator/act8865-regulator.c
-index 21e20483bd91..e0239cf3f56d 100644
---- a/drivers/regulator/act8865-regulator.c
-+++ b/drivers/regulator/act8865-regulator.c
-@@ -131,7 +131,7 @@
-  * ACT8865 voltage number
-  */
- #define	ACT8865_VOLTAGE_NUM	64
--#define ACT8600_SUDCDC_VOLTAGE_NUM	255
-+#define ACT8600_SUDCDC_VOLTAGE_NUM	256
- 
- struct act8865 {
- 	struct regmap *regmap;
-@@ -222,7 +222,8 @@ static const struct regulator_linear_range act8600_sudcdc_voltage_ranges[] = {
- 	REGULATOR_LINEAR_RANGE(3000000, 0, 63, 0),
- 	REGULATOR_LINEAR_RANGE(3000000, 64, 159, 100000),
- 	REGULATOR_LINEAR_RANGE(12600000, 160, 191, 200000),
--	REGULATOR_LINEAR_RANGE(19000000, 191, 255, 400000),
-+	REGULATOR_LINEAR_RANGE(19000000, 192, 247, 400000),
-+	REGULATOR_LINEAR_RANGE(41400000, 248, 255, 0),
- };
- 
- static struct regulator_ops act8865_ops = {
--- 
-2.17.1
+Now if only 605ca5ede764 had a CC:stable and a Fixes: tag... Machine
+Learning won this round though, because 605ca5ede764 was added to 4.14
+stable by Sasha...
 
+[1] https://bugzilla.suse.com/show_bug.cgi?id=1119962#c16
