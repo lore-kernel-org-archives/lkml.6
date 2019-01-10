@@ -2,124 +2,168 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AB42C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 15:10:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E7EAC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 15:10:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC2E8214DA
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 15:10:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 327EB214DA
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 15:10:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=axentia.se header.i=@axentia.se header.b="dEVabNWP"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="B42KzEOx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729495AbfAJPKo (ORCPT
+        id S1729537AbfAJPKs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 10:10:44 -0500
-Received: from mail-eopbgr80099.outbound.protection.outlook.com ([40.107.8.99]:48079
-        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727753AbfAJPKm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 10:10:42 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axentia.se;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=c3NQshP9lIPHHAPMrelZKkEChYzI3ptRTj3F2NAeNDc=;
- b=dEVabNWPaZHqKvwOwFtLweor2XQTsUGV1p0c7nm4VQiOjdCZXRt3xN6QesFY/VO6xCAAeUXCNE/0Pjh8UTygUEr5dq0/l5HnzQDmYi/AeeBeTFQMELnNqonCIcoiAEae8MDxhUOpkJrX7DHb+6N2G67Thf6cvWxeCk8b6le5q+o=
-Received: from AM6PR02MB4470.eurprd02.prod.outlook.com (20.177.191.218) by
- AM6PR02MB4037.eurprd02.prod.outlook.com (20.177.112.150) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1516.14; Thu, 10 Jan 2019 15:10:39 +0000
-Received: from AM6PR02MB4470.eurprd02.prod.outlook.com
- ([fe80::e5f3:a239:2ec4:4453]) by AM6PR02MB4470.eurprd02.prod.outlook.com
- ([fe80::e5f3:a239:2ec4:4453%6]) with mapi id 15.20.1516.015; Thu, 10 Jan 2019
- 15:10:39 +0000
-From:   Peter Rosin <peda@axentia.se>
-To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Peter Rosin <peda@axentia.se>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        David Airlie <airlied@linux.ie>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCH 2/4] drm/atmel-hlcdc: do not swap w/h of the crtc when a plane
- is rotated
-Thread-Topic: [PATCH 2/4] drm/atmel-hlcdc: do not swap w/h of the crtc when a
- plane is rotated
-Thread-Index: AQHUqPal2z9iTYzgb0+a4YlOuMR4jQ==
-Date:   Thu, 10 Jan 2019 15:10:39 +0000
-Message-ID: <20190110151020.30468-3-peda@axentia.se>
-References: <20190110151020.30468-1-peda@axentia.se>
-In-Reply-To: <20190110151020.30468-1-peda@axentia.se>
-Accept-Language: en-US, sv-SE
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: git-send-email 2.11.0
-x-originating-ip: [85.226.244.23]
-x-clientproxiedby: HE1PR05CA0257.eurprd05.prod.outlook.com
- (2603:10a6:3:fb::33) To AM6PR02MB4470.eurprd02.prod.outlook.com
- (2603:10a6:20b:60::26)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=peda@axentia.se; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM6PR02MB4037;6:arwSSsVJDO4D30SFKsbe2Y9ZC4sW5T5+T4JgSsKt+v0Abo+baQ4T3oP57UWSPaXlJ8/rfiieUdDMGrrZRMJSATMck94+/VMa/dSXBa89o8jVc70Q68Hvj6RQLnk5mWbsVmt/VOhivaq9PX5jBLmW0ItPDWQ2MZPNWgDp4kP0kNvkFCvEoAPcbrunE6Fia39CMC33ZHzQ3CNyvIWJ530JpW/Tqk3w3aJFV5LO5q8NrXUrKPm32U45T0JDsfktYWTc8qN30KST9m77VL92boxBuV5CO7jU6rTrp1mBSAQcBD/6a0zXkUlBQ0j+vmmqe8Gyeo3ZgAEzTfUQQgwUgktq+yNzl1q9pxTFPRmPtt+B8+Cx8EBmsKl7hJ2M9gaOsXSyzfoxIXPNtBa48elWU2bgg5Pmd5QUWVrx/yTaA1HogLsKkjbZpkuSeuHjgXssvAweXx9m9baCm/HYKdKPK7015A==;5:yB9RRPl/+WJ8VpUNMdf8DwLWMA41wC/hdpK6N9WNayTJtH5N89D+0Twm7NMBkFn3zfqN1KAZ72HkdfNb/vDJZqGsaiFzoLOdFHn6p0euQCajMfOB9nn0MVOOb5AHaL73h6DKBCpCH4Pc5BcApVYM9uUpUat/FkuvuDoniSiaacZy/Q/bsRrAFs+4Bx0vf2TfqNtKZCxvebv7LbK26EDvLA==;7:lQG8cfzOIuoXgTpEzF7iOGVttWsQZfzNHMGLJxpH/PVCxIzsQsDwaufhlk8Q6Sfy5NJggeE335auAy+DUGLAMDyfomULWOIOHe6ZduBvPpQ8ND7cu4J7YwzbOr4kogYSRC/YE+PcKeWJ1V04lCqb2A==
-x-ms-office365-filtering-correlation-id: f6ad3eb1-575e-400b-208d-08d6770dc7ae
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(7021145)(8989299)(5600109)(711020)(4534185)(7022145)(4603075)(4627221)(201702281549075)(8990200)(7048125)(7024125)(7027125)(7023125)(2017052603328)(7153060)(7193020);SRVR:AM6PR02MB4037;
-x-ms-traffictypediagnostic: AM6PR02MB4037:
-x-microsoft-antispam-prvs: <AM6PR02MB403782F5A08A417100BC50FFBC840@AM6PR02MB4037.eurprd02.prod.outlook.com>
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(3230021)(908002)(999002)(5005026)(6040522)(8220060)(2401047)(8121501046)(3231475)(944501520)(52105112)(93006095)(93001095)(10201501046)(3002001)(6041310)(20161123558120)(2016111802025)(20161123562045)(20161123560045)(20161123564045)(6043046)(201708071742011)(7699051)(76991095);SRVR:AM6PR02MB4037;BCL:0;PCL:0;RULEID:;SRVR:AM6PR02MB4037;
-x-forefront-prvs: 0913EA1D60
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39830400003)(136003)(366004)(396003)(346002)(376002)(199004)(189003)(53936002)(316002)(36756003)(6512007)(97736004)(50226002)(5660300001)(66066001)(186003)(386003)(4326008)(6506007)(446003)(25786009)(26005)(256004)(11346002)(2501003)(476003)(102836004)(2616005)(6916009)(14454004)(71190400001)(71200400001)(106356001)(105586002)(2906002)(68736007)(7736002)(486006)(5640700003)(4744005)(1076003)(6436002)(6486002)(508600001)(2351001)(81156014)(99286004)(81166006)(3846002)(8936002)(305945005)(575784001)(6116002)(8676002)(86362001)(54906003)(74482002)(76176011)(52116002);DIR:OUT;SFP:1102;SCL:1;SRVR:AM6PR02MB4037;H:AM6PR02MB4470.eurprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: axentia.se does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: e6MbwdfETt/ygnp79dhOdG7HmbTYYF5zr4ejqJbHC/0d+7JQM7H9jeh+3vGqMXCUzF2n41HRmjyjw8rt1rO+3NSJw9szKG1yfch3IztRFz6w5cDKKnIVr0/JfmKlDepvlaWUGZSdtwqxtkkbVvwm8r4lMAc47hZvKQmhAJYX8LEhdoixvc75A1BhqGQDdkQS8ba6+lWUn04aXR7DG9vKsDHZCWVwYDq4i7FGFRLtct9/Tnss9PwvjHpCovjVsDdvLkEMSJVhO+ot1v7m5gUDHZbx5veeiKt8jyC10hdZaN8BNiYiRb9HW9ipSINs8KjD
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        Thu, 10 Jan 2019 10:10:48 -0500
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:46232 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729497AbfAJPKr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 10:10:47 -0500
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20190110151044euoutp02701c0ceea115f2c6a4e2db6e405c0057~4hU6dNBMZ0091500915euoutp02M
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 15:10:44 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20190110151044euoutp02701c0ceea115f2c6a4e2db6e405c0057~4hU6dNBMZ0091500915euoutp02M
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1547133044;
+        bh=4JEigMfbNQ5WSKWZ+sqcGxd1mMIKthpbpm38EX2s9yc=;
+        h=From:Subject:To:Cc:Date:In-Reply-To:References:From;
+        b=B42KzEOxo2QQvg2Ph0GxJe4rnK7V8NkoDbChYfVcISLdCg0g2EcXq7lglyWVmmkeO
+         zf7QZbUkqb4IRaGZJrn6zH07EUpPf1YIzYOEvn1OhrRBerZwAd+xD7g9BVKsRtHGdv
+         9tVNpsh9JirZPKOxwQ/ygNwakFewTDMqQCIRLXDU=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20190110151044eucas1p280eb0c99a0cfba9f41dfb8c25d3a4ee6~4hU6E3kYF0785107851eucas1p2k;
+        Thu, 10 Jan 2019 15:10:44 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id A3.46.04806.370673C5; Thu, 10
+        Jan 2019 15:10:44 +0000 (GMT)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20190110151043eucas1p2ae1a4572a5e65d564d1952552fe7f216~4hU5RS_qw0785207852eucas1p2R;
+        Thu, 10 Jan 2019 15:10:43 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20190110151043eusmtrp13859993a3280bdd5f98675b68b2dbfce~4hU4-ug2d0085400854eusmtrp1h;
+        Thu, 10 Jan 2019 15:10:43 +0000 (GMT)
+X-AuditID: cbfec7f5-34dff700000012c6-89-5c376073236f
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 5F.3F.04284.370673C5; Thu, 10
+        Jan 2019 15:10:43 +0000 (GMT)
+Received: from [106.120.53.102] (unknown [106.120.53.102]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20190110151042eusmtip13cbdfa1ed0b64c0d5aec126c661c0e22~4hU4uzmf60320703207eusmtip1e;
+        Thu, 10 Jan 2019 15:10:42 +0000 (GMT)
+From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH] Fix stack memory disclosure
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Vlad Tsyrklevich <vlad@tsyrklevich.net>,
+        linux-fbdev@vger.kernel.org,
+        Security Officers <security@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Message-ID: <c0a93d03-f150-6363-2df7-b2dec8a8638a@samsung.com>
+Date:   Thu, 10 Jan 2019 16:10:42 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+        Thunderbird/45.3.0
 MIME-Version: 1.0
-X-OriginatorOrg: axentia.se
-X-MS-Exchange-CrossTenant-Network-Message-Id: f6ad3eb1-575e-400b-208d-08d6770dc7ae
-X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Jan 2019 15:10:38.2808
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 4ee68585-03e1-4785-942a-df9c1871a234
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR02MB4037
+In-Reply-To: <CAGXu5jKiKA79mnTwCxTKsXBBKAvaoaX=CH61pLXdxtWQvUhhuQ@mail.gmail.com>
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFuplleLIzCtJLcpLzFFi42LZduzned2SBPMYg5mfGC3OdOdanOj7wGpx
+        edccNourfzsYLa49mcriwOoxu+Eii8emVZ1sHuc38np83iQXwBLFZZOSmpNZllqkb5fAlXH4
+        yyOWgo+8FU+mXGdpYFzC3cXIySEhYCJxum0eexcjF4eQwApGiduzJjJCOF8YJY58nMAG4Xxm
+        lNgx4zo7TMu/r9uZQWwhgeWMEnvXqEMUvWeU+HB/GhtIgk3ASmJi+ypGEFtYwEDi2ZYGJhBb
+        REBV4vulZmaQBmaBGYwS2563sXYxcnDwCthJzP9bB1LDAlTT+PM7WFhUIEKi/4w6SJhXQFDi
+        5MwnLCA2p0CgxJqb38BsZgF5ie1v54CNlBDoZ5d48e8DE8ShLhJbfq9jgbCFJV4d3wL1gIzE
+        6ck9LBAN0xkl3vxaCuWsZ5RYc+YYVLe1xOHjF8GuYBbQlFi/Sx8i7CixpP8nO0hYQoBP4sZb
+        QYgj+CQmbZvODBHmlehoE4KoVpPYsGwDG8zarp0rmSFsD4nfczrZJzAqzkLy2iwk78xC2LuA
+        kXkVo3hqaXFuemqxcV5quV5xYm5xaV66XnJ+7iZGYCI5/e/41x2M+/4kHWIU4GBU4uHt8DWP
+        EWJNLCuuzD3EKMHBrCTCe2e5WYwQb0piZVVqUX58UWlOavEhRmkOFiVx3mqGB9FCAumJJanZ
+        qakFqUUwWSYOTqkGxuVSc3fMS9vXc+rq/ddJ3kpFTPm1h7N44k5o/DGNza996SZzpjVBXHYP
+        6/FWzTxfL6NryXytFsFP6zcXN0+wfRI2fyF/iqvUOr4ptWouHiq9+x1sov/Mff9s+sZg3tvd
+        SsZF/6yXrkr9tGdfaPO/tTmv/G6+mfgtt0t+7r2wKoNY93i+8JvGSizFGYmGWsxFxYkAKnus
+        LiADAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprCIsWRmVeSWpSXmKPExsVy+t/xu7rFCeYxBncOslqc6c61ONH3gdXi
+        8q45bBZX/3YwWlx7MpXFgdVjdsNFFo9NqzrZPM5v5PX4vEkugCVKz6Yov7QkVSEjv7jEVina
+        0MJIz9DSQs/IxFLP0Ng81srIVEnfziYlNSezLLVI3y5BL+Pwl0csBR95K55Muc7SwLiEu4uR
+        k0NCwETi39ftzF2MXBxCAksZJTYfucTUxcgBlJCROL6+DKJGWOLPtS42iJq3jBKHnz9iB0mw
+        CVhJTGxfxQhiCwsYSDzb0sAEYosIqEp8v9QMNfQKo8Tkv2dYQRxmgRmMEr2XZrKBbOAVsJOY
+        /7cOpIEFqKHx53dWEFtUIELi1sMOFhCbV0BQ4uTMJ2A2p0CgxJqb38BsZgF1iT/zLjFD2PIS
+        29/OYZ7AKDgLScssJGWzkJQtYGRexSiSWlqcm55bbKhXnJhbXJqXrpecn7uJERgj24793LyD
+        8dLG4EOMAhyMSjy8Hb7mMUKsiWXFlbmHGCU4mJVEeO8sN4sR4k1JrKxKLcqPLyrNSS0+xGgK
+        9MREZinR5Hxg/OaVxBuaGppbWBqaG5sbm1koifOeN6iMEhJITyxJzU5NLUgtgulj4uCUamDU
+        efP7p9iPsp+avM80BX9G3IpmnKCx0inC/Uz5vflsk7fuz/q5bO6Gt2WH0j2FTCvnfOkMie9f
+        /32Z9yt5Q55NXy4yaXlN4GkX2cKe9ofhzfWL+W/0ju1ekimZ3PDfRCdvVV/Qs6z7PVm8t/wV
+        rAw16iaqnlsckFX3ZVpd+2875rdLIidelxBVYinOSDTUYi4qTgQAC9YXwqcCAAA=
+X-CMS-MailID: 20190110151043eucas1p2ae1a4572a5e65d564d1952552fe7f216
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20190108234243epcas4p3b9ec45a771e71a0c3a3af7eeea93905d
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20190108234243epcas4p3b9ec45a771e71a0c3a3af7eeea93905d
+References: <20190106075408.58405-1-vlad@tsyrklevich.net>
+        <CGME20190108234243epcas4p3b9ec45a771e71a0c3a3af7eeea93905d@epcas4p3.samsung.com>
+        <CAGXu5jKiKA79mnTwCxTKsXBBKAvaoaX=CH61pLXdxtWQvUhhuQ@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The destination crtc rectangle is independent of source plane rotation.
 
-Signed-off-by: Peter Rosin <peda@axentia.se>
----
- drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c | 3 ---
- 1 file changed, 3 deletions(-)
+On 01/09/2019 12:41 AM, Kees Cook wrote:
+> On Sat, Jan 5, 2019 at 11:51 PM Vlad Tsyrklevich <vlad@tsyrklevich.net> wrote:
+>>
+>> Using [1] for static analysis I found that the OMAPFB_QUERY_PLANE,
+>> OMAPFB_GET_COLOR_KEY, OMAPFB_GET_DISPLAY_INFO, and OMAPFB_GET_VRAM_INFO
+>> cases could all leak uninitialized stack memory--either due to
+>> uninitialized padding or 'reserved' fields.
+>>
+>> Fix them by clearing the shared union used to store copied out data.
+>>
+>> [1] https://github.com/vlad902/kernel-uninitialized-memory-checker
+>>
+>> Signed-off-by: Vlad Tsyrklevich <vlad@tsyrklevich.net>
+> 
+> Reviewed-by: Kees Cook <keescook@chromium.org>
+> Fixes: b39a982ddecf ("OMAP: DSS2: omapfb driver")
 
-diff --git a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c b/drivers/gpu/=
-drm/atmel-hlcdc/atmel_hlcdc_plane.c
-index ea8fc0deb814..d6f93f029020 100644
---- a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c
-+++ b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c
-@@ -642,9 +642,6 @@ static int atmel_hlcdc_plane_atomic_check(struct drm_pl=
-ane *p,
- 	 * Swap width and size in case of 90 or 270 degrees rotation
- 	 */
- 	if (drm_rotation_90_or_270(state->base.rotation)) {
--		tmp =3D state->crtc_w;
--		state->crtc_w =3D state->crtc_h;
--		state->crtc_h =3D tmp;
- 		tmp =3D state->src_w;
- 		state->src_w =3D state->src_h;
- 		state->src_h =3D tmp;
---=20
-2.11.0
+Thanks.
 
+> Since this driver is orphaned (according to MAINTAINERS), I think this
+> fix should go via Bart's tree. Bart, can you take this?
+
+Sure, I will merge it tomorrow (I plan to send fbdev fixes pull request to
+Linus next week).
+
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
+
+> -Kees
+> 
+>> Cc: security@kernel.org
+>>
+>> ---
+>>  drivers/video/fbdev/omap2/omapfb/omapfb-ioctl.c | 2 ++
+>>  1 file changed, 2 insertions(+)
+>>
+>> diff --git a/drivers/video/fbdev/omap2/omapfb/omapfb-ioctl.c b/drivers/video/fbdev/omap2/omapfb/omapfb-ioctl.c
+>> index 53f93616c..8e23160ec 100644
+>> --- a/drivers/video/fbdev/omap2/omapfb/omapfb-ioctl.c
+>> +++ b/drivers/video/fbdev/omap2/omapfb/omapfb-ioctl.c
+>> @@ -609,6 +609,8 @@ int omapfb_ioctl(struct fb_info *fbi, unsigned int cmd, unsigned long arg)
+>>
+>>         int r = 0;
+>>
+>> +       memset(&p, 0, sizeof(p));
+>> +
+>>         switch (cmd) {
+>>         case OMAPFB_SYNC_GFX:
+>>                 DBG("ioctl SYNC_GFX\n");
+>> --
+>> 2.17.0
