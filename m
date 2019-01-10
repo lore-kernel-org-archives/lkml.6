@@ -2,76 +2,149 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 124C7C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 23:06:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 171F7C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 23:06:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D4F37208E3
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 23:06:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547161597;
-	bh=eKvOq4NCk4wPWMAcHIFanyfg7O5t8WfBBTE64xC8bHs=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=AlVXkKo7nz12z1pePbtXnnXL4tZTBaZqm10KeFVEIwSpSUszyYPfgGSVipk0aPhCF
-	 4Xs9TUkHR7OKQj/mPHJzZnsScnEkhcMCQwAxsY5ZYFNitvEexvei0M48QOZFb4hr24
-	 7lEjsa3DM76Q2o6WAUCXDpUgf+Qwb3cUFKQ8oOIU=
+	by mail.kernel.org (Postfix) with ESMTP id E3BF9208E3
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 23:06:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729864AbfAJXGh (ORCPT
+        id S1729982AbfAJXGz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 18:06:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50154 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728300AbfAJXGg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 18:06:36 -0500
-Received: from localhost.localdomain (user-0ccsrjt.cable.mindspring.com [24.206.110.125])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7D8B4208E3;
-        Thu, 10 Jan 2019 23:06:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547161596;
-        bh=eKvOq4NCk4wPWMAcHIFanyfg7O5t8WfBBTE64xC8bHs=;
-        h=From:To:Cc:Subject:Date:From;
-        b=DewEyD3QBYmMBcEEiozzj2ISh6WBs1XMekrSMXXXYj7dgPEr/VL/r25A7+HA0jB+T
-         XKRrFXba7wCz0/2Piy8kpo6tAJT7bg0CcIlteOu4jY4Uqw1yatOQN1w1M9YVzsCrf4
-         YRwr0cARQHVv8UqTgRYcdGXMTHCcxDj+2aPwoTsg=
-From:   Alan Tull <atull@kernel.org>
-To:     Moritz Fischer <mdf@kernel.org>
-Cc:     Dinh Nguyen <dinguyen@kernel.org>, Alan Tull <atull@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-fpga@vger.kernel.org
-Subject: [PATCH] fpga: altera_freeze_bridge: remove restriction to socfpga
-Date:   Thu, 10 Jan 2019 17:06:26 -0600
-Message-Id: <20190110230626.4130-1-atull@kernel.org>
-X-Mailer: git-send-email 2.16.2
+        Thu, 10 Jan 2019 18:06:55 -0500
+Received: from mslow2.mail.gandi.net ([217.70.178.242]:33994 "EHLO
+        mslow2.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728300AbfAJXGy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 18:06:54 -0500
+Received: from relay12.mail.gandi.net (unknown [217.70.178.232])
+        by mslow2.mail.gandi.net (Postfix) with ESMTP id 78C743A6DC3;
+        Thu, 10 Jan 2019 23:52:28 +0100 (CET)
+Received: from localhost (unknown [88.190.179.123])
+        (Authenticated sender: repk@triplefau.lt)
+        by relay12.mail.gandi.net (Postfix) with ESMTPSA id 7F141200003;
+        Thu, 10 Jan 2019 22:52:26 +0000 (UTC)
+From:   Remi Pommarel <repk@triplefau.lt>
+To:     Ulf Hansson <ulf.hansson@linaro.org>,
+        Kevin Hilman <khilman@baylibre.com>
+Cc:     Elie Roudninski <xademax@gmail.com>, linux-mmc@vger.kernel.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Remi Pommarel <repk@triplefau.lt>
+Subject: [PATCH v2] mmc: meson-gx: Free irq in release() callback
+Date:   Fri, 11 Jan 2019 00:01:35 +0100
+Message-Id: <20190110230135.19555-1-repk@triplefau.lt>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Altera Freeze Bridge should not be restricted to ARCH_SOCFPGA
-since it can be used on other platforms such as Stratix10.
+Because the irq was requested through device managed resources API
+(devm_request_threaded_irq()) it was freed after meson_mmc_remove()
+completion, thus after mmc_free_host() has reclaimed meson_host memory.
+As this irq is IRQF_SHARED, while using CONFIG_DEBUG_SHIRQ, its handler
+get called by free_irq(). So meson_mmc_irq() was called after the
+meson_host memory reclamation and was using invalid memory.
 
-Signed-off-by: Alan Tull <atull@kernel.org>
+We ended up with the following scenario:
+device_release_driver()
+	meson_mmc_remove()
+		mmc_free_host() /* Freeing host memory */
+	...
+	devres_release_all()
+		devm_irq_release()
+			__free_irq()
+				meson_mmc_irq() /* Uses freed memory */
+
+To avoid this, the irq is released in meson_mmc_remove() and in
+mseon_mmc_probe() error path before mmc_free_host() gets called.
+
+This fixes https://marc.info/?l=linux-mmc&m=154707415208716.
+
+Signed-off-by: Remi Pommarel <repk@triplefau.lt>
 ---
- drivers/fpga/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Changes since v1:
+- Fix it also in the error handling of probe callback
+---
+ drivers/mmc/host/meson-gx-mmc.c | 18 +++++++++++-------
+ 1 file changed, 11 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/fpga/Kconfig b/drivers/fpga/Kconfig
-index 0bb7b5c..0bdbd3d 100644
---- a/drivers/fpga/Kconfig
-+++ b/drivers/fpga/Kconfig
-@@ -104,7 +104,7 @@ config SOCFPGA_FPGA_BRIDGE
+diff --git a/drivers/mmc/host/meson-gx-mmc.c b/drivers/mmc/host/meson-gx-mmc.c
+index c2690c1a50ff..f115d7c63ffe 100644
+--- a/drivers/mmc/host/meson-gx-mmc.c
++++ b/drivers/mmc/host/meson-gx-mmc.c
+@@ -179,6 +179,8 @@ struct meson_host {
+ 	struct sd_emmc_desc *descs;
+ 	dma_addr_t descs_dma_addr;
  
- config ALTERA_FREEZE_BRIDGE
- 	tristate "Altera FPGA Freeze Bridge"
--	depends on ARCH_SOCFPGA && FPGA_BRIDGE
-+	depends on FPGA_BRIDGE
- 	help
- 	  Say Y to enable drivers for Altera FPGA Freeze bridges.  A
- 	  freeze bridge is a bridge that exists in the FPGA fabric to
++	int irq;
++
+ 	bool vqmmc_enabled;
+ };
+ 
+@@ -1231,7 +1233,7 @@ static int meson_mmc_probe(struct platform_device *pdev)
+ 	struct resource *res;
+ 	struct meson_host *host;
+ 	struct mmc_host *mmc;
+-	int ret, irq;
++	int ret;
+ 
+ 	mmc = mmc_alloc_host(sizeof(struct meson_host), &pdev->dev);
+ 	if (!mmc)
+@@ -1276,8 +1278,8 @@ static int meson_mmc_probe(struct platform_device *pdev)
+ 		goto free_host;
+ 	}
+ 
+-	irq = platform_get_irq(pdev, 0);
+-	if (irq <= 0) {
++	host->irq = platform_get_irq(pdev, 0);
++	if (host->irq <= 0) {
+ 		dev_err(&pdev->dev, "failed to get interrupt resource.\n");
+ 		ret = -EINVAL;
+ 		goto free_host;
+@@ -1331,9 +1333,8 @@ static int meson_mmc_probe(struct platform_device *pdev)
+ 	writel(IRQ_CRC_ERR | IRQ_TIMEOUTS | IRQ_END_OF_CHAIN,
+ 	       host->regs + SD_EMMC_IRQ_EN);
+ 
+-	ret = devm_request_threaded_irq(&pdev->dev, irq, meson_mmc_irq,
+-					meson_mmc_irq_thread, IRQF_SHARED,
+-					NULL, host);
++	ret = request_threaded_irq(host->irq, meson_mmc_irq,
++			meson_mmc_irq_thread, IRQF_SHARED, NULL, host);
+ 	if (ret)
+ 		goto err_init_clk;
+ 
+@@ -1351,7 +1352,7 @@ static int meson_mmc_probe(struct platform_device *pdev)
+ 	if (host->bounce_buf == NULL) {
+ 		dev_err(host->dev, "Unable to map allocate DMA bounce buffer.\n");
+ 		ret = -ENOMEM;
+-		goto err_init_clk;
++		goto err_free_irq;
+ 	}
+ 
+ 	host->descs = dma_alloc_coherent(host->dev, SD_EMMC_DESC_BUF_LEN,
+@@ -1370,6 +1371,8 @@ static int meson_mmc_probe(struct platform_device *pdev)
+ err_bounce_buf:
+ 	dma_free_coherent(host->dev, host->bounce_buf_size,
+ 			  host->bounce_buf, host->bounce_dma_addr);
++err_free_irq:
++	free_irq(host->irq, host);
+ err_init_clk:
+ 	clk_disable_unprepare(host->mmc_clk);
+ err_core_clk:
+@@ -1387,6 +1390,7 @@ static int meson_mmc_remove(struct platform_device *pdev)
+ 
+ 	/* disable interrupts */
+ 	writel(0, host->regs + SD_EMMC_IRQ_EN);
++	free_irq(host->irq, host);
+ 
+ 	dma_free_coherent(host->dev, SD_EMMC_DESC_BUF_LEN,
+ 			  host->descs, host->descs_dma_addr);
 -- 
-2.7.4
+2.20.1
 
