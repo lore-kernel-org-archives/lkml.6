@@ -2,181 +2,133 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72198C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 12:25:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9586FC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 12:25:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E80A20665
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 12:25:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547123114;
-	bh=HYNhoc0GJOM1qSqIwfYgZDvAbtqiJavl73zwI0ehz+4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=MIZQveMjI+SF2wVR1A2XDnArK1uu3EpZSNsxqxnaeZrS+tplA0kQtRQfIW5w8eThu
-	 STVPNlYbjvON7HrtO5vTzPevCRxqsZXV4EpjwMdF/+Q6Jleyk6HC1VYLwqr+KdlcLL
-	 4mbyMx4OMlDb9vKNwYV2f1LqUsH6cmP7UaWsLuEg=
+	by mail.kernel.org (Postfix) with ESMTP id 5E3A9214C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 12:25:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Jm+oEOjx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728338AbfAJMZN (ORCPT
+        id S1728464AbfAJMZg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 07:25:13 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:34121 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726255AbfAJMZN (ORCPT
+        Thu, 10 Jan 2019 07:25:36 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:45996 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726255AbfAJMZg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 07:25:13 -0500
-Received: by mail-lf1-f67.google.com with SMTP id p6so8177786lfc.1;
-        Thu, 10 Jan 2019 04:25:10 -0800 (PST)
+        Thu, 10 Jan 2019 07:25:36 -0500
+Received: by mail-pf1-f196.google.com with SMTP id g62so5220454pfd.12
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 04:25:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=qSovJCuzZts6dtBKRUP27331a+qq8qL97WZmBA4gUD8=;
-        b=QFSCOQ/bg7d/e1WDSgfoxJRpvJcBWJEsHq7cPmFUWq0yW8W7O8/pBhOiBst9+gfurJ
-         OFY76/EM/qn0qYR5qcguO+UGkY+j+d9j6R1ciuqgA+J4QRd+ZsKYPmnuVJ7TsYCWO9ub
-         1rUh5DaH2Vi1nXa3FjaUCNAxdYtXWaeJoct6QazOYtuoFnHyVrBPiWRjtBHW6Dl75t0b
-         /3MYdmmzx8R7HA6oi59wq2mTQBreOFvMH9fDGGgVbcH1CD+3M6s64KTXCbWu59JC5+8Z
-         QePVSTq0pgactbjH2D7lk9TZk7MMgUWNkbujgZhKKihwCImzWQMuHITpocHHA/chEBMJ
-         O7kQ==
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=R7KG4RNn7WVmbQvqhKvIJ9jxw1xMvMrqX83v0AiI99E=;
+        b=Jm+oEOjxcIAQjx1tUKVDs25RELoi8XQNj66KQbW7bZ6I1VGpeD+sJbQB2MrfeNx2x4
+         ajyGaGnixLAgvSPNbCeYb0L42WP7nm6P5Z0kaM/1Upd/SJH0XuUWHtZAwCy3kLvQkI2T
+         3OMwb23DjpUrcou3VaaYUVIllhteN7ew/ttd8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=qSovJCuzZts6dtBKRUP27331a+qq8qL97WZmBA4gUD8=;
-        b=SpDoMyGOrwKevdlol9vKnjKRsdeFXeFGOtaA+J1muzP1yeX+evsc8lnTBeDAogOYFl
-         UGfWPu58DTHmFKFkHRMTYrXo8H1H0UldIoEH3LCD4CEPYkDLXiid+pR+LmZbuqOk5t8q
-         bphsNt6M8OlYmw3NOhEO1iW6Kuj7qZVrSoetVV50i1Gt7G3oAma7LPHQaVet88otHopn
-         jBwsK6R/kFxn8Y+VG1soEK78O5SxfnIxupuBn/tROI2avZ8E/zs9xV3fHkvf0BgsZddS
-         VLkJAFrT+fdrlptgiTcGSXoa7uH91eQ7A1M4g9mY7agUoxARLzfJiPMG2qslXta2OU49
-         EHkw==
-X-Gm-Message-State: AJcUukdDCWvbsszTw1DP6+2PqNtqiQVsdHHjZLSFZoC6gfyJ8/EawoPX
-        q6mdzs7f6R/QJ1VNwYlmQVY=
-X-Google-Smtp-Source: ALg8bN4I+kp0KfdIaouhhIkfwQS+BKpoyXi8fUrU3kFW4d45e2ZsknuPCLkxJFc97KlxZIo0AU4Yhg==
-X-Received: by 2002:a19:8d01:: with SMTP id p1mr5428437lfd.149.1547123109687;
-        Thu, 10 Jan 2019 04:25:09 -0800 (PST)
-Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
-        by smtp.gmail.com with ESMTPSA id x16sm13819667lff.26.2019.01.10.04.25.08
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 10 Jan 2019 04:25:08 -0800 (PST)
-Received: from johan by xi.terra with local (Exim 4.91)
-        (envelope-from <johan@kernel.org>)
-        id 1ghZOW-0002p2-Js; Thu, 10 Jan 2019 13:25:08 +0100
-Date:   Thu, 10 Jan 2019 13:25:08 +0100
-From:   Johan Hovold <johan@kernel.org>
-To:     Andreas Kemnade <andreas@kemnade.info>
-Cc:     johan@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Discussions about the Letux Kernel 
-        <letux-kernel@openphoenux.org>
-Subject: Re: [PATCH v2 4/5] gnss: sirf: add a separate supply for a lna
-Message-ID: <20190110122508.GD3430@localhost>
-References: <20181209195150.5192-1-andreas@kemnade.info>
- <20181209195150.5192-5-andreas@kemnade.info>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181209195150.5192-5-andreas@kemnade.info>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=R7KG4RNn7WVmbQvqhKvIJ9jxw1xMvMrqX83v0AiI99E=;
+        b=m7AMNRoXu7JFpsuTRrGPfCiBnnm7Z/Wq74iAqsaTl31KjWf4EpYXRb/ous7fva/Ifg
+         +bmW9UAiyr99gP50eXpQkEdnW1SyNKSb4yeUBLXulqFaEJtQqGjUf2ROrcD5PG+1mt+L
+         8IYsEgTRXCVa9I1pJJ7FBy6Y2eV6LSlYXs8GWRkGf8/hkkW8Yh6tL4nKNbkjvkeQTQNx
+         iSNL74lYox/iU+mGUSTFoKTrBjFnF+kVdUDB6ZNtBxYyef0cWodWkERARcyxklgTovTI
+         6Hx/OeU5sXDdOWZ5Juz4ZY0JKCXK08dYlf62nVQ4CqcdKHu/GSye8L0K1tZGxUmnhZLf
+         9Y1Q==
+X-Gm-Message-State: AJcUukeYBarCjKR+Jdf63haImNUgtAQSdzCbc8oXvSR1qHU+pUD2r6n1
+        vPWom+LqyIGqJGxrinHHxct5Dg==
+X-Google-Smtp-Source: ALg8bN6rrtAAJfc6Yg2JWHg+PFTuRZ/QgQnMnERKMd1OnlfkW49EduF+AkjYZYjYBTPtiJEjjiORlA==
+X-Received: by 2002:a62:528e:: with SMTP id g136mr10491873pfb.111.1547123134975;
+        Thu, 10 Jan 2019 04:25:34 -0800 (PST)
+Received: from localhost.localdomain ([117.196.233.251])
+        by smtp.gmail.com with ESMTPSA id m67sm142985541pfb.25.2019.01.10.04.25.27
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 10 Jan 2019 04:25:34 -0800 (PST)
+From:   Sumit Garg <sumit.garg@linaro.org>
+To:     linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, jens.wiklander@linaro.org,
+        mpm@selenic.com, herbert@gondor.apana.org.au, robh+dt@kernel.org,
+        mark.rutland@arm.com, arnd@arndb.de, gregkh@linuxfoundation.org,
+        daniel.thompson@linaro.org, ard.biesheuvel@linaro.org,
+        bhsharma@redhat.com, tee-dev@lists.linaro.org,
+        Sumit Garg <sumit.garg@linaro.org>
+Subject: [PATCH v2 0/4] Introduce TEE bus driver framework
+Date:   Thu, 10 Jan 2019 17:54:53 +0530
+Message-Id: <1547123097-16431-1-git-send-email-sumit.garg@linaro.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Dec 09, 2018 at 08:51:49PM +0100, Andreas Kemnade wrote:
-> Devices might have a separate lna between antenna output of the gps
-> chip and the antenna which might have a separate supply.
+This series introduces a generic TEE bus driver concept for TEE based
+kernel drivers which would like to communicate with TEE based devices/
+services.
 
-Fix the s/antenna output/antenna input/ as per Nikolaus comment.
+Patch #1 adds TEE bus concept where devices/services are identified via
+Universally Unique Identifier (UUID) and drivers register a table of
+device UUIDs which they can support. This concept also allows for device
+enumeration to be specific to corresponding TEE implementation like
+OP-TEE etc.
 
-> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
-> ---
-> Changes in v2:
->  - handle lna also if there is no on-off gpio
->  - rebase on changed 2/5
-> 
->  drivers/gnss/sirf.c | 26 ++++++++++++++++++++++----
->  1 file changed, 22 insertions(+), 4 deletions(-)
+Patch #2 adds TEE bus device enumeration support for OP-TEE. OP-TEE
+provides a pseudo TA to enumerate TAs which can act as devices/services
+for TEE bus.
 
-You also need to update the binding docs. As already discussed I think
-adding this to the generic binding is appropriate (even if only sirf
-implements it initially).
+Patch #3 adds supp_nowait flag for non-blocking requests arising via
+TEE internal client interface.
 
-> diff --git a/drivers/gnss/sirf.c b/drivers/gnss/sirf.c
-> index c64369494afb..d339e8ef2508 100644
-> --- a/drivers/gnss/sirf.c
-> +++ b/drivers/gnss/sirf.c
-> @@ -36,6 +36,7 @@ struct sirf_data {
->  	struct serdev_device *serdev;
->  	speed_t	speed;
->  	struct regulator *vcc;
-> +	struct regulator *lna;
->  	struct gpio_desc *on_off;
->  	struct gpio_desc *wakeup;
->  	int irq;
-> @@ -282,21 +283,32 @@ static int sirf_set_active(struct sirf_data *data, bool active)
->  static int sirf_runtime_suspend(struct device *dev)
->  {
->  	struct sirf_data *data = dev_get_drvdata(dev);
-> +	int ret = 0;
+Patch #4 adds OP-TEE based hwrng driver which act as TEE bus driver.
+On ARM SoC's with TrustZone enabled, peripherals like entropy sources
+might not be accessible to normal world (linux in this case) and rather
+accessible to secure world (OP-TEE in this case) only. So this driver
+aims to provides a generic interface to OP-TEE based random number
+generator service.
 
-No need to initialise.
+Example case is Developerbox based on Socionext's Synquacer SoC [1]
+which provides 7 thermal sensors accessible from secure world only which
+could be used as entropy sources (thermal/measurement noise).
 
->  	if (!data->on_off)
+[1] https://www.96boards.org/product/developerbox/
 
-Perhaps invert this test now too.
+Changes in v2:
 
-> -		return regulator_disable(data->vcc);
-> +		ret = regulator_disable(data->vcc);
-> +	else
-> +		ret = sirf_set_active(data, false);
->  
-> -	return sirf_set_active(data, false);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return regulator_disable(data->lna);
+Based on review comments, the scope of this series has increased as
+follows:
 
-You need to undo the above if this call fails.
+1. Added TEE bus driver framework.
+2. Added OP-TEE based device enumeration.
+3. Register optee-rng driver as TEE bus driver.
+4. Removed DT dependency for optee-rng device UUID.
+5. Added supp_nowait flag.
 
->  }
->  
->  static int sirf_runtime_resume(struct device *dev)
->  {
->  	struct sirf_data *data = dev_get_drvdata(dev);
-> +	int ret;
-> +
-> +	ret = regulator_enable(data->lna);
-> +	if (ret)
-> +		return ret;
->  
->  	if (!data->on_off)
->  		return regulator_enable(data->vcc);
-> -
-> -	return sirf_set_active(data, true);
-> +	else
-> +		return sirf_set_active(data, true);
+Sumit Garg (4):
+  tee: add bus driver framework for TEE based devices
+  tee: optee: add TEE bus device enumeration support
+  tee: add supp_nowait flag in tee_context struct
+  hwrng: add OP-TEE based rng driver
 
-You must undo the changes here too on errors since we call this function
-directly from probe in one case.
+ MAINTAINERS                        |   5 +
+ drivers/char/hw_random/Kconfig     |  15 ++
+ drivers/char/hw_random/Makefile    |   1 +
+ drivers/char/hw_random/optee-rng.c | 272 +++++++++++++++++++++++++++++++++++++
+ drivers/tee/optee/Makefile         |   1 +
+ drivers/tee/optee/core.c           |   4 +
+ drivers/tee/optee/device.c         | 150 ++++++++++++++++++++
+ drivers/tee/optee/optee_private.h  |   3 +
+ drivers/tee/optee/supp.c           |  10 +-
+ drivers/tee/tee_core.c             |  43 +++++-
+ include/linux/tee_drv.h            |  42 ++++++
+ 11 files changed, 542 insertions(+), 4 deletions(-)
+ create mode 100644 drivers/char/hw_random/optee-rng.c
+ create mode 100644 drivers/tee/optee/device.c
 
->  }
->  
->  static int __maybe_unused sirf_suspend(struct device *dev)
-> @@ -384,6 +396,12 @@ static int sirf_probe(struct serdev_device *serdev)
->  		goto err_put_device;
->  	}
->  
-> +	data->lna = devm_regulator_get(dev, "lna");
-> +	if (IS_ERR(data->lna)) {
-> +		ret = PTR_ERR(data->lna);
-> +		goto err_put_device;
-> +	}
-> +
->  	data->on_off = devm_gpiod_get_optional(dev, "sirf,onoff",
->  			GPIOD_OUT_LOW);
->  	if (IS_ERR(data->on_off))
+-- 
+2.7.4
 
-Johan
