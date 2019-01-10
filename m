@@ -2,73 +2,191 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-4.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5FC8C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 11:23:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B172C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 11:23:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E63B214C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 11:23:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2FA162173B
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 11:23:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728391AbfAJLXE (ORCPT
+        id S1728403AbfAJLXu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 06:23:04 -0500
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:40540 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727795AbfAJLXD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 06:23:03 -0500
-Received: by mail-qt1-f195.google.com with SMTP id k12so12028992qtf.7;
-        Thu, 10 Jan 2019 03:23:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=6P+PRX0zU1eJwaaLlLHDXyE1ziW+BRlCB2dSF0fome4=;
-        b=YJSRLE9FdKTbSWuarXLRaTTJMi0HGwctg+MqUuIw4yTRA47MNb80aZCI47+kRGj1lh
-         b1T5df8rI/cPM7IjlaZofzLf1qxj51QevtGYFiVM7mCwQXK9RcBbP66RMMfcmc/U2mj0
-         cA/qvw3CfbzokPYP6TwIitOukqjNAMUb3pLGTOv1wMqWyAs2irEN2019Bw+xllkDGHtt
-         XqazhYBigAEEF8PLvhwLS2n1ZDrDDitkZeZUuCbVunwP0VWnYOPkP9y5pOkTH7/vEpVH
-         mna+WL7XsVvZsCTuPm8GPCExAN/LZeRwfOszHoXnV9bNdUtBx5DHLGsUFkC6ou5HWejV
-         NL0Q==
-X-Gm-Message-State: AJcUukfbzt1nV2SrdZeQljF8mr0va9LDTdUuGmWrgp9uHPcUE8Otqn9e
-        1ce+qfBvzQBQKEIdWDhb0+MHHn9wq9cdwhK2kQs=
-X-Google-Smtp-Source: ALg8bN4KgkK9JFVxLzoSj63GQPxDvjjcvhIqCJGvuss2wVvhpr05nZjewBaW6udwSdXgjaLir8yotD79QZYcRRSmFz4=
-X-Received: by 2002:ac8:2c34:: with SMTP id d49mr9414827qta.152.1547119382523;
- Thu, 10 Jan 2019 03:23:02 -0800 (PST)
+        Thu, 10 Jan 2019 06:23:50 -0500
+Received: from mga11.intel.com ([192.55.52.93]:8846 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727795AbfAJLXt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 06:23:49 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jan 2019 03:23:48 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,461,1539673200"; 
+   d="scan'208";a="126549739"
+Received: from linux.intel.com ([10.54.29.200])
+  by orsmga001.jf.intel.com with ESMTP; 10 Jan 2019 03:23:48 -0800
+Received: from [10.125.252.115] (abudanko-mobl.ccr.corp.intel.com [10.125.252.115])
+        by linux.intel.com (Postfix) with ESMTP id 18A3758050C;
+        Thu, 10 Jan 2019 03:23:45 -0800 (PST)
+Subject: [PATCH v4 2/4] perf record: bind the AIO user space buffers to nodes
+From:   Alexey Budankov <alexey.budankov@linux.intel.com>
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc:     Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+References: <085c941d-106b-3d8f-027d-58962c54edd6@linux.intel.com>
+Organization: Intel Corp.
+Message-ID: <11882778-60bb-02e8-179a-ac74d4e91d7e@linux.intel.com>
+Date:   Thu, 10 Jan 2019 14:23:44 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-References: <1547045397-24388-1-git-send-email-guoren@kernel.org> <20190110081052.GB13262@guoren-Inspiron-7460>
-In-Reply-To: <20190110081052.GB13262@guoren-Inspiron-7460>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Thu, 10 Jan 2019 12:22:46 +0100
-Message-ID: <CAK8P3a3OS2Y3_B04z5shaT+CHZ3isQYj-GO+G9kxeY4aGkQmUA@mail.gmail.com>
-Subject: Re: [GIT PULL] csky fixup for linux-5.0-rc1
-To:     Guo Ren <guoren@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <085c941d-106b-3d8f-027d-58962c54edd6@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 10, 2019 at 9:11 AM Guo Ren <guoren@kernel.org> wrote:
->
-> Sorry Linus,
->
-> This pull-request is wrong on the patch:
-> "csky: fixup module relocation error with 807 & 860".
-> diff --git a/arch/csky/kernel/module.c b/arch/csky/kernel/module.c
-> -       uint16_t location_tmp = (uint16_t *)location;
-> +       uint16_t *location_tmp = (uint16_t *)location;
->
-> Please drop it if possible and I'll send another [GIT PULL].
 
-It's already pulled into mainline, so it can't be undone, you have
-to send a separate pull request, based on top of the patches
-that got pulled.
+Allocate and bind AIO user space buffers to the memory nodes
+that mmap kernel buffers are bound to.
 
-       Arnd
+Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
+---
+Changes in v4:
+- fixed compilation issue converting pr_warn() to pr_warning()
+- implemented stop if mbind() fails
+Changes in v3:
+- corrected code style issues
+- adjusted __aio_alloc,__aio_bind,__aio_free() implementation
+Changes in v2:
+- implemented perf_mmap__aio_alloc, perf_mmap__aio_free, perf_mmap__aio_bind 
+  and put HAVE_LIBNUMA_SUPPORT #ifdefs in there
+---
+ tools/perf/util/mmap.c | 77 +++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 73 insertions(+), 4 deletions(-)
+
+diff --git a/tools/perf/util/mmap.c b/tools/perf/util/mmap.c
+index e68ba754a8e2..34be9f900575 100644
+--- a/tools/perf/util/mmap.c
++++ b/tools/perf/util/mmap.c
+@@ -10,6 +10,9 @@
+ #include <sys/mman.h>
+ #include <inttypes.h>
+ #include <asm/bug.h>
++#ifdef HAVE_LIBNUMA_SUPPORT
++#include <numaif.h>
++#endif
+ #include "debug.h"
+ #include "event.h"
+ #include "mmap.h"
+@@ -154,9 +157,72 @@ void __weak auxtrace_mmap_params__set_idx(struct auxtrace_mmap_params *mp __mayb
+ }
+ 
+ #ifdef HAVE_AIO_SUPPORT
++
++#ifdef HAVE_LIBNUMA_SUPPORT
++static int perf_mmap__aio_alloc(struct perf_mmap *map, int index)
++{
++	map->aio.data[index] = mmap(NULL, perf_mmap__mmap_len(map), PROT_READ|PROT_WRITE,
++				    MAP_PRIVATE|MAP_ANONYMOUS, 0, 0);
++	if (map->aio.data[index] == MAP_FAILED) {
++		map->aio.data[index] = NULL;
++		return -1;
++	}
++
++	return 0;
++}
++
++static void perf_mmap__aio_free(struct perf_mmap *map, int index)
++{
++	if (map->aio.data[index]) {
++		munmap(map->aio.data[index], perf_mmap__mmap_len(map));
++		map->aio.data[index] = NULL;
++	}
++}
++
++static int perf_mmap__aio_bind(struct perf_mmap *map, int index, int cpu, int affinity)
++{
++	void *data;
++	size_t mmap_len;
++	unsigned long node_mask;
++
++	if (affinity != PERF_AFFINITY_SYS && cpu__max_node() > 1) {
++		data = map->aio.data[index];
++		mmap_len = perf_mmap__mmap_len(map);
++		node_mask = 1UL << cpu__get_node(cpu);
++		if (mbind(data, mmap_len, MPOL_BIND, &node_mask, 1, 0)) {
++			pr_err("Failed to bind [%p-%p] AIO buffer to node %d: error %m\n",
++				data, data + mmap_len, cpu__get_node(cpu));
++			return -1;
++		}
++	}
++
++	return 0;
++}
++#else
++static int perf_mmap__aio_alloc(struct perf_mmap *map, int index)
++{
++	map->aio.data[index] = malloc(perf_mmap__mmap_len(map));
++	if (map->aio.data[index] == NULL)
++		return -1;
++
++	return 0;
++}
++
++static void perf_mmap__aio_free(struct perf_mmap *map, int index)
++{
++	zfree(&(map->aio.data[index]));
++}
++
++static int perf_mmap__aio_bind(struct perf_mmap *map __maybe_unused, int index __maybe_unused,
++		int cpu __maybe_unused, int affinity __maybe_unused)
++{
++	return 0;
++}
++#endif
++
+ static int perf_mmap__aio_mmap(struct perf_mmap *map, struct mmap_params *mp)
+ {
+-	int delta_max, i, prio;
++	int delta_max, i, prio, ret;
+ 
+ 	map->aio.nr_cblocks = mp->nr_cblocks;
+ 	if (map->aio.nr_cblocks) {
+@@ -177,11 +243,14 @@ static int perf_mmap__aio_mmap(struct perf_mmap *map, struct mmap_params *mp)
+ 		}
+ 		delta_max = sysconf(_SC_AIO_PRIO_DELTA_MAX);
+ 		for (i = 0; i < map->aio.nr_cblocks; ++i) {
+-			map->aio.data[i] = malloc(perf_mmap__mmap_len(map));
+-			if (!map->aio.data[i]) {
++			ret = perf_mmap__aio_alloc(map, i);
++			if (ret == -1) {
+ 				pr_debug2("failed to allocate data buffer area, error %m");
+ 				return -1;
+ 			}
++			ret = perf_mmap__aio_bind(map, i, map->cpu, mp->affinity);
++			if (ret == -1)
++				return -1;
+ 			/*
+ 			 * Use cblock.aio_fildes value different from -1
+ 			 * to denote started aio write operation on the
+@@ -210,7 +279,7 @@ static void perf_mmap__aio_munmap(struct perf_mmap *map)
+ 	int i;
+ 
+ 	for (i = 0; i < map->aio.nr_cblocks; ++i)
+-		zfree(&map->aio.data[i]);
++		perf_mmap__aio_free(map, i);
+ 	if (map->aio.data)
+ 		zfree(&map->aio.data);
+ 	zfree(&map->aio.cblocks);
