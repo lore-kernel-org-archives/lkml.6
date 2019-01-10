@@ -2,186 +2,119 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91E4FC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 07:58:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 998F4C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 07:59:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F741206B7
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 07:58:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 68B75206B7
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 07:59:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Cu0VTGLg"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z489OqK8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727601AbfAJH6E (ORCPT
+        id S1727615AbfAJH7a (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 02:58:04 -0500
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:52280 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727485AbfAJH6E (ORCPT
+        Thu, 10 Jan 2019 02:59:30 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:38784 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727397AbfAJH7a (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 02:58:04 -0500
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0A7vq5D124023;
-        Thu, 10 Jan 2019 01:57:52 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1547107072;
-        bh=ioWM/YgbvcogAcnuellxGGzHiVKMAVZ+3g7bvteDC9o=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=Cu0VTGLg/XzPm00rR3qBb1xL5GEgYNKw8QIOqnsxhNofg6IeX63tR8CuxrXGPczhp
-         odjTD/yik/mU9qJDdG7nGP23XdmwAQRo/TuuiGNBtW6o3Thn1mQQpPSm8B4MBTQJSx
-         irKSw6lAskXe1NRTCoRiBJKw+eG8nnn0Z8kpIFHk=
-Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0A7vq6l035806
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 10 Jan 2019 01:57:52 -0600
-Received: from DLEE115.ent.ti.com (157.170.170.26) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Thu, 10
- Jan 2019 01:57:52 -0600
-Received: from dflp32.itg.ti.com (10.64.6.15) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Thu, 10 Jan 2019 01:57:52 -0600
-Received: from [172.22.82.147] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0A7vnvk012503;
-        Thu, 10 Jan 2019 01:57:50 -0600
-Subject: Re: [RFC PATCH 1/3] can: m_can: Create m_can core to leverage common
- code
-To:     Wolfgang Grandegger <wg@grandegger.com>,
-        Dan Murphy <dmurphy@ti.com>, <mkl@pengutronix.de>,
-        <davem@davemloft.net>
-CC:     <linux-can@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20181010142055.25271-1-dmurphy@ti.com>
- <20181010142055.25271-2-dmurphy@ti.com>
- <52811b27-00c0-f5e2-2b18-608ccf846723@grandegger.com>
- <349ef8be-f4c7-25cc-2c33-7ce1fd0b0f40@ti.com>
- <9003a544-83cf-7dce-7f14-4abd292d470e@grandegger.com>
- <b73e200c-8a6b-00e0-dabc-af3245cc36fd@ti.com>
- <69d3a046-2d55-06e0-fba7-c9a0d20e6daa@grandegger.com>
-From:   "Rizvi, Mohammad Faiz Abbas" <faiz_abbas@ti.com>
-Message-ID: <62dd2f40-3ef6-fa6d-dc53-6896b52020ca@ti.com>
-Date:   Thu, 10 Jan 2019 13:27:49 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Thu, 10 Jan 2019 02:59:30 -0500
+Received: by mail-wr1-f66.google.com with SMTP id v13so10211702wrw.5;
+        Wed, 09 Jan 2019 23:59:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=wszGA2v3AoII9Q+xJf3Qvz06bsNcxHDgeUx0b4oBp8E=;
+        b=Z489OqK81WADI1yIOpwMu7UwBtVBqDrhmrSHYzHD+gYXymEediyzz0yV8KdNTeK6F4
+         aEjg1GIcslxhF+YO3lO6RtoFOcc51dI19+nqbEUQM06F0gVzkVD0vnOuYHF9yL1J5xnE
+         g9xUVMfbh6HzabgtLYidTi1IWxh+qeHttx9uEZZMOFxrNsESnsP3L34sZYGDhRF8lkRF
+         SM+pfr/EQrojcQdL0dRzUkB4MWqlEd6GNsNipHDqT/Rz7Jc5Qquu7MrwODehr611bu/x
+         PkouYm+3E5PyyCXOBoOcC/8j7GUPZ5k92NjeZJBM6evzAzQIFmgHaBy1bd+tMhoH3DeZ
+         yMJQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=wszGA2v3AoII9Q+xJf3Qvz06bsNcxHDgeUx0b4oBp8E=;
+        b=VNrVz3JdcY2a8vl//AnsvzekT9HTvGT1JOaDadwgQt+ASTkU0Tag/qUpR0FBBzdHOs
+         vAo1SotPUahtBWmx+xCj+kIdHJ6KGVVL1mcDRCeB1RpC6PyO/+5CqfUtqOzy1RJSyEGI
+         NwmC9Qgag9xipf4N0rMYF3sgo1SMdOHmFOirRIdvt1Gj40FV5tcw9WWNUMYxYVxMgtQe
+         J1F3DCYb+0BHy2PEHa3peVEalKVYukwiTKwnyOfgNc0vX8gni8TW0nE+BQ/zE+HbJvRd
+         bLrldlOk+bUwvG8ME+Icz27xV3wYbgn6ITCIkYBWrlGhDu6K7OGLjKNo13RRM1XwGIby
+         BVuA==
+X-Gm-Message-State: AJcUukcbSNg9Si7/KVDSyV88b/WrvV3+vure28+Z88Wtn8ONX6+znKfS
+        yPJNfUbDnDhWfeXsearVTh5nAgL+
+X-Google-Smtp-Source: ALg8bN7GpFBv4zgGjAV3yVWB0/dpEeNzj6NiYdrA9dZlpEwZ6RGQlyHnMNI+h4IBCg7G7H6ObbDuRg==
+X-Received: by 2002:adf:d089:: with SMTP id y9mr8119667wrh.22.1547107168478;
+        Wed, 09 Jan 2019 23:59:28 -0800 (PST)
+Received: from localhost (pD9E51040.dip0.t-ipconnect.de. [217.229.16.64])
+        by smtp.gmail.com with ESMTPSA id y34sm167415663wrd.68.2019.01.09.23.59.27
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 09 Jan 2019 23:59:27 -0800 (PST)
+Date:   Thu, 10 Jan 2019 08:59:26 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>
+Cc:     jonathanh@nvidia.com, mkarthik@nvidia.com, smohammed@nvidia.com,
+        talho@nvidia.com, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
+Subject: Re: [PATCH V5] i2c: tegra: Fix Maximum transfer size
+Message-ID: <20190110075926.GA5213@ulmo>
+References: <1546984750-26199-1-git-send-email-skomatineni@nvidia.com>
+ <1546984750-26199-2-git-send-email-skomatineni@nvidia.com>
 MIME-Version: 1.0
-In-Reply-To: <69d3a046-2d55-06e0-fba7-c9a0d20e6daa@grandegger.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="OXfL5xGRrasGEqWY"
+Content-Disposition: inline
+In-Reply-To: <1546984750-26199-2-git-send-email-skomatineni@nvidia.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Dan, Wolfgang,
 
-On 1/10/2019 1:14 PM, Wolfgang Grandegger wrote:
-> Hello Dan,
-> 
-> sorry for my late response on that topic...
-> 
-> Am 09.01.19 um 21:58 schrieb Dan Murphy:
->> Wolfgang
->>
->> On 11/3/18 5:45 AM, Wolfgang Grandegger wrote:
->>> Hello Dan,
->>>
->>> Am 31.10.2018 um 21:15 schrieb Dan Murphy:
->>>> Wolfgang
->>>>
->>>> Thanks for the review
->>>>
->>>> On 10/27/2018 09:19 AM, Wolfgang Grandegger wrote:
->>>>> Hello Dan,
->>>>>
->>>>> for the RFC, could you please just do the necessary changes to the
->>>>> existing code. We can discuss about better names, etc. later. For
->>>>> the review if the common code I quickly did:
->>>>>
->>>>>    mv m_can.c m_can_platform.c
->>>>>    mv m_can_core.c m_can.c
->>>>>
->>>>> The file names are similar to what we have for the C_CAN driver.
->>>>>
->>>>>    s/classdev/priv/
->>>>>    variable name s/m_can_dev/priv/
->>>>>
->>>>> Then your patch 1/3 looks as shown below. I'm going to comment on that
->>>>> one. The comments start with "***"....
->>>>>
->>>>
->>>> So you would like me to align the names with the c_can driver?
->>>
->>> That would be the obvious choice.
->>>> <snip>
->>>>>
->>>>> *** I didn't review the rest of the patch for now.
->>>>>
->>>>
->>>> snipped the code to reply to the comment.
->>>>
->>>>> Looking to the generic code, you didn't really change the way
->>>>> the driver is accessing the registers. Also the interrupt handling
->>>>> and rx polling is as it was before. Does that work properly using
->>>>> the SPI interface of the TCAN4x5x?
->>>>
->>>> I don't want to change any of that yet.  Maybe my cover letter was not clear
->>>> or did not go through.
->>>>
->>>> But the intention was just to break out the functionality to create a MCAN framework
->>>> that can be used by devices that contain the Bosch MCAN core and provider their own protocal to access
->>>> the registers in the device.
->>>>
->>>> I don't want to do any functional changes at this time on the IP code itself until we have a framework.
->>>> There should be no regression in the io mapped code.
->>>>
->>>> I did comment on the interrupt handling and asked if a threaded work queue would affect CAN timing.
->>>> For the original TCAN driver this was the way it was implemented.
->>>
->>> Do threaded interrupts with RX polling make sense? I think we need a
->>> common interface allowing to select hard-irqs+napi or threaded-irqs.
->>>
->>
->> I have been working on this code for about a month now and I am *not happy* with the amount of change that needs
->> to be done to make the m_can a framework.
->>
->> I can tx/rx frames from another CAN device to the TCAN part but I have not even touched the iomapped code.
->>
->> The challenging part is that the m_can code that is currently available does not have to worry about atomic context because
->> there is no peripheral waiting.  Since the TCAN is a peripheral device we need to take into about the hard waits in IRQ context
->> as well as the atomic context.  Doing this creates many deltas in the base code that may break iomapped devices.  I have had to
->> add the thread_irqs and now I am in the midst of the issue you brought up with napi.  I would have to schedule a queue for perp devices
->> and leave the non-threaded iomapped irq.
->>
->> At this point I think it may be wise to leave the m_can code alone as it is working and stable and just work on the TCAN driver as
->> a standalone driver.  A framework would be nice but I think it would destablize the m_can driver which is embedded in many SoC's and
->> we cannot possibly test everyone of them.
-> 
-> Unfortunately, I do not have m_can hardware at hand.
+--OXfL5xGRrasGEqWY
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-There are exactly 3 platforms in mainline that use the m_can driver. I 
-can help Dan test it on a dra76x. I haven't had a chance to look at the 
-changes in depth, but just testing for regressions on existing platforms 
-shouldn't be too hard once we have it working on one.
+On Tue, Jan 08, 2019 at 01:59:10PM -0800, Sowjanya Komatineni wrote:
+> Tegra194 supports maximum 64K Bytes transfer per packet.
+> Tegra186 and prior supports maximum 4K Bytes transfer per packet.
+>=20
+> This patch fixes this payload difference between Tegra194 and prior
+> tegra chipsets using separate i2c_adapter_quirks.
+>=20
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+> ---
+>  drivers/i2c/busses/i2c-tegra.c | 15 ++++++++++++++-
+>  1 file changed, 14 insertions(+), 1 deletion(-)
 
-Thanks,
-Faiz
+Acked-by: Thierry Reding <treding@nvidia.com>
 
-> 
->> What are your thoughts?
-> 
-> What we need is a common set of functions doing tx, rx, error and state
-> handling. This will requires substantial changes to the existing
-> io-mapped m_can driver, of course. I still believe it's worth the
-> effort, but I agree that it's difficult for you to re-write and test the
-> existing m_can driver.
-> 
-> What about implementing such a set of common functions plus the SPI
-> specific part for your TCAN device. What do you/others think?
-> 
-> Wolfgang.
-> 
+--OXfL5xGRrasGEqWY
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlw2+1sACgkQ3SOs138+
+s6HGZw/+OgrH0vkohH4q9BiATVC4SuZlLfhPt6G2C+/w2Ziuqh+F9ek1ByxxQRM3
+rcP+YO76giKzcUSOnyglp0OVRAY0JLGetrk2ejlynC6g1thykq68rfflLZzEGNlG
+auYJcAFLUuDpvpB8cynuSJUtX9S8dj/PUYuIGWEYrupYVSpNGqrWfd8AXhcUdO2N
+O0gDtKLvVAtoieFks0xOFqoYxxYIaFndyAw+J/8GsJggKjkF7hPUS8gP9A0dSCVR
+p3wumVhB+znWZEHH1Ya37vKIUbzbKQuFqxOY2JKW+7uNMmQ9MrCPRMidbUqhRB+y
+DGfBl9J0SW4ng/9/Gce8f7GddXYQFH9E3cgUA1v9RjdcRstvqvnrci4HofATo8a3
+TJftImGwgCgAsBzwruYVuotmDYmDX0gz3MWDzaI0ULDx+CR7WVnp+A45WhLefmxv
+nvx6iQFhUwPLzVAbStqaLPF4L4aTgJWGZEaWkhwaHsPUs49SzqWHB+HEzZRh+naU
+QWMsPS4bU3U1aHo87TIixUdoZysLiWLJxxg2mEIRWU+zM0Dw1K6rEPW0qMhYq4EV
+xM+PXBg6zDLPdtGM2w55DfTSYtqBc54kfwY15xbZxkRBtbbs9yQyIsY7e/tvziyn
+GSgi4B4A3CD1TTWvaXHtQM9TaMbbvHTvh6OFJPsJZ1xZr+SoE8Q=
+=x4d3
+-----END PGP SIGNATURE-----
+
+--OXfL5xGRrasGEqWY--
