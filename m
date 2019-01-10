@@ -2,132 +2,421 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FROM_EXCESS_BASE64,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2E78C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 10:44:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48D02C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 10:47:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 78B2E206B6
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 10:44:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ysoft.com header.i=@ysoft.com header.b="Ra4r1egj"
+	by mail.kernel.org (Postfix) with ESMTP id 0491D2173B
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 10:47:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728175AbfAJKor (ORCPT
+        id S1727734AbfAJKr4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 05:44:47 -0500
-Received: from mail-eopbgr40089.outbound.protection.outlook.com ([40.107.4.89]:38990
-        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726255AbfAJKor (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 05:44:47 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ysoft.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GaSVGLE/JEm33+ceTG4lJkGrod4b70u9Y+0chgFfqgE=;
- b=Ra4r1egj3jIMTCzyd/icTcuKhKZZVnHsyJReLciJtYFjayydigW7UzHhwmg07o4eTcyxJf5x1ApvKssNYcR+ZUTRj9Pz74oJAnJS8ChaOSRqjxGAO6X9vCCs+8g3eVyuHgpW6cQgsNUWljIourA68bicmL2xlzKJ3NfPh4uuovg=
-Received: from DB7PR04MB4810.eurprd04.prod.outlook.com (20.176.233.96) by
- DB7PR04MB4764.eurprd04.prod.outlook.com (20.176.233.86) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1516.14; Thu, 10 Jan 2019 10:44:03 +0000
-Received: from DB7PR04MB4810.eurprd04.prod.outlook.com
- ([fe80::951:9643:746c:47d7]) by DB7PR04MB4810.eurprd04.prod.outlook.com
- ([fe80::951:9643:746c:47d7%4]) with mapi id 15.20.1516.015; Thu, 10 Jan 2019
- 10:44:03 +0000
-From:   =?utf-8?B?Vm9rw6HEjSBNaWNoYWw=?= <Michal.Vokac@ysoft.com>
-To:     Shawn Guo <shawnguo@kernel.org>, Rob Herring <robh@kernel.org>
-CC:     Mark Rutland <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Kumar Gala <kumar.gala@linaro.org>,
-        ARM-SoC Maintainers <arm@kernel.org>,
-        Sean Hudson <darknighte@darknighte.com>,
-        Frank Rowand <frowand.list@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Grant Likely <grant.likely@arm.com>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v2 18/34] dt-bindings: arm: Convert FSL board/soc bindings
- to json-schema
-Thread-Topic: [PATCH v2 18/34] dt-bindings: arm: Convert FSL board/soc
- bindings to json-schema
-Thread-Index: AQHUi1ACOhyxeXH+pEqKY9pDZzILPqVxAQUAgAFgd4CAAbr0gIA0LGGAgABDWoA=
-Date:   Thu, 10 Jan 2019 10:44:03 +0000
-Message-ID: <dc0ef959-78a0-2a32-c0f9-e8da11e035e6@ysoft.com>
-References: <20181203213223.16986-1-robh@kernel.org>
- <20181203213223.16986-19-robh@kernel.org> <20181206023140.GZ3987@dragon>
- <CAL_JsqK5nBdk-MiuTPMxr9oXqXnLqeMU3vtZi6AnT9V35_W55A@mail.gmail.com>
- <20181208015835.GM3987@dragon> <20190110064256.GA25218@dragon>
-In-Reply-To: <20190110064256.GA25218@dragon>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: AM5P190CA0007.EURP190.PROD.OUTLOOK.COM
- (2603:10a6:206:14::20) To DB7PR04MB4810.eurprd04.prod.outlook.com
- (2603:10a6:10:15::32)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Michal.Vokac@ysoft.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [89.24.100.190]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DB7PR04MB4764;6:DQrkdUXjtzB/MH5+dT+7Q2C6DMe5fBK77CYe3PknZzraagW86dJLIeQfM8T1mSHL8L2ks+v5C/I38aUrjkxFNBNJFzS/pgTdh3A+Pic/eDEIf2yvgAVfhYv3DKnIGMMXErgN+u3xSiKMimLBN2Nc6RIdI0/bJGNrkhbkn6q696uLIs/bEUvZ/+3YwTC7LXBZVxzXWX2Wvla6cSSN+J+1emye2+yfpSCay/UUGwa1X/nvNdP0rUG+pZkk2+MsIWAm5mL6GzKdYOC8SJ0LZZjkbpCS6ZNFUIAcxX2d9VGIE9JiEvBdmMeEP4ZM52e8QVpYJOIc7qQVHNSaDh2lX6PD57YMeZ9bBiYB6WonsUeSB2YzYyJOlj23l2w+f11J5U4JIoXejZvLjtU4BM/SmRa3JqlcEKp3twVlZ+Fma4bVy0cU/0hnUlU2sLaKlkvie0eJY4DobVVRg7HxEqGCpuNFPA==;5:3kItR3wJZqd33pZDPkjoZV+Xg6h9i2zfP2Bo0N5NOU502QMaQMBo1U85tmpoFVsi4ceHfbAhwoJuJJcMTzdmixlULv7/v6JhCziAeWPIjiocJ/LoBbnuvEyld5SDjf6vCLcUf+UGVXRDi0G7rIRhHDNLLTMWc/2M+sKPi672jy0wzyjq24qrqI7EFyqhupRaqzPjlK3Fv66CM/KaEBS3qQ==;7:A0Yo+gXhwJuDMwJhDWxV8KT5A/Vacc8n31YzK4XDd8Q2Rqy65Ch4zxsn2B4gNhzK5w87cPATZFvQcMIzsBerRzjv9C8nieyMH7AFUFzRBNoHnORHuZqzl8Tv3hK8j+TAoB8mqWi6urP/cZrBnTzmkA==
-x-ms-office365-filtering-correlation-id: de532e13-c868-4640-cfa7-08d676e889a7
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(2017052603328)(7153060)(7193020);SRVR:DB7PR04MB4764;
-x-ms-traffictypediagnostic: DB7PR04MB4764:
-x-microsoft-antispam-prvs: <DB7PR04MB476483A0145B3B7DC8589C249E840@DB7PR04MB4764.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(3230021)(908002)(999002)(5005026)(6040522)(8220060)(2401047)(8121501046)(10201501046)(93006095)(93001095)(3231475)(944501520)(52105112)(3002001)(6041310)(20161123560045)(20161123564045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:DB7PR04MB4764;BCL:0;PCL:0;RULEID:;SRVR:DB7PR04MB4764;
-x-forefront-prvs: 0913EA1D60
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39850400004)(136003)(376002)(366004)(346002)(396003)(189003)(199004)(7736002)(72206003)(478600001)(102836004)(6246003)(316002)(54906003)(76176011)(36756003)(966005)(386003)(6506007)(53546011)(305945005)(31686004)(52116002)(8676002)(97736004)(39060400002)(81156014)(110136005)(81166006)(486006)(14454004)(4326008)(8936002)(93886005)(229853002)(106356001)(105586002)(6116002)(3846002)(25786009)(256004)(14444005)(6436002)(6486002)(66066001)(26005)(446003)(186003)(11346002)(2616005)(2906002)(68736007)(6306002)(85182001)(31696002)(6512007)(53936002)(7416002)(71200400001)(86362001)(71190400001)(5660300001)(99286004)(476003);DIR:OUT;SFP:1101;SCL:1;SRVR:DB7PR04MB4764;H:DB7PR04MB4810.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: ysoft.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: mbzcZW4/KV1gV/swy44if9VU3LHGpNUmL5h0S3Ba9Mndeg5hm9rheD8qPfHlyk5RBX8lZGYJeDif0RD0M2Nk/2qEz9bZdQPJ2BPgX7KV4rEZtLtfFspAfscZzHY396Vx3goXGYXqmQZQveQmpwCjuTvSX4paBXZdv6mL4df11/rLrzDLc16twKALI0V6QTzUFw/nD8yeZezRgU+5n798xUbyYRBuhbk9kv16o5XS0PVg55w6gtobONXrRwO/0M3hDuCcuVDbKv+e6i7UvhWe3oZttxrMcbQlmfS5VUgpef7BORqzg2c9NDH4n3G49Pzg
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <4878A9ED35BB0147A72BC90477A0A926@eurprd04.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Thu, 10 Jan 2019 05:47:56 -0500
+Received: from mga06.intel.com ([134.134.136.31]:30170 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726560AbfAJKrz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 05:47:55 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jan 2019 02:46:52 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,461,1539673200"; 
+   d="scan'208";a="309235913"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmsmga006.fm.intel.com with ESMTP; 10 Jan 2019 02:46:52 -0800
+Received: from [10.125.252.115] (abudanko-mobl.ccr.corp.intel.com [10.125.252.115])
+        by linux.intel.com (Postfix) with ESMTP id E5A4B58058B;
+        Thu, 10 Jan 2019 02:46:49 -0800 (PST)
+From:   Alexey Budankov <alexey.budankov@linux.intel.com>
+Organization: Intel Corp.
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc:     Jiri Olsa <jolsa@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: [PATCH v4 0/4] Reduce NUMA related overhead in perf record profiling
+ on large server systems
+Message-ID: <085c941d-106b-3d8f-027d-58962c54edd6@linux.intel.com>
+Date:   Thu, 10 Jan 2019 13:46:48 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-X-OriginatorOrg: ysoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: de532e13-c868-4640-cfa7-08d676e889a7
-X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Jan 2019 10:44:02.7326
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b5839965-430f-4be2-b282-d7a3149f2b37
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB7PR04MB4764
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gMTAuMS4yMDE5IDA3OjQyLCBTaGF3biBHdW8gd3JvdGU6DQo+IE9uIFNhdCwgRGVjIDA4LCAy
-MDE4IGF0IDA5OjU4OjM3QU0gKzA4MDAsIFNoYXduIEd1byB3cm90ZToNCj4+IE9uIFRodSwgRGVj
-IDA2LCAyMDE4IGF0IDA1OjMzOjEzUE0gLTA2MDAsIFJvYiBIZXJyaW5nIHdyb3RlOg0KPj4+IE9u
-IFdlZCwgRGVjIDUsIDIwMTggYXQgODozMiBQTSBTaGF3biBHdW8gPHNoYXduZ3VvQGtlcm5lbC5v
-cmc+IHdyb3RlOg0KPj4+Pg0KPj4+PiBPbiBNb24sIERlYyAwMywgMjAxOCBhdCAwMzozMjowN1BN
-IC0wNjAwLCBSb2IgSGVycmluZyB3cm90ZToNCj4+Pj4+IENvbnZlcnQgRnJlZXNjYWxlIFNvQyBi
-aW5kaW5ncyB0byBEVCBzY2hlbWEgZm9ybWF0IHVzaW5nIGpzb24tc2NoZW1hLg0KPj4+Pj4NCj4+
-Pj4+IENjOiBTaGF3biBHdW8gPHNoYXduZ3VvQGtlcm5lbC5vcmc+DQo+Pj4+PiBDYzogTWFyayBS
-dXRsYW5kIDxtYXJrLnJ1dGxhbmRAYXJtLmNvbT4NCj4+Pj4+IENjOiBkZXZpY2V0cmVlQHZnZXIu
-a2VybmVsLm9yZw0KPj4+Pj4gU2lnbmVkLW9mZi1ieTogUm9iIEhlcnJpbmcgPHJvYmhAa2VybmVs
-Lm9yZz4NCj4+Pj4+IC0tLQ0KPj4+Pj4gICAuLi4vZGV2aWNldHJlZS9iaW5kaW5ncy9hcm0vYXJt
-YWRldXMudHh0ICAgICAgfCAgIDYgLQ0KPj4+Pj4gICBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUv
-YmluZGluZ3MvYXJtL2JoZi50eHQgfCAgIDYgLQ0KPj4+Pj4gICAuLi4vYmluZGluZ3MvYXJtL2Nv
-bXB1bGFiLWJvYXJkcy50eHQgICAgICAgICAgfCAgMjUgLS0NCj4+Pj4+ICAgRG9jdW1lbnRhdGlv
-bi9kZXZpY2V0cmVlL2JpbmRpbmdzL2FybS9mc2wudHh0IHwgMjI5IC0tLS0tLS0tLS0tLS0tLS0t
-LQ0KPj4+Pj4gICAuLi4vZGV2aWNldHJlZS9iaW5kaW5ncy9hcm0vZnNsLnlhbWwgICAgICAgICAg
-fCAyMTQgKysrKysrKysrKysrKysrKw0KPj4+Pg0KPj4+PiBSb2IsDQo+Pj4+DQo+Pj4+IEkgZG8g
-aGF2ZSBhbnkgY2hhbmdlcyBvbiBiaW5kaW5ncy9hcm0vZnNsLnR4dCBxdWV1ZWQgZm9yIDQuMjEg
-b24gbXkNCj4+Pj4gdHJlZSwgc28gcGxlYXNlIHNlbmQgaXQgdmlhIHlvdXIgdHJlZS4NCj4+Pg0K
-Pj4+IFdoYXQgYWJvdXQ6DQo+Pj4NCj4+PiBjMzg2ZjM2Mjk1N2IgZHQtYmluZGluZ3M6IEFkZCBj
-b21wYXRpYmxlIHN0cmluZyBmb3IgTFMxMDI4QS1RRFMNCj4+PiAzNjcxY2Q1N2RlMDYgZHQtYmlu
-ZGluZ3M6IGxzMTAxMmE6IEFkZCBGUldZLUxTMTAxMkEgZGV2aWNlIHRyZWUgYmluZGluZw0KPj4N
-Cj4+IEFoLCBzb3JyeSwgSSBvbmx5IGNoZWNrZWQgb24gaW14L2R0IGJyYW5jaCBhbmQgZm9yZ290
-IGlteC9kdDY0LiAgSSB3aWxsDQo+PiBkcm9wIHRoZSBjaGFuZ2VzIG9uIGZzbC50eHQgYW5kIHVw
-ZGF0ZSBmc2wueWFtbCBhZnRlciBpdCBoaXRzIG1haW5saW5lLg0KPiANCj4gV2hhdCBoYXBwZW5l
-ZCB0byB0aGlzPyAgSXQgc2VlbXMgdGhlIHBhdGNoIGRpZCBub3QgaGl0IHY1LjAtcmMxLg0KDQpI
-aSBTaGF3biwNClJvYiBhY3R1YWxseSBhc2tlZCB5b3UgYSBzaW1pbGFyIHF1ZXN0aW9uIHR3byBk
-YXlzIGFnby4uDQoNCmh0dHBzOi8vbGttbC5vcmcvbGttbC8yMDE5LzEvOC83NTQNCg==
+
+It has been observed that trace reading thread runs on the same hw thread
+most of the time during perf record sampling collection. This scheduling
+layout leads up to 30% profiling overhead in case when some cpu intensive
+workload fully utilizes a large server system with NUMA. Overhead usually
+arises from remote (cross node) HW and memory references that have much
+longer latencies than local ones [1].
+
+This patch set implements --affinity option that lowers 30% overhead
+completely for serial trace streaming (--affinity=cpu) and from 30% to
+10% for AIO1 (--aio=1) trace streaming (--affinity=node|cpu).
+See OVERHEAD section below for more details.
+
+Implemented extension provides users with capability to instruct Perf 
+tool to bounce trace reading thread's affinity mask between NUMA nodes 
+(--affinity=node) or assign the thread to the exact cpu (--affinity=cpu) 
+that trace buffer being processed belongs to.
+
+The extension brings improvement in case of full system utilization when 
+Perf tool process contends with workload process on cpu cores. In case a 
+system has free cores to execute Perf tool process during profiling the 
+default system scheduling layout induces the lowest overhead.
+
+The patch set has been validated on BT benchmark from NAS Parallel 
+Benchmarks [2] running on dual socket, 44 cores, 88 hw threads Broadwell 
+system with kernels v4.4-21-generic (Ubuntu 16.04) and v4.20.0-rc5 
+(tip perf/core). 
+
+OVERHEAD:
+			       BENCH REPORT BASED   ELAPSED TIME BASED
+	  v4.20.0-rc5 
+          (tip perf/core):
+				
+(current) SERIAL-SYS  / BASE : 1.27x (14.37/11.31), 1.29x (15.19/11.69)
+	  SERIAL-NODE / BASE : 1.15x (13.04/11.31), 1.17x (13.79/11.69)
+	  SERIAL-CPU  / BASE : 1.00x (11.32/11.31), 1.01x (11.89/11.69)
+	
+	  AIO1-SYS    / BASE : 1.29x (14.58/11.31), 1.29x (15.26/11.69)
+	  AIO1-NODE   / BASE : 1.08x (12.23/11.31), 1,11x (13.01/11.69)
+	  AIO1-CPU    / BASE : 1.07x (12.14/11.31), 1.08x (12.83/11.69)
+
+	  v4.4.0-21-generic
+          (Ubuntu 16.04 LTS):
+
+(current) SERIAL-SYS  / BASE : 1.26x (13.73/10.87), 1.29x (14.69/11.32)
+	  SERIAL-NODE / BASE : 1.19x (13.02/10.87), 1.23x (14.03/11.32)
+	  SERIAL-CPU  / BASE : 1.03x (11.21/10.87), 1.07x (12.18/11.32)
+	
+	  AIO1-SYS    / BASE : 1.26x (13.73/10.87), 1.29x (14.69/11.32)
+	  AIO1-NODE   / BASE : 1.10x (12.04/10.87), 1.15x (13.03/11.32)
+	  AIO1-CPU    / BASE : 1.12x (12.20/10.87), 1.15x (13.09/11.32)
+
+The patch set is generated for acme perf/core repository.
+
+---
+Alexey Budankov (4):
+  perf record: allocate affinity masks
+  perf record: bind the AIO user space buffers to nodes
+  perf record: apply affinity masks when reading mmap buffers
+  perf record: implement --affinity=node|cpu option
+
+ tools/perf/Documentation/perf-record.txt |   5 ++
+ tools/perf/builtin-record.c              |  47 ++++++++++-
+ tools/perf/perf.h                        |   8 ++
+ tools/perf/util/evlist.c                 |  10 ++-
+ tools/perf/util/evlist.h                 |   2 +-
+ tools/perf/util/mmap.c                   | 100 ++++++++++++++++++++++-
+ tools/perf/util/mmap.h                   |   4 +-
+ 7 files changed, 166 insertions(+), 10 deletions(-)
+
+---
+Changes in v4:
+- fixed compilation issue converting pr_warn() to pr_warning()
+- implemented stop if mbind() fails
+- corrected mmap_params->cpu_map initialization to be based on /sys/devices/system/cpu/online
+- separated node cpu map generation into build_node_mask()
+
+Changes in v3:
+- converted PERF_AFFINITY_EOF to PERF_AFFINITY_MAX
+- corrected code style issues
+- adjusted __aio_alloc,__aio_bind,__aio_free() implementation
+- separated mask manipulations into __adjust_affinity() and __setup_affinity_mask()
+- implemented mapping of c index into online cpu index
+- adjusted indentation at record__parse_affinity()
+
+Changes in v2:
+- made debug affinity mode message user friendly
+- converted affinity mode defines to enum values
+- implemented perf_mmap__aio_alloc, perf_mmap__aio_free, perf_mmap__aio_bind 
+  and put HAVE_LIBNUMA_SUPPORT #ifdefs in there
+- separated AIO buffers binding to patch 2/4
+
+---
+[1] https://en.wikipedia.org/wiki/Non-uniform_memory_access
+[2] https://www.nas.nasa.gov/publications/npb.html
+[3] http://man7.org/linux/man-pages/man2/sched_setaffinity.2.html
+[4] http://man7.org/linux/man-pages/man2/mbind.2.html
+
+---
+ENVIRONMENT AND MEASUREMENTS:
+
+  MACHINE:
+
+	broadwell, dual socket, 44 core, 88 threads
+
+	/proc/cpuinfo
+
+	processor	: 87
+	vendor_id	: GenuineIntel
+	cpu family	: 6
+	model		: 79
+	model name	: Intel(R) Xeon(R) CPU E5-2699 v4 @ 2.20GHz
+	stepping	: 1
+	microcode	: 0xb000019
+	cpu MHz		: 1200.117
+	cache size	: 56320 KB
+	physical id	: 1
+	siblings	: 44
+	core id		: 28
+	cpu cores	: 22
+	apicid		: 121
+	initial apicid	: 121
+	fpu		: yes
+	fpu_exception	: yes
+	cpuid level	: 20
+	wp		: yes
+	flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc aperfmperf eagerfpu pni pclmulqdq dtes64 monitor ds_cpl vmx smx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid dca sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch epb intel_pt tpr_shadow vnmi flexpriority ept vpid fsgsbase tsc_adjust bmi1 hle avx2 smep bmi2 erms invpcid rtm cqm rdseed adx smap xsaveopt cqm_llc cqm_occup_llc cqm_mbm_total cqm_mbm_local dtherm ida arat pln pts
+	bugs		:
+	bogomips	: 4391.42
+	clflush size	: 64
+	cache_alignment	: 64
+	address sizes	: 46 bits physical, 48 bits virtual
+	power management:
+  		
+  BASE:
+
+	/usr/bin/time ./bt.B.x 
+
+	NAS Parallel Benchmarks (NPB3.3-OMP) - BT Benchmark
+	
+	No input file inputbt.data. Using compiled defaults
+	Size:  102x 102x 102
+	Iterations:  200       dt:   0.0003000
+	Number of available threads:    88
+	
+	BT Benchmark Completed.
+	Class           =                        B
+	Size            =            102x 102x 102
+	Iterations      =                      200
+	Time in seconds =                    10.87
+	Total threads   =                       88
+	Avail threads   =                       88
+	Mop/s total     =                 64608.74
+	Mop/s/thread    =                   734.19
+	Operation type  =           floating point
+	Verification    =               SUCCESSFUL
+	Version         =                    3.3.1
+	Compile date    =              20 Sep 2018
+	
+	956.25user 19.14system 0:11.32elapsed 8616%CPU (0avgtext+0avgdata 210496maxresident)k
+	0inputs+0outputs (0major+57939minor)pagefaults 0swaps
+
+  SERIAL-SYS:
+
+	/usr/bin/time ./tip/tools/perf/perf record -v -N -B -T -R -F 25000 -a -e cycles -- ./bt.B.x 
+	Using CPUID GenuineIntel-6-4F-1
+	nr_cblocks: 0
+	affinity (UNSET:0, NODE:1, CPU:2) = 0
+	mmap size 528384B
+
+	NAS Parallel Benchmarks (NPB3.3-OMP) - BT Benchmark
+
+	No input file inputbt.data. Using compiled defaults
+	Size:  102x 102x 102
+	Iterations:  200       dt:   0.0003000
+	Number of available threads:    88
+
+	BT Benchmark Completed.
+	Class           =                        B
+	Size            =            102x 102x 102
+	Iterations      =                      200
+	Time in seconds =                    13.73
+	Total threads   =                       88
+	Avail threads   =                       88
+	Mop/s total     =                 51136.52
+	Mop/s/thread    =                   581.10
+	Operation type  =           floating point
+	Verification    =               SUCCESSFUL
+	Version         =                    3.3.1
+	Compile date    =              20 Sep 2018
+
+	[ perf record: Captured and wrote 1661,120 MB perf.data ]
+
+	1184.84user 40.70system 0:14.69elapsed 8341%CPU (0avgtext+0avgdata 208612maxresident)k
+	0inputs+3402072outputs (0major+137077minor)pagefaults 0swaps
+
+  SERIAL-NODE:
+
+	/usr/bin/time ./tip/tools/perf/perf record -v -N -B -T -R -F 25000 --affinity=node -a -e cycles -- ./bt.B.x 
+	Using CPUID GenuineIntel-6-4F-1
+	nr_cblocks: 0
+	affinity (UNSET:0, NODE:1, CPU:2) = 1
+	mmap size 528384B
+
+	NAS Parallel Benchmarks (NPB3.3-OMP) - BT Benchmark
+
+	No input file inputbt.data. Using compiled defaults
+	Size:  102x 102x 102
+	Iterations:  200       dt:   0.0003000
+	Number of available threads:    88
+
+	BT Benchmark Completed.
+	Class           =                        B
+	Size            =            102x 102x 102
+	Iterations      =                      200
+	Time in seconds =                    13.02
+	Total threads   =                       88
+	Avail threads   =                       88
+	Mop/s total     =                 53924.69
+	Mop/s/thread    =                   612.78
+	Operation type  =           floating point
+	Verification    =               SUCCESSFUL
+	Version         =                    3.3.1
+	Compile date    =              20 Sep 2018
+
+	[ perf record: Captured and wrote 1557,152 MB perf.data ]
+
+	1120.42user 29.92system 0:14.03elapsed 8198%CPU (0avgtext+0avgdata 206388maxresident)k
+	0inputs+3189128outputs (0major+149207minor)pagefaults 0swaps
+
+  SERIAL-CPU:
+
+	/usr/bin/time ./tip/tools/perf/perf record -v -N -B -T -R -F 25000 --affinity=cpu -a -e cycles -- ./bt.B.x 
+	Using CPUID GenuineIntel-6-4F-1
+	nr_cblocks: 0
+	affinity (UNSET:0, NODE:1, CPU:2) = 2
+	mmap size 528384B
+
+	NAS Parallel Benchmarks (NPB3.3-OMP) - BT Benchmark
+
+	No input file inputbt.data. Using compiled defaults
+	Size:  102x 102x 102
+	Iterations:  200       dt:   0.0003000
+	Number of available threads:    88
+
+	BT Benchmark Completed.
+	Class           =                        B
+	Size            =            102x 102x 102
+	Iterations      =                      200
+	Time in seconds =                    11.21
+	Total threads   =                       88
+	Avail threads   =                       88
+	Mop/s total     =                 62642.24
+	Mop/s/thread    =                   711.84
+	Operation type  =           floating point
+	Verification    =               SUCCESSFUL
+	Version         =                    3.3.1
+	Compile date    =              20 Sep 2018
+
+	[ perf record: Captured and wrote 1365,043 MB perf.data ]
+
+	976.06user 31.35system 0:12.18elapsed 8264%CPU (0avgtext+0avgdata 208488maxresident)k
+	0inputs+2795704outputs (0major+126032minor)pagefaults 0swaps
+
+  AIO1-SYS:
+
+	/usr/bin/time ./tip/tools/perf/perf record -v -N -B -T -R -F 25000 --aio=1 -a -e cycles -- ./bt.B.x 
+	Using CPUID GenuineIntel-6-4F-1
+	nr_cblocks: 1
+	affinity (UNSET:0, NODE:1, CPU:2) = 0
+	mmap size 528384B
+
+	NAS Parallel Benchmarks (NPB3.3-OMP) - BT Benchmark
+
+	No input file inputbt.data. Using compiled defaults
+	Size:  102x 102x 102
+	Iterations:  200       dt:   0.0003000
+	Number of available threads:    88
+
+	BT Benchmark Completed.
+	Class           =                        B
+	Size            =            102x 102x 102
+	Iterations      =                      200
+	Time in seconds =                    14.23
+	Total threads   =                       88
+	Avail threads   =                       88
+	Mop/s total     =                 49338.27
+	Mop/s/thread    =                   560.66
+	Operation type  =           floating point
+	Verification    =               SUCCESSFUL
+	Version         =                    3.3.1
+	Compile date    =              20 Sep 2018
+
+	[ perf record: Captured and wrote 1720,590 MB perf.data ]
+
+	1229.19user 41.99system 0:15.22elapsed 8350%CPU (0avgtext+0avgdata 208604maxresident)k
+	0inputs+3523880outputs (0major+124670minor)pagefaults 0swaps
+
+  AIO1-NODE:
+
+	/usr/bin/time ./tip/tools/perf/perf record -v -N -B -T -R -F 25000 --aio=1 --affinity=node -a -e cycles -- ./bt.B.x 
+	Using CPUID GenuineIntel-6-4F-1
+	nr_cblocks: 1
+	affinity (UNSET:0, NODE:1, CPU:2) = 1
+	mmap size 528384B
+
+	NAS Parallel Benchmarks (NPB3.3-OMP) - BT Benchmark
+
+	No input file inputbt.data. Using compiled defaults
+	Size:  102x 102x 102
+	Iterations:  200       dt:   0.0003000
+	Number of available threads:    88
+
+	BT Benchmark Completed.
+	Class           =                        B
+	Size            =            102x 102x 102
+	Iterations      =                      200
+	Time in seconds =                    12.04
+	Total threads   =                       88
+	Avail threads   =                       88
+	Mop/s total     =                 58313.58
+	Mop/s/thread    =                   662.65
+	Operation type  =           floating point
+	Verification    =               SUCCESSFUL
+	Version         =                    3.3.1
+	Compile date    =              20 Sep 2018
+
+	[ perf record: Captured and wrote 1471,279 MB perf.data ]
+
+	1055.62user 30.43system 0:13.03elapsed 8333%CPU (0avgtext+0avgdata 208424maxresident)k
+	0inputs+3013288outputs (0major+79088minor)pagefaults 0swaps
+
+  AIO1-CPU:
+
+	/usr/bin/time ./tip/tools/perf/perf record -v -N -B -T -R -F 25000 --aio=1 --affinity=cpu -a -e cycles -- ./bt.B.x 
+	Using CPUID GenuineIntel-6-4F-1
+	nr_cblocks: 1
+	affinity (UNSET:0, NODE:1, CPU:2) = 2
+	mmap size 528384B
+
+	NAS Parallel Benchmarks (NPB3.3-OMP) - BT Benchmark
+
+	No input file inputbt.data. Using compiled defaults
+	Size:  102x 102x 102
+	Iterations:  200       dt:   0.0003000
+	Number of available threads:    88
+
+	BT Benchmark Completed.
+	Class           =                        B
+	Size            =            102x 102x 102
+	Iterations      =                      200
+	Time in seconds =                    12.20
+	Total threads   =                       88
+	Avail threads   =                       88
+	Mop/s total     =                 57538.84
+	Mop/s/thread    =                   653.85
+	Operation type  =           floating point
+	Verification    =               SUCCESSFUL
+	Version         =                    3.3.1
+	Compile date    =              20 Sep 2018
+
+	[ perf record: Captured and wrote 1486,859 MB perf.data ]
+
+	1051.97user 42.07system 0:13.09elapsed 8352%CPU (0avgtext+0avgdata 206388maxresident)k
+	0inputs+3045168outputs (0major+174612minor)pagefaults 0swaps
