@@ -2,188 +2,310 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10BE6C43444
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 23:11:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BEC8C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 23:11:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C8C36208E3
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 23:10:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4A53421783
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 23:11:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="KnWVcAzf"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Nq1lh+cs"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729992AbfAJXK6 (ORCPT
+        id S1730007AbfAJXLt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 18:10:58 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:45228 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726255AbfAJXK5 (ORCPT
+        Thu, 10 Jan 2019 18:11:49 -0500
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:43221 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726149AbfAJXLt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 18:10:57 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0AN9i4D129170;
-        Thu, 10 Jan 2019 23:10:36 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : from : to :
- cc : references : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=oRzF5Mf+c8fr7aI5Yt0Wn5q585W5ocJ97d5GetEiM4g=;
- b=KnWVcAzfrJzTfeDi6DznDYXGASEjktVTmYF9prUi09ZLI4Ig7aVoCO6RfE1i+hdSqWMr
- 6rLzTQ22cYtNeZa/8luOySrlse0h/g20+f0dGpLlsGXHsafvQJLGO6qmHIHtXSDwAAta
- wgFQU+dfMFTyP2L9IB04mEW+qtFcEkMFj9JmEGuU6byZYmh3Ze3TuWFn60k8Sc/thEI3
- GCoI/tD/fguTSnQ8LZWICyONbq4a4DKBzxgml1wzabWgbXD3xEm2duk8szJdGQfLXBN5
- 11MFFDxLBgh2HHTE16nQgNuM1mlJUq7QD1niTwP/ZwnnwDwsAUO16IoQZnyAIdACxeAU tg== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by userp2130.oracle.com with ESMTP id 2ptm0uj31y-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 10 Jan 2019 23:10:36 +0000
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x0ANAZed029293
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 10 Jan 2019 23:10:35 GMT
-Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x0ANAYsQ024758;
-        Thu, 10 Jan 2019 23:10:34 GMT
-Received: from dhcp-burlington7-2nd-B-east-10-152-55-162.usdhcp.oraclecorp.com (/10.152.32.65)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 10 Jan 2019 15:10:33 -0800
-Subject: Re: [PATCH] xen: Fix x86 sched_clock() interface for xen
-From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
-To:     Juergen Gross <jgross@suse.com>, linux-kernel@vger.kernel.org,
-        xen-devel@lists.xenproject.org, x86@kernel.org
-Cc:     sstabellini@kernel.org, hpa@zytor.com, tglx@linutronix.de,
-        mingo@redhat.com, bp@alien8.de, hans@knorrie.org,
-        stable@vger.kernel.org
-References: <20190110100722.11216-1-jgross@suse.com>
- <e7ea12ca-93f1-2421-702b-b55806eb20bd@oracle.com>
- <e98d244f-1257-ed23-26f4-8909900590b4@suse.com>
- <21d24fe0-f9bd-c312-7773-b43a8ff39ef1@oracle.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
- 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
- Jg6OxFYd01z+a+oL
-Message-ID: <d8cc08b1-0ec1-6d12-f0df-a41845a69ea0@oracle.com>
-Date:   Thu, 10 Jan 2019 18:10:31 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        Thu, 10 Jan 2019 18:11:49 -0500
+Received: by mail-oi1-f194.google.com with SMTP id u18so10722595oie.10;
+        Thu, 10 Jan 2019 15:11:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Kxp3nAsjyhe1ZXgou3xjj+oYDaWg6XYj9eFlDogGyts=;
+        b=Nq1lh+cscYB6VfvbOK+3GwQV1Bpkh94ES6P/EMVIXVdndGXT7MrDBUjwsHFf6F9/eM
+         A5sR6xtGBv/fnDJID1/IjYHNgf/5gz51ozuFWx2ZEv/VUYZDRdTQJZK954MPJeTDoMlh
+         6Q7vt3IPP4fP6cu6q2vT4CgKBUhxkbo5xNuaQjIsNjxe5MwwLvUxeTzFLYKDFZd/tESc
+         Vfqb28LHr3vLdbINmUnrKuOTrXB4bM9HbUxUtqkmSVwoGrCZss5mHDIkQOi/CEZXy4E8
+         Vb8aPRYqb+AE12hyCaSDfxalyydekKBt8z6GZ0MYkESYCHNWWa9JuWcfvgJ6rNwZkYMO
+         dLGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Kxp3nAsjyhe1ZXgou3xjj+oYDaWg6XYj9eFlDogGyts=;
+        b=IOqjwkg1uTaeIZwP/yZ5XU/xtSvfHooOLNGFwalC/0kE8BsykHuzDe4qntzxXWhy/Q
+         GZ/79hKyhJDNgNIS57+tYBpRxCGdS453NZH7dRZ4ASrAY326T2KQ8AmpVFDsbgpkInhj
+         0iJS8dMOeX1yUJIAQ2c/lY7GubOQk3jIw/X+iGk1+eubunEq7VfBwjl6G1OmNYxgzSJf
+         v8tL0xZ55rApGytcocYB8BGE6Ps7m+YJf8mzpYVwoPJwZtYEHD1nslwARZN5dojN5i8N
+         humpHagDJAfvg7tVglNraiPqodN/vxuyucR3lWNvCe5z69QnDj0W1Wyth/FGhjRxx035
+         2NOQ==
+X-Gm-Message-State: AJcUukeANXZxQ/Kn98fT3a65SRCLLybLn5B9tvQSKpTlg2CYDR9nJHof
+        LXU75zHIRRrYoKQAXuEueJmr6wG0ik0=
+X-Google-Smtp-Source: ALg8bN6gwaZSFTR3MqkLnZKLgc2axibXNsT1Z+0JzJxEb/XKkxRoTaUBxvIukMkqa9Vuo48tTeNQkA==
+X-Received: by 2002:aca:2403:: with SMTP id n3mr7813937oic.328.1547161907350;
+        Thu, 10 Jan 2019 15:11:47 -0800 (PST)
+Received: from nuclearis2-1.lan (c-98-195-139-126.hsd1.tx.comcast.net. [98.195.139.126])
+        by smtp.gmail.com with ESMTPSA id m133sm37152654oib.52.2019.01.10.15.11.46
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 10 Jan 2019 15:11:46 -0800 (PST)
+From:   Alexandru Gagniuc <mr.nuke.me@gmail.com>
+To:     bhelgaas@google.com
+Cc:     austin_bolen@dell.com, alex_gagniuc@dellteam.com,
+        keith.busch@intel.com, Shyam_Iyer@Dell.com, lukas@wunner.de,
+        okaya@kernel.org, Alexandru Gagniuc <mr.nuke.me@gmail.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [RFC] PCI / ACPI: Implementing Type 3 _HPX records
+Date:   Thu, 10 Jan 2019 17:11:27 -0600
+Message-Id: <20190110231136.31163-1-mr.nuke.me@gmail.com>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
-In-Reply-To: <21d24fe0-f9bd-c312-7773-b43a8ff39ef1@oracle.com>
-Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9132 signatures=668680
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1901100176
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/10/19 12:17 PM, Boris Ostrovsky wrote:
-> On 1/10/19 11:14 AM, Juergen Gross wrote:
->> On 10/01/2019 16:34, Boris Ostrovsky wrote:
->>> On 1/10/19 5:07 AM, Juergen Gross wrote:
->>>>  
->>>> +void xen_clocksource_suspend(void)
->>>> +{
->>>> +	xen_clock_value_saved = xen_clocksource_read() - xen_sched_clock_offset;
->>> xen_clock_value_saved = xen_sched_clock() maybe? 
->> I wanted xen_clocksource_suspend() and xen_clocksource_resume() to
->> be symmetrical to each other.
-> OK.
->
-> Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
->
->> In case you are feeling strong about that, I'm not. :-) So in case
->> you insist on it I can change it. Or you can do so while committing.
+_HPX Type 3 is intended to be more generic and allow configuration of
+settings not possible with Type 2 tables. For example, FW could ensure
+that the completion timeout value is set accordingly throughout the PCI
+tree; some switches require very special handling.
 
+Type 3 can come in an arbitrary number of ACPI packages. With the older
+types we only ever had one descriptor. We could get lazy and store it
+on the stack. The current flow is to parse the HPX table
+--pci_get_hp_params()-- and then program the PCIe device registers.
 
-I did some basic testing and noticed this (at loglevel=8):
+In the current flow, we'll need to malloc(). Here's what I tried:
+ 1) devm_kmalloc() on the pci_dev
+  This ended up giving me NULL dereference at boot time.
+ 2) Add a cleanup function to be called after writing the PCIe registers
 
-[   64.336488] Freezing user space processes ... (elapsed 0.001 seconds)
-done.
-[   64.337805] OOM killer disabled.
-[   64.337814] Freezing remaining freezable tasks ... (elapsed 0.000
-seconds) done.
-[   64.339066] suspending xenstore...
-[   85.888340] xen:grant_table: Grant tables using version 1 layout
-[   64.359729] OOM killer enabled.
-[   64.359736] Restarting tasks ... done.
+This RFC implements method 2. The HPX3 stuff is still NDA'd, but the
+housekeeping parts are in here. Is this a good way to do things? I'm not
+too sure about the need to call cleanup() on a stack variable. But if
+not that, then what else?
 
+Alex
 
-Which made me think that perhaps we should do suspend/restore of the
-clocksource as close as possible to HYPERVISOR_suspend() call, e.g. in
-xen_arch_pre_suspend()/xen_arch_post_suspend():
+---
+ drivers/pci/pci-acpi.c      | 88 +++++++++++++++++++++++++++++++++++++
+ drivers/pci/probe.c         | 29 ++++++++++++
+ include/linux/pci_hotplug.h | 17 +++++++
+ 3 files changed, 134 insertions(+)
 
-diff --git a/arch/x86/xen/suspend.c b/arch/x86/xen/suspend.c
-index 45fc9caf3880..80ecba3fcc8c 100644
---- a/arch/x86/xen/suspend.c
-+++ b/arch/x86/xen/suspend.c
-@@ -22,6 +22,7 @@ static DEFINE_PER_CPU(u64, spec_ctrl);
- 
- void xen_arch_pre_suspend(void)
- {
-+       xen_clocksource_suspend();
-        xen_save_time_memory_area();
- 
-        if (xen_pv_domain())
-@@ -36,6 +37,7 @@ void xen_arch_post_suspend(int cancelled)
-                xen_hvm_post_suspend(cancelled);
- 
-        xen_restore_time_memory_area();
-+       xen_clocksource_resume();
- }
- 
- static void xen_vcpu_notify_restore(void *data)
+diff --git a/drivers/pci/pci-acpi.c b/drivers/pci/pci-acpi.c
+index e1949f7efd9c..2ce1b68ce688 100644
+--- a/drivers/pci/pci-acpi.c
++++ b/drivers/pci/pci-acpi.c
+@@ -219,6 +219,65 @@ static acpi_status decode_type2_hpx_record(union acpi_object *record,
+ 	return AE_OK;
+ }
+ 
++static acpi_status parse_hpx3_register(struct hpp_type3 *hpx3,
++				       union acpi_object *reg_fields)
++{
++	struct hpp_type3_register *hpx3_reg;
++
++	hpx3_reg = kzalloc(sizeof(*hpx3_reg), GFP_KERNEL);
++	if (!hpx3_reg)
++		return AE_NO_MEMORY;
++
++	/* Parse fields blurb */
++
++	list_add_tail(&hpx3_reg->list, &hpx3->regs);
++	return AE_OK;
++}
++
++static acpi_status decode_type3_hpx_record(union acpi_object *record,
++					   struct hotplug_params *hpx)
++{
++	union acpi_object *fields = record->package.elements;
++	u32 desc_count, expected_length, revision;
++	union acpi_object *reg_fields;
++	acpi_status ret;
++	int i;
++
++	revision = fields[1].integer.value;
++	switch (revision) {
++	case 1:
++		desc_count = fields[2].integer.value;
++		expected_length = 3 + desc_count * 14;
++
++		if (record->package.count != expected_length)
++			return AE_ERROR;
++
++		for (i = 2; i < expected_length; i++)
++			if (fields[i].type != ACPI_TYPE_INTEGER)
++				return AE_ERROR;
++
++		if (!hpx->t3) {
++			INIT_LIST_HEAD(&hpx->type3_data.regs);
++			hpx->t3 = &hpx->type3_data;
++		}
++
++		for (i = 0; i < desc_count; i++) {
++			reg_fields = fields + 3 + i * 14;
++			ret = parse_hpx3_register(hpx->t3, reg_fields);
++			if (ret != AE_OK)
++				return ret;
++		}
++
++		break;
++	default:
++		printk(KERN_WARNING
++			"%s: Type 3 Revision %d record not supported\n",
++			__func__, revision);
++		return AE_ERROR;
++	}
++	return AE_OK;
++}
++
+ static acpi_status acpi_run_hpx(acpi_handle handle, struct hotplug_params *hpx)
+ {
+ 	acpi_status status;
+@@ -271,6 +330,11 @@ static acpi_status acpi_run_hpx(acpi_handle handle, struct hotplug_params *hpx)
+ 			if (ACPI_FAILURE(status))
+ 				goto exit;
+ 			break;
++		case 3:
++			status = decode_type3_hpx_record(record, hpx);
++			if (ACPI_FAILURE(status))
++				goto exit;
++			break;
+ 		default:
+ 			printk(KERN_ERR "%s: Type %d record not supported\n",
+ 			       __func__, type);
+@@ -368,6 +432,30 @@ int pci_get_hp_params(struct pci_dev *dev, struct hotplug_params *hpp)
+ }
+ EXPORT_SYMBOL_GPL(pci_get_hp_params);
+ 
++static int cleantup_type3_hpx_record(struct hpp_type3 *hpx3)
++{
++	struct hpp_type3_register *reg;
++	struct list_head *entry, *temp;
++
++	list_for_each_safe(entry, temp, &hpp->t3->regs){
++		reg = list_entry(entry, typeof(*reg), list);
++		list_del(entry);
++		kfree(reg);
++	}
++}
++
++/* pci_cleanup_hp_params
++ *
++ * @hpp - allocated by the caller
++ */
++void pci_cleanup_hp_params(struct hotplug_params *hpp)
++{
++
++	if (hpp->t3)
++		cleanup_type3_hpx_record(hpp->t3);
++}
++EXPORT_SYMBOL_GPL(pci_cleanup_hp_params);
++
+ /**
+  * pciehp_is_native - Check whether a hotplug port is handled by the OS
+  * @bridge: Hotplug port to check
+diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+index 257b9f6f2ebb..35ef7d1f4f3b 100644
+--- a/drivers/pci/probe.c
++++ b/drivers/pci/probe.c
+@@ -1979,6 +1979,32 @@ static void program_hpp_type2(struct pci_dev *dev, struct hpp_type2 *hpp)
+ 	 */
+ }
+ 
++static void program_hpp_type3_register(struct pci_dev *dev,
++				       const struct hpp_type3_register *reg)
++{
++	/* Complicated ACPI-mandated blurb */
++}
++
++static void program_hpp_type3(struct pci_dev *dev, struct hpp_type3 *hpp)
++{
++	struct hpp_type3_register *reg;
++
++	if (!hpp)
++		return;
++
++	if (!pci_is_pcie(dev))
++		return;
++
++	if (hpp->revision > 1) {
++		pci_warn(dev, "PCIe settings rev %d not supported\n",
++			 hpp->revision);
++		return;
++	}
++
++	list_for_each_entry(reg, &hpp->regs, list)
++		program_hpp_type3_register(dev, reg);
++}
++
+ int pci_configure_extended_tags(struct pci_dev *dev, void *ign)
+ {
+ 	struct pci_host_bridge *host;
+@@ -2145,9 +2171,12 @@ static void pci_configure_device(struct pci_dev *dev)
+ 	if (ret)
+ 		return;
+ 
++	program_hpp_type3(dev, hpp.t3);
+ 	program_hpp_type2(dev, hpp.t2);
+ 	program_hpp_type1(dev, hpp.t1);
+ 	program_hpp_type0(dev, hpp.t0);
++
++	pci_cleanup_hp_params(&hpp);
+ }
+ 
+ static void pci_release_capabilities(struct pci_dev *dev)
+diff --git a/include/linux/pci_hotplug.h b/include/linux/pci_hotplug.h
+index 7acc9f91e72b..479da87a3774 100644
+--- a/include/linux/pci_hotplug.h
++++ b/include/linux/pci_hotplug.h
+@@ -124,18 +124,35 @@ struct hpp_type2 {
+ 	u32 sec_unc_err_mask_or;
+ };
+ 
++/*
++ * PCI Express Setting Record (Type 3)
++ * The ACPI overlords can never get enough
++ */
++struct hpp_type3_register {
++	u32 crap_describing_entry_contents;
++	struct list_head list;
++};
++
++struct hpp_type3 {
++	u32 revision;
++	struct list_head regs;
++};
++
+ struct hotplug_params {
+ 	struct hpp_type0 *t0;		/* Type0: NULL if not available */
+ 	struct hpp_type1 *t1;		/* Type1: NULL if not available */
+ 	struct hpp_type2 *t2;		/* Type2: NULL if not available */
++	struct hpp_type3 *t3;		/* Type3: NULL if not available */
+ 	struct hpp_type0 type0_data;
+ 	struct hpp_type1 type1_data;
+ 	struct hpp_type2 type2_data;
++	struct hpp_type3 type3_data;
+ };
+ 
+ #ifdef CONFIG_ACPI
+ #include <linux/acpi.h>
+ int pci_get_hp_params(struct pci_dev *dev, struct hotplug_params *hpp);
++void pci_cleanup_hp_params(struct hotplug_params *hpp);
+ bool pciehp_is_native(struct pci_dev *bridge);
+ int acpi_get_hp_hw_control_from_firmware(struct pci_dev *bridge);
+ bool shpchp_is_native(struct pci_dev *bridge);
+-- 
+2.19.2
 
-
-This still has a window of incorrect clock value (you can see it, for
-example, when xen_hvm_post_suspend() does pr_info("Xen HVM callback
-vector for event delivery is enabled\n")), but it's smaller than before.
-In particular, we will make time right before dpm_resume_start() call.
-
--boris
