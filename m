@@ -2,118 +2,127 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-19.7 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,
+	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3048EC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 18:57:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08F3BC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 18:57:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EEA422183F
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 18:57:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CFB6120675
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 18:57:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ANgcHEZB"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="n6fAPMd7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729255AbfAJS5m (ORCPT
+        id S1729300AbfAJS54 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 13:57:42 -0500
-Received: from mail-it1-f196.google.com ([209.85.166.196]:53843 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728297AbfAJS5l (ORCPT
+        Thu, 10 Jan 2019 13:57:56 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:46101 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728297AbfAJS54 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 13:57:41 -0500
-Received: by mail-it1-f196.google.com with SMTP id g85so203210ita.3
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 10:57:40 -0800 (PST)
+        Thu, 10 Jan 2019 13:57:56 -0500
+Received: by mail-pf1-f193.google.com with SMTP id c73so5700588pfe.13
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 10:57:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=ZCHJ/TvwzF0ThhfFXbmNmVm1YbERtS5kXlpqZlpNyCE=;
-        b=ANgcHEZBrNT721hW/GfEtszNfqcPceiM7DNUXGU4oJSlRB07TDvf/Kpfh73ZKQhL1T
-         G9x8WXvL6aE8V50fP8oNmTHGJkusCsd4/ZnP6ebKgst8p4+5ubeHl4KjcPnb5ASpe16e
-         iB72cAOUnZnrImrSIdq/Q5T5lcQMzw5ZDuc+k=
+        bh=sf8nYcm0bUrRFdr6g8oNTGFSuvJBY7iJ8mE5wljL+AA=;
+        b=n6fAPMd72BjKlvc3za1GUExf7hfLoM7Ow9Fnko6UpTNS0KsBe40gm+0tt1/nip/JwU
+         kDxpYBkEkC2pSOWi/dOvDQc7xNs8e0LY6anaFgoyyRnBfKO1d+wv6Xy4pbhCK9sjgBsb
+         uchvPBkGYHO/z121gA35m18xNBlnWREXyjwj5yw2tt3vrHVrzNGMTU2x1Enwke7kpZe6
+         bmCU8Wd6mvtlu46vwI92yutoLpP/Xfk5kzAm14VcW4qI3JorbBNVJzqRWdcpP6bRPz64
+         sfhu522AJ9hpDnH2qYcIAoiinCYvm2JQJeQH1nL9NTa5DxJqNFaILr/4S5Ry3u8jsuJs
+         YatA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=ZCHJ/TvwzF0ThhfFXbmNmVm1YbERtS5kXlpqZlpNyCE=;
-        b=DD9xK7kanQxrX0u28Np8jnNpQ3/UNXQOnHs+nwZE50Q714DmsjxHUCYP3JuxtJM1zd
-         Ma0eN1NBTm4eQ6VOga+jqQdWd7xcq53ZMjyzeEEwv//UCkxP4R9WW5qpLlo+42+I78Je
-         BuVkZwV7E3gjuh6ZM8CTwUzEllRW4/yFsjFoV6eeAO7hGrH43MK/uWcQSsWc83f+MwuD
-         qqjg7T3dsCS9jqSJAviLiOu6SLHfEXjHn+8ag8QsV2oMCfhpucywNRmgdMIUIgUJomQA
-         K3BKZQlIdlf0gpeHvN35NT5z+4C5rt1lo7YRS6CYDuRATRSgYHqxMSZuEd41fAMOSAiT
-         yxwA==
-X-Gm-Message-State: AJcUukfit9nVYTy0G9SYyrEC5/g07aIBgT9cosKNWqA0Vkph++gCoAOW
-        o1s/JGxVu1YtMMfVhilL83uqgfz2QcxVJJtWctxd8w==
-X-Google-Smtp-Source: ALg8bN70O57ml7NqAXy6P5IzR/pHoeiIXe9+fryzWmoJz5X7s8TIF7WOBc8aLAGBHlFW8b/qQG+RtRwhvL1jY5rvxBo=
-X-Received: by 2002:a24:6f42:: with SMTP id x63mr24331itb.152.1547146660173;
- Thu, 10 Jan 2019 10:57:40 -0800 (PST)
+        bh=sf8nYcm0bUrRFdr6g8oNTGFSuvJBY7iJ8mE5wljL+AA=;
+        b=mipSYdnoWkiDbc3oPOyjHZgC2A3NgDdzVLhCxIOwJt8ULzif4KR977NNeRKmq30A+t
+         ctqGsu5QeglJqymuto/O/X7sX6+ySLm2s7A+R4qHvONLrKUBlHyzOm3yIZP9ojliRCrj
+         vhRe1D91D0AmTtTdgQxRyBo/oOXQuUOUGNbgiYC5G2QIWJwFRofmqLL64agc1HhNT9RU
+         8ymqs4jxqOlJiuaxanpuYHAqpzfVxX2EilSIWOEbNMUsfbrl9aH7XjKwdLbmK4bWJ9FN
+         Uo/iZCx9yxlmCqqYJVWcv+Liw1h2e++ks+MnTFaJ4hN4yi3Ml2fu/+OhPHamXCj8f821
+         8mMA==
+X-Gm-Message-State: AJcUuke6mzl/YPL3zInRN7wJhzEFWYCRrApwG4lLax7XoqjTSniXNrq4
+        7lmtgQfbxc2zvlCdQMGPqPuODdZN0uI/32aM0GB6TA==
+X-Google-Smtp-Source: ALg8bN6EuydCRGoYFJOzlKAz1yeqnP3TpvUGLBKpAGzv9Kp9gUdksCOCkkv3CrewTG/y2USXm7e5jvzmxg+Os7oPMJQ=
+X-Received: by 2002:a62:7e13:: with SMTP id z19mr11289629pfc.94.1547146675097;
+ Thu, 10 Jan 2019 10:57:55 -0800 (PST)
 MIME-Version: 1.0
-References: <20190109172336.GA1711@lenoch> <CAJZ5v0iZRUaAb-eiodgByZiEAe8AWxk9G2p8zHK45J-LuXgaAA@mail.gmail.com>
- <20190109231944.GA21177@lenoch>
-In-Reply-To: <20190109231944.GA21177@lenoch>
-From:   Vincent Guittot <vincent.guittot@linaro.org>
-Date:   Thu, 10 Jan 2019 19:57:29 +0100
-Message-ID: <CAKfTPtAEu9ApVquRQbcobxOYMc3OEPF3cFUEHOtcrr=nEBXhQg@mail.gmail.com>
-Subject: Re: [PATCH v2] PM/runtime: Fix 'jiffies' in comments after move to hrtimers
-To:     Ladislav Michl <ladis@linux-mips.org>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux OMAP Mailing List <linux-omap@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Tony Lindgren <tony@atomide.com>
+References: <20190108050649.9962-1-natechancellor@gmail.com> <20190110054107.6069-1-natechancellor@gmail.com>
+In-Reply-To: <20190110054107.6069-1-natechancellor@gmail.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Thu, 10 Jan 2019 10:57:44 -0800
+Message-ID: <CAKwvOdnyhpho0x-fi03RQOrqqBFYfKdScSj9FDWPFOvg2DrGsg@mail.gmail.com>
+Subject: Re: [PATCH v2] isdn: avm: Fix string plus integer warning from Clang
+To:     Nathan Chancellor <natechancellor@gmail.com>
+Cc:     Karsten Keil <isdn@linux-pingi.de>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 10 Jan 2019 at 00:19, Ladislav Michl <ladis@linux-mips.org> wrote:
+On Wed, Jan 9, 2019 at 9:42 PM Nathan Chancellor
+<natechancellor@gmail.com> wrote:
 >
-> PM-runtime now uses the hrtimers infrastructure for autosuspend, however
-> comments still reference 'jiffies'.
+> A recent commit in Clang expanded the -Wstring-plus-int warning, showing
+> some odd behavior in this file.
 >
-> Fixes: 8234f6734c5d ("PM-runtime: Switch autosuspend over to using hrtimers")
-> Signed-off-by: Ladislav Michl <ladis@linux-mips.org>
+> drivers/isdn/hardware/avm/b1.c:426:30: warning: adding 'int' to a string does not append to the string [-Wstring-plus-int]
+>                 cinfo->version[j] = "\0\0" + 1;
+>                                     ~~~~~~~^~~
+> drivers/isdn/hardware/avm/b1.c:426:30: note: use array indexing to silence this warning
+>                 cinfo->version[j] = "\0\0" + 1;
+>                                            ^
+>                                     &      [  ]
+> 1 warning generated.
+>
+> This is equivalent to just "\0". Nick pointed out that it is smarter to
+> use "" instead of "\0" because "" is used elsewhere in the kernel and
+> can be deduplicated at the linking stage.
+>
+> Link: https://github.com/ClangBuiltLinux/linux/issues/309
+> Suggested-by: Nick Desaulniers <ndesaulniers@google.com>
 
-Acked-by: Vincent Guittot <vincent.guittot@linaro.org>
+Thanks for sending the v2.  I'll leave review to the maintainers to
+confirm my suspicions about the code's intent.
 
+> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 > ---
->  Changes:
->  -v2: Reword comment accoring to Rafael's suggestion
 >
->  drivers/base/power/runtime.c | 7 +++++--
->  1 file changed, 5 insertions(+), 2 deletions(-)
+> v1 -> v2:
 >
-> diff --git a/drivers/base/power/runtime.c b/drivers/base/power/runtime.c
-> index 70624695b6d5..a282e74d1a16 100644
-> --- a/drivers/base/power/runtime.c
-> +++ b/drivers/base/power/runtime.c
-> @@ -121,7 +121,7 @@ static void pm_runtime_cancel_pending(struct device *dev)
->   * Compute the autosuspend-delay expiration time based on the device's
->   * power.last_busy time.  If the delay has already expired or is disabled
->   * (negative) or the power.use_autosuspend flag isn't set, return 0.
-> - * Otherwise return the expiration time in jiffies (adjusted to be nonzero).
-> + * Otherwise return the expiration time in nanoseconds (adjusted to be nonzero).
->   *
->   * This function may be called either with or without dev->power.lock held.
->   * Either way it can be racy, since power.last_busy may be updated at any time.
-> @@ -905,7 +905,10 @@ static enum hrtimer_restart  pm_suspend_timer_fn(struct hrtimer *timer)
->         spin_lock_irqsave(&dev->power.lock, flags);
+> * Use "" instead of "\0", as they are equivalent, but "" can be
+>   deduplicated by the linker, as pointed out by Nick.
 >
->         expires = dev->power.timer_expires;
-> -       /* If 'expire' is after 'jiffies' we've been called too early. */
-> +       /*
-> +        * If 'expires' is after the current time, we've been called
-> +        * too early.
-> +        */
->         if (expires > 0 && expires < ktime_to_ns(ktime_get())) {
->                 dev->power.timer_expires = 0;
->                 rpm_suspend(dev, dev->power.timer_autosuspends ?
+>  drivers/isdn/hardware/avm/b1.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/isdn/hardware/avm/b1.c b/drivers/isdn/hardware/avm/b1.c
+> index 4ac378e48902..40ca1e8fa09f 100644
+> --- a/drivers/isdn/hardware/avm/b1.c
+> +++ b/drivers/isdn/hardware/avm/b1.c
+> @@ -423,7 +423,7 @@ void b1_parse_version(avmctrl_info *cinfo)
+>         int i, j;
+>
+>         for (j = 0; j < AVM_MAXVERSION; j++)
+> -               cinfo->version[j] = "\0\0" + 1;
+> +               cinfo->version[j] = "";
+>         for (i = 0, j = 0;
+>              j < AVM_MAXVERSION && i < cinfo->versionlen;
+>              j++, i += cinfo->versionbuf[i] + 1)
 > --
 > 2.20.1
 >
+
+
+-- 
+Thanks,
+~Nick Desaulniers
