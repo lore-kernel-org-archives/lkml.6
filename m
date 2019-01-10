@@ -3,98 +3,125 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6CF7C43612
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 16:14:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E836CC43612
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 16:16:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F563206B7
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 16:14:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C3F3D206B7
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 16:16:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728908AbfAJQO4 (ORCPT
+        id S1729014AbfAJQQg convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 11:14:56 -0500
-Received: from mx2.suse.de ([195.135.220.15]:43234 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727821AbfAJQOz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 11:14:55 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 6A9D8AC17;
-        Thu, 10 Jan 2019 16:14:54 +0000 (UTC)
-Subject: Re: [PATCH] xen: Fix x86 sched_clock() interface for xen
-To:     Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
-        x86@kernel.org
-Cc:     sstabellini@kernel.org, hpa@zytor.com, tglx@linutronix.de,
-        mingo@redhat.com, bp@alien8.de, hans@knorrie.org,
-        stable@vger.kernel.org
-References: <20190110100722.11216-1-jgross@suse.com>
- <e7ea12ca-93f1-2421-702b-b55806eb20bd@oracle.com>
-From:   Juergen Gross <jgross@suse.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <e98d244f-1257-ed23-26f4-8909900590b4@suse.com>
-Date:   Thu, 10 Jan 2019 17:14:53 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Thu, 10 Jan 2019 11:16:36 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:51302 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727771AbfAJQQf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 11:16:35 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id C85E7209BD; Thu, 10 Jan 2019 17:16:32 +0100 (CET)
+Received: from localhost (alyon-652-1-22-18.w109-213.abo.wanadoo.fr [109.213.145.18])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 7BDFF20898;
+        Thu, 10 Jan 2019 17:16:22 +0100 (CET)
+From:   Gregory CLEMENT <gregory.clement@bootlin.com>
+To:     Stephen Boyd <sboyd@codeaurora.org>
+Cc:     Mike Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        Jason Cooper <jason@lakedaemon.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        =?utf-8?Q?Miqu=C3=A8l?= Raynal <miquel.raynal@bootlin.com>,
+        Maxime Chevallier <maxime.chevallier@bootlin.com>
+Subject: Re: [PATCH v3 0/6] Add CPU clock support for Armada 7K/8K
+References: <20181216094147.6468-1-gregory.clement@bootlin.com>
+Date:   Thu, 10 Jan 2019 17:16:22 +0100
+In-Reply-To: <20181216094147.6468-1-gregory.clement@bootlin.com> (Gregory
+        CLEMENT's message of "Sun, 16 Dec 2018 10:41:41 +0100")
+Message-ID: <87a7k8o5d5.fsf@FE-laptop>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <e7ea12ca-93f1-2421-702b-b55806eb20bd@oracle.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/01/2019 16:34, Boris Ostrovsky wrote:
-> On 1/10/19 5:07 AM, Juergen Gross wrote:
->>  
->> +void xen_clocksource_suspend(void)
->> +{
->> +	xen_clock_value_saved = xen_clocksource_read() - xen_sched_clock_offset;
-> 
-> 
-> xen_clock_value_saved = xen_sched_clock() maybe? 
+Hi Stephen,
+ 
+ On dim., déc. 16 2018, Gregory CLEMENT <gregory.clement@bootlin.com> wrote:
 
-I wanted xen_clocksource_suspend() and xen_clocksource_resume() to
-be symmetrical to each other.
+> Hello,
+>
+> This is the third version of a series allowing to manage the cpu
+> clock for Armada 7K/8K. For these SoCs, the CPUs share the same clock
+> by cluster, so actually the clock management is done at cluster level.
+>
+> As for the other Armada 7K/8K clocks it is possible to have multiple
+> AP so here again we need to have unique name: the purpose of the second
+> patch is to share a common code which will be used in 3 drivers.
+>
+> The last 2 patch enable the driver at dt and platform level and will
+> be applied through the mvebu subsystem.
 
-In case you are feeling strong about that, I'm not. :-) So in case
-you insist on it I can change it. Or you can do so while committing.
+What is the status of this series?
 
+The only comments I had was from Rob about the binding and I answered
+them 3 weeks ago. Do you have any other comments? Do you expect a rebase
+of this series on v5.0-rc1?
 
-Juergen
+Thanks,
 
+Gregory
+
+>
+> Changelog v2->v3:
+>  - Add back the first patch documenting the binding
+>
+> Changelog v1->v2:
+>  - Header cleanup
+>  - Use unsigned int instead of it for cluster member of the ap_cpu_clk struct
+>  - Use clk_hw instead of clk
+>  - Use regmap_read_poll_timeout
+>  - Use for_each_of_cpu_node
+>  - Remove unnecessary WARN_ON()
+>  - Remove headers from armada_ap_cp_helper.h
+>  - Few other minor cleanup
+>
+> Gregory CLEMENT (6):
+>   dt-bindings: ap806: add the cluster clock node in the syscon file
+>   clk: mvebu: add helper file for Armada AP and CP clocks
+>   clk: mvebu: add CPU clock driver for Armada 7K/8K
+>   clk: mvebu: ap806: Fix clock name for the cluster
+>   arm64: marvell: enable the  Armada 7K/8K CPU clk driver
+>   arm64: dts: marvell: Add cpu clock node on Armada 7K/8K
+>
+>  .../arm/marvell/ap806-system-controller.txt   |  22 ++
+>  arch/arm64/Kconfig.platforms                  |   1 +
+>  .../boot/dts/marvell/armada-ap806-quad.dtsi   |   4 +
+>  arch/arm64/boot/dts/marvell/armada-ap806.dtsi |   6 +
+>  drivers/clk/mvebu/Kconfig                     |   8 +
+>  drivers/clk/mvebu/Makefile                    |   2 +
+>  drivers/clk/mvebu/ap-cpu-clk.c                | 259 ++++++++++++++++++
+>  drivers/clk/mvebu/ap806-system-controller.c   |  24 +-
+>  drivers/clk/mvebu/armada_ap_cp_helper.c       |  30 ++
+>  drivers/clk/mvebu/armada_ap_cp_helper.h       |  11 +
+>  drivers/clk/mvebu/cp110-system-controller.c   |  32 +--
+>  11 files changed, 357 insertions(+), 42 deletions(-)
+>  create mode 100644 drivers/clk/mvebu/ap-cpu-clk.c
+>  create mode 100644 drivers/clk/mvebu/armada_ap_cp_helper.c
+>  create mode 100644 drivers/clk/mvebu/armada_ap_cp_helper.h
+>
+> -- 
+> 2.19.2
+>
+
+-- 
+Gregory Clement, Bootlin
+Embedded Linux and Kernel engineering
+http://bootlin.com
