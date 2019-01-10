@@ -2,218 +2,470 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4796C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 12:47:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F382C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 12:48:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71065214C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 12:47:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CC67421773
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 12:48:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="fxaz70yY";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="PHSYaCYb"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728649AbfAJMrg (ORCPT
+        id S1728682AbfAJMsS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 07:47:36 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:56920 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727704AbfAJMrg (ORCPT
+        Thu, 10 Jan 2019 07:48:18 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:50816 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727704AbfAJMsR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 07:47:36 -0500
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x0ACctkc130400
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 07:47:35 -0500
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2px4m3cpy6-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 07:47:34 -0500
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <pmorel@linux.ibm.com>;
-        Thu, 10 Jan 2019 12:47:33 -0000
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 10 Jan 2019 12:47:29 -0000
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0AClSx53015034
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 10 Jan 2019 12:47:28 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4825EA4067;
-        Thu, 10 Jan 2019 12:47:28 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0C074A4054;
-        Thu, 10 Jan 2019 12:47:28 +0000 (GMT)
-Received: from [9.152.224.140] (unknown [9.152.224.140])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu, 10 Jan 2019 12:47:27 +0000 (GMT)
-Reply-To: pmorel@linux.ibm.com
-Subject: Re: [PATCH v1 1/2] vfio:iommu: Use capabilities do report IOMMU
- informations
-To:     Alex Williamson <alex.williamson@redhat.com>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        walling@linux.ibm.com, cohuck@redhat.com, david@redhat.com,
-        pasic@linux.ibm.com, thuth@redhat.com,
-        Shameerali Kolothum Thodi 
-        <shameerali.kolothum.thodi@huawei.com>
-References: <1547037714-21592-1-git-send-email-pmorel@linux.ibm.com>
- <1547037714-21592-2-git-send-email-pmorel@linux.ibm.com>
- <20190109083708.1d39234d@x1.home>
- <bd36cddc-cce1-adc1-cab8-d6df2089e931@linux.ibm.com>
- <20190109124337.3e85395e@x1.home>
-From:   Pierre Morel <pmorel@linux.ibm.com>
-Date:   Thu, 10 Jan 2019 13:47:27 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 10 Jan 2019 07:48:17 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id E2D67601DA; Thu, 10 Jan 2019 12:48:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1547124496;
+        bh=j00q9Unbxv4FYnVyCluRYvVPZu2KFLBOsstIt9cOuyY=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=fxaz70yYdFZzS7J50tIKjd0ATakVR9X6IMsqNzX1P1N2pccYlTJvGI7ztmcK1yFmd
+         QT2B7lesocYM80+MHP0lJfqPu3WeQXEFR2zM9+I6W1YbJdSosA2CHMBmV1MVocEqdA
+         A2I/rWzePm9meSE7GUH0WNEe7436b8LY7uAtzr+8=
+Received: from [10.206.24.236] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: aneela@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id F14AF601DA;
+        Thu, 10 Jan 2019 12:48:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1547124495;
+        bh=j00q9Unbxv4FYnVyCluRYvVPZu2KFLBOsstIt9cOuyY=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=PHSYaCYbBdZAEpIlLSOODF3KuuVhebqV3MLxXj08FCZLoRO0xQH4ezsQZX5NlNSg3
+         s9JG7iWk/hAhKw5wZaLY9Pu+tPfDhKiCI3B+/7X4RBAgh+l8hKfx8lHGlMsBGAokYN
+         wvkM1cBjEKOO+BCf1+mv0Oh82+MPkkGpRFMjrFEM=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org F14AF601DA
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=aneela@codeaurora.org
+Subject: Re: [PATCH v2 2/7] soc: qcom: Add AOSS QMP communication driver
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     Russell King <linux@armlinux.org.uk>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20190106080915.4493-1-bjorn.andersson@linaro.org>
+ <20190106080915.4493-3-bjorn.andersson@linaro.org>
+From:   Arun Kumar Neelakantam <aneela@codeaurora.org>
+Message-ID: <a162251c-bd84-356f-0f96-c733d775639d@codeaurora.org>
+Date:   Thu, 10 Jan 2019 18:18:09 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <20190109124337.3e85395e@x1.home>
+In-Reply-To: <20190106080915.4493-3-bjorn.andersson@linaro.org>
 Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19011012-0008-0000-0000-000002AEEB7F
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19011012-0009-0000-0000-0000221AF1B1
-Message-Id: <891c8f2e-5ac4-e423-d8aa-831fb0c9e97b@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-10_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901100104
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/01/2019 20:43, Alex Williamson wrote:
-> On Wed, 9 Jan 2019 18:07:19 +0100
-> Pierre Morel <pmorel@linux.ibm.com> wrote:
-> 
->> On 09/01/2019 16:37, Alex Williamson wrote:
->>> On Wed,  9 Jan 2019 13:41:53 +0100
->>> Pierre Morel <pmorel@linux.ibm.com> wrote:
->>>    
->>>> We add a new flag, VFIO_IOMMU_INFO_CAPABILITIES, inside the
->>>> vfio_iommu_type1_info to specify the support for capabilities.
->>>>
->>>> We add a new capability, with id VFIO_IOMMU_INFO_CAP_DMA
->>>> in the capability list of the VFIO_IOMMU_GET_INFO ioctl.
->>>>
->>>> Signed-off-by: Pierre Morel <pmorel@linux.ibm.com>
->>>> ---
->>>>    include/uapi/linux/vfio.h | 9 +++++++++
->>>>    1 file changed, 9 insertions(+)
->>>>
->>>> diff --git a/include/uapi/linux/vfio.h b/include/uapi/linux/vfio.h
->>>> index 8131028..54c4fcb 100644
->>>> --- a/include/uapi/linux/vfio.h
->>>> +++ b/include/uapi/linux/vfio.h
->>>> @@ -669,6 +669,15 @@ struct vfio_iommu_type1_info {
->>>>    	__u32	flags;
->>>>    #define VFIO_IOMMU_INFO_PGSIZES (1 << 0)	/* supported page sizes info */
->>>>    	__u64	iova_pgsizes;		/* Bitmap of supported page sizes */
->>>> +#define VFIO_IOMMU_INFO_CAPABILITIES (1 << 1)  /* support capabilities info */
->>>> +	__u64   cap_offset;     /* Offset within info struct of first cap */
->>>> +};
->>>> +
->>>> +#define VFIO_IOMMU_INFO_CAP_DMA 1
->>>> +struct vfio_iommu_cap_dma {
->>>> +	struct vfio_info_cap_header header;
->>>> +	__u64   dma_start;
->>>> +	__u64   dma_end;
->>>>    };
->>>>    
->>>>    #define VFIO_IOMMU_GET_INFO _IO(VFIO_TYPE, VFIO_BASE + 12)
->>>
->>> Unfortunately for most systems, a simple start and end is not really
->>> sufficient to describe the available IOVA space, there are often
->>> reserved regions intermixed, so this is not really a complete
->>> solution.  Shameer tried to solve this last year[1] but we ran into a
->>> road block that Intel IGD devices impose a reserved range of IOVA
->>> spaces reported to the user that conflict with existing assignment of
->>> this device and we haven't figured out yet how to be more selective of
->>> the enforcement of those reserved ranges.  Thanks,
->>>
->>> Alex
->>>
->>> [1] https://lkml.org/lkml/2018/4/18/293
->>>    
->>
->> I understand that some architecture may be more complex and have special
->> needs.
->> However the IOMMU geometry is a constant for all IOMMU devices and
->> is reported by the geometry in the iommu operations.
->>
->> This makes the IOMMU geometry a special case.
-> 
-> I'm not so sure that the geometry is a constant for all IOMMU devices,
 
-Sorry, I did not express myself correctly, what I mean is that the IOMMU 
-geometry is independent of the system memory map but is a constant of 
-the IOMMU device.
-May be different for another IOMMU device, as we can have several 
-different IOMMU device, typically one per PCI device, in the Z architecture.
-
-> nor am I sure how if that were true and it's part of an in-kernel
-> interface that it automatically qualifies it as the right way to expose
-> it to userspace.  The fact that we have a reserved region interface to
-> augment a basic contiguous range suggests it's known to be insufficient
-> even for in-kernel use.
-> 
->> It is also a special case because it is an inclusive description of
->> available memory, to oppose to the exclusive description given by the
->> windows.
-> 
-> Geometry doesn't really have anything to do with available memory, it's
-> the minimum and maximum IOVA aperture.  Shameer's proposal gave us an
-> IOVA list, which is based on the IOMMU geometry, from which it excludes
-> various reserved ranges.  So if you have a less complex architecture,
-> you might only have one entry in the list, which gives you the start
-> and end of the base geometry.  Move complex architectures might have
-> more entries, but the geometry can still be deduced from the absolute
-> highest and lowest addresses within the list.  Therefore a basic
-> geometry capability is automatically redundant to the interface that's
-> already been proposed.
-> 
->> Isn't it possible to separate the IOMMU geometry, which is really
->> related to the IOMMU chip, from other windows exclusion related to the
->> system memory mapping?
-> 
-> Why would we ever have both given the description above?
-
-My idea for this is based on that restrictions are comming from two 
-different address spaces:
-- One address space is the device view before IOMMU (aperture)
-- The other is the physical system view (reserved windows)
-
-which, I thought, makes things difficult to merge.
-However reading you and Shameer and the pointers you both sent, I 
-understand that there are much more for me to learn, especially about 
-other architectures (Intel / RMRR)
-
-> 
->> Retrieving the IOMMU geometry is very important for us because the
->> driver inside the guest must get it and program the IOMMU based on these
->> values.
-> 
-> So you have motivation to help move the IOVA list proposal forward,
-> or some equally inclusive proposal that isn't just a stop-gap ;)
-> Thanks,
-> 
-> Alex
-> 
-
-I will be happy to help.
-I will need some time to catch up however.
-Thanks for your comments.
-
-Regards,
-Pierre
-
--- 
-Pierre Morel
-Linux/KVM/QEMU in Böblingen - Germany
-
+On 1/6/2019 1:39 PM, Bjorn Andersson wrote:
+> The AOSS QMP driver is used to communicate with the AOSS for certain
+> side-channel requests, that are not enabled through the RPMh interface.
+>
+> The communication is a very simple synchronous mechanism of messages
+> being written in message RAM and a doorbell in the AOSS is rung. As the
+> AOSS has processed the message length is cleared and an interrupt is
+> fired by the AOSS as acknowledgment.
+>
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> ---
+Reviewed-by: Arun Kumar Neelakantam <aneela@codeaurora.org>
+> Changes since v1:
+> - Skip check in send for empty TX buffer
+> - Don't follow WARN_ON() with dev_err()
+> - Register platform_device rather than populate based on of-children
+>
+>   drivers/soc/qcom/Kconfig          |   9 +
+>   drivers/soc/qcom/Makefile         |   1 +
+>   drivers/soc/qcom/aoss-qmp.c       | 313 ++++++++++++++++++++++++++++++
+>   include/linux/soc/qcom/aoss-qmp.h |  12 ++
+>   4 files changed, 335 insertions(+)
+>   create mode 100644 drivers/soc/qcom/aoss-qmp.c
+>   create mode 100644 include/linux/soc/qcom/aoss-qmp.h
+>
+> diff --git a/drivers/soc/qcom/Kconfig b/drivers/soc/qcom/Kconfig
+> index a51458022d21..dda19471057f 100644
+> --- a/drivers/soc/qcom/Kconfig
+> +++ b/drivers/soc/qcom/Kconfig
+> @@ -3,6 +3,15 @@
+>   #
+>   menu "Qualcomm SoC drivers"
+>   
+> +config QCOM_AOSS_QMP
+> +	tristate "Qualcomm AOSS Messaging Driver"
+> +	depends on ARCH_QCOM || COMPILE_TEST
+> +	depends on MAILBOX
+> +	help
+> +	  This driver provides the means for communicating with the
+> +	  micro-controller in the AOSS, using QMP, to control certain resource
+> +	  that are not exposed through RPMh.
+> +
+>   config QCOM_COMMAND_DB
+>   	bool "Qualcomm Command DB"
+>   	depends on ARCH_QCOM || COMPILE_TEST
+> diff --git a/drivers/soc/qcom/Makefile b/drivers/soc/qcom/Makefile
+> index 67cb85d0373c..d0d7fdc94d9a 100644
+> --- a/drivers/soc/qcom/Makefile
+> +++ b/drivers/soc/qcom/Makefile
+> @@ -1,5 +1,6 @@
+>   # SPDX-License-Identifier: GPL-2.0
+>   CFLAGS_rpmh-rsc.o := -I$(src)
+> +obj-$(CONFIG_QCOM_AOSS_QMP) +=	aoss-qmp.o
+>   obj-$(CONFIG_QCOM_GENI_SE) +=	qcom-geni-se.o
+>   obj-$(CONFIG_QCOM_COMMAND_DB) += cmd-db.o
+>   obj-$(CONFIG_QCOM_GLINK_SSR) +=	glink_ssr.o
+> diff --git a/drivers/soc/qcom/aoss-qmp.c b/drivers/soc/qcom/aoss-qmp.c
+> new file mode 100644
+> index 000000000000..de52703b96b6
+> --- /dev/null
+> +++ b/drivers/soc/qcom/aoss-qmp.c
+> @@ -0,0 +1,313 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (c) 2018, Linaro Ltd
+> + */
+> +#include <linux/interrupt.h>
+> +#include <linux/io.h>
+> +#include <linux/mailbox_client.h>
+> +#include <linux/module.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/soc/qcom/aoss-qmp.h>
+> +
+> +#define QMP_DESC_MAGIC			0x0
+> +#define QMP_DESC_VERSION		0x4
+> +#define QMP_DESC_FEATURES		0x8
+> +
+> +#define QMP_DESC_UCORE_LINK_STATE	0xc
+> +#define QMP_DESC_UCORE_LINK_STATE_ACK	0x10
+> +#define QMP_DESC_UCORE_CH_STATE		0x14
+> +#define QMP_DESC_UCORE_CH_STATE_ACK	0x18
+> +#define QMP_DESC_UCORE_MBOX_SIZE	0x1c
+> +#define QMP_DESC_UCORE_MBOX_OFFSET	0x20
+> +
+> +#define QMP_DESC_MCORE_LINK_STATE	0x24
+> +#define QMP_DESC_MCORE_LINK_STATE_ACK	0x28
+> +#define QMP_DESC_MCORE_CH_STATE		0x2c
+> +#define QMP_DESC_MCORE_CH_STATE_ACK	0x30
+> +#define QMP_DESC_MCORE_MBOX_SIZE	0x34
+> +#define QMP_DESC_MCORE_MBOX_OFFSET	0x38
+> +
+> +#define QMP_STATE_UP	0x0000ffff
+> +#define QMP_STATE_DOWN	0xffff0000
+> +
+> +#define QMP_MAGIC	0x4d41494c
+> +#define QMP_VERSION	1
+> +
+> +/**
+> + * struct qmp - driver state for QMP implementation
+> + * @msgram: iomem referencing the message RAM used for communication
+> + * @dev: reference to QMP device
+> + * @mbox_client: mailbox client used to ring the doorbell on transmit
+> + * @mbox_chan: mailbox channel used to ring the doorbell on transmit
+> + * @offset: offset within @msgram where messages should be written
+> + * @size: maximum size of the messages to be transmitted
+> + * @event: wait_queue for synchronization with the IRQ
+> + * @tx_lock: provides syncrhonization between multiple callers of qmp_send()
+> + * @pd_pdev: platform device for the power-domain child device
+> + */
+> +struct qmp {
+> +	void __iomem *msgram;
+> +	struct device *dev;
+> +
+> +	struct mbox_client mbox_client;
+> +	struct mbox_chan *mbox_chan;
+> +
+> +	size_t offset;
+> +	size_t size;
+> +
+> +	wait_queue_head_t event;
+> +
+> +	struct mutex tx_lock;
+> +
+> +	struct platform_device *pd_pdev;
+> +};
+> +
+> +static void qmp_kick(struct qmp *qmp)
+> +{
+> +	mbox_send_message(qmp->mbox_chan, NULL);
+> +	mbox_client_txdone(qmp->mbox_chan, 0);
+> +}
+> +
+> +static bool qmp_magic_valid(struct qmp *qmp)
+> +{
+> +	return readl(qmp->msgram + QMP_DESC_MAGIC) == QMP_MAGIC;
+> +}
+> +
+> +static bool qmp_link_acked(struct qmp *qmp)
+> +{
+> +	return readl(qmp->msgram + QMP_DESC_MCORE_LINK_STATE_ACK) == QMP_STATE_UP;
+> +}
+> +
+> +static bool qmp_mcore_channel_acked(struct qmp *qmp)
+> +{
+> +	return readl(qmp->msgram + QMP_DESC_MCORE_CH_STATE_ACK) == QMP_STATE_UP;
+> +}
+> +
+> +static bool qmp_ucore_channel_up(struct qmp *qmp)
+> +{
+> +	return readl(qmp->msgram + QMP_DESC_UCORE_CH_STATE) == QMP_STATE_UP;
+> +}
+> +
+> +static int qmp_open(struct qmp *qmp)
+> +{
+> +	int ret;
+> +	u32 val;
+> +
+> +	ret = wait_event_timeout(qmp->event, qmp_magic_valid(qmp), HZ);
+> +	if (!ret) {
+> +		dev_err(qmp->dev, "QMP magic doesn't match\n");
+> +		return -ETIMEDOUT;
+> +	}
+> +
+> +	val = readl(qmp->msgram + QMP_DESC_VERSION);
+> +	if (val != QMP_VERSION) {
+> +		dev_err(qmp->dev, "unsupported QMP version %d\n", val);
+> +		return -EINVAL;
+> +	}
+> +
+> +	qmp->offset = readl(qmp->msgram + QMP_DESC_MCORE_MBOX_OFFSET);
+> +	qmp->size = readl(qmp->msgram + QMP_DESC_MCORE_MBOX_SIZE);
+> +	if (!qmp->size) {
+> +		dev_err(qmp->dev, "invalid mailbox size 0x%zx\n", qmp->size);
+> +		return -EINVAL;
+> +	}
+> +
+> +	/* Ack remote core's link state */
+> +	val = readl(qmp->msgram + QMP_DESC_UCORE_LINK_STATE);
+> +	writel(val, qmp->msgram + QMP_DESC_UCORE_LINK_STATE_ACK);
+> +
+> +	/* Set local core's link state to up */
+> +	writel(QMP_STATE_UP, qmp->msgram + QMP_DESC_MCORE_LINK_STATE);
+> +
+> +	qmp_kick(qmp);
+> +
+> +	ret = wait_event_timeout(qmp->event, qmp_link_acked(qmp), HZ);
+> +	if (!ret) {
+> +		dev_err(qmp->dev, "ucore didn't ack link\n");
+> +		goto timeout_close_link;
+> +	}
+> +
+> +	writel(QMP_STATE_UP, qmp->msgram + QMP_DESC_MCORE_CH_STATE);
+> +
+> +	ret = wait_event_timeout(qmp->event, qmp_ucore_channel_up(qmp), HZ);
+> +	if (!ret) {
+> +		dev_err(qmp->dev, "ucore didn't open channel\n");
+> +		goto timeout_close_channel;
+> +	}
+> +
+> +	/* Ack remote core's channel state */
+> +	val = readl(qmp->msgram + QMP_DESC_UCORE_CH_STATE);
+> +	writel(val, qmp->msgram + QMP_DESC_UCORE_CH_STATE_ACK);
+> +
+> +	qmp_kick(qmp);
+> +
+> +	ret = wait_event_timeout(qmp->event, qmp_mcore_channel_acked(qmp), HZ);
+> +	if (!ret) {
+> +		dev_err(qmp->dev, "ucore didn't ack channel\n");
+> +		goto timeout_close_channel;
+> +	}
+> +
+> +	return 0;
+> +
+> +timeout_close_channel:
+> +	writel(QMP_STATE_DOWN, qmp->msgram + QMP_DESC_MCORE_CH_STATE);
+> +
+> +timeout_close_link:
+> +	writel(QMP_STATE_DOWN, qmp->msgram + QMP_DESC_MCORE_LINK_STATE);
+> +	qmp_kick(qmp);
+> +
+> +	return -ETIMEDOUT;
+> +}
+> +
+> +static void qmp_close(struct qmp *qmp)
+> +{
+> +	writel(QMP_STATE_DOWN, qmp->msgram + QMP_DESC_MCORE_CH_STATE);
+> +	writel(QMP_STATE_DOWN, qmp->msgram + QMP_DESC_MCORE_LINK_STATE);
+> +	qmp_kick(qmp);
+> +}
+> +
+> +static irqreturn_t qmp_intr(int irq, void *data)
+> +{
+> +	struct qmp *qmp = data;
+> +
+> +	wake_up_interruptible_all(&qmp->event);
+> +
+> +	return IRQ_HANDLED;
+> +}
+> +
+> +static bool qmp_message_empty(struct qmp *qmp)
+> +{
+> +	return readl(qmp->msgram + qmp->offset) == 0;
+> +}
+> +
+> +/**
+> + * qmp_send() - send a message to the AOSS
+> + * @qmp: qmp context
+> + * @data: message to be sent
+> + * @len: length of the message
+> + *
+> + * Transmit @data to AOSS and wait for the AOSS to acknowledge the message.
+> + * @len must be a multiple of 4 and not longer than the mailbox size. Access is
+> + * synchronized by this implementation.
+> + *
+> + * Return: 0 on success, negative errno on failure
+> + */
+> +int qmp_send(struct qmp *qmp, const void *data, size_t len)
+> +{
+> +	int ret;
+> +
+> +	if (WARN_ON(len + sizeof(u32) > qmp->size))
+> +		return -EINVAL;
+> +
+> +	if (WARN_ON(len % sizeof(u32)))
+> +		return -EINVAL;
+> +
+> +	mutex_lock(&qmp->tx_lock);
+> +
+> +	/* The message RAM only implements 32-bit accesses */
+> +	__iowrite32_copy(qmp->msgram + qmp->offset + sizeof(u32),
+> +			 data, len / sizeof(u32));
+> +	writel(len, qmp->msgram + qmp->offset);
+> +	qmp_kick(qmp);
+> +
+> +	ret = wait_event_interruptible_timeout(qmp->event,
+> +					       qmp_message_empty(qmp), HZ);
+> +	if (!ret) {
+> +		dev_err(qmp->dev, "ucore did not ack channel\n");
+> +		ret = -ETIMEDOUT;
+> +
+> +		/* Clear message from buffer */
+> +		writel(0, qmp->msgram + qmp->offset);
+> +	} else {
+> +		ret = 0;
+> +	}
+> +
+> +	mutex_unlock(&qmp->tx_lock);
+> +
+> +	return ret;
+> +}
+> +EXPORT_SYMBOL(qmp_send);
+> +
+> +static int qmp_probe(struct platform_device *pdev)
+> +{
+> +	struct resource *res;
+> +	struct qmp *qmp;
+> +	int irq;
+> +	int ret;
+> +
+> +	qmp = devm_kzalloc(&pdev->dev, sizeof(*qmp), GFP_KERNEL);
+> +	if (!qmp)
+> +		return -ENOMEM;
+> +
+> +	qmp->dev = &pdev->dev;
+> +	init_waitqueue_head(&qmp->event);
+> +	mutex_init(&qmp->tx_lock);
+> +
+> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +	qmp->msgram = devm_ioremap_resource(&pdev->dev, res);
+> +	if (IS_ERR(qmp->msgram))
+> +		return PTR_ERR(qmp->msgram);
+> +
+> +	qmp->mbox_client.dev = &pdev->dev;
+> +	qmp->mbox_client.knows_txdone = true;
+> +	qmp->mbox_chan = mbox_request_channel(&qmp->mbox_client, 0);
+> +	if (IS_ERR(qmp->mbox_chan)) {
+> +		dev_err(&pdev->dev, "failed to acquire ipc mailbox\n");
+> +		return PTR_ERR(qmp->mbox_chan);
+> +	}
+> +
+> +	irq = platform_get_irq(pdev, 0);
+> +	ret = devm_request_irq(&pdev->dev, irq, qmp_intr, IRQF_ONESHOT,
+> +			       "aoss-qmp", qmp);
+> +	if (ret < 0) {
+> +		dev_err(&pdev->dev, "failed to request interrupt\n");
+> +		return ret;
+> +	}
+> +
+> +	ret = qmp_open(qmp);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	platform_set_drvdata(pdev, qmp);
+> +
+> +	if (of_property_read_bool(pdev->dev.of_node, "#power-domain-cells")) {
+> +		qmp->pd_pdev = platform_device_register_data(&pdev->dev,
+> +							     "aoss_qmp_pd",
+> +							     PLATFORM_DEVID_NONE,
+> +							     NULL, 0);
+> +		if (IS_ERR(qmp->pd_pdev))
+> +			dev_err(&pdev->dev, "failed to register AOSS PD\n");
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int qmp_remove(struct platform_device *pdev)
+> +{
+> +	struct qmp *qmp = platform_get_drvdata(pdev);
+> +
+> +	platform_device_unregister(qmp->pd_pdev);
+> +
+> +	qmp_close(qmp);
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct of_device_id qmp_dt_match[] = {
+> +	{ .compatible = "qcom,sdm845-aoss-qmp", },
+> +	{}
+> +};
+> +MODULE_DEVICE_TABLE(of, qmp_dt_match);
+> +
+> +static struct platform_driver qmp_driver = {
+> +	.driver = {
+> +		.name		= "aoss_qmp",
+> +		.of_match_table	= qmp_dt_match,
+> +	},
+> +	.probe = qmp_probe,
+> +	.remove	= qmp_remove,
+> +};
+> +module_platform_driver(qmp_driver);
+> +
+> +MODULE_DESCRIPTION("Qualcomm AOSS QMP driver");
+> +MODULE_LICENSE("GPL v2");
+> diff --git a/include/linux/soc/qcom/aoss-qmp.h b/include/linux/soc/qcom/aoss-qmp.h
+> new file mode 100644
+> index 000000000000..32ccaa091a9f
+> --- /dev/null
+> +++ b/include/linux/soc/qcom/aoss-qmp.h
+> @@ -0,0 +1,12 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * Copyright (c) 2018, Linaro Ltd
+> + */
+> +#ifndef __AOP_QMP_H__
+> +#define __AOP_QMP_H__
+> +
+> +struct qmp;
+> +
+> +int qmp_send(struct qmp *qmp, const void *data, size_t len);
+> +
+> +#endif
