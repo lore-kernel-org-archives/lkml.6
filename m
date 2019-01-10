@@ -2,91 +2,134 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9FE5C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 20:12:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E2CAC43612
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 20:12:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC793208E3
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 20:12:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="PWZxMT4P"
+	by mail.kernel.org (Postfix) with ESMTP id 47D94206B7
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 20:12:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730130AbfAJUMX (ORCPT
+        id S1730156AbfAJUMZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 15:12:23 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:37068 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730100AbfAJUMX (ORCPT
+        Thu, 10 Jan 2019 15:12:25 -0500
+Received: from gateway22.websitewelcome.com ([192.185.47.144]:28381 "EHLO
+        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730128AbfAJUMY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 15:12:23 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=wbiickOP40LLH/UtEwMrQ5X8VYvNhXyQgFfwQqT2dyk=; b=PWZxMT4PLIbMhVxjo+l21VEd7
-        cbyXXlnYEAfEA1K2HNTPKo+7qkSyld3AUMc3TLzlcUDetQ/B9g6HC4MCS4VwFqyhhDLfP40L7c6fV
-        uDdP20Z/DtI0LgrEuQoXpiaK1BN1KqkGAKvAfkGLE18SZen4/dGLVyGhXXiVBnLlPFoe43FRQQhYy
-        TcBlAyS2M/FqIAO8QBR81+mw80TleVHrcgm1NrIwlGhAC3KTyqzOSTuCBCXR3F7+/2TpJgUnIm64d
-        t++gBDylqPLVvU5OiV4L/sn9uj/F5tSZG2y3DtofZq9qKIoTJcbflfPzwL8o6YXZ+Zwe7RIJcYpzv
-        UCsPZKj2w==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=worktop.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1ghgge-0003Bz-1z; Thu, 10 Jan 2019 20:12:20 +0000
-Received: by worktop.programming.kicks-ass.net (Postfix, from userid 1000)
-        id C07FF9844AF; Thu, 10 Jan 2019 21:12:17 +0100 (CET)
-Date:   Thu, 10 Jan 2019 21:12:17 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     James Morse <james.morse@arm.com>
-Cc:     Waiman Long <longman@redhat.com>,
-        Zhenzhong Duan <zhenzhong.duan@oracle.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        SRINIVAS <srinivas.eeda@oracle.com>
-Subject: Re: Question about qspinlock nest
-Message-ID: <20190110201217.GH2861@worktop.programming.kicks-ass.net>
-References: <e784a592-5dec-b0b3-6c70-d9ef775621d5@oracle.com>
- <910e9fb6-d0df-4711-fe2b-244b3c20eb82@redhat.com>
- <d06126a1-1db8-f937-2084-2c1234b6f56f@arm.com>
+        Thu, 10 Jan 2019 15:12:24 -0500
+Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
+        by gateway22.websitewelcome.com (Postfix) with ESMTP id A4337A93C
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 14:12:23 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id hgghg78RjYTGMhgghgsAcD; Thu, 10 Jan 2019 14:12:23 -0600
+X-Authority-Reason: nr=8
+Received: from [189.250.130.205] (port=41286 helo=[192.168.43.131])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1ghggh-002efX-1F; Thu, 10 Jan 2019 14:12:23 -0600
+Subject: Re: [PATCH 10/41] scsi: bfa: bfa_fcs_lport: Mark expected switch
+ fall-throughs
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Anil Gurumurthy <anil.gurumurthy@qlogic.com>,
+        Sudarsana Kalluru <sudarsana.kalluru@qlogic.com>
+Cc:     "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <cover.1543374820.git.gustavo@embeddedor.com>
+ <5cc329185c0b92f3aad001fc1afa54996a2c1112.1543374820.git.gustavo@embeddedor.com>
+ <a2a4fd41-d231-4d72-a95e-e1109c209f94@embeddedor.com>
+Message-ID: <fad1ad2c-1004-6064-931a-6c898ba00915@embeddedor.com>
+Date:   Thu, 10 Jan 2019 14:12:20 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d06126a1-1db8-f937-2084-2c1234b6f56f@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <a2a4fd41-d231-4d72-a95e-e1109c209f94@embeddedor.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.130.205
+X-Source-L: No
+X-Exim-ID: 1ghggh-002efX-1F
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.43.131]) [189.250.130.205]:41286
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 61
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 10, 2019 at 06:25:57PM +0000, James Morse wrote:
+Hi,
 
-> On arm64 if all the RAS and psuedo-NMI patches land, our worst-case interleaving
-> jumps to at least 7. The culprit is APEI using spinlocks to protect fixmap slots.
-> 
-> I have an RFC to bump the number of node bits from 2 to 3, but as this is APEI
-> four times, it may be preferable to make it use something other than spinlocks.
-> 
-> 
-> The worst-case order is below. Each one masks those before it:
-> 1. process context
-> 2. soft-irq
-> 3. hard-irq
-> 4. psuedo-nmi [0]
->    - using the irqchip priorities to configure some IRQs as NMI.
-> 5. SError [1]
->    - a bit like an asynchronous MCE. ACPI allows this to convey CPER records,
->      requiring an APEI call.
-> 6&7. SDEI [2]
->      - a firmware triggered software interrupt, only its two of them, either of
->        which could convey CPER records.
-> 8. Synchronous external abort
->    - again, similar to MCE. There are systems using this with APEI.
+Friendly ping (second one):
 
-The thing is, everything non-maskable (NMI like) really should not be
-using spinlocks at all.
+Who can ack/review/take this patch, please?
 
-I otherwise have no clue about wth APEI is, but it sounds like horrible
-crap ;-)
+Thanks
+--
+Gustavo
+
+On 12/19/18 9:39 AM, Gustavo A. R. Silva wrote:
+> Hi,
+> 
+> Friendly ping:
+> 
+> Who can ack or review this patch, please?
+> 
+> Thanks
+> -- 
+> Gustavo
+> 
+> On 11/27/18 10:27 PM, Gustavo A. R. Silva wrote:
+>> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
+>> where we are expecting to fall through.
+>>
+>> Notice that, in this particular case, I replaced "!!! fall through !!!"
+>> with a "fall through" annotation, which is what GCC is expecting to
+>> find.
+>>
+>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+>> ---
+>>   drivers/scsi/bfa/bfa_fcs_lport.c | 8 ++------
+>>   1 file changed, 2 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/drivers/scsi/bfa/bfa_fcs_lport.c b/drivers/scsi/bfa/bfa_fcs_lport.c
+>> index b4f2c1d8742e..646f09f66443 100644
+>> --- a/drivers/scsi/bfa/bfa_fcs_lport.c
+>> +++ b/drivers/scsi/bfa/bfa_fcs_lport.c
+>> @@ -6430,9 +6430,7 @@ bfa_fcs_vport_sm_logo_for_stop(struct bfa_fcs_vport_s *vport,
+>>       switch (event) {
+>>       case BFA_FCS_VPORT_SM_OFFLINE:
+>>           bfa_sm_send_event(vport->lps, BFA_LPS_SM_OFFLINE);
+>> -        /*
+>> -         * !!! fall through !!!
+>> -         */
+>> +        /* fall through */
+>>       case BFA_FCS_VPORT_SM_RSP_OK:
+>>       case BFA_FCS_VPORT_SM_RSP_ERROR:
+>> @@ -6458,9 +6456,7 @@ bfa_fcs_vport_sm_logo(struct bfa_fcs_vport_s *vport,
+>>       switch (event) {
+>>       case BFA_FCS_VPORT_SM_OFFLINE:
+>>           bfa_sm_send_event(vport->lps, BFA_LPS_SM_OFFLINE);
+>> -        /*
+>> -         * !!! fall through !!!
+>> -         */
+>> +        /* fall through */
+>>       case BFA_FCS_VPORT_SM_RSP_OK:
+>>       case BFA_FCS_VPORT_SM_RSP_ERROR:
+>>
