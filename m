@@ -2,156 +2,107 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35109C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 17:42:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E79EC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 17:42:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0574A21783
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 17:42:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547142125;
-	bh=DcwRp4geh15gjmpDaSUBHFzXU/i/OwLPXS3EmX1LQwA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=jYzPc5xpnUaKqOe4g132uHV0RxdahXhBFILnU2Y4GDfOZCEEBygOHS/E1QDVTGV/9
-	 SJ7nJQQuXui/YEi6K64CO/O623ZciNEdvMHP+0ojsn2DrbffTnZvAE5FJ/4H+h+TI+
-	 uVGoxUfImRqnp1/Snjt9QzyGryrL3GbMMfSwvRGI=
+	by mail.kernel.org (Postfix) with ESMTP id 5B6A4208E3
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 17:42:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730521AbfAJRmE (ORCPT
+        id S1730577AbfAJRmG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 12:42:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51732 "EHLO mail.kernel.org"
+        Thu, 10 Jan 2019 12:42:06 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:40530 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729890AbfAJRmD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 12:42:03 -0500
-Received: from earth.universe (host-091-097-085-127.ewe-ip-backbone.de [91.97.85.127])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1730497AbfAJRmE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 12:42:04 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8761420685;
-        Thu, 10 Jan 2019 17:42:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547142122;
-        bh=DcwRp4geh15gjmpDaSUBHFzXU/i/OwLPXS3EmX1LQwA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=z0YfJeTBkQ+A3FTSuWLZgZR3/fp5HLmoKRkcyt66p/2ojMri9B+3ZadNAqD8jqByw
-         UH79eALqI+bofOzbJ8x5bn0LdYrWD+F/oD6k/qDYWywHDVXWnUiSw2ACm/yK2l57kH
-         vE7bVgnMM3RfTc4d8/MH8XPtb2s71I9utdz8gNCM=
-Received: by earth.universe (Postfix, from userid 1000)
-        id 973C33C08E2; Thu, 10 Jan 2019 18:42:00 +0100 (CET)
-Date:   Thu, 10 Jan 2019 18:42:00 +0100
-From:   Sebastian Reichel <sre@kernel.org>
-To:     Pavel Machek <pavel@ucw.cz>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Marcel Holtmann <marcel@holtmann.org>,
-        Tony Lindgren <tony@atomide.com>,
-        Rob Herring <robh@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-bluetooth@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 00/14] Add support for FM radio in hcill and kill TI_ST
-Message-ID: <20190110174200.dtabgkcsvci7ptf5@earth.universe>
-References: <20181221011752.25627-1-sre@kernel.org>
- <20181222200827.GC15237@amd>
+        by mx1.redhat.com (Postfix) with ESMTPS id CD347C0C5A4E;
+        Thu, 10 Jan 2019 17:42:03 +0000 (UTC)
+Received: from redhat.com (unknown [10.20.6.215])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id D5DF05C6C1;
+        Thu, 10 Jan 2019 17:42:01 +0000 (UTC)
+Date:   Thu, 10 Jan 2019 12:42:00 -0500
+From:   Jerome Glisse <jglisse@redhat.com>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Andrea Arcangeli <aarcange@redhat.com>,
+        Huang Ying <ying.huang@intel.com>,
+        Zhang Yi <yi.z.zhang@linux.intel.com>, kvm@vger.kernel.org,
+        Dave Hansen <dave.hansen@intel.com>,
+        Liu Jingqi <jingqi.liu@intel.com>,
+        Yao Yuan <yuan.yao@intel.com>, Fan Du <fan.du@intel.com>,
+        Dong Eddie <eddie.dong@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        Peng Dong <dongx.peng@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Fengguang Wu <fengguang.wu@intel.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        linux-accelerators@lists.ozlabs.org, Mel Gorman <mgorman@suse.de>
+Subject: Re: [RFC][PATCH v2 00/21] PMEM NUMA node and hotness
+ accounting/migration
+Message-ID: <20190110174159.GD4394@redhat.com>
+References: <20181228050806.ewpxtwo3fpw7h3lq@wfg-t540p.sh.intel.com>
+ <20181228084105.GQ16738@dhcp22.suse.cz>
+ <20181228094208.7lgxhha34zpqu4db@wfg-t540p.sh.intel.com>
+ <20181228121515.GS16738@dhcp22.suse.cz>
+ <20181228133111.zromvopkfcg3m5oy@wfg-t540p.sh.intel.com>
+ <20181228195224.GY16738@dhcp22.suse.cz>
+ <20190102122110.00000206@huawei.com>
+ <20190108145256.GX31793@dhcp22.suse.cz>
+ <20190110155317.GB4394@redhat.com>
+ <20190110164248.GO31793@dhcp22.suse.cz>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="izgndclbtthitgpl"
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20181222200827.GC15237@amd>
-User-Agent: NeoMutt/20180716
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190110164248.GO31793@dhcp22.suse.cz>
+User-Agent: Mutt/1.10.0 (2018-05-17)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Thu, 10 Jan 2019 17:42:04 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Jan 10, 2019 at 05:42:48PM +0100, Michal Hocko wrote:
+> On Thu 10-01-19 10:53:17, Jerome Glisse wrote:
+> > On Tue, Jan 08, 2019 at 03:52:56PM +0100, Michal Hocko wrote:
+> > > On Wed 02-01-19 12:21:10, Jonathan Cameron wrote:
+> > > [...]
+> > > > So ideally I'd love this set to head in a direction that helps me tick off
+> > > > at least some of the above usecases and hopefully have some visibility on
+> > > > how to address the others moving forwards,
+> > > 
+> > > Is it sufficient to have such a memory marked as movable (aka only have
+> > > ZONE_MOVABLE)? That should rule out most of the kernel allocations and
+> > > it fits the "balance by migration" concept.
+> > 
+> > This would not work for GPU, GPU driver really want to be in total
+> > control of their memory yet sometimes they want to migrate some part
+> > of the process to their memory.
+> 
+> But that also means that GPU doesn't really fit the model discussed
+> here, right? I thought HMM is the way to manage such a memory.
 
---izgndclbtthitgpl
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+HMM provides the plumbing and tools to manage but right now the patchset
+for nouveau expose API through nouveau device file as nouveau ioctl. This
+is not a good long term solution when you want to mix and match multiple
+GPUs memory (possibly from different vendors). Then you get each device
+driver implementing their own mem policy infrastructure and without any
+coordination between devices/drivers. While it is _mostly_ ok for single
+GPU case, it is seriously crippling for the multi-GPUs or multi-devices
+cases (for instance when you chain network and GPU together or GPU and
+storage).
 
-Hi,
+People have been asking for a single common API to manage both regular
+memory and device memory. As anyway the common case is you move things
+around depending on which devices/CPUs is working on the dataset.
 
-On Sat, Dec 22, 2018 at 09:08:28PM +0100, Pavel Machek wrote:
-> Merry Christmas!
->=20
-> > This moves all remaining users of the legacy TI_ST driver to hcill (pat=
-ches
-> > 1-3). Then patches 4-7 convert wl128x-radio driver to a standard platfo=
-rm
-> > device driver with support for multiple instances. Patch 7 will result =
-in
-> > (userless) TI_ST driver no longer supporting radio at runtime. Patch 8-=
-11 do
-> > some cleanups in the wl128x-radio driver. Finally patch 12 removes the =
-TI_ST
-> > specific parts from wl128x-radio and adds the required infrastructure t=
-o use it
-> > with the serdev hcill driver instead. The remaining patches 13 and 14 r=
-emove
-> > the old TI_ST code.
-> >=20
-> > The new code has been tested on the Motorola Droid 4. For testing the a=
-udio
-> > should be configured to route Ext to Speaker or Headphone. Then you nee=
-d to
-> > plug headphone, since its cable is used as antenna. For testing there i=
-s a
-> > 'radio' utility packages in Debian. When you start the utility you need=
- to
-> > specify a frequency, since initial get_frequency returns an error:
-> >=20
-> > $ radio -f 100.0
->=20
-> Ok, it seems  the driver does not work built-in, due to firmware issue:
->=20
-> root@devuan:/home/user# dmesg | grep wl12
-> [    1.018951] reg-fixed-voltage regulator-wl12xx: GPIO lookup for
-> consumer (null)
-> [    1.026550] reg-fixed-voltage regulator-wl12xx: using device tree
-> for GPIO lookup
-> [    1.034271] of_get_named_gpiod_flags: can't parse 'gpios' property
-> of node '/regulator-wl12xx[0]'
-> [    1.043487] of_get_named_gpiod_flags: parsed 'gpio' property of
-> node '/regulator-wl12xx[0]' - status (0)
-> [    4.151885] wl12xx_driver wl12xx.1.auto: Direct firmware load for
-> ti-connectivity/wl128x-nvs.bin failed with error -2
-> [   11.368286] vwl1271: disabling
-> root@devuan:/home/user# find /lib/firmware/ | grep wl128
-> /lib/firmware/ti-connectivity/wl128x-fw-5-plt.bin
-> /lib/firmware/ti-connectivity/wl128x-fw-5-mr.bin
-> /lib/firmware/ti-connectivity/wl128x-fw-5-sr.bin
-> /lib/firmware/ti-connectivity/wl128x-nvs.bin
-> root@devuan:/home/user#
->
-> Ideas welcome... ... ... am I supposed to compile wl128-nvs.bin into
-> the kernel using EXTRA_FIRMWARE?
-
-This is due to the driver loading before the rootfs is available.
-You can workaround this without touching your kernel configuration by
-rebinding the driver via sysfs: https://lwn.net/Articles/143397/
-
--- Sebastian
-
---izgndclbtthitgpl
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlw3g+UACgkQ2O7X88g7
-+pp02A/+LdobdlOclsOQ8qABdONlxr5vq+1EKYO1Ndt4hVsVlwFnwdgiYe8hePbP
-Jwm7B54dSKqNB6PvM+R2+Z8wdx9Dj5J7yeFEZTukU+HvVlydS+DC+puJeMAxl34C
-pxciUELVgRWb5bAjvEAkGxCVCgl3g46O2rlP5SCGT+wK3+U70QweN5JuYCHUOuZl
-4bmfFvJJsAUsgWT/7skv7sFYxkeYtf6sVd8t4B3kuEhz3zygglFT6vJ23Mz1GSKn
-7txon8q33fRIuGtFgxDdqluXK6p/Jey5UvVck2CGoy2CI2D44B6FcpcwsuMQ2lS5
-qq+rzBUlR6PptlDp490VM0AfJjSpqVj+kZ4VJJOAZJhHSVV8C8NZ0SNMLMqkxWRo
-ype8zG3qk8OA+NffHxe/eYO/HRySixTM/3uRe23SLrtzESy4crUBsED3erxHdLLd
-yIMVAkEOBLh7zDonKzhRAxAbWp1vc7HTJ90EQ1PeD9i+nSYlQWTLsKIp/ClYikk5
-eOaQ5BsojO/9MSH+yoJ/+kUbmtCvo1e4hFD2EJ3S6p2yxJ1qjMK8QuKeSpuW4hYE
-veV79BoXBmfn0qYUze2PICUDrtjAZW0DYeD1qfxJFjt0In2ajyR42ZrOkhWgwxSO
-DcreKJaLjVFe4hPRp9DuzpdNAaLWeKDHfXlLEEa0BQ2uP2wwdLw=
-=pHLn
------END PGP SIGNATURE-----
-
---izgndclbtthitgpl--
+Cheers,
+Jérôme
