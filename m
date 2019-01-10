@@ -2,107 +2,161 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DA16C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 14:56:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67094C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 14:56:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A1752177B
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 14:56:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547132188;
-	bh=x8ixPfnY9CDOrkbEci5+EHGsD+DlIszXx6qiBK0WCas=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=pJ+2RAs9aIG+7DtLvFJ4b5zQpSy9J4WvzVnkBCSYrmH+O9+1D/ziHUEoC8OXx1VsN
-	 uUjTbUpEM8QZFPaw77fS+dNd++PuV7T9oJg/Gi2Gh9kGOy7Kc9fN9CC5uQgjB0Vizm
-	 AUnqZlOgvGmnTHKnsGqnkaf4phsO+d9Aj5UCgxeE=
+	by mail.kernel.org (Postfix) with ESMTP id 431C220660
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 14:56:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729343AbfAJO41 (ORCPT
+        id S1729358AbfAJO4b (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 09:56:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58790 "EHLO mail.kernel.org"
+        Thu, 10 Jan 2019 09:56:31 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:44149 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728174AbfAJO40 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 09:56:26 -0500
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CF7FB2177B;
-        Thu, 10 Jan 2019 14:56:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547132186;
-        bh=x8ixPfnY9CDOrkbEci5+EHGsD+DlIszXx6qiBK0WCas=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=ardrtDcjpxMjuYpH7vTcRF2GUKRsR5fiZXk/OGM01AEDAI+Ilov9oKjI6CvDTzbP3
-         nUQkplrJBEABVHoHQ47TbZemyFKdM5F4H3HNzuE3gLc23L+vIZp3NmtrjVdc78sBGr
-         TivNJr9UycMHYqErIl6/eIWdSKSdfah99ucVZI/s=
-Received: by mail-qt1-f169.google.com with SMTP id k12so13146273qtf.7;
-        Thu, 10 Jan 2019 06:56:25 -0800 (PST)
-X-Gm-Message-State: AJcUukcuY7VoSIgfTEblM7+GMYw4KBWC9VIFSSO5hLlCPfGOjSC1eBnq
-        B0XZ12/jisBiJOawwcSoAF1Z3e2+HTMgUGwWBg==
-X-Google-Smtp-Source: ALg8bN4qsrI4IbXruHDYjephGcIiMg+ENVkpyht7YxiZ6hS41dl1OEanw90G6BMC+LHAhVThVZnDg5NLyamV9c4ILyE=
-X-Received: by 2002:a37:b646:: with SMTP id g67mr9533110qkf.326.1547132185057;
- Thu, 10 Jan 2019 06:56:25 -0800 (PST)
-MIME-Version: 1.0
-References: <20181228044819.5697-1-sibis@codeaurora.org> <20181228044819.5697-2-sibis@codeaurora.org>
- <20190103233014.GA181833@google.com> <20190103235043.GA195759@google.com>
- <20190104000145.GJ31596@builder> <20190104001158.GA200069@google.com>
- <20190105015430.GA67838@google.com> <CAL_JsqLbMNB6EzYCzmq5PBc9EvVmYifsoJBwymV621h385Hv0w@mail.gmail.com>
- <20190109215532.GA178267@google.com>
-In-Reply-To: <20190109215532.GA178267@google.com>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Thu, 10 Jan 2019 08:56:12 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqKF5i8HNT-ez+Q=Dv9OA-Lf1VaqpZbL2ouo0Bm+v5FxJg@mail.gmail.com>
-Message-ID: <CAL_JsqKF5i8HNT-ez+Q=Dv9OA-Lf1VaqpZbL2ouo0Bm+v5FxJg@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] dt-bindings: remoteproc: qcom: Add firmware
- bindings for Q6V5
-To:     Brian Norris <briannorris@chromium.org>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Sibi Sankar <sibis@codeaurora.org>,
-        David Brown <david.brown@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andy Gross <andy.gross@linaro.org>,
-        Avaneesh Kumar Dwivedi <akdwived@codeaurora.org>,
-        Chris Lew <clew@codeaurora.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-arm-msm-owner@vger.kernel.org,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        "open list:REMOTE PROCESSOR (REMOTEPROC) SUBSYSTEM" 
-        <linux-remoteproc@vger.kernel.org>, devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        id S1728174AbfAJO4b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 09:56:31 -0500
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 43b8G20bGnz9v10Z;
+        Thu, 10 Jan 2019 15:56:26 +0100 (CET)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id rl9HS-dhm25l; Thu, 10 Jan 2019 15:56:26 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 43b8G175pZz9v10W;
+        Thu, 10 Jan 2019 15:56:25 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 723B68B899;
+        Thu, 10 Jan 2019 15:56:27 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id ht3OTm41Sfu5; Thu, 10 Jan 2019 15:56:27 +0100 (CET)
+Received: from po16846vm.idsi0.si.c-s.fr (unknown [192.168.4.90])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 3323B8B898;
+        Thu, 10 Jan 2019 15:56:27 +0100 (CET)
+Received: by po16846vm.idsi0.si.c-s.fr (Postfix, from userid 0)
+        id F37FE6BF21; Thu, 10 Jan 2019 14:56:26 +0000 (UTC)
+Message-Id: <d61e312b60352073192975746c24901a37d881c7.1547132111.git.christophe.leroy@c-s.fr>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH] powerpc/8xx: replace most #ifdef by IS_ENABLED() in 8xx_mmu.c
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Date:   Thu, 10 Jan 2019 14:56:26 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 9, 2019 at 3:55 PM Brian Norris <briannorris@chromium.org> wrote:
->
-> On Tue, Jan 08, 2019 at 09:22:30AM -0600, Rob Herring wrote:
-> > On Fri, Jan 4, 2019 at 7:54 PM Brian Norris <briannorris@chromium.org> wrote:
-> > > To add to my thoughts, since I think maybe Sibi was a little unclear of
-> > > my thoughts:
-> > >
-> > > One of my primary concerns with the existing approach is that it's
-> > > basically a complete free-for-all. We should have some minimal standards
-> > > (enforced in code) such that our DTB can never point us at something
-> > > like /lib/firmware/<other-vendor>/foo.bin (or /lib/firmware/modem.mdt;
-> > > or lots of other bad examples). This could probably be done simply by
-> > > always prefixing 'qcom/' (I don't remember -- does request_firmware()
-> > > follow '..'? e.g., 'firmware-name = "../bar/foo.bin"'.)
-> >
-> > We can write a schema to enforce some of this:
-> >
-> > firmware-name:
-> >   pattern: "^\w.*"
->
-> Are DT schemas ready to use/enforce? Or would this currently just be a
-> suggestion? I'm out of the loop. But I guess that would be interesting.
+This patch replaces most #ifdef mess by IS_ENABLED() in 8xx_mmu.c
+This has the advantage of allowing syntax verification at compile
+time regardless of selected options.
 
-Yes, please! Initial support is in 5.0-rc.
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+---
+ arch/powerpc/mm/8xx_mmu.c | 65 +++++++++++++++++++++--------------------------
+ 1 file changed, 29 insertions(+), 36 deletions(-)
 
-I'm not requiring new bindings to be written as schemas just yet
-though. We need to ring out any issues with early adopters.
+diff --git a/arch/powerpc/mm/8xx_mmu.c b/arch/powerpc/mm/8xx_mmu.c
+index 1f339deea7e2..2300fe88e1f2 100644
+--- a/arch/powerpc/mm/8xx_mmu.c
++++ b/arch/powerpc/mm/8xx_mmu.c
+@@ -66,26 +66,22 @@ unsigned long p_block_mapped(phys_addr_t pa)
+ void __init MMU_init_hw(void)
+ {
+ 	/* PIN up to the 3 first 8Mb after IMMR in DTLB table */
+-#ifdef CONFIG_PIN_TLB_DATA
+-	unsigned long ctr = mfspr(SPRN_MD_CTR) & 0xfe000000;
+-	unsigned long flags = 0xf0 | MD_SPS16K | _PAGE_SH | _PAGE_DIRTY;
+-#ifdef CONFIG_PIN_TLB_IMMR
+-	int i = 29;
+-#else
+-	int i = 28;
+-#endif
+-	unsigned long addr = 0;
+-	unsigned long mem = total_lowmem;
+-
+-	for (; i < 32 && mem >= LARGE_PAGE_SIZE_8M; i++) {
+-		mtspr(SPRN_MD_CTR, ctr | (i << 8));
+-		mtspr(SPRN_MD_EPN, (unsigned long)__va(addr) | MD_EVALID);
+-		mtspr(SPRN_MD_TWC, MD_PS8MEG | MD_SVALID);
+-		mtspr(SPRN_MD_RPN, addr | flags | _PAGE_PRESENT);
+-		addr += LARGE_PAGE_SIZE_8M;
+-		mem -= LARGE_PAGE_SIZE_8M;
++	if (IS_ENABLED(CONFIG_PIN_TLB_DATA)) {
++		unsigned long ctr = mfspr(SPRN_MD_CTR) & 0xfe000000;
++		unsigned long flags = 0xf0 | MD_SPS16K | _PAGE_SH | _PAGE_DIRTY;
++		int i = IS_ENABLED(CONFIG_PIN_TLB_IMMR) ? 29 : 28;
++		unsigned long addr = 0;
++		unsigned long mem = total_lowmem;
++
++		for (; i < 32 && mem >= LARGE_PAGE_SIZE_8M; i++) {
++			mtspr(SPRN_MD_CTR, ctr | (i << 8));
++			mtspr(SPRN_MD_EPN, (unsigned long)__va(addr) | MD_EVALID);
++			mtspr(SPRN_MD_TWC, MD_PS8MEG | MD_SVALID);
++			mtspr(SPRN_MD_RPN, addr | flags | _PAGE_PRESENT);
++			addr += LARGE_PAGE_SIZE_8M;
++			mem -= LARGE_PAGE_SIZE_8M;
++		}
+ 	}
+-#endif
+ }
+ 
+ static void __init mmu_mapin_immr(void)
+@@ -110,18 +106,15 @@ unsigned long __init mmu_mapin_ram(unsigned long top)
+ 	if (__map_without_ltlbs) {
+ 		mapped = 0;
+ 		mmu_mapin_immr();
+-#ifndef CONFIG_PIN_TLB_IMMR
+-		patch_instruction_site(&patch__dtlbmiss_immr_jmp, PPC_INST_NOP);
+-#endif
+-#ifndef CONFIG_PIN_TLB_TEXT
+-		mmu_patch_cmp_limit(&patch__itlbmiss_linmem_top, 0);
+-#endif
++		if (!IS_ENABLED(CONFIG_PIN_TLB_IMMR))
++			patch_instruction_site(&patch__dtlbmiss_immr_jmp, PPC_INST_NOP);
++		if (!IS_ENABLED(CONFIG_PIN_TLB_TEXT))
++			mmu_patch_cmp_limit(&patch__itlbmiss_linmem_top, 0);
+ 	} else {
+ 		mapped = top & ~(LARGE_PAGE_SIZE_8M - 1);
+-#ifndef CONFIG_PIN_TLB_TEXT
+-		mmu_patch_cmp_limit(&patch__itlbmiss_linmem_top,
+-				    _ALIGN(__pa(_einittext), 8 << 20));
+-#endif
++		if (!IS_ENABLED(CONFIG_PIN_TLB_TEXT))
++			mmu_patch_cmp_limit(&patch__itlbmiss_linmem_top,
++					    _ALIGN(__pa(_einittext), 8 << 20));
+ 	}
+ 
+ 	mmu_patch_cmp_limit(&patch__dtlbmiss_linmem_top, mapped);
+@@ -166,14 +159,14 @@ void set_context(unsigned long id, pgd_t *pgd)
+ {
+ 	s16 offset = (s16)(__pa(swapper_pg_dir));
+ 
+-#ifdef CONFIG_BDI_SWITCH
+-	pgd_t	**ptr = *(pgd_t ***)(KERNELBASE + 0xf0);
++	if (IS_ENABLED(CONFIG_BDI_SWITCH)) {
++		pgd_t	**ptr = *(pgd_t ***)(KERNELBASE + 0xf0);
+ 
+-	/* Context switch the PTE pointer for the Abatron BDI2000.
+-	 * The PGDIR is passed as second argument.
+-	 */
+-	*(ptr + 1) = pgd;
+-#endif
++		/* Context switch the PTE pointer for the Abatron BDI2000.
++		 * The PGDIR is passed as second argument.
++		 */
++		*(ptr + 1) = pgd;
++	}
+ 
+ 	/* Register M_TWB will contain base address of level 1 table minus the
+ 	 * lower part of the kernel PGDIR base address, so that all accesses to
+-- 
+2.13.3
 
-Rob
