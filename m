@@ -4,58 +4,59 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3950C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 22:19:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E03BC43444
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 22:19:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5CD1E208E3
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 22:19:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D67AC213F2
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 22:19:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547158749;
-	bh=MgLcqD13FmzUBlC7H2ZxxoRWRvpJnxbGuDhcCbTfoNY=;
+	s=default; t=1547158752;
+	bh=MY2n0LCGJ3loLRt6T3jo4Gbf1lnb+ExTLfrzfHEU7Jk=;
 	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=1Qq/xtx/5r0WZ4QzUr2A/HokE4OwdrQYSe4EQERIhk5AswDzIMLKT+lXkcqSzosnM
-	 l3e7tjkWwkU7eOBDFt/ex2FCWL1SB5BM7NfGdi6RRLmRyE5E25ShsyxMj0tRXiyzm6
-	 lvrhyRfrk+JnDHGwP6tCgoIIfCUcQ4iqykMjo+HM=
+	b=rcVb6k+yMkqQs/qma0rpohMS1rHdHpbEN4Ko9XSKkE2XrqmxBdEiJ0P+rLoGaCKfo
+	 x9ppgLJrlojiQlwWIzRkgyaJ/5dbB+NOQne6OKzkocGeCM+v45F2M/F4asf+jkZ4mS
+	 iz1jh7Ibk07a48td/6wp16f98O+4J0Gog1oqj43s=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728616AbfAJWTI (ORCPT
+        id S1728800AbfAJWTL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 17:19:08 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:34932 "EHLO
+        Thu, 10 Jan 2019 17:19:11 -0500
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:45905 "EHLO
         mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727545AbfAJWTI (ORCPT
+        with ESMTP id S1728626AbfAJWTJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 17:19:08 -0500
-Received: by mail-oi1-f194.google.com with SMTP id v6so10632155oif.2;
-        Thu, 10 Jan 2019 14:19:06 -0800 (PST)
+        Thu, 10 Jan 2019 17:19:09 -0500
+Received: by mail-oi1-f194.google.com with SMTP id y1so10604700oie.12;
+        Thu, 10 Jan 2019 14:19:09 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=Beq8fcA6CE5RWNDB3Fqd7YqwJ6cJ75/3fqv4FG+4TMU=;
-        b=AtpUlmVJretDE4Q8vyy+ZItM/MREYMunhuDCvU6JTc9TdT6miJPCQxg0WmG+SFVLYw
-         yc1PyCPTNXj1RVmBW46sHnNEBN6cx+zg1hReaeMwD86Zw3jzelXYZzjG7YIJj3gTOchj
-         n3nAAkLl4b7JUDF590AoMuTwRuJ2TTjrFKNjAD4tn3LkvMmC12PlQ9oyGUaiK3ytxUlP
-         SCLFX7LtwDaZ28aEd8sCHB3Z61kV48z5TeaXuY+AUMFbYMucBD85cD+JnBCTSqfrXG8I
-         DPHNeUVFrjxas9yjpt4XChy2s0yGW0KEB5osDu88kcms7c9oS/GcxDikFE10AB5Z+d5l
-         yMbw==
-X-Gm-Message-State: AJcUukcx/OhN3xpix8pEZjCIwvoYG1uOqRSZR44Y0HM4HnRHDtidJ1Lj
-        zNOI2NjeBb/6e9e1nBKopQyilJU=
-X-Google-Smtp-Source: ALg8bN57BJ0HLVYm08Z6mm5wg5ImQLfS5amjniGC0v1d//K4MzhUeO1gj/dWGXBJJSwJZymgwZFIvw==
-X-Received: by 2002:a05:6808:282:: with SMTP id z2mr8042927oic.128.1547158745591;
-        Thu, 10 Jan 2019 14:19:05 -0800 (PST)
+        bh=B6rEDZHQfkLDLG2fw3CpEJQVRilD3bhc2OAgpl+nmGs=;
+        b=tIXmHRH+uCFxsL1J32iBvACy9Ctw0Xan6sf2hM2ZXLN39JWRgJ77VS33Nu4wrwxtRw
+         iflTT0spsfW+pZmh0GdOxVWy8R+N2pa0GZzdVnMvToDtRFjLqDYnB5xRuFOO1OKqHlUI
+         aBMCD0AzWPfZxY5jGF+b5yV4TDhCvYL0n9UfN33BJMtxTIiQSrAV849AXQlcEEZ1T3z5
+         wKqOiZ1/VSJLGseCe7x40NIRkZhRDym9J6Q4QpVqHcU9GWxSfJzC9GBHuNcKW8feutpf
+         CAiMXDCP7fmsyoH7Q9FfH1Cjc8lAKU6i2vyjK7MbI49rQvb31WvTL7OJyAikdgFPUsDQ
+         YMAQ==
+X-Gm-Message-State: AJcUuke7B5lxw877RGN5WBjvbKQn5sWyMkqjhboToOztgjOTUj8xPPPv
+        rOpBcL1E83Q5pOKskE/sEInPxWY=
+X-Google-Smtp-Source: ALg8bN5FLTgSeNmAv1dmrNv9rFeWe5nuxvRzuDOq8YZTKTSzlr4KDwadRoWx0do1Ra3GEV9kYEequA==
+X-Received: by 2002:a54:450f:: with SMTP id l15mr8007899oil.351.1547158748346;
+        Thu, 10 Jan 2019 14:19:08 -0800 (PST)
 Received: from xps15.herring.priv (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.googlemail.com with ESMTPSA id c19sm36776707otl.16.2019.01.10.14.19.03
+        by smtp.googlemail.com with ESMTPSA id c19sm36776707otl.16.2019.01.10.14.19.05
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 10 Jan 2019 14:19:03 -0800 (PST)
+        Thu, 10 Jan 2019 14:19:05 -0800 (PST)
 From:   Rob Herring <robh@kernel.org>
 To:     devicetree@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org
-Subject: [PATCH] dt-bindings: arm: l2x0: Convert L2 cache to json-schema
-Date:   Thu, 10 Jan 2019 16:18:58 -0600
-Message-Id: <20190110221903.3990-1-robh@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>
+Subject: [PATCH] dt-bindings: interrupt-controller: Convert ARM GIC to json-schema
+Date:   Thu, 10 Jan 2019 16:18:59 -0600
+Message-Id: <20190110221903.3990-2-robh@kernel.org>
 X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -64,389 +65,425 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Convert the ARM L2 cache controller binding to json-schema.
+Convert the ARM GIC binding document to DT schema format using
+json-schema.
 
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Jason Cooper <jason@lakedaemon.net>
+Cc: Marc Zyngier <marc.zyngier@arm.com>
 Signed-off-by: Rob Herring <robh@kernel.org>
 ---
- .../devicetree/bindings/arm/l2c2x0.txt        | 114 --------
- .../devicetree/bindings/arm/l2c2x0.yaml       | 248 ++++++++++++++++++
- 2 files changed, 248 insertions(+), 114 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/arm/l2c2x0.txt
- create mode 100644 Documentation/devicetree/bindings/arm/l2c2x0.yaml
+ .../bindings/interrupt-controller/arm,gic.txt | 171 --------------
+ .../interrupt-controller/arm,gic.yaml         | 223 ++++++++++++++++++
+ 2 files changed, 223 insertions(+), 171 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/interrupt-controller/arm,gic.txt
+ create mode 100644 Documentation/devicetree/bindings/interrupt-controller/arm,gic.yaml
 
-diff --git a/Documentation/devicetree/bindings/arm/l2c2x0.txt b/Documentation/devicetree/bindings/arm/l2c2x0.txt
+diff --git a/Documentation/devicetree/bindings/interrupt-controller/arm,gic.txt b/Documentation/devicetree/bindings/interrupt-controller/arm,gic.txt
 deleted file mode 100644
-index fbe6cb21f4cf..000000000000
---- a/Documentation/devicetree/bindings/arm/l2c2x0.txt
+index 2f3244648646..000000000000
+--- a/Documentation/devicetree/bindings/interrupt-controller/arm,gic.txt
 +++ /dev/null
-@@ -1,114 +0,0 @@
--* ARM L2 Cache Controller
+@@ -1,171 +0,0 @@
+-* ARM Generic Interrupt Controller
 -
--ARM cores often have a separate L2C210/L2C220/L2C310 (also known as PL210/PL220/
--PL310 and variants) based level 2 cache controller. All these various implementations
--of the L2 cache controller have compatible programming models (Note 1).
--Some of the properties that are just prefixed "cache-*" are taken from section
--3.7.3 of the Devicetree Specification which can be found at:
--https://www.devicetree.org/specifications/
+-ARM SMP cores are often associated with a GIC, providing per processor
+-interrupts (PPI), shared processor interrupts (SPI) and software
+-generated interrupts (SGI).
 -
--The ARM L2 cache representation in the device tree should be done as follows:
+-Primary GIC is attached directly to the CPU and typically has PPIs and SGIs.
+-Secondary GICs are cascaded into the upward interrupt controller and do not
+-have PPIs or SGIs.
 -
--Required properties:
+-Main node required properties:
 -
 -- compatible : should be one of:
--  "arm,pl310-cache"
--  "arm,l220-cache"
--  "arm,l210-cache"
--  "bcm,bcm11351-a2-pl310-cache": DEPRECATED by "brcm,bcm11351-a2-pl310-cache"
--  "brcm,bcm11351-a2-pl310-cache": For Broadcom bcm11351 chipset where an
--     offset needs to be added to the address before passing down to the L2
--     cache controller
--  "marvell,aurora-system-cache": Marvell Controller designed to be
--     compatible with the ARM one, with system cache mode (meaning
--     maintenance operations on L1 are broadcasted to the L2 and L2
--     performs the same operation).
--  "marvell,aurora-outer-cache": Marvell Controller designed to be
--     compatible with the ARM one with outer cache mode.
--  "marvell,tauros3-cache": Marvell Tauros3 cache controller, compatible
--     with arm,pl310-cache controller.
--- cache-unified : Specifies the cache is a unified cache.
--- cache-level : Should be set to 2 for a level 2 cache.
--- reg : Physical base address and size of cache controller's memory mapped
--  registers.
+-	"arm,arm1176jzf-devchip-gic"
+-	"arm,arm11mp-gic"
+-	"arm,cortex-a15-gic"
+-	"arm,cortex-a7-gic"
+-	"arm,cortex-a9-gic"
+-	"arm,eb11mp-gic"
+-	"arm,gic-400"
+-	"arm,pl390"
+-	"arm,tc11mp-gic"
+-	"brcm,brahma-b15-gic"
+-	"nvidia,tegra210-agic"
+-	"qcom,msm-8660-qgic"
+-	"qcom,msm-qgic2"
+-- interrupt-controller : Identifies the node as an interrupt controller
+-- #interrupt-cells : Specifies the number of cells needed to encode an
+-  interrupt source.  The type shall be a <u32> and the value shall be 3.
 -
--Optional properties:
+-  The 1st cell is the interrupt type; 0 for SPI interrupts, 1 for PPI
+-  interrupts.
 -
--- arm,data-latency : Cycles of latency for Data RAM accesses. Specifies 3 cells of
--  read, write and setup latencies. Minimum valid values are 1. Controllers
--  without setup latency control should use a value of 0.
--- arm,tag-latency : Cycles of latency for Tag RAM accesses. Specifies 3 cells of
--  read, write and setup latencies. Controllers without setup latency control
--  should use 0. Controllers without separate read and write Tag RAM latency
--  values should only use the first cell.
--- arm,dirty-latency : Cycles of latency for Dirty RAMs. This is a single cell.
--- arm,filter-ranges : <start length> Starting address and length of window to
--  filter. Addresses in the filter window are directed to the M1 port. Other
--  addresses will go to the M0 port.
--- arm,io-coherent : indicates that the system is operating in an hardware
--  I/O coherent mode. Valid only when the arm,pl310-cache compatible
--  string is used.
--- interrupts : 1 combined interrupt.
--- cache-size : specifies the size in bytes of the cache
--- cache-sets : specifies the number of associativity sets of the cache
--- cache-block-size : specifies the size in bytes of a cache block
--- cache-line-size : specifies the size in bytes of a line in the cache,
--  if this is not specified, the line size is assumed to be equal to the
--  cache block size
--- cache-id-part: cache id part number to be used if it is not present
--  on hardware
--- wt-override: If present then L2 is forced to Write through mode
--- arm,double-linefill : Override double linefill enable setting. Enable if
--  non-zero, disable if zero.
--- arm,double-linefill-incr : Override double linefill on INCR read. Enable
--  if non-zero, disable if zero.
--- arm,double-linefill-wrap : Override double linefill on WRAP read. Enable
--  if non-zero, disable if zero.
--- arm,prefetch-drop : Override prefetch drop enable setting. Enable if non-zero,
--  disable if zero.
--- arm,prefetch-offset : Override prefetch offset value. Valid values are
--  0-7, 15, 23, and 31.
--- arm,shared-override : The default behavior of the L220 or PL310 cache
--  controllers with respect to the shareable attribute is to transform "normal
--  memory non-cacheable transactions" into "cacheable no allocate" (for reads)
--  or "write through no write allocate" (for writes).
--  On systems where this may cause DMA buffer corruption, this property must be
--  specified to indicate that such transforms are precluded.
--- arm,parity-enable : enable parity checking on the L2 cache (L220 or PL310).
--- arm,parity-disable : disable parity checking on the L2 cache (L220 or PL310).
--- arm,outer-sync-disable : disable the outer sync operation on the L2 cache.
--  Some core tiles, especially ARM PB11MPCore have a faulty L220 cache that
--  will randomly hang unless outer sync operations are disabled.
--- prefetch-data : Data prefetch. Value: <0> (forcibly disable), <1>
--  (forcibly enable), property absent (retain settings set by firmware)
--- prefetch-instr : Instruction prefetch. Value: <0> (forcibly disable),
--  <1> (forcibly enable), property absent (retain settings set by
--  firmware)
--- arm,dynamic-clock-gating : L2 dynamic clock gating. Value: <0> (forcibly
--  disable), <1> (forcibly enable), property absent (OS specific behavior,
--  preferably retain firmware settings)
--- arm,standby-mode: L2 standby mode enable. Value <0> (forcibly disable),
--  <1> (forcibly enable), property absent (OS specific behavior,
--  preferably retain firmware settings)
--- arm,early-bresp-disable : Disable the CA9 optimization Early BRESP (PL310)
--- arm,full-line-zero-disable : Disable the CA9 optimization Full line of zero
--  write (PL310)
+-  The 2nd cell contains the interrupt number for the interrupt type.
+-  SPI interrupts are in the range [0-987].  PPI interrupts are in the
+-  range [0-15].
+-
+-  The 3rd cell is the flags, encoded as follows:
+-	bits[3:0] trigger type and level flags.
+-		1 = low-to-high edge triggered
+-		2 = high-to-low edge triggered (invalid for SPIs)
+-		4 = active high level-sensitive
+-		8 = active low level-sensitive (invalid for SPIs).
+-	bits[15:8] PPI interrupt cpu mask.  Each bit corresponds to each of
+-	the 8 possible cpus attached to the GIC.  A bit set to '1' indicated
+-	the interrupt is wired to that CPU.  Only valid for PPI interrupts.
+-	Also note that the configurability of PPI interrupts is IMPLEMENTATION
+-	DEFINED and as such not guaranteed to be present (most SoC available
+-	in 2014 seem to ignore the setting of this flag and use the hardware
+-	default value).
+-
+-- reg : Specifies base physical address(s) and size of the GIC registers. The
+-  first region is the GIC distributor register base and size. The 2nd region is
+-  the GIC cpu interface register base and size.
+-
+-Optional
+-- interrupts	: Interrupt source of the parent interrupt controller on
+-  secondary GICs, or VGIC maintenance interrupt on primary GIC (see
+-  below).
+-
+-- cpu-offset	: per-cpu offset within the distributor and cpu interface
+-  regions, used when the GIC doesn't have banked registers. The offset is
+-  cpu-offset * cpu-nr.
+-
+-- clocks        : List of phandle and clock-specific pairs, one for each entry
+-  in clock-names.
+-- clock-names   : List of names for the GIC clock input(s). Valid clock names
+-  depend on the GIC variant:
+-	"ic_clk" (for "arm,arm11mp-gic")
+-	"PERIPHCLKEN" (for "arm,cortex-a15-gic")
+-	"PERIPHCLK", "PERIPHCLKEN" (for "arm,cortex-a9-gic")
+-	"clk" (for "arm,gic-400" and "nvidia,tegra210")
+-	"gclk" (for "arm,pl390")
+-
+-- power-domains : A phandle and PM domain specifier as defined by bindings of
+-		  the power controller specified by phandle, used when the GIC
+-		  is part of a Power or Clock Domain.
+-
 -
 -Example:
 -
--L2: cache-controller {
--        compatible = "arm,pl310-cache";
--        reg = <0xfff12000 0x1000>;
--        arm,data-latency = <1 1 1>;
--        arm,tag-latency = <2 2 2>;
--        arm,filter-ranges = <0x80000000 0x8000000>;
--        cache-unified;
--        cache-level = <2>;
--	interrupts = <45>;
--};
+-	intc: interrupt-controller@fff11000 {
+-		compatible = "arm,cortex-a9-gic";
+-		#interrupt-cells = <3>;
+-		#address-cells = <1>;
+-		interrupt-controller;
+-		reg = <0xfff11000 0x1000>,
+-		      <0xfff10100 0x100>;
+-	};
 -
--Note 1: The description in this document doesn't apply to integrated L2
--	cache controllers as found in e.g. Cortex-A15/A7/A57/A53. These
--	integrated L2 controllers are assumed to be all preconfigured by
--	early secure boot code. Thus no need to deal with their configuration
--	in the kernel at all.
-diff --git a/Documentation/devicetree/bindings/arm/l2c2x0.yaml b/Documentation/devicetree/bindings/arm/l2c2x0.yaml
+-
+-* GIC virtualization extensions (VGIC)
+-
+-For ARM cores that support the virtualization extensions, additional
+-properties must be described (they only exist if the GIC is the
+-primary interrupt controller).
+-
+-Required properties:
+-
+-- reg : Additional regions specifying the base physical address and
+-  size of the VGIC registers. The first additional region is the GIC
+-  virtual interface control register base and size. The 2nd additional
+-  region is the GIC virtual cpu interface register base and size.
+-
+-- interrupts : VGIC maintenance interrupt.
+-
+-Example:
+-
+-	interrupt-controller@2c001000 {
+-		compatible = "arm,cortex-a15-gic";
+-		#interrupt-cells = <3>;
+-		interrupt-controller;
+-		reg = <0x2c001000 0x1000>,
+-		      <0x2c002000 0x2000>,
+-		      <0x2c004000 0x2000>,
+-		      <0x2c006000 0x2000>;
+-		interrupts = <1 9 0xf04>;
+-	};
+-
+-
+-* GICv2m extension for MSI/MSI-x support (Optional)
+-
+-Certain revisions of GIC-400 supports MSI/MSI-x via V2M register frame(s).
+-This is enabled by specifying v2m sub-node(s).
+-
+-Required properties:
+-
+-- compatible	    : The value here should contain "arm,gic-v2m-frame".
+-
+-- msi-controller    : Identifies the node as an MSI controller.
+-
+-- reg		    : GICv2m MSI interface register base and size
+-
+-Optional properties:
+-
+-- arm,msi-base-spi  : When the MSI_TYPER register contains an incorrect
+-  		      value, this property should contain the SPI base of
+-		      the MSI frame, overriding the HW value.
+-
+-- arm,msi-num-spis  : When the MSI_TYPER register contains an incorrect
+-  		      value, this property should contain the number of
+-		      SPIs assigned to the frame, overriding the HW value.
+-
+-Example:
+-
+-	interrupt-controller@e1101000 {
+-		compatible = "arm,gic-400";
+-		#interrupt-cells = <3>;
+-		#address-cells = <2>;
+-		#size-cells = <2>;
+-		interrupt-controller;
+-		interrupts = <1 8 0xf04>;
+-		ranges = <0 0 0 0xe1100000 0 0x100000>;
+-		reg = <0x0 0xe1110000 0 0x01000>,
+-		      <0x0 0xe112f000 0 0x02000>,
+-		      <0x0 0xe1140000 0 0x10000>,
+-		      <0x0 0xe1160000 0 0x10000>;
+-		v2m0: v2m@8000 {
+-			compatible = "arm,gic-v2m-frame";
+-			msi-controller;
+-			reg = <0x0 0x80000 0 0x1000>;
+-		};
+-
+-		....
+-
+-		v2mN: v2m@9000 {
+-			compatible = "arm,gic-v2m-frame";
+-			msi-controller;
+-			reg = <0x0 0x90000 0 0x1000>;
+-		};
+-	};
+diff --git a/Documentation/devicetree/bindings/interrupt-controller/arm,gic.yaml b/Documentation/devicetree/bindings/interrupt-controller/arm,gic.yaml
 new file mode 100644
-index 000000000000..bfc5c185561c
+index 000000000000..758fbd7128e7
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/l2c2x0.yaml
-@@ -0,0 +1,248 @@
++++ b/Documentation/devicetree/bindings/interrupt-controller/arm,gic.yaml
+@@ -0,0 +1,223 @@
 +# SPDX-License-Identifier: GPL-2.0
 +%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/arm/l2c2x0.yaml#
++$id: http://devicetree.org/schemas/interrupt-controller/arm,gic.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: ARM L2 Cache Controller
++title: ARM Generic Interrupt Controller v1 and v2
 +
 +maintainers:
-+  - Rob Herring <robh@kernel.org>
++  - Marc Zyngier <marc.zyngier@arm.com>
 +
 +description: |+
-+  ARM cores often have a separate L2C210/L2C220/L2C310 (also known as PL210/
-+  PL220/PL310 and variants) based level 2 cache controller. All these various
-+  implementations of the L2 cache controller have compatible programming
-+  models (Note 1). Some of the properties that are just prefixed "cache-*" are
-+  taken from section 3.7.3 of the Devicetree Specification which can be found
-+  at:
-+  https://www.devicetree.org/specifications/
++  ARM SMP cores are often associated with a GIC, providing per processor
++  interrupts (PPI), shared processor interrupts (SPI) and software
++  generated interrupts (SGI).
 +
-+  Note 1: The description in this document doesn't apply to integrated L2
-+    cache controllers as found in e.g. Cortex-A15/A7/A57/A53. These
-+    integrated L2 controllers are assumed to be all preconfigured by
-+    early secure boot code. Thus no need to deal with their configuration
-+    in the kernel at all.
++  Primary GIC is attached directly to the CPU and typically has PPIs and SGIs.
++  Secondary GICs are cascaded into the upward interrupt controller and do not
++  have PPIs or SGIs.
 +
 +allOf:
-+  - $ref: /schemas/cache-controller.yaml#
++  - $ref: /schemas/interrupt-controller.yaml#
 +
 +properties:
 +  compatible:
-+    enum:
-+      - arm,pl310-cache
-+      - arm,l220-cache
-+      - arm,l210-cache
-+        # DEPRECATED by "brcm,bcm11351-a2-pl310-cache"
-+      - bcm,bcm11351-a2-pl310-cache
-+        # For Broadcom bcm11351 chipset where an
-+        # offset needs to be added to the address before passing down to the L2
-+        # cache controller
-+      - brcm,bcm11351-a2-pl310-cache
-+        # Marvell Controller designed to be
-+        # compatible with the ARM one, with system cache mode (meaning
-+        # maintenance operations on L1 are broadcasted to the L2 and L2
-+        # performs the same operation).
-+      - marvell,aurora-system-cache
-+        # Marvell Controller designed to be
-+        # compatible with the ARM one with outer cache mode.
-+      - marvell,aurora-outer-cache
-+        # Marvell Tauros3 cache controller, compatible
-+        # with arm,pl310-cache controller.
-+      - marvell,tauros3-cache
++    oneOf:
++      - items:
++          - enum:
++              - arm,arm11mp-gic
++              - arm,cortex-a15-gic
++              - arm,cortex-a7-gic
++              - arm,cortex-a5-gic
++              - arm,cortex-a9-gic
++              - arm,eb11mp-gic
++              - arm,gic-400
++              - arm,pl390
++              - arm,tc11mp-gic
++              - nvidia,tegra210-agic
++              - qcom,msm-8660-qgic
++              - qcom,msm-qgic2
 +
-+  cache-level:
-+    const: 2
++      - items:
++          - const: arm,arm1176jzf-devchip-gic
++          - const: arm,arm11mp-gic
 +
-+  cache-unified: true
-+  cache-size: true
-+  cache-sets: true
-+  cache-block-size: true
-+  cache-line-size: true
++      - items:
++          - const: brcm,brahma-b15-gic
++          - const: arm,cortex-a15-gic
++
++  interrupt-controller: true
++
++  "#address-cells":
++    enum: [ 0, 1 ]
++  "#size-cells":
++    const: 1
++
++  "#interrupt-cells":
++    const: 3
++    description: |
++      The 1st cell is the interrupt type; 0 for SPI interrupts, 1 for PPI
++      interrupts.
++
++      The 2nd cell contains the interrupt number for the interrupt type.
++      SPI interrupts are in the range [0-987].  PPI interrupts are in the
++      range [0-15].
++
++      The 3rd cell is the flags, encoded as follows:
++        bits[3:0] trigger type and level flags.
++          1 = low-to-high edge triggered
++          2 = high-to-low edge triggered (invalid for SPIs)
++          4 = active high level-sensitive
++          8 = active low level-sensitive (invalid for SPIs).
++        bits[15:8] PPI interrupt cpu mask.  Each bit corresponds to each of
++        the 8 possible cpus attached to the GIC.  A bit set to '1' indicated
++        the interrupt is wired to that CPU.  Only valid for PPI interrupts.
++        Also note that the configurability of PPI interrupts is IMPLEMENTATION
++        DEFINED and as such not guaranteed to be present (most SoC available
++        in 2014 seem to ignore the setting of this flag and use the hardware
++        default value).
 +
 +  reg:
-+    maxItems: 1
++    description: |
++      Specifies base physical address(s) and size of the GIC registers. The
++      first region is the GIC distributor register base and size. The 2nd region
++      is the GIC cpu interface register base and size.
 +
-+  arm,data-latency:
-+    description: Cycles of latency for Data RAM accesses. Specifies 3 cells of
-+      read, write and setup latencies. Minimum valid values are 1. Controllers
-+      without setup latency control should use a value of 0.
-+    allOf:
-+      - $ref: /schemas/types.yaml#/definitions/uint32-array
-+      - minItems: 2
-+        maxItems: 3
-+        items:
-+          minimum: 0
-+          maximum: 8
-+
-+  arm,tag-latency:
-+    description: Cycles of latency for Tag RAM accesses. Specifies 3 cells of
-+      read, write and setup latencies. Controllers without setup latency control
-+      should use 0. Controllers without separate read and write Tag RAM latency
-+      values should only use the first cell.
-+    allOf:
-+      - $ref: /schemas/types.yaml#/definitions/uint32-array
-+      - minItems: 1
-+        maxItems: 3
-+        items:
-+          minimum: 0
-+          maximum: 8
-+
-+  arm,dirty-latency:
-+    description: Cycles of latency for Dirty RAMs. This is a single cell.
-+    allOf:
-+      - $ref: /schemas/types.yaml#/definitions/uint32
-+      - minimum: 1
-+        maximum: 8
-+
-+  arm,filter-ranges:
-+    description: <start length> Starting address and length of window to
-+      filter. Addresses in the filter window are directed to the M1 port. Other
-+      addresses will go to the M0 port.
-+    allOf:
-+      - $ref: /schemas/types.yaml#/definitions/uint32-array
-+      - items:
-+          minItems: 2
-+          maxItems: 2
-+
-+  arm,io-coherent:
-+    description: indicates that the system is operating in an hardware
-+      I/O coherent mode. Valid only when the arm,pl310-cache compatible
-+      string is used.
-+    type: boolean
++      For GICv2 with virtualization extensions, additional regions are
++      required for specifying the base physical address and size of the VGIC
++      registers. The first additional region is the GIC virtual interface
++      control register base and size. The 2nd additional region is the GIC
++      virtual cpu interface register base and size.
++    minItems: 2
++    maxItems: 4
 +
 +  interrupts:
-+    # Either a single combined interrupt or up to 9 individual interrupts
-+    minItems: 1
-+    maxItems: 9
++    description: Interrupt source of the parent interrupt controller on
++      secondary GICs, or VGIC maintenance interrupt on primary GIC (see
++      below).
++    maxItems: 1
 +
-+  cache-id-part:
-+    description: cache id part number to be used if it is not present
-+      on hardware
++  cpu-offset:
++    description: per-cpu offset within the distributor and cpu interface
++      regions, used when the GIC doesn't have banked registers. The offset
++      is cpu-offset * cpu-nr.
 +    $ref: /schemas/types.yaml#/definitions/uint32
 +
-+  wt-override:
-+    description: If present then L2 is forced to Write through mode
-+    type: boolean
++  clocks:
++    minItems: 1
++    maxItems: 2
 +
-+  arm,double-linefill:
-+    description: Override double linefill enable setting. Enable if
-+      non-zero, disable if zero.
-+    allOf:
-+      - $ref: /schemas/types.yaml#/definitions/uint32
-+      - enum: [ 0, 1 ]
++  clock-names:
++    description: List of names for the GIC clock input(s). Valid clock names
++      depend on the GIC variant.
++    oneOf:
++      - const: ic_clk # for "arm,arm11mp-gic"
++      - const: PERIPHCLKEN # for "arm,cortex-a15-gic"
++      - items: # for "arm,cortex-a9-gic"
++          - const: PERIPHCLK
++          - const: PERIPHCLKEN
++      - const: clk # for "arm,gic-400" and "nvidia,tegra210"
++      - const: gclk #for "arm,pl390"
 +
-+  arm,double-linefill-incr:
-+    description: Override double linefill on INCR read. Enable
-+      if non-zero, disable if zero.
-+    allOf:
-+      - $ref: /schemas/types.yaml#/definitions/uint32
-+      - enum: [ 0, 1 ]
-+
-+  arm,double-linefill-wrap:
-+    description: Override double linefill on WRAP read. Enable
-+      if non-zero, disable if zero.
-+    allOf:
-+      - $ref: /schemas/types.yaml#/definitions/uint32
-+      - enum: [ 0, 1 ]
-+
-+  arm,prefetch-drop:
-+    description: Override prefetch drop enable setting. Enable if non-zero,
-+      disable if zero.
-+    allOf:
-+      - $ref: /schemas/types.yaml#/definitions/uint32
-+      - enum: [ 0, 1 ]
-+
-+  arm,prefetch-offset:
-+    description: Override prefetch offset value.
-+    allOf:
-+      - $ref: /schemas/types.yaml#/definitions/uint32
-+      - enum: [ 0, 1, 2, 3, 4, 5, 6, 7, 15, 23, 31 ]
-+
-+  arm,shared-override:
-+    description: The default behavior of the L220 or PL310 cache
-+      controllers with respect to the shareable attribute is to transform "normal
-+      memory non-cacheable transactions" into "cacheable no allocate" (for reads)
-+      or "write through no write allocate" (for writes).
-+      On systems where this may cause DMA buffer corruption, this property must
-+      be specified to indicate that such transforms are precluded.
-+    type: boolean
-+
-+  arm,parity-enable:
-+    description: enable parity checking on the L2 cache (L220 or PL310).
-+    type: boolean
-+
-+  arm,parity-disable:
-+    description: disable parity checking on the L2 cache (L220 or PL310).
-+    type: boolean
-+
-+  arm,outer-sync-disable:
-+    description: disable the outer sync operation on the L2 cache.
-+      Some core tiles, especially ARM PB11MPCore have a faulty L220 cache that
-+      will randomly hang unless outer sync operations are disabled.
-+    type: boolean
-+
-+  prefetch-data:
-+    description: |
-+      Data prefetch. Value: <0> (forcibly disable), <1>
-+      (forcibly enable), property absent (retain settings set by firmware)
-+    allOf:
-+      - $ref: /schemas/types.yaml#/definitions/uint32
-+      - enum: [ 0, 1 ]
-+
-+  prefetch-instr:
-+    description: |
-+      Instruction prefetch. Value: <0> (forcibly disable),
-+      <1> (forcibly enable), property absent (retain settings set by
-+      firmware)
-+    allOf:
-+      - $ref: /schemas/types.yaml#/definitions/uint32
-+      - enum: [ 0, 1 ]
-+
-+  arm,dynamic-clock-gating:
-+    description: |
-+      L2 dynamic clock gating. Value: <0> (forcibly
-+      disable), <1> (forcibly enable), property absent (OS specific behavior,
-+      preferably retain firmware settings)
-+    allOf:
-+      - $ref: /schemas/types.yaml#/definitions/uint32
-+      - enum: [ 0, 1 ]
-+
-+  arm,standby-mode:
-+    description: L2 standby mode enable. Value <0> (forcibly disable),
-+      <1> (forcibly enable), property absent (OS specific behavior,
-+      preferably retain firmware settings)
-+    allOf:
-+      - $ref: /schemas/types.yaml#/definitions/uint32
-+      - enum: [ 0, 1 ]
-+
-+  arm,early-bresp-disable:
-+    description: Disable the CA9 optimization Early BRESP (PL310)
-+    type: boolean
-+
-+  arm,full-line-zero-disable:
-+    description: Disable the CA9 optimization Full line of zero
-+      write (PL310)
-+    type: boolean
++  power-domains:
++    maxItems: 1
 +
 +required:
 +  - compatible
-+  - cache-unified
 +  - reg
++
++patternProperties:
++  "^v2m@[0-9a-f]+$":
++    description: |
++      * GICv2m extension for MSI/MSI-x support (Optional)
++
++      Certain revisions of GIC-400 supports MSI/MSI-x via V2M register frame(s).
++      This is enabled by specifying v2m sub-node(s).
++
++    properties:
++      compatible:
++        const: arm,gic-v2m-frame
++
++      msi-controller: true
++
++      reg:
++        maxItems: 1
++        description: GICv2m MSI interface register base and size
++
++      arm,msi-base-spi:
++        description: When the MSI_TYPER register contains an incorrect value,
++          this property should contain the SPI base of the MSI frame, overriding
++          the HW value.
++        $ref: /schemas/types.yaml#/definitions/uint32
++
++      arm,msi-num-spis:
++        description: When the MSI_TYPER register contains an incorrect value,
++          this property should contain the number of SPIs assigned to the
++          frame, overriding the HW value.
++        $ref: /schemas/types.yaml#/definitions/uint32
++
++    required:
++      - compatible
++      - msi-controller
++      - reg
++
++    additionalProperties: false
 +
 +additionalProperties: false
 +
 +examples:
 +  - |
-+    cache-controller@fff12000 {
-+        compatible = "arm,pl310-cache";
-+        reg = <0xfff12000 0x1000>;
-+        arm,data-latency = <1 1 1>;
-+        arm,tag-latency = <2 2 2>;
-+        arm,filter-ranges = <0x80000000 0x8000000>;
-+        cache-unified;
-+        cache-level = <2>;
-+        interrupts = <45>;
++    // GICv1
++    intc: interrupt-controller@fff11000 {
++      compatible = "arm,cortex-a9-gic";
++      #interrupt-cells = <3>;
++      #address-cells = <1>;
++      interrupt-controller;
++      reg = <0xfff11000 0x1000>,
++            <0xfff10100 0x100>;
 +    };
 +
++  - |
++    // GICv2
++    interrupt-controller@2c001000 {
++      compatible = "arm,cortex-a15-gic";
++      #interrupt-cells = <3>;
++      interrupt-controller;
++      reg = <0x2c001000 0x1000>,
++            <0x2c002000 0x2000>,
++            <0x2c004000 0x2000>,
++            <0x2c006000 0x2000>;
++      interrupts = <1 9 0xf04>;
++    };
++
++  - |
++    // GICv2m extension for MSI/MSI-x support
++    interrupt-controller@e1101000 {
++      compatible = "arm,gic-400";
++      #interrupt-cells = <3>;
++      #address-cells = <2>;
++      #size-cells = <2>;
++      interrupt-controller;
++      interrupts = <1 8 0xf04>;
++      ranges = <0 0 0 0xe1100000 0 0x100000>;
++      reg = <0x0 0xe1110000 0 0x01000>,
++            <0x0 0xe112f000 0 0x02000>,
++            <0x0 0xe1140000 0 0x10000>,
++            <0x0 0xe1160000 0 0x10000>;
++
++      v2m0: v2m@8000 {
++        compatible = "arm,gic-v2m-frame";
++        msi-controller;
++        reg = <0x0 0x80000 0 0x1000>;
++      };
++
++      //...
++
++      v2mN: v2m@9000 {
++        compatible = "arm,gic-v2m-frame";
++        msi-controller;
++        reg = <0x0 0x90000 0 0x1000>;
++      };
++    };
 +...
 -- 
 2.19.1
