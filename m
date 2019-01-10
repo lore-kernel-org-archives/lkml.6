@@ -2,121 +2,90 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 573B2C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 13:26:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7246CC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 13:26:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1FD37214DA
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 13:26:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="IIW2DCjV"
+	by mail.kernel.org (Postfix) with ESMTP id 42AE52184B
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 13:26:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547126778;
+	bh=j5qYE6P9WfSgsp0q/Ulg7FRLiqNYqxR2g7YFDQ8wRFM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=zfojixbWJ3osILAErNInoquelaTtRHAPcQp9jwAqtHIdS33nd9Ae0qOFlNcuCoTw/
+	 ZY4CdiTAa0Azljl+4YpJv/IEO66+tQlt2YILO38ZJTo+TjX4sKIMZ+M0Y4Gzx5YqFv
+	 HnceyzL/jxQgRTYGnC4uvMiYwZoF09EWy/P9wJgM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728920AbfAJN0D (ORCPT
+        id S1728936AbfAJN0R (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 08:26:03 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:46520 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728843AbfAJN0C (ORCPT
+        Thu, 10 Jan 2019 08:26:17 -0500
+Received: from mail-io1-f47.google.com ([209.85.166.47]:45866 "EHLO
+        mail-io1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728907AbfAJN0R (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 08:26:02 -0500
-Received: by mail-oi1-f194.google.com with SMTP id x202so9217205oif.13
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 05:26:01 -0800 (PST)
+        Thu, 10 Jan 2019 08:26:17 -0500
+Received: by mail-io1-f47.google.com with SMTP id c2so8877273iom.12
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 05:26:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ohYVSf1fMbgvNKdeTvE1yHp/DGUKv0oXC+hX6SOxMkA=;
-        b=IIW2DCjVNVZuslGTFaSmM0zrd5AQVQs9KDp2KFRXSbCQoxYyw+94e92qDGBqTyYj9f
-         rTjqASpKAt6Xb8tRKhvwmEL28Vqwml66hb0v5SEzBEhnYj39EnFmpVUHCBEttJ7OqDKw
-         vCUsXhvqdH5rZYw4Bqk3Z72b/G35JUNQffeNU=
+        d=linuxfoundation.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=j5qYE6P9WfSgsp0q/Ulg7FRLiqNYqxR2g7YFDQ8wRFM=;
+        b=RJzEV8wjaFTkE9lyluOOqu2kfod8GRRvtUH/Q92nyY6BFEWk44ZquKVXQcR/MCXFl7
+         sJ6Yp4K/gLKRE8XdJpQDqG9tPWdkPveRWP4dVnDmaiculUjZQWfwU1C1cW+PCVcTmKTp
+         3xAvFDsOCboNAimLlo/Cado2n+dnIgSGMUihw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ohYVSf1fMbgvNKdeTvE1yHp/DGUKv0oXC+hX6SOxMkA=;
-        b=JJunUZL6d2foHshutTyyix2QleJcHgmkGPqvWXzGQ8ln8hhKOcqkpr0PaxyEiWnBBD
-         EA/EC1AJebQ/YnkkT2DfKs8WJGvaiL4YzVXCUQXwdKPs/20RgGTcjxsNUZgRLcd0HKFo
-         hRE1B9xsZ/qf45dFQ6/6hA6tyJtN4363Jm5Nnozq4UAyyH313+abzLTSk1uhM/jnGgOl
-         ISbIe+cFmJ5rfKVG44SKJ5e0u7239JLYuR/aso0Chgpv+VrsttychjQek1LgoFPI3m6o
-         8MJtPrJrLtAtw7yBfJ8RArJlSg77hUcEQ8IGBJ7EeNxcp584sZtLwNPAOjH5ow3SYvI+
-         1s/Q==
-X-Gm-Message-State: AJcUuke1AiPrs1o9DjZaY0J66seck/8KoEjwpMX9ntcNG9hS+CxrfL7X
-        xQEqiVSSTPFFU+d6hsOnu+3QoEHYQVDRIbRzW7wy1g==
-X-Google-Smtp-Source: ALg8bN49WlrOP/5pP+J9WCkIOY3Be/esAAQ74dx3rIvjYOkGKZN7SQXT3HNWI3fx/CND/XZqQSOlAUbc8eKcpIYbbg4=
-X-Received: by 2002:aca:2dc9:: with SMTP id t192mr6774360oit.325.1547126761553;
- Thu, 10 Jan 2019 05:26:01 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=j5qYE6P9WfSgsp0q/Ulg7FRLiqNYqxR2g7YFDQ8wRFM=;
+        b=Sasj7fR1w/i9VK8D9KSUkC/pSFFPWuzadTssIae9K8NMKlfI1pe+8mZFLuI47SUfaW
+         pSKx59cPWbzkxEjOCodZbUNCtHgzvpjh+2lfm3Uamctn+A8uCj1t6TQ7uPx/vJUITGDk
+         e0esY0bRbmQt8ul7cq3EkPchZFUAfdOZB6DNOa+SUxq2jgIj9+r/9yuBz+EpqYb9ZioX
+         aCJwVqEam4zCtlH5tYMLFyLXWX5ffv2ILMreUmNaRPKecIE9tZn4h+hUg2YhQDpNYw3p
+         MOtDveGwiWRppr0lcG3zJXPIcJwTQHgXzkV8I/ggZExweIWmN8Fr12YKUx6SEPt+Dgvi
+         UsrA==
+X-Gm-Message-State: AJcUukfSYQGoGPMkmFxxvPr3TxiWrFoL5V2pJRnSZC7Jz4PxrujCNG7l
+        M9PTbaN03v1BddtAhcmwXhHelA==
+X-Google-Smtp-Source: ALg8bN6hMFPGp0tdGeYHmnwsEvUKmOTYZf+VPzhHFW2StGxrNYheOcVqVkxZEloyIEsDclqiYOl2fw==
+X-Received: by 2002:a5e:de01:: with SMTP id e1mr6640938iok.137.1547126776395;
+        Thu, 10 Jan 2019 05:26:16 -0800 (PST)
+Received: from pure.paranoia.local ([198.144.156.49])
+        by smtp.gmail.com with ESMTPSA id q197sm8935828itb.22.2019.01.10.05.26.15
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 10 Jan 2019 05:26:15 -0800 (PST)
+Date:   Thu, 10 Jan 2019 08:26:13 -0500
+From:   Konstantin Ryabitsev <konstantin@linuxfoundation.org>
+To:     Guo Ren <guoren@kernel.org>
+Cc:     pr-tracker-bot@kernel.org, torvalds@linux-foundation.org,
+        arnd@arndb.de, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org
+Subject: Re: [GIT PULL] csky fixup for linux-5.0-rc1
+Message-ID: <20190110132613.GB22569@pure.paranoia.local>
+References: <1547045397-24388-1-git-send-email-guoren@kernel.org>
+ <20190109180501.12290.85607.pr-tracker-bot@pdx-korg-gitolite-1.ci.codeaurora.org>
+ <20190109182955.GC30131@pure.paranoia.local>
+ <20190110080203.GA13262@guoren-Inspiron-7460>
 MIME-Version: 1.0
-References: <0184EA26B2509940AA629AE1405DD7F201FFC21E@dggema523-mbx.china.huawei.com>
- <c01e3ed0-f66c-f7df-295a-70b44bad49ff@arm.com> <CAFEAcA8No4tti6o9oErdfGKyHqRTfXebO4fuEOhBApFAxw=LOg@mail.gmail.com>
- <1d73ec5a-b58d-1e00-b681-53cd80cba999@arm.com> <63a1ad58-b4db-c266-1077-0a3d0a3975d0@huawei.com>
-In-Reply-To: <63a1ad58-b4db-c266-1077-0a3d0a3975d0@huawei.com>
-From:   Peter Maydell <peter.maydell@linaro.org>
-Date:   Thu, 10 Jan 2019 13:25:50 +0000
-Message-ID: <CAFEAcA9nGHFCuocGv+XLTStOZMONNK1SFYZ=uxhVN+KRU6BG2w@mail.gmail.com>
-Subject: Re: [RFC RESEND PATCH] kvm: arm64: export memory error recovery
- capability to user space
-To:     gengdongjiu <gengdongjiu@huawei.com>
-Cc:     James Morse <james.morse@arm.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Christoffer Dall <christoffer.dall@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        kvm-devel <kvm@vger.kernel.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        lkml - Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        arm-mail-list <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190110080203.GA13262@guoren-Inspiron-7460>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 10 Jan 2019 at 12:09, gengdongjiu <gengdongjiu@huawei.com> wrote:
-> Peter, I summarize James's main idea, James think QEMU does not needs
-> to check *something* if Qemu support firmware-first.
-> What do we do for your comments?
+On Thu, Jan 10, 2019 at 04:02:03PM +0800, Guo Ren wrote:
+> Can I take back this pull request and send a new pull request with
+> https:// URLs ?
 
-Unless I'm missing something, the code in your most recent patchset
-attempts to update an ACPI table when it gets the SIGBUS from the
-host kernel without doing anything to check whether it has ever
-created the ACPI table (and set up the QEMU global variable that
-tells the code where it is in the guest memory) in the first place.
-I don't see how that can work.
+It's not necessary at this point, as the pull request has already been
+processed. However, your future emails should have the public URL of the
+git repository.
 
-> >> I think one question here which it would be good to answer is:
-> >> if we are modelling a guest and we haven't specifically provided
-> >> it an ACPI table to tell it about memory errors, what do we do
-> >> when we get a sigbus from the host? We have basically two choices:
-> >>  (1) send the guest an SError (aka asynchronous external abort)
-> >>      anyway (with no further info about what the memory error is)
-> >
-> > For an AR signal an external abort is valid. Its up to the implementation
-> > whether these are synchronous or asynchronous. Qemu can only take a signal for
-> > something that was synchronous, so you can choose between the two.
-> > Synchronous external abort is marginally better as an unaware OS knows its
-> > affects this thread, and may be able to kill it.
-> > SError with an imp-def ESR is indistinguishable from 'part of the soc fell out',
-> > and should always result in a panic().
-> >
-> >
-> >>  (2) just stop QEMU (as we would for a memory error in QEMU's
-> >>      own memory)
-> >
-> > This is also valid. A machine may take external-abort to EL3 and then
-> > reboot/crash/burn.
-
-We should decide which of these we want to do, and have a comment
-explaining what we're doing. If I'm reading your current patchset
-correctly, it does neither -- if it can't record the fault in the
-ACPI table it just ignores it without either stopping QEMU or
-delivering an SError.
-
-I think I favour option (2) here.
-
-thanks
--- PMM
+Best,
+-K
