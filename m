@@ -2,137 +2,93 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DAE2BC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 20:24:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADA94C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 20:24:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE19F208E3
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 20:24:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7D623213F2
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 20:24:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729236AbfAJUYH (ORCPT
+        id S1729849AbfAJUY5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 15:24:07 -0500
-Received: from gateway36.websitewelcome.com ([192.185.187.5]:38900 "EHLO
-        gateway36.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727834AbfAJUYH (ORCPT
+        Thu, 10 Jan 2019 15:24:57 -0500
+Received: from smtprelay0037.hostedemail.com ([216.40.44.37]:49969 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726560AbfAJUY5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 15:24:07 -0500
-Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
-        by gateway36.websitewelcome.com (Postfix) with ESMTP id A9D8F402048B6
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 13:13:37 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id hgW7g6xrTYTGMhgW7gs07N; Thu, 10 Jan 2019 14:01:27 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.130.205] (port=59938 helo=[192.168.1.76])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1ghgW7-002VGf-B6; Thu, 10 Jan 2019 14:01:27 -0600
-Subject: Re: [PATCH 27/41] scsi: lpfc: lpfc_scsi: Mark expected switch
- fall-throughs
-To:     James Smart <james.smart@broadcom.com>,
-        Dick Kennedy <dick.kennedy@broadcom.com>
-Cc:     "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <cover.1543374820.git.gustavo@embeddedor.com>
- <4c7efa89883829e21a09e558139e5d8a0d94dee0.1543374820.git.gustavo@embeddedor.com>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Message-ID: <feef9be1-02e5-60cf-434e-f0a9659b6566@embeddedor.com>
-Date:   Thu, 10 Jan 2019 14:01:09 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <4c7efa89883829e21a09e558139e5d8a0d94dee0.1543374820.git.gustavo@embeddedor.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+        Thu, 10 Jan 2019 15:24:57 -0500
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay01.hostedemail.com (Postfix) with ESMTP id 12AE9100E86C1;
+        Thu, 10 Jan 2019 20:24:56 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: bike43_82460749f3861
+X-Filterd-Recvd-Size: 2235
+Received: from XPS-9350.home (unknown [47.151.153.53])
+        (Authenticated sender: joe@perches.com)
+        by omf20.hostedemail.com (Postfix) with ESMTPA;
+        Thu, 10 Jan 2019 20:24:55 +0000 (UTC)
+Message-ID: <d3c1a0a9a29f6edfb36d97889d3498e1968500c0.camel@perches.com>
+Subject: Re: [PATCH] checkpatch: allow reporting C99 style comments
+From:   Joe Perches <joe@perches.com>
+To:     Vadim Bendebury <vbendeb@chromium.org>,
+        linux-kernel@vger.kernel.org
+Cc:     apw@canonical.com
+Date:   Thu, 10 Jan 2019 12:24:53 -0800
+In-Reply-To: <20190110050117.55349-1-vbendeb@chromium.org>
+References: <20190110050117.55349-1-vbendeb@chromium.org>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.1-1build1 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.130.205
-X-Source-L: No
-X-Exim-ID: 1ghgW7-002VGf-B6
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.76]) [189.250.130.205]:59938
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 6
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-Friendly ping (second one):
-
-Who can ack/review/take this patch, please?
-
-Thanks
---
-Gustavo
-
-On 11/27/18 10:32 PM, Gustavo A. R. Silva wrote:
-> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
-> where we are expecting to fall through.
+On Wed, 2019-01-09 at 21:01 -0800, Vadim Bendebury wrote:
+> Presently C99 style comments are removed unconditionally before actual
+> patch validity check happens. This is a problem for some third party
+> projects which use checkpatch.pl but do not allow C99 style comments.
 > 
-> Notice that, in this particular case, I replaced "Drop thru" with
-> "fall through" annotations, which is what GCC is expecting to find.
+> This patch adds yet another variable, named C99_COMMENT_TOLERANCE. If
+> it is included in the --ignore command line or config file options
+> list, C99 comments in the patch are reported as errors.
 > 
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> ---
->   drivers/scsi/lpfc/lpfc_scsi.c | 8 ++++----
->   1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/scsi/lpfc/lpfc_scsi.c b/drivers/scsi/lpfc/lpfc_scsi.c
-> index baed2b891efb..0eeed6c4c2ee 100644
-> --- a/drivers/scsi/lpfc/lpfc_scsi.c
-> +++ b/drivers/scsi/lpfc/lpfc_scsi.c
-> @@ -1427,7 +1427,7 @@ lpfc_bg_err_inject(struct lpfc_hba *phba, struct scsi_cmnd *sc,
->   
->   					break;
->   				}
-> -				/* Drop thru */
-> +				/* fall through */
->   			case SCSI_PROT_WRITE_INSERT:
->   				/*
->   				 * For WRITE_INSERT, force the error
-> @@ -1546,7 +1546,7 @@ lpfc_bg_err_inject(struct lpfc_hba *phba, struct scsi_cmnd *sc,
->   					rc = BG_ERR_TGT | BG_ERR_CHECK;
->   					break;
->   				}
-> -				/* Drop thru */
-> +				/* fall through */
->   			case SCSI_PROT_WRITE_INSERT:
->   				/*
->   				 * For WRITE_INSERT, force the
-> @@ -1628,7 +1628,7 @@ lpfc_bg_err_inject(struct lpfc_hba *phba, struct scsi_cmnd *sc,
->   			switch (op) {
->   			case SCSI_PROT_WRITE_PASS:
->   				rc = BG_ERR_CHECK;
-> -				/* Drop thru */
-> +				/* fall through */
->   
->   			case SCSI_PROT_WRITE_INSERT:
->   				/*
-> @@ -4115,7 +4115,7 @@ lpfc_scsi_cmd_iocb_cmpl(struct lpfc_hba *phba, struct lpfc_iocbq *pIocbIn,
->   					lpfc_cmd->cur_iocbq.sli4_lxritag,
->   					0, 0);
->   			}
-> -		/* else: fall through */
-> +			/* fall through */
->   		default:
->   			cmd->result = DID_ERROR << 16;
->   			break;
-> 
+> Tested by processing a patch with a C99 style comment, it passes the
+> check just fine unless '--ignore C99_COMMENT_TOLERANCE' is present in
+> .checkpatch.conf.
+
+I'm not a big fan of the name but I can't think of
+anything much better.
+
+And the location of the added test isn't good.
+
+> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+[]
+> @@ -61,7 +61,6 @@ my $codespellfile = "/usr/share/codespell/dictionary.txt";
+>  my $conststructsfile = "$D/const_structs.checkpatch";
+>  my $typedefsfile = "";
+>  my $color = "auto";
+> -my $allow_c99_comments = 1;
+
+Keep this here.
+ 
+>  sub help {
+>  	my ($exitcode) = @_;
+> @@ -1250,6 +1249,8 @@ sub sanitise_line {
+>  	my $off = 0;
+>  	my $c;
+>  
+> +	my $allow_c99_comments = !defined $ignore_type{"C99_COMMENT_TOLERANCE"};
+> +
+
+And add this test as a new line near line 1015 like
+
+ my $vname;
++$allow_c99_comments = !defined $ignore_type{"C99_COMMENT_TOLERANCE"};
+ for my $filename (@ARGV) {
+
+
