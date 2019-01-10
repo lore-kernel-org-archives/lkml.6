@@ -2,114 +2,335 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD4A6C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 20:03:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C422FC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 20:05:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B3BE720665
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 20:03:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7444F213F2
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 20:05:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="bvARo4xa"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729867AbfAJUDo (ORCPT
+        id S1729203AbfAJUFR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 15:03:44 -0500
-Received: from gateway30.websitewelcome.com ([192.185.197.25]:21908 "EHLO
-        gateway30.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729286AbfAJUDm (ORCPT
+        Thu, 10 Jan 2019 15:05:17 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:41321 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726255AbfAJUFQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 15:03:42 -0500
-Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
-        by gateway30.websitewelcome.com (Postfix) with ESMTP id F21CF19BC5
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 14:03:41 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id hgYHgZk7R2PzOhgYHgDpiY; Thu, 10 Jan 2019 14:03:41 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.130.205] (port=41174 helo=[192.168.43.131])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1ghgYH-002XDM-Ij; Thu, 10 Jan 2019 14:03:41 -0600
-Subject: Re: [PATCH 22/41] scsi: lpfc: lpfc_ct: Mark expected switch
- fall-throughs
-To:     James Smart <james.smart@broadcom.com>,
-        Dick Kennedy <dick.kennedy@broadcom.com>
-Cc:     "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <cover.1543374820.git.gustavo@embeddedor.com>
- <4e80e3ae7cd0f0c54b45530a3772af4f606b0c8e.1543374820.git.gustavo@embeddedor.com>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Message-ID: <3f4cadf2-7251-96e7-0626-4c91fb363b34@embeddedor.com>
-Date:   Thu, 10 Jan 2019 14:03:37 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 10 Jan 2019 15:05:16 -0500
+Received: by mail-ed1-f65.google.com with SMTP id a20so11231297edc.8
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 12:05:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=/pcj8QbUs5xMkok8fEUXFpApIKzfIdSMQ258p+BVwqw=;
+        b=bvARo4xaxm3HknyMDAR4UpAygeFJc7LQecx0Yf2FqjkDvPvmKZSxkbJxCyZJr6+tfp
+         rJkHuZN0pIWTua6FONz0iQYVhB886MD3tJGyxP2khLmSMYkLFK1XtPJ19TvlI6gvPK3P
+         /ZycSLbuM/CX6/RAyH5sKKdkQZVsE5PuE30JA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=/pcj8QbUs5xMkok8fEUXFpApIKzfIdSMQ258p+BVwqw=;
+        b=H1ed9iW9rACvkLCqo0ENJyJyxoU2/HKydtetDOgWL4kxyQDumwSrDkOunYmhhWoPHm
+         lw+ns+MzJXWvkKPzIA2rkjpnjfEXWkC0dx3itP/SsILwZe+GN8AY8K0KRiCiOr4IhNRV
+         rZcQFzgzdG14EcEgaM6vMNvCUGzRL7CBOGTJAyR1bGYPVww/qlFak8b4QguLWeKCZXgR
+         0nsuxIft1XQz1LD0mYBKjZXmmttNeIR4nCgGYljJI8GWsLKTtxc5R0bONFAMdt2v1gAW
+         ToE73UsQX4zdlRqdw/3hJoNiZWxMkd0CsIiMfqpym51H3YiMFmArhdKRLOr8LRzzHQLH
+         2koA==
+X-Gm-Message-State: AJcUukfjicCt+7k+q4niUSZ3pmOb0ByNGP3MsoU+k1xBwKy73CtEdbEN
+        Odx1yFKj3OxQPEJBLP2UglJYqA==
+X-Google-Smtp-Source: ALg8bN519pWGLuFqAD1ZfGlICAlXyhVll/vuaOHWcFWH9+5VsG8Dan5cRA9MyqK7pQyaerUzhWaXaQ==
+X-Received: by 2002:a17:906:753:: with SMTP id z19-v6mr9697817ejb.175.1547150714221;
+        Thu, 10 Jan 2019 12:05:14 -0800 (PST)
+Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
+        by smtp.gmail.com with ESMTPSA id r8sm1742705edo.11.2019.01.10.12.05.12
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 10 Jan 2019 12:05:13 -0800 (PST)
+Date:   Thu, 10 Jan 2019 21:05:10 +0100
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Shayenne Moura <shayenneluzmoura@gmail.com>
+Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Rob Clark <robdclark@gmail.com>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Vincent Abriou <vincent.abriou@st.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Carlo Caione <carlo@caione.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH v4 1/3] drm: msm: Cleanup drm_display_mode print str
+Message-ID: <20190110200510.GO21184@phenom.ffwll.local>
+Mail-Followup-To: Shayenne Moura <shayenneluzmoura@gmail.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Rob Clark <robdclark@gmail.com>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Vincent Abriou <vincent.abriou@st.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Carlo Caione <carlo@caione.org>,
+        Kevin Hilman <khilman@baylibre.com>, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org
+References: <cover.1547143069.git.shayenneluzmoura@gmail.com>
+ <3e2dcd38c964061f245b0ae22186c71da06e9742.1547143069.git.shayenneluzmoura@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <4e80e3ae7cd0f0c54b45530a3772af4f606b0c8e.1543374820.git.gustavo@embeddedor.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.130.205
-X-Source-L: No
-X-Exim-ID: 1ghgYH-002XDM-Ij
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.43.131]) [189.250.130.205]:41174
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 30
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3e2dcd38c964061f245b0ae22186c71da06e9742.1547143069.git.shayenneluzmoura@gmail.com>
+X-Operating-System: Linux phenom 4.18.0-2-amd64 
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-Friendly ping (second one):
-
-Who can ack/review/take this patch, please?
-
-Thanks
---
-Gustavo
-
-On 11/27/18 10:31 PM, Gustavo A. R. Silva wrote:
-> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
-> where we are expecting to fall through.
+On Thu, Jan 10, 2019 at 04:13:01PM -0200, Shayenne Moura wrote:
+> This patch adjust the print string of drm_display_mode object
+> to remove drm_mode_object dependency in msm files.
 > 
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> Reported-by: kbuild test robot <lkp@intel.com>
+
+For next time around, this is a bit much credit for kbuild test robot. I'd
+just do something like:
+
+v3: Fix typo that kbuild robot reported.
+
+In drm we also keep the per-change changelog usually within the commit
+message (since often there's useful information there that's worth
+keeping). Which is different from everywhere else in the kernel.
+-Daniel
+
+> Signed-off-by: Shayenne Moura <shayenneluzmoura@gmail.com>
+> 
 > ---
->   drivers/scsi/lpfc/lpfc_ct.c | 2 ++
->   1 file changed, 2 insertions(+)
+> Changes in v2:
+>   - Use DRM_MODE_FMT/ARG macros (Daniel).
+>   - Make the commit message more clear
 > 
-> diff --git a/drivers/scsi/lpfc/lpfc_ct.c b/drivers/scsi/lpfc/lpfc_ct.c
-> index 6305ffeba7ea..b2b7fcc23654 100644
-> --- a/drivers/scsi/lpfc/lpfc_ct.c
-> +++ b/drivers/scsi/lpfc/lpfc_ct.c
-> @@ -3050,6 +3050,7 @@ lpfc_fdmi_cmd(struct lpfc_vport *vport, struct lpfc_nodelist *ndlp,
->   	case SLI_MGMT_GHAT:
->   	case SLI_MGMT_GRPL:
->   		rsp_size = FC_MAX_NS_RSP;
-> +		/* fall through */
->   	case SLI_MGMT_DHBA:
->   	case SLI_MGMT_DHAT:
->   		pe = (struct lpfc_fdmi_port_entry *)&CtReq->un.PortID;
-> @@ -3062,6 +3063,7 @@ lpfc_fdmi_cmd(struct lpfc_vport *vport, struct lpfc_nodelist *ndlp,
->   	case SLI_MGMT_GPAT:
->   	case SLI_MGMT_GPAS:
->   		rsp_size = FC_MAX_NS_RSP;
-> +		/* fall through */
->   	case SLI_MGMT_DPRT:
->   	case SLI_MGMT_DPA:
->   		pe = (struct lpfc_fdmi_port_entry *)&CtReq->un.PortID;
+> Changes in v3:
+>   - Resolve typo in v2 patch
 > 
+> Changes in v4:
+>   - No changes
+> 
+>  drivers/gpu/drm/msm/disp/mdp4/mdp4_crtc.c         | 10 ++--------
+>  drivers/gpu/drm/msm/disp/mdp4/mdp4_dsi_encoder.c  |  9 +--------
+>  drivers/gpu/drm/msm/disp/mdp4/mdp4_dtv_encoder.c  |  9 +--------
+>  drivers/gpu/drm/msm/disp/mdp4/mdp4_lcdc_encoder.c |  9 +--------
+>  drivers/gpu/drm/msm/disp/mdp5/mdp5_cmd_encoder.c  |  9 +--------
+>  drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c         |  9 +--------
+>  drivers/gpu/drm/msm/disp/mdp5/mdp5_encoder.c      |  9 +--------
+>  drivers/gpu/drm/msm/dsi/dsi_manager.c             |  9 +--------
+>  drivers/gpu/drm/msm/edp/edp_bridge.c              |  9 +--------
+>  9 files changed, 10 insertions(+), 72 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/msm/disp/mdp4/mdp4_crtc.c b/drivers/gpu/drm/msm/disp/mdp4/mdp4_crtc.c
+> index 457c29dba4a1..7b028f778960 100644
+> --- a/drivers/gpu/drm/msm/disp/mdp4/mdp4_crtc.c
+> +++ b/drivers/gpu/drm/msm/disp/mdp4/mdp4_crtc.c
+> @@ -244,14 +244,8 @@ static void mdp4_crtc_mode_set_nofb(struct drm_crtc *crtc)
+>  
+>  	mode = &crtc->state->adjusted_mode;
+>  
+> -	DBG("%s: set mode: %d:\"%s\" %d %d %d %d %d %d %d %d %d %d 0x%x 0x%x",
+> -			mdp4_crtc->name, mode->base.id, mode->name,
+> -			mode->vrefresh, mode->clock,
+> -			mode->hdisplay, mode->hsync_start,
+> -			mode->hsync_end, mode->htotal,
+> -			mode->vdisplay, mode->vsync_start,
+> -			mode->vsync_end, mode->vtotal,
+> -			mode->type, mode->flags);
+> +	DBG("%s: set mode: " DRM_MODE_FMT,
+> +			mdp4_crtc->name, DRM_MODE_ARG(mode));
+>  
+>  	mdp4_write(mdp4_kms, REG_MDP4_DMA_SRC_SIZE(dma),
+>  			MDP4_DMA_SRC_SIZE_WIDTH(mode->hdisplay) |
+> diff --git a/drivers/gpu/drm/msm/disp/mdp4/mdp4_dsi_encoder.c b/drivers/gpu/drm/msm/disp/mdp4/mdp4_dsi_encoder.c
+> index 6a1ebdace391..48ce218b8463 100644
+> --- a/drivers/gpu/drm/msm/disp/mdp4/mdp4_dsi_encoder.c
+> +++ b/drivers/gpu/drm/msm/disp/mdp4/mdp4_dsi_encoder.c
+> @@ -58,14 +58,7 @@ static void mdp4_dsi_encoder_mode_set(struct drm_encoder *encoder,
+>  
+>  	mode = adjusted_mode;
+>  
+> -	DBG("set mode: %d:\"%s\" %d %d %d %d %d %d %d %d %d %d 0x%x 0x%x",
+> -			mode->base.id, mode->name,
+> -			mode->vrefresh, mode->clock,
+> -			mode->hdisplay, mode->hsync_start,
+> -			mode->hsync_end, mode->htotal,
+> -			mode->vdisplay, mode->vsync_start,
+> -			mode->vsync_end, mode->vtotal,
+> -			mode->type, mode->flags);
+> +	DBG("set mode: " DRM_MODE_FMT, DRM_MODE_ARG(mode));
+>  
+>  	ctrl_pol = 0;
+>  	if (mode->flags & DRM_MODE_FLAG_NHSYNC)
+> diff --git a/drivers/gpu/drm/msm/disp/mdp4/mdp4_dtv_encoder.c b/drivers/gpu/drm/msm/disp/mdp4/mdp4_dtv_encoder.c
+> index ba8e587f734b..f6bc86a35d8d 100644
+> --- a/drivers/gpu/drm/msm/disp/mdp4/mdp4_dtv_encoder.c
+> +++ b/drivers/gpu/drm/msm/disp/mdp4/mdp4_dtv_encoder.c
+> @@ -104,14 +104,7 @@ static void mdp4_dtv_encoder_mode_set(struct drm_encoder *encoder,
+>  
+>  	mode = adjusted_mode;
+>  
+> -	DBG("set mode: %d:\"%s\" %d %d %d %d %d %d %d %d %d %d 0x%x 0x%x",
+> -			mode->base.id, mode->name,
+> -			mode->vrefresh, mode->clock,
+> -			mode->hdisplay, mode->hsync_start,
+> -			mode->hsync_end, mode->htotal,
+> -			mode->vdisplay, mode->vsync_start,
+> -			mode->vsync_end, mode->vtotal,
+> -			mode->type, mode->flags);
+> +	DBG("set mode: " DRM_MODE_FMT, DRM_MODE_ARG(mode));
+>  
+>  	mdp4_dtv_encoder->pixclock = mode->clock * 1000;
+>  
+> diff --git a/drivers/gpu/drm/msm/disp/mdp4/mdp4_lcdc_encoder.c b/drivers/gpu/drm/msm/disp/mdp4/mdp4_lcdc_encoder.c
+> index 2bfb39082f54..d47b8f4af991 100644
+> --- a/drivers/gpu/drm/msm/disp/mdp4/mdp4_lcdc_encoder.c
+> +++ b/drivers/gpu/drm/msm/disp/mdp4/mdp4_lcdc_encoder.c
+> @@ -273,14 +273,7 @@ static void mdp4_lcdc_encoder_mode_set(struct drm_encoder *encoder,
+>  
+>  	mode = adjusted_mode;
+>  
+> -	DBG("set mode: %d:\"%s\" %d %d %d %d %d %d %d %d %d %d 0x%x 0x%x",
+> -			mode->base.id, mode->name,
+> -			mode->vrefresh, mode->clock,
+> -			mode->hdisplay, mode->hsync_start,
+> -			mode->hsync_end, mode->htotal,
+> -			mode->vdisplay, mode->vsync_start,
+> -			mode->vsync_end, mode->vtotal,
+> -			mode->type, mode->flags);
+> +	DBG("set mode: " DRM_MODE_FMT, DRM_MODE_ARG(mode));
+>  
+>  	mdp4_lcdc_encoder->pixclock = mode->clock * 1000;
+>  
+> diff --git a/drivers/gpu/drm/msm/disp/mdp5/mdp5_cmd_encoder.c b/drivers/gpu/drm/msm/disp/mdp5/mdp5_cmd_encoder.c
+> index d6f79dc755b4..33972c1816ed 100644
+> --- a/drivers/gpu/drm/msm/disp/mdp5/mdp5_cmd_encoder.c
+> +++ b/drivers/gpu/drm/msm/disp/mdp5/mdp5_cmd_encoder.c
+> @@ -134,14 +134,7 @@ void mdp5_cmd_encoder_mode_set(struct drm_encoder *encoder,
+>  {
+>  	mode = adjusted_mode;
+>  
+> -	DBG("set mode: %d:\"%s\" %d %d %d %d %d %d %d %d %d %d 0x%x 0x%x",
+> -			mode->base.id, mode->name,
+> -			mode->vrefresh, mode->clock,
+> -			mode->hdisplay, mode->hsync_start,
+> -			mode->hsync_end, mode->htotal,
+> -			mode->vdisplay, mode->vsync_start,
+> -			mode->vsync_end, mode->vtotal,
+> -			mode->type, mode->flags);
+> +	DBG("set mode: " DRM_MODE_FMT, DRM_MODE_ARG(mode));
+>  	pingpong_tearcheck_setup(encoder, mode);
+>  	mdp5_crtc_set_pipeline(encoder->crtc);
+>  }
+> diff --git a/drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c b/drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c
+> index b1da9ce54379..4878b81c96fb 100644
+> --- a/drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c
+> +++ b/drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c
+> @@ -384,14 +384,7 @@ static void mdp5_crtc_mode_set_nofb(struct drm_crtc *crtc)
+>  
+>  	mode = &crtc->state->adjusted_mode;
+>  
+> -	DBG("%s: set mode: %d:\"%s\" %d %d %d %d %d %d %d %d %d %d 0x%x 0x%x",
+> -			crtc->name, mode->base.id, mode->name,
+> -			mode->vrefresh, mode->clock,
+> -			mode->hdisplay, mode->hsync_start,
+> -			mode->hsync_end, mode->htotal,
+> -			mode->vdisplay, mode->vsync_start,
+> -			mode->vsync_end, mode->vtotal,
+> -			mode->type, mode->flags);
+> +	DBG("%s: set mode: " DRM_MODE_FMT, crtc->name, DRM_MODE_ARG(mode));
+>  
+>  	mixer_width = mode->hdisplay;
+>  	if (r_mixer)
+> diff --git a/drivers/gpu/drm/msm/disp/mdp5/mdp5_encoder.c b/drivers/gpu/drm/msm/disp/mdp5/mdp5_encoder.c
+> index fcd44d1d1068..d2a56e55e53d 100644
+> --- a/drivers/gpu/drm/msm/disp/mdp5/mdp5_encoder.c
+> +++ b/drivers/gpu/drm/msm/disp/mdp5/mdp5_encoder.c
+> @@ -118,14 +118,7 @@ static void mdp5_vid_encoder_mode_set(struct drm_encoder *encoder,
+>  
+>  	mode = adjusted_mode;
+>  
+> -	DBG("set mode: %d:\"%s\" %d %d %d %d %d %d %d %d %d %d 0x%x 0x%x",
+> -			mode->base.id, mode->name,
+> -			mode->vrefresh, mode->clock,
+> -			mode->hdisplay, mode->hsync_start,
+> -			mode->hsync_end, mode->htotal,
+> -			mode->vdisplay, mode->vsync_start,
+> -			mode->vsync_end, mode->vtotal,
+> -			mode->type, mode->flags);
+> +	DBG("set mode: " DRM_MODE_FMT, DRM_MODE_ARG(mode));
+>  
+>  	ctrl_pol = 0;
+>  
+> diff --git a/drivers/gpu/drm/msm/dsi/dsi_manager.c b/drivers/gpu/drm/msm/dsi/dsi_manager.c
+> index 80aa6344185e..7c8352a8ea97 100644
+> --- a/drivers/gpu/drm/msm/dsi/dsi_manager.c
+> +++ b/drivers/gpu/drm/msm/dsi/dsi_manager.c
+> @@ -536,14 +536,7 @@ static void dsi_mgr_bridge_mode_set(struct drm_bridge *bridge,
+>  	struct mipi_dsi_host *host = msm_dsi->host;
+>  	bool is_dual_dsi = IS_DUAL_DSI();
+>  
+> -	DBG("set mode: %d:\"%s\" %d %d %d %d %d %d %d %d %d %d 0x%x 0x%x",
+> -			mode->base.id, mode->name,
+> -			mode->vrefresh, mode->clock,
+> -			mode->hdisplay, mode->hsync_start,
+> -			mode->hsync_end, mode->htotal,
+> -			mode->vdisplay, mode->vsync_start,
+> -			mode->vsync_end, mode->vtotal,
+> -			mode->type, mode->flags);
+> +	DBG("set mode: " DRM_MODE_FMT, DRM_MODE_ARG(mode));
+>  
+>  	if (is_dual_dsi && !IS_MASTER_DSI_LINK(id))
+>  		return;
+> diff --git a/drivers/gpu/drm/msm/edp/edp_bridge.c b/drivers/gpu/drm/msm/edp/edp_bridge.c
+> index 931a5c97cccf..153f350ce017 100644
+> --- a/drivers/gpu/drm/msm/edp/edp_bridge.c
+> +++ b/drivers/gpu/drm/msm/edp/edp_bridge.c
+> @@ -60,14 +60,7 @@ static void edp_bridge_mode_set(struct drm_bridge *bridge,
+>  	struct edp_bridge *edp_bridge = to_edp_bridge(bridge);
+>  	struct msm_edp *edp = edp_bridge->edp;
+>  
+> -	DBG("set mode: %d:\"%s\" %d %d %d %d %d %d %d %d %d %d 0x%x 0x%x",
+> -			mode->base.id, mode->name,
+> -			mode->vrefresh, mode->clock,
+> -			mode->hdisplay, mode->hsync_start,
+> -			mode->hsync_end, mode->htotal,
+> -			mode->vdisplay, mode->vsync_start,
+> -			mode->vsync_end, mode->vtotal,
+> -			mode->type, mode->flags);
+> +	DBG("set mode: " DRM_MODE_FMT, DRM_MODE_ARG(mode));
+>  
+>  	list_for_each_entry(connector, &dev->mode_config.connector_list, head) {
+>  		if ((connector->encoder != NULL) &&
+> -- 
+> 2.17.1
+> 
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
