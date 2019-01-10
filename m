@@ -2,201 +2,168 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68B56C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 23:13:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01FC1C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 23:15:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2BEA6213F2
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 23:13:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="fDXMwTam"
+	by mail.kernel.org (Postfix) with ESMTP id C706D213F2
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 23:15:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730047AbfAJXNT (ORCPT
+        id S1730079AbfAJXP4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 18:13:19 -0500
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:40040 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726149AbfAJXNT (ORCPT
+        Thu, 10 Jan 2019 18:15:56 -0500
+Received: from smtp-1.orcon.net.nz ([60.234.4.34]:53442 "EHLO
+        smtp-1.orcon.net.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728787AbfAJXPz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 18:13:19 -0500
-Received: by mail-ed1-f65.google.com with SMTP id g22so11591879edr.7
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 15:13:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brauner.io; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=HZd7aYmyoblkRUeGzG3dKNA8bmjh2OnCORdwspfF86k=;
-        b=fDXMwTamTSL1+JQL/N3v84xbkkQT0Jd65cDFJ4DDCBU7brh2+dJlNy+oi0O+vZoQIm
-         Ac754sgI1zCIg1EEurnB6lMqj62U9s5+4ugiAEqvBv8EeuwMEl/+qVsZU4i6ijW4gaPp
-         W2XoCp2Nmus7JNTq+DarSeU+/Pyd5z6a9jpVc6+hx0SqpIP8N78s7TXrEjvPo63FgTJC
-         aDCtVSFHhTgpxIKtu0bkiKqYjsJYgZ/nWoyGdRDpLQbLjXO4/nhV5s7Xv6c1Xx3+UO4F
-         1fCRbFWXU2IldeKyHTvQA8NjTWx9T5NVzL2FcV0FRInhC4FXNNHw9Lf92KHQghRAyQnd
-         2b7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=HZd7aYmyoblkRUeGzG3dKNA8bmjh2OnCORdwspfF86k=;
-        b=V3Kkvz9Q0DGQ1lZZQn42a/p83r9SoPOmsKBOtvReiYhKNv/pshiGF9fCbxnUZFx1xm
-         O7hPUgrxZERiszuR7Bo1pyurvOLupQRV70gDzbjxDa5ouy2GbZAkRrktnU9D16GbXKFm
-         K4C6Y46lCxq7l9KpbIswiOcLCWSpdaImZZJwVeXZRl6V0bTjr5FETJCfFtwcRGVyxqFt
-         F58WcOC99ysc1v9OCTC0u2lp9ifAuTsJjelTtUzjDIQh0CeSFMekCHIsXO0UkhBF4J4D
-         yq8+atuMeexl/SeIrBg/DI+xcyy7A6cZcHB/2ZP9sqkeGcgCAhO76syMYdYwFLiBHBW/
-         sGoA==
-X-Gm-Message-State: AJcUukfe0Zk2EQyLPycnjI3Amdy9GDOHxiFKiw2nM5dh90jrgs91SIFl
-        aAWxWzryaxbV9g0f5c2R0Osp5A==
-X-Google-Smtp-Source: ALg8bN71z3yyzbwgIOioHz0QWPVAqThmRgCiBMZFSXydGS/zycv0jXqTBOafLF4uCshTUkHI1Ygy2w==
-X-Received: by 2002:a50:b902:: with SMTP id m2mr10812045ede.108.1547161996414;
-        Thu, 10 Jan 2019 15:13:16 -0800 (PST)
-Received: from localhost.localdomain ([2a02:8109:b6c0:d6c:c571:88:8aee:976c])
-        by smtp.gmail.com with ESMTPSA id g21sm2342870edc.63.2019.01.10.15.13.15
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 10 Jan 2019 15:13:15 -0800 (PST)
-From:   Christian Brauner <christian@brauner.io>
-To:     corbet@lwn.net, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Christian Brauner <christian@brauner.io>
-Subject: [PATCH] Documentation/filesystems: add binderfs
-Date:   Fri, 11 Jan 2019 00:13:09 +0100
-Message-Id: <20190110231309.12653-1-christian@brauner.io>
-X-Mailer: git-send-email 2.19.1
+        Thu, 10 Jan 2019 18:15:55 -0500
+Received: from [121.99.228.40] (port=24388 helo=tower)
+        by smtp-1.orcon.net.nz with esmtpa (Exim 4.86_2)
+        (envelope-from <mcree@orcon.net.nz>)
+        id 1ghjX2-0006MW-NK; Fri, 11 Jan 2019 12:14:37 +1300
+Date:   Fri, 11 Jan 2019 12:14:31 +1300
+From:   Michael Cree <mcree@orcon.net.nz>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Joseph Myers <joseph@codesourcery.com>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+        Matt Turner <mattst88@gmail.com>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Michal Simek <monstr@monstr.eu>,
+        Paul Burton <paul.burton@mips.com>,
+        Helge Deller <deller@gmx.de>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Rich Felker <dalias@libc.org>,
+        David Miller <davem@davemloft.net>,
+        Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        Firoz Khan <firoz.khan@linaro.org>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        alpha <linux-alpha@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-ia64@vger.kernel.org,
+        linux-m68k <linux-m68k@lists.linux-m68k.org>,
+        linux-mips@vger.kernel.org,
+        Parisc List <linux-parisc@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        Linux-sh list <linux-sh@vger.kernel.org>,
+        sparclinux <sparclinux@vger.kernel.org>
+Subject: Re: [PATCH 00/15] arch: synchronize syscall tables in preparation
+ for y2038
+Message-ID: <20190110231431.ho6mjhjkj4p47hww@tower>
+Mail-Followup-To: Michael Cree <mcree@orcon.net.nz>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Joseph Myers <joseph@codesourcery.com>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+        Matt Turner <mattst88@gmail.com>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, Tony Luck <tony.luck@intel.com>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Michal Simek <monstr@monstr.eu>, Paul Burton <paul.burton@mips.com>,
+        Helge Deller <deller@gmx.de>, Michael Ellerman <mpe@ellerman.id.au>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Rich Felker <dalias@libc.org>, David Miller <davem@davemloft.net>,
+        Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        Firoz Khan <firoz.khan@linaro.org>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        alpha <linux-alpha@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-ia64@vger.kernel.org,
+        linux-m68k <linux-m68k@lists.linux-m68k.org>,
+        linux-mips@vger.kernel.org,
+        Parisc List <linux-parisc@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        Linux-sh list <linux-sh@vger.kernel.org>,
+        sparclinux <sparclinux@vger.kernel.org>
+References: <20190110162435.309262-1-arnd@arndb.de>
+ <alpine.DEB.2.21.1901101808220.31458@digraph.polyomino.org.uk>
+ <CAK8P3a2f4SCJXrm6HWO9UKY-akSW+ONNpOvQOtYbia_fRo9ciQ@mail.gmail.com>
 MIME-Version: 1.0
-X-Patchwork-Bot: notify
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAK8P3a2f4SCJXrm6HWO9UKY-akSW+ONNpOvQOtYbia_fRo9ciQ@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-GeoIP: NZ
+X-Spam_score: -2.9
+X-Spam_score_int: -28
+X-Spam_bar: --
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This documents the Android binderfs filesystem used to dynamically add and
-remove binder devices that are private to each instance.
+On Thu, Jan 10, 2019 at 11:42:32PM +0100, Arnd Bergmann wrote:
+> On Thu, Jan 10, 2019 at 7:10 PM Joseph Myers <joseph@codesourcery.com> wrote:
+> >
+> > On Thu, 10 Jan 2019, Arnd Bergmann wrote:
+> >
+> > > - Add system calls that have not yet been integrated into all
+> > >   architectures but that we definitely want there.
+> >
+> > glibc has a note that alpha lacks statfs64, any plans for that?
+> 
+> Good catch, I missed that because all other 64-bit architectures
+> have a statfs() call with 64-bit fields. I see that it also has an
+> osf_statfs64 structure and system call with lots of padding and some
+> oddly sized fields: f_type, f_flags and f_namemax are only 16 bits
+> wide, the rest is all 64-bit.
+> 
+> Adding the regular statfs64() should be easy enough, we just need to
+> decide which layout to use:
+> 
+> a) use the currently unused 'struct statfs64' as provided by the
+>     alpha uapi headers, which has a 32-bit __statfs_word but
+>     64-bit f_blocks, f_bfree, f_bavail, f_files, and f_ffree.
+> 
+> b) copy asm-generic/statfs.h to the alpha asm/statfs.h and
+>     change statfs64 to have the regular layout that we use
+>     on all other 64-bit architectures, using all 64-bit fields.
+> 
+> The other open question for alpha (as mentioned in one of the
+> patches I sent) would be whether to add get{eg,eu,g,p,pp,u}id()
+> with the regular calling conventions.
 
-Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
----
- Documentation/filesystems/binderfs.txt | 109 +++++++++++++++++++++++++
- 1 file changed, 109 insertions(+)
- create mode 100644 Documentation/filesystems/binderfs.txt
+I would be interested in seeing those provided on Alpha.  There are
+a handful of projects choosing to sidestep glibc for these syscalls
+and they break on Alpha.  Such projects are never keen to include
+special assembler code (because the extant syscalls on Alpha are not
+C ABI compliant) to support a legacy arch.
 
-diff --git a/Documentation/filesystems/binderfs.txt b/Documentation/filesystems/binderfs.txt
-new file mode 100644
-index 000000000000..9c47eb33dd6a
---- /dev/null
-+++ b/Documentation/filesystems/binderfs.txt
-@@ -0,0 +1,109 @@
-+
-+The Android binderfs Filesystem
-+===============================
-+
-+Android binderfs is a filesystem for the Android binder IPC mechanism.  It
-+allows to dynamically add and remove binder devices at runtime.  Binder devices
-+located in a new binderfs instance are independent of binder devices located in
-+other binderfs instances.  Mounting a new binderfs instance makes it possible
-+to get a set of private binder devices.
-+
-+Mounting binderfs
-+-----------------
-+
-+Android binderfs can be mounted with:
-+
-+mkdir /dev/binderfs
-+mount -t binder binder /dev/binderfs
-+
-+at which point a new instance of binderfs will show up at /dev/binderfs.  In a
-+fresh instance of binderfs no binder devices will be present.  There will only
-+be a binder-control device which serves as the request handler for binderfs.
-+Mounting another binderfs instance at a different location will create a new
-+and separate instance from all other binderfs mounts.  This is identical to the
-+behavior of e.g. devpts and tmpfs.
-+The Android binderfs filesystem can be mounted in user namespaces.
-+
-+Options
-+-------
-+
-+Android binderfs does currently not support mount options.
-+
-+Allocating binder Devices
-+-------------------------
-+
-+To allocate a new binder device in a binderfs instance a request needs to be
-+sent through the binder-control device node.  A request is sent in the form of
-+an ioctl(2).  Here’s an example program:
-+
-+#define _GNU_SOURCE
-+#include <errno.h>
-+#include <fcntl.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <sys/ioctl.h>
-+#include <sys/stat.h>
-+#include <sys/types.h>
-+#include <unistd.h>
-+#include <linux/android/binder_ctl.h>
-+
-+int main(int argc, char *argv[])
-+{
-+        int fd, ret, saved_errno;
-+        size_t len;
-+        struct binderfs_device device = { 0 };
-+
-+        if (argc != 3)
-+                exit(EXIT_FAILURE);
-+
-+        len = strlen(argv[2]);
-+        if (len > BINDERFS_MAX_NAME)
-+                exit(EXIT_FAILURE);
-+
-+        memcpy(device.name, argv[2], len);
-+
-+        fd = open(argv[1], O_RDONLY | O_CLOEXEC);
-+        if (fd < 0) {
-+                printf("%s - Failed to open binder-control device\n",
-+                       strerror(errno));
-+                exit(EXIT_FAILURE);
-+        }
-+
-+        ret = ioctl(fd, BINDER_CTL_ADD, &device);
-+        saved_errno = errno;
-+        close(fd);
-+        errno = saved_errno;
-+        if (ret < 0) {
-+                printf("%s - Failed to allocate new binder device\n",
-+                       strerror(errno));
-+                exit(EXIT_FAILURE);
-+        }
-+
-+        printf("Allocated new binder device with major %d, minor %d, and "
-+               "name %s\n", device.major, device.minor,
-+               device.name);
-+
-+        exit(EXIT_SUCCESS);
-+}
-+
-+What this program simply does is to open the binder-control device node and
-+sending a BINDER_CTL_ADD request to the kernel.  Users of binderfs need to tell
-+the kernel which name the new binder device should get.  By default a name can
-+only contain up to BINDERFS_MAX_NAME chars including the terminating zero byte.
-+
-+Once the request is made via an ioctl(2) passing a struct binder_device with
-+the name to the kernel it will allocate a new binder device and return the
-+major and minor number of the new device in the struct (This is necessary
-+because binderfs allocates a major device number dynamically at boot.).  After
-+the ioctl(2) returns there will be a new binder device located under
-+/dev/binderfs with the chosen name.
-+
-+Deleting binder Devices
-+-----------------------
-+
-+Binderfs binder devices can be deleted via unlink(2).  This means that the
-+rm(1) tool can be used to delete them.
-+Note that the binder-control device cannot be deleted since this would make the
-+binderfs instance unuseable.  The binder-control device will be deleted when
-+the binderfs instance is unmounted and all references to it have been dropped.
--- 
-2.19.1
-
+Cheers
+Michael.
