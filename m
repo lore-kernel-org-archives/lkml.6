@@ -2,579 +2,222 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 797EAC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 21:12:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D75DFC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 21:13:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 26543213F2
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 21:12:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9CAFF20657
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 21:13:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="vpLe06kO"
+	dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b="cz2fd8sW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728288AbfAJVMr (ORCPT
+        id S1728447AbfAJVNF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 16:12:47 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:58830 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727653AbfAJVMr (ORCPT
+        Thu, 10 Jan 2019 16:13:05 -0500
+Received: from mail-it1-f196.google.com ([209.85.166.196]:52829 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727653AbfAJVNE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 16:12:47 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0AL8jLc041382;
-        Thu, 10 Jan 2019 21:10:45 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : in-reply-to :
- references; s=corp-2018-07-02;
- bh=J/DtCpfjG0WDrU4iITiI5mf9/LuYasBuhGA4btT2oWM=;
- b=vpLe06kOkVg2gqfoWhoHvjK64OjM12NZYrBUbj/dR1MgwKTmXbt3O9ouWtwqiCvDXHvb
- Kg8LTVu/wRcASK1HItrw7ZYUc71MQZkXfn+4jbCsOOb4AljbtXCIZYXt9gdMdxLQOfrq
- t8uYPJW0mfHNtBxF7eYCzTG/InDFmKA1Q/Z1nhCcoNcrLVJqs5FE7yDUhNxvcd/cFXUm
- HwLGj0OKJ7rYlS3KVY3nnrT4euVP3dqQYGlnVmB7h1eilYgE+G/a+9WZCLvbd0RioBOo
- eoIGtsds6WipicyeAJqxSjVzOnnPao1XcZBORvOXUULELMGUSDGHi91lPzuXyjXSEwbg dA== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by userp2130.oracle.com with ESMTP id 2ptm0uhnvq-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 10 Jan 2019 21:10:45 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x0ALAc9w012315
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 10 Jan 2019 21:10:39 GMT
-Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x0ALAaCn003926;
-        Thu, 10 Jan 2019 21:10:37 GMT
-Received: from concerto.internal (/24.9.64.241)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 10 Jan 2019 13:10:36 -0800
-From:   Khalid Aziz <khalid.aziz@oracle.com>
-To:     juergh@gmail.com, tycho@tycho.ws, jsteckli@amazon.de,
-        ak@linux.intel.com, torvalds@linux-foundation.org,
-        liran.alon@oracle.com, keescook@google.com, konrad.wilk@oracle.com
-Cc:     deepa.srinivasan@oracle.com, chris.hyser@oracle.com,
-        tyhicks@canonical.com, dwmw@amazon.co.uk,
-        andrew.cooper3@citrix.com, jcm@redhat.com,
-        boris.ostrovsky@oracle.com, kanth.ghatraju@oracle.com,
-        joao.m.martins@oracle.com, jmattson@google.com,
-        pradeep.vincent@oracle.com, john.haxby@oracle.com,
-        tglx@linutronix.de, kirill.shutemov@linux.intel.com, hch@lst.de,
-        steven.sistare@oracle.com, kernel-hardening@lists.openwall.com,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org, x86@kernel.org,
-        "Vasileios P . Kemerlis" <vpk@cs.columbia.edu>,
-        Juerg Haefliger <juerg.haefliger@canonical.com>,
-        Tycho Andersen <tycho@docker.com>,
-        Marco Benatto <marco.antonio.780@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Khalid Aziz <khalid.aziz@oracle.com>
-Subject: [RFC PATCH v7 12/16] xpfo, mm: remove dependency on CONFIG_PAGE_EXTENSION
-Date:   Thu, 10 Jan 2019 14:09:44 -0700
-Message-Id: <a9436d3bc7943123bdbaac3f3e2b6bec3153ee05.1547153058.git.khalid.aziz@oracle.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <cover.1547153058.git.khalid.aziz@oracle.com>
-References: <cover.1547153058.git.khalid.aziz@oracle.com>
-In-Reply-To: <cover.1547153058.git.khalid.aziz@oracle.com>
-References: <cover.1547153058.git.khalid.aziz@oracle.com>
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9132 signatures=668680
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1901100164
+        Thu, 10 Jan 2019 16:13:04 -0500
+Received: by mail-it1-f196.google.com with SMTP id g76so886677itg.2
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 13:13:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rasmusvillemoes.dk; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=OI+O4dLQsBNL6LtFgeqiFo/iUZFy+al9XMoWcHtF3Lg=;
+        b=cz2fd8sWK/Ra272oZS5JeWOZhn/7W/I2p53HDa9kh2I9QPp+cO9vkMTEf8aXLvF3F2
+         XYxJmPH0qYUQv/PIsqzrkc4ms8kyN4SbjN4LrAcIlbU6ZEmHx2Ddf6Mjogx2sb1D3tE9
+         KFoGhSeHmB/jcI1zu2IXR3wZI2iW7gHp5xseE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=OI+O4dLQsBNL6LtFgeqiFo/iUZFy+al9XMoWcHtF3Lg=;
+        b=un4tZQrBSCaoYM7eY9ObRSfglCJ/yCdCGQdpZagmN8/HY4iDISVm1gj8mwUFYbtoJ3
+         H3pdB0FcQZBKiIjWzt0cYs0LgR8NLUQjpX/q7ZQE9KcFxDp9ilx5ieUPaU/32ukIwiBE
+         qg881pO4TIWjVdtXF6ZtE+HHQj4k2fuiWOROKyCvH6bwBuhzKNB9zbTKr4h4nS5ngy4F
+         F6B3xo3ldQerUEy8HToJznDJqZT99wHZ7XkWMDj69GRm5scqvH/k+kmFRRNJHSew/ZVz
+         NnE0m1eAbQk9JbIot9JZ/ZCZT8nyOGbvGAG33QsQtQObTP033cmxqfH+H079TVPvdO2r
+         e/Dg==
+X-Gm-Message-State: AJcUukcm96Nu+mZdLPc5HJn9tJxQ44eNSBAYsarscOW3mmdBZo1ECDZ+
+        RBNk3EEqYXnQ3LbSmu436V+McG6axFDnDfy4JhyZpg==
+X-Google-Smtp-Source: ALg8bN5L8rpuvPfjOqn+5sEHApMe3s6uc7hZX1JBPSIqVNjuDY/oDOOyAClhHvleJpOW4Tpc/mp92bwM05yX/O03KQg=
+X-Received: by 2002:a24:6e88:: with SMTP id w130mr325910itc.103.1547154783611;
+ Thu, 10 Jan 2019 13:13:03 -0800 (PST)
+MIME-Version: 1.0
+References: <20181102230624.20064-1-linux@rasmusvillemoes.dk> <20181104192615.GC18517@krava>
+In-Reply-To: <20181104192615.GC18517@krava>
+From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Date:   Thu, 10 Jan 2019 22:12:52 +0100
+Message-ID: <CAKwiHFhxgGWbEB7J8csejmmjTgJXEeXXc84ONarFDKN8A1tCLg@mail.gmail.com>
+Subject: Re: [PATCH] perf: replace automatic const char[] variables by statics
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Julian Stecklina <jsteckli@amazon.de>
+ping
 
-Instead of using the page extension debug feature, encode all
-information, we need for XPFO in struct page. This allows to get rid of
-some checks in the hot paths and there are also no pages anymore that
-are allocated before XPFO is enabled.
-
-Also make debugging aids configurable for maximum performance.
-
-Signed-off-by: Julian Stecklina <jsteckli@amazon.de>
-Cc: x86@kernel.org
-Cc: kernel-hardening@lists.openwall.com
-Cc: Vasileios P. Kemerlis <vpk@cs.columbia.edu>
-Cc: Juerg Haefliger <juerg.haefliger@canonical.com>
-Cc: Tycho Andersen <tycho@docker.com>
-Cc: Marco Benatto <marco.antonio.780@gmail.com>
-Cc: David Woodhouse <dwmw2@infradead.org>
-Signed-off-by: Khalid Aziz <khalid.aziz@oracle.com>
----
- include/linux/mm_types.h       |   8 ++
- include/linux/page-flags.h     |  13 +++
- include/linux/xpfo.h           |   3 +-
- include/trace/events/mmflags.h |  10 +-
- mm/page_alloc.c                |   3 +-
- mm/page_ext.c                  |   4 -
- mm/xpfo.c                      | 162 ++++++++-------------------------
- security/Kconfig               |  12 ++-
- 8 files changed, 81 insertions(+), 134 deletions(-)
-
-diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-index 2c471a2c43fa..d17d33f36a01 100644
---- a/include/linux/mm_types.h
-+++ b/include/linux/mm_types.h
-@@ -204,6 +204,14 @@ struct page {
- #ifdef LAST_CPUPID_NOT_IN_PAGE_FLAGS
- 	int _last_cpupid;
- #endif
-+
-+#ifdef CONFIG_XPFO
-+	/* Counts the number of times this page has been kmapped. */
-+	atomic_t xpfo_mapcount;
-+
-+	/* Serialize kmap/kunmap of this page */
-+	spinlock_t xpfo_lock;
-+#endif
- } _struct_page_alignment;
- 
- /*
-diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
-index 50ce1bddaf56..a532063f27b5 100644
---- a/include/linux/page-flags.h
-+++ b/include/linux/page-flags.h
-@@ -101,6 +101,10 @@ enum pageflags {
- #if defined(CONFIG_IDLE_PAGE_TRACKING) && defined(CONFIG_64BIT)
- 	PG_young,
- 	PG_idle,
-+#endif
-+#ifdef CONFIG_XPFO
-+	PG_xpfo_user,		/* Page is allocated to user-space */
-+	PG_xpfo_unmapped,	/* Page is unmapped from the linear map */
- #endif
- 	__NR_PAGEFLAGS,
- 
-@@ -398,6 +402,15 @@ TESTCLEARFLAG(Young, young, PF_ANY)
- PAGEFLAG(Idle, idle, PF_ANY)
- #endif
- 
-+#ifdef CONFIG_XPFO
-+PAGEFLAG(XpfoUser, xpfo_user, PF_ANY)
-+TESTCLEARFLAG(XpfoUser, xpfo_user, PF_ANY)
-+TESTSETFLAG(XpfoUser, xpfo_user, PF_ANY)
-+PAGEFLAG(XpfoUnmapped, xpfo_unmapped, PF_ANY)
-+TESTCLEARFLAG(XpfoUnmapped, xpfo_unmapped, PF_ANY)
-+TESTSETFLAG(XpfoUnmapped, xpfo_unmapped, PF_ANY)
-+#endif
-+
- /*
-  * On an anonymous page mapped into a user virtual memory area,
-  * page->mapping points to its anon_vma, not to a struct address_space;
-diff --git a/include/linux/xpfo.h b/include/linux/xpfo.h
-index d4b38ab8a633..ea5188882f49 100644
---- a/include/linux/xpfo.h
-+++ b/include/linux/xpfo.h
-@@ -27,7 +27,7 @@ struct page;
- 
- #include <linux/types.h>
- 
--extern struct page_ext_operations page_xpfo_ops;
-+void xpfo_init_single_page(struct page *page);
- 
- void set_kpte(void *kaddr, struct page *page, pgprot_t prot);
- void xpfo_dma_map_unmap_area(bool map, const void *addr, size_t size,
-@@ -56,6 +56,7 @@ phys_addr_t user_virt_to_phys(unsigned long addr);
- 
- #else /* !CONFIG_XPFO */
- 
-+static inline void xpfo_init_single_page(struct page *page) { }
- static inline void xpfo_kmap(void *kaddr, struct page *page) { }
- static inline void xpfo_kunmap(void *kaddr, struct page *page) { }
- static inline void xpfo_alloc_pages(struct page *page, int order, gfp_t gfp) { }
-diff --git a/include/trace/events/mmflags.h b/include/trace/events/mmflags.h
-index a1675d43777e..6bb000bb366f 100644
---- a/include/trace/events/mmflags.h
-+++ b/include/trace/events/mmflags.h
-@@ -79,6 +79,12 @@
- #define IF_HAVE_PG_IDLE(flag,string)
- #endif
- 
-+#ifdef CONFIG_XPFO
-+#define IF_HAVE_PG_XPFO(flag,string) ,{1UL << flag, string}
-+#else
-+#define IF_HAVE_PG_XPFO(flag,string)
-+#endif
-+
- #define __def_pageflag_names						\
- 	{1UL << PG_locked,		"locked"	},		\
- 	{1UL << PG_waiters,		"waiters"	},		\
-@@ -105,7 +111,9 @@ IF_HAVE_PG_MLOCK(PG_mlocked,		"mlocked"	)		\
- IF_HAVE_PG_UNCACHED(PG_uncached,	"uncached"	)		\
- IF_HAVE_PG_HWPOISON(PG_hwpoison,	"hwpoison"	)		\
- IF_HAVE_PG_IDLE(PG_young,		"young"		)		\
--IF_HAVE_PG_IDLE(PG_idle,		"idle"		)
-+IF_HAVE_PG_IDLE(PG_idle,		"idle"		)		\
-+IF_HAVE_PG_XPFO(PG_xpfo_user,		"xpfo_user"	)		\
-+IF_HAVE_PG_XPFO(PG_xpfo_unmapped,	"xpfo_unmapped" ) 		\
- 
- #define show_page_flags(flags)						\
- 	(flags) ? __print_flags(flags, "|",				\
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 08e277790b5f..d00382b20001 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -1024,6 +1024,7 @@ static __always_inline bool free_pages_prepare(struct page *page,
- 	if (bad)
- 		return false;
- 
-+	xpfo_free_pages(page, order);
- 	page_cpupid_reset_last(page);
- 	page->flags &= ~PAGE_FLAGS_CHECK_AT_PREP;
- 	reset_page_owner(page, order);
-@@ -1038,7 +1039,6 @@ static __always_inline bool free_pages_prepare(struct page *page,
- 	kernel_poison_pages(page, 1 << order, 0);
- 	kernel_map_pages(page, 1 << order, 0);
- 	kasan_free_pages(page, order);
--	xpfo_free_pages(page, order);
- 
- 	return true;
- }
-@@ -1191,6 +1191,7 @@ static void __meminit __init_single_page(struct page *page, unsigned long pfn,
- 	if (!is_highmem_idx(zone))
- 		set_page_address(page, __va(pfn << PAGE_SHIFT));
- #endif
-+	xpfo_init_single_page(page);
- }
- 
- #ifdef CONFIG_DEFERRED_STRUCT_PAGE_INIT
-diff --git a/mm/page_ext.c b/mm/page_ext.c
-index 38e5013dcb9a..ae44f7adbe07 100644
---- a/mm/page_ext.c
-+++ b/mm/page_ext.c
-@@ -8,7 +8,6 @@
- #include <linux/kmemleak.h>
- #include <linux/page_owner.h>
- #include <linux/page_idle.h>
--#include <linux/xpfo.h>
- 
- /*
-  * struct page extension
-@@ -69,9 +68,6 @@ static struct page_ext_operations *page_ext_ops[] = {
- #if defined(CONFIG_IDLE_PAGE_TRACKING) && !defined(CONFIG_64BIT)
- 	&page_idle_ops,
- #endif
--#ifdef CONFIG_XPFO
--	&page_xpfo_ops,
--#endif
- };
- 
- static unsigned long total_usage;
-diff --git a/mm/xpfo.c b/mm/xpfo.c
-index e80374b0c78e..cbfeafc2f10f 100644
---- a/mm/xpfo.c
-+++ b/mm/xpfo.c
-@@ -16,33 +16,16 @@
- #include <linux/highmem.h>
- #include <linux/mm.h>
- #include <linux/module.h>
--#include <linux/page_ext.h>
- #include <linux/xpfo.h>
- 
- #include <asm/tlbflush.h>
- 
--/* XPFO page state flags */
--enum xpfo_flags {
--	XPFO_PAGE_USER,		/* Page is allocated to user-space */
--	XPFO_PAGE_UNMAPPED,	/* Page is unmapped from the linear map */
--};
--
--/* Per-page XPFO house-keeping data */
--struct xpfo {
--	unsigned long flags;	/* Page state */
--	bool inited;		/* Map counter and lock initialized */
--	atomic_t mapcount;	/* Counter for balancing map/unmap requests */
--	spinlock_t maplock;	/* Lock to serialize map/unmap requests */
--};
--
--DEFINE_STATIC_KEY_FALSE(xpfo_inited);
-+DEFINE_STATIC_KEY_TRUE(xpfo_inited);
- DEFINE_STATIC_KEY_FALSE(xpfo_do_tlb_flush);
- 
--static bool xpfo_disabled __initdata;
--
- static int __init noxpfo_param(char *str)
- {
--	xpfo_disabled = true;
-+	static_branch_disable(&xpfo_inited);
- 
- 	return 0;
- }
-@@ -57,34 +40,13 @@ static int __init xpfotlbflush_param(char *str)
- early_param("noxpfo", noxpfo_param);
- early_param("xpfotlbflush", xpfotlbflush_param);
- 
--static bool __init need_xpfo(void)
--{
--	if (xpfo_disabled) {
--		printk(KERN_INFO "XPFO disabled\n");
--		return false;
--	}
--
--	return true;
--}
--
--static void init_xpfo(void)
--{
--	printk(KERN_INFO "XPFO enabled\n");
--	static_branch_enable(&xpfo_inited);
--}
--
--struct page_ext_operations page_xpfo_ops = {
--	.size = sizeof(struct xpfo),
--	.need = need_xpfo,
--	.init = init_xpfo,
--};
--
- bool __init xpfo_enabled(void)
- {
--	return !xpfo_disabled;
-+	if (!static_branch_unlikely(&xpfo_inited))
-+		return false;
-+	else
-+		return true;
- }
--EXPORT_SYMBOL(xpfo_enabled);
--
- 
- static void xpfo_cond_flush_kernel_tlb(struct page *page, int order)
- {
-@@ -92,58 +54,40 @@ static void xpfo_cond_flush_kernel_tlb(struct page *page, int order)
- 		xpfo_flush_kernel_tlb(page, order);
- }
- 
--static inline struct xpfo *lookup_xpfo(struct page *page)
-+void __meminit xpfo_init_single_page(struct page *page)
- {
--	struct page_ext *page_ext = lookup_page_ext(page);
--
--	if (unlikely(!page_ext)) {
--		WARN(1, "xpfo: failed to get page ext");
--		return NULL;
--	}
--
--	return (void *)page_ext + page_xpfo_ops.offset;
-+	spin_lock_init(&page->xpfo_lock);
- }
- 
- void xpfo_alloc_pages(struct page *page, int order, gfp_t gfp)
- {
- 	int i, flush_tlb = 0;
--	struct xpfo *xpfo;
- 
- 	if (!static_branch_unlikely(&xpfo_inited))
- 		return;
- 
- 	for (i = 0; i < (1 << order); i++)  {
--		xpfo = lookup_xpfo(page + i);
--		if (!xpfo)
--			continue;
--
--		WARN(test_bit(XPFO_PAGE_UNMAPPED, &xpfo->flags),
--		     "xpfo: unmapped page being allocated\n");
--
--		/* Initialize the map lock and map counter */
--		if (unlikely(!xpfo->inited)) {
--			spin_lock_init(&xpfo->maplock);
--			atomic_set(&xpfo->mapcount, 0);
--			xpfo->inited = true;
--		}
--		WARN(atomic_read(&xpfo->mapcount),
--		     "xpfo: already mapped page being allocated\n");
--
-+#ifdef CONFIG_XPFO_DEBUG
-+		BUG_ON(PageXpfoUser(page + i));
-+		BUG_ON(PageXpfoUnmapped(page + i));
-+		BUG_ON(spin_is_locked(&(page + i)->xpfo_lock));
-+		BUG_ON(atomic_read(&(page + i)->xpfo_mapcount));
-+#endif
- 		if ((gfp & GFP_HIGHUSER) == GFP_HIGHUSER) {
- 			if (static_branch_unlikely(&xpfo_do_tlb_flush)) {
- 				/*
- 				 * Tag the page as a user page and flush the TLB if it
- 				 * was previously allocated to the kernel.
- 				 */
--				if (!test_and_set_bit(XPFO_PAGE_USER, &xpfo->flags))
-+				if (!TestSetPageXpfoUser(page + i))
- 					flush_tlb = 1;
- 			} else {
--				set_bit(XPFO_PAGE_USER, &xpfo->flags);
-+				SetPageXpfoUser(page + i);
- 			}
- 
- 		} else {
- 			/* Tag the page as a non-user (kernel) page */
--			clear_bit(XPFO_PAGE_USER, &xpfo->flags);
-+			ClearPageXpfoUser(page + i);
- 		}
- 	}
- 
-@@ -154,27 +98,21 @@ void xpfo_alloc_pages(struct page *page, int order, gfp_t gfp)
- void xpfo_free_pages(struct page *page, int order)
- {
- 	int i;
--	struct xpfo *xpfo;
- 
- 	if (!static_branch_unlikely(&xpfo_inited))
- 		return;
- 
- 	for (i = 0; i < (1 << order); i++) {
--		xpfo = lookup_xpfo(page + i);
--		if (!xpfo || unlikely(!xpfo->inited)) {
--			/*
--			 * The page was allocated before page_ext was
--			 * initialized, so it is a kernel page.
--			 */
--			continue;
--		}
-+#ifdef CONFIG_XPFO_DEBUG
-+		BUG_ON(atomic_read(&(page + i)->xpfo_mapcount));
-+#endif
- 
- 		/*
- 		 * Map the page back into the kernel if it was previously
- 		 * allocated to user space.
- 		 */
--		if (test_and_clear_bit(XPFO_PAGE_USER, &xpfo->flags)) {
--			clear_bit(XPFO_PAGE_UNMAPPED, &xpfo->flags);
-+		if (TestClearPageXpfoUser(page + i)) {
-+			ClearPageXpfoUnmapped(page + i);
- 			set_kpte(page_address(page + i), page + i,
- 				 PAGE_KERNEL);
- 		}
-@@ -183,84 +121,56 @@ void xpfo_free_pages(struct page *page, int order)
- 
- void xpfo_kmap(void *kaddr, struct page *page)
- {
--	struct xpfo *xpfo;
--
- 	if (!static_branch_unlikely(&xpfo_inited))
- 		return;
- 
--	xpfo = lookup_xpfo(page);
--
--	/*
--	 * The page was allocated before page_ext was initialized (which means
--	 * it's a kernel page) or it's allocated to the kernel, so nothing to
--	 * do.
--	 */
--	if (!xpfo || unlikely(!xpfo->inited) ||
--	    !test_bit(XPFO_PAGE_USER, &xpfo->flags))
-+	if (!PageXpfoUser(page))
- 		return;
- 
--	spin_lock(&xpfo->maplock);
-+	spin_lock(&page->xpfo_lock);
- 
- 	/*
- 	 * The page was previously allocated to user space, so map it back
- 	 * into the kernel. No TLB flush required.
- 	 */
--	if ((atomic_inc_return(&xpfo->mapcount) == 1) &&
--	    test_and_clear_bit(XPFO_PAGE_UNMAPPED, &xpfo->flags))
-+	if ((atomic_inc_return(&page->xpfo_mapcount) == 1) &&
-+	    TestClearPageXpfoUnmapped(page))
- 		set_kpte(kaddr, page, PAGE_KERNEL);
- 
--	spin_unlock(&xpfo->maplock);
-+	spin_unlock(&page->xpfo_lock);
- }
- EXPORT_SYMBOL(xpfo_kmap);
- 
- void xpfo_kunmap(void *kaddr, struct page *page)
- {
--	struct xpfo *xpfo;
--
- 	if (!static_branch_unlikely(&xpfo_inited))
- 		return;
- 
--	xpfo = lookup_xpfo(page);
--
--	/*
--	 * The page was allocated before page_ext was initialized (which means
--	 * it's a kernel page) or it's allocated to the kernel, so nothing to
--	 * do.
--	 */
--	if (!xpfo || unlikely(!xpfo->inited) ||
--	    !test_bit(XPFO_PAGE_USER, &xpfo->flags))
-+	if (!PageXpfoUser(page))
- 		return;
- 
--	spin_lock(&xpfo->maplock);
-+	spin_lock(&page->xpfo_lock);
- 
- 	/*
- 	 * The page is to be allocated back to user space, so unmap it from the
- 	 * kernel, flush the TLB and tag it as a user page.
- 	 */
--	if (atomic_dec_return(&xpfo->mapcount) == 0) {
--		WARN(test_bit(XPFO_PAGE_UNMAPPED, &xpfo->flags),
--		     "xpfo: unmapping already unmapped page\n");
--		set_bit(XPFO_PAGE_UNMAPPED, &xpfo->flags);
-+	if (atomic_dec_return(&page->xpfo_mapcount) == 0) {
-+#ifdef CONFIG_XPFO_DEBUG
-+		BUG_ON(PageXpfoUnmapped(page));
-+#endif
-+		SetPageXpfoUnmapped(page);
- 		set_kpte(kaddr, page, __pgprot(0));
- 		xpfo_cond_flush_kernel_tlb(page, 0);
- 	}
- 
--	spin_unlock(&xpfo->maplock);
-+	spin_unlock(&page->xpfo_lock);
- }
- EXPORT_SYMBOL(xpfo_kunmap);
- 
- bool xpfo_page_is_unmapped(struct page *page)
- {
--	struct xpfo *xpfo;
--
--	if (!static_branch_unlikely(&xpfo_inited))
--		return false;
--
--	xpfo = lookup_xpfo(page);
--	if (unlikely(!xpfo) && !xpfo->inited)
--		return false;
--
--	return test_bit(XPFO_PAGE_UNMAPPED, &xpfo->flags);
-+	return PageXpfoUnmapped(page);
- }
- EXPORT_SYMBOL(xpfo_page_is_unmapped);
- 
-diff --git a/security/Kconfig b/security/Kconfig
-index 8d0e4e303551..c7c581bac963 100644
---- a/security/Kconfig
-+++ b/security/Kconfig
-@@ -13,7 +13,6 @@ config XPFO
- 	bool "Enable eXclusive Page Frame Ownership (XPFO)"
- 	default n
- 	depends on ARCH_SUPPORTS_XPFO
--	select PAGE_EXTENSION
- 	help
- 	  This option offers protection against 'ret2dir' kernel attacks.
- 	  When enabled, every time a page frame is allocated to user space, it
-@@ -25,6 +24,17 @@ config XPFO
- 
- 	  If in doubt, say "N".
- 
-+config XPFO_DEBUG
-+       bool "Enable debugging of XPFO"
-+       default n
-+       depends on XPFO
-+       help
-+         Enables additional checking of XPFO data structures that help find
-+	 bugs in the XPFO implementation. This option comes with a slight
-+	 performance cost.
-+
-+	 If in doubt, say "N".
-+
- config SECURITY_DMESG_RESTRICT
- 	bool "Restrict unprivileged access to the kernel syslog"
- 	default n
--- 
-2.17.1
-
+On Sun, 4 Nov 2018 at 20:26, Jiri Olsa <jolsa@redhat.com> wrote:
+>
+> On Sat, Nov 03, 2018 at 12:06:23AM +0100, Rasmus Villemoes wrote:
+> > An automatic const char[] variable gets initialized at runtime, just
+> > like any other automatic variable. For long strings, that uses a lot of
+> > stack and wastes time building the string; e.g. for the "No %s
+> > allocation events..." case one has
+> >
+> >   444516:       48 b8 4e 6f 20 25 73 20 61 6c   movabs $0x6c61207325206f4e,%rax # "No %s al"
+> >   ...
+> >   444674:       48 89 45 80                     mov    %rax,-0x80(%rbp)
+> >   444678:       48 b8 6c 6f 63 61 74 69 6f 6e   movabs $0x6e6f697461636f6c,%rax # "location"
+> >   444682:       48 89 45 88                     mov    %rax,-0x78(%rbp)
+> >   444686:       48 b8 20 65 76 65 6e 74 73 20   movabs $0x2073746e65766520,%rax # " events "
+> >   444690:       66 44 89 55 c4                  mov    %r10w,-0x3c(%rbp)
+> >   444695:       48 89 45 90                     mov    %rax,-0x70(%rbp)
+> >   444699:       48 b8 66 6f 75 6e 64 2e 20 20   movabs $0x20202e646e756f66,%rax
+> >
+> > Make them all static so that the compiler just references objects in .rodata.
+> >
+> > Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+>
+> sounds good
+>
+> Acked-by: Jiri Olsa <jolsa@kernel.org>
+>
+> thanks,
+> jirka
+>
+> > ---
+> >  tools/perf/builtin-c2c.c        | 4 ++--
+> >  tools/perf/builtin-kmem.c       | 4 ++--
+> >  tools/perf/builtin-report.c     | 6 +++---
+> >  tools/perf/builtin-sched.c      | 2 +-
+> >  tools/perf/ui/browsers/header.c | 2 +-
+> >  tools/perf/ui/browsers/hists.c  | 4 ++--
+> >  6 files changed, 11 insertions(+), 11 deletions(-)
+> >
+> > diff --git a/tools/perf/builtin-c2c.c b/tools/perf/builtin-c2c.c
+> > index f3aa9d02a5ab..ab6a89e5393c 100644
+> > --- a/tools/perf/builtin-c2c.c
+> > +++ b/tools/perf/builtin-c2c.c
+> > @@ -2343,7 +2343,7 @@ static int perf_c2c__browse_cacheline(struct hist_entry *he)
+> >       struct c2c_cacheline_browser *cl_browser;
+> >       struct hist_browser *browser;
+> >       int key = -1;
+> > -     const char help[] =
+> > +     static const char help[] =
+> >       " ENTER         Toggle callchains (if present) \n"
+> >       " n             Toggle Node details info \n"
+> >       " s             Toggle full length of symbol and source line columns \n"
+> > @@ -2424,7 +2424,7 @@ static int perf_c2c__hists_browse(struct hists *hists)
+> >  {
+> >       struct hist_browser *browser;
+> >       int key = -1;
+> > -     const char help[] =
+> > +     static const char help[] =
+> >       " d             Display cacheline details \n"
+> >       " ENTER         Toggle callchains (if present) \n"
+> >       " q             Quit \n";
+> > diff --git a/tools/perf/builtin-kmem.c b/tools/perf/builtin-kmem.c
+> > index b63bca4b0c2a..088705c167bf 100644
+> > --- a/tools/perf/builtin-kmem.c
+> > +++ b/tools/perf/builtin-kmem.c
+> > @@ -334,7 +334,7 @@ static int build_alloc_func_list(void)
+> >       struct alloc_func *func;
+> >       struct machine *machine = &kmem_session->machines.host;
+> >       regex_t alloc_func_regex;
+> > -     const char pattern[] = "^_?_?(alloc|get_free|get_zeroed)_pages?";
+> > +     static const char pattern[] = "^_?_?(alloc|get_free|get_zeroed)_pages?";
+> >
+> >       ret = regcomp(&alloc_func_regex, pattern, REG_EXTENDED);
+> >       if (ret) {
+> > @@ -1924,7 +1924,7 @@ int cmd_kmem(int argc, const char **argv)
+> >               NULL
+> >       };
+> >       struct perf_session *session;
+> > -     const char errmsg[] = "No %s allocation events found.  Have you run 'perf kmem record --%s'?\n";
+> > +     static const char errmsg[] = "No %s allocation events found.  Have you run 'perf kmem record --%s'?\n";
+> >       int ret = perf_config(kmem_config, NULL);
+> >
+> >       if (ret)
+> > diff --git a/tools/perf/builtin-report.c b/tools/perf/builtin-report.c
+> > index 257c9c18cb7e..ff615c624784 100644
+> > --- a/tools/perf/builtin-report.c
+> > +++ b/tools/perf/builtin-report.c
+> > @@ -955,9 +955,9 @@ int cmd_report(int argc, const char **argv)
+> >       int branch_mode = -1;
+> >       bool branch_call_mode = false;
+> >  #define CALLCHAIN_DEFAULT_OPT  "graph,0.5,caller,function,percent"
+> > -     const char report_callchain_help[] = "Display call graph (stack chain/backtrace):\n\n"
+> > -                                          CALLCHAIN_REPORT_HELP
+> > -                                          "\n\t\t\t\tDefault: " CALLCHAIN_DEFAULT_OPT;
+> > +     static const char report_callchain_help[] = "Display call graph (stack chain/backtrace):\n\n"
+> > +                                                 CALLCHAIN_REPORT_HELP
+> > +                                                 "\n\t\t\t\tDefault: " CALLCHAIN_DEFAULT_OPT;
+> >       char callchain_default_opt[] = CALLCHAIN_DEFAULT_OPT;
+> >       const char * const report_usage[] = {
+> >               "perf report [<options>]",
+> > diff --git a/tools/perf/builtin-sched.c b/tools/perf/builtin-sched.c
+> > index cbf39dab19c1..2e0f0c65964a 100644
+> > --- a/tools/perf/builtin-sched.c
+> > +++ b/tools/perf/builtin-sched.c
+> > @@ -3336,7 +3336,7 @@ static int __cmd_record(int argc, const char **argv)
+> >
+> >  int cmd_sched(int argc, const char **argv)
+> >  {
+> > -     const char default_sort_order[] = "avg, max, switch, runtime";
+> > +     static const char default_sort_order[] = "avg, max, switch, runtime";
+> >       struct perf_sched sched = {
+> >               .tool = {
+> >                       .sample          = perf_sched__process_tracepoint_sample,
+> > diff --git a/tools/perf/ui/browsers/header.c b/tools/perf/ui/browsers/header.c
+> > index d75492189acb..5aeb663dd184 100644
+> > --- a/tools/perf/ui/browsers/header.c
+> > +++ b/tools/perf/ui/browsers/header.c
+> > @@ -35,7 +35,7 @@ static int list_menu__run(struct ui_browser *menu)
+> >  {
+> >       int key;
+> >       unsigned long offset;
+> > -     const char help[] =
+> > +     static const char help[] =
+> >       "h/?/F1        Show this window\n"
+> >       "UP/DOWN/PGUP\n"
+> >       "PGDN/SPACE\n"
+> > diff --git a/tools/perf/ui/browsers/hists.c b/tools/perf/ui/browsers/hists.c
+> > index a96f62ca984a..eab9dc025b3a 100644
+> > --- a/tools/perf/ui/browsers/hists.c
+> > +++ b/tools/perf/ui/browsers/hists.c
+> > @@ -2737,7 +2737,7 @@ static int perf_evsel__hists_browse(struct perf_evsel *evsel, int nr_events,
+> >       "S             Zoom into current Processor Socket\n"            \
+> >
+> >       /* help messages are sorted by lexical order of the hotkey */
+> > -     const char report_help[] = HIST_BROWSER_HELP_COMMON
+> > +     static const char report_help[] = HIST_BROWSER_HELP_COMMON
+> >       "i             Show header information\n"
+> >       "P             Print histograms to perf.hist.N\n"
+> >       "r             Run available scripts\n"
+> > @@ -2745,7 +2745,7 @@ static int perf_evsel__hists_browse(struct perf_evsel *evsel, int nr_events,
+> >       "t             Zoom into current Thread\n"
+> >       "V             Verbose (DSO names in callchains, etc)\n"
+> >       "/             Filter symbol by name";
+> > -     const char top_help[] = HIST_BROWSER_HELP_COMMON
+> > +     static const char top_help[] = HIST_BROWSER_HELP_COMMON
+> >       "P             Print histograms to perf.hist.N\n"
+> >       "t             Zoom into current Thread\n"
+> >       "V             Verbose (DSO names in callchains, etc)\n"
+> > --
+> > 2.19.1.6.gbde171bbf5
+> >
