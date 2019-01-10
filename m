@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65E13C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 17:59:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2964C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 17:59:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D949214DA
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 17:59:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 81E7B2184B
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 17:59:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730700AbfAJR7K (ORCPT
+        id S1730756AbfAJR7O (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 12:59:10 -0500
-Received: from shell.v3.sk ([90.176.6.54]:58535 "EHLO shell.v3.sk"
+        Thu, 10 Jan 2019 12:59:14 -0500
+Received: from shell.v3.sk ([90.176.6.54]:58547 "EHLO shell.v3.sk"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729882AbfAJR7K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 12:59:10 -0500
+        id S1730111AbfAJR7L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 12:59:11 -0500
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id CB1581002F3;
-        Thu, 10 Jan 2019 18:59:05 +0100 (CET)
+        by zimbra.v3.sk (Postfix) with ESMTP id 875891002FD;
+        Thu, 10 Jan 2019 18:59:07 +0100 (CET)
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id 6Di5iCeP8c-U; Thu, 10 Jan 2019 18:59:01 +0100 (CET)
+        with ESMTP id JyUnaOXByXJ0; Thu, 10 Jan 2019 18:58:57 +0100 (CET)
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 677A61002F4;
-        Thu, 10 Jan 2019 18:58:58 +0100 (CET)
+        by zimbra.v3.sk (Postfix) with ESMTP id 84C3E100302;
+        Thu, 10 Jan 2019 18:58:56 +0100 (CET)
 X-Virus-Scanned: amavisd-new at zimbra.v3.sk
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id C0jK_DAWrPma; Thu, 10 Jan 2019 18:58:55 +0100 (CET)
+        with ESMTP id VSH7_VDcrhh1; Thu, 10 Jan 2019 18:58:53 +0100 (CET)
 Received: from belphegor.brq.redhat.com (nat-pool-brq-t.redhat.com [213.175.37.10])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id 8F9001002F9;
-        Thu, 10 Jan 2019 18:58:54 +0100 (CET)
+        by zimbra.v3.sk (Postfix) with ESMTPSA id 7277F1002F3;
+        Thu, 10 Jan 2019 18:58:53 +0100 (CET)
 From:   Lubomir Rintel <lkundrak@v3.sk>
 To:     Andy Shevchenko <andy@infradead.org>,
         Darren Hart <dvhart@infradead.org>
@@ -44,10 +44,10 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         platform-driver-x86@vger.kernel.org, linux-pm@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
-        Lubomir Rintel <lkundrak@v3.sk>
-Subject: [PATCH v5 05/10] Platform: OLPC: Use BIT() and GENMASK() for event masks
-Date:   Thu, 10 Jan 2019 18:58:40 +0100
-Message-Id: <20190110175845.1203986-6-lkundrak@v3.sk>
+        Lubomir Rintel <lkundrak@v3.sk>, Pavel Machek <pavel@ucw.cz>
+Subject: [PATCH v5 02/10] Platform: OLPC: Remove an unused include
+Date:   Thu, 10 Jan 2019 18:58:37 +0100
+Message-Id: <20190110175845.1203986-3-lkundrak@v3.sk>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190110175845.1203986-1-lkundrak@v3.sk>
 References: <20190110175845.1203986-1-lkundrak@v3.sk>
@@ -58,58 +58,27 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Just a cosmetic tidy-up.
+Also, the header is x86 specific, while there are non-x86 OLPC machines.
 
 Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-
+Acked-by: Pavel Machek <pavel@ucw.cz>
 ---
-Changes since v1:
-- This patch was added to the set.
+ drivers/platform/olpc/olpc-ec.c | 1 -
+ 1 file changed, 1 deletion(-)
 
- include/linux/olpc-ec.h | 23 ++++++++++++-----------
- 1 file changed, 12 insertions(+), 11 deletions(-)
-
-diff --git a/include/linux/olpc-ec.h b/include/linux/olpc-ec.h
-index 7fa3d27f7fee..f7b6a7eda232 100644
---- a/include/linux/olpc-ec.h
-+++ b/include/linux/olpc-ec.h
-@@ -2,6 +2,8 @@
- #ifndef _LINUX_OLPC_EC_H
- #define _LINUX_OLPC_EC_H
+diff --git a/drivers/platform/olpc/olpc-ec.c b/drivers/platform/olpc/olpc=
+-ec.c
+index 374a8028fec7..981955dce926 100644
+--- a/drivers/platform/olpc/olpc-ec.c
++++ b/drivers/platform/olpc/olpc-ec.c
+@@ -17,7 +17,6 @@
+ #include <linux/init.h>
+ #include <linux/list.h>
+ #include <linux/olpc-ec.h>
+-#include <asm/olpc.h>
 =20
-+#include <linux/bits.h>
-+
- /* XO-1 EC commands */
- #define EC_FIRMWARE_REV			0x08
- #define EC_WRITE_SCI_MASK		0x1b
-@@ -17,17 +19,16 @@
- #define EC_EXT_SCI_QUERY		0x85
-=20
- /* SCI source values */
--#define EC_SCI_SRC_EMPTY        0x00
--#define EC_SCI_SRC_GAME         0x01
--#define EC_SCI_SRC_BATTERY      0x02
--#define EC_SCI_SRC_BATSOC       0x04
--#define EC_SCI_SRC_BATERR       0x08
--#define EC_SCI_SRC_EBOOK        0x10    /* XO-1 only */
--#define EC_SCI_SRC_WLAN         0x20    /* XO-1 only */
--#define EC_SCI_SRC_ACPWR        0x40
--#define EC_SCI_SRC_BATCRIT      0x80
--#define EC_SCI_SRC_GPWAKE       0x100   /* XO-1.5 only */
--#define EC_SCI_SRC_ALL          0x1FF
-+#define EC_SCI_SRC_GAME         BIT(0)
-+#define EC_SCI_SRC_BATTERY      BIT(1)
-+#define EC_SCI_SRC_BATSOC       BIT(2)
-+#define EC_SCI_SRC_BATERR       BIT(3)
-+#define EC_SCI_SRC_EBOOK        BIT(4)    /* XO-1 only */
-+#define EC_SCI_SRC_WLAN         BIT(5)    /* XO-1 only */
-+#define EC_SCI_SRC_ACPWR        BIT(6)
-+#define EC_SCI_SRC_BATCRIT      BIT(7)
-+#define EC_SCI_SRC_GPWAKE       BIT(8)   /* XO-1.5 only */
-+#define EC_SCI_SRC_ALL          GENMASK(8, 0)
-=20
- struct platform_device;
-=20
+ struct ec_cmd_desc {
+ 	u8 cmd;
 --=20
 2.20.1
 
