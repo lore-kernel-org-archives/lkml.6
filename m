@@ -2,113 +2,129 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 083DDC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 20:39:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2782C43444
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 20:40:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C7B1C2173B
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 20:39:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 729F0213F2
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 20:40:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lca.pw header.i=@lca.pw header.b="Q6mPHXay"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Xo7zfHVB";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="UVhDHMh0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730455AbfAJUjz (ORCPT
+        id S1730479AbfAJUkP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 15:39:55 -0500
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:37748 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729743AbfAJUjy (ORCPT
+        Thu, 10 Jan 2019 15:40:15 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:41170 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730219AbfAJUkP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 15:39:54 -0500
-Received: by mail-qt1-f195.google.com with SMTP id t33so15283742qtt.4
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 12:39:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=message-id:subject:from:to:date:in-reply-to:references:mime-version
-         :content-transfer-encoding;
-        bh=BM10tUvFqe2/qUpdcNvy1XQgs7cykrDXn4NqoVqHHkY=;
-        b=Q6mPHXayVjek0lCitJARjuKVeid7Jc5go7wKFZq3bHcPjCrVC9Dsm7ChkkeoysRtyx
-         BXgrutc2eJVsQvb2iHHu7lwoYRxXCTFjC6RQQCCdPHhnX2BbaTb5h14Z/mjgIr7yMV12
-         axEsxiKKxUluoB3lwIW5yGeSdGKgUgwcj5sO0ufz0m10FPs/nEYwonKSMH7tIYX17lrj
-         09mqVdXPYhWG0pOqlWSwxE/Hbhro3lfU9KSQPtOXvrKF1mQQ1bbOVgAdhR7MrRkax0EN
-         vlK4qmrM2NLad0H+XYUfvUbR62pYPZUcV5WZV1IVmbR8p4nIYlc5U3Q+Ly48te+pdztM
-         q0Vg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=BM10tUvFqe2/qUpdcNvy1XQgs7cykrDXn4NqoVqHHkY=;
-        b=Gx/XTMgShrGlmpAMAa5hm92ESE7xiEBoslkk7TFk2uPmULc4zI04GSTGD8zocA2ezH
-         PCfbSfgeSUVW3BSLRm/iqPiLNnIxw4SsHznqfWZd+deBwk459pESDm023SokZEMVvVFJ
-         5X6VUNGWVF5fQhJ3rezwH9j/9BdO5jmlpqycTUnMDV1eDIFHGdatjSowfKy5EdczHNV2
-         A2sJ0Zq9urtNJ4TrTSg7VdydoUuNU8ZLlbkR/VY3v2JH0RaLp4sSxobDJXdcFyKLTlyt
-         b57vU2MWkHAmemGWAfjMb0WjsljgZBERmtOsMu20bhjVt2pAZFQijpHqnb3XfON+IeFh
-         BAlw==
-X-Gm-Message-State: AJcUukfWE3UyNOh7eoF1dyz3KGaD27yKtiUan180YwKK/2J3DvVsPFFD
-        wdunfSrFoN/MgniLMgGDseEtlA==
-X-Google-Smtp-Source: ALg8bN56UGDqEEIeHs9djrF+w+asnMO+rW3niboUIuSnWfEL3QljA8fXBJ1tEB9ABBBMzCTj1LnRFw==
-X-Received: by 2002:aed:35c5:: with SMTP id d5mr11137276qte.212.1547152793305;
-        Thu, 10 Jan 2019 12:39:53 -0800 (PST)
-Received: from dhcp-41-57.bos.redhat.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
-        by smtp.gmail.com with ESMTPSA id z30sm48643977qtz.26.2019.01.10.12.39.51
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 10 Jan 2019 12:39:52 -0800 (PST)
-Message-ID: <1547152791.6911.6.camel@lca.pw>
-Subject: Re: PROBLEM: syzkaller found / pool corruption-overwrite / page in
- user-area or NULL
-From:   Qian Cai <cai@lca.pw>
-To:     James Bottomley <jejb@linux.ibm.com>, Esme <esploit@protonmail.ch>,
-        "dgilbert@interlog.com" <dgilbert@interlog.com>,
-        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-mm@kvack.org
-Date:   Thu, 10 Jan 2019 15:39:51 -0500
-In-Reply-To: <1547150339.2814.9.camel@linux.ibm.com>
-References: <t78EEfgpy3uIwPUvqvmuQEYEWKG9avWzjUD3EyR93Qaf_tfx1gqt4XplrqMgdxR1U9SsrVdA7G9XeUZacgUin0n6lBzoxJHVJ9Ko0yzzrxI=@protonmail.ch>
-         <1547150339.2814.9.camel@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6 (3.22.6-10.el7) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Thu, 10 Jan 2019 15:40:15 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 5F7346055A; Thu, 10 Jan 2019 20:40:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1547152814;
+        bh=xMnvTGCTdIG4CkZNAHo7OB4PW/yqZ15fzZRJSuiKI1k=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=Xo7zfHVBADe1TLeeyK5WjrI6z4PJwnmZN8dLNTifKKIB6JM3ZuFCCfDi+hSphDaDb
+         mQSKP3czQ8PI9aMBqpNbFo+otKJkGpMfwNe12NTT1W5E6W0ds5cTbttspPuYjPnkpz
+         AtVxU7y7r6bpCq/Z8a3QamWD47EIoqtcU3OK4iTo=
+Received: from jackp-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: jackp@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 514C5601B4;
+        Thu, 10 Jan 2019 20:40:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1547152813;
+        bh=xMnvTGCTdIG4CkZNAHo7OB4PW/yqZ15fzZRJSuiKI1k=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=UVhDHMh02RAFxnvRqUET7CZg1FY1M+rm3YwpndchAkr7uhGDseuy4AdCahZ0Wso+R
+         JzEYED6efi98zjhEkaj1KSYuJRoBdtFjVn3yhBrWBey+cneKBEnwiKM5OLEr/l3rvU
+         SUv9LCBfndQRahMUCjmtLWAb0CO6RPLdJKgIaig8=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 514C5601B4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jackp@codeaurora.org
+From:   Jack Pham <jackp@codeaurora.org>
+To:     Felipe Balbi <balbi@kernel.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jack Pham <jackp@codeaurora.org>, stable@vger.kernel.org
+Subject: [PATCH v2] usb: dwc3: gadget: Clear req->needs_extra_trb flag on cleanup
+Date:   Thu, 10 Jan 2019 12:39:55 -0800
+Message-Id: <20190110203955.10724-1-jackp@codeaurora.org>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <87pnt5c53o.fsf@linux.intel.com>
+References: <87pnt5c53o.fsf@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2019-01-10 at 11:58 -0800, James Bottomley wrote:
-> On Thu, 2019-01-10 at 19:12 +0000, Esme wrote:
-> > Sorry for the resend some mail servers rejected the mime type.
-> > 
-> > Hi, I've been getting more into Kernel stuff lately and forged ahead
-> > with some syzkaller bug finding.  I played with reducing it further
-> > as you can see from the attached c code but am moving on and hope to
-> > get better about this process moving forward as I'm still building
-> > out my test systems/debugging tools.
-> > 
-> > Attached is the report and C repro that still triggers on a fresh git
-> > pull as of a few minutes ago, if you need anything else please let me
-> > know.
-> > Esme
-> > 
-> > Linux syzkaller 5.0.0-rc1+ #5 SMP Tue Jan 8 20:39:33 EST 2019 x86_64
-> > GNU/Linux
-> 
-> I'm not sure I'm reading this right, but it seems that a simple
-> allocation inside block/scsi_ioctl.h
-> 
-> 	buffer = kzalloc(bytes, q->bounce_gfp | GFP_USER| __GFP_NOWARN);
-> 
-> (where bytes is < 4k) caused a slub padding check failure on free. 
-> From the internal details, the freeing entity seems to be KASAN as part
-> of its quarantine reduction (albeit triggered by this kzalloc).  I'm
-> not remotely familiar with what KASAN is doing, but it seems the memory
-> corruption problem is somewhere within the KASAN tracking?
-> 
-> I added linux-mm in case they can confirm this diagnosis or give me a
-> pointer to what might be wrong in scsi.
-> 
+OUT endpoint requests may somtimes have this flag set when
+preparing to be submitted to HW indicating that there is an
+additional TRB chained to the request for alignment purposes.
+If that request is removed before the controller can execute the
+transfer (e.g. ep_dequeue/ep_disable), the request will not go
+through the dwc3_gadget_ep_cleanup_completed_request() handler
+and will not have its needs_extra_trb flag cleared when
+dwc3_gadget_giveback() is called.  This same request could be
+later requeued for a new transfer that does not require an
+extra TRB and if it is successfully completed, the cleanup
+and TRB reclamation will incorrectly process the additional TRB
+which belongs to the next request, and incorrectly advances the
+TRB dequeue pointer, thereby messing up calculation of the next
+requeust's actual/remaining count when it completes.
 
-Did you enable page_poison with PAGE_POISONING_ZERO=y ?
+The right thing to do here is to ensure that the flag is cleared
+before it is given back to the function driver.  A good place
+to do that is in dwc3_gadget_del_and_unmap_request().
+
+Fixes: c6267a51639b ("usb: dwc3: gadget: align transfers to wMaxPacketSize")
+Cc: stable@vger.kernel.org
+Signed-off-by: Jack Pham <jackp@codeaurora.org>
+---
+v2: Added Fixes tag and Cc: stable
+
+Felipe, as I mentioned in the cover for v1, for stable (from 4.11 where
+c6267a51639b first landed through 4.20), the fix needs to be modified to
+assign to the separate req->unaligned and req->zero flags in lieu of
+needs_extra_trb which appeared in 5.0-rc1 in:
+
+	commit 1a22ec643580626f439c8583edafdcc73798f2fb
+	Author: Felipe Balbi <felipe.balbi@linux.intel.com>
+	Date:   Wed Aug 1 13:15:05 2018 +0300
+
+	    usb: dwc3: gadget: combine unaligned and zero flags
+
+Do I need to send a separate patch for <= 4.20 or will you handle it?
+It's straightforward really, the code change should instead be
+
++	req->unaligned = false;
++	req->zero = false;
+
+Thanks,
+Jack
+
+ drivers/usb/dwc3/gadget.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/usb/dwc3/gadget.c b/drivers/usb/dwc3/gadget.c
+index 2ecde30ad0b7..e97b14f444c8 100644
+--- a/drivers/usb/dwc3/gadget.c
++++ b/drivers/usb/dwc3/gadget.c
+@@ -177,6 +177,7 @@ static void dwc3_gadget_del_and_unmap_request(struct dwc3_ep *dep,
+ 	req->started = false;
+ 	list_del(&req->list);
+ 	req->remaining = 0;
++	req->needs_extra_trb = false;
+ 
+ 	if (req->request.status == -EINPROGRESS)
+ 		req->request.status = status;
+-- 
+The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
