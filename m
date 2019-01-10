@@ -7,55 +7,56 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A956DC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 18:56:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3048EC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 18:57:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A95A214DA
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 18:56:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EEA422183F
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 18:57:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="SyFN34cb"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ANgcHEZB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729241AbfAJS4c (ORCPT
+        id S1729255AbfAJS5m (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 13:56:32 -0500
-Received: from mail-io1-f67.google.com ([209.85.166.67]:46897 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728331AbfAJS4c (ORCPT
+        Thu, 10 Jan 2019 13:57:42 -0500
+Received: from mail-it1-f196.google.com ([209.85.166.196]:53843 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728297AbfAJS5l (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 13:56:32 -0500
-Received: by mail-io1-f67.google.com with SMTP id v10so9766695ios.13
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 10:56:31 -0800 (PST)
+        Thu, 10 Jan 2019 13:57:41 -0500
+Received: by mail-it1-f196.google.com with SMTP id g85so203210ita.3
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 10:57:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=7BgF4kh9Xmlpw50K9SbfmwVdmpzqbAle3GfrvnRfGmk=;
-        b=SyFN34cb6X7nCgBYzsAzXOb9UUWhX+NfdDJaApUeY6oM0bWGvd2oAhEfM9LwF34glr
-         +4GvkzgsPgfa2jenE6CcTmKmCeASazCXEvWf8L9Hj8JRtISD6JrrM0WNb2B7+hROCg/D
-         yQEX7hQmhZkDylS2lChIBGRE2u+M+Q3+58T8E=
+        bh=ZCHJ/TvwzF0ThhfFXbmNmVm1YbERtS5kXlpqZlpNyCE=;
+        b=ANgcHEZBrNT721hW/GfEtszNfqcPceiM7DNUXGU4oJSlRB07TDvf/Kpfh73ZKQhL1T
+         G9x8WXvL6aE8V50fP8oNmTHGJkusCsd4/ZnP6ebKgst8p4+5ubeHl4KjcPnb5ASpe16e
+         iB72cAOUnZnrImrSIdq/Q5T5lcQMzw5ZDuc+k=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=7BgF4kh9Xmlpw50K9SbfmwVdmpzqbAle3GfrvnRfGmk=;
-        b=RBJbt+QUJg4B9M9lt+OMUdD9pU2ozKRypvRgtmUH21PAcEVMC6fDsdrSAnID8ATL+U
-         Khe0WCWtrENEipmrRDmlPNTtNZgT0iccO3G23QJNjnI44Qa5hm6N429N0x/T2BLWKmRu
-         TrWrYpHI1cZYJILlIt2Ac2xO2D98SiWvJ5Dc5dNZlly3fgRhQxIJwFqfxixyEZ3yUET4
-         p/7IAbCMG+ceBO/en1nJxD+8xn6Fy4CIUZru5JqAdUuTrS3TsiHeK4q8t4nlxWKizwwS
-         3Gxc1NOEpQYLENT/nqwvuc1P7cOuth1xWWyjZApfufc4MYSMtYhHJqbHdpM8U62bWTnv
-         ri2w==
-X-Gm-Message-State: AJcUukdZSC1718e5LqoALQieeOyOMNnes6OKAz2au3+Vz+7mto/nZZGr
-        ShoJvi1jjt7S+XgA6yAGpjWgJzYOcKWuZ73rfpa3vEeGYroNnQ==
-X-Google-Smtp-Source: ALg8bN6EBRB2D+ruHx7MaylPDpx+z+ZfTSkB8UjltZZWghyOWFgN0Ivly2UPnBQY0eqcH3TV+og4p1w1Gb6VGwE8/a8=
-X-Received: by 2002:a6b:6b02:: with SMTP id g2mr7195717ioc.18.1547146590880;
- Thu, 10 Jan 2019 10:56:30 -0800 (PST)
+        bh=ZCHJ/TvwzF0ThhfFXbmNmVm1YbERtS5kXlpqZlpNyCE=;
+        b=DD9xK7kanQxrX0u28Np8jnNpQ3/UNXQOnHs+nwZE50Q714DmsjxHUCYP3JuxtJM1zd
+         Ma0eN1NBTm4eQ6VOga+jqQdWd7xcq53ZMjyzeEEwv//UCkxP4R9WW5qpLlo+42+I78Je
+         BuVkZwV7E3gjuh6ZM8CTwUzEllRW4/yFsjFoV6eeAO7hGrH43MK/uWcQSsWc83f+MwuD
+         qqjg7T3dsCS9jqSJAviLiOu6SLHfEXjHn+8ag8QsV2oMCfhpucywNRmgdMIUIgUJomQA
+         K3BKZQlIdlf0gpeHvN35NT5z+4C5rt1lo7YRS6CYDuRATRSgYHqxMSZuEd41fAMOSAiT
+         yxwA==
+X-Gm-Message-State: AJcUukfit9nVYTy0G9SYyrEC5/g07aIBgT9cosKNWqA0Vkph++gCoAOW
+        o1s/JGxVu1YtMMfVhilL83uqgfz2QcxVJJtWctxd8w==
+X-Google-Smtp-Source: ALg8bN70O57ml7NqAXy6P5IzR/pHoeiIXe9+fryzWmoJz5X7s8TIF7WOBc8aLAGBHlFW8b/qQG+RtRwhvL1jY5rvxBo=
+X-Received: by 2002:a24:6f42:: with SMTP id x63mr24331itb.152.1547146660173;
+ Thu, 10 Jan 2019 10:57:40 -0800 (PST)
 MIME-Version: 1.0
-References: <20190110095125.GA4491@lenoch>
-In-Reply-To: <20190110095125.GA4491@lenoch>
+References: <20190109172336.GA1711@lenoch> <CAJZ5v0iZRUaAb-eiodgByZiEAe8AWxk9G2p8zHK45J-LuXgaAA@mail.gmail.com>
+ <20190109231944.GA21177@lenoch>
+In-Reply-To: <20190109231944.GA21177@lenoch>
 From:   Vincent Guittot <vincent.guittot@linaro.org>
-Date:   Thu, 10 Jan 2019 19:56:19 +0100
-Message-ID: <CAKfTPtCV=PYAqG=LavafTpMxvXdr7W-bfsOkpP+04EtOaicjyg@mail.gmail.com>
-Subject: Re: [PATCH] PM/runtime: Do not needlessly call ktime_get
+Date:   Thu, 10 Jan 2019 19:57:29 +0100
+Message-ID: <CAKfTPtAEu9ApVquRQbcobxOYMc3OEPF3cFUEHOtcrr=nEBXhQg@mail.gmail.com>
+Subject: Re: [PATCH v2] PM/runtime: Fix 'jiffies' in comments after move to hrtimers
 To:     Ladislav Michl <ladis@linux-mips.org>
 Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
         Linux PM <linux-pm@vger.kernel.org>,
@@ -71,60 +72,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 10 Jan 2019 at 10:51, Ladislav Michl <ladis@linux-mips.org> wrote:
+On Thu, 10 Jan 2019 at 00:19, Ladislav Michl <ladis@linux-mips.org> wrote:
 >
-> pm_runtime_autosuspend_expiration calls ktime_get even when
-> its returned value may be unused. Therefore get current time
-> later and remove gotos while there.
+> PM-runtime now uses the hrtimers infrastructure for autosuspend, however
+> comments still reference 'jiffies'.
 >
+> Fixes: 8234f6734c5d ("PM-runtime: Switch autosuspend over to using hrtimers")
 > Signed-off-by: Ladislav Michl <ladis@linux-mips.org>
 
 Acked-by: Vincent Guittot <vincent.guittot@linaro.org>
 
 > ---
->  NOTE: Depends on Vincent's "[PATCH v2] PM/runtime: Fix autosuspend_delay
->        on 32bits arch"!
+>  Changes:
+>  -v2: Reword comment accoring to Rafael's suggestion
 >
->  drivers/base/power/runtime.c | 19 ++++++++-----------
->  1 file changed, 8 insertions(+), 11 deletions(-)
+>  drivers/base/power/runtime.c | 7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
 >
 > diff --git a/drivers/base/power/runtime.c b/drivers/base/power/runtime.c
-> index 457be03b744d..836b1b8784eb 100644
+> index 70624695b6d5..a282e74d1a16 100644
 > --- a/drivers/base/power/runtime.c
 > +++ b/drivers/base/power/runtime.c
-> @@ -129,24 +129,21 @@ static void pm_runtime_cancel_pending(struct device *dev)
->  u64 pm_runtime_autosuspend_expiration(struct device *dev)
->  {
->         int autosuspend_delay;
-> -       u64 last_busy, expires = 0;
-> -       u64 now = ktime_to_ns(ktime_get());
-> +       u64 expires;
+> @@ -121,7 +121,7 @@ static void pm_runtime_cancel_pending(struct device *dev)
+>   * Compute the autosuspend-delay expiration time based on the device's
+>   * power.last_busy time.  If the delay has already expired or is disabled
+>   * (negative) or the power.use_autosuspend flag isn't set, return 0.
+> - * Otherwise return the expiration time in jiffies (adjusted to be nonzero).
+> + * Otherwise return the expiration time in nanoseconds (adjusted to be nonzero).
+>   *
+>   * This function may be called either with or without dev->power.lock held.
+>   * Either way it can be racy, since power.last_busy may be updated at any time.
+> @@ -905,7 +905,10 @@ static enum hrtimer_restart  pm_suspend_timer_fn(struct hrtimer *timer)
+>         spin_lock_irqsave(&dev->power.lock, flags);
 >
->         if (!dev->power.use_autosuspend)
-> -               goto out;
-> +               return 0;
->
->         autosuspend_delay = READ_ONCE(dev->power.autosuspend_delay);
->         if (autosuspend_delay < 0)
-> -               goto out;
-> -
-> -       last_busy = READ_ONCE(dev->power.last_busy);
-> +               return 0;
->
-> -       expires = last_busy + (u64)autosuspend_delay * NSEC_PER_MSEC;
-> -       if (expires <= now)
-> -               expires = 0;    /* Already expired. */
-> +       expires  = READ_ONCE(dev->power.last_busy);
-> +       expires += (u64)autosuspend_delay * NSEC_PER_MSEC;
-> +       if (expires > ktime_to_ns(ktime_get()))
-> +               return expires; /* Expires in the future */
->
-> - out:
-> -       return expires;
-> +       return 0;
->  }
->  EXPORT_SYMBOL_GPL(pm_runtime_autosuspend_expiration);
->
+>         expires = dev->power.timer_expires;
+> -       /* If 'expire' is after 'jiffies' we've been called too early. */
+> +       /*
+> +        * If 'expires' is after the current time, we've been called
+> +        * too early.
+> +        */
+>         if (expires > 0 && expires < ktime_to_ns(ktime_get())) {
+>                 dev->power.timer_expires = 0;
+>                 rpm_suspend(dev, dev->power.timer_autosuspends ?
 > --
 > 2.20.1
 >
