@@ -2,99 +2,141 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EDA7C43444
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 17:23:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDC1FC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 17:23:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 326E4214DA
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 17:23:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 98B3820879
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 17:23:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729903AbfAJRXu (ORCPT
+        id S1729923AbfAJRXy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 12:23:50 -0500
-Received: from mout.kundenserver.de ([217.72.192.75]:33261 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729803AbfAJRXp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 12:23:45 -0500
-Received: from wuerfel.lan ([109.192.41.194]) by mrelayeu.kundenserver.de
- (mreue109 [212.227.15.145]) with ESMTPA (Nemesis) id
- 1McH1O-1hI4Fh1sui-00clIh; Thu, 10 Jan 2019 18:22:25 +0100
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     y2038@lists.linaro.org, linux-api@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Arnd Bergmann <arnd@arndb.de>, mattst88@gmail.com,
-        linux@armlinux.org.uk, catalin.marinas@arm.com,
-        will.deacon@arm.com, tony.luck@intel.com, fenghua.yu@intel.com,
-        geert@linux-m68k.org, monstr@monstr.eu, paul.burton@mips.com,
-        deller@gmx.de, benh@kernel.crashing.org, mpe@ellerman.id.au,
-        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com, dalias@libc.org,
-        davem@davemloft.net, luto@kernel.org, tglx@linutronix.de,
-        mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
-        jcmvbkbc@gmail.com, akpm@linux-foundation.org,
-        deepa.kernel@gmail.com, ebiederm@xmission.com,
-        firoz.khan@linaro.org, linux-alpha@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
-        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-        sparclinux@vger.kernel.org, netdev@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org
-Subject: [PATCH 03/11] time: fix sys_timer_settime prototype
-Date:   Thu, 10 Jan 2019 18:22:08 +0100
-Message-Id: <20190110172216.313063-4-arnd@arndb.de>
-X-Mailer: git-send-email 2.20.0
-In-Reply-To: <20190110172216.313063-1-arnd@arndb.de>
-References: <20190110172216.313063-1-arnd@arndb.de>
+        Thu, 10 Jan 2019 12:23:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36408 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729891AbfAJRXt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 12:23:49 -0500
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9085820879;
+        Thu, 10 Jan 2019 17:23:48 +0000 (UTC)
+Date:   Thu, 10 Jan 2019 12:23:46 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc:     "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>
+Subject: Re: Possible use of RCU while in extended QS: idle vs RCU read-side
+ in interrupt vs rcu_eqs_exit
+Message-ID: <20190110122346.7063cf08@gandalf.local.home>
+In-Reply-To: <600900741.1177.1547140315581.JavaMail.zimbra@efficios.com>
+References: <2103471967.794.1547084331086.JavaMail.zimbra@efficios.com>
+        <20190110110839.7daeef3d@gandalf.local.home>
+        <1884815641.993.1547138653377.JavaMail.zimbra@efficios.com>
+        <600900741.1177.1547140315581.JavaMail.zimbra@efficios.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:3gTXRESf+h45Wvylwj9vM5Tda294DtDs8hhcZWgW4vEmMf66/zd
- hIB9vsXzYxRm5RZp35Ogjn6bqTec1vMAcTvQChqgMUCCk4LwBUmbpf4G9T4QoD3ki9A93eN
- nfkWegpv6J8c56JtHNLVhMjiBjGBTG2VcPlkL8lswl45ryU3nIXdFJRuZofh+00SPluw7pB
- Irr3BMn+tj5jjtoJ7fqtQ==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:h0tMv83ysn0=:OM4Zv09Xf1B3x0L+/3KO6x
- e04xJJ8iYmGngbOe2nReDYpA4tuZKa+1MerLoy0MrDtVhYnyD/R/DMr1TkPbJ6MVZYzCMtGdB
- x7bWaPYwUDzBW9IX4QooXgWxFSxxCifR6bvcemt6R3g8D/lo3gIXvHZ7NDC8T4lPqBgEVjdUp
- 5mGQaFc486H4LzdBb3XVHnulw6TJSiRZm/EioSczE9ZRUyq1LXpL1YntwKStPelMkgoMuCI9I
- 4srTCsPoYSNv7a1rzmRy4uhSHNFk5chRt2w04GOQZD6wlRbcWLj7c+0bP9gUHanTiy6k9YYVs
- 1I+/gzYw3VNVWqiEU24XGmAVbWGmwqtlSIAnoC1Uzx12MK1RH8CPJhHmsEwxGlHr2EDBVcWuF
- HA+tvdiMxGiCsRnQR9VosZmKFczCJkq3xjcwDml/j8ZBVr6w2njucIHM+295fIp7lbRl/WAIg
- K/p+CbxNOaOjEEZYTcqNj+RpZW7Xe5o2BHoytjTUArg/KIlH/akMbPD1TCvjAh886BP3gQafp
- OX/8TKrMiI6LTW36MfHGMgvRQgxpW4CD+u/lLyBO7uiqMAUESBtaexZkWM4G5UEkbNKOmO24Y
- wXIL/DizPMuoMLMgXzWWrD4iZQ5pbhZ2FmXV3zCbDrRzxpZqhXC63IEnezj/qWZJPybnBUCvy
- VqHVALmlPBbAQLNfc7h3Fv0mi/yW+8fKVxIxvQVSbRN9UL2cckfBt75dWyBM3v3K+yeOt8wD1
- p3EKZTw3ihTagDKn54jsKPyk76ZV1t86nHZnUg==
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A small typo has crept into the y2038 conversion of the timer_settime
-system call. So far this was completely harmless, but once we start
-using the new version, this has to be fixed.
+On Thu, 10 Jan 2019 12:11:55 -0500 (EST)
+Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
 
-Fixes: 6ff847350702 ("time: Change types to new y2038 safe __kernel_itimerspec")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- include/linux/syscalls.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> ----- On Jan 10, 2019, at 8:44 AM, Mathieu Desnoyers mathieu.desnoyers@efficios.com wrote:
+> 
+> > ----- On Jan 10, 2019, at 8:08 AM, rostedt rostedt@goodmis.org wrote:
+> >   
+> >> On Wed, 9 Jan 2019 20:38:51 -0500 (EST)
+> >> Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
+> >>   
+> >>> Hi Paul,
+> >>> 
+> >>> I've had a user report that trace_sched_waking() appears to be
+> >>> invoked while !rcu_is_watching() in some situation, so I started
+> >>> digging into the scheduler idle code.  
+> >> 
+> >> I'm wondering if this isn't a bug. Do you have the backtrace for where
+> >> trace_sched_waking() was called without rcu watching?  
+> > 
+> > I strongly suspect a bug as well. I'm awaiting a reproducer from the
+> > user whom reported this issue so I can add a WARN_ON_ONCE(!rcu_is_watching())
+> > in the scheduler code near trace_sched_waking() and gather a backtrace.
+> > 
+> > It still has to be confirmed, but I suspect this have been triggered
+> > within a HyperV guest. It may therefore be related to a virtualized environment.
+> > 
+> > I'll try to ask more specifically on which environment this was encountered.  
+> 
+> So it ends up it happens directly on hardware on a Linux laptop. Here is
+> the stacktrace:
+> 
+> vmlinux!try_to_wake_up
+> vmlinux!default_wake_function
+> vmlinux!pollwake
+> vmlinux!__wake_up_common
+> vmlinux!__wake_up_common_lock
+> vmlinux!__wake_up
+> vmlinux!perf_event_wakeup
+> vmlinux!perf_pending_event
+> vmlinux!irq_work_run_list
+> vmlinux!irq_work_run
 
-diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
-index 0296772e8fe5..8e86d9623d4e 100644
---- a/include/linux/syscalls.h
-+++ b/include/linux/syscalls.h
-@@ -591,7 +591,7 @@ asmlinkage long sys_timer_gettime(timer_t timer_id,
- asmlinkage long sys_timer_getoverrun(timer_t timer_id);
- asmlinkage long sys_timer_settime(timer_t timer_id, int flags,
- 				const struct __kernel_itimerspec __user *new_setting,
--				struct itimerspec __user *old_setting);
-+				struct __kernel_itimerspec __user *old_setting);
- asmlinkage long sys_timer_delete(timer_t timer_id);
- asmlinkage long sys_clock_settime(clockid_t which_clock,
- 				const struct __kernel_timespec __user *tp);
--- 
-2.20.0
+> vmlinux!smp_irq_work_iterrupt
+
+The first thing this calls is ipi_entering_ack_irq(), which calls
+irq_enter(), which calls rcu_irq_enter().
+
+So why isn't rcu watching here?
+
+-- Steve
+
+
+> vmlinux!irq_work_interrupt
+> vmlinux!finish_task_switch
+> vmlinux!__schedule
+> vmlinux!schedule_idle
+> vmlinux!do_idle
+> vmlinux!cpu_startup_entry
+> vmlinux!start_secondary
+> vmlinux!secondary_startup_64
+> 
+> Does it raise any red flag ?
+> 
+> Thanks,
+> 
+> Mathieu
+> 
+> > 
+> > Thanks,
+> > 
+> > Mathieu
+> >   
+> >> 
+> >> -- Steve
+> >>   
+> >>> 
+> >>> It appears that interrupts are re-enabled before rcu_eqs_exit() is
+> >>> invoked when exiting idle code from the scheduler.
+> >>> 
+> >>> I wonder what happens if an interrupt handler (including scheduler code)
+> >>> happens to issue a RCU read-side critical section before rcu_eqs_exit()
+> >>> is called ? Is there some code on interrupt entry that ensures rcu eqs
+> >>> state is exited in such scenario ?
+> >>> 
+> >>> Thanks,
+> >>> 
+> >>> Mathieu  
+> > 
+> > --
+> > Mathieu Desnoyers
+> > EfficiOS Inc.
+> > http://www.efficios.com  
+> 
 
