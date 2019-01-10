@@ -2,131 +2,181 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1568FC43444
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 17:00:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E31DAC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 17:00:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D88C0214C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 17:00:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B83E9214DA
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 17:00:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="aUn4RN0k"
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="bYvuDzm1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728993AbfAJRAO (ORCPT
+        id S1729109AbfAJRAS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 12:00:14 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:41148 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728266AbfAJRAM (ORCPT
+        Thu, 10 Jan 2019 12:00:18 -0500
+Received: from smtprelay2.synopsys.com ([198.182.60.111]:59410 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728266AbfAJRAQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 12:00:12 -0500
-Received: by mail-lf1-f65.google.com with SMTP id c16so8799686lfj.8
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 09:00:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=eYkLzlnfprc1E19rgfszl7a3v0UTbwhsSbLwYFVGylM=;
-        b=aUn4RN0k+5xejsvkFvXKKCADmXeMBnTGcQrHTXW73g3wImkJPmwGIWBzweHznVRxTm
-         NxEwro69r2zPaC5HOx0ReBoLmrlPVhGTvACMvuL6qkiM8IADPK/5fK8nYRTOi+T/+qMF
-         zZ3eNuxcsV6/lnklZ/cXcTtyQJRBqbsi3SpBw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=eYkLzlnfprc1E19rgfszl7a3v0UTbwhsSbLwYFVGylM=;
-        b=XwsC5U8XIXjzAM23sKhMFJ+uQ6WWFK+pr+HAQCQAAlVa1KiyGOHdrgO9I9rGWdUuKF
-         hsi99SUJFCp4yZGFOrzQIpgQUIl0uBXkF+2ywPQ95ZCQiT/Nxytp+LIqyhPFl7ECBklX
-         cJ3X3lf1K6U8Kl1sI/4r0JQCefV+j7pdz1He4e8bijIcJHWKaoht7OIr9Uj6uLbH2ULv
-         6zA3KoDlpujuPQUYUUYOqO+tfRg/UfiHnWdgpyct2OEVgVSgn3vPj35PjnkTv9ucYHK9
-         zEPPswnD8Kgq3n6w/wM5nO0WPkxnETnl7KHVSeKTR0HZyJA6sG+EZXpf+W6os+rfcfr7
-         8B2g==
-X-Gm-Message-State: AJcUukeRDLfBA7182ToQtb/2Nh41YXll/eLmOY5igmUcMfB2/L4puIbw
-        VVjtmyAHGDIvr1MxTj2zkIhbikjF1dY=
-X-Google-Smtp-Source: ALg8bN4/q4tpRsPk8En4bO0TAHYglN1/zQn4bfjRdEXBAXfzIGEu/XVgpaICsknGjM4aGFCVc2a10g==
-X-Received: by 2002:a19:1d0d:: with SMTP id d13mr6081400lfd.74.1547139608817;
-        Thu, 10 Jan 2019 09:00:08 -0800 (PST)
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com. [209.85.167.46])
-        by smtp.gmail.com with ESMTPSA id e14-v6sm15435211ljl.43.2019.01.10.09.00.07
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 10 Jan 2019 09:00:07 -0800 (PST)
-Received: by mail-lf1-f46.google.com with SMTP id n18so8818005lfh.6
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 09:00:07 -0800 (PST)
-X-Received: by 2002:a19:c014:: with SMTP id q20mr5939141lff.16.1547139607220;
- Thu, 10 Jan 2019 09:00:07 -0800 (PST)
+        Thu, 10 Jan 2019 12:00:16 -0500
+Received: from mailhost.synopsys.com (mailhost1.synopsys.com [10.12.238.239])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id DF4F810C0A42;
+        Thu, 10 Jan 2019 09:00:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1547139615; bh=AMdMSVG1Q7Xusu3VXK/+CposrKlkej3BAymwkHqU3FE=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To:From;
+        b=bYvuDzm1VbgZQZD3kpX6U+dq5MYkkG6ADK7a1CSnNVlhgCysfgC1aKYajCbMdP138
+         YjVZGnzL1mpqc8jN8yVy72H0f06wOetCJb6ciFI1OHT4NyKlR6vseCSVStVXBLUmPs
+         OqJHN3F60jODYaOXg2DJzpR04UwVy/0ydOZgfaakqDH/Oh36qAfkdmk+MyQxsRlAbI
+         HlBd+jF2PIFaSNFhsNPxvJL4JF0pxmNf1HaROG1mNgjLTaQRIsC7/piRGS4dBFvMzY
+         NVZhsE7Gya0xOJYYfU4911Tq1HX16FusOMIZeHuQQvpEQjO2uB9t4LOdyRj47Fxkvv
+         k22OkFAi95cEw==
+Received: from US01WXQAHTC1.internal.synopsys.com (us01wxqahtc1.internal.synopsys.com [10.12.238.230])
+        by mailhost.synopsys.com (Postfix) with ESMTP id 16116560A;
+        Thu, 10 Jan 2019 09:00:13 -0800 (PST)
+Received: from DE02WEHTCA.internal.synopsys.com (10.225.19.92) by
+ US01WXQAHTC1.internal.synopsys.com (10.12.238.230) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Thu, 10 Jan 2019 09:00:13 -0800
+Received: from DE02WEHTCB.internal.synopsys.com (10.225.19.94) by
+ DE02WEHTCA.internal.synopsys.com (10.225.19.92) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Thu, 10 Jan 2019 18:00:10 +0100
+Received: from [10.107.19.13] (10.107.19.13) by
+ DE02WEHTCB.internal.synopsys.com (10.225.19.80) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Thu, 10 Jan 2019 18:00:10 +0100
+Subject: Re: [V3, 4/4] media: platform: dwc: Add MIPI CSI-2 controller driver
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Luis Oliveira <luis.oliveira@synopsys.com>
+CC:     <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <joao.pinto@synopsys.com>, <festevam@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        "Neil Armstrong" <narmstrong@baylibre.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Thierry Reding <treding@nvidia.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Todor Tomov <todor.tomov@linaro.org>
+References: <1539953556-35762-1-git-send-email-lolivei@synopsys.com>
+ <1539953556-35762-5-git-send-email-lolivei@synopsys.com>
+ <1798955.5kaMj8jiTI@avalon>
+From:   Luis de Oliveira <luis.oliveira@synopsys.com>
+Message-ID: <367bf8de-a70b-145a-a69a-9edfa8c635b4@synopsys.com>
+Date:   Thu, 10 Jan 2019 17:00:07 +0000
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-References: <20190110101232.9398-1-o.rempel@pengutronix.de>
- <20190110101232.9398-4-o.rempel@pengutronix.de> <CAADWXX_G7X6QkNuqnpMyr+MGP+nUhqPaifJrfC=m57mhJu2jdg@mail.gmail.com>
- <20190110151953.qpat4t7lat6plfk6@pengutronix.de>
-In-Reply-To: <20190110151953.qpat4t7lat6plfk6@pengutronix.de>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 10 Jan 2019 08:59:51 -0800
-X-Gmail-Original-Message-ID: <CAHk-=whSbmZm8aZyoR9XjoLzotbXdxNuUpcxUTBo7svS77R6+A@mail.gmail.com>
-Message-ID: <CAHk-=whSbmZm8aZyoR9XjoLzotbXdxNuUpcxUTBo7svS77R6+A@mail.gmail.com>
-Subject: Re: [PATCH v1 3/3] drivers/tty: increase priority for tty_buffer_worker
-To:     Oleksij Rempel <o.rempel@pengutronix.de>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        lkml <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1798955.5kaMj8jiTI@avalon>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.107.19.13]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 10, 2019 at 7:19 AM Oleksij Rempel <o.rempel@pengutronix.de> wrote:
->
-> It is for industrial low latency RS-422 based application. The loopback
-> test is just easy way to test/reproduce it without additional hardware.
->
-> What is good, mainlineable way to implement it?
+Hi Laurent,
 
-I can easily see that for that specific use it might be the right
-thing and the easiest way to give better latency guarantees. I just
-don't think it's generally applicable, because of the reasons stated
-(ie "giving one thread much higher priority can have some detrimental
-effects on other cases").
+Sorry for taking so long to answer. I was stuck in other projects and lost track
+of this.
 
-And obviously for people who do *not* want this, the extra kthreads
-for just tty flushing are just ugly overhead. We've tried to no longer
-have a lot of special threads. At least yours isn't percpu..
+My answers inline,
 
-I wonder if  you could get at least similar behavior by:
+On 14-Nov-18 20:22, Laurent Pinchart wrote:
+> Hi Luis,
+> 
+> Thank you for the patch.
+> 
+> On Friday, 19 October 2018 15:52:26 EET Luis Oliveira wrote:
+>> Add the Synopsys MIPI CSI-2 controller driver. This
+>> controller driver is divided in platform dependent functions
+>> and core functions. It also includes a platform for future
+>> DesignWare drivers.
+>>
+>> Signed-off-by: Luis Oliveira <lolivei@synopsys.com>
+>> ---
+>> Changelog
+>> v2-V3
+>> - exposed IPI settings to userspace
+> 
+> Could you please explain why you need this and can't use standard APIs ? 
+> Custom sysfs attributes are needed, they need to be documented in 
+> Documentation/ABI/.
+> 
 
- - allocating your own workqueue
+IPI - Image Pixel Interface enables to access direct video stream in our CSI-2
+Host IP and needs to be configured to match the video source. I can't hard code
+it. But maybe I can think of a way to configure it using the video configuration.
+I will try do that in the next patchset.
 
-      tty_wq = alloc_workqueue("tty", WQ_HIGHPRI, 0);
+>> - fixed headers
+>>
+>>  MAINTAINERS                              |  11 +
+>>  drivers/media/platform/dwc/Kconfig       |  30 +-
+>>  drivers/media/platform/dwc/Makefile      |   2 +
+>>  drivers/media/platform/dwc/dw-csi-plat.c | 699 ++++++++++++++++++++++++++++
+>>  drivers/media/platform/dwc/dw-csi-plat.h |  77 ++++
+>>  drivers/media/platform/dwc/dw-mipi-csi.c | 494 ++++++++++++++++++++++
+>>  drivers/media/platform/dwc/dw-mipi-csi.h | 202 +++++++++
+>>  include/media/dwc/dw-mipi-csi-pltfrm.h   | 102 +++++
+>>  8 files changed, 1616 insertions(+), 1 deletion(-)
+>>  create mode 100644 drivers/media/platform/dwc/dw-csi-plat.c
+>>  create mode 100644 drivers/media/platform/dwc/dw-csi-plat.h
+>>  create mode 100644 drivers/media/platform/dwc/dw-mipi-csi.c
+>>  create mode 100644 drivers/media/platform/dwc/dw-mipi-csi.h
+>>  create mode 100644 include/media/dwc/dw-mipi-csi-pltfrm.h
+>>
+>> diff --git a/MAINTAINERS b/MAINTAINERS
+>> index da2e509..fd5f1fc 100644
+>> --- a/MAINTAINERS
+>> +++ b/MAINTAINERS
+>> @@ -14032,6 +14032,16 @@ S:	Maintained
+>>  F:	drivers/dma/dwi-axi-dmac/
+>>  F:	Documentation/devicetree/bindings/dma/snps,dw-axi-dmac.txt
+>>
+>> +SYNOPSYS DESIGNWARE MIPI CSI-2 HOST VIDEO PLATFORM
+>> +M:	Luis Oliveira <luis.oliveira@synopsys.com>
+>> +L:	linux-media@vger.kernel.org
+>> +T:	git git://linuxtv.org/media_tree.git
+>> +S:	Maintained
+>> +F:	drivers/media/platform/dwc
+>> +F:	include/media/dwc/dw-mipi-csi-pltfrm.h
+>> +F:	Documentation/devicetree/bindings/media/snps,dw-csi-plat.txt
+>> +F:	Documentation/devicetree/bindings/phy/snps,dphy-rx.txt
+> 
+> These two lines belong to patches 1/4 and 3/4. Doesn't checkpatch.pl warn 
+> about this ? Now that I mentioned checkpatch.pl, I tried running it on this 
+> series, and it generates a fair number of warnings and errors. Could you 
+> please fix them ?
+> 
 
- - and then instead of the current
+I did, but maybe - or probably - i did not fix them all. Sorry.
+I am preparing a new patchset and I will make sure everything goes right this time.
 
-     queue_work(system_unbound_wq, &buf->work);
+>> +
+>>  SYNOPSYS DESIGNWARE DMAC DRIVER
+>>  M:	Viresh Kumar <vireshk@kernel.org>
+>>  R:	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+>> @@ -16217,3 +16227,4 @@ T:	git
+>> git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git S:	Buried
+>> alive in reporters
+>>  F:	*
+>>  F:	*/
+>> +
+> 
+> Stray new line.
+> 
+Noted.
 
-   you'd queue it onto that WQ_HIGHPRI workqueue.
-
-NOTE! The advantage of the above is that it should be much easier to
-make conditional. It could be a small boot-time option to say "create
-your own tty high-priority workqueue", and it would be off by default
-- and the tty buffer code would just use the default
-"system_unbound_wq" normally, but then with the special option to use
-that HIGHPRI workqueue.
-
-See what I'm saying? It shouldn't be all that different from what you
-do in your patch-series, but at least this way it's an easy
-conditional, and people who don't have your kind of special latency
-issues would never see it (and the code would be maintainable).
-
-And do explain in the commit messages what your real load is (the
-loopback case can still be interesting to show numbers in a controlled
-environment, but it's not very compelling from a "this is the _reason_
-for the change", if you see what I mean).
-
-How does that sound? I think it would be much more likely to be
-acceptable, and it doesn't sound like a big change.
-
-But I may have missed something.
-
-             Linus
+> [snip]
+> 
+Thank you,
+Luis
