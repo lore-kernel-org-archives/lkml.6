@@ -2,325 +2,401 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B5ECC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 18:21:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23DABC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 18:21:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB01C208E3
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 18:21:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D3D9720675
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 18:21:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="PfE6IS0X"
+	dkim=pass (2048-bit key) header.d=android.com header.i=@android.com header.b="QwqfWZnX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731038AbfAJSVL (ORCPT
+        id S1731057AbfAJSVR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 13:21:11 -0500
-Received: from smtprelay.synopsys.com ([198.182.60.111]:34508 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729760AbfAJSVK (ORCPT
+        Thu, 10 Jan 2019 13:21:17 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:36212 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731018AbfAJSVR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 13:21:10 -0500
-Received: from mailhost.synopsys.com (mailhost2.synopsys.com [10.13.184.66])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id 9527110C0A42;
-        Thu, 10 Jan 2019 10:21:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1547144469; bh=3DhO0nsT73OngEt7lN4Jc9aqYbxhGBAiGX/ukl5lFgo=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To:From;
-        b=PfE6IS0X6M6u7cxJbyJ0mtFPlqv4se/YZZw3BEeRVRBZIT5F96OlRqEVKv0vH/Abo
-         KP6T/5u7ntlujWdbFky3vIvii8hbGoPpvGzOimxGc1mAEhMt/GfgTXVcWKZYCL5Dw8
-         0B00vCe45i1L/FYNBAud9dlb0v5WwZtRpkWXYJPt/kx67PAPdHegFOusEIbWLNOt9y
-         SQorROxfeUufBQVg055vKaHWVXntEKx6L2kChUs1bpFpQjmvhMt3H8dRujp0H0neog
-         AP5GPigVhLDRfPDUkpeuGpX2qjLmGd4gv22DO+8Uuo10b/npkXTKHweiBU9GNqFTmZ
-         7bEzMuRlACLaw==
-Received: from US01WEHTC3.internal.synopsys.com (us01wehtc3.internal.synopsys.com [10.15.84.232])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 396AB395D;
-        Thu, 10 Jan 2019 10:21:09 -0800 (PST)
-Received: from IN01WEHTCA.internal.synopsys.com (10.144.199.104) by
- US01WEHTC3.internal.synopsys.com (10.15.84.232) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Thu, 10 Jan 2019 10:21:08 -0800
-Received: from IN01WEHTCB.internal.synopsys.com (10.144.199.105) by
- IN01WEHTCA.internal.synopsys.com (10.144.199.103) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Thu, 10 Jan 2019 23:51:08 +0530
-Received: from [10.10.161.70] (10.10.161.70) by
- IN01WEHTCB.internal.synopsys.com (10.144.199.243) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Thu, 10 Jan 2019 23:51:08 +0530
-Subject: Re: [PATCH v2 2/4] ARC: perf: introduce Kernel PMU events support
-To:     Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
-        <linux-snps-arc@lists.infradead.org>
-CC:     <linux-kernel@vger.kernel.org>,
-        Alexey Brodkin <alexey.brodkin@synopsys.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Ingo Molnar" <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>
-Newsgroups: gmane.linux.kernel,gmane.linux.kernel.arc
-References: <20181213165621.20817-1-Eugeniy.Paltsev@synopsys.com>
- <20181213165621.20817-3-Eugeniy.Paltsev@synopsys.com>
-From:   Vineet Gupta <vineet.gupta1@synopsys.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=vgupta@synopsys.com; keydata=
- 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
- hhqBJlyU6MVUa6vZNv8E
-Message-ID: <2ff36f1a-d243-750a-053f-a7eca5b888e0@synopsys.com>
-Date:   Thu, 10 Jan 2019 10:20:58 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 10 Jan 2019 13:21:17 -0500
+Received: by mail-pl1-f193.google.com with SMTP id g9so5542094plo.3
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 10:21:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=android.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=jW2F+kuk2u3TW/g5pX4JcDnMmNLR2q6hyiV3PoFZrMc=;
+        b=QwqfWZnXVHe7nZGsBMSlw6pfok4CTnWpSlY1mq+YeuZRFDaFFp4mttoyx5DI7h2d/8
+         DjEoY8COBb+PoDFWE0/Umr9yTZ7DrqNqKwdmYmGwpXYVX2URrHY8o3M8A2M4txmwQrQX
+         EmjjuxoyjGsqjvDPslpX6WhuehKdQNkP2Q2wUU7ebDuaA519V7X1g2u+TuU++UOSzPU8
+         YQVUeMqU6rzb8XXdoLQdX3u1tIhPccmEwnUZjAvGOgr96Oy2L8opGDLotGRYXXlQadQz
+         qcaBgNXupw/1dogwuzQT69EPOcLyStSgK1srN7om4tWVG+PaRmhQsejwi9sjx6BZZOQt
+         PtyA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=jW2F+kuk2u3TW/g5pX4JcDnMmNLR2q6hyiV3PoFZrMc=;
+        b=EC2xBFPJxHrwoSSm5MuH9JxIZKTS/kx1xccXLSsBrfvqZVJJ6PGQ/yvY6jXQ41TlDH
+         bk47Mx0UZqj22px/iBwvwjDRvrx/ORN7poiYHusxkmYu9bt9idZp+5G8DtsfVMVBnH1J
+         CDkJ5ljAQEkjqitbIe3E0MilprOt5Ys/I+CAHzcLBftue2LVHamd1QuOvTfPZOOJane/
+         PCsH0rR+XY5W4BeGOkPVohblvkchgpYfkKvh2aKh3GPOlDmYtaYiSQ2Vlkw1uexXhsZY
+         +OTYT1drpCV48hVQy+L4E0ghsebVHiuQ6qAuQ37fnr9kHekRYne5y+QMgTf1DyHDcBGC
+         oU4A==
+X-Gm-Message-State: AJcUukeBwnl0XNNYbSvQss57BQO5UJCnlF8fpvthUyisMe5sTCrnShn4
+        NwLk8HiCHfg+ie08TglmUOtS+cE/8zg=
+X-Google-Smtp-Source: ALg8bN6U33F2bBDOci/2Vd00tC7uS0BjKUc6xx3YcpQZ/EJRcc6kaCJzwtf3ZvTrM+6Hzlc3tFg8/w==
+X-Received: by 2002:a17:902:7e44:: with SMTP id a4mr11361860pln.338.1547144476237;
+        Thu, 10 Jan 2019 10:21:16 -0800 (PST)
+Received: from ava-linux2.mtv.corp.google.com ([2620:0:1000:1601:6cc0:d41d:b970:fd7])
+        by smtp.googlemail.com with ESMTPSA id y84sm138939662pfb.81.2019.01.10.10.21.15
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 10 Jan 2019 10:21:15 -0800 (PST)
+From:   Todd Kjos <tkjos@android.com>
+X-Google-Original-From: Todd Kjos <tkjos@google.com>
+To:     tkjos@google.com, gregkh@linuxfoundation.org, arve@android.com,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        maco@google.com
+Cc:     joel@joelfernandes.org, kernel-team@android.com
+Subject: [PATCH] binder: create node flag to request sender's security context
+Date:   Thu, 10 Jan 2019 10:21:00 -0800
+Message-Id: <20190110182100.186199-1-tkjos@google.com>
+X-Mailer: git-send-email 2.20.1.97.g81188d93c3-goog
 MIME-Version: 1.0
-In-Reply-To: <20181213165621.20817-3-Eugeniy.Paltsev@synopsys.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.10.161.70]
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ping ! Peter, does this look ok to you ?
+To allow servers to verify client identity, allow a node
+flag to be set that causes the sender's security context
+to be delivered with the transaction. The BR_TRANSACTION
+command is extended in BR_TRANSACTION_SEC_CTX to
+contain a pointer to the security context string.
 
+Signed-off-by: Todd Kjos <tkjos@google.com>
+---
+ drivers/android/binder.c            | 106 ++++++++++++++++++++++------
+ include/uapi/linux/android/binder.h |  19 +++++
+ 2 files changed, 102 insertions(+), 23 deletions(-)
 
-On 12/13/18 8:56 AM, Eugeniy Paltsev wrote:
-> Export all available ARC architected hardware events as
-> kernel PMU events to make non-generic events accessible.
-> 
-> ARC PMU HW allow us to read the list of all available
-> events names. So we generate kernel PMU event list
-> dynamically in arc_pmu_device_probe() using
-> human-readable events names we got from HW instead of
-> using pre-defined events list.
-> 
-> -------------------------->8--------------------------
-> $ perf list
->   [snip]
->   arc_pmu/bdata64/                  [Kernel PMU event]
->   arc_pmu/bdcstall/                 [Kernel PMU event]
->   arc_pmu/bdslot/                   [Kernel PMU event]
->   arc_pmu/bfbmp/                    [Kernel PMU event]
->   arc_pmu/bfirqex/                  [Kernel PMU event]
->   arc_pmu/bflgstal/                 [Kernel PMU event]
->   arc_pmu/bflush/                   [Kernel PMU event]
-> -------------------------->8--------------------------
-> 
-> Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-> ---
-> Changes v1->v2:
->  * Rename "arc_pmu" to "arc_pct"
->  * Trivial changes
-> 
->  arch/arc/kernel/perf_event.c | 106 ++++++++++++++++++++++++++++++++++++++++++-
->  1 file changed, 105 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/arc/kernel/perf_event.c b/arch/arc/kernel/perf_event.c
-> index 693f32d60c35..d60aaaead421 100644
-> --- a/arch/arc/kernel/perf_event.c
-> +++ b/arch/arc/kernel/perf_event.c
-> @@ -17,12 +17,28 @@
->  /* HW holds 8 symbols + one for null terminator */
->  #define ARCPMU_EVENT_NAME_LEN	9
->  
-> +enum arc_pmu_attr_groups {
-> +	ARCPMU_ATTR_GR_EVENTS,
-> +	ARCPMU_ATTR_GR_FORMATS,
-> +	ARCPMU_NR_ATTR_GR
-> +};
-> +
-> +struct arc_pmu_raw_event_entry {
-> +	char name[ARCPMU_EVENT_NAME_LEN];
-> +};
-> +
->  struct arc_pmu {
->  	struct pmu	pmu;
->  	unsigned int	irq;
->  	int		n_counters;
-> +	int		n_events;
->  	u64		max_period;
->  	int		ev_hw_idx[PERF_COUNT_ARC_HW_MAX];
-> +
-> +	struct arc_pmu_raw_event_entry	*raw_entry;
-> +	struct attribute		**attrs;
-> +	struct perf_pmu_events_attr	*attr;
-> +	const struct attribute_group	*attr_groups[ARCPMU_NR_ATTR_GR + 1];
->  };
->  
->  struct arc_pmu_cpu {
-> @@ -192,6 +208,17 @@ static int arc_pmu_event_init(struct perf_event *event)
->  			 (int)hwc->config, arc_pmu_ev_hw_map[ret]);
->  		return 0;
->  
-> +	case PERF_TYPE_RAW:
-> +		if (event->attr.config >= arc_pmu->n_events)
-> +			return -ENOENT;
-> +
-> +		hwc->config |= event->attr.config;
-> +		pr_debug("init raw event with idx %lld \'%s\'\n",
-> +			 event->attr.config,
-> +			 arc_pmu->raw_entry[event->attr.config].name);
-> +
-> +		return 0;
-> +
->  	default:
->  		return -ENOENT;
->  	}
-> @@ -442,6 +469,67 @@ static void arc_cpu_pmu_irq_init(void *data)
->  	write_aux_reg(ARC_REG_PCT_INT_ACT, 0xffffffff);
->  }
->  
-> +/* Event field occupies the bottom 15 bits of our config field */
-> +PMU_FORMAT_ATTR(event, "config:0-14");
-> +static struct attribute *arc_pmu_format_attrs[] = {
-> +	&format_attr_event.attr,
-> +	NULL,
-> +};
-> +
-> +static struct attribute_group arc_pmu_format_attr_gr = {
-> +	.name = "format",
-> +	.attrs = arc_pmu_format_attrs,
-> +};
-> +
-> +static ssize_t arc_pmu_events_sysfs_show(struct device *dev,
-> +					 struct device_attribute *attr,
-> +					 char *page)
-> +{
-> +	struct perf_pmu_events_attr *pmu_attr;
-> +
-> +	pmu_attr = container_of(attr, struct perf_pmu_events_attr, attr);
-> +	return sprintf(page, "event=0x%04llx\n", pmu_attr->id);
-> +}
-> +
-> +/*
-> + * We don't add attrs here as we don't have pre-defined list of perf events.
-> + * We will generate and add attrs dynamically in probe() after we read HW
-> + * configuration.
-> + */
-> +static struct attribute_group arc_pmu_events_attr_gr = {
-> +	.name = "events",
-> +};
-> +
-> +static void arc_pmu_add_raw_event_attr(int j, char *str)
-> +{
-> +	memmove(arc_pmu->raw_entry[j].name, str, ARCPMU_EVENT_NAME_LEN - 1);
-> +	arc_pmu->attr[j].attr.attr.name = arc_pmu->raw_entry[j].name;
-> +	arc_pmu->attr[j].attr.attr.mode = VERIFY_OCTAL_PERMISSIONS(0444);
-> +	arc_pmu->attr[j].attr.show = arc_pmu_events_sysfs_show;
-> +	arc_pmu->attr[j].id = j;
-> +	arc_pmu->attrs[j] = &(arc_pmu->attr[j].attr.attr);
-> +}
-> +
-> +static int arc_pmu_raw_alloc(struct device *dev)
-> +{
-> +	arc_pmu->attr = devm_kmalloc_array(dev, arc_pmu->n_events + 1,
-> +		sizeof(*arc_pmu->attr), GFP_KERNEL | __GFP_ZERO);
-> +	if (!arc_pmu->attr)
-> +		return -ENOMEM;
-> +
-> +	arc_pmu->attrs = devm_kmalloc_array(dev, arc_pmu->n_events + 1,
-> +		sizeof(*arc_pmu->attrs), GFP_KERNEL | __GFP_ZERO);
-> +	if (!arc_pmu->attrs)
-> +		return -ENOMEM;
-> +
-> +	arc_pmu->raw_entry = devm_kmalloc_array(dev, arc_pmu->n_events,
-> +		sizeof(*arc_pmu->raw_entry), GFP_KERNEL | __GFP_ZERO);
-> +	if (!arc_pmu->raw_entry)
-> +		return -ENOMEM;
-> +
-> +	return 0;
-> +}
-> +
->  static int arc_pmu_device_probe(struct platform_device *pdev)
->  {
->  	struct arc_reg_pct_build pct_bcr;
-> @@ -473,6 +561,11 @@ static int arc_pmu_device_probe(struct platform_device *pdev)
->  	if (!arc_pmu)
->  		return -ENOMEM;
->  
-> +	arc_pmu->n_events = cc_bcr.c;
-> +
-> +	if (arc_pmu_raw_alloc(&pdev->dev))
-> +		return -ENOMEM;
-> +
->  	has_interrupts = is_isa_arcv2() ? pct_bcr.i : 0;
->  
->  	arc_pmu->n_counters = pct_bcr.c;
-> @@ -504,8 +597,14 @@ static int arc_pmu_device_probe(struct platform_device *pdev)
->  				arc_pmu->ev_hw_idx[i] = j;
->  			}
->  		}
-> +
-> +		arc_pmu_add_raw_event_attr(j, cc_name.str);
->  	}
->  
-> +	arc_pmu_events_attr_gr.attrs = arc_pmu->attrs;
-> +	arc_pmu->attr_groups[ARCPMU_ATTR_GR_EVENTS] = &arc_pmu_events_attr_gr;
-> +	arc_pmu->attr_groups[ARCPMU_ATTR_GR_FORMATS] = &arc_pmu_format_attr_gr;
-> +
->  	arc_pmu->pmu = (struct pmu) {
->  		.pmu_enable	= arc_pmu_enable,
->  		.pmu_disable	= arc_pmu_disable,
-> @@ -515,6 +614,7 @@ static int arc_pmu_device_probe(struct platform_device *pdev)
->  		.start		= arc_pmu_start,
->  		.stop		= arc_pmu_stop,
->  		.read		= arc_pmu_read,
-> +		.attr_groups	= arc_pmu->attr_groups,
->  	};
->  
->  	if (has_interrupts) {
-> @@ -536,7 +636,11 @@ static int arc_pmu_device_probe(struct platform_device *pdev)
->  	} else
->  		arc_pmu->pmu.capabilities |= PERF_PMU_CAP_NO_INTERRUPT;
->  
-> -	return perf_pmu_register(&arc_pmu->pmu, pdev->name, PERF_TYPE_RAW);
-> +	/*
-> +	 * perf parser doesn't really like '-' symbol in events name, so let's
-> +	 * use '_' in arc pct name as it goes to kernel PMU event prefix.
-> +	 */
-> +	return perf_pmu_register(&arc_pmu->pmu, "arc_pct", PERF_TYPE_RAW);
->  }
->  
->  static const struct of_device_id arc_pmu_match[] = {
-> 
+diff --git a/drivers/android/binder.c b/drivers/android/binder.c
+index cdfc87629efb8..84551a2f2d71a 100644
+--- a/drivers/android/binder.c
++++ b/drivers/android/binder.c
+@@ -329,6 +329,8 @@ struct binder_error {
+  *                        (invariant after initialized)
+  * @min_priority:         minimum scheduling priority
+  *                        (invariant after initialized)
++ * @txn_security_ctx:     require sender's security context
++ *                        (invariant after initialized)
+  * @async_todo:           list of async work items
+  *                        (protected by @proc->inner_lock)
+  *
+@@ -365,6 +367,7 @@ struct binder_node {
+ 		 * invariant after initialization
+ 		 */
+ 		u8 accept_fds:1;
++		u8 txn_security_ctx:1;
+ 		u8 min_priority;
+ 	};
+ 	bool has_async_transaction;
+@@ -615,6 +618,7 @@ struct binder_transaction {
+ 	long	saved_priority;
+ 	kuid_t	sender_euid;
+ 	struct list_head fd_fixups;
++	binder_uintptr_t security_ctx;
+ 	/**
+ 	 * @lock:  protects @from, @to_proc, and @to_thread
+ 	 *
+@@ -1152,6 +1156,7 @@ static struct binder_node *binder_init_node_ilocked(
+ 	node->work.type = BINDER_WORK_NODE;
+ 	node->min_priority = flags & FLAT_BINDER_FLAG_PRIORITY_MASK;
+ 	node->accept_fds = !!(flags & FLAT_BINDER_FLAG_ACCEPTS_FDS);
++	node->txn_security_ctx = !!(flags & FLAT_BINDER_FLAG_TXN_SECURITY_CTX);
+ 	spin_lock_init(&node->lock);
+ 	INIT_LIST_HEAD(&node->work.entry);
+ 	INIT_LIST_HEAD(&node->async_todo);
+@@ -2778,6 +2783,8 @@ static void binder_transaction(struct binder_proc *proc,
+ 	binder_size_t last_fixup_min_off = 0;
+ 	struct binder_context *context = proc->context;
+ 	int t_debug_id = atomic_inc_return(&binder_last_id);
++	char *secctx = NULL;
++	u32 secctx_sz = 0;
+ 
+ 	e = binder_transaction_log_add(&binder_transaction_log);
+ 	e->debug_id = t_debug_id;
+@@ -3020,6 +3027,20 @@ static void binder_transaction(struct binder_proc *proc,
+ 	t->flags = tr->flags;
+ 	t->priority = task_nice(current);
+ 
++	if (target_node && target_node->txn_security_ctx) {
++		u32 secid;
++
++		security_task_getsecid(proc->tsk, &secid);
++		ret = security_secid_to_secctx(secid, &secctx, &secctx_sz);
++		if (ret) {
++			return_error = BR_FAILED_REPLY;
++			return_error_param = ret;
++			return_error_line = __LINE__;
++			goto err_get_secctx_failed;
++		}
++		extra_buffers_size += ALIGN(secctx_sz, sizeof(u64));
++	}
++
+ 	trace_binder_transaction(reply, t, target_node);
+ 
+ 	t->buffer = binder_alloc_new_buf(&target_proc->alloc, tr->data_size,
+@@ -3036,6 +3057,19 @@ static void binder_transaction(struct binder_proc *proc,
+ 		t->buffer = NULL;
+ 		goto err_binder_alloc_buf_failed;
+ 	}
++	if (secctx) {
++		size_t buf_offset = ALIGN(tr->data_size, sizeof(void *)) +
++				    ALIGN(tr->offsets_size, sizeof(void *)) +
++				    ALIGN(extra_buffers_size, sizeof(void *)) -
++				    ALIGN(secctx_sz, sizeof(u64));
++		char *kptr = t->buffer->data + buf_offset;
++
++		t->security_ctx = (binder_uintptr_t)kptr +
++		    binder_alloc_get_user_buffer_offset(&target_proc->alloc);
++		memcpy(kptr, secctx, secctx_sz);
++		security_release_secctx(secctx, secctx_sz);
++		secctx = NULL;
++	}
+ 	t->buffer->debug_id = t->debug_id;
+ 	t->buffer->transaction = t;
+ 	t->buffer->target_node = target_node;
+@@ -3305,6 +3339,9 @@ static void binder_transaction(struct binder_proc *proc,
+ 	t->buffer->transaction = NULL;
+ 	binder_alloc_free_buf(&target_proc->alloc, t->buffer);
+ err_binder_alloc_buf_failed:
++	if (secctx)
++		security_release_secctx(secctx, secctx_sz);
++err_get_secctx_failed:
+ 	kfree(tcomplete);
+ 	binder_stats_deleted(BINDER_STAT_TRANSACTION_COMPLETE);
+ err_alloc_tcomplete_failed:
+@@ -4036,11 +4073,13 @@ static int binder_thread_read(struct binder_proc *proc,
+ 
+ 	while (1) {
+ 		uint32_t cmd;
+-		struct binder_transaction_data tr;
++		struct binder_transaction_data_secctx tr;
++		struct binder_transaction_data *trd = &tr.transaction_data;
+ 		struct binder_work *w = NULL;
+ 		struct list_head *list = NULL;
+ 		struct binder_transaction *t = NULL;
+ 		struct binder_thread *t_from;
++		size_t trsize = sizeof(*trd);
+ 
+ 		binder_inner_proc_lock(proc);
+ 		if (!binder_worklist_empty_ilocked(&thread->todo))
+@@ -4240,8 +4279,8 @@ static int binder_thread_read(struct binder_proc *proc,
+ 		if (t->buffer->target_node) {
+ 			struct binder_node *target_node = t->buffer->target_node;
+ 
+-			tr.target.ptr = target_node->ptr;
+-			tr.cookie =  target_node->cookie;
++			trd->target.ptr = target_node->ptr;
++			trd->cookie =  target_node->cookie;
+ 			t->saved_priority = task_nice(current);
+ 			if (t->priority < target_node->min_priority &&
+ 			    !(t->flags & TF_ONE_WAY))
+@@ -4251,22 +4290,23 @@ static int binder_thread_read(struct binder_proc *proc,
+ 				binder_set_nice(target_node->min_priority);
+ 			cmd = BR_TRANSACTION;
+ 		} else {
+-			tr.target.ptr = 0;
+-			tr.cookie = 0;
++			trd->target.ptr = 0;
++			trd->cookie = 0;
+ 			cmd = BR_REPLY;
+ 		}
+-		tr.code = t->code;
+-		tr.flags = t->flags;
+-		tr.sender_euid = from_kuid(current_user_ns(), t->sender_euid);
++		trd->code = t->code;
++		trd->flags = t->flags;
++		trd->sender_euid = from_kuid(current_user_ns(), t->sender_euid);
+ 
+ 		t_from = binder_get_txn_from(t);
+ 		if (t_from) {
+ 			struct task_struct *sender = t_from->proc->tsk;
+ 
+-			tr.sender_pid = task_tgid_nr_ns(sender,
+-							task_active_pid_ns(current));
++			trd->sender_pid =
++				task_tgid_nr_ns(sender,
++						task_active_pid_ns(current));
+ 		} else {
+-			tr.sender_pid = 0;
++			trd->sender_pid = 0;
+ 		}
+ 
+ 		ret = binder_apply_fd_fixups(t);
+@@ -4297,15 +4337,20 @@ static int binder_thread_read(struct binder_proc *proc,
+ 			}
+ 			continue;
+ 		}
+-		tr.data_size = t->buffer->data_size;
+-		tr.offsets_size = t->buffer->offsets_size;
+-		tr.data.ptr.buffer = (binder_uintptr_t)
++		trd->data_size = t->buffer->data_size;
++		trd->offsets_size = t->buffer->offsets_size;
++		trd->data.ptr.buffer = (binder_uintptr_t)
+ 			((uintptr_t)t->buffer->data +
+ 			binder_alloc_get_user_buffer_offset(&proc->alloc));
+-		tr.data.ptr.offsets = tr.data.ptr.buffer +
++		trd->data.ptr.offsets = trd->data.ptr.buffer +
+ 					ALIGN(t->buffer->data_size,
+ 					    sizeof(void *));
+ 
++		if (t->security_ctx) {
++			cmd = BR_TRANSACTION_SEC_CTX;
++			tr.secctx = t->security_ctx;
++			trsize = sizeof(tr);
++		}
+ 		if (put_user(cmd, (uint32_t __user *)ptr)) {
+ 			if (t_from)
+ 				binder_thread_dec_tmpref(t_from);
+@@ -4316,7 +4361,7 @@ static int binder_thread_read(struct binder_proc *proc,
+ 			return -EFAULT;
+ 		}
+ 		ptr += sizeof(uint32_t);
+-		if (copy_to_user(ptr, &tr, sizeof(tr))) {
++		if (copy_to_user(ptr, &tr, trsize)) {
+ 			if (t_from)
+ 				binder_thread_dec_tmpref(t_from);
+ 
+@@ -4325,7 +4370,7 @@ static int binder_thread_read(struct binder_proc *proc,
+ 
+ 			return -EFAULT;
+ 		}
+-		ptr += sizeof(tr);
++		ptr += trsize;
+ 
+ 		trace_binder_transaction_received(t);
+ 		binder_stat_br(proc, thread, cmd);
+@@ -4333,16 +4378,18 @@ static int binder_thread_read(struct binder_proc *proc,
+ 			     "%d:%d %s %d %d:%d, cmd %d size %zd-%zd ptr %016llx-%016llx\n",
+ 			     proc->pid, thread->pid,
+ 			     (cmd == BR_TRANSACTION) ? "BR_TRANSACTION" :
+-			     "BR_REPLY",
++				(cmd == BR_TRANSACTION_SEC_CTX) ?
++				     "BR_TRANSACTION_SEC_CTX" : "BR_REPLY",
+ 			     t->debug_id, t_from ? t_from->proc->pid : 0,
+ 			     t_from ? t_from->pid : 0, cmd,
+ 			     t->buffer->data_size, t->buffer->offsets_size,
+-			     (u64)tr.data.ptr.buffer, (u64)tr.data.ptr.offsets);
++			     (u64)trd->data.ptr.buffer,
++			     (u64)trd->data.ptr.offsets);
+ 
+ 		if (t_from)
+ 			binder_thread_dec_tmpref(t_from);
+ 		t->buffer->allow_user_free = 1;
+-		if (cmd == BR_TRANSACTION && !(t->flags & TF_ONE_WAY)) {
++		if (cmd != BR_REPLY && !(t->flags & TF_ONE_WAY)) {
+ 			binder_inner_proc_lock(thread->proc);
+ 			t->to_parent = thread->transaction_stack;
+ 			t->to_thread = thread;
+@@ -4690,7 +4737,8 @@ static int binder_ioctl_write_read(struct file *filp,
+ 	return ret;
+ }
+ 
+-static int binder_ioctl_set_ctx_mgr(struct file *filp)
++static int binder_ioctl_set_ctx_mgr(struct file *filp,
++				    struct flat_binder_object *fbo)
+ {
+ 	int ret = 0;
+ 	struct binder_proc *proc = filp->private_data;
+@@ -4719,7 +4767,7 @@ static int binder_ioctl_set_ctx_mgr(struct file *filp)
+ 	} else {
+ 		context->binder_context_mgr_uid = curr_euid;
+ 	}
+-	new_node = binder_new_node(proc, NULL);
++	new_node = binder_new_node(proc, fbo);
+ 	if (!new_node) {
+ 		ret = -ENOMEM;
+ 		goto out;
+@@ -4842,8 +4890,20 @@ static long binder_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+ 		binder_inner_proc_unlock(proc);
+ 		break;
+ 	}
++	case BINDER_SET_CONTEXT_MGR_EXT: {
++		struct flat_binder_object fbo;
++
++		if (copy_from_user(&fbo, ubuf, sizeof(fbo))) {
++			ret = -EINVAL;
++			goto err;
++		}
++		ret = binder_ioctl_set_ctx_mgr(filp, &fbo);
++		if (ret)
++			goto err;
++		break;
++	}
+ 	case BINDER_SET_CONTEXT_MGR:
+-		ret = binder_ioctl_set_ctx_mgr(filp);
++		ret = binder_ioctl_set_ctx_mgr(filp, NULL);
+ 		if (ret)
+ 			goto err;
+ 		break;
+diff --git a/include/uapi/linux/android/binder.h b/include/uapi/linux/android/binder.h
+index b9ba520f7e4bb..2832134e53971 100644
+--- a/include/uapi/linux/android/binder.h
++++ b/include/uapi/linux/android/binder.h
+@@ -41,6 +41,14 @@ enum {
+ enum {
+ 	FLAT_BINDER_FLAG_PRIORITY_MASK = 0xff,
+ 	FLAT_BINDER_FLAG_ACCEPTS_FDS = 0x100,
++
++	/**
++	 * @FLAT_BINDER_FLAG_TXN_SECURITY_CTX: request security contexts
++	 *
++	 * Only when set, causes senders to include their security
++	 * context
++	 */
++	FLAT_BINDER_FLAG_TXN_SECURITY_CTX = 0x1000,
+ };
+ 
+ #ifdef BINDER_IPC_32BIT
+@@ -218,6 +226,7 @@ struct binder_node_info_for_ref {
+ #define BINDER_VERSION			_IOWR('b', 9, struct binder_version)
+ #define BINDER_GET_NODE_DEBUG_INFO	_IOWR('b', 11, struct binder_node_debug_info)
+ #define BINDER_GET_NODE_INFO_FOR_REF	_IOWR('b', 12, struct binder_node_info_for_ref)
++#define BINDER_SET_CONTEXT_MGR_EXT	_IOW('b', 13, struct flat_binder_object)
+ 
+ /*
+  * NOTE: Two special error codes you should check for when calling
+@@ -276,6 +285,11 @@ struct binder_transaction_data {
+ 	} data;
+ };
+ 
++struct binder_transaction_data_secctx {
++	struct binder_transaction_data transaction_data;
++	binder_uintptr_t secctx;
++};
++
+ struct binder_transaction_data_sg {
+ 	struct binder_transaction_data transaction_data;
+ 	binder_size_t buffers_size;
+@@ -311,6 +325,11 @@ enum binder_driver_return_protocol {
+ 	BR_OK = _IO('r', 1),
+ 	/* No parameters! */
+ 
++	BR_TRANSACTION_SEC_CTX = _IOR('r', 2,
++				      struct binder_transaction_data_secctx),
++	/*
++	 * binder_transaction_data_secctx: the received command.
++	 */
+ 	BR_TRANSACTION = _IOR('r', 2, struct binder_transaction_data),
+ 	BR_REPLY = _IOR('r', 3, struct binder_transaction_data),
+ 	/*
+-- 
+2.20.1.97.g81188d93c3-goog
 
