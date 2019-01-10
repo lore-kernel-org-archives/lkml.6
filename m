@@ -2,127 +2,92 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F80CC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 09:32:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5663DC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 09:33:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7160C214DA
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 09:32:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547112756;
-	bh=AuHRvUB18fTcqTG1z2dguFQBQnaJJG+1GR/8axSIbwo=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=J9cEHn/NnJhlOzPDu9YzFaiUT9+l6anjjk3i9fPBO/mkgMAnnhS/0tzly8CMjOf6r
-	 vMK5VOP885vqrt9UjUo9tw0H6QqyF/u6i5D7fhsAurqgwD/XRkmROmYG01djVuh/0y
-	 hcZ46ZTU8dcZJsSv3cOk/t4RvgAxAkJfo6FLrydQ=
+	by mail.kernel.org (Postfix) with ESMTP id 3135D21848
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 09:33:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727957AbfAJJcf (ORCPT
+        id S1727975AbfAJJdW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 04:32:35 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:43114 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727826AbfAJJce (ORCPT
+        Thu, 10 Jan 2019 04:33:22 -0500
+Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:60748 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727807AbfAJJdV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 04:32:34 -0500
-Received: by mail-ot1-f68.google.com with SMTP id a11so9341159otr.10;
-        Thu, 10 Jan 2019 01:32:33 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=pWe8aiOlfHkTiEPAme+y+3DxEA3ueHtWT4PQaYLhd+c=;
-        b=uY+GQE2RIkditXJlaTXwUGzjSoMFLwgLIHeKRAml/uUsrTNwGlndM4w9EGZMfaGVqf
-         Udcl21jropgOrpS9w/ALZSkbHflqariO6a+zzQav4IOZZHM4pPPoh2iAfe0EqFW7gVIS
-         VaqPd7uY2dS4leSUqOVNA38Pyjk1aydSBB148Ye9/BWFaUimLq/518c5atbvKlHiOda2
-         LAWEr1uKb/PvtG8H+LLNcPq5RrsuQDBTqhCs+hjvUzkt3CmhugpbqY1ufP+aOtg9/rE2
-         e6irbNxrv/eQ9KF9g/Yv4Xo38R86ZxAN/8rsakdo7wHuoSwnQzIH6K/TpvE3yg4DE1p+
-         +5EQ==
-X-Gm-Message-State: AJcUukdIaBgO1e/5DqNpnOuB++KncoV/l6NcOM3f7XX5bOvpb9UEkQ1V
-        wwEpyrMvFd/0//TuQIclB/osM5265AhmND2N6nU=
-X-Google-Smtp-Source: ALg8bN6yknZrv+z5LxfvrzW9pjdNiVd0ms9hz5f/t2AYaWcnpiyQyXp8TYi4KCnwvHyqfCj+v7+TjTV4kO7+/q+c/FY=
-X-Received: by 2002:a9d:60b:: with SMTP id 11mr6099001otn.200.1547112753154;
- Thu, 10 Jan 2019 01:32:33 -0800 (PST)
+        Thu, 10 Jan 2019 04:33:21 -0500
+Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
+        by mx0a-001ae601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0A9Sx91003201;
+        Thu, 10 Jan 2019 03:32:46 -0600
+Authentication-Results: ppops.net;
+        spf=none smtp.mailfrom=rf@opensource.cirrus.com
+Received: from mail4.cirrus.com ([87.246.98.35])
+        by mx0a-001ae601.pphosted.com with ESMTP id 2pu19vru1m-1;
+        Thu, 10 Jan 2019 03:32:46 -0600
+Received: from EX17.ad.cirrus.com (unknown [172.20.9.81])
+        by mail4.cirrus.com (Postfix) with ESMTP id 24262650F62A;
+        Thu, 10 Jan 2019 03:36:56 -0600 (CST)
+Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
+ (172.20.9.81) with Microsoft SMTP Server id 14.3.408.0; Thu, 10 Jan 2019
+ 09:32:45 +0000
+Received: from [198.90.251.142] (edi-sw-dsktp006.ad.cirrus.com
+ [198.90.251.142])      by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id
+ x0A9WiKv000357;        Thu, 10 Jan 2019 09:32:44 GMT
+Subject: Re: [PATCH 1/1] doc: pinctrl: fix bad reference to pinctrl.txt file
+To:     Otto Sabart <ottosabart@seberm.com>,
+        <linux-kernel@vger.kernel.org>, <patches@opensource.cirrus.com>
+CC:     Charles Keepax <ckeepax@opensource.cirrus.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@s-opensource.com>
+References: <10552cb9ce3067c4b4cf8c25ed6a20c498478549.1547060185.git.ottosabart@seberm.com>
+From:   Richard Fitzgerald <rf@opensource.cirrus.com>
+Message-ID: <4338fca9-11ca-ec92-e6bf-a5734eb1c07c@opensource.cirrus.com>
+Date:   Thu, 10 Jan 2019 09:32:44 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-References: <cover.1547078153.git.amit.kucheria@linaro.org>
- <3c7d0e4a8373e89d6922543ccf56749970de5567.1547078153.git.amit.kucheria@linaro.org>
- <20190110061210.lz5i5wf7wxh22q7c@vireshk-i7>
-In-Reply-To: <20190110061210.lz5i5wf7wxh22q7c@vireshk-i7>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Thu, 10 Jan 2019 10:32:19 +0100
-Message-ID: <CAJZ5v0hKODG2hT+8iwpX3te1dpbLPuy4=7RrEmAp=aATuEdkhA@mail.gmail.com>
-Subject: Re: [PATCH v1 5/7] cpufreq: qcom-hw: Register as a cpufreq cooling device
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     Amit Kucheria <amit.kucheria@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        bjorn.andersson@linaro.org, Eduardo Valentin <edubezval@gmail.com>,
-        Andy Gross <andy.gross@linaro.org>,
-        Taniya Das <tdas@codeaurora.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Doug Anderson <dianders@chromium.org>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        "open list:CPU FREQUENCY DRIVERS" <linux-pm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <10552cb9ce3067c4b4cf8c25ed6a20c498478549.1547060185.git.ottosabart@seberm.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=809 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1901100078
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 10, 2019 at 7:12 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
->
-> On 10-01-19, 05:30, Amit Kucheria wrote:
-> > Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
-> > ---
-> >  drivers/cpufreq/qcom-cpufreq-hw.c | 5 +++++
-> >  1 file changed, 5 insertions(+)
-> >
-> > diff --git a/drivers/cpufreq/qcom-cpufreq-hw.c b/drivers/cpufreq/qcom-cpufreq-hw.c
-> > index 649dddd72749..1c01311e5927 100644
-> > --- a/drivers/cpufreq/qcom-cpufreq-hw.c
-> > +++ b/drivers/cpufreq/qcom-cpufreq-hw.c
-> > @@ -5,6 +5,7 @@
-> >
-> >  #include <linux/bitfield.h>
-> >  #include <linux/cpufreq.h>
-> > +#include <linux/cpu_cooling.h>
-> >  #include <linux/init.h>
-> >  #include <linux/kernel.h>
-> >  #include <linux/module.h>
-> > @@ -216,7 +217,10 @@ static int qcom_cpufreq_hw_cpu_init(struct cpufreq_policy *policy)
-> >  static int qcom_cpufreq_hw_cpu_exit(struct cpufreq_policy *policy)
-> >  {
-> >       void __iomem *base = policy->driver_data - REG_PERF_STATE;
-> > +     struct thermal_cooling_device *cdev = policy->cooldev;
-> >
-> > +     if (cdev)
-> > +             cpufreq_cooling_unregister(cdev);
-> >       kfree(policy->freq_table);
-> >       devm_iounmap(&global_pdev->dev, base);
-> >
-> > @@ -238,6 +242,7 @@ static struct cpufreq_driver cpufreq_qcom_hw_driver = {
-> >       .init           = qcom_cpufreq_hw_cpu_init,
-> >       .exit           = qcom_cpufreq_hw_cpu_exit,
-> >       .fast_switch    = qcom_cpufreq_hw_fast_switch,
-> > +     .ready          = generic_cpufreq_ready,
-> >       .name           = "qcom-cpufreq-hw",
-> >       .attr           = qcom_cpufreq_hw_attr,
-> >  };
->
-> I liked the idea of reducing code duplication, but not much the
-> implementation. All we were able to get rid of was a call to
-> of_cpufreq_cooling_register() and nothing else. Is it worth it ?
->
-> Maybe we can add another flag in cpufreq.h:
->
-> #define CPUFREQ_AUTO_REGISTER_COOLING_DEV (1 << 7)
->
-> and let the core do it all automatically by itself, that will get rid
-> of code duplication actually.
->
-> @Rafael: What do you say ?
+On 09/01/19 19:06, Otto Sabart wrote:
+> The pinctrl.txt file was converted into reStructuredText and moved into
+> driver-api folder. This patch updates the broken reference.
+> 
+> Fixes: 5a9b73832e9e ("pinctrl.txt: move it to the driver-api book")
+> Signed-off-by: Otto Sabart <ottosabart@seberm.com>
+> ---
+>   include/linux/mfd/madera/pdata.h | 3 ++-
+>   1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/include/linux/mfd/madera/pdata.h b/include/linux/mfd/madera/pdata.h
+> index 8dc852402dbb..dd00ab824e5b 100644
+> --- a/include/linux/mfd/madera/pdata.h
+> +++ b/include/linux/mfd/madera/pdata.h
+> @@ -34,7 +34,8 @@ struct madera_codec_pdata;
+>    * @micvdd:	    Substruct of pdata for the MICVDD regulator
+>    * @irq_flags:	    Mode for primary IRQ (defaults to active low)
+>    * @gpio_base:	    Base GPIO number
+> - * @gpio_configs:   Array of GPIO configurations (See Documentation/pinctrl.txt)
+> + * @gpio_configs:   Array of GPIO configurations (See
+> + *		    Documentation/driver-api/pinctl.rst)
+>    * @n_gpio_configs: Number of entries in gpio_configs
+>    * @gpsw:	    General purpose switch mode setting. Depends on the external
+>    *		    hardware connected to the switch. (See the SW1_MODE field
+> 
 
-Getting rid of code duplication is good, let's do that.
+Acked-by: Richard Fitzgerald <rf@opensource.cirrus.com>
