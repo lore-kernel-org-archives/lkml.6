@@ -2,97 +2,64 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 525C0C43612
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 14:57:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29928C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 14:59:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B28A2177B
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 14:57:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547132237;
-	bh=c/qbdnKSZOdak4w2JWNqjRw6gFb+wYybIGhIdCnjS1I=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=0YqADZOb0V4Qudl+Vg0x1KLbl0fV5QrmLk1VFLlMu8n0ZaRgEbEZQBg7WA4nahey+
-	 82RWzGSksNTumGrHRqj1q93EIJSv7msK+PacERtySqXGEU1K0JpAbb2nLp7c82AuJk
-	 t4nPwVzaeBuJglmPnGp5km9uLM8OjFi86sQX+p1w=
+	by mail.kernel.org (Postfix) with ESMTP id 03A4C2177B
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 14:59:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729369AbfAJO5Q (ORCPT
+        id S1729370AbfAJO7g (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 09:57:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59310 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728137AbfAJO5P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 09:57:15 -0500
-Received: from devnote (p7010-ipngnfx01kyoto.kyoto.ocn.ne.jp [114.179.123.10])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3B7DF214DA;
-        Thu, 10 Jan 2019 14:57:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547132234;
-        bh=c/qbdnKSZOdak4w2JWNqjRw6gFb+wYybIGhIdCnjS1I=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=gh7hPP0kGsLvcbH1N3lq/u3cS9p/K32pr4D3KHj4AInnyE/DYEsSggtC5G/A2wQgO
-         tGPJ9W1mx5oKKxMciDGxLTd/UiL2RcW6objSSX4dNNOIgyxnwocV5Mmd4o/egj2nFV
-         coAc4r8PuRvBEgEs8BTbEnjF9Cl4T1eoTdZb11v0=
-Date:   Thu, 10 Jan 2019 23:57:10 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     Ingo Molnar <mingo@redhat.com>, peterz@infradead.org,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Andrea Righi <righi.andrea@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>, stable@vger.kernel.org
-Subject: Re: [PATCH 1/9] x86/kprobes: Prohibit probing on optprobe template
- code
-Message-Id: <20190110235710.6b2a5cdb44ea05df73af997b@kernel.org>
-In-Reply-To: <20190110060720.GA12546@kroah.com>
-References: <154708884117.6325.4454464467156828009.stgit@devbox>
-        <154708887054.6325.3201133039718891603.stgit@devbox>
-        <20190110060720.GA12546@kroah.com>
-X-Mailer: Sylpheed 3.5.0 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        Thu, 10 Jan 2019 09:59:36 -0500
+Received: from www62.your-server.de ([213.133.104.62]:55798 "EHLO
+        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727753AbfAJO7f (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 09:59:35 -0500
+Received: from [78.46.172.3] (helo=sslproxy06.your-server.de)
+        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89_1)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1ghbnx-0000ng-AO; Thu, 10 Jan 2019 15:59:33 +0100
+Received: from [178.197.249.40] (helo=linux.home)
+        by sslproxy06.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1ghbnx-000EIr-3l; Thu, 10 Jan 2019 15:59:33 +0100
+Subject: Re: [PATCH] selftests: bpf: install files tcp_(server|client)*.py
+To:     Anders Roxell <anders.roxell@linaro.org>, ast@kernel.org
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org
+References: <20190108092303.12597-1-anders.roxell@linaro.org>
+From:   Daniel Borkmann <daniel@iogearbox.net>
+Message-ID: <c1bb1ee4-6138-04ab-f690-8c988501bda4@iogearbox.net>
+Date:   Thu, 10 Jan 2019 15:59:32 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
+MIME-Version: 1.0
+In-Reply-To: <20190108092303.12597-1-anders.roxell@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Authenticated-Sender: daniel@iogearbox.net
+X-Virus-Scanned: Clear (ClamAV 0.100.2/25285/Thu Jan 10 11:21:15 2019)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 10 Jan 2019 07:07:20 +0100
-Greg KH <gregkh@linuxfoundation.org> wrote:
-
-> On Thu, Jan 10, 2019 at 11:54:30AM +0900, Masami Hiramatsu wrote:
-> > Prohibit probing on optprobe template code, since it is not
-> > a code but a template instruction sequence. If we modify
-> > this template, copied template must be broken.
-> > 
-> > Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-> > Fixes: 9326638cbee2 ("kprobes, x86: Use NOKPROBE_SYMBOL() instead of __kprobes annotation")
-> > ---
-> >  arch/x86/kernel/kprobes/opt.c |    5 +++++
-> >  1 file changed, 5 insertions(+)
+On 01/08/2019 10:23 AM, Anders Roxell wrote:
+> When test_tcpbpf_user runs it complains that it can't find files
+> tcp_server.py and tcp_client.py.
 > 
-> <formletter>
+> Rework so that tcp_server.py and tcp_client.py gets installed, added them
+> to the variable TEST_PROGS_EXTENDED.
 > 
-> This is not the correct way to submit patches for inclusion in the
-> stable kernel tree.  Please read:
->     https://www.kernel.org/doc/html/latest/process/stable-kernel-rules.html
-> for how to do this properly.
-> 
-> </formletter>
-> 
-> Same for all patches in this series...
+> Fixes: d6d4f60c3a09 ("bpf: add selftest for tcpbpf")
+> Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
 
-Oops, sorry. I'll fix the format again.
-BTW, I'm still considering I should make it other patches in this series
-as improvement instead of fix, since those are just adding blacklist, and
-usually user can avoid it with KPROBE_EVENTS_ON_NOTRACE=n (which is default).
-
-Thank you,
-
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
+Applied to bpf, thanks!
