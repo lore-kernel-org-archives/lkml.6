@@ -2,142 +2,119 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6340C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 17:34:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B1E0C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 17:34:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C787214DA
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 17:34:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EF05C214DA
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 17:34:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="S+snrzqV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730425AbfAJReC (ORCPT
+        id S1730450AbfAJReR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 12:34:02 -0500
-Received: from mga12.intel.com ([192.55.52.136]:47747 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729878AbfAJReC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 12:34:02 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jan 2019 09:34:01 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,462,1539673200"; 
-   d="scan'208";a="310787095"
-Received: from mint-dev.iind.intel.com ([10.223.25.164])
-  by fmsmga005.fm.intel.com with ESMTP; 10 Jan 2019 09:33:59 -0800
-From:   Ramalingam C <ramalingam.c@intel.com>
-To:     intel-gfx-trybot@lists.freedesktop.org
-Cc:     Ramalingam C <ramalingam.c@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v10 03/40] component: alloc component_match without any comp to match
-Date:   Thu, 10 Jan 2019 22:58:28 +0530
-Message-Id: <1547141345-22173-3-git-send-email-ramalingam.c@intel.com>
+        Thu, 10 Jan 2019 12:34:17 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:41025 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729850AbfAJReQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 12:34:16 -0500
+Received: by mail-pl1-f195.google.com with SMTP id u6so5470776plm.8
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 09:34:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=UMvSdiE9NQb8Gth/j6Scv5auomzdDy6K1LUx8wBPip4=;
+        b=S+snrzqVx87Vv8vO3Vd4/93M99EhiAo+3zcwPBjfg+caaG83DhaALpoDIZcM5NbcNb
+         V8hTusXjeWHskqvlbM51H4HUSXZsuoehPol+HkoMQcFe0BDjoJT6Q224yzQfhkI9j85C
+         LlCoo1gci/dGQ+bVrLzIbaSgViF6Oq8ouSQHg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=UMvSdiE9NQb8Gth/j6Scv5auomzdDy6K1LUx8wBPip4=;
+        b=B1p42vRYETGD0AWiRrCQLe7TKmlQH0t6OvgJvl1ZeDRZXPA1ii7DgYIBHVzBRSzKTW
+         kFScLzZqzF3QySrzT0Ti0D92wBf2k5sF63x6ItYZ+eOtzXScNQvOhtdQqblg//ZwIQ/K
+         EvO6PGmjzulDw9KtetUqUna6ITtDhNlTq6VO3iEd2hCTZxI+MGAqh0C04QxomlH/ZA45
+         WpZ7Oj8A2J4kIRvTXOHVO/2dQRuiW9fY+RgJHgKO8N1Ll/ZTUWzPYjTwUbxBYIIrZ19d
+         BxLHfbmLHUrr/6a+8P9nTofOWdN81dFio4tbrbyBvTAjrU3kZz7QyaISPXLYTxwZsADe
+         aqrA==
+X-Gm-Message-State: AJcUukccPaYEhJ01Hgndo4fGRefdnHdC4cdcXKoOQVCB2SyPbsT0Ee/I
+        9cbWNAG9fVASNxvx8qm+osGtUEwDNqoLXg==
+X-Google-Smtp-Source: ALg8bN5XWk2o54dWlRyD9TPXSEYKYh3HdyebYLKoOtSdvrA0c9KEPzTfpNiFMCAEsTt+WysR55zxDQ==
+X-Received: by 2002:a17:902:780a:: with SMTP id p10mr11498934pll.54.1547141655294;
+        Thu, 10 Jan 2019 09:34:15 -0800 (PST)
+Received: from localhost.localdomain ([2601:1c2:680:1319:4e72:b9ff:fe99:466a])
+        by smtp.gmail.com with ESMTPSA id k15sm125977409pfb.147.2019.01.10.09.34.13
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 10 Jan 2019 09:34:14 -0800 (PST)
+From:   John Stultz <john.stultz@linaro.org>
+To:     lkml <linux-kernel@vger.kernel.org>
+Cc:     Tanglei Han <hantanglei@huawei.com>,
+        Zhuangluan Su <suzhuangluan@hisilicon.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Vinod Koul <vkoul@kernel.org>, Wei Xu <xuwei5@hisilicon.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Guodong Xu <guodong.xu@linaro.org>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Ryan Grachek <ryan@edited.us>, devicetree@vger.kernel.org,
+        dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 0/8 v3] k3dma patches to add support for hi3660/HiKey960
+Date:   Thu, 10 Jan 2019 09:34:04 -0800
+Message-Id: <1547141652-8660-1-git-send-email-john.stultz@linaro.org>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1547141345-22173-1-git-send-email-ramalingam.c@intel.com>
-References: <1547141345-22173-1-git-send-email-ramalingam.c@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If all the components associated to a component master is not added
-to the component framework due to the HW capability or Kconfig
-selection, component_match will be NULL at
-component_master_add_with_match().
+This patch series is based on recent work by Tanglei Han, and
+adds support for hi3660 SoCs as found on the HiKey960 board,
+along with a few patches I've been carrying.
 
-To avoid this, component_match_alloc() is added to the framework,
-to allcoate the struct component_match with zero associated components.
-Hence component master can be added with a component_match with zero
-associated components.
+Review and feedback would be greatly appreciated!
 
-This helps the component master bind call to get triggered,
-even if no component is registered for that particular master.
+thanks
+-john
 
-This is meant for big PCI device drivers where small/optional
-features are external components, and based on usecases different
-combination of components are build as entire driver.
+Cc: Tanglei Han <hantanglei@huawei.com>
+Cc: Zhuangluan Su <suzhuangluan@hisilicon.com>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Vinod Koul <vkoul@kernel.org>
+Cc: Wei Xu <xuwei5@hisilicon.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: Guodong Xu <guodong.xu@linaro.org>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: Ryan Grachek <ryan@edited.us>
+CC: devicetree@vger.kernel.org
+Cc: dmaengine@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
 
-In such PCI device driver Load, if we use the component master for
-waiting for few  components(features) availability, only if they are
-supported by the underlying HW, then we need to allocate memory for
-component_match using the API introduced in this change before
-the call to component_master_add_with_match.
+John Stultz (3):
+  Documentation: bindings: k3dma: Add binding for hisi-dma-avail-chan
+  arm64: dts: hi3660: Add dma to uart nodes
+  arm64: dts: hi3660: Fixup unofficial dma-min-chan to
+    hisi-dma-avail-chan
 
-Signed-off-by: Ramalingam C <ramalingam.c@intel.com>
-Suggested-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Kate Stewart <kstewart@linuxfoundation.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Philippe Ombredanne <pombredanne@nexb.com>
-Cc: linux-kernel@vger.kernel.org
-Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/base/component.c  | 30 ++++++++++++++++++++++++++++++
- include/linux/component.h |  2 ++
- 2 files changed, 32 insertions(+)
+Li Yu (2):
+  dma: k3dma: Delete axi_config
+  dma: k3dma: Add support for hisi-dma-avail-chan
 
-diff --git a/drivers/base/component.c b/drivers/base/component.c
-index ddcea8739c12..1b8bb07c0ec7 100644
---- a/drivers/base/component.c
-+++ b/drivers/base/component.c
-@@ -302,6 +302,36 @@ static int component_match_realloc(struct device *dev,
- }
- 
- /*
-+ * Allocate the match without any component_match_array elements.
-+ *
-+ * This function is useful when the component master might end up
-+ * registering itself without any matching components.
-+ */
-+void component_match_alloc(struct device *master,
-+	struct component_match **matchptr)
-+{
-+	struct component_match *match = *matchptr;
-+
-+	if (IS_ERR(match))
-+		return;
-+
-+	if (match)
-+		return;
-+
-+	match = devres_alloc(devm_component_match_release,
-+			     sizeof(*match), GFP_KERNEL);
-+	if (!match) {
-+		*matchptr = ERR_PTR(-ENOMEM);
-+		return;
-+	}
-+
-+	devres_add(master, match);
-+
-+	*matchptr = match;
-+}
-+EXPORT_SYMBOL(component_match_alloc);
-+
-+/*
-  * Add a component to be matched, with a release function.
-  *
-  * The match array is first created or extended if necessary.
-diff --git a/include/linux/component.h b/include/linux/component.h
-index e71fbbbc74e2..3f6b420a58f8 100644
---- a/include/linux/component.h
-+++ b/include/linux/component.h
-@@ -37,6 +37,8 @@ void component_match_add_release(struct device *master,
- 	struct component_match **matchptr,
- 	void (*release)(struct device *, void *),
- 	int (*compare)(struct device *, void *), void *compare_data);
-+void component_match_alloc(struct device *master,
-+	struct component_match **matchptr);
- 
- static inline void component_match_add(struct device *master,
- 	struct component_match **matchptr,
+Youlin Wang (3):
+  Documentation: bindings: k3dma: Extend the k3dma driver binding to
+    support hisi-asp
+  dma: k3dma: Upgrade k3dma driver to support hisi_asp_dma hardware
+  arm64: dts: hi3660: Add hisi asp dma device
+
+ Documentation/devicetree/bindings/dma/k3dma.txt |  7 ++-
+ arch/arm64/boot/dts/hisilicon/hi3660.dtsi       | 20 ++++++++-
+ drivers/dma/k3dma.c                             | 60 +++++++++++++++++++++----
+ 3 files changed, 76 insertions(+), 11 deletions(-)
+
 -- 
 2.7.4
 
