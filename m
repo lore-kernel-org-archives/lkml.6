@@ -2,123 +2,195 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36ED8C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 12:53:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9446C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 12:53:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 050DC214C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 12:53:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8D64C214C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 12:53:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XXTxM/Sj"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="pl+J7XFW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728556AbfAJMxk (ORCPT
+        id S1728651AbfAJMxz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 07:53:40 -0500
-Received: from mail-it1-f172.google.com ([209.85.166.172]:39867 "EHLO
-        mail-it1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726974AbfAJMxk (ORCPT
+        Thu, 10 Jan 2019 07:53:55 -0500
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:54876 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726974AbfAJMxz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 07:53:40 -0500
-Received: by mail-it1-f172.google.com with SMTP id a6so16047556itl.4
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 04:53:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=6vbhcvdkLKlaMENn/NDZIlJAD2tULxVTuxTmq+ZrNMQ=;
-        b=XXTxM/SjWPZYPCoAMHByfK6CPiyx5WLqzAKbaINFxoV5nV1Cmcv8koEYdbGC1/AljH
-         a6ZgDQu+w2uCIkZMrt8rkNoA1qTqJwx1FfCGnCD8Dhn792Mrool1kg8Shf3z2Pu2Op/d
-         S+TPvQM/xav3m4uv+U6AyfUrAC3R7GaNa7wEDF6Hn9NUdqHkfPI5AmneONCKW+LMsClC
-         W321NJmFYgN/kWYzaM+oKxowVUFUeBonNiLIMu5Ghs6ySI9eC2/m8N+eN6PmoqQ2JNGZ
-         XWMm8iwlf509t4r4B+LSrf8xRPvFtYDBl+sj9LH23nF+DkBLlXqtul2trocChSCW+n60
-         qKrQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=6vbhcvdkLKlaMENn/NDZIlJAD2tULxVTuxTmq+ZrNMQ=;
-        b=lH+5vUZF1Si5Ut3oLxTGU9QEgiQIFA5z2pcFh5PBb0CAwXqKQkdfJ6+VBdnUxI+cFD
-         RW8bqY2VJz9F4tnXxyBlZu6Ub+D2OBaWxF0Ii5STXn8jVfcawsThRPjnc48IA4d6JcB5
-         z5Q0T+nKF4PEeMWAnT474uIn02JsrP7raUcpAcllzSiFrL0ESnnfyaRSX3S4xnUi1ING
-         +EEJqBedC1ulUMP2NHKRcIYhD+kgtalkQnAsb5ao8RZOE0maAQFvNtmwGklx+LB0vD9C
-         mm1Quy7K5whbOCwG+nI0L78IV+0AH4N5JXGRRclil0+Ll6GUIG+HN+UphXNUcxrya2zV
-         L+FA==
-X-Gm-Message-State: AJcUukfdjD92CBnSZTpacxVez4LK2nVqGkFY8IND79wzIywGcflPcJFE
-        75fIUoz6VcmDFoNHlsE7yd3Xc+roiK0C2m607etdBQ==
-X-Google-Smtp-Source: ALg8bN71pWbop/TizwUCneCSJ4y2eQ9vnbJEohuldjgY8pVWlC/dev1PTBy4SNK5w8i1ESgDrKIqpB97qZPFA1+4yww=
-X-Received: by 2002:a02:ac8c:: with SMTP id x12mr6388633jan.72.1547124818948;
- Thu, 10 Jan 2019 04:53:38 -0800 (PST)
+        Thu, 10 Jan 2019 07:53:55 -0500
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0ACrZv4067953;
+        Thu, 10 Jan 2019 06:53:35 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1547124815;
+        bh=IaS1PXhDONTksppz1ZwK4WXNe8wkDqcYFRVb/fGcS1A=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=pl+J7XFWttH4Tl/ECxi3mSqJ54uza0WsVAYcafYSi9L2Hcv/lcSoilSUwYIShqtKw
+         /135OSmI0/R7BXzDzfyYkiVZ0WoRypURPGxDHU9LsVJDAgkybwKdIyvYljo/YaY6/E
+         nqPQV7CWd4M8yeDcceUkBiQ9fYDrfA3MHIGExIxU=
+Received: from DLEE111.ent.ti.com (dlee111.ent.ti.com [157.170.170.22])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0ACrZHC022970
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 10 Jan 2019 06:53:35 -0600
+Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE111.ent.ti.com
+ (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Thu, 10
+ Jan 2019 06:53:35 -0600
+Received: from dflp33.itg.ti.com (10.64.6.16) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Thu, 10 Jan 2019 06:53:35 -0600
+Received: from [172.22.122.36] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0ACrZtr023734;
+        Thu, 10 Jan 2019 06:53:35 -0600
+Subject: Re: [RFC PATCH 1/3] can: m_can: Create m_can core to leverage common
+ code
+To:     Wolfgang Grandegger <wg@grandegger.com>, <mkl@pengutronix.de>,
+        <davem@davemloft.net>
+CC:     <linux-can@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20181010142055.25271-1-dmurphy@ti.com>
+ <20181010142055.25271-2-dmurphy@ti.com>
+ <52811b27-00c0-f5e2-2b18-608ccf846723@grandegger.com>
+ <349ef8be-f4c7-25cc-2c33-7ce1fd0b0f40@ti.com>
+ <9003a544-83cf-7dce-7f14-4abd292d470e@grandegger.com>
+ <b73e200c-8a6b-00e0-dabc-af3245cc36fd@ti.com>
+ <69d3a046-2d55-06e0-fba7-c9a0d20e6daa@grandegger.com>
+From:   Dan Murphy <dmurphy@ti.com>
+Message-ID: <06e0146a-5f96-5f60-1ab3-be21b854932a@ti.com>
+Date:   Thu, 10 Jan 2019 06:53:24 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.3
 MIME-Version: 1.0
-References: <CAOMFOmU=t9YbE68YpoQn0Ug0XN1F+0iuJp9J=htCRRrbdaPSVA@mail.gmail.com>
- <20190108223746.shuwx3ro7cgwz7hh@breakpoint.cc> <20190110124123.GA21224@hirez.programming.kicks-ass.net>
-In-Reply-To: <20190110124123.GA21224@hirez.programming.kicks-ass.net>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Thu, 10 Jan 2019 13:53:28 +0100
-Message-ID: <CACT4Y+YZ-bOFM_vHN5GiE5Yh=qqGjO_cgsJD4cnNyupOd6-A-Q@mail.gmail.com>
-Subject: Re: seqcount usage in xt_replace_table()
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Florian Westphal <fw@strlen.de>,
-        Anatol Pomozov <anatol.pomozov@gmail.com>,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <69d3a046-2d55-06e0-fba7-c9a0d20e6daa@grandegger.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 10, 2019 at 1:41 PM Peter Zijlstra <peterz@infradead.org> wrote:
->
-> On Tue, Jan 08, 2019 at 11:37:46PM +0100, Florian Westphal wrote:
-> > Anatol Pomozov <anatol.pomozov@gmail.com> wrote:
-> > > Or maybe xt_replace_table() can be enhanced? When I hear that
-> > > something waits until an event happens on all CPUs I think about
-> > > wait_event() function. Would it be better for xt_replace_table() to
-> > > introduce an atomic counter that is decremented by CPUs, and the main
-> > > CPU waits until the counter gets zero?
-> >
-> > That would mean placing an additional atomic op into the
-> > iptables evaluation path (ipt_do_table and friends).
-> >
->
-> For:
->
->         /*
->          * Ensure contents of newinfo are visible before assigning to
->          * private.
->          */
->         smp_wmb();
->         table->private = newinfo;
->
-> we have:
->
->         smp_store_release(&table->private, newinfo);
->
-> But what store does that second smp_wmb() order against? The comment:
->
->         /* make sure all cpus see new ->private value */
->         smp_wmb();
->
-> makes no sense what so ever, no smp_*() barrier can provide such
-> guarantees.
+Wolfgang
 
-Do we want WRITE_ONCE here then?
-We want it to be compiled to an actual memory access and then it's up
-to hardware to make it visible to other CPUs.
-smp_wmb should most likely have this as a side effect too, but
-somewhat indirect.
-Also race-detector-friendly.
+On 1/10/19 1:44 AM, Wolfgang Grandegger wrote:
+> Hello Dan,
+> 
+> sorry for my late response on that topic...
+> 
+> Am 09.01.19 um 21:58 schrieb Dan Murphy:
+>> Wolfgang
+>>
+>> On 11/3/18 5:45 AM, Wolfgang Grandegger wrote:
+>>> Hello Dan,
+>>>
+>>> Am 31.10.2018 um 21:15 schrieb Dan Murphy:
+>>>> Wolfgang
+>>>>
+>>>> Thanks for the review
+>>>>
+>>>> On 10/27/2018 09:19 AM, Wolfgang Grandegger wrote:
+>>>>> Hello Dan,
+>>>>>
+>>>>> for the RFC, could you please just do the necessary changes to the
+>>>>> existing code. We can discuss about better names, etc. later. For
+>>>>> the review if the common code I quickly did:
+>>>>>
+>>>>>   mv m_can.c m_can_platform.c
+>>>>>   mv m_can_core.c m_can.c
+>>>>>
+>>>>> The file names are similar to what we have for the C_CAN driver.
+>>>>>
+>>>>>   s/classdev/priv/
+>>>>>   variable name s/m_can_dev/priv/
+>>>>>
+>>>>> Then your patch 1/3 looks as shown below. I'm going to comment on that
+>>>>> one. The comments start with "***"....
+>>>>>
+>>>>
+>>>> So you would like me to align the names with the c_can driver?
+>>>
+>>> That would be the obvious choice.
+>>>> <snip>
+>>>>>
+>>>>> *** I didn't review the rest of the patch for now.
+>>>>>
+>>>>
+>>>> snipped the code to reply to the comment.
+>>>>
+>>>>> Looking to the generic code, you didn't really change the way
+>>>>> the driver is accessing the registers. Also the interrupt handling
+>>>>> and rx polling is as it was before. Does that work properly using
+>>>>> the SPI interface of the TCAN4x5x?
+>>>>
+>>>> I don't want to change any of that yet.  Maybe my cover letter was not clear
+>>>> or did not go through.
+>>>>
+>>>> But the intention was just to break out the functionality to create a MCAN framework
+>>>> that can be used by devices that contain the Bosch MCAN core and provider their own protocal to access
+>>>> the registers in the device.
+>>>>
+>>>> I don't want to do any functional changes at this time on the IP code itself until we have a framework.
+>>>> There should be no regression in the io mapped code.
+>>>>
+>>>> I did comment on the interrupt handling and asked if a threaded work queue would affect CAN timing.
+>>>> For the original TCAN driver this was the way it was implemented.
+>>>
+>>> Do threaded interrupts with RX polling make sense? I think we need a
+>>> common interface allowing to select hard-irqs+napi or threaded-irqs.
+>>>
+>>
+>> I have been working on this code for about a month now and I am *not happy* with the amount of change that needs
+>> to be done to make the m_can a framework.
+>>
+>> I can tx/rx frames from another CAN device to the TCAN part but I have not even touched the iomapped code.
+>>
+>> The challenging part is that the m_can code that is currently available does not have to worry about atomic context because
+>> there is no peripheral waiting.  Since the TCAN is a peripheral device we need to take into about the hard waits in IRQ context
+>> as well as the atomic context.  Doing this creates many deltas in the base code that may break iomapped devices.  I have had to 
+>> add the thread_irqs and now I am in the midst of the issue you brought up with napi.  I would have to schedule a queue for perp devices
+>> and leave the non-threaded iomapped irq.
+>>
+>> At this point I think it may be wise to leave the m_can code alone as it is working and stable and just work on the TCAN driver as
+>> a standalone driver.  A framework would be nice but I think it would destablize the m_can driver which is embedded in many SoC's and
+>> we cannot possibly test everyone of them.
+> 
+> Unfortunately, I do not have m_can hardware at hand.
+> 
+>> What are your thoughts?
+> 
+> What we need is a common set of functions doing tx, rx, error and state
+> handling. This will requires substantial changes to the existing
+> io-mapped m_can driver, of course. I still believe it's worth the
+> effort, but I agree that it's difficult for you to re-write and test the
+> existing m_can driver.
+
+OK I will keep working on it.  What you are describing is what I have done.
+I have abstracted the register reads and writes away and I am in the process
+of abstracting away the device specific initialization.
+
+> 
+> What about implementing such a set of common functions plus the SPI
+> specific part for your TCAN device. What do you/others think?
+
+As stated above this is what I have.  But the m_can driver was written for io-mapped that has no delays
+so we need to take into about peripheral wait time in IRQ and atomic context.
+
+This is where the issues are stemming from mainly in the atomic context.
+
+Dan
 
 
-> > Only alternative I see that might work is synchronize_rcu (the
-> > _do_table functions are called with rcu read lock held).
-> >
-> > I guess current scheme is cheaper though.
->
-> Is performance a concern in this path? There is no comment justifying
-> this 'creative' stuff.
->
+> 
+> Wolfgang.
+> 
+
+
+-- 
+------------------
+Dan Murphy
