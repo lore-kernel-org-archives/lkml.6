@@ -2,223 +2,694 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70272C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 17:29:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1295BC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 17:29:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 41D2B2177B
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 17:29:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C318F2173B
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 17:29:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730271AbfAJR3E (ORCPT
+        id S1730333AbfAJR3O (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 12:29:04 -0500
-Received: from skedge03.snt-world.com ([91.208.41.68]:52924 "EHLO
-        skedge03.snt-world.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730248AbfAJR3D (ORCPT
+        Thu, 10 Jan 2019 12:29:14 -0500
+Received: from mout.kundenserver.de ([217.72.192.75]:44751 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730209AbfAJR3L (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 12:29:03 -0500
-Received: from sntmail10s.snt-is.com (unknown [10.203.32.183])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by skedge03.snt-world.com (Postfix) with ESMTPS id 64DB267A887;
-        Thu, 10 Jan 2019 18:28:58 +0100 (CET)
-Received: from sntmail12r.snt-is.com (10.203.32.182) by sntmail10s.snt-is.com
- (10.203.32.183) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1466.3; Thu, 10 Jan
- 2019 18:28:58 +0100
-Received: from sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305]) by
- sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305%5]) with mapi id
- 15.01.1466.003; Thu, 10 Jan 2019 18:28:58 +0100
-From:   Schrempf Frieder <frieder.schrempf@kontron.de>
-To:     Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "boris.brezillon@bootlin.com" <boris.brezillon@bootlin.com>,
-        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
-        "broonie@kernel.org" <broonie@kernel.org>,
-        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-CC:     "robh@kernel.org" <robh@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v6 1/5] spi: spi-mem: Add driver for NXP FlexSPI
- controller
-Thread-Topic: [PATCH v6 1/5] spi: spi-mem: Add driver for NXP FlexSPI
- controller
-Thread-Index: AQHUpzP8UrlUpBv3BkeiEjKwk1C7CKWotMOA
-Date:   Thu, 10 Jan 2019 17:28:57 +0000
-Message-ID: <dbb6ddc8-5939-3d4b-7031-931afa79fccb@kontron.de>
-References: <1546939346-20181-1-git-send-email-yogeshnarayan.gaur@nxp.com>
- <1546939346-20181-2-git-send-email-yogeshnarayan.gaur@nxp.com>
-In-Reply-To: <1546939346-20181-2-git-send-email-yogeshnarayan.gaur@nxp.com>
-Accept-Language: de-DE, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [172.25.9.42]
-x-c2processedorg: 51b406b7-48a2-4d03-b652-521f56ac89f3
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <B1A30D48233E2A4BA19CBDE5A99C26DA@snt-world.com>
-Content-Transfer-Encoding: base64
+        Thu, 10 Jan 2019 12:29:11 -0500
+Received: from wuerfel.lan ([109.192.41.194]) by mrelayeu.kundenserver.de
+ (mreue109 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 1N0o3X-1hSiHB2IRJ-00wl1W; Thu, 10 Jan 2019 18:22:36 +0100
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     y2038@lists.linaro.org, linux-api@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Arnd Bergmann <arnd@arndb.de>, mattst88@gmail.com,
+        linux@armlinux.org.uk, catalin.marinas@arm.com,
+        will.deacon@arm.com, tony.luck@intel.com, fenghua.yu@intel.com,
+        geert@linux-m68k.org, monstr@monstr.eu, paul.burton@mips.com,
+        deller@gmx.de, benh@kernel.crashing.org, mpe@ellerman.id.au,
+        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com, dalias@libc.org,
+        davem@davemloft.net, luto@kernel.org, tglx@linutronix.de,
+        mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
+        jcmvbkbc@gmail.com, akpm@linux-foundation.org,
+        deepa.kernel@gmail.com, ebiederm@xmission.com,
+        firoz.khan@linaro.org, linux-alpha@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
+        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+        sparclinux@vger.kernel.org, netdev@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org
+Subject: [PATCH 11/11] y2038: add 64-bit time_t syscalls to all 32-bit architectures
+Date:   Thu, 10 Jan 2019 18:22:16 +0100
+Message-Id: <20190110172216.313063-12-arnd@arndb.de>
+X-Mailer: git-send-email 2.20.0
+In-Reply-To: <20190110172216.313063-1-arnd@arndb.de>
+References: <20190110172216.313063-1-arnd@arndb.de>
 MIME-Version: 1.0
-X-SnT-MailScanner-Information: Please contact the ISP for more information
-X-SnT-MailScanner-ID: 64DB267A887.A076C
-X-SnT-MailScanner: Found to be clean
-X-SnT-MailScanner-SpamCheck: 
-X-SnT-MailScanner-From: frieder.schrempf@kontron.de
-X-SnT-MailScanner-To: boris.brezillon@bootlin.com, broonie@kernel.org,
-        computersforpeace@gmail.com, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-mtd@lists.infradead.org, linux-spi@vger.kernel.org,
-        marek.vasut@gmail.com, mark.rutland@arm.com, robh@kernel.org,
-        shawnguo@kernel.org, yogeshnarayan.gaur@nxp.com
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:r+IkUoP0oXwm41891g6lc/Fh4dgpRDbdJ2L0q0r25FU+D7aqvIj
+ dvYUG+j56TfNpTSjZEBykSMw+LjDUGm9qxTWvuu3M9O1e3juY/f1mE0PUc0zVEeCjlXPWr8
+ VnicKr845WwSUzM2qrvKSAm0Wc9Iltd0jPIjd9bvgW+70DOeVVM8TP6sPkvrVX+eHIKUUQN
+ OnSlkKB9M7L+8h2yjog6A==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:p/ZMqWYFf7g=:z/HKRiN9m3H0xSTzzwgyDl
+ Qz5KGmxvghaYpdnSfIxQi/Kwb/dW/7OGL/cObIJdNIJB9yZD0z6lo91+FwQqy9snvBOf84dZr
+ bcbypLZjEeIPd1DupWW8IAxI48gHqf9IaU15ymbDoWrM+SDCsAP1/M1KZLFMg2uPUbux4E105
+ c5JKAWNZI19mHF1nU35r8qtdyOnJVPMV+QtPJ3HI6R2bYE503RSzZHJHapZzeECh+Fz32vHtW
+ u8p4XFeR4VkzJAk0yPAwTkF0HLsuKKVRtnFJkcsJvmVRXyLpCy1Mz7lQQkpJdeEu2EqiWWpNk
+ wHf/juhQGw+UDB/HjopGcl6Igj7AMhpQyohGvrW8np9unmMNycrlh5hqwkp2/ayjb6RdWP6RU
+ drwCAf6OegHfSRodreGiQvP1K8d7hWako/aa0tR6y7gUvLmb4u57F5mF9OnYfh5fRArnVRbJB
+ fRFwRHiYba8L0JJuHn7EoJB/fP3ihNpqHhA1sLYP81criH/p0rC6NtMLTjJlDv/el3aLuRzbc
+ JxdmSL36j1Q1f+wJWsK/fAv3qfl4pS0L0lyE9/r1aGQRctx4MJ063NVTTTTQr5ISG1hjvPzZG
+ ug1CgM4uvdqNUxgnRqgVEodFy7JJSoeQZ3DE9ubYSzA1gC7I8NZwulTXGEKL6BN5pe8n2Sf1T
+ HlFBT01QehtsL+/+QyAVBKjSKAWqk8DjlimYkUGlahQKoE+U02UWVX11HUmljj74rLfPGzRSg
+ 3V+zS+47bTZhI5+RYtWGm2/9VrB3g51oPTn9+w==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgWW9nZXNoLA0KDQpteSBjb21tZW50cyBiZWxvdyBhcmUgbWFpbmx5IGFib3V0IHRoaW5ncyBJ
-IGFscmVhZHkgbWVudGlvbmVkIGluIG15IA0KcmV2aWV3IGZvciB2NSBhbmQgYWJvdXQgcmVtb3Zp
-bmcgb3Igc2ltcGxpZnlpbmcgc29tZSB1bm5lY2Vzc2FyeSBvciANCmNvbXBsZXggY29kZS4NCg0K
-QWxzbyBhcyBJIGdhdGhlcmVkIGZyb20geW91ciBjb252ZXJzYXRpb24gd2l0aCBCb3JpcywgdGhl
-cmUncyBzdGlsbCBhIA0KY2hlY2sgZm9yIHRoZSBsZW5ndGggb2YgdGhlIHJlcXVlc3RlZCBtZW1v
-cnkgbWlzc2luZy4NCg0KT24gMDguMDEuMTkgMTA6MjQsIFlvZ2VzaCBOYXJheWFuIEdhdXIgd3Jv
-dGU6DQpbLi4uXQ0KPiArDQo+ICtzdGF0aWMgYm9vbCBueHBfZnNwaV9zdXBwb3J0c19vcChzdHJ1
-Y3Qgc3BpX21lbSAqbWVtLA0KPiArCQkJCSBjb25zdCBzdHJ1Y3Qgc3BpX21lbV9vcCAqb3ApDQo+
-ICt7DQo+ICsJc3RydWN0IG54cF9mc3BpICpmID0gc3BpX2NvbnRyb2xsZXJfZ2V0X2RldmRhdGEo
-bWVtLT5zcGktPm1hc3Rlcik7DQo+ICsJaW50IHJldDsNCj4gKw0KPiArCXJldCA9IG54cF9mc3Bp
-X2NoZWNrX2J1c3dpZHRoKGYsIG9wLT5jbWQuYnVzd2lkdGgpOw0KPiArDQo+ICsJaWYgKG9wLT5h
-ZGRyLm5ieXRlcykNCj4gKwkJcmV0IHw9IG54cF9mc3BpX2NoZWNrX2J1c3dpZHRoKGYsIG9wLT5h
-ZGRyLmJ1c3dpZHRoKTsNCj4gKw0KPiArCWlmIChvcC0+ZHVtbXkubmJ5dGVzKQ0KPiArCQlyZXQg
-fD0gbnhwX2ZzcGlfY2hlY2tfYnVzd2lkdGgoZiwgb3AtPmR1bW15LmJ1c3dpZHRoKTsNCj4gKw0K
-PiArCWlmIChvcC0+ZGF0YS5uYnl0ZXMpDQo+ICsJCXJldCB8PSBueHBfZnNwaV9jaGVja19idXN3
-aWR0aChmLCBvcC0+ZGF0YS5idXN3aWR0aCk7DQo+ICsNCj4gKwlpZiAocmV0KQ0KPiArCQlyZXR1
-cm4gZmFsc2U7DQo+ICsNCj4gKwkvKg0KPiArCSAqIFRoZSBudW1iZXIgb2YgaW5zdHJ1Y3Rpb25z
-IG5lZWRlZCBmb3IgdGhlIG9wLCBuZWVkcw0KPiArCSAqIHRvIGZpdCBpbnRvIGEgc2luZ2xlIExV
-VCBlbnRyeS4NCj4gKwkgKi8NCj4gKwlpZiAob3AtPmFkZHIubmJ5dGVzICsNCj4gKwkgICAob3At
-PmR1bW15Lm5ieXRlcyA/IDE6MCkgKw0KPiArCSAgIChvcC0+ZGF0YS5uYnl0ZXMgPyAxOjApID4g
-NikNCj4gKwkJcmV0dXJuIGZhbHNlOw0KDQpBY3R1YWxseSB0aGlzIGNoZWNrIHdhcyBvbmx5IG5l
-ZWRlZCBpbiB0aGUgUVNQSSBkcml2ZXIsIGFzIHdlIHdlcmUgdXNpbmcgDQogIExVVF9NT0RFIGFu
-ZCB0aGVyZSB3ZSBuZWVkZWQgb25lIGluc3RydWN0aW9uIGZvciBlYWNoIGFkZHJlc3MgYnl0ZS4g
-DQpIZXJlIHRoZSBudW1iZXIgb2YgaW5zdHJ1Y3Rpb25zIHdpbGwgYWx3YXlzIGZpdCBpbnRvIG9u
-ZSBMVVQgZW50cnkuDQoNCkluc3RlYWQgb2YgdGhpcywgYSBjaGVjayBmb3Igb3AtPmFkZHIubmJ5
-dGVzID4gNCAoYXMgYWxyZWFkeSBzdWdnZXN0ZWQgDQppbiBteSBjb21tZW50cyBmb3IgdjUpIHdv
-dWxkIG1ha2UgbW9yZSBzZW5zZS4gU28gd2UgY2FuIG1ha2Ugc3VyZSB0aGF0IA0KdGhlIGFkZHJl
-c3MgbGVuZ3RoIHBhc3NlZCBpbiBpcyBzdXBwb3J0ZWQgKGJldHdlZW4gMSBhbmQgNCBieXRlcyku
-DQoNCj4gKw0KPiArCS8qIE1heCA2NCBkdW1teSBjbG9jayBjeWNsZXMgc3VwcG9ydGVkICovDQo+
-ICsJaWYgKG9wLT5kdW1teS5idXN3aWR0aCAmJg0KPiArCSAgICAob3AtPmR1bW15Lm5ieXRlcyAq
-IDggLyBvcC0+ZHVtbXkuYnVzd2lkdGggPiA2NCkpDQo+ICsJCXJldHVybiBmYWxzZTsNCj4gKw0K
-PiArCS8qIE1heCBkYXRhIGxlbmd0aCwgY2hlY2sgY29udHJvbGxlciBsaW1pdHMgYW5kIGFsaWdu
-bWVudCAqLw0KPiArCWlmIChvcC0+ZGF0YS5kaXIgPT0gU1BJX01FTV9EQVRBX0lOICYmDQo+ICsJ
-ICAgIChvcC0+ZGF0YS5uYnl0ZXMgPiBmLT5kZXZ0eXBlX2RhdGEtPmFoYl9idWZfc2l6ZSB8fA0K
-PiArCSAgICAgKG9wLT5kYXRhLm5ieXRlcyA+IGYtPmRldnR5cGVfZGF0YS0+cnhmaWZvIC0gNCAm
-Jg0KPiArCSAgICAgICFJU19BTElHTkVEKG9wLT5kYXRhLm5ieXRlcywgOCkpKSkNCj4gKwkJcmV0
-dXJuIGZhbHNlOw0KPiArDQo+ICsJaWYgKG9wLT5kYXRhLmRpciA9PSBTUElfTUVNX0RBVEFfT1VU
-ICYmDQo+ICsJICAgIG9wLT5kYXRhLm5ieXRlcyA+IGYtPmRldnR5cGVfZGF0YS0+dHhmaWZvKQ0K
-PiArCQlyZXR1cm4gZmFsc2U7DQo+ICsNCj4gKwlyZXR1cm4gdHJ1ZTsNCj4gK30NCj4gKw0KWy4u
-Ll0NCj4gK3N0YXRpYyB2b2lkIG54cF9mc3BpX3NlbGVjdF9tZW0oc3RydWN0IG54cF9mc3BpICpm
-LCBzdHJ1Y3Qgc3BpX2RldmljZSAqc3BpKQ0KPiArew0KPiArCXVuc2lnbmVkIGxvbmcgcmF0ZSA9
-IHNwaS0+bWF4X3NwZWVkX2h6Ow0KPiArCWludCByZXQ7DQo+ICsJdWludDY0X3Qgc2l6ZV9rYjsN
-Cj4gKw0KPiArCS8qDQo+ICsJICogUmV0dXJuLCBpZiBwcmV2aW91c2x5IHNlbGVjdGVkIHNsYXZl
-IGRldmljZSBpcyBzYW1lIGFzIGN1cnJlbnQNCj4gKwkgKiByZXF1ZXN0ZWQgc2xhdmUgZGV2aWNl
-Lg0KPiArCSAqLw0KPiArCWlmIChmLT5zZWxlY3RlZCA9PSBzcGktPmNoaXBfc2VsZWN0KQ0KPiAr
-CQlyZXR1cm47DQo+ICsNCj4gKwkvKiBSZXNldCBGTFNIeHhDUjAgcmVnaXN0ZXJzICovDQo+ICsJ
-ZnNwaV93cml0ZWwoZiwgMCwgZi0+aW9iYXNlICsgRlNQSV9GTFNIQTFDUjApOw0KPiArCWZzcGlf
-d3JpdGVsKGYsIDAsIGYtPmlvYmFzZSArIEZTUElfRkxTSEEyQ1IwKTsNCj4gKwlmc3BpX3dyaXRl
-bChmLCAwLCBmLT5pb2Jhc2UgKyBGU1BJX0ZMU0hCMUNSMCk7DQo+ICsJZnNwaV93cml0ZWwoZiwg
-MCwgZi0+aW9iYXNlICsgRlNQSV9GTFNIQjJDUjApOw0KPiArDQo+ICsJLyogQXNzaWduIGNvbnRy
-b2xsZXIgbWVtb3J5IG1hcHBlZCBzcGFjZSBhcyBzaXplLCBLQnl0ZXMsIG9mIGZsYXNoLiAqLw0K
-PiArCXNpemVfa2IgPSBGU1BJX0ZMU0hYQ1IwX1NaKGYtPm1lbW1hcF9waHlfc2l6ZSk7DQo+ICsN
-Cj4gKwlzd2l0Y2ggKHNwaS0+Y2hpcF9zZWxlY3QpIHsNCj4gKwljYXNlIDA6DQo+ICsJCWZzcGlf
-d3JpdGVsKGYsIHNpemVfa2IsIGYtPmlvYmFzZSArIEZTUElfRkxTSEExQ1IwKTsNCj4gKwkJYnJl
-YWs7DQo+ICsJY2FzZSAxOg0KPiArCQlmc3BpX3dyaXRlbChmLCBzaXplX2tiLCBmLT5pb2Jhc2Ug
-KyBGU1BJX0ZMU0hBMkNSMCk7DQo+ICsJCWJyZWFrOw0KPiArCWNhc2UgMjoNCj4gKwkJZnNwaV93
-cml0ZWwoZiwgc2l6ZV9rYiwgZi0+aW9iYXNlICsgRlNQSV9GTFNIQjFDUjApOw0KPiArCQlicmVh
-azsNCj4gKwljYXNlIDM6DQo+ICsJCWZzcGlfd3JpdGVsKGYsIHNpemVfa2IsIGYtPmlvYmFzZSAr
-IEZTUElfRkxTSEIyQ1IwKTsNCj4gKwkJYnJlYWs7DQo+ICsJfQ0KDQpUaGUgc3dpdGNoIHN0YXRl
-bWVudCBhYm92ZSBjYW4gYmUgcmVwbGFjZWQgYnk6DQoNCmZzcGlfd3JpdGVsKGYsIHNpemVfa2Is
-IGYtPmlvYmFzZSArIEZTUElfRkxTSEExQ1IwICsNCgkgICAgNCAqIHNwaS0+Y2hpcF9zZWxlY3Qp
-Ow0KDQo+ICsNCj4gKwlkZXZfZGJnKGYtPmRldiwgIlNsYXZlIGRldmljZSBbQ1M6JXhdIHNlbGVj
-dGVkXG4iLCBzcGktPmNoaXBfc2VsZWN0KTsNCj4gKw0KPiArCW54cF9mc3BpX2Nsa19kaXNhYmxl
-X3VucHJlcChmKTsNCj4gKw0KPiArCXJldCA9IGNsa19zZXRfcmF0ZShmLT5jbGssIHJhdGUpOw0K
-PiArCWlmIChyZXQpDQo+ICsJCXJldHVybjsNCj4gKw0KPiArCXJldCA9IG54cF9mc3BpX2Nsa19w
-cmVwX2VuYWJsZShmKTsNCj4gKwlpZiAocmV0KQ0KPiArCQlyZXR1cm47DQo+ICsNCj4gKwlmLT5z
-ZWxlY3RlZCA9IHNwaS0+Y2hpcF9zZWxlY3Q7DQo+ICt9DQo+ICsNCj4gK3N0YXRpYyB2b2lkIG54
-cF9mc3BpX3JlYWRfYWhiKHN0cnVjdCBueHBfZnNwaSAqZiwgY29uc3Qgc3RydWN0IHNwaV9tZW1f
-b3AgKm9wKQ0KPiArew0KPiArCXUzMiBsZW4gPSBvcC0+ZGF0YS5uYnl0ZXM7DQo+ICsNCj4gKwkv
-KiBSZWFkIG91dCB0aGUgZGF0YSBkaXJlY3RseSBmcm9tIHRoZSBBSEIgYnVmZmVyLiAqLw0KPiAr
-CW1lbWNweV9mcm9taW8ob3AtPmRhdGEuYnVmLmluLCAoZi0+YWhiX2FkZHIgKyBvcC0+YWRkci52
-YWwpLCBsZW4pOw0KPiArfQ0KPiArDQo+ICtzdGF0aWMgdm9pZCBueHBfZnNwaV9maWxsX3R4Zmlm
-byhzdHJ1Y3QgbnhwX2ZzcGkgKmYsDQo+ICsJCQkJIGNvbnN0IHN0cnVjdCBzcGlfbWVtX29wICpv
-cCkNCj4gK3sNCj4gKwl2b2lkIF9faW9tZW0gKmJhc2UgPSBmLT5pb2Jhc2U7DQo+ICsJaW50IGks
-IGosIHJldDsNCj4gKwlpbnQgc2l6ZSwgdG1wLCB3bV9zaXplOw0KPiArCXUzMiBkYXRhID0gMDsN
-Cj4gKwl1MzIgKnR4YnVmID0gKHUzMiAqKSBvcC0+ZGF0YS5idWYub3V0Ow0KDQpZb3UgY2FuIGNh
-c3QgdGhlIHU4IGJ1ZmZlciB0byB1MzIgYW5kIGluY3JlbWVudCBpdCBieSAxIGluIGVhY2ggY3lj
-bGUgDQpiZWxvdywgb3IgeW91IGNhbiBqdXN0IHVzZSB0aGUgdTggYnVmZmVyIGFuZCBhbGlnbiBh
-bmQgaW5jcmVtZW50IGJ5IDggYXMgDQpJIGRpZCBpbiBteSBwcm9wb3NhbCBmb3IgdjUuDQpJIHN0
-aWxsIGxpa2UgbXkgdmVyc2lvbiBiZXR0ZXIgYXMgaXQgc2VlbXMgc2ltcGxlciBhbmQgZWFzaWVy
-IHRvIA0KdW5kZXJzdGFuZCA7KQ0KDQo+ICsNCj4gKwkvKiBjbGVhciB0aGUgVFggRklGTy4gKi8N
-Cj4gKwlmc3BpX3dyaXRlbChmLCBGU1BJX0lQVFhGQ1JfQ0xSLCBiYXNlICsgRlNQSV9JUFRYRkNS
-KTsNCj4gKw0KPiArCS8qIERlZmF1bHQgdmFsdWUgb2Ygd2F0ZXIgbWFyayBsZXZlbCBpcyA4IGJ5
-dGVzLiAqLw0KPiArCXdtX3NpemUgPSA4Ow0KPiArDQo+ICsJc2l6ZSA9IG9wLT5kYXRhLm5ieXRl
-cyAvIHdtX3NpemU7DQo+ICsJZm9yIChpID0gMDsgaSA8IHNpemU7IGkrKykgew0KPiArCQkvKiBX
-YWl0IGZvciBUWEZJRk8gZW1wdHkgKi8NCj4gKwkJcmV0ID0gZnNwaV9yZWFkbF9wb2xsX3RvdXQo
-ZiwgZi0+aW9iYXNlICsgRlNQSV9JTlRSLA0KPiArCQkJCQkgICBGU1BJX0lOVFJfSVBUWFdFLCAw
-LA0KPiArCQkJCQkgICBQT0xMX1RPVVQsIHRydWUpOw0KPiArCQlXQVJOX09OKHJldCk7DQo+ICsN
-Cj4gKwkJZm9yICh0bXAgPSB3bV9zaXplLCBqID0gMDsgdG1wID4gMDsgdG1wIC09IDQsIGorKykN
-Cg0KSSBzdGlsbCB0aGluayB0aGUgaW5uZXIgbG9vcCBzaG91bGQgb25seSBiZSBhZGRlZCB3aGVu
-IHNvbWVvbmUgDQppbXBsZW1lbnRzIHdhdGVybWFyayBsZXZlbHMgb3RoZXIgdGhhbiA4LiBJdCBp
-cyBvZiBubyB1c2UgYXQgdGhlIG1vbWVudCANCmFuZCBtYWtlcyByZWFkaW5nIHRoZSBjb2RlIG1v
-cmUgZGlmZmljdWx0Lg0KQnV0IGlmIHlvdSBpbnNpc3Qgb24gdXNpbmcgaXQsIHBsZWFzZSBhdCBs
-ZWFzdCBzaW1wbGlmeSB0aGUgY29kZS4NCg0KV2hhdCBhYm91dDoJZm9yIChqID0gMDsgaiA8ICh3
-bV9zaXplIC8gNCk7IGorKykNCg0KPiArCQkJZnNwaV93cml0ZWwoZiwgKnR4YnVmKyssIGJhc2Ug
-KyBGU1BJX1RGRFIgKyBqICogNCk7ID4gKw0KPiArCQlmc3BpX3dyaXRlbChmLCBGU1BJX0lOVFJf
-SVBUWFdFLCBiYXNlICsgRlNQSV9JTlRSKTsNCj4gKwl9DQo+ICsNCj4gKwlzaXplID0gb3AtPmRh
-dGEubmJ5dGVzICUgd21fc2l6ZTsNCj4gKwlpZiAoc2l6ZSkgew0KPiArCQkvKiBXYWl0IGZvciBU
-WEZJRk8gZW1wdHkgKi8NCj4gKwkJcmV0ID0gZnNwaV9yZWFkbF9wb2xsX3RvdXQoZiwgZi0+aW9i
-YXNlICsgRlNQSV9JTlRSLA0KPiArCQkJCQkgICBGU1BJX0lOVFJfSVBUWFdFLCAwLA0KPiArCQkJ
-CQkgICBQT0xMX1RPVVQsIHRydWUpOw0KPiArCQlXQVJOX09OKHJldCk7DQo+ICsNCj4gKwkJZm9y
-ICh0bXAgPSBzaXplLCBqID0gMDsgdG1wID4gMDsgdG1wIC09IDQsIGorKykgew0KDQpTYW1lIGhl
-cmU6CWZvciAoaiA9IDA7IGogPCAoc2l6ZSAvIDQpOyBqKyspIHsNCg0KPiArCQkJZGF0YSA9IDA7
-DQo+ICsJCQltZW1jcHkoJmRhdGEsIHR4YnVmKyssIDQpOw0KPiArCQkJZnNwaV93cml0ZWwoZiwg
-ZGF0YSwgYmFzZSArIEZTUElfVEZEUiArIGogKiA0KTsNCj4gKwkJfQ0KPiArCQlmc3BpX3dyaXRl
-bChmLCBGU1BJX0lOVFJfSVBUWFdFLCBiYXNlICsgRlNQSV9JTlRSKTsNCj4gKwl9DQo+ICt9DQo+
-ICsNCj4gK3N0YXRpYyB2b2lkIG54cF9mc3BpX3JlYWRfcnhmaWZvKHN0cnVjdCBueHBfZnNwaSAq
-ZiwNCj4gKwkJCSAgY29uc3Qgc3RydWN0IHNwaV9tZW1fb3AgKm9wKQ0KPiArew0KPiArCXZvaWQg
-X19pb21lbSAqYmFzZSA9IGYtPmlvYmFzZTsNCj4gKwlpbnQgaSwgajsNCj4gKwlpbnQgc2l6ZSwg
-dG1wX3NpemUsIHdtX3NpemUsIHJldDsNCj4gKwl1MzIgdG1wID0gMDsNCj4gKwl1OCAqYnVmID0g
-b3AtPmRhdGEuYnVmLmluOw0KPiArCXUzMiBsZW4gPSBvcC0+ZGF0YS5uYnl0ZXM7DQo+ICsNCj4g
-KwkvKiBEZWZhdWx0IHZhbHVlIG9mIHdhdGVyIG1hcmsgbGV2ZWwgaXMgOCBieXRlcy4gKi8NCj4g
-Kwl3bV9zaXplID0gODsNCj4gKw0KPiArCXdoaWxlIChsZW4gPiAwKSB7DQoNCldoYXQgaXMgdGhp
-cyBvdXRlciBsb29wIGdvb2QgZm9yPyBCZWxvdyB5b3UgYXJlIGZpcnN0IHJlYWRpbmcgYWxpZ25l
-ZCB0byANCndtX3NpemUgYW5kIHRoZW4gdGhlIHJlbWFpbmluZyBieXRlcy4gV2h5IHdvdWxkIHlv
-dSBuZWVkIHRvIHJlcGVhdCB0aGF0Pw0KSXQgbG9va3MgbGlrZSB0aGUgbG9vcCB3aWxsIGFsd2F5
-cyBiZSBleGVjdXRlZCBvbmx5IG9uY2UuDQoNCj4gKwkJc2l6ZSA9IGxlbiAvIHdtX3NpemU7DQo+
-ICsJCWZvciAoaSA9IDA7IGkgPCBzaXplOyBpKyspIHsNCj4gKwkJCS8qIFdhaXQgZm9yIFJYRklG
-TyBhdmFpbGFibGUgKi8NCj4gKwkJCXJldCA9IGZzcGlfcmVhZGxfcG9sbF90b3V0KGYsIGYtPmlv
-YmFzZSArIEZTUElfSU5UUiwNCj4gKwkJCQkJCSAgIEZTUElfSU5UUl9JUFJYV0EsIDAsDQo+ICsJ
-CQkJCQkgICBQT0xMX1RPVVQsIHRydWUpOw0KPiArCQkJV0FSTl9PTihyZXQpOw0KPiArDQo+ICsJ
-CQlmb3IgKHRtcF9zaXplID0gd21fc2l6ZSwgaiA9IDA7IHRtcF9zaXplID4gMDsNCj4gKwkJCSAg
-ICAgdG1wX3NpemUgLT0gNCwgaisrLCBidWYgKz0gNCkgew0KDQpXaGF0IGFib3V0OgkJZm9yIChq
-ID0gMDsgaiA8ICh3bV9zaXplIC8gNCk7IGorKywgYnVmICs9IDQpIHsNCg0KPiArCQkJCXRtcCA9
-IGZzcGlfcmVhZGwoZiwgYmFzZSArIEZTUElfUkZEUiArIGogKiA0KTsNCj4gKwkJCQltZW1jcHko
-YnVmLCAmdG1wLCA0KTsNCj4gKwkJCX0NCj4gKwkJCS8qIG1vdmUgdGhlIEZJRk8gcG9pbnRlciAq
-Lw0KPiArCQkJZnNwaV93cml0ZWwoZiwgRlNQSV9JTlRSX0lQUlhXQSwgYmFzZSArIEZTUElfSU5U
-Uik7DQo+ICsJCQlsZW4gLT0gd21fc2l6ZTsNCj4gKwkJfQ0KPiArDQo+ICsJCXNpemUgPSBsZW4g
-JSB3bV9zaXplOw0KPiArCQlpZiAoc2l6ZSkgew0KPiArCQkJLyogV2FpdCBmb3IgUlhGSUZPIGF2
-YWlsYWJsZSAqLw0KPiArCQkJcmV0ID0gZnNwaV9yZWFkbF9wb2xsX3RvdXQoZiwgZi0+aW9iYXNl
-ICsgRlNQSV9JTlRSLA0KPiArCQkJCQkJICAgRlNQSV9JTlRSX0lQUlhXQSwgMCwNCj4gKwkJCQkJ
-CSAgIFBPTExfVE9VVCwgdHJ1ZSk7DQo+ICsJCQlXQVJOX09OKHJldCk7DQo+ICsNCj4gKwkJCWZv
-ciAoaiA9IDA7IGxlbiA+IDA7IGxlbiAtPSBzaXplLCBqKyssIGJ1ZiArPSBzaXplKSB7DQo+ICsJ
-CQkJdG1wID0gZnNwaV9yZWFkbChmLCBiYXNlICsgRlNQSV9SRkRSICsgaiAqIDQpOw0KPiArCQkJ
-CXNpemUgPSBsZW4gPCA0ID8gbGVuIDogNDsNCg0KV2hhdCBhYm91dDoJCQlzaXplID0gbWluKGxl
-biwgNCk7DQoNCj4gKwkJCQltZW1jcHkoYnVmLCAmdG1wLCBzaXplKTsNCj4gKwkJCX0NCj4gKwkJ
-fQ0KPiArDQo+ICsJCS8qIGludmFsaWQgdGhlIFJYRklGTyAqLw0KPiArCQlmc3BpX3dyaXRlbChm
-LCBGU1BJX0lQUlhGQ1JfQ0xSLCBiYXNlICsgRlNQSV9JUFJYRkNSKTsNCj4gKwkJLyogbW92ZSB0
-aGUgRklGTyBwb2ludGVyICovDQo+ICsJCWZzcGlfd3JpdGVsKGYsIEZTUElfSU5UUl9JUFJYV0Es
-IGJhc2UgKyBGU1BJX0lOVFIpOw0KPiArCX0NCj4gK30NCg0KVGhhbmtzLA0KRnJpZWRlcg0K
+This adds 21 new system calls on each ABI that has 32-bit time_t
+today. All of these have the exact same semantics as their existing
+counterparts, and the new ones all have macro names that end in 'time64'
+for clarification.
+
+This gets us to the point of being able to safely use a C library
+that has 64-bit time_t in user space. There are still a couple of
+loose ends to tie up in various areas of the code, but this is the
+big one, and should be entirely uncontroversial at this point.
+
+In particular, there are four system calls (getitimer, setitimer,
+waitid, and getrusage) that don't have a 64-bit counterpart yet,
+but these can all be safely implemented in the C library by wrapping
+around the existing system calls because the 32-bit time_t they
+pass only counts elapsed time, not time since the epoch. They
+will be dealt with later.
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+The one point that still needs to be agreed on is the actual
+number assignment. Following the earlier patch that added
+the sysv IPC calls with common numbers where possible, I also
+tried the same here, using consistent numbers on all 32-bit
+architectures.
+
+There are a couple of minor issues with this:
+
+- On asm-generic, we now leave the numbers from 295 to 402
+  unassigned, which wastes a small amount of kernel .data
+  segment. Originally I had asm-generic start at 300 and
+  everyone else start at 400 here, which was also not
+  perfect, and we have gone beyond 400 already, so I ended
+  up just using the same numbers as the rest here.
+
+- Once we get to 512, we clash with the x32 numbers (unless
+  we remove x32 support first), and probably have to skip
+  a few more. I also considered using the 512..547 space
+  for 32-bit-only calls (which never clash with x32), but
+  that also seems to add a bit of complexity.
+
+- On alpha, we have already used up the space up to 527
+  (with a small hole between 261 and 299). We could sync
+  up with that as well, but my feeling was that alpha syscalls
+  are already special enough that I don't care.
+
+Let me know if you have other ideas.
+---
+ arch/alpha/kernel/syscalls/syscall.tbl      |  2 +
+ arch/arm/tools/syscall.tbl                  | 21 ++++++++++
+ arch/arm64/include/asm/unistd.h             |  2 +-
+ arch/arm64/include/asm/unistd32.h           | 41 +++++++++++++++++++
+ arch/ia64/kernel/syscalls/syscall.tbl       |  1 +
+ arch/m68k/kernel/syscalls/syscall.tbl       | 20 +++++++++
+ arch/microblaze/kernel/syscalls/syscall.tbl | 21 ++++++++++
+ arch/mips/kernel/syscalls/syscall_n32.tbl   | 21 ++++++++++
+ arch/mips/kernel/syscalls/syscall_n64.tbl   |  1 +
+ arch/mips/kernel/syscalls/syscall_o32.tbl   | 20 +++++++++
+ arch/parisc/kernel/syscalls/syscall.tbl     | 21 ++++++++++
+ arch/powerpc/kernel/syscalls/syscall.tbl    | 20 +++++++++
+ arch/s390/kernel/syscalls/syscall.tbl       | 20 +++++++++
+ arch/sh/kernel/syscalls/syscall.tbl         | 20 +++++++++
+ arch/sparc/kernel/syscalls/syscall.tbl      | 20 +++++++++
+ arch/x86/entry/syscalls/syscall_32.tbl      | 20 +++++++++
+ arch/xtensa/kernel/syscalls/syscall.tbl     | 21 ++++++++++
+ include/uapi/asm-generic/unistd.h           | 45 ++++++++++++++++++++-
+ scripts/checksyscalls.sh                    | 40 ++++++++++++++++++
+ 19 files changed, 375 insertions(+), 2 deletions(-)
+
+diff --git a/arch/alpha/kernel/syscalls/syscall.tbl b/arch/alpha/kernel/syscalls/syscall.tbl
+index 25b4a7e76943..04d96d042180 100644
+--- a/arch/alpha/kernel/syscalls/syscall.tbl
++++ b/arch/alpha/kernel/syscalls/syscall.tbl
+@@ -456,3 +456,5 @@
+ 525	common	pkey_free			sys_pkey_free
+ 526	common	pkey_mprotect			sys_pkey_mprotect
+ 527	common	rseq				sys_rseq
++# all other architectures have common numbers for new syscall, alpha
++# is the exception.
+diff --git a/arch/arm/tools/syscall.tbl b/arch/arm/tools/syscall.tbl
+index a96d9b5ee04e..286afdc43283 100644
+--- a/arch/arm/tools/syscall.tbl
++++ b/arch/arm/tools/syscall.tbl
+@@ -416,3 +416,24 @@
+ 399	common	io_pgetevents		sys_io_pgetevents_time32
+ 400	common	migrate_pages		sys_migrate_pages
+ 401	common	kexec_file_load		sys_kexec_file_load
++# 402 is unused
++403	common	clock_gettime64			sys_clock_gettime
++404	common	clock_settime64			sys_clock_settime
++405	common	clock_adjtime64			sys_clock_adjtime
++406	common	clock_getres_time64		sys_clock_getres
++407	common	clock_nanosleep_time64		sys_clock_nanosleep
++408	common	timer_gettime64			sys_timer_gettime
++409	common	timer_settime64			sys_timer_settime
++410	common	timerfd_gettime64		sys_timerfd_gettime
++411	common	timerfd_settime64		sys_timerfd_settime
++412	common	utimensat_time64		sys_utimensat
++413	common	pselect6_time64			sys_pselect6
++414	common	ppoll_time64			sys_ppoll
++416	common	io_pgetevents_time64		sys_io_pgetevents
++417	common	recvmmsg_time64			sys_recvmmsg
++418	common	mq_timedsend_time64		sys_mq_timedsend
++419	common	mq_timedreceiv_time64		sys_mq_timedreceive
++420	common	semtimedop_time64		sys_semtimedop
++421	common	rt_sigtimedwait_time64		sys_rt_sigtimedwait
++422	common	futex_time64			sys_futex
++423	common	sched_rr_get_interval_time64	sys_sched_rr_get_interval
+diff --git a/arch/arm64/include/asm/unistd.h b/arch/arm64/include/asm/unistd.h
+index 2c30e6f145ff..d1dd93436e1e 100644
+--- a/arch/arm64/include/asm/unistd.h
++++ b/arch/arm64/include/asm/unistd.h
+@@ -44,7 +44,7 @@
+ #define __ARM_NR_compat_set_tls		(__ARM_NR_COMPAT_BASE + 5)
+ #define __ARM_NR_COMPAT_END		(__ARM_NR_COMPAT_BASE + 0x800)
+ 
+-#define __NR_compat_syscalls		402
++#define __NR_compat_syscalls		424
+ #endif
+ 
+ #define __ARCH_WANT_SYS_CLONE
+diff --git a/arch/arm64/include/asm/unistd32.h b/arch/arm64/include/asm/unistd32.h
+index 3ecec626fb0f..23c73db53d28 100644
+--- a/arch/arm64/include/asm/unistd32.h
++++ b/arch/arm64/include/asm/unistd32.h
+@@ -825,6 +825,47 @@ __SYSCALL(__NR_io_pgetevents, compat_sys_io_pgetevents)
+ __SYSCALL(__NR_migrate_pages, sys_migrate_pages)
+ #define __NR_kexec_file_load 401
+ __SYSCALL(__NR_kexec_file_load, sys_kexec_file_load)
++/* 402 is unused */
++#define __NR_clock_gettime64 403
++__SYSCALL(__NR_clock_gettime64, sys_clock_gettime)
++#define __NR_clock_settime64 404
++__SYSCALL(__NR_clock_settime64, sys_clock_settime)
++#define __NR_clock_adjtime64 405
++__SYSCALL(__NR_clock_adjtime64, sys_clock_adjtime)
++#define __NR_clock_getres_time64 406
++__SYSCALL(__NR_clock_getres_time64, sys_clock_getres)
++#define __NR_clock_nanosleep_time64 407
++__SYSCALL(__NR_clock_nanosleep_time64, sys_clock_nanosleep)
++#define __NR_timer_gettime64 408
++__SYSCALL(__NR_timer_gettime64, sys_timer_gettime)
++#define __NR_timer_settime64 409
++__SYSCALL(__NR_timer_settime64, sys_timer_settime)
++#define __NR_timerfd_gettime64 410
++__SYSCALL(__NR_timerfd_gettime64, sys_timerfd_gettime)
++#define __NR_timerfd_settime64 411
++__SYSCALL(__NR_timerfd_settime64, sys_timerfd_settime)
++#define __NR_utimensat_time64 412
++__SYSCALL(__NR_utimensat_time64, sys_utimensat)
++#define __NR_pselect6_time64 413
++__SYSCALL(__NR_pselect6_time64, compat_sys_pselect6_time64)
++#define __NR_ppoll_time64 414
++__SYSCALL(__NR_ppoll_time64, compat_sys_ppoll_time64)
++#define __NR_io_pgetevents_time64 416
++__SYSCALL(__NR_io_pgetevents_time64, sys_io_pgetevents)
++#define __NR_recvmmsg_time64 417
++__SYSCALL(__NR_recvmmsg_time64, compat_sys_recvmmsg_time64)
++#define __NR_mq_timedsend_time64 418
++__SYSCALL(__NR_mq_timedsend_time64, sys_mq_timedsend)
++#define __NR_mq_timedreceiv_time64 419
++__SYSCALL(__NR_mq_timedreceiv_time64, sys_mq_timedreceive)
++#define __NR_semtimedop_time64 420
++__SYSCALL(__NR_semtimedop_time64, sys_semtimedop)
++#define __NR_rt_sigtimedwait_time64 421
++__SYSCALL(__NR_rt_sigtimedwait_time64, compat_sys_rt_sigtimedwait_time64)
++#define __NR_futex_time64 422
++__SYSCALL(__NR_futex_time64, sys_futex)
++#define __NR_sched_rr_get_interval_time64 423
++__SYSCALL(__NR_sched_rr_get_interval_time64, sys_sched_rr_get_interval)
+ 
+ /*
+  * Please add new compat syscalls above this comment and update
+diff --git a/arch/ia64/kernel/syscalls/syscall.tbl b/arch/ia64/kernel/syscalls/syscall.tbl
+index 84e03de00177..ae18c430301c 100644
+--- a/arch/ia64/kernel/syscalls/syscall.tbl
++++ b/arch/ia64/kernel/syscalls/syscall.tbl
+@@ -343,3 +343,4 @@
+ 331	common	pkey_free			sys_pkey_free
+ 332	common	pkey_mprotect			sys_pkey_mprotect
+ 333	common	rseq				sys_rseq
++# 334 through 423 are reserved to sync up with other architectures
+diff --git a/arch/m68k/kernel/syscalls/syscall.tbl b/arch/m68k/kernel/syscalls/syscall.tbl
+index dec78dc5b056..da627bef806e 100644
+--- a/arch/m68k/kernel/syscalls/syscall.tbl
++++ b/arch/m68k/kernel/syscalls/syscall.tbl
+@@ -403,3 +403,23 @@
+ 400	common	msgsnd				sys_msgsnd
+ 401	common	msgrcv				sys_msgrcv
+ 402	common	msgctl				sys_msgctl
++403	common	clock_gettime64			sys_clock_gettime
++404	common	clock_settime64			sys_clock_settime
++405	common	clock_adjtime64			sys_clock_adjtime
++406	common	clock_getres_time64		sys_clock_getres
++407	common	clock_nanosleep_time64		sys_clock_nanosleep
++408	common	timer_gettime64			sys_timer_gettime
++409	common	timer_settime64			sys_timer_settime
++410	common	timerfd_gettime64		sys_timerfd_gettime
++411	common	timerfd_settime64		sys_timerfd_settime
++412	common	utimensat_time64		sys_utimensat
++413	common	pselect6_time64			sys_pselect6
++414	common	ppoll_time64			sys_ppoll
++416	common	io_pgetevents_time64		sys_io_pgetevents
++417	common	recvmmsg_time64			sys_recvmmsg
++418	common	mq_timedsend_time64		sys_mq_timedsend
++419	common	mq_timedreceiv_time64		sys_mq_timedreceive
++420	common	semtimedop_time64		sys_semtimedop
++421	common	rt_sigtimedwait_time64		sys_rt_sigtimedwait
++422	common	futex_time64			sys_futex
++423	common	sched_rr_get_interval_time64	sys_sched_rr_get_interval
+diff --git a/arch/microblaze/kernel/syscalls/syscall.tbl b/arch/microblaze/kernel/syscalls/syscall.tbl
+index 44a87649d681..5ca6677c0437 100644
+--- a/arch/microblaze/kernel/syscalls/syscall.tbl
++++ b/arch/microblaze/kernel/syscalls/syscall.tbl
+@@ -408,3 +408,24 @@
+ 398	common	statx				sys_statx
+ 399	common	io_pgetevents			sys_io_pgetevents_time32
+ 400	common	rseq				sys_rseq
++# 401 and 402 are unused
++403	common	clock_gettime64			sys_clock_gettime
++404	common	clock_settime64			sys_clock_settime
++405	common	clock_adjtime64			sys_clock_adjtime
++406	common	clock_getres_time64		sys_clock_getres
++407	common	clock_nanosleep_time64		sys_clock_nanosleep
++408	common	timer_gettime64			sys_timer_gettime
++409	common	timer_settime64			sys_timer_settime
++410	common	timerfd_gettime64		sys_timerfd_gettime
++411	common	timerfd_settime64		sys_timerfd_settime
++412	common	utimensat_time64		sys_utimensat
++413	common	pselect6_time64			sys_pselect6
++414	common	ppoll_time64			sys_ppoll
++416	common	io_pgetevents_time64		sys_io_pgetevents
++417	common	recvmmsg_time64			sys_recvmmsg
++418	common	mq_timedsend_time64		sys_mq_timedsend
++419	common	mq_timedreceiv_time64		sys_mq_timedreceive
++420	common	semtimedop_time64		sys_semtimedop
++421	common	rt_sigtimedwait_time64		sys_rt_sigtimedwait
++422	common	futex_time64			sys_futex
++423	common	sched_rr_get_interval_time64	sys_sched_rr_get_interval
+diff --git a/arch/mips/kernel/syscalls/syscall_n32.tbl b/arch/mips/kernel/syscalls/syscall_n32.tbl
+index 6d1e019817c8..6218e3a08438 100644
+--- a/arch/mips/kernel/syscalls/syscall_n32.tbl
++++ b/arch/mips/kernel/syscalls/syscall_n32.tbl
+@@ -341,3 +341,24 @@
+ 330	n32	statx				sys_statx
+ 331	n32	rseq				sys_rseq
+ 332	n32	io_pgetevents			compat_sys_io_pgetevents
++# 333 through 402 are unassigned to sync up with generic numbers
++403	n32	clock_gettime64			sys_clock_gettime
++404	n32	clock_settime64			sys_clock_settime
++405	n32	clock_adjtime64			sys_clock_adjtime
++406	n32	clock_getres_time64		sys_clock_getres
++407	n32	clock_nanosleep_time64		sys_clock_nanosleep
++408	n32	timer_gettime64			sys_timer_gettime
++409	n32	timer_settime64			sys_timer_settime
++410	n32	timerfd_gettime64		sys_timerfd_gettime
++411	n32	timerfd_settime64		sys_timerfd_settime
++412	n32	utimensat_time64		sys_utimensat
++413	n32	pselect6_time64			compat_sys_pselect6_time64
++414	n32	ppoll_time64			compat_sys_ppoll_time64
++416	n32	io_pgetevents_time64		sys_io_pgetevents
++417	n32	recvmmsg_time64			compat_sys_recvmmsg_time64
++418	n32	mq_timedsend_time64		sys_mq_timedsend
++419	n32	mq_timedreceiv_time64		sys_mq_timedreceive
++420	n32	semtimedop_time64		sys_semtimedop
++421	n32	rt_sigtimedwait_time64		compat_sys_rt_sigtimedwait_time64
++422	n32	futex_time64			sys_futex
++423	n32	sched_rr_get_interval_time64	sys_sched_rr_get_interval
+diff --git a/arch/mips/kernel/syscalls/syscall_n64.tbl b/arch/mips/kernel/syscalls/syscall_n64.tbl
+index af0da757a7b2..c85502e67b44 100644
+--- a/arch/mips/kernel/syscalls/syscall_n64.tbl
++++ b/arch/mips/kernel/syscalls/syscall_n64.tbl
+@@ -337,3 +337,4 @@
+ 326	n64	statx				sys_statx
+ 327	n64	rseq				sys_rseq
+ 328	n64	io_pgetevents			sys_io_pgetevents
++# 329 through 423 are reserved to sync up with other architectures
+diff --git a/arch/mips/kernel/syscalls/syscall_o32.tbl b/arch/mips/kernel/syscalls/syscall_o32.tbl
+index 54312c5b5343..0be1cddeda0c 100644
+--- a/arch/mips/kernel/syscalls/syscall_o32.tbl
++++ b/arch/mips/kernel/syscalls/syscall_o32.tbl
+@@ -391,3 +391,23 @@
+ 400	o32	msgsnd				sys_msgsnd			compat_sys_msgsnd
+ 401	o32	msgrcv				sys_msgrcv			compat_sys_msgrcv
+ 402	o32	msgctl				sys_msgctl			compat_sys_msgctl
++403	o32	clock_gettime64			sys_clock_gettime		sys_clock_gettime
++404	o32	clock_settime64			sys_clock_settime		sys_clock_settime
++405	o32	clock_adjtime64			sys_clock_adjtime		sys_clock_adjtime
++406	o32	clock_getres_time64		sys_clock_getres		sys_clock_getres
++407	o32	clock_nanosleep_time64		sys_clock_nanosleep		sys_clock_nanosleep
++408	o32	timer_gettime64			sys_timer_gettime		sys_timer_gettime
++409	o32	timer_settime64			sys_timer_settime		sys_timer_settime
++410	o32	timerfd_gettime64		sys_timerfd_gettime		sys_timerfd_gettime
++411	o32	timerfd_settime64		sys_timerfd_settime		sys_timerfd_settime
++412	o32	utimensat_time64		sys_utimensat			sys_utimensat
++413	o32	pselect6_time64			sys_pselect6			compat_sys_pselect6_time64
++414	o32	ppoll_time64			sys_ppoll			compat_sys_ppoll_time64
++416	o32	io_pgetevents_time64		sys_io_pgetevents		sys_io_pgetevents
++417	o32	recvmmsg_time64			sys_recvmmsg			compat_sys_recvmmsg_time64
++418	o32	mq_timedsend_time64		sys_mq_timedsend		sys_mq_timedsend
++419	o32	mq_timedreceiv_time64		sys_mq_timedreceive		sys_mq_timedreceive
++420	o32	semtimedop_time64		sys_semtimedop			sys_semtimedop
++421	o32	rt_sigtimedwait_time64		sys_rt_sigtimedwait		compat_sys_rt_sigtimedwait_time64
++422	o32	futex_time64			sys_futex			sys_futex
++423	o32	sched_rr_get_interval_time64	sys_sched_rr_get_interval	sys_sched_rr_get_interval
+diff --git a/arch/parisc/kernel/syscalls/syscall.tbl b/arch/parisc/kernel/syscalls/syscall.tbl
+index 2521cd561769..51ae690484e4 100644
+--- a/arch/parisc/kernel/syscalls/syscall.tbl
++++ b/arch/parisc/kernel/syscalls/syscall.tbl
+@@ -399,3 +399,24 @@
+ 352	common	pkey_free		sys_pkey_free
+ 353	common	pkey_mprotect		sys_pkey_mprotect
+ 354	common	rseq			sys_rseq
++# 355 through 402 are unassigned to sync up with generic numbers
++403	32	clock_gettime64			sys_clock_gettime		sys_clock_gettime
++404	32	clock_settime64			sys_clock_settime		sys_clock_settime
++405	32	clock_adjtime64			sys_clock_adjtime		sys_clock_adjtime
++406	32	clock_getres_time64		sys_clock_getres		sys_clock_getres
++407	32	clock_nanosleep_time64		sys_clock_nanosleep		sys_clock_nanosleep
++408	32	timer_gettime64			sys_timer_gettime		sys_timer_gettime
++409	32	timer_settime64			sys_timer_settime		sys_timer_settime
++410	32	timerfd_gettime64		sys_timerfd_gettime		sys_timerfd_gettime
++411	32	timerfd_settime64		sys_timerfd_settime		sys_timerfd_settime
++412	32	utimensat_time64		sys_utimensat			sys_utimensat
++413	32	pselect6_time64			sys_pselect6			compat_sys_pselect6_time64
++414	32	ppoll_time64			sys_ppoll			compat_sys_ppoll_time64
++416	32	io_pgetevents_time64		sys_io_pgetevents		sys_io_pgetevents
++417	32	recvmmsg_time64			sys_recvmmsg			compat_sys_recvmmsg_time64
++418	32	mq_timedsend_time64		sys_mq_timedsend		sys_mq_timedsend
++419	32	mq_timedreceiv_time64		sys_mq_timedreceive		sys_mq_timedreceive
++420	32	semtimedop_time64		sys_semtimedop			sys_semtimedop
++421	32	rt_sigtimedwait_time64		sys_rt_sigtimedwait		compat_sys_rt_sigtimedwait_time64
++422	32	futex_time64			sys_futex			sys_futex
++423	32	sched_rr_get_interval_time64	sys_sched_rr_get_interval	sys_sched_rr_get_interval
+diff --git a/arch/powerpc/kernel/syscalls/syscall.tbl b/arch/powerpc/kernel/syscalls/syscall.tbl
+index ed02c21bb5a2..5c0936d862fc 100644
+--- a/arch/powerpc/kernel/syscalls/syscall.tbl
++++ b/arch/powerpc/kernel/syscalls/syscall.tbl
+@@ -484,3 +484,23 @@
+ 400	common	msgsnd				sys_msgsnd			compat_sys_msgsnd
+ 401	common	msgrcv				sys_msgrcv			compat_sys_msgrcv
+ 402	common	msgctl				sys_msgctl			compat_sys_msgctl
++403	32	clock_gettime64			sys_clock_gettime		sys_clock_gettime
++404	32	clock_settime64			sys_clock_settime		sys_clock_settime
++405	32	clock_adjtime64			sys_clock_adjtime		sys_clock_adjtime
++406	32	clock_getres_time64		sys_clock_getres		sys_clock_getres
++407	32	clock_nanosleep_time64		sys_clock_nanosleep		sys_clock_nanosleep
++408	32	timer_gettime64			sys_timer_gettime		sys_timer_gettime
++409	32	timer_settime64			sys_timer_settime		sys_timer_settime
++410	32	timerfd_gettime64		sys_timerfd_gettime		sys_timerfd_gettime
++411	32	timerfd_settime64		sys_timerfd_settime		sys_timerfd_settime
++412	32	utimensat_time64		sys_utimensat			sys_utimensat
++413	32	pselect6_time64			sys_pselect6			compat_sys_pselect6_time64
++414	32	ppoll_time64			sys_ppoll			compat_sys_ppoll_time64
++416	32	io_pgetevents_time64		sys_io_pgetevents		sys_io_pgetevents
++417	32	recvmmsg_time64			sys_recvmmsg			compat_sys_recvmmsg_time64
++418	32	mq_timedsend_time64		sys_mq_timedsend		sys_mq_timedsend
++419	32	mq_timedreceiv_time64		sys_mq_timedreceive		sys_mq_timedreceive
++420	32	semtimedop_time64		sys_semtimedop			sys_semtimedop
++421	32	rt_sigtimedwait_time64		sys_rt_sigtimedwait		compat_sys_rt_sigtimedwait_time64
++422	32	futex_time64			sys_futex			sys_futex
++423	32	sched_rr_get_interval_time64	sys_sched_rr_get_interval	sys_sched_rr_get_interval
+diff --git a/arch/s390/kernel/syscalls/syscall.tbl b/arch/s390/kernel/syscalls/syscall.tbl
+index b3199a744731..bc763c0bb245 100644
+--- a/arch/s390/kernel/syscalls/syscall.tbl
++++ b/arch/s390/kernel/syscalls/syscall.tbl
+@@ -406,3 +406,23 @@
+ 400  common	msgsnd			sys_msgsnd			compat_sys_msgsnd
+ 401  common	msgrcv			sys_msgrcv			compat_sys_msgrcv
+ 402  common	msgctl			sys_msgctl			compat_sys_msgctl
++403	32	clock_gettime64		-				sys_clock_gettime
++404	32	clock_settime64		-				sys_clock_settime
++405	32	clock_adjtime64		-				sys_clock_adjtime
++406	32	clock_getres_time64	-				sys_clock_getres
++407	32	clock_nanosleep_time64	-				sys_clock_nanosleep
++408	32	timer_gettime64		-				sys_timer_gettime
++409	32	timer_settime64		-				sys_timer_settime
++410	32	timerfd_gettime64	-				sys_timerfd_gettime
++411	32	timerfd_settime64	-				sys_timerfd_settime
++412	32	utimensat_time64	-				sys_utimensat
++413	32	pselect6_time64		-				compat_sys_pselect6_time64
++414	32	ppoll_time64		-				compat_sys_ppoll_time64
++416	32	io_pgetevents_time64	-				sys_io_pgetevents
++417	32	recvmmsg_time64		-				compat_sys_recvmmsg_time64
++418	32	mq_timedsend_time64	-				sys_mq_timedsend
++419	32	mq_timedreceiv_time64	-				sys_mq_timedreceive
++420	32	semtimedop_time64	-				sys_semtimedop
++421	32	rt_sigtimedwait_time64	-				compat_sys_rt_sigtimedwait_time64
++422	32	futex_time64		-				sys_futex
++423	32	sched_rr_get_interval_time64	-			sys_sched_rr_get_interval
+diff --git a/arch/sh/kernel/syscalls/syscall.tbl b/arch/sh/kernel/syscalls/syscall.tbl
+index d3993b305cab..dcf3f8c91652 100644
+--- a/arch/sh/kernel/syscalls/syscall.tbl
++++ b/arch/sh/kernel/syscalls/syscall.tbl
+@@ -406,3 +406,23 @@
+ 400	common	msgsnd				sys_msgsnd
+ 401	common	msgrcv				sys_msgrcv
+ 402	common	msgctl				sys_msgctl
++403	common	clock_gettime64			sys_clock_gettime
++404	common	clock_settime64			sys_clock_settime
++405	common	clock_adjtime64			sys_clock_adjtime
++406	common	clock_getres_time64		sys_clock_getres
++407	common	clock_nanosleep_time64		sys_clock_nanosleep
++408	common	timer_gettime64			sys_timer_gettime
++409	common	timer_settime64			sys_timer_settime
++410	common	timerfd_gettime64		sys_timerfd_gettime
++411	common	timerfd_settime64		sys_timerfd_settime
++412	common	utimensat_time64		sys_utimensat
++413	common	pselect6_time64			sys_pselect6
++414	common	ppoll_time64			sys_ppoll
++416	common	io_pgetevents_time64		sys_io_pgetevents
++417	common	recvmmsg_time64			sys_recvmmsg
++418	common	mq_timedsend_time64		sys_mq_timedsend
++419	common	mq_timedreceiv_time64		sys_mq_timedreceive
++420	common	semtimedop_time64		sys_semtimedop
++421	common	rt_sigtimedwait_time64		sys_rt_sigtimedwait
++422	common	futex_time64			sys_futex
++423	common	sched_rr_get_interval_time64	sys_sched_rr_get_interval
+diff --git a/arch/sparc/kernel/syscalls/syscall.tbl b/arch/sparc/kernel/syscalls/syscall.tbl
+index fde7491f76e8..18858a7eea02 100644
+--- a/arch/sparc/kernel/syscalls/syscall.tbl
++++ b/arch/sparc/kernel/syscalls/syscall.tbl
+@@ -449,3 +449,23 @@
+ 400	common	msgsnd			sys_msgsnd			compat_sys_msgsnd
+ 401	common	msgrcv			sys_msgrcv			compat_sys_msgrcv
+ 402	common	msgctl			sys_msgctl			compat_sys_msgctl
++403	32	clock_gettime64			sys_clock_gettime		sys_clock_gettime
++404	32	clock_settime64			sys_clock_settime		sys_clock_settime
++405	32	clock_adjtime64			sys_clock_adjtime		sys_clock_adjtime
++406	32	clock_getres_time64		sys_clock_getres		sys_clock_getres
++407	32	clock_nanosleep_time64		sys_clock_nanosleep		sys_clock_nanosleep
++408	32	timer_gettime64			sys_timer_gettime		sys_timer_gettime
++409	32	timer_settime64			sys_timer_settime		sys_timer_settime
++410	32	timerfd_gettime64		sys_timerfd_gettime		sys_timerfd_gettime
++411	32	timerfd_settime64		sys_timerfd_settime		sys_timerfd_settime
++412	32	utimensat_time64		sys_utimensat			sys_utimensat
++413	32	pselect6_time64			sys_pselect6			compat_sys_pselect6_time64
++414	32	ppoll_time64			sys_ppoll			compat_sys_ppoll_time64
++416	32	io_pgetevents_time64		sys_io_pgetevents		sys_io_pgetevents
++417	32	recvmmsg_time64			sys_recvmmsg			compat_sys_recvmmsg_time64
++418	32	mq_timedsend_time64		sys_mq_timedsend		sys_mq_timedsend
++419	32	mq_timedreceiv_time64		sys_mq_timedreceive		sys_mq_timedreceive
++420	32	semtimedop_time64		sys_semtimedop			sys_semtimedop
++421	32	rt_sigtimedwait_time64		sys_rt_sigtimedwait		compat_sys_rt_sigtimedwait_time64
++422	32	futex_time64			sys_futex			sys_futex
++423	32	sched_rr_get_interval_time64	sys_sched_rr_get_interval	sys_sched_rr_get_interval
+diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
+index 1ad4b1c5417d..b21ddeeb43cb 100644
+--- a/arch/x86/entry/syscalls/syscall_32.tbl
++++ b/arch/x86/entry/syscalls/syscall_32.tbl
+@@ -409,3 +409,23 @@
+ 400	i386	msgsnd			sys_msgsnd    			__ia32_compat_sys_msgsnd
+ 401	i386	msgrcv			sys_msgrcv    			__ia32_compat_sys_msgrcv
+ 402	i386	msgctl			sys_msgctl    			__ia32_compat_sys_msgctl
++403	i386	clock_gettime64		sys_clock_gettime		__ia32_sys_clock_gettime
++404	i386	clock_settime64		sys_clock_settime		__ia32_sys_clock_settime
++405	i386	clock_adjtime64		sys_clock_adjtime		__ia32_sys_clock_adjtime
++406	i386	clock_getres_time64	sys_clock_getres		__ia32_sys_clock_getres
++407	i386	clock_nanosleep_time64	sys_clock_nanosleep		__ia32_sys_clock_nanosleep
++408	i386	timer_gettime64		sys_timer_gettime		__ia32_sys_timer_gettime
++409	i386	timer_settime64		sys_timer_settime		__ia32_sys_timer_settime
++410	i386	timerfd_gettime64	sys_timerfd_gettime		__ia32_sys_timerfd_gettime
++411	i386	timerfd_settime64	sys_timerfd_settime		__ia32_sys_timerfd_settime
++412	i386	utimensat_time64	sys_utimensat			__ia32_sys_utimensat
++413	i386	pselect6_time64		sys_pselect6			__ia32_compat_sys_pselect6_time64
++414	i386	ppoll_time64		sys_ppoll			__ia32_compat_sys_ppoll_time64
++416	i386	io_pgetevents_time64	sys_io_pgetevents		__ia32_sys_io_pgetevents
++417	i386	recvmmsg_time64		sys_recvmmsg			__ia32_compat_sys_recvmmsg_time64
++418	i386	mq_timedsend_time64	sys_mq_timedsend		__ia32_sys_mq_timedsend
++419	i386	mq_timedreceiv_time64	sys_mq_timedreceive		__ia32_sys_mq_timedreceive
++420	i386	semtimedop_time64	sys_semtimedop			__ia32_sys_semtimedop
++421	i386	rt_sigtimedwait_time64	sys_rt_sigtimedwait		__ia32_compat_sys_rt_sigtimedwait_time64
++422	i386	futex_time64		sys_futex			__ia32_sys_futex
++423	i386	sched_rr_get_interval_time64	sys_sched_rr_get_interval	__ia32_sys_sched_rr_get_interval
+diff --git a/arch/xtensa/kernel/syscalls/syscall.tbl b/arch/xtensa/kernel/syscalls/syscall.tbl
+index 482673389e21..f63e1d8c0437 100644
+--- a/arch/xtensa/kernel/syscalls/syscall.tbl
++++ b/arch/xtensa/kernel/syscalls/syscall.tbl
+@@ -373,3 +373,24 @@
+ 350	common	pkey_free			sys_pkey_free
+ 351	common	statx				sys_statx
+ 352	common	rseq				sys_rseq
++# 353 through 402 are unassigned to sync up with generic numbers
++403	common	clock_gettime64			sys_clock_gettime
++404	common	clock_settime64			sys_clock_settime
++405	common	clock_adjtime64			sys_clock_adjtime
++406	common	clock_getres_time64		sys_clock_getres
++407	common	clock_nanosleep_time64		sys_clock_nanosleep
++408	common	timer_gettime64			sys_timer_gettime
++409	common	timer_settime64			sys_timer_settime
++410	common	timerfd_gettime64		sys_timerfd_gettime
++411	common	timerfd_settime64		sys_timerfd_settime
++412	common	utimensat_time64		sys_utimensat
++413	common	pselect6_time64			sys_pselect6
++414	common	ppoll_time64			sys_ppoll
++416	common	io_pgetevents_time64		sys_io_pgetevents
++417	common	recvmmsg_time64			sys_recvmmsg
++418	common	mq_timedsend_time64		sys_mq_timedsend
++419	common	mq_timedreceiv_time64		sys_mq_timedreceive
++420	common	semtimedop_time64		sys_semtimedop
++421	common	rt_sigtimedwait_time64		sys_rt_sigtimedwait
++422	common	futex_time64			sys_futex
++423	common	sched_rr_get_interval_time64	sys_sched_rr_get_interval
+diff --git a/include/uapi/asm-generic/unistd.h b/include/uapi/asm-generic/unistd.h
+index af38c660c857..b8626863a90f 100644
+--- a/include/uapi/asm-generic/unistd.h
++++ b/include/uapi/asm-generic/unistd.h
+@@ -740,9 +740,52 @@ __SC_COMP_3264(__NR_io_pgetevents, sys_io_pgetevents_time32, sys_io_pgetevents,
+ __SYSCALL(__NR_rseq, sys_rseq)
+ #define __NR_kexec_file_load 294
+ __SYSCALL(__NR_kexec_file_load,     sys_kexec_file_load)
++/* 295 through 402 are unassigned to sync up with generic numbers */
++#if __BITS_PER_LONG == 32
++#define __NR_clock_gettime64 403
++__SYSCALL(__NR_clock_gettime64, sys_clock_gettime)
++#define __NR_clock_settime64 404
++__SYSCALL(__NR_clock_settime64, sys_clock_settime)
++#define __NR_clock_adjtime64 405
++__SYSCALL(__NR_clock_adjtime64, sys_clock_adjtime)
++#define __NR_clock_getres_time64 406
++__SYSCALL(__NR_clock_getres_time64, sys_clock_getres)
++#define __NR_clock_nanosleep_time64 407
++__SYSCALL(__NR_clock_nanosleep_time64, sys_clock_nanosleep)
++#define __NR_timer_gettime64 408
++__SYSCALL(__NR_timer_gettime64, sys_timer_gettime)
++#define __NR_timer_settime64 409
++__SYSCALL(__NR_timer_settime64, sys_timer_settime)
++#define __NR_timerfd_gettime64 410
++__SYSCALL(__NR_timerfd_gettime64, sys_timerfd_gettime)
++#define __NR_timerfd_settime64 411
++__SYSCALL(__NR_timerfd_settime64, sys_timerfd_settime)
++#define __NR_utimensat_time64 412
++__SYSCALL(__NR_utimensat_time64, sys_utimensat)
++#define __NR_pselect6_time64 413
++__SC_COMP(__NR_pselect6_time64, sys_pselect6, compat_sys_pselect6_time64)
++#define __NR_ppoll_time64 414
++__SC_COMP(__NR_ppoll_time64, sys_ppoll, compat_sys_ppoll_time64)
++#define __NR_io_pgetevents_time64 416
++__SYSCALL(__NR_io_pgetevents_time64, sys_io_pgetevents)
++#define __NR_recvmmsg_time64 417
++__SC_COMP(__NR_recvmmsg_time64, sys_recvmmsg, compat_sys_recvmmsg_time64)
++#define __NR_mq_timedsend_time64 418
++__SYSCALL(__NR_mq_timedsend_time64, sys_mq_timedsend)
++#define __NR_mq_timedreceiv_time64 419
++__SYSCALL(__NR_mq_timedreceiv_time64, sys_mq_timedreceive)
++#define __NR_semtimedop_time64 420
++__SYSCALL(__NR_semtimedop_time64, sys_semtimedop)
++#define __NR_rt_sigtimedwait_time64 421
++__SC_COMP(__NR_rt_sigtimedwait_time64, sys_rt_sigtimedwait, compat_sys_rt_sigtimedwait_time64)
++#define __NR_futex_time64 422
++__SYSCALL(__NR_futex_time64, sys_futex)
++#define __NR_sched_rr_get_interval_time64 423
++__SYSCALL(__NR_sched_rr_get_interval_time64, sys_sched_rr_get_interval)
++#endif
+ 
+ #undef __NR_syscalls
+-#define __NR_syscalls 295
++#define __NR_syscalls 424
+ 
+ /*
+  * 32 bit systems traditionally used different
+diff --git a/scripts/checksyscalls.sh b/scripts/checksyscalls.sh
+index cf931003395f..45aac9dac53b 100755
+--- a/scripts/checksyscalls.sh
++++ b/scripts/checksyscalls.sh
+@@ -84,6 +84,26 @@ cat << EOF
+ #define __IGNORE_statfs64
+ #define __IGNORE_llseek
+ #define __IGNORE_mmap2
++#define __IGNORE_clock_gettime64
++#define __IGNORE_clock_settime64
++#define __IGNORE_clock_adjtime64
++#define __IGNORE_clock_getres_time64
++#define __IGNORE_clock_nanosleep_time64
++#define __IGNORE_timer_gettime64
++#define __IGNORE_timer_settime64
++#define __IGNORE_timerfd_gettime64
++#define __IGNORE_timerfd_settime64
++#define __IGNORE_utimensat_time64
++#define __IGNORE_pselect6_time64
++#define __IGNORE_ppoll_time64
++#define __IGNORE_io_pgetevents_time64
++#define __IGNORE_recvmmsg_time64
++#define __IGNORE_mq_timedsend_time64
++#define __IGNORE_mq_timedreceiv_time64
++#define __IGNORE_semtimedop_time64
++#define __IGNORE_rt_sigtimedwait_time64
++#define __IGNORE_futex_time64
++#define __IGNORE_sched_rr_get_interval_time64
+ #else
+ #define __IGNORE_sendfile
+ #define __IGNORE_ftruncate
+@@ -98,6 +118,26 @@ cat << EOF
+ #define __IGNORE_statfs
+ #define __IGNORE_lseek
+ #define __IGNORE_mmap
++#define __IGNORE_clock_gettime
++#define __IGNORE_clock_settime
++#define __IGNORE_clock_adjtime
++#define __IGNORE_clock_getres
++#define __IGNORE_clock_nanosleep
++#define __IGNORE_timer_gettime
++#define __IGNORE_timer_settime
++#define __IGNORE_timerfd_gettime
++#define __IGNORE_timerfd_settime
++#define __IGNORE_utimensat
++#define __IGNORE_pselect6
++#define __IGNORE_ppoll
++#define __IGNORE_io_pgetevents
++#define __IGNORE_recvmmsg
++#define __IGNORE_mq_timedsend
++#define __IGNORE_mq_timedreceiv
++#define __IGNORE_semtimedop
++#define __IGNORE_rt_sigtimedwait
++#define __IGNORE_futex
++#define __IGNORE_sched_rr_get_interval
+ #endif
+ 
+ /* i386-specific or historical system calls */
+-- 
+2.20.0
+
