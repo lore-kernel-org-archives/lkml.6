@@ -2,107 +2,128 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFEE0C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 06:26:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F4AEC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 06:27:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA22A20657
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 06:26:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E3C55206B7
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 06:27:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="KbcY+sZp"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ESlhdUQp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727218AbfAJG06 (ORCPT
+        id S1727307AbfAJG1f (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 01:26:58 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:43584 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726338AbfAJG06 (ORCPT
+        Thu, 10 Jan 2019 01:27:35 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:33136 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726338AbfAJG1f (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 01:26:58 -0500
-Received: by mail-pf1-f193.google.com with SMTP id w73so4847111pfk.10
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jan 2019 22:26:57 -0800 (PST)
+        Thu, 10 Jan 2019 01:27:35 -0500
+Received: by mail-pf1-f196.google.com with SMTP id c123so4875062pfb.0;
+        Wed, 09 Jan 2019 22:27:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=AJLZyiuwozSilcJHEfPtty3E19jURDLTPlHh9adfgAU=;
-        b=KbcY+sZpinw4d2obh3P7Eh7C8SZrCgNSbqNR1TXaH53fmQleLmLCNqZ0Y5zQ+5qe4v
-         I4XVAgGUnmpTwra/mm8YqfZZVYl7eALSZlriuMmLElXHUH2cGWNoHzbY9JD1u3m1OJn4
-         c+JSvXEB/8XcZ2iXGFXNMpC2xaF0P07zO/0oo=
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=Uqep5P12TmNJRbDpNJ38z4+WnFaCIQ/6dfEgnqnIVCU=;
+        b=ESlhdUQpSVrVl6UjPIHJprxQTwAxcUKZf+HRCE+TrPSxd3kch7zC2hhzmu/lDZxfQX
+         ELnBHZkHxtPmBR+mMNXPCzAmu/nZzazCFua4tUNfxY7tVIxhMariWppDrnIgLEaiKmKV
+         MY7O/l8RSbNYO5RswniB1EF0KKmkvjT7g1OWaUdc2g0Xy1ZM2r3qhhDh430LBhsLFax3
+         Egv2p0ealXSWQI74wreKnAQiFUG0LAx7usnFlVnCCC01ENEktaRj3mTgTe1nkcf9Tf1a
+         tjBul/sgTFCUAwfgpqIQZfda2WnkE1xerQh2mKM9i6/zZ50M+tqf92BjLGhAcRYcTrfG
+         4VUw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=AJLZyiuwozSilcJHEfPtty3E19jURDLTPlHh9adfgAU=;
-        b=fHfO0WA2h4bdDhd42WeH+ilkBcypsYyFbrUOOLaEbhUdGHrm0i6D8WvywHh4TQ2NcP
-         N2714Vnj0LNdEyEnJdTSsf7I4p5wiBL3XzRpl+KJaMiq0FDlrE1fby9jsabUS99TX+cf
-         k+FeZL13AjzB2fV+WwZxuzhouK/0zNny/MXnluaSlpgDvUC9w5jUzpdPksqRTovf+9dT
-         aWoGGrk717iNzcNo/ImevVnpFqqdQqzNR4ob3YMFmXpajPnW0njKpTpUwu35RtSkfDR5
-         pL90p5ctTlGo2gjeyV3qZk5G4/P3FxHknZDE71HplK4mCkG4g5A4w0nhXZ8Iko6D7Y4F
-         QNeQ==
-X-Gm-Message-State: AJcUukcSyR7CnqyfYFRdC4rUafGajt3mUTJyInHYbYg6n4dX5ixeF7Y6
-        rzVAKitwxpYx0srBi7MCbbcM3Q==
-X-Google-Smtp-Source: ALg8bN7KxC/9mJdJNHPZcR44Zn0snuWIMEYLSIEjKTvXzpb7whxoceCur9DnAeRgQiPrIPlOwU27Zg==
-X-Received: by 2002:a65:6148:: with SMTP id o8mr8231871pgv.451.1547101617494;
-        Wed, 09 Jan 2019 22:26:57 -0800 (PST)
-Received: from localhost ([122.166.131.155])
-        by smtp.gmail.com with ESMTPSA id v89sm111673671pfk.12.2019.01.09.22.26.56
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 09 Jan 2019 22:26:56 -0800 (PST)
-Date:   Thu, 10 Jan 2019 11:56:54 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Rajendra Nayak <rnayak@codeaurora.org>
-Cc:     andy.gross@linaro.org, robh@kernel.org, sboyd@kernel.org,
-        ulf.hansson@linaro.org, collinsd@codeaurora.org, mka@chromium.org,
-        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, henryc.chen@mediatek.com
-Subject: Re: [PATCH v11 1/9] dt-bindings: opp: Introduce opp-level bindings
-Message-ID: <20190110062654.3ukmgorqdw5tist5@vireshk-i7>
-References: <20190110040209.6028-1-rnayak@codeaurora.org>
- <20190110040209.6028-2-rnayak@codeaurora.org>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=Uqep5P12TmNJRbDpNJ38z4+WnFaCIQ/6dfEgnqnIVCU=;
+        b=L6YqooNQGhMBydFuYY57hzRopgPGlv1Go0XzXkRSvw7cTlcPw8Kd9zQ7Tllsq6S5Tu
+         GNB9RnYkHxcf/ar/DUUKHqpSfhinst0VdrVy5Yd659nQlw3/gw6Ap6dmBtujk+9Kfg+L
+         Cl6qMZ1M3uJI3op6aOJBSG7FlDdFshpi4hjfaj4VdWKheBmsmzWGj6JgQkCHPpkddeaU
+         wi7KEnzcMzrUWBxhcxbHqhIrmebA1GI2kr49cx5sD7gtxzSzyEfzSLRIYY3IxIBorn6B
+         ctuOl4H72QgjrW5JoUIVuBz+ijbTr1ZNHS+jXFCu0tNQzZ0WD2KAeFfFdG32BnLIikgO
+         p6jQ==
+X-Gm-Message-State: AJcUukc8Yy2OD1fb9gYgAHcpQ6qmgIIFT8w6x7p2X2QZ4dgpfnNyNvF3
+        aWU3eZUoJgxlWmD6eEEuN04=
+X-Google-Smtp-Source: ALg8bN7j2Q/fjvAboQakyJ6XacZL6OAh9N+31Z5vS9qdNJVSsMG9zZStrivtv2kMB90g+KP/4EJXTA==
+X-Received: by 2002:a63:bc02:: with SMTP id q2mr8304277pge.116.1547101654087;
+        Wed, 09 Jan 2019 22:27:34 -0800 (PST)
+Received: from myunghoj-Precision-5530 (cpe-76-176-3-80.san.res.rr.com. [76.176.3.80])
+        by smtp.gmail.com with ESMTPSA id h134sm149229455pfe.27.2019.01.09.22.27.32
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 09 Jan 2019 22:27:33 -0800 (PST)
+Date:   Wed, 9 Jan 2019 22:27:31 -0800
+From:   Myungho Jung <mhjungk@gmail.com>
+To:     Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+        Parav Pandit <parav@mellanox.com>
+Cc:     linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] RDMA/cma: Rollback source IP address if failing to
+ acquire device
+Message-ID: <20190110062727.GA25844@myunghoj-Precision-5530>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190110040209.6028-2-rnayak@codeaurora.org>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10-01-19, 09:32, Rajendra Nayak wrote:
-> Add opp-level as an additional property in the OPP node to describe
-> the performance level of the device.
-> 
-> On some SoCs (especially from Qualcomm and MediaTek) this value
-> is communicated to a remote microprocessor by the CPU, which
-> then takes some actions (like adjusting voltage values across various
-> rails) based on the value passed.
-> 
-> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
-> ---
->  Documentation/devicetree/bindings/opp/opp.txt | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/opp/opp.txt b/Documentation/devicetree/bindings/opp/opp.txt
-> index c396c4c0af92..76b6c79604a5 100644
-> --- a/Documentation/devicetree/bindings/opp/opp.txt
-> +++ b/Documentation/devicetree/bindings/opp/opp.txt
-> @@ -129,6 +129,9 @@ Optional properties:
->  - opp-microamp-<name>: Named opp-microamp property. Similar to
->    opp-microvolt-<name> property, but for microamp instead.
->  
-> +- opp-level: A value representing the performance level of the device,
-> +  expressed as a 32-bit integer.
-> +
->  - clock-latency-ns: Specifies the maximum possible transition latency (in
->    nanoseconds) for switching to this OPP from any other OPP.
+If cma_acquire_dev_by_src_ip() returns error in addr_handler(), the
+device state changes back to RDMA_CM_ADDR_BOUND but the resolved source
+IP address is still left. After that, if rdma_destroy_id() is called
+after rdma_listen(), the device is freed without removed from
+listen_any_list in cma_cancel_operation(). Revert to the previous IP
+address if acquiring device fails.
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Reported-by: syzbot+f3ce716af730c8f96637@syzkaller.appspotmail.com
+Signed-off-by: Myungho Jung <mhjungk@gmail.com>
+---
+ drivers/infiniband/core/cma.c | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
 
+diff --git a/drivers/infiniband/core/cma.c b/drivers/infiniband/core/cma.c
+index 63a7cc00bae0..8cd113b0ddfb 100644
+--- a/drivers/infiniband/core/cma.c
++++ b/drivers/infiniband/core/cma.c
+@@ -2963,13 +2963,22 @@ static void addr_handler(int status, struct sockaddr *src_addr,
+ {
+ 	struct rdma_id_private *id_priv = context;
+ 	struct rdma_cm_event event = {};
++	struct sockaddr *addr;
++	struct sockaddr_storage old_addr;
+ 
+ 	mutex_lock(&id_priv->handler_mutex);
+ 	if (!cma_comp_exch(id_priv, RDMA_CM_ADDR_QUERY,
+ 			   RDMA_CM_ADDR_RESOLVED))
+ 		goto out;
+ 
+-	memcpy(cma_src_addr(id_priv), src_addr, rdma_addr_size(src_addr));
++	/*
++	 * Store the previous src address, so that if we fail to acquire
++	 * matching rdma device, old address can be restored back, which helps
++	 * to cancel the cma listen operation correctly.
++	 */
++	addr = cma_src_addr(id_priv);
++	memcpy(&old_addr, addr, rdma_addr_size(addr));
++	memcpy(addr, src_addr, rdma_addr_size(src_addr));
+ 	if (!status && !id_priv->cma_dev) {
+ 		status = cma_acquire_dev_by_src_ip(id_priv);
+ 		if (status)
+@@ -2980,6 +2989,8 @@ static void addr_handler(int status, struct sockaddr *src_addr,
+ 	}
+ 
+ 	if (status) {
++		memcpy(addr, &old_addr,
++		       rdma_addr_size((struct sockaddr *)&old_addr));
+ 		if (!cma_comp_exch(id_priv, RDMA_CM_ADDR_RESOLVED,
+ 				   RDMA_CM_ADDR_BOUND))
+ 			goto out;
 -- 
-viresh
+2.17.1
+
