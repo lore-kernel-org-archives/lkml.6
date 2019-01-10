@@ -2,113 +2,219 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95FE3C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 16:17:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11B9EC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 16:18:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 63706206B7
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 16:17:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D45C420685
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 16:18:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=brainfault-org.20150623.gappssmtp.com header.i=@brainfault-org.20150623.gappssmtp.com header.b="eU/+6VpX"
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="M2pK/8FU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729797AbfAJQRV (ORCPT
+        id S1729825AbfAJQSp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 11:17:21 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:51456 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727771AbfAJQRU (ORCPT
+        Thu, 10 Jan 2019 11:18:45 -0500
+Received: from us01smtprelay-2.synopsys.com ([198.182.47.9]:41458 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727788AbfAJQSo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 11:17:20 -0500
-Received: by mail-wm1-f66.google.com with SMTP id b11so11838960wmj.1
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 08:17:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=m7zd4F4iCg7LqUJrAtDsKz7+E+kJNDA5tf+6CtbsY7Q=;
-        b=eU/+6VpX2yaywkjodLF6Hqp2XAB7DKmZTsrA7KnUGxFncAS2CJADrKxdofrFgLRw4P
-         eHTNOAh1gHe46rsFeSp2MFaNJM2XL1q1hbbBBgVLpvbebUHzGaDuhyTaQ6scTu7gK7W+
-         JO4pL6k/kY/3+Geqs0v2vSmuQwVhq1eoIXJZq8Y2GOAvx9G2mRE3hymg+A25pc9zOe5I
-         +T5/SlxjLqqM0IiV4vfUPBow9aT+D4DYXMyuC+UYOg4rSBbYgRzB1iQgfuE66Xl9b3WF
-         HZDIv757/25JbpwnUqO3hbQp4zUVnHUQ8DLs2TNClWyUnMCGMZ5iAvE6T5Y0P+hoUkJK
-         H0OQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=m7zd4F4iCg7LqUJrAtDsKz7+E+kJNDA5tf+6CtbsY7Q=;
-        b=ALuXlFxEyU+V7XtZWWNN9et7yoyafmkqZqxucLCTUYY9zIJIYbnMZkjNjA7XbQGAVz
-         52twKPgiUKHsv3RYYvnNxMKybeFkvBNqX7ikaYAPHtOrmeyvrlidWIQ3prpLZ2nXe3Au
-         i+WwIqACtdHMd88b9HORt3yWnwbfN5pbVnX/UIH4hMfystP8op6MMESyCFaE5VrEzETA
-         DqGdtbhjNH+GkXV/qe2yA84DRW9IFw2IGXV/zHKjUAUeIwlY5yPKEjaGArmgKiDNwdhz
-         beycFFXy+d3/gByZcR7lgYNf69asYgjq52gu3NsMI9az7Ozg+liZ6qm4F7Fq/cqHLMF8
-         yzpg==
-X-Gm-Message-State: AJcUukcZ4Qn9UDqsGK8fhLyE9v8o3dNeYlV1+M2F+m0BLd4bbewr/39K
-        6vLAvk0Vh+4GNm56q0AWImH0EVNKMjbw8ABZACaR/Q==
-X-Google-Smtp-Source: ALg8bN6AAzhTc8eiJ5/RdCwaMAu4nfBEQKLa3Fg3gFECP6GCQfpAJuksSHlEu/FiybRFHYBOZWIeRK1cc9EwWF5FhM8=
-X-Received: by 2002:a1c:f509:: with SMTP id t9mr11115100wmh.76.1547137038333;
- Thu, 10 Jan 2019 08:17:18 -0800 (PST)
+        Thu, 10 Jan 2019 11:18:44 -0500
+Received: from mailhost.synopsys.com (mailhost2.synopsys.com [10.13.184.66])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id 0A59924E1190;
+        Thu, 10 Jan 2019 08:18:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1547137124; bh=e36giWoucqJ1mkLZysgssgXf4Q045PYv6EaiUSHhT5k=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To:From;
+        b=M2pK/8FUvc4OMMR2IdgmbgfCrnYvWlEdMUpJwB2YYm3bxx3DmTafaCikaqNDLUKEf
+         NmPKrPjUYJTFCKMXf7xU9mYNMRzrCCXG5U3tQOSrZyzb+eHXTbfesSVNPCHdfeMuXY
+         ZYcsaFEKSv0wvTmOLAJIPDvEOjOqHZxJ9j3cK48uwmItVinLEgKH/Qji/N8Dd2rbYi
+         UD9EuejkY/eVdiITQ56cmI7rEi98wSZwwPPWShlWSgNZY0LczLvqvX4dDHXnZuzjuo
+         NSwFibHlZilHM1+pqUVaPtl1hCLpSZxJFF2gO3gOskWeLmnim0eBCkphdSYa+5WHNT
+         /zppvy/1hDC5A==
+Received: from US01WEHTC2.internal.synopsys.com (us01wehtc2.internal.synopsys.com [10.12.239.237])
+        by mailhost.synopsys.com (Postfix) with ESMTP id BD7EA31BF;
+        Thu, 10 Jan 2019 08:18:43 -0800 (PST)
+Received: from DE02WEHTCA.internal.synopsys.com (10.225.19.92) by
+ US01WEHTC2.internal.synopsys.com (10.12.239.237) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Thu, 10 Jan 2019 08:18:43 -0800
+Received: from DE02WEHTCB.internal.synopsys.com (10.225.19.94) by
+ DE02WEHTCA.internal.synopsys.com (10.225.19.92) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Thu, 10 Jan 2019 17:18:41 +0100
+Received: from [10.107.19.13] (10.107.19.13) by
+ DE02WEHTCB.internal.synopsys.com (10.225.19.80) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Thu, 10 Jan 2019 17:18:41 +0100
+Subject: Re: [V3, 4/4] media: platform: dwc: Add MIPI CSI-2 controller driver
+To:     <Eugen.Hristev@microchip.com>, <luis.oliveira@synopsys.com>,
+        <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC:     <joao.pinto@synopsys.com>, <festevam@gmail.com>,
+        <mchehab@kernel.org>, <gregkh@linuxfoundation.org>,
+        <davem@davemloft.net>, <akpm@linux-foundation.org>,
+        <arnd@arndb.de>, <hans.verkuil@cisco.com>,
+        <laurent.pinchart@ideasonboard.com>, <geert@linux-m68k.org>,
+        <narmstrong@baylibre.com>, <p.zabel@pengutronix.de>,
+        <treding@nvidia.com>, <maxime.ripard@bootlin.com>,
+        <todor.tomov@linaro.org>
+References: <1539953556-35762-1-git-send-email-lolivei@synopsys.com>
+ <1539953556-35762-5-git-send-email-lolivei@synopsys.com>
+ <4db76eb2-460f-c644-6dbd-370b07b2def8@microchip.com>
+From:   Luis de Oliveira <luis.oliveira@synopsys.com>
+Message-ID: <2407a3ca-1a83-5685-c26c-a922251b2943@synopsys.com>
+Date:   Thu, 10 Jan 2019 16:18:38 +0000
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-References: <20181204135507.3706-1-anup@brainfault.org> <20181204135507.3706-2-anup@brainfault.org>
- <mvmbm4oehd5.fsf_-_@suse.de> <CAAhSdy3-SaP7RBbgx7kZgkkxeN2W-Ue8QDFXkOgFG5GiAg52-g@mail.gmail.com>
- <mvm7efcedop.fsf@suse.de>
-In-Reply-To: <mvm7efcedop.fsf@suse.de>
-From:   Anup Patel <anup@brainfault.org>
-Date:   Thu, 10 Jan 2019 21:47:07 +0530
-Message-ID: <CAAhSdy0suSgKpdz+NUrXzS9Ozp75hMC6ovW4yLf5s0KYJwwocw@mail.gmail.com>
-Subject: Re: [PATCH] tty/serial: emit CR before NL in RISC-V SBL console
-To:     Andreas Schwab <schwab@suse.de>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Atish Patra <atish.patra@wdc.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Rob Herring <robh@kernel.org>, linux-riscv@lists.infradead.org,
-        "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>,
-        linux-serial@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <4db76eb2-460f-c644-6dbd-370b07b2def8@microchip.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.107.19.13]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 10, 2019 at 8:56 PM Andreas Schwab <schwab@suse.de> wrote:
->
-> On Jan 10 2019, Anup Patel <anup@brainfault.org> wrote:
->
-> > Instead of doing '\n' handling here, we should do it in BBL or
-> > OpenSBI (i.e. SBI runtime firmware) otherwise all users of
-> > SBI_CONSOLE_PUTCHAR (namely, Linux, FreeBSD,
-> > FreeRTOS, U-Boot S-mode, etc) will endup having '\n'
-> > handling.
->
-> I don't think the serial driver should do NLCR handling on its own,
-> without being instructed by the tty layer.  Since the earlycon does not
-> have a tty layer, it needs to handle it explicitly.
 
-I tried to investigate more. What you suggest is correct
-but we should use uart_console_write() API.
 
-Instead of explicitly doing NLCR here, we should do
-something as follows:
+On 09-Jan-19 13:07, Eugen.Hristev@microchip.com wrote:
+> 
+> 
+> On 19.10.2018 15:52, Luis Oliveira wrote:
+>> Add the Synopsys MIPI CSI-2 controller driver. This
+>> controller driver is divided in platform dependent functions
+>> and core functions. It also includes a platform for future
+>> DesignWare drivers.
+>>
+>> Signed-off-by: Luis Oliveira <lolivei@synopsys.com>
+>> ---
+>> Changelog
+>> v2-V3
+>> - exposed IPI settings to userspace
+>> - fixed headers
+>>
+>>   MAINTAINERS                              |  11 +
+>>   drivers/media/platform/dwc/Kconfig       |  30 +-
+>>   drivers/media/platform/dwc/Makefile      |   2 +
+>>   drivers/media/platform/dwc/dw-csi-plat.c | 699 +++++++++++++++++++++++++++++++
+>>   drivers/media/platform/dwc/dw-csi-plat.h |  77 ++++
+>>   drivers/media/platform/dwc/dw-mipi-csi.c | 494 ++++++++++++++++++++++
+>>   drivers/media/platform/dwc/dw-mipi-csi.h | 202 +++++++++
+>>   include/media/dwc/dw-mipi-csi-pltfrm.h   | 102 +++++
+>>   8 files changed, 1616 insertions(+), 1 deletion(-)
+>>   create mode 100644 drivers/media/platform/dwc/dw-csi-plat.c
+>>   create mode 100644 drivers/media/platform/dwc/dw-csi-plat.h
+>>   create mode 100644 drivers/media/platform/dwc/dw-mipi-csi.c
+>>   create mode 100644 drivers/media/platform/dwc/dw-mipi-csi.h
+>>   create mode 100644 include/media/dwc/dw-mipi-csi-pltfrm.h
+>>
+> 
+> [snip]
+> 
+>> +/* Video formats supported by the MIPI CSI-2 */
+>> +const struct mipi_fmt dw_mipi_csi_formats[] = {
+>> +	{
+>> +		/* RAW 8 */
+>> +		.code = MEDIA_BUS_FMT_SBGGR8_1X8,
+>> +		.depth = 8,
+>> +	},
+>> +	{
+>> +		/* RAW 10 */
+>> +		.code = MEDIA_BUS_FMT_SBGGR10_2X8_PADHI_BE,
+>> +		.depth = 10,
+>> +	},
+> 
+> Hi Luis,
+> 
+> Any reason why RAW12 format is not handled here ?
+> 
+> Here, namely MEDIA_BUS_FMT_SBGGR12_1X12 etc.
+> 
+Hi Eugen,
 
-static void sbi_putc(struct uart_port *port, int c)
-{
-    sbi_console_putchar(c);
-}
+My Hw testing setup currently does not support it, so I didn't add it.
 
-static void sbi_console_write(struct console *con,
-                                               const char *s, unsigned n)
-{
-    struct earlycon_device *dev = con->data;
-    uart_console_write(&dev->port, s, n, sbi_putc);
-}
+>> +	{
+>> +		/* RGB 565 */
+>> +		.code = MEDIA_BUS_FMT_RGB565_2X8_BE,
+>> +		.depth = 16,
+>> +	},
+>> +	{
+>> +		/* BGR 565 */
+>> +		.code = MEDIA_BUS_FMT_RGB565_2X8_LE,
+>> +		.depth = 16,
+>> +	},
+>> +	{
+>> +		/* RGB 888 */
+>> +		.code = MEDIA_BUS_FMT_RGB888_2X12_LE,
+>> +		.depth = 24,
+>> +	},
+>> +	{
+>> +		/* BGR 888 */
+>> +		.code = MEDIA_BUS_FMT_RGB888_2X12_BE,
+>> +		.depth = 24,
+>> +	},
+>> +};
+> 
+> [snip]
+> 
+>> +
+>> +void dw_mipi_csi_set_ipi_fmt(struct mipi_csi_dev *csi_dev)
+>> +{
+>> +	struct device *dev = csi_dev->dev;
+>> +
+>> +	if (csi_dev->ipi_dt)
+>> +		dw_mipi_csi_write(csi_dev, reg.IPI_DATA_TYPE, csi_dev->ipi_dt);
+>> +	else {
+>> +		switch (csi_dev->fmt->code) {
+>> +		case MEDIA_BUS_FMT_RGB565_2X8_BE:
+>> +		case MEDIA_BUS_FMT_RGB565_2X8_LE:
+>> +			dw_mipi_csi_write(csi_dev,
+>> +					reg.IPI_DATA_TYPE, CSI_2_RGB565);
+>> +			dev_dbg(dev, "DT: RGB 565");
+>> +			break;
+>> +
+>> +		case MEDIA_BUS_FMT_RGB888_2X12_LE:
+>> +		case MEDIA_BUS_FMT_RGB888_2X12_BE:
+>> +			dw_mipi_csi_write(csi_dev,
+>> +					reg.IPI_DATA_TYPE, CSI_2_RGB888);
+>> +			dev_dbg(dev, "DT: RGB 888");
+>> +			break;
+>> +		case MEDIA_BUS_FMT_SBGGR10_2X8_PADHI_BE:
+>> +			dw_mipi_csi_write(csi_dev,
+>> +					reg.IPI_DATA_TYPE, CSI_2_RAW10);
+>> +			dev_dbg(dev, "DT: RAW 10");
+>> +			break;
+>> +		case MEDIA_BUS_FMT_SBGGR8_1X8:
+>> +			dw_mipi_csi_write(csi_dev,
+>> +					reg.IPI_DATA_TYPE, CSI_2_RAW8);
+>> +			dev_dbg(dev, "DT: RAW 8");
+>> +			break;
+> 
+> Same here, in CSI_2_RAW12 case it will default to a RGB565 case.
+> 
+> Thanks,
+> 
+> Eugen
+> 
+> 
+I will try to add the support for this data type in my next patchset if not I
+will flag it as unsupported for now in the commit message and code.
 
-The uart_console_write() does the NLCR handling.
+Thanks for your review,
+Luis
 
-Regards,
-Anup
+> 
+>> +		default:
+>> +			dw_mipi_csi_write(csi_dev,
+>> +					reg.IPI_DATA_TYPE, CSI_2_RGB565);
+>> +			dev_dbg(dev, "Error");
+>> +			break;
+>> +		}
+>> +	}
+>> +}
+>> +
+> 
+> [snip]
+> 
