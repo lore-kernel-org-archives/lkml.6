@@ -2,123 +2,137 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0B7FC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 14:52:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AA6EC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 14:52:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BAD6F21783
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 14:52:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="hxonHDkP";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="efgbsdor"
+	by mail.kernel.org (Postfix) with ESMTP id F21662177B
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 14:52:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729360AbfAJOwR (ORCPT
+        id S1729373AbfAJOwU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 09:52:17 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:55632 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729032AbfAJOwQ (ORCPT
+        Thu, 10 Jan 2019 09:52:20 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:41312 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729032AbfAJOwU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 09:52:16 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 683FA608C6; Thu, 10 Jan 2019 14:52:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1547131935;
-        bh=hIXiILI5C4y24hHeAtwGojns8dRLrMtEJ59Jiir/WD0=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=hxonHDkPp8KqnmgBL/HrSvemr9grkclvhEsYENJvQ0MyupkBj/JNgNsk+p7mb5KUj
-         B1tuoI3pVX6Eyj/ztKhWL4mVWc2RF2HsF01atHHt5hqbSiILuijS0krgC1dzOzClKv
-         dqeNACmwwbvCZPPGoEHMxzbjhN86oUGyslXfzBqI=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id B239B6092B;
-        Thu, 10 Jan 2019 14:52:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1547131933;
-        bh=hIXiILI5C4y24hHeAtwGojns8dRLrMtEJ59Jiir/WD0=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=efgbsdorTh9YFK+uZdmYj/6/sQCXyfv8GPN2/0VOg98V76oIdnwTRjsvZ3wgjaE/Z
-         qrs7M1tjEmzsTuKOKspda8EX7nrroOWlnTemR4bYkE3qn9IPB7XJWXuxLiq/lNg86s
-         vuYP3D92KWExm9nDO8JtRvdSYPrNTTNWXkPpvGtI=
+        Thu, 10 Jan 2019 09:52:20 -0500
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x0AEnMa2147041
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 09:52:18 -0500
+Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2px5x5y09f-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 09:52:18 -0500
+Received: from localhost
+        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Thu, 10 Jan 2019 14:52:18 -0000
+Received: from b01cxnp22035.gho.pok.ibm.com (9.57.198.25)
+        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 10 Jan 2019 14:52:15 -0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0AEqEYp24117402
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 10 Jan 2019 14:52:15 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D7A90B205F;
+        Thu, 10 Jan 2019 14:52:14 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B9F0DB2065;
+        Thu, 10 Jan 2019 14:52:14 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.88])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Thu, 10 Jan 2019 14:52:14 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 7E93216C5F90; Thu, 10 Jan 2019 06:52:15 -0800 (PST)
+Date:   Thu, 10 Jan 2019 06:52:15 -0800
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Florian Westphal <fw@strlen.de>,
+        Anatol Pomozov <anatol.pomozov@gmail.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: seqcount usage in xt_replace_table()
+Reply-To: paulmck@linux.ibm.com
+References: <CAOMFOmU=t9YbE68YpoQn0Ug0XN1F+0iuJp9J=htCRRrbdaPSVA@mail.gmail.com>
+ <20190108223746.shuwx3ro7cgwz7hh@breakpoint.cc>
+ <20190110124123.GA21224@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Thu, 10 Jan 2019 20:22:12 +0530
-From:   Balakrishna Godavarthi <bgodavar@codeaurora.org>
-To:     Johan Hovold <johan@kernel.org>
-Cc:     marcel@holtmann.org, johan.hedberg@gmail.com, mka@chromium.org,
-        linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org,
-        hemantg@codeaurora.org, linux-arm-msm@vger.kernel.org,
-        Johan Hovold <jhovold@gmail.com>
-Subject: Re: [PATCH v5 2/5] Bluetooth: hci_qca: Deassert RTS while baudrate
- change command
-In-Reply-To: <20190110143928.GE3430@localhost>
-References: <20181220144639.15928-1-bgodavar@codeaurora.org>
- <20181220144639.15928-3-bgodavar@codeaurora.org>
- <20190109145224.GN14782@localhost>
- <b5160d8862b49f0369fa58610516d354@codeaurora.org>
- <20190110143928.GE3430@localhost>
-Message-ID: <61301df80bd6a8ee0265b31b7f6a3aa1@codeaurora.org>
-X-Sender: bgodavar@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190110124123.GA21224@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 19011014-0072-0000-0000-000003E7DFED
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010379; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000274; SDB=6.01144485; UDB=6.00595914; IPR=6.00924749;
+ MB=3.00025068; MTD=3.00000008; XFM=3.00000015; UTC=2019-01-10 14:52:17
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19011014-0073-0000-0000-00004AC1FD04
+Message-Id: <20190110145215.GM1215@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-10_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=904 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901100117
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Johan,
+On Thu, Jan 10, 2019 at 01:41:23PM +0100, Peter Zijlstra wrote:
+> On Tue, Jan 08, 2019 at 11:37:46PM +0100, Florian Westphal wrote:
+> > Anatol Pomozov <anatol.pomozov@gmail.com> wrote:
+> > > Or maybe xt_replace_table() can be enhanced? When I hear that
+> > > something waits until an event happens on all CPUs I think about
+> > > wait_event() function. Would it be better for xt_replace_table() to
+> > > introduce an atomic counter that is decremented by CPUs, and the main
+> > > CPU waits until the counter gets zero?
+> > 
+> > That would mean placing an additional atomic op into the
+> > iptables evaluation path (ipt_do_table and friends).
+> > 
+> 
+> For:
+> 
+> 	/*
+> 	 * Ensure contents of newinfo are visible before assigning to
+> 	 * private.
+> 	 */
+> 	smp_wmb();
+> 	table->private = newinfo;
+> 
+> we have:
+> 
+> 	smp_store_release(&table->private, newinfo);
+> 
+> But what store does that second smp_wmb() order against? The comment:
+> 
+> 	/* make sure all cpus see new ->private value */
+> 	smp_wmb();
+> 
+> makes no sense what so ever, no smp_*() barrier can provide such
+> guarantees.
 
-On 2019-01-10 20:09, Johan Hovold wrote:
-> On Thu, Jan 10, 2019 at 08:04:12PM +0530, Balakrishna Godavarthi wrote:
->> Hi Johan,
->> 
->> On 2019-01-09 20:22, Johan Hovold wrote:
->> > On Thu, Dec 20, 2018 at 08:16:36PM +0530, Balakrishna Godavarthi wrote:
->> >> This patch will help to stop frame reassembly errors while changing
->> >> the baudrate. This is because host send a change baudrate request
->> >> command to the chip with 115200 bps, Whereas chip will change their
->> >> UART clocks to the enable for new baudrate and sends the response
->> >> for the change request command with newer baudrate, On host side
->> >> we are still operating in 115200 bps which results of reading garbage
->> >> data. Here we are pulling RTS line, so that chip we will wait to send
->> >> data
->> >> to host until host change its baudrate.
-> 
->> >> +		/* Deassert RTS while changing the baudrate of chip and host.
->> >> +		 * This will prevent chip from transmitting its response with
->> >> +		 * the new baudrate while the host port is still operating at
->> >> +		 * the old speed.
->> >> +		 */
->> >> +		qcadev = serdev_device_get_drvdata(hu->serdev);
->> >> +		if (qcadev->btsoc_type == QCA_WCN3990)
->> >> +			serdev_device_set_rts(hu->serdev, false);
->> >> +
->> >
->> > This may not do what you want unless you also disable hardware flow
->> > control.
-> 
->> Here my requirement here is to block the chip to send its data before
->> HOST changes it is baudrate. So if i disable flow control lines of
->> HOST which will be in low state.  so that the chip will send it data
->> before HOST change the baudrate of HOST. which results in frame
->> reassembly error.
-> 
-> Not sure I understand what you're trying to say above. My point is that
-> you cannot reliable control RTS when you have automatic flow control
-> enabled (i.e. it is managed by hardware and it's state reflects whether
-> there's room in the UART receive FIFO).
-> 
-> Johan
+Agreed, this would require something like synchronize_rcu() or some
+sort of IPI-based sys_membarrier() lookalike.
 
-[Bala]: Yes i got your point, but our driver will not support automatic 
-flow control (based on the FIFO status)
-         unless we explicitly enabled via software. i.e. if we enable the 
-flow, hardware will look for it.
-         else it will not looks for CTS or RTS Line.
+							Thanx, Paul
 
--- 
-Regards
-Balakrishna.
+> > Only alternative I see that might work is synchronize_rcu (the
+> > _do_table functions are called with rcu read lock held).
+> > 
+> > I guess current scheme is cheaper though.
+> 
+> Is performance a concern in this path? There is no comment justifying
+> this 'creative' stuff.
+> 
+
