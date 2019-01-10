@@ -2,120 +2,140 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CE93C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 12:56:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 179AFC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 12:58:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA2BC214C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 12:56:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D8D3520879
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 12:58:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="uZkhceZf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728744AbfAJM4P (ORCPT
+        id S1728655AbfAJM6k (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 07:56:15 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:33878 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726974AbfAJM4O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 07:56:14 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1394380D;
-        Thu, 10 Jan 2019 04:56:14 -0800 (PST)
-Received: from [10.1.196.62] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 26EDF3F5AF;
-        Thu, 10 Jan 2019 04:56:13 -0800 (PST)
-Subject: Re: [PATCH] arm: fix a migrating irq bug when hotplug cpu
-To:     Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Cc:     Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        linux-kernel@vger.kernel.org
-References: <20190110100922.20280-1-dietmar.eggemann@arm.com>
-From:   Marc Zyngier <marc.zyngier@arm.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=marc.zyngier@arm.com; prefer-encrypt=mutual; keydata=
- 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
-Organization: ARM Ltd
-Message-ID: <52e825c6-6704-c6b9-bbba-a87a0f5ec9cb@arm.com>
-Date:   Thu, 10 Jan 2019 12:56:11 +0000
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        Thu, 10 Jan 2019 07:58:40 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:35711 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726974AbfAJM6k (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 07:58:40 -0500
+Received: by mail-wr1-f65.google.com with SMTP id 96so11287653wrb.2
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 04:58:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=references:user-agent:from:to:cc:subject:in-reply-to:date
+         :message-id:mime-version;
+        bh=Ghyg2fTNZ6AJK2z+KTbcv4WJQiMtAvnC4S83tmSQRP4=;
+        b=uZkhceZfR2py7d6JlA3P0T64RdjXetk+fy7ZlrB/rXbQM1ZqBQslgfCLQDudjuyZIQ
+         NzgwTpP32zvzf0WLV4rOKvjxVBOtNL/r90R2A8QMQq92fZCAMeRijpyu+xUh5Qfo4D0m
+         SHtucDgiaiGLhMnmexlAvsHqfmORbsxOMsBu215v575BibZeuIIq8QDzZmZPjQ2XWfbn
+         tvggYsbWc+98qiQ9alJ/h8qhSqxA2+ygUNcqFKYg24mb9BfoVPkkuNKO+KMjvGy5RK4F
+         GK/LDtZozttRlbdiWmhw0swd1IngtGQdbKx/FJw2V9iEBsCwpvxiU9VR86Qc0NcEfDmY
+         ViTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:references:user-agent:from:to:cc:subject
+         :in-reply-to:date:message-id:mime-version;
+        bh=Ghyg2fTNZ6AJK2z+KTbcv4WJQiMtAvnC4S83tmSQRP4=;
+        b=R9DRnFwIZMUpOn9EHQ1c39Ma51J5qgXCphmJIEYqUkaz2RoyGTeCwAUYGXrd6WEwIN
+         Em0XyPVYnZYSQjXUL1ag4pRT9jwVd5kij8t/9MhhzCi3LPryqDtLoeh1+AcGTQzSHLb4
+         HBHoxn4BdK732JdE70fL9ZvFRjBymZmX8pYAUIuVCzykuNv0NMDFcXe8QPeB1Lb9UZaN
+         q2n6EWqBhFZ0FHlQkGDAmTwQl/0p2Q1uPidbW7IOq13qahRkpPMwRDDlPGd7haPhZ0+P
+         Mp+T43GnC0jhDMVQpT05sf6Hx72tdDTytTGlFiwvSxPO7W2N12WVrC76I6lTs6YKvKuw
+         7iGg==
+X-Gm-Message-State: AJcUukdGyo5g5oextQpRnwHiwu9GoBTnMzzJQmY44ajEUPO8seS45ePk
+        bTToK4PMB4Bo6O+sQuvLphl9Sw==
+X-Google-Smtp-Source: ALg8bN7ZvUqgP30iZI3R3hJE7O5uNU4561ChgR0QgZwSUBjUeUDw23zKFoy1+ebR3rzZufclLCwtsA==
+X-Received: by 2002:adf:a58a:: with SMTP id g10mr9030831wrc.3.1547125118267;
+        Thu, 10 Jan 2019 04:58:38 -0800 (PST)
+Received: from localhost ([2620:10d:c092:180::1:f5ef])
+        by smtp.gmail.com with ESMTPSA id v16sm49800567wrs.75.2019.01.10.04.58.36
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 10 Jan 2019 04:58:37 -0800 (PST)
+References: <1547042198-17601-1-git-send-email-lollivier@baylibre.com> <CACRpkdbhVB7-Y9EBhBC6GAxqFt8zujS2QJ4CzGDJnDMDjj2Ptg@mail.gmail.com> <CAFBinCBf+yJu4z1JYNdH7B4h07-U_0ckysV_=nC65nd5ByOCvA@mail.gmail.com>
+User-agent: mu4e 1.0; emacs 25.3.2
+From:   Loys Ollivier <lollivier@baylibre.com>
+To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Loys Ollivier <lollivier@baylibre.com>,
+        "open list\:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, Kevin Hilman <khilman@baylibre.com>,
+        "open list\:ARM\/Amlogic Meson..." 
+        <linux-amlogic@lists.infradead.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Jerome Brunet <jbrunet@baylibre.com>
+Subject: Re: [PATCH v2] arm64: dts: meson: Fix mmc cd-gpio polarity
+In-reply-to: <CAFBinCBf+yJu4z1JYNdH7B4h07-U_0ckysV_=nC65nd5ByOCvA@mail.gmail.com>
+Date:   Thu, 10 Jan 2019 13:58:35 +0100
+Message-ID: <861s5ku0sk.fsf@baylibre.com>
 MIME-Version: 1.0
-In-Reply-To: <20190110100922.20280-1-dietmar.eggemann@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; format=flowed
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/01/2019 10:09, Dietmar Eggemann wrote:
-> Arm TC2 fails cpu hotplug stress test.
-> 
-> This issue was tracked down to a missing copy of the new affinity
-> cpumask for the vexpress-spc interrupt into struct
-> irq_common_data.affinity when the interrupt is migrated in
-> migrate_one_irq().
-> 
-> Fix it by replacing the arm specific hotplug cpu migration with the
-> generic irq code.
-> 
-> This is the counterpart implementation to commit 217d453d473c ("arm64:
-> fix a migrating irq bug when hotplug cpu").
-> 
-> Tested with cpu hotplug stress test on Arm TC2 (multi_v7_defconfig plus
-> CONFIG_ARM_BIG_LITTLE_CPUFREQ=y and CONFIG_ARM_VEXPRESS_SPC_CPUFREQ=y).
-> The vexpress-spc interrupt (irq=22) on this board is affine to CPU0.
-> Its affinity cpumask now changes correctly e.g. from 0 to 1-4 when
-> CPU0 is hotplugged out.
-> 
-> Suggested-by: Marc Zyngier <marc.zyngier@arm.com>
-> Signed-off-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Hi,
 
-Acked-by: Marc Zyngier <marc.zyngier@arm.com>
+On Wed 09 Jan 2019 at 22:14, Martin Blumenstingl wrote:
 
-	M.
+> Hi,
+>
+> On Wed, Jan 9, 2019 at 7:31 PM Linus Walleij <linus.walleij@linaro.org> 
+> wrote:
+>>
+>> Hi Ollivier!
+>>
+>> On Wed, Jan 9, 2019 at 2:56 PM Loys Ollivier <lollivier@baylibre.com> 
+>> wrote:
+>>
+>> > Commit 89a5e15bcba8 ("gpio/mmc/of: Respect polarity in the device tree")
+>> > changed the behavior of "cd-inverted" to follow the device tree bindings
+>> > specification.
+>> > Lines specifying "cd-inverted" are now "acitve high".
+> there's a typo in the description - it should be "active"
+>
+Thanks I'll fix it.
+>> >
+>> > Fix the SD card for meson by setting the cd-gpio as "active low" 
+>> > according
+>> > to the boards specifications.
+>> >
+>> > Fixes: 89a5e15bcba8 ("gpio/mmc/of: Respect polarity in the device tree")
+>> > Signed-off-by: Loys Ollivier <lollivier@baylibre.com>
+>> >
+>> > v2: fix more occurences, also in other meson boards.
+>>
+>> This is a good change in itself since it gets rid of some occasions
+>> of the dreaded "cd-inverted" property. I think Martin Blumenstingl
+>> already sent patches like these though (I might be confused).
+> I sent patches for the 32-bit Amlogic SoCs
+> my TODO-list is now a bit longer, I'll test this series on my Khadas
+> VIM, VIM2 and Libretech CC during the weekend
+>
+I have seen Martin's patch for the arm boards.
+This adresses arm64 boards.
+Tested on libretech-cc.
+
+>> But we should keep the old device trees working as well.
+>> Can you test if Martins patch:
+>> https://marc.info/?l=linux-mmc&m=154637189021211&w=2
+>>
+>> Also makes your boards work?
+> feedback on that patch is appreciated
+>
+Answered to the patch mail directly. Tested on libretech-cc, it works.
+Fixing the meson boards DT for future release would still be valid imho.
+
+>
+> Regards
+> Martin
+
+Best,
+Loys
 -- 
-Jazz is not dead. It just smells funny...
+-L
