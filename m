@@ -2,284 +2,107 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A59CFC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 10:50:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0729C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 10:53:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 53E5D2173B
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 10:50:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9ABB3206B6
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 10:53:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="rCfqXSJn"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727862AbfAJKuy (ORCPT
+        id S1727918AbfAJKxt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 05:50:54 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:60034 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726255AbfAJKux (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 05:50:53 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BAAABA78;
-        Thu, 10 Jan 2019 02:50:52 -0800 (PST)
-Received: from [10.1.197.45] (e112298-lin.cambridge.arm.com [10.1.197.45])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EA6543F694;
-        Thu, 10 Jan 2019 02:50:50 -0800 (PST)
-Subject: Re: [PATCH v8 15/26] arm64: alternative: Apply alternatives early in
- boot process
-To:     Suzuki K Poulose <suzuki.poulose@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Cc:     linux-kernel@vger.kernel.org, daniel.thompson@linaro.org,
-        joel@joelfernandes.org, marc.zyngier@arm.com,
-        christoffer.dall@arm.com, james.morse@arm.com,
-        catalin.marinas@arm.com, will.deacon@arm.com, mark.rutland@arm.com
-References: <1546956464-48825-1-git-send-email-julien.thierry@arm.com>
- <1546956464-48825-16-git-send-email-julien.thierry@arm.com>
- <cec17e88-d199-abb4-4919-deff7182a26f@arm.com>
- <31a93d8b-9036-aef7-1b96-4de910a8d10b@arm.com>
- <21974e36-de7b-008b-49d6-b5960268501a@arm.com>
-From:   Julien Thierry <julien.thierry@arm.com>
-Message-ID: <cbc427bc-10f7-6765-f5ab-b9d1848c6c1e@arm.com>
-Date:   Thu, 10 Jan 2019 10:50:49 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 10 Jan 2019 05:53:49 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:33774 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726925AbfAJKxt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 05:53:49 -0500
+Received: from zn.tnic (p200300EC2BC5CF00E0BB3AAFA35C49DB.dip0.t-ipconnect.de [IPv6:2003:ec:2bc5:cf00:e0bb:3aaf:a35c:49db])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 76E881EC047F;
+        Thu, 10 Jan 2019 11:53:47 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1547117627;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=UOHGl8Mr2k3j9sC85+ioN0Bx8EmFViP29gcUbCjXs3Y=;
+        b=rCfqXSJnh+YBRBY7+isBTAvr7GVZzU7SHW07FgWrI4TDR9Gh/OhksSjSxklB0Gv6UkCg47
+        D9F/w+urUF4YbVpPkLVuQ//XQhkq7fwyXwN/9PxjkEz1c0xscF0YSozgzubZQs0faS0jN/
+        Lgvqu/mi9w1yya1UDHLEkgkb2cvjIMY=
+Date:   Thu, 10 Jan 2019 11:53:39 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc:     Tony Luck <tony.luck@gmail.com>,
+        Reinette Chatre <reinette.chatre@intel.com>,
+        Babu Moger <Babu.Moger@amd.com>, X86-ML <x86@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Jan =?utf-8?Q?H=2E_Sch=C3=B6nherr?= <jschoenh@amazon.de>,
+        David Duncan <davdunc@amazon.com>
+Subject: Re: [PATCH] x86/intel_rdt: use rdmsr_safe() to workaround AWS host
+ issue
+Message-ID: <20190110105339.GC17621@zn.tnic>
+References: <20181220134046.7916-1-vkuznets@redhat.com>
+ <20181220161722.GD31403@zn.tnic>
+ <51dcb13a-4751-47f5-1e01-f6731a2c6f3c@intel.com>
+ <20521afe-09af-7acf-6f32-3f6e9a971091@intel.com>
+ <20190109113915.GB15665@zn.tnic>
+ <87bm4qoww4.fsf@vitty.brq.redhat.com>
+ <20190109121445.GC15665@zn.tnic>
+ <CA+8MBbLh2JyWg=AF-cftrCfDB8QgRwJ2sKV-S24Jqtu_y1qZrg@mail.gmail.com>
+ <87woncol9s.fsf@vitty.brq.redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <21974e36-de7b-008b-49d6-b5960268501a@arm.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Disposition: inline
+In-Reply-To: <87woncol9s.fsf@vitty.brq.redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Jan 10, 2019 at 11:32:47AM +0100, Vitaly Kuznetsov wrote:
+> The other thing is: how can we be sure that there's no hypervisor
+> exposing these feature already? Even if open-source hypervisors like
+> KVM/Xen don't do it it doesn't prove anything: there are numerous
+> proprietary hypervisors and who knows what they do.
 
+Well, we have this thing called CPUID which enumerates features -
+regardless of running on baremetal or on a hypervisor. But apparently
+some Intel CPUs dropped the ball there. Which caused the f*ckup we are
+in right now.
 
-On 08/01/2019 17:40, Suzuki K Poulose wrote:
-> 
-> 
-> On 08/01/2019 15:20, Julien Thierry wrote:
->> Hi Suzuki,
->>
->> On 08/01/2019 14:51, Suzuki K Poulose wrote:
->>> Hi Julien,
->>>
->>> On 08/01/2019 14:07, Julien Thierry wrote:
->>>> From: Daniel Thompson <daniel.thompson@linaro.org>
->>>>
->>>> Currently alternatives are applied very late in the boot process (and
->>>> a long time after we enable scheduling). Some alternative sequences,
->>>> such as those that alter the way CPU context is stored, must be applied
->>>> much earlier in the boot sequence.
->>>>
->>>> Introduce apply_boot_alternatives() to allow some alternatives to be
->>>> applied immediately after we detect the CPU features of the boot CPU.
->>>>
->>>> Signed-off-by: Daniel Thompson <daniel.thompson@linaro.org>
->>>> [julien.thierry@arm.com: rename to fit new cpufeature framework better,
->>>>               apply BOOT_SCOPE feature early in boot]
->>>> Signed-off-by: Julien Thierry <julien.thierry@arm.com>
->>>> Cc: Catalin Marinas <catalin.marinas@arm.com>
->>>> Cc: Will Deacon <will.deacon@arm.com>
->>>> Cc: Christoffer Dall <christoffer.dall@arm.com>
->>>> Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
->>>> ---
->>>>    arch/arm64/include/asm/alternative.h |  1 +
->>>>    arch/arm64/include/asm/cpufeature.h  |  4 ++++
->>>>    arch/arm64/kernel/alternative.c      | 43
->>>> +++++++++++++++++++++++++++++++-----
->>>>    arch/arm64/kernel/cpufeature.c       |  6 +++++
->>>>    arch/arm64/kernel/smp.c              |  7 ++++++
->>>>    5 files changed, 56 insertions(+), 5 deletions(-)
->>>>
->>>> diff --git a/arch/arm64/include/asm/alternative.h
->>>> b/arch/arm64/include/asm/alternative.h
->>>> index 9806a23..b9f8d78 100644
->>>> --- a/arch/arm64/include/asm/alternative.h
->>>> +++ b/arch/arm64/include/asm/alternative.h
->>>> @@ -25,6 +25,7 @@ struct alt_instr {
->>>>    typedef void (*alternative_cb_t)(struct alt_instr *alt,
->>>>                     __le32 *origptr, __le32 *updptr, int nr_inst);
->>>>    +void __init apply_boot_alternatives(void);
->>>>    void __init apply_alternatives_all(void);
->>>>    bool alternative_is_applied(u16 cpufeature);
->>>>    diff --git a/arch/arm64/include/asm/cpufeature.h
->>>> b/arch/arm64/include/asm/cpufeature.h
->>>> index 89c3f31..e505e1f 100644
->>>> --- a/arch/arm64/include/asm/cpufeature.h
->>>> +++ b/arch/arm64/include/asm/cpufeature.h
->>>> @@ -391,6 +391,10 @@ static inline int cpucap_default_scope(const
->>>> struct arm64_cpu_capabilities *cap)
->>>>    extern struct static_key_false cpu_hwcap_keys[ARM64_NCAPS];
->>>>    extern struct static_key_false arm64_const_caps_ready;
->>>>    +/* ARM64 CAPS + alternative_cb */
->>>> +#define ARM64_NPATCHABLE (ARM64_NCAPS + 1)
->>>> +extern DECLARE_BITMAP(boot_capabilities, ARM64_NPATCHABLE);
->>>> +
->>>>    #define for_each_available_cap(cap)        \
->>>>        for_each_set_bit(cap, cpu_hwcaps, ARM64_NCAPS)
->>>>    diff --git a/arch/arm64/kernel/alternative.c
->>>> b/arch/arm64/kernel/alternative.c
->>>> index c947d22..a9b4677 100644
->>>> --- a/arch/arm64/kernel/alternative.c
->>>> +++ b/arch/arm64/kernel/alternative.c
->>>> @@ -155,7 +155,8 @@ static void clean_dcache_range_nopatch(u64 start,
->>>> u64 end)
->>>>        } while (cur += d_size, cur < end);
->>>>    }
->>>>    -static void __apply_alternatives(void *alt_region, bool is_module)
->>>> +static void __apply_alternatives(void *alt_region,  bool is_module,
->>>> +                 unsigned long *feature_mask)
->>>>    {
->>>>        struct alt_instr *alt;
->>>>        struct alt_region *region = alt_region;
->>>> @@ -165,6 +166,9 @@ static void __apply_alternatives(void *alt_region,
->>>> bool is_module)
->>>>        for (alt = region->begin; alt < region->end; alt++) {
->>>>            int nr_inst;
->>>>    +        if (!test_bit(alt->cpufeature, feature_mask))
->>>> +            continue;
->>>> +
->>>>            /* Use ARM64_CB_PATCH as an unconditional patch */
->>>>            if (alt->cpufeature < ARM64_CB_PATCH &&
->>>>                !cpus_have_cap(alt->cpufeature))
->>>> @@ -203,8 +207,11 @@ static void __apply_alternatives(void
->>>> *alt_region, bool is_module)
->>>>            __flush_icache_all();
->>>>            isb();
->>>>    -        /* We applied all that was available */
->>>> -        bitmap_copy(applied_alternatives, cpu_hwcaps, ARM64_NCAPS);
->>>> +        /* Ignore ARM64_CB bit from feature mask */
->>>> +        bitmap_or(applied_alternatives, applied_alternatives,
->>>> +              feature_mask, ARM64_NCAPS);
->>>> +        bitmap_and(applied_alternatives, applied_alternatives,
->>>> +               cpu_hwcaps, ARM64_NCAPS);
->>>>        }
->>>>    }
->>>>    @@ -225,8 +232,13 @@ static int __apply_alternatives_multi_stop(void
->>>> *unused)
->>>>                cpu_relax();
->>>>            isb();
->>>>        } else {
->>>> +        DECLARE_BITMAP(remaining_capabilities, ARM64_NPATCHABLE);
->>>> +
->>>> +        bitmap_complement(remaining_capabilities, boot_capabilities,
->>>> +                  ARM64_NPATCHABLE);
->>>> +
->>>>            BUG_ON(all_alternatives_applied);
->>>> -        __apply_alternatives(&region, false);
->>>> +        __apply_alternatives(&region, false, remaining_capabilities);
->>>>            /* Barriers provided by the cache flushing */
->>>>            WRITE_ONCE(all_alternatives_applied, 1);
->>>>        }
->>>> @@ -240,6 +252,24 @@ void __init apply_alternatives_all(void)
->>>>        stop_machine(__apply_alternatives_multi_stop, NULL,
->>>> cpu_online_mask);
->>>>    }
->>>>    +/*
->>>> + * This is called very early in the boot process (directly after we
->>>> run
->>>> + * a feature detect on the boot CPU). No need to worry about other
->>>> CPUs
->>>> + * here.
->>>> + */
->>>> +void __init apply_boot_alternatives(void)
->>>> +{
->>>> +    struct alt_region region = {
->>>> +        .begin    = (struct alt_instr *)__alt_instructions,
->>>> +        .end    = (struct alt_instr *)__alt_instructions_end,
->>>> +    };
->>>> +
->>>> +    /* If called on non-boot cpu things could go wrong */
->>>> +    WARN_ON(smp_processor_id() != 0);
->>>> +
->>>> +    __apply_alternatives(&region, false, &boot_capabilities[0]);
->>>> +}
->>>> +
->>>>    #ifdef CONFIG_MODULES
->>>>    void apply_alternatives_module(void *start, size_t length)
->>>>    {
->>>> @@ -247,7 +277,10 @@ void apply_alternatives_module(void *start,
->>>> size_t length)
->>>>            .begin    = start,
->>>>            .end    = start + length,
->>>>        };
->>>> +    DECLARE_BITMAP(all_capabilities, ARM64_NPATCHABLE);
->>>> +
->>>> +    bitmap_fill(all_capabilities, ARM64_NPATCHABLE);
->>>>    -    __apply_alternatives(&region, true);
->>>> +    __apply_alternatives(&region, true, &all_capabilities[0]);
->>>>    }
->>>>    #endif
->>>> diff --git a/arch/arm64/kernel/cpufeature.c
->>>> b/arch/arm64/kernel/cpufeature.c
->>>> index 84fa5be..71c8d4f 100644
->>>> --- a/arch/arm64/kernel/cpufeature.c
->>>> +++ b/arch/arm64/kernel/cpufeature.c
->>>> @@ -54,6 +54,9 @@
->>>>    EXPORT_SYMBOL(cpu_hwcaps);
->>>>    static struct arm64_cpu_capabilities const __ro_after_init
->>>> *cpu_hwcaps_ptrs[ARM64_NCAPS];
->>>>    +/* Need also bit for ARM64_CB_PATCH */
->>>> +DECLARE_BITMAP(boot_capabilities, ARM64_NPATCHABLE);
->>>> +
->>>>    /*
->>>>     * Flag to indicate if we have computed the system wide
->>>>     * capabilities based on the boot time active CPUs. This
->>>> @@ -1672,6 +1675,9 @@ static void update_cpu_capabilities(u16
->>>> scope_mask)
->>>>            if (caps->desc)
->>>>                pr_info("detected: %s\n", caps->desc);
->>>>            cpus_set_cap(caps->capability);
->>>> +
->>>> +        if (caps->type & SCOPE_BOOT_CPU)
->>>
->>> You may want to do :
->>>          if (scope_mask & SCOPE_BOOT_CPU)
->>>
->>> for a tighter check to ensure this doesn't update the boot_capabilities
->>> after we have applied the boot_scope alternatives and miss applying the
->>> alternatives for those, should someone add a multi-scope (i.e
->>> SCOPE_BOOT_CPU and
->>> something else) capability (even by mistake).
->>>
->>
->> But a multi-scope capability containing SCOPE_BOOT_CPU should already
->> get updated for setup_boot_cpu_capabilities. Capabilities marked with
->> SCOPE_BOOT_CPU need to be enabled on the boot CPU or not at all.
-> 
-> Yes, you're right. It is not normal to have multiple SCOPE for a
-> "capability".
-> But if someone comes with such a cap, we may miss handling this case. It is
-> always better to be safer.
-> 
->>
->> Shouldn't the call to caps->matches() fail for a boot feature that was
->> not found on the boot cpu?
->>
->> Also, you made the opposite suggestion 4 version ago with a more
->> worrying scenario :) :
->> https://lkml.org/lkml/2018/5/25/208
-> 
-> Ah, you're right. I missed that. We need the additional check as you
-> mention
-> below.
-> 
->>
->> Otherwise, if my assumption above is wrong, it means the check should
->> probably be:
->>     if (caps->type & SCOPE_BOOT_CPU && scope_mask & SCOPE_BOOT_CPU)
-> 
-> Yes, this is what we want.
+If you really want to not foreclose that feature for guests - and it
+sounds like you do - the other thing I can think of is an early quirk
+*setting* those feature bits for those Intel CPUs which "forgot" to set
+them and then changing the resctrl code to test CPUID bits first.
 
-Yes you're right, the behaviour I was thinking of were the ID register,
-where there views are altered for following CPUs when system wide
-features are missing on the boot CPU. But ->matches() callbacks don't
-only rely on ID registers.
+This way, the kernel is presented with a unified view on what is
+supported by the underlying machine - and that machine can be a HV or
+baremetal - kernel doesn't care.
 
-I'll add that for the next version.
+> The original issue which triggered the discussion was discovered on
+> AWS Xen where the host is buggy and I suggested a simple short-term
+> workaround
 
-Thanks,
+And I'm sick'n'tired of simple-short term workarounds and band-aids and
+the kernel always bending because people dropped the ball and those
+being perpetuated, because, sure, we'll add one more "fix" on the pile,
+who cares... :-\
+
+If AWS xen is broken, then that should be fixed - not the kernel.
 
 -- 
-Julien Thierry
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
