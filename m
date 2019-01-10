@@ -2,102 +2,101 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76E00C43612
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 12:10:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2FEDC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 12:12:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4BE4B214C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 12:10:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 90C1E214C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 12:12:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547122325;
+	bh=i4iZSxZ10gxDNhXlh5D3J0I2xe7ygS2mZhYbL0uaIOk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=AZpzUZYIoP4/arkXVHxdduKkijG1nFW7ztRlyYLzOLgqgo2tSDuh5xEqsGY29NUml
+	 7wWYzAkU9ZJGJdkIQAYNXnu/QTKCg+H9hJrYhf6yHNV09Na83mfsU2JwraM46RSvn8
+	 Ar/frWwCjzFbpoyho7pAdZH1BdcclFfBzLmGUHwo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728538AbfAJMKw (ORCPT
+        id S1728419AbfAJMME (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 07:10:52 -0500
-Received: from gloria.sntech.de ([185.11.138.130]:54710 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726969AbfAJMKw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 07:10:52 -0500
-Received: from wf0848.dip.tu-dresden.de ([141.76.183.80] helo=phil.localnet)
-        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <heiko@sntech.de>)
-        id 1ghZAW-0002x4-0E; Thu, 10 Jan 2019 13:10:40 +0100
-From:   Heiko Stuebner <heiko@sntech.de>
-To:     Kishon Vijay Abraham I <kishon@ti.com>,
-        Shawn Lin <shawn.lin@rock-chips.com>
-Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Alan Douglas <adouglas@cadence.com>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Cyrille Pitchen <cyrille.pitchen@free-electrons.com>,
-        Jia-Ju Bai <baijiaju1990@gmail.com>,
-        linux-omap@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 00/15] PCI: endpoint: Cleanup EPC features
-Date:   Thu, 10 Jan 2019 13:10:39 +0100
-Message-ID: <17209565.32fjuqOkZh@phil>
-In-Reply-To: <ce1e4bab-5c7c-5593-d28f-2187a04baef6@ti.com>
-References: <20190107064148.10152-1-kishon@ti.com> <1936135.agpnLP3rXd@phil> <ce1e4bab-5c7c-5593-d28f-2187a04baef6@ti.com>
+        Thu, 10 Jan 2019 07:12:04 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:39337 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727968AbfAJMMD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 07:12:03 -0500
+Received: by mail-lj1-f194.google.com with SMTP id t9-v6so9498810ljh.6;
+        Thu, 10 Jan 2019 04:12:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=YxhrnZ5bEH6f7GA2TAG7cN5Vn3RAYe9CQ34I/qGgfZg=;
+        b=A1gOcEiS4HbS333fxf0VlGkdwHWLXmgHLzZedw0mdLQ4mGRH5bIQiXDl0+gpihoSsC
+         msLUZqmgqUw+MgbX21wr42U5xJj2ffXUJCbMm3w1qarEhca5KzOxWmwT0094DI2O8a0r
+         8E9PmTX2P4KJyvxDtmYVuU2dktAjAXylFNLFW1Iz75ZK1PcYJVUkSCFFw3tziHaVcdc+
+         aaVcBBfU7ky7zrnauWaHKPtcufmAAZGkTkDg4Ar04wW5PeYejRQv1p4edMWttDi0V3cu
+         CHR2dGRcnNGfKV4XkEj3LC5OJX3YBJ2p9NqlLcj6g8H9/9GQlj00h8KC9F4V7ejuGkwf
+         tLog==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=YxhrnZ5bEH6f7GA2TAG7cN5Vn3RAYe9CQ34I/qGgfZg=;
+        b=DeUldwvNhfHiq03PKGtOmFVlt+yCxv96u9CYU4+g6XDC4xSbz0598F/KrRm/iVaoUd
+         5jkCU2lpobvUmVhQDObZKk4umvJsS0wp+sQqR8x8jaNsawtXjUnRTUY8MXUEFpjqF//O
+         BcOd0EFh5YUa2jUJV/STUUM5ipS8AaQLnZKaLcyIKQeD6SiojKz4hg7w8z/u7HOBh6o2
+         tNGcDOI6YeukQod+GW5uzXc7YHimCz1w0qddLNCtUJAtakZ+VAX7FpufDP0er1UhPPlL
+         7BNWB6MqwDXFVw/wz7rZIN+eIUHfqVTOsb0nlIxste4myRCVRh49OQqOPGyCciqNKLNd
+         3ndA==
+X-Gm-Message-State: AJcUukfQiz0MRCqGRBkZ3gjgTccl8+6+ZXy66ko0Fi+Z32nqui86fvdp
+        nlKiTFD2Y79W0goRrTRzYeb8ADUb
+X-Google-Smtp-Source: ALg8bN5lrXY5nOsVwL76hoihKbDWrveZB92TXxWzR8z4xl7C/ePrhA8NY9c9xy1/maqaL8BNeHVd7g==
+X-Received: by 2002:a2e:95c6:: with SMTP id y6-v6mr5642019ljh.59.1547122321267;
+        Thu, 10 Jan 2019 04:12:01 -0800 (PST)
+Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
+        by smtp.gmail.com with ESMTPSA id r7-v6sm15252242ljc.10.2019.01.10.04.12.00
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 10 Jan 2019 04:12:00 -0800 (PST)
+Received: from johan by xi.terra with local (Exim 4.91)
+        (envelope-from <johan@kernel.org>)
+        id 1ghZBo-0002jR-5S; Thu, 10 Jan 2019 13:12:00 +0100
+Date:   Thu, 10 Jan 2019 13:12:00 +0100
+From:   Johan Hovold <johan@kernel.org>
+To:     Andreas Kemnade <andreas@kemnade.info>
+Cc:     johan@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Discussions about the Letux Kernel 
+        <letux-kernel@openphoenux.org>
+Subject: Re: [PATCH v2 3/5] dt-bindings: gnss: add w2sg0004 compatible string
+Message-ID: <20190110121200.GC3430@localhost>
+References: <20181209195150.5192-1-andreas@kemnade.info>
+ <20181209195150.5192-4-andreas@kemnade.info>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181209195150.5192-4-andreas@kemnade.info>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Donnerstag, 10. Januar 2019, 06:05:00 CET schrieb Kishon Vijay Abraham I:
-> Hi Heiko,
+On Sun, Dec 09, 2018 at 08:51:48PM +0100, Andreas Kemnade wrote:
+> Add w2sg0004 compatible string since devices without wakeup
+> pins are now supported.
 > 
-> On 07/01/19 8:05 PM, Heiko Stuebner wrote:
-> > Am Montag, 7. Januar 2019, 07:41:33 CET schrieb Kishon Vijay Abraham I:
-> >> Hi Lorenzo,
-> >>
-> >> The Endpoint controller driver uses features member in 'struct pci_epc'
-> >> to advertise the list of supported features to the endpoint function
-> >> driver.
-> >>
-> >> There are a few shortcomings with this approach.
-> >>   *) Certain endpoint controllers support fixed size BAR (e.g. TI's
-> >>      AM654 uses Designware configuration with fixed size BAR). The
-> >>      size of each BARs cannot be passed to the endpoint function
-> >>      driver.
-> >>   *) Too many macros for handling EPC features.
-> >>      (EPC_FEATURE_NO_LINKUP_NOTIFIER, EPC_FEATURE_BAR_MASK,
-> >>       EPC_FEATURE_MSIX_AVAILABLE, EPC_FEATURE_SET_BAR,
-> >>       EPC_FEATURE_GET_BAR)
-> >>   *) Endpoint controllers are directly modifying struct pci_epc
-> >>      members. (I have plans to move struct pci_epc to
-> >>      drivers/pci/endpoint so that pci_epc members are referenced
-> >>      only by endpoint core).
-> >>
-> >> To overcome the above shortcomings, introduced pci_epc_get_features()
-> >> API, pci_epc_features structure and a ->get_features() callback.
-> >>
-> >> Also added a patch to set BAR flags in pci_epf_alloc_space and
-> >> remove it from pci-epf-test function driver.
-> >>
-> >> Tested on TI's DRA7xx platform.
-> > 
-> > While I don't have that much PCI experience and hence cannot judge
-> > this cleanup as a whole, I can at least say, that my Rockchip rk3399
-> > still does find its PCIE-connected wifi card, so this series on rk3399
-> > 
-> > Tested-by: Heiko Stuebner <heiko@sntech.de>
-> 
-> Thank you for testing this series with PCIe controller configured in RC mode.
-> It would be great if it could be tested with EP mode too.
-> 
-> Thanks for the help.
+> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+> ---
+> Changes in v2:
+>  - reordering of entries
+> With the original order there was a
+> Reviewed-by: Rob Herring <robh@kernel.org>
 
-Sadly I don't have hardware for that, but the support was done by Shawn,
-maybe he can help with testing EP mode and will hopefully see this mail
-and give it a spin.
+You can keep that and add my
 
-Heiko
+Reviewed-by: Johan Hovold <johan@kernel.org>
 
-
+too.
