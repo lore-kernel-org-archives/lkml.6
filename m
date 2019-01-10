@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2386C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 17:42:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A240C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 17:42:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B727D20685
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 17:42:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 61078214DA
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 17:42:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730722AbfAJRmZ (ORCPT
+        id S1730750AbfAJRm2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 12:42:25 -0500
-Received: from shell.v3.sk ([90.176.6.54]:58375 "EHLO shell.v3.sk"
+        Thu, 10 Jan 2019 12:42:28 -0500
+Received: from shell.v3.sk ([90.176.6.54]:58395 "EHLO shell.v3.sk"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730668AbfAJRmX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 12:42:23 -0500
+        id S1730717AbfAJRmZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 12:42:25 -0500
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id F23CB1002E6;
-        Thu, 10 Jan 2019 18:42:19 +0100 (CET)
+        by zimbra.v3.sk (Postfix) with ESMTP id CEF611002E6;
+        Thu, 10 Jan 2019 18:42:23 +0100 (CET)
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id EXbQPRh29amv; Thu, 10 Jan 2019 18:42:06 +0100 (CET)
+        with ESMTP id plXHm1UC-Qus; Thu, 10 Jan 2019 18:42:12 +0100 (CET)
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 9CC121002EA;
-        Thu, 10 Jan 2019 18:42:05 +0100 (CET)
+        by zimbra.v3.sk (Postfix) with ESMTP id 5E12D1002E5;
+        Thu, 10 Jan 2019 18:42:07 +0100 (CET)
 X-Virus-Scanned: amavisd-new at zimbra.v3.sk
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id 3Cd6t0tuauUA; Thu, 10 Jan 2019 18:42:03 +0100 (CET)
+        with ESMTP id TgMpJF7der0x; Thu, 10 Jan 2019 18:42:04 +0100 (CET)
 Received: from belphegor.brq.redhat.com (nat-pool-brq-t.redhat.com [213.175.37.10])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id 4E6351002E8;
+        by zimbra.v3.sk (Postfix) with ESMTPSA id 83D481002E9;
         Thu, 10 Jan 2019 18:42:03 +0100 (CET)
 From:   Lubomir Rintel <lkundrak@v3.sk>
 To:     Sebastian Reichel <sre@kernel.org>
@@ -41,10 +41,10 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>, x86@kernel.org,
         linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: [PATCH v5 4/7] power: supply: olpc_battery: Move priv data to a struct
-Date:   Thu, 10 Jan 2019 18:40:02 +0100
-Message-Id: <20190110174005.1202564-5-lkundrak@v3.sk>
+        Sebastian Reichel <sebastian.reichel@collabora.com>
+Subject: [PATCH v5 5/7] power: supply: olpc_battery: Use devm_power_supply_register()
+Date:   Thu, 10 Jan 2019 18:40:03 +0100
+Message-Id: <20190110174005.1202564-6-lkundrak@v3.sk>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190110174005.1202564-1-lkundrak@v3.sk>
 References: <20190110174005.1202564-1-lkundrak@v3.sk>
@@ -55,208 +55,79 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The global variables for private data are not too nice. I'd like some
-more, and that would clutter the global name space even further.
+This simplifies the error handling.
 
 Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.com>
 
 ---
-Changes since v4:
-- Bring some more code that was misplaced here.
-
-Changes since v2:
-- Bring the allocaton of the priv data structure here
-
 Changes since v1:
-- Split out the move to devm_* into a separate patch
+- This was split off the "power: supply: olpc_battery: Move priv data to
+  a struct" patch.
 
- drivers/power/supply/olpc_battery.c | 78 ++++++++++++++++++-----------
- 1 file changed, 48 insertions(+), 30 deletions(-)
+ drivers/power/supply/olpc_battery.c | 19 +++++--------------
+ 1 file changed, 5 insertions(+), 14 deletions(-)
 
 diff --git a/drivers/power/supply/olpc_battery.c b/drivers/power/supply/o=
 lpc_battery.c
-index 5323987d9284..7067cb500669 100644
+index 7067cb500669..1fcc459433a8 100644
 --- a/drivers/power/supply/olpc_battery.c
 +++ b/drivers/power/supply/olpc_battery.c
-@@ -53,6 +53,12 @@
+@@ -634,7 +634,7 @@ static int olpc_battery_probe(struct platform_device =
+*pdev)
+ 	psy_cfg.of_node =3D pdev->dev.of_node;
+ 	psy_cfg.drv_data =3D data;
 =20
- #define BAT_ADDR_MFR_TYPE	0x5F
-=20
-+struct olpc_battery_data {
-+	struct power_supply *olpc_ac;
-+	struct power_supply *olpc_bat;
-+	char bat_serial[17];
-+};
-+
- /*********************************************************************
-  *		Power
-  *********************************************************************/
-@@ -91,11 +97,8 @@ static const struct power_supply_desc olpc_ac_desc =3D=
- {
- 	.get_property =3D olpc_ac_get_prop,
- };
-=20
--static struct power_supply *olpc_ac;
--
--static char bat_serial[17]; /* Ick */
--
--static int olpc_bat_get_status(union power_supply_propval *val, uint8_t =
-ec_byte)
-+static int olpc_bat_get_status(struct olpc_battery_data *data,
-+		union power_supply_propval *val, uint8_t ec_byte)
- {
- 	if (olpc_platform_info.ecver > 0x44) {
- 		if (ec_byte & (BAT_STAT_CHARGING | BAT_STAT_TRICKLE))
-@@ -326,6 +329,7 @@ static int olpc_bat_get_property(struct power_supply =
-*psy,
- 				 enum power_supply_property psp,
- 				 union power_supply_propval *val)
- {
-+	struct olpc_battery_data *data =3D power_supply_get_drvdata(psy);
- 	int ret =3D 0;
- 	__be16 ec_word;
- 	uint8_t ec_byte;
-@@ -347,7 +351,7 @@ static int olpc_bat_get_property(struct power_supply =
-*psy,
-=20
- 	switch (psp) {
- 	case POWER_SUPPLY_PROP_STATUS:
--		ret =3D olpc_bat_get_status(val, ec_byte);
-+		ret =3D olpc_bat_get_status(data, val, ec_byte);
- 		if (ret)
- 			return ret;
- 		break;
-@@ -450,8 +454,8 @@ static int olpc_bat_get_property(struct power_supply =
-*psy,
- 		if (ret)
- 			return ret;
-=20
--		sprintf(bat_serial, "%016llx", (long long)be64_to_cpu(ser_buf));
--		val->strval =3D bat_serial;
-+		sprintf(data->bat_serial, "%016llx", (long long)be64_to_cpu(ser_buf));
-+		val->strval =3D data->bat_serial;
- 		break;
- 	case POWER_SUPPLY_PROP_VOLTAGE_MAX_DESIGN:
- 		ret =3D olpc_bat_get_voltage_max_design(val);
-@@ -579,17 +583,17 @@ static struct power_supply_desc olpc_bat_desc =3D {
- 	.use_for_apm =3D 1,
- };
-=20
--static struct power_supply *olpc_bat;
--
- static int olpc_battery_suspend(struct platform_device *pdev,
- 				pm_message_t state)
- {
--	if (device_may_wakeup(&olpc_ac->dev))
-+	struct olpc_battery_data *data =3D platform_get_drvdata(pdev);
-+
-+	if (device_may_wakeup(&data->olpc_ac->dev))
- 		olpc_ec_wakeup_set(EC_SCI_SRC_ACPWR);
- 	else
- 		olpc_ec_wakeup_clear(EC_SCI_SRC_ACPWR);
-=20
--	if (device_may_wakeup(&olpc_bat->dev))
-+	if (device_may_wakeup(&data->olpc_bat->dev))
- 		olpc_ec_wakeup_set(EC_SCI_SRC_BATTERY | EC_SCI_SRC_BATSOC
- 				   | EC_SCI_SRC_BATERR);
- 	else
-@@ -601,8 +605,15 @@ static int olpc_battery_suspend(struct platform_devi=
-ce *pdev,
-=20
- static int olpc_battery_probe(struct platform_device *pdev)
- {
--	int ret;
-+	struct power_supply_config psy_cfg =3D {};
-+	struct olpc_battery_data *data;
- 	uint8_t status;
-+	int ret;
-+
-+	data =3D devm_kzalloc(&pdev->dev, sizeof(*data), GFP_KERNEL);
-+	if (!data)
-+		return -ENOMEM;
-+	platform_set_drvdata(pdev, data);
-=20
- 	/*
- 	 * We've seen a number of EC protocol changes; this driver requires
-@@ -620,9 +631,13 @@ static int olpc_battery_probe(struct platform_device=
- *pdev)
-=20
- 	/* Ignore the status. It doesn't actually matter */
-=20
--	olpc_ac =3D power_supply_register(&pdev->dev, &olpc_ac_desc, NULL);
--	if (IS_ERR(olpc_ac))
--		return PTR_ERR(olpc_ac);
-+	psy_cfg.of_node =3D pdev->dev.of_node;
-+	psy_cfg.drv_data =3D data;
-+
-+	data->olpc_ac =3D power_supply_register(&pdev->dev, &olpc_ac_desc, &psy=
+-	data->olpc_ac =3D power_supply_register(&pdev->dev, &olpc_ac_desc, &psy=
 _cfg);
-+	if (IS_ERR(data->olpc_ac))
-+		return PTR_ERR(data->olpc_ac);
-+
- 	if (of_property_match_string(pdev->dev.of_node, "compatible",
- 					"olpc,xo1.5-battery") >=3D 0) {
- 		/* XO-1.5 */
-@@ -634,42 +649,45 @@ static int olpc_battery_probe(struct platform_devic=
++	data->olpc_ac =3D devm_power_supply_register(&pdev->dev, &olpc_ac_desc,=
+ &psy_cfg);
+ 	if (IS_ERR(data->olpc_ac))
+ 		return PTR_ERR(data->olpc_ac);
+=20
+@@ -649,15 +649,13 @@ static int olpc_battery_probe(struct platform_devic=
 e *pdev)
  		olpc_bat_desc.num_properties =3D ARRAY_SIZE(olpc_xo1_bat_props);
  	}
 =20
--	olpc_bat =3D power_supply_register(&pdev->dev, &olpc_bat_desc, NULL);
--	if (IS_ERR(olpc_bat)) {
--		ret =3D PTR_ERR(olpc_bat);
-+	data->olpc_bat =3D power_supply_register(&pdev->dev, &olpc_bat_desc, &p=
+-	data->olpc_bat =3D power_supply_register(&pdev->dev, &olpc_bat_desc, &p=
 sy_cfg);
-+	if (IS_ERR(data->olpc_bat)) {
-+		ret =3D PTR_ERR(data->olpc_bat);
- 		goto battery_failed;
- 	}
+-	if (IS_ERR(data->olpc_bat)) {
+-		ret =3D PTR_ERR(data->olpc_bat);
+-		goto battery_failed;
+-	}
++	data->olpc_bat =3D devm_power_supply_register(&pdev->dev, &olpc_bat_des=
+c, &psy_cfg);
++	if (IS_ERR(data->olpc_bat))
++		return PTR_ERR(data->olpc_bat);
 =20
--	ret =3D device_create_bin_file(&olpc_bat->dev, &olpc_bat_eeprom);
-+	ret =3D device_create_bin_file(&data->olpc_bat->dev, &olpc_bat_eeprom);
+ 	ret =3D device_create_bin_file(&data->olpc_bat->dev, &olpc_bat_eeprom);
  	if (ret)
- 		goto eeprom_failed;
+-		goto eeprom_failed;
++		return ret;
 =20
--	ret =3D device_create_file(&olpc_bat->dev, &olpc_bat_error);
-+	ret =3D device_create_file(&data->olpc_bat->dev, &olpc_bat_error);
+ 	ret =3D device_create_file(&data->olpc_bat->dev, &olpc_bat_error);
  	if (ret)
- 		goto error_failed;
-=20
- 	if (olpc_ec_wakeup_available()) {
--		device_set_wakeup_capable(&olpc_ac->dev, true);
--		device_set_wakeup_capable(&olpc_bat->dev, true);
-+		device_set_wakeup_capable(&data->olpc_ac->dev, true);
-+		device_set_wakeup_capable(&data->olpc_bat->dev, true);
- 	}
-=20
- 	return 0;
+@@ -672,10 +670,6 @@ static int olpc_battery_probe(struct platform_device=
+ *pdev)
 =20
  error_failed:
--	device_remove_bin_file(&olpc_bat->dev, &olpc_bat_eeprom);
-+	device_remove_bin_file(&data->olpc_bat->dev, &olpc_bat_eeprom);
- eeprom_failed:
--	power_supply_unregister(olpc_bat);
-+	power_supply_unregister(data->olpc_bat);
- battery_failed:
--	power_supply_unregister(olpc_ac);
-+	power_supply_unregister(data->olpc_ac);
+ 	device_remove_bin_file(&data->olpc_bat->dev, &olpc_bat_eeprom);
+-eeprom_failed:
+-	power_supply_unregister(data->olpc_bat);
+-battery_failed:
+-	power_supply_unregister(data->olpc_ac);
  	return ret;
  }
 =20
- static int olpc_battery_remove(struct platform_device *pdev)
- {
--	device_remove_file(&olpc_bat->dev, &olpc_bat_error);
--	device_remove_bin_file(&olpc_bat->dev, &olpc_bat_eeprom);
--	power_supply_unregister(olpc_bat);
--	power_supply_unregister(olpc_ac);
-+	struct olpc_battery_data *data =3D platform_get_drvdata(pdev);
-+
-+	device_remove_file(&data->olpc_bat->dev, &olpc_bat_error);
-+	device_remove_bin_file(&data->olpc_bat->dev, &olpc_bat_eeprom);
-+	power_supply_unregister(data->olpc_bat);
-+	power_supply_unregister(data->olpc_ac);
-+
+@@ -685,9 +679,6 @@ static int olpc_battery_remove(struct platform_device=
+ *pdev)
+=20
+ 	device_remove_file(&data->olpc_bat->dev, &olpc_bat_error);
+ 	device_remove_bin_file(&data->olpc_bat->dev, &olpc_bat_eeprom);
+-	power_supply_unregister(data->olpc_bat);
+-	power_supply_unregister(data->olpc_ac);
+-
  	return 0;
  }
 =20
