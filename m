@@ -1,107 +1,90 @@
 Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=1.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FSL_HELO_FAKE,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FDBCC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 08:37:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91A28C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 08:37:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 490082173B
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 08:37:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 15DB52173B
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 08:37:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vkhg5iOc"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="fOY3mgUJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727792AbfAJIhE (ORCPT
+        id S1727701AbfAJIhb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 03:37:04 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:44407 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726369AbfAJIhD (ORCPT
+        Thu, 10 Jan 2019 03:37:31 -0500
+Received: from mail-io1-f68.google.com ([209.85.166.68]:41610 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726369AbfAJIha (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 03:37:03 -0500
-Received: by mail-pf1-f194.google.com with SMTP id u6so4976529pfh.11
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 00:37:02 -0800 (PST)
+        Thu, 10 Jan 2019 03:37:30 -0500
+Received: by mail-io1-f68.google.com with SMTP id s22so8274599ioc.8
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 00:37:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=fzJWWhVhoQ53zvh9P9pc3UFm4hIku4H1tEhsKDoVCAM=;
-        b=Vkhg5iOcNaoLDfnEdTDGsDcg3xX8ZNV0xbeizayZ+hKjQ7SI87p1ylIOB9Wt+FSynK
-         GntqVziQOvupttR7fsMESEThG+JWNx9oKI8nsevBkh+2QgdL+PXzhAs+OpqOr9lAuyYd
-         ll2cjzEelNSWFKe6nZ9w3F9K2j5nPSMBPtH6zUkC6cd2XiuusfqBHmCQQQKEtNPmFUEE
-         dZZMiMR7gZp49v40Zj26BFF80faWIcat7lmIL0G61OEK/s1QS4UzL2M6xeskGPOw1La0
-         7isCX2K1nQKDRkQ0Ou5dqPmhNhEmqMaFWL3KV0SP7RLjCxf6Y8cZJtT2Uy+e4fhRtZGw
-         ogMw==
+        d=szeredi.hu; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ch50uua6GkQS394O37KZhAfy6Wm7YWq2aCfYFwnxrJE=;
+        b=fOY3mgUJL4GhtMMpDCcZazUfXxFg9nPcOrllgCJNrWHYFnfKWWb3BcpF+ui2UOE0mr
+         cH2m7mtEymFDa4zf+ud9n4BTDQkz43EiLVu8uNJSk+ssYDNAMl4ZmtWzKVusulgvCwyf
+         YOKIIeLkQWcPYPJmDw/v/PdOZeHANEJbmNqVw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=fzJWWhVhoQ53zvh9P9pc3UFm4hIku4H1tEhsKDoVCAM=;
-        b=WC00qLAdlnt5xBo82AWOzoZS9yGuXpuweGE/D0WiMJ4MoyaO0VZO22IF6zE0wIkeIN
-         ZBdDeluz9M13abIeTErFS2jDVqHOYDyRN2u5RYwLi8KMWQCfMfXwXLUp6u5v86dFU1n6
-         jaeiJcVJQODvJVIK+//r9HqcT2whwSr3Me6oAW1RDxvXECCy1Ok322zZvF51MlGSyma3
-         gj4DchT4wUug7WcEQ5bc+rWnLDwU3k4Cl8fKj68kiAxEHf9Wpw3d7aallmf2ZewB1ak3
-         aNftNO/POftgverQpAnMBf6B8sqMn4TQI16fsxP9bBSAHQF3WeenOH8OP1NUEWEy8Hhg
-         kkdg==
-X-Gm-Message-State: AJcUukfsjEa+fQ4amGFQ7MBobmsfsGUjlBniByeycBIyU6/v3UJmgyEU
-        OmaYLnosUGool7cUh9EY24Unwyn5
-X-Google-Smtp-Source: ALg8bN5aQdHGtnmy45jJFRiZjCMjuptAvFiZssGoHWMDkg1s4jxdj20SbnRYsZizg+5nuoMvZgUyNA==
-X-Received: by 2002:a62:5301:: with SMTP id h1mr9261121pfb.17.1547109422124;
-        Thu, 10 Jan 2019 00:37:02 -0800 (PST)
-Received: from gmail.com (c-73-140-212-29.hsd1.wa.comcast.net. [73.140.212.29])
-        by smtp.gmail.com with ESMTPSA id 196sm293228929pfc.77.2019.01.10.00.37.01
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 10 Jan 2019 00:37:01 -0800 (PST)
-Date:   Thu, 10 Jan 2019 00:36:59 -0800
-From:   Andrei Vagin <avagin@gmail.com>
-To:     Oleg Nesterov <oleg@redhat.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org,
-        "Eric W. Biederman" <ebiederm@xmission.com>
-Subject: Re: [PATCH] kernel: release ptraced tasks before zap_pid_ns_processes
-Message-ID: <20190110083658.GA11083@gmail.com>
-References: <20190102205939.26231-1-avagin@gmail.com>
- <20190108165043.GA10240@redhat.com>
- <20190108203612.GA19454@gmail.com>
- <20190109170829.GA15302@redhat.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ch50uua6GkQS394O37KZhAfy6Wm7YWq2aCfYFwnxrJE=;
+        b=qlMBLpwRpP9ZuSvhahUyA3chV0iMBmoR8U+1FyzF0+CvGeAj8DeKUS9UdQTPU2NfeY
+         JDVC3OJlwErYur2Hycb8S2IiSDbRr1BHFLyd8O8KCtoBA9bNq3F0qKzRewontKDxSao7
+         lZ63dIidKye5vCNdqSzIissnou9eZRr/k9Jri0IlvBMRlNYKLbrWR4gVKpLY9BhX53+2
+         RZQocLWcyHm94gdw53XozMJngkJ/O6MjFClaM0PpzBlu9cPlH9oGUcz/emizxdtGqCsy
+         ywVYXR5y0YRU+/LCJ5nk0bXR82sGgpLxpwq5NDEY0qVpIizDzyLVYDigj1YJyrT+BU6t
+         jWhA==
+X-Gm-Message-State: AJcUukcgt6Hbd31wkhGCp7O/sxG5Qy8J4ftfYoxY4TF/FCShNSPghMvv
+        pUnQce4FeXAH3N4BjcSwp3n831f2ikh+aJRRDNsvXfs1
+X-Google-Smtp-Source: ALg8bN5di1VgwbrljY+d/h8I0ga51Or+2Gb8dKeb0vPgQ/rLKf1eO1SoNhNpdMEMI267DoMNcJtLZkO8Zx1SXM36JMw=
+X-Received: by 2002:a6b:fe13:: with SMTP id x19mr5788938ioh.294.1547109449757;
+ Thu, 10 Jan 2019 00:37:29 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=koi8-r
-Content-Disposition: inline
-In-Reply-To: <20190109170829.GA15302@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <154166765576.10655.15178401490817622677.stgit@localhost.localdomain>
+ <b0ff11bd-49ea-6073-3c06-80a57275936a@virtuozzo.com>
+In-Reply-To: <b0ff11bd-49ea-6073-3c06-80a57275936a@virtuozzo.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Thu, 10 Jan 2019 09:37:18 +0100
+Message-ID: <CAJfpegsnbKNOUj1JwE-cN1ejOi9Ad+T0bcKOHsyPj5u7EDWv+Q@mail.gmail.com>
+Subject: Re: [PATCH v2 0/5] fuse: Interrupt-related optimizations and improvements
+To:     Kirill Tkhai <ktkhai@virtuozzo.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 09, 2019 at 06:08:30PM +0100, Oleg Nesterov wrote:
-> On 01/08, Andrei Vagin wrote:
+On Wed, Dec 26, 2018 at 2:25 PM Kirill Tkhai <ktkhai@virtuozzo.com> wrote:
+>
+> ping
+>
+> On 08.11.2018 12:05, Kirill Tkhai wrote:
+> > v2: Changes in [1-2,5] patches. The biggest change is in [5],
+> >     where repeater FR_INTERRUPTED assignment is removed.
 > >
-> > No, you don't. The patch looks really nice. Thanks!
+> > This patchset consists of several parts. Patches [1-2] optimize
+> > likely case of request_end(), and make this function to take
+> > fiq->waitq.lock only, when it is really needed. This improves
+> > performance of this function completes.
 > >
-> > BTW: We probably need to add the "Fixes:" tag, but I am not sure to which
-> > commit, it looks like the issue is here for years.
-> 
-> I hate you ;)
+> > Patch 3 makes request_end() to call wake_up() only for not
+> > background requests (background requests never wait answer),
+> > and this optimizes this function a bit more
+> >
+> > Patches [4-5] makes code to check userspace requests correct
+> > interrupt id to requeue (whether we've sent this interrupt).
 
-I know :)
+Pushed to fuse.git#for-next.
 
-> Ok, OK, this was broken by me in 7c8bd2322c7fd973d089b27de55e29c92c667a06
-> "exit: ptrace: shift "reap dead" code from exit_ptrace() to forget_original_parent()"
-> 
-> > Acked-by: Andrei Vagin <avagin@gmail.com>
-> 
-> Thanks, but if you agree with this patch may I ask you to send v2?
-> 
-> You found the real problem, my version is only slightly better than yours,
-> I don't want to steal the "From" tag. Feel free to add mine signed-of-by.
-
-Thanks Oleg! I will send a second version of this patch.
-
-> 
-> Oleg.
-> 
+Thanks,
+Miklos
