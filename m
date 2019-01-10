@@ -2,118 +2,161 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 382A0C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 21:24:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F6B4C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 21:27:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ADCE120663
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 21:24:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2628220685
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 21:27:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=axentia.se header.i=@axentia.se header.b="vvfOqsW0"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="JFShwHEh"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728744AbfAJVYH (ORCPT
+        id S1728831AbfAJV1x (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 16:24:07 -0500
-Received: from mail-eopbgr80125.outbound.protection.outlook.com ([40.107.8.125]:38074
-        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728385AbfAJVYH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 16:24:07 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axentia.se;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3TD4LGJ/dfugD2myBCJZqQf9LuECulpvIz4/7bwRZok=;
- b=vvfOqsW0GA3zDWknq356HXG71ADAyLYqCCHEkadhQ1gGCt70uOSzgjl4uA5xQhMCUI1xLtcgROmoY4KJkQMYdZAhYZlFFC/RFFd4w5x6w2l69hf+XcG62NQSTTUFTL3JsoX+CC6M8JTc92jf0pfNvwphMPAI2SGHrYX9ESeAoik=
-Received: from AM6PR02MB4470.eurprd02.prod.outlook.com (20.177.191.218) by
- AM6PR02MB4391.eurprd02.prod.outlook.com (20.177.190.156) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1516.13; Thu, 10 Jan 2019 21:24:02 +0000
-Received: from AM6PR02MB4470.eurprd02.prod.outlook.com
- ([fe80::e5f3:a239:2ec4:4453]) by AM6PR02MB4470.eurprd02.prod.outlook.com
- ([fe80::e5f3:a239:2ec4:4453%6]) with mapi id 15.20.1516.016; Thu, 10 Jan 2019
- 21:24:02 +0000
-From:   Peter Rosin <peda@axentia.se>
-To:     Boris Brezillon <bbrezillon@kernel.org>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        David Airlie <airlied@linux.ie>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>
-Subject: Re: [PATCH 0/4] drm/atmel-hlcdc: fix plane clipping/rotation issues
-Thread-Topic: [PATCH 0/4] drm/atmel-hlcdc: fix plane clipping/rotation issues
-Thread-Index: AQHUqPaeuHFV8522kE2kP/gCblgMKKWoxn6AgAA9LwA=
-Date:   Thu, 10 Jan 2019 21:24:02 +0000
-Message-ID: <dae0e92e-e91f-6208-987b-a214583b45a1@axentia.se>
-References: <20190110151020.30468-1-peda@axentia.se>
- <20190110184446.75b4350a@bbrezillon>
-In-Reply-To: <20190110184446.75b4350a@bbrezillon>
-Accept-Language: en-US, sv-SE
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.3
-x-originating-ip: [85.226.244.23]
-x-clientproxiedby: HE1P195CA0013.EURP195.PROD.OUTLOOK.COM (2603:10a6:3:fd::23)
- To AM6PR02MB4470.eurprd02.prod.outlook.com (2603:10a6:20b:60::26)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=peda@axentia.se; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM6PR02MB4391;6:lQ1Jj99WFLrDaKum4h2WrWEw8JuyjneHWsldb2tpZ3xH5g/dGCerwxlilRIricIqoYF54Xn2KUracQMPQGjhUUsl6FhPtyrtiN5NlmyKnhZ5VcrU+tgeAU7adIJKqL7pAapxw6NapnLvXYi+PTD7t2hk5SIgOolv7nJ0nywbHV6FHaRXBkA6ECW03nua3D9+GrPFJXUeinff3aiwHeITeFKNC7hFElbiLIOuWtvuRYAPqipJslrf5DkJ8TZvWoDXwgHDdu1NVpbXh4EXHfyHMn5g2/mydFchPkh0uFP1Zkec4waNhTVm6S2Iv61LPRu/ZX6d3g63kpxdk7HTxCxNFjvgdY48ZXh47qxUUdhL5hs9j1O20FmBbelKZ2O37fRBfnpf6exHCK3ZVY5JwpbczNllnYxlb9x+Fz6q0vyvqGcryF0WEhred/cxiK8CbxYM3FtiZBYlblLBZhQxqEcCnw==;5:dKJaeUddhad43t/CKFZcfc5Mlu+BconkhNumzM7k79YaWoyo7uJ8SGYmp/elaDtbIfqc3Y0VkKR8QymtnB/mroCW0BAqlyFLp4ZpL7Qr66+OQ8OCxOC5xVfvAKml7uYHwRqqsKcSEhv/53V3ca/n3DowNql4uP/zraAfsu4kopSrQoU+wVZsN69MrnRoRxw902fUv/IvcAW4abOowmav9g==;7:qD4Tbh1QSOvl6rJh5ctsSnNmrsrphwyfzIxPGPY/uTOtjlDb8jGlCpZ8CJ2izsh+8wcrwbQv8pjo9Dql2wxdt/Sj7d7KCmqApC5o4OdxnNyxFMEbsAF8VRqtHn3nEmQOg/GhKDCqxQEEz8jdtTidYQ==
-x-ms-office365-filtering-correlation-id: 1a0953b5-9d22-4f02-c8a9-08d67741f15c
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(7021145)(8989299)(4534185)(7022145)(4603075)(4627221)(201702281549075)(8990200)(7048125)(7024125)(7027125)(7023125)(5600109)(711020)(2017052603328)(7153060)(7193020);SRVR:AM6PR02MB4391;
-x-ms-traffictypediagnostic: AM6PR02MB4391:
-x-microsoft-antispam-prvs: <AM6PR02MB439197C935C22413A7BFB6ADBC840@AM6PR02MB4391.eurprd02.prod.outlook.com>
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(3230021)(908002)(999002)(5005026)(6040522)(8220060)(2401047)(8121501046)(10201501046)(3002001)(93006095)(93001095)(3231475)(944501520)(52105112)(6041310)(20161123564045)(20161123560045)(20161123558120)(20161123562045)(2016111802025)(6043046)(201708071742011)(7699051)(76991095);SRVR:AM6PR02MB4391;BCL:0;PCL:0;RULEID:;SRVR:AM6PR02MB4391;
-x-forefront-prvs: 0913EA1D60
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(136003)(376002)(396003)(39830400003)(346002)(52314003)(189003)(199004)(53546011)(6506007)(68736007)(66066001)(65826007)(99286004)(229853002)(81166006)(5660300001)(26005)(8676002)(386003)(186003)(65956001)(106356001)(7736002)(102836004)(305945005)(476003)(446003)(11346002)(2616005)(2906002)(76176011)(486006)(316002)(105586002)(65806001)(58126008)(81156014)(8936002)(31686004)(54906003)(52116002)(4326008)(6116002)(25786009)(6436002)(3846002)(6512007)(64126003)(6246003)(6916009)(86362001)(74482002)(31696002)(71190400001)(256004)(36756003)(71200400001)(14454004)(508600001)(6486002)(97736004)(53936002);DIR:OUT;SFP:1102;SCL:1;SRVR:AM6PR02MB4391;H:AM6PR02MB4470.eurprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: axentia.se does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: TivzDkEmEM8nIfsh84NULAIgrgSFjdP25uF0G+06bLBsIRPVbMVvrgH6JHclYkqAzsitimAbmS2nBXUzFt8hs2zYEfBgwOo+7Y4bS6LvACl5UxfxmaWc+tQWqEkzr3j90qOOleB89JDgPr/qzcsa2GxtbMKUDIlCHb2hnfU7esjeDI4jBE44Ri+5bXI8PPq3mP+CpsdR8qWWWgu7LOkRodUHUF1KDiNZg1VIwCizrPPvdSxkWVxT97LLVBX5V2hEY/l6ECmBStD2NHmXC/AxSbefrasvde5UgZf7Zq4AXOk3S0aePrPNezpecNZyGiuW
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <8C616B4FE4CACD448F68AA381DF5801D@eurprd02.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Thu, 10 Jan 2019 16:27:53 -0500
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:34156 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728385AbfAJV1x (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 16:27:53 -0500
+Received: by mail-qt1-f193.google.com with SMTP id r14so15570455qtp.1
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 13:27:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=/2psC/xmYKcCimHGDvdmNQbyRK+HK1phw1tb669Zars=;
+        b=JFShwHEh9QcQJLrl+ecZkT/L23qHW3VmQ0rkSzFiFSDy89iqGayTYWilypCxR7St7C
+         M1Q92JQ++ac6+1wwEdQuBWS3nXiugh5DEfGU5CsLX/6fuX4ysUfrvePt4P5oA5mBEg0G
+         l9hTcfjMgSz4+dWBVlzyY7KCdxLmdN0I3Id10=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=/2psC/xmYKcCimHGDvdmNQbyRK+HK1phw1tb669Zars=;
+        b=jE4TX1LhH+1C+qb2SXBLqGPXMRKub5c0F3dDtIN1lb4/KyZyIEBrT/vzuXACov3jKB
+         hOxNP802jjAnNTtnwzqkn1WLY83uXfavKUwqWry+v0rC50uokZ0PmD8T6IRYfBjCs8ih
+         Nwxt8vGuyIwcHq4uKwHmoBDLGQiDdXzTXej/Vq1868R6J6xgGrGOLGLr5htpWlMH9lPa
+         +kilRz24yRirEI1TQZVg5hhCE6B+30gtXy90HuYGWdyPCkw89zQzwU1XmtbJiX+OY7ko
+         n5N0PFdT/UqIv0ju4qj/PDC6+fFFZKe6mHxWVlvtJCbV8bcFwmU/BthDmHiBx5zmLo52
+         JR5Q==
+X-Gm-Message-State: AJcUukc5TfxWhqJ3NU39h6P7dBBZ//vV6ujybbLkZ7x35hn2v6NzvPj2
+        E0723+XHFKiJxCcw3/rcPWQ7gjJudG8=
+X-Google-Smtp-Source: ALg8bN79kCVl4LDJIxHW9xKrmF3e9s45bcb631nJo+x1bsL3jvUhfC82B3m/4jXuRL9CSMARHl9EDg==
+X-Received: by 2002:a37:9543:: with SMTP id x64mr10897005qkd.158.1547155671762;
+        Thu, 10 Jan 2019 13:27:51 -0800 (PST)
+Received: from xanadu.home (modemcable228.104-82-70.mc.videotron.ca. [70.82.104.228])
+        by smtp.gmail.com with ESMTPSA id d85sm7396774qkb.89.2019.01.10.13.27.50
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 10 Jan 2019 13:27:51 -0800 (PST)
+Date:   Thu, 10 Jan 2019 16:27:49 -0500 (EST)
+From:   Nicolas Pitre <nicolas.pitre@linaro.org>
+To:     Greg KH <gregkh@linuxfoundation.org>
+cc:     Dave Mielke <dave@mielke.cc>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] vgacon: unconfuse vc_origin when using soft scrollback
+In-Reply-To: <nycvar.YSQ.7.76.1901101131090.6027@knanqh.ubzr>
+Message-ID: <nycvar.YSQ.7.76.1901101620580.6919@knanqh.ubzr>
+References: <nycvar.YSQ.7.76.1901101131090.6027@knanqh.ubzr>
+User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
 MIME-Version: 1.0
-X-OriginatorOrg: axentia.se
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1a0953b5-9d22-4f02-c8a9-08d67741f15c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Jan 2019 21:24:02.0449
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 4ee68585-03e1-4785-942a-df9c1871a234
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR02MB4391
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gMjAxOS0wMS0xMCAxODo0NSwgQm9yaXMgQnJlemlsbG9uIHdyb3RlOg0KPiBPbiBUaHUsIDEw
-IEphbiAyMDE5IDE1OjEwOjI4ICswMDAwDQo+IFBldGVyIFJvc2luIDxwZWRhQGF4ZW50aWEuc2U+
-IHdyb3RlOg0KPiANCj4+IEhpIQ0KPj4NCj4+IEkgZm91bmQgYW4gdW5mb3J0dW5hdGUgaXNzdWUg
-d2hpbGUgcmVjb2RpbmcgcGxhbmUgaGFuZGxpbmcgdG8gdXNlDQo+PiBkcm1fYXRvbWljX2hlbHBl
-cl9jaGVja19wbGFuZV9zdGF0ZSgpLiBUaGUgZHJpdmVyIHJvdGF0ZXMgY2xvY2t3aXNlLA0KPj4g
-d2hpY2ggaXMgbm90IGNvcnJlY3QuIEkgc2ltcGx5IGZpeGVkIGl0IChwYXRjaCAxLzQpLCBidXQg
-bWF5YmUgdGhhdA0KPj4gd2lsbCBjYXVzZSByZWdyZXNzaW9ucyBmb3IgdW5zdXNwZWN0aW5nIHVz
-ZXJzIHdobyBzaW1wbHkgYXNzdW1lZA0KPj4gdGhhdCB0aGUgY2xvY2t3aXNlIHJvdGF0aW9uIHdh
-cyBjb3JyZWN0PyBJIGRvbid0IGtub3cgd2hhdCB0byBkbw0KPj4gYWJvdXQgdGhhdD8gQWRkaW5n
-IGFuIG9wdGlvbiB0byBnZXQgdGhlIG9sZCBicm9rZW4gYmVoYXZpb3Igc2VlbXMNCj4+IHVzZWxl
-c3MsIHdvdWxkbid0IGl0IGJlIGp1c3QgYXMgZWFzeSB0byBqdXN0IGZpeCB3aGF0ZXZlciBhcHAg
-dG8NCj4+IHJvdGF0ZSB0aGUgb3RoZXIgd2F5IGluc3RlYWQgb2YgYWRkaW5nIGFuIG9wdGlvbiBz
-b21ld2hlcmU/DQo+IA0KPiBIbSwgcm90YXRpb24gc3VwcG9ydCBoYXMgYmVlbiBhZGRlZCBiZWZv
-cmUgdGhlIHN0YW5kYXJkIHJvdGF0aW9uDQo+IHByb3BlcnR5IHdhcyBjcmVhdGVkLCBhbmQgYXQg
-dGhhdCB0aW1lIEkgYXNzdW1lZCByb3RhdGlvbiB3YXMgY2xvY2t3aXNlDQo+ICh3aGljaCBhcHBh
-cmVudGx5IHdhcyBhbiB1bndpc2UgY2hvaWNlKS4gQW55d2F5LCBJIGRvbid0IGhhdmUgYQ0KPiBz
-b2x1dGlvbiBmb3IgdGhpcyBwcm9ibGVtLCBzbyBJJ2xsIGxldCBOaWNvbGFzIGRlY2lkZSBpZiBp
-dCdzDQo+IGFjY2VwdGFibGUgdG8gY2hhbmdlIHRoZSByb3RhdGlvbiBiZWhhdmlvci4NCg0KU3Bl
-YWtpbmcgb2YgdW53aXNlLCBmYmNvbiByb3RhdGlvbiBpcyBjbG9ja3dpc2UgYW5kIGRybSByb3Rh
-dGlvbg0KaXMgY291bnRlcmNsb2Nrd2lzZS4gJ251ZmYgc2FpZC4NCg0KQ2hlZXJzLA0KUGV0ZXIN
-Cg==
+On Thu, 10 Jan 2019, Nicolas Pitre wrote:
+
+> When CONFIG_VGACON_SOFT_SCROLLBACK is selected, the VGA display memory
+> index and vc_visible_origin don't change when scrollback is activated.
+> The actual screen content is saved away and the scrollbackdata is copied
+> over it. However the vt code, and /dev/vcs devices in particular, still
+> expect vc_origin to always point at the actual screen content not the
+> displayed scrollback content.
+> 
+> So adjust vc_origin to point at the saved screen content when scrollback
+> is active and set it back to vc_visible_origin when restoring the screen.
+> 
+> This fixes /dev/vcsa<n> that return scrollback content when they
+> shouldn't (onli /dev/vcsa without a number should), and also fixes
+> /dev/vcsu that should return scrollback content when scrollback is
+> active but currently doesn't.
+
+The vt code is just a frigging mess of integer variables and pointer 
+variables referring to the same thing. It is therefore littered with 
+casts all over the place. And of course I missed one in this patch.  
+
+Here's a revised patch to quiet a warning:
+
+----- >8
+Subject: [PATCH] vgacon: unconfuse vc_origin when using soft scrollback
+
+When CONFIG_VGACON_SOFT_SCROLLBACK is selected, the VGA display memory
+index and vc_visible_origin don't change when scrollback is activated.
+The actual screen content is saved away and the scrollbackdata is copied
+over it. However the vt code, and /dev/vcs devices in particular, still
+expect vc_origin to always point at the actual screen content not the
+displayed scrollback content.
+
+So adjust vc_origin to point at the saved screen content when scrollback
+is active and set it back to vc_visible_origin when restoring the screen.
+
+This fixes /dev/vcsa<n> that return scrollback content when they
+shouldn't (onli /dev/vcsa without a number should), and also fixes
+/dev/vcsu that should return scrollback content when scrollback is
+active but currently doesn't.
+
+An unnecessary call to vga_set_mem_top() is also removed.
+
+Signed-off-by: Nicolas Pitre <nico@linaro.org>
+Cc: stable@vger.kernel.org # v4.19+
+
+---
+
+I tagged it for stable starting with v4.19 as this is the kernel that
+introduced /dev/vcsu* which is directly affected. Users of earlier kernels
+most likely won't care.
+
+diff --git a/drivers/video/console/vgacon.c b/drivers/video/console/vgacon.c
+index 09731b2f68..a3353a9970 100644
+--- a/drivers/video/console/vgacon.c
++++ b/drivers/video/console/vgacon.c
+@@ -271,6 +271,7 @@ static void vgacon_scrollback_update(struct vc_data *c, int t, int count)
+ 
+ static void vgacon_restore_screen(struct vc_data *c)
+ {
++	c->vc_origin = c->vc_visible_origin;
+ 	vgacon_scrollback_cur->save = 0;
+ 
+ 	if (!vga_is_gfx && !vgacon_scrollback_cur->restore) {
+@@ -287,8 +288,7 @@ static void vgacon_scrolldelta(struct vc_data *c, int lines)
+ 	int start, end, count, soff;
+ 
+ 	if (!lines) {
+-		c->vc_visible_origin = c->vc_origin;
+-		vga_set_mem_top(c);
++		vgacon_restore_screen(c);
+ 		return;
+ 	}
+ 
+@@ -298,6 +298,7 @@ static void vgacon_scrolldelta(struct vc_data *c, int lines)
+ 	if (!vgacon_scrollback_cur->save) {
+ 		vgacon_cursor(c, CM_ERASE);
+ 		vgacon_save_screen(c);
++		c->vc_origin = c->vc_screenbuf;
+ 		vgacon_scrollback_cur->save = 1;
+ 	}
+ 
+@@ -335,7 +336,7 @@ static void vgacon_scrolldelta(struct vc_data *c, int lines)
+ 		int copysize;
+ 
+ 		int diff = c->vc_rows - count;
+-		void *d = (void *) c->vc_origin;
++		void *d = (void *) c->vc_visible_origin;
+ 		void *s = (void *) c->vc_screenbuf;
+ 
+ 		count *= c->vc_size_row;
+
