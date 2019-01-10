@@ -2,84 +2,351 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16792C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 13:22:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF90AC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 13:22:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D35792184B
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 13:22:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547126542;
-	bh=OECq5171S9i76LcX8GhY6qNZdz8TO45DCOI9JThXBnQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=FUNrn6IOYSBRqOu+fKMnOT0lBrg4x+Fff0DGhyg+eIdmh1Ep80s3mVu0vc9uUs3f2
-	 /95uciRCK1U/2u1J3oAP0OUggB7pbAPQmRp5M4GZMMFuvMxSq0ogl31rZBGnsbCI/6
-	 4fuglCwGt6nXD5VS8LiyrZ2JGnYRzOjVyBVA1dOU=
+	by mail.kernel.org (Postfix) with ESMTP id 76515214DA
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 13:22:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728759AbfAJNWV (ORCPT
+        id S1728807AbfAJNWq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 08:22:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38816 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728088AbfAJNWV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 08:22:21 -0500
-Received: from dragon (61-216-91-114.HINET-IP.hinet.net [61.216.91.114])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2235D214DA;
-        Thu, 10 Jan 2019 13:22:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547126540;
-        bh=OECq5171S9i76LcX8GhY6qNZdz8TO45DCOI9JThXBnQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=QNPy61wYrXLXZlpLNsrTlouHOgDXHM5NTaWfwCrMjLfVYE80q3alIGubwnpzYd4t0
-         38zAinaCBPmKZUVSBR+ohKU7C11k8PHPQbSzFOa3OF+fdKu5QXgK2tFl9XSAp9XDvE
-         d3aMO6c3peTcD2oWmpLuoDOtkYyrZahT5jFieWRA=
-Date:   Thu, 10 Jan 2019 21:22:10 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Lukasz Majewski <lukma@denx.de>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Stefan Agner <stefan@agner.ch>,
-        Fabio Estevam <festevam@gmail.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>
-Subject: Re: [PATCH v2] ARM: dts: vf610-bk4: Provide support for reading ID
- code from MVB device
-Message-ID: <20190110132209.GA30487@dragon>
-References: <20181113121213.14296-1-lukma@denx.de>
- <20181209215056.22027-1-lukma@denx.de>
+        Thu, 10 Jan 2019 08:22:46 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:49080 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728088AbfAJNWq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 08:22:46 -0500
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 65C3648B92E7B2CD96F1;
+        Thu, 10 Jan 2019 21:22:26 +0800 (CST)
+Received: from linux-ioko.site (10.71.200.31) by
+ DGGEMS413-HUB.china.huawei.com (10.3.19.213) with Microsoft SMTP Server id
+ 14.3.408.0; Thu, 10 Jan 2019 21:22:20 +0800
+From:   "Wei Hu (Xavier)" <xavier.huwei@huawei.com>
+To:     <dledford@redhat.com>, <jgg@ziepe.ca>
+CC:     <linux-rdma@vger.kernel.org>, <xavier.huwei@huawei.com>,
+        <lijun_nudt@163.com>, <oulijun@huawei.com>,
+        <liudongdong3@huawei.com>, <liuyixian@huawei.com>,
+        <zhangxiping3@huawei.com>, <linuxarm@huawei.com>,
+        <linux-kernel@vger.kernel.org>, <xavier_huwei@163.com>
+Subject: [PATCH rdma-rc 2/3] RDMA/hns: Fix the chip hanging caused by sending mailbox&CMQ during reset
+Date:   Thu, 10 Jan 2019 21:57:42 +0800
+Message-ID: <1547128663-69220-3-git-send-email-xavier.huwei@huawei.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1547128663-69220-1-git-send-email-xavier.huwei@huawei.com>
+References: <1547128663-69220-1-git-send-email-xavier.huwei@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181209215056.22027-1-lukma@denx.de>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: text/plain
+X-Originating-IP: [10.71.200.31]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Dec 09, 2018 at 10:50:56PM +0100, Lukasz Majewski wrote:
-> The procedure to read this ID value is as follows:
-> 
-> rmmod spi_fsl_dspi
-> insmod spi-gpio.ko
-> 
-> echo 504 > /sys/class/gpio/export
-> cat /sys/class/gpio/gpio504/value
-> ...
-> echo 511 > /sys/class/gpio/export
-> cat /sys/class/gpio/gpio511/value
-> 
-> rmmod spi-gpio.ko
-> insmod spi_fsl_dspi
-> 
-> Signed-off-by: Lukasz Majewski <lukma@denx.de>
+On hi08 chip, There is a possibility of chip hanging and
+some errors when sending mailbox & doorbell during reset.
+We can fix it by prohibiting mailbox and doorbell during
+reset and reset occurred to ensure that hardware can work
+normally.
 
-Applied, thanks.
+Fixes: a04ff739f2a9 ("RDMA/hns: Add command queue support for hip08 RoCE driver")
+Signed-off-by: Wei Hu (Xavier) <xavier.huwei@huawei.com>
+---
+ drivers/infiniband/hw/hns/hns_roce_cmd.c    |  32 ++++--
+ drivers/infiniband/hw/hns/hns_roce_device.h |   7 ++
+ drivers/infiniband/hw/hns/hns_roce_hw_v2.c  | 154 +++++++++++++++++++++++++++-
+ drivers/infiniband/hw/hns/hns_roce_hw_v2.h  |   3 +
+ 4 files changed, 183 insertions(+), 13 deletions(-)
+
+diff --git a/drivers/infiniband/hw/hns/hns_roce_cmd.c b/drivers/infiniband/hw/hns/hns_roce_cmd.c
+index a0ba19d..2acf946 100644
+--- a/drivers/infiniband/hw/hns/hns_roce_cmd.c
++++ b/drivers/infiniband/hw/hns/hns_roce_cmd.c
+@@ -176,17 +176,33 @@ int hns_roce_cmd_mbox(struct hns_roce_dev *hr_dev, u64 in_param, u64 out_param,
+ 		      unsigned long in_modifier, u8 op_modifier, u16 op,
+ 		      unsigned long timeout)
+ {
+-	if (hr_dev->is_reset)
+-		return 0;
++	int ret;
++
++	if (hr_dev->hw->rst_prc_mbox) {
++		ret = hr_dev->hw->rst_prc_mbox(hr_dev);
++		if (ret == CMD_RST_PRC_SUCCESS)
++			return 0;
++		else if (ret == CMD_RST_PRC_EBUSY)
++			return -EBUSY;
++	}
+ 
+ 	if (hr_dev->cmd.use_events)
+-		return hns_roce_cmd_mbox_wait(hr_dev, in_param, out_param,
+-					      in_modifier, op_modifier, op,
+-					      timeout);
++		ret = hns_roce_cmd_mbox_wait(hr_dev, in_param, out_param,
++					     in_modifier, op_modifier, op,
++					     timeout);
+ 	else
+-		return hns_roce_cmd_mbox_poll(hr_dev, in_param, out_param,
+-					      in_modifier, op_modifier, op,
+-					      timeout);
++		ret = hns_roce_cmd_mbox_poll(hr_dev, in_param, out_param,
++					     in_modifier, op_modifier, op,
++					     timeout);
++
++	if (ret == CMD_RST_PRC_EBUSY)
++		return -EBUSY;
++
++	if (ret && (hr_dev->hw->rst_prc_mbox &&
++		    hr_dev->hw->rst_prc_mbox(hr_dev) == CMD_RST_PRC_SUCCESS))
++		return 0;
++
++	return ret;
+ }
+ EXPORT_SYMBOL_GPL(hns_roce_cmd_mbox);
+ 
+diff --git a/drivers/infiniband/hw/hns/hns_roce_device.h b/drivers/infiniband/hw/hns/hns_roce_device.h
+index f4cac63..cd7c2a6 100644
+--- a/drivers/infiniband/hw/hns/hns_roce_device.h
++++ b/drivers/infiniband/hw/hns/hns_roce_device.h
+@@ -236,6 +236,12 @@ enum {
+ 	HNS_ROCE_RST_DIRECT_RETURN		= 0,
+ };
+ 
++enum {
++	CMD_RST_PRC_OTHERS,
++	CMD_RST_PRC_SUCCESS,
++	CMD_RST_PRC_EBUSY,
++};
++
+ #define HNS_ROCE_CMD_SUCCESS			1
+ 
+ #define HNS_ROCE_PORT_DOWN			0
+@@ -854,6 +860,7 @@ struct hns_roce_hw {
+ 			 u64 out_param, u32 in_modifier, u8 op_modifier, u16 op,
+ 			 u16 token, int event);
+ 	int (*chk_mbox)(struct hns_roce_dev *hr_dev, unsigned long timeout);
++	int (*rst_prc_mbox)(struct hns_roce_dev *hr_dev);
+ 	int (*set_gid)(struct hns_roce_dev *hr_dev, u8 port, int gid_index,
+ 		       const union ib_gid *gid, const struct ib_gid_attr *attr);
+ 	int (*set_mac)(struct hns_roce_dev *hr_dev, u8 phy_port, u8 *addr);
+diff --git a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
+index dadb685..5f476e9 100644
+--- a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
++++ b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
+@@ -712,6 +712,125 @@ static int hns_roce_v2_post_recv(struct ib_qp *ibqp,
+ 	return ret;
+ }
+ 
++static int hns_roce_v2_cmd_hw_reseted(struct hns_roce_dev *hr_dev,
++				      unsigned long instance_stage,
++				      unsigned long reset_stage)
++{
++	/* When hardware reset has been completed once or more, we should stop
++	 * sending mailbox&cmq to hardware. If now in .init_instance()
++	 * function, we should exit with error. If now at HNAE3_INIT_CLIENT
++	 * stage of soft reset process, we should exit with error, and then
++	 * HNAE3_INIT_CLIENT related process can rollback the operation like
++	 * notifing hardware to free resources, HNAE3_INIT_CLIENT related
++	 * process will exit with error to notify NIC driver to reschedule soft
++	 * reset process once again.
++	 */
++	hr_dev->is_reset = true;
++
++	if (reset_stage == HNS_ROCE_STATE_RST_INIT ||
++	    instance_stage == HNS_ROCE_STATE_INIT)
++		return CMD_RST_PRC_EBUSY;
++
++	return CMD_RST_PRC_SUCCESS;
++}
++
++static int hns_roce_v2_cmd_hw_resetting(struct hns_roce_dev *hr_dev,
++					unsigned long instance_stage,
++					unsigned long reset_stage)
++{
++	struct hns_roce_v2_priv *priv = (struct hns_roce_v2_priv *)hr_dev->priv;
++	struct hnae3_handle *handle = priv->handle;
++	const struct hnae3_ae_ops *ops = handle->ae_algo->ops;
++	unsigned long end;
++
++	/* When hardware reset is detected, we should stop sending mailbox&cmq
++	 * to hardware, and wait until hardware reset finished. If now
++	 * in .init_instance() function, we should exit with error. If now at
++	 * HNAE3_INIT_CLIENT stage of soft reset process, we should exit with
++	 * error, and then HNAE3_INIT_CLIENT related process can rollback the
++	 * operation like notifing hardware to free resources, HNAE3_INIT_CLIENT
++	 * related process will exit with error to notify NIC driver to
++	 * reschedule soft reset process once again.
++	 */
++	end = msecs_to_jiffies(HNS_ROCE_V2_HW_RST_TIMEOUT) + jiffies;
++	while (ops->get_hw_reset_stat(handle) && time_before(jiffies, end))
++		udelay(1);
++
++	if (!ops->get_hw_reset_stat(handle))
++		hr_dev->is_reset = true;
++	else
++		dev_warn(hr_dev->dev, "hw_resetting!\n");
++
++	if (!hr_dev->is_reset || reset_stage == HNS_ROCE_STATE_RST_INIT ||
++	    instance_stage == HNS_ROCE_STATE_INIT)
++		return CMD_RST_PRC_EBUSY;
++
++	return CMD_RST_PRC_SUCCESS;
++}
++
++static int hns_roce_v2_cmd_sw_resetting(struct hns_roce_dev *hr_dev)
++{
++	struct hns_roce_v2_priv *priv = (struct hns_roce_v2_priv *)hr_dev->priv;
++	struct hnae3_handle *handle = priv->handle;
++	const struct hnae3_ae_ops *ops = handle->ae_algo->ops;
++	unsigned long end;
++
++	/* When software reset is detected at .init_instance() function, we
++	 * should stop sending mailbox&cmq to hardware, and
++	 * wait until hardware reset finished, we should exit with error.
++	 */
++	end = msecs_to_jiffies(HNS_ROCE_V2_HW_RST_TIMEOUT) + jiffies;
++	while (ops->ae_dev_reset_cnt(handle) == hr_dev->reset_cnt &&
++	       time_before(jiffies, end))
++		udelay(1);
++
++	if (ops->ae_dev_reset_cnt(handle) != hr_dev->reset_cnt)
++		hr_dev->is_reset = true;
++	else
++		dev_warn(hr_dev->dev, "reset_cnt no change!\n");
++
++	return CMD_RST_PRC_EBUSY;
++}
++
++static int hns_roce_v2_rst_process_cmd(struct hns_roce_dev *hr_dev)
++{
++	struct hns_roce_v2_priv *priv = (struct hns_roce_v2_priv *)hr_dev->priv;
++	struct hnae3_handle *handle = priv->handle;
++	const struct hnae3_ae_ops *ops = handle->ae_algo->ops;
++	unsigned long instance_stage;	/* the current instance stage */
++	unsigned long reset_stage;	/* the current reset stage */
++	unsigned long reset_cnt;
++	bool sw_resetting;
++	bool hw_resetting;
++
++	if (hr_dev->is_reset)
++		return CMD_RST_PRC_SUCCESS;
++
++	/* Get information about reset from NIC driver or RoCE driver itself,
++	 * the meaning of the following variables from NIC driver are described
++	 * as below:
++	 * reset_cnt -- The count value of completed hardware reset.
++	 * hw_resetting -- Whether hardware device is resetting now.
++	 * sw_resetting -- Whether NIC's software reset process is running now.
++	 */
++	instance_stage = handle->rinfo.instance_state;
++	reset_stage = handle->rinfo.reset_state;
++	reset_cnt = ops->ae_dev_reset_cnt(handle);
++	hw_resetting = ops->get_hw_reset_stat(handle);
++	sw_resetting = ops->ae_dev_resetting(handle);
++
++	if (reset_cnt != hr_dev->reset_cnt)
++		return hns_roce_v2_cmd_hw_reseted(hr_dev, instance_stage,
++						  reset_stage);
++	else if (hw_resetting)
++		return hns_roce_v2_cmd_hw_resetting(hr_dev, instance_stage,
++						    reset_stage);
++	else if (sw_resetting && instance_stage == HNS_ROCE_STATE_INIT)
++		return hns_roce_v2_cmd_sw_resetting(hr_dev);
++
++	return 0;
++}
++
+ static int hns_roce_cmq_space(struct hns_roce_v2_cmq_ring *ring)
+ {
+ 	int ntu = ring->next_to_use;
+@@ -892,8 +1011,8 @@ static int hns_roce_cmq_csq_clean(struct hns_roce_dev *hr_dev)
+ 	return clean;
+ }
+ 
+-static int hns_roce_cmq_send(struct hns_roce_dev *hr_dev,
+-			     struct hns_roce_cmq_desc *desc, int num)
++static int __hns_roce_cmq_send(struct hns_roce_dev *hr_dev,
++			       struct hns_roce_cmq_desc *desc, int num)
+ {
+ 	struct hns_roce_v2_priv *priv = (struct hns_roce_v2_priv *)hr_dev->priv;
+ 	struct hns_roce_v2_cmq_ring *csq = &priv->cmq.csq;
+@@ -905,9 +1024,6 @@ static int hns_roce_cmq_send(struct hns_roce_dev *hr_dev,
+ 	int ret = 0;
+ 	int ntc;
+ 
+-	if (hr_dev->is_reset)
+-		return 0;
+-
+ 	spin_lock_bh(&csq->lock);
+ 
+ 	if (num > hns_roce_cmq_space(csq)) {
+@@ -982,6 +1098,30 @@ static int hns_roce_cmq_send(struct hns_roce_dev *hr_dev,
+ 	return ret;
+ }
+ 
++int hns_roce_cmq_send(struct hns_roce_dev *hr_dev,
++			     struct hns_roce_cmq_desc *desc, int num)
++{
++	int retval;
++	int ret;
++
++	ret = hns_roce_v2_rst_process_cmd(hr_dev);
++	if (ret == CMD_RST_PRC_SUCCESS)
++		return 0;
++	if (ret == CMD_RST_PRC_EBUSY)
++		return ret;
++
++	ret = __hns_roce_cmq_send(hr_dev, desc, num);
++	if (ret) {
++		retval = hns_roce_v2_rst_process_cmd(hr_dev);
++		if (retval == CMD_RST_PRC_SUCCESS)
++			return 0;
++		else if (retval == CMD_RST_PRC_EBUSY)
++			return retval;
++	}
++
++	return ret;
++}
++
+ static int hns_roce_cmq_query_hw_info(struct hns_roce_dev *hr_dev)
+ {
+ 	struct hns_roce_query_version *resp;
+@@ -1735,6 +1875,9 @@ static int hns_roce_v2_chk_mbox(struct hns_roce_dev *hr_dev,
+ 
+ 	status = hns_roce_v2_cmd_complete(hr_dev);
+ 	if (status != 0x1) {
++		if (status == CMD_RST_PRC_EBUSY)
++			return status;
++
+ 		dev_err(dev, "mailbox status 0x%x!\n", status);
+ 		return -EBUSY;
+ 	}
+@@ -5758,6 +5901,7 @@ static int hns_roce_v2_post_srq_recv(struct ib_srq *ibsrq,
+ 	.hw_exit = hns_roce_v2_exit,
+ 	.post_mbox = hns_roce_v2_post_mbox,
+ 	.chk_mbox = hns_roce_v2_chk_mbox,
++	.rst_prc_mbox = hns_roce_v2_rst_process_cmd,
+ 	.set_gid = hns_roce_v2_set_gid,
+ 	.set_mac = hns_roce_v2_set_mac,
+ 	.write_mtpt = hns_roce_v2_write_mtpt,
+diff --git a/drivers/infiniband/hw/hns/hns_roce_hw_v2.h b/drivers/infiniband/hw/hns/hns_roce_hw_v2.h
+index 8def828..17b3299 100644
+--- a/drivers/infiniband/hw/hns/hns_roce_hw_v2.h
++++ b/drivers/infiniband/hw/hns/hns_roce_hw_v2.h
+@@ -90,6 +90,9 @@
+ #define HNS_ROCE_V2_UC_RC_SGE_NUM_IN_WQE	2
+ #define HNS_ROCE_V2_RSV_QPS			8
+ 
++/* Time out for hardware to complete reset */
++#define HNS_ROCE_V2_HW_RST_TIMEOUT		1000
++
+ /* The longest time for software reset process in NIC subsystem, if a timeout
+  * occurs, it indicates that the network subsystem has encountered a serious
+  * error and cannot be recovered from the reset processing.
+-- 
+1.9.1
+
