@@ -2,177 +2,861 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8F2CC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 08:04:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19646C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 08:07:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7BD3D2173B
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 08:04:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="ClRwzP0x"
+	by mail.kernel.org (Postfix) with ESMTP id 031B6206B7
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 08:07:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547107646;
+	bh=XRALCbw6e3t2nLb+gEPZXQ2nkxlPn8m8LKprA49h9pU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=DhUwD9STyYSggiWB8U427U7bmfpZeSEjmTlef6DjHdenOCW10rsLxiupWc3ikWmRk
+	 6bLm4uYDZ1ONsU4lKcPoY+MktBwu8PTU044RfF4arfiExochvWTAvZEXh/C+dkVZ1N
+	 IvVPzz769P1WseuqCuw14jrtFKg49WnG6YTvK5CU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727745AbfAJIEz (ORCPT
+        id S1727638AbfAJIHX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 03:04:55 -0500
-Received: from mail-eopbgr800044.outbound.protection.outlook.com ([40.107.80.44]:12829
-        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727401AbfAJIEy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 03:04:54 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gKyu5UH75e1dO/f0+MGJarVpNispPljzMPGWkDvS3Io=;
- b=ClRwzP0xJHqRdQtJva/O3XRvJkLovJWlv3RymaieuGGqDggTAYSf6GsFrKDEii0zKmeOTzT6LvS6+dH9sOR+j8KQb5Rtv4WduZrG2LXwc39MakjNHNPdNZGeSz2SKR0Ynv4tSQjKocLc3s2IyLHYDGell4+nt2T6XpCz0OrN6uY=
-Received: from BYAPR12MB3237.namprd12.prod.outlook.com (20.179.93.25) by
- BYAPR12MB2920.namprd12.prod.outlook.com (20.179.91.145) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1495.6; Thu, 10 Jan 2019 08:04:49 +0000
-Received: from BYAPR12MB3237.namprd12.prod.outlook.com
- ([fe80::a96e:ffd:3bd6:c5f5]) by BYAPR12MB3237.namprd12.prod.outlook.com
- ([fe80::a96e:ffd:3bd6:c5f5%4]) with mapi id 15.20.1516.015; Thu, 10 Jan 2019
- 08:04:49 +0000
-From:   S@vger.kernel.org
-To:     Borislav Petkov <bp@alien8.de>, "S, Shirish" <Shirish.S@amd.com>
-CC:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        "maintainer : X86 ARCHITECTURE" <x86@kernel.org>,
-        Tony Luck <tony.luck@intel.com>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        "open list : X86 ARCHITECTURE" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/2] x86/mce/amd: Ensure quirks are applied in resume path
- as well
-Thread-Topic: [PATCH 2/2] x86/mce/amd: Ensure quirks are applied in resume
- path as well
-Thread-Index: AQHUpnT6RX1zZkZcBk29IptIsRwq2qWngtqAgACqJYA=
-Date:   Thu, 10 Jan 2019 08:04:49 +0000
-Message-ID: <7a9227c0-1bc3-67c5-14a8-a40d186a5ef8@amd.com>
-References: <1546857399-2926-1-git-send-email-shirish.s@amd.com>
- <1546857399-2926-3-git-send-email-shirish.s@amd.com>
- <20190109220843.GK15665@zn.tnic>
-In-Reply-To: <20190109220843.GK15665@zn.tnic>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: BMXPR01CA0034.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:b00:c::20) To BYAPR12MB3237.namprd12.prod.outlook.com
- (2603:10b6:a03:136::25)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Shirish.S@amd.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [202.56.249.162]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BYAPR12MB2920;20:acdEFZWZpng1aDu4548Nzarnitk/7vLO6R6CM9pSIrGdha0SxCnttSW/lyYtLWmk6UjQpR7sZWR7XfDp1ZOkNwzVAbq0BdJp49E75PsN9bel9S69lOrfT8WHi84kK3AsiyoELaA8YmyUdas+ATRfpI9Pns3NeWM34R+LkMy6qKGXI15CKH5Oe9pFrRySf8E9BTJM6coZ3aIY27iiR168v4+iB3IwD1c9stWBBRmVLdLFuCdpTWO3wWa2D52GDdlj
-x-ms-office365-filtering-correlation-id: bf370542-4e25-4c38-8589-08d676d24af7
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:BYAPR12MB2920;
-x-ms-traffictypediagnostic: BYAPR12MB2920:
-x-microsoft-antispam-prvs: <BYAPR12MB292035A6C4B0954FB402EAC3F2840@BYAPR12MB2920.namprd12.prod.outlook.com>
-x-forefront-prvs: 0913EA1D60
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(366004)(376002)(136003)(346002)(39860400002)(199004)(189003)(71190400001)(31686004)(81166006)(6506007)(8936002)(5660300001)(478600001)(25786009)(53936002)(76176011)(316002)(71200400001)(81156014)(486006)(4326008)(2616005)(106356001)(11346002)(72206003)(6436002)(476003)(256004)(2906002)(6636002)(14444005)(446003)(966005)(6512007)(97736004)(6306002)(105586002)(7736002)(229853002)(54906003)(102836004)(66066001)(31696002)(6246003)(110136005)(36756003)(99286004)(6116002)(3846002)(53546011)(8676002)(52116002)(6486002)(305945005)(26005)(186003)(68736007)(386003)(14454004);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR12MB2920;H:BYAPR12MB3237.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: pll+vhEA03rgLGIl1YbOSxe9H5uGaegm/fhlakcAOazxh4xaw1Wvv97omchaDVaUiKus5Aii7oB5P2NGZfaTGK6RdKfK0UXFD0ariXnAZSr2Voa3NQ5DzEpEV4qZ5O7p2tsPp3TY2NTq+7H4FoNARVGZZFAfNHCA82rd8oO+XHK3yGnWj7Q/aypCARmDc8MNXGPOdsVywvzWLGB3PjgMk47ZgLSqVmUlKyHy52xnyaojvjudK2evmevIWpydV9cknryRryNld4w8sWj+zHgUQUtLbTmlr5bLeeWmf/RVHKvqrgkdXqeyj1IEE/9dOuBT
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <035DC0AFD25463429A3178C48F42476C@namprd12.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Thu, 10 Jan 2019 03:07:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43108 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727220AbfAJIHX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 03:07:23 -0500
+Received: from dragon (61-216-91-114.HINET-IP.hinet.net [61.216.91.114])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0DE38206B7;
+        Thu, 10 Jan 2019 08:07:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547107641;
+        bh=XRALCbw6e3t2nLb+gEPZXQ2nkxlPn8m8LKprA49h9pU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=v46i2kyBjF9e1MQOli2uh9ANog78nfbWBBtwU9yIT2qShmyfMv7GRLDrBuVWiHlZs
+         Wa7oNhY7mDPktbMePxne6xkyg3PIWOtUozwBPQ4TRr0w9fbdnhGIAC9H//aCsYzbK4
+         id4VPwdyqOzFT+yoLIRILugdrorvMfcMw1HM8vOs=
+Date:   Thu, 10 Jan 2019 16:07:08 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Martyn Welch <martyn.welch@collabora.com>
+Cc:     Sascha Hauer <s.hauer@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] ARM: dts: imx6: Add support for Phytec phyBOARD
+ i.MX6UL Segin
+Message-ID: <20190110080706.GF25218@dragon>
+References: <20181211194251.12988-1-martyn.welch@collabora.com>
+ <20181211194251.12988-2-martyn.welch@collabora.com>
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: bf370542-4e25-4c38-8589-08d676d24af7
-X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Jan 2019 08:04:49.4167
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR12MB2920
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181211194251.12988-2-martyn.welch@collabora.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgQm9yaXNsYXYsDQoNCk9uIDEvMTAvMjAxOSAzOjM4IEFNLCBCb3Jpc2xhdiBQZXRrb3Ygd3Jv
-dGU6DQo+IE9uIE1vbiwgSmFuIDA3LCAyMDE5IGF0IDEwOjM3OjI0QU0gKzAwMDAsIFMsIFNoaXJp
-c2ggd3JvdGU6DQo+PiBUaGlzIHBhdGNoIGFkZHMgdGhyZXNob2xkIHF1aXJrIGFwcGxpY2FibGUg
-Zm9yIGZhbWlseSAxNQ0KPiBTYW1lIGlzc3VlIHdpdGggIlRoaXMgcGF0Y2giIGhlcmUuDQpBZ3Jl
-ZSwgaGF2ZSBhdm9pZGVkIHRoZSBwaHJhc2UgaW4gYm90aCBwYXRjaGVzIHRoYXQgb3JpZ2luYXRl
-IGZyb20gdGhpcyANCmRpc2N1c3Npb24uDQo+DQo+PiBpbiByZXN1bWUgcGF0aCBhcyB3ZWxsLCBz
-aW5jZSBtY2VfYW1kX2ZlYXR1cmVfaW5pdCgpDQo+PiBkb2VzIG5vdCBoYXZlIHF1aXJrcyBhcHBs
-aWVkIHdoZW4gb3JpZ2luYXRpbmcgZnJvbSBtY2Vfc3lzY29yZV9yZXN1bWUoKSwNCj4+IHJlc3Vs
-dGluZyBpbiB0aGUgYmVsb3cgbWVzc2FnZSBhdCBldmVyeSBzdWNjZXNzZnVsIHJlc3VtZToNCj4+
-DQo+PiAiW0Zpcm13YXJlIEJ1Z106IGNwdSAwLCBpbnZhbGlkIHRocmVzaG9sZCBpbnRlcnJ1cHQg
-b2Zmc2V0IC4uLiINCj4+DQo+PiBTaWduZWQtb2ZmLWJ5OiBTaGlyaXNoIFMgPHNoaXJpc2guc0Bh
-bWQuY29tPg0KPj4gLS0tDQo+PiAgIGFyY2gveDg2L2tlcm5lbC9jcHUvbWNlL2FtZC5jIHwgMzQg
-KysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKw0KPj4gICAxIGZpbGUgY2hhbmdlZCwg
-MzQgaW5zZXJ0aW9ucygrKQ0KPj4NCj4+IGRpZmYgLS1naXQgYS9hcmNoL3g4Ni9rZXJuZWwvY3B1
-L21jZS9hbWQuYyBiL2FyY2gveDg2L2tlcm5lbC9jcHUvbWNlL2FtZC5jDQo+PiBpbmRleCA4OTI5
-OGM4Li4yN2NiZjY2IDEwMDY0NA0KPj4gLS0tIGEvYXJjaC94ODYva2VybmVsL2NwdS9tY2UvYW1k
-LmMNCj4+ICsrKyBiL2FyY2gveDg2L2tlcm5lbC9jcHUvbWNlL2FtZC5jDQo+PiBAQCAtNTQ1LDYg
-KzU0NSwzNCBAQCBwcmVwYXJlX3RocmVzaG9sZF9ibG9jayh1bnNpZ25lZCBpbnQgYmFuaywgdW5z
-aWduZWQgaW50IGJsb2NrLCB1MzIgYWRkciwNCj4+ICAgCXJldHVybiBvZmZzZXQ7DQo+PiAgIH0N
-Cj4+ICAgDQo+PiArdm9pZCBkaXNhYmxlX2Vycl90aHJlc2hvbGRpbmcoc3RydWN0IGNwdWluZm9f
-eDg2ICpjKQ0KPj4gK3sNCj4+ICsJaW50IGk7DQo+PiArCXU2NCBod2NyOw0KPj4gKwlib29sIG5l
-ZWRfdG9nZ2xlOw0KPj4gKwl1MzIgbXNyc1tdID0gew0KPj4gKwkJMHgwMDAwMDQxMywgLyogTUM0
-X01JU0MwICovDQo+PiArCQkweGMwMDAwNDA4LCAvKiBNQzRfTUlTQzEgKi8NCj4+ICsJfTsNCj4+
-ICsNCj4+ICsJaWYgKGMtPng4Nl9tb2RlbCA+PSAweDEwICYmIGMtPng4Nl9tb2RlbCA8PSAweDdm
-KSB7DQo+IFlvdSBjYW4gc2F2ZSB5b3Vyc2VsZiBhbiBpbmRlbnRhdGlvbiBsZXZlbCBieSByZXZl
-cnNpbmcgdGhlIGxvZ2ljIGhlcmU6DQo+DQo+IAlpZiAoYy0+eDg2ICE9IDB4MTUpDQo+IAkJcmV0
-dXJuOw0KPg0KPiBBbHNvLCBJJ20gd29uZGVyaW5nIGlmIHlvdSBzaW1wbHkgY2FuJ3QgZG8NCj4N
-Cj4gCWlmIChjLT54ODZfbW9kZWwgPCAweDEwKQ0KPiAJCXJldHVybjsNCj4NCj4gVGhlIGFzc3Vt
-cHRpb24gYmVpbmcgdGhhdCBhbGwgdGhlIG1vZGVscyAtIGV2ZW4gYWZ0ZXIgMHg3ZiAtIGFyZSBo
-aWdobHkNCj4gdW5saWtlbHkgdG8gZ2V0IE1DNF9NSVNDIHRocmVzaG9sZGluZyBzdXBwb3J0ZWQs
-IGFsbCBvZiBhIHN1ZGRlbi4gTWlnaHQNCj4gd2FubmEgcnVuIGl0IGJ5IEhXIGd1eXMgZmlyc3Qg
-dGhvdWdoLg0KDQpQZXJoYXBzIG5vIG5lZWQgdG8gY2hlY2sgdGhlIG1vZGVsIGFsdG9nZXRoZXIs
-IHRoaXMgaXMgYXBwbGljYWJsZSB0byANCmVudGlyZSBmYW1pbHkgMTUsIHNpbmNlIHRoZXJlIGlz
-IG5vIDh0aCBHZW4uDQoNCj4NCj4+ICsJCXJkbXNybChNU1JfSzdfSFdDUiwgaHdjcik7DQo+PiAr
-DQo+PiArCQkvKiBNY1N0YXR1c1dyRW4gaGFzIHRvIGJlIHNldCAqLw0KPj4gKwkJbmVlZF90b2dn
-bGUgPSAhKGh3Y3IgJiBCSVQoMTgpKTsNCj4+ICsNCj4+ICsJCWlmIChuZWVkX3RvZ2dsZSkNCj4+
-ICsJCQl3cm1zcmwoTVNSX0s3X0hXQ1IsIGh3Y3IgfCBCSVQoMTgpKTsNCj4+ICsNCj4+ICsJCS8q
-IENsZWFyIENudFAgYml0IHNhZmVseSAqLw0KPj4gKwkJZm9yIChpID0gMDsgaSA8IEFSUkFZX1NJ
-WkUobXNycyk7IGkrKykNCj4+ICsJCQltc3JfY2xlYXJfYml0KG1zcnNbaV0sIDYyKTsNCj4+ICsN
-Cj4+ICsJCS8qIHJlc3RvcmUgb2xkIHNldHRpbmdzICovDQo+PiArCQlpZiAobmVlZF90b2dnbGUp
-DQo+PiArCQkJd3Jtc3JsKE1TUl9LN19IV0NSLCBod2NyKTsNCj4+ICsJfQ0KPiBTbyB5b3UgY29w
-aWVkIHRoZSBzYW1lIGNvZGUgZnJvbSBfX21jaGVja19jcHVfYXBwbHlfcXVpcmtzKCkuDQo+DQo+
-IE5vLg0KPg0KPiBJbiBhIGZpcnN0IHBhdGNoLCB5b3UgY2FydmUgdGhhdCBDbnRQIGNsZWFyaW5n
-IGNvZGUgaW4gYSBzZXBhcmF0ZQ0KPiBmdW5jdGlvbiBkaXNhYmxlX2Vycl90aHJlc2hvbGRpbmco
-KSBsaWtlIHlvdSd2ZSBkb25lIGJlZm9yZS4NCkFncmVlLCBmaXJzdCBwYXRjaCBoZXJlOsKgIGh0
-dHBzOi8vbGttbC5vcmcvbGttbC8yMDE5LzEvMTAvNzANCj4gVGhlbiwgaW4gYSBzZWNvbmQgcGF0
-Y2gsIHlvdSBjYWxsIGl0IGZyb20gbWNlL2FtZC5jIGFuZCB5b3UgbW92ZSBhbGwgdGhlDQo+IGZh
-bWlseS9tb2RlbCBjaGVja3MgaW5zaWRlIHRoZSBmdW5jdGlvbiBzbyB0aGF0IHlvdSBoYXZlIGEg
-c29sZQ0KPg0KPiAJZGlzYWJsZV9lcnJfdGhyZXNob2xkaW5nKCk7DQo+DQo+IGNhbGxzIHdoZXJl
-IHlvdSBuZWVkIHRoZW0uDQo+DQo+IFlvdSBkb24ndCBoYXZlIHRvIHBhc3MgaW4gc3RydWN0IGNw
-dWluZm9feDg2ICpjIC0geW91IGNhbiB1c2UNCj4gYm9vdF9jcHVfZGF0YSBpbiB0aGUgZnVuY3Rp
-b24uDQpBZ3JlZSwgc2Vjb25kIHBhdGNoIGhlcmU6IGh0dHBzOi8vbGttbC5vcmcvbGttbC8yMDE5
-LzEvMTAvNzINCj4NCj4+ICt9DQo+PiAgIC8qIGNwdSBpbml0IGVudHJ5IHBvaW50LCBjYWxsZWQg
-ZnJvbSBtY2UuYyB3aXRoIHByZWVtcHQgb2ZmICovDQo+PiAgIHZvaWQgbWNlX2FtZF9mZWF0dXJl
-X2luaXQoc3RydWN0IGNwdWluZm9feDg2ICpjKQ0KPj4gICB7DQo+PiBAQCAtNTUyLDYgKzU4MCwx
-MiBAQCB2b2lkIG1jZV9hbWRfZmVhdHVyZV9pbml0KHN0cnVjdCBjcHVpbmZvX3g4NiAqYykNCj4+
-ICAgCXVuc2lnbmVkIGludCBiYW5rLCBibG9jaywgY3B1ID0gc21wX3Byb2Nlc3Nvcl9pZCgpOw0K
-Pj4gICAJaW50IG9mZnNldCA9IC0xOw0KPj4gICANCj4+ICsJLyogRGlzYWJsZSBlcnJvciB0aHJl
-c2hvbGRpbmcgYmFuayBpbiBTMyByZXN1bWUgcGF0aCBhcyB3ZWxsLA0KPiBXaGF0IFMzIHJlc3Vt
-ZSBwYXRoPyBUaGF0J3MgdGhlIENQVSBpbml0IHBhdGguDQoNCkkgaGF2ZSBhbHNvIHB1dCBpbiB0
-aGUgY29tbWl0IG1lc3NhZ2UsIGJ1dCBmb3IgZGlzY3Vzc2lvbiBzYWtlLCB0aGVyZSANCmFyZSAy
-IGNvZGUgcGF0aHMgbGVhZGluZyB0byBtY2VfYW1kX2ZlYXR1cmVfaW5pdCgpIGFzIGJlbG93Lg0K
-MSkgUzUgLT4gUzA6IChib290KQ0Kc2Vjb25kYXJ5X3N0YXJ0dXBfNjQgLT4gc3RhcnRfa2VybmVs
-IC0+IGlkZW50aWZ5X2Jvb3RfY3B1IC0+DQppZGVudGlmeV9jcHUgLT4NCm1jaGVja19jcHVfaW5p
-dCAoY2FsbHPCoCBfX21jaGVja19jcHVfYXBwbHlfcXVpcmtzIGJlZm9yZSkgLT4NCm1jZV9hbWRf
-ZmVhdHVyZV9pbml0DQoNCjIpIFMzIC0+IFMwOiAocmVzdW1lKQ0Kc3lzY29yZV9yZXN1bWUgLT4g
-bWNlX3N5c2NvcmVfcmVzdW1lIC0+IG1jZV9hbWRfZmVhdHVyZV9pbml0DQoNCkkgaGF2ZSBzdW1t
-YXJpemVkIHRoaXMgc2VxdWVuY2UgYWZ0ZXIgY2FwdHVyaW5nIHRoZSBjYWxsIHRyYWNlIGluIGJv
-dGggDQpzY2VuYXJpb3MuDQoNCkl0cyBjbGVhciB0aGF0IHRoZSBxdWlya3MgYXJlIG5vdCBhcHBs
-aWVkIGR1cmluZyBTMy0+IFMwIHRyYW5zaXRpb24sIA0KaGVuY2UgdGhlIHBhdGNoLg0KDQpJIGNh
-bm5vdCBtb3ZlIHRoZSBxdWlyayB0byBtY2VfYW1kX2ZlYXR1cmVfaW5pdCgpIHNpbmNlIGFtZC5j
-IGlzIGd1YXJkZWQgDQpieSBDT05GSUdfWDg2X01DRV9BTUQgYW5kIHRoZSBxdWlyayBzaG91bGQg
-YmUgYXBwbGljYWJsZSBpbiBjYXNlIHRoZSANCmNvbmZpZyBpcyBvZmYgdmlhDQoNCl9fbWNoZWNr
-X2NwdV9hcHBseV9xdWlya3MoKSBhdCBib290Lg0KDQo+IEFsc28sIGtlcm5lbCBjb21tZW50cyBz
-dHlsZSBpczoNCj4NCj4gCS8qDQo+IAkgKiBBIHNlbnRlbmNlIGVuZGluZyB3aXRoIGEgZnVsbC1z
-dG9wLg0KPiAJICogQW5vdGhlciBzZW50ZW5jZS4gLi4uDQo+IAkgKiBNb3JlIHNlbnRlbmNlcy4g
-Li4uDQo+IAkgKi8NCj4NCkFncmVlLCBmb2xsb3dlZCBpdCBpbiB0aGUgYWJvdmUgbWVudGlvbmVk
-IHBhdGNoZXMuDQoNClRoYW5rcy4NCg0KUmVnYXJkcywNCg0KU2hpcmlzaCBTDQoNCj4gR29vZCBs
-dWNrIQ0KPg0KPiA6LSkNCj4NCi0tIA0KUmVnYXJkcywNClNoaXJpc2ggUw0KDQo=
+On Tue, Dec 11, 2018 at 07:42:51PM +0000, Martyn Welch wrote:
+> The Phytec phyBOARD Segin is i.MX6 based SBC, available with either an
+> i.MX6UL or i.MX6ULL SOM and various add-on boards.
+> 
+> The following adds support for the "Full Featured" version of the Segin,
+> which is provided with the i.MX6UL SOM and the PEB-EVAL-01 evaluation
+> module.
+> 
+> Its hardware specifications are:
+> 
+>  * 512MB DDR3 memory
+>  * 512MB NAND flash
+>  * Dual 10/100 Ethernet
+>  * USB Host and USB OTG
+>  * RS232
+>  * MicroSD external storage
+>  * Audio, RS232, I2C, SPI, CAN headers
+>  * Further I/O options via A/V and Expansion headers
+> 
+> Signed-off-by: Martyn Welch <martyn.welch@collabora.com>
+> 
+> ---
+> 
+>  arch/arm/boot/dts/Makefile                    |   1 +
+>  arch/arm/boot/dts/imx6ul-phytec-pcl063.dtsi   | 152 ++++++++
+>  .../boot/dts/imx6ul-phytec-peb-eval-01.dtsi   |  55 +++
+>  .../dts/imx6ul-phytec-phyboard-segin-full.dts | 103 ++++++
+>  .../dts/imx6ul-phytec-phyboard-segin.dtsi     | 341 ++++++++++++++++++
+>  5 files changed, 652 insertions(+)
+>  create mode 100644 arch/arm/boot/dts/imx6ul-phytec-pcl063.dtsi
+>  create mode 100644 arch/arm/boot/dts/imx6ul-phytec-peb-eval-01.dtsi
+>  create mode 100644 arch/arm/boot/dts/imx6ul-phytec-phyboard-segin-full.dts
+>  create mode 100644 arch/arm/boot/dts/imx6ul-phytec-phyboard-segin.dtsi
+> 
+> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+> index b0e966d625b9..6ca286f6b37c 100644
+> --- a/arch/arm/boot/dts/Makefile
+> +++ b/arch/arm/boot/dts/Makefile
+> @@ -557,6 +557,7 @@ dtb-$(CONFIG_SOC_IMX6UL) += \
+>  	imx6ul-liteboard.dtb \
+>  	imx6ul-opos6uldev.dtb \
+>  	imx6ul-pico-hobbit.dtb \
+> +	imx6ul-phytec-phyboard-segin-full.dtb \
+>  	imx6ul-tx6ul-0010.dtb \
+>  	imx6ul-tx6ul-0011.dtb \
+>  	imx6ul-tx6ul-mainboard.dtb \
+> diff --git a/arch/arm/boot/dts/imx6ul-phytec-pcl063.dtsi b/arch/arm/boot/dts/imx6ul-phytec-pcl063.dtsi
+> new file mode 100644
+> index 000000000000..ede24105044f
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/imx6ul-phytec-pcl063.dtsi
+> @@ -0,0 +1,152 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (C) 2016 PHYTEC Messtechnik GmbH
+> + * Author: Christian Hemp <c.hemp@phytec.de>
+> + */
+> +
+> +#include <dt-bindings/gpio/gpio.h>
+> +#include <dt-bindings/interrupt-controller/irq.h>
+> +#include <dt-bindings/pwm/pwm.h>
+> +#include "imx6ul.dtsi"
+> +
+> +/ {
+> +
+> +	model = "Phytec phyCORE i.MX6 UltraLite";
+> +	compatible = "phytec,imx6ul-pcl063", "fsl,imx6ul";
+> +
+> +	chosen {
+> +		stdout-path = &uart1;
+> +	};
+> +
+> +
+
+One newline is enough.
+
+> +	/*
+> +	 * Set the minimum memory size here and
+> +	 * let the bootloader set the real size.
+> +	 */
+> +	memory {
+> +		reg = <0x80000000 0x8000000>;
+> +	};
+> +
+> +	gpio_leds_som: somleds {
+
+leds for node name?
+
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&pinctrl_gpioleds_som>;
+> +		compatible = "gpio-leds";
+> +		status = "okay";
+
+The okay status is generally used to flip the disabled devices.
+
+> +
+> +		som_green {
+
+led-green?
+
+> +			label = "phycore:green";
+> +			gpios = <&gpio5 4 GPIO_ACTIVE_HIGH>;
+> +			linux,default-trigger = "heartbeat";
+> +		};
+> +	};
+> +};
+> +
+> +&fec1 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_enet1>;
+> +	phy-mode = "rmii";
+> +	phy-handle = <&ethphy0>;
+> +	status = "okay";
+> +
+> +	mdio: mdio {
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +
+> +		ethphy0: ethernet-phy@1 {
+> +			reg = <1>;
+> +			interrupt-parent = <&gpio1>;
+> +			interrupts = <2 IRQ_TYPE_LEVEL_LOW>;
+> +			micrel,led-mode = <1>;
+> +			clocks = <&clks IMX6UL_CLK_ENET_REF>;
+> +			clock-names = "rmii-ref";
+> +		};
+> +	};
+> +};
+> +
+> +&gpmi {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_gpmi_nand>;
+> +	nand-on-flash-bbt;
+> +	status = "okay";
+> +};
+> +
+> +&i2c1 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 =<&pinctrl_i2c1>;
+> +	clock-frequency = <100000>;
+> +	status = "okay";
+> +
+> +	eeprom@52 {
+> +		compatible = "catalyst,24c32", "atmel,24c32";
+> +		reg = <0x52>;
+> +	};
+> +};
+> +
+> +&snvs_poweroff {
+> +	status = "okay";
+> +};
+> +
+> +&uart1 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_uart1>;
+> +	status = "okay";
+> +};
+> +
+> +&iomuxc {
+> +	pinctrl-names = "default";
+> +
+> +	pinctrl_enet1: enet1grp {
+> +		fsl,pins = <
+> +			MX6UL_PAD_GPIO1_IO07__ENET1_MDC		0x1b0b0
+> +			MX6UL_PAD_GPIO1_IO06__ENET1_MDIO	0x1b0b0
+> +			MX6UL_PAD_ENET1_RX_EN__ENET1_RX_EN	0x1b0b0
+> +			MX6UL_PAD_ENET1_RX_ER__ENET1_RX_ER	0x1b0b0
+> +			MX6UL_PAD_ENET1_RX_DATA0__ENET1_RDATA00	0x1b0b0
+> +			MX6UL_PAD_ENET1_RX_DATA1__ENET1_RDATA01	0x1b0b0
+> +			MX6UL_PAD_ENET1_TX_EN__ENET1_TX_EN	0x1b0b0
+> +			MX6UL_PAD_ENET1_TX_DATA0__ENET1_TDATA00	0x1b0b0
+> +			MX6UL_PAD_ENET1_TX_DATA1__ENET1_TDATA01	0x1b0b0
+> +			MX6UL_PAD_ENET1_TX_CLK__ENET1_REF_CLK1	0x4001b031
+> +			MX6UL_PAD_GPIO1_IO02__GPIO1_IO02	0x17059
+> +		>;
+> +	};
+> +
+> +	pinctrl_gpioleds_som: gpioledssomgrp {
+> +		fsl,pins = <MX6UL_PAD_SNVS_TAMPER4__GPIO5_IO04	0x0b0b0>;
+> +	};
+> +
+> +	pinctrl_gpmi_nand: gpminandgrp {
+> +		fsl,pins = <
+> +			MX6UL_PAD_NAND_CLE__RAWNAND_CLE		0x0b0b1
+> +			MX6UL_PAD_NAND_ALE__RAWNAND_ALE		0x0b0b1
+> +			MX6UL_PAD_NAND_WP_B__RAWNAND_WP_B	0x0b0b1
+> +			MX6UL_PAD_NAND_READY_B__RAWNAND_READY_B	0x0b000
+> +			MX6UL_PAD_NAND_CE0_B__RAWNAND_CE0_B	0x0b0b1
+> +			MX6UL_PAD_NAND_RE_B__RAWNAND_RE_B	0x0b0b1
+> +			MX6UL_PAD_NAND_WE_B__RAWNAND_WE_B	0x0b0b1
+> +			MX6UL_PAD_NAND_DATA00__RAWNAND_DATA00	0x0b0b1
+> +			MX6UL_PAD_NAND_DATA01__RAWNAND_DATA01	0x0b0b1
+> +			MX6UL_PAD_NAND_DATA02__RAWNAND_DATA02	0x0b0b1
+> +			MX6UL_PAD_NAND_DATA03__RAWNAND_DATA03	0x0b0b1
+> +			MX6UL_PAD_NAND_DATA04__RAWNAND_DATA04	0x0b0b1
+> +			MX6UL_PAD_NAND_DATA05__RAWNAND_DATA05	0x0b0b1
+> +			MX6UL_PAD_NAND_DATA06__RAWNAND_DATA06	0x0b0b1
+> +			MX6UL_PAD_NAND_DATA07__RAWNAND_DATA07	0x0b0b1
+> +		>;
+> +	};
+> +
+> +	pinctrl_i2c1: i2cgrp {
+> +		fsl,pins = <
+> +			MX6UL_PAD_UART4_TX_DATA__I2C1_SCL	0x4001b8b0
+> +			MX6UL_PAD_UART4_RX_DATA__I2C1_SDA	0x4001b8b0
+> +		>;
+> +	};
+> +
+> +	pinctrl_uart1: uart1grp {
+> +		fsl,pins = <
+> +			MX6UL_PAD_UART1_TX_DATA__UART1_DCE_TX	0x1b0b1
+> +			MX6UL_PAD_UART1_RX_DATA__UART1_DCE_RX	0x1b0b1
+> +		>;
+> +	};
+> +
+> +};
+> diff --git a/arch/arm/boot/dts/imx6ul-phytec-peb-eval-01.dtsi b/arch/arm/boot/dts/imx6ul-phytec-peb-eval-01.dtsi
+> new file mode 100644
+> index 000000000000..e7d115b0ff80
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/imx6ul-phytec-peb-eval-01.dtsi
+> @@ -0,0 +1,55 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (C) 2016 PHYTEC Messtechnik
+> + * Author: Christian Hemp <c.hemp@phytec.de>
+> + */
+> +
+> +#include <dt-bindings/input/input.h>
+> +
+> +/ {
+> +	gpio_keys: gpio-keys {
+> +		compatible = "gpio-key";
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&pinctrl_gpio_keys>;
+> +		status = "disabled";
+> +
+> +		power {
+> +			label = "Power Button";
+> +			gpios = <&gpio5 0 GPIO_ACTIVE_LOW>;
+> +			linux,code = <KEY_POWER>;
+> +			gpio-key,wakeup;
+
+The property is deprecated.  Use wakeup-source instead.
+
+> +		};
+> +	};
+> +
+> +	user_leds: user_leds {
+
+leds.
+
+> +		compatible = "gpio-leds";
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&pinctrl_user_leds>;
+> +		status = "disabled";
+> +
+> +		user_led_yellow {
+
+led-yellow
+
+> +			gpios = <&gpio1 1 GPIO_ACTIVE_HIGH>;
+> +			linux,default-trigger = "default-on";
+> +		};
+> +
+> +		user_led_red {
+
+led-red.
+
+> +			gpios = <&gpio1 10 GPIO_ACTIVE_HIGH>;
+> +			linux,default-trigger = "default-on";
+> +		};
+> +	};
+> +};
+> +
+> +&iomuxc {
+> +	pinctrl_gpio_keys: gpio_keysgrp {
+> +		fsl,pins = <
+> +			MX6UL_PAD_SNVS_TAMPER0__GPIO5_IO00	0x79
+> +		>;
+> +	};
+> +
+> +	pinctrl_user_leds: user_ledsgrp {
+> +		fsl,pins = <
+> +			MX6UL_PAD_JTAG_MOD__GPIO1_IO10		0x79
+> +			MX6UL_PAD_GPIO1_IO01__GPIO1_IO01	0x79
+> +		>;
+> +	};
+> +};
+> diff --git a/arch/arm/boot/dts/imx6ul-phytec-phyboard-segin-full.dts b/arch/arm/boot/dts/imx6ul-phytec-phyboard-segin-full.dts
+> new file mode 100644
+> index 000000000000..4bee97a4e950
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/imx6ul-phytec-phyboard-segin-full.dts
+> @@ -0,0 +1,103 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (C) 2016 PHYTEC Messtechnik GmbH
+> + * Author: Christian Hemp <c.hemp@phytec.de>
+> + */
+> +
+> +/dts-v1/;
+> +#include "imx6ul-phytec-pcl063.dtsi"
+> +#include "imx6ul-phytec-phyboard-segin.dtsi"
+> +#include "imx6ul-phytec-peb-eval-01.dtsi"
+> +
+> +/ {
+> +
+> +	model = "Phytec phyBOARD-Segin i.MX6 UltraLite Full Featured";
+> +	compatible = "phytec,imx6ul-pbacd10", "phytec,imx6ul-pcl063",
+> +		     "fsl,imx6ul";
+> +};
+> +
+> +&adc1 {
+> +	status = "okay";
+> +};
+> +
+> +&can1 {
+> +	status = "okay";
+> +};
+> +
+> +&codec {
+> +	status = "okay";
+> +};
+> +
+> +&fec2 {
+> +	status = "okay";
+> +};
+> +
+> +&i2c_rtc {
+> +	status = "okay";
+> +};
+> +
+> +&reg_can1_en {
+> +	status = "okay";
+> +};
+> +
+> +&reg_sound_1v8 {
+> +	status = "okay";
+> +};
+> +
+> +&reg_sound_3v3 {
+> +	status = "okay";
+> +};
+> +
+> +&sai2 {
+> +	status = "okay";
+> +};
+> +
+> +&sound {
+> +	status = "okay";
+> +};
+> +
+> +&uart5 {
+> +	status = "okay";
+> +};
+> +
+> +&usbotg1 {
+> +	status = "okay";
+> +};
+> +
+> +&usbotg2 {
+> +	status = "okay";
+> +};
+> +
+> +&usdhc1 {
+> +	status = "okay";
+> +};
+> +
+> +
+
+One newline.
+
+> +&ecspi3 {
+
+Sort the node properly.  The only exception could be iomuxc node with
+lots of pin data.
+
+> +	status = "okay";
+
+We usually put status at the end of property list.
+
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_ecspi3>;
+> +
+
+Unnecessary newline.
+
+> +	fsl,spi-num-chipselects=<0>;
+
+Obsolete property.
+
+> +	cs-gpios = <0>;
+
+Invalid GPIO specifier.
+
+> +
+> +	spidev@0 {
+> +		compatible = "spidev";
+> +		spi-max-frequency = <20000000>;
+> +		reg = <0>;
+> +	};
+> +
+> +};
+> +
+> +
+
+One newline.
+
+> +&iomuxc {
+> +	pinctrl_ecspi3: ecspi3grp {
+> +		fsl,pins = <
+> +			MX6UL_PAD_UART2_RTS_B__ECSPI3_MISO 0x10b0
+> +			MX6UL_PAD_UART2_CTS_B__ECSPI3_MOSI 0x10b0
+> +			MX6UL_PAD_UART2_RX_DATA__ECSPI3_SCLK 0x10b0
+> +			MX6UL_PAD_UART2_TX_DATA__ECSPI3_SS0 0x10b0
+> +		>;
+> +	};
+> +};
+> +
+> diff --git a/arch/arm/boot/dts/imx6ul-phytec-phyboard-segin.dtsi b/arch/arm/boot/dts/imx6ul-phytec-phyboard-segin.dtsi
+> new file mode 100644
+> index 000000000000..3e59f49ce5cc
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/imx6ul-phytec-phyboard-segin.dtsi
+> @@ -0,0 +1,341 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (C) 2016 PHYTEC Messtechnik GmbH
+> + * Author: Christian Hemp <c.hemp@phytec.de>
+> + */
+> +
+> +/ {
+> +
+> +	model = "Phytec phyBOARD-Segin i.MX6 UltraLite";
+> +	compatible = "phytec,imx6ul-pbacd-10", "phytec,imx6ul-pcl063",
+> +		     "fsl,imx6ul";
+> +
+> +	aliases {
+> +		rtc0 = &i2c_rtc;
+> +		rtc1 = &snvs_rtc;
+> +	};
+> +
+> +	regulators {
+> +		compatible = "simple-bus";
+
+Drop this container node and put the regulator node directly under root
+with unique name.
+
+	reg_xxx: regulator-xxx {
+		...
+	};
+
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +
+> +		reg_sound_1v8: regulator@1 {
+> +			compatible = "regulator-fixed";
+> +			reg = <1>;
+> +			regulator-name = "i2s-audio-1v8";
+> +			regulator-min-microvolt = <1800000>;
+> +			regulator-max-microvolt = <1800000>;
+> +			status = "disabled";
+> +		};
+> +
+> +		reg_sound_3v3: regulator@2 {
+> +			compatible = "regulator-fixed";
+> +			reg = <2>;
+> +			regulator-name = "i2s-audio-3v3";
+> +			regulator-min-microvolt = <3300000>;
+> +			regulator-max-microvolt = <3300000>;
+> +			status = "disabled";
+> +		};
+> +
+> +		reg_can1_en: regulator@3 {
+> +			compatible = "regulator-fixed";
+> +			reg = <3>;
+> +			pinctrl-names = "default";
+> +			pinctrl-0 = <&princtrl_flexcan1_en>;
+> +			regulator-name = "Can";
+> +			regulator-min-microvolt = <3300000>;
+> +			regulator-max-microvolt = <3300000>;
+> +			gpio = <&gpio5 2 GPIO_ACTIVE_HIGH>;
+> +			enable-active-high;
+> +			status = "disabled";
+> +		};
+> +
+> +		reg_adc1_vref_3v3: regulator@5 {
+> +			compatible = "regulator-fixed";
+> +			regulator-name = "vref-3v3";
+> +			regulator-min-microvolt = <3300000>;
+> +			regulator-max-microvolt = <3300000>;
+> +		};
+> +	};
+> +
+> +	sound: sound {
+> +		compatible = "simple-audio-card";
+> +		simple-audio-card,name = "phyBOARD-Segin-TLV320AIC3007";
+> +		simple-audio-card,format = "i2s";
+> +		simple-audio-card,bitclock-master = <&dailink_master>;
+> +		simple-audio-card,frame-master = <&dailink_master>;
+> +		simple-audio-card,widgets =
+> +			"Line", "Line In",
+> +			"Line", "Line Out",
+> +			"Speaker", "Speaker";
+> +		simple-audio-card,routing =
+> +			"Line Out", "LLOUT",
+> +			"Line Out", "RLOUT",
+> +			"Speaker", "SPOP",
+> +			"Speaker", "SPOM",
+> +			"LINE1L", "Line In",
+> +			"LINE1R", "Line In";
+> +		status = "disabled";
+> +
+> +		simple-audio-card,cpu {
+> +			sound-dai = <&sai2>;
+> +		};
+> +
+> +		dailink_master: simple-audio-card,codec {
+> +			sound-dai = <&codec>;
+> +			clocks = <&clks IMX6UL_CLK_SAI2>;
+> +		};
+> +	};
+> +
+> +};
+> +
+> +&can1 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_flexcan1>;
+> +	xceiver-supply = <&reg_can1_en>;
+> +	status = "disabled";
+> +};
+> +
+> +&clks {
+> +	assigned-clocks = <&clks IMX6UL_CLK_PLL4_AUDIO_DIV>;
+> +	assigned-clock-rates = <786432000>;
+> +};
+> +
+> +&fec2 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_enet2>;
+> +	phy-mode = "rmii";
+> +	phy-handle = <&ethphy1>;
+> +	status = "disabled";
+> +};
+> +
+> +&i2c1 {
+> +	codec: tlv320@18 {
+> +		compatible = "ti,tlv320aic3007";
+> +		#sound-dai-cells = <0>;
+> +		reg = <0x18>;
+> +
+
+Drop the newline.
+
+> +		AVDD-supply = <&reg_sound_3v3>;
+> +		IOVDD-supply = <&reg_sound_3v3>;
+> +		DRVDD-supply = <&reg_sound_3v3>;
+> +		DVDD-supply = <&reg_sound_1v8>;
+> +		status = "disabled";
+> +	};
+> +
+> +	stmpe: stmpe@44 {
+> +		compatible = "st,stmpe811";
+> +		reg = <0x44>;
+> +		interrupts = <3 IRQ_TYPE_LEVEL_LOW>;
+> +		interrupt-parent = <&gpio5>;
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&pinctrl_stmpe>;
+> +		status = "disabled";
+> +
+> +		stmpe_touchscreen {
+
+touchscreen
+
+> +			compatible = "st,stmpe-ts";
+> +			st,sample-time = <4>;
+> +			st,mod-12b = <1>;
+> +			st,ref-sel = <0>;
+> +			st,adc-freq = <1>;
+> +			st,ave-ctrl = <1>;
+> +			st,touch-det-delay = <2>;
+> +			st,settling = <2>;
+> +			st,fraction-z = <7>;
+> +			st,i-drive = <1>;
+> +			touchscreen-inverted-x = <1>;
+> +			touchscreen-inverted-y = <1>;
+> +		};
+> +	};
+> +
+> +	i2c_rtc: rtc@68 {
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&pinctrl_rtc_int>;
+> +		compatible = "microcrystal,rv4162";
+> +		reg = <0x68>;
+> +		interrupt-parent = <&gpio5>;
+> +		interrupts = <1 IRQ_TYPE_LEVEL_LOW>;
+> +		status = "disabled";
+> +	};
+> +};
+> +
+> +&mdio {
+> +	ethphy1: ethernet-phy@2 {
+> +		reg = <2>;
+> +		micrel,led-mode = <1>;
+> +		clocks = <&clks IMX6UL_CLK_ENET2_REF>;
+> +		clock-names = "rmii-ref";
+> +	};
+> +};
+> +
+> +&pwm3 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_pwm3>;
+> +	status = "disabled";
+> +};
+> +
+> +&sai2 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_sai2>;
+> +	assigned-clocks = <&clks IMX6UL_CLK_SAI2_SEL>,
+> +			<&clks IMX6UL_CLK_SAI2>;
+> +	assigned-clock-parents = <&clks IMX6UL_CLK_PLL4_AUDIO_DIV>;
+> +	assigned-clock-rates = <0>, <19200000>;
+> +	fsl,sai-mclk-direction-output;
+> +	status = "disabled";
+> +};
+> +
+> +&uart5 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_uart5>;
+> +	uart-has-rtscts;
+> +	status = "disabled";
+> +};
+> +
+> +&usbotg1 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_usb_otg1_id>;
+> +	dr_mode = "otg";
+> +	status = "disabled";
+> +};
+> +
+> +&usbotg2 {
+> +	dr_mode = "host";
+> +	disable-over-current;
+> +	status = "disabled";
+> +};
+> +
+> +&usdhc1 {
+> +	pinctrl-names = "default", "state_100mhz", "state_200mhz";
+> +	pinctrl-0 = <&pinctrl_usdhc1>;
+> +	pinctrl-1 = <&pinctrl_usdhc1_100mhz>;
+> +	pinctrl-2 = <&pinctrl_usdhc1_200mhz>;
+> +	cd-gpios = <&gpio1 19 GPIO_ACTIVE_LOW>;
+> +	no-1-8-v;
+> +	keep-power-in-suspend;
+> +	wakeup-source;
+> +	status = "disabled";
+> +};
+> +
+> +&adc1 {
+
+Sort it properly.
+
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_adc1>;
+> +	vref-supply = <&reg_adc1_vref_3v3>;
+> +	status = "disabled";
+
+Put it at the end of properties.
+
+> +	/*
+> +	 * driver can not separate a specific channel so we request 4 channels
+> +	 * here - we need only the fourth channel
+> +	 */
+> +	num-channels = <4>;
+> +};
+> +
+> +&iomuxc {
+> +	pinctrl_enet2: enet2grp {
+> +		fsl,pins = <
+> +			MX6UL_PAD_ENET2_RX_EN__ENET2_RX_EN	0x1b0b0
+> +			MX6UL_PAD_ENET2_RX_ER__ENET2_RX_ER	0x1b0b0
+> +			MX6UL_PAD_ENET2_RX_DATA0__ENET2_RDATA00	0x1b0b0
+> +			MX6UL_PAD_ENET2_RX_DATA1__ENET2_RDATA01	0x1b0b0
+> +			MX6UL_PAD_ENET2_TX_EN__ENET2_TX_EN	0x1b0b0
+> +			MX6UL_PAD_ENET2_TX_DATA0__ENET2_TDATA00	0x1b0b0
+> +			MX6UL_PAD_ENET2_TX_DATA1__ENET2_TDATA01	0x1b0b0
+> +			MX6UL_PAD_ENET2_TX_CLK__ENET2_REF_CLK2	0x4001b031
+> +		>;
+> +	};
+> +
+> +	pinctrl_flexcan1: flexcan1 {
+> +		fsl,pins = <
+> +			MX6UL_PAD_UART3_CTS_B__FLEXCAN1_TX	0x0b0b0
+> +			MX6UL_PAD_UART3_RTS_B__FLEXCAN1_RX	0x0b0b0
+> +		>;
+> +	};
+> +
+> +	princtrl_flexcan1_en: flexcan1engrp {
+> +		fsl,pins = <
+> +			MX6UL_PAD_SNVS_TAMPER2__GPIO5_IO02	0x17059
+> +		>;
+> +	};
+> +
+> +	pinctrl_pwm3: pwm3grp {
+> +		fsl,pins = <
+> +			MX6UL_PAD_GPIO1_IO04__PWM3_OUT	0x0b0b0
+> +		>;
+> +	};
+> +
+> +	pinctrl_rtc_int: rtcintgrp {
+> +		fsl,pins = <
+> +			MX6UL_PAD_SNVS_TAMPER1__GPIO5_IO01	0x17059
+> +		>;
+> +	};
+> +
+> +	pinctrl_sai2: sai2grp {
+> +		fsl,pins = <
+> +			MX6UL_PAD_JTAG_TDI__SAI2_TX_BCLK	0x17088
+> +			MX6UL_PAD_JTAG_TDO__SAI2_TX_SYNC	0x17088
+> +			MX6UL_PAD_JTAG_TRST_B__SAI2_TX_DATA	0x11088
+> +			MX6UL_PAD_JTAG_TCK__SAI2_RX_DATA	0x11088
+> +			MX6UL_PAD_JTAG_TMS__SAI2_MCLK		0x17088
+> +		>;
+> +	};
+> +
+> +	pinctrl_stmpe: stmpegrp {
+> +		fsl,pins = <
+> +			MX6UL_PAD_SNVS_TAMPER3__GPIO5_IO03	0x17059
+> +		>;
+> +	};
+> +
+> +	pinctrl_uart5: uart5grp {
+> +		fsl,pins = <
+> +			MX6UL_PAD_UART5_TX_DATA__UART5_DCE_TX	0x1b0b1
+> +			MX6UL_PAD_UART5_RX_DATA__UART5_DCE_RX	0x1b0b1
+> +			MX6UL_PAD_GPIO1_IO08__UART5_DCE_RTS	0x1b0b1
+> +			MX6UL_PAD_GPIO1_IO09__UART5_DCE_CTS	0x1b0b1
+> +		>;
+> +	};
+> +
+> +	pinctrl_usb_otg1_id: usbotg1idgrp {
+> +		fsl,pins = <
+> +			MX6UL_PAD_GPIO1_IO00__ANATOP_OTG1_ID	0x17059
+> +		>;
+> +	};
+> +
+> +	pinctrl_usdhc1: usdhc1grp {
+> +		fsl,pins = <
+> +			MX6UL_PAD_SD1_CMD__USDHC1_CMD		0x17059
+> +			MX6UL_PAD_SD1_CLK__USDHC1_CLK		0x10059
+> +			MX6UL_PAD_SD1_DATA0__USDHC1_DATA0	0x17059
+> +			MX6UL_PAD_SD1_DATA1__USDHC1_DATA1	0x17059
+> +			MX6UL_PAD_SD1_DATA2__USDHC1_DATA2	0x17059
+> +			MX6UL_PAD_SD1_DATA3__USDHC1_DATA3	0x17059
+> +			MX6UL_PAD_UART1_RTS_B__GPIO1_IO19	0x17059
+> +		>;
+> +	};
+> +
+> +	pinctrl_usdhc1_100mhz: usdhc1grp100mhz {
+> +		fsl,pins = <
+> +			MX6UL_PAD_SD1_CMD__USDHC1_CMD		0x170b9
+> +			MX6UL_PAD_SD1_CLK__USDHC1_CLK		0x100b9
+> +			MX6UL_PAD_SD1_DATA0__USDHC1_DATA0	0x170b9
+> +			MX6UL_PAD_SD1_DATA1__USDHC1_DATA1	0x170b9
+> +			MX6UL_PAD_SD1_DATA2__USDHC1_DATA2	0x170b9
+> +			MX6UL_PAD_SD1_DATA3__USDHC1_DATA3	0x170b9
+> +		>;
+> +	};
+> +
+> +	pinctrl_usdhc1_200mhz: usdhc1grp200mhz {
+> +		fsl,pins = <
+> +			MX6UL_PAD_SD1_CMD__USDHC1_CMD		0x170f9
+> +			MX6UL_PAD_SD1_CLK__USDHC1_CLK		0x100f9
+> +			MX6UL_PAD_SD1_DATA0__USDHC1_DATA0	0x170f9
+> +			MX6UL_PAD_SD1_DATA1__USDHC1_DATA1	0x170f9
+> +			MX6UL_PAD_SD1_DATA2__USDHC1_DATA2	0x170f9
+> +			MX6UL_PAD_SD1_DATA3__USDHC1_DATA3	0x170f9
+> +		>;
+> +	};
+> +
+> +	pinctrl_adc1: adc1grp {
+
+Sort it properly.
+
+Shawn
+
+> +		fsl,pins = <
+> +			MX6UL_PAD_GPIO1_IO03__GPIO1_IO03	0xb0
+> +		>;
+> +	};
+> +};
+> -- 
+> 2.19.2
+> 
