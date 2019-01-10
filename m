@@ -2,115 +2,131 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93CC6C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 09:02:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83ED8C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 09:03:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 600F1214C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 09:02:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 535F02173B
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 09:03:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="giryIPP2";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="KJppmrMH"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="EY1cxcFT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727741AbfAJJCz (ORCPT
+        id S1727768AbfAJJDo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 04:02:55 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:42570 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727661AbfAJJCy (ORCPT
+        Thu, 10 Jan 2019 04:03:44 -0500
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:37273 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727220AbfAJJDn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 04:02:54 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 5E3C5608CD; Thu, 10 Jan 2019 09:02:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1547110974;
-        bh=B40pLJEFi33B2dRTxWBa3gDmBvRpqCUr3ITuOr6EK9A=;
-        h=From:To:Cc:Subject:Date:From;
-        b=giryIPP2yFpuKeql6SC7M/QS5egIRjRfVvDzvNSM0SkctdveWBxGacs5pfBNcuY0l
-         8LKv3WJy3OyOKGXjJgGGA0cuHgVQK6yZTrRPluxoHuC9qJQloPZWx7AlDAmcZml5+q
-         VguEjzJImNyphlbmGMPbTVkC4IlF3d3fm+YRDc44=
-Received: from rohkumar-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: rohitkr@codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 80BF06038E;
-        Thu, 10 Jan 2019 09:02:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1547110973;
-        bh=B40pLJEFi33B2dRTxWBa3gDmBvRpqCUr3ITuOr6EK9A=;
-        h=From:To:Cc:Subject:Date:From;
-        b=KJppmrMHC9s6zuiSd7zgE06B/Tj8SBkYlWMwtiTo2ea1rzxGJmBSExXIjPCM8nE3s
-         K7XkP0jw1bUgU2j7VizlOXydPVnXh11ibIXn8EVWFCYHe0jUg6SyWd87Zc6RY52TrN
-         5YTluEDqUb5UFrpvpIQAOGLRIFgvshL7ZeBFsAtY=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 80BF06038E
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rohitkr@codeaurora.org
-From:   Rohit kumar <rohitkr@codeaurora.org>
-To:     plai@codeaurora.org, bgoswami@codeaurora.org,
-        asishb@codeaurora.org, lgirdwood@gmail.com, broonie@kernel.org,
-        perex@perex.cz, tiwai@suse.com, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org, rohkumar@qti.qualcomm.com,
-        srinivas.kandagatla@linaro.org, vinod.koul@linaro.org
-Cc:     Rohit kumar <rohitkr@codeaurora.org>,
-        Ajit Pandey <ajitp@codeaurora.org>
-Subject: [PATCH] ASoC: soc-core: Hold client_mutex around soc_init_dai_link()
-Date:   Thu, 10 Jan 2019 14:32:41 +0530
-Message-Id: <1547110961-23670-1-git-send-email-rohitkr@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
+        Thu, 10 Jan 2019 04:03:43 -0500
+Received: by mail-vs1-f65.google.com with SMTP id n13so6562071vsk.4
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 01:03:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Cq/LJE+M2szGt0iqQyBFymvPRV2Wpa+Cosev17WtFYw=;
+        b=EY1cxcFTAfs7Ai9Pnyl+8lbFw2ccyvPu2LW3zAMhb5anwaqjci4JNKHgSNKyNRP1yr
+         QpGz/2//c9va1ms0ai93dzZhrKqNdDvh2GDsMl/QfxE/FSPDaEEgsDLkrutu571CPn8E
+         FYAZTPNBvR9VMJ2blC5O/lJ/avoJGl62V2M1Y=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Cq/LJE+M2szGt0iqQyBFymvPRV2Wpa+Cosev17WtFYw=;
+        b=gFrypE2zgdE08oT6boP3ks4asoOT+RLcHIdFu9pWKsZh7ChVy8eZD0TXS1STQnbx3b
+         0/dS3k3J1aaWvPO/uYki+/yMonVsZnlfyf5kMIljol3A0QuerZu5RUpYKe3DI2edYPJB
+         Fjl496BBy9fTElCDMpOYdA7nH/2TSQ0lvM8zU3BaiVjcsY6I3ivz5YzWC5rS7mRTl4dg
+         +HZ+MIrOV8M6AZdrmD4aLqgYRy5sLJAVOMGAuQS+1ywN0waetY+TLruDi56gS01dlWlZ
+         bE1SmdDpVryWmU5DyKhO7dCK0/SXhq2UVD4C03MJiGZuLEnZ78ygz0OGEOuBPjlU4QVE
+         id4A==
+X-Gm-Message-State: AJcUukd1qR/KTXVjGBy5oLalArOgxaE5Ocro19yc2SxVTWadDN1xin1X
+        6pQZ4LfP+/HKzLhnzed9VlvE+C0UHzQ+fB+Er5CnYA==
+X-Google-Smtp-Source: ALg8bN4pzqMeB0IOSuC+roawxU1Zi4G+SKG9EQiaaJntXQ1Mds1d4KevZDeyxrZnPyqlmwXyfHCSZyeCMNJbP1+IfgE=
+X-Received: by 2002:a67:e0d4:: with SMTP id m20mr3970609vsl.182.1547111022238;
+ Thu, 10 Jan 2019 01:03:42 -0800 (PST)
+MIME-Version: 1.0
+References: <cover.1547078153.git.amit.kucheria@linaro.org>
+ <3c7d0e4a8373e89d6922543ccf56749970de5567.1547078153.git.amit.kucheria@linaro.org>
+ <20190110061210.lz5i5wf7wxh22q7c@vireshk-i7>
+In-Reply-To: <20190110061210.lz5i5wf7wxh22q7c@vireshk-i7>
+From:   Amit Kucheria <amit.kucheria@linaro.org>
+Date:   Thu, 10 Jan 2019 14:33:31 +0530
+Message-ID: <CAHLCerPwzJ75Z+AdnrAyV2kY5AV4p5NFbGR1VUEufagGq=2bDw@mail.gmail.com>
+Subject: Re: [PATCH v1 5/7] cpufreq: qcom-hw: Register as a cpufreq cooling device
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Andy Gross <andy.gross@linaro.org>,
+        Taniya Das <tdas@codeaurora.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        "open list:CPU FREQUENCY DRIVERS" <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-soc_init_dai_link() calls soc_find_component() which needs
-to be within client_mutex lock. Add client_mutex lock around
-soc_init_dai_link() in snd_soc_register_card() to avoid
-lockdep warning.
+On Thu, Jan 10, 2019 at 11:42 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
+>
+> On 10-01-19, 05:30, Amit Kucheria wrote:
+> > Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
+> > ---
+> >  drivers/cpufreq/qcom-cpufreq-hw.c | 5 +++++
+> >  1 file changed, 5 insertions(+)
+> >
+> > diff --git a/drivers/cpufreq/qcom-cpufreq-hw.c b/drivers/cpufreq/qcom-cpufreq-hw.c
+> > index 649dddd72749..1c01311e5927 100644
+> > --- a/drivers/cpufreq/qcom-cpufreq-hw.c
+> > +++ b/drivers/cpufreq/qcom-cpufreq-hw.c
+> > @@ -5,6 +5,7 @@
+> >
+> >  #include <linux/bitfield.h>
+> >  #include <linux/cpufreq.h>
+> > +#include <linux/cpu_cooling.h>
+> >  #include <linux/init.h>
+> >  #include <linux/kernel.h>
+> >  #include <linux/module.h>
+> > @@ -216,7 +217,10 @@ static int qcom_cpufreq_hw_cpu_init(struct cpufreq_policy *policy)
+> >  static int qcom_cpufreq_hw_cpu_exit(struct cpufreq_policy *policy)
+> >  {
+> >       void __iomem *base = policy->driver_data - REG_PERF_STATE;
+> > +     struct thermal_cooling_device *cdev = policy->cooldev;
+> >
+> > +     if (cdev)
+> > +             cpufreq_cooling_unregister(cdev);
+> >       kfree(policy->freq_table);
+> >       devm_iounmap(&global_pdev->dev, base);
+> >
+> > @@ -238,6 +242,7 @@ static struct cpufreq_driver cpufreq_qcom_hw_driver = {
+> >       .init           = qcom_cpufreq_hw_cpu_init,
+> >       .exit           = qcom_cpufreq_hw_cpu_exit,
+> >       .fast_switch    = qcom_cpufreq_hw_fast_switch,
+> > +     .ready          = generic_cpufreq_ready,
+> >       .name           = "qcom-cpufreq-hw",
+> >       .attr           = qcom_cpufreq_hw_attr,
+> >  };
+>
+> I liked the idea of reducing code duplication, but not much the
+> implementation. All we were able to get rid of was a call to
+> of_cpufreq_cooling_register() and nothing else. Is it worth it ?
+>
+> Maybe we can add another flag in cpufreq.h:
+>
+> #define CPUFREQ_AUTO_REGISTER_COOLING_DEV (1 << 7)
+>
+> and let the core do it all automatically by itself, that will get rid
+> of code duplication actually.
 
-Fixes: 8780cf1142a5 ("ASoC: soc-core: defer card probe until all component is added to list")
-Reported-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Rohit kumar <rohitkr@codeaurora.org>
-Signed-off-by: Ajit Pandey <ajitp@codeaurora.org>
----
- sound/soc/soc-core.c | 4 ++++
- 1 file changed, 4 insertions(+)
+I like the idea of a flag. I'll spin something implementing it in the next rev.
 
-diff --git a/sound/soc/soc-core.c b/sound/soc/soc-core.c
-index eec92f1..0934b36 100644
---- a/sound/soc/soc-core.c
-+++ b/sound/soc/soc-core.c
-@@ -1027,6 +1027,7 @@ static int snd_soc_init_platform(struct snd_soc_card *card,
- 				 struct snd_soc_dai_link *dai_link)
- {
- 	struct snd_soc_dai_link_component *platform = dai_link->platform;
-+
- 	/*
- 	 * FIXME
- 	 *
-@@ -2754,15 +2755,18 @@ int snd_soc_register_card(struct snd_soc_card *card)
- 	if (!card->name || !card->dev)
- 		return -EINVAL;
- 
-+	mutex_lock(&client_mutex);
- 	for_each_card_prelinks(card, i, link) {
- 
- 		ret = soc_init_dai_link(card, link);
- 		if (ret) {
- 			dev_err(card->dev, "ASoC: failed to init link %s\n",
- 				link->name);
-+			mutex_unlock(&client_mutex);
- 			return ret;
- 		}
- 	}
-+	mutex_unlock(&client_mutex);
- 
- 	dev_set_drvdata(card->dev, card);
- 
--- 
-Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.,
-is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
-
+> @Rafael: What do you say ?
