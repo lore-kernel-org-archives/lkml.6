@@ -2,105 +2,91 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 004C4C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 23:25:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5C1CC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 23:31:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B6C53213F2
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 23:25:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="gaA35ZXg"
+	by mail.kernel.org (Postfix) with ESMTP id 946EA214C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 23:31:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730227AbfAJXZ5 (ORCPT
+        id S1730236AbfAJXbt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 18:25:57 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:35796 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727846AbfAJXZ5 (ORCPT
+        Thu, 10 Jan 2019 18:31:49 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33362 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727846AbfAJXbt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 18:25:57 -0500
-Received: by mail-ed1-f67.google.com with SMTP id x30so11667533edx.2
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 15:25:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brauner.io; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=dSH1MCyTs5Fq2rS1SuY9wqa78utN690zCnDgXG/iH7g=;
-        b=gaA35ZXgNEMfycsvkzxmrXWXCPwUFxQq3ErYmM6gnNzW7+hGXnJhOFA2cupQ/aBmdD
-         lSOqbDVoZrSdpb7fQEe5H60Bw7wqNM85AX4VQPGxTk8KPOk7sooqIppIXDd7pz1TO3fO
-         x4RFuIfEzXRmTs5ozz9mIn3khkvfr8ir7OVJpL8ggbFCOnxz0+cyCDmZpMK/d9nhFjQ7
-         +HALHz+Kd3NPO+JW3dYZDItmn1PfA1mx9TJtm+8JcpjM84VSAbyui6hElDssAMxZZumF
-         SVMH2aTx6m4MoIOU9rWFKUZc7I6GdntS/PG7YooQoJRPusuYX9de1BDN6SDMRgXDhIVj
-         lKuw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=dSH1MCyTs5Fq2rS1SuY9wqa78utN690zCnDgXG/iH7g=;
-        b=haSPtRJLcwitt4XSQI/043bdb6RDnZNQjUJKHLna18Iv7yskz8p/61aPAiKc2Ji8zw
-         zpL7K6iIL5kA22w+Cx+XVy5RADW1N1ISWdmFiF+i9N5fCONfzySlgZw95U5HsN/r67XF
-         T6nPDDp9Pt3dhd+kxEhNXymtCZm3pG7wfD3SVnKq1cmB5tymJ22J4XgwdUmAerV/E3M2
-         /UlWVQZPBqGfff2tkw7nOa/xjsS5U10kzWlQ43UkS3netn+PG+9Rhtm8c6+bE7BOqoww
-         kRJlcaequYUXnJC6iWapv2rfw7PdyMZBZaY/12JOvkBmwYkRb2d6AWyrDElKSc5jIT2u
-         qguQ==
-X-Gm-Message-State: AJcUukc6l+e2sMLFJ5RrMlUZ+sb8MeixXqaKvOG+nByyQ4+cudwnzec7
-        SHGETE/SYo4LtSMR7ozrHQ5XkQeFm1Otjg==
-X-Google-Smtp-Source: ALg8bN7z96vT+Fs5BI+NE1VB+VK+LkDyIOEC/JVmt2uX3bYrPoACvTM2AuvEtBVkQFwSqj+3rLikQA==
-X-Received: by 2002:a17:906:c30f:: with SMTP id s15-v6mr10114872ejz.169.1547162754165;
-        Thu, 10 Jan 2019 15:25:54 -0800 (PST)
-Received: from localhost.localdomain ([2a02:8109:b6c0:d6c:c571:88:8aee:976c])
-        by smtp.gmail.com with ESMTPSA id b46sm2314765edc.57.2019.01.10.15.25.52
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 10 Jan 2019 15:25:53 -0800 (PST)
-From:   Christian Brauner <christian@brauner.io>
-To:     gregkh@linuxfoundation.org, tkjos@android.com,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Cc:     arve@android.com, maco@android.com, joel@joelfernandes.org,
-        tkjos@google.com, Christian Brauner <christian@brauner.io>
-Subject: [PATCH] binderfs: rename header to binderfs.h
-Date:   Fri, 11 Jan 2019 00:25:41 +0100
-Message-Id: <20190110232541.16294-1-christian@brauner.io>
-X-Mailer: git-send-email 2.19.1
-MIME-Version: 1.0
-X-Patchwork-Bot: notify
-Content-Transfer-Encoding: 8bit
+        Thu, 10 Jan 2019 18:31:49 -0500
+Received: from localhost.localdomain (c-24-6-170-16.hsd1.ca.comcast.net [24.6.170.16])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2598E1217;
+        Thu, 10 Jan 2019 23:31:48 +0000 (UTC)
+Date:   Thu, 10 Jan 2019 15:31:47 -0800
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Yang Shi <yang.shi@linux.alibaba.com>
+Cc:     ying.huang@intel.com, tim.c.chen@intel.com, minchan@kernel.org,
+        daniel.m.jordan@oracle.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [v5 PATCH 1/2] mm: swap: check if swap backing device is
+ congested or not
+Message-Id: <20190110153147.1baf4c88bf0dd3b8a78aad08@linux-foundation.org>
+In-Reply-To: <1546543673-108536-1-git-send-email-yang.shi@linux.alibaba.com>
+References: <1546543673-108536-1-git-send-email-yang.shi@linux.alibaba.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It doesn't make sense to call the header binder_ctl.h when its sole
-existence is tied to binderfs. So give it a sensible name. Users will far
-more easily remember binderfs.h than binder_ctl.h.
+On Fri,  4 Jan 2019 03:27:52 +0800 Yang Shi <yang.shi@linux.alibaba.com> wrote:
 
-Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
----
- drivers/android/binderfs.c                              | 2 +-
- include/uapi/linux/android/{binder_ctl.h => binderfs.h} | 0
- 2 files changed, 1 insertion(+), 1 deletion(-)
- rename include/uapi/linux/android/{binder_ctl.h => binderfs.h} (100%)
+> Swap readahead would read in a few pages regardless if the underlying
+> device is busy or not.  It may incur long waiting time if the device is
+> congested, and it may also exacerbate the congestion.
+> 
+> Use inode_read_congested() to check if the underlying device is busy or
+> not like what file page readahead does.  Get inode from swap_info_struct.
+> Although we can add inode information in swap_address_space
+> (address_space->host), it may lead some unexpected side effect, i.e.
+> it may break mapping_cap_account_dirty().  Using inode from
+> swap_info_struct seems simple and good enough.
+> 
+> ...
+>
+> --- a/mm/swap_state.c
+> +++ b/mm/swap_state.c
+> @@ -538,11 +538,18 @@ struct page *swap_cluster_readahead(swp_entry_t entry, gfp_t gfp_mask,
+>  	bool do_poll = true, page_allocated;
+>  	struct vm_area_struct *vma = vmf->vma;
+>  	unsigned long addr = vmf->address;
+> +	struct inode *inode = NULL;
+>  
+>  	mask = swapin_nr_pages(offset) - 1;
+>  	if (!mask)
+>  		goto skip;
+>  
+> +	if (si->flags & (SWP_BLKDEV | SWP_FS)) {
 
-diff --git a/drivers/android/binderfs.c b/drivers/android/binderfs.c
-index 7496b10532aa..b4ac9ecc16f7 100644
---- a/drivers/android/binderfs.c
-+++ b/drivers/android/binderfs.c
-@@ -30,7 +30,7 @@
- #include <linux/xarray.h>
- #include <uapi/asm-generic/errno-base.h>
- #include <uapi/linux/android/binder.h>
--#include <uapi/linux/android/binder_ctl.h>
-+#include <uapi/linux/android/binderfs.h>
- 
- #include "binder_internal.h"
- 
-diff --git a/include/uapi/linux/android/binder_ctl.h b/include/uapi/linux/android/binderfs.h
-similarity index 100%
-rename from include/uapi/linux/android/binder_ctl.h
-rename to include/uapi/linux/android/binderfs.h
--- 
-2.19.1
+I re-read your discussion with Tim and I must say the reasoning behind
+this test remain foggy.
+
+What goes wrong if we just remove it?
+
+What is the status of shmem swap readahead?
+
+Can we at least get a comment in here which explains the reasoning?
+
+Thanks.
+
+> +		inode = si->swap_file->f_mapping->host;
+> +		if (inode_read_congested(inode))
+> +			goto skip;
+> +	}
+> +
+>  	do_poll = false;
+>  	/* Read a page_cluster sized and aligned cluster around offset. */
 
