@@ -2,111 +2,110 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBA30C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 11:03:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36543C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 11:05:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B5E69214DA
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 11:03:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 083CD214DA
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 11:05:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728287AbfAJLDU (ORCPT
+        id S1728229AbfAJLE7 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 06:03:20 -0500
-Received: from relay.sw.ru ([185.231.240.75]:58334 "EHLO relay.sw.ru"
+        Thu, 10 Jan 2019 06:04:59 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:42125 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727617AbfAJLDT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 06:03:19 -0500
-Received: from [172.16.25.169]
-        by relay.sw.ru with esmtp (Exim 4.91)
-        (envelope-from <ktkhai@virtuozzo.com>)
-        id 1ghY7J-0003cl-II; Thu, 10 Jan 2019 14:03:17 +0300
-Subject: Re: [PATCH 1/2] fuse: Fix race in fuse_writepage_in_flight()
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <154322517208.18737.3297786654135648324.stgit@localhost.localdomain>
- <00b1782a-5c5c-5bc8-7ea9-4f8450679fa1@virtuozzo.com>
- <CAJfpeguokUoCPEnK7Q_Rp9cmyBCMfm51=7TmbbS-QiEy2BxxAQ@mail.gmail.com>
-From:   Kirill Tkhai <ktkhai@virtuozzo.com>
-Message-ID: <a45d54a3-b275-9c95-3c9d-a19566e447dc@virtuozzo.com>
-Date:   Thu, 10 Jan 2019 14:03:17 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        id S1726925AbfAJLE7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 06:04:59 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id CDE97209D7; Thu, 10 Jan 2019 12:04:56 +0100 (CET)
+Received: from localhost (alyon-652-1-61-72.w109-213.abo.wanadoo.fr [109.213.84.72])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 94941206DC;
+        Thu, 10 Jan 2019 12:04:46 +0100 (CET)
+From:   Gregory CLEMENT <gregory.clement@bootlin.com>
+To:     Heinrich Schuchardt <xypron.glpk@gmx.de>
+Cc:     Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/1] arm64: dts: marvell: armada-ap806: reserve PSCI area
+References: <20181221164503.5128-1-xypron.glpk@gmx.de>
+Date:   Thu, 10 Jan 2019 12:04:46 +0100
+In-Reply-To: <20181221164503.5128-1-xypron.glpk@gmx.de> (Heinrich Schuchardt's
+        message of "Fri, 21 Dec 2018 17:45:03 +0100")
+Message-ID: <874lagpycx.fsf@FE-laptop>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <CAJfpeguokUoCPEnK7Q_Rp9cmyBCMfm51=7TmbbS-QiEy2BxxAQ@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10.01.2019 14:00, Miklos Szeredi wrote:
-> On Thu, Jan 10, 2019 at 11:48 AM Kirill Tkhai <ktkhai@virtuozzo.com> wrote:
->>
->> Hi, Miklos,
->>
->> any comments about this?
-> 
-> Is there a reproducer?  ISTR that fsx-linux with mmaps enabled was
-> good for stressing the writeback_cache code.
+Hi Heinrich,
+ 
+ On ven., déc. 21 2018, Heinrich Schuchardt <xypron.glpk@gmx.de> wrote:
 
-There is no a reproducer, since I found that by eyes during preparation of another patchset.
+> The memory area [0x4000000-0x4200000[ is occupied by the PSCI firmware. Any
+> attempt to access it from Linux leads to an immediate crash.
+>
+> So let's make the same memory reservation as the vendor kernel.
+>
+> Signed-off-by: Heinrich Schuchardt <xypron.glpk@gmx.de>
 
->>
->> On 26.11.2018 12:46, Kirill Tkhai wrote:
->>> Checking for FR_PENDING in fuse_writepage_in_flight() is racy.
->>> It does not guarantee the first request in misc.write.next list
->>> is not in userspace, since there we take fc->lock, while
->>> fuse_dev_do_read() takes fiq->waitq.lock:
->>>
->>> fuse_dev_read()                           fuse_writepage_in_flight()
->>>                                             test_bit(FR_PENDING)
->>>   clear_bit(FR_PENDING)
->>> handle old_req->pages[0] in userspace
->>>                                             copy_highpage(old_req->pages[0], page)
->>>                                             ^^^^^
->>>                                             userspace never sees this pages
->>>
->>> The only reliable way to determ, whether we are able to replace
->>> old_req's page, is to completely skip the first request in the list.
->>> This patch makes the function to do that.
->>>
->>> Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
->>> ---
->>>  fs/fuse/file.c |    4 +++-
->>>  1 file changed, 3 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
->>> index b52f9baaa3e7..c6650c68b31a 100644
->>> --- a/fs/fuse/file.c
->>> +++ b/fs/fuse/file.c
->>> @@ -1740,6 +1740,7 @@ static bool fuse_writepage_in_flight(struct fuse_req *new_req,
->>>  {
->>>       struct fuse_conn *fc = get_fuse_conn(new_req->inode);
->>>       struct fuse_inode *fi = get_fuse_inode(new_req->inode);
->>> +     struct fuse_req *first_req;
->>>       struct fuse_req *tmp;
->>>       struct fuse_req *old_req;
->>>       bool found = false;
->>> @@ -1764,6 +1765,7 @@ static bool fuse_writepage_in_flight(struct fuse_req *new_req,
->>>       }
->>>
->>>       new_req->num_pages = 1;
->>> +     first_req = old_req;
->>>       for (tmp = old_req; tmp != NULL; tmp = tmp->misc.write.next) {
->>>               BUG_ON(tmp->inode != new_req->inode);
->>>               curr_index = tmp->misc.write.in.offset >> PAGE_SHIFT;
->>> @@ -1773,7 +1775,7 @@ static bool fuse_writepage_in_flight(struct fuse_req *new_req,
->>>               }
->>>       }
->>>
->>> -     if (old_req->num_pages == 1 && test_bit(FR_PENDING, &old_req->flags)) {
->>> +     if (old_req->num_pages == 1 && old_req != first_req) {
->>>               struct backing_dev_info *bdi = inode_to_bdi(page->mapping->host);
->>>
->>>               copy_highpage(old_req->pages[0], page);
->>>
+
+Applied on mvebu/fixes
+
+I added a comment about the use with a mainline /U-Boot
+
+Thanks,
+
+Gregory
+
+
+> ---
+> v2
+> 	Move the change from armada-8040-mcbin.dts to armada-ap806.dtsi.
+> 	I only have a MACCHIATObin for testing but
+> 	https://github.com/MarvellEmbeddedProcessors/linux-marvell
+> 	has the reservation in that file.
+> ---
+>  arch/arm64/boot/dts/marvell/armada-ap806.dtsi | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/marvell/armada-ap806.dtsi b/arch/arm64/boot/dts/marvell/armada-ap806.dtsi
+> index 7d94c1fa592a..f8dafef83db0 100644
+> --- a/arch/arm64/boot/dts/marvell/armada-ap806.dtsi
+> +++ b/arch/arm64/boot/dts/marvell/armada-ap806.dtsi
+> @@ -28,6 +28,17 @@
+>  		method = "smc";
+>  	};
+>  
+> +	reserved-memory {
+> +		#address-cells = <2>;
+> +		#size-cells = <2>;
+> +		ranges;
+> +
+> +		psci-area@4000000 {
+> +			reg = <0x0 0x4000000 0x0 0x200000>;
+> +			no-map;
+> +		};
+> +	};
+> +
+>  	ap806 {
+>  		#address-cells = <2>;
+>  		#size-cells = <2>;
+> -- 
+> 2.19.2
+>
+
+-- 
+Gregory Clement, Bootlin
+Embedded Linux and Kernel engineering
+http://bootlin.com
