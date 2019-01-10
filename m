@@ -2,118 +2,81 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DBB5C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 11:16:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E440C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 11:21:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 181D0214C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 11:16:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2F781214C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 11:21:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728323AbfAJLQD (ORCPT
+        id S1728342AbfAJLVJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 06:16:03 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:59592 "EHLO mx1.redhat.com"
+        Thu, 10 Jan 2019 06:21:09 -0500
+Received: from out1.zte.com.cn ([202.103.147.172]:36620 "EHLO mxct.zte.com.cn"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727938AbfAJLQC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 06:16:02 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 8F8745F789;
-        Thu, 10 Jan 2019 11:15:56 +0000 (UTC)
-Received: from sirius.home.kraxel.org (ovpn-116-203.ams2.redhat.com [10.36.116.203])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D957B68B02;
-        Thu, 10 Jan 2019 11:15:49 +0000 (UTC)
-Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id 5920316E03; Thu, 10 Jan 2019 12:15:45 +0100 (CET)
-From:   Gerd Hoffmann <kraxel@redhat.com>
-To:     dri-devel@lists.freedesktop.org
-Cc:     Gerd Hoffmann <kraxel@redhat.com>, David Airlie <airlied@linux.ie>,
-        virtualization@lists.linux-foundation.org (open list:VIRTIO GPU DRIVER),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] drm/virtio: drop prime import/export callbacks
-Date:   Thu, 10 Jan 2019 12:15:45 +0100
-Message-Id: <20190110111545.26768-1-kraxel@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Thu, 10 Jan 2019 11:16:02 +0000 (UTC)
+        id S1727806AbfAJLVJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 06:21:09 -0500
+Received: from mse01.zte.com.cn (unknown [10.30.3.20])
+        by Forcepoint Email with ESMTPS id 240F7C0F34802E181BE6;
+        Thu, 10 Jan 2019 19:21:06 +0800 (CST)
+Received: from notes_smtp.zte.com.cn ([10.30.1.239])
+        by mse01.zte.com.cn with ESMTP id x0ABKxh9084969;
+        Thu, 10 Jan 2019 19:20:59 +0800 (GMT-8)
+        (envelope-from tan.hu@zte.com.cn)
+Received: from localhost.localdomain ([10.75.9.60])
+          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
+          with ESMTP id 2019011019213058-21524191 ;
+          Thu, 10 Jan 2019 19:21:30 +0800 
+From:   Tan Hu <tan.hu@zte.com.cn>
+To:     adobriyan@gmail.com
+Cc:     zhong.weidong@zte.com.cn, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: [PATCH] proc: only export statistics of softirqs for online cpus
+Date:   Thu, 10 Jan 2019 19:24:01 +0800
+Message-Id: <1547119441-28314-1-git-send-email-tan.hu@zte.com.cn>
+X-Mailer: git-send-email 1.8.3.1
+X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
+ 21, 2013) at 2019-01-10 19:21:30,
+        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
+ 2019-01-10 19:20:47,
+        Serialize complete at 2019-01-10 19:20:47
+X-MAIL: mse01.zte.com.cn x0ABKxh9084969
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Also set prime_handle_to_fd and prime_fd_to_handle to NULL,
-so drm will not advertive DRM_PRIME_CAP_{IMPORT,EXPORT} to
-userspace.
+Only export statistics of softirqs for online cpus like
+/proc/interrupts, it would be more clearly.
 
-Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+Signed-off-by: Tan Hu <tan.hu@zte.com.cn>
 ---
- drivers/gpu/drm/virtio/virtgpu_drv.h   |  4 ----
- drivers/gpu/drm/virtio/virtgpu_drv.c   |  4 ----
- drivers/gpu/drm/virtio/virtgpu_prime.c | 14 --------------
- 3 files changed, 22 deletions(-)
+ fs/proc/softirqs.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/virtio/virtgpu_drv.h b/drivers/gpu/drm/virtio/virtgpu_drv.h
-index cf896d8793..4f2f3c43a4 100644
---- a/drivers/gpu/drm/virtio/virtgpu_drv.h
-+++ b/drivers/gpu/drm/virtio/virtgpu_drv.h
-@@ -354,10 +354,6 @@ int virtio_gpu_object_wait(struct virtio_gpu_object *bo, bool no_wait);
- /* virtgpu_prime.c */
- int virtgpu_gem_prime_pin(struct drm_gem_object *obj);
- void virtgpu_gem_prime_unpin(struct drm_gem_object *obj);
--struct sg_table *virtgpu_gem_prime_get_sg_table(struct drm_gem_object *obj);
--struct drm_gem_object *virtgpu_gem_prime_import_sg_table(
--	struct drm_device *dev, struct dma_buf_attachment *attach,
--	struct sg_table *sgt);
- void *virtgpu_gem_prime_vmap(struct drm_gem_object *obj);
- void virtgpu_gem_prime_vunmap(struct drm_gem_object *obj, void *vaddr);
- int virtgpu_gem_prime_mmap(struct drm_gem_object *obj,
-diff --git a/drivers/gpu/drm/virtio/virtgpu_drv.c b/drivers/gpu/drm/virtio/virtgpu_drv.c
-index af92964b68..b996ac1d4f 100644
---- a/drivers/gpu/drm/virtio/virtgpu_drv.c
-+++ b/drivers/gpu/drm/virtio/virtgpu_drv.c
-@@ -205,14 +205,10 @@ static struct drm_driver driver = {
- #if defined(CONFIG_DEBUG_FS)
- 	.debugfs_init = virtio_gpu_debugfs_init,
- #endif
--	.prime_handle_to_fd = drm_gem_prime_handle_to_fd,
--	.prime_fd_to_handle = drm_gem_prime_fd_to_handle,
- 	.gem_prime_export = drm_gem_prime_export,
- 	.gem_prime_import = drm_gem_prime_import,
- 	.gem_prime_pin = virtgpu_gem_prime_pin,
- 	.gem_prime_unpin = virtgpu_gem_prime_unpin,
--	.gem_prime_get_sg_table = virtgpu_gem_prime_get_sg_table,
--	.gem_prime_import_sg_table = virtgpu_gem_prime_import_sg_table,
- 	.gem_prime_vmap = virtgpu_gem_prime_vmap,
- 	.gem_prime_vunmap = virtgpu_gem_prime_vunmap,
- 	.gem_prime_mmap = virtgpu_gem_prime_mmap,
-diff --git a/drivers/gpu/drm/virtio/virtgpu_prime.c b/drivers/gpu/drm/virtio/virtgpu_prime.c
-index 86ce0ae93f..c59ec34c80 100644
---- a/drivers/gpu/drm/virtio/virtgpu_prime.c
-+++ b/drivers/gpu/drm/virtio/virtgpu_prime.c
-@@ -39,20 +39,6 @@ void virtgpu_gem_prime_unpin(struct drm_gem_object *obj)
- 	WARN_ONCE(1, "not implemented");
- }
+diff --git a/fs/proc/softirqs.c b/fs/proc/softirqs.c
+index 12901dc..b7e6a0f 100644
+--- a/fs/proc/softirqs.c
++++ b/fs/proc/softirqs.c
+@@ -12,13 +12,13 @@ static int show_softirqs(struct seq_file *p, void *v)
+ 	int i, j;
  
--struct sg_table *virtgpu_gem_prime_get_sg_table(struct drm_gem_object *obj)
--{
--	WARN_ONCE(1, "not implemented");
--	return ERR_PTR(-ENODEV);
--}
--
--struct drm_gem_object *virtgpu_gem_prime_import_sg_table(
--	struct drm_device *dev, struct dma_buf_attachment *attach,
--	struct sg_table *table)
--{
--	WARN_ONCE(1, "not implemented");
--	return ERR_PTR(-ENODEV);
--}
--
- void *virtgpu_gem_prime_vmap(struct drm_gem_object *obj)
- {
- 	struct virtio_gpu_object *bo = gem_to_virtio_gpu_obj(obj);
+ 	seq_puts(p, "                    ");
+-	for_each_possible_cpu(i)
++	for_each_online_cpu(i)
+ 		seq_printf(p, "CPU%-8d", i);
+ 	seq_putc(p, '\n');
+ 
+ 	for (i = 0; i < NR_SOFTIRQS; i++) {
+ 		seq_printf(p, "%12s:", softirq_to_name[i]);
+-		for_each_possible_cpu(j)
++		for_each_online_cpu(j)
+ 			seq_printf(p, " %10u", kstat_softirqs_cpu(i, j));
+ 		seq_putc(p, '\n');
+ 	}
 -- 
-2.9.3
+1.8.3.1
 
