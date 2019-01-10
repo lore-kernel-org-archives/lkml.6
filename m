@@ -2,139 +2,94 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73137C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 00:44:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D195C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 00:44:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F5A8214DA
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 00:44:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 10912214DA
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 00:44:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="a4PXxpmi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726831AbfAJAof (ORCPT
+        id S1726906AbfAJAoh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 19:44:35 -0500
-Received: from mail.us.es ([193.147.175.20]:49274 "EHLO mail.us.es"
+        Wed, 9 Jan 2019 19:44:37 -0500
+Received: from ozlabs.org ([203.11.71.1]:42629 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726730AbfAJAoe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726731AbfAJAoe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 9 Jan 2019 19:44:34 -0500
-Received: from antivirus1-rhel7.int (unknown [192.168.2.11])
-        by mail.us.es (Postfix) with ESMTP id 3C3E01E8FA4
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 01:44:31 +0100 (CET)
-Received: from antivirus1-rhel7.int (localhost [127.0.0.1])
-        by antivirus1-rhel7.int (Postfix) with ESMTP id 1FF65DA84E
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 01:44:31 +0100 (CET)
-Received: by antivirus1-rhel7.int (Postfix, from userid 99)
-        id 00185DA86E; Thu, 10 Jan 2019 01:44:30 +0100 (CET)
-Received: from antivirus1-rhel7.int (localhost [127.0.0.1])
-        by antivirus1-rhel7.int (Postfix) with ESMTP id 366DADA7FC;
-        Thu, 10 Jan 2019 01:44:27 +0100 (CET)
-Received: from 192.168.1.97 (192.168.1.97)
- by antivirus1-rhel7.int (F-Secure/fsigk_smtp/550/antivirus1-rhel7.int);
- Thu, 10 Jan 2019 01:44:27 +0100 (CET)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/antivirus1-rhel7.int)
-Received: from us.es (sys.soleta.eu [212.170.55.40])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        (Authenticated sender: 1984lsi)
-        by entrada.int (Postfix) with ESMTPSA id F3D6A4265A5C;
-        Thu, 10 Jan 2019 01:44:26 +0100 (CET)
-Date:   Thu, 10 Jan 2019 01:44:26 +0100
-X-SMTPAUTHUS: auth mail.us.es
-From:   Pablo Neira Ayuso <pablo@netfilter.org>
-To:     Shakeel Butt <shakeelb@google.com>
-Cc:     Michal Hocko <mhocko@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Florian Westphal <fw@strlen.de>,
-        Kirill Tkhai <ktkhai@virtuozzo.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org,
-        syzbot+7713f3aa67be76b1552c@syzkaller.appspotmail.com,
-        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
-        Roopa Prabhu <roopa@cumulusnetworks.com>,
-        Nikolay Aleksandrov <nikolay@cumulusnetworks.com>,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        bridge@lists.linux-foundation.org
-Subject: Re: [PATCH v2] netfilter: account ebt_table_info to kmemcg
-Message-ID: <20190110004426.p4n4lrpnnvv4czir@salvia>
-References: <20190103031431.247970-1-shakeelb@google.com>
+        by ozlabs.org (Postfix) with ESMTPSA id 43ZnM43RPBz9sN4;
+        Thu, 10 Jan 2019 11:44:32 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1547081072;
+        bh=pohI/vJ1VR5CUd0DrbDd+kJZGdW/x72V/4t+JyyADSw=;
+        h=Date:From:To:Cc:Subject:From;
+        b=a4PXxpmisVTZJxFO6ZABnJ3QDVxfBn0h1ZqU2K7uGlBh0Awm6kp4rqgpX8vF+aYvS
+         XZ2rey+3vrcHzdNhC8kD4fCTGGshMHUb4btHEq4JT8NXA+u0XhcBxZc+jzXtj4XAHQ
+         hrRk6ecp/6xE0GNYj3zeku++reMJW6aenocJPnjCih0nyUsmkAWqZE2WOC76IeSuWc
+         c289j7tZWYTArF0MMlo4cR6dmWIZOFMm5jBH8eMMeKMrfDpVhIKGEgYJPW0iKbNoNn
+         LXuW6A9ekT01ycmOwVY+n5ibzUjbEDmqSdJDTcU7VbZqezy8t2k39x0efr9pEqwIYH
+         kb1lk9GvvcX6A==
+Date:   Thu, 10 Jan 2019 11:44:31 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: linux-next: build warning after merge of the spi tree
+Message-ID: <20190110114431.65b7b129@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190103031431.247970-1-shakeelb@google.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-Virus-Scanned: ClamAV using ClamSMTP
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/Xard+V.h9zHArzGvbhRjPfC"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 02, 2019 at 07:14:31PM -0800, Shakeel Butt wrote:
-> The [ip,ip6,arp]_tables use x_tables_info internally and the underlying
-> memory is already accounted to kmemcg. Do the same for ebtables. The
-> syzbot, by using setsockopt(EBT_SO_SET_ENTRIES), was able to OOM the
-> whole system from a restricted memcg, a potential DoS.
-> 
-> By accounting the ebt_table_info, the memory used for ebt_table_info can
-> be contained within the memcg of the allocating process. However the
-> lifetime of ebt_table_info is independent of the allocating process and
-> is tied to the network namespace. So, the oom-killer will not be able to
-> relieve the memory pressure due to ebt_table_info memory. The memory for
-> ebt_table_info is allocated through vmalloc. Currently vmalloc does not
-> handle the oom-killed allocating process correctly and one large
-> allocation can bypass memcg limit enforcement. So, with this patch,
-> at least the small allocations will be contained. For large allocations,
-> we need to fix vmalloc.
+--Sig_/Xard+V.h9zHArzGvbhRjPfC
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Fine with this -mm?
+Hi Mark,
 
-If no objections, I'll apply this to the netfilter tree. Thanks.
+After merging the spi tree, today's linux-next build (x86_64 allmodconfig)
+produced this warning:
 
-> Reported-by: syzbot+7713f3aa67be76b1552c@syzkaller.appspotmail.com
-> Signed-off-by: Shakeel Butt <shakeelb@google.com>
-> Cc: Florian Westphal <fw@strlen.de>
-> Cc: Michal Hocko <mhocko@kernel.org>
-> Cc: Kirill Tkhai <ktkhai@virtuozzo.com>
-> Cc: Pablo Neira Ayuso <pablo@netfilter.org>
-> Cc: Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>
-> Cc: Roopa Prabhu <roopa@cumulusnetworks.com>
-> Cc: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Linux MM <linux-mm@kvack.org>
-> Cc: netfilter-devel@vger.kernel.org
-> Cc: coreteam@netfilter.org
-> Cc: bridge@lists.linux-foundation.org
-> Cc: LKML <linux-kernel@vger.kernel.org>
-> ---
-> Changelog since v1:
-> - More descriptive commit message.
-> 
->  net/bridge/netfilter/ebtables.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/net/bridge/netfilter/ebtables.c b/net/bridge/netfilter/ebtables.c
-> index 491828713e0b..5e55cef0cec3 100644
-> --- a/net/bridge/netfilter/ebtables.c
-> +++ b/net/bridge/netfilter/ebtables.c
-> @@ -1137,14 +1137,16 @@ static int do_replace(struct net *net, const void __user *user,
->  	tmp.name[sizeof(tmp.name) - 1] = 0;
->  
->  	countersize = COUNTER_OFFSET(tmp.nentries) * nr_cpu_ids;
-> -	newinfo = vmalloc(sizeof(*newinfo) + countersize);
-> +	newinfo = __vmalloc(sizeof(*newinfo) + countersize, GFP_KERNEL_ACCOUNT,
-> +			    PAGE_KERNEL);
->  	if (!newinfo)
->  		return -ENOMEM;
->  
->  	if (countersize)
->  		memset(newinfo->counters, 0, countersize);
->  
-> -	newinfo->entries = vmalloc(tmp.entries_size);
-> +	newinfo->entries = __vmalloc(tmp.entries_size, GFP_KERNEL_ACCOUNT,
-> +				     PAGE_KERNEL);
->  	if (!newinfo->entries) {
->  		ret = -ENOMEM;
->  		goto free_newinfo;
-> -- 
-> 2.20.1.415.g653613c723-goog
-> 
+drivers/spi/spi-dw.c: In function 'dw_spi_setup':
+drivers/spi/spi-dw.c:400:6: warning: unused variable 'ret' [-Wunused-variab=
+le]
+  int ret;
+      ^~~
+
+Introduced by commit
+
+  9400c41e77b8 ("spi: dw: Convert to use CS GPIO descriptors")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/Xard+V.h9zHArzGvbhRjPfC
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlw2lW8ACgkQAVBC80lX
+0Gw74wf8Cz5yhnUCwf8fKE03AAZCPU6eoWbUsfyOZ1bJ+YktWl1jOf2ccSR9PJo9
+7s+2+UiNSkea8+hEDqU6wT9cEg1JrgFSgskQoxAIyAjQhhtX4O11Bx8Q6BHhSWB9
+usoKEhtCsZ9LIeoNXcZhyGpGyeQqhnjbUZ80Sr/UwLV4j3Twy37QlshVkCpXfp0F
+2pW182rqy2bZT9T99+cWrohQhK8lRsbO2bCi0krlomR91+LBfQuY+TzSV2a22kG7
+YJ+zBxBJFT3Nn7Obl0LsGBT4L9ZmxOkCtqQqphPzwWx/wTYr7U9TPT4MQo3y9+3u
+y7wEm/jcB6PIhlZyTtcMHmnUpKxBsg==
+=ehQA
+-----END PGP SIGNATURE-----
+
+--Sig_/Xard+V.h9zHArzGvbhRjPfC--
