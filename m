@@ -4,25 +4,25 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DAB6CC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 16:27:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35668C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 16:27:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B49B3206B7
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 16:27:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0FB5A214DA
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 16:27:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730140AbfAJQ1V (ORCPT
+        id S1730198AbfAJQ1b (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 11:27:21 -0500
-Received: from mout.kundenserver.de ([217.72.192.73]:50865 "EHLO
+        Thu, 10 Jan 2019 11:27:31 -0500
+Received: from mout.kundenserver.de ([212.227.17.13]:60007 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729904AbfAJQ0X (ORCPT
+        with ESMTP id S1729868AbfAJQ0W (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 11:26:23 -0500
+        Thu, 10 Jan 2019 11:26:22 -0500
 Received: from wuerfel.lan ([109.192.41.194]) by mrelayeu.kundenserver.de
  (mreue108 [212.227.15.145]) with ESMTPA (Nemesis) id
- 1Mlf8e-1h7aDx3tBq-00ik97; Thu, 10 Jan 2019 17:25:16 +0100
+ 1MStGi-1gqtJn10Qg-00UNaT; Thu, 10 Jan 2019 17:25:13 +0100
 From:   Arnd Bergmann <arnd@arndb.de>
 To:     y2038@lists.linaro.org, linux-api@vger.kernel.org,
         linux-kernel@vger.kernel.org
@@ -42,56 +42,104 @@ Cc:     Arnd Bergmann <arnd@arndb.de>, ink@jurassic.park.msu.ru,
         linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
         linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
         linux-sh@vger.kernel.org, sparclinux@vger.kernel.org
-Subject: [PATCH 08/15] m68k: assign syscall number for seccomp
-Date:   Thu, 10 Jan 2019 17:24:28 +0100
-Message-Id: <20190110162435.309262-9-arnd@arndb.de>
+Subject: [PATCH 06/15] ARM: add migrate_pages() system call
+Date:   Thu, 10 Jan 2019 17:24:26 +0100
+Message-Id: <20190110162435.309262-7-arnd@arndb.de>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20190110162435.309262-1-arnd@arndb.de>
 References: <20190110162435.309262-1-arnd@arndb.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:cAxqL4Pr32LfUICErQXLweOdeKXEeQmVpfR3EH9HEknl3Rx7o7E
- 3gUWhnJXo/Ubf1H9GjN7gL/hmeHLUh13G8skhoZVYIlxTGcXEAJWfHMK5fqwDp3C4mE6U0X
- qU5L8eRnhl276oNgVKUTHhKQsmD41xIQYhIiHkfU/+doRmo4DFVRig7b6U0yHHq8by33NdZ
- hcAmBJVorlGuA9B3ZJvMQ==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:bDCus6IHYZs=:59ePj81cYO3U2E3eiWHh1M
- sBYu+VjNywqUwFg/ihKW68e09BYM+B9wyJRztaakMTQXqRhqdEmvZ1ojdiFn0PboHSl1sg6Jz
- lktVPIRNjSHV++3RcDapX5ekI8ig/J0IvxH1f4+g6djzOk81uQeI5fVOD5R8OO0yszdfBId8u
- bb2KyOJqmuC0e+cXrMswmdkk/j+BBIteI5Mmb3mP+1uYhOF+TfOtsnOry98sXfwt5ZUPA9G11
- 6Bq2Pyf8idFvfkqnomphG6qXjz59WU2R1Q9Rx7kZwVitLUrtIW2RRr7yq1n7ODZWZGQ2z8AoO
- z24C7F3FN6OHu0pcfqceGVVVuzVusmsWJwQG+I6qPtgtEzJ98nxKoDWen8bapo4VdUefswZ8o
- 6W9+k1MDORiZpzr2jtSy9Ndat8iO6D+3zwTqbLUBoNqQtCgrmkHlAGhalt1LHHGyNhOW148bV
- PpMR+nZk7cIlmB54DRwSnuFmOUO6LDwN1o+g/il93UIM6NlbxyI/DWUKjWVYBGVdQ3s6Ic1Zf
- 0vSKAXuuihlQy5+pZqwaU8DXbOPv4HafkS3SIDPs2yD4d38mWQptPnqKD/bHDpvp4VJ5b/kNU
- aQ+nkmqzQ/IA01YkCZdy/qpBVvRyBS9YoP7Bz5rdcT7rE/Pq4hpkFgqLOPRpxbuJBNTSr2VaF
- icl78Ty7oQCbEHsFAET4OGF8IzhdbEX4J989KHwG97wdV3IRjqDo/uOxwU7z25q/vFvVzTku/
- IOt8wsJUD0b10sFcR6in2Nc/TFY9E3NMoaCyBQ==
+X-Provags-ID: V03:K1:xU1TfvUWuXdLttcRhOwMDdJJXZRPbxZEzH/siDEOVU0h6xSKutI
+ 9QsRxUZDYmciiqijchskFcKTpq+zTdu1Z3OJ6HXVSfUcAA+HxeciwrBeeSL6Ckg3kR4vhW6
+ M00Lmj5s9Y3w6Le9cFFx9VvdHdeeOpVNHkzmK9YN7A4Vyz/gVMPCkuNCa3YGL4MWEdk3Y2L
+ uZjLpOEPaYJJ39nJiErlA==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:iEETSAcdels=:snhz2M6ZDU1wMmINknfiml
+ 8rIFJhUvhs+Ay8kN3BD7oJb2etgmtw72I2WkvaCrrbpRNfkB2lNhIHVSPih1sMYmqO8aNQhJC
+ BAYxAg9zPjIUiMPXEQFroevk1mcSjtKSEWh8quV/Sx6szi6sr9kr3xbVBCzBSqoiFxOEDf2Yz
+ P0ln4ZJrlRLi3JmoA4TJnA0yYWSVQY8ix4z2XMx3D1T3kARsBL0FbF1VNr3Dh6ztv7puylfk2
+ iBvTE5iVFltU/ODVCuFvJ0hzNmUh1J5n0ncgn+EUazsxZ6mzE1/hQKnFBwZyb6tyFNVARadXx
+ sZ7PtBxJJiJyHdENuekRI3RL2e3+puXXmNss+Kw/wkN/vaN3tNJDO/wO8L32tp928ltxYFMVc
+ Qr/oNbqfPdYiEI1z+T1yD4v72J+I8GXPuigetbee+wGFI7e5tGWKbiFzc3yfC9d3v8ropk7I5
+ ud80M0hnDuJTSKJ8AK1sIXep07Gs1X82o9ea+Voj3XjdYuH1dPb+6il6FeI6tPnB83kNY2vCW
+ ZwZ614d05NhmsbiVlfK/xAkzjOArgomBg7WKFPSBQTRQWj41UA+qTNOIVNaFEK8QletG2TSZU
+ nboVUxJ7xylPRFuUPMs5pUCVkgj7ZUWXtqlgVO81GqQwQw0RlUkcJHOxtO8DrbTDsbo5Fc6J8
+ hyFARcweFgLqPmYrPk1mavinSjYCbldtqMnzC+do764FjEsm1c0Uup3bQg5DXq4LiYGyrIjVz
+ ncFrswlP2h/DpgfzhfuJvMrTWN6BYDXT8cD1iQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Most architectures have assigned a numbers for the seccomp syscall
-even when they do not implement it.
+The migrate_pages system call has an assigned number on all architectures
+except ARM. When it got added initially in commit d80ade7b3231 ("ARM:
+Fix warning: #warning syscall migrate_pages not implemented"), it was
+intentionally left out based on the observation that there are no 32-bit
+ARM NUMA systems.
 
-m68k is an exception here, so for consistency lets add the number.
-Unless CONFIG_SECCOMP is implemented, the system call just
-returns -ENOSYS.
+However, there are now arm64 NUMA machines that can in theory run 32-bit
+kernels (actually enabling NUMA there would require additional work)
+as well as 32-bit user space on 64-bit kernels, so that argument is no
+longer very strong.
+
+Assigning the number lets us use the system call on 64-bit kernels as well
+as providing a more consistent set of syscalls across architectures.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/m68k/kernel/syscalls/syscall.tbl | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/include/asm/unistd.h     | 1 -
+ arch/arm/tools/syscall.tbl        | 1 +
+ arch/arm64/include/asm/unistd.h   | 2 +-
+ arch/arm64/include/asm/unistd32.h | 2 ++
+ 4 files changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/arch/m68k/kernel/syscalls/syscall.tbl b/arch/m68k/kernel/syscalls/syscall.tbl
-index 1a95c4a1bc0d..85779d6ef935 100644
---- a/arch/m68k/kernel/syscalls/syscall.tbl
-+++ b/arch/m68k/kernel/syscalls/syscall.tbl
-@@ -387,3 +387,4 @@
- 377	common	preadv2				sys_preadv2
- 378	common	pwritev2			sys_pwritev2
- 379	common	statx				sys_statx
-+380	common	seccomp				sys_seccomp
+diff --git a/arch/arm/include/asm/unistd.h b/arch/arm/include/asm/unistd.h
+index 88ef2ce1f69a..d713587dfcf4 100644
+--- a/arch/arm/include/asm/unistd.h
++++ b/arch/arm/include/asm/unistd.h
+@@ -45,7 +45,6 @@
+  * Unimplemented (or alternatively implemented) syscalls
+  */
+ #define __IGNORE_fadvise64_64
+-#define __IGNORE_migrate_pages
+ 
+ #ifdef __ARM_EABI__
+ /*
+diff --git a/arch/arm/tools/syscall.tbl b/arch/arm/tools/syscall.tbl
+index 8edf93b4490f..86de9eb34296 100644
+--- a/arch/arm/tools/syscall.tbl
++++ b/arch/arm/tools/syscall.tbl
+@@ -414,3 +414,4 @@
+ 397	common	statx			sys_statx
+ 398	common	rseq			sys_rseq
+ 399	common	io_pgetevents		sys_io_pgetevents
++400	common	migrate_pages		sys_migrate_pages
+diff --git a/arch/arm64/include/asm/unistd.h b/arch/arm64/include/asm/unistd.h
+index a7b1fc58ffdf..261216c3336e 100644
+--- a/arch/arm64/include/asm/unistd.h
++++ b/arch/arm64/include/asm/unistd.h
+@@ -44,7 +44,7 @@
+ #define __ARM_NR_compat_set_tls		(__ARM_NR_COMPAT_BASE + 5)
+ #define __ARM_NR_COMPAT_END		(__ARM_NR_COMPAT_BASE + 0x800)
+ 
+-#define __NR_compat_syscalls		400
++#define __NR_compat_syscalls		401
+ #endif
+ 
+ #define __ARCH_WANT_SYS_CLONE
+diff --git a/arch/arm64/include/asm/unistd32.h b/arch/arm64/include/asm/unistd32.h
+index 04ee190b90fe..355fe2bc035b 100644
+--- a/arch/arm64/include/asm/unistd32.h
++++ b/arch/arm64/include/asm/unistd32.h
+@@ -821,6 +821,8 @@ __SYSCALL(__NR_statx, sys_statx)
+ __SYSCALL(__NR_rseq, sys_rseq)
+ #define __NR_io_pgetevents 399
+ __SYSCALL(__NR_io_pgetevents, compat_sys_io_pgetevents)
++#define __NR_migrate_pages 400
++__SYSCALL(__NR_migrate_pages, sys_migrate_pages)
+ 
+ /*
+  * Please add new compat syscalls above this comment and update
 -- 
 2.20.0
 
