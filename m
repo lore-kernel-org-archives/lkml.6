@@ -2,171 +2,115 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21EA2C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 00:55:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01950C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 01:02:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EBAAA2173B
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 00:55:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C0B892173B
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 01:02:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Zm7h3nM7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726938AbfAJAzN convert rfc822-to-8bit (ORCPT
+        id S1726914AbfAJBCA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 19:55:13 -0500
-Received: from mga14.intel.com ([192.55.52.115]:23946 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726286AbfAJAzN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 19:55:13 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Jan 2019 16:55:12 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,459,1539673200"; 
-   d="scan'208";a="265909661"
-Received: from fmsmsx106.amr.corp.intel.com ([10.18.124.204])
-  by orsmga004.jf.intel.com with ESMTP; 09 Jan 2019 16:55:11 -0800
-Received: from fmsmsx115.amr.corp.intel.com (10.18.116.19) by
- FMSMSX106.amr.corp.intel.com (10.18.124.204) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Wed, 9 Jan 2019 16:55:11 -0800
-Received: from shsmsx151.ccr.corp.intel.com (10.239.6.50) by
- fmsmsx115.amr.corp.intel.com (10.18.116.19) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Wed, 9 Jan 2019 16:55:11 -0800
-Received: from shsmsx101.ccr.corp.intel.com ([169.254.1.196]) by
- SHSMSX151.ccr.corp.intel.com ([169.254.3.160]) with mapi id 14.03.0415.000;
- Thu, 10 Jan 2019 08:55:09 +0800
-From:   "Tian, Kevin" <kevin.tian@intel.com>
-To:     Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>,
-        "Alex Williamson" <alex.williamson@redhat.com>,
-        Pierre Morel <pmorel@linux.ibm.com>,
-        "Raj, Ashok" <ashok.raj@intel.com>
-CC:     "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "walling@linux.ibm.com" <walling@linux.ibm.com>,
-        "cohuck@redhat.com" <cohuck@redhat.com>,
-        "david@redhat.com" <david@redhat.com>,
-        "pasic@linux.ibm.com" <pasic@linux.ibm.com>,
-        "thuth@redhat.com" <thuth@redhat.com>,
-        "Pan, Jacob jun" <jacob.jun.pan@intel.com>
-Subject: RE: [PATCH v1 1/2] vfio:iommu: Use capabilities do report IOMMU
- informations
-Thread-Topic: [PATCH v1 1/2] vfio:iommu: Use capabilities do report IOMMU
- informations
-Thread-Index: AQHUqBi+cPxDEoUDQUq6P6u1uWuLFqWmjA4AgAAZmgCAAQcZkA==
-Date:   Thu, 10 Jan 2019 00:55:07 +0000
-Message-ID: <AADFC41AFE54684AB9EE6CBC0274A5D19BEE5E6B@SHSMSX101.ccr.corp.intel.com>
-References: <1547037714-21592-1-git-send-email-pmorel@linux.ibm.com>
-        <1547037714-21592-2-git-send-email-pmorel@linux.ibm.com>
- <20190109083708.1d39234d@x1.home>
- <5FC3163CFD30C246ABAA99954A238FA8388B1270@FRAEML521-MBS.china.huawei.com>
-In-Reply-To: <5FC3163CFD30C246ABAA99954A238FA8388B1270@FRAEML521-MBS.china.huawei.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ctpclassification: CTP_NT
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiOGM0Y2YzMjktYmJlMC00MjUxLWFlYmMtNGI4ZTk2NmY0OTgxIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiSklSK1lrQzVGcEgydlRETGJ6Y0NjRlZaVzJtS05WY1JBRzJMakJqaHRlU1lyOWxhTDNPa0ZNZ2lTWnkzaTBOSSJ9
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [10.239.127.40]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Wed, 9 Jan 2019 20:02:00 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:45836 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726822AbfAJBB7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 20:01:59 -0500
+Received: by mail-pf1-f196.google.com with SMTP id g62so4466392pfd.12
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Jan 2019 17:01:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=48k2tfaVkuCjX7VKHs5SKEon79tbbADS21HoSx9XbYs=;
+        b=Zm7h3nM7Oxsfn63RSiUAUSVpIoBUwNghwQVWiNL4Zje04a4iv0ybhz7LbZZdnK/bJz
+         kXNahSp93yqYLyt6rjU/1yVl3oBZ9UScOCFQB/YM+zNZIk8P7KlTiMoiANTadEMH61r4
+         tCZeK0ZwVQ3o3HVQ9kPo5l7Wl6k8mPfliSCR0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=48k2tfaVkuCjX7VKHs5SKEon79tbbADS21HoSx9XbYs=;
+        b=fCTY6hD7THOPVaRrkaE7ZsspbXDzVQmjvL8AiMqaWR7dk1SeOylvY1GA+bMPybMBN0
+         9adJybYM71cgoSWGwepna62DgAzBU16BpdKvDOjNoW5ewxThPbzcq1M7rlvX6qtTV5mC
+         x8XcTTcRyYL9o5UqTYuM7SXNkpY7N30sRDM+eDd274R6opf59KGZNy/PqR9hLTtsw7Tw
+         byaANaCYoAsAm1U14sQmr5hQ07ykJtiAeD5GVGDCUEUAOUcHtsvyrwpHeILzPhKNyX7o
+         dWLb6Y+sBhXn0L227P1y906sQ07L77Mr6/FV2DhePtthGjaerrq6vzHqb67J5Ce767Rr
+         95cw==
+X-Gm-Message-State: AJcUukcNIFZqf1dxlkGO8uocSZrmpZD8G4A7/PskBB+7eOfJU3MrVFVZ
+        8U1LLPv3jrmFOHC9PXc7M7d9MA==
+X-Google-Smtp-Source: ALg8bN6cM+lIuU2ZocSKkCf4i9N6Lq8OQF3vfWEY1b0fpHL8mEUwOUyt77ruQwqEUmKgvS0Wu2AQRw==
+X-Received: by 2002:a62:d448:: with SMTP id u8mr8128840pfl.105.1547082118779;
+        Wed, 09 Jan 2019 17:01:58 -0800 (PST)
+Received: from localhost ([2620:15c:202:1:75a:3f6e:21d:9374])
+        by smtp.gmail.com with ESMTPSA id t24sm97327224pfh.21.2019.01.09.17.01.57
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 09 Jan 2019 17:01:58 -0800 (PST)
+Date:   Wed, 9 Jan 2019 17:01:57 -0800
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Amit Kucheria <amit.kucheria@linaro.org>
+Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        bjorn.andersson@linaro.org, viresh.kumar@linaro.org,
+        edubezval@gmail.com, andy.gross@linaro.org, tdas@codeaurora.org,
+        swboyd@chromium.org, dianders@chromium.org,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        "open list:CPU FREQUENCY DRIVERS" <linux-pm@vger.kernel.org>
+Subject: Re: [PATCH v1 2/7] drivers: cpufreq: Add thermal_cooling_device
+ pointer to struct cpufreq_policy
+Message-ID: <20190110010157.GU261387@google.com>
+References: <cover.1547078153.git.amit.kucheria@linaro.org>
+ <aadc9cff04dc310138b41979239ce51938afedce.1547078153.git.amit.kucheria@linaro.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <aadc9cff04dc310138b41979239ce51938afedce.1547078153.git.amit.kucheria@linaro.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> From: Shameerali Kolothum Thodi
-> [mailto:shameerali.kolothum.thodi@huawei.com]
+On Thu, Jan 10, 2019 at 05:30:51AM +0530, Amit Kucheria wrote:
+> Several cpufreq drivers register themselves as thermal cooling devices.
+> Adding a pointer to struct cpufreq_policy removes the need for them to
+> store this pointer in a private data structure.
 > 
-> > -----Original Message-----
-> > From: Alex Williamson [mailto:alex.williamson@redhat.com]
-> > Sent: 09 January 2019 15:37
-> > To: Pierre Morel <pmorel@linux.ibm.com>
-> > Cc: kvm@vger.kernel.org; linux-kernel@vger.kernel.org;
-> > walling@linux.ibm.com; cohuck@redhat.com; david@redhat.com;
-> > pasic@linux.ibm.com; thuth@redhat.com; Shameerali Kolothum Thodi
-> > <shameerali.kolothum.thodi@huawei.com>
-> > Subject: Re: [PATCH v1 1/2] vfio:iommu: Use capabilities do report
-> IOMMU
-> > informations
-> >
-> > On Wed,  9 Jan 2019 13:41:53 +0100
-> > Pierre Morel <pmorel@linux.ibm.com> wrote:
-> >
-> > > We add a new flag, VFIO_IOMMU_INFO_CAPABILITIES, inside the
-> > > vfio_iommu_type1_info to specify the support for capabilities.
-> > >
-> > > We add a new capability, with id VFIO_IOMMU_INFO_CAP_DMA
-> > > in the capability list of the VFIO_IOMMU_GET_INFO ioctl.
-> > >
-> > > Signed-off-by: Pierre Morel <pmorel@linux.ibm.com>
-> > > ---
-> > >  include/uapi/linux/vfio.h | 9 +++++++++
-> > >  1 file changed, 9 insertions(+)
-> > >
-> > > diff --git a/include/uapi/linux/vfio.h b/include/uapi/linux/vfio.h
-> > > index 8131028..54c4fcb 100644
-> > > --- a/include/uapi/linux/vfio.h
-> > > +++ b/include/uapi/linux/vfio.h
-> > > @@ -669,6 +669,15 @@ struct vfio_iommu_type1_info {
-> > >  	__u32	flags;
-> > >  #define VFIO_IOMMU_INFO_PGSIZES (1 << 0)	/* supported page
-> sizes
-> > info */
-> > >  	__u64	iova_pgsizes;		/* Bitmap of supported page sizes
-> */
-> > > +#define VFIO_IOMMU_INFO_CAPABILITIES (1 << 1)  /* support
-> capabilities
-> > info */
-> > > +	__u64   cap_offset;     /* Offset within info struct of first cap */
-> > > +};
-> > > +
-> > > +#define VFIO_IOMMU_INFO_CAP_DMA 1
-> > > +struct vfio_iommu_cap_dma {
-> > > +	struct vfio_info_cap_header header;
-> > > +	__u64   dma_start;
-> > > +	__u64   dma_end;
-> > >  };
-> > >
-> > >  #define VFIO_IOMMU_GET_INFO _IO(VFIO_TYPE, VFIO_BASE + 12)
-> >
-> > Unfortunately for most systems, a simple start and end is not really
-> > sufficient to describe the available IOVA space, there are often
-> > reserved regions intermixed, so this is not really a complete
-> > solution.  Shameer tried to solve this last year[1] but we ran into a
-> > road block that Intel IGD devices impose a reserved range of IOVA
-> > spaces reported to the user that conflict with existing assignment of
-> > this device and we haven't figured out yet how to be more selective of
-> > the enforcement of those reserved ranges.  Thanks,
+> Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
+> ---
+>  include/linux/cpufreq.h | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
-> Right. I had further discussions to unblock this at KVM forum/off-list with
-> Intel folks and was promised some help.
-> 
-> IIRC the discussion was at, Kevin/Ashok will take another look on your
-> proposed approach to exclude the RMRR[1] and see whether that is good
-> enough or not.
-> 
-> Kevin/Ashok,
-> 
-> Please update if you had a chance to look into it.
+> diff --git a/include/linux/cpufreq.h b/include/linux/cpufreq.h
+> index c86d6d8bdfed..2496549d7573 100644
+> --- a/include/linux/cpufreq.h
+> +++ b/include/linux/cpufreq.h
+> @@ -95,6 +95,8 @@ struct cpufreq_policy {
+>  	struct cpufreq_frequency_table	*freq_table;
+>  	enum cpufreq_table_sorting freq_table_sorted;
+>  
+> +	struct thermal_cooling_device *cooldev; /* Pointer to the cooling
+> +						 * device if used for thermal mitigation */
+>  	struct list_head        policy_list;
+>  	struct kobject		kobj;
+>  	struct completion	kobj_unregister;
 
-+Jacob.
+I've mixed feelings about this. It's definitely desirable to avoid
+code duplication and tying the cooling device to the cpufreq_policy is
+a convenient way to achieve that. However semantically it seems a bit
+odd that a CPU cooling device is part of the cpufreq policy.
 
-My recent check seems to indicate [1] possibly fine with IGD, but I'll let
-Ashok/Jacob to double confirm and ack since they are the owner of 
-intel-iommu driver. 
+Anyway, unless there are better ideas we probably want to be pragmatic
+here, so if Viresh is fine with it who am I to complain ;-)
 
-> 
-> Thanks,
-> Shameer
-> 
-> [1]. https://lkml.org/lkml/2018/6/5/897
-> 
-> > Alex
-> >
-> > [1] https://lkml.org/lkml/2018/4/18/293
+Cheers
+
+Matthias
+
+
