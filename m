@@ -2,100 +2,168 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35A71C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 13:02:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FF7CC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 13:06:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 00AC620879
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 13:02:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="fC5PL8oG"
+	by mail.kernel.org (Postfix) with ESMTP id 2A41020879
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 13:06:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728695AbfAJNCu (ORCPT
+        id S1728712AbfAJNGD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 08:02:50 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:42324 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726560AbfAJNCt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 08:02:49 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0ACxLA7016901;
-        Thu, 10 Jan 2019 13:02:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : mime-version : content-type; s=corp-2018-07-02;
- bh=BvdGAZZGoVwFCNBc3H3CyGU9G1OYwx5u635RP5ESyMM=;
- b=fC5PL8oGgB0pRG3dkpJYXVdiCguIhB2vRvEyPpdYaxOPINsdPbt2NrObpYKH/bOdJXG4
- m2MM1KoVlzqUv4i1/+vNKrS3wD1fHcQj9tN40BwfsNrClgdHkJdykeI5AjDJitXkQ5eH
- yW8Q8ZvCGWrE6hj5TOSaMLv1dV6qFa47KDAZLFfz8M8ptq7AAx7bAldMgm2pN5eFJmqy
- shzr7RnIP/9lMDLyytyH0Gkmlp+/YR90qbBUe6l1YSfHfFculi87BV6LFtQ9cplO8vlF
- e46crOg4OSt3lvz7+XM4NFzrbFzpB0/UZ/iEvg6HgiYmyv0z2TM3XUyaLof6C1cV4KJ1 5A== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by userp2130.oracle.com with ESMTP id 2ptm0uf3ah-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 10 Jan 2019 13:02:42 +0000
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x0AD2bDG026653
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 10 Jan 2019 13:02:37 GMT
-Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x0AD2aRv010833;
-        Thu, 10 Jan 2019 13:02:36 GMT
-Received: from kadam (/197.157.0.17)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 10 Jan 2019 05:02:36 -0800
-Date:   Thu, 10 Jan 2019 16:02:30 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Matt Porter <mporter@kernel.crashing.org>,
-        Alexandre Bounine <alexandre.bounine@idt.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH] [PATCH] rapidio: Potential oops in riocm_ch_listen()
-Message-ID: <20190110130230.GB27017@kadam>
+        Thu, 10 Jan 2019 08:06:03 -0500
+Received: from mx2.suse.de ([195.135.220.15]:34354 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726560AbfAJNGC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 08:06:02 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id AC44AAD18;
+        Thu, 10 Jan 2019 13:06:00 +0000 (UTC)
+Date:   Thu, 10 Jan 2019 14:05:59 +0100 (CET)
+From:   Miroslav Benes <mbenes@suse.cz>
+To:     Petr Mladek <pmladek@suse.com>
+cc:     Jiri Kosina <jikos@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Jason Baron <jbaron@akamai.com>,
+        Joe Lawrence <joe.lawrence@redhat.com>,
+        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
+        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jessica Yu <jeyu@kernel.org>
+Subject: Re: [PATCH v15 07/11] livepatch: Add atomic replace
+In-Reply-To: <20190109124329.21991-8-pmladek@suse.com>
+Message-ID: <alpine.LSU.2.21.1901101405370.15065@pobox.suse.cz>
+References: <20190109124329.21991-1-pmladek@suse.com> <20190109124329.21991-8-pmladek@suse.com>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9131 signatures=668680
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=889
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1901100106
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If riocm_get_channel() fails, then we should just return -EINVAL.
-Calling riocm_put_channel() will trigger a NULL dereference and
-generally we should call put() if the get() didn't succeed.
+On Wed, 9 Jan 2019, Petr Mladek wrote:
 
-Fixes: b6e8d4aa1110 ("rapidio: add RapidIO channelized messaging driver")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- drivers/rapidio/rio_cm.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+> From: Jason Baron <jbaron@akamai.com>
+> 
+> Sometimes we would like to revert a particular fix. Currently, this
+> is not easy because we want to keep all other fixes active and we
+> could revert only the last applied patch.
+> 
+> One solution would be to apply new patch that implemented all
+> the reverted functions like in the original code. It would work
+> as expected but there will be unnecessary redirections. In addition,
+> it would also require knowing which functions need to be reverted at
+> build time.
+> 
+> Another problem is when there are many patches that touch the same
+> functions. There might be dependencies between patches that are
+> not enforced on the kernel side. Also it might be pretty hard to
+> actually prepare the patch and ensure compatibility with the other
+> patches.
+> 
+> Atomic replace && cumulative patches:
+> 
+> A better solution would be to create cumulative patch and say that
+> it replaces all older ones.
+> 
+> This patch adds a new "replace" flag to struct klp_patch. When it is
+> enabled, a set of 'nop' klp_func will be dynamically created for all
+> functions that are already being patched but that will no longer be
+> modified by the new patch. They are used as a new target during
+> the patch transition.
+> 
+> The idea is to handle Nops' structures like the static ones. When
+> the dynamic structures are allocated, we initialize all values that
+> are normally statically defined.
+> 
+> The only exception is "new_func" in struct klp_func. It has to point
+> to the original function and the address is known only when the object
+> (module) is loaded. Note that we really need to set it. The address is
+> used, for example, in klp_check_stack_func().
+> 
+> Nevertheless we still need to distinguish the dynamically allocated
+> structures in some operations. For this, we add "nop" flag into
+> struct klp_func and "dynamic" flag into struct klp_object. They
+> need special handling in the following situations:
+> 
+>   + The structures are added into the lists of objects and functions
+>     immediately. In fact, the lists were created for this purpose.
+> 
+>   + The address of the original function is known only when the patched
+>     object (module) is loaded. Therefore it is copied later in
+>     klp_init_object_loaded().
+> 
+>   + The ftrace handler must not set PC to func->new_func. It would cause
+>     infinite loop because the address points back to the beginning of
+>     the original function.
+> 
+>   + The various free() functions must free the structure itself.
+> 
+> Note that other ways to detect the dynamic structures are not considered
+> safe. For example, even the statically defined struct klp_object might
+> include empty funcs array. It might be there just to run some callbacks.
+> 
+> Also note that the safe iterator must be used in the free() functions.
+> Otherwise already freed structures might get accessed.
+> 
+> Special callbacks handling:
+> 
+> The callbacks from the replaced patches are _not_ called by intention.
+> It would be pretty hard to define a reasonable semantic and implement it.
+> 
+> It might even be counter-productive. The new patch is cumulative. It is
+> supposed to include most of the changes from older patches. In most cases,
+> it will not want to call pre_unpatch() post_unpatch() callbacks from
+> the replaced patches. It would disable/break things for no good reasons.
+> Also it should be easier to handle various scenarios in a single script
+> in the new patch than think about interactions caused by running many
+> scripts from older patches. Not to say that the old scripts even would
+> not expect to be called in this situation.
+> 
+> Removing replaced patches:
+> 
+> One nice effect of the cumulative patches is that the code from the
+> older patches is no longer used. Therefore the replaced patches can
+> be removed. It has several advantages:
+> 
+>   + Nops' structs will no longer be necessary and might be removed.
+>     This would save memory, restore performance (no ftrace handler),
+>     allow clear view on what is really patched.
+> 
+>   + Disabling the patch will cause using the original code everywhere.
+>     Therefore the livepatch callbacks could handle only one scenario.
+>     Note that the complication is already complex enough when the patch
+>     gets enabled. It is currently solved by calling callbacks only from
+>     the new cumulative patch.
+> 
+>   + The state is clean in both the sysfs interface and lsmod. The modules
+>     with the replaced livepatches might even get removed from the system.
+> 
+> Some people actually expected this behavior from the beginning. After all
+> a cumulative patch is supposed to "completely" replace an existing one.
+> It is like when a new version of an application replaces an older one.
+> 
+> This patch does the first step. It removes the replaced patches from
+> the list of patches. It is safe. The consistency model ensures that
+> they are no longer used. By other words, each process works only with
+> the structures from klp_transition_patch.
+> 
+> The removal is done by a special function. It combines actions done by
+> __disable_patch() and klp_complete_transition(). But it is a fast
+> track without all the transaction-related stuff.
+> 
+> Signed-off-by: Jason Baron <jbaron@akamai.com>
+> [pmladek@suse.com: Split, reuse existing code, simplified]
+> Signed-off-by: Petr Mladek <pmladek@suse.com>
+> Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+> Cc: Jessica Yu <jeyu@kernel.org>
+> Cc: Jiri Kosina <jikos@kernel.org>
+> Cc: Miroslav Benes <mbenes@suse.cz>
 
-diff --git a/drivers/rapidio/rio_cm.c b/drivers/rapidio/rio_cm.c
-index bad0e0ea4f30..cf45829585cb 100644
---- a/drivers/rapidio/rio_cm.c
-+++ b/drivers/rapidio/rio_cm.c
-@@ -1215,7 +1215,9 @@ static int riocm_ch_listen(u16 ch_id)
- 	riocm_debug(CHOP, "(ch_%d)", ch_id);
- 
- 	ch = riocm_get_channel(ch_id);
--	if (!ch || !riocm_cmp_exch(ch, RIO_CM_CHAN_BOUND, RIO_CM_LISTEN))
-+	if (!ch)
-+		return -EINVAL;
-+	if (!riocm_cmp_exch(ch, RIO_CM_CHAN_BOUND, RIO_CM_LISTEN))
- 		ret = -EINVAL;
- 	riocm_put_channel(ch);
- 	return ret;
--- 
-2.17.1
+Acked-by: Miroslav Benes <mbenes@suse.cz>
 
+Miroslav
