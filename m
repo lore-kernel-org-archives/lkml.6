@@ -2,82 +2,110 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A583C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 20:53:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E225BC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 20:53:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D62020685
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 20:53:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AFF5620685
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 20:53:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="syQrfQTQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730568AbfAJUxM (ORCPT
+        id S1730644AbfAJUxQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 15:53:12 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:40067 "EHLO
-        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729628AbfAJUxL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 15:53:11 -0500
-Received: from carbon-x1.hos.anvin.org (c-24-5-245-234.hsd1.ca.comcast.net [24.5.245.234] (may be forged))
-        (authenticated bits=0)
-        by mail.zytor.com (8.15.2/8.15.2) with ESMTPSA id x0AKpwOr355981
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO);
-        Thu, 10 Jan 2019 12:51:59 -0800
-Subject: Re: [PATCH v3 0/6] Static calls
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>
-Cc:     the arch/x86 maintainers <x86@kernel.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Jason Baron <jbaron@akamai.com>, Jiri Kosina <jkosina@suse.cz>,
-        David Laight <David.Laight@aculab.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Julia Cartwright <julia@ni.com>, Jessica Yu <jeyu@kernel.org>,
-        Nadav Amit <namit@vmware.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Edward Cree <ecree@solarflare.com>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>
-References: <cover.1547073843.git.jpoimboe@redhat.com>
- <CAHk-=wiP4Z5r6tdkuD2DYocxG0zx=Kh+Z2k_LQ4QFvehe1+9uw@mail.gmail.com>
-From:   "H. Peter Anvin" <hpa@zytor.com>
-Message-ID: <faadced2-9343-8bbc-5bd6-8682382e7322@zytor.com>
-Date:   Thu, 10 Jan 2019 12:51:53 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Thu, 10 Jan 2019 15:53:16 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:33575 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729628AbfAJUxP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 15:53:15 -0500
+Received: by mail-lf1-f66.google.com with SMTP id i26so9320610lfc.0;
+        Thu, 10 Jan 2019 12:53:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=+eSlKha60Px6UNpdnXSUR6EysfM1BrF6z25Bgwx9Baw=;
+        b=syQrfQTQs9KEuxcdxHKh/J8TQDTXYNQXWajawLtDCuKIr8Xs+EQIyINcpDDD4iV39u
+         SzHmgdPFUB4u1PNUNNxzgu5aVsa9395Kmnu0LzHLYmnLrXqSBoAAYr219egJf9U5B2gT
+         +IQ3lMp7mV3A2A/MpPNNQ3N41WI0k6YWe4nUK7yMiz46ZlnUG/HHCo94+5LQoximT5t7
+         h2PcR4B1LETbvc0kKeZ9PHd+7hNqkQPLG4if8pE0yyFjcLHGRGkud8+rH+/Xt5SgszEp
+         CcHaa9PIMdWehX18NEhjyqdX2m8ZbSOC0I1DP4U+vm0eCIahbw4/nHPecZCNvi5z/G/n
+         +XsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=+eSlKha60Px6UNpdnXSUR6EysfM1BrF6z25Bgwx9Baw=;
+        b=Rf3xn7cIAqntXeGTWoXheh+FNTdOyT7hOwhjnWHjjgiTm3rZjG+KbBQnRwLgwmE3iM
+         ZszpoFD4zNLlJwUyqMEMTVaoHv9dAwRsvNvZY1qfFmPFkI3XQeeTDoKiHp7CPJbAn+Bp
+         N1iTieJHm8FTaP6tIWvSPdvAiNANRl4bEykY15PXXw227cqlay8k3HLPevf7Ayfbf22m
+         GhNz62xWf2bHFoSEhamYZipemGeqgbLI7wmy6DYvwVXFyx2Yys4Sw58ON3Oy0Zqcp2pf
+         tC4CyyZSnpANMXN+Nk9l5Pq1Jbvl3qoXxcH4ZzQbjl7DKAGeiLEmc1q4lPA6BI1OE1rM
+         GP3A==
+X-Gm-Message-State: AJcUukdnUvvD6cIf/ib35bmMV09q7+R8yQXkxqdrjNPtC3YggmUrBq7L
+        CUAxF7Y4Hso+VEWfGnn5CMY=
+X-Google-Smtp-Source: ALg8bN5yVCtk0zO/TczaR04e9HTgOfd/c5nRqiqJXlWlxRa65MMcLq2etLGQG3et7RgZkQjlwp1lIw==
+X-Received: by 2002:a19:ef15:: with SMTP id n21mr7162146lfh.21.1547153591755;
+        Thu, 10 Jan 2019 12:53:11 -0800 (PST)
+Received: from localhost.localdomain ([2a02:a315:5445:5300:5dc1:592c:c674:2869])
+        by smtp.googlemail.com with ESMTPSA id z7-v6sm15389690lji.42.2019.01.10.12.53.10
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 10 Jan 2019 12:53:10 -0800 (PST)
+From:   =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
+To:     kgene@kernel.org
+Cc:     krzk@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        linux@armlinux.org.uk, viresh.kumar@linaro.org, rjw@rjwysocki.net,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
+Subject: [PATCH v2 0/4] ARM: dts: s5pv210: Enable cpufreq support
+Date:   Thu, 10 Jan 2019 21:52:11 +0100
+Message-Id: <20190110205215.22030-1-pawel.mikolaj.chmiel@gmail.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-In-Reply-To: <CAHk-=wiP4Z5r6tdkuD2DYocxG0zx=Kh+Z2k_LQ4QFvehe1+9uw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/10/19 9:31 AM, Linus Torvalds wrote:
-> On Wed, Jan 9, 2019 at 2:59 PM Josh Poimboeuf <jpoimboe@redhat.com> wrote:
->>
->> NOTE: At least experimentally, the call destination writes seem to be
->> atomic with respect to instruction fetching.  On Nehalem I can easily
->> trigger crashes when writing a call destination across cachelines while
->> reading the instruction on other CPU; but I get no such crashes when
->> respecting cacheline boundaries.
-> 
-> I still doubt ifetch is atomic on a cacheline boundary for the simple
-> reason that the bus between the IU and the L1 I$ is narrower in older
-> CPU's.
-> 
+This patchset enables cpufreq support using s5pv210-cpufreq driver.
 
-As far as I understand, on P6+ (and possibly earlier, but I don't know) it is
-atomic on a 16-byte fetch datum, at least for Intel CPUs.
+First patch adds missing dmc nodes, which are required by driver.
 
-However, single byte accesses are always going to be safe.
+Second patch is cosmetic, it stops driver from flooding kernel log with
+ messages, after every change of freq.
 
-	-hpa
+Third patch adds defer probe support for regulators, needed by driver.
+It was observed, that those regulators can be no yet initialized, when
+ driver is probed, so we should wait till we can get them.
+
+Last patch enables required kernel config options.
+
+Changes from v1:
+  - Added Acked-by to one of patches
+  - Fix compilation error after changes in driver
+  - Reorganize code (so it's smaller), inside patch which logs information
+    about defered probe of regulators
+
+Paweł Chmiel (4):
+  ARM: dts: s5pv210: Add dmc nodes
+  cpufreq: s5pv210: Don't flood kernel log after cpufreq change
+  cpufreq: s5pv210: Defer probe if getting regulators fail
+  ARM: defconfig: s5pv210: Add cpufreq support
+
+ arch/arm/boot/dts/s5pv210.dtsi     | 12 +++++++++++
+ arch/arm/configs/s5pv210_defconfig |  6 ++++++
+ drivers/cpufreq/s5pv210-cpufreq.c  | 34 ++++++++++++++++++------------
+ 3 files changed, 38 insertions(+), 14 deletions(-)
+
+-- 
+2.17.1
 
