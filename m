@@ -2,93 +2,60 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C5F6C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 17:32:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBE00C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 17:32:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB297208E3
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 17:32:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C7E88208E3
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 17:32:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730383AbfAJRcr (ORCPT
+        id S1730398AbfAJRcz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 12:32:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46774 "EHLO mail.kernel.org"
+        Thu, 10 Jan 2019 12:32:55 -0500
+Received: from mga14.intel.com ([192.55.52.115]:57684 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730023AbfAJRcr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 12:32:47 -0500
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E8FC220675;
-        Thu, 10 Jan 2019 17:32:44 +0000 (UTC)
-Date:   Thu, 10 Jan 2019 12:32:43 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Josh Poimboeuf <jpoimboe@redhat.com>
-Cc:     Nadav Amit <namit@vmware.com>, X86 ML <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Jason Baron <jbaron@akamai.com>, Jiri Kosina <jkosina@suse.cz>,
-        David Laight <David.Laight@ACULAB.COM>,
-        Borislav Petkov <bp@alien8.de>,
-        Julia Cartwright <julia@ni.com>, Jessica Yu <jeyu@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Edward Cree <ecree@solarflare.com>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>
-Subject: Re: [PATCH v3 5/6] x86/alternative: Use a single access in
- text_poke() where possible
-Message-ID: <20190110123243.3b9e0856@gandalf.local.home>
-In-Reply-To: <20190110172004.wuh45xoafynfm2df@treble>
-References: <cover.1547073843.git.jpoimboe@redhat.com>
-        <279b8003f7f0a6831d090ab822d37bc958f974de.1547073843.git.jpoimboe@redhat.com>
-        <8138A1EE-359D-4CD2-8E96-5BF00313AB3B@vmware.com>
-        <20190110172004.wuh45xoafynfm2df@treble>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1729799AbfAJRcy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 12:32:54 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jan 2019 09:32:54 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,462,1539673200"; 
+   d="scan'208";a="113734468"
+Received: from vanderss-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.254.152])
+  by fmsmga007.fm.intel.com with ESMTP; 10 Jan 2019 09:32:50 -0800
+Date:   Thu, 10 Jan 2019 19:32:49 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Jia Zhang <zhang.jia@linux.alibaba.com>
+Cc:     peterhuewe@gmx.de, jgg@ziepe.ca, tweek@google.com,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] tpm/eventlog/tpm1: Simplify walking over *pos
+ measurements
+Message-ID: <20190110173249.GE6589@linux.intel.com>
+References: <1546759399-45360-1-git-send-email-zhang.jia@linux.alibaba.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1546759399-45360-1-git-send-email-zhang.jia@linux.alibaba.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 10 Jan 2019 11:20:04 -0600
-Josh Poimboeuf <jpoimboe@redhat.com> wrote:
-
-
-> > While I can't find a reason for hypervisors to emulate this instruction,
-> > smarter people might find ways to turn it into a security exploit.  
+On Sun, Jan 06, 2019 at 03:23:18PM +0800, Jia Zhang wrote:
+> The sanity check would be easier, especially for the first read
+> of binary_bios_measurements from the beginning.
 > 
-> Interesting point... but I wonder if it's a realistic concern.  BTW,
-> text_poke_bp() also relies on undocumented behavior.
+> Signed-off-by: Jia Zhang <zhang.jia@linux.alibaba.com>
 
-But we did get an official OK from Intel that it will work. Took a bit
-of arm twisting to get them to do so, but they did. And it really is
-pretty robust.
+The cover letter is missing and commit messages do not describe
+what kind of change the commit does.
 
-I would really like an acknowledgment from the HW vendors before we do
-go this route.
-
--- Steve
-
-
-> 
-> The entire instruction doesn't need to be read atomically; just the
-> 32-bit call destination.  Assuming the hypervisor is x86-64, and it uses
-> a 32-bit access to read the call destination (which seems logical), the
-> intra-cacheline reads will be atomic, as stated in the SDM.
-> 
-> If the above assumptions are not true, and the hypervisor reads the call
-> destination non-atomically (which seems unlikely IMO), even then I don't
-> see how it could be realistically exploitable.  It would just oops from
-> calling a corrupt address.
-> 
-
+/Jarkko
