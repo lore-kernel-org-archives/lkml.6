@@ -2,507 +2,287 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-11.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5585C43444
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 16:57:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D23CC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 16:58:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8DD35214C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 16:57:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547139422;
-	bh=1sbwG4UXtNm8/r9OjoSGcOf9PRMAvycarJm89qf0WvM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ucErp1qsSWtL1TR1rv0UNfracUtTIRYQMHz1yzOxRx83dXo2VfCuudqoxwxQFC3Zw
-	 SlWSPki2qKtRX1RCmhmQ1ikepbkO1OMZbTf8+o8fpigST4BwbbvDabJdoievE9TYYG
-	 uReXBmjfV8di4ThHdhtvuAqDHAqeJ8Flt+hmfZ0s=
+	by mail.kernel.org (Postfix) with ESMTP id B850720685
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 16:58:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="zaMRJz01"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729217AbfAJQ5B (ORCPT
+        id S1729073AbfAJQ6e (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 11:57:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46714 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729143AbfAJQ46 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 11:56:58 -0500
-Received: from quaco.ghostprotocols.net (unknown [190.15.121.82])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C0D2420685;
-        Thu, 10 Jan 2019 16:56:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547139417;
-        bh=1sbwG4UXtNm8/r9OjoSGcOf9PRMAvycarJm89qf0WvM=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=j/zUBWTnJNqu2316w5w5KXnGs9irmoWHEVvJWHGwE45BmdOd6/PL59HL7Xis8ONTX
-         5NIOU12ubsW8DKzTiytFtnPB+//QEsKOL1SSTc1UrKYSe2KLgGu6WwfjGaoLjMnxw8
-         jX+Z7CD5gJ9LcEIsEjSZvHz7miECQmZP2h8oT82w=
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org,
-        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Namhyung Kim <namhyung@kernel.org>,
-        linuxppc-dev@lists.ozlabs.org,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 4/4] tools headers powerpc: Remove unistd.h
-Date:   Thu, 10 Jan 2019 13:56:36 -0300
-Message-Id: <20190110165636.19338-5-acme@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190110165636.19338-1-acme@kernel.org>
-References: <20190110165636.19338-1-acme@kernel.org>
+        Thu, 10 Jan 2019 11:58:34 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:48378 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728637AbfAJQ6e (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 11:58:34 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0AGrkDn180068;
+        Thu, 10 Jan 2019 16:58:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=7Chk4M27S8U5tOjTqfzDgmGVgxpihuB7i7YZ2UXeIq0=;
+ b=zaMRJz018TwD1ajhtrGnbC8AVUc6PpNkkb3KmqY+bx7gcP6EU+DJ2mZdd1z9F/1eZFbu
+ rghSqj/2OF57eo12Pw0clasJsFOmEekjBDvTgA4xIJym6X6htuxHEIoy7eqfB+FPGPVE
+ oWyxarnYI+qQQjWCAFZCbaOffRnMHxBaNyFHqT12OKEpZGyQh7wZrYwd5gfygiyXtRAp
+ FY+Eyn9+xP4XOcpRFszJAlBtDMiHnW9OjejqF+20t9LiwqaHOZ05WQLC5STJKvRTcTQP
+ CgPLxoEYwgKmMGSnMFIofdQYWEE4OQlJDeiZduv2WMWpZvu+1nuAQ5iamH0xj2ILXxGi +A== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by userp2120.oracle.com with ESMTP id 2ptn7r8902-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 10 Jan 2019 16:58:18 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x0AGwHgc015943
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 10 Jan 2019 16:58:17 GMT
+Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x0AGwGR7025863;
+        Thu, 10 Jan 2019 16:58:17 GMT
+Received: from [192.168.1.93] (/99.156.91.244)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 10 Jan 2019 08:58:16 -0800
+Subject: Re: [PATCH v1] fs/jfs: Switch to use new generic UUID API
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Christoph Hellwig <hch@lst.de>, linux-kernel@vger.kernel.org,
+        jfs-discussion@lists.sourceforge.net
+References: <20190110134153.83901-1-andriy.shevchenko@linux.intel.com>
+From:   Dave Kleikamp <dave.kleikamp@oracle.com>
+Openpgp: preference=signencrypt
+Message-ID: <026bd92b-4154-171a-a50d-d65200b2441b@oracle.com>
+Date:   Thu, 10 Jan 2019 10:58:15 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190110134153.83901-1-andriy.shevchenko@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9131 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1901100132
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+On 1/10/19 7:41 AM, Andy Shevchenko wrote:
+> There are new types and helpers that are supposed to be used in new code.
+> 
+> As a preparation to get rid of legacy types and API functions do
+> the conversion here.
 
-We use syscall.tbl to generate system call table on powerpc.
+Looks good to me. I tweaked it slightly to keep checkpatch from
+complaining about lines over 80 characters. I'll push it into -next for
+v5.1.
 
-The unistd.h copy is no longer required now. Remove it.
+Shaggy
 
-Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: linuxppc-dev@lists.ozlabs.org
-Link: http://lkml.kernel.org/r/20190110094936.3132-2-ravi.bangoria@linux.ibm.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/arch/powerpc/include/uapi/asm/unistd.h | 404 -------------------
- tools/perf/check-headers.sh                  |   1 -
- 2 files changed, 405 deletions(-)
- delete mode 100644 tools/arch/powerpc/include/uapi/asm/unistd.h
-
-diff --git a/tools/arch/powerpc/include/uapi/asm/unistd.h b/tools/arch/powerpc/include/uapi/asm/unistd.h
-deleted file mode 100644
-index 985534d0b448..000000000000
---- a/tools/arch/powerpc/include/uapi/asm/unistd.h
-+++ /dev/null
-@@ -1,404 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0+ WITH Linux-syscall-note */
--/*
-- * This file contains the system call numbers.
-- *
-- * This program is free software; you can redistribute it and/or
-- * modify it under the terms of the GNU General Public License
-- * as published by the Free Software Foundation; either version
-- * 2 of the License, or (at your option) any later version.
-- */
--#ifndef _UAPI_ASM_POWERPC_UNISTD_H_
--#define _UAPI_ASM_POWERPC_UNISTD_H_
--
--
--#define __NR_restart_syscall	  0
--#define __NR_exit		  1
--#define __NR_fork		  2
--#define __NR_read		  3
--#define __NR_write		  4
--#define __NR_open		  5
--#define __NR_close		  6
--#define __NR_waitpid		  7
--#define __NR_creat		  8
--#define __NR_link		  9
--#define __NR_unlink		 10
--#define __NR_execve		 11
--#define __NR_chdir		 12
--#define __NR_time		 13
--#define __NR_mknod		 14
--#define __NR_chmod		 15
--#define __NR_lchown		 16
--#define __NR_break		 17
--#define __NR_oldstat		 18
--#define __NR_lseek		 19
--#define __NR_getpid		 20
--#define __NR_mount		 21
--#define __NR_umount		 22
--#define __NR_setuid		 23
--#define __NR_getuid		 24
--#define __NR_stime		 25
--#define __NR_ptrace		 26
--#define __NR_alarm		 27
--#define __NR_oldfstat		 28
--#define __NR_pause		 29
--#define __NR_utime		 30
--#define __NR_stty		 31
--#define __NR_gtty		 32
--#define __NR_access		 33
--#define __NR_nice		 34
--#define __NR_ftime		 35
--#define __NR_sync		 36
--#define __NR_kill		 37
--#define __NR_rename		 38
--#define __NR_mkdir		 39
--#define __NR_rmdir		 40
--#define __NR_dup		 41
--#define __NR_pipe		 42
--#define __NR_times		 43
--#define __NR_prof		 44
--#define __NR_brk		 45
--#define __NR_setgid		 46
--#define __NR_getgid		 47
--#define __NR_signal		 48
--#define __NR_geteuid		 49
--#define __NR_getegid		 50
--#define __NR_acct		 51
--#define __NR_umount2		 52
--#define __NR_lock		 53
--#define __NR_ioctl		 54
--#define __NR_fcntl		 55
--#define __NR_mpx		 56
--#define __NR_setpgid		 57
--#define __NR_ulimit		 58
--#define __NR_oldolduname	 59
--#define __NR_umask		 60
--#define __NR_chroot		 61
--#define __NR_ustat		 62
--#define __NR_dup2		 63
--#define __NR_getppid		 64
--#define __NR_getpgrp		 65
--#define __NR_setsid		 66
--#define __NR_sigaction		 67
--#define __NR_sgetmask		 68
--#define __NR_ssetmask		 69
--#define __NR_setreuid		 70
--#define __NR_setregid		 71
--#define __NR_sigsuspend		 72
--#define __NR_sigpending		 73
--#define __NR_sethostname	 74
--#define __NR_setrlimit		 75
--#define __NR_getrlimit		 76
--#define __NR_getrusage		 77
--#define __NR_gettimeofday	 78
--#define __NR_settimeofday	 79
--#define __NR_getgroups		 80
--#define __NR_setgroups		 81
--#define __NR_select		 82
--#define __NR_symlink		 83
--#define __NR_oldlstat		 84
--#define __NR_readlink		 85
--#define __NR_uselib		 86
--#define __NR_swapon		 87
--#define __NR_reboot		 88
--#define __NR_readdir		 89
--#define __NR_mmap		 90
--#define __NR_munmap		 91
--#define __NR_truncate		 92
--#define __NR_ftruncate		 93
--#define __NR_fchmod		 94
--#define __NR_fchown		 95
--#define __NR_getpriority	 96
--#define __NR_setpriority	 97
--#define __NR_profil		 98
--#define __NR_statfs		 99
--#define __NR_fstatfs		100
--#define __NR_ioperm		101
--#define __NR_socketcall		102
--#define __NR_syslog		103
--#define __NR_setitimer		104
--#define __NR_getitimer		105
--#define __NR_stat		106
--#define __NR_lstat		107
--#define __NR_fstat		108
--#define __NR_olduname		109
--#define __NR_iopl		110
--#define __NR_vhangup		111
--#define __NR_idle		112
--#define __NR_vm86		113
--#define __NR_wait4		114
--#define __NR_swapoff		115
--#define __NR_sysinfo		116
--#define __NR_ipc		117
--#define __NR_fsync		118
--#define __NR_sigreturn		119
--#define __NR_clone		120
--#define __NR_setdomainname	121
--#define __NR_uname		122
--#define __NR_modify_ldt		123
--#define __NR_adjtimex		124
--#define __NR_mprotect		125
--#define __NR_sigprocmask	126
--#define __NR_create_module	127
--#define __NR_init_module	128
--#define __NR_delete_module	129
--#define __NR_get_kernel_syms	130
--#define __NR_quotactl		131
--#define __NR_getpgid		132
--#define __NR_fchdir		133
--#define __NR_bdflush		134
--#define __NR_sysfs		135
--#define __NR_personality	136
--#define __NR_afs_syscall	137 /* Syscall for Andrew File System */
--#define __NR_setfsuid		138
--#define __NR_setfsgid		139
--#define __NR__llseek		140
--#define __NR_getdents		141
--#define __NR__newselect		142
--#define __NR_flock		143
--#define __NR_msync		144
--#define __NR_readv		145
--#define __NR_writev		146
--#define __NR_getsid		147
--#define __NR_fdatasync		148
--#define __NR__sysctl		149
--#define __NR_mlock		150
--#define __NR_munlock		151
--#define __NR_mlockall		152
--#define __NR_munlockall		153
--#define __NR_sched_setparam		154
--#define __NR_sched_getparam		155
--#define __NR_sched_setscheduler		156
--#define __NR_sched_getscheduler		157
--#define __NR_sched_yield		158
--#define __NR_sched_get_priority_max	159
--#define __NR_sched_get_priority_min	160
--#define __NR_sched_rr_get_interval	161
--#define __NR_nanosleep		162
--#define __NR_mremap		163
--#define __NR_setresuid		164
--#define __NR_getresuid		165
--#define __NR_query_module	166
--#define __NR_poll		167
--#define __NR_nfsservctl		168
--#define __NR_setresgid		169
--#define __NR_getresgid		170
--#define __NR_prctl		171
--#define __NR_rt_sigreturn	172
--#define __NR_rt_sigaction	173
--#define __NR_rt_sigprocmask	174
--#define __NR_rt_sigpending	175
--#define __NR_rt_sigtimedwait	176
--#define __NR_rt_sigqueueinfo	177
--#define __NR_rt_sigsuspend	178
--#define __NR_pread64		179
--#define __NR_pwrite64		180
--#define __NR_chown		181
--#define __NR_getcwd		182
--#define __NR_capget		183
--#define __NR_capset		184
--#define __NR_sigaltstack	185
--#define __NR_sendfile		186
--#define __NR_getpmsg		187	/* some people actually want streams */
--#define __NR_putpmsg		188	/* some people actually want streams */
--#define __NR_vfork		189
--#define __NR_ugetrlimit		190	/* SuS compliant getrlimit */
--#define __NR_readahead		191
--#ifndef __powerpc64__			/* these are 32-bit only */
--#define __NR_mmap2		192
--#define __NR_truncate64		193
--#define __NR_ftruncate64	194
--#define __NR_stat64		195
--#define __NR_lstat64		196
--#define __NR_fstat64		197
--#endif
--#define __NR_pciconfig_read	198
--#define __NR_pciconfig_write	199
--#define __NR_pciconfig_iobase	200
--#define __NR_multiplexer	201
--#define __NR_getdents64		202
--#define __NR_pivot_root		203
--#ifndef __powerpc64__
--#define __NR_fcntl64		204
--#endif
--#define __NR_madvise		205
--#define __NR_mincore		206
--#define __NR_gettid		207
--#define __NR_tkill		208
--#define __NR_setxattr		209
--#define __NR_lsetxattr		210
--#define __NR_fsetxattr		211
--#define __NR_getxattr		212
--#define __NR_lgetxattr		213
--#define __NR_fgetxattr		214
--#define __NR_listxattr		215
--#define __NR_llistxattr		216
--#define __NR_flistxattr		217
--#define __NR_removexattr	218
--#define __NR_lremovexattr	219
--#define __NR_fremovexattr	220
--#define __NR_futex		221
--#define __NR_sched_setaffinity	222
--#define __NR_sched_getaffinity	223
--/* 224 currently unused */
--#define __NR_tuxcall		225
--#ifndef __powerpc64__
--#define __NR_sendfile64		226
--#endif
--#define __NR_io_setup		227
--#define __NR_io_destroy		228
--#define __NR_io_getevents	229
--#define __NR_io_submit		230
--#define __NR_io_cancel		231
--#define __NR_set_tid_address	232
--#define __NR_fadvise64		233
--#define __NR_exit_group		234
--#define __NR_lookup_dcookie	235
--#define __NR_epoll_create	236
--#define __NR_epoll_ctl		237
--#define __NR_epoll_wait		238
--#define __NR_remap_file_pages	239
--#define __NR_timer_create	240
--#define __NR_timer_settime	241
--#define __NR_timer_gettime	242
--#define __NR_timer_getoverrun	243
--#define __NR_timer_delete	244
--#define __NR_clock_settime	245
--#define __NR_clock_gettime	246
--#define __NR_clock_getres	247
--#define __NR_clock_nanosleep	248
--#define __NR_swapcontext	249
--#define __NR_tgkill		250
--#define __NR_utimes		251
--#define __NR_statfs64		252
--#define __NR_fstatfs64		253
--#ifndef __powerpc64__
--#define __NR_fadvise64_64	254
--#endif
--#define __NR_rtas		255
--#define __NR_sys_debug_setcontext 256
--/* Number 257 is reserved for vserver */
--#define __NR_migrate_pages	258
--#define __NR_mbind		259
--#define __NR_get_mempolicy	260
--#define __NR_set_mempolicy	261
--#define __NR_mq_open		262
--#define __NR_mq_unlink		263
--#define __NR_mq_timedsend	264
--#define __NR_mq_timedreceive	265
--#define __NR_mq_notify		266
--#define __NR_mq_getsetattr	267
--#define __NR_kexec_load		268
--#define __NR_add_key		269
--#define __NR_request_key	270
--#define __NR_keyctl		271
--#define __NR_waitid		272
--#define __NR_ioprio_set		273
--#define __NR_ioprio_get		274
--#define __NR_inotify_init	275
--#define __NR_inotify_add_watch	276
--#define __NR_inotify_rm_watch	277
--#define __NR_spu_run		278
--#define __NR_spu_create		279
--#define __NR_pselect6		280
--#define __NR_ppoll		281
--#define __NR_unshare		282
--#define __NR_splice		283
--#define __NR_tee		284
--#define __NR_vmsplice		285
--#define __NR_openat		286
--#define __NR_mkdirat		287
--#define __NR_mknodat		288
--#define __NR_fchownat		289
--#define __NR_futimesat		290
--#ifdef __powerpc64__
--#define __NR_newfstatat		291
--#else
--#define __NR_fstatat64		291
--#endif
--#define __NR_unlinkat		292
--#define __NR_renameat		293
--#define __NR_linkat		294
--#define __NR_symlinkat		295
--#define __NR_readlinkat		296
--#define __NR_fchmodat		297
--#define __NR_faccessat		298
--#define __NR_get_robust_list	299
--#define __NR_set_robust_list	300
--#define __NR_move_pages		301
--#define __NR_getcpu		302
--#define __NR_epoll_pwait	303
--#define __NR_utimensat		304
--#define __NR_signalfd		305
--#define __NR_timerfd_create	306
--#define __NR_eventfd		307
--#define __NR_sync_file_range2	308
--#define __NR_fallocate		309
--#define __NR_subpage_prot	310
--#define __NR_timerfd_settime	311
--#define __NR_timerfd_gettime	312
--#define __NR_signalfd4		313
--#define __NR_eventfd2		314
--#define __NR_epoll_create1	315
--#define __NR_dup3		316
--#define __NR_pipe2		317
--#define __NR_inotify_init1	318
--#define __NR_perf_event_open	319
--#define __NR_preadv		320
--#define __NR_pwritev		321
--#define __NR_rt_tgsigqueueinfo	322
--#define __NR_fanotify_init	323
--#define __NR_fanotify_mark	324
--#define __NR_prlimit64		325
--#define __NR_socket		326
--#define __NR_bind		327
--#define __NR_connect		328
--#define __NR_listen		329
--#define __NR_accept		330
--#define __NR_getsockname	331
--#define __NR_getpeername	332
--#define __NR_socketpair		333
--#define __NR_send		334
--#define __NR_sendto		335
--#define __NR_recv		336
--#define __NR_recvfrom		337
--#define __NR_shutdown		338
--#define __NR_setsockopt		339
--#define __NR_getsockopt		340
--#define __NR_sendmsg		341
--#define __NR_recvmsg		342
--#define __NR_recvmmsg		343
--#define __NR_accept4		344
--#define __NR_name_to_handle_at	345
--#define __NR_open_by_handle_at	346
--#define __NR_clock_adjtime	347
--#define __NR_syncfs		348
--#define __NR_sendmmsg		349
--#define __NR_setns		350
--#define __NR_process_vm_readv	351
--#define __NR_process_vm_writev	352
--#define __NR_finit_module	353
--#define __NR_kcmp		354
--#define __NR_sched_setattr	355
--#define __NR_sched_getattr	356
--#define __NR_renameat2		357
--#define __NR_seccomp		358
--#define __NR_getrandom		359
--#define __NR_memfd_create	360
--#define __NR_bpf		361
--#define __NR_execveat		362
--#define __NR_switch_endian	363
--#define __NR_userfaultfd	364
--#define __NR_membarrier		365
--#define __NR_mlock2		378
--#define __NR_copy_file_range	379
--#define __NR_preadv2		380
--#define __NR_pwritev2		381
--#define __NR_kexec_file_load	382
--#define __NR_statx		383
--#define __NR_pkey_alloc		384
--#define __NR_pkey_free		385
--#define __NR_pkey_mprotect	386
--#define __NR_rseq		387
--#define __NR_io_pgetevents	388
--
--#endif /* _UAPI_ASM_POWERPC_UNISTD_H_ */
-diff --git a/tools/perf/check-headers.sh b/tools/perf/check-headers.sh
-index b51e952ab35f..7b55613924de 100755
---- a/tools/perf/check-headers.sh
-+++ b/tools/perf/check-headers.sh
-@@ -50,7 +50,6 @@ arch/parisc/include/uapi/asm/errno.h
- arch/powerpc/include/uapi/asm/errno.h
- arch/sparc/include/uapi/asm/errno.h
- arch/x86/include/uapi/asm/errno.h
--arch/powerpc/include/uapi/asm/unistd.h
- include/asm-generic/bitops/arch_hweight.h
- include/asm-generic/bitops/const_hweight.h
- include/asm-generic/bitops/__fls.h
--- 
-2.20.1
-
+> 
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
+> 
+> - not tested on real FS
+> 
+>  fs/jfs/jfs_incore.h     |  6 ++++--
+>  fs/jfs/jfs_logmgr.c     | 17 ++++++++---------
+>  fs/jfs/jfs_logmgr.h     | 10 +++++-----
+>  fs/jfs/jfs_mount.c      |  4 ++--
+>  fs/jfs/jfs_superblock.h |  7 ++++---
+>  fs/jfs/super.c          |  5 +++--
+>  6 files changed, 26 insertions(+), 23 deletions(-)
+> 
+> diff --git a/fs/jfs/jfs_incore.h b/fs/jfs/jfs_incore.h
+> index 912a3af2393e..340eb8e4f716 100644
+> --- a/fs/jfs/jfs_incore.h
+> +++ b/fs/jfs/jfs_incore.h
+> @@ -23,6 +23,8 @@
+>  #include <linux/rwsem.h>
+>  #include <linux/slab.h>
+>  #include <linux/bitops.h>
+> +#include <linux/uuid.h>
+> +
+>  #include "jfs_types.h"
+>  #include "jfs_xtree.h"
+>  #include "jfs_dtree.h"
+> @@ -178,8 +180,8 @@ struct jfs_sb_info {
+>  	pxd_t		logpxd;		/* pxd describing log	*/
+>  	pxd_t		fsckpxd;	/* pxd describing fsck wkspc */
+>  	pxd_t		ait2;		/* pxd describing AIT copy	*/
+> -	char		uuid[16];	/* 128-bit uuid for volume	*/
+> -	char		loguuid[16];	/* 128-bit uuid for log	*/
+> +	uuid_t		uuid;		/* 128-bit uuid for volume	*/
+> +	uuid_t		loguuid;	/* 128-bit uuid for log	*/
+>  	/*
+>  	 * commit_state is used for synchronization of the jfs_commit
+>  	 * threads.  It is protected by LAZY_LOCK().
+> diff --git a/fs/jfs/jfs_logmgr.c b/fs/jfs/jfs_logmgr.c
+> index 6b68df395892..6361fa4d85db 100644
+> --- a/fs/jfs/jfs_logmgr.c
+> +++ b/fs/jfs/jfs_logmgr.c
+> @@ -1092,8 +1092,7 @@ int lmLogOpen(struct super_block *sb)
+>  	mutex_lock(&jfs_log_mutex);
+>  	list_for_each_entry(log, &jfs_external_logs, journal_list) {
+>  		if (log->bdev->bd_dev == sbi->logdev) {
+> -			if (memcmp(log->uuid, sbi->loguuid,
+> -				   sizeof(log->uuid))) {
+> +			if (!uuid_equal(&log->uuid, &sbi->loguuid)) {
+>  				jfs_warn("wrong uuid on JFS journal");
+>  				mutex_unlock(&jfs_log_mutex);
+>  				return -EINVAL;
+> @@ -1130,7 +1129,7 @@ int lmLogOpen(struct super_block *sb)
+>  	}
+>  
+>  	log->bdev = bdev;
+> -	memcpy(log->uuid, sbi->loguuid, sizeof(log->uuid));
+> +	uuid_copy(&log->uuid, &sbi->loguuid);
+>  
+>  	/*
+>  	 * initialize log:
+> @@ -1336,7 +1335,7 @@ int lmLogInit(struct jfs_log * log)
+>  			jfs_info("lmLogInit: inline log:0x%p base:0x%Lx size:0x%x",
+>  				 log, (unsigned long long)log->base, log->size);
+>  		} else {
+> -			if (memcmp(logsuper->uuid, log->uuid, 16)) {
+> +			if (!uuid_equal(&logsuper->uuid, &log->uuid)) {
+>  				jfs_warn("wrong uuid on JFS log device");
+>  				goto errout20;
+>  			}
+> @@ -1732,7 +1731,7 @@ static int lmLogFileSystem(struct jfs_log * log, struct jfs_sb_info *sbi,
+>  	int i;
+>  	struct logsuper *logsuper;
+>  	struct lbuf *bpsuper;
+> -	char *uuid = sbi->uuid;
+> +	uuid_t *uuid = &sbi->uuid;
+>  
+>  	/*
+>  	 * insert/remove file system device to log active file system list.
+> @@ -1743,8 +1742,8 @@ static int lmLogFileSystem(struct jfs_log * log, struct jfs_sb_info *sbi,
+>  	logsuper = (struct logsuper *) bpsuper->l_ldata;
+>  	if (activate) {
+>  		for (i = 0; i < MAX_ACTIVE; i++)
+> -			if (!memcmp(logsuper->active[i].uuid, NULL_UUID, 16)) {
+> -				memcpy(logsuper->active[i].uuid, uuid, 16);
+> +			if (uuid_is_null(&logsuper->active[i].uuid)) {
+> +				uuid_copy(&logsuper->active[i].uuid, uuid);
+>  				sbi->aggregate = i;
+>  				break;
+>  			}
+> @@ -1755,8 +1754,8 @@ static int lmLogFileSystem(struct jfs_log * log, struct jfs_sb_info *sbi,
+>  		}
+>  	} else {
+>  		for (i = 0; i < MAX_ACTIVE; i++)
+> -			if (!memcmp(logsuper->active[i].uuid, uuid, 16)) {
+> -				memcpy(logsuper->active[i].uuid, NULL_UUID, 16);
+> +			if (uuid_equal(&logsuper->active[i].uuid, uuid)) {
+> +				uuid_copy(&logsuper->active[i].uuid, &uuid_null);
+>  				break;
+>  			}
+>  		if (i == MAX_ACTIVE) {
+> diff --git a/fs/jfs/jfs_logmgr.h b/fs/jfs/jfs_logmgr.h
+> index e38c21598850..870fc22360e7 100644
+> --- a/fs/jfs/jfs_logmgr.h
+> +++ b/fs/jfs/jfs_logmgr.h
+> @@ -19,6 +19,8 @@
+>  #ifndef	_H_JFS_LOGMGR
+>  #define _H_JFS_LOGMGR
+>  
+> +#include <linux/uuid.h>
+> +
+>  #include "jfs_filsys.h"
+>  #include "jfs_lock.h"
+>  
+> @@ -73,15 +75,13 @@ struct logsuper {
+>  	__le32 state;		/* 4: state - see below */
+>  
+>  	__le32 end;		/* 4: addr of last log record set by logredo */
+> -	char uuid[16];		/* 16: 128-bit journal uuid */
+> +	uuid_t uuid;		/* 16: 128-bit journal uuid */
+>  	char label[16];		/* 16: journal label */
+>  	struct {
+> -		char uuid[16];
+> +		uuid_t uuid;
+>  	} active[MAX_ACTIVE];	/* 2048: active file systems list */
+>  };
+>  
+> -#define NULL_UUID "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
+> -
+>  /* log flag: commit option (see jfs_filsys.h) */
+>  
+>  /* log state */
+> @@ -410,7 +410,7 @@ struct jfs_log {
+>  	spinlock_t synclock;	/* 4: synclist lock */
+>  	struct lbuf *wqueue;	/* 4: log pageout queue */
+>  	int count;		/* 4: count */
+> -	char uuid[16];		/* 16: 128-bit uuid of log device */
+> +	uuid_t uuid;		/* 16: 128-bit uuid of log device */
+>  
+>  	int no_integrity;	/* 3: flag to disable journaling to disk */
+>  };
+> diff --git a/fs/jfs/jfs_mount.c b/fs/jfs/jfs_mount.c
+> index d8658607bf46..c9c1f16b93df 100644
+> --- a/fs/jfs/jfs_mount.c
+> +++ b/fs/jfs/jfs_mount.c
+> @@ -389,8 +389,8 @@ static int chkSuper(struct super_block *sb)
+>  		sbi->logpxd = j_sb->s_logpxd;
+>  	else {
+>  		sbi->logdev = new_decode_dev(le32_to_cpu(j_sb->s_logdev));
+> -		memcpy(sbi->uuid, j_sb->s_uuid, sizeof(sbi->uuid));
+> -		memcpy(sbi->loguuid, j_sb->s_loguuid, sizeof(sbi->uuid));
+> +		uuid_copy(&sbi->uuid, &j_sb->s_uuid);
+> +		uuid_copy(&sbi->loguuid, &j_sb->s_loguuid);
+>  	}
+>  	sbi->fsckpxd = j_sb->s_fsckpxd;
+>  	sbi->ait2 = j_sb->s_ait2;
+> diff --git a/fs/jfs/jfs_superblock.h b/fs/jfs/jfs_superblock.h
+> index 04847b8d3070..0a401f083d1a 100644
+> --- a/fs/jfs/jfs_superblock.h
+> +++ b/fs/jfs/jfs_superblock.h
+> @@ -18,6 +18,8 @@
+>  #ifndef	_H_JFS_SUPERBLOCK
+>  #define _H_JFS_SUPERBLOCK
+>  
+> +#include <linux/uuid.h>
+> +
+>  /*
+>   * make the magic number something a human could read
+>   */
+> @@ -100,10 +102,9 @@ struct jfs_superblock {
+>  	pxd_t s_xlogpxd;	/* 8: extendfs logpxd */
+>  	/* - 128 byte boundary - */
+>  
+> -	char s_uuid[16];	/* 16: 128-bit uuid for volume */
+> +	uuid_t s_uuid;		/* 16: 128-bit uuid for volume */
+>  	char s_label[16];	/* 16: volume label */
+> -	char s_loguuid[16];	/* 16: 128-bit uuid for log device */
+> -
+> +	uuid_t s_loguuid;	/* 16: 128-bit uuid for log device */
+>  };
+>  
+>  extern int readSuper(struct super_block *, struct buffer_head **);
+> diff --git a/fs/jfs/super.c b/fs/jfs/super.c
+> index 65d8fc87ab11..99a43e7f6ee0 100644
+> --- a/fs/jfs/super.c
+> +++ b/fs/jfs/super.c
+> @@ -174,8 +174,9 @@ static int jfs_statfs(struct dentry *dentry, struct kstatfs *buf)
+>  	buf->f_files = maxinodes;
+>  	buf->f_ffree = maxinodes - (atomic_read(&imap->im_numinos) -
+>  				    atomic_read(&imap->im_numfree));
+> -	buf->f_fsid.val[0] = (u32)crc32_le(0, sbi->uuid, sizeof(sbi->uuid)/2);
+> -	buf->f_fsid.val[1] = (u32)crc32_le(0, sbi->uuid + sizeof(sbi->uuid)/2,
+> +	buf->f_fsid.val[0] = (u32)crc32_le(0, (char *)&sbi->uuid,
+> +					sizeof(sbi->uuid)/2);
+> +	buf->f_fsid.val[1] = (u32)crc32_le(0, (char *)&sbi->uuid + sizeof(sbi->uuid)/2,
+>  					sizeof(sbi->uuid)/2);
+>  
+>  	buf->f_namelen = JFS_NAME_MAX;
+> 
