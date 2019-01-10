@@ -2,105 +2,158 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7101BC43612
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 17:28:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8206AC43444
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 17:28:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 47BBE20675
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 17:28:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5DCE520675
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 17:28:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729905AbfAJR2N (ORCPT
+        id S1730094AbfAJR2n (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 12:28:13 -0500
-Received: from mga07.intel.com ([134.134.136.100]:8928 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729519AbfAJR2N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 12:28:13 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jan 2019 09:28:12 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,462,1539673200"; 
-   d="scan'208";a="115795203"
-Received: from vanderss-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.254.152])
-  by fmsmga008.fm.intel.com with ESMTP; 10 Jan 2019 09:28:08 -0800
-Date:   Thu, 10 Jan 2019 19:28:06 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Michael =?iso-8859-1?Q?Niew=F6hner?= <linux@mniewoehner.de>
-Cc:     Mimi Zohar <zohar@linux.ibm.com>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        peterhuewe@gmx.de, jgg@ziepe.ca, arnd@arndb.de,
-        linux-integrity@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Nayna Jain <nayna@linux.ibm.com>,
-        Ken Goldman <kgold@linux.ibm.com>
-Subject: Re: tpm_tis TPM2.0 not detected on cold boot
-Message-ID: <20190110172806.GD6589@linux.intel.com>
-References: <ef7e773b01a5e6153b84628f74fc67092a2f9b0e.camel@gmail.com>
- <1f281756bb1f041e55be8dd090670a1a7b1d1c94.camel@mniewoehner.de>
- <1545519232.3940.115.camel@linux.ibm.com>
- <e7ec38d7cade9aa76384aa2781eab307d2cd5a7b.camel@mniewoehner.de>
- <20190103132737.GD10491@linux.intel.com>
- <6c1bf9815bfcb5d2bc0cfedfc49c7feda0173dc9.camel@mniewoehner.de>
- <20190103150434.GC17015@linux.intel.com>
- <5aa2fc082b6b0657574918b025005ad569da6412.camel@mniewoehner.de>
- <c1f5f53cdaaaad6cc80c2b10172a69f0301d3e0e.camel@mniewoehner.de>
- <5ee514be264361a8f1ed4a4ad823ad72dd7dce23.camel@mniewoehner.de>
+        Thu, 10 Jan 2019 12:28:43 -0500
+Received: from mout.kundenserver.de ([217.72.192.75]:55459 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729519AbfAJR2m (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 12:28:42 -0500
+Received: from wuerfel.lan ([109.192.41.194]) by mrelayeu.kundenserver.de
+ (mreue109 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 1MXp1O-1gn0kD2DHw-00Y6aZ; Thu, 10 Jan 2019 18:22:29 +0100
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     y2038@lists.linaro.org, linux-api@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Arnd Bergmann <arnd@arndb.de>, mattst88@gmail.com,
+        linux@armlinux.org.uk, catalin.marinas@arm.com,
+        will.deacon@arm.com, tony.luck@intel.com, fenghua.yu@intel.com,
+        geert@linux-m68k.org, monstr@monstr.eu, paul.burton@mips.com,
+        deller@gmx.de, benh@kernel.crashing.org, mpe@ellerman.id.au,
+        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com, dalias@libc.org,
+        davem@davemloft.net, luto@kernel.org, tglx@linutronix.de,
+        mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
+        jcmvbkbc@gmail.com, akpm@linux-foundation.org,
+        deepa.kernel@gmail.com, ebiederm@xmission.com,
+        firoz.khan@linaro.org, linux-alpha@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
+        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+        sparclinux@vger.kernel.org, netdev@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org
+Subject: [PATCH 06/11] timex: change syscalls to use struct __kernel_timex
+Date:   Thu, 10 Jan 2019 18:22:11 +0100
+Message-Id: <20190110172216.313063-7-arnd@arndb.de>
+X-Mailer: git-send-email 2.20.0
+In-Reply-To: <20190110172216.313063-1-arnd@arndb.de>
+References: <20190110172216.313063-1-arnd@arndb.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <5ee514be264361a8f1ed4a4ad823ad72dd7dce23.camel@mniewoehner.de>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Provags-ID: V03:K1:4lo+P0Jssf80yBpLJNqYJgkfsZFwI33q3gIWB3cTNQ6r/2Wo8AP
+ K0fcuczrITU2zqExzuVqdUFRe951ZBXZdhvuNYueI9HRB/wAuM//Jxw32Zhzt7rs+9cWSNa
+ oelu2KFU17/9u1/baRsXVk4dlNgBuOSrd/sBG/x9LFm4MsBvDE0xR2Nv7Z/ch6WGgE4G9sa
+ rgGYWLhXf4N1GHKl2M65w==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:Ex1jn0af5BU=:bdsVGTxlAhmtjwRIgR6eTI
+ A6S5rnxwNHQOTJ5wkUU8iQj15DJ8B4PGE5oaXe2FiwQd1vUxLtu4LolchmDA2f1eXTej9jyu6
+ x9UcI0IGhLKozYOViHtZZYanwoHR6sZ7k1NSDOwP6srOhNDZiJII2LdQvL6Cvxf9ulGif9liF
+ WK0zzsiHfFCIZowb20Lu6CgLh8apZBrhB3+jR/iohmjOjAnyGBmvzP2SMk+0tQziIIBMEbeou
+ UCZNwl5e87zMy+AInX9jyvLnjNIqvAB8VQhmKrueWUiWOCm0zQ3ZDYjEvYPwjNkSdqZoAyxtg
+ iBEhmi2A4DTtZLTGBU0sLZYx3GekSmri2P1ly3jZHAJSVuma20FgAR5vxIW739U/DPQp5Wizt
+ T/ofzDRrit15IQybfvoIqZaPuOVWQlYW94MMLa7hKcDt7ACA7q5nXyPdfDl9hAVQzyYIG1gqc
+ QZbQPEElC+uYbRh2GjCHhlmL0Bxv2EH9pLRPNDEnRZKScKzhhXmIfsRE9BiOo47k1szyt0sJo
+ 8GB80a+OMHVA9umcqSAutnVoNJjn79SVERawkT+g+agsDkSH6q/EauYLfQxeDjWHW/rgZ6+KF
+ B2nvfG/KIkVGZdAfyFh7x/Q1V9lhOgfGbiwxLaMLjKn17be5kAu/Ns+N4Q5OIUYeW3V6dpiKg
+ ng2TAuGMOKmBfVJLshy1Ld5uwcy0rCu24SLYmPTihXMdum5WLSbioTUZBTr42yrettAcxMDS3
+ 5wnuXitzJJuDXGn/RQ6if954eiQU6enck0+NWw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 04, 2019 at 04:28:24PM +0100, Michael Niewöhner wrote:
-> root@debian:~# tpm2_pcrlist
-> ERROR:tcti:src/util/io.c:102:write_all() failed to write to fd 3: Operation not
-> permitted 
-> ERROR:tcti:src/tss2-tcti/tcti-device.c:86:tcti_device_transmit() wrong number of
-> bytes written. Expected 22, wrote 0. 
-> ERROR: GetCapability: Get PCR allocation status Error. TPM Error:0xa000a......
-> ERROR: Unable to run tpm2_pcrlist
-> root@debian:~# tpm2_pcrlist; tpm2_pcrlist 
-> sha1 :
->   0  : 1ebb2be3b7103a09b5caeeb5827c1242cd6632ec
->   1  : 425e833da73cb511150d6ffcf6fac64e9a6feb58
->   2  : b2a83b0ebf2f8374299a5b2bdfc31ea955ad7236
->   3  : b2a83b0ebf2f8374299a5b2bdfc31ea955ad7236
->   4  : d13c141b174afbb568773adf1f39940a2df47c7d
->   5  : 756a3647403ab141ec2c1ac7325854f4a93f6efd
-> ......
+From: Deepa Dinamani <deepa.kernel@gmail.com>
 
-So the sympton is that it from time to time works and time to time
-fails.
+struct timex is not y2038 safe.
+Switch all the syscall apis to use y2038 safe __kernel_timex.
 
-Can't recall whether you had interrupts enabled or disabled for the
-TPM chip (depending on whether you use IRQs or polling you'd have
-to tweak the code from a different place), but you could tweak
-directly the TPM2_DURATION_* constants in drivers/char/tpm/tpm.h:
+Note that sys_adjtimex() does not have a y2038 safe solution.  C libraries
+can implement it by calling clock_adjtime(CLOCK_REALTIME, ...).
 
-enum tpm2_timeouts {
-	TPM2_TIMEOUT_A          =    750,
-	TPM2_TIMEOUT_B          =   2000,
-	TPM2_TIMEOUT_C          =    200,
-	TPM2_TIMEOUT_D          =     30,
-	TPM2_DURATION_SHORT     =     20,
-	TPM2_DURATION_MEDIUM    =    750,
-	TPM2_DURATION_LONG      =   2000,
-	TPM2_DURATION_LONG_LONG = 300000,
-	TPM2_DURATION_DEFAULT   = 120000,
-};
+Signed-off-by: Deepa Dinamani <deepa.kernel@gmail.com>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ include/linux/syscalls.h   | 6 +++---
+ kernel/time/posix-timers.c | 2 +-
+ kernel/time/time.c         | 4 +++-
+ 3 files changed, 7 insertions(+), 5 deletions(-)
 
-Set SHORT, LONG and MEDIUM to lets say 3000 and lets see if that
-makes a difference or not.
+diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
+index 8e86d9623d4e..394e8db7e57e 100644
+--- a/include/linux/syscalls.h
++++ b/include/linux/syscalls.h
+@@ -54,7 +54,7 @@ struct __sysctl_args;
+ struct sysinfo;
+ struct timespec;
+ struct timeval;
+-struct timex;
++struct __kernel_timex;
+ struct timezone;
+ struct tms;
+ struct utimbuf;
+@@ -695,7 +695,7 @@ asmlinkage long sys_gettimeofday(struct timeval __user *tv,
+ 				struct timezone __user *tz);
+ asmlinkage long sys_settimeofday(struct timeval __user *tv,
+ 				struct timezone __user *tz);
+-asmlinkage long sys_adjtimex(struct timex __user *txc_p);
++asmlinkage long sys_adjtimex(struct __kernel_timex __user *txc_p);
+ 
+ /* kernel/timer.c */
+ asmlinkage long sys_getpid(void);
+@@ -870,7 +870,7 @@ asmlinkage long sys_open_by_handle_at(int mountdirfd,
+ 				      struct file_handle __user *handle,
+ 				      int flags);
+ asmlinkage long sys_clock_adjtime(clockid_t which_clock,
+-				struct timex __user *tx);
++				struct __kernel_timex __user *tx);
+ asmlinkage long sys_syncfs(int fd);
+ asmlinkage long sys_setns(int fd, int nstype);
+ asmlinkage long sys_sendmmsg(int fd, struct mmsghdr __user *msg,
+diff --git a/kernel/time/posix-timers.c b/kernel/time/posix-timers.c
+index 2d84b3db1ade..de79f85ae14f 100644
+--- a/kernel/time/posix-timers.c
++++ b/kernel/time/posix-timers.c
+@@ -1060,7 +1060,7 @@ int do_clock_adjtime(const clockid_t which_clock, struct __kernel_timex * ktx)
+ }
+ 
+ SYSCALL_DEFINE2(clock_adjtime, const clockid_t, which_clock,
+-		struct timex __user *, utx)
++		struct __kernel_timex __user *, utx)
+ {
+ 	struct __kernel_timex ktx;
+ 	int err;
+diff --git a/kernel/time/time.c b/kernel/time/time.c
+index d179d33f639a..78b5c8f1495a 100644
+--- a/kernel/time/time.c
++++ b/kernel/time/time.c
+@@ -263,7 +263,8 @@ COMPAT_SYSCALL_DEFINE2(settimeofday, struct old_timeval32 __user *, tv,
+ }
+ #endif
+ 
+-SYSCALL_DEFINE1(adjtimex, struct timex __user *, txc_p)
++#if !defined(CONFIG_64BIT_TIME) || defined(CONFIG_64BIT)
++SYSCALL_DEFINE1(adjtimex, struct __kernel_timex __user *, txc_p)
+ {
+ 	struct __kernel_timex txc;		/* Local copy of parameter */
+ 	int ret;
+@@ -277,6 +278,7 @@ SYSCALL_DEFINE1(adjtimex, struct timex __user *, txc_p)
+ 	ret = do_adjtimex(&txc);
+ 	return copy_to_user(txc_p, &txc, sizeof(struct __kernel_timex)) ? -EFAULT : ret;
+ }
++#endif
+ 
+ #ifdef CONFIG_COMPAT_32BIT_TIME
+ int get_old_timex32(struct __kernel_timex *txc, const struct old_timex32 __user *utp)
+-- 
+2.20.0
 
-/Jarkko
