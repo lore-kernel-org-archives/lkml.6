@@ -4,48 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FCF3C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 04:03:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37E4DC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 04:03:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D258F2184A
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 04:03:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F11B42173B
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 04:03:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="b5kMwvC4";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="b5kMwvC4"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="FIeHVjzv";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="bOpeoY6B"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727377AbfAJEDR (ORCPT
+        id S1727257AbfAJEDW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 23:03:17 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:50498 "EHLO
+        Wed, 9 Jan 2019 23:03:22 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:50676 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727264AbfAJEDQ (ORCPT
+        with ESMTP id S1727264AbfAJEDV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 23:03:16 -0500
+        Wed, 9 Jan 2019 23:03:21 -0500
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id E948D60909; Thu, 10 Jan 2019 04:03:14 +0000 (UTC)
+        id 8C7426079B; Thu, 10 Jan 2019 04:03:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1547092994;
-        bh=REeYR9klFkvldEk9TtltTL3XpkfwWq0PPbhSV3EtTq8=;
+        s=default; t=1547092999;
+        bh=swBNTswFy95YricD/5Mjjh6m9GMHPf2IpJBTGj+1P68=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=b5kMwvC4VjCOrfSgjQrutwxdoZGfK7zX1s49sSl9lBghcI0dIr/xlLPWQoy5A9enz
-         oEWaGpFUXe6faMemZCsTN23p8BcuUPimu3zVrhl+SGZQ3h8CHQCVcyik4CvwXNrOUn
-         YzMID5CroZdQDC+T6D5JQmJUY9cc7rhVUGpptIrA=
+        b=FIeHVjzvYU2hQMNYB1w2CQcRqBlxH5RxB243ZIaV5E7DrTQEbN07vbrgsErFdriqz
+         nhApAjmJZm579Fw7oG5+7czUZ1Hh/Xqm5S1DwdLSzd3DbLCaZD+FgcPzSpSvzD3W5a
+         4HyAntUfGmLYcZVGzgVetedPFGsoztiJvSxUnFq4=
 Received: from blr-ubuntu-173.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: rnayak@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 91C24608D2;
-        Thu, 10 Jan 2019 04:03:10 +0000 (UTC)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id A881E608FD;
+        Thu, 10 Jan 2019 04:03:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1547092994;
-        bh=REeYR9klFkvldEk9TtltTL3XpkfwWq0PPbhSV3EtTq8=;
+        s=default; t=1547092998;
+        bh=swBNTswFy95YricD/5Mjjh6m9GMHPf2IpJBTGj+1P68=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=b5kMwvC4VjCOrfSgjQrutwxdoZGfK7zX1s49sSl9lBghcI0dIr/xlLPWQoy5A9enz
-         oEWaGpFUXe6faMemZCsTN23p8BcuUPimu3zVrhl+SGZQ3h8CHQCVcyik4CvwXNrOUn
-         YzMID5CroZdQDC+T6D5JQmJUY9cc7rhVUGpptIrA=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 91C24608D2
+        b=bOpeoY6B3B36XbH2HBYCd9qnHP/op09kOI7p9jOxVsQ6lnvS6TvxDPejAsC4YEA38
+         V+vXVNdg22kwJB3ZT1cbQshSMfLs4OJM1j9fpRC/uu7DNRziDP+qfZHPXoJ0+09X7H
+         dBc9vpLtkGZIfZzBDIaKXC3Rf8XF6Dny63G53uZw=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A881E608FD
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rnayak@codeaurora.org
 From:   Rajendra Nayak <rnayak@codeaurora.org>
@@ -55,9 +56,9 @@ To:     andy.gross@linaro.org, robh@kernel.org, viresh.kumar@linaro.org,
 Cc:     devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
         linux-kernel@vger.kernel.org, henryc.chen@mediatek.com,
         Rajendra Nayak <rnayak@codeaurora.org>
-Subject: [PATCH v11 2/9] OPP: Add support for parsing the 'opp-level' property
-Date:   Thu, 10 Jan 2019 09:32:02 +0530
-Message-Id: <20190110040209.6028-3-rnayak@codeaurora.org>
+Subject: [PATCH v11 3/9] dt-bindings: power: Add qcom rpm power domain driver bindings
+Date:   Thu, 10 Jan 2019 09:32:03 +0530
+Message-Id: <20190110040209.6028-4-rnayak@codeaurora.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190110040209.6028-1-rnayak@codeaurora.org>
 References: <20190110040209.6028-1-rnayak@codeaurora.org>
@@ -68,107 +69,219 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that the OPP bindings are updated to include an optional
-'opp-level' property, add support to parse it from device tree
-and store it as part of dev_pm_opp structure.
-Also add and export an helper 'dev_pm_opp_get_level()' that can be
-used to get the level value read from device tree when present.
+Add DT bindings to describe the rpm/rpmh power domains found on Qualcomm
+Technologies, Inc. SoCs. These power domains communicate a performance
+state to RPM/RPMh, which then translates it into corresponding voltage on a
+PMIC rail.
 
 Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+Reviewed-by: Stephen Boyd <swboyd@chromium.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- drivers/opp/core.c     | 18 ++++++++++++++++++
- drivers/opp/of.c       |  2 ++
- drivers/opp/opp.h      |  2 ++
- include/linux/pm_opp.h |  7 +++++++
- 4 files changed, 29 insertions(+)
+ .../devicetree/bindings/power/qcom,rpmpd.txt  | 145 ++++++++++++++++++
+ include/dt-bindings/power/qcom-rpmpd.h        |  39 +++++
+ 2 files changed, 184 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/power/qcom,rpmpd.txt
+ create mode 100644 include/dt-bindings/power/qcom-rpmpd.h
 
-diff --git a/drivers/opp/core.c b/drivers/opp/core.c
-index e5507add8f04..90b78a122be9 100644
---- a/drivers/opp/core.c
-+++ b/drivers/opp/core.c
-@@ -130,6 +130,24 @@ unsigned long dev_pm_opp_get_freq(struct dev_pm_opp *opp)
- }
- EXPORT_SYMBOL_GPL(dev_pm_opp_get_freq);
- 
-+/**
-+ * dev_pm_opp_get_level() - Gets the level corresponding to an available opp
-+ * @opp:	opp for which level value has to be returned for
-+ *
-+ * Return: level read from device tree corresponding to the opp, else
-+ * return 0.
-+ */
-+unsigned int dev_pm_opp_get_level(struct dev_pm_opp *opp)
-+{
-+	if (IS_ERR_OR_NULL(opp) || !opp->available) {
-+		pr_err("%s: Invalid parameters\n", __func__);
-+		return 0;
-+	}
+diff --git a/Documentation/devicetree/bindings/power/qcom,rpmpd.txt b/Documentation/devicetree/bindings/power/qcom,rpmpd.txt
+new file mode 100644
+index 000000000000..980e5413d18f
+--- /dev/null
++++ b/Documentation/devicetree/bindings/power/qcom,rpmpd.txt
+@@ -0,0 +1,145 @@
++Qualcomm RPM/RPMh Power domains
 +
-+	return opp->level;
-+}
-+EXPORT_SYMBOL_GPL(dev_pm_opp_get_level);
++For RPM/RPMh Power domains, we communicate a performance state to RPM/RPMh
++which then translates it into a corresponding voltage on a rail
 +
- /**
-  * dev_pm_opp_is_turbo() - Returns if opp is turbo OPP or not
-  * @opp: opp for which turbo mode is being verified
-diff --git a/drivers/opp/of.c b/drivers/opp/of.c
-index 06f0f632ec47..1779f2c93291 100644
---- a/drivers/opp/of.c
-+++ b/drivers/opp/of.c
-@@ -594,6 +594,8 @@ static struct dev_pm_opp *_opp_add_static_v2(struct opp_table *opp_table,
- 		new_opp->rate = (unsigned long)rate;
- 	}
- 
-+	of_property_read_u32(np, "opp-level", &new_opp->level);
++Required Properties:
++ - compatible: Should be one of the following
++	* qcom,msm8996-rpmpd: RPM Power domain for the msm8996 family of SoC
++	* qcom,sdm845-rpmhpd: RPMh Power domain for the sdm845 family of SoC
++ - #power-domain-cells: number of cells in Power domain specifier
++	must be 1.
++ - operating-points-v2: Phandle to the OPP table for the Power domain.
++	Refer to Documentation/devicetree/bindings/power/power_domain.txt
++	and Documentation/devicetree/bindings/opp/opp.txt for more details
 +
- 	/* Check if the OPP supports hardware's hierarchy of versions or not */
- 	if (!_opp_is_supported(dev, opp_table, np)) {
- 		dev_dbg(dev, "OPP not supported by hardware: %llu\n", rate);
-diff --git a/drivers/opp/opp.h b/drivers/opp/opp.h
-index e24d81497375..4458175aa661 100644
---- a/drivers/opp/opp.h
-+++ b/drivers/opp/opp.h
-@@ -60,6 +60,7 @@ extern struct list_head opp_tables;
-  * @suspend:	true if suspend OPP
-  * @pstate: Device's power domain's performance state.
-  * @rate:	Frequency in hertz
-+ * @level:	Performance level
-  * @supplies:	Power supplies voltage/current values
-  * @clock_latency_ns: Latency (in nanoseconds) of switching to this OPP's
-  *		frequency from any other OPP's frequency.
-@@ -80,6 +81,7 @@ struct dev_pm_opp {
- 	bool suspend;
- 	unsigned int pstate;
- 	unsigned long rate;
-+	unsigned int level;
- 
- 	struct dev_pm_opp_supply *supplies;
- 
-diff --git a/include/linux/pm_opp.h b/include/linux/pm_opp.h
-index 0a2a88e5a383..473d2c7516f0 100644
---- a/include/linux/pm_opp.h
-+++ b/include/linux/pm_opp.h
-@@ -86,6 +86,8 @@ unsigned long dev_pm_opp_get_voltage(struct dev_pm_opp *opp);
- 
- unsigned long dev_pm_opp_get_freq(struct dev_pm_opp *opp);
- 
-+unsigned int dev_pm_opp_get_level(struct dev_pm_opp *opp);
++Refer to <dt-bindings/power/qcom-rpmpd.h> for the level values for
++various OPPs for different platforms as well as Power domain indexes
 +
- bool dev_pm_opp_is_turbo(struct dev_pm_opp *opp);
- 
- int dev_pm_opp_get_opp_count(struct device *dev);
-@@ -157,6 +159,11 @@ static inline unsigned long dev_pm_opp_get_freq(struct dev_pm_opp *opp)
- 	return 0;
- }
- 
-+static inline unsigned int dev_pm_opp_get_level(struct dev_pm_opp *opp)
-+{
-+	return 0;
-+}
++Example: rpmh power domain controller and OPP table
 +
- static inline bool dev_pm_opp_is_turbo(struct dev_pm_opp *opp)
- {
- 	return false;
++#include <dt-bindings/power/qcom-rpmhpd.h>
++
++opp-level values specified in the OPP tables for RPMh power domains
++should use the RPMH_REGULATOR_LEVEL_* constants from
++<dt-bindings/power/qcom-rpmhpd.h>
++
++	rpmhpd: power-controller {
++		compatible = "qcom,sdm845-rpmhpd";
++		#power-domain-cells = <1>;
++		operating-points-v2 = <&rpmhpd_opp_table>;
++
++		rpmhpd_opp_table: opp-table {
++			compatible = "operating-points-v2";
++
++			rpmhpd_opp_ret: opp1 {
++				opp-level = <RPMH_REGULATOR_LEVEL_RETENTION>;
++			};
++
++			rpmhpd_opp_min_svs: opp2 {
++				opp-level = <RPMH_REGULATOR_LEVEL_MIN_SVS>;
++			};
++
++			rpmhpd_opp_low_svs: opp3 {
++				opp-level = <RPMH_REGULATOR_LEVEL_LOW_SVS>;
++			};
++
++			rpmhpd_opp_svs: opp4 {
++				opp-level = <RPMH_REGULATOR_LEVEL_SVS>;
++			};
++
++			rpmhpd_opp_svs_l1: opp5 {
++				opp-level = <RPMH_REGULATOR_LEVEL_SVS_L1>;
++			};
++
++			rpmhpd_opp_nom: opp6 {
++				opp-level = <RPMH_REGULATOR_LEVEL_NOM>;
++			};
++
++			rpmhpd_opp_nom_l1: opp7 {
++				opp-level = <RPMH_REGULATOR_LEVEL_NOM_L1>;
++			};
++
++			rpmhpd_opp_nom_l2: opp8 {
++				opp-level = <RPMH_REGULATOR_LEVEL_NOM_L2>;
++			};
++
++			rpmhpd_opp_turbo: opp9 {
++				opp-level = <RPMH_REGULATOR_LEVEL_TURBO>;
++			};
++
++			rpmhpd_opp_turbo_l1: opp10 {
++				opp-level = <RPMH_REGULATOR_LEVEL_TURBO_L1>;
++			};
++		};
++	};
++
++Example: rpm power domain controller and OPP table
++
++	rpmpd: power-controller {
++		compatible = "qcom,msm8996-rpmpd";
++		#power-domain-cells = <1>;
++		operating-points-v2 = <&rpmpd_opp_table>;
++
++		rpmpd_opp_table: opp-table {
++			compatible = "operating-points-v2";
++
++			rpmpd_opp_low: opp1 {
++				opp-level = <1>;
++			};
++
++			rpmpd_opp_ret: opp2 {
++				opp-level = <2>;
++			};
++
++			rpmpd_opp_svs: opp3 {
++				opp-level = <3>;
++			};
++
++			rpmpd_opp_normal: opp4 {
++				opp-level = <4>;
++			};
++
++			rpmpd_opp_high: opp5 {
++				opp-level = <5>;
++			};
++
++			rpmpd_opp_turbo: opp6 {
++				opp-level = <6>;
++			};
++		};
++	};
++
++Example: Client/Consumer device using OPP table
++
++	leaky-device0@12350000 {
++		compatible = "foo,i-leak-current";
++		reg = <0x12350000 0x1000>;
++		power-domains = <&rpmhpd SDM845_MX>;
++		operating-points-v2 = <&leaky_opp_table>;
++	};
++
++
++	leaky_opp_table: opp-table {
++		compatible = "operating-points-v2";
++
++		opp1 {
++			opp-hz = /bits/ 64 <144000>;
++			required-opps = <&rpmhpd_opp_low>;
++		};
++
++		opp2 {
++			opp-hz = /bits/ 64 <400000>;
++			required-opps = <&rpmhpd_opp_ret>;
++		};
++
++		opp3 {
++			opp-hz = /bits/ 64 <20000000>;
++			required-opps = <&rpmpd_opp_svs>;
++		};
++
++		opp4 {
++			opp-hz = /bits/ 64 <25000000>;
++			required-opps = <&rpmpd_opp_normal>;
++		};
++	};
+diff --git a/include/dt-bindings/power/qcom-rpmpd.h b/include/dt-bindings/power/qcom-rpmpd.h
+new file mode 100644
+index 000000000000..87d9c6611682
+--- /dev/null
++++ b/include/dt-bindings/power/qcom-rpmpd.h
+@@ -0,0 +1,39 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/* Copyright (c) 2018, The Linux Foundation. All rights reserved. */
++
++#ifndef _DT_BINDINGS_POWER_QCOM_RPMPD_H
++#define _DT_BINDINGS_POWER_QCOM_RPMPD_H
++
++/* SDM845 Power Domain Indexes */
++#define SDM845_EBI	0
++#define SDM845_MX	1
++#define SDM845_MX_AO	2
++#define SDM845_CX	3
++#define SDM845_CX_AO	4
++#define SDM845_LMX	5
++#define SDM845_LCX	6
++#define SDM845_GFX	7
++#define SDM845_MSS	8
++
++/* SDM845 Power Domain performance levels */
++#define RPMH_REGULATOR_LEVEL_RETENTION	16
++#define RPMH_REGULATOR_LEVEL_MIN_SVS	48
++#define RPMH_REGULATOR_LEVEL_LOW_SVS	64
++#define RPMH_REGULATOR_LEVEL_SVS	128
++#define RPMH_REGULATOR_LEVEL_SVS_L1	192
++#define RPMH_REGULATOR_LEVEL_NOM	256
++#define RPMH_REGULATOR_LEVEL_NOM_L1	320
++#define RPMH_REGULATOR_LEVEL_NOM_L2	336
++#define RPMH_REGULATOR_LEVEL_TURBO	384
++#define RPMH_REGULATOR_LEVEL_TURBO_L1	416
++
++/* MSM8996 Power Domain Indexes */
++#define MSM8996_VDDCX		0
++#define MSM8996_VDDCX_AO	1
++#define MSM8996_VDDCX_VFC	2
++#define MSM8996_VDDMX		3
++#define MSM8996_VDDMX_AO	4
++#define MSM8996_VDDSSCX		5
++#define MSM8996_VDDSSCX_VFC	6
++
++#endif
 -- 
 QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
 of Code Aurora Forum, hosted by The Linux Foundation
