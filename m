@@ -2,93 +2,128 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E232C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 23:40:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5BFBC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 23:42:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EADD4214C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 23:40:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8B0FA208E3
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 23:42:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="EikjmN81"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730390AbfAJXkL convert rfc822-to-8bit (ORCPT
+        id S1730401AbfAJXmW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 18:40:11 -0500
-Received: from mga17.intel.com ([192.55.52.151]:11649 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729424AbfAJXkH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 18:40:07 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jan 2019 15:40:07 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,463,1539673200"; 
-   d="scan'208";a="309411675"
-Received: from fmsmsx107.amr.corp.intel.com ([10.18.124.205])
-  by fmsmga006.fm.intel.com with ESMTP; 10 Jan 2019 15:40:07 -0800
-Received: from fmsmsx124.amr.corp.intel.com (10.18.125.39) by
- fmsmsx107.amr.corp.intel.com (10.18.124.205) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Thu, 10 Jan 2019 15:40:02 -0800
-Received: from fmsmsx121.amr.corp.intel.com ([169.254.6.18]) by
- fmsmsx124.amr.corp.intel.com ([169.254.8.80]) with mapi id 14.03.0415.000;
- Thu, 10 Jan 2019 15:40:02 -0800
-From:   "Chen, Tim C" <tim.c.chen@intel.com>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Yang Shi <yang.shi@linux.alibaba.com>
-CC:     "Huang, Ying" <ying.huang@intel.com>,
-        "minchan@kernel.org" <minchan@kernel.org>,
-        "daniel.m.jordan@oracle.com" <daniel.m.jordan@oracle.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [v5 PATCH 1/2] mm: swap: check if swap backing device is
- congested or not
-Thread-Topic: [v5 PATCH 1/2] mm: swap: check if swap backing device is
- congested or not
-Thread-Index: AQHUo5qpOoFpUagMFk+moCKgkvnZWaWpuDWA//96P7A=
-Date:   Thu, 10 Jan 2019 23:40:01 +0000
-Message-ID: <045D8A5597B93E4EBEDDCBF1FC15F5097E16F8E2@fmsmsx121.amr.corp.intel.com>
-References: <1546543673-108536-1-git-send-email-yang.shi@linux.alibaba.com>
- <20190110153147.1baf4c88bf0dd3b8a78aad08@linux-foundation.org>
-In-Reply-To: <20190110153147.1baf4c88bf0dd3b8a78aad08@linux-foundation.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiODIzZjViMTAtMjQzZi00MGZhLWFhOTgtZWViNjllOWUxZjAwIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiMTVpdFVMTFR1QlNObVcrNUlHRUZPZTNOaWpNakhmc0xiXC83dE1yRWlES21cLzBHYlwvMHhrd09JUG9NSGl3Y0FKUyJ9
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [10.1.200.107]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Thu, 10 Jan 2019 18:42:22 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:38090 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729110AbfAJXmV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 18:42:21 -0500
+Received: by mail-pf1-f196.google.com with SMTP id q1so6037103pfi.5
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 15:42:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=CGbGciDXDaOFaw7tyoURQCK72kHq4YbWapdOxjk8N70=;
+        b=EikjmN81xd0nQYwSQaGSTWnffwVY5+AHktdBEvhGsIF2HmmPw/R/OlTfhTMwj10EZE
+         5KPxZCr+qIRKeMKeUufebHuguv/APZnaE8YNW1a6fPptcbADcT6ov5wIFeo5l018BId+
+         PBpYWzJNXx3PrQ/wfhZ4ckh/y23Q5nCEZ4lXJT6VBG2wOg/C9rNY1uxrWYE0W88RxiYU
+         o5HPbrjaa+bGJJtqcApZsGIpECsGFb34+3CetwTLDGWlU4w4/Y9fcU7p36zuYk3nMbGk
+         hWSh+iY8RsUnHeH+y8HrtUCWJFinAhL/bvEEZX8azURWciKjfISAovS3zmjWOX3KjfiC
+         0ixw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=CGbGciDXDaOFaw7tyoURQCK72kHq4YbWapdOxjk8N70=;
+        b=Wre2a6D8YY97ubTDdtuEHqtJ0DBTvdAsVpevR4ZUumZTNU5dtzCHZK/JPRfsCzTNFB
+         KAxqovxDlRdaeQraFJ+dqJ1F73bnPH2f+u8HuzTAA1u096/W5gcDHJ5yGl4D52iz+Rj2
+         E/oA/7TZtfEaar0tyADX4WlrxqU4IRbIvz39MISntKYvueCnBaxpPj7j/ywubxdc995t
+         vqT+NiB/9aCyWfo2uSjNLfrNxQIjOuaUa5I0LX+f25qjFHpsjDV4oPRUqafg7YxcAoLM
+         xjBWvE8SfbF7mJbdyeTiSDkrg/luqdYtixAoRTkts9Q07S82dhj6NmovniNYDTH0DSnT
+         8j3w==
+X-Gm-Message-State: AJcUukcYigHRARg6t/8JDfGw2G13JoQIvecM32xhcB5LDLCUt75WzClZ
+        dlHP+33R14vHgk2femxuCKc7+Q==
+X-Google-Smtp-Source: ALg8bN5SXc4iJ5BAvsiJqXD2w/ws9lN8qJtQrb0k65OAYwjp7JB00yYTR5zTzooaN8TbPtjGhKMqzQ==
+X-Received: by 2002:a63:4948:: with SMTP id y8mr11205161pgk.32.1547163740837;
+        Thu, 10 Jan 2019 15:42:20 -0800 (PST)
+Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
+        by smtp.gmail.com with ESMTPSA id v12sm105948442pgg.41.2019.01.10.15.42.19
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 10 Jan 2019 15:42:19 -0800 (PST)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1ghjxq-0001Fq-Ic; Thu, 10 Jan 2019 16:42:18 -0700
+Date:   Thu, 10 Jan 2019 16:42:18 -0700
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Christoph Hellwig <hch@lst.de>
+Cc:     Shiraz Saleem <shiraz.saleem@intel.com>,
+        Imre Deak <imre.deak@intel.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        linux-media@vger.kernel.org, Yong Zhi <yong.zhi@intel.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Bingbu Cao <bingbu.cao@intel.com>,
+        Tian Shu Qiu <tian.shu.qiu@intel.com>,
+        Jian Xu Zheng <jian.xu.zheng@intel.com>,
+        Sinclair Yeh <syeh@vmware.com>,
+        Thomas Hellstrom <thellstrom@vmware.com>,
+        dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH] lib/scatterlist: Provide a DMA page iterator
+Message-ID: <20190110234218.GM6890@ziepe.ca>
+References: <20190104223531.GA1705@ziepe.ca>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190104223531.GA1705@ziepe.ca>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> >
-> > +	if (si->flags & (SWP_BLKDEV | SWP_FS)) {
+On Fri, Jan 04, 2019 at 03:35:31PM -0700, Jason Gunthorpe wrote:
+> Commit 2db76d7c3c6d ("lib/scatterlist: sg_page_iter: support sg lists w/o
+> backing pages") introduced the sg_page_iter_dma_address() function without
+> providing a way to use it in the general case. If the sg_dma_len is not
+> equal to the dma_length callers cannot safely use the
+> for_each_sg_page/sg_page_iter_dma_address combination.
 > 
-> I re-read your discussion with Tim and I must say the reasoning behind this
-> test remain foggy.
-
-I was worried that the dereference
-
-inode = si->swap_file->f_mapping->host;
-
-is not always safe for corner cases.
-
-So the test makes sure that the dereference is valid.
-
+> Resolve this API mistake by providing a DMA specific iterator,
+> for_each_sg_dma_page(), that uses the right length so
+> sg_page_iter_dma_address() works as expected with all sglists. A new
+> iterator type is introduced to provide compile-time safety against wrongly
+> mixing accessors and iterators.
 > 
-> What goes wrong if we just remove it?
+> Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+>  drivers/gpu/drm/vmwgfx/vmwgfx_drv.h        | 26 ++++++++++--
+>  drivers/gpu/drm/vmwgfx/vmwgfx_mob.c        | 26 +++++++-----
+>  drivers/gpu/drm/vmwgfx/vmwgfx_ttm_buffer.c | 42 +++++++++++++------
+>  drivers/media/pci/intel/ipu3/ipu3-cio2.c   |  4 +-
+>  include/linux/scatterlist.h                | 49 ++++++++++++++++++----
+>  lib/scatterlist.c                          | 26 ++++++++++++
+>  6 files changed, 134 insertions(+), 39 deletions(-)
+> 
+> I'd like to run this patch through the RDMA tree as we have another
+> series in the works that wants to use the for_each_sg_dma_page() API.
+> 
+> The changes to vmwgfx make me nervous, it would be great if someone
+> could test and ack them?
+> 
+> Changes since the RFC:
+> - Rework vmwgfx too [CH]
+> - Use a distinct type for the DMA page iterator [CH]
+> - Do not have a #ifdef [CH]
 
-If the dereference to get inode is always safe, we can remove it.
+ChristophH: Will you ack?
 
+Are you still OK with the vmwgfx reworking, or should we go back to
+the original version that didn't have the type safety so this driver
+can be left broken?
 
-Thanks.
-
-Tim
+Thanks,
+Jason
