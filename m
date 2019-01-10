@@ -2,201 +2,169 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D59CCC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 14:31:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21BDAC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 14:34:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A6120214C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 14:31:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E53A0214C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 14:34:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="bx0QZ2QX";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="EZAIo/rT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729176AbfAJObt (ORCPT
+        id S1729143AbfAJOe1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 09:31:49 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:34474 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729163AbfAJObr (ORCPT
+        Thu, 10 Jan 2019 09:34:27 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:39778 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728120AbfAJOe0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 09:31:47 -0500
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x0AEU2p3132540
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 09:31:46 -0500
-Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2px483atk1-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 09:31:45 -0500
-Received: from localhost
-        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Thu, 10 Jan 2019 14:31:43 -0000
-Received: from b01cxnp22033.gho.pok.ibm.com (9.57.198.23)
-        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 10 Jan 2019 14:31:37 -0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0AEVaid26673222
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 10 Jan 2019 14:31:36 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C08E3B2064;
-        Thu, 10 Jan 2019 14:31:36 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8EA7EB205F;
-        Thu, 10 Jan 2019 14:31:36 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.88])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Thu, 10 Jan 2019 14:31:36 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 4A02E16C5FAB; Thu, 10 Jan 2019 06:31:37 -0800 (PST)
-Date:   Thu, 10 Jan 2019 06:31:37 -0800
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     Andrea Parri <andrea.parri@amarulasolutions.com>
-Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        mingo@kernel.org, stern@rowland.harvard.edu,
-        parri.andrea@gmail.com, will.deacon@arm.com, peterz@infradead.org,
-        boqun.feng@gmail.com, npiggin@gmail.com, dhowells@redhat.com,
-        j.alglave@ucl.ac.uk, luc.maranget@inria.fr, akiyks@gmail.com,
-        willy@infradead.org
-Subject: Re: [PATCH RFC memory-model 0/6] LKMM updates
-Reply-To: paulmck@linux.ibm.com
-References: <20190109210706.GA27268@linux.ibm.com>
- <20190109231852.GA4494@andrea>
- <20190109234043.GD1215@linux.ibm.com>
- <20190110003952.GA4354@andrea>
- <20190110042027.GG1215@linux.ibm.com>
- <20190110084024.GA10280@andrea>
+        Thu, 10 Jan 2019 09:34:26 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id BAEBA6095E; Thu, 10 Jan 2019 14:34:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1547130865;
+        bh=VvXTEQoOMSpoVxGTN9aA4mY5gyUWqTpppdcQPs3QOn0=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=bx0QZ2QXX7GhK9jgUPBi3SGLSxjixlAPRAv8r7Oe8vPz8xbTtwbGgh9X46wOz26BH
+         rAVphXQ38OwGYnOh+hlbF39Q6s1nMHb06B9bUWNCCoyeh0dm0pvjy6cEwVzlO/0xHs
+         U8qglXnr75A0xvFg/O1uNj1ffa2vXK2CtKYUfNGI=
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id B86DF608FD;
+        Thu, 10 Jan 2019 14:34:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1547130853;
+        bh=VvXTEQoOMSpoVxGTN9aA4mY5gyUWqTpppdcQPs3QOn0=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=EZAIo/rTZtV/BTP/ELhOCo4GBq7OmnRpVcTFHJVEBIiBkcAJRZqXb2pEcv4B1DZhX
+         2xUlpTFEeZXaBpJ1zCYAtfcCXxMS9W0tatDLYX2WsjRGDpGjyLq46WCSEGP6ZJ73Us
+         aGXwZAJMKuxUCuUH8h9di9ffkqlajhE/kZpuss68=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190110084024.GA10280@andrea>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 19011014-0072-0000-0000-000003E7DE05
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010379; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000274; SDB=6.01144478; UDB=6.00595910; IPR=6.00924742;
- MB=3.00025068; MTD=3.00000008; XFM=3.00000015; UTC=2019-01-10 14:31:42
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19011014-0073-0000-0000-00004AC1F1E3
-Message-Id: <20190110143137.GJ1215@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-10_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901100115
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Thu, 10 Jan 2019 20:04:12 +0530
+From:   Balakrishna Godavarthi <bgodavar@codeaurora.org>
+To:     Johan Hovold <johan@kernel.org>
+Cc:     marcel@holtmann.org, johan.hedberg@gmail.com, mka@chromium.org,
+        linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org,
+        hemantg@codeaurora.org, linux-arm-msm@vger.kernel.org,
+        Johan Hovold <jhovold@gmail.com>
+Subject: Re: [PATCH v5 2/5] Bluetooth: hci_qca: Deassert RTS while baudrate
+ change command
+In-Reply-To: <20190109145224.GN14782@localhost>
+References: <20181220144639.15928-1-bgodavar@codeaurora.org>
+ <20181220144639.15928-3-bgodavar@codeaurora.org>
+ <20190109145224.GN14782@localhost>
+Message-ID: <b5160d8862b49f0369fa58610516d354@codeaurora.org>
+X-Sender: bgodavar@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 10, 2019 at 09:40:24AM +0100, Andrea Parri wrote:
-> > > > > It seems that
-> > > > > 
-> > > > >   1b52d0186177 ("tools/memory-model: Model smp_mb__after_unlock_lock()")
-> > > > >   
-> > > > > from linux-rcu/dev got lost; this also needs an ack (probably yours! ;D,
-> > > > > considered that, IIRC, you introduced the primitive and RCU is currently
-> > > > > its only user.)
-> > > > 
-> > > > That commit is in -tip:
-> > > > 
-> > > > 4607abbcf464 ("tools/memory-model: Model smp_mb__after_unlock_lock()")
-> > > > 
-> > > > So it has already left my -rcu tree.  ;-)
-> > > 
-> > > Oh, you're right: now I see the commit (e.g., with "git show"), but I
-> > > don't see the corresponding changes applied to the tree.
-> > > 
-> > >   https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/commit/?h=locking/core&id=4607abbcf464ea2be14da444215d05c73025cf6e
-> > >   https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/tree/tools/memory-model/linux-kernel.bell?h=locking/core
-> > > 
-> > > Is this expected?
-> > 
-> > Are you asking why it is in -tip but not in mainline?  I am not sure,
-> > but given that the merge window was over the holiday season and that
-> > the length of the merge window proved to be shorter than many people
-> > expected it to be, I am not too surprised.  ;-)
+Hi Johan,
+
+On 2019-01-09 20:22, Johan Hovold wrote:
+> On Thu, Dec 20, 2018 at 08:16:36PM +0530, Balakrishna Godavarthi wrote:
+>> This patch will help to stop frame reassembly errors while changing
+>> the baudrate. This is because host send a change baudrate request
+>> command to the chip with 115200 bps, Whereas chip will change their
+>> UART clocks to the enable for new baudrate and sends the response
+>> for the change request command with newer baudrate, On host side
+>> we are still operating in 115200 bps which results of reading garbage
+>> data. Here we are pulling RTS line, so that chip we will wait to send 
+>> data
+>> to host until host change its baudrate.
+>> 
+>> Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
+>> Tested-by: Matthias Kaehlcke <mka@chromium.org>
+>> Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
+>> ---
+>>  drivers/bluetooth/hci_qca.c | 24 +++++++++++++-----------
+>>  1 file changed, 13 insertions(+), 11 deletions(-)
+>> 
+>> diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
+>> index 5a07c2370289..1680ead6cc3d 100644
+>> --- a/drivers/bluetooth/hci_qca.c
+>> +++ b/drivers/bluetooth/hci_qca.c
+>> @@ -963,7 +963,6 @@ static int qca_set_baudrate(struct hci_dev *hdev, 
+>> uint8_t baudrate)
+>>  	struct hci_uart *hu = hci_get_drvdata(hdev);
+>>  	struct qca_data *qca = hu->priv;
+>>  	struct sk_buff *skb;
+>> -	struct qca_serdev *qcadev;
+>>  	u8 cmd[] = { 0x01, 0x48, 0xFC, 0x01, 0x00 };
+>> 
+>>  	if (baudrate > QCA_BAUDRATE_3200000)
+>> @@ -977,13 +976,6 @@ static int qca_set_baudrate(struct hci_dev *hdev, 
+>> uint8_t baudrate)
+>>  		return -ENOMEM;
+>>  	}
+>> 
+>> -	/* Disabling hardware flow control is mandatory while
+>> -	 * sending change baudrate request to wcn3990 SoC.
+>> -	 */
+>> -	qcadev = serdev_device_get_drvdata(hu->serdev);
+>> -	if (qcadev->btsoc_type == QCA_WCN3990)
+>> -		hci_uart_set_flow_control(hu, true);
+>> -
+>>  	/* Assign commands to change baudrate and packet type. */
+>>  	skb_put_data(skb, cmd, sizeof(cmd));
+>>  	hci_skb_pkt_type(skb) = HCI_COMMAND_PKT;
+>> @@ -999,9 +991,6 @@ static int qca_set_baudrate(struct hci_dev *hdev, 
+>> uint8_t baudrate)
+>>  	schedule_timeout(msecs_to_jiffies(BAUDRATE_SETTLE_TIMEOUT_MS));
+>>  	set_current_state(TASK_RUNNING);
+>> 
+>> -	if (qcadev->btsoc_type == QCA_WCN3990)
+>> -		hci_uart_set_flow_control(hu, false);
+>> -
+>>  	return 0;
+>>  }
+>> 
+>> @@ -1086,6 +1075,7 @@ static int qca_check_speeds(struct hci_uart *hu)
+>>  static int qca_set_speed(struct hci_uart *hu, enum qca_speed_type 
+>> speed_type)
+>>  {
+>>  	unsigned int speed, qca_baudrate;
+>> +	struct qca_serdev *qcadev;
+>>  	int ret;
+>> 
+>>  	if (speed_type == QCA_INIT_SPEED) {
+>> @@ -1097,6 +1087,15 @@ static int qca_set_speed(struct hci_uart *hu, 
+>> enum qca_speed_type speed_type)
+>>  		if (!speed)
+>>  			return 0;
+>> 
+>> +		/* Deassert RTS while changing the baudrate of chip and host.
+>> +		 * This will prevent chip from transmitting its response with
+>> +		 * the new baudrate while the host port is still operating at
+>> +		 * the old speed.
+>> +		 */
+>> +		qcadev = serdev_device_get_drvdata(hu->serdev);
+>> +		if (qcadev->btsoc_type == QCA_WCN3990)
+>> +			serdev_device_set_rts(hu->serdev, false);
+>> +
 > 
-> Mmh, let me try again:
+> This may not do what you want unless you also disable hardware flow
+> control.
 > 
->   $ git clone git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git
->   $ cd tip
->   $ git checkout -b locking/core origin/locking/core
-> 
->   $ git show 4607abbcf464
->   commit 4607abbcf464ea2be14da444215d05c73025cf6e
->   Author: Andrea Parri <andrea.parri@amarulasolutions.com>
->   Date:   Mon Dec 3 15:04:49 2018 -0800
-> 
->       tools/memory-model: Model smp_mb__after_unlock_lock()
-> 
->   $ cd tools/memory-model
->   $ herd7 -conf linux-kernel.cfg after-unlock-lock-same-cpu.litmus
->   File "after-unlock-lock-same-cpu.litmus": Unknown macro smp_mb__after_unlock_lock (User error)
-> 
->   [aka, linux-kernel.def in tip:locking/core does not have the
->    smp_mb__after_unlock_lock() added by 4607abbcf464]
+> Johan
 
-Color me confused:
 
-------------------------------------------------------------------------
+Here my requirement here is to block the chip to send its data before 
+HOST changes
+it is baudrate. So if i disable flow control lines of HOST which will be 
+in low state.
+so that the chip will send it data before HOST change the baudrate of 
+HOST. which results in
+frame reassembly error.
 
-$ git checkout 4607abbcf464Checking out files: 100% (18397/18397), done.
-Previous HEAD position was 4e284b1bf15a rcu: Remove wrapper definitions for obsolete RCU update functions
-HEAD is now at 4607abbcf464 tools/memory-model: Model smp_mb__after_unlock_lock()
-$ grep smp_mb__after_unlock_lock tools/memory-model/linux-kernel.def 
-smp_mb__after_unlock_lock() { __fence{after-unlock-lock}; }
-
-------------------------------------------------------------------------
-
-In addition, it handles this litmus test just fine:
-
-------------------------------------------------------------------------
-
-C MP+polocks
-
-(*
- * Result: Never
- *
- * This litmus test demonstrates how lock acquisitions and releases can
- * stand in for smp_load_acquire() and smp_store_release(), respectively.
- * In other words, when holding a given lock (or indeed after releasing a
- * given lock), a CPU is not only guaranteed to see the accesses that other
- * CPUs made while previously holding that lock, it is also guaranteed
- * to see all prior accesses by those other CPUs.
- *)
-
-{}
-
-P0(int *x, int *y, spinlock_t *mylock)
-{
-	WRITE_ONCE(*x, 1);
-	spin_lock(mylock);
-	smp_mb__after_unlock_lock();
-	WRITE_ONCE(*y, 1);
-	spin_unlock(mylock);
-}
-
-P1(int *x, int *y, spinlock_t *mylock)
-{
-	int r0;
-	int r1;
-
-	spin_lock(mylock);
-	r0 = READ_ONCE(*y);
-	spin_unlock(mylock);
-	r1 = READ_ONCE(*x);
-}
-
-exists (1:r0=1 /\ 1:r1=0)
-
-------------------------------------------------------------------------
-
-Again, color me confused.
-
-							Thanx, Paul
-
+-- 
+Regards
+Balakrishna.
