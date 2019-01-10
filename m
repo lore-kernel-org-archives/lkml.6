@@ -2,99 +2,161 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA2BFC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 12:55:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB41FC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 12:55:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A2E8214C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 12:55:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="cQx/mxKU"
+	by mail.kernel.org (Postfix) with ESMTP id B9AF6214C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 12:55:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728722AbfAJMzF (ORCPT
+        id S1728734AbfAJMzq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 07:55:05 -0500
-Received: from mail-it1-f196.google.com ([209.85.166.196]:34453 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726974AbfAJMzF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 07:55:05 -0500
-Received: by mail-it1-f196.google.com with SMTP id x124so15372878itd.1
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 04:55:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=i3THPlnqCfHqKQrDSd/etb5bV4/UayvSKLU77BgpSN0=;
-        b=cQx/mxKURO9NPcAVDLTfFyMKKV5XioNUpDEaCCFwfyXHSz4ZeJ39ngdJ3ei4jLpulU
-         uKp8qp/Ifz7Rc20XV8PPhvLugcH5nVSRnQ2c/rkrBzA7TAblrpBl3M8NDKXMKyYv0B6i
-         kv8iCZTuXXdYzacA+7gnP0oSORCdjUm5/PQhc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=i3THPlnqCfHqKQrDSd/etb5bV4/UayvSKLU77BgpSN0=;
-        b=jJEb5byN48gTkv1G8mqLKlimo2ra32AdV87wkDtKvnAsTwPvSYCxqPKLFe4d6FsV8v
-         mp6yw5igb6NGfauA/z2HylPDVcr9bdJbkjBG7A0QM1FlfBTkPuOUQHWLOlWp6STnrT9j
-         1qgB8dH+fS9Gf7sEBDHDsQ+mm/RFmLx8ODlaNwxQrDgZVGeEsX5XTuZabYxZnebqp2/U
-         DpMNFi266AptmmeTRGLmJoPYliSgSoiZQw8V/VaM5UZe7jAAU811tAvBQvjmV4Gk/Nw2
-         fh1+CRXQzW6BdP2l7TvzUNv1IwRuW1ZCUWg6WcDHFM0kZZpv42qk5Ug56ByyDZx/qwqI
-         5e5Q==
-X-Gm-Message-State: AJcUukdJweSIptOCIa7iYlitEz1ASv5M/QSdBN608dWDvmmchqKMd6HY
-        II8ekp5DmOFXHXypgXNoIp0pKQJkyMKbXW/Cx81qsUiTv4U=
-X-Google-Smtp-Source: ALg8bN7j1mII0fZx8rHd4ljC0hECGocBdL5+h8bPHkwfR5CbgeM/3fGiCAutPJiei/xBZQUknUY7ETWuTarI/rOE9FM=
-X-Received: by 2002:a24:7596:: with SMTP id y144mr7479744itc.68.1547124904306;
- Thu, 10 Jan 2019 04:55:04 -0800 (PST)
+        Thu, 10 Jan 2019 07:55:46 -0500
+Received: from foss.arm.com ([217.140.101.70]:33838 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726974AbfAJMzq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 07:55:46 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8197980D;
+        Thu, 10 Jan 2019 04:55:45 -0800 (PST)
+Received: from [10.1.196.62] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3E57F3F5AF;
+        Thu, 10 Jan 2019 04:55:44 -0800 (PST)
+Subject: Re: [RESEND 1/1] gic: its: Make sure a LPI is discarded before free.
+To:     "Zhao, Yuanyuan" <yuanyuan.zhao@hxt-semitech.com>
+Cc:     "tglx@linutronix.de" <tglx@linutronix.de>,
+        "jason@lakedaemon.net" <jason@lakedaemon.net>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "Zheng, Joey" <yu.zheng@hxt-semitech.com>,
+        "Wang, Dongsheng" <dongsheng.wang@hxt-semitech.com>
+References: <e37e3f5e0146be65c60092a457ca5c82e25581a0.1545292748.git.yuanyuan.zhao@hxt-semitech.com>
+ <20190109074324.6445118d@why.wild-wind.fr.eu.org>
+ <c81f42aa93904353bbeac590da7b0945@HXTBJIDCEMVIW02.hxtcorp.net>
+ <38d7afaf-e800-f6e7-83e3-eb006f4d6f4c@arm.com>
+ <8ebfa53337724799b4b6b2ed8bb06866@HXTBJIDCEMVIW02.hxtcorp.net>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=marc.zyngier@arm.com; prefer-encrypt=mutual; keydata=
+ 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
+Organization: ARM Ltd
+Message-ID: <f0816b2b-4a62-5f34-5792-001ddc5ba165@arm.com>
+Date:   Thu, 10 Jan 2019 12:55:42 +0000
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-References: <20190110101232.9398-1-o.rempel@pengutronix.de> <20190110101232.9398-4-o.rempel@pengutronix.de>
-In-Reply-To: <20190110101232.9398-4-o.rempel@pengutronix.de>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 10 Jan 2019 04:54:53 -0800
-Message-ID: <CAADWXX_G7X6QkNuqnpMyr+MGP+nUhqPaifJrfC=m57mhJu2jdg@mail.gmail.com>
-Subject: Re: [PATCH v1 3/3] drivers/tty: increase priority for tty_buffer_worker
-To:     Oleksij Rempel <o.rempel@pengutronix.de>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        lkml <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <8ebfa53337724799b4b6b2ed8bb06866@HXTBJIDCEMVIW02.hxtcorp.net>
+Content-Type: text/plain; charset=iso-2022-jp
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 10, 2019 at 2:12 AM Oleksij Rempel <o.rempel@pengutronix.de> wrote:
->
-> sched_priority = 1 is enough to dramatically reduce latency
-> on have system load produced by tasks with default user space prio.
+On 10/01/2019 09:42, Zhao, Yuanyuan wrote:
+> 
+> 
+>> -----Original Message-----
+>> From: Marc Zyngier [mailto:marc.zyngier@arm.com]
+>> Sent: 2019年1月9日 17:52
+>> To: Zhao, Yuanyuan <yuanyuan.zhao@hxt-semitech.com>
+>> Cc: tglx@linutronix.de; jason@lakedaemon.net; linux-
+>> kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org; Zheng, Joey
+>> <yu.zheng@hxt-semitech.com>; Wang, Dongsheng <dongsheng.wang@hxt-
+>> semitech.com>
+>> Subject: Re: [RESEND 1/1] gic: its: Make sure a LPI is discarded before free.
+>>
+>> On 09/01/2019 09:29, Zhao, Yuanyuan wrote:
+>>> Hi Marc:
+>>>
+>>> Thank you for your reply.
+>>>
+>>> As you said, APIs such as free_irq will deactivate irq before free it.
+>>> But deactivation is not forced by every API, for example
+>>> irq_dispose_mapping.  So I think it's better to check that irq was
+>>> deactivated as expected.
+>>
+>> In general, we should fix the problem at the core API level instead of hacking
+>> individual drivers.
+>>
+>> But more to the point, irq_dispose_mapping is not supposed to do anything
+>> with the an active irq, as it doesn't have the required information to safely
+>> remove it.
+>>
+>> So calling irq_dispose_mapping on an interrupt that still has registered
+>> actions is a bug, and I'm not convinced we want to cater for such a case. Do
+>> you have a concrete example of some kernel code expecting this behaviour?
+>>
+>> Thanks,
+>>
+>> 	M.
+>>
+> 
+> Most driver use free_irq after register actions, I found this problem by a test case. 
 
-.. and is this perhaps a way for a user to then make the system spend
-inordinate amounts of time in the tty layer, and hurting other people?
-I'm thinking threads using pty's etc as a way to make the system
-unresponsive.
+Right, so that's not a fix at all. Not following the API is the bug.
 
-We have *never* had good results with random priority modifications.
-People used to do this for the X server, and it helped in very
-specific cases, and hurt enormously in others.
+> But if this problem happen and the same DeviceID & EventID are reused, 
+> the freed ITT will be visit which cause delayed kernel panic,
+> the prev INTs are triggered unexpected, but the new INTs lost.
 
-Why would anybody use a tty interface with a l;oopback adapter and
-care about latency?
+If you're disposing of the mapping and yet have not freed the interrupt,
+then anything can happen. The kernel doesn't try to protect yourself
+from your own mistakes.
 
-I can kind of see why you want to do this from a theoretical point,
-but from a *practical* point of view it seems pointless. Why not use
-more appropriate models like networking or pipes etc. IOW, I think you
-should describe what you *really* are doing much more.
+> So I think this check spend less, but gains more.
 
-"hackbench with a loopback serial adapter" really doesn't sound like
-something that should worry a lot of people.
+I beg to differ. This brings nothing but a very weak guarantee that only
+applies to a particular class of HW, makes a mess of the API, and papers
+over grave bugs that should be fixed.
 
-My gut feel is that if somebody still cares deeply about serial line
-latency, they should look at trying to see if they can do some of the
-work directly without the bounce to the workqueue. We use workqueues
-for a reason, but it's possible that some of it could be avoided at
-least in special cases... And yours sounds like a special case.
+Thanks,
 
-                Linus
+	M.
+-- 
+Jazz is not dead. It just smells funny...
