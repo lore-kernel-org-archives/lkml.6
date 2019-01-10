@@ -2,192 +2,110 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7BD8C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 15:48:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A264CC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 15:49:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8DB20206B7
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 15:48:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6D524206B7
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 15:49:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="GXlGp+v7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729593AbfAJPsL (ORCPT
+        id S1729651AbfAJPtN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 10:48:11 -0500
-Received: from mga04.intel.com ([192.55.52.120]:31698 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729436AbfAJPsK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 10:48:10 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jan 2019 07:48:08 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,461,1539673200"; 
-   d="scan'208";a="105596968"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga007.jf.intel.com with ESMTP; 10 Jan 2019 07:48:06 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 43AE1F7; Thu, 10 Jan 2019 17:48:04 +0200 (EET)
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        linux-input@vger.kernel.org, Even Xu <even.xu@intel.com>,
-        linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1] HID: intel-ish-hid: Switch to use new generic UUID API
-Date:   Thu, 10 Jan 2019 17:48:04 +0200
-Message-Id: <20190110154804.89298-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.20.1
+        Thu, 10 Jan 2019 10:49:13 -0500
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:42689 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728196AbfAJPtN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 10:49:13 -0500
+Received: by mail-qt1-f194.google.com with SMTP id d19so13468521qtq.9
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 07:49:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=UzCHN6ZAYfuc+bAQ6pxUDfDKwJ3nHkac1f0dov90bVc=;
+        b=GXlGp+v71dHwIXM2GMAjfxUkBb//yY5taoCw5mJOGIEhwcuwbLYSnMxM1amea+lj+X
+         +fgVqRytyvHNt4AOtomFmGess4SoYoZoaVrfTwqh3z41m/BJs0xqYaJqkhXKxdCKcKGq
+         +JCS8lhfcD2uR/y81zhJWYJV2vYMvblVO4J5I=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=UzCHN6ZAYfuc+bAQ6pxUDfDKwJ3nHkac1f0dov90bVc=;
+        b=gfM9MZpAf1iSJAtXe83+JRnKYfewYoFUs2IK+J/fjJ6wpgteraJv+SdYRhfyTh+3hv
+         +6Pc4k3mPSkwV3yOc78RHRvjllxi1HUHBKReYa8jKKD7G4gtDonX/iOArLqQRK35jrD8
+         1ALy3B2QH4aBfCauu5IN8v/iqBSBR//lr/Wo074OvL3Gi/YamMFOPA6826wtUM5t+p9n
+         Eqv0wgXrJQAhuyk12Tr3da7L4hLU4Wp4phgfpAxZ/RdunR60Qmw7fgt7xEcd0B89AnQs
+         8r0Uvqe6lx1sA1tYpdTKoJ9UgyJnFLNCXqazuakjAxAfFBjzHOWzth4vUek5726uScT1
+         gnvA==
+X-Gm-Message-State: AJcUukcqOMjO1nhMmz9p+yK8MpJ+RQ8P1Pz7DcrqwYGDeQ6zwaoXedrX
+        uLn5xJvXNYuw5ESSuL+FeeJicQ==
+X-Google-Smtp-Source: ALg8bN7jFpIPweZZQarWLl3QA5Pf/TMswCi0ehHSF1gzqlsrz+FFsDt0fGYpHnPTM87XsoH4KdsFBA==
+X-Received: by 2002:a0c:96c9:: with SMTP id b9mr9881168qvd.238.1547135351421;
+        Thu, 10 Jan 2019 07:49:11 -0800 (PST)
+Received: from google.com ([2620:0:1003:510:59af:10e9:2d49:6b0a])
+        by smtp.gmail.com with ESMTPSA id 20sm46011180qtp.54.2019.01.10.07.49.10
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 10 Jan 2019 07:49:10 -0800 (PST)
+Date:   Thu, 10 Jan 2019 10:49:09 -0500
+From:   Kyle Williams <kdgwill@chromium.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Mathias Nyman <mathias.nyman@linux.intel.com>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        Jon Flatley <jflat@chromium.org>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        linux-usb@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] USB: quirks: Check device interface LPM capability
+Message-ID: <20190110154909.GB142026@google.com>
+References: <20181205093902.GA18633@kroah.com>
+ <20181208014724.951-1-kdgwill@google.com>
+ <20181208014724.951-2-kdgwill@google.com>
+ <20181212113709.GA20058@kroah.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181212113709.GA20058@kroah.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are new types and helpers that are supposed to be used in new code.
+On Wed, Dec 12, 2018 at 12:37:09PM +0100, Greg Kroah-Hartman wrote:
+> On Fri, Dec 07, 2018 at 08:47:21PM -0500, Kyle Williams wrote:
+> > From: Kyle Williams <kdgwill@chromium.org>
+> > 
+> > Description: enable the ability to disable LPM for all devices matched
+> > by interface information
+> 
+> Why have "Description:" in here?  Of course this is the description :)
+> 
+> And the subject doesn't make much sense, what does this have to do with
+> quirks?
+> 
+> Also, you need more information here in the description about why you
+> are doing all of this, as it is, I have no idea why this patch is needed
+> at all.
+> 
+> thanks,
+> 
+> greg k-h
 
-As a preparation to get rid of legacy types and API functions do
-the conversion here.
+It seems the underlying issue has been solved in
+0472bf0 xhci: Prevent U1/U2 link pm states if exit latency is too long
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/hid/intel-ish-hid/ishtp-hid-client.c |  3 +--
- drivers/hid/intel-ish-hid/ishtp-hid.h        |  6 +++---
- drivers/hid/intel-ish-hid/ishtp/bus.c        | 19 ++++++++-----------
- drivers/hid/intel-ish-hid/ishtp/bus.h        |  4 ++--
- drivers/hid/intel-ish-hid/ishtp/client.h     |  2 +-
- drivers/hid/intel-ish-hid/ishtp/hbm.h        |  2 +-
- 6 files changed, 16 insertions(+), 20 deletions(-)
+However, the patch to fix the issue when matching the USB_QUIRK_NO_LPM
+quirk by iterface could be useful in the future. Currently nothing will
+happen that quirk is matched by interface instead of by vid/pid pair.
+Is their anything that would need to be changed besides removing the
+Description tag?
 
-diff --git a/drivers/hid/intel-ish-hid/ishtp-hid-client.c b/drivers/hid/intel-ish-hid/ishtp-hid-client.c
-index e64243bc9c96..2246697ada1d 100644
---- a/drivers/hid/intel-ish-hid/ishtp-hid-client.c
-+++ b/drivers/hid/intel-ish-hid/ishtp-hid-client.c
-@@ -788,8 +788,7 @@ static int hid_ishtp_cl_probe(struct ishtp_cl_device *cl_device)
- 	if (!cl_device)
- 		return	-ENODEV;
- 
--	if (uuid_le_cmp(hid_ishtp_guid,
--			cl_device->fw_client->props.protocol_name) != 0)
-+	if (!guid_equal(&hid_ishtp_guid, &cl_device->fw_client->props.protocol_name))
- 		return	-ENODEV;
- 
- 	client_data = devm_kzalloc(&cl_device->dev, sizeof(*client_data),
-diff --git a/drivers/hid/intel-ish-hid/ishtp-hid.h b/drivers/hid/intel-ish-hid/ishtp-hid.h
-index f5c7eb79b7b5..1cd07a441cd4 100644
---- a/drivers/hid/intel-ish-hid/ishtp-hid.h
-+++ b/drivers/hid/intel-ish-hid/ishtp-hid.h
-@@ -29,9 +29,9 @@
- 		client->cl_device->ishtp_dev, __VA_ARGS__)
- 
- /* ISH Transport protocol (ISHTP in short) GUID */
--static const uuid_le hid_ishtp_guid = UUID_LE(0x33AECD58, 0xB679, 0x4E54,
--					      0x9B, 0xD9, 0xA0, 0x4D, 0x34,
--					      0xF0, 0xC2, 0x26);
-+static const guid_t hid_ishtp_guid =
-+	GUID_INIT(0x33AECD58, 0xB679, 0x4E54,
-+		  0x9B, 0xD9, 0xA0, 0x4D, 0x34, 0xF0, 0xC2, 0x26);
- 
- /* ISH HID message structure */
- struct hostif_msg_hdr {
-diff --git a/drivers/hid/intel-ish-hid/ishtp/bus.c b/drivers/hid/intel-ish-hid/ishtp/bus.c
-index 728dc6d4561a..1b6092b300fe 100644
---- a/drivers/hid/intel-ish-hid/ishtp/bus.c
-+++ b/drivers/hid/intel-ish-hid/ishtp/bus.c
-@@ -133,18 +133,15 @@ int ishtp_write_message(struct ishtp_device *dev, struct ishtp_msg_hdr *hdr,
-  *
-  * Return: fw client index or -ENOENT if not found
-  */
--int ishtp_fw_cl_by_uuid(struct ishtp_device *dev, const uuid_le *uuid)
-+int ishtp_fw_cl_by_uuid(struct ishtp_device *dev, const guid_t *uuid)
- {
--	int i, res = -ENOENT;
-+	unsigned int i;
- 
- 	for (i = 0; i < dev->fw_clients_num; ++i) {
--		if (uuid_le_cmp(*uuid, dev->fw_clients[i].props.protocol_name)
--				== 0) {
--			res = i;
--			break;
--		}
-+		if (guid_equal(uuid, &dev->fw_clients[i].props.protocol_name))
-+			return i;
- 	}
--	return res;
-+	return -ENOENT;
- }
- EXPORT_SYMBOL(ishtp_fw_cl_by_uuid);
- 
-@@ -158,7 +155,7 @@ EXPORT_SYMBOL(ishtp_fw_cl_by_uuid);
-  * Return: pointer of client information on success, NULL on failure.
-  */
- struct ishtp_fw_client *ishtp_fw_cl_get_client(struct ishtp_device *dev,
--						const uuid_le *uuid)
-+					       const guid_t *uuid)
- {
- 	int i;
- 	unsigned long flags;
-@@ -401,7 +398,7 @@ static const struct device_type ishtp_cl_device_type = {
-  * Return: ishtp_cl_device pointer or NULL on failure
-  */
- static struct ishtp_cl_device *ishtp_bus_add_device(struct ishtp_device *dev,
--						    uuid_le uuid, char *name)
-+						    guid_t uuid, char *name)
- {
- 	struct ishtp_cl_device *device;
- 	int status;
-@@ -629,7 +626,7 @@ int ishtp_bus_new_client(struct ishtp_device *dev)
- 	int	i;
- 	char	*dev_name;
- 	struct ishtp_cl_device	*cl_device;
--	uuid_le	device_uuid;
-+	guid_t	device_uuid;
- 
- 	/*
- 	 * For all reported clients, create an unconnected client and add its
-diff --git a/drivers/hid/intel-ish-hid/ishtp/bus.h b/drivers/hid/intel-ish-hid/ishtp/bus.h
-index b8a5bcc82536..babf19ba3ff6 100644
---- a/drivers/hid/intel-ish-hid/ishtp/bus.h
-+++ b/drivers/hid/intel-ish-hid/ishtp/bus.h
-@@ -112,8 +112,8 @@ void	ishtp_cl_driver_unregister(struct ishtp_cl_driver *driver);
- 
- int	ishtp_register_event_cb(struct ishtp_cl_device *device,
- 				void (*read_cb)(struct ishtp_cl_device *));
--int	ishtp_fw_cl_by_uuid(struct ishtp_device *dev, const uuid_le *cuuid);
-+int	ishtp_fw_cl_by_uuid(struct ishtp_device *dev, const guid_t *cuuid);
- struct	ishtp_fw_client *ishtp_fw_cl_get_client(struct ishtp_device *dev,
--						const uuid_le *uuid);
-+						const guid_t *uuid);
- 
- #endif /* _LINUX_ISHTP_CL_BUS_H */
-diff --git a/drivers/hid/intel-ish-hid/ishtp/client.h b/drivers/hid/intel-ish-hid/ishtp/client.h
-index 042f4c4853b1..e0df3eb611e6 100644
---- a/drivers/hid/intel-ish-hid/ishtp/client.h
-+++ b/drivers/hid/intel-ish-hid/ishtp/client.h
-@@ -126,7 +126,7 @@ struct ishtp_cl {
- };
- 
- /* Client connection managenment internal functions */
--int ishtp_can_client_connect(struct ishtp_device *ishtp_dev, uuid_le *uuid);
-+int ishtp_can_client_connect(struct ishtp_device *ishtp_dev, guid_t *uuid);
- int ishtp_fw_cl_by_id(struct ishtp_device *dev, uint8_t client_id);
- void ishtp_cl_send_msg(struct ishtp_device *dev, struct ishtp_cl *cl);
- void recv_ishtp_cl_msg(struct ishtp_device *dev,
-diff --git a/drivers/hid/intel-ish-hid/ishtp/hbm.h b/drivers/hid/intel-ish-hid/ishtp/hbm.h
-index d96111cef7f8..7286e3600140 100644
---- a/drivers/hid/intel-ish-hid/ishtp/hbm.h
-+++ b/drivers/hid/intel-ish-hid/ishtp/hbm.h
-@@ -149,7 +149,7 @@ struct hbm_host_enum_response {
- } __packed;
- 
- struct ishtp_client_properties {
--	uuid_le protocol_name;
-+	guid_t protocol_name;
- 	uint8_t protocol_version;
- 	uint8_t max_number_of_connections;
- 	uint8_t fixed_address;
--- 
-2.20.1
-
+-Kyle
