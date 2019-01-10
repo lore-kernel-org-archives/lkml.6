@@ -2,128 +2,132 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66924C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 17:01:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 449C4C43612
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 17:02:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3543D20685
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 17:01:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1532420685
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 17:02:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="eC1oJJPM"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="mx3G+nBq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729197AbfAJRBO (ORCPT
+        id S1729109AbfAJRC3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 12:01:14 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:58856 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727943AbfAJRBN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 12:01:13 -0500
-Received: from zn.tnic (p200300EC2BC5CF00F8565421A8111C7E.dip0.t-ipconnect.de [IPv6:2003:ec:2bc5:cf00:f856:5421:a811:1c7e])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id EE3A41EC035B;
-        Thu, 10 Jan 2019 18:01:10 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1547139671;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=uTSCpUvBGNcb7la2cAU6MajSH8aykN1VCQ1VTxp1XVE=;
-        b=eC1oJJPMLuPZWyjYhBywAXwcCJU8TeoQuA8UK98PP/G4cdYZO1ysag4vhiO5OKi0ZXYPGx
-        HHfRsKdvst2jiC/VkydxX86lHni2h9H7K+tqg5JWnF83zJd44PUQef9W6NI+kB1uPI+PaL
-        45UN79Ia6Nd1y53aw4XTHf3nI9gQBRo=
-Date:   Thu, 10 Jan 2019 18:01:03 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Chao Fan <fanc.fnst@cn.fujitsu.com>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, tglx@linutronix.de,
-        mingo@redhat.com, hpa@zytor.com, keescook@chromium.org,
-        bhe@redhat.com, msys.mizuma@gmail.com, indou.takao@jp.fujitsu.com,
-        caoj.fnst@cn.fujitsu.com
-Subject: Re: [PATCH v15 2/6] x86/boot: Introduce get_acpi_rsdp() to parse
- RSDP in cmdline from KEXEC
-Message-ID: <20190110170103.GF17621@zn.tnic>
-References: <20190107032243.25324-1-fanc.fnst@cn.fujitsu.com>
- <20190107032243.25324-3-fanc.fnst@cn.fujitsu.com>
+        Thu, 10 Jan 2019 12:02:29 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:49128 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727836AbfAJRC2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 12:02:28 -0500
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0AGxTLh179520;
+        Thu, 10 Jan 2019 17:02:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=jnCKMZoBc1lLvLQ8sW1g6t1cZ7Wd/SFilvKOlPJEmag=;
+ b=mx3G+nBqOr0JDGW/7kptr3FQzgsNCuSesb4LdwjoI1v2B9t/McMmpbCpCt10UjhBp9+h
+ 0Gh4bQp68MQElFuBqfRKlooy1a/B6c+Q5I+z9LTjDxRAsfnS5XPVcDwehl2+v1zvmhMU
+ OsuDzRdLeopTkrmOVogRdntuo/KbWeng7ZLoKDHyHq2cFVHhMyL3NxbLeIiFqVCn20vZ
+ 3i5uQmJXaBfhi/NKc4sesipxHAx/4o+rQG8S0BQj0b9MXWgrcMIMS/XxkL0VIxgOtCao
+ mnZOKpkZzs+juVmhixXF+1bg1IyE36uiXl+fxVGFO2n8JpcKeTBBxnRFMkuBEWRArcjv GQ== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by aserp2130.oracle.com with ESMTP id 2ptj3e8nad-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 10 Jan 2019 17:02:09 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x0AH28OL029311
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 10 Jan 2019 17:02:08 GMT
+Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x0AH27jl002612;
+        Thu, 10 Jan 2019 17:02:07 GMT
+Received: from char.us.oracle.com (/10.152.32.25)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 10 Jan 2019 09:02:07 -0800
+Received: by char.us.oracle.com (Postfix, from userid 1000)
+        id B9DC56A0126; Thu, 10 Jan 2019 12:02:05 -0500 (EST)
+Date:   Thu, 10 Jan 2019 12:02:05 -0500
+From:   Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+To:     Joerg Roedel <joro@8bytes.org>
+Cc:     "Michael S . Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>, Jens Axboe <axboe@kernel.dk>,
+        virtualization@lists.linux-foundation.org,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        iommu@lists.linux-foundation.org, jfehlig@suse.com,
+        jon.grimm@amd.com, brijesh.singh@amd.com, hch@lst.de,
+        Joerg Roedel <jroedel@suse.de>
+Subject: Re: [PATCH 1/3] swiotlb: Export maximum allocation size
+Message-ID: <20190110170205.GB27546@char.us.oracle.com>
+References: <20190110134433.15672-1-joro@8bytes.org>
+ <20190110134433.15672-2-joro@8bytes.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190107032243.25324-3-fanc.fnst@cn.fujitsu.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190110134433.15672-2-joro@8bytes.org>
+User-Agent: Mutt/1.8.3 (2017-05-23)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9131 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1901100133
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 07, 2019 at 11:22:39AM +0800, Chao Fan wrote:
-> KASLR may randomly choose some positions which are located in movable
-> memory regions. This will make the movable memory chosen by KASLR
-> can't be removed.
+On Thu, Jan 10, 2019 at 02:44:31PM +0100, Joerg Roedel wrote:
+> From: Joerg Roedel <jroedel@suse.de>
 > 
-> Memory information in SRAT is necessary to fix the conflict between
-> KASLR and memory-hotremove.
+> The SWIOTLB implementation has a maximum size it can
+> allocate dma-handles for. This needs to be exported so that
+> device drivers don't try to allocate larger chunks.
 > 
-> ACPI SRAT (System/Static Resource Affinity Table) shows the details
-> about memory ranges, including ranges of memory provided by hot-added
-> memory devices. SRAT is introduced by Root System Description
-> Pointer(RSDP). So RSDP should be found firstly.
+> This is especially important for block device drivers like
+> virtio-blk, that might do DMA through SWIOTLB.
+
+Why not use swiotlb_nr_tbl ? That is how drivers/gpu/drm use to figure if they
+need to limit the size of pages.
 > 
-> When booting form KEXEC/EFI/BIOS, the methods to find RSDP
-> are different. When booting from KEXEC, 'acpi_rsdp=' may have been
-> added to cmdline, so parse cmdline to find RSDP.
-> 
-> Signed-off-by: Chao Fan <fanc.fnst@cn.fujitsu.com>
+> Signed-off-by: Joerg Roedel <jroedel@suse.de>
 > ---
->  arch/x86/boot/compressed/acpi.c | 30 ++++++++++++++++++++++++++++++
->  1 file changed, 30 insertions(+)
->  create mode 100644 arch/x86/boot/compressed/acpi.c
+>  include/linux/swiotlb.h | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
 > 
-> diff --git a/arch/x86/boot/compressed/acpi.c b/arch/x86/boot/compressed/acpi.c
-> new file mode 100644
-> index 000000000000..7ca5001d7639
-> --- /dev/null
-> +++ b/arch/x86/boot/compressed/acpi.c
-> @@ -0,0 +1,30 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +#define BOOT_CTYPE_H
-> +#include "misc.h"
-> +#include "error.h"
-> +#include "../string.h"
+> diff --git a/include/linux/swiotlb.h b/include/linux/swiotlb.h
+> index 7c007ed7505f..0bcc80a97036 100644
+> --- a/include/linux/swiotlb.h
+> +++ b/include/linux/swiotlb.h
+> @@ -72,6 +72,11 @@ static inline bool is_swiotlb_buffer(phys_addr_t paddr)
+>  	return paddr >= io_tlb_start && paddr < io_tlb_end;
+>  }
+>  
+> +static inline size_t swiotlb_max_alloc_size(void)
+> +{
+> +	return ((1UL << IO_TLB_SHIFT) * IO_TLB_SEGSIZE);
+> +}
 > +
-> +#include <linux/acpi.h>
-
-Ok, I corrected it to this, please replace in your version:
-
-/*
- * Max length of 64-bit hex address string is 19, prefix "0x" + 16 hex
- * digits, and '\0' for termination.
- */
-#define MAX_ADDR_LEN 19
-
-static acpi_physical_address get_acpi_rsdp(void)
-{
-	acpi_physical_address addr = 0;
-
-#ifdef CONFIG_KEXEC
-	char val[MAX_ADDR_LEN] = { };
-	int ret;
-
-	ret = cmdline_find_option("acpi_rsdp", val, MAX_ADDR_LEN);
-	if (ret < 0)
-		return 0;
-
-	if (kstrtoull(val, 16, &addr))
-		return 0;
-#endif
-	return addr;
-}
-
-
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+>  bool swiotlb_map(struct device *dev, phys_addr_t *phys, dma_addr_t *dma_addr,
+>  		size_t size, enum dma_data_direction dir, unsigned long attrs);
+>  void __init swiotlb_exit(void);
+> @@ -95,6 +100,13 @@ static inline unsigned int swiotlb_max_segment(void)
+>  {
+>  	return 0;
+>  }
+> +
+> +static inline size_t swiotlb_max_alloc_size(void)
+> +{
+> +	/* There is no limit when SWIOTLB isn't used */
+> +	return ~0UL;
+> +}
+> +
+>  #endif /* CONFIG_SWIOTLB */
+>  
+>  extern void swiotlb_print_info(void);
+> -- 
+> 2.17.1
+> 
