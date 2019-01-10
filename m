@@ -2,132 +2,94 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C691DC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 02:50:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED38EC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 02:50:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 984E820665
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 02:50:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C5A9120665
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 02:50:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727228AbfAJCuZ (ORCPT
+        id S1727271AbfAJCu5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 21:50:25 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:43032 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727037AbfAJCuZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 21:50:25 -0500
-Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id E9BD39804EEF78570EA8;
-        Thu, 10 Jan 2019 10:50:22 +0800 (CST)
-Received: from [127.0.0.1] (10.177.31.14) by DGGEMS404-HUB.china.huawei.com
- (10.3.19.204) with Microsoft SMTP Server id 14.3.408.0; Thu, 10 Jan 2019
- 10:50:13 +0800
-Subject: Re: [PATCH] 9p: use inode->i_lock to protect i_size_write()
-To:     Dominique Martinet <asmadeus@codewreck.org>
-CC:     <v9fs-developer@lists.sourceforge.net>, <lucho@ionkov.net>,
-        <ericvh@gmail.com>, <linux-fsdevel@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <xingaopeng@huawei.com>
-References: <20190109020522.105713-1-houtao1@huawei.com>
- <20190109023832.GA12389@nautica>
-From:   Hou Tao <houtao1@huawei.com>
-Message-ID: <831fe284-c9e9-49a4-d530-5af57c2dd9d1@huawei.com>
-Date:   Thu, 10 Jan 2019 10:50:12 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Wed, 9 Jan 2019 21:50:57 -0500
+Received: from [223.203.96.18] ([223.203.96.18]:33959 "EHLO
+        barracuda02.hxt-semitech.com" rhost-flags-FAIL-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727235AbfAJCu5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 21:50:57 -0500
+X-ASG-Debug-ID: 1547087509-107606139f176010001-xx1T2L
+Received: from HXTBJIDCEMVIW02.hxtcorp.net ([10.128.0.15]) by barracuda02.hxt-semitech.com with ESMTP id fjQ69rVqfbcloQWy (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NO); Thu, 10 Jan 2019 10:31:50 +0800 (CST)
+X-Barracuda-Envelope-From: xiaoting.liu@hxt-semitech.com
+Received: from openbmc001.localdomain (10.5.21.169) by
+ HXTBJIDCEMVIW02.hxtcorp.net (10.128.0.15) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Thu, 10 Jan 2019 10:31:42 +0800
+From:   Xiaoting Liu <xiaoting.liu@hxt-semitech.com>
+To:     <linux@roeck-us.net>, <jdelvare@suse.com>
+CC:     <openbmc@lists.ozlabs.org>, <linux-hwmon@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <shunyong.yang@hxt-semitech.com>,
+        <dongsheng.wang@hxt-semitech.com>,
+        Xiaoting Liu <xiaoting.liu@hxt-semitech.com>
+Subject: [PATCH v3 4/4] hwmon: (pmbus) add support for DPS-650AB
+Date:   Thu, 10 Jan 2019 10:31:44 +0800
+X-ASG-Orig-Subj: [PATCH v3 4/4] hwmon: (pmbus) add support for DPS-650AB
+Message-ID: <625d047f0f42d30bb5ceb75ada529b5fa0c9a21a.1546918172.git.xiaoting.liu@hxt-semitech.com>
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <cover.1546918172.git.xiaoting.liu@hxt-semitech.com>
+References: <cover.1546918172.git.xiaoting.liu@hxt-semitech.com>
 MIME-Version: 1.0
-In-Reply-To: <20190109023832.GA12389@nautica>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Originating-IP: [10.177.31.14]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain
+X-Originating-IP: [10.5.21.169]
+X-ClientProxiedBy: HXTBJIDCEMVIW01.hxtcorp.net (10.128.0.14) To
+ HXTBJIDCEMVIW02.hxtcorp.net (10.128.0.15)
+X-Barracuda-Connect: UNKNOWN[10.128.0.15]
+X-Barracuda-Start-Time: 1547087510
+X-Barracuda-Encrypted: ECDHE-RSA-AES256-SHA384
+X-Barracuda-URL: https://192.168.50.102:443/cgi-mod/mark.cgi
+X-Barracuda-Scan-Msg-Size: 1003
+X-Virus-Scanned: by bsmtpd at hxt-semitech.com
+X-Barracuda-BRTS-Status: 1
+X-Barracuda-Bayes: INNOCENT GLOBAL 0.8846 1.0000 3.0633
+X-Barracuda-Spam-Score: 3.06
+X-Barracuda-Spam-Status: No, SCORE=3.06 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=
+X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.65431
+        Rule breakdown below
+         pts rule name              description
+        ---- ---------------------- --------------------------------------------------
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Provide support for PSU DPS-650AB from Delta Electronics, INC.
 
+Signed-off-by: Xiaoting Liu <xiaoting.liu@hxt-semitech.com>
+---
+v3:
+  No change.
+---
+v2:
+  Change the patch subject and commit message.
+  Drop dps650ab.c file.
+  Replace struct name dps650ab_pmbus_info with pmbus_info_one_skip.
+---
+ drivers/hwmon/pmbus/pmbus.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-On 2019/1/9 10:38, Dominique Martinet wrote:
-> Hou Tao wrote on Wed, Jan 09, 2019:
->> Use inode->i_lock to protect i_size_write(), else i_size_read() in
->> generic_fillattr() may loop infinitely when multiple processes invoke
->> v9fs_vfs_getattr() or v9fs_vfs_getattr_dotl() simultaneously under
->> 32-bit SMP environment, and a soft lockup will be triggered as show below:
-> Hmm, I'm not familiar with the read/write seqcount code for 32 bit but I
-> don't understand how locking here helps besides slowing things down (so
-> if the value is constantly updated, the read thread might have a chance
-> to be scheduled between two updates which was harder to do before ; and
-> thus "solving" your soft lockup)
-i_size_read() will call read_seqcount_begin() under 32-bit SMP environment,
-and it may loop in __read_seqcount_begin() infinitely because two or more
-invocations of write_seqcount_begin interleave and s->sequence becomes
-an odd number. It's noted in comments of i_size_write():
-
-/*
- * NOTE: unlike i_size_read(), i_size_write() does need locking around it
- * (normally i_mutex), otherwise on 32bit/SMP an update of i_size_seqcount
- * can be lost, resulting in subsequent i_size_read() calls spinning forever.
- */
-static inline void i_size_write(struct inode *inode, loff_t i_size)
-{
-#if BITS_PER_LONG==32 && defined(CONFIG_SMP)
-    preempt_disable();
-    write_seqcount_begin(&inode->i_size_seqcount);
-    inode->i_size = i_size;
-    write_seqcount_end(&inode->i_size_seqcount);
-    preempt_enable();
-#elif BITS_PER_LONG==32 && defined(CONFIG_PREEMPT)
-    preempt_disable();
-    inode->i_size = i_size;
-    preempt_enable();
-#else
-    inode->i_size = i_size;
-#endif
-}
-
-> Instead, a better fix would be to update v9fs_stat2inode to first read
-> the inode size, and only call i_size_write if it changed - I'd bet this
-> also fixes the problem and looks better than locking to me.
-> (Can also probably reuse stat->length instead of the following
-> i_size_read for i_blocks...)
-For read-only case, this fix will work. However if the inode size is changed
-constantly, there will be two or more callers of i_size_write() and the soft-lockup
-is still possible.
-
->
-> On the other hand it might make sense to also lock the inode for
-> stat2inode because we're dealing with partially updated inodes at time,
-> but if we do this I'd rather put the locking in v9fs_stat2inode and not
-> outside of it to catch all the places where it's used; but the readers
-> don't lock so I'm not sure it makes much sense.
-Moving lock into v9fs_stat2inode() sounds reasonable. There are callers
-which don't need it (e.g. v9fs_qid_iget() uses it to fill attribute for a
-newly-created inode and v9fs_mount() uses it to fill attribute for root inode),
-so i will rename v9fs_stat2inode() to v9fs_stat2inode_nolock(), and wrap
-v9fs_stat2inode() upon v9fs_stat2inode_nolock().
-
->
-> There's also a window during which the inode's nlink is dropped down to
-> 1 then set again appropriately if the extension is present; that's
-> rather ugly and we probably should only reset it to 1 if the attribute
-> wasn't set before... That can be another patch and/or I'll do it
-> eventually if you don't.
-I can not follow that. Do you mean inode->i_nlink may be updated concurrently
-by v9fs_stat2inode() and v9fs_remove() and that will lead to corruption of i_nlink ?
-
-I also note a race about updating of v9inode->cache_validity. It seems that it is possible
-the clear of V9FS_INO_INVALID_ATTR in v9fs_remove() may lost if there are invocations of
-v9fs_vfs_getattr() in the same time. We may need to ensure V9FS_INO_INVALID_ATTR is enabled
-before clearing it atomically in v9fs_vfs_getattr() and i will send another patch for it.
-
-Regards,
-Tao
-> I hope what I said makes sense.
->
-> Thanks,
-
+diff --git a/drivers/hwmon/pmbus/pmbus.c b/drivers/hwmon/pmbus/pmbus.c
+index ef845a1310fa..e648ed8d926a 100644
+--- a/drivers/hwmon/pmbus/pmbus.c
++++ b/drivers/hwmon/pmbus/pmbus.c
+@@ -212,6 +212,7 @@ static int pmbus_probe(struct i2c_client *client,
+ 	{"bmr453", (kernel_ulong_t)&pmbus_info_one},
+ 	{"bmr454", (kernel_ulong_t)&pmbus_info_one},
+ 	{"dps460", (kernel_ulong_t)&pmbus_info_one_skip},
++	{"dps650ab", (kernel_ulong_t)&pmbus_info_one_skip},
+ 	{"dps800", (kernel_ulong_t)&pmbus_info_one_skip},
+ 	{"mdt040", (kernel_ulong_t)&pmbus_info_one},
+ 	{"ncp4200", (kernel_ulong_t)&pmbus_info_one},
+-- 
+1.8.3.1
 
