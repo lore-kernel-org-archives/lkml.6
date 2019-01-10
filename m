@@ -2,359 +2,192 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B53AC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 00:01:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C81F5C43612
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 00:11:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 48EC4214DA
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 00:01:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="SEU3cD/l"
+	by mail.kernel.org (Postfix) with ESMTP id 95FD32177B
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 00:11:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547079093;
+	bh=h9FpAV7ViS0x77yN0brgUg1SlZ1S+BVD3oJKuVUo6qY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=mTEtuOPsja8h1/nk/WHVxULew95iA+MCuh22rbC3pcXzCQ8GQczwweaJk7sxDIVBb
+	 V9ZEV3s/9UgVBwhWgaVz7/eYg3lrAJmoJp2p9hhuRtFYafDvkQoqurbLp8mK40CRpt
+	 Dm0yc7k/Z8P8ZM5IbVXjeaxpmBuHPSswxclvZapU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727125AbfAJABu (ORCPT
+        id S1726637AbfAJALd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 19:01:50 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:40923 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727091AbfAJABt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 19:01:49 -0500
-Received: by mail-wr1-f67.google.com with SMTP id p4so9453002wrt.7
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jan 2019 16:01:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :in-reply-to:references;
-        bh=/ZE0qkZUqxgI4JnoiR2IYSBVxq7qTxELnI9TqLZdU2Y=;
-        b=SEU3cD/l7LwiQdrMqY0xwiVIBYsLKKhJzQ0jQqZ3SYhK6b1+rJih9rAPWLpIWbW9QM
-         s6lfKr/XhCmSBTPElE94yMb24QcBF+HZwm+vCZtFZNs5PVTSEHVxJE4+AUvDeLGYqGhM
-         Pk/6aNxdOjH1IeGyVsbdurFHqPhpVe+40+Xvc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:in-reply-to:references;
-        bh=/ZE0qkZUqxgI4JnoiR2IYSBVxq7qTxELnI9TqLZdU2Y=;
-        b=pVmECZZShTc6mZaHI0z7WO9THYwabgB951smTqu+x1WSoPkpJ4Re01sfHjOJy6RpzE
-         neJWCwP/QtUjuudKpr0mpA5fp4xIM+cEqIFHfWD/qg8qc/ZRNFKcluVtqJ0ErJZiPu1Y
-         sPrewphSyBsvanqxDQwD59ic+AJqZSGFrLSOccIPhFNFkhrh9HRkt4AU2hbKENiFbQmy
-         frcdhzLqAIBz5Ywt3ewRHNIXYjk+f/I/+eOvrNivxLm2XUHKhxQNkmTRgruV7CeXPEMj
-         4ocPa19LILaoEt1Zel+QS1O0zHGX88lipCG7g8NYH0tzmKv9gS9aimye0C0mGiVtFhJc
-         WEIQ==
-X-Gm-Message-State: AJcUukdNTfB6vR5DvNz1A8yjBU+XTgNW7aluHg+wR54mfS9uJWv1AaLf
-        C8vDA40Cel/IysahKWwC9n/JBrmcCMk=
-X-Google-Smtp-Source: ALg8bN4rTwZ3JIx+gIP/hSyRkknpeUIs+AFjwxsB5RKRshYU6RVKSlGqB3ZfHEbzl78aoYTT/FsaFg==
-X-Received: by 2002:adf:dfd1:: with SMTP id q17mr7150347wrn.27.1547078506825;
-        Wed, 09 Jan 2019 16:01:46 -0800 (PST)
-Received: from localhost ([49.248.171.190])
-        by smtp.gmail.com with ESMTPSA id y13sm5251318wme.2.2019.01.09.16.01.44
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 09 Jan 2019 16:01:46 -0800 (PST)
-From:   Amit Kucheria <amit.kucheria@linaro.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     linux-arm-msm@vger.kernel.org, bjorn.andersson@linaro.org,
-        viresh.kumar@linaro.org, edubezval@gmail.com,
-        andy.gross@linaro.org, tdas@codeaurora.org, swboyd@chromium.org,
-        dianders@chromium.org, mka@chromium.org,
-        David Brown <david.brown@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
-        DEVICE TREE BINDINGS)
-Subject: [PATCH v1 7/7] arm64: dts: sdm845: wireup the thermal trip points to cpufreq
-Date:   Thu, 10 Jan 2019 05:30:56 +0530
-Message-Id: <6c5b26e65be18222587724e066fc2e39b9f60397.1547078153.git.amit.kucheria@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <cover.1547078153.git.amit.kucheria@linaro.org>
-References: <cover.1547078153.git.amit.kucheria@linaro.org>
-In-Reply-To: <cover.1547078153.git.amit.kucheria@linaro.org>
-References: <cover.1547078153.git.amit.kucheria@linaro.org>
+        Wed, 9 Jan 2019 19:11:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52344 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726286AbfAJALc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 19:11:32 -0500
+Received: from devbox (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 707DF2173B;
+        Thu, 10 Jan 2019 00:11:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547079090;
+        bh=h9FpAV7ViS0x77yN0brgUg1SlZ1S+BVD3oJKuVUo6qY=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=uF5ROo5CAjeOfV2heuc2LntifdxgtrpMa0MogXYqMU13mCCVcKJkzHLvwiw5pt2Vm
+         SbIosPXeOlC3Wc8rQMb5aMeLJ+ThhFt0IB5NURIdBo91N4F8lYRiR0iGduU204fKLV
+         0c2sB4UjEd/2Qjj4uTobcZ0gnz23ONxWt4wrX/Hg=
+Date:   Thu, 10 Jan 2019 09:11:27 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Ingo Molnar <mingo@redhat.com>, peterz@infradead.org,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Andrea Righi <righi.andrea@gmail.com>, stable@vger.kernel.org
+Subject: Re: [PATCH v2 3/3] x86/kprobes: Fix to avoid kretprobe recursion
+Message-Id: <20190110091127.17e902c318578b192051eeb0@kernel.org>
+In-Reply-To: <20190109110816.72a7ae85@gandalf.local.home>
+References: <154692263564.1133.17363562046971295490.stgit@devbox>
+        <154692272225.1133.799265848498671353.stgit@devbox>
+        <20190109110816.72a7ae85@gandalf.local.home>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since the big and little cpus are in the same frequency domain, use all
-of them for mitigation in the cooling-map. At the lower trip points we
-restrict ourselves to throttling only a few OPPs. At higher trip
-temperatures, allow ourselves to be throttled to any extent.
+On Wed, 9 Jan 2019 11:08:16 -0500
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
----
- arch/arm64/boot/dts/qcom/sdm845.dtsi | 145 +++++++++++++++++++++++++++
- 1 file changed, 145 insertions(+)
+> On Tue,  8 Jan 2019 13:45:22 +0900
+> Masami Hiramatsu <mhiramat@kernel.org> wrote:
+> 
+> > Fix to avoid kretprobe recursion loop by setting a dummy
+> > kprobes to current_kprobe per-cpu variable.
+> > 
+> > This bug has been introduced with the asm-coded trampoline
+> > code, since previously it used another kprobe for hooking
+> > the function return placeholder (which only has a nop) and
+> > trampoline handler was called from that kprobe.
+> > 
+> > This revives the old lost kprobe again.
+> > 
+> > With this fix, we don't see deadlock anymore.
+> > 
+> > # echo "r:event_1 __fdget" >> kprobe_events
+> > # echo "r:event_2 _raw_spin_lock_irqsave" >> kprobe_events
+> > # echo 1 > events/kprobes/enable
+> > 
+> > And you can see that all inner-called kretprobe are skipped.
+> > 
+> > # cat kprobe_profile
+> >   event_1                                  235               0
+> >   event_2                                19375           19612
+> > 
+> > The 1st column is recorded count and the 2nd is missed count.
+> > Above shows (event_1 rec) + (event_2 rec) ~= (event_2 missed)
+> 
+> I don't quite understand the above. Is the miss count because we missed
+> event_2 events for both event_1 and event_2?
+> 
+>  trace raw_spin_lock()
+>     handler calls raw_spin_lock()
+>           trace raw_spin_lock() [ skip ]
 
-diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-index 29e823b0caf4..cd6402a9aa64 100644
---- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-@@ -13,6 +13,7 @@
- #include <dt-bindings/reset/qcom,sdm845-aoss.h>
- #include <dt-bindings/soc/qcom,rpmh-rsc.h>
- #include <dt-bindings/clock/qcom,gcc-sdm845.h>
-+#include <dt-bindings/thermal/thermal.h>
- 
- / {
- 	interrupt-parent = <&intc>;
-@@ -99,6 +100,7 @@
- 			compatible = "qcom,kryo385";
- 			reg = <0x0 0x0>;
- 			enable-method = "psci";
-+			#cooling-cells = <2>;
- 			next-level-cache = <&L2_0>;
- 			L2_0: l2-cache {
- 				compatible = "cache";
-@@ -114,6 +116,7 @@
- 			compatible = "qcom,kryo385";
- 			reg = <0x0 0x100>;
- 			enable-method = "psci";
-+			#cooling-cells = <2>;
- 			next-level-cache = <&L2_100>;
- 			L2_100: l2-cache {
- 				compatible = "cache";
-@@ -126,6 +129,7 @@
- 			compatible = "qcom,kryo385";
- 			reg = <0x0 0x200>;
- 			enable-method = "psci";
-+			#cooling-cells = <2>;
- 			next-level-cache = <&L2_200>;
- 			L2_200: l2-cache {
- 				compatible = "cache";
-@@ -138,6 +142,7 @@
- 			compatible = "qcom,kryo385";
- 			reg = <0x0 0x300>;
- 			enable-method = "psci";
-+			#cooling-cells = <2>;
- 			next-level-cache = <&L2_300>;
- 			L2_300: l2-cache {
- 				compatible = "cache";
-@@ -150,6 +155,7 @@
- 			compatible = "qcom,kryo385";
- 			reg = <0x0 0x400>;
- 			enable-method = "psci";
-+			#cooling-cells = <2>;
- 			next-level-cache = <&L2_400>;
- 			L2_400: l2-cache {
- 				compatible = "cache";
-@@ -162,6 +168,7 @@
- 			compatible = "qcom,kryo385";
- 			reg = <0x0 0x500>;
- 			enable-method = "psci";
-+			#cooling-cells = <2>;
- 			next-level-cache = <&L2_500>;
- 			L2_500: l2-cache {
- 				compatible = "cache";
-@@ -174,6 +181,7 @@
- 			compatible = "qcom,kryo385";
- 			reg = <0x0 0x600>;
- 			enable-method = "psci";
-+			#cooling-cells = <2>;
- 			next-level-cache = <&L2_600>;
- 			L2_600: l2-cache {
- 				compatible = "cache";
-@@ -186,6 +194,7 @@
- 			compatible = "qcom,kryo385";
- 			reg = <0x0 0x700>;
- 			enable-method = "psci";
-+			#cooling-cells = <2>;
- 			next-level-cache = <&L2_700>;
- 			L2_700: l2-cache {
- 				compatible = "cache";
-@@ -1703,6 +1712,23 @@
- 					type = "critical";
- 				};
- 			};
-+
-+			cooling-maps {
-+				map0 {
-+					trip = <&cpu_alert0>;
-+					cooling-device = <&CPU0 THERMAL_NO_LIMIT 4>,
-+							 <&CPU1 THERMAL_NO_LIMIT 4>,
-+							 <&CPU2 THERMAL_NO_LIMIT 4>,
-+							 <&CPU3 THERMAL_NO_LIMIT 4>;
-+				};
-+				map1 {
-+					trip = <&cpu_crit0>;
-+					cooling-device = <&CPU0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+							 <&CPU1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+							 <&CPU2 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+							 <&CPU3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
-+				};
-+			};
- 		};
- 
- 		cpu1-thermal {
-@@ -1724,6 +1750,23 @@
- 					type = "critical";
- 				};
- 			};
-+
-+			cooling-maps {
-+				map0 {
-+					trip = <&cpu_alert1>;
-+					cooling-device = <&CPU0 THERMAL_NO_LIMIT 4>,
-+							 <&CPU1 THERMAL_NO_LIMIT 4>,
-+							 <&CPU2 THERMAL_NO_LIMIT 4>,
-+							 <&CPU3 THERMAL_NO_LIMIT 4>;
-+				};
-+				map1 {
-+					trip = <&cpu_crit1>;
-+					cooling-device = <&CPU0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+							 <&CPU1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+							 <&CPU2 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+							 <&CPU3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
-+				};
-+			};
- 		};
- 
- 		cpu2-thermal {
-@@ -1745,6 +1788,23 @@
- 					type = "critical";
- 				};
- 			};
-+
-+			cooling-maps {
-+				map0 {
-+					trip = <&cpu_alert2>;
-+					cooling-device = <&CPU0 THERMAL_NO_LIMIT 4>,
-+							 <&CPU1 THERMAL_NO_LIMIT 4>,
-+							 <&CPU2 THERMAL_NO_LIMIT 4>,
-+							 <&CPU3 THERMAL_NO_LIMIT 4>;
-+				};
-+				map1 {
-+					trip = <&cpu_crit2>;
-+					cooling-device = <&CPU0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+							 <&CPU1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+							 <&CPU2 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+							 <&CPU3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
-+				};
-+			};
- 		};
- 
- 		cpu3-thermal {
-@@ -1766,6 +1826,23 @@
- 					type = "critical";
- 				};
- 			};
-+
-+			cooling-maps {
-+				map0 {
-+					trip = <&cpu_alert3>;
-+					cooling-device = <&CPU0 THERMAL_NO_LIMIT 4>,
-+							 <&CPU1 THERMAL_NO_LIMIT 4>,
-+							 <&CPU2 THERMAL_NO_LIMIT 4>,
-+							 <&CPU3 THERMAL_NO_LIMIT 4>;
-+				};
-+				map1 {
-+					trip = <&cpu_crit3>;
-+					cooling-device = <&CPU0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+							 <&CPU1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+							 <&CPU2 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+							 <&CPU3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
-+				};
-+			};
- 		};
- 
- 		cpu4-thermal {
-@@ -1787,6 +1864,23 @@
- 					type = "critical";
- 				};
- 			};
-+
-+			cooling-maps {
-+				map0 {
-+					trip = <&cpu_alert4>;
-+					cooling-device = <&CPU4 THERMAL_NO_LIMIT 4>,
-+							 <&CPU5 THERMAL_NO_LIMIT 4>,
-+							 <&CPU6 THERMAL_NO_LIMIT 4>,
-+							 <&CPU7 THERMAL_NO_LIMIT 4>;
-+				};
-+				map1 {
-+					trip = <&cpu_crit4>;
-+					cooling-device = <&CPU4 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+							 <&CPU5 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+							 <&CPU6 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+							 <&CPU7 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
-+				};
-+			};
- 		};
- 
- 		cpu5-thermal {
-@@ -1808,6 +1902,23 @@
- 					type = "critical";
- 				};
- 			};
-+
-+			cooling-maps {
-+				map0 {
-+					trip = <&cpu_alert5>;
-+					cooling-device = <&CPU4 THERMAL_NO_LIMIT 4>,
-+							 <&CPU5 THERMAL_NO_LIMIT 4>,
-+							 <&CPU6 THERMAL_NO_LIMIT 4>,
-+							 <&CPU7 THERMAL_NO_LIMIT 4>;
-+				};
-+				map1 {
-+					trip = <&cpu_crit5>;
-+					cooling-device = <&CPU4 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+							 <&CPU5 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+							 <&CPU6 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+							 <&CPU7 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
-+				};
-+			};
- 		};
- 
- 		cpu6-thermal {
-@@ -1829,6 +1940,23 @@
- 					type = "critical";
- 				};
- 			};
-+
-+			cooling-maps {
-+				map0 {
-+					trip = <&cpu_alert6>;
-+					cooling-device = <&CPU4 THERMAL_NO_LIMIT 4>,
-+							 <&CPU5 THERMAL_NO_LIMIT 4>,
-+							 <&CPU6 THERMAL_NO_LIMIT 4>,
-+							 <&CPU7 THERMAL_NO_LIMIT 4>;
-+				};
-+				map1 {
-+					trip = <&cpu_crit6>;
-+					cooling-device = <&CPU4 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+							 <&CPU5 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+							 <&CPU6 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+							 <&CPU7 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
-+				};
-+			};
- 		};
- 
- 		cpu7-thermal {
-@@ -1850,6 +1978,23 @@
- 					type = "critical";
- 				};
- 			};
-+
-+			cooling-maps {
-+				map0 {
-+					trip = <&cpu_alert7>;
-+					cooling-device = <&CPU4 THERMAL_NO_LIMIT 4>,
-+							 <&CPU5 THERMAL_NO_LIMIT 4>,
-+							 <&CPU6 THERMAL_NO_LIMIT 4>,
-+							 <&CPU7 THERMAL_NO_LIMIT 4>;
-+				};
-+				map1 {
-+					trip = <&cpu_crit7>;
-+					cooling-device = <&CPU4 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+							 <&CPU5 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+							 <&CPU6 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+							 <&CPU7 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
-+				};
-+			};
- 		};
- 	};
- };
+Yes, both events(kretprobe) eventually hits event_2 in trampoline_handler()'s
+spin_lock_irqsave().
+
+> 
+> I'm also guessing that the 2 extra (19612 - (235 + 19375) = 2) are
+> possibly due to the displaying being racy?
+
+Yes, it can be racy.
+
+Thank you,
+
+> 
+> > 
+> > Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+> > Reported-by: Andrea Righi <righi.andrea@gmail.com>
+> > Fixes: c9becf58d935 ("[PATCH] kretprobe: kretprobe-booster")
+> > Cc: stable@vger.kernel.org
+> > ---
+> >  arch/x86/kernel/kprobes/core.c |   22 ++++++++++++++++++++--
+> >  1 file changed, 20 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/arch/x86/kernel/kprobes/core.c b/arch/x86/kernel/kprobes/core.c
+> > index 69b6400d1ce2..f4b954ff5b89 100644
+> > --- a/arch/x86/kernel/kprobes/core.c
+> > +++ b/arch/x86/kernel/kprobes/core.c
+> > @@ -749,11 +749,16 @@ asm(
+> >  NOKPROBE_SYMBOL(kretprobe_trampoline);
+> >  STACK_FRAME_NON_STANDARD(kretprobe_trampoline);
+> >  
+> > +static struct kprobe kretprobe_kprobe = {
+> > +	.addr = (void *)kretprobe_trampoline,
+> > +};
+> > +
+> >  /*
+> >   * Called from kretprobe_trampoline
+> >   */
+> >  static __used void *trampoline_handler(struct pt_regs *regs)
+> >  {
+> > +	struct kprobe_ctlblk *kcb;
+> >  	struct kretprobe_instance *ri = NULL;
+> >  	struct hlist_head *head, empty_rp;
+> >  	struct hlist_node *tmp;
+> > @@ -763,6 +768,17 @@ static __used void *trampoline_handler(struct pt_regs *regs)
+> >  	void *frame_pointer;
+> >  	bool skipped = false;
+> >  
+> > +	preempt_disable();
+> > +
+> > +	/*
+> > +	 * Set a dummy kprobe for avoiding kretprobe recursion.
+> > +	 * Since kretprobe never run in kprobe handler, kprobe must not
+> > +	 * be running at this point.
+> > +	 */
+> > +	kcb = get_kprobe_ctlblk();
+> > +	__this_cpu_write(current_kprobe, &kretprobe_kprobe);
+> 
+> If an interrupt comes in here, is this still safe, if the interrupt
+> handler has a kretprobe too?
+> 
+> -- Steve
+> 
+> > +	kcb->kprobe_status = KPROBE_HIT_ACTIVE;
+> > +
+> >  	INIT_HLIST_HEAD(&empty_rp);
+> >  	kretprobe_hash_lock(current, &head, &flags);
+> >  	/* fixup registers */
+> > @@ -838,10 +854,9 @@ static __used void *trampoline_handler(struct pt_regs *regs)
+> >  		orig_ret_address = (unsigned long)ri->ret_addr;
+> >  		if (ri->rp && ri->rp->handler) {
+> >  			__this_cpu_write(current_kprobe, &ri->rp->kp);
+> > -			get_kprobe_ctlblk()->kprobe_status = KPROBE_HIT_ACTIVE;
+> >  			ri->ret_addr = correct_ret_addr;
+> >  			ri->rp->handler(ri, regs);
+> > -			__this_cpu_write(current_kprobe, NULL);
+> > +			__this_cpu_write(current_kprobe, &kretprobe_kprobe);
+> >  		}
+> >  
+> >  		recycle_rp_inst(ri, &empty_rp);
+> > @@ -857,6 +872,9 @@ static __used void *trampoline_handler(struct pt_regs *regs)
+> >  
+> >  	kretprobe_hash_unlock(current, &flags);
+> >  
+> > +	__this_cpu_write(current_kprobe, NULL);
+> > +	preempt_enable();
+> > +
+> >  	hlist_for_each_entry_safe(ri, tmp, &empty_rp, hlist) {
+> >  		hlist_del(&ri->hlist);
+> >  		kfree(ri);
+> 
+
+
 -- 
-2.17.1
-
+Masami Hiramatsu <mhiramat@kernel.org>
