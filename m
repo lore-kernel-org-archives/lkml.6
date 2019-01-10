@@ -2,115 +2,93 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A815BC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 11:37:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48E09C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 11:38:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 76A08206B6
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 11:37:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 15C35206B6
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 11:38:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="LWJZA9xj";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="TW6kTg1p"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728499AbfAJLh2 (ORCPT
+        id S1728525AbfAJLiK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 06:37:28 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:41225 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727938AbfAJLh2 (ORCPT
+        Thu, 10 Jan 2019 06:38:10 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:51646 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727938AbfAJLiK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 06:37:28 -0500
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1ghYeM-0006Ze-16; Thu, 10 Jan 2019 11:37:26 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] selftests: cpu-hotplug: fix case where CPUs offline > CPUs present
-Date:   Thu, 10 Jan 2019 11:37:25 +0000
-Message-Id: <20190110113725.12369-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.19.1
-MIME-Version: 1.0
+        Thu, 10 Jan 2019 06:38:10 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id C3D206050D; Thu, 10 Jan 2019 11:38:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1547120289;
+        bh=vY9fpVJ3jCUzeRDbQwY56b+r8Z6FNX2cll6Lo2nDneo=;
+        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+        b=LWJZA9xjbXwM8nbtdArdJFn45MLL5wr6sAlJIE/Z6k03mO2arCe6mEav6vTuZITZ9
+         r9yyvr5+IAgV7V5e58g1b1oxyEhkMWmqmT9ZrNI54mnHPYMnc+RX6ejH0M31aKrGvx
+         vsPWJbokxCdH7JOaQQ+bQCvk2XYV24sDUrvqEvxM=
+Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 17F6E601D1;
+        Thu, 10 Jan 2019 11:38:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1547120289;
+        bh=vY9fpVJ3jCUzeRDbQwY56b+r8Z6FNX2cll6Lo2nDneo=;
+        h=Subject:From:In-Reply-To:References:To:Cc:From;
+        b=TW6kTg1pOzUomFsBI2lrZE6fTsRagGI+dySOUO987Oc1/BM8Ym9DYS5clpZg6e8tI
+         5D4w1GlHASKoM9BTKlIr85/ASrZzwnHlFZqTohNsB0S1W4n6xhnbiLe032vMI1fgvd
+         X1FLJLtB2ueI85ZIpSJIJrdOItT0pbhX+OpUjsYo=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 17F6E601D1
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] brcmfmac: add a check for the status of usb_register
+From:   Kalle Valo <kvalo@codeaurora.org>
+In-Reply-To: <20181226012227.70524-1-kjlu@umn.edu>
+References: <20181226012227.70524-1-kjlu@umn.edu>
+To:     Kangjie Lu <kjlu@umn.edu>
+Cc:     kjlu@umn.edu, pakki001@umn.edu,
+        Arend van Spriel <arend.vanspriel@broadcom.com>,
+        Franky Lin <franky.lin@broadcom.com>,
+        Hante Meuleman <hante.meuleman@broadcom.com>,
+        Chi-Hsien Lin <chi-hsien.lin@cypress.com>,
+        Wright Feng <wright.feng@cypress.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Pieter-Paul Giesberts <pieter-paul.giesberts@broadcom.com>,
+        linux-wireless@vger.kernel.org,
+        brcm80211-dev-list.pdl@broadcom.com,
+        brcm80211-dev-list@cypress.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
+Message-Id: <20190110113809.C3D206050D@smtp.codeaurora.org>
+Date:   Thu, 10 Jan 2019 11:38:09 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Kangjie Lu <kjlu@umn.edu> wrote:
 
-The cpu-hotplug test assumes that we can offline the maximum CPU as
-described by /sys/devices/system/cpu/offline.  However, in the case
-where the number of CPUs exceeds like kernel configuration then
-the offline count can be greater than the present count and we end
-up trying to test the offlining of a CPU that is not available to
-offline.  Fix this by testing the maximum present CPU instead.
+> usb_register() may fail, so let's check its status and issue an error
+> message if it fails.
+> 
+> Signed-off-by: Kangjie Lu <kjlu@umn.edu>
 
-Also, the test currently offlines the CPU and does not online it,
-so fix this by onlining the CPU after the test.
+Patch applied to wireless-drivers-next.git, thanks.
 
-Fixes: d89dffa976bc ("fault-injection: add selftests for cpu and memory hotplug")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- .../selftests/cpu-hotplug/cpu-on-off-test.sh      | 15 ++++++++++++---
- 1 file changed, 12 insertions(+), 3 deletions(-)
+42daad3343be brcmfmac: add a check for the status of usb_register
 
-diff --git a/tools/testing/selftests/cpu-hotplug/cpu-on-off-test.sh b/tools/testing/selftests/cpu-hotplug/cpu-on-off-test.sh
-index bab13dd025a6..8670fb38a40e 100755
---- a/tools/testing/selftests/cpu-hotplug/cpu-on-off-test.sh
-+++ b/tools/testing/selftests/cpu-hotplug/cpu-on-off-test.sh
-@@ -31,12 +31,17 @@ prerequisite()
- 	echo "CPU online/offline summary:"
- 	online_cpus=`cat $SYSFS/devices/system/cpu/online`
- 	online_max=${online_cpus##*-}
-+	echo "online_cpus = $online_cpus online_max = $online_max"
- 
- 	if [[ "$online_cpus" = "$online_max" ]]; then
- 		echo "$msg: since there is only one cpu: $online_cpus"
- 		exit $ksft_skip
- 	fi
- 
-+	present_cpus=`cat $SYSFS/devices/system/cpu/present`
-+	present_max=${present_cpus##*-}
-+	echo "present_cpus = $present_cpus present_max = $present_max"
-+
- 	echo -e "\t Cpus in online state: $online_cpus"
- 
- 	offline_cpus=`cat $SYSFS/devices/system/cpu/offline`
-@@ -46,6 +51,7 @@ prerequisite()
- 		offline_max=${offline_cpus##*-}
- 	fi
- 	echo -e "\t Cpus in offline state: $offline_cpus"
-+
- }
- 
- #
-@@ -151,6 +157,8 @@ online_cpus=0
- online_max=0
- offline_cpus=0
- offline_max=0
-+present_cpus=0
-+present_max=0
- 
- while getopts e:ahp: opt; do
- 	case $opt in
-@@ -190,9 +198,10 @@ if [ $allcpus -eq 0 ]; then
- 	online_cpu_expect_success $online_max
- 
- 	if [[ $offline_cpus -gt 0 ]]; then
--		echo -e "\t offline to online to offline: cpu $offline_max"
--		online_cpu_expect_success $offline_max
--		offline_cpu_expect_success $offline_max
-+		echo -e "\t offline to online to offline: cpu $present_max"
-+		online_cpu_expect_success $present_max
-+		offline_cpu_expect_success $present_max
-+		online_cpu $present_max
- 	fi
- 	exit 0
- else
 -- 
-2.19.1
+https://patchwork.kernel.org/patch/10742769/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
