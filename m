@@ -2,330 +2,109 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67478C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 10:34:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC258C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 10:34:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 37494214C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 10:34:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 546202173B
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 10:34:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b="dNid3tld"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728247AbfAJKeD (ORCPT
+        id S1728278AbfAJKeq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 05:34:03 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:28554 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728020AbfAJKeC (ORCPT
+        Thu, 10 Jan 2019 05:34:46 -0500
+Received: from mail-lf1-f54.google.com ([209.85.167.54]:32924 "EHLO
+        mail-lf1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728020AbfAJKep (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 05:34:02 -0500
-X-UUID: 1290c1a8242e4a2f9b4b354ceb789b37-20190110
-X-UUID: 1290c1a8242e4a2f9b4b354ceb789b37-20190110
-Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw02.mediatek.com
-        (envelope-from <long.cheng@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 176831677; Thu, 10 Jan 2019 18:33:55 +0800
-Received: from MTKCAS32.mediatek.inc (172.27.4.184) by mtkmbs01n1.mediatek.inc
- (172.21.101.68) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 10 Jan
- 2019 18:33:53 +0800
-Received: from [10.17.3.153] (10.17.3.153) by MTKCAS32.mediatek.inc
- (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Thu, 10 Jan 2019 18:33:51 +0800
-Message-ID: <1547116431.3831.43.camel@mhfsdcap03>
-Subject: Re: [PATCH v9 1/2] dmaengine: 8250_mtk_dma: add MediaTek uart DMA
- support
-From:   Long Cheng <long.cheng@mediatek.com>
-To:     Vinod Koul <vkoul@kernel.org>
-CC:     Randy Dunlap <rdunlap@infradead.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ryder Lee <ryder.lee@mediatek.com>,
-        Sean Wang <sean.wang@kernel.org>,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Sean Wang <sean.wang@mediatek.com>,
-        <dmaengine@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-serial@vger.kernel.org>,
-        <srv_heupstream@mediatek.com>,
-        Yingjoe Chen <yingjoe.chen@mediatek.com>,
-        YT Shen <yt.shen@mediatek.com>,
-        Zhenbao Liu <zhenbao.liu@mediatek.com>
-Date:   Thu, 10 Jan 2019 18:33:51 +0800
-In-Reply-To: <20190104171953.GQ13372@vkoul-mobl.Dlink>
-References: <1546395178-8880-1-git-send-email-long.cheng@mediatek.com>
-         <1546395178-8880-2-git-send-email-long.cheng@mediatek.com>
-         <20190104171953.GQ13372@vkoul-mobl.Dlink>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        Thu, 10 Jan 2019 05:34:45 -0500
+Received: by mail-lf1-f54.google.com with SMTP id i26so7953301lfc.0
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 02:34:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rasmusvillemoes.dk; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=OqOhCieBDsuj4Y0QmowZiCSjRoE3NQCiR1vLTa8e+bc=;
+        b=dNid3tldK02Gr+68KRqDPF6DnySSSBKEEZ6fU7FR6gKZeQdpyyEYEPbOUhXNg9m0y9
+         ziofpKxqVHok617LaMu86rQlZJUSf34/wMNE7rz6NzKd6KqSjgSKBQu7GbfXX/KAoCNv
+         aLBAz8cdIIcQZf2xgu87OptjG5Pe8SiqeK1JI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=OqOhCieBDsuj4Y0QmowZiCSjRoE3NQCiR1vLTa8e+bc=;
+        b=b42BLBxAnTeL+dJeTRxNNQBKhSPRdpkoFuBdzoXNdGFoJkADh/ZU6pV4Yvl/A8vXfa
+         t60cgBquItcrzg44KqkqTxhBrVOC4SViGWRs2mnNm4iuEjVq4dMvyZ1/Hu0waKve/Slr
+         t7Ig76C7WS1pKvCJ8JbMPEMmihFCtNU0Owxtfz8Ldh5EQrYPpJvxKBzX7vRkqD06nW5S
+         Brwcf2o+VblGsiZPa3zdPyp166ebCSR0Ne58o+wgw7Wp3/9+eLq0vCX3WWSJoU9IJeBf
+         kEEFwsdewTTxPO1KhT37XuFvnzHHZ7+9EcKwe8cR3foyTtdmMy1H7fGoa00h4SHRQyhL
+         SIPw==
+X-Gm-Message-State: AJcUukc33J6NWGAzK2oDJ47CZQXTmlI4J6B+Clgu52RTecJnlKDbFE4i
+        1fqtqaP2f3Yj8AjzkkgdT3ynnw==
+X-Google-Smtp-Source: ALg8bN4pPvg+jRWYmdxUi4X2rUHwnvo9VZgn1cTsGnfy2GsuyTtB+HtgmJeruf1ABGG03s4Gw5BM+w==
+X-Received: by 2002:ac2:51af:: with SMTP id f15mr5255864lfk.44.1547116483520;
+        Thu, 10 Jan 2019 02:34:43 -0800 (PST)
+Received: from [172.16.11.26] ([81.216.59.226])
+        by smtp.gmail.com with ESMTPSA id g85-v6sm1799326lji.17.2019.01.10.02.34.42
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 10 Jan 2019 02:34:42 -0800 (PST)
+Subject: Re: [RFC] Use plan9 C extensions
+To:     Nick Desaulniers <ndesaulniers@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>
+References: <20190109203119.GR6310@bombadil.infradead.org>
+ <CAHk-=wjjkLv-8oAZPLf=pp4z_-VFpWJw+wTJYevqq0bWWY=L9g@mail.gmail.com>
+ <CAKwvOdmOt7xhnLYmNsgJbD=6aM2BKjdqUyeARxinsT4wpSVaew@mail.gmail.com>
+From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Message-ID: <75e59b18-50f1-3300-a574-72515bda46ab@rasmusvillemoes.dk>
+Date:   Thu, 10 Jan 2019 11:34:37 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-X-MTK:  N
+In-Reply-To: <CAKwvOdmOt7xhnLYmNsgJbD=6aM2BKjdqUyeARxinsT4wpSVaew@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2019-01-04 at 22:49 +0530, Vinod Koul wrote:
-> On 02-01-19, 10:12, Long Cheng wrote:
-> > In DMA engine framework, add 8250 uart dma to support MediaTek uart.
-> > If MediaTek uart enabled(SERIAL_8250_MT6577), and want to improve
-> > the performance, can enable the function.
-> 
-> Is the DMA controller UART specific, can it work with other controllers
-> as well, if so you should get rid of uart name in patch
-> 
+On 10/01/2019 00.55, Nick Desaulniers wrote:
 
-I don't know that it can work or not on other controller. but it's for
-MediaTek SOC
+> I agree that something like builtin_types_compatible_p() in a macro
+> could help make these functions more "generic" in the sense of being
+> able to accept either a `struct xarray*` or `struct xarray_cyclic*`.
 
-> > +#define MTK_UART_APDMA_CHANNELS		(CONFIG_SERIAL_8250_NR_UARTS * 2)
-> 
-> Why are the channels not coming from DT?
-> 
+An alternative to implementing all the generic functions as macros is
+transparent_union:
 
-i will using dma-requests install of it.
+https://godbolt.org/z/TK_SJD
 
-> > +
-> > +#define VFF_EN_B		BIT(0)
-> > +#define VFF_STOP_B		BIT(0)
-> > +#define VFF_FLUSH_B		BIT(0)
-> > +#define VFF_4G_SUPPORT_B	BIT(0)
-> > +#define VFF_RX_INT_EN0_B	BIT(0)	/*rx valid size >=  vff thre*/
-> > +#define VFF_RX_INT_EN1_B	BIT(1)
-> > +#define VFF_TX_INT_EN_B		BIT(0)	/*tx left size >= vff thre*/
-> 
-> space around /* space */ also run checkpatch to check for style errors
-> 
+If there is an interface that takes a "const xarray *" one would define
+another union type
 
-ok.
+union __transparent_union const_xarray_any {
+  const struct xarray *xa;
+  const struct xarray_cyclic *xac;
+};
 
-> > +static void mtk_uart_apdma_start_tx(struct mtk_chan *c)
-> > +{
-> > +	unsigned int len, send, left, wpt, d_wpt, tmp;
-> > +	int ret;
-> > +
-> > +	left = mtk_uart_apdma_read(c, VFF_LEFT_SIZE);
-> > +	if (!left) {
-> > +		mtk_uart_apdma_write(c, VFF_INT_EN, VFF_TX_INT_EN_B);
-> > +		return;
-> > +	}
-> > +
-> > +	/* Wait 1sec for flush,  can't sleep*/
-> > +	ret = readx_poll_timeout(readl, c->base + VFF_FLUSH, tmp,
-> > +			tmp != VFF_FLUSH_B, 0, 1000000);
-> > +	if (ret)
-> > +		dev_warn(c->vc.chan.device->dev, "tx: fail, debug=0x%x\n",
-> > +			mtk_uart_apdma_read(c, VFF_DEBUG_STATUS));
-> > +
-> > +	send = min_t(unsigned int, left, c->desc->avail_len);
-> > +	wpt = mtk_uart_apdma_read(c, VFF_WPT);
-> > +	len = mtk_uart_apdma_read(c, VFF_LEN);
-> > +
-> > +	d_wpt = wpt + send;
-> > +	if ((d_wpt & VFF_RING_SIZE) >= len) {
-> > +		d_wpt = d_wpt - len;
-> > +		d_wpt = d_wpt ^ VFF_RING_WRAP;
-> > +	}
-> > +	mtk_uart_apdma_write(c, VFF_WPT, d_wpt);
-> > +
-> > +	c->desc->avail_len -= send;
-> > +
-> > +	mtk_uart_apdma_write(c, VFF_INT_EN, VFF_TX_INT_EN_B);
-> > +	if (mtk_uart_apdma_read(c, VFF_FLUSH) == 0U)
-> > +		mtk_uart_apdma_write(c, VFF_FLUSH, VFF_FLUSH_B);
-> > +}
-> > +
-> > +static void mtk_uart_apdma_start_rx(struct mtk_chan *c)
-> > +{
-> > +	struct mtk_uart_apdma_desc *d = c->desc;
-> > +	unsigned int len, wg, rg, cnt;
-> > +
-> > +	if ((mtk_uart_apdma_read(c, VFF_VALID_SIZE) == 0U) ||
-> > +		!d || !vchan_next_desc(&c->vc))
-> > +		return;
-> > +
-> > +	len = mtk_uart_apdma_read(c, VFF_LEN);
-> > +	rg = mtk_uart_apdma_read(c, VFF_RPT);
-> > +	wg = mtk_uart_apdma_read(c, VFF_WPT);
-> > +	if ((rg ^ wg) & VFF_RING_WRAP)
-> > +		cnt = (wg & VFF_RING_SIZE) + len - (rg & VFF_RING_SIZE);
-> > +	else
-> > +		cnt = (wg & VFF_RING_SIZE) - (rg & VFF_RING_SIZE);
-> > +
-> > +	c->rx_status = cnt;
-> > +	mtk_uart_apdma_write(c, VFF_RPT, wg);
-> > +
-> > +	list_del(&d->vd.node);
-> > +	vchan_cookie_complete(&d->vd);
-> > +}
-> 
-> this looks odd, why do you have different rx and tx start routines?
-> 
+The obvious implementation using _Generic fails since all expressions
+must be valid:
 
-Would you like explain it in more detail? thanks.
-In tx function, will wait the last data flush done. and the count the
-size that send.
-In Rx function, will count the size that receive.
-Any way, in rx / tx, need andle WPT or RPT.
+https://godbolt.org/z/X0bvwO
 
-> > +static int mtk_uart_apdma_alloc_chan_resources(struct dma_chan *chan)
-> > +{
-> > +	struct mtk_uart_apdmadev *mtkd = to_mtk_uart_apdma_dev(chan->device);
-> > +	struct mtk_chan *c = to_mtk_uart_apdma_chan(chan);
-> > +	u32 tmp;
-> > +	int ret;
-> > +
-> > +	pm_runtime_get_sync(mtkd->ddev.dev);
-> > +
-> > +	mtk_uart_apdma_write(c, VFF_ADDR, 0);
-> > +	mtk_uart_apdma_write(c, VFF_THRE, 0);
-> > +	mtk_uart_apdma_write(c, VFF_LEN, 0);
-> > +	mtk_uart_apdma_write(c, VFF_RST, VFF_WARM_RST_B);
-> > +
-> > +	ret = readx_poll_timeout(readl, c->base + VFF_EN, tmp,
-> > +			tmp == 0, 10, 100);
-> > +	if (ret) {
-> > +		dev_err(chan->device->dev, "dma reset: fail, timeout\n");
-> > +		return ret;
-> > +	}
-> 
-> register read does reset?
-> 
+and _Generic is gcc >= 4.9 anyway. I think an implementation based on
+choose_expr/types_compatible might have the same problem, but maybe
+there's some clever way around that.
 
-'mtk_uart_apdma_write(c, VFF_RST, VFF_WARM_RST_B);' is reset. resd just
-poll reset done.
-
-> > +
-> > +	if (!c->requested) {
-> > +		c->requested = true;
-> > +		ret = request_irq(mtkd->dma_irq[chan->chan_id],
-> > +				  mtk_uart_apdma_irq_handler, IRQF_TRIGGER_NONE,
-> > +				  KBUILD_MODNAME, chan);
-> 
-> why is the irq not requested in driver probe?
-> 
-
-I have explained in below,
-http://lists.infradead.org/pipermail/linux-mediatek/2018-December/016418.html
-
-> > +static enum dma_status mtk_uart_apdma_tx_status(struct dma_chan *chan,
-> > +					 dma_cookie_t cookie,
-> > +					 struct dma_tx_state *txstate)
-> > +{
-> > +	struct mtk_chan *c = to_mtk_uart_apdma_chan(chan);
-> > +	enum dma_status ret;
-> > +	unsigned long flags;
-> > +
-> > +	if (!txstate)
-> > +		return DMA_ERROR;
-> > +
-> > +	ret = dma_cookie_status(chan, cookie, txstate);
-> > +	spin_lock_irqsave(&c->vc.lock, flags);
-> > +	if (ret == DMA_IN_PROGRESS) {
-> > +		c->rx_status = mtk_uart_apdma_read(c, VFF_RPT) & VFF_RING_SIZE;
-> > +		dma_set_residue(txstate, c->rx_status);
-> > +	} else if (ret == DMA_COMPLETE && c->cfg.direction == DMA_DEV_TO_MEM) {
-> 
-> why set reside when it is complete? also reside can be null, that should
-> be checked as well
-> 
-In different status, set different reside.
-
-> > +static struct dma_async_tx_descriptor *mtk_uart_apdma_prep_slave_sg
-> > +	(struct dma_chan *chan, struct scatterlist *sgl,
-> > +	unsigned int sglen, enum dma_transfer_direction dir,
-> > +	unsigned long tx_flags, void *context)
-> > +{
-> > +	struct mtk_chan *c = to_mtk_uart_apdma_chan(chan);
-> > +	struct mtk_uart_apdma_desc *d;
-> > +
-> > +	if ((dir != DMA_DEV_TO_MEM) &&
-> > +		(dir != DMA_MEM_TO_DEV)) {
-> > +		dev_err(chan->device->dev, "bad direction\n");
-> > +		return NULL;
-> > +	}
-> 
-> we have a macro for this
-
-Thanks for your suggestion. i will modify it.
-> 
-> > +
-> > +	/* Now allocate and setup the descriptor */
-> > +	d = kzalloc(sizeof(*d), GFP_ATOMIC);
-> > +	if (!d)
-> > +		return NULL;
-> > +
-> > +	/* sglen is 1 */
-> 
-> ?
-> 
-> > +static int mtk_uart_apdma_slave_config(struct dma_chan *chan,
-> > +				struct dma_slave_config *cfg)
-> > +{
-> > +	struct mtk_chan *c = to_mtk_uart_apdma_chan(chan);
-> > +	struct mtk_uart_apdmadev *mtkd =
-> > +				to_mtk_uart_apdma_dev(c->vc.chan.device);
-> > +
-> > +	c->cfg = *cfg;
-> > +
-> > +	if (cfg->direction == DMA_DEV_TO_MEM) {
-> 
-> fg->direction is deprecated, in fact I have removed all users recently,
-> please do not use this
-
-You will remove 'direction' in 'struct dma_slave_config'? if remove, how
-do confirm direction?
-
-> 
-> > +		unsigned int rx_len = cfg->src_addr_width * 1024;
-> > +
-> > +		mtk_uart_apdma_write(c, VFF_ADDR, cfg->src_addr);
-> > +		mtk_uart_apdma_write(c, VFF_LEN, rx_len);
-> > +		mtk_uart_apdma_write(c, VFF_THRE, VFF_RX_THRE(rx_len));
-> > +		mtk_uart_apdma_write(c, VFF_INT_EN,
-> > +				VFF_RX_INT_EN0_B | VFF_RX_INT_EN1_B);
-> > +		mtk_uart_apdma_write(c, VFF_RPT, 0);
-> > +		mtk_uart_apdma_write(c, VFF_INT_FLAG, VFF_RX_INT_FLAG_CLR_B);
-> > +		mtk_uart_apdma_write(c, VFF_EN, VFF_EN_B);
-> 
-> why are we writing this here, we are supposed to do that when txn
-> starts!
-> 
-
-also you can review the link
-http://lists.infradead.org/pipermail/linux-mediatek/2018-December/016418.html
-
-> > +static int mtk_uart_apdma_device_resume(struct dma_chan *chan)
-> > +{
-> > +	/* just for check caps pass */
-> > +	return 0;
-> > +}
-> 
-> if you do not support this please remove this!
-> 
-> > +static void mtk_uart_apdma_free(struct mtk_uart_apdmadev *mtkd)
-> > +{
-> > +	while (list_empty(&mtkd->ddev.channels) == 0) {
-> > +		struct mtk_chan *c = list_first_entry(&mtkd->ddev.channels,
-> > +			struct mtk_chan, vc.chan.device_node);
-> > +
-> > +		list_del(&c->vc.chan.device_node);
-> > +		tasklet_kill(&c->vc.task);
-> > +	}
-> > +}
-> > +
-> > +static const struct of_device_id mtk_uart_apdma_match[] = {
-> > +	{ .compatible = "mediatek,mt6577-uart-dma", },
-> 
-> where is the binding document for ediatek,mt6577-uart-dma ??
-> 
-
-http://lists.infradead.org/pipermail/linux-mediatek/2018-December/016154.html
-
-
+Rasmus
