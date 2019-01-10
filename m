@@ -2,116 +2,112 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57E80C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 16:49:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1154BC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 16:49:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 23A99206B7
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 16:49:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D46E8206B7
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 16:49:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547138957;
+	bh=xsnjqhuZJ9KzzhhGhsUf2Xx3JX61cB4FzMxRVnXI4Q0=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=siYw7Gjjh7BPbdD5szqRp3olmzLw4I9jz457TMtKwtonAmGtDJiSzUkzSia7Q0We2
+	 F7iBlD0EmclKQgnvA9eTD/arzVm0bYeWS1SusR1dfw6Pt3+KNyuWHv+XM2I00yooYI
+	 X6NBIL3sYM5h/pLqsDt57wda7kQjc//WcaUEFHQ0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728753AbfAJQtF (ORCPT
+        id S1728828AbfAJQtR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 11:49:05 -0500
-Received: from gateway36.websitewelcome.com ([192.185.192.36]:41504 "EHLO
-        gateway36.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728415AbfAJQtE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 11:49:04 -0500
-X-Greylist: delayed 1473 seconds by postgrey-1.27 at vger.kernel.org; Thu, 10 Jan 2019 11:49:04 EST
-Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
-        by gateway36.websitewelcome.com (Postfix) with ESMTP id 8D88B400C6176
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 09:36:40 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id hd8Ag8Y4R90onhd8BgcNrm; Thu, 10 Jan 2019 10:24:31 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.130.205] (port=50704 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1ghd8A-000D11-96; Thu, 10 Jan 2019 10:24:30 -0600
-Date:   Thu, 10 Jan 2019 10:24:29 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Jean Delvare <jdelvare@suse.com>,
-        Guenter Roeck <linux@roeck-us.net>
-Cc:     linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] hwmon: (adt7462) Mark expected switch fall-throughs
-Message-ID: <20190110162429.GA15908@embeddedor>
+        Thu, 10 Jan 2019 11:49:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41850 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728415AbfAJQtP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 11:49:15 -0500
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0B586214DA;
+        Thu, 10 Jan 2019 16:49:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547138954;
+        bh=xsnjqhuZJ9KzzhhGhsUf2Xx3JX61cB4FzMxRVnXI4Q0=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=BT6rikCiqNCJadXZUXNmRX9d9JHmB8U4rtNF35mSibn8cKNOMsQMHYN0lQiUGfWBQ
+         FpSK7g8ID/fIDKfTrlMgAVzMuZ+Z/cPhLGUBTd7PZS+Yhu5/WQBUocFYIWxWI1ayMT
+         lYtg3Ou8VzqG+PuAAadKI80t7HY3BDcPXqBuiMTs=
+Received: by mail-qt1-f174.google.com with SMTP id t13so13890930qtn.3;
+        Thu, 10 Jan 2019 08:49:14 -0800 (PST)
+X-Gm-Message-State: AJcUukewCI8IDg2P5mYrSP0ihGUpqrt7i33Po6R2NYGg/0iBBIjTrEY5
+        e1W226IOvU9AdFvPdjAI1XTQjGgYZBUODPtKrg==
+X-Google-Smtp-Source: ALg8bN4xldI/Miwo9HXUJPBpA/jHxyoBCYOMMVvm/RezheoPqqQ3nHkH/EOX8PO/n16APDq3CYwv0m1/66kREwBpyb8=
+X-Received: by 2002:a37:b646:: with SMTP id g67mr9959076qkf.326.1547138953214;
+ Thu, 10 Jan 2019 08:49:13 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.130.205
-X-Source-L: No
-X-Exim-ID: 1ghd8A-000D11-96
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.130.205]:50704
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 4
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+References: <20190110080821.30280-1-manivannan.sadhasivam@linaro.org>
+In-Reply-To: <20190110080821.30280-1-manivannan.sadhasivam@linaro.org>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Thu, 10 Jan 2019 10:49:01 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqJt3aKGBPCu49OxJx0_HDu5r1W9NhRfREowaBMQ047dSA@mail.gmail.com>
+Message-ID: <CAL_JsqJt3aKGBPCu49OxJx0_HDu5r1W9NhRfREowaBMQ047dSA@mail.gmail.com>
+Subject: Re: [PATCH 0/3] Add Oxalis board support
+To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc:     Shawn Guo <shawnguo@kernel.org>, Yang-Leo Li <leoyang.li@nxp.com>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>, devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        a.tropschug@ebs-systart.com, m.bittner@ebs-systart.com,
+        Amit Kucheria <amit.kucheria@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation to enabling -Wimplicit-fallthrough, mark switch cases
-where we are expecting to fall through.
+On Thu, Jan 10, 2019 at 2:08 AM Manivannan Sadhasivam
+<manivannan.sadhasivam@linaro.org> wrote:
+>
+> Hello,
+>
+> This patchset adds Oxalis board support. This board is one of the
+> 96Boards Enterprise Edition platform from EBS-SYSTART GmbH. Below are some
+> of the key features of this board:
+>
+> * SoC: NXP Layerscape LS1012A
+> * RAM: 1GB DDR3L
+> * PMU: NXP VR5100
+> * Storage: 64MByte SPI Flash for bootloader and RCW, MicroSD Card, SATA
+> * Connectivity: 2x Ethernet
+> * USB: 2x USB3.0
+>
+> More information about this board can be found in 96Boards product
+> page: https://www.96boards.org/product/oxalis/
+>
+> Ethernet and SPI flash are not supported yet!
+>
+> Thanks,
+> Mani
+>
+> Manivannan Sadhasivam (3):
+>   dt-bindings: vendor-prefixes: Add EBS-SYSTART GmbH Vendor Prefix
+>   dt-bindings: arm: fsl: Add devicetree binding for Oxalis
+>   arm64: dts: freescale: Add devicetree for Oxalis
+>
+>  Documentation/devicetree/bindings/arm/fsl.txt |  4 +
 
-Warning level 3 was used: -Wimplicit-fallthrough=3
+This is converted to json-schema now (in Shawn's tree), so you'll need
+to update to that.
 
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/hwmon/adt7462.c | 4 ++++
- 1 file changed, 4 insertions(+)
+Rob
 
-diff --git a/drivers/hwmon/adt7462.c b/drivers/hwmon/adt7462.c
-index b0211f731251..030f5d49c061 100644
---- a/drivers/hwmon/adt7462.c
-+++ b/drivers/hwmon/adt7462.c
-@@ -448,6 +448,7 @@ static const char *voltage_label(struct adt7462_data *data, int which)
- 		case 3:
- 			return "+1.5V";
- 		}
-+		/* fall through */
- 	case 2:
- 		if (!(data->pin_cfg[1] & ADT7462_PIN22_INPUT))
- 			return "+12V3";
-@@ -505,6 +506,7 @@ static const char *voltage_label(struct adt7462_data *data, int which)
- 		case 3:
- 			return "+1.5";
- 		}
-+		/* fall through */
- 	case 11:
- 		if (data->pin_cfg[3] >> ADT7462_PIN28_SHIFT ==
- 					ADT7462_PIN28_VOLT &&
-@@ -542,6 +544,7 @@ static int voltage_multiplier(struct adt7462_data *data, int which)
- 		case 3:
- 			return 7800;
- 		}
-+		/* fall through */
- 	case 2:
- 		if (!(data->pin_cfg[1] & ADT7462_PIN22_INPUT))
- 			return 62500;
-@@ -599,6 +602,7 @@ static int voltage_multiplier(struct adt7462_data *data, int which)
- 		case 3:
- 			return 7800;
- 		}
-+		/* fall through */
- 	case 11:
- 	case 12:
- 		if (data->pin_cfg[3] >> ADT7462_PIN28_SHIFT ==
--- 
-2.20.1
-
+>  .../devicetree/bindings/vendor-prefixes.txt   |  1 +
+>  arch/arm64/boot/dts/freescale/Makefile        |  1 +
+>  .../boot/dts/freescale/fsl-ls1012a-oxalis.dts | 96 +++++++++++++++++++
+>  4 files changed, 102 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/freescale/fsl-ls1012a-oxalis.dts
+>
+> --
+> 2.17.1
+>
