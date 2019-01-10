@@ -2,97 +2,111 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FB12C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 06:49:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68DC4C43612
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 06:52:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3AB09214DA
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 06:49:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oNDqQOnx"
+	by mail.kernel.org (Postfix) with ESMTP id 38B5C2173B
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 06:52:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547103131;
+	bh=ZyNYH/vHBOA8dkihnXP8MmLSFtimqBgh0uJ/tRB1G8Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=uoEqfns+sAO7xcgFQCI8PlODuhRjijEJGX4e7GAkDCQVXtmgBn0AxYFLdnV5sibYf
+	 1h0aZ8FqNT4T6zMYT41GsOn9DI2UsI5hlIRjIb9YqGKJpA8zeQlI9NMcVGzSH6TjZl
+	 M55dQbbnF9qb1w3fIeoOcFhlqb35A4OKKhm352A4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727364AbfAJGtn (ORCPT
+        id S1727415AbfAJGwK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 01:49:43 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:39865 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725536AbfAJGtn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 01:49:43 -0500
-Received: by mail-pf1-f195.google.com with SMTP id r136so4875774pfc.6;
-        Wed, 09 Jan 2019 22:49:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=message-id:date:from:to:cc:subject:mime-version:content-disposition
-         :user-agent;
-        bh=eEJOT0okA+zkankTToP39j/tuXqOn8a/Jd6LGEx1DBA=;
-        b=oNDqQOnxoIZ2EOK5U/ShtVcQG5PkAUMQTne76gQaNJ1OCr+YSHiQGHh/O65rkFzcdE
-         c9tEBqoLPncgcja9cxpGZQyQ5XChA7PjvKgqhrGZvga8QAX9F6JEQqJNAPF4sLBZF1sB
-         tmFF/q18cnrG9wKA08YyPZLi+H76jEXE7ZP0esbvUGOdPo/A9BVDPaxC+HvXd9yimgIL
-         1TlOq9H0mzUh+l3SralKwykNwW1QifGfnT8HuNfiJKhhzmlAlPxbRQrWKgWo2UQA5Onm
-         C7GkMboPHsbMg3ozU/CeDE6Fr+qMiPi1CBWknWaR2fSRz5Qm2sPZhkk+syS5tXjmCEUv
-         DN2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:date:from:to:cc:subject:mime-version
-         :content-disposition:user-agent;
-        bh=eEJOT0okA+zkankTToP39j/tuXqOn8a/Jd6LGEx1DBA=;
-        b=tCQnZSS8HGSNFTqvj13NWX2lSITnkmpc9VjY1VA1XPy+gOt8sqPERG0VOs94eSHjFf
-         ad5IlqrxYM1amQiyKb/6kWBcb8Pp4aTQBDoeXLZDJ6xlMBdTuJh9XoiQgq2aWOZ/cXlG
-         16731H7Vmp/Bam7SD800mqSgA+DAJlKOJh6CapMyVGHMq3lhBX6kAcjq4sp1kTFw9rTS
-         4nQwkYGtRlaqAB2Wx1drjFYTFAyOWXpvdRENyNWx3NQRCayEKwYVWAinQZJ6Lt82Jkbu
-         UjFX5eSOmqq3Mf9v0Q5Aj3cvBtn7NjZ5V1Cn6whpEGBORLi6QbH3IOmQRVHHXqYPOmSq
-         fPlw==
-X-Gm-Message-State: AJcUukcmkfrbIsQ3yOsnmKdDL+/5JtxsAw353jaCjfyD6zTC3lkrQ4Qm
-        s/QzENQWNiZgqPCFBrXZUlM=
-X-Google-Smtp-Source: ALg8bN4gzbEF0ECGuFoooWy0Lh4wex0eBfiTXcoSu/2WRTkXKozbeERrSU4d79Puwng9uNTJ0CJtyQ==
-X-Received: by 2002:a62:2c81:: with SMTP id s123mr8955092pfs.174.1547102982312;
-        Wed, 09 Jan 2019 22:49:42 -0800 (PST)
-Received: from sabyasachi ([2409:4061:2019:ef6:e468:6878:1f4b:258a])
-        by smtp.gmail.com with ESMTPSA id t12sm116815188pfi.45.2019.01.09.22.49.40
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 09 Jan 2019 22:49:41 -0800 (PST)
-Message-ID: <5c36eb05.1c69fb81.c3ab9.8a59@mx.google.com>
-X-Google-Original-Message-ID: <20190110064936.GA25141@sabyasachi.linux@gmail.com>
-Date:   Thu, 10 Jan 2019 12:19:36 +0530
-From:   Sabyasachi Gupta <sabyasachi.linux@gmail.com>
-To:     stern@rowland.harvard.edu, gregkh@linuxfoundation.org
-Cc:     linux-usb@vger.kernel.org, usb-storage@lists.one-eyed-alien.net,
-        linux-kernel@vger.kernel.org, jrdr.linux@gmail.com,
-        brajeswar.linux@gmail.com
-Subject: [PATCH] drivers/usb/storage/cypress_atacb.c: Remove duplicate header
+        Thu, 10 Jan 2019 01:52:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44656 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727321AbfAJGwK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 01:52:10 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1D905214DA;
+        Thu, 10 Jan 2019 06:52:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547103129;
+        bh=ZyNYH/vHBOA8dkihnXP8MmLSFtimqBgh0uJ/tRB1G8Q=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=LFJ+3oR7BOVcUdzK2rhM6WI9W37EVV9kcfGbx2X2kEm3+8gIaC59YrGCnjwyoEo6D
+         jDvtfV6aC8FgyrYFzGFqdCzyR0ldRy8KlLmpTsZnkJEWDBoxSU1SPqj9krWQh4CrY9
+         ziNt/D90tavnVD9Aetw8dto30K3NcFZtVxvQoVtg=
+Date:   Thu, 10 Jan 2019 07:52:07 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH 4.19 000/170] 4.19.14-stable review
+Message-ID: <20190110065207.GA17195@kroah.com>
+References: <20190107104452.953560660@linuxfoundation.org>
+ <20190108230731.GC20519@roeck-us.net>
+ <20190109143811.GB29274@kroah.com>
+ <20190109194048.GA11505@roeck-us.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20190109194048.GA11505@roeck-us.net>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove unusual_cypress.h which is included more than once.
+On Wed, Jan 09, 2019 at 11:40:48AM -0800, Guenter Roeck wrote:
+> On Wed, Jan 09, 2019 at 03:38:11PM +0100, Greg Kroah-Hartman wrote:
+> > On Tue, Jan 08, 2019 at 03:07:31PM -0800, Guenter Roeck wrote:
+> > > On Mon, Jan 07, 2019 at 01:30:27PM +0100, Greg Kroah-Hartman wrote:
+> > > > This is the start of the stable review cycle for the 4.19.14 release.
+> > > > There are 170 patches in this series, all will be posted as a response
+> > > > to this one.  If anyone has any issues with these being applied, please
+> > > > let me know.
+> > > > 
+> > > > Responses should be made by Wed Jan  9 10:43:54 UTC 2019.
+> > > > Anything received after that time might be too late.
+> > > > 
+> > > 
+> > > For v4.19.13-171-gc68ce175c3b8:
+> > > 
+> > > Build results:
+> > > 	total: 155 pass: 152 fail: 3
+> > > Failed builds: 
+> > > 	powerpc:ppc64e_defconfig 
+> > > 	powerpc:cell_defconfig 
+> > > 	powerpc:maple_defconfig 
+> > > Qemu test results:
+> > > 	total: 332 pass: 319 fail: 13
+> > > Failed tests: 
+> > > 	ppc64:mac99:ppc64_book3s_defconfig:nosmp:initrd 
+> > > 	ppc64:mac99:ppc64_book3s_defconfig:smp:initrd 
+> > > 	ppc64:mac99:ppc64_book3s_defconfig:smp:ide:rootfs 
+> > > 	ppc64:mac99:ppc64_book3s_defconfig:smp:mmc:rootfs 
+> > > 	ppc64:mac99:ppc64_book3s_defconfig:smp:nvme:rootfs 
+> > > 	ppc64:mac99:ppc64_book3s_defconfig:smp:scsi[DC395]:rootfs 
+> > > 	ppc64:mpc8544ds:ppc64_e5500_defconfig:nosmp:initrd 
+> > > 	ppc64:mpc8544ds:ppc64_e5500_defconfig:smp:initrd 
+> > > 	ppc64:ppce500:corenet64_smp_defconfig:e5500:initrd 
+> > > 	ppc64:ppce500:corenet64_smp_defconfig:e5500:nvme:rootfs 
+> > > 	ppc64:ppce500:corenet64_smp_defconfig:e5500:mmc:rootfs 
+> > > 	ppc64:ppce500:corenet64_smp_defconfig:e5500:scsi[53C895A]:rootfs
+> > > 	ppc64:ppce500:corenet64_smp_defconfig:e5500:sata-sii3112:rootfs
+> > 
+> > Ugh, I thought this was just the cell build, didn't realize it hit more.
+> > 
+> > Ok, I've dropped the patch from all queues.  Odd that it only causes
+> > problems on 4.19.y :(
+> > 
+> I don't know what you dropped, but v4.19.14 fails to build with 
+> the same error. Did you drop it after the release ?
 
-Signed-off-by: Sabyasachi Gupta <sabyasachi.linux@gmail.com>
----
- drivers/usb/storage/cypress_atacb.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/drivers/usb/storage/cypress_atacb.c b/drivers/usb/storage/cypress_atacb.c
-index 4825902..be2e346 100644
---- a/drivers/usb/storage/cypress_atacb.c
-+++ b/drivers/usb/storage/cypress_atacb.c
-@@ -55,7 +55,6 @@ MODULE_DEVICE_TABLE(usb, cypress_usb_ids);
- }
- 
- static struct us_unusual_dev cypress_unusual_dev_list[] = {
--#	include "unusual_cypress.h"
- 	{ }		/* Terminating entry */
- };
- 
--- 
-2.7.4
+No, I should have dropped it before the release.  Let me go see what I
+messed up...
 
