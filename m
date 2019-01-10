@@ -2,128 +2,94 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0B17C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 08:50:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69EC9C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 08:54:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 79DC720879
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 08:50:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3BE9C20879
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 08:54:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727702AbfAJIue (ORCPT
+        id S1727685AbfAJIyM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 03:50:34 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:56657 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727372AbfAJIue (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 03:50:34 -0500
-X-UUID: 70060d12bb194ef7b0aeb2f78d44d92e-20190110
-X-UUID: 70060d12bb194ef7b0aeb2f78d44d92e-20190110
-Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw01.mediatek.com
-        (envelope-from <long.cheng@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1420587663; Thu, 10 Jan 2019 16:50:28 +0800
-Received: from MTKCAS32.mediatek.inc (172.27.4.184) by mtkmbs03n2.mediatek.inc
- (172.21.101.182) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 10 Jan
- 2019 16:50:26 +0800
-Received: from [10.17.3.153] (10.17.3.153) by MTKCAS32.mediatek.inc
- (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Thu, 10 Jan 2019 16:50:25 +0800
-Message-ID: <1547110225.3831.24.camel@mhfsdcap03>
-Subject: Re: [PATCH v9 1/2] dmaengine: 8250_mtk_dma: add MediaTek uart DMA
- support
-From:   Long Cheng <long.cheng@mediatek.com>
-To:     Randy Dunlap <rdunlap@infradead.org>
-CC:     Nicolas Boichat <drinkcat@chromium.org>,
-        Vinod Koul <vkoul@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ryder Lee <ryder.lee@mediatek.com>,
-        Sean Wang <sean.wang@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Sean Wang <sean.wang@mediatek.com>,
-        <dmaengine@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        <linux-serial@vger.kernel.org>, <srv_heupstream@mediatek.com>,
-        Yingjoe Chen <yingjoe.chen@mediatek.com>,
-        "YT Shen" <yt.shen@mediatek.com>,
-        Zhenbao Liu <zhenbao.liu@mediatek.com>
-Date:   Thu, 10 Jan 2019 16:50:25 +0800
-In-Reply-To: <d60c25c2-efe4-9294-dc7e-98f0333bff76@infradead.org>
-References: <1546395178-8880-1-git-send-email-long.cheng@mediatek.com>
-         <1546395178-8880-2-git-send-email-long.cheng@mediatek.com>
-         <CANMq1KB=yuEJxUdi8M9deDhAv24WZ-4h+26cFq7AzBi8uyd88Q@mail.gmail.com>
-         <d60c25c2-efe4-9294-dc7e-98f0333bff76@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        Thu, 10 Jan 2019 03:54:12 -0500
+Received: from relay.sw.ru ([185.231.240.75]:53434 "EHLO relay.sw.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727547AbfAJIyM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 03:54:12 -0500
+Received: from [172.16.25.169]
+        by relay.sw.ru with esmtp (Exim 4.91)
+        (envelope-from <ktkhai@virtuozzo.com>)
+        id 1ghW6D-0002nj-Jp; Thu, 10 Jan 2019 11:54:01 +0300
+Subject: Re: [PATCH] ipset: fix a missing check of nla_parse
+To:     Pablo Neira Ayuso <pablo@netfilter.org>
+Cc:     Kangjie Lu <kjlu@umn.edu>, pakki001@umn.edu,
+        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
+        Florian Westphal <fw@strlen.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Stefano Brivio <sbrivio@redhat.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20181226035002.73614-1-kjlu@umn.edu>
+ <c462e7f4-6c41-78e8-26e9-8ce16ca26a5c@virtuozzo.com>
+ <20190109224335.qe6f4x4722qz6x5p@salvia>
+From:   Kirill Tkhai <ktkhai@virtuozzo.com>
+Message-ID: <298cbd2a-06fd-39c1-7d5f-5adcf21b68b2@virtuozzo.com>
+Date:   Thu, 10 Jan 2019 11:54:01 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-X-TM-SNTS-SMTP: C0E1301CD85C79D6C4D6D9D004E32AB58BE59366EFE59482B05044DE530829012000:8
-X-MTK:  N
+In-Reply-To: <20190109224335.qe6f4x4722qz6x5p@salvia>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2019-01-02 at 18:03 -0800, Randy Dunlap wrote:
-> Hi,
+On 10.01.2019 01:43, Pablo Neira Ayuso wrote:
+> On Wed, Dec 26, 2018 at 12:16:25PM +0300, Kirill Tkhai wrote:
+>> On 26.12.2018 06:50, Kangjie Lu wrote:
+>>> When nla_parse fails, we should not use the results (the first
+>>> argument). The fix checks if it fails, and if so, returns its error code
+>>> upstream.
+>>>
+>>> Signed-off-by: Kangjie Lu <kjlu@umn.edu>
+>>> ---
+>>>  net/netfilter/ipset/ip_set_core.c | 4 +++-
+>>>  1 file changed, 3 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/net/netfilter/ipset/ip_set_core.c b/net/netfilter/ipset/ip_set_core.c
+>>> index 1577f2f76060..4dc8057cff02 100644
+>>> --- a/net/netfilter/ipset/ip_set_core.c
+>>> +++ b/net/netfilter/ipset/ip_set_core.c
+>>> @@ -1531,8 +1531,10 @@ call_ad(struct sock *ctnl, struct sk_buff *skb, struct ip_set *set,
+>>>  		memcpy(&errmsg->msg, nlh, nlh->nlmsg_len);
+>>>  		cmdattr = (void *)&errmsg->msg + min_len;
+>>>  
+>>> -		nla_parse(cda, IPSET_ATTR_CMD_MAX, cmdattr,
+>>> +		ret = nla_parse(cda, IPSET_ATTR_CMD_MAX, cmdattr,
+>>>  			  nlh->nlmsg_len - min_len, ip_set_adt_policy, NULL);
 > 
-> While you are making changes, here are a few more:
+> @Kangjie: nitpick, could you align this line below? ie.
 > 
+> 		ret = nla_parse(cda, IPSET_ATTR_CMD_MAX, cmdattr,
+>                                 nlh->nlmsg_len - min_len, ip_set_adt_policy,
+>                                 NULL);
+> 
+>>> +		if (ret)
+>>> +			return ret;
+>>
+>> In this function above nlmsg_new() allocates skb2, but I don't see, where you free it here.
+> 
+> netlink_unicast() is responsible for releasing this skb2.
 
-hi
+We return earlier at "if (ret)", so netlink_unicast() is not called.
+ 
+>>>  		errline = nla_data(cda[IPSET_ATTR_LINENO]);
 
-OK, thanks for your comments.
-
-> 
-> On 1/2/19 5:39 PM, Nicolas Boichat wrote:
-> > diff --git a/drivers/dma/mediatek/Kconfig b/drivers/dma/mediatek/Kconfig
-> > index 27bac0b..1a523c87 100644
-> > --- a/drivers/dma/mediatek/Kconfig
-> > +++ b/drivers/dma/mediatek/Kconfig
-> > @@ -1,4 +1,15 @@
-> > 
-> > +config DMA_MTK_UART
-> > +       tristate "MediaTek SoCs APDMA support for UART"
-> > +       depends on OF && SERIAL_8250_MT6577
-> > +       select DMA_ENGINE
-> > +       select DMA_VIRTUAL_CHANNELS
-> > +       help
-> > +         Support for the UART DMA engine found on MediaTek MTK SoCs.
-> > +         when SERIAL_8250_MT6577 is enabled, and if you want to use DMA,
-> 
-> 	    When
-> 
-> > +         you can enable the config. the DMA engine can only be used
-> 
-> 	                               The
-> 
-> > +         with MediaTek SoCs.
-> > +
-> 
-
-above, i will modify.
-
-> Also, use tabs to indent instead of spaces.
-> The lines (tristate, depends, select, and help) should be indented with one tab.
-> The help text lines should be indented with one tab + 2 spaces.
-> 
-
-in my patch, i already do this. So don't need modify.
-
-> >  config MTK_HSDMA
-> >         tristate "MediaTek High-Speed DMA controller support"
-> >         depends on ARCH_MEDIATEK || COMPILE_TEST
-> 
-> 
-> thanks,
-
-
+Kirill
