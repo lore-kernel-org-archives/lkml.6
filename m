@@ -2,75 +2,58 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 116E8C43612
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 14:30:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 428B1C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 14:31:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DFCE7214C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 14:30:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1A5EE214C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 14:31:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729106AbfAJOa4 (ORCPT
+        id S1729126AbfAJObf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 09:30:56 -0500
-Received: from mga04.intel.com ([192.55.52.120]:22476 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728746AbfAJOaz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 09:30:55 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jan 2019 06:30:55 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,461,1539673200"; 
-   d="scan'208";a="126590311"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga001.jf.intel.com with ESMTP; 10 Jan 2019 06:30:53 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id A3ACF108; Thu, 10 Jan 2019 16:30:52 +0200 (EET)
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Matias Bjorling <mb@lightnvm.io>, linux-block@vger.kernel.org,
-        Christoph Hellwig <hch@lst.de>, linux-kernel@vger.kernel.org
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1] : Switch to use new generic UUID API
-Date:   Thu, 10 Jan 2019 16:30:51 +0200
-Message-Id: <20190110143051.52305-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.20.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Thu, 10 Jan 2019 09:31:35 -0500
+Received: from shards.monkeyblade.net ([23.128.96.9]:46268 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728191AbfAJObe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 09:31:34 -0500
+Received: from localhost (unknown [66.187.232.66])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id C2060146D7883;
+        Thu, 10 Jan 2019 06:31:32 -0800 (PST)
+Date:   Thu, 10 Jan 2019 06:31:31 -0800 (PST)
+Message-Id: <20190110.063131.806023297365839327.davem@davemloft.net>
+To:     colin.king@canonical.com
+Cc:     arjun@chelsio.com, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: cxgb3: fix various indentation issues
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20190107233924.14076-1-colin.king@canonical.com>
+References: <20190107233924.14076-1-colin.king@canonical.com>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 10 Jan 2019 06:31:34 -0800 (PST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are new types and helpers that are supposed to be used in new code.
+From: Colin King <colin.king@canonical.com>
+Date: Mon,  7 Jan 2019 23:39:24 +0000
 
-As a preparation to get rid of legacy types and API functions do
-the conversion here.
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> There are handful of lines that have indentation issues, fix these.
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/lightnvm/pblk.h | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+Definitely makes the code impossible to properly audit.
 
-diff --git a/drivers/lightnvm/pblk.h b/drivers/lightnvm/pblk.h
-index 85e38ed62f85..0a0aeb6ef314 100644
---- a/drivers/lightnvm/pblk.h
-+++ b/drivers/lightnvm/pblk.h
-@@ -1362,10 +1362,7 @@ static inline unsigned int pblk_get_secs(struct bio *bio)
- 
- static inline void pblk_setup_uuid(struct pblk *pblk)
- {
--	uuid_le uuid;
--
--	uuid_le_gen(&uuid);
--	memcpy(pblk->instance_uuid, uuid.b, 16);
-+	guid_gen((guid_t *)&pblk->instance_uuid);
- }
- 
- static inline char *pblk_disk_name(struct pblk *pblk)
--- 
-2.20.1
-
+Applied, thanks for fixing this.
