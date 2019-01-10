@@ -2,85 +2,87 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47063C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 13:29:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B98D1C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 13:31:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 16ACA214C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 13:29:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="UZLj0cNZ";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="lgal3F/0"
+	by mail.kernel.org (Postfix) with ESMTP id 82208214C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 13:31:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728963AbfAJN3v (ORCPT
+        id S1728948AbfAJNbz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 08:29:51 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:56100 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728888AbfAJN3u (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 08:29:50 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 1AAB96038E; Thu, 10 Jan 2019 13:29:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1547126990;
-        bh=iuk39SxciM8KqGRl45x4b28ujBRhmHv4iwfNBoUqMlY=;
-        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-        b=UZLj0cNZtOLJhEtscY9Epwes3yKPu+hVDE6DHJnFsYFRLnmWgTe+QFsy0Vj9fMjz1
-         uiO6xZ7YUPYmwmXrGI3NRgfPa7QABztc7JzLgQV9zhEtawIEb2k3LUV3raP4heaslG
-         Rr7s20YMRgYaqk69jnme1U8kixD54dXrWjcNSYkc=
-Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 408D860300;
-        Thu, 10 Jan 2019 13:29:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1547126989;
-        bh=iuk39SxciM8KqGRl45x4b28ujBRhmHv4iwfNBoUqMlY=;
-        h=Subject:From:In-Reply-To:References:To:Cc:From;
-        b=lgal3F/0DaXjRA/sVPBcC4gip2ovnbiTl2urvGGcFM6R8phQvXojyt5WWpr6LlHYw
-         OnVtfiMN44HnAe633OZIwDQfilGcURS0n/WvRUKOSYn2/dKZQWenlugjSielMyRah6
-         rHsy0eUqNdlQTmDUD+4YCtoU4vWCY3zCnM0mxBng=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 408D860300
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-Content-Type: text/plain; charset="utf-8"
+        Thu, 10 Jan 2019 08:31:55 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:57686 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728702AbfAJNby (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 08:31:54 -0500
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id B3F73597EFA230B72652;
+        Thu, 10 Jan 2019 21:31:51 +0800 (CST)
+Received: from localhost.localdomain (10.67.212.75) by
+ DGGEMS409-HUB.china.huawei.com (10.3.19.209) with Microsoft SMTP Server id
+ 14.3.408.0; Thu, 10 Jan 2019 21:31:45 +0800
+From:   John Garry <john.garry@huawei.com>
+To:     <jejb@linux.vnet.ibm.com>, <martin.petersen@oracle.com>
+CC:     <linuxarm@huawei.com>, <linux-kernel@vger.kernel.org>,
+        <linux-scsi@vger.kernel.org>, John Garry <john.garry@huawei.com>
+Subject: [PATCH] scsi: hisi_sas: Set protection parameters prior to adding SCSI host
+Date:   Thu, 10 Jan 2019 21:32:41 +0800
+Message-ID: <1547127161-213124-1-git-send-email-john.garry@huawei.com>
+X-Mailer: git-send-email 2.8.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH] wireless: ath: return error code upstream
-From:   Kalle Valo <kvalo@codeaurora.org>
-In-Reply-To: <20181226064328.75897-1-kjlu@umn.edu>
-References: <20181226064328.75897-1-kjlu@umn.edu>
-To:     Kangjie Lu <kjlu@umn.edu>
-Cc:     kjlu@umn.edu, pakki001@umn.edu,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
-Message-Id: <20190110132950.1AAB96038E@smtp.codeaurora.org>
-Date:   Thu, 10 Jan 2019 13:29:50 +0000 (UTC)
+Content-Type: text/plain
+X-Originating-IP: [10.67.212.75]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Kangjie Lu <kjlu@umn.edu> wrote:
+Currently we set the protection parameters after calling scsi_add_host()
+for v3 hw.
 
-> ath6kl_wmi_cmd_send could fail, so let's return its error code upstream.
-> 
-> Signed-off-by: Kangjie Lu <kjlu@umn.edu>
-> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+They should be set beforehand, so make this change.
 
-Patch applied to ath-next branch of ath.git, thanks.
+Appearantly this fixes our DIX issue (not mainline yet) also, but more
+testing required.
 
-fc6a6521556c ath6kl: return error code in ath6kl_wmi_set_roam_lrssi_cmd()
+Fixes: d6a9000b81be ("scsi: hisi_sas: Add support for DIF feature for v2 hw")
+Signed-off-by: John Garry <john.garry@huawei.com>
 
+diff --git a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
+index b780b52..18d1f2cb 100644
+--- a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
++++ b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
+@@ -2675,6 +2675,12 @@ static void debugfs_snapshot_restore_v3_hw(struct hisi_hba *hisi_hba)
+ 	if (hisi_sas_debugfs_enable)
+ 		hisi_sas_debugfs_init(hisi_hba);
+ 
++	if (hisi_hba->prot_mask) {
++		dev_info(dev, "Registering for DIF/DIX prot_mask=0x%x\n",
++			 prot_mask);
++		scsi_host_set_prot(hisi_hba->shost, prot_mask);
++	}
++
+ 	rc = scsi_add_host(shost, dev);
+ 	if (rc)
+ 		goto err_out_ha;
+@@ -2687,12 +2693,6 @@ static void debugfs_snapshot_restore_v3_hw(struct hisi_hba *hisi_hba)
+ 	if (rc)
+ 		goto err_out_register_ha;
+ 
+-	if (hisi_hba->prot_mask) {
+-		dev_info(dev, "Registering for DIF/DIX prot_mask=0x%x\n",
+-			 prot_mask);
+-		scsi_host_set_prot(hisi_hba->shost, prot_mask);
+-	}
+-
+ 	scsi_scan_host(shost);
+ 
+ 	return 0;
 -- 
-https://patchwork.kernel.org/patch/10742845/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+1.9.1
 
