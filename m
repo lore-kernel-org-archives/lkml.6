@@ -2,107 +2,120 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1E88C43612
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 20:09:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03A23C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 20:10:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D995208E3
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 20:09:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CE23E20665
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 20:10:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729976AbfAJUJW (ORCPT
+        id S1730022AbfAJUK4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 15:09:22 -0500
-Received: from fieldses.org ([173.255.197.46]:48860 "EHLO fieldses.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729622AbfAJUJW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 15:09:22 -0500
-Received: by fieldses.org (Postfix, from userid 2815)
-        id BE514315; Thu, 10 Jan 2019 15:09:21 -0500 (EST)
-Date:   Thu, 10 Jan 2019 15:09:21 -0500
-To:     Guk-Bong Kwon <gbkwon@gmail.com>
-Cc:     linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: There is no 'no space' message when using xfs with nfs.
-Message-ID: <20190110200921.GB15492@fieldses.org>
-References: <CAJ-WH_xqdJVyA7mMmoqAkbJoOcsvgm9cF--NQADfd+pp_oRbEw@mail.gmail.com>
+        Thu, 10 Jan 2019 15:10:56 -0500
+Received: from gateway36.websitewelcome.com ([192.185.187.5]:27490 "EHLO
+        gateway36.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729366AbfAJUKz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 15:10:55 -0500
+Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
+        by gateway36.websitewelcome.com (Postfix) with ESMTP id 087D5400C8BDD
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 13:23:05 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id hgfHgZrC02PzOhgfHgDwhv; Thu, 10 Jan 2019 14:10:55 -0600
+X-Authority-Reason: nr=8
+Received: from [189.250.130.205] (port=41258 helo=[192.168.43.131])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1ghgfG-002dTS-M6; Thu, 10 Jan 2019 14:10:54 -0600
+Subject: Re: [PATCH 13/41] scsi: csiostor: csio_wr: mark expected switch
+ fall-through
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org
+References: <cover.1543374820.git.gustavo@embeddedor.com>
+ <5e846a635bfaf121af56e1f60a99816091e55170.1543374820.git.gustavo@embeddedor.com>
+ <a05a7975-b09b-fd0a-8af1-82ab3b90596e@embeddedor.com>
+Message-ID: <8f7b1fb9-260a-93aa-ec88-8d48ca9b2513@embeddedor.com>
+Date:   Thu, 10 Jan 2019 14:10:53 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJ-WH_xqdJVyA7mMmoqAkbJoOcsvgm9cF--NQADfd+pp_oRbEw@mail.gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-From:   bfields@fieldses.org (J. Bruce Fields)
+In-Reply-To: <a05a7975-b09b-fd0a-8af1-82ab3b90596e@embeddedor.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.130.205
+X-Source-L: No
+X-Exim-ID: 1ghgfG-002dTS-M6
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.43.131]) [189.250.130.205]:41258
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 40
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Dec 09, 2018 at 10:07:26PM +0900, Guk-Bong Kwon wrote:
-> i use xfs filesystem over nfs
-> 
-> 
-> I am using the xfs file system via NFS on two Linux servers.
-> 
-> Even though xfs is full, you will not get a 'no space' message through nfs.
-> 
-> The server's load average goes up and the kworker consumes the CPU.
-> 
-> The server's nfs service is not responding.
-> 
-> When ext3 is full in the same environment, I get a 'no space' message.
-> 
-> Which part of nfs and xfs should be checked?
+Hi,
 
-I don't know.  I'd be inclined to ask the xfs folks.  But 3.4 is 6 years
-old, and they may want you to reproduce on more recent upstream.
+Friendly ping (second one):
 
-It might help to look at the traffic in wireshark and try to figure out
-which rpc calls are not getting responses from the server.
+Who can ack/review/take this patch, please?
 
---b.
+Martin: apparently, the only maintainers for
+this driver are you and James.
 
+Thanks
+--
+Gustavo
+
+On 12/19/18 9:39 AM, Gustavo A. R. Silva wrote:
+> Hi,
 > 
+> Friendly ping:
 > 
-> Below is the environment I am using.
+> Who can ack or review this patch, please?
 > 
+> Thanks
+> -- 
+> Gustavo
 > 
-> kernel : nfs server 3.4.113 vanilla, nfs client 2.6.32-573.el6.x86_64
-> 
-> nfs : nfs v3 with tcp
-> 
-> 
-> ==================================================================
-> nfs server
-> ==================================================================
-> /dev/mapper/lv2  500G  500G   20K 100% /lv2
-> 
-> /lv2    0.0.0.0/0.0.0.0(rw,async,wdelay,nohide,nocrossmnt,insecure,no_root_squash,no_all_squash,no_subtree_check,insecure_locks,no_acl,fsid=1543743056,anonuid=65534,anongid=65534)
-> 
-> 
-> ==================================================================
-> nfs client
-> ==================================================================
-> 10.0.0.20:/lv2   500G  500G   32K 100% /mnt/2
-> 
-> nfsstat  -m
-> /mnt/2 from 10.0.0.20:/lv2
->  Flags: rw,relatime,vers=3,rsize=32768,wsize=32768,namlen=255,hard,proto=udp,timeo=11,retrans=3,sec=sys,mountaddr=10.0.0.20,mountvers=3,mountport=2047,mountproto=udp,local_lock=none,addr=10.0.0.20
-> 
-> 
-> ==================================================================
-> server top log
-> ==================================================================
-> top - 21:54:10 up 58 min,  0 users,  load average: 8.50, 8.37, 8.83
-> Tasks: 347 total,   2 running, 345 sleeping,   0 stopped,   0 zombie
-> Cpu(s):  0.0%us,  4.2%sy,  0.0%ni, 95.8%id,  0.0%wa,  0.0%hi,  0.0%si,  0.0%st
-> 
->   PID USER      PR  NI  VIRT  RES  SHR S %CPU %MEM    TIME+  COMMAND
-> 12368 root      20   0     0    0    0 S   12  0.0   4:32.44 kworker/2:2
-> 11092 root      20   0     0    0    0 S   10  0.0   4:42.57 kworker/3:1
-> 11166 root      20   0     0    0    0 R    9  0.0   2:09.47 kworker/5:1
-> 12473 root      20   0     0    0    0 S    8  0.0   2:09.36 kworker/4:2
->  2944 root      20   0     0    0    0 D    6  0.0   2:09.10 nfsd
->  2953 root      20   0     0    0    0 D    6  0.0   2:24.65 nfsd
->  3024 root      20   0     0    0    0 D    6  0.0   2:23.12 nfsd
+> On 11/27/18 10:28 PM, Gustavo A. R. Silva wrote:
+>> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
+>> where we are expecting to fall through.
+>>
+>> Addresses-Coverity-ID: 1056538 ("Missing break in switch")
+>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+>> ---
+>>   drivers/scsi/csiostor/csio_wr.c | 1 +
+>>   1 file changed, 1 insertion(+)
+>>
+>> diff --git a/drivers/scsi/csiostor/csio_wr.c b/drivers/scsi/csiostor/csio_wr.c
+>> index dc12933533d5..b6861ea66c9f 100644
+>> --- a/drivers/scsi/csiostor/csio_wr.c
+>> +++ b/drivers/scsi/csiostor/csio_wr.c
+>> @@ -808,6 +808,7 @@ csio_wr_destroy_queues(struct csio_hw *hw, bool cmd)
+>>                   csio_q_eqid(hw, i) = CSIO_MAX_QID;
+>>               }
+>> +            /* fall through */
+>>           case CSIO_INGRESS:
+>>               if (csio_q_iqid(hw, i) != CSIO_MAX_QID) {
+>>                   csio_wr_cleanup_iq_ftr(hw, i);
+>>
