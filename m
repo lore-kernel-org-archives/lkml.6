@@ -6,132 +6,154 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 877B7C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 08:28:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9563CC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 08:29:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 63980206B6
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 08:28:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 71BC1206B6
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 08:29:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727804AbfAJI26 (ORCPT
+        id S1727851AbfAJI3E (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 03:28:58 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:53676 "EHLO mx1.redhat.com"
+        Thu, 10 Jan 2019 03:29:04 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:52080 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727704AbfAJI2w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 03:28:52 -0500
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        id S1727781AbfAJI2z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 03:28:55 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 90E4514402A;
-        Thu, 10 Jan 2019 08:28:51 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 3786096E9;
+        Thu, 10 Jan 2019 08:28:55 +0000 (UTC)
 Received: from sirius.home.kraxel.org (ovpn-116-203.ams2.redhat.com [10.36.116.203])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 3AF597E47E;
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C99EC10A1858;
         Thu, 10 Jan 2019 08:28:51 +0000 (UTC)
 Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id 047D19C7F; Thu, 10 Jan 2019 09:28:47 +0100 (CET)
+        id 2D1319983; Thu, 10 Jan 2019 09:28:47 +0100 (CET)
 From:   Gerd Hoffmann <kraxel@redhat.com>
 To:     dri-devel@lists.freedesktop.org, David Airlie <airlied@redhat.com>
 Cc:     andr2000@gmail.com, Gerd Hoffmann <kraxel@redhat.com>,
         David Airlie <airlied@linux.ie>,
         virtualization@lists.linux-foundation.org (open list:DRM DRIVER FOR
         BOCHS VIRTUAL GPU), linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v3 10/15] drm/bochs: drop unused gpu_addr arg from bochs_bo_pin()
-Date:   Thu, 10 Jan 2019 09:28:40 +0100
-Message-Id: <20190110082845.3453-11-kraxel@redhat.com>
+Subject: [PATCH v3 11/15] drm/bochs: move ttm_bo_(un)reserve calls into bochs_bo_{pin,unpin}
+Date:   Thu, 10 Jan 2019 09:28:41 +0100
+Message-Id: <20190110082845.3453-12-kraxel@redhat.com>
 In-Reply-To: <20190110082845.3453-1-kraxel@redhat.com>
 References: <20190110082845.3453-1-kraxel@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Thu, 10 Jan 2019 08:28:51 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Thu, 10 Jan 2019 08:28:55 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It's always NULL, so just remove it.
-
 Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
-Reviewed-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
 Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
 ---
- drivers/gpu/drm/bochs/bochs.h       |  2 +-
- drivers/gpu/drm/bochs/bochs_fbdev.c |  2 +-
- drivers/gpu/drm/bochs/bochs_kms.c   |  2 +-
- drivers/gpu/drm/bochs/bochs_mm.c    | 11 +----------
- 4 files changed, 4 insertions(+), 13 deletions(-)
+ drivers/gpu/drm/bochs/bochs_fbdev.c |  8 --------
+ drivers/gpu/drm/bochs/bochs_kms.c   | 14 +-------------
+ drivers/gpu/drm/bochs/bochs_mm.c    |  8 ++++++++
+ 3 files changed, 9 insertions(+), 21 deletions(-)
 
-diff --git a/drivers/gpu/drm/bochs/bochs.h b/drivers/gpu/drm/bochs/bochs.h
-index 4dc1b6384e..d0d474e06f 100644
---- a/drivers/gpu/drm/bochs/bochs.h
-+++ b/drivers/gpu/drm/bochs/bochs.h
-@@ -142,7 +142,7 @@ int bochs_dumb_create(struct drm_file *file, struct drm_device *dev,
- int bochs_dumb_mmap_offset(struct drm_file *file, struct drm_device *dev,
- 			   uint32_t handle, uint64_t *offset);
- 
--int bochs_bo_pin(struct bochs_bo *bo, u32 pl_flag, u64 *gpu_addr);
-+int bochs_bo_pin(struct bochs_bo *bo, u32 pl_flag);
- int bochs_bo_unpin(struct bochs_bo *bo);
- 
- /* bochs_kms.c */
 diff --git a/drivers/gpu/drm/bochs/bochs_fbdev.c b/drivers/gpu/drm/bochs/bochs_fbdev.c
-index d9f3d42999..92feb817ff 100644
+index 92feb817ff..ccf783b038 100644
 --- a/drivers/gpu/drm/bochs/bochs_fbdev.c
 +++ b/drivers/gpu/drm/bochs/bochs_fbdev.c
-@@ -81,7 +81,7 @@ static int bochsfb_create(struct drm_fb_helper *helper,
- 	if (ret)
- 		return ret;
+@@ -77,14 +77,9 @@ static int bochsfb_create(struct drm_fb_helper *helper,
  
--	ret = bochs_bo_pin(bo, TTM_PL_FLAG_VRAM, NULL);
-+	ret = bochs_bo_pin(bo, TTM_PL_FLAG_VRAM);
+ 	bo = gem_to_bochs_bo(gobj);
+ 
+-	ret = ttm_bo_reserve(&bo->bo, true, false, NULL);
+-	if (ret)
+-		return ret;
+-
+ 	ret = bochs_bo_pin(bo, TTM_PL_FLAG_VRAM);
  	if (ret) {
  		DRM_ERROR("failed to pin fbcon\n");
- 		ttm_bo_unreserve(&bo->bo);
-diff --git a/drivers/gpu/drm/bochs/bochs_kms.c b/drivers/gpu/drm/bochs/bochs_kms.c
-index 5b7e1a7c6b..f663c54185 100644
---- a/drivers/gpu/drm/bochs/bochs_kms.c
-+++ b/drivers/gpu/drm/bochs/bochs_kms.c
-@@ -101,7 +101,7 @@ static int bochs_plane_prepare_fb(struct drm_plane *plane,
- 	ret = ttm_bo_reserve(&bo->bo, true, false, NULL);
- 	if (ret)
+-		ttm_bo_unreserve(&bo->bo);
  		return ret;
--	ret = bochs_bo_pin(bo, TTM_PL_FLAG_VRAM, NULL);
-+	ret = bochs_bo_pin(bo, TTM_PL_FLAG_VRAM);
- 	ttm_bo_unreserve(&bo->bo);
- 	return ret;
- }
-diff --git a/drivers/gpu/drm/bochs/bochs_mm.c b/drivers/gpu/drm/bochs/bochs_mm.c
-index 0980411e41..5a0e092847 100644
---- a/drivers/gpu/drm/bochs/bochs_mm.c
-+++ b/drivers/gpu/drm/bochs/bochs_mm.c
-@@ -210,20 +210,13 @@ static void bochs_ttm_placement(struct bochs_bo *bo, int domain)
- 	bo->placement.num_busy_placement = c;
- }
- 
--static inline u64 bochs_bo_gpu_offset(struct bochs_bo *bo)
--{
--	return bo->bo.offset;
--}
--
--int bochs_bo_pin(struct bochs_bo *bo, u32 pl_flag, u64 *gpu_addr)
-+int bochs_bo_pin(struct bochs_bo *bo, u32 pl_flag)
- {
- 	struct ttm_operation_ctx ctx = { false, false };
- 	int i, ret;
- 
- 	if (bo->pin_count) {
- 		bo->pin_count++;
--		if (gpu_addr)
--			*gpu_addr = bochs_bo_gpu_offset(bo);
- 		return 0;
  	}
  
-@@ -235,8 +228,6 @@ int bochs_bo_pin(struct bochs_bo *bo, u32 pl_flag, u64 *gpu_addr)
+@@ -92,12 +87,9 @@ static int bochsfb_create(struct drm_fb_helper *helper,
+ 			  &bo->kmap);
+ 	if (ret) {
+ 		DRM_ERROR("failed to kmap fbcon\n");
+-		ttm_bo_unreserve(&bo->bo);
+ 		return ret;
+ 	}
+ 
+-	ttm_bo_unreserve(&bo->bo);
+-
+ 	/* init fb device */
+ 	info = drm_fb_helper_alloc_fbi(helper);
+ 	if (IS_ERR(info)) {
+diff --git a/drivers/gpu/drm/bochs/bochs_kms.c b/drivers/gpu/drm/bochs/bochs_kms.c
+index f663c54185..fc856a02a2 100644
+--- a/drivers/gpu/drm/bochs/bochs_kms.c
++++ b/drivers/gpu/drm/bochs/bochs_kms.c
+@@ -92,34 +92,22 @@ static int bochs_plane_prepare_fb(struct drm_plane *plane,
+ 				struct drm_plane_state *new_state)
+ {
+ 	struct bochs_bo *bo;
+-	int ret;
+ 
+ 	if (!new_state->fb)
+ 		return 0;
+ 	bo = gem_to_bochs_bo(new_state->fb->obj[0]);
+-
+-	ret = ttm_bo_reserve(&bo->bo, true, false, NULL);
+-	if (ret)
+-		return ret;
+-	ret = bochs_bo_pin(bo, TTM_PL_FLAG_VRAM);
+-	ttm_bo_unreserve(&bo->bo);
+-	return ret;
++	return bochs_bo_pin(bo, TTM_PL_FLAG_VRAM);
+ }
+ 
+ static void bochs_plane_cleanup_fb(struct drm_plane *plane,
+ 				   struct drm_plane_state *old_state)
+ {
+ 	struct bochs_bo *bo;
+-	int ret;
+ 
+ 	if (!old_state->fb)
+ 		return;
+ 	bo = gem_to_bochs_bo(old_state->fb->obj[0]);
+-	ret = ttm_bo_reserve(&bo->bo, true, false, NULL);
+-	if (ret)
+-		return;
+ 	bochs_bo_unpin(bo);
+-	ttm_bo_unreserve(&bo->bo);
+ }
+ 
+ static const struct drm_plane_helper_funcs bochs_plane_helper_funcs = {
+diff --git a/drivers/gpu/drm/bochs/bochs_mm.c b/drivers/gpu/drm/bochs/bochs_mm.c
+index 5a0e092847..fcbf35456d 100644
+--- a/drivers/gpu/drm/bochs/bochs_mm.c
++++ b/drivers/gpu/drm/bochs/bochs_mm.c
+@@ -223,7 +223,11 @@ int bochs_bo_pin(struct bochs_bo *bo, u32 pl_flag)
+ 	bochs_ttm_placement(bo, pl_flag);
+ 	for (i = 0; i < bo->placement.num_placement; i++)
+ 		bo->placements[i].flags |= TTM_PL_FLAG_NO_EVICT;
++	ret = ttm_bo_reserve(&bo->bo, true, false, NULL);
++	if (ret)
++		return ret;
+ 	ret = ttm_bo_validate(&bo->bo, &bo->placement, &ctx);
++	ttm_bo_unreserve(&bo->bo);
+ 	if (ret)
  		return ret;
  
- 	bo->pin_count = 1;
--	if (gpu_addr)
--		*gpu_addr = bochs_bo_gpu_offset(bo);
- 	return 0;
- }
+@@ -247,7 +251,11 @@ int bochs_bo_unpin(struct bochs_bo *bo)
+ 
+ 	for (i = 0; i < bo->placement.num_placement; i++)
+ 		bo->placements[i].flags &= ~TTM_PL_FLAG_NO_EVICT;
++	ret = ttm_bo_reserve(&bo->bo, true, false, NULL);
++	if (ret)
++		return ret;
+ 	ret = ttm_bo_validate(&bo->bo, &bo->placement, &ctx);
++	ttm_bo_unreserve(&bo->bo);
+ 	if (ret)
+ 		return ret;
  
 -- 
 2.9.3
