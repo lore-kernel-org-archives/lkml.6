@@ -2,126 +2,128 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3EBAC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 17:00:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66924C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 17:01:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 75732214C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 17:00:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3543D20685
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 17:01:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lBmVoWFv"
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="eC1oJJPM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729327AbfAJRAe (ORCPT
+        id S1729197AbfAJRBO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 12:00:34 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:36316 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727943AbfAJRAb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 12:00:31 -0500
-Received: by mail-pf1-f195.google.com with SMTP id b85so5578326pfc.3
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 09:00:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-description:content-disposition:in-reply-to:user-agent;
-        bh=6j/A8TcKOtE71kxvXPpjO0ugJYp9u52edbev/Tl2cEk=;
-        b=lBmVoWFvJEJuiXcbGHhvMeJc0lu4Y+N6x7+syTLMn9QjypnGuFpQw8/RN0Cdl2OLlR
-         XjHqvgJnWzjVKpByREcY2InJ1c7yaOgDlGETZz3RQ5oyosCG4IIBpzl3ikAvIph3YqCi
-         TC5OjWkmLKcvm6NfdLfkVPofNStMplG6SUSZ9Cue/4Do8mnWBit1Z+MkOogny/0AS0l0
-         dDLmxwoZSnkJvtv7snuhZbznTaZs5qsC12h0PjQqSMygzoVvZhAHf13Q2H1l49C9QYnM
-         upAqM6jLKPfM6quxInbp+ak1phfFYWcOcBW3o3D6bdxZWNCGqOI/UPeFDkHEbHPizH+B
-         IZOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-description:content-disposition:in-reply-to
-         :user-agent;
-        bh=6j/A8TcKOtE71kxvXPpjO0ugJYp9u52edbev/Tl2cEk=;
-        b=DQrARYQeP6Y9Sn6M2Z25L1lG3RfFOq05fXHet2rSbwC5cLnkQzIz1l85k1naC4z1ot
-         mVzQ+TA0ESPq7fzLVbaEHCErG8i3QkbuM4CbvXEQuw5fTn3EA2I+ac7F0mUan0C3uwHD
-         /vz2jf4X5JP2gtjThjFcr5WNWaqqglEsJoRGb/1uxoSaQDIg0c1juGuSBCyqNSJNLW1O
-         1R4Noo1nkOd4ZaKoAWgbG6odDltf9z08PVSQOo2z2VI8JMwvMSOq2liIu+rgtvx6Hh6s
-         O0fZHQ5ExSCQHc/eDxz8uu38vUUBbNzqG5hl6Q0AMfUXe5CTUyS1D/qkKEbSjwivZiDy
-         UOJg==
-X-Gm-Message-State: AJcUukfqp3TeudI60lBecKJ68ov1RM5Y2kWU3D+BL9bb+d9fJvMcAqst
-        voo12YuO4EvrGljb68nsLRGks1fiSyY=
-X-Google-Smtp-Source: ALg8bN4kKMMK20pD9rvsbdW7Ni+9GRDWL/yWqzSQKz16W1jNPbPRchHHojGzpYFRuxhWOEuDk0paLA==
-X-Received: by 2002:aa7:8286:: with SMTP id s6mr10681504pfm.63.1547139630014;
-        Thu, 10 Jan 2019 09:00:30 -0800 (PST)
-Received: from raspberrypi ([218.147.106.184])
-        by smtp.gmail.com with ESMTPSA id i5sm18998991pfg.34.2019.01.10.09.00.27
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 10 Jan 2019 09:00:29 -0800 (PST)
-Date:   Thu, 10 Jan 2019 17:00:24 +0000
-From:   Sidong Yang <realwakka@gmail.com>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] staging: vboxvideo: vbox_main: Remove unnecessary local
- variable
-Message-ID: <20190110170023.4vcyws3ktsf2sz3g@raspberrypi>
-References: <20190110061347.31326-1-realwakka@gmail.com>
- <20190110122358.GC1743@kadam>
+        Thu, 10 Jan 2019 12:01:14 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:58856 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727943AbfAJRBN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 12:01:13 -0500
+Received: from zn.tnic (p200300EC2BC5CF00F8565421A8111C7E.dip0.t-ipconnect.de [IPv6:2003:ec:2bc5:cf00:f856:5421:a811:1c7e])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id EE3A41EC035B;
+        Thu, 10 Jan 2019 18:01:10 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1547139671;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=uTSCpUvBGNcb7la2cAU6MajSH8aykN1VCQ1VTxp1XVE=;
+        b=eC1oJJPMLuPZWyjYhBywAXwcCJU8TeoQuA8UK98PP/G4cdYZO1ysag4vhiO5OKi0ZXYPGx
+        HHfRsKdvst2jiC/VkydxX86lHni2h9H7K+tqg5JWnF83zJd44PUQef9W6NI+kB1uPI+PaL
+        45UN79Ia6Nd1y53aw4XTHf3nI9gQBRo=
+Date:   Thu, 10 Jan 2019 18:01:03 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Chao Fan <fanc.fnst@cn.fujitsu.com>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, tglx@linutronix.de,
+        mingo@redhat.com, hpa@zytor.com, keescook@chromium.org,
+        bhe@redhat.com, msys.mizuma@gmail.com, indou.takao@jp.fujitsu.com,
+        caoj.fnst@cn.fujitsu.com
+Subject: Re: [PATCH v15 2/6] x86/boot: Introduce get_acpi_rsdp() to parse
+ RSDP in cmdline from KEXEC
+Message-ID: <20190110170103.GF17621@zn.tnic>
+References: <20190107032243.25324-1-fanc.fnst@cn.fujitsu.com>
+ <20190107032243.25324-3-fanc.fnst@cn.fujitsu.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Description: evel@driverdev.osuosl.org,
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190110122358.GC1743@kadam>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20190107032243.25324-3-fanc.fnst@cn.fujitsu.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 10, 2019 at 03:23:58PM +0300, Dan Carpenter wrote:
-> On Thu, Jan 10, 2019 at 06:13:47AM +0000, Sidong Yang wrote:
-> > Removed unnecessary local variable in have_hgsmi_mode_hints.
-> > The result of hgsmi_query_conf should be directly compared without
-> > assigning to local variable.
-> > 
-> > Signed-off-by: Sidong Yang <realwakka@gmail.com>
-> > ---
+On Mon, Jan 07, 2019 at 11:22:39AM +0800, Chao Fan wrote:
+> KASLR may randomly choose some positions which are located in movable
+> memory regions. This will make the movable memory chosen by KASLR
+> can't be removed.
 > 
-> I sort of prefer the original...
+> Memory information in SRAT is necessary to fix the conflict between
+> KASLR and memory-hotremove.
 > 
-> The hgsmi_query_conf() function returns negative error codes if it
-> can't complete the query because of allocation failures.  To me that's
-> more obvious, when we write it in the original way.
+> ACPI SRAT (System/Static Resource Affinity Table) shows the details
+> about memory ranges, including ranges of memory provided by hot-added
+> memory devices. SRAT is introduced by Root System Description
+> Pointer(RSDP). So RSDP should be found firstly.
 > 
-> In the new code it looks like it returns bool or something.  The
-> copy_to/from_user() are normally written like if (copy_to_user()) {
-> but those don't return negative error codes so it's a different
-> situation.
+> When booting form KEXEC/EFI/BIOS, the methods to find RSDP
+> are different. When booting from KEXEC, 'acpi_rsdp=' may have been
+> added to cmdline, so parse cmdline to find RSDP.
 > 
+> Signed-off-by: Chao Fan <fanc.fnst@cn.fujitsu.com>
+> ---
+>  arch/x86/boot/compressed/acpi.c | 30 ++++++++++++++++++++++++++++++
+>  1 file changed, 30 insertions(+)
+>  create mode 100644 arch/x86/boot/compressed/acpi.c
+> 
+> diff --git a/arch/x86/boot/compressed/acpi.c b/arch/x86/boot/compressed/acpi.c
+> new file mode 100644
+> index 000000000000..7ca5001d7639
+> --- /dev/null
+> +++ b/arch/x86/boot/compressed/acpi.c
+> @@ -0,0 +1,30 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +#define BOOT_CTYPE_H
+> +#include "misc.h"
+> +#include "error.h"
+> +#include "../string.h"
+> +
+> +#include <linux/acpi.h>
 
-Hi, Dan.
+Ok, I corrected it to this, please replace in your version:
 
-I think you just point out that my code isn't obvious because the
-function returns negative error codes. I agree with you. But what if
-change my code like if(hgsmi_query_conf() != 0). 
+/*
+ * Max length of 64-bit hex address string is 19, prefix "0x" + 16 hex
+ * digits, and '\0' for termination.
+ */
+#define MAX_ADDR_LEN 19
 
-> This isn't something in checkpatch or CodingStyle so there isn't a
-> standard.  It's just personal opinion vs personal opinion.  If you were
-> going to do a lot of vboxvideo development, then it would be your
-> opinion which matters the most because you are doing the work.  But
-> this is your first vboxvideo patch...
-> 
-> Let's just leave it as-is.
+static acpi_physical_address get_acpi_rsdp(void)
+{
+	acpi_physical_address addr = 0;
 
-I agree with this comment. I'm just a newbie for this module and It
-isn't about checkpatch or CodingStyle. but I just wondered if my code
-has problem.
+#ifdef CONFIG_KEXEC
+	char val[MAX_ADDR_LEN] = { };
+	int ret;
 
-regards,
-Sidong Yang
+	ret = cmdline_find_option("acpi_rsdp", val, MAX_ADDR_LEN);
+	if (ret < 0)
+		return 0;
 
-> 
-> regards,
-> dan carpenter
-> 
-> 
+	if (kstrtoull(val, 16, &addr))
+		return 0;
+#endif
+	return addr;
+}
+
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
