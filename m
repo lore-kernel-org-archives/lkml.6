@@ -2,110 +2,75 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36543C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 11:05:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0696C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 11:05:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 083CD214DA
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 11:05:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 901D0214DA
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 11:05:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728229AbfAJLE7 convert rfc822-to-8bit (ORCPT
+        id S1728315AbfAJLFz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 06:04:59 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:42125 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726925AbfAJLE7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 06:04:59 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id CDE97209D7; Thu, 10 Jan 2019 12:04:56 +0100 (CET)
-Received: from localhost (alyon-652-1-61-72.w109-213.abo.wanadoo.fr [109.213.84.72])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 94941206DC;
-        Thu, 10 Jan 2019 12:04:46 +0100 (CET)
-From:   Gregory CLEMENT <gregory.clement@bootlin.com>
-To:     Heinrich Schuchardt <xypron.glpk@gmx.de>
-Cc:     Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/1] arm64: dts: marvell: armada-ap806: reserve PSCI area
-References: <20181221164503.5128-1-xypron.glpk@gmx.de>
-Date:   Thu, 10 Jan 2019 12:04:46 +0100
-In-Reply-To: <20181221164503.5128-1-xypron.glpk@gmx.de> (Heinrich Schuchardt's
-        message of "Fri, 21 Dec 2018 17:45:03 +0100")
-Message-ID: <874lagpycx.fsf@FE-laptop>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Thu, 10 Jan 2019 06:05:55 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:60330 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726925AbfAJLFy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 06:05:54 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 78361A78;
+        Thu, 10 Jan 2019 03:05:54 -0800 (PST)
+Received: from queper01-lin.cambridge.arm.com (queper01-lin.cambridge.arm.com [10.1.195.48])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 62F1F3F694;
+        Thu, 10 Jan 2019 03:05:52 -0800 (PST)
+From:   Quentin Perret <quentin.perret@arm.com>
+To:     corbet@lwn.net, peterz@infradead.org, rjw@rjwysocki.net
+Cc:     mingo@redhat.com, morten.rasmussen@arm.com, qais.yousef@arm.com,
+        patrick.bellasi@arm.com, dietmar.eggemann@arm.com,
+        linux-doc@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, quentin.perret@arm.com
+Subject: [PATCH 0/2] Documentation: Explain EAS and EM
+Date:   Thu, 10 Jan 2019 11:05:44 +0000
+Message-Id: <20190110110546.8101-1-quentin.perret@arm.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Heinrich,
- 
- On ven., déc. 21 2018, Heinrich Schuchardt <xypron.glpk@gmx.de> wrote:
+The recently introduced Energy Aware Scheduling (EAS) feature relies on
+a large set of concepts, assumptions, and design choices that are
+probably not obvious for an outsider. Moreover, enabling EAS on a
+particular platform isn't straightforward because of all its
+dependencies. This series tries to address this by introducing proper
+documentation files for the scheduler's part of EAS and for the newly
+introduced Energy Model (EM) framework. These are meant to explain not
+only the design choices of EAS but also to list its dependencies in a
+human-readable location.
 
-> The memory area [0x4000000-0x4200000[ is occupied by the PSCI firmware. Any
-> attempt to access it from Linux leads to an immediate crash.
->
-> So let's make the same memory reservation as the vendor kernel.
->
-> Signed-off-by: Heinrich Schuchardt <xypron.glpk@gmx.de>
+The two new doc files are simple .txt to be consistent with the existing
+documentation of the relevant subsystems, but I'm happy to translate to
+.rst if deemed necessary.
 
+All feedback is welcome.
 
-Applied on mvebu/fixes
+Thanks !
+Quentin
 
-I added a comment about the use with a mainline /U-Boot
+Quentin Perret (2):
+  PM / EM: Document the Energy Model framework
+  sched: Document Energy Aware Scheduling
 
-Thanks,
-
-Gregory
-
-
-> ---
-> v2
-> 	Move the change from armada-8040-mcbin.dts to armada-ap806.dtsi.
-> 	I only have a MACCHIATObin for testing but
-> 	https://github.com/MarvellEmbeddedProcessors/linux-marvell
-> 	has the reservation in that file.
-> ---
->  arch/arm64/boot/dts/marvell/armada-ap806.dtsi | 11 +++++++++++
->  1 file changed, 11 insertions(+)
->
-> diff --git a/arch/arm64/boot/dts/marvell/armada-ap806.dtsi b/arch/arm64/boot/dts/marvell/armada-ap806.dtsi
-> index 7d94c1fa592a..f8dafef83db0 100644
-> --- a/arch/arm64/boot/dts/marvell/armada-ap806.dtsi
-> +++ b/arch/arm64/boot/dts/marvell/armada-ap806.dtsi
-> @@ -28,6 +28,17 @@
->  		method = "smc";
->  	};
->  
-> +	reserved-memory {
-> +		#address-cells = <2>;
-> +		#size-cells = <2>;
-> +		ranges;
-> +
-> +		psci-area@4000000 {
-> +			reg = <0x0 0x4000000 0x0 0x200000>;
-> +			no-map;
-> +		};
-> +	};
-> +
->  	ap806 {
->  		#address-cells = <2>;
->  		#size-cells = <2>;
-> -- 
-> 2.19.2
->
+ Documentation/power/energy-model.txt     | 144 ++++++++
+ Documentation/scheduler/sched-energy.txt | 425 +++++++++++++++++++++++
+ 2 files changed, 569 insertions(+)
+ create mode 100644 Documentation/power/energy-model.txt
+ create mode 100644 Documentation/scheduler/sched-energy.txt
 
 -- 
-Gregory Clement, Bootlin
-Embedded Linux and Kernel engineering
-http://bootlin.com
+2.20.1
+
