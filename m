@@ -4,59 +4,60 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1F0DC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 22:19:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98C5EC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 22:19:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8EBF0208E3
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 22:19:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 53391208E3
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 22:19:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547158767;
-	bh=6Iv/PPOIjmEwPbwF5g7x79NbQO/d37D4LsWAXVwzrmQ=;
+	s=default; t=1547158786;
+	bh=X7gds3erUp9TB+MHHOh/CHLaTtPI8WNusNcxJe1WgFg=;
 	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=xX7w8g6hg5eziYx7oY+ZTZF8HC86tpdc6KkkzmctsLyaFxz6L+1MwU/L/whw2xDqg
-	 oA7omEiaAXEAv75U1gC/zBItpHZ/OcaY74kKnrEhDLBRx9mRw7ccyMr114YZrdvcHn
-	 8taQYv5z/hGt0frk/zaKnUUOaNPBpS79NlkwH2kA=
+	b=Q/HERRvHnjliglIyxYg+SJmPfKXXBR5vD8565B6QuiEzIsIZUEXfasIF1EB8zzGcC
+	 sXgBtcpYhdh9HEuDS3hcLSvevi9Negc/ngr+ViGYCpXW1CP69uTXPIP5Ob96+W09sp
+	 tN1uerHjwCtMMXeeZjqH/nARl2q8+CAPtI+P1tNc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729179AbfAJWT0 (ORCPT
+        id S1729235AbfAJWTp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 17:19:26 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:41092 "EHLO
+        Thu, 10 Jan 2019 17:19:45 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:44292 "EHLO
         mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728882AbfAJWTO (ORCPT
+        with ESMTP id S1728580AbfAJWTp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 17:19:14 -0500
-Received: by mail-ot1-f65.google.com with SMTP id u16so11416846otk.8;
-        Thu, 10 Jan 2019 14:19:14 -0800 (PST)
+        Thu, 10 Jan 2019 17:19:45 -0500
+Received: by mail-ot1-f65.google.com with SMTP id f18so11388425otl.11;
+        Thu, 10 Jan 2019 14:19:44 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=8mXKyDOeuv77l2GB4kWHUs7/iI/PNHekuOkXLJVMaq4=;
-        b=ESTmADy3BsFZmTYKyAmGk/ebTiYkHrB7B1PDHs1rXZdFqpvXl2qorlP3y3pVqHtMBQ
-         TVCWmN8xJDgF9KrVpDZhihU/SA7YxlL+IxkG6qZ1GFzmPpcXH4wVVExKqqJA9osCQgk5
-         y5pJovaYaRqvQymmIkrWECjAzd8O099JzFFzMdD00Qn0hrv+1xtqECNocpvg0U5KUHgI
-         pJhDcygjypQc602DCjvIMhmyQ7xBqnWhjciLOBXdkuc32Zk2pB6xcvmMgUnOCpDlWW8T
-         pUQBHdQrh4tUR1eYTJw/gYqhxuroFvl/VUgzKOeh61K9uNMC7Z0GQ3KDGJxG0v1+tFpM
-         dabg==
-X-Gm-Message-State: AJcUukeuToYSxcimp++2Rxc1mEE3IWfeR/PTSszf3n1zl6TCfT597Q8a
-        jj75ZlM1TDYvLNLjvfl0czwzyd8=
-X-Google-Smtp-Source: ALg8bN6f8SHvnKK5VJSIN1SWFmUwn/fYGBFQwswqM37xWh4pLZzoZrcXET7WfIxfmPySy5xQMoRZMg==
-X-Received: by 2002:a9d:5a81:: with SMTP id w1mr8415635oth.317.1547158753259;
-        Thu, 10 Jan 2019 14:19:13 -0800 (PST)
+        bh=lcEn48btYuBBpFW3H6jCSdPYCQ5J3zew7Gw3e+pbdng=;
+        b=RNMMZfGuTG1aB0xa4Vk7/g9DewO9K8+GoGhRe4pdoZUE7XxUe+pGoBNx3FCeHD2Wgh
+         dihdb9Fe9jImPLBL3efhoQgjtWBSiUyZMIIrKyMjL663Qvj7T6ddmRbOZwEegPEr4M/P
+         67n26rlkMqyGyEl7vA5W1VdFeblLT+GIPFTjgKGRAbeEBG7R23SRS0ISOFNmTMJuvfoc
+         79rI9VO2Pdq13C/hdlgVQ2IonxPkYPvg8HMgwTSFhlxPKWyoXPSjA9VVn5gu19Xv3EQt
+         ZxhbNbtk2teTK0aCbgI7GM7rW54ZGi1X/Pc5UMtBF1dSS/1X/2cIFQ4+uwUn2hLRHgTe
+         YJTw==
+X-Gm-Message-State: AJcUukdaVY4Z6lc4n2GFNA+M8luDq7BNVLrXPKfGrMUJLdGCcgc1vFlX
+        vEzMOstS+YkVO1tf5q2ISOR5sUU=
+X-Google-Smtp-Source: ALg8bN60MD55tdYQwHak1aQ5zyPP4GWqLEr9ietPQFIbdRjmDPbyyniY5Bgu3cNhZB0KkOD+ARhf6A==
+X-Received: by 2002:a9d:70d5:: with SMTP id w21mr7388152otj.301.1547158783935;
+        Thu, 10 Jan 2019 14:19:43 -0800 (PST)
 Received: from xps15.herring.priv (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.googlemail.com with ESMTPSA id c19sm36776707otl.16.2019.01.10.14.19.12
+        by smtp.googlemail.com with ESMTPSA id h24sm34719828otq.11.2019.01.10.14.19.43
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 10 Jan 2019 14:19:12 -0800 (PST)
+        Thu, 10 Jan 2019 14:19:43 -0800 (PST)
 From:   Rob Herring <robh@kernel.org>
 To:     devicetree@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
-Subject: [PATCH] dt-bindings: clock: Convert fixed-factor-clock to json-schema
-Date:   Thu, 10 Jan 2019 16:19:02 -0600
-Message-Id: <20190110221903.3990-5-robh@kernel.org>
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-serial@vger.kernel.org
+Subject: [PATCH] dt-bindings: serial: Convert arm,pl011 to json-schema
+Date:   Thu, 10 Jan 2019 16:19:42 -0600
+Message-Id: <20190110221942.5374-1-robh@kernel.org>
 X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -65,115 +66,210 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Convert the fixed-factor-clock binding to DT schema format using
-json-schema.
+Convert the arm,pl011 binding to DT schema using json-schema.
 
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org
+The zte,zx296702-uart binding appears to be broken as the dts files are
+missing 'arm,primecell'. That's included in the schema here to throw a
+warning.
+
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-serial@vger.kernel.org
 Signed-off-by: Rob Herring <robh@kernel.org>
 ---
- .../bindings/clock/fixed-factor-clock.txt     | 28 ----------
- .../bindings/clock/fixed-factor-clock.yaml    | 56 +++++++++++++++++++
- 2 files changed, 56 insertions(+), 28 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/clock/fixed-factor-clock.txt
- create mode 100644 Documentation/devicetree/bindings/clock/fixed-factor-clock.yaml
+ .../devicetree/bindings/serial/pl011.txt      |  51 -------
+ .../devicetree/bindings/serial/pl011.yaml     | 126 ++++++++++++++++++
+ 2 files changed, 126 insertions(+), 51 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/serial/pl011.txt
+ create mode 100644 Documentation/devicetree/bindings/serial/pl011.yaml
 
-diff --git a/Documentation/devicetree/bindings/clock/fixed-factor-clock.txt b/Documentation/devicetree/bindings/clock/fixed-factor-clock.txt
+diff --git a/Documentation/devicetree/bindings/serial/pl011.txt b/Documentation/devicetree/bindings/serial/pl011.txt
 deleted file mode 100644
-index 189467a7188a..000000000000
---- a/Documentation/devicetree/bindings/clock/fixed-factor-clock.txt
+index 77863aefe9ef..000000000000
+--- a/Documentation/devicetree/bindings/serial/pl011.txt
 +++ /dev/null
-@@ -1,28 +0,0 @@
--Binding for simple fixed factor rate clock sources.
--
--This binding uses the common clock binding[1].
--
--[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
+@@ -1,51 +0,0 @@
+-* ARM AMBA Primecell PL011 serial UART
 -
 -Required properties:
--- compatible : shall be "fixed-factor-clock".
--- #clock-cells : from common clock binding; shall be set to 0.
--- clock-div: fixed divider.
--- clock-mult: fixed multiplier.
--- clocks: parent clock.
+-- compatible: must be "arm,primecell", "arm,pl011", "zte,zx296702-uart"
+-- reg: exactly one register range with length 0x1000
+-- interrupts: exactly one interrupt specifier
 -
 -Optional properties:
--- clock-output-names : From common clock binding.
+-- pinctrl:
+-	   When present, must have one state named "default",
+-	   and may contain a second name named "sleep". The former
+-	   state sets up pins for ordinary operation whereas
+-	   the latter state will put the associated pins to sleep
+-	   when the UART is unused
+-- clocks:
+-	   When present, the first clock listed must correspond to
+-	   the clock named UARTCLK on the IP block, i.e. the clock
+-	   to the external serial line, whereas the second clock
+-	   must correspond to the PCLK clocking the internal logic
+-	   of the block. Just listing one clock (the first one) is
+-	   deprecated.
+-- clock-names:
+-	   When present, the first clock listed must be named
+-	   "uartclk" and the second clock listed must be named
+-	   "apb_pclk"
+-- dmas:	
+-	   When present, may have one or two dma channels.
+-	   The first one must be named "rx", the second one
+-	   must be named "tx".
+-- auto-poll:
+-	   Enables polling when using RX DMA.
+-- poll-rate-ms:
+-	   Rate at which poll occurs when auto-poll is set,
+-	   default 100ms.
+-- poll-timeout-ms:
+-	   Poll timeout when auto-poll is set, default
+-	   3000ms.
 -
--Some clocks that require special treatments are also handled by that
--driver, with the compatibles:
--  - allwinner,sun4i-a10-pll3-2x-clk
+-See also bindings/arm/primecell.txt
 -
 -Example:
--	clock {
--		compatible = "fixed-factor-clock";
--		clocks = <&parentclk>;
--		#clock-cells = <0>;
--		clock-div = <2>;
--		clock-mult = <1>;
--	};
-diff --git a/Documentation/devicetree/bindings/clock/fixed-factor-clock.yaml b/Documentation/devicetree/bindings/clock/fixed-factor-clock.yaml
+-
+-uart@80120000 {
+-	compatible = "arm,pl011", "arm,primecell";
+-	reg = <0x80120000 0x1000>;
+-	interrupts = <0 11 IRQ_TYPE_LEVEL_HIGH>;
+-	dmas = <&dma 13 0 0x2>, <&dma 13 0 0x0>;
+-	dma-names = "rx", "tx";
+-	clocks = <&foo_clk>, <&bar_clk>;
+-	clock-names = "uartclk", "apb_pclk";
+-};
+diff --git a/Documentation/devicetree/bindings/serial/pl011.yaml b/Documentation/devicetree/bindings/serial/pl011.yaml
 new file mode 100644
-index 000000000000..e7cd4ebac456
+index 000000000000..1a64d59152aa
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/fixed-factor-clock.yaml
-@@ -0,0 +1,56 @@
++++ b/Documentation/devicetree/bindings/serial/pl011.yaml
+@@ -0,0 +1,126 @@
 +# SPDX-License-Identifier: GPL-2.0
 +%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/clock/fixed-factor-clock.yaml#
++$id: http://devicetree.org/schemas/serial/pl011.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: Binding for simple fixed factor rate clock sources.
++title: ARM AMBA Primecell PL011 serial UART
 +
 +maintainers:
-+  - Michael Turquette <mturquette@baylibre.com>
-+  - Stephen Boyd <sboyd@kernel.org>
++  - Rob Herring <robh@kernel.org>
++
++allOf:
++  - $ref: /schemas/serial.yaml#
++
++# Need a custom select here or 'arm,primecell' will match on lots of nodes
++select:
++  properties:
++    compatible:
++      contains:
++        enum:
++          - arm,pl011
++          - zte,zx296702-uart
++  required:
++    - compatible
 +
 +properties:
 +  compatible:
-+    enum:
-+      - allwinner,sun4i-a10-pll3-2x-clk
-+      - fixed-factor-clock
++    oneOf:
++      - items:
++          - const: arm,pl011
++          - const: arm,primecell
++      - items:
++          - const: zte,zx296702-uart
++          - const: arm,primecell
 +
-+  "#clock-cells":
-+    const: 0
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++  pinctrl-0: true
++  pinctrl-1: true
++
++  pinctrl-names:
++    description:
++      When present, must have one state named "default",
++      and may contain a second name named "sleep". The former
++      state sets up pins for ordinary operation whereas
++      the latter state will put the associated pins to sleep
++      when the UART is unused
++    minItems: 1
++    items:
++      - const: default
++      - const: sleep
 +
 +  clocks:
-+    maxItems: 1
++    description:
++      When present, the first clock listed must correspond to
++      the clock named UARTCLK on the IP block, i.e. the clock
++      to the external serial line, whereas the second clock
++      must correspond to the PCLK clocking the internal logic
++      of the block. Just listing one clock (the first one) is
++      deprecated.
++    maxItems: 2
 +
-+  clock-div:
-+    description: Fixed divider
++  clock-names:
++    items:
++      - const: uartclk
++      - const: apb_pclk
++
++  dmas:
++    minItems: 1
++    maxItems: 2
++
++  dma-names:
++    minItems: 1
++    items:
++      - const: rx
++      - const: tx
++
++  auto-poll:
++    description:
++      Enables polling when using RX DMA.
++    type: boolean
++
++  poll-rate-ms:
++    description:
++      Rate at which poll occurs when auto-poll is set.
++      default 100ms.
 +    allOf:
 +      - $ref: /schemas/types.yaml#/definitions/uint32
-+      - minimum: 1
++      - default: 100
 +
-+  clock-mult:
-+    description: Fixed multiplier
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+
-+  clock-output-names:
-+    maxItems: 1
++  poll-timeout-ms:
++    description:
++      Poll timeout when auto-poll is set, default
++      3000ms.
++    allOf:
++      - $ref: /schemas/types.yaml#/definitions/uint32
++      - default: 3000
 +
 +required:
 +  - compatible
-+  - clocks
-+  - "#clock-cells"
-+  - clock-div
-+  - clock-mult
++  - reg
++  - interrupts
++
++dependencies:
++  poll-rate-ms: [ auto-poll ]
++  poll-timeout-ms: [ auto-poll ]
 +
 +additionalProperties: false
 +
 +examples:
 +  - |
-+    clock {
-+      compatible = "fixed-factor-clock";
-+      clocks = <&parentclk>;
-+      #clock-cells = <0>;
-+      clock-div = <2>;
-+      clock-mult = <1>;
++    serial@80120000 {
++      compatible = "arm,pl011", "arm,primecell";
++      reg = <0x80120000 0x1000>;
++      interrupts = <0 11 4>;
++      dmas = <&dma 13 0 0x2>, <&dma 13 0 0x0>;
++      dma-names = "rx", "tx";
++      clocks = <&foo_clk>, <&bar_clk>;
++      clock-names = "uartclk", "apb_pclk";
 +    };
++
 +...
 -- 
 2.19.1
