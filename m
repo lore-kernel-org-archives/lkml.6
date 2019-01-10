@@ -3,132 +3,138 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 206FBC43612
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 08:28:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EF5FC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 08:28:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EFEDF206B6
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 08:28:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7999A21773
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 08:28:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727573AbfAJI2Y (ORCPT
+        id S1727653AbfAJI21 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 03:28:24 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:28943 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727262AbfAJI2X (ORCPT
+        Thu, 10 Jan 2019 03:28:27 -0500
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:54833 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727262AbfAJI2Z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 03:28:23 -0500
-X-UUID: 9fae71145775415e8cf40d566ecf2958-20190110
-X-UUID: 9fae71145775415e8cf40d566ecf2958-20190110
-Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw02.mediatek.com
-        (envelope-from <ck.hu@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 894056482; Thu, 10 Jan 2019 16:28:17 +0800
-Received: from MTKMBS06N2.mediatek.inc (172.21.101.130) by
- mtkmbs03n2.mediatek.inc (172.21.101.182) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Thu, 10 Jan 2019 16:28:15 +0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs06n2.mediatek.inc (172.21.101.130) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Thu, 10 Jan 2019 16:28:15 +0800
-Received: from [172.21.77.4] (172.21.77.4) by mtkcas07.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Thu, 10 Jan 2019 16:28:15 +0800
-Message-ID: <1547108895.31582.1.camel@mtksdaap41>
-Subject: Re: [PATCH 2/9] drm/mediatek: move the setting of fixed divider
-From:   CK Hu <ck.hu@mediatek.com>
-To:     chunhui dai <chunhui.dai@mediatek.com>
-CC:     --to=Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        "Philipp Zabel" <p.zabel@pengutronix.de>,
-        David Airlie <airlied@linux.ie>,
-        Sean Wang <sean.wang@mediatek.com>,
-        Ryder Lee <ryder.lee@mediatek.com>,
-        "Colin Ian King" <colin.king@canonical.com>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <dri-devel@lists.freedesktop.org>, <srv_heupstream@mediatek.com>,
-        <bibby.hsieh@mediatek.com>, <jamesjj.liao@mediatek.com>,
-        <jitao.shi@mediatek.com>
-Date:   Thu, 10 Jan 2019 16:28:15 +0800
-In-Reply-To: <1546585439-30455-3-git-send-email-chunhui.dai@mediatek.com>
-References: <1546585439-30455-1-git-send-email-chunhui.dai@mediatek.com>
-         <1546585439-30455-3-git-send-email-chunhui.dai@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+        Thu, 10 Jan 2019 03:28:25 -0500
+X-IronPort-AV: E=Sophos;i="5.56,460,1539619200"; 
+   d="scan'208";a="51701932"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 10 Jan 2019 16:28:22 +0800
+Received: from G08CNEXCHPEKD02.g08.fujitsu.local (unknown [10.167.33.83])
+        by cn.fujitsu.com (Postfix) with ESMTP id 0B77F4B7349D;
+        Thu, 10 Jan 2019 16:28:24 +0800 (CST)
+Received: from [10.167.226.60] (10.167.226.60) by
+ G08CNEXCHPEKD02.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Thu, 10 Jan 2019 16:28:22 +0800
+Subject: Re: [PATCH] x86/boot: drop memset from copy.S
+To:     <hpa@zytor.com>, <x86@kernel.org>, <linux-kernel@vger.kernel.org>
+CC:     <tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>
+References: <20190107074056.12532-1-caoj.fnst@cn.fujitsu.com>
+ <000CE7C8-33F3-404A-9E7D-F2CCB0BA110E@zytor.com>
+ <28158fd7-8569-e0c1-75d0-c423330e256d@cn.fujitsu.com>
+ <1DA6B342-5F32-4C73-9352-4DB9F176D53C@zytor.com>
+From:   Cao jin <caoj.fnst@cn.fujitsu.com>
+Message-ID: <181a8787-fb13-2c88-2d85-00c1bb377cdf@cn.fujitsu.com>
+Date:   Thu, 10 Jan 2019 16:28:38 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
+In-Reply-To: <1DA6B342-5F32-4C73-9352-4DB9F176D53C@zytor.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-TM-SNTS-SMTP: 004192433046345DE11453B4D7675205C9A28576C80F431AE3A3EE6BF315C46C2000:8
-X-MTK:  N
+X-Originating-IP: [10.167.226.60]
+X-yoursite-MailScanner-ID: 0B77F4B7349D.AB91B
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: caoj.fnst@cn.fujitsu.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Chunhui:
+Hello HPA,
 
-On Fri, 2019-01-04 at 15:03 +0800, chunhui dai wrote:
-> move the setting of fixed divider from enable/disable
-> to the function of setting rate.
-
-Please describe more about _WHY_ of this patch. Does it fix any bug, or
-enhance some thing, or a new feature?
-
-Regards,
-CK
-
+On 1/8/19 4:38 PM, hpa@zytor.com wrote:
+> On January 7, 2019 12:52:57 AM PST, Cao jin <caoj.fnst@cn.fujitsu.com> wrote:
+>> Hi,
+>>
+>> On 1/7/19 3:59 PM, hpa@zytor.com wrote:
+>>> On January 6, 2019 11:40:56 PM PST, Cao jin
+>> <caoj.fnst@cn.fujitsu.com> wrote:
+>>>> According to objdump output of setup, function memset is not used in
+>>>> setup code. Currently, all usage of memset in setup come from macro
+>>>> definition of string.h.
+>>>>
+>>>> Signed-off-by: Cao jin <caoj.fnst@cn.fujitsu.com>
+>>>> ---
+>>>> Compiled and booted under x86_64; compiled under i386.
+>>>>
+>>>> Questions: now there is 2 definition of memcpy, one lies in copy.S,
+>>>> another lies in string.h which is mapped to gcc builtin function. Do
+>> we
+>>>> still need 2 definition? Could we move the content of copy.S to
+>>>> boot/string.c?
+>>>>
+>>>> At first glance, the usage of string.{c.h} of setup is kind of
+>>>> confusing,
+>>>> they are also used in compressed/ and purgatory/
+>>>>
+>>>> arch/x86/boot/copy.S | 15 ---------------
+>>>> 1 file changed, 15 deletions(-)
+>>>>
+>>>> diff --git a/arch/x86/boot/copy.S b/arch/x86/boot/copy.S
+>>>> index 15d9f74b0008..5157d08b0ff2 100644
+>>>> --- a/arch/x86/boot/copy.S
+>>>> +++ b/arch/x86/boot/copy.S
+>>>> @@ -33,21 +33,6 @@ GLOBAL(memcpy)
+>>>> 	retl
+>>>> ENDPROC(memcpy)
+>>>>
+>>>> -GLOBAL(memset)
+>>>> -	pushw	%di
+>>>> -	movw	%ax, %di
+>>>> -	movzbl	%dl, %eax
+>>>> -	imull	$0x01010101,%eax
+>>>> -	pushw	%cx
+>>>> -	shrw	$2, %cx
+>>>> -	rep; stosl
+>>>> -	popw	%cx
+>>>> -	andw	$3, %cx
+>>>> -	rep; stosb
+>>>> -	popw	%di
+>>>> -	retl
+>>>> -ENDPROC(memset)
+>>>> -
+>>>> GLOBAL(copy_from_fs)
+>>>> 	pushw	%ds
+>>>> 	pushw	%fs
+>>>
+>>> This is dependent on both gcc version and flags.
+>>>
+>>
+>> Thanks for your info, but I still don't quite get your point. All files
+>> who has memset reference in setup will also #include "string.h", so how
+>> gcc version and flags will associate memset reference to the assembly
+>> function by force?  Hope to get a little more details when you are
+>> convenient:)
 > 
-> Signed-off-by: chunhui dai <chunhui.dai@mediatek.com>
-> ---
->  drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c | 5 +----
->  1 file changed, 1 insertion(+), 4 deletions(-)
+> GCC will sometimes emit calls to certain functions including memcpy().
 > 
-> diff --git a/drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c b/drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c
-> index b5ed6b7..68b124f 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c
-> +++ b/drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c
-> @@ -79,7 +79,6 @@ static int mtk_hdmi_pll_prepare(struct clk_hw *hw)
->  	mtk_hdmi_phy_set_bits(hdmi_phy, HDMI_CON0, RG_HDMITX_EN_SLDO_MASK);
->  	usleep_range(80, 100);
->  	mtk_hdmi_phy_set_bits(hdmi_phy, HDMI_CON2, RG_HDMITX_MBIAS_LPF_EN);
-> -	mtk_hdmi_phy_set_bits(hdmi_phy, HDMI_CON2, RG_HDMITX_EN_TX_POSDIV);
->  	mtk_hdmi_phy_set_bits(hdmi_phy, HDMI_CON0, RG_HDMITX_EN_SER_MASK);
->  	mtk_hdmi_phy_set_bits(hdmi_phy, HDMI_CON0, RG_HDMITX_EN_PRED_MASK);
->  	mtk_hdmi_phy_set_bits(hdmi_phy, HDMI_CON0, RG_HDMITX_EN_DRV_MASK);
-> @@ -94,7 +93,6 @@ static void mtk_hdmi_pll_unprepare(struct clk_hw *hw)
->  	mtk_hdmi_phy_clear_bits(hdmi_phy, HDMI_CON0, RG_HDMITX_EN_DRV_MASK);
->  	mtk_hdmi_phy_clear_bits(hdmi_phy, HDMI_CON0, RG_HDMITX_EN_PRED_MASK);
->  	mtk_hdmi_phy_clear_bits(hdmi_phy, HDMI_CON0, RG_HDMITX_EN_SER_MASK);
-> -	mtk_hdmi_phy_clear_bits(hdmi_phy, HDMI_CON2, RG_HDMITX_EN_TX_POSDIV);
->  	mtk_hdmi_phy_clear_bits(hdmi_phy, HDMI_CON2, RG_HDMITX_MBIAS_LPF_EN);
->  	usleep_range(80, 100);
->  	mtk_hdmi_phy_clear_bits(hdmi_phy, HDMI_CON0, RG_HDMITX_EN_SLDO_MASK);
-> @@ -123,6 +121,7 @@ static int mtk_hdmi_pll_set_rate(struct clk_hw *hw, unsigned long rate,
->  
->  	mtk_hdmi_phy_set_bits(hdmi_phy, HDMI_CON6, RG_HTPLL_PREDIV_MASK);
->  	mtk_hdmi_phy_set_bits(hdmi_phy, HDMI_CON6, RG_HTPLL_POSDIV_MASK);
-> +	mtk_hdmi_phy_set_bits(hdmi_phy, HDMI_CON2, RG_HDMITX_EN_TX_POSDIV);
->  	mtk_hdmi_phy_mask(hdmi_phy, HDMI_CON6, (0x1 << RG_HTPLL_IC),
->  			  RG_HTPLL_IC_MASK);
->  	mtk_hdmi_phy_mask(hdmi_phy, HDMI_CON6, (0x1 << RG_HTPLL_IR),
-> @@ -223,7 +222,6 @@ static void mtk_hdmi_phy_enable_tmds(struct mtk_hdmi_phy *hdmi_phy)
->  	mtk_hdmi_phy_set_bits(hdmi_phy, HDMI_CON0, RG_HDMITX_EN_SLDO_MASK);
->  	usleep_range(80, 100);
->  	mtk_hdmi_phy_set_bits(hdmi_phy, HDMI_CON2, RG_HDMITX_MBIAS_LPF_EN);
-> -	mtk_hdmi_phy_set_bits(hdmi_phy, HDMI_CON2, RG_HDMITX_EN_TX_POSDIV);
->  	mtk_hdmi_phy_set_bits(hdmi_phy, HDMI_CON0, RG_HDMITX_EN_SER_MASK);
->  	mtk_hdmi_phy_set_bits(hdmi_phy, HDMI_CON0, RG_HDMITX_EN_PRED_MASK);
->  	mtk_hdmi_phy_set_bits(hdmi_phy, HDMI_CON0, RG_HDMITX_EN_DRV_MASK);
-> @@ -235,7 +233,6 @@ static void mtk_hdmi_phy_disable_tmds(struct mtk_hdmi_phy *hdmi_phy)
->  	mtk_hdmi_phy_clear_bits(hdmi_phy, HDMI_CON0, RG_HDMITX_EN_DRV_MASK);
->  	mtk_hdmi_phy_clear_bits(hdmi_phy, HDMI_CON0, RG_HDMITX_EN_PRED_MASK);
->  	mtk_hdmi_phy_clear_bits(hdmi_phy, HDMI_CON0, RG_HDMITX_EN_SER_MASK);
-> -	mtk_hdmi_phy_clear_bits(hdmi_phy, HDMI_CON2, RG_HDMITX_EN_TX_POSDIV);
->  	mtk_hdmi_phy_clear_bits(hdmi_phy, HDMI_CON2, RG_HDMITX_MBIAS_LPF_EN);
->  	usleep_range(80, 100);
->  	mtk_hdmi_phy_clear_bits(hdmi_phy, HDMI_CON0, RG_HDMITX_EN_SLDO_MASK);
+
+Thanks very much. After spending some time on GCC document, I think you
+are talking about a condition that, for example, __builtin_memcpy() is
+not optimized as inline code, but a function call to memcpy() in copy.S.
+
+But I failed to find out the details how would gcc version & flags make
+it this way, even I checked out the .cmd file of these .c. Or is this
+born to be obscure for programmers?
+
+-- 
+Sincerely,
+Cao jin
 
 
