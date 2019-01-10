@@ -2,127 +2,138 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4801C43444
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 13:42:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9827FC43612
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 13:43:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8432620879
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 13:42:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 67BE320879
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 13:43:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="XjxK1ipu"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JFdqqCWl"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729030AbfAJNmw (ORCPT
+        id S1729039AbfAJNnv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 08:42:52 -0500
-Received: from aserp2130.oracle.com ([141.146.126.79]:39750 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728919AbfAJNmw (ORCPT
+        Thu, 10 Jan 2019 08:43:51 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:34545 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728848AbfAJNnv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 08:42:52 -0500
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0ADcjFd193867;
-        Thu, 10 Jan 2019 13:42:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=UfXZEiC++YYzx6hQjwXCQSKZEfHaOn/f3XquOBw4btk=;
- b=XjxK1ipuhd7W1votCS6aLJuAxXo9I6T5cw+eEoZ18nuL7FZ4tvrjnfryZ/dUaGUoR1e8
- 3Rx4dodWrvjhYN9xlKxc0h2WR0yDM+Yq8afrgd7E6XhZOluJxEVWGLthYcjZHm6SGNUn
- jGo0G9ZmiW63MHPy63agwxQfHfdt/yR7ogEYSf+CM+AUtVdzFS7Q/ircz4TokiPyjBib
- D7+rBRNdc2M/VFrYSEqBzxWstlhvhMicurfZjKaIak0yGBflNamOsUlmfGmzM1O60Wv5
- bSbtqQ9xracjNHJsumf0UAUDvNcPmvZMZa5VooimpZYSS2Sfmrsj6BhKeHwr0LRSwR2r PA== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by aserp2130.oracle.com with ESMTP id 2ptj3e7dxs-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 10 Jan 2019 13:42:07 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x0ADg6me025459
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 10 Jan 2019 13:42:06 GMT
-Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x0ADg0Wu013477;
-        Thu, 10 Jan 2019 13:42:00 GMT
-Received: from kadam (/197.157.0.17)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 10 Jan 2019 05:42:00 -0800
-Date:   Thu, 10 Jan 2019 16:41:39 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-Cc:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Jason Wang <jasowang@redhat.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Andrea Parri <andrea.parri@amarulasolutions.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Akira Yokosawa <akiyks@gmail.com>,
-        Daniel Lustig <dlustig@nvidia.com>, linux-arch@vger.kernel.org,
-        Network Development <netdev@vger.kernel.org>,
-        virtualization@lists.linux-foundation.org,
-        Eli Friedman <efriedma@codeaurora.org>,
-        Joe Perches <joe@perches.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        linux-sparse@vger.kernel.org,
-        Eric Christopher <echristo@google.com>
-Subject: Re: [PATCH RFC 1/4] include/linux/compiler*.h: fix OPTIMIZER_HIDE_VAR
-Message-ID: <20190110134139.GE1743@kadam>
-References: <20190102205715.14054-1-mst@redhat.com>
- <20190102205715.14054-2-mst@redhat.com>
- <CAKwvOdk3b6mnpTEEyY-JFrej8K12w9oTMLqi7q5aNiRMyJo6Ow@mail.gmail.com>
- <CANiq72nEiw8+cZNnBOwF1ehv232ZJe5qzhdbaTEg0rOoV2p4sg@mail.gmail.com>
- <20190109213543-mutt-send-email-mst@kernel.org>
+        Thu, 10 Jan 2019 08:43:51 -0500
+Received: by mail-wr1-f66.google.com with SMTP id j2so11478321wrw.1;
+        Thu, 10 Jan 2019 05:43:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:openpgp:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=PUNNiqlsfxrP3NkRtGyXhshMaWx6PTZbvwB96bcU1Lg=;
+        b=JFdqqCWlhNMscDh/C8RTQe9QCxF4ZqHajcjf6OKNOUDyw8dxST2TEeACBbI7YByAM4
+         0ABzSAhTjiV06Dv/K5zQS6tEas4bSymHqDBdhWyd18SiRX4clXyst0XNGTs2sBKMlI4y
+         tZxXrAKDlXluOICs5vs27TmkS3s8sofT+PeXhDA+Q+tesDV5dw8pSfrEtgWvokYbV8De
+         mRYKs5ZRh3tT4IesFpXhT6KiJilgR8pYOIo40U9Vri9h1psHW5LQBJB5MwAGGR4lQ7OD
+         /EoUjXjgq5YbQHAF0+fhJ8DU9VGrtVJCDuWnkkitmuzymlnAan8AyZ7mcN518fyotbRg
+         xiQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=PUNNiqlsfxrP3NkRtGyXhshMaWx6PTZbvwB96bcU1Lg=;
+        b=AOH+5EBO3L1S7JQeHdMGnpAktPbaMpTErH9D/xWVS+ia2bbZL+deYIFaPVYrp9s83E
+         n2B4CiCZ1XMC3t2HH8KUEUcF9kn7F2KwiFZ5cGFZOJMUYjEF1YAAINvRdPtmK2U744bx
+         8Q3DBP8lhavlCvcB2cSFDarb1rAx/rmo+vLepFly0tSVeYs054Aj4ewsac/q6aUCCkkz
+         ILIYEDLnGJHQCGgCBnIl6YV6fotj0ssZIrVY4DWayXSblV6LGyXKOB/kXAr1j0aQMuGu
+         2bnee5Dfio95z67Rev038degn7JcCQQLrIXrvWZfFeBJXRgF4BDjuHnHtnaZT5SYqvjR
+         kxZg==
+X-Gm-Message-State: AJcUuke8gHZf3zRTDoAYO70q0hkQpMKcyDw2C19R8qb8FLlkS8XK3hx7
+        fSB9TjU0WS9pQl+/QJungng=
+X-Google-Smtp-Source: ALg8bN7WhOA1gcALjAc7Y/LLZiFB0ZKKO9d+h8gOgTwneQJkk9RotD6HFS/2L8r0GoVdBQigRl1DNg==
+X-Received: by 2002:adf:df01:: with SMTP id y1mr9689733wrl.127.1547127828554;
+        Thu, 10 Jan 2019 05:43:48 -0800 (PST)
+Received: from [192.168.1.4] (ip-86-49-110-70.net.upcbroadband.cz. [86.49.110.70])
+        by smtp.gmail.com with ESMTPSA id y13sm8963319wme.2.2019.01.10.05.43.47
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 10 Jan 2019 05:43:47 -0800 (PST)
+Subject: Re: [PATCH v5 2/2] dt-bindings: spi: Document Renesas R-Car RPC-IF
+ controller bindings
+To:     masonccyang@mxic.com.tw
+Cc:     boris.brezillon@bootlin.com, broonie@kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>, juliensu@mxic.com.tw,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-spi@vger.kernel.org, sergei.shtylyov@cogentembedded.com,
+        zhengxunli@mxic.com.tw
+References: <1546921020-20436-1-git-send-email-masonccyang@mxic.com.tw>
+ <1546921020-20436-3-git-send-email-masonccyang@mxic.com.tw>
+ <05c8e4ac-a9c8-7c24-289f-ce7a089dbc1e@gmail.com>
+ <OFD1D4749F.04B5A6A1-ON4825837E.00331D68-4825837E.00344CA0@mxic.com.tw>
+From:   Marek Vasut <marek.vasut@gmail.com>
+Openpgp: preference=signencrypt
+Message-ID: <85882d18-9b05-5cc9-105d-093ae7cf0041@gmail.com>
+Date:   Thu, 10 Jan 2019 14:43:46 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190109213543-mutt-send-email-mst@kernel.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9131 signatures=668680
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=774
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1901100109
+In-Reply-To: <OFD1D4749F.04B5A6A1-ON4825837E.00331D68-4825837E.00344CA0@mxic.com.tw>
+Content-Type: text/plain; charset=UTF-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 09, 2019 at 09:36:41PM -0500, Michael S. Tsirkin wrote:
-> On Wed, Jan 09, 2019 at 11:35:52AM +0100, Miguel Ojeda wrote:
-> > On Tue, Jan 8, 2019 at 6:44 PM Nick Desaulniers <ndesaulniers@google.com> wrote:
-> > >
-> > > Also for more context, see:
-> > > commit 7829fb09a2b4 ("lib: make memzero_explicit more robust against
-> > > dead store elimination")
-> > 
-> > By the way, shouldn't that barrier_data() be directly in compiler.h
-> > too, since it is for both gcc & clang?
-> > 
-> > > Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-> > >
-> > > + Miguel
-> > > Miguel, would you mind taking this into your compiler-attributes tree?
-> > 
-> > Sure, at least we get quickly some linux-next time.
-> 
-> 
-> BTW why linux-next? shouldn't this go into 5.0 and stable? It's a bugfix after all.
-> 
+On 1/10/19 10:31 AM, masonccyang@mxic.com.tw wrote:
+> Hi Marek,
 
-It doesn't hurt to put things in linux-next for a week and then 5.0 and
--stable.  Not a lot of testing happens on linux-next, but some does.
+Hi,
 
-regards,
-dan carpenter
+>> "Marek Vasut" <marek.vasut@gmail.com>
+>> 2019/01/08 下午 08:06
+>> > diff --git a/Documentation/devicetree/bindings/spi/spi-renesas-
+>> rpc.txt b/Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
+>> > new file mode 100644
+>> > index 0000000..5f96532
+>> > --- /dev/null
+>> > +++ b/Documentation/devicetree/bindings/spi/spi-renesas-rpc.txt
+>> > @@ -0,0 +1,37 @@
+>> > +Renesas R-Car Gen3 RPC-IF controller Device Tree Bindings
+>> > +----------------------------------------------------------
+>> > +
+>> > +Required properties:
+>> > +- compatible: should be "renesas,r8a77995-rpc"
+>> > +- #address-cells: should be 1
+>> > +- #size-cells: should be 0
+>> > +- reg: should contain 2 entries, one for the registers and one
+>> for the direct
+>> > +       mapping area
+>> > +- reg-names: should contain "regs" and "dirmap"
+>> > +- clock-names: should contain "rpc"
+>> > +- clocks: should contain 1 entries for the module's clock
+>> > +- renesas,rpc-mode: should contain "spi" for rpc spi mode or
+>> > +                  "hyperflash" for rpc hyperflash mode.
+>>
+>> Why do we need this property ? I believe it is possible to detect the
+>> configuration based on the type of child of the RPC node. If the driver
+>> was properly designed, it could well behave as either CFI NOR driver or
+>> SPI flash driver and all would be good, but it seems this is written
+>> with it being SPI flash driver only and once the HF mode would need to
+>> be added, it'd mean a tremendous undertaking to rework the entire driver.
+>>
+> 
+> Except to check if there are any SPI NOR child nodes by "jedec,spi-nor"
+> compatible, is any other way better ?
+> 
+> any suggestion is welcome.
 
+That's the one. A MFD RPC driver can sanitize it's child nodes, verify
+that the config is valid and configure the RPC accordingly. All of the
+devices that can be connected to the RPC are either valid jedec-nor or
+CFI NOR (HF), so this should work fine.
+
+-- 
+Best regards,
+Marek Vasut
