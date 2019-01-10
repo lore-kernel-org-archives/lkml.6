@@ -2,104 +2,83 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14F0BC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 12:28:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D134BC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 12:28:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DBF7B2177B
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 12:28:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9AC0321773
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 12:28:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547123282;
-	bh=crGfDYdPOltsvWmVn0eFpUZBB/b1BDI7bkxMPXPbe+E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=yKUkXInOSrPYOARPYD5LO8wPSS1qhh0pTN4fAYX0VXRBbm+s03lcu6x+jjuBll3b1
-	 hI+c5FGXDLWL1GEsCt2lOMcKWdSqnByh2SDBdCJzNgh3mOSDLhxxcAwoZrugS3uG92
-	 OxJfvrRCqTk7ZVvmlKAqbhOBx4F6RePT4T2aX6fE=
+	s=default; t=1547123334;
+	bh=iKLKgP4yFhPD4z8BrGilBtpuUnjbsaHzvKSX9eOLwnE=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=mrwtCQFPUOANScxR3qx6P+GtHylP/ICkCtg0Y1AIueiYEnlT2DuYjSRUS00Defpan
+	 nqQLXJC62gG6neFKL6fpH2jL+TM0YXD63gsQiC4mTiDdbjfh4Voz5akxcmtcKcYI3x
+	 SRrGgz0sKdAAu20S13lnA/It7WUdAV72CUCpOvTw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728213AbfAJM2C (ORCPT
+        id S1728356AbfAJM2x (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 07:28:02 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:33809 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727579AbfAJM2B (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 07:28:01 -0500
-Received: by mail-lj1-f193.google.com with SMTP id u89-v6so9544672lje.1;
-        Thu, 10 Jan 2019 04:27:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=XwAPx2ugzQ22frK+NatiM0MCS3FyveznXEHwVAedwls=;
-        b=oyLYzoDQplzpmiBANRfoBJMF1YggrNImKzXJm58FbC2MomyuY3ZAIcY7FCwYYpXozq
-         VeWVL5DPT42gsN7iueiuUOzE9Qri2sDazNsHy/MIIMXoGjTmhhx81pWWjhOO6scXpLns
-         Y6i2gmoBfl+/piyn/P7CtxVwzg2yIJjQq3A9MddMqIB36kRTsHaPWR6BEkPgQlxnMAOk
-         SmCjiWX0YfSS14oMEHOy5bOfnt72ArvnfGysXe43Hv8uptHSkSUmw5/CRPtjtCnBx3Vl
-         EUgCkdhN8S89yAtNieNaOx9XcfSTpgTp+X4q/u4Bqxdp7U8NySliFAmL1ee3koORspUx
-         wyEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=XwAPx2ugzQ22frK+NatiM0MCS3FyveznXEHwVAedwls=;
-        b=g4UpbdL6LdcxOklQpUbs7zJ6HstGLOCsbCzVjQgwVKZEQL9zVU05Nl+DVDAXH7M8s7
-         1dXmhWOGet6vxDh9Ka4naCb7sej2CAmaa4NWZuFXpbnolmq3LQyNOEgk95IJEjTA2VCS
-         u8izCx6vlo8TYrQwlzK2JwzcUk4Air5Yrtz/9/mJ2fpnyXWfDww+FmkasoUfn/gcuqpy
-         aXShzWlBfdFObckDdZ4wJgViBZ60pYMDI0ejT/u4tt0aQRQmlwvov/rHEf3xeFJFUGk+
-         mQdIZPePJ1FEs0grd2D7J5L5deZFO5OcobiXX/907oAo0TQ8b4xsCtxeWbLEEUTYr5CV
-         PBGg==
-X-Gm-Message-State: AJcUukcEhXbh01ZbMjGPG+KJzgwMZJcWSYpTni2hwkfX++7NUxw5pw2p
-        3oQWRxJkqL0M8LvfrD+F7Z4=
-X-Google-Smtp-Source: ALg8bN6pZQP41bicMbMKdqSA40fcd55QFYPBFyd9a52/kjOpJmAy1Gb/8Xy9rWvXIHFloNrV0g5vPQ==
-X-Received: by 2002:a2e:9e95:: with SMTP id f21-v6mr5890699ljk.128.1547123278948;
-        Thu, 10 Jan 2019 04:27:58 -0800 (PST)
-Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
-        by smtp.gmail.com with ESMTPSA id l3-v6sm15380166ljg.21.2019.01.10.04.27.57
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 10 Jan 2019 04:27:57 -0800 (PST)
-Received: from johan by xi.terra with local (Exim 4.91)
-        (envelope-from <johan@kernel.org>)
-        id 1ghZRF-0002pk-OC; Thu, 10 Jan 2019 13:27:57 +0100
-Date:   Thu, 10 Jan 2019 13:27:57 +0100
-From:   Johan Hovold <johan@kernel.org>
-To:     Andreas Kemnade <andreas@kemnade.info>
-Cc:     johan@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Discussions about the Letux Kernel 
-        <letux-kernel@openphoenux.org>
-Subject: Re: [PATCH v2 5/5] dt-bindings: gnss: add lna-supply property
-Message-ID: <20190110122757.GB9725@localhost>
-References: <20181209195150.5192-1-andreas@kemnade.info>
- <20181209195150.5192-6-andreas@kemnade.info>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181209195150.5192-6-andreas@kemnade.info>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+        Thu, 10 Jan 2019 07:28:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45016 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727579AbfAJM2x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 07:28:53 -0500
+Received: from localhost.localdomain (unknown [115.199.179.168])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id BB058214DA;
+        Thu, 10 Jan 2019 12:28:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547123332;
+        bh=iKLKgP4yFhPD4z8BrGilBtpuUnjbsaHzvKSX9eOLwnE=;
+        h=From:To:Cc:Subject:Date:From;
+        b=w7X8hBxOm1HN9hBhoPeYTKuY+VApiMbNgR6yanNOZitFeOdNMkVJTzRJ1C8sQGyBK
+         fvwdT0DcjCjaPEGAY21JwS2I5eWow5bScIpjulhfyObWuBgevQVXtowFCeCwqLMf8y
+         ts6zOWUzBZST/D15QroaJgMiryJrsogHHbp206sw=
+From:   guoren@kernel.org
+To:     torvalds@linux-foundation.org, arnd@arndb.de, guoren@kernel.org
+Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        Guo Ren <ren_guo@c-sky.com>
+Subject: [PATCH V2] csky: fixup compile error with CPU 810.
+Date:   Thu, 10 Jan 2019 20:28:39 +0800
+Message-Id: <1547123319-15224-1-git-send-email-guoren@kernel.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Dec 09, 2018 at 08:51:50PM +0100, Andreas Kemnade wrote:
-> Add lna-supply property.
-> 
-> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
-> ---
-> Changes in v2:
->  - reordering
-> Original order had a
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> 
->  Documentation/devicetree/bindings/gnss/sirfstar.txt | 1 +
->  1 file changed, 1 insertion(+)
+From: Guo Ren <ren_guo@c-sky.com>
 
-Ah, missed this one at first.
+This bug is from commit f553aa1c13cb:
+  "csky: fixup relocation error with 807 & 860".
 
-But shouldn't this go into the generic binding since it isn't specific
-for sirf-star based receivers?
+I forgot to compile with 810 for that patch.
 
-Johan
+Signed-off-by: Guo Ren <ren_guo@c-sky.com>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+---
+ arch/csky/kernel/module.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/csky/kernel/module.c b/arch/csky/kernel/module.c
+index 0b028ee..b5ad7d9 100644
+--- a/arch/csky/kernel/module.c
++++ b/arch/csky/kernel/module.c
+@@ -28,7 +28,7 @@
+ 
+ static void jsri_2_lrw_jsr(uint32_t *location)
+ {
+-	uint16_t location_tmp = (uint16_t *)location;
++	uint16_t *location_tmp = (uint16_t *)location;
+ 
+ 	if (IS_BSR32(*location_tmp, *(location_tmp + 1)))
+ 		return;
+-- 
+2.7.4
+
