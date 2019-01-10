@@ -2,158 +2,127 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B29A4C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 17:19:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A478C43444
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 17:19:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7FA4920879
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 17:19:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e/bCKzm9"
+	by mail.kernel.org (Postfix) with ESMTP id 6D01620879
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 17:19:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729541AbfAJRTN (ORCPT
+        id S1729727AbfAJRTb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 12:19:13 -0500
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:36358 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729645AbfAJRTN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 12:19:13 -0500
-Received: by mail-qt1-f194.google.com with SMTP id t13so14090818qtn.3
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 09:19:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=4wzNd9DeG8t/wPBLcT852h6gcuKHG7AuIZJhFevKVHc=;
-        b=e/bCKzm9Pac2mOEn8vqmIewvqabaCBKHNtG9OIHed/0KYIggEUXlJSplJ+D5BLxOYp
-         G1qD0UziP6fx4kVYJKec4TYqPoTxsChm7p4vwjfsEYckBt/GGP9zksUbJTjtGVkZUIZC
-         hesuxHRhxJW5d0tyPV0I3tnb+rB6OwAW+icYYAvur/p8mDAdQFkqGjDxJITQySIF0cqE
-         SC4gmXnOrqgxplCai5GEWAkPXzLkwUUiR0pAVkd5J6ii23MTHUaQYZxqJUvtNKEh+YfA
-         NCy7s5TTAZXvOQ/OaZC8E8rCL4cfhV3RJKwu41ZCQ/FJjqBd1Sy/Z8hKiTgCGSRcI1A6
-         fbig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=4wzNd9DeG8t/wPBLcT852h6gcuKHG7AuIZJhFevKVHc=;
-        b=Yy7MFuvcGrQ7v10iIfTl+Zy0ZNOnIzt8QTkiGY2/farEXBKHC2fJhQwv0OMvlQUY59
-         qgxbaOOikFB8imDblUhHObSfXvtCxgyZkwPEHx7VczZQsBO6CWagwVvg2doJmex3SYjz
-         noAd2NmxNmW1COw4J6as/PFjTrl+uuh+cukGI5JZ0l78i+7h6VbqjoT2G+1hb/Ijpgj1
-         71K89dUf7JgjyZumn78P3W+VBPPxgJH1XvH/IpgbFS0be13M/vM/f9oUfjaq4bLuvJE5
-         dk+1HOiNTOU2628u8pQQgzIVrS9kvJmVtAzOJftyoGd2rZ6FOoXpaYbr9x3YFrXCfPLV
-         tj0w==
-X-Gm-Message-State: AJcUukci0gugSZiU+RhtFWQ4hI5lE0PYAqMXKN++PI4gQN0nz6kf1KGP
-        3zS3zyCkfJXih6kwImJbvyk=
-X-Google-Smtp-Source: ALg8bN5lddHwkN4xjqbgE60pIIInwgNR4/oYJZlr0iU/tR6M3nDX9tKML8LeBJ2LRHxPSqto/FnGLw==
-X-Received: by 2002:aed:2d66:: with SMTP id h93mr10315213qtd.130.1547140750695;
-        Thu, 10 Jan 2019 09:19:10 -0800 (PST)
-Received: from smtp.gmail.com ([143.107.45.1])
-        by smtp.gmail.com with ESMTPSA id x5sm42481591qtc.43.2019.01.10.09.19.07
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 10 Jan 2019 09:19:10 -0800 (PST)
-Date:   Thu, 10 Jan 2019 15:19:04 -0200
-From:   Shayenne Moura <shayenneluzmoura@gmail.com>
-To:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        Rob Clark <robdclark@gmail.com>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Vincent Abriou <vincent.abriou@st.com>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Carlo Caione <carlo@caione.org>,
-        Kevin Hilman <khilman@baylibre.com>
-Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 6/7] drm: Remove use of drm_mode_object
-Message-ID: <7ca1476341d7261cbb7b67a6c0097323614967d9.1547137815.git.shayenneluzmoura@gmail.com>
-References: <cover.1547137815.git.shayenneluzmoura@gmail.com>
+        Thu, 10 Jan 2019 12:19:31 -0500
+Received: from mga07.intel.com ([134.134.136.100]:8012 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729509AbfAJRTb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 12:19:31 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jan 2019 09:19:29 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,462,1539673200"; 
+   d="scan'208";a="115793775"
+Received: from vanderss-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.254.152])
+  by fmsmga008.fm.intel.com with ESMTP; 10 Jan 2019 09:19:24 -0800
+Date:   Thu, 10 Jan 2019 19:19:23 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Michael =?iso-8859-1?Q?Niew=F6hner?= <linux@mniewoehner.de>
+Cc:     Mimi Zohar <zohar@linux.ibm.com>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        peterhuewe@gmx.de, jgg@ziepe.ca, arnd@arndb.de,
+        linux-integrity@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        Ken Goldman <kgold@linux.ibm.com>
+Subject: Re: tpm_tis TPM2.0 not detected on cold boot
+Message-ID: <20190110171923.GC6589@linux.intel.com>
+References: <ef7e773b01a5e6153b84628f74fc67092a2f9b0e.camel@gmail.com>
+ <1f281756bb1f041e55be8dd090670a1a7b1d1c94.camel@mniewoehner.de>
+ <1545519232.3940.115.camel@linux.ibm.com>
+ <e7ec38d7cade9aa76384aa2781eab307d2cd5a7b.camel@mniewoehner.de>
+ <20190103132737.GD10491@linux.intel.com>
+ <6c1bf9815bfcb5d2bc0cfedfc49c7feda0173dc9.camel@mniewoehner.de>
+ <20190103150434.GC17015@linux.intel.com>
+ <5aa2fc082b6b0657574918b025005ad569da6412.camel@mniewoehner.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <cover.1547137815.git.shayenneluzmoura@gmail.com>
-User-Agent: NeoMutt/20171215
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <5aa2fc082b6b0657574918b025005ad569da6412.camel@mniewoehner.de>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch removes the drm_mode_object prints, evaluation and use from
-drm_display_mode objects used in drm files. It removes dependency from
-drm_mode_object.
+On Thu, Jan 03, 2019 at 04:47:31PM +0100, Michael Niewöhner wrote:
+> On Thu, 2019-01-03 at 17:04 +0200, Jarkko Sakkinen wrote:
+> > On Thu, Jan 03, 2019 at 02:38:11PM +0100, Michael Niewöhner wrote:
+> > > On Thu, 2019-01-03 at 15:27 +0200, Jarkko Sakkinen wrote:
+> > > > On Sun, Dec 23, 2018 at 12:55:12PM +0100, Michael Niewöhner wrote:
+> > > > > There is another issue but I don't know if both are related. Maybe
+> > > > > that's
+> > > > > just a
+> > > > > timing issue...
+> > > > > 
+> > > > > root@debian:~# dd if=/dev/hwrng bs=1 count=1
+> > > > > dd: error reading '/dev/hwrng': Operation not permitted
+> > > > > 0+0 records in
+> > > > > 0+0 records out
+> > > > > 0 bytes copied, 0.755958 s, 0.0 kB/s
+> > > > > root@debian:~# dd if=/dev/hwrng bs=1 count=1 | xxd; dd if=/dev/hwrng
+> > > > > bs=1
+> > > > > count=1 | xxd
+> > > > > dd: error reading '/dev/hwrng': Operation not permitted
+> > > > > 0+0 records in
+> > > > > 0+0 records out
+> > > > > 0 bytes copied, 0.755697 s, 0.0 kB/s
+> > > > > 1+0 records in
+> > > > > 1+0 records out
+> > > > > 00000000: 52                                       R
+> > > > > 1 byte copied, 0.0106268 s, 0.1 kB/s
+> > > > > 
+> > > > > 
+> > > > > Michael
+> > > > 
+> > > > What does /sys/devices/virtual/misc/hw_random/rng_current show?
+> > > > 
+> > > > Did run commands as a sanity check on my laptop and seem to work.
+> > > > 
+> > > > /Jarkko
+> > > 
+> > > rng_current says "tpm-rng-0", which should be correct
+> > 
+> > Is /dev/tpm0 accessible and usable?
+> > 
+> > /Jarkko
+> 
+> No, it does not seem to work:
+> 
+> root@debian:~# tpm_version                                     
+> Tspi_Context_Connect failed: 0x00003011 - layer=tsp, code=0011 (17),
+> Communication failure
+> root@debian:~# tcsd -f
+> TCSD TDDL ioctl: (25) Inappropriate ioctl for device
+> TCSD TDDL Falling back to Read/Write device support.
+> TCSD TDDL ERROR: write to device /dev/tpm0 failed: Operation not permitted
+> TCSD TCS ERROR: TCS GetCapability failed with result = 0x1087
+> root@debian:~# stat /dev/tpm0
+>   File: /dev/tpm0
+>   Size: 0         	Blocks: 0          IO Block: 4096   character special
+> file
+> Device: 6h/6d	Inode: 1114        Links: 1     Device type: a,e0
+> Access: (0600/crw-------)  Uid: (  104/     tss)   Gid: (  112/     tss)
+> Access: 2019-01-03 16:39:20.627635333 +0100
+> Modify: 2019-01-03 16:39:20.627635333 +0100
+> Change: 2019-01-03 16:39:20.627635333 +0100
+>  Birth: -
 
-Signed-off-by: Shayenne Moura <shayenneluzmoura@gmail.com>
-Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+But those tools should not work because TrouSerS is for TPM 1.2.
 
----
-Changes in v2 and v3:
-  - No change
-
- drivers/gpu/drm/drm_crtc_helper.c | 5 ++---
- drivers/gpu/drm/drm_modes.c       | 9 ---------
- 2 files changed, 2 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/gpu/drm/drm_crtc_helper.c b/drivers/gpu/drm/drm_crtc_helper.c
-index a3c81850e755..cc5cc8d109a2 100644
---- a/drivers/gpu/drm/drm_crtc_helper.c
-+++ b/drivers/gpu/drm/drm_crtc_helper.c
-@@ -386,9 +386,8 @@ bool drm_crtc_helper_set_mode(struct drm_crtc *crtc,
- 		if (!encoder_funcs)
- 			continue;
- 
--		DRM_DEBUG_KMS("[ENCODER:%d:%s] set [MODE:%d:%s]\n",
--			encoder->base.id, encoder->name,
--			mode->base.id, mode->name);
-+		DRM_DEBUG_KMS("[ENCODER:%d:%s] set [MODE:%s]\n",
-+			encoder->base.id, encoder->name, mode->name);
- 		if (encoder_funcs->mode_set)
- 			encoder_funcs->mode_set(encoder, mode, adjusted_mode);
- 
-diff --git a/drivers/gpu/drm/drm_modes.c b/drivers/gpu/drm/drm_modes.c
-index 24a750436559..adce9a26bac9 100644
---- a/drivers/gpu/drm/drm_modes.c
-+++ b/drivers/gpu/drm/drm_modes.c
-@@ -71,11 +71,6 @@ struct drm_display_mode *drm_mode_create(struct drm_device *dev)
- 	if (!nmode)
- 		return NULL;
- 
--	if (drm_mode_object_add(dev, &nmode->base, DRM_MODE_OBJECT_MODE)) {
--		kfree(nmode);
--		return NULL;
--	}
--
- 	return nmode;
- }
- EXPORT_SYMBOL(drm_mode_create);
-@@ -92,8 +87,6 @@ void drm_mode_destroy(struct drm_device *dev, struct drm_display_mode *mode)
- 	if (!mode)
- 		return;
- 
--	drm_mode_object_unregister(dev, &mode->base);
--
- 	kfree(mode);
- }
- EXPORT_SYMBOL(drm_mode_destroy);
-@@ -911,11 +904,9 @@ EXPORT_SYMBOL(drm_mode_set_crtcinfo);
-  */
- void drm_mode_copy(struct drm_display_mode *dst, const struct drm_display_mode *src)
- {
--	int id = dst->base.id;
- 	struct list_head head = dst->head;
- 
- 	*dst = *src;
--	dst->base.id = id;
- 	dst->head = head;
- }
- EXPORT_SYMBOL(drm_mode_copy);
--- 
-2.17.1
-
+/Jarkko
