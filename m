@@ -2,158 +2,159 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0E4FC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 22:59:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3B9FC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 23:00:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 97454214C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 22:59:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A260B208E3
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 23:00:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="hTh7kIwm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729947AbfAJW7J (ORCPT
+        id S1729969AbfAJXAF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 17:59:09 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:58490 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726369AbfAJW7J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 17:59:09 -0500
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 5EC8813AA0;
-        Thu, 10 Jan 2019 22:59:08 +0000 (UTC)
-Received: from madcap2.tricolour.ca (ovpn-112-10.phx2.redhat.com [10.3.112.10])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 43E1B7F1AD;
-        Thu, 10 Jan 2019 22:58:50 +0000 (UTC)
-Date:   Thu, 10 Jan 2019 17:58:47 -0500
-From:   Richard Guy Briggs <rgb@redhat.com>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     containers@lists.linux-foundation.org, linux-audit@redhat.com,
-        linux-kernel@vger.kernel.org, ebiederm@xmission.com,
-        luto@kernel.org, carlos@redhat.com, dhowells@redhat.com,
-        viro@zeniv.linux.org.uk, simo@redhat.com,
-        Eric Paris <eparis@parisplace.org>,
-        Serge Hallyn <serge@hallyn.com>
-Subject: Re: [PATCH ghak90 (was ghak32) V4 06/10] audit: add containerid
- support for tty_audit
-Message-ID: <20190110225847.vumlt2jor57djrdc@madcap2.tricolour.ca>
-References: <cover.1533065887.git.rgb@redhat.com>
- <e41cb6760a8183c0955c378fce7b500819f9838f.1533065887.git.rgb@redhat.com>
- <CAHC9VhRPMAUsgs2zXkPEFZPQS6dmAO1-kBX1Y-7tRkD-kwGEjw@mail.gmail.com>
- <20181031211739.6jag6b5qve77qmmu@madcap2.tricolour.ca>
- <CAHC9VhTnj3Sg9R-XM0U9gqOsNXT+Tn+VVRXJtBTt0A0DPQ0GQg@mail.gmail.com>
+        Thu, 10 Jan 2019 18:00:05 -0500
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:6613 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726369AbfAJXAF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 18:00:05 -0500
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c37ce650000>; Thu, 10 Jan 2019 14:59:50 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Thu, 10 Jan 2019 15:00:03 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Thu, 10 Jan 2019 15:00:03 -0800
+Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL108.nvidia.com
+ (172.18.146.13) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 10 Jan
+ 2019 23:00:02 +0000
+Received: from NAM03-DM3-obe.outbound.protection.outlook.com (104.47.41.54) by
+ HQMAIL109.nvidia.com (172.20.187.15) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4 via Frontend Transport; Thu, 10 Jan 2019 23:00:02 +0000
+Received: from BN7PR12MB2836.namprd12.prod.outlook.com (20.176.178.161) by
+ BN7PR12MB2803.namprd12.prod.outlook.com (20.176.178.150) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1516.13; Thu, 10 Jan 2019 22:59:46 +0000
+Received: from BN7PR12MB2836.namprd12.prod.outlook.com
+ ([fe80::4024:c208:f331:505e]) by BN7PR12MB2836.namprd12.prod.outlook.com
+ ([fe80::4024:c208:f331:505e%3]) with mapi id 15.20.1516.015; Thu, 10 Jan 2019
+ 22:59:44 +0000
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+To:     Thierry Reding <thierry.reding@gmail.com>
+CC:     Jonathan Hunter <jonathanh@nvidia.com>,
+        Mantravadi Karthik <mkarthik@nvidia.com>,
+        Shardar Mohammed <smohammed@nvidia.com>,
+        Timo Alho <talho@nvidia.com>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
+Subject: RE: [PATCH V1] i2c: tegra: Add Bus Clear Master Support
+Thread-Topic: [PATCH V1] i2c: tegra: Add Bus Clear Master Support
+Thread-Index: AQHUo8PEPupW6HXIj02E5aKJ0AbfZ6WoqOAAgAB8WyA=
+Date:   Thu, 10 Jan 2019 22:59:44 +0000
+Message-ID: <BN7PR12MB283699DEC4D5EF468B0404F4C2840@BN7PR12MB2836.namprd12.prod.outlook.com>
+References: <1546561418-10230-1-git-send-email-skomatineni@nvidia.com>
+ <20190110152148.GE25353@ulmo>
+In-Reply-To: <20190110152148.GE25353@ulmo>
+Accept-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=skomatineni@nvidia.com; 
+x-originating-ip: [216.228.112.22]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BN7PR12MB2803;6:rYCxws+flwXYVSLpIA3YXchRJcfBLzAeQRLgd3D6GKk5ZVV+5JOswtW/63HnlX+7C8Ob3OHxbQbAz4I7/ONEQ2dOBCgnuiRO9g9q/0gJoj68MumEotQPkF1HpJxljykC5n1ctvXhVCdZB5+au1M5tho96xbS7B79eGLLZvEoc3e5Kmxj1WSQSMs93DgRGUqlLuWKjfQFRtqUHzERfWxyd8xOxFzKQUyZPwRy32uRzHDc7Nu7aZri+O2WQ+cw3uiB/E0AQSI7+g1AfdoEZbOgD6Wb6PiUh8zZviqbNXM+9gIx64q36BZr5UhjehVKhHyGvPJBIqj86Hc5fGUwnXDZpTzEFPibeKLnEMV8JJN+p17yqrR9j0dHHHMjIBrxGHwCBIO/zdDiz72b5F/OIrKVOgNndPGOABpVYPB62WeScNuqFCobOYNw+isFheSLpwWGpFOWN2Md0FpVxPLYJFIvDg==;5:6+OZBcWbylf/TF3blC0WB9ciQ3jqaQtPF+iGhAa1P5WLYFmCoPJ5IwyCpiLqVNAyQgvg9pPYyQB9UjZVQrobicMxgGsyqbHBmP2zfDEHSAfKFvek7fyqwm2nUwUrxFa+LQVszqe1GeRvHE3q/Ul4JcJ5LamJPjLriPTi+fusyPay0qYdxqpad1WKzgw2Ix3rZ64UNnexX+7oNkSKbqeNuQ==;7:vIf5kQFm/W+f2CI2oZF06brOF2NMMF8TifV5xpQYnGRSOw7DI8ydADVnpPJObk1DuioFvLtAMrJP4Iw6pWuSTnac+YHC1TGKVHtN4vX9Zix+BXR7wYqiekPe1XH6mgRMWtc+yUzbv+iHOiLLEkZ62g==
+x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
+x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10009020)(366004)(396003)(136003)(376002)(346002)(39860400002)(199004)(189003)(6246003)(99286004)(7696005)(6436002)(86362001)(105586002)(74316002)(486006)(97736004)(14454004)(106356001)(9686003)(316002)(76176011)(305945005)(66066001)(54906003)(551934003)(33656002)(7736002)(68736007)(39060400002)(229853002)(102836004)(8936002)(6116002)(256004)(71190400001)(71200400001)(5660300001)(476003)(6506007)(55016002)(53936002)(14444005)(478600001)(3846002)(8676002)(26005)(2906002)(6916009)(81156014)(81166006)(25786009)(11346002)(186003)(4326008)(446003);DIR:OUT;SFP:1101;SCL:1;SRVR:BN7PR12MB2803;H:BN7PR12MB2836.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-ms-office365-filtering-correlation-id: 0dcb335b-a65a-478b-d134-08d6774f4fb9
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(2017052603328)(7153060)(7193020);SRVR:BN7PR12MB2803;
+x-ms-traffictypediagnostic: BN7PR12MB2803:
+x-microsoft-antispam-prvs: <BN7PR12MB2803C53D18FAD0F7A4D6A182C2840@BN7PR12MB2803.namprd12.prod.outlook.com>
+x-forefront-prvs: 0913EA1D60
+received-spf: None (protection.outlook.com: nvidia.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: IQE0XSr20AqOJ4Vnv1LqdTtRPsXzOxS6VfeEAriWAeKYpXkVlXmgnwB81cPCxcaE7dwkzu2JPmH7Qk1TiqgJF0wJYkWQSjk2cDgEBPPuQbHNLDJqfOyC0pfHFPiMnLUO+euTOvjZGrmGHsEW7rajDfbPeLZRahLjtK97oQVBqL+Wy8qso/o28uNYNtzVXr4CDZ1Yd6U4SXQLlS3LWg4S4M+4VAuCnPf2qPZt9P/+jW2tm3tmjrtbcy0P444wglP3T4oB62ZvkR6LtZ0G7rbn53zOrV//INx4h4Kly7z+OZWQAcUr78tWJcSkDpL51Z2jlgcm8neA41eodF5gewVVQbhvEOCzu2bYJWqswuyyH8qTaYy1nIQoOgXFq9sHt8pSdAydHWA4DN0Xg1dX+2aTjf4io70hKo/8f0bXv28t5Yo=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHC9VhTnj3Sg9R-XM0U9gqOsNXT+Tn+VVRXJtBTt0A0DPQ0GQg@mail.gmail.com>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Thu, 10 Jan 2019 22:59:08 +0000 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0dcb335b-a65a-478b-d134-08d6774f4fb9
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Jan 2019 22:59:44.1812
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN7PR12MB2803
+X-OriginatorOrg: Nvidia.com
+Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1547161190; bh=gXOPxMgnGtL+72n5b3HT3mdovkmzwQ84ooO7sV9lAgM=;
+        h=X-PGP-Universal:From:To:CC:Subject:Thread-Topic:Thread-Index:Date:
+         Message-ID:References:In-Reply-To:Accept-Language:X-MS-Has-Attach:
+         X-MS-TNEF-Correlator:authentication-results:x-originating-ip:
+         x-ms-publictraffictype:x-microsoft-exchange-diagnostics:
+         x-ms-exchange-antispam-srfa-diagnostics:
+         x-forefront-antispam-report:
+         x-ms-office365-filtering-correlation-id:x-microsoft-antispam:
+         x-ms-traffictypediagnostic:x-microsoft-antispam-prvs:
+         x-forefront-prvs:received-spf:x-ms-exchange-senderadcheck:
+         x-microsoft-antispam-message-info:spamdiagnosticoutput:
+         spamdiagnosticmetadata:MIME-Version:
+         X-MS-Exchange-CrossTenant-Network-Message-Id:
+         X-MS-Exchange-CrossTenant-originalarrivaltime:
+         X-MS-Exchange-CrossTenant-fromentityheader:
+         X-MS-Exchange-CrossTenant-id:
+         X-MS-Exchange-Transport-CrossTenantHeadersStamped:X-OriginatorOrg:
+         Content-Language:Content-Type:Content-Transfer-Encoding;
+        b=hTh7kIwmyRzyLTSjiZgp931XFr7hpOGfNXf1lV53YzGWXhqCZq35Xn2ZhQqRlb9XI
+         ub7i19qqhFFsiYcXyKgrbyYwRyREC5yTRo4K86Olv5kEElYNitczASZfNKa5l30R84
+         EA7BvOxjVVpkNy/xsIADjq+XSy2e6a6BnA1TcKvl07hgkzWPLSSuPfwx5IWwdEclWP
+         WU9r314tHmgYv7TQ5G5Jb9iecBVrxrehvubtQJ7Ni0UvUwwxJImtB+i9hqG6PAwk12
+         s2gERDGkWuLrnjZCMQ6B4qZK5jNehmqknvSeBg9O19khB6kZB/D6M1FiyYXFWbj7hl
+         uTRzB84zPvyGQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-01-03 15:11, Paul Moore wrote:
-> On Wed, Oct 31, 2018 at 5:17 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > On 2018-10-19 19:17, Paul Moore wrote:
-> > > On Sun, Aug 5, 2018 at 4:33 AM Richard Guy Briggs
-> <rgb@redhat.com> wrote:
-> > > > Add audit container identifier auxiliary record to tty logging rule
-> > > > event standalone records.
-> > > >
-> > > > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> > > > Acked-by: Serge Hallyn <serge@hallyn.com>
-> > > > ---
-> > > >  drivers/tty/tty_audit.c | 5 ++++-
-> > > >  1 file changed, 4 insertions(+), 1 deletion(-)
-> > > >
-> > > > diff --git a/drivers/tty/tty_audit.c b/drivers/tty/tty_audit.c
-> > > > index 50f567b..3e21477 100644
-> > > > --- a/drivers/tty/tty_audit.c
-> > > > +++ b/drivers/tty/tty_audit.c
-> > > > @@ -66,8 +66,9 @@ static void tty_audit_log(const char *description, dev_t dev,
-> > > >         uid_t uid = from_kuid(&amp;init_user_ns, task_uid(tsk));
-> > > >         uid_t loginuid = from_kuid(&amp;init_user_ns, audit_get_loginuid(tsk));
-> > > >         unsigned int sessionid = audit_get_sessionid(tsk);
-> > > > +       struct audit_context *context = audit_alloc_local(GFP_KERNEL);
-> > > >
-> > > > -       ab = audit_log_start(NULL, GFP_KERNEL, AUDIT_TTY);
-> > > > +       ab = audit_log_start(context, GFP_KERNEL, AUDIT_TTY);
-> > > >         if (ab) {
-> > > >                 char name[sizeof(tsk->comm)];
-> > > >
-> > > > @@ -80,6 +81,8 @@ static void tty_audit_log(const char *description, dev_t dev,
-> > > >                 audit_log_n_hex(ab, data, size);
-> > > >                 audit_log_end(ab);
-> > > >         }
-> > > > +       audit_log_contid(context, "tty", audit_get_contid(tsk));
-> > > > +       audit_free_context(context);
-> > > >  }
-> > >
-> > > Since I never polished up my task_struct/current fix patch enough to
-> > > get it past RFC status during this development window (new job, stolen
-> > > laptop, etc.) *and* it looks like you are going to need at least one
-> > > more respin of this patchset, go ahead and fix this patch to use
-> > > current instead of generating a local context.  I'll deal with the
-> > > merge fallout if/when it happens.
-> >
-> > Sure, I will switch it to current in the call to audit_get_contid().
-> >
-> > The local context is a distinct issue.  Like USER records, I prefer
-> > local due to potential record volume, it is already trackable as far as
-> > Steve is concerned, and if it is to be connected with the syscall
-> > record, it should be linked to syscall records in a seperate new github
-> > issue with its own patch.  It accumulates events until the buffer is
-> > flushed to a record, so the timestamp only represents the flush (usually
-> > user "CR/enter").
-> 
-> Generally, yes, associating records is a separate issue, but in this
-> particular case you are changing this record by making it a "local"
-> record, which as we've discussed before, I view as a necessary evil
-> and something that must be minimized.  A quick look at the
-> tty_audit_log() callers shows tty_audit_tiocsti() which is an ioctl
-> handler (and thus current should be valid and correct), and
-> tty_audit_buf_push() whose callers all seem have valid and correct
-> current values; if you find that not to be the case please let me
-> know.
 
-Unless I'm misunderstanding what "local" means, it already had a local
-context by virtue of having a NULL context since it was never previously
-connected to syscall events, so changing it to a local context doesn't
-change that other than making it possible to associate an auxiliary
-audit container identifier record.
 
-The reasoning I'm also applying here is that the contents of this record
-don't all come from this one syscall, but most likely came in from an
-entire line of individual keystrokes, so the syscall information is only
-from the last one of those syscalls, though that syscall information
-other than the timestamp should be the same.
+>> @@ -636,6 +649,9 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_=
+id)
+>>  		goto err;
+>>  	}
+>> =20
+>> +	if (i2c_dev->hw->has_bus_clr_support && (status & I2C_INT_BUS_CLR_DONE=
+))
+>> +		goto err;
+>> +
+>
+>This looks odd. If we support bus clear and the BUS_CLR_DONE interrupt is =
+set, shouldn't we still process all other potential interrupts? Or was this=
+ meant to be inversed:
+>
+>	if (!i2c_dev->hw->supports_bus_clear && (status & I2C_INT_BUS_CLR_DONE)
+>
+>?
+>
+>
+>Thierry
 
-Reading your reply above it isn't clear to me that I had made these two
-points clear previously.  If you still think this record should be
-associated to a syscall despite my reasoning above, I'm willing to
-connect it, but will do so in a seperate issue/patch.
+Bus clear mechanism is to recover master from I2C Bus hang when I2C master =
+loses bus arbitration due to some slave devices pulling SDA LOW continuousl=
+y for some unknown reason.
+Master performs bus clear operation and once bus clear is done successfully=
+, I2C_INT_BUS_CLR_DONE is set in interrupt status.=20
+During this time, no other interrupts will be received as it is already in =
+the process of recovering from bus hang thru this bus clear operation.=20
+So transaction during the bus hang obviously is failure transaction. But ma=
+ster tries to recover from bus hang so transaction can be re-tried and comm=
+unication with other slaves on that bus and further happen.
 
-> > > Local contexts are a last resort.  If you ever find yourself writing
-> > > code that generates a local context, you should first be 100% certain
-> > > that the event is not the the result of a process initiated action (in
-> > > which case it should take from the task's context).
-> >
-> > Well, I'm 100% certain it is linked to a process, but so are USER
-> > records that are already being discussed as the exception.  This is
-> > basically a keystroke logger (that has a flag to omit passwords).
-> 
-> --
-> paul moore
-
-- RGB
-
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
+Thanks
+Sowjanya
