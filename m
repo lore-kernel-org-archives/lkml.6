@@ -6,92 +6,86 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2FCEC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 22:30:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CAE2C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 22:33:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F97E214C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 22:30:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0B38E213F2
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 22:33:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="V4zXZS0b"
+	dkim=pass (2048-bit key) header.d=lca.pw header.i=@lca.pw header.b="czu55pSE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729560AbfAJWaU (ORCPT
+        id S1729578AbfAJWd1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 17:30:20 -0500
-Received: from ozlabs.org ([203.11.71.1]:52961 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727957AbfAJWaT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 17:30:19 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43bLKh2rXmz9sCr;
-        Fri, 11 Jan 2019 09:30:16 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1547159416;
-        bh=5haN7Rpaq+kKqv+1PUmOXtWC819W3qlXMQ0aUDGqP5k=;
-        h=Date:From:To:Cc:Subject:From;
-        b=V4zXZS0b5fssBwcdb0wLbrzq/XIIx13Y1y3r9aT3QOCPWdR6xWBuxXGq3/qNM5HQU
-         Uj+GhhKLAS9ejmwzO3TJcD6tOLiNpz3641Xib0l1ooe95/H3tG+i19U9QysJzafdBd
-         LWo88Cke4a6+duPDG6JS/DozT5HCAkaUn+9GiurDNxvQroK9o2Qbs3v+CTnWZJ94M9
-         dxVe0bBoCkEAlfoX7RyfXslSQpAomTdoQp+NWY/Pr15Fd5umyQW/b6iWE8EmlytMhQ
-         SuSJ7380+kxhzkrHT5da9ZFDEeZmk+nYIQ2xZ4wf5mof3CbPvuAwcMaGO3wf4cOCwd
-         hw7DqIkkmmrng==
-Date:   Fri, 11 Jan 2019 09:30:03 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Shawn Guo <shawn.guo@linaro.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Lukasz Majewski <lukma@denx.de>
-Subject: linux-next: build failure after merge of the imx-mxs tree
-Message-ID: <20190111093003.2f00829e@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/mL+ddRtA3ixjl0kR+FYTqM2"; protocol="application/pgp-signature"
+        Thu, 10 Jan 2019 17:33:27 -0500
+Received: from mail-qt1-f172.google.com ([209.85.160.172]:36587 "EHLO
+        mail-qt1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729399AbfAJWd1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 17:33:27 -0500
+Received: by mail-qt1-f172.google.com with SMTP id t13so15841572qtn.3
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 14:33:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lca.pw; s=google;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=F9qoiFCTa+4CEViWe1tbFkHCZIHovA/zc787QU1XEFU=;
+        b=czu55pSEhzvQtwWPRIOOLqlPojsj0fgwOmVYlNm3jDHAqqKQS/NrapHkg2NbisDI/s
+         sn9Uh18HXtg0dK7oDkXT0y399QCQoB0uNJ6rPFMEgL79ncIkufNvGIF1k/d+w6CeQHZ7
+         00Lk93HDS+cRbhhzWvEvliHcCnR2cyvytcdhmh4F9Nbt/3Bzm0108mIH+2pKw4Ce019m
+         naxjrnF+f5H0eneOB+hIb6i7eBqJFPdbtD6VrlcTMUTH1oAJv/1tvmKDFcvW2Dxm8DKz
+         98ieXjVDnaUcwRnjouPIPVFQF1EVDNSBBaoTwkqTaVeBSSAvNhrbW++d0/i5j69rQqjF
+         86cA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=F9qoiFCTa+4CEViWe1tbFkHCZIHovA/zc787QU1XEFU=;
+        b=AI8yHgKZlg7yC6B9BSsvkZGvB5Upku+qANcpKbXtA8lSH3zfpqhPrLAII57r7oXsru
+         +1nERDZFcExB1utqKd0BfR53yVsP1ZcVnzvTExYWfGLrY/OKBtkV3DEJ5uy8Tl4qwHNk
+         b9EUuohD+OQWzjzPWjb2VFdfPhi1MgFvPuFihxI0elQdk6t8z+Lu6fmSEOdIcDjTbQEN
+         /00ii1K/6F7CmSXW7oysLwG5CwGCtczNWJ6okIp78yLN9yzyquG2wxhTOVWANWbbWabU
+         l9wtqWy1z7/HhrAD4qthm/y2wrak+YVlyE29GGSBv2Aci2mNEMCfAfExMJ7+1TJI+qIQ
+         EFyw==
+X-Gm-Message-State: AJcUukdGtUKTsFHw6uVPbx6LX+Qs+UiIpiWHGS1zv1NBBeN5rAiJrQDJ
+        cCOfdy+Ld7BjS75NoHprERYxlXXorPBgbw==
+X-Google-Smtp-Source: ALg8bN7rW7MWjyiCO0xojQk/waEuZTxto6KEDZike+X8N+8My2jNkLH/Qpzwocssog/lkmhL9Wl9zw==
+X-Received: by 2002:a0c:8c8a:: with SMTP id p10mr11693764qvb.218.1547159606191;
+        Thu, 10 Jan 2019 14:33:26 -0800 (PST)
+Received: from dhcp-41-57.bos.redhat.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
+        by smtp.gmail.com with ESMTPSA id d193sm47864814qka.91.2019.01.10.14.33.25
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 10 Jan 2019 14:33:25 -0800 (PST)
+Message-ID: <1547159604.6911.12.camel@lca.pw>
+Subject: Re: PROBLEM: syzkaller found / pool corruption-overwrite / page in
+ user-area or NULL
+From:   Qian Cai <cai@lca.pw>
+To:     Esme <esploit@protonmail.ch>
+Cc:     James Bottomley <jejb@linux.ibm.com>,
+        "dgilbert@interlog.com" <dgilbert@interlog.com>,
+        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>
+Date:   Thu, 10 Jan 2019 17:33:24 -0500
+In-Reply-To: <hFmbfypBKySVyM6ITf55xUsPWifgqJy6MZ-kFJcYna61S-u2hoClrqr87QTF4F2LhW-K42T2lcCbvsEyGAL0dJTq5CndQBiMT6JnlW4xmdc=@protonmail.ch>
+References: <t78EEfgpy3uIwPUvqvmuQEYEWKG9avWzjUD3EyR93Qaf_tfx1gqt4XplrqMgdxR1U9SsrVdA7G9XeUZacgUin0n6lBzoxJHVJ9Ko0yzzrxI=@protonmail.ch>
+         <1547150339.2814.9.camel@linux.ibm.com> <1547153074.6911.8.camel@lca.pw>
+         <4u36JfbOrbu9CXLDErzQKvorP0gc2CzyGe60rBmZsGAGIw6RacZnIfoSsAF0I0TCnVx0OvcqCZFN6ntbgicJ66cWew9cOXRgcuWxSPdL3ko=@protonmail.ch>
+         <1547154231.6911.10.camel@lca.pw>
+         <hFmbfypBKySVyM6ITf55xUsPWifgqJy6MZ-kFJcYna61S-u2hoClrqr87QTF4F2LhW-K42T2lcCbvsEyGAL0dJTq5CndQBiMT6JnlW4xmdc=@protonmail.ch>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6 (3.22.6-10.el7) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/mL+ddRtA3ixjl0kR+FYTqM2
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Thu, 2019-01-10 at 21:35 +0000, Esme wrote:
+> The repro.report is from a different test system, I pulled the attached config
+> from proc (attached);
+> 
 
-Hi Shawn,
-
-After merging the imx-mxs tree, today's linux-next build (arm
-multi_v7_defconfig) failed like this:
-
-arch/arm/boot/dts/vfxxx.dtsi:550.24-563.6: Warning (spi_bus_bridge): /soc/a=
-ips-bus@40080000/spi@400ad000: incorrect #address-cells for SPI bus
-  also defined at arch/arm/boot/dts/vf610-bk4.dts:130.8-142.3
-arch/arm/boot/dts/vf610-bk4.dtb: Warning (spi_bus_reg): Failed prerequisite=
- 'spi_bus_bridge'
-
-
-Caused by commit
-
-  cf91ce9696a0 ("ARM: dts: vf610-bk4: Provide support for reading ID code f=
-rom MVB device")
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/mL+ddRtA3ixjl0kR+FYTqM2
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlw3x2sACgkQAVBC80lX
-0GzjJAf+IHo5uMYfhpAD6bI4AnG1kIEHOoXUkIlDD5aiD5QjGRmEc+vOmMZ9Y/8+
-c2COwfLc9gUnzwd01UnHVWoridLPkBDOBx5vvD6oHj9JCj4HzN8dV5E93MQ8CfVT
-0qvRotV3ThwW7e3/fh8L+vqlldlmHUW30IrwwuIrupMKma479WnqCT9Z0yJkzVnr
-0ol/D6FGB/A+Gee5ZVId5y5+YoUmPoB/tf+OdM1j+HMmAQNo8omH9qY2HCCHRy9x
-W8fJk0cINAmIuRCv/zdDHeq2D5c3BDjsq5U6WjVGfhO6KnYh2jQwlxlamxQgjwRP
-0CPci/GlE41ZMFb+r/9eQEuOhKsKRw==
-=3Kag
------END PGP SIGNATURE-----
-
---Sig_/mL+ddRtA3ixjl0kR+FYTqM2--
+So, if the report is not right one. Where is the right crash stack trace then
+that using the exact same config.?
