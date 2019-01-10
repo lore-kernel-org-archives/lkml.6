@@ -2,236 +2,223 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8249C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 17:29:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70272C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 17:29:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 780EC208E3
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 17:29:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 41D2B2177B
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 17:29:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730251AbfAJR3A (ORCPT
+        id S1730271AbfAJR3E (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 12:29:00 -0500
-Received: from mout.kundenserver.de ([212.227.17.24]:52545 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729844AbfAJR26 (ORCPT
+        Thu, 10 Jan 2019 12:29:04 -0500
+Received: from skedge03.snt-world.com ([91.208.41.68]:52924 "EHLO
+        skedge03.snt-world.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730248AbfAJR3D (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 12:28:58 -0500
-Received: from wuerfel.lan ([109.192.41.194]) by mrelayeu.kundenserver.de
- (mreue109 [212.227.15.145]) with ESMTPA (Nemesis) id
- 1N8XHb-1hKz3U1jPt-014Q0M; Thu, 10 Jan 2019 18:22:21 +0100
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     y2038@lists.linaro.org, linux-api@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Arnd Bergmann <arnd@arndb.de>, mattst88@gmail.com,
-        linux@armlinux.org.uk, catalin.marinas@arm.com,
-        will.deacon@arm.com, tony.luck@intel.com, fenghua.yu@intel.com,
-        geert@linux-m68k.org, monstr@monstr.eu, paul.burton@mips.com,
-        deller@gmx.de, benh@kernel.crashing.org, mpe@ellerman.id.au,
-        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com, dalias@libc.org,
-        davem@davemloft.net, luto@kernel.org, tglx@linutronix.de,
-        mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
-        jcmvbkbc@gmail.com, akpm@linux-foundation.org,
-        deepa.kernel@gmail.com, ebiederm@xmission.com,
-        firoz.khan@linaro.org, linux-alpha@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
-        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-        sparclinux@vger.kernel.org, netdev@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org
-Subject: [PATCH 00/11] y2038: add time64 syscalls
-Date:   Thu, 10 Jan 2019 18:22:05 +0100
-Message-Id: <20190110172216.313063-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.20.0
+        Thu, 10 Jan 2019 12:29:03 -0500
+Received: from sntmail10s.snt-is.com (unknown [10.203.32.183])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by skedge03.snt-world.com (Postfix) with ESMTPS id 64DB267A887;
+        Thu, 10 Jan 2019 18:28:58 +0100 (CET)
+Received: from sntmail12r.snt-is.com (10.203.32.182) by sntmail10s.snt-is.com
+ (10.203.32.183) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1466.3; Thu, 10 Jan
+ 2019 18:28:58 +0100
+Received: from sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305]) by
+ sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305%5]) with mapi id
+ 15.01.1466.003; Thu, 10 Jan 2019 18:28:58 +0100
+From:   Schrempf Frieder <frieder.schrempf@kontron.de>
+To:     Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "boris.brezillon@bootlin.com" <boris.brezillon@bootlin.com>,
+        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+CC:     "robh@kernel.org" <robh@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v6 1/5] spi: spi-mem: Add driver for NXP FlexSPI
+ controller
+Thread-Topic: [PATCH v6 1/5] spi: spi-mem: Add driver for NXP FlexSPI
+ controller
+Thread-Index: AQHUpzP8UrlUpBv3BkeiEjKwk1C7CKWotMOA
+Date:   Thu, 10 Jan 2019 17:28:57 +0000
+Message-ID: <dbb6ddc8-5939-3d4b-7031-931afa79fccb@kontron.de>
+References: <1546939346-20181-1-git-send-email-yogeshnarayan.gaur@nxp.com>
+ <1546939346-20181-2-git-send-email-yogeshnarayan.gaur@nxp.com>
+In-Reply-To: <1546939346-20181-2-git-send-email-yogeshnarayan.gaur@nxp.com>
+Accept-Language: de-DE, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [172.25.9.42]
+x-c2processedorg: 51b406b7-48a2-4d03-b652-521f56ac89f3
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <B1A30D48233E2A4BA19CBDE5A99C26DA@snt-world.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:vW0Dtz92Na8JvFtbJmdrKh+Wt6C4wl+ANEtiHTyStG1oSJxvfH2
- K9sHwGh5KPndF/MySTlf8GNZ6uZN4Q6cZ+LtnuLRLzGMbJedI2g87MyDucReT6MVo6SLLpw
- TuOM3qHe1ytgZ1t/Jri3mKwNr3y9kLV5Hh4pq1RC8iRupXThgHBi24MmMG4TY9XG/OEt8so
- 3ZEJ/rgV99vZ95v5E8NdA==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:FLOeMd4IsYY=:wjmGiFrHNe582W/8TvMbrZ
- BTy71tzGcGr4BEAsOx4HtTiNnuPoNmXfJHuYPGkcnQWfgbLQDLLP3kNILyltnsG/5UG7n2b3t
- 7lL0rkEvk1Sfre+MGr1faxey2eFmMU1tWHcgIRMejducRkWGnTVRVIYR0WWMAPE6AnQ/nBPqp
- apAjtfeQVYyStSFw12j2hEeC8cpzOl27LGFLByoxNr076lfVfyFuKZe+L03CSeKQX68X9n0EM
- JXv52qUBTEhONk8ol+2EmtIZeOtfhwxzXlbdTmf1nXz2uPzV93NJ8CDcMY/DhKT3FJCmtYXQJ
- y4EL2T8GKQihE1ht5FEovgdELPhx+x9D6umTQ7VvcEIKo8yo/lSRHSQtdx1ymIwwQVHUzK5yc
- +nOpf47UwebfvIF+l70PD5EGaQw3Hzqvzr5ZFF+35+R0CuWTVC5hepujdK2vh8HExaIiSTeVN
- f/IGUYp0y3zRCNJAMLVZo6ag4ltWlgQQcurKYmnCZDNq3SFWZZQ+1q5WZK8WNuXBtgNrQnZVO
- gX+RqODXtoK9q+2aYJM1HchrkwfBIy2uuHupSlpQ7whfY583avdOewcQLayLqeBcU3POL4Vcc
- GGfx3Hmkcn2vNYjLxt7mahHfjEDdZa3oGAXGgoiw+YbHUsJf+i0EP5l3jCUrwXULt+zp7Dpto
- SDBG/+s3XxYapxF/ya3DAeMZC4WmUzDhmHiHE4XegrfvHICFTgylYbQsyxNb40HaplIXCuzLA
- h3TmROU2XfTNK/Xs0rUaKh+MbBwQU1fQShHtOg==
+X-SnT-MailScanner-Information: Please contact the ISP for more information
+X-SnT-MailScanner-ID: 64DB267A887.A076C
+X-SnT-MailScanner: Found to be clean
+X-SnT-MailScanner-SpamCheck: 
+X-SnT-MailScanner-From: frieder.schrempf@kontron.de
+X-SnT-MailScanner-To: boris.brezillon@bootlin.com, broonie@kernel.org,
+        computersforpeace@gmail.com, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mtd@lists.infradead.org, linux-spi@vger.kernel.org,
+        marek.vasut@gmail.com, mark.rutland@arm.com, robh@kernel.org,
+        shawnguo@kernel.org, yogeshnarayan.gaur@nxp.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This series finally gets us to the point of having system calls with
-64-bit time_t on all architectures, after a long time of incremental
-preparation patches.
-
-There was actually one conversion that I missed during the summer,
-i.e. Deepa's timex series, which I now updated based the 5.0-rc1 changes
-and review comments.
-
-I hope that the actual conversion should be uncontroversial by now,
-even if some of the patches are rather large.
-
-The one area that may need a little discussion is for the system call
-numbers assigned in the final patch: Can we get consensus on whether
-the idea of using the same numbers on all architectures, as well as my
-choice of numbers makes sense here?
-
-So far, I have done a lot of build testing across most architectures,
-which has found a number of bugs. I have also done an LTP run on arm32
-with existing user space, but not on the other architectures. I did LTP
-tests with a modified musl libc[2] last summer on an older version of
-this series to make sure that the new 64-bit time_t interfaces work.
-The version there will need updates for testing with this new kernel
-patch series; I plan to do that next.
-
-For testing, the series plus the preparatory patches is available at
-[3].  Once there is a general agreement on this series and I have done
-more tests for the new system calls, I plan to add this to linux-next
-through my asm-generic tree or Thomas' timers tree.
-
-Please review and test!
-
-      Arnd
-
-[1] https://lore.kernel.org/lkml/20190110162435.309262-1-arnd@arndb.de/T/
-[2] https://git.linaro.org/people/arnd/musl-y2038.git/
-[3] https://git.kernel.org/pub/scm/linux/kernel/git/arnd/playground.git y2038-5.0-rc1
-
-Arnd Bergmann (8):
-  time: make adjtime compat handling available for 32 bit
-  time: fix sys_timer_settime prototype
-  sparc64: add custom adjtimex/clock_adjtime functions
-  y2038: syscalls: rename y2038 compat syscalls
-  y2038: use time32 syscall names on 32-bit
-  y2038: remove struct definition redirects
-  y2038: rename old time and utime syscalls
-  y2038: add 64-bit time_t syscalls to all 32-bit architectures
-
-Deepa Dinamani (3):
-  time: Add struct __kernel_timex
-  timex: use __kernel_timex internally
-  timex: change syscalls to use struct __kernel_timex
-
- arch/Kconfig                                |   2 +-
- arch/alpha/kernel/osf_sys.c                 |   5 +-
- arch/alpha/kernel/syscalls/syscall.tbl      |   2 +
- arch/arm/include/asm/unistd.h               |   4 +-
- arch/arm/kernel/sys_oabi-compat.c           |   8 +-
- arch/arm/tools/syscall.tbl                  |  77 ++++++++-----
- arch/arm64/include/asm/unistd.h             |   2 +-
- arch/arm64/include/asm/unistd32.h           |  89 ++++++++++----
- arch/ia64/kernel/syscalls/syscall.tbl       |   1 +
- arch/m68k/include/asm/unistd.h              |   4 +-
- arch/m68k/kernel/syscalls/syscall.tbl       |  72 +++++++-----
- arch/microblaze/include/asm/unistd.h        |   4 +-
- arch/microblaze/kernel/syscalls/syscall.tbl |  77 ++++++++-----
- arch/mips/include/asm/unistd.h              |   4 +-
- arch/mips/kernel/syscalls/syscall_n32.tbl   |  71 ++++++++----
- arch/mips/kernel/syscalls/syscall_n64.tbl   |   1 +
- arch/mips/kernel/syscalls/syscall_o32.tbl   |  74 +++++++-----
- arch/parisc/include/asm/unistd.h            |   9 +-
- arch/parisc/kernel/syscalls/syscall.tbl     | 105 ++++++++++++-----
- arch/powerpc/include/asm/unistd.h           |   8 +-
- arch/powerpc/kernel/syscalls/syscall.tbl    | 121 +++++++++++++++-----
- arch/s390/include/asm/unistd.h              |   2 +-
- arch/s390/kernel/syscalls/syscall.tbl       |  72 +++++++-----
- arch/sh/include/asm/unistd.h                |   4 +-
- arch/sh/kernel/syscalls/syscall.tbl         |  72 +++++++-----
- arch/sparc/include/asm/unistd.h             |   8 +-
- arch/sparc/kernel/sys_sparc_64.c            |  59 +++++++++-
- arch/sparc/kernel/syscalls/syscall.tbl      | 100 +++++++++++-----
- arch/x86/entry/syscalls/syscall_32.tbl      |  74 +++++++-----
- arch/x86/entry/syscalls/syscall_64.tbl      |   4 +-
- arch/x86/include/asm/unistd.h               |   8 +-
- arch/xtensa/include/asm/unistd.h            |   2 +-
- arch/xtensa/kernel/syscalls/syscall.tbl     |  71 ++++++++----
- drivers/ptp/ptp_clock.c                     |   2 +-
- fs/aio.c                                    |  10 +-
- fs/select.c                                 |   4 +-
- fs/timerfd.c                                |   4 +-
- fs/utimes.c                                 |  10 +-
- include/linux/compat.h                      | 104 +----------------
- include/linux/posix-clock.h                 |   2 +-
- include/linux/syscalls.h                    |  65 ++++++++++-
- include/linux/time32.h                      |  32 +++++-
- include/linux/time64.h                      |   8 --
- include/linux/timex.h                       |   4 +-
- include/uapi/asm-generic/unistd.h           | 103 ++++++++++++-----
- include/uapi/linux/time.h                   |   4 -
- include/uapi/linux/timex.h                  |  39 +++++++
- ipc/mqueue.c                                |  16 +--
- ipc/sem.c                                   |   2 +-
- kernel/compat.c                             |  64 -----------
- kernel/futex.c                              |   2 +-
- kernel/sched/core.c                         |   5 +-
- kernel/signal.c                             |   2 +-
- kernel/sys_ni.c                             |  18 +--
- kernel/time/hrtimer.c                       |   2 +-
- kernel/time/ntp.c                           |  18 +--
- kernel/time/ntp_internal.h                  |   2 +-
- kernel/time/posix-clock.c                   |   2 +-
- kernel/time/posix-stubs.c                   |  25 ++--
- kernel/time/posix-timers.c                  |  72 ++++++------
- kernel/time/posix-timers.h                  |   2 +-
- kernel/time/time.c                          |  92 ++++++++++++---
- kernel/time/timekeeping.c                   |   4 +-
- net/compat.c                                |   2 +-
- scripts/checksyscalls.sh                    |  40 +++++++
- 65 files changed, 1264 insertions(+), 713 deletions(-)
-
--- 
-2.20.0
-
-Cc: mattst88@gmail.com
-Cc: linux@armlinux.org.uk
-Cc: catalin.marinas@arm.com
-Cc: will.deacon@arm.com
-Cc: tony.luck@intel.com
-Cc: fenghua.yu@intel.com
-Cc: geert@linux-m68k.org
-Cc: monstr@monstr.eu
-Cc: paul.burton@mips.com
-Cc: deller@gmx.de
-Cc: benh@kernel.crashing.org
-Cc: mpe@ellerman.id.au
-Cc: schwidefsky@de.ibm.com
-Cc: heiko.carstens@de.ibm.com
-Cc: dalias@libc.org
-Cc: davem@davemloft.net
-Cc: luto@kernel.org
-Cc: tglx@linutronix.de
-Cc: mingo@redhat.com
-Cc: hpa@zytor.com
-Cc: x86@kernel.org
-Cc: jcmvbkbc@gmail.com
-Cc: arnd@arndb.de
-Cc: akpm@linux-foundation.org
-Cc: deepa.kernel@gmail.com
-Cc: ebiederm@xmission.com
-Cc: firoz.khan@linaro.org
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-alpha@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-ia64@vger.kernel.org
-Cc: linux-m68k@lists.linux-m68k.org
-Cc: linux-mips@vger.kernel.org
-Cc: linux-parisc@vger.kernel.org
-Cc: linuxppc-dev@lists.ozlabs.org
-Cc: linux-s390@vger.kernel.org
-Cc: linux-sh@vger.kernel.org
-Cc: sparclinux@vger.kernel.org
-Cc: netdev@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org
-Cc: linux-api@vger.kernel.org
-Cc: linux-arch@vger.kernel.org
-
+SGkgWW9nZXNoLA0KDQpteSBjb21tZW50cyBiZWxvdyBhcmUgbWFpbmx5IGFib3V0IHRoaW5ncyBJ
+IGFscmVhZHkgbWVudGlvbmVkIGluIG15IA0KcmV2aWV3IGZvciB2NSBhbmQgYWJvdXQgcmVtb3Zp
+bmcgb3Igc2ltcGxpZnlpbmcgc29tZSB1bm5lY2Vzc2FyeSBvciANCmNvbXBsZXggY29kZS4NCg0K
+QWxzbyBhcyBJIGdhdGhlcmVkIGZyb20geW91ciBjb252ZXJzYXRpb24gd2l0aCBCb3JpcywgdGhl
+cmUncyBzdGlsbCBhIA0KY2hlY2sgZm9yIHRoZSBsZW5ndGggb2YgdGhlIHJlcXVlc3RlZCBtZW1v
+cnkgbWlzc2luZy4NCg0KT24gMDguMDEuMTkgMTA6MjQsIFlvZ2VzaCBOYXJheWFuIEdhdXIgd3Jv
+dGU6DQpbLi4uXQ0KPiArDQo+ICtzdGF0aWMgYm9vbCBueHBfZnNwaV9zdXBwb3J0c19vcChzdHJ1
+Y3Qgc3BpX21lbSAqbWVtLA0KPiArCQkJCSBjb25zdCBzdHJ1Y3Qgc3BpX21lbV9vcCAqb3ApDQo+
+ICt7DQo+ICsJc3RydWN0IG54cF9mc3BpICpmID0gc3BpX2NvbnRyb2xsZXJfZ2V0X2RldmRhdGEo
+bWVtLT5zcGktPm1hc3Rlcik7DQo+ICsJaW50IHJldDsNCj4gKw0KPiArCXJldCA9IG54cF9mc3Bp
+X2NoZWNrX2J1c3dpZHRoKGYsIG9wLT5jbWQuYnVzd2lkdGgpOw0KPiArDQo+ICsJaWYgKG9wLT5h
+ZGRyLm5ieXRlcykNCj4gKwkJcmV0IHw9IG54cF9mc3BpX2NoZWNrX2J1c3dpZHRoKGYsIG9wLT5h
+ZGRyLmJ1c3dpZHRoKTsNCj4gKw0KPiArCWlmIChvcC0+ZHVtbXkubmJ5dGVzKQ0KPiArCQlyZXQg
+fD0gbnhwX2ZzcGlfY2hlY2tfYnVzd2lkdGgoZiwgb3AtPmR1bW15LmJ1c3dpZHRoKTsNCj4gKw0K
+PiArCWlmIChvcC0+ZGF0YS5uYnl0ZXMpDQo+ICsJCXJldCB8PSBueHBfZnNwaV9jaGVja19idXN3
+aWR0aChmLCBvcC0+ZGF0YS5idXN3aWR0aCk7DQo+ICsNCj4gKwlpZiAocmV0KQ0KPiArCQlyZXR1
+cm4gZmFsc2U7DQo+ICsNCj4gKwkvKg0KPiArCSAqIFRoZSBudW1iZXIgb2YgaW5zdHJ1Y3Rpb25z
+IG5lZWRlZCBmb3IgdGhlIG9wLCBuZWVkcw0KPiArCSAqIHRvIGZpdCBpbnRvIGEgc2luZ2xlIExV
+VCBlbnRyeS4NCj4gKwkgKi8NCj4gKwlpZiAob3AtPmFkZHIubmJ5dGVzICsNCj4gKwkgICAob3At
+PmR1bW15Lm5ieXRlcyA/IDE6MCkgKw0KPiArCSAgIChvcC0+ZGF0YS5uYnl0ZXMgPyAxOjApID4g
+NikNCj4gKwkJcmV0dXJuIGZhbHNlOw0KDQpBY3R1YWxseSB0aGlzIGNoZWNrIHdhcyBvbmx5IG5l
+ZWRlZCBpbiB0aGUgUVNQSSBkcml2ZXIsIGFzIHdlIHdlcmUgdXNpbmcgDQogIExVVF9NT0RFIGFu
+ZCB0aGVyZSB3ZSBuZWVkZWQgb25lIGluc3RydWN0aW9uIGZvciBlYWNoIGFkZHJlc3MgYnl0ZS4g
+DQpIZXJlIHRoZSBudW1iZXIgb2YgaW5zdHJ1Y3Rpb25zIHdpbGwgYWx3YXlzIGZpdCBpbnRvIG9u
+ZSBMVVQgZW50cnkuDQoNCkluc3RlYWQgb2YgdGhpcywgYSBjaGVjayBmb3Igb3AtPmFkZHIubmJ5
+dGVzID4gNCAoYXMgYWxyZWFkeSBzdWdnZXN0ZWQgDQppbiBteSBjb21tZW50cyBmb3IgdjUpIHdv
+dWxkIG1ha2UgbW9yZSBzZW5zZS4gU28gd2UgY2FuIG1ha2Ugc3VyZSB0aGF0IA0KdGhlIGFkZHJl
+c3MgbGVuZ3RoIHBhc3NlZCBpbiBpcyBzdXBwb3J0ZWQgKGJldHdlZW4gMSBhbmQgNCBieXRlcyku
+DQoNCj4gKw0KPiArCS8qIE1heCA2NCBkdW1teSBjbG9jayBjeWNsZXMgc3VwcG9ydGVkICovDQo+
+ICsJaWYgKG9wLT5kdW1teS5idXN3aWR0aCAmJg0KPiArCSAgICAob3AtPmR1bW15Lm5ieXRlcyAq
+IDggLyBvcC0+ZHVtbXkuYnVzd2lkdGggPiA2NCkpDQo+ICsJCXJldHVybiBmYWxzZTsNCj4gKw0K
+PiArCS8qIE1heCBkYXRhIGxlbmd0aCwgY2hlY2sgY29udHJvbGxlciBsaW1pdHMgYW5kIGFsaWdu
+bWVudCAqLw0KPiArCWlmIChvcC0+ZGF0YS5kaXIgPT0gU1BJX01FTV9EQVRBX0lOICYmDQo+ICsJ
+ICAgIChvcC0+ZGF0YS5uYnl0ZXMgPiBmLT5kZXZ0eXBlX2RhdGEtPmFoYl9idWZfc2l6ZSB8fA0K
+PiArCSAgICAgKG9wLT5kYXRhLm5ieXRlcyA+IGYtPmRldnR5cGVfZGF0YS0+cnhmaWZvIC0gNCAm
+Jg0KPiArCSAgICAgICFJU19BTElHTkVEKG9wLT5kYXRhLm5ieXRlcywgOCkpKSkNCj4gKwkJcmV0
+dXJuIGZhbHNlOw0KPiArDQo+ICsJaWYgKG9wLT5kYXRhLmRpciA9PSBTUElfTUVNX0RBVEFfT1VU
+ICYmDQo+ICsJICAgIG9wLT5kYXRhLm5ieXRlcyA+IGYtPmRldnR5cGVfZGF0YS0+dHhmaWZvKQ0K
+PiArCQlyZXR1cm4gZmFsc2U7DQo+ICsNCj4gKwlyZXR1cm4gdHJ1ZTsNCj4gK30NCj4gKw0KWy4u
+Ll0NCj4gK3N0YXRpYyB2b2lkIG54cF9mc3BpX3NlbGVjdF9tZW0oc3RydWN0IG54cF9mc3BpICpm
+LCBzdHJ1Y3Qgc3BpX2RldmljZSAqc3BpKQ0KPiArew0KPiArCXVuc2lnbmVkIGxvbmcgcmF0ZSA9
+IHNwaS0+bWF4X3NwZWVkX2h6Ow0KPiArCWludCByZXQ7DQo+ICsJdWludDY0X3Qgc2l6ZV9rYjsN
+Cj4gKw0KPiArCS8qDQo+ICsJICogUmV0dXJuLCBpZiBwcmV2aW91c2x5IHNlbGVjdGVkIHNsYXZl
+IGRldmljZSBpcyBzYW1lIGFzIGN1cnJlbnQNCj4gKwkgKiByZXF1ZXN0ZWQgc2xhdmUgZGV2aWNl
+Lg0KPiArCSAqLw0KPiArCWlmIChmLT5zZWxlY3RlZCA9PSBzcGktPmNoaXBfc2VsZWN0KQ0KPiAr
+CQlyZXR1cm47DQo+ICsNCj4gKwkvKiBSZXNldCBGTFNIeHhDUjAgcmVnaXN0ZXJzICovDQo+ICsJ
+ZnNwaV93cml0ZWwoZiwgMCwgZi0+aW9iYXNlICsgRlNQSV9GTFNIQTFDUjApOw0KPiArCWZzcGlf
+d3JpdGVsKGYsIDAsIGYtPmlvYmFzZSArIEZTUElfRkxTSEEyQ1IwKTsNCj4gKwlmc3BpX3dyaXRl
+bChmLCAwLCBmLT5pb2Jhc2UgKyBGU1BJX0ZMU0hCMUNSMCk7DQo+ICsJZnNwaV93cml0ZWwoZiwg
+MCwgZi0+aW9iYXNlICsgRlNQSV9GTFNIQjJDUjApOw0KPiArDQo+ICsJLyogQXNzaWduIGNvbnRy
+b2xsZXIgbWVtb3J5IG1hcHBlZCBzcGFjZSBhcyBzaXplLCBLQnl0ZXMsIG9mIGZsYXNoLiAqLw0K
+PiArCXNpemVfa2IgPSBGU1BJX0ZMU0hYQ1IwX1NaKGYtPm1lbW1hcF9waHlfc2l6ZSk7DQo+ICsN
+Cj4gKwlzd2l0Y2ggKHNwaS0+Y2hpcF9zZWxlY3QpIHsNCj4gKwljYXNlIDA6DQo+ICsJCWZzcGlf
+d3JpdGVsKGYsIHNpemVfa2IsIGYtPmlvYmFzZSArIEZTUElfRkxTSEExQ1IwKTsNCj4gKwkJYnJl
+YWs7DQo+ICsJY2FzZSAxOg0KPiArCQlmc3BpX3dyaXRlbChmLCBzaXplX2tiLCBmLT5pb2Jhc2Ug
+KyBGU1BJX0ZMU0hBMkNSMCk7DQo+ICsJCWJyZWFrOw0KPiArCWNhc2UgMjoNCj4gKwkJZnNwaV93
+cml0ZWwoZiwgc2l6ZV9rYiwgZi0+aW9iYXNlICsgRlNQSV9GTFNIQjFDUjApOw0KPiArCQlicmVh
+azsNCj4gKwljYXNlIDM6DQo+ICsJCWZzcGlfd3JpdGVsKGYsIHNpemVfa2IsIGYtPmlvYmFzZSAr
+IEZTUElfRkxTSEIyQ1IwKTsNCj4gKwkJYnJlYWs7DQo+ICsJfQ0KDQpUaGUgc3dpdGNoIHN0YXRl
+bWVudCBhYm92ZSBjYW4gYmUgcmVwbGFjZWQgYnk6DQoNCmZzcGlfd3JpdGVsKGYsIHNpemVfa2Is
+IGYtPmlvYmFzZSArIEZTUElfRkxTSEExQ1IwICsNCgkgICAgNCAqIHNwaS0+Y2hpcF9zZWxlY3Qp
+Ow0KDQo+ICsNCj4gKwlkZXZfZGJnKGYtPmRldiwgIlNsYXZlIGRldmljZSBbQ1M6JXhdIHNlbGVj
+dGVkXG4iLCBzcGktPmNoaXBfc2VsZWN0KTsNCj4gKw0KPiArCW54cF9mc3BpX2Nsa19kaXNhYmxl
+X3VucHJlcChmKTsNCj4gKw0KPiArCXJldCA9IGNsa19zZXRfcmF0ZShmLT5jbGssIHJhdGUpOw0K
+PiArCWlmIChyZXQpDQo+ICsJCXJldHVybjsNCj4gKw0KPiArCXJldCA9IG54cF9mc3BpX2Nsa19w
+cmVwX2VuYWJsZShmKTsNCj4gKwlpZiAocmV0KQ0KPiArCQlyZXR1cm47DQo+ICsNCj4gKwlmLT5z
+ZWxlY3RlZCA9IHNwaS0+Y2hpcF9zZWxlY3Q7DQo+ICt9DQo+ICsNCj4gK3N0YXRpYyB2b2lkIG54
+cF9mc3BpX3JlYWRfYWhiKHN0cnVjdCBueHBfZnNwaSAqZiwgY29uc3Qgc3RydWN0IHNwaV9tZW1f
+b3AgKm9wKQ0KPiArew0KPiArCXUzMiBsZW4gPSBvcC0+ZGF0YS5uYnl0ZXM7DQo+ICsNCj4gKwkv
+KiBSZWFkIG91dCB0aGUgZGF0YSBkaXJlY3RseSBmcm9tIHRoZSBBSEIgYnVmZmVyLiAqLw0KPiAr
+CW1lbWNweV9mcm9taW8ob3AtPmRhdGEuYnVmLmluLCAoZi0+YWhiX2FkZHIgKyBvcC0+YWRkci52
+YWwpLCBsZW4pOw0KPiArfQ0KPiArDQo+ICtzdGF0aWMgdm9pZCBueHBfZnNwaV9maWxsX3R4Zmlm
+byhzdHJ1Y3QgbnhwX2ZzcGkgKmYsDQo+ICsJCQkJIGNvbnN0IHN0cnVjdCBzcGlfbWVtX29wICpv
+cCkNCj4gK3sNCj4gKwl2b2lkIF9faW9tZW0gKmJhc2UgPSBmLT5pb2Jhc2U7DQo+ICsJaW50IGks
+IGosIHJldDsNCj4gKwlpbnQgc2l6ZSwgdG1wLCB3bV9zaXplOw0KPiArCXUzMiBkYXRhID0gMDsN
+Cj4gKwl1MzIgKnR4YnVmID0gKHUzMiAqKSBvcC0+ZGF0YS5idWYub3V0Ow0KDQpZb3UgY2FuIGNh
+c3QgdGhlIHU4IGJ1ZmZlciB0byB1MzIgYW5kIGluY3JlbWVudCBpdCBieSAxIGluIGVhY2ggY3lj
+bGUgDQpiZWxvdywgb3IgeW91IGNhbiBqdXN0IHVzZSB0aGUgdTggYnVmZmVyIGFuZCBhbGlnbiBh
+bmQgaW5jcmVtZW50IGJ5IDggYXMgDQpJIGRpZCBpbiBteSBwcm9wb3NhbCBmb3IgdjUuDQpJIHN0
+aWxsIGxpa2UgbXkgdmVyc2lvbiBiZXR0ZXIgYXMgaXQgc2VlbXMgc2ltcGxlciBhbmQgZWFzaWVy
+IHRvIA0KdW5kZXJzdGFuZCA7KQ0KDQo+ICsNCj4gKwkvKiBjbGVhciB0aGUgVFggRklGTy4gKi8N
+Cj4gKwlmc3BpX3dyaXRlbChmLCBGU1BJX0lQVFhGQ1JfQ0xSLCBiYXNlICsgRlNQSV9JUFRYRkNS
+KTsNCj4gKw0KPiArCS8qIERlZmF1bHQgdmFsdWUgb2Ygd2F0ZXIgbWFyayBsZXZlbCBpcyA4IGJ5
+dGVzLiAqLw0KPiArCXdtX3NpemUgPSA4Ow0KPiArDQo+ICsJc2l6ZSA9IG9wLT5kYXRhLm5ieXRl
+cyAvIHdtX3NpemU7DQo+ICsJZm9yIChpID0gMDsgaSA8IHNpemU7IGkrKykgew0KPiArCQkvKiBX
+YWl0IGZvciBUWEZJRk8gZW1wdHkgKi8NCj4gKwkJcmV0ID0gZnNwaV9yZWFkbF9wb2xsX3RvdXQo
+ZiwgZi0+aW9iYXNlICsgRlNQSV9JTlRSLA0KPiArCQkJCQkgICBGU1BJX0lOVFJfSVBUWFdFLCAw
+LA0KPiArCQkJCQkgICBQT0xMX1RPVVQsIHRydWUpOw0KPiArCQlXQVJOX09OKHJldCk7DQo+ICsN
+Cj4gKwkJZm9yICh0bXAgPSB3bV9zaXplLCBqID0gMDsgdG1wID4gMDsgdG1wIC09IDQsIGorKykN
+Cg0KSSBzdGlsbCB0aGluayB0aGUgaW5uZXIgbG9vcCBzaG91bGQgb25seSBiZSBhZGRlZCB3aGVu
+IHNvbWVvbmUgDQppbXBsZW1lbnRzIHdhdGVybWFyayBsZXZlbHMgb3RoZXIgdGhhbiA4LiBJdCBp
+cyBvZiBubyB1c2UgYXQgdGhlIG1vbWVudCANCmFuZCBtYWtlcyByZWFkaW5nIHRoZSBjb2RlIG1v
+cmUgZGlmZmljdWx0Lg0KQnV0IGlmIHlvdSBpbnNpc3Qgb24gdXNpbmcgaXQsIHBsZWFzZSBhdCBs
+ZWFzdCBzaW1wbGlmeSB0aGUgY29kZS4NCg0KV2hhdCBhYm91dDoJZm9yIChqID0gMDsgaiA8ICh3
+bV9zaXplIC8gNCk7IGorKykNCg0KPiArCQkJZnNwaV93cml0ZWwoZiwgKnR4YnVmKyssIGJhc2Ug
+KyBGU1BJX1RGRFIgKyBqICogNCk7ID4gKw0KPiArCQlmc3BpX3dyaXRlbChmLCBGU1BJX0lOVFJf
+SVBUWFdFLCBiYXNlICsgRlNQSV9JTlRSKTsNCj4gKwl9DQo+ICsNCj4gKwlzaXplID0gb3AtPmRh
+dGEubmJ5dGVzICUgd21fc2l6ZTsNCj4gKwlpZiAoc2l6ZSkgew0KPiArCQkvKiBXYWl0IGZvciBU
+WEZJRk8gZW1wdHkgKi8NCj4gKwkJcmV0ID0gZnNwaV9yZWFkbF9wb2xsX3RvdXQoZiwgZi0+aW9i
+YXNlICsgRlNQSV9JTlRSLA0KPiArCQkJCQkgICBGU1BJX0lOVFJfSVBUWFdFLCAwLA0KPiArCQkJ
+CQkgICBQT0xMX1RPVVQsIHRydWUpOw0KPiArCQlXQVJOX09OKHJldCk7DQo+ICsNCj4gKwkJZm9y
+ICh0bXAgPSBzaXplLCBqID0gMDsgdG1wID4gMDsgdG1wIC09IDQsIGorKykgew0KDQpTYW1lIGhl
+cmU6CWZvciAoaiA9IDA7IGogPCAoc2l6ZSAvIDQpOyBqKyspIHsNCg0KPiArCQkJZGF0YSA9IDA7
+DQo+ICsJCQltZW1jcHkoJmRhdGEsIHR4YnVmKyssIDQpOw0KPiArCQkJZnNwaV93cml0ZWwoZiwg
+ZGF0YSwgYmFzZSArIEZTUElfVEZEUiArIGogKiA0KTsNCj4gKwkJfQ0KPiArCQlmc3BpX3dyaXRl
+bChmLCBGU1BJX0lOVFJfSVBUWFdFLCBiYXNlICsgRlNQSV9JTlRSKTsNCj4gKwl9DQo+ICt9DQo+
+ICsNCj4gK3N0YXRpYyB2b2lkIG54cF9mc3BpX3JlYWRfcnhmaWZvKHN0cnVjdCBueHBfZnNwaSAq
+ZiwNCj4gKwkJCSAgY29uc3Qgc3RydWN0IHNwaV9tZW1fb3AgKm9wKQ0KPiArew0KPiArCXZvaWQg
+X19pb21lbSAqYmFzZSA9IGYtPmlvYmFzZTsNCj4gKwlpbnQgaSwgajsNCj4gKwlpbnQgc2l6ZSwg
+dG1wX3NpemUsIHdtX3NpemUsIHJldDsNCj4gKwl1MzIgdG1wID0gMDsNCj4gKwl1OCAqYnVmID0g
+b3AtPmRhdGEuYnVmLmluOw0KPiArCXUzMiBsZW4gPSBvcC0+ZGF0YS5uYnl0ZXM7DQo+ICsNCj4g
+KwkvKiBEZWZhdWx0IHZhbHVlIG9mIHdhdGVyIG1hcmsgbGV2ZWwgaXMgOCBieXRlcy4gKi8NCj4g
+Kwl3bV9zaXplID0gODsNCj4gKw0KPiArCXdoaWxlIChsZW4gPiAwKSB7DQoNCldoYXQgaXMgdGhp
+cyBvdXRlciBsb29wIGdvb2QgZm9yPyBCZWxvdyB5b3UgYXJlIGZpcnN0IHJlYWRpbmcgYWxpZ25l
+ZCB0byANCndtX3NpemUgYW5kIHRoZW4gdGhlIHJlbWFpbmluZyBieXRlcy4gV2h5IHdvdWxkIHlv
+dSBuZWVkIHRvIHJlcGVhdCB0aGF0Pw0KSXQgbG9va3MgbGlrZSB0aGUgbG9vcCB3aWxsIGFsd2F5
+cyBiZSBleGVjdXRlZCBvbmx5IG9uY2UuDQoNCj4gKwkJc2l6ZSA9IGxlbiAvIHdtX3NpemU7DQo+
+ICsJCWZvciAoaSA9IDA7IGkgPCBzaXplOyBpKyspIHsNCj4gKwkJCS8qIFdhaXQgZm9yIFJYRklG
+TyBhdmFpbGFibGUgKi8NCj4gKwkJCXJldCA9IGZzcGlfcmVhZGxfcG9sbF90b3V0KGYsIGYtPmlv
+YmFzZSArIEZTUElfSU5UUiwNCj4gKwkJCQkJCSAgIEZTUElfSU5UUl9JUFJYV0EsIDAsDQo+ICsJ
+CQkJCQkgICBQT0xMX1RPVVQsIHRydWUpOw0KPiArCQkJV0FSTl9PTihyZXQpOw0KPiArDQo+ICsJ
+CQlmb3IgKHRtcF9zaXplID0gd21fc2l6ZSwgaiA9IDA7IHRtcF9zaXplID4gMDsNCj4gKwkJCSAg
+ICAgdG1wX3NpemUgLT0gNCwgaisrLCBidWYgKz0gNCkgew0KDQpXaGF0IGFib3V0OgkJZm9yIChq
+ID0gMDsgaiA8ICh3bV9zaXplIC8gNCk7IGorKywgYnVmICs9IDQpIHsNCg0KPiArCQkJCXRtcCA9
+IGZzcGlfcmVhZGwoZiwgYmFzZSArIEZTUElfUkZEUiArIGogKiA0KTsNCj4gKwkJCQltZW1jcHko
+YnVmLCAmdG1wLCA0KTsNCj4gKwkJCX0NCj4gKwkJCS8qIG1vdmUgdGhlIEZJRk8gcG9pbnRlciAq
+Lw0KPiArCQkJZnNwaV93cml0ZWwoZiwgRlNQSV9JTlRSX0lQUlhXQSwgYmFzZSArIEZTUElfSU5U
+Uik7DQo+ICsJCQlsZW4gLT0gd21fc2l6ZTsNCj4gKwkJfQ0KPiArDQo+ICsJCXNpemUgPSBsZW4g
+JSB3bV9zaXplOw0KPiArCQlpZiAoc2l6ZSkgew0KPiArCQkJLyogV2FpdCBmb3IgUlhGSUZPIGF2
+YWlsYWJsZSAqLw0KPiArCQkJcmV0ID0gZnNwaV9yZWFkbF9wb2xsX3RvdXQoZiwgZi0+aW9iYXNl
+ICsgRlNQSV9JTlRSLA0KPiArCQkJCQkJICAgRlNQSV9JTlRSX0lQUlhXQSwgMCwNCj4gKwkJCQkJ
+CSAgIFBPTExfVE9VVCwgdHJ1ZSk7DQo+ICsJCQlXQVJOX09OKHJldCk7DQo+ICsNCj4gKwkJCWZv
+ciAoaiA9IDA7IGxlbiA+IDA7IGxlbiAtPSBzaXplLCBqKyssIGJ1ZiArPSBzaXplKSB7DQo+ICsJ
+CQkJdG1wID0gZnNwaV9yZWFkbChmLCBiYXNlICsgRlNQSV9SRkRSICsgaiAqIDQpOw0KPiArCQkJ
+CXNpemUgPSBsZW4gPCA0ID8gbGVuIDogNDsNCg0KV2hhdCBhYm91dDoJCQlzaXplID0gbWluKGxl
+biwgNCk7DQoNCj4gKwkJCQltZW1jcHkoYnVmLCAmdG1wLCBzaXplKTsNCj4gKwkJCX0NCj4gKwkJ
+fQ0KPiArDQo+ICsJCS8qIGludmFsaWQgdGhlIFJYRklGTyAqLw0KPiArCQlmc3BpX3dyaXRlbChm
+LCBGU1BJX0lQUlhGQ1JfQ0xSLCBiYXNlICsgRlNQSV9JUFJYRkNSKTsNCj4gKwkJLyogbW92ZSB0
+aGUgRklGTyBwb2ludGVyICovDQo+ICsJCWZzcGlfd3JpdGVsKGYsIEZTUElfSU5UUl9JUFJYV0Es
+IGJhc2UgKyBGU1BJX0lOVFIpOw0KPiArCX0NCj4gK30NCg0KVGhhbmtzLA0KRnJpZWRlcg0K
