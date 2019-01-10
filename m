@@ -2,123 +2,146 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B82C8C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 05:42:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29C61C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 05:50:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E50D206B7
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 05:42:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EB256206B7
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 05:50:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MVIziZOY"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="NEzs4/8f"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727304AbfAJFma (ORCPT
+        id S1727214AbfAJFul (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 00:42:30 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:51287 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726016AbfAJFm2 (ORCPT
+        Thu, 10 Jan 2019 00:50:41 -0500
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:39718 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725915AbfAJFuk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 00:42:28 -0500
-Received: by mail-wm1-f65.google.com with SMTP id b11so9976721wmj.1;
-        Wed, 09 Jan 2019 21:42:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=R+/Zbi6zEL0OBRO5mltxI7+vObSFQp+JULbs9Uzhlcc=;
-        b=MVIziZOYY1qsduDoCJlRGrZ3arIjV1Wq/8oFVzZO9YJ9FRJBharqwFnzuNCcf4PYJY
-         HkLHq3dsMTqMWFJfFru1g/7/+wfTIBJtqG5RjilRooa1kKIPYw1vTBuNkGdXDx96Yg3I
-         Mlh9EoGv3U4FAsIkuSpa/OytuqtSL9qXy3uQFQBknBx4REhO63scxXW30aDAzLagJ5IT
-         3QHpk/2ZMzNkL+lhZFijQDtBHMeZZPdvZbWDCALhDPuZ4P4v57FDiI+IhYtZRy6xMq1V
-         qXC7wE5bfIArYthvR5NQq8lwr/lTbkls/emFQxS+zAHx9Sy7aIhLfBPIVNmSq17ukWP7
-         gDxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=R+/Zbi6zEL0OBRO5mltxI7+vObSFQp+JULbs9Uzhlcc=;
-        b=KhFx9jtVxKDlNQx7hGOgq8mbBzFWyjEwwVRyXJhKtYoijbt9lN4R8gK9puWzsGft1U
-         MUYUFcc7N5QBScwIV3ruzNV+V2rQbKh3E8ZHo7zKQ2JHygdv/6RMX/mVlRTfAvremlki
-         aztmAOECRcJJr+JcHz19x5x7gCYPaycIhq5404psW3WY5VbrnWhJCOw5fdiajmMSNpUn
-         YBJUW1wpgJzFxuXHqahiWAVcOrmjzSL6SUa58RDdO0uhen8vOcQ4m5j/WJeiq5Z8CXTz
-         ysvAPHaupgxy1GGd1uRkOAG4JcZ2fKMHO8myyIQXGvyWli2wJNqdDHz64ML6/gU7SN86
-         l2ew==
-X-Gm-Message-State: AJcUukfYmD73GgsGIdPEYFHU3Bp7RCQ4DC3HNTCUoNGsv9ZHsW4e+qam
-        mxBqfkJsEq8VpzyDCpixhp4=
-X-Google-Smtp-Source: ALg8bN5kTffYYX0op16vk5C2d6fXx1rbgvx7okSKHiEUsfUXRrL2PpHcir+DRps3ohWhJ2Pb9viVmw==
-X-Received: by 2002:a1c:2686:: with SMTP id m128mr7969090wmm.52.1547098944941;
-        Wed, 09 Jan 2019 21:42:24 -0800 (PST)
-Received: from localhost.localdomain ([2a01:4f8:10b:24a5::2])
-        by smtp.gmail.com with ESMTPSA id w125sm20434809wmb.45.2019.01.09.21.42.23
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 09 Jan 2019 21:42:24 -0800 (PST)
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Karsten Keil <isdn@linux-pingi.de>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Nick Desaulniers <ndesaulniers@google.com>
-Subject: [PATCH v2] isdn: avm: Fix string plus integer warning from Clang
-Date:   Wed,  9 Jan 2019 22:41:08 -0700
-Message-Id: <20190110054107.6069-1-natechancellor@gmail.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190108050649.9962-1-natechancellor@gmail.com>
-References: <20190108050649.9962-1-natechancellor@gmail.com>
+        Thu, 10 Jan 2019 00:50:40 -0500
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0A5oHWK069173;
+        Wed, 9 Jan 2019 23:50:17 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1547099417;
+        bh=5AM9w8DKHn7sr8xi/A/jL8BaWMoPviU7ebwpWRMWGgE=;
+        h=Subject:From:To:CC:References:Date:In-Reply-To;
+        b=NEzs4/8fODQnCkrzO5bFI39UmLB83+bZSydworOxqBGufzlCTm1BPz/pHfsBrhA09
+         nM4MdH9LdYebCdOHErMfbEMmKCNkS7NY3NRTZtSMHURPWBopRe23v/cNKDmfUI+xO2
+         inbHgKr+ycYVF0IVPtzv6YEhNMbd9YHtX5ePYMB4=
+Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0A5oH5X034080
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 9 Jan 2019 23:50:17 -0600
+Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Wed, 9
+ Jan 2019 23:50:16 -0600
+Received: from dflp32.itg.ti.com (10.64.6.15) by DFLE111.ent.ti.com
+ (10.64.6.32) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Wed, 9 Jan 2019 23:50:16 -0600
+Received: from [172.24.191.45] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0A5oA1s007190;
+        Wed, 9 Jan 2019 23:50:11 -0600
+Subject: Re: Regression in v4.20 with net phy soft reset changes
+From:   Keerthy <j-keerthy@ti.com>
+To:     Tony Lindgren <tony@atomide.com>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Sekhar Nori <nsekhar@ti.com>
+CC:     Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Chris Healy <cphealy@gmail.com>,
+        Clemens Gruber <clemens.gruber@pqgruber.com>,
+        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>,
+        Murali Karicheri <m-karicheri2@ti.com>,
+        Rex Chang <rchang@ti.com>, Tero Kristo <t-kristo@ti.com>,
+        WingMan Kwok <w-kwok2@ti.com>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-omap@vger.kernel.org>
+References: <20190109190650.GT5544@atomide.com>
+ <a63ca542-db96-40ed-201d-59c609f565ce@gmail.com>
+ <20190109213611.GU5544@atomide.com>
+ <5bdce91b-cd56-75eb-c6d2-5542869b716e@ti.com>
+Message-ID: <63ffba1c-47c1-a32b-68d6-0c3c31b74dd8@ti.com>
+Date:   Thu, 10 Jan 2019 11:20:10 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-X-Patchwork-Bot: notify
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <5bdce91b-cd56-75eb-c6d2-5542869b716e@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A recent commit in Clang expanded the -Wstring-plus-int warning, showing
-some odd behavior in this file.
 
-drivers/isdn/hardware/avm/b1.c:426:30: warning: adding 'int' to a string does not append to the string [-Wstring-plus-int]
-                cinfo->version[j] = "\0\0" + 1;
-                                    ~~~~~~~^~~
-drivers/isdn/hardware/avm/b1.c:426:30: note: use array indexing to silence this warning
-                cinfo->version[j] = "\0\0" + 1;
-                                           ^
-                                    &      [  ]
-1 warning generated.
 
-This is equivalent to just "\0". Nick pointed out that it is smarter to
-use "" instead of "\0" because "" is used elsewhere in the kernel and
-can be deduplicated at the linking stage.
+On Thursday 10 January 2019 10:36 AM, Keerthy wrote:
+> 
+> 
+> On Thursday 10 January 2019 03:06 AM, Tony Lindgren wrote:
+>> Hi,
+>>
+>> * Heiner Kallweit <hkallweit1@gmail.com> [190109 19:28]:
+>>> On 09.01.2019 20:06, Tony Lindgren wrote:
+>>>> Commit 6e2d85ec0559 ("net: phy: Stop with excessive soft reset") caused
+>>>> a regression where suspend resume cycle fails to bring up Ethernet on at
+>>>> least cpsw on am437x-sk-evm.
+>>>>
+>>> What kind of PHY and which PHY driver is used with this board?
+>>> I found one schematics of am437x where a KSZ9031RN PHY is used.
+>>> Is it the same on your board?
+>>
+>> Yes that's the phy.
+>>
+>>> As described in the commit message of this commit you would have
+>>> the option to implement the soft_reset callback in the PHY driver.
+>>> Can you try to add .soft_reset = genphy_soft_reset to the
+>>> KSZ9031 driver config in drivers/net/phy/micrel.c and check whether
+>>> it fixes the issue?
+>>
+>> Yes that seems to work based on a quick test of five suspend
+>> resume cycles.
+> 
 
-Link: https://github.com/ClangBuiltLinux/linux/issues/309
-Suggested-by: Nick Desaulniers <ndesaulniers@google.com>
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
----
+Removing Grygorii as the e-mail no longer exists
 
-v1 -> v2:
+To add to Tony's observations. I ran a 100 time suspend/resume adding the
+soft_reset hook to the phy_driver structs in drivers/net/phy/micrel.c and
+suspend/resume (DS0) works nicely.
 
-* Use "" instead of "\0", as they are equivalent, but "" can be
-  deduplicated by the linker, as pointed out by Nick.
-
- drivers/isdn/hardware/avm/b1.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/isdn/hardware/avm/b1.c b/drivers/isdn/hardware/avm/b1.c
-index 4ac378e48902..40ca1e8fa09f 100644
---- a/drivers/isdn/hardware/avm/b1.c
-+++ b/drivers/isdn/hardware/avm/b1.c
-@@ -423,7 +423,7 @@ void b1_parse_version(avmctrl_info *cinfo)
- 	int i, j;
- 
- 	for (j = 0; j < AVM_MAXVERSION; j++)
--		cinfo->version[j] = "\0\0" + 1;
-+		cinfo->version[j] = "";
- 	for (i = 0, j = 0;
- 	     j < AVM_MAXVERSION && i < cinfo->versionlen;
- 	     j++, i += cinfo->versionbuf[i] + 1)
--- 
-2.20.1
-
+> 
+>>
+>> I wonder what all hardware this issue affects though?
+>>
+>> It's probably best that the network folks check what all
+>> hardare needs patching.
+>>
+>> For TI hardware, Sekhar and TI network folks, can you guys
+>> please check the various TI SoCs for multiple suspend resume
+>> cycles with v5.0-rc1 and patch accordingly? See also below
+>> for something else to check, 10 seconds to resume a phy
+>> seems very long to me :)
+>>
+>>>> Keerthy noticed this may not happen on the first resume, but usually
+>>>> happens after few suspend resume cycles. The most working suspend resume
+>>>> cycles I've seen with the commit above is three.
+>> ...
+>>>> Note that unrelated to the commit above, there may be other issues too
+>>>> as the cpsw phy LED seems to come on only after about five seconds with
+>>>> about total of 10 seconds before the Ethernet is up again.
+>>
+>> Regards,
+>>
+>> Tony
+>>
