@@ -2,143 +2,87 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2D44C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 20:52:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7740C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 20:52:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A0C820685
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 20:52:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B3421213F2
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 20:52:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729497AbfAJUwH (ORCPT
+        id S1729618AbfAJUwj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 15:52:07 -0500
-Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:58313 "EHLO
-        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729323AbfAJUwH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 15:52:07 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R131e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04446;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0THxlQX._1547153341;
-Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0THxlQX._1547153341)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Fri, 11 Jan 2019 04:49:03 +0800
-Subject: Re: [v5 PATCH 1/2] mm: swap: check if swap backing device is
- congested or not
-To:     ying.huang@intel.com, tim.c.chen@intel.com, minchan@kernel.org,
-        daniel.m.jordan@oracle.com, akpm@linux-foundation.org
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <1546543673-108536-1-git-send-email-yang.shi@linux.alibaba.com>
-From:   Yang Shi <yang.shi@linux.alibaba.com>
-Message-ID: <c8424b8a-ec72-d482-ed22-0b8df500e103@linux.alibaba.com>
-Date:   Thu, 10 Jan 2019 12:49:00 -0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.7.0
+        Thu, 10 Jan 2019 15:52:39 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:35066 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729459AbfAJUwj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 15:52:39 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 90ECC2090D;
+        Thu, 10 Jan 2019 20:52:37 +0000 (UTC)
+Received: from treble (ovpn-125-32.rdu2.redhat.com [10.10.125.32])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 5A736104812A;
+        Thu, 10 Jan 2019 20:52:28 +0000 (UTC)
+Date:   Thu, 10 Jan 2019 14:52:26 -0600
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     x86@kernel.org, linux-kernel@vger.kernel.org,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Jason Baron <jbaron@akamai.com>, Jiri Kosina <jkosina@suse.cz>,
+        David Laight <David.Laight@ACULAB.COM>,
+        Borislav Petkov <bp@alien8.de>,
+        Julia Cartwright <julia@ni.com>, Jessica Yu <jeyu@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, Nadav Amit <namit@vmware.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Edward Cree <ecree@solarflare.com>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>
+Subject: Re: [PATCH v3 0/6] Static calls
+Message-ID: <20190110205226.iburt6mrddsxnjpk@treble>
+References: <cover.1547073843.git.jpoimboe@redhat.com>
+ <20190110203023.GL2861@worktop.programming.kicks-ass.net>
 MIME-Version: 1.0
-In-Reply-To: <1546543673-108536-1-git-send-email-yang.shi@linux.alibaba.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190110203023.GL2861@worktop.programming.kicks-ass.net>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Thu, 10 Jan 2019 20:52:38 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andrew,
+On Thu, Jan 10, 2019 at 09:30:23PM +0100, Peter Zijlstra wrote:
+> On Wed, Jan 09, 2019 at 04:59:35PM -0600, Josh Poimboeuf wrote:
+> > With this version, I stopped trying to use text_poke_bp(), and instead
+> > went with a different approach: if the call site destination doesn't
+> > cross a cacheline boundary, just do an atomic write.  Otherwise, keep
+> > using the trampoline indefinitely.
+> 
+> > - Get rid of the use of text_poke_bp(), in favor of atomic writes.
+> >   Out-of-line calls will be promoted to inline only if the call sites
+> >   don't cross cache line boundaries. [Linus/Andy]
+> 
+> Can we perserve why text_poke_bp() didn't work? I seem to have forgotten
+> again. The problem was poking the return address onto the stack from the
+> int3 handler, or something along those lines?
 
+Right, emulating a call instruction from the #BP handler is ugly,
+because you have to somehow grow the stack to make room for the return
+address.  Personally I liked the idea of shifting the iret frame by 16
+bytes in the #DB entry code, but others hated it.
 
-How do you look these patches? They had been reviewed and the commit log 
-has been updated per your and Daniel's comments.
+So many bad-but-not-completely-unacceptable options to choose from.
 
-
-Thanks,
-
-Yang
-
-
-
-On 1/3/19 11:27 AM, Yang Shi wrote:
-> Swap readahead would read in a few pages regardless if the underlying
-> device is busy or not.  It may incur long waiting time if the device is
-> congested, and it may also exacerbate the congestion.
->
-> Use inode_read_congested() to check if the underlying device is busy or
-> not like what file page readahead does.  Get inode from swap_info_struct.
-> Although we can add inode information in swap_address_space
-> (address_space->host), it may lead some unexpected side effect, i.e.
-> it may break mapping_cap_account_dirty().  Using inode from
-> swap_info_struct seems simple and good enough.
->
-> Just does the check in vma_cluster_readahead() since
-> swap_vma_readahead() is just used for non-rotational device which
-> much less likely has congestion than traditional HDD.
->
-> Although swap slots may be consecutive on swap partition, it still may be
-> fragmented on swap file. This check would help to reduce excessive stall
-> for such case.
->
-> The test with page_fault1 of will-it-scale (sometimes tracing may just
-> show runtest.py that is the wrapper script of page_fault1), which basically
-> launches NR_CPU threads to generate 128MB anonymous pages for each thread,
-> on my virtual machine with congested HDD shows long tail latency is reduced
-> significantly.
->
-> Without the patch
->   page_fault1_thr-1490  [023]   129.311706: funcgraph_entry:      #57377.796 us |  do_swap_page();
->   page_fault1_thr-1490  [023]   129.369103: funcgraph_entry:        5.642us   |  do_swap_page();
->   page_fault1_thr-1490  [023]   129.369119: funcgraph_entry:      #1289.592 us |  do_swap_page();
->   page_fault1_thr-1490  [023]   129.370411: funcgraph_entry:        4.957us   |  do_swap_page();
->   page_fault1_thr-1490  [023]   129.370419: funcgraph_entry:        1.940us   |  do_swap_page();
->   page_fault1_thr-1490  [023]   129.378847: funcgraph_entry:      #1411.385 us |  do_swap_page();
->   page_fault1_thr-1490  [023]   129.380262: funcgraph_entry:        3.916us   |  do_swap_page();
->   page_fault1_thr-1490  [023]   129.380275: funcgraph_entry:      #4287.751 us |  do_swap_page();
->
-> With the patch
->        runtest.py-1417  [020]   301.925911: funcgraph_entry:      #9870.146 us |  do_swap_page();
->        runtest.py-1417  [020]   301.935785: funcgraph_entry:        9.802us   |  do_swap_page();
->        runtest.py-1417  [020]   301.935799: funcgraph_entry:        3.551us   |  do_swap_page();
->        runtest.py-1417  [020]   301.935806: funcgraph_entry:        2.142us   |  do_swap_page();
->        runtest.py-1417  [020]   301.935853: funcgraph_entry:        6.938us   |  do_swap_page();
->        runtest.py-1417  [020]   301.935864: funcgraph_entry:        3.765us   |  do_swap_page();
->        runtest.py-1417  [020]   301.935871: funcgraph_entry:        3.600us   |  do_swap_page();
->        runtest.py-1417  [020]   301.935878: funcgraph_entry:        7.202us   |  do_swap_page();
->
-> Acked-by: Tim Chen <tim.c.chen@intel.com>
-> Cc: Huang Ying <ying.huang@intel.com>
-> Cc: Minchan Kim <minchan@kernel.org>
-> Cc: Daniel Jordan <daniel.m.jordan@oracle.com>
-> Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
-> ---
-> v5: Elaborate more about the test case per Daniel
-> v4: Added observed effects in the commit log per Andrew
-> v3: Move inode deference under swap device type check per Tim Chen
-> v2: Check the swap device type per Tim Chen
->
->   mm/swap_state.c | 7 +++++++
->   1 file changed, 7 insertions(+)
->
-> diff --git a/mm/swap_state.c b/mm/swap_state.c
-> index fd2f21e..78d500e 100644
-> --- a/mm/swap_state.c
-> +++ b/mm/swap_state.c
-> @@ -538,11 +538,18 @@ struct page *swap_cluster_readahead(swp_entry_t entry, gfp_t gfp_mask,
->   	bool do_poll = true, page_allocated;
->   	struct vm_area_struct *vma = vmf->vma;
->   	unsigned long addr = vmf->address;
-> +	struct inode *inode = NULL;
->   
->   	mask = swapin_nr_pages(offset) - 1;
->   	if (!mask)
->   		goto skip;
->   
-> +	if (si->flags & (SWP_BLKDEV | SWP_FS)) {
-> +		inode = si->swap_file->f_mapping->host;
-> +		if (inode_read_congested(inode))
-> +			goto skip;
-> +	}
-> +
->   	do_poll = false;
->   	/* Read a page_cluster sized and aligned cluster around offset. */
->   	start_offset = offset & ~mask;
-
+-- 
+Josh
