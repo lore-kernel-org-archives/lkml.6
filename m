@@ -2,94 +2,125 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69EC9C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 08:54:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09276C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 08:55:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3BE9C20879
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 08:54:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D3AE221773
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 08:55:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727685AbfAJIyM (ORCPT
+        id S1727705AbfAJIz1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 03:54:12 -0500
-Received: from relay.sw.ru ([185.231.240.75]:53434 "EHLO relay.sw.ru"
+        Thu, 10 Jan 2019 03:55:27 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:50972 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727547AbfAJIyM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 03:54:12 -0500
-Received: from [172.16.25.169]
-        by relay.sw.ru with esmtp (Exim 4.91)
-        (envelope-from <ktkhai@virtuozzo.com>)
-        id 1ghW6D-0002nj-Jp; Thu, 10 Jan 2019 11:54:01 +0300
-Subject: Re: [PATCH] ipset: fix a missing check of nla_parse
-To:     Pablo Neira Ayuso <pablo@netfilter.org>
-Cc:     Kangjie Lu <kjlu@umn.edu>, pakki001@umn.edu,
-        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
-        Florian Westphal <fw@strlen.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        Stefano Brivio <sbrivio@redhat.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20181226035002.73614-1-kjlu@umn.edu>
- <c462e7f4-6c41-78e8-26e9-8ce16ca26a5c@virtuozzo.com>
- <20190109224335.qe6f4x4722qz6x5p@salvia>
-From:   Kirill Tkhai <ktkhai@virtuozzo.com>
-Message-ID: <298cbd2a-06fd-39c1-7d5f-5adcf21b68b2@virtuozzo.com>
-Date:   Thu, 10 Jan 2019 11:54:01 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
-MIME-Version: 1.0
-In-Reply-To: <20190109224335.qe6f4x4722qz6x5p@salvia>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
+        id S1727435AbfAJIz0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 03:55:26 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 9C2867FD5A;
+        Thu, 10 Jan 2019 08:55:26 +0000 (UTC)
+Received: from localhost.localdomain (unknown [10.32.181.131])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A2FB05C6C1;
+        Thu, 10 Jan 2019 08:55:25 +0000 (UTC)
+Message-ID: <351f5da149072c8c1165f8f205ac5c852a92dff8.camel@redhat.com>
+Subject: Re: [BUG] moving fq back to clock monotonic breaks my setup
+From:   Paolo Abeni <pabeni@redhat.com>
+To:     Ian Kumlien <ian.kumlien@gmail.com>,
+        Eric Dumazet <edumazet@google.com>
+Cc:     netdev <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Date:   Thu, 10 Jan 2019 09:55:24 +0100
+In-Reply-To: <CAA85sZvciuNTc1NM1XbbBCqV-hWwjMZM+0i3vigtzmJ8CpPjHg@mail.gmail.com>
+References: <CAA85sZt=Q4b_tn_vDx3g1ap7GNrXsHQk7Jki1T+zPbqVot90jg@mail.gmail.com>
+         <CANn89iLkciYGn7GyKc2QitSjjTms58_GKFqjOJ=6G8wEFi=SJA@mail.gmail.com>
+         <CAA85sZvciuNTc1NM1XbbBCqV-hWwjMZM+0i3vigtzmJ8CpPjHg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.3 (3.30.3-1.fc29) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Thu, 10 Jan 2019 08:55:26 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10.01.2019 01:43, Pablo Neira Ayuso wrote:
-> On Wed, Dec 26, 2018 at 12:16:25PM +0300, Kirill Tkhai wrote:
->> On 26.12.2018 06:50, Kangjie Lu wrote:
->>> When nla_parse fails, we should not use the results (the first
->>> argument). The fix checks if it fails, and if so, returns its error code
->>> upstream.
->>>
->>> Signed-off-by: Kangjie Lu <kjlu@umn.edu>
->>> ---
->>>  net/netfilter/ipset/ip_set_core.c | 4 +++-
->>>  1 file changed, 3 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/net/netfilter/ipset/ip_set_core.c b/net/netfilter/ipset/ip_set_core.c
->>> index 1577f2f76060..4dc8057cff02 100644
->>> --- a/net/netfilter/ipset/ip_set_core.c
->>> +++ b/net/netfilter/ipset/ip_set_core.c
->>> @@ -1531,8 +1531,10 @@ call_ad(struct sock *ctnl, struct sk_buff *skb, struct ip_set *set,
->>>  		memcpy(&errmsg->msg, nlh, nlh->nlmsg_len);
->>>  		cmdattr = (void *)&errmsg->msg + min_len;
->>>  
->>> -		nla_parse(cda, IPSET_ATTR_CMD_MAX, cmdattr,
->>> +		ret = nla_parse(cda, IPSET_ATTR_CMD_MAX, cmdattr,
->>>  			  nlh->nlmsg_len - min_len, ip_set_adt_policy, NULL);
+On Thu, 2019-01-10 at 09:25 +0100, Ian Kumlien wrote:
+> On Thu, Jan 10, 2019 at 6:53 AM Eric Dumazet <edumazet@google.com> wrote:
+> > On Wed, Jan 9, 2019 at 4:48 PM Ian Kumlien <ian.kumlien@gmail.com> wrote:
+> > > Hi,
+> > > 
+> > > Just been trough ~5+ hours of bisecting and eventually actually found
+> > > the culprit =)
+> > > 
+> > > commit fb420d5d91c1274d5966917725e71f27ed092a85 (refs/bisect/bad)
+> > > Author: Eric Dumazet <edumazet@google.com>
+> > > Date:   Fri Sep 28 10:28:44 2018 -0700
+> > > 
+> > >     tcp/fq: move back to CLOCK_MONOTONIC
+> > > 
+> > > [--8<--]
+> > > 
+> > > So this might be because my setup might be "odd".
+> > > 
+> > > Basically I have a firewall with four nics that uses two of those nics
+> > > to handle my normal
+> > > internet connection (firewall/MASQ/NAT) and the other two are assigned
+> > > to one bridge each.
+> > > 
+> > > The firewall is also my local caching DNS server and DHCP server,
+> > > which is also used by the VM:s...
+> > > But with 4.20 DHCP replies disappeared before entering the bridge - i
+> > > couldn't even see them in
+> > > tcpdump! (all nics are ixgbe on a atom soc)
+> > > 
+> > > I'm currently running a kernel with that patch reversed but I'm also
+> > > wondering about possible ways
+> > > forward since I'm reverting a fix from someone else...
+> > 
+> > I suggest you use netdev@ mailing list instead of lkml
+> > 
+> > Then, we probably need to clear skb->tstamp in more paths (you are
+> > mentioning bridge ...)
+> > 
+> > See commit 8203e2d844d34af247a151d8ebd68553a6e91785 for reference.
+> > 
+> > Can you try :
+> > 
+> > diff --git a/net/bridge/br_forward.c b/net/bridge/br_forward.c
+> > index 5372e2042adfe20d3cd039c29057535b2413be61..bd4fa141420c92a44716bd93fcd8aa3d3310203a
+> > 100644
+> > --- a/net/bridge/br_forward.c
+> > +++ b/net/bridge/br_forward.c
+> > @@ -53,6 +53,7 @@ int br_dev_queue_push_xmit(struct net *net, struct
+> > sock *sk, struct sk_buff *skb
+> >                 skb_set_network_header(skb, depth);
+> >         }
+> > 
+> > +       skb->tstamp = 0;
+> >         dev_queue_xmit(skb);
+> > 
+> >         return 0;
 > 
-> @Kangjie: nitpick, could you align this line below? ie.
+> This works, and so does: https://marc.info/?l=linux-netdev&m=154696956604748&w=2
 > 
-> 		ret = nla_parse(cda, IPSET_ATTR_CMD_MAX, cmdattr,
->                                 nlh->nlmsg_len - min_len, ip_set_adt_policy,
->                                 NULL);
-> 
->>> +		if (ret)
->>> +			return ret;
->>
->> In this function above nlmsg_new() allocates skb2, but I don't see, where you free it here.
-> 
-> netlink_unicast() is responsible for releasing this skb2.
+> Pointed out by Paolo (tested both separately)
 
-We return earlier at "if (ret)", so netlink_unicast() is not called.
- 
->>>  		errline = nla_data(cda[IPSET_ATTR_LINENO]);
+Note: I cleared the tstamp in br_forward_finish() instead of
+br_dev_queue_push_xmit() because I think the latter could be called
+also in the local xmit path, via br_nf_post_routing.
 
-Kirill
+We must preserve the tstamp in output path, right?
+
+Thanks,
+
+Paolo
+
+
+
+
