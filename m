@@ -2,125 +2,89 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F8BFC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 10:56:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4197C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 10:56:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 019292177B
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 10:56:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="jyH0m92B"
+	by mail.kernel.org (Postfix) with ESMTP id BA5822173B
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 10:56:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728109AbfAJK4k (ORCPT
+        id S1728222AbfAJK4o (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 05:56:40 -0500
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:10109 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727455AbfAJK4j (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 05:56:39 -0500
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c3724d50000>; Thu, 10 Jan 2019 02:56:21 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Thu, 10 Jan 2019 02:56:39 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Thu, 10 Jan 2019 02:56:39 -0800
-Received: from [10.21.132.148] (10.124.1.5) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 10 Jan
- 2019 10:56:37 +0000
-Subject: Re: [alsa-devel] [PATCH v1 3/3] ASoC: soc-core: fix platform name vs.
- of_node assignement
-To:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Mark Brown <broonie@kernel.org>
-CC:     Liam Girdwood <lgirdwood@gmail.com>, <linux-tegra@vger.kernel.org>,
-        Matthias Reichl <hias@horus.com>,
-        <alsa-devel@alsa-project.org>,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        Takashi Iwai <tiwai@suse.com>, <linux-kernel@vger.kernel.org>,
-        Marcel Ziswiler <marcel@ziswiler.com>
-References: <20181218174040.k7u26vnnoplllnwb@camel2.lan>
- <952471da-b355-6471-6c19-5120d6704f81@nvidia.com>
- <87lg3vuc7p.wl-kuninori.morimoto.gx@renesas.com>
- <b5164c93-8be8-1c3d-9415-c895da6ad622@nvidia.com>
- <d1e41ed2-da7c-b46c-bc6d-64cf3e536771@nvidia.com>
- <865d2a3e-bf6b-1f30-1179-7e922c0d0641@nvidia.com>
- <87k1je38w7.wl-kuninori.morimoto.gx@renesas.com>
- <0660a471-3698-2059-4494-ad146518a4ed@nvidia.com>
- <20190109125340.GD10405@sirena.org.uk>
- <52f5f2cf-9260-f9c5-f73d-3c3d5debc86b@nvidia.com>
- <20190109141439.GE10405@sirena.org.uk>
- <875zuxb9uy.wl-kuninori.morimoto.gx@renesas.com>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <a2068291-e554-cc4f-9af9-0022f3c4de34@nvidia.com>
-Date:   Thu, 10 Jan 2019 10:56:35 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 10 Jan 2019 05:56:44 -0500
+Received: from mx2.suse.de ([195.135.220.15]:44462 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727455AbfAJK4n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 05:56:43 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id D8BF3AEC6;
+        Thu, 10 Jan 2019 10:56:41 +0000 (UTC)
+Date:   Thu, 10 Jan 2019 10:56:38 +0000
+From:   Mel Gorman <mgorman@suse.de>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     akpm@linux-foundation.org, Michal Hocko <mhocko@suse.com>,
+        Kees Cook <keescook@chromium.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Mike Rapoport <rppt@linux.ibm.com>, keith.busch@intel.com,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 1/3] mm: Shuffle initial free memory to improve
+ memory-side-cache utilization
+Message-ID: <20190110105638.GJ28934@suse.de>
+References: <154690326478.676627.103843791978176914.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <154690327057.676627.18166704439241470885.stgit@dwillia2-desk3.amr.corp.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <875zuxb9uy.wl-kuninori.morimoto.gx@renesas.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL104.nvidia.com (172.18.146.11) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1547117781; bh=j//TMwjSKzY2Aan2YwqJW8hR5guLjV9iJNrcK6jvCwU=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=jyH0m92BMIG1W6gmvbQ1pZwNRNyDOhbbzn/uZz24LoTltIWkQsevv/AR2J0DD/Zsi
-         20PCjDpCbipHuyNAl9q6tQ7PtrI4T8BR/OIZXjoHxkJPMQWJJ2W+6gV9GYJ9LA3892
-         UlIANDLeVdXGRdqKcWWTktOv7/vUdMzN171mzQQYoo49YtPKgVIzQ4awWasdducCom
-         a/Ip4pSsCG6b0qz8PdSz+LB+WuQ1+VIW4voZivUWGxl/kckT+hYJAFONztrDTJ82iD
-         ZeLUY0cMmr3+aBxe1vZE736TSblnt+f+GzGXsvpDC0Cx2/tq5ricYWtL5AgdneDRwq
-         B5QSCntZ07WDA==
+Content-Type: text/plain; charset=iso-8859-15
+Content-Disposition: inline
+In-Reply-To: <154690327057.676627.18166704439241470885.stgit@dwillia2-desk3.amr.corp.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-On 10/01/2019 01:16, Kuninori Morimoto wrote:
-
-...
-
-> As I mentioned above, I think we have same issue on codec side too.
-
-Actually no. Looking at snd_soc_init_multicodec() it always allocates
-memory if any of the 'legacy' codec members
-(codec_name/codec_of_node/codec_dai_name) are populated. However, this
-looks quite fragile to me and is susceptible to leaking memory if the
-user/machine driver already incorrectly allocated the memory as well as
-populating these legacy codec members.
-
-My concern about all of this is it is not fool proof and hard to detect
-if a machine driver is doing something bad that it should not.
-
-> exchanging *platform to platform doesn't solve all issues.
-> And we need to exchange all driver again if we had multi-platform
-> support in the future (I don't know when it can happen though...)
+On Mon, Jan 07, 2019 at 03:21:10PM -0800, Dan Williams wrote:
+> Randomization of the page allocator improves the average utilization of
+> a direct-mapped memory-side-cache. Memory side caching is a platform
+> capability that Linux has been previously exposed to in HPC
+> (high-performance computing) environments on specialty platforms. In
+> that instance it was a smaller pool of high-bandwidth-memory relative to
+> higher-capacity / lower-bandwidth DRAM. Now, this capability is going to
+> be found on general purpose server platforms where DRAM is a cache in
+> front of higher latency persistent memory [1].
 > 
-> My posted quick-patch can solve "dirty pointer" issue,
-> but it can't solve "memory leak" issue.
-> This issue will be solved if all driver can switch to
-> modern style, but it needs more time.
-> Are these correct ?
-> 
-> So, how about this ?
 
-It is still fragile. Again the machine driver could have incorrectly set
-these 'allocated_platform/codecs' members as they are exposed to the
-machine driver. You have no way to determine if the machine driver is
-doing the correct thing or not. The problem becomes more complex with
-probe deferral.
+So I glanced through the series and while I won't nak it, I'm not a
+major fan either so I won't ack it either. While there are merits to
+randomisation in terms of cache coloring, it may not be robust. IIRC, the
+main strength of randomisation vs being smart was "it's simple and usually
+doesn't fall apart completely". In particular I'd worry that compaction
+will undo all the randomisation work by moving related pages into the same
+direct-mapped lines. Furthermore, the runtime list management of "randomly
+place and head or tail of list" will have variable and non-deterministic
+outcomes and may also be undone by either high-order merging or compaction.
 
-Cheers
-Jon
+As bad as it is, an ideal world would have a proper cache-coloring
+allocation algorithm but they previously failed as the runtime overhead
+exceeded the actual benefit, particularly as fully associative caches
+became more popular and there was no universal "one solution fits all". One
+hatchet job around it may be to have per-task free-lists that put free
+pages into buckets with the obvious caveat that those lists would need
+draining and secondary locking. A caveat of that is that there may need
+to be arch and/or driver hooks to detect how the colors are managed which
+could also turn into a mess.
+
+The big plus of the series is that it's relatively simple and appears to
+be isolated enough that it only has an impact when the necessary hardware
+in place. It will deal with some cases but I'm not sure it'll survive
+long-term, particularly if HPC continues to report in the field that
+reboots are necessary to reshufffle the lists (taken from your linked
+documents). That workaround of running STREAM before a job starts and
+rebooting the machine if the performance SLAs are not met is horrid.
 
 -- 
-nvpublic
+Mel Gorman
+SUSE Labs
