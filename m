@@ -2,105 +2,188 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50D54C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 23:10:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10BE6C43444
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 23:11:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 16A66208E3
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 23:10:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C8C36208E3
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 23:10:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="UJmpPae6"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="KnWVcAzf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729620AbfAJXKq (ORCPT
+        id S1729992AbfAJXK6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 18:10:46 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:38255 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726255AbfAJXKq (ORCPT
+        Thu, 10 Jan 2019 18:10:58 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:45228 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726255AbfAJXK5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 18:10:46 -0500
-Received: by mail-lj1-f194.google.com with SMTP id c19-v6so11265096lja.5
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 15:10:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=u50w8boiNftTwFOQnBwDE2vr4tMTPEPc+OhoF2hUl3g=;
-        b=UJmpPae6tx6DFCOpaz6hn0oqaollZO2kxdvdtj/qdojKf1lKYyh9D9cqvqcNLiDs1A
-         rYu4saDT69SrH9uB/8FLKuMJ8URdgPatiFgwaUgQcAg4fuG8Tj+6yG4eGKUu0ueoxK7N
-         PPstmOrn/VP6YbHAfE9sMxx74zcavq4f0CC+8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=u50w8boiNftTwFOQnBwDE2vr4tMTPEPc+OhoF2hUl3g=;
-        b=kSQeZZYpJOJngwEklxnpdfgaBcljYeR7USTRlr/pzJ1BimqVlsN8fRNmuMRpmG9vjE
-         boTgI6zLNm8/Tck3JJl4Djc6qaTGt9uxZupvJbUVEiOBkrUVT7r2e740cVa4n5Dn4wzT
-         sB94PiMK146Tnc6x20W3hA+2oxDrhr97s/AVIlh4h1R3FzYy1RH43e8Y8hbV1iX+nvhB
-         aD42H+1vsJwsTkdH4FXCwDgx+DUx8XpprfDIw4Y3z4ZGJaXJ6IpI0nBdWmOvhLInM3XR
-         kZNT7tPX3uu4u0VpG+7gRP48OtDXnnB4p2xJx9ov06Awy/4yG+PZGx6Xtw44dR/1mS2d
-         OlTg==
-X-Gm-Message-State: AJcUukchFEe82ftelT+zMaUOiplqj7WnSHkenDWx9nTXFz22qfEIP/F2
-        vSncD6c/ZgeiJmxglSiHOILmktnGrJAu4w==
-X-Google-Smtp-Source: ALg8bN4l6TdDgDG/jTHYsWG2JxqdCvYhNpNvuXsSft7ai0IHregYjDUD1sZjknExQPIOhQH0tZauzg==
-X-Received: by 2002:a2e:851a:: with SMTP id j26-v6mr7025561lji.163.1547161842650;
-        Thu, 10 Jan 2019 15:10:42 -0800 (PST)
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com. [209.85.208.171])
-        by smtp.gmail.com with ESMTPSA id 10sm11847073ljr.4.2019.01.10.15.10.42
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 10 Jan 2019 15:10:42 -0800 (PST)
-Received: by mail-lj1-f171.google.com with SMTP id k15-v6so11234815ljc.8
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 15:10:42 -0800 (PST)
-X-Received: by 2002:a2e:2c02:: with SMTP id s2-v6mr7173902ljs.118.1547161358642;
- Thu, 10 Jan 2019 15:02:38 -0800 (PST)
+        Thu, 10 Jan 2019 18:10:57 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0AN9i4D129170;
+        Thu, 10 Jan 2019 23:10:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : from : to :
+ cc : references : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=oRzF5Mf+c8fr7aI5Yt0Wn5q585W5ocJ97d5GetEiM4g=;
+ b=KnWVcAzfrJzTfeDi6DznDYXGASEjktVTmYF9prUi09ZLI4Ig7aVoCO6RfE1i+hdSqWMr
+ 6rLzTQ22cYtNeZa/8luOySrlse0h/g20+f0dGpLlsGXHsafvQJLGO6qmHIHtXSDwAAta
+ wgFQU+dfMFTyP2L9IB04mEW+qtFcEkMFj9JmEGuU6byZYmh3Ze3TuWFn60k8Sc/thEI3
+ GCoI/tD/fguTSnQ8LZWICyONbq4a4DKBzxgml1wzabWgbXD3xEm2duk8szJdGQfLXBN5
+ 11MFFDxLBgh2HHTE16nQgNuM1mlJUq7QD1niTwP/ZwnnwDwsAUO16IoQZnyAIdACxeAU tg== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by userp2130.oracle.com with ESMTP id 2ptm0uj31y-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 10 Jan 2019 23:10:36 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x0ANAZed029293
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 10 Jan 2019 23:10:35 GMT
+Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x0ANAYsQ024758;
+        Thu, 10 Jan 2019 23:10:34 GMT
+Received: from dhcp-burlington7-2nd-B-east-10-152-55-162.usdhcp.oraclecorp.com (/10.152.32.65)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 10 Jan 2019 15:10:33 -0800
+Subject: Re: [PATCH] xen: Fix x86 sched_clock() interface for xen
+From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
+To:     Juergen Gross <jgross@suse.com>, linux-kernel@vger.kernel.org,
+        xen-devel@lists.xenproject.org, x86@kernel.org
+Cc:     sstabellini@kernel.org, hpa@zytor.com, tglx@linutronix.de,
+        mingo@redhat.com, bp@alien8.de, hans@knorrie.org,
+        stable@vger.kernel.org
+References: <20190110100722.11216-1-jgross@suse.com>
+ <e7ea12ca-93f1-2421-702b-b55806eb20bd@oracle.com>
+ <e98d244f-1257-ed23-26f4-8909900590b4@suse.com>
+ <21d24fe0-f9bd-c312-7773-b43a8ff39ef1@oracle.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
+ 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
+ Jg6OxFYd01z+a+oL
+Message-ID: <d8cc08b1-0ec1-6d12-f0df-a41845a69ea0@oracle.com>
+Date:   Thu, 10 Jan 2019 18:10:31 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-References: <cover.1547073843.git.jpoimboe@redhat.com> <20190110203023.GL2861@worktop.programming.kicks-ass.net>
- <20190110205226.iburt6mrddsxnjpk@treble>
-In-Reply-To: <20190110205226.iburt6mrddsxnjpk@treble>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 10 Jan 2019 15:02:22 -0800
-X-Gmail-Original-Message-ID: <CAHk-=whR7LzKcuB9Z2km1T25DUkJcbE9rNhCzApAPADbDqMhmQ@mail.gmail.com>
-Message-ID: <CAHk-=whR7LzKcuB9Z2km1T25DUkJcbE9rNhCzApAPADbDqMhmQ@mail.gmail.com>
-Subject: Re: [PATCH v3 0/6] Static calls
-To:     Josh Poimboeuf <jpoimboe@redhat.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Jason Baron <jbaron@akamai.com>, Jiri Kosina <jkosina@suse.cz>,
-        David Laight <David.Laight@aculab.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Julia Cartwright <julia@ni.com>, Jessica Yu <jeyu@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, Nadav Amit <namit@vmware.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Edward Cree <ecree@solarflare.com>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <21d24fe0-f9bd-c312-7773-b43a8ff39ef1@oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9132 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1901100176
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 10, 2019 at 12:52 PM Josh Poimboeuf <jpoimboe@redhat.com> wrote:
+On 1/10/19 12:17 PM, Boris Ostrovsky wrote:
+> On 1/10/19 11:14 AM, Juergen Gross wrote:
+>> On 10/01/2019 16:34, Boris Ostrovsky wrote:
+>>> On 1/10/19 5:07 AM, Juergen Gross wrote:
+>>>>  
+>>>> +void xen_clocksource_suspend(void)
+>>>> +{
+>>>> +	xen_clock_value_saved = xen_clocksource_read() - xen_sched_clock_offset;
+>>> xen_clock_value_saved = xen_sched_clock() maybe? 
+>> I wanted xen_clocksource_suspend() and xen_clocksource_resume() to
+>> be symmetrical to each other.
+> OK.
 >
-> Right, emulating a call instruction from the #BP handler is ugly,
-> because you have to somehow grow the stack to make room for the return
-> address.  Personally I liked the idea of shifting the iret frame by 16
-> bytes in the #DB entry code, but others hated it.
+> Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+>
+>> In case you are feeling strong about that, I'm not. :-) So in case
+>> you insist on it I can change it. Or you can do so while committing.
 
-Yeah, I hated it.
 
-But I'm starting to think it's the simplest solution.
+I did some basic testing and noticed this (at loglevel=8):
 
-So still not loving it, but all the other models have had huge issues too.
+[   64.336488] Freezing user space processes ... (elapsed 0.001 seconds)
+done.
+[   64.337805] OOM killer disabled.
+[   64.337814] Freezing remaining freezable tasks ... (elapsed 0.000
+seconds) done.
+[   64.339066] suspending xenstore...
+[   85.888340] xen:grant_table: Grant tables using version 1 layout
+[   64.359729] OOM killer enabled.
+[   64.359736] Restarting tasks ... done.
 
-                Linus
+
+Which made me think that perhaps we should do suspend/restore of the
+clocksource as close as possible to HYPERVISOR_suspend() call, e.g. in
+xen_arch_pre_suspend()/xen_arch_post_suspend():
+
+diff --git a/arch/x86/xen/suspend.c b/arch/x86/xen/suspend.c
+index 45fc9caf3880..80ecba3fcc8c 100644
+--- a/arch/x86/xen/suspend.c
++++ b/arch/x86/xen/suspend.c
+@@ -22,6 +22,7 @@ static DEFINE_PER_CPU(u64, spec_ctrl);
+ 
+ void xen_arch_pre_suspend(void)
+ {
++       xen_clocksource_suspend();
+        xen_save_time_memory_area();
+ 
+        if (xen_pv_domain())
+@@ -36,6 +37,7 @@ void xen_arch_post_suspend(int cancelled)
+                xen_hvm_post_suspend(cancelled);
+ 
+        xen_restore_time_memory_area();
++       xen_clocksource_resume();
+ }
+ 
+ static void xen_vcpu_notify_restore(void *data)
+
+
+This still has a window of incorrect clock value (you can see it, for
+example, when xen_hvm_post_suspend() does pr_info("Xen HVM callback
+vector for event delivery is enabled\n")), but it's smaller than before.
+In particular, we will make time right before dpm_resume_start() call.
+
+-boris
