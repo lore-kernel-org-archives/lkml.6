@@ -2,121 +2,116 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB64CC43612
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 17:06:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49197C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 17:07:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9673020685
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 17:06:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 17C1E218AF
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 17:07:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="l4XXsrD4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729329AbfAJRG3 (ORCPT
+        id S1729345AbfAJRHp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 12:06:29 -0500
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:33067 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728918AbfAJRG2 (ORCPT
+        Thu, 10 Jan 2019 12:07:45 -0500
+Received: from mail.andi.de1.cc ([85.214.239.24]:38312 "EHLO
+        h2641619.stratoserver.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728553AbfAJRHo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 12:06:28 -0500
-Received: by mail-qt1-f195.google.com with SMTP id l11so14028193qtp.0;
-        Thu, 10 Jan 2019 09:06:26 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ppZcVQ/6kEa1+6j6RgrBmmjrAAts0gpmQru81oI2DjY=;
-        b=eUNK2GNcNZATkLKzPd+5MbCWteA1Rs9iH5n/sPGSXu7s5xGsmbf8IUfFNXXc/5rqUt
-         BtpR62/vROgnBjwJcLxARMkZYGLyhdHXFz80odEWynHx6UzRJANvJ5Lc/XgeewNZ11Pm
-         f9TpCO+6Ax0MygpLp48TR5W1TPvP2xRvBEFHizdsqMCYdKdd51cB++Sh29OJdqNN0JTA
-         3JyLmWstDYV9ngto322UVZNuLN9k41EexiuKKFuH+Ob+/sF2UQ9IdMO0+x5U9Aiz0Oji
-         GU+sySHvsn0UaF/Zp8Ueg948My2oVRlCgAF1/jh3qC54/q9VptuhC1NtBdwXnOrNq4Qe
-         7bvw==
-X-Gm-Message-State: AJcUukfj/jXI4kquXnz2WkbP/M/dM9sSVZJ/C8fxX+mt/zfF3hujL8l+
-        N+PbRPBHXbW1PslXygWDbU2sBEqCbp27/cKdqR4=
-X-Google-Smtp-Source: ALg8bN6AYimQvL2fk3CyhFYbTwHueixsV0cppMAFEDILJ7f9F0R4jNkQXt8J3yrK7O3RY2Kukmp6QEA1Mn21OLb0A00=
-X-Received: by 2002:a0c:e202:: with SMTP id q2mr10276671qvl.180.1547139986093;
- Thu, 10 Jan 2019 09:06:26 -0800 (PST)
+        Thu, 10 Jan 2019 12:07:44 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=kemnade.info; s=20180802; h=Content-Type:MIME-Version:References:
+        In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=scNwPhXPLsyx0PJdP8SiCDSozRa9MNPaFiu/trMl1ns=; b=l4XXsrD4nDhmcpfBFmO6iCt9I
+        6x9x4BOem+JL6fr9aAUnM7PrwqJU8LFoVR10XuWtsVivOPkFurPdt1ld4B/a5IA4Ct7U6MgTiAMq1
+        IchaW5u8UM/aW/lHTcfRNqnUIlQHDVQTZ8FmlZ8lHQNqkFTIDQlZGyUuRSaJmEajrwro4=;
+Received: from p200300ccfbdcb9007ee9d3fffe1fa246.dip0.t-ipconnect.de ([2003:cc:fbdc:b900:7ee9:d3ff:fe1f:a246] helo=localhost)
+        by h2641619.stratoserver.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <andreas@kemnade.info>)
+        id 1ghdnx-00022x-MQ; Thu, 10 Jan 2019 18:07:41 +0100
+Received: from [::1] (helo=localhost)
+        by eeepc with esmtp (Exim 4.89)
+        (envelope-from <andreas@kemnade.info>)
+        id 1ghdnw-0007K4-Ns; Thu, 10 Jan 2019 18:07:40 +0100
+Date:   Thu, 10 Jan 2019 18:07:32 +0100
+From:   Andreas Kemnade <andreas@kemnade.info>
+To:     Johan Hovold <johan@kernel.org>
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Discussions about the Letux Kernel 
+        <letux-kernel@openphoenux.org>
+Subject: Re: [PATCH v2 5/5] dt-bindings: gnss: add lna-supply property
+Message-ID: <20190110180732.75490757@kemnade.info>
+In-Reply-To: <20190110122757.GB9725@localhost>
+References: <20181209195150.5192-1-andreas@kemnade.info>
+        <20181209195150.5192-6-andreas@kemnade.info>
+        <20190110122757.GB9725@localhost>
+X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; i686-pc-linux-gnu)
 MIME-Version: 1.0
-References: <20190110162435.309262-1-arnd@arndb.de> <CAMuHMdXYP3=TRHYqddVRfbRRaj_Ou=wfoX6ohKM7XNAx-c2RXw@mail.gmail.com>
-In-Reply-To: <CAMuHMdXYP3=TRHYqddVRfbRRaj_Ou=wfoX6ohKM7XNAx-c2RXw@mail.gmail.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Thu, 10 Jan 2019 18:06:09 +0100
-Message-ID: <CAK8P3a0kmr2ju+sZE+f-+=-2t5Eu+t-DS-+r6OKrPVTAxHwf8w@mail.gmail.com>
-Subject: Re: [PATCH 00/15] arch: synchronize syscall tables in preparation for y2038
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     y2038 Mailman List <y2038@lists.linaro.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-        Matt Turner <mattst88@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Michal Simek <monstr@monstr.eu>,
-        Paul Burton <paul.burton@mips.com>,
-        Helge Deller <deller@gmx.de>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Rich Felker <dalias@libc.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Andy Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        Firoz Khan <firoz.khan@linaro.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        alpha <linux-alpha@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "linux-ia64@vger.kernel.org" <linux-ia64@vger.kernel.org>,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>,
-        linux-mips@vger.kernel.org,
-        Parisc List <linux-parisc@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        Linux-sh list <linux-sh@vger.kernel.org>,
-        sparclinux <sparclinux@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/kogTsdgB3P=GJqkn3Pu7N.f"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 10, 2019 at 5:59 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
->
-> Hi Arnd,
->
-> On Thu, Jan 10, 2019 at 5:26 PM Arnd Bergmann <arnd@arndb.de> wrote:
-> > The system call tables have diverged a bit over the years, and a number
-> > of the recent additions never made it into all architectures, for one
-> > reason or another.
-> >
-> > This is an attempt to clean it up as far as we can without breaking
-> > compatibility, doing a number of steps:
->
-> Thanks a lot!
->
-> > - Add system calls that have not yet been integrated into all
-> >   architectures but that we definitely want there.
->
-> It looks like you missed wiring up io_pgetevents() on m68k.
-> Is that intentional?
+--Sig_/kogTsdgB3P=GJqkn3Pu7N.f
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Yes, I thought I had described that somewhere but maybe I
-forgot: semtimedop() and io_pgetevents() get replaced with
-time64 versions in the follow-up, so I only added them in
-64-bit architectures. If you think we should have both
-io_pgetevents() and io_pgetevents_time32() on all 32-bit
-architectures, I can add that as well.
+On Thu, 10 Jan 2019 13:27:57 +0100
+Johan Hovold <johan@kernel.org> wrote:
 
-      Arnd
+> On Sun, Dec 09, 2018 at 08:51:50PM +0100, Andreas Kemnade wrote:
+> > Add lna-supply property.
+> >=20
+> > Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+> > ---
+> > Changes in v2:
+> >  - reordering
+> > Original order had a
+> > Reviewed-by: Rob Herring <robh@kernel.org>
+> >=20
+> >  Documentation/devicetree/bindings/gnss/sirfstar.txt | 1 +
+> >  1 file changed, 1 insertion(+) =20
+>=20
+> Ah, missed this one at first.
+>=20
+> But shouldn't this go into the generic binding since it isn't specific
+> for sirf-star based receivers?
+
+That idea was formulated with a question mark towards Rob.
+And no reaction from Rob about that.
+
+Regards,
+Andreas
+
+--Sig_/kogTsdgB3P=GJqkn3Pu7N.f
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEE7sDbhY5mwNpwYgrAfb1qx03ikyQFAlw3e9QACgkQfb1qx03i
+kyQJ8A//at4YsJK1yECSuQsCChA8HxdLQ/mCI4OESmDhNY2tEN1m36RPMh80SpXk
+KVmtT+6NTnjn4xzw0jGPHVH1yaAN2/egT7UnyBpjsA5Xj/smLmKajQ2VTarMFs5x
+5a4Q83f5NcDeVt03/0hnzbp7rdGp3BtHWiInBd8Fm18giY2BEFANnOLIyPMR1P/3
+ZIf8uBnnJhM0vmrRklI6kvZLoAjnpOZPDXK6n7SLTKT7Io8WuavG9Im/xjm3no8o
+/ko9aqE0wjf0fs/PDlYA8x59KVlLzd/2+0Bn6F0HN+kjYJomDgcmACMIvlj6bp39
+8SDzzQWhU1nASmRaHKm1LnNabrla37N2Uaxa0DCwUhTyhuh5lcVHerNQQRTD1oX3
+9mRcZIcJ4M+gKig287DgECHSpqWN3SIHSqSdnrze+BW2K8+/g1AbqJp4Z8HzGQSd
+Gq4LbgImEgEHaekSY/CaqpE98Cs/LQVbeiAjqSyNoIhc8Tc7xOylQ01dN0C+F6dF
+eOPF4Icxw226yzIk8mekzoxGrgA9kx+YVOjsiYEB643FFowggr3Doqg2LxGG3pnS
+jAPclnnt6F7Xdy7G2ncrkQ2B/85G4D/K4kTVnTqmChLDopaV0H8BvGmVusudyIbp
+zrNMeDaUjn1Q5/lWKWlZt/0gD3vDS18oUneu6CMqB99lhVSxJMQ=
+=JKBw
+-----END PGP SIGNATURE-----
+
+--Sig_/kogTsdgB3P=GJqkn3Pu7N.f--
