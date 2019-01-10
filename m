@@ -2,154 +2,123 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51924C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 00:16:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E918DC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 00:16:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C92A2075C
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 00:16:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A448B2075C
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 00:16:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rlUsTWpw"
+	dkim=pass (1024-bit key) header.d=vmware.com header.i=@vmware.com header.b="rFli1suu"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726783AbfAJAQd (ORCPT
+        id S1726848AbfAJAQl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 19:16:33 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:33899 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726286AbfAJAQd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 19:16:33 -0500
-Received: by mail-lf1-f68.google.com with SMTP id p6so7039935lfc.1;
-        Wed, 09 Jan 2019 16:16:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=tX/uOXZXaLfYk2EMsN1c8tOykFCY1NPHqE/mUp9QK2o=;
-        b=rlUsTWpwEdHkVf7m65sm0Bd0GhQjULKIzIr5oGjNMe40P0VEyGbMybrNQWf9QpXpLk
-         hNKjN0L628wxUbKz+KCMU9Pgts9zr6ICynPRNIlR/n8pHOFoCCG8LpQg5Bc+1WzjI5n9
-         u1JAnOqopXfwcZszTReGKbjIViUzNhmJbjNmvPawcJhX+pZ+pF2LNwuXGKTrDDRYdhdD
-         Pj+2pTsQLyXM0VCQAZwVBDryeP2mN6T4/G/gx3QwQQVu6OW0/bM2A4VDj09vTDct92Mw
-         /EXz9jOw9cP/alNfoGUhAm+2YmMe6ja74zDM4LPAhcgs698kyyLwvqdTFggQqyAx42ml
-         BSBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=tX/uOXZXaLfYk2EMsN1c8tOykFCY1NPHqE/mUp9QK2o=;
-        b=CUdCNoSC6/skLnUdwyn1MxQa7+MygcaeqqpivpeCm1Yj2WaWvKlDs3oZKimfahUGVS
-         T3xuVgFzeTPjzY6NI6t9mxRR99rARMR70EX5FRJA1eaQ7FaGuDnFEVJXx68UZg/Zq6kk
-         j+lEFjB+XhR7TSReSDuikG4Q8gwg09AUvkE5GOCzWkHY56JtirM89cBMqQBnPWzDRwWD
-         VrOrvgA5CDSoFmMjF+qkHDlRO5KnE7XjNsJXVKfcxi3F6QZyNrJfRE2XZ7oahzRyccQa
-         DiGsx+b/gk8yJgzkb4yit9tURoiLSCvX+voCVAHbySdLkgwhYDuKk9aEjRXtGThdU2uS
-         wI8Q==
-X-Gm-Message-State: AJcUukfrsLONGzJUgSrEG5kCsmwciqzDL00JvebCJ72Rf4S4yWZwvORb
-        JbPPFPWbF7j2qSCxMdYV3rkcGnx/3ACz7z+nhws=
-X-Google-Smtp-Source: ALg8bN78yZ9fg59V9fl7GwWG9an2CiXfrkph/eWr/1gyYIsK7azYq7Ie2ejqzrT7bQsM7gC/Fkgmml0PWIIBVmizUHI=
-X-Received: by 2002:a19:a60c:: with SMTP id p12mr4914048lfe.63.1547079390268;
- Wed, 09 Jan 2019 16:16:30 -0800 (PST)
+        Wed, 9 Jan 2019 19:16:41 -0500
+Received: from mail-eopbgr820050.outbound.protection.outlook.com ([40.107.82.50]:36736
+        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726286AbfAJAQj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 19:16:39 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vmware.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Spnsqgp5awlncUGTQG0PqZdoYLb5/cGOxIGpj25TZAo=;
+ b=rFli1suunC3zN7Xu32ifdtv2WC5xrnV7/wH6kkiBeuOfr55pn8TXcwEp1ww/Cg1Nof17XpdkeoIZ4KxIR/4e1s40N0jv49ohan39oFzyJDMG9WITTFbgCVPzUSZrIVYf1wSMYdkrRqLUQ35nBMZTf60XzLnH6E0F7wzqZ2zDZL8=
+Received: from BYAPR05MB4776.namprd05.prod.outlook.com (52.135.233.146) by
+ BYAPR05MB5479.namprd05.prod.outlook.com (20.177.185.204) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1516.4; Thu, 10 Jan 2019 00:16:34 +0000
+Received: from BYAPR05MB4776.namprd05.prod.outlook.com
+ ([fe80::35a9:ab4b:cc18:b732]) by BYAPR05MB4776.namprd05.prod.outlook.com
+ ([fe80::35a9:ab4b:cc18:b732%2]) with mapi id 15.20.1516.010; Thu, 10 Jan 2019
+ 00:16:34 +0000
+From:   Nadav Amit <namit@vmware.com>
+To:     Josh Poimboeuf <jpoimboe@redhat.com>
+CC:     X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Jason Baron <jbaron@akamai.com>, Jiri Kosina <jkosina@suse.cz>,
+        David Laight <David.Laight@ACULAB.COM>,
+        Borislav Petkov <bp@alien8.de>,
+        Julia Cartwright <julia@ni.com>, Jessica Yu <jeyu@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Edward Cree <ecree@solarflare.com>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>
+Subject: Re: [PATCH v3 3/6] x86/static_call: Add out-of-line static call
+ implementation
+Thread-Topic: [PATCH v3 3/6] x86/static_call: Add out-of-line static call
+ implementation
+Thread-Index: AQHUqG8PCfZFBn3lmUis/8VJvjDrbaWnop2A
+Date:   Thu, 10 Jan 2019 00:16:34 +0000
+Message-ID: <B4C5F8DE-5337-47F1-AD59-93B375A323C2@vmware.com>
+References: <cover.1547073843.git.jpoimboe@redhat.com>
+ <30f0713894a415f13e0f0ea3d40595416db2f6d7.1547073843.git.jpoimboe@redhat.com>
+In-Reply-To: <30f0713894a415f13e0f0ea3d40595416db2f6d7.1547073843.git.jpoimboe@redhat.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [208.91.2.1]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BYAPR05MB5479;20:/apfOkBQzbxLNrG+j+jNY4vSegy7u2H3RsjQhUiyJ8FUxJPwrDf7XAtHKVp8qYPZLy7L2Di8cBapkojWFffL+S5GhwJBq1j5xFwnQM5+CcRzPsQPMZGPRqYPl3TPJT00U6fse1ECvOzse6Jw5HXNkhJmYTJn/BevnoVYYker9Nk=
+x-ms-office365-filtering-correlation-id: c9e8f975-c06e-4118-b197-08d67690e134
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(2017052603328)(7153060)(7193020);SRVR:BYAPR05MB5479;
+x-ms-traffictypediagnostic: BYAPR05MB5479:
+x-microsoft-antispam-prvs: <BYAPR05MB54796C4DAFC1549D6CFDA299D0840@BYAPR05MB5479.namprd05.prod.outlook.com>
+x-forefront-prvs: 0913EA1D60
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(346002)(396003)(39860400002)(136003)(376002)(189003)(199004)(446003)(7736002)(106356001)(11346002)(6306002)(2906002)(53546011)(102836004)(476003)(6506007)(97736004)(76176011)(2616005)(26005)(36756003)(33656002)(305945005)(6346003)(6436002)(68736007)(53936002)(82746002)(66066001)(186003)(99286004)(229853002)(71190400001)(6246003)(966005)(8936002)(83716004)(71200400001)(6486002)(478600001)(4326008)(14454004)(8676002)(7416002)(316002)(54906003)(486006)(5660300001)(105586002)(14444005)(81156014)(6116002)(86362001)(81166006)(256004)(6512007)(3846002)(6916009)(25786009)(567974002);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR05MB5479;H:BYAPR05MB4776.namprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: vmware.com does not designate
+ permitted sender hosts)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=namit@vmware.com; 
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: Li9oxfkd5mQueyw9nIYmCVF9OhOpgfmPmuS67O9MIfgvOjVA9cGQLFd0lMuTCIMrnV8FnYt2LAT1h2ZdSsdSCQiD9Pl7VcGLwo30j1XUvgqZv02Qix3gB+EQXCgkUHwWeB1tIurUF256NRaZempHcASEQTQ2uU50Nw77UzMxIennYHVn+JCK50xnJgHmYLaJzuDvnzedu6SjNTd/qMrkSipCcY4IVQIqnvOxqiN0rYrnDmJb34dAMKkHQaSEHpBROwZOi/9e7v7EjIeqOxIg56YHDR9q4le1Ajz20njzBymbTksVoTgPPTz+T+lFo9Qb
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <78DEC2595438E443B97F13ED9845B9BE@namprd05.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-References: <CAA85sZsiifWTKq=Mw30f-UVyrzywnYYX7GvyqG+O+ndSYBML9A@mail.gmail.com>
- <CAA85sZsj5PxZeiXSVK92QXi93fc+Ch2x2KHqzzPcT2OffaKsEQ@mail.gmail.com>
- <CAA85sZsyEnkmwO2grp3H5pXErrNV=prOjEfPy=odoQ8iSHox4Q@mail.gmail.com>
- <20190108145112.65fc554f@hermes.lan> <CAA85sZt=mrqprwkKLGbv2UMy6vQb0XSc58YrWvqxzK4yhdbpGQ@mail.gmail.com>
- <02fbd1e8-8ad1-3a47-c3e1-86adbb73185d@gmail.com> <CAA85sZvVHCYFRXp5cYzSDNpesNMtCZOB+Gnb+N+SmraD6eke1A@mail.gmail.com>
-In-Reply-To: <CAA85sZvVHCYFRXp5cYzSDNpesNMtCZOB+Gnb+N+SmraD6eke1A@mail.gmail.com>
-From:   Ian Kumlien <ian.kumlien@gmail.com>
-Date:   Thu, 10 Jan 2019 01:16:19 +0100
-Message-ID: <CAA85sZsF53oFBVzrbuj6wrM43QutKy52S-77PqNZdTChJKOyWQ@mail.gmail.com>
-Subject: Re: [BUG] v4.20 - bridge not getting DHCP responses? (works in 4.19.13)
-To:     Florian Fainelli <f.fainelli@gmail.com>
-Cc:     Stephen Hemminger <stephen@networkplumber.org>,
-        jeffrey.t.kirsher@intel.com,
-        Roopa Prabhu <roopa@cumulusnetworks.com>,
-        nikolay@cumulusnetworks.com,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linux Kernel Network Developers <netdev@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: vmware.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c9e8f975-c06e-4118-b197-08d67690e134
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Jan 2019 00:16:34.1918
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR05MB5479
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 9, 2019 at 12:17 AM Ian Kumlien <ian.kumlien@gmail.com> wrote:
-> On Wed, Jan 9, 2019, 00:09 Florian Fainelli <f.fainelli@gmail.com wrote:
-
- [--8<---]
-
->> > when looking at "git log v4.19...v4.20
->> > drivers/net/ethernet/intel/ixgbe/" nothing else really stands out...
->> > The machine is also running NAT for my home network and all of that
->> > works just fine...
->> >
->> > I started with tcpdump, prooving that packets reached all the way
->> > outside but replies never made it, reboorting
->> > with 4.19.13 resulted in replies appearing in the tcpdump.
->> >
->> > I don't quite know where to look - and what can i do to test - i tried
->> > disabling all offloading (due to the UDP
->> > offloading changes) but nothing helped...
->> >
->> > Ideas? Patches? ;)
->>
->> Running a bisection would certainly help find the offending commit if
->> that is something that you can do?
->
-> I was hoping for a likely suspect but this was on my "Todo" for Friday night anyway... (And I already started testing with some patches reversed)
-
-So after lengthy git bisect sections, both from the latest stable i
-was using (not the best of ideas)
-and from 4.19.
-
-The latest stable yielded 72b0094f918294e6cb8cf5c3b4520d928fbb1a57 -
-which is incorrect...
-
-However, the proper bisect gave me this:
-fb420d5d91c1274d5966917725e71f27ed092a85 is the first bad commit
-commit fb420d5d91c1274d5966917725e71f27ed092a85
-Author: Eric Dumazet <edumazet@google.com>
-Date:   Fri Sep 28 10:28:44 2018 -0700
-
-    tcp/fq: move back to CLOCK_MONOTONIC
-
-    In the recent TCP/EDT patch series, I switched TCP and sch_fq
-    clocks from MONOTONIC to TAI, in order to meet the choice done
-    earlier for sch_etf packet scheduler.
-
-    But sure enough, this broke some setups were the TAI clock
-    jumps forward (by almost 50 year...), as reported
-    by Leonard Crestez.
-
-    If we want to converge later, we'll probably need to add
-    an skb field to differentiate the clock bases, or a socket option.
-
-    In the meantime, an UDP application will need to use CLOCK_MONOTONIC
-    base for its SCM_TXTIME timestamps if using fq packet scheduler.
-
-    Fixes: 72b0094f9182 ("tcp: switch tcp_clock_ns() to CLOCK_TAI base")
-    Fixes: 142537e41923 ("net_sched: sch_fq: switch to CLOCK_TAI")
-    Fixes: fd2bca2aa789 ("tcp: switch internal pacing timer to CLOCK_TAI")
-    Signed-off-by: Eric Dumazet <edumazet@google.com>
-    Reported-by: Leonard Crestez <leonard.crestez@nxp.com>
-    Tested-by: Leonard Crestez <leonard.crestez@nxp.com>
-    Signed-off-by: David S. Miller <davem@davemloft.net>
-
-:040000 040000 06615f5ed4486fd0af77a8fb59775a9f2346aebc
-7f883c7753cb3d5d881e0edbef2989f4e6db6a1f M include
-:040000 040000 767c5e93fe5cfd609f90834d93978511c284ea01
-cc47bd361516622c0b21602e188181fdfc6b2995 M net
-----
-
-Which could actually be the culprit - I'm having problems *with* UDP
-traffic (DHCP) and I am using fq
-
-Lets hope it's so, since this was kinda boring:
-ls /lib/modules |grep 4.19.0 |wc -l
-27
-
-Testing 4.20.1 and then 4.20.1 with the suspected patch reverted, will
-report shortly!
+PiBPbiBKYW4gOSwgMjAxOSwgYXQgMjo1OSBQTSwgSm9zaCBQb2ltYm9ldWYgPGpwb2ltYm9lQHJl
+ZGhhdC5jb20+IHdyb3RlOg0KPiANCg0KPHNuaXA+DQoNCj4gKw0KPiArdm9pZCBfX3JlZiBhcmNo
+X3N0YXRpY19jYWxsX3RyYW5zZm9ybSh2b2lkICpzaXRlLCB2b2lkICp0cmFtcCwgdm9pZCAqZnVu
+YykNCj4gK3sNCj4gKwlzMzIgZGVzdF9yZWxhdGl2ZTsNCj4gKwl1bnNpZ25lZCBjaGFyIG9wY29k
+ZTsNCj4gKwl2b2lkICooKnBva2VyKSh2b2lkICosIGNvbnN0IHZvaWQgKiwgc2l6ZV90KTsNCj4g
+Kwl2b2lkICppbnNuID0gdHJhbXA7DQo+ICsNCj4gKwltdXRleF9sb2NrKCZ0ZXh0X211dGV4KTsN
+Cj4gKw0KPiArCS8qDQo+ICsJICogRm9yIHg4Ni02NCwgYSAzMi1iaXQgY3Jvc3MtbW9kaWZ5aW5n
+IHdyaXRlIHRvIGEgY2FsbCBkZXN0aW5hdGlvbiBpcw0KPiArCSAqIHNhZmUgYXMgbG9uZyBhcyBp
+dCdzIHdpdGhpbiBhIGNhY2hlIGxpbmUuDQo+ICsJICovDQo+ICsJb3Bjb2RlID0gKih1bnNpZ25l
+ZCBjaGFyICopaW5zbjsNCj4gKwlpZiAob3Bjb2RlICE9IDB4ZTggJiYgb3Bjb2RlICE9IDB4ZTkp
+IHsNCj4gKwkJV0FSTl9PTkNFKDEsICJ1bmV4cGVjdGVkIHN0YXRpYyBjYWxsIGluc24gb3Bjb2Rl
+IDB4JXggYXQgJXBTIiwNCj4gKwkJCSAgb3Bjb2RlLCBpbnNuKTsNCj4gKwkJZ290byBkb25lOw0K
+PiArCX0NCj4gKw0KPiArCWRlc3RfcmVsYXRpdmUgPSAobG9uZykoZnVuYykgLSAobG9uZykoaW5z
+biArIENBTExfSU5TTl9TSVpFKTsNCj4gKw0KPiArCXBva2VyID0gZWFybHlfYm9vdF9pcnFzX2Rp
+c2FibGVkID8gdGV4dF9wb2tlX2Vhcmx5IDogdGV4dF9wb2tlOw0KPiArCXBva2VyKGluc24gKyAx
+LCAmZGVzdF9yZWxhdGl2ZSwgc2l6ZW9mKGRlc3RfcmVsYXRpdmUpKTsNCj4gKw0KPiArZG9uZToN
+Cj4gKwltdXRleF91bmxvY2soJnRleHRfbXV0ZXgpOw0KPiArfQ0KPiArRVhQT1JUX1NZTUJPTF9H
+UEwoYXJjaF9zdGF0aWNfY2FsbF90cmFuc2Zvcm0pOw0KDQpFcnLigKYgSSB3YXMgcmV3cml0aW5n
+IF9fanVtcF9sYWJlbF90cmFuc2Zvcm0oKSwgc28gaWYgdGhpcyBjb2RlIGR1cGxpY2F0aW9uIGNh
+bg0KYmUgYXZvaWRlZCwgdGhpcyB3b3VsZCBiZSBncmVhdC4NCg0KKFNlZSBodHRwczovL2xrbWwu
+b3JnL2xrbWwvMjAxOC8xMS8xNC83MiAp
