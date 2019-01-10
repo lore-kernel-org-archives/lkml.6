@@ -2,154 +2,334 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C53E2C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 14:19:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEEB1C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 14:20:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 92A6D214C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 14:19:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A47FB214DA
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 14:20:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728577AbfAJOTp (ORCPT
+        id S1728643AbfAJOUW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 09:19:45 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:55424 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728166AbfAJOTp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 09:19:45 -0500
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x0AEIhxP044701
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 09:19:43 -0500
-Received: from e15.ny.us.ibm.com (e15.ny.us.ibm.com [129.33.205.205])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2px5x5wf2v-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 09:19:43 -0500
-Received: from localhost
-        by e15.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Thu, 10 Jan 2019 14:19:42 -0000
-Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
-        by e15.ny.us.ibm.com (146.89.104.202) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 10 Jan 2019 14:19:39 -0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0AEJcYj20709434
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 10 Jan 2019 14:19:38 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 42ACEB206A;
-        Thu, 10 Jan 2019 14:19:38 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 24C01B2064;
-        Thu, 10 Jan 2019 14:19:38 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.88])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Thu, 10 Jan 2019 14:19:38 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id D20C016C63DA; Thu, 10 Jan 2019 06:19:38 -0800 (PST)
-Date:   Thu, 10 Jan 2019 06:19:38 -0800
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        rostedt <rostedt@goodmis.org>
-Subject: Re: Possible use of RCU while in extended QS: idle vs RCU read-side
- in interrupt vs rcu_eqs_exit
-Reply-To: paulmck@linux.ibm.com
-References: <2103471967.794.1547084331086.JavaMail.zimbra@efficios.com>
- <20190110041328.GE1215@linux.ibm.com>
- <219114011.864.1547101805680.JavaMail.zimbra@efficios.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <219114011.864.1547101805680.JavaMail.zimbra@efficios.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 19011014-0068-0000-0000-00000380A715
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010379; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000274; SDB=6.01144474; UDB=6.00595908; IPR=6.00924738;
- MB=3.00025068; MTD=3.00000008; XFM=3.00000015; UTC=2019-01-10 14:19:41
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19011014-0069-0000-0000-00004714A69D
-Message-Id: <20190110141938.GI1215@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-10_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901100113
+        Thu, 10 Jan 2019 09:20:22 -0500
+Received: from mga18.intel.com ([134.134.136.126]:42504 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727839AbfAJOUV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 09:20:21 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jan 2019 06:20:20 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,461,1539673200"; 
+   d="scan'208";a="310736479"
+Received: from wliu29-mobl3.ccr.corp.intel.com ([10.249.174.142])
+  by fmsmga005.fm.intel.com with ESMTP; 10 Jan 2019 06:20:16 -0800
+Message-ID: <1547130015.10666.17.camel@intel.com>
+Subject: Re: [PATCH v2 02/11] thermal: add irq-mode configuration for trip
+ point
+From:   Zhang Rui <rui.zhang@intel.com>
+To:     Lukasz Luba <l.luba@partner.samsung.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org
+Cc:     edubezval@gmail.com, daniel.lezcano@linaro.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, corbet@lwn.net, b.zolnierkie@samsung.com,
+        krzk@kernel.org
+Date:   Thu, 10 Jan 2019 22:20:15 +0800
+In-Reply-To: <3314da31-1b8b-ec19-4aee-38d98aa8adbf@partner.samsung.com>
+References: <1541610593-28542-1-git-send-email-l.luba@partner.samsung.com>
+         <CGME20181107171036eucas1p13253d56b463c8f888ab8f8e418635297@eucas1p1.samsung.com>
+         <1541610593-28542-3-git-send-email-l.luba@partner.samsung.com>
+         <1544022595.2841.45.camel@intel.com>
+         <2ac425fc-7c32-6e2f-7086-c14f85b0bbfd@partner.samsung.com>
+         <3314da31-1b8b-ec19-4aee-38d98aa8adbf@partner.samsung.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 10, 2019 at 01:30:05AM -0500, Mathieu Desnoyers wrote:
-> ----- On Jan 9, 2019, at 8:13 PM, paulmck paulmck@linux.ibm.com wrote:
+Hi, Lukasz,
+
+On 四, 2018-12-06 at 20:55 +0100, Lukasz Luba wrote:
 > 
-> > On Wed, Jan 09, 2019 at 08:38:51PM -0500, Mathieu Desnoyers wrote:
-> >> Hi Paul,
-> >> 
-> >> I've had a user report that trace_sched_waking() appears to be
-> >> invoked while !rcu_is_watching() in some situation, so I started
-> >> digging into the scheduler idle code.
-> >> 
-> >> It appears that interrupts are re-enabled before rcu_eqs_exit() is
-> >> invoked when exiting idle code from the scheduler.
-> >> 
-> >> I wonder what happens if an interrupt handler (including scheduler code)
-> >> happens to issue a RCU read-side critical section before rcu_eqs_exit()
-> >> is called ? Is there some code on interrupt entry that ensures rcu eqs
-> >> state is exited in such scenario ?
+> On 12/6/18 8:18 PM, Lukasz Luba wrote:
 > > 
-> > Interrupt handlers are supposed to invoke irq_enter(), which will in
-> > turn invoke rcu_irq_enter(), which should take care of things.
+> > Hi Rui,
 > > 
-> > However, there are cases where a given architecture knows that a given
-> > interrupt handler does not contain RCU readers, and in this case, the
-> > architecture might omit the rcu_irq_enter() or maybe even the whole
-> > irq_enter().  And then it is all fun and games until someone adds an
-> > RCU read-side critical section.  ;-)
+> > On 12/5/18 4:09 PM, Zhang Rui wrote:
+> > > 
+> > > On 三, 2018-11-07 at 18:09 +0100, Lukasz Luba wrote:
+> > > > 
+> > > > This patch adds support irq mode in trip point.
+> > > > When that flag is set in DT, there is no need for polling
+> > > > in thermal framework. Crossing the trip point will rise an IRQ.
+> > > > The naming convention for tip point 'type' can be confussing
+> > > > and 'passive' (whic is passive cooling) might be interpretted
+> > > > wrongly.
+> > > > 
+> > > > This mechanism prevents from missue and adds explicit setting
+> > > > for hardware which support interrupts for pre-configured
+> > > > temperature
+> > > > threshold.
+> > > > 
+> > > > Cc: Zhang Rui <rui.zhang@intel.com>
+> > > > Cc: Eduardo Valentin <edubezval@gmail.com>
+> > > > Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+> > > > Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
+> > > > ---
+> > > >   drivers/thermal/of-thermal.c   | 17 +++++++++++++++++
+> > > >   drivers/thermal/thermal_core.c | 10 ++++++++--
+> > > >   include/linux/thermal.h        |  5 +++++
+> > > >   3 files changed, 30 insertions(+), 2 deletions(-)
+> > > > 
+> > > > diff --git a/drivers/thermal/of-thermal.c b/drivers/thermal/of-
+> > > > thermal.c
+> > > > index 4bfdb4a..1a75946a 100644
+> > > > --- a/drivers/thermal/of-thermal.c
+> > > > +++ b/drivers/thermal/of-thermal.c
+> > > > @@ -312,6 +312,20 @@ static int of_thermal_get_trip_type(struct
+> > > > thermal_zone_device *tz, int trip,
+> > > >       return 0;
+> > > >   }
+> > > > +static int
+> > > > +of_thermal_get_trip_irq_mode(struct thermal_zone_device *tz,
+> > > > int
+> > > > trip,
+> > > > +                 bool *mode)
+> > > > +{
+> > > > +    struct __thermal_zone *data = tz->devdata;
+> > > > +
+> > > > +    if (trip >= data->ntrips || trip < 0)
+> > > > +        return -EDOM;
+> > > > +
+> > > > +    *mode = data->trips[trip].irq_mode;
+> > > > +
+> > > > +    return 0;
+> > > > +}
+> > > > +
+> > > >   static int of_thermal_get_trip_temp(struct
+> > > > thermal_zone_device *tz,
+> > > > int trip,
+> > > >                       int *temp)
+> > > >   {
+> > > > @@ -394,6 +408,7 @@ static struct thermal_zone_device_ops
+> > > > of_thermal_ops = {
+> > > >       .set_mode = of_thermal_set_mode,
+> > > >       .get_trip_type = of_thermal_get_trip_type,
+> > > > +    .get_trip_irq_mode = of_thermal_get_trip_irq_mode,
+> > > >       .get_trip_temp = of_thermal_get_trip_temp,
+> > > >       .set_trip_temp = of_thermal_set_trip_temp,
+> > > >       .get_trip_hyst = of_thermal_get_trip_hyst,
+> > > > @@ -827,6 +842,8 @@ static int thermal_of_populate_trip(struct
+> > > > device_node *np,
+> > > >           return ret;
+> > > >       }
+> > > > +    trip->irq_mode = of_property_read_bool(np, "irq-mode");
+> > > > +
+> > > >       /* Required for cooling map matching */
+> > > >       trip->np = np;
+> > > >       of_node_get(np);
+> > > > diff --git a/drivers/thermal/thermal_core.c
+> > > > b/drivers/thermal/thermal_core.c
+> > > > index 39fc812..6d41e08 100644
+> > > > --- a/drivers/thermal/thermal_core.c
+> > > > +++ b/drivers/thermal/thermal_core.c
+> > > > @@ -406,6 +406,7 @@ static void handle_critical_trips(struct
+> > > > thermal_zone_device *tz,
+> > > >   static void handle_thermal_trip(struct thermal_zone_device
+> > > > *tz, int
+> > > > trip)
+> > > >   {
+> > > >       enum thermal_trip_type type;
+> > > > +    bool irq_mode = false;
+> > > >       /* Ignore disabled trip points */
+> > > >       if (test_bit(trip, &tz->trips_disabled))
+> > > > @@ -419,9 +420,14 @@ static void handle_thermal_trip(struct
+> > > > thermal_zone_device *tz, int trip)
+> > > >           handle_non_critical_trips(tz, trip);
+> > > >       /*
+> > > >        * Alright, we handled this trip successfully.
+> > > > -     * So, start monitoring again.
+> > > > +     * So, start monitoring in polling mode if
+> > > > +     * trip is not using irq HW support.
+> > > >        */
+> > > > -    monitor_thermal_zone(tz);
+> > > > +    if (tz->ops->get_trip_irq_mode)
+> > > > +        tz->ops->get_trip_irq_mode(tz, trip, &irq_mode);
+> > > > +
+> > > > +    if (!irq_mode)
+> > > > +        monitor_thermal_zone(tz);
+> > > >   }
+> > > handle_thermal_trip() is called from
+> > > thermal_zone_device_update(), and
+> > > it is invoked for every trip points.
+> > > say, you have a passive trip point 1 that supports irq_mode, and
+> > > another passive trip point 2 that does not support irq_mode,
+> > > monitor_thermal_zone() is still called in handle_thermal_trip(tz,
+> > > 2),
+> > > and the passive timer will be activated anyway, do I miss
+> > > something?
+
+sorry that I missed this thread.
+
+> > Yes, the passive timer will be activated in your example. It is
+> > correct
+> > behavior and does not break anything.
+> > case 1: there is 'k' passive trip points which have irq_mode and 1
+> > additional which does not have 'irq_mode', the framework will start
+> > polling but skip check for those 'k' trip points.
+> > case 2: all of the passive trip points have irq_mode set, the
+> > framework
+> > will not register 'scheduled_work' because it will not call 
+> > 'monitor_thermal_zone()'.
+> > This is the case of most Exynos platforms, but there is one
+> > exception 
+> > which has 'case 1' with 2 trip points not supporting irq_mode.
+> Do you suggest to cover the 'case 1'?
+
+So this solution does not cover case 1.
+And for case 2, why not set passive_delay to 0? are they sharing the
+same DT file?
+
+> It would be possible after adding a new enum THERMAL_FRAMEWORK_POLL, 
+> then function:
+
+hmmm, I think we can
+1. use tz->passive to count the passive trip points that need passive
+polling.
+2. count tz->passive properly in the governors
+3. always do passive polling when tz->passive > 0.
+
+This will cover both cases, right?
+
+some sample code to handle this in step_wise governor attached below,
+
+what do you think?
+
+thanks,
+rui
+
+diff --git a/drivers/thermal/step_wise.c b/drivers/thermal/step_wise.c
+index ee047ca..59d9a1d 100644
+--- a/drivers/thermal/step_wise.c
++++ b/drivers/thermal/step_wise.c
+@@ -121,8 +121,15 @@ static void update_passive_instance(struct
+thermal_zone_device *tz,
+         * If value is +1, activate a passive instance.
+         * If value is -1, deactivate a passive instance.
+         */
+-       if (type == THERMAL_TRIP_PASSIVE || type == THERMAL_TRIPS_NONE)
+-               tz->passive += value;
++       if (type != THERMAL_TRIP_PASSIVE && type != THERMAL_TRIPS_NONE)
++               return;
++       if (tz->ops->get_trip_irq_mode) {
++               if (tz->ops->get_trip_irq_mode(tz, trip, &irq_mode))
++                               return;
++               if (irq_mode)
++                               return;
++       }
++       tz->passive += value;
+ }
+
+
+> thermal_zone_device_check() will call
+> thermal_zone_device_update(tz, THERMAL_FRAMEWORK_POLL)
+> and in handle_thermal_trip() implement something like:
+> --------------8<----------------
+> static void handle_thermal_trip(struct thermal_zone_device *tz, int
+> trip)
+> {
+> 	enum thermal_trip_type type;
+> 	bool irq_mode = false;
 > 
-> Even if an irq handler does not contain any RCU read-side critical
-> section, won't it end by possibly invoking the scheduler before
-> returning ? Considering that the scheduler has tracepoints which
-> use RCU, this might be related to the issue that has been brought
-> to my attention.
-
-Most interrupt handlers just return, but yes, scheduler state is often
-checked during return from interrupt.  But in that case, the interrupt
-handler needs to have invoked irq_enter().
-
-> Do you have examples of such interrupt handlers which do not invoke
-> rcu_irq_enter() ?
-
-Mostly examples of lightweight interrupts handlers that used to not invoke
-irq_enter() and thus not rcu_irq_enter(), but which later started using
-RCU readers.  Which means that they are no longer examples that do not
-invoke rcu_irq_enter().  ;-)
-
-Some of them just invoked rcu_irq_enter(), others had to do the full
-irq_enter() call (which in turn invokes rcu_irq_enter()).
-
-These interrupt handlers were very light-weight.  Page-table walkers,
-hardware events, and the like.  Take an interrupt, look at a hardware
-register, update a data structure, maybe write to a hardware register,
-return from interrupt.
-
-If there is only one such tracepoint, one approach is to use _rcuidle,
-that is, instead of trace_blarvitz(), trace_blarvitz_rcuidle().  This can
-add overhead, so this might not be appropriate for any of the scheduler's
-fastpaths.  Which brings me back to the interrupt handler invoking
-either irq_enter() or rcu_irq_enter().  Or moving the tracepoints to
-a nearby region of code that RCU is already watching.
-
-So, is it reasonably to add the rcu_irq_enter()?  If you do change this,
-please test with CONFIG_RCU_EQS_DEBUG=y.
-
-							Thanx, Paul
-
+> 	/* Ignore disabled trip points */
+> 	if (test_bit(trip, &tz->trips_disabled))
+> 		return;
+> 
+> 	if (tz->ops->get_trip_irq_mode)
+> 		tz->ops->get_trip_irq_mode(tz, trip, &irq_mode)
+> 
+> 	if (tz->notify_event == THERMAL_FRAMEWORK_POLL && irq_mode)
+> 		return;
+> ...
+> 
+> 	if (!irq_mode)
+> 		monitor_thermal_zone(tz);
+> }
+> 
+> ---------->8-----------------------
+> 
+> I could implement it in v3 if you don't see that it add too much of
+> mess 
+> and agree for this approach.
+> 
+> Regards,
+> Lukasz
+> 
+> > 
+> > 
+> > Regards,
+> > Lukasz
+> > 
+> > > 
+> > > 
+> > > thanks,
+> > > rui
+> > > 
+> > > > 
+> > > >   static void update_temperature(struct thermal_zone_device
+> > > > *tz)
+> > > > diff --git a/include/linux/thermal.h b/include/linux/thermal.h
+> > > > index 5f4705f..b064565 100644
+> > > > --- a/include/linux/thermal.h
+> > > > +++ b/include/linux/thermal.h
+> > > > @@ -103,6 +103,7 @@ struct thermal_zone_device_ops {
+> > > >           enum thermal_device_mode);
+> > > >       int (*get_trip_type) (struct thermal_zone_device *, int,
+> > > >           enum thermal_trip_type *);
+> > > > +    int (*get_trip_irq_mode) (struct thermal_zone_device *,
+> > > > int,
+> > > > bool *);
+> > > >       int (*get_trip_temp) (struct thermal_zone_device *, int,
+> > > > int
+> > > > *);
+> > > >       int (*set_trip_temp) (struct thermal_zone_device *, int,
+> > > > int);
+> > > >       int (*get_trip_hyst) (struct thermal_zone_device *, int,
+> > > > int
+> > > > *);
+> > > > @@ -196,6 +197,7 @@ struct thermal_zone_device {
+> > > >       struct thermal_attr *trip_temp_attrs;
+> > > >       struct thermal_attr *trip_type_attrs;
+> > > >       struct thermal_attr *trip_hyst_attrs;
+> > > > +    struct thermal_attr *trip_irq_mode_attrs;
+> > > >       void *devdata;
+> > > >       int trips;
+> > > >       unsigned long trips_disabled;    /* bitmap for disabled
+> > > > trips */
+> > > > @@ -364,6 +366,8 @@ struct thermal_zone_of_device_ops {
+> > > >    * @temperature: temperature value in miliCelsius
+> > > >    * @hysteresis: relative hysteresis in miliCelsius
+> > > >    * @type: trip point type
+> > > > + * @irq_mode: to not use polling in framework set support of
+> > > > HW irq
+> > > > (which will
+> > > > + *          be triggered when temperature reaches this level).
+> > > >    */
+> > > >   struct thermal_trip {
+> > > > @@ -371,6 +375,7 @@ struct thermal_trip {
+> > > >       int temperature;
+> > > >       int hysteresis;
+> > > >       enum thermal_trip_type type;
+> > > > +    bool irq_mode;
+> > > >   };
+> > > >   /* Function declarations */
+> > > 
