@@ -3,47 +3,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D482C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 14:10:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 447EBC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 14:13:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F30DF20660
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 14:10:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0FAAF20657
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 14:13:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729040AbfAJOKx (ORCPT
+        id S1727935AbfAJONF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 09:10:53 -0500
-Received: from foss.arm.com ([217.140.101.70]:36206 "EHLO foss.arm.com"
+        Thu, 10 Jan 2019 09:13:05 -0500
+Received: from mga02.intel.com ([134.134.136.20]:33049 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728181AbfAJOKw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 09:10:52 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0FF531596;
-        Thu, 10 Jan 2019 06:10:52 -0800 (PST)
-Received: from [192.168.100.241] (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id ED9233F5AF;
-        Thu, 10 Jan 2019 06:10:50 -0800 (PST)
-Subject: Re: [PATCH v3 4/7] arm64: add sysfs vulnerability show for meltdown
-To:     Julien Thierry <julien.thierry@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Cc:     catalin.marinas@arm.com, will.deacon@arm.com, marc.zyngier@arm.com,
-        suzuki.poulose@arm.com, dave.martin@arm.com,
-        shankerd@codeaurora.org, linux-kernel@vger.kernel.org,
-        ykaukab@suse.de, mlangsdo@redhat.com, steven.price@arm.com,
-        stefan.wahren@i2se.com
-References: <20190109235544.2992426-1-jeremy.linton@arm.com>
- <20190109235544.2992426-5-jeremy.linton@arm.com>
- <8c8b564a-1d65-bc18-73fb-58b349a47800@arm.com>
-From:   Jeremy Linton <jeremy.linton@arm.com>
-Message-ID: <7e843245-56c0-d7c1-38ba-27ff231a500a@arm.com>
-Date:   Thu, 10 Jan 2019 08:10:43 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S1727759AbfAJOND (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 09:13:03 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jan 2019 06:13:02 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,461,1539673200"; 
+   d="scan'208";a="113688826"
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.56]) ([10.237.72.56])
+  by fmsmga007.fm.intel.com with ESMTP; 10 Jan 2019 06:12:59 -0800
+Subject: Re: [PATCH 1/2] mmc: sdhci: Properly set DMA mask
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
+        Sowjanya Komatineni <skomatineni@nvidia.com>,
+        Krishna Reddy <vdumpa@nvidia.com>, linux-mmc@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20190104104753.3383-1-thierry.reding@gmail.com>
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <a960e9a7-ff86-b000-1319-df85741fb380@intel.com>
+Date:   Thu, 10 Jan 2019 16:11:33 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <8c8b564a-1d65-bc18-73fb-58b349a47800@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20190104104753.3383-1-thierry.reding@gmail.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -51,100 +53,119 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Julien,
-
-On 01/10/2019 03:23 AM, Julien Thierry wrote:
-> Hi Jeremy,
+On 4/01/19 12:47 PM, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
 > 
-> On 09/01/2019 23:55, Jeremy Linton wrote:
->> Display the mitigation status if active, otherwise
->> assume the cpu is safe unless it doesn't have CSV3
->> and isn't in our whitelist.
->>
->> Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
->> ---
->>   arch/arm64/kernel/cpufeature.c | 32 +++++++++++++++++++++++++++-----
->>   1 file changed, 27 insertions(+), 5 deletions(-)
->>
->> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
->> index ab784d7a0083..ef7bbc49ef78 100644
->> --- a/arch/arm64/kernel/cpufeature.c
->> +++ b/arch/arm64/kernel/cpufeature.c
->> @@ -944,8 +944,12 @@ has_useable_cnp(const struct arm64_cpu_capabilities *entry, int scope)
->>   	return has_cpuid_feature(entry, scope);
->>   }
->>   
->> +/* default value is invalid until unmap_kernel_at_el0() runs */
->> +static bool __meltdown_safe = true;
->> +
->>   #ifdef CONFIG_UNMAP_KERNEL_AT_EL0
->>   static int __kpti_forced; /* 0: not forced, >0: forced on, <0: forced off */
->> +extern uint arm64_requested_vuln_attrs;
->>   
->>   static bool is_cpu_meltdown_safe(void)
->>   {
->> @@ -972,6 +976,14 @@ static bool unmap_kernel_at_el0(const struct arm64_cpu_capabilities *entry,
->>   {
->>   	char const *str = "command line option";
->>   
->> +	bool meltdown_safe = is_cpu_meltdown_safe() ||
->> +		has_cpuid_feature(entry, scope);
->> +
->> +	if (!meltdown_safe)
->> +		__meltdown_safe = false;
->> +
->> +	arm64_requested_vuln_attrs |= VULN_MELTDOWN;
->> +
->>   	/*
->>   	 * For reasons that aren't entirely clear, enabling KPTI on Cavium
->>   	 * ThunderX leads to apparent I-cache corruption of kernel text, which
->> @@ -993,11 +1005,7 @@ static bool unmap_kernel_at_el0(const struct arm64_cpu_capabilities *entry,
->>   	if (IS_ENABLED(CONFIG_RANDOMIZE_BASE))
->>   		return true;
->>   
->> -	if (is_cpu_meltdown_safe())
->> -		return false;
->> -
->> -	/* Defer to CPU feature registers */
->> -	return !has_cpuid_feature(entry, scope);
->> +	return !meltdown_safe;
->>   }
->>   
->>   static void
->> @@ -2065,3 +2073,17 @@ static int __init enable_mrs_emulation(void)
->>   }
->>   
->>   core_initcall(enable_mrs_emulation);
->> +
->> +#ifdef CONFIG_GENERIC_CPU_VULNERABILITIES
->> +ssize_t cpu_show_meltdown(struct device *dev, struct device_attribute *attr,
->> +		char *buf)
->> +{
->> +	if (arm64_kernel_unmapped_at_el0())
->> +		return sprintf(buf, "Mitigation: KPTI\n");
->> +
->> +	if (__meltdown_safe)
->> +		return sprintf(buf, "Not affected\n");
+> The implementation of sdhci_set_dma_mask() is conflating two things: on
+> one hand it uses the SDHCI_USE_64_BIT_DMA flag to determine whether or
+> not to use the 64-bit addressing capability of the controller and on the
+> other hand it also uses that flag to set a DMA mask for the controller's
+> parent device.
 > 
-> An issue I see is that we don't even bother to check it that CPUs are
-> meltdown safe if CONFIG_UNMAP_KERNEL_AT_EL0 is not defined but here
-> we'll advertise that the system is meltdown safe.
+> However, a controller supporting 64-bit addressing doesn't mean that it
+> needs to support addressing 64 bits of address range. It's perfectly
+> acceptable to use 64-bit addressing for a 32-bit address range or even
+> smaller, even if that makes little sense, considering the extra overhead
+> of the 64-bit addressing descriptors.
+> 
+> But it is fairly common for hardware to support somewhere between 32 and
+> 64 bits of address range. Tegra124 and Tegra210, for example, support 34
+> bits and the newer Tegra186 and Tegra194 support 40 bits. The latter can
+> also use an IOMMU for address translation, which has an input address
+> range of 48 bits. This causes problems with the current algorithm in the
+> SDHCI core for choosing the DMA mask. If the DMA mask is set to 64 bits,
+> the DMA memory allocations can (and usually do because the allocator
+> starts from the top) end up beyond the 40 bit boundary addressable by
+> the SDHCI controller, causing IOMMU faults.
+> 
+> For Tegra specifically this problem is currently worked around by
+> setting the SDHCI_QUIRK2_BROKEN_64_BIT_DMA quirk. This causes the DMA
+> mask to always be set to 32 bits and therefore all allocations will fit
+> within the range addressable by the controller.
+> 
+> This commit reworks the code in sdhci_set_dma_mask() to fix the above
+> issue. The rationale behind this change is that the SDHCI controller
+> driver should be the authoritative source of the DMA mask setting. The
+> SDHCI core has no way of knowing what the individual SDHCI controllers
+> are capable of. So instead of overriding the DMA mask depending on
+> whether or not 64-bit addressing mode is used, the DMA mask is only
+> modified if absolutely necessary. On one hand, if the controller can
+> only address 32 bits of memory or less, we disable use of 64-bit
+> addressing mode because it is not needed. On the other hand, we also
+> want to make sure that if we don't support 64-bit addressing mode, such
+> as in the case where the BROKEN_64_BIT_DMA quirk is set, we do restrict
+> the DMA mask to fit the capabilities. The latter is an inconsistency by
+> the driver, so we warn about it to make sure it will be addressed in the
+> driver.
 
-That check isn't necessary anymore because the sysfs attribute is only 
-populated if unmap_kernel_at_el0() runs (assuming I haven't messed 
-something up). That was Dave/Will's suggestions in the last thread about 
-how to handle this case.
+sdhci_set_dma_mask() was added because people did want sdhci to set the DMA
+mask.  Also using 64-bit DMA even with 32-bit systems has the advantage of
+reducing exposure to problems i.e. the same logic is used with the same SoC
+irrespective of whether or not it is in 32-bit compatibility mode.  So the
+policy for sdhci is always to use 64-bit DMA if it is supported.
 
-
+I suggest we add a new sdhci op for ->set_dma_mask() and call that instead
+of sdhci_set_dma_mask() if it is not NULL.
 
 > 
-> I think that checking whether we know that CPUs are meltdown safe should
-> be separated from whether mitigation is applied.
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> ---
+>  drivers/mmc/host/sdhci.c | 36 ++++++++++++++++++++++--------------
+>  1 file changed, 22 insertions(+), 14 deletions(-)
 > 
-> Someone who knows thinks their CPUs are in the white list might want to
-> compile out code that does the kpti, but it would be good to give them a
-> proper diagnostic whether they were wrong or not.
-> 
-> Cheers,
+> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+> index 7c6c93e85b7e..01f81e96be23 100644
+> --- a/drivers/mmc/host/sdhci.c
+> +++ b/drivers/mmc/host/sdhci.c
+> @@ -3499,27 +3499,35 @@ static int sdhci_set_dma_mask(struct sdhci_host *host)
+>  {
+>  	struct mmc_host *mmc = host->mmc;
+>  	struct device *dev = mmc_dev(mmc);
+> -	int ret = -EINVAL;
+> +	u64 dma_mask = dma_get_mask(dev);
+> +	u64 dma32 = DMA_BIT_MASK(32);
+> +	int ret = 0;
+>  
+>  	if (host->quirks2 & SDHCI_QUIRK2_BROKEN_64_BIT_DMA)
+>  		host->flags &= ~SDHCI_USE_64_BIT_DMA;
+>  
+> -	/* Try 64-bit mask if hardware is capable  of it */
+> -	if (host->flags & SDHCI_USE_64_BIT_DMA) {
+> -		ret = dma_set_mask_and_coherent(dev, DMA_BIT_MASK(64));
+> -		if (ret) {
+> -			pr_warn("%s: Failed to set 64-bit DMA mask.\n",
+> -				mmc_hostname(mmc));
+> -			host->flags &= ~SDHCI_USE_64_BIT_DMA;
+> -		}
+> +	/*
+> +	 * Hardware that can't address more than the 32-bit address range does
+> +	 * not need to use 64-bit addressing mode, even if it supports it.
+> +	 */
+> +	if ((host->flags & SDHCI_USE_64_BIT_DMA) && (dma_mask <= dma32)) {
+> +		pr_debug("%s: controller needs addresses <= 32-bits\n",
+> +			mmc_hostname(mmc));
+> +		host->flags &= ~SDHCI_USE_64_BIT_DMA;
+>  	}
+>  
+> -	/* 32-bit mask as default & fallback */
+> -	if (ret) {
+> -		ret = dma_set_mask_and_coherent(dev, DMA_BIT_MASK(32));
+> +	/*
+> +	 * If the hardware doesn't support 64-bit addressing, make sure to
+> +	 * restrict the DMA mask so we don't get buffers allocated beyond the
+> +	 * 32-bit boundary.
+> +	 */
+> +	if (!(host->flags & SDHCI_USE_64_BIT_DMA) && (dma_mask > dma32)) {
+> +		WARN(1, "64-bit DMA not supported, DMA mask %llx\n", dma_mask);
+> +
+> +		ret = dma_set_mask_and_coherent(dev, dma32);
+>  		if (ret)
+> -			pr_warn("%s: Failed to set 32-bit DMA mask.\n",
+> -				mmc_hostname(mmc));
+> +			pr_warn("%s: failed to set 32-bit DMA mask: %d\n",
+> +				mmc_hostname(mmc), ret);
+>  	}
+>  
+>  	return ret;
 > 
 
