@@ -2,142 +2,178 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 811F0C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 16:01:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAA77C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 16:02:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 51580206B7
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 16:01:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 916B0206B7
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 16:02:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cxwXrkMA"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cHfDj6pj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729823AbfAJQBW (ORCPT
+        id S1728594AbfAJQCD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 11:01:22 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:38138 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726242AbfAJQBV (ORCPT
+        Thu, 10 Jan 2019 11:02:03 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:54760 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726242AbfAJQCD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 11:01:21 -0500
-Received: by mail-pl1-f195.google.com with SMTP id e5so5361582plb.5;
-        Thu, 10 Jan 2019 08:01:20 -0800 (PST)
+        Thu, 10 Jan 2019 11:02:03 -0500
+Received: by mail-wm1-f67.google.com with SMTP id a62so11790429wmh.4;
+        Thu, 10 Jan 2019 08:02:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=70ftbVxR298Asw2Ow0anQXUxDuy5RknOAgPyr50bVv4=;
-        b=cxwXrkMAS7796TWzBDeNEoPt/+UoPXw3g9YtX+hVx5mg430ONcMrlxSmu3+GuB6fU3
-         3RVs9CJBTjLknOGxSmjgN6RNw0Ah+ehXQMfrSrD9Ol60kcEnU8N2c1ur5oG3zogH+87K
-         +JkRUNEguowAQ8ai3q9YpwyYwUnWFly7ObHyx5SiSi35JL/ttn8+cv60VFmKcBJt0Vbs
-         7rqaVB3r6YFP5Q1m9KMBdYPCk3ts0DZdUCIjFbzEiUKnWd51kiF6+QuVurRVb9Z0CV2s
-         VAqMyrQSLMxOojw4gqm4ataJVibNClcfWc021bGJEJnhdgj22g6uF9My1M/D5z88EEva
-         2QuA==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=M6Ja8jDTXzh67+tdsvNzbJCs3Fr6Vmdfdx/VYhC5PM4=;
+        b=cHfDj6pj/CdjZkUEYRb/rSWRISjYGx+exqXK+eKt5dn//WJtZrF5ncy6AvLmxoMtm+
+         DFR0Vh7F3xW3Ep+gdJy1H6KOiIShHTQhD58igF5MMKqXT4vW0dH34Cp1o3oL1/MFka1H
+         o71IxyuLCfUvoHjXobfmzQ1+Jb9oZ2V1HTR3gngQ9Qd/erwTJeqzseaRJQnw2zQlF2il
+         h2DLgE7MaZvubL5pn7RR4RRSoN7qBDVn2XCaNxjRqsWOquZdjQbHQyg3anA+Xbvug54+
+         c05UN0tZuO2pEXfxqbv9pz0t2f9LJ5BHCMsS96z2dMKZzyAuaFuQ1E/rF6dVqRjJW/AV
+         8mHA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=70ftbVxR298Asw2Ow0anQXUxDuy5RknOAgPyr50bVv4=;
-        b=UEP8Myj5pHEyTGW5Uo0gScBcPud1/ipsTDzKmcWlIcLnPQnZgAhXNUFOVhRH3XORJh
-         BqotBemnALbe1pbzVH0jGMhHXgAuH0hpr2+20eJe5QuVVySS5UU6pwdgS7tDDrx1s7Rv
-         FIV/rB+YpumSyyRSJrdnyl1844CrqmQnIOILO63dEj4fL3BH3B6mOQWE24OluCEmuGcW
-         Q4zY6X5s3E1+zKL6/dZBOS4JBSLC9yj7xfn9Ht9VKFovVa7nv9Hu7zvqR3veskP1l2Ef
-         guCDJ1NYFLKK4XyZUFNm30BmlrT9AOkKnKiT89EB47Bv5MEUybk4VxCYgjFyB9S2upPd
-         wwMQ==
-X-Gm-Message-State: AJcUukeGToUc7MAZj+zky0PzolAs4EYEsuTZvVIc6EQ1+ZB9EUgHTeWg
-        X+qjDtCG9WM7h0JppPi0LQE=
-X-Google-Smtp-Source: ALg8bN5qK917oxBJhDBueI/R9nNul9+JHcLn37ZqT53or3qlwuuD4azbuIMh3czcfbxrQQ+zABXqyg==
-X-Received: by 2002:a17:902:f01:: with SMTP id 1mr10525718ply.143.1547136080016;
-        Thu, 10 Jan 2019 08:01:20 -0800 (PST)
-Received: from hp-pavilion-15-notebook-pc-brajeswar ([42.110.130.38])
-        by smtp.gmail.com with ESMTPSA id v72sm60178382pfd.163.2019.01.10.08.01.18
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=M6Ja8jDTXzh67+tdsvNzbJCs3Fr6Vmdfdx/VYhC5PM4=;
+        b=Kr/hty6b7EWyTW19IjXdYNQWbpflIAv5tydepTJzYbJ13Kw/YyrShXCV6DtK8N3hR7
+         NMxQM+Tg0Z3Br0ap4X4doZfCVTPDl0saC5UtnKu4V+Ax8DoLYeDJRtT7+Y1eYdDhzwDA
+         FnOERgjzveUryBUKzPuUPGhJ9Jz2fc5RYsTrOEGoLXJe4heBhmrPi3tIqOfBQVzTWqn8
+         ydLPMPSVwbodENYRAA4yUJ2b5PWlS0EEcVFQ/lhndPTl3wYGIPn82Cb4DzHopDbBOir9
+         LYmWG8cIWIO/R7/MTnHeXEVBJNRRV6pmdTILsaRPbkCWskF9cws2RcmhX33afO4b74+U
+         nK5A==
+X-Gm-Message-State: AJcUukdvcGwvt5CSXLBF0vT4DnpWJLm3hpI+l2Ft9CmW7DTLmHiyzACc
+        gccrpu5CjHd2SUgQWxM6bJ0BrrMZ
+X-Google-Smtp-Source: ALg8bN6GaOco5DtluCcF/CugyJ0ZycTnLHAPuIsS6gd46eGK0gt9ITbCgFR08T+7gCifND/m+Zi0sQ==
+X-Received: by 2002:a1c:7a16:: with SMTP id v22mr9662284wmc.131.1547136119419;
+        Thu, 10 Jan 2019 08:01:59 -0800 (PST)
+Received: from localhost (pD9E51040.dip0.t-ipconnect.de. [217.229.16.64])
+        by smtp.gmail.com with ESMTPSA id u204sm24923522wmu.30.2019.01.10.08.01.58
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 10 Jan 2019 08:01:19 -0800 (PST)
-Date:   Thu, 10 Jan 2019 21:31:14 +0530
-From:   Brajeswar Ghosh <brajeswar.linux@gmail.com>
-To:     peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
-        namhyung@kernel.org, Ariel.Elior@cavium.com, davem@davemloft.net,
-        mst@redhat.com, jasowang@redhat.com, john.fastabend@gmail.com,
-        parri.andrea@gmail.com, dhowells@redhat.com, ebiederm@xmission.com,
-        james.morris@microsoft.com, paul@paul-moore.com,
-        zohar@linux.vnet.ibm.com, mjg59@google.com,
-        viro@zeniv.linux.org.uk, richard_c_haines@btinternet.com,
-        sargun@sargun.me
-Cc:     jrdr.linux@gmail.com, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, sabyasachi.linux@gmail.com
-Subject: [PATCH] include/linux: Remove duplicate header
-Message-ID: <20190110160114.GA5641@hp-pavilion-15-notebook-pc-brajeswar>
+        Thu, 10 Jan 2019 08:01:58 -0800 (PST)
+Date:   Thu, 10 Jan 2019 17:01:57 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Adrian Hunter <adrian.hunter@intel.com>
+Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Sowjanya Komatineni <skomatineni@nvidia.com>,
+        Krishna Reddy <vdumpa@nvidia.com>, linux-mmc@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] mmc: sdhci: Properly set DMA mask
+Message-ID: <20190110160157.GA27895@ulmo>
+References: <20190104104753.3383-1-thierry.reding@gmail.com>
+ <a960e9a7-ff86-b000-1319-df85741fb380@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="lrZ03NoBR/3+SXJZ"
 Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <a960e9a7-ff86-b000-1319-df85741fb380@intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove duplicate headers which are included more than once
 
-Signed-off-by: Brajeswar Ghosh <brajeswar.linux@gmail.com>
----
- include/linux/perf_event.h | 1 -
- include/linux/ptr_ring.h   | 1 -
- include/linux/qed/qed_if.h | 1 -
- include/linux/security.h   | 1 -
- 4 files changed, 4 deletions(-)
+--lrZ03NoBR/3+SXJZ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
-index 53c500f0ca79..8d7a2b65514b 100644
---- a/include/linux/perf_event.h
-+++ b/include/linux/perf_event.h
-@@ -53,7 +53,6 @@ struct perf_guest_info_callbacks {
- #include <linux/atomic.h>
- #include <linux/sysfs.h>
- #include <linux/perf_regs.h>
--#include <linux/workqueue.h>
- #include <linux/cgroup.h>
- #include <asm/local.h>
- 
-diff --git a/include/linux/ptr_ring.h b/include/linux/ptr_ring.h
-index 6894976b54e3..627b7aa067e0 100644
---- a/include/linux/ptr_ring.h
-+++ b/include/linux/ptr_ring.h
-@@ -26,7 +26,6 @@
- #include <linux/cache.h>
- #include <linux/types.h>
- #include <linux/compiler.h>
--#include <linux/cache.h>
- #include <linux/slab.h>
- #include <asm/errno.h>
- #endif
-diff --git a/include/linux/qed/qed_if.h b/include/linux/qed/qed_if.h
-index a47321a0d572..9ebdb60f605a 100644
---- a/include/linux/qed/qed_if.h
-+++ b/include/linux/qed/qed_if.h
-@@ -38,7 +38,6 @@
- #include <linux/netdevice.h>
- #include <linux/pci.h>
- #include <linux/skbuff.h>
--#include <linux/types.h>
- #include <asm/byteorder.h>
- #include <linux/io.h>
- #include <linux/compiler.h>
-diff --git a/include/linux/security.h b/include/linux/security.h
-index ac0ef467d25e..2915ea6a5b77 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -30,7 +30,6 @@
- #include <linux/err.h>
- #include <linux/string.h>
- #include <linux/mm.h>
--#include <linux/fs.h>
- 
- struct linux_binprm;
- struct cred;
--- 
-2.17.1
+On Thu, Jan 10, 2019 at 04:11:33PM +0200, Adrian Hunter wrote:
+> On 4/01/19 12:47 PM, Thierry Reding wrote:
+> > From: Thierry Reding <treding@nvidia.com>
+> >=20
+> > The implementation of sdhci_set_dma_mask() is conflating two things: on
+> > one hand it uses the SDHCI_USE_64_BIT_DMA flag to determine whether or
+> > not to use the 64-bit addressing capability of the controller and on the
+> > other hand it also uses that flag to set a DMA mask for the controller's
+> > parent device.
+> >=20
+> > However, a controller supporting 64-bit addressing doesn't mean that it
+> > needs to support addressing 64 bits of address range. It's perfectly
+> > acceptable to use 64-bit addressing for a 32-bit address range or even
+> > smaller, even if that makes little sense, considering the extra overhead
+> > of the 64-bit addressing descriptors.
+> >=20
+> > But it is fairly common for hardware to support somewhere between 32 and
+> > 64 bits of address range. Tegra124 and Tegra210, for example, support 34
+> > bits and the newer Tegra186 and Tegra194 support 40 bits. The latter can
+> > also use an IOMMU for address translation, which has an input address
+> > range of 48 bits. This causes problems with the current algorithm in the
+> > SDHCI core for choosing the DMA mask. If the DMA mask is set to 64 bits,
+> > the DMA memory allocations can (and usually do because the allocator
+> > starts from the top) end up beyond the 40 bit boundary addressable by
+> > the SDHCI controller, causing IOMMU faults.
+> >=20
+> > For Tegra specifically this problem is currently worked around by
+> > setting the SDHCI_QUIRK2_BROKEN_64_BIT_DMA quirk. This causes the DMA
+> > mask to always be set to 32 bits and therefore all allocations will fit
+> > within the range addressable by the controller.
+> >=20
+> > This commit reworks the code in sdhci_set_dma_mask() to fix the above
+> > issue. The rationale behind this change is that the SDHCI controller
+> > driver should be the authoritative source of the DMA mask setting. The
+> > SDHCI core has no way of knowing what the individual SDHCI controllers
+> > are capable of. So instead of overriding the DMA mask depending on
+> > whether or not 64-bit addressing mode is used, the DMA mask is only
+> > modified if absolutely necessary. On one hand, if the controller can
+> > only address 32 bits of memory or less, we disable use of 64-bit
+> > addressing mode because it is not needed. On the other hand, we also
+> > want to make sure that if we don't support 64-bit addressing mode, such
+> > as in the case where the BROKEN_64_BIT_DMA quirk is set, we do restrict
+> > the DMA mask to fit the capabilities. The latter is an inconsistency by
+> > the driver, so we warn about it to make sure it will be addressed in the
+> > driver.
+>=20
+> sdhci_set_dma_mask() was added because people did want sdhci to set the D=
+MA
+> mask.  Also using 64-bit DMA even with 32-bit systems has the advantage of
+> reducing exposure to problems i.e. the same logic is used with the same S=
+oC
+> irrespective of whether or not it is in 32-bit compatibility mode.  So the
+> policy for sdhci is always to use 64-bit DMA if it is supported.
+>=20
+> I suggest we add a new sdhci op for ->set_dma_mask() and call that instead
+> of sdhci_set_dma_mask() if it is not NULL.
 
+Some drivers are already doing something similar by overriding the DMA
+mask again in ->enable_dma(). I had briefly considered doing that for
+Tegra, but after thinking about it, it just became clear to me that we
+shouldn't need to override this in every driver. I just don't think it's
+correct for the MMC core to muck with the DMA mask. Just because the
+hardware supports the SDHCI 64-bit addressing mode doesn't mean that all
+64 bits can be addressed by the hardware. The DMA mask defines what the
+valid address range is for the device and it's already conventional for
+drivers to set this early in their ->probe() implementation (or have the
+bus set it up). It seems wasteful to have to redo that in a custom
+callback.
+
+Thierry
+
+--lrZ03NoBR/3+SXJZ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlw3bHEACgkQ3SOs138+
+s6E+6RAAo9MUU0egJn3CJ3V1aQt88FFoh/K8sq/6CWkSiEGgkZ9yl1eHE5KS5a7l
+jZ/UD9Q6mtU2DgdGO/k7as8Up2f2/OhSgJQR3sKGuph6D5shSChThqsO/wT0fODY
+wja5kmbFNhzi+U9Ernu+jj/E7DSnFDZ6q1V9KAyxDagxVsPNSgKItkOZQoLbrVdo
+i3yx81yaSEUV33FYx64dQGj/YGJ655lxo+Y2EMEc212kqeLRurCWlJqoz/iLQGEn
+hS+uwgNo55LvvI1BziNlWXHnMMiD/Xr3n9LAOppKpg5w1ZBIqln5GPLEr58O0SVF
+MFHmi3BRSvv/Fy5YaN7nJDO3UWvP1/airrHnM9dkOL3WVEmQJaz99pEpecd8ENtG
+yQKO71lQ0TdS0f311MZg+78Vp4zysmzTEXB6Ossf7nGNDdiJAKFnVss79qJG7oKk
+sT+Ayha478Eib/NAvWTezkWbUwKqdTX0e/9Vj/7gXZeIUQ/S4LrzapkknqjssDnG
+Mr0jmG/o+/CgLD3x2fOmcHLuGvnxRBfmpqAf9qRTCg+8B0txG12cPvN03oY3mUPF
+Nd+W0D8jllrge/B5/ota0+j+mFWOc7d0PMFoe04KgeBEnJxGRhgTXuWI6+XgJHMI
+/WXWaRaCRxfeFLROwiF+lDs6ZSGbORO1IXDQXuLifU31vDtlJ7U=
+=mm9/
+-----END PGP SIGNATURE-----
+
+--lrZ03NoBR/3+SXJZ--
