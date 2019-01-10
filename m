@@ -2,117 +2,157 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01205C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 15:40:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A3B2C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 15:41:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C3CE421783
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 15:40:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cRquREY7"
+	by mail.kernel.org (Postfix) with ESMTP id 12F9A21872
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 15:41:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729593AbfAJPkn (ORCPT
+        id S1729621AbfAJPlZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 10:40:43 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:45293 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729106AbfAJPkm (ORCPT
+        Thu, 10 Jan 2019 10:41:25 -0500
+Received: from iolanthe.rowland.org ([192.131.102.54]:35340 "HELO
+        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1728998AbfAJPlY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 10:40:42 -0500
-Received: by mail-pg1-f195.google.com with SMTP id y4so4965730pgc.12;
-        Thu, 10 Jan 2019 07:40:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=sEDM8Cm8KkOdeb7wayGXYHQE+T67ai/kdB1bmLgaMGY=;
-        b=cRquREY7IuRCAFM8sOcuRuDKRzsBeSdZtG8dpYjrwI7ZQOUXAjBOIXK0v1m0qz+YKs
-         jsnHwuiarvrZIXi4YnbNSljs3jiCFm8ftVmLjYsYy1tHfCqABLSzp5kp5l4CrLMWaYUk
-         vItVJiV6/P/ybfV1fom3FywA/xyes7BAy93hFnFor7nAIxF345ekruvzFgnI+dcS2fIN
-         kIuq9iDfHqm1ktJpV54ElJS4RzlfOZyY7f10Uwpn9uxtzDRRkzHrFiuq9X63YarP57vw
-         RBvFaBtbXRsJEp2hqrrHi/JYbdkrWqBKBciDQS00GQEzzlZLkhqQICf9Qtb9vXwnxhoN
-         3kjg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=sEDM8Cm8KkOdeb7wayGXYHQE+T67ai/kdB1bmLgaMGY=;
-        b=t2AjdoSO4c/puRDjj4VM7b8imIplyw6CH3BEvPmAmlHKn2bF4X3tgEIu8rBMaNJ2si
-         AHdUvl8F2eQ1pZc5plhnnGT85M7XLRHVuvD7aA2I/qEn3ltdtrl0t+MUxSFhhCccoWIv
-         ITBWUDNzVd9jKsU80Azte6z+EWVsJjMVRjvQdpoM4WLvj5mVTqU/xPslhtxEtz+9Xa+i
-         PYImdfQKYKjkXazoPno7ZB1ktWLzkh+zMAlYiK+2is3e39piM4aIRPEjNtvbJI1iO9HS
-         L9OtAuVh1EfPAN8Gk2RbyaKODQf2LjcYhWWwjHN0T6bvVQ5kevR+rqaKM3G0rwv1Y4G1
-         Ophw==
-X-Gm-Message-State: AJcUukflYcFQdv1wE3UrcD9Pr9bxiSDk6dMOeKUHQTrk7PyhkSg6DfUm
-        NfBIA9PsAJ+Awxr7Nk9uXDs=
-X-Google-Smtp-Source: ALg8bN6LAud7R+pZupa2hlnAiasiBsL///OLIc8HljJKVY7AWODaLNztYaF9YhMUNMeBD3MRuNpukw==
-X-Received: by 2002:a62:47d9:: with SMTP id p86mr10398418pfi.95.1547134842028;
-        Thu, 10 Jan 2019 07:40:42 -0800 (PST)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id e23sm111245541pfh.68.2019.01.10.07.40.40
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 10 Jan 2019 07:40:40 -0800 (PST)
-Date:   Thu, 10 Jan 2019 07:40:39 -0800
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Christoph Biedl <linux-kernel.bfrz@manchmal.in-ulm.de>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Breno Leitao <leitao@debian.org>, linux-kernel@vger.kernel.org,
-        torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 4.19 000/170] 4.19.14-stable review
-Message-ID: <20190110154039.GA26814@roeck-us.net>
-References: <20190107104452.953560660@linuxfoundation.org>
- <20190108230731.GC20519@roeck-us.net>
- <20190109143811.GB29274@kroah.com>
- <20190109194048.GA11505@roeck-us.net>
- <20190110065207.GA17195@kroah.com>
- <20190110131743.GE20217@kroah.com>
- <1547130295@msgid.manchmal.in-ulm.de>
- <1547133048@msgid.manchmal.in-ulm.de>
+        Thu, 10 Jan 2019 10:41:24 -0500
+Received: (qmail 3497 invoked by uid 2102); 10 Jan 2019 10:41:23 -0500
+Received: from localhost (sendmail-bs@127.0.0.1)
+  by localhost with SMTP; 10 Jan 2019 10:41:23 -0500
+Date:   Thu, 10 Jan 2019 10:41:23 -0500 (EST)
+From:   Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@iolanthe.rowland.org
+To:     "Paul E. McKenney" <paulmck@linux.ibm.com>
+cc:     Andrea Parri <andrea.parri@amarulasolutions.com>,
+        <linux-kernel@vger.kernel.org>, <linux-arch@vger.kernel.org>,
+        <mingo@kernel.org>, <parri.andrea@gmail.com>,
+        <will.deacon@arm.com>, <peterz@infradead.org>,
+        <boqun.feng@gmail.com>, <npiggin@gmail.com>, <dhowells@redhat.com>,
+        <j.alglave@ucl.ac.uk>, <luc.maranget@inria.fr>, <akiyks@gmail.com>,
+        <willy@infradead.org>
+Subject: Re: [PATCH RFC memory-model 0/6] LKMM updates
+In-Reply-To: <20190110143137.GJ1215@linux.ibm.com>
+Message-ID: <Pine.LNX.4.44L0.1901101039360.1497-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1547133048@msgid.manchmal.in-ulm.de>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 10, 2019 at 04:15:40PM +0100, Christoph Biedl wrote:
-> Christoph Biedl wrote...
-> 
-> > Sorry for not getting back to you earlier. Building yesterday's
-> > release (v4.19.14) *failed*, bisect led to
-> >
-> > | commit a9935a12768851762089fda8e5a9daaf0231808e (HEAD)
-> > | Author: Breno Leitao <leitao@debian.org>
-> > | Date:   Mon Nov 26 18:12:00 2018 -0200
-> > |
-> > |     powerpc/tm: Unset MSR[TS] if not recheckpointing
-> >
-> > Reverting that commit seems to be sufficient, build passes then.
-> >
-> > Additionally, neither 4.20 nor 5.0-rc1 show this problem. The
-> > | commit 6f5b9f018f4c7686fd944d920209d1382d320e4e upstream.
-> > builds as well, so I'll try to find the missing prerequisite next.
-> 
-> Cherry-picking
-> 
-> | commit 5c784c8414fba11b62e12439f11e109fb5751f38
-> | Author: Breno Leitao <leitao@debian.org>
-> | Date:   Thu Aug 16 14:21:07 2018 -0300
-> |
-> |     powerpc/tm: Remove msr_tm_active()
-> 
-> makes the build pass. Bruno, does this make sense?
-> 
-As I had reported and suggested well before the release.
-According to Greg those responsible for the patch series rejected that.
+On Thu, 10 Jan 2019, Paul E. McKenney wrote:
 
-Guenter
+> On Thu, Jan 10, 2019 at 09:40:24AM +0100, Andrea Parri wrote:
+> > > > > > It seems that
+> > > > > > 
+> > > > > >   1b52d0186177 ("tools/memory-model: Model smp_mb__after_unlock_lock()")
+> > > > > >   
+> > > > > > from linux-rcu/dev got lost; this also needs an ack (probably yours! ;D,
+> > > > > > considered that, IIRC, you introduced the primitive and RCU is currently
+> > > > > > its only user.)
+> > > > > 
+> > > > > That commit is in -tip:
+> > > > > 
+> > > > > 4607abbcf464 ("tools/memory-model: Model smp_mb__after_unlock_lock()")
+> > > > > 
+> > > > > So it has already left my -rcu tree.  ;-)
+> > > > 
+> > > > Oh, you're right: now I see the commit (e.g., with "git show"), but I
+> > > > don't see the corresponding changes applied to the tree.
+> > > > 
+> > > >   https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/commit/?h=locking/core&id=4607abbcf464ea2be14da444215d05c73025cf6e
+> > > >   https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/tree/tools/memory-model/linux-kernel.bell?h=locking/core
+> > > > 
+> > > > Is this expected?
+> > > 
+> > > Are you asking why it is in -tip but not in mainline?  I am not sure,
+> > > but given that the merge window was over the holiday season and that
+> > > the length of the merge window proved to be shorter than many people
+> > > expected it to be, I am not too surprised.  ;-)
+> > 
+> > Mmh, let me try again:
+> > 
+> >   $ git clone git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git
+> >   $ cd tip
+> >   $ git checkout -b locking/core origin/locking/core
+> > 
+> >   $ git show 4607abbcf464
+> >   commit 4607abbcf464ea2be14da444215d05c73025cf6e
+> >   Author: Andrea Parri <andrea.parri@amarulasolutions.com>
+> >   Date:   Mon Dec 3 15:04:49 2018 -0800
+> > 
+> >       tools/memory-model: Model smp_mb__after_unlock_lock()
+> > 
+> >   $ cd tools/memory-model
+> >   $ herd7 -conf linux-kernel.cfg after-unlock-lock-same-cpu.litmus
+> >   File "after-unlock-lock-same-cpu.litmus": Unknown macro smp_mb__after_unlock_lock (User error)
+> > 
+> >   [aka, linux-kernel.def in tip:locking/core does not have the
+> >    smp_mb__after_unlock_lock() added by 4607abbcf464]
+> 
+> Color me confused:
+> 
+> ------------------------------------------------------------------------
+> 
+> $ git checkout 4607abbcf464Checking out files: 100% (18397/18397), done.
+> Previous HEAD position was 4e284b1bf15a rcu: Remove wrapper definitions for obsolete RCU update functions
+> HEAD is now at 4607abbcf464 tools/memory-model: Model smp_mb__after_unlock_lock()
+> $ grep smp_mb__after_unlock_lock tools/memory-model/linux-kernel.def 
+> smp_mb__after_unlock_lock() { __fence{after-unlock-lock}; }
+> 
+> ------------------------------------------------------------------------
+> 
+> In addition, it handles this litmus test just fine:
+> 
+> ------------------------------------------------------------------------
+> 
+> C MP+polocks
+> 
+> (*
+>  * Result: Never
+>  *
+>  * This litmus test demonstrates how lock acquisitions and releases can
+>  * stand in for smp_load_acquire() and smp_store_release(), respectively.
+>  * In other words, when holding a given lock (or indeed after releasing a
+>  * given lock), a CPU is not only guaranteed to see the accesses that other
+>  * CPUs made while previously holding that lock, it is also guaranteed
+>  * to see all prior accesses by those other CPUs.
+>  *)
+> 
+> {}
+> 
+> P0(int *x, int *y, spinlock_t *mylock)
+> {
+> 	WRITE_ONCE(*x, 1);
+> 	spin_lock(mylock);
+> 	smp_mb__after_unlock_lock();
+> 	WRITE_ONCE(*y, 1);
+> 	spin_unlock(mylock);
+> }
+> 
+> P1(int *x, int *y, spinlock_t *mylock)
+> {
+> 	int r0;
+> 	int r1;
+> 
+> 	spin_lock(mylock);
+> 	r0 = READ_ONCE(*y);
+> 	spin_unlock(mylock);
+> 	r1 = READ_ONCE(*x);
+> }
+> 
+> exists (1:r0=1 /\ 1:r1=0)
+> 
+> ------------------------------------------------------------------------
+> 
+> Again, color me confused.
+
+Andrea's point is that while the 1b52d0186177 commit is present in the
+tip repository, it isn't in the locking/core branch.
+
+Alan
+
