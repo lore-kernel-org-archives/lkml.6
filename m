@@ -7,51 +7,51 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDF93C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 12:25:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6C17C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 12:25:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F87F20665
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 12:25:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B43F52173B
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 12:25:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="dr9F0jpt"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="cSOkYzgW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728572AbfAJMZp (ORCPT
+        id S1728592AbfAJMZw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 07:25:45 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:41987 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728352AbfAJMZp (ORCPT
+        Thu, 10 Jan 2019 07:25:52 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:44012 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728349AbfAJMZw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 07:25:45 -0500
-Received: by mail-pl1-f195.google.com with SMTP id y1so5115258plp.9
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 04:25:43 -0800 (PST)
+        Thu, 10 Jan 2019 07:25:52 -0500
+Received: by mail-pl1-f193.google.com with SMTP id gn14so5117268plb.10
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 04:25:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=fG6Bxz4zCKnlte2DiphB1mWwnICLjL7B6OfDSnAmPoM=;
-        b=dr9F0jptT97nERs45FBkoKZrhIfKnDtAMrmjVYkZirPQiYs5b3uF5s+/48Q/UDjHPp
-         i2SgeCGe5nvs9VunxJXGc5jkpxH0l2STEwJak0PiPGSgqGPRQq1W5r5yJ6NiWpOToDDe
-         dJlJUZj+7fCaql4lHbc78E0On8kv42sPV+GgQ=
+        bh=d+KWrKOuDpBX8jJHDJHHBhRKTXGgkfJrV7NGClro9/k=;
+        b=cSOkYzgWzOCDmPB7T+gj+IGVJVEkpN2AQLAhEmUxpIxuZIksC0ju/BAbKJRkwdqf6/
+         ZZnXShegs0Sc7f7uX43K8FRBHzcyYZYp5HKQkIGRjhf3vvx9HQ8YM2TMFaDkyBzIc0Te
+         v3JSh7ziVp1yLzz0KZKaqdQjaZGiDvmrn1tDc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=fG6Bxz4zCKnlte2DiphB1mWwnICLjL7B6OfDSnAmPoM=;
-        b=RwWc0TTjwhS2WhzOV140GTQkCTrqA00AV86oJuEqECOyYUJaf3nsrHoleO2WwDYBkf
-         1jRK0nRoUXmv0t5GUZwnGrjhLSNC/d3jYF8KQuZK9rMwz+9ni65p17ohmllxhDJOiefW
-         N5ICbu+Xhr8MvRoFjR7GDQgWS0vigxH4zsRROmOJwKasIHk/HPIGQoXhQXogbheC5dPw
-         5duHRqtujOpnQCyTQMhOoRND52DIZlMzQCkpbyWEcrHXrS62nbbTvFFLZPaps7p7byIz
-         zXOvDimg4ZtkioqHtb0AUQdO5/4D0wYgblkCv8Vv63P4lqc/BdlORpvUoLdTL4B1ogFo
-         Jfxg==
-X-Gm-Message-State: AJcUukdBw/N481y8foGc1MNzwThIDP/kwlEj+Wl99ixclaQIWMk3r/jJ
-        Uo7hfluFmi7xfyDeQGxXvkI+/g==
-X-Google-Smtp-Source: ALg8bN5qWZqFUykCmBZNde/2W86VZJlGLO7awAyBW/y4aZ8NHZnyX2dcLCB8FvPlhZV5d5rB8dJ4cA==
-X-Received: by 2002:a17:902:b592:: with SMTP id a18mr10171014pls.293.1547123143455;
-        Thu, 10 Jan 2019 04:25:43 -0800 (PST)
+        bh=d+KWrKOuDpBX8jJHDJHHBhRKTXGgkfJrV7NGClro9/k=;
+        b=DKq3KB+Gc7OnBZARYSQ6EMfAlID7tltRCbDsbx73N4IdSrrD7F4hJcIaiZQDr25dgW
+         WXM0nT49i4VDwzQmUhZD+Z5rTwnkdhmpaAuAKxsE64iw4SbG7ZOHeIGAaW0QUU7p/2Ho
+         Lhha752l3qf0mbdSUoG9TcOHJa9E+5fO92X2nrdLYzexckJEEczFtFLHukVDBDtRZ3FF
+         Z6RDMRC1y6nn9t924WCXm0zJU/irNnZ9vt9gPwB4T+aDbn0MeEvpatu/YTjOXNmkUb4q
+         dhpUw0ucRrte3FBXj6isd8uCxLYRJIC+BdRFKIoA9qv0I/f5AU4lKgQ4Sj/98QZLdBIQ
+         DgkQ==
+X-Gm-Message-State: AJcUukfKvSSITNS80FAHpPmv708uYqVcGtWMm4venVSPXe4JLlWvlTmc
+        t2Wqv5AroN/N52bYSWXH0hjIlA==
+X-Google-Smtp-Source: ALg8bN6YwLE5L90iEjIUqERGQBXvBelz7g9FiRZnbV19wPDLg/bRxj98XHkYAI/XG7hXlA/9Dd7ypQ==
+X-Received: by 2002:a17:902:d202:: with SMTP id t2mr10303040ply.193.1547123151732;
+        Thu, 10 Jan 2019 04:25:51 -0800 (PST)
 Received: from localhost.localdomain ([117.196.233.251])
-        by smtp.gmail.com with ESMTPSA id m67sm142985541pfb.25.2019.01.10.04.25.35
+        by smtp.gmail.com with ESMTPSA id m67sm142985541pfb.25.2019.01.10.04.25.43
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 10 Jan 2019 04:25:43 -0800 (PST)
+        Thu, 10 Jan 2019 04:25:51 -0800 (PST)
 From:   Sumit Garg <sumit.garg@linaro.org>
 To:     linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, jens.wiklander@linaro.org,
@@ -60,9 +60,9 @@ Cc:     linux-kernel@vger.kernel.org, jens.wiklander@linaro.org,
         daniel.thompson@linaro.org, ard.biesheuvel@linaro.org,
         bhsharma@redhat.com, tee-dev@lists.linaro.org,
         Sumit Garg <sumit.garg@linaro.org>
-Subject: [PATCH v2 1/4] tee: add bus driver framework for TEE based devices
-Date:   Thu, 10 Jan 2019 17:54:54 +0530
-Message-Id: <1547123097-16431-2-git-send-email-sumit.garg@linaro.org>
+Subject: [PATCH v2 2/4] tee: optee: add TEE bus device enumeration support
+Date:   Thu, 10 Jan 2019 17:54:55 +0530
+Message-Id: <1547123097-16431-3-git-send-email-sumit.garg@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1547123097-16431-1-git-send-email-sumit.garg@linaro.org>
 References: <1547123097-16431-1-git-send-email-sumit.garg@linaro.org>
@@ -71,155 +71,222 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Introduce a generic TEE bus driver concept for TEE based kernel drivers
-which would like to communicate with TEE based devices/services.
-
-In this TEE bus concept, devices/services are identified via Universally
-Unique Identifier (UUID) and drivers register a table of device UUIDs
-which they can support.
-
-So this TEE bus framework registers a match() callback function which
-iterates over the driver UUID table to find a corresponding match for
-device UUID. If a match is found, then this particular device is probed
-via corresponding probe api registered by the driver. This process
-happens whenever a device or a driver is registered with TEE bus.
-
-Also this framework allows for device enumeration to be specific to
-corresponding TEE implementation like OP-TEE etc.
+OP-TEE provides a pseudo TA to enumerate TAs which can act as devices/
+services for TEE bus. So implement device enumeration using invoke
+function: PTA_CMD_GET_DEVICES provided by pseudo TA to fetch array of
+device UUIDs. Also register these enumerated devices with TEE bus as
+"optee-clntX" device.
 
 Signed-off-by: Sumit Garg <sumit.garg@linaro.org>
 ---
- drivers/tee/tee_core.c  | 41 ++++++++++++++++++++++++++++++++++++++---
- include/linux/tee_drv.h | 36 ++++++++++++++++++++++++++++++++++++
- 2 files changed, 74 insertions(+), 3 deletions(-)
+ drivers/tee/optee/Makefile        |   1 +
+ drivers/tee/optee/core.c          |   4 +
+ drivers/tee/optee/device.c        | 150 ++++++++++++++++++++++++++++++++++++++
+ drivers/tee/optee/optee_private.h |   3 +
+ 4 files changed, 158 insertions(+)
+ create mode 100644 drivers/tee/optee/device.c
 
-diff --git a/drivers/tee/tee_core.c b/drivers/tee/tee_core.c
-index 7b2bb4c..9ddb89e 100644
---- a/drivers/tee/tee_core.c
-+++ b/drivers/tee/tee_core.c
-@@ -15,7 +15,6 @@
- #define pr_fmt(fmt) "%s: " fmt, __func__
+diff --git a/drivers/tee/optee/Makefile b/drivers/tee/optee/Makefile
+index 48d262a..56263ae 100644
+--- a/drivers/tee/optee/Makefile
++++ b/drivers/tee/optee/Makefile
+@@ -5,3 +5,4 @@ optee-objs += call.o
+ optee-objs += rpc.o
+ optee-objs += supp.o
+ optee-objs += shm_pool.o
++optee-objs += device.o
+diff --git a/drivers/tee/optee/core.c b/drivers/tee/optee/core.c
+index e5efce3..ac59c77 100644
+--- a/drivers/tee/optee/core.c
++++ b/drivers/tee/optee/core.c
+@@ -634,6 +634,10 @@ static struct optee *optee_probe(struct device_node *np)
+ 	if (optee->sec_caps & OPTEE_SMC_SEC_CAP_DYNAMIC_SHM)
+ 		pr_info("dynamic shared memory is enabled\n");
  
- #include <linux/cdev.h>
--#include <linux/device.h>
- #include <linux/fs.h>
- #include <linux/idr.h>
- #include <linux/module.h>
-@@ -1027,6 +1026,30 @@ int tee_client_invoke_func(struct tee_context *ctx,
- }
- EXPORT_SYMBOL_GPL(tee_client_invoke_func);
- 
-+static int tee_client_device_match(struct device *dev,
-+				   struct device_driver *drv)
++	rc = optee_enumerate_devices();
++	if (rc)
++		goto err;
++
+ 	pr_info("initialized driver\n");
+ 	return optee;
+ err:
+diff --git a/drivers/tee/optee/device.c b/drivers/tee/optee/device.c
+new file mode 100644
+index 0000000..b38d24b
+--- /dev/null
++++ b/drivers/tee/optee/device.c
+@@ -0,0 +1,150 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (C) 2019 Linaro Ltd.
++ */
++
++#include <linux/kernel.h>
++#include <linux/slab.h>
++#include <linux/tee_drv.h>
++#include <linux/uuid.h>
++#include "optee_private.h"
++
++/*
++ * Get device UUIDs
++ *
++ * [out]     memref[0]        Array of device UUIDs
++ *
++ * Return codes:
++ * TEE_SUCCESS - Invoke command success
++ * TEE_ERROR_BAD_PARAMETERS - Incorrect input param
++ * TEE_ERROR_SHORT_BUFFER - Output buffer size less than required
++ */
++#define PTA_CMD_GET_DEVICES		0x0
++
++static int optee_ctx_match(struct tee_ioctl_version_data *ver, const void *data)
 +{
-+	struct tee_client_device *tee_device;
-+	const struct tee_client_device_id *id_table;
++	if (ver->impl_id == TEE_IMPL_ID_OPTEE)
++		return 1;
++	else
++		return 0;
++}
 +
-+	tee_device = to_tee_client_device(dev);
-+	id_table = to_tee_client_driver(drv)->id_table;
++static int get_devices(struct tee_context *ctx, u32 session,
++		       struct tee_shm *device_uuid, u32 *shm_size)
++{
++	u32 ret = 0;
++	struct tee_ioctl_invoke_arg inv_arg = {0};
++	struct tee_param param[4] = {0};
 +
-+	while (!uuid_is_null(&id_table->uuid)) {
-+		if (uuid_equal(&tee_device->id.uuid, &id_table->uuid))
-+			return 1;
-+		id_table++;
++	/* Invoke PTA_CMD_GET_DEVICES function */
++	inv_arg.func = PTA_CMD_GET_DEVICES;
++	inv_arg.session = session;
++	inv_arg.num_params = 4;
++
++	/* Fill invoke cmd params */
++	param[0].attr = TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_OUTPUT;
++	param[0].u.memref.shm = device_uuid;
++	param[0].u.memref.size = *shm_size;
++	param[0].u.memref.shm_offs = 0;
++
++	ret = tee_client_invoke_func(ctx, &inv_arg, param);
++	if ((ret < 0) || ((inv_arg.ret != TEEC_SUCCESS) &&
++			  (inv_arg.ret != TEEC_ERROR_SHORT_BUFFER))) {
++		pr_err("PTA_CMD_GET_DEVICES invoke function err: %x\n",
++		       inv_arg.ret);
++		return -EINVAL;
 +	}
++
++	*shm_size = param[0].u.memref.size;
 +
 +	return 0;
 +}
 +
-+struct bus_type tee_bus_type = {
-+	.name		= "tee",
-+	.match		= tee_client_device_match,
-+};
-+EXPORT_SYMBOL_GPL(tee_bus_type);
++static int optee_register_device(uuid_t *device_uuid, u32 device_id)
++{
++	struct tee_client_device *optee_device = NULL;
++	int rc;
 +
- static int __init tee_init(void)
- {
- 	int rc;
-@@ -1040,10 +1063,21 @@ static int __init tee_init(void)
- 	rc = alloc_chrdev_region(&tee_devt, 0, TEE_NUM_DEVICES, "tee");
- 	if (rc) {
- 		pr_err("failed to allocate char dev region\n");
--		class_destroy(tee_class);
--		tee_class = NULL;
-+		goto class_err;
- 	}
- 
-+	rc = bus_register(&tee_bus_type);
-+	if (rc) {
-+		pr_err("failed to register tee bus\n");
-+		goto class_err;
++	optee_device = kzalloc(sizeof(*optee_device), GFP_KERNEL);
++	if (!optee_device)
++		return -ENOMEM;
++
++	optee_device->dev.bus = &tee_bus_type;
++	dev_set_name(&optee_device->dev, "optee-clnt%u", device_id);
++	uuid_copy(&optee_device->id.uuid, device_uuid);
++
++	rc = device_register(&optee_device->dev);
++	if (rc)
++		pr_err("device registration failed, err: %d\n", rc);
++
++	return rc;
++}
++
++int optee_enumerate_devices(void)
++{
++	uuid_t pta_uuid =
++		UUID_INIT(0x7011a688, 0xddde, 0x4053,
++			  0xa5, 0xa9, 0x7b, 0x3c, 0x4d, 0xdf, 0x13, 0xb8);
++	struct tee_ioctl_open_session_arg sess_arg = {0};
++	struct tee_shm *device_shm = NULL;
++	uuid_t *device_uuid = NULL;
++	struct tee_context *ctx = NULL;
++	u32 shm_size = 0, idx = 0;
++	int rc;
++
++	/* Open context with OP-TEE driver */
++	ctx = tee_client_open_context(NULL, optee_ctx_match, NULL, NULL);
++	if (IS_ERR(ctx))
++		return -ENODEV;
++
++	/* Open session with device enumeration pseudo TA */
++	memcpy(sess_arg.uuid, pta_uuid.b, TEE_IOCTL_UUID_LEN);
++	sess_arg.clnt_login = TEE_IOCTL_LOGIN_PUBLIC;
++	sess_arg.num_params = 0;
++
++	rc = tee_client_open_session(ctx, &sess_arg, NULL);
++	if ((rc < 0) || (sess_arg.ret != TEEC_SUCCESS)) {
++		/* Device enumeration pseudo TA not found */
++		rc = 0;
++		goto out_ctx;
 +	}
 +
-+	return 0;
++	rc = get_devices(ctx, sess_arg.session, device_shm, &shm_size);
++	if (rc < 0)
++		goto out_sess;
 +
-+class_err:
-+	class_destroy(tee_class);
-+	tee_class = NULL;
++	device_shm = tee_shm_alloc(ctx, shm_size,
++				   TEE_SHM_MAPPED | TEE_SHM_DMA_BUF);
++	if (IS_ERR(device_shm)) {
++		pr_err("tee_shm_alloc failed\n");
++		rc = PTR_ERR(device_shm);
++		goto out_sess;
++	}
 +
- 	return rc;
- }
++	rc = get_devices(ctx, sess_arg.session, device_shm, &shm_size);
++	if (rc < 0)
++		goto out_shm;
++
++	device_uuid = tee_shm_get_va(device_shm, 0);
++	if (IS_ERR(device_uuid)) {
++		pr_err("tee_shm_get_va failed\n");
++		rc = PTR_ERR(device_uuid);
++		goto out_shm;
++	}
++
++	while (idx < shm_size / sizeof(uuid_t)) {
++		rc = optee_register_device(&device_uuid[idx], idx);
++		if (rc)
++			goto out_shm;
++		idx++;
++	}
++
++out_shm:
++	tee_shm_free(device_shm);
++out_sess:
++	tee_client_close_session(ctx, sess_arg.session);
++out_ctx:
++	tee_client_close_context(ctx);
++
++	return rc;
++}
+diff --git a/drivers/tee/optee/optee_private.h b/drivers/tee/optee/optee_private.h
+index 35e7938..a5e84af 100644
+--- a/drivers/tee/optee/optee_private.h
++++ b/drivers/tee/optee/optee_private.h
+@@ -28,6 +28,7 @@
+ #define TEEC_ERROR_BAD_PARAMETERS	0xFFFF0006
+ #define TEEC_ERROR_COMMUNICATION	0xFFFF000E
+ #define TEEC_ERROR_OUT_OF_MEMORY	0xFFFF000C
++#define TEEC_ERROR_SHORT_BUFFER		0xFFFF0010
  
-@@ -1052,6 +1086,7 @@ static void __exit tee_exit(void)
- 	class_destroy(tee_class);
- 	tee_class = NULL;
- 	unregister_chrdev_region(tee_devt, TEE_NUM_DEVICES);
-+	bus_unregister(&tee_bus_type);
- }
+ #define TEEC_ORIGIN_COMMS		0x00000002
  
- subsys_initcall(tee_init);
-diff --git a/include/linux/tee_drv.h b/include/linux/tee_drv.h
-index 6cfe058..ed16bf1 100644
---- a/include/linux/tee_drv.h
-+++ b/include/linux/tee_drv.h
-@@ -20,6 +20,8 @@
- #include <linux/kref.h>
- #include <linux/list.h>
- #include <linux/tee.h>
-+#include <linux/device.h>
-+#include <linux/uuid.h>
+@@ -181,6 +182,8 @@ void optee_free_pages_list(void *array, size_t num_entries);
+ void optee_fill_pages_list(u64 *dst, struct page **pages, int num_pages,
+ 			   size_t page_offset);
  
++int optee_enumerate_devices(void);
++
  /*
-  * The file describes the API provided by the generic TEE driver to the
-@@ -538,4 +540,38 @@ static inline bool tee_param_is_memref(struct tee_param *param)
- 	}
- }
- 
-+extern struct bus_type tee_bus_type;
-+
-+/**
-+ * struct tee_client_device_id - tee based device identifier
-+ * @uuid:		For TEE based client devices we use the device uuid
-+ *			as the identifier.
-+ */
-+struct tee_client_device_id {
-+	uuid_t uuid;
-+};
-+
-+/**
-+ * struct tee_client_device - tee based device
-+ * @id:			device identifier
-+ * @dev:		device structure
-+ */
-+struct tee_client_device {
-+	struct tee_client_device_id id;
-+	struct device dev;
-+};
-+#define to_tee_client_device(d) container_of(d, struct tee_client_device, dev)
-+
-+/**
-+ * struct tee_client_driver - tee client driver
-+ * @id_table:		device id table supported by this driver
-+ * @driver:		driver structure
-+ */
-+struct tee_client_driver {
-+	const struct tee_client_device_id *id_table;
-+	struct device_driver driver;
-+};
-+#define to_tee_client_driver(d) \
-+		container_of(d, struct tee_client_driver, driver)
-+
- #endif /*__TEE_DRV_H*/
+  * Small helpers
+  */
 -- 
 2.7.4
 
