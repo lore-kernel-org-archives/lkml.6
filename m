@@ -2,74 +2,86 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9F60C43612
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 09:12:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FE6FC43444
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 09:14:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 88103206B6
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 09:12:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F028F206B6
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 09:14:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727804AbfAJJMF (ORCPT
+        id S1727780AbfAJJOg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 04:12:05 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:17130 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727257AbfAJJMF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 04:12:05 -0500
-Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 08154533F960A97D8195;
-        Thu, 10 Jan 2019 17:11:59 +0800 (CST)
-Received: from [127.0.0.1] (10.202.226.43) by DGGEMS410-HUB.china.huawei.com
- (10.3.19.210) with Microsoft SMTP Server id 14.3.408.0; Thu, 10 Jan 2019
- 17:11:51 +0800
-Subject: Re: [PATCH] scsi: isci: initialize shost fully before calling
- scsi_add_host()
-To:     Christoph Hellwig <hch@lst.de>,
-        Logan Gunthorpe <logang@deltatee.com>
-References: <20190108205043.3122-1-logang@deltatee.com>
- <20190109184105.GB22070@lst.de>
-CC:     <linux-scsi@vger.kernel.org>, <linux-block@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Intel SCU Linux support <intel-linux-scu@intel.com>,
-        Artur Paszkiewicz <artur.paszkiewicz@intel.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Jens Axboe <axboe@kernel.dk>, Jeff Moyer <jmoyer@redhat.com>,
-        chenxiang <chenxiang66@hisilicon.com>
-From:   John Garry <john.garry@huawei.com>
-Message-ID: <8d96b40d-fc83-9218-9479-3de423594ddb@huawei.com>
-Date:   Thu, 10 Jan 2019 09:11:44 +0000
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.3.0
+        Thu, 10 Jan 2019 04:14:36 -0500
+Received: from tartarus.angband.pl ([54.37.238.230]:49142 "EHLO
+        tartarus.angband.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726255AbfAJJOf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 04:14:35 -0500
+Received: from kilobyte by tartarus.angband.pl with local (Exim 4.89)
+        (envelope-from <kilobyte@angband.pl>)
+        id 1ghWPw-00041g-Kn; Thu, 10 Jan 2019 10:14:24 +0100
+Date:   Thu, 10 Jan 2019 10:14:24 +0100
+From:   Adam Borowski <kilobyte@angband.pl>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        leozinho29_eu@hotmail.com, Mike Galbraith <efault@gmx.de>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        Jan Kara <jack@suse.cz>,
+        Matthew Wilcox <mawilcox@microsoft.com>,
+        Ross Zwisler <zwisler@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Felix Kuehling <felix.kuehling@amd.com>,
+        Ralph Campbell <rcampbell@nvidia.com>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH] mm/mmu_notifier: mm/rmap.c: Fix a mmu_notifier range bug
+ in try_to_unmap_one
+Message-ID: <20190110091424.mzgpdaqq74ie6ro5@angband.pl>
+References: <20190110005117.18282-1-sean.j.christopherson@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20190109184105.GB22070@lst.de>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.226.43]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190110005117.18282-1-sean.j.christopherson@intel.com>
+X-Junkbait: aaron@angband.pl, zzyx@angband.pl
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: kilobyte@angband.pl
+X-SA-Exim-Scanned: No (on tartarus.angband.pl); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/01/2019 18:41, Christoph Hellwig wrote:
-> This looks good.  I wonder if there is any good way to prevent other
-> drivers from picking up this bug byt using a better interface, but
-> that should not delay your fix.
->
-> .
->
+On Wed, Jan 09, 2019 at 04:51:17PM -0800, Sean Christopherson wrote:
+> Manifests as KVM use-after-free WARNINGs and subsequent "BUG: Bad page
+> state in process X" errors when reclaiming from a KVM guest due to KVM
+> removing the wrong pages from its own mappings.
 
-I noticed that hisi_sas has this same problem but I forgot to fix it.
+With your patch, no badness happened so far.  Thanks!
 
-So how about just drop these APIs and let the user set the shost 
-protection parameters directly, like other shost parameters, which 
-should make it a bit clearer when these should be set, i.e. before 
-scsi_add_host()?
+> Reported-by: Adam Borowski <kilobyte@angband.pl>
+> Fixes: ac46d4f3c432 ("mm/mmu_notifier: use structure for invalidate_range_start/end calls v2")
 
-John
+> --- a/mm/rmap.c
+> +++ b/mm/rmap.c
+> -	mmu_notifier_range_init(&range, vma->vm_mm, vma->vm_start,
+> -				min(vma->vm_end, vma->vm_start +
+> +	mmu_notifier_range_init(&range, vma->vm_mm, address,
+> +				min(vma->vm_end, address +
 
 
+Meow.
+-- 
+⢀⣴⠾⠻⢶⣦⠀ Hans 1 was born and raised in Johannesburg, then moved to Boston,
+⣾⠁⢠⠒⠀⣿⡁ and has just became a naturalized citizen.  Hans 2's grandparents
+⢿⡄⠘⠷⠚⠋⠀ came from Melanesia to Düsseldorf, and he hasn't ever been outside
+⠈⠳⣄⠀⠀⠀⠀ Germany until yesterday.  Which one is an African-American?
