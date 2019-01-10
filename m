@@ -2,83 +2,104 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB74EC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 06:57:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE3C7C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 06:59:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 797E92173B
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 06:57:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547103463;
-	bh=zURElWaV1s1C73JNRKoyfkAu0+W613sSKDS8Jw22Imw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=V+pUx5it3SmQUiEcbFvbl/e2waIBTxgQfeXHyMQqcNg4fJJUtML9dF4BYwlGrryQA
-	 Wvv2hRLu6ri7qKLDNpa3ld6jDA0Da7iBOKqITkKTAawdrBLYfFcaeVMM2Oo99jw0/c
-	 PMZ1lZFhNcs3lpRLkBSLyr7jpC6RsAqDMs07C3Ts=
+	by mail.kernel.org (Postfix) with ESMTP id A520520657
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 06:59:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727443AbfAJG5m (ORCPT
+        id S1727472AbfAJG7Q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 01:57:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45240 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725536AbfAJG5m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 01:57:42 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A2FBA20657;
-        Thu, 10 Jan 2019 06:57:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547103461;
-        bh=zURElWaV1s1C73JNRKoyfkAu0+W613sSKDS8Jw22Imw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=iS0/KpWi3vnl0rtHkMb7IiOKevwYH5t1Z6s6D+IfMqFl00A43aNGWJRo4Zyofufdd
-         aHK+I5EzNlJiRZBtCTi3la9Ug8YsSQQdH9e9Pzc7cjMv3AnFiHGRv8C/074HUYAa6N
-         gKr53BkvLmo7692SV8/bAA5m4rJHKKjkRE1r2OHo=
-Date:   Thu, 10 Jan 2019 07:57:38 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Peter Chen <hzpeterchen@gmail.com>
-Cc:     Pawel Laszczak <pawell@cadence.com>, devicetree@vger.kernel.org,
-        mark.rutland@arm.com, linux-usb@vger.kernel.org,
-        hdegoede@redhat.com,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        andy.shevchenko@gmail.com, robh+dt@kernel.org, rogerq@ti.com,
-        lkml <linux-kernel@vger.kernel.org>, adouglas@cadence.com,
-        jbergsagel@ti.com, nsekhar@ti.com, nm@ti.com, sureshp@cadence.com,
-        peter.chen@nxp.com, pjez@cadence.com, kurahul@cadence.com
-Subject: Re: [PATCH v2 5/5] usb:cdns3 Add Cadence USB3 DRD Driver
-Message-ID: <20190110065738.GA28817@kroah.com>
-References: <1545577992-4013-1-git-send-email-pawell@cadence.com>
- <1545577992-4013-6-git-send-email-pawell@cadence.com>
- <CAL411-oF2j1Xjz60Q3B1beBoUoFUxN+rBi9_Z0nx7R2P0p_3tg@mail.gmail.com>
+        Thu, 10 Jan 2019 01:59:16 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:38100 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727340AbfAJG7Q (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 01:59:16 -0500
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x0A6x2t1030336
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 01:59:15 -0500
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2pwywhjvxr-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 01:59:15 -0500
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <heiko.carstens@de.ibm.com>;
+        Thu, 10 Jan 2019 06:59:13 -0000
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 10 Jan 2019 06:59:11 -0000
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0A6xAvP45154424
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 10 Jan 2019 06:59:10 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1C1224C044;
+        Thu, 10 Jan 2019 06:59:10 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E50DF4C046;
+        Thu, 10 Jan 2019 06:59:09 +0000 (GMT)
+Received: from osiris (unknown [9.152.212.95])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Thu, 10 Jan 2019 06:59:09 +0000 (GMT)
+Date:   Thu, 10 Jan 2019 07:59:08 +0100
+From:   Heiko Carstens <heiko.carstens@de.ibm.com>
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc:     Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] s390/hypfs: Use struct_size() in kzalloc()
+References: <20190109173541.GA16953@embeddedor>
 MIME-Version: 1.0
+In-Reply-To: <20190109173541.GA16953@embeddedor>
+X-TM-AS-GCONF: 00
+x-cbid: 19011006-0016-0000-0000-000002433390
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19011006-0017-0000-0000-0000329D35C0
+Message-Id: <20190110065908.GA7756@osiris>
 Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
 Content-Disposition: inline
-In-Reply-To: <CAL411-oF2j1Xjz60Q3B1beBoUoFUxN+rBi9_Z0nx7R2P0p_3tg@mail.gmail.com>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-10_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=787 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901100057
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 10, 2019 at 09:30:41AM +0800, Peter Chen wrote:
-> On Mon, Dec 24, 2018 at 12:44 AM Pawel Laszczak <pawell@cadence.com> wrote:
-> - debugfs is nice to have feature, I suggest removing it at this
-> initial version. Besides, role switch
-> through /sys is normal feature, the end user may use it at real
-> product, so, it is better at device's
-> /sys entry instead of debugfs.
+On Wed, Jan 09, 2019 at 11:35:41AM -0600, Gustavo A. R. Silva wrote:
+> One of the more common cases of allocation size calculations is finding the
+> size of a structure that has a zero-sized array at the end, along with memory
+> for some number of elements for that array. For example:
 > 
-> - I don't know why you add "disable" at debugfs, please comment.
+> struct foo {
+>     int stuff;
+>     void *entry[];
+> };
+> 
+> instance = kzalloc(sizeof(struct foo) + sizeof(void *) * count, GFP_KERNEL);
+> 
+> Instead of leaving these open-coded and prone to type mistakes, we can now
+> use the new struct_size() helper:
+> 
+> instance = kzalloc(struct_size(instance, entry, count), GFP_KERNEL);
+> 
+> This code was detected with the help of Coccinelle.
+> 
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> ---
+>  arch/s390/hypfs/hypfs_diag0c.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
 
-As you imply here, no real-world functionality should ever be in
-debugfs as it is an optional system component and kernel code should
-work just fine without it being enabled (as more and more systems are
-disabling it due to the obvious security problems it has.)
+Applied, thanks!
 
-thanks,
-
-greg k-h
