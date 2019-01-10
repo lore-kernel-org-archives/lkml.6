@@ -2,151 +2,62 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 886CBC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 05:06:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFA8AC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 05:11:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4CA73206B7
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 05:06:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 388F321738
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 05:11:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="hUOC/ctN";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="RROKgi3i"
+	dkim=pass (2048-bit key) header.d=redchan.it header.i=@redchan.it header.b="GaEVBZ+y"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727137AbfAJFGr (ORCPT
+        id S1727065AbfAJFLD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 00:06:47 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:55058 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725379AbfAJFGr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 00:06:47 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id A771160386; Thu, 10 Jan 2019 05:06:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1547096805;
-        bh=57avjh3+prGYKb+5K6LC4AcsgPmO9s9egCZIcvDISOE=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=hUOC/ctNJPnZ/7O7d/Kq68gI+/dPlwgw8jiXSphrVpL0xv71FxMwqCJBI9lhfi44K
-         yrhZASefomh9wIJzTZxrSXEgCZkZgabyHwyo9gpohAfLc4htmIPIePjFmbGE1uZO1a
-         7RTyUR4EMvK8Cjur2XwMZqEPyzjafTIRJgh23bMM=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id 61C2960265;
-        Thu, 10 Jan 2019 05:06:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1547096803;
-        bh=57avjh3+prGYKb+5K6LC4AcsgPmO9s9egCZIcvDISOE=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=RROKgi3i5xU8iKSQnhaVVa+z2wDGchD771iVHknjda58Ad5bPYYM3yLMcXvULYuCo
-         SO8OHmI9ce13voX4t6uqql5Vk+FKYHYG6VXp9AZJnGo6x5XsNiJocadDysjg9gFy73
-         onizsL8LETSah8P37qr6fZUhxdUxHkm8FmTvH2uo=
+        Thu, 10 Jan 2019 00:11:03 -0500
+Received: from cock.li ([185.100.85.212]:40866 "EHLO cock.li"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725379AbfAJFLC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 00:11:02 -0500
 MIME-Version: 1.0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=redchan.it; s=mail;
+        t=1547097059; bh=Th7GMpoymUSY2ZKOBknOrlY9FNJu4wM0CYmkGL+J4qs=;
+        h=Date:From:To:Subject:From;
+        b=GaEVBZ+yZu6cW5amOcWKyHm2EFA/E6IrNLa88QoPnjLCkkqDmGT978TWLMGurtGzq
+         +NKKLC7VVxyCCs+6e2FeQZEkuMILBf8h1374E2poTDaXK3ay6J+ky0asJdAbegC3m4
+         ojymShomSUqtA03V7907j8IlUf6wZ7JXu3Yb4oXII4ypzRktuRhES6PmZEmn5Wwvf6
+         MyQhvOP8aRPCoiyjSc9HTnNxhaXEyGToz0hRg9Zr8ZbIQ4V8fvK63xQK8FnPXNu1oG
+         dSvbm0zmkZuN9qq4arWUNUui3B0bQsSK2nHjb+aYuwltw/ThiYZPVwgrys0AZ3etWU
+         UlTv8xTuDoTAQ==
 Content-Type: text/plain; charset=US-ASCII;
  format=flowed
 Content-Transfer-Encoding: 7bit
-Date:   Thu, 10 Jan 2019 10:36:43 +0530
-From:   Arun KS <arunks@codeaurora.org>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Michal Hocko <mhocko@kernel.org>,
-        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
-        arunks.linux@gmail.com, vbabka@suse.cz, osalvador@suse.de,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        getarunks@gmail.com
-Subject: Re: [PATCH v7] mm/page_alloc.c: memory_hotplug: free pages as higher
- order
-In-Reply-To: <20190109105652.40e24fa969a2bb7a58e097a8@linux-foundation.org>
-References: <1546578076-31716-1-git-send-email-arunks@codeaurora.org>
- <fb6465c99b3ada2c6af587a7eb00016d96d56f77.camel@linux.intel.com>
- <20190108181352.GI31793@dhcp22.suse.cz>
- <bfb543b6e343c21c3e263a110f234e08@codeaurora.org>
- <20190109073718.GM31793@dhcp22.suse.cz>
- <a053bd9b93e71baae042cdfc3432f945@codeaurora.org>
- <20190109084031.GN31793@dhcp22.suse.cz>
- <e005e71b125b9b8ddee668d1df9ad5ec@codeaurora.org>
- <20190109105754.GR31793@dhcp22.suse.cz>
- <2efb06e91d9af48bf3d1d38bd50e0458@codeaurora.org>
- <20190109105652.40e24fa969a2bb7a58e097a8@linux-foundation.org>
-Message-ID: <51ebe46608c1b502bb7985498f29302d@codeaurora.org>
-X-Sender: arunks@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+Date:   Thu, 10 Jan 2019 05:10:58 +0000
+From:   unconditionedwitness@redchan.it
+To:     linux-kernel@vger.kernel.org
+Subject: Re: Linux 5.0-rc1
+Message-ID: <7ebae6048e376d5176f3fff426615d4b@redchan.it>
+X-Sender: unconditionedwitness@redchan.it
+User-Agent: Roundcube Webmail/1.3.6
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-01-10 00:26, Andrew Morton wrote:
-> On Wed, 09 Jan 2019 16:36:36 +0530 Arun KS <arunks@codeaurora.org> 
-> wrote:
-> 
->> On 2019-01-09 16:27, Michal Hocko wrote:
->> > On Wed 09-01-19 16:12:48, Arun KS wrote:
->> > [...]
->> >> It will be called once per online of a section and the arg value is
->> >> always
->> >> set to 0 while entering online_pages_range.
->> >
->> > You rare right that this will be the case in the most simple scenario.
->> > But the point is that the callback can be called several times from
->> > walk_system_ram_range and then your current code wouldn't work
->> > properly.
->> 
->> Thanks. Will use +=
-> 
-> The v8 patch
-> https://lore.kernel.org/lkml/1547032395-24582-1-git-send-email-arunks@codeaurora.org/T/#u
-> 
-> (which you apparently sent 7 minutes after typing the above) still has
-> 
->  static int online_pages_range(unsigned long start_pfn, unsigned long 
-> nr_pages,
->  			void *arg)
->  {
-> -	unsigned long i;
->  	unsigned long onlined_pages = *(unsigned long *)arg;
-> -	struct page *page;
-> 
->  	if (PageReserved(pfn_to_page(start_pfn)))
-> -		for (i = 0; i < nr_pages; i++) {
-> -			page = pfn_to_page(start_pfn + i);
-> -			(*online_page_callback)(page);
-> -			onlined_pages++;
-> -		}
-> +		onlined_pages = online_pages_blocks(start_pfn, nr_pages);
-> 
-> 
-> Even then the code makes no sense.
-> 
-> static int online_pages_range(unsigned long start_pfn, unsigned long 
-> nr_pages,
-> 			void *arg)
-> {
-> 	unsigned long onlined_pages = *(unsigned long *)arg;
-> 
-> 	if (PageReserved(pfn_to_page(start_pfn)))
-> 		onlined_pages += online_pages_blocks(start_pfn, nr_pages);
-> 
-> 	online_mem_sections(start_pfn, start_pfn + nr_pages);
-> 
-> 	*(unsigned long *)arg += onlined_pages;
-> 	return 0;
-> }
-> 
-> Either the final assignment should be
-> 
-> 	*(unsigned long *)arg = onlined_pages;
-> 
-> or the initialization should be
-> 
-> 	unsigned long onlined_pages = 0;
-> 
-> 
-> 
-> This is becoming a tad tiresome and I'd prefer not to have to check up
-> on such things.  Can we please get this right?
+The copyright owner can rescind. Those saying you cannot are wrong.
+Explained. In american vernacular:
+Video: http://www.veoh.com/watch/v141917696RbH96XaD
+        https://openload.co/f/mT_AH3xmIUM/TruthAboutLinuxandGPLv2__.mp4
+Audio: http://ufile.io/sdhpl
 
-Sorry about that. Will fix it.
+If you hit a video about a speedrunner: that's the wrong one.
+There ain't no speed-runs through the court system.
+(People been trying to give you false links, if it ain't a thug negro
+rap God tellin' you the in's and outs of licensing, GPLv2, and linux:
+sorry man you at the wrong address.)
 
-Regards,
-Arun
+Remember: If it is from the streets; you can rest easy regarding the 
+veracity of the information given.
+
