@@ -2,117 +2,263 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 007D4C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 22:26:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8114C43612
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 22:27:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C5FE3208E3
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 22:26:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A6833213F2
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 22:27:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729372AbfAJW0k convert rfc822-to-8bit (ORCPT
+        id S1729401AbfAJW13 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 17:26:40 -0500
-Received: from sw.attotech.com ([208.69.85.34]:11692 "EHLO
-        NOTESERV1.attotech.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728042AbfAJW0j (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 17:26:39 -0500
-X-Greylist: delayed 919 seconds by postgrey-1.27 at vger.kernel.org; Thu, 10 Jan 2019 17:26:39 EST
-Received: from [10.30.1.34] ([10.30.1.34])
-          by NOTESERV1.attotech.com (IBM Domino Release 9.0.1FP10 HF314)
-          with ESMTP id 2019011017111804-18675 ;
-          Thu, 10 Jan 2019 17:11:18 -0500 
-Subject: Re: [PATCH 14/41] scsi: esas2r: esas2r_init: mark expected switch
- fall-throughs
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Bradley Grove <linuxdrivers@attotech.com>
-Cc:     "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-From:   "Grove, Bradley" <bgrove@attotech.com>
-Message-ID: <6bcead36-dc21-0ba9-48e4-35a9fa19df09@attotech.com>
-Date:   Thu, 10 Jan 2019 17:11:18 -0500
-In-Reply-To: <3751e0eb-e57b-9aed-c23a-f593b780605b@embeddedor.com>
-Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-References: <cover.1543374820.git.gustavo@embeddedor.com>
- <eb98d6f510cd93e45d7832837acd4e5811f3d20e.1543374820.git.gustavo@embeddedor.com>
- <b7f0fbf6-a793-c22c-cc3e-e35706d722f9@embeddedor.com>
- <3751e0eb-e57b-9aed-c23a-f593b780605b@embeddedor.com>
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Thu, 10 Jan 2019 17:27:29 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:34623 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728042AbfAJW13 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 17:27:29 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id B5F9C207B0; Thu, 10 Jan 2019 23:27:26 +0100 (CET)
+Received: from localhost (lfbn-1-17122-186.w86-248.abo.wanadoo.fr [86.248.186.186])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 87B4820729;
+        Thu, 10 Jan 2019 23:27:26 +0100 (CET)
+Date:   Thu, 10 Jan 2019 23:27:26 +0100
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Jan Kotas <jank@cadence.com>
+Cc:     a.zummo@towertech.it, robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-rtc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] rtc: Add Cadence RTC driver
+Message-ID: <20190110222726.GI2362@piout.net>
+References: <20190108122242.12411-1-jank@cadence.com>
+ <20190108122242.12411-3-jank@cadence.com>
 MIME-Version: 1.0
-X-MIMETrack: Itemize by SMTP Server on NOTESERV1/SERV/ATTO(Release 9.0.1FP10
- HF314|September 20, 2018) at 01/10/2019 05:11:18 PM
-X-TNEFEvaluated: 1
-X-Disclaimed: 7795
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190108122242.12411-3-jank@cadence.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Acked-by: Bradley Grove <bgrove@atto.com>
+Hello,
+
+On 08/01/2019 12:22:42+0000, Jan Kotas wrote:
+>  drivers/rtc/Kconfig       |  10 ++
+>  drivers/rtc/Makefile      |   1 +
+>  drivers/rtc/rtc-cadence.c | 404 ++++++++++++++++++++++++++++++++++++++++++++++
+
+I would prefer a name that is a bit less generic, unless you can
+guarantee this driver will be able to handle every RTCs from Cadence.
+
+> +static int cdns_rtc_alarm_irq_enable(struct device *dev, unsigned int enabled)
+> +{
+> +	struct cdns_rtc *crtc = dev_get_drvdata(dev);
+> +
+> +	if (enabled) {
+> +		writel((CDNS_RTC_AEI_SEC | CDNS_RTC_AEI_MIN | CDNS_RTC_AEI_HOUR
+> +			| CDNS_RTC_AEI_DATE | CDNS_RTC_AEI_SEC),
+
+CDNS_RTC_AEI_SEC is used twice here.
+
+> +		       crtc->regs + CDNS_RTC_AENR);
+> +		writel(CDNS_RTC_AEI_ALRM, crtc->regs + CDNS_RTC_IENR);
+> +	} else {
+> +		writel(0, crtc->regs + CDNS_RTC_AENR);
+> +		writel(CDNS_RTC_AEI_ALRM, crtc->regs + CDNS_RTC_IDISR);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
 
 
-On 1/10/2019 3:08 PM, Gustavo A. R. Silva wrote:
-> Hi,
-> 
-> Friendly ping (second one):
-> 
-> Who can ack/review/take this patch, please?
-> 
-> Thanks
+> +static int cdns_rtc_probe(struct platform_device *pdev)
+> +{
+> +	struct cdns_rtc *crtc;
+> +	struct resource *res;
+> +	int ret;
+> +	unsigned long ref_clk_freq;
+> +
+> +	crtc = devm_kzalloc(&pdev->dev, sizeof(*crtc), GFP_KERNEL);
+> +	if (!crtc)
+> +		return -ENOMEM;
+> +
+> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +	crtc->regs = devm_ioremap_resource(&pdev->dev, res);
+> +	if (IS_ERR(crtc->regs))
+> +		return PTR_ERR(crtc->regs);
+> +
+> +	crtc->irq = platform_get_irq(pdev, 0);
+> +	if (crtc->irq < 0)
+> +		return -EINVAL;
+> +
+> +	crtc->pclk = devm_clk_get(&pdev->dev, "pclk");
+> +	if (IS_ERR(crtc->pclk)) {
+> +		ret = PTR_ERR(crtc->pclk);
+> +		dev_err(&pdev->dev,
+> +			"Failed to retrieve the peripheral clock, %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	crtc->ref_clk = devm_clk_get(&pdev->dev, "ref_clk");
+> +	if (IS_ERR(crtc->ref_clk)) {
+> +		ret = PTR_ERR(crtc->ref_clk);
+> +		dev_err(&pdev->dev,
+> +			"Failed to retrieve the reference clock, %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	ret = clk_prepare_enable(crtc->pclk);
+> +	if (ret) {
+> +		dev_err(&pdev->dev,
+> +			"Failed to enable the peripheral clock, %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	ret = clk_prepare_enable(crtc->ref_clk);
+> +	if (ret) {
+> +		dev_err(&pdev->dev,
+> +			"Failed to enable the reference clock, %d\n", ret);
+> +		goto err_disable_pclk;
+> +	}
+> +
+> +	ref_clk_freq = clk_get_rate(crtc->ref_clk);
+> +	if ((ref_clk_freq != 1) && (ref_clk_freq != 100)) {
+> +		dev_err(&pdev->dev,
+> +			"Invalid reference clock frequency %lu Hz.\n",
+> +			ref_clk_freq);
+> +		ret = -EINVAL;
+> +		goto err_disable_ref_clk;
+> +	}
+> +
+> +	ret = devm_request_irq(&pdev->dev, crtc->irq,
+> +			       cdns_rtc_irq_handler, 0,
+> +			       dev_name(&pdev->dev), &pdev->dev);
+> +	if (ret) {
+> +		dev_err(&pdev->dev,
+> +			"Unable to request interrupt for the device, %d\n",
+> +			ret);
+> +		goto err_disable_ref_clk;
+> +	}
+> +
+
+You should use devm_rtc_allocate_device to allocate crtc->rtc_dev before
+requesting the IRQ. Else, this leaves a race condition open.
+
+Also, please set crtc->rtc_dev->range_min and crtc->rtc_dev->range_max
+according to the fully contiguous range of time that is supported by the
+RTC. You can use
+https://git.kernel.org/pub/scm/linux/kernel/git/abelloni/rtc-tools.git/tree/rtc-range.c
+to assist you.
+
+> +	/* Always use 24-hour mode */
+> +	writel(0, crtc->regs + CDNS_RTC_HMR);
+> +
+> +	device_init_wakeup(&pdev->dev, 1);
+> +	platform_set_drvdata(pdev, crtc);
+> +	cdns_rtc_set_enabled(crtc, true);
+
+Is that really necessary? I guess you could check whether it has already
+been enabled to know whether the currently set time is valid so
+cdns_rtc_read_time could return -EINVAL when it knows it isn't valid.
+cdns_rtc_set_time will enable the RTC once the time has been set anyway.
+
+> +
+> +	crtc->rtc_dev = devm_rtc_device_register(&pdev->dev,
+> +						 dev_name(&pdev->dev),
+> +						 &cdns_rtc_ops,
+> +						 THIS_MODULE);
+> +	if (IS_ERR(crtc->rtc_dev)) {
+> +		ret = PTR_ERR(crtc->rtc_dev);
+> +		dev_err(&pdev->dev, "Unable to register the rtc device, %d\n",
+> +			ret);
+> +		goto err_stop_rtc;
+> +	}
+> +
+> +	return 0;
+> +
+> +err_stop_rtc:
+> +	cdns_rtc_set_enabled(crtc, false);
+> +
+> +err_disable_ref_clk:
+> +	clk_disable_unprepare(crtc->ref_clk);
+> +
+> +err_disable_pclk:
+> +	clk_disable_unprepare(crtc->pclk);
+> +
+> +	return ret;
+> +}
+> +
+> +static int cdns_rtc_remove(struct platform_device *pdev)
+> +{
+> +	struct cdns_rtc *crtc = platform_get_drvdata(pdev);
+> +
+> +	cdns_rtc_alarm_irq_enable(&pdev->dev, 0);
+> +	device_init_wakeup(&pdev->dev, 0);
+> +
+> +	clk_disable_unprepare(crtc->pclk);
+> +	clk_disable_unprepare(crtc->ref_clk);
+> +
+> +	return 0;
+> +}
+> +
+> +#ifdef CONFIG_PM_SLEEP
+> +static int cdns_rtc_suspend(struct device *dev)
+> +{
+> +	struct cdns_rtc *crtc = dev_get_drvdata(dev);
+> +
+> +	if (device_may_wakeup(dev))
+> +		enable_irq_wake(crtc->irq);
+> +
+> +	return 0;
+> +}
+> +
+> +static int cdns_rtc_resume(struct device *dev)
+> +{
+> +	struct cdns_rtc *crtc = dev_get_drvdata(dev);
+> +
+> +	if (device_may_wakeup(dev))
+> +		disable_irq_wake(crtc->irq);
+> +
+> +	return 0;
+> +}
+> +#endif
+> +
+> +static SIMPLE_DEV_PM_OPS(cdns_rtc_pm_ops, cdns_rtc_suspend, cdns_rtc_resume);
+> +
+> +static const struct of_device_id cdns_rtc_of_match[] = {
+> +	{ .compatible = "cdns,rtc-r109v3" },
+
+Is r109v3 an IP name or a revision?
+
+> +	{ },
+> +};
+> +MODULE_DEVICE_TABLE(of, cdns_rtc_of_match);
+> +
+> +static struct platform_driver cdns_rtc_driver = {
+> +	.driver = {
+> +		.name = "cdns-rtc",
+> +		.of_match_table = cdns_rtc_of_match,
+> +		.pm = &cdns_rtc_pm_ops,
+> +	},
+> +	.probe = cdns_rtc_probe,
+> +	.remove = cdns_rtc_remove,
+> +};
+> +module_platform_driver(cdns_rtc_driver);
+> +
+> +MODULE_AUTHOR("Jan Kotas <jank@cadence.com>");
+> +MODULE_DESCRIPTION("Cadence RTC driver");
+> +MODULE_LICENSE("GPL v2");
+> +MODULE_ALIAS("platform:cdns-rtc");
 > -- 
-> Gustavo
+> 2.15.0
 > 
-> On 12/19/18 9:39 AM, Gustavo A. R. Silva wrote:
->> Hi,
->>
->> Friendly ping:
->>
->> Who can ack or review this patch, please?
->>
->> Thanks
->> -- 
->> Gustavo
->>
->> On 11/27/18 10:28 PM, Gustavo A. R. Silva wrote:
->>> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
->>> where we are expecting to fall through.
->>>
->>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
->>> ---
->>>   drivers/scsi/esas2r/esas2r_init.c | 3 ++-
->>>   1 file changed, 2 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/scsi/esas2r/esas2r_init.c 
->>> b/drivers/scsi/esas2r/esas2r_init.c
->>> index 46b2c83ba21f..950cd92df2ff 100644
->>> --- a/drivers/scsi/esas2r/esas2r_init.c
->>> +++ b/drivers/scsi/esas2r/esas2r_init.c
->>> @@ -1241,6 +1241,7 @@ static bool esas2r_format_init_msg(struct 
->>> esas2r_adapter *a,
->>>               a->init_msg = ESAS2R_INIT_MSG_GET_INIT;
->>>               break;
->>>           }
->>> +        /* fall through */
->>>       case ESAS2R_INIT_MSG_GET_INIT:
->>>           if (msg == ESAS2R_INIT_MSG_GET_INIT) {
->>> @@ -1254,7 +1255,7 @@ static bool esas2r_format_init_msg(struct 
->>> esas2r_adapter *a,
->>>                   esas2r_hdebug("FAILED");
->>>               }
->>>           }
->>> -    /* fall through */
->>> +        /* fall through */
->>>       default:
->>>           rq->req_stat = RS_SUCCESS;
->>>
 
-
-
-This electronic transmission and any attachments hereto are intended only for the use of the individual or entity to which it is addressed and may contain confidential information belonging to ATTO Technology, Inc. If you have reason to believe that you are not the intended recipient, you are hereby notified that any disclosure, copying, distribution or the taking of any action in reliance on the contents of this electronic transmission is strictly prohibited. If you have reason to believe that you have received this transmission in error, please notify ATTO immediately by return e-mail and delete and destroy this communication.   
+-- 
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
