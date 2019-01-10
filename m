@@ -2,43 +2,36 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB41FC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 12:55:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CE93C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 12:56:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B9AF6214C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 12:55:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EA2BC214C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 12:56:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728734AbfAJMzq (ORCPT
+        id S1728744AbfAJM4P (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 07:55:46 -0500
-Received: from foss.arm.com ([217.140.101.70]:33838 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726974AbfAJMzq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 07:55:46 -0500
+        Thu, 10 Jan 2019 07:56:15 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:33878 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726974AbfAJM4O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 07:56:14 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8197980D;
-        Thu, 10 Jan 2019 04:55:45 -0800 (PST)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1394380D;
+        Thu, 10 Jan 2019 04:56:14 -0800 (PST)
 Received: from [10.1.196.62] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3E57F3F5AF;
-        Thu, 10 Jan 2019 04:55:44 -0800 (PST)
-Subject: Re: [RESEND 1/1] gic: its: Make sure a LPI is discarded before free.
-To:     "Zhao, Yuanyuan" <yuanyuan.zhao@hxt-semitech.com>
-Cc:     "tglx@linutronix.de" <tglx@linutronix.de>,
-        "jason@lakedaemon.net" <jason@lakedaemon.net>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "Zheng, Joey" <yu.zheng@hxt-semitech.com>,
-        "Wang, Dongsheng" <dongsheng.wang@hxt-semitech.com>
-References: <e37e3f5e0146be65c60092a457ca5c82e25581a0.1545292748.git.yuanyuan.zhao@hxt-semitech.com>
- <20190109074324.6445118d@why.wild-wind.fr.eu.org>
- <c81f42aa93904353bbeac590da7b0945@HXTBJIDCEMVIW02.hxtcorp.net>
- <38d7afaf-e800-f6e7-83e3-eb006f4d6f4c@arm.com>
- <8ebfa53337724799b4b6b2ed8bb06866@HXTBJIDCEMVIW02.hxtcorp.net>
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 26EDF3F5AF;
+        Thu, 10 Jan 2019 04:56:13 -0800 (PST)
+Subject: Re: [PATCH] arm: fix a migrating irq bug when hotplug cpu
+To:     Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Cc:     Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        linux-kernel@vger.kernel.org
+References: <20190110100922.20280-1-dietmar.eggemann@arm.com>
 From:   Marc Zyngier <marc.zyngier@arm.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=marc.zyngier@arm.com; prefer-encrypt=mutual; keydata=
@@ -84,13 +77,13 @@ Autocrypt: addr=marc.zyngier@arm.com; prefer-encrypt=mutual; keydata=
  hApihi08gwvP5G9fNGKQyRETePEtEAWt0b7dOqMzYBYGRVr7uS4uT6WP7fzOwAJC4lU7ZYWZ
  yVshCa0IvTtp1085RtT3qhh9mobkcZ+7cQOY+Tx2RGXS9WeOh2jZjdoWUv6CevXNQyOUXMM=
 Organization: ARM Ltd
-Message-ID: <f0816b2b-4a62-5f34-5792-001ddc5ba165@arm.com>
-Date:   Thu, 10 Jan 2019 12:55:42 +0000
+Message-ID: <52e825c6-6704-c6b9-bbba-a87a0f5ec9cb@arm.com>
+Date:   Thu, 10 Jan 2019 12:56:11 +0000
 User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
  Thunderbird/60.3.1
 MIME-Version: 1.0
-In-Reply-To: <8ebfa53337724799b4b6b2ed8bb06866@HXTBJIDCEMVIW02.hxtcorp.net>
-Content-Type: text/plain; charset=iso-2022-jp
+In-Reply-To: <20190110100922.20280-1-dietmar.eggemann@arm.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -98,64 +91,30 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/01/2019 09:42, Zhao, Yuanyuan wrote:
+On 10/01/2019 10:09, Dietmar Eggemann wrote:
+> Arm TC2 fails cpu hotplug stress test.
 > 
+> This issue was tracked down to a missing copy of the new affinity
+> cpumask for the vexpress-spc interrupt into struct
+> irq_common_data.affinity when the interrupt is migrated in
+> migrate_one_irq().
 > 
->> -----Original Message-----
->> From: Marc Zyngier [mailto:marc.zyngier@arm.com]
->> Sent: 2019年1月9日 17:52
->> To: Zhao, Yuanyuan <yuanyuan.zhao@hxt-semitech.com>
->> Cc: tglx@linutronix.de; jason@lakedaemon.net; linux-
->> kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org; Zheng, Joey
->> <yu.zheng@hxt-semitech.com>; Wang, Dongsheng <dongsheng.wang@hxt-
->> semitech.com>
->> Subject: Re: [RESEND 1/1] gic: its: Make sure a LPI is discarded before free.
->>
->> On 09/01/2019 09:29, Zhao, Yuanyuan wrote:
->>> Hi Marc:
->>>
->>> Thank you for your reply.
->>>
->>> As you said, APIs such as free_irq will deactivate irq before free it.
->>> But deactivation is not forced by every API, for example
->>> irq_dispose_mapping.  So I think it's better to check that irq was
->>> deactivated as expected.
->>
->> In general, we should fix the problem at the core API level instead of hacking
->> individual drivers.
->>
->> But more to the point, irq_dispose_mapping is not supposed to do anything
->> with the an active irq, as it doesn't have the required information to safely
->> remove it.
->>
->> So calling irq_dispose_mapping on an interrupt that still has registered
->> actions is a bug, and I'm not convinced we want to cater for such a case. Do
->> you have a concrete example of some kernel code expecting this behaviour?
->>
->> Thanks,
->>
->> 	M.
->>
+> Fix it by replacing the arm specific hotplug cpu migration with the
+> generic irq code.
 > 
-> Most driver use free_irq after register actions, I found this problem by a test case. 
+> This is the counterpart implementation to commit 217d453d473c ("arm64:
+> fix a migrating irq bug when hotplug cpu").
+> 
+> Tested with cpu hotplug stress test on Arm TC2 (multi_v7_defconfig plus
+> CONFIG_ARM_BIG_LITTLE_CPUFREQ=y and CONFIG_ARM_VEXPRESS_SPC_CPUFREQ=y).
+> The vexpress-spc interrupt (irq=22) on this board is affine to CPU0.
+> Its affinity cpumask now changes correctly e.g. from 0 to 1-4 when
+> CPU0 is hotplugged out.
+> 
+> Suggested-by: Marc Zyngier <marc.zyngier@arm.com>
+> Signed-off-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
 
-Right, so that's not a fix at all. Not following the API is the bug.
-
-> But if this problem happen and the same DeviceID & EventID are reused, 
-> the freed ITT will be visit which cause delayed kernel panic,
-> the prev INTs are triggered unexpected, but the new INTs lost.
-
-If you're disposing of the mapping and yet have not freed the interrupt,
-then anything can happen. The kernel doesn't try to protect yourself
-from your own mistakes.
-
-> So I think this check spend less, but gains more.
-
-I beg to differ. This brings nothing but a very weak guarantee that only
-applies to a particular class of HW, makes a mess of the API, and papers
-over grave bugs that should be fixed.
-
-Thanks,
+Acked-by: Marc Zyngier <marc.zyngier@arm.com>
 
 	M.
 -- 
