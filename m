@@ -6,81 +6,59 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D627C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 12:26:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FE0BC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 12:26:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4295220665
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 12:26:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2A97D20665
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 12:26:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728672AbfAJM0T (ORCPT
+        id S1728683AbfAJM0r (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 07:26:19 -0500
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:41267 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727579AbfAJM0R (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 07:26:17 -0500
-Received: by mail-qt1-f194.google.com with SMTP id l12so12293406qtf.8
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 04:26:16 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=kMaczRLZuY7tddOmSul8f/HtY4zML1PqsSt1bdAC76E=;
-        b=RASyQ4GOuHJQ3u/9RBkPH62jW9pyuU3AbWiwHtmh4+G7ao4sF8KkqTG0R0qGjofa/O
-         sxdaClrWzSB3kvcBfXsk4eBCh8+oEW2t+VrKw0gk69N8MUfV8Tcjo7updG9U76ibg7xZ
-         gr49MTIXsmLSpIgXMqurSoXL16Ud9qj2iQ9KEikVl8DntFvbXSYLQw5POMtzuEm0NGot
-         bIdJoaqN7fLOEeRqYmSQ2ZTdTK4ak2vWU5eBMjUH1BUWwiZlPYkJJUnmv4cV/f1biEUB
-         BR3TfNFbpor1OvFIGDphHnXbk3kdpi/1saPCqKudrpaJJ2hqgIAZIY1zr8clZvtQAsb9
-         2KCw==
-X-Gm-Message-State: AJcUukdzY2bxIeaJtTiIFt++6rCiqed0aSPnpjhej/AqfYHwSMU3GFHe
-        HBqW2HB9YpgO3ZAO9XJPoz5GNNgJSlnEkVsSYI0=
-X-Google-Smtp-Source: ALg8bN58Vt3fNw4HeN0DarFXNenvDb0yu54L2tHhiDy3MidFntMnEZG/SFEnZa1OTDJbQM9/ymV5jWQCkobMoglwU+A=
-X-Received: by 2002:ac8:1d12:: with SMTP id d18mr9276973qtl.343.1547123176135;
- Thu, 10 Jan 2019 04:26:16 -0800 (PST)
+        Thu, 10 Jan 2019 07:26:47 -0500
+Received: from gloria.sntech.de ([185.11.138.130]:54774 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727579AbfAJM0q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 07:26:46 -0500
+Received: from wf0848.dip.tu-dresden.de ([141.76.183.80] helo=phil.localnet)
+        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <heiko@sntech.de>)
+        id 1ghZQ4-00032m-Ao; Thu, 10 Jan 2019 13:26:44 +0100
+From:   Heiko Stuebner <heiko@sntech.de>
+To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Cc:     linux-kernel@vger.kernel.org, kernel@collabora.com,
+        bleung@chromium.org, groeck@google.com,
+        kieran.bingham@ideasonboard.com,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        linux-rockchip@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2] phy: phy-rockchip-inno-usb2: drop reading the utmi-avalid property
+Date:   Thu, 10 Jan 2019 13:26:43 +0100
+Message-ID: <5125335.cuvu72hbmo@phil>
+In-Reply-To: <20190109171415.9954-1-enric.balletbo@collabora.com>
+References: <20190109171415.9954-1-enric.balletbo@collabora.com>
 MIME-Version: 1.0
-References: <000000000000449587057e1e6f8b@google.com> <49b3b189-a51f-6a97-0e1f-bc3f2c305299@I-love.SAKURA.ne.jp>
- <62FAC6A3-AC41-44CD-8ABC-79F404BF8CB1@microgate.com> <F23DE81F-C976-4AED-8990-84A6ADC1BF1F@microgate.com>
- <d351e662-0087-9cd7-46b2-ef49134c639c@i-love.sakura.ne.jp>
-In-Reply-To: <d351e662-0087-9cd7-46b2-ef49134c639c@i-love.sakura.ne.jp>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Thu, 10 Jan 2019 13:25:59 +0100
-Message-ID: <CAK8P3a39t3pDjL9yqS6T9JQM-nGej7gvZibhya5qkC1JDHj5tw@mail.gmail.com>
-Subject: Re: [PATCH] tty/n_hdlc: fix __might_sleep warning
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Paul Fulghum <paulkf@microgate.com>,
-        "linux-kernel@vger.kernel.org Mailing List" 
-        <linux-kernel@vger.kernel.org>,
-        Alan Cox <alan@lxorguk.ukuu.org.uk>,
-        syzbot <syzbot+c244af085a0159d22879@syzkaller.appspotmail.com>,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 10, 2019 at 12:39 PM Tetsuo Handa
-<penguin-kernel@i-love.sakura.ne.jp> wrote:
-> On 2019/01/02 5:28, Paul Fulghum wrote:
-> > Fix __might_sleep warning in tty/n_hdlc.c read due to copy_to_user call while current is TASK_INTERRUPTIBLE.
-> > This is a false positive since the code path does not depend on current state remaining TASK_INTERRUPTIBLE.
-> > The loop breaks out and sets TASK_RUNNING after calling copy_to_user.
-> > This patch supresses the warning by setting TASK_RUNNING before calling copy_to_user.
-> >
-> > [1] https://syzkaller.appspot.com/bug?id=17d5de7f1fcab794cb8c40032f893f52de899324
-> >
-> > Signed-off-by: Paul Fulghum <paulkf@microgate.com>
-> > Reported-by: syzbot <syzbot+c244af085a0159d22879@syzkaller.appspotmail.com>
-> > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-> > Cc: Arnd Bergmann <arnd@arndb.de>
-> > Cc: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Am Mittwoch, 9. Januar 2019, 18:14:15 CET schrieb Enric Balletbo i Serra:
+> That property is no used in mainline and is not documented. The only
+> board using that property is the rk33-99-evb-rev1 and -rev2 in the
+> vendor kernel. The existence of a further -rev3 (which also looks way
+> better cared for compared rev1+2) indicates that the older ones are
+> probably some sort of preproduction models, where some wiring (on the soc
+> or board) may have gone wrong.
+> 
+> It is also not clear why this is a hardware-description or a DT
+> property, so, as noboby seems to care of this just drop reading that
+> property.
+> 
+> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 
-This version looks good to me.
+Reviewed-by: Heiko Stuebner <heiko@sntech.de>
 
-Acked-by: Arnd Bergmann <arnd@arndb.de>
 
-       Arnd
