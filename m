@@ -7,54 +7,62 @@ X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF87BC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 11:54:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08A98C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 11:54:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE4FE214DA
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 11:54:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CD534214DA
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 11:54:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547121283;
-	bh=i4v/YMsZV2OQsuMFl24146W2+i7ZMn7+s0SEGtGDnKM=;
+	s=default; t=1547121289;
+	bh=pnGi9ghz+sruP4xD27/HKWPCbuX1k5hgPZ3INB7x8Ko=;
 	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=A64qy5kxjwaBG0N8p/0VQ2FfmxCKlp9MyRTONZDJb+W/Wwl4auvhVdkaHOOMauxOX
-	 4Vq1t8uLt0PiaxlltUShgjEDO9wO3LRWaR+PXnD3kBgKgQLwIFz0OqI0T21Ib7xETh
-	 kax8Er0fjF4P7dVvq+NvVdHnR99U/ot2mDmwxFsI=
+	b=h2rCIn8QtFuVs5c9/vJvY0VsmV5RlSj1ftCXwFnaqoBt45PRbf/cOckr3rTN4Wja9
+	 bX+BCDvPRTEeRd1FKp7ThAUNYSmyTXFWuC84PvjxnHvbbcezNve9p1aFGu5Wgmn8aS
+	 a64YN1tY4o6riq/JpowVflwG+dgsY2bldc6PQkgs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727837AbfAJLym (ORCPT
+        id S1728437AbfAJLys (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 06:54:42 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:60936 "EHLO
+        Thu, 10 Jan 2019 06:54:48 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:32856 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727435AbfAJLym (ORCPT
+        with ESMTP id S1727860AbfAJLyr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 06:54:42 -0500
+        Thu, 10 Jan 2019 06:54:47 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=LoPgMtFHKLxYovTFVdiOStzQd0dkXxGJnaudw4ol18I=; b=gKbpB2IuYSG+
-        t6S7r2glN+j95+Y3ci4WBD/BF5A0i+xqvlAlAN5ytDjsa42iSyY6YjTcTp4yMUIdp5euAKV8OUajb
-        uPcpnDDIAlWEFlTqPY6lJP8x1lR0+zA9cpXnpFWTS6FbnRjPsvurTakmHP1dVibrZCWNMbqoE5icS
-        afe3o=;
+        List-Archive; bh=9ii/SwTbzoAw7ZUDADMijsWgJ6Y/Kph6hmRMA8PIEOQ=; b=I1va7rdqO+5d
+        3FsOApzx3/1q91pST+GMS39jRqdY6wc9qFVgciGZk8AJuL2pVMshv8vLVRVY2l301lNcH1I2DqhnF
+        LDoa6IbLmC4TKAN8xDKnBy5m+NXLnqyp7MJLraRt5Vy0R8tUFlrHptFcsL3G7HxKk7wdfdhyvE0dr
+        DCh/g=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1ghYux-0003Pq-QX; Thu, 10 Jan 2019 11:54:35 +0000
+        id 1ghYut-0003Pi-Cy; Thu, 10 Jan 2019 11:54:31 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 6EE0F1127052; Thu, 10 Jan 2019 11:54:35 +0000 (GMT)
+        id 092A91127052; Thu, 10 Jan 2019 11:54:26 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
-To:     Anders Roxell <anders.roxell@linaro.org>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Mark Brown <broonie@kernel.org>, broonie@kernel.org,
-        linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-spi@vger.kernel.org
-Subject: Applied "spi: dw: fix warning unused variable 'ret'" to the spi tree
-In-Reply-To:  <20190110101407.7583-1-anders.roxell@linaro.org>
+To:     Wei Yongjun <weiyongjun1@huawei.com>
+Cc:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Mark Brown <broonie@kernel.org>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+        Jie Yang <yang.jie@linux.intel.com>,
+        Mark Brown <broonie@kernel.org>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        kernel-janitors@vger.kernel.org, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
+Subject: Applied "ASoC: Intel: bytcht_es8316: use correct drvdata in snd_byt_cht_es8316_mc_remove()" to the asoc tree
+In-Reply-To:  <1547084589-40006-1-git-send-email-weiyongjun1@huawei.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20190110115435.6EE0F1127052@debutante.sirena.org.uk>
-Date:   Thu, 10 Jan 2019 11:54:35 +0000 (GMT)
+Message-Id: <20190110115426.092A91127052@debutante.sirena.org.uk>
+Date:   Thu, 10 Jan 2019 11:54:26 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -62,11 +70,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   spi: dw: fix warning unused variable 'ret'
+   ASoC: Intel: bytcht_es8316: use correct drvdata in snd_byt_cht_es8316_mc_remove()
 
-has been applied to the spi tree at
+has been applied to the asoc tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
@@ -87,44 +95,40 @@ to this mail.
 Thanks,
 Mark
 
-From 4f0a0cd52d6c812fbf737e436b18f04eac2e312e Mon Sep 17 00:00:00 2001
-From: Anders Roxell <anders.roxell@linaro.org>
-Date: Thu, 10 Jan 2019 11:14:07 +0100
-Subject: [PATCH] spi: dw: fix warning unused variable 'ret'
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From f833fe2056b3a6d69598ef029cede6e77dcc1b14 Mon Sep 17 00:00:00 2001
+From: Wei Yongjun <weiyongjun1@huawei.com>
+Date: Thu, 10 Jan 2019 01:43:09 +0000
+Subject: [PATCH] ASoC: Intel: bytcht_es8316: use correct drvdata in
+ snd_byt_cht_es8316_mc_remove()
 
-When CONFIG_SPI_DESIGNWARE are enabled we see the unused variable
-warning in dw_spi_setup.
+The snd_byt_cht_es8316_mc_remove() use the platform drvdata as a type
+of 'struct byt_cht_es8316_private', but snd_byt_cht_es8316_mc_probe()
+set it to 'struct snd_soc_card', as suggested by Dan Carpenter, fix
+the usage in snd_byt_cht_es8316_mc_remove().
 
-../drivers/spi/spi-dw.c: In function ‘dw_spi_setup’:
-../drivers/spi/spi-dw.c:400:6: warning: unused variable ‘ret’ [-Wunused-variable]
-  int ret;
-      ^~~
-
-Remove the unused varable.
-
-Fixes: 9400c41e77b8 ("spi: dw: Convert to use CS GPIO descriptors")
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+Fixes: 0d3e91da0750 ("ASoC: Intel: bytcht_es8316: Add external speaker mux support")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+Acked-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Reviewed-by: Hans de Goede <hdegoede@redhat.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/spi/spi-dw.c | 1 -
- 1 file changed, 1 deletion(-)
+ sound/soc/intel/boards/bytcht_es8316.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/spi/spi-dw.c b/drivers/spi/spi-dw.c
-index f54b498001a9..7092e58add2c 100644
---- a/drivers/spi/spi-dw.c
-+++ b/drivers/spi/spi-dw.c
-@@ -397,7 +397,6 @@ static int dw_spi_setup(struct spi_device *spi)
- {
- 	struct dw_spi_chip *chip_info = NULL;
- 	struct chip_data *chip;
--	int ret;
+diff --git a/sound/soc/intel/boards/bytcht_es8316.c b/sound/soc/intel/boards/bytcht_es8316.c
+index cdf2061e7613..fa9c4cf97686 100644
+--- a/sound/soc/intel/boards/bytcht_es8316.c
++++ b/sound/soc/intel/boards/bytcht_es8316.c
+@@ -544,7 +544,8 @@ static int snd_byt_cht_es8316_mc_probe(struct platform_device *pdev)
  
- 	/* Only alloc on first setup */
- 	chip = spi_get_ctldata(spi);
+ static int snd_byt_cht_es8316_mc_remove(struct platform_device *pdev)
+ {
+-	struct byt_cht_es8316_private *priv = platform_get_drvdata(pdev);
++	struct snd_soc_card *card = platform_get_drvdata(pdev);
++	struct byt_cht_es8316_private *priv = snd_soc_card_get_drvdata(card);
+ 
+ 	gpiod_put(priv->speaker_en_gpio);
+ 	return 0;
 -- 
 2.20.1
 
