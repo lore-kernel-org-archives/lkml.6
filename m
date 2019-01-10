@@ -2,57 +2,46 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3D58C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 09:42:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BDFFC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 09:42:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BDB69214DA
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 09:42:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 456C4214C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 09:42:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728031AbfAJJmC (ORCPT
+        id S1728055AbfAJJmL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 04:42:02 -0500
-Received: from mga11.intel.com ([192.55.52.93]:62912 "EHLO mga11.intel.com"
+        Thu, 10 Jan 2019 04:42:11 -0500
+Received: from relay.sw.ru ([185.231.240.75]:55566 "EHLO relay.sw.ru"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727903AbfAJJmC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 04:42:02 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jan 2019 01:42:01 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,460,1539673200"; 
-   d="scan'208";a="115695595"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmsmga008.fm.intel.com with ESMTP; 10 Jan 2019 01:42:01 -0800
-Received: from [10.125.252.115] (abudanko-mobl.ccr.corp.intel.com [10.125.252.115])
-        by linux.intel.com (Postfix) with ESMTP id EBD5958058B;
-        Thu, 10 Jan 2019 01:41:58 -0800 (PST)
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-Subject: Re: [PATCH v3 3/4] perf record: apply affinity masks when reading
- mmap buffers
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <b31ddfd5-a017-d8da-14eb-d1b48bfc255b@linux.intel.com>
- <a5081531-f89b-9d5a-df16-76a1de3c0d82@linux.intel.com>
- <20190109165330.GC19455@krava>
-Organization: Intel Corp.
-Message-ID: <93fedb49-f4fc-8153-2920-5b6b107bbca2@linux.intel.com>
-Date:   Thu, 10 Jan 2019 12:41:55 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        id S1727903AbfAJJmK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 04:42:10 -0500
+Received: from [172.16.25.169]
+        by relay.sw.ru with esmtp (Exim 4.91)
+        (envelope-from <ktkhai@virtuozzo.com>)
+        id 1ghWqg-0003DW-It; Thu, 10 Jan 2019 12:42:02 +0300
+Subject: Re: [PATCH RFC 0/3] mm: Reduce IO by improving algorithm of memcg
+ pagecache pages eviction
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     akpm@linux-foundation.org, hannes@cmpxchg.org,
+        josef@toxicpanda.com, jack@suse.cz, hughd@google.com,
+        darrick.wong@oracle.com, aryabinin@virtuozzo.com, guro@fb.com,
+        mgorman@techsingularity.net, shakeelb@google.com,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <154703479840.32690.6504699919905946726.stgit@localhost.localdomain>
+ <20190109141113.GW31793@dhcp22.suse.cz>
+ <e9b64635-87cf-f330-acea-0ca681a2528e@virtuozzo.com>
+ <20190109171021.GY31793@dhcp22.suse.cz>
+From:   Kirill Tkhai <ktkhai@virtuozzo.com>
+Message-ID: <3d4f4c83-44c9-c6d5-8dbe-c42a47e6c2bd@virtuozzo.com>
+Date:   Thu, 10 Jan 2019 12:42:02 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-In-Reply-To: <20190109165330.GC19455@krava>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20190109171021.GY31793@dhcp22.suse.cz>
+Content-Type: text/plain; charset=windows-1252
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -60,62 +49,101 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09.01.2019 19:53, Jiri Olsa wrote:
-> On Wed, Jan 09, 2019 at 12:38:23PM +0300, Alexey Budankov wrote:
+On 09.01.2019 20:10, Michal Hocko wrote:
+> On Wed 09-01-19 18:43:05, Kirill Tkhai wrote:
+>> Hi, Michal,
+>>
+>> On 09.01.2019 17:11, Michal Hocko wrote:
+>>> On Wed 09-01-19 15:20:18, Kirill Tkhai wrote:
+>>>> On nodes without memory overcommit, it's common a situation,
+>>>> when memcg exceeds its limit and pages from pagecache are
+>>>> shrinked on reclaim, while node has a lot of free memory.
+>>>
+>>> Yes, that is the semantic of the hard limit. If the system is not
+>>> overcommitted then the hard limit can be used to prevent unexpected
+>>> direct reclaim from unrelated activity.
+>>
+>> According to Documentation/admin-guide/cgroup-v2.rst:
+>>
+>>   memory.max
+>>         Memory usage hard limit.  This is the final protection
+>>         mechanism.  If a cgroup's memory usage reaches this limit and
+>>         can't be reduced, the OOM killer is invoked in the cgroup.
+>>         Under certain circumstances, the usage may go over the limit
+>>         temporarily.
+>>
+>> There is nothing about direct reclaim in another memcg. I don't think
+>> we break something here.
 > 
-> SNIP
+> Others in the thread have pointed that out already. What is a hard limit
+> in one memcg is an isolateion protection in another one. Especially when
+> the system is not overcommited.
 > 
->> diff --git a/tools/perf/util/mmap.c b/tools/perf/util/mmap.c
->> index e5220790f1fb..ee0230eed635 100644
->> --- a/tools/perf/util/mmap.c
->> +++ b/tools/perf/util/mmap.c
->> @@ -377,6 +377,24 @@ void perf_mmap__munmap(struct perf_mmap *map)
->>  	auxtrace_mmap__munmap(&map->auxtrace_mmap);
->>  }
+>> File pages are accounted to memcg, and this guarantees, that single
+>> memcg won't occupy all system memory by its unevictible page cache.
+>> But the suggested patchset follows the same way. Pages, which remain
+>> in pagecache, are easy-to-be-evicted, since they are not dirty and
+>> not under writeback. System can drop them fast and in foreseeable time.
+>> This is cardinal thing about the patchset: remained pages do not
+>> introduce principal burden on system memory or reclaim time.
+> 
+> What does prevent that the page cache is easily reclaimable? Aka clean
+> and ready to be dropped? Not to mention that even when the reclaim is
+> fast it is not free. Especially when you do not expect that because you
+> haven't reached your hard limit and the admin made sure that hard limits
+> do not overcommit.
+
+Yes, I mean it's clean and ready to drop.
+
+I understand the problem, so in case of people worry about reclaim speed
+increasing, this does not mean we should completely forget this way. This
+means we possible may find a compromise, which is suitable for everybody.
+
+>>> But this also means that any hard limited memcg can fill up all the
+>>> memory and break the above assumption about the isolation from direct
+>>> reclaim. Not to mention the OOM or is there anything you do anything
+>>> about preventing that?
+>>
+>> This is discussed thing. We may add such the pages into tail of LRU list
+>> instead of head. We may introduce one more separate list to link such
+>> the pages only, and fastly evict them in case of global reclaim. I don't
+>> think there is a problem.
 >>  
->> +static void perf_mmap__setup_affinity_mask(struct perf_mmap *map, struct mmap_params *mp)
->> +{
->> +	int c, cpu, nr_cpus, node;
->> +
->> +	CPU_ZERO(&map->affinity_mask);
->> +	if (mp->affinity == PERF_AFFINITY_NODE && cpu__max_node() > 1) {
->> +		nr_cpus = cpu_map__nr(mp->cpu_map);
->> +		node = cpu__get_node(map->cpu);
->> +		for (c = 0; c < nr_cpus; c++) {
->> +			cpu = mp->cpu_map->map[c]; /* map c index to online cpu index */
->> +			if (cpu__get_node(cpu) == node)
->> +				CPU_SET(cpu, &map->affinity_mask);
+>>> That beig said, I do not think we want to or even can change the
+>>> semantic of the hard limit and break existing setups.
+>>
+>> Using the original description and the comments I gave in this message,
+>> could you please to clarify the way we break existing setups?
 > 
-> should we do that from from all possible cpus task (perf record)
-> can run on, instead of mp->cpu_map, which might be only subset
-> (-C ... option)
-
-That is how it should be and because mp->cpu_map depends on -C option value 
-in this patch set version it requires to be corrected, possibly like this:
-
-struct mmap_params mp = {
-		.nr_cblocks	= nr_cblocks,
-		.affinity	= affinity,
-		.cpu_map	= cpu_map__new(NULL) /* builds struct cpu_map from /sys/devices/system/cpu/online */
-	}; 
-and 
-	if (mp->affinity == PERF_AFFINITY_NODE && cpu__max_node() > 1 && mp->cpu_map)
-
-Thanks!
-
+> isolation as explained above.
 > 
-> also node -> cpu_map is static configuration, we could prepare
-> this map ahead (like cpunode_map) and just assign it in here
-> based on node index
-
-It makes sense and either way is possible. However the static configuration 
-looks a bit trickier because it incurs additional mask objects duplication 
-and conversion from struct cpu_map to cpu_set_t still remains the same.
-
-Thanks,
-Alexey
-
+>>> I am still
+>>> interested to hear more about more detailed/specific usecases that might
+>>> benefit from this behavior. Why do those users even use hard limit at
+>>> all? To protect from anon memory leaks?
+>>
+>> In multi-user machine people want to have size of available to container
+>> memory equal to the size, which they pay. So, hard limit is needed to prevent
+>> one container to occupy all system memory via slowly-evictible writeback
+>> pages, unevictible anon pages, etc. You can't fastly allocate a page,
+>> in case of many pages are under writeback, this operation is very slow.
+>>
+>> (But unmapped pagecache pages introduced by patchset is another thing:
+>>  you just need to take not sleeping spinlock to call __delete_from_page_cache()
+>>  only. This is fast)
+>>
+>> Multi-user machine may have more memory, than sum of all containers hard
+>> limit. This may be used as an optimization just to reduce disk IO. There
+>> is no contradiction to sane sense here. And it's not a rare situation.
+>> In our kernel we have cleancache driver for handling this situation, but
+>> cleancache is not the best solution like I wrote.
+>>
+>> Not overcommited system is likely case for the patchset, while the below
+>> is a little less likely:
 > 
-> thanks,
-> jirka
-> 
+> I beliave Johannes has explained that you are trying to use the hard
+> limit in a wrong way for something it is not designed for.
+
+In general, I think a some time useful design is not a Bible, that nobody
+is allowed to change. We should not limit us in something, in case of this
+has a sense and may be useful. This is just a note in general.
