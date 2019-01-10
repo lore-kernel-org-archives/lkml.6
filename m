@@ -2,131 +2,126 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C755C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 00:40:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 874E6C43444
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 00:40:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 129B221738
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 00:40:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="DbO1l3Gh"
+	by mail.kernel.org (Postfix) with ESMTP id 5EB3B214C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 00:40:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726755AbfAJAkC (ORCPT
+        id S1726834AbfAJAkm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 19:40:02 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:40874 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726659AbfAJAkC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 19:40:02 -0500
-Received: by mail-ed1-f67.google.com with SMTP id g22so8790121edr.7
-        for <linux-kernel@vger.kernel.org>; Wed, 09 Jan 2019 16:40:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=BHUQDTnETOEjv40kYCAQYWIRcl3AM67mdb7HXkKNtfk=;
-        b=DbO1l3Gh/5ZvT5YEqkgb8hnHuZJJmbcRqGXqIuZlr35QVJFlK+L8OgKupIkZPo4yPz
-         hJPOIiCth9jYPL2z7pg8XioJLREq3DaHXtOvTMXt/EoezzYf+wlRNVNr6yI4cKP7Qgv8
-         GyVSICs3sItEAzZHZgPeliFlVyq9GNXxJoy7s=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=BHUQDTnETOEjv40kYCAQYWIRcl3AM67mdb7HXkKNtfk=;
-        b=nexvB6QnT3IrzWAfvb+pUJGkfM1n+zqtJH0zUngNtpa1Vv7kZZN2BMAEvftusWCI59
-         g9cqJ03d68B8OiGZylTkAdxDPATD9J2wluPYdI2wtu9YdJtvWtggh1hMzs8MUe+0IKkG
-         ZuDYDucU3hyCQWPU/3nGg19tMw5MECGPQ2YeHbil0P67sdL9npB+VoB3tW0ukX+N4G4g
-         Osws7YEj4YvYyB+78pF9NzOqWLhg9wwebY8QwMQyPsrVR4yxwppmVYodesylVBA8Awkl
-         FWI0cc00WnjZYG182bzxkVCIrvW+lCSym84rD66o7WZD7EX6fObpj28zRqWIWttKBJ5t
-         EMlg==
-X-Gm-Message-State: AJcUuke6RHNI/qTlTojueuDbU+yLt4vmycAMKyfPqKsIarizbBhpvA8R
-        xmXjH5+gkwCeLlWnIxGmT702gw==
-X-Google-Smtp-Source: ALg8bN75S+/h5JlpuiDpbHWh1prLYVIFc+vtYUJdBjNL1RxczXJtPoNuSmw8TXOlrrDtA7dgJiIx3g==
-X-Received: by 2002:a17:906:681a:: with SMTP id k26-v6mr6907049ejr.62.1547080800290;
-        Wed, 09 Jan 2019 16:40:00 -0800 (PST)
-Received: from andrea ([89.22.71.151])
-        by smtp.gmail.com with ESMTPSA id s36sm1603194edb.43.2019.01.09.16.39.58
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 09 Jan 2019 16:39:59 -0800 (PST)
-Date:   Thu, 10 Jan 2019 01:39:52 +0100
-From:   Andrea Parri <andrea.parri@amarulasolutions.com>
-To:     "Paul E. McKenney" <paulmck@linux.ibm.com>
-Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        mingo@kernel.org, stern@rowland.harvard.edu,
-        parri.andrea@gmail.com, will.deacon@arm.com, peterz@infradead.org,
-        boqun.feng@gmail.com, npiggin@gmail.com, dhowells@redhat.com,
-        j.alglave@ucl.ac.uk, luc.maranget@inria.fr, akiyks@gmail.com,
-        willy@infradead.org
-Subject: Re: [PATCH RFC memory-model 0/6] LKMM updates
-Message-ID: <20190110003952.GA4354@andrea>
-References: <20190109210706.GA27268@linux.ibm.com>
- <20190109231852.GA4494@andrea>
- <20190109234043.GD1215@linux.ibm.com>
+        Wed, 9 Jan 2019 19:40:42 -0500
+Received: from mga07.intel.com ([134.134.136.100]:41474 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726615AbfAJAkm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 19:40:42 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Jan 2019 16:40:41 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,459,1539673200"; 
+   d="scan'208";a="309104230"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.154])
+  by fmsmga006.fm.intel.com with ESMTP; 09 Jan 2019 16:40:40 -0800
+Date:   Wed, 9 Jan 2019 16:40:40 -0800
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     "Huang, Kai" <kai.huang@intel.com>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Jethro Beekman <jethro@fortanix.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "x86@kernel.org" <x86@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Haitao Huang <haitao.huang@linux.intel.com>,
+        "Dr . Greg Wettstein" <greg@enjellic.com>
+Subject: Re: x86/sgx: uapi change proposal
+Message-ID: <20190110004040.GD1697@linux.intel.com>
+References: <20181219091148.GA5121@linux.intel.com>
+ <613c6814-4e71-38e5-444a-545f0e286df8@fortanix.com>
+ <20181219144515.GA30909@linux.intel.com>
+ <CALCETrW_8LnitFamYUU7POHFOJFxLO7ESFUdS=aeG_SOvHVPkw@mail.gmail.com>
+ <20181221162825.GB26865@linux.intel.com>
+ <105F7BF4D0229846AF094488D65A0989355A45B6@PGSMSX112.gar.corp.intel.com>
+ <20190108220946.GA30462@linux.intel.com>
+ <105F7BF4D0229846AF094488D65A0989355A58F1@PGSMSX112.gar.corp.intel.com>
+ <20190109171625.GB1821@linux.intel.com>
+ <105F7BF4D0229846AF094488D65A0989355A994F@PGSMSX112.gar.corp.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190109234043.GD1215@linux.ibm.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <105F7BF4D0229846AF094488D65A0989355A994F@PGSMSX112.gar.corp.intel.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 09, 2019 at 03:40:43PM -0800, Paul E. McKenney wrote:
-> On Thu, Jan 10, 2019 at 12:18:53AM +0100, Andrea Parri wrote:
-> > On Wed, Jan 09, 2019 at 01:07:06PM -0800, Paul E. McKenney wrote:
-> > > Hello!
-> > > 
-> > > This series contains updates for the Linux-kernel memory model:
-> > > 
-> > > 1-3.	Add SRCU support, courtesy of Alan Stern.
-> > > 
-> > > 4.	Update README for adding of SRCU support.
-> > > 
-> > > 5.	Update memory-barriers.txt on enforcing heavy ordering for
-> > > 	port-I/O accesses, courtesy of Will Deacon.  This one needs
-> > > 	an ack, preferably by someone from Intel.  Matthew Wilcox
-> > > 	posted some feedback from an Intel manual here, which might
-> > > 	be considered to be a close substitute, but...  ;-)
-> > > 
-> > > 	http://lkml.kernel.org/r/20181127192234.GF10377@bombadil.infradead.org
-> > > 
-> > > 6.	Update Documentation/explanation.txt to include SRCU support,
-> > > 	courtesy of Alan Stern.
-> > > 
-> > > 7.	Dynamically check SRCU lock-to-unlock matching, courtesy of
-> > > 	Luc Maranget.  This needs an ack.
+On Wed, Jan 09, 2019 at 04:21:19PM -0800, Huang, Kai wrote:
+> > > > That's possible, but it has several downsides.
+> > > >
+> > > >   - Duplicates a lot of code in KVM for managing memory regions.
+> > >
+> > > I don't see why there will be duplicated code. you can simply call
+> > > __x86_set_memory_region to create private slot. It is KVM x86
+> > > equivalent to KVM_SET_USER_MEMORY_REGION from userspace. The only
+> > > difference is Qemu is not aware of the private slot.
 > > 
-> > It seems that
+> > What about when we allow removing an EPC region?  At that point you'd be
+> > fully duplicating KVM_SET_USER_MEMORY_REGION.  And that's not a purely
+> > theoretical idea, it's something I'd like to support in the future, e.g.
+> > via the WIP virtio-mem interface.
+> 
+> OK. Isn't virtio-balloon good enough for us? 
+> 
+> Removing EPC is not consistent with hardware behaviour, but if you really
+> want to support then should also be fine since we are not strictly
+> following HW spec anyway.
+
+Even if virtio-balloon is sufficient from a performance perspective, the
+virtio-mem approach can provide unique capabilities, e.g. hotplugging
+EPC into a VM or "I'm done with SGX, have all of my EPC back".
+
 > > 
-> >   1b52d0186177 ("tools/memory-model: Model smp_mb__after_unlock_lock()")
-> >   
-> > from linux-rcu/dev got lost; this also needs an ack (probably yours! ;D,
-> > considered that, IIRC, you introduced the primitive and RCU is currently
-> > its only user.)
+> > https://events.linuxfoundation.org/wp-content/uploads/2017/12/virtio-
+> > mem-Paravirtualized-Memory-David-Hildenbrand-Red-Hat-1.pdf
+> > 
+> > > No. EPC info is from Qemu at the beginning (size is given by
+> > > parameter, base is calculated by Qemu), and actually it is Qemu
+> > > notifies KVM EPC info, so I don't think we require additional ioctls or
+> > capabilities here.
+> > 
+> > How does Qemu know KVM supports virtual EPC?  Probing /dev/sgx doesn't
+> > convey any information about KVM support.  Maybe you could report it via
+> > KVM_GET_SUPPORTED_CPUID, but that would be problematic for Qemu
+> > since it would have to create vCPUs before initializing the machine.
 > 
-> That commit is in -tip:
+> KVM_GET_SUPPORTED_CPUID is the one. I don't think KVM_GET_SUPPORTED_CPUID
+> require creating vcpu prior, since it is global thing that platform  supports. No?
+
+It's not a KVM requirement, but rather Qemu's code flow.  It sets up the
+"machine" and then creates the vCPUs.  The CPUID info is a CPU capability
+and so isn't necessarily available when the "machine" is being created.
+
+> > 
+> > The other aspect of private memslots is that they are not exposed to L2,
+> > because again, from the guest's perspective, they do not exist.  We can
+> > obviously hackaround that restriction, but it's yet another hint that shoving
+> > EPC into a private memslot is the wrong approach.
 > 
-> 4607abbcf464 ("tools/memory-model: Model smp_mb__after_unlock_lock()")
-> 
-> So it has already left my -rcu tree.  ;-)
+> But guest is aware of SGX and EPC so I don't see why it cannot be exposed
+> to L2 even with private slot.
 
-Oh, you're right: now I see the commit (e.g., with "git show"), but I
-don't see the corresponding changes applied to the tree.
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/commit/?h=locking/core&id=4607abbcf464ea2be14da444215d05c73025cf6e
-  https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/tree/tools/memory-model/linux-kernel.bell?h=locking/core
-
-Is this expected?
-
-  Andrea
-
-
-> 
-> 							Thanx, Paul
-> 
+It's not that it can't be done, but rather we'd have to explicitly tell
+KVM "this private slot isn't really private, expose it to L2".  See
+commit 3a2936dedd20 ("kvm: mmu: Don't expose private memslots to L2").
