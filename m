@@ -2,317 +2,174 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D68FC43444
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 09:51:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7F85C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 09:53:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE8A02183F
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 09:51:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547113898;
-	bh=oWUTePOMtpHziylhL0nsoA2h1dUu5DecFxkNSlxT8M8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=K1xER3RuwzF8WVBVy2rwz9BeOKCTXeCHja1GbKjxgaWBu4DfmfKHzGRf4StKF8Ru3
-	 w9d85oMtvM6bEK8YOM7MvFpkCvNODcS9xAvcC1ewzgDy6JonBd6pRLO5cQw20MjA/4
-	 XQID33k89wVTHfO1y/NxpGUC0RNEJcSOQOW03vF4=
+	by mail.kernel.org (Postfix) with ESMTP id 96391214C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 09:53:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="MHiVgAr5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728104AbfAJJvh (ORCPT
+        id S1728030AbfAJJxD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 04:51:37 -0500
-Received: from mx2.suse.de ([195.135.220.15]:33546 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727916AbfAJJvg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 04:51:36 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 07F6AAFFC;
-        Thu, 10 Jan 2019 09:51:34 +0000 (UTC)
-Date:   Thu, 10 Jan 2019 10:51:31 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Arun KS <arunks@codeaurora.org>
-Cc:     arunks.linux@gmail.com, alexander.h.duyck@linux.intel.com,
-        akpm@linux-foundation.org, vbabka@suse.cz, osalvador@suse.de,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        getarunks@gmail.com
-Subject: Re: [PATCH v9] mm/page_alloc.c: memory_hotplug: free pages as higher
- order
-Message-ID: <20190110095131.GJ31793@dhcp22.suse.cz>
-References: <1547098543-26452-1-git-send-email-arunks@codeaurora.org>
+        Thu, 10 Jan 2019 04:53:03 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:45347 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727893AbfAJJxD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 04:53:03 -0500
+Received: by mail-wr1-f67.google.com with SMTP id t6so10547758wrr.12
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 01:53:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=1yZeSQ30Tm3iQTm/rUp7onyO024u+ZimzqVhFCVCuko=;
+        b=MHiVgAr5pNCGMB6Anhh08zm1kC5DABTYtg0VeBAJhphngUdmjoKrZ1D/7Q9RJQ3Xjs
+         v6L51ctDvbHwTOCcDtj/gBk5ebGtjtqYuIkFYFEyt41aMzjqOZamIMWYTjKwAzKAG2Jv
+         2qq/90MJNH7qgpGYT3PjC7UDyHSRgWvFyqkWw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=1yZeSQ30Tm3iQTm/rUp7onyO024u+ZimzqVhFCVCuko=;
+        b=i5PHpEJn5VOWTCjHehWADvhUl05prsxAnJ64fR/xI434SJDansud1MTxfK+C82KD4H
+         iUcrDbvbYk2LlL06Pkm8AK5UavaG0RhHpcISuMrY/2R31VWCVzwZh/qRbvu22JL8ik+g
+         uDJZ8W08CC4eDONnZsWxUtjl8vMWm7hW2NnI0S1nljnL5LT16v0vj5+AJQIPPhzyHpmu
+         fNa1EVGfbvMbiMRVlKnfwa9JNpAJm7jnOX2QIKEjLBYMY5Lq/1ZJdFY+4cf5oxIjlprC
+         2qjSva6I8JMDIqRn3j9xWtnQHPqMxfPcKTG0Cnh7Z8rcxGVSvAOmPjZ4SqAdZwLFfJ7g
+         fkaw==
+X-Gm-Message-State: AJcUukdg7ohhSb1GhE/Gp5Bi/PZAVYW4mng/Vp5C/Kc32ZmEKddUXZea
+        VXVrNDEwRvdp3vAF2oFcM33uWg==
+X-Google-Smtp-Source: ALg8bN43A6rV/sr9W9NC81jeAmDcXFAHQz0/dzhgUPv241lo99pVPUNS5G8sc1BFdmzwpWbLMRLU5Q==
+X-Received: by 2002:adf:db01:: with SMTP id s1mr8217466wri.214.1547113981038;
+        Thu, 10 Jan 2019 01:53:01 -0800 (PST)
+Received: from [192.168.0.41] (sju31-1-78-210-255-2.fbx.proxad.net. [78.210.255.2])
+        by smtp.googlemail.com with ESMTPSA id 133sm19771317wme.9.2019.01.10.01.52.59
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 10 Jan 2019 01:53:00 -0800 (PST)
+Subject: Re: [PATCH v2] cpuidle: Add 'above' and 'below' idle state metrics
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Linux PM <linux-pm@vger.kernel.org>
+Cc:     Doug Smythies <dsmythies@telus.net>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux Documentation <linux-doc@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Giovanni Gherdovich <ggherdovich@suse.cz>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+References: <3514439.dzOWKx1Cjx@aspire.rjw.lan>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <e89ee355-3d87-1fe7-a1ff-91a1dd43177b@linaro.org>
+Date:   Thu, 10 Jan 2019 10:52:59 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1547098543-26452-1-git-send-email-arunks@codeaurora.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <3514439.dzOWKx1Cjx@aspire.rjw.lan>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 10-01-19 11:05:43, Arun KS wrote:
-> When freeing pages are done with higher order, time spent on coalescing
-> pages by buddy allocator can be reduced.  With section size of 256MB, hot
-> add latency of a single section shows improvement from 50-60 ms to less
-> than 1 ms, hence improving the hot add latency by 60 times.  Modify
-> external providers of online callback to align with the change.
+On 10/12/2018 12:30, Rafael J. Wysocki wrote:
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 > 
-> Signed-off-by: Arun KS <arunks@codeaurora.org>
-> Acked-by: Michal Hocko <mhocko@suse.com>
-
-JFTR. I have mentioned that previously but let me repeat. You should be
-dropping any acks/reviewed-bys when making any non trivial changes to a
-patch and reposting.
-
-Nevertheless, the patch still looks ok so my Acked-by still applies to
-the core MM parts but do not assume that in future please.
-
-> Reviewed-by: Oscar Salvador <osalvador@suse.de>
+> Add two new metrics for CPU idle states, "above" and "below", to count
+> the number of times the given state had been asked for (or entered
+> from the kernel's perspective), but the observed idle duration turned
+> out to be too short or too long for it (respectively).
+> 
+> These metrics help to estimate the quality of the CPU idle governor
+> in use.
+> 
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 > ---
-> Changes since v8:
-> - Remove return type change for online_page_callback.
-> - Use consistent names for external online_page providers.
-> - Fix onlined_pages accounting.
 > 
-> Changes since v7:
-> - Rebased to 5.0-rc1.
-> - Fixed onlined_pages accounting.
-> - Added comment for return value of online_page_callback.
-> - Renamed xen_bring_pgs_online to xen_online_pages.
+> -> v2: Fix a leftover in the documentation from the previous versions
+>        of the patch and a typo in the changelog.
 > 
-> Changes since v6:
-> - Rebased to 4.20
-> - Changelog updated.
-> - No improvement seen on arm64, hence removed removal of prefetch.
-> 
-> Changes since v5:
-> - Rebased to 4.20-rc1.
-> - Changelog updated.
-> 
-> Changes since v4:
-> - As suggested by Michal Hocko,
-> - Simplify logic in online_pages_block() by using get_order().
-> - Seperate out removal of prefetch from __free_pages_core().
-> 
-> Changes since v3:
-> - Renamed _free_pages_boot_core -> __free_pages_core.
-> - Removed prefetch from __free_pages_core.
-> - Removed xen_online_page().
-> 
-> Changes since v2:
-> - Reuse code from __free_pages_boot_core().
-> 
-> Changes since v1:
-> - Removed prefetch().
-> 
-> Changes since RFC:
-> - Rebase.
-> - As suggested by Michal Hocko remove pages_per_block.
-> - Modifed external providers of online_page_callback.
-> 
-> v8: https://lore.kernel.org/patchwork/patch/1030332/
-> v7: https://lore.kernel.org/patchwork/patch/1028908/
-> v6: https://lore.kernel.org/patchwork/patch/1007253/
-> v5: https://lore.kernel.org/patchwork/patch/995739/
-> v4: https://lore.kernel.org/patchwork/patch/995111/
-> v3: https://lore.kernel.org/patchwork/patch/992348/
-> v2: https://lore.kernel.org/patchwork/patch/991363/
-> v1: https://lore.kernel.org/patchwork/patch/989445/
-> RFC: https://lore.kernel.org/patchwork/patch/984754/
 > ---
-> ---
->  drivers/hv/hv_balloon.c        |  4 ++--
->  drivers/xen/balloon.c          | 15 ++++++++++-----
->  include/linux/memory_hotplug.h |  2 +-
->  mm/internal.h                  |  1 +
->  mm/memory_hotplug.c            | 37 +++++++++++++++++++++++++------------
->  mm/page_alloc.c                |  8 ++++----
->  6 files changed, 43 insertions(+), 24 deletions(-)
+>  Documentation/ABI/testing/sysfs-devices-system-cpu |    7 ++++
+>  Documentation/admin-guide/pm/cpuidle.rst           |   10 ++++++
+>  drivers/cpuidle/cpuidle.c                          |   31 ++++++++++++++++++++-
+>  drivers/cpuidle/sysfs.c                            |    6 ++++
+>  include/linux/cpuidle.h                            |    2 +
+>  5 files changed, 55 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/hv/hv_balloon.c b/drivers/hv/hv_balloon.c
-> index 5301fef..55d79f8 100644
-> --- a/drivers/hv/hv_balloon.c
-> +++ b/drivers/hv/hv_balloon.c
-> @@ -771,7 +771,7 @@ static void hv_mem_hot_add(unsigned long start, unsigned long size,
->  	}
->  }
+> Index: linux-pm/drivers/cpuidle/cpuidle.c
+> ===================================================================
+> --- linux-pm.orig/drivers/cpuidle/cpuidle.c
+> +++ linux-pm/drivers/cpuidle/cpuidle.c
+> @@ -202,7 +202,6 @@ int cpuidle_enter_state(struct cpuidle_d
+>  	struct cpuidle_state *target_state = &drv->states[index];
+>  	bool broadcast = !!(target_state->flags & CPUIDLE_FLAG_TIMER_STOP);
+>  	ktime_t time_start, time_end;
+> -	s64 diff;
 >  
-> -static void hv_online_page(struct page *pg)
-> +static void hv_online_page(struct page *pg, unsigned int order)
->  {
->  	struct hv_hotadd_state *has;
->  	unsigned long flags;
-> @@ -783,7 +783,7 @@ static void hv_online_page(struct page *pg)
->  		if ((pfn < has->start_pfn) || (pfn >= has->end_pfn))
->  			continue;
+>  	/*
+>  	 * Tell the time framework to switch to a broadcast timer because our
+> @@ -248,6 +247,9 @@ int cpuidle_enter_state(struct cpuidle_d
+>  		local_irq_enable();
 >  
-> -		hv_page_online_one(has, pg);
-> +		hv_bring_pgs_online(has, pfn, (1UL << order));
->  		break;
->  	}
->  	spin_unlock_irqrestore(&dm_device.ha_lock, flags);
-> diff --git a/drivers/xen/balloon.c b/drivers/xen/balloon.c
-> index ceb5048..d107447 100644
-> --- a/drivers/xen/balloon.c
-> +++ b/drivers/xen/balloon.c
-> @@ -369,14 +369,19 @@ static enum bp_state reserve_additional_memory(void)
->  	return BP_ECANCELED;
->  }
->  
-> -static void xen_online_page(struct page *page)
-> +static void xen_online_page(struct page *page, unsigned int order)
->  {
-> -	__online_page_set_limits(page);
-> +	unsigned long i, size = (1 << order);
-> +	unsigned long start_pfn = page_to_pfn(page);
-> +	struct page *p;
->  
-> +	pr_debug("Online %lu pages starting at pfn 0x%lx\n", size, start_pfn);
->  	mutex_lock(&balloon_mutex);
-> -
-> -	__balloon_append(page);
-> -
-> +	for (i = 0; i < size; i++) {
-> +		p = pfn_to_page(start_pfn + i);
-> +		__online_page_set_limits(p);
-> +		__balloon_append(p);
-> +	}
->  	mutex_unlock(&balloon_mutex);
->  }
->  
-> diff --git a/include/linux/memory_hotplug.h b/include/linux/memory_hotplug.h
-> index 07da5c6..e368730 100644
-> --- a/include/linux/memory_hotplug.h
-> +++ b/include/linux/memory_hotplug.h
-> @@ -87,7 +87,7 @@ extern int test_pages_in_a_zone(unsigned long start_pfn, unsigned long end_pfn,
->  	unsigned long *valid_start, unsigned long *valid_end);
->  extern void __offline_isolated_pages(unsigned long, unsigned long);
->  
-> -typedef void (*online_page_callback_t)(struct page *page);
-> +typedef void (*online_page_callback_t)(struct page *page, unsigned int order);
->  
->  extern int set_online_page_callback(online_page_callback_t callback);
->  extern int restore_online_page_callback(online_page_callback_t callback);
-> diff --git a/mm/internal.h b/mm/internal.h
-> index f4a7bb0..536bc2a 100644
-> --- a/mm/internal.h
-> +++ b/mm/internal.h
-> @@ -163,6 +163,7 @@ static inline struct page *pageblock_pfn_to_page(unsigned long start_pfn,
->  extern int __isolate_free_page(struct page *page, unsigned int order);
->  extern void memblock_free_pages(struct page *page, unsigned long pfn,
->  					unsigned int order);
-> +extern void __free_pages_core(struct page *page, unsigned int order);
->  extern void prep_compound_page(struct page *page, unsigned int order);
->  extern void post_alloc_hook(struct page *page, unsigned int order,
->  					gfp_t gfp_flags);
-> diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-> index b9a667d..77dff24 100644
-> --- a/mm/memory_hotplug.c
-> +++ b/mm/memory_hotplug.c
-> @@ -47,7 +47,7 @@
->   * and restore_online_page_callback() for generic callback restore.
->   */
->  
-> -static void generic_online_page(struct page *page);
-> +static void generic_online_page(struct page *page, unsigned int order);
->  
->  static online_page_callback_t online_page_callback = generic_online_page;
->  static DEFINE_MUTEX(online_page_callback_lock);
-> @@ -656,26 +656,39 @@ void __online_page_free(struct page *page)
->  }
->  EXPORT_SYMBOL_GPL(__online_page_free);
->  
-> -static void generic_online_page(struct page *page)
-> +static void generic_online_page(struct page *page, unsigned int order)
->  {
-> -	__online_page_set_limits(page);
-> -	__online_page_increment_counters(page);
-> -	__online_page_free(page);
-> +	__free_pages_core(page, order);
-> +	totalram_pages_add(1UL << order);
-> +#ifdef CONFIG_HIGHMEM
-> +	if (PageHighMem(page))
-> +		totalhigh_pages_add(1UL << order);
-> +#endif
-> +}
+>  	if (entered_state >= 0) {
+> +		s64 diff, delay = drv->states[entered_state].exit_latency;
+> +		int i;
 > +
-> +static int online_pages_blocks(unsigned long start, unsigned long nr_pages)
-> +{
-> +	unsigned long end = start + nr_pages;
-> +	int order, ret, onlined_pages = 0;
+>  		/*
+>  		 * Update cpuidle counters
+>  		 * This can be moved to within driver enter routine,
+> @@ -260,6 +262,33 @@ int cpuidle_enter_state(struct cpuidle_d
+>  		dev->last_residency = (int)diff;
+
+Shouldn't we subtract the 'delay' from the computed 'diff' in any case ?
+
+Otherwise the 'last_residency' accumulates the effective sleep time and
+the time to wakeup. We are interested in the sleep time only for
+prediction and metrics no ?
+
+>  		dev->states_usage[entered_state].time += dev->last_residency;
+>  		dev->states_usage[entered_state].usage++;
 > +
-> +	while (start < end) {
-> +		order = min(MAX_ORDER - 1,
-> +			get_order(PFN_PHYS(end) - PFN_PHYS(start)));
-> +		(*online_page_callback)(pfn_to_page(start), order);
+> +		if (diff < drv->states[entered_state].target_residency) {
+> +			for (i = entered_state - 1; i >= 0; i--) {
+> +				if (drv->states[i].disabled ||
+> +				    dev->states_usage[i].disable)
+> +					continue;
 > +
-> +		onlined_pages += (1UL << order);
-> +		start += (1UL << order);
-> +	}
-> +	return onlined_pages;
->  }
->  
->  static int online_pages_range(unsigned long start_pfn, unsigned long nr_pages,
->  			void *arg)
->  {
-> -	unsigned long i;
->  	unsigned long onlined_pages = *(unsigned long *)arg;
-> -	struct page *page;
->  
->  	if (PageReserved(pfn_to_page(start_pfn)))
-> -		for (i = 0; i < nr_pages; i++) {
-> -			page = pfn_to_page(start_pfn + i);
-> -			(*online_page_callback)(page);
-> -			onlined_pages++;
-> -		}
-> +		onlined_pages += online_pages_blocks(start_pfn, nr_pages);
->  
->  	online_mem_sections(start_pfn, start_pfn + nr_pages);
->  
-> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> index d295c9b..883212a 100644
-> --- a/mm/page_alloc.c
-> +++ b/mm/page_alloc.c
-> @@ -1303,7 +1303,7 @@ static void __free_pages_ok(struct page *page, unsigned int order)
->  	local_irq_restore(flags);
->  }
->  
-> -static void __init __free_pages_boot_core(struct page *page, unsigned int order)
-> +void __free_pages_core(struct page *page, unsigned int order)
->  {
->  	unsigned int nr_pages = 1 << order;
->  	struct page *p = page;
-> @@ -1382,7 +1382,7 @@ void __init memblock_free_pages(struct page *page, unsigned long pfn,
->  {
->  	if (early_page_uninitialised(pfn))
->  		return;
-> -	return __free_pages_boot_core(page, order);
-> +	__free_pages_core(page, order);
->  }
->  
->  /*
-> @@ -1472,14 +1472,14 @@ static void __init deferred_free_range(unsigned long pfn,
->  	if (nr_pages == pageblock_nr_pages &&
->  	    (pfn & (pageblock_nr_pages - 1)) == 0) {
->  		set_pageblock_migratetype(page, MIGRATE_MOVABLE);
-> -		__free_pages_boot_core(page, pageblock_order);
-> +		__free_pages_core(page, pageblock_order);
->  		return;
->  	}
->  
->  	for (i = 0; i < nr_pages; i++, page++, pfn++) {
->  		if ((pfn & (pageblock_nr_pages - 1)) == 0)
->  			set_pageblock_migratetype(page, MIGRATE_MOVABLE);
-> -		__free_pages_boot_core(page, 0);
-> +		__free_pages_core(page, 0);
->  	}
->  }
->  
-> -- 
-> 1.9.1
+> +				/* Shallower states are enabled, so update. */
+> +				dev->states_usage[entered_state].above++;
+> +				break;
+> +			}
+> +		} else if (diff > delay) {
+> +			for (i = entered_state + 1; i < drv->state_count; i++) {
+> +				if (drv->states[i].disabled ||
+> +				    dev->states_usage[i].disable)
+> +					continue;
+> +
+> +				/*
+> +				 * Update if a deeper state would have been a
+> +				 * better match for the observed idle duration.
+> +				 */
+> +				if (diff - delay >= drv->states[i].target_residency)
+> +					dev->states_usage[entered_state].below++;
+> +
+> +				break;
+> +			}
+> +		}
+>  	} else {
+
 
 -- 
-Michal Hocko
-SUSE Labs
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
+
