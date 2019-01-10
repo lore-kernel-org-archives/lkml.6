@@ -2,115 +2,141 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.1 required=3.0 tests=DKIM_ADSP_ALL,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B98E6C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 18:00:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F4DBC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 18:00:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 937C4208E3
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 18:00:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 42C09208E3
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 18:00:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730969AbfAJSAL (ORCPT
+        id S1730826AbfAJSA4 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 13:00:11 -0500
-Received: from shell.v3.sk ([90.176.6.54]:58529 "EHLO shell.v3.sk"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729480AbfAJR7K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 12:59:10 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id E1D241002F7;
-        Thu, 10 Jan 2019 18:59:04 +0100 (CET)
-Received: from shell.v3.sk ([127.0.0.1])
-        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id PzyG_0JlMs-I; Thu, 10 Jan 2019 18:58:56 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 3FF2E1002FB;
-        Thu, 10 Jan 2019 18:58:55 +0100 (CET)
-X-Virus-Scanned: amavisd-new at zimbra.v3.sk
-Received: from shell.v3.sk ([127.0.0.1])
-        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id MA-jPCPI_amu; Thu, 10 Jan 2019 18:58:53 +0100 (CET)
-Received: from belphegor.brq.redhat.com (nat-pool-brq-t.redhat.com [213.175.37.10])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id 2E5921002F1;
-        Thu, 10 Jan 2019 18:58:53 +0100 (CET)
-From:   Lubomir Rintel <lkundrak@v3.sk>
-To:     Andy Shevchenko <andy@infradead.org>,
-        Darren Hart <dvhart@infradead.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Mark Rutland <mark.rutland@arm.com>,
-        platform-driver-x86@vger.kernel.org, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Lubomir Rintel <lkundrak@v3.sk>, Pavel Machek <pavel@ucw.cz>
-Subject: [PATCH v5 01/10] dt-bindings: olpc,xo1.75-ec: Add OLPC XO-1.75 EC bindings
-Date:   Thu, 10 Jan 2019 18:58:36 +0100
-Message-Id: <20190110175845.1203986-2-lkundrak@v3.sk>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190110175845.1203986-1-lkundrak@v3.sk>
-References: <20190110175845.1203986-1-lkundrak@v3.sk>
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+        Thu, 10 Jan 2019 13:00:56 -0500
+Received: from sender-of-o53.zoho.com ([135.84.80.218]:21840 "EHLO
+        sender-of-o53.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729480AbfAJSAz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 13:00:55 -0500
+ARC-Seal: i=1; a=rsa-sha256; t=1547143234; cv=none; 
+        d=zoho.com; s=zohoarc; 
+        b=Zr8qqRaZTYf+vaDNoyqcxCT+3sWnfarhI0eLTbYvNAObjutoFwGK2NmNCEL4Bu7okNm5wYUryvT+IxYmXMbxmtv3HGyBzhTvuSKAYkhZGlLniXqPJfTSgvA4bq9rZL5sw6N/C3+3Ku9K+gY+wd1rc3MMb1oc5g+E+wmfWlTxRVw=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com; s=zohoarc; 
+        t=1547143234; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To:ARC-Authentication-Results; 
+        bh=y7Ug1hh2YUjlfSyroPaXvQSS+T5lVCs5wbg4QTW3dmM=; 
+        b=dGc4zpunH6nYbkl7GLD4ILdPFc2eeq8nbZQ+0/gl7ph7n8xy6k3Sd4WOp2VJ/kAyhcOhsNKQAK4T5fdKwGHrS0P2PkRnyHW12QQGQnHr3qFZS89LbDeRrM0ZaI/tu0DOFIdHtNUko4G8HVqNPv4zmTXtmST3eDDrFdUYb1ZCNog=
+ARC-Authentication-Results: i=1; mx.zoho.com;
+        dkim=pass  header.i=mniewoehner.de;
+        spf=pass  smtp.mailfrom=linux@mniewoehner.de;
+        dmarc=pass header.from=<linux@mniewoehner.de> header.from=<linux@mniewoehner.de>
+Received: from z3r0 (31.187.91.78 [31.187.91.78]) by mx.zohomail.com
+        with SMTPS id 1547143233258132.69536931174787; Thu, 10 Jan 2019 10:00:33 -0800 (PST)
+Message-ID: <3245408721bf1480f24af08db668fa7e3e7c848b.camel@mniewoehner.de>
+Subject: Re: tpm_tis TPM2.0 not detected on cold boot
+From:   Michael =?ISO-8859-1?Q?Niew=F6hner?= <linux@mniewoehner.de>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     Mimi Zohar <zohar@linux.ibm.com>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        peterhuewe@gmx.de, jgg@ziepe.ca, arnd@arndb.de,
+        linux-integrity@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        Ken Goldman <kgold@linux.ibm.com>
+In-Reply-To: <20190110171923.GC6589@linux.intel.com>
+References: <ef7e773b01a5e6153b84628f74fc67092a2f9b0e.camel@gmail.com>
+         <1f281756bb1f041e55be8dd090670a1a7b1d1c94.camel@mniewoehner.de>
+         <1545519232.3940.115.camel@linux.ibm.com>
+         <e7ec38d7cade9aa76384aa2781eab307d2cd5a7b.camel@mniewoehner.de>
+         <20190103132737.GD10491@linux.intel.com>
+         <6c1bf9815bfcb5d2bc0cfedfc49c7feda0173dc9.camel@mniewoehner.de>
+         <20190103150434.GC17015@linux.intel.com>
+         <5aa2fc082b6b0657574918b025005ad569da6412.camel@mniewoehner.de>
+         <20190110171923.GC6589@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Date:   Thu, 10 Jan 2019 19:00:28 +0100
+Mime-Version: 1.0
+User-Agent: Evolution 3.30.3 
+Content-Transfer-Encoding: 8BIT
+X-ZohoMailClient: External
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The OLPC XO-1.75 Embedded Controller is a SPI master that uses extra
-signals for handshaking. It needs to know when is the slave (Linux)
-side's TX FIFO ready for transfer (the ready-gpio signal on the SPI
-controller node) and when does it wish to respond with a command (the
-cmd-gpio property).
+On Thu, 2019-01-10 at 19:19 +0200, Jarkko Sakkinen wrote:
+> On Thu, Jan 03, 2019 at 04:47:31PM +0100, Michael Niewöhner wrote:
+> > On Thu, 2019-01-03 at 17:04 +0200, Jarkko Sakkinen wrote:
+> > > On Thu, Jan 03, 2019 at 02:38:11PM +0100, Michael Niewöhner wrote:
+> > > > On Thu, 2019-01-03 at 15:27 +0200, Jarkko Sakkinen wrote:
+> > > > > On Sun, Dec 23, 2018 at 12:55:12PM +0100, Michael Niewöhner wrote:
+> > > > > > There is another issue but I don't know if both are related. Maybe
+> > > > > > that's
+> > > > > > just a
+> > > > > > timing issue...
+> > > > > > 
+> > > > > > root@debian:~# dd if=/dev/hwrng bs=1 count=1
+> > > > > > dd: error reading '/dev/hwrng': Operation not permitted
+> > > > > > 0+0 records in
+> > > > > > 0+0 records out
+> > > > > > 0 bytes copied, 0.755958 s, 0.0 kB/s
+> > > > > > root@debian:~# dd if=/dev/hwrng bs=1 count=1 | xxd; dd if=/dev/hwrng
+> > > > > > bs=1
+> > > > > > count=1 | xxd
+> > > > > > dd: error reading '/dev/hwrng': Operation not permitted
+> > > > > > 0+0 records in
+> > > > > > 0+0 records out
+> > > > > > 0 bytes copied, 0.755697 s, 0.0 kB/s
+> > > > > > 1+0 records in
+> > > > > > 1+0 records out
+> > > > > > 00000000: 52                                       R
+> > > > > > 1 byte copied, 0.0106268 s, 0.1 kB/s
+> > > > > > 
+> > > > > > 
+> > > > > > Michael
+> > > > > 
+> > > > > What does /sys/devices/virtual/misc/hw_random/rng_current show?
+> > > > > 
+> > > > > Did run commands as a sanity check on my laptop and seem to work.
+> > > > > 
+> > > > > /Jarkko
+> > > > 
+> > > > rng_current says "tpm-rng-0", which should be correct
+> > > 
+> > > Is /dev/tpm0 accessible and usable?
+> > > 
+> > > /Jarkko
+> > 
+> > No, it does not seem to work:
+> > 
+> > root@debian:~# tpm_version                                     
+> > Tspi_Context_Connect failed: 0x00003011 - layer=tsp, code=0011 (17),
+> > Communication failure
+> > root@debian:~# tcsd -f
+> > TCSD TDDL ioctl: (25) Inappropriate ioctl for device
+> > TCSD TDDL Falling back to Read/Write device support.
+> > TCSD TDDL ERROR: write to device /dev/tpm0 failed: Operation not permitted
+> > TCSD TCS ERROR: TCS GetCapability failed with result = 0x1087
+> > root@debian:~# stat /dev/tpm0
+> >   File: /dev/tpm0
+> >   Size: 0         	Blocks: 0          IO Block: 4096   character special
+> > file
+> > Device: 6h/6d	Inode: 1114        Links: 1     Device type: a,e0
+> > Access: (0600/crw-------)  Uid: (  104/     tss)   Gid: (  112/     tss)
+> > Access: 2019-01-03 16:39:20.627635333 +0100
+> > Modify: 2019-01-03 16:39:20.627635333 +0100
+> > Change: 2019-01-03 16:39:20.627635333 +0100
+> >  Birth: -
+> 
+> But those tools should not work because TrouSerS is for TPM 1.2.
+> 
+> /Jarkko
 
-Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-Acked-by: Pavel Machek <pavel@ucw.cz>
 
----
-Changes since v1:
-- s/cmd-gpio/cmd-gpios/
-- s/ready-gpio/ready-gpios/ in the documentation paragraph
-- Remove status =3D "okay" from the example
+Right. I realized that too late... Have a look at my email from Fri, 04 Jan 2019
+19:26:10 +0100
 
- .../bindings/misc/olpc,xo1.75-ec.txt          | 23 +++++++++++++++++++
- 1 file changed, 23 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/misc/olpc,xo1.75-ec=
-.txt
+Michael
 
-diff --git a/Documentation/devicetree/bindings/misc/olpc,xo1.75-ec.txt b/=
-Documentation/devicetree/bindings/misc/olpc,xo1.75-ec.txt
-new file mode 100644
-index 000000000000..8c4d649cdd8f
---- /dev/null
-+++ b/Documentation/devicetree/bindings/misc/olpc,xo1.75-ec.txt
-@@ -0,0 +1,23 @@
-+OLPC XO-1.75 Embedded Controller
-+
-+Required properties:
-+- compatible: Should be "olpc,xo1.75-ec".
-+- cmd-gpios: gpio specifier of the CMD pin
-+
-+The embedded controller requires the SPI controller driver to signal rea=
-diness
-+to receive a transfer (that is, when TX FIFO contains the response data)=
- by
-+strobing the ACK pin with the ready signal. See the "ready-gpios" proper=
-ty of the
-+SSP binding as documented in:
-+<Documentation/devicetree/bindings/spi/spi-pxa2xx.txt>.
-+
-+Example:
-+	&ssp3 {
-+		spi-slave;
-+		ready-gpios =3D <&gpio 125 GPIO_ACTIVE_HIGH>;
-+
-+		slave {
-+			compatible =3D "olpc,xo1.75-ec";
-+			spi-cpha;
-+			cmd-gpios =3D <&gpio 155 GPIO_ACTIVE_HIGH>;
-+		};
-+	};
---=20
-2.20.1
 
