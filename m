@@ -2,185 +2,104 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07AF6C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 09:42:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9E97C43444
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 09:46:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D5B6A214DA
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 09:42:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A4F70214DA
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 09:46:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728034AbfAJJmo convert rfc822-to-8bit (ORCPT
+        id S1727959AbfAJJqK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 04:42:44 -0500
-Received: from mx01.hxt-semitech.com ([223.203.96.7]:49657 "EHLO
-        barracuda.hxt-semitech.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727863AbfAJJmn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 04:42:43 -0500
-X-ASG-Debug-ID: 1547113357-093b7e40ef0d260001-xx1T2L
-Received: from HXTBJIDCEMVIW02.hxtcorp.net ([10.128.0.15]) by barracuda.hxt-semitech.com with ESMTP id K6a7nSiqnbCeoU8t (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NO); Thu, 10 Jan 2019 17:42:37 +0800 (CST)
-X-Barracuda-Envelope-From: yuanyuan.zhao@hxt-semitech.com
-Received: from HXTBJIDCEMVIW02.hxtcorp.net (10.128.0.15) by
- HXTBJIDCEMVIW02.hxtcorp.net (10.128.0.15) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Thu, 10 Jan 2019 17:42:30 +0800
-Received: from HXTBJIDCEMVIW02.hxtcorp.net ([fe80::3e:f4ff:7927:a6f6]) by
- HXTBJIDCEMVIW02.hxtcorp.net ([fe80::3e:f4ff:7927:a6f6%12]) with mapi id
- 15.00.1395.000; Thu, 10 Jan 2019 17:42:30 +0800
-From:   "Zhao, Yuanyuan" <yuanyuan.zhao@hxt-semitech.com>
-To:     Marc Zyngier <marc.zyngier@arm.com>
-CC:     "tglx@linutronix.de" <tglx@linutronix.de>,
-        "jason@lakedaemon.net" <jason@lakedaemon.net>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "Zheng, Joey" <yu.zheng@hxt-semitech.com>,
-        "Wang, Dongsheng" <dongsheng.wang@hxt-semitech.com>
-Subject: RE: [RESEND 1/1] gic: its: Make sure a LPI is discarded before free.
-Thread-Topic: [RESEND 1/1] gic: its: Make sure a LPI is discarded before free.
-X-ASG-Orig-Subj: RE: [RESEND 1/1] gic: its: Make sure a LPI is discarded before free.
-Thread-Index: AQHUp+8DksFLG785G0++VUmPBlsY5qWmkCdg//+b1gCAAhBd8A==
-Date:   Thu, 10 Jan 2019 09:42:28 +0000
-Message-ID: <8ebfa53337724799b4b6b2ed8bb06866@HXTBJIDCEMVIW02.hxtcorp.net>
-References: <e37e3f5e0146be65c60092a457ca5c82e25581a0.1545292748.git.yuanyuan.zhao@hxt-semitech.com>
- <20190109074324.6445118d@why.wild-wind.fr.eu.org>
- <c81f42aa93904353bbeac590da7b0945@HXTBJIDCEMVIW02.hxtcorp.net>
- <38d7afaf-e800-f6e7-83e3-eb006f4d6f4c@arm.com>
-In-Reply-To: <38d7afaf-e800-f6e7-83e3-eb006f4d6f4c@arm.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.65.11.40]
-Content-Type: text/plain; charset="iso-2022-jp"
-Content-Transfer-Encoding: 8BIT
+        Thu, 10 Jan 2019 04:46:10 -0500
+Received: from relay.sw.ru ([185.231.240.75]:55640 "EHLO relay.sw.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727863AbfAJJqK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 04:46:10 -0500
+Received: from [172.16.25.169]
+        by relay.sw.ru with esmtp (Exim 4.91)
+        (envelope-from <ktkhai@virtuozzo.com>)
+        id 1ghWua-0003EX-Uo; Thu, 10 Jan 2019 12:46:05 +0300
+Subject: Re: [PATCH RFC 0/3] mm: Reduce IO by improving algorithm of memcg
+ pagecache pages eviction
+To:     Shakeel Butt <shakeelb@google.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Johannes Weiner <hannes@cmpxchg.org>, josef@toxicpanda.com,
+        Jan Kara <jack@suse.cz>, Hugh Dickins <hughd@google.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Roman Gushchin <guro@fb.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Linux MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <154703479840.32690.6504699919905946726.stgit@localhost.localdomain>
+ <CALvZod63z5_m-izxFh4XQvjcALqffkZ5G91-KsyOuAC4wvN3Wg@mail.gmail.com>
+From:   Kirill Tkhai <ktkhai@virtuozzo.com>
+Message-ID: <a1dbe366-43bd-e3ee-6133-f6179b2f2278@virtuozzo.com>
+Date:   Thu, 10 Jan 2019 12:46:04 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-X-Barracuda-Connect: UNKNOWN[10.128.0.15]
-X-Barracuda-Start-Time: 1547113357
-X-Barracuda-Encrypted: ECDHE-RSA-AES256-SHA384
-X-Barracuda-URL: https://192.168.50.101:443/cgi-mod/mark.cgi
-X-Virus-Scanned: by bsmtpd at hxt-semitech.com
-X-Barracuda-BRTS-Status: 1
-X-Barracuda-Spam-Score: 0.60
-X-Barracuda-Spam-Status: No, SCORE=0.60 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=ISO2022JP_CHARSET, MARKETING_SUBJECT
-X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.65452
-        Rule breakdown below
-         pts rule name              description
-        ---- ---------------------- --------------------------------------------------
-        -0.00 ISO2022JP_CHARSET      ISO-2022-JP message
-        0.60 MARKETING_SUBJECT      Subject contains popular marketing words
+In-Reply-To: <CALvZod63z5_m-izxFh4XQvjcALqffkZ5G91-KsyOuAC4wvN3Wg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi, Shakeel,
 
+On 09.01.2019 20:37, Shakeel Butt wrote:
+> Hi Kirill,
+> 
+> On Wed, Jan 9, 2019 at 4:20 AM Kirill Tkhai <ktkhai@virtuozzo.com> wrote:
+>>
+>> On nodes without memory overcommit, it's common a situation,
+>> when memcg exceeds its limit and pages from pagecache are
+>> shrinked on reclaim, while node has a lot of free memory.
+>> Further access to the pages requires real device IO, while
+>> IO causes time delays, worse powerusage, worse throughput
+>> for other users of the device, etc.
+>>
+>> Cleancache is not a good solution for this problem, since
+>> it implies copying of page on every cleancache_put_page()
+>> and cleancache_get_page(). Also, it requires introduction
+>> of internal per-cleancache_ops data structures to manage
+>> cached pages and their inodes relationships, which again
+>> introduces overhead.
+>>
+>> This patchset introduces another solution. It introduces
+>> a new scheme for evicting memcg pages:
+>>
+>>   1)__remove_mapping() uncharges unmapped page memcg
+>>     and leaves page in pagecache on memcg reclaim;
+>>
+>>   2)putback_lru_page() places page into root_mem_cgroup
+>>     list, since its memcg is NULL. Page may be evicted
+>>     on global reclaim (and this will be easily, as
+>>     page is not mapped, so shrinker will shrink it
+>>     with 100% probability of success);
+>>
+>>   3)pagecache_get_page() charges page into memcg of
+>>     a task, which takes it first.
+>>
+> 
+> From what I understand from the proposal, on memcg reclaim, the file
+> pages are uncharged but kept in the memory and if they are accessed
+> again (either through mmap or syscall), they will be charged again but
+> to the requesting memcg. Also it is assumed that the global reclaim of
+> such uncharged file pages is very fast and deterministic. Is that
+> right?
 
-> -----Original Message-----
-> From: Marc Zyngier [mailto:marc.zyngier@arm.com]
-> Sent: 2019年1月9日 17:52
-> To: Zhao, Yuanyuan <yuanyuan.zhao@hxt-semitech.com>
-> Cc: tglx@linutronix.de; jason@lakedaemon.net; linux-
-> kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org; Zheng, Joey
-> <yu.zheng@hxt-semitech.com>; Wang, Dongsheng <dongsheng.wang@hxt-
-> semitech.com>
-> Subject: Re: [RESEND 1/1] gic: its: Make sure a LPI is discarded before free.
-> 
-> On 09/01/2019 09:29, Zhao, Yuanyuan wrote:
-> > Hi Marc:
-> >
-> > Thank you for your reply.
-> >
-> > As you said, APIs such as free_irq will deactivate irq before free it.
-> > But deactivation is not forced by every API, for example
-> > irq_dispose_mapping.  So I think it's better to check that irq was
-> > deactivated as expected.
-> 
-> In general, we should fix the problem at the core API level instead of hacking
-> individual drivers.
-> 
-> But more to the point, irq_dispose_mapping is not supposed to do anything
-> with the an active irq, as it doesn't have the required information to safely
-> remove it.
-> 
-> So calling irq_dispose_mapping on an interrupt that still has registered
-> actions is a bug, and I'm not convinced we want to cater for such a case. Do
-> you have a concrete example of some kernel code expecting this behaviour?
-> 
-> Thanks,
-> 
-> 	M.
-> 
+Yes, this was my assumption. But Michal, Josef and Johannes pointed a diving
+into reclaim in general is not fast. So, maybe we need some more creativity
+here to minimize the effect of this diving..
 
-Most driver use free_irq after register actions, I found this problem by a test case. 
-But if this problem happen and the same DeviceID & EventID are reused, 
-the freed ITT will be visit which cause delayed kernel panic,
-the prev INTs are triggered unexpected, but the new INTs lost.
-
-So I think this check spend less, but gains more.
-
-BRs,
-Yuanyuan.
-
-
-> >
-> > BRs,
-> > Yuanyuan
-> >
-> >
-> >> -----Original Message-----
-> >> From: Marc Zyngier [mailto:marc.zyngier@arm.com]
-> >> Sent: 2019年1月9日 15:43
-> >> To: Zhao, Yuanyuan <yuanyuan.zhao@hxt-semitech.com>
-> >> Cc: tglx@linutronix.de; jason@lakedaemon.net; linux-
-> >> kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org; Zheng,
-> >> Joey <yu.zheng@hxt-semitech.com>; Wang, Dongsheng
-> >> <dongsheng.wang@hxt- semitech.com>
-> >> Subject: Re: [RESEND 1/1] gic: its: Make sure a LPI is discarded before free.
-> >>
-> >> On Wed, 9 Jan 2019 11:53:27 +0800
-> >> Zhao Yuanyuan <yuanyuan.zhao@hxt-semitech.com> wrote:
-> >>
-> >> Hi Zhao,
-> >>
-> >>> Its device will be removed after all events be freed.
-> >>> Undisarded events can lead to unpredictable behaviar.
-> >>>
-> >>> Signed-off-by: Zhao Yuanyuan <yuanyuan.zhao@hxt-semitech.com>
-> >>> ---
-> >>>  drivers/irqchip/irq-gic-v3-its.c | 4 ++++
-> >>>  1 file changed, 4 insertions(+)
-> >>>
-> >>> diff --git a/drivers/irqchip/irq-gic-v3-its.c
-> >>> b/drivers/irqchip/irq-gic-v3-its.c
-> >>> index db20e99..4fee008 100644
-> >>> --- a/drivers/irqchip/irq-gic-v3-its.c
-> >>> +++ b/drivers/irqchip/irq-gic-v3-its.c
-> >>> @@ -2572,6 +2572,10 @@ static void its_irq_domain_free(struct
-> >> irq_domain *domain, unsigned int virq,
-> >>>  								virq + i);
-> >>>  		u32 event = its_get_event_id(data);
-> >>>
-> >>> +		/* Discard irq before free */
-> >>> +		if (irqd_is_activated(d))
-> >>> +			its_send_discard(its_dev, event);
-> >>> +
-> >>>  		/* Mark interrupt index as unused */
-> >>>  		clear_bit(event, its_dev->event_map.lpi_map);
-> >>>
-> >>
-> >> But we already do send a discard on deactivate, which logically
-> >> happens before we free the domain. So what are you fixing here?
-> >>
-> >> Thanks,
-> >>
-> >> 	M.
-> >> --
-> >> Without deviation from the norm, progress is not possible.
-> 
-> 
-> --
-> Jazz is not dead. It just smells funny...
+Thanks,
+Kirill
