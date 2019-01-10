@@ -6,107 +6,122 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D6B1C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 15:12:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6619BC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 15:12:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2302A214DA
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 15:12:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3AC02214DA
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 15:12:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729665AbfAJPMC (ORCPT
+        id S1729691AbfAJPMF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 10:12:02 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:35326 "EHLO pegase1.c-s.fr"
+        Thu, 10 Jan 2019 10:12:05 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:41342 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729654AbfAJPL7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 10:11:59 -0500
+        id S1729668AbfAJPMC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 10:12:02 -0500
 Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 43b8bw0FB5z9v0fC;
-        Thu, 10 Jan 2019 16:11:56 +0100 (CET)
+        by localhost (Postfix) with ESMTP id 43b8c01Xj9z9v0f9;
+        Thu, 10 Jan 2019 16:12:00 +0100 (CET)
 X-Virus-Scanned: Debian amavisd-new at c-s.fr
 Received: from pegase1.c-s.fr ([192.168.12.234])
         by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id UNeSJXpWqqtg; Thu, 10 Jan 2019 16:11:55 +0100 (CET)
+        with ESMTP id GkASEmS-V-lv; Thu, 10 Jan 2019 16:12:00 +0100 (CET)
 Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 43b8bv6srVz9v0f8;
-        Thu, 10 Jan 2019 16:11:55 +0100 (CET)
+        by pegase1.c-s.fr (Postfix) with ESMTP id 43b8c00cHKz9v0f8;
+        Thu, 10 Jan 2019 16:12:00 +0100 (CET)
 Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 740CB8B89F;
-        Thu, 10 Jan 2019 16:11:57 +0100 (CET)
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 8E8A38B8A0;
+        Thu, 10 Jan 2019 16:12:01 +0100 (CET)
 X-Virus-Scanned: amavisd-new at c-s.fr
 Received: from messagerie.si.c-s.fr ([127.0.0.1])
         by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id r6tFMXGFAgaO; Thu, 10 Jan 2019 16:11:57 +0100 (CET)
+        with ESMTP id 6yfjW1o2106b; Thu, 10 Jan 2019 16:12:01 +0100 (CET)
 Received: from po16846vm.idsi0.si.c-s.fr (unknown [192.168.4.90])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 46B108B898;
-        Thu, 10 Jan 2019 16:11:57 +0100 (CET)
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 62A728B89F;
+        Thu, 10 Jan 2019 16:12:01 +0100 (CET)
 Received: by po16846vm.idsi0.si.c-s.fr (Postfix, from userid 0)
-        id 0B7256BF21; Thu, 10 Jan 2019 15:11:57 +0000 (UTC)
-Message-Id: <b4ad853e98c4fac80236a5c44d1d47011fa34ecd.1547132681.git.christophe.leroy@c-s.fr>
+        id 188C36BF21; Thu, 10 Jan 2019 15:12:01 +0000 (UTC)
+Message-Id: <89564282d74c3dd4130ac08ecb72963b3f624cdb.1547132681.git.christophe.leroy@c-s.fr>
 In-Reply-To: <cover.1547132681.git.christophe.leroy@c-s.fr>
 References: <cover.1547132681.git.christophe.leroy@c-s.fr>
 From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH v2 09/15] powerpc/mmu: add is_strict_kernel_rwx() helper
+Subject: [PATCH v2 11/15] powerpc/kconfig: define CONFIG_DATA_SHIFT and
+ CONFIG_ETEXT_SHIFT
 To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Paul Mackerras <paulus@samba.org>,
         Michael Ellerman <mpe@ellerman.id.au>, j.neuschaefer@gmx.net
 Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date:   Thu, 10 Jan 2019 15:11:57 +0000 (UTC)
+Date:   Thu, 10 Jan 2019 15:12:01 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a helper to know whether STRICT_KERNEL_RWX is enabled.
+CONFIG_STRICT_KERNEL_RWX requires a special alignment
+for DATA for some subarches. Today it is just defined
+as an #ifdef in vmlinux.lds.S
 
-This is based on rodata_enabled flag which is defined only
-when CONFIG_STRICT_KERNEL_RWX is selected.
+In order to get more flexibility, this patch moves the
+definition of this alignment in Kconfig
+
+On some subarches, CONFIG_STRICT_KERNEL_RWX will
+require a special alignment of _etext.
+
+This patch also adds a configuration item for it in Kconfig
 
 Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 ---
- arch/powerpc/include/asm/mmu.h | 11 +++++++++++
- arch/powerpc/mm/init_32.c      |  4 +---
- 2 files changed, 12 insertions(+), 3 deletions(-)
+ arch/powerpc/Kconfig              | 9 +++++++++
+ arch/powerpc/kernel/vmlinux.lds.S | 9 +++------
+ 2 files changed, 12 insertions(+), 6 deletions(-)
 
-diff --git a/arch/powerpc/include/asm/mmu.h b/arch/powerpc/include/asm/mmu.h
-index 25607604a7a5..f5e27f4a0c29 100644
---- a/arch/powerpc/include/asm/mmu.h
-+++ b/arch/powerpc/include/asm/mmu.h
-@@ -289,6 +289,17 @@ static inline u16 get_mm_addr_key(struct mm_struct *mm, unsigned long address)
- }
- #endif /* CONFIG_PPC_MEM_KEYS */
+diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
+index d72caed57f2c..52d401a9f1a3 100644
+--- a/arch/powerpc/Kconfig
++++ b/arch/powerpc/Kconfig
+@@ -731,6 +731,15 @@ config THREAD_SHIFT
+ 	  Used to define the stack size. The default is almost always what you
+ 	  want. Only change this if you know what you are doing.
  
-+#ifdef CONFIG_STRICT_KERNEL_RWX
-+static inline bool strict_kernel_rwx_enabled(void)
-+{
-+	return rodata_enabled;
-+}
-+#else
-+static inline bool strict_kernel_rwx_enabled(void)
-+{
-+	return false;
-+}
-+#endif
- #endif /* !__ASSEMBLY__ */
++config ETEXT_SHIFT
++	int
++	default PPC_PAGE_SHIFT
++
++config DATA_SHIFT
++	int
++	default 24 if STRICT_KERNEL_RWX && PPC64
++	default PPC_PAGE_SHIFT
++
+ config FORCE_MAX_ZONEORDER
+ 	int "Maximum zone order"
+ 	range 8 9 if PPC64 && PPC_64K_PAGES
+diff --git a/arch/powerpc/kernel/vmlinux.lds.S b/arch/powerpc/kernel/vmlinux.lds.S
+index ad1c77f71f54..4fb3cd420383 100644
+--- a/arch/powerpc/kernel/vmlinux.lds.S
++++ b/arch/powerpc/kernel/vmlinux.lds.S
+@@ -12,11 +12,8 @@
+ #include <asm/cache.h>
+ #include <asm/thread_info.h>
  
- /* The kernel use the constants below to index in the page sizes array.
-diff --git a/arch/powerpc/mm/init_32.c b/arch/powerpc/mm/init_32.c
-index 3e59e5d64b01..ee5a430b9a18 100644
---- a/arch/powerpc/mm/init_32.c
-+++ b/arch/powerpc/mm/init_32.c
-@@ -108,12 +108,10 @@ static void __init MMU_setup(void)
- 		__map_without_bats = 1;
- 		__map_without_ltlbs = 1;
- 	}
--#ifdef CONFIG_STRICT_KERNEL_RWX
--	if (rodata_enabled) {
-+	if (strict_kernel_rwx_enabled()) {
- 		__map_without_bats = 1;
- 		__map_without_ltlbs = 1;
- 	}
+-#if defined(CONFIG_STRICT_KERNEL_RWX) && !defined(CONFIG_PPC32)
+-#define STRICT_ALIGN_SIZE	(1 << 24)
+-#else
+-#define STRICT_ALIGN_SIZE	PAGE_SIZE
 -#endif
- }
++#define STRICT_ALIGN_SIZE	(1 << CONFIG_DATA_SHIFT)
++#define ETEXT_ALIGN_SIZE	(1 << CONFIG_ETEXT_SHIFT)
  
- /*
+ ENTRY(_stext)
+ 
+@@ -131,7 +128,7 @@ SECTIONS
+ 
+ 	} :kernel
+ 
+-	. = ALIGN(PAGE_SIZE);
++	. = ALIGN(ETEXT_ALIGN_SIZE);
+ 	_etext = .;
+ 	PROVIDE32 (etext = .);
+ 
 -- 
 2.13.3
 
