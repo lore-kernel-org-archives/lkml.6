@@ -2,125 +2,165 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A0A9C43612
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 15:30:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FED3C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 15:30:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E1F2621872
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 15:30:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6A69220685
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 15:30:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729722AbfAJPaS (ORCPT
+        id S1729740AbfAJPaz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 10:30:18 -0500
-Received: from szxga01-in.huawei.com ([45.249.212.187]:6928 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729162AbfAJPaR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 10:30:17 -0500
-Received: from DGGEMA406-HUB.china.huawei.com (unknown [172.30.72.53])
-        by Forcepoint Email with ESMTP id AD2DB6E2AB425ED23186;
-        Thu, 10 Jan 2019 23:30:12 +0800 (CST)
-Received: from DGGEMA423-HUB.china.huawei.com (10.1.198.156) by
- DGGEMA406-HUB.china.huawei.com (10.3.20.47) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Thu, 10 Jan 2019 23:30:12 +0800
-Received: from DGGEMA523-MBX.china.huawei.com ([169.254.5.180]) by
- dggema423-hub.china.huawei.com ([10.1.198.156]) with mapi id 14.03.0415.000;
- Thu, 10 Jan 2019 23:30:08 +0800
-From:   gengdongjiu <gengdongjiu@huawei.com>
-To:     Peter Maydell <peter.maydell@linaro.org>
-CC:     James Morse <james.morse@arm.com>,
-        =?utf-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Christoffer Dall <christoffer.dall@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        "Catalin Marinas" <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        kvm-devel <kvm@vger.kernel.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        lkml - Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        arm-mail-list <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [RFC RESEND PATCH] kvm: arm64: export memory error recovery
- capability to user space
-Thread-Topic: [RFC RESEND PATCH] kvm: arm64: export memory error recovery
- capability to user space
-Thread-Index: AdSo8Hp33+98LQYESeSIe29UjvqzCw==
-Date:   Thu, 10 Jan 2019 15:30:08 +0000
-Message-ID: <0184EA26B2509940AA629AE1405DD7F2020453D5@dggema523-mbx.china.huawei.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.45.56.182]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Thu, 10 Jan 2019 10:30:55 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:38064 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727882AbfAJPaz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 10:30:55 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3BCAA1596;
+        Thu, 10 Jan 2019 07:30:54 -0800 (PST)
+Received: from e110439-lin (e110439-lin.cambridge.arm.com [10.1.194.43])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 04D933F6CF;
+        Thu, 10 Jan 2019 07:30:51 -0800 (PST)
+Date:   Thu, 10 Jan 2019 15:30:42 +0000
+From:   Patrick Bellasi <patrick.bellasi@arm.com>
+To:     Vincent Guittot <vincent.guittot@linaro.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <Morten.Rasmussen@arm.com>,
+        Paul Turner <pjt@google.com>, Ben Segall <bsegall@google.com>,
+        Thara Gopinath <thara.gopinath@linaro.org>,
+        pkondeti@codeaurora.org, Quentin Perret <quentin.perret@arm.com>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Subject: Re: [PATCH v7 2/2] sched/fair: update scale invariance of PELT
+Message-ID: <20190110153031.4rh64xz2muctkffe@e110439-lin>
+References: <20181128115336.GB23094@e110439-lin>
+ <CAKfTPtBsKc7v5gc=XUrzO-_4kahGfdNteo=t9W5fLv0Ee8co_w@mail.gmail.com>
+ <20181128144039.GC23094@e110439-lin>
+ <CAKfTPtAR7otTTwKYbg5OWbgrUYNKBNsUnOcMS9CfQtbYspvO5A@mail.gmail.com>
+ <20181128152133.GD23094@e110439-lin>
+ <CAKfTPtDTSXiVsPepiJDFT9ZCXfUVYTQhRvgfZbF=_w87girPAQ@mail.gmail.com>
+ <20181128163545.GE23094@e110439-lin>
+ <CAKfTPtAd8V=Qst82HPb1HW7ZdvrHGgaVhZ=rAdzbHNednp+ztg@mail.gmail.com>
+ <20181129150020.GF23094@e110439-lin>
+ <CAKfTPtB_uVBx85vWVOhqUYyKGFipa4HGECsC-YZMvaz8wK6oCA@mail.gmail.com>
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKfTPtB_uVBx85vWVOhqUYyKGFipa4HGECsC-YZMvaz8wK6oCA@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiANCj4gT24gVGh1LCAxMCBKYW4gMjAxOSBhdCAxMjowOSwgZ2VuZ2RvbmdqaXUgPGdlbmdkb25n
-aml1QGh1YXdlaS5jb20+IHdyb3RlOg0KPiA+IFBldGVyLCBJIHN1bW1hcml6ZSBKYW1lcydzIG1h
-aW4gaWRlYSwgSmFtZXMgdGhpbmsgUUVNVSBkb2VzIG5vdCBuZWVkcw0KPiA+IHRvIGNoZWNrICpz
-b21ldGhpbmcqIGlmIFFlbXUgc3VwcG9ydCBmaXJtd2FyZS1maXJzdC4NCj4gPiBXaGF0IGRvIHdl
-IGRvIGZvciB5b3VyIGNvbW1lbnRzPw0KPiANCj4gVW5sZXNzIEknbSBtaXNzaW5nIHNvbWV0aGlu
-ZywgdGhlIGNvZGUgaW4geW91ciBtb3N0IHJlY2VudCBwYXRjaHNldCBhdHRlbXB0cyB0byB1cGRh
-dGUgYW4gQUNQSSB0YWJsZSB3aGVuIGl0IGdldHMgdGhlIFNJR0JVUyBmcm9tIHRoZQ0KPiBob3N0
-IGtlcm5lbCB3aXRob3V0IGRvaW5nIGFueXRoaW5nIHRvIGNoZWNrIHdoZXRoZXIgaXQgaGFzIGV2
-ZXIgY3JlYXRlZCB0aGUgQUNQSSB0YWJsZSAoYW5kIHNldCB1cCB0aGUgUUVNVSBnbG9iYWwgdmFy
-aWFibGUgdGhhdCB0ZWxscyB0aGUNCj4gY29kZSB3aGVyZSBpdCBpcyBpbiB0aGUgZ3Vlc3QgbWVt
-b3J5KSBpbiB0aGUgZmlyc3QgcGxhY2UuDQoNCndoZW4gUUVNVSB2ZXJzaW9uIGlzIGdyZWF0ZXIg
-dGhhbiBzb21lIHZlcnNpb24sIGl0IHdpbGwgZGVmYXVsdCBjcmVhdGUgdGhlIEFQRUkgdGFibGUu
-IEJ1dCBvbmx5IHdoZW4gdGhlIGd1ZXN0IGlzIGJvb3RlZCBieSBVRUZJLCBpdCB3aWxsIHN1cHBv
-cnQgdG8gcmVjb3JkIHRoZSBDUEVSIHRvIGd1ZXN0IG1lbW9yeS4gDQpJbiBteSB0ZXN0LCBJIGJv
-b3QgZ3Vlc3QgdXNpbmcgVUVGSSwgc28gaXQgaXMgbm8gcHJvYmxlbSwgSSB3aWxsIGNoZWNrIHdo
-ZXRoZXIgdGhpcyBib290aW5nIHVzZXMgVUVGSSBiZWZvcmUgdXBkYXRlIHRoZSBBQ1BJIHRhYmxl
-Lg0KDQo+IEkgZG9uJ3Qgc2VlIGhvdyB0aGF0IGNhbiB3b3JrLgkNCj4gDQo+ID4gPj4gSSB0aGlu
-ayBvbmUgcXVlc3Rpb24gaGVyZSB3aGljaCBpdCB3b3VsZCBiZSBnb29kIHRvIGFuc3dlciBpczoN
-Cj4gPiA+PiBpZiB3ZSBhcmUgbW9kZWxsaW5nIGEgZ3Vlc3QgYW5kIHdlIGhhdmVuJ3Qgc3BlY2lm
-aWNhbGx5IHByb3ZpZGVkIGl0DQo+ID4gPj4gYW4gQUNQSSB0YWJsZSB0byB0ZWxsIGl0IGFib3V0
-IG1lbW9yeSBlcnJvcnMsIHdoYXQgZG8gd2UgZG8gd2hlbiB3ZQ0KPiA+ID4+IGdldCBhIHNpZ2J1
-cyBmcm9tIHRoZSBob3N0PyBXZSBoYXZlIGJhc2ljYWxseSB0d28gY2hvaWNlczoNCj4gPiA+PiAg
-KDEpIHNlbmQgdGhlIGd1ZXN0IGFuIFNFcnJvciAoYWthIGFzeW5jaHJvbm91cyBleHRlcm5hbCBh
-Ym9ydCkNCj4gPiA+PiAgICAgIGFueXdheSAod2l0aCBubyBmdXJ0aGVyIGluZm8gYWJvdXQgd2hh
-dCB0aGUgbWVtb3J5IGVycm9yIGlzKQ0KPiA+ID4NCj4gPiA+IEZvciBhbiBBUiBzaWduYWwgYW4g
-ZXh0ZXJuYWwgYWJvcnQgaXMgdmFsaWQuIEl0cyB1cCB0byB0aGUNCj4gPiA+IGltcGxlbWVudGF0
-aW9uIHdoZXRoZXIgdGhlc2UgYXJlIHN5bmNocm9ub3VzIG9yIGFzeW5jaHJvbm91cy4gUWVtdQ0K
-PiA+ID4gY2FuIG9ubHkgdGFrZSBhIHNpZ25hbCBmb3Igc29tZXRoaW5nIHRoYXQgd2FzIHN5bmNo
-cm9ub3VzLCBzbyB5b3UgY2FuIGNob29zZSBiZXR3ZWVuIHRoZSB0d28uDQo+ID4gPiBTeW5jaHJv
-bm91cyBleHRlcm5hbCBhYm9ydCBpcyBtYXJnaW5hbGx5IGJldHRlciBhcyBhbiB1bmF3YXJlIE9T
-DQo+ID4gPiBrbm93cyBpdHMgYWZmZWN0cyB0aGlzIHRocmVhZCwgYW5kIG1heSBiZSBhYmxlIHRv
-IGtpbGwgaXQuDQo+ID4gPiBTRXJyb3Igd2l0aCBhbiBpbXAtZGVmIEVTUiBpcyBpbmRpc3Rpbmd1
-aXNoYWJsZSBmcm9tICdwYXJ0IG9mIHRoZQ0KPiA+ID4gc29jIGZlbGwgb3V0JywgYW5kIHNob3Vs
-ZCBhbHdheXMgcmVzdWx0IGluIGEgcGFuaWMoKS4NCj4gPiA+DQo+ID4gPg0KPiA+ID4+ICAoMikg
-anVzdCBzdG9wIFFFTVUgKGFzIHdlIHdvdWxkIGZvciBhIG1lbW9yeSBlcnJvciBpbiBRRU1VJ3MN
-Cj4gPiA+PiAgICAgIG93biBtZW1vcnkpDQo+ID4gPg0KPiA+ID4gVGhpcyBpcyBhbHNvIHZhbGlk
-LiBBIG1hY2hpbmUgbWF5IHRha2UgZXh0ZXJuYWwtYWJvcnQgdG8gRUwzIGFuZA0KPiA+ID4gdGhl
-biByZWJvb3QvY3Jhc2gvYnVybi4NCj4gDQo+IFdlIHNob3VsZCBkZWNpZGUgd2hpY2ggb2YgdGhl
-c2Ugd2Ugd2FudCB0byBkbywgYW5kIGhhdmUgYSBjb21tZW50IGV4cGxhaW5pbmcgd2hhdCB3ZSdy
-ZSBkb2luZy4gSWYgSSdtIHJlYWRpbmcgeW91ciBjdXJyZW50IHBhdGNoc2V0DQo+IGNvcnJlY3Rs
-eSwgaXQgZG9lcyBuZWl0aGVyIC0tIGlmIGl0IGNhbid0IHJlY29yZCB0aGUgZmF1bHQgaW4gdGhl
-IEFDUEkgdGFibGUgaXQganVzdCBpZ25vcmVzIGl0IHdpdGhvdXQgZWl0aGVyIHN0b3BwaW5nIFFF
-TVUgb3IgZGVsaXZlcmluZyBhbiBTRXJyb3IuDQoNCkphbWVzIG1heSBub3Qga25vdyBteSBkZXRh
-aWxlZCBpbXBsZW1lbnRhdGlvbiBpbiB0aGUgUUVNVS4gSW4gbXkgcGF0Y2gsIEkgb25seSBoYW5k
-bGUgdGhlIEJVU19NQ0VFUlJfQVIgU0lHQlVTIHNpZ25hbChzeW5jaHJvbm91cyBzaWduYWwpLiB3
-aGVuIHRoZSBTSUdCVVMgaXMgQlVTX01DRUVSUl9BUiwgaXQgd2lsbCBkZWxpdmVyIGEgc3luY2hy
-b25vdXMgZXhjZXB0aW9uIGFib3J0Lg0KSmFtZXMgc2FpZCBpdCBuZWVkcyB0byBkZWxpdmVyIGFu
-IFNFcnJvciB3aGVuIHRoZSBCVVNfTUNFRVJSX09SIFNJR0JVUyBzaWduYWwoc3luY2hyb25vdXMg
-c2lnbmFsKSwgYnV0IEkgZG8gbm90IGhhbmRsZSB0aGUgdGhpcyBjYXNlIGJlY2F1c2UgUUVNVSBt
-YWluIHRocmVhZCB3aWxsIG1hc2sgdGhpcyBhc3luY2hyb25vdXMgc2lnbmFsLg0KDQpJZiB0aGUg
-bWVtb3J5IGVycm9yIGlzIGJlbG9uZyB0byBRRU1VIGl0c2VsZiwgSSBqdXN0IHByaW50IGFuIGVy
-cm9yIGxvZ1syXS4gSWYgeW91IHRoaW5rLCBpdCBzaG91bGQgc3RvcCBRRU1VIGZvciB0aGlzIGNh
-c2UsIEkgd2lsbCBjaGFuZ2UgaXQuDQoNCnZvaWQga3ZtX2FyY2hfb25fc2lnYnVzX3ZjcHUoQ1BV
-U3RhdGUgKmMsIGludCBjb2RlLCB2b2lkICphZGRyKSB7DQoJLi4uLi4uLi4uLi4uLi4uLi4uDQog
-ICAJaWYgKGNvZGUgPT0gQlVTX01DRUVSUl9BUikgew0KICAgIAlrdm1fY3B1X3N5bmNocm9uaXpl
-X3N0YXRlKGMpOw0KICAgICAgIAlpZiAoZ2hlc19yZWNvcmRfZXJyb3JzKEFDUElfSEVTVF9OT1RJ
-RllfU0VBLCBwYWRkcikpIHsNCiAgICAgCQlrdm1faW5qZWN0X2FybV9zZWEoYyk7DQogICAgIAl9
-IGVsc2Ugew0KICAgICAgIAkJZnByaW50ZihzdGRlcnIsICJmYWlsZWQgdG8gcmVjb3JkIHRoZSBl
-cnJvclxuIik7DQogICAgICAgCX0NCgl9DQpbMl0JZnByaW50ZihzdGRlcnIsICJIYXJkd2FyZSBt
-ZW1vcnkgZXJyb3IgZm9yIG1lbW9yeSB1c2VkIGJ5ICINCiAgICAgICAgICAgICAgICAiUUVNVSBp
-dHNlbGYgaW5zdGVhZCBvZiBndWVzdCBzeXN0ZW0hXG4iKTsNCn0NCj4gDQo+IEkgdGhpbmsgSSBm
-YXZvdXIgb3B0aW9uICgyKSBoZXJlLg0KPiANCj4gdGhhbmtzDQo+IC0tIFBNTQ0K
+On 29-Nov 17:19, Vincent Guittot wrote:
+> On Thu, 29 Nov 2018 at 16:00, Patrick Bellasi <patrick.bellasi@arm.com> wrote:
+> > On 29-Nov 11:43, Vincent Guittot wrote:
+
+[...]
+
+> > Seems we agree that, when there is no idle time:
+> > - the two 15% tasks will be overestimated
+> > - their utilization will reach 50% after a while
+> >
+> > If I'm not wrong, we will have:
+> > - 30% CPU util in  ~16ms @1024 capacity
+> >                    ~64ms  @256 capacity
+> >
+> > Thus, the tasks will be certainly over-estimated after ~64ms.
+> > Is that correct ?
+> 
+> From a pure util_avg pov it's correct
+> But i'd like to weight that a bit with the example below
+> 
+> > Now, we can argue that 64ms is a pretty long time and thus it's quite
+> > unlucky we will have no idle for such a long time.
+> >
+> > Still, I'm wondering if we should keep collecting those samples or
+> > better find a way to detect that and skip the sampling.
+> 
+> The problem is that you can have util_avg above capacity even with idle time
+> In the 1st example of this thread, the 39ms/80ms task will reach 709
+> which is the value saved by util_est on a big core
+> But on core with half capacity, there is still idle time so 709 is a
+> correct value although above 512
+
+Right, I see your point and (in principle) I like the idea of
+collecting samples for tasks which happen to run at a lower capacity
+then required and the utilization value makes sense...
+
+> In fact, max will be always above the linear ratio because it's based
+> on geometric series
+> 
+> And this is true even with 15.6ms/32ms (same ratio as above) task
+> although the impact is smaller (max value, which should be saved by
+> util est, becomes  587 in this case).
+
+However that's not always the case... as per my example above.
+
+Moreover, we should also consider that util_est is mainly meant to be
+a lower-bound for tasks utilization.
+That's why task_util_est() already returns the actual util_avg when
+it's higher than the estimated utilization.
+
+With your new signal and without any special check on samples
+collection, if a task is limited because of thermal capping for
+example, we could end up overestimating its utilization and thus
+perhaps generating an unwanted frequency spike when the capping is
+relaxed... and (even worst) it will take some more activations for the
+estimated utilization to converge back to the actual utilization.
+
+Since we cannot easily know if there is idle time in a CPU when a task
+completes an activation with a utilization higher then the CPU
+capacity, I would better prefer to just skip the sampling with
+something like:
+
+---8<---
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 9332863d122a..485053026533 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -3639,6 +3639,7 @@ util_est_dequeue(struct cfs_rq *cfs_rq, struct task_struct *p, bool task_sleep)
+ {
+ 	long last_ewma_diff;
+ 	struct util_est ue;
++	int cpu;
+ 
+ 	if (!sched_feat(UTIL_EST))
+ 		return;
+@@ -3672,6 +3673,14 @@ util_est_dequeue(struct cfs_rq *cfs_rq, struct task_struct *p, bool task_sleep)
+ 	if (within_margin(last_ewma_diff, (SCHED_CAPACITY_SCALE / 100)))
+ 		return;
+ 
++	/*
++	 * To avoid overestimation of actual task utilization, skip updates if
++	 * we cannot grant there is idle time in this CPU.
++	 */
++	cpu = cpu_of(rq_of(cfs_rq));
++	if (task_util(p) > cpu_capacity(cpu))
++		return;
++
+ 	/*
+ 	 * Update Task's estimated utilization
+ 	 *
+---8<---
+
+At least this will ensure that util_est always provides an actual
+measured lower bound for a task utilization.
+
+If you think this makes sense, feel free to add such a patch on
+top of your series.
+
+Cheers Patrick
+
+-- 
+#include <best/regards.h>
+
+Patrick Bellasi
