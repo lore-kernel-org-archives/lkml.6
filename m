@@ -2,95 +2,165 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1974EC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 07:01:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9A4FC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 07:01:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC5BC2173B
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 07:01:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547103675;
-	bh=FceOKX4IlMcPkljfRCx8fmuGUPwBbz53DwE5EtzxOLg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=cOpNOZoEq0F6v4Z0ldo+WEOi730h5NjMPJjav4WuoSzMUMxxi4r1EaqKrAZ9wax4x
-	 VNHxBKhMg9yrzks4g4bFOZbdLGV+FWEZGpoEwl6Ju51mhsBGXIXnglzxptj1Kx/3vt
-	 zE1xm7d1mUYx4g5PjH701vcDI+cSDkR95wqL0gWg=
+	by mail.kernel.org (Postfix) with ESMTP id 9783C20657
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 07:01:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="XNViYEPW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727414AbfAJHBO (ORCPT
+        id S1727540AbfAJHBb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 02:01:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45734 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726968AbfAJHBO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 02:01:14 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 56C0120657;
-        Thu, 10 Jan 2019 07:01:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547103673;
-        bh=FceOKX4IlMcPkljfRCx8fmuGUPwBbz53DwE5EtzxOLg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=rmqp/m7xayz4ySXiTy0IlGwXqmfq06taj0fe1LKYl4LdnCiwRDFg+ikYMHYiiY7mQ
-         QtsBdc8irxlSnhRRNFwzxzLCx71768ZWwbTrqzkehowgt0LdjoLhaECi8g1GmB4XSP
-         sn/wqickAez5M6ghGV0eXjvbFi+UjMOR9KpPtukE=
-Date:   Thu, 10 Jan 2019 08:01:10 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     devel@driverdev.osuosl.org, sedat.dilek@credativ.de,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] staging: rtl8723bs: Mark ACPI table declaration as used
-Message-ID: <20190110070110.GA29175@kroah.com>
-References: <20180926232055.31951-1-natechancellor@gmail.com>
- <20180927051634.GA32508@kroah.com>
- <CAKwvOdm3Au2V159PtripyZReZf167TtL5o7P9uYY-okr+n4xPw@mail.gmail.com>
- <CAKwvOd=NkgAWVGCS4Mb=Mgs5iu-uX1Kp=fjYSHhXAnh4gAQ-8w@mail.gmail.com>
- <CAKwvOd=+Vqm2FdZ-nb7j2eVTHuP2dWBmiYyZ0WLMEERK9NqNKA@mail.gmail.com>
+        Thu, 10 Jan 2019 02:01:31 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:34144 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726968AbfAJHBa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 02:01:30 -0500
+Received: by mail-pf1-f194.google.com with SMTP id h3so4908866pfg.1
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Jan 2019 23:01:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=3X7FWpHmTVcpHXfgsAheG4ZiQ9OG79ixvLWK46B7wSw=;
+        b=XNViYEPWf8Ouq/4k2irBaaEcoqwsVhgKIY45nC1h2Bm8Yz4QELiRbOjf+D961Quc3R
+         VBZRqtiAMKQJSpuoVMF4g2UzrHIFRKvzBkXtQy/KMToUErbaVt8FMX3Q0OKRM7mKU5r/
+         tQuwR8MMlEfBunUgdj7RNnx62fA11dqUYIwVU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=3X7FWpHmTVcpHXfgsAheG4ZiQ9OG79ixvLWK46B7wSw=;
+        b=MbZEFk1Pk8KakIZUn5t1AdhMO1w+B4f3hqj8zk4abPxSZJ6cE7FO1TyY13+HPpDEyQ
+         nYJmxbGsk/dKqUrn9MXn3vbVm7h/LWwXr3/Zbg7B9VO88R1M69K/7Jv7u+Zl5A3XfoU7
+         f6lXtC4uEBiAD0jNMFqAhFbgRpL+r9X/jsy6MCnX916KRpJgpjxVSGoRzc385EFRKvZA
+         HyM1JusJlr9mdxa2C2hfqt7lHnvdqAzdMPLjlPGHKpljij5sF64SaHjX+ue1r1Ibipsx
+         qGc3CqzQTgYmgvBkQYd8XWOFfz0VZbRjWhlrcKUZhr3cKDVNVL53iU2GtmR2t3F6TTW4
+         q9Vw==
+X-Gm-Message-State: AJcUukcbvdUfadQGzZk3Sl4yLYfllBVD/s/BNg1wrGuX96kRkXXisGO7
+        tMqyXIUnaRRYr1CBCm9mqhpKJA==
+X-Google-Smtp-Source: ALg8bN7vWeNi5PBVQFiiWICw8G/6yLGRvwYizy2YCiPR4JORhVVenJWjrAlcK2J1duvFSb80jtdz5Q==
+X-Received: by 2002:a65:62da:: with SMTP id m26mr8407142pgv.278.1547103689853;
+        Wed, 09 Jan 2019 23:01:29 -0800 (PST)
+Received: from localhost ([122.166.131.155])
+        by smtp.gmail.com with ESMTPSA id i5sm15187414pfg.34.2019.01.09.23.01.28
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 09 Jan 2019 23:01:29 -0800 (PST)
+Date:   Thu, 10 Jan 2019 12:31:27 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     =?utf-8?B?UGF3ZcWC?= Chmiel <pawel.mikolaj.chmiel@gmail.com>
+Cc:     kgene@kernel.org, krzk@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, linux@armlinux.org.uk, rjw@rjwysocki.net,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+Subject: Re: [PATCH 3/4] cpufreq: s5pv210: Defer probe if getting regulators
+ fail
+Message-ID: <20190110070127.ymukpnbabjr5n5fe@vireshk-i7>
+References: <20190108200509.30494-1-pawel.mikolaj.chmiel@gmail.com>
+ <20190108200509.30494-4-pawel.mikolaj.chmiel@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAKwvOd=+Vqm2FdZ-nb7j2eVTHuP2dWBmiYyZ0WLMEERK9NqNKA@mail.gmail.com>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190108200509.30494-4-pawel.mikolaj.chmiel@gmail.com>
+User-Agent: NeoMutt/20180323-120-3dd1ac
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 09, 2019 at 04:19:30PM -0800, Nick Desaulniers wrote:
-> Digging up an old thread to point out I was wrong:
+On 08-01-19, 21:05, Paweł Chmiel wrote:
+> There is possibility, that when probing driver, regulators are not yet
+> initialized. In this case we should return EPROBE_DEFER and wait till
+> they're initialized, since they're required currently for cpufreq driver
+> to work. Also move regulator initialization code at beginning of probe,
+> so we can defer as fast as posibble.
 > 
-> On Thu, Sep 27, 2018 at 1:08 PM Nick Desaulniers
-> <ndesaulniers@google.com> wrote:
-> > > This is not a million-little-commits problem; more like 2 drivers in
-> > > the whole tree have this problem.
-> > >
-> > > Note that this change that Nathan has DOES NOT need to applied to
-> > > every driver that uses MODULE_DEVICE_TABLE.  Only when the struct has
-> > > no other references other than JUST being passed to
-> > > MODULE_DEVICE_TABLE() is this a problem.  For an allyesconfig, I only
-> > > see 2 instances of this case in the whole tree:
-> > >
-> > > https://github.com/ClangBuiltLinux/linux/issues/169 <- this patch is addressing
-> > > https://github.com/ClangBuiltLinux/linux/issues/178 <- waiting on the
-> > > results of this patch
-> > >
-> > > If you're ok with this change to two drivers, then:
-> > > Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+> Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
+> ---
+>  drivers/cpufreq/s5pv210-cpufreq.c | 33 +++++++++++++++++++------------
+>  1 file changed, 20 insertions(+), 13 deletions(-)
 > 
-> I just landed a fix for this in Clang
-> (https://reviews.llvm.org/rL350776) which will ship soon in Clang 8.
-> Sedat helped test this patch and reported that it removed 41
-> false-negative warnings
-> https://github.com/ClangBuiltLinux/linux/issues/232#issuecomment-440006399
+> diff --git a/drivers/cpufreq/s5pv210-cpufreq.c b/drivers/cpufreq/s5pv210-cpufreq.c
+> index f51697f1e0b3..2d0e4dc7ede7 100644
+> --- a/drivers/cpufreq/s5pv210-cpufreq.c
+> +++ b/drivers/cpufreq/s5pv210-cpufreq.c
+> @@ -594,6 +594,26 @@ static int s5pv210_cpufreq_probe(struct platform_device *pdev)
+>  	 * this whole driver as soon as S5PV210 gets migrated to use
+>  	 * cpufreq-dt driver.
+>  	 */
+> +	arm_regulator = regulator_get(NULL, "vddarm");
+> +	if (PTR_ERR(arm_regulator) == -EPROBE_DEFER) {
+> +		pr_dbg("vddarm regulator not ready, defer\n");
+> +		return -EPROBE_DEFER;
+> +	} else if (IS_ERR(arm_regulator)) {
+> +		pr_err("failed to get regulator vddarm\n");
+> +		return PTR_ERR(arm_regulator);
+> +	}
 
-Great, thanks for letting me know.  Can I revert this patch?
+The only difference between the two cases is pr_dbg vs pr_err, its
+ugly that we have to add special code for that :(
 
-thanks,
+Maybe write it as:
 
-greg k-h
+        if (IS_ERR(arm_regulator)) {
+                if (PTR_ERR(arm_regulator) == -EPROBE_DEFER)
+                        pr_dbg...
+                else
+                        pr_err
+                return PTR_ERR(arm_regulator);
+        }
+
+> +
+> +	int_regulator = regulator_get(NULL, "vddint");
+> +	if (PTR_ERR(int_regulator == -EPROBE_DEFER) {
+
+Does this even compile ?
+
+> +		regulator_put(arm_regulator);
+> +		pr_dbg("vddint regulator not ready, defer\n");
+> +		return -EPROBE_DEFER;
+> +	} else if (IS_ERR(int_regulator)) {
+> +		regulator_put(arm_regulator);
+> +		pr_err("failed to get regulator vddint\n");
+> +		return PTR_ERR(int_regulator);
+> +	}
+> +
+>  	np = of_find_compatible_node(NULL, NULL, "samsung,s5pv210-clock");
+>  	if (!np) {
+>  		pr_err("%s: failed to find clock controller DT node\n",
+> @@ -633,19 +653,6 @@ static int s5pv210_cpufreq_probe(struct platform_device *pdev)
+>  		}
+>  	}
+>  
+> -	arm_regulator = regulator_get(NULL, "vddarm");
+> -	if (IS_ERR(arm_regulator)) {
+> -		pr_err("failed to get regulator vddarm\n");
+> -		return PTR_ERR(arm_regulator);
+> -	}
+> -
+> -	int_regulator = regulator_get(NULL, "vddint");
+> -	if (IS_ERR(int_regulator)) {
+> -		pr_err("failed to get regulator vddint\n");
+> -		regulator_put(arm_regulator);
+> -		return PTR_ERR(int_regulator);
+> -	}
+> -
+>  	register_reboot_notifier(&s5pv210_cpufreq_reboot_notifier);
+>  
+>  	return cpufreq_register_driver(&s5pv210_driver);
+> -- 
+> 2.17.1
+
+-- 
+viresh
