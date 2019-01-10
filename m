@@ -2,174 +2,139 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F4C5C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 00:44:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73137C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 00:44:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 48381214DA
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 00:44:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4F5A8214DA
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 00:44:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726729AbfAJAo3 (ORCPT
+        id S1726831AbfAJAof (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 19:44:29 -0500
-Received: from ipmail01.adl6.internode.on.net ([150.101.137.136]:61418 "EHLO
-        ipmail01.adl6.internode.on.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726496AbfAJAo3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 19:44:29 -0500
-Received: from ppp59-167-129-252.static.internode.on.net (HELO dastard) ([59.167.129.252])
-  by ipmail01.adl6.internode.on.net with ESMTP; 10 Jan 2019 11:14:26 +1030
-Received: from dave by dastard with local (Exim 4.80)
-        (envelope-from <david@fromorbit.com>)
-        id 1ghOSO-0001oD-Or; Thu, 10 Jan 2019 11:44:24 +1100
-Date:   Thu, 10 Jan 2019 11:44:24 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Jiri Kosina <jikos@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Jann Horn <jannh@google.com>,
+        Wed, 9 Jan 2019 19:44:35 -0500
+Received: from mail.us.es ([193.147.175.20]:49274 "EHLO mail.us.es"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726730AbfAJAoe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 9 Jan 2019 19:44:34 -0500
+Received: from antivirus1-rhel7.int (unknown [192.168.2.11])
+        by mail.us.es (Postfix) with ESMTP id 3C3E01E8FA4
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 01:44:31 +0100 (CET)
+Received: from antivirus1-rhel7.int (localhost [127.0.0.1])
+        by antivirus1-rhel7.int (Postfix) with ESMTP id 1FF65DA84E
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 01:44:31 +0100 (CET)
+Received: by antivirus1-rhel7.int (Postfix, from userid 99)
+        id 00185DA86E; Thu, 10 Jan 2019 01:44:30 +0100 (CET)
+Received: from antivirus1-rhel7.int (localhost [127.0.0.1])
+        by antivirus1-rhel7.int (Postfix) with ESMTP id 366DADA7FC;
+        Thu, 10 Jan 2019 01:44:27 +0100 (CET)
+Received: from 192.168.1.97 (192.168.1.97)
+ by antivirus1-rhel7.int (F-Secure/fsigk_smtp/550/antivirus1-rhel7.int);
+ Thu, 10 Jan 2019 01:44:27 +0100 (CET)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/antivirus1-rhel7.int)
+Received: from us.es (sys.soleta.eu [212.170.55.40])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: 1984lsi)
+        by entrada.int (Postfix) with ESMTPSA id F3D6A4265A5C;
+        Thu, 10 Jan 2019 01:44:26 +0100 (CET)
+Date:   Thu, 10 Jan 2019 01:44:26 +0100
+X-SMTPAUTHUS: auth mail.us.es
+From:   Pablo Neira Ayuso <pablo@netfilter.org>
+To:     Shakeel Butt <shakeelb@google.com>
+Cc:     Michal Hocko <mhocko@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Michal Hocko <mhocko@suse.com>, Linux-MM <linux-mm@kvack.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>
-Subject: Re: [PATCH] mm/mincore: allow for making sys_mincore() privileged
-Message-ID: <20190110004424.GH27534@dastard>
-References: <20190106001138.GW6310@bombadil.infradead.org>
- <CAHk-=wiT=ov+6zYcnw_64ihYf74Amzqs67iVGtJMQq65PxiVYw@mail.gmail.com>
- <CAHk-=wg1A44Roa8C4dmfdXLRLmNysEW36=3R7f+tzZzbcJ2d2g@mail.gmail.com>
- <CAHk-=wiqbKEC5jUXr3ax+oUuiRrp=QMv_ZnUfO-SPv=UNJ-OTw@mail.gmail.com>
- <20190108044336.GB27534@dastard>
- <CAHk-=wjvzEFQcTGJFh9cyV_MPQftNrjOLon8YMMxaX0G1TLqkg@mail.gmail.com>
- <20190109022430.GE27534@dastard>
- <nycvar.YFH.7.76.1901090326460.16954@cbobk.fhfr.pm>
- <20190109043906.GF27534@dastard>
- <CAHk-=wic28fSkwmPbBHZcJ3BGbiftprNy861M53k+=OAB9n0=w@mail.gmail.com>
+        Florian Westphal <fw@strlen.de>,
+        Kirill Tkhai <ktkhai@virtuozzo.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org,
+        syzbot+7713f3aa67be76b1552c@syzkaller.appspotmail.com,
+        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
+        Roopa Prabhu <roopa@cumulusnetworks.com>,
+        Nikolay Aleksandrov <nikolay@cumulusnetworks.com>,
+        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+        bridge@lists.linux-foundation.org
+Subject: Re: [PATCH v2] netfilter: account ebt_table_info to kmemcg
+Message-ID: <20190110004426.p4n4lrpnnvv4czir@salvia>
+References: <20190103031431.247970-1-shakeelb@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHk-=wic28fSkwmPbBHZcJ3BGbiftprNy861M53k+=OAB9n0=w@mail.gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20190103031431.247970-1-shakeelb@google.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 09, 2019 at 10:25:43AM -0800, Linus Torvalds wrote:
-> On Tue, Jan 8, 2019 at 8:39 PM Dave Chinner <david@fromorbit.com> wrote:
-> >
-> > FWIW, I just realised that the easiest, most reliable way to
-> > invalidate the page cache over a file range is simply to do a
-> > O_DIRECT read on it.
+On Wed, Jan 02, 2019 at 07:14:31PM -0800, Shakeel Butt wrote:
+> The [ip,ip6,arp]_tables use x_tables_info internally and the underlying
+> memory is already accounted to kmemcg. Do the same for ebtables. The
+> syzbot, by using setsockopt(EBT_SO_SET_ENTRIES), was able to OOM the
+> whole system from a restricted memcg, a potential DoS.
 > 
-> If that's the case, that's actually an O_DIRECT bug.
->
-> It should only invalidate the caches on write.
+> By accounting the ebt_table_info, the memory used for ebt_table_info can
+> be contained within the memcg of the allocating process. However the
+> lifetime of ebt_table_info is independent of the allocating process and
+> is tied to the network namespace. So, the oom-killer will not be able to
+> relieve the memory pressure due to ebt_table_info memory. The memory for
+> ebt_table_info is allocated through vmalloc. Currently vmalloc does not
+> handle the oom-killed allocating process correctly and one large
+> allocation can bypass memcg limit enforcement. So, with this patch,
+> at least the small allocations will be contained. For large allocations,
+> we need to fix vmalloc.
 
-Sounds nice from a theoretical POV, but reality has taught us
-very different lessons.
+Fine with this -mm?
 
-FWIW, a quick check of XFS's history so you understand how long this
-behaviour has been around. It was introduced in the linux port in
-2001 as direct IO support was being added:
+If no objections, I'll apply this to the netfilter tree. Thanks.
 
-commit e837eac23662afae603aaaef7c94bc839c1b8f67
-Author: Steve Lord <lord@sgi.com>
-Date:   Mon Mar 5 16:47:52 2001 +0000
-
-    Add bounds checking for direct I/O, do the cache invalidation for
-    data coherency on direct I/O.
-
-This was basically a direct port of the flush+invalidation code in
-the Irix direct IO path, which was introduced in 1995:
-
-    > revision 1.149
-    > date: 1995/08/11 20:09:44;  author: ajs;  state: Exp;  lines: +70 -2
-    > 280514 Adding page cache flusing calls to make direct
-    > I/O coherent with buffered I/O.
-
-IOWs, history tells us that invalidation for direct IO reads has
-been done on XFS for almost 25 years.  I know for certain that there
-have been applications out there that depend on this
-invalidation-on-read behaviour (another of those "reality bites"
-lessons) so we can't just remove it because you *think* it is a bug.
-
-i.e. we *could* remove the invalidation on read, but this we have a
-major behavioural change to the XFS direct IO path. This means we
-need to determine if we've just awoken sleeping data corruption
-krakens as well as determine if there are any performance
-regressions that result from the behavioural change.
-
-Which brings me to validation.  If the recent
-clone/dedupe/copy_file_range() debacle has taught me anything, it's
-that validating a "simple" IO path mechanism is going to take months
-worth of machine time before we have any confidence that the change
-is not going to expose users to new data corruption problems.
-
-That's the difficulty here - it only takes 5 minutes to change
-the code, but there's months of machine time needed to determine if
-it's really safe to make that code change. Testing has a nasty habit
-of finding invalid assumptions; when those are assumptions about
-data coherency and integrity we can't test them on our users.
-
-And, really, this would be just another band-aid over a symptom of
-the information leak - it doesn't prevent users from being able to
-control page cache invalidation. It just removes one method, just
-like hacking mincore only removes one method of observing the page
-cache.  And, like mincore(), there's every chance it impacts on
-userspace in a negative manner and so we need to be very careful
-here.
-
-> On reads, it wants to either _flush_ any direct caches before the
-> read, or just take the data from the caches. At no point is
-> "invalidate" a valid model.
+> Reported-by: syzbot+7713f3aa67be76b1552c@syzkaller.appspotmail.com
+> Signed-off-by: Shakeel Butt <shakeelb@google.com>
+> Cc: Florian Westphal <fw@strlen.de>
+> Cc: Michal Hocko <mhocko@kernel.org>
+> Cc: Kirill Tkhai <ktkhai@virtuozzo.com>
+> Cc: Pablo Neira Ayuso <pablo@netfilter.org>
+> Cc: Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>
+> Cc: Roopa Prabhu <roopa@cumulusnetworks.com>
+> Cc: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Linux MM <linux-mm@kvack.org>
+> Cc: netfilter-devel@vger.kernel.org
+> Cc: coreteam@netfilter.org
+> Cc: bridge@lists.linux-foundation.org
+> Cc: LKML <linux-kernel@vger.kernel.org>
+> ---
+> Changelog since v1:
+> - More descriptive commit message.
 > 
-> Of course, I'm not in the least bit shocked if O_DIRECT is buggy like
-> this. But looking at least at the ext4 routine, the read just does
+>  net/bridge/netfilter/ebtables.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
 > 
->         ret = filemap_write_and_wait_range(mapping, iocb->ki_pos,
+> diff --git a/net/bridge/netfilter/ebtables.c b/net/bridge/netfilter/ebtables.c
+> index 491828713e0b..5e55cef0cec3 100644
+> --- a/net/bridge/netfilter/ebtables.c
+> +++ b/net/bridge/netfilter/ebtables.c
+> @@ -1137,14 +1137,16 @@ static int do_replace(struct net *net, const void __user *user,
+>  	tmp.name[sizeof(tmp.name) - 1] = 0;
+>  
+>  	countersize = COUNTER_OFFSET(tmp.nentries) * nr_cpu_ids;
+> -	newinfo = vmalloc(sizeof(*newinfo) + countersize);
+> +	newinfo = __vmalloc(sizeof(*newinfo) + countersize, GFP_KERNEL_ACCOUNT,
+> +			    PAGE_KERNEL);
+>  	if (!newinfo)
+>  		return -ENOMEM;
+>  
+>  	if (countersize)
+>  		memset(newinfo->counters, 0, countersize);
+>  
+> -	newinfo->entries = vmalloc(tmp.entries_size);
+> +	newinfo->entries = __vmalloc(tmp.entries_size, GFP_KERNEL_ACCOUNT,
+> +				     PAGE_KERNEL);
+>  	if (!newinfo->entries) {
+>  		ret = -ENOMEM;
+>  		goto free_newinfo;
+> -- 
+> 2.20.1.415.g653613c723-goog
 > 
-> and I don't see any invalidation.
-
-I wouldn't look at ext4 as an example of a reliable, problem free
-direct IO implementation because, historically speaking, it's been a
-series of nasty hacks (*cough* mount -o dioread_nolock *cough*) and
-been far worse than XFS from data integrity, performance and
-reliability perspectives.
-
-IMO, "because ext4" has been a poor reason for justifying anything
-for a long time, not the least when talking about features that
-didn't even originate in extN....
-
-> Can you actually point to such a thing? Let's get that fixed, because
-> it's completely wrong regardless of this whole mincore issue.
-
-The biggest problem that remains today is that we have no mechanism
-for serialising page faults against DIO. If we leave pages cached in
-memory while we have a AIO+DIO read (or write!) in progress, we can
-dirty the page and run a buffered read before the AIO+DIO read
-returns. This now leaves us in the state where where the AIO+DIO
-read returns different (stale) data to a buffered read that has
-already completed because it hit the dirty page cache.  i.e. we
-still have nasty page cache vs direct IO coherency problems, and
-they are largely unsolvable because of the limitations of the core
-kernel infrastructure architecture.
-
-Yes, you can argue that userspace is doing an insane thing, but
-every so often we come across coherency issues like this that are
-out of a user's control (e.g. backup scan vs app accesses) and we do
-our best to ensure that they don't cause problems given the
-constraints we have.  Invalidating the page cache on dio reads
-mostly mitigates these coherency race conditions and that's why it's
-still there in the XFS code paths...
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
