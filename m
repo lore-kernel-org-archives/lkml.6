@@ -2,137 +2,125 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.7 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E024C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 05:52:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0590AC43444
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 05:53:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E18E6206B7
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 05:52:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C8DD021738
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 05:53:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NpKKOH5n"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727221AbfAJFwf convert rfc822-to-8bit (ORCPT
+        id S1727276AbfAJFxj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 00:52:35 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:54474 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725536AbfAJFwe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 00:52:34 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 10343C049DFC;
-        Thu, 10 Jan 2019 05:52:34 +0000 (UTC)
-Received: from colo-mx.corp.redhat.com (colo-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.21])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id DA031179CB;
-        Thu, 10 Jan 2019 05:52:33 +0000 (UTC)
-Received: from zmail21.collab.prod.int.phx2.redhat.com (zmail21.collab.prod.int.phx2.redhat.com [10.5.83.24])
-        by colo-mx.corp.redhat.com (Postfix) with ESMTP id 371CA3F7CB;
-        Thu, 10 Jan 2019 05:52:33 +0000 (UTC)
-Date:   Thu, 10 Jan 2019 00:52:32 -0500 (EST)
-From:   Pankaj Gupta <pagupta@redhat.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        leozinho29 eu <leozinho29_eu@hotmail.com>,
-        Mike Galbraith <efault@gmx.de>,
-        Adam Borowski <kilobyte@angband.pl>,
-        =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
-        Christian =?utf-8?Q?K=C3=B6nig?= <christian.koenig@amd.com>,
-        Jan Kara <jack@suse.cz>,
-        Matthew Wilcox <mawilcox@microsoft.com>,
-        Ross Zwisler <zwisler@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Felix Kuehling <felix.kuehling@amd.com>,
-        Ralph Campbell <rcampbell@nvidia.com>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Message-ID: <1861725446.61345592.1547099552878.JavaMail.zimbra@redhat.com>
-In-Reply-To: <20190110005117.18282-1-sean.j.christopherson@intel.com>
-References: <20190110005117.18282-1-sean.j.christopherson@intel.com>
-Subject: Re: [PATCH] mm/mmu_notifier: mm/rmap.c: Fix a mmu_notifier range
- bug in try_to_unmap_one
+        Thu, 10 Jan 2019 00:53:39 -0500
+Received: from mail-yb1-f194.google.com ([209.85.219.194]:34345 "EHLO
+        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727142AbfAJFxj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 00:53:39 -0500
+Received: by mail-yb1-f194.google.com with SMTP id w186so3094319ybg.1
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Jan 2019 21:53:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=vLElFRyIcUvvx4RziwEI+XY+P+q4djNY2jdC1xfWvCw=;
+        b=NpKKOH5nook8Z9YjK7LypJawLMCyczbGcAVgjM8C6EsG0sOmoTTejfx4YEcpZnB0IU
+         ILOZcfMzvVbJSco7xqeIy7JNO0FJhnQjfa8fTWK5o3usgSiELfTgJ7X8INpiXMtBlT4s
+         L2RFedJEJcHmL5PHDmezhFBmWhdnqVSpfgjoad8q7CkQHfOfRBbs6YtcHzHBSHYzikF1
+         oKIS/0UDrCZFASYZcqfivHOIcPa1n3A5E+7Vi+TLsbLDgnFrYERMClRe9ZspMRFxVm6o
+         a6UVjf+qNWv0VHZAcbn36UxbYm8cTjlGBQnP42vPR9CQ90Io+2Vbd0VOGR9zefeEJQ7I
+         kDdA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=vLElFRyIcUvvx4RziwEI+XY+P+q4djNY2jdC1xfWvCw=;
+        b=JwjTRTNVN8qK+gZ/5aEfPhGNkoTYFx7d3nn+MkP+UkB9y1JQheBy9OBl6U6z6fWz4/
+         kgeAkKucRqbQDZZQe31JIkLWni8rnACTfsm9f1SyAMzn4+s6lPzq8QplThF6zMcIBMvp
+         3qrfZGBP9BrqkZWIfMZo1s4U5uFu7dNBS/LW2qklPToAcvf2qp1Bqq66D2x8zIvBUksn
+         BOGQHXl7JTXZkstyJytvm5C/PO6iiJvzmXDT5bRtkZX5ywtSvMza39OMWmlR5XtIkjiJ
+         M6JGEhHAia3Un7wVZlSfHRp5crX/IYDoV2kQInK4h+ouAMv4YrlFPK5UGpS3LwHpQSHj
+         0BFg==
+X-Gm-Message-State: AJcUukdxlLw0lCzCvilyDAhKEYkoMBXTAuC8vxZdxP8yuHKTAxfuWOvj
+        lvZZU4NWQYxIJ5De87zHi4dZPYW++cInlzP4SMWyPQ==
+X-Google-Smtp-Source: ALg8bN4W+igM6CnjW3opAi59a6C+JT4U1TFKQig0J4U+HZJnkbSg7EFR2Wzo2cG4MS8OhaUDE7TQMFKxgfebUGpjnNU=
+X-Received: by 2002:a25:ca08:: with SMTP id a8mr8323890ybg.127.1547099617584;
+ Wed, 09 Jan 2019 21:53:37 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-X-Originating-IP: [10.65.161.12, 10.4.195.7]
-Thread-Topic: mm/mmu_notifier: mm/rmap.c: Fix a mmu_notifier range bug in try_to_unmap_one
-Thread-Index: NxVIbboUSCe9zovHI7aboNWzdLjs1g==
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Thu, 10 Jan 2019 05:52:34 +0000 (UTC)
+References: <CAA85sZt=Q4b_tn_vDx3g1ap7GNrXsHQk7Jki1T+zPbqVot90jg@mail.gmail.com>
+In-Reply-To: <CAA85sZt=Q4b_tn_vDx3g1ap7GNrXsHQk7Jki1T+zPbqVot90jg@mail.gmail.com>
+From:   Eric Dumazet <edumazet@google.com>
+Date:   Wed, 9 Jan 2019 21:53:26 -0800
+Message-ID: <CANn89iLkciYGn7GyKc2QitSjjTms58_GKFqjOJ=6G8wEFi=SJA@mail.gmail.com>
+Subject: Re: [BUG] moving fq back to clock monotonic breaks my setup
+To:     ian.kumlien@gmail.com, netdev <netdev@vger.kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Jan 9, 2019 at 4:48 PM Ian Kumlien <ian.kumlien@gmail.com> wrote:
+>
+> Hi,
+>
+> Just been trough ~5+ hours of bisecting and eventually actually found
+> the culprit =)
+>
+> commit fb420d5d91c1274d5966917725e71f27ed092a85 (refs/bisect/bad)
+> Author: Eric Dumazet <edumazet@google.com>
+> Date:   Fri Sep 28 10:28:44 2018 -0700
+>
+>     tcp/fq: move back to CLOCK_MONOTONIC
+>
+> [--8<--]
+>
+> So this might be because my setup might be "odd".
+>
+> Basically I have a firewall with four nics that uses two of those nics
+> to handle my normal
+> internet connection (firewall/MASQ/NAT) and the other two are assigned
+> to one bridge each.
+>
+> The firewall is also my local caching DNS server and DHCP server,
+> which is also used by the VM:s...
+> But with 4.20 DHCP replies disappeared before entering the bridge - i
+> couldn't even see them in
+> tcpdump! (all nics are ixgbe on a atom soc)
+>
+> I'm currently running a kernel with that patch reversed but I'm also
+> wondering about possible ways
+> forward since I'm reverting a fix from someone else...
 
-> The conversion to use a structure for mmu_notifier_invalidate_range_*()
-> unintentionally changed the usage in try_to_unmap_one() to init the
-> 'struct mmu_notifier_range' with vma->vm_start instead of @address,
-> i.e. it invalidates the wrong address range.  Revert to the correct
-> address range.
-> 
-> Manifests as KVM use-after-free WARNINGs and subsequent "BUG: Bad page
-> state in process X" errors when reclaiming from a KVM guest due to KVM
-> removing the wrong pages from its own mappings.
-> 
-> Reported-by: leozinho29_eu@hotmail.com
-> Reported-by: Mike Galbraith <efault@gmx.de>
-> Reported-by: Adam Borowski <kilobyte@angband.pl>
-> Cc: Jérôme Glisse <jglisse@redhat.com>
-> Cc: Christian König <christian.koenig@amd.com>
-> Cc: Jan Kara <jack@suse.cz>
-> Cc: Matthew Wilcox <mawilcox@microsoft.com>
-> Cc: Ross Zwisler <zwisler@kernel.org>
-> Cc: Dan Williams <dan.j.williams@intel.com>
-> Cc: Paolo Bonzini <pbonzini@redhat.com>
-> Cc: Radim Krčmář <rkrcmar@redhat.com>
-> Cc: Michal Hocko <mhocko@kernel.org>
-> Cc: Felix Kuehling <felix.kuehling@amd.com>
-> Cc: Ralph Campbell <rcampbell@nvidia.com>
-> Cc: John Hubbard <jhubbard@nvidia.com>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Linus Torvalds <torvalds@linux-foundation.org>
-> Fixes: ac46d4f3c432 ("mm/mmu_notifier: use structure for
-> invalidate_range_start/end calls v2")
-> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> ---
-> 
-> FWIW, I looked through all other calls to mmu_notifier_range_init() in
-> the patch and didn't spot any other unintentional functional changes.
-> 
->  mm/rmap.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/mm/rmap.c b/mm/rmap.c
-> index 68a1a5b869a5..0454ecc29537 100644
-> --- a/mm/rmap.c
-> +++ b/mm/rmap.c
-> @@ -1371,8 +1371,8 @@ static bool try_to_unmap_one(struct page *page, struct
-> vm_area_struct *vma,
->  	 * Note that the page can not be free in this function as call of
->  	 * try_to_unmap() must hold a reference on the page.
->  	 */
-> -	mmu_notifier_range_init(&range, vma->vm_mm, vma->vm_start,
-> -				min(vma->vm_end, vma->vm_start +
-> +	mmu_notifier_range_init(&range, vma->vm_mm, address,
-> +				min(vma->vm_end, address +
->  				    (PAGE_SIZE << compound_order(page))));
->  	if (PageHuge(page)) {
->  		/*
-> --
+I suggest you use netdev@ mailing list instead of lkml
 
-I was suspecting this patch for some other issue. But could not spot this after 
-in depth analyzing the changed "invalidate_range_start/end calls". 
+Then, we probably need to clear skb->tstamp in more paths (you are
+mentioning bridge ...)
 
-Its indeed a good catch. 
+See commit 8203e2d844d34af247a151d8ebd68553a6e91785 for reference.
 
-Reviewed-by: Pankaj gupta <pagupta@redhat.com>
+Can you try :
 
-> 2.19.2
-> 
-> 
+diff --git a/net/bridge/br_forward.c b/net/bridge/br_forward.c
+index 5372e2042adfe20d3cd039c29057535b2413be61..bd4fa141420c92a44716bd93fcd8aa3d3310203a
+100644
+--- a/net/bridge/br_forward.c
++++ b/net/bridge/br_forward.c
+@@ -53,6 +53,7 @@ int br_dev_queue_push_xmit(struct net *net, struct
+sock *sk, struct sk_buff *skb
+                skb_set_network_header(skb, depth);
+        }
+
++       skb->tstamp = 0;
+        dev_queue_xmit(skb);
+
+        return 0;
+
+Thanks.
