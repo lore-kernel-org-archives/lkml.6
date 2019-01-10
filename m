@@ -2,99 +2,77 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 724BCC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 11:10:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A30F6C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 11:10:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 32A64214DA
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 11:10:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tronnes.org header.i=@tronnes.org header.b="f3Q9FZoJ"
+	by mail.kernel.org (Postfix) with ESMTP id 7D292214DA
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 11:10:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728109AbfAJLKD (ORCPT
+        id S1728295AbfAJLKT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 06:10:03 -0500
-Received: from smtp.domeneshop.no ([194.63.252.55]:47389 "EHLO
-        smtp.domeneshop.no" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727806AbfAJLKD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 06:10:03 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=tronnes.org; s=ds201810;
-        h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject; bh=3M3rnuoFyFqK2PfNTqTRZ9iVr4ClUSVBwQzVAPXmtG4=;
-        b=f3Q9FZoJxW5JvsjheKBCq4Y5CuJI/GOIUQ8FevipPxErGFnhlkfYZyQxm6+QyLCjmBfFp2NSuQLaXzS5SptM9Gcel0ZzX6/1wdAC6VHqnsod1wGOyExL8+ETfGiDBtosnAT3/ZaP3gr3peKdZQl2wCYLTtipSUAN1YZLkdhsWRzHW2xyYpZ/IVKcNdBVg2YsCcq05pji2/ZWCcUZjZL7OEtt/RIBzBflkkZOhlfTxBShlMWq0Bq4t32cciDNj2CElQSNysV5ZVsB3c6V5oHlkIRwjm7XQEvdfwPBLUk/0BrgUdhcOG6DPc3rrRjdkbIZNn2CB3EfomKT/OlZ9lvHXw==;
-Received: from 211.81-166-168.customer.lyse.net ([81.166.168.211]:58113 helo=[192.168.10.176])
-        by smtp.domeneshop.no with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.84_2)
-        (envelope-from <noralf@tronnes.org>)
-        id 1ghYDp-0003t1-Id; Thu, 10 Jan 2019 12:10:01 +0100
-Subject: Re: [PATCH v3 14/15] drm/bochs: drop old fbdev emulation code
-To:     Gerd Hoffmann <kraxel@redhat.com>
-Cc:     dri-devel@lists.freedesktop.org, David Airlie <airlied@redhat.com>,
-        andr2000@gmail.com, David Airlie <airlied@linux.ie>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:DRM DRIVER FOR BOCHS VIRTUAL GPU" 
-        <virtualization@lists.linux-foundation.org>
-References: <20190110082845.3453-1-kraxel@redhat.com>
- <20190110082845.3453-15-kraxel@redhat.com>
- <faf265e5-8f47-f652-5b19-d55fd4ed7d67@tronnes.org>
- <20190110101613.yo4ewkhy3nxs3do3@sirius.home.kraxel.org>
-From:   =?UTF-8?Q?Noralf_Tr=c3=b8nnes?= <noralf@tronnes.org>
-Message-ID: <c9190d7a-6549-2a10-9fbe-a2080a689686@tronnes.org>
-Date:   Thu, 10 Jan 2019 12:09:59 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Thu, 10 Jan 2019 06:10:19 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:60486 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727806AbfAJLKS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 06:10:18 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5264DA78;
+        Thu, 10 Jan 2019 03:10:18 -0800 (PST)
+Received: from fuggles.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9F74A3F694;
+        Thu, 10 Jan 2019 03:10:14 -0800 (PST)
+Date:   Thu, 10 Jan 2019 11:10:12 +0000
+From:   Will Deacon <will.deacon@arm.com>
+To:     Andrew Murray <andrew.murray@arm.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Richard Henderson <rth@twiddle.net>,
+        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+        Matt Turner <mattst88@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        Russell King <linux@armlinux.org.uk>, suzuki.poulose@arm.com,
+        robin.murphy@arm.com, Michael Ellerman <mpe@ellerman.id.au>,
+        x86@kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-alpha@vger.kernel.org
+Subject: Re: [PATCH v4 13/13] drivers/perf: use PERF_PMU_CAP_NO_EXCLUDE for
+ Cavium TX2 PMU
+Message-ID: <20190110111012.GB27065@fuggles.cambridge.arm.com>
+References: <1546878450-20341-1-git-send-email-andrew.murray@arm.com>
+ <1546878450-20341-14-git-send-email-andrew.murray@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <20190110101613.yo4ewkhy3nxs3do3@sirius.home.kraxel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1546878450-20341-14-git-send-email-andrew.murray@arm.com>
+User-Agent: Mutt/1.11.1+86 (6f28e57d73f2) ()
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-Den 10.01.2019 11.16, skrev Gerd Hoffmann:
->   Hi,
+On Mon, Jan 07, 2019 at 04:27:30PM +0000, Andrew Murray wrote:
+> The Cavium ThunderX2 UNCORE PMU driver doesn't support any event
+> filtering. Let's advertise the PERF_PMU_CAP_NO_EXCLUDE capability to
+> simplify the code.
 > 
->>> -	drm_fb_helper_set_suspend_unlocked(&bochs->fb.helper, 1);
->>
->> The generic fbdev emulation doesn't take care of suspend/resume. You
->> could do this:
->> drm_fb_helper_set_suspend_unlocked(drm_dev->fb_helper, 1);
-> 
-> Additional to drm_mode_config_helper_suspend() I assume?
+> Signed-off-by: Andrew Murray <andrew.murray@arm.com>
+> ---
+>  drivers/perf/thunderx2_pmu.c | 10 +---------
+>  1 file changed, 1 insertion(+), 9 deletions(-)
 
-No, sorry for the confusion. I didn't know if you could use
-drm_mode_config_helper_suspend() or not. That function takes care of
-fbdev suspend as well:
+Acked-by: Will Deacon <will.deacon@arm.com>
 
-int drm_mode_config_helper_suspend(struct drm_device *dev)
-{
-<...>
-	drm_kms_helper_poll_disable(dev);
-	drm_fb_helper_set_suspend_unlocked(dev->fb_helper, 1);
-	state = drm_atomic_helper_suspend(dev);
-<...>
-}
+Thanks for fixing this up.
 
-
-> Does the call order matter?
-> 
->>>  	drm_helper_resume_force_mode(drm_dev);
->>
->> The docs for this function has this to say:
->> * This function is deprecated. New drivers should implement atomic mode-
->> * setting and use the atomic suspend/resume helpers.
->>
->> Maybe you can use drm_mode_config_helper_suspend/resume() instead like
->> suggested in the drm_fbdev_generic_setup() docs.
-> 
-> That should work, yes.  The driver is simple enough ;)
-> 
-> cheers,
->   Gerd
-> 
+Will
