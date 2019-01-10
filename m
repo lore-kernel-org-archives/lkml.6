@@ -2,119 +2,127 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48A07C43612
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 17:15:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16F38C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 17:15:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E87120874
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 17:15:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DB31C20874
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 17:15:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hwsi6ngZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729538AbfAJRPJ (ORCPT
+        id S1729559AbfAJRPT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 12:15:09 -0500
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:45199 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729474AbfAJRPI (ORCPT
+        Thu, 10 Jan 2019 12:15:19 -0500
+Received: from mail-qt1-f181.google.com ([209.85.160.181]:39056 "EHLO
+        mail-qt1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729416AbfAJRPS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 12:15:08 -0500
-Received: by mail-qt1-f193.google.com with SMTP id e5so14010849qtr.12;
-        Thu, 10 Jan 2019 09:15:06 -0800 (PST)
+        Thu, 10 Jan 2019 12:15:18 -0500
+Received: by mail-qt1-f181.google.com with SMTP id u47so14062216qtj.6
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 09:15:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=vptgO8luquUdrl132GMBjMAnkNeZcOlBF0ROPIwjqak=;
+        b=Hwsi6ngZof+Z0IjyEDDi1S0iLqbOIkuSH846XB8wzFQBaw0uL8WukjRCaB1P6t/Y2S
+         PQGx4wu0zsJQKNu8RGvDlGmOYEX0TW46qJfwIl8eus1qqdxpm1yzDO1FHT/1TmqnPTt2
+         cLxvNNbN0EExf3XmfSMIjdt2ZuSTF6w9xkyQO1YwOt8TG4nyrmxW6yLSwtDmGYE7VWf+
+         8uU2DtGbOAmtkqgs3jvOkI+YwP1FPsk0Y6AOvjziN/Xw7fekXVDtT7nHPCa927kfypyi
+         HB7Dv06WsZ8UWyEH9kkI4xvDeRjks4c66WUumCchubK2qt6rCybmLirt1g7wSTXJVfLO
+         DXUg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Vi+SvwsycUKtGhpMC3QEpN/Bk6bKq1AfTBDWYF1k7VQ=;
-        b=hf/Qw2NMREqLD0cU2L5PwYV6N3JVMoymHdz6WPZ4m0wF+QIVmbrGaDTsAVhbXHq03N
-         4zvyj8yMQlqAAkoSnTfjpTSDoKlE5/4DeDyYXqDanBk2XFUaWvhIweXT6lMTXFx35g0e
-         UT6Q4jr945WYh8e637Kj6ObPedDpTpUpbSu1VWf/sLwt+8cdb9NgCHp83IDvOkmf35kJ
-         eKcb0zmFQdz2u9d1PfJDI48UvC9AqA5sGgyzEGK2O3Pq7/Hinbi03TI30LWQ9v0sRygF
-         tpFBRAWbmX7y40RN9bhyROcWqdgIZzIjE6dh7nnXGRgWA0sbqle/1qVCFu6heqQN4uaR
-         L3zw==
-X-Gm-Message-State: AJcUukdDu2iSUzrpLirdpfVetnMplsuyAWY8r/S6gdyK0on1eVhuVsN5
-        e8yeoyAjDUQCUQcx+uFu9ACFiAKJ518JEpQ5pUI=
-X-Google-Smtp-Source: ALg8bN4AdylggnguSr7egu7xIPGdOjTe436nAOiytiob3A7SfzgpinZUkBcCe85tXDNMw1nvzwC1nAoiCh7sWU6vHE4=
-X-Received: by 2002:ac8:1d12:: with SMTP id d18mr10355152qtl.343.1547140506273;
- Thu, 10 Jan 2019 09:15:06 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=vptgO8luquUdrl132GMBjMAnkNeZcOlBF0ROPIwjqak=;
+        b=CPAPij8hQZASaNgwfFUCnz8jJf7lbJbubMRqA2M3dlKDYqMErid/F7oiAPHPYyM5O9
+         dmf0ASZvJ4qqge/KHPcTB6js6/9+1RlIHysA5TJiIWRkGe1s8Azd4BQuOV9Z/Qp1OJ4g
+         64Y+JG79lYnzkoFIpvuK+m//0SVx7aWBXX/pEdJ230yIoYqyiKMI7xfM0uYHCZJESHNp
+         jqqN0JWFrLfWMKIan4cEiw6RDIilC2PMo+b+exzLWGxIPaP4jk/pCdjiZd87kMbVw0aA
+         R39xyg9e3l/okayydQ0dqX3mh9x0tSz0BYKo0OjS7s7g2vfZP88VL0ElXJ9Ish70nSd/
+         VO9g==
+X-Gm-Message-State: AJcUukdRrezaLohhhnBeBUYp53xUJKeRBweKOIWJ3MBV5EpqtKEb3tQl
+        UgfFjO40vvPok07MkiqUhbX10d0/YJY=
+X-Google-Smtp-Source: ALg8bN7/PuHT2Ij7P8PVtmTjiWylXgmlthz+dEvDnLhRfKWn2aedrycuEsK4RXweSM62xr8eCUa+Xg==
+X-Received: by 2002:a0c:8322:: with SMTP id j31mr10639509qva.56.1547140517110;
+        Thu, 10 Jan 2019 09:15:17 -0800 (PST)
+Received: from smtp.gmail.com ([143.107.45.1])
+        by smtp.gmail.com with ESMTPSA id e89sm35789152qtb.78.2019.01.10.09.15.12
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 10 Jan 2019 09:15:16 -0800 (PST)
+Date:   Thu, 10 Jan 2019 15:15:10 -0200
+From:   Shayenne Moura <shayenneluzmoura@gmail.com>
+To:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Rob Clark <robdclark@gmail.com>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Vincent Abriou <vincent.abriou@st.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Carlo Caione <carlo@caione.org>,
+        Kevin Hilman <khilman@baylibre.com>
+Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/7] drm: Remove drm_mode_object dependency from
+ drm_display_mode
+Message-ID: <cover.1547137815.git.shayenneluzmoura@gmail.com>
 MIME-Version: 1.0
-References: <20190110162435.309262-1-arnd@arndb.de> <20190110162435.309262-8-arnd@arndb.de>
- <20190110163908.GC31683@fuggles.cambridge.arm.com>
-In-Reply-To: <20190110163908.GC31683@fuggles.cambridge.arm.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Thu, 10 Jan 2019 18:14:50 +0100
-Message-ID: <CAK8P3a27hYDL+yjO+DFe8n_C_dyjGNKcKOcWz-p3Pc1LwcxKjw@mail.gmail.com>
-Subject: Re: [PATCH 07/15] ARM: add kexec_file_load system call number
-To:     Will Deacon <will.deacon@arm.com>
-Cc:     y2038 Mailman List <y2038@lists.linaro.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-        Matt Turner <mattst88@gmail.com>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Michal Simek <monstr@monstr.eu>,
-        Paul Burton <paul.burton@mips.com>,
-        Helge Deller <deller@gmx.de>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Rich Felker <dalias@libc.org>,
-        David Miller <davem@davemloft.net>,
-        Andy Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        Firoz Khan <firoz.khan@linaro.org>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        alpha <linux-alpha@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-ia64@vger.kernel.org,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>,
-        linux-mips@vger.kernel.org,
-        Parisc List <linux-parisc@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        Linux-sh list <linux-sh@vger.kernel.org>,
-        sparclinux <sparclinux@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 10, 2019 at 5:39 PM Will Deacon <will.deacon@arm.com> wrote:
->
-> > diff --git a/arch/arm64/include/asm/unistd32.h b/arch/arm64/include/asm/unistd32.h
-> > index 355fe2bc035b..19f3f58b6146 100644
-> > --- a/arch/arm64/include/asm/unistd32.h
-> > +++ b/arch/arm64/include/asm/unistd32.h
-> > @@ -823,6 +823,8 @@ __SYSCALL(__NR_rseq, sys_rseq)
-> >  __SYSCALL(__NR_io_pgetevents, compat_sys_io_pgetevents)
-> >  #define __NR_migrate_pages 400
-> >  __SYSCALL(__NR_migrate_pages, sys_migrate_pages)
-> > +#define __NR_kexec_file_load 401
-> > +__SYSCALL(__NR_kexec_file_load, sys_kexec_file_load)
->
-> Hmm, I wonder if we need a compat wrapper for this, or are we assuming
-> that the early entry code has already zero-extended the long and pointer
-> arguments?
+This patch serie removes drm_mode_object dependency from
+drm_display_mode struct. This is part of KMS cleanup.
 
-Yes, that is generally the assumption for compat syscalls.
+---
+Changes in v3:
+  - Solve typo in first patch in v2
 
-s390 needs some extra magic to do a 31-to-64 extension on pointer
-arguments, and I think sometimes we need a special wrapper to
-do sign-extension of 32-bit arguments into 64-bit, but the arguments
-here should not need that.
+Changes in v2:
+  - Make alterations suggested by Daniel and commit
+    messages clear
 
-     Arnd
+Shayenne Moura (7):
+  drm: msm: Cleanup drm_display_mode print str
+  drm: omapdrm: Cleanup drm_display_mode print str
+  drm: meson: Cleanup on drm_display_mode print str
+  drm: sti: Cleanup drm_display_mode print str
+  drm: i915: Cleanup drm_display_mode print str
+  drm: Remove use of drm_mode_object
+  drm: Complete remove drm_mode_object dependency
+
+ drivers/gpu/drm/drm_crtc_helper.c             |  5 ++---
+ drivers/gpu/drm/drm_modes.c                   |  9 --------
+ drivers/gpu/drm/i915/i915_debugfs.c           |  9 +-------
+ drivers/gpu/drm/meson/meson_dw_hdmi.c         | 12 +++--------
+ drivers/gpu/drm/msm/disp/mdp4/mdp4_crtc.c     | 10 ++-------
+ .../gpu/drm/msm/disp/mdp4/mdp4_dsi_encoder.c  |  9 +-------
+ .../gpu/drm/msm/disp/mdp4/mdp4_dtv_encoder.c  |  9 +-------
+ .../gpu/drm/msm/disp/mdp4/mdp4_lcdc_encoder.c |  9 +-------
+ .../gpu/drm/msm/disp/mdp5/mdp5_cmd_encoder.c  |  9 +-------
+ drivers/gpu/drm/msm/disp/mdp5/mdp5_crtc.c     |  9 +-------
+ drivers/gpu/drm/msm/disp/mdp5/mdp5_encoder.c  |  9 +-------
+ drivers/gpu/drm/msm/dsi/dsi_manager.c         |  9 +-------
+ drivers/gpu/drm/msm/edp/edp_bridge.c          |  9 +-------
+ drivers/gpu/drm/omapdrm/omap_connector.c      |  9 ++------
+ drivers/gpu/drm/omapdrm/omap_crtc.c           |  8 ++-----
+ drivers/gpu/drm/sti/sti_crtc.c                | 16 ++++----------
+ include/drm/drm_modes.h                       | 21 +++----------------
+ 17 files changed, 27 insertions(+), 144 deletions(-)
+
+-- 
+2.17.1
+
