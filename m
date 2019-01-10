@@ -4,25 +4,25 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92E25C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 16:27:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF4CBC43613
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 16:27:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D14F214DA
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 16:27:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A7BC2206B7
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 16:27:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730184AbfAJQ1b (ORCPT
+        id S1730170AbfAJQ13 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 11:27:31 -0500
-Received: from mout.kundenserver.de ([212.227.17.24]:59445 "EHLO
+        Thu, 10 Jan 2019 11:27:29 -0500
+Received: from mout.kundenserver.de ([217.72.192.75]:49257 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729870AbfAJQ0W (ORCPT
+        with ESMTP id S1729872AbfAJQ0W (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 10 Jan 2019 11:26:22 -0500
 Received: from wuerfel.lan ([109.192.41.194]) by mrelayeu.kundenserver.de
  (mreue108 [212.227.15.145]) with ESMTPA (Nemesis) id
- 1MXGzQ-1gmTTU2Mc2-00YlJB; Thu, 10 Jan 2019 17:25:10 +0100
+ 1M3UdI-1gh5Av3nYQ-000Zdl; Thu, 10 Jan 2019 17:25:08 +0100
 From:   Arnd Bergmann <arnd@arndb.de>
 To:     y2038@lists.linaro.org, linux-api@vger.kernel.org,
         linux-kernel@vger.kernel.org
@@ -41,59 +41,54 @@ Cc:     Arnd Bergmann <arnd@arndb.de>, ink@jurassic.park.msu.ru,
         linux-ia64@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
         linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
         linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
-        stable@vger.kernel.org
-Subject: [PATCH 04/15] alpha: wire up io_pgetevents system call
-Date:   Thu, 10 Jan 2019 17:24:24 +0100
-Message-Id: <20190110162435.309262-5-arnd@arndb.de>
+        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org
+Subject: [PATCH 02/15] ia64: add statx and io_pgetevents syscalls
+Date:   Thu, 10 Jan 2019 17:24:22 +0100
+Message-Id: <20190110162435.309262-3-arnd@arndb.de>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20190110162435.309262-1-arnd@arndb.de>
 References: <20190110162435.309262-1-arnd@arndb.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:IuTdScJNFP/vlVpLiekPy1ow4ZHjUHd9bBQuCDC76YNBRibrohQ
- xe4PTU5B3/2nsf++H4PdApUdmfw+lrf+m4akyCZLHyYTCLErcx0kRCUeA5fx2pSYrXhfboI
- TGcpRPLubhe7ITv+g8HM3hG2m2F8x+f0mihrQflNCCgZKTCoOQI1SPWgWNjeYt2eQffohnL
- 2+S4SOm3O/NYGRyHFCqnA==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:xg+0ntML16s=:vQUEgMtLWbgXhUDfOD4tFX
- XVNGSeubXuS5k5TazDG/RTdD+JSIqKb/pqlh4L0fs8LKwLKGo9Mr7o0bUxYV4FvRtEPZM+GKv
- UfYdpiNhsKK7dBkmvzm5tkoM7X+/xOL79IaUdjoW/sM48o9/nL0wpTNmfPxRgKXqXbNQIiALo
- n+08m1jAdAD3r6B+DybJibdim3imldLCouU/K09vqwerADzQiMJc13fKPRn0V60r/kWpeotYH
- OtY4V38lQzwSmWjU9owIspp0el3VCTwvDZbYu7ojyyAcDHZAYvPrK8caRi3SOaHdwFqesPlpx
- GUzFCEvd4/c2t6OOcaCMSDOy3AMIWnnOK+CMb6653SXWw3bhDJjZFw3EJL/dSwwWluWv8ILx0
- 0gajNPyzAPBbJyOhecVf2SSzqeyfzeow/YNVRERPCe+L3c43vvO5D3bIGZExSdI0iLqiyJpXL
- DSMRbux5mjH5JbIiMck0dOMMoRlUXHbvb9V4XPibE4zBWammySsIbDptCPBfr8Ne895uaLKJ5
- p+DL/Lg1ijinapAoxBaw8V2s1MIyXB/ov86x7SR2xFfoSb5fyn9VshvOo8iFhkyv+xIPzpyyY
- vQbuFM1W5zrSVFQlRiSF5Q4hwf/SFkFNVGvJC+s/JC5XiBAffWJcxH0VqilVba1u5pblYuaYz
- 5eqR6z5hxwaLgpk95sWnUAn0rfYw3vIQCCkKfnvOdk2lPgt/6pLaX3KfQs02ySpY3vvpD5UNK
- Xq5j6U5WXDRMdBdxYGE53f4ixXF9gjVFB99CiA==
+X-Provags-ID: V03:K1:jZ+pK1soglClNV8JzDCTro7NHj/jUQtDuwPrtlNj70FE5cXaEjQ
+ r+SHifgmj/OSg7YZwhAOnPSW9mMqXmoPHKnySSVlYLAvZ5Qhmn0Ta+SNUS25ZKwBP+7W0FI
+ oC428/ece5QP7XVIUK6jj6GfWl2BehhsCgBk1eJ35E6ipEp+AkgoJ4p50hpr3L8WlpiANBy
+ Ux+9nIr/6cdCw6+aDpHaQ==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:VEnbB0N4QPA=:rFF45PK4fVaAoP1KJQfuTu
+ qvzYM8C+SXZ0bdt6/VS1aHwqCz9bxt9HM0Dy+SmyNnsMPzSGOvYUznlNmPBP7WaOWN0H5/Hsk
+ wxXtf6q9lDrPBVeh9tGtqh/pqc3fNDVJGBwe7R4H4MOKF5gBFDjdrUfh6kTv/6hZ4VFGEfXPu
+ k9JND7wy/Q2wfIh4iR74yZ8OK6p5d2VXYILYRlJt5yqqV/4vm0mIg4RabkqYyniSDjAqoA/yR
+ 4neMRN765leyRi0iM7/PySopaHdETBP6GgGXogfbu1sh98uM/8LzEo5BgiQGRk3LNOPzb6kHL
+ dzaPrOjflqNJGjbPhhKSRmG3IMKFRiyLtGNf0B9RcDIteLZiWGBTgOR3iASyXUwTM5jbvHYgO
+ xNSP+vUMJY+PDeHm4b8Yy64mS1bUGhxJqdytmPQcSw63vqGswdT1vxlphYGiDQeqHitDVFDrI
+ Soez+KleqeFa8mcLOsKe6ZMqPJTG1MqVfOmsdnuwKJy2UUWy5aNh0BsMpbD7/IwUBv+XL8MZJ
+ EtPa5ZK1i/IEf6wgxy8JWdU8NQaVBJ19YEXykvAAYJ11RWKsFBUGULs64DI7sN91HITcMOMPB
+ 5EpGhU0ofNb/PBtMBhqlZdNvcgLmG6FvIw7LhcS+IHweR6qjnVPU+vtRy3UrhpKJiLKuQgrwS
+ RgCxnAOj/yl+1DloOIxpgLtvFmKTkShVrAJU0h3SoLsnuQ3+rkRvC0iczX5xOWaXZebvIKRH/
+ 7WlXNpAGcwfi5K0UvkY0Ar+HWNEg1kGaLHiv6A==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The io_pgetevents system call was added in linux-4.18 but has
-no entry for alpha:
+All architectures should implement these two, so assign numbers
+and hook them up on ia64.
 
-warning: #warning syscall io_pgetevents not implemented [-Wcpp]
-
-Assign a the next system call number here.
-
-Cc: stable@vger.kernel.org
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/alpha/kernel/syscalls/syscall.tbl | 1 +
- 1 file changed, 1 insertion(+)
+ arch/ia64/kernel/syscalls/syscall.tbl | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/alpha/kernel/syscalls/syscall.tbl b/arch/alpha/kernel/syscalls/syscall.tbl
-index 7b56a53be5e3..e09558edae73 100644
---- a/arch/alpha/kernel/syscalls/syscall.tbl
-+++ b/arch/alpha/kernel/syscalls/syscall.tbl
-@@ -451,3 +451,4 @@
- 520	common	preadv2				sys_preadv2
- 521	common	pwritev2			sys_pwritev2
- 522	common	statx				sys_statx
-+523	common	io_pgetevents			sys_io_pgetevents
+diff --git a/arch/ia64/kernel/syscalls/syscall.tbl b/arch/ia64/kernel/syscalls/syscall.tbl
+index e97caf51be42..52585281205b 100644
+--- a/arch/ia64/kernel/syscalls/syscall.tbl
++++ b/arch/ia64/kernel/syscalls/syscall.tbl
+@@ -335,3 +335,5 @@
+ 323	common	copy_file_range			sys_copy_file_range
+ 324	common	preadv2				sys_preadv2
+ 325	common	pwritev2			sys_pwritev2
++326	common	statx				sys_statx
++327	common	io_pgetevents			sys_io_pgetevents
 -- 
 2.20.0
 
