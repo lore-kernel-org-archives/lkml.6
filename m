@@ -2,104 +2,110 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24F50C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 02:29:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA95DC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 02:32:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED1E821738
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 02:29:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9B51D2075C
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 02:32:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726995AbfAJC32 (ORCPT
+        id S1726955AbfAJCce (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 9 Jan 2019 21:29:28 -0500
-Received: from mx01.hxt-semitech.com ([223.203.96.7]:44461 "EHLO
-        barracuda.hxt-semitech.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726541AbfAJC31 (ORCPT
+        Wed, 9 Jan 2019 21:32:34 -0500
+Received: from relmlor1.renesas.com ([210.160.252.171]:49420 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726458AbfAJCce (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 9 Jan 2019 21:29:27 -0500
-X-ASG-Debug-ID: 1547087361-093b7e40ef08420001-xx1T2L
-Received: from HXTBJIDCEMVIW02.hxtcorp.net ([10.128.0.15]) by barracuda.hxt-semitech.com with ESMTP id CZlH7xSdAs82Beof (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NO); Thu, 10 Jan 2019 10:29:21 +0800 (CST)
-X-Barracuda-Envelope-From: xiaoting.liu@hxt-semitech.com
-Received: from openbmc001.localdomain (10.5.21.169) by
- HXTBJIDCEMVIW02.hxtcorp.net (10.128.0.15) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Thu, 10 Jan 2019 10:29:11 +0800
-From:   Xiaoting Liu <xiaoting.liu@hxt-semitech.com>
-To:     <robh+dt@kernel.org>, <mark.rutland@arm.com>, <linux@roeck-us.net>
-CC:     <openbmc@lists.ozlabs.org>, <joel@jms.id.au>, <andrew@aj.id.au>,
-        <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-aspeed@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>,
-        <shunyong.yang@hxt-semitech.com>,
-        <dongsheng.wang@hxt-semitech.com>,
-        Xiaoting Liu <xiaoting.liu@hxt-semitech.com>
-Subject: [PATCH v3 3/4] ARM: dts: dps650ab: add power supply
-Date:   Thu, 10 Jan 2019 10:29:13 +0800
-X-ASG-Orig-Subj: [PATCH v3 3/4] ARM: dts: dps650ab: add power supply
-Message-ID: <a7b5fa54198e7fd0def33de3e7db36239a2e3da7.1546918172.git.xiaoting.liu@hxt-semitech.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <cover.1546918172.git.xiaoting.liu@hxt-semitech.com>
-References: <cover.1546918172.git.xiaoting.liu@hxt-semitech.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.5.21.169]
-X-ClientProxiedBy: HXTBJIDCEMVIW02.hxtcorp.net (10.128.0.15) To
- HXTBJIDCEMVIW02.hxtcorp.net (10.128.0.15)
-X-Barracuda-Connect: UNKNOWN[10.128.0.15]
-X-Barracuda-Start-Time: 1547087361
-X-Barracuda-Encrypted: ECDHE-RSA-AES256-SHA384
-X-Barracuda-URL: https://192.168.50.101:443/cgi-mod/mark.cgi
-X-Virus-Scanned: by bsmtpd at hxt-semitech.com
-X-Barracuda-BRTS-Status: 1
-X-Barracuda-Bayes: SPAM GLOBAL 0.9813 1.0000 4.1264
-X-Barracuda-Spam-Score: 4.13
-X-Barracuda-Spam-Status: No, SCORE=4.13 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=
-X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.65431
-        Rule breakdown below
-         pts rule name              description
-        ---- ---------------------- --------------------------------------------------
+        Wed, 9 Jan 2019 21:32:34 -0500
+Date:   10 Jan 2019 11:32:31 +0900
+X-IronPort-AV: E=Sophos;i="5.56,459,1539615600"; 
+   d="scan'208";a="4811467"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie5.idc.renesas.com with ESMTP; 10 Jan 2019 11:32:31 +0900
+Received: from morimoto-PC.renesas.com (unknown [10.166.18.140])
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 409F74046A9B;
+        Thu, 10 Jan 2019 11:32:31 +0900 (JST)
+Message-ID: <874lahb6bi.wl-kuninori.morimoto.gx@renesas.com>
+From:   Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Ajit Pandey <ajitp@codeaurora.org>, rohkumar@qti.qualcomm.com,
+        alsa-devel@alsa-project.org, bgoswami@codeaurora.org,
+        vinod.koul@linaro.org, linux-kernel@vger.kernel.org,
+        plai@codeaurora.org, tiwai@suse.com, lgirdwood@gmail.com,
+        Rohit kumar <rohitkr@codeaurora.org>, asishb@codeaurora.org,
+        srinivas.kandagatla@linaro.org
+Subject: Re: [alsa-devel] Applied "ASoC: soc-core: defer card probe until all   component is added to list" to the asoc tree
+In-Reply-To: <20190109124902.672EB1127528@debutante.sirena.org.uk>
+References: <1547023627-30312-1-git-send-email-rohitkr@codeaurora.org>
+        <20190109124902.672EB1127528@debutante.sirena.org.uk>
+User-Agent: Wanderlust/2.15.9 Emacs/24.5 Mule/6.0
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add Delta Electronics power supply DPS-650-AB.
 
-Signed-off-by: Xiaoting Liu <xiaoting.liu@hxt-semitech.com>
----
-v3:
-  Modify patch subject and commit message.
-  Add delta to compatible property.
----
-v2:
-  No change.
----
- arch/arm/boot/dts/aspeed-bmc-arm-stardragon4800-rep2.dts | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+Hi Mark, Ajit
 
-diff --git a/arch/arm/boot/dts/aspeed-bmc-arm-stardragon4800-rep2.dts b/arch/arm/boot/dts/aspeed-bmc-arm-stardragon4800-rep2.dts
-index bdfd8c9f3a7c..521afbea2c5b 100644
---- a/arch/arm/boot/dts/aspeed-bmc-arm-stardragon4800-rep2.dts
-+++ b/arch/arm/boot/dts/aspeed-bmc-arm-stardragon4800-rep2.dts
-@@ -173,6 +173,16 @@
- 			};
- 		};
- 	};
-+
-+	dps650ab@58 {
-+		compatible = "delta,dps650ab";
-+		reg = <0x58>;
-+	};
-+
-+	dps650ab@59 {
-+		compatible = "delta,dps650ab";
-+		reg = <0x59>;
-+	};
- };
- 
- &i2c9 {
--- 
-1.8.3.1
+> From: Ajit Pandey <ajitp@codeaurora.org>
+> Date: Wed, 9 Jan 2019 14:17:07 +0530
+> Subject: [PATCH] ASoC: soc-core: defer card probe until all component is added
+>  to list
+> 
+> DAI component probe is not called if it is not present
+> in component list during sound card registration.
+> Check if component is available in component list for
+> platform and cpu dai before soundcard registration.
+> 
+> Signed-off-by: Ajit Pandey <ajitp@codeaurora.org>
+> Signed-off-by: Rohit kumar <rohitkr@codeaurora.org>
+> Signed-off-by: Mark Brown <broonie@kernel.org>
+> ---
 
+I got below WARNING by this patch.
+I guess we need mutex_lock() on snd_soc_register_card() ?
+
+	...
+	[drm] Device feb00000.display probed
+	[drm] Cannot find any crtc or sizes
+	[drm] Cannot find any crtc or sizes
+	WARNING: CPU: 0 PID: 76 at sound/soc/soc-core.c:739 soc_find_component+0xb8/0xc0
+	CPU: 0 PID: 76 Comm: kworker/0:1 Not tainted 5.0.0-rc1+ #1360
+	Hardware name: Renesas H3ULCB Kingfisher board based on r8a7795 ES2.0+ (DT)
+	Workqueue: events deferred_probe_work_func
+	pstate: 60000005 (nZCv daif -PAN -UAO)
+	pc : soc_find_component+0xb8/0xc0
+	lr : soc_find_component+0xb4/0xc0
+	sp : ffff00001217ba10
+	x29: ffff00001217ba10 x28: 0000000000000000 
+	x27: ffff000010a82920 x26: 0000000000000000 
+	x25: ffff8006f9c59900 x24: ffff0000105f33a0 
+	x23: ffff000010948d70 x22: 0000000000000000 
+	x21: ffff000010af1720 x20: ffff8006ff80b6d8 
+	x19: ffff8006f8523080 x18: 0000000000000010 
+	x17: 0000000000000000 x16: 0000000000000000 
+	x15: ffffffffffffffff x14: 0720072007200720 
+	x13: 0720072007200720 x12: 0720072007200720 
+	x11: 0720072007200720 x10: 0720072007200720 
+	x9 : 0000000000000000 x8 : ffff000010a85000 
+	x7 : ffff000010114bd4 x6 : 0000000000000001 
+	x5 : 0000000000000018 x4 : 0000000000000001 
+	x3 : 0000000000000000 x2 : 0000000000000003 
+	x1 : ffff000010af17b0 x0 : 0000000000000000 
+	Call trace:
+	 soc_find_component+0xb8/0xc0
+	 soc_init_dai_link+0x18c/0x210
+	 snd_soc_register_card.part.16+0x138/0x198
+	 snd_soc_register_card+0x30/0x48
+	 devm_snd_soc_register_card+0x4c/0xa0
+	 graph_probe+0x2d8/0x388
+	 platform_drv_probe+0x58/0xa8
+	 really_probe+0x1c0/0x2a0
+	 driver_probe_device+0x5c/0xf0
+	 __device_attach_driver+0x9c/0xe0
+	...
