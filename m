@@ -2,161 +2,97 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67094C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 14:56:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 525C0C43612
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 14:57:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 431C220660
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 14:56:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1B28A2177B
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 14:57:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547132237;
+	bh=c/qbdnKSZOdak4w2JWNqjRw6gFb+wYybIGhIdCnjS1I=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=0YqADZOb0V4Qudl+Vg0x1KLbl0fV5QrmLk1VFLlMu8n0ZaRgEbEZQBg7WA4nahey+
+	 82RWzGSksNTumGrHRqj1q93EIJSv7msK+PacERtySqXGEU1K0JpAbb2nLp7c82AuJk
+	 t4nPwVzaeBuJglmPnGp5km9uLM8OjFi86sQX+p1w=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729358AbfAJO4b (ORCPT
+        id S1729369AbfAJO5Q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 09:56:31 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:44149 "EHLO pegase1.c-s.fr"
+        Thu, 10 Jan 2019 09:57:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59310 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728174AbfAJO4b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 09:56:31 -0500
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 43b8G20bGnz9v10Z;
-        Thu, 10 Jan 2019 15:56:26 +0100 (CET)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id rl9HS-dhm25l; Thu, 10 Jan 2019 15:56:26 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 43b8G175pZz9v10W;
-        Thu, 10 Jan 2019 15:56:25 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 723B68B899;
-        Thu, 10 Jan 2019 15:56:27 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id ht3OTm41Sfu5; Thu, 10 Jan 2019 15:56:27 +0100 (CET)
-Received: from po16846vm.idsi0.si.c-s.fr (unknown [192.168.4.90])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 3323B8B898;
-        Thu, 10 Jan 2019 15:56:27 +0100 (CET)
-Received: by po16846vm.idsi0.si.c-s.fr (Postfix, from userid 0)
-        id F37FE6BF21; Thu, 10 Jan 2019 14:56:26 +0000 (UTC)
-Message-Id: <d61e312b60352073192975746c24901a37d881c7.1547132111.git.christophe.leroy@c-s.fr>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH] powerpc/8xx: replace most #ifdef by IS_ENABLED() in 8xx_mmu.c
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date:   Thu, 10 Jan 2019 14:56:26 +0000 (UTC)
+        id S1728137AbfAJO5P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 09:57:15 -0500
+Received: from devnote (p7010-ipngnfx01kyoto.kyoto.ocn.ne.jp [114.179.123.10])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3B7DF214DA;
+        Thu, 10 Jan 2019 14:57:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547132234;
+        bh=c/qbdnKSZOdak4w2JWNqjRw6gFb+wYybIGhIdCnjS1I=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=gh7hPP0kGsLvcbH1N3lq/u3cS9p/K32pr4D3KHj4AInnyE/DYEsSggtC5G/A2wQgO
+         tGPJ9W1mx5oKKxMciDGxLTd/UiL2RcW6objSSX4dNNOIgyxnwocV5Mmd4o/egj2nFV
+         coAc4r8PuRvBEgEs8BTbEnjF9Cl4T1eoTdZb11v0=
+Date:   Thu, 10 Jan 2019 23:57:10 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     Ingo Molnar <mingo@redhat.com>, peterz@infradead.org,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Andrea Righi <righi.andrea@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>, stable@vger.kernel.org
+Subject: Re: [PATCH 1/9] x86/kprobes: Prohibit probing on optprobe template
+ code
+Message-Id: <20190110235710.6b2a5cdb44ea05df73af997b@kernel.org>
+In-Reply-To: <20190110060720.GA12546@kroah.com>
+References: <154708884117.6325.4454464467156828009.stgit@devbox>
+        <154708887054.6325.3201133039718891603.stgit@devbox>
+        <20190110060720.GA12546@kroah.com>
+X-Mailer: Sylpheed 3.5.0 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch replaces most #ifdef mess by IS_ENABLED() in 8xx_mmu.c
-This has the advantage of allowing syntax verification at compile
-time regardless of selected options.
+On Thu, 10 Jan 2019 07:07:20 +0100
+Greg KH <gregkh@linuxfoundation.org> wrote:
 
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
----
- arch/powerpc/mm/8xx_mmu.c | 65 +++++++++++++++++++++--------------------------
- 1 file changed, 29 insertions(+), 36 deletions(-)
+> On Thu, Jan 10, 2019 at 11:54:30AM +0900, Masami Hiramatsu wrote:
+> > Prohibit probing on optprobe template code, since it is not
+> > a code but a template instruction sequence. If we modify
+> > this template, copied template must be broken.
+> > 
+> > Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+> > Fixes: 9326638cbee2 ("kprobes, x86: Use NOKPROBE_SYMBOL() instead of __kprobes annotation")
+> > ---
+> >  arch/x86/kernel/kprobes/opt.c |    5 +++++
+> >  1 file changed, 5 insertions(+)
+> 
+> <formletter>
+> 
+> This is not the correct way to submit patches for inclusion in the
+> stable kernel tree.  Please read:
+>     https://www.kernel.org/doc/html/latest/process/stable-kernel-rules.html
+> for how to do this properly.
+> 
+> </formletter>
+> 
+> Same for all patches in this series...
 
-diff --git a/arch/powerpc/mm/8xx_mmu.c b/arch/powerpc/mm/8xx_mmu.c
-index 1f339deea7e2..2300fe88e1f2 100644
---- a/arch/powerpc/mm/8xx_mmu.c
-+++ b/arch/powerpc/mm/8xx_mmu.c
-@@ -66,26 +66,22 @@ unsigned long p_block_mapped(phys_addr_t pa)
- void __init MMU_init_hw(void)
- {
- 	/* PIN up to the 3 first 8Mb after IMMR in DTLB table */
--#ifdef CONFIG_PIN_TLB_DATA
--	unsigned long ctr = mfspr(SPRN_MD_CTR) & 0xfe000000;
--	unsigned long flags = 0xf0 | MD_SPS16K | _PAGE_SH | _PAGE_DIRTY;
--#ifdef CONFIG_PIN_TLB_IMMR
--	int i = 29;
--#else
--	int i = 28;
--#endif
--	unsigned long addr = 0;
--	unsigned long mem = total_lowmem;
--
--	for (; i < 32 && mem >= LARGE_PAGE_SIZE_8M; i++) {
--		mtspr(SPRN_MD_CTR, ctr | (i << 8));
--		mtspr(SPRN_MD_EPN, (unsigned long)__va(addr) | MD_EVALID);
--		mtspr(SPRN_MD_TWC, MD_PS8MEG | MD_SVALID);
--		mtspr(SPRN_MD_RPN, addr | flags | _PAGE_PRESENT);
--		addr += LARGE_PAGE_SIZE_8M;
--		mem -= LARGE_PAGE_SIZE_8M;
-+	if (IS_ENABLED(CONFIG_PIN_TLB_DATA)) {
-+		unsigned long ctr = mfspr(SPRN_MD_CTR) & 0xfe000000;
-+		unsigned long flags = 0xf0 | MD_SPS16K | _PAGE_SH | _PAGE_DIRTY;
-+		int i = IS_ENABLED(CONFIG_PIN_TLB_IMMR) ? 29 : 28;
-+		unsigned long addr = 0;
-+		unsigned long mem = total_lowmem;
-+
-+		for (; i < 32 && mem >= LARGE_PAGE_SIZE_8M; i++) {
-+			mtspr(SPRN_MD_CTR, ctr | (i << 8));
-+			mtspr(SPRN_MD_EPN, (unsigned long)__va(addr) | MD_EVALID);
-+			mtspr(SPRN_MD_TWC, MD_PS8MEG | MD_SVALID);
-+			mtspr(SPRN_MD_RPN, addr | flags | _PAGE_PRESENT);
-+			addr += LARGE_PAGE_SIZE_8M;
-+			mem -= LARGE_PAGE_SIZE_8M;
-+		}
- 	}
--#endif
- }
- 
- static void __init mmu_mapin_immr(void)
-@@ -110,18 +106,15 @@ unsigned long __init mmu_mapin_ram(unsigned long top)
- 	if (__map_without_ltlbs) {
- 		mapped = 0;
- 		mmu_mapin_immr();
--#ifndef CONFIG_PIN_TLB_IMMR
--		patch_instruction_site(&patch__dtlbmiss_immr_jmp, PPC_INST_NOP);
--#endif
--#ifndef CONFIG_PIN_TLB_TEXT
--		mmu_patch_cmp_limit(&patch__itlbmiss_linmem_top, 0);
--#endif
-+		if (!IS_ENABLED(CONFIG_PIN_TLB_IMMR))
-+			patch_instruction_site(&patch__dtlbmiss_immr_jmp, PPC_INST_NOP);
-+		if (!IS_ENABLED(CONFIG_PIN_TLB_TEXT))
-+			mmu_patch_cmp_limit(&patch__itlbmiss_linmem_top, 0);
- 	} else {
- 		mapped = top & ~(LARGE_PAGE_SIZE_8M - 1);
--#ifndef CONFIG_PIN_TLB_TEXT
--		mmu_patch_cmp_limit(&patch__itlbmiss_linmem_top,
--				    _ALIGN(__pa(_einittext), 8 << 20));
--#endif
-+		if (!IS_ENABLED(CONFIG_PIN_TLB_TEXT))
-+			mmu_patch_cmp_limit(&patch__itlbmiss_linmem_top,
-+					    _ALIGN(__pa(_einittext), 8 << 20));
- 	}
- 
- 	mmu_patch_cmp_limit(&patch__dtlbmiss_linmem_top, mapped);
-@@ -166,14 +159,14 @@ void set_context(unsigned long id, pgd_t *pgd)
- {
- 	s16 offset = (s16)(__pa(swapper_pg_dir));
- 
--#ifdef CONFIG_BDI_SWITCH
--	pgd_t	**ptr = *(pgd_t ***)(KERNELBASE + 0xf0);
-+	if (IS_ENABLED(CONFIG_BDI_SWITCH)) {
-+		pgd_t	**ptr = *(pgd_t ***)(KERNELBASE + 0xf0);
- 
--	/* Context switch the PTE pointer for the Abatron BDI2000.
--	 * The PGDIR is passed as second argument.
--	 */
--	*(ptr + 1) = pgd;
--#endif
-+		/* Context switch the PTE pointer for the Abatron BDI2000.
-+		 * The PGDIR is passed as second argument.
-+		 */
-+		*(ptr + 1) = pgd;
-+	}
- 
- 	/* Register M_TWB will contain base address of level 1 table minus the
- 	 * lower part of the kernel PGDIR base address, so that all accesses to
+Oops, sorry. I'll fix the format again.
+BTW, I'm still considering I should make it other patches in this series
+as improvement instead of fix, since those are just adding blacklist, and
+usually user can avoid it with KPROBE_EVENTS_ON_NOTRACE=n (which is default).
+
+Thank you,
+
 -- 
-2.13.3
-
+Masami Hiramatsu <mhiramat@kernel.org>
