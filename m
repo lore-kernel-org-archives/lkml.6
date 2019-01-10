@@ -2,94 +2,71 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5EB3C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 15:26:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E29BC43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 15:26:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F012214DA
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 15:26:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 57635214DA
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 15:26:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729640AbfAJP0f (ORCPT
+        id S1729671AbfAJP0t (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 10:26:35 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:50366 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728181AbfAJP0e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 10:26:34 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 51858209BC; Thu, 10 Jan 2019 16:26:32 +0100 (CET)
-Received: from localhost (aaubervilliers-681-1-45-241.w90-88.abo.wanadoo.fr [90.88.163.241])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 1FEA5206A6;
-        Thu, 10 Jan 2019 16:26:32 +0100 (CET)
-Date:   Thu, 10 Jan 2019 16:26:32 +0100
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Chen-Yu Tsai <wens@csie.org>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] pinctrl: sunxi: Increase size of regulator array
-Message-ID: <20190110152632.hdlo3h4e7yzzjtug@flea>
-References: <20190110082633.6321-1-wens@csie.org>
+        Thu, 10 Jan 2019 10:26:49 -0500
+Received: from mx2.suse.de ([195.135.220.15]:34518 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728181AbfAJP0t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 10:26:49 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id E9BA0AF9A;
+        Thu, 10 Jan 2019 15:26:47 +0000 (UTC)
+From:   Andreas Schwab <schwab@suse.de>
+To:     Anup Patel <anup@brainfault.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Atish Patra <atish.patra@wdc.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Rob Herring <robh@kernel.org>, linux-riscv@lists.infradead.org,
+        "linux-kernel\@vger.kernel.org List" <linux-kernel@vger.kernel.org>,
+        linux-serial@vger.kernel.org
+Subject: Re: [PATCH] tty/serial: emit CR before NL in RISC-V SBL console
+References: <20181204135507.3706-1-anup@brainfault.org>
+        <20181204135507.3706-2-anup@brainfault.org>
+        <mvmbm4oehd5.fsf_-_@suse.de>
+        <CAAhSdy3-SaP7RBbgx7kZgkkxeN2W-Ue8QDFXkOgFG5GiAg52-g@mail.gmail.com>
+X-Yow:  Why is everything made of Lycra Spandex?
+Date:   Thu, 10 Jan 2019 16:26:46 +0100
+In-Reply-To: <CAAhSdy3-SaP7RBbgx7kZgkkxeN2W-Ue8QDFXkOgFG5GiAg52-g@mail.gmail.com>
+        (Anup Patel's message of "Thu, 10 Jan 2019 20:46:51 +0530")
+Message-ID: <mvm7efcedop.fsf@suse.de>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1.91 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="kli3jxp2tgsklhtl"
-Content-Disposition: inline
-In-Reply-To: <20190110082633.6321-1-wens@csie.org>
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Jan 10 2019, Anup Patel <anup@brainfault.org> wrote:
 
---kli3jxp2tgsklhtl
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> Instead of doing '\n' handling here, we should do it in BBL or
+> OpenSBI (i.e. SBI runtime firmware) otherwise all users of
+> SBI_CONSOLE_PUTCHAR (namely, Linux, FreeBSD,
+> FreeRTOS, U-Boot S-mode, etc) will endup having '\n'
+> handling.
 
-Hi,
+I don't think the serial driver should do NLCR handling on its own,
+without being instructed by the tty layer.  Since the earlycon does not
+have a tty layer, it needs to handle it explicitly.
 
-On Thu, Jan 10, 2019 at 04:26:32PM +0800, Chen-Yu Tsai wrote:
-> On the A80, the pin banks go up to PN, which translates to the 14th
-> entry in the regulator array. The array is only 12 entries long, which
-> causes the sunxi_pmx_{request,free} functions to access beyond the
-> array on the A80 and the A31 (which has pin bank PM). While the
-> accessed data is still valid allocated data within the same driver
-> data structure, it is likely not a pointer.
->=20
-> Increase the size of the regulator array from 12 to 14. This is a simple
-> fix. While we could have the code take into account the fact that R_PIO
-> pin banks start from PL, or maybe even dynamically allocate the array
-> based on the last pin of the pin controller, the size reduction probably
-> isn't worth the additional code complexity.
->=20
-> Fixes: 9a2a566adb00 ("pinctrl: sunxi: Deal with per-bank regulators")
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+Andreas.
 
-I definitely overlooked the R_PIO case, sorry. I guess the proper fix
-would be the first alternative one you suggested, and we should take
-the pin_base into account. There's no need to store twice such a large
-array for this case.
-
-Maxime
-
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---kli3jxp2tgsklhtl
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXDdkKAAKCRDj7w1vZxhR
-xVZ/AQCpt6hSufv7rqxoHZMaPfZNZtvAXgWIk+QzGqSQcNg/dwEA2m6KUm8jKcn+
-y9C35x9106A+jIfECwW6uRGQcTCwhwY=
-=vK/T
------END PGP SIGNATURE-----
-
---kli3jxp2tgsklhtl--
+-- 
+Andreas Schwab, SUSE Labs, schwab@suse.de
+GPG Key fingerprint = 0196 BAD8 1CE9 1970 F4BE  1748 E4D4 88E3 0EEA B9D7
+"And now for something completely different."
