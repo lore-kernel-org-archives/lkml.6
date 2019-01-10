@@ -2,148 +2,185 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BDFFC43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 09:42:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07AF6C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 09:42:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 456C4214C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 09:42:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D5B6A214DA
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 09:42:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728055AbfAJJmL (ORCPT
+        id S1728034AbfAJJmo convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 04:42:11 -0500
-Received: from relay.sw.ru ([185.231.240.75]:55566 "EHLO relay.sw.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727903AbfAJJmK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 04:42:10 -0500
-Received: from [172.16.25.169]
-        by relay.sw.ru with esmtp (Exim 4.91)
-        (envelope-from <ktkhai@virtuozzo.com>)
-        id 1ghWqg-0003DW-It; Thu, 10 Jan 2019 12:42:02 +0300
-Subject: Re: [PATCH RFC 0/3] mm: Reduce IO by improving algorithm of memcg
- pagecache pages eviction
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     akpm@linux-foundation.org, hannes@cmpxchg.org,
-        josef@toxicpanda.com, jack@suse.cz, hughd@google.com,
-        darrick.wong@oracle.com, aryabinin@virtuozzo.com, guro@fb.com,
-        mgorman@techsingularity.net, shakeelb@google.com,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <154703479840.32690.6504699919905946726.stgit@localhost.localdomain>
- <20190109141113.GW31793@dhcp22.suse.cz>
- <e9b64635-87cf-f330-acea-0ca681a2528e@virtuozzo.com>
- <20190109171021.GY31793@dhcp22.suse.cz>
-From:   Kirill Tkhai <ktkhai@virtuozzo.com>
-Message-ID: <3d4f4c83-44c9-c6d5-8dbe-c42a47e6c2bd@virtuozzo.com>
-Date:   Thu, 10 Jan 2019 12:42:02 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
-MIME-Version: 1.0
-In-Reply-To: <20190109171021.GY31793@dhcp22.suse.cz>
-Content-Type: text/plain; charset=windows-1252
+        Thu, 10 Jan 2019 04:42:44 -0500
+Received: from mx01.hxt-semitech.com ([223.203.96.7]:49657 "EHLO
+        barracuda.hxt-semitech.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727863AbfAJJmn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 04:42:43 -0500
+X-ASG-Debug-ID: 1547113357-093b7e40ef0d260001-xx1T2L
+Received: from HXTBJIDCEMVIW02.hxtcorp.net ([10.128.0.15]) by barracuda.hxt-semitech.com with ESMTP id K6a7nSiqnbCeoU8t (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NO); Thu, 10 Jan 2019 17:42:37 +0800 (CST)
+X-Barracuda-Envelope-From: yuanyuan.zhao@hxt-semitech.com
+Received: from HXTBJIDCEMVIW02.hxtcorp.net (10.128.0.15) by
+ HXTBJIDCEMVIW02.hxtcorp.net (10.128.0.15) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Thu, 10 Jan 2019 17:42:30 +0800
+Received: from HXTBJIDCEMVIW02.hxtcorp.net ([fe80::3e:f4ff:7927:a6f6]) by
+ HXTBJIDCEMVIW02.hxtcorp.net ([fe80::3e:f4ff:7927:a6f6%12]) with mapi id
+ 15.00.1395.000; Thu, 10 Jan 2019 17:42:30 +0800
+From:   "Zhao, Yuanyuan" <yuanyuan.zhao@hxt-semitech.com>
+To:     Marc Zyngier <marc.zyngier@arm.com>
+CC:     "tglx@linutronix.de" <tglx@linutronix.de>,
+        "jason@lakedaemon.net" <jason@lakedaemon.net>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "Zheng, Joey" <yu.zheng@hxt-semitech.com>,
+        "Wang, Dongsheng" <dongsheng.wang@hxt-semitech.com>
+Subject: RE: [RESEND 1/1] gic: its: Make sure a LPI is discarded before free.
+Thread-Topic: [RESEND 1/1] gic: its: Make sure a LPI is discarded before free.
+X-ASG-Orig-Subj: RE: [RESEND 1/1] gic: its: Make sure a LPI is discarded before free.
+Thread-Index: AQHUp+8DksFLG785G0++VUmPBlsY5qWmkCdg//+b1gCAAhBd8A==
+Date:   Thu, 10 Jan 2019 09:42:28 +0000
+Message-ID: <8ebfa53337724799b4b6b2ed8bb06866@HXTBJIDCEMVIW02.hxtcorp.net>
+References: <e37e3f5e0146be65c60092a457ca5c82e25581a0.1545292748.git.yuanyuan.zhao@hxt-semitech.com>
+ <20190109074324.6445118d@why.wild-wind.fr.eu.org>
+ <c81f42aa93904353bbeac590da7b0945@HXTBJIDCEMVIW02.hxtcorp.net>
+ <38d7afaf-e800-f6e7-83e3-eb006f4d6f4c@arm.com>
+In-Reply-To: <38d7afaf-e800-f6e7-83e3-eb006f4d6f4c@arm.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.65.11.40]
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
+X-Barracuda-Connect: UNKNOWN[10.128.0.15]
+X-Barracuda-Start-Time: 1547113357
+X-Barracuda-Encrypted: ECDHE-RSA-AES256-SHA384
+X-Barracuda-URL: https://192.168.50.101:443/cgi-mod/mark.cgi
+X-Virus-Scanned: by bsmtpd at hxt-semitech.com
+X-Barracuda-BRTS-Status: 1
+X-Barracuda-Spam-Score: 0.60
+X-Barracuda-Spam-Status: No, SCORE=0.60 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=ISO2022JP_CHARSET, MARKETING_SUBJECT
+X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.65452
+        Rule breakdown below
+         pts rule name              description
+        ---- ---------------------- --------------------------------------------------
+        -0.00 ISO2022JP_CHARSET      ISO-2022-JP message
+        0.60 MARKETING_SUBJECT      Subject contains popular marketing words
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09.01.2019 20:10, Michal Hocko wrote:
-> On Wed 09-01-19 18:43:05, Kirill Tkhai wrote:
->> Hi, Michal,
->>
->> On 09.01.2019 17:11, Michal Hocko wrote:
->>> On Wed 09-01-19 15:20:18, Kirill Tkhai wrote:
->>>> On nodes without memory overcommit, it's common a situation,
->>>> when memcg exceeds its limit and pages from pagecache are
->>>> shrinked on reclaim, while node has a lot of free memory.
->>>
->>> Yes, that is the semantic of the hard limit. If the system is not
->>> overcommitted then the hard limit can be used to prevent unexpected
->>> direct reclaim from unrelated activity.
->>
->> According to Documentation/admin-guide/cgroup-v2.rst:
->>
->>   memory.max
->>         Memory usage hard limit.  This is the final protection
->>         mechanism.  If a cgroup's memory usage reaches this limit and
->>         can't be reduced, the OOM killer is invoked in the cgroup.
->>         Under certain circumstances, the usage may go over the limit
->>         temporarily.
->>
->> There is nothing about direct reclaim in another memcg. I don't think
->> we break something here.
-> 
-> Others in the thread have pointed that out already. What is a hard limit
-> in one memcg is an isolateion protection in another one. Especially when
-> the system is not overcommited.
-> 
->> File pages are accounted to memcg, and this guarantees, that single
->> memcg won't occupy all system memory by its unevictible page cache.
->> But the suggested patchset follows the same way. Pages, which remain
->> in pagecache, are easy-to-be-evicted, since they are not dirty and
->> not under writeback. System can drop them fast and in foreseeable time.
->> This is cardinal thing about the patchset: remained pages do not
->> introduce principal burden on system memory or reclaim time.
-> 
-> What does prevent that the page cache is easily reclaimable? Aka clean
-> and ready to be dropped? Not to mention that even when the reclaim is
-> fast it is not free. Especially when you do not expect that because you
-> haven't reached your hard limit and the admin made sure that hard limits
-> do not overcommit.
 
-Yes, I mean it's clean and ready to drop.
 
-I understand the problem, so in case of people worry about reclaim speed
-increasing, this does not mean we should completely forget this way. This
-means we possible may find a compromise, which is suitable for everybody.
+> -----Original Message-----
+> From: Marc Zyngier [mailto:marc.zyngier@arm.com]
+> Sent: 2019年1月9日 17:52
+> To: Zhao, Yuanyuan <yuanyuan.zhao@hxt-semitech.com>
+> Cc: tglx@linutronix.de; jason@lakedaemon.net; linux-
+> kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org; Zheng, Joey
+> <yu.zheng@hxt-semitech.com>; Wang, Dongsheng <dongsheng.wang@hxt-
+> semitech.com>
+> Subject: Re: [RESEND 1/1] gic: its: Make sure a LPI is discarded before free.
+> 
+> On 09/01/2019 09:29, Zhao, Yuanyuan wrote:
+> > Hi Marc:
+> >
+> > Thank you for your reply.
+> >
+> > As you said, APIs such as free_irq will deactivate irq before free it.
+> > But deactivation is not forced by every API, for example
+> > irq_dispose_mapping.  So I think it's better to check that irq was
+> > deactivated as expected.
+> 
+> In general, we should fix the problem at the core API level instead of hacking
+> individual drivers.
+> 
+> But more to the point, irq_dispose_mapping is not supposed to do anything
+> with the an active irq, as it doesn't have the required information to safely
+> remove it.
+> 
+> So calling irq_dispose_mapping on an interrupt that still has registered
+> actions is a bug, and I'm not convinced we want to cater for such a case. Do
+> you have a concrete example of some kernel code expecting this behaviour?
+> 
+> Thanks,
+> 
+> 	M.
+> 
 
->>> But this also means that any hard limited memcg can fill up all the
->>> memory and break the above assumption about the isolation from direct
->>> reclaim. Not to mention the OOM or is there anything you do anything
->>> about preventing that?
->>
->> This is discussed thing. We may add such the pages into tail of LRU list
->> instead of head. We may introduce one more separate list to link such
->> the pages only, and fastly evict them in case of global reclaim. I don't
->> think there is a problem.
->>  
->>> That beig said, I do not think we want to or even can change the
->>> semantic of the hard limit and break existing setups.
->>
->> Using the original description and the comments I gave in this message,
->> could you please to clarify the way we break existing setups?
-> 
-> isolation as explained above.
-> 
->>> I am still
->>> interested to hear more about more detailed/specific usecases that might
->>> benefit from this behavior. Why do those users even use hard limit at
->>> all? To protect from anon memory leaks?
->>
->> In multi-user machine people want to have size of available to container
->> memory equal to the size, which they pay. So, hard limit is needed to prevent
->> one container to occupy all system memory via slowly-evictible writeback
->> pages, unevictible anon pages, etc. You can't fastly allocate a page,
->> in case of many pages are under writeback, this operation is very slow.
->>
->> (But unmapped pagecache pages introduced by patchset is another thing:
->>  you just need to take not sleeping spinlock to call __delete_from_page_cache()
->>  only. This is fast)
->>
->> Multi-user machine may have more memory, than sum of all containers hard
->> limit. This may be used as an optimization just to reduce disk IO. There
->> is no contradiction to sane sense here. And it's not a rare situation.
->> In our kernel we have cleancache driver for handling this situation, but
->> cleancache is not the best solution like I wrote.
->>
->> Not overcommited system is likely case for the patchset, while the below
->> is a little less likely:
-> 
-> I beliave Johannes has explained that you are trying to use the hard
-> limit in a wrong way for something it is not designed for.
+Most driver use free_irq after register actions, I found this problem by a test case. 
+But if this problem happen and the same DeviceID & EventID are reused, 
+the freed ITT will be visit which cause delayed kernel panic,
+the prev INTs are triggered unexpected, but the new INTs lost.
 
-In general, I think a some time useful design is not a Bible, that nobody
-is allowed to change. We should not limit us in something, in case of this
-has a sense and may be useful. This is just a note in general.
+So I think this check spend less, but gains more.
+
+BRs,
+Yuanyuan.
+
+
+> >
+> > BRs,
+> > Yuanyuan
+> >
+> >
+> >> -----Original Message-----
+> >> From: Marc Zyngier [mailto:marc.zyngier@arm.com]
+> >> Sent: 2019年1月9日 15:43
+> >> To: Zhao, Yuanyuan <yuanyuan.zhao@hxt-semitech.com>
+> >> Cc: tglx@linutronix.de; jason@lakedaemon.net; linux-
+> >> kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org; Zheng,
+> >> Joey <yu.zheng@hxt-semitech.com>; Wang, Dongsheng
+> >> <dongsheng.wang@hxt- semitech.com>
+> >> Subject: Re: [RESEND 1/1] gic: its: Make sure a LPI is discarded before free.
+> >>
+> >> On Wed, 9 Jan 2019 11:53:27 +0800
+> >> Zhao Yuanyuan <yuanyuan.zhao@hxt-semitech.com> wrote:
+> >>
+> >> Hi Zhao,
+> >>
+> >>> Its device will be removed after all events be freed.
+> >>> Undisarded events can lead to unpredictable behaviar.
+> >>>
+> >>> Signed-off-by: Zhao Yuanyuan <yuanyuan.zhao@hxt-semitech.com>
+> >>> ---
+> >>>  drivers/irqchip/irq-gic-v3-its.c | 4 ++++
+> >>>  1 file changed, 4 insertions(+)
+> >>>
+> >>> diff --git a/drivers/irqchip/irq-gic-v3-its.c
+> >>> b/drivers/irqchip/irq-gic-v3-its.c
+> >>> index db20e99..4fee008 100644
+> >>> --- a/drivers/irqchip/irq-gic-v3-its.c
+> >>> +++ b/drivers/irqchip/irq-gic-v3-its.c
+> >>> @@ -2572,6 +2572,10 @@ static void its_irq_domain_free(struct
+> >> irq_domain *domain, unsigned int virq,
+> >>>  								virq + i);
+> >>>  		u32 event = its_get_event_id(data);
+> >>>
+> >>> +		/* Discard irq before free */
+> >>> +		if (irqd_is_activated(d))
+> >>> +			its_send_discard(its_dev, event);
+> >>> +
+> >>>  		/* Mark interrupt index as unused */
+> >>>  		clear_bit(event, its_dev->event_map.lpi_map);
+> >>>
+> >>
+> >> But we already do send a discard on deactivate, which logically
+> >> happens before we free the domain. So what are you fixing here?
+> >>
+> >> Thanks,
+> >>
+> >> 	M.
+> >> --
+> >> Without deviation from the norm, progress is not possible.
+> 
+> 
+> --
+> Jazz is not dead. It just smells funny...
