@@ -2,74 +2,85 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78FA0C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 13:29:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47063C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 13:29:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 48A9621773
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 13:29:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547126953;
-	bh=4ywgLt9DcYw65IAZYoC8ZQhmuIRxsvSA7Q9QGfYzB0o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=SDf0frBLM2SRcB/5zA1HNMGZS2fV9fvBreCPtZEkgpiV2d9jr9w/M06uhw2EPtJxZ
-	 FqUgSs/mOAxZfg5ZH4tSAagZXgHDUVp8q1iWl4AnOu3kZypnPUjiMlHkiIUzwA1/YV
-	 z8wfcGl61nXHvlw2aFP6M/fa/3fFuPTijNwQNJpk=
+	by mail.kernel.org (Postfix) with ESMTP id 16ACA214C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 13:29:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="UZLj0cNZ";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="lgal3F/0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728937AbfAJN3M (ORCPT
+        id S1728963AbfAJN3v (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 08:29:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39866 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727847AbfAJN3M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 08:29:12 -0500
-Received: from guoren-Inspiron-7460 (23.83.240.247.16clouds.com [23.83.240.247])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        Thu, 10 Jan 2019 08:29:51 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:56100 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728888AbfAJN3u (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 08:29:50 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 1AAB96038E; Thu, 10 Jan 2019 13:29:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1547126990;
+        bh=iuk39SxciM8KqGRl45x4b28ujBRhmHv4iwfNBoUqMlY=;
+        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+        b=UZLj0cNZtOLJhEtscY9Epwes3yKPu+hVDE6DHJnFsYFRLnmWgTe+QFsy0Vj9fMjz1
+         uiO6xZ7YUPYmwmXrGI3NRgfPa7QABztc7JzLgQV9zhEtawIEb2k3LUV3raP4heaslG
+         Rr7s20YMRgYaqk69jnme1U8kixD54dXrWjcNSYkc=
+Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6617B214C6;
-        Thu, 10 Jan 2019 13:29:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547126951;
-        bh=4ywgLt9DcYw65IAZYoC8ZQhmuIRxsvSA7Q9QGfYzB0o=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=hLz0ZGbZa+ARg3TrjLnncDHx+ymVuFuFinBEGfTQs9qcH2wC/rXa7si0aXKl32492
-         p4Pj72XBLAWmy+HWVD85L7LIrPqfiWyZyYoPZT0MBTaipdoNPR2JMtCQNRWi7ypYFF
-         ns99pzWOhbhCA1JawlKzCCozXTFiX2lnLVg0DH7M=
-Date:   Thu, 10 Jan 2019 21:29:02 +0800
-From:   Guo Ren <guoren@kernel.org>
-To:     Konstantin Ryabitsev <konstantin@linuxfoundation.org>
-Cc:     pr-tracker-bot@kernel.org, torvalds@linux-foundation.org,
-        arnd@arndb.de, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org
-Subject: Re: [GIT PULL] csky fixup for linux-5.0-rc1
-Message-ID: <20190110132902.GA10138@guoren-Inspiron-7460>
-References: <1547045397-24388-1-git-send-email-guoren@kernel.org>
- <20190109180501.12290.85607.pr-tracker-bot@pdx-korg-gitolite-1.ci.codeaurora.org>
- <20190109182955.GC30131@pure.paranoia.local>
- <20190110080203.GA13262@guoren-Inspiron-7460>
- <20190110132613.GB22569@pure.paranoia.local>
+        (Authenticated sender: kvalo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 408D860300;
+        Thu, 10 Jan 2019 13:29:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1547126989;
+        bh=iuk39SxciM8KqGRl45x4b28ujBRhmHv4iwfNBoUqMlY=;
+        h=Subject:From:In-Reply-To:References:To:Cc:From;
+        b=lgal3F/0DaXjRA/sVPBcC4gip2ovnbiTl2urvGGcFM6R8phQvXojyt5WWpr6LlHYw
+         OnVtfiMN44HnAe633OZIwDQfilGcURS0n/WvRUKOSYn2/dKZQWenlugjSielMyRah6
+         rHsy0eUqNdlQTmDUD+4YCtoU4vWCY3zCnM0mxBng=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 408D860300
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190110132613.GB22569@pure.paranoia.local>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] wireless: ath: return error code upstream
+From:   Kalle Valo <kvalo@codeaurora.org>
+In-Reply-To: <20181226064328.75897-1-kjlu@umn.edu>
+References: <20181226064328.75897-1-kjlu@umn.edu>
+To:     Kangjie Lu <kjlu@umn.edu>
+Cc:     kjlu@umn.edu, pakki001@umn.edu,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
+Message-Id: <20190110132950.1AAB96038E@smtp.codeaurora.org>
+Date:   Thu, 10 Jan 2019 13:29:50 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 10, 2019 at 08:26:13AM -0500, Konstantin Ryabitsev wrote:
-> On Thu, Jan 10, 2019 at 04:02:03PM +0800, Guo Ren wrote:
-> > Can I take back this pull request and send a new pull request with
-> > https:// URLs ?
-> 
-> It's not necessary at this point, as the pull request has already been
-> processed. However, your future emails should have the public URL of the
-> git repository.
-OK
+Kangjie Lu <kjlu@umn.edu> wrote:
 
-Best Regards
- Guo Ren
+> ath6kl_wmi_cmd_send could fail, so let's return its error code upstream.
+> 
+> Signed-off-by: Kangjie Lu <kjlu@umn.edu>
+> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+
+Patch applied to ath-next branch of ath.git, thanks.
+
+fc6a6521556c ath6kl: return error code in ath6kl_wmi_set_roam_lrssi_cmd()
+
+-- 
+https://patchwork.kernel.org/patch/10742845/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+
