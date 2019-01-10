@@ -2,122 +2,177 @@ Return-Path: <SRS0=lBHl=PS=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3437CC43444
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 19:17:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82C12C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 19:20:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0444920874
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 19:17:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 477AC20874
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 19:20:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="OcFFMzXy";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="XVItNS6L"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="qxaH0d4v"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729360AbfAJTRB (ORCPT
+        id S1729413AbfAJTT7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 14:17:01 -0500
-Received: from new2-smtp.messagingengine.com ([66.111.4.224]:56647 "EHLO
-        new2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728748AbfAJTRA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 14:17:00 -0500
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 0906014B0D;
-        Thu, 10 Jan 2019 14:16:59 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute6.internal (MEProxy); Thu, 10 Jan 2019 14:16:59 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm2; bh=6qeHQhqiowfV1AXW8PA8kiNqumV
-        6PSgdPFAxIL2Fw6Q=; b=OcFFMzXy9SL6EhTXjFM1JKCtWHZQQCol3SW2uG/UzQB
-        PvvsmC1JZhRXZXwMn+oJTBJdjpRaloCBadgpQ+yTaYSVFZPh6x5+q5569a0zIsHj
-        vigKG/74LRoGpsnwhtM7iKmAZfR/7gD6zTLuh6r0L2eZ3lck7l1RD7NDaj9h0y/i
-        m2qdSREkb5f4SIJQkgzTmY+xpS+IjpewhZI8kp8S7l+ndJ+FLwxrOihWo6OaFz/m
-        sI11t7c6Is4skIkZib9gY5/Egx1uP16YzfwahCu6zAlYqAE3cUqIgUVC5dEySjJm
-        YGAkbHHa4dkqNX/qzScwtKKuOBTT9yHHZc+Ahyg7nMQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=6qeHQh
-        qiowfV1AXW8PA8kiNqumV6PSgdPFAxIL2Fw6Q=; b=XVItNS6LMERFhsdCY7mnRU
-        RLIMTg2W6mfOEqitCRv6VRaHutliQ1GviCo6ptEYsU+8qvJkqGAz61JiX/45pexI
-        +wAzioHs/uavD5ISrAbiWWTxsy1YZ8lOgD5BgoKfXpQ5AKC/ezdW8rwWUZYgjr+7
-        69AJlax8sOx1osnOPcXZE0vOusQpv9xPOq/orpiN2gM8SnkvWMAr9gb7qbDXsWTG
-        A9mGxjJnPP4r6NWBwb0kw3N9DabtXqc8XCabL+7G1hlGXsHXFtE6aYdWGFIIAAq6
-        yZUGGxhyrTSr61IMqSxs5lGNsryM/8M4ZoDEGiqkd411IlZR4OBN7Q2r4ZuU9WYg
-        ==
-X-ME-Sender: <xms:KJo3XFFqdLJBuxPuopi-OXtfWGJxar_rKw7G_M-mUknlyStvn1dEqg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedtledrfeefgdduvdefucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfquhhtnecuuegrihhlohhuthemucef
-    tddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenogfuphgrmhfkphculdeftd
-    dtmdenucfjughrpeffhffvuffkfhggtggujggfsehttdertddtredvnecuhfhrohhmpefi
-    rhgvghcumffjuceoghhrvghgsehkrhhorghhrdgtohhmqeenucfkphepkeefrdekiedrke
-    elrddutdejnecurfgrrhgrmhepmhgrihhlfhhrohhmpehgrhgvgheskhhrohgrhhdrtgho
-    mhenucevlhhushhtvghrufhiiigvpedt
-X-ME-Proxy: <xmx:KJo3XPkTweLvrQZ5s01_YIOUe7GIZoYdVbEj3ylHuChU4vo1qM-X6g>
-    <xmx:KJo3XI3WRjTXiAzDt3uLahGQS4_OWPWiMqCYpuK12-YnWppTYICNpw>
-    <xmx:KJo3XDT-MCvj00CQnSHrov34AaKEdrN72gIh-nh062h2uaECGzlu0w>
-    <xmx:Kpo3XFqdAv3bQx0mqYzuJooZxgLlJrfzHb87oFLEEpyp0aP25Div3A>
-Received: from localhost (5356596b.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        by mail.messagingengine.com (Postfix) with ESMTPA id E60A8102A0;
-        Thu, 10 Jan 2019 14:16:54 -0500 (EST)
-Date:   Thu, 10 Jan 2019 20:16:53 +0100
-From:   Greg KH <greg@kroah.com>
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     Sasha Levin <sashal@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        linux-kernel@vger.kernel.org, tglx@linutronix.de,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Will Deacon <will.deacon@arm.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Joerg Roedel <jroedel@suse.de>, stable@vger.kernel.org,
-        Shuah Khan <shuahkh@osg.samsung.com>
-Subject: Re: [PATCH 2/2] x86/selftests/pkeys: fork() to check for state being
- preserved
-Message-ID: <20190110191653.GF18221@kroah.com>
-References: <20190102215657.585704B7@viggo.jf.intel.com>
- <20190103135225.4929F217D9@mail.kernel.org>
- <0c10a3c9-67a7-c404-da0f-d9df079fdd23@intel.com>
+        Thu, 10 Jan 2019 14:19:59 -0500
+Received: from nat-hk.nvidia.com ([203.18.50.4]:60411 "EHLO nat-hk.nvidia.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728572AbfAJTT7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 14:19:59 -0500
+Received: from hkpgpgate101.nvidia.com (Not Verified[10.18.92.100]) by nat-hk.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c379adb0000>; Fri, 11 Jan 2019 03:19:55 +0800
+Received: from HKMAIL103.nvidia.com ([10.18.16.12])
+  by hkpgpgate101.nvidia.com (PGP Universal service);
+  Thu, 10 Jan 2019 11:19:52 -0800
+X-PGP-Universal: processed;
+        by hkpgpgate101.nvidia.com on Thu, 10 Jan 2019 11:19:52 -0800
+Received: from HKMAIL103.nvidia.com (10.18.16.12) by HKMAIL103.nvidia.com
+ (10.18.16.12) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 10 Jan
+ 2019 19:19:51 +0000
+Received: from NAM03-DM3-obe.outbound.protection.outlook.com (104.47.41.57) by
+ HKMAIL103.nvidia.com (10.18.16.12) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4 via Frontend Transport; Thu, 10 Jan 2019 19:19:51 +0000
+Received: from BN7PR12MB2836.namprd12.prod.outlook.com (20.176.178.161) by
+ BN7PR12MB2642.namprd12.prod.outlook.com (20.176.176.84) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1516.13; Thu, 10 Jan 2019 19:19:49 +0000
+Received: from BN7PR12MB2836.namprd12.prod.outlook.com
+ ([fe80::4024:c208:f331:505e]) by BN7PR12MB2836.namprd12.prod.outlook.com
+ ([fe80::4024:c208:f331:505e%3]) with mapi id 15.20.1516.015; Thu, 10 Jan 2019
+ 19:19:47 +0000
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+To:     Thierry Reding <thierry.reding@gmail.com>
+CC:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        "Jonathan Hunter" <jonathanh@nvidia.com>,
+        "adrian.hunter@intel.com" <adrian.hunter@intel.com>,
+        "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>
+Subject: RE: [PATCH V3 3/3] mmc: tegra: SDMMC pads auto-calibration
+Thread-Topic: [PATCH V3 3/3] mmc: tegra: SDMMC pads auto-calibration
+Thread-Index: AQHUot3iT26MK/BSWU6kkDZarmU1JKWopkQAgABCrSA=
+Date:   Thu, 10 Jan 2019 19:19:47 +0000
+Message-ID: <BN7PR12MB283603C485B9B4B04E742FFFC2840@BN7PR12MB2836.namprd12.prod.outlook.com>
+References: <1546462674-22856-1-git-send-email-skomatineni@nvidia.com>
+ <1546462674-22856-3-git-send-email-skomatineni@nvidia.com>
+ <20190110150602.GC25353@ulmo>
+In-Reply-To: <20190110150602.GC25353@ulmo>
+Accept-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=skomatineni@nvidia.com; 
+x-originating-ip: [216.228.112.22]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BN7PR12MB2642;6:NneZlwWX8mi0Fn6mNnB4/WYQ4mXgG5kgkEB7SugukJoQKsSipXBGxUdiO8zznwHGW1T21ocQWlM6VewvO5jqfb56U7E5nbBuKTEwroQlK19gDviAn5l38gasMKF7UVNbzVuuWkS6hrMoaHmxW6oGQC2RSe28Oqfdwbq5CV4U4/+euUzDN7laz9iPWJ5R2iCMMlzP2KRFnAVNEV4sjfpYazLC2lS2qfzAru3vViDWSesdqWf5uKkpfx0etIBQjnE2pCjwJF4eTEav/G/pp/qSilyskYEtNrr3t20WT0Ailyowz379KDp1y5dIQCMlOwc2FdNaTZ+SGQELXDuCJyG1O+O0bNBlFi19aB+iCX8HoflT8dkQBiJwP2ubt/jXLgEn2Py3YdmN2FtZ3j92KuUOVaMwn/9fDNOeEQti7+0B/IKmc9BukyoAcHTibEd9H/uE6hoXQMQYnNR2YXFB3xim0w==;5:G8ZnpnLgxsZoBCeItv9axTxgSbDjasKduBmqMyCIRnL+e4k5Z0YAWlcqWM3O+gTnomV32dhFnNSLukn+0ZqWmXDWzK/iLWTs9u+wtmuATjAmUBWHH/2NbGISYL0TSjeA46tSFSCcGG1qtKr4Azkwzo2KNW12XZrtAVdwaqCfXL+lxMQmNklaShb8c4irO4w866MZUek9+MWsFFmtUXI+4A==;7:PC3tgDXafPr6YQAQg+o/lAi1gpRJRTZk8RalBa72JHQ7UL/1X3zb/o8imFFGwkKj4oFxHedl1xGEV0GfUZYzzmqZB5typsKdcK5mRh3N08X2lQ+oBMzJdVOCeplr9SUTikAfZIqAuYND8QxXPbBOuw==
+x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
+x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10009020)(39860400002)(136003)(396003)(366004)(346002)(376002)(189003)(199004)(14454004)(25786009)(4326008)(7736002)(446003)(39060400002)(305945005)(3846002)(476003)(6246003)(53936002)(55016002)(106356001)(54906003)(97736004)(86362001)(105586002)(6916009)(9686003)(478600001)(256004)(316002)(11346002)(74316002)(68736007)(6436002)(6506007)(7696005)(186003)(76176011)(66066001)(6116002)(26005)(486006)(81166006)(8936002)(71190400001)(71200400001)(229853002)(99286004)(8676002)(81156014)(567974002)(102836004)(2906002)(5660300001)(33656002);DIR:OUT;SFP:1101;SCL:1;SRVR:BN7PR12MB2642;H:BN7PR12MB2836.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-ms-office365-filtering-correlation-id: 6cb84fb8-7e19-4c67-56f4-08d67730960d
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(2017052603328)(7153060)(7193020);SRVR:BN7PR12MB2642;
+x-ms-traffictypediagnostic: BN7PR12MB2642:
+x-microsoft-antispam-prvs: <BN7PR12MB26422F721FE8187CE0460250C2840@BN7PR12MB2642.namprd12.prod.outlook.com>
+x-forefront-prvs: 0913EA1D60
+received-spf: None (protection.outlook.com: nvidia.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: Wy2mlvjsE3jatqdu5tz/guB3KdCtrcDCxcbm+H2DV8fPk4ZthhUj1i0sXrUTlYVOvbunslP9taADsztxS4y+WMz7BGJe0ngzXrb5ilugFvokghM9G7NjUDoS6RLQlPmTAuqg1lt7G85IrnkbbCBZN4IyiPj032VndR1cSQiKAccDrWovhnSAPnktROzJH0i6ilf0LNJKosT09yMGpyzBmwTgRHRvrECYZLTVu+RUQFztSfh9fvt6Dwy1oyr6yh1YYGWFEWM7otSPSwro6VsMONkKWvh1DiiJ5qzraEQY3J1bv9QbUgGisEYijI72pbl20Oj9XhrrmVAqILF1cP7dGufL8ql614FXHa9TAawaxKlAiLzI4ohTfeffgkGqjPB0TNusNpOtKz+uDi6AiZKdMJFm49jHUNzkxk7h5PYCd51ztMJhDzORZHKW7DT5wVvp+MMsrGF7bjFX7QSHN6aIug==
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0c10a3c9-67a7-c404-da0f-d9df079fdd23@intel.com>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6cb84fb8-7e19-4c67-56f4-08d67730960d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Jan 2019 19:19:47.6584
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN7PR12MB2642
+X-OriginatorOrg: Nvidia.com
+Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1547147995; bh=hhis5HiYx+8/aXXP9CANe3XZ7VxHCYy2OyC4IdYc/EA=;
+        h=X-PGP-Universal:From:To:CC:Subject:Thread-Topic:Thread-Index:Date:
+         Message-ID:References:In-Reply-To:Accept-Language:X-MS-Has-Attach:
+         X-MS-TNEF-Correlator:authentication-results:x-originating-ip:
+         x-ms-publictraffictype:x-microsoft-exchange-diagnostics:
+         x-ms-exchange-antispam-srfa-diagnostics:
+         x-forefront-antispam-report:
+         x-ms-office365-filtering-correlation-id:x-microsoft-antispam:
+         x-ms-traffictypediagnostic:x-microsoft-antispam-prvs:
+         x-forefront-prvs:received-spf:x-ms-exchange-senderadcheck:
+         x-microsoft-antispam-message-info:spamdiagnosticoutput:
+         spamdiagnosticmetadata:MIME-Version:
+         X-MS-Exchange-CrossTenant-Network-Message-Id:
+         X-MS-Exchange-CrossTenant-originalarrivaltime:
+         X-MS-Exchange-CrossTenant-fromentityheader:
+         X-MS-Exchange-CrossTenant-id:
+         X-MS-Exchange-Transport-CrossTenantHeadersStamped:X-OriginatorOrg:
+         Content-Language:Content-Type:Content-Transfer-Encoding;
+        b=qxaH0d4vkWFus3wRIEHz/as1Bf0bJUJJrCX16SnO6VD9+fuX/DpajEC79PmAbuZxa
+         /0aX1qaUGuzL92+7LhP/aCw9T8xbvYWt7lW7pIRJ5QlbNtHypfP7lbQd2pPOhKrChH
+         lV2RmdmTc1Mr6oFyRcSwTQ6TlDu5nr6mg2IjXrYxVCibWCbCyZmm4YyRtPD0vxyoXX
+         04olqYBp3ssh8CyCwylvFMMB5yLk9+HCtJW5A6zdX/0Yjz6FZEprZ892dUfHeKlPlE
+         r2MciopFVNOuDp1IX6odjwoCBXiv/am9SPnx94+ohLR/sy9AUdUwB1ciL/kiC6AVjH
+         cd9MZ20CSQsKA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 03, 2019 at 10:57:24AM -0800, Dave Hansen wrote:
-> On 1/3/19 5:52 AM, Sasha Levin wrote:
-> > This commit has been processed because it contains a -stable tag.
-> > The stable tag indicates that it's relevant for the following trees: all
-> > 
-> > The bot has tested the following trees: v4.20.0, v4.19.13, v4.14.91, v4.9.148, v4.4.169, v3.18.131, 
-> > 
-> > v4.20.0: Build OK!
-> > v4.19.13: Build OK!
-> > v4.14.91: Build OK!
-> > v4.9.148: Failed to apply! Possible dependencies:
-> >     f50b4878329a ("x86/pkeys/selftests: Fix pkey exhaustion test off-by-one")
-> 
-> Protection keys was merged in 4.8.  We can ignore any of the selftests
-> changes before that.
-> 
-> But, it looks like the 4.9 selftests are a bit behind mainline.
-> Probably because I didn't cc stable@ on f50b4878329a.  I don't have a
-> strong opinion as to how up-to-date we want to keep the -stable
-> selftests.  Shua, is there a usual way that folks do this?
+>> @@ -805,6 +854,12 @@ static int tegra_sdhci_init_pinctrl_info(struct dev=
+ice *dev,
+>>  		return -1;
+>>  	}
+>> =20
+>> +	tegra_host->pinctrl_state_1v8_drv =3D pinctrl_lookup_state(
+>> +				tegra_host->pinctrl_sdmmc, "sdmmc-1v8-drv");
+>> +
+>> +	tegra_host->pinctrl_state_3v3_drv =3D pinctrl_lookup_state(
+>> +				tegra_host->pinctrl_sdmmc, "sdmmc-3v3-drv");
+>
+>If this truly is optional, then I suggest we do something like this
+>instead:
 
-I wouldn't worry too much about selftests.  Usually people run the
-latest selftests (like 4.20) on older stable kernels, as they "should"
-just work properly (or at least fail gracefully).
+On tegra210, these settings are part of pinmux so using pinctrl to pinmux d=
+evice node with existing properties pull-up and pull-down strength to confi=
+gure timeout values.
+On tegra186 and later, these settings are part of sdmmc controller itself s=
+o using existing pullup and pulldown timeout properties within sdmmc device=
+ node itself.
 
-thanks,
+From sdhci driver perspective, if pinctrl state exists (which is the case o=
+f tegra210), it uses it to configure drive settings otherwise (tegra186 & t=
+egra194) it configures drive settings in pad register with in sdmmc domain =
+itself.
+So in away presence of sdmmc-1v8-drv and sdmmc-3v3-drv state is optional as=
+ they apply only for tegra210.
+From sdhci-tegra drive perspective,  it shouldn't return error on absence o=
+f these states as these states are not used for tegra186 and tegra194 and i=
+nstead use drive strengths time out properties.
+Will add check in drive to return error on absence of both sdmmc-3v3-drv, s=
+dmmc-1v8-drv pinctrl states along with drive settings properties with in sd=
+mmc device node...
 
-greg k-h
+>
+>	tegra_host->pinctrl_state_1v8_drv =3D pinctrl_lookup_state(...);
+>	if (IS_ERR(tegra_host->pinctrl_state_1v8_drv)) {
+>		err =3D PTR_ERR(tegra_host->pinctrl_state_1v8_drv);
+>
+>		if (err =3D=3D -ENODEV)
+>			tegra_host->pinctrl_state_1v8_drv =3D NULL;
+>		else
+>			return err;
+>	}
+>
+>With that we can use the much simpler condition everywhere:
+>
+>	if (tegra_host->pinctrl_state_1v8_drv)
+>		...
+>
+>Thierry
