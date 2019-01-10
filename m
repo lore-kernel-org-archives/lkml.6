@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE092C43387
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 20:53:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CEB1C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 20:53:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 69A942177E
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 20:53:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3DD6B2173B
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 20:53:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Htf7k0Ex"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="somvAXwF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730749AbfAJUxV (ORCPT
+        id S1730832AbfAJUxY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 15:53:21 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:45413 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730669AbfAJUxT (ORCPT
+        Thu, 10 Jan 2019 15:53:24 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:43160 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730607AbfAJUxR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 15:53:19 -0500
-Received: by mail-lf1-f65.google.com with SMTP id b20so9258368lfa.12;
-        Thu, 10 Jan 2019 12:53:17 -0800 (PST)
+        Thu, 10 Jan 2019 15:53:17 -0500
+Received: by mail-lj1-f194.google.com with SMTP id q2-v6so10946307lji.10;
+        Thu, 10 Jan 2019 12:53:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=pV8kbDyRB/8qZ90lJTc0lEk+FaV2Ra/kqeVF/E8Hnfk=;
-        b=Htf7k0ExehzCaF3zhHh1dRJbDHstaIkx5+nKHbbc/ILqAjuqaUwe3koIB3cNj44gz2
-         ZwF0a1qw6466nImj6AWCNYVaJdU0eXFGt6hVW2tW/n6Db5HoOaqLFVTWnulK4rMHo6Q8
-         saKPC9Pv/qlO+joFcR3ASl0LCqDVgoAWDWRhxz8JScyXXxDt5zQbW4LkHBbKBTfSRfam
-         S2rH4mnhsuT5xDuyvYWeSvpj2VL23FZunTRa6t18CsuqH2gu/7q/Igb53u9n5Cqmrj0Y
-         EP5sYVhOQ2c1w4Gwji6GfVl/y+MJwSuyCwubB7fzG44E5g3khbFVV9PhOr6Ab/gnxmvU
-         aybw==
+        bh=+SD/OC2mkph624S4bKD3nSN6vMhl6eg9eqmNC9NaBYg=;
+        b=somvAXwFWVUInL8qU/Be8IdSbgDkR4UaG91kcTe3n8czAmA1mzk7gJ66uxFpI8hWx9
+         IUOy9kXQtxiTGMzW4PAfI3Kpcvt5ANS99Gk6ImDv6q40PuVPxio/CBOsXUyxGG5xzdEy
+         3qQv7zz38P83fi0E9RwOijcf7y2i6Rl0Fr8DJBSynNZ46gsWkSklwJA5736cB0Av8xoE
+         +7gJoweqGrdbFWA/Yr2KVkfLxda8UUu+ROgf7FCrQIlD+0gVKta/xXMu5JGRl+xJtG0Z
+         5qgFAKtnsuplwxD7Dpa/17EKWwaVCW6duIaY1XoVQ/h/uXMPDjMXz/9kyPJdLK09G1cW
+         6q8w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=pV8kbDyRB/8qZ90lJTc0lEk+FaV2Ra/kqeVF/E8Hnfk=;
-        b=l+AWFj54GPo6xRdkIzUU3k+r+vouYTCGtjUZiCbUFPoOxt3Wy1eIGvpJp2x1l/AXck
-         8vyn3upj6Uz5gWeIo0uQMGITSvWL4PGiu8YOZ4SC3BVziOPUgZBxlEVtqMsp8UGBjTtK
-         ENMXiD66LoPjsAGf9aEtE8bPNS8eWgmVcjdm5ztODlDh70ABoAF3HuLVLWOz+Rth4MB+
-         TewHNNuvDrUG/Ehq0VKerPw+hZUrp7fgzkfN4rxSeVWKDxYXhcMhjLSl6nyGAQRwDdLg
-         jephbvQyl1AydAtcKmO0IECua10SW7xfVRrpnw2cC0ANQkMTlugNcY/ADkAOdptUzfms
-         4P7Q==
-X-Gm-Message-State: AJcUukfUxjUQkYJ9Jl0orXe52h6inVrGbhbQ+qVTsCswxRLeKAxFSOEr
-        DLQotzdWTZc4tCsRHgENOW0=
-X-Google-Smtp-Source: ALg8bN5+qL67TTptupCRMWOWMH6hxida6ZissbV6ggdz+24+VlshN7ushnka9oUaZ9ltQc93hn1ACg==
-X-Received: by 2002:a19:d5:: with SMTP id 204mr6311233lfa.116.1547153596596;
-        Thu, 10 Jan 2019 12:53:16 -0800 (PST)
+        bh=+SD/OC2mkph624S4bKD3nSN6vMhl6eg9eqmNC9NaBYg=;
+        b=O5ahyR9rCvHIC6D0VoY4o1YM8836kqBk0LhlU6LroUhK59PrehkaEoXuiqRdjXzDku
+         vadeR6dpQO5MYkhhY4AEHA5kmTMIdrmDfoMQGv9/2jdog6IWJm7oz9ZozeFPh27vrj9M
+         EVPmmX9bbtdSmpZ7/TX+mNtYeN1MBgkF6v654ABhpbcfEpDN5HFNjLPbc0mNd6fomvxa
+         R3Bhvj8HOCb6I3lv2rtiqh0UkR0wclY9yXxocQ6LvaG2IecZMNhSOAFS7YBSeQNgO5EM
+         LgwB7fkMEtRiprHdjo9pMMMFW8j5kQ13fc4CZGzqej0xS7wu0ifgNuyP1Kr++hZB4c5p
+         86dg==
+X-Gm-Message-State: AJcUukctg2FMEb8lBD1FwHb4xrAVXuPqsGdPLtwKs0j14ow2aRYVSGO9
+        dup3QhFisNG8o6opMV+8m34=
+X-Google-Smtp-Source: ALg8bN5OhNydl/YWlWYGi+wVoxty4MjReSUNdvKbqB3yWLq4KH0DXd1xC7lsMDC1i783piOK1c0mig==
+X-Received: by 2002:a2e:9783:: with SMTP id y3-v6mr6788109lji.167.1547153594941;
+        Thu, 10 Jan 2019 12:53:14 -0800 (PST)
 Received: from localhost.localdomain ([2a02:a315:5445:5300:5dc1:592c:c674:2869])
-        by smtp.googlemail.com with ESMTPSA id z7-v6sm15389690lji.42.2019.01.10.12.53.15
+        by smtp.googlemail.com with ESMTPSA id z7-v6sm15389690lji.42.2019.01.10.12.53.13
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 10 Jan 2019 12:53:16 -0800 (PST)
+        Thu, 10 Jan 2019 12:53:14 -0800 (PST)
 From:   =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
 To:     kgene@kernel.org
 Cc:     krzk@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
@@ -64,9 +64,9 @@ Cc:     krzk@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
         linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
         =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
-Subject: [PATCH v2 3/4] cpufreq: s5pv210: Defer probe if getting regulators fail
-Date:   Thu, 10 Jan 2019 21:52:14 +0100
-Message-Id: <20190110205215.22030-4-pawel.mikolaj.chmiel@gmail.com>
+Subject: [PATCH v2 2/4] cpufreq: s5pv210: Don't flood kernel log after cpufreq change
+Date:   Thu, 10 Jan 2019 21:52:13 +0100
+Message-Id: <20190110205215.22030-3-pawel.mikolaj.chmiel@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190110205215.22030-1-pawel.mikolaj.chmiel@gmail.com>
 References: <20190110205215.22030-1-pawel.mikolaj.chmiel@gmail.com>
@@ -78,71 +78,30 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is possibility, that when probing driver, regulators are not yet
-initialized. In this case we should return EPROBE_DEFER and wait till
-they're initialized, since they're required currently for cpufreq driver
-to work. Also move regulator initialization code at beginning of probe,
-so we can defer as fast as posibble.
+This commit replaces printk with pr_debug, so we don't flood kernel log.
 
 Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
+Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
 Changes from v1:
-  - Fix compilation error
-  - Reorganize code so it's smaller
+  - Added Acked-by
 ---
- drivers/cpufreq/s5pv210-cpufreq.c | 32 ++++++++++++++++++-------------
- 1 file changed, 19 insertions(+), 13 deletions(-)
+ drivers/cpufreq/s5pv210-cpufreq.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/cpufreq/s5pv210-cpufreq.c b/drivers/cpufreq/s5pv210-cpufreq.c
-index f51697f1e0b3..6df95941ba96 100644
+index dbecd7667db2..f51697f1e0b3 100644
 --- a/drivers/cpufreq/s5pv210-cpufreq.c
 +++ b/drivers/cpufreq/s5pv210-cpufreq.c
-@@ -594,6 +594,25 @@ static int s5pv210_cpufreq_probe(struct platform_device *pdev)
- 	 * this whole driver as soon as S5PV210 gets migrated to use
- 	 * cpufreq-dt driver.
- 	 */
-+	arm_regulator = regulator_get(NULL, "vddarm");
-+	if (IS_ERR(arm_regulator)) {
-+		if (PTR_ERR(arm_regulator) == -EPROBE_DEFER)
-+			pr_debug("vddarm regulator not ready, defer\n");
-+		else
-+			pr_err("failed to get regulator vddarm\n");
-+		return PTR_ERR(arm_regulator);
-+	}
-+
-+	int_regulator = regulator_get(NULL, "vddint");
-+	if (IS_ERR(int_regulator)) {
-+		if (PTR_ERR(int_regulator) == -EPROBE_DEFER)
-+			pr_debug("vddint regulator not ready, defer\n");
-+		else
-+			pr_err("failed to get regulator vddint\n");
-+		regulator_put(arm_regulator);
-+		return PTR_ERR(int_regulator);
-+	}
-+
- 	np = of_find_compatible_node(NULL, NULL, "samsung,s5pv210-clock");
- 	if (!np) {
- 		pr_err("%s: failed to find clock controller DT node\n",
-@@ -633,19 +652,6 @@ static int s5pv210_cpufreq_probe(struct platform_device *pdev)
- 		}
+@@ -481,7 +481,7 @@ static int s5pv210_target(struct cpufreq_policy *policy, unsigned int index)
+ 				arm_volt, arm_volt_max);
  	}
  
--	arm_regulator = regulator_get(NULL, "vddarm");
--	if (IS_ERR(arm_regulator)) {
--		pr_err("failed to get regulator vddarm\n");
--		return PTR_ERR(arm_regulator);
--	}
--
--	int_regulator = regulator_get(NULL, "vddint");
--	if (IS_ERR(int_regulator)) {
--		pr_err("failed to get regulator vddint\n");
--		regulator_put(arm_regulator);
--		return PTR_ERR(int_regulator);
--	}
--
- 	register_reboot_notifier(&s5pv210_cpufreq_reboot_notifier);
+-	printk(KERN_DEBUG "Perf changed[L%d]\n", index);
++	pr_debug("Perf changed[L%d]\n", index);
  
- 	return cpufreq_register_driver(&s5pv210_driver);
+ exit:
+ 	mutex_unlock(&set_freq_lock);
 -- 
 2.17.1
 
