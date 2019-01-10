@@ -6,23 +6,23 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF4CBC43613
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 16:27:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6DB0C43387
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 16:27:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A7BC2206B7
-	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 16:27:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9F37F214DA
+	for <linux-kernel@archiver.kernel.org>; Thu, 10 Jan 2019 16:27:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730170AbfAJQ13 (ORCPT
+        id S1729391AbfAJQ1z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 11:27:29 -0500
-Received: from mout.kundenserver.de ([217.72.192.75]:49257 "EHLO
+        Thu, 10 Jan 2019 11:27:55 -0500
+Received: from mout.kundenserver.de ([217.72.192.73]:56733 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729872AbfAJQ0W (ORCPT
+        with ESMTP id S1729869AbfAJQ0W (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 10 Jan 2019 11:26:22 -0500
 Received: from wuerfel.lan ([109.192.41.194]) by mrelayeu.kundenserver.de
  (mreue108 [212.227.15.145]) with ESMTPA (Nemesis) id
- 1M3UdI-1gh5Av3nYQ-000Zdl; Thu, 10 Jan 2019 17:25:08 +0100
+ 1N6KQZ-1hNB0I3voH-016iww; Thu, 10 Jan 2019 17:25:20 +0100
 From:   Arnd Bergmann <arnd@arndb.de>
 To:     y2038@lists.linaro.org, linux-api@vger.kernel.org,
         linux-kernel@vger.kernel.org
@@ -41,54 +41,70 @@ Cc:     Arnd Bergmann <arnd@arndb.de>, ink@jurassic.park.msu.ru,
         linux-ia64@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
         linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
         linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org
-Subject: [PATCH 02/15] ia64: add statx and io_pgetevents syscalls
-Date:   Thu, 10 Jan 2019 17:24:22 +0100
-Message-Id: <20190110162435.309262-3-arnd@arndb.de>
+        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
+        stable@vger.kernel.org
+Subject: [PATCH 11/15] mips: fix n32 compat_ipc_parse_version
+Date:   Thu, 10 Jan 2019 17:24:31 +0100
+Message-Id: <20190110162435.309262-12-arnd@arndb.de>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20190110162435.309262-1-arnd@arndb.de>
 References: <20190110162435.309262-1-arnd@arndb.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:jZ+pK1soglClNV8JzDCTro7NHj/jUQtDuwPrtlNj70FE5cXaEjQ
- r+SHifgmj/OSg7YZwhAOnPSW9mMqXmoPHKnySSVlYLAvZ5Qhmn0Ta+SNUS25ZKwBP+7W0FI
- oC428/ece5QP7XVIUK6jj6GfWl2BehhsCgBk1eJ35E6ipEp+AkgoJ4p50hpr3L8WlpiANBy
- Ux+9nIr/6cdCw6+aDpHaQ==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:VEnbB0N4QPA=:rFF45PK4fVaAoP1KJQfuTu
- qvzYM8C+SXZ0bdt6/VS1aHwqCz9bxt9HM0Dy+SmyNnsMPzSGOvYUznlNmPBP7WaOWN0H5/Hsk
- wxXtf6q9lDrPBVeh9tGtqh/pqc3fNDVJGBwe7R4H4MOKF5gBFDjdrUfh6kTv/6hZ4VFGEfXPu
- k9JND7wy/Q2wfIh4iR74yZ8OK6p5d2VXYILYRlJt5yqqV/4vm0mIg4RabkqYyniSDjAqoA/yR
- 4neMRN765leyRi0iM7/PySopaHdETBP6GgGXogfbu1sh98uM/8LzEo5BgiQGRk3LNOPzb6kHL
- dzaPrOjflqNJGjbPhhKSRmG3IMKFRiyLtGNf0B9RcDIteLZiWGBTgOR3iASyXUwTM5jbvHYgO
- xNSP+vUMJY+PDeHm4b8Yy64mS1bUGhxJqdytmPQcSw63vqGswdT1vxlphYGiDQeqHitDVFDrI
- Soez+KleqeFa8mcLOsKe6ZMqPJTG1MqVfOmsdnuwKJy2UUWy5aNh0BsMpbD7/IwUBv+XL8MZJ
- EtPa5ZK1i/IEf6wgxy8JWdU8NQaVBJ19YEXykvAAYJ11RWKsFBUGULs64DI7sN91HITcMOMPB
- 5EpGhU0ofNb/PBtMBhqlZdNvcgLmG6FvIw7LhcS+IHweR6qjnVPU+vtRy3UrhpKJiLKuQgrwS
- RgCxnAOj/yl+1DloOIxpgLtvFmKTkShVrAJU0h3SoLsnuQ3+rkRvC0iczX5xOWaXZebvIKRH/
- 7WlXNpAGcwfi5K0UvkY0Ar+HWNEg1kGaLHiv6A==
+X-Provags-ID: V03:K1:NTeLC7MR2Bco8KMPQbeHemq+c8XkDiSkrQwrov4uU0Z2HIvLK3h
+ B70xuWmOCA+GgP9GbJW06L0FSoky+iyRXiPQtor05zQnX3nSWgbCFexomF8JWeeFg3drH3y
+ rXvQCh8Qq2yvqHXdwWp+IqlKijE958CWOwGDX5zrvh45L7DSmguLRjdatci2FIWThGOBeMO
+ 7Grv+aoRjg5U7DHRIfGJA==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:G9+dY9LvBJI=:bKGBCt806147bZ4SdhcCjz
+ CjfhFmq62oMPvk12bhL/NPBuD+5FlocKRN+VDrlu+h+1YO7B5XMKs1rQ3bMyWXFjXtyrfVUmf
+ ROFcBae7Gm7dn55/DbQjGxJB0kf9LN8M3r7dfpsX/llHt7fhXBWYwXxcBTsUfD0welfTav328
+ EDIRylUi4qTuCL5Iz1Nfi2GSWB4mXFvcQ3V2YCErrq9qaRl3dP0Xj/QHcw2UC5UHXD2RrZNun
+ ajqDXU4WSW9wdw5rWh9WyppYeb+r8+uvy8qnSE4JZkaLcvMsJ4wyypUhZvpUSQX4QefATbLZd
+ z51aUK8wUHE+2Egci+WDHRnqzes2wM5K6O/LXALHZJITLXvaigwteu6ieZqq10+GZdb3+ct8z
+ czBjsXuimew+gJhrQLYucnaH0q1xO8HZpwXJus5JJIY7c7UipaP7g+Y4XOcfDevXN1QRC/PqW
+ UDf3gCSIyz5BygoBlLNZlYIfD243aj1b2j7/b3cne1RchQTejvJtnWreir8CZpzVDssrP5t7p
+ 2lbK8eWngwNVdCPotXiIUPbEC2XxM3avQAZj82p/+02ovqTGk11Z3iwL6txAojsEk31Q21+Ll
+ 4yTnEhil5jv8i1KAoINI+qkfWyZbpyy5Xl8BgJBk/x1Zu7W4l6OI8S2bLKyO/j7NTkKOylmda
+ UcIZbdDo1TJkxvo4XDfB2o6PCbxZ2+UvgAyNn37onfsy4lX/gDc7LwuqgrnG7rp7o4p0dybPS
+ aALSWonHNDRdQhORpQPMx1dXI5BMScV7uDxMFw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-All architectures should implement these two, so assign numbers
-and hook them up on ia64.
+While reading through the sysvipc implementation, I noticed that the n32
+semctl/shmctl/msgctl system calls behave differently based on whether
+o32 support is enabled or not: Without o32, the IPC_64 flag passed by
+user space is rejected but calls without that flag get IPC_64 behavior.
 
+As far as I can tell, this was inadvertently changed by a cleanup patch
+but never noticed by anyone, possibly nobody has tried using sysvipc
+on n32 after linux-3.19.
+
+Change it back to the old behavior now.
+
+Fixes: 78aaf956ba3a ("MIPS: Compat: Fix build error if CONFIG_MIPS32_COMPAT but no compat ABI.")
+Cc: stable@vger.kernel.org
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/ia64/kernel/syscalls/syscall.tbl | 2 ++
- 1 file changed, 2 insertions(+)
+As stated above, this was only found by inspection, the patch is not
+tested. Please review accordingly.
+---
+ arch/mips/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/ia64/kernel/syscalls/syscall.tbl b/arch/ia64/kernel/syscalls/syscall.tbl
-index e97caf51be42..52585281205b 100644
---- a/arch/ia64/kernel/syscalls/syscall.tbl
-+++ b/arch/ia64/kernel/syscalls/syscall.tbl
-@@ -335,3 +335,5 @@
- 323	common	copy_file_range			sys_copy_file_range
- 324	common	preadv2				sys_preadv2
- 325	common	pwritev2			sys_pwritev2
-+326	common	statx				sys_statx
-+327	common	io_pgetevents			sys_io_pgetevents
+diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
+index 787290781b8c..0d14f51d0002 100644
+--- a/arch/mips/Kconfig
++++ b/arch/mips/Kconfig
+@@ -3155,6 +3155,7 @@ config MIPS32_O32
+ config MIPS32_N32
+ 	bool "Kernel support for n32 binaries"
+ 	depends on 64BIT
++	select ARCH_WANT_COMPAT_IPC_PARSE_VERSION
+ 	select COMPAT
+ 	select MIPS32_COMPAT
+ 	select SYSVIPC_COMPAT if SYSVIPC
 -- 
 2.20.0
 
