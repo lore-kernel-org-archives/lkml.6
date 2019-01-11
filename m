@@ -2,187 +2,157 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5041C43444
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 07:31:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF22BC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 07:31:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85FD02084C
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 07:31:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZlQdUXAO"
+	by mail.kernel.org (Postfix) with ESMTP id 8FD192084C
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 07:31:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731132AbfAKHbC (ORCPT
+        id S1731160AbfAKHbI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 02:31:02 -0500
-Received: from mail-ua1-f68.google.com ([209.85.222.68]:36196 "EHLO
-        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728468AbfAKHbC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 02:31:02 -0500
-Received: by mail-ua1-f68.google.com with SMTP id j3so4470594uap.3
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 23:31:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=YSKy8uIC12AR58FOss2L6+jhDODyLcnLXMtm7S/wK04=;
-        b=ZlQdUXAOsAtx7nFHAPiM4n1CWO3zX2JHOMQoWcR7mxhCsjNR+wcufs8lTTcqRu/UAZ
-         KXHiIbUjhQcJmCB8PXK+00qlxzexyt/ffcO56jpAg+qQw41i05SiQPnRS5/2NjGoDl8J
-         IXvjf9Z6EvWuK5EAjX6dgwLlMDpGSCcxybjUM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=YSKy8uIC12AR58FOss2L6+jhDODyLcnLXMtm7S/wK04=;
-        b=Kl7O7+7tt8loGiLfyS35qrF2l8gslGKoqiX3S8lR6J478T9/VGND9fLC2eF//+0HTd
-         Mr7q/pHUD8aXFnwDSP/mHDBW0St+RFYPAkiMk1m69tygh5Y1qkdDYQJkvwW8xw831I4V
-         OJyQVIIq4w4yHe8P/pxzfIVIuhGqWCnrsgNEi1ROc/CRGczgHi3pIIo0eMk1cm/XI1sm
-         Ptop7F7lt9/157Lf4c98fp63yEnrZr3y9qVgkUo0RCL0qtTsDbmS8jMXJlntCjMknKfU
-         euCzkpO8Pf2dAOQQ8LdognmJwzoA3xhb5lpLMXJQmcWmgeHymHLzmXuSReZNQJgRIVQ7
-         qV8Q==
-X-Gm-Message-State: AJcUukeXtosKs20EeJV15ptb32Ys/RXCsDRobWwypUkGlw5si2rWkCZm
-        YXHWwXE4Soklts9hf47qcZmAaUh9b1F61crtVuvPGQ==
-X-Google-Smtp-Source: ALg8bN72MocGPUMW13tG/tMsUgaI0b1p+mkbtN1ZOLyohFz8HNRi7vemampDabgCfCVjf3vB9uDroc1XPVXTFDGJ2bM=
-X-Received: by 2002:ab0:21c6:: with SMTP id u6mr5128107uan.97.1547191860630;
- Thu, 10 Jan 2019 23:31:00 -0800 (PST)
+        Fri, 11 Jan 2019 02:31:08 -0500
+Received: from mx2.suse.de ([195.135.220.15]:59154 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728468AbfAKHbH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 02:31:07 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id B4EA9B01F;
+        Fri, 11 Jan 2019 07:31:05 +0000 (UTC)
+Subject: Re: [PATCH] xen: Fix x86 sched_clock() interface for xen
+To:     Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
+        x86@kernel.org
+Cc:     sstabellini@kernel.org, hpa@zytor.com, tglx@linutronix.de,
+        mingo@redhat.com, bp@alien8.de, hans@knorrie.org,
+        stable@vger.kernel.org
+References: <20190110100722.11216-1-jgross@suse.com>
+ <e7ea12ca-93f1-2421-702b-b55806eb20bd@oracle.com>
+ <e98d244f-1257-ed23-26f4-8909900590b4@suse.com>
+ <21d24fe0-f9bd-c312-7773-b43a8ff39ef1@oracle.com>
+ <d8cc08b1-0ec1-6d12-f0df-a41845a69ea0@oracle.com>
+ <2325af4f-ec68-d775-e5d5-eb0b76bc72fe@suse.com>
+From:   Juergen Gross <jgross@suse.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <119cbb5a-c145-36a6-5db8-d44575267b8f@suse.com>
+Date:   Fri, 11 Jan 2019 08:31:03 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-References: <1547123097-16431-1-git-send-email-sumit.garg@linaro.org>
- <1547123097-16431-4-git-send-email-sumit.garg@linaro.org> <20190110142355.bcgw62w2qk2mlzj6@holly.lan>
-In-Reply-To: <20190110142355.bcgw62w2qk2mlzj6@holly.lan>
-From:   Sumit Garg <sumit.garg@linaro.org>
-Date:   Fri, 11 Jan 2019 13:00:49 +0530
-Message-ID: <CAFA6WYPzA+rKMq58xVPghSe-mLa6fDi4t=1DYxakEaeG+ayQug@mail.gmail.com>
-Subject: Re: [PATCH v2 3/4] tee: add supp_nowait flag in tee_context struct
-To:     Daniel Thompson <daniel.thompson@linaro.org>
-Cc:     linux-arm-kernel@lists.infradead.org,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>, linux-kernel@vger.kernel.org,
-        Jens Wiklander <jens.wiklander@linaro.org>, mpm@selenic.com,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Bhupesh Sharma <bhsharma@redhat.com>, tee-dev@lists.linaro.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <2325af4f-ec68-d775-e5d5-eb0b76bc72fe@suse.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: de-DE
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 10 Jan 2019 at 19:53, Daniel Thompson
-<daniel.thompson@linaro.org> wrote:
->
-> On Thu, Jan 10, 2019 at 05:54:56PM +0530, Sumit Garg wrote:
-> > This flag indicates that requests in this context should not wait for
-> > tee-supplicant daemon to be started if not present and just return
-> > with an error code. It is needed for requests which should be
-> > non-blocking in nature like ones arising from TEE based kernel drivers
-> > or any in kernel api that uses TEE internal client interface.
->
-> This patch seems out of order in the patch set: Doesn't
-> optee_enumarate_devices() require this feature if it is to
-> work correctly with a TEE that does not implement the enumeate pTA.
->
-> If so better to implement the feature first so that
-> optee_emumerate_devices() works correctly when it first appears.
->
+On 11/01/2019 08:15, Juergen Gross wrote:
+> On 11/01/2019 00:10, Boris Ostrovsky wrote:
+>> On 1/10/19 12:17 PM, Boris Ostrovsky wrote:
+>>> On 1/10/19 11:14 AM, Juergen Gross wrote:
+>>>> On 10/01/2019 16:34, Boris Ostrovsky wrote:
+>>>>> On 1/10/19 5:07 AM, Juergen Gross wrote:
+>>>>>>  
+>>>>>> +void xen_clocksource_suspend(void)
+>>>>>> +{
+>>>>>> +	xen_clock_value_saved = xen_clocksource_read() - xen_sched_clock_offset;
+>>>>> xen_clock_value_saved = xen_sched_clock() maybe? 
+>>>> I wanted xen_clocksource_suspend() and xen_clocksource_resume() to
+>>>> be symmetrical to each other.
+>>> OK.
+>>>
+>>> Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+>>>
+>>>> In case you are feeling strong about that, I'm not. :-) So in case
+>>>> you insist on it I can change it. Or you can do so while committing.
+>>
+>>
+>> I did some basic testing and noticed this (at loglevel=8):
+>>
+>> [   64.336488] Freezing user space processes ... (elapsed 0.001 seconds)
+>> done.
+>> [   64.337805] OOM killer disabled.
+>> [   64.337814] Freezing remaining freezable tasks ... (elapsed 0.000
+>> seconds) done.
+>> [   64.339066] suspending xenstore...
+>> [   85.888340] xen:grant_table: Grant tables using version 1 layout
+>> [   64.359729] OOM killer enabled.
+>> [   64.359736] Restarting tasks ... done.
+>>
+>>
+>> Which made me think that perhaps we should do suspend/restore of the
+>> clocksource as close as possible to HYPERVISOR_suspend() call, e.g. in
+>> xen_arch_pre_suspend()/xen_arch_post_suspend():
+>>
+>> diff --git a/arch/x86/xen/suspend.c b/arch/x86/xen/suspend.c
+>> index 45fc9caf3880..80ecba3fcc8c 100644
+>> --- a/arch/x86/xen/suspend.c
+>> +++ b/arch/x86/xen/suspend.c
+>> @@ -22,6 +22,7 @@ static DEFINE_PER_CPU(u64, spec_ctrl);
+>>  
+>>  void xen_arch_pre_suspend(void)
+>>  {
+>> +       xen_clocksource_suspend();
+>>         xen_save_time_memory_area();
+>>  
+>>         if (xen_pv_domain())
+>> @@ -36,6 +37,7 @@ void xen_arch_post_suspend(int cancelled)
+>>                 xen_hvm_post_suspend(cancelled);
+>>  
+>>         xen_restore_time_memory_area();
+>> +       xen_clocksource_resume();
+>>  }
+>>  
+>>  static void xen_vcpu_notify_restore(void *data)
+>>
+>>
+>> This still has a window of incorrect clock value (you can see it, for
+>> example, when xen_hvm_post_suspend() does pr_info("Xen HVM callback
+>> vector for event delivery is enabled\n")), but it's smaller than before.
+>> In particular, we will make time right before dpm_resume_start() call.
+> 
+> You are right, this is better.
 
-Agree, will make this patch as #2 in next version.
+In fact, I can just handle this entirely inside arch/x86/xen/time.c by
+moving the required statements into xen_save_time_memory_area() and
+xen_restore_time_memory_area().
 
-> >
-> > Signed-off-by: Sumit Garg <sumit.garg@linaro.org>
-> > ---
-> >  drivers/tee/optee/supp.c | 10 +++++++++-
-> >  drivers/tee/tee_core.c   |  2 ++
-> >  include/linux/tee_drv.h  |  6 ++++++
-> >  3 files changed, 17 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/tee/optee/supp.c b/drivers/tee/optee/supp.c
-> > index 43626e1..92f56b8 100644
-> > --- a/drivers/tee/optee/supp.c
-> > +++ b/drivers/tee/optee/supp.c
-> > @@ -88,10 +88,18 @@ u32 optee_supp_thrd_req(struct tee_context *ctx, u32 func, size_t num_params,
-> >  {
-> >       struct optee *optee = tee_get_drvdata(ctx->teedev);
-> >       struct optee_supp *supp = &optee->supp;
-> > -     struct optee_supp_req *req = kzalloc(sizeof(*req), GFP_KERNEL);
-> > +     struct optee_supp_req *req;
-> >       bool interruptable;
-> >       u32 ret;
-> >
-> > +     /*
-> > +      * Return in case there is no supplicant available and
-> > +      * non-blocking request.
-> > +      */
-> > +     if (!supp->ctx && ctx->supp_nowait)
-> > +             return TEEC_ERROR_COMMUNICATION;
-> > +
-> > +     req = kzalloc(sizeof(*req), GFP_KERNEL);
-> >       if (!req)
-> >               return TEEC_ERROR_OUT_OF_MEMORY;
-> >
-> > diff --git a/drivers/tee/tee_core.c b/drivers/tee/tee_core.c
-> > index 9ddb89e..5d6c317 100644
-> > --- a/drivers/tee/tee_core.c
-> > +++ b/drivers/tee/tee_core.c
-> > @@ -105,6 +105,7 @@ static int tee_open(struct inode *inode, struct file *filp)
-> >       if (IS_ERR(ctx))
-> >               return PTR_ERR(ctx);
-> >
-> > +     ctx->supp_nowait = false;
-> >       filp->private_data = ctx;
-> >       return 0;
-> >  }
-> > @@ -981,6 +982,7 @@ tee_client_open_context(struct tee_context *start,
-> >       } while (IS_ERR(ctx) && PTR_ERR(ctx) != -ENOMEM);
-> >
-> >       put_device(put_dev);
-> > +     ctx->supp_nowait = true;
->
-> Why automatically set supp_nowait inside open_context() ?
->
 
-I think this is the default behaviour (non-blocking request) that any
-in kernel client would expect. Also this flag could be configured
-again before call to open_session() if any in kernel client requires
-different behaviour.
-
--Sumit
-
->
-> >       return ctx;
-> >  }
-> >  EXPORT_SYMBOL_GPL(tee_client_open_context);
-> > diff --git a/include/linux/tee_drv.h b/include/linux/tee_drv.h
-> > index ed16bf1..fe1a920 100644
-> > --- a/include/linux/tee_drv.h
-> > +++ b/include/linux/tee_drv.h
-> > @@ -49,6 +49,11 @@ struct tee_shm_pool;
-> >   * @releasing:  flag that indicates if context is being released right now.
-> >   *           It is needed to break circular dependency on context during
-> >   *              shared memory release.
-> > + * @supp_nowait: flag that indicates that requests in this context should not
-> > + *              wait for tee-supplicant daemon to be started if not present
-> > + *              and just return with an error code. It is needed for requests
-> > + *              that arises from TEE based kernel drivers that should be
-> > + *              non-blocking in nature.
-> >   */
-> >  struct tee_context {
-> >       struct tee_device *teedev;
-> > @@ -56,6 +61,7 @@ struct tee_context {
-> >       void *data;
-> >       struct kref refcount;
-> >       bool releasing;
-> > +     bool supp_nowait;
-> >  };
-> >
-> >  struct tee_param_memref {
-> > --
-> > 2.7.4
-> >
+Juergen
