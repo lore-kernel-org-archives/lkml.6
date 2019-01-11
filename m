@@ -2,123 +2,126 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-11.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F35AC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 07:45:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADA02C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 07:46:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 323F320870
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 07:45:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B3B62146F
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 07:46:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547192779;
+	bh=OQTtl5nBooU1fvICzXgQqo5OqARVAOrCAkQLoQ1IKdI=;
+	h=Date:From:To:Cc:Subject:List-ID:From;
+	b=KTru6w0tCGyClKNmIyXckZGcLzwJWgdlz8QNcQvr7JDHleq9pfhzOi7cKcefjcFs+
+	 hInHRZWjk0oahCXqJgI2IpV0STdCF3L6LwpfkQYEB6f3WVy5hmGxNK7VmLfaEyS1ni
+	 uFkgiWIHaCKUJh0ku4k20MPzQbMCj2e7dN+NjA1c=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731154AbfAKHpJ (ORCPT
+        id S1730008AbfAKHqT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 02:45:09 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:54766 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727578AbfAKHpI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 02:45:08 -0500
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 2703719D383;
-        Fri, 11 Jan 2019 07:45:07 +0000 (UTC)
-Received: from colo-mx.corp.redhat.com (colo-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.21])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 8ABC4600C2;
-        Fri, 11 Jan 2019 07:45:06 +0000 (UTC)
-Received: from zmail21.collab.prod.int.phx2.redhat.com (zmail21.collab.prod.int.phx2.redhat.com [10.5.83.24])
-        by colo-mx.corp.redhat.com (Postfix) with ESMTP id 554C93F7CB;
-        Fri, 11 Jan 2019 07:45:05 +0000 (UTC)
-Date:   Fri, 11 Jan 2019 02:45:04 -0500 (EST)
-From:   Pankaj Gupta <pagupta@redhat.com>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        qemu-devel@nongnu.org, linux-nvdimm@ml01.01.org,
-        linux-fsdevel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        linux-acpi@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-xfs@vger.kernel.org, jack@suse.cz, stefanha@redhat.com,
-        dan j williams <dan.j.williams@intel.com>, riel@surriel.com,
-        nilal@redhat.com, kwolf@redhat.com, pbonzini@redhat.com,
-        zwisler@kernel.org, vishal l verma <vishal.l.verma@intel.com>,
-        dave jiang <dave.jiang@intel.com>, david@redhat.com,
-        jmoyer@redhat.com,
-        xiaoguangrong eric <xiaoguangrong.eric@gmail.com>,
-        hch@infradead.org, mst@redhat.com, jasowang@redhat.com,
-        lcapitulino@redhat.com, imammedo@redhat.com, eblake@redhat.com,
-        willy@infradead.org, tytso@mit.edu,
-        adilger kernel <adilger.kernel@dilger.ca>,
-        darrick wong <darrick.wong@oracle.com>, rjw@rjwysocki.net
-Message-ID: <1326478078.61913951.1547192704870.JavaMail.zimbra@redhat.com>
-In-Reply-To: <20190110012617.GA4205@dastard>
-References: <20190109144736.17452-1-pagupta@redhat.com> <20190110012617.GA4205@dastard>
-Subject: Re: [PATCH v3 0/5] kvm "virtio pmem" device
+        Fri, 11 Jan 2019 02:46:19 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:35645 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727578AbfAKHqS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 02:46:18 -0500
+Received: by mail-wm1-f67.google.com with SMTP id t200so1378648wmt.0;
+        Thu, 10 Jan 2019 23:46:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=p7l960C6hgsMnp4ATmccsLtV2cK3xs6YZYI45kJUrsI=;
+        b=nTfv9wSTJINAXQBJpD50fZyF/JF3pBleBT1SIrCk+RpdS4QLZ5bzOVcezwsh0OCElK
+         K7N/8B0gFu1TQ+/XnFV+YYuaby9gVctHHaHQ7nm8ZkKfD+Lp4SmtO+bXgiFOxzMTaarq
+         Pf4XJf7d/1D+TEvKU7qhOEm7hGAPVcnVVv+ULwiMSy6eenX1NjjlLezBSlbVgGbuUj6B
+         tAatEa793vTJJbctp6ZlRJJyCw6WjPsb5h/zDZrNpYM0BPAfRVG0RiHt/bPlGkIY73Ny
+         4/yW2J4veAbBUGdkHkIncVjVTUUZX7Md8P8EMy7gIxa36Kv6zpvbmh9+8FKz6iuqPKBT
+         sYSg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mime-version:content-disposition:user-agent;
+        bh=p7l960C6hgsMnp4ATmccsLtV2cK3xs6YZYI45kJUrsI=;
+        b=qc5w20twUxqww2+2CUNt5y5KSRN2BMnXsfX0XF/GKl/vkfl5SAQvj/uIt4rdACsctt
+         nd/OHJgYVH/OqTEegUzb+oc7OCtrz2yNdtEkBLaUMGMicjpiytrRQaUZZG19IUTisa+q
+         Mm3txNhglHjCt6byYhhodt/mydGQI0szliuYz7DHcf0JUXYwDVvCivzk2yE7bPr2W4IV
+         RFVQ5HX7V8dbhv41l8pjGBJOrxAiZu4UNVppFE5mbdTTr8gsP2zqY/VArjZzuuruhc19
+         9kVwBeBXcoTCLdzK8xkEtdCRfhlcStZu136q4KfZcm64OuQV/tD/vb+gfIrHrVKENL4c
+         N4Zg==
+X-Gm-Message-State: AJcUukclPGndlIW5vE+Tx9mxufsp7uXbHJmjkfDA9HTTQUb6IC/v8wv+
+        k06I7PlncVBurqZ3dpFYSg4=
+X-Google-Smtp-Source: ALg8bN5jCeROQmjVI59GoGSO/33m9r4h1YQglilkyIoghm6qGmEaW2yyMpU2Lg7Onu9G8Kfp0wxMMg==
+X-Received: by 2002:a1c:4683:: with SMTP id t125mr1252361wma.9.1547192776832;
+        Thu, 10 Jan 2019 23:46:16 -0800 (PST)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id a17sm62770747wrs.58.2019.01.10.23.46.15
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 10 Jan 2019 23:46:16 -0800 (PST)
+Date:   Fri, 11 Jan 2019 08:46:14 +0100
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        linux-efi@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: [GIT PULL] EFI fix
+Message-ID: <20190111074614.GA68053@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.65.161.12, 10.4.195.30]
-Thread-Topic: kvm "virtio pmem" device
-Thread-Index: BxCbuq7mbfT/7EGJGXq2rFPowBArAw==
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Fri, 11 Jan 2019 07:45:07 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Linus,
 
-> 
-> On Wed, Jan 09, 2019 at 08:17:31PM +0530, Pankaj Gupta wrote:
-> >  This patch series has implementation for "virtio pmem".
-> >  "virtio pmem" is fake persistent memory(nvdimm) in guest
-> >  which allows to bypass the guest page cache. This also
-> >  implements a VIRTIO based asynchronous flush mechanism.
-> 
-> Hmmmm. Sharing the host page cache direct into the guest VM. Sounds
-> like a good idea, but.....
-> 
-> This means the guest VM can now run timing attacks to observe host
-> side page cache residency, and depending on the implementation I'm
-> guessing that the guest will be able to control host side page
-> cache eviction, too (e.g. via discard or hole punch operations).
+Please pull the latest efi-urgent-for-linus git tree from:
 
-Not sure how? this is similar to mmapping virtual memory by any userspace 
-process. Any host userspace process can do such attack on host page cache
-using mincore & mmap shared file. 
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git efi-urgent-for-linus
 
-But i don't think guest can do this alone. For virtio-pmem usecase guest 
-won't be using page cache so timing attack from only guest side is not 
-possible unless host userspace can run checks on page cache eviction state
-using mincore etc. 
+   # HEAD: b12f5440d8ca02e8f9ab4f1461f9214295cc4f66 Merge branch 'linus' into efi/urgent, to resolve conflict
 
-As rightly described by Rik, guest will only access its own page cache pages 
-and if guest page cache is managed directly by host, this saves alot of 
-effort for guest in transferring guest state of page cache.  
+A single fix that adds an annotation to resolve a kmemleak false 
+positive.
 
-> 
-> Which means this functionality looks to me like a new vector for
-> information leakage into and out of the guest VM via guest
-> controlled host page cache manipulation.
-> 
-> https://arxiv.org/pdf/1901.01161
-> 
-> I might be wrong, but if I'm not we're going to have to be very
-> careful about how guest VMs can access and manipulate host side
-> resources like the page cache.....
+ Thanks,
 
-If I am following correctly the discussions in MM thread. 
-Important steps to mitigate this:
+	Ingo
 
-* Avoid running mincore in privilege mode: to safeguard page evict state of any 
-  page cache page.
-* tweaking RWF_NOWAIT 
-
-I think if we secure ways to find current state(cached/evicted) of a page in host, 
-we should be able to mitigate the impact for any page cache page access attack 
-including virtio-pmem.
-
-Thanks,
-Pankaj
+------------------>
+Qian Cai (1):
+      efi: Let kmemleak ignore false positives
 
 
+ drivers/firmware/efi/efi.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/firmware/efi/efi.c b/drivers/firmware/efi/efi.c
+index 4c46ff6f2242..7ac09dd8f268 100644
+--- a/drivers/firmware/efi/efi.c
++++ b/drivers/firmware/efi/efi.c
+@@ -31,6 +31,7 @@
+ #include <linux/acpi.h>
+ #include <linux/ucs2_string.h>
+ #include <linux/memblock.h>
++#include <linux/kmemleak.h>
+ 
+ #include <asm/early_ioremap.h>
+ 
+@@ -1026,6 +1027,8 @@ int __ref efi_mem_reserve_persistent(phys_addr_t addr, u64 size)
+ 	if (!rsv)
+ 		return -ENOMEM;
+ 
++	kmemleak_ignore(rsv);
++
+ 	rsv->size = EFI_MEMRESERVE_COUNT(PAGE_SIZE);
+ 	atomic_set(&rsv->count, 1);
+ 	rsv->entry[0].base = addr;
