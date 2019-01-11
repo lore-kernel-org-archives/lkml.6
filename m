@@ -7,46 +7,49 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 666DAC43612
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:11:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D720C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:11:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 31CC921872
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:11:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E407320874
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:11:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547219483;
-	bh=1lRnoQcT6JvBEScvKhR1ZbjtxTTOweW+zH8rn45s4AA=;
+	s=default; t=1547219486;
+	bh=lWxSlZm4FLrwrCoc+WcaGlj3nv30BScGOl4ad3LCz+A=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ZZJpNiGL8P5XHpwcp3CiHTojZfhwrhZY2nDolWf/4WcLbyEIVXNgA+u+WOs0gFcPW
-	 pmadqQMKP2IRywCYnPUA+P1SAcYo1mCE2IZ9UGcESFUcAWmQYMbTMakEv6ZhZHScLo
-	 25rRxq5MdtogWKjnl1hwwNkW9ELA5+NobmB4wkWQ=
+	b=t/JwqQsJL4FzyP2BN1yDHlq0OBDULaBq7VLjUTbVjg1wzMztPjUl8hJcX8otEoOYq
+	 FfIOxtghbNs8+moHrtQXFgor7JWVoQ+UwYCZKzUIJY9yn502oB4UNWgT2HeCLS9LTz
+	 YxWLuIXOwpvG2R+kQZCz4VW6f6938dXwH79zue+o=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387567AbfAKOQJ (ORCPT
+        id S2387547AbfAKOQH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:16:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60414 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:16:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60360 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387550AbfAKOQG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:16:06 -0500
+        id S2387543AbfAKOQD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:16:03 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 161B42177B;
-        Fri, 11 Jan 2019 14:16:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 93AEC214D8;
+        Fri, 11 Jan 2019 14:16:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547216165;
-        bh=1lRnoQcT6JvBEScvKhR1ZbjtxTTOweW+zH8rn45s4AA=;
+        s=default; t=1547216163;
+        bh=lWxSlZm4FLrwrCoc+WcaGlj3nv30BScGOl4ad3LCz+A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AXSh0S9+7iGaxbkqWLWq/P/9hp9WwJaL+bzbMrL/kYt/XwHd+C/c1qiPWtBbDAHkb
-         CXMAbF8BY1tcrDzgmx9b9eA3iEk3cFzXzalnuuVMnepabE8CZuKZFcMFu3BQhWTqpS
-         VyOuGXUBgdKewwOtzGrc2McqLMLDpuWDKeGOwkvU=
+        b=Z0Zwn/n1opincI9CNNnA+wftiLrM+rGz2X6eluImyBHc/q62HDOblAObUP9sb86MK
+         NppQpZ4Oqdet66zamOTVKnkuXCJel2xgGlcTMrCQE+qGUVsoCAJo0GzRMOnCjyOzHb
+         3Dg84QniwX3ZFWfAZ8hLvJJ/vagEKBaQk1/IA5bY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Yan, Zheng" <zyan@redhat.com>,
-        Ilya Dryomov <idryomov@gmail.com>
-Subject: [PATCH 3.18 45/47] ceph: dont update importing caps mseq when handing cap export
-Date:   Fri, 11 Jan 2019 15:08:30 +0100
-Message-Id: <20190111131001.960851612@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+0c1d61e4db7db94102ca@syzkaller.appspotmail.com,
+        Dominique Martinet <dominique.martinet@cea.fr>,
+        Eric Van Hensbergen <ericvh@gmail.com>,
+        Latchesar Ionkov <lucho@ionkov.net>
+Subject: [PATCH 3.18 44/47] 9p/net: put a lower bound on msize
+Date:   Fri, 11 Jan 2019 15:08:29 +0100
+Message-Id: <20190111131001.837522541@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111130956.170952125@linuxfoundation.org>
 References: <20190111130956.170952125@linuxfoundation.org>
@@ -65,35 +68,81 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Yan, Zheng <zyan@redhat.com>
+From: Dominique Martinet <dominique.martinet@cea.fr>
 
-commit 3c1392d4c49962a31874af14ae9ff289cb2b3851 upstream.
+commit 574d356b7a02c7e1b01a1d9cba8a26b3c2888f45 upstream.
 
-Updating mseq makes client think importer mds has accepted all prior
-cap messages and importer mds knows what caps client wants. Actually
-some cap messages may have been dropped because of mseq mismatch.
+If the requested msize is too small (either from command line argument
+or from the server version reply), we won't get any work done.
+If it's *really* too small, nothing will work, and this got caught by
+syzbot recently (on a new kmem_cache_create_usercopy() call)
 
-If mseq is left untouched, importing cap's mds_wanted later will get
-reset by cap import message.
+Just set a minimum msize to 4k in both code paths, until someone
+complains they have a use-case for a smaller msize.
 
+We need to check in both mount option and server reply individually
+because the msize for the first version request would be unchecked
+with just a global check on clnt->msize.
+
+Link: http://lkml.kernel.org/r/1541407968-31350-1-git-send-email-asmadeus@codewreck.org
+Reported-by: syzbot+0c1d61e4db7db94102ca@syzkaller.appspotmail.com
+Signed-off-by: Dominique Martinet <dominique.martinet@cea.fr>
+Cc: Eric Van Hensbergen <ericvh@gmail.com>
+Cc: Latchesar Ionkov <lucho@ionkov.net>
 Cc: stable@vger.kernel.org
-Signed-off-by: "Yan, Zheng" <zyan@redhat.com>
-Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ceph/caps.c |    1 -
- 1 file changed, 1 deletion(-)
+ net/9p/client.c |   21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
---- a/fs/ceph/caps.c
-+++ b/fs/ceph/caps.c
-@@ -2830,7 +2830,6 @@ retry:
- 			tcap->cap_id = t_cap_id;
- 			tcap->seq = t_seq - 1;
- 			tcap->issue_seq = t_seq - 1;
--			tcap->mseq = t_mseq;
- 			tcap->issued |= issued;
- 			tcap->implemented |= issued;
- 			if (cap == ci->i_auth_cap)
+--- a/net/9p/client.c
++++ b/net/9p/client.c
+@@ -155,6 +155,12 @@ static int parse_opts(char *opts, struct
+ 				ret = r;
+ 				continue;
+ 			}
++			if (option < 4096) {
++				p9_debug(P9_DEBUG_ERROR,
++					 "msize should be at least 4k\n");
++				ret = -EINVAL;
++				continue;
++			}
+ 			clnt->msize = option;
+ 			break;
+ 		case Opt_trans:
+@@ -979,10 +985,18 @@ static int p9_client_version(struct p9_c
+ 	else if (!strncmp(version, "9P2000", 6))
+ 		c->proto_version = p9_proto_legacy;
+ 	else {
++		p9_debug(P9_DEBUG_ERROR,
++			 "server returned an unknown version: %s\n", version);
+ 		err = -EREMOTEIO;
+ 		goto error;
+ 	}
+ 
++	if (msize < 4096) {
++		p9_debug(P9_DEBUG_ERROR,
++			 "server returned a msize < 4096: %d\n", msize);
++		err = -EREMOTEIO;
++		goto error;
++	}
+ 	if (msize < c->msize)
+ 		c->msize = msize;
+ 
+@@ -1047,6 +1061,13 @@ struct p9_client *p9_client_create(const
+ 	if (clnt->msize > clnt->trans_mod->maxsize)
+ 		clnt->msize = clnt->trans_mod->maxsize;
+ 
++	if (clnt->msize < 4096) {
++		p9_debug(P9_DEBUG_ERROR,
++			 "Please specify a msize of at least 4k\n");
++		err = -EINVAL;
++		goto free_client;
++	}
++
+ 	err = p9_client_version(clnt);
+ 	if (err)
+ 		goto close_trans;
 
 
