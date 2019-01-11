@@ -2,129 +2,90 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B33FC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:20:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 881CCC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:21:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EFF2F2177B
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:20:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5094D2183F
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:21:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547216449;
-	bh=DEyNysdr8FjzlK31tn3EDih7tFB+oH2Mn5IoAUTlLAs=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=m7wlVkX2MzXcR4A+6abLR+kG3hfoNQG5BazBRX3eMJYgl0ug08hxI1Npf89URZRuq
-	 u/h1ppmj8ECi2nxbAhvuNUhSLxyKfurIZ/xbluityWy7OSLOCTvXi2t8AvwAc406ay
-	 0RD+9WWFhmjeqFRkPUzNpH18988eAvUf0sfqMcOc=
+	s=default; t=1547216467;
+	bh=7ct6IFvTvpHHRB+lDLFl7365LkRR7Zv0O54hCicmnoU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=ZOBNI/d0wJQdYrCD7OsJucdyLl0Gc0XAiahMzpTjy04+idg7o9uNQw5Szenpf0aHR
+	 To1LdJzl01OVt5mmpxP1r6yw4QjXlPdWLq6FwdSpmPNZrbloTt9mzu++CO3Ui2Hjpc
+	 7XnU+teCLiAuJnyG/L5ItjCXhPxYwhTaB0slK4KA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732682AbfAKOUs (ORCPT
+        id S1732520AbfAKOVG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:20:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37992 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:21:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39152 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388084AbfAKOUS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:20:18 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        id S1731427AbfAKOVE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:21:04 -0500
+Received: from devbox (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 785A621783;
-        Fri, 11 Jan 2019 14:20:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D12972177B;
+        Fri, 11 Jan 2019 14:21:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547216417;
-        bh=DEyNysdr8FjzlK31tn3EDih7tFB+oH2Mn5IoAUTlLAs=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aC1xHM0fMYZgKYo2+BgZj3J7bCjzQau0IjiNc+hzCs8+7igzwQAvl0vwEWiFhqIkC
-         CfZGAU6EHVjx09dy/z/H879EPgfTag1v98YcqaHNVLgE6Xqak6+w55Ltso8henOacO
-         Gix5jTP0JRwe3jSNDWy9iHWfgVneuavIL7n9Ihzg=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Frank Haverkamp <haver@linux.vnet.ibm.com>
-Subject: [PATCH 4.4 85/88] genwqe: Fix size check
-Date:   Fri, 11 Jan 2019 15:08:54 +0100
-Message-Id: <20190111131059.798830740@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190111131045.137499039@linuxfoundation.org>
-References: <20190111131045.137499039@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        s=default; t=1547216464;
+        bh=7ct6IFvTvpHHRB+lDLFl7365LkRR7Zv0O54hCicmnoU=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=jmVc0UQeTIZEkw77dTvEpM0Xr4sDGZv/pl2KcVlog0y+TPEKT4/0gsyBLJON/Ky3n
+         hNCGxYb5yl5jSa/erurEiwzMdlGGdjaklLD6ShqnnCvS7stYMWui+3VMIwUc14mqGq
+         e9Naq2plC3xJBIfPVu4V4ISI1PfNx7+eszdyATIU=
+Date:   Fri, 11 Jan 2019 23:21:01 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Ingo Molnar <mingo@redhat.com>, peterz@infradead.org,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Andrea Righi <righi.andrea@gmail.com>, stable@vger.kernel.org
+Subject: Re: [PATCH 6/9] kprobes: Prohibit probing on hardirq tracers
+Message-Id: <20190111232101.572db64cd592c43f20efdf95@kernel.org>
+In-Reply-To: <20190110121231.446b3396@gandalf.local.home>
+References: <154708884117.6325.4454464467156828009.stgit@devbox>
+        <154708901305.6325.18088274750877716004.stgit@devbox>
+        <20190110121231.446b3396@gandalf.local.home>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.4-stable review patch.  If anyone has any objections, please let me know.
+On Thu, 10 Jan 2019 12:12:31 -0500
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-------------------
+> On Thu, 10 Jan 2019 11:56:53 +0900
+> Masami Hiramatsu <mhiramat@kernel.org> wrote:
+> 
+> > Since kprobes breakpoint handling involves hardirq tracer,
+> > probing these functions cause breakpoint recursion problem.
+> > 
+> > Prohibit probing on those functions.
+> > 
+> > Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+> > ---
+> >  kernel/trace/trace_irqsoff.c    |    9 +++++++--
+> >  kernel/trace/trace_preemptirq.c |    5 +++++
+> >  2 files changed, 12 insertions(+), 2 deletions(-)
+> > 
+> 
+> 
+> Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 
-From: Christian Borntraeger <borntraeger@de.ibm.com>
+Thank you for your Ack!
 
-commit fdd669684655c07dacbdb0d753fd13833de69a33 upstream.
-
-Calling the test program genwqe_cksum with the default buffer size of
-2MB triggers the following kernel warning on s390:
-
-WARNING: CPU: 30 PID: 9311 at mm/page_alloc.c:3189 __alloc_pages_nodemask+0x45c/0xbe0
-CPU: 30 PID: 9311 Comm: genwqe_cksum Kdump: loaded Not tainted 3.10.0-957.el7.s390x #1
-task: 00000005e5d13980 ti: 00000005e7c6c000 task.ti: 00000005e7c6c000
-Krnl PSW : 0704c00180000000 00000000002780ac (__alloc_pages_nodemask+0x45c/0xbe0)
-           R:0 T:1 IO:1 EX:1 Key:0 M:1 W:0 P:0 AS:3 CC:0 PM:0 EA:3
-Krnl GPRS: 00000000002932b8 0000000000b73d7c 0000000000000010 0000000000000009
-           0000000000000041 00000005e7c6f9b8 0000000000000001 00000000000080d0
-           0000000000000000 0000000000b70500 0000000000000001 0000000000000000
-           0000000000b70528 00000000007682c0 0000000000277df2 00000005e7c6f9a0
-Krnl Code: 000000000027809e: de7195001000	ed	1280(114,%r9),0(%r1)
-	   00000000002780a4: a774fead		brc	7,277dfe
-	  #00000000002780a8: a7f40001		brc	15,2780aa
-	  >00000000002780ac: 92011000		mvi	0(%r1),1
-	   00000000002780b0: a7f4fea7		brc	15,277dfe
-	   00000000002780b4: 9101c6b6		tm	1718(%r12),1
-	   00000000002780b8: a784ff3a		brc	8,277f2c
-	   00000000002780bc: a7f4fe2e		brc	15,277d18
-Call Trace:
-([<0000000000277df2>] __alloc_pages_nodemask+0x1a2/0xbe0)
- [<000000000013afae>] s390_dma_alloc+0xfe/0x310
- [<000003ff8065f362>] __genwqe_alloc_consistent+0xfa/0x148 [genwqe_card]
- [<000003ff80658f7a>] genwqe_mmap+0xca/0x248 [genwqe_card]
- [<00000000002b2712>] mmap_region+0x4e2/0x778
- [<00000000002b2c54>] do_mmap+0x2ac/0x3e0
- [<0000000000292d7e>] vm_mmap_pgoff+0xd6/0x118
- [<00000000002b081c>] SyS_mmap_pgoff+0xdc/0x268
- [<00000000002b0a34>] SyS_old_mmap+0x8c/0xb0
- [<000000000074e518>] sysc_tracego+0x14/0x1e
- [<000003ffacf87dc6>] 0x3ffacf87dc6
-
-turns out the check in __genwqe_alloc_consistent uses "> MAX_ORDER"
-while the mm code uses ">= MAX_ORDER". Fix genwqe.
-
-Cc: stable@vger.kernel.org
-Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
-Signed-off-by: Frank Haverkamp <haver@linux.vnet.ibm.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- drivers/misc/genwqe/card_utils.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- a/drivers/misc/genwqe/card_utils.c
-+++ b/drivers/misc/genwqe/card_utils.c
-@@ -217,7 +217,7 @@ u32 genwqe_crc32(u8 *buff, size_t len, u
- void *__genwqe_alloc_consistent(struct genwqe_dev *cd, size_t size,
- 			       dma_addr_t *dma_handle)
- {
--	if (get_order(size) > MAX_ORDER)
-+	if (get_order(size) >= MAX_ORDER)
- 		return NULL;
- 
- 	return dma_alloc_coherent(&cd->pci_dev->dev, size, dma_handle,
+> 
+> -- Steve
 
 
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
