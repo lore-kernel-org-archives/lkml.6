@@ -2,236 +2,134 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B97DC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:23:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71E7EC43612
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:23:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D77D220874
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:23:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547216586;
-	bh=NB9LUEGkDiBXb3kkEIkR2r/RYcmwWQlT+yQnVbpQbxM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=KvjvNVR/PsI1UcAIA8ubmjFuqPOlKky/oIfoeUBiU8k0zPnq3+u+Fxc6eeXsZbKMv
-	 9/1jFfn8L4r9EBUVkq0OxFYI0dXoAXfEZe4u5dmB63Tfvqathr1sIE11FFX0wT7lHM
-	 RNTjWnBOpOCoGF/l98x9eb/x/1DiljXnOHOyNUm4=
+	by mail.kernel.org (Postfix) with ESMTP id 3785520874
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:23:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="0L//b2Uy"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733287AbfAKOXF (ORCPT
+        id S1731363AbfAKOTA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:23:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35664 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729349AbfAKOTD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:19:03 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 772EC2183F;
-        Fri, 11 Jan 2019 14:19:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547216342;
-        bh=NB9LUEGkDiBXb3kkEIkR2r/RYcmwWQlT+yQnVbpQbxM=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ATcOZddBsRfQ3RnuzXjoTN9C41LG2k8zbTfWa31oLAww2RuuFgRpw6yoRFVA4uKsG
-         FaF+X5Y4GPhh0N/LEyYtXVZs3BZbxSfmaAGAsTkLynysYg9guzOuyUvJJ1OfEhiiD6
-         3e2Oob8SnRdKtlIVfQeipkP23u0fpEIjqmgnV32k=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michal Hocko <mhocko@suse.com>,
-        Oscar Salvador <osalvador@suse.com>,
-        David Hildenbrand <david@redhat.com>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.4 65/88] hwpoison, memory_hotplug: allow hwpoisoned pages to be offlined
-Date:   Fri, 11 Jan 2019 15:08:34 +0100
-Message-Id: <20190111131056.924629088@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190111131045.137499039@linuxfoundation.org>
-References: <20190111131045.137499039@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+        Fri, 11 Jan 2019 09:19:00 -0500
+Received: from esa3.microchip.iphmx.com ([68.232.153.233]:48960 "EHLO
+        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731550AbfAKOS5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:18:57 -0500
+X-IronPort-AV: E=Sophos;i="5.56,466,1539673200"; 
+   d="scan'208";a="25369365"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa3.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 11 Jan 2019 07:18:37 -0700
+Received: from NAM01-BN3-obe.outbound.protection.outlook.com (10.10.215.89) by
+ email.microchip.com (10.10.76.108) with Microsoft SMTP Server (TLS) id
+ 14.3.352.0; Fri, 11 Jan 2019 07:18:37 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=microchiptechnology.onmicrosoft.com;
+ s=selector1-microchiptechnology-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=bOdCH4rio62Tu9aQaHAy51ldI11moR/S69dG9CFyQJg=;
+ b=0L//b2UyAIg3k/5GAwite7bBPtW1HEP0ETynN9EGGewh+WzbkhPsIss19MyfSPTC4rHcytVXaIH3bxZpXZ8Dot1gCJr62aTHQr4blOY1uWGKzt6A72AwqLqd2DUdU4VA/mSNwJlbpmwaQ+bjAZhGwFWYLkN55IdHT2H64OGLz8k=
+Received: from MWHPR11MB1662.namprd11.prod.outlook.com (10.172.55.15) by
+ MWHPR11MB1664.namprd11.prod.outlook.com (10.172.55.17) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1516.17; Fri, 11 Jan 2019 14:18:35 +0000
+Received: from MWHPR11MB1662.namprd11.prod.outlook.com
+ ([fe80::890b:3c0f:a8f4:5de5]) by MWHPR11MB1662.namprd11.prod.outlook.com
+ ([fe80::890b:3c0f:a8f4:5de5%7]) with mapi id 15.20.1516.016; Fri, 11 Jan 2019
+ 14:18:35 +0000
+From:   <Nicolas.Ferre@microchip.com>
+To:     <bbrezillon@kernel.org>, <peda@axentia.se>
+CC:     <linux-kernel@vger.kernel.org>, <alexandre.belloni@bootlin.com>,
+        <airlied@linux.ie>, <dri-devel@lists.freedesktop.org>,
+        <boris.brezillon@bootlin.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <Joshua.Henderson@microchip.com>
+Subject: Re: [PATCH 0/4] drm/atmel-hlcdc: fix plane clipping/rotation issues
+Thread-Topic: [PATCH 0/4] drm/atmel-hlcdc: fix plane clipping/rotation issues
+Thread-Index: AQHUqbiJnoZpqps6wk2bx1LYfOfUCQ==
+Date:   Fri, 11 Jan 2019 14:18:34 +0000
+Message-ID: <96578f9c-74f1-38ab-7993-460fd9bc42ee@microchip.com>
+References: <20190110151020.30468-1-peda@axentia.se>
+ <20190110184446.75b4350a@bbrezillon>
+In-Reply-To: <20190110184446.75b4350a@bbrezillon>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: CWLP265CA0142.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:401:53::34) To MWHPR11MB1662.namprd11.prod.outlook.com
+ (2603:10b6:301:e::15)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Nicolas.Ferre@microchip.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [195.6.168.232]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;MWHPR11MB1664;6:oeW9YYzNpBImqNhZcy7pTGWeCF1NGDCsrVAEfXym/f9I5QZW8rVQbabaQezwIHhKBfhrfq9MbxDWRv1rKQAO88ExxudHHVPzWa2ouQSSpDf92SRn442Y3Q97nZvbzAOz64oZsArYm9HKus4YjMHygyFokwhwCl2X/XgnQOPPT59S+pCkegn6VJOz29feaXO3N8hgJomMLwpAdCXIQ6gyLXiKHGjMBVbUDmgqDRXZcTkl9Ye9I8XvPoy57Z0cP/mDWcMpZaFDFTqDpO7KJGGNOUkeUKgtBmhHCg2ye5bWVtIsvs1qBX3/n+nhLq/C26I1MtjMBUN89B3xC+YAHorre/UnIThSazQKD8kAzLgU5qxAZCdYzkj8CRF3tVMQDky1RZxv5qXr1zbEM/8/MvErHoVnb3jrffneBhqI+vBcmD+bHJEiFjqi0DIZnHxdi9O768iGwZzW+lkMDt74Wqxrjw==;5:WRRyEekPSobdXLRAQwWxdfTqkcSuA1sdd8ZmWjSxF+YxkCMR3AHX4SHbSy4WRaKDi3Ht1Jsq9h/3nlRamiNBgNScNFz7ib0kj3ntSn+j0+k6f5aP5ZfnEfLQFaKH/5c1vyBmd1XcX2nt4Z+JV7lCemWqcWHa/hZ/m1Wea3cO3SAOwqcEsTaUVP+lznNjxi3V+slO+hIlGoCwhcl1BuSVgg==;7:ZcicWsq9t9KChY0M/YiheA4aNyIPTFggVBMTUDaIZhAbYIA4It+ilXlDFKWwjmg639GscvBmYZrUswiXPFyNykHHHMfnT0T+25MJUKxjc9ub77vDoTXlrbynhX7XwcNt0JBlF36l9f/7YAp5FLMTDg==
+x-ms-office365-filtering-correlation-id: e1c40280-40a5-45f5-e02e-08d677cfabf5
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(2017052603328)(7153060)(7193020);SRVR:MWHPR11MB1664;
+x-ms-traffictypediagnostic: MWHPR11MB1664:
+x-microsoft-antispam-prvs: <MWHPR11MB16646F8C8DA2DB35E336F734E0850@MWHPR11MB1664.namprd11.prod.outlook.com>
+x-forefront-prvs: 09144DB0F7
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(39860400002)(346002)(376002)(366004)(136003)(189003)(199004)(52314003)(52116002)(4326008)(54906003)(316002)(86362001)(229853002)(76176011)(31696002)(6436002)(6486002)(106356001)(14454004)(105586002)(6116002)(478600001)(6512007)(72206003)(53936002)(107886003)(6246003)(31686004)(486006)(5660300001)(7736002)(305945005)(3846002)(25786009)(97736004)(2906002)(99286004)(36756003)(186003)(14444005)(8676002)(6506007)(53546011)(102836004)(26005)(386003)(110136005)(68736007)(71200400001)(71190400001)(2616005)(66066001)(256004)(476003)(11346002)(8936002)(81156014)(81166006)(446003);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR11MB1664;H:MWHPR11MB1662.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: microchip.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: MYY6k8DEkGokQzAPFVCnHTNSdXV+LKWwjcapHR1ejud/L3lLLM+Zr59RaT9Jq/i4CPILlOYLbPPan0I3DP4+JULewU1R1Ujr+RV/UUOWNd4r7yRTlcaQ3mr4g5oFAEBCFtLVG2wFlTbsAAJ63qo6/M2mvFdpAVDveeC5/9kxUhy+TomwHftPp3b3paqc59TPDDDcOrqsdnUEeKWbZ/Ro2ghqnaG+5bjjdrEh90xQ24bFBlWRKwec/jHL1ry+UkGRZs/cQNxIikGh7eFdh0x75R3/5b/Y4Oy/Uwj1uPOcioHThjSY6GTuh5PKveUdmUjt0vkzvV3EHOfMU0niyjth8vhgYcBZ6UQe4uf+K8RLAyFnZtiTYLlBsvY7OrC0cF7dd/D6Vwa0jHlEqfA9KNmXPc+1Lw2tW+LAXHvhr+larIs=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <C6AF515EE756F04F910A90230508F347@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-CrossTenant-Network-Message-Id: e1c40280-40a5-45f5-e02e-08d677cfabf5
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Jan 2019 14:18:34.9589
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR11MB1664
+X-OriginatorOrg: microchip.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.4-stable review patch.  If anyone has any objections, please let me know.
-
-------------------
-
-From: Michal Hocko <mhocko@suse.com>
-
-commit b15c87263a69272423771118c653e9a1d0672caa upstream.
-
-We have received a bug report that an injected MCE about faulty memory
-prevents memory offline to succeed on 4.4 base kernel.  The underlying
-reason was that the HWPoison page has an elevated reference count and the
-migration keeps failing.  There are two problems with that.  First of all
-it is dubious to migrate the poisoned page because we know that accessing
-that memory is possible to fail.  Secondly it doesn't make any sense to
-migrate a potentially broken content and preserve the memory corruption
-over to a new location.
-
-Oscar has found out that 4.4 and the current upstream kernels behave
-slightly differently with his simply testcase
-
-===
-
-int main(void)
-{
-        int ret;
-        int i;
-        int fd;
-        char *array = malloc(4096);
-        char *array_locked = malloc(4096);
-
-        fd = open("/tmp/data", O_RDONLY);
-        read(fd, array, 4095);
-
-        for (i = 0; i < 4096; i++)
-                array_locked[i] = 'd';
-
-        ret = mlock((void *)PAGE_ALIGN((unsigned long)array_locked), sizeof(array_locked));
-        if (ret)
-                perror("mlock");
-
-        sleep (20);
-
-        ret = madvise((void *)PAGE_ALIGN((unsigned long)array_locked), 4096, MADV_HWPOISON);
-        if (ret)
-                perror("madvise");
-
-        for (i = 0; i < 4096; i++)
-                array_locked[i] = 'd';
-
-        return 0;
-}
-===
-
-+ offline this memory.
-
-In 4.4 kernels he saw the hwpoisoned page to be returned back to the LRU
-list
-kernel:  [<ffffffff81019ac9>] dump_trace+0x59/0x340
-kernel:  [<ffffffff81019e9a>] show_stack_log_lvl+0xea/0x170
-kernel:  [<ffffffff8101ac71>] show_stack+0x21/0x40
-kernel:  [<ffffffff8132bb90>] dump_stack+0x5c/0x7c
-kernel:  [<ffffffff810815a1>] warn_slowpath_common+0x81/0xb0
-kernel:  [<ffffffff811a275c>] __pagevec_lru_add_fn+0x14c/0x160
-kernel:  [<ffffffff811a2eed>] pagevec_lru_move_fn+0xad/0x100
-kernel:  [<ffffffff811a334c>] __lru_cache_add+0x6c/0xb0
-kernel:  [<ffffffff81195236>] add_to_page_cache_lru+0x46/0x70
-kernel:  [<ffffffffa02b4373>] extent_readpages+0xc3/0x1a0 [btrfs]
-kernel:  [<ffffffff811a16d7>] __do_page_cache_readahead+0x177/0x200
-kernel:  [<ffffffff811a18c8>] ondemand_readahead+0x168/0x2a0
-kernel:  [<ffffffff8119673f>] generic_file_read_iter+0x41f/0x660
-kernel:  [<ffffffff8120e50d>] __vfs_read+0xcd/0x140
-kernel:  [<ffffffff8120e9ea>] vfs_read+0x7a/0x120
-kernel:  [<ffffffff8121404b>] kernel_read+0x3b/0x50
-kernel:  [<ffffffff81215c80>] do_execveat_common.isra.29+0x490/0x6f0
-kernel:  [<ffffffff81215f08>] do_execve+0x28/0x30
-kernel:  [<ffffffff81095ddb>] call_usermodehelper_exec_async+0xfb/0x130
-kernel:  [<ffffffff8161c045>] ret_from_fork+0x55/0x80
-
-And that latter confuses the hotremove path because an LRU page is
-attempted to be migrated and that fails due to an elevated reference
-count.  It is quite possible that the reuse of the HWPoisoned page is some
-kind of fixed race condition but I am not really sure about that.
-
-With the upstream kernel the failure is slightly different.  The page
-doesn't seem to have LRU bit set but isolate_movable_page simply fails and
-do_migrate_range simply puts all the isolated pages back to LRU and
-therefore no progress is made and scan_movable_pages finds same set of
-pages over and over again.
-
-Fix both cases by explicitly checking HWPoisoned pages before we even try
-to get reference on the page, try to unmap it if it is still mapped.  As
-explained by Naoya:
-
-: Hwpoison code never unmapped those for no big reason because
-: Ksm pages never dominate memory, so we simply didn't have strong
-: motivation to save the pages.
-
-Also put WARN_ON(PageLRU) in case there is a race and we can hit LRU
-HWPoison pages which shouldn't happen but I couldn't convince myself about
-that.  Naoya has noted the following:
-
-: Theoretically no such gurantee, because try_to_unmap() doesn't have a
-: guarantee of success and then memory_failure() returns immediately
-: when hwpoison_user_mappings fails.
-: Or the following code (comes after hwpoison_user_mappings block) also impli=
-: es
-: that the target page can still have PageLRU flag.
-:
-:         /*
-:          * Torn down by someone else?
-:          */
-:         if (PageLRU(p) && !PageSwapCache(p) && p->mapping =3D=3D NULL) {
-:                 action_result(pfn, MF_MSG_TRUNCATED_LRU, MF_IGNORED);
-:                 res =3D -EBUSY;
-:                 goto out;
-:         }
-:
-: So I think it's OK to keep "if (WARN_ON(PageLRU(page)))" block in
-: current version of your patch.
-
-Link: http://lkml.kernel.org/r/20181206120135.14079-1-mhocko@kernel.org
-Signed-off-by: Michal Hocko <mhocko@suse.com>
-Reviewed-by: Oscar Salvador <osalvador@suse.com>
-Debugged-by: Oscar Salvador <osalvador@suse.com>
-Tested-by: Oscar Salvador <osalvador@suse.com>
-Acked-by: David Hildenbrand <david@redhat.com>
-Acked-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- mm/memory_hotplug.c |   16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
-
---- a/mm/memory_hotplug.c
-+++ b/mm/memory_hotplug.c
-@@ -32,6 +32,7 @@
- #include <linux/hugetlb.h>
- #include <linux/memblock.h>
- #include <linux/bootmem.h>
-+#include <linux/rmap.h>
- 
- #include <asm/tlbflush.h>
- 
-@@ -1471,6 +1472,21 @@ do_migrate_range(unsigned long start_pfn
- 			continue;
- 		}
- 
-+		/*
-+		 * HWPoison pages have elevated reference counts so the migration would
-+		 * fail on them. It also doesn't make any sense to migrate them in the
-+		 * first place. Still try to unmap such a page in case it is still mapped
-+		 * (e.g. current hwpoison implementation doesn't unmap KSM pages but keep
-+		 * the unmap as the catch all safety net).
-+		 */
-+		if (PageHWPoison(page)) {
-+			if (WARN_ON(PageLRU(page)))
-+				isolate_lru_page(page);
-+			if (page_mapped(page))
-+				try_to_unmap(page, TTU_IGNORE_MLOCK | TTU_IGNORE_ACCESS);
-+			continue;
-+		}
-+
- 		if (!get_page_unless_zero(page))
- 			continue;
- 		/*
-
-
+T24gMTAvMDEvMjAxOSBhdCAxODo0NSwgQm9yaXMgQnJlemlsbG9uIHdyb3RlOg0KPiBPbiBUaHUs
+IDEwIEphbiAyMDE5IDE1OjEwOjI4ICswMDAwDQo+IFBldGVyIFJvc2luIDxwZWRhQGF4ZW50aWEu
+c2U+IHdyb3RlOg0KPiANCj4+IEhpIQ0KPj4NCj4+IEkgZm91bmQgYW4gdW5mb3J0dW5hdGUgaXNz
+dWUgd2hpbGUgcmVjb2RpbmcgcGxhbmUgaGFuZGxpbmcgdG8gdXNlDQo+PiBkcm1fYXRvbWljX2hl
+bHBlcl9jaGVja19wbGFuZV9zdGF0ZSgpLiBUaGUgZHJpdmVyIHJvdGF0ZXMgY2xvY2t3aXNlLA0K
+Pj4gd2hpY2ggaXMgbm90IGNvcnJlY3QuIEkgc2ltcGx5IGZpeGVkIGl0IChwYXRjaCAxLzQpLCBi
+dXQgbWF5YmUgdGhhdA0KPj4gd2lsbCBjYXVzZSByZWdyZXNzaW9ucyBmb3IgdW5zdXNwZWN0aW5n
+IHVzZXJzIHdobyBzaW1wbHkgYXNzdW1lZA0KPj4gdGhhdCB0aGUgY2xvY2t3aXNlIHJvdGF0aW9u
+IHdhcyBjb3JyZWN0PyBJIGRvbid0IGtub3cgd2hhdCB0byBkbw0KPj4gYWJvdXQgdGhhdD8gQWRk
+aW5nIGFuIG9wdGlvbiB0byBnZXQgdGhlIG9sZCBicm9rZW4gYmVoYXZpb3Igc2VlbXMNCj4+IHVz
+ZWxlc3MsIHdvdWxkbid0IGl0IGJlIGp1c3QgYXMgZWFzeSB0byBqdXN0IGZpeCB3aGF0ZXZlciBh
+cHAgdG8NCj4+IHJvdGF0ZSB0aGUgb3RoZXIgd2F5IGluc3RlYWQgb2YgYWRkaW5nIGFuIG9wdGlv
+biBzb21ld2hlcmU/DQo+IA0KPiBIbSwgcm90YXRpb24gc3VwcG9ydCBoYXMgYmVlbiBhZGRlZCBi
+ZWZvcmUgdGhlIHN0YW5kYXJkIHJvdGF0aW9uDQo+IHByb3BlcnR5IHdhcyBjcmVhdGVkLCBhbmQg
+YXQgdGhhdCB0aW1lIEkgYXNzdW1lZCByb3RhdGlvbiB3YXMgY2xvY2t3aXNlDQo+ICh3aGljaCBh
+cHBhcmVudGx5IHdhcyBhbiB1bndpc2UgY2hvaWNlKS4gQW55d2F5LCBJIGRvbid0IGhhdmUgYQ0K
+PiBzb2x1dGlvbiBmb3IgdGhpcyBwcm9ibGVtLCBzbyBJJ2xsIGxldCBOaWNvbGFzIGRlY2lkZSBp
+ZiBpdCdzDQo+IGFjY2VwdGFibGUgdG8gY2hhbmdlIHRoZSByb3RhdGlvbiBiZWhhdmlvci4NCg0K
+WWVzLCBiZWluZyBjb25zaXN0ZW50IHdpdGggc3RhbmRhcmQgRFJNIHN1Yi1zeXN0ZW0gaXMgZmFy
+IG1vcmUgaW1wb3J0YW50IA0KaW4gbXkgb3Bpbmlvbi4NCg0KQmVzdCByZWdhcmRzLA0KICAgTmlj
+b2xhcw0KDQo+PiBJIGhhdmUgb25seSB0ZXN0ZWQgdGhpcyBzZXJpZXMgb24gc2FtYTVkMywgYnV0
+IEkgZGlkIGNoZWNrIHRoZSBkb2NzDQo+PiBmb3IgdmFyaW91cyBvdGhlciBjaGlwcyAoc2FtYTVk
+Miwgc2FtYTVkNCwgc2FtOW4xMiwgc2FtOWcxNSwgc2FtOWczNQ0KPj4gYW5kIHNhbTl4MzUpIHN1
+cHBvcnRlZCBieSB0aGUgZHJpdmVyIChyZWxldmFudCB0byBwYXRjaCA0LzQpLg0KPiANCj4gVGhh
+bmtzIGZvciBhZGRyZXNzaW5nIHRob3NlIHByb2JsZW1zLg0KPiANCj4+DQo+PiBDaGVlcnMsDQo+
+PiBQZXRlcg0KPj4NCj4+IFBldGVyIFJvc2luICg0KToNCj4+ICAgIGRybS9hdG1lbC1obGNkYzog
+cm90YXRlIHBsYW5lcyBjb3VudGVyY2xvY2t3aXNlDQo+PiAgICBkcm0vYXRtZWwtaGxjZGM6IGRv
+IG5vdCBzd2FwIHcvaCBvZiB0aGUgY3J0YyB3aGVuIGEgcGxhbmUgaXMgcm90YXRlZA0KPj4gICAg
+ZHJtL2F0bWVsLWhsY2RjOiBmaXggY2xpcHBpbmcgb2YgcGxhbmVzDQo+PiAgICBkcm0vYXRtZWwt
+aGxjZGM6IGRvIG5vdCBpbW1lZGlhdGVseSBkaXNhYmxlIHBsYW5lcywgd2FpdCBmb3IgbmV4dA0K
+Pj4gICAgICBmcmFtZQ0KPj4NCj4+ICAgZHJpdmVycy9ncHUvZHJtL2F0bWVsLWhsY2RjL2F0bWVs
+X2hsY2RjX3BsYW5lLmMgfCAxNzkgKysrKysrKysrLS0tLS0tLS0tLS0tLS0tDQo+PiAgIDEgZmls
+ZSBjaGFuZ2VkLCA2NyBpbnNlcnRpb25zKCspLCAxMTIgZGVsZXRpb25zKC0pDQo+Pg0KPiANCj4g
+DQoNCg0KLS0gDQpOaWNvbGFzIEZlcnJlDQo=
