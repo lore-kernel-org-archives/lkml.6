@@ -6,84 +6,71 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D45EFC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 18:46:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB521C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 18:46:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B556C20878
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 18:46:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 831C920878
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 18:46:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390083AbfAKSqX convert rfc822-to-8bit (ORCPT
+        id S2390195AbfAKSqd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 13:46:23 -0500
-Received: from mga05.intel.com ([192.55.52.43]:43977 "EHLO mga05.intel.com"
+        Fri, 11 Jan 2019 13:46:33 -0500
+Received: from relay.sw.ru ([185.231.240.75]:41754 "EHLO relay.sw.ru"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728927AbfAKSqX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 13:46:23 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Jan 2019 10:46:22 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,466,1539673200"; 
-   d="scan'208";a="105915380"
-Received: from orsmsx107.amr.corp.intel.com ([10.22.240.5])
-  by orsmga007.jf.intel.com with ESMTP; 11 Jan 2019 10:46:22 -0800
-Received: from orsmsx104.amr.corp.intel.com ([169.254.4.11]) by
- ORSMSX107.amr.corp.intel.com ([169.254.1.32]) with mapi id 14.03.0415.000;
- Fri, 11 Jan 2019 10:46:22 -0800
-From:   "Bowers, AndrewX" <andrewx.bowers@intel.com>
-To:     "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>
-CC:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [Intel-wired-lan] [PATCH] ixgbe: remove magic constant in
- ixgbe_reset_hw_82599()
-Thread-Topic: [Intel-wired-lan] [PATCH] ixgbe: remove magic constant in
- ixgbe_reset_hw_82599()
-Thread-Index: AQHUotKoDnZiRZ5LM02zKH+JAqXauaWqditQ
-Date:   Fri, 11 Jan 2019 18:46:22 +0000
-Message-ID: <26D9FDECA4FBDD4AADA65D8E2FC68A4A1D3510C4@ORSMSX104.amr.corp.intel.com>
-References: <nycvar.YFH.7.76.1901022016380.14047@cbobk.fhfr.pm>
-In-Reply-To: <nycvar.YFH.7.76.1901022016380.14047@cbobk.fhfr.pm>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiNWE2ZWJhZTgtYzIxZi00MjZmLThkODktOWYwNzlhZDllYjVkIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiZGtcL3FldkpjVFZNbSs4OFJJWW5GSHJLT2t0ZTgxd0dpblVPN1hwUVlHRFhMZjdud2JPQnhmWVdXRTRoVmg2SEkifQ==
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [10.22.254.138]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S1728927AbfAKSqd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 13:46:33 -0500
+Received: from [172.16.25.12]
+        by relay.sw.ru with esmtp (Exim 4.91)
+        (envelope-from <aryabinin@virtuozzo.com>)
+        id 1gi1p6-0006fL-JJ; Fri, 11 Jan 2019 21:46:28 +0300
+Subject: Re: [PATCH] kasan: fix kasan_check_read/write definitions
+To:     Arnd Bergmann <arnd@arndb.de>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     Anders Roxell <anders.roxell@linaro.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org
+References: <20181211133453.2835077-1-arnd@arndb.de>
+From:   Andrey Ryabinin <aryabinin@virtuozzo.com>
+Message-ID: <478333ec-1866-2908-1111-8b3dda135278@virtuozzo.com>
+Date:   Fri, 11 Jan 2019 21:46:50 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
+In-Reply-To: <20181211133453.2835077-1-arnd@arndb.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> -----Original Message-----
-> From: Intel-wired-lan [mailto:intel-wired-lan-bounces@osuosl.org] On
-> Behalf Of Jiri Kosina
-> Sent: Wednesday, January 2, 2019 11:21 AM
-> To: Kirsher, Jeffrey T <jeffrey.t.kirsher@intel.com>
-> Cc: netdev@vger.kernel.org; intel-wired-lan@lists.osuosl.org; linux-
-> kernel@vger.kernel.org
-> Subject: [Intel-wired-lan] [PATCH] ixgbe: remove magic constant in
-> ixgbe_reset_hw_82599()
+On 12/11/18 4:34 PM, Arnd Bergmann wrote:
+> Building little-endian allmodconfig kernels on arm64 started failing
+> with the generated atomic.h implementation, since we now try to call
+> kasan helpers from the EFI stub:
 > 
-> From: Jiri Kosina <jkosina@suse.cz>
+> aarch64-linux-gnu-ld: drivers/firmware/efi/libstub/arm-stub.stub.o: in function `atomic_set':
+> include/generated/atomic-instrumented.h:44: undefined reference to `__efistub_kasan_check_write'
 > 
-> ixgbe_reset_hw_82599() resets the value of hw->mac.num_rar_entries to
-> pre-defined value of 128. Let's get rid of that hardcoded literal, and use
-> IXGBE_82599_RAR_ENTRIES instead, the same way the normal initialization
-> path does.
+> I suspect that we get similar problems in other files that explicitly
+> disable KASAN for some reason but call atomic_t based helper functions.
 > 
-> Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+> We can fix this by checking the predefined __SANITIZE_ADDRESS__ macro
+> that the compiler sets instead of checking CONFIG_KASAN, but this in turn
+> requires a small hack in mm/kasan/common.c so we do see the extern
+> declaration there instead of the inline function.
+> 
+> Fixes: b1864b828644 ("locking/atomics: build atomic headers as required")
+> Reported-by: Anders Roxell <anders.roxell@linaro.org>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 > ---
->  drivers/net/ethernet/intel/ixgbe/ixgbe_82599.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
-
-
+Acked-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
