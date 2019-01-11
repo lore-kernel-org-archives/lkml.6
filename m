@@ -2,139 +2,212 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AD78C43612
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 19:53:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9101C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 19:54:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E94B520836
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 19:53:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547236387;
-	bh=/RbIUTsicKRWGlJZW/bYousgfFP0ecwjHcGBKq7xITc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=z+ieM3X4bWxx3VIl8u4xcB9LjfDEwRyP44XwSHun6jlzn/wzQKXMT08nnjcGdJlRE
-	 9GiCGXUclxPSacDh8id/uTHbBicJcgKmOIIirejr8VEQo85UqIuzct9/uIyzPcqkxB
-	 FHYfVlwl21/Z6Sg2pxNsiBWPBF2cevmzcVqF30sY=
+	by mail.kernel.org (Postfix) with ESMTP id 7ECED2084C
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 19:54:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387841AbfAKTxG (ORCPT
+        id S2388790AbfAKTyd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 14:53:06 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:33042 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729124AbfAKTxF (ORCPT
+        Fri, 11 Jan 2019 14:54:33 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:50314 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731221AbfAKTyd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 14:53:05 -0500
-Received: by mail-ot1-f65.google.com with SMTP id i20so14218095otl.0;
-        Fri, 11 Jan 2019 11:53:04 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=+2TD2oZRzwkC+aydOSsmZyCcfz+f8jQPAtzrx0HUfqM=;
-        b=a4BsSpaw116QsIseM8+alOa3onzc+F4NyUu5xFcduDzX5bQ8YlbMvID48jHjJQ5g0I
-         7QCTfuZfzie8x9WibB1JkYQRcAzunS1tVWloVEha2xHhYef/zOYWBE6dRjVbvnK/L1e1
-         peMroP13s+jdKjTp5JIdQTBMh60BZamJ18wpn95uU3+KhYJuu/HV2g6/eDHrvEei7DnY
-         nFIuU5P0IalM9RS8t8mhyd6XFRPOYh56VMwC6i/8Ewot3UP13kTDufVmVNeGZl+3wSn5
-         EVU0itDL0bZJ3F+s6mDk8VkZDrYg9iIgigtuaIYqxZjums7JMCcJVNQjVo9H1Bz1t4Jv
-         RAOw==
-X-Gm-Message-State: AJcUukclI03BGECOCUxa+Zwthr3DTWIFoNHydB9N7BZDISMSrNfkbZ20
-        dtb4J5Hvt67UTUxb+wX1UA==
-X-Google-Smtp-Source: ALg8bN7EzkRi1yi2nyRqFZbexKquii1ImncHMr18M7iKOeoBY5A61qbjzYXDOgcIZKa7dSRptWs7WQ==
-X-Received: by 2002:a9d:4f0e:: with SMTP id d14mr10995137otl.259.1547236384002;
-        Fri, 11 Jan 2019 11:53:04 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id l108sm35408545otc.23.2019.01.11.11.53.03
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 11 Jan 2019 11:53:03 -0800 (PST)
-Date:   Fri, 11 Jan 2019 13:53:02 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Andrey Smirnov <andrew.smirnov@gmail.com>
-Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Chris Healy <cphealy@gmail.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        "A.s. Dong" <aisheng.dong@nxp.com>,
-        Richard Zhu <hongxing.zhu@nxp.com>, devicetree@vger.kernel.org,
-        linux-imx@nxp.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-Subject: Re: [PATCH v4 4/4] PCI: imx6: Add support for i.MX8MQ
-Message-ID: <20190111195302.GA18985@bogus>
-References: <20190104165335.13205-1-andrew.smirnov@gmail.com>
- <20190104165335.13205-5-andrew.smirnov@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190104165335.13205-5-andrew.smirnov@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Fri, 11 Jan 2019 14:54:33 -0500
+Received: from 61-220-137-37.hinet-ip.hinet.net ([61.220.137.37] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <kai.heng.feng@canonical.com>)
+        id 1gi2sw-0005v0-To; Fri, 11 Jan 2019 19:54:31 +0000
+From:   Kai-Heng Feng <kai.heng.feng@canonical.com>
+To:     gregkh@linuxfoundation.org
+Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>
+Subject: [PATCH 1/2] USB: Add new USB LPM helpers
+Date:   Sat, 12 Jan 2019 03:54:24 +0800
+Message-Id: <20190111195425.11925-1-kai.heng.feng@canonical.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 04, 2019 at 08:53:35AM -0800, Andrey Smirnov wrote:
-> Add code needed to support i.MX8MQ variant.
-> 
-> Cc: Bjorn Helgaas <bhelgaas@google.com>
-> Cc: Fabio Estevam <fabio.estevam@nxp.com>
-> Cc: Chris Healy <cphealy@gmail.com>
-> Cc: Lucas Stach <l.stach@pengutronix.de>
-> Cc: Leonard Crestez <leonard.crestez@nxp.com>
-> Cc: "A.s. Dong" <aisheng.dong@nxp.com>
-> Cc: Richard Zhu <hongxing.zhu@nxp.com>
-> Cc: Rob Herring <robh@kernel.org>,
-> Cc: devicetree@vger.kernel.org,
-> Cc: linux-imx@nxp.com
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-kernel@vger.kernel.org
-> Cc: linux-pci@vger.kernel.org
-> Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
-> ---
->  .../bindings/pci/fsl,imx6q-pcie.txt           |  3 +-
->  drivers/pci/controller/dwc/Kconfig            |  4 +-
->  drivers/pci/controller/dwc/pci-imx6.c         | 77 ++++++++++++++++++-
->  3 files changed, 79 insertions(+), 5 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie.txt b/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie.txt
-> index d514c1f2365f..920ca93870a8 100644
-> --- a/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie.txt
-> +++ b/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie.txt
-> @@ -9,6 +9,7 @@ Required properties:
->  	- "fsl,imx6sx-pcie",
->  	- "fsl,imx6qp-pcie"
->  	- "fsl,imx7d-pcie"
-> +	- "fsl,imx8mq-pcie"
->  - reg: base address and length of the PCIe controller
->  - interrupts: A list of interrupt outputs of the controller. Must contain an
->    entry for each entry in the interrupt-names property.
-> @@ -45,7 +46,7 @@ Additional required properties for imx6sx-pcie:
->    PCIE_PHY power domains
->  - power-domain-names: Must be "pcie", "pcie_phy"
->  
-> -Additional required properties for imx7d-pcie:
-> +Additional required properties for imx7d-pcie and imx8mq-pcie:
->  - power-domains: Must be set to a phandle pointing to PCIE_PHY power domain
->  - resets: Must contain phandles to PCIe-related reset lines exposed by SRC
->    IP block
-> diff --git a/drivers/pci/controller/dwc/Kconfig b/drivers/pci/controller/dwc/Kconfig
-> index 6aafec3fad00..83ea318ad989 100644
-> --- a/drivers/pci/controller/dwc/Kconfig
-> +++ b/drivers/pci/controller/dwc/Kconfig
-> @@ -89,8 +89,8 @@ config PCI_EXYNOS
->  	select PCIE_DW_HOST
->  
->  config PCI_IMX6
-> -	bool "Freescale i.MX6/7 PCIe controller"
-> -	depends on SOC_IMX6Q || SOC_IMX7D || (ARM && COMPILE_TEST)
-> +	bool "Freescale i.MX6/7/8 PCIe controller"
-> +	depends on SOC_IMX6Q || SOC_IMX7D || (ARM64 && ARCH_MXC) || ((ARM || ARM64) && COMPILE_TEST)
+Use new helpers to make LPM enabling/disabling more clear.
 
-Since you added the ifdef around the abort handler, I think you can drop 
-"(ARM || ARM64)" and enable building other arches.
+This is a preparation to subsequent patch.
 
-Rob
+Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+---
+v5:
+ - Split to two patches. The first one uses the new LPM helpers, the
+   second one consolidates the LPM checks to solve the issue.
+v4:
+ - Use usb_enable_usb2_hardware_lpm() and
+   usb_disable_usb2_hardware_lpm() to control USB2 LPM.
+v3:
+ - Consolidate udev->usb2_hw_lpm_capable and udev->usb2_hw_lpm_enabled
+  check to usb_set_usb2_hardware_lpm().
+v2:
+  - Check udev->usb2_hw_lpm_enabled before calling usb_port_resume().
+
+ drivers/usb/core/driver.c  | 12 +++++++++++-
+ drivers/usb/core/hub.c     | 12 ++++++------
+ drivers/usb/core/message.c |  2 +-
+ drivers/usb/core/sysfs.c   |  5 ++++-
+ drivers/usb/core/usb.h     | 10 ++++++++--
+ 5 files changed, 30 insertions(+), 11 deletions(-)
+
+diff --git a/drivers/usb/core/driver.c b/drivers/usb/core/driver.c
+index 53564386ed57..c276ffc5561f 100644
+--- a/drivers/usb/core/driver.c
++++ b/drivers/usb/core/driver.c
+@@ -1896,7 +1896,7 @@ int usb_runtime_idle(struct device *dev)
+ 	return -EBUSY;
+ }
+ 
+-int usb_set_usb2_hardware_lpm(struct usb_device *udev, int enable)
++static int usb_set_usb2_hardware_lpm(struct usb_device *udev, int enable)
+ {
+ 	struct usb_hcd *hcd = bus_to_hcd(udev->bus);
+ 	int ret = -EPERM;
+@@ -1913,6 +1913,16 @@ int usb_set_usb2_hardware_lpm(struct usb_device *udev, int enable)
+ 	return ret;
+ }
+ 
++int usb_enable_usb2_hardware_lpm(struct usb_device *udev)
++{
++	return usb_set_usb2_hardware_lpm(udev, 1);
++}
++
++int usb_disable_usb2_hardware_lpm(struct usb_device *udev)
++{
++	return usb_set_usb2_hardware_lpm(udev, 0);
++}
++
+ #endif /* CONFIG_PM */
+ 
+ struct bus_type usb_bus_type = {
+diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
+index 1d1e61e980f3..ca38ff8124a7 100644
+--- a/drivers/usb/core/hub.c
++++ b/drivers/usb/core/hub.c
+@@ -3221,7 +3221,7 @@ int usb_port_suspend(struct usb_device *udev, pm_message_t msg)
+ 
+ 	/* disable USB2 hardware LPM */
+ 	if (udev->usb2_hw_lpm_enabled == 1)
+-		usb_set_usb2_hardware_lpm(udev, 0);
++		usb_disable_usb2_hardware_lpm(udev);
+ 
+ 	if (usb_disable_ltm(udev)) {
+ 		dev_err(&udev->dev, "Failed to disable LTM before suspend\n");
+@@ -3260,7 +3260,7 @@ int usb_port_suspend(struct usb_device *udev, pm_message_t msg)
+  err_ltm:
+ 		/* Try to enable USB2 hardware LPM again */
+ 		if (udev->usb2_hw_lpm_capable == 1)
+-			usb_set_usb2_hardware_lpm(udev, 1);
++			usb_enable_usb2_hardware_lpm(udev);
+ 
+ 		if (udev->do_remote_wakeup)
+ 			(void) usb_disable_remote_wakeup(udev);
+@@ -3544,7 +3544,7 @@ int usb_port_resume(struct usb_device *udev, pm_message_t msg)
+ 	} else  {
+ 		/* Try to enable USB2 hardware LPM */
+ 		if (udev->usb2_hw_lpm_capable == 1)
+-			usb_set_usb2_hardware_lpm(udev, 1);
++			usb_enable_usb2_hardware_lpm(udev);
+ 
+ 		/* Try to enable USB3 LTM */
+ 		usb_enable_ltm(udev);
+@@ -4435,7 +4435,7 @@ static void hub_set_initial_usb2_lpm_policy(struct usb_device *udev)
+ 	if ((udev->bos->ext_cap->bmAttributes & cpu_to_le32(USB_BESL_SUPPORT)) ||
+ 			connect_type == USB_PORT_CONNECT_TYPE_HARD_WIRED) {
+ 		udev->usb2_hw_lpm_allowed = 1;
+-		usb_set_usb2_hardware_lpm(udev, 1);
++		usb_enable_usb2_hardware_lpm(udev);
+ 	}
+ }
+ 
+@@ -5650,7 +5650,7 @@ static int usb_reset_and_verify_device(struct usb_device *udev)
+ 	 * It will be re-enabled by the enumeration process.
+ 	 */
+ 	if (udev->usb2_hw_lpm_enabled == 1)
+-		usb_set_usb2_hardware_lpm(udev, 0);
++		usb_disable_usb2_hardware_lpm(udev);
+ 
+ 	/* Disable LPM while we reset the device and reinstall the alt settings.
+ 	 * Device-initiated LPM, and system exit latency settings are cleared
+@@ -5753,7 +5753,7 @@ static int usb_reset_and_verify_device(struct usb_device *udev)
+ 
+ done:
+ 	/* Now that the alt settings are re-installed, enable LTM and LPM. */
+-	usb_set_usb2_hardware_lpm(udev, 1);
++	usb_enable_usb2_hardware_lpm(udev);
+ 	usb_unlocked_enable_lpm(udev);
+ 	usb_enable_ltm(udev);
+ 	usb_release_bos_descriptor(udev);
+diff --git a/drivers/usb/core/message.c b/drivers/usb/core/message.c
+index bfa5eda0cc26..35951aea7f50 100644
+--- a/drivers/usb/core/message.c
++++ b/drivers/usb/core/message.c
+@@ -1244,7 +1244,7 @@ void usb_disable_device(struct usb_device *dev, int skip_ep0)
+ 		}
+ 
+ 		if (dev->usb2_hw_lpm_enabled == 1)
+-			usb_set_usb2_hardware_lpm(dev, 0);
++			usb_disable_usb2_hardware_lpm(dev);
+ 		usb_unlocked_disable_lpm(dev);
+ 		usb_disable_ltm(dev);
+ 
+diff --git a/drivers/usb/core/sysfs.c b/drivers/usb/core/sysfs.c
+index ea18284dfa9a..7e88fdfe3cf5 100644
+--- a/drivers/usb/core/sysfs.c
++++ b/drivers/usb/core/sysfs.c
+@@ -528,7 +528,10 @@ static ssize_t usb2_hardware_lpm_store(struct device *dev,
+ 
+ 	if (!ret) {
+ 		udev->usb2_hw_lpm_allowed = value;
+-		ret = usb_set_usb2_hardware_lpm(udev, value);
++		if (value)
++			ret = usb_enable_usb2_hardware_lpm(udev);
++		else
++			ret = usb_disable_usb2_hardware_lpm(udev);
+ 	}
+ 
+ 	usb_unlock_device(udev);
+diff --git a/drivers/usb/core/usb.h b/drivers/usb/core/usb.h
+index 546a2219454b..d95a5358f73d 100644
+--- a/drivers/usb/core/usb.h
++++ b/drivers/usb/core/usb.h
+@@ -92,7 +92,8 @@ extern int usb_remote_wakeup(struct usb_device *dev);
+ extern int usb_runtime_suspend(struct device *dev);
+ extern int usb_runtime_resume(struct device *dev);
+ extern int usb_runtime_idle(struct device *dev);
+-extern int usb_set_usb2_hardware_lpm(struct usb_device *udev, int enable);
++extern int usb_enable_usb2_hardware_lpm(struct usb_device *udev);
++extern int usb_disable_usb2_hardware_lpm(struct usb_device *udev);
+ 
+ #else
+ 
+@@ -112,7 +113,12 @@ static inline int usb_autoresume_device(struct usb_device *udev)
+ 	return 0;
+ }
+ 
+-static inline int usb_set_usb2_hardware_lpm(struct usb_device *udev, int enable)
++static inline int usb_enable_usb2_hardware_lpm(struct usb_device *udev)
++{
++	return 0;
++}
++
++static inline int usb_disable_usb2_hardware_lpm(struct usb_device *udev)
+ {
+ 	return 0;
+ }
+-- 
+2.17.1
+
