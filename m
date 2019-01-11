@@ -6,46 +6,47 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 545D5C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:15:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 955EAC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:15:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 239B72183F
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:15:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 64ED720874
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:15:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547216109;
-	bh=WfrGHToNUVG4ZCfezeDftm+bdRZq2O70qNp5ZAhxojY=;
+	s=default; t=1547216116;
+	bh=fYi8dyqE9YKcazkjTKDUboTRSbEf+2q0mI4AuU7cRH0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=wgDRuK/Zld/pHq5obSjN76HtxLVvAIFgLUL+E4RkOAbnNqnVkxqWM/qR5GxWIs/GP
-	 4L+VSbnMkYqgfmMoJp64HjGxysjDXW+NLDJtUgpIPYBmrZXQ2C+j9mqgK9Xk68Nww0
-	 XkN1M0rRT0gZkaYLO+3uRWD9LWrL10oaaBVbJu1g=
+	b=m2mcrHwt3y0E2+lpoDd5GZD99VJaP5vtMsb4BlXfMKVk4zR3ZNOdPszZ3eD+6TEdp
+	 b6tzErdZe7tK/aUOxbqCiX21kqSRG2Xin7UR4/71ghSWJ6YtZ9zWCpGXlOv8DMBSLi
+	 KPKztD1w+2dIiPs6Su5QEqlW7cTR2DtnEdj03Mk0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733232AbfAKOPI (ORCPT
+        id S1733257AbfAKOPO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:15:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59106 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:15:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59230 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733219AbfAKOPG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:15:06 -0500
+        id S1733238AbfAKOPL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:15:11 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 007C7217D6;
-        Fri, 11 Jan 2019 14:15:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 29DC2217D6;
+        Fri, 11 Jan 2019 14:15:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547216105;
-        bh=WfrGHToNUVG4ZCfezeDftm+bdRZq2O70qNp5ZAhxojY=;
+        s=default; t=1547216110;
+        bh=fYi8dyqE9YKcazkjTKDUboTRSbEf+2q0mI4AuU7cRH0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tM642fcS44mEH7QOc2OVmBCMHyHGUkCAUxVv+DiV0KQ45YEXfo4D1mEIYTjtyx1Ez
-         TDwiY1Vlq1/OwFAZVaxav3Dd9sjdUdjzttspLsNIhSIJnMperSKsJmxa7GVatoOfgj
-         Rt9LGbqVbkRl9MisCrjMgOjpY9fa+mkXrfFLyzWY=
+        b=W/okXtP5xxUE95lWDR4vv4eq+0B2G74LoynaOO5ApddovlbJaijSXsDFX9OLO2Ayz
+         O8B5WV5rpXN+lVa7QSje1rQyY23YQVQ0JtmbVYD06je6BWoyqawMMjW53KDA1hTbi2
+         H3rZtuGeIyXo1I83QnpUw1wpdvnHZJ0mebVuTzXA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Maurizio Lombardi <mlombard@redhat.com>,
-        Theodore Tso <tytso@mit.edu>, stable@kernel.org
-Subject: [PATCH 3.18 24/47] ext4: missing unlock/put_page() in ext4_try_to_write_inline_data()
-Date:   Fri, 11 Jan 2019 15:08:09 +0100
-Message-Id: <20190111130959.162453960@linuxfoundation.org>
+        stable@vger.kernel.org, Macpaul Lin <macpaul.lin@mediatek.com>,
+        Johan Hovold <johan@kernel.org>,
+        Oliver Neukum <oneukum@suse.com>
+Subject: [PATCH 3.18 26/47] cdc-acm: fix abnormal DATA RX issue for Mediatek Preloader.
+Date:   Fri, 11 Jan 2019 15:08:11 +0100
+Message-Id: <20190111130959.422855289@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111130956.170952125@linuxfoundation.org>
 References: <20190111130956.170952125@linuxfoundation.org>
@@ -64,37 +65,80 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Maurizio Lombardi <mlombard@redhat.com>
+From: Macpaul Lin <macpaul.lin@mediatek.com>
 
-commit 132d00becb31e88469334e1e62751c81345280e0 upstream.
+commit eafb27fa5283599ce6c5492ea18cf636a28222bb upstream.
 
-In case of error, ext4_try_to_write_inline_data() should unlock
-and release the page it holds.
+Mediatek Preloader is a proprietary embedded boot loader for loading
+Little Kernel and Linux into device DRAM.
 
-Fixes: f19d5870cbf7 ("ext4: add normal write support for inline data")
-Cc: stable@kernel.org # 3.8
-Signed-off-by: Maurizio Lombardi <mlombard@redhat.com>
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+This boot loader also handle firmware update. Mediatek Preloader will be
+enumerated as a virtual COM port when the device is connected to Windows
+or Linux OS via CDC-ACM class driver. When the USB enumeration has been
+done, Mediatek Preloader will send out handshake command "READY" to PC
+actively instead of waiting command from the download tool.
+
+Since Linux 4.12, the commit "tty: reset termios state on device
+registration" (93857edd9829e144acb6c7e72d593f6e01aead66) causes Mediatek
+Preloader receiving some abnoraml command like "READYXX" as it sent.
+This will be recognized as an incorrect response. The behavior change
+also causes the download handshake fail. This change only affects
+subsequent connects if the reconnected device happens to get the same minor
+number.
+
+By disabling the ECHO termios flag could avoid this problem. However, it
+cannot be done by user space configuration when download tool open
+/dev/ttyACM0. This is because the device running Mediatek Preloader will
+send handshake command "READY" immediately once the CDC-ACM driver is
+ready.
+
+This patch wants to fix above problem by introducing "DISABLE_ECHO"
+property in driver_info. When Mediatek Preloader is connected, the
+CDC-ACM driver could disable ECHO flag in termios to avoid the problem.
+
+Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
+Cc: stable@vger.kernel.org
+Reviewed-by: Johan Hovold <johan@kernel.org>
+Acked-by: Oliver Neukum <oneukum@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext4/inline.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/usb/class/cdc-acm.c |   10 ++++++++++
+ drivers/usb/class/cdc-acm.h |    1 +
+ 2 files changed, 11 insertions(+)
 
---- a/fs/ext4/inline.c
-+++ b/fs/ext4/inline.c
-@@ -696,8 +696,11 @@ int ext4_try_to_write_inline_data(struct
+--- a/drivers/usb/class/cdc-acm.c
++++ b/drivers/usb/class/cdc-acm.c
+@@ -502,6 +502,13 @@ static int acm_tty_install(struct tty_dr
+ 	if (retval)
+ 		goto error_init_termios;
  
- 	if (!PageUptodate(page)) {
- 		ret = ext4_read_inline_page(inode, page);
--		if (ret < 0)
-+		if (ret < 0) {
-+			unlock_page(page);
-+			put_page(page);
- 			goto out_up_read;
-+		}
- 	}
++	/*
++	 * Suppress initial echoing for some devices which might send data
++	 * immediately after acm driver has been installed.
++	 */
++	if (acm->quirks & DISABLE_ECHO)
++		tty->termios.c_lflag &= ~ECHO;
++
+ 	tty->driver_data = acm;
  
- 	ret = 1;
+ 	return 0;
+@@ -1694,6 +1701,9 @@ static const struct usb_device_id acm_id
+ 	{ USB_DEVICE(0x0e8d, 0x0003), /* FIREFLY, MediaTek Inc; andrey.arapov@gmail.com */
+ 	.driver_info = NO_UNION_NORMAL, /* has no union descriptor */
+ 	},
++	{ USB_DEVICE(0x0e8d, 0x2000), /* MediaTek Inc Preloader */
++	.driver_info = DISABLE_ECHO, /* DISABLE ECHO in termios flag */
++	},
+ 	{ USB_DEVICE(0x0e8d, 0x3329), /* MediaTek Inc GPS */
+ 	.driver_info = NO_UNION_NORMAL, /* has no union descriptor */
+ 	},
+--- a/drivers/usb/class/cdc-acm.h
++++ b/drivers/usb/class/cdc-acm.h
+@@ -135,3 +135,4 @@ struct acm {
+ #define QUIRK_CONTROL_LINE_STATE	BIT(6)
+ #define CLEAR_HALT_CONDITIONS		BIT(7)
+ #define SEND_ZERO_PACKET		BIT(8)
++#define DISABLE_ECHO			BIT(9)
 
 
