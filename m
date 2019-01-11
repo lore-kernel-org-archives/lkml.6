@@ -7,51 +7,51 @@ X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8EBCC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 23:02:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C61D5C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 23:02:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 77A862084C
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 23:02:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 94FA52084C
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 23:02:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="RwKY65J/"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="h6k4pgWE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726427AbfAKXCD (ORCPT
+        id S1726454AbfAKXCH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 18:02:03 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:37359 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726275AbfAKXCB (ORCPT
+        Fri, 11 Jan 2019 18:02:07 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:39153 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726428AbfAKXCG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 18:02:01 -0500
-Received: by mail-pf1-f193.google.com with SMTP id y126so7626818pfb.4
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Jan 2019 15:02:01 -0800 (PST)
+        Fri, 11 Jan 2019 18:02:06 -0500
+Received: by mail-pg1-f193.google.com with SMTP id w6so6916056pgl.6
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jan 2019 15:02:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=FFa9dZDnTlLUNw3LxfKJLjg60R1d6M30gGhExTiakGk=;
-        b=RwKY65J/VJ93YHg/tGNlaLOUUGvs3zeg2oNpSJOx8yi9NAxvfK5Q5BtrSEWM+3RoDT
-         2+0ns8S6rOJnAvZbmKj8H9DeuCv9qoLTTOYpDHWUHwgBTSoKIpq1xTnlhH0/wpONmQZe
-         mke3Ft52VAce87ouK2LL9ZIOOSlQS7uLbM93g=
+        bh=Ulw7GmeZQfl8VV/7kr1fBqzdA+8zFDUimIIDwT+KzKY=;
+        b=h6k4pgWEdJ5oK3yMBqb5gdNSOR6ouHGcQEeQfQU1zh2PvmPrHOR9JOblfanrrzx4bn
+         WpBE97hFNbGlt2gICd15nKVydaWKyd0fftS2hNP5SJ3Yo3+5GfbI1U0HDetqyxxEY8u0
+         OMaZAPtwyS3O3/siKM0h1tmwPj1Twi2AWOEbE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=FFa9dZDnTlLUNw3LxfKJLjg60R1d6M30gGhExTiakGk=;
-        b=DOmA0wKv/S38vhg5Zgm7VB+s7JQFNgaUios6gdcLld7qDEI5RsleDEhkFBY/jegLbU
-         7WyDmvxuhFNYKg2B3meTklAokBxR/+sSs8Rl++7PBzGaFCv3wozk4M3siABf9G5dtPTp
-         6y9khv7u+iW63MNpvUy9F6i7PKcEmxx0rrj1JPApnyYPtyYHS0gpmkonF0KYfdSFkv6S
-         WUCj907wg3guJv4aBO5egHpN4YRQPLeAz1PZHVoQXoVeZB8XeTkCpiU0fRtA7f/elBVL
-         scoM8mPwitZNVFpodUg7947ZiUsFm7AbvIeKOVuezGb6BJB7VBqbZeEA4uVkEpN+3F6W
-         kRrA==
-X-Gm-Message-State: AJcUukfopl9h0U9DBX1F3ZxROr1Gmsat/+b6pHU6n8N4o96vZqgLuvNr
-        vBi0SYeRR+ZkdQhfeBiV7+R1zQ==
-X-Google-Smtp-Source: ALg8bN7xCso6B959PPpGN8vAw5jbMldMZ7tJnqf0ulNZSNPAQFoD8mv6PHiszu2yOOFQbRGwIh5x7w==
-X-Received: by 2002:a63:a553:: with SMTP id r19mr14971240pgu.53.1547247721044;
-        Fri, 11 Jan 2019 15:02:01 -0800 (PST)
+        bh=Ulw7GmeZQfl8VV/7kr1fBqzdA+8zFDUimIIDwT+KzKY=;
+        b=XarHRpIpRjm3QwoFh1p/jasXOP6ZvFqzP5t8D4shZIq9LJDP7Z0KiatFHYGZI7gCxT
+         AaSYy5evR7Qf7Lpi6Z/NLV1GpucClg48sasbeTJbJ1cllL+9+hWfV2BZ1/X8xSud4Xzu
+         0GW7tE/PXv5aOul9kllH9ymKpU70KabxRxs0zVVeR1ik9A9UhYxqztCA8MyWFaXO/SOK
+         7NHytyRZQA+76sew2FQUddHmudotkcGXttwZP38wx5VSIPrKMIi8+7m7QHOP5ZAOPFOo
+         PR0HYV1p7eH7BBmUiXFB3dGnTuAPR1wATmMxPWN5VBj3Ysg10yerxwXT9UiskDZ35ogZ
+         ASlw==
+X-Gm-Message-State: AJcUukePhO04GMEVfxqGya3mkO2WAc96ARDjM+44tiIICMKr5vtyuTTi
+        wJLG+E2ouw2ohAvFSvobVRH6Ekuz++Y=
+X-Google-Smtp-Source: ALg8bN5qAQ3iBHoJ0wFHaD2bHkeLfhuykgOD9ZUlCxPaubz/cKkbAhf9RecUAUn0NGgXIC11YT6o+Q==
+X-Received: by 2002:a63:24c2:: with SMTP id k185mr14552455pgk.406.1547247725865;
+        Fri, 11 Jan 2019 15:02:05 -0800 (PST)
 Received: from evgreen2.mtv.corp.google.com ([2620:15c:202:201:ffda:7716:9afc:1301])
-        by smtp.gmail.com with ESMTPSA id 15sm116045186pfr.55.2019.01.11.15.01.59
+        by smtp.gmail.com with ESMTPSA id 15sm116045186pfr.55.2019.01.11.15.02.04
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 11 Jan 2019 15:02:00 -0800 (PST)
+        Fri, 11 Jan 2019 15:02:05 -0800 (PST)
 From:   Evan Green <evgreen@chromium.org>
 To:     Andy Gross <andy.gross@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
@@ -65,9 +65,9 @@ Cc:     Can Guo <cang@codeaurora.org>,
         linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
         David Brown <david.brown@linaro.org>,
         Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH v1 3/8] arm64: dts: sdm845: Add UFS PHY reset
-Date:   Fri, 11 Jan 2019 15:01:24 -0800
-Message-Id: <20190111230129.127037-4-evgreen@chromium.org>
+Subject: [PATCH v1 4/8] arm64: dts: msm8996: Add UFS PHY reset controller
+Date:   Fri, 11 Jan 2019 15:01:25 -0800
+Message-Id: <20190111230129.127037-5-evgreen@chromium.org>
 X-Mailer: git-send-email 2.18.1
 In-Reply-To: <20190111230129.127037-1-evgreen@chromium.org>
 References: <20190111230129.127037-1-evgreen@chromium.org>
@@ -76,40 +76,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Wire up the reset controller in the Qcom UFS controller for the PHY.
-This will be used to toggle PHY reset during initialization of the PHY.
+Add the reset controller for the UFS controller, and wire it up
+so that the UFS PHY can initialize itself without relying on
+implicit sequencing between the two drivers.
 
 Signed-off-by: Evan Green <evgreen@chromium.org>
 ---
-This commit is based atop the series at [1]. Patches 1 and 2 of that
-series have landed, but 3, 4, and 5 are still outstanding.
 
-[1] https://lore.kernel.org/lkml/20181210192826.241350-1-evgreen@chromium.org/
+ arch/arm64/boot/dts/qcom/msm8996.dtsi | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
- arch/arm64/boot/dts/qcom/sdm845.dtsi | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-index b29332b265d9e..029ab66405cf4 100644
---- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-@@ -990,6 +990,7 @@
- 			phy-names = "ufsphy";
- 			lanes-per-direction = <2>;
- 			power-domains = <&gcc UFS_PHY_GDSC>;
+diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+index 99b7495455a62..179f1988d45c5 100644
+--- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+@@ -663,10 +663,11 @@
+ 			clock-names = "ref_clk_src", "ref_clk";
+ 			clocks = <&rpmcc RPM_SMD_LN_BB_CLK>,
+ 				 <&gcc GCC_UFS_CLKREF_CLK>;
++			resets = <&ufshc 0>;
+ 			status = "disabled";
+ 		};
+ 
+-		ufshc@624000 {
++		ufshc: ufshc@624000 {
+ 			compatible = "qcom,ufshc";
+ 			reg = <0x624000 0x2500>;
+ 			interrupts = <GIC_SPI 265 IRQ_TYPE_LEVEL_HIGH>;
+@@ -722,6 +723,7 @@
+ 				<0 0>;
+ 
+ 			lanes-per-direction = <1>;
 +			#reset-cells = <1>;
- 
- 			clock-names =
- 				"core_clk",
-@@ -1033,6 +1034,8 @@
- 			clocks = <&gcc GCC_UFS_MEM_CLKREF_CLK>,
- 				 <&gcc GCC_UFS_PHY_PHY_AUX_CLK>;
- 
-+			resets = <&ufs_mem_hc 0>;
-+			reset-names = "ufsphy";
  			status = "disabled";
  
- 			ufs_mem_phy_lanes: lanes@1d87400 {
+ 			ufs_variant {
 -- 
 2.18.1
 
