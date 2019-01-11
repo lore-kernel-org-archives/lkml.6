@@ -2,173 +2,127 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E78DAC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:01:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29DEAC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:01:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BAD9E20874
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:01:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ennoqf7r";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="lbQZX67Z"
+	by mail.kernel.org (Postfix) with ESMTP id EE9E720874
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:01:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547218904;
+	bh=taOGbMQh93TdgIuuP76DZUmHoUOHqRuPen9Zr962Kzg=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=nh8AO0dJh2OTjoVZvGTZHSYdCnrF0oH0AN6LgKBZz8M1bcq7OmL3IBGx/bOE/CzCv
+	 3oXDAzHoPvHzN+CbM/r6iAt1i57TjJOOqzzb1sNKTDdEaDDjfsSmnT54fYntN4InwR
+	 +W/THi0sOx2N1MfbkiRftUhIWOU2jdvHMzFWBaOg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389343AbfAKOcI (ORCPT
+        id S2390165AbfAKPBn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:32:08 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:58264 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388788AbfAKOcG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:32:06 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 4BFF460B7A; Fri, 11 Jan 2019 14:32:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1547217124;
-        bh=ct5t8aTnKDmeGd6CQtFHo+dDdWVL9qBI83GTPbVNbOE=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=ennoqf7rR+p/vostZqJDSLg+M02Ai9bKEiPtoKcUyQ7MrOvS1HMTzaw9FzmQT5T9s
-         AdQ7HQxRA5KgAH+URxIZqu4tGt4O5MFiSQsUJvoXzdgRDps7tuGsiIc4GHJGNr19Sm
-         T1Q6VrlIdlOkWROlbWtQ9xWG8lqvGsZ9MuDydQNQ=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id 198DE6098C;
-        Fri, 11 Jan 2019 14:32:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1547217121;
-        bh=ct5t8aTnKDmeGd6CQtFHo+dDdWVL9qBI83GTPbVNbOE=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=lbQZX67Zj8QLZWiKymGJEIQ2qg5qqrPxFYSR1Jvnm+MllSYnm3qDPDTKjEwNynUjS
-         YL9OZOX5moaOILGnFArbfb13GAU/FX1E83b3qWqXErPBOszChAf7EVkztfnV5t8iXh
-         wppSoylVWtYjBPXn0wV5MaHaMXdVy7ulQlf+MsUw=
+        Fri, 11 Jan 2019 10:01:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51822 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388799AbfAKOb5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:31:57 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 915272063F;
+        Fri, 11 Jan 2019 14:31:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547217117;
+        bh=taOGbMQh93TdgIuuP76DZUmHoUOHqRuPen9Zr962Kzg=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=NavOgN0TFMz14rQnYMcjERX2WnjXOuHERbSlhhvt9RTnojL6xHrt8H5HDREVLNmVO
+         UcyRvpRQRFFwpjQZrSx/qErKPMHXlMCEVd3WZ3+w6gBL7HUqsvnt6VSCUgeEr8J82p
+         NCelFneNZzXnALHqYSFdoHhCI0+cFbdJ0FUBtoyw=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        Paul Gortmaker <paul.gortmaker@windriver.com>,
+        Bernd Edlinger <bernd.edlinger@hotmail.de>,
+        Qian Cai <cai@lca.pw>, Josh Poimboeuf <jpoimboe@redhat.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 048/105] kbuild: fix false positive warning/error about missing libelf
+Date:   Fri, 11 Jan 2019 15:14:19 +0100
+Message-Id: <20190111131107.141377119@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190111131102.899065735@linuxfoundation.org>
+References: <20190111131102.899065735@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Fri, 11 Jan 2019 20:02:00 +0530
-From:   Balakrishna Godavarthi <bgodavar@codeaurora.org>
-To:     Matthias Kaehlcke <mka@chromium.org>
-Cc:     Johan Hovold <johan@kernel.org>, marcel@holtmann.org,
-        johan.hedberg@gmail.com, linux-kernel@vger.kernel.org,
-        linux-bluetooth@vger.kernel.org, hemantg@codeaurora.org,
-        linux-arm-msm@vger.kernel.org, Johan Hovold <jhovold@gmail.com>
-Subject: Re: [PATCH v5 1/5] Bluetooth: hci_qca: use wait_until_sent() for
- power pulses
-In-Reply-To: <20190111005532.GC261387@google.com>
-References: <20181220144639.15928-1-bgodavar@codeaurora.org>
- <20181220144639.15928-2-bgodavar@codeaurora.org>
- <20181222015947.GF261387@google.com> <20190109143822.GM14782@localhost>
- <2d4ee183e3c2fa964c14a5ac702043c0@codeaurora.org>
- <20190111005532.GC261387@google.com>
-Message-ID: <5e4b077bbcc81b624c851643bebc45f7@codeaurora.org>
-X-Sender: bgodavar@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-01-11 06:25, Matthias Kaehlcke wrote:
-> On Thu, Jan 10, 2019 at 08:18:37PM +0530, Balakrishna Godavarthi wrote:
->> Hi Johan,
->> 
->> On 2019-01-09 20:08, Johan Hovold wrote:
->> > On Fri, Dec 21, 2018 at 05:59:47PM -0800, Matthias Kaehlcke wrote:
->> > > On Thu, Dec 20, 2018 at 08:16:35PM +0530, Balakrishna Godavarthi
->> > > wrote:
->> > > > wcn3990 requires a power pulse to turn ON/OFF along with
->> > > > regulators. Sometimes we are observing the power pulses are sent
->> > > > out with some time delay, due to queuing these commands. This is
->> > > > causing synchronization issues with chip, which intern delay the
->> > > > chip setup or may end up with communication issues.
->> > > >
->> > > > Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
->> > > > ---
->> > > >  drivers/bluetooth/hci_qca.c | 38 ++++++++++++++-----------------------
->> > > >  1 file changed, 14 insertions(+), 24 deletions(-)
->> > > >
->> > > > diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
->> > > > index f036c8f98ea3..5a07c2370289 100644
->> > > > --- a/drivers/bluetooth/hci_qca.c
->> > > > +++ b/drivers/bluetooth/hci_qca.c
->> > > > @@ -1013,11 +1013,9 @@ static inline void host_set_baudrate(struct hci_uart *hu, unsigned int speed)
->> > > >  		hci_uart_set_baudrate(hu, speed);
->> > > >  }
->> > > >
->> > > > -static int qca_send_power_pulse(struct hci_dev *hdev, u8 cmd)
->> > > > +static int qca_send_power_pulse(struct hci_uart *hu, u8 cmd)
->> > > >  {
->> > > > -	struct hci_uart *hu = hci_get_drvdata(hdev);
->> > > > -	struct qca_data *qca = hu->priv;
->> > > > -	struct sk_buff *skb;
->> > > > +	int ret;
->> > > >
->> > > >  	/* These power pulses are single byte command which are sent
->> > > >  	 * at required baudrate to wcn3990. On wcn3990, we have an external
->> > > > @@ -1029,19 +1027,16 @@ static int qca_send_power_pulse(struct hci_dev *hdev, u8 cmd)
->> > > >  	 * save power. Disabling hardware flow control is mandatory while
->> > > >  	 * sending power pulses to SoC.
->> > > >  	 */
->> > > > -	bt_dev_dbg(hdev, "sending power pulse %02x to SoC", cmd);
->> > > > -
->> > > > -	skb = bt_skb_alloc(sizeof(cmd), GFP_KERNEL);
->> > > > -	if (!skb)
->> > > > -		return -ENOMEM;
->> > > > -
->> > > > +	bt_dev_dbg(hu->hdev, "sending power pulse %02x to SoC", cmd);
->> > > >  	hci_uart_set_flow_control(hu, true);
->> > > > +	ret = serdev_device_write_buf(hu->serdev, &cmd, sizeof(cmd));
->> > > > +	if (ret < 0) {
->> > > > +		bt_dev_err(hu->hdev, "failed to send power pulse %02x to SoC",
->> > > > +			   cmd);
->> > > > +		return ret;
->> > > > +	}
->> > > >
->> > > > -	skb_put_u8(skb, cmd);
->> > > > -	hci_skb_pkt_type(skb) = HCI_COMMAND_PKT;
->> > > > -
->> > > > -	skb_queue_tail(&qca->txq, skb);
->> > > > -	hci_uart_tx_wakeup(hu);
->> > > > +	serdev_device_wait_until_sent(hu->serdev, 0);
->> >
->> > Again, do you really want to wait indefinitely here?
->> >
->> [Bala]: these commands are mandatory to turn ON or OFF the chip.
->>         so blocking to the max time is required.
->>         these commands are sent during the BT chip ON & OFF.
->>         in the latest series, i have flushed the uart before sending 
->> this
->> commands
->>         so the uart FIFO(as just opened the port before calling this
->> function) or the circular
->>         buffer will be empty and also i am disabling the flow control 
->> too.
->>        https://patchwork.kernel.org/patch/10744435/
-> 
-> The commands may be mandatory for switching the chip on or off, but
-> what is better if there is a problem with sending them (e.g. a buggy
-> UART driver):
-> 
-> 1. wait a reasonable time, report an error
-> 2. wait forever
-> 
-> ?
-> 
-> If the single byte command couldn't be sent after a few milliseconds,
-> it likely never will, waiting forever doesn't fix that. An error
-> report at least provides some information about the problem and the
-> driver is in a not-hanging state.
-> 
-> Cheers
-> 
-> Matthias
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
-[Bala]: will update this with a bound TIMEOUT value. But 
-wait_until_sent() is void return
-         type how could we know that the data is sent out on the lines.
+------------------
 
+[ Upstream commit ef7cfd00b2caf6edeb7f169682b64be2d0a798cf ]
 
+For the same reason as commit 25896d073d8a ("x86/build: Fix compiler
+support check for CONFIG_RETPOLINE"), you cannot put this $(error ...)
+into the parse stage of the top Makefile.
+
+Perhaps I'd propose a more sophisticated solution later, but this is
+the best I can do for now.
+
+Link: https://lkml.org/lkml/2017/12/25/211
+Reported-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+Reported-by: Bernd Edlinger <bernd.edlinger@hotmail.de>
+Reported-by: Qian Cai <cai@lca.pw>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Tested-by: Qian Cai <cai@lca.pw>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ Makefile | 13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
+
+diff --git a/Makefile b/Makefile
+index be4d1f25cb29..2de4072bcc90 100644
+--- a/Makefile
++++ b/Makefile
+@@ -954,11 +954,6 @@ ifdef CONFIG_STACK_VALIDATION
+   ifeq ($(has_libelf),1)
+     objtool_target := tools/objtool FORCE
+   else
+-    ifdef CONFIG_UNWINDER_ORC
+-      $(error "Cannot generate ORC metadata for CONFIG_UNWINDER_ORC=y, please install libelf-dev, libelf-devel or elfutils-libelf-devel")
+-    else
+-      $(warning "Cannot use CONFIG_STACK_VALIDATION=y, please install libelf-dev, libelf-devel or elfutils-libelf-devel")
+-    endif
+     SKIP_STACK_VALIDATION := 1
+     export SKIP_STACK_VALIDATION
+   endif
+@@ -1102,6 +1097,14 @@ uapi-asm-generic:
+ 
+ PHONY += prepare-objtool
+ prepare-objtool: $(objtool_target)
++ifeq ($(SKIP_STACK_VALIDATION),1)
++ifdef CONFIG_UNWINDER_ORC
++	@echo "error: Cannot generate ORC metadata for CONFIG_UNWINDER_ORC=y, please install libelf-dev, libelf-devel or elfutils-libelf-devel" >&2
++	@false
++else
++	@echo "warning: Cannot use CONFIG_STACK_VALIDATION=y, please install libelf-dev, libelf-devel or elfutils-libelf-devel" >&2
++endif
++endif
+ 
+ # Check for CONFIG flags that require compiler support. Abort the build
+ # after .config has been processed, but before the kernel build starts.
 -- 
-Regards
-Balakrishna.
+2.19.1
+
+
+
