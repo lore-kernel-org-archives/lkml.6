@@ -4,50 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F4DEC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:15:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B36D8C43444
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:15:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E19DA21783
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:15:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 81D3D2177B
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:15:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547216133;
-	bh=sAeZmfbFrisJPBcsaz9trwd91j/Fm7L1a5Xm+ilOvbg=;
+	s=default; t=1547216135;
+	bh=GRQiYu9mOzfPXZ1EE7DipneGOwkRafJT4W+KN0ZDCTo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=DbtN6Eo5mqm/xyYSSlvdbK4dbOyhb5kkKeI/aX2l18ga3V0xnhPg0GZn893fNPf94
-	 /HSHIuqhrhRyUC4kFVs6x5UPyPez4HjgWjNDYM2NSp7Wh+ehAnP1iwLy2iygnv5jGl
-	 LGG5L1Lcltda7Lbytv57IV0uPNbaJvbKqI5B3S0U=
+	b=hV9VzqfhSq+4HqXoAGzEVQox/L+BcwZ/MiERKpa5DXi91TkIe/So2zlt0V63Hjoa5
+	 2GTGVwvo/+ch6yXboxCZ9KFQjYTIJBUoHT/fs6cUv6MBStHdjKCc7G5f6fd0HtcrN+
+	 a+QR7rBpAN6OoU+SWxMsA2uDpUmrRCwYm6p4lMhQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387414AbfAKOPc (ORCPT
+        id S2387427AbfAKOPd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:15:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59656 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:15:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59700 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387394AbfAKOPa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:15:30 -0500
+        id S2387412AbfAKOPc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:15:32 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 76356214D8;
-        Fri, 11 Jan 2019 14:15:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 11DEC20874;
+        Fri, 11 Jan 2019 14:15:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547216128;
-        bh=sAeZmfbFrisJPBcsaz9trwd91j/Fm7L1a5Xm+ilOvbg=;
+        s=default; t=1547216131;
+        bh=GRQiYu9mOzfPXZ1EE7DipneGOwkRafJT4W+KN0ZDCTo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mATZm+CUY1u4RcM1kYGdJ7e3OV6SZutK9AKW214/9JSVwQl2ix6lqcrT0eTti2swC
-         iY/v9IROpYXMvIIom1vORPql8jlYrhZQWjq8CFTh20NqwmoVMt9UZ2F85R+Z0RBaVm
-         axoyrvd7mZuBdfYvsMVyQShVAZTx9YVZ4busI21c=
+        b=UuyzmfqvDjmIpt917mXKal0fsZsqO364rqDqretIMOsYjNGEbk2O7wKc09R/A8vtB
+         TZJheCaOkoPURkK8wH29Rlkg9IG/a8P93LByaXNYLVPblWADhFDMEni8Xft1Fez5PW
+         gXHxHLxNuR5qhCl1edmrJ7gYxxXUcrg7wfMlZu2Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
-        Tom Gundersen <teg@jklm.no>,
-        David Herrmann <dh.herrmann@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 3.18 32/47] fork: record start_time late
-Date:   Fri, 11 Jan 2019 15:08:17 +0100
-Message-Id: <20190111131000.231010024@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Pavel Tikhomirov <ptikhomirov@virtuozzo.com>,
+        Vasily Averin <vvs@virtuozzo.com>, NeilBrown <neilb@suse.com>,
+        "J. Bruce Fields" <bfields@redhat.com>, stable@kernel.org
+Subject: [PATCH 3.18 33/47] sunrpc: fix cache_head leak due to queued request
+Date:   Fri, 11 Jan 2019 15:08:18 +0100
+Message-Id: <20190111131000.357737442@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111130956.170952125@linuxfoundation.org>
 References: <20190111130956.170952125@linuxfoundation.org>
@@ -66,78 +66,68 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: David Herrmann <dh.herrmann@gmail.com>
+From: Vasily Averin <vvs@virtuozzo.com>
 
-commit 7b55851367136b1efd84d98fea81ba57a98304cf upstream.
+commit 4ecd55ea074217473f94cfee21bb72864d39f8d7 upstream.
 
-This changes the fork(2) syscall to record the process start_time after
-initializing the basic task structure but still before making the new
-process visible to user-space.
+After commit d202cce8963d, an expired cache_head can be removed from the
+cache_detail's hash.
 
-Technically, we could record the start_time anytime during fork(2).  But
-this might lead to scenarios where a start_time is recorded long before
-a process becomes visible to user-space.  For instance, with
-userfaultfd(2) and TLS, user-space can delay the execution of fork(2)
-for an indefinite amount of time (and will, if this causes network
-access, or similar).
+However, the expired cache_head may be waiting for a reply from a
+previously submitted request. Such a cache_head has an increased
+refcounter and therefore it won't be freed after cache_put(freeme).
 
-By recording the start_time late, it much closer reflects the point in
-time where the process becomes live and can be observed by other
-processes.
+Because the cache_head was removed from the hash it cannot be found
+during cache_clean() and can be leaked forever, together with stalled
+cache_request and other taken resources.
 
-Lastly, this makes it much harder for user-space to predict and control
-the start_time they get assigned.  Previously, user-space could fork a
-process and stall it in copy_thread_tls() before its pid is allocated,
-but after its start_time is recorded.  This can be misused to later-on
-cycle through PIDs and resume the stalled fork(2) yielding a process
-that has the same pid and start_time as a process that existed before.
-This can be used to circumvent security systems that identify processes
-by their pid+start_time combination.
+In our case we noticed it because an entry in the export cache was
+holding a reference on a filesystem.
 
-Even though user-space was always aware that start_time recording is
-flaky (but several projects are known to still rely on start_time-based
-identification), changing the start_time to be recorded late will help
-mitigate existing attacks and make it much harder for user-space to
-control the start_time a process gets assigned.
-
-Reported-by: Jann Horn <jannh@google.com>
-Signed-off-by: Tom Gundersen <teg@jklm.no>
-Signed-off-by: David Herrmann <dh.herrmann@gmail.com>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes d202cce8963d ("sunrpc: never return expired entries in sunrpc_cache_lookup")
+Cc: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+Cc: stable@kernel.org # 2.6.35
+Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
+Reviewed-by: NeilBrown <neilb@suse.com>
+Signed-off-by: J. Bruce Fields <bfields@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/fork.c |   13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
+ net/sunrpc/cache.c |    9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -1321,8 +1321,6 @@ static struct task_struct *copy_process(
+--- a/net/sunrpc/cache.c
++++ b/net/sunrpc/cache.c
+@@ -50,6 +50,10 @@ static void cache_init(struct cache_head
+ 	h->last_refresh = now;
+ }
  
- 	posix_cpu_timers_init(p);
- 
--	p->start_time = ktime_get_ns();
--	p->real_start_time = ktime_get_boot_ns();
- 	p->io_context = NULL;
- 	p->audit_context = NULL;
- 	if (clone_flags & CLONE_THREAD)
-@@ -1487,6 +1485,17 @@ static struct task_struct *copy_process(
- 	spin_lock(&current->sighand->siglock);
- 
- 	/*
-+	 * From this point on we must avoid any synchronous user-space
-+	 * communication until we take the tasklist-lock. In particular, we do
-+	 * not want user-space to be able to predict the process start-time by
-+	 * stalling fork(2) after we recorded the start_time but before it is
-+	 * visible to the system.
-+	 */
++static void cache_fresh_locked(struct cache_head *head, time_t expiry);
++static void cache_fresh_unlocked(struct cache_head *head,
++				struct cache_detail *detail);
 +
-+	p->start_time = ktime_get_ns();
-+	p->real_start_time = ktime_get_boot_ns();
-+
-+	/*
- 	 * Copy seccomp details explicitly here, in case they were changed
- 	 * before holding sighand lock.
- 	 */
+ struct cache_head *sunrpc_cache_lookup(struct cache_detail *detail,
+ 				       struct cache_head *key, int hash)
+ {
+@@ -94,6 +98,7 @@ struct cache_head *sunrpc_cache_lookup(s
+ 				*hp = tmp->next;
+ 				tmp->next = NULL;
+ 				detail->entries --;
++				cache_fresh_locked(tmp, 0);
+ 				freeme = tmp;
+ 				break;
+ 			}
+@@ -109,8 +114,10 @@ struct cache_head *sunrpc_cache_lookup(s
+ 	cache_get(new);
+ 	write_unlock(&detail->hash_lock);
+ 
+-	if (freeme)
++	if (freeme) {
++		cache_fresh_unlocked(freeme, detail);
+ 		cache_put(freeme, detail);
++	}
+ 	return new;
+ }
+ EXPORT_SYMBOL_GPL(sunrpc_cache_lookup);
 
 
