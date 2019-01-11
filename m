@@ -4,49 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD248C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:38:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9A30C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:38:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 822F0218AF
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:38:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BA362206B6
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:38:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547217527;
-	bh=vPC1VnuUkB0KdOnStkNAAjiVnqGfYhiWtIW0axCw8o8=;
+	s=default; t=1547217530;
+	bh=FwFuUDeXJ7YYLZEp/eMNLF4cJFhhiHoMj3/UDU/sy3c=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=WihOX/wQKQmZMpJ0510uTRVwDJ3B37x76yURuC6D6KO9rPHpDLP9lK74nR0f0YNcZ
-	 IHZG7h/PwpybEkMG9c4cKeHBNoUsjQd/3kDRkWsWFZrm4vC6pxLkDdZMApZw9Pn0VO
-	 W9zqFrt8NnDpOzDn8Z67vVFhtXATtb71oqIw977c=
+	b=yOkZga/ffL1erKwF9CsfbQgr4IZpFRVYJ1HLi8/XdmdtOoebw7fTDjF/Ty41pm9zx
+	 pd7JVFqbx/B6+ubdjjtGVgEOUGtEYIqI1Y6nzI4WCoOBNPtbTKJUCaMVbg3g4tbZFm
+	 erl5Onb79+rpJ5dToM4LWTQ62ZFFZDEitsTFQYdQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390927AbfAKOip (ORCPT
+        id S2390940AbfAKOit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:38:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59420 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:38:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59478 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390914AbfAKOin (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:38:43 -0500
+        id S2390914AbfAKOiq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:38:46 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AE0BD206B6;
-        Fri, 11 Jan 2019 14:38:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 388142063F;
+        Fri, 11 Jan 2019 14:38:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547217523;
-        bh=vPC1VnuUkB0KdOnStkNAAjiVnqGfYhiWtIW0axCw8o8=;
+        s=default; t=1547217525;
+        bh=FwFuUDeXJ7YYLZEp/eMNLF4cJFhhiHoMj3/UDU/sy3c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FjqjYyDdxokvG4mePcqz5VtPys2Y/CuRTNBvukSdRn8bSbPKjTYRJhr9gS+YPHDlF
-         6ObenQBGwg3kqjD4VmFsnBzpT7ZxoX5kmawIhWbXn3RPPyjXcuqAymXt0tzRABzEuY
-         JklvUyZoZnAWLJraTLZMsvVsVleE1IOyK98Om25I=
+        b=lLJH+NBebWDo54S5DO4eAdXTvY9tDW81wOpctogGP2sXLfH/1JJcMWqF5CGBVHrpN
+         5lEAxITgFxOGsvupn1d3X1cMIMgpa5rpf/3t63NS5tuj0Y9ON489u/15IaRJWpiAo2
+         FKT/+0g61SFtjgUKUsY0AuGQBryzuCE1MlLe6cCs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vasily Averin <vvs@virtuozzo.com>,
-        "J. Bruce Fields" <bfields@redhat.com>
-Subject: [PATCH 4.19 091/148] sunrpc: use SVC_NET() in svcauth_gss_* functions
-Date:   Fri, 11 Jan 2019 15:14:29 +0100
-Message-Id: <20190111131117.830023287@linuxfoundation.org>
+        stable@vger.kernel.org, Nicholas Piggin <npiggin@gmail.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nathan Chancellor <natechancellor@gmail.com>
+Subject: [PATCH 4.19 092/148] powerpc: remove old GCC version checks
+Date:   Fri, 11 Jan 2019 15:14:30 +0100
+Message-Id: <20190111131117.876608934@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131114.337122649@linuxfoundation.org>
 References: <20190111131114.337122649@linuxfoundation.org>
@@ -65,56 +67,62 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vasily Averin <vvs@virtuozzo.com>
+From: Nicholas Piggin <npiggin@gmail.com>
 
-commit b8be5674fa9a6f3677865ea93f7803c4212f3e10 upstream.
+commit f2910f0e6835339e6ce82cef22fa15718b7e3bfa upstream.
 
-Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: J. Bruce Fields <bfields@redhat.com>
+GCC 4.6 is the minimum supported now.
+
+Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
+Reviewed-by: Joel Stanley <joel@jms.id.au>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+[nc: Applied to minimize unnecessary conflicts]
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- net/sunrpc/auth_gss/svcauth_gss.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ arch/powerpc/Makefile |   31 ++-----------------------------
+ 1 file changed, 2 insertions(+), 29 deletions(-)
 
---- a/net/sunrpc/auth_gss/svcauth_gss.c
-+++ b/net/sunrpc/auth_gss/svcauth_gss.c
-@@ -1122,7 +1122,7 @@ static int svcauth_gss_legacy_init(struc
- 	struct kvec *resv = &rqstp->rq_res.head[0];
- 	struct rsi *rsip, rsikey;
- 	int ret;
--	struct sunrpc_net *sn = net_generic(rqstp->rq_xprt->xpt_net, sunrpc_net_id);
-+	struct sunrpc_net *sn = net_generic(SVC_NET(rqstp), sunrpc_net_id);
+--- a/arch/powerpc/Makefile
++++ b/arch/powerpc/Makefile
+@@ -408,36 +408,9 @@ archprepare: checkbin
+ # to stdout and these checks are run even on install targets.
+ TOUT	:= .tmp_gas_check
  
- 	memset(&rsikey, 0, sizeof(rsikey));
- 	ret = gss_read_verf(gc, argv, authp,
-@@ -1233,7 +1233,7 @@ static int svcauth_gss_proxy_init(struct
- 	uint64_t handle;
- 	int status;
- 	int ret;
--	struct net *net = rqstp->rq_xprt->xpt_net;
-+	struct net *net = SVC_NET(rqstp);
- 	struct sunrpc_net *sn = net_generic(net, sunrpc_net_id);
- 
- 	memset(&ud, 0, sizeof(ud));
-@@ -1424,7 +1424,7 @@ svcauth_gss_accept(struct svc_rqst *rqst
- 	__be32		*rpcstart;
- 	__be32		*reject_stat = resv->iov_base + resv->iov_len;
- 	int		ret;
--	struct sunrpc_net *sn = net_generic(rqstp->rq_xprt->xpt_net, sunrpc_net_id);
-+	struct sunrpc_net *sn = net_generic(SVC_NET(rqstp), sunrpc_net_id);
- 
- 	dprintk("RPC:       svcauth_gss: argv->iov_len = %zd\n",
- 			argv->iov_len);
-@@ -1714,7 +1714,7 @@ svcauth_gss_release(struct svc_rqst *rqs
- 	struct rpc_gss_wire_cred *gc = &gsd->clcred;
- 	struct xdr_buf *resbuf = &rqstp->rq_res;
- 	int stat = -EINVAL;
--	struct sunrpc_net *sn = net_generic(rqstp->rq_xprt->xpt_net, sunrpc_net_id);
-+	struct sunrpc_net *sn = net_generic(SVC_NET(rqstp), sunrpc_net_id);
- 
- 	if (gc->gc_proc != RPC_GSS_PROC_DATA)
- 		goto out;
+-# Check gcc and binutils versions:
+-# - gcc-3.4 and binutils-2.14 are a fatal combination
+-# - Require gcc 4.0 or above on 64-bit
+-# - gcc-4.2.0 has issues compiling modules on 64-bit
++# Check toolchain versions:
++# - gcc-4.6 is the minimum kernel-wide version so nothing required.
+ checkbin:
+-	@if test "$(cc-name)" != "clang" \
+-	    && test "$(cc-version)" = "0304" ; then \
+-		if ! /bin/echo mftb 5 | $(AS) -v -mppc -many -o $(TOUT) >/dev/null 2>&1 ; then \
+-			echo -n '*** ${VERSION}.${PATCHLEVEL} kernels no longer build '; \
+-			echo 'correctly with gcc-3.4 and your version of binutils.'; \
+-			echo '*** Please upgrade your binutils or downgrade your gcc'; \
+-			false; \
+-		fi ; \
+-	fi
+-	@if test "$(cc-name)" != "clang" \
+-	    && test "$(cc-version)" -lt "0400" \
+-	    && test "x${CONFIG_PPC64}" = "xy" ; then \
+-                echo -n "Sorry, GCC v4.0 or above is required to build " ; \
+-                echo "the 64-bit powerpc kernel." ; \
+-                false ; \
+-        fi
+-	@if test "$(cc-name)" != "clang" \
+-	    && test "$(cc-fullversion)" = "040200" \
+-	    && test "x${CONFIG_MODULES}${CONFIG_PPC64}" = "xyy" ; then \
+-		echo -n '*** GCC-4.2.0 cannot compile the 64-bit powerpc ' ; \
+-		echo 'kernel with modules enabled.' ; \
+-		echo -n '*** Please use a different GCC version or ' ; \
+-		echo 'disable kernel modules' ; \
+-		false ; \
+-	fi
+ 	@if test "x${CONFIG_CPU_LITTLE_ENDIAN}" = "xy" \
+ 	    && $(LD) --version | head -1 | grep ' 2\.24$$' >/dev/null ; then \
+ 		echo -n '*** binutils 2.24 miscompiles weak symbols ' ; \
 
 
