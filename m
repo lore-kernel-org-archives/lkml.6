@@ -7,48 +7,47 @@ X-Spam-Status: No, score=-13.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 840B3C43444
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:28:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E31D3C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:28:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 55FD021841
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:28:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AA40921848
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:28:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547216894;
-	bh=9yZzEDH6AISU5BVVWPxjPOGMXqwORxtAXsLEnHe+39g=;
+	s=default; t=1547216896;
+	bh=kjUWcPbjgGlEGGQDfavYdCLPQx+ZMYgT71pSssyqVrw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=1ypI6xJeXC9z/jE+fUAwZC09danF4TnJItgORuqEnR4v8ZMfs6/k+8lKHu07jwyyV
-	 deJlnHxmmI7yPa/f/PqCnA34yg0HACCP4zh+pOIqTxX5gsVtI7CUP/ycd6asp2jqiS
-	 Pm2VgHASjdojsLY/VQW2O7naCOUg8UrYcy5H8UX4=
+	b=JdrmrUPUXuOimuxJW+7n74olpERjr5cFm+9p+DlQWn/LIPcXchTc850ISckO0Aswq
+	 3j9hWJ5mX2UjMzQjt4MSxAnOluqIdiODnVEdAKlF4tNbJVJXsX5NF2PyDB7Snm2lZK
+	 55HXxkktnhVwv900QUuevbSsICIMXvuYUD76Grsg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388481AbfAKO2N (ORCPT
+        id S2388172AbfAKO2P (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:28:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46654 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:28:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46820 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388464AbfAKO2I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:28:08 -0500
+        id S2388480AbfAKO2N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:28:13 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 070FF2063F;
-        Fri, 11 Jan 2019 14:28:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6A1882063F;
+        Fri, 11 Jan 2019 14:28:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547216887;
-        bh=9yZzEDH6AISU5BVVWPxjPOGMXqwORxtAXsLEnHe+39g=;
+        s=default; t=1547216892;
+        bh=kjUWcPbjgGlEGGQDfavYdCLPQx+ZMYgT71pSssyqVrw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SkE3Tmg5y7kvSKM0tCVdAmJdnLUBMcZJVKYXk8nroCBvB8iOh0i4D4A17qwx9RTUa
-         X36mexwU/27ovlhot+jq5ETMlxHGYN6kSffSTUnkWTlss2A389hg0d3LGU9vaATi+A
-         tMzYz0KWY6Dd7JPksMD2atcuSYtYtwKQBh5vBDwg=
+        b=r/FoaV7JLx/yLPPAGS6hcUZrfukQ3TK7XcJcWYbv0cPY7+Zq3WkH6TMdzK7XdcCAt
+         cpBtehmsqYLaj2Goi+qcd99a/iTq6tjs5yJ3WnVSYaIW8ZcEviFHZnGJOdBCQv2vqS
+         cfbNpqi8NeEzKsPAErOTaYsEQ3r80uad79b41IUc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yonglong Liu <liuyonglong@huawei.com>,
-        Peng Li <lipeng321@huawei.com>,
+        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 20/63] net: hns: All ports can not work when insmod hns ko after rmmod.
-Date:   Fri, 11 Jan 2019 15:14:23 +0100
-Message-Id: <20190111131049.084813255@linuxfoundation.org>
+Subject: [PATCH 4.9 30/63] vxge: ensure data0 is initialized in when fetching firmware version information
+Date:   Fri, 11 Jan 2019 15:14:33 +0100
+Message-Id: <20190111131050.367976885@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131046.387528003@linuxfoundation.org>
 References: <20190111131046.387528003@linuxfoundation.org>
@@ -67,82 +66,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 308c6cafde0147616da45e3a928adae55c428deb ]
+[ Upstream commit f7db2beb4c2c6cc8111f5ab90fc7363ca91107b6 ]
 
-There are two test cases:
-1. Remove the 4 modules:hns_enet_drv/hns_dsaf/hnae/hns_mdio,
-   and install them again, must use "ifconfig down/ifconfig up"
-   command pair to bring port to work.
+Currently variable data0 is not being initialized so a garbage value is
+being passed to vxge_hw_vpath_fw_api and this value is being written to
+the rts_access_steer_data0 register.  There are other occurrances where
+data0 is being initialized to zero (e.g. in function
+vxge_hw_upgrade_read_version) so I think it makes sense to ensure data0
+is initialized likewise to 0.
 
-   This patch calls phy_stop function when init phy to fix this bug.
+Detected by CoverityScan, CID#140696 ("Uninitialized scalar variable")
 
-2. Remove the 2 modules:hns_enet_drv/hns_dsaf, and install them again,
-   all ports can not use anymore, because of the phy devices register
-   failed(phy devices already exists).
-
-   Phy devices are registered when hns_dsaf installed, this patch
-   removes them when hns_dsaf removed.
-
-The two cases are sometimes related, fixing the second case also requires
-fixing the first case, so fix them together.
-
-Signed-off-by: Yonglong Liu <liuyonglong@huawei.com>
-Signed-off-by: Peng Li <lipeng321@huawei.com>
+Fixes: 8424e00dfd52 ("vxge: serialize access to steering control register")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/hisilicon/hns/hns_dsaf_mac.c | 15 +++++++++++++++
- drivers/net/ethernet/hisilicon/hns/hns_enet.c     |  3 +++
- 2 files changed, 18 insertions(+)
+ drivers/net/ethernet/neterion/vxge/vxge-config.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_mac.c b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_mac.c
-index ec8c738af726..b6429be2b8bd 100644
---- a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_mac.c
-+++ b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_mac.c
-@@ -724,6 +724,17 @@ static void hns_mac_register_phy(struct hns_mac_cb *mac_cb)
- 			mac_cb->mac_id, addr);
- }
+diff --git a/drivers/net/ethernet/neterion/vxge/vxge-config.c b/drivers/net/ethernet/neterion/vxge/vxge-config.c
+index 6223930a8155..6f57b0b7d57a 100644
+--- a/drivers/net/ethernet/neterion/vxge/vxge-config.c
++++ b/drivers/net/ethernet/neterion/vxge/vxge-config.c
+@@ -808,7 +808,7 @@ __vxge_hw_vpath_fw_ver_get(struct __vxge_hw_virtualpath *vpath,
+ 	struct vxge_hw_device_date *fw_date = &hw_info->fw_date;
+ 	struct vxge_hw_device_version *flash_version = &hw_info->flash_version;
+ 	struct vxge_hw_device_date *flash_date = &hw_info->flash_date;
+-	u64 data0, data1 = 0, steer_ctrl = 0;
++	u64 data0 = 0, data1 = 0, steer_ctrl = 0;
+ 	enum vxge_hw_status status;
  
-+static void hns_mac_remove_phydev(struct hns_mac_cb *mac_cb)
-+{
-+	if (!to_acpi_device_node(mac_cb->fw_port) || !mac_cb->phy_dev)
-+		return;
-+
-+	phy_device_remove(mac_cb->phy_dev);
-+	phy_device_free(mac_cb->phy_dev);
-+
-+	mac_cb->phy_dev = NULL;
-+}
-+
- #define MAC_MEDIA_TYPE_MAX_LEN		16
- 
- static const struct {
-@@ -1030,7 +1041,11 @@ void hns_mac_uninit(struct dsaf_device *dsaf_dev)
- 	int max_port_num = hns_mac_get_max_port_num(dsaf_dev);
- 
- 	for (i = 0; i < max_port_num; i++) {
-+		if (!dsaf_dev->mac_cb[i])
-+			continue;
-+
- 		dsaf_dev->misc_op->cpld_reset_led(dsaf_dev->mac_cb[i]);
-+		hns_mac_remove_phydev(dsaf_dev->mac_cb[i]);
- 		dsaf_dev->mac_cb[i] = NULL;
- 	}
- }
-diff --git a/drivers/net/ethernet/hisilicon/hns/hns_enet.c b/drivers/net/ethernet/hisilicon/hns/hns_enet.c
-index 92ed6534ceae..12d90c04931b 100644
---- a/drivers/net/ethernet/hisilicon/hns/hns_enet.c
-+++ b/drivers/net/ethernet/hisilicon/hns/hns_enet.c
-@@ -1079,6 +1079,9 @@ int hns_nic_init_phy(struct net_device *ndev, struct hnae_handle *h)
- 	if (h->phy_if == PHY_INTERFACE_MODE_XGMII)
- 		phy_dev->autoneg = false;
- 
-+	if (h->phy_if == PHY_INTERFACE_MODE_SGMII)
-+		phy_stop(phy_dev);
-+
- 	return 0;
- }
- 
+ 	status = vxge_hw_vpath_fw_api(vpath,
 -- 
 2.19.1
 
