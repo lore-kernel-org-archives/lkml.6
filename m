@@ -2,98 +2,139 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C68B8C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 01:28:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE1C1C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 01:28:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 96A282133F
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 01:28:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="PX0kpIsH"
+	by mail.kernel.org (Postfix) with ESMTP id A4B1120879
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 01:28:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729296AbfAKB2N (ORCPT
+        id S1729354AbfAKB2R (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 20:28:13 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:42782 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728834AbfAKB2N (ORCPT
+        Thu, 10 Jan 2019 20:28:17 -0500
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:55175 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728834AbfAKB2R (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 20:28:13 -0500
-Received: by mail-pg1-f193.google.com with SMTP id d72so5583267pga.9
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 17:28:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:in-reply-to:references:date:message-id
-         :mime-version;
-        bh=2P+pkq/TAVJfpx+QVUhCn9RikOPq88PivZzjtOGkCms=;
-        b=PX0kpIsHZAopLUpTUOPcmSxdoYqWG3Yy2a/gSt4fMAnFTPMwwUZp9lvNX7iUhe0CEO
-         mr97YQ7w7MATf/6pJT7ZjTp5xduZAHtwnnPdIDJ5cb3ltat7IkZXULfiL7Iz5aMqdKmb
-         M1IPOaheORYcAz6PekI7TF5iRMtxmFJWNu6bHeQM56HEB3a+r/+zhiKS29cOuIjP50Dq
-         +mv6Kn5EWfNVPwXwYrsIhj7tXR4JUNhGgkE3oiTS/CeZoxr5Nn/fVQjE6mC682Hrq1My
-         arIrXEGnTS9VKPbcKRtVdYDn9EYVAKzl1Hk7q6W5/SPh8wZsW9V4vUCpsHs66BuSnPfj
-         VqCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=2P+pkq/TAVJfpx+QVUhCn9RikOPq88PivZzjtOGkCms=;
-        b=XUAyR7xUZM+NvWDvfrk1gUx1fDpJ5Vt+VjtUYe2D6szFtwZm7AuuHPKdRgkfF/KoxW
-         hOx2xazpoB2YiGE7/Q3jwFImpEH/vAXWXVe++po4ZBS1QQOLGMQWVB0CF+tmk6vNr/FH
-         i6laCBvSvuQiZIJvkWni/1N049TBgVvf7wKYKk+O9BOujsqcbDgXFza3VyAnTy3hTAWt
-         7QiTiLJAGcpEu9LQ6/TSRYli5UkhGY8VuFUnfAgSBsP7jOq+zSAFp9mbAOGWIAVDH9Vq
-         iuSEBjsyZ3hpsOZz21eQurZIz9RE3kDj9wvudQHOijyotKx4QqD6GMbRzTvds39cx3vU
-         wkHA==
-X-Gm-Message-State: AJcUukd6R3Oz+4/lyuBUhaIGDES66H9w1o5Q/e/G23h1ftAuLeW9dVE5
-        SMUiZbqvs2If5DtaTBYK4HD0rQ==
-X-Google-Smtp-Source: ALg8bN5IO4BJcANmQlKQXyWnapZsR/3IqoI/v9r4ESHNsrGTcIk1c3DNbMbLWi6X4V8xHzoCBXXJsQ==
-X-Received: by 2002:a63:184a:: with SMTP id 10mr11378583pgy.81.1547170092711;
-        Thu, 10 Jan 2019 17:28:12 -0800 (PST)
-Received: from localhost (c-71-197-186-152.hsd1.wa.comcast.net. [71.197.186.152])
-        by smtp.googlemail.com with ESMTPSA id r187sm242710873pfc.63.2019.01.10.17.28.11
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 10 Jan 2019 17:28:12 -0800 (PST)
-From:   Kevin Hilman <khilman@baylibre.com>
-To:     Loys Ollivier <lollivier@baylibre.com>, devicetree@vger.kernel.org,
-        linux-amlogic@lists.infradead.org
-Cc:     Loys Ollivier <lollivier@baylibre.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-mmc@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: Re: [PATCH v3] arm64: dts: meson: Fix mmc cd-gpios polarity
-In-Reply-To: <1547134822-18498-1-git-send-email-lollivier@baylibre.com>
-References: <1547134822-18498-1-git-send-email-lollivier@baylibre.com>
-Date:   Thu, 10 Jan 2019 17:28:11 -0800
-Message-ID: <7hftu0oudw.fsf@baylibre.com>
+        Thu, 10 Jan 2019 20:28:17 -0500
+X-IronPort-AV: E=Sophos;i="5.56,463,1539619200"; 
+   d="scan'208";a="51752542"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 11 Jan 2019 09:28:13 +0800
+Received: from G08CNEXCHPEKD01.g08.fujitsu.local (unknown [10.167.33.80])
+        by cn.fujitsu.com (Postfix) with ESMTP id 7E5984BAD909;
+        Fri, 11 Jan 2019 09:28:14 +0800 (CST)
+Received: from localhost.localdomain (10.167.225.56) by
+ G08CNEXCHPEKD01.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Fri, 11 Jan 2019 09:28:13 +0800
+Date:   Fri, 11 Jan 2019 09:27:18 +0800
+From:   Chao Fan <fanc.fnst@cn.fujitsu.com>
+To:     Borislav Petkov <bp@alien8.de>
+CC:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
+        <tglx@linutronix.de>, <mingo@redhat.com>, <hpa@zytor.com>,
+        <keescook@chromium.org>, <bhe@redhat.com>, <msys.mizuma@gmail.com>,
+        <indou.takao@jp.fujitsu.com>, <caoj.fnst@cn.fujitsu.com>
+Subject: Re: [PATCH v15 4/6] x86/boot: Introduce bios_get_rsdp_addr() to
+ search RSDP in memory
+Message-ID: <20190111012718.GE2216@localhost.localdomain>
+References: <20190107032243.25324-1-fanc.fnst@cn.fujitsu.com>
+ <20190107032243.25324-5-fanc.fnst@cn.fujitsu.com>
+ <20190110212747.GH17621@zn.tnic>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20190110212747.GH17621@zn.tnic>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Originating-IP: [10.167.225.56]
+X-yoursite-MailScanner-ID: 7E5984BAD909.AB3F3
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Loys Ollivier <lollivier@baylibre.com> writes:
-
-> Commit 89a5e15bcba8 ("gpio/mmc/of: Respect polarity in the device tree")
-> changed the behavior of "cd-inverted" to follow the device tree bindings
-> specification.
-> Lines specifying "cd-inverted" are now "active high".
+On Thu, Jan 10, 2019 at 10:27:47PM +0100, Borislav Petkov wrote:
+>On Mon, Jan 07, 2019 at 11:22:41AM +0800, Chao Fan wrote:
+>> Memory information in SRAT table is necessary to fix the conflict
+>> between KASLR and memory-hotremove. So RSDP and SRAT should be parsed.
+>> 
+>> When booting form KEXEC/EFI/BIOS, the methods to compute RSDP
+>> are different. When booting from BIOS, there is no variable who can
+>> point to RSDP directly, so scan memory for the RSDP and verify RSDP
+>> by signature and checksum.
+>> 
+>> Signed-off-by: Chao Fan <fanc.fnst@cn.fujitsu.com>
+>> ---
+>>  arch/x86/boot/compressed/acpi.c | 86 +++++++++++++++++++++++++++++++++
+>>  1 file changed, 86 insertions(+)
 >
-> Fix the SD card for meson by setting the cd-gpios as "active low" according
-> to the boards specifications.
+>...
 >
-> Fixes: 89a5e15bcba8 ("gpio/mmc/of: Respect polarity in the device tree")
-> Signed-off-by: Loys Ollivier <lollivier@baylibre.com>
+>> +/* Search RSDP address, based on acpi_find_root_pointer(). */
+>> +static acpi_physical_address bios_get_rsdp_addr(void)
+>> +{
+>> +	u8 *table_ptr;
+>> +	u32 address;
+>> +	u8 *rsdp;
+>
+>But those u8's together:
+>
+>	u8 *table_ptr, *rsdp;
+>	u32 address;
 
-Thanks for fixing this!
+Thanks, will change that.
 
-Queued as a fix for v5.1-rc,
+>
+>> +
+>> +	/* Get the location of the Extended BIOS Data Area (EBDA) */
+>> +	table_ptr = (u8 *)ACPI_EBDA_PTR_LOCATION;
+>> +	address = *(u16 *)table_ptr;
+>> +	address <<= 4;
+>> +	table_ptr = (u8 *)(long)address;
+>> +
+>> +	/*
+>> +	 * Search EBDA paragraphs (EBDA is required to be a minimum of
+>> +	 * 1K length)
+>> +	 */
+>> +	if (address > 0x400) {
+>> +		rsdp = scan_mem_for_rsdp(table_ptr, ACPI_EBDA_WINDOW_SIZE);
+>> +		if (rsdp) {
+>> +			address += (u32)ACPI_PTR_DIFF(rsdp, table_ptr);
+>> +			return address;
+>> +		}
+>> +	}
+>> +
+>> +	/* Search upper memory: 16-byte boundaries in E0000h-FFFFFh */
+>> +	table_ptr = (u8 *)ACPI_HI_RSDP_WINDOW_BASE;
+>> +	rsdp = scan_mem_for_rsdp(table_ptr, ACPI_HI_RSDP_WINDOW_SIZE);
+>> +
+>
+>Superfluous newline.
 
-I see that this is being fixed in the driver also, but I think fixing
-the DTs is necessary also.
+Will drop it.
 
-Kevin
+Thanks,
+Chao Fan
+
+>
+>> +	if (rsdp) {
+>> +		address = (u32)(ACPI_HI_RSDP_WINDOW_BASE +
+>> +				ACPI_PTR_DIFF(rsdp, table_ptr));
+>> +		return address;
+>> +	}
+>> +	return 0;
+>> +}
+>
+>-- 
+>Regards/Gruss,
+>    Boris.
+>
+>Good mailing practices for 400: avoid top-posting and trim the reply.
+>
+>
+
+
