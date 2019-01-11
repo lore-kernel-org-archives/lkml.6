@@ -2,139 +2,102 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8418C43444
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 12:17:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8730AC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 12:19:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A18A7217D6
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 12:17:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5253420870
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 12:19:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Z4rWHesd"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732260AbfAKMRw (ORCPT
+        id S1732277AbfAKMTk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 07:17:52 -0500
-Received: from relay.sw.ru ([185.231.240.75]:56604 "EHLO relay.sw.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731471AbfAKMRw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 07:17:52 -0500
-Received: from [172.16.25.169]
-        by relay.sw.ru with esmtp (Exim 4.91)
-        (envelope-from <ktkhai@virtuozzo.com>)
-        id 1ghvku-0004Sh-61; Fri, 11 Jan 2019 15:17:44 +0300
-Subject: Re: [PATCH RFC 0/3] mm: Reduce IO by improving algorithm of memcg
- pagecache pages eviction
-To:     Shakeel Butt <shakeelb@google.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Josef Bacik <josef@toxicpanda.com>, Jan Kara <jack@suse.cz>,
-        Hugh Dickins <hughd@google.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Roman Gushchin <guro@fb.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Linux MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <154703479840.32690.6504699919905946726.stgit@localhost.localdomain>
- <CALvZod63z5_m-izxFh4XQvjcALqffkZ5G91-KsyOuAC4wvN3Wg@mail.gmail.com>
- <a1dbe366-43bd-e3ee-6133-f6179b2f2278@virtuozzo.com>
- <CALvZod62A+EpGF6UVGjBhuDfwPd2b7c0M9mR86jP-3GGGT1T6g@mail.gmail.com>
-From:   Kirill Tkhai <ktkhai@virtuozzo.com>
-Message-ID: <5f105f0b-ef4e-2f52-4a36-94c05c8140ae@virtuozzo.com>
-Date:   Fri, 11 Jan 2019 15:17:43 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        Fri, 11 Jan 2019 07:19:40 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:38164 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731471AbfAKMTj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 07:19:39 -0500
+Received: by mail-lj1-f195.google.com with SMTP id c19-v6so12763030lja.5
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jan 2019 04:19:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=hUB4Mxdg1jcc6Yo92cFrzmRtIYd0yWqCYV4RNq4YQ9w=;
+        b=Z4rWHesdrWP+xM0zCb1CABaWacveXs1qO0jh136QEuBMJjxXJV6ACW5/AHfr1/6/ji
+         vD+z8FNpmD/Z+vtVHV7885NHgChvxEWVGS6u9tukCQXHigt1Vi+fq6kFblVqxSgGVvt9
+         iW/j4qc16/D7ExmNC0NsC+HrbpPGIeCovrOFk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=hUB4Mxdg1jcc6Yo92cFrzmRtIYd0yWqCYV4RNq4YQ9w=;
+        b=keG20P/+0TH6MxRhyt5bTaSz6oA/txwgM1CtRH2rFi/EdAtjJJLHKueWFbXHfctRFs
+         Qo6Tfn5MqBTSQT2B6Xg7B90D0q3oCKMbebtJOoDFspPpVzjnF8o/u1k9vlHOGhLWGsTL
+         EYvqYR9lwx+FuybsM0wihuJC/O5hRiYZJjSWG8RnjRuEsotw1lNe3BiYbV/9QYSxuMAt
+         7SxLPeR1BpTWkjBIC4z/HiHgYFjXMM2gRX8+3gBjc0LCeHm3gvmbeQ4ajC10vd1aHAQJ
+         qKZt1WJYQdForAJbwgVxNLc9c9AFIf8HNGlm/fbIsmlS0GVMsYDNALNqG/j1xF3VBljF
+         s1Xw==
+X-Gm-Message-State: AJcUukdXRBpihusAoJKyIdhIW/xvy51o3A5UHTyUvpv6usddz7zM3UeU
+        iMJJAfqz8SzxSB0QsT2oomgV71F2i2UpBn/j8ByiYQ==
+X-Google-Smtp-Source: ALg8bN6SBszocyiKBcd2VbtIahmf8C2sB2zOYd848Onj2qBs+x9P/+IeYdM8reJuzlztmXr1htBFa6RO/rXHjoq0ZAo=
+X-Received: by 2002:a2e:710a:: with SMTP id m10-v6mr8362889ljc.66.1547209177648;
+ Fri, 11 Jan 2019 04:19:37 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <CALvZod62A+EpGF6UVGjBhuDfwPd2b7c0M9mR86jP-3GGGT1T6g@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20190104103226.2878-1-brgl@bgdev.pl>
+In-Reply-To: <20190104103226.2878-1-brgl@bgdev.pl>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Fri, 11 Jan 2019 13:19:26 +0100
+Message-ID: <CACRpkdacXeBEh2UMmigSo+zYQCj3yMyNRfxHjqhu_kiZ2JMXbg@mail.gmail.com>
+Subject: Re: [PATCH] gpiolib: fix line event timestamps for nested irqs
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10.01.2019 22:19, Shakeel Butt wrote:
-> On Thu, Jan 10, 2019 at 1:46 AM Kirill Tkhai <ktkhai@virtuozzo.com> wrote:
->>
->> Hi, Shakeel,
->>
->> On 09.01.2019 20:37, Shakeel Butt wrote:
->>> Hi Kirill,
->>>
->>> On Wed, Jan 9, 2019 at 4:20 AM Kirill Tkhai <ktkhai@virtuozzo.com> wrote:
->>>>
->>>> On nodes without memory overcommit, it's common a situation,
->>>> when memcg exceeds its limit and pages from pagecache are
->>>> shrinked on reclaim, while node has a lot of free memory.
->>>> Further access to the pages requires real device IO, while
->>>> IO causes time delays, worse powerusage, worse throughput
->>>> for other users of the device, etc.
->>>>
->>>> Cleancache is not a good solution for this problem, since
->>>> it implies copying of page on every cleancache_put_page()
->>>> and cleancache_get_page(). Also, it requires introduction
->>>> of internal per-cleancache_ops data structures to manage
->>>> cached pages and their inodes relationships, which again
->>>> introduces overhead.
->>>>
->>>> This patchset introduces another solution. It introduces
->>>> a new scheme for evicting memcg pages:
->>>>
->>>>   1)__remove_mapping() uncharges unmapped page memcg
->>>>     and leaves page in pagecache on memcg reclaim;
->>>>
->>>>   2)putback_lru_page() places page into root_mem_cgroup
->>>>     list, since its memcg is NULL. Page may be evicted
->>>>     on global reclaim (and this will be easily, as
->>>>     page is not mapped, so shrinker will shrink it
->>>>     with 100% probability of success);
->>>>
->>>>   3)pagecache_get_page() charges page into memcg of
->>>>     a task, which takes it first.
->>>>
->>>
->>> From what I understand from the proposal, on memcg reclaim, the file
->>> pages are uncharged but kept in the memory and if they are accessed
->>> again (either through mmap or syscall), they will be charged again but
->>> to the requesting memcg. Also it is assumed that the global reclaim of
->>> such uncharged file pages is very fast and deterministic. Is that
->>> right?
->>
->> Yes, this was my assumption. But Michal, Josef and Johannes pointed a diving
->> into reclaim in general is not fast. So, maybe we need some more creativity
->> here to minimize the effect of this diving..
->>
-> 
-> I kind of disagree that this patchset is breaking the API semantics as
-> the charged memory of a memcg will never go over max/limit_in_bytes.
-> However the concern I have is the performance isolation. The
-> performance of a pagecache heavy job with a private mount can be
-> impacted by other jobs running on the system. This might be fine for
-> some customers but not for Google. One use-case I can tell is the
-> auto-tuner which adjusts the limits of the jobs based on their
-> performance and history. So, to make the auto-tuning deterministic we
-> have to disable the proposed optimization for the jobs with
-> auto-tuning enabled. Beside that there are internal non-auto-tuned
-> customers who prefer deterministic performance.
-> 
-> Also I am a bit skeptical that the allocation from the pool of such
-> (clean unmapped uncharged) file pages can be made as efficient as
-> fastpath of page allocator. Even if these pages are stored in a
-> separate list instead of root's LRU, on allocation, the pages need to
-> be unlinked from their mapping and has to be cleared.
+On Fri, Jan 4, 2019 at 11:32 AM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
 
-I'd said, we move this unlinking from one place to another, so the unlinking
-itself does not introduce more pressure on node. The difference to current
-behavior is 1)we need to get through all shrinker functions once again,
-2)this forces caller to do global reclaim and iterate all memcgs.
-But it looks like these two things may be solved in some way.
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>
+> Nested interrupts run inside the calling thread's context and the top
+> half handler is never called which means that we never read the
+> timestamp.
+>
+> This issue came up when trying to read line events from a gpiochip
+> using regmap_irq_chip for interrupts.
+>
+> Fix it by reading the timestamp from the irq thread function if it's
+> still 0 by the time the second handler is called.
+>
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-> BTW does this optimization have any impact on workingset mechanism?
+Oh that's right. Should this not have Fixes: and Cc: stable?
 
-I won't say exactly, but since pages are unmapped, we should not call
-any workingset handlers, so I don't know what we may break there.
+> +       /*
+> +        * We may be running from a nested threaded interrupt in which case
+> +        * we didn't get the timestamp from lineevent_irq_handler().
+> +        */
+> +       if (!le->timestamp)
+> +               le->timestamp = ktime_get_real_ns();
+> +
+>         ge.timestamp = le->timestamp;
 
-Kirill
+I would merge these:
+
+if (!le->timestamp)
+    ge.timestamp = ktime_get_real_ns();
+else
+    ge.timestamp = le->timestamp;
+
+Yours,
+Linus Walleij
