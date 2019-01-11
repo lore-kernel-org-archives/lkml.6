@@ -2,170 +2,114 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F5C5C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 02:10:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14EB6C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 02:11:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1CE6B20872
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 02:10:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=xenosoft.de header.i=@xenosoft.de header.b="Y9bn1tu9"
+	by mail.kernel.org (Postfix) with ESMTP id DADBA2133F
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 02:11:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547172665;
+	bh=fYVZuXIDpw7cfbcY6Adp9hw77SJtD2Wjf8YPK6E3XCk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=BmzflhpQ5mCKeO/aB3v6pfJ1H54Cq+L/ZjxeVEBX43tcjGUqLe5+SB/XkBRaNrEm4
+	 9bq5iGmmVG9xT0t6NJXbmc/OhRGFkmR+mqumrTk1Hf94HI42hYH55aWt3sKUQmWDNc
+	 rLTyMAQbRUl9JDx0YF20ouSY+vqTa+4UEBxo/5LE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729570AbfAKCKV (ORCPT
+        id S1729601AbfAKCLE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 21:10:21 -0500
-Received: from mo4-p02-ob.smtp.rzone.de ([85.215.255.82]:25686 "EHLO
-        mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728083AbfAKCKU (ORCPT
+        Thu, 10 Jan 2019 21:11:04 -0500
+Received: from lgeamrelo12.lge.com ([156.147.23.52]:60755 "EHLO
+        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728083AbfAKCLE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 21:10:20 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1547172616;
-        s=strato-dkim-0002; d=xenosoft.de;
-        h=In-Reply-To:Date:Message-ID:References:Cc:To:From:Subject:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=qGVmgqtlQDziwwLkWKa25bRl+9+rwwdzzixuHKRHbhs=;
-        b=Y9bn1tu9cMfoFyCIhjS4E+05COjdMiHnJEoDHZf8nOB2S56aGt5CklRJA8eaa6fosr
-        +2xsvP2RI8G/PboiPD0LL9rFV0NP+aEx+9C85rwh8HfsaF05MXaC6v3h5rwdiYmOgIv6
-        citFwEfv8MpP9XJX2NXri1m0cdD7EXfxKxlRS3l8ZkqZbI0YiAZHAO7yMPjF5zR9LryW
-        QxdI83dmzDmygwknNFB5lMMmBl5Tf/q5/V8MUErA+mc2K5kRa1uvVF6PzQWZpD6zfv3V
-        eOZ+yXqJtLXZQsMYjCqoSkgbozglwgr5i99opsX1JneLFS00a7tVxUjTqm9QaKIiNFIF
-        Ze7A==
-X-RZG-AUTH: ":L2QefEenb+UdBJSdRCXu93KJ1bmSGnhMdmOod1DhGM4l4Hio94KKxRySfLxnHfJ+Dkjp5G5MdirQj0WG7CkMjtMHfb0qEIS/g2biZPgkZjq/DQ=="
-X-RZG-CLASS-ID: mo00
-Received: from [IPv6:2a02:8109:a400:162c:302c:e1f6:9992:a190]
-        by smtp.strato.de (RZmta 44.9 AUTH)
-        with ESMTPSA id t0203dv0B2AEXIO
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
-        (Client did not present a certificate);
-        Fri, 11 Jan 2019 03:10:14 +0100 (CET)
-Subject: Re: use generic DMA mapping code in powerpc V4
-From:   Christian Zigotzky <chzigotzky@xenosoft.de>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     linux-arch@vger.kernel.org,
-        Darren Stevens <darren@stevens-zone.net>,
-        linux-kernel@vger.kernel.org, Julian Margetson <runaway@candw.ms>,
-        linux-mm@kvack.org, iommu@lists.linux-foundation.org,
-        Paul Mackerras <paulus@samba.org>,
-        Olof Johansson <olof@lixom.net>, linuxppc-dev@lists.ozlabs.org
-References: <2242B4B2-6311-492E-BFF9-6740E36EC6D4@xenosoft.de>
- <84558d7f-5a7f-5219-0c3a-045e6b4c494f@xenosoft.de>
- <20181213091021.GA2106@lst.de>
- <835bd119-081e-a5ea-1899-189d439c83d6@xenosoft.de>
- <76bc684a-b4d2-1d26-f18d-f5c9ba65978c@xenosoft.de>
- <20181213112511.GA4574@lst.de>
- <e109de27-f4af-147d-dc0e-067c8bafb29b@xenosoft.de>
- <ad5a5a8a-d232-d523-a6f7-e9377fc3857b@xenosoft.de>
- <e60d6ca3-860c-f01d-8860-c5e022ec7179@xenosoft.de>
- <008c981e-bdd2-21a7-f5f7-c57e4850ae9a@xenosoft.de>
- <20190103073622.GA24323@lst.de>
- <71A251A5-FA06-4019-B324-7AED32F7B714@xenosoft.de>
- <1b0c5c21-2761-d3a3-651b-3687bb6ae694@xenosoft.de>
- <3504ee70-02de-049e-6402-2d530bf55a84@xenosoft.de>
-Message-ID: <23284859-bf0a-9cd5-a480-2a7fd7802056@xenosoft.de>
-Date:   Fri, 11 Jan 2019 03:10:13 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Thu, 10 Jan 2019 21:11:04 -0500
+Received: from unknown (HELO lgeamrelo02.lge.com) (156.147.1.126)
+        by 156.147.23.52 with ESMTP; 11 Jan 2019 11:11:02 +0900
+X-Original-SENDERIP: 156.147.1.126
+X-Original-MAILFROM: namhyung@kernel.org
+Received: from unknown (HELO sejong) (10.177.227.17)
+        by 156.147.1.126 with ESMTP; 11 Jan 2019 11:11:01 +0900
+X-Original-SENDERIP: 10.177.227.17
+X-Original-MAILFROM: namhyung@kernel.org
+Date:   Fri, 11 Jan 2019 11:11:01 +0900
+From:   Namhyung Kim <namhyung@kernel.org>
+To:     Florian Fainelli <f.fainelli@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, cphealy@gmail.com,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Kim Phillips <kim.phillips@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
+        Thomas Richter <tmricht@linux.ibm.com>,
+        rmk+kernel@armlinux.org.uk, l.stach@pengutronix.de,
+        kernel-team@lge.com
+Subject: Re: [PATCH v3 0/2] perf tests: Check for ARM [vectors] page
+Message-ID: <20190111021101.GA625@sejong>
+References: <20181221034337.26663-1-f.fainelli@gmail.com>
+ <20181227105539.GA4521@sejong>
+ <27ac27b2-c373-2831-e7ce-4e898365d517@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <3504ee70-02de-049e-6402-2d530bf55a84@xenosoft.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Language: de-DE
+In-Reply-To: <27ac27b2-c373-2831-e7ce-4e898365d517@gmail.com>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Next step: 891dcc1072f1fa27a83da920d88daff6ca08fc02 (powerpc/dma: remove 
-dma_nommu_dma_supported)
+Hello,
 
-git clone git://git.infradead.org/users/hch/misc.git -b powerpc-dma.6 a
+Sorry for being so late.
 
-git checkout 891dcc1072f1fa27a83da920d88daff6ca08fc02
+On Thu, Dec 27, 2018 at 05:35:17PM -0800, Florian Fainelli wrote:
+> Le 12/27/18 à 2:55 AM, Namhyung Kim a écrit :
+> > Hello,
+> > 
+> > On Thu, Dec 20, 2018 at 07:43:35PM -0800, Florian Fainelli wrote:
+> >> Hi all,
+> >>
+> >> I just painfully learned that perf would segfault when
+> >> CONFIG_KUSER_HELPERS is disabled because it unconditionally makes use of
+> > 
+> > Could you please elaborate?
+> 
+> Sure, I was debugging why perf was segfaulting on my systems and saw
+> that the faulting address was within 0xffff_0000 (high vectors); and
+> because CONFIG_KUSER_HELPERS was not enabled, nothing was mapped at that
+> address so this was a legitimate crash. This was on a variety of ARMv7A
+> systems, Cortex-A9, Cortex-A5 etc.
+> 
+> Later on, I found that in tools/arch/arm/include/asm/barrier.h the
+> barriers are unconditionally defined to make use of the [vectors] page
+> that the ARM kernel only sets up when CONFIG_KUSER_HELPERS is enabled
+> and this is the reason for the crash.
+> 
+> Testing for the page itself is pretty harmless if you think we should
+> make something more robust around checking for HAVE_AUXTRACE_SUPPORT
+> (which appears to be the specific location making use of barriers), let
+> me know.
 
-Output:
+Thanks for the explanation.
 
-Note: checking out '891dcc1072f1fa27a83da920d88daff6ca08fc02'.
+Is there anything we can do instead if CONFIG_KUSER_HELPERS is not
+defined?
 
-You are in 'detached HEAD' state. You can look around, make experimental
-changes and commit them, and you can discard any commits you make in this
-state without impacting any branches by performing another checkout.
+I think it'd be better making the barriers into functions (probably
+with "static inline") and configurable depending on a result of
+runtime checking of the availability (like you did).
 
-If you want to create a new branch to retain commits you create, you may
-do so (now or later) by using -b with the checkout command again. Example:
+The init routine of the auxtrace (or other future users of barriers)
+should call an arch-specific function to check the availability then.
 
-git checkout -b <new-branch-name>
-
-HEAD is now at 891dcc1... powerpc/dma: remove dma_nommu_dma_supported
-
----
-
-Link to the Git: 
-http://git.infradead.org/users/hch/misc.git/shortlog/refs/heads/powerpc-dma.6
-
-Results: PASEMI onboard ethernet works and the X5000 (P5020 board) 
-boots. I also successfully tested sound, hardware 3D acceleration, 
-Bluetooth, network, booting with a label etc. The uImages work also in a 
-virtual e5500 quad-core QEMU machine.
-
--- Christian
-
-
-On 09 January 2019 at 10:31AM, Christian Zigotzky wrote:
-> Next step: a64e18ba191ba9102fb174f27d707485ffd9389c (powerpc/dma: 
-> remove dma_nommu_get_required_mask)
->
-> git clone git://git.infradead.org/users/hch/misc.git -b powerpc-dma.6 a
->
-> git checkout a64e18ba191ba9102fb174f27d707485ffd9389c
->
-> Link to the Git: 
-> http://git.infradead.org/users/hch/misc.git/shortlog/refs/heads/powerpc-dma.6
->
-> Results: PASEMI onboard ethernet works and the X5000 (P5020 board) 
-> boots. I also successfully tested sound, hardware 3D acceleration, 
-> Bluetooth, network, booting with a label etc. The uImages work also in 
-> a virtual e5500 quad-core QEMU machine.
->
-> -- Christian
->
->
-> On 05 January 2019 at 5:03PM, Christian Zigotzky wrote:
->> Next step: c446404b041130fbd9d1772d184f24715cf2362f (powerpc/dma: 
->> remove dma_nommu_mmap_coherent)
->>
->> git clone git://git.infradead.org/users/hch/misc.git -b powerpc-dma.6 a
->>
->> git checkout c446404b041130fbd9d1772d184f24715cf2362f
->>
->> Output:
->>
->> Note: checking out 'c446404b041130fbd9d1772d184f24715cf2362f'.
->>
->> You are in 'detached HEAD' state. You can look around, make experimental
->> changes and commit them, and you can discard any commits you make in 
->> this
->> state without impacting any branches by performing another checkout.
->>
->> If you want to create a new branch to retain commits you create, you may
->> do so (now or later) by using -b with the checkout command again. 
->> Example:
->>
->>   git checkout -b <new-branch-name>
->>
->> HEAD is now at c446404... powerpc/dma: remove dma_nommu_mmap_coherent
->>
->> -----
->>
->> Link to the Git: 
->> http://git.infradead.org/users/hch/misc.git/shortlog/refs/heads/powerpc-dma.6
->>
->> Result: PASEMI onboard ethernet works and the X5000 (P5020 board) boots.
->>
->> -- Christian
->>
->
->
-
+Thanks,
+Namhyung
