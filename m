@@ -7,48 +7,50 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7BE3C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:50:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FA91C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:50:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7FDD72063F
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:50:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1AC48206B6
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:50:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547218251;
-	bh=ubcLXkBXxYTs9DUGIx9p4DZc9jBZnLU6qqa6jdzZMT4=;
+	s=default; t=1547218256;
+	bh=SU5bnpz0LvnY+oE6LGN/UxvhAFIJ5xtDJ6Z4EkU3FqY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=X2MVALEUkEFbYNkdd0jLtMoiAHQQGPlQajX7Yp3jH9ZGYtX81XsuHGizAMT8aODXe
-	 T75oR9I3XPnHmUs/rwpA7R6Y6B2y2KEZ4sGUQQBiCtjR8UrIvrlqorGdafaZo7p1oF
-	 TJSKmgOKSgbShA5w+W9pgr+HD0dJ0V84B6rc4kCw=
+	b=Q+pjiUl3+mbf8TgojsPj2GHb4uPpnroNZap+UHXunWBYy2bYejr9rHMLgzFLrmlEX
+	 7si81mbhyixnk663rAYX97PWyXHUCYpWfaWyFlhl5voQcT8DXpKTcr9VyLRG0HpFgq
+	 WqCC7m1SnFhqujYjSBEmigQVN9+XLPFCI6nnMwVE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732411AbfAKOkC (ORCPT
+        id S2391659AbfAKOuy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:40:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60762 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:50:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60854 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403838AbfAKOjz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:39:55 -0500
+        id S2391140AbfAKOkA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:40:00 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E64DA2063F;
-        Fri, 11 Jan 2019 14:39:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2BADC206B6;
+        Fri, 11 Jan 2019 14:39:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547217594;
-        bh=ubcLXkBXxYTs9DUGIx9p4DZc9jBZnLU6qqa6jdzZMT4=;
+        s=default; t=1547217599;
+        bh=SU5bnpz0LvnY+oE6LGN/UxvhAFIJ5xtDJ6Z4EkU3FqY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SZ3JnjHKnRKDIrHJm75gJrBxggMVH59Ns3r8be0jybYNlLu0dFngpq4fLZSDuEp9e
-         TPPR2DlAVSsvrs+pFGY3SbJ9BUITNyoXtHeiDBZjrJGkXVg0CGD5kDlvxl28HLcdZ6
-         HhcYICAelmmh5L0bJwvxkvmAYywZm0ZKQtWkQd4U=
+        b=s8YkaEr0GoPl38ZAWYxsy5s3U5+M1gZBVK4eniAb7hET5GrLtrqz92or4ujTqdGqb
+         o6tp1JNTPvVKA9ZLy1d5YFs1d7I/MdqK4b4loXfbDkiABTr9Tpvg+kIDS7+kgy3Fe5
+         +1+/vGSSUqhWubTjoDw7XIs3PfyzOol9/0h8xgjk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Priit Laes <plaes@plaes.org>,
-        =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5@gmail.com>,
-        Larry Finger <Larry.Finger@lwfinger.net>,
-        Kalle Valo <kvalo@codeaurora.org>
-Subject: [PATCH 4.19 120/148] b43: Fix error in cordic routine
-Date:   Fri, 11 Jan 2019 15:14:58 +0100
-Message-Id: <20190111131119.049505468@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jean Delvare <jdelvare@suse.de>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Subject: [PATCH 4.19 122/148] PCI / PM: Allow runtime PM without callback functions
+Date:   Fri, 11 Jan 2019 15:15:00 +0100
+Message-Id: <20190111131119.129293070@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131114.337122649@linuxfoundation.org>
 References: <20190111131114.337122649@linuxfoundation.org>
@@ -67,40 +69,118 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Larry Finger <Larry.Finger@lwfinger.net>
+From: Jarkko Nikula <jarkko.nikula@linux.intel.com>
 
-commit 8ea3819c0bbef57a51d8abe579e211033e861677 upstream.
+commit c5eb1190074cfb14c5d9cac692f1912eecf1a5e4 upstream.
 
-The cordic routine for calculating sines and cosines that was added in
-commit 6f98e62a9f1b ("b43: update cordic code to match current specs")
-contains an error whereby a quantity declared u32 can in fact go negative.
+a9c8088c7988 ("i2c: i801: Don't restore config registers on runtime PM")
+nullified the runtime PM suspend/resume callback pointers while keeping the
+runtime PM enabled.
 
-This problem was detected by Priit Laes who is switching b43 to use the
-routine in the library functions of the kernel.
+This caused the SMBus PCI device to stay in D0 with
+/sys/devices/.../power/runtime_status showing "error" when the runtime PM
+framework attempted to autosuspend the device.  This is due to PCI bus
+runtime PM, which checks for driver runtime PM callbacks and returns
+-ENOSYS if they are not set.
 
-Fixes: 986504540306 ("b43: make cordic common (LP-PHY and N-PHY need it)")
-Reported-by: Priit Laes <plaes@plaes.org>
-Cc: Rafał Miłecki <zajec5@gmail.com>
-Cc: Stable <stable@vger.kernel.org> # 2.6.34
-Signed-off-by: Larry Finger <Larry.Finger@lwfinger.net>
-Signed-off-by: Priit Laes <plaes@plaes.org>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Since i2c-i801.c doesn't need to do anything device-specific for runtime
+PM, Jean Delvare proposed this be fixed in the PCI core rather than adding
+dummy runtime PM callback functions in the PCI drivers.
+
+Change pci_pm_runtime_suspend()/pci_pm_runtime_resume() so they allow
+changing the PCI device power state during runtime PM transitions even if
+the driver supplies no runtime PM callbacks.
+
+This fixes the runtime PM regression on i2c-i801.c.
+
+It is not obvious why the code previously required the runtime PM
+callbacks.  The test has been there since the code was introduced by
+6cbf82148ff2 ("PCI PM: Run-time callbacks for PCI bus type").
+
+On the other hand, a similar change was done to generic runtime PM
+callbacks in 05aa55dddb9e ("PM / Runtime: Lenient generic runtime pm
+callbacks").
+
+Fixes: a9c8088c7988 ("i2c: i801: Don't restore config registers on runtime PM")
+Reported-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Signed-off-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Reviewed-by: Jean Delvare <jdelvare@suse.de>
+Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Cc: stable@vger.kernel.org	# v4.18+
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/wireless/broadcom/b43/phy_common.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/pci/pci-driver.c |   27 ++++++++++++---------------
+ 1 file changed, 12 insertions(+), 15 deletions(-)
 
---- a/drivers/net/wireless/broadcom/b43/phy_common.c
-+++ b/drivers/net/wireless/broadcom/b43/phy_common.c
-@@ -616,7 +616,7 @@ struct b43_c32 b43_cordic(int theta)
- 	u8 i;
- 	s32 tmp;
- 	s8 signx = 1;
--	u32 angle = 0;
-+	s32 angle = 0;
- 	struct b43_c32 ret = { .i = 39797, .q = 0, };
+--- a/drivers/pci/pci-driver.c
++++ b/drivers/pci/pci-driver.c
+@@ -1251,30 +1251,29 @@ static int pci_pm_runtime_suspend(struct
+ 		return 0;
+ 	}
  
- 	while (theta > (180 << 16))
+-	if (!pm || !pm->runtime_suspend)
+-		return -ENOSYS;
+-
+ 	pci_dev->state_saved = false;
+-	error = pm->runtime_suspend(dev);
+-	if (error) {
++	if (pm && pm->runtime_suspend) {
++		error = pm->runtime_suspend(dev);
+ 		/*
+ 		 * -EBUSY and -EAGAIN is used to request the runtime PM core
+ 		 * to schedule a new suspend, so log the event only with debug
+ 		 * log level.
+ 		 */
+-		if (error == -EBUSY || error == -EAGAIN)
++		if (error == -EBUSY || error == -EAGAIN) {
+ 			dev_dbg(dev, "can't suspend now (%pf returned %d)\n",
+ 				pm->runtime_suspend, error);
+-		else
++			return error;
++		} else if (error) {
+ 			dev_err(dev, "can't suspend (%pf returned %d)\n",
+ 				pm->runtime_suspend, error);
+-
+-		return error;
++			return error;
++		}
+ 	}
+ 
+ 	pci_fixup_device(pci_fixup_suspend, pci_dev);
+ 
+-	if (!pci_dev->state_saved && pci_dev->current_state != PCI_D0
++	if (pm && pm->runtime_suspend
++	    && !pci_dev->state_saved && pci_dev->current_state != PCI_D0
+ 	    && pci_dev->current_state != PCI_UNKNOWN) {
+ 		WARN_ONCE(pci_dev->current_state != prev,
+ 			"PCI PM: State of device not saved by %pF\n",
+@@ -1292,7 +1291,7 @@ static int pci_pm_runtime_suspend(struct
+ 
+ static int pci_pm_runtime_resume(struct device *dev)
+ {
+-	int rc;
++	int rc = 0;
+ 	struct pci_dev *pci_dev = to_pci_dev(dev);
+ 	const struct dev_pm_ops *pm = dev->driver ? dev->driver->pm : NULL;
+ 
+@@ -1306,14 +1305,12 @@ static int pci_pm_runtime_resume(struct
+ 	if (!pci_dev->driver)
+ 		return 0;
+ 
+-	if (!pm || !pm->runtime_resume)
+-		return -ENOSYS;
+-
+ 	pci_fixup_device(pci_fixup_resume_early, pci_dev);
+ 	pci_enable_wake(pci_dev, PCI_D0, false);
+ 	pci_fixup_device(pci_fixup_resume, pci_dev);
+ 
+-	rc = pm->runtime_resume(dev);
++	if (pm && pm->runtime_resume)
++		rc = pm->runtime_resume(dev);
+ 
+ 	pci_dev->runtime_d3cold = false;
+ 
 
 
