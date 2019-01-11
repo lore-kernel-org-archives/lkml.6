@@ -4,50 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9741DC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:17:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA42DC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:17:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E5EA2184C
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:17:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AA2F8214D8
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:17:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547216221;
-	bh=saKEvZEKF3KL8z9IlyNDy3vdJwlv80m06CPIezkhRVE=;
+	s=default; t=1547216225;
+	bh=+fjmWzl+On/cMu2fiYKiMxF3K4bXXhq1kn/2eu8HO3M=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=xkk4pSye4MzCmRvMBV4gixEZXyt5wCxp+KY1C0yqbw0//OGLjb4n8bY+df2n+9MFX
-	 VIJqcIL+22LfG1TccWzHnR8YlMKjwrF9xp4aLeCYhtQf2Jng0NA6gBAotmCSs9k8k+
-	 auz/S9ak6P2iyzF8Kd0Tzbe1TAVa3KWr9sJynnIs=
+	b=gcZXJeyJ4vZN+SCZWJRGIV3gqjLiuhEeP3Phc6qWMLsgSPPeNd3HVjj2YYgjKNJ2V
+	 ZhZPS1tGnufRcTOs5j67FBMQ0hf2SpUQfDPvIjTqKJYCS30dgb7SDY6nxEWXlxq9Oj
+	 cwQdeidM7Ryr+jonlvlGcX6qwzTCN3T2famb9nOA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387781AbfAKORA (ORCPT
+        id S2387795AbfAKORE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:17:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33260 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:17:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33396 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387740AbfAKOQ4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:16:56 -0500
+        id S2387740AbfAKORC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:17:02 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 62E1721783;
-        Fri, 11 Jan 2019 14:16:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1FCFB21841;
+        Fri, 11 Jan 2019 14:17:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547216215;
-        bh=saKEvZEKF3KL8z9IlyNDy3vdJwlv80m06CPIezkhRVE=;
+        s=default; t=1547216221;
+        bh=+fjmWzl+On/cMu2fiYKiMxF3K4bXXhq1kn/2eu8HO3M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AwwH9OgBIMwEUyakMbVppLMNy025H8Dl/9bTUo9Dl5wtknyY5pJibu7AZQMyXXLfX
-         54QgYjlqNySuNPOcMMH0IZXTS2GjRgVBG8rkyjw4uakZjlVEhwQH+Qvxr2JYrIjH3d
-         54ko1jW138/sMeF7XsC4IRqYjqXQSmTVEQwtvb1g=
+        b=1h8GGlzX7UPZ6CatthWSkqqdO0oSgy6PG1wBmAkB4Smtj44UaMU82+6UvDtLmAyUo
+         i5i9Z5m/3b+u9a/44ho3edgw364sLAokLy4eDSdoRHSZl90i0ZCN3cRqldxPRwj3Ez
+         KyJijDhNwNWjmIqDwo9h3A0r00bmCHippLHv+8Jc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Willem de Bruijn <willemb@google.com>,
-        Alexander Aring <aring@mojatatu.com>,
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        syzbot <syzkaller@googlegroups.com>,
+        Karsten Keil <isdn@linux-pingi.de>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 18/88] ieee802154: lowpan_header_create check must check daddr
-Date:   Fri, 11 Jan 2019 15:07:47 +0100
-Message-Id: <20190111131048.835006301@linuxfoundation.org>
+Subject: [PATCH 4.4 20/88] isdn: fix kernel-infoleak in capi_unlocked_ioctl
+Date:   Fri, 11 Jan 2019 15:07:49 +0100
+Message-Id: <20190111131049.124510553@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131045.137499039@linuxfoundation.org>
 References: <20190111131045.137499039@linuxfoundation.org>
@@ -66,33 +66,80 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Willem de Bruijn <willemb@google.com>
+From: Eric Dumazet <edumazet@google.com>
 
-[ Upstream commit 40c3ff6d5e0809505a067dd423c110c5658c478c ]
+[ Upstream commit d63967e475ae10f286dbd35e189cb241e0b1f284 ]
 
-Packet sockets may call dev_header_parse with NULL daddr. Make
-lowpan_header_ops.create fail.
+Since capi_ioctl() copies 64 bytes after calling
+capi20_get_manufacturer() we need to ensure to not leak
+information to user.
 
-Fixes: 87a93e4eceb4 ("ieee802154: change needed headroom/tailroom")
-Signed-off-by: Willem de Bruijn <willemb@google.com>
-Acked-by: Alexander Aring <aring@mojatatu.com>
+BUG: KMSAN: kernel-infoleak in _copy_to_user+0x16b/0x1f0 lib/usercopy.c:32
+CPU: 0 PID: 11245 Comm: syz-executor633 Not tainted 4.20.0-rc7+ #2
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x173/0x1d0 lib/dump_stack.c:113
+ kmsan_report+0x12e/0x2a0 mm/kmsan/kmsan.c:613
+ kmsan_internal_check_memory+0x9d4/0xb00 mm/kmsan/kmsan.c:704
+ kmsan_copy_to_user+0xab/0xc0 mm/kmsan/kmsan_hooks.c:601
+ _copy_to_user+0x16b/0x1f0 lib/usercopy.c:32
+ capi_ioctl include/linux/uaccess.h:177 [inline]
+ capi_unlocked_ioctl+0x1a0b/0x1bf0 drivers/isdn/capi/capi.c:939
+ do_vfs_ioctl+0xebd/0x2bf0 fs/ioctl.c:46
+ ksys_ioctl fs/ioctl.c:713 [inline]
+ __do_sys_ioctl fs/ioctl.c:720 [inline]
+ __se_sys_ioctl+0x1da/0x270 fs/ioctl.c:718
+ __x64_sys_ioctl+0x4a/0x70 fs/ioctl.c:718
+ do_syscall_64+0xbc/0xf0 arch/x86/entry/common.c:291
+ entry_SYSCALL_64_after_hwframe+0x63/0xe7
+RIP: 0033:0x440019
+Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 fb 13 fc ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007ffdd4659fb8 EFLAGS: 00000213 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 0000000000440019
+RDX: 0000000020000080 RSI: 00000000c0044306 RDI: 0000000000000003
+RBP: 00000000006ca018 R08: 0000000000000000 R09: 00000000004002c8
+R10: 0000000000000000 R11: 0000000000000213 R12: 00000000004018a0
+R13: 0000000000401930 R14: 0000000000000000 R15: 0000000000000000
+
+Local variable description: ----data.i@capi_unlocked_ioctl
+Variable was created at:
+ capi_ioctl drivers/isdn/capi/capi.c:747 [inline]
+ capi_unlocked_ioctl+0x82/0x1bf0 drivers/isdn/capi/capi.c:939
+ do_vfs_ioctl+0xebd/0x2bf0 fs/ioctl.c:46
+
+Bytes 12-63 of 64 are uninitialized
+Memory access of size 64 starts at ffff88807ac5fce8
+Data copied to user address 0000000020000080
+
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Cc: Karsten Keil <isdn@linux-pingi.de>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ieee802154/6lowpan/tx.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/isdn/capi/kcapi.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/net/ieee802154/6lowpan/tx.c
-+++ b/net/ieee802154/6lowpan/tx.c
-@@ -55,6 +55,9 @@ int lowpan_header_create(struct sk_buff
- 	const u8 *daddr = _daddr;
- 	struct lowpan_addr_info *info;
+--- a/drivers/isdn/capi/kcapi.c
++++ b/drivers/isdn/capi/kcapi.c
+@@ -851,7 +851,7 @@ u16 capi20_get_manufacturer(u32 contr, u
+ 	u16 ret;
  
-+	if (!daddr)
-+		return -EINVAL;
-+
- 	/* TODO:
- 	 * if this package isn't ipv6 one, where should it be routed?
- 	 */
+ 	if (contr == 0) {
+-		strlcpy(buf, capi_manufakturer, CAPI_MANUFACTURER_LEN);
++		strncpy(buf, capi_manufakturer, CAPI_MANUFACTURER_LEN);
+ 		return CAPI_NOERROR;
+ 	}
+ 
+@@ -859,7 +859,7 @@ u16 capi20_get_manufacturer(u32 contr, u
+ 
+ 	ctr = get_capi_ctr_by_nr(contr);
+ 	if (ctr && ctr->state == CAPI_CTR_RUNNING) {
+-		strlcpy(buf, ctr->manu, CAPI_MANUFACTURER_LEN);
++		strncpy(buf, ctr->manu, CAPI_MANUFACTURER_LEN);
+ 		ret = CAPI_NOERROR;
+ 	} else
+ 		ret = CAPI_REGNOTINSTALLED;
 
 
