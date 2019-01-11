@@ -2,67 +2,87 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C5B2C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 05:40:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88C1FC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 05:41:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 33010217F9
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 05:40:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 501F52173B
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 05:41:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547185264;
+	bh=l6/vvOnoNlma3/jNTjNg3ATfAjw5y5j+gwreGNa+24o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=b0Db15YP7JhrEYb7ajm6ADBTZo+Czqs8rgcha1LQt8pCegO+xi1pa3lq3yamXs6Mk
+	 SX6adV/JpuExP2VR29NS92UE5XqonB1kYcp40b603aJHoAJgK/V2rIYWDr9tB/2fcT
+	 GFukIYLTOvyz6bF5qIIdw1JCeEMayLxKrUSLL8xs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728908AbfAKFkE (ORCPT
+        id S1728882AbfAKFlD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 00:40:04 -0500
-Received: from mga14.intel.com ([192.55.52.115]:1062 "EHLO mga14.intel.com"
+        Fri, 11 Jan 2019 00:41:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54626 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725793AbfAKFkE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 00:40:04 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jan 2019 21:40:03 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,464,1539673200"; 
-   d="scan'208";a="126797129"
-Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.157])
-  by orsmga001.jf.intel.com with SMTP; 10 Jan 2019 21:39:59 -0800
-Received: by lahna (sSMTP sendmail emulation); Fri, 11 Jan 2019 07:39:58 +0200
-Date:   Fri, 11 Jan 2019 07:39:58 +0200
-From:   Mika Westerberg <mika.westerberg@linux.intel.com>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio@vger.kernel.org,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        linux-acpi@vger.kernel.org,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
-        Jie Yang <yang.jie@linux.intel.com>,
-        Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org,
-        Hans de Goede <hdegoede@redhat.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFT][PATCH v2] gpiolib: acpi: Introduce
- ACPI_GPIO_QUIRK_ONLY_GPIOIO
-Message-ID: <20190111053958.GR14577@lahna.fi.intel.com>
-References: <20190109105245.25954-1-andriy.shevchenko@linux.intel.com>
+        id S1725793AbfAKFlD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 00:41:03 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C42BC20675;
+        Fri, 11 Jan 2019 05:41:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547185262;
+        bh=l6/vvOnoNlma3/jNTjNg3ATfAjw5y5j+gwreGNa+24o=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=h5+LEOkAVIf4bU91Vvox9fzqQT7JGCMDD8RihiUTvE+/V0tc801zTZ1D94rUDZAsG
+         a1kv8sXu8YPHV/62p6+2DY1h45I4ix1+ypfERJmHE/V/jiwwewyWR9gYo8H4Bvie2T
+         xJ1uIMrPppK0ldbaW+JFe/x7dY2R2+h9SIxCJEnU=
+Date:   Fri, 11 Jan 2019 06:40:58 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Lukas Wunner <lukas@wunner.de>
+Cc:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        "Hutter, Tony" <hutter2@llnl.gov>,
+        Marc Dionne <marc.c.dionne@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>, Kash Pande <kash@tripleback.net>
+Subject: Re: x86/fpu: Don't export __kernel_fpu_{begin,end}()
+Message-ID: <20190111054058.GA27966@kroah.com>
+References: <git-mailbomb-linux-master-12209993e98c5fa1855c467f22a24e3d5b8be205@kernel.org>
+ <CAB9dFdsZb-sZixeOzrt8F50h1pnUK2W2Cxx8+xjhgd0=6xs7iw@mail.gmail.com>
+ <20190109111951.5zvnj7ls6jv56p2u@linutronix.de>
+ <20190109165235.GA8151@kroah.com>
+ <20190109170935.e6b6rwzpk6dlruu4@linutronix.de>
+ <20190110131132.GC20217@kroah.com>
+ <ba74ed88-06d0-5063-799f-c9c6ddbc7da0@llnl.gov>
+ <20190110180752.f4cnunadzzkev24m@linutronix.de>
+ <20190110182413.GA6932@kroah.com>
+ <20190111050407.4k7pkir3jqtyn22o@wunner.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190109105245.25954-1-andriy.shevchenko@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190111050407.4k7pkir3jqtyn22o@wunner.de>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 09, 2019 at 12:52:45PM +0200, Andy Shevchenko wrote:
-> New quirk enforces search for GPIO based on its type,
-> i.e. iterate over GpioIo resources only.
+On Fri, Jan 11, 2019 at 06:04:07AM +0100, Lukas Wunner wrote:
+> On Thu, Jan 10, 2019 at 07:24:13PM +0100, Greg Kroah-Hartman wrote:
+> > My tolerance for ZFS is pretty non-existant.  Sun explicitly did not
+> > want their code to work on Linux, so why would we do extra work to get
+> > their code to work properly?
 > 
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ZoL facilitates seamless r/w cross-mounting with macOS, something no
+> other filesystem allows, and that feature is critical for me to work
+> on Linux drivers for Mac hardware.  Please don't make life harder than
+> necessary for developers like me.  Your "extra work" argument seems
+> disingenuous to me, Sebastian's patch is causing extra work for
+> ZFS developers, not the kernel community.  The maintenance burden
+> for the kernel community to retain the export is zero.
 
-Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Sorry, no, we do not keep symbols exported for no in-kernel users.
+
+greg k-h
