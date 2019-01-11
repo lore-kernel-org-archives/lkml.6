@@ -4,51 +4,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B18A1C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:35:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42DCEC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:35:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 754F82184B
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:35:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 148112063F
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:35:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547217349;
-	bh=DmiHCXBvaAeplyFk+fMCzwahr0MUxk0ZwEpna96daA4=;
+	s=default; t=1547217352;
+	bh=NBWqRQglnpvjbE1B1hIoVAx5WQV9bjDWL6XPT5CtI0Q=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ou3KTTOwDoEOSH3ZpRZAlgkbPXZpHa/GqvaHMs5ZF08rnLrau4/s34J1bTwwpXtE2
-	 pjswF2GtCCvA1ybtkOrd5wRwchOwDDIzj6l5ErKUg+QzwSjDVbvxC1lX2WmyRW3Prc
-	 VMbL5HcajTn+0vpAn1ZYpAudulVSp1vWSXEWHBMQ=
+	b=0o1i/kxa6y1hDGC96HcFD4h5fTuFmezw3vQIlQA7g4aLhweK/OxediU55qDU7va2f
+	 xe2LZisF8VT2HRU3uPaPFH8sFwR8iLo6NEMyaPsuOoRgUZcgl60UUPYHPp7AT0O0SG
+	 xf6SdTsMpmkzKK7lSV2JL4LxxmpHZcyyI1fiOH2g=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390229AbfAKOfs (ORCPT
+        id S2390243AbfAKOfv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:35:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55966 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:35:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56072 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389778AbfAKOfn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:35:43 -0500
+        id S2390230AbfAKOfs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:35:48 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D82562133F;
-        Fri, 11 Jan 2019 14:35:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8E8862063F;
+        Fri, 11 Jan 2019 14:35:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547217342;
-        bh=DmiHCXBvaAeplyFk+fMCzwahr0MUxk0ZwEpna96daA4=;
+        s=default; t=1547217348;
+        bh=NBWqRQglnpvjbE1B1hIoVAx5WQV9bjDWL6XPT5CtI0Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TmJWygIEhi8XsjN+BuDsIGzkkMu3XMj2s6mN4+EzfxdvDCp9NepodzmuAi1ZnIez/
-         7+y4HXRba91gQJYZYcg/GB7nj4Ln+acpP/HD//qwEuy0vvQlb8R9ir9Ag+lYfnXAy6
-         tkivI2M4n0hydyGtUIrOJ3KWYczG96UvxJmw8PIc=
+        b=M9yONG/RJdh0pSI3RPMJcorcWhZWuqTcZBmKi63AxJSXY128d06Lh+ikqG8ZwNrJY
+         +pUTKFM5OrnHWffK6jjLds4+QrtP2EeK+6KcjI6yWnjINB3ULcFDlWb2n6Z74W152P
+         htR+f2xokfLwRJe4xIETihANqk677XrDGRlmC1pk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Fabio Estevam <festevam@gmail.com>,
-        Troy Kisky <troy.kisky@boundarydevices.com>,
-        Shawn Guo <shawnguo@kernel.org>,
+        stable@vger.kernel.org, Neel Mehta <nmehta@google.com>,
+        Shane Huntley <shuntley@google.com>,
+        Heather Adkins <argv@google.com>,
+        Florian Westphal <fw@strlen.de>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 009/148] ARM: dts: imx7d-nitrogen7: Fix the description of the Wifi clock
-Date:   Fri, 11 Jan 2019 15:13:07 +0100
-Message-Id: <20190111131114.710924785@linuxfoundation.org>
+Subject: [PATCH 4.19 021/148] netfilter: seqadj: re-load tcp header pointer after possible head reallocation
+Date:   Fri, 11 Jan 2019 15:13:19 +0100
+Message-Id: <20190111131115.167895873@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131114.337122649@linuxfoundation.org>
 References: <20190111131114.337122649@linuxfoundation.org>
@@ -67,55 +69,63 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit f15096f12a4e9340168df5fdd9201aa8ed60d59e ]
+[ Upstream commit 530aad77010b81526586dfc09130ec875cd084e4 ]
 
-According to bindings/regulator/fixed-regulator.txt the 'clocks' and
-'clock-names' properties are not valid ones.
+When adjusting sack block sequence numbers, skb_make_writable() gets
+called to make sure tcp options are all in the linear area, and buffer
+is not shared.
 
-In order to turn on the Wifi clock the correct location for describing
-the CLKO2 clock is via a mmc-pwrseq handle, so do it accordingly.
+This can cause tcp header pointer to get reallocated, so we must
+reaload it to avoid memory corruption.
 
-Fixes: 56354959cfec ("ARM: dts: imx: add Boundary Devices Nitrogen7 board")
-Signed-off-by: Fabio Estevam <festevam@gmail.com>
-Acked-by: Troy Kisky <troy.kisky@boundarydevices.com>
-Signed-off-by: Shawn Guo <shawnguo@kernel.org>
+This bug pre-dates git history.
+
+Reported-by: Neel Mehta <nmehta@google.com>
+Reported-by: Shane Huntley <shuntley@google.com>
+Reported-by: Heather Adkins <argv@google.com>
+Signed-off-by: Florian Westphal <fw@strlen.de>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/imx7d-nitrogen7.dts | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ net/netfilter/nf_conntrack_seqadj.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm/boot/dts/imx7d-nitrogen7.dts b/arch/arm/boot/dts/imx7d-nitrogen7.dts
-index d8aac4a2d02a..177d21fdeb28 100644
---- a/arch/arm/boot/dts/imx7d-nitrogen7.dts
-+++ b/arch/arm/boot/dts/imx7d-nitrogen7.dts
-@@ -86,13 +86,17 @@
- 		compatible = "regulator-fixed";
- 		regulator-min-microvolt = <3300000>;
- 		regulator-max-microvolt = <3300000>;
--		clocks = <&clks IMX7D_CLKO2_ROOT_DIV>;
--		clock-names = "slow";
- 		regulator-name = "reg_wlan";
- 		startup-delay-us = <70000>;
- 		gpio = <&gpio4 21 GPIO_ACTIVE_HIGH>;
- 		enable-active-high;
- 	};
-+
-+	usdhc2_pwrseq: usdhc2_pwrseq {
-+		compatible = "mmc-pwrseq-simple";
-+		clocks = <&clks IMX7D_CLKO2_ROOT_DIV>;
-+		clock-names = "ext_clock";
-+	};
- };
+diff --git a/net/netfilter/nf_conntrack_seqadj.c b/net/netfilter/nf_conntrack_seqadj.c
+index a975efd6b8c3..9da303461069 100644
+--- a/net/netfilter/nf_conntrack_seqadj.c
++++ b/net/netfilter/nf_conntrack_seqadj.c
+@@ -115,12 +115,12 @@ static void nf_ct_sack_block_adjust(struct sk_buff *skb,
+ /* TCP SACK sequence number adjustment */
+ static unsigned int nf_ct_sack_adjust(struct sk_buff *skb,
+ 				      unsigned int protoff,
+-				      struct tcphdr *tcph,
+ 				      struct nf_conn *ct,
+ 				      enum ip_conntrack_info ctinfo)
+ {
+-	unsigned int dir, optoff, optend;
++	struct tcphdr *tcph = (void *)skb->data + protoff;
+ 	struct nf_conn_seqadj *seqadj = nfct_seqadj(ct);
++	unsigned int dir, optoff, optend;
  
- &adc1 {
-@@ -375,6 +379,7 @@
- 	bus-width = <4>;
- 	non-removable;
- 	vmmc-supply = <&reg_wlan>;
-+	mmc-pwrseq = <&usdhc2_pwrseq>;
- 	cap-power-off-card;
- 	keep-power-in-suspend;
- 	status = "okay";
+ 	optoff = protoff + sizeof(struct tcphdr);
+ 	optend = protoff + tcph->doff * 4;
+@@ -128,6 +128,7 @@ static unsigned int nf_ct_sack_adjust(struct sk_buff *skb,
+ 	if (!skb_make_writable(skb, optend))
+ 		return 0;
+ 
++	tcph = (void *)skb->data + protoff;
+ 	dir = CTINFO2DIR(ctinfo);
+ 
+ 	while (optoff < optend) {
+@@ -207,7 +208,7 @@ int nf_ct_seq_adjust(struct sk_buff *skb,
+ 		 ntohl(newack));
+ 	tcph->ack_seq = newack;
+ 
+-	res = nf_ct_sack_adjust(skb, protoff, tcph, ct, ctinfo);
++	res = nf_ct_sack_adjust(skb, protoff, ct, ctinfo);
+ out:
+ 	spin_unlock_bh(&ct->lock);
+ 
 -- 
 2.19.1
 
