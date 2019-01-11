@@ -2,213 +2,103 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C87B9C43612
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:54:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 464C0C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:54:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9089E206B6
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:54:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 188A7206B6
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:54:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547218462;
-	bh=XFJjVu+TJitMF1LrYxSYeb/43obxTtDJMav6khpAtfM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=FNLQ7Tl6dsnn6Zz8vnq3LiaN5YmZ+8qcbnJ8R3eA+SUyRzjsQNEI9lNqN4vhajHXY
-	 RcfKL0zEbQZzyXS7mupBDxBGx5VES557RT9mS4aHQ0UHn99Lq+EdBul7L1AWyvyEKV
-	 IE8NN5v1j71x1Sp49xpfzVUC6M61KRYukmHsgO38=
+	s=default; t=1547218469;
+	bh=S6ElH7k6esPaLtiC5jX9RX0OZYVYFi1FXOVpTZQXqGU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=ioloPppty40cGNn8DyMY+KIAcIcMGKGUaHvg/TD6i0F4jicUPJIBfVL4ZDtAaU+Cj
+	 Dk14Rf9mx+SSdi8saNyelyUCLPG8tayLmzWcGTK0N+GJLqwv9+X6XHfFD2O+OUVdAk
+	 XGkXfqRXRvIBTKxpfliK5TZSKOexPaE6EqYmv/0s=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390653AbfAKOhe (ORCPT
+        id S2391695AbfAKOy2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:37:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58014 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390613AbfAKOha (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:37:30 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9A0512063F;
-        Fri, 11 Jan 2019 14:37:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547217449;
-        bh=XFJjVu+TJitMF1LrYxSYeb/43obxTtDJMav6khpAtfM=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zamTUg3m+sniuH0DaPVkwxWIT/roF2nHMB1UlAMblPWUWLj7OGY9JC+2n/CiqRFFe
-         3PfZCoR06vd45ONd8l2K4e4iwlWOIReQvafQ0hD1UWDUiVC0pm0NjpNGlQcVLqlLuP
-         oRB7McKfYBya2ipvF7ZTltLbmpuspj3AQ0o2yteU=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Falcon <tlfalcon@linux.ibm.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 026/148] ibmvnic: Convert reset work item mutex to spin lock
-Date:   Fri, 11 Jan 2019 15:13:24 +0100
-Message-Id: <20190111131115.351420445@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190111131114.337122649@linuxfoundation.org>
-References: <20190111131114.337122649@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+        Fri, 11 Jan 2019 09:54:28 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:40773 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733133AbfAKOy0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:54:26 -0500
+Received: by mail-ot1-f67.google.com with SMTP id s5so13299437oth.7;
+        Fri, 11 Jan 2019 06:54:26 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=AxBTm/miHcpzTWrZ6oK4vYugnLB4OJ4qPCXeYxBcs9I=;
+        b=LupztZU59vq4bf2BLj1nqyWo5GuK24RfUht9oLknUXNU+zdZkpOCw6QF9sAqYVcR65
+         CGmNg0xmh3ats325UUopYp8C4PZ+SlxSC/xkEtEGMhfYyM0IDdENU6mzldUFH6H3agug
+         yR9ZskfXeIruTmMNzb6l7IIvaWkhmASpC7XnGvkVV+nnkLfolLfEekYxl6/9F02qdnfU
+         cR/ivk+A4/hDKbzJIOuIgR2QIgHHn4CXWBXmVgtZek+wYSFpAmemdSW1XfKNZqSJY318
+         12tYOjPU2Ro1wZpShMngWx6dxjwHpWHEka69RZanUSNBvp3qiCbE57yMKK8IoL75hyDv
+         SN/w==
+X-Gm-Message-State: AJcUukcsxXtByXBSlLT6cEuTCfq1qPM1WE82Hkk1tUbkNt8zVJWY6WNF
+        7HEyxaoqGnUS3jH0WVIe6g==
+X-Google-Smtp-Source: ALg8bN7V0LmbKUmrNricS3ji6iXmjFN22dEwo5X+zsrnshlMFJPUSzs6OlleaePLksTmKgNq0jURtg==
+X-Received: by 2002:a9d:4b0f:: with SMTP id q15mr5119413otf.201.1547218465767;
+        Fri, 11 Jan 2019 06:54:25 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id d3sm35589465otb.79.2019.01.11.06.54.24
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 11 Jan 2019 06:54:24 -0800 (PST)
+Date:   Fri, 11 Jan 2019 08:54:24 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Heiko Stuebner <heiko@sntech.de>
+Cc:     Johan Jonker <jbx6244@gmail.com>, hjc@rock-chips.com,
+        airlied@linux.ie, mark.rutland@arm.com, mturquette@baylibre.com,
+        sboyd@kernel.org, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2 3/7] drm: rockchip: vop: add rk3066 vop definitions
+Message-ID: <20190111145424.GA21604@bogus>
+References: <20181229133318.18128-1-jbx6244@gmail.com>
+ <20181229133318.18128-4-jbx6244@gmail.com>
+ <154632658.xpTMZOjgxT@phil>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <154632658.xpTMZOjgxT@phil>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.19-stable review patch.  If anyone has any objections, please let me know.
+On Sun, Dec 30, 2018 at 06:22:00PM +0100, Heiko Stuebner wrote:
+> Hi Johan,
+> 
+> Am Samstag, 29. Dezember 2018, 14:33:14 CET schrieb Johan Jonker:
+> > From: Mark Yao <mark.yao@rock-chips.com>
+> > 
+> > This patch adds the rk3066 VOP definitions.
+> > 
+> > The VOP or LCD Controller serves as interface between
+> > framebuffer memory and a display device (LCD panel or TV set).
+> > 
+> > This SOC has two symmetrical LCDC's for a dual panel application.
+> > 
+> > A LCDC has 5 display layers.
+> > Only 3 are used here.
+> > 
+> > - Video layer 0 (Win0)
+> > - Video layer 1 (Win1)
+> > - OSD layer     (Win2)
+> 
+> Patch itself looks good, we'll need to wait a bit to give Rob a chance
+> to look at the (simple) dt-binding change and I'll drop the paragraph
+> about the display layers when applying.
 
-------------------
+Don't wait on me for simple oneline compatible additions.
 
-[ Upstream commit 6c5c7489089608d89b7ce310bca44812e2b0a4a5 ]
+Acked-by: Rob Herring <robh@kernel.org>
 
-ibmvnic_reset can create and schedule a reset work item from
-an IRQ context, so do not use a mutex, which can sleep. Convert
-the reset work item mutex to a spin lock. Locking debugger generated
-the trace output below.
-
-BUG: sleeping function called from invalid context at kernel/locking/mutex.c:908
-in_atomic(): 1, irqs_disabled(): 1, pid: 120, name: kworker/8:1
-4 locks held by kworker/8:1/120:
- #0: 0000000017c05720 ((wq_completion)"events"){+.+.}, at: process_one_work+0x188/0x710
- #1: 00000000ace90706 ((linkwatch_work).work){+.+.}, at: process_one_work+0x188/0x710
- #2: 000000007632871f (rtnl_mutex){+.+.}, at: rtnl_lock+0x30/0x50
- #3: 00000000fc36813a (&(&crq->lock)->rlock){..-.}, at: ibmvnic_tasklet+0x88/0x2010 [ibmvnic]
-irq event stamp: 26293
-hardirqs last  enabled at (26292): [<c000000000122468>] tasklet_action_common.isra.12+0x78/0x1c0
-hardirqs last disabled at (26293): [<c000000000befce8>] _raw_spin_lock_irqsave+0x48/0xf0
-softirqs last  enabled at (26288): [<c000000000a8ac78>] dev_deactivate_queue.constprop.28+0xc8/0x160
-softirqs last disabled at (26289): [<c0000000000306e0>] call_do_softirq+0x14/0x24
-CPU: 8 PID: 120 Comm: kworker/8:1 Kdump: loaded Not tainted 4.20.0-rc6 #6
-Workqueue: events linkwatch_event
-Call Trace:
-[c0000003fffa7a50] [c000000000bc83e4] dump_stack+0xe8/0x164 (unreliable)
-[c0000003fffa7aa0] [c00000000015ba0c] ___might_sleep+0x2dc/0x320
-[c0000003fffa7b20] [c000000000be960c] __mutex_lock+0x8c/0xb40
-[c0000003fffa7c30] [d000000006202ac8] ibmvnic_reset+0x78/0x330 [ibmvnic]
-[c0000003fffa7cc0] [d0000000062097f4] ibmvnic_tasklet+0x1054/0x2010 [ibmvnic]
-[c0000003fffa7e00] [c0000000001224c8] tasklet_action_common.isra.12+0xd8/0x1c0
-[c0000003fffa7e60] [c000000000bf1238] __do_softirq+0x1a8/0x64c
-[c0000003fffa7f90] [c0000000000306e0] call_do_softirq+0x14/0x24
-[c0000003f3f87980] [c00000000001ba50] do_softirq_own_stack+0x60/0xb0
-[c0000003f3f879c0] [c0000000001218a8] do_softirq+0xa8/0x100
-[c0000003f3f879f0] [c000000000121a74] __local_bh_enable_ip+0x174/0x180
-[c0000003f3f87a60] [c000000000bf003c] _raw_spin_unlock_bh+0x5c/0x80
-[c0000003f3f87a90] [c000000000a8ac78] dev_deactivate_queue.constprop.28+0xc8/0x160
-[c0000003f3f87ad0] [c000000000a8c8b0] dev_deactivate_many+0xd0/0x520
-[c0000003f3f87b70] [c000000000a8cd40] dev_deactivate+0x40/0x60
-[c0000003f3f87ba0] [c000000000a5e0c4] linkwatch_do_dev+0x74/0xd0
-[c0000003f3f87bd0] [c000000000a5e694] __linkwatch_run_queue+0x1a4/0x1f0
-[c0000003f3f87c30] [c000000000a5e728] linkwatch_event+0x48/0x60
-[c0000003f3f87c50] [c0000000001444e8] process_one_work+0x238/0x710
-[c0000003f3f87d20] [c000000000144a48] worker_thread+0x88/0x4e0
-[c0000003f3f87db0] [c00000000014e3a8] kthread+0x178/0x1c0
-[c0000003f3f87e20] [c00000000000bfd0] ret_from_kernel_thread+0x5c/0x6c
-
-Signed-off-by: Thomas Falcon <tlfalcon@linux.ibm.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/net/ethernet/ibm/ibmvnic.c | 16 +++++++++-------
- drivers/net/ethernet/ibm/ibmvnic.h |  2 +-
- 2 files changed, 10 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/net/ethernet/ibm/ibmvnic.c b/drivers/net/ethernet/ibm/ibmvnic.c
-index 5ab21a1b5444..5058bd83bdd6 100644
---- a/drivers/net/ethernet/ibm/ibmvnic.c
-+++ b/drivers/net/ethernet/ibm/ibmvnic.c
-@@ -1939,8 +1939,9 @@ static int do_hard_reset(struct ibmvnic_adapter *adapter,
- static struct ibmvnic_rwi *get_next_rwi(struct ibmvnic_adapter *adapter)
- {
- 	struct ibmvnic_rwi *rwi;
-+	unsigned long flags;
- 
--	mutex_lock(&adapter->rwi_lock);
-+	spin_lock_irqsave(&adapter->rwi_lock, flags);
- 
- 	if (!list_empty(&adapter->rwi_list)) {
- 		rwi = list_first_entry(&adapter->rwi_list, struct ibmvnic_rwi,
-@@ -1950,7 +1951,7 @@ static struct ibmvnic_rwi *get_next_rwi(struct ibmvnic_adapter *adapter)
- 		rwi = NULL;
- 	}
- 
--	mutex_unlock(&adapter->rwi_lock);
-+	spin_unlock_irqrestore(&adapter->rwi_lock, flags);
- 	return rwi;
- }
- 
-@@ -2025,6 +2026,7 @@ static int ibmvnic_reset(struct ibmvnic_adapter *adapter,
- 	struct list_head *entry, *tmp_entry;
- 	struct ibmvnic_rwi *rwi, *tmp;
- 	struct net_device *netdev = adapter->netdev;
-+	unsigned long flags;
- 	int ret;
- 
- 	if (adapter->state == VNIC_REMOVING ||
-@@ -2041,13 +2043,13 @@ static int ibmvnic_reset(struct ibmvnic_adapter *adapter,
- 		goto err;
- 	}
- 
--	mutex_lock(&adapter->rwi_lock);
-+	spin_lock_irqsave(&adapter->rwi_lock, flags);
- 
- 	list_for_each(entry, &adapter->rwi_list) {
- 		tmp = list_entry(entry, struct ibmvnic_rwi, list);
- 		if (tmp->reset_reason == reason) {
- 			netdev_dbg(netdev, "Skipping matching reset\n");
--			mutex_unlock(&adapter->rwi_lock);
-+			spin_unlock_irqrestore(&adapter->rwi_lock, flags);
- 			ret = EBUSY;
- 			goto err;
- 		}
-@@ -2055,7 +2057,7 @@ static int ibmvnic_reset(struct ibmvnic_adapter *adapter,
- 
- 	rwi = kzalloc(sizeof(*rwi), GFP_KERNEL);
- 	if (!rwi) {
--		mutex_unlock(&adapter->rwi_lock);
-+		spin_unlock_irqrestore(&adapter->rwi_lock, flags);
- 		ibmvnic_close(netdev);
- 		ret = ENOMEM;
- 		goto err;
-@@ -2069,7 +2071,7 @@ static int ibmvnic_reset(struct ibmvnic_adapter *adapter,
- 	}
- 	rwi->reset_reason = reason;
- 	list_add_tail(&rwi->list, &adapter->rwi_list);
--	mutex_unlock(&adapter->rwi_lock);
-+	spin_unlock_irqrestore(&adapter->rwi_lock, flags);
- 	adapter->resetting = true;
- 	netdev_dbg(adapter->netdev, "Scheduling reset (reason %d)\n", reason);
- 	schedule_work(&adapter->ibmvnic_reset);
-@@ -4700,7 +4702,7 @@ static int ibmvnic_probe(struct vio_dev *dev, const struct vio_device_id *id)
- 
- 	INIT_WORK(&adapter->ibmvnic_reset, __ibmvnic_reset);
- 	INIT_LIST_HEAD(&adapter->rwi_list);
--	mutex_init(&adapter->rwi_lock);
-+	spin_lock_init(&adapter->rwi_lock);
- 	adapter->resetting = false;
- 
- 	adapter->mac_change_pending = false;
-diff --git a/drivers/net/ethernet/ibm/ibmvnic.h b/drivers/net/ethernet/ibm/ibmvnic.h
-index 735f481b1870..09465397b7ff 100644
---- a/drivers/net/ethernet/ibm/ibmvnic.h
-+++ b/drivers/net/ethernet/ibm/ibmvnic.h
-@@ -1068,7 +1068,7 @@ struct ibmvnic_adapter {
- 	struct tasklet_struct tasklet;
- 	enum vnic_state state;
- 	enum ibmvnic_reset_reason reset_reason;
--	struct mutex rwi_lock;
-+	spinlock_t rwi_lock;
- 	struct list_head rwi_list;
- 	struct work_struct ibmvnic_reset;
- 	bool resetting;
--- 
-2.19.1
-
-
-
+Rob
