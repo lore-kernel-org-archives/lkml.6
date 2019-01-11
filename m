@@ -7,48 +7,47 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD8A6C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:19:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73432C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:19:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 732D02183F
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:19:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 376CC2177B
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:19:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547216366;
-	bh=ezxktuBPXy+XkMrISUMKTKcZKAUUO/sN2tn/dizpP50=;
+	s=default; t=1547216377;
+	bh=wQ8NCEzr1QqEFzYRdWiQLYZD93QPD/iexOizbwwrBLg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=CseUPJ/Ci36EeAoLwu3MDL00vft5nqwWiUrEVbiJTzWzowmSuOSNOQhn/jTAzbZWI
-	 /oyJ6WAQe0Fx2zjoIJXP89LtYnXpOVkM2zLCey7QKQ0mBxICrxUY+zs03Ili26wte9
-	 3/vUGiwmRMllaLeavybIrMsuwVgSinkCP4af0uxA=
+	b=OVRzbg2DHPlxkZmPP3cD1lXzVsCz42h5urPF6gkXCkNN7qI/VjiHzhbRKc9VRmhCj
+	 l32o67HrcYxwpKyuw4J8BF0sk8sgG5YxXhKsxFRPJ1ATwA+eU1KtIR4SXhFVrVfs4O
+	 pA7i5kjqAGPfb60jUgkNu2E34GHUEGgPQgVEEslI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731807AbfAKOTZ (ORCPT
+        id S2388038AbfAKOTf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:19:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36192 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:19:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36474 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731683AbfAKOTT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:19:19 -0500
+        id S1731776AbfAKOT2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:19:28 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 538DD2177B;
-        Fri, 11 Jan 2019 14:19:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3DB5C2183F;
+        Fri, 11 Jan 2019 14:19:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547216358;
-        bh=ezxktuBPXy+XkMrISUMKTKcZKAUUO/sN2tn/dizpP50=;
+        s=default; t=1547216367;
+        bh=wQ8NCEzr1QqEFzYRdWiQLYZD93QPD/iexOizbwwrBLg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zMUY/eJj1SJ21Wbt/msSYNUCffURVsjIhvrpr7xGrCzzYMHT0yk0G3HGfVJgxY84L
-         YbdwTWcelZLpBw7NWxe5aymOkPj5r0JyfbPm3WtYzBZ6d2MwBeuJLNRq/7ERwrXa2C
-         ArqTsFPK+OrIR1GWBoCYLsNmYLHD3JykUHGtPXO8=
+        b=GLCr6MX24/CK8cI4rqVzklkC5rzEo5RnYsIYCBnfu+F3/nfTaOZyV2a1ka9iwN4uN
+         Cn44zDSqGPyUhZYIT2pqAnVcsGUSWvinWwXzw1BDSymubIjAwmLCb7MPQYI7gCSfnF
+         4bdM+8cAd9T7+ApuZOvhCrdqmpnaQXUIXXyig5y4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Omar Sandoval <osandov@fb.com>, Jens Axboe <axboe@kernel.dk>,
-        Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Subject: [PATCH 4.4 71/88] block: break discard submissions into the user defined size
-Date:   Fri, 11 Jan 2019 15:08:40 +0100
-Message-Id: <20190111131057.981935488@linuxfoundation.org>
+        stable@vger.kernel.org, "Yavuz, Tuba" <tuba@ece.ufl.edu>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.4 73/88] ALSA: cs46xx: Potential NULL dereference in probe
+Date:   Fri, 11 Jan 2019 15:08:42 +0100
+Message-Id: <20190111131058.238706172@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131045.137499039@linuxfoundation.org>
 References: <20190111131045.137499039@linuxfoundation.org>
@@ -67,40 +66,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jens Axboe <axboe@kernel.dk>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-commit af097f5d199e2aa3ab3ef777f0716e487b8f7b08 upstream.
+commit 1524f4e47f90b27a3ac84efbdd94c63172246a6f upstream.
 
-Don't build discards bigger than what the user asked for, if the
-user decided to limit the size by writing to 'discard_max_bytes'.
+The "chip->dsp_spos_instance" can be NULL on some of the ealier error
+paths in snd_cs46xx_create().
 
-Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
-Reviewed-by: Omar Sandoval <osandov@fb.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Reported-by: "Yavuz, Tuba" <tuba@ece.ufl.edu>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- block/blk-lib.c |   10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
 
---- a/block/blk-lib.c
-+++ b/block/blk-lib.c
-@@ -81,8 +81,14 @@ int blkdev_issue_discard(struct block_de
- 			break;
- 		}
+---
+ sound/pci/cs46xx/dsp_spos.c |    3 +++
+ 1 file changed, 3 insertions(+)
+
+--- a/sound/pci/cs46xx/dsp_spos.c
++++ b/sound/pci/cs46xx/dsp_spos.c
+@@ -899,6 +899,9 @@ int cs46xx_dsp_proc_done (struct snd_cs4
+ 	struct dsp_spos_instance * ins = chip->dsp_spos_instance;
+ 	int i;
  
--		/* Make sure bi_size doesn't overflow */
--		req_sects = min_t(sector_t, nr_sects, UINT_MAX >> 9);
-+		/*
-+		 * Issue in chunks of the user defined max discard setting,
-+		 * ensuring that bi_size doesn't overflow
-+		 */
-+		req_sects = min_t(sector_t, nr_sects,
-+					q->limits.max_discard_sectors);
-+		if (req_sects > UINT_MAX >> 9)
-+			req_sects = UINT_MAX >> 9;
++	if (!ins)
++		return 0;
++
+ 	snd_info_free_entry(ins->proc_sym_info_entry);
+ 	ins->proc_sym_info_entry = NULL;
  
- 		/*
- 		 * If splitting a request, and the next starting sector would be
 
 
