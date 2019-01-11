@@ -7,47 +7,50 @@ X-Spam-Status: No, score=-13.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 744E3C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:54:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 724CDC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:54:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 414BB21872
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:54:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3A285206B6
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:54:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547218445;
-	bh=WvmyV0pnUZdP08F9OvmayR12Lg+ykRElKGNEOxcoGmk=;
+	s=default; t=1547218447;
+	bh=yss41sBtXTzeXZKQ9fWDbZkdgsGDf+7kKA/KDW0btSs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=B9pQ12gsoHIfu3z0ATTWkgjIq025SZV51qYrPqtk/q/2wGnO1z11WenxozViwV9Pa
-	 DaGWkKsvsJZgitkxT4PxwmZlmV6T5XfeB6c+pJeJWKDV4E1swfjIiZYO2yKS79oDON
-	 YZe+gESCB9T5Vuftx5JA52ZshZXPRF/Y5bCud3FQ=
+	b=xIYWx7ZhbGT0flukqt8a/3jh+0xbm8RAhgb5U/kku9IiQGTnA0Ae23AtDgmZLVjgw
+	 dTjAQIaVm3jZJJPRDX/fUwMl5J1Xd5N2gh5Z/q5UFNZy1/m7V91qc3qyFtWk41cH94
+	 H/XiT1hE8LH6ytHQXlkgLuQLG2eEZXLyC2zxjWmQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390687AbfAKOhq (ORCPT
+        id S2391239AbfAKOyG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:37:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58132 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:54:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58352 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390613AbfAKOhf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:37:35 -0500
+        id S2390682AbfAKOhp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:37:45 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DDF06204EC;
-        Fri, 11 Jan 2019 14:37:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 94760204EC;
+        Fri, 11 Jan 2019 14:37:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547217454;
-        bh=WvmyV0pnUZdP08F9OvmayR12Lg+ykRElKGNEOxcoGmk=;
+        s=default; t=1547217465;
+        bh=yss41sBtXTzeXZKQ9fWDbZkdgsGDf+7kKA/KDW0btSs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oXJSsXI/RnR730eODr1GvrRWDWBXYVYCEANxju4Le/zgihTdOATWt0NeUYGHDPDpN
-         jq6C1NNU7QrLitibinWCN+kvIgiHjLxhI8TCZEPx4DqOSGqcCgiMob54VPfQ2RQ7wA
-         H4aQyt3NnMcgBNl12LluEzyutT7rBduf+6/05k3k=
+        b=VRTHpseUvvwEtmUOM/CjBJD1t7IjSe+u6Pk0iljgjV/iiyRwkyRV6WnE7dzZknvKQ
+         6v+HrcHrzx+qjFAWi5jsw8ew03Sht8Q20FqMdkTZjK5yU8xdp3ORDjJvahXgw8HvAq
+         72g3YO48hfgv1CAuHyQIgy3LLvZPXhSNHuWxHK18=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>,
-        Stefan Schmidt <stefan@datenfreihafen.org>,
+        stable@vger.kernel.org,
+        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Gregory CLEMENT <gregory.clement@bootlin.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 028/148] ieee802154: ca8210: fix possible u8 overflow in ca8210_rx_done
-Date:   Fri, 11 Jan 2019 15:13:26 +0100
-Message-Id: <20190111131115.431998226@linuxfoundation.org>
+Subject: [PATCH 4.19 071/148] gpio: mvebu: only fail on missing clk if pwm is actually to be used
+Date:   Fri, 11 Jan 2019 15:14:09 +0100
+Message-Id: <20190111131117.078147091@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131114.337122649@linuxfoundation.org>
 References: <20190111131114.337122649@linuxfoundation.org>
@@ -66,47 +69,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 8e41cae64b08fe2e86a9ffb88b295c6b4b3a3322 ]
+[ Upstream commit c8da642d41a6811c21177c9994aa7dc35be67d46 ]
 
-gcc warning this:
+The gpio IP on Armada 370 at offset 0x18180 has neither a clk nor pwm
+registers. So there is no need for a clk as the pwm isn't used anyhow.
+So only check for the clk in the presence of the pwm registers. This fixes
+a failure to probe the gpio driver for the above mentioned gpio device.
 
-drivers/net/ieee802154/ca8210.c:730:10: warning:
- comparison is always false due to limited range of data type [-Wtype-limits]
-
-'len' is u8 type, we get it from buf[1] adding 2, which can overflow.
-This patch change the type of 'len' to unsigned int to avoid this,also fix
-the gcc warning.
-
-Fixes: ded845a781a5 ("ieee802154: Add CA8210 IEEE 802.15.4 device driver")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Signed-off-by: Stefan Schmidt <stefan@datenfreihafen.org>
+Fixes: 757642f9a584 ("gpio: mvebu: Add limited PWM support")
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+Reviewed-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ieee802154/ca8210.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpio/gpio-mvebu.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/ieee802154/ca8210.c b/drivers/net/ieee802154/ca8210.c
-index 0ff5a403a8dc..b2ff903a9cb6 100644
---- a/drivers/net/ieee802154/ca8210.c
-+++ b/drivers/net/ieee802154/ca8210.c
-@@ -721,7 +721,7 @@ static void ca8210_mlme_reset_worker(struct work_struct *work)
- static void ca8210_rx_done(struct cas_control *cas_ctl)
- {
- 	u8 *buf;
--	u8 len;
-+	unsigned int len;
- 	struct work_priv_container *mlme_reset_wpc;
- 	struct ca8210_priv *priv = cas_ctl->priv;
+diff --git a/drivers/gpio/gpio-mvebu.c b/drivers/gpio/gpio-mvebu.c
+index 6e02148c208b..adc768f908f1 100644
+--- a/drivers/gpio/gpio-mvebu.c
++++ b/drivers/gpio/gpio-mvebu.c
+@@ -773,9 +773,6 @@ static int mvebu_pwm_probe(struct platform_device *pdev,
+ 				     "marvell,armada-370-gpio"))
+ 		return 0;
  
-@@ -730,7 +730,7 @@ static void ca8210_rx_done(struct cas_control *cas_ctl)
- 	if (len > CA8210_SPI_BUF_SIZE) {
- 		dev_crit(
- 			&priv->spi->dev,
--			"Received packet len (%d) erroneously long\n",
-+			"Received packet len (%u) erroneously long\n",
- 			len
- 		);
- 		goto finish;
+-	if (IS_ERR(mvchip->clk))
+-		return PTR_ERR(mvchip->clk);
+-
+ 	/*
+ 	 * There are only two sets of PWM configuration registers for
+ 	 * all the GPIO lines on those SoCs which this driver reserves
+@@ -786,6 +783,9 @@ static int mvebu_pwm_probe(struct platform_device *pdev,
+ 	if (!res)
+ 		return 0;
+ 
++	if (IS_ERR(mvchip->clk))
++		return PTR_ERR(mvchip->clk);
++
+ 	/*
+ 	 * Use set A for lines of GPIO chip with id 0, B for GPIO chip
+ 	 * with id 1. Don't allow further GPIO chips to be used for PWM.
 -- 
 2.19.1
 
