@@ -7,46 +7,49 @@ X-Spam-Status: No, score=-13.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C1A3C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:03:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 993FCC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:03:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DFCAF20874
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:03:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6A71320874
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:03:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547219024;
-	bh=C/hfEG3elNUSBJAw5OtSt+T9uOZuLNDbp+oXKyV6Gak=;
+	s=default; t=1547219037;
+	bh=/ic5ItVptzdmdFINa/UKt61bt8joxR08qHNuQupmn+M=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=QICupVbzseamv0EzpxY0doVE0tXFjHZ0wA4PUA56gIrYz4FjFK1DH1AKEicUC/1re
-	 huQsGDbhMQH6zUhfQBgE4oSsRVDwcNGiSttEH5X9U7slZChmA8Tpl5jZt/vkicUMvI
-	 gYvY2FO1mBUe+tJ8rG4NjsDgQ6alnttIbPsTlFFE=
+	b=K2kimn8noWRlzIM8396uBArU11YV98qoAEzZUchxOx8txZYJmfXCVYAh1/ypkK3Iy
+	 Gq/XN8ykKBE5a/Ul8uzjXheHh9grtPJ8Xh2ryiW0gG8WV+pSQk2Pgx7GSnAlJHmxRD
+	 O/IFXX00orzVFbu8rvFEqeTmSrkqDcUFdoJJgFS4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391841AbfAKPDm (ORCPT
+        id S2391845AbfAKPDz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 10:03:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50256 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 10:03:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50122 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389029AbfAKOar (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:30:47 -0500
+        id S2389000AbfAKOam (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:30:42 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AC42B2063F;
-        Fri, 11 Jan 2019 14:30:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 177C921841;
+        Fri, 11 Jan 2019 14:30:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547217047;
-        bh=C/hfEG3elNUSBJAw5OtSt+T9uOZuLNDbp+oXKyV6Gak=;
+        s=default; t=1547217041;
+        bh=/ic5ItVptzdmdFINa/UKt61bt8joxR08qHNuQupmn+M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1HPVnNvwchE8Bgs3auPYqhmtoJj/NtL2vnIhedX24MNV1Y0D6QhHRGsKNLMud70Nd
-         RP/iN1k0AEd8chwLwegRnjzE3gGMGEn8MiBsy3UNCC5GvO5Q4zkNcW1iaoN3F/qJ/0
-         32qSisVwMEeYKd921KhRIwVZbg6H9ceeJrBNbVok=
+        b=Bf++eQbtg+KF2BG7SXTBTwnAfIAiG2Swovz1esXcFS4ehRlZwd5C2CGIhragL9ljc
+         Jn/RfiUGS5a0fQYUExTX6qLI3elaJmIcUYF7Qv2ollRTioxVlLrOTTmglvHWj3eA34
+         sHzfUbDwlDMdJpOFFZQFtUJ0Nll+SmMXAYMHKswY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org, Stefan Assmann <sassmann@kpanic.de>,
+        Andrew Bowers <andrewx.bowers@intel.com>,
+        Jacob Keller <jacob.e.keller@intel.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 003/105] powerpc/mm: Fix linux page tables build with some configs
-Date:   Fri, 11 Jan 2019 15:13:34 +0100
-Message-Id: <20190111131103.272001621@linuxfoundation.org>
+Subject: [PATCH 4.14 020/105] i40e: fix mac filter delete when setting mac address
+Date:   Fri, 11 Jan 2019 15:13:51 +0100
+Message-Id: <20190111131104.953808754@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131102.899065735@linuxfoundation.org>
 References: <20190111131102.899065735@linuxfoundation.org>
@@ -65,34 +68,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 462951cd32e1496dc64b00051dfb777efc8ae5d8 ]
+[ Upstream commit 158daed16efb1170694e420ae06ba8ba954d82e5 ]
 
-For some configs the build fails with:
+A previous commit moved the ether_addr_copy() in i40e_set_mac() before
+the mac filter del/add to avoid a race. However it wasn't taken into
+account that this alters the mac address being handed to
+i40e_del_mac_filter().
 
-  arch/powerpc/mm/dump_linuxpagetables.c: In function 'populate_markers':
-  arch/powerpc/mm/dump_linuxpagetables.c:306:39: error: 'PKMAP_BASE' undeclared (first use in this function)
-  arch/powerpc/mm/dump_linuxpagetables.c:314:50: error: 'LAST_PKMAP' undeclared (first use in this function)
+Also changed i40e_add_mac_filter() to operate on netdev->dev_addr,
+hopefully that makes the code easier to read.
 
-These come from highmem.h, including that fixes the build.
+Fixes: 458867b2ca0c ("i40e: don't remove netdev->dev_addr when syncing uc list")
 
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Stefan Assmann <sassmann@kpanic.de>
+Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
+Acked-by: Jacob Keller <jacob.e.keller@intel.com>
+Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/mm/dump_linuxpagetables.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/ethernet/intel/i40e/i40e_main.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/arch/powerpc/mm/dump_linuxpagetables.c b/arch/powerpc/mm/dump_linuxpagetables.c
-index 31c1c61afaa4..0bbaf7344872 100644
---- a/arch/powerpc/mm/dump_linuxpagetables.c
-+++ b/arch/powerpc/mm/dump_linuxpagetables.c
-@@ -19,6 +19,7 @@
- #include <linux/hugetlb.h>
- #include <linux/io.h>
- #include <linux/mm.h>
-+#include <linux/highmem.h>
- #include <linux/sched.h>
- #include <linux/seq_file.h>
- #include <asm/fixmap.h>
+diff --git a/drivers/net/ethernet/intel/i40e/i40e_main.c b/drivers/net/ethernet/intel/i40e/i40e_main.c
+index 176c99b8251d..904b42becd45 100644
+--- a/drivers/net/ethernet/intel/i40e/i40e_main.c
++++ b/drivers/net/ethernet/intel/i40e/i40e_main.c
+@@ -1554,17 +1554,17 @@ static int i40e_set_mac(struct net_device *netdev, void *p)
+ 		netdev_info(netdev, "set new mac address %pM\n", addr->sa_data);
+ 
+ 	/* Copy the address first, so that we avoid a possible race with
+-	 * .set_rx_mode(). If we copy after changing the address in the filter
+-	 * list, we might open ourselves to a narrow race window where
+-	 * .set_rx_mode could delete our dev_addr filter and prevent traffic
+-	 * from passing.
++	 * .set_rx_mode().
++	 * - Remove old address from MAC filter
++	 * - Copy new address
++	 * - Add new address to MAC filter
+ 	 */
+-	ether_addr_copy(netdev->dev_addr, addr->sa_data);
+-
+ 	spin_lock_bh(&vsi->mac_filter_hash_lock);
+ 	i40e_del_mac_filter(vsi, netdev->dev_addr);
+-	i40e_add_mac_filter(vsi, addr->sa_data);
++	ether_addr_copy(netdev->dev_addr, addr->sa_data);
++	i40e_add_mac_filter(vsi, netdev->dev_addr);
+ 	spin_unlock_bh(&vsi->mac_filter_hash_lock);
++
+ 	if (vsi->type == I40E_VSI_MAIN) {
+ 		i40e_status ret;
+ 
 -- 
 2.19.1
 
