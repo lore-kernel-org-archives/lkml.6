@@ -2,288 +2,229 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04A7DC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 03:13:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80666C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 03:15:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8BA520660
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 03:12:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3FBA220660
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 03:15:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dkK1CbN8"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="WqS72cWN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728031AbfAKDM6 (ORCPT
+        id S1728670AbfAKDPJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 22:12:58 -0500
-Received: from mail-io1-f65.google.com ([209.85.166.65]:42176 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726255AbfAKDM6 (ORCPT
+        Thu, 10 Jan 2019 22:15:09 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:42897 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726255AbfAKDPI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 22:12:58 -0500
-Received: by mail-io1-f65.google.com with SMTP id x6so11142717ioa.9
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 19:12:57 -0800 (PST)
+        Thu, 10 Jan 2019 22:15:08 -0500
+Received: by mail-pl1-f194.google.com with SMTP id y1so6093919plp.9
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 19:15:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=mBVKWh9GQT9Zq6AHBwsKrTTXFLIl5c5l7UpK0ut0GKc=;
-        b=dkK1CbN8gW6KeKvKvAS4D+j2bEriRBueni2km0Rn6vO2t5j+RjwgEkMxdg7yQeQxL7
-         WrXRJEVtxOFEMvDPyIv0bz5upI38+mq2gdg1uN22i429l8gX8idCSA7iY70oXkdjEHUc
-         0GNT1GIYPkdra8Exj8NTHw59D62S7W+eq6xaf7oypiTmWvTfLQTh7eeXei0vq2J57YYy
-         2ZIuVKWA6qopgDUPiVcuwCCu8EK1Akm6vk2LtfUAstWy5FTVNW2VPkQl3//4aMN+88jN
-         ALGIesbNDLvqgkiGbEb+/P+AzGIVlux3XzgWuN//IzRtIFnNt+GkoMx8TzVxOhcqJ16e
-         Q7bg==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=yx4yQXIKxW7YTtA3rr7iZqxnRr2RSZ9wqmpwBW/NF0c=;
+        b=WqS72cWNdSSw0SuRaNYPvYE7oY8teoBR9JkRDtBQfP4RTxCmg9ac0mtTKHFNH9jwqt
+         A+NTxmRILWdiYdArDZImbu0Z73AsNEYZ3Ew10usxBG1ttpGj0hx18eXJiCGCuGh6MYEv
+         67xgZcfvKZygA0R+73so1ktLciXmQos6C33lc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=mBVKWh9GQT9Zq6AHBwsKrTTXFLIl5c5l7UpK0ut0GKc=;
-        b=oc9R5w+52Um81GV1WejahYitHqQpY0G+Qz3QI0p++PisZ9Pv8fVGA74E8xlKhRYnn4
-         ufosAq7kD8OvWmX21mNDfYv07H/raTlOKH4rrB6MY0n9qk+QUgMRNSJXnT5i8/4mU/+5
-         V13lCUMIwlDmVUDpPGuC7tAXldiIYBC+CpVyj2Bh7Xm/TLElRFSe4Nk8kcofyLV1PIlF
-         wUcsi5D4z0YOMlos+H7WGesBRb8bNqANN06g4ZQoClXLo79zd7nSeoMxotLygxba3yPo
-         eSfb8w7f9zBJE/j/b8d0+y5neTjMcGaaqaAq2ikzzRyRNeWv6knbacYX4u+PZl/M81U6
-         BsxA==
-X-Gm-Message-State: AJcUukc43md8RXLtSyuMg+MveinAinsj7T5x3LTXkkba7f1MGT08mtRo
-        TunIZGPABVX6wj7y8qJcDWQqDl6u9fwtKjTZ6w==
-X-Google-Smtp-Source: ALg8bN4mfE9C1ZDU1IS+KKermhGvFizjleS0GbUYQ1EUKcsTI8MrBKjMaHl9mn9DpU8ueOezp3XDDABi4DqCD/WlPFg=
-X-Received: by 2002:a6b:3f06:: with SMTP id m6mr8073861ioa.117.1547176377003;
- Thu, 10 Jan 2019 19:12:57 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=yx4yQXIKxW7YTtA3rr7iZqxnRr2RSZ9wqmpwBW/NF0c=;
+        b=ftTf9d/YJVHJvmA5QlIm8pgO7h3Zm14riZblv3w7iZCI+cV2mOICri+/hsPS81+JgB
+         5kdlu+YmCt3/81RKw6whQnmaCMRejliPgmaneY54qgfnXfhO9zomPLWtOIVfZf6gD2UL
+         MTF3xg5QWVdXunmGGqHyeroGVI/5Fuiv4dFzextWlyc+9UDyj7WPuzV/aWJNZd6sRQnE
+         OisfvAkboRyTPqtoBmUxL/pWp9sqRKtSBKL15gCGM1rWZlqQuLExhMIigJ1ZUcP3lABC
+         COO2DrLD1Fj4LF7XKNNnZsxKUfuJ1K0bhycS/VjvGymUToO2cg3JQoP3gq+akFsrwuju
+         CTfg==
+X-Gm-Message-State: AJcUukfe1QhCu9///Cer6va0mnRXcUbvr/m3bYoGIwFKNZr/9s0XgFFt
+        ixk+ALFPdcCiyh40sJbj/yMABg==
+X-Google-Smtp-Source: ALg8bN5cVfwTPgDJMss7X4em4Y1YENV2B3aKzPPnHSsqPofYI3C8uSGpfRHJV72LBAy9In+EgsngwQ==
+X-Received: by 2002:a17:902:14b:: with SMTP id 69mr13129022plb.52.1547176507869;
+        Thu, 10 Jan 2019 19:15:07 -0800 (PST)
+Received: from minitux (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id i1sm110118747pgb.46.2019.01.10.19.15.06
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 10 Jan 2019 19:15:07 -0800 (PST)
+Date:   Thu, 10 Jan 2019 19:15:04 -0800
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Vivek Gautam <vivek.gautam@codeaurora.org>
+Cc:     joro@8bytes.org, robh+dt@kernel.org, andy.gross@linaro.org,
+        iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, mark.rutland@arm.com,
+        david.brown@linaro.org, linux-kernel@vger.kernel.org,
+        robin.murphy@arm.com, will.deacon@arm.com, dianders@chromium.org
+Subject: Re: [PATCH v4 2/2] dts: arm64/sdm845: Add node for arm,mmu-500
+Message-ID: <20190111031504.GC17247@minitux>
+References: <20181011094930.17010-1-vivek.gautam@codeaurora.org>
+ <20181011094930.17010-3-vivek.gautam@codeaurora.org>
+ <20190108065935.GA11536@builder>
+ <9675f7d8-a726-07d3-34b7-99b7464a6303@codeaurora.org>
 MIME-Version: 1.0
-References: <CAFgQCTuu54oZWKq_ppEvZFb4Mz31gVmsa37gTap+e9KbE=T0aQ@mail.gmail.com>
- <20181207155627.GG1286@dhcp22.suse.cz> <20181210123738.GN1286@dhcp22.suse.cz>
- <CAFgQCTupPc1rKv2SrmWD+eJ0H6PRaizPBw3+AG67_PuLA2SKFw@mail.gmail.com>
- <20181212115340.GQ1286@dhcp22.suse.cz> <CAFgQCTuhW6sPtCNFmnz13p30v3owE3Rty5WJNgtqgz8XaZT-aQ@mail.gmail.com>
- <CAFgQCTtFZ8ku7W_7rcmrbmH4Qvsv7zgOSHKfPSpNSkVjYkPfBg@mail.gmail.com>
- <20181217132926.GM30879@dhcp22.suse.cz> <CAFgQCTubm9B1_zM+oc1GLfOChu+XY9N4OcjyeDgk6ggObRtMKg@mail.gmail.com>
- <20181220091934.GC14234@dhcp22.suse.cz> <20190108143440.GU31793@dhcp22.suse.cz>
-In-Reply-To: <20190108143440.GU31793@dhcp22.suse.cz>
-From:   Pingfan Liu <kernelfans@gmail.com>
-Date:   Fri, 11 Jan 2019 11:12:45 +0800
-Message-ID: <CAFgQCTtdJ1mR6v2Y3ojHSmjg9U90cAUddhxG3Y_8zNDR5Aw9oQ@mail.gmail.com>
-Subject: Re: [PATCH] mm/alloc: fallback to first node if the wanted node offline
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9675f7d8-a726-07d3-34b7-99b7464a6303@codeaurora.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 8, 2019 at 10:34 PM Michal Hocko <mhocko@kernel.org> wrote:
->
-> On Thu 20-12-18 10:19:34, Michal Hocko wrote:
-> > On Thu 20-12-18 15:19:39, Pingfan Liu wrote:
-> > > Hi Michal,
-> > >
-> > > WIth this patch applied on the old one, I got the following message.
-> > > Please get it from attachment.
-> > [...]
-> > > [    0.409637] NUMA: Node 1 [mem 0x00000000-0x0009ffff] + [mem 0x00100000-0x7fffffff] -> [mem 0x00000000-0x7fffffff]
-> > > [    0.419858] NUMA: Node 1 [mem 0x00000000-0x7fffffff] + [mem 0x100000000-0x47fffffff] -> [mem 0x00000000-0x47fffffff]
-> > > [    0.430356] NODE_DATA(0) allocated [mem 0x87efd4000-0x87effefff]
-> > > [    0.436325]     NODE_DATA(0) on node 5
-> > > [    0.440092] Initmem setup node 0 [mem 0x0000000000000000-0x0000000000000000]
-> > > [    0.447078] node[0] zonelist:
-> > > [    0.450106] NODE_DATA(1) allocated [mem 0x47ffd5000-0x47fffffff]
-> > > [    0.456114] NODE_DATA(2) allocated [mem 0x87efa9000-0x87efd3fff]
-> > > [    0.462064]     NODE_DATA(2) on node 5
-> > > [    0.465852] Initmem setup node 2 [mem 0x0000000000000000-0x0000000000000000]
-> > > [    0.472813] node[2] zonelist:
-> > > [    0.475846] NODE_DATA(3) allocated [mem 0x87ef7e000-0x87efa8fff]
-> > > [    0.481827]     NODE_DATA(3) on node 5
-> > > [    0.485590] Initmem setup node 3 [mem 0x0000000000000000-0x0000000000000000]
-> > > [    0.492575] node[3] zonelist:
-> > > [    0.495608] NODE_DATA(4) allocated [mem 0x87ef53000-0x87ef7dfff]
-> > > [    0.501587]     NODE_DATA(4) on node 5
-> > > [    0.505349] Initmem setup node 4 [mem 0x0000000000000000-0x0000000000000000]
-> > > [    0.512334] node[4] zonelist:
-> > > [    0.515370] NODE_DATA(5) allocated [mem 0x87ef28000-0x87ef52fff]
-> > > [    0.521384] NODE_DATA(6) allocated [mem 0x87eefd000-0x87ef27fff]
-> > > [    0.527329]     NODE_DATA(6) on node 5
-> > > [    0.531091] Initmem setup node 6 [mem 0x0000000000000000-0x0000000000000000]
-> > > [    0.538076] node[6] zonelist:
-> > > [    0.541109] NODE_DATA(7) allocated [mem 0x87eed2000-0x87eefcfff]
-> > > [    0.547090]     NODE_DATA(7) on node 5
-> > > [    0.550851] Initmem setup node 7 [mem 0x0000000000000000-0x0000000000000000]
-> > > [    0.557836] node[7] zonelist:
-> >
-> > OK, so it is clear that building zonelists this early is not going to
-> > fly. We do not have the complete information yet. I am not sure when do
-> > we get that at this moment but I suspect the we either need to move that
-> > initialization to a sooner stage or we have to reconsider whether the
-> > phase when we build zonelists really needs to consider only online numa
-> > nodes.
-> >
-> > [...]
-> > > [    1.067658] percpu: Embedded 46 pages/cpu @(____ptrval____) s151552 r8192 d28672 u262144
-> > > [    1.075692] node[1] zonelist: 1:Normal 1:DMA32 1:DMA 5:Normal
-> > > [    1.081376] node[5] zonelist: 5:Normal 1:Normal 1:DMA32 1:DMA
-> >
-> > I hope to get to this before I leave for christmas vacation, if not I
-> > will stare into it after then.
->
-> I am sorry but I didn't get to this sooner. But I've got another idea. I
-> concluded that the whole dance is simply bogus and we should treat
-> memory less nodes, well, as nodes with no memory ranges rather than
-> special case them. Could you give the following a spin please?
->
-> ---
-> diff --git a/arch/x86/mm/numa.c b/arch/x86/mm/numa.c
-> index 1308f5408bf7..0e79445cfd85 100644
-> --- a/arch/x86/mm/numa.c
-> +++ b/arch/x86/mm/numa.c
-> @@ -216,8 +216,6 @@ static void __init alloc_node_data(int nid)
->
->         node_data[nid] = nd;
->         memset(NODE_DATA(nid), 0, sizeof(pg_data_t));
-> -
-> -       node_set_online(nid);
->  }
->
->  /**
-> @@ -535,6 +533,7 @@ static int __init numa_register_memblks(struct numa_meminfo *mi)
->         /* Account for nodes with cpus and no memory */
->         node_possible_map = numa_nodes_parsed;
->         numa_nodemask_from_meminfo(&node_possible_map, mi);
-> +       pr_info("parsed=%*pbl, possible=%*pbl\n", nodemask_pr_args(&numa_nodes_parsed), nodemask_pr_args(&node_possible_map));
->         if (WARN_ON(nodes_empty(node_possible_map)))
->                 return -EINVAL;
->
-> @@ -570,7 +569,7 @@ static int __init numa_register_memblks(struct numa_meminfo *mi)
->                 return -EINVAL;
->
->         /* Finally register nodes. */
-> -       for_each_node_mask(nid, node_possible_map) {
-> +       for_each_node_mask(nid, numa_nodes_parsed) {
->                 u64 start = PFN_PHYS(max_pfn);
->                 u64 end = 0;
->
-> @@ -581,9 +580,6 @@ static int __init numa_register_memblks(struct numa_meminfo *mi)
->                         end = max(mi->blk[i].end, end);
->                 }
->
-> -               if (start >= end)
-> -                       continue;
-> -
->                 /*
->                  * Don't confuse VM with a node that doesn't have the
->                  * minimum amount of memory:
-> @@ -592,6 +588,8 @@ static int __init numa_register_memblks(struct numa_meminfo *mi)
->                         continue;
->
->                 alloc_node_data(nid);
-> +               if (end)
-> +                       node_set_online(nid);
->         }
->
->         /* Dump memblock with node info and return. */
-> @@ -721,21 +719,6 @@ void __init x86_numa_init(void)
->         numa_init(dummy_numa_init);
->  }
->
-> -static void __init init_memory_less_node(int nid)
-> -{
-> -       unsigned long zones_size[MAX_NR_ZONES] = {0};
-> -       unsigned long zholes_size[MAX_NR_ZONES] = {0};
-> -
-> -       /* Allocate and initialize node data. Memory-less node is now online.*/
-> -       alloc_node_data(nid);
-> -       free_area_init_node(nid, zones_size, 0, zholes_size);
-> -
-> -       /*
-> -        * All zonelists will be built later in start_kernel() after per cpu
-> -        * areas are initialized.
-> -        */
-> -}
-> -
->  /*
->   * Setup early cpu_to_node.
->   *
-> @@ -763,9 +746,6 @@ void __init init_cpu_to_node(void)
->                 if (node == NUMA_NO_NODE)
->                         continue;
->
-> -               if (!node_online(node))
-> -                       init_memory_less_node(node);
-> -
->                 numa_set_node(cpu, node);
->         }
->  }
-> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> index 2ec9cc407216..52e54d16662a 100644
-> --- a/mm/page_alloc.c
-> +++ b/mm/page_alloc.c
-> @@ -5234,6 +5234,8 @@ static void build_zonelists(pg_data_t *pgdat)
->         int node, load, nr_nodes = 0;
->         nodemask_t used_mask;
->         int local_node, prev_node;
-> +       struct zone *zone;
-> +       struct zoneref *z;
->
->         /* NUMA-aware ordering of nodes */
->         local_node = pgdat->node_id;
-> @@ -5259,6 +5261,11 @@ static void build_zonelists(pg_data_t *pgdat)
->
->         build_zonelists_in_node_order(pgdat, node_order, nr_nodes);
->         build_thisnode_zonelists(pgdat);
-> +
-> +       pr_info("node[%d] zonelist: ", pgdat->node_id);
-> +       for_each_zone_zonelist(zone, z, &pgdat->node_zonelists[ZONELIST_FALLBACK], MAX_NR_ZONES-1)
-> +               pr_cont("%d:%s ", zone_to_nid(zone), zone->name);
-> +       pr_cont("\n");
->  }
->
->  #ifdef CONFIG_HAVE_MEMORYLESS_NODES
-> @@ -5361,10 +5368,11 @@ static void __build_all_zonelists(void *data)
->         if (self && !node_online(self->node_id)) {
->                 build_zonelists(self);
->         } else {
-> -               for_each_online_node(nid) {
-> +               for_each_node(nid) {
->                         pg_data_t *pgdat = NODE_DATA(nid);
->
-> -                       build_zonelists(pgdat);
-> +                       if (pgdat)
-> +                               build_zonelists(pgdat);
->                 }
->
->  #ifdef CONFIG_HAVE_MEMORYLESS_NODES
-> @@ -6644,10 +6652,8 @@ static unsigned long __init find_min_pfn_for_node(int nid)
->         for_each_mem_pfn_range(i, nid, &start_pfn, NULL, NULL)
->                 min_pfn = min(min_pfn, start_pfn);
->
-> -       if (min_pfn == ULONG_MAX) {
-> -               pr_warn("Could not find start_pfn for node %d\n", nid);
-> +       if (min_pfn == ULONG_MAX)
->                 return 0;
-> -       }
->
->         return min_pfn;
->  }
-> @@ -6991,8 +6997,12 @@ void __init free_area_init_nodes(unsigned long *max_zone_pfn)
->         mminit_verify_pageflags_layout();
->         setup_nr_node_ids();
->         zero_resv_unavail();
-> -       for_each_online_node(nid) {
-> +       for_each_node(nid) {
->                 pg_data_t *pgdat = NODE_DATA(nid);
-> +
-> +               if (!pgdat)
-> +                       continue;
-> +
->                 free_area_init_node(nid, NULL,
->                                 find_min_pfn_for_node(nid), NULL);
->
-Hi, this patch works! Feel free to use tested-by me
+On Tue 08 Jan 03:18 PST 2019, Vivek Gautam wrote:
 
-Best Regards
-Pingfan
+> 
+> On 1/8/2019 12:29 PM, Bjorn Andersson wrote:
+> > On Thu 11 Oct 02:49 PDT 2018, Vivek Gautam wrote:
+> > 
+> > > Add device node for arm,mmu-500 available on sdm845.
+> > > This MMU-500 with single TCU and multiple TBU architecture
+> > > is shared among all the peripherals except gpu.
+> > > 
+> > Hi Vivek,
+> > 
+> > Applying this patch together with UFS ([1] and [2]) ontop of v5.0-rc1
+> > causes my MTP reboot once the UFSHCD module is inserted and probed.
+> > Independently the patches seems to work fine.
+> > 
+> > Do you have any suggestion to why this would be?
+> 
+> 
+> Hi Bjorn,
+> 
+> Enabling SMMU on sdm845 when you have UFS also enabled, would need addition
+> of
+> 'iommus' property to ufs dt node.
+> You will need to add the following with ufs:
+> 
+> iommus = <&apps_smmu 0x100 0xf>;
+> 
+
+Thanks, this do address the sudden restart of my MTP, but provides a
+fault.
+
+[    7.391117] arm-smmu 15000000.iommu: Unhandled context fault: fsr=0x402, iova=0xffffdf3e0, fsynr=0x290000, cb=0
+[    7.747406] ufshcd-qcom 1d84000.ufshc: ufshcd_verify_dev_init: NOP OUT failed -11
+
+The only thing done ontop of v5.0-rc1, is to take your patch adding
+apps_smmu, add the ufs nodes as Evan proposed and specify iommus in the
+ufshcd node.
+
+
+With Coreboot UFS seems to work without specifying iommus, but with it
+UFS fails to come up.
+
+Regards,
+Bjorn
+
+> Thanks
+> Vivek
+> 
+> > 
+> > [1] https://lore.kernel.org/lkml/20181210192826.241350-4-evgreen@chromium.org/
+> > [2] https://lore.kernel.org/lkml/20181210192826.241350-5-evgreen@chromium.org/
+> > 
+> > Regards,
+> > Bjorn
+> > 
+> > > Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
+> > > ---
+> > > 
+> > > Changes since v3:
+> > >   - none.
+> > > 
+> > >   arch/arm64/boot/dts/qcom/sdm845.dtsi | 72 ++++++++++++++++++++++++++++++++++++
+> > >   1 file changed, 72 insertions(+)
+> > > 
+> > > diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+> > > index b72bdb0a31a5..0aace729643d 100644
+> > > --- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
+> > > +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+> > > @@ -1297,6 +1297,78 @@
+> > >   			cell-index = <0>;
+> > >   		};
+> > > +		apps_smmu: iommu@15000000 {
+> > > +			compatible = "qcom,sdm845-smmu-500", "arm,mmu-500";
+> > > +			reg = <0x15000000 0x80000>;
+> > > +			#iommu-cells = <2>;
+> > > +			#global-interrupts = <1>;
+> > > +			interrupts = <GIC_SPI 65 IRQ_TYPE_LEVEL_HIGH>,
+> > > +				     <GIC_SPI 96 IRQ_TYPE_LEVEL_HIGH>,
+> > > +				     <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH>,
+> > > +				     <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>,
+> > > +				     <GIC_SPI 99 IRQ_TYPE_LEVEL_HIGH>,
+> > > +				     <GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH>,
+> > > +				     <GIC_SPI 101 IRQ_TYPE_LEVEL_HIGH>,
+> > > +				     <GIC_SPI 102 IRQ_TYPE_LEVEL_HIGH>,
+> > > +				     <GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>,
+> > > +				     <GIC_SPI 104 IRQ_TYPE_LEVEL_HIGH>,
+> > > +				     <GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>,
+> > > +				     <GIC_SPI 106 IRQ_TYPE_LEVEL_HIGH>,
+> > > +				     <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>,
+> > > +				     <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>,
+> > > +				     <GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH>,
+> > > +				     <GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH>,
+> > > +				     <GIC_SPI 111 IRQ_TYPE_LEVEL_HIGH>,
+> > > +				     <GIC_SPI 112 IRQ_TYPE_LEVEL_HIGH>,
+> > > +				     <GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH>,
+> > > +				     <GIC_SPI 114 IRQ_TYPE_LEVEL_HIGH>,
+> > > +				     <GIC_SPI 115 IRQ_TYPE_LEVEL_HIGH>,
+> > > +				     <GIC_SPI 116 IRQ_TYPE_LEVEL_HIGH>,
+> > > +				     <GIC_SPI 117 IRQ_TYPE_LEVEL_HIGH>,
+> > > +				     <GIC_SPI 118 IRQ_TYPE_LEVEL_HIGH>,
+> > > +				     <GIC_SPI 181 IRQ_TYPE_LEVEL_HIGH>,
+> > > +				     <GIC_SPI 182 IRQ_TYPE_LEVEL_HIGH>,
+> > > +				     <GIC_SPI 183 IRQ_TYPE_LEVEL_HIGH>,
+> > > +				     <GIC_SPI 184 IRQ_TYPE_LEVEL_HIGH>,
+> > > +				     <GIC_SPI 185 IRQ_TYPE_LEVEL_HIGH>,
+> > > +				     <GIC_SPI 186 IRQ_TYPE_LEVEL_HIGH>,
+> > > +				     <GIC_SPI 187 IRQ_TYPE_LEVEL_HIGH>,
+> > > +				     <GIC_SPI 188 IRQ_TYPE_LEVEL_HIGH>,
+> > > +				     <GIC_SPI 189 IRQ_TYPE_LEVEL_HIGH>,
+> > > +				     <GIC_SPI 190 IRQ_TYPE_LEVEL_HIGH>,
+> > > +				     <GIC_SPI 191 IRQ_TYPE_LEVEL_HIGH>,
+> > > +				     <GIC_SPI 192 IRQ_TYPE_LEVEL_HIGH>,
+> > > +				     <GIC_SPI 315 IRQ_TYPE_LEVEL_HIGH>,
+> > > +				     <GIC_SPI 316 IRQ_TYPE_LEVEL_HIGH>,
+> > > +				     <GIC_SPI 317 IRQ_TYPE_LEVEL_HIGH>,
+> > > +				     <GIC_SPI 318 IRQ_TYPE_LEVEL_HIGH>,
+> > > +				     <GIC_SPI 319 IRQ_TYPE_LEVEL_HIGH>,
+> > > +				     <GIC_SPI 320 IRQ_TYPE_LEVEL_HIGH>,
+> > > +				     <GIC_SPI 321 IRQ_TYPE_LEVEL_HIGH>,
+> > > +				     <GIC_SPI 322 IRQ_TYPE_LEVEL_HIGH>,
+> > > +				     <GIC_SPI 323 IRQ_TYPE_LEVEL_HIGH>,
+> > > +				     <GIC_SPI 324 IRQ_TYPE_LEVEL_HIGH>,
+> > > +				     <GIC_SPI 325 IRQ_TYPE_LEVEL_HIGH>,
+> > > +				     <GIC_SPI 326 IRQ_TYPE_LEVEL_HIGH>,
+> > > +				     <GIC_SPI 327 IRQ_TYPE_LEVEL_HIGH>,
+> > > +				     <GIC_SPI 328 IRQ_TYPE_LEVEL_HIGH>,
+> > > +				     <GIC_SPI 329 IRQ_TYPE_LEVEL_HIGH>,
+> > > +				     <GIC_SPI 330 IRQ_TYPE_LEVEL_HIGH>,
+> > > +				     <GIC_SPI 331 IRQ_TYPE_LEVEL_HIGH>,
+> > > +				     <GIC_SPI 332 IRQ_TYPE_LEVEL_HIGH>,
+> > > +				     <GIC_SPI 333 IRQ_TYPE_LEVEL_HIGH>,
+> > > +				     <GIC_SPI 334 IRQ_TYPE_LEVEL_HIGH>,
+> > > +				     <GIC_SPI 335 IRQ_TYPE_LEVEL_HIGH>,
+> > > +				     <GIC_SPI 336 IRQ_TYPE_LEVEL_HIGH>,
+> > > +				     <GIC_SPI 337 IRQ_TYPE_LEVEL_HIGH>,
+> > > +				     <GIC_SPI 338 IRQ_TYPE_LEVEL_HIGH>,
+> > > +				     <GIC_SPI 339 IRQ_TYPE_LEVEL_HIGH>,
+> > > +				     <GIC_SPI 340 IRQ_TYPE_LEVEL_HIGH>,
+> > > +				     <GIC_SPI 341 IRQ_TYPE_LEVEL_HIGH>,
+> > > +				     <GIC_SPI 342 IRQ_TYPE_LEVEL_HIGH>,
+> > > +				     <GIC_SPI 343 IRQ_TYPE_LEVEL_HIGH>;
+> > > +		};
+> > > +
+> > >   		apss_shared: mailbox@17990000 {
+> > >   			compatible = "qcom,sdm845-apss-shared";
+> > >   			reg = <0x17990000 0x1000>;
+> > > -- 
+> > > QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+> > > of Code Aurora Forum, hosted by The Linux Foundation
+> > > 
