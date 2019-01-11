@@ -2,116 +2,120 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CE67C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 02:53:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59519C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 02:55:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C6382177E
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 02:53:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547175209;
-	bh=oZKi2MTg1AqpyqReXhqTQ3F1OFNrCnIawIBlFvdkN4k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=jINfiibLLzXZtw9FeKmRhnSOuQayvdQBclOrYM76Rr3zz0IAz/li9ObPpyhJ0oF2o
-	 9gfx4MDEx4IsqFQOEkcWaCAMYdiXdae8DZtxIMYKDDChB5qlfnjglMF0I0d7xO6khe
-	 iEpQrLoiT/Y4LZpcnAawEtK+gY0sS8YDWtbqrays=
+	by mail.kernel.org (Postfix) with ESMTP id 1119A20879
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 02:55:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="cuP3YwmS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730110AbfAKCx2 (ORCPT
+        id S1729286AbfAKCz3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 21:53:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60836 "EHLO mail.kernel.org"
+        Thu, 10 Jan 2019 21:55:29 -0500
+Received: from ozlabs.org ([203.11.71.1]:56865 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729475AbfAKCx2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 21:53:28 -0500
-Received: from dragon (61-216-91-114.HINET-IP.hinet.net [61.216.91.114])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        id S1727780AbfAKCz3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 21:55:29 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 285832084C;
-        Fri, 11 Jan 2019 02:53:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547175207;
-        bh=oZKi2MTg1AqpyqReXhqTQ3F1OFNrCnIawIBlFvdkN4k=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Fk60+bhCF5DRuQV+8ah61Os3814mAbLRyk8hKUl59mP2tHYOU0DDzotWHRMXYV580
-         wnbcsLNjCh6Oxs+1ZHi1Yb+o4vnSJ1wn3B0zbIiidRv6/C4x2pixiWWbuKcdr6vy20
-         tBF4tgCC4f/7HnGnL6O82s57JzaGYTsq5ydxDk40=
-Date:   Fri, 11 Jan 2019 10:53:15 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Anson Huang <anson.huang@nxp.com>
-Cc:     "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-Subject: Re: [PATCH 1/2] ARM: dts: imx7ulp: add sim node
-Message-ID: <20190111025314.GH25218@dragon>
-References: <1544775260-25458-1-git-send-email-Anson.Huang@nxp.com>
+        by ozlabs.org (Postfix) with ESMTPSA id 43bSCd0rrtz9sCs;
+        Fri, 11 Jan 2019 13:55:25 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1547175326;
+        bh=4coEkcmIAnBv2XU15dyvSDbJnIsWHbFwxJO0EBOj3QA=;
+        h=Date:From:To:Cc:Subject:From;
+        b=cuP3YwmS8mDS+CKN2A+ap74e9/3ulWXR+0kFChsTsoYjwO0bJwLTb/xP/C1RyuyhF
+         P9fBlBwHgRuL9lEmuXklAKm2CvRYVpnugF+uTHf+CtKIEeRFCbva0nAaw0wTqXKo93
+         TROsa90C5M9i4qNXlqjkgn8iEa7eoHiJ9TppXSgXKxhDAOVLZIa8E4nU/PZiMXhOTY
+         +Gige/ffX9dpmADjxmox1MymFdcw7H2/X/DSfsgvRyiOkEt9MEArpBuMBcS0Wej5A2
+         XFXSLMbqe99bSq41tH1Fe2zr2bSZevlDPgrKIsVhOU8icXJbLESFtJ/9CuhPXHvh8o
+         o9obllVfFqAbw==
+Date:   Fri, 11 Jan 2019 13:55:24 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        James Morris <jmorris@namei.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Kees Cook <keescook@chromium.org>,
+        Kent Overstreet <kent.overstreet@gmail.com>
+Subject: linux-next: manual merge of the akpm-current tree with the security
+ tree
+Message-ID: <20190111135524.5e3cceda@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1544775260-25458-1-git-send-email-Anson.Huang@nxp.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/DO8h4dLRcQhDbH0nPFNPl+N"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 14, 2018 at 08:20:22AM +0000, Anson Huang wrote:
-> i.MX7ULP SoC revision info is inside the SIM mode's JTAG_ID
-> register, add sim node to support SoC revision check.
-> 
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> ---
->  arch/arm/boot/dts/imx7ulp.dtsi | 13 +++++++++++++
->  1 file changed, 13 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/imx7ulp.dtsi b/arch/arm/boot/dts/imx7ulp.dtsi
-> index b86daf7..fca6e50 100644
-> --- a/arch/arm/boot/dts/imx7ulp.dtsi
-> +++ b/arch/arm/boot/dts/imx7ulp.dtsi
-> @@ -347,4 +347,17 @@
->  			gpio-ranges = <&iomuxc1 0 96 32>;
->  		};
->  	};
-> +
-> +	m4aips1: bus@41080000 {
-> +		compatible = "simple-bus";
-> +		#address-cells = <1>;
-> +		#size-cells = <1>;
-> +		reg = <0x41080000 0x80000>;
-> +		ranges;
-> +
-> +		sim: sim@410a3000 {
-> +			compatible = "fsl,imx7ulp-sim", "syscon";
+--Sig_/DO8h4dLRcQhDbH0nPFNPl+N
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-The compatible needs to be documented. Also we generally compose a series
-in order below.
+Hi all,
 
- - Bindings patch
- - Kernel patch
- - DTS patch
+Today's linux-next merge of the akpm-current tree got a conflict in:
 
-Shawn
+  security/selinux/ss/services.c
 
-> +			reg = <0x410a3000 0x1000>;
-> +		};
-> +	};
->  };
-> -- 
-> 2.7.4
-> 
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+between commit:
+
+  3d252529480c ("SELinux: Remove unused selinux_is_enabled")
+
+from the security tree and commit:
+
+  dd4c293d6d4d ("selinux: convert to kvmalloc")
+
+from the akpm-current tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc security/selinux/ss/services.c
+index d6e7b4856d93,fac47b306b6b..000000000000
+--- a/security/selinux/ss/services.c
++++ b/security/selinux/ss/services.c
+@@@ -49,7 -49,7 +49,6 @@@
+  #include <linux/sched.h>
+  #include <linux/audit.h>
+  #include <linux/mutex.h>
+- #include <linux/flex_array.h>
+ -#include <linux/selinux.h>
+  #include <linux/vmalloc.h>
+  #include <net/netlabel.h>
+ =20
+
+--Sig_/DO8h4dLRcQhDbH0nPFNPl+N
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlw4BZwACgkQAVBC80lX
+0GxBJQf+LKof6Bjuuqe7LdWNnrMSkUtYVxLMnM0UvQzaQws7+9Y7+/4JP15++9YK
+wEJ2otXV1/nO64rzXPMggLbqKw7rmV/37ScBec0QV4H2bWDDdbQygyx2KVgxbo92
+ES7p4DxOmwRa1SgStbUq4rz9OozH3+YhnEh1XD8gmL09NKYlWvnrNNC11qAvZFhN
+zvG/wxUMZz3ZO/NQOfjFKnBj4HgKN0cCtjV2SD8lZyB+RcJBcWAB2ZDRnztqwtkM
+tZlP/Ja17EY4mFGRUAlwuQi9YKE10pHXQSfaxmRynz528gCz/xaACSWTA3Orcx/9
+oWK70WlCkH7itIRpH/OEvGdQdjGtGw==
+=nTsu
+-----END PGP SIGNATURE-----
+
+--Sig_/DO8h4dLRcQhDbH0nPFNPl+N--
