@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C15A9C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:33:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDA30C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:33:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85EA321841
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:33:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A63C72133F
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:33:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547217218;
-	bh=yUaub11QHYhPmz5chVvkaZDQ1OVh6Ce+RL12oQWuIMk=;
+	s=default; t=1547217220;
+	bh=JTfwFTQ7jx2eJFXxQ6+XI5BcCDZxYcDRqLy7o8JIYD8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=2EoUQzN+8JrJ4bY1FldlkplRFhQoHzAhFtaY7KWdj1UUHfsYHb4P9ikgqnJE5ctZi
-	 3nJnUi1QtRaDde7yny5TqmIUZmiI85Ix7Y/WbdR0Mz2Q/Ja1YFrXvOTtvKqE9UeX8b
-	 CiKNRrZuqrbAfbg0d99q4+RgGf7jNg/coFK4i0XY=
+	b=qfpg+nDpNg462uzOX3WMjlnHgvbVAqwnTitqHd19EEJ4i2cDBrjHjqQfXRmm2AuJ2
+	 5W+2mKY68VpqHxU3wSHhpSbX3UhXA0kifqvRQVGWUzmCin8sOS+t9GIyVtqdwSBNhA
+	 5Zu2yOu+dJgS2v9wnR4qIW2UwUriRX5JWDyi64LI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389691AbfAKOdh (ORCPT
+        id S2389702AbfAKOdk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:33:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53788 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:33:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53838 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389641AbfAKOde (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:33:34 -0500
+        id S2389683AbfAKOdg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:33:36 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E4A522133F;
-        Fri, 11 Jan 2019 14:33:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E4F59204EC;
+        Fri, 11 Jan 2019 14:33:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547217213;
-        bh=yUaub11QHYhPmz5chVvkaZDQ1OVh6Ce+RL12oQWuIMk=;
+        s=default; t=1547217216;
+        bh=JTfwFTQ7jx2eJFXxQ6+XI5BcCDZxYcDRqLy7o8JIYD8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jehXyESPsQU6BU9rISossdT2WsMhgj8TLAfQu8jV4NYcU5mq88RrwowPNkvo0XKFd
-         DbKp3M6PAH5CQuXTrcnQV+kKrvQFY4BeWVFQo4ozxbOblsQuuJzaahZNqD25gAGuEk
-         u+UNwBswT6p5ufcBhERJ8AneaowQCfIXmsckFWok=
+        b=lwbgLK6kZty8uaG6fdceS4ycfq5SxNcLuNN1Rad+DwX+6P/pAA6MQjqkeXvwQdy5n
+         ktCX9AnnkOXSmYwg6RjtHfoZnQFhvE3FF4wOkPvB4fWoEPoYtXPX9iLhMrZodT5cbU
+         SOxrR/YJlkwjtU4BFVcIZsB+gQkz1z6ZaUwtZ65I=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Vasily Averin <vvs@virtuozzo.com>,
         David Teigland <teigland@redhat.com>, stable@kernel.org
-Subject: [PATCH 4.14 084/105] dlm: fixed memory leaks after failed ls_remove_names allocation
-Date:   Fri, 11 Jan 2019 15:14:55 +0100
-Message-Id: <20190111131110.007932844@linuxfoundation.org>
+Subject: [PATCH 4.14 085/105] dlm: possible memory leak on error path in create_lkb()
+Date:   Fri, 11 Jan 2019 15:14:56 +0100
+Message-Id: <20190111131110.110293347@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131102.899065735@linuxfoundation.org>
 References: <20190111131102.899065735@linuxfoundation.org>
@@ -67,38 +67,28 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Vasily Averin <vvs@virtuozzo.com>
 
-commit b982896cdb6e6a6b89d86dfb39df489d9df51e14 upstream.
+commit 23851e978f31eda8b2d01bd410d3026659ca06c7 upstream.
 
-If allocation fails on last elements of array need to free already
-allocated elements.
-
-v2: just move existing out_rsbtbl label to right place
-
-Fixes 789924ba635f ("dlm: fix race between remove and lookup")
-Cc: stable@kernel.org # 3.6
+Fixes 3d6aa675fff9 ("dlm: keep lkbs in idr")
+Cc: stable@kernel.org # 3.1
 
 Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
 Signed-off-by: David Teigland <teigland@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/dlm/lockspace.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/dlm/lock.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/fs/dlm/lockspace.c
-+++ b/fs/dlm/lockspace.c
-@@ -680,11 +680,11 @@ static int new_lockspace(const char *nam
- 	kfree(ls->ls_recover_buf);
-  out_lkbidr:
- 	idr_destroy(&ls->ls_lkbidr);
-+ out_rsbtbl:
- 	for (i = 0; i < DLM_REMOVE_NAMES_MAX; i++) {
- 		if (ls->ls_remove_names[i])
- 			kfree(ls->ls_remove_names[i]);
+--- a/fs/dlm/lock.c
++++ b/fs/dlm/lock.c
+@@ -1210,6 +1210,7 @@ static int create_lkb(struct dlm_ls *ls,
+ 
+ 	if (rv < 0) {
+ 		log_error(ls, "create_lkb idr error %d", rv);
++		dlm_free_lkb(lkb);
+ 		return rv;
  	}
-- out_rsbtbl:
- 	vfree(ls->ls_rsbtbl);
-  out_lsfree:
- 	if (do_unreg)
+ 
 
 
