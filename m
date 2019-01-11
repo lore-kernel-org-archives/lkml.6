@@ -7,49 +7,47 @@ X-Spam-Status: No, score=-13.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EB91C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:31:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1121C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:31:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D45C82063F
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:31:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 843C421848
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:31:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547217110;
-	bh=ceV8O2wzbxPTWswEN+LHc5y4Jpo+cFjqIpdRf738eH8=;
+	s=default; t=1547217112;
+	bh=ouJCU3hSvGBw9Shyu9jPfg3sukLdeFX9X3wN0VcI4Mw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=wt+Zy8M6nRZEJVDC6oYyvhNCQhz7hc0iWDVmw/BeT/WvOj01RRLql6vFcHCd4p/hz
-	 I5eRf93ovLbR9wNq93kxnnJLy2RbVzw5A5f5B+9EVI5Nulg5nbtRSFjC8JvDdjx6WC
-	 XF57sJHFU9SjvGSzowdnytyLsLevTnkQ5SO88m74=
+	b=KhOQ0XOhyrHozG6lGaVynhTUAppcI80on7Wa0RB9s9pTOvnwAn7KBWI9O2V/0PCzP
+	 bvhTuWEqI+PsRmWVQPe7KeKe6V2dxc55ovNhJPt+1MJR+dwReNz7vtIKpO+UYlbXSA
+	 lxmcIrKlAWdJgoxEvrLji8KvphtOiPKzEUwZksUY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389262AbfAKObu (ORCPT
+        id S2389275AbfAKObv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:31:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51592 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:31:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51650 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389245AbfAKObr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:31:47 -0500
+        id S2389258AbfAKObu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:31:50 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4FF3721848;
-        Fri, 11 Jan 2019 14:31:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E670B2063F;
+        Fri, 11 Jan 2019 14:31:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547217106;
-        bh=ceV8O2wzbxPTWswEN+LHc5y4Jpo+cFjqIpdRf738eH8=;
+        s=default; t=1547217109;
+        bh=ouJCU3hSvGBw9Shyu9jPfg3sukLdeFX9X3wN0VcI4Mw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gq7LKpBfJ01HCdYmEjTghEKGZozki3EBJ2PbQW8oByHlwAa8Q6NLJGSELRDBiTtij
-         Oj/QTbm9DloGuWxBv/AajpQr1bcbWe29+ou7qQzxJ6CV446yO0u4+dj+hgcPOCDxqt
-         WLN1vDl9mqXojd9GuQwV2zE9868tfVYHNmg/WhpY=
+        b=f1x1aAtewCd93FDOV5X4JTfqJmp/iT2fbUKCqkoBnG7/b8V1PnsIcy5PbsCG3+bGJ
+         ksHMuTFBzYIjE8g9yNPIaD3ERyrFWxhkDJk6KrxDJyKTM5NasmLF+veRTNZu24FqZu
+         fLoludNxcg86rD0zBzZA5zrqwczRPoFYe1cOoqvw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Anssi Hannula <anssi.hannula@bitwise.fi>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        stable@vger.kernel.org, Jason Martinsen <jasonmartinsen@msn.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 044/105] net: macb: fix dropped RX frames due to a race
-Date:   Fri, 11 Jan 2019 15:14:15 +0100
-Message-Id: <20190111131106.809889494@linuxfoundation.org>
+Subject: [PATCH 4.14 045/105] lan78xx: Resolve issue with changing MAC address
+Date:   Fri, 11 Jan 2019 15:14:16 +0100
+Message-Id: <20190111131106.894847028@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131102.899065735@linuxfoundation.org>
 References: <20190111131102.899065735@linuxfoundation.org>
@@ -68,61 +66,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 8159ecab0db9095902d4c73605fb8787f5c7d653 ]
+[ Upstream commit 15515aaaa69659c502003926a2067ee76176148a ]
 
-Bit RX_USED set to 0 in the address field allows the controller to write
-data to the receive buffer descriptor.
+Current state for the lan78xx driver does not allow for changing the
+MAC address of the interface, without either removing the module (if
+you compiled it that way) or rebooting the machine.  If you attempt to
+change the MAC address, ifconfig will show the new address, however,
+the system/interface will not respond to any traffic using that
+configuration.  A few short-term options to work around this are to
+unload the module and reload it with the new MAC address, change the
+interface to "promisc", or reboot with the correct configuration to
+change the MAC.
 
-The driver does not ensure the ctrl field is ready (cleared) when the
-controller sees the RX_USED=0 written by the driver. The ctrl field might
-only be cleared after the controller has already updated it according to
-a newly received frame, causing the frame to be discarded in gem_rx() due
-to unexpected ctrl field contents.
+This patch enables the ability to change the MAC address via fairly normal means...
+ifdown <interface>
+modify entry in /etc/network/interfaces OR a similar method
+ifup <interface>
+Then test via any network communication, such as ICMP requests to gateway.
 
-A message is logged when the above scenario occurs:
+My only test platform for this patch has been a raspberry pi model 3b+.
 
-  macb ff0b0000.ethernet eth0: not whole frame pointed by descriptor
+Signed-off-by: Jason Martinsen <jasonmartinsen@msn.com>
 
-Fix the issue by ensuring that when the controller sees RX_USED=0 the
-ctrl field is already cleared.
+-----
 
-This issue was observed on a ZynqMP based system.
-
-Fixes: 4df95131ea80 ("net/macb: change RX path for GEM")
-Signed-off-by: Anssi Hannula <anssi.hannula@bitwise.fi>
-Tested-by: Claudiu Beznea <claudiu.beznea@microchip.com>
-Cc: Nicolas Ferre <nicolas.ferre@microchip.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/cadence/macb_main.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ drivers/net/usb/lan78xx.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/ethernet/cadence/macb_main.c
-index 3aabc36eec0b..9046993947cc 100644
---- a/drivers/net/ethernet/cadence/macb_main.c
-+++ b/drivers/net/ethernet/cadence/macb_main.c
-@@ -923,14 +923,19 @@ static void gem_rx_refill(struct macb *bp)
+diff --git a/drivers/net/usb/lan78xx.c b/drivers/net/usb/lan78xx.c
+index e069b310d6a6..b62c41114e34 100644
+--- a/drivers/net/usb/lan78xx.c
++++ b/drivers/net/usb/lan78xx.c
+@@ -2212,6 +2212,10 @@ static int lan78xx_set_mac_addr(struct net_device *netdev, void *p)
+ 	ret = lan78xx_write_reg(dev, RX_ADDRL, addr_lo);
+ 	ret = lan78xx_write_reg(dev, RX_ADDRH, addr_hi);
  
- 			if (entry == bp->rx_ring_size - 1)
- 				paddr |= MACB_BIT(RX_WRAP);
--			macb_set_addr(bp, desc, paddr);
- 			desc->ctrl = 0;
-+			/* Setting addr clears RX_USED and allows reception,
-+			 * make sure ctrl is cleared first to avoid a race.
-+			 */
-+			dma_wmb();
-+			macb_set_addr(bp, desc, paddr);
- 
- 			/* properly align Ethernet header */
- 			skb_reserve(skb, NET_IP_ALIGN);
- 		} else {
--			desc->addr &= ~MACB_BIT(RX_USED);
- 			desc->ctrl = 0;
-+			dma_wmb();
-+			desc->addr &= ~MACB_BIT(RX_USED);
- 		}
- 	}
++	/* Added to support MAC address changes */
++	ret = lan78xx_write_reg(dev, MAF_LO(0), addr_lo);
++	ret = lan78xx_write_reg(dev, MAF_HI(0), addr_hi | MAF_HI_VALID_);
++
+ 	return 0;
+ }
  
 -- 
 2.19.1
