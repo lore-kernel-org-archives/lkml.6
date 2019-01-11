@@ -2,134 +2,155 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69371C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 16:58:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AA63C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 16:59:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 432D620874
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 16:58:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 66F5520874
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 16:59:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388285AbfAKQ6B (ORCPT
+        id S2388346AbfAKQ7j convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 11:58:01 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:47624 "EHLO mx1.redhat.com"
+        Fri, 11 Jan 2019 11:59:39 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:56696 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731195AbfAKQ6A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 11:58:00 -0500
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        id S1730633AbfAKQ7i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 11:59:38 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id AE9657AE8B;
-        Fri, 11 Jan 2019 16:57:59 +0000 (UTC)
-Received: from treble (ovpn-122-231.rdu2.redhat.com [10.10.122.231])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id C068660851;
-        Fri, 11 Jan 2019 16:57:54 +0000 (UTC)
-Date:   Fri, 11 Jan 2019 10:57:52 -0600
-From:   Josh Poimboeuf <jpoimboe@redhat.com>
-To:     Alexandre Chartre <alexandre.chartre@oracle.com>
-Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Nadav Amit <namit@vmware.com>, X86 ML <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Jason Baron <jbaron@akamai.com>, Jiri Kosina <jkosina@suse.cz>,
-        David Laight <David.Laight@ACULAB.COM>,
-        Borislav Petkov <bp@alien8.de>,
-        Julia Cartwright <julia@ni.com>, Jessica Yu <jeyu@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Edward Cree <ecree@solarflare.com>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>
-Subject: Re: [PATCH v3 5/6] x86/alternative: Use a single access in
- text_poke() where possible
-Message-ID: <20190111165752.z6e2dfktj2caqi4n@treble>
-References: <279b8003f7f0a6831d090ab822d37bc958f974de.1547073843.git.jpoimboe@redhat.com>
- <8138A1EE-359D-4CD2-8E96-5BF00313AB3B@vmware.com>
- <20190110172004.wuh45xoafynfm2df@treble>
- <20190110123243.3b9e0856@gandalf.local.home>
- <20190110174257.GE16556@linux.intel.com>
- <20190110125757.1c8d2870@gandalf.local.home>
- <20190110180428.GG16556@linux.intel.com>
- <e5ea3781-336d-7b03-a22e-5012e915affd@oracle.com>
- <20190111152809.ejutcmqrx4ud3fli@treble>
- <ad6fae93-4122-7854-aa4c-2facd67ca839@oracle.com>
+        by mx1.redhat.com (Postfix) with ESMTPS id 4A7BF7FDE9;
+        Fri, 11 Jan 2019 16:59:38 +0000 (UTC)
+Received: from llong.remote.csb (ovpn-124-242.rdu2.redhat.com [10.10.124.242])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 1D935411B;
+        Fri, 11 Jan 2019 16:59:36 +0000 (UTC)
+Subject: Re: Question about qspinlock nest
+To:     Zhenzhong Duan <zhenzhong.duan@oracle.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        SRINIVAS <srinivas.eeda@oracle.com>
+References: <e784a592-5dec-b0b3-6c70-d9ef775621d5@oracle.com>
+ <910e9fb6-d0df-4711-fe2b-244b3c20eb82@redhat.com>
+ <2eca6f60-3e8b-a389-27cb-8adbd9676607@oracle.com>
+From:   Waiman Long <longman@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=longman@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ weim8xU=
+Organization: Red Hat
+Message-ID: <4b43a3d1-a8f6-3ea7-7c32-b230d9fd0782@redhat.com>
+Date:   Fri, 11 Jan 2019 08:59:35 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
+In-Reply-To: <2eca6f60-3e8b-a389-27cb-8adbd9676607@oracle.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <ad6fae93-4122-7854-aa4c-2facd67ca839@oracle.com>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Fri, 11 Jan 2019 16:58:00 +0000 (UTC)
+Content-Transfer-Encoding: 8BIT
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Fri, 11 Jan 2019 16:59:38 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 11, 2019 at 05:46:36PM +0100, Alexandre Chartre wrote:
-> 
-> 
-> On 01/11/2019 04:28 PM, Josh Poimboeuf wrote:
-> > On Fri, Jan 11, 2019 at 01:10:52PM +0100, Alexandre Chartre wrote:
-> > > To avoid any issue with live patching the call instruction, what about
-> > > toggling between two call instructions: one would be the currently active
-> > > call, while the other would currently be inactive but to be used after a
-> > > change is made. You can safely patch the inactive call and then toggle
-> > > the call flow (using a jump label) between the active and inactive calls.
-> > > 
-> > > So instead of having a single call instruction:
-> > > 
-> > > 	call function
-> > > 
-> > > You would have:
-> > > 
-> > > 	STATIC_JUMP_IF_TRUE label, key
-> > > 	call function1
-> > > 	jmp done
-> > > label:
-> > > 	call function2
-> > > done:
-> > > 
-> > > If the key is set so that function1 is currently called then you can
-> > > safely update the call instruction for function2. Once this is done,
-> > > just flip the key to make the function2 call active. On a next update,
-> > > you would, of course, have to switch and update the call for function1.
-> > 
-> > What about the following race?
-> > 
-> > CPU1						CPU2
-> > static key is false, doesn't jump
-> > task gets preempted before calling function1
-> > 						change static key to true
-> > 						start patching "call function1"
-> > task resumes, sees inconsistent call instruction
-> > 
-> 
-> If the function1 call is active then it won't be changed, you will change
-> function2. However, I presume you can still have a race but if the function
-> is changed twice before calling function1:
-> 
-> CPU1						CPU2
-> static key is false, doesn't jump
-> task gets preempted before calling function1
->                                                 -- first function change --
->                                                 patch "call function2"
->                                                 change static key to true
->                                                 -- second function change --
->                                                 start patching "call function1"
-> task resumes, sees inconsistent call instruction
-> 
-> So right, that's a problem.
+On 01/11/2019 12:06 AM, Zhenzhong Duan wrote:
+>
+>
+> On 2019/1/10 22:43, Waiman Long wrote:
+>> On 01/10/2019 03:02 AM, Zhenzhong Duan wrote:
+>>> Hi Maintainer,
+>>>
+>>>
+>>> There is a question confused me for days. Appreciate an answer.
+>>>
+>>> In below code, the comment says we never have more than 4 nested
+>>> contexts.
+>>>
+>>> What happen if debug and mce exceptions nest with the four, or we
+>>> ensure it never happen?
+>>>
+>>>
+>>> /*
+>>>  * Per-CPU queue node structures; we can never have more than 4 nested
+>>>  * contexts: task, softirq, hardirq, nmi.
+>>>  *
+>>>  * Exactly fits one 64-byte cacheline on a 64-bit architecture.
+>>>  *
+>>>  * PV doubles the storage and uses the second cacheline for PV state.
+>>>  */
+>>> static DEFINE_PER_CPU_ALIGNED(struct qnode, qnodes[MAX_NODES]);
+>>>
+>> Yes, both debug and mce exceptions are some kind of NMIs. So
+>> theoretically, it is possible to have more than four. Are you aware of
+>> any debug and MCE exception handlers that need to take a spinlock for
+>> synchronization?
+> Not for debug exception, for MCE exception handler I found below two:
+>
+> do_machine_check->mce_report_event->schedule_work
+> do_machine_check->force_sig->force_sig_info
+>
+> schedule_work() and force_sig_info() take spinlocks.
+> -- 
+> Thanks
+> Zhenzhong
 
-Right, that's what I meant to say :-)
+The comment for do_machine_scheck() has already state that:
 
--- 
-Josh
+ * This is executed in NMI context not subject to normal locking rules. This
+ * implies that most kernel services cannot be safely used. Don't even
+ * think about putting a printk in there!
+
+So even if it doesn't exceed the MAX_NODES limit, it could hit deadlock
+and other kind of locking hazards. So supporting MCE is not a reason
+strong enough to extend MAX_NODES.
+
+In hindsight, we should have added a "BUG_ON(idx >= MAX_NODES);" check
+to avoid silent corruption because of that issue.
+
+Thanks,
+Longman
+
+
