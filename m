@@ -4,50 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73628C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:14:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 522DDC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:14:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 45B4E2183F
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:14:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 21EB32183F
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:14:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547216089;
-	bh=p0dcsPsdPGHaiFQTv3TVWw+hfY7vThPhjpH5jn6dC+Q=;
+	s=default; t=1547216093;
+	bh=DCPgf4CXaelKbDrasZknhn1+ZOQMaKajji3KMBGqEoM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=insZKwkxgc7gAj6ItI4eG9chcbLttgGKOjGP4AhM6wWiryU1CSc+AA7XDOaehToCq
-	 fCuXj4zljia7OdNRzJ3s2fT5r9qOA/VLhMaZ4a5kacXkxfOkKAnajZHFAaoR2t1nYA
-	 sKf5Gf/VfXjr9jJ2bLlR9/w3eCWH+aWOesDqPCiQ=
+	b=rDdwH3XAncAkEJVd2PszHmH/bWbcpjneP7xvXjop4CT64VKPuXUcZGvJpv4D7Sdp/
+	 IvtxKPpeCdqsVrPo6GERneNnsQtfHb2bpSS0jHPGUhz8NW1YSZcrvaYAbi5gHF2GZX
+	 fnA0FtRz1CT6uPXrSDcAaA9i84B/ri58sgJIfzlw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733151AbfAKOOr (ORCPT
+        id S1733164AbfAKOOw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:14:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58534 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:14:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58732 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732147AbfAKOOo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:14:44 -0500
+        id S1732147AbfAKOOu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:14:50 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8E90220874;
-        Fri, 11 Jan 2019 14:14:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 41C7B217D6;
+        Fri, 11 Jan 2019 14:14:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547216084;
-        bh=p0dcsPsdPGHaiFQTv3TVWw+hfY7vThPhjpH5jn6dC+Q=;
+        s=default; t=1547216089;
+        bh=DCPgf4CXaelKbDrasZknhn1+ZOQMaKajji3KMBGqEoM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uibo/4a8xzjcM7H24lWq2ZhzUVo7FVZt8bHsUw225eIA66e7x1HnXqeOYPTE1S/pK
-         iC47CCmIg22TWCY88DmFneFs4eQ++MAmgXhC78xNfNgU/EteSFEeg6xL69VYn/z02G
-         yIlDeon3zyFZe59DD2d2jApzbuRgv1ciI/P1qq+I=
+        b=YRT6oTWOSQXYuMU+Z8037gUlJ3v7VhvD5K6SvzO/SLtbS2ycQd8wAb+7SeZw2l5gO
+         Xm29gcJD+MMQFZwHBQiMG15JhZc3t618G+vijB2skOnn4aXI/4wkStbSdPhOPesp8Q
+         6fNyjTUGwok8At9SOlUtgGRApqRnJvNzKGWpGLNc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tyler Hicks <tyhicks@canonical.com>, security@kernel.org
-Subject: [PATCH 3.18 07/47] x86/mtrr: Dont copy uninitialized gentry fields back to userspace
-Date:   Fri, 11 Jan 2019 15:07:52 +0100
-Message-Id: <20190111130957.053666840@linuxfoundation.org>
+        stable@vger.kernel.org, Tyrel Datwyler <tyreld@linux.vnet.ibm.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 3.18 09/47] ibmveth: fix DMA unmap error in ibmveth_xmit_start error path
+Date:   Fri, 11 Jan 2019 15:07:54 +0100
+Message-Id: <20190111130957.308612785@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111130956.170952125@linuxfoundation.org>
 References: <20190111130956.170952125@linuxfoundation.org>
@@ -66,41 +64,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
 
-commit 32043fa065b51e0b1433e48d118821c71b5cd65d upstream.
+[ Upstream commit 756af9c642329d54f048bac2a62f829b391f6944 ]
 
-Currently the copy_to_user of data in the gentry struct is copying
-uninitiaized data in field _pad from the stack to userspace.
+Commit 33a48ab105a7 ("ibmveth: Fix DMA unmap error") fixed an issue in the
+normal code path of ibmveth_xmit_start() that was originally introduced by
+Commit 6e8ab30ec677 ("ibmveth: Add scatter-gather support"). This original
+fix missed the error path where dma_unmap_page is wrongly called on the
+header portion in descs[0] which was mapped with dma_map_single. As a
+result a failure to DMA map any of the frags results in a dmesg warning
+when CONFIG_DMA_API_DEBUG is enabled.
 
-Fix this by explicitly memset'ing gentry to zero, this also will zero any
-compiler added padding fields that may be in struct (currently there are
-none).
+------------[ cut here ]------------
+DMA-API: ibmveth 30000002: device driver frees DMA memory with wrong function
+  [device address=0x000000000a430000] [size=172 bytes] [mapped as page] [unmapped as single]
+WARNING: CPU: 1 PID: 8426 at kernel/dma/debug.c:1085 check_unmap+0x4fc/0xe10
+...
+<snip>
+...
+DMA-API: Mapped at:
+ibmveth_start_xmit+0x30c/0xb60
+dev_hard_start_xmit+0x100/0x450
+sch_direct_xmit+0x224/0x490
+__qdisc_run+0x20c/0x980
+__dev_queue_xmit+0x1bc/0xf20
 
-Detected by CoverityScan, CID#200783 ("Uninitialized scalar variable")
+This fixes the API misuse by unampping descs[0] with dma_unmap_single.
 
-Fixes: b263b31e8ad6 ("x86, mtrr: Use explicit sizing and padding for the 64-bit ioctls")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Tyler Hicks <tyhicks@canonical.com>
-Cc: security@kernel.org
-Link: https://lkml.kernel.org/r/20181218172956.1440-1-colin.king@canonical.com
+Fixes: 6e8ab30ec677 ("ibmveth: Add scatter-gather support")
+Signed-off-by: Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- arch/x86/kernel/cpu/mtrr/if.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/net/ethernet/ibm/ibmveth.c |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
---- a/arch/x86/kernel/cpu/mtrr/if.c
-+++ b/arch/x86/kernel/cpu/mtrr/if.c
-@@ -173,6 +173,8 @@ mtrr_ioctl(struct file *file, unsigned i
- 	struct mtrr_gentry gentry;
- 	void __user *arg = (void __user *) __arg;
+--- a/drivers/net/ethernet/ibm/ibmveth.c
++++ b/drivers/net/ethernet/ibm/ibmveth.c
+@@ -1059,11 +1059,15 @@ out:
  
-+	memset(&gentry, 0, sizeof(gentry));
-+
- 	switch (cmd) {
- 	case MTRRIOC_ADD_ENTRY:
- 	case MTRRIOC_SET_ENTRY:
+ map_failed_frags:
+ 	last = i+1;
+-	for (i = 0; i < last; i++)
++	for (i = 1; i < last; i++)
+ 		dma_unmap_page(&adapter->vdev->dev, descs[i].fields.address,
+ 			       descs[i].fields.flags_len & IBMVETH_BUF_LEN_MASK,
+ 			       DMA_TO_DEVICE);
+ 
++	dma_unmap_single(&adapter->vdev->dev,
++			 descs[0].fields.address,
++			 descs[0].fields.flags_len & IBMVETH_BUF_LEN_MASK,
++			 DMA_TO_DEVICE);
+ map_failed:
+ 	if (!firmware_has_feature(FW_FEATURE_CMO))
+ 		netdev_err(netdev, "tx: unable to map xmit buffer\n");
 
 
