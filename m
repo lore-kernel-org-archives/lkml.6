@@ -7,48 +7,52 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7260CC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:19:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 890C4C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:19:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 41EE921841
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:19:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 560F02183F
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:19:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547216349;
-	bh=PfuOEeq9RQIXNw8veeDEoY7VdGLsooAzEoGaVdyXN+8=;
+	s=default; t=1547216355;
+	bh=MXcrlELUPTIodr0e286UIRdOoZOZqFzOEtrHirFXDY0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=oA/EWBjZ+L6e698EvBYgI3os9TtP825GUc5u+K1F2a3aEmRHh02yHomft/9SkLdY2
-	 P6eozvqv4OCgSH+iqJxo7gF4MZcQDjaSjzPlHe6HrFaqo+jMBNp6Cmx7jEW8ANY5qb
-	 iT3A8bRaTS/1xLGF80JhWofz5nKF0rSe3+57UjaM=
+	b=EJCB5YUJqII+Z6xJOD7Q1vVX2QMXv22Wj5QeH4RTAnXsq+xnJoOK4ZhuQvhvINnsb
+	 3iqr+c9Zd3kbQUfuW0/wqrHQKLIApmfZ9x98xDUKXUeHw/mYyIfUvQeLAA41ueGNtC
+	 X5yNJVYIoBzmCnrenhniHUIwRyD2wh0CX5HZ8UBs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731606AbfAKOTH (ORCPT
+        id S1731558AbfAKOTO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:19:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35584 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:19:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35870 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731596AbfAKOTB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:19:01 -0500
+        id S1729812AbfAKOTI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:19:08 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F00882177B;
-        Fri, 11 Jan 2019 14:18:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A1EAD21783;
+        Fri, 11 Jan 2019 14:19:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547216340;
-        bh=PfuOEeq9RQIXNw8veeDEoY7VdGLsooAzEoGaVdyXN+8=;
+        s=default; t=1547216348;
+        bh=MXcrlELUPTIodr0e286UIRdOoZOZqFzOEtrHirFXDY0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=u6dqenSL5JVFnlMq95kTRGxlmONsu993MG/hQn6FSR9JvHqpToP241iquK5Ajbfhn
-         LoIy7zEiFhMyWA6M6YEzgkhlXbgpVAVxuRhOsoGMc1Pd9JeLXwH6BSfiHh+GbAOuMq
-         6t6BFua6543cST87XtT79ExoDwMTwzhH5j6/2JeA=
+        b=lxe2Lgo4ndnM2kasY8sYte2bJTi/T6sSQMo1HM5Q6qsMKYJdRGS6Dq5hBWnHWObVN
+         ocB5pwlt4dDoKZY6K01xSOmQU+vjQeBzQigmQA9VzSMDz2I5YQFIiWDtKCUSxKn3W0
+         m5xYJT2erXPiUkyICHhu0itvKXgji9bty2pPQp0o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
-        Tom Gundersen <teg@jklm.no>,
-        David Herrmann <dh.herrmann@gmail.com>,
+        stable@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>,
+        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.4 64/88] fork: record start_time late
-Date:   Fri, 11 Jan 2019 15:08:33 +0100
-Message-Id: <20190111131056.810914046@linuxfoundation.org>
+Subject: [PATCH 4.4 67/88] mm, devm_memremap_pages: kill mapping "System RAM" support
+Date:   Fri, 11 Jan 2019 15:08:36 +0100
+Message-Id: <20190111131057.258741581@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131045.137499039@linuxfoundation.org>
 References: <20190111131045.137499039@linuxfoundation.org>
@@ -67,78 +71,57 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: David Herrmann <dh.herrmann@gmail.com>
+From: Dan Williams <dan.j.williams@intel.com>
 
-commit 7b55851367136b1efd84d98fea81ba57a98304cf upstream.
+commit 06489cfbd915ff36c8e36df27f1c2dc60f97ca56 upstream.
 
-This changes the fork(2) syscall to record the process start_time after
-initializing the basic task structure but still before making the new
-process visible to user-space.
+Given the fact that devm_memremap_pages() requires a percpu_ref that is
+torn down by devm_memremap_pages_release() the current support for mapping
+RAM is broken.
 
-Technically, we could record the start_time anytime during fork(2).  But
-this might lead to scenarios where a start_time is recorded long before
-a process becomes visible to user-space.  For instance, with
-userfaultfd(2) and TLS, user-space can delay the execution of fork(2)
-for an indefinite amount of time (and will, if this causes network
-access, or similar).
+Support for remapping "System RAM" has been broken since the beginning and
+there is no existing user of this this code path, so just kill the support
+and make it an explicit error.
 
-By recording the start_time late, it much closer reflects the point in
-time where the process becomes live and can be observed by other
-processes.
+This cleanup also simplifies a follow-on patch to fix the error path when
+setting a devm release action for devm_memremap_pages_release() fails.
 
-Lastly, this makes it much harder for user-space to predict and control
-the start_time they get assigned.  Previously, user-space could fork a
-process and stall it in copy_thread_tls() before its pid is allocated,
-but after its start_time is recorded.  This can be misused to later-on
-cycle through PIDs and resume the stalled fork(2) yielding a process
-that has the same pid and start_time as a process that existed before.
-This can be used to circumvent security systems that identify processes
-by their pid+start_time combination.
-
-Even though user-space was always aware that start_time recording is
-flaky (but several projects are known to still rely on start_time-based
-identification), changing the start_time to be recorded late will help
-mitigate existing attacks and make it much harder for user-space to
-control the start_time a process gets assigned.
-
-Reported-by: Jann Horn <jannh@google.com>
-Signed-off-by: Tom Gundersen <teg@jklm.no>
-Signed-off-by: David Herrmann <dh.herrmann@gmail.com>
+Link: http://lkml.kernel.org/r/154275557997.76910.14689813630968180480.stgit@dwillia2-desk3.amr.corp.intel.com
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+Reviewed-by: "Jérôme Glisse" <jglisse@redhat.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Logan Gunthorpe <logang@deltatee.com>
+Cc: Balbir Singh <bsingharora@gmail.com>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/fork.c |   13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
+ kernel/memremap.c |    9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -1411,8 +1411,6 @@ static struct task_struct *copy_process(
+--- a/kernel/memremap.c
++++ b/kernel/memremap.c
+@@ -171,15 +171,12 @@ void *devm_memremap_pages(struct device
+ 	struct page_map *page_map;
+ 	int error, nid;
  
- 	posix_cpu_timers_init(p);
+-	if (is_ram == REGION_MIXED) {
+-		WARN_ONCE(1, "%s attempted on mixed region %pr\n",
+-				__func__, res);
++	if (is_ram != REGION_DISJOINT) {
++		WARN_ONCE(1, "%s attempted on %s region %pr\n", __func__,
++				is_ram == REGION_MIXED ? "mixed" : "ram", res);
+ 		return ERR_PTR(-ENXIO);
+ 	}
  
--	p->start_time = ktime_get_ns();
--	p->real_start_time = ktime_get_boot_ns();
- 	p->io_context = NULL;
- 	p->audit_context = NULL;
- 	cgroup_fork(p);
-@@ -1573,6 +1571,17 @@ static struct task_struct *copy_process(
- 		goto bad_fork_free_pid;
- 
- 	/*
-+	 * From this point on we must avoid any synchronous user-space
-+	 * communication until we take the tasklist-lock. In particular, we do
-+	 * not want user-space to be able to predict the process start-time by
-+	 * stalling fork(2) after we recorded the start_time but before it is
-+	 * visible to the system.
-+	 */
-+
-+	p->start_time = ktime_get_ns();
-+	p->real_start_time = ktime_get_boot_ns();
-+
-+	/*
- 	 * Make it visible to the rest of the system, but dont wake it up yet.
- 	 * Need tasklist lock for parent etc handling!
- 	 */
+-	if (is_ram == REGION_INTERSECTS)
+-		return __va(res->start);
+-
+ 	page_map = devres_alloc_node(devm_memremap_pages_release,
+ 			sizeof(*page_map), GFP_KERNEL, dev_to_node(dev));
+ 	if (!page_map)
 
 
