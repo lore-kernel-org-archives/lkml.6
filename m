@@ -2,128 +2,166 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C218C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 01:17:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B21EC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 01:18:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4411020872
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 01:17:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dlf7+xIO"
+	by mail.kernel.org (Postfix) with ESMTP id 7422520872
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 01:18:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729034AbfAKBRW (ORCPT
+        id S1729195AbfAKBSW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 20:17:22 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:39287 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726369AbfAKBRV (ORCPT
+        Thu, 10 Jan 2019 20:18:22 -0500
+Received: from Mailgw01.mediatek.com ([1.203.163.78]:52357 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726369AbfAKBSW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 20:17:21 -0500
-Received: by mail-pg1-f196.google.com with SMTP id w6so5583729pgl.6
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 17:17:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=pBrZ3CioDf9IPnu/iao9blT0tnYCjnN+XUWIYCmnjVI=;
-        b=dlf7+xIONI6JaeCr8BxqmLQXVnJ/3Il58Z3oHS0X5j688A5xlpM18FUDkNb+ICs0Ux
-         QfhaWjixCTKBWuOPDLU2Puee/o0ollIgBSS7kpri8euDCc9ZpypPkZA4SkrF+3KdfKrm
-         xUm8OyG2U5WIpRWCh8s4py/JMzLtjq9iE5RVfSYPEldPIaSgdxcXQ0Fwz/Wyd8t44n+n
-         ShTxsFs3/fq9PsdY6/UgdS9a2y1oJgdbYpEQFA1N/6uea8uLyhelz6r+SavatbSYggMN
-         uWeU2Z6urDdtL71avRcbGsGVjRkw3XFwt0FvrwnElrroTeJf9ZQ3rh60JXiC2aH5Xwjt
-         HQNw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=pBrZ3CioDf9IPnu/iao9blT0tnYCjnN+XUWIYCmnjVI=;
-        b=cZ03uDwXXpM5xgCfl2O3OWHIPlLmjkmTuK0w2tIzTXfKmiS/yTZ8IAud8Nkw7Fv5SW
-         FiJAKeVkoIQymCMG1MuY6DaE85JzHjjIH6imQwkYdUxu6oZrl8ywGPReiL/2nYt4UMA5
-         YQO2mD+HOmFWPfa/s8ytQtN1SkLRrpjuSO6xfDgPO0a+eTCc0QyAjx7PlmMXrI8Iw2O7
-         FBZ/SFEGvJBp62JV0O79enT1qfYGIOcHQ4+MbgOwNSKeCDzcRkx1XcBt1FaUW8YBUPxz
-         YhxAqN18eXHyiZwkePX9jFOLkIfnacWpA5uz5A8tPC4P/Q6l5jTBk+9hDqPgAMwqkCNO
-         MGRg==
-X-Gm-Message-State: AJcUukcA6i/lktaMFIGQY4JCHz4iCraTG4px1hanV1sfjqOR943cVfer
-        WO9odsVUMi2qr//JOwaUVuYta1LNAEOS2A==
-X-Google-Smtp-Source: ALg8bN6xHkb+R89hc+bzgrI1nBBCvO1djpQnbcNJb4y33X7QX0osetByPWxSxAF5EH3H9ICQqYQAWA==
-X-Received: by 2002:a62:6047:: with SMTP id u68mr12252161pfb.239.1547169440216;
-        Thu, 10 Jan 2019 17:17:20 -0800 (PST)
-Received: from localhost ([104.133.9.99])
-        by smtp.gmail.com with ESMTPSA id x12sm96711363pgr.55.2019.01.10.17.17.19
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 10 Jan 2019 17:17:19 -0800 (PST)
-From:   Stephane Eranian <eranian@google.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     peterz@infradead.org, mingo@elte.hu, ak@linux.intel.com,
-        kan.liang@intel.com, jolsa@redhat.com, acme@redhat.com
-Subject: [PATCH] perf/core: fix perf_proc_update_handler() bug
-Date:   Thu, 10 Jan 2019 17:17:16 -0800
-Message-Id: <1547169436-6266-1-git-send-email-eranian@google.com>
-X-Mailer: git-send-email 2.7.4
+        Thu, 10 Jan 2019 20:18:22 -0500
+X-UUID: 14cf770aefae49cb8b22b993901eab9d-20190111
+X-UUID: 14cf770aefae49cb8b22b993901eab9d-20190111
+Received: from mtkcas32.mediatek.inc [(172.27.4.250)] by mailgw01.mediatek.com
+        (envelope-from <min.guo@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 1897669074; Fri, 11 Jan 2019 09:18:12 +0800
+Received: from MTKCAS32.mediatek.inc (172.27.4.184) by MTKMBS31N2.mediatek.inc
+ (172.27.4.87) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 11 Jan
+ 2019 09:18:11 +0800
+Received: from [10.17.3.153] (10.17.3.153) by MTKCAS32.mediatek.inc
+ (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Fri, 11 Jan 2019 09:18:10 +0800
+Message-ID: <1547169490.4433.147.camel@mhfsdcap03>
+Subject: Re: [PATCH 4/4] usb: musb: Add support for MediaTek musb controller
+From:   Min Guo <min.guo@mediatek.com>
+To:     Bin Liu <b-liu@ti.com>
+CC:     Rob Herring <robh+dt@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "Matthias Brugger" <matthias.bgg@gmail.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        <chunfeng.yun@mediatek.com>, <linux-usb@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        Yonglong Wu <yonglong.wu@mediatek.com>
+Date:   Fri, 11 Jan 2019 09:18:10 +0800
+In-Reply-To: <20190110141840.GA18026@uda0271908>
+References: <1545896066-897-1-git-send-email-min.guo@mediatek.com>
+         <1545896066-897-5-git-send-email-min.guo@mediatek.com>
+         <20190108154441.GG25910@uda0271908> <1547037068.4433.122.camel@mhfsdcap03>
+         <20190109140144.GI25910@uda0271908> <1547105062.4433.144.camel@mhfsdcap03>
+         <20190110141840.GA18026@uda0271908>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The perf_proc_update_handler() handles /proc/sys/kernel/perf_event_max_sample_rate
-syctl variable.  When the PMU IRQ handler timing monitoring is disabled, i.e,
-when /proc/sys/kernel/perf_cpu_time_max_percent is equal to 0 or 100,
-then no modification to sysctl_perf_event_sample_rate is allowed to prevent
-possible hang from wrong values.
+Hi Bin,
 
-The problem is that the test to prevent modification is made after the
-sysctl variable is modified in perf_proc_update_handler().
+On Thu, 2019-01-10 at 08:18 -0600, Bin Liu wrote:
+> Hi Min,
+> 
+> Please briefly summarize the controller differences in the commit log,
+> such as
+> 
+> - WIC interrupt registers;
+> - data toggle bit;
+> - no dedicated DMA interrupt line;
+> 
+> so that we can quickly understand the core driver is modified
+> accordingly to handle the differences.
 
-You get an error:
+Okay, tkanks.
 
-$ echo 10001 >/proc/sys/kernel/perf_event_max_sample_rate
-echo: write error: invalid argument
+> On Thu, Jan 10, 2019 at 03:24:22PM +0800, Min Guo wrote:
+> > Hi Bin,
+> 
+> [snip]
+> 
+> > > > > > +		musb_writeb(mbase, MUSB_INTRUSB,
+> > > > > > +			musb_readb(mbase, MUSB_INTRUSB));
+> > > > > 
+> > > > > For this clearing register bit operation, please create platform hooks
+> > > > > musb_clearb() and musb_clearw() in struct musb_platform_ops instead,
+> > > > > then follow how musb_readb() pointer is assigned in
+> > > > > musb_init_controller() to use the W1C version for mtk platform.
+> > > > 
+> > > > I have tried implementing musb_readb(), musb_readw() interface with
+> > > > interrupt status W1C function in struct musb_platform_ops. But this
+> > > > interface will require a global variable to hold MAC basic address for
+> > > > judgment, and then special handling of the interrupt state. A global
+> > > > variable will make the driver work with only a single instance, so it
+> > > > can't work on some MTK platforms which have two instances.
+> > > 
+> > > I didn't mean to modify musb_read*(), but
+> > > 
+> > > > How about creating musb_clearb/w() as following:
+> > > > void (*clearb)(void __iomem *addr, unsigned offset, u8 data);
+> > > > void (*clearw)(void __iomem *addr, unsigned offset, u16 data);
+> > > 
+> > > this is what I was asking for, similar to what musb_readb/w() is
+> > > implemented.
+> > 
+> > I will prepare a patch for musb_clearb/w().
+> 
+> This doesn't have to be a separate patch.
 
-But the value is still modified causing all sorts of inconsistencies:
+Okay.
 
-$ cat /proc/sys/kernel/perf_event_max_sample_rate
-10001
+> > > > > > +		musb_writew(mbase, MUSB_INTRRX,
+> > > > > > +			musb_readw(mbase, MUSB_INTRRX));
+> > > > > > +		musb_writew(mbase, MUSB_INTRTX,
+> > > > > > +			musb_readw(mbase, MUSB_INTRTX));
+> > > > > > +	}
+> 
+> [snip]
+> 
+> > > > > > +	/* MediaTek controller has private toggle register */
+> > > > > 
+> > > > > only one toggle register for all endpoints? how does it handle
+> > > > > difference toggle values for different endpoints?
+> > > > 
+> > > > MediaTek controller has separate registers to describe TX/RX toggle.
+> > > 
+> > > Is it one register per endpoint?
+> > 
+> > MUSB_RXTOG/MUSB_TXTOG is common register, each bit reflects the toggle
+> > state of an endpoint. bit[0] not used,bit[1~8] corresponds to ep[1~8]
+> > 
+> > > > 
+> > > > > > +	if (musb->ops->quirks & MUSB_MTK_QUIRKS) {
+> > > > > > +		u16 toggle;
+> > > > > > +		u8 epnum = qh->hw_ep->epnum;
+> > > > > > +
+> > > > > > +		if (is_in)
+> > > > > > +			toggle = musb_readl(musb->mregs, MUSB_RXTOG);
+> > > 
+> > > this line seems telling there is just *one* register for all endpoints.
+> > 
+> > Yes, all endpoint share this register, endpoint and bit are one-to-one
+> > correspondence.
+> 
+> Okay, thanks. Sorry I missed the bit operation in the code below.
+> 
+> > 
+> > > > > 
+> > > > > should use musb_readw() instead? MUSB_RXTOG seems to be 16bit.
+> > > > 
+> > > > Ok
+> > > > 
+> > > > > > +		else
+> > > > > > +			toggle = musb_readl(musb->mregs, MUSB_TXTOG);
+> > > > > > +
+> > > > > > +		csr = toggle & (1 << epnum);
+> 
+> Regards,
+> -Bin.
 
-This patch fixes the problem by moving the parsing of the value after
-the test.
-
-Signed-off-by: Stephane Eranian <eranian@google.com>
----
- kernel/events/core.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
-
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 3cd13a30f732..e5ede6918050 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -436,18 +436,18 @@ int perf_proc_update_handler(struct ctl_table *table, int write,
- 		void __user *buffer, size_t *lenp,
- 		loff_t *ppos)
- {
--	int ret = proc_dointvec_minmax(table, write, buffer, lenp, ppos);
--
--	if (ret || !write)
--		return ret;
--
-+	int ret;
-+	int perf_cpu = sysctl_perf_cpu_time_max_percent;
- 	/*
- 	 * If throttling is disabled don't allow the write:
- 	 */
--	if (sysctl_perf_cpu_time_max_percent == 100 ||
--	    sysctl_perf_cpu_time_max_percent == 0)
-+	if (write && (perf_cpu == 100 || perf_cpu == 0))
- 		return -EINVAL;
- 
-+	ret = proc_dointvec_minmax(table, write, buffer, lenp, ppos);
-+	if (ret || !write)
-+		return ret;
-+
- 	max_samples_per_tick = DIV_ROUND_UP(sysctl_perf_event_sample_rate, HZ);
- 	perf_sample_period_ns = NSEC_PER_SEC / sysctl_perf_event_sample_rate;
- 	update_perf_cpu_limits();
--- 
-2.7.4
 
