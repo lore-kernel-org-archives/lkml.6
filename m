@@ -4,50 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCBC4C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:13:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49DEBC43612
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:13:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9409721848
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:13:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1C1D62177B
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:13:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547219606;
-	bh=NlIBgMEPNWg37sCph84P37Ezg77ggd959MwGstAynx8=;
+	s=default; t=1547219612;
+	bh=V+pdW+o0NrhshV+EF77I4bvVNnyyMy4/2Kqz/joJmIw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Z7LxwlnR03pUxBtc3IagAuM0PRQxX7yecCIEnuC+kFkXuO3CFaB3Xgf/Q9Sr6bx0J
-	 Jm4n5ITNWoRDCz0Knaan+bS5IlnkNGvlPyGw1HW84p7Uh/q54JcceGzvXTV1YeVyIu
-	 FpEKFAp6hkQyC4ccjer2KWKNYQnr6oUtWR6pJTLo=
+	b=B34TBSEfAC/gGE6YUkG8J7ZOsjQNX9yH5m0gRVBCH9kVlVQ1G0H46u4Wlq450H1YH
+	 ywWGbzoM6L5Ov14YUL/09v76FkPs9KP6Qo+A7wUST17S2LJUW96lb8vxu+wefVRsO3
+	 2ZKZ64/RXkdDo9slPE/2zpAqLP09EqBK1gwDY5g4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392080AbfAKPNZ (ORCPT
+        id S1733194AbfAKOPA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 10:13:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58970 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733178AbfAKOPA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 11 Jan 2019 09:15:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58868 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1733178AbfAKOO4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:14:56 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D7A8D2177B;
-        Fri, 11 Jan 2019 14:14:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D9163217D6;
+        Fri, 11 Jan 2019 14:14:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547216100;
-        bh=NlIBgMEPNWg37sCph84P37Ezg77ggd959MwGstAynx8=;
+        s=default; t=1547216095;
+        bh=V+pdW+o0NrhshV+EF77I4bvVNnyyMy4/2Kqz/joJmIw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2HlR5fXPTlau3wowZlhYrvHzvbh8pWSY5QpKODNDATOQWXWmztd9CyyqLpFG1qZlo
-         YZ0EP2M4AesOGI+iDb9TVoa1Fu9Nk1kJm8+GVTCM5+jERWhlCwwdb+xifpFCFko7qz
-         dauBt6337QfnPQBR7ldiOnbqZMDyBQ7EfrpM/tqc=
+        b=S7QJjwerdhNIv/PaIit6i8ZGgdxtnImVUiLr884anUzbweBI0VLi4/n3tqwIvO2X0
+         UXJuZzJHTJphkNfBlT3jV3DyMe/s3gq27esifSp84EybHYNiXG1Iwwqd8FWPxF6j+j
+         Iik6seKCg+cw2NP11GOgGy7D2qjz3LgehhNeJigQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 3.18 22/47] KVM: x86: Use jmp to invoke kvm_spurious_fault() from .fixup
-Date:   Fri, 11 Jan 2019 15:08:07 +0100
-Message-Id: <20190111130958.977470820@linuxfoundation.org>
+        stable@vger.kernel.org, Cong Wang <xiyou.wangcong@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        syzbot+f621cda8b7e598908efa@syzkaller.appspotmail.com
+Subject: [PATCH 3.18 12/47] netrom: fix locking in nr_find_socket()
+Date:   Fri, 11 Jan 2019 15:07:57 +0100
+Message-Id: <20190111130957.608361184@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111130956.170952125@linuxfoundation.org>
 References: <20190111130956.170952125@linuxfoundation.org>
@@ -66,136 +66,101 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sean Christopherson <sean.j.christopherson@intel.com>
+From: Cong Wang <xiyou.wangcong@gmail.com>
 
-commit e81434995081fd7efb755fd75576b35dbb0850b1 upstream.
+[ Upstream commit 7314f5480f3e37e570104dc5e0f28823ef849e72 ]
 
-____kvm_handle_fault_on_reboot() provides a generic exception fixup
-handler that is used to cleanly handle faults on VMX/SVM instructions
-during reboot (or at least try to).  If there isn't a reboot in
-progress, ____kvm_handle_fault_on_reboot() treats any exception as
-fatal to KVM and invokes kvm_spurious_fault(), which in turn generates
-a BUG() to get a stack trace and die.
+nr_find_socket(), nr_find_peer() and nr_find_listener() lock the
+sock after finding it in the global list. However, the call path
+requires BH disabled for the sock lock consistently.
 
-When it was originally added by commit 4ecac3fd6dc2 ("KVM: Handle
-virtualization instruction #UD faults during reboot"), the "call" to
-kvm_spurious_fault() was handcoded as PUSH+JMP, where the PUSH'd value
-is the RIP of the faulting instructing.
+Actually the locking is unnecessary at this point, we can just hold
+the sock refcnt to make sure it is not gone after we unlock the global
+list, and lock it later only when needed.
 
-The PUSH+JMP trickery is necessary because the exception fixup handler
-code lies outside of its associated function, e.g. right after the
-function.  An actual CALL from the .fixup code would show a slightly
-bogus stack trace, e.g. an extra "random" function would be inserted
-into the trace, as the return RIP on the stack would point to no known
-function (and the unwinder will likely try to guess who owns the RIP).
-
-Unfortunately, the JMP was replaced with a CALL when the macro was
-reworked to not spin indefinitely during reboot (commit b7c4145ba2eb
-"KVM: Don't spin on virt instruction faults during reboot").  This
-causes the aforementioned behavior where a bogus function is inserted
-into the stack trace, e.g. my builds like to blame free_kvm_area().
-
-Revert the CALL back to a JMP.  The changelog for commit b7c4145ba2eb
-("KVM: Don't spin on virt instruction faults during reboot") contains
-nothing that indicates the switch to CALL was deliberate.  This is
-backed up by the fact that the PUSH <insn RIP> was left intact.
-
-Note that an alternative to the PUSH+JMP magic would be to JMP back
-to the "real" code and CALL from there, but that would require adding
-a JMP in the non-faulting path to avoid calling kvm_spurious_fault()
-and would add no value, i.e. the stack trace would be the same.
-
-Using CALL:
-
-------------[ cut here ]------------
-kernel BUG at /home/sean/go/src/kernel.org/linux/arch/x86/kvm/x86.c:356!
-invalid opcode: 0000 [#1] SMP
-CPU: 4 PID: 1057 Comm: qemu-system-x86 Not tainted 4.20.0-rc6+ #75
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 0.0.0 02/06/2015
-RIP: 0010:kvm_spurious_fault+0x5/0x10 [kvm]
-Code: <0f> 0b 66 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 41 55 49 89 fd 41
-RSP: 0018:ffffc900004bbcc8 EFLAGS: 00010046
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffffffffffffffff
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: ffff888273fd8000 R08: 00000000000003e8 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000784 R12: ffffc90000371fb0
-R13: 0000000000000000 R14: 000000026d763cf4 R15: ffff888273fd8000
-FS:  00007f3d69691700(0000) GS:ffff888277800000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000055f89bc56fe0 CR3: 0000000271a5a001 CR4: 0000000000362ee0
-Call Trace:
- free_kvm_area+0x1044/0x43ea [kvm_intel]
- ? vmx_vcpu_run+0x156/0x630 [kvm_intel]
- ? kvm_arch_vcpu_ioctl_run+0x447/0x1a40 [kvm]
- ? kvm_vcpu_ioctl+0x368/0x5c0 [kvm]
- ? kvm_vcpu_ioctl+0x368/0x5c0 [kvm]
- ? __set_task_blocked+0x38/0x90
- ? __set_current_blocked+0x50/0x60
- ? __fpu__restore_sig+0x97/0x490
- ? do_vfs_ioctl+0xa1/0x620
- ? __x64_sys_futex+0x89/0x180
- ? ksys_ioctl+0x66/0x70
- ? __x64_sys_ioctl+0x16/0x20
- ? do_syscall_64+0x4f/0x100
- ? entry_SYSCALL_64_after_hwframe+0x44/0xa9
-Modules linked in: vhost_net vhost tap kvm_intel kvm irqbypass bridge stp llc
----[ end trace 9775b14b123b1713 ]---
-
-Using JMP:
-
-------------[ cut here ]------------
-kernel BUG at /home/sean/go/src/kernel.org/linux/arch/x86/kvm/x86.c:356!
-invalid opcode: 0000 [#1] SMP
-CPU: 6 PID: 1067 Comm: qemu-system-x86 Not tainted 4.20.0-rc6+ #75
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 0.0.0 02/06/2015
-RIP: 0010:kvm_spurious_fault+0x5/0x10 [kvm]
-Code: <0f> 0b 66 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 41 55 49 89 fd 41
-RSP: 0018:ffffc90000497cd0 EFLAGS: 00010046
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffffffffffffffff
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: ffff88827058bd40 R08: 00000000000003e8 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000784 R12: ffffc90000369fb0
-R13: 0000000000000000 R14: 00000003c8fc6642 R15: ffff88827058bd40
-FS:  00007f3d7219e700(0000) GS:ffff888277900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f3d64001000 CR3: 0000000271c6b004 CR4: 0000000000362ee0
-Call Trace:
- vmx_vcpu_run+0x156/0x630 [kvm_intel]
- ? kvm_arch_vcpu_ioctl_run+0x447/0x1a40 [kvm]
- ? kvm_vcpu_ioctl+0x368/0x5c0 [kvm]
- ? kvm_vcpu_ioctl+0x368/0x5c0 [kvm]
- ? __set_task_blocked+0x38/0x90
- ? __set_current_blocked+0x50/0x60
- ? __fpu__restore_sig+0x97/0x490
- ? do_vfs_ioctl+0xa1/0x620
- ? __x64_sys_futex+0x89/0x180
- ? ksys_ioctl+0x66/0x70
- ? __x64_sys_ioctl+0x16/0x20
- ? do_syscall_64+0x4f/0x100
- ? entry_SYSCALL_64_after_hwframe+0x44/0xa9
-Modules linked in: vhost_net vhost tap kvm_intel kvm irqbypass bridge stp llc
----[ end trace f9daedb85ab3ddba ]---
-
-Fixes: b7c4145ba2eb ("KVM: Don't spin on virt instruction faults during reboot")
-Cc: stable@vger.kernel.org
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Reported-and-tested-by: syzbot+f621cda8b7e598908efa@syzkaller.appspotmail.com
+Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- arch/x86/include/asm/kvm_host.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/netrom/af_netrom.c |   15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
 
---- a/arch/x86/include/asm/kvm_host.h
-+++ b/arch/x86/include/asm/kvm_host.h
-@@ -1044,7 +1044,7 @@ asmlinkage void kvm_spurious_fault(void)
- 	"cmpb $0, kvm_rebooting \n\t"	      \
- 	"jne 668b \n\t"      		      \
- 	__ASM_SIZE(push) " $666b \n\t"	      \
--	"call kvm_spurious_fault \n\t"	      \
-+	"jmp kvm_spurious_fault \n\t"	      \
- 	".popsection \n\t" \
- 	_ASM_EXTABLE(666b, 667b)
+--- a/net/netrom/af_netrom.c
++++ b/net/netrom/af_netrom.c
+@@ -153,7 +153,7 @@ static struct sock *nr_find_listener(ax2
+ 	sk_for_each(s, &nr_list)
+ 		if (!ax25cmp(&nr_sk(s)->source_addr, addr) &&
+ 		    s->sk_state == TCP_LISTEN) {
+-			bh_lock_sock(s);
++			sock_hold(s);
+ 			goto found;
+ 		}
+ 	s = NULL;
+@@ -174,7 +174,7 @@ static struct sock *nr_find_socket(unsig
+ 		struct nr_sock *nr = nr_sk(s);
+ 
+ 		if (nr->my_index == index && nr->my_id == id) {
+-			bh_lock_sock(s);
++			sock_hold(s);
+ 			goto found;
+ 		}
+ 	}
+@@ -198,7 +198,7 @@ static struct sock *nr_find_peer(unsigne
+ 
+ 		if (nr->your_index == index && nr->your_id == id &&
+ 		    !ax25cmp(&nr->dest_addr, dest)) {
+-			bh_lock_sock(s);
++			sock_hold(s);
+ 			goto found;
+ 		}
+ 	}
+@@ -224,7 +224,7 @@ static unsigned short nr_find_next_circu
+ 		if (i != 0 && j != 0) {
+ 			if ((sk=nr_find_socket(i, j)) == NULL)
+ 				break;
+-			bh_unlock_sock(sk);
++			sock_put(sk);
+ 		}
+ 
+ 		id++;
+@@ -918,6 +918,7 @@ int nr_rx_frame(struct sk_buff *skb, str
+ 	}
+ 
+ 	if (sk != NULL) {
++		bh_lock_sock(sk);
+ 		skb_reset_transport_header(skb);
+ 
+ 		if (frametype == NR_CONNACK && skb->len == 22)
+@@ -927,6 +928,7 @@ int nr_rx_frame(struct sk_buff *skb, str
+ 
+ 		ret = nr_process_rx_frame(sk, skb);
+ 		bh_unlock_sock(sk);
++		sock_put(sk);
+ 		return ret;
+ 	}
+ 
+@@ -958,10 +960,12 @@ int nr_rx_frame(struct sk_buff *skb, str
+ 	    (make = nr_make_new(sk)) == NULL) {
+ 		nr_transmit_refusal(skb, 0);
+ 		if (sk)
+-			bh_unlock_sock(sk);
++			sock_put(sk);
+ 		return 0;
+ 	}
+ 
++	bh_lock_sock(sk);
++
+ 	window = skb->data[20];
+ 
+ 	skb->sk             = make;
+@@ -1014,6 +1018,7 @@ int nr_rx_frame(struct sk_buff *skb, str
+ 		sk->sk_data_ready(sk);
+ 
+ 	bh_unlock_sock(sk);
++	sock_put(sk);
+ 
+ 	nr_insert_socket(make);
  
 
 
