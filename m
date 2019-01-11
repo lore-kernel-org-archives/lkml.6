@@ -2,118 +2,110 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2210AC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 09:54:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9561C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 09:54:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E6A2420874
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 09:54:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A35EC20874
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 09:54:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="EIcnHl8J"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="WMLcjg+X"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731560AbfAKJyU (ORCPT
+        id S1731583AbfAKJye (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 04:54:20 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:43937 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728616AbfAKJyT (ORCPT
+        Fri, 11 Jan 2019 04:54:34 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:39200 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730166AbfAKJye (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 04:54:19 -0500
-Received: by mail-wr1-f66.google.com with SMTP id r10so14459444wrs.10
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Jan 2019 01:54:18 -0800 (PST)
+        Fri, 11 Jan 2019 04:54:34 -0500
+Received: by mail-lj1-f196.google.com with SMTP id t9-v6so12397274ljh.6
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jan 2019 01:54:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=nkf9/5iA3E6KP4iOorpGJNEgxsrAnhqFpwiLvHdb7lg=;
-        b=EIcnHl8JnL0fqQn6uGpdUkzn36mc3hQ2zifOp4JPzxmLwiO179GzbCLnpmHFcuHQ93
-         Om/0KyMNA3UA4rccGU96pgfJwY3lP8g4BK4p53L2e5+5zmNtLR1Rn34ZCdxEjcRW085h
-         Di0rxMiUcUAbPXz5yYHlNdQWZSC7TWATRptao=
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=lDK1FAgxhgi3jXoNAQKdEfAbhO19e8mPHK/hUEQFr7I=;
+        b=WMLcjg+XD2sK/PkoIlRemJuRAMSvYdo+TPNeYthUtIN3L3VTbGLv/4nyi3pJgRXPim
+         JCH6y179utuToP1Y9VDNa4Puv2WJRNu3Zp5U8is9gH3JL/Fxh2DDXIj4hol6dsO58VMz
+         twEZgWSZwE6cD/ndgYA+UxT4XsV9YjZucb95g=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=nkf9/5iA3E6KP4iOorpGJNEgxsrAnhqFpwiLvHdb7lg=;
-        b=sgtRguIJuOtlE0jzTQoBxToGH3jmG2oBu6pfBpyTrHLAGiIM0D2+6fYryz5WJ5QY+G
-         NND85b1zEVx6kvpuZYUUqJkKMs9skX1Gg7U+EZDp9shABzFW9a676OdpHEDrd7QQGc5g
-         3LVQD0jN3EihMXAooEsLdtMaOGcUf6U+p0aCO88iMf9quMI9uaHwsM8Yj1qzpUOXkuCH
-         YDnKYq0P2PsBVCxKeceaexJ+iK31xgPFiWrSbGcImeKA2pwB4zrb/nSOEs16HEQ7ZlFC
-         VcWqCLruUIy9vV/JQbswmLh+F8GAr6U3cd65x67HtvHYKyL+YXD4sxZwYo81wxH7L8Qd
-         svgA==
-X-Gm-Message-State: AJcUukdXJNI3qCa/RGn6irRU5Df8fui3+mOGvbVWQ+fuyMNAUJTMni1x
-        VedA1xSreNl1tpUM5qePkEduTA==
-X-Google-Smtp-Source: ALg8bN56GVH2/sjleOq169ZKaNQdMURQeexzxkatzs56pWJTpsTbQdDVeUtfDiZH6iITIsZSaqx5vw==
-X-Received: by 2002:adf:b307:: with SMTP id j7mr13532668wrd.46.1547200457315;
-        Fri, 11 Jan 2019 01:54:17 -0800 (PST)
-Received: from holly.lan (cpc141214-aztw34-2-0-cust773.18-1.cable.virginm.net. [86.9.19.6])
-        by smtp.gmail.com with ESMTPSA id f137sm18810289wmg.29.2019.01.11.01.54.15
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 11 Jan 2019 01:54:16 -0800 (PST)
-Date:   Fri, 11 Jan 2019 09:54:14 +0000
-From:   Daniel Thompson <daniel.thompson@linaro.org>
-To:     Sumit Garg <sumit.garg@linaro.org>
-Cc:     linux-arm-kernel@lists.infradead.org,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>, linux-kernel@vger.kernel.org,
-        Jens Wiklander <jens.wiklander@linaro.org>, mpm@selenic.com,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Bhupesh Sharma <bhsharma@redhat.com>, tee-dev@lists.linaro.org
-Subject: Re: [PATCH v2 3/4] tee: add supp_nowait flag in tee_context struct
-Message-ID: <20190111095414.nbnzbocdn32zypdc@holly.lan>
-References: <1547123097-16431-1-git-send-email-sumit.garg@linaro.org>
- <1547123097-16431-4-git-send-email-sumit.garg@linaro.org>
- <20190110142355.bcgw62w2qk2mlzj6@holly.lan>
- <CAFA6WYPzA+rKMq58xVPghSe-mLa6fDi4t=1DYxakEaeG+ayQug@mail.gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=lDK1FAgxhgi3jXoNAQKdEfAbhO19e8mPHK/hUEQFr7I=;
+        b=aaD5I8S/6dqG7Ju1FXdGO7vPI0zBMWFntZEyJlVCoDBOoaxk+2A+swkT0agHJ8hEfz
+         wagjVu+RFnjQYOBUjPtI+lvVonpfdIfYeAmNbMEqhbWUNBQB+6xZfgSXt68DCAcsavKn
+         +11kwtjEZSZ7Gcr4SBlr/8t48iQ+FhJY4MNptVE48ENfPHg2KKqxMgYdKtDdycbryU0t
+         jDcI/dYqn088Lz10KGdcd84Ic0lYXZ3IVhXAfvPYeyCQIWsQvhYlXR8R/QvFEEWTAEh8
+         HlX5I0x0vvZqdf3+7LkPZVrOTYsTajxwZzofDX9vtAsXjD9a0i8XouCFKWPkrDF8XoG8
+         KZ8Q==
+X-Gm-Message-State: AJcUukfaIDTmM/k3cgLotoEnEb6TVuOKI4xstYWGRXOGvHyhLVRVsyMw
+        LPWAJIynPVlVouFfS/bb69GrtcLHQVGrHTSIe2GD6A==
+X-Google-Smtp-Source: ALg8bN7nRDxyuo1cVbZfGLGHtnNshIBA79qFEezoOXTXDQHk2/Om7qYQ8hbQyi4L7SJW3JvQ42LB9FVV2eGmCJv6Aqw=
+X-Received: by 2002:a2e:9e16:: with SMTP id e22-v6mr8099680ljk.4.1547200471478;
+ Fri, 11 Jan 2019 01:54:31 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAFA6WYPzA+rKMq58xVPghSe-mLa6fDi4t=1DYxakEaeG+ayQug@mail.gmail.com>
-User-Agent: NeoMutt/20180716
+References: <cover.1502103715.git.michal.simek@xilinx.com> <72d3cd83bed792a23ab60cf9b6d51b618f5aa084.1502103715.git.michal.simek@xilinx.com>
+ <CACRpkdZE-Edr7fWZY5VQM1_65iw7MYGP-iDa2ExZsPxpM0rurQ@mail.gmail.com>
+ <6da5fd79-fbc8-b613-954f-dcbe2ef8d6c5@xilinx.com> <20190107164210.3ecf37e8@windsurf>
+In-Reply-To: <20190107164210.3ecf37e8@windsurf>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Fri, 11 Jan 2019 10:54:20 +0100
+Message-ID: <CACRpkdafBpC14TxBNVN2AemkBz-yKkXkKfNpdgkYKQX3qFemag@mail.gmail.com>
+Subject: Re: [PATCH 2/8] gpio: zynq: Wakeup gpio controller when it is used as
+ IRQ controller
+To:     Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Cc:     Michal Simek <michal.simek@xilinx.com>,
+        Nava kishore Manne <navam@xilinx.com>,
+        Josh Cartwright <josh.cartwright@ni.com>,
+        "monstr@monstr.eu" <monstr@monstr.eu>,
+        Peter Crosthwaite <peter.crosthwaite@xilinx.com>,
+        Borsodi Petr <Petr.Borsodi@i.cz>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        Rob Herring <robherring2@gmail.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Steffen Trumtrar <s.trumtrar@pengutronix.de>,
+        =?UTF-8?Q?S=C3=B6ren_Brinkmann?= <soren.brinkmann@xilinx.com>,
+        Shubhrajyoti Datta <shubhraj@xilinx.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 11, 2019 at 01:00:49PM +0530, Sumit Garg wrote:
-> On Thu, 10 Jan 2019 at 19:53, Daniel Thompson
-> <daniel.thompson@linaro.org> wrote:
-> > > diff --git a/drivers/tee/tee_core.c b/drivers/tee/tee_core.c
-> > > index 9ddb89e..5d6c317 100644
-> > > --- a/drivers/tee/tee_core.c
-> > > +++ b/drivers/tee/tee_core.c
-> > > @@ -105,6 +105,7 @@ static int tee_open(struct inode *inode, struct file *filp)
-> > >       if (IS_ERR(ctx))
-> > >               return PTR_ERR(ctx);
-> > >
-> > > +     ctx->supp_nowait = false;
-> > >       filp->private_data = ctx;
-> > >       return 0;
-> > >  }
-> > > @@ -981,6 +982,7 @@ tee_client_open_context(struct tee_context *start,
-> > >       } while (IS_ERR(ctx) && PTR_ERR(ctx) != -ENOMEM);
-> > >
-> > >       put_device(put_dev);
-> > > +     ctx->supp_nowait = true;
-> >
-> > Why automatically set supp_nowait inside open_context() ?
-> >
-> 
-> I think this is the default behaviour (non-blocking request) that any
-> in kernel client would expect. Also this flag could be configured
-> again before call to open_session() if any in kernel client requires
-> different behaviour.
+On Mon, Jan 7, 2019 at 4:42 PM Thomas Petazzoni
+<thomas.petazzoni@bootlin.com> wrote:
 
-Makes sense. I think this is a deep enough behaviour to warrant proper
-commenting though.
+> This patch almost solves the problem. It doesn't work as-is, because it
+> assumes that runtime PM is used by all GPIO controllers, which is not
+> the case. When runtime PM is not enabled, pm_runtime_get_sync() fails
+> with -EACCES, and the whole gpiochip_irq_reqres() function aborts.
+(...)
+> However, I must say that from a design perspective, I am not a big fan
+> of this solution. Indeed for the normal GPIO ->request() and ->free()
+> hooks, it is currently the GPIO driver itself that is responsible for
+> runtime PM get/put, so it would be weird to have the runtime PM get/put
+> for the IRQ request/free be done by the GPIO core.
+>
+> I believe that either the GPIO core should be in charge of the entire
+> runtime PM interaction, or it should entirely be the responsibility of
+> each GPIO controller driver. Having a mixed solution seems very
+> confusing.
 
+My stance is that the driver is responsible of enabling and managing
+runtime PM for its hardware block(s).
 
-Daniel.
+Runtime PM in the core should only be added if the core needs to
+be aware about it, such as is the case when e.g. a block device
+needs to drain its write buffer before going to runtime sleep.
+
+I fail so see why the GPIO core need to be aware about this.
+
+Yours,
+Linus Walleij
