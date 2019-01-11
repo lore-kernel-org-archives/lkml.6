@@ -2,64 +2,60 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAF65C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:31:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16B5DC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:31:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A6A8A21841
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:31:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C566A2177B
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:31:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547217073;
-	bh=F2kqJdxWfpuk7oc+alO5uLVU0sPo7EW0BCf4dKgpk/A=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=IO0AxRk15L3c1Amiou+7KTjozxpNb1Xkc18zNLzQoNPmv7T1detNRNWc/H5OuXUAZ
-	 +Y27pDZR4QaePUmbPxkBP07ZW9AIJA/ymX39v8VFB9JD6wK/rQ47+woMSx3/xeQJJe
-	 vS74ZF2EH/Ugn6hP2t6vxL8nNbVzN8SaZzulWULI=
+	s=default; t=1547217080;
+	bh=BVN/wjvLGajMs7sC4fexDXdoywD8kpOQ0VNfLZrWZB4=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=T7SU9GC1IGlnGPwrFxi99n/x52YrhI6J7fdG5MDe160/FGOC3mZq9j5gaZK/fnjDk
+	 FBCkf8ViCFtbbEapSpmJkNXdotaZ23bToYqn+aqDU8MUxSjdbZlfF+hFkvm0bguRqp
+	 PzAQmJndELmLnBEbqLbKddHcMsuKYatGTqoqrHR0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389120AbfAKObM (ORCPT
+        id S2389148AbfAKObT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:31:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50656 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:31:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50836 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389103AbfAKObI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:31:08 -0500
+        id S2389124AbfAKObQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:31:16 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A3C052133F;
-        Fri, 11 Jan 2019 14:31:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6307C21841;
+        Fri, 11 Jan 2019 14:31:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547217067;
-        bh=F2kqJdxWfpuk7oc+alO5uLVU0sPo7EW0BCf4dKgpk/A=;
-        h=From:To:Cc:Subject:Date:From;
-        b=kVmUR8dzmudcb8VKN+5ScJ86YjN5kUFIIwsLDF3TF2M1ULg0PhBJ9S4c8BHKcQGm4
-         WGIT/1it8Sa6Vl3mVBiQTtPUwLxR/QfRcWlnqjmvdszJz5ItOeEREYHDyAyhmRlkk8
-         NzP4MnIy95zz4kVxhYZkpzr4lX2zvNmM1g3dDTFg=
+        s=default; t=1547217074;
+        bh=BVN/wjvLGajMs7sC4fexDXdoywD8kpOQ0VNfLZrWZB4=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=HxNAN6xGvkEBiTWc+fsmgEIgkvyP1lKrhe9kcxhSy0B5lUWHCBnbaN4q0/jpE1cyO
+         wgqJl0BYWOt7yDMGRk1rx1DjL41QIQ5VjizNJ+xihz6OGTa9N/i6YOnuunP2lCvjSd
+         WiCXAiD258NbCZokL1qQHWOorOgqjYIht/sQbzJQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: [PATCH 4.14 000/105] 4.14.93-stable review
-Date:   Fri, 11 Jan 2019 15:13:31 +0100
-Message-Id: <20190111131102.899065735@linuxfoundation.org>
+        stable@vger.kernel.org, Yonglong Liu <liuyonglong@huawei.com>,
+        Peng Li <lipeng321@huawei.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 033/105] net: hns: Some registers use wrong address according to the datasheet.
+Date:   Fri, 11 Jan 2019 15:14:04 +0100
+Message-Id: <20190111131106.022161962@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
-MIME-Version: 1.0
+In-Reply-To: <20190111131102.899065735@linuxfoundation.org>
+References: <20190111131102.899065735@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 X-Patchwork-Hint: ignore
-X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.93-rc1.gz
-X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-X-KernelTest-Branch: linux-4.14.y
-X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
-X-KernelTest-Version: 4.14.93-rc1
-X-KernelTest-Deadline: 2019-01-13T13:11+00:00
+MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -67,462 +63,433 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is the start of the stable review cycle for the 4.14.93 release.
-There are 105 patches in this series, all will be posted as a response
-to this one.  If anyone has any issues with these being applied, please
-let me know.
+4.14-stable review patch.  If anyone has any objections, please let me know.
+
+------------------
+
+[ Upstream commit 4ad26f117b6ea0f5d5f1592127bafb5ec65904d3 ]
+
+According to the hip06 datasheet:
+1.Six registers use wrong address:
+  RCB_COM_SF_CFG_INTMASK_RING
+  RCB_COM_SF_CFG_RING_STS
+  RCB_COM_SF_CFG_RING
+  RCB_COM_SF_CFG_INTMASK_BD
+  RCB_COM_SF_CFG_BD_RINT_STS
+  DSAF_INODE_VC1_IN_PKT_NUM_0_REG
+2.The offset of DSAF_INODE_VC1_IN_PKT_NUM_0_REG should be
+  0x103C + 0x80 * all_chn_num
+3.The offset to show the value of DSAF_INODE_IN_DATA_STP_DISC_0_REG
+  is wrong, so the value of DSAF_INODE_SW_VLAN_TAG_DISC_0_REG will be
+  overwrite
+
+These registers are only used in "ethtool -d", so that did not cause ndev
+to misfunction.
+
+Signed-off-by: Yonglong Liu <liuyonglong@huawei.com>
+Signed-off-by: Peng Li <lipeng321@huawei.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ .../ethernet/hisilicon/hns/hns_dsaf_main.c    | 242 +++++++++---------
+ .../net/ethernet/hisilicon/hns/hns_dsaf_reg.h |  12 +-
+ 2 files changed, 127 insertions(+), 127 deletions(-)
+
+diff --git a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_main.c b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_main.c
+index bc020dddd253..9086d566a624 100644
+--- a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_main.c
++++ b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_main.c
+@@ -2278,237 +2278,237 @@ void hns_dsaf_get_regs(struct dsaf_device *ddev, u32 port, void *data)
+ 				DSAF_INODE_BD_ORDER_STATUS_0_REG + j * 4);
+ 		p[223 + i] = dsaf_read_dev(ddev,
+ 				DSAF_INODE_SW_VLAN_TAG_DISC_0_REG + j * 4);
+-		p[224 + i] = dsaf_read_dev(ddev,
++		p[226 + i] = dsaf_read_dev(ddev,
+ 				DSAF_INODE_IN_DATA_STP_DISC_0_REG + j * 4);
+ 	}
+ 
+-	p[227] = dsaf_read_dev(ddev, DSAF_INODE_GE_FC_EN_0_REG + port * 4);
++	p[229] = dsaf_read_dev(ddev, DSAF_INODE_GE_FC_EN_0_REG + port * 4);
+ 
+ 	for (i = 0; i < DSAF_INODE_NUM / DSAF_COMM_CHN; i++) {
+ 		j = i * DSAF_COMM_CHN + port;
+-		p[228 + i] = dsaf_read_dev(ddev,
++		p[230 + i] = dsaf_read_dev(ddev,
+ 				DSAF_INODE_VC0_IN_PKT_NUM_0_REG + j * 4);
+ 	}
+ 
+-	p[231] = dsaf_read_dev(ddev,
+-		DSAF_INODE_VC1_IN_PKT_NUM_0_REG + port * 4);
++	p[233] = dsaf_read_dev(ddev,
++		DSAF_INODE_VC1_IN_PKT_NUM_0_REG + port * 0x80);
+ 
+ 	/* dsaf inode registers */
+ 	for (i = 0; i < HNS_DSAF_SBM_NUM(ddev) / DSAF_COMM_CHN; i++) {
+ 		j = i * DSAF_COMM_CHN + port;
+-		p[232 + i] = dsaf_read_dev(ddev,
++		p[234 + i] = dsaf_read_dev(ddev,
+ 				DSAF_SBM_CFG_REG_0_REG + j * 0x80);
+-		p[235 + i] = dsaf_read_dev(ddev,
++		p[237 + i] = dsaf_read_dev(ddev,
+ 				DSAF_SBM_BP_CFG_0_XGE_REG_0_REG + j * 0x80);
+-		p[238 + i] = dsaf_read_dev(ddev,
++		p[240 + i] = dsaf_read_dev(ddev,
+ 				DSAF_SBM_BP_CFG_1_REG_0_REG + j * 0x80);
+-		p[241 + i] = dsaf_read_dev(ddev,
++		p[243 + i] = dsaf_read_dev(ddev,
+ 				DSAF_SBM_BP_CFG_2_XGE_REG_0_REG + j * 0x80);
+-		p[244 + i] = dsaf_read_dev(ddev,
++		p[246 + i] = dsaf_read_dev(ddev,
+ 				DSAF_SBM_FREE_CNT_0_0_REG + j * 0x80);
+-		p[245 + i] = dsaf_read_dev(ddev,
++		p[249 + i] = dsaf_read_dev(ddev,
+ 				DSAF_SBM_FREE_CNT_1_0_REG + j * 0x80);
+-		p[248 + i] = dsaf_read_dev(ddev,
++		p[252 + i] = dsaf_read_dev(ddev,
+ 				DSAF_SBM_BP_CNT_0_0_REG + j * 0x80);
+-		p[251 + i] = dsaf_read_dev(ddev,
++		p[255 + i] = dsaf_read_dev(ddev,
+ 				DSAF_SBM_BP_CNT_1_0_REG + j * 0x80);
+-		p[254 + i] = dsaf_read_dev(ddev,
++		p[258 + i] = dsaf_read_dev(ddev,
+ 				DSAF_SBM_BP_CNT_2_0_REG + j * 0x80);
+-		p[257 + i] = dsaf_read_dev(ddev,
++		p[261 + i] = dsaf_read_dev(ddev,
+ 				DSAF_SBM_BP_CNT_3_0_REG + j * 0x80);
+-		p[260 + i] = dsaf_read_dev(ddev,
++		p[264 + i] = dsaf_read_dev(ddev,
+ 				DSAF_SBM_INER_ST_0_REG + j * 0x80);
+-		p[263 + i] = dsaf_read_dev(ddev,
++		p[267 + i] = dsaf_read_dev(ddev,
+ 				DSAF_SBM_MIB_REQ_FAILED_TC_0_REG + j * 0x80);
+-		p[266 + i] = dsaf_read_dev(ddev,
++		p[270 + i] = dsaf_read_dev(ddev,
+ 				DSAF_SBM_LNK_INPORT_CNT_0_REG + j * 0x80);
+-		p[269 + i] = dsaf_read_dev(ddev,
++		p[273 + i] = dsaf_read_dev(ddev,
+ 				DSAF_SBM_LNK_DROP_CNT_0_REG + j * 0x80);
+-		p[272 + i] = dsaf_read_dev(ddev,
++		p[276 + i] = dsaf_read_dev(ddev,
+ 				DSAF_SBM_INF_OUTPORT_CNT_0_REG + j * 0x80);
+-		p[275 + i] = dsaf_read_dev(ddev,
++		p[279 + i] = dsaf_read_dev(ddev,
+ 				DSAF_SBM_LNK_INPORT_TC0_CNT_0_REG + j * 0x80);
+-		p[278 + i] = dsaf_read_dev(ddev,
++		p[282 + i] = dsaf_read_dev(ddev,
+ 				DSAF_SBM_LNK_INPORT_TC1_CNT_0_REG + j * 0x80);
+-		p[281 + i] = dsaf_read_dev(ddev,
++		p[285 + i] = dsaf_read_dev(ddev,
+ 				DSAF_SBM_LNK_INPORT_TC2_CNT_0_REG + j * 0x80);
+-		p[284 + i] = dsaf_read_dev(ddev,
++		p[288 + i] = dsaf_read_dev(ddev,
+ 				DSAF_SBM_LNK_INPORT_TC3_CNT_0_REG + j * 0x80);
+-		p[287 + i] = dsaf_read_dev(ddev,
++		p[291 + i] = dsaf_read_dev(ddev,
+ 				DSAF_SBM_LNK_INPORT_TC4_CNT_0_REG + j * 0x80);
+-		p[290 + i] = dsaf_read_dev(ddev,
++		p[294 + i] = dsaf_read_dev(ddev,
+ 				DSAF_SBM_LNK_INPORT_TC5_CNT_0_REG + j * 0x80);
+-		p[293 + i] = dsaf_read_dev(ddev,
++		p[297 + i] = dsaf_read_dev(ddev,
+ 				DSAF_SBM_LNK_INPORT_TC6_CNT_0_REG + j * 0x80);
+-		p[296 + i] = dsaf_read_dev(ddev,
++		p[300 + i] = dsaf_read_dev(ddev,
+ 				DSAF_SBM_LNK_INPORT_TC7_CNT_0_REG + j * 0x80);
+-		p[299 + i] = dsaf_read_dev(ddev,
++		p[303 + i] = dsaf_read_dev(ddev,
+ 				DSAF_SBM_LNK_REQ_CNT_0_REG + j * 0x80);
+-		p[302 + i] = dsaf_read_dev(ddev,
++		p[306 + i] = dsaf_read_dev(ddev,
+ 				DSAF_SBM_LNK_RELS_CNT_0_REG + j * 0x80);
+-		p[305 + i] = dsaf_read_dev(ddev,
++		p[309 + i] = dsaf_read_dev(ddev,
+ 				DSAF_SBM_BP_CFG_3_REG_0_REG + j * 0x80);
+-		p[308 + i] = dsaf_read_dev(ddev,
++		p[312 + i] = dsaf_read_dev(ddev,
+ 				DSAF_SBM_BP_CFG_4_REG_0_REG + j * 0x80);
+ 	}
+ 
+ 	/* dsaf onode registers */
+ 	for (i = 0; i < DSAF_XOD_NUM; i++) {
+-		p[311 + i] = dsaf_read_dev(ddev,
++		p[315 + i] = dsaf_read_dev(ddev,
+ 				DSAF_XOD_ETS_TSA_TC0_TC3_CFG_0_REG + i * 0x90);
+-		p[319 + i] = dsaf_read_dev(ddev,
++		p[323 + i] = dsaf_read_dev(ddev,
+ 				DSAF_XOD_ETS_TSA_TC4_TC7_CFG_0_REG + i * 0x90);
+-		p[327 + i] = dsaf_read_dev(ddev,
++		p[331 + i] = dsaf_read_dev(ddev,
+ 				DSAF_XOD_ETS_BW_TC0_TC3_CFG_0_REG + i * 0x90);
+-		p[335 + i] = dsaf_read_dev(ddev,
++		p[339 + i] = dsaf_read_dev(ddev,
+ 				DSAF_XOD_ETS_BW_TC4_TC7_CFG_0_REG + i * 0x90);
+-		p[343 + i] = dsaf_read_dev(ddev,
++		p[347 + i] = dsaf_read_dev(ddev,
+ 				DSAF_XOD_ETS_BW_OFFSET_CFG_0_REG + i * 0x90);
+-		p[351 + i] = dsaf_read_dev(ddev,
++		p[355 + i] = dsaf_read_dev(ddev,
+ 				DSAF_XOD_ETS_TOKEN_CFG_0_REG + i * 0x90);
+ 	}
+ 
+-	p[359] = dsaf_read_dev(ddev, DSAF_XOD_PFS_CFG_0_0_REG + port * 0x90);
+-	p[360] = dsaf_read_dev(ddev, DSAF_XOD_PFS_CFG_1_0_REG + port * 0x90);
+-	p[361] = dsaf_read_dev(ddev, DSAF_XOD_PFS_CFG_2_0_REG + port * 0x90);
++	p[363] = dsaf_read_dev(ddev, DSAF_XOD_PFS_CFG_0_0_REG + port * 0x90);
++	p[364] = dsaf_read_dev(ddev, DSAF_XOD_PFS_CFG_1_0_REG + port * 0x90);
++	p[365] = dsaf_read_dev(ddev, DSAF_XOD_PFS_CFG_2_0_REG + port * 0x90);
+ 
+ 	for (i = 0; i < DSAF_XOD_BIG_NUM / DSAF_COMM_CHN; i++) {
+ 		j = i * DSAF_COMM_CHN + port;
+-		p[362 + i] = dsaf_read_dev(ddev,
++		p[366 + i] = dsaf_read_dev(ddev,
+ 				DSAF_XOD_GNT_L_0_REG + j * 0x90);
+-		p[365 + i] = dsaf_read_dev(ddev,
++		p[369 + i] = dsaf_read_dev(ddev,
+ 				DSAF_XOD_GNT_H_0_REG + j * 0x90);
+-		p[368 + i] = dsaf_read_dev(ddev,
++		p[372 + i] = dsaf_read_dev(ddev,
+ 				DSAF_XOD_CONNECT_STATE_0_REG + j * 0x90);
+-		p[371 + i] = dsaf_read_dev(ddev,
++		p[375 + i] = dsaf_read_dev(ddev,
+ 				DSAF_XOD_RCVPKT_CNT_0_REG + j * 0x90);
+-		p[374 + i] = dsaf_read_dev(ddev,
++		p[378 + i] = dsaf_read_dev(ddev,
+ 				DSAF_XOD_RCVTC0_CNT_0_REG + j * 0x90);
+-		p[377 + i] = dsaf_read_dev(ddev,
++		p[381 + i] = dsaf_read_dev(ddev,
+ 				DSAF_XOD_RCVTC1_CNT_0_REG + j * 0x90);
+-		p[380 + i] = dsaf_read_dev(ddev,
++		p[384 + i] = dsaf_read_dev(ddev,
+ 				DSAF_XOD_RCVTC2_CNT_0_REG + j * 0x90);
+-		p[383 + i] = dsaf_read_dev(ddev,
++		p[387 + i] = dsaf_read_dev(ddev,
+ 				DSAF_XOD_RCVTC3_CNT_0_REG + j * 0x90);
+-		p[386 + i] = dsaf_read_dev(ddev,
++		p[390 + i] = dsaf_read_dev(ddev,
+ 				DSAF_XOD_RCVVC0_CNT_0_REG + j * 0x90);
+-		p[389 + i] = dsaf_read_dev(ddev,
++		p[393 + i] = dsaf_read_dev(ddev,
+ 				DSAF_XOD_RCVVC1_CNT_0_REG + j * 0x90);
+ 	}
+ 
+-	p[392] = dsaf_read_dev(ddev,
++	p[396] = dsaf_read_dev(ddev,
+ 		DSAF_XOD_XGE_RCVIN0_CNT_0_REG + port * 0x90);
+-	p[393] = dsaf_read_dev(ddev,
++	p[397] = dsaf_read_dev(ddev,
+ 		DSAF_XOD_XGE_RCVIN1_CNT_0_REG + port * 0x90);
+-	p[394] = dsaf_read_dev(ddev,
++	p[398] = dsaf_read_dev(ddev,
+ 		DSAF_XOD_XGE_RCVIN2_CNT_0_REG + port * 0x90);
+-	p[395] = dsaf_read_dev(ddev,
++	p[399] = dsaf_read_dev(ddev,
+ 		DSAF_XOD_XGE_RCVIN3_CNT_0_REG + port * 0x90);
+-	p[396] = dsaf_read_dev(ddev,
++	p[400] = dsaf_read_dev(ddev,
+ 		DSAF_XOD_XGE_RCVIN4_CNT_0_REG + port * 0x90);
+-	p[397] = dsaf_read_dev(ddev,
++	p[401] = dsaf_read_dev(ddev,
+ 		DSAF_XOD_XGE_RCVIN5_CNT_0_REG + port * 0x90);
+-	p[398] = dsaf_read_dev(ddev,
++	p[402] = dsaf_read_dev(ddev,
+ 		DSAF_XOD_XGE_RCVIN6_CNT_0_REG + port * 0x90);
+-	p[399] = dsaf_read_dev(ddev,
++	p[403] = dsaf_read_dev(ddev,
+ 		DSAF_XOD_XGE_RCVIN7_CNT_0_REG + port * 0x90);
+-	p[400] = dsaf_read_dev(ddev,
++	p[404] = dsaf_read_dev(ddev,
+ 		DSAF_XOD_PPE_RCVIN0_CNT_0_REG + port * 0x90);
+-	p[401] = dsaf_read_dev(ddev,
++	p[405] = dsaf_read_dev(ddev,
+ 		DSAF_XOD_PPE_RCVIN1_CNT_0_REG + port * 0x90);
+-	p[402] = dsaf_read_dev(ddev,
++	p[406] = dsaf_read_dev(ddev,
+ 		DSAF_XOD_ROCEE_RCVIN0_CNT_0_REG + port * 0x90);
+-	p[403] = dsaf_read_dev(ddev,
++	p[407] = dsaf_read_dev(ddev,
+ 		DSAF_XOD_ROCEE_RCVIN1_CNT_0_REG + port * 0x90);
+-	p[404] = dsaf_read_dev(ddev,
++	p[408] = dsaf_read_dev(ddev,
+ 		DSAF_XOD_FIFO_STATUS_0_REG + port * 0x90);
+ 
+ 	/* dsaf voq registers */
+ 	for (i = 0; i < DSAF_VOQ_NUM / DSAF_COMM_CHN; i++) {
+ 		j = (i * DSAF_COMM_CHN + port) * 0x90;
+-		p[405 + i] = dsaf_read_dev(ddev,
++		p[409 + i] = dsaf_read_dev(ddev,
+ 			DSAF_VOQ_ECC_INVERT_EN_0_REG + j);
+-		p[408 + i] = dsaf_read_dev(ddev,
++		p[412 + i] = dsaf_read_dev(ddev,
+ 			DSAF_VOQ_SRAM_PKT_NUM_0_REG + j);
+-		p[411 + i] = dsaf_read_dev(ddev, DSAF_VOQ_IN_PKT_NUM_0_REG + j);
+-		p[414 + i] = dsaf_read_dev(ddev,
++		p[415 + i] = dsaf_read_dev(ddev, DSAF_VOQ_IN_PKT_NUM_0_REG + j);
++		p[418 + i] = dsaf_read_dev(ddev,
+ 			DSAF_VOQ_OUT_PKT_NUM_0_REG + j);
+-		p[417 + i] = dsaf_read_dev(ddev,
++		p[421 + i] = dsaf_read_dev(ddev,
+ 			DSAF_VOQ_ECC_ERR_ADDR_0_REG + j);
+-		p[420 + i] = dsaf_read_dev(ddev, DSAF_VOQ_BP_STATUS_0_REG + j);
+-		p[423 + i] = dsaf_read_dev(ddev, DSAF_VOQ_SPUP_IDLE_0_REG + j);
+-		p[426 + i] = dsaf_read_dev(ddev,
++		p[424 + i] = dsaf_read_dev(ddev, DSAF_VOQ_BP_STATUS_0_REG + j);
++		p[427 + i] = dsaf_read_dev(ddev, DSAF_VOQ_SPUP_IDLE_0_REG + j);
++		p[430 + i] = dsaf_read_dev(ddev,
+ 			DSAF_VOQ_XGE_XOD_REQ_0_0_REG + j);
+-		p[429 + i] = dsaf_read_dev(ddev,
++		p[433 + i] = dsaf_read_dev(ddev,
+ 			DSAF_VOQ_XGE_XOD_REQ_1_0_REG + j);
+-		p[432 + i] = dsaf_read_dev(ddev,
++		p[436 + i] = dsaf_read_dev(ddev,
+ 			DSAF_VOQ_PPE_XOD_REQ_0_REG + j);
+-		p[435 + i] = dsaf_read_dev(ddev,
++		p[439 + i] = dsaf_read_dev(ddev,
+ 			DSAF_VOQ_ROCEE_XOD_REQ_0_REG + j);
+-		p[438 + i] = dsaf_read_dev(ddev,
++		p[442 + i] = dsaf_read_dev(ddev,
+ 			DSAF_VOQ_BP_ALL_THRD_0_REG + j);
+ 	}
+ 
+ 	/* dsaf tbl registers */
+-	p[441] = dsaf_read_dev(ddev, DSAF_TBL_CTRL_0_REG);
+-	p[442] = dsaf_read_dev(ddev, DSAF_TBL_INT_MSK_0_REG);
+-	p[443] = dsaf_read_dev(ddev, DSAF_TBL_INT_SRC_0_REG);
+-	p[444] = dsaf_read_dev(ddev, DSAF_TBL_INT_STS_0_REG);
+-	p[445] = dsaf_read_dev(ddev, DSAF_TBL_TCAM_ADDR_0_REG);
+-	p[446] = dsaf_read_dev(ddev, DSAF_TBL_LINE_ADDR_0_REG);
+-	p[447] = dsaf_read_dev(ddev, DSAF_TBL_TCAM_HIGH_0_REG);
+-	p[448] = dsaf_read_dev(ddev, DSAF_TBL_TCAM_LOW_0_REG);
+-	p[449] = dsaf_read_dev(ddev, DSAF_TBL_TCAM_MCAST_CFG_4_0_REG);
+-	p[450] = dsaf_read_dev(ddev, DSAF_TBL_TCAM_MCAST_CFG_3_0_REG);
+-	p[451] = dsaf_read_dev(ddev, DSAF_TBL_TCAM_MCAST_CFG_2_0_REG);
+-	p[452] = dsaf_read_dev(ddev, DSAF_TBL_TCAM_MCAST_CFG_1_0_REG);
+-	p[453] = dsaf_read_dev(ddev, DSAF_TBL_TCAM_MCAST_CFG_0_0_REG);
+-	p[454] = dsaf_read_dev(ddev, DSAF_TBL_TCAM_UCAST_CFG_0_REG);
+-	p[455] = dsaf_read_dev(ddev, DSAF_TBL_LIN_CFG_0_REG);
+-	p[456] = dsaf_read_dev(ddev, DSAF_TBL_TCAM_RDATA_HIGH_0_REG);
+-	p[457] = dsaf_read_dev(ddev, DSAF_TBL_TCAM_RDATA_LOW_0_REG);
+-	p[458] = dsaf_read_dev(ddev, DSAF_TBL_TCAM_RAM_RDATA4_0_REG);
+-	p[459] = dsaf_read_dev(ddev, DSAF_TBL_TCAM_RAM_RDATA3_0_REG);
+-	p[460] = dsaf_read_dev(ddev, DSAF_TBL_TCAM_RAM_RDATA2_0_REG);
+-	p[461] = dsaf_read_dev(ddev, DSAF_TBL_TCAM_RAM_RDATA1_0_REG);
+-	p[462] = dsaf_read_dev(ddev, DSAF_TBL_TCAM_RAM_RDATA0_0_REG);
+-	p[463] = dsaf_read_dev(ddev, DSAF_TBL_LIN_RDATA_0_REG);
++	p[445] = dsaf_read_dev(ddev, DSAF_TBL_CTRL_0_REG);
++	p[446] = dsaf_read_dev(ddev, DSAF_TBL_INT_MSK_0_REG);
++	p[447] = dsaf_read_dev(ddev, DSAF_TBL_INT_SRC_0_REG);
++	p[448] = dsaf_read_dev(ddev, DSAF_TBL_INT_STS_0_REG);
++	p[449] = dsaf_read_dev(ddev, DSAF_TBL_TCAM_ADDR_0_REG);
++	p[450] = dsaf_read_dev(ddev, DSAF_TBL_LINE_ADDR_0_REG);
++	p[451] = dsaf_read_dev(ddev, DSAF_TBL_TCAM_HIGH_0_REG);
++	p[452] = dsaf_read_dev(ddev, DSAF_TBL_TCAM_LOW_0_REG);
++	p[453] = dsaf_read_dev(ddev, DSAF_TBL_TCAM_MCAST_CFG_4_0_REG);
++	p[454] = dsaf_read_dev(ddev, DSAF_TBL_TCAM_MCAST_CFG_3_0_REG);
++	p[455] = dsaf_read_dev(ddev, DSAF_TBL_TCAM_MCAST_CFG_2_0_REG);
++	p[456] = dsaf_read_dev(ddev, DSAF_TBL_TCAM_MCAST_CFG_1_0_REG);
++	p[457] = dsaf_read_dev(ddev, DSAF_TBL_TCAM_MCAST_CFG_0_0_REG);
++	p[458] = dsaf_read_dev(ddev, DSAF_TBL_TCAM_UCAST_CFG_0_REG);
++	p[459] = dsaf_read_dev(ddev, DSAF_TBL_LIN_CFG_0_REG);
++	p[460] = dsaf_read_dev(ddev, DSAF_TBL_TCAM_RDATA_HIGH_0_REG);
++	p[461] = dsaf_read_dev(ddev, DSAF_TBL_TCAM_RDATA_LOW_0_REG);
++	p[462] = dsaf_read_dev(ddev, DSAF_TBL_TCAM_RAM_RDATA4_0_REG);
++	p[463] = dsaf_read_dev(ddev, DSAF_TBL_TCAM_RAM_RDATA3_0_REG);
++	p[464] = dsaf_read_dev(ddev, DSAF_TBL_TCAM_RAM_RDATA2_0_REG);
++	p[465] = dsaf_read_dev(ddev, DSAF_TBL_TCAM_RAM_RDATA1_0_REG);
++	p[466] = dsaf_read_dev(ddev, DSAF_TBL_TCAM_RAM_RDATA0_0_REG);
++	p[467] = dsaf_read_dev(ddev, DSAF_TBL_LIN_RDATA_0_REG);
+ 
+ 	for (i = 0; i < DSAF_SW_PORT_NUM; i++) {
+ 		j = i * 0x8;
+-		p[464 + 2 * i] = dsaf_read_dev(ddev,
++		p[468 + 2 * i] = dsaf_read_dev(ddev,
+ 			DSAF_TBL_DA0_MIS_INFO1_0_REG + j);
+-		p[465 + 2 * i] = dsaf_read_dev(ddev,
++		p[469 + 2 * i] = dsaf_read_dev(ddev,
+ 			DSAF_TBL_DA0_MIS_INFO0_0_REG + j);
+ 	}
+ 
+-	p[480] = dsaf_read_dev(ddev, DSAF_TBL_SA_MIS_INFO2_0_REG);
+-	p[481] = dsaf_read_dev(ddev, DSAF_TBL_SA_MIS_INFO1_0_REG);
+-	p[482] = dsaf_read_dev(ddev, DSAF_TBL_SA_MIS_INFO0_0_REG);
+-	p[483] = dsaf_read_dev(ddev, DSAF_TBL_PUL_0_REG);
+-	p[484] = dsaf_read_dev(ddev, DSAF_TBL_OLD_RSLT_0_REG);
+-	p[485] = dsaf_read_dev(ddev, DSAF_TBL_OLD_SCAN_VAL_0_REG);
+-	p[486] = dsaf_read_dev(ddev, DSAF_TBL_DFX_CTRL_0_REG);
+-	p[487] = dsaf_read_dev(ddev, DSAF_TBL_DFX_STAT_0_REG);
+-	p[488] = dsaf_read_dev(ddev, DSAF_TBL_DFX_STAT_2_0_REG);
+-	p[489] = dsaf_read_dev(ddev, DSAF_TBL_LKUP_NUM_I_0_REG);
+-	p[490] = dsaf_read_dev(ddev, DSAF_TBL_LKUP_NUM_O_0_REG);
+-	p[491] = dsaf_read_dev(ddev, DSAF_TBL_UCAST_BCAST_MIS_INFO_0_0_REG);
++	p[484] = dsaf_read_dev(ddev, DSAF_TBL_SA_MIS_INFO2_0_REG);
++	p[485] = dsaf_read_dev(ddev, DSAF_TBL_SA_MIS_INFO1_0_REG);
++	p[486] = dsaf_read_dev(ddev, DSAF_TBL_SA_MIS_INFO0_0_REG);
++	p[487] = dsaf_read_dev(ddev, DSAF_TBL_PUL_0_REG);
++	p[488] = dsaf_read_dev(ddev, DSAF_TBL_OLD_RSLT_0_REG);
++	p[489] = dsaf_read_dev(ddev, DSAF_TBL_OLD_SCAN_VAL_0_REG);
++	p[490] = dsaf_read_dev(ddev, DSAF_TBL_DFX_CTRL_0_REG);
++	p[491] = dsaf_read_dev(ddev, DSAF_TBL_DFX_STAT_0_REG);
++	p[492] = dsaf_read_dev(ddev, DSAF_TBL_DFX_STAT_2_0_REG);
++	p[493] = dsaf_read_dev(ddev, DSAF_TBL_LKUP_NUM_I_0_REG);
++	p[494] = dsaf_read_dev(ddev, DSAF_TBL_LKUP_NUM_O_0_REG);
++	p[495] = dsaf_read_dev(ddev, DSAF_TBL_UCAST_BCAST_MIS_INFO_0_0_REG);
+ 
+ 	/* dsaf other registers */
+-	p[492] = dsaf_read_dev(ddev, DSAF_INODE_FIFO_WL_0_REG + port * 0x4);
+-	p[493] = dsaf_read_dev(ddev, DSAF_ONODE_FIFO_WL_0_REG + port * 0x4);
+-	p[494] = dsaf_read_dev(ddev, DSAF_XGE_GE_WORK_MODE_0_REG + port * 0x4);
+-	p[495] = dsaf_read_dev(ddev,
++	p[496] = dsaf_read_dev(ddev, DSAF_INODE_FIFO_WL_0_REG + port * 0x4);
++	p[497] = dsaf_read_dev(ddev, DSAF_ONODE_FIFO_WL_0_REG + port * 0x4);
++	p[498] = dsaf_read_dev(ddev, DSAF_XGE_GE_WORK_MODE_0_REG + port * 0x4);
++	p[499] = dsaf_read_dev(ddev,
+ 		DSAF_XGE_APP_RX_LINK_UP_0_REG + port * 0x4);
+-	p[496] = dsaf_read_dev(ddev, DSAF_NETPORT_CTRL_SIG_0_REG + port * 0x4);
+-	p[497] = dsaf_read_dev(ddev, DSAF_XGE_CTRL_SIG_CFG_0_REG + port * 0x4);
++	p[500] = dsaf_read_dev(ddev, DSAF_NETPORT_CTRL_SIG_0_REG + port * 0x4);
++	p[501] = dsaf_read_dev(ddev, DSAF_XGE_CTRL_SIG_CFG_0_REG + port * 0x4);
+ 
+ 	if (!is_ver1)
+-		p[498] = dsaf_read_dev(ddev, DSAF_PAUSE_CFG_REG + port * 0x4);
++		p[502] = dsaf_read_dev(ddev, DSAF_PAUSE_CFG_REG + port * 0x4);
+ 
+ 	/* mark end of dsaf regs */
+-	for (i = 499; i < 504; i++)
++	for (i = 503; i < 504; i++)
+ 		p[i] = 0xdddddddd;
+ }
+ 
+diff --git a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_reg.h b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_reg.h
+index 6d20e4eb7402..5ae3d017ddbc 100644
+--- a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_reg.h
++++ b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_reg.h
+@@ -176,7 +176,7 @@
+ #define DSAF_INODE_IN_DATA_STP_DISC_0_REG	0x1A50
+ #define DSAF_INODE_GE_FC_EN_0_REG		0x1B00
+ #define DSAF_INODE_VC0_IN_PKT_NUM_0_REG		0x1B50
+-#define DSAF_INODE_VC1_IN_PKT_NUM_0_REG		0x1C00
++#define DSAF_INODE_VC1_IN_PKT_NUM_0_REG		0x103C
+ #define DSAF_INODE_IN_PRIO_PAUSE_BASE_REG	0x1C00
+ #define DSAF_INODE_IN_PRIO_PAUSE_BASE_OFFSET	0x100
+ #define DSAF_INODE_IN_PRIO_PAUSE_OFFSET		0x50
+@@ -404,11 +404,11 @@
+ #define RCB_ECC_ERR_ADDR4_REG			0x460
+ #define RCB_ECC_ERR_ADDR5_REG			0x464
+ 
+-#define RCB_COM_SF_CFG_INTMASK_RING		0x480
+-#define RCB_COM_SF_CFG_RING_STS			0x484
+-#define RCB_COM_SF_CFG_RING			0x488
+-#define RCB_COM_SF_CFG_INTMASK_BD		0x48C
+-#define RCB_COM_SF_CFG_BD_RINT_STS		0x470
++#define RCB_COM_SF_CFG_INTMASK_RING		0x470
++#define RCB_COM_SF_CFG_RING_STS			0x474
++#define RCB_COM_SF_CFG_RING			0x478
++#define RCB_COM_SF_CFG_INTMASK_BD		0x47C
++#define RCB_COM_SF_CFG_BD_RINT_STS		0x480
+ #define RCB_COM_RCB_RD_BD_BUSY			0x490
+ #define RCB_COM_RCB_FBD_CRT_EN			0x494
+ #define RCB_COM_AXI_WR_ERR_INTMASK		0x498
+-- 
+2.19.1
 
-Responses should be made by Sun Jan 13 13:10:07 UTC 2019.
-Anything received after that time might be too late.
-
-The whole patch series can be found in one patch at:
-	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.93-rc1.gz
-or in the git tree and branch at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
-and the diffstat can be found below.
-
-thanks,
-
-greg k-h
-
--------------
-Pseudo-Shortlog of commits:
-
-Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Linux 4.14.93-rc1
-
-Boris Brezillon <boris.brezillon@bootlin.com>
-    drm/vc4: Set ->is_yuv to false when num_planes == 1
-
-Christophe Leroy <christophe.leroy@c-s.fr>
-    lib: fix build failure in CONFIG_DEBUG_VIRTUAL test
-
-Lubomir Rintel <lkundrak@v3.sk>
-    power: supply: olpc_battery: correct the temperature units
-
-Alexander Shishkin <alexander.shishkin@linux.intel.com>
-    intel_th: msu: Fix an off-by-one in attribute store
-
-Christian Borntraeger <borntraeger@de.ibm.com>
-    genwqe: Fix size check
-
-Yan, Zheng <zyan@redhat.com>
-    ceph: don't update importing cap's mseq when handing cap export
-
-Linus Torvalds <torvalds@linux-foundation.org>
-    sched/fair: Fix infinite loop in update_blocked_averages() by reverting a9e7f6544b9c
-
-Sohil Mehta <sohil.mehta@intel.com>
-    iommu/vt-d: Handle domain agaw being less than iommu agaw
-
-Sagi Grimberg <sagi@grimberg.me>
-    rxe: fix error completion wr_id and qp_num
-
-Dominique Martinet <dominique.martinet@cea.fr>
-    9p/net: put a lower bound on msize
-
-Breno Leitao <leitao@debian.org>
-    powerpc/tm: Set MSR[TS] just prior to recheckpoint
-
-Ard Biesheuvel <ard.biesheuvel@linaro.org>
-    arm64: relocatable: fix inconsistencies in linker script and options
-
-Ard Biesheuvel <ard.biesheuvel@linaro.org>
-    arm64: drop linker script hack to hide __efistub_ symbols
-
-Benjamin Coddington <bcodding@redhat.com>
-    lockd: Show pid of lockd for remote locks
-
-Ondrej Mosnacek <omosnace@redhat.com>
-    selinux: policydb - fix byte order and alignment issues
-
-Larry Finger <Larry.Finger@lwfinger.net>
-    b43: Fix error in cordic routine
-
-Andreas Gruenbacher <agruenba@redhat.com>
-    gfs2: Fix loop in gfs2_rbm_find
-
-Andreas Gruenbacher <agruenba@redhat.com>
-    gfs2: Get rid of potential double-freeing in gfs2_create_inode
-
-Vasily Averin <vvs@virtuozzo.com>
-    dlm: memory leaks on error path in dlm_user_request()
-
-Vasily Averin <vvs@virtuozzo.com>
-    dlm: lost put_lkb on error path in receive_convert() and receive_unlock()
-
-Vasily Averin <vvs@virtuozzo.com>
-    dlm: possible memory leak on error path in create_lkb()
-
-Vasily Averin <vvs@virtuozzo.com>
-    dlm: fixed memory leaks after failed ls_remove_names allocation
-
-Hui Peng <benquike@163.com>
-    ALSA: usb-audio: Fix an out-of-bound read in create_composite_quirks
-
-Takashi Iwai <tiwai@suse.de>
-    ALSA: usb-audio: Avoid access before bLength check in build_audio_procunit()
-
-Dan Carpenter <dan.carpenter@oracle.com>
-    ALSA: cs46xx: Potential NULL dereference in probe
-
-Damien Le Moal <damien.lemoal@wdc.com>
-    dm zoned: Fix target BIO completion handling
-
-Mikulas Patocka <mpatocka@redhat.com>
-    dm verity: fix crash on bufio buffer that was allocated with vmalloc
-
-Stefan Hajnoczi <stefanha@redhat.com>
-    vhost/vsock: fix uninitialized vhost_vsock->guest_cid
-
-Joel Stanley <joel@jms.id.au>
-    raid6/ppc: Fix build for clang
-
-Joel Stanley <joel@jms.id.au>
-    powerpc/boot: Set target when cross-compiling for clang
-
-Joel Stanley <joel@jms.id.au>
-    Makefile: Export clang toolchain variables
-
-Masahiro Yamada <yamada.masahiro@socionext.com>
-    kbuild: consolidate Clang compiler flags
-
-Masahiro Yamada <yamada.masahiro@socionext.com>
-    kbuild: add -no-integrated-as Clang option unconditionally
-
-Matthias Kaehlcke <mka@chromium.org>
-    md: raid10: remove VLAIS
-
-Joel Stanley <joel@jms.id.au>
-    ftrace: Build with CPPFLAGS to get -Qunused-arguments
-
-Joel Stanley <joel@jms.id.au>
-    powerpc: Disable -Wbuiltin-requires-header when setjmp is used
-
-Nicholas Piggin <npiggin@gmail.com>
-    powerpc: avoid -mno-sched-epilog on GCC 4.9 and newer
-
-Vasily Averin <vvs@virtuozzo.com>
-    sunrpc: use SVC_NET() in svcauth_gss_* functions
-
-Vasily Averin <vvs@virtuozzo.com>
-    sunrpc: fix cache_head leak due to queued request
-
-Huang Ying <ying.huang@intel.com>
-    mm, swap: fix swapoff with KSM pages
-
-Dan Williams <dan.j.williams@intel.com>
-    mm, hmm: mark hmm_devmem_{add, add_resource} EXPORT_SYMBOL_GPL
-
-Dan Williams <dan.j.williams@intel.com>
-    mm, hmm: use devm semantics for hmm_devmem_{add, remove}
-
-Dan Williams <dan.j.williams@intel.com>
-    mm, devm_memremap_pages: kill mapping "System RAM" support
-
-Dan Williams <dan.j.williams@intel.com>
-    mm, devm_memremap_pages: mark devm_memremap_pages() EXPORT_SYMBOL_GPL
-
-Michal Hocko <mhocko@suse.com>
-    hwpoison, memory_hotplug: allow hwpoisoned pages to be offlined
-
-Minchan Kim <minchan@kernel.org>
-    zram: fix double free backing device
-
-David Herrmann <dh.herrmann@gmail.com>
-    fork: record start_time late
-
-Martin Kelly <martin@martingkelly.com>
-    tools: fix cross-compile var clobbering
-
-Thomas Gleixner <tglx@linutronix.de>
-    genirq/affinity: Don't return with empty affinity masks on error
-
-Ewan D. Milne <emilne@redhat.com>
-    scsi: lpfc: do not set queue->page_count to 0 if pc_sli4_params.wqpcnt is invalid
-
-Steffen Maier <maier@linux.ibm.com>
-    scsi: zfcp: fix posting too many status read buffers leading to adapter shutdown
-
-Yangtao Li <tiny.windzz@gmail.com>
-    serial/sunsu: fix refcount leak
-
-Daniele Palmas <dnlplm@gmail.com>
-    qmi_wwan: Fix qmap header retrieval in qmimux_rx_fixup
-
-Kangjie Lu <kjlu@umn.edu>
-    net: netxen: fix a missing check and an uninitialized use
-
-Mantas Mikulėnas <grawity@gmail.com>
-    Input: synaptics - enable SMBus for HP EliteBook 840 G4
-
-Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
-    gpio: mvebu: only fail on missing clk if pwm is actually to be used
-
-Michael S. Tsirkin <mst@redhat.com>
-    virtio: fix test build after uio.h change
-
-Masahiro Yamada <yamada.masahiro@socionext.com>
-    kbuild: fix false positive warning/error about missing libelf
-
-Sara Sharon <sara.sharon@intel.com>
-    mac80211: free skb fraglist before freeing the skb
-
-Colin Ian King <colin.king@canonical.com>
-    vxge: ensure data0 is initialized in when fetching firmware version information
-
-Jason Martinsen <jasonmartinsen@msn.com>
-    lan78xx: Resolve issue with changing MAC address
-
-Anssi Hannula <anssi.hannula@bitwise.fi>
-    net: macb: fix dropped RX frames due to a race
-
-Anssi Hannula <anssi.hannula@bitwise.fi>
-    net: macb: fix random memory corruption on RX with 64-bit DMA
-
-Dan Carpenter <dan.carpenter@oracle.com>
-    qed: Fix an error code qed_ll2_start_xmit()
-
-Trond Myklebust <trond.myklebust@hammerspace.com>
-    SUNRPC: Fix a race with XPRT_CONNECTING
-
-Yonglong Liu <liuyonglong@huawei.com>
-    net: hns: Fix ping failed when use net bridge and send multicast
-
-Yonglong Liu <liuyonglong@huawei.com>
-    net: hns: Add mac pcs config when enable|disable mac
-
-Yonglong Liu <liuyonglong@huawei.com>
-    net: hns: Fix ntuple-filters status error.
-
-Yonglong Liu <liuyonglong@huawei.com>
-    net: hns: Avoid net reset caused by pause frames storm
-
-Yonglong Liu <liuyonglong@huawei.com>
-    net: hns: Free irq when exit from abnormal branch
-
-Yonglong Liu <liuyonglong@huawei.com>
-    net: hns: Clean rx fbd when ae stopped.
-
-Yonglong Liu <liuyonglong@huawei.com>
-    net: hns: Fixed bug that netdev was opened twice
-
-Yonglong Liu <liuyonglong@huawei.com>
-    net: hns: Some registers use wrong address according to the datasheet.
-
-Yonglong Liu <liuyonglong@huawei.com>
-    net: hns: All ports can not work when insmod hns ko after rmmod.
-
-Yonglong Liu <liuyonglong@huawei.com>
-    net: hns: Incorrect offset address used for some registers.
-
-Arnd Bergmann <arnd@arndb.de>
-    w90p910_ether: remove incorrect __init annotation
-
-Nathan Chancellor <natechancellor@gmail.com>
-    drivers: net: xgene: Remove unnecessary forward declarations
-
-Sinan Kaya <okaya@kernel.org>
-    x86, hyperv: remove PCI dependency
-
-Varun Prakash <varun@chelsio.com>
-    scsi: target: iscsi: cxgbit: add missing spin_lock_init()
-
-Varun Prakash <varun@chelsio.com>
-    scsi: target: iscsi: cxgbit: fix csk leak
-
-Sudarsana Reddy Kalluru <sudarsana.kalluru@cavium.com>
-    bnx2x: Send update-svid ramrod with retry/poll flags enabled
-
-Sudarsana Reddy Kalluru <sudarsana.kalluru@cavium.com>
-    bnx2x: Remove configured vlans as part of unload sequence.
-
-Sudarsana Reddy Kalluru <sudarsana.kalluru@cavium.com>
-    bnx2x: Clear fip MAC when fcoe offload support is disabled
-
-Florian Westphal <fw@strlen.de>
-    netfilter: nat: can't use dst_hold on noref dst
-
-Pan Bian <bianpan2016@163.com>
-    netfilter: ipset: do not call ipset_nest_end after nla_nest_cancel
-
-Stefan Assmann <sassmann@kpanic.de>
-    i40e: fix mac filter delete when setting mac address
-
-Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-    x86/dump_pagetables: Fix LDT remap address marker
-
-Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-    x86/mm: Fix guard hole handling
-
-YueHaibing <yuehaibing@huawei.com>
-    ieee802154: ca8210: fix possible u8 overflow in ca8210_rx_done
-
-Thomas Falcon <tlfalcon@linux.ibm.com>
-    ibmvnic: Fix non-atomic memory allocation in IRQ context
-
-Yussuf Khalil <dev@pp3345.net>
-    Input: synaptics - enable RMI on ThinkPad T560
-
-Tony Lindgren <tony@atomide.com>
-    Input: omap-keypad - fix idle configuration to not block SoC idle states
-
-Dan Carpenter <dan.carpenter@oracle.com>
-    scsi: bnx2fc: Fix NULL dereference in error handling
-
-Florian Westphal <fw@strlen.de>
-    netfilter: seqadj: re-load tcp header pointer after possible head reallocation
-
-Steffen Klassert <steffen.klassert@secunet.com>
-    xfrm: Fix NULL pointer dereference in xfrm_input when skb_dst_force clears the dst_entry.
-
-Benjamin Poirier <bpoirier@suse.com>
-    xfrm: Fix bucket count reported to userspace
-
-Wei Yongjun <weiyongjun1@huawei.com>
-    xfrm: Fix error return code in xfrm_output_one()
-
-Qian Cai <cai@lca.pw>
-    checkstack.pl: fix for aarch64
-
-Peter Hutterer <peter.hutterer@who-t.net>
-    Input: restore EV_ABS ABS_RESERVED
-
-Fabio Estevam <festevam@gmail.com>
-    ARM: dts: imx7d-nitrogen7: Fix the description of the Wifi clock
-
-Anson Huang <anson.huang@nxp.com>
-    ARM: imx: update the cpu power up timing setting on i.mx6sx
-
-Hans de Goede <hdegoede@redhat.com>
-    HID: ite: Add USB id match for another ITE based keyboard rfkill key quirk
-
-Michael Ellerman <mpe@ellerman.id.au>
-    powerpc/mm: Fix linux page tables build with some configs
-
-Paul Mackerras <paulus@ozlabs.org>
-    powerpc: Fix COFF zImage booting on old powermacs
-
-Jerome Brunet <jbrunet@baylibre.com>
-    pinctrl: meson: fix pull enable register calculation
-
-
--------------
-
-Diffstat:
-
- Makefile                                           |  31 +-
- arch/arm/boot/dts/imx7d-nitrogen7.dts              |   9 +-
- arch/arm/mach-imx/cpuidle-imx6sx.c                 |   2 +-
- arch/arm64/Makefile                                |   2 +-
- arch/arm64/kernel/image.h                          |  44 +-
- arch/arm64/kernel/vmlinux.lds.S                    |   9 +-
- arch/powerpc/Makefile                              |   7 +-
- arch/powerpc/boot/Makefile                         |   5 +
- arch/powerpc/boot/crt0.S                           |   4 +-
- arch/powerpc/kernel/Makefile                       |   3 +
- arch/powerpc/kernel/signal_32.c                    |  20 +-
- arch/powerpc/kernel/signal_64.c                    |  44 +-
- arch/powerpc/mm/dump_linuxpagetables.c             |   1 +
- arch/powerpc/xmon/Makefile                         |   5 +-
- arch/x86/include/asm/pgtable_64_types.h            |   5 +
- arch/x86/mm/dump_pagetables.c                      |  15 +-
- arch/x86/xen/mmu_pv.c                              |  11 +-
- drivers/block/zram/zram_drv.c                      |   4 +-
- drivers/gpio/gpio-mvebu.c                          |   6 +-
- drivers/gpu/drm/vc4/vc4_plane.c                    |   1 +
- drivers/hid/hid-ids.h                              |   3 +
- drivers/hid/hid-ite.c                              |   1 +
- drivers/hv/Kconfig                                 |   2 +-
- drivers/hwtracing/intel_th/msu.c                   |   3 +-
- drivers/infiniband/sw/rxe/rxe_resp.c               |  13 +-
- drivers/input/keyboard/omap4-keypad.c              |  16 +-
- drivers/input/mouse/synaptics.c                    |   2 +
- drivers/iommu/intel-iommu.c                        |   4 +-
- drivers/md/dm-verity-target.c                      |  24 +-
- drivers/md/dm-zoned-target.c                       | 122 ++---
- drivers/md/raid10.c                                |  15 +-
- drivers/misc/genwqe/card_utils.c                   |   2 +-
- drivers/net/ethernet/apm/xgene/xgene_enet_main.c   |   3 -
- drivers/net/ethernet/broadcom/bnx2x/bnx2x.h        |   1 +
- drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c   |  48 +-
- drivers/net/ethernet/broadcom/bnx2x/bnx2x_sp.h     |   4 +-
- drivers/net/ethernet/cadence/macb_main.c           |  14 +-
- drivers/net/ethernet/hisilicon/hns/hns_ae_adapt.c  |   3 +
- drivers/net/ethernet/hisilicon/hns/hns_dsaf_gmac.c |  14 +-
- drivers/net/ethernet/hisilicon/hns/hns_dsaf_mac.c  |  15 +
- drivers/net/ethernet/hisilicon/hns/hns_dsaf_main.c | 503 ++++++++++++++-------
- drivers/net/ethernet/hisilicon/hns/hns_dsaf_reg.h  |  13 +-
- drivers/net/ethernet/hisilicon/hns/hns_enet.c      |  43 +-
- drivers/net/ethernet/ibm/ibmvnic.c                 |   2 +-
- drivers/net/ethernet/intel/i40e/i40e_main.c        |  14 +-
- drivers/net/ethernet/neterion/vxge/vxge-config.c   |   2 +-
- drivers/net/ethernet/nuvoton/w90p910_ether.c       |   2 +-
- .../net/ethernet/qlogic/netxen/netxen_nic_init.c   |   3 +-
- drivers/net/ethernet/qlogic/qed/qed_ll2.c          |   1 +
- drivers/net/ieee802154/ca8210.c                    |   4 +-
- drivers/net/usb/lan78xx.c                          |   4 +
- drivers/net/usb/qmi_wwan.c                         |  15 +-
- drivers/net/wireless/broadcom/b43/phy_common.c     |   2 +-
- drivers/pinctrl/meson/pinctrl-meson.c              |   3 +-
- drivers/power/supply/olpc_battery.c                |   4 +-
- drivers/s390/scsi/zfcp_aux.c                       |   6 +-
- drivers/scsi/bnx2fc/bnx2fc_fcoe.c                  |   2 +-
- drivers/scsi/lpfc/lpfc_sli.c                       |   3 +-
- drivers/target/iscsi/cxgbit/cxgbit_cm.c            |   5 +-
- drivers/target/iscsi/cxgbit/cxgbit_main.c          |   1 +
- drivers/tty/serial/sunsu.c                         |  31 +-
- drivers/vhost/vsock.c                              |   2 +
- fs/ceph/caps.c                                     |   1 -
- fs/dlm/lock.c                                      |  17 +-
- fs/dlm/lockspace.c                                 |   2 +-
- fs/gfs2/inode.c                                    |  18 +-
- fs/gfs2/rgrp.c                                     |   2 +-
- fs/lockd/clntproc.c                                |   2 +-
- fs/lockd/xdr.c                                     |   4 +-
- fs/lockd/xdr4.c                                    |   4 +-
- include/linux/hmm.h                                |   4 +-
- include/uapi/linux/input-event-codes.h             |   9 +
- kernel/fork.c                                      |  13 +-
- kernel/irq/affinity.c                              |  15 +-
- kernel/memremap.c                                  |  11 +-
- kernel/sched/fair.c                                |  43 +-
- lib/raid6/Makefile                                 |  15 +
- lib/test_debug_virtual.c                           |   1 +
- mm/hmm.c                                           | 131 ++----
- mm/memory_hotplug.c                                |  16 +
- mm/swapfile.c                                      |   3 +-
- net/9p/client.c                                    |  21 +
- net/mac80211/status.c                              |   5 +
- net/netfilter/ipset/ip_set_list_set.c              |   2 +-
- net/netfilter/nf_conntrack_seqadj.c                |   7 +-
- net/netfilter/nf_nat_core.c                        |   3 +-
- net/sunrpc/auth_gss/svcauth_gss.c                  |   8 +-
- net/sunrpc/cache.c                                 |  10 +-
- net/sunrpc/xprtsock.c                              |   4 +-
- net/xfrm/xfrm_input.c                              |   7 +-
- net/xfrm/xfrm_output.c                             |   1 +
- net/xfrm/xfrm_state.c                              |   2 +-
- scripts/Makefile.build                             |   2 +-
- scripts/checkstack.pl                              |   4 +-
- security/selinux/ss/policydb.c                     |  51 ++-
- sound/pci/cs46xx/dsp_spos.c                        |   3 +
- sound/usb/mixer.c                                  |  10 +-
- sound/usb/quirks-table.h                           |   3 +
- tools/cgroup/Makefile                              |   1 -
- tools/gpio/Makefile                                |   2 -
- tools/hv/Makefile                                  |   1 -
- tools/iio/Makefile                                 |   2 -
- tools/laptop/freefall/Makefile                     |   1 -
- tools/leds/Makefile                                |   1 -
- tools/perf/Makefile.perf                           |   6 -
- tools/power/acpi/Makefile.config                   |   3 -
- tools/scripts/Makefile.include                     |  18 +
- tools/spi/Makefile                                 |   2 -
- tools/testing/nvdimm/test/iomap.c                  |   2 +-
- tools/usb/Makefile                                 |   1 -
- tools/virtio/linux/kernel.h                        |   4 +
- tools/vm/Makefile                                  |   1 -
- 112 files changed, 1035 insertions(+), 666 deletions(-)
 
 
