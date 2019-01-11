@@ -2,101 +2,75 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EEBFC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:22:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A677FC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:22:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6008021783
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:22:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547216522;
-	bh=PplxZEIVO2K2oXT01L8xA8Vray38hPptf9HTerzxCUY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=jyZXQFKMTqdqrMCVesxmRWjRIFYqBHYx0sEWYVrkPymswkPsdriJYPkry4pGcScu/
-	 sN2tCXC7zkyqXUrm2Da71/egcCwdiShtnMukF1ts2RYpsBNMZcI6yBi/TZ1FzhlwpJ
-	 NqRSNmhMTkQ/jW+TZrU6sPYiSATB6obnavD7KHpc=
+	by mail.kernel.org (Postfix) with ESMTP id 64FE62177B
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:22:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="CSe3SXHC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732776AbfAKOWB (ORCPT
+        id S1732832AbfAKOWJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:22:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36864 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:22:09 -0500
+Received: from vps0.lunn.ch ([185.16.172.187]:40351 "EHLO vps0.lunn.ch"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731878AbfAKOTm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:19:42 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 082C3218AE;
-        Fri, 11 Jan 2019 14:19:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547216381;
-        bh=PplxZEIVO2K2oXT01L8xA8Vray38hPptf9HTerzxCUY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=h8Cv/ZLWKJY0Sj8ry3eyxGwuT4ILb5BB/pZ5ccQvq41j+4XhtWpNGZNsVWy0euPCb
-         ckajyXe6/J7nPOHLz9JtMytReFohRhEoAfYgfhoeCNNdhhQpzBdX5SVUgCJD04Tkrv
-         SHKK967xmukNMpRNAzD+w31a/rMVAaSjStEcSgX0=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vasily Averin <vvs@virtuozzo.com>,
-        David Teigland <teigland@redhat.com>, stable@kernel.org
-Subject: [PATCH 4.4 78/88] dlm: lost put_lkb on error path in receive_convert() and receive_unlock()
-Date:   Fri, 11 Jan 2019 15:08:47 +0100
-Message-Id: <20190111131058.925065044@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190111131045.137499039@linuxfoundation.org>
-References: <20190111131045.137499039@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+        id S1729624AbfAKOTi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:19:38 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch; s=20171124;
+        h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date; bh=0RigYZLJue07QZWT7y7EUdLva04itwCInh7YyWYd71c=;
+        b=CSe3SXHCrsRC5qnMMAFqJJA2e8kfJ524ZZIrQ8FiwIwQMpAE10KIn574spw9yj6FDG1d8K+LTnmN6oNHdUq6aXhwkyDVb/7XO3MgKweKGEMXEwpSnjKh7AY5thd5oSBHMOuBTiuZjImQWwO1kGok+4uDnjZlXfs5UlahUhYQKgM=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.84_2)
+        (envelope-from <andrew@lunn.ch>)
+        id 1ghxem-0001Lw-Mc; Fri, 11 Jan 2019 15:19:32 +0100
+Date:   Fri, 11 Jan 2019 15:19:32 +0100
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Camelia Alexandra Groza <camelia.groza@nxp.com>
+Cc:     "f.fainelli@gmail.com" <f.fainelli@gmail.com>,
+        "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "oss@buserror.net" <oss@buserror.net>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net] net: phy: guard against accessing a NULL features
+ bitmap
+Message-ID: <20190111141932.GC20924@lunn.ch>
+References: <1547207806-30572-1-git-send-email-camelia.groza@nxp.com>
+ <20190111133730.GA1895@lunn.ch>
+ <VI1PR04MB47994BB92D3E766C6B4E37C9F2850@VI1PR04MB4799.eurprd04.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <VI1PR04MB47994BB92D3E766C6B4E37C9F2850@VI1PR04MB4799.eurprd04.prod.outlook.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.4-stable review patch.  If anyone has any objections, please let me know.
+> > Hi Camelia
+> > 
+> > A NULL features is a driver bug. So i would prefer to solve this
+> > differently.
+> >
+> > Please make phy_driver_register() do a WARN_ON(!new_driver->features)
+> > and return -EINVAL.
+> 
+> I wasn't aware that features are mandatory. I'll make the change.
 
-------------------
+It was not origionally, but really it should be now.
 
-From: Vasily Averin <vvs@virtuozzo.com>
+> Yes, there are five drivers that don't have features configured: BCM8706, BCM8727, CS4340, TN2020 and KSZ8873MLL.
 
-commit c0174726c3976e67da8649ac62cae43220ae173a upstream.
+> I'm planning to send patches on net-next for the Cortina and
+> Teranetics ones at least, but fixing the generic crash was my
+> priority.
 
-Fixes 6d40c4a708e0 ("dlm: improve error and debug messages")
-Cc: stable@kernel.org # 3.5
+O.K, will take the others.
 
-Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
-Signed-off-by: David Teigland <teigland@redhat.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- fs/dlm/lock.c |    2 ++
- 1 file changed, 2 insertions(+)
-
---- a/fs/dlm/lock.c
-+++ b/fs/dlm/lock.c
-@@ -4178,6 +4178,7 @@ static int receive_convert(struct dlm_ls
- 			  (unsigned long long)lkb->lkb_recover_seq,
- 			  ms->m_header.h_nodeid, ms->m_lkid);
- 		error = -ENOENT;
-+		dlm_put_lkb(lkb);
- 		goto fail;
- 	}
- 
-@@ -4231,6 +4232,7 @@ static int receive_unlock(struct dlm_ls
- 			  lkb->lkb_id, lkb->lkb_remid,
- 			  ms->m_header.h_nodeid, ms->m_lkid);
- 		error = -ENOENT;
-+		dlm_put_lkb(lkb);
- 		goto fail;
- 	}
- 
-
-
+Thanks
+	Andrew
