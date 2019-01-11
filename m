@@ -2,67 +2,72 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D02CAC43444
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 19:19:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05FFCC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 19:19:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B3492218C3
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 19:19:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DA00E2184A
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 19:19:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732928AbfAKTTc (ORCPT
+        id S2387758AbfAKTTj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 14:19:32 -0500
-Received: from relay.sw.ru ([185.231.240.75]:42918 "EHLO relay.sw.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387451AbfAKTTc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 14:19:32 -0500
-Received: from [172.16.25.12]
-        by relay.sw.ru with esmtp (Exim 4.91)
-        (envelope-from <aryabinin@virtuozzo.com>)
-        id 1gi2L4-0006oM-Uj; Fri, 11 Jan 2019 22:19:31 +0300
-Subject: Re: [PATCH 3/3] mm/vmalloc: pass VM_USERMAP flags directly to
- __vmalloc_node_range()
-To:     Roman Penyaev <rpenyaev@suse.de>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>, Joe Perches <joe@perches.com>,
-        "Luis R. Rodriguez" <mcgrof@kernel.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-References: <20190103145954.16942-1-rpenyaev@suse.de>
- <20190103145954.16942-4-rpenyaev@suse.de>
-From:   Andrey Ryabinin <aryabinin@virtuozzo.com>
-Message-ID: <75680183-6e15-0487-c758-d1ce5fba27bc@virtuozzo.com>
-Date:   Fri, 11 Jan 2019 22:19:52 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Fri, 11 Jan 2019 14:19:39 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:34521 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732943AbfAKTTj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 14:19:39 -0500
+Received: from p4fea4364.dip0.t-ipconnect.de ([79.234.67.100] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1gi2L8-00021A-3V; Fri, 11 Jan 2019 20:19:34 +0100
+Date:   Fri, 11 Jan 2019 20:19:33 +0100 (CET)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Waiman Long <longman@redhat.com>
+cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Daniel Colascione <dancol@google.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH v3 4/4] /proc/stat: Call kstat_irqs_usr() only for active
+ IRQs
+In-Reply-To: <alpine.DEB.2.21.1901111750280.4957@nanos.tec.linutronix.de>
+Message-ID: <alpine.DEB.2.21.1901112017000.1661@nanos.tec.linutronix.de>
+References: <1547061648-16080-1-git-send-email-longman@redhat.com> <1547061648-16080-5-git-send-email-longman@redhat.com> <alpine.DEB.2.21.1901111750280.4957@nanos.tec.linutronix.de>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <20190103145954.16942-4-rpenyaev@suse.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, 11 Jan 2019, Thomas Gleixner wrote:
+> --- a/kernel/irq/internals.h
+> +++ b/kernel/irq/internals.h
+> @@ -246,6 +246,7 @@ static inline void kstat_incr_irqs_this_
+>  {
+>  	__this_cpu_inc(*desc->kstat_irqs);
+>  	__this_cpu_inc(kstat.irqs_sum);
+> +	desc->tot_count++;
+
+There is one issue here. True percpu interrupts, like the timer interrupts
+on ARM(64), will access that in parallel. But that's not rocket science to
+fix.
+
+Thanks,
+
+	tglx
 
 
-On 1/3/19 5:59 PM, Roman Penyaev wrote:
-> vmalloc_user*() calls differ from normal vmalloc() only in that they
-> set VM_USERMAP flags for the area.  During the whole history of
-> vmalloc.c changes now it is possible simply to pass VM_USERMAP flags
-> directly to __vmalloc_node_range() call instead of finding the area
-> (which obviously takes time) after the allocation.
-> 
-> Signed-off-by: Roman Penyaev <rpenyaev@suse.de>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Michal Hocko <mhocko@suse.com>
-> Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>
-> Cc: Joe Perches <joe@perches.com>
-> Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>
-> Cc: linux-mm@kvack.org
-> Cc: linux-kernel@vger.kernel.org
-
-Acked-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
