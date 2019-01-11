@@ -4,50 +4,55 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DD83C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:53:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21C51C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:53:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 46A07206B6
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:53:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E43C6206B6
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:53:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547218426;
-	bh=+xSw01ZDl+AzkFRz29wo2BvvYTGMCQexCU6bgARZ6ow=;
+	s=default; t=1547218435;
+	bh=12boeD+mYVo2SzzVJ9Ju7sZr/69+Y/8F6W4e4sg7B9g=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=1grq5vcLEdogtU/6CiIbHJILDSe0XeNCJV7c6edh2B+h6DAzDuX8VyGjNj6W7dKVf
-	 QV1tFGz8C9BfM1//KLR9l2F3L0RHh/sMaYD0yxy3I0aUJpODpiMmBzluRs8flzwYCN
-	 3JjZGL0/nfEKwHmGVK5EnSH2KhmSRMlnPI+7AS0Y=
+	b=Xgp7Yoxn/CLFzn4pMRw01TOXr7JlDPR2N1yAcQzoMw4/LTXA3gwSjbXx5jnHOh60t
+	 Ft57KnEfbVE2jt2UcXbOQKlFOzLJnHJPuLHyLNSgGo0s7f7LxOrn+b2ryVyg0ov9nK
+	 fPnuHrrAVodo246WeyLFcWhPRvfSkAV6yLvlvZ/Q=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391157AbfAKOxp (ORCPT
+        id S2390699AbfAKOhs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:53:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58554 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:37:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58178 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390727AbfAKOh7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:37:59 -0500
+        id S2390664AbfAKOhh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:37:37 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 02B562063F;
-        Fri, 11 Jan 2019 14:37:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 45E502063F;
+        Fri, 11 Jan 2019 14:37:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547217478;
-        bh=+xSw01ZDl+AzkFRz29wo2BvvYTGMCQexCU6bgARZ6ow=;
+        s=default; t=1547217456;
+        bh=12boeD+mYVo2SzzVJ9Ju7sZr/69+Y/8F6W4e4sg7B9g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UNPP0wMUG1LGDERP15HFxpMlNUltIySifs8KPRIiesMm9VJa0rgV0nvmslq2Tv5lZ
-         EXBZhPRhiByD4+ekS6UR3rWnmAD5C5EP9YYXQsaK8eAtz1fTIwvIVLnd4bIORVROxP
-         H4GhmhhI7eexIyVe/nL6AbKrQKUMZ4qO2ZT0m+Ek=
+        b=BXZmZNBueT492pMTGJCvx2lNnHkUOUKYsK9kMAR2ssDjt8ulyOD/T8+p6Kw+4LpnX
+         xfpvg1R7uFCTS4txV5P75oSly/8TZu3sp1a3aY3RiK/w1MXHnEl3wKoJ0k+W5TIORh
+         CJZTpgsH0lUl7Ua3qdNegciS2kaURx9PqzAQcvWI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mans Rullgard <mans@mansr.com>,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 076/148] auxdisplay: charlcd: fix x/y command parsing
-Date:   Fri, 11 Jan 2019 15:14:14 +0100
-Message-Id: <20190111131117.266402414@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Hans van Kranenburg <hans.van.kranenburg@mendix.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Juergen Gross <jgross@suse.com>, bp@alien8.de, hpa@zytor.com,
+        dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
+        boris.ostrovsky@oracle.com, bhe@redhat.com, linux-mm@kvack.org,
+        xen-devel@lists.xenproject.org, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 029/148] x86/mm: Fix guard hole handling
+Date:   Fri, 11 Jan 2019 15:13:27 +0100
+Message-Id: <20190111131115.468401035@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131114.337122649@linuxfoundation.org>
 References: <20190111131114.337122649@linuxfoundation.org>
@@ -66,42 +71,115 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 9bc30ab82108e6a34dc63bf956b49edf71b1681a ]
+[ Upstream commit 16877a5570e0c5f4270d5b17f9bab427bcae9514 ]
 
-The x/y command parsing has been broken since commit 129957069e6a
-("staging: panel: Fixed checkpatch warning about simple_strtoul()").
+There is a guard hole at the beginning of the kernel address space, also
+used by hypervisors. It occupies 16 PGD entries.
 
-Commit b34050fadb86 ("auxdisplay: charlcd: Fix and clean up handling of
-x/y commands") fixed some problems by rewriting the parsing code,
-but also broke things further by removing the check for a complete
-command before attempting to parse it.  As a result, parsing is
-terminated at the first x or y character.
+This reserved range is not defined explicitely, it is calculated relative
+to other entities: direct mapping and user space ranges.
 
-This reinstates the check for a final semicolon.  Whereas the original
-code use strchr(), this is wasteful seeing as the semicolon is always
-at the end of the buffer.  Thus check this character directly instead.
+The calculation got broken by recent changes of the kernel memory layout:
+LDT remap range is now mapped before direct mapping and makes the
+calculation invalid.
 
-Signed-off-by: Mans Rullgard <mans@mansr.com>
-Signed-off-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+The breakage leads to crash on Xen dom0 boot[1].
+
+Define the reserved range explicitely. It's part of kernel ABI (hypervisors
+expect it to be stable) and must not depend on changes in the rest of
+kernel memory layout.
+
+[1] https://lists.xenproject.org/archives/html/xen-devel/2018-11/msg03313.html
+
+Fixes: d52888aa2753 ("x86/mm: Move LDT remap out of KASLR region on 5-level paging")
+Reported-by: Hans van Kranenburg <hans.van.kranenburg@mendix.com>
+Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Tested-by: Hans van Kranenburg <hans.van.kranenburg@mendix.com>
+Reviewed-by: Juergen Gross <jgross@suse.com>
+Cc: bp@alien8.de
+Cc: hpa@zytor.com
+Cc: dave.hansen@linux.intel.com
+Cc: luto@kernel.org
+Cc: peterz@infradead.org
+Cc: boris.ostrovsky@oracle.com
+Cc: bhe@redhat.com
+Cc: linux-mm@kvack.org
+Cc: xen-devel@lists.xenproject.org
+Link: https://lkml.kernel.org/r/20181130202328.65359-2-kirill.shutemov@linux.intel.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/auxdisplay/charlcd.c | 3 +++
- 1 file changed, 3 insertions(+)
+ arch/x86/include/asm/pgtable_64_types.h |  5 +++++
+ arch/x86/mm/dump_pagetables.c           |  8 ++++----
+ arch/x86/xen/mmu_pv.c                   | 11 ++++++-----
+ 3 files changed, 15 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/auxdisplay/charlcd.c b/drivers/auxdisplay/charlcd.c
-index 81c22d20d9d9..60e0b772673f 100644
---- a/drivers/auxdisplay/charlcd.c
-+++ b/drivers/auxdisplay/charlcd.c
-@@ -538,6 +538,9 @@ static inline int handle_lcd_special_code(struct charlcd *lcd)
- 	}
- 	case 'x':	/* gotoxy : LxXXX[yYYY]; */
- 	case 'y':	/* gotoxy : LyYYY[xXXX]; */
-+		if (priv->esc_seq.buf[priv->esc_seq.len - 1] != ';')
-+			break;
+diff --git a/arch/x86/include/asm/pgtable_64_types.h b/arch/x86/include/asm/pgtable_64_types.h
+index 84bd9bdc1987..88bca456da99 100644
+--- a/arch/x86/include/asm/pgtable_64_types.h
++++ b/arch/x86/include/asm/pgtable_64_types.h
+@@ -111,6 +111,11 @@ extern unsigned int ptrs_per_p4d;
+  */
+ #define MAXMEM			(1UL << MAX_PHYSMEM_BITS)
+ 
++#define GUARD_HOLE_PGD_ENTRY	-256UL
++#define GUARD_HOLE_SIZE		(16UL << PGDIR_SHIFT)
++#define GUARD_HOLE_BASE_ADDR	(GUARD_HOLE_PGD_ENTRY << PGDIR_SHIFT)
++#define GUARD_HOLE_END_ADDR	(GUARD_HOLE_BASE_ADDR + GUARD_HOLE_SIZE)
 +
- 		/* If the command is valid, move to the new address */
- 		if (parse_xy(esc, &priv->addr.x, &priv->addr.y))
- 			charlcd_gotoxy(lcd);
+ #define LDT_PGD_ENTRY		-240UL
+ #define LDT_BASE_ADDR		(LDT_PGD_ENTRY << PGDIR_SHIFT)
+ #define LDT_END_ADDR		(LDT_BASE_ADDR + PGDIR_SIZE)
+diff --git a/arch/x86/mm/dump_pagetables.c b/arch/x86/mm/dump_pagetables.c
+index a12afff146d1..073755c89126 100644
+--- a/arch/x86/mm/dump_pagetables.c
++++ b/arch/x86/mm/dump_pagetables.c
+@@ -493,11 +493,11 @@ static inline bool is_hypervisor_range(int idx)
+ {
+ #ifdef CONFIG_X86_64
+ 	/*
+-	 * ffff800000000000 - ffff87ffffffffff is reserved for
+-	 * the hypervisor.
++	 * A hole in the beginning of kernel address space reserved
++	 * for a hypervisor.
+ 	 */
+-	return	(idx >= pgd_index(__PAGE_OFFSET) - 16) &&
+-		(idx <  pgd_index(__PAGE_OFFSET));
++	return	(idx >= pgd_index(GUARD_HOLE_BASE_ADDR)) &&
++		(idx <  pgd_index(GUARD_HOLE_END_ADDR));
+ #else
+ 	return false;
+ #endif
+diff --git a/arch/x86/xen/mmu_pv.c b/arch/x86/xen/mmu_pv.c
+index 2c84c6ad8b50..c8f011e07a15 100644
+--- a/arch/x86/xen/mmu_pv.c
++++ b/arch/x86/xen/mmu_pv.c
+@@ -640,19 +640,20 @@ static int __xen_pgd_walk(struct mm_struct *mm, pgd_t *pgd,
+ 			  unsigned long limit)
+ {
+ 	int i, nr, flush = 0;
+-	unsigned hole_low, hole_high;
++	unsigned hole_low = 0, hole_high = 0;
+ 
+ 	/* The limit is the last byte to be touched */
+ 	limit--;
+ 	BUG_ON(limit >= FIXADDR_TOP);
+ 
++#ifdef CONFIG_X86_64
+ 	/*
+ 	 * 64-bit has a great big hole in the middle of the address
+-	 * space, which contains the Xen mappings.  On 32-bit these
+-	 * will end up making a zero-sized hole and so is a no-op.
++	 * space, which contains the Xen mappings.
+ 	 */
+-	hole_low = pgd_index(USER_LIMIT);
+-	hole_high = pgd_index(PAGE_OFFSET);
++	hole_low = pgd_index(GUARD_HOLE_BASE_ADDR);
++	hole_high = pgd_index(GUARD_HOLE_END_ADDR);
++#endif
+ 
+ 	nr = pgd_index(limit) + 1;
+ 	for (i = 0; i < nr; i++) {
 -- 
 2.19.1
 
