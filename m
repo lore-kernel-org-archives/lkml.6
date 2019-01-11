@@ -2,51 +2,52 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-13.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 709DEC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:20:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23F12C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:20:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3601F2183F
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:20:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E08222183F
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:20:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547216425;
-	bh=ppz06c4vCKnszKSiMDtZs+RwRADevR4IMkN73e37ONY=;
+	s=default; t=1547216430;
+	bh=fZGKMrCGncoRrVzqwHd4S+4M+qmiRzJVrSsPtIABLks=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=WkhnI4ZNkTykfiRM3xvDpscmoGRotT0CVs/9+TQ/xIOBxE8ljutbvDAwQkxrbHG7Q
-	 BIK+Vf2dfkp1hblBCDezLtXqK49l7imspgx5N+CWJYyQfoS6JCl8MynUAFzVRhU3zO
-	 S9L+jWKOLwIZ/Ff+Ncfbsbl71fdZ+G7g0zhGr4Ww=
+	b=gwXQJx5Cnpy/BLC3OUt0BI7fOX3+dP4ahfM3ivueenUTt3JS8WUZi9Zb3VtCra88G
+	 e8F3XkoRejPcdnz4jpPQTJbg3qTk1ghgneO3t8oAZrdsvUKOSSIW4yHyKTLXDQFxrf
+	 Vg3Hx4dhVCoZK9u7Yvf58jNfnizUHtv/JBG1UJJo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728941AbfAKOUY (ORCPT
+        id S2388115AbfAKOU2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:20:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38088 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:20:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38322 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731443AbfAKOUV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:20:21 -0500
+        id S1725789AbfAKOU0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:20:26 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 16C8E21783;
-        Fri, 11 Jan 2019 14:20:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 264232177B;
+        Fri, 11 Jan 2019 14:20:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547216420;
-        bh=ppz06c4vCKnszKSiMDtZs+RwRADevR4IMkN73e37ONY=;
+        s=default; t=1547216425;
+        bh=fZGKMrCGncoRrVzqwHd4S+4M+qmiRzJVrSsPtIABLks=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jslcMGwVP5gBZTb1o0FTv/7gHcM0qkGeIMRyJn71tvfeS38PSP1f2eQBYT46V6h/Q
-         wPXaioxrdLZN+cTX6gRPb+bR5GQ+36pNVRUhiUBOM0uqb5NzT8Cxn3bzyptdyGQUx/
-         4JkgETxh3GakBVvA2j3ghTFJ4UtXgQWe0lY3sBHI=
+        b=JpA77aMHZrFCc32ThFnGshjofJnqfWzq6YfGNxQc8BOi8vPsB+0rjIJOZiJh5ttQT
+         /3o00UQzz5xzS3LNsLV5V37xuIRIopp8zI2OrlCMc1rp+uncoE8rnv3salBrF/Becl
+         fKMzkKOIyQO23KK9zEYm35A1WVh26hcj72axIHJY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Subject: [PATCH 4.4 86/88] intel_th: msu: Fix an off-by-one in attribute store
-Date:   Fri, 11 Jan 2019 15:08:55 +0100
-Message-Id: <20190111131059.914695192@linuxfoundation.org>
+        stable@vger.kernel.org, Stefan Hajnoczi <stefanha@redhat.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Daniel Verkamp <dverkamp@chromium.org>
+Subject: [PATCH 4.4 88/88] vhost/vsock: fix uninitialized vhost_vsock->guest_cid
+Date:   Fri, 11 Jan 2019 15:08:57 +0100
+Message-Id: <20190111131100.174148460@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131045.137499039@linuxfoundation.org>
 References: <20190111131045.137499039@linuxfoundation.org>
@@ -65,52 +66,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+From: Stefan Hajnoczi <stefanha@redhat.com>
 
-commit ec5b5ad6e272d8d6b92d1007f79574919862a2d2 upstream.
+commit a72b69dc083a931422cc8a5e33841aff7d5312f2 upstream.
 
-The 'nr_pages' attribute of the 'msc' subdevices parses a comma-separated
-list of window sizes, passed from userspace. However, there is a bug in
-the string parsing logic wherein it doesn't exclude the comma character
-from the range of characters as it consumes them. This leads to an
-out-of-bounds access given a sufficiently long list. For example:
+The vhost_vsock->guest_cid field is uninitialized when /dev/vhost-vsock
+is opened until the VHOST_VSOCK_SET_GUEST_CID ioctl is called.
 
-> # echo 8,8,8,8 > /sys/bus/intel_th/devices/0-msc0/nr_pages
-> ==================================================================
-> BUG: KASAN: slab-out-of-bounds in memchr+0x1e/0x40
-> Read of size 1 at addr ffff8803ffcebcd1 by task sh/825
->
-> CPU: 3 PID: 825 Comm: npktest.sh Tainted: G        W         4.20.0-rc1+
-> Call Trace:
->  dump_stack+0x7c/0xc0
->  print_address_description+0x6c/0x23c
->  ? memchr+0x1e/0x40
->  kasan_report.cold.5+0x241/0x308
->  memchr+0x1e/0x40
->  nr_pages_store+0x203/0xd00 [intel_th_msu]
+kvmalloc(..., GFP_KERNEL | __GFP_RETRY_MAYFAIL) does not zero memory.
+All other vhost_vsock fields are initialized explicitly so just
+initialize this field too.
 
-Fix this by accounting for the comma character.
-
-Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Fixes: ba82664c134ef ("intel_th: Add Memory Storage Unit driver")
-Cc: stable@vger.kernel.org # v4.4+
+Signed-off-by: Stefan Hajnoczi <stefanha@redhat.com>
+Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+Cc: Daniel Verkamp <dverkamp@chromium.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
----
- drivers/hwtracing/intel_th/msu.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
---- a/drivers/hwtracing/intel_th/msu.c
-+++ b/drivers/hwtracing/intel_th/msu.c
-@@ -1418,7 +1418,8 @@ nr_pages_store(struct device *dev, struc
- 		if (!end)
- 			break;
+diff --git a/drivers/vhost/vsock.c b/drivers/vhost/vsock.c
+index c9de9c41aa97..5a5e981bd8e4 100644
+--- a/drivers/vhost/vsock.c
++++ b/drivers/vhost/vsock.c
+@@ -518,6 +518,8 @@ static int vhost_vsock_dev_open(struct inode *inode, struct file *file)
+ 		goto out;
+ 	}
  
--		len -= end - p;
-+		/* consume the number and the following comma, hence +1 */
-+		len -= end - p + 1;
- 		p = end + 1;
- 	} while (len);
++	vsock->guest_cid = 0; /* no CID assigned yet */
++
+ 	atomic_set(&vsock->queued_replies, 0);
  
+ 	vqs[VSOCK_VQ_TX] = &vsock->vqs[VSOCK_VQ_TX];
 
 
