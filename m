@@ -6,38 +6,46 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97E31C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 03:16:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A48FDC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 03:18:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 70E9320660
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 03:16:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 66CA920879
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 03:18:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730258AbfAKDQt (ORCPT
+        id S1729074AbfAKDS3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 22:16:49 -0500
-Received: from mail.tripleback.net ([198.50.226.104]:40472 "EHLO
+        Thu, 10 Jan 2019 22:18:29 -0500
+Received: from mail.tripleback.net ([198.50.226.104]:40502 "EHLO
         mail.tripleback.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728098AbfAKDQt (ORCPT
+        with ESMTP id S1726149AbfAKDS2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 22:16:49 -0500
-X-Greylist: delayed 561 seconds by postgrey-1.27 at vger.kernel.org; Thu, 10 Jan 2019 22:16:48 EST
+        Thu, 10 Jan 2019 22:18:28 -0500
 Received: from localhost (mail.clusterducks.int [127.0.0.1])
-        by mail.tripleback.net (Postfix) with ESMTP id 1A999C0E65
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 22:09:11 -0500 (EST)
+        by mail.tripleback.net (Postfix) with ESMTP id C0CD4C0E65
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 22:20:10 -0500 (EST)
 X-Virus-Scanned: amavisd-new at tripleback.net
 Received: from mail.tripleback.net ([127.0.0.1])
         by localhost (mail.tripleback.net [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id O7vEHoVDEntv for <linux-kernel@vger.kernel.org>;
-        Thu, 10 Jan 2019 22:09:10 -0500 (EST)
+        with ESMTP id IBzYReyc-vrO for <linux-kernel@vger.kernel.org>;
+        Thu, 10 Jan 2019 22:20:10 -0500 (EST)
 Received: from [192.168.0.22] (S010664777daa9143.du.shawcable.net [184.66.63.229])
         (using TLSv1 with cipher ECDHE-RSA-AES128-SHA (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: kash@tripleback.net)
-        by mail.tripleback.net (Postfix) with ESMTPSA id 3F1B9C0CC3
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 22:09:10 -0500 (EST)
+        by mail.tripleback.net (Postfix) with ESMTPSA id 410CCC0CC3
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 22:20:10 -0500 (EST)
 From:   Kash Pande <kash@tripleback.net>
 Subject: Re: x86/fpu: Don't export __kernel_fpu_{begin,end}()
 To:     linux-kernel@vger.kernel.org
+References: <git-mailbomb-linux-master-12209993e98c5fa1855c467f22a24e3d5b8be205@kernel.org>
+ <CAB9dFdsZb-sZixeOzrt8F50h1pnUK2W2Cxx8+xjhgd0=6xs7iw@mail.gmail.com>
+ <20190109111951.5zvnj7ls6jv56p2u@linutronix.de>
+ <20190109165235.GA8151@kroah.com>
+ <20190109170935.e6b6rwzpk6dlruu4@linutronix.de>
+ <20190110131132.GC20217@kroah.com>
+ <ba74ed88-06d0-5063-799f-c9c6ddbc7da0@llnl.gov>
+ <20190110180752.f4cnunadzzkev24m@linutronix.de>
+ <20190110182413.GA6932@kroah.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=kash@tripleback.net; prefer-encrypt=mutual; keydata=
  mQENBFk4mtYBCACd55EsQx9d/7r6jPgo9+Niwyv6QBYGBc5ww9pPOBrN0oSO47Hm+oSOO5Bu
@@ -64,52 +72,44 @@ Autocrypt: addr=kash@tripleback.net; prefer-encrypt=mutual; keydata=
  bMiVH+IeWnlIwBScamT3DAXmu4CxKUpgkqmFsDL2aZve1ZUxwMwgblDZqBKdZoLJEYQ4Llf6
  JXZmkBNIuO8GA0ZGamjEOvxwn3OYPd7I2FQESawdKNAzv734vCCYELEQFP2mh04B32bEH4ei
  2oovF94E7UQCVIZg7Q==
-Message-ID: <a4c5c516-bf38-cc7a-bd4c-f0f3297e855e@tripleback.net>
-Date:   Thu, 10 Jan 2019 19:07:13 -0800
+Message-ID: <c9021705-9987-f7c2-e60c-15a09b87d345@tripleback.net>
+Date:   Thu, 10 Jan 2019 19:18:24 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.3.3
 MIME-Version: 1.0
+In-Reply-To: <20190110182413.GA6932@kroah.com>
 Content-Type: multipart/signed; micalg=pgp-sha256;
  protocol="application/pgp-signature";
- boundary="7wDvpqP4iyaq4TMwcpbK9lyiT9BKJF1G4"
+ boundary="22qyMCs7nZTvjT8mrSQ4UPDVpjfNB3kF2"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---7wDvpqP4iyaq4TMwcpbK9lyiT9BKJF1G4
-Content-Type: multipart/mixed; boundary="RiJlwvZCYZbDrpFhjxoBOejVTgRNoqYYQ";
+--22qyMCs7nZTvjT8mrSQ4UPDVpjfNB3kF2
+Content-Type: multipart/mixed; boundary="HzI38cCvj5fRe9GmYjc7dA0a6lCD67aSU";
  protected-headers="v1"
 From: Kash Pande <kash@tripleback.net>
 To: linux-kernel@vger.kernel.org
-Message-ID: <a4c5c516-bf38-cc7a-bd4c-f0f3297e855e@tripleback.net>
+Message-ID: <c9021705-9987-f7c2-e60c-15a09b87d345@tripleback.net>
 Subject: Re: x86/fpu: Don't export __kernel_fpu_{begin,end}()
+References: <git-mailbomb-linux-master-12209993e98c5fa1855c467f22a24e3d5b8be205@kernel.org>
+ <CAB9dFdsZb-sZixeOzrt8F50h1pnUK2W2Cxx8+xjhgd0=6xs7iw@mail.gmail.com>
+ <20190109111951.5zvnj7ls6jv56p2u@linutronix.de>
+ <20190109165235.GA8151@kroah.com>
+ <20190109170935.e6b6rwzpk6dlruu4@linutronix.de>
+ <20190110131132.GC20217@kroah.com>
+ <ba74ed88-06d0-5063-799f-c9c6ddbc7da0@llnl.gov>
+ <20190110180752.f4cnunadzzkev24m@linutronix.de>
+ <20190110182413.GA6932@kroah.com>
+In-Reply-To: <20190110182413.GA6932@kroah.com>
 
---RiJlwvZCYZbDrpFhjxoBOejVTgRNoqYYQ
+--HzI38cCvj5fRe9GmYjc7dA0a6lCD67aSU
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 Content-Language: en-US
 
-
-
-> On Thu, Jan 10, 2019 at 07:07:52PM +0100, Sebastian Andrzej Siewior wro=
-te:
-> > On 2019-01-10 17:32:58 [+0000], Hutter, Tony wrote:
-> > > > But since when did out-of-tree modules use __kernel_fpu_begin?=C2=
-=A0
-It's an
-> > > > x86-only thing, and shouldn't really be used by anyone, right?
-> > >
-> > > ZFS on Linux uses it for checksums.=C2=A0 Its removal is currently
-breaking ZFS builds against 5.0:
-> >
-> > So btrfs uses crc32c() / kernel's crypto API for that and ZFS can't?
-> > Well the crypto API is GPL only exported so that won't work. crc32c()=
- is
-> > EXPORT_SYMBOL() so it would work.
-> > On the other hand it does not look right to provide a EXPORT_SYMBOL
-> > wrapper around a GPL only interface=C3=A2=E2=82=AC=C2=A6
 
 > Yes, the "GPL condom" attempt doesn't work at all.=C2=A0 It's been shot=
  down
@@ -135,7 +135,6 @@ we're following the terms of GPL.
 ot
 > want their code to work on Linux, so why would we do extra work to get
 > their code to work properly?
-
 
 1. Should your personal feelings affect the quality of the Linux kernel?
 I say no.
@@ -167,23 +166,25 @@ re
 
 
 
---RiJlwvZCYZbDrpFhjxoBOejVTgRNoqYYQ--
 
---7wDvpqP4iyaq4TMwcpbK9lyiT9BKJF1G4
+
+--HzI38cCvj5fRe9GmYjc7dA0a6lCD67aSU--
+
+--22qyMCs7nZTvjT8mrSQ4UPDVpjfNB3kF2
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: OpenPGP digital signature
 Content-Disposition: attachment; filename="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEE5MQWwRLWQeWW1A0MLHWyk7icJXgFAlw4CGIACgkQLHWyk7ic
-JXh9Mwf/bw/0NH40luX/XVbEwn9LlkwAld8X/nuMnUw08I17FqL9ZQxdlJa78Q3v
-JslpAChnVURV5TvpJ4Jb99JuqLwJVRzZWYXfhV/LjVF2Xo6SmSAzkaBHDfj1Q59g
-wXjv6f0hDCU1Dw5Fx+bNn/AtPY6/o57Y57CTnM8E+fLB/zp/v/v3Cb7XBpDv4la2
-DFkRDv4JcKfi6M7qxsb0Hwjy9Gg5lvfuXJlThTsP8OMIHIOjucRGBQcMzAZqs4d3
-kkzfVy//7nnYC9UXe2ZK4wvLLVEHGvT0t8+NprXw3dWG0ZIDZ3gYJ4PW4qIthTIq
-JznsVeEEg98I+ocRmYFYjmbZotRHqA==
-=9vPG
+iQEzBAEBCAAdFiEE5MQWwRLWQeWW1A0MLHWyk7icJXgFAlw4CwAACgkQLHWyk7ic
+JXgdswf+OokFiaor7rWVn5pUBtKjzGAmwsJfS5WCxrScSHz7wbBYDfeMWo6vDH6o
+CqHTARo8HNfjMlcT5NiuTs9oWecD6N5xCztQr4PkMCtbdJuhZFA8gw0hqUDnUAHH
+ndP4RIW5UDz6xmFn6VYKgis0qJlYmLsNYHl3mTb3S0MMb2x481ML0jbaLSByjL2A
++rkCpE64VnthfWTBqVzKq9d1JsW3MTfKGoiJS6eF05ODiJfsuIiTMcR7oTeksV2T
+IuOKYar9RVJctFaZv+PCSIFNVKHkBjzeRWJfznFzFrpcO0pba7JBKOf4g7PjlEHN
+0bdNE7nH/IjlfI5C7kSIN+nyWirUPQ==
+=+33t
 -----END PGP SIGNATURE-----
 
---7wDvpqP4iyaq4TMwcpbK9lyiT9BKJF1G4--
+--22qyMCs7nZTvjT8mrSQ4UPDVpjfNB3kF2--
