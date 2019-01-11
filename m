@@ -2,58 +2,60 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C180C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 05:13:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 669D8C43444
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 05:13:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F7032184B
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 05:13:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2872D2173B
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 05:13:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Imun+eR9"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QxIVKFSc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729746AbfAKFNU (ORCPT
+        id S1729837AbfAKFN0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 00:13:20 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:36523 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728632AbfAKFNT (ORCPT
+        Fri, 11 Jan 2019 00:13:26 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:38863 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728632AbfAKFN0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 00:13:19 -0500
-Received: by mail-pl1-f195.google.com with SMTP id g9so6239507plo.3;
-        Thu, 10 Jan 2019 21:13:18 -0800 (PST)
+        Fri, 11 Jan 2019 00:13:26 -0500
+Received: by mail-pl1-f194.google.com with SMTP id e5so6226377plb.5;
+        Thu, 10 Jan 2019 21:13:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=yiNiXONw2hvDBpSYOL1d5N1MZI2fH8KXdlUQmgz4Znk=;
-        b=Imun+eR9QhZIf1CBWp1uTUvcu5c57x6vr/TD90brUG3h9+tzOmOdHmt/PFarV+h4iM
-         ECaoPAXZhC7f+gFgH8zk3gm3sDYQWwWUiJHxmbpVd4VfkM5Nhkr3SNVHzirNLtqmRR8r
-         3n8XqbC1ZS6MYSropDcrzMzA+8NTDWmgfpD7CXX04EMJXKXl64uawfa7vR89Sc+fnA3G
-         j+sguhsTgN5w9Jm45XJyfT7l5vmjIkKqrCugfyIheLGK7Id9ZpHttrA5JWFwPiY97a++
-         89mZzdRxZvm3R+yrRBFO4lE6XTtghhI1ZY0rmclP4ZZxDhPAwQoAPEQL5xMe58Ku3j/E
-         iCNQ==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=V+u0Zr0RniU+aM1CbZXWVIvdBXHEhjiwQS1respGVgg=;
+        b=QxIVKFSc+xLsuLW52+XUiU/TXXaB/qGlW4A3Cfa8HuJjgkRI/wq/+IAYzlXWpogLhL
+         Vi+Dd9HsaFROyIJIagXcYbmzrfaIhR4PGbbxmRMZuH1yn1GgIFu/ZL7NZD+s46NfL45X
+         8C5AwFAPWdyoRQwJ+d8vsbAdzSku4NcDZqy+GyaEBdD+Of+l9fkrvT/Zmfbrtdy8w2LH
+         8PfhPnh/14bVlCBvekx6P9ZKTm6CqjiJ73oHlSYxKJy79q14FJP5w14Z3LD5SAuTolcL
+         7CzpEwS5A7hagjBChFbVjBPChSF2jmpenqDqd0Mx8UOyMdYFKVmG82yvL38fgM6TGyWF
+         iFMw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=yiNiXONw2hvDBpSYOL1d5N1MZI2fH8KXdlUQmgz4Znk=;
-        b=h3O8/zc1/IuWMfA5uDTzqkyDwwRX3MGVTMspRngq+386+uP6peIPhas1yg+oEiCzcL
-         m6HG616sD6GaR1fiDp4eQgmqEAtT1zHXXayh4uqdVx1/9q8ixjKJymU5xL2GQ9uuI+Ak
-         7fZ9CigGZfnqgLn7080tLLHzCkQHV7blC0zxPhc5scfHxg/rF8WJ3ZxfwIXrWpBPUfaY
-         edea85SHvPW2OIHFcahkKkbSW8BVDzzMnHMg7I6Wxzjp5YQ685FNVcWAi1i4BxrF4mmD
-         hbdYupiySVuc/3ntzXdwK6oInDYlbwiRbU44XbO+pThFUL/Po9ds9Y5h9BfPeu2CqmEH
-         w04Q==
-X-Gm-Message-State: AJcUukc+h20Wh/uWDnVSB6diwb2Hg0PY/yckLYMgunowQx8VqxKhNGug
-        ZgJ38c33MMqrvaTJ5fftPQSyY+gl6UWk
-X-Google-Smtp-Source: ALg8bN5rMV8JFql1nyNXCDkvGEFzOQ0KzKP/vFF0LATwv/Hp28/MAYHRgpLWoRhd7tg434tfMvck9w==
-X-Received: by 2002:a17:902:2aa8:: with SMTP id j37mr12667449plb.226.1547183597655;
-        Thu, 10 Jan 2019 21:13:17 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=V+u0Zr0RniU+aM1CbZXWVIvdBXHEhjiwQS1respGVgg=;
+        b=eFCN4qWMjnrBiN1R+Z/2+8rDmjXO+DPZYtSDBYW8PlIABryqJsJFMyifAHSg6M4Jd9
+         1MyIrxNEnbrmm0SXLPXUfHo0CouiYqk8E7Ip34FgTJ9kA/2yZ3yGs0Ibe27si+IEWDRe
+         dc4nLAIFh7Zg9QbtAHRP4naTJewUgUP9chq+CDjawKgrwTapN7sTyoCrK6TSOVuVyLu6
+         SK4yJsH5C8Y+q5jYZ6iiyLQN9wdv28IWrNfRklw/oCgQcrYc1IHYg8cFAltM7YjvdmFM
+         EwC9aHFl2AWWHdFh/f7AZkTasFeDUcF59ZZlCSa65SBOkYmnCjEzbdkCuaeQ8mBkNE/P
+         eSkA==
+X-Gm-Message-State: AJcUukeLEj++eS5GXwvUKYvQdJ9u96cwckb3sWI0pkOv/nhik9JQPQu/
+        J8L2VARJB+3q7E6pI/hj8+1dZ1PSQeib
+X-Google-Smtp-Source: ALg8bN7eC57a6OGKT0WjXEulrsCn268Kwp8SuL/Sc5JAlDGxLx10K/Z81zjSvV5waQB2JL3h2km0FQ==
+X-Received: by 2002:a17:902:7614:: with SMTP id k20mr13420401pll.285.1547183604873;
+        Thu, 10 Jan 2019 21:13:24 -0800 (PST)
 Received: from mylaptop.redhat.com ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id q7sm93490471pgp.40.2019.01.10.21.13.09
+        by smtp.gmail.com with ESMTPSA id q7sm93490471pgp.40.2019.01.10.21.13.17
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 10 Jan 2019 21:13:16 -0800 (PST)
+        Thu, 10 Jan 2019 21:13:24 -0800 (PST)
 From:   Pingfan Liu <kernelfans@gmail.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Pingfan Liu <kernelfans@gmail.com>,
@@ -72,36 +74,21 @@ Cc:     Pingfan Liu <kernelfans@gmail.com>,
         Vlastimil Babka <vbabka@suse.cz>,
         Michal Hocko <mhocko@suse.com>, x86@kernel.org,
         linux-acpi@vger.kernel.org, linux-mm@kvack.org
-Subject: [PATCHv2 0/7] x86_64/mm: remove bottom-up allocation style by pushing forward the parsing of mem hotplug info 
-Date:   Fri, 11 Jan 2019 13:12:50 +0800
-Message-Id: <1547183577-20309-1-git-send-email-kernelfans@gmail.com>
+Subject: [PATCHv2 1/7] x86/mm: concentrate the code to memblock allocator enabled
+Date:   Fri, 11 Jan 2019 13:12:51 +0800
+Message-Id: <1547183577-20309-2-git-send-email-kernelfans@gmail.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1547183577-20309-1-git-send-email-kernelfans@gmail.com>
+References: <1547183577-20309-1-git-send-email-kernelfans@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Background
-When kaslr kernel can be guaranteed to sit inside unmovable node
-after [1]. But if kaslr kernel is located near the end of the movable node,
-then bottom-up allocator may create pagetable which crosses the boundary
-between unmovable node and movable node.  It is a probability issue,
-two factors include -1. how big the gap between kernel end and
-unmovable node's end.  -2. how many memory does the system own.
-Alternative way to fix this issue is by increasing the gap by
-boot/compressed/kaslr*. But taking the scenario of PB level memory,
-the pagetable will take server MB even if using 1GB page, different page
-attr and fragment will make things worse. So it is hard to decide how much
-should the gap increase.
-The following figure show the defection of current bottom-up style:
-  [startA, endA][startB, "kaslr kernel verly close to" endB][startC, endC]
+This patch identifies the point where memblock alloc start. It has no
+functional.
 
-If nodeA,B is unmovable, while nodeC is movable, then init_mem_mapping()
-can generate pgtable on nodeC, which stain movable node.
-
-This patch makes it certainty instead of a probablity problem. It achieves
-this by pushing forward the parsing of mem hotplug info ahead of init_mem_mapping().
-
+Signed-off-by: Pingfan Liu <kernelfans@gmail.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Ingo Molnar <mingo@redhat.com>
 Cc: Borislav Petkov <bp@alien8.de>
@@ -123,43 +110,104 @@ Cc: Michal Hocko <mhocko@suse.com>
 Cc: x86@kernel.org
 Cc: linux-acpi@vger.kernel.org
 Cc: linux-mm@kvack.org
-Pingfan Liu (7):
-  x86/mm: concentrate the code to memblock allocator enabled
-  acpi: change the topo of acpi_table_upgrade()
-  mm/memblock: introduce allocation boundary for tracing purpose
-  x86/setup: parse acpi to get hotplug info before init_mem_mapping()
-  x86/mm: set allowed range for memblock allocator
-  x86/mm: remove bottom-up allocation style for x86_64
-  x86/mm: isolate the bottom-up style to init_32.c
+---
+ arch/x86/kernel/setup.c | 54 ++++++++++++++++++++++++-------------------------
+ 1 file changed, 26 insertions(+), 28 deletions(-)
 
- arch/arm/mm/init.c              |   3 +-
- arch/arm/mm/mmu.c               |   4 +-
- arch/arm/mm/nommu.c             |   2 +-
- arch/arm64/kernel/setup.c       |   2 +-
- arch/csky/kernel/setup.c        |   2 +-
- arch/microblaze/mm/init.c       |   2 +-
- arch/mips/kernel/setup.c        |   2 +-
- arch/powerpc/mm/40x_mmu.c       |   6 +-
- arch/powerpc/mm/44x_mmu.c       |   2 +-
- arch/powerpc/mm/8xx_mmu.c       |   2 +-
- arch/powerpc/mm/fsl_booke_mmu.c |   5 +-
- arch/powerpc/mm/hash_utils_64.c |   4 +-
- arch/powerpc/mm/init_32.c       |   2 +-
- arch/powerpc/mm/pgtable-radix.c |   2 +-
- arch/powerpc/mm/ppc_mmu_32.c    |   8 +-
- arch/powerpc/mm/tlb_nohash.c    |   6 +-
- arch/unicore32/mm/mmu.c         |   2 +-
- arch/x86/kernel/setup.c         |  93 ++++++++++++++---------
- arch/x86/mm/init.c              | 163 +++++-----------------------------------
- arch/x86/mm/init_32.c           | 147 ++++++++++++++++++++++++++++++++++++
- arch/x86/mm/mm_internal.h       |   8 +-
- arch/xtensa/mm/init.c           |   2 +-
- drivers/acpi/tables.c           |   4 +-
- include/linux/acpi.h            |   5 +-
- include/linux/memblock.h        |  10 ++-
- mm/memblock.c                   |  23 ++++--
- 26 files changed, 290 insertions(+), 221 deletions(-)
-
+diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
+index d494b9b..ac432ae 100644
+--- a/arch/x86/kernel/setup.c
++++ b/arch/x86/kernel/setup.c
+@@ -962,29 +962,6 @@ void __init setup_arch(char **cmdline_p)
+ 
+ 	if (efi_enabled(EFI_BOOT))
+ 		efi_memblock_x86_reserve_range();
+-#ifdef CONFIG_MEMORY_HOTPLUG
+-	/*
+-	 * Memory used by the kernel cannot be hot-removed because Linux
+-	 * cannot migrate the kernel pages. When memory hotplug is
+-	 * enabled, we should prevent memblock from allocating memory
+-	 * for the kernel.
+-	 *
+-	 * ACPI SRAT records all hotpluggable memory ranges. But before
+-	 * SRAT is parsed, we don't know about it.
+-	 *
+-	 * The kernel image is loaded into memory at very early time. We
+-	 * cannot prevent this anyway. So on NUMA system, we set any
+-	 * node the kernel resides in as un-hotpluggable.
+-	 *
+-	 * Since on modern servers, one node could have double-digit
+-	 * gigabytes memory, we can assume the memory around the kernel
+-	 * image is also un-hotpluggable. So before SRAT is parsed, just
+-	 * allocate memory near the kernel image to try the best to keep
+-	 * the kernel away from hotpluggable memory.
+-	 */
+-	if (movable_node_is_enabled())
+-		memblock_set_bottom_up(true);
+-#endif
+ 
+ 	x86_report_nx();
+ 
+@@ -1096,9 +1073,6 @@ void __init setup_arch(char **cmdline_p)
+ 
+ 	cleanup_highmap();
+ 
+-	memblock_set_current_limit(ISA_END_ADDRESS);
+-	e820__memblock_setup();
+-
+ 	reserve_bios_regions();
+ 
+ 	if (efi_enabled(EFI_MEMMAP)) {
+@@ -1113,6 +1087,8 @@ void __init setup_arch(char **cmdline_p)
+ 		efi_reserve_boot_services();
+ 	}
+ 
++	memblock_set_current_limit(0, ISA_END_ADDRESS, false);
++	e820__memblock_setup();
+ 	/* preallocate 4k for mptable mpc */
+ 	e820__memblock_alloc_reserved_mpc_new();
+ 
+@@ -1130,7 +1106,31 @@ void __init setup_arch(char **cmdline_p)
+ 	trim_platform_memory_ranges();
+ 	trim_low_memory_range();
+ 
++#ifdef CONFIG_MEMORY_HOTPLUG
++	/*
++	 * Memory used by the kernel cannot be hot-removed because Linux
++	 * cannot migrate the kernel pages. When memory hotplug is
++	 * enabled, we should prevent memblock from allocating memory
++	 * for the kernel.
++	 *
++	 * ACPI SRAT records all hotpluggable memory ranges. But before
++	 * SRAT is parsed, we don't know about it.
++	 *
++	 * The kernel image is loaded into memory at very early time. We
++	 * cannot prevent this anyway. So on NUMA system, we set any
++	 * node the kernel resides in as un-hotpluggable.
++	 *
++	 * Since on modern servers, one node could have double-digit
++	 * gigabytes memory, we can assume the memory around the kernel
++	 * image is also un-hotpluggable. So before SRAT is parsed, just
++	 * allocate memory near the kernel image to try the best to keep
++	 * the kernel away from hotpluggable memory.
++	 */
++	if (movable_node_is_enabled())
++		memblock_set_bottom_up(true);
++#endif
+ 	init_mem_mapping();
++	memblock_set_current_limit(get_max_mapped());
+ 
+ 	idt_setup_early_pf();
+ 
+@@ -1145,8 +1145,6 @@ void __init setup_arch(char **cmdline_p)
+ 	 */
+ 	mmu_cr4_features = __read_cr4() & ~X86_CR4_PCIDE;
+ 
+-	memblock_set_current_limit(get_max_mapped());
+-
+ 	/*
+ 	 * NOTE: On x86-32, only from this point on, fixmaps are ready for use.
+ 	 */
 -- 
 2.7.4
 
