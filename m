@@ -2,326 +2,288 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 100BAC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 03:09:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04A7DC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 03:13:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C4F0B20872
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 03:09:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B8BA520660
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 03:12:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="XgoQ2sdF"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dkK1CbN8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730261AbfAKDJa (ORCPT
+        id S1728031AbfAKDM6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 22:09:30 -0500
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:14108 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730184AbfAKDJX (ORCPT
+        Thu, 10 Jan 2019 22:12:58 -0500
+Received: from mail-io1-f65.google.com ([209.85.166.65]:42176 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726255AbfAKDM6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 22:09:23 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c3808d00001>; Thu, 10 Jan 2019 19:09:04 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Thu, 10 Jan 2019 19:09:22 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Thu, 10 Jan 2019 19:09:22 -0800
-Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 11 Jan
- 2019 03:09:21 +0000
-Received: from HQMAIL104.nvidia.com (172.18.146.11) by HQMAIL111.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 11 Jan
- 2019 03:09:21 +0000
-Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL104.nvidia.com
- (172.18.146.11) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
- Transport; Fri, 11 Jan 2019 03:09:21 +0000
-Received: from skomatineni-linux.nvidia.com (Not Verified[10.110.103.52]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5c3808e10001>; Thu, 10 Jan 2019 19:09:21 -0800
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-To:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <mperttunen@nvidia.com>, <chunyan.zhang@unisoc.com>,
-        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <adrian.hunter@intel.com>, <ulf.hansson@linaro.org>
-CC:     <anrao@nvidia.com>, <devicetree@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-mmc@vger.kernel.org>,
-        Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: [PATCH V8 3/3] mmc: tegra: HW Command Queue Support for Tegra SDMMC
-Date:   Thu, 10 Jan 2019 19:08:55 -0800
-Message-ID: <1547176135-2470-3-git-send-email-skomatineni@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1547176135-2470-1-git-send-email-skomatineni@nvidia.com>
-References: <1547176135-2470-1-git-send-email-skomatineni@nvidia.com>
-X-NVConfidentiality: public
+        Thu, 10 Jan 2019 22:12:58 -0500
+Received: by mail-io1-f65.google.com with SMTP id x6so11142717ioa.9
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 19:12:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=mBVKWh9GQT9Zq6AHBwsKrTTXFLIl5c5l7UpK0ut0GKc=;
+        b=dkK1CbN8gW6KeKvKvAS4D+j2bEriRBueni2km0Rn6vO2t5j+RjwgEkMxdg7yQeQxL7
+         WrXRJEVtxOFEMvDPyIv0bz5upI38+mq2gdg1uN22i429l8gX8idCSA7iY70oXkdjEHUc
+         0GNT1GIYPkdra8Exj8NTHw59D62S7W+eq6xaf7oypiTmWvTfLQTh7eeXei0vq2J57YYy
+         2ZIuVKWA6qopgDUPiVcuwCCu8EK1Akm6vk2LtfUAstWy5FTVNW2VPkQl3//4aMN+88jN
+         ALGIesbNDLvqgkiGbEb+/P+AzGIVlux3XzgWuN//IzRtIFnNt+GkoMx8TzVxOhcqJ16e
+         Q7bg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=mBVKWh9GQT9Zq6AHBwsKrTTXFLIl5c5l7UpK0ut0GKc=;
+        b=oc9R5w+52Um81GV1WejahYitHqQpY0G+Qz3QI0p++PisZ9Pv8fVGA74E8xlKhRYnn4
+         ufosAq7kD8OvWmX21mNDfYv07H/raTlOKH4rrB6MY0n9qk+QUgMRNSJXnT5i8/4mU/+5
+         V13lCUMIwlDmVUDpPGuC7tAXldiIYBC+CpVyj2Bh7Xm/TLElRFSe4Nk8kcofyLV1PIlF
+         wUcsi5D4z0YOMlos+H7WGesBRb8bNqANN06g4ZQoClXLo79zd7nSeoMxotLygxba3yPo
+         eSfb8w7f9zBJE/j/b8d0+y5neTjMcGaaqaAq2ikzzRyRNeWv6knbacYX4u+PZl/M81U6
+         BsxA==
+X-Gm-Message-State: AJcUukc43md8RXLtSyuMg+MveinAinsj7T5x3LTXkkba7f1MGT08mtRo
+        TunIZGPABVX6wj7y8qJcDWQqDl6u9fwtKjTZ6w==
+X-Google-Smtp-Source: ALg8bN4mfE9C1ZDU1IS+KKermhGvFizjleS0GbUYQ1EUKcsTI8MrBKjMaHl9mn9DpU8ueOezp3XDDABi4DqCD/WlPFg=
+X-Received: by 2002:a6b:3f06:: with SMTP id m6mr8073861ioa.117.1547176377003;
+ Thu, 10 Jan 2019 19:12:57 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1547176144; bh=W+EMqhP4QQdJI2uJEKSGqKov2aT6TNiVOpJl6lu/rmQ=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         In-Reply-To:References:X-NVConfidentiality:MIME-Version:
-         Content-Type;
-        b=XgoQ2sdFwHJ/wH+zxt6IUYqfy70kzkYM9A5uQwr6fIkBYQE3BcGSK4xbRlc+6aAur
-         WP7ZRECJ5G+b5s/gpWKFSA7G7Ik3ykzsPYlytzSH3En3jY63GurIJeLudwvFd9RAYz
-         I4ue0Rxw0tLS1RxBExtHYWTF3Lx++WkBiH/z/K7s5/WQY2nkHB3ECgAYDSjsFBrEC4
-         6iMiQ0Z1ZC7ccbpHPNjNUey8qZe/Ju4ideCpke4CnHFAg2eejVMSmK73iITPGnZJ9w
-         Keq/crXRVY3eQ/PSJShcY6EoykWrC6xW/Tg50/Y8cm3dmDa/CuVQ/Sq0S47/AQWXEQ
-         psbGOA8CycfMw==
+References: <CAFgQCTuu54oZWKq_ppEvZFb4Mz31gVmsa37gTap+e9KbE=T0aQ@mail.gmail.com>
+ <20181207155627.GG1286@dhcp22.suse.cz> <20181210123738.GN1286@dhcp22.suse.cz>
+ <CAFgQCTupPc1rKv2SrmWD+eJ0H6PRaizPBw3+AG67_PuLA2SKFw@mail.gmail.com>
+ <20181212115340.GQ1286@dhcp22.suse.cz> <CAFgQCTuhW6sPtCNFmnz13p30v3owE3Rty5WJNgtqgz8XaZT-aQ@mail.gmail.com>
+ <CAFgQCTtFZ8ku7W_7rcmrbmH4Qvsv7zgOSHKfPSpNSkVjYkPfBg@mail.gmail.com>
+ <20181217132926.GM30879@dhcp22.suse.cz> <CAFgQCTubm9B1_zM+oc1GLfOChu+XY9N4OcjyeDgk6ggObRtMKg@mail.gmail.com>
+ <20181220091934.GC14234@dhcp22.suse.cz> <20190108143440.GU31793@dhcp22.suse.cz>
+In-Reply-To: <20190108143440.GU31793@dhcp22.suse.cz>
+From:   Pingfan Liu <kernelfans@gmail.com>
+Date:   Fri, 11 Jan 2019 11:12:45 +0800
+Message-ID: <CAFgQCTtdJ1mR6v2Y3ojHSmjg9U90cAUddhxG3Y_8zNDR5Aw9oQ@mail.gmail.com>
+Subject: Re: [PATCH] mm/alloc: fallback to first node if the wanted node offline
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds HW Command Queue for supported Tegra SDMMC
-controllers.
+On Tue, Jan 8, 2019 at 10:34 PM Michal Hocko <mhocko@kernel.org> wrote:
+>
+> On Thu 20-12-18 10:19:34, Michal Hocko wrote:
+> > On Thu 20-12-18 15:19:39, Pingfan Liu wrote:
+> > > Hi Michal,
+> > >
+> > > WIth this patch applied on the old one, I got the following message.
+> > > Please get it from attachment.
+> > [...]
+> > > [    0.409637] NUMA: Node 1 [mem 0x00000000-0x0009ffff] + [mem 0x00100000-0x7fffffff] -> [mem 0x00000000-0x7fffffff]
+> > > [    0.419858] NUMA: Node 1 [mem 0x00000000-0x7fffffff] + [mem 0x100000000-0x47fffffff] -> [mem 0x00000000-0x47fffffff]
+> > > [    0.430356] NODE_DATA(0) allocated [mem 0x87efd4000-0x87effefff]
+> > > [    0.436325]     NODE_DATA(0) on node 5
+> > > [    0.440092] Initmem setup node 0 [mem 0x0000000000000000-0x0000000000000000]
+> > > [    0.447078] node[0] zonelist:
+> > > [    0.450106] NODE_DATA(1) allocated [mem 0x47ffd5000-0x47fffffff]
+> > > [    0.456114] NODE_DATA(2) allocated [mem 0x87efa9000-0x87efd3fff]
+> > > [    0.462064]     NODE_DATA(2) on node 5
+> > > [    0.465852] Initmem setup node 2 [mem 0x0000000000000000-0x0000000000000000]
+> > > [    0.472813] node[2] zonelist:
+> > > [    0.475846] NODE_DATA(3) allocated [mem 0x87ef7e000-0x87efa8fff]
+> > > [    0.481827]     NODE_DATA(3) on node 5
+> > > [    0.485590] Initmem setup node 3 [mem 0x0000000000000000-0x0000000000000000]
+> > > [    0.492575] node[3] zonelist:
+> > > [    0.495608] NODE_DATA(4) allocated [mem 0x87ef53000-0x87ef7dfff]
+> > > [    0.501587]     NODE_DATA(4) on node 5
+> > > [    0.505349] Initmem setup node 4 [mem 0x0000000000000000-0x0000000000000000]
+> > > [    0.512334] node[4] zonelist:
+> > > [    0.515370] NODE_DATA(5) allocated [mem 0x87ef28000-0x87ef52fff]
+> > > [    0.521384] NODE_DATA(6) allocated [mem 0x87eefd000-0x87ef27fff]
+> > > [    0.527329]     NODE_DATA(6) on node 5
+> > > [    0.531091] Initmem setup node 6 [mem 0x0000000000000000-0x0000000000000000]
+> > > [    0.538076] node[6] zonelist:
+> > > [    0.541109] NODE_DATA(7) allocated [mem 0x87eed2000-0x87eefcfff]
+> > > [    0.547090]     NODE_DATA(7) on node 5
+> > > [    0.550851] Initmem setup node 7 [mem 0x0000000000000000-0x0000000000000000]
+> > > [    0.557836] node[7] zonelist:
+> >
+> > OK, so it is clear that building zonelists this early is not going to
+> > fly. We do not have the complete information yet. I am not sure when do
+> > we get that at this moment but I suspect the we either need to move that
+> > initialization to a sooner stage or we have to reconsider whether the
+> > phase when we build zonelists really needs to consider only online numa
+> > nodes.
+> >
+> > [...]
+> > > [    1.067658] percpu: Embedded 46 pages/cpu @(____ptrval____) s151552 r8192 d28672 u262144
+> > > [    1.075692] node[1] zonelist: 1:Normal 1:DMA32 1:DMA 5:Normal
+> > > [    1.081376] node[5] zonelist: 5:Normal 1:Normal 1:DMA32 1:DMA
+> >
+> > I hope to get to this before I leave for christmas vacation, if not I
+> > will stare into it after then.
+>
+> I am sorry but I didn't get to this sooner. But I've got another idea. I
+> concluded that the whole dance is simply bogus and we should treat
+> memory less nodes, well, as nodes with no memory ranges rather than
+> special case them. Could you give the following a spin please?
+>
+> ---
+> diff --git a/arch/x86/mm/numa.c b/arch/x86/mm/numa.c
+> index 1308f5408bf7..0e79445cfd85 100644
+> --- a/arch/x86/mm/numa.c
+> +++ b/arch/x86/mm/numa.c
+> @@ -216,8 +216,6 @@ static void __init alloc_node_data(int nid)
+>
+>         node_data[nid] = nd;
+>         memset(NODE_DATA(nid), 0, sizeof(pg_data_t));
+> -
+> -       node_set_online(nid);
+>  }
+>
+>  /**
+> @@ -535,6 +533,7 @@ static int __init numa_register_memblks(struct numa_meminfo *mi)
+>         /* Account for nodes with cpus and no memory */
+>         node_possible_map = numa_nodes_parsed;
+>         numa_nodemask_from_meminfo(&node_possible_map, mi);
+> +       pr_info("parsed=%*pbl, possible=%*pbl\n", nodemask_pr_args(&numa_nodes_parsed), nodemask_pr_args(&node_possible_map));
+>         if (WARN_ON(nodes_empty(node_possible_map)))
+>                 return -EINVAL;
+>
+> @@ -570,7 +569,7 @@ static int __init numa_register_memblks(struct numa_meminfo *mi)
+>                 return -EINVAL;
+>
+>         /* Finally register nodes. */
+> -       for_each_node_mask(nid, node_possible_map) {
+> +       for_each_node_mask(nid, numa_nodes_parsed) {
+>                 u64 start = PFN_PHYS(max_pfn);
+>                 u64 end = 0;
+>
+> @@ -581,9 +580,6 @@ static int __init numa_register_memblks(struct numa_meminfo *mi)
+>                         end = max(mi->blk[i].end, end);
+>                 }
+>
+> -               if (start >= end)
+> -                       continue;
+> -
+>                 /*
+>                  * Don't confuse VM with a node that doesn't have the
+>                  * minimum amount of memory:
+> @@ -592,6 +588,8 @@ static int __init numa_register_memblks(struct numa_meminfo *mi)
+>                         continue;
+>
+>                 alloc_node_data(nid);
+> +               if (end)
+> +                       node_set_online(nid);
+>         }
+>
+>         /* Dump memblock with node info and return. */
+> @@ -721,21 +719,6 @@ void __init x86_numa_init(void)
+>         numa_init(dummy_numa_init);
+>  }
+>
+> -static void __init init_memory_less_node(int nid)
+> -{
+> -       unsigned long zones_size[MAX_NR_ZONES] = {0};
+> -       unsigned long zholes_size[MAX_NR_ZONES] = {0};
+> -
+> -       /* Allocate and initialize node data. Memory-less node is now online.*/
+> -       alloc_node_data(nid);
+> -       free_area_init_node(nid, zones_size, 0, zholes_size);
+> -
+> -       /*
+> -        * All zonelists will be built later in start_kernel() after per cpu
+> -        * areas are initialized.
+> -        */
+> -}
+> -
+>  /*
+>   * Setup early cpu_to_node.
+>   *
+> @@ -763,9 +746,6 @@ void __init init_cpu_to_node(void)
+>                 if (node == NUMA_NO_NODE)
+>                         continue;
+>
+> -               if (!node_online(node))
+> -                       init_memory_less_node(node);
+> -
+>                 numa_set_node(cpu, node);
+>         }
+>  }
+> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> index 2ec9cc407216..52e54d16662a 100644
+> --- a/mm/page_alloc.c
+> +++ b/mm/page_alloc.c
+> @@ -5234,6 +5234,8 @@ static void build_zonelists(pg_data_t *pgdat)
+>         int node, load, nr_nodes = 0;
+>         nodemask_t used_mask;
+>         int local_node, prev_node;
+> +       struct zone *zone;
+> +       struct zoneref *z;
+>
+>         /* NUMA-aware ordering of nodes */
+>         local_node = pgdat->node_id;
+> @@ -5259,6 +5261,11 @@ static void build_zonelists(pg_data_t *pgdat)
+>
+>         build_zonelists_in_node_order(pgdat, node_order, nr_nodes);
+>         build_thisnode_zonelists(pgdat);
+> +
+> +       pr_info("node[%d] zonelist: ", pgdat->node_id);
+> +       for_each_zone_zonelist(zone, z, &pgdat->node_zonelists[ZONELIST_FALLBACK], MAX_NR_ZONES-1)
+> +               pr_cont("%d:%s ", zone_to_nid(zone), zone->name);
+> +       pr_cont("\n");
+>  }
+>
+>  #ifdef CONFIG_HAVE_MEMORYLESS_NODES
+> @@ -5361,10 +5368,11 @@ static void __build_all_zonelists(void *data)
+>         if (self && !node_online(self->node_id)) {
+>                 build_zonelists(self);
+>         } else {
+> -               for_each_online_node(nid) {
+> +               for_each_node(nid) {
+>                         pg_data_t *pgdat = NODE_DATA(nid);
+>
+> -                       build_zonelists(pgdat);
+> +                       if (pgdat)
+> +                               build_zonelists(pgdat);
+>                 }
+>
+>  #ifdef CONFIG_HAVE_MEMORYLESS_NODES
+> @@ -6644,10 +6652,8 @@ static unsigned long __init find_min_pfn_for_node(int nid)
+>         for_each_mem_pfn_range(i, nid, &start_pfn, NULL, NULL)
+>                 min_pfn = min(min_pfn, start_pfn);
+>
+> -       if (min_pfn == ULONG_MAX) {
+> -               pr_warn("Could not find start_pfn for node %d\n", nid);
+> +       if (min_pfn == ULONG_MAX)
+>                 return 0;
+> -       }
+>
+>         return min_pfn;
+>  }
+> @@ -6991,8 +6997,12 @@ void __init free_area_init_nodes(unsigned long *max_zone_pfn)
+>         mminit_verify_pageflags_layout();
+>         setup_nr_node_ids();
+>         zero_resv_unavail();
+> -       for_each_online_node(nid) {
+> +       for_each_node(nid) {
+>                 pg_data_t *pgdat = NODE_DATA(nid);
+> +
+> +               if (!pgdat)
+> +                       continue;
+> +
+>                 free_area_init_node(nid, NULL,
+>                                 find_min_pfn_for_node(nid), NULL);
+>
+Hi, this patch works! Feel free to use tested-by me
 
-Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
----
- drivers/mmc/host/Kconfig       |   1 +
- drivers/mmc/host/sdhci-tegra.c | 117 +++++++++++++++++++++++++++++++++++++++--
- drivers/mmc/host/sdhci.c       |   9 +++-
- drivers/mmc/host/sdhci.h       |   2 +
- 4 files changed, 124 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
-index e26b8145efb3..0739d26c001b 100644
---- a/drivers/mmc/host/Kconfig
-+++ b/drivers/mmc/host/Kconfig
-@@ -250,6 +250,7 @@ config MMC_SDHCI_TEGRA
- 	depends on ARCH_TEGRA
- 	depends on MMC_SDHCI_PLTFM
- 	select MMC_SDHCI_IO_ACCESSORS
-+	select MMC_CQHCI
- 	help
- 	  This selects the Tegra SD/MMC controller. If you have a Tegra
- 	  platform with SD or MMC devices, say Y or M here.
-diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-index e6ace31e2a41..94ea14651d86 100644
---- a/drivers/mmc/host/sdhci-tegra.c
-+++ b/drivers/mmc/host/sdhci-tegra.c
-@@ -33,6 +33,7 @@
- #include <linux/ktime.h>
- 
- #include "sdhci-pltfm.h"
-+#include "cqhci.h"
- 
- /* Tegra SDHOST controller vendor register definitions */
- #define SDHCI_TEGRA_VENDOR_CLOCK_CTRL			0x100
-@@ -89,6 +90,9 @@
- #define NVQUIRK_NEEDS_PAD_CONTROL			BIT(7)
- #define NVQUIRK_DIS_CARD_CLK_CONFIG_TAP			BIT(8)
- 
-+/* SDMMC CQE Base Address for Tegra Host Ver 4.1 and Higher */
-+#define SDHCI_TEGRA_CQE_BASE_ADDR			0xF000
-+
- struct sdhci_tegra_soc_data {
- 	const struct sdhci_pltfm_data *pdata;
- 	u32 nvquirks;
-@@ -128,6 +132,7 @@ struct sdhci_tegra {
- 	u32 default_tap;
- 	u32 default_trim;
- 	u32 dqs_trim;
-+	bool enable_hwcq;
- };
- 
- static u16 tegra_sdhci_readw(struct sdhci_host *host, int reg)
-@@ -595,6 +600,20 @@ static void tegra_sdhci_parse_tap_and_trim(struct sdhci_host *host)
- 		tegra_host->dqs_trim = 0x11;
- }
- 
-+static void tegra_sdhci_parse_dt(struct sdhci_host *host)
-+{
-+	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-+	struct sdhci_tegra *tegra_host = sdhci_pltfm_priv(pltfm_host);
-+
-+	if (device_property_read_bool(host->mmc->parent, "supports-cqe"))
-+		tegra_host->enable_hwcq = true;
-+	else
-+		tegra_host->enable_hwcq = false;
-+
-+	tegra_sdhci_parse_pad_autocal_dt(host);
-+	tegra_sdhci_parse_tap_and_trim(host);
-+}
-+
- static void tegra_sdhci_set_clock(struct sdhci_host *host, unsigned int clock)
- {
- 	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-@@ -836,6 +855,49 @@ static void tegra_sdhci_voltage_switch(struct sdhci_host *host)
- 		tegra_host->pad_calib_required = true;
- }
- 
-+static void sdhci_tegra_cqe_enable(struct mmc_host *mmc)
-+{
-+	struct cqhci_host *cq_host = mmc->cqe_private;
-+	u32 cqcfg = 0;
-+
-+	/*
-+	 * Tegra SDMMC Controller design prevents write access to BLOCK_COUNT
-+	 * registers when CQE is enabled.
-+	 */
-+	cqcfg = cqhci_readl(cq_host, CQHCI_CFG);
-+	if (cqcfg & CQHCI_ENABLE)
-+		cqhci_writel(cq_host, (cqcfg & ~CQHCI_ENABLE), CQHCI_CFG);
-+
-+	sdhci_cqe_enable(mmc);
-+
-+	if (cqcfg & CQHCI_ENABLE)
-+		cqhci_writel(cq_host, cqcfg, CQHCI_CFG);
-+}
-+
-+static void sdhci_tegra_dumpregs(struct mmc_host *mmc)
-+{
-+	sdhci_dumpregs(mmc_priv(mmc));
-+}
-+
-+static u32 sdhci_tegra_cqhci_irq(struct sdhci_host *host, u32 intmask)
-+{
-+	int cmd_error = 0;
-+	int data_error = 0;
-+
-+	if (!sdhci_cqe_irq(host, intmask, &cmd_error, &data_error))
-+		return intmask;
-+
-+	cqhci_irq(host->mmc, intmask, cmd_error, data_error);
-+
-+	return 0;
-+}
-+
-+static const struct cqhci_host_ops sdhci_tegra_cqhci_ops = {
-+	.enable	= sdhci_tegra_cqe_enable,
-+	.disable = sdhci_cqe_disable,
-+	.dumpregs = sdhci_tegra_dumpregs,
-+};
-+
- static const struct sdhci_ops tegra_sdhci_ops = {
- 	.get_ro     = tegra_sdhci_get_ro,
- 	.read_w     = tegra_sdhci_readw,
-@@ -989,6 +1051,7 @@ static const struct sdhci_ops tegra186_sdhci_ops = {
- 	.set_uhs_signaling = tegra_sdhci_set_uhs_signaling,
- 	.voltage_switch = tegra_sdhci_voltage_switch,
- 	.get_max_clock = tegra_sdhci_get_max_clock,
-+	.irq = sdhci_tegra_cqhci_irq,
- };
- 
- static const struct sdhci_pltfm_data sdhci_tegra186_pdata = {
-@@ -1030,6 +1093,54 @@ static const struct of_device_id sdhci_tegra_dt_match[] = {
- };
- MODULE_DEVICE_TABLE(of, sdhci_tegra_dt_match);
- 
-+static int sdhci_tegra_add_host(struct sdhci_host *host)
-+{
-+	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-+	struct sdhci_tegra *tegra_host = sdhci_pltfm_priv(pltfm_host);
-+	struct cqhci_host *cq_host;
-+	bool dma64;
-+	int ret;
-+
-+	if (!tegra_host->enable_hwcq)
-+		return sdhci_add_host(host);
-+
-+	host->v4_mode = true;
-+
-+	ret = sdhci_setup_host(host);
-+	if (ret)
-+		return ret;
-+
-+	host->mmc->caps2 |= MMC_CAP2_CQE | MMC_CAP2_CQE_DCMD;
-+
-+	cq_host = devm_kzalloc(host->mmc->parent,
-+				sizeof(*cq_host), GFP_KERNEL);
-+	if (!cq_host) {
-+		ret = -ENOMEM;
-+		goto cleanup;
-+	}
-+
-+	cq_host->mmio = host->ioaddr + SDHCI_TEGRA_CQE_BASE_ADDR;
-+	cq_host->ops = &sdhci_tegra_cqhci_ops;
-+
-+	dma64 = host->flags & SDHCI_USE_64_BIT_DMA;
-+	if (dma64)
-+		cq_host->caps |= CQHCI_TASK_DESC_SZ_128;
-+
-+	ret = cqhci_init(cq_host, host->mmc, dma64);
-+	if (ret)
-+		goto cleanup;
-+
-+	ret = __sdhci_add_host(host);
-+	if (ret)
-+		goto cleanup;
-+
-+	return 0;
-+
-+cleanup:
-+	sdhci_cleanup_host(host);
-+	return ret;
-+}
-+
- static int sdhci_tegra_probe(struct platform_device *pdev)
- {
- 	const struct of_device_id *match;
-@@ -1077,9 +1188,7 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
- 	if (tegra_host->soc_data->nvquirks & NVQUIRK_ENABLE_DDR50)
- 		host->mmc->caps |= MMC_CAP_1_8V_DDR;
- 
--	tegra_sdhci_parse_pad_autocal_dt(host);
--
--	tegra_sdhci_parse_tap_and_trim(host);
-+	tegra_sdhci_parse_dt(host);
- 
- 	tegra_host->power_gpio = devm_gpiod_get_optional(&pdev->dev, "power",
- 							 GPIOD_OUT_HIGH);
-@@ -1117,7 +1226,7 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
- 
- 	usleep_range(2000, 4000);
- 
--	rc = sdhci_add_host(host);
-+	rc = sdhci_tegra_add_host(host);
- 	if (rc)
- 		goto err_add_host;
- 
-diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-index a22e11a65658..c6afe793399e 100644
---- a/drivers/mmc/host/sdhci.c
-+++ b/drivers/mmc/host/sdhci.c
-@@ -3353,7 +3353,14 @@ void sdhci_cqe_enable(struct mmc_host *mmc)
- 
- 	ctrl = sdhci_readb(host, SDHCI_HOST_CONTROL);
- 	ctrl &= ~SDHCI_CTRL_DMA_MASK;
--	if (host->flags & SDHCI_USE_64_BIT_DMA)
-+	/*
-+	 * Host from V4.10 supports ADMA3 DMA type.
-+	 * ADMA3 performs integrated descriptor which is more suitable
-+	 * for cmd queuing to fetch both command and transfer descriptors.
-+	 */
-+	if (host->v4_mode && (host->caps1 & SDHCI_CAN_DO_ADMA3))
-+		ctrl |= SDHCI_CTRL_ADMA3;
-+	else if (host->flags & SDHCI_USE_64_BIT_DMA)
- 		ctrl |= SDHCI_CTRL_ADMA64;
- 	else
- 		ctrl |= SDHCI_CTRL_ADMA32;
-diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
-index 6cc9a3c2ac66..4070be49d947 100644
---- a/drivers/mmc/host/sdhci.h
-+++ b/drivers/mmc/host/sdhci.h
-@@ -88,6 +88,7 @@
- #define   SDHCI_CTRL_ADMA1	0x08
- #define   SDHCI_CTRL_ADMA32	0x10
- #define   SDHCI_CTRL_ADMA64	0x18
-+#define   SDHCI_CTRL_ADMA3	0x18
- #define   SDHCI_CTRL_8BITBUS	0x20
- #define  SDHCI_CTRL_CDTEST_INS	0x40
- #define  SDHCI_CTRL_CDTEST_EN	0x80
-@@ -230,6 +231,7 @@
- #define  SDHCI_RETUNING_MODE_SHIFT		14
- #define  SDHCI_CLOCK_MUL_MASK	0x00FF0000
- #define  SDHCI_CLOCK_MUL_SHIFT	16
-+#define  SDHCI_CAN_DO_ADMA3	0x08000000
- #define  SDHCI_SUPPORT_HS400	0x80000000 /* Non-standard */
- 
- #define SDHCI_CAPABILITIES_1	0x44
--- 
-2.7.4
-
+Best Regards
+Pingfan
