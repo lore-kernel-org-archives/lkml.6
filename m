@@ -2,200 +2,173 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90A53C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 20:58:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA67CC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 20:59:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 566CA2084C
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 20:58:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B9DB22084C
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 20:59:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="ISh828SP"
+	dkim=pass (2048-bit key) header.d=lca.pw header.i=@lca.pw header.b="VgILSKCf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726674AbfAKU6g (ORCPT
+        id S1726692AbfAKU7M (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 15:58:36 -0500
-Received: from us01smtprelay-2.synopsys.com ([198.182.47.9]:39622 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726635AbfAKU6g (ORCPT
+        Fri, 11 Jan 2019 15:59:12 -0500
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:35074 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726635AbfAKU7L (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 15:58:36 -0500
-Received: from mailhost.synopsys.com (mailhost3.synopsys.com [10.12.238.238])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id 34B0B24E1024;
-        Fri, 11 Jan 2019 12:58:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1547240315; bh=KjM2U8zzXjSYEEa9IM0sDfxFpgxQOltZA+m4yd6wiqk=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To:From;
-        b=ISh828SPar9UKMdDEjE8Wdb2T3qkAGlNdSoyJP8tsP3sOULHigyLbanTW2Js9zoh4
-         YLhE5ar4nzjkb3n5vMEtLzHhGxKUDdQsRzXaX1NxjHNnw6Ytliday5/GVT9m1iLOQf
-         E2HSA537Wxat4QRAYjs8IoYYM1YyTay7SSMwsKEY001A2I1NKpJO4KoUe9TkKJUzKq
-         EY79+X7VqSD9iLlWMrVdBwD/8DIrlRtf5e9WlVrwrtsAJd6U1J6RNBk0/RIQ/kTh/Y
-         QsmsbyiYYcWeCuoRD27/RyVyVKmZOfGOsihJPXap/ICvEi2ZQOPxTX5HNcRhX6D/r3
-         b31j2wSali7tw==
-Received: from US01WEHTC3.internal.synopsys.com (us01wehtc3.internal.synopsys.com [10.15.84.232])
-        by mailhost.synopsys.com (Postfix) with ESMTP id BDD2D37F9;
-        Fri, 11 Jan 2019 12:58:34 -0800 (PST)
-Received: from IN01WEHTCA.internal.synopsys.com (10.144.199.104) by
- US01WEHTC3.internal.synopsys.com (10.15.84.232) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Fri, 11 Jan 2019 12:58:34 -0800
-Received: from IN01WEHTCB.internal.synopsys.com (10.144.199.105) by
- IN01WEHTCA.internal.synopsys.com (10.144.199.103) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Sat, 12 Jan 2019 02:28:31 +0530
-Received: from [10.10.161.70] (10.10.161.70) by
- IN01WEHTCB.internal.synopsys.com (10.144.199.243) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Sat, 12 Jan 2019 02:28:31 +0530
-Subject: Re: [PATCH 3/3] bitops.h: set_mask_bits() to return old value
-To:     Peter Zijlstra <peterz@infradead.org>
-CC:     Mark Rutland <mark.rutland@arm.com>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Jani Nikula <jani.nikula@intel.com>,
-        Will Deacon <will.deacon@arm.com>,
-        <linux-kernel@vger.kernel.org>,
-        Chris Wilson <chris@chris-wilson.co.uk>, <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        <linux-snps-arc@lists.infradead.org>,
-        Ingo Molnar <mingo@kernel.org>
-Newsgroups: gmane.linux.kernel.arc,gmane.linux.kernel,gmane.linux.kernel.mm
-References: <1547166387-19785-1-git-send-email-vgupta@synopsys.com>
- <1547166387-19785-4-git-send-email-vgupta@synopsys.com>
- <20190111092408.GM30894@hirez.programming.kicks-ass.net>
-From:   Vineet Gupta <vineet.gupta1@synopsys.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=vgupta@synopsys.com; keydata=
- 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
- hhqBJlyU6MVUa6vZNv8E
-Message-ID: <d36b8582-184a-37d2-699f-04837745b70a@synopsys.com>
-Date:   Fri, 11 Jan 2019 12:58:22 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <20190111092408.GM30894@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.10.161.70]
+        Fri, 11 Jan 2019 15:59:11 -0500
+Received: by mail-qt1-f196.google.com with SMTP id v11so20377993qtc.2
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jan 2019 12:59:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lca.pw; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=nLURB8lQzG7p+sod0PD/WoOlCEtowuu31PoAPAwMNgI=;
+        b=VgILSKCfyJyAdjO7qv/SJK+Bd/WLFBcLoOPmoaHAwVR+AayYvZ+zBXwlfXLzl/h8xT
+         /JGW8zy+aucb1hTfa2/qpQ/z+f7DKSj+/d5wyai+hEzuFGU4NBDmyhGX2BAe4lUAJuLt
+         epZ/l7haqkqOuZdV2hKFnGtECjQxkkGxn9dDwO9XC+nRRHPY9ggczJbwFY/aS4K327c8
+         n41Mm+WWJqEhMcWaAqaIbC086RcC3lk+RJU/qd6E+34ffSqWCMIhyzzDbTxxfqcgBf6d
+         rD6TViRAFUztGNq9jfnRjEfReYX1RrU31BR/A13+ZZMsQLIWoPVOvxymfRx3CR0VO0Gu
+         vq3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=nLURB8lQzG7p+sod0PD/WoOlCEtowuu31PoAPAwMNgI=;
+        b=azI2f680YkoAMzplBdWMVrt519h9kEBUMxCN6Br8BrOVdvUfVKaRZXN071fU+dl/Pq
+         djow6dQhCvOwzVViym+ByrdjqpzythW3rti12m5dTwRRbToIW3f/7WW2WUTl8gD7oXM8
+         go3UiQxak77Dvna/ArhM+lYXdT/lm2woFNYNgDaKQmCZ+3ILwScm+vMEFELpo4gs9BWb
+         LQOrvtNKmBuYwyAlIPM6fTR40AgNsDO9Jxtt2MpXxdLvr8OuLSX4oB4y8/ziLYl08uLK
+         a5u0/rJ8XnoG9zuvrynR/hbMnXGAm9WR5KIpPdY5Byf9BMsqZ/dq61BXocsIh87zJ4fU
+         9tOw==
+X-Gm-Message-State: AJcUukcWoQl3TwWNJiUwgloBM1c2Q7GsPhNFvSbFMf5Cyz8SEr8XMfLA
+        O5eS2PK/+F2QvDFbAiFyAZhkug==
+X-Google-Smtp-Source: ALg8bN6XquNmyONIg6xRMXqhZKP/c2GM+PdUT8aDISEi1yVWjES6wf565ksToUTx1qwZlaMJexLR1A==
+X-Received: by 2002:aed:2dc5:: with SMTP id i63mr15674257qtd.173.1547240349039;
+        Fri, 11 Jan 2019 12:59:09 -0800 (PST)
+Received: from ovpn-120-55.rdu2.redhat.com (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
+        by smtp.gmail.com with ESMTPSA id u67sm39861353qki.22.2019.01.11.12.59.08
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 11 Jan 2019 12:59:08 -0800 (PST)
+From:   Qian Cai <cai@lca.pw>
+To:     akpm@linux-foundation.org
+Cc:     esploit@protonmail.ch, jejb@linux.ibm.com, dgilbert@interlog.com,
+        martin.petersen@oracle.com, joeypabalinas@gmail.com,
+        walken@google.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Qian Cai <cai@lca.pw>
+Subject: [PATCH v2] rbtree: fix the red root
+Date:   Fri, 11 Jan 2019 15:58:43 -0500
+Message-Id: <20190111205843.25761-1-cai@lca.pw>
+X-Mailer: git-send-email 2.17.2 (Apple Git-113)
+In-Reply-To: <20190111181600.GJ6310@bombadil.infradead.org>
+References: <20190111181600.GJ6310@bombadil.infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/11/19 1:24 AM, Peter Zijlstra wrote:
-> diff --git a/include/linux/bitops.h b/include/linux/bitops.h
-> index 705f7c442691..2060d26a35f5 100644
-> --- a/include/linux/bitops.h
-> +++ b/include/linux/bitops.h
-> @@ -241,10 +241,10 @@ static __always_inline void __assign_bit(long nr, volatile unsigned long *addr,
->  	const typeof(*(ptr)) mask__ = (mask), bits__ = (bits);	\
->  	typeof(*(ptr)) old__, new__;				\
->  								\
-> +	old__ = READ_ONCE(*(ptr));				\
->  	do {							\
-> -		old__ = READ_ONCE(*(ptr));			\
->  		new__ = (old__ & ~mask__) | bits__;		\
-> -	} while (cmpxchg(ptr, old__, new__) != old__);		\
-> +	} while (!try_cmpxchg(ptr, &old__, new__));		\
->  								\
->  	new__;							\
->  })
-> 
-> 
-> While there you probably want something like the above... 
+A GPF was reported,
 
-As a separate change perhaps so that a revert (unlikely as it might be) could be
-done with less pain.
+kasan: CONFIG_KASAN_INLINE enabled
+kasan: GPF could be caused by NULL-ptr deref or user memory access
+general protection fault: 0000 [#1] SMP KASAN
+        kasan_die_handler.cold.22+0x11/0x31
+        notifier_call_chain+0x17b/0x390
+        atomic_notifier_call_chain+0xa7/0x1b0
+        notify_die+0x1be/0x2e0
+        do_general_protection+0x13e/0x330
+        general_protection+0x1e/0x30
+        rb_insert_color+0x189/0x1480
+        create_object+0x785/0xca0
+        kmemleak_alloc+0x2f/0x50
+        kmem_cache_alloc+0x1b9/0x3c0
+        getname_flags+0xdb/0x5d0
+        getname+0x1e/0x20
+        do_sys_open+0x3a1/0x7d0
+        __x64_sys_open+0x7e/0xc0
+        do_syscall_64+0x1b3/0x820
+        entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
-> although,
-> looking at it now, we seem to have 'forgotten' to add try_cmpxchg to the
-> generic code :/
+It turned out,
 
-So it _has_ to be a separate change ;-)
+gparent = rb_red_parent(parent);
+tmp = gparent->rb_right; <-- GPF was triggered here.
 
-But can we even provide a sane generic try_cmpxchg. The asm-generic cmpxchg relies
-on local irq save etc so it is clearly only to prevent a new arch from failing to
-compile. atomic*_cmpxchg() is different story since atomics have to be provided by
-arch.
+Apparently, "gparent" is NULL which indicates "parent" is rbtree's root
+which is red. Otherwise, it will be treated properly a few lines above.
 
-Anyhow what is more interesting is the try_cmpxchg API itself. So commit
-a9ebf306f52c756 introduced/use of try_cmpxchg(), which indeed makes the looping
-"nicer" to read and obvious code gen improvements.
+/*
+ * If there is a black parent, we are done.
+ * Otherwise, take some corrective action as,
+ * per 4), we don't want a red root or two
+ * consecutive red nodes.
+ */
+if(rb_is_black(parent))
+	break;
 
-So,
-        for (;;) {
-                new = val $op $imm;
-                old = cmpxchg(ptr, val, new);
-                if (old == val)
-                        break;
-                val = old;
-        }
+Hence, it violates the rule #1 (the root can't be red) and need a fix
+up, and also add a regression test for it. This looks like was
+introduced by 6d58452dc06 where it no longer always paint the root as
+black.
 
-becomes
+Fixes: 6d58452dc06 (rbtree: adjust root color in rb_insert_color() only
+when necessary)
+Reported-by: Esme <esploit@protonmail.ch>
+Tested-by: Joey Pabalinas <joeypabalinas@gmail.com>
+Signed-off-by: Qian Cai <cai@lca.pw>
+---
 
-        do {
-        } while (!try_cmpxchg(ptr, &val, val $op $imm));
+v2: add a regression test.
 
+ lib/rbtree.c      |  7 +++++++
+ lib/rbtree_test.c | 11 +++++++++++
+ 2 files changed, 18 insertions(+)
 
-But on pure LL/SC retry based arches, we still end up with generated code having 2
-loops. We discussed something similar a while back: see [1]
+diff --git a/lib/rbtree.c b/lib/rbtree.c
+index d3ff682fd4b8..acc969ad8de9 100644
+--- a/lib/rbtree.c
++++ b/lib/rbtree.c
+@@ -127,6 +127,13 @@ __rb_insert(struct rb_node *node, struct rb_root *root,
+ 			break;
+ 
+ 		gparent = rb_red_parent(parent);
++		if (unlikely(!gparent)) {
++			/*
++			 * The root is red so correct it.
++			 */
++			rb_set_parent_color(parent, NULL, RB_BLACK);
++			break;
++		}
+ 
+ 		tmp = gparent->rb_right;
+ 		if (parent != tmp) {	/* parent == gparent->rb_left */
+diff --git a/lib/rbtree_test.c b/lib/rbtree_test.c
+index b7055b2a07d3..afad0213a117 100644
+--- a/lib/rbtree_test.c
++++ b/lib/rbtree_test.c
+@@ -345,6 +345,17 @@ static int __init rbtree_test_init(void)
+ 		check(0);
+ 	}
+ 
++	/*
++	 * a little regression test to catch a bug may be introduced by
++	 * 6d58452dc06 (rbtree: adjust root color in rb_insert_color() only when
++	 * necessary)
++	 */
++	insert(nodes, &root);
++	nodes->rb.__rb_parent_color = RB_RED;
++	insert(nodes + 1, &root);
++	erase(nodes + 1, &root);
++	erase(nodes, &root);
++
+ 	printk(KERN_ALERT "augmented rbtree testing");
+ 
+ 	init();
+-- 
+2.17.2 (Apple Git-113)
 
-First loop is inside inline asm to retry LL/SC and the outer one due to code
-above. Explicit return of try_cmpxchg() means setting up a register with a boolean
-status of cmpxchg (AFAIKR ARMv7 already does that but ARC e.g. uses a CPU flag
-thus requires an additional insn or two). We could arguably remove the inline asm
-loop and retry LL/SC from the outer loop, but it seems cleaner to keep the retry
-where it belongs.
-
-Also under the hood, try_cmpxchg() would end up re-reading it for the issue fixed
-by commit 44fe84459faf1a.
-
-Heck, it would all be simpler if we could express this w/o use of cmpxchg.
-
-	try_some_op(ptr, &val, val $op $imm);
-
-P.S. the horrible API name is for indicative purposes only
-
-This would remove the outer loop completely, also avoid any re-reads due to the
-semantics of cmpxchg etc.
-
-[1] https://www.spinics.net/lists/kernel/msg2029217.html
