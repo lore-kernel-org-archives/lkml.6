@@ -2,116 +2,123 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD56EC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 19:34:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A940C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 19:34:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A479D218D4
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 19:34:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1391F218D9
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 19:34:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="Ba0/9Wyt"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="B5qX3z+c"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388394AbfAKTeb (ORCPT
+        id S2388677AbfAKTez (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 14:34:31 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:33653 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730371AbfAKTeb (ORCPT
+        Fri, 11 Jan 2019 14:34:55 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:34021 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730371AbfAKTey (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 14:34:31 -0500
-Received: by mail-pf1-f193.google.com with SMTP id c123so7417543pfb.0
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Jan 2019 11:34:30 -0800 (PST)
+        Fri, 11 Jan 2019 14:34:54 -0500
+Received: by mail-lj1-f196.google.com with SMTP id u89-v6so13950054lje.1
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jan 2019 11:34:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:in-reply-to:references:date:message-id
-         :mime-version;
-        bh=vJobNwacwqELFSn9sezgDxi723fb3GrAhFS+Ypv4NN0=;
-        b=Ba0/9WytPW7bVkcWE8ZByDPjWX+8iuvKJ8Ll6FzmDBgj6GlssfqK8Rtn5Ib6+2Vjh8
-         1dwseXgEvshMmw0Vz6Yg0ijhEObsrEdFKFdL7yPDKxhXEjhiM8kUQ+DVpa1WYRrHx0tC
-         4tiB8cYT2JP5R50Y5k4GZ2QBNI/zQWk0ZgpazKIeyMBVk4QcIT6Q+b3BcapojBQaAi9i
-         PerxhLbcjH2kYCSqKozP3CwRH1yknwqi4xbopth9XBH8hUWDux811FPFfBH2vSAOTi1a
-         dtMwU/nx0bIz7N0duoK53NId5Ib7KkV60MUv8kwnMMyN0LLmeyY1db0uQbMMjvM5vB3q
-         wnLg==
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=GLJSAT9tUQzsVm07g1kVZQDg0TcBmJXqmI7ZVgOIiPk=;
+        b=B5qX3z+c2tCNMDAgsNBYMRDMW3flrEONFkAR2cgZ9s2eU19BuGlpy+xT0TLYNR6l/5
+         nop4h+IPtlb4mXPErEUMsPM1glKsmRIQF9sk8I42xfkRYPJw9UkX6cFV0kgqeXtFiur2
+         +IDdtgeOzvqV6bpyguihgo2Ee/oh7HnintN70=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=vJobNwacwqELFSn9sezgDxi723fb3GrAhFS+Ypv4NN0=;
-        b=rslIxFLTugljbis6AbDuxwv+2Pu7TFNEZ6D4/OCsvUZAWfM+o45AUs0jsKXg0PUg/s
-         WyIvO8mONJ0zON8F7VAx4xDogNaFXgWe/06AMPa3CjDKcEu09V1GxZJa8lQuD930AiH0
-         W7VXHlKYS6DScBne2/s4B/XJbZDC+875f4twrLjra4sbSzOUulmBPFHfvL0jF2xCB3nj
-         Cc+CkPsLkbVz1KCklOeeoQs/WdITGQhOa84RwrRPBcFi27xxGobmpW89QjnGqc9TqK0z
-         WG++EW5dXRTNWGlBqLXCaSjvxQGVmrfTFWWKMJOv0VlLJIBlYWzWg06p2CRbipKVx7Kh
-         nlhw==
-X-Gm-Message-State: AJcUukfB3CsrBxijXHUVm7HBVlAsvgQN4c5pkL/iwGNOrIkO/8eg9F44
-        PzFhk5euB5/CGP/hh6vSqjFZGw==
-X-Google-Smtp-Source: ALg8bN4x4AE2g1LcqhsOU54NrX74CWOz6J9XgXLTy6k+mS76NrnccRah4G9l5H0LAHlu/i7iO/DGnw==
-X-Received: by 2002:a62:220d:: with SMTP id i13mr15707191pfi.162.1547235270148;
-        Fri, 11 Jan 2019 11:34:30 -0800 (PST)
-Received: from localhost (c-71-197-186-152.hsd1.wa.comcast.net. [71.197.186.152])
-        by smtp.googlemail.com with ESMTPSA id 125sm102764027pfg.39.2019.01.11.11.34.29
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 11 Jan 2019 11:34:29 -0800 (PST)
-From:   Kevin Hilman <khilman@baylibre.com>
-To:     Dmitry Vyukov <dvyukov@google.com>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        syzkaller <syzkaller@googlegroups.com>,
-        Fengguang Wu <fengguang.wu@intel.com>
-Subject: Re: [PATCH] printk: Add caller information to printk() output.
-In-Reply-To: <CACT4Y+ZKR7eib+ZtK-7mbCw6rD6KOeuWtjWtxAcnHEWnYqyjJw@mail.gmail.com>
-References: <20181204152724.ypk44mi4a56nrud4@pathway.suse.cz> <459018db-763b-9520-ead2-2c0d5975fbf3@i-love.sakura.ne.jp> <20181210130930.bas4fozjhe3dc5nu@pathway.suse.cz> <c5b5d660-d217-35f0-c4f1-7252367934d1@i-love.sakura.ne.jp> <e3f69846-ef08-c8f5-368f-4dada13c9970@i-love.sakura.ne.jp> <20181213121847.mwlr2vyv6qzclhk6@pathway.suse.cz> <20181213124255.GB3053@tigerII.localdomain> <20181217145452.3kev4rmo2l5lt2qy@pathway.suse.cz> <93f19e57-5051-c67d-9af4-b17624062d44@i-love.sakura.ne.jp> <20181218083911.qxvlqlwlb4eye72x@pathway.suse.cz> <20181218085833.GA460@jagdpanzerIV> <CACT4Y+ahbDb7F2B1-z5QxroZcqP+AEUfUi6Sa1ZHRpaCeVmZ=w@mail.gmail.com> <CACT4Y+ZKR7eib+ZtK-7mbCw6rD6KOeuWtjWtxAcnHEWnYqyjJw@mail.gmail.com>
-Date:   Fri, 11 Jan 2019 11:34:28 -0800
-Message-ID: <7h4lafng3f.fsf@baylibre.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=GLJSAT9tUQzsVm07g1kVZQDg0TcBmJXqmI7ZVgOIiPk=;
+        b=TMpnJqVNZrYzs5tcVcczJotwcwZj61TJXiQClI1eRHExwIzIWGfzL2W5TZZ5UGCTbx
+         ziFcI7fYgTl/rci7C8juyoEz1CjUGPfM2bM6jyqevLsTtZcUYAQQvEDVI7p4m5n4bqN2
+         8EXtNVp4zOmRRZjhDR/8JTuYHsPsJMT8f+2wCz5S9UPA2hZclr/9XBqrFnnXA9rdaTn6
+         D996p7WP0/f9WeJlR/xUPIwGdG19AlHSNdUsesryWC6XQ5KEhVpdm4gM6SDt4lnz3T2P
+         p3UmrfvAqmAamIvkAGIpNrx3PNACv3+qiNzLEYiVkaAT/cm0IZqvRc4d3T4BHMBmAv36
+         1lew==
+X-Gm-Message-State: AJcUukcjPzaSn59EUP5oMsBOPFQ+ajrER3yjkr7TrNw/O8JLGdv0h+Nd
+        cNaB5nDVWgirO8I2zZYN6X1RAgucnmc=
+X-Google-Smtp-Source: ALg8bN4Ml1POCOz0h/gzIXGgv+sDCZwmwjZWfe/fGsJMmx/NbbgAcNim2JzQ4g2of7Zj1B7yIlLO1w==
+X-Received: by 2002:a2e:630a:: with SMTP id x10-v6mr8898370ljb.11.1547235292073;
+        Fri, 11 Jan 2019 11:34:52 -0800 (PST)
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com. [209.85.167.50])
+        by smtp.gmail.com with ESMTPSA id t9-v6sm15963872ljj.87.2019.01.11.11.34.50
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 11 Jan 2019 11:34:51 -0800 (PST)
+Received: by mail-lf1-f50.google.com with SMTP id z13so11594422lfe.11
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jan 2019 11:34:50 -0800 (PST)
+X-Received: by 2002:a19:982:: with SMTP id 124mr8412103lfj.138.1547235290376;
+ Fri, 11 Jan 2019 11:34:50 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <cover.1547073843.git.jpoimboe@redhat.com> <20190110203023.GL2861@worktop.programming.kicks-ass.net>
+ <20190110205226.iburt6mrddsxnjpk@treble> <CAHk-=whR7LzKcuB9Z2km1T25DUkJcbE9rNhCzApAPADbDqMhmQ@mail.gmail.com>
+ <CALCETrWBwTVHWXahVXMMBL4QA1f+YdKgv1XANXPsk86FjFFH2Q@mail.gmail.com>
+ <B374297A-8298-4CED-8EC0-6A39BDBA5F05@vmware.com> <20190111151525.tf7lhuycyyvjjxez@treble>
+ <CAHk-=wjJm8DpCsw=Wno01q4VFqUeiLKE8QmbAtUJurYhn3jRqA@mail.gmail.com> <12578A17-E695-4DD5-AEC7-E29FAB2C8322@zytor.com>
+In-Reply-To: <12578A17-E695-4DD5-AEC7-E29FAB2C8322@zytor.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 11 Jan 2019 11:34:34 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wgQR1RfjA9V70cL-vTrhYBF9FWhPRaZahQuDaSazL+kAQ@mail.gmail.com>
+Message-ID: <CAHk-=wgQR1RfjA9V70cL-vTrhYBF9FWhPRaZahQuDaSazL+kAQ@mail.gmail.com>
+Subject: Re: [PATCH v3 0/6] Static calls
+To:     Peter Anvin <hpa@zytor.com>
+Cc:     Josh Poimboeuf <jpoimboe@redhat.com>,
+        Nadav Amit <namit@vmware.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Jason Baron <jbaron@akamai.com>, Jiri Kosina <jkosina@suse.cz>,
+        David Laight <David.Laight@aculab.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Julia Cartwright <julia@ni.com>, Jessica Yu <jeyu@kernel.org>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Edward Cree <ecree@solarflare.com>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dmitry Vyukov <dvyukov@google.com> writes:
-
-> On Wed, Jan 2, 2019 at 5:09 PM Dmitry Vyukov <dvyukov@google.com> wrote:
->>
->> On Tue, Dec 18, 2018 at 9:58 AM Sergey Senozhatsky
->> <sergey.senozhatsky.work@gmail.com> wrote:
->> >
->> > On (12/18/18 09:39), Petr Mladek wrote:
->> > >
->> > > Sergey, are you okay with this squashed patch, please?
->> > >
->> >
->> > Yeah. There are several minor nitpicks, but here is my
->> > Acked-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
->> >
->> >
->> > One final question - can syzbot folks confirm that the patch
->> > helps? Just curious.
->>
->> This slip through the cracks. Tetsuo pinged me and I am testing now.
->> Need to create a set of tests and update parsing code to handle this.
+On Fri, Jan 11, 2019 at 11:24 AM <hpa@zytor.com> wrote:
 >
-> I've pushed support for CONFIG_PRINTK_CALLER to syzkaller/syzbot:
-> https://github.com/google/syzkaller/commit/7da2392541a49c3f17b2e7d24e04b84d72b965fb
-> Let's see what happens. Limited local testing shows that it's working
-> as intended and significatly improves quality of reports and ability
-> to make sense out of kernel output.
->
-> Tetsuo, thanks for your great persistence with this change!
-> Sergey, Petr, thanks for reviews!
->
-> +Fengguang, Kevin, maybe you will find this useful for 0-day/kernel-ci.
+> I still don't see why can't simply spin in the #BP handler until the patch is complete.
 
-Yes, will definitely give it a try.  
+So here's at least one problem:
 
-Kevin
+text_poke_bp()
+  text_poke(addr, &int3, sizeof(int3));
+   *interrupt*
+      interrupt has a static call
+        *BP*
+          poke_int3_handler
+             *BOOM*
+
+Note how at BOOM we cannot just spin (or return) to wait for the
+'int3' to be switched back. Becuase it never will. Because we are
+interrupting the thing that would do that switch-back.
+
+So we'd have to do the 'text_poke_bp()' sequence with interrupts
+disabled. Which we can't do right now at least, because part of that
+sequence involves that on_each_cpu(do_sync_core) thing, which needs
+interrupts enabled.
+
+See?
+
+Or am I missing something?
+
+            Linus
