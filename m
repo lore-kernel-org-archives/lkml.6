@@ -2,102 +2,76 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E295C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 01:41:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F8ABC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 01:46:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 359E420879
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 01:41:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D017E206B7
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 01:46:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729452AbfAKBlz (ORCPT
+        id S1729272AbfAKBqt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 20:41:55 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:56792 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728880AbfAKBlz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 20:41:55 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id E79858E664;
-        Fri, 11 Jan 2019 01:41:54 +0000 (UTC)
-Received: from x1.home (ovpn-116-25.phx2.redhat.com [10.3.116.25])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 1E1121001F45;
-        Fri, 11 Jan 2019 01:41:54 +0000 (UTC)
-Date:   Thu, 10 Jan 2019 18:41:53 -0700
-From:   Alex Williamson <alex.williamson@redhat.com>
-To:     Alexey Kardashevskiy <aik@ozlabs.ru>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        kvm@vger.kernel.org, Laura Abbott <labbott@redhat.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Cornelia Huck <cohuck@redhat.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] vfio_pci: set TRACE_INCLUDE_PATH to fix the build error
-Message-ID: <20190110184153.224baf5a@x1.home>
-In-Reply-To: <9b1c9668-98cb-2a30-2fb0-b797b47aa9b6@ozlabs.ru>
-References: <1546916883-25911-1-git-send-email-yamada.masahiro@socionext.com>
-        <20190110144701.ah3hmedqmyqf5uzt@home.goodmis.org>
-        <9b1c9668-98cb-2a30-2fb0-b797b47aa9b6@ozlabs.ru>
-Organization: Red Hat
+        Thu, 10 Jan 2019 20:46:49 -0500
+Received: from mail1.windriver.com ([147.11.146.13]:64823 "EHLO
+        mail1.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727750AbfAKBqs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 20:46:48 -0500
+Received: from ALA-HCA.corp.ad.wrs.com ([147.11.189.40])
+        by mail1.windriver.com (8.15.2/8.15.1) with ESMTPS id x0B1kGqd018780
+        (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
+        Thu, 10 Jan 2019 17:46:16 -0800 (PST)
+Received: from [128.224.162.180] (128.224.162.180) by ALA-HCA.corp.ad.wrs.com
+ (147.11.189.50) with Microsoft SMTP Server (TLS) id 14.3.408.0; Thu, 10 Jan
+ 2019 17:46:16 -0800
+Subject: Re: [PATCH v2] kernel/dma: Fix panic caused by passing swiotlb to
+ command line
+To:     <konrad@darnok.org>, Christoph Hellwig <hch@lst.de>
+CC:     Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        <m.szyprowski@samsung.com>, <robin.murphy@arm.com>,
+        <iommu@lists.linux-foundation.org>, <linux-kernel@vger.kernel.org>
+References: <1543832571-121638-1-git-send-email-zhe.he@windriver.com>
+ <b35907a9-4d30-493b-3839-731b10d71c63@windriver.com>
+ <20190107090702.GA14033@lst.de>
+ <CAPbh3rupHC_G0=5dBhhpoXvXO_=i-Y6p=9WdRtn9W19jRpVVcg@mail.gmail.com>
+From:   He Zhe <zhe.he@windriver.com>
+Message-ID: <1cef7480-0838-c044-9bca-9b7adacb0f17@windriver.com>
+Date:   Fri, 11 Jan 2019 09:46:12 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <CAPbh3rupHC_G0=5dBhhpoXvXO_=i-Y6p=9WdRtn9W19jRpVVcg@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Fri, 11 Jan 2019 01:41:55 +0000 (UTC)
+Content-Language: en-US
+X-Originating-IP: [128.224.162.180]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 11 Jan 2019 12:13:35 +1100
-Alexey Kardashevskiy <aik@ozlabs.ru> wrote:
 
-> On 11/01/2019 01:47, Steven Rostedt wrote:
-> > On Tue, Jan 08, 2019 at 12:08:03PM +0900, Masahiro Yamada wrote:  
-> >> ---
-> >>
-> >>  drivers/vfio/pci/trace.h | 2 +-
-> >>  1 file changed, 1 insertion(+), 1 deletion(-)
-> >>
-> >> diff --git a/drivers/vfio/pci/trace.h b/drivers/vfio/pci/trace.h
-> >> index 228ccdb..4d13e51 100644
-> >> --- a/drivers/vfio/pci/trace.h
-> >> +++ b/drivers/vfio/pci/trace.h
-> >> @@ -94,7 +94,7 @@ TRACE_EVENT(vfio_pci_npu2_mmap,
-> >>  #endif /* _TRACE_VFIO_PCI_H */
-> >>  
-> >>  #undef TRACE_INCLUDE_PATH
-> >> -#define TRACE_INCLUDE_PATH .
-> >> +#define TRACE_INCLUDE_PATH ../../drivers/vfio/pci  
-> > 
-> > Note, the reason why I did not show this method in the samples/trace_events/
-> > is that there's one "gotcha" that you need to be careful about. It may not be
-> > an issue here, but please be aware of it.
-> > 
-> > The words in TRACE_INCLUDE_PATH can be updated by C preprocessor defines. For
-> > example, if for some reason you had:
-> > 
-> > #define pci special_pci
-> > 
-> > The above would turn into:
-> > 
-> >  ../../drivers/vfio/special_pci
-> > 
-> > and it wont build, and you will be left scratching your head wondering why.  
 
-Thanks for the info Steve, that'd definitely be a head scratcher, but
-it also seems really unlikely for this path.
+On 1/11/19 1:27 AM, Konrad Rzeszutek Wilk wrote:
+> Let's skip it. There was another patch that would allocate a default 4MB size if it there was an misue of swiotlb parameters.
 
-> Lovely :) imho it is +1 for
-> CFLAGS_vfio_pci_nvlink2.o += -I$(src)
-> and a comment.
+But this patch mainly fixes a crash. Could you please point me to the patch you mentioned?
 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=d1fc1176c055c9ec9c6ec4d113a284e0bad9d09a
+Thanks,
+Zhe
 
-Obviously we can still refine further, but I don't see this new piece
-of information making a meaningful difference in the choice.  Thanks,
+>
+>
+>
+> On Mon, Jan 7, 2019, 4:07 AM Christoph Hellwig <hch@lst.de <mailto:hch@lst.de> wrote:
+>
+>     On Mon, Jan 07, 2019 at 04:46:51PM +0800, He Zhe wrote:
+>     > Kindly ping.
+>
+>     Konrad, I'll pick this up through the DMA mapping tree unless you
+>     protest in the next few days.
+>
 
-Alex
