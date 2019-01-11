@@ -2,300 +2,232 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C48E0C43612
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 08:11:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15D97C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 08:12:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 916322173B
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 08:11:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C4E6A21783
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 08:12:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="iGy0gh1o"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="mf09QgYB";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="n8FvuTpg"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729249AbfAKILd (ORCPT
+        id S1729590AbfAKIME (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 03:11:33 -0500
-Received: from us01smtprelay-2.synopsys.com ([198.182.47.9]:43160 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728997AbfAKILd (ORCPT
+        Fri, 11 Jan 2019 03:12:04 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:59870 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728997AbfAKIME (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 03:11:33 -0500
-Received: from mailhost.synopsys.com (mailhost1.synopsys.com [10.12.238.239])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id 0E74124E0F62;
-        Fri, 11 Jan 2019 00:11:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1547194292; bh=YpXgJdjATGMJJFiHOIq7KUjEgmNE1CWuZYddXFo+Ck4=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To:From;
-        b=iGy0gh1oUOShlvWrW3zIdd0whwHSWn9AKwZxbliv2EBsco+Xj3hNHccK/Qt0MLc/f
-         pIW4S1Pukd/1SCh2uDfQMoKOaS3J6JyDZtE2LMOC8egcle1BpvsBITOYOplhLYEj3w
-         FqmU30mlKKTKF3R5tciwN8i2xIoC8y66aaCfDDix1gtE2ekLszMT1g/775YCn42v9n
-         a2sXTIyz3JoLfZFBUnoMI6vwplxYbfPyBKvrIiSqpdXi5EQw5cRhxAeVGNaI1nkgLO
-         yBpV9jt1apicJ9Yc3lj4qgZiVkRvS+80RngPeCZemn41cq63MrtcWFQfdoloVAst7M
-         yRNUWPz3v9I7A==
-Received: from US01WXQAHTC1.internal.synopsys.com (us01wxqahtc1.internal.synopsys.com [10.12.238.230])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 048D55785;
-        Fri, 11 Jan 2019 00:11:31 -0800 (PST)
-Received: from DE02WEHTCA.internal.synopsys.com (10.225.19.92) by
- US01WXQAHTC1.internal.synopsys.com (10.12.238.230) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Fri, 11 Jan 2019 00:11:31 -0800
-Received: from DE02WEHTCB.internal.synopsys.com (10.225.19.94) by
- DE02WEHTCA.internal.synopsys.com (10.225.19.92) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Fri, 11 Jan 2019 09:11:28 +0100
-Received: from [10.107.19.13] (10.107.19.13) by
- DE02WEHTCB.internal.synopsys.com (10.225.19.80) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Fri, 11 Jan 2019 09:11:28 +0100
-Subject: Re: [V3, 4/4] media: platform: dwc: Add MIPI CSI-2 controller driver
-To:     "Eugen.Hristev@microchip.com" <Eugen.Hristev@microchip.com>,
-        "luis.oliveira@synopsys.com" <luis.oliveira@synopsys.com>,
-        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     "joao.pinto@synopsys.com" <joao.pinto@synopsys.com>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "mchehab@kernel.org" <mchehab@kernel.org>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "hans.verkuil@cisco.com" <hans.verkuil@cisco.com>,
-        "laurent.pinchart@ideasonboard.com" 
-        <laurent.pinchart@ideasonboard.com>,
-        "geert@linux-m68k.org" <geert@linux-m68k.org>,
-        "narmstrong@baylibre.com" <narmstrong@baylibre.com>,
-        "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
-        "treding@nvidia.com" <treding@nvidia.com>,
-        "maxime.ripard@bootlin.com" <maxime.ripard@bootlin.com>,
-        "todor.tomov@linaro.org" <todor.tomov@linaro.org>
-References: <1539953556-35762-1-git-send-email-lolivei@synopsys.com>
- <1539953556-35762-5-git-send-email-lolivei@synopsys.com>
- <4db76eb2-460f-c644-6dbd-370b07b2def8@microchip.com>
- <2407a3ca-1a83-5685-c26c-a922251b2943@synopsys.com>
- <24f6a1fe-4790-91ba-ce21-72397c0a02df@microchip.com>
-From:   Luis de Oliveira <luis.oliveira@synopsys.com>
-Message-ID: <2c5b8a1b-c620-787b-9d83-6bfe099c4552@synopsys.com>
-Date:   Fri, 11 Jan 2019 08:11:24 +0000
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Fri, 11 Jan 2019 03:12:04 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 9508B60908; Fri, 11 Jan 2019 08:12:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1547194322;
+        bh=4aPFGzg1sYUi9RN9kbgII9O0iJEGLlXwbc2oeZitpmc=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=mf09QgYBpkw5hASEjORbW5A4XI3hsMHip4jJ7dQrknoUntoJOmdIpFdRjyMUFjcZ9
+         gaEMhlOxrgOlMIKepYIheR/uc0U6ainyqYZN8sIul86JyOXDkaXZRsWEeMU+u9ph0P
+         pSlnwe9urchMy/tOuIFSEiGGMgVtkStUsF3q+zgI=
+Received: from [10.204.110.203] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: rohitkr@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 76AC8601B4;
+        Fri, 11 Jan 2019 08:11:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1547194320;
+        bh=4aPFGzg1sYUi9RN9kbgII9O0iJEGLlXwbc2oeZitpmc=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=n8FvuTpgT2yXip4dbLhAj1zTK3aSh73L4yHOAY0mR8ObbhQN7CWHg3J5wxFf7ELr5
+         hHAGZNQMpvpTLNm0YHMEPFoc4PNmXMvIqdDwnZF/l9WBSQyaIdHYx0DHATd59ZFIm/
+         SPY0Gv7WkcYVnffg4tXtOjdqvnogHH1Z0PH90ExI=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 76AC8601B4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rohitkr@codeaurora.org
+Subject: Re: [alsa-devel] [PATCH v2] ASoC: soc-core: defer card probe until
+ all component is added to list
+To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        plai@codeaurora.org, bgoswami@codeaurora.org,
+        asishb@codeaurora.org, lgirdwood@gmail.com, broonie@kernel.org,
+        perex@perex.cz, tiwai@suse.com, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org, rohkumar@qti.qualcomm.com,
+        srinivas.kandagatla@linaro.org, vinod.koul@linaro.org
+Cc:     Ajit Pandey <ajitp@codeaurora.org>
+References: <1547023627-30312-1-git-send-email-rohitkr@codeaurora.org>
+ <598efaa4-1543-5441-0d1d-01935dc62056@linux.intel.com>
+From:   Rohit Kumar <rohitkr@codeaurora.org>
+Message-ID: <0294d952-18e6-7cd5-fbd0-5822571468f2@codeaurora.org>
+Date:   Fri, 11 Jan 2019 13:41:53 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.3
 MIME-Version: 1.0
-In-Reply-To: <24f6a1fe-4790-91ba-ce21-72397c0a02df@microchip.com>
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <598efaa4-1543-5441-0d1d-01935dc62056@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.107.19.13]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Thanks Pierre for reporting the issue.
+
+On 1/11/2019 10:37 AM, Pierre-Louis Bossart wrote:
+> While debugging Skylake audio stuff, I came across a kernel oops 
+> introduced by this commit.
+>
+> It's quite late here and my brain is fried, submitting as is but my 
+> money is on the use of link->platform->of_node which is quite unlikely 
+> to work on ACPI platforms.
+>
+
+Right, either name or of_node should not be NULL for soc_find_component.
+
+We will provide fix.
+
+> and btw you may want to fix the typos, it's registration, not 
+> registartion.
 
 
-On 11-Jan-19 7:25, Eugen.Hristev@microchip.com wrote:
-> 
-> 
-> On 10.01.2019 18:18, Luis de Oliveira wrote:
->>
->>
->> On 09-Jan-19 13:07, Eugen.Hristev@microchip.com wrote:
->>>
->>>
->>> On 19.10.2018 15:52, Luis Oliveira wrote:
->>>> Add the Synopsys MIPI CSI-2 controller driver. This
->>>> controller driver is divided in platform dependent functions
->>>> and core functions. It also includes a platform for future
->>>> DesignWare drivers.
->>>>
->>>> Signed-off-by: Luis Oliveira <lolivei@synopsys.com>
->>>> ---
->>>> Changelog
->>>> v2-V3
->>>> - exposed IPI settings to userspace
->>>> - fixed headers
->>>>
->>>>    MAINTAINERS                              |  11 +
->>>>    drivers/media/platform/dwc/Kconfig       |  30 +-
->>>>    drivers/media/platform/dwc/Makefile      |   2 +
->>>>    drivers/media/platform/dwc/dw-csi-plat.c | 699 +++++++++++++++++++++++++++++++
->>>>    drivers/media/platform/dwc/dw-csi-plat.h |  77 ++++
->>>>    drivers/media/platform/dwc/dw-mipi-csi.c | 494 ++++++++++++++++++++++
->>>>    drivers/media/platform/dwc/dw-mipi-csi.h | 202 +++++++++
->>>>    include/media/dwc/dw-mipi-csi-pltfrm.h   | 102 +++++
->>>>    8 files changed, 1616 insertions(+), 1 deletion(-)
->>>>    create mode 100644 drivers/media/platform/dwc/dw-csi-plat.c
->>>>    create mode 100644 drivers/media/platform/dwc/dw-csi-plat.h
->>>>    create mode 100644 drivers/media/platform/dwc/dw-mipi-csi.c
->>>>    create mode 100644 drivers/media/platform/dwc/dw-mipi-csi.h
->>>>    create mode 100644 include/media/dwc/dw-mipi-csi-pltfrm.h
->>>>
->>>
->>> [snip]
->>>
->>>> +/* Video formats supported by the MIPI CSI-2 */
->>>> +const struct mipi_fmt dw_mipi_csi_formats[] = {
->>>> +	{
->>>> +		/* RAW 8 */
->>>> +		.code = MEDIA_BUS_FMT_SBGGR8_1X8,
->>>> +		.depth = 8,
->>>> +	},
->>>> +	{
->>>> +		/* RAW 10 */
->>>> +		.code = MEDIA_BUS_FMT_SBGGR10_2X8_PADHI_BE,
->>>> +		.depth = 10,
->>>> +	},
->>>
->>> Hi Luis,
->>>
->>> Any reason why RAW12 format is not handled here ?
->>>
->>> Here, namely MEDIA_BUS_FMT_SBGGR12_1X12 etc.
->>>
->> Hi Eugen,
->>
->> My Hw testing setup currently does not support it, so I didn't add it.
->>
->>>> +	{
->>>> +		/* RGB 565 */
->>>> +		.code = MEDIA_BUS_FMT_RGB565_2X8_BE,
->>>> +		.depth = 16,
->>>> +	},
->>>> +	{
->>>> +		/* BGR 565 */
->>>> +		.code = MEDIA_BUS_FMT_RGB565_2X8_LE,
->>>> +		.depth = 16,
->>>> +	},
->>>> +	{
->>>> +		/* RGB 888 */
->>>> +		.code = MEDIA_BUS_FMT_RGB888_2X12_LE,
->>>> +		.depth = 24,
->>>> +	},
->>>> +	{
->>>> +		/* BGR 888 */
->>>> +		.code = MEDIA_BUS_FMT_RGB888_2X12_BE,
->>>> +		.depth = 24,
->>>> +	},
->>>> +};
->>>
->>> [snip]
->>>
->>>> +
->>>> +void dw_mipi_csi_set_ipi_fmt(struct mipi_csi_dev *csi_dev)
->>>> +{
->>>> +	struct device *dev = csi_dev->dev;
->>>> +
->>>> +	if (csi_dev->ipi_dt)
->>>> +		dw_mipi_csi_write(csi_dev, reg.IPI_DATA_TYPE, csi_dev->ipi_dt);
->>>> +	else {
->>>> +		switch (csi_dev->fmt->code) {
->>>> +		case MEDIA_BUS_FMT_RGB565_2X8_BE:
->>>> +		case MEDIA_BUS_FMT_RGB565_2X8_LE:
->>>> +			dw_mipi_csi_write(csi_dev,
->>>> +					reg.IPI_DATA_TYPE, CSI_2_RGB565);
->>>> +			dev_dbg(dev, "DT: RGB 565");
->>>> +			break;
->>>> +
->>>> +		case MEDIA_BUS_FMT_RGB888_2X12_LE:
->>>> +		case MEDIA_BUS_FMT_RGB888_2X12_BE:
->>>> +			dw_mipi_csi_write(csi_dev,
->>>> +					reg.IPI_DATA_TYPE, CSI_2_RGB888);
->>>> +			dev_dbg(dev, "DT: RGB 888");
->>>> +			break;
->>>> +		case MEDIA_BUS_FMT_SBGGR10_2X8_PADHI_BE:
->>>> +			dw_mipi_csi_write(csi_dev,
->>>> +					reg.IPI_DATA_TYPE, CSI_2_RAW10);
->>>> +			dev_dbg(dev, "DT: RAW 10");
->>>> +			break;
->>>> +		case MEDIA_BUS_FMT_SBGGR8_1X8:
->>>> +			dw_mipi_csi_write(csi_dev,
->>>> +					reg.IPI_DATA_TYPE, CSI_2_RAW8);
->>>> +			dev_dbg(dev, "DT: RAW 8");
->>>> +			break;
->>>
->>> Same here, in CSI_2_RAW12 case it will default to a RGB565 case.
->>>
->>> Thanks,
->>>
->>> Eugen
->>>
->>>
->> I will try to add the support for this data type in my next patchset if not I
->> will flag it as unsupported for now in the commit message and code.
-> 
-> Hi Luis,
-> 
-> I am currently trying to see if your driver works , and I need the RAW12 
-> type, that's why I am asking about it.
-> 
-> One question related to the subdevice you create here, how do you 
-> register this subdev into the media subsystem ? sync or async, or not at 
-> all ?
-> After the driver probes, there is no call to the set format functions, I 
-> added a node inside the Device tree, I see you are registering media 
-> pads, but the other endpoint needs to be an async waiting for completion 
-> node or your subdev registers in some other way ? (maybe some link 
-> validation required ?)
-> 
-> Thanks for your help,
-> 
-> Eugen
-> 
-Hi Eugen,
+Sure.
 
-On top of this dphy+controller solution I use a wrapper driver that binds this
-two together and create the links.
-I use V4L2_ASYNC_MATCH_FWNODE and v4l2_async_notifier_operations to match and
-bound all my sensors until completion.
+>
+> -Pierre
+>
+> 8780cf1142a59568a3aa77959cbd76b2edb6fd81 is the first bad commit
+> commit 8780cf1142a59568a3aa77959cbd76b2edb6fd81
+> Author: Ajit Pandey <ajitp@codeaurora.org>
+> Date:   Wed Jan 9 14:17:07 2019 +0530
+>
+>     ASoC: soc-core: defer card probe until all component is added to list
+>
+>     DAI component probe is not called if it is not present
+>     in component list during sound card registration.
+>     Check if component is available in component list for
+>     platform and cpu dai before soundcard registration.
+>
+>     Signed-off-by: Ajit Pandey <ajitp@codeaurora.org>
+>     Signed-off-by: Rohit kumar <rohitkr@codeaurora.org>
+>     Signed-off-by: Mark Brown <broonie@kernel.org>
+>
+> :040000 040000 98da59b0a73551030a0c9030b8cd58114003c82b 
+> 48f0618f37a16dcfea5999ecd9743edbb0763594 M    sound
+>
+> [    2.686029] HDMI HDA Codec ehdaudio0D2: Max dais supported: 3
+> [    2.687854] BUG: unable to handle kernel NULL pointer dereference 
+> at 0000000000000000
+> [    2.687858] PGD 0 P4D 0
+> [    2.687862] Oops: 0000 [#1] SMP PTI
+> [    2.687866] CPU: 1 PID: 1647 Comm: systemd-udevd Not tainted 
+> 4.20.0-rc7-test+ #88
+> [    2.687867] Hardware name: Dell Inc. XPS 13 9350/07TYC2, BIOS 1.0.0 
+> 09/10/2015
+> [    2.687872] RIP: 0010:strcmp+0xc/0x20
+> [    2.687875] Code: 75 f7 48 83 c6 01 0f b6 4e ff 48 83 c2 01 84 c9 
+> 88 4a ff 75 ed f3 c3 0f 1f 80 00 00 00 00 48 83 c7 01 0f b6 47 ff 48 
+> 83 c6 01 <3a> 46 ff 75 07 84 c0 75 eb 31 c0 c3 19 c0 83 c8 01 c3 66 90 
+> 48 85
+> [    2.687877] RSP: 0018:ffff9fadc104bb18 EFLAGS: 00010202
+> [    2.687880] RAX: 0000000000000065 RBX: ffff9d6834ba5428 RCX: 
+> 0000000000000001
+> [    2.687882] RDX: ffffffffc0288d00 RSI: 0000000000000001 RDI: 
+> ffff9d68351b5a61
+> [    2.687883] RBP: 0000000000000000 R08: 0000000000000001 R09: 
+> ffff9d6836dbfd80
+> [    2.687885] R10: 0000000000000000 R11: ffff9d6835e65648 R12: 
+> 0000000000000000
+> [    2.687887] R13: 0000000000000000 R14: 0000000000000000 R15: 
+> ffff9fadc104be98
+> [    2.687889] FS:  00007f976806a8c0(0000) GS:ffff9d6838a80000(0000) 
+> knlGS:0000000000000000
+> [    2.687891] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [    2.687893] CR2: 0000000000000000 CR3: 00000002b4286002 CR4: 
+> 00000000003606e0
+> [    2.687895] Call Trace:
+> [    2.687902]  soc_find_component+0x4c/0x70 [snd_soc_core]
+> [    2.687908]  soc_init_dai_link+0x124/0x280 [snd_soc_core]
+> [    2.687913]  snd_soc_register_card+0x6b/0x1f0 [snd_soc_core]
+> [    2.687918]  ? __devres_alloc_node+0x2c/0x60
+> [    2.687922]  devm_snd_soc_register_card+0x3e/0x80 [snd_soc_core]
+> [    2.687926]  platform_drv_probe+0x35/0x90
+> [    2.687930]  ? driver_sysfs_add+0x70/0xd0
+> [    2.687932]  really_probe+0xee/0x2e0
+> [    2.687935]  driver_probe_device+0x4a/0xe0
+> [    2.687938]  __driver_attach+0xac/0xb0
+> [    2.687941]  ? driver_probe_device+0xe0/0xe0
+> [    2.687943]  bus_for_each_dev+0x71/0xb0
+> [    2.687946]  bus_add_driver+0x191/0x210
+> [    2.687948]  ? 0xffffffffc01bf000
+> [    2.687951]  driver_register+0x56/0xe0
+> [    2.687953]  ? 0xffffffffc01bf000
+> [    2.687956]  do_one_initcall+0x41/0x1b8
+> [    2.687960]  ? kobject_uevent_env+0x101/0x680
+> [    2.687962]  ? _cond_resched+0x10/0x40
+> [    2.687966]  ? kmem_cache_alloc_trace+0x35/0x160
+> [    2.687969]  do_init_module+0x56/0x1db
+> [    2.687973]  load_module+0x1e7c/0x2560
+> [    2.687976]  ? vfs_read+0x10a/0x130
+> [    2.687979]  ? __do_sys_finit_module+0xba/0xe0
+> [    2.687983]  __do_sys_finit_module+0xba/0xe0
+> [    2.687988]  do_syscall_64+0x43/0xf0
+> [    2.687992]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+> [    2.687995] RIP: 0033:0x7f9768aef219
+> [    2.687998] Code: 00 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 
+> 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 
+> 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 47 fc 0c 00 f7 d8 64 89 
+> 01 48
+> [    2.688000] RSP: 002b:00007ffccf3a4c98 EFLAGS: 00000246 ORIG_RAX: 
+> 0000000000000139
+> [    2.688003] RAX: ffffffffffffffda RBX: 000055991cf57970 RCX: 
+> 00007f9768aef219
+> [    2.688006] RDX: 0000000000000000 RSI: 00007f97689d3cad RDI: 
+> 000000000000000f
+> [    2.688008] RBP: 00007f97689d3cad R08: 0000000000000000 R09: 
+> 0000000000000000
+> [    2.688010] R10: 000000000000000f R11: 0000000000000246 R12: 
+> 0000000000000000
+> [    2.688012] R13: 000055991cf49930 R14: 0000000000020000 R15: 
+> 000055991cf57970
+> [    2.688015] Modules linked in: snd_soc_skl_hda_dsp(+) 
+> snd_soc_hdac_hdmi snd_soc_dmic ax88179_178a(+) usbnet 
+> snd_hda_codec_realtek snd_hda_codec_generic snd_soc_skl 
+> snd_soc_hdac_hda snd_hda_ext_core snd_soc_skl_ipc x86_pkg_temp_thermal 
+> snd_soc_sst_ipc snd_soc_sst_dsp snd_soc_acpi_intel_match snd_soc_acpi 
+> snd_soc_core snd_compress snd_hda_codec snd_hwdep snd_hda_core snd_pcm 
+> efivarfs intel_lpss_pci xhci_pci intel_lpss mfd_core xhci_hcd
+> [    2.688031] CR2: 0000000000000000
+> [    2.688034] ---[ end trace 8b96d01935d9effd ]---
+> [    2.688037] RIP: 0010:strcmp+0xc/0x20
+> [    2.688039] Code: 75 f7 48 83 c6 01 0f b6 4e ff 48 83 c2 01 84 c9 
+> 88 4a ff 75 ed f3 c3 0f 1f 80 00 00 00 00 48 83 c7 01 0f b6 47 ff 48 
+> 83 c6 01 <3a> 46 ff 75 07 84 c0 75 eb 31 c0 c3 19 c0 83 c8 01 c3 66 90 
+> 48 85
+> [    2.688042] RSP: 0018:ffff9fadc104bb18 EFLAGS: 00010202
+> [    2.688044] RAX: 0000000000000065 RBX: ffff9d6834ba5428 RCX: 
+> 0000000000000001
+> [    2.688046] RDX: ffffffffc0288d00 RSI: 0000000000000001 RDI: 
+> ffff9d68351b5a61
+> [    2.688048] RBP: 0000000000000000 R08: 0000000000000001 R09: 
+> ffff9d6836dbfd80
+> [    2.688050] R10: 0000000000000000 R11: ffff9d6835e65648 R12: 
+> 0000000000000000
+> [    2.688052] R13: 0000000000000000 R14: 0000000000000000 R15: 
+> ffff9fadc104be98
+> [    2.688055] FS:  00007f976806a8c0(0000) GS:ffff9d6838a80000(0000) 
+> knlGS:0000000000000000
+> [    2.688057] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [    2.688059] CR2: 0000000000000000 CR3: 00000002b4286002 CR4: 
+> 00000000003606e0
+>
+Thanks,
 
-My dt looks like this:
+Rohit
 
-camera wrapper {
- 	
-	video_dev {
-		dma
-	}
-	vif_1 @reg {
-		...
-	}
-	..
-	vif_n @reg {
-		...
-	}
-	csi_1 @reg {
-		...
-		phy
-		port 1..2 {}
-	}
-	csi_n @reg {
-		...
-		phy
-		port 1..2 {}
-	}
+-- 
+Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+of the Code Aurora Forum, hosted by the Linux Foundation.
 
-Fundamentally It is the same principle as this
-drivers/media/platform/exynos4-is/media-dev.c but my solution has more entities
-for testing purposes.
-Check the exynos4-is because is very similar to my top solution.
-
-When I started doing this patchset I was thinking of sending the wrapper also
-but I then decided to not do it because it is very narrow and focused in my
-tests. But I can include it in v4 if everyone think its best.
-
-Thank you,
-Luis
->>
->> Thanks for your review,
->> Luis
->>
->>>
->>>> +		default:
->>>> +			dw_mipi_csi_write(csi_dev,
->>>> +					reg.IPI_DATA_TYPE, CSI_2_RGB565);
->>>> +			dev_dbg(dev, "Error");
->>>> +			break;
->>>> +		}
->>>> +	}
->>>> +}
->>>> +
->>>
->>> [snip]
->>>
->>
