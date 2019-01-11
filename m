@@ -7,49 +7,55 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0123C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:40:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC500C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:40:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 922EB218AE
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:40:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 875D421841
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:40:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547217640;
-	bh=lB2oQXXf2sKeHpznddeLVlKJ53HuKbRSodJHIcazVCI=;
+	s=default; t=1547217645;
+	bh=rtgMRSECNr9fVgu4X39L3GySmVyT8j1QasvDxu5JPrA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Q9SPi0ODroQbPoLUCaZWamKib7Yv/C6lWydpOAgca5cB0NC390RV362NB+J/Aaljp
-	 31Farpw/iDVhu3KnLCuyiqh99/0Pcdzx67G0VizxSk2H9Q42B4EzaTwUrlnoWBxadc
-	 FjtDbvvrkGEpDzBwPLbunSOVpFlfYkKmTweVLB20=
+	b=vbDiEqHgUCu5IEMBgXkz1a65/0q+BVeTLkWFKwMTQN4ck2uEJ/r3CrBXkXkurdc2F
+	 +Bzp5KU5dDqU1OwHkMbtxUFeX8q05+hf4pAUF/NSDH63EgATxQAXI6yhqlraQRZlL3
+	 5sZih1MQ1rWkiHovZFTMzvmKMpdSGLSxuxhnZb+Y=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403892AbfAKOkj (ORCPT
+        id S2403902AbfAKOko (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:40:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33218 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:40:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33322 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390629AbfAKOkh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:40:37 -0500
+        id S2390629AbfAKOkl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:40:41 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B816121841;
-        Fri, 11 Jan 2019 14:40:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0BE652063F;
+        Fri, 11 Jan 2019 14:40:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547217636;
-        bh=lB2oQXXf2sKeHpznddeLVlKJ53HuKbRSodJHIcazVCI=;
+        s=default; t=1547217640;
+        bh=rtgMRSECNr9fVgu4X39L3GySmVyT8j1QasvDxu5JPrA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=No6Egf/2d1x3zF3oy9D1ESa7wNxkATyrbJ9ngL7gej2j54G3lj1qXMpZZA46eZhaP
-         uoQlQ+FpNl7wd1OQoRIh2QOycoFqDA4zBvs3fu1Cv/7O6dRO+wQt5hXJwSGamWi1EG
-         wU9bOZG5vzWJDqp4ZWOLkD1APOpAS8iEeflfVFeE=
+        b=h3wUGY2W1ao+wR1s85QrMJXqlmcOHmwWuCvHOYIL7FL8zBGQb16dfA2Xzfrl6lO2C
+         U4h72katf2poSX4Cj0Lah4byUTwlN2h/XG9vq4EXZFHXuMliko66S1Pcox2txmDUEt
+         DNDKiiD5OvTMNoka56uvxxiDMiKi/q9291mg/WZk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sergey Gorenko <sergeygo@mellanox.com>,
-        Max Gurtovoy <maxg@mellanox.com>,
-        Laurence Oberman <loberman@redhat.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Doug Ledford <dledford@redhat.com>
-Subject: [PATCH 4.19 133/148] RDMA/srpt: Fix a use-after-free in the channel release code
-Date:   Fri, 11 Jan 2019 15:15:11 +0100
-Message-Id: <20190111131119.580464530@linuxfoundation.org>
+        stable@vger.kernel.org, Zhipeng Xie <xiezhipeng1@huawei.com>,
+        Sargun Dhillon <sargun@sargun.me>,
+        Xie XiuQi <xiexiuqi@huawei.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Bin Li <huawei.libin@huawei.com>,
+        Mike Galbraith <efault@gmx.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Tejun Heo <tj@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.19 135/148] sched/fair: Fix infinite loop in update_blocked_averages() by reverting a9e7f6544b9c
+Date:   Fri, 11 Jan 2019 15:15:13 +0100
+Message-Id: <20190111131119.670921893@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131114.337122649@linuxfoundation.org>
 References: <20190111131114.337122649@linuxfoundation.org>
@@ -68,123 +74,185 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Bart Van Assche <bvanassche@acm.org>
+From: Linus Torvalds <torvalds@linux-foundation.org>
 
-commit ed041919f0d23c109d52cde8da6ddc211c52d67e upstream.
+commit c40f7d74c741a907cfaeb73a7697081881c497d0 upstream.
 
-This patch avoids that KASAN sporadically reports the following:
+Zhipeng Xie, Xie XiuQi and Sargun Dhillon reported lockups in the
+scheduler under high loads, starting at around the v4.18 time frame,
+and Zhipeng Xie tracked it down to bugs in the rq->leaf_cfs_rq_list
+manipulation.
 
-BUG: KASAN: use-after-free in rxe_run_task+0x1e/0x60 [rdma_rxe]
-Read of size 1 at addr ffff88801c50d8f4 by task check/24830
+Do a (manual) revert of:
 
-CPU: 4 PID: 24830 Comm: check Not tainted 4.20.0-rc6-dbg+ #3
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
-Call Trace:
- dump_stack+0x86/0xca
- print_address_description+0x71/0x239
- kasan_report.cold.5+0x242/0x301
- __asan_load1+0x47/0x50
- rxe_run_task+0x1e/0x60 [rdma_rxe]
- rxe_post_send+0x4bd/0x8d0 [rdma_rxe]
- srpt_zerolength_write+0xe1/0x160 [ib_srpt]
- srpt_close_ch+0x8b/0xe0 [ib_srpt]
- srpt_set_enabled+0xe7/0x150 [ib_srpt]
- srpt_tpg_enable_store+0xc0/0x100 [ib_srpt]
- configfs_write_file+0x157/0x1d0
- __vfs_write+0xd7/0x3d0
- vfs_write+0x102/0x290
- ksys_write+0xab/0x130
- __x64_sys_write+0x43/0x50
- do_syscall_64+0x71/0x210
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
+  a9e7f6544b9c ("sched/fair: Fix O(nr_cgroups) in load balance path")
 
-Allocated by task 13856:
- save_stack+0x43/0xd0
- kasan_kmalloc+0xc7/0xe0
- kasan_slab_alloc+0x11/0x20
- kmem_cache_alloc+0x105/0x320
- rxe_alloc+0xff/0x1f0 [rdma_rxe]
- rxe_create_qp+0x9f/0x160 [rdma_rxe]
- ib_create_qp+0xf5/0x690 [ib_core]
- rdma_create_qp+0x6a/0x140 [rdma_cm]
- srpt_cm_req_recv.cold.59+0x1588/0x237b [ib_srpt]
- srpt_rdma_cm_req_recv.isra.35+0x1d5/0x220 [ib_srpt]
- srpt_rdma_cm_handler+0x6f/0x100 [ib_srpt]
- cma_listen_handler+0x59/0x60 [rdma_cm]
- cma_ib_req_handler+0xd5b/0x2570 [rdma_cm]
- cm_process_work+0x2e/0x110 [ib_cm]
- cm_work_handler+0x2aae/0x502b [ib_cm]
- process_one_work+0x481/0x9e0
- worker_thread+0x67/0x5b0
- kthread+0x1cf/0x1f0
- ret_from_fork+0x24/0x30
+It turns out that the list_del_leaf_cfs_rq() introduced by this commit
+is a surprising property that was not considered in followup commits
+such as:
 
-Freed by task 3440:
- save_stack+0x43/0xd0
- __kasan_slab_free+0x139/0x190
- kasan_slab_free+0xe/0x10
- kmem_cache_free+0xbc/0x330
- rxe_elem_release+0x66/0xe0 [rdma_rxe]
- rxe_destroy_qp+0x3f/0x50 [rdma_rxe]
- ib_destroy_qp+0x140/0x360 [ib_core]
- srpt_release_channel_work+0xdc/0x310 [ib_srpt]
- process_one_work+0x481/0x9e0
- worker_thread+0x67/0x5b0
- kthread+0x1cf/0x1f0
- ret_from_fork+0x24/0x30
+  9c2791f936ef ("sched/fair: Fix hierarchical order in rq->leaf_cfs_rq_list")
 
-Cc: Sergey Gorenko <sergeygo@mellanox.com>
-Cc: Max Gurtovoy <maxg@mellanox.com>
-Cc: Laurence Oberman <loberman@redhat.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Bart Van Assche <bvanassche@acm.org>
-Signed-off-by: Doug Ledford <dledford@redhat.com>
+As Vincent Guittot explains:
+
+ "I think that there is a bigger problem with commit a9e7f6544b9c and
+  cfs_rq throttling:
+
+  Let take the example of the following topology TG2 --> TG1 --> root:
+
+   1) The 1st time a task is enqueued, we will add TG2 cfs_rq then TG1
+      cfs_rq to leaf_cfs_rq_list and we are sure to do the whole branch in
+      one path because it has never been used and can't be throttled so
+      tmp_alone_branch will point to leaf_cfs_rq_list at the end.
+
+   2) Then TG1 is throttled
+
+   3) and we add TG3 as a new child of TG1.
+
+   4) The 1st enqueue of a task on TG3 will add TG3 cfs_rq just before TG1
+      cfs_rq and tmp_alone_branch will stay  on rq->leaf_cfs_rq_list.
+
+  With commit a9e7f6544b9c, we can del a cfs_rq from rq->leaf_cfs_rq_list.
+  So if the load of TG1 cfs_rq becomes NULL before step 2) above, TG1
+  cfs_rq is removed from the list.
+  Then at step 4), TG3 cfs_rq is added at the beginning of rq->leaf_cfs_rq_list
+  but tmp_alone_branch still points to TG3 cfs_rq because its throttled
+  parent can't be enqueued when the lock is released.
+  tmp_alone_branch doesn't point to rq->leaf_cfs_rq_list whereas it should.
+
+  So if TG3 cfs_rq is removed or destroyed before tmp_alone_branch
+  points on another TG cfs_rq, the next TG cfs_rq that will be added,
+  will be linked outside rq->leaf_cfs_rq_list - which is bad.
+
+  In addition, we can break the ordering of the cfs_rq in
+  rq->leaf_cfs_rq_list but this ordering is used to update and
+  propagate the update from leaf down to root."
+
+Instead of trying to work through all these cases and trying to reproduce
+the very high loads that produced the lockup to begin with, simplify
+the code temporarily by reverting a9e7f6544b9c - which change was clearly
+not thought through completely.
+
+This (hopefully) gives us a kernel that doesn't lock up so people
+can continue to enjoy their holidays without worrying about regressions. ;-)
+
+[ mingo: Wrote changelog, fixed weird spelling in code comment while at it. ]
+
+Analyzed-by: Xie XiuQi <xiexiuqi@huawei.com>
+Analyzed-by: Vincent Guittot <vincent.guittot@linaro.org>
+Reported-by: Zhipeng Xie <xiezhipeng1@huawei.com>
+Reported-by: Sargun Dhillon <sargun@sargun.me>
+Reported-by: Xie XiuQi <xiexiuqi@huawei.com>
+Tested-by: Zhipeng Xie <xiezhipeng1@huawei.com>
+Tested-by: Sargun Dhillon <sargun@sargun.me>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Acked-by: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: <stable@vger.kernel.org> # v4.13+
+Cc: Bin Li <huawei.libin@huawei.com>
+Cc: Mike Galbraith <efault@gmx.de>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Tejun Heo <tj@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Fixes: a9e7f6544b9c ("sched/fair: Fix O(nr_cgroups) in load balance path")
+Link: http://lkml.kernel.org/r/1545879866-27809-1-git-send-email-xiexiuqi@huawei.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/ulp/srpt/ib_srpt.c |   18 +++++++++++++-----
- 1 file changed, 13 insertions(+), 5 deletions(-)
+ kernel/sched/fair.c |   43 +++++++++----------------------------------
+ 1 file changed, 9 insertions(+), 34 deletions(-)
 
---- a/drivers/infiniband/ulp/srpt/ib_srpt.c
-+++ b/drivers/infiniband/ulp/srpt/ib_srpt.c
-@@ -2009,6 +2009,14 @@ static void srpt_free_ch(struct kref *kr
- 	kfree_rcu(ch, rcu);
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -352,10 +352,9 @@ static inline void list_del_leaf_cfs_rq(
+ 	}
  }
  
-+/*
-+ * Shut down the SCSI target session, tell the connection manager to
-+ * disconnect the associated RDMA channel, transition the QP to the error
-+ * state and remove the channel from the channel list. This function is
-+ * typically called from inside srpt_zerolength_write_done(). Concurrent
-+ * srpt_zerolength_write() calls from inside srpt_close_ch() are possible
-+ * as long as the channel is on sport->nexus_list.
-+ */
- static void srpt_release_channel_work(struct work_struct *w)
+-/* Iterate thr' all leaf cfs_rq's on a runqueue */
+-#define for_each_leaf_cfs_rq_safe(rq, cfs_rq, pos)			\
+-	list_for_each_entry_safe(cfs_rq, pos, &rq->leaf_cfs_rq_list,	\
+-				 leaf_cfs_rq_list)
++/* Iterate through all leaf cfs_rq's on a runqueue: */
++#define for_each_leaf_cfs_rq(rq, cfs_rq) \
++	list_for_each_entry_rcu(cfs_rq, &rq->leaf_cfs_rq_list, leaf_cfs_rq_list)
+ 
+ /* Do the two (enqueued) entities belong to the same group ? */
+ static inline struct cfs_rq *
+@@ -447,8 +446,8 @@ static inline void list_del_leaf_cfs_rq(
  {
- 	struct srpt_rdma_ch *ch;
-@@ -2036,6 +2044,11 @@ static void srpt_release_channel_work(st
- 	else
- 		ib_destroy_cm_id(ch->ib_cm.cm_id);
+ }
  
-+	sport = ch->sport;
-+	mutex_lock(&sport->mutex);
-+	list_del_rcu(&ch->list);
-+	mutex_unlock(&sport->mutex);
-+
- 	srpt_destroy_ch_ib(ch);
+-#define for_each_leaf_cfs_rq_safe(rq, cfs_rq, pos)	\
+-		for (cfs_rq = &rq->cfs, pos = NULL; cfs_rq; cfs_rq = pos)
++#define for_each_leaf_cfs_rq(rq, cfs_rq)	\
++		for (cfs_rq = &rq->cfs; cfs_rq; cfs_rq = NULL)
  
- 	srpt_free_ioctx_ring((struct srpt_ioctx **)ch->ioctx_ring,
-@@ -2046,11 +2059,6 @@ static void srpt_release_channel_work(st
- 			     sdev, ch->rq_size,
- 			     srp_max_req_size, DMA_FROM_DEVICE);
+ static inline struct sched_entity *parent_entity(struct sched_entity *se)
+ {
+@@ -7371,27 +7370,10 @@ static inline bool others_have_blocked(s
  
--	sport = ch->sport;
--	mutex_lock(&sport->mutex);
--	list_del_rcu(&ch->list);
--	mutex_unlock(&sport->mutex);
+ #ifdef CONFIG_FAIR_GROUP_SCHED
+ 
+-static inline bool cfs_rq_is_decayed(struct cfs_rq *cfs_rq)
+-{
+-	if (cfs_rq->load.weight)
+-		return false;
 -
- 	wake_up(&sport->ch_releaseQ);
+-	if (cfs_rq->avg.load_sum)
+-		return false;
+-
+-	if (cfs_rq->avg.util_sum)
+-		return false;
+-
+-	if (cfs_rq->avg.runnable_load_sum)
+-		return false;
+-
+-	return true;
+-}
+-
+ static void update_blocked_averages(int cpu)
+ {
+ 	struct rq *rq = cpu_rq(cpu);
+-	struct cfs_rq *cfs_rq, *pos;
++	struct cfs_rq *cfs_rq;
+ 	const struct sched_class *curr_class;
+ 	struct rq_flags rf;
+ 	bool done = true;
+@@ -7403,7 +7385,7 @@ static void update_blocked_averages(int
+ 	 * Iterates the task_group tree in a bottom up fashion, see
+ 	 * list_add_leaf_cfs_rq() for details.
+ 	 */
+-	for_each_leaf_cfs_rq_safe(rq, cfs_rq, pos) {
++	for_each_leaf_cfs_rq(rq, cfs_rq) {
+ 		struct sched_entity *se;
  
- 	kref_put(&ch->kref, srpt_free_ch);
+ 		/* throttled entities do not contribute to load */
+@@ -7418,13 +7400,6 @@ static void update_blocked_averages(int
+ 		if (se && !skip_blocked_update(se))
+ 			update_load_avg(cfs_rq_of(se), se, 0);
+ 
+-		/*
+-		 * There can be a lot of idle CPU cgroups.  Don't let fully
+-		 * decayed cfs_rqs linger on the list.
+-		 */
+-		if (cfs_rq_is_decayed(cfs_rq))
+-			list_del_leaf_cfs_rq(cfs_rq);
+-
+ 		/* Don't need periodic decay once load/util_avg are null */
+ 		if (cfs_rq_has_blocked(cfs_rq))
+ 			done = false;
+@@ -10196,10 +10171,10 @@ const struct sched_class fair_sched_clas
+ #ifdef CONFIG_SCHED_DEBUG
+ void print_cfs_stats(struct seq_file *m, int cpu)
+ {
+-	struct cfs_rq *cfs_rq, *pos;
++	struct cfs_rq *cfs_rq;
+ 
+ 	rcu_read_lock();
+-	for_each_leaf_cfs_rq_safe(cpu_rq(cpu), cfs_rq, pos)
++	for_each_leaf_cfs_rq(cpu_rq(cpu), cfs_rq)
+ 		print_cfs_rq(m, cpu, cfs_rq);
+ 	rcu_read_unlock();
+ }
 
 
