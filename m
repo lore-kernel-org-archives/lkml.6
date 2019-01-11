@@ -2,115 +2,143 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FE77C43444
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:18:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0097EC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:18:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6075D21848
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:18:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547219881;
-	bh=F5ptBm6roh9RBCL+nEoOqI1mhPoyMDA3FWJiFktxJXE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=iqMvIr8G0/umv2BFXBMzLZSdKdpGNHFQe2iKp09C6llSCLE2xwFi5iXpGAKq/1xRD
-	 G48gY6z5QjahM7/Kpdf2XcSDdgcCTWC3D7rCiK91VMC6wri+wpFWsuQ9EfKpTPd23V
-	 9AQghs9cV2175pv6+m7DIXX6HDEGyTH3r0gHVJDc=
+	by mail.kernel.org (Postfix) with ESMTP id C393321872
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:18:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=axentia.se header.i=@axentia.se header.b="BoMr4MuG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387409AbfAKPSA (ORCPT
+        id S2387487AbfAKPSz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 10:18:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59746 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730715AbfAKPSA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 10:18:00 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1813420675;
-        Fri, 11 Jan 2019 15:17:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547219879;
-        bh=F5ptBm6roh9RBCL+nEoOqI1mhPoyMDA3FWJiFktxJXE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=gLbCbRZm9ilHSamdXxgpHRt+pxTwH1D6Fkfuc1vt2kuWZr61xANSr1rf1jqUHR5vl
-         JE8FZy7gB0+4e+vRAMqeDLSFsUkKlCOcIgY/j1hneIFKIWnN6dWyya4Q1VVHDkGno8
-         hRe2pjx7C+OT+/KKNoKE+NkUoPzVS2bZuLCi3+HA=
-Date:   Fri, 11 Jan 2019 16:17:57 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Mike Snitzer <snitzer@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Ming Lin <ming.l@ssi.samsung.com>,
-        Christoph Hellwig <hch@lst.de>, Xiao Ni <xni@redhat.com>,
-        Mariusz Dabrowski <mariusz.dabrowski@intel.com>,
-        Ming Lei <ming.lei@redhat.com>, Jens Axboe <axboe@kernel.dk>,
-        Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Subject: Re: [PATCH 4.4 72/88] block: dont deal with discard limit in
- blkdev_issue_discard()
-Message-ID: <20190111151757.GA15261@kroah.com>
-References: <20190111131045.137499039@linuxfoundation.org>
- <20190111131058.120784730@linuxfoundation.org>
- <20190111142539.GA10601@redhat.com>
- <20190111143514.GA8530@kroah.com>
- <20190111150605.GA10771@redhat.com>
+        Fri, 11 Jan 2019 10:18:55 -0500
+Received: from mail-eopbgr130105.outbound.protection.outlook.com ([40.107.13.105]:51490
+        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730170AbfAKPSy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 10:18:54 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axentia.se;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=CdVjgqBAKb2LTB6mUAZoPn9np5g+Q/Z8qdGM19eYcWs=;
+ b=BoMr4MuGVCtAFg3g3GN6cxYrbGQz3jFlkPlONFanTGZHK0v5nb4xTz4R61hMxaqUfZeI8bxeELn/A2GG/7+oO4w7YxhK4dx63uipO2hdV8cg6K5wcKjE4xn2ZcaaP534YwCUuZqSUJgVnZuZNSXHwThSwqJyChd8dxoMS6OLwxE=
+Received: from AM6PR02MB4470.eurprd02.prod.outlook.com (20.177.191.218) by
+ AM6PR02MB4658.eurprd02.prod.outlook.com (20.177.117.147) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1516.13; Fri, 11 Jan 2019 15:18:50 +0000
+Received: from AM6PR02MB4470.eurprd02.prod.outlook.com
+ ([fe80::e5f3:a239:2ec4:4453]) by AM6PR02MB4470.eurprd02.prod.outlook.com
+ ([fe80::e5f3:a239:2ec4:4453%6]) with mapi id 15.20.1516.016; Fri, 11 Jan 2019
+ 15:18:50 +0000
+From:   Peter Rosin <peda@axentia.se>
+To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     Peter Rosin <peda@axentia.se>, David Airlie <airlied@linux.ie>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Archit Taneja <architt@codeaurora.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Subject: [PATCH v4 0/5] drm/bridge: various small lvds-encoder things
+Thread-Topic: [PATCH v4 0/5] drm/bridge: various small lvds-encoder things
+Thread-Index: AQHUqcD0CoXRdWU6p0KJ3CgM18hMaw==
+Date:   Fri, 11 Jan 2019 15:18:50 +0000
+Message-ID: <20190111151843.11114-1-peda@axentia.se>
+Accept-Language: en-US, sv-SE
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: git-send-email 2.11.0
+x-originating-ip: [85.226.244.23]
+x-clientproxiedby: HE1PR07CA0035.eurprd07.prod.outlook.com
+ (2603:10a6:7:66::21) To AM6PR02MB4470.eurprd02.prod.outlook.com
+ (2603:10a6:20b:60::26)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=peda@axentia.se; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AM6PR02MB4658;6:PrRA6uQBG8uuvbQvtJm7PHTbpczyFxgwwGoD0NkYKDw5JlwFf5OwsxcIg0J/7/TNInNqdNMx9MZzGdhP5grgvqLYlJm3Kq0P0mnNwxxJqO+OTVNkMUi1uwROWecK8WtbxUy34kFZOS+6BBBTVorXBwtEO2EOBxXBwforOQ7QPlhRib/UTcHOYRczYErK5Q8CZ41b9llrjkX2jt3qzLZc/VdZ4sQWqRQoq/uaVzT+Cl389y9vo+T58RHGBFsImQadtmEnTL1gyXkvlSG5XLZrc2Cy+aWcLc0dalvl3jCBIdU7KPHXq7AXXdP+qgA88CKjQJMTQct6E2M7jztt+4U0x1JqZdbMygta3U8CdZh7nXh71Fvgu4dQ8/JT4Rxyu5YzYbAp07W/bG+sbLMcJg3y1NYNJa2V/Hntas1z9p0ZYm9tdyiNIFdzqeKc4sbK7l1TMxk6f28UhTXb7Aucn2phwQ==;5:imaqYutrztAiCEMB4MCpuifBtenHD0KFllBPPEvikb4xYOL2NH6mZ2ljx02RqxSTDDweWXGa40cvn0IMISEwSqSs+wycyKLhKEIJ1lCAmOoo+9WjuW2wJZdq9nnNLXIXeZ7NG7kfIczig0gvcPCu2pngCDaQE1iyHDtfGHYrvOuSHgolJhu9LdIz+pnbuAWhAh9EQfEiRx0vX830OVOEzg==;7:CqgBklV1HTUIyLiyKGV2op3Yrl7aUVWgDX1EUV/hmIgi9DpoUNtrkJ08omMgQOfhu4UC1blN8trhB/P3HM4cWq46OF38k6NGoqZkzxiXlEasdcLtMn6S7ZXiW4No4wDzUhUcdAZM1/0QdUKlTiCtdg==
+x-ms-office365-filtering-correlation-id: 9c7a704d-36bc-4cc8-92fd-08d677d816de
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(7021145)(8989299)(4534185)(7022145)(4603075)(4627221)(201702281549075)(8990200)(7048125)(7024125)(7027125)(7023125)(5600109)(711020)(2017052603328)(7153060)(7193020);SRVR:AM6PR02MB4658;
+x-ms-traffictypediagnostic: AM6PR02MB4658:
+x-microsoft-antispam-prvs: <AM6PR02MB46580E47AFE2A76E5CAE7FD8BC850@AM6PR02MB4658.eurprd02.prod.outlook.com>
+x-forefront-prvs: 09144DB0F7
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(366004)(39830400003)(136003)(346002)(376002)(189003)(199004)(6116002)(3846002)(5660300001)(6486002)(86362001)(54906003)(74482002)(71200400001)(71190400001)(25786009)(305945005)(6512007)(7736002)(99286004)(52116002)(6506007)(102836004)(386003)(2501003)(2906002)(316002)(66066001)(186003)(26005)(14454004)(476003)(50226002)(36756003)(5640700003)(14444005)(486006)(6916009)(256004)(2616005)(97736004)(1076003)(2351001)(53936002)(68736007)(8676002)(81166006)(508600001)(81156014)(105586002)(6436002)(4326008)(8936002)(106356001);DIR:OUT;SFP:1102;SCL:1;SRVR:AM6PR02MB4658;H:AM6PR02MB4470.eurprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: axentia.se does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: XxNSpX4qiYG0r2nlN2RN7Pdz2xKBjvCM0cWhLNlW4Z99ysZPdOtcnOKW/hTNXVSh2bA1HT2f0EnOs5GFlReG7XWUT/xpYIQR9jhz148hSU2/uN1u5mVuiF/Z4+lMCMMXcv39p2rP/mvriGGWUqvFpVggdqLDl7082bAUOvovbFWCAsYOs0quccP48vveC5tsoVJ+My0m00UQFhL1HA1Nj4s5csY+LhcsN4V883Oubxm2MLiGbBUUfv7ZYBSSPW5aM6R+16jJUGlrkYcvMJ7pNbBq6nORytbufGTLdIV5n03/Hh63QflBVzEALWemS5RAfRmoT6mhBBvJB3GFbY1yhgTHBgcGnj0YByp6h90wUzW7wkOOVIvHFjwWPmRLbSr0wD82VcMpcl9XuRGXVf5eZZ5rZGyChGASk9vn2ag6C5k=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190111150605.GA10771@redhat.com>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+X-OriginatorOrg: axentia.se
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9c7a704d-36bc-4cc8-92fd-08d677d816de
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Jan 2019 15:18:49.3465
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 4ee68585-03e1-4785-942a-df9c1871a234
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR02MB4658
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 11, 2019 at 10:06:05AM -0500, Mike Snitzer wrote:
-> On Fri, Jan 11 2019 at  9:35am -0500,
-> Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
-> 
-> > On Fri, Jan 11, 2019 at 09:25:39AM -0500, Mike Snitzer wrote:
-> > > On Fri, Jan 11 2019 at  9:08am -0500,
-> > > Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
-> > > 
-> > > > 4.4-stable review patch.  If anyone has any objections, please let me know.
-> > > > 
-> > > > ------------------
-> > > > 
-> > > > From: Ming Lei <ming.lei@redhat.com>
-> > > > 
-> > > > commit 744889b7cbb56a64f957e65ade7cb65fe3f35714 upstream.
-> > > 
-> > > Hi Greg,
-> > > 
-> > > Please also pick up this commit:
-> > > 89f5fa47476eda56402e29fff3c5097f5c2a1e19 ("dm: call blk_queue_split() to
-> > > impose device limits on bios")
-> > 
-> > That's going to be hard as the dependancy for that patch is not here in
-> > 4.4.y, and this patch itself isn't even in anything older than 4.19.y.
-> 
-> Right, I quickly replied to this thread with followup of the 3 prereq
-> patches needed to get 89f5fa47476 to apply.
-> 
-> > So why add it here to 4.4.y only?
-> 
-> Because you're looking to pull in a commit into 4.4 that causes problems
-> elsewhere.
->  
-> > Can you send the needed patch series to the stable@ mailing list for the
-> > different stable trees if this needs to get into them?
-> 
-> I'll try to get to that, but it is low priority for me.  And in the
-> meantime.. DM will be broken in 4.4 if you take 744889b7cb.. wheeeee.
+Hi!
 
-Ok, then I should drop this patch from 4.4, I can do that.  Looks like
-it's not in 4.9 either, so that's another good reason to not take it
-here as well.
+I'm not sure if I should have added the texas chips to the lvds_encoder_mat=
+ch
+list in the driver, right next to the thine,thc63lvdm83d entry, but ended
+up not doing that. That can always be added later, if needed...
 
-Any objection to just dropping it?
+Changes since v3:
+- retained a (modified) note in lvds-transmitter.txt about encoders with
+  additional device-specific properties
+- added tag from Rob on patch 3/5
 
-thanks,
+Changes since v2:
+- changed from pwdn-gpios to powerdown-gpios after discussion with Rob with
+  new patch 3/5 updating the thine,thc63lvdm83d binding as well as a
+  consequence
+- added patch 4/5 which helps keep lines shorter in the lvds-encoder driver
+- added tag from Rob on patch 2/5
 
-greg k-h
+Changes since v1:
+- fork out the bindings for the texas chips into their own file in order
+  to avoid clutter in the generic lvds-transmitter binding.
+- added a patch to remove some surplus stuff in the generic lvds-transmitte=
+r
+  binding.
+
+Cheers,
+Peter
+
+Peter Rosin (5):
+  dt-bindings: display: bridge: fork out ti,ds90c185 from
+    lvds-transmitter
+  dt-bindings: display: bridge: lvds-transmitter: cleanup example
+  dt-bindings: display: bridge: thc63lvdm83d: use standard
+    powerdown-gpios
+  drm/bridge: lvds-encoder: add dev helper variable in .probe()
+  drm/bridge: lvds-encoder: add powerdown-gpios support
+
+ .../bindings/display/bridge/lvds-transmitter.txt   | 12 ++---
+ .../bindings/display/bridge/thine,thc63lvdm83d.txt |  2 +-
+ .../bindings/display/bridge/ti,ds90c185.txt        | 55 ++++++++++++++++++=
+++++
+ drivers/gpu/drm/bridge/lvds-encoder.c              | 53 +++++++++++++++++-=
+---
+ 4 files changed, 103 insertions(+), 19 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/display/bridge/ti,ds9=
+0c185.txt
+
+--=20
+2.11.0
+
