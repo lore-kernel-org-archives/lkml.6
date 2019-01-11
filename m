@@ -2,134 +2,108 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3C43C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:07:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE999C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:07:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C44192084C
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:07:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547219232;
-	bh=Ny6exevUrQohs3UatbPG1lT7DPUU9sjzF88rXvEOiuM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=M3ttmJTpj9KFHNE9TxYIxembQ5i2/rZjpSTa4IuwVhIudAFoRfaQirQG9M5exEjZO
-	 PH08dJOm2N/PK4dFHzYdx5XDZrUKZ4Lg7bjfX86sbCpEpuoKsOeZ9Z4dqjFllVlLTS
-	 KRmHLJI6eOyXt0Om/rnYZr94VHXt5y6TCYlOVFXY=
+	by mail.kernel.org (Postfix) with ESMTP id 8E0D22084C
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:07:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QsvM0uu4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391931AbfAKPHL (ORCPT
+        id S2390152AbfAKPHO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 11 Jan 2019 10:07:14 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:44162 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391836AbfAKPHL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 11 Jan 2019 10:07:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47292 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387551AbfAKO2d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:28:33 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CCA422063F;
-        Fri, 11 Jan 2019 14:28:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547216912;
-        bh=Ny6exevUrQohs3UatbPG1lT7DPUU9sjzF88rXvEOiuM=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0M5gDQrS+As9d+pWXyLZwhGOCo6zmLA2TPobnPcQs89WGiuBVu279R1LRaUpUBtfj
-         cRaqOz0RzBQM7RLLV7lOld+s36SU3lAowvCl5XBKhAiBJNxtBDksTxxvIoiZr2dpGi
-         3K/YLmKtFDu2SKs4mlVj+3xkjjdmr9HCTXl1u2OA=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>,
-        Christoph Hellwig <hch@lst.de>, Michal Hocko <mhocko@suse.com>,
-        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.9 37/63] mm, devm_memremap_pages: mark devm_memremap_pages() EXPORT_SYMBOL_GPL
-Date:   Fri, 11 Jan 2019 15:14:40 +0100
-Message-Id: <20190111131051.490237975@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190111131046.387528003@linuxfoundation.org>
-References: <20190111131046.387528003@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+Received: by mail-pf1-f196.google.com with SMTP id u6so7056885pfh.11
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jan 2019 07:07:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=5lu9A1QSpPTMUXYRUbEIMz+FrtlaKDaua7/G7w3FZL8=;
+        b=QsvM0uu4icAZvextylbdiwQF+jVmwkwcRTFbwvekeKAkggRQtNuG1yoUKv9QGnngR+
+         DK2boV+OXN4GEhRdq8EaSr0OONaDWE88K/OJ5VAxGivZoh+YGndf9KfrXkwvF6gnVkQX
+         nTyB6idbYpK55CJm0E7qRJQSDcfPgFFxJTFLEELimduks6bbI/fiwhEUg+VQq+4UbKEO
+         /5m8X2KXTUvmdgd9pkhtAPR9EFxD7sLEnYFjQO13ov5Khi9lOk2hF31OiH2YFVU1fvkc
+         ti6rmIsEVP1wp/8gEx/yh8Oebts9hgzlTUAdFMrdOT/2E8srkxPSJ70jx7N4ou8HhnWV
+         uW+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=5lu9A1QSpPTMUXYRUbEIMz+FrtlaKDaua7/G7w3FZL8=;
+        b=r37z/6i4yiNFzv9xYE0iLS/ZHWxf98NTgnGPIID7Ji6PgxufLmSPtj7NM7RMkvnNZ3
+         qQE2Fmao0vVIV0aYCbiBek7cCPmMMNaSdG0ChDX5vQ2JCa/xPf84fg8FVlN4DbRemN4k
+         RJvCad7tNKcAYw5FU7aTeql+HQ6G639+IefGM4ZHqAP+o2d8CE09+i7jB3nAVlJLJGYT
+         4XbzIBWkjKbGjxH3LPKn8Irs1kdrxPxO9XzOvlUQevzzDl7XEv2DjC/ayGPZP3acN+24
+         +91PQMQXsXDquyV0gB1L/zTU61raPgTIgv38RybZoIwthRyNsqe7IFeE5Y19cN+nb0wU
+         fmVg==
+X-Gm-Message-State: AJcUukepGOFzkUa4zgB4YFaQh41bIcvdyDXy/uRnHZFI6lT8e/gquJFQ
+        UMn0XLJQ8PYGHZjsFooI//c=
+X-Google-Smtp-Source: ALg8bN6KjwykscB3sBkV9lO0D9hkHDIbI6Lk2JEn0IITS33oEFeAQ1Opc96e0VUEvQ74PX81me3O3Q==
+X-Received: by 2002:a62:1043:: with SMTP id y64mr15144503pfi.78.1547219230435;
+        Fri, 11 Jan 2019 07:07:10 -0800 (PST)
+Received: from jordon-HP-15-Notebook-PC ([49.207.52.190])
+        by smtp.gmail.com with ESMTPSA id b202sm150546595pfb.88.2019.01.11.07.07.08
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Fri, 11 Jan 2019 07:07:09 -0800 (PST)
+Date:   Fri, 11 Jan 2019 20:41:11 +0530
+From:   Souptick Joarder <jrdr.linux@gmail.com>
+To:     akpm@linux-foundation.org, willy@infradead.org, mhocko@suse.com,
+        joro@8bytes.org, linux@armlinux.org.uk, robin.murphy@arm.com
+Cc:     iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: [PATCH 6/9] iommu/dma-iommu.c: Convert to use vm_insert_range
+Message-ID: <20190111151110.GA2798@jordon-HP-15-Notebook-PC>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
+Convert to use vm_insert_range() to map range of kernel
+memory to user vma.
 
-------------------
-
-From: Dan Williams <dan.j.williams@intel.com>
-
-commit 808153e1187fa77ac7d7dad261ff476888dcf398 upstream.
-
-devm_memremap_pages() is a facility that can create struct page entries
-for any arbitrary range and give drivers the ability to subvert core
-aspects of page management.
-
-Specifically the facility is tightly integrated with the kernel's memory
-hotplug functionality.  It injects an altmap argument deep into the
-architecture specific vmemmap implementation to allow allocating from
-specific reserved pages, and it has Linux specific assumptions about page
-structure reference counting relative to get_user_pages() and
-get_user_pages_fast().  It was an oversight and a mistake that this was
-not marked EXPORT_SYMBOL_GPL from the outset.
-
-Again, devm_memremap_pagex() exposes and relies upon core kernel internal
-assumptions and will continue to evolve along with 'struct page', memory
-hotplug, and support for new memory types / topologies.  Only an in-kernel
-GPL-only driver is expected to keep up with this ongoing evolution.  This
-interface, and functionality derived from this interface, is not suitable
-for kernel-external drivers.
-
-Link: http://lkml.kernel.org/r/154275557457.76910.16923571232582744134.stgit@dwillia2-desk3.amr.corp.intel.com
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Cc: "Jérôme Glisse" <jglisse@redhat.com>
-Cc: Balbir Singh <bsingharora@gmail.com>
-Cc: Logan Gunthorpe <logang@deltatee.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
 ---
- kernel/memremap.c                 |    2 +-
- tools/testing/nvdimm/test/iomap.c |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/iommu/dma-iommu.c | 12 +-----------
+ 1 file changed, 1 insertion(+), 11 deletions(-)
 
---- a/kernel/memremap.c
-+++ b/kernel/memremap.c
-@@ -399,7 +399,7 @@ void *devm_memremap_pages(struct device
- 	devres_free(page_map);
- 	return ERR_PTR(error);
- }
--EXPORT_SYMBOL(devm_memremap_pages);
-+EXPORT_SYMBOL_GPL(devm_memremap_pages);
+diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
+index d1b0475..802de67 100644
+--- a/drivers/iommu/dma-iommu.c
++++ b/drivers/iommu/dma-iommu.c
+@@ -622,17 +622,7 @@ struct page **iommu_dma_alloc(struct device *dev, size_t size, gfp_t gfp,
  
- unsigned long vmem_altmap_offset(struct vmem_altmap *altmap)
+ int iommu_dma_mmap(struct page **pages, size_t size, struct vm_area_struct *vma)
  {
---- a/tools/testing/nvdimm/test/iomap.c
-+++ b/tools/testing/nvdimm/test/iomap.c
-@@ -114,7 +114,7 @@ void *__wrap_devm_memremap_pages(struct
- 		return nfit_res->buf + offset - nfit_res->res.start;
- 	return devm_memremap_pages(dev, res, ref, altmap);
+-	unsigned long uaddr = vma->vm_start;
+-	unsigned int i, count = PAGE_ALIGN(size) >> PAGE_SHIFT;
+-	int ret = -ENXIO;
+-
+-	for (i = vma->vm_pgoff; i < count && uaddr < vma->vm_end; i++) {
+-		ret = vm_insert_page(vma, uaddr, pages[i]);
+-		if (ret)
+-			break;
+-		uaddr += PAGE_SIZE;
+-	}
+-	return ret;
++	return vm_insert_range(vma, pages, PAGE_ALIGN(size) >> PAGE_SHIFT);
  }
--EXPORT_SYMBOL(__wrap_devm_memremap_pages);
-+EXPORT_SYMBOL_GPL(__wrap_devm_memremap_pages);
  
- pfn_t __wrap_phys_to_pfn_t(phys_addr_t addr, unsigned long flags)
- {
-
+ static dma_addr_t __iommu_dma_map(struct device *dev, phys_addr_t phys,
+-- 
+1.9.1
 
