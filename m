@@ -7,47 +7,50 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB0B0C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:44:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89FB1C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:44:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B335620872
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:44:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 58FF1206B6
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:44:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547217862;
-	bh=+rYH8lvAmI6yrFP2QNefAba/v+8jRraooH24duOg0Xs=;
+	s=default; t=1547217867;
+	bh=N0lSpPT41xUhxm188eCX34il2LokFKjZDge80XPQQjc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=m87RWmS3zhX9jgNBsXnkHJ+JwFLvRjC0lVP4XFJctyCC4Y4eYXfuNT7MgEs+VtoNB
-	 mSZd7yXvj4SohqIALIUBm/xEYZmNTx3E2cPf6OYS1BBMZN1FA0or7OqdPRqGDKWUHd
-	 SMkx9VQCzN2HhEwicgzrsNUoGmtPXj7fMxIDpS9c=
+	b=srPef4Uk5v7lP52KVHOCX27FmqbaYcgIaE3ey+BQF/WJDfxbYgEoD0iI9XHTZQbo4
+	 WYm4+Awf7xvnk05yTo1gtgrP7SoQYOGDx8XQLQ0HVQM+3HStkyegai4dACht9Gr4gS
+	 5obNAOae6EOii9rEJD+G01x3T9hN3zBgmQWh5XZg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404601AbfAKOoV (ORCPT
+        id S2404613AbfAKOo0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:44:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37184 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:44:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37334 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404569AbfAKOoO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:44:14 -0500
+        id S2403771AbfAKOoX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:44:23 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 89C5020872;
-        Fri, 11 Jan 2019 14:44:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1E807206B6;
+        Fri, 11 Jan 2019 14:44:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547217854;
-        bh=+rYH8lvAmI6yrFP2QNefAba/v+8jRraooH24duOg0Xs=;
+        s=default; t=1547217862;
+        bh=N0lSpPT41xUhxm188eCX34il2LokFKjZDge80XPQQjc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kUKvZL6l1wlvQpW3eJAbDBI3AMT937H/tpd5sKy2wzjLQSnZy7ja9W6VWQXzmn3cA
-         ZVSUJViE5mWxWFeBPEpW8IFXs0GsfNEaorKaRAWyId2/BJW4Xwel7nSd6PEcz/8RrZ
-         SoCaibIbZM9AXpJQT4+nRZxyKY8G5/j09QuiJWB4=
+        b=FOeR84QZiXw/JN8hM1KcbvKa2lAnQhZCt2yg7unPvYGnEKHy7+ShZFTKA6RBpzV+6
+         UiITSwqU/v4s6enqbDxoH3x5hZyPYIykBcoEXvwevRgd+Evz23QE7FfUSt41gTBIiN
+         MwdiaaZfNTkfd+AQZ44fH6HgkW69nc694tUW8Eds=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Eric Anholt <eric@anholt.net>
-Subject: [PATCH 4.20 64/65] drm/vc4: Set ->is_yuv to false when num_planes == 1
-Date:   Fri, 11 Jan 2019 15:15:50 +0100
-Message-Id: <20190111131104.489893319@linuxfoundation.org>
+        stable@vger.kernel.org, Daniel Jurgens <danielj@mellanox.com>,
+        Eli Cohen <eli@mellanox.com>, James Morris <jmorris@namei.org>,
+        Doug Ledford <dledford@redhat.com>,
+        Ondrej Mosnacek <omosnace@redhat.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Paul Moore <paul@paul-moore.com>
+Subject: [PATCH 4.20 36/65] selinux: policydb - fix byte order and alignment issues
+Date:   Fri, 11 Jan 2019 15:15:22 +0100
+Message-Id: <20190111131101.606156425@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131055.331350141@linuxfoundation.org>
 References: <20190111131055.331350141@linuxfoundation.org>
@@ -66,37 +69,161 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Boris Brezillon <boris.brezillon@bootlin.com>
+From: Ondrej Mosnacek <omosnace@redhat.com>
 
-commit 2b02a05bdc3a62d36e0d0b015351897109e25991 upstream.
+commit 5df275cd4cf51c86d49009f1397132f284ba515e upstream.
 
-When vc4_plane_state is duplicated ->is_yuv is left assigned to its
-previous value, and we never set it back to false when switching to
-a non-YUV format.
+Do the LE conversions before doing the Infiniband-related range checks.
+The incorrect checks are otherwise causing a failure to load any policy
+with an ibendportcon rule on BE systems. This can be reproduced by
+running (on e.g. ppc64):
 
-Fix that by setting ->is_yuv to false in the 'num_planes == 1' branch
-of the vc4_plane_setup_clipping_and_scaling() function.
+cat >my_module.cil <<EOF
+(type test_ibendport_t)
+(roletype object_r test_ibendport_t)
+(ibendportcon mlx4_0 1 (system_u object_r test_ibendport_t ((s0) (s0))))
+EOF
+semodule -i my_module.cil
 
-Fixes: fc04023fafecf ("drm/vc4: Add support for YUV planes.")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
-Reviewed-by: Eric Anholt <eric@anholt.net>
-Link: https://patchwork.freedesktop.org/patch/msgid/20181009132446.21960-1-boris.brezillon@bootlin.com
+Also, fix loading/storing the 64-bit subnet prefix for OCON_IBPKEY to
+use a correctly aligned buffer.
+
+Finally, do not use the 'nodebuf' (u32) buffer where 'buf' (__le32)
+should be used instead.
+
+Tested internally on a ppc64 machine with a RHEL 7 kernel with this
+patch applied.
+
+Cc: Daniel Jurgens <danielj@mellanox.com>
+Cc: Eli Cohen <eli@mellanox.com>
+Cc: James Morris <jmorris@namei.org>
+Cc: Doug Ledford <dledford@redhat.com>
+Cc: <stable@vger.kernel.org> # 4.13+
+Fixes: a806f7a1616f ("selinux: Create policydb version for Infiniband support")
+Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
+Acked-by: Stephen Smalley <sds@tycho.nsa.gov>
+Signed-off-by: Paul Moore <paul@paul-moore.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/vc4/vc4_plane.c |    1 +
- 1 file changed, 1 insertion(+)
+ security/selinux/ss/policydb.c |   51 ++++++++++++++++++++++++++++-------------
+ 1 file changed, 36 insertions(+), 15 deletions(-)
 
---- a/drivers/gpu/drm/vc4/vc4_plane.c
-+++ b/drivers/gpu/drm/vc4/vc4_plane.c
-@@ -321,6 +321,7 @@ static int vc4_plane_setup_clipping_and_
- 		if (vc4_state->is_unity)
- 			vc4_state->x_scaling[0] = VC4_SCALING_PPF;
- 	} else {
-+		vc4_state->is_yuv = false;
- 		vc4_state->x_scaling[1] = VC4_SCALING_NONE;
- 		vc4_state->y_scaling[1] = VC4_SCALING_NONE;
+--- a/security/selinux/ss/policydb.c
++++ b/security/selinux/ss/policydb.c
+@@ -2108,6 +2108,7 @@ static int ocontext_read(struct policydb
+ {
+ 	int i, j, rc;
+ 	u32 nel, len;
++	__be64 prefixbuf[1];
+ 	__le32 buf[3];
+ 	struct ocontext *l, *c;
+ 	u32 nodebuf[8];
+@@ -2217,21 +2218,30 @@ static int ocontext_read(struct policydb
+ 					goto out;
+ 				break;
+ 			}
+-			case OCON_IBPKEY:
+-				rc = next_entry(nodebuf, fp, sizeof(u32) * 4);
++			case OCON_IBPKEY: {
++				u32 pkey_lo, pkey_hi;
++
++				rc = next_entry(prefixbuf, fp, sizeof(u64));
++				if (rc)
++					goto out;
++
++				/* we need to have subnet_prefix in CPU order */
++				c->u.ibpkey.subnet_prefix = be64_to_cpu(prefixbuf[0]);
++
++				rc = next_entry(buf, fp, sizeof(u32) * 2);
+ 				if (rc)
+ 					goto out;
+ 
+-				c->u.ibpkey.subnet_prefix = be64_to_cpu(*((__be64 *)nodebuf));
++				pkey_lo = le32_to_cpu(buf[0]);
++				pkey_hi = le32_to_cpu(buf[1]);
+ 
+-				if (nodebuf[2] > 0xffff ||
+-				    nodebuf[3] > 0xffff) {
++				if (pkey_lo > U16_MAX || pkey_hi > U16_MAX) {
+ 					rc = -EINVAL;
+ 					goto out;
+ 				}
+ 
+-				c->u.ibpkey.low_pkey = le32_to_cpu(nodebuf[2]);
+-				c->u.ibpkey.high_pkey = le32_to_cpu(nodebuf[3]);
++				c->u.ibpkey.low_pkey  = pkey_lo;
++				c->u.ibpkey.high_pkey = pkey_hi;
+ 
+ 				rc = context_read_and_validate(&c->context[0],
+ 							       p,
+@@ -2239,7 +2249,10 @@ static int ocontext_read(struct policydb
+ 				if (rc)
+ 					goto out;
+ 				break;
+-			case OCON_IBENDPORT:
++			}
++			case OCON_IBENDPORT: {
++				u32 port;
++
+ 				rc = next_entry(buf, fp, sizeof(u32) * 2);
+ 				if (rc)
+ 					goto out;
+@@ -2249,12 +2262,13 @@ static int ocontext_read(struct policydb
+ 				if (rc)
+ 					goto out;
+ 
+-				if (buf[1] > 0xff || buf[1] == 0) {
++				port = le32_to_cpu(buf[1]);
++				if (port > U8_MAX || port == 0) {
+ 					rc = -EINVAL;
+ 					goto out;
+ 				}
+ 
+-				c->u.ibendport.port = le32_to_cpu(buf[1]);
++				c->u.ibendport.port = port;
+ 
+ 				rc = context_read_and_validate(&c->context[0],
+ 							       p,
+@@ -2262,7 +2276,8 @@ static int ocontext_read(struct policydb
+ 				if (rc)
+ 					goto out;
+ 				break;
+-			}
++			} /* end case */
++			} /* end switch */
+ 		}
  	}
+ 	rc = 0;
+@@ -3105,6 +3120,7 @@ static int ocontext_write(struct policyd
+ {
+ 	unsigned int i, j, rc;
+ 	size_t nel, len;
++	__be64 prefixbuf[1];
+ 	__le32 buf[3];
+ 	u32 nodebuf[8];
+ 	struct ocontext *c;
+@@ -3192,12 +3208,17 @@ static int ocontext_write(struct policyd
+ 					return rc;
+ 				break;
+ 			case OCON_IBPKEY:
+-				*((__be64 *)nodebuf) = cpu_to_be64(c->u.ibpkey.subnet_prefix);
++				/* subnet_prefix is in CPU order */
++				prefixbuf[0] = cpu_to_be64(c->u.ibpkey.subnet_prefix);
+ 
+-				nodebuf[2] = cpu_to_le32(c->u.ibpkey.low_pkey);
+-				nodebuf[3] = cpu_to_le32(c->u.ibpkey.high_pkey);
++				rc = put_entry(prefixbuf, sizeof(u64), 1, fp);
++				if (rc)
++					return rc;
++
++				buf[0] = cpu_to_le32(c->u.ibpkey.low_pkey);
++				buf[1] = cpu_to_le32(c->u.ibpkey.high_pkey);
+ 
+-				rc = put_entry(nodebuf, sizeof(u32), 4, fp);
++				rc = put_entry(buf, sizeof(u32), 2, fp);
+ 				if (rc)
+ 					return rc;
+ 				rc = context_write(p, &c->context[0], fp);
 
 
