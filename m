@@ -7,49 +7,47 @@ X-Spam-Status: No, score=-13.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4E58C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:57:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 029FAC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:57:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C1AE20872
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:57:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C964920872
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:57:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547218660;
-	bh=h3g1koeO0QmifHzfsYwoQjfqhCXdgZZ2Bly36Hxxp0o=;
+	s=default; t=1547218665;
+	bh=a1RrmN80EN5ylCFOn6mmZGiY6ejKS9tO9/pfJqKruyA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ujzx2fOlN2aOjx5jU0BRBMvdRWFKidKGArVUVQoQuDM1WB96M/Cf3wQAoigmgurzq
-	 BdjqTkIf2NXRLOFSz/cvLXYh82aLG/DXZskixVzyqwDSKe13iWwH+gXIHIvSl9WeQT
-	 uANufWY87+RszCM7SONoohc2yrSPj81MRxT49wZ4=
+	b=wAS2m6lCZMhBMmu7DwxeQfE/gk2vOumH39z5SamUAl5qfF/5uPoXh5CPwdq+yxnFV
+	 R25sLTEgcRGtOPmccUQPluoHEnhAvG7DWGARi4o3yZVB6w2qamfWHrdHGU6ZbUhTPq
+	 Mf3eiAUO6Y6tn1wZzokfI8uL8Js3Nw4JTSyWiOVs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391711AbfAKO5k (ORCPT
+        id S2390065AbfAKOfG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:57:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55374 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:35:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55280 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390046AbfAKOfH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:35:07 -0500
+        id S2390046AbfAKOfC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:35:02 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 14B462063F;
-        Fri, 11 Jan 2019 14:35:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E7301204EC;
+        Fri, 11 Jan 2019 14:35:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547217306;
-        bh=h3g1koeO0QmifHzfsYwoQjfqhCXdgZZ2Bly36Hxxp0o=;
+        s=default; t=1547217301;
+        bh=a1RrmN80EN5ylCFOn6mmZGiY6ejKS9tO9/pfJqKruyA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WBW4a83rJ8XSPCz9L1xo4nDHn35HiMuggIqKP6PktcLXrOmvZpZwQiU+CXKx9gTbL
-         C299E39s979trNAbCTrGUPoL1BOROZMyHeIRbNwXjDbx2AOOAOTmphmO6dsN3Niw0O
-         4yjGUouw6ZKI0E8F2W99GJKUmT4YeGtmGQt3i5uU=
+        b=sQyHh48i69jHKZ5A24Pt2lTQy4jggfgTJ1wIbdLtNbHsctb5E/3yKuSmL/Ey2SgQW
+         cMQ+5BrBJcDFe+W2b6IukdNQAMRyLnkRMQkQm/FyUdeLYZ71PWnx8Q7vOphO+rUcSb
+         tpY90FOtnmxOVeMCF3hKQY46WcCQE+MzvCydZLfo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mark Zhang <markz@mellanox.com>,
-        Parav Pandit <parav@mellanox.com>,
-        Leon Romanovsky <leonro@mellanox.com>,
-        Doug Ledford <dledford@redhat.com>,
+        stable@vger.kernel.org, Oliver OHalloran <oohall@gmail.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 014/148] IB/core: Fix oops in netdev_next_upper_dev_rcu()
-Date:   Fri, 11 Jan 2019 15:13:12 +0100
-Message-Id: <20190111131114.903741900@linuxfoundation.org>
+Subject: [PATCH 4.19 012/148] powerpc/mm: Fallback to RAM if the altmap is unusable
+Date:   Fri, 11 Jan 2019 15:13:10 +0100
+Message-Id: <20190111131114.826231183@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131114.337122649@linuxfoundation.org>
 References: <20190111131114.337122649@linuxfoundation.org>
@@ -68,40 +66,89 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 37fbd834b4e492dc41743830cbe435f35120abd8 ]
+[ Upstream commit 9ef34630a4614ee1cd478f9859ebea55d55f10ec ]
 
-When support for bonding of RoCE devices was added, there was
-necessarily a link between the RoCE device and the paired netdevice that
-was part of the bond.  If you remove the mlx4_en module, that paired
-association is broken (the RoCE device is still present but the paired
-netdevice has been released).  We need to account for this in
-is_upper_ndev_bond_master_filter() and filter out those links with a
-broken pairing or else we later oops in netdev_next_upper_dev_rcu().
+The "altmap" is used to provide a pool of memory that is reserved for
+the vmemmap backing of hot-plugged memory. This is useful when adding
+large amount of ZONE_DEVICE memory to a system with a limited amount of
+normal memory.
 
-Fixes: 408f1242d940 ("IB/core: Delete lower netdevice default GID entries in bonding scenario")
-Signed-off-by: Mark Zhang <markz@mellanox.com>
-Reviewed-by: Parav Pandit <parav@mellanox.com>
-Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
-Signed-off-by: Doug Ledford <dledford@redhat.com>
+On ppc64 we use huge pages to map the vmemmap which requires the backing
+storage to be contigious and aligned to the hugepage size. The altmap
+implementation allows for the altmap provider to reserve a few PFNs at
+the start of the range for it's own uses and when this occurs the
+first chunk of the altmap is not usable for hugepage mappings. On hash
+there is no sane way to fall back to a normal sized page mapping so we
+fail the allocation. This results in memory hotplug failing with
+ENOMEM when the new range doesn't fall into an existing vmemmap block.
+
+This patch handles this case by falling back to using system memory
+rather than failing if we cannot allocate from the altmap. This
+fallback should only ever be used for the first vmemmap block so it
+should not cause excess memory consumption.
+
+Fixes: 7b73d978a5d0 ("mm: pass the vmem_altmap to vmemmap_populate")
+Signed-off-by: Oliver O'Halloran <oohall@gmail.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/infiniband/core/roce_gid_mgmt.c | 3 +++
- 1 file changed, 3 insertions(+)
+ arch/powerpc/mm/init_64.c | 19 ++++++++++++++++---
+ 1 file changed, 16 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/infiniband/core/roce_gid_mgmt.c b/drivers/infiniband/core/roce_gid_mgmt.c
-index 25d43c8f1c2a..558de0b9895c 100644
---- a/drivers/infiniband/core/roce_gid_mgmt.c
-+++ b/drivers/infiniband/core/roce_gid_mgmt.c
-@@ -267,6 +267,9 @@ is_upper_ndev_bond_master_filter(struct ib_device *ib_dev, u8 port,
- 	struct net_device *cookie_ndev = cookie;
- 	bool match = false;
+diff --git a/arch/powerpc/mm/init_64.c b/arch/powerpc/mm/init_64.c
+index 7a9886f98b0c..a5091c034747 100644
+--- a/arch/powerpc/mm/init_64.c
++++ b/arch/powerpc/mm/init_64.c
+@@ -188,15 +188,20 @@ int __meminit vmemmap_populate(unsigned long start, unsigned long end, int node,
+ 	pr_debug("vmemmap_populate %lx..%lx, node %d\n", start, end, node);
  
-+	if (!rdma_ndev)
-+		return false;
-+
- 	rcu_read_lock();
- 	if (netif_is_bond_master(cookie_ndev) &&
- 	    rdma_is_upper_dev_rcu(rdma_ndev, cookie_ndev))
+ 	for (; start < end; start += page_size) {
+-		void *p;
++		void *p = NULL;
+ 		int rc;
+ 
+ 		if (vmemmap_populated(start, page_size))
+ 			continue;
+ 
++		/*
++		 * Allocate from the altmap first if we have one. This may
++		 * fail due to alignment issues when using 16MB hugepages, so
++		 * fall back to system memory if the altmap allocation fail.
++		 */
+ 		if (altmap)
+ 			p = altmap_alloc_block_buf(page_size, altmap);
+-		else
++		if (!p)
+ 			p = vmemmap_alloc_block_buf(page_size, node);
+ 		if (!p)
+ 			return -ENOMEM;
+@@ -255,8 +260,15 @@ void __ref vmemmap_free(unsigned long start, unsigned long end,
+ {
+ 	unsigned long page_size = 1 << mmu_psize_defs[mmu_vmemmap_psize].shift;
+ 	unsigned long page_order = get_order(page_size);
++	unsigned long alt_start = ~0, alt_end = ~0;
++	unsigned long base_pfn;
+ 
+ 	start = _ALIGN_DOWN(start, page_size);
++	if (altmap) {
++		alt_start = altmap->base_pfn;
++		alt_end = altmap->base_pfn + altmap->reserve +
++			  altmap->free + altmap->alloc + altmap->align;
++	}
+ 
+ 	pr_debug("vmemmap_free %lx...%lx\n", start, end);
+ 
+@@ -280,8 +292,9 @@ void __ref vmemmap_free(unsigned long start, unsigned long end,
+ 		page = pfn_to_page(addr >> PAGE_SHIFT);
+ 		section_base = pfn_to_page(vmemmap_section_start(start));
+ 		nr_pages = 1 << page_order;
++		base_pfn = PHYS_PFN(addr);
+ 
+-		if (altmap) {
++		if (base_pfn >= alt_start && base_pfn < alt_end) {
+ 			vmem_altmap_free(altmap, nr_pages);
+ 		} else if (PageReserved(page)) {
+ 			/* allocated from bootmem */
 -- 
 2.19.1
 
