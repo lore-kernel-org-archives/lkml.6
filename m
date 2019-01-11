@@ -2,134 +2,102 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F6B3C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 10:55:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BC8CC43612
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 10:56:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E865521848
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 10:55:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F0D5420872
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 10:56:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="wq/c5agS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731878AbfAKKzM (ORCPT
+        id S1729961AbfAKK4Q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 05:55:12 -0500
-Received: from cloudserver094114.home.pl ([79.96.170.134]:57501 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725789AbfAKKzL (ORCPT
+        Fri, 11 Jan 2019 05:56:16 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:58704 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725789AbfAKK4Q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 05:55:11 -0500
-Received: from 79.184.254.168.ipv4.supernova.orange.pl (79.184.254.168) (HELO aspire.rjw.lan)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.183)
- id ac8736e6ecfb3cd6; Fri, 11 Jan 2019 11:55:08 +0100
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        "Raju P . L . S . S . S . N" <rplsssn@codeaurora.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Tony Lindgren <tony@atomide.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Lina Iyer <ilina@codeaurora.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Fri, 11 Jan 2019 05:56:16 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0BAuAn2072145;
+        Fri, 11 Jan 2019 04:56:10 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1547204170;
+        bh=eR6eD6q/nJ45/trmkxExdoKyplDZBZ8qqleBxBVmRac=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=wq/c5agSPxlxQo0E61BpbQJT1k0ykDZasJRhoZap5x6b7M74w5m1bkBh4blwi1q3s
+         W6UEeP33rHH4ea81ZYt+nCVlMHCHjqPn1yWwYOkBjpf62lMkXxCOKvrYg+I5BNEXt7
+         Sr+ZSAgTel7E3zm8c+JTHsCWjWMv9nVqo0fX9qWQ=
+Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0BAuAMF075491
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 11 Jan 2019 04:56:10 -0600
+Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Fri, 11
+ Jan 2019 04:56:09 -0600
+Received: from dlep32.itg.ti.com (157.170.170.100) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Fri, 11 Jan 2019 04:56:09 -0600
+Received: from [172.24.190.172] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0BAu6h7012714;
+        Fri, 11 Jan 2019 04:56:07 -0600
+Subject: Re: [PATCH 1/5] ARM: davinci: da830-evm: fix label names in GPIO
+ lookup entries
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>
+CC:     Kevin Hilman <khilman@kernel.org>,
         Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v10 02/27] PM / Domains: Add support for CPU devices to genpd
-Date:   Fri, 11 Jan 2019 11:54:20 +0100
-Message-ID: <1993885.1ZciKZtFgT@aspire.rjw.lan>
-In-Reply-To: <CAPDyKFpPa1u1ouoa2zFzMe2McqEpxu7Vex2zd1nYoQUQtY2s-A@mail.gmail.com>
-References: <20181129174700.16585-1-ulf.hansson@linaro.org> <45ff9a4b-6130-7800-28cc-a2f5f736f44b@linaro.org> <CAPDyKFpPa1u1ouoa2zFzMe2McqEpxu7Vex2zd1nYoQUQtY2s-A@mail.gmail.com>
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Andrew F . Davis" <afd@ti.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        stable <stable@vger.kernel.org>
+References: <20190103151104.11839-1-brgl@bgdev.pl>
+ <20190103151104.11839-2-brgl@bgdev.pl>
+ <CACRpkdapcG1bWCOk=SWHfKvpPMdBiEu0QOj4M+Zbx11Xhc59cA@mail.gmail.com>
+From:   Sekhar Nori <nsekhar@ti.com>
+Message-ID: <7d73f52d-e6e3-296c-ea87-6a0cf43afb0f@ti.com>
+Date:   Fri, 11 Jan 2019 16:26:06 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <CACRpkdapcG1bWCOk=SWHfKvpPMdBiEu0QOj4M+Zbx11Xhc59cA@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wednesday, December 19, 2018 11:02:05 AM CET Ulf Hansson wrote:
-> On Wed, 19 Dec 2018 at 10:53, Daniel Lezcano <daniel.lezcano@linaro.org> wrote:
-> >
-> > On 29/11/2018 18:46, Ulf Hansson wrote:
-> > > To enable a device belonging to a CPU to be attached to a PM domain managed
-> > > by genpd, let's do a few changes to it, as to make it convenient to manage
-> > > the specifics around CPUs.
-> > >
-> > > To be able to quickly find out what CPUs that are attached to a genpd,
-> > > which typically becomes useful from a genpd governor as following changes
-> > > is about to show, let's add a cpumask to the struct generic_pm_domain. At
-> > > the point when a CPU device gets attached to a genpd, let's update its
-> > > cpumask. Moreover, let's also propagate changes to the cpumask upwards in
-> > > the topology to the master PM domains. In this way, the cpumask for a genpd
-> > > hierarchically reflects all CPUs attached to the topology below it.
-> > >
-> > > Finally, let's make this an opt-in feature, to avoid having to manage CPUs
-> > > and the cpumask for a genpd that doesn't need it. For that reason, let's
-> > > add a new genpd configuration bit, GENPD_FLAG_CPU_DOMAIN.
-> > >
-> > > Cc: Lina Iyer <ilina@codeaurora.org>
-> > > Co-developed-by: Lina Iyer <lina.iyer@linaro.org>
-> > > Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-> > > ---
-> > >
-> > > Changes in v10:
-> > >       - Don't allocate the cpumask when not used.
-> > >       - Simplify the code that updates the cpumask.
-> > >       - Document the GENPD_FLAG_CPU_DOMAIN.
-> > >
-> > > ---
-> > >  drivers/base/power/domain.c | 66 ++++++++++++++++++++++++++++++++++++-
-> > >  include/linux/pm_domain.h   | 13 ++++++++
-> > >  2 files changed, 78 insertions(+), 1 deletion(-)
-> > >
-> > > diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
-> > > index e27b91d36a2a..c3ff8e395308 100644
-> > > --- a/drivers/base/power/domain.c
-> > > +++ b/drivers/base/power/domain.c
-> > > @@ -20,6 +20,7 @@
-> > >  #include <linux/sched.h>
-> > >  #include <linux/suspend.h>
-> > >  #include <linux/export.h>
-> > > +#include <linux/cpu.h>
-> > >
-> > >  #include "power.h"
-> > >
-> > > @@ -126,6 +127,7 @@ static const struct genpd_lock_ops genpd_spin_ops = {
-> > >  #define genpd_is_irq_safe(genpd)     (genpd->flags & GENPD_FLAG_IRQ_SAFE)
-> > >  #define genpd_is_always_on(genpd)    (genpd->flags & GENPD_FLAG_ALWAYS_ON)
-> > >  #define genpd_is_active_wakeup(genpd)        (genpd->flags & GENPD_FLAG_ACTIVE_WAKEUP)
-> > > +#define genpd_is_cpu_domain(genpd)   (genpd->flags & GENPD_FLAG_CPU_DOMAIN)
-> > >
-> > >  static inline bool irq_safe_dev_in_no_sleep_domain(struct device *dev,
-> > >               const struct generic_pm_domain *genpd)
-> > > @@ -1377,6 +1379,56 @@ static void genpd_free_dev_data(struct device *dev,
-> > >       dev_pm_put_subsys_data(dev);
-> > >  }
-> > >
-> > > +static void __genpd_update_cpumask(struct generic_pm_domain *genpd,
-> > > +                                int cpu, bool set, unsigned int depth)
-> > > +{
-> > > +     struct gpd_link *link;
-> > > +
-> > > +     if (!genpd_is_cpu_domain(genpd))
-> > > +             return;
-> >
-> > With this test, we won't continue updating the cpumask for the other
-> > masters. Is it done on purpose ?
-> 
-> Correct, and yes it's on purpose.
-> 
-> We are not even allocating the cpumask for the genpd in question,
-> unless it has the GENPD_FLAG_CPU_DOMAIN set.
+Hi Linus,
 
-So this patch is generally fine by me.  You can add my ACK to it when
-submitting it again, unless it is changed, so I know I've seen it
-already.
+On 11/01/19 3:08 PM, Linus Walleij wrote:
+> On Thu, Jan 3, 2019 at 4:11 PM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+> 
+>> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>>
+>> Since commit 587f7a694f01 ("gpio: davinci: Use dev name for label and
+>> automatic base selection") the gpiochip label no longer has an ID
+>> suffix. Update the GPIO lookup entries.
+>>
+>> Fixes: 587f7a694f01 ("gpio: davinci: Use dev name for label and automatic base selection")
+>> Cc: stable@vger.kernel.org
+>> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> 
+> The series:
+> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> 
+> I suppose you will push this upstream through ARM SoC.
 
+I sent a pull request with these applied to ARM SoC yesterday.
+
+Thanks,
+Sekhar
