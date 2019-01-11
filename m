@@ -2,76 +2,93 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A804C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 09:23:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09E22C43444
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 09:24:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 39D6921841
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 09:23:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547198599;
-	bh=uiM2cVfanZs0ZGhYatV5X4aqAFQuagFoODxsLBxQ874=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=1AsINhQL/7r8aPZdp06oVgfes8DkI8HmF4xo/Kp5FPDF3vgKqaySKcn6YHoMPP8oJ
-	 3hvrvqKW/VKu2re5iXr8UzyDBneawW9dp9RGkKIYhU/o+W83/uVm95hBtRi2WPn9tb
-	 X/LkpIBNahb8z5DMJZBNcdrtxMtJzhXFoG0N1Tj4=
+	by mail.kernel.org (Postfix) with ESMTP id CECAF2146F
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 09:24:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="aNNmoPgs"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731427AbfAKJXS (ORCPT
+        id S1731063AbfAKJY0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 04:23:18 -0500
-Received: from mx2.suse.de ([195.135.220.15]:47224 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727900AbfAKJXR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 04:23:17 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 25DB9AF97;
-        Fri, 11 Jan 2019 09:23:16 +0000 (UTC)
-Date:   Fri, 11 Jan 2019 10:23:15 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Pingfan Liu <kernelfans@gmail.com>
-Cc:     Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org,
+        Fri, 11 Jan 2019 04:24:26 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:55972 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727900AbfAKJY0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 04:24:26 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=3bbqLmoBi4UZeRgd7URqMZLeNNe0MRIllp1E7eJVj0A=; b=aNNmoPgsvxPQq61hvQHcor5bA
+        0LPvTkpfJ/6vOrRplQ7yTmX6+sHt2N1cWHPnoOkQSHh3hLqzc42ktWwk0XLRarfTDjZu5OTX3AAHw
+        8YCHrml7NksXzKYP3YveERj9LXQ7LXne8iSuMkUO+2vpSDvjva6FGxIVM6THVUB0dVUNsnWkYhwf0
+        Ks4R4+UanUuhAxT44qHB5eDVc/s4RSPENGw1HZ55p/2fv8EULhstdSmm4GcAE7SjgVxe9YqbP56PC
+        htjUC7aAGNucsLsqRxRbT8D1j8vJ4Bd22ffdBVeRCu9PezulCN7pMKumK2iS1mKHE+Iz772bm3UNq
+        iZef46nvA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1ght2v-00080C-Nu; Fri, 11 Jan 2019 09:24:09 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 80185208096AB; Fri, 11 Jan 2019 10:24:08 +0100 (CET)
+Date:   Fri, 11 Jan 2019 10:24:08 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Vineet Gupta <vineet.gupta1@synopsys.com>
+Cc:     linux-kernel@vger.kernel.org, linux-snps-arc@lists.infradead.org,
+        linux-mm@kvack.org, Miklos Szeredi <mszeredi@redhat.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Jani Nikula <jani.nikula@intel.com>,
+        Chris Wilson <chris@chris-wilson.co.uk>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: Re: [PATCH] mm/alloc: fallback to first node if the wanted node
- offline
-Message-ID: <20190111092315.GB14956@dhcp22.suse.cz>
-References: <20181210123738.GN1286@dhcp22.suse.cz>
- <CAFgQCTupPc1rKv2SrmWD+eJ0H6PRaizPBw3+AG67_PuLA2SKFw@mail.gmail.com>
- <20181212115340.GQ1286@dhcp22.suse.cz>
- <CAFgQCTuhW6sPtCNFmnz13p30v3owE3Rty5WJNgtqgz8XaZT-aQ@mail.gmail.com>
- <CAFgQCTtFZ8ku7W_7rcmrbmH4Qvsv7zgOSHKfPSpNSkVjYkPfBg@mail.gmail.com>
- <20181217132926.GM30879@dhcp22.suse.cz>
- <CAFgQCTubm9B1_zM+oc1GLfOChu+XY9N4OcjyeDgk6ggObRtMKg@mail.gmail.com>
- <20181220091934.GC14234@dhcp22.suse.cz>
- <20190108143440.GU31793@dhcp22.suse.cz>
- <CAFgQCTtdJ1mR6v2Y3ojHSmjg9U90cAUddhxG3Y_8zNDR5Aw9oQ@mail.gmail.com>
+        Will Deacon <will.deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH 3/3] bitops.h: set_mask_bits() to return old value
+Message-ID: <20190111092408.GM30894@hirez.programming.kicks-ass.net>
+References: <1547166387-19785-1-git-send-email-vgupta@synopsys.com>
+ <1547166387-19785-4-git-send-email-vgupta@synopsys.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAFgQCTtdJ1mR6v2Y3ojHSmjg9U90cAUddhxG3Y_8zNDR5Aw9oQ@mail.gmail.com>
+In-Reply-To: <1547166387-19785-4-git-send-email-vgupta@synopsys.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 11-01-19 11:12:45, Pingfan Liu wrote:
-[...]
-> Hi, this patch works! Feel free to use tested-by me
+On Thu, Jan 10, 2019 at 04:26:27PM -0800, Vineet Gupta wrote:
 
-Thanks a lot for your testing! Now it is time to seriously think whether
-this is the right thing to do and sync all other arches that might have
-the same problem. I will take care of it. Thanks for your patience and
-effort. I will post something hopefully soon in a separate thread as
-this one grown too large already.
+> @@ -246,7 +246,7 @@ static __always_inline void __assign_bit(long nr, volatile unsigned long *addr,
+>  		new__ = (old__ & ~mask__) | bits__;		\
+>  	} while (cmpxchg(ptr, old__, new__) != old__);		\
 
--- 
-Michal Hocko
-SUSE Labs
+diff --git a/include/linux/bitops.h b/include/linux/bitops.h
+index 705f7c442691..2060d26a35f5 100644
+--- a/include/linux/bitops.h
++++ b/include/linux/bitops.h
+@@ -241,10 +241,10 @@ static __always_inline void __assign_bit(long nr, volatile unsigned long *addr,
+ 	const typeof(*(ptr)) mask__ = (mask), bits__ = (bits);	\
+ 	typeof(*(ptr)) old__, new__;				\
+ 								\
++	old__ = READ_ONCE(*(ptr));				\
+ 	do {							\
+-		old__ = READ_ONCE(*(ptr));			\
+ 		new__ = (old__ & ~mask__) | bits__;		\
+-	} while (cmpxchg(ptr, old__, new__) != old__);		\
++	} while (!try_cmpxchg(ptr, &old__, new__));		\
+ 								\
+ 	new__;							\
+ })
+
+
+While there you probably want something like the above... although,
+looking at it now, we seem to have 'forgotten' to add try_cmpxchg to the
+generic code :/
