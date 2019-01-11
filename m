@@ -7,50 +7,51 @@ X-Spam-Status: No, score=-13.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42DCEC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:35:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 700A1C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:35:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 148112063F
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:35:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 401772184A
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:35:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547217352;
-	bh=NBWqRQglnpvjbE1B1hIoVAx5WQV9bjDWL6XPT5CtI0Q=;
+	s=default; t=1547217356;
+	bh=ME83h21x7S5tpbBBgHVFaHTnEKaUl6hxPSnLBQK79R8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=0o1i/kxa6y1hDGC96HcFD4h5fTuFmezw3vQIlQA7g4aLhweK/OxediU55qDU7va2f
-	 xe2LZisF8VT2HRU3uPaPFH8sFwR8iLo6NEMyaPsuOoRgUZcgl60UUPYHPp7AT0O0SG
-	 xf6SdTsMpmkzKK7lSV2JL4LxxmpHZcyyI1fiOH2g=
+	b=m0bmXKFRP1NjVxMSk5UIL3PkZthpoeEF9VObFoIKMVpm7SMs8O+0l+BY6j3HPH2ly
+	 orSdCgrU0v9pKnl1FrY04Sf8kvY91ymQYRdDB6aGe+uLy+aco/P3rDzSB+LBc2Ah77
+	 BjnU93Z8FcBuKUqcWH8vfDtdncfzplx/HQFV2PVU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390243AbfAKOfv (ORCPT
+        id S2390256AbfAKOfz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:35:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56072 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:35:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56130 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390230AbfAKOfs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:35:48 -0500
+        id S2390239AbfAKOfv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:35:51 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8E8862063F;
-        Fri, 11 Jan 2019 14:35:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 17C182133F;
+        Fri, 11 Jan 2019 14:35:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547217348;
-        bh=NBWqRQglnpvjbE1B1hIoVAx5WQV9bjDWL6XPT5CtI0Q=;
+        s=default; t=1547217350;
+        bh=ME83h21x7S5tpbBBgHVFaHTnEKaUl6hxPSnLBQK79R8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=M9yONG/RJdh0pSI3RPMJcorcWhZWuqTcZBmKi63AxJSXY128d06Lh+ikqG8ZwNrJY
-         +pUTKFM5OrnHWffK6jjLds4+QrtP2EeK+6KcjI6yWnjINB3ULcFDlWb2n6Z74W152P
-         htR+f2xokfLwRJe4xIETihANqk677XrDGRlmC1pk=
+        b=y8BfX7bZI30oB4rmxTlxYwl0JQxN4eOc79u5F6BQyJ4MKG2YG9XLw+qjqZi/P8L2I
+         xsu4hsYfzx6Cw4SAhpWzJDBbcgpb3w29aWIEicPdEd0C2++q1FOtoF/UmftLjpA05q
+         GGJtmRIyBjGybei9BvvncBgd6ZfEWPb84Gp5lXDg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Neel Mehta <nmehta@google.com>,
-        Shane Huntley <shuntley@google.com>,
-        Heather Adkins <argv@google.com>,
-        Florian Westphal <fw@strlen.de>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 021/148] netfilter: seqadj: re-load tcp header pointer after possible head reallocation
-Date:   Fri, 11 Jan 2019 15:13:19 +0100
-Message-Id: <20190111131115.167895873@linuxfoundation.org>
+        stable@vger.kernel.org,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>, bp@alien8.de,
+        hpa@zytor.com, dave.hansen@linux.intel.com, luto@kernel.org,
+        peterz@infradead.org, boris.ostrovsky@oracle.com, jgross@suse.com,
+        bhe@redhat.com, hans.van.kranenburg@mendix.com, linux-mm@kvack.org,
+        xen-devel@lists.xenproject.org, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 030/148] x86/dump_pagetables: Fix LDT remap address marker
+Date:   Fri, 11 Jan 2019 15:13:28 +0100
+Message-Id: <20190111131115.509913664@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131114.337122649@linuxfoundation.org>
 References: <20190111131114.337122649@linuxfoundation.org>
@@ -69,63 +70,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 530aad77010b81526586dfc09130ec875cd084e4 ]
+[ Upstream commit 254eb5505ca0ca749d3a491fc6668b6c16647a99 ]
 
-When adjusting sack block sequence numbers, skb_make_writable() gets
-called to make sure tcp options are all in the linear area, and buffer
-is not shared.
+The LDT remap placement has been changed. It's now placed before the direct
+mapping in the kernel virtual address space for both paging modes.
 
-This can cause tcp header pointer to get reallocated, so we must
-reaload it to avoid memory corruption.
+Change address markers order accordingly.
 
-This bug pre-dates git history.
-
-Reported-by: Neel Mehta <nmehta@google.com>
-Reported-by: Shane Huntley <shuntley@google.com>
-Reported-by: Heather Adkins <argv@google.com>
-Signed-off-by: Florian Westphal <fw@strlen.de>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Fixes: d52888aa2753 ("x86/mm: Move LDT remap out of KASLR region on 5-level paging")
+Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: bp@alien8.de
+Cc: hpa@zytor.com
+Cc: dave.hansen@linux.intel.com
+Cc: luto@kernel.org
+Cc: peterz@infradead.org
+Cc: boris.ostrovsky@oracle.com
+Cc: jgross@suse.com
+Cc: bhe@redhat.com
+Cc: hans.van.kranenburg@mendix.com
+Cc: linux-mm@kvack.org
+Cc: xen-devel@lists.xenproject.org
+Link: https://lkml.kernel.org/r/20181130202328.65359-3-kirill.shutemov@linux.intel.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/netfilter/nf_conntrack_seqadj.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ arch/x86/mm/dump_pagetables.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-diff --git a/net/netfilter/nf_conntrack_seqadj.c b/net/netfilter/nf_conntrack_seqadj.c
-index a975efd6b8c3..9da303461069 100644
---- a/net/netfilter/nf_conntrack_seqadj.c
-+++ b/net/netfilter/nf_conntrack_seqadj.c
-@@ -115,12 +115,12 @@ static void nf_ct_sack_block_adjust(struct sk_buff *skb,
- /* TCP SACK sequence number adjustment */
- static unsigned int nf_ct_sack_adjust(struct sk_buff *skb,
- 				      unsigned int protoff,
--				      struct tcphdr *tcph,
- 				      struct nf_conn *ct,
- 				      enum ip_conntrack_info ctinfo)
- {
--	unsigned int dir, optoff, optend;
-+	struct tcphdr *tcph = (void *)skb->data + protoff;
- 	struct nf_conn_seqadj *seqadj = nfct_seqadj(ct);
-+	unsigned int dir, optoff, optend;
- 
- 	optoff = protoff + sizeof(struct tcphdr);
- 	optend = protoff + tcph->doff * 4;
-@@ -128,6 +128,7 @@ static unsigned int nf_ct_sack_adjust(struct sk_buff *skb,
- 	if (!skb_make_writable(skb, optend))
- 		return 0;
- 
-+	tcph = (void *)skb->data + protoff;
- 	dir = CTINFO2DIR(ctinfo);
- 
- 	while (optoff < optend) {
-@@ -207,7 +208,7 @@ int nf_ct_seq_adjust(struct sk_buff *skb,
- 		 ntohl(newack));
- 	tcph->ack_seq = newack;
- 
--	res = nf_ct_sack_adjust(skb, protoff, tcph, ct, ctinfo);
-+	res = nf_ct_sack_adjust(skb, protoff, ct, ctinfo);
- out:
- 	spin_unlock_bh(&ct->lock);
- 
+diff --git a/arch/x86/mm/dump_pagetables.c b/arch/x86/mm/dump_pagetables.c
+index 073755c89126..c05a818224bb 100644
+--- a/arch/x86/mm/dump_pagetables.c
++++ b/arch/x86/mm/dump_pagetables.c
+@@ -53,10 +53,10 @@ struct addr_marker {
+ enum address_markers_idx {
+ 	USER_SPACE_NR = 0,
+ 	KERNEL_SPACE_NR,
+-	LOW_KERNEL_NR,
+-#if defined(CONFIG_MODIFY_LDT_SYSCALL) && defined(CONFIG_X86_5LEVEL)
++#ifdef CONFIG_MODIFY_LDT_SYSCALL
+ 	LDT_NR,
+ #endif
++	LOW_KERNEL_NR,
+ 	VMALLOC_START_NR,
+ 	VMEMMAP_START_NR,
+ #ifdef CONFIG_KASAN
+@@ -64,9 +64,6 @@ enum address_markers_idx {
+ 	KASAN_SHADOW_END_NR,
+ #endif
+ 	CPU_ENTRY_AREA_NR,
+-#if defined(CONFIG_MODIFY_LDT_SYSCALL) && !defined(CONFIG_X86_5LEVEL)
+-	LDT_NR,
+-#endif
+ #ifdef CONFIG_X86_ESPFIX64
+ 	ESPFIX_START_NR,
+ #endif
 -- 
 2.19.1
 
