@@ -7,46 +7,50 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A5F4C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:42:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08866C43612
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:42:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C5EC20872
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:42:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C4A50206B6
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:42:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547217768;
-	bh=2Bfq2t4gLVive4tIbhGkyAzlpIxxWfJU6LqhtumUFUQ=;
+	s=default; t=1547217771;
+	bh=p7gw9CE4s7AUU+M+A/fzPexDPhhZiLwYOVUfmiaPs28=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=HTvNWmNYrfmBwJyKd5135+w/vyN4IAYTD+/caKg7+kNAxcvq0MKGkVV2Yz5gZvlAo
-	 TtBfGK6DY44XniBRFZkos50VzrEtwVXXEFNsK1b+Wj7PvZ75werZYAiz7c7rAyQUlJ
-	 4W8DWtVB09Q7l8Sn9WLbcFNg0cH14LxCTwz7e0I4=
+	b=nbtVBWkruRmLR5ejwnZYEFK+dZi/vaTBCXDkCcOYZT7T6nsoE3WNX0uYZROnvV+CP
+	 e/+e3Cbf4lliTOtYmAzAuPh6+j8xJpW53uY6YPJ+tJVPFrFrAlPLPXbhVMSsBVso8C
+	 y0QvTMs2/IebOi/O6k258g600o6XUYKS/FYK0Z8o=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404232AbfAKOmr (ORCPT
+        id S2404246AbfAKOmv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:42:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35498 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:42:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35562 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404218AbfAKOmn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:42:43 -0500
+        id S2404233AbfAKOms (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:42:48 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7E63320872;
-        Fri, 11 Jan 2019 14:42:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 82C622063F;
+        Fri, 11 Jan 2019 14:42:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547217763;
-        bh=2Bfq2t4gLVive4tIbhGkyAzlpIxxWfJU6LqhtumUFUQ=;
+        s=default; t=1547217768;
+        bh=p7gw9CE4s7AUU+M+A/fzPexDPhhZiLwYOVUfmiaPs28=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=usImlUFPWJo5H/lNImPm7fpisF7W2dSwjmokhsMpoAX/Taqnzgp5h2qYYTynR+O43
-         VyBmWi0SrC4Q8RWkBWDCsDYsW5I2xX6H24OxG97Mt0hsO2zGKCHOqbsczgGceJQ5GC
-         r+Mf/u9RYEpTkjJvApv4YJW31dHOxWxSyxxfnUvU=
+        b=O72kVGm4Bas2oknX+Pyi2LTqi6PK+7XSmVTlgjHpfjwfPEhy+XF9NzPYhZGbStxGM
+         qD11b0Tq5I9gPm07Xf5C2hWNQ2ha+Xa11XWLRfZg13NnhqjY6fczn66WZPR+w7h8UN
+         u4vZJGn1SWBs1u+5BecJwb2tg4aeEaoTA0AN3njU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vasily Averin <vvs@virtuozzo.com>,
-        David Teigland <teigland@redhat.com>, stable@kernel.org
-Subject: [PATCH 4.20 30/65] dlm: possible memory leak on error path in create_lkb()
-Date:   Fri, 11 Jan 2019 15:15:16 +0100
-Message-Id: <20190111131100.497920209@linuxfoundation.org>
+        stable@vger.kernel.org, Michal Hocko <mhocko@suse.com>,
+        Oscar Salvador <osalvador@suse.com>,
+        David Hildenbrand <david@redhat.com>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.20 05/65] hwpoison, memory_hotplug: allow hwpoisoned pages to be offlined
+Date:   Fri, 11 Jan 2019 15:14:51 +0100
+Message-Id: <20190111131056.878077905@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131055.331350141@linuxfoundation.org>
 References: <20190111131055.331350141@linuxfoundation.org>
@@ -65,30 +69,169 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vasily Averin <vvs@virtuozzo.com>
+From: Michal Hocko <mhocko@suse.com>
 
-commit 23851e978f31eda8b2d01bd410d3026659ca06c7 upstream.
+commit b15c87263a69272423771118c653e9a1d0672caa upstream.
 
-Fixes 3d6aa675fff9 ("dlm: keep lkbs in idr")
-Cc: stable@kernel.org # 3.1
+We have received a bug report that an injected MCE about faulty memory
+prevents memory offline to succeed on 4.4 base kernel.  The underlying
+reason was that the HWPoison page has an elevated reference count and the
+migration keeps failing.  There are two problems with that.  First of all
+it is dubious to migrate the poisoned page because we know that accessing
+that memory is possible to fail.  Secondly it doesn't make any sense to
+migrate a potentially broken content and preserve the memory corruption
+over to a new location.
 
-Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
-Signed-off-by: David Teigland <teigland@redhat.com>
+Oscar has found out that 4.4 and the current upstream kernels behave
+slightly differently with his simply testcase
+
+===
+
+int main(void)
+{
+        int ret;
+        int i;
+        int fd;
+        char *array = malloc(4096);
+        char *array_locked = malloc(4096);
+
+        fd = open("/tmp/data", O_RDONLY);
+        read(fd, array, 4095);
+
+        for (i = 0; i < 4096; i++)
+                array_locked[i] = 'd';
+
+        ret = mlock((void *)PAGE_ALIGN((unsigned long)array_locked), sizeof(array_locked));
+        if (ret)
+                perror("mlock");
+
+        sleep (20);
+
+        ret = madvise((void *)PAGE_ALIGN((unsigned long)array_locked), 4096, MADV_HWPOISON);
+        if (ret)
+                perror("madvise");
+
+        for (i = 0; i < 4096; i++)
+                array_locked[i] = 'd';
+
+        return 0;
+}
+===
+
++ offline this memory.
+
+In 4.4 kernels he saw the hwpoisoned page to be returned back to the LRU
+list
+kernel:  [<ffffffff81019ac9>] dump_trace+0x59/0x340
+kernel:  [<ffffffff81019e9a>] show_stack_log_lvl+0xea/0x170
+kernel:  [<ffffffff8101ac71>] show_stack+0x21/0x40
+kernel:  [<ffffffff8132bb90>] dump_stack+0x5c/0x7c
+kernel:  [<ffffffff810815a1>] warn_slowpath_common+0x81/0xb0
+kernel:  [<ffffffff811a275c>] __pagevec_lru_add_fn+0x14c/0x160
+kernel:  [<ffffffff811a2eed>] pagevec_lru_move_fn+0xad/0x100
+kernel:  [<ffffffff811a334c>] __lru_cache_add+0x6c/0xb0
+kernel:  [<ffffffff81195236>] add_to_page_cache_lru+0x46/0x70
+kernel:  [<ffffffffa02b4373>] extent_readpages+0xc3/0x1a0 [btrfs]
+kernel:  [<ffffffff811a16d7>] __do_page_cache_readahead+0x177/0x200
+kernel:  [<ffffffff811a18c8>] ondemand_readahead+0x168/0x2a0
+kernel:  [<ffffffff8119673f>] generic_file_read_iter+0x41f/0x660
+kernel:  [<ffffffff8120e50d>] __vfs_read+0xcd/0x140
+kernel:  [<ffffffff8120e9ea>] vfs_read+0x7a/0x120
+kernel:  [<ffffffff8121404b>] kernel_read+0x3b/0x50
+kernel:  [<ffffffff81215c80>] do_execveat_common.isra.29+0x490/0x6f0
+kernel:  [<ffffffff81215f08>] do_execve+0x28/0x30
+kernel:  [<ffffffff81095ddb>] call_usermodehelper_exec_async+0xfb/0x130
+kernel:  [<ffffffff8161c045>] ret_from_fork+0x55/0x80
+
+And that latter confuses the hotremove path because an LRU page is
+attempted to be migrated and that fails due to an elevated reference
+count.  It is quite possible that the reuse of the HWPoisoned page is some
+kind of fixed race condition but I am not really sure about that.
+
+With the upstream kernel the failure is slightly different.  The page
+doesn't seem to have LRU bit set but isolate_movable_page simply fails and
+do_migrate_range simply puts all the isolated pages back to LRU and
+therefore no progress is made and scan_movable_pages finds same set of
+pages over and over again.
+
+Fix both cases by explicitly checking HWPoisoned pages before we even try
+to get reference on the page, try to unmap it if it is still mapped.  As
+explained by Naoya:
+
+: Hwpoison code never unmapped those for no big reason because
+: Ksm pages never dominate memory, so we simply didn't have strong
+: motivation to save the pages.
+
+Also put WARN_ON(PageLRU) in case there is a race and we can hit LRU
+HWPoison pages which shouldn't happen but I couldn't convince myself about
+that.  Naoya has noted the following:
+
+: Theoretically no such gurantee, because try_to_unmap() doesn't have a
+: guarantee of success and then memory_failure() returns immediately
+: when hwpoison_user_mappings fails.
+: Or the following code (comes after hwpoison_user_mappings block) also impli=
+: es
+: that the target page can still have PageLRU flag.
+:
+:         /*
+:          * Torn down by someone else?
+:          */
+:         if (PageLRU(p) && !PageSwapCache(p) && p->mapping =3D=3D NULL) {
+:                 action_result(pfn, MF_MSG_TRUNCATED_LRU, MF_IGNORED);
+:                 res =3D -EBUSY;
+:                 goto out;
+:         }
+:
+: So I think it's OK to keep "if (WARN_ON(PageLRU(page)))" block in
+: current version of your patch.
+
+Link: http://lkml.kernel.org/r/20181206120135.14079-1-mhocko@kernel.org
+Signed-off-by: Michal Hocko <mhocko@suse.com>
+Reviewed-by: Oscar Salvador <osalvador@suse.com>
+Debugged-by: Oscar Salvador <osalvador@suse.com>
+Tested-by: Oscar Salvador <osalvador@suse.com>
+Acked-by: David Hildenbrand <david@redhat.com>
+Acked-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/dlm/lock.c |    1 +
- 1 file changed, 1 insertion(+)
+ mm/memory_hotplug.c |   16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
---- a/fs/dlm/lock.c
-+++ b/fs/dlm/lock.c
-@@ -1209,6 +1209,7 @@ static int create_lkb(struct dlm_ls *ls,
+--- a/mm/memory_hotplug.c
++++ b/mm/memory_hotplug.c
+@@ -34,6 +34,7 @@
+ #include <linux/hugetlb.h>
+ #include <linux/memblock.h>
+ #include <linux/compaction.h>
++#include <linux/rmap.h>
  
- 	if (rv < 0) {
- 		log_error(ls, "create_lkb idr error %d", rv);
-+		dlm_free_lkb(lkb);
- 		return rv;
- 	}
+ #include <asm/tlbflush.h>
  
+@@ -1369,6 +1370,21 @@ do_migrate_range(unsigned long start_pfn
+ 			pfn = page_to_pfn(compound_head(page))
+ 				+ hpage_nr_pages(page) - 1;
+ 
++		/*
++		 * HWPoison pages have elevated reference counts so the migration would
++		 * fail on them. It also doesn't make any sense to migrate them in the
++		 * first place. Still try to unmap such a page in case it is still mapped
++		 * (e.g. current hwpoison implementation doesn't unmap KSM pages but keep
++		 * the unmap as the catch all safety net).
++		 */
++		if (PageHWPoison(page)) {
++			if (WARN_ON(PageLRU(page)))
++				isolate_lru_page(page);
++			if (page_mapped(page))
++				try_to_unmap(page, TTU_IGNORE_MLOCK | TTU_IGNORE_ACCESS);
++			continue;
++		}
++
+ 		if (!get_page_unless_zero(page))
+ 			continue;
+ 		/*
 
 
