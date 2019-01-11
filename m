@@ -4,51 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4866C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:03:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B239CC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:03:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8AAFA21841
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:03:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7803820874
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:03:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547219006;
-	bh=iKtJUPYzLlo0KdwACrmCxr6zAQaTuA7Seg9wmN2jLpU=;
+	s=default; t=1547219013;
+	bh=vlET32D9X7aBfB6LNIc1rEnO6lnQPXSZku33gWuvhwM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=yn+kHX96mH2/PonibgaPXQDBaHFa/O4aaDxtOujob9yeSBbkVCcAU+2imAyRxiif1
-	 nq/aAev0F6gdoNrsqeQwMRYXB34uvykZXjaPNztk8RgK4ghiwydfZaY9uh29ol1kJx
-	 m+HF2H6m294nBe6FtK+lYOmPl/BdOqfpQWFd0+7I=
+	b=mbuWe1eXstjn2D2rPcTtaLfjEP0No8llxXlesC/wMzJFTVLF8Ua30OzvqNCjSfaxK
+	 1gFhLEn8hIYxrhXTRwBRwuBhg2IoIiQscZaCmOZYSErdyTv8P2Lyoyj+/bzNTqBFPs
+	 +XpOjPLTjZ9VaLWFjza1QdF0cnlk+RMhIraAWTTs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389073AbfAKObA (ORCPT
+        id S2389039AbfAKOau (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:31:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50432 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:30:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50206 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388279AbfAKOa4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:30:56 -0500
+        id S2389018AbfAKOap (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:30:45 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 942932063F;
-        Fri, 11 Jan 2019 14:30:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0FB5121848;
+        Fri, 11 Jan 2019 14:30:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547217056;
-        bh=iKtJUPYzLlo0KdwACrmCxr6zAQaTuA7Seg9wmN2jLpU=;
+        s=default; t=1547217044;
+        bh=vlET32D9X7aBfB6LNIc1rEnO6lnQPXSZku33gWuvhwM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QqQmUZp4/w2zI3A6JMbbjp8LePcVEHnxHTxeujy2zBH86DFBl8PBf2xSWqdYaabNr
-         6dFvIOqhMVZL+1GsMuxhRrg/JhHYa1DdtBOq1mcr8PpBd6RqtJ+joCG6zQPuWAy3Wi
-         DE8QlGr3EMbfELNX5jjYQUPxK0ro3XWTQWPeZhLE=
+        b=HhdfIYr1VlNnndrLyX88XvYFUadHMrnLfjVHaVJQKIZwwlXIXe5N/k6ddPu1ik6je
+         nTmtzkeNTTzf6INmSo79u0s37Y4nyz9IsQhwZOs57qJw1mgpq7oOCYQs64BTTuZWqA
+         Mon1dK+JMy8TRfNLW2yx02CrBawlVtxQtUCtC1nw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Fabio Estevam <festevam@gmail.com>,
-        Troy Kisky <troy.kisky@boundarydevices.com>,
-        Shawn Guo <shawnguo@kernel.org>,
+        stable@vger.kernel.org, Pan Bian <bianpan2016@163.com>,
+        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 006/105] ARM: dts: imx7d-nitrogen7: Fix the description of the Wifi clock
-Date:   Fri, 11 Jan 2019 15:13:37 +0100
-Message-Id: <20190111131103.578763945@linuxfoundation.org>
+Subject: [PATCH 4.14 021/105] netfilter: ipset: do not call ipset_nest_end after nla_nest_cancel
+Date:   Fri, 11 Jan 2019 15:13:52 +0100
+Message-Id: <20190111131105.057282403@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131102.899065735@linuxfoundation.org>
 References: <20190111131102.899065735@linuxfoundation.org>
@@ -67,55 +67,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit f15096f12a4e9340168df5fdd9201aa8ed60d59e ]
+[ Upstream commit 708abf74dd87f8640871b814faa195fb5970b0e3 ]
 
-According to bindings/regulator/fixed-regulator.txt the 'clocks' and
-'clock-names' properties are not valid ones.
+In the error handling block, nla_nest_cancel(skb, atd) is called to
+cancel the nest operation. But then, ipset_nest_end(skb, atd) is
+unexpected called to end the nest operation. This patch calls the
+ipset_nest_end only on the branch that nla_nest_cancel is not called.
 
-In order to turn on the Wifi clock the correct location for describing
-the CLKO2 clock is via a mmc-pwrseq handle, so do it accordingly.
-
-Fixes: 56354959cfec ("ARM: dts: imx: add Boundary Devices Nitrogen7 board")
-Signed-off-by: Fabio Estevam <festevam@gmail.com>
-Acked-by: Troy Kisky <troy.kisky@boundarydevices.com>
-Signed-off-by: Shawn Guo <shawnguo@kernel.org>
+Fixes: 45040978c899 ("netfilter: ipset: Fix set:list type crash when flush/dump set in parallel")
+Signed-off-by: Pan Bian <bianpan2016@163.com>
+Signed-off-by: Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/imx7d-nitrogen7.dts | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ net/netfilter/ipset/ip_set_list_set.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/imx7d-nitrogen7.dts b/arch/arm/boot/dts/imx7d-nitrogen7.dts
-index e7998308861f..f8caea16bc2d 100644
---- a/arch/arm/boot/dts/imx7d-nitrogen7.dts
-+++ b/arch/arm/boot/dts/imx7d-nitrogen7.dts
-@@ -117,13 +117,17 @@
- 		compatible = "regulator-fixed";
- 		regulator-min-microvolt = <3300000>;
- 		regulator-max-microvolt = <3300000>;
--		clocks = <&clks IMX7D_CLKO2_ROOT_DIV>;
--		clock-names = "slow";
- 		regulator-name = "reg_wlan";
- 		startup-delay-us = <70000>;
- 		gpio = <&gpio4 21 GPIO_ACTIVE_HIGH>;
- 		enable-active-high;
- 	};
-+
-+	usdhc2_pwrseq: usdhc2_pwrseq {
-+		compatible = "mmc-pwrseq-simple";
-+		clocks = <&clks IMX7D_CLKO2_ROOT_DIV>;
-+		clock-names = "ext_clock";
-+	};
- };
- 
- &adc1 {
-@@ -430,6 +434,7 @@
- 	bus-width = <4>;
- 	non-removable;
- 	vmmc-supply = <&reg_wlan>;
-+	mmc-pwrseq = <&usdhc2_pwrseq>;
- 	cap-power-off-card;
- 	keep-power-in-suspend;
- 	status = "okay";
+diff --git a/net/netfilter/ipset/ip_set_list_set.c b/net/netfilter/ipset/ip_set_list_set.c
+index 75d52aed6fdb..e563921e6af5 100644
+--- a/net/netfilter/ipset/ip_set_list_set.c
++++ b/net/netfilter/ipset/ip_set_list_set.c
+@@ -542,8 +542,8 @@ list_set_list(const struct ip_set *set,
+ 		ret = -EMSGSIZE;
+ 	} else {
+ 		cb->args[IPSET_CB_ARG0] = i;
++		ipset_nest_end(skb, atd);
+ 	}
+-	ipset_nest_end(skb, atd);
+ out:
+ 	rcu_read_unlock();
+ 	return ret;
 -- 
 2.19.1
 
