@@ -4,41 +4,41 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2962C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:27:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02687C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:27:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A45892177B
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:27:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C66372183F
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:27:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547216851;
-	bh=6k6VdfncHjJZY3jHVB8tLiUgm7Y5EIvdxnICTg5EiEg=;
+	s=default; t=1547216855;
+	bh=pdDmRlSXUVw9Wx9f9kO7VVkgZ3AzuUOOLjSu5J5DpzY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=wukuXP0ogDvLM9q+WJuqMo7KiDBJ/6htoVZDMGtKJj2TKSDlEQseaTe4W6l3oxjRY
-	 hPl0I+2J5RfR2wByqDaq7gukpo+i3lPkPrEdXY8PFIVjp3ahK00d6ehfDrNyVjCIYo
-	 NUmfv/74xfl0hqvKvowRa/C5jwF+9H8LdcsrFRpY=
+	b=kSwbCF0+ffXEiWJT77D3Tod4f4sFVIWnahzPlOpbyaAFCoc3bwCge7Vu2o4LLolxp
+	 4iVNX1p2YwAOgFXAt5qLkIsmFLDDgKpDmBYNA0TANs9E9Etouk7zdYdpntmgNhp+5S
+	 xzPb00CBTm/7WWSyGn0qa2NaKYRaDn/CfEbma7uQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388331AbfAKO1a (ORCPT
+        id S2388343AbfAKO1e (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:27:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45676 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:27:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45756 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388089AbfAKO12 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:27:28 -0500
+        id S2388089AbfAKO1b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:27:31 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3AAB02177B;
-        Fri, 11 Jan 2019 14:27:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0AF082177B;
+        Fri, 11 Jan 2019 14:27:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547216847;
-        bh=6k6VdfncHjJZY3jHVB8tLiUgm7Y5EIvdxnICTg5EiEg=;
+        s=default; t=1547216850;
+        bh=pdDmRlSXUVw9Wx9f9kO7VVkgZ3AzuUOOLjSu5J5DpzY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YcFfxSSfB3BePKAolcFb8px+a0VoIuCshsgScJr2NGwlB02k3RIU4AmM23Ix0nR3d
-         gTsoxAxblqehPILQoY01FcwWv0XDwI94jpnqmeDOyrdUsg2UpogGDVGlBzLYV4C5jL
-         HnLKrFHTU2MGYMz5eTIVgn9J88ZFDn159alIo1Rs=
+        b=t1tF4ciDI5ui7wIDAISQvZLIXpdgXWmArIlr875sM9u5Rl1qeT6wiJF7Jmz/hAe+W
+         slwyqauuB7GTBpOIaRZtcben7GUMLXGuuiaEM/VfNn0YnvrWyjq5U9V8WXVMNS2zB1
+         Xh4W804zjyWBI+Fy5V0/fzuhb57Q/ocMs4fwysh0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -47,9 +47,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Ariel Elior <ariel.elior@cavium.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 13/63] bnx2x: Remove configured vlans as part of unload sequence.
-Date:   Fri, 11 Jan 2019 15:14:16 +0100
-Message-Id: <20190111131048.143317216@linuxfoundation.org>
+Subject: [PATCH 4.9 14/63] bnx2x: Send update-svid ramrod with retry/poll flags enabled
+Date:   Fri, 11 Jan 2019 15:14:17 +0100
+Message-Id: <20190111131048.301257980@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131046.387528003@linuxfoundation.org>
 References: <20190111131046.387528003@linuxfoundation.org>
@@ -68,112 +68,70 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 04f05230c5c13b1384f66f5186a68d7499e34622 ]
+[ Upstream commit 9061193c4ee065d3240fde06767c2e06ec61decc ]
 
-Vlans are not getting removed when drivers are unloaded. The recent storm
-firmware versions had added safeguards against re-configuring an already
-configured vlan. As a result, PF inner reload flows (e.g., mtu change)
-might trigger an assertion.
-This change is going to remove vlans (same as we do for MACs) when doing
-a chip cleanup during unload.
+Driver sends update-SVID ramrod in the MFW notification path.
+If there is a pending ramrod, driver doesn't retry the command
+and storm firmware will never be updated with the SVID value.
+The patch adds changes to send update-svid ramrod in process context with
+retry/poll flags set.
 
 Signed-off-by: Sudarsana Reddy Kalluru <Sudarsana.Kalluru@cavium.com>
 Signed-off-by: Ariel Elior <ariel.elior@cavium.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../net/ethernet/broadcom/bnx2x/bnx2x_main.c  | 34 +++++++++++++++----
- .../net/ethernet/broadcom/bnx2x/bnx2x_sp.h    |  4 ++-
- 2 files changed, 30 insertions(+), 8 deletions(-)
+ drivers/net/ethernet/broadcom/bnx2x/bnx2x.h      |  1 +
+ drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c | 10 +++++++++-
+ 2 files changed, 10 insertions(+), 1 deletion(-)
 
+diff --git a/drivers/net/ethernet/broadcom/bnx2x/bnx2x.h b/drivers/net/ethernet/broadcom/bnx2x/bnx2x.h
+index d5e4c42662b6..162b809422f4 100644
+--- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x.h
++++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x.h
+@@ -1278,6 +1278,7 @@ enum sp_rtnl_flag {
+ 	BNX2X_SP_RTNL_TX_STOP,
+ 	BNX2X_SP_RTNL_GET_DRV_VERSION,
+ 	BNX2X_SP_RTNL_CHANGE_UDP_PORT,
++	BNX2X_SP_RTNL_UPDATE_SVID,
+ };
+ 
+ enum bnx2x_iov_flag {
 diff --git a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
-index 77f53e4122c3..4c412c52bcde 100644
+index 4c412c52bcde..0352089d0d98 100644
 --- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
 +++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
-@@ -8462,6 +8462,7 @@ int bnx2x_set_vlan_one(struct bnx2x *bp, u16 vlan,
- 	/* Fill a user request section if needed */
- 	if (!test_bit(RAMROD_CONT, ramrod_flags)) {
- 		ramrod_param.user_req.u.vlan.vlan = vlan;
-+		__set_bit(BNX2X_VLAN, &ramrod_param.user_req.vlan_mac_flags);
- 		/* Set the command: ADD or DEL */
- 		if (set)
- 			ramrod_param.user_req.cmd = BNX2X_VLAN_MAC_ADD;
-@@ -8482,6 +8483,27 @@ int bnx2x_set_vlan_one(struct bnx2x *bp, u16 vlan,
- 	return rc;
- }
+@@ -2925,6 +2925,10 @@ static void bnx2x_handle_update_svid_cmd(struct bnx2x *bp)
+ 	func_params.f_obj = &bp->func_obj;
+ 	func_params.cmd = BNX2X_F_CMD_SWITCH_UPDATE;
  
-+static int bnx2x_del_all_vlans(struct bnx2x *bp)
-+{
-+	struct bnx2x_vlan_mac_obj *vlan_obj = &bp->sp_objs[0].vlan_obj;
-+	unsigned long ramrod_flags = 0, vlan_flags = 0;
-+	struct bnx2x_vlan_entry *vlan;
-+	int rc;
++	/* Prepare parameters for function state transitions */
++	__set_bit(RAMROD_COMP_WAIT, &func_params.ramrod_flags);
++	__set_bit(RAMROD_RETRY, &func_params.ramrod_flags);
 +
-+	__set_bit(RAMROD_COMP_WAIT, &ramrod_flags);
-+	__set_bit(BNX2X_VLAN, &vlan_flags);
-+	rc = vlan_obj->delete_all(bp, vlan_obj, &vlan_flags, &ramrod_flags);
-+	if (rc)
-+		return rc;
-+
-+	/* Mark that hw forgot all entries */
-+	list_for_each_entry(vlan, &bp->vlan_reg, link)
-+		vlan->hw = false;
-+	bp->vlan_cnt = 0;
-+
-+	return 0;
-+}
-+
- int bnx2x_del_all_macs(struct bnx2x *bp,
- 		       struct bnx2x_vlan_mac_obj *mac_obj,
- 		       int mac_type, bool wait_for_comp)
-@@ -9320,6 +9342,11 @@ void bnx2x_chip_cleanup(struct bnx2x *bp, int unload_mode, bool keep_link)
- 		BNX2X_ERR("Failed to schedule DEL commands for UC MACs list: %d\n",
- 			  rc);
+ 	if (IS_MF_UFP(bp) || IS_MF_BD(bp)) {
+ 		int func = BP_ABS_FUNC(bp);
+ 		u32 val;
+@@ -4301,7 +4305,8 @@ static void bnx2x_attn_int_deasserted3(struct bnx2x *bp, u32 attn)
+ 				bnx2x_handle_eee_event(bp);
  
-+	/* Remove all currently configured VLANs */
-+	rc = bnx2x_del_all_vlans(bp);
-+	if (rc < 0)
-+		BNX2X_ERR("Failed to delete all VLANs\n");
+ 			if (val & DRV_STATUS_OEM_UPDATE_SVID)
+-				bnx2x_handle_update_svid_cmd(bp);
++				bnx2x_schedule_sp_rtnl(bp,
++					BNX2X_SP_RTNL_UPDATE_SVID, 0);
+ 
+ 			if (bp->link_vars.periodic_flags &
+ 			    PERIODIC_FLAGS_LINK_EVENT) {
+@@ -10369,6 +10374,9 @@ static void bnx2x_sp_rtnl_task(struct work_struct *work)
+ 			       &bp->sp_rtnl_state))
+ 		bnx2x_update_mng_version(bp);
+ 
++	if (test_and_clear_bit(BNX2X_SP_RTNL_UPDATE_SVID, &bp->sp_rtnl_state))
++		bnx2x_handle_update_svid_cmd(bp);
 +
- 	/* Disable LLH */
- 	if (!CHIP_IS_E1(bp))
- 		REG_WR(bp, NIG_REG_LLH0_FUNC_EN + port*8, 0);
-@@ -13007,13 +13034,6 @@ static void bnx2x_vlan_configure(struct bnx2x *bp, bool set_rx_mode)
- 
- int bnx2x_vlan_reconfigure_vid(struct bnx2x *bp)
- {
--	struct bnx2x_vlan_entry *vlan;
--
--	/* The hw forgot all entries after reload */
--	list_for_each_entry(vlan, &bp->vlan_reg, link)
--		vlan->hw = false;
--	bp->vlan_cnt = 0;
--
- 	/* Don't set rx mode here. Our caller will do it. */
- 	bnx2x_vlan_configure(bp, false);
- 
-diff --git a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_sp.h b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_sp.h
-index 0bf2fd470819..7a6e82db4231 100644
---- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_sp.h
-+++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_sp.h
-@@ -265,6 +265,7 @@ enum {
- 	BNX2X_ETH_MAC,
- 	BNX2X_ISCSI_ETH_MAC,
- 	BNX2X_NETQ_ETH_MAC,
-+	BNX2X_VLAN,
- 	BNX2X_DONT_CONSUME_CAM_CREDIT,
- 	BNX2X_DONT_CONSUME_CAM_CREDIT_DEST,
- };
-@@ -272,7 +273,8 @@ enum {
- #define BNX2X_VLAN_MAC_CMP_MASK	(1 << BNX2X_UC_LIST_MAC | \
- 				 1 << BNX2X_ETH_MAC | \
- 				 1 << BNX2X_ISCSI_ETH_MAC | \
--				 1 << BNX2X_NETQ_ETH_MAC)
-+				 1 << BNX2X_NETQ_ETH_MAC | \
-+				 1 << BNX2X_VLAN)
- #define BNX2X_VLAN_MAC_CMP_FLAGS(flags) \
- 	((flags) & BNX2X_VLAN_MAC_CMP_MASK)
- 
+ 	if (test_and_clear_bit(BNX2X_SP_RTNL_CHANGE_UDP_PORT,
+ 			       &bp->sp_rtnl_state)) {
+ 		if (bnx2x_udp_port_update(bp)) {
 -- 
 2.19.1
 
