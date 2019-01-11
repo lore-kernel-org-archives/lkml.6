@@ -2,113 +2,281 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A2DBC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 21:16:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50205C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 21:19:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E2846218A4
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 21:16:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="eA77T5rq"
+	by mail.kernel.org (Postfix) with ESMTP id 1A81221783
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 21:19:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726827AbfAKVQd (ORCPT
+        id S1725772AbfAKVTk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 16:16:33 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:41121 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725776AbfAKVQd (ORCPT
+        Fri, 11 Jan 2019 16:19:40 -0500
+Received: from asavdk3.altibox.net ([109.247.116.14]:52966 "EHLO
+        asavdk3.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725308AbfAKVTj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 16:16:33 -0500
-Received: by mail-lf1-f66.google.com with SMTP id c16so11787342lfj.8
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Jan 2019 13:16:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=FVPQ+uc2pT5ysrroM87Ozt7Y7jD9G0mxwnFLeDtmFoQ=;
-        b=eA77T5rqo34wHH7TnPy6G6LcAvd0iElkdh9JnxnMWk0Zu08fi+Mss1o0AzgP/VHQDe
-         dlnvX0hcn05gOMxAHo+kDApRxUk88AispuN60fMZc3ZFCcFqWQ9hzaSCnoIRtNRNg0q3
-         oXakvuV3YGtBd9AjJ0RsUSM6p7pUV+RkcDBTU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=FVPQ+uc2pT5ysrroM87Ozt7Y7jD9G0mxwnFLeDtmFoQ=;
-        b=oyrbRc+kHbCNBtdNiQOl+E4OH8zWGoewxDtX2Mwqk7d9U9VXsCr2ol++D641Ntt9mn
-         pMiBrQ1k4Sy0myk5b5erTZBhB8hvcUfi79xuDu4/J+1xmjteNV51LvMKJBLWlbfMrf6u
-         EKVFpZr4r0YdibrtvVKT5TwF+PHJtmZ08UPlXWsDNkZCh4xLexHGkJS5N+JYIOc6yR+E
-         cE1lOCHHYqgrl0B/03TSbxnyna8yghxRA7TQBPiuKiA5enu0bxwfSSDg0iLeh0KWeLFX
-         JN4RUUwS1JpiT6u+RV4RXmutsA3ApGXf+8g7bXlrNcIDKAy8E/iN+CnDbN2LJES8oW2A
-         wN7w==
-X-Gm-Message-State: AJcUukeVZ4Sl4lOP+XkYrfCvvq+/aNW54u7vSZE6RoOhk7b9Y3TAI5xv
-        BaBgf6nqJUkLL/b5bWjDryygfJHJDkU=
-X-Google-Smtp-Source: ALg8bN6G0almGry2UnBGVNHkeIitRZWJV37xcYzJB/oyS1VOfawjqBP8Xn36yriLXid0ZX8voPWuIQ==
-X-Received: by 2002:a19:ced3:: with SMTP id e202mr8866728lfg.13.1547241389793;
-        Fri, 11 Jan 2019 13:16:29 -0800 (PST)
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com. [209.85.167.50])
-        by smtp.gmail.com with ESMTPSA id u26-v6sm15827468lji.22.2019.01.11.13.16.29
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 11 Jan 2019 13:16:29 -0800 (PST)
-Received: by mail-lf1-f50.google.com with SMTP id a8so11790326lfk.5
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Jan 2019 13:16:29 -0800 (PST)
-X-Received: by 2002:a19:cbcc:: with SMTP id b195mr9444235lfg.117.1547241063794;
- Fri, 11 Jan 2019 13:11:03 -0800 (PST)
+        Fri, 11 Jan 2019 16:19:39 -0500
+Received: from ravnborg.org (unknown [158.248.194.18])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by asavdk3.altibox.net (Postfix) with ESMTPS id 7AA4820020;
+        Fri, 11 Jan 2019 22:19:33 +0100 (CET)
+Date:   Fri, 11 Jan 2019 22:19:31 +0100
+From:   Sam Ravnborg <sam@ravnborg.org>
+To:     Jagan Teki <jagan@amarulasolutions.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        David Airlie <airlied@linux.ie>, Sean Paul <sean@poorly.run>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-amarula@amarulasolutions.com
+Subject: Re: [PATCH V7 2/2] drm/panel: Add Sitronix ST7701 panel driver
+Message-ID: <20190111211931.GA29735@ravnborg.org>
+References: <20190111124714.19566-1-jagan@amarulasolutions.com>
+ <20190111124714.19566-2-jagan@amarulasolutions.com>
 MIME-Version: 1.0
-References: <cover.1547073843.git.jpoimboe@redhat.com> <20190110203023.GL2861@worktop.programming.kicks-ass.net>
- <20190110205226.iburt6mrddsxnjpk@treble> <CAHk-=whR7LzKcuB9Z2km1T25DUkJcbE9rNhCzApAPADbDqMhmQ@mail.gmail.com>
- <CALCETrWBwTVHWXahVXMMBL4QA1f+YdKgv1XANXPsk86FjFFH2Q@mail.gmail.com>
- <B374297A-8298-4CED-8EC0-6A39BDBA5F05@vmware.com> <20190111151525.tf7lhuycyyvjjxez@treble>
- <CAHk-=wjJm8DpCsw=Wno01q4VFqUeiLKE8QmbAtUJurYhn3jRqA@mail.gmail.com>
- <20190111200420.qtyffayxceysoarf@treble> <CAHk-=whLu9kG3dqgXUkCrNrTp0NVtdOOWxvonXTfhtq-krXo+Q@mail.gmail.com>
- <20190111203135.5clurevf34bkiy3o@treble> <CAHk-=whKabsg3N4uHHFkHXXf_mi6=T2OvkC-OUNG8Lt-bsCjFg@mail.gmail.com>
- <CALCETrXZdzNS=Bbv=qyM8iBC82QWOQqcfN1GFfcn6UHvePatHQ@mail.gmail.com>
-In-Reply-To: <CALCETrXZdzNS=Bbv=qyM8iBC82QWOQqcfN1GFfcn6UHvePatHQ@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 11 Jan 2019 13:10:47 -0800
-X-Gmail-Original-Message-ID: <CAHk-=whQJ-gj2M4ZJj8LnZXBK9k3fiRVjAXD9+M5D2Ja+N2mug@mail.gmail.com>
-Message-ID: <CAHk-=whQJ-gj2M4ZJj8LnZXBK9k3fiRVjAXD9+M5D2Ja+N2mug@mail.gmail.com>
-Subject: Re: [PATCH v3 0/6] Static calls
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Josh Poimboeuf <jpoimboe@redhat.com>,
-        Nadav Amit <namit@vmware.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Jason Baron <jbaron@akamai.com>, Jiri Kosina <jkosina@suse.cz>,
-        David Laight <David.Laight@aculab.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Julia Cartwright <julia@ni.com>, Jessica Yu <jeyu@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Edward Cree <ecree@solarflare.com>,
-        Daniel Bristot de Oliveira <bristot@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190111124714.19566-2-jagan@amarulasolutions.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-CMAE-Score: 0
+X-CMAE-Analysis: v=2.3 cv=dqr19Wo4 c=1 sm=1 tr=0
+        a=UWs3HLbX/2nnQ3s7vZ42gw==:117 a=UWs3HLbX/2nnQ3s7vZ42gw==:17
+        a=kj9zAlcOel0A:10 a=k1dyMpTxz__Fw_ammmUA:9 a=J2CCd2KcDSp0Zr6i:21
+        a=KSCQr6G_N1XjhTh8:21 a=CjuIK1q_8ugA:10
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 11, 2019 at 1:05 PM Andy Lutomirski <luto@kernel.org> wrote:
->
-> > Yeah, my suggestion doesn't allow for batching, since it would
-> > basically generate one trampoline for every rewritten instruction.
->
-> Sure it does.  Just make 1000 trampolines and patch 1000 sites in a
-> batch :)  As long as the number of trampolines is smallish (e.g. fits
-> in a page), then we should be in good shape.
+Hi Jagan.
 
-Yeah, I guess that's true.
+Gave this another more detailed read - triggered some additional comments.
+Depite the comments it looks good, and this is all more or
+less cosmetic improvements.
 
-But let's not worry about it. I don't think we do batching for any
-alternative instruction rewriting right now, do we?
+	Sam
 
-             Linus
+> +struct st7701_panel_desc {
+> +	const struct drm_display_mode *mode;
+> +	unsigned int lanes;
+> +	unsigned long flags;
+> +	enum mipi_dsi_pixel_format format;
+> +	const char *const *supply_names;
+> +	unsigned int num_supplies;
+> +	unsigned int panel_sleep_delay;
+> +};
+> +
+> +struct st7701 {
+> +	struct drm_panel panel;
+> +	struct mipi_dsi_device *dsi;
+> +	const struct st7701_panel_desc *desc;
+> +
+> +	struct backlight_device *backlight;
+> +	struct regulator_bulk_data *supplies;
+> +	unsigned int num_supplies;
+I cannot see that num_supplies in this struct are used?
+
+
+> +	struct gpio_desc *reset;
+> +	unsigned int sleep_delay;
+> +};
+> +
+> +static inline struct st7701 *panel_to_st7701(struct drm_panel *panel)
+> +{
+> +	return container_of(panel, struct st7701, panel);
+> +}
+> +
+> +static inline int st7701_dsi_write(struct st7701 *st7701, const void *seq,
+> +				   size_t len)
+> +{
+> +	return mipi_dsi_dcs_write_buffer(st7701->dsi, seq, len);
+> +}
+> +
+
+
+> +static int st7701_prepare(struct drm_panel *panel)
+> +{
+> +	struct st7701 *st7701 = panel_to_st7701(panel);
+> +	int ret;
+> +
+> +	gpiod_set_value(st7701->reset, 0);
+> +	msleep(20);
+> +
+> +	ret = regulator_bulk_enable(st7701->desc->num_supplies,
+> +				    st7701->supplies);
+> +	if (ret < 0)
+> +		return ret;
+> +	msleep(20);
+> +
+> +	gpiod_set_value(st7701->reset, 1);
+> +	msleep(20);
+> +
+> +	gpiod_set_value(st7701->reset, 0);
+> +	msleep(30);
+> +
+> +	gpiod_set_value(st7701->reset, 1);
+> +	msleep(150);
+> +
+> +	st7701_init_sequence(st7701);
+> +
+> +	return 0;
+> +}
+> +
+
+> +static int st7701_unprepare(struct drm_panel *panel)
+> +{
+> +	struct st7701 *st7701 = panel_to_st7701(panel);
+> +
+> +	ST7701_DSI(st7701, MIPI_DCS_EXIT_SLEEP_MODE, 0x00);
+> +
+> +	msleep(st7701->sleep_delay);
+> +
+> +	gpiod_set_value(st7701->reset, 0);
+> +
+> +	gpiod_set_value(st7701->reset, 1);
+> +
+> +	gpiod_set_value(st7701->reset, 0);
+No timing constrains here? In prepare there are sleeps intermixed.
+
+> +
+> +	regulator_bulk_disable(st7701->desc->num_supplies, st7701->supplies);
+> +
+> +	return 0;
+> +}
+> +
+> +static int st7701_get_modes(struct drm_panel *panel)
+> +{
+> +	struct st7701 *st7701 = panel_to_st7701(panel);
+> +	const struct drm_display_mode *desc_mode = st7701->desc->mode;
+> +	struct drm_display_mode *mode;
+> +
+> +	mode = drm_mode_duplicate(panel->drm, desc_mode);
+> +	if (!mode) {
+> +		dev_err(&st7701->dsi->dev, "failed to add mode %ux%ux@%u\n",
+> +			desc_mode->hdisplay, desc_mode->vdisplay,
+> +			desc_mode->vrefresh);
+Use something like:
+		DRM_DEV_ERROR(st7701->dev, "failed to add mode" DRM_MODE_FMT ",
+			      DRM_MODE_ARG(desc_mode));
+
+> +		return -ENOMEM;
+> +	}
+> +
+> +	drm_mode_set_name(mode);
+> +	drm_mode_probed_add(panel->connector, mode);
+> +
+> +	panel->connector->display_info.width_mm = desc_mode->width_mm;
+> +	panel->connector->display_info.height_mm = desc_mode->height_mm;
+> +
+> +	return 1;
+> +}
+> +
+
+> +static const struct st7701_panel_desc ts8550b_desc = {
+> +	.mode = &ts8550b_mode,
+> +	.lanes = 2,
+> +	.flags = MIPI_DSI_MODE_VIDEO,
+> +	.format = MIPI_DSI_FMT_RGB888,
+> +	.supply_names = ts8550b_supply_names,
+> +	.num_supplies = ARRAY_SIZE(ts8550b_supply_names),
+> +	.panel_sleep_delay = 80, /* panel need extra 80ms for sleep out cmd */
+In the only place this is used there is added 120 ms too.
+Looks inconsistent - do we have the same delay twice?
+
+
+> +
+> +static int st7701_dsi_probe(struct mipi_dsi_device *dsi)
+> +{
+> +	const struct st7701_panel_desc *desc;
+> +	struct device_node *np;
+> +	struct st7701 *st7701;
+> +	int ret, i;
+> +
+> +	st7701 = devm_kzalloc(&dsi->dev, sizeof(*st7701), GFP_KERNEL);
+> +	if (!st7701)
+> +		return -ENOMEM;
+> +
+> +	desc = of_device_get_match_data(&dsi->dev);
+> +	dsi->mode_flags = desc->flags;
+> +	dsi->format = desc->format;
+> +	dsi->lanes = desc->lanes;
+> +
+> +	st7701->supplies = devm_kcalloc(&dsi->dev, desc->num_supplies,
+> +					sizeof(*st7701->supplies),
+> +					GFP_KERNEL);
+> +	if (!st7701->supplies)
+> +		return -ENOMEM;
+> +
+> +	for (i = 0; i < desc->num_supplies; i++)
+> +		st7701->supplies[i].supply = desc->supply_names[i];
+> +
+> +	ret = devm_regulator_bulk_get(&dsi->dev, desc->num_supplies,
+> +				      st7701->supplies);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	st7701->reset = devm_gpiod_get(&dsi->dev, "reset", GPIOD_OUT_LOW);
+> +	if (IS_ERR(st7701->reset)) {
+> +		dev_err(&dsi->dev, "Couldn't get our reset GPIO\n");
+> +		return PTR_ERR(st7701->reset);
+> +	}
+> +
+> +	np = of_parse_phandle(dsi->dev.of_node, "backlight", 0);
+> +	if (np) {
+> +		st7701->backlight = of_find_backlight_by_node(np);
+> +		of_node_put(np);
+> +
+> +		if (!st7701->backlight)
+> +			return -EPROBE_DEFER;
+> +	}
+This is a simpler variant of the above:
+	st7701->backlight = devm_of_find_backlight(dsi->dev);
+	if (IS_ERR(st7701->backlight))
+		return PTR_ERR(st7701->backlight);
+
+Suggested by Noralf in another thread for a similar driver.
+
+
+> +
+> +	drm_panel_init(&st7701->panel);
+> +
+> +	/* We need to wait 120ms after a sleep out command */
+> +	st7701->sleep_delay = 120 + desc->panel_sleep_delay;
+This is the other place where we add 120 to the previous 80 - in total 200 ms.
+
+> +	st7701->panel.funcs = &st7701_funcs;
+> +	st7701->panel.dev = &dsi->dev;
+> +
+> +	ret = drm_panel_add(&st7701->panel);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	mipi_dsi_set_drvdata(dsi, st7701);
+> +	st7701->dsi = dsi;
+
+> +	st7701->desc = desc;
+This assignment could come earlier, so we do not have it unassigned when calling
+other functions. As it is now it works so you can safely ignore this comment.
+
+> +
+> +	return mipi_dsi_attach(dsi);
+> +}
+> +
+> +static int st7701_dsi_remove(struct mipi_dsi_device *dsi)
+> +{
+> +	struct st7701 *st7701 = mipi_dsi_get_drvdata(dsi);
+> +
+> +	mipi_dsi_detach(dsi);
+> +	drm_panel_remove(&st7701->panel);
+> +
+> +	if (st7701->backlight)
+> +		put_device(&st7701->backlight->dev);
+
+Use:
+	backlight_put(st7701->backlight);
+
+
