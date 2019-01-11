@@ -2,171 +2,137 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CB9EC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 00:30:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6232FC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 00:35:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6CE8920872
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 00:30:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547166624;
-	bh=GhjNZeaFrFOl6BRL7aoWZ7fWABm9Kl+kAat9qQOV0RI=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=PlV5RZhAJIJVaRgmiEnQZ8EWuhDqO+NoNX6LBtle3Pf1jwn7DpjUGPLS21mlLc7xb
-	 sxasllFtr+TEeGyJLNacN6WmD3iv2Bw9CvmyThXl7LyNKADZtDGfvtY+TC3uw8iFz5
-	 rAWO0XpLEFiWoWOqtUDktg1k6vkR7v8lZdG/Cj4g=
+	by mail.kernel.org (Postfix) with ESMTP id 2117D20872
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 00:35:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="hs5eUGuC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728397AbfAKAaW (ORCPT
+        id S1728785AbfAKAfH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 19:30:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59714 "EHLO mail.kernel.org"
+        Thu, 10 Jan 2019 19:35:07 -0500
+Received: from nat-hk.nvidia.com ([203.18.50.4]:55076 "EHLO nat-hk.nvidia.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726560AbfAKAaV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 19:30:21 -0500
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 18633217F9
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Jan 2019 00:30:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547166620;
-        bh=GhjNZeaFrFOl6BRL7aoWZ7fWABm9Kl+kAat9qQOV0RI=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=Q6Zfod1M29jhY7yiz2WRKWgAmqqgUKUmoS8vLkp0rDk7qFAhCcFbeP+A2m4dw16Vl
-         D1RZ2XYqTKHduIxAwugHV5p9/VuVE5gD/He9JllzUqz4WbWv3XfcFDYG/LKKW1IEzW
-         ahugusoUCK9rC/gem93GC7prPa5mz9VGv3rdmYig=
-Received: by mail-wm1-f45.google.com with SMTP id a62so743866wmh.4
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 16:30:20 -0800 (PST)
-X-Gm-Message-State: AJcUukcZ0wIM/9e0Nq5NkUe9QZllmRObPQ4KulPJrxZtVSXE5G7z9LBt
-        hNVe3yLfZMTgDLGcTIH9uAQJiFtZQELAlpkO9O6Now==
-X-Google-Smtp-Source: ALg8bN7tz8lieNI5xeB9nJNvN9juxR/2CmjHMsD+uQIv/smYKUZ0WUgXlH6qhRo3tUhchfesQqCWFTRCY0dIgkGM/Zs=
-X-Received: by 2002:a1c:f112:: with SMTP id p18mr188067wmh.83.1547166618440;
- Thu, 10 Jan 2019 16:30:18 -0800 (PST)
-MIME-Version: 1.0
-References: <20181219091148.GA5121@linux.intel.com> <613c6814-4e71-38e5-444a-545f0e286df8@fortanix.com>
- <20181219144515.GA30909@linux.intel.com> <CALCETrW_8LnitFamYUU7POHFOJFxLO7ESFUdS=aeG_SOvHVPkw@mail.gmail.com>
- <20181221162825.GB26865@linux.intel.com> <105F7BF4D0229846AF094488D65A0989355A45B6@PGSMSX112.gar.corp.intel.com>
- <20190108220946.GA30462@linux.intel.com> <CALCETrU7Zb8L8eTYZg3bAB1Gfw1orUfeQmXjVy1_R-kfBeweVA@mail.gmail.com>
- <20190109163135.GA1821@linux.intel.com> <CALCETrW2wPq_umu6jNzCMvR6kphTZhcEody6ok64yyLWvfrvTg@mail.gmail.com>
- <20190110235406.GB2365@linux.intel.com>
-In-Reply-To: <20190110235406.GB2365@linux.intel.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Thu, 10 Jan 2019 16:30:06 -0800
-X-Gmail-Original-Message-ID: <CALCETrUsj1YBwcEDiyU-seTiCuyFJW+BvunzOUUiUYQj+ojpEg@mail.gmail.com>
-Message-ID: <CALCETrUsj1YBwcEDiyU-seTiCuyFJW+BvunzOUUiUYQj+ojpEg@mail.gmail.com>
-Subject: Re: x86/sgx: uapi change proposal
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        "Huang, Kai" <kai.huang@intel.com>,
-        Jethro Beekman <jethro@fortanix.com>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "x86@kernel.org" <x86@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
+        id S1727846AbfAKAfH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 19:35:07 -0500
+Received: from hkpgpgate102.nvidia.com (Not Verified[10.18.92.9]) by nat-hk.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c37e4b90000>; Fri, 11 Jan 2019 08:35:05 +0800
+Received: from HKMAIL104.nvidia.com ([10.18.16.13])
+  by hkpgpgate102.nvidia.com (PGP Universal service);
+  Thu, 10 Jan 2019 16:35:02 -0800
+X-PGP-Universal: processed;
+        by hkpgpgate102.nvidia.com on Thu, 10 Jan 2019 16:35:02 -0800
+Received: from HKMAIL102.nvidia.com (10.18.16.11) by HKMAIL104.nvidia.com
+ (10.18.16.13) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 11 Jan
+ 2019 00:35:01 +0000
+Received: from NAM02-CY1-obe.outbound.protection.outlook.com (104.47.37.52) by
+ HKMAIL102.nvidia.com (10.18.16.11) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4 via Frontend Transport; Fri, 11 Jan 2019 00:35:01 +0000
+Received: from BN7PR12MB2836.namprd12.prod.outlook.com (20.176.178.161) by
+ BN7PR12MB2658.namprd12.prod.outlook.com (20.176.176.88) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1516.15; Fri, 11 Jan 2019 00:34:59 +0000
+Received: from BN7PR12MB2836.namprd12.prod.outlook.com
+ ([fe80::4024:c208:f331:505e]) by BN7PR12MB2836.namprd12.prod.outlook.com
+ ([fe80::4024:c208:f331:505e%3]) with mapi id 15.20.1516.015; Fri, 11 Jan 2019
+ 00:34:57 +0000
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+To:     Adrian Hunter <adrian.hunter@intel.com>,
+        "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
+        Chunyan Zhang <chunyan.zhang@unisoc.com>
+CC:     "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Haitao Huang <haitao.huang@linux.intel.com>,
-        "Dr . Greg Wettstein" <greg@enjellic.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>
+Subject: RE: [PATCH V7 2/2] mmc: tegra: HW Command Queue Support for Tegra
+ SDMMC
+Thread-Topic: [PATCH V7 2/2] mmc: tegra: HW Command Queue Support for Tegra
+ SDMMC
+Thread-Index: AQHUotKSxBXfHJPe7kWiv8CqukYPGKWoiBQAgAC77dA=
+Date:   Fri, 11 Jan 2019 00:34:57 +0000
+Message-ID: <BN7PR12MB2836750BAFFAEAF8436C7C58C2850@BN7PR12MB2836.namprd12.prod.outlook.com>
+References: <1546457808-18270-1-git-send-email-skomatineni@nvidia.com>
+ <1546457808-18270-3-git-send-email-skomatineni@nvidia.com>
+ <5722018a-7654-c6f9-c2aa-2817b39b1a35@intel.com>
+In-Reply-To: <5722018a-7654-c6f9-c2aa-2817b39b1a35@intel.com>
+Accept-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=skomatineni@nvidia.com; 
+x-originating-ip: [216.228.112.22]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BN7PR12MB2658;6:61UPAuOZTR2URwyFs/IMcK79yJkiqjuZfxS5LFKYZtFXSNwwk5h3aczpTlkKmdBYzfoSWalC4U4OWugyGZtUrPoq7Czzf+H+j65AvlzIpp+r/+qpxXQ2E6WGJOI93g3qbgUfThUMLL4d4PaveQooRJT+a6MoqB+9xYqihiX4uLKSuLiEHAyVwOJsc3Rs2shOTBzwWIGwX505UTGtMuQCbj+yHO5XeyK9guV/qNc3oqluom2J9OAC9aUDevMGoHqXG2xkqhkJZdHiIrTD3pIzdwi284qrA+WmAYsNPpMXCoBOnHX+kDnkGy2K4u8b8dw+X0vpzMUN6eQU0N1g2/QZoJnU9+hlqlgTIkgbKKYBUOIPlnRpdhSKRhbEpmxM6khNPDzABXZlPLPfl2vK08Qw5Tj6VHCXl8hS8ZBzD6+T4nNaKrXutNDhdTALaHT7xCG3LSeobZvfhPbJ9sur0wzh6w==;5:w4kCEm6D3jRrfgdjmn+slK1q/lUkB5D8tS06uUDrWkMloR0haj1lCHM/HnTh8I88jYD/BNizu8C1OjSh3sM/IEFudcdEKLx5g4grvH4ejrwyjo3WJEGu9olytp8tpP2mAMcG0KO6CK/jVm6QMA+zSaktfvSD3ztYzw0BDegBLAB4KOIPvUKvHtU0neUtEOAZ2YYMvus1IStaqfO5MZFH5Q==;7:ja2LtuLW+MAP6OCNKYPcMoXPHETYSAocCb8SWOatRmHHAIDdRPgNvd1RmLmsYhXQ3NGkrnWF4spXN+oVRr2zdXc1qddTdWrLOyd2DMk8fJ/8c24C3KHxsjBP749UiMnU1ExW52c4Ru0E0wuuNUAfkw==
+x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
+x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10009020)(396003)(136003)(39860400002)(376002)(366004)(346002)(189003)(199004)(256004)(4744005)(229853002)(8676002)(11346002)(66066001)(446003)(6506007)(54906003)(33656002)(110136005)(316002)(478600001)(86362001)(486006)(25786009)(8936002)(6116002)(6436002)(55016002)(3846002)(7696005)(81156014)(81166006)(4326008)(476003)(9686003)(76176011)(71200400001)(71190400001)(14454004)(53936002)(68736007)(186003)(106356001)(99286004)(305945005)(26005)(105586002)(39060400002)(7736002)(2906002)(74316002)(2501003)(97736004)(5660300001)(102836004)(6246003);DIR:OUT;SFP:1101;SCL:1;SRVR:BN7PR12MB2658;H:BN7PR12MB2836.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-ms-office365-filtering-correlation-id: f9f42590-a643-439e-cf73-08d6775c9d2e
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600109)(711020)(2017052603328)(7153060)(7193020);SRVR:BN7PR12MB2658;
+x-ms-traffictypediagnostic: BN7PR12MB2658:
+x-microsoft-antispam-prvs: <BN7PR12MB2658D72509BF322C6A2F53C5C2850@BN7PR12MB2658.namprd12.prod.outlook.com>
+x-forefront-prvs: 09144DB0F7
+received-spf: None (protection.outlook.com: nvidia.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: osBcLpWnpVxTJopUT1fyqNqFIMOfcQIUBRxCqiQ7+UJEiJ9bdIcicZMehSb5fFfHk2GYtboySHkjWPwr9XjDV8N7XX79Qi6jbAPQVREnY4JNT//diRwg5wyDCQfNmQtIaoc0fVU4zFFvTKbe16Vr+5o2r0nu3Nt6iUyf1bsQsHAaQHxKTqApzL7p/IVyVil9kgcZ6rW1DGozlt+dtemJTo9HHIK7UcWv8QBDdrFdlJkO/hu0cgIseK+0bbwAvaxYnIwYqy9SKjD1ShQuzg/Fl0+SEie0hSVaxA1YkjEHgFuhn/75JwCdfGbXng/Haw2xHE6XPUecr3DQoZHEdCObxNUTcuspz534YnJA6AW4O8P0SLf5pzIasqFfkYMneW1W/DU80ILqhIMrj/RwG3KYNR3EvXSwpxB5VVXqMxkFZeI=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+MIME-Version: 1.0
+X-MS-Exchange-CrossTenant-Network-Message-Id: f9f42590-a643-439e-cf73-08d6775c9d2e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Jan 2019 00:34:57.5109
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN7PR12MB2658
+X-OriginatorOrg: Nvidia.com
+Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1547166905; bh=7C7WH+0hAYrI/zp8dwLu3FBNHvlgtaE5nB7jLgrRN2k=;
+        h=X-PGP-Universal:From:To:CC:Subject:Thread-Topic:Thread-Index:Date:
+         Message-ID:References:In-Reply-To:Accept-Language:X-MS-Has-Attach:
+         X-MS-TNEF-Correlator:authentication-results:x-originating-ip:
+         x-ms-publictraffictype:x-microsoft-exchange-diagnostics:
+         x-ms-exchange-antispam-srfa-diagnostics:
+         x-forefront-antispam-report:
+         x-ms-office365-filtering-correlation-id:x-microsoft-antispam:
+         x-ms-traffictypediagnostic:x-microsoft-antispam-prvs:
+         x-forefront-prvs:received-spf:x-ms-exchange-senderadcheck:
+         x-microsoft-antispam-message-info:spamdiagnosticoutput:
+         spamdiagnosticmetadata:MIME-Version:
+         X-MS-Exchange-CrossTenant-Network-Message-Id:
+         X-MS-Exchange-CrossTenant-originalarrivaltime:
+         X-MS-Exchange-CrossTenant-fromentityheader:
+         X-MS-Exchange-CrossTenant-id:
+         X-MS-Exchange-Transport-CrossTenantHeadersStamped:X-OriginatorOrg:
+         Content-Language:Content-Type:Content-Transfer-Encoding;
+        b=hs5eUGuCWCf07Hc5/lxZH5CoFjSC8FMXn8v8LaJ57xzrBlXEVRJ8zEaQsK96BnN75
+         G55HleCUY3zuXiXAXuK8JVKDGDtAFRj6UNPmOSTB07uhpyapvroGrmUnKrU/5hPBvF
+         et54HXZOWr7ylh7Fe3BWFTJQdr/1HyYgmnuPXj5igLdfz2zV4DVK1uisMhxEPPGbEI
+         q2FCb9qf74mOBeJv7QIoJ3TuhinbGAU9yTby0GogBF+KUMbuiOWmQRnsz5VMRwnBEM
+         t2i/hLv0aHNN+tivrSpqmF0jwLUWp6znvQeZ0hPyvjx/iP0r7xx0i2HG+CjfFcXmPT
+         1nGAmhCjqL0Dg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 10, 2019 at 3:54 PM Sean Christopherson
-<sean.j.christopherson@intel.com> wrote:
->
-> On Thu, Jan 10, 2019 at 01:34:44PM -0800, Andy Lutomirski wrote:
-> > >> On Jan 9, 2019, at 8:31 AM, Sean Christopherson <sean.j.christophers=
-on@intel.com> wrote:
-> > >>
-> > >> On Tue, Jan 08, 2019 at 02:54:11PM -0800, Andy Lutomirski wrote:
-> > >
-> > >> I do think it makes sense to have QEMU delegate the various ENCLS
-> > >> operations (especially EINIT) to the regular SGX interface, which wi=
-ll
-> > >> mean that VM guests will have exactly the same access controls appli=
-ed
-> > >> as regular user programs, which is probably what we want.
-> > >
-> > > To what end?  Except for EINIT, none of the ENCLS leafs are interesti=
-ng
-> > > from a permissions perspective.  Trapping and re-executing ENCLS leaf=
-s
-> > > is painful, e.g. most leafs have multiple virtual addresses that need=
- to
-> > > be translated.  And routing everything through the regular interface
-> > > would make SGX even slower than it already is, e.g. every ENCLS would
-> > > take an additional ~900 cycles just to handle the VM-Exit, and that's
-> > > not accounting for any additional overhead in the SGX code, e.g. usin=
-g
-> > > the regular interface would mean superfluous locks, etc...
-> >
-> > Trapping EINIT is what I have in mind.
->
-> Phew, had me worried :-)
->
-> > >
-> > > Couldn't we require the same privilege/capability for VMs and and EIN=
-IT
-> > > tokens?  I.e. /dev/sgx/virtualmachine can only be opened by a user th=
-at
-> > > can also generate tokens.
-> >
-> > Hmm, maybe.  Or we can use Jarkko=E2=80=99s securityfs attribute thingy=
-.
-> >
-> > Concretely, I think there are two things we care about:
-> >
-> > First, if the host enforces some policy as to which enclaves can
-> > launch, then it should apply the same policy to guests =E2=80=94 otherw=
-ise KVM
-> > lets programs do an end run around the policy. So, in the initial
-> > incarnation of this, QEMU should probably have to open the provision
-> > attribute fd if it wants its guest to be able to EINIT a provisioning
-> > enclave.  When someone inevitably adds an EINIT LSM hook, the KVM
-> > interface should also call it.
->
-> Sort of.  A guest that is running under KVM (i.e. VMX) is much more
-> contained than a random userspace program.  A rogue enclave in a VMX
-> guest can attack the guest kernel/OS, but barring a bug (or more likely,
-> several major bugs) elsewhere in the virtualization stack the enclave
-> can't do anything nasty to the host.  An enclave would let someone hide
-> code, but enclaves are even more restricted than cpl3, i.e. there's not
-> a lot it can do without coordinating with unencrypted code in the guest.
->
-> And if someone has sufficient permissions to run a KVM guest, they're
-> much more likely to do something malcious in the guest kernel, not an
-> enclave.
-
-Are you sure?  On my laptop, /dev/kvm is 0666, and that's the distro
-default.  I don't think this is at all unusual.  I'm not particularly
-concerned about a guest attacking itself, but it's conceptually
-straightforward to bypass whatever restrictions the host has by simply
-opening /dev/kvm and sticking your enclave in a VM.
-
->
-> All that aside, I don't see any justification for singling out SGX for
-> extra scrutiny, there are other ways for a user with KVM permissions to
-> hide malicious code in guest (and at cpl0!), e.g. AMD's SEV{-ES}.
-
-I'm not singling out SGX.  I'm just saying that the KVM should not
-magically bypass host policy.  If you want to assign a virtual
-function on your NIC to a KVM guest, you need to give your QEMU
-process that privilege.  Similarly, if someone has a MAC policy that
-controls which processes can launch which enclaves and they want to
-run Windows with full SGX support in a VM guest, then they should
-authorize that in their MAC policy by giving QEMU unrestricted launch
-privileges.
-
-Similarly, if access to a persistent provisioning identifier is
-restricted, access to /dev/kvm shouldn't magically bypass it.  Just
-give the QEMU process the relevant privileges.
+Pj4gK3N0YXRpYyBpbnQgc2RoY2lfdGVncmFfYWRkX2hvc3Qoc3RydWN0IHNkaGNpX2hvc3QgKmhv
+c3QpIHsNCj4+ICsJc3RydWN0IHNkaGNpX3BsdGZtX2hvc3QgKnBsdGZtX2hvc3QgPSBzZGhjaV9w
+cml2KGhvc3QpOw0KPj4gKwlzdHJ1Y3Qgc2RoY2lfdGVncmEgKnRlZ3JhX2hvc3QgPSBzZGhjaV9w
+bHRmbV9wcml2KHBsdGZtX2hvc3QpOw0KPj4gKwlzdHJ1Y3QgY3FoY2lfaG9zdCAqY3FfaG9zdDsN
+Cj4+ICsJYm9vbCBkbWE2NDsNCj4+ICsJaW50IHJldDsNCj4+ICsNCj4+ICsJaWYgKCF0ZWdyYV9o
+b3N0LT5lbmFibGVfaHdjcSkNCj4+ICsJCXJldHVybiBzZGhjaV9hZGRfaG9zdChob3N0KTsNCj4+
+ICsNCj4+ICsJaG9zdC0+djRfbW9kZSA9IHRydWU7DQo+DQo+Q2FuIHlvdSB1c2Ugc2RoY2lfZW5h
+YmxlX3Y0X21vZGUoKSBoZXJlPw0KDQpIaSBBZHJpYW4sDQpzZGhjaV9yZWFkX2NhcHMgc2V0cyB2
+NCBtb2RlIHRocnUgc2RoY2lfZG9fZW5hYmxlX3Y0X21vZGUgaWYgdjRfbW9kZSBpcyB0cnVlDQpz
+ZGhjaV9zZXR1cF9ob3N0IGNhbGxzIHNkaGNpX3JlYWRfY2FwcyBzbyBJIHdhcyBzZXR0aW5nIHY0
+X21vZGUgdG8gdHJ1ZSBzbyB2NCBtb2RlIGdldHMgZW5hYmxlZCBkdXJpbmcgcmVhZCBjYXBzLg0K
+DQpUaGFua3MNCnNvd2phbnlhDQoNCg==
