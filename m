@@ -4,50 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C83D4C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:18:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12FC5C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:18:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8FA7E21841
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:18:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D50272184A
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:18:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547216305;
-	bh=qgU6V4POssyL23AE/+FYVEkRnCwvO6mWddpLPhLjP1Y=;
+	s=default; t=1547216315;
+	bh=NLd8OBmpYioGJGybZKS+60EigDeTAAcXAA2sOI/Tacw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=K+4l/aM0INilPYOC0+3KZD7oVlqUU5DhBzKX4gXvh4s0DRGtGrFDrsBKwIbBF2a9R
-	 cPX4sim4AB5kKI6rDiHCAIyYvANJCEZk6EL8V3lpoDDxShm77Ez9aKlCtBjjpwCohr
-	 B6Iq+6mKgvf8qsgFTMnPW+fTEFFc9wcnM+sXYjNk=
+	b=dRs59NeYO9Tsi9G3h64ZOuRAhg9dfAIAMz25fQHe50QRGUPof1RlrSD3uDjM4EcIq
+	 HIityGC0/OvHmrUmdwtlq3Mixp4J9SRv/ujHFrKmC89O+vTwuRXP3t272UMieID7gd
+	 TrFtIoDi0H38c7PWaUh5YIwHdzEvKHLHqkUBrzLU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730929AbfAKOSY (ORCPT
+        id S2387984AbfAKOSe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:18:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34816 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:18:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34970 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730092AbfAKOST (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:18:19 -0500
+        id S1730200AbfAKOS1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:18:27 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D4BF92177B;
-        Fri, 11 Jan 2019 14:18:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 711D62183F;
+        Fri, 11 Jan 2019 14:18:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547216298;
-        bh=qgU6V4POssyL23AE/+FYVEkRnCwvO6mWddpLPhLjP1Y=;
+        s=default; t=1547216306;
+        bh=NLd8OBmpYioGJGybZKS+60EigDeTAAcXAA2sOI/Tacw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pYX/BHWynu8yz/NzafgG6yP6N41/9F480VROUh+wwJbmNAY2zPsKGQ0D7V7WFUUh2
-         V25zGI5B819OjjE4XWoPncyWOS/6h+U46IG7pT+lhNk/xNHj4G7zly+QFBkW8h36+w
-         HDkc6wQCeGH6wW3HcrijNw8zajaT6Z/IP7SpxW4o=
+        b=KZAyZOIRTldpl4f9QlcaSpy9YSlhyhuUI6QNJ7FnU1uAnPru8Zb0RWp69IeTICq9v
+         jOOjo0n69VY1mjwRN8O0EajshCEB+notb1JjpKxwjMwaiWpV8KWR5i/OyuBFwWB+2s
+         UVl3pNeTAJNTlSdgC8gAqZ7WdDQ7iXg/lyO4BjnE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 14/88] ip6mr: Fix potential Spectre v1 vulnerability
-Date:   Fri, 11 Jan 2019 15:07:43 +0100
-Message-Id: <20190111131048.253702315@linuxfoundation.org>
+        stable@vger.kernel.org, Theodore Tso <tytso@mit.edu>,
+        =?UTF-8?q?ruippan=20 ?= <ruippan@tencent.com>,
+        stable@kernel.org
+Subject: [PATCH 4.4 44/88] ext4: fix EXT4_IOC_GROUP_ADD ioctl
+Date:   Fri, 11 Jan 2019 15:08:13 +0100
+Message-Id: <20190111131052.638024535@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131045.137499039@linuxfoundation.org>
 References: <20190111131045.137499039@linuxfoundation.org>
@@ -66,59 +65,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+From: ruippan (潘睿) <ruippan@tencent.com>
 
-[ Upstream commit 69d2c86766da2ded2b70281f1bf242cb0d58a778 ]
+commit e647e29196b7f802f8242c39ecb7cc937f5ef217 upstream.
 
-vr.mifi is indirectly controlled by user-space, hence leading to
-a potential exploitation of the Spectre variant 1 vulnerability.
+Commit e2b911c53584 ("ext4: clean up feature test macros with
+predicate functions") broke the EXT4_IOC_GROUP_ADD ioctl.  This was
+not noticed since only very old versions of resize2fs (before
+e2fsprogs 1.42) use this ioctl.  However, using a new kernel with an
+enterprise Linux userspace will cause attempts to use online resize to
+fail with "No reserved GDT blocks".
 
-This issue was detected with the help of Smatch:
-
-net/ipv6/ip6mr.c:1845 ip6mr_ioctl() warn: potential spectre issue 'mrt->vif_table' [r] (local cap)
-net/ipv6/ip6mr.c:1919 ip6mr_compat_ioctl() warn: potential spectre issue 'mrt->vif_table' [r] (local cap)
-
-Fix this by sanitizing vr.mifi before using it to index mrt->vif_table'
-
-Notice that given that speculation windows are large, the policy is
-to kill the speculation on the first load and not worry if it can be
-completed with a dependent load/store [1].
-
-[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: e2b911c53584 ("ext4: clean up feature test macros with predicate...")
+Cc: stable@kernel.org # v4.4
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Signed-off-by: ruippan (潘睿) <ruippan@tencent.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/ipv6/ip6mr.c |    4 ++++
- 1 file changed, 4 insertions(+)
 
---- a/net/ipv6/ip6mr.c
-+++ b/net/ipv6/ip6mr.c
-@@ -72,6 +72,8 @@ struct mr6_table {
- #endif
- };
+---
+ fs/ext4/resize.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/fs/ext4/resize.c
++++ b/fs/ext4/resize.c
+@@ -1600,7 +1600,7 @@ int ext4_group_add(struct super_block *s
+ 	}
  
-+#include <linux/nospec.h>
-+
- struct ip6mr_rule {
- 	struct fib_rule		common;
- };
-@@ -1871,6 +1873,7 @@ int ip6mr_ioctl(struct sock *sk, int cmd
- 			return -EFAULT;
- 		if (vr.mifi >= mrt->maxvif)
- 			return -EINVAL;
-+		vr.mifi = array_index_nospec(vr.mifi, mrt->maxvif);
- 		read_lock(&mrt_lock);
- 		vif = &mrt->vif6_table[vr.mifi];
- 		if (MIF_EXISTS(mrt, vr.mifi)) {
-@@ -1945,6 +1948,7 @@ int ip6mr_compat_ioctl(struct sock *sk,
- 			return -EFAULT;
- 		if (vr.mifi >= mrt->maxvif)
- 			return -EINVAL;
-+		vr.mifi = array_index_nospec(vr.mifi, mrt->maxvif);
- 		read_lock(&mrt_lock);
- 		vif = &mrt->vif6_table[vr.mifi];
- 		if (MIF_EXISTS(mrt, vr.mifi)) {
+ 	if (reserved_gdb || gdb_off == 0) {
+-		if (ext4_has_feature_resize_inode(sb) ||
++		if (!ext4_has_feature_resize_inode(sb) ||
+ 		    !le16_to_cpu(es->s_reserved_gdt_blocks)) {
+ 			ext4_warning(sb,
+ 				     "No reserved GDT blocks, can't resize");
 
 
