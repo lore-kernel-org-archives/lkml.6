@@ -4,49 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDD87C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:49:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CEDA1C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:50:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D737206B6
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:49:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 933F12063F
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:50:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547218193;
-	bh=YQi2Eb++361fhbDNsL6sArryVFucH91GPm12GaXI/mk=;
+	s=default; t=1547218223;
+	bh=e7KL1Zgs3kzFkd3lLqnJcuSxanODOirgkHuUpyebSfM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=MJmdxrTFaGPfj8f2+7DGcuFCfLnKfdw994oXAuSCudH8DFlSMGXqDWrssvRWnACFP
-	 ZsDD39TZ9nWjJ97BNJIYoXFpMzRs88eoyYiFXdhzOKWxvy0CzK65kOH6Dc60Pmz5cu
-	 3ep8jz8obP4er+qMr8JfvZ/3DwQ+ZnhZsoHFcLmU=
+	b=Vl1lZpqkEky+nWrzZ1Fdkg7/W7zBvXP0y2YhOr32Q/Rg3xpjM4GCIH65UfTE2FX7s
+	 +xH6B2/wdpbii9HR4WF9XH0lLgls5GUUgheWUX5LxKq+3dIgTOE8dSkIF9hINiQYQ2
+	 F611X0wizwtSPvBOcmGKQCgKL0/k37zrr+gh2sXk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391636AbfAKOtw (ORCPT
+        id S2391639AbfAKOuW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:49:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33688 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:50:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33036 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403946AbfAKOlA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:41:00 -0500
+        id S2390849AbfAKOkZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:40:25 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F1B11206B6;
-        Fri, 11 Jan 2019 14:40:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9398A21841;
+        Fri, 11 Jan 2019 14:40:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547217659;
-        bh=YQi2Eb++361fhbDNsL6sArryVFucH91GPm12GaXI/mk=;
+        s=default; t=1547217625;
+        bh=e7KL1Zgs3kzFkd3lLqnJcuSxanODOirgkHuUpyebSfM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nXNW88LWOEUVsGeK3WZBACUUwku3JAk0MjyEVO/Zxgb/no73Co7cYRRBe/nIiN9uM
-         PIw/19G+5gs1o3Noz29aX4Nc1ufpRLtnPOAlKk9CWwJpzkNHVu7xnc+CGTN29jlc42
-         OYRWbldZjZrZY3X4qA0HlaJftReSsDymKJvi5TxA=
+        b=sP2WSCsmP2IjLZUDHUi1TpeabBx5FCzusJBCVndc398Z6M+8SGynXOzZBDUCcWziP
+         QtzD0+fNY6A+ArVARTbOj/Db7X53C/ca1Kcur/+K5ZZlLRgQelIr5jCsIfNkk30R81
+         d+FpxhQs7FoWGis6Jzk0Db21LLXxJloXobB1mgpA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Frank Rowand <frank.rowand@sony.com>,
-        Rob Herring <robh@kernel.org>
-Subject: [PATCH 4.19 142/148] of: of_node_get()/of_node_put() nodes held in phandle cache
-Date:   Fri, 11 Jan 2019 15:15:20 +0100
-Message-Id: <20190111131119.989945022@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Mircea Caprioru <mircea.caprioru@analog.com>,
+        Stable@vger.kernel.org,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: [PATCH 4.19 130/148] iio: dac: ad5686: fix bit shift read register
+Date:   Fri, 11 Jan 2019 15:15:08 +0100
+Message-Id: <20190111131119.473968948@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131114.337122649@linuxfoundation.org>
 References: <20190111131114.337122649@linuxfoundation.org>
@@ -65,138 +67,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Frank Rowand <frank.rowand@sony.com>
+From: Mircea Caprioru <mircea.caprioru@analog.com>
 
-commit b8a9ac1a5b99a2fcbed19fd29d2d59270c281a31 upstream.
+commit 0e76df5c978338f3051e5126fc0c4245c57a307a upstream.
 
-The phandle cache contains struct device_node pointers.  The refcount
-of the pointers was not incremented while in the cache, allowing use
-after free error after kfree() of the node.  Add the proper increment
-and decrement of the use count.
+This patch solves the register readback issue with the bit shift. When the
+dac resolution was lower than the register size (ex. 12 bits out of 16
+bits) the readback value was not shifted with the difference in bits and
+the value was higher. Also a mask is applied on the read value in order to
+get the value relative to the actual bit size.
 
-Fixes: 0b3ce78e90fc ("of: cache phandle nodes to reduce cost of of_find_node_by_phandle()")
-Cc: stable@vger.kernel.org # v4.17+
-Signed-off-by: Frank Rowand <frank.rowand@sony.com>
-Signed-off-by: Rob Herring <robh@kernel.org>
+Fixes: 0357e488b8 ("iio:dac:ad5686: Refactor the driver")
+Signed-off-by: Mircea Caprioru <mircea.caprioru@analog.com>
+Cc: <Stable@vger.kernel.org>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/of/base.c |   70 +++++++++++++++++++++++++++++++++++-------------------
- 1 file changed, 46 insertions(+), 24 deletions(-)
+ drivers/iio/dac/ad5686.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/of/base.c
-+++ b/drivers/of/base.c
-@@ -115,9 +115,6 @@ int __weak of_node_to_nid(struct device_
- }
- #endif
- 
--static struct device_node **phandle_cache;
--static u32 phandle_cache_mask;
--
- /*
-  * Assumptions behind phandle_cache implementation:
-  *   - phandle property values are in a contiguous range of 1..n
-@@ -126,6 +123,44 @@ static u32 phandle_cache_mask;
-  *   - the phandle lookup overhead reduction provided by the cache
-  *     will likely be less
-  */
-+
-+static struct device_node **phandle_cache;
-+static u32 phandle_cache_mask;
-+
-+/*
-+ * Caller must hold devtree_lock.
-+ */
-+static void __of_free_phandle_cache(void)
-+{
-+	u32 cache_entries = phandle_cache_mask + 1;
-+	u32 k;
-+
-+	if (!phandle_cache)
-+		return;
-+
-+	for (k = 0; k < cache_entries; k++)
-+		of_node_put(phandle_cache[k]);
-+
-+	kfree(phandle_cache);
-+	phandle_cache = NULL;
-+}
-+
-+int of_free_phandle_cache(void)
-+{
-+	unsigned long flags;
-+
-+	raw_spin_lock_irqsave(&devtree_lock, flags);
-+
-+	__of_free_phandle_cache();
-+
-+	raw_spin_unlock_irqrestore(&devtree_lock, flags);
-+
-+	return 0;
-+}
-+#if !defined(CONFIG_MODULES)
-+late_initcall_sync(of_free_phandle_cache);
-+#endif
-+
- void of_populate_phandle_cache(void)
- {
- 	unsigned long flags;
-@@ -135,8 +170,7 @@ void of_populate_phandle_cache(void)
- 
- 	raw_spin_lock_irqsave(&devtree_lock, flags);
- 
--	kfree(phandle_cache);
--	phandle_cache = NULL;
-+	__of_free_phandle_cache();
- 
- 	for_each_of_allnodes(np)
- 		if (np->phandle && np->phandle != OF_PHANDLE_ILLEGAL)
-@@ -154,30 +188,15 @@ void of_populate_phandle_cache(void)
- 		goto out;
- 
- 	for_each_of_allnodes(np)
--		if (np->phandle && np->phandle != OF_PHANDLE_ILLEGAL)
-+		if (np->phandle && np->phandle != OF_PHANDLE_ILLEGAL) {
-+			of_node_get(np);
- 			phandle_cache[np->phandle & phandle_cache_mask] = np;
-+		}
- 
- out:
- 	raw_spin_unlock_irqrestore(&devtree_lock, flags);
- }
- 
--int of_free_phandle_cache(void)
--{
--	unsigned long flags;
--
--	raw_spin_lock_irqsave(&devtree_lock, flags);
--
--	kfree(phandle_cache);
--	phandle_cache = NULL;
--
--	raw_spin_unlock_irqrestore(&devtree_lock, flags);
--
--	return 0;
--}
--#if !defined(CONFIG_MODULES)
--late_initcall_sync(of_free_phandle_cache);
--#endif
--
- void __init of_core_init(void)
- {
- 	struct device_node *np;
-@@ -1155,8 +1174,11 @@ struct device_node *of_find_node_by_phan
- 	if (!np) {
- 		for_each_of_allnodes(np)
- 			if (np->phandle == handle) {
--				if (phandle_cache)
-+				if (phandle_cache) {
-+					/* will put when removed from cache */
-+					of_node_get(np);
- 					phandle_cache[masked_handle] = np;
-+				}
- 				break;
- 			}
- 	}
+--- a/drivers/iio/dac/ad5686.c
++++ b/drivers/iio/dac/ad5686.c
+@@ -124,7 +124,8 @@ static int ad5686_read_raw(struct iio_de
+ 		mutex_unlock(&indio_dev->mlock);
+ 		if (ret < 0)
+ 			return ret;
+-		*val = ret;
++		*val = (ret >> chan->scan_type.shift) &
++			GENMASK(chan->scan_type.realbits - 1, 0);
+ 		return IIO_VAL_INT;
+ 	case IIO_CHAN_INFO_SCALE:
+ 		*val = st->vref_mv;
 
 
