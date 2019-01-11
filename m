@@ -7,50 +7,48 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FA91C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:50:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22FFDC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:51:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1AC48206B6
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:50:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E890A206B6
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:51:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547218256;
-	bh=SU5bnpz0LvnY+oE6LGN/UxvhAFIJ5xtDJ6Z4EkU3FqY=;
+	s=default; t=1547218267;
+	bh=Aome5Lwg4P/8d933nfogJPQcPjNJWDi+mhfla0FipjA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Q+pjiUl3+mbf8TgojsPj2GHb4uPpnroNZap+UHXunWBYy2bYejr9rHMLgzFLrmlEX
-	 7si81mbhyixnk663rAYX97PWyXHUCYpWfaWyFlhl5voQcT8DXpKTcr9VyLRG0HpFgq
-	 WqCC7m1SnFhqujYjSBEmigQVN9+XLPFCI6nnMwVE=
+	b=gnD6w5tPnq7ocgxfC27PyZy2iBex0i9XIOM+VCENhm9Ecfa71LoCatBYN0t+Sm6O4
+	 uZmA8jJK6K8bPNisR4ZO6wDOUyTf4kCIRFMjvwMzai81UWTQYhgwumd0k6V0w339SD
+	 NHsyqGj4RlBGOXhlDKvq4LZuNUjr24wJjYF9zFus=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391659AbfAKOuy (ORCPT
+        id S2403843AbfAKOjz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:50:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60854 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:39:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60672 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391140AbfAKOkA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:40:00 -0500
+        id S2391101AbfAKOju (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:39:50 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2BADC206B6;
-        Fri, 11 Jan 2019 14:39:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C69192133F;
+        Fri, 11 Jan 2019 14:39:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547217599;
-        bh=SU5bnpz0LvnY+oE6LGN/UxvhAFIJ5xtDJ6Z4EkU3FqY=;
+        s=default; t=1547217589;
+        bh=Aome5Lwg4P/8d933nfogJPQcPjNJWDi+mhfla0FipjA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=s8YkaEr0GoPl38ZAWYxsy5s3U5+M1gZBVK4eniAb7hET5GrLtrqz92or4ujTqdGqb
-         o6tp1JNTPvVKA9ZLy1d5YFs1d7I/MdqK4b4loXfbDkiABTr9Tpvg+kIDS7+kgy3Fe5
-         +1+/vGSSUqhWubTjoDw7XIs3PfyzOol9/0h8xgjk=
+        b=O9kQSZgpL9TvXuO4L7uThbxT5DcpNhDj+kW3T+mn9ydhgcSBSSREBtr7GRsZ6HqEk
+         6z8cO59gyeXy0LTAOM04e7ZZa0h+2mzmYfW2bTH6PYgLFGGQQa54WmcAUfFjY+khxE
+         7FzBUQzUWrc7L4FBg709uAzkTz4Jwi4i12lnv6iE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jean Delvare <jdelvare@suse.de>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Subject: [PATCH 4.19 122/148] PCI / PM: Allow runtime PM without callback functions
-Date:   Fri, 11 Jan 2019 15:15:00 +0100
-Message-Id: <20190111131119.129293070@linuxfoundation.org>
+        stable@vger.kernel.org, Pan Bian <bianpan2016@163.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Bob Peterson <rpeterso@redhat.com>
+Subject: [PATCH 4.19 118/148] gfs2: Get rid of potential double-freeing in gfs2_create_inode
+Date:   Fri, 11 Jan 2019 15:14:56 +0100
+Message-Id: <20190111131118.974613998@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131114.337122649@linuxfoundation.org>
 References: <20190111131114.337122649@linuxfoundation.org>
@@ -69,118 +67,70 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+From: Andreas Gruenbacher <agruenba@redhat.com>
 
-commit c5eb1190074cfb14c5d9cac692f1912eecf1a5e4 upstream.
+commit 6ff9b09e00a441599f3aacdf577254455a048bc9 upstream.
 
-a9c8088c7988 ("i2c: i801: Don't restore config registers on runtime PM")
-nullified the runtime PM suspend/resume callback pointers while keeping the
-runtime PM enabled.
+In gfs2_create_inode, after setting and releasing the acl / default_acl, the
+acl / default_acl pointers are not set to NULL as they should be.  In that
+state, when the function reaches label fail_free_acls, gfs2_create_inode will
+try to release the same acls again.
 
-This caused the SMBus PCI device to stay in D0 with
-/sys/devices/.../power/runtime_status showing "error" when the runtime PM
-framework attempted to autosuspend the device.  This is due to PCI bus
-runtime PM, which checks for driver runtime PM callbacks and returns
--ENOSYS if they are not set.
+Fix that by setting the pointers to NULL after releasing the acls.  Slightly
+simplify the logic.  Also, posix_acl_release checks for NULL already, so
+there is no need to duplicate those checks here.
 
-Since i2c-i801.c doesn't need to do anything device-specific for runtime
-PM, Jean Delvare proposed this be fixed in the PCI core rather than adding
-dummy runtime PM callback functions in the PCI drivers.
-
-Change pci_pm_runtime_suspend()/pci_pm_runtime_resume() so they allow
-changing the PCI device power state during runtime PM transitions even if
-the driver supplies no runtime PM callbacks.
-
-This fixes the runtime PM regression on i2c-i801.c.
-
-It is not obvious why the code previously required the runtime PM
-callbacks.  The test has been there since the code was introduced by
-6cbf82148ff2 ("PCI PM: Run-time callbacks for PCI bus type").
-
-On the other hand, a similar change was done to generic runtime PM
-callbacks in 05aa55dddb9e ("PM / Runtime: Lenient generic runtime pm
-callbacks").
-
-Fixes: a9c8088c7988 ("i2c: i801: Don't restore config registers on runtime PM")
-Reported-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Signed-off-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Reviewed-by: Jean Delvare <jdelvare@suse.de>
-Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Cc: stable@vger.kernel.org	# v4.18+
+Fixes: e01580bf9e4d ("gfs2: use generic posix ACL infrastructure")
+Reported-by: Pan Bian <bianpan2016@163.com>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: stable@vger.kernel.org # v4.9+
+Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
+Signed-off-by: Bob Peterson <rpeterso@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/pci/pci-driver.c |   27 ++++++++++++---------------
- 1 file changed, 12 insertions(+), 15 deletions(-)
+ fs/gfs2/inode.c |   18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
---- a/drivers/pci/pci-driver.c
-+++ b/drivers/pci/pci-driver.c
-@@ -1251,30 +1251,29 @@ static int pci_pm_runtime_suspend(struct
- 		return 0;
+--- a/fs/gfs2/inode.c
++++ b/fs/gfs2/inode.c
+@@ -744,17 +744,19 @@ static int gfs2_create_inode(struct inod
+ 			       the gfs2 structures. */
+ 	if (default_acl) {
+ 		error = __gfs2_set_acl(inode, default_acl, ACL_TYPE_DEFAULT);
++		if (error)
++			goto fail_gunlock3;
+ 		posix_acl_release(default_acl);
++		default_acl = NULL;
+ 	}
+ 	if (acl) {
+-		if (!error)
+-			error = __gfs2_set_acl(inode, acl, ACL_TYPE_ACCESS);
++		error = __gfs2_set_acl(inode, acl, ACL_TYPE_ACCESS);
++		if (error)
++			goto fail_gunlock3;
+ 		posix_acl_release(acl);
++		acl = NULL;
  	}
  
--	if (!pm || !pm->runtime_suspend)
--		return -ENOSYS;
+-	if (error)
+-		goto fail_gunlock3;
 -
- 	pci_dev->state_saved = false;
--	error = pm->runtime_suspend(dev);
--	if (error) {
-+	if (pm && pm->runtime_suspend) {
-+		error = pm->runtime_suspend(dev);
- 		/*
- 		 * -EBUSY and -EAGAIN is used to request the runtime PM core
- 		 * to schedule a new suspend, so log the event only with debug
- 		 * log level.
- 		 */
--		if (error == -EBUSY || error == -EAGAIN)
-+		if (error == -EBUSY || error == -EAGAIN) {
- 			dev_dbg(dev, "can't suspend now (%pf returned %d)\n",
- 				pm->runtime_suspend, error);
--		else
-+			return error;
-+		} else if (error) {
- 			dev_err(dev, "can't suspend (%pf returned %d)\n",
- 				pm->runtime_suspend, error);
--
--		return error;
-+			return error;
-+		}
+ 	error = security_inode_init_security(&ip->i_inode, &dip->i_inode, name,
+ 					     &gfs2_initxattrs, NULL);
+ 	if (error)
+@@ -789,10 +791,8 @@ fail_free_inode:
  	}
- 
- 	pci_fixup_device(pci_fixup_suspend, pci_dev);
- 
--	if (!pci_dev->state_saved && pci_dev->current_state != PCI_D0
-+	if (pm && pm->runtime_suspend
-+	    && !pci_dev->state_saved && pci_dev->current_state != PCI_D0
- 	    && pci_dev->current_state != PCI_UNKNOWN) {
- 		WARN_ONCE(pci_dev->current_state != prev,
- 			"PCI PM: State of device not saved by %pF\n",
-@@ -1292,7 +1291,7 @@ static int pci_pm_runtime_suspend(struct
- 
- static int pci_pm_runtime_resume(struct device *dev)
- {
--	int rc;
-+	int rc = 0;
- 	struct pci_dev *pci_dev = to_pci_dev(dev);
- 	const struct dev_pm_ops *pm = dev->driver ? dev->driver->pm : NULL;
- 
-@@ -1306,14 +1305,12 @@ static int pci_pm_runtime_resume(struct
- 	if (!pci_dev->driver)
- 		return 0;
- 
--	if (!pm || !pm->runtime_resume)
--		return -ENOSYS;
--
- 	pci_fixup_device(pci_fixup_resume_early, pci_dev);
- 	pci_enable_wake(pci_dev, PCI_D0, false);
- 	pci_fixup_device(pci_fixup_resume, pci_dev);
- 
--	rc = pm->runtime_resume(dev);
-+	if (pm && pm->runtime_resume)
-+		rc = pm->runtime_resume(dev);
- 
- 	pci_dev->runtime_d3cold = false;
- 
+ 	gfs2_rsqa_delete(ip, NULL);
+ fail_free_acls:
+-	if (default_acl)
+-		posix_acl_release(default_acl);
+-	if (acl)
+-		posix_acl_release(acl);
++	posix_acl_release(default_acl);
++	posix_acl_release(acl);
+ fail_gunlock:
+ 	gfs2_dir_no_add(&da);
+ 	gfs2_glock_dq_uninit(ghs);
 
 
