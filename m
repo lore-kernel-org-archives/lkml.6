@@ -2,87 +2,93 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0024BC43612
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 21:50:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8791C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 21:52:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B9D6A2184C
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 21:50:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547243415;
-	bh=m5A3LyTYd4rG6iY+EhsL+YZsp9Q2KYk0yKq9xBjBoTk=;
-	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
-	b=xY/9UaEyUB1Gl+HNz3E1ZAQ+mckQ/y8530AUUpWjMgMCBN1iZKP4ZyPqmMRteUnO5
-	 EReCquGvpZwDN+N1fLCgaqnq6paJ4wRWEMOxqB/IQJwc9u39g2Pu6zlbHyv1flXa/c
-	 6PeIxOWRWfqjNCsxHabXSwqGl/+7L9mh5JxusAgU=
+	by mail.kernel.org (Postfix) with ESMTP id 8B9F52183F
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 21:52:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=maine.edu header.i=@maine.edu header.b="bIJ+SWjA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726368AbfAKVuP (ORCPT
+        id S1726224AbfAKVw0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 16:50:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48204 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725536AbfAKVuO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 16:50:14 -0500
-Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B85622133F;
-        Fri, 11 Jan 2019 21:50:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547243414;
-        bh=m5A3LyTYd4rG6iY+EhsL+YZsp9Q2KYk0yKq9xBjBoTk=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=AmEDBh5zJqnQfFr9vhOm85pF6hutpRCK1Ksl7Lx+qVAnYfpqyKcxhBMwxAOIL7A51
-         Gcg+/PNz6U91hP88WuvvOTK8gzUENYt6vinYAG/xQJsuNUAVAtYflTX2SqF9HijpeH
-         /n8gZSHW/5BOFtI/ECWVNS3wyhfZZp+J5VB1eUNE=
-Subject: Re: [PATCH 3.18 00/47] 3.18.132-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org, shuah <shuah@kernel.org>
-References: <20190111130956.170952125@linuxfoundation.org>
-From:   shuah <shuah@kernel.org>
-Message-ID: <176f3cdd-c534-7878-8fb3-69f627059600@kernel.org>
-Date:   Fri, 11 Jan 2019 14:50:13 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Fri, 11 Jan 2019 16:52:26 -0500
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:35031 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725554AbfAKVw0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 16:52:26 -0500
+Received: by mail-qt1-f194.google.com with SMTP id v11so20526953qtc.2
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jan 2019 13:52:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=maine.edu; s=google;
+        h=from:date:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=Rznx8m7oF3vk7OvtYn7TIPy51bBYUCQncQQQG14BSTc=;
+        b=bIJ+SWjADDx+zmkSDmbB+mdj7BMAUd+EwHS8D2WLJU5Gikuze5O8djfkayy4uRPsr4
+         EMwr4WLjpuQC3Yguw5a74sCZ2D9pqaNJ5GM5Mnc90J9VrD2uSNmzLCwG1L0Tnw+YPeS4
+         LeXLLOwbCY/aUE03q4QQIb664QfQxC+fCpy48=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=Rznx8m7oF3vk7OvtYn7TIPy51bBYUCQncQQQG14BSTc=;
+        b=qGFOGbHc43I3coH2B1Y+8i4WMVgjvoEgA+5NL0ryrPTG2HX6PWl2n8mGE0Hx7/kVst
+         ST/V4tdVsje9vAOFQbacgPO8FIKdnwchKehWrM4wxMM5nzJ8nAOJVYH2BdgIoZZQ0bVO
+         8uh3pXeQIMHplz13miya8g0VVSCcA8kzYEg837oJz2yWcezE11YMEinKY03G585RfLLS
+         e6DRcQhuUJwLWvj74EcrikEBu6lANolS/h8t+paMXgBVDWTmHRo4HWGsokmuNmhHq2bs
+         kl5fNQ9VRwwd8zjhIqllOab2/bisZZNdJyBYaMK6WzgD/87m9A7VEr7vo3XaI03lbrJ1
+         Zohw==
+X-Gm-Message-State: AJcUukeIjilI2etOA63cetopUROn4VJ/F1C0eBYqwwfw5kYjIm/FOM9Q
+        EDg83qISJ893TeZFx0cCh6jkVw==
+X-Google-Smtp-Source: ALg8bN7fmwtR9OElthFN+Ufvpq5laXZGEELE7MMzgx1zJKecNp8Zru3tELzyFuRE8JXZJCstrZmrIA==
+X-Received: by 2002:a0c:f8cb:: with SMTP id h11mr15835493qvo.134.1547243544107;
+        Fri, 11 Jan 2019 13:52:24 -0800 (PST)
+Received: from macbook-air (weaver.eece.maine.edu. [130.111.218.23])
+        by smtp.gmail.com with ESMTPSA id m81sm24161384qkl.92.2019.01.11.13.52.22
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 11 Jan 2019 13:52:23 -0800 (PST)
+From:   Vince Weaver <vincent.weaver@maine.edu>
+X-Google-Original-From: Vince Weaver <vince@maine.edu>
+Date:   Fri, 11 Jan 2019 16:52:22 -0500 (EST)
+X-X-Sender: vince@macbook-air
+To:     Peter Zijlstra <peterz@infradead.org>
+cc:     linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>
+Subject: Re: perf: rdpmc bug when viewing all procs on remote cpu
+In-Reply-To: <alpine.DEB.2.21.1901101500030.3717@macbook-air>
+Message-ID: <alpine.DEB.2.21.1901111649580.6487@macbook-air>
+References: <alpine.DEB.2.21.1901101229010.3358@macbook-air> <alpine.DEB.2.21.1901101246340.3358@macbook-air> <alpine.DEB.2.21.1901101500030.3717@macbook-air>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <20190111130956.170952125@linuxfoundation.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/11/19 7:07 AM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 3.18.132 release.
-> There are 47 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Sun Jan 13 13:09:31 UTC 2019.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v3.x/stable-review/patch-3.18.132-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-3.18.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-> 
+On Thu, 10 Jan 2019, Vince Weaver wrote:
 
-Compiled and booted on my test system. No dmesg regressions.
+> On Thu, 10 Jan 2019, Vince Weaver wrote:
+> 
+> > On Thu, 10 Jan 2019, Vince Weaver wrote:
+> > 
+> > > However if you create an all-process attached to CPU event:
+> > > 	perf_event_open(attr, -1, X, -1, 0);
+> > > the mmap event index is set as if this were a valid event and so the rdpmc
+> > > succeeds even though it shouldn't (we're trying to read an event value
+> > > on a remote cpu with a local rdpmc).
 
-thanks,
--- Shuah
+so on further looking at the code, it doesn't appear that rdpmc events are 
+explicitly marked as unavailable in the attach-cpu or attach-pid case, 
+it's just by luck the check for PERF_EVENT_STATE_ACTIVE catches most of 
+the cases?
 
+should an explicit check be added to zero out userpg->index in cases where 
+the event being measured is running on a different core?
+
+Vince
