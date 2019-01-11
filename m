@@ -2,204 +2,201 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 921E8C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 13:13:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D341DC43612
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 13:15:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E3B420675
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 13:13:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ACCC0214D8
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 13:15:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731063AbfAKNNC (ORCPT
+        id S1732441AbfAKNPo convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 08:13:02 -0500
-Received: from syrinx.knorrie.org ([82.94.188.77]:50360 "EHLO
-        syrinx.knorrie.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730595AbfAKNNB (ORCPT
+        Fri, 11 Jan 2019 08:15:44 -0500
+Received: from mail1.bemta25.messagelabs.com ([195.245.230.67]:6755 "EHLO
+        mail1.bemta25.messagelabs.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731970AbfAKNPo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 08:13:01 -0500
-Received: from [10.200.4.80] (unknown [85.146.242.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by syrinx.knorrie.org (Postfix) with ESMTPSA id 6174D349BEB9B;
-        Fri, 11 Jan 2019 14:12:59 +0100 (CET)
-Subject: Re: [PATCH v2] xen: Fix x86 sched_clock() interface for xen
-To:     Juergen Gross <jgross@suse.com>, linux-kernel@vger.kernel.org,
-        xen-devel@lists.xenproject.org, x86@kernel.org
-Cc:     boris.ostrovsky@oracle.com, sstabellini@kernel.org, hpa@zytor.com,
-        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-        stable@vger.kernel.org
-References: <20190111120805.24852-1-jgross@suse.com>
-From:   Hans van Kranenburg <hans@knorrie.org>
-Openpgp: preference=signencrypt
-Autocrypt: addr=hans@knorrie.org; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <74aafdff-c7d5-b9aa-c3fb-3787d36c7bbe@knorrie.org>
-Date:   Fri, 11 Jan 2019 14:12:59 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        Fri, 11 Jan 2019 08:15:44 -0500
+Received: from [46.226.52.200] (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256 bits))
+        by server-3.bemta.az-b.eu-west-1.aws.symcld.net id 4A/C9-01171-CF6983C5; Fri, 11 Jan 2019 13:15:40 +0000
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprBKsWRWlGSWpSXmKPExsVy8+3OTbp/pln
+  EGGzdJm6x5OJVdov2d8vYLS7vmsNmcWz1FTYHFo95a6o9ps/7yeTxeZNcAHMUa2ZeUn5FAmtG
+  b9sUtoLDShVvdt1na2C8JNPFyMUhJDCbUWJi11HmLkZODjYBGYnfz2+yg9giAtYSb/o+s4HYz
+  AIREhdfbmYBsYUFIiWWrZ4GVRMnMe3iZCYIW0/i0LdWsBoWAVWJhhmzwWxeAReJC8cegs1nFB
+  CT+H5qDRPETHGJW0/mg9kSAgISS/acZ4awRSVePv7H2sXIAWQrSKxuU4AIG0qsmnaABcKWlnj
+  Ts44NwjaVOHzzMAvESD2JG1OnQJ2sLbFs4WtmiBMEJU7OfMIygVFkFpLNs5C0zELSMgtJywJG
+  llWMFklFmekZJbmJmTm6hgYGuoaGRrqGlma6RoZmeolVukl6qaW65anFJbqGeonlxXrFlbnJO
+  Sl6eaklmxiBMZZScOTGDsYvy9MPMUpyMCmJ8v6ebBEjxJeUn1KZkVicEV9UmpNafIhRhoNDSY
+  LXbSpQTrAoNT21Ii0zBxjtMGkJDh4lEV4ekDRvcUFibnFmOkTqFKOilDhvM0hCACSRUZoH1wZ
+  LMJcYZaWEeRkZGBiEeApSi3IzS1DlXzGKczAqCfOWg0zhycwrgZv+CmgxE9Di4G/mIItLEhFS
+  Ug2MIUxqoqE2qq/ZckSEf99mZjNbv/zzi8Da5EyLWTEvxCsDj8eekTy06Hp0y7rDhpuUp+pLP
+  Dtybkvug5rnn1v3SK/ZHX1++4Xr1lkbQpcXrj227/vVezH/Xlp+OtZ603DdkqkL2BIm6x2Z4r
+  D++w2TR9psb5wXbGf9ZW6qVJpy9dSVA0surjl3/YgSS3FGoqEWc1FxIgAG0I9zKwMAAA==
+X-Env-Sender: Oliver.Rohe@wago.com
+X-Msg-Ref: server-12.tower-288.messagelabs.com!1547212539!332796!1
+X-Originating-IP: [217.237.185.178]
+X-SYMC-ESS-Client-Auth: outbound-route-from=pass
+X-StarScan-Received: 
+X-StarScan-Version: 9.31.5; banners=-,-,-
+X-VirusChecked: Checked
+Received: (qmail 6526 invoked from network); 11 Jan 2019 13:15:40 -0000
+Received: from unknown (HELO SVEX01005.wago.local) (217.237.185.178)
+  by server-12.tower-288.messagelabs.com with AES128-SHA encrypted SMTP; 11 Jan 2019 13:15:40 -0000
+Received: from SVEX01006.wago.local ([10.1.101.122]) by SVEX01005.wago.local
+ ([169.254.1.23]) with mapi id 14.03.0415.000; Fri, 11 Jan 2019 14:15:39 +0100
+From:   <Oliver.Rohe@wago.com>
+To:     <alexandre.belloni@bootlin.com>, <a.zummo@towertech.it>
+CC:     <linux-rtc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <Oliver.Rohe@wago.com>
+Subject: [PATCH] rtc: rs5c372: Fix reading from rtc when the oscillator got
+ interrupted.
+Thread-Topic: [PATCH] rtc: rs5c372: Fix reading from rtc when the oscillator
+ got interrupted.
+Thread-Index: AQHUqa+/rXqeQIxzX0+LFpkiw+8xxQ==
+Date:   Fri, 11 Jan 2019 13:15:39 +0000
+Message-ID: <1547212521-14871-1-git-send-email-oliver.rohe@wago.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.1.101.133]
+x-kse-antivirus-interceptor-info: scan successful
+x-kse-antivirus-info: Clean
+x-pp-proceessed: 8707ce24-8c4e-4a04-80f2-2a31f9152b06
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-In-Reply-To: <20190111120805.24852-1-jgross@suse.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en_US
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+When the oscillator of the rtc gets interrupted,
+e.g. due to an empty battery, reading from the rtc will now return an error
+and the oscillator bit will be cleared, once the rtc is successfully reset.
 
-On 1/11/19 1:08 PM, Juergen Gross wrote:
-> Commit f94c8d11699759 ("sched/clock, x86/tsc: Rework the x86 'unstable'
-> sched_clock() interface") broke Xen guest time handling across
-> migration:
-> 
-> [  187.249951] Freezing user space processes ... (elapsed 0.001 seconds) done.
-> [  187.251137] OOM killer disabled.
-> [  187.251137] Freezing remaining freezable tasks ... (elapsed 0.001 seconds) done.
-> [  187.252299] suspending xenstore...
-> [  187.266987] xen:grant_table: Grant tables using version 1 layout
-> [18446743811.706476] OOM killer enabled.
-> [18446743811.706478] Restarting tasks ... done.
-> [18446743811.720505] Setting capacity to 16777216
-> 
-> Fix that by setting xen_sched_clock_offset at resume time to ensure a
-> monotonic clock value.
-> 
-> [...]
+Signed-off-by: Oliver Rohe <oliver.rohe@wago.com>
+---
+ drivers/rtc/rtc-rs5c372.c | 60 ++++++++++++++++++++++++++++++++++++++++-------
+ 1 file changed, 52 insertions(+), 8 deletions(-)
 
-I'm throwing around a PV domU over a bunch of test servers with live
-migrate now, and in between the kernel logging, I'm seeing this:
-
-[Fri Jan 11 13:58:42 2019] Freezing user space processes ... (elapsed
-0.002 seconds) done.
-[Fri Jan 11 13:58:42 2019] OOM killer disabled.
-[Fri Jan 11 13:58:42 2019] Freezing remaining freezable tasks ...
-(elapsed 0.000 seconds) done.
-[Fri Jan 11 13:58:42 2019] suspending xenstore...
-[Fri Jan 11 13:58:42 2019] ------------[ cut here ]------------
-[Fri Jan 11 13:58:42 2019] Current state: 1
-[Fri Jan 11 13:58:42 2019] WARNING: CPU: 3 PID: 0 at
-kernel/time/clockevents.c:133 clockevents_switch_state+0x48/0xe0
-[Fri Jan 11 13:58:42 2019] Modules linked in:
-[Fri Jan 11 13:58:42 2019] CPU: 3 PID: 0 Comm: swapper/3 Not tainted
-4.19.14+ #1
-[Fri Jan 11 13:58:42 2019] RIP: e030:clockevents_switch_state+0x48/0xe0
-[Fri Jan 11 13:58:42 2019] Code: 8b 0c cd 40 ee 00 82 e9 d6 5b d1 00 80
-3d 8e 8d 43 01 00 75 17 89 c6 48 c7 c7 92 62 1f 82 c6 05 7c 8d 43 01 01
-e8 f8 22 f8 ff <0f> 0b 5b 5d f3 c3 83 e2 01 74 f7 48 8b 47 48 48 85 c0
-74 69 48 89
-[Fri Jan 11 13:58:42 2019] RSP: e02b:ffffc90000787e30 EFLAGS: 00010082
-[Fri Jan 11 13:58:42 2019] RAX: 0000000000000000 RBX: ffff88805df94d80
-RCX: 0000000000000006
-[Fri Jan 11 13:58:42 2019] RDX: 0000000000000007 RSI: 0000000000000001
-RDI: ffff88805df963f0
-[Fri Jan 11 13:58:42 2019] RBP: 0000000000000004 R08: 0000000000000000
-R09: 0000000000000119
-[Fri Jan 11 13:58:42 2019] R10: 0000000000000020 R11: ffffffff82af4e2d
-R12: ffff88805df9ca40
-[Fri Jan 11 13:58:42 2019] R13: 0000000dd28d6ca6 R14: 0000000000000000
-R15: 0000000000000000
-[Fri Jan 11 13:58:42 2019] FS:  00007f34193ce040(0000)
-GS:ffff88805df80000(0000) knlGS:0000000000000000
-[Fri Jan 11 13:58:42 2019] CS:  e033 DS: 002b ES: 002b CR0: 0000000080050033
-[Fri Jan 11 13:58:42 2019] CR2: 00007f6220be50e1 CR3: 000000005ce5c000
-CR4: 0000000000002660
-[Fri Jan 11 13:58:42 2019] Call Trace:
-[Fri Jan 11 13:58:42 2019]  tick_program_event+0x4b/0x70
-[Fri Jan 11 13:58:42 2019]  hrtimer_try_to_cancel+0xa8/0x100
-[Fri Jan 11 13:58:42 2019]  hrtimer_cancel+0x10/0x20
-[Fri Jan 11 13:58:42 2019]  __tick_nohz_idle_restart_tick+0x45/0xd0
-[Fri Jan 11 13:58:42 2019]  tick_nohz_idle_exit+0x93/0xa0
-[Fri Jan 11 13:58:42 2019]  do_idle+0x149/0x260
-[Fri Jan 11 13:58:42 2019]  cpu_startup_entry+0x6a/0x70
-[Fri Jan 11 13:58:42 2019] ---[ end trace 519c07d1032908f8 ]---
-[Fri Jan 11 13:58:42 2019] xen:grant_table: Grant tables using version 1
-layout
-[Fri Jan 11 13:58:42 2019] OOM killer enabled.
-[Fri Jan 11 13:58:42 2019] Restarting tasks ... done.
-[Fri Jan 11 13:58:42 2019] Setting capacity to 6291456
-[Fri Jan 11 13:58:42 2019] Setting capacity to 10485760
-
-This always happens on every *first* live migrate that I do after
-starting the domU.
-
-OTOH, With v1 I've indeed also observed the 'leftover' time jump on the
-first line when resuming. It didn't happen always, but it seems to not
-happen anymore at all now, so that's good.
-
-Hans
+diff --git a/drivers/rtc/rtc-rs5c372.c b/drivers/rtc/rtc-rs5c372.c
+index ff35dce..91d1475 100644
+--- a/drivers/rtc/rtc-rs5c372.c
++++ b/drivers/rtc/rtc-rs5c372.c
+@@ -52,8 +52,10 @@
+ #	define RS5C_CTRL1_CT4		(4 << 0)	/* 1 Hz level irq */
+ #define RS5C_REG_CTRL2		15
+ #	define RS5C372_CTRL2_24		(1 << 5)
+-#	define R2x2x_CTRL2_XSTP		(1 << 5)	/* only if R2x2x */
+-#	define RS5C_CTRL2_XSTP		(1 << 4)	/* only if !R2x2x */
++#	define RS5C_CTRL2_XSTP          (1 << 4)        /* only if !R2x2x */
++#	define R2x2x_CTRL2_VDET		(1 << 6)	/* only if  R2x2x */
++#	define R2x2x_CTRL2_XSTP		(1 << 5)	/* only if  R2x2x */
++#	define R2x2x_CTRL2_PON		(1 << 4)	/* only if  R2x2x */
+ #	define RS5C_CTRL2_CTFG		(1 << 2)
+ #	define RS5C_CTRL2_AAFG		(1 << 1)	/* or WAFG */
+ #	define RS5C_CTRL2_BAFG		(1 << 0)	/* or DAFG */
+@@ -212,10 +214,31 @@ static int rs5c372_rtc_read_time(struct device *dev, struct rtc_time *tm)
+ 	struct i2c_client *client = to_i2c_client(dev);
+ 	struct rs5c372	*rs5c = i2c_get_clientdata(client);
+ 	int		status = rs5c_get_regs(rs5c);
++	unsigned char ctrl2 = rs5c->regs[RS5C_REG_CTRL2];
+ 
+ 	if (status < 0)
+ 		return status;
+ 
++	switch (rs5c->type) {
++	case rtc_r2025sd:
++	case rtc_r2221tl:
++		if (ctrl2 & R2x2x_CTRL2_VDET)
++			dev_warn(&client->dev, "rtc battery voltage drop below threshold detected.\n");
++		if (ctrl2 & R2x2x_CTRL2_PON)
++			dev_warn(&client->dev, "rtc battery voltage drop to zero detected.\n");
++		if ((rs5c->type == rtc_r2025sd && !(ctrl2 & R2x2x_CTRL2_XSTP)) ||
++		    (rs5c->type == rtc_r2221tl &&  (ctrl2 & R2x2x_CTRL2_XSTP))) {
++			dev_warn(&client->dev, "rtc oscillator interruption detected. Please reset the rtc clock.\n");
++			return -EIO;
++		}
++		break;
++	default:
++		if (ctrl2 & RS5C_CTRL2_XSTP) {
++			dev_warn(&client->dev, "rtc oscillator interruption detected. Please reset the rtc clock.\n");
++			return -EIO;
++		}
++	}
++
+ 	tm->tm_sec = bcd2bin(rs5c->regs[RS5C372_REG_SECS] & 0x7f);
+ 	tm->tm_min = bcd2bin(rs5c->regs[RS5C372_REG_MINS] & 0x7f);
+ 	tm->tm_hour = rs5c_reg2hr(rs5c, rs5c->regs[RS5C372_REG_HOURS]);
+@@ -243,6 +266,7 @@ static int rs5c372_rtc_set_time(struct device *dev, struct rtc_time *tm)
+ 	struct i2c_client *client = to_i2c_client(dev);
+ 	struct rs5c372	*rs5c = i2c_get_clientdata(client);
+ 	unsigned char	buf[7];
++	unsigned char	ctrl2;
+ 	int		addr;
+ 
+ 	dev_dbg(&client->dev, "%s: tm is secs=%d, mins=%d, hours=%d "
+@@ -261,7 +285,32 @@ static int rs5c372_rtc_set_time(struct device *dev, struct rtc_time *tm)
+ 	buf[6] = bin2bcd(tm->tm_year - 100);
+ 
+ 	if (i2c_smbus_write_i2c_block_data(client, addr, sizeof(buf), buf) < 0) {
+-		dev_err(&client->dev, "%s: write error\n", __func__);
++		dev_dbg(&client->dev, "%s: write error in line %i\n",
++			__func__, __LINE__);
++		return -EIO;
++	}
++
++	addr = RS5C_ADDR(RS5C_REG_CTRL2);
++	ctrl2 = i2c_smbus_read_byte_data(client, addr);
++
++	/* clear rtc warning bits */
++	switch (rs5c->type) {
++	case rtc_r2025sd:
++	case rtc_r2221tl:
++		ctrl2 &= ~(R2x2x_CTRL2_VDET | R2x2x_CTRL2_PON);
++		if (rs5c->type == rtc_r2025sd)
++			ctrl2 |= R2x2x_CTRL2_XSTP;
++		else
++			ctrl2 &= ~R2x2x_CTRL2_XSTP;
++		break;
++	default:
++		ctrl2 &= ~RS5C_CTRL2_XSTP;
++		break;
++	}
++
++	if (i2c_smbus_write_byte_data(client, addr, ctrl2) < 0) {
++		dev_dbg(&client->dev, "%s: write error in line %i\n",
++			__func__, __LINE__);
+ 		return -EIO;
+ 	}
+ 
+@@ -523,23 +572,18 @@ static int rs5c_oscillator_setup(struct rs5c372 *rs5c372)
+ 	buf[0] = rs5c372->regs[RS5C_REG_CTRL1];
+ 	buf[1] = rs5c372->regs[RS5C_REG_CTRL2];
+ 
+-	/* handle xstp bit */
+ 	switch (rs5c372->type) {
+ 	case rtc_r2025sd:
+ 		if (buf[1] & R2x2x_CTRL2_XSTP)
+ 			return ret;
+-		rs5c372->regs[RS5C_REG_CTRL2] |= R2x2x_CTRL2_XSTP;
+ 		break;
+ 	case rtc_r2221tl:
+ 		if (!(buf[1] & R2x2x_CTRL2_XSTP))
+ 			return ret;
+-		rs5c372->regs[RS5C_REG_CTRL2] &= ~R2x2x_CTRL2_XSTP;
+ 		break;
+-
+ 	default:
+ 		if (!(buf[1] & RS5C_CTRL2_XSTP))
+ 			return ret;
+-		rs5c372->regs[RS5C_REG_CTRL2] &= ~RS5C_CTRL2_XSTP;
+ 		break;
+ 	}
+ 
+-- 
+2.7.4
