@@ -2,122 +2,291 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 522DDC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:14:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF5F3C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:14:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 21EB32183F
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:14:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7A0432183F
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:14:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547216093;
-	bh=DCPgf4CXaelKbDrasZknhn1+ZOQMaKajji3KMBGqEoM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=rDdwH3XAncAkEJVd2PszHmH/bWbcpjneP7xvXjop4CT64VKPuXUcZGvJpv4D7Sdp/
-	 IvtxKPpeCdqsVrPo6GERneNnsQtfHb2bpSS0jHPGUhz8NW1YSZcrvaYAbi5gHF2GZX
-	 fnA0FtRz1CT6uPXrSDcAaA9i84B/ri58sgJIfzlw=
+	s=default; t=1547216096;
+	bh=468WIDtLkYHO3ueagV2krwC9Q7H2+gXKRyAXaVSaM+s=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=mVd2jq8PnklcggJLpqXSE/q9cpz5aIHzjaJjiSP68PP0AGmUZ1co7jam4/mzx5j3z
+	 IBVN+Fud6hN22oV+tFPWiWuqVHzOHVjdELrdBT+42O+1k6bzEtitu8j00h0XgV+RN/
+	 DJi8e2JKXrrF5koAkdbQAyBBBCqKsw4Tou0MKYN8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733164AbfAKOOw (ORCPT
+        id S1733179AbfAKOOz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:14:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58732 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:14:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58790 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732147AbfAKOOu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:14:50 -0500
+        id S1732147AbfAKOOy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:14:54 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 41C7B217D6;
-        Fri, 11 Jan 2019 14:14:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D55F920874;
+        Fri, 11 Jan 2019 14:14:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547216089;
-        bh=DCPgf4CXaelKbDrasZknhn1+ZOQMaKajji3KMBGqEoM=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YRT6oTWOSQXYuMU+Z8037gUlJ3v7VhvD5K6SvzO/SLtbS2ycQd8wAb+7SeZw2l5gO
-         Xm29gcJD+MMQFZwHBQiMG15JhZc3t618G+vijB2skOnn4aXI/4wkStbSdPhOPesp8Q
-         6fNyjTUGwok8At9SOlUtgGRApqRnJvNzKGWpGLNc=
+        s=default; t=1547216092;
+        bh=468WIDtLkYHO3ueagV2krwC9Q7H2+gXKRyAXaVSaM+s=;
+        h=From:To:Cc:Subject:Date:From;
+        b=kKxUeE+1/VBM5qEySiVyr3r09ZENsclpszLIV22kj8O/cqgR5WgKlDtww2RpskpUZ
+         kAbwuDvf+5G0bSOPfyt/DRxOPcRQYVLNaX5/aALdgAAJH1aadROX/nSyddIHtX2Bb8
+         mAaFATnQUl0nrfoFHYKf3Xop0mrcELU8jkHV52ZU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tyrel Datwyler <tyreld@linux.vnet.ibm.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 3.18 09/47] ibmveth: fix DMA unmap error in ibmveth_xmit_start error path
-Date:   Fri, 11 Jan 2019 15:07:54 +0100
-Message-Id: <20190111130957.308612785@linuxfoundation.org>
+        torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: [PATCH 3.18 00/47] 3.18.132-stable review
+Date:   Fri, 11 Jan 2019 15:07:45 +0100
+Message-Id: <20190111130956.170952125@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190111130956.170952125@linuxfoundation.org>
-References: <20190111130956.170952125@linuxfoundation.org>
+MIME-Version: 1.0
 User-Agent: quilt/0.65
 X-stable: review
 X-Patchwork-Hint: ignore
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v4.x/stable-review/patch-3.18.132-rc1.gz
+X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+X-KernelTest-Branch: linux-3.18.y
+X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
+X-KernelTest-Version: 3.18.132-rc1
+X-KernelTest-Deadline: 2019-01-13T13:10+00:00
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.18-stable review patch.  If anyone has any objections, please let me know.
+This is the start of the stable review cycle for the 3.18.132 release.
+There are 47 patches in this series, all will be posted as a response
+to this one.  If anyone has any issues with these being applied, please
+let me know.
 
-------------------
+Responses should be made by Sun Jan 13 13:09:31 UTC 2019.
+Anything received after that time might be too late.
 
-From: Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
+The whole patch series can be found in one patch at:
+	https://www.kernel.org/pub/linux/kernel/v3.x/stable-review/patch-3.18.132-rc1.gz
+or in the git tree and branch at:
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-3.18.y
+and the diffstat can be found below.
 
-[ Upstream commit 756af9c642329d54f048bac2a62f829b391f6944 ]
+thanks,
 
-Commit 33a48ab105a7 ("ibmveth: Fix DMA unmap error") fixed an issue in the
-normal code path of ibmveth_xmit_start() that was originally introduced by
-Commit 6e8ab30ec677 ("ibmveth: Add scatter-gather support"). This original
-fix missed the error path where dma_unmap_page is wrongly called on the
-header portion in descs[0] which was mapped with dma_map_single. As a
-result a failure to DMA map any of the frags results in a dmesg warning
-when CONFIG_DMA_API_DEBUG is enabled.
+greg k-h
 
-------------[ cut here ]------------
-DMA-API: ibmveth 30000002: device driver frees DMA memory with wrong function
-  [device address=0x000000000a430000] [size=172 bytes] [mapped as page] [unmapped as single]
-WARNING: CPU: 1 PID: 8426 at kernel/dma/debug.c:1085 check_unmap+0x4fc/0xe10
-...
-<snip>
-...
-DMA-API: Mapped at:
-ibmveth_start_xmit+0x30c/0xb60
-dev_hard_start_xmit+0x100/0x450
-sch_direct_xmit+0x224/0x490
-__qdisc_run+0x20c/0x980
-__dev_queue_xmit+0x1bc/0xf20
+-------------
+Pseudo-Shortlog of commits:
 
-This fixes the API misuse by unampping descs[0] with dma_unmap_single.
+Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    Linux 3.18.132-rc1
 
-Fixes: 6e8ab30ec677 ("ibmveth: Add scatter-gather support")
-Signed-off-by: Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/ethernet/ibm/ibmveth.c |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+Lubomir Rintel <lkundrak@v3.sk>
+    power: supply: olpc_battery: correct the temperature units
 
---- a/drivers/net/ethernet/ibm/ibmveth.c
-+++ b/drivers/net/ethernet/ibm/ibmveth.c
-@@ -1059,11 +1059,15 @@ out:
- 
- map_failed_frags:
- 	last = i+1;
--	for (i = 0; i < last; i++)
-+	for (i = 1; i < last; i++)
- 		dma_unmap_page(&adapter->vdev->dev, descs[i].fields.address,
- 			       descs[i].fields.flags_len & IBMVETH_BUF_LEN_MASK,
- 			       DMA_TO_DEVICE);
- 
-+	dma_unmap_single(&adapter->vdev->dev,
-+			 descs[0].fields.address,
-+			 descs[0].fields.flags_len & IBMVETH_BUF_LEN_MASK,
-+			 DMA_TO_DEVICE);
- map_failed:
- 	if (!firmware_has_feature(FW_FEATURE_CMO))
- 		netdev_err(netdev, "tx: unable to map xmit buffer\n");
+Christian Borntraeger <borntraeger@de.ibm.com>
+    genwqe: Fix size check
+
+Yan, Zheng <zyan@redhat.com>
+    ceph: don't update importing cap's mseq when handing cap export
+
+Dominique Martinet <dominique.martinet@cea.fr>
+    9p/net: put a lower bound on msize
+
+Larry Finger <Larry.Finger@lwfinger.net>
+    b43: Fix error in cordic routine
+
+Andreas Gruenbacher <agruenba@redhat.com>
+    gfs2: Fix loop in gfs2_rbm_find
+
+Vasily Averin <vvs@virtuozzo.com>
+    dlm: memory leaks on error path in dlm_user_request()
+
+Vasily Averin <vvs@virtuozzo.com>
+    dlm: lost put_lkb on error path in receive_convert() and receive_unlock()
+
+Vasily Averin <vvs@virtuozzo.com>
+    dlm: possible memory leak on error path in create_lkb()
+
+Vasily Averin <vvs@virtuozzo.com>
+    dlm: fixed memory leaks after failed ls_remove_names allocation
+
+Hui Peng <benquike@163.com>
+    ALSA: usb-audio: Fix an out-of-bound read in create_composite_quirks
+
+Takashi Iwai <tiwai@suse.de>
+    ALSA: usb-audio: Avoid access before bLength check in build_audio_procunit()
+
+Dan Carpenter <dan.carpenter@oracle.com>
+    ALSA: cs46xx: Potential NULL dereference in probe
+
+Vasily Averin <vvs@virtuozzo.com>
+    sunrpc: use SVC_NET() in svcauth_gss_* functions
+
+Vasily Averin <vvs@virtuozzo.com>
+    sunrpc: fix cache_head leak due to queued request
+
+David Herrmann <dh.herrmann@gmail.com>
+    fork: record start_time late
+
+Steffen Maier <maier@linux.ibm.com>
+    scsi: zfcp: fix posting too many status read buffers leading to adapter shutdown
+
+Georgy A Bystrenin <gkot@altlinux.org>
+    CIFS: Fix error mapping for SMB2_LOCK command which caused OFD lock problem
+
+Huacai Chen <chenhc@lemote.com>
+    MIPS: Align kernel load address to 64KB
+
+Huacai Chen <chenhc@lemote.com>
+    MIPS: Ensure pmd_present() returns false after pmd_mknotpresent()
+
+Hans Verkuil <hverkuil-cisco@xs4all.nl>
+    media: vivid: free bitmap_cap when updating std/timings/etc.
+
+Macpaul Lin <macpaul.lin@mediatek.com>
+    cdc-acm: fix abnormal DATA RX issue for Mediatek Preloader.
+
+Theodore Ts'o <tytso@mit.edu>
+    ext4: force inode writes when nfsd calls commit_metadata()
+
+Maurizio Lombardi <mlombard@redhat.com>
+    ext4: missing unlock/put_page() in ext4_try_to_write_inline_data()
+
+Pan Bian <bianpan2016@163.com>
+    ext4: fix possible use after free in ext4_quota_enable
+
+Sean Christopherson <sean.j.christopherson@intel.com>
+    KVM: x86: Use jmp to invoke kvm_spurious_fault() from .fixup
+
+Jia-Ju Bai <baijiaju1990@gmail.com>
+    usb: r8a66597: Fix a possible concurrency use-after-free bug in r8a66597_endpoint_disable()
+
+Scott Chen <scott@labau.com.tw>
+    USB: serial: pl2303: add ids for Hewlett-Packard HP POS pole displays
+
+Deepa Dinamani <deepa.kernel@gmail.com>
+    sock: Make sock->sk_stamp thread-safe
+
+Juergen Gross <jgross@suse.com>
+    xen/netfront: tolerate frags with no data
+
+Jorgen Hansen <jhansen@vmware.com>
+    VSOCK: Send reset control packet when socket is partially bound
+
+Jason Wang <jasowang@redhat.com>
+    vhost: make sure used idx is seen before log in vhost_add_used_n()
+
+Xin Long <lucien.xin@gmail.com>
+    sctp: initialize sin6_flowinfo for ipv6 addrs in sctp_inet6addr_event
+
+Willem de Bruijn <willemb@google.com>
+    packet: validate address length if non-zero
+
+Willem de Bruijn <willemb@google.com>
+    packet: validate address length
+
+Cong Wang <xiyou.wangcong@gmail.com>
+    netrom: fix locking in nr_find_socket()
+
+Eric Dumazet <edumazet@google.com>
+    isdn: fix kernel-infoleak in capi_unlocked_ioctl
+
+Cong Wang <xiyou.wangcong@gmail.com>
+    ipv6: explicitly initialize udp6_addr in udp_sock_create6()
+
+Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
+    ibmveth: fix DMA unmap error in ibmveth_xmit_start error path
+
+Cong Wang <xiyou.wangcong@gmail.com>
+    ax25: fix a use-after-free in ax25_fillin_cb()
+
+Colin Ian King <colin.king@canonical.com>
+    x86/mtrr: Don't copy uninitialized gentry fields back to userspace
+
+Dexuan Cui <decui@microsoft.com>
+    Drivers: hv: vmbus: Return -EINVAL for the sys files for unopened channels
+
+Christophe Leroy <christophe.leroy@c-s.fr>
+    gpio: max7301: fix driver for use with CONFIG_VMAP_STACK
+
+Russell King <rmk+kernel@armlinux.org.uk>
+    mmc: omap_hsmmc: fix DMA API warning
+
+Ulf Hansson <ulf.hansson@linaro.org>
+    mmc: core: Reset HPI enabled state during re-init and in case of errors
+
+Tore Anderson <tore@fud.no>
+    USB: serial: option: add HP lt4132
+
+Hui Peng <benquike@gmail.com>
+    USB: hso: Fix OOB memory access in hso_probe/hso_get_config_data
+
+
+-------------
+
+Diffstat:
+
+ Makefile                                           |  4 +-
+ arch/mips/boot/compressed/calc_vmlinuz_load_addr.c |  7 ++-
+ arch/mips/include/asm/pgtable-64.h                 |  5 ++
+ arch/x86/include/asm/kvm_host.h                    |  2 +-
+ arch/x86/kernel/cpu/mtrr/if.c                      |  2 +
+ drivers/gpio/gpio-max7301.c                        | 12 +---
+ drivers/hv/vmbus_drv.c                             | 20 +++++++
+ drivers/isdn/capi/kcapi.c                          |  4 +-
+ drivers/media/platform/vivid/vivid-vid-cap.c       |  2 +
+ drivers/misc/genwqe/card_utils.c                   |  2 +-
+ drivers/mmc/core/mmc.c                             |  4 +-
+ drivers/mmc/host/omap_hsmmc.c                      | 12 +++-
+ drivers/net/ethernet/ibm/ibmveth.c                 |  6 +-
+ drivers/net/usb/hso.c                              | 18 +++++-
+ drivers/net/wireless/b43/phy_common.c              |  2 +-
+ drivers/net/xen-netfront.c                         |  2 +-
+ drivers/power/olpc_battery.c                       |  4 +-
+ drivers/s390/scsi/zfcp_aux.c                       |  6 +-
+ drivers/usb/class/cdc-acm.c                        | 10 ++++
+ drivers/usb/class/cdc-acm.h                        |  1 +
+ drivers/usb/host/r8a66597-hcd.c                    |  5 +-
+ drivers/usb/serial/option.c                        |  7 ++-
+ drivers/usb/serial/pl2303.c                        |  5 ++
+ drivers/usb/serial/pl2303.h                        |  5 ++
+ drivers/vhost/vhost.c                              |  2 +
+ fs/ceph/caps.c                                     |  1 -
+ fs/cifs/smb2maperror.c                             |  4 +-
+ fs/dlm/lock.c                                      | 17 +++---
+ fs/dlm/lockspace.c                                 |  2 +-
+ fs/ext4/inline.c                                   |  5 +-
+ fs/ext4/super.c                                    | 13 ++++-
+ fs/gfs2/rgrp.c                                     |  2 +-
+ include/net/sock.h                                 | 36 +++++++++++-
+ include/trace/events/ext4.h                        | 20 +++++++
+ kernel/fork.c                                      | 13 ++++-
+ net/9p/client.c                                    | 21 +++++++
+ net/ax25/af_ax25.c                                 | 11 +++-
+ net/ax25/ax25_dev.c                                |  2 +
+ net/compat.c                                       | 15 +++--
+ net/core/sock.c                                    |  3 +
+ net/ipv6/ip6_udp_tunnel.c                          |  3 +-
+ net/netrom/af_netrom.c                             | 15 +++--
+ net/packet/af_packet.c                             |  8 ++-
+ net/sctp/ipv6.c                                    |  1 +
+ net/sunrpc/auth_gss/svcauth_gss.c                  |  8 +--
+ net/sunrpc/cache.c                                 |  9 ++-
+ net/sunrpc/svcsock.c                               |  2 +-
+ net/vmw_vsock/vmci_transport.c                     | 67 ++++++++++++++++------
+ sound/pci/cs46xx/dsp_spos.c                        |  3 +
+ sound/usb/mixer.c                                  | 10 +++-
+ sound/usb/quirks-table.h                           |  3 +
+ 51 files changed, 352 insertions(+), 91 deletions(-)
 
 
