@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-13.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9877DC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:37:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 688F0C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:38:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E30521872
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:37:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 32AED2133F
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:38:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547217475;
-	bh=OoN/exucuoLXT+fnM3ky4F8iWPXon5mGZ1DPI3PxX/Y=;
+	s=default; t=1547217481;
+	bh=ICBzdRkPqv3Xc5j0T/VZsnyJQJo99Bb2NRTtueSzaIc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=bsQ93W9DfTdFNf9o91RDo1ISfyNXbwAbTWzv6edM31FCKAAE9IdOXM2j97A+uzIxK
-	 PRTq/umEgDkW8g6AdZg2nhL27/ln5ZFlkJt2Vw5ku+gL3JEmsb6wf+fll6bqDfTNJB
-	 CTRoWAA0eKn6+GC4m4mbn668sfhYCi8ThY4naDJg=
+	b=ws9QfPa7T/lnmyCbeLr1fEjvOWYufIuCrSMPM5T89BR0ZVgSKjSAEzHrZv4FCOhp7
+	 ZegLEquxxM0UTLeQH38NwekKti5rH5yHUs+wuq2TDEGs9c2Hj9t/lGFyQ36CK1x/d4
+	 Q90Y0JQuYbfU7RLwZcFfbFSV27LII5rDFIcWdWf0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390724AbfAKOhy (ORCPT
+        id S2390744AbfAKOiA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:37:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58416 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:38:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58514 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390236AbfAKOhv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:37:51 -0500
+        id S2390236AbfAKOh4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:37:56 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0660A204EC;
-        Fri, 11 Jan 2019 14:37:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 77616204EC;
+        Fri, 11 Jan 2019 14:37:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547217470;
-        bh=OoN/exucuoLXT+fnM3ky4F8iWPXon5mGZ1DPI3PxX/Y=;
+        s=default; t=1547217476;
+        bh=ICBzdRkPqv3Xc5j0T/VZsnyJQJo99Bb2NRTtueSzaIc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dKVYoAASSj8F/4MbL+KXbqnB7MaCgwFithxBk0R9M7lHB3hZJfAxVN72DG7hFyiKv
-         PYEqgVDTLK+mwIOTfncyAbaZN572bYxMd9DpK7yVgzKhGiFVtFKTjL5sxh15lXpEqR
-         IPlSDOGprnDocESjQjaQifb6H6m5OMA0arBX1wkI=
+        b=KKKj3FItPkGguCwDnePzPUF+/CAdP26u/x4eeUuaMLGvQO3HMzYOtB2flsWAHjw/s
+         /vBDUaZN4bHKoKaejFnp4k4XYKd3OjJs37rjjghoCQBfeN/txG3q14hbq+X9p4IDTM
+         9iPf82IyPdONW/dJiN1/nk8bFdfwUibTQX4JfaDc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kangjie Lu <kjlu@umn.edu>,
+        stable@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 073/148] net: netxen: fix a missing check and an uninitialized use
-Date:   Fri, 11 Jan 2019 15:14:11 +0100
-Message-Id: <20190111131117.153772430@linuxfoundation.org>
+Subject: [PATCH 4.19 075/148] serial/sunsu: fix refcount leak
+Date:   Fri, 11 Jan 2019 15:14:13 +0100
+Message-Id: <20190111131117.231104013@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131114.337122649@linuxfoundation.org>
 References: <20190111131114.337122649@linuxfoundation.org>
@@ -66,34 +66,78 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit d134e486e831defd26130770181f01dfc6195f7d ]
+[ Upstream commit d430aff8cd0c57502d873909c184e3b5753f8b88 ]
 
-When netxen_rom_fast_read() fails, "bios" is left uninitialized and may
-contain random value, thus should not be used.
+The function of_find_node_by_path() acquires a reference to the node
+returned by it and that reference needs to be dropped by its caller.
 
-The fix ensures that if netxen_rom_fast_read() fails, we return "-EIO".
+su_get_type() doesn't do that. The match node are used as an identifier
+to compare against the current node, so we can directly drop the refcount
+after getting the node from the path as it is not used as pointer.
 
-Signed-off-by: Kangjie Lu <kjlu@umn.edu>
+Fix this by use a single variable and drop the refcount right after
+of_find_node_by_path().
+
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/qlogic/netxen/netxen_nic_init.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/tty/serial/sunsu.c | 31 ++++++++++++++++++++++++++-----
+ 1 file changed, 26 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/net/ethernet/qlogic/netxen/netxen_nic_init.c b/drivers/net/ethernet/qlogic/netxen/netxen_nic_init.c
-index 0ea141ece19e..6547a9dd5935 100644
---- a/drivers/net/ethernet/qlogic/netxen/netxen_nic_init.c
-+++ b/drivers/net/ethernet/qlogic/netxen/netxen_nic_init.c
-@@ -1125,7 +1125,8 @@ netxen_validate_firmware(struct netxen_adapter *adapter)
- 		return -EINVAL;
+diff --git a/drivers/tty/serial/sunsu.c b/drivers/tty/serial/sunsu.c
+index 6cf3e9b0728f..3e77475668c0 100644
+--- a/drivers/tty/serial/sunsu.c
++++ b/drivers/tty/serial/sunsu.c
+@@ -1394,22 +1394,43 @@ static inline struct console *SUNSU_CONSOLE(void)
+ static enum su_type su_get_type(struct device_node *dp)
+ {
+ 	struct device_node *ap = of_find_node_by_path("/aliases");
++	enum su_type rc = SU_PORT_PORT;
+ 
+ 	if (ap) {
+ 		const char *keyb = of_get_property(ap, "keyboard", NULL);
+ 		const char *ms = of_get_property(ap, "mouse", NULL);
++		struct device_node *match;
+ 
+ 		if (keyb) {
+-			if (dp == of_find_node_by_path(keyb))
+-				return SU_PORT_KBD;
++			match = of_find_node_by_path(keyb);
++
++			/*
++			 * The pointer is used as an identifier not
++			 * as a pointer, we can drop the refcount on
++			 * the of__node immediately after getting it.
++			 */
++			of_node_put(match);
++
++			if (dp == match) {
++				rc = SU_PORT_KBD;
++				goto out;
++			}
+ 		}
+ 		if (ms) {
+-			if (dp == of_find_node_by_path(ms))
+-				return SU_PORT_MS;
++			match = of_find_node_by_path(ms);
++
++			of_node_put(match);
++
++			if (dp == match) {
++				rc = SU_PORT_MS;
++				goto out;
++			}
+ 		}
  	}
- 	val = nx_get_bios_version(adapter);
--	netxen_rom_fast_read(adapter, NX_BIOS_VERSION_OFFSET, (int *)&bios);
-+	if (netxen_rom_fast_read(adapter, NX_BIOS_VERSION_OFFSET, (int *)&bios))
-+		return -EIO;
- 	if ((__force u32)val != bios) {
- 		dev_err(&pdev->dev, "%s: firmware bios is incompatible\n",
- 				fw_name[fw_type]);
+ 
+-	return SU_PORT_PORT;
++out:
++	of_node_put(ap);
++	return rc;
+ }
+ 
+ static int su_probe(struct platform_device *op)
 -- 
 2.19.1
 
