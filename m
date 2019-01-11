@@ -7,47 +7,48 @@ X-Spam-Status: No, score=-13.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28673C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:31:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB5C4C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:31:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE2032133F
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:31:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8E5C221848
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:31:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547217116;
-	bh=adBaWIPwXZhSEgajjqNq5RYVJoqg0Fcp/u+/VfRc5WA=;
+	s=default; t=1547217119;
+	bh=nRa/al4YCjMracuNGFvHzOBna8i00A1GmevtbK8uQy8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=r1OTyr7T/Jbmuj1wBKkuTTKWRJqDOU6mL3fXQMx7F6GBrzMr9VsQD/qZurLnIITon
-	 e3lMFJmeXRo6gUBK4C8XrCoKIZbyOWq1xSt4bZEbGpWlTPWfefZ8Hqvo9pdSpPt8Dn
-	 ID1Azap6CW72RxRqHWOkZ6uLolYgJFfecWNj7Lrc=
+	b=A5+/VLje/AhpvgWa7M8jEHf3c59gvK9IM+IkJV/fF7skdyZZmVjmcNFhrRFTUG4gB
+	 N4Dcp5BpadEwbHrU7zQvmMvYW8QGyiuEIpvu7d9WZV4iQOPjjywnrmNo/CLnhwlUYF
+	 3z1fSuuFlRlfvfmHL7c67m1zuxaenYFqLb16TkiE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389287AbfAKObz (ORCPT
+        id S2389300AbfAKOb6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:31:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51706 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:31:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51768 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731255AbfAKObw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:31:52 -0500
+        id S2389286AbfAKObz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:31:55 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6E1B32063F;
-        Fri, 11 Jan 2019 14:31:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1122A2063F;
+        Fri, 11 Jan 2019 14:31:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547217111;
-        bh=adBaWIPwXZhSEgajjqNq5RYVJoqg0Fcp/u+/VfRc5WA=;
+        s=default; t=1547217114;
+        bh=nRa/al4YCjMracuNGFvHzOBna8i00A1GmevtbK8uQy8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ufui+HmWDndL3ldKQgn0zxgAbNfxXqo1JtVJtLvG6XMPSJimCb6rLA0oloCoR33Ij
-         ohvJ3IHx7ovLoNJkw455utMwwFPnYY4CEEqzrq7cETL4ZKev8h/2aarXh1Rbkt0vXO
-         ITyT2omQd5IahMWrCuNVVujC076nslHFXuQsYi44=
+        b=bOoOmRSbEHIJIevRr2ao92aAuPk3uzJwPxAUKDmZQR1ZuPYggAwLHBCxsM8/bjFBh
+         0FJoZMcedKxKuzkZK2PKorow+hb07SkbtKLur+vfhpssefC9JcUmOyHPBMUSQ+O6Dt
+         94oEQQqQIQ0jRvwVfSK5icyozwI7nFZakymmgSbY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Sara Sharon <sara.sharon@intel.com>,
+        Luca Coelho <luciano.coelho@intel.com>,
+        Johannes Berg <johannes.berg@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 046/105] vxge: ensure data0 is initialized in when fetching firmware version information
-Date:   Fri, 11 Jan 2019 15:14:17 +0100
-Message-Id: <20190111131106.966227334@linuxfoundation.org>
+Subject: [PATCH 4.14 047/105] mac80211: free skb fraglist before freeing the skb
+Date:   Fri, 11 Jan 2019 15:14:18 +0100
+Message-Id: <20190111131107.060817785@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131102.899065735@linuxfoundation.org>
 References: <20190111131102.899065735@linuxfoundation.org>
@@ -66,38 +67,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit f7db2beb4c2c6cc8111f5ab90fc7363ca91107b6 ]
+[ Upstream commit 34b1e0e9efe101822e83cc62d22443ed3867ae7a ]
 
-Currently variable data0 is not being initialized so a garbage value is
-being passed to vxge_hw_vpath_fw_api and this value is being written to
-the rts_access_steer_data0 register.  There are other occurrances where
-data0 is being initialized to zero (e.g. in function
-vxge_hw_upgrade_read_version) so I think it makes sense to ensure data0
-is initialized likewise to 0.
+mac80211 uses the frag list to build AMSDU. When freeing
+the skb, it may not be really freed, since someone is still
+holding a reference to it.
+In that case, when TCP skb is being retransmitted, the
+pointer to the frag list is being reused, while the data
+in there is no longer valid.
+Since we will never get frag list from the network stack,
+as mac80211 doesn't advertise the capability, we can safely
+free and nullify it before releasing the SKB.
 
-Detected by CoverityScan, CID#140696 ("Uninitialized scalar variable")
-
-Fixes: 8424e00dfd52 ("vxge: serialize access to steering control register")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sara Sharon <sara.sharon@intel.com>
+Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/neterion/vxge/vxge-config.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/mac80211/status.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/net/ethernet/neterion/vxge/vxge-config.c b/drivers/net/ethernet/neterion/vxge/vxge-config.c
-index 6223930a8155..6f57b0b7d57a 100644
---- a/drivers/net/ethernet/neterion/vxge/vxge-config.c
-+++ b/drivers/net/ethernet/neterion/vxge/vxge-config.c
-@@ -808,7 +808,7 @@ __vxge_hw_vpath_fw_ver_get(struct __vxge_hw_virtualpath *vpath,
- 	struct vxge_hw_device_date *fw_date = &hw_info->fw_date;
- 	struct vxge_hw_device_version *flash_version = &hw_info->flash_version;
- 	struct vxge_hw_device_date *flash_date = &hw_info->flash_date;
--	u64 data0, data1 = 0, steer_ctrl = 0;
-+	u64 data0 = 0, data1 = 0, steer_ctrl = 0;
- 	enum vxge_hw_status status;
+diff --git a/net/mac80211/status.c b/net/mac80211/status.c
+index 35912270087c..b18466cf466c 100644
+--- a/net/mac80211/status.c
++++ b/net/mac80211/status.c
+@@ -545,6 +545,11 @@ static void ieee80211_report_used_skb(struct ieee80211_local *local,
+ 	}
  
- 	status = vxge_hw_vpath_fw_api(vpath,
+ 	ieee80211_led_tx(local);
++
++	if (skb_has_frag_list(skb)) {
++		kfree_skb_list(skb_shinfo(skb)->frag_list);
++		skb_shinfo(skb)->frag_list = NULL;
++	}
+ }
+ 
+ /*
 -- 
 2.19.1
 
