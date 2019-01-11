@@ -2,187 +2,164 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17F9BC43444
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 05:11:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C180C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 05:13:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CFF3B20874
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 05:11:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0F7032184B
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 05:13:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Imun+eR9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729554AbfAKFLK (ORCPT
+        id S1729746AbfAKFNU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 00:11:10 -0500
-Received: from mga04.intel.com ([192.55.52.120]:48214 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725797AbfAKFLK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 00:11:10 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jan 2019 21:07:07 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,464,1539673200"; 
-   d="scan'208";a="117256977"
-Received: from catoland-mobl.amr.corp.intel.com (HELO [10.251.149.33]) ([10.251.149.33])
-  by orsmga003.jf.intel.com with ESMTP; 10 Jan 2019 21:07:04 -0800
-Subject: Re: [alsa-devel] [PATCH v2] ASoC: soc-core: defer card probe until
- all component is added to list
-To:     Rohit kumar <rohitkr@codeaurora.org>, plai@codeaurora.org,
-        bgoswami@codeaurora.org, asishb@codeaurora.org,
-        lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz,
-        tiwai@suse.com, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org, rohkumar@qti.qualcomm.com,
-        srinivas.kandagatla@linaro.org, vinod.koul@linaro.org
-Cc:     Ajit Pandey <ajitp@codeaurora.org>
-References: <1547023627-30312-1-git-send-email-rohitkr@codeaurora.org>
-From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Message-ID: <598efaa4-1543-5441-0d1d-01935dc62056@linux.intel.com>
-Date:   Thu, 10 Jan 2019 23:07:03 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <1547023627-30312-1-git-send-email-rohitkr@codeaurora.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+        Fri, 11 Jan 2019 00:13:20 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:36523 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728632AbfAKFNT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 00:13:19 -0500
+Received: by mail-pl1-f195.google.com with SMTP id g9so6239507plo.3;
+        Thu, 10 Jan 2019 21:13:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=yiNiXONw2hvDBpSYOL1d5N1MZI2fH8KXdlUQmgz4Znk=;
+        b=Imun+eR9QhZIf1CBWp1uTUvcu5c57x6vr/TD90brUG3h9+tzOmOdHmt/PFarV+h4iM
+         ECaoPAXZhC7f+gFgH8zk3gm3sDYQWwWUiJHxmbpVd4VfkM5Nhkr3SNVHzirNLtqmRR8r
+         3n8XqbC1ZS6MYSropDcrzMzA+8NTDWmgfpD7CXX04EMJXKXl64uawfa7vR89Sc+fnA3G
+         j+sguhsTgN5w9Jm45XJyfT7l5vmjIkKqrCugfyIheLGK7Id9ZpHttrA5JWFwPiY97a++
+         89mZzdRxZvm3R+yrRBFO4lE6XTtghhI1ZY0rmclP4ZZxDhPAwQoAPEQL5xMe58Ku3j/E
+         iCNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=yiNiXONw2hvDBpSYOL1d5N1MZI2fH8KXdlUQmgz4Znk=;
+        b=h3O8/zc1/IuWMfA5uDTzqkyDwwRX3MGVTMspRngq+386+uP6peIPhas1yg+oEiCzcL
+         m6HG616sD6GaR1fiDp4eQgmqEAtT1zHXXayh4uqdVx1/9q8ixjKJymU5xL2GQ9uuI+Ak
+         7fZ9CigGZfnqgLn7080tLLHzCkQHV7blC0zxPhc5scfHxg/rF8WJ3ZxfwIXrWpBPUfaY
+         edea85SHvPW2OIHFcahkKkbSW8BVDzzMnHMg7I6Wxzjp5YQ685FNVcWAi1i4BxrF4mmD
+         hbdYupiySVuc/3ntzXdwK6oInDYlbwiRbU44XbO+pThFUL/Po9ds9Y5h9BfPeu2CqmEH
+         w04Q==
+X-Gm-Message-State: AJcUukc+h20Wh/uWDnVSB6diwb2Hg0PY/yckLYMgunowQx8VqxKhNGug
+        ZgJ38c33MMqrvaTJ5fftPQSyY+gl6UWk
+X-Google-Smtp-Source: ALg8bN5rMV8JFql1nyNXCDkvGEFzOQ0KzKP/vFF0LATwv/Hp28/MAYHRgpLWoRhd7tg434tfMvck9w==
+X-Received: by 2002:a17:902:2aa8:: with SMTP id j37mr12667449plb.226.1547183597655;
+        Thu, 10 Jan 2019 21:13:17 -0800 (PST)
+Received: from mylaptop.redhat.com ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id q7sm93490471pgp.40.2019.01.10.21.13.09
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 10 Jan 2019 21:13:16 -0800 (PST)
+From:   Pingfan Liu <kernelfans@gmail.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Pingfan Liu <kernelfans@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>, Yinghai Lu <yinghai@kernel.org>,
+        Tejun Heo <tj@kernel.org>, Chao Fan <fanc.fnst@cn.fujitsu.com>,
+        Baoquan He <bhe@redhat.com>, Juergen Gross <jgross@suse.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Michal Hocko <mhocko@suse.com>, x86@kernel.org,
+        linux-acpi@vger.kernel.org, linux-mm@kvack.org
+Subject: [PATCHv2 0/7] x86_64/mm: remove bottom-up allocation style by pushing forward the parsing of mem hotplug info 
+Date:   Fri, 11 Jan 2019 13:12:50 +0800
+Message-Id: <1547183577-20309-1-git-send-email-kernelfans@gmail.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-While debugging Skylake audio stuff, I came across a kernel oops 
-introduced by this commit.
+Background
+When kaslr kernel can be guaranteed to sit inside unmovable node
+after [1]. But if kaslr kernel is located near the end of the movable node,
+then bottom-up allocator may create pagetable which crosses the boundary
+between unmovable node and movable node.  It is a probability issue,
+two factors include -1. how big the gap between kernel end and
+unmovable node's end.  -2. how many memory does the system own.
+Alternative way to fix this issue is by increasing the gap by
+boot/compressed/kaslr*. But taking the scenario of PB level memory,
+the pagetable will take server MB even if using 1GB page, different page
+attr and fragment will make things worse. So it is hard to decide how much
+should the gap increase.
+The following figure show the defection of current bottom-up style:
+  [startA, endA][startB, "kaslr kernel verly close to" endB][startC, endC]
 
-It's quite late here and my brain is fried, submitting as is but my 
-money is on the use of link->platform->of_node which is quite unlikely 
-to work on ACPI platforms.
+If nodeA,B is unmovable, while nodeC is movable, then init_mem_mapping()
+can generate pgtable on nodeC, which stain movable node.
 
-and btw you may want to fix the typos, it's registration, not registartion.
+This patch makes it certainty instead of a probablity problem. It achieves
+this by pushing forward the parsing of mem hotplug info ahead of init_mem_mapping().
 
--Pierre
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Len Brown <lenb@kernel.org>
+Cc: Yinghai Lu <yinghai@kernel.org>
+Cc: Tejun Heo <tj@kernel.org>
+Cc: Chao Fan <fanc.fnst@cn.fujitsu.com>
+Cc: Baoquan He <bhe@redhat.com>
+Cc: Juergen Gross <jgross@suse.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Mike Rapoport <rppt@linux.vnet.ibm.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: x86@kernel.org
+Cc: linux-acpi@vger.kernel.org
+Cc: linux-mm@kvack.org
+Pingfan Liu (7):
+  x86/mm: concentrate the code to memblock allocator enabled
+  acpi: change the topo of acpi_table_upgrade()
+  mm/memblock: introduce allocation boundary for tracing purpose
+  x86/setup: parse acpi to get hotplug info before init_mem_mapping()
+  x86/mm: set allowed range for memblock allocator
+  x86/mm: remove bottom-up allocation style for x86_64
+  x86/mm: isolate the bottom-up style to init_32.c
 
-8780cf1142a59568a3aa77959cbd76b2edb6fd81 is the first bad commit
-commit 8780cf1142a59568a3aa77959cbd76b2edb6fd81
-Author: Ajit Pandey <ajitp@codeaurora.org>
-Date:   Wed Jan 9 14:17:07 2019 +0530
+ arch/arm/mm/init.c              |   3 +-
+ arch/arm/mm/mmu.c               |   4 +-
+ arch/arm/mm/nommu.c             |   2 +-
+ arch/arm64/kernel/setup.c       |   2 +-
+ arch/csky/kernel/setup.c        |   2 +-
+ arch/microblaze/mm/init.c       |   2 +-
+ arch/mips/kernel/setup.c        |   2 +-
+ arch/powerpc/mm/40x_mmu.c       |   6 +-
+ arch/powerpc/mm/44x_mmu.c       |   2 +-
+ arch/powerpc/mm/8xx_mmu.c       |   2 +-
+ arch/powerpc/mm/fsl_booke_mmu.c |   5 +-
+ arch/powerpc/mm/hash_utils_64.c |   4 +-
+ arch/powerpc/mm/init_32.c       |   2 +-
+ arch/powerpc/mm/pgtable-radix.c |   2 +-
+ arch/powerpc/mm/ppc_mmu_32.c    |   8 +-
+ arch/powerpc/mm/tlb_nohash.c    |   6 +-
+ arch/unicore32/mm/mmu.c         |   2 +-
+ arch/x86/kernel/setup.c         |  93 ++++++++++++++---------
+ arch/x86/mm/init.c              | 163 +++++-----------------------------------
+ arch/x86/mm/init_32.c           | 147 ++++++++++++++++++++++++++++++++++++
+ arch/x86/mm/mm_internal.h       |   8 +-
+ arch/xtensa/mm/init.c           |   2 +-
+ drivers/acpi/tables.c           |   4 +-
+ include/linux/acpi.h            |   5 +-
+ include/linux/memblock.h        |  10 ++-
+ mm/memblock.c                   |  23 ++++--
+ 26 files changed, 290 insertions(+), 221 deletions(-)
 
-     ASoC: soc-core: defer card probe until all component is added to list
-
-     DAI component probe is not called if it is not present
-     in component list during sound card registration.
-     Check if component is available in component list for
-     platform and cpu dai before soundcard registration.
-
-     Signed-off-by: Ajit Pandey <ajitp@codeaurora.org>
-     Signed-off-by: Rohit kumar <rohitkr@codeaurora.org>
-     Signed-off-by: Mark Brown <broonie@kernel.org>
-
-:040000 040000 98da59b0a73551030a0c9030b8cd58114003c82b 
-48f0618f37a16dcfea5999ecd9743edbb0763594 M    sound
-
-[    2.686029] HDMI HDA Codec ehdaudio0D2: Max dais supported: 3
-[    2.687854] BUG: unable to handle kernel NULL pointer dereference at 
-0000000000000000
-[    2.687858] PGD 0 P4D 0
-[    2.687862] Oops: 0000 [#1] SMP PTI
-[    2.687866] CPU: 1 PID: 1647 Comm: systemd-udevd Not tainted 
-4.20.0-rc7-test+ #88
-[    2.687867] Hardware name: Dell Inc. XPS 13 9350/07TYC2, BIOS 1.0.0 
-09/10/2015
-[    2.687872] RIP: 0010:strcmp+0xc/0x20
-[    2.687875] Code: 75 f7 48 83 c6 01 0f b6 4e ff 48 83 c2 01 84 c9 88 
-4a ff 75 ed f3 c3 0f 1f 80 00 00 00 00 48 83 c7 01 0f b6 47 ff 48 83 c6 
-01 <3a> 46 ff 75 07 84 c0 75 eb 31 c0 c3 19 c0 83 c8 01 c3 66 90 48 85
-[    2.687877] RSP: 0018:ffff9fadc104bb18 EFLAGS: 00010202
-[    2.687880] RAX: 0000000000000065 RBX: ffff9d6834ba5428 RCX: 
-0000000000000001
-[    2.687882] RDX: ffffffffc0288d00 RSI: 0000000000000001 RDI: 
-ffff9d68351b5a61
-[    2.687883] RBP: 0000000000000000 R08: 0000000000000001 R09: 
-ffff9d6836dbfd80
-[    2.687885] R10: 0000000000000000 R11: ffff9d6835e65648 R12: 
-0000000000000000
-[    2.687887] R13: 0000000000000000 R14: 0000000000000000 R15: 
-ffff9fadc104be98
-[    2.687889] FS:  00007f976806a8c0(0000) GS:ffff9d6838a80000(0000) 
-knlGS:0000000000000000
-[    2.687891] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[    2.687893] CR2: 0000000000000000 CR3: 00000002b4286002 CR4: 
-00000000003606e0
-[    2.687895] Call Trace:
-[    2.687902]  soc_find_component+0x4c/0x70 [snd_soc_core]
-[    2.687908]  soc_init_dai_link+0x124/0x280 [snd_soc_core]
-[    2.687913]  snd_soc_register_card+0x6b/0x1f0 [snd_soc_core]
-[    2.687918]  ? __devres_alloc_node+0x2c/0x60
-[    2.687922]  devm_snd_soc_register_card+0x3e/0x80 [snd_soc_core]
-[    2.687926]  platform_drv_probe+0x35/0x90
-[    2.687930]  ? driver_sysfs_add+0x70/0xd0
-[    2.687932]  really_probe+0xee/0x2e0
-[    2.687935]  driver_probe_device+0x4a/0xe0
-[    2.687938]  __driver_attach+0xac/0xb0
-[    2.687941]  ? driver_probe_device+0xe0/0xe0
-[    2.687943]  bus_for_each_dev+0x71/0xb0
-[    2.687946]  bus_add_driver+0x191/0x210
-[    2.687948]  ? 0xffffffffc01bf000
-[    2.687951]  driver_register+0x56/0xe0
-[    2.687953]  ? 0xffffffffc01bf000
-[    2.687956]  do_one_initcall+0x41/0x1b8
-[    2.687960]  ? kobject_uevent_env+0x101/0x680
-[    2.687962]  ? _cond_resched+0x10/0x40
-[    2.687966]  ? kmem_cache_alloc_trace+0x35/0x160
-[    2.687969]  do_init_module+0x56/0x1db
-[    2.687973]  load_module+0x1e7c/0x2560
-[    2.687976]  ? vfs_read+0x10a/0x130
-[    2.687979]  ? __do_sys_finit_module+0xba/0xe0
-[    2.687983]  __do_sys_finit_module+0xba/0xe0
-[    2.687988]  do_syscall_64+0x43/0xf0
-[    2.687992]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-[    2.687995] RIP: 0033:0x7f9768aef219
-[    2.687998] Code: 00 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 
-48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 
-05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 47 fc 0c 00 f7 d8 64 89 01 48
-[    2.688000] RSP: 002b:00007ffccf3a4c98 EFLAGS: 00000246 ORIG_RAX: 
-0000000000000139
-[    2.688003] RAX: ffffffffffffffda RBX: 000055991cf57970 RCX: 
-00007f9768aef219
-[    2.688006] RDX: 0000000000000000 RSI: 00007f97689d3cad RDI: 
-000000000000000f
-[    2.688008] RBP: 00007f97689d3cad R08: 0000000000000000 R09: 
-0000000000000000
-[    2.688010] R10: 000000000000000f R11: 0000000000000246 R12: 
-0000000000000000
-[    2.688012] R13: 000055991cf49930 R14: 0000000000020000 R15: 
-000055991cf57970
-[    2.688015] Modules linked in: snd_soc_skl_hda_dsp(+) 
-snd_soc_hdac_hdmi snd_soc_dmic ax88179_178a(+) usbnet 
-snd_hda_codec_realtek snd_hda_codec_generic snd_soc_skl snd_soc_hdac_hda 
-snd_hda_ext_core snd_soc_skl_ipc x86_pkg_temp_thermal snd_soc_sst_ipc 
-snd_soc_sst_dsp snd_soc_acpi_intel_match snd_soc_acpi snd_soc_core 
-snd_compress snd_hda_codec snd_hwdep snd_hda_core snd_pcm efivarfs 
-intel_lpss_pci xhci_pci intel_lpss mfd_core xhci_hcd
-[    2.688031] CR2: 0000000000000000
-[    2.688034] ---[ end trace 8b96d01935d9effd ]---
-[    2.688037] RIP: 0010:strcmp+0xc/0x20
-[    2.688039] Code: 75 f7 48 83 c6 01 0f b6 4e ff 48 83 c2 01 84 c9 88 
-4a ff 75 ed f3 c3 0f 1f 80 00 00 00 00 48 83 c7 01 0f b6 47 ff 48 83 c6 
-01 <3a> 46 ff 75 07 84 c0 75 eb 31 c0 c3 19 c0 83 c8 01 c3 66 90 48 85
-[    2.688042] RSP: 0018:ffff9fadc104bb18 EFLAGS: 00010202
-[    2.688044] RAX: 0000000000000065 RBX: ffff9d6834ba5428 RCX: 
-0000000000000001
-[    2.688046] RDX: ffffffffc0288d00 RSI: 0000000000000001 RDI: 
-ffff9d68351b5a61
-[    2.688048] RBP: 0000000000000000 R08: 0000000000000001 R09: 
-ffff9d6836dbfd80
-[    2.688050] R10: 0000000000000000 R11: ffff9d6835e65648 R12: 
-0000000000000000
-[    2.688052] R13: 0000000000000000 R14: 0000000000000000 R15: 
-ffff9fadc104be98
-[    2.688055] FS:  00007f976806a8c0(0000) GS:ffff9d6838a80000(0000) 
-knlGS:0000000000000000
-[    2.688057] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[    2.688059] CR2: 0000000000000000 CR3: 00000002b4286002 CR4: 
-00000000003606e0
+-- 
+2.7.4
 
