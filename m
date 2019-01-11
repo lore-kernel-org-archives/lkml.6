@@ -4,51 +4,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A20CDC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:28:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5D67C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:28:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6CE6721841
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:28:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9C02321841
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:28:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547216911;
-	bh=LAfF6IKwDaaTY35Gq4wCLwsYO2YeOt1ZDqLAq+vTB6U=;
+	s=default; t=1547216914;
+	bh=Wjsy577JQhJl8C10A1LG+MqhQlkZdzk55tQ+B2jq9cE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Pd7N8E3JhFQ9xdDhLABX8R+UmivxS6iRQycPSRfjyTjoS4p8XS+g2pgF5ysfXtHC7
-	 RH1hK63Nqgx4cYAv1MVomnNhtumbSZvvbOPJmfiTpGLTZyNhP7fXufTeuwKLrfOitZ
-	 7a0GelGiJbji8OJOdlMr8cRZ1TVn3Ajn6w8+PeMg=
+	b=gkh+X5p9jMXhLA7j4S7+pXuiv5k6OIX2iNJ6S5X3211yd1wwds4L+AJ42M66NR8tC
+	 iY7YQ10S5Axl9v050Kf+1+cOUYiUddQKuWsoHyUcX0FyogmnTd7hBq6bM13SObtH97
+	 6C7tsDRwvthZkUzctA6TM0BkepZ6G58srNliQPWE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388534AbfAKO2a (ORCPT
+        id S2388545AbfAKO2d (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:28:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47140 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:28:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47230 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388497AbfAKO22 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:28:28 -0500
+        id S2388530AbfAKO2a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:28:30 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AFC392063F;
-        Fri, 11 Jan 2019 14:28:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 416592177B;
+        Fri, 11 Jan 2019 14:28:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547216907;
-        bh=LAfF6IKwDaaTY35Gq4wCLwsYO2YeOt1ZDqLAq+vTB6U=;
+        s=default; t=1547216909;
+        bh=Wjsy577JQhJl8C10A1LG+MqhQlkZdzk55tQ+B2jq9cE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=foCITfnDdJ++f5Hmdtp0QvXDQB/Hg2x7YobYopbLEJak7ogzGN4m4Zhc08hc03haX
-         GapvJ11yVLuR9aZzK8Nq7KO+NOqHzrwryfQzlojHMQW4urmFqOQREcnVBpxXFkIvi5
-         SuTIUC2hz5v6dWCnYhVtnRWCDKFVChKmsbK3C7sY=
+        b=vbMN01qTNZDCE+ks5qQ8aPntY2DelwcNalEmBc+HVcuL8Ish/qLt+eala+ShQHK8s
+         PX+cimi65t9lLtqcan0WVqmAjFJSFzDeOofpAtm3Zzj1gVa1NiAq1srwaiRVcldj/Q
+         Nbsd70mRtKdByGKUu3czie455U/qyLTxDuaREUUM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
-        Tom Gundersen <teg@jklm.no>,
-        David Herrmann <dh.herrmann@gmail.com>,
+        stable@vger.kernel.org, Michal Hocko <mhocko@suse.com>,
+        Oscar Salvador <osalvador@suse.com>,
+        David Hildenbrand <david@redhat.com>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.9 35/63] fork: record start_time late
-Date:   Fri, 11 Jan 2019 15:14:38 +0100
-Message-Id: <20190111131051.144667108@linuxfoundation.org>
+Subject: [PATCH 4.9 36/63] hwpoison, memory_hotplug: allow hwpoisoned pages to be offlined
+Date:   Fri, 11 Jan 2019 15:14:39 +0100
+Message-Id: <20190111131051.242600471@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131046.387528003@linuxfoundation.org>
 References: <20190111131046.387528003@linuxfoundation.org>
@@ -67,78 +69,169 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: David Herrmann <dh.herrmann@gmail.com>
+From: Michal Hocko <mhocko@suse.com>
 
-commit 7b55851367136b1efd84d98fea81ba57a98304cf upstream.
+commit b15c87263a69272423771118c653e9a1d0672caa upstream.
 
-This changes the fork(2) syscall to record the process start_time after
-initializing the basic task structure but still before making the new
-process visible to user-space.
+We have received a bug report that an injected MCE about faulty memory
+prevents memory offline to succeed on 4.4 base kernel.  The underlying
+reason was that the HWPoison page has an elevated reference count and the
+migration keeps failing.  There are two problems with that.  First of all
+it is dubious to migrate the poisoned page because we know that accessing
+that memory is possible to fail.  Secondly it doesn't make any sense to
+migrate a potentially broken content and preserve the memory corruption
+over to a new location.
 
-Technically, we could record the start_time anytime during fork(2).  But
-this might lead to scenarios where a start_time is recorded long before
-a process becomes visible to user-space.  For instance, with
-userfaultfd(2) and TLS, user-space can delay the execution of fork(2)
-for an indefinite amount of time (and will, if this causes network
-access, or similar).
+Oscar has found out that 4.4 and the current upstream kernels behave
+slightly differently with his simply testcase
 
-By recording the start_time late, it much closer reflects the point in
-time where the process becomes live and can be observed by other
-processes.
+===
 
-Lastly, this makes it much harder for user-space to predict and control
-the start_time they get assigned.  Previously, user-space could fork a
-process and stall it in copy_thread_tls() before its pid is allocated,
-but after its start_time is recorded.  This can be misused to later-on
-cycle through PIDs and resume the stalled fork(2) yielding a process
-that has the same pid and start_time as a process that existed before.
-This can be used to circumvent security systems that identify processes
-by their pid+start_time combination.
+int main(void)
+{
+        int ret;
+        int i;
+        int fd;
+        char *array = malloc(4096);
+        char *array_locked = malloc(4096);
 
-Even though user-space was always aware that start_time recording is
-flaky (but several projects are known to still rely on start_time-based
-identification), changing the start_time to be recorded late will help
-mitigate existing attacks and make it much harder for user-space to
-control the start_time a process gets assigned.
+        fd = open("/tmp/data", O_RDONLY);
+        read(fd, array, 4095);
 
-Reported-by: Jann Horn <jannh@google.com>
-Signed-off-by: Tom Gundersen <teg@jklm.no>
-Signed-off-by: David Herrmann <dh.herrmann@gmail.com>
+        for (i = 0; i < 4096; i++)
+                array_locked[i] = 'd';
+
+        ret = mlock((void *)PAGE_ALIGN((unsigned long)array_locked), sizeof(array_locked));
+        if (ret)
+                perror("mlock");
+
+        sleep (20);
+
+        ret = madvise((void *)PAGE_ALIGN((unsigned long)array_locked), 4096, MADV_HWPOISON);
+        if (ret)
+                perror("madvise");
+
+        for (i = 0; i < 4096; i++)
+                array_locked[i] = 'd';
+
+        return 0;
+}
+===
+
++ offline this memory.
+
+In 4.4 kernels he saw the hwpoisoned page to be returned back to the LRU
+list
+kernel:  [<ffffffff81019ac9>] dump_trace+0x59/0x340
+kernel:  [<ffffffff81019e9a>] show_stack_log_lvl+0xea/0x170
+kernel:  [<ffffffff8101ac71>] show_stack+0x21/0x40
+kernel:  [<ffffffff8132bb90>] dump_stack+0x5c/0x7c
+kernel:  [<ffffffff810815a1>] warn_slowpath_common+0x81/0xb0
+kernel:  [<ffffffff811a275c>] __pagevec_lru_add_fn+0x14c/0x160
+kernel:  [<ffffffff811a2eed>] pagevec_lru_move_fn+0xad/0x100
+kernel:  [<ffffffff811a334c>] __lru_cache_add+0x6c/0xb0
+kernel:  [<ffffffff81195236>] add_to_page_cache_lru+0x46/0x70
+kernel:  [<ffffffffa02b4373>] extent_readpages+0xc3/0x1a0 [btrfs]
+kernel:  [<ffffffff811a16d7>] __do_page_cache_readahead+0x177/0x200
+kernel:  [<ffffffff811a18c8>] ondemand_readahead+0x168/0x2a0
+kernel:  [<ffffffff8119673f>] generic_file_read_iter+0x41f/0x660
+kernel:  [<ffffffff8120e50d>] __vfs_read+0xcd/0x140
+kernel:  [<ffffffff8120e9ea>] vfs_read+0x7a/0x120
+kernel:  [<ffffffff8121404b>] kernel_read+0x3b/0x50
+kernel:  [<ffffffff81215c80>] do_execveat_common.isra.29+0x490/0x6f0
+kernel:  [<ffffffff81215f08>] do_execve+0x28/0x30
+kernel:  [<ffffffff81095ddb>] call_usermodehelper_exec_async+0xfb/0x130
+kernel:  [<ffffffff8161c045>] ret_from_fork+0x55/0x80
+
+And that latter confuses the hotremove path because an LRU page is
+attempted to be migrated and that fails due to an elevated reference
+count.  It is quite possible that the reuse of the HWPoisoned page is some
+kind of fixed race condition but I am not really sure about that.
+
+With the upstream kernel the failure is slightly different.  The page
+doesn't seem to have LRU bit set but isolate_movable_page simply fails and
+do_migrate_range simply puts all the isolated pages back to LRU and
+therefore no progress is made and scan_movable_pages finds same set of
+pages over and over again.
+
+Fix both cases by explicitly checking HWPoisoned pages before we even try
+to get reference on the page, try to unmap it if it is still mapped.  As
+explained by Naoya:
+
+: Hwpoison code never unmapped those for no big reason because
+: Ksm pages never dominate memory, so we simply didn't have strong
+: motivation to save the pages.
+
+Also put WARN_ON(PageLRU) in case there is a race and we can hit LRU
+HWPoison pages which shouldn't happen but I couldn't convince myself about
+that.  Naoya has noted the following:
+
+: Theoretically no such gurantee, because try_to_unmap() doesn't have a
+: guarantee of success and then memory_failure() returns immediately
+: when hwpoison_user_mappings fails.
+: Or the following code (comes after hwpoison_user_mappings block) also impli=
+: es
+: that the target page can still have PageLRU flag.
+:
+:         /*
+:          * Torn down by someone else?
+:          */
+:         if (PageLRU(p) && !PageSwapCache(p) && p->mapping =3D=3D NULL) {
+:                 action_result(pfn, MF_MSG_TRUNCATED_LRU, MF_IGNORED);
+:                 res =3D -EBUSY;
+:                 goto out;
+:         }
+:
+: So I think it's OK to keep "if (WARN_ON(PageLRU(page)))" block in
+: current version of your patch.
+
+Link: http://lkml.kernel.org/r/20181206120135.14079-1-mhocko@kernel.org
+Signed-off-by: Michal Hocko <mhocko@suse.com>
+Reviewed-by: Oscar Salvador <osalvador@suse.com>
+Debugged-by: Oscar Salvador <osalvador@suse.com>
+Tested-by: Oscar Salvador <osalvador@suse.com>
+Acked-by: David Hildenbrand <david@redhat.com>
+Acked-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/fork.c |   13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
+ mm/memory_hotplug.c |   16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -1606,8 +1606,6 @@ static __latent_entropy struct task_stru
+--- a/mm/memory_hotplug.c
++++ b/mm/memory_hotplug.c
+@@ -34,6 +34,7 @@
+ #include <linux/memblock.h>
+ #include <linux/bootmem.h>
+ #include <linux/compaction.h>
++#include <linux/rmap.h>
  
- 	posix_cpu_timers_init(p);
+ #include <asm/tlbflush.h>
  
--	p->start_time = ktime_get_ns();
--	p->real_start_time = ktime_get_boot_ns();
- 	p->io_context = NULL;
- 	p->audit_context = NULL;
- 	cgroup_fork(p);
-@@ -1768,6 +1766,17 @@ static __latent_entropy struct task_stru
- 		goto bad_fork_free_pid;
+@@ -1617,6 +1618,21 @@ do_migrate_range(unsigned long start_pfn
+ 			continue;
+ 		}
  
- 	/*
-+	 * From this point on we must avoid any synchronous user-space
-+	 * communication until we take the tasklist-lock. In particular, we do
-+	 * not want user-space to be able to predict the process start-time by
-+	 * stalling fork(2) after we recorded the start_time but before it is
-+	 * visible to the system.
-+	 */
++		/*
++		 * HWPoison pages have elevated reference counts so the migration would
++		 * fail on them. It also doesn't make any sense to migrate them in the
++		 * first place. Still try to unmap such a page in case it is still mapped
++		 * (e.g. current hwpoison implementation doesn't unmap KSM pages but keep
++		 * the unmap as the catch all safety net).
++		 */
++		if (PageHWPoison(page)) {
++			if (WARN_ON(PageLRU(page)))
++				isolate_lru_page(page);
++			if (page_mapped(page))
++				try_to_unmap(page, TTU_IGNORE_MLOCK | TTU_IGNORE_ACCESS);
++			continue;
++		}
 +
-+	p->start_time = ktime_get_ns();
-+	p->real_start_time = ktime_get_boot_ns();
-+
-+	/*
- 	 * Make it visible to the rest of the system, but dont wake it up yet.
- 	 * Need tasklist lock for parent etc handling!
- 	 */
+ 		if (!get_page_unless_zero(page))
+ 			continue;
+ 		/*
 
 
