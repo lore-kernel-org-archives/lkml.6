@@ -3,333 +3,120 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30DCAC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 08:59:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9A3DC43612
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 09:00:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ECF0220657
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 08:59:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A2BD820657
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 09:00:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731283AbfAKI75 (ORCPT
+        id S1731297AbfAKJAV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 03:59:57 -0500
-Received: from smtp2.provo.novell.com ([137.65.250.81]:35272 "EHLO
-        smtp2.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725779AbfAKI74 (ORCPT
-        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
-        Fri, 11 Jan 2019 03:59:56 -0500
-Received: from ghe-pc.suse.asia (prv-ext-foundry1int.gns.novell.com [137.65.251.240])
-        by smtp2.provo.novell.com with ESMTP (TLS encrypted); Fri, 11 Jan 2019 01:59:51 -0700
-From:   Gang He <ghe@suse.com>
-To:     mark@fasheh.com, jlbec@evilplan.org, jiangqi903@gmail.com
-Cc:     Gang He <ghe@suse.com>, linux-kernel@vger.kernel.org,
-        ocfs2-devel@oss.oracle.com, akpm@linux-foundation.org
-Subject: [PATCH] ocfs2: fix the application IO timeout when fstrim is running
-Date:   Fri, 11 Jan 2019 17:00:14 +0800
-Message-Id: <20190111090014.31645-1-ghe@suse.com>
-X-Mailer: git-send-email 2.12.3
+        Fri, 11 Jan 2019 04:00:21 -0500
+Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:55295 "EHLO
+        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725779AbfAKJAU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 04:00:20 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R161e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04420;MF=zhang.jia@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0TI.JvuE_1547197175;
+Received: from localhost(mailfrom:zhang.jia@linux.alibaba.com fp:SMTPD_---0TI.JvuE_1547197175)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Fri, 11 Jan 2019 16:59:35 +0800
+From:   Jia Zhang <zhang.jia@linux.alibaba.com>
+To:     jarkko.sakkinen@linux.intel.com, peterhuewe@gmx.de, jgg@ziepe.ca,
+        tweek@google.com
+Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        zhang.jia@linux.alibaba.com
+Subject: [PATCH 1/2] tpm/eventlog/tpm1: Simplify walking over *pos measurements
+Date:   Fri, 11 Jan 2019 16:59:32 +0800
+Message-Id: <1547197173-52826-2-git-send-email-zhang.jia@linux.alibaba.com>
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1547197173-52826-1-git-send-email-zhang.jia@linux.alibaba.com>
+References: <1547197173-52826-1-git-send-email-zhang.jia@linux.alibaba.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The user reported this problem, the upper application IO was
-timeout when fstrim was running on this ocfs2 partition. the
-application monitoring resource agent considered that this
-application did not work, then this node was fenced by the cluster
-brain (e.g. pacemaker).
-The root cause is that fstrim thread always holds main_bm meta-file
-related locks until all the cluster groups are trimmed.
-This patch will make fstrim thread release main_bm meta-file
-related locks when each cluster group is trimmed, this will let
-the current application IO has a chance to claim the clusters from
-main_bm meta-file.
+The responsibility of tpm1_bios_measurements_start() is to walk
+over the first *pos measurements, ensuring the skipped and
+to-be-read measurements are not out-of-boundary.
 
-Signed-off-by: Gang He <ghe@suse.com>
+Current logic is complicated a bit. Just employ a do-while loop
+with necessary sanity check, and then get the goal.
+
+Signed-off-by: Jia Zhang <zhang.jia@linux.alibaba.com>
 ---
- fs/ocfs2/alloc.c       | 159 +++++++++++++++++++++++++----------------
- fs/ocfs2/dlmglue.c     |   5 ++
- fs/ocfs2/ocfs2.h       |   1 +
- fs/ocfs2/ocfs2_trace.h |   2 +
- fs/ocfs2/super.c       |   2 +
- 5 files changed, 106 insertions(+), 63 deletions(-)
+ drivers/char/tpm/eventlog/tpm1.c | 37 ++++++++++++++-----------------------
+ 1 file changed, 14 insertions(+), 23 deletions(-)
 
-diff --git a/fs/ocfs2/alloc.c b/fs/ocfs2/alloc.c
-index d1cbb27808e2..6f0999015a44 100644
---- a/fs/ocfs2/alloc.c
-+++ b/fs/ocfs2/alloc.c
-@@ -7532,10 +7532,11 @@ static int ocfs2_trim_group(struct super_block *sb,
- 	return count;
- }
- 
--int ocfs2_trim_fs(struct super_block *sb, struct fstrim_range *range)
-+static
-+int ocfs2_trim_mainbm(struct super_block *sb, struct fstrim_range *range)
+diff --git a/drivers/char/tpm/eventlog/tpm1.c b/drivers/char/tpm/eventlog/tpm1.c
+index 58c8478..4cf8303 100644
+--- a/drivers/char/tpm/eventlog/tpm1.c
++++ b/drivers/char/tpm/eventlog/tpm1.c
+@@ -74,7 +74,7 @@
+ /* returns pointer to start of pos. entry of tcg log */
+ static void *tpm1_bios_measurements_start(struct seq_file *m, loff_t *pos)
  {
- 	struct ocfs2_super *osb = OCFS2_SB(sb);
--	u64 start, len, trimmed, first_group, last_group, group;
-+	u64 start, len, trimmed = 0, first_group, last_group = 0, group = 0;
- 	int ret, cnt;
- 	u32 first_bit, last_bit, minlen;
- 	struct buffer_head *main_bm_bh = NULL;
-@@ -7543,7 +7544,6 @@ int ocfs2_trim_fs(struct super_block *sb, struct fstrim_range *range)
- 	struct buffer_head *gd_bh = NULL;
- 	struct ocfs2_dinode *main_bm;
- 	struct ocfs2_group_desc *gd = NULL;
--	struct ocfs2_trim_fs_info info, *pinfo = NULL;
+-	loff_t i;
++	loff_t i = 0;
+ 	struct tpm_chip *chip = m->private;
+ 	struct tpm_bios_log *log = &chip->log;
+ 	void *addr = log->bios_event_log;
+@@ -83,38 +83,29 @@ static void *tpm1_bios_measurements_start(struct seq_file *m, loff_t *pos)
+ 	u32 converted_event_size;
+ 	u32 converted_event_type;
  
- 	start = range->start >> osb->s_clustersize_bits;
- 	len = range->len >> osb->s_clustersize_bits;
-@@ -7552,6 +7552,9 @@ int ocfs2_trim_fs(struct super_block *sb, struct fstrim_range *range)
- 	if (minlen >= osb->bitmap_cpg || range->len < sb->s_blocksize)
- 		return -EINVAL;
- 
-+	trace_ocfs2_trim_mainbm(start, len, minlen);
-+
-+next_group:
- 	main_bm_inode = ocfs2_get_system_file_inode(osb,
- 						    GLOBAL_BITMAP_SYSTEM_INODE,
- 						    OCFS2_INVALID_SLOT);
-@@ -7570,64 +7573,34 @@ int ocfs2_trim_fs(struct super_block *sb, struct fstrim_range *range)
- 	}
- 	main_bm = (struct ocfs2_dinode *)main_bm_bh->b_data;
- 
--	if (start >= le32_to_cpu(main_bm->i_clusters)) {
--		ret = -EINVAL;
--		goto out_unlock;
--	}
 -
--	len = range->len >> osb->s_clustersize_bits;
--	if (start + len > le32_to_cpu(main_bm->i_clusters))
--		len = le32_to_cpu(main_bm->i_clusters) - start;
--
--	trace_ocfs2_trim_fs(start, len, minlen);
--
--	ocfs2_trim_fs_lock_res_init(osb);
--	ret = ocfs2_trim_fs_lock(osb, NULL, 1);
--	if (ret < 0) {
--		if (ret != -EAGAIN) {
--			mlog_errno(ret);
--			ocfs2_trim_fs_lock_res_uninit(osb);
-+	/*
-+	 * Do some check before trim the first group.
-+	 */
-+	if (!group) {
-+		if (start >= le32_to_cpu(main_bm->i_clusters)) {
-+			ret = -EINVAL;
- 			goto out_unlock;
- 		}
- 
--		mlog(ML_NOTICE, "Wait for trim on device (%s) to "
--		     "finish, which is running from another node.\n",
--		     osb->dev_str);
--		ret = ocfs2_trim_fs_lock(osb, &info, 0);
--		if (ret < 0) {
--			mlog_errno(ret);
--			ocfs2_trim_fs_lock_res_uninit(osb);
--			goto out_unlock;
--		}
-+		if (start + len > le32_to_cpu(main_bm->i_clusters))
-+			len = le32_to_cpu(main_bm->i_clusters) - start;
- 
--		if (info.tf_valid && info.tf_success &&
--		    info.tf_start == start && info.tf_len == len &&
--		    info.tf_minlen == minlen) {
--			/* Avoid sending duplicated trim to a shared device */
--			mlog(ML_NOTICE, "The same trim on device (%s) was "
--			     "just done from node (%u), return.\n",
--			     osb->dev_str, info.tf_nodenum);
--			range->len = info.tf_trimlen;
--			goto out_trimunlock;
--		}
-+		/*
-+		 * Determine first and last group to examine based on
-+		 * start and len
-+		 */
-+		first_group = ocfs2_which_cluster_group(main_bm_inode, start);
-+		if (first_group == osb->first_cluster_group_blkno)
-+			first_bit = start;
-+		else
-+			first_bit = start - ocfs2_blocks_to_clusters(sb,
-+								first_group);
-+		last_group = ocfs2_which_cluster_group(main_bm_inode,
-+						       start + len - 1);
-+		group = first_group;
- 	}
- 
--	info.tf_nodenum = osb->node_num;
--	info.tf_start = start;
--	info.tf_len = len;
--	info.tf_minlen = minlen;
--
--	/* Determine first and last group to examine based on start and len */
--	first_group = ocfs2_which_cluster_group(main_bm_inode, start);
--	if (first_group == osb->first_cluster_group_blkno)
--		first_bit = start;
--	else
--		first_bit = start - ocfs2_blocks_to_clusters(sb, first_group);
--	last_group = ocfs2_which_cluster_group(main_bm_inode, start + len - 1);
--	last_bit = osb->bitmap_cpg;
--
--	trimmed = 0;
--	for (group = first_group; group <= last_group;) {
+ 	/* read over *pos measurements */
+-	for (i = 0; i < *pos; i++) {
 +	do {
- 		if (first_bit + len >= osb->bitmap_cpg)
- 			last_bit = osb->bitmap_cpg;
- 		else
-@@ -7659,21 +7632,81 @@ int ocfs2_trim_fs(struct super_block *sb, struct fstrim_range *range)
- 			group = ocfs2_clusters_to_blocks(sb, osb->bitmap_cpg);
- 		else
- 			group += ocfs2_clusters_to_blocks(sb, osb->bitmap_cpg);
+ 		event = addr;
+ 
++		/* check if current entry is valid */
++		if (addr + sizeof(struct tcpa_event) >= limit)
++			return NULL;
++
+ 		converted_event_size =
+ 		    do_endian_conversion(event->event_size);
+ 		converted_event_type =
+ 		    do_endian_conversion(event->event_type);
+ 
+-		if ((addr + sizeof(struct tcpa_event)) < limit) {
+-			if ((converted_event_type == 0) &&
+-			    (converted_event_size == 0))
+-				return NULL;
+-			addr += (sizeof(struct tcpa_event) +
+-				 converted_event_size);
+-		}
 -	}
--	range->len = trimmed * sb->s_blocksize;
-+	} while (0);
+-
+-	/* now check if current entry is valid */
+-	if ((addr + sizeof(struct tcpa_event)) >= limit)
+-		return NULL;
+-
+-	event = addr;
++		if (((converted_event_type == 0) && (converted_event_size == 0))
++		    || ((addr + sizeof(struct tcpa_event) + converted_event_size)
++			>= limit))
++			return NULL;
  
--	info.tf_trimlen = range->len;
--	info.tf_success = (ret ? 0 : 1);
--	pinfo = &info;
--out_trimunlock:
--	ocfs2_trim_fs_unlock(osb, pinfo);
--	ocfs2_trim_fs_lock_res_uninit(osb);
- out_unlock:
- 	ocfs2_inode_unlock(main_bm_inode, 0);
- 	brelse(main_bm_bh);
-+	main_bm_bh = NULL;
- out_mutex:
- 	inode_unlock(main_bm_inode);
- 	iput(main_bm_inode);
-+
-+	/*
-+	 * If all the groups trim are not done or failed, but we should release
-+	 * main_bm related locks for avoiding the current IO starve, then go to
-+	 * trim the next group
-+	 */
-+	if (ret >= 0 && group <= last_group)
-+		goto next_group;
- out:
-+	range->len = trimmed * sb->s_blocksize;
-+	return ret;
-+}
-+
-+int ocfs2_trim_fs(struct super_block *sb, struct fstrim_range *range)
-+{
-+	int ret;
-+	struct ocfs2_super *osb = OCFS2_SB(sb);
-+	struct ocfs2_trim_fs_info info, *pinfo = NULL;
-+
-+	ocfs2_trim_fs_lock_res_init(osb);
-+
-+	trace_ocfs2_trim_fs(range->start, range->len, range->minlen);
-+
-+	ret = ocfs2_trim_fs_lock(osb, NULL, 1);
-+	if (ret < 0) {
-+		if (ret != -EAGAIN) {
-+			mlog_errno(ret);
-+			ocfs2_trim_fs_lock_res_uninit(osb);
-+			return ret;
-+		}
-+
-+		mlog(ML_NOTICE, "Wait for trim on device (%s) to "
-+		     "finish, which is running from another node.\n",
-+		     osb->dev_str);
-+		ret = ocfs2_trim_fs_lock(osb, &info, 0);
-+		if (ret < 0) {
-+			mlog_errno(ret);
-+			ocfs2_trim_fs_lock_res_uninit(osb);
-+			return ret;
-+		}
-+
-+		if (info.tf_valid && info.tf_success &&
-+		    info.tf_start == range->start &&
-+		    info.tf_len == range->len &&
-+		    info.tf_minlen == range->minlen) {
-+			/* Avoid sending duplicated trim to a shared device */
-+			mlog(ML_NOTICE, "The same trim on device (%s) was "
-+			     "just done from node (%u), return.\n",
-+			     osb->dev_str, info.tf_nodenum);
-+			range->len = info.tf_trimlen;
-+			goto out;
-+		}
-+	}
-+
-+	info.tf_nodenum = osb->node_num;
-+	info.tf_start = range->start;
-+	info.tf_len = range->len;
-+	info.tf_minlen = range->minlen;
-+
-+	ret = ocfs2_trim_mainbm(sb, range);
-+
-+	info.tf_trimlen = range->len;
-+	info.tf_success = (ret < 0 ? 0 : 1);
-+	pinfo = &info;
-+out:
-+	ocfs2_trim_fs_unlock(osb, pinfo);
-+	ocfs2_trim_fs_lock_res_uninit(osb);
- 	return ret;
+-	converted_event_size = do_endian_conversion(event->event_size);
+-	converted_event_type = do_endian_conversion(event->event_type);
++		if (i++ == *pos)
++			break;
+ 
+-	if (((converted_event_type == 0) && (converted_event_size == 0))
+-	    || ((addr + sizeof(struct tcpa_event) + converted_event_size)
+-		>= limit))
+-		return NULL;
++		addr += (sizeof(struct tcpa_event) + converted_event_size);
++	} while (1);
+ 
+ 	return addr;
  }
-diff --git a/fs/ocfs2/dlmglue.c b/fs/ocfs2/dlmglue.c
-index 7c835824247e..af405586c5b1 100644
---- a/fs/ocfs2/dlmglue.c
-+++ b/fs/ocfs2/dlmglue.c
-@@ -686,6 +686,9 @@ void ocfs2_trim_fs_lock_res_init(struct ocfs2_super *osb)
- {
- 	struct ocfs2_lock_res *lockres = &osb->osb_trim_fs_lockres;
- 
-+	/* Only one trimfs thread are allowed to work at the same time. */
-+	mutex_lock(&osb->obs_trim_fs_mutex);
-+
- 	ocfs2_lock_res_init_once(lockres);
- 	ocfs2_build_lock_name(OCFS2_LOCK_TYPE_TRIM_FS, 0, 0, lockres->l_name);
- 	ocfs2_lock_res_init_common(osb, lockres, OCFS2_LOCK_TYPE_TRIM_FS,
-@@ -698,6 +701,8 @@ void ocfs2_trim_fs_lock_res_uninit(struct ocfs2_super *osb)
- 
- 	ocfs2_simple_drop_lockres(osb, lockres);
- 	ocfs2_lock_res_free(lockres);
-+
-+	mutex_unlock(&osb->obs_trim_fs_mutex);
- }
- 
- static void ocfs2_orphan_scan_lock_res_init(struct ocfs2_lock_res *res,
-diff --git a/fs/ocfs2/ocfs2.h b/fs/ocfs2/ocfs2.h
-index 4f86ac0027b5..1f029fbe8b8d 100644
---- a/fs/ocfs2/ocfs2.h
-+++ b/fs/ocfs2/ocfs2.h
-@@ -407,6 +407,7 @@ struct ocfs2_super
- 	struct ocfs2_lock_res osb_rename_lockres;
- 	struct ocfs2_lock_res osb_nfs_sync_lockres;
- 	struct ocfs2_lock_res osb_trim_fs_lockres;
-+	struct mutex obs_trim_fs_mutex;
- 	struct ocfs2_dlm_debug *osb_dlm_debug;
- 
- 	struct dentry *osb_debug_root;
-diff --git a/fs/ocfs2/ocfs2_trace.h b/fs/ocfs2/ocfs2_trace.h
-index 2ee76a90ba8f..dc4bce1649c1 100644
---- a/fs/ocfs2/ocfs2_trace.h
-+++ b/fs/ocfs2/ocfs2_trace.h
-@@ -712,6 +712,8 @@ TRACE_EVENT(ocfs2_trim_extent,
- 
- DEFINE_OCFS2_ULL_UINT_UINT_UINT_EVENT(ocfs2_trim_group);
- 
-+DEFINE_OCFS2_ULL_ULL_ULL_EVENT(ocfs2_trim_mainbm);
-+
- DEFINE_OCFS2_ULL_ULL_ULL_EVENT(ocfs2_trim_fs);
- 
- /* End of trace events for fs/ocfs2/alloc.c. */
-diff --git a/fs/ocfs2/super.c b/fs/ocfs2/super.c
-index 3415e0b09398..96ae7cedd487 100644
---- a/fs/ocfs2/super.c
-+++ b/fs/ocfs2/super.c
-@@ -1847,6 +1847,8 @@ static int ocfs2_mount_volume(struct super_block *sb)
- 	if (ocfs2_is_hard_readonly(osb))
- 		goto leave;
- 
-+	mutex_init(&osb->obs_trim_fs_mutex);
-+
- 	status = ocfs2_dlm_init(osb);
- 	if (status < 0) {
- 		mlog_errno(status);
 -- 
-2.19.2
+1.8.3.1
 
