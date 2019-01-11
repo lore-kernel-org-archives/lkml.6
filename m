@@ -2,108 +2,124 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CEC2FC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 11:51:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0AC2C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 11:53:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F3D02064C
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 11:51:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="fGvYWVn+";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="dorsoiaA"
+	by mail.kernel.org (Postfix) with ESMTP id 76DAF206B6
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 11:53:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730626AbfAKLvy (ORCPT
+        id S1731233AbfAKLxL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 06:51:54 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:37770 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728488AbfAKLvy (ORCPT
+        Fri, 11 Jan 2019 06:53:11 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:36848 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728488AbfAKLxL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 06:51:54 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 6351660A72; Fri, 11 Jan 2019 11:51:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1547207512;
-        bh=mw9RZ2ur1/2dBHon5bWF7MAr5QKceWwhoPlxvuaWF90=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-        b=fGvYWVn+I3bA62EwJGiSI0yk52ibkf4ouGESO1iY1GXcRZRIyLt0S9o67vvhY0h/p
-         8oC3FBDccFgcZf7BtIsgSNwjYhsfsOHrotYRBXl07FMswFJRf/eesfrqCts844D5uY
-         X7P1AhLxiOHoyr+1doPGB3F09vMI+0I4wmx9Pjwo=
-Received: from purkki.adurom.net (purkki.adurom.net [80.68.90.206])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id F0020608CB;
-        Fri, 11 Jan 2019 11:51:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1547207511;
-        bh=mw9RZ2ur1/2dBHon5bWF7MAr5QKceWwhoPlxvuaWF90=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-        b=dorsoiaAh/aGRGp7yhr9F+cJZjRPoVdWMo7d9/WYBOHqUtgH2SYcl6hezjTixUYzm
-         VU3IeFAiDLWNVYbZnM8UGsBviNW3p+eL9lA9PF67Sr9sYjQEzMJmgho4YRqLw7xd6l
-         ZE02fT4NfeIhFsETt2N9i9g84TEtWwix8Z9Zis9g=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org F0020608CB
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-From:   Kalle Valo <kvalo@codeaurora.org>
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linuxwifi <linuxwifi@intel.com>,
-        linux-wireless <linux-wireless@vger.kernel.org>,
-        Luca Coelho <luciano.coelho@intel.com>
-Subject: Re: linux-next: Tree for Jan 10 (iwlwifi)
-References: <20190110151409.7d0916c8@canb.auug.org.au>
-        <2069197c-c758-6c4e-d30c-3f6baa10b841@infradead.org>
-Date:   Fri, 11 Jan 2019 13:51:47 +0200
-In-Reply-To: <2069197c-c758-6c4e-d30c-3f6baa10b841@infradead.org> (Randy
-        Dunlap's message of "Thu, 10 Jan 2019 13:41:33 -0800")
-Message-ID: <87pnt35s4s.fsf@purkki.adurom.net>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/23.4 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+        Fri, 11 Jan 2019 06:53:11 -0500
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x0BBmtco147323
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jan 2019 06:53:09 -0500
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2pxr5d7mrs-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jan 2019 06:53:09 -0500
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <tmricht@linux.ibm.com>;
+        Fri, 11 Jan 2019 11:53:08 -0000
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 11 Jan 2019 11:53:04 -0000
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0BBr33t6422980
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 11 Jan 2019 11:53:04 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D959E5204E;
+        Fri, 11 Jan 2019 11:53:03 +0000 (GMT)
+Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 9E2A452051;
+        Fri, 11 Jan 2019 11:53:03 +0000 (GMT)
+From:   Thomas Richter <tmricht@linux.ibm.com>
+To:     linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        acme@kernel.org
+Cc:     brueckner@linux.vnet.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, Thomas Richter <tmricht@linux.ibm.com>
+Subject: [Patch 1/4] perf report: Add function for verbose dump of raw data
+Date:   Fri, 11 Jan 2019 12:52:56 +0100
+X-Mailer: git-send-email 2.16.4
+X-TM-AS-GCONF: 00
+x-cbid: 19011111-0008-0000-0000-000002AF73E1
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19011111-0009-0000-0000-0000221B7DA0
+Message-Id: <20190111115259.99438-1-tmricht@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-11_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901110099
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Randy Dunlap <rdunlap@infradead.org> writes:
+Add support to call an architecture dependend function to interpret
+raw data verbatim when dumping the perf.data file with
+option -D.
 
-> On 1/9/19 8:14 PM, Stephen Rothwell wrote:
->> Hi all,
->> 
->> Changes since 20190109:
->> 
->
-> on x86_64:
->
-> WARNING: unmet direct dependencies detected for MAC80211_LEDS
->   Depends on [n]: NET [=y] && WIRELESS [=y] && MAC80211 [=n] && LEDS_CLASS [=y]
->   Selected by [y]:
->   - IWLWIFI_LEDS [=y] && NETDEVICES [=y] && WLAN [=y] && WLAN_VENDOR_INTEL [=y] && IWLWIFI [=y] && (LEDS_CLASS [=y]=y || LEDS_CLASS [=y]=IWLWIFI [=y])
->
-> and then
->
-> ld: drivers/net/wireless/intel/iwlwifi/iwl-eeprom-parse.o: in function `iwl_parse_eeprom_data':
-> iwl-eeprom-parse.c:(.text+0x7c4): undefined reference to `ieee80211_channel_to_frequency'
-> ld: drivers/net/wireless/intel/iwlwifi/iwl-nvm-parse.o: in function `iwl_init_sbands':
-> iwl-nvm-parse.c:(.text+0x37f): undefined reference to `ieee80211_channel_to_frequency'
-> ld: drivers/net/wireless/intel/iwlwifi/iwl-nvm-parse.o: in function `iwl_parse_nvm_mcc_info':
-> iwl-nvm-parse.c:(.text+0xce9): undefined reference to `ieee80211_channel_to_frequency'
-> ld: iwl-nvm-parse.c:(.text+0xe9b): undefined reference to `reg_query_regdb_wmm'
-> ld: drivers/net/wireless/intel/iwlwifi/pcie/tx.o: in function `iwl_trans_pcie_tx':
-> tx.c:(.text+0x344d): undefined reference to `ieee80211_hdrlen'
-> ld: drivers/net/wireless/intel/iwlwifi/pcie/tx-gen2.o: in function `iwl_trans_pcie_gen2_tx':
-> tx-gen2.c:(.text+0xd93): undefined reference to `ieee80211_hdrlen'
-> ld: drivers/net/wireless/intel/iwlwifi/iwl-devtrace.o: in function `iwl_rx_trace_len':
-> iwl-devtrace.c:(.text+0x974): undefined reference to `ieee80211_hdrlen'
+This allows to display the event's raw data more verbatim
+than just plain hex data.
 
-Kbuild bot also reported this and Luca (CCed) is working on a fix.
-Thanks for the report.
+Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
+---
+ tools/perf/util/session.c | 7 +++++++
+ tools/perf/util/session.h | 3 +++
+ 2 files changed, 10 insertions(+)
 
+diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
+index 7d2c8ce6cfad..1c8d6d0ef300 100644
+--- a/tools/perf/util/session.c
++++ b/tools/perf/util/session.c
+@@ -1050,6 +1050,12 @@ static void sample_read__printf(struct perf_sample *sample, u64 read_format)
+ 			sample->read.one.id, sample->read.one.value);
+ }
+ 
++void __weak arch__trace_event(struct perf_evlist *evlist __maybe_unused,
++			      union perf_event *event __maybe_unused,
++			      struct perf_sample *sample __maybe_unused)
++{
++}
++
+ static void dump_event(struct perf_evlist *evlist, union perf_event *event,
+ 		       u64 file_offset, struct perf_sample *sample)
+ {
+@@ -1060,6 +1066,7 @@ static void dump_event(struct perf_evlist *evlist, union perf_event *event,
+ 	       file_offset, event->header.size, event->header.type);
+ 
+ 	trace_event(event);
++	arch__trace_event(evlist, event, sample);
+ 
+ 	if (sample)
+ 		perf_evlist__print_tstamp(evlist, event, sample);
+diff --git a/tools/perf/util/session.h b/tools/perf/util/session.h
+index d96eccd7d27f..160d9cd6a3ae 100644
+--- a/tools/perf/util/session.h
++++ b/tools/perf/util/session.h
+@@ -128,4 +128,7 @@ int perf_event__synthesize_id_index(struct perf_tool *tool,
+ 				    struct perf_evlist *evlist,
+ 				    struct machine *machine);
+ 
++void arch__trace_event(struct perf_evlist *evlist __maybe_unused,
++		       union perf_event *event __maybe_unused,
++		       struct perf_sample *sample __maybe_unused);
+ #endif /* __PERF_SESSION_H */
 -- 
-Kalle Valo
+2.14.3
+
