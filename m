@@ -2,162 +2,161 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 517FDC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 19:54:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58D12C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 19:54:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3422F2084C
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 19:54:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2FEC32084C
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 19:54:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547236488;
+	bh=1oDG6m5Dn/Y28gbkdiNqhtU244k/so4n4E4WKoi0A0s=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=eTjWDUbH0AwWvxzKPLGVxbVNGv82vpYKu7jp5I7L8yMkh4CIJVw6WHPB09yfh/j4C
+	 yF+ITCdIoK64TiPN1q3wQnYluCoRXNQj5XVLoSOU6xMpAoaOsCPoQZx8RHyfciwbkk
+	 +R3OjbwejDiwMtEpGE1+0yEfGLxkPov2xqdR3ncc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388913AbfAKTyi (ORCPT
+        id S2388981AbfAKTyr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 14:54:38 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:50317 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388791AbfAKTyh (ORCPT
+        Fri, 11 Jan 2019 14:54:47 -0500
+Received: from casper.infradead.org ([85.118.1.10]:57678 "EHLO
+        casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388712AbfAKTyq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 14:54:37 -0500
-Received: from 61-220-137-37.hinet-ip.hinet.net ([61.220.137.37] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <kai.heng.feng@canonical.com>)
-        id 1gi2t0-0005vJ-Qu; Fri, 11 Jan 2019 19:54:35 +0000
-From:   Kai-Heng Feng <kai.heng.feng@canonical.com>
-To:     gregkh@linuxfoundation.org
-Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>
-Subject: [PATCH 2/2] USB: Consolidate LPM checks to avoid enabling LPM twice
-Date:   Sat, 12 Jan 2019 03:54:25 +0800
-Message-Id: <20190111195425.11925-2-kai.heng.feng@canonical.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190111195425.11925-1-kai.heng.feng@canonical.com>
-References: <20190111195425.11925-1-kai.heng.feng@canonical.com>
+        Fri, 11 Jan 2019 14:54:46 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
+        MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=fMcNvquDgQQYlKE4Y7lNw6Nx1C1EhjU6J5BGveGlj+4=; b=mbohqD2QpEMefQWwUsKCJJR0wu
+        XLxAF7/7GnD3lzQsYsgzRvoy1zuL7Ej70GIMeFRCcP6OoqrQ5zEbi3ymwpEXuE8uU+YWZg1Gp5EQ/
+        4otHAYmsRlUMimv7+sUOhH7xlI537dTWBlz21EilYEsoRClF7Mc76ZM5aJlB5CO9fzeeNiq95PRcv
+        tU1bQ5OdGrT9SQgptnDn1p/CqPKxQJW/h9+Bmc6E0J675O13PXHHI8iN7g+v+ZnA5MjEoLdWoyrVa
+        oLvXi+/a8wZ3SkoSbTiyARozxYoYa3ppl0LF0X5BNi1DgOEj2LhBA7evi/bgAhBuyyDGHmrPx6s9Q
+        MIxVgPSA==;
+Received: from 177.17.174.42.dynamic.adsl.gvt.net.br ([177.17.174.42] helo=coco.lan)
+        by casper.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gi2sp-0000fE-UV; Fri, 11 Jan 2019 19:54:24 +0000
+Date:   Fri, 11 Jan 2019 17:54:16 -0200
+From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Pawel Osciak <pawel@osciak.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Niklas =?UTF-8?B?U8O2ZGVybHVuZA==?= 
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Russell King <linux@armlinux.org.uk>,
+        iommu@lists.linux-foundation.org,
+        linux-arm-kernel@lists.infradead.org,
+        linuxppc-dev@lists.ozlabs.org, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] videobuf2: replace a layering violation with
+ dma_map_resource
+Message-ID: <20190111175416.7d291e25@coco.lan>
+In-Reply-To: <20190111181731.11782-4-hch@lst.de>
+References: <20190111181731.11782-1-hch@lst.de>
+        <20190111181731.11782-4-hch@lst.de>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-USB Bluetooth controller QCA ROME (0cf3:e007) sometimes stops working
-after S3:
-[ 165.110742] Bluetooth: hci0: using NVM file: qca/nvm_usb_00000302.bin
-[ 168.432065] Bluetooth: hci0: Failed to send body at 4 of 1953 (-110)
+Em Fri, 11 Jan 2019 19:17:31 +0100
+Christoph Hellwig <hch@lst.de> escreveu:
 
-After some experiments, I found that disabling LPM can workaround the
-issue.
+> vb2_dc_get_userptr pokes into arm direct mapping details to get the
+> resemblance of a dma address for a a physical address that does is
+> not backed by a page struct.  Not only is this not portable to other
+> architectures with dma direct mapping offsets, but also not to uses
+> of IOMMUs of any kind.  Switch to the proper dma_map_resource /
+> dma_unmap_resource interface instead.
 
-On some platforms, the USB power is cut during S3, so the driver uses
-reset-resume to resume the device. During port resume, LPM gets enabled
-twice, by usb_reset_and_verify_device() and usb_port_resume().
+Makes sense to me. I'm assuming that you'll be pushing it together
+with other mm patches, so:
 
-Consolidate all checks into new LPM helpers to make sure LPM only gets
-enabled once.
+Acked-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 
-Fixes: de68bab4fa96 ("usb: Don't enable USB 2.0 Link PM by default.”)
-Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
----
- drivers/usb/core/driver.c  | 11 ++++++++---
- drivers/usb/core/hub.c     | 12 ++++--------
- drivers/usb/core/message.c |  3 +--
- 3 files changed, 13 insertions(+), 13 deletions(-)
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  .../common/videobuf2/videobuf2-dma-contig.c   | 41 ++++---------------
+>  1 file changed, 9 insertions(+), 32 deletions(-)
+> 
+> diff --git a/drivers/media/common/videobuf2/videobuf2-dma-contig.c b/drivers/media/common/videobuf2/videobuf2-dma-contig.c
+> index aff0ab7bf83d..82389aead6ed 100644
+> --- a/drivers/media/common/videobuf2/videobuf2-dma-contig.c
+> +++ b/drivers/media/common/videobuf2/videobuf2-dma-contig.c
+> @@ -439,42 +439,14 @@ static void vb2_dc_put_userptr(void *buf_priv)
+>  				set_page_dirty_lock(pages[i]);
+>  		sg_free_table(sgt);
+>  		kfree(sgt);
+> +	} else {
+> +		dma_unmap_resource(buf->dev, buf->dma_addr, buf->size,
+> +				   buf->dma_dir, 0);
+>  	}
+>  	vb2_destroy_framevec(buf->vec);
+>  	kfree(buf);
+>  }
+>  
+> -/*
+> - * For some kind of reserved memory there might be no struct page available,
+> - * so all that can be done to support such 'pages' is to try to convert
+> - * pfn to dma address or at the last resort just assume that
+> - * dma address == physical address (like it has been assumed in earlier version
+> - * of videobuf2-dma-contig
+> - */
+> -
+> -#ifdef __arch_pfn_to_dma
+> -static inline dma_addr_t vb2_dc_pfn_to_dma(struct device *dev, unsigned long pfn)
+> -{
+> -	return (dma_addr_t)__arch_pfn_to_dma(dev, pfn);
+> -}
+> -#elif defined(__pfn_to_bus)
+> -static inline dma_addr_t vb2_dc_pfn_to_dma(struct device *dev, unsigned long pfn)
+> -{
+> -	return (dma_addr_t)__pfn_to_bus(pfn);
+> -}
+> -#elif defined(__pfn_to_phys)
+> -static inline dma_addr_t vb2_dc_pfn_to_dma(struct device *dev, unsigned long pfn)
+> -{
+> -	return (dma_addr_t)__pfn_to_phys(pfn);
+> -}
+> -#else
+> -static inline dma_addr_t vb2_dc_pfn_to_dma(struct device *dev, unsigned long pfn)
+> -{
+> -	/* really, we cannot do anything better at this point */
+> -	return (dma_addr_t)(pfn) << PAGE_SHIFT;
+> -}
+> -#endif
+> -
+>  static void *vb2_dc_get_userptr(struct device *dev, unsigned long vaddr,
+>  	unsigned long size, enum dma_data_direction dma_dir)
+>  {
+> @@ -528,7 +500,12 @@ static void *vb2_dc_get_userptr(struct device *dev, unsigned long vaddr,
+>  		for (i = 1; i < n_pages; i++)
+>  			if (nums[i-1] + 1 != nums[i])
+>  				goto fail_pfnvec;
+> -		buf->dma_addr = vb2_dc_pfn_to_dma(buf->dev, nums[0]);
+> +		buf->dma_addr = dma_map_resource(buf->dev,
+> +				__pfn_to_phys(nums[0]), size, buf->dma_dir, 0);
+> +		if (dma_mapping_error(buf->dev, buf->dma_addr)) {
+> +			ret = -ENOMEM;
+> +			goto fail_pfnvec;
+> +		}
+>  		goto out;
+>  	}
+>  
 
-diff --git a/drivers/usb/core/driver.c b/drivers/usb/core/driver.c
-index c276ffc5561f..8987cec9549d 100644
---- a/drivers/usb/core/driver.c
-+++ b/drivers/usb/core/driver.c
-@@ -1901,9 +1901,6 @@ static int usb_set_usb2_hardware_lpm(struct usb_device *udev, int enable)
- 	struct usb_hcd *hcd = bus_to_hcd(udev->bus);
- 	int ret = -EPERM;
- 
--	if (enable && !udev->usb2_hw_lpm_allowed)
--		return 0;
--
- 	if (hcd->driver->set_usb2_hw_lpm) {
- 		ret = hcd->driver->set_usb2_hw_lpm(hcd, udev, enable);
- 		if (!ret)
-@@ -1915,11 +1912,19 @@ static int usb_set_usb2_hardware_lpm(struct usb_device *udev, int enable)
- 
- int usb_enable_usb2_hardware_lpm(struct usb_device *udev)
- {
-+	if (!udev->usb2_hw_lpm_capable ||
-+	    !udev->usb2_hw_lpm_allowed ||
-+	    udev->usb2_hw_lpm_enabled)
-+		return 0;
-+
- 	return usb_set_usb2_hardware_lpm(udev, 1);
- }
- 
- int usb_disable_usb2_hardware_lpm(struct usb_device *udev)
- {
-+	if (!udev->usb2_hw_lpm_enabled)
-+		return 0;
-+
- 	return usb_set_usb2_hardware_lpm(udev, 0);
- }
- 
-diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
-index ca38ff8124a7..55c87be5764c 100644
---- a/drivers/usb/core/hub.c
-+++ b/drivers/usb/core/hub.c
-@@ -3220,8 +3220,7 @@ int usb_port_suspend(struct usb_device *udev, pm_message_t msg)
- 	}
- 
- 	/* disable USB2 hardware LPM */
--	if (udev->usb2_hw_lpm_enabled == 1)
--		usb_disable_usb2_hardware_lpm(udev);
-+	usb_disable_usb2_hardware_lpm(udev);
- 
- 	if (usb_disable_ltm(udev)) {
- 		dev_err(&udev->dev, "Failed to disable LTM before suspend\n");
-@@ -3259,8 +3258,7 @@ int usb_port_suspend(struct usb_device *udev, pm_message_t msg)
- 		usb_enable_ltm(udev);
-  err_ltm:
- 		/* Try to enable USB2 hardware LPM again */
--		if (udev->usb2_hw_lpm_capable == 1)
--			usb_enable_usb2_hardware_lpm(udev);
-+		usb_enable_usb2_hardware_lpm(udev);
- 
- 		if (udev->do_remote_wakeup)
- 			(void) usb_disable_remote_wakeup(udev);
-@@ -3543,8 +3541,7 @@ int usb_port_resume(struct usb_device *udev, pm_message_t msg)
- 		hub_port_logical_disconnect(hub, port1);
- 	} else  {
- 		/* Try to enable USB2 hardware LPM */
--		if (udev->usb2_hw_lpm_capable == 1)
--			usb_enable_usb2_hardware_lpm(udev);
-+		usb_enable_usb2_hardware_lpm(udev);
- 
- 		/* Try to enable USB3 LTM */
- 		usb_enable_ltm(udev);
-@@ -5649,8 +5646,7 @@ static int usb_reset_and_verify_device(struct usb_device *udev)
- 	/* Disable USB2 hardware LPM.
- 	 * It will be re-enabled by the enumeration process.
- 	 */
--	if (udev->usb2_hw_lpm_enabled == 1)
--		usb_disable_usb2_hardware_lpm(udev);
-+	usb_disable_usb2_hardware_lpm(udev);
- 
- 	/* Disable LPM while we reset the device and reinstall the alt settings.
- 	 * Device-initiated LPM, and system exit latency settings are cleared
-diff --git a/drivers/usb/core/message.c b/drivers/usb/core/message.c
-index 35951aea7f50..4f33eb632a88 100644
---- a/drivers/usb/core/message.c
-+++ b/drivers/usb/core/message.c
-@@ -1243,8 +1243,7 @@ void usb_disable_device(struct usb_device *dev, int skip_ep0)
- 			dev->actconfig->interface[i] = NULL;
- 		}
- 
--		if (dev->usb2_hw_lpm_enabled == 1)
--			usb_disable_usb2_hardware_lpm(dev);
-+		usb_disable_usb2_hardware_lpm(dev);
- 		usb_unlocked_disable_lpm(dev);
- 		usb_disable_ltm(dev);
- 
--- 
-2.17.1
 
+
+Thanks,
+Mauro
