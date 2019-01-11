@@ -2,296 +2,138 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,UNPARSEABLE_RELAY autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BE79C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 20:36:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17E30C43612
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 20:36:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C55B21783
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 20:36:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E085D21783
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 20:36:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Ncyr2DHp"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="zqxkaixa"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725895AbfAKUgJ (ORCPT
+        id S1726154AbfAKUgb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 15:36:09 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:42665 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725804AbfAKUgH (ORCPT
+        Fri, 11 Jan 2019 15:36:31 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:45160 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725554AbfAKUga (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 15:36:07 -0500
-Received: by mail-pl1-f193.google.com with SMTP id y1so7240423plp.9
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Jan 2019 12:36:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=xcWWIbOm2J3eFMuV+hJKXP1P/GfLQOPTvj4Lf/y9kvQ=;
-        b=Ncyr2DHpTIrPPZypZXVwd6msWaghhaSaIifbfoghFWmQ1P7hMgBoocESotC1CJRE/o
-         j3ijXKUMmfQEkgzTeMOARYRmY216mdeCsGQIj0vDzDGgtI11ZxvYmr7vO3LSc/UNvLqA
-         cnW1yXSqYIpns7ZE04g/uXxqlBJJ5/rarZFtQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=xcWWIbOm2J3eFMuV+hJKXP1P/GfLQOPTvj4Lf/y9kvQ=;
-        b=Bvc4XZOBFCUkDVMVMVtmgGx7QPhAl+cLxYaQM+cZjjZNt/PMhJXqJWNjOcLH8qHXid
-         U1KQzVPWrZPRbWlzsocmlupLaUifBV2CULHysa+R4tXXCa9Nsc0uGPvuse6cFIMRhHGc
-         M6z+onDmsih6Mhpov2xxOt2Bzim9Aje0RIYoi1TG6Pl2ovzr6s8XZqccqb5FCdVdUkmK
-         1iwLMG65X71X0J/XvYT7a92NRkLTQv/Rpf8d8qJQKAg/gPgDEWQnWjwZ48uAGDNIoHy+
-         Xqz0dUhEcBvlEKzqGnFOLw+myTZtK9jnQWDgAnNfGzI3aV4eZak95YmtFV1vThCyzjtK
-         70CQ==
-X-Gm-Message-State: AJcUukcw8I7jOquojlc0IZaqZ59R+cQAXw7RzS1iKq2ZcSV4yhdNSgVL
-        6dQqomyObPxCrSzUJVg4IWFXgg==
-X-Google-Smtp-Source: ALg8bN4P47H6XXdTmLX995PaTOzniZQ3jzeXpjNQ/7vjfEM4TMIqepzjtioH2v2nrRtPKnX6vPGy3Q==
-X-Received: by 2002:a17:902:e20b:: with SMTP id ce11mr15583359plb.251.1547238966885;
-        Fri, 11 Jan 2019 12:36:06 -0800 (PST)
-Received: from localhost ([2620:15c:202:1:75a:3f6e:21d:9374])
-        by smtp.gmail.com with ESMTPSA id d69sm108775446pfg.168.2019.01.11.12.36.05
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 11 Jan 2019 12:36:06 -0800 (PST)
-Date:   Fri, 11 Jan 2019 12:36:05 -0800
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Amit Kucheria <amit.kucheria@linaro.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Andy Gross <andy.gross@linaro.org>,
-        Taniya Das <tdas@codeaurora.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        David Brown <david.brown@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>
-Subject: Re: [PATCH v1 7/7] arm64: dts: sdm845: wireup the thermal trip
- points to cpufreq
-Message-ID: <20190111203605.GG261387@google.com>
-References: <cover.1547078153.git.amit.kucheria@linaro.org>
- <6c5b26e65be18222587724e066fc2e39b9f60397.1547078153.git.amit.kucheria@linaro.org>
- <20190111003014.GB261387@google.com>
- <CAHLCerP5ZyORkJm9E8kk-+4X6u6f2=vn_0hq7jSewr9O4=RKDw@mail.gmail.com>
+        Fri, 11 Jan 2019 15:36:30 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0BKSwOL063588;
+        Fri, 11 Jan 2019 20:36:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=99uPd3V3L9uMaiExmuEZBX+VIsu9Fi82Sb9lEprRISM=;
+ b=zqxkaixay4hRzq/NzrO27hcJ/IB8LOL+NehKLosZFfAje+Ebp0zmllL36suz7W6dikkf
+ K3bhweRIAfaCIino2bBcYm4HHxXJUZ8SfGfl0zSGWTl/l4x+UJB2NyJyN3jPRYwluRKS
+ 08gm0sAxfH78V3dJNoeQF5T2lPCh1Q2csR30ftwcx+5gglK5Ou+qeCcU74FJa3NBlHLY
+ Mz1UXE5fMNbwSpYHCVG2QxXTa9NoUuPgik8tknQjpqXBHfvdtYwD4ZDtchEK8yHyUFIT
+ +IvxqjLp7gRWWnMuMD7kEebGCGMx4LG6S2AUK5yrl8XdY/p81N6nc2pYO9H0g+Fy+ut8 mA== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by userp2120.oracle.com with ESMTP id 2ptn7retmq-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 11 Jan 2019 20:36:04 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x0BKZwJN029193
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 11 Jan 2019 20:35:58 GMT
+Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x0BKZvSw026423;
+        Fri, 11 Jan 2019 20:35:57 GMT
+Received: from dhcp-burlington7-2nd-B-east-10-152-55-162.usdhcp.oraclecorp.com (/10.152.32.65)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 11 Jan 2019 12:35:56 -0800
+Subject: Re: [PATCH v2] xen: Fix x86 sched_clock() interface for xen
+To:     Juergen Gross <jgross@suse.com>, linux-kernel@vger.kernel.org,
+        xen-devel@lists.xenproject.org, x86@kernel.org
+Cc:     sstabellini@kernel.org, hpa@zytor.com, tglx@linutronix.de,
+        mingo@redhat.com, bp@alien8.de, hans@knorrie.org,
+        stable@vger.kernel.org
+References: <20190111120805.24852-1-jgross@suse.com>
+From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
+ 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
+ Jg6OxFYd01z+a+oL
+Message-ID: <f0b7963a-049f-e89e-a9cb-9e0f18f771a3@oracle.com>
+Date:   Fri, 11 Jan 2019 15:35:54 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
+In-Reply-To: <20190111120805.24852-1-jgross@suse.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAHLCerP5ZyORkJm9E8kk-+4X6u6f2=vn_0hq7jSewr9O4=RKDw@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9133 signatures=668680
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=881
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1901110163
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 11, 2019 at 04:47:15PM +0530, Amit Kucheria wrote:
-> On Fri, Jan 11, 2019 at 6:00 AM Matthias Kaehlcke <mka@chromium.org> wrote:
-> >
-> > On Thu, Jan 10, 2019 at 05:30:56AM +0530, Amit Kucheria wrote:
-> > > Since the big and little cpus are in the same frequency domain, use all
-> > > of them for mitigation in the cooling-map. At the lower trip points we
-> > > restrict ourselves to throttling only a few OPPs. At higher trip
-> > > temperatures, allow ourselves to be throttled to any extent.
-> > >
-> > > Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
-> > > ---
-> > >  arch/arm64/boot/dts/qcom/sdm845.dtsi | 145 +++++++++++++++++++++++++++
-> > >  1 file changed, 145 insertions(+)
-> > >
-> > > diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> > > index 29e823b0caf4..cd6402a9aa64 100644
-> > > --- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> > > +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> > > @@ -13,6 +13,7 @@
-> > >  #include <dt-bindings/reset/qcom,sdm845-aoss.h>
-> > >  #include <dt-bindings/soc/qcom,rpmh-rsc.h>
-> > >  #include <dt-bindings/clock/qcom,gcc-sdm845.h>
-> > > +#include <dt-bindings/thermal/thermal.h>
-> > >
-> > >  / {
-> > >       interrupt-parent = <&intc>;
-> > > @@ -99,6 +100,7 @@
-> > >                       compatible = "qcom,kryo385";
-> > >                       reg = <0x0 0x0>;
-> > >                       enable-method = "psci";
-> > > +                     #cooling-cells = <2>;
-> > >                       next-level-cache = <&L2_0>;
-> > >                       L2_0: l2-cache {
-> > >                               compatible = "cache";
-> > > @@ -114,6 +116,7 @@
-> > >                       compatible = "qcom,kryo385";
-> > >                       reg = <0x0 0x100>;
-> > >                       enable-method = "psci";
-> > > +                     #cooling-cells = <2>;
-> > >                       next-level-cache = <&L2_100>;
-> > >                       L2_100: l2-cache {
-> > >                               compatible = "cache";
-> > > @@ -126,6 +129,7 @@
-> > >                       compatible = "qcom,kryo385";
-> > >                       reg = <0x0 0x200>;
-> > >                       enable-method = "psci";
-> > > +                     #cooling-cells = <2>;
-> > >                       next-level-cache = <&L2_200>;
-> > >                       L2_200: l2-cache {
-> > >                               compatible = "cache";
-> > > @@ -138,6 +142,7 @@
-> > >                       compatible = "qcom,kryo385";
-> > >                       reg = <0x0 0x300>;
-> > >                       enable-method = "psci";
-> > > +                     #cooling-cells = <2>;
-> > >                       next-level-cache = <&L2_300>;
-> > >                       L2_300: l2-cache {
-> > >                               compatible = "cache";
-> > > @@ -150,6 +155,7 @@
-> > >                       compatible = "qcom,kryo385";
-> > >                       reg = <0x0 0x400>;
-> > >                       enable-method = "psci";
-> > > +                     #cooling-cells = <2>;
-> > >                       next-level-cache = <&L2_400>;
-> > >                       L2_400: l2-cache {
-> > >                               compatible = "cache";
-> > > @@ -162,6 +168,7 @@
-> > >                       compatible = "qcom,kryo385";
-> > >                       reg = <0x0 0x500>;
-> > >                       enable-method = "psci";
-> > > +                     #cooling-cells = <2>;
-> > >                       next-level-cache = <&L2_500>;
-> > >                       L2_500: l2-cache {
-> > >                               compatible = "cache";
-> > > @@ -174,6 +181,7 @@
-> > >                       compatible = "qcom,kryo385";
-> > >                       reg = <0x0 0x600>;
-> > >                       enable-method = "psci";
-> > > +                     #cooling-cells = <2>;
-> > >                       next-level-cache = <&L2_600>;
-> > >                       L2_600: l2-cache {
-> > >                               compatible = "cache";
-> > > @@ -186,6 +194,7 @@
-> > >                       compatible = "qcom,kryo385";
-> > >                       reg = <0x0 0x700>;
-> > >                       enable-method = "psci";
-> > > +                     #cooling-cells = <2>;
-> > >                       next-level-cache = <&L2_700>;
-> > >                       L2_700: l2-cache {
-> > >                               compatible = "cache";
-> > > @@ -1703,6 +1712,23 @@
-> > >                                       type = "critical";
-> > >                               };
-> > >                       };
-> > > +
-> > > +                     cooling-maps {
-> > > +                             map0 {
-> > > +                                     trip = <&cpu_alert0>;
-> > > +                                     cooling-device = <&CPU0 THERMAL_NO_LIMIT 4>,
-> > > +                                                      <&CPU1 THERMAL_NO_LIMIT 4>,
-> > > +                                                      <&CPU2 THERMAL_NO_LIMIT 4>,
-> > > +                                                      <&CPU3 THERMAL_NO_LIMIT 4>;
-> > > +                             };
-> > > +                             map1 {
-> > > +                                     trip = <&cpu_crit0>;
-> > > +                                     cooling-device = <&CPU0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-> > > +                                                      <&CPU1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-> > > +                                                      <&CPU2 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-> > > +                                                      <&CPU3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
-> > > +                             };
-> > > +                     };
-> >
-> > Slightly off-topic, buy maybe not so much since we are just starting
-> > to use the trip points:
-> >
-> > Currently we use the naming scheme 'cpu_<type>N' for trip points. I
-> > anticipate that we're going to add more passive trip points soon, to
-> > keep the 'power_allocator' thermal governor happy, which expects a
-> > 'switch_on' and a 'desired_temperature' trip point. With the current
-> > naming scheme this could become a bit messy. I suggest to change it to
-> > 'cpuN_<type>[X]', which would allow for something like 'cpuN_alert0'
-> > and 'cpuN_alert1'.
-> >
-> > If you think the change makes sense you can consider to do it within
-> > this series, I can also send a separate patch once it has landed.
-> 
-> Sure, I can change them to cpuN_alertX format.
+On 1/11/19 7:08 AM, Juergen Gross wrote:
+> @@ -421,6 +424,11 @@ void xen_restore_time_memory_area(void)
+>  	if (ret != 0)
+>  		pr_notice("Cannot restore secondary vcpu_time_info (err %d)",
+>  			  ret);
+> +
+> +out:
+> +	/* Need pvclock_resume() before using xen_clocksource_read(). */
+> +	pvclock_resume();
 
-Great, thanks!
+Do we want to drop it from xen_timer_resume then?
 
-Another concern about adding trip points later could be the node
-name. We currently have:
+BTW, I ran this code a few times on top of for-linus-4.21 and didn't see
+any of the problems that Hans described. I didn't do LM, only
+save/restore, but I'd think it shouldn't make any difference.
 
-
-trips {
-  cpu0_alert0: trip0 {
-    ...
-  };
-
-  cpu0_crit: trip1 {
-    ...
-  };
-};
-
-If we keep increasing enumeration with the node name this would become:
-
-trips {
-  cpu0_alert0: trip0 {
-    ...
-  };
-
-  cpu0_alert1: trip1 {
-    ...
-  };
-
-  cpu0_crit: trip2 {
-    ...
-  };
-};
-
-i.e. the node name of the critical trip-point changes, which might be
-a concern for dtsi's that override a value, though they should
-probably use the phandle &cpu0_crit anyway. If this is a concern we
-could change the node names to 'alert0' and 'crit'.
-
-I looked around a bit and actually I kinda like the naming scheme used
-by hisilicon/hi6220.dtsi, mediatek/mt8173.dtsi and rockchip/rk3328.dtsi
-(with minor variations):
-
-trips {
-        threshold: trip-point@0 {
-                temperature = <68000>;
-                hysteresis = <2000>;
-                type = "passive";
-        };
-
-        target: trip-point@1 {
-                temperature = <85000>;
-                hysteresis = <2000>;
-                type = "passive";
-        };
-
-        cpu_crit: cpu_crit@0 {
-                temperature = <115000>;
-                hysteresis = <2000>;
-                type = "critical";
-        };
-};
-
-If we were to use this we'd have to adapt it slightly since we have
-multiple thermal zones. In line with the other scheme this could be
-cpuN_threshold, cpuN_target and cpuN_crit.
-
-Up to you, just providing some options ;-)
-
-> > You could also consider to add the additional trip point in this
-> > series if you agree that it will be needed.
-> 
-> I expect that we'll end up with at least 2 passive trip points but I
-> don't know what temperature to set the next one at. So let's just go
-> with 1 passive and 1 critical trip point in this series and you can
-> send a patch adding more once we've characterised IPA.
-
-Sounds good
-
-Thanks!
-
-Matthias
+-boris
