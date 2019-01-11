@@ -2,126 +2,116 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAB86C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 00:20:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD66FC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 00:20:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B531E2133F
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 00:20:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8B7242133F
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 00:20:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="R9E/gPas"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="D2qFYgAq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730985AbfAKAUT (ORCPT
+        id S1731042AbfAKAUX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 19:20:19 -0500
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:48780 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1730562AbfAKATq (ORCPT
+        Thu, 10 Jan 2019 19:20:23 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:41813 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730987AbfAKAUS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 19:19:46 -0500
-Received: from pps.filterd (m0001303.ppops.net [127.0.0.1])
-        by m0001303.ppops.net (8.16.0.27/8.16.0.27) with SMTP id x0B0Hocj022390
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 16:19:45 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-type; s=facebook; bh=xkc/m6L5gIetS+MM8nNA5Dq8r/hwzty2qHxIbJneJL4=;
- b=R9E/gPasAkPEH+UEwMmkqlgbHKloBVw482EmfuMNfbSPIhm1iAx/gLHED+MHL6YXi60V
- siyrmLP7U8W+PK2Dis8gknTPEuA5OmRI+qceUSHXb2GDjsJhxssCd9rCaXtjMaALqSDt
- w8P1zKG22qTK9AyKHKdaGQw83MsbndRCZ1Q= 
-Received: from maileast.thefacebook.com ([199.201.65.23])
-        by m0001303.ppops.net with ESMTP id 2pxb7sh1pg-6
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 16:19:45 -0800
-Received: from mx-out.facebook.com (2620:10d:c0a1:3::13) by
- mail.thefacebook.com (2620:10d:c021:18::172) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA) id 15.1.1531.3;
- Thu, 10 Jan 2019 16:19:40 -0800
-Received: by devbig006.ftw2.facebook.com (Postfix, from userid 4523)
-        id DDA8362E20C4; Thu, 10 Jan 2019 16:19:37 -0800 (PST)
-Smtp-Origin-Hostprefix: devbig
-From:   Song Liu <songliubraving@fb.com>
-Smtp-Origin-Hostname: devbig006.ftw2.facebook.com
-To:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>
-CC:     Song Liu <songliubraving@fb.com>, <peterz@infradead.org>,
-        <acme@kernel.org>, <ast@kernel.org>, <daniel@iogearbox.net>,
-        <kernel-team@fb.com>, <dsahern@gmail.com>
-Smtp-Origin-Cluster: ftw2c04
-Subject: [PATCH v7 perf, bpf-next 2/8] sync tools/include/uapi/linux/perf_event.h
-Date:   Thu, 10 Jan 2019 16:19:27 -0800
-Message-ID: <20190111001933.4153792-3-songliubraving@fb.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190111001933.4153792-1-songliubraving@fb.com>
-References: <20190111001933.4153792-1-songliubraving@fb.com>
-X-FB-Internal: Safe
+        Thu, 10 Jan 2019 19:20:18 -0500
+Received: by mail-lf1-f68.google.com with SMTP id c16so9602180lfj.8
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 16:20:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=P5u5iiMOkiBu01OyUnjONhm/uHWtbE4KsBsEBZxRP8g=;
+        b=D2qFYgAqy3Dhx14PwioxQLbtx7v9qhVCpQ+ivSbyrU4xBjkSdB3Hnqoh+xXW1iu5/h
+         ray7lFY26bMEl6J6W4gjklD+3ZDXtXmIkggpXrsbUVJzSW9lmzCjA3CX0l+chgtZyhEb
+         0MXM1qfRxiCRXrXSQO7MCpFeuWIVZEdEbXv6k=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=P5u5iiMOkiBu01OyUnjONhm/uHWtbE4KsBsEBZxRP8g=;
+        b=BJWx336p3cOPht3ZdBKNP0MX9zL4S5sqh6Dij9Vwmw+WV46hn9JqNMGmvd1MsidaWU
+         pCvEUhmCmA/WDEUcDeoYFtXUcEZRlCf//llEPK3tDT8xXH7ZQb1cTYb4O2v20l5aEZjm
+         qDB6P2ZK2Q6/Yt4f+l1Tvzi79cFxL7YsMk52Slnq1lfY8gTHy0zmLlx0L0wA/ZXKFbjj
+         9ooQ8SWe50VoccDK/++WySoeCQ+CHcOhSwpjFDEo72N5+JNrO43iFSas7S5jeLCPLP8d
+         be67sKzE2dsd7BA5f7+nryxcffkxmhdiU6sNJp6vFkToGkWgKHMNuj7hvKzwQ36apx0+
+         4z4Q==
+X-Gm-Message-State: AJcUukfk8IalyW8EkC9idkGirorokKr8DcW5M5Yq/m8CMB/QUHKIpFDP
+        cUmbkKgVkPD222ItDEoPqVo6t9L3RGE=
+X-Google-Smtp-Source: ALg8bN6soa9BdwouFF8E5lRvy54tbOo+dv7KvSQxWFLJ5X/c8VR9GOV1xaQQWcAGen/0OZ3h7TiYzQ==
+X-Received: by 2002:a19:1cd3:: with SMTP id c202mr7237656lfc.33.1547166016099;
+        Thu, 10 Jan 2019 16:20:16 -0800 (PST)
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com. [209.85.208.173])
+        by smtp.gmail.com with ESMTPSA id v5-v6sm15667904lje.78.2019.01.10.16.20.14
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 10 Jan 2019 16:20:15 -0800 (PST)
+Received: by mail-lj1-f173.google.com with SMTP id x85-v6so11392136ljb.2
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 16:20:14 -0800 (PST)
+X-Received: by 2002:a2e:880a:: with SMTP id x10-v6mr6209037ljh.174.1547166013763;
+ Thu, 10 Jan 2019 16:20:13 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-10_09:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
-X-FB-Internal: Safe
+References: <20181210192826.241350-1-evgreen@chromium.org> <20181210192826.241350-4-evgreen@chromium.org>
+In-Reply-To: <20181210192826.241350-4-evgreen@chromium.org>
+From:   Evan Green <evgreen@chromium.org>
+Date:   Thu, 10 Jan 2019 16:19:37 -0800
+X-Gmail-Original-Message-ID: <CAE=gft7sGJ4dJDdJMMf4B36rLCpSNmULophrp7GEk=wBq+ZhdQ@mail.gmail.com>
+Message-ID: <CAE=gft7sGJ4dJDdJMMf4B36rLCpSNmULophrp7GEk=wBq+ZhdQ@mail.gmail.com>
+Subject: Re: [PATCH v7 3/5] arm64: dts: qcom: sdm845: add UFS controller
+To:     Andy Gross <andy.gross@linaro.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>
+Cc:     Douglas Anderson <dianders@chromium.org>,
+        Stephen Boyd <swboyd@chromium.org>, devicetree@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        David Brown <david.brown@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-sync changes for PERF_RECORD_KSYMBOL
+Hi Andy,
 
-Signed-off-by: Song Liu <songliubraving@fb.com>
----
- tools/include/uapi/linux/perf_event.h | 26 +++++++++++++++++++++++++-
- 1 file changed, 25 insertions(+), 1 deletion(-)
+On Mon, Dec 10, 2018 at 11:28 AM Evan Green <evgreen@chromium.org> wrote:
+>
+> Add the UFS controller and PHY to SDM845.
+>
+> Signed-off-by: Evan Green <evgreen@chromium.org>
+> Signed-off-by: Douglas Anderson <dianders@chromium.org>
+> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+>
+> ---
+> As Doug mentioned in v2, this should land after (or with) the driver fix
+> in this series.
+>
+> Changes in v7: None
+> Changes in v6:
+> - Removed resets and reset-names (Bjorn)
+> - Renamed nodes (Bjorn)
+>
+> Changes in v5: None
+> Changes in v4: None
+> Changes in v3: None
+> Changes in v2:
+> - Renamed ufsphy to phy (Vivek)
+> - Removed #clock-cells (Vivek)
+>
+>  arch/arm64/boot/dts/qcom/sdm845.dtsi | 64 ++++++++++++++++++++++++++++
+>  1 file changed, 64 insertions(+)
+>
 
-diff --git a/tools/include/uapi/linux/perf_event.h b/tools/include/uapi/linux/perf_event.h
-index 9de8780ac8d9..68c4da0227c5 100644
---- a/tools/include/uapi/linux/perf_event.h
-+++ b/tools/include/uapi/linux/perf_event.h
-@@ -372,7 +372,8 @@ struct perf_event_attr {
- 				context_switch :  1, /* context switch data */
- 				write_backward :  1, /* Write ring buffer from end to beginning */
- 				namespaces     :  1, /* include namespaces data */
--				__reserved_1   : 35;
-+				ksymbol        :  1, /* include ksymbol events */
-+				__reserved_1   : 34;
- 
- 	union {
- 		__u32		wakeup_events;	  /* wakeup every n events */
-@@ -965,9 +966,32 @@ enum perf_event_type {
- 	 */
- 	PERF_RECORD_NAMESPACES			= 16,
- 
-+	/*
-+	 * Record ksymbol register/unregister events:
-+	 *
-+	 * struct {
-+	 *	struct perf_event_header	header;
-+	 *	u64				addr;
-+	 *	u32				len;
-+	 *	u16				ksym_type;
-+	 *	u16				flags;
-+	 *	char				name[];
-+	 *	struct sample_id		sample_id;
-+	 * };
-+	 */
-+	PERF_RECORD_KSYMBOL			= 17,
-+
- 	PERF_RECORD_MAX,			/* non-ABI */
- };
- 
-+enum perf_record_ksymbol_type {
-+	PERF_RECORD_KSYMBOL_TYPE_UNKNOWN	= 0,
-+	PERF_RECORD_KSYMBOL_TYPE_BPF		= 1,
-+	PERF_RECORD_KSYMBOL_TYPE_MAX		/* non-ABI */
-+};
-+
-+#define PERF_RECORD_KSYMBOL_FLAGS_UNREGISTER	(1 << 0)
-+
- #define PERF_MAX_STACK_DEPTH		127
- #define PERF_MAX_CONTEXTS_PER_STACK	  8
- 
--- 
-2.17.1
+Patches 3, 4, and 5 of this series should be ready to go. Any reason
+they never got picked up? Were you just waiting for patches 1 and 2 to
+show up from Kishon?
 
+
+-Evan
