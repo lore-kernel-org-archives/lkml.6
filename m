@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93E87C43444
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:41:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9FE0C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:41:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5BD8C206B6
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:41:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A0FB42063F
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:41:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547217694;
-	bh=PzJuKdoBwRECwvtft59735y3C5WNB1kRcq+CO/rejLs=;
+	s=default; t=1547217700;
+	bh=5npUuVqQ1atJkEmarVl/THBxhwvwTnkBq9ASwl2pzmA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=skMB9YTKjG19gmnxaCl0qGAkh/S6DO7tEs4UVtHBOSGcuoF8gvtGAM/MLWoZWRzzl
-	 DSH3k13oX8ew1qEiCIhTDTd7PMGoHNlnjpC6gQAtyqZMppLFwQDbRAod9c6XER4cVZ
-	 biyQTkK/eaTURzopF4CmIIiM7AXhkkMyCgefhLh4=
+	b=prW0oorkKCidVddSrHmc3ifLR8wM3hsNOM4NFSK2LSoYKPr5JF/DPL9ZwIeaQJ4cS
+	 Qs+tfAAKakgPSlazoWzmflv8Q5Gfnj4h9zP4dnnKARZl+wn8nUdlD6Pa5DpVwhzTKL
+	 uxrsUZfM+LPYv0OE90OfdmCKG1f3O6hJLVRexNdk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391298AbfAKOld (ORCPT
+        id S2391314AbfAKOlj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:41:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34224 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:41:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34280 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404013AbfAKOlb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:41:31 -0500
+        id S2391296AbfAKOle (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:41:34 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 862C5206B6;
-        Fri, 11 Jan 2019 14:41:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0CA4F2063F;
+        Fri, 11 Jan 2019 14:41:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547217691;
-        bh=PzJuKdoBwRECwvtft59735y3C5WNB1kRcq+CO/rejLs=;
+        s=default; t=1547217693;
+        bh=5npUuVqQ1atJkEmarVl/THBxhwvwTnkBq9ASwl2pzmA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WgLWlh3H3Noi+XlkGD+RXtDvwj+eRXHHXPkcLSClC6dwrSGdvbrmLeZA8VMQw/MVc
-         GM1v2nXlkVO+gdUewsfeNNAUxYyS62Smc6ExwaZQwDDZjKMO5ZWLFCpWF8efzQbyoD
-         nodTSLkQN+b1O8S/R6pOC+P4ZOKf3dGcM/AOmG8w=
+        b=Y+pca8H8AFgb0/taHJuXOORdpH6sbBteX9VOyjgzO5iWywUIV/+GpCBUxlYw4Wwxt
+         VPLScb5O4SpGoAEowATfURFZXGxFGNBPFlRe7Kop9IRvUsO68WSaBUJmvXxcwVHHE8
+         y4kXENkwLNp7pa9DPh+6FwsLkmwX5nz+0xKCwvwk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Heiko Stuebner <heiko@sntech.de>
-Subject: [PATCH 4.19 147/148] drm/rockchip: psr: do not dereference encoder before it is null checked.
-Date:   Fri, 11 Jan 2019 15:15:25 +0100
-Message-Id: <20190111131120.203901080@linuxfoundation.org>
+        Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>
+Subject: [PATCH 4.19 148/148] drm/amd/display: Fix unintialized max_bpc state values
+Date:   Fri, 11 Jan 2019 15:15:26 +0100
+Message-Id: <20190111131120.240666057@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131114.337122649@linuxfoundation.org>
 References: <20190111131114.337122649@linuxfoundation.org>
@@ -66,43 +66,53 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+From: Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>
 
-commit 4eda776c3cefcb1f01b2d85bd8753f67606282b5 upstream.
+commit 49f1c44b581b08e3289127ffe58bd208c3166701 upstream.
 
-'encoder' is dereferenced before it is null sanity checked, hence we
-potentially have a null pointer dereference bug. Instead, initialise
-drm_drv from encoder->dev->dev_private after we are sure 'encoder' is
-not null.
+[Why]
+If the "max bpc" isn't explicitly set in the atomic state then it
+have a value of 0. This has the correct behavior of limiting a panel
+to 8bpc in the case where the panel supports 8bpc. In the case of eDP
+panels this isn't a true assumption - there are panels that can only
+do 6bpc.
 
-Fixes: 5182c1a556d7f ("drm/rockchip: add an common abstracted PSR driver")
-Cc: stable@vger.kernel.org
-Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-Link: https://patchwork.freedesktop.org/patch/msgid/20181013105654.11827-1-enric.balletbo@collabora.com
+Banding occurs for these displays.
+
+[How]
+Initialize the max_bpc when the connector resets to 8bpc. Also carry
+over the value when the state is duplicated.
+
+Bugzilla: https://bugs.freedesktop.org/108825
+Fixes: 307638884f72 ("drm/amd/display: Support amdgpu "max bpc" connector property")
+
+Signed-off-by: Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>
+Reviewed-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
----
- drivers/gpu/drm/rockchip/rockchip_drm_psr.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/rockchip/rockchip_drm_psr.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_psr.c
-@@ -189,12 +189,14 @@ EXPORT_SYMBOL(rockchip_drm_psr_flush_all
- int rockchip_drm_psr_register(struct drm_encoder *encoder,
- 			int (*psr_set)(struct drm_encoder *, bool enable))
- {
--	struct rockchip_drm_private *drm_drv = encoder->dev->dev_private;
-+	struct rockchip_drm_private *drm_drv;
- 	struct psr_drv *psr;
+---
+ drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c |    2 ++
+ 1 file changed, 2 insertions(+)
+
+--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
++++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+@@ -2894,6 +2894,7 @@ void amdgpu_dm_connector_funcs_reset(str
+ 		state->underscan_enable = false;
+ 		state->underscan_hborder = 0;
+ 		state->underscan_vborder = 0;
++		state->max_bpc = 8;
  
- 	if (!encoder || !psr_set)
- 		return -EINVAL;
+ 		__drm_atomic_helper_connector_reset(connector, &state->base);
+ 	}
+@@ -2911,6 +2912,7 @@ amdgpu_dm_connector_atomic_duplicate_sta
+ 	if (new_state) {
+ 		__drm_atomic_helper_connector_duplicate_state(connector,
+ 							      &new_state->base);
++		new_state->max_bpc = state->max_bpc;
+ 		return &new_state->base;
+ 	}
  
-+	drm_drv = encoder->dev->dev_private;
-+
- 	psr = kzalloc(sizeof(struct psr_drv), GFP_KERNEL);
- 	if (!psr)
- 		return -ENOMEM;
 
 
