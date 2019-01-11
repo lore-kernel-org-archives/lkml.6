@@ -2,137 +2,170 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-13.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD610C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 00:53:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E69CEC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 00:55:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA5882133F
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 00:53:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A5C2720879
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 00:55:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="zVrA6T/F"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="RsMMbSiC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729202AbfAKAxh (ORCPT
+        id S1729216AbfAKAzg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 19:53:37 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:36620 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727401AbfAKAxh (ORCPT
+        Thu, 10 Jan 2019 19:55:36 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:36735 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727401AbfAKAzg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 19:53:37 -0500
-Received: by mail-pl1-f194.google.com with SMTP id g9so5959230plo.3
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 16:53:36 -0800 (PST)
+        Thu, 10 Jan 2019 19:55:36 -0500
+Received: by mail-pl1-f196.google.com with SMTP id g9so5961298plo.3
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 16:55:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:in-reply-to:references:date:message-id
-         :mime-version;
-        bh=d+X9gpNYVSva8N2u0I5OWMv9xuzeEIgVw0AyDjUxoJI=;
-        b=zVrA6T/FKuIYh9Kgg9FkzvDQWkQZpyopoZp/bD8sGDhCyLF7rBXVZmjgLnzToTccZL
-         7jeXqAtmHxb+h490SSFuLdr4qRR+dSqtcY8jqTqxXfdYn8/CiP5HOOaDkyDOxezpjp1C
-         aJw6X9eZpvufQJr6oyXRJiQ/E3809djtMJcU2+bRno4ZJeN9JoAU7ixWVtcPNTDWCkmQ
-         wahduqkLpNWKv56/6uX7DZew2jegvYq48aJ4nOO3v4aaSpCnNpQx+bwCYqlxKH2Dnbjh
-         Av2iZ1h5dJwplzsq07mbeMkqUtoD4LcK8KoxNGiH8hvwepZVGnB17NiVtMkmsWI+vW56
-         h+nA==
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=YjCyW2GH67YMCpgdeXCFurOp9JBWuqWYPvAFzLefnC0=;
+        b=RsMMbSiCTIRrlCcMpHkBgeytNsaijEdpO6bwVs6/eaJBb8CNAtTKpGU42GTaM6E9HD
+         3gyuumzejiDbRjd0QuM4BcsV8oiCnY40wubFJ8nRANgD5D9+doZ1RVFWswpyD9hK9eUZ
+         guTcKBO8QZyYcVOecWU9AJ+LyiYyc+gqP94kU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=d+X9gpNYVSva8N2u0I5OWMv9xuzeEIgVw0AyDjUxoJI=;
-        b=XgJ0yQqHDUi/MrHX/2D/3m8UnSjpCJWgwhfCup/GX43cXIkxQIHEaki7LJubtDFU6H
-         7hDcTN1lCeYZ5wUZK7kQKKkH5A/X7BIb8clqLYwD9C5+547r3F+4joK8eSk73jFiJE2z
-         ZYXzIeMD1cOg/UGZoJR2h4lOmBgbGLGqS1JrYN5eVt6ZgJ/v20wM82XdOhA8HYJAo+wn
-         YPiCY9lK6GEHtauh7nSVzkY7hfCfOVEAAX/fwL3gnCPivuo1RM2OyMqJVnoIHB59NWKm
-         abiuRGdJ6njTMCS/tNiIVpQRzjagV6Dzdc0/C3kI+xWp0upuljRnvSF7aAS2ZxdwcYNd
-         R/5Q==
-X-Gm-Message-State: AJcUukdN+q4h+UAnuO6+6bBsqxjAcBGGzVt7deCag0gJutTT4taHMJVQ
-        pqTbSy57wBpxRGb9fWm5gySudv90ziQ=
-X-Google-Smtp-Source: ALg8bN7kf17ouikPbX3kwEK63xd10riC0IV86qLI8Pb2l50tpM/h5j+1Iao91I9mV4FU97dcAQhi2A==
-X-Received: by 2002:a17:902:aa8c:: with SMTP id d12mr12707258plr.25.1547168016422;
-        Thu, 10 Jan 2019 16:53:36 -0800 (PST)
-Received: from localhost (c-71-197-186-152.hsd1.wa.comcast.net. [71.197.186.152])
-        by smtp.googlemail.com with ESMTPSA id m65sm136399873pfg.180.2019.01.10.16.53.35
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=YjCyW2GH67YMCpgdeXCFurOp9JBWuqWYPvAFzLefnC0=;
+        b=Kq9tWK4Y7JIgjmMcK64IEye0XAgmv1sdEaNZOW2+gpe00/4ScO4SJJxZ9LvaMwiV4f
+         +sglRrcqGI6q93xaF/sPTnolu9TP29D7aBCqovhhvAJRzzP4s/oNORjCEM2eGGUn8Co/
+         lDbD3hGONHwNX/7yXkkyAYMwo90nrof331NCoy/0aqq/f5G0updG9VWi4n6nwIHCOHsz
+         RdUcmqiIhmfPtRJbuTHWitBMCuvgBDM8XM07NiTQ49M22pVdFbPRD8f1hHBYKfq+K77G
+         OYpQFlqiqvOpQWw0FWvIphEnBw29H085yVvdwZYiNKqctAkOH64mWXzo55P0m641e8h7
+         EFNA==
+X-Gm-Message-State: AJcUukecSVqEkLAOllSzMtRe38Kjos7YcI6WGkWZvAIQVlvQwVfvsIot
+        nXvLtrsGpyqY1CjygYqVIKeoKA==
+X-Google-Smtp-Source: ALg8bN5swk/zauv3ghMFWlLsv9y9oVTr+DmGRDMp0DYm2UZiYQ3UuDIPaI/QNJR20sbT4PpJbHBRDw==
+X-Received: by 2002:a17:902:7044:: with SMTP id h4mr12378360plt.35.1547168135238;
+        Thu, 10 Jan 2019 16:55:35 -0800 (PST)
+Received: from localhost ([2620:15c:202:1:75a:3f6e:21d:9374])
+        by smtp.gmail.com with ESMTPSA id y191sm27642057pfg.56.2019.01.10.16.55.33
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 10 Jan 2019 16:53:35 -0800 (PST)
-From:   Kevin Hilman <khilman@baylibre.com>
-To:     Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc:     Carlo Caione <carlo@caione.org>, devicetree@vger.kernel.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] arm64: dts: meson: libretech-cc: switch eMMC to 1.8v
-In-Reply-To: <f4fa4226a508d563d1a77eaafa5590fd84577c15.camel@baylibre.com>
-References: <20181220161037.23756-1-jbrunet@baylibre.com> <20181220161037.23756-3-jbrunet@baylibre.com> <CAFBinCBQkpLxUZYp2NQoXEA=8t_XCJMHauM+DwTz-p0FA57CrA@mail.gmail.com> <f4fa4226a508d563d1a77eaafa5590fd84577c15.camel@baylibre.com>
-Date:   Thu, 10 Jan 2019 16:53:35 -0800
-Message-ID: <7h5zuwqak0.fsf@baylibre.com>
+        Thu, 10 Jan 2019 16:55:33 -0800 (PST)
+Date:   Thu, 10 Jan 2019 16:55:32 -0800
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Balakrishna Godavarthi <bgodavar@codeaurora.org>
+Cc:     Johan Hovold <johan@kernel.org>, marcel@holtmann.org,
+        johan.hedberg@gmail.com, linux-kernel@vger.kernel.org,
+        linux-bluetooth@vger.kernel.org, hemantg@codeaurora.org,
+        linux-arm-msm@vger.kernel.org, Johan Hovold <jhovold@gmail.com>
+Subject: Re: [PATCH v5 1/5] Bluetooth: hci_qca: use wait_until_sent() for
+ power pulses
+Message-ID: <20190111005532.GC261387@google.com>
+References: <20181220144639.15928-1-bgodavar@codeaurora.org>
+ <20181220144639.15928-2-bgodavar@codeaurora.org>
+ <20181222015947.GF261387@google.com>
+ <20190109143822.GM14782@localhost>
+ <2d4ee183e3c2fa964c14a5ac702043c0@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <2d4ee183e3c2fa964c14a5ac702043c0@codeaurora.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Jerome Brunet <jbrunet@baylibre.com> writes:
+On Thu, Jan 10, 2019 at 08:18:37PM +0530, Balakrishna Godavarthi wrote:
+> Hi Johan,
+> 
+> On 2019-01-09 20:08, Johan Hovold wrote:
+> > On Fri, Dec 21, 2018 at 05:59:47PM -0800, Matthias Kaehlcke wrote:
+> > > On Thu, Dec 20, 2018 at 08:16:35PM +0530, Balakrishna Godavarthi
+> > > wrote:
+> > > > wcn3990 requires a power pulse to turn ON/OFF along with
+> > > > regulators. Sometimes we are observing the power pulses are sent
+> > > > out with some time delay, due to queuing these commands. This is
+> > > > causing synchronization issues with chip, which intern delay the
+> > > > chip setup or may end up with communication issues.
+> > > >
+> > > > Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
+> > > > ---
+> > > >  drivers/bluetooth/hci_qca.c | 38 ++++++++++++++-----------------------
+> > > >  1 file changed, 14 insertions(+), 24 deletions(-)
+> > > >
+> > > > diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
+> > > > index f036c8f98ea3..5a07c2370289 100644
+> > > > --- a/drivers/bluetooth/hci_qca.c
+> > > > +++ b/drivers/bluetooth/hci_qca.c
+> > > > @@ -1013,11 +1013,9 @@ static inline void host_set_baudrate(struct hci_uart *hu, unsigned int speed)
+> > > >  		hci_uart_set_baudrate(hu, speed);
+> > > >  }
+> > > >
+> > > > -static int qca_send_power_pulse(struct hci_dev *hdev, u8 cmd)
+> > > > +static int qca_send_power_pulse(struct hci_uart *hu, u8 cmd)
+> > > >  {
+> > > > -	struct hci_uart *hu = hci_get_drvdata(hdev);
+> > > > -	struct qca_data *qca = hu->priv;
+> > > > -	struct sk_buff *skb;
+> > > > +	int ret;
+> > > >
+> > > >  	/* These power pulses are single byte command which are sent
+> > > >  	 * at required baudrate to wcn3990. On wcn3990, we have an external
+> > > > @@ -1029,19 +1027,16 @@ static int qca_send_power_pulse(struct hci_dev *hdev, u8 cmd)
+> > > >  	 * save power. Disabling hardware flow control is mandatory while
+> > > >  	 * sending power pulses to SoC.
+> > > >  	 */
+> > > > -	bt_dev_dbg(hdev, "sending power pulse %02x to SoC", cmd);
+> > > > -
+> > > > -	skb = bt_skb_alloc(sizeof(cmd), GFP_KERNEL);
+> > > > -	if (!skb)
+> > > > -		return -ENOMEM;
+> > > > -
+> > > > +	bt_dev_dbg(hu->hdev, "sending power pulse %02x to SoC", cmd);
+> > > >  	hci_uart_set_flow_control(hu, true);
+> > > > +	ret = serdev_device_write_buf(hu->serdev, &cmd, sizeof(cmd));
+> > > > +	if (ret < 0) {
+> > > > +		bt_dev_err(hu->hdev, "failed to send power pulse %02x to SoC",
+> > > > +			   cmd);
+> > > > +		return ret;
+> > > > +	}
+> > > >
+> > > > -	skb_put_u8(skb, cmd);
+> > > > -	hci_skb_pkt_type(skb) = HCI_COMMAND_PKT;
+> > > > -
+> > > > -	skb_queue_tail(&qca->txq, skb);
+> > > > -	hci_uart_tx_wakeup(hu);
+> > > > +	serdev_device_wait_until_sent(hu->serdev, 0);
+> > 
+> > Again, do you really want to wait indefinitely here?
+> > 
+> [Bala]: these commands are mandatory to turn ON or OFF the chip.
+>         so blocking to the max time is required.
+>         these commands are sent during the BT chip ON & OFF.
+>         in the latest series, i have flushed the uart before sending this
+> commands
+>         so the uart FIFO(as just opened the port before calling this
+> function) or the circular
+>         buffer will be empty and also i am disabling the flow control too.
+>        https://patchwork.kernel.org/patch/10744435/
 
-> On Sat, 2018-12-22 at 18:01 +0100, Martin Blumenstingl wrote:
->> Hi Jerome,
->> 
->> On Thu, Dec 20, 2018 at 5:11 PM Jerome Brunet <jbrunet@baylibre.com> wrote:
->> > While some 3.3v eMMC 4.0 are available from libretech, the default
->> > option for the aml-s905x-cc seems to 1.8v 5.0 modules.
->> nit-pick:
->> can you please state which module (storage size) you used for testing?
->> you probably still remember that we had some confusion on Odroid-C2
->> which eMMC module works and which doesn't, so let's be explicit here
->> 
->> > Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
->> > ---
->> >  .../boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts    | 9 +++++----
->> >  1 file changed, 5 insertions(+), 4 deletions(-)
->> > 
->> > diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts
->> > b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts
->> > index daad007fac1f..d0d202cf7161 100644
->> > --- a/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts
->> > +++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts
->> > @@ -118,8 +118,8 @@
->> >         vddio_boot: regulator-vddio_boot {
->> >                 compatible = "regulator-fixed";
->> >                 regulator-name = "VDDIO_BOOT";
->> > -               regulator-min-microvolt = <3300000>;
->> > -               regulator-max-microvolt = <3300000>;
->> > +               regulator-min-microvolt = <1800000>;
->> > +               regulator-max-microvolt = <1800000>;
->> is there a 3.3V -> 1.8V regulator on the eMMC module?
->> I'm not sure about the schematics but it seems to be that the board
->> itself supplies only 3.3V to the eMMC connector, so I'm not sure where
->> 1.8V come from in this case
->
-> The module is indeed fed by 3.3v only but it has embedded LDOs add will feed
-> back the supply of the BOOT gpio bank.
->
-> I tried the following modules:
-> * 8 GB samsung - v1.0-170420
-> * 32 GB toshiba - v1.0-170421
->
-> I think you can't get them here [0].
->
-> In theory, these 4.x modules [1] could also work. They don't have the LDOs and
-> are directly feeding back the 3.3v to the BOOT bank. Since the modules are
-> advertised as being compatible with the Allwinner boards only, and not the AML
-> ones, it should not be the default option.
->
-> [0] : 
-> https://www.loverpi.com/collections/libre-computer-project/products/libre-computer-board-emmc-5-x-module?variant=4173557729
-> [1] : 
-> https://www.loverpi.com/collections/libre-computer-project/products/libre-computer-board-emmc-4-x-module?variant=761282232333
->
->> can you please add a comment to the .dts about this?
->
-> Sure
->
+The commands may be mandatory for switching the chip on or off, but
+what is better if there is a problem with sending them (e.g. a buggy
+UART driver):
 
-OK, I'll wait for a v2 of this series.
+1. wait a reasonable time, report an error
+2. wait forever
 
-Kevin
+?
+
+If the single byte command couldn't be sent after a few milliseconds,
+it likely never will, waiting forever doesn't fix that. An error
+report at least provides some information about the problem and the
+driver is in a not-hanging state.
+
+Cheers
+
+Matthias
