@@ -2,52 +2,51 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB943C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:38:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD248C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:38:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE8E22133F
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:38:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 822F0218AF
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:38:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547217524;
-	bh=/Wmo1i+hAQS/43i20NggAhuU4UbU9xTedILewX+11g4=;
+	s=default; t=1547217527;
+	bh=vPC1VnuUkB0KdOnStkNAAjiVnqGfYhiWtIW0axCw8o8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=OfwJG99e5lPIf+e2h/iK1hw5PoiycoRGg7XPfeSd/AeawOBqmihBGnPDHhoub9p9r
-	 Pt7DfDR3536VQbeBdvtDNWXvIx1lGe/h2jSzyVs/obnUY0ea1D+FIjuKVaR9IsOhxi
-	 BH0g7tIxMK5Xiw91VTFBl4pKfv5iqUFuo7mZKCLE=
+	b=WihOX/wQKQmZMpJ0510uTRVwDJ3B37x76yURuC6D6KO9rPHpDLP9lK74nR0f0YNcZ
+	 IHZG7h/PwpybEkMG9c4cKeHBNoUsjQd/3kDRkWsWFZrm4vC6pxLkDdZMApZw9Pn0VO
+	 W9zqFrt8NnDpOzDn8Z67vVFhtXATtb71oqIw977c=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390916AbfAKOin (ORCPT
+        id S2390927AbfAKOip (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:38:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59386 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:38:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59420 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390120AbfAKOil (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:38:41 -0500
+        id S2390914AbfAKOin (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:38:43 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 255EC2184B;
-        Fri, 11 Jan 2019 14:38:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AE0BD206B6;
+        Fri, 11 Jan 2019 14:38:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547217520;
-        bh=/Wmo1i+hAQS/43i20NggAhuU4UbU9xTedILewX+11g4=;
+        s=default; t=1547217523;
+        bh=vPC1VnuUkB0KdOnStkNAAjiVnqGfYhiWtIW0axCw8o8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iCmyvvocCbTUA3dzm7lcJKU58jjp4RQ+16uXUmi8JiIkgtNfKp/hp05RP0aHnQrxm
-         mUMrMKwJT0jGlGmA2aykxKuCpLtQ93Fd4+8YdrwbsNOB29/Uk5frSdHxEMMIeoFkT5
-         fU01sz5rueofDwFqVOqfujrjkojz0NMjQ5gHfGkY=
+        b=FjqjYyDdxokvG4mePcqz5VtPys2Y/CuRTNBvukSdRn8bSbPKjTYRJhr9gS+YPHDlF
+         6ObenQBGwg3kqjD4VmFsnBzpT7ZxoX5kmawIhWbXn3RPPyjXcuqAymXt0tzRABzEuY
+         JklvUyZoZnAWLJraTLZMsvVsVleE1IOyK98Om25I=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 064/148] vxge: ensure data0 is initialized in when fetching firmware version information
-Date:   Fri, 11 Jan 2019 15:14:02 +0100
-Message-Id: <20190111131116.810920737@linuxfoundation.org>
+        stable@vger.kernel.org, Vasily Averin <vvs@virtuozzo.com>,
+        "J. Bruce Fields" <bfields@redhat.com>
+Subject: [PATCH 4.19 091/148] sunrpc: use SVC_NET() in svcauth_gss_* functions
+Date:   Fri, 11 Jan 2019 15:14:29 +0100
+Message-Id: <20190111131117.830023287@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131114.337122649@linuxfoundation.org>
 References: <20190111131114.337122649@linuxfoundation.org>
@@ -66,40 +65,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit f7db2beb4c2c6cc8111f5ab90fc7363ca91107b6 ]
+From: Vasily Averin <vvs@virtuozzo.com>
 
-Currently variable data0 is not being initialized so a garbage value is
-being passed to vxge_hw_vpath_fw_api and this value is being written to
-the rts_access_steer_data0 register.  There are other occurrances where
-data0 is being initialized to zero (e.g. in function
-vxge_hw_upgrade_read_version) so I think it makes sense to ensure data0
-is initialized likewise to 0.
+commit b8be5674fa9a6f3677865ea93f7803c4212f3e10 upstream.
 
-Detected by CoverityScan, CID#140696 ("Uninitialized scalar variable")
+Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: J. Bruce Fields <bfields@redhat.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Fixes: 8424e00dfd52 ("vxge: serialize access to steering control register")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/neterion/vxge/vxge-config.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/sunrpc/auth_gss/svcauth_gss.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/ethernet/neterion/vxge/vxge-config.c b/drivers/net/ethernet/neterion/vxge/vxge-config.c
-index 398011c87643..bf4302e45dcd 100644
---- a/drivers/net/ethernet/neterion/vxge/vxge-config.c
-+++ b/drivers/net/ethernet/neterion/vxge/vxge-config.c
-@@ -807,7 +807,7 @@ __vxge_hw_vpath_fw_ver_get(struct __vxge_hw_virtualpath *vpath,
- 	struct vxge_hw_device_date *fw_date = &hw_info->fw_date;
- 	struct vxge_hw_device_version *flash_version = &hw_info->flash_version;
- 	struct vxge_hw_device_date *flash_date = &hw_info->flash_date;
--	u64 data0, data1 = 0, steer_ctrl = 0;
-+	u64 data0 = 0, data1 = 0, steer_ctrl = 0;
- 	enum vxge_hw_status status;
+--- a/net/sunrpc/auth_gss/svcauth_gss.c
++++ b/net/sunrpc/auth_gss/svcauth_gss.c
+@@ -1122,7 +1122,7 @@ static int svcauth_gss_legacy_init(struc
+ 	struct kvec *resv = &rqstp->rq_res.head[0];
+ 	struct rsi *rsip, rsikey;
+ 	int ret;
+-	struct sunrpc_net *sn = net_generic(rqstp->rq_xprt->xpt_net, sunrpc_net_id);
++	struct sunrpc_net *sn = net_generic(SVC_NET(rqstp), sunrpc_net_id);
  
- 	status = vxge_hw_vpath_fw_api(vpath,
--- 
-2.19.1
-
+ 	memset(&rsikey, 0, sizeof(rsikey));
+ 	ret = gss_read_verf(gc, argv, authp,
+@@ -1233,7 +1233,7 @@ static int svcauth_gss_proxy_init(struct
+ 	uint64_t handle;
+ 	int status;
+ 	int ret;
+-	struct net *net = rqstp->rq_xprt->xpt_net;
++	struct net *net = SVC_NET(rqstp);
+ 	struct sunrpc_net *sn = net_generic(net, sunrpc_net_id);
+ 
+ 	memset(&ud, 0, sizeof(ud));
+@@ -1424,7 +1424,7 @@ svcauth_gss_accept(struct svc_rqst *rqst
+ 	__be32		*rpcstart;
+ 	__be32		*reject_stat = resv->iov_base + resv->iov_len;
+ 	int		ret;
+-	struct sunrpc_net *sn = net_generic(rqstp->rq_xprt->xpt_net, sunrpc_net_id);
++	struct sunrpc_net *sn = net_generic(SVC_NET(rqstp), sunrpc_net_id);
+ 
+ 	dprintk("RPC:       svcauth_gss: argv->iov_len = %zd\n",
+ 			argv->iov_len);
+@@ -1714,7 +1714,7 @@ svcauth_gss_release(struct svc_rqst *rqs
+ 	struct rpc_gss_wire_cred *gc = &gsd->clcred;
+ 	struct xdr_buf *resbuf = &rqstp->rq_res;
+ 	int stat = -EINVAL;
+-	struct sunrpc_net *sn = net_generic(rqstp->rq_xprt->xpt_net, sunrpc_net_id);
++	struct sunrpc_net *sn = net_generic(SVC_NET(rqstp), sunrpc_net_id);
+ 
+ 	if (gc->gc_proc != RPC_GSS_PROC_DATA)
+ 		goto out;
 
 
