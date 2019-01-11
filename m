@@ -2,78 +2,128 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30236C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 13:01:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F8C5C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 13:07:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E7DB720836
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 13:01:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2EEB32133F
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 13:07:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="kwoesHTw"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QDNfNczV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732550AbfAKNBk (ORCPT
+        id S1732581AbfAKNHh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 08:01:40 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:37042 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732534AbfAKNBj (ORCPT
+        Fri, 11 Jan 2019 08:07:37 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:42262 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732564AbfAKNHf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 08:01:39 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=9iEdlVG4OtwVuTok1VoQsjsAtASdR3We9Xg3fpJ5lTQ=; b=kwoesHTw2J21ha69Hpuu2cYBW
-        +ML10BARBhg3aEYlZb1nSox79H4W+gEvgb2Fe2d5I+3ho70AeO/OLXAdPq6W68CV286CqKbwjAFsL
-        VrlijQ0S8co6j65+Z+KKikBQeKG8N/Bz6MeZcBNbDRJy7GyBy0XGDqsOBPAzps7qdByK0U8kvW+K4
-        Gub5bhDhwcKgBXLMds5qSEZ/gxUKOG9EcHvbdYv/DoHwHMe/GcrhMoF69jDTsMKPH2SxIm7Iw3mnK
-        /Xx8nebD6TVgh5xJvrJ0K/71ochETXJ5Net2T1hFtJBAkMdhXEFEsIcj8Jnon14nNL+1aSGQF0d5j
-        7/r6KthpQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1ghwRJ-0001fN-8m; Fri, 11 Jan 2019 13:01:33 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id CF3F8202A6058; Fri, 11 Jan 2019 14:01:30 +0100 (CET)
-Date:   Fri, 11 Jan 2019 14:01:30 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Valentin Schneider <valentin.schneider@arm.com>
-Cc:     linux-kernel@vger.kernel.org, cai@gmx.us,
-        daniel.lezcano@linaro.org, linux-arm-kernel@lists.infradead.org,
-        longman@redhat.com, marc.zyngier@arm.com, mark.rutland@arm.com,
-        mingo@kernel.org, tglx@linutronix.de, dietmar.eggemann@arm.com
-Subject: Re: [PATCH 0/2] System-wide mute of hotplug lockdep during init
-Message-ID: <20190111130130.GA12917@hirez.programming.kicks-ass.net>
-References: <1545243796-23224-1-git-send-email-valentin.schneider@arm.com>
- <0f2b6cc8-ad2f-bd0b-fe51-c333a8033452@arm.com>
+        Fri, 11 Jan 2019 08:07:35 -0500
+Received: by mail-pl1-f194.google.com with SMTP id y1so6745893plp.9
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jan 2019 05:07:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=kBdmbqrqZGCDFNNdFNSivV8+bHiJ8p/Kjme4d3AE51w=;
+        b=QDNfNczVk8q5SIWTbzrDnpMWmL5Z+HHZCd1PQK7GrG/KjZx+dLPeLbp7Fcc5BVQND7
+         KihRnmWDeK3+AI9EbZGlalqxd/bUj+Qssg5A2fhtIKOPZh/l0kdhuiWjJscnHCg5QlCs
+         OhJkxD+bP1gfFXdZUER0hpEzQjWOrJZljdUvzs90T92TGv3Io5ofwz7vfToBF6IeqMdH
+         g5xNOeBkii5CQa97KnqKqocX/DYeFrNbngROAEgWa3Ivry2jZ6uZ3niLwo4+G1zkAeK5
+         DP0E0cEnMeWZm3cPTIxCYsGQhxEDWm6mAHXyHmCxkVf8vip7EdrDqme2JcPcc4/KJMh+
+         Q26w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=kBdmbqrqZGCDFNNdFNSivV8+bHiJ8p/Kjme4d3AE51w=;
+        b=pE2cawlNDNyfvnSrHzMIwCO2nSiTDXwZfk6swEP3Chz+D+DeSQMW/Cf4My6RJtNJgt
+         3JV9AWiXVWMI4nhXspif4LIaKhZPJToCGM0ePpSYdcF27PdZ2XmI5eTPplVZtTZhV6vp
+         IsjDWrKA+j0zxfSv7qvPQsGbe4vnALz+vvb7aqpOEyxaEIfVCozRDerkIXtYxy/hw7xu
+         L8f2gq7vZDnl7ZCeab5P0vagwxlu0dHCSfrgMJQcbHOD8FYbQUIGAZeoQfEOxcxEsPtU
+         mQfBNxBBTP/wXUkCyvugwtSglSSn9lUIVYXXeiOqXSv10qIXHeWE0TbqAMed1LJ8bekm
+         s49g==
+X-Gm-Message-State: AJcUukdSwTrMDDM0PsGcyCyHw91YooNVCPHkshc8B1ksIA10WjCEk2C3
+        jNPQH0kOh8J5k4N/rj3jxKo=
+X-Google-Smtp-Source: ALg8bN5nIdAujCqD6Q9CH34G9NkY5X1rFHt5JvVdJmodZF9BQCxU8/KlOHK024eqWh+65qtdIEXyuQ==
+X-Received: by 2002:a17:902:925:: with SMTP id 34mr14085011plm.14.1547212053377;
+        Fri, 11 Jan 2019 05:07:33 -0800 (PST)
+Received: from localhost ([121.137.63.184])
+        by smtp.gmail.com with ESMTPSA id l11sm104458445pff.65.2019.01.11.05.07.31
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 11 Jan 2019 05:07:32 -0800 (PST)
+From:   Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+X-Google-Original-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Date:   Fri, 11 Jan 2019 22:07:29 +0900
+To:     Petr Mladek <pmladek@suse.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] sysrq: Restore original console_loglevel when sysrq
+ disabled
+Message-ID: <20190111130729.GA31790@tigerII.localdomain>
+References: <20190111124515.11017-1-pmladek@suse.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <0f2b6cc8-ad2f-bd0b-fe51-c333a8033452@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190111124515.11017-1-pmladek@suse.com>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 11, 2019 at 09:53:58AM +0000, Valentin Schneider wrote:
-> Hi,
+On (01/11/19 13:45), Petr Mladek wrote:
+> The sysrq header line is printed with an increased loglevel
+> to provide users some positive feedback.
 > 
-> On 19/12/2018 18:23, Valentin Schneider wrote:
-> > In [1] Peter had a suggestion to broadly mute hotplug lockdep warnings during
-> > init instead of going after every single warning and wrapping them with
-> > cpus_read_{lock, unlock}(). This is implemented in [PATCH 1/2].
-> > 
-> > [PATCH 2/2] is a logical follow-up as [PATCH 1/2] is the generalized version
-> > of the reverted patch.
-> > 
-> > [1]: https://lore.kernel.org/lkml/1543877121-4098-1-git-send-email-cai@gmx.us/#t
-> > 
-> 
-> Gentle ping - I suppose this flew under the holidays radar.
+> The original loglevel is not restored when the sysrq operation
+> is disabled. This bug was introduced in 2.6.12 (pre-git-history)
+> by the commit ("Allow admin to enable only some of the Magic-Sysrq
+> functions").
 
-Indeed so... got them now. Thanks!
+
+Good find, and the patch looks OK to me. A small comment below.
+FWIW,
+Reviewed-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+
+
+---
+
+A side note (nitpick, etc.); it's Friday night in here, I'm enjoying
+my beer; so maybe I'm wrong about the whole thing.
+
+
+> @@ -553,6 +553,7 @@ void __handle_sysrq(int key, bool check_mask)
+>  			op_p->handler(key);
+>  		} else {
+>  			pr_cont("This sysrq operation is disabled.\n");
+> +			console_loglevel = orig_log_level;
+>  		}
+
+This looks a bit racy.
+
+When we do
+
+	printk("FOO\n");
+	console_loglevel = XYZ;
+
+We don't have any real guarantees that printk("FOO\n") will print
+anything straight ahead. It is possible that console_sem is already
+locked and the owner is preempted, so by the time the console_sem
+owner picks up that FOO\n messages, console_loglevel is back to
+orig_log_level and suppress_message_printing() will just tell us
+to skip the message.
+
+Do we need pr_cont() there? Maybe we can just have a normal pr_err()
+which would always tell that "key" sysrq is disabled? (we also
+would need to change the error message a bit).
+
+	-ss
