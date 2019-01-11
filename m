@@ -7,47 +7,49 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E2D3C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:40:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57AD5C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:40:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D383C2063F
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:40:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2B8312133F
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:40:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547217655;
-	bh=LM94Qigtz5LtHH+8d0xXc6hDQf7dFfyG+Hcnku6unOc=;
+	s=default; t=1547217658;
+	bh=HMLI5u/ktZW2z3KrsY/hXkDBXeBy2raIIL8pf70W+FI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=QGJmCU2CsooMcRv/X8WqQzDDUnioe292Cn6mW3R4EUrKV6/8cpsvwAN4JMK3kFd7o
-	 D5VTKUJadUqjzOfMOT7mhmeLrhYSOUpU66L1063jxn5OGYkaobtQUWapokTCZcPopn
-	 PO/sTvvByTKvhATpLpIR1Y68exwm+b/Lt6xavi6I=
+	b=uhOow2uCIBpyX9uEwrTM75IASTyOKnPLNb4BDgB3UDsy88kPhWaOsD1hoMZO8wzZl
+	 KnoSBh/AXHMgkXdyrxQdNAh878Cz6MaglAioCUsr8wNDc+joYoYtrBlKF6M9Hd9B1r
+	 aU9k6nq3dsH6DGuAamk+F9SRzDn6ib1bCCDRpiq0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403928AbfAKOky (ORCPT
+        id S2390961AbfAKOk4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:40:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33512 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:40:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33458 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391261AbfAKOkw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:40:52 -0500
+        id S2403915AbfAKOkt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:40:49 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B90162063F;
-        Fri, 11 Jan 2019 14:40:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C3522206B6;
+        Fri, 11 Jan 2019 14:40:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547217651;
-        bh=LM94Qigtz5LtHH+8d0xXc6hDQf7dFfyG+Hcnku6unOc=;
+        s=default; t=1547217648;
+        bh=HMLI5u/ktZW2z3KrsY/hXkDBXeBy2raIIL8pf70W+FI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mct/V6Cx2vJpvabDnBoavHuu0csdPYl0w/4M+EEvErLnysxt2aD+16rJC4m3s65jZ
-         KyXY0RuBM6ViY/NH+mtPY9nH4w5E+TE/OE//WkXT1/ogb6T+m7cusZXPLEMkIP9B4N
-         hqSxyKEAHudngGvOEWpJ6oFXtCm3h5fimYBjR4Ng=
+        b=pFqP5oMPGzqWYOJrXQxI8g+kpBmSsoTPsofOKffGG8bdaOAvz9W5d0wyBdysI9Its
+         8RrG9UkJzXnDcajFvBNGUKOrQxTO3eut+X8L/aZ40DLxkh2rDxJqEns20wrQiiCRQF
+         mwY3o16Xsmp9iNK4qafl0I9zi5UClsvM0aOS/TsE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Frank Haverkamp <haver@linux.vnet.ibm.com>
-Subject: [PATCH 4.19 139/148] genwqe: Fix size check
-Date:   Fri, 11 Jan 2019 15:15:17 +0100
-Message-Id: <20190111131119.847409206@linuxfoundation.org>
+        stable@vger.kernel.org, John Garry <john.garry@huawei.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Weijian Huang <huangweijian4@hisilicon.com>,
+        Shaokun Zhang <zhangshaokun@hisilicon.com>
+Subject: [PATCH 4.19 138/148] drivers/perf: hisi: Fixup one DDRC PMU register offset
+Date:   Fri, 11 Jan 2019 15:15:16 +0100
+Message-Id: <20190111131119.802583279@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131114.337122649@linuxfoundation.org>
 References: <20190111131114.337122649@linuxfoundation.org>
@@ -66,65 +68,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Christian Borntraeger <borntraeger@de.ibm.com>
+From: Shaokun Zhang <zhangshaokun@hisilicon.com>
 
-commit fdd669684655c07dacbdb0d753fd13833de69a33 upstream.
+commit eb4f5213251833567570df1a09803f895653274d upstream.
 
-Calling the test program genwqe_cksum with the default buffer size of
-2MB triggers the following kernel warning on s390:
+For DDRC PMU, each PMU counter is fixed-purpose. There is a mismatch
+between perf list and driver definition on rw_chg event.
+# perf list | grep chg
+  hisi_sccl1_ddrc0/rnk_chg/                          [Kernel PMU event]
+  hisi_sccl1_ddrc0/rw_chg/                           [Kernel PMU event]
+But the register offset of rw_chg event is not defined in the driver,
+meanwhile bnk_chg register offset is mis-defined, let's fixup it.
 
-WARNING: CPU: 30 PID: 9311 at mm/page_alloc.c:3189 __alloc_pages_nodemask+0x45c/0xbe0
-CPU: 30 PID: 9311 Comm: genwqe_cksum Kdump: loaded Not tainted 3.10.0-957.el7.s390x #1
-task: 00000005e5d13980 ti: 00000005e7c6c000 task.ti: 00000005e7c6c000
-Krnl PSW : 0704c00180000000 00000000002780ac (__alloc_pages_nodemask+0x45c/0xbe0)
-           R:0 T:1 IO:1 EX:1 Key:0 M:1 W:0 P:0 AS:3 CC:0 PM:0 EA:3
-Krnl GPRS: 00000000002932b8 0000000000b73d7c 0000000000000010 0000000000000009
-           0000000000000041 00000005e7c6f9b8 0000000000000001 00000000000080d0
-           0000000000000000 0000000000b70500 0000000000000001 0000000000000000
-           0000000000b70528 00000000007682c0 0000000000277df2 00000005e7c6f9a0
-Krnl Code: 000000000027809e: de7195001000	ed	1280(114,%r9),0(%r1)
-	   00000000002780a4: a774fead		brc	7,277dfe
-	  #00000000002780a8: a7f40001		brc	15,2780aa
-	  >00000000002780ac: 92011000		mvi	0(%r1),1
-	   00000000002780b0: a7f4fea7		brc	15,277dfe
-	   00000000002780b4: 9101c6b6		tm	1718(%r12),1
-	   00000000002780b8: a784ff3a		brc	8,277f2c
-	   00000000002780bc: a7f4fe2e		brc	15,277d18
-Call Trace:
-([<0000000000277df2>] __alloc_pages_nodemask+0x1a2/0xbe0)
- [<000000000013afae>] s390_dma_alloc+0xfe/0x310
- [<000003ff8065f362>] __genwqe_alloc_consistent+0xfa/0x148 [genwqe_card]
- [<000003ff80658f7a>] genwqe_mmap+0xca/0x248 [genwqe_card]
- [<00000000002b2712>] mmap_region+0x4e2/0x778
- [<00000000002b2c54>] do_mmap+0x2ac/0x3e0
- [<0000000000292d7e>] vm_mmap_pgoff+0xd6/0x118
- [<00000000002b081c>] SyS_mmap_pgoff+0xdc/0x268
- [<00000000002b0a34>] SyS_old_mmap+0x8c/0xb0
- [<000000000074e518>] sysc_tracego+0x14/0x1e
- [<000003ffacf87dc6>] 0x3ffacf87dc6
-
-turns out the check in __genwqe_alloc_consistent uses "> MAX_ORDER"
-while the mm code uses ">= MAX_ORDER". Fix genwqe.
-
+Fixes: 904dcf03f086 ("perf: hisi: Add support for HiSilicon SoC DDRC PMU driver")
 Cc: stable@vger.kernel.org
-Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
-Signed-off-by: Frank Haverkamp <haver@linux.vnet.ibm.com>
+Cc: John Garry <john.garry@huawei.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Reported-by: Weijian Huang <huangweijian4@hisilicon.com>
+Signed-off-by: Shaokun Zhang <zhangshaokun@hisilicon.com>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/misc/genwqe/card_utils.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/perf/hisilicon/hisi_uncore_ddrc_pmu.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/misc/genwqe/card_utils.c
-+++ b/drivers/misc/genwqe/card_utils.c
-@@ -217,7 +217,7 @@ u32 genwqe_crc32(u8 *buff, size_t len, u
- void *__genwqe_alloc_consistent(struct genwqe_dev *cd, size_t size,
- 			       dma_addr_t *dma_handle)
- {
--	if (get_order(size) > MAX_ORDER)
-+	if (get_order(size) >= MAX_ORDER)
- 		return NULL;
+--- a/drivers/perf/hisilicon/hisi_uncore_ddrc_pmu.c
++++ b/drivers/perf/hisilicon/hisi_uncore_ddrc_pmu.c
+@@ -30,8 +30,8 @@
+ #define DDRC_FLUX_RCMD          0x38c
+ #define DDRC_PRE_CMD            0x3c0
+ #define DDRC_ACT_CMD            0x3c4
+-#define DDRC_BNK_CHG            0x3c8
+ #define DDRC_RNK_CHG            0x3cc
++#define DDRC_RW_CHG             0x3d0
+ #define DDRC_EVENT_CTRL         0x6C0
+ #define DDRC_INT_MASK		0x6c8
+ #define DDRC_INT_STATUS		0x6cc
+@@ -51,7 +51,7 @@
  
- 	return dma_zalloc_coherent(&cd->pci_dev->dev, size, dma_handle,
+ static const u32 ddrc_reg_off[] = {
+ 	DDRC_FLUX_WR, DDRC_FLUX_RD, DDRC_FLUX_WCMD, DDRC_FLUX_RCMD,
+-	DDRC_PRE_CMD, DDRC_ACT_CMD, DDRC_BNK_CHG, DDRC_RNK_CHG
++	DDRC_PRE_CMD, DDRC_ACT_CMD, DDRC_RNK_CHG, DDRC_RW_CHG
+ };
+ 
+ /*
 
 
