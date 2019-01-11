@@ -2,127 +2,90 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC822C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:49:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C089BC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:49:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F1FC206B6
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:49:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 878AF2063F
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:49:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547218176;
-	bh=AdL5jdSPRsIRUg83p9Vm9AgahdZP08ht8NrGS1PuwDA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=mQHy19nCA7iOqEdjUjU7Rqex88uQ8uTvrJbKhEd/BqzPE76T6Uh4pCxU4kmkuyUmG
-	 CtB3KKbNmxyISuvGXC/P47/p6eaC4lYIc8sWJ93AbLzRnqslgJ+elsasGULnnuQ6sG
-	 0vDuqXcXt6hYFbFwZxn/r/ZALnqJv5TSQv0etRmw=
+	s=default; t=1547218182;
+	bh=H2+MumtGZP9D/c/gCgyobZB/B5bqmZ2Z8Nz/mVhAcsE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=EG6irl55OWBUK1WzyAjzpDPWqknA29Tkzwpi7UGlOD3s+DZvDmDes6/XOLKeGfbEI
+	 G7Wq+qlG4gFpI3br5GUgdOCXesFZhtRx+1CSxhpB84ozME3qythjWaTno90HmLyglR
+	 /LPUvVNqkl188ridpWoqt9UUft3FBjzoKN328Vus=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391619AbfAKOtg (ORCPT
+        id S2391631AbfAKOtl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:49:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39934 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391578AbfAKOt0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:49:26 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8E59F2063F;
-        Fri, 11 Jan 2019 14:49:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547218166;
-        bh=AdL5jdSPRsIRUg83p9Vm9AgahdZP08ht8NrGS1PuwDA=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HorgfF1VAMhLmYPIOFAO2dX2o4UAp2uwKS9opwEC3vzuNGfdS48Mfw0qIdZ23/gBj
-         LXkq4Si83CP0sc81KSBZoUASCbnferq8BBmG8Rhg2et632qHaSYcdDhvDfZuo2DC1E
-         IqVVS5E3ibY1OZk0KL9M9LlEnFlmTVrwY9+jm8vM=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ashok Raj <ashok.raj@intel.com>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        "Ramos Falcon, Ernesto R" <ernesto.r.ramos.falcon@intel.com>,
-        Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
-        Sohil Mehta <sohil.mehta@intel.com>,
-        Joerg Roedel <jroedel@suse.de>
-Subject: [PATCH 4.20 50/65] iommu/vt-d: Handle domain agaw being less than iommu agaw
-Date:   Fri, 11 Jan 2019 15:15:36 +0100
-Message-Id: <20190111131103.085348406@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190111131055.331350141@linuxfoundation.org>
-References: <20190111131055.331350141@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+        Fri, 11 Jan 2019 09:49:41 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:40339 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391608AbfAKOtd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:49:33 -0500
+Received: by mail-ot1-f68.google.com with SMTP id s5so13285026oth.7;
+        Fri, 11 Jan 2019 06:49:32 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=SkSuY7KYrBpDBLfeRoZ7d0Kp310+i18pSDvVIWDGic8=;
+        b=SOvKhqEfnbPgzz5Ie38H20mKXp19P/8ZlYfhaR74MhrI33jBuRQ8/mUb3kjaZbByEL
+         XDTMz24xFvFTWkJ24daX/fXAACz/s9lrrWV/mgU4cscQvepqitc+1/v54rHaU7nqoG+9
+         QdoBw06Q+L1hDQbNRjb0W3rY2A61ZjyCWoJ/y5J3O+fLGmKjHkFPrSXTrR4Tj62DnUVy
+         yg8SSqfUw9YDFo8GO37/81FPPz2wlCV1IuZiEsGEjn/bMm+1FBeYyx5H0WCEOSRPlO3Y
+         WXn30XORv7tcKejcDduojcWF2RAkvq5VGXeoRzWP0K3jHkIOhO9zGeNEb0lC0tA66AdB
+         6r0w==
+X-Gm-Message-State: AJcUukfmCJBrY8uw0rbqcweulUATjm9yiCZ8nwBFMvZlQzEkOYkbnR/q
+        95NaHwTFoAelDyCaswEx1Q==
+X-Google-Smtp-Source: ALg8bN50tT2iwFNdKETVqqqi+TUoM+Yi5iI3WMUE0nIETEzHmLC93g0F+m6SB1V5R4My/fCmqkMnfg==
+X-Received: by 2002:a9d:468:: with SMTP id 95mr9653190otc.312.1547218171901;
+        Fri, 11 Jan 2019 06:49:31 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id s17sm34622800otp.36.2019.01.11.06.49.31
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 11 Jan 2019 06:49:31 -0800 (PST)
+Date:   Fri, 11 Jan 2019 08:49:30 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Peter Rosin <peda@axentia.se>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Peter Rosin <peda@axentia.se>, David Airlie <airlied@linux.ie>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Archit Taneja <architt@codeaurora.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Subject: Re: [PATCH v3 3/5] dt-bindings: display: bridge: thc63lvdm83d: use
+  standard powerdown-gpios
+Message-ID: <20190111144930.GA15806@bogus>
+References: <20181229070649.21308-1-peda@axentia.se>
+ <20181229070649.21308-4-peda@axentia.se>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181229070649.21308-4-peda@axentia.se>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.20-stable review patch.  If anyone has any objections, please let me know.
+On Sat, 29 Dec 2018 07:07:31 +0000, Peter Rosin wrote:
+> The name powerdown-gpios is the standard property name for the
+> functionality covered by the previous pwdn-gpios name. This rename
+> should be safe to do since the linux driver supporting the binding
+> (lvds-encoder.c) never implemented the property, and no dts file
+> names it. At least not upstream.
+> 
+> Signed-off-by: Peter Rosin <peda@axentia.se>
+> ---
+>  Documentation/devicetree/bindings/display/bridge/thine,thc63lvdm83d.txt | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
 
-------------------
-
-From: Sohil Mehta <sohil.mehta@intel.com>
-
-commit 3569dd07aaad71920c5ea4da2d5cc9a167c1ffd4 upstream.
-
-The Intel IOMMU driver opportunistically skips a few top level page
-tables from the domain paging directory while programming the IOMMU
-context entry. However there is an implicit assumption in the code that
-domain's adjusted guest address width (agaw) would always be greater
-than IOMMU's agaw.
-
-The IOMMU capabilities in an upcoming platform cause the domain's agaw
-to be lower than IOMMU's agaw. The issue is seen when the IOMMU supports
-both 4-level and 5-level paging. The domain builds a 4-level page table
-based on agaw of 2. However the IOMMU's agaw is set as 3 (5-level). In
-this case the code incorrectly tries to skip page page table levels.
-This causes the IOMMU driver to avoid programming the context entry. The
-fix handles this case and programs the context entry accordingly.
-
-Fixes: de24e55395698 ("iommu/vt-d: Simplify domain_context_mapping_one")
-Cc: <stable@vger.kernel.org>
-Cc: Ashok Raj <ashok.raj@intel.com>
-Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
-Cc: Lu Baolu <baolu.lu@linux.intel.com>
-Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
-Reported-by: Ramos Falcon, Ernesto R <ernesto.r.ramos.falcon@intel.com>
-Tested-by: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-Signed-off-by: Sohil Mehta <sohil.mehta@intel.com>
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- drivers/iommu/intel-iommu.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
---- a/drivers/iommu/intel-iommu.c
-+++ b/drivers/iommu/intel-iommu.c
-@@ -2044,7 +2044,7 @@ static int domain_context_mapping_one(st
- 	 * than default.  Unnecessary for PT mode.
- 	 */
- 	if (translation != CONTEXT_TT_PASS_THROUGH) {
--		for (agaw = domain->agaw; agaw != iommu->agaw; agaw--) {
-+		for (agaw = domain->agaw; agaw > iommu->agaw; agaw--) {
- 			ret = -ENOMEM;
- 			pgd = phys_to_virt(dma_pte_addr(pgd));
- 			if (!dma_pte_present(pgd))
-@@ -2058,7 +2058,7 @@ static int domain_context_mapping_one(st
- 			translation = CONTEXT_TT_MULTI_LEVEL;
- 
- 		context_set_address_root(context, virt_to_phys(pgd));
--		context_set_address_width(context, iommu->agaw);
-+		context_set_address_width(context, agaw);
- 	} else {
- 		/*
- 		 * In pass through mode, AW must be programmed to
-
-
+Reviewed-by: Rob Herring <robh@kernel.org>
