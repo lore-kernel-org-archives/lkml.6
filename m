@@ -2,93 +2,130 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FBE1C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 19:30:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C600AC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 19:32:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C5FA218C3
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 19:30:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547235006;
-	bh=BpyAFt5946ugiE00tqZo7FW3BnzcyAnkE8EISO8ByH0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=uW7VBjxI1O7nSI6SP0IfbtDwP42sgutTjTRxyiO5Aylzx/kzRMMZYWrKUvFixiIjp
-	 6Hw/S2ijRo+edrv6CvPKkjJH59C+xMNhD8Ax411XsPovvlIg5mxwWrFjTwDrY3SYXK
-	 CHEbuds/O+DjOJ/2rZ+fHDiowB6PQCEDeYzFdcBw=
+	by mail.kernel.org (Postfix) with ESMTP id 989B9218D3
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 19:32:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TfOB4IyF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388537AbfAKTaF (ORCPT
+        id S2388563AbfAKTcx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 14:30:05 -0500
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:41143 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731807AbfAKTaE (ORCPT
+        Fri, 11 Jan 2019 14:32:53 -0500
+Received: from mail-io1-f65.google.com ([209.85.166.65]:34016 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732371AbfAKTcx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 14:30:04 -0500
-Received: by mail-oi1-f196.google.com with SMTP id j21so13106628oii.8;
-        Fri, 11 Jan 2019 11:30:04 -0800 (PST)
+        Fri, 11 Jan 2019 14:32:53 -0500
+Received: by mail-io1-f65.google.com with SMTP id b16so13076894ior.1;
+        Fri, 11 Jan 2019 11:32:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=eIxobHanVVV7p4lGf1aBEUdrw5ikpusn57X5A64Zg5M=;
+        b=TfOB4IyFZXNCn+wncrr1rZAslXeVSpqhzslRhS7ij0abumHa6EqHmQ0ROw+1PxX5M2
+         vBsUz5uMZJ4my2oED4jAPsRnOgk7bEwMWI/J5OZaig3MjvNPIMgJrujisjOCC2YvRtoZ
+         0YcqaxzOxs3jwMcEtY0mp4p0XUj8Rauze7B4VPMEBMTVLBylA0sdTX6L2ZRYziy05+Jf
+         sfPOaydeniBXNU+R1Yx8RDKBlAieskYiXCNdskbfTR33Da9gNm/6ldIsb48JjFNBEe13
+         q83AIuAtm7/uLibrc2BOLB+REYnwNiujyit4Ci/7tY5KvtymhfUgdGLmQTSD7pTY3+Ye
+         vxWQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=8c0Cd9SOEjMucxUgr1cK7o0spBsIvwNckk4Oy28C5lI=;
-        b=STHvGrhbndwegc5Hx/8McenC8oatCXfpjRyn16FcSOYGUOfM/qRM0QSpvo5gWrD4sX
-         /opCwkczwCkPYWKykEW5/yAHvDXC2l4fk3WTuvQ/k5V1tBy419WZigtCPARgNWS7m25S
-         Zt1reJ+PF66mAhQ9CwIImgizGG2LDzJp3io88AGV086tleHU/iR3H1PRwgRoxakM5EHd
-         jTco3h6ZtsrHEGIgZb2STcYhoE3CY5tk3LRnxHyQTXnEPKumPN5mzXinigK7+8PW7TjV
-         nutSWwR+9nX58JReZhGphR/gi4aqez0VKnzLV/Cn7kgtiLYHTkF9Wpmbd5FaI5yZqjjv
-         nrEg==
-X-Gm-Message-State: AJcUukeSNz9UFP0xBlojSd1FOPThysYGE1826AH1+Wm74RbwBHbjc+C0
-        5NAdaYuXsRPzVpLxZhSyng==
-X-Google-Smtp-Source: ALg8bN4aD2psTbop+nJFCIp6EGeA7Nih3kgQ7KPHL/VjW6kqRp1Sfq9RC0C0xCae3bHA5zHvpYMDVg==
-X-Received: by 2002:aca:f44c:: with SMTP id s73mr10507571oih.102.1547235003963;
-        Fri, 11 Jan 2019 11:30:03 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id u65sm31698804oib.5.2019.01.11.11.30.03
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=eIxobHanVVV7p4lGf1aBEUdrw5ikpusn57X5A64Zg5M=;
+        b=PvRBCj5OKrHmD/9CeOo2jlAEPFJsGN1Dag3An5kDXKZ+E2Z7+76z6SxpSfTEHOW1rj
+         ehytD485+ZMzLxygWERmvVONEYIC80+pEia3vTi7wcDEMPURTp6XSEHIZ085COGBSMJg
+         CimMmoqjFcJscUfPB8tKH5Ws48QsVI9Pc/opMlh9YNSuK55cHzN2NimhkWehl80R0o+h
+         eO0A5d0lZobn2GsfLLqmc6HwU83zMWted/+eWmZrJV3e5/ReCkwpCpWvLwYfrTMch6HX
+         Imoh48Vgn1anX3UCKH64B+iV0eXvVK4NKPWqnAzSz4OC3BqlXJFstYb5IuHx9jX9M+/B
+         LUkQ==
+X-Gm-Message-State: AJcUukfZyMr0P3XndmC0BdvIaBZ1gDEoWYsN1kY3uX38T+I4aCEAGGJH
+        2xocos8oaickNvRg0B3IPgQxNjIxMhY=
+X-Google-Smtp-Source: ALg8bN6b5J9P4GUpsK2WN8ppu+cGCQK1MgkW9Uw85UFWMimRHyRon6/E9fbT88jsvb9HqHBZRhBssQ==
+X-Received: by 2002:a6b:3bc8:: with SMTP id i191mr10970226ioa.23.1547235171581;
+        Fri, 11 Jan 2019 11:32:51 -0800 (PST)
+Received: from localhost ([67.218.223.154])
+        by smtp.gmail.com with ESMTPSA id r195sm1320694ita.3.2019.01.11.11.32.50
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 11 Jan 2019 11:30:03 -0800 (PST)
-Date:   Fri, 11 Jan 2019 13:30:02 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Yunfei Dong <yunfei.dong@mediatek.com>
-Cc:     Tiffany Lin <tiffany.lin@mediatek.com>,
-        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
-        Yunfei Dong <yunfei.dong@mediatek.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org,
-        Qianqian Yan <qianqian.yan@mediatek.com>
-Subject: Re: [PATCH v2,1/3] media: dt-bindings: media: add 'assigned-clocks'
- to vcodec examples
-Message-ID: <20190111193002.GA19308@bogus>
-References: <1546571161-11470-1-git-send-email-yunfei.dong@mediatek.com>
+        Fri, 11 Jan 2019 11:32:50 -0800 (PST)
+From:   Sebastien Bourdelin <sebastien.bourdelin@gmail.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     devicetree@vger.kernel.org, linux-iio@vger.kernel.org,
+        himanshujha199640@gmail.com, mark.rutland@arm.com,
+        robh+dt@kernel.org, pmeerw@pmeerw.net, lars@metafoo.de,
+        knaack.h@gmx.de, jic23@kernel.org,
+        Sebastien Bourdelin <sebastien.bourdelin@gmail.com>
+Subject: [PATCH 1/2] iio: chemical: bme680: Add device-tree support
+Date:   Fri, 11 Jan 2019 14:31:40 -0500
+Message-Id: <20190111193141.20607-1-sebastien.bourdelin@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1546571161-11470-1-git-send-email-yunfei.dong@mediatek.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 4 Jan 2019 11:05:59 +0800, Yunfei Dong wrote:
-> Fix MTK binding document for MT8173 dtsi changed in order
-> to use standard CCF interface.
-> MT8173 SoC from Mediatek.
-> 
-> Signed-off-by: Yunfei Dong <yunfei.dong@mediatek.com>
-> Signed-off-by: Qianqian Yan <qianqian.yan@mediatek.com>
-> ---
-> change note:
-> v2: modify subject
-> ---
->  .../devicetree/bindings/media/mediatek-vcodec.txt   | 13 +++++++++++++
->  1 file changed, 13 insertions(+)
-> 
+This commit allow the driver to work with device-tree.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Sebastien Bourdelin <sebastien.bourdelin@gmail.com>
+---
+ drivers/iio/chemical/bme680_i2c.c | 7 +++++++
+ drivers/iio/chemical/bme680_spi.c | 7 +++++++
+ 2 files changed, 14 insertions(+)
+
+diff --git a/drivers/iio/chemical/bme680_i2c.c b/drivers/iio/chemical/bme680_i2c.c
+index 06d4be539d2e..94a36ebdf0b2 100644
+--- a/drivers/iio/chemical/bme680_i2c.c
++++ b/drivers/iio/chemical/bme680_i2c.c
+@@ -70,10 +70,17 @@ static const struct acpi_device_id bme680_acpi_match[] = {
+ };
+ MODULE_DEVICE_TABLE(acpi, bme680_acpi_match);
+ 
++static const struct of_device_id bme680_of_i2c_match[] = {
++	{ .compatible = "bosch,bme680", },
++	{},
++}
++MODULE_DEVICE_TABLE(of, bme680_of_i2c_match);
++
+ static struct i2c_driver bme680_i2c_driver = {
+ 	.driver = {
+ 		.name			= "bme680_i2c",
+ 		.acpi_match_table       = ACPI_PTR(bme680_acpi_match),
++		.of_match_table		= of_match_ptr(bme680_of_i2c_match),
+ 	},
+ 	.probe = bme680_i2c_probe,
+ 	.id_table = bme680_i2c_id,
+diff --git a/drivers/iio/chemical/bme680_spi.c b/drivers/iio/chemical/bme680_spi.c
+index c9fb05e8d0b9..45bd4e93a891 100644
+--- a/drivers/iio/chemical/bme680_spi.c
++++ b/drivers/iio/chemical/bme680_spi.c
+@@ -110,10 +110,17 @@ static const struct acpi_device_id bme680_acpi_match[] = {
+ };
+ MODULE_DEVICE_TABLE(acpi, bme680_acpi_match);
+ 
++static const struct of_device_id bme680_of_spi_match[] = {
++	{ .compatible = "bosch,bme680", },
++	{},
++}
++MODULE_DEVICE_TABLE(of, bme680_of_spi_match);
++
+ static struct spi_driver bme680_spi_driver = {
+ 	.driver = {
+ 		.name			= "bme680_spi",
+ 		.acpi_match_table	= ACPI_PTR(bme680_acpi_match),
++		.of_match_table		= of_match_ptr(bme680_of_spi_match),
+ 	},
+ 	.probe = bme680_spi_probe,
+ 	.id_table = bme680_spi_id,
+-- 
+2.20.1
+
