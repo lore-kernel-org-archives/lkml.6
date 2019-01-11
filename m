@@ -2,52 +2,56 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8085DC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:25:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7420C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:25:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5253020874
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:25:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 791302177B
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:25:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547216712;
-	bh=dTm/LYUeoH7BCumYYd5wRnUaYtKRL6M5eL2t5J6LNZI=;
+	s=default; t=1547216720;
+	bh=BXXDzqq8wJtvo7WE24heaNxLLn7VNKQ7c0b93ub0p80=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=sSQTmZyTbisA+L+b6SWz4UBq1WJDCb/DHO3MZPtlMElmyu9LfcSeWewgTxCJUALwQ
-	 kAoAbr36bAWsBPhcB/oMNmIwN7GhCJYS/1mXRHwWDLiW6eq69Jdc1wQBuqTkK+MZUT
-	 I2KznOzlvNLQn7IFW5fVKOI5RzZiQ9J1spxwHc3I=
+	b=mWbS7WiaBHLYrGcRFrLjrqFPBRaVCN0Ybu4Fr5uH210VFRd7HlHPAmKcMmARdNUeu
+	 6V2jWrDyOOOF1lzPZ9nUuSeovbytuZXSOYBKG4tkvH92xisaDZL/jnc3c54790lb72
+	 J84iHPZdBC/eLEDkoqY3joSo8nw1gaCLTCk8J1Zg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388242AbfAKOZL (ORCPT
+        id S2388252AbfAKOZT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:25:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35114 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:25:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35026 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730166AbfAKOSh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:18:37 -0500
+        id S2387974AbfAKOSd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:18:33 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CDD5621841;
-        Fri, 11 Jan 2019 14:18:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 91D012177B;
+        Fri, 11 Jan 2019 14:18:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547216317;
-        bh=dTm/LYUeoH7BCumYYd5wRnUaYtKRL6M5eL2t5J6LNZI=;
+        s=default; t=1547216312;
+        bh=BXXDzqq8wJtvo7WE24heaNxLLn7VNKQ7c0b93ub0p80=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Vk0XQL0R9YmOGpfojNAd/kE0Di+KtuyG6AsZJAw6qyUKnTRJYMxiIxnZzCoJ9jQ1B
-         bMMa37rQzICIqSgtg7s0j8/av5rwsZWHxWfiAI13LD2BLf86j8iDIpFPNi2paULU7O
-         8IYcydVnffcttEWS2hMPDl+Cf6ePrWdozCv1zrOo=
+        b=ByIaAzDrs0aGkAi7o3qCcMZmtkaLrooTC5bNLpuxApsalfqNgi6TYDZh6B6M1P7lI
+         HR0kuH6ryKPFG1KL6AOCT77ILipLh2ZczluEMJrTRZYcnw3F2cy+EURqrIwxnELP8d
+         TwwLz9DYzeSDf8i6jcLZvIAirVcye8WHOgCH6/V4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paul Mackerras <paulus@ozlabs.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 56/88] powerpc: Fix COFF zImage booting on old powermacs
-Date:   Fri, 11 Jan 2019 15:08:25 +0100
-Message-Id: <20190111131054.518734690@linuxfoundation.org>
+        stable@vger.kernel.org,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Sasha Levin <alexander.levin@microsoft.com>,
+        Mike Haboustak <haboustak@gmail.com>
+Subject: [PATCH 4.4 54/88] x86/kvm/vmx: do not use vm-exit instruction length for fast MMIO when running nested
+Date:   Fri, 11 Jan 2019 15:08:23 +0100
+Message-Id: <20190111131054.124701505@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131045.137499039@linuxfoundation.org>
 References: <20190111131045.137499039@linuxfoundation.org>
@@ -66,56 +70,83 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 5564597d51c8ff5b88d95c76255e18b13b760879 ]
+From: Vitaly Kuznetsov <vkuznets@redhat.com>
 
-Commit 6975a783d7b4 ("powerpc/boot: Allow building the zImage wrapper
-as a relocatable ET_DYN", 2011-04-12) changed the procedure descriptor
-at the start of crt0.S to have a hard-coded start address of 0x500000
-rather than a reference to _zimage_start, presumably because having
-a reference to a symbol introduced a relocation which is awkward to
-handle in a position-independent executable.  Unfortunately, what is
-at 0x500000 in the COFF image is not the first instruction, but the
-procedure descriptor itself, that is, a word containing 0x500000,
-which is not a valid instruction.  Hence, booting a COFF zImage
-results in a "DEFAULT CATCH!, code=FFF00700" message from Open
-Firmware.
+commit d391f1207067268261add0485f0f34503539c5b0 upstream.
 
-This fixes the problem by (a) putting the procedure descriptor in the
-data section and (b) adding a branch to _zimage_start as the first
-instruction in the program.
+I was investigating an issue with seabios >= 1.10 which stopped working
+for nested KVM on Hyper-V. The problem appears to be in
+handle_ept_violation() function: when we do fast mmio we need to skip
+the instruction so we do kvm_skip_emulated_instruction(). This, however,
+depends on VM_EXIT_INSTRUCTION_LEN field being set correctly in VMCS.
+However, this is not the case.
 
-Fixes: 6975a783d7b4 ("powerpc/boot: Allow building the zImage wrapper as a relocatable ET_DYN")
-Signed-off-by: Paul Mackerras <paulus@ozlabs.org>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Intel's manual doesn't mandate VM_EXIT_INSTRUCTION_LEN to be set when
+EPT MISCONFIG occurs. While on real hardware it was observed to be set,
+some hypervisors follow the spec and don't set it; we end up advancing
+IP with some random value.
+
+I checked with Microsoft and they confirmed they don't fill
+VM_EXIT_INSTRUCTION_LEN on EPT MISCONFIG.
+
+Fix the issue by doing instruction skip through emulator when running
+nested.
+
+Fixes: 68c3b4d1676d870f0453c31d5a52e7e65c7448ae
+Suggested-by: Radim Krčmář <rkrcmar@redhat.com>
+Suggested-by: Paolo Bonzini <pbonzini@redhat.com>
+Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+Acked-by: Michael S. Tsirkin <mst@redhat.com>
+Signed-off-by: Radim Krčmář <rkrcmar@redhat.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+[mhaboustak: backport to 4.9.y]
+Signed-off-by: Mike Haboustak <haboustak@gmail.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/powerpc/boot/crt0.S | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ arch/x86/kvm/vmx.c |   19 +++++++++++++++++--
+ arch/x86/kvm/x86.c |    3 ++-
+ 2 files changed, 19 insertions(+), 3 deletions(-)
 
-diff --git a/arch/powerpc/boot/crt0.S b/arch/powerpc/boot/crt0.S
-index 5c2199857aa8..a3550e8f1a77 100644
---- a/arch/powerpc/boot/crt0.S
-+++ b/arch/powerpc/boot/crt0.S
-@@ -15,7 +15,7 @@
- RELA = 7
- RELACOUNT = 0x6ffffff9
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -6163,9 +6163,24 @@ static int handle_ept_misconfig(struct k
  
--	.text
-+	.data
- 	/* A procedure descriptor used when booting this as a COFF file.
- 	 * When making COFF, this comes first in the link and we're
- 	 * linked at 0x500000.
-@@ -23,6 +23,8 @@ RELACOUNT = 0x6ffffff9
- 	.globl	_zimage_start_opd
- _zimage_start_opd:
- 	.long	0x500000, 0, 0, 0
-+	.text
-+	b	_zimage_start
+ 	gpa = vmcs_read64(GUEST_PHYSICAL_ADDRESS);
+ 	if (!kvm_io_bus_write(vcpu, KVM_FAST_MMIO_BUS, gpa, 0, NULL)) {
+-		skip_emulated_instruction(vcpu);
+ 		trace_kvm_fast_mmio(gpa);
+-		return 1;
++		/*
++		* Doing kvm_skip_emulated_instruction() depends on undefined
++		* behavior: Intel's manual doesn't mandate
++		* VM_EXIT_INSTRUCTION_LEN to be set in VMCS when EPT MISCONFIG
++		* occurs and while on real hardware it was observed to be set,
++		* other hypervisors (namely Hyper-V) don't set it, we end up
++		* advancing IP with some random value. Disable fast mmio when
++		* running nested and keep it for real hardware in hope that
++		* VM_EXIT_INSTRUCTION_LEN will always be set correctly.
++		*/
++		if (!static_cpu_has(X86_FEATURE_HYPERVISOR)) {
++			skip_emulated_instruction(vcpu);
++			return 1;
++		}
++		else
++			return x86_emulate_instruction(vcpu, gpa, EMULTYPE_SKIP,
++						       NULL, 0) == EMULATE_DONE;
+ 	}
  
- #ifdef __powerpc64__
- .balign 8
--- 
-2.19.1
-
+ 	ret = handle_mmio_page_fault(vcpu, gpa, true);
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -5436,7 +5436,8 @@ int x86_emulate_instruction(struct kvm_v
+ 		 * handle watchpoints yet, those would be handled in
+ 		 * the emulate_ops.
+ 		 */
+-		if (kvm_vcpu_check_breakpoint(vcpu, &r))
++		if (!(emulation_type & EMULTYPE_SKIP) &&
++		    kvm_vcpu_check_breakpoint(vcpu, &r))
+ 			return r;
+ 
+ 		ctxt->interruptibility = 0;
 
 
