@@ -2,87 +2,100 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DAD9C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 16:11:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3A97C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 16:14:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E288120657
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 16:11:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547223085;
-	bh=wlhzySpQexfDTHBtmYOaa4kUngy8ps93uoCtSzAwEVQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=bB6zCwMTYoZJvXlAgS8kkp/3Wj7GYNYVlwtBEKwkVN4lHWob179jJzH3/mh8RXJRq
-	 3FnAUYjvhYLO9P/7S8hpvcVQwmQBvbshqFQeuh90XDZBlEQST5IlEAHZEdb8BETZv2
-	 MTynCjS/2K0PcMMYMNMgVYVfZGU6mrKgWOoEHoVw=
+	by mail.kernel.org (Postfix) with ESMTP id A72E820836
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 16:14:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387698AbfAKQLY (ORCPT
+        id S2387781AbfAKQOE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 11:11:24 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:39289 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387593AbfAKQLX (ORCPT
+        Fri, 11 Jan 2019 11:14:04 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:38216 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2387541AbfAKQOE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 11:11:23 -0500
-Received: by mail-oi1-f194.google.com with SMTP id i6so12615031oia.6;
-        Fri, 11 Jan 2019 08:11:23 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=GRecEAjgtFmhrxC47GMtKt+tli6Fq5d/fm+B5suVxdo=;
-        b=Pr5PKO2rDqnewo8KjcuHn6a+Cq2BqZ8nMw3BeGDTh+tq4Rgx65l6Ch3wjUZdDgOfA6
-         U/jXCH2RUczJOecLeKFI188cVdjAvxQ9uq5aFcokpS/OcnI/39ej6CQ/OF0W67n1KHx9
-         Xj/LV7jg2BL9+W21UPTKLjjxMR5l1PrKDaTYake7UoF18aplcBruzSFIWr8tUHyg+AiK
-         fINsy0gPLOkIcXTGmYR2O3BsAtgcYyoQqvXH1XoG+IsdCtXvPo5P8SgjL3cYzhuV1maa
-         Ce6M8qbin+RCwnWUwDhD0r9ONEwadmggm4RcWViQpv8v0u6VsK093nvB6wWQ/yh5B2uE
-         RARQ==
-X-Gm-Message-State: AJcUuked2y9LN06xBxyFC9u4nHQg/jweA8Pc3pNZkY+Z4g5yj0whtkqb
-        7esxrb6OQFZMIJlrBNCGpw==
-X-Google-Smtp-Source: ALg8bN5EZVAbXcE+pNN4ZsRZ3vwo0tPAt9UQdPCMHIojTQmtpwtreFKxVw/SOKXJq5KG7oWQAv2HZg==
-X-Received: by 2002:aca:2409:: with SMTP id n9mr9974996oic.40.1547223082407;
-        Fri, 11 Jan 2019 08:11:22 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id p203sm54969009oic.49.2019.01.11.08.11.21
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 11 Jan 2019 08:11:21 -0800 (PST)
-Date:   Fri, 11 Jan 2019 10:11:20 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com, mperttunen@nvidia.com,
-        thierry.reding@gmail.com, jonathanh@nvidia.com,
-        adrian.hunter@intel.com, ulf.hansson@linaro.org,
-        devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org,
-        Sowjanya Komatineni <skomatineni@nvidia.com>
-Subject: Re: [PATCH V3 1/3] dt-bindings: mmc: tegra: Add pinctrl for pad
- drive strength config
-Message-ID: <20190111161120.GA6491@bogus>
-References: <1546462674-22856-1-git-send-email-skomatineni@nvidia.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1546462674-22856-1-git-send-email-skomatineni@nvidia.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Fri, 11 Jan 2019 11:14:04 -0500
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id x0BGDxtW079423
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jan 2019 11:14:03 -0500
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2pxx9w8wue-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jan 2019 11:14:02 -0500
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Fri, 11 Jan 2019 16:14:00 -0000
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 11 Jan 2019 16:13:54 -0000
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0BGDr1H60948652
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 11 Jan 2019 16:13:53 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 53869A4054;
+        Fri, 11 Jan 2019 16:13:53 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 82F62A405B;
+        Fri, 11 Jan 2019 16:13:51 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.91.13])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri, 11 Jan 2019 16:13:51 +0000 (GMT)
+Subject: Re: [RFC PATCH 2/2] kexec, KEYS: Make use of platform keyring for
+ signature verify
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Dave Young <dyoung@redhat.com>, Kairui Song <kasong@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, dhowells@redhat.com,
+        dwmw2@infradead.org, jwboyer@fedoraproject.org,
+        keyrings@vger.kernel.org, jmorris@namei.org, serge@hallyn.com,
+        bauerman@linux.ibm.com, ebiggers@google.com, nayna@linux.ibm.com,
+        linux-integrity@vger.kernel.org, kexec@lists.infradead.org
+Date:   Fri, 11 Jan 2019 11:13:40 -0500
+In-Reply-To: <20190111134303.GA12760@dhcp-128-65.nay.redhat.com>
+References: <20190109164824.19708-1-kasong@redhat.com>
+         <20190109164824.19708-3-kasong@redhat.com>
+         <20190111134303.GA12760@dhcp-128-65.nay.redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19011116-0016-0000-0000-000002440502
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19011116-0017-0000-0000-0000329E0F74
+Message-Id: <1547223220.19931.471.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-11_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901110133
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2 Jan 2019 12:57:52 -0800, Sowjanya Komatineni wrote:
-> Add pinctrl for 3V3 and 1V8 pad drive strength configuration for
-> Tegra210 sdmmc which has pad configuration registers in the pinmux
-> reigster domain.
-> Pad drive strengths for Tegra186 and Later are
-> part of SDMMC device node itself.
-> 
-> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-> ---
->  Documentation/devicetree/bindings/mmc/nvidia,tegra20-sdhci.txt | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
-> 
+On Fri, 2019-01-11 at 21:43 +0800, Dave Young wrote:
+[snip]
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+> Personally I would like to see platform key separated from integrity.
+> But for the kexec_file part I think it is good at least it works with
+> this fix.
+> 
+> Acked-by: Dave Young <dyoung@redhat.com>
+
+The original "platform" keyring patches that Nayna posted multiple
+times were in the certs directory, but nobody commented/responded.  So
+she reworked the patches, moving them to the integrity directory and
+posted them (cc'ing the kexec mailing list).  It's a bit late to be
+asking to move it, isn't it?
+
+Mimi
+
