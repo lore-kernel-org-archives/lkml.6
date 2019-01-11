@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED6E6C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:41:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0058C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:41:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C073A21841
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:41:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7F19321841
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:41:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547217685;
-	bh=0VnDfnTpFM7iQYWEgaxnVOQYDN+nwQqIEvnYqZQDbnc=;
+	s=default; t=1547217689;
+	bh=kRyk9dIvF4np2AVcixSNxS4xf3opuzbCKcrR+9R+DSI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ZNj6KsgC5Kg3ADobGkiNJhfBp1RdXjXg20xc4oP2cIc+upitY29krlsbCuN7b0Bvg
-	 hirXA3gYf0jZlFRPxhMAW4+x4gQ7vuVgIlQ/WZrm3dg5tdEtFlD67m5gbvGZztmc8p
-	 vdYgckpay2VKO1VXvecp6kdiwzBLNW+9jYkKUnvY=
+	b=qG5PfNtdnzE9DTMj7Y7RCRqBwFrldKbWQw1jV9Rb/xpZIMCbftmh6tyFKlJipVVZ/
+	 qdslqemrzWB8jnJsumpgT0jQjmvaHtqejzzQulW3Hti4I2dz+3PttBOBZiQNJJjCE1
+	 3El/PEELkBaD0fB54wj7ZlFOn57EZQwKQTj/x4SU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404002AbfAKOlZ (ORCPT
+        id S2404017AbfAKOl2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:41:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34068 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:41:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34122 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391284AbfAKOlW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:41:22 -0500
+        id S2391284AbfAKOl0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:41:26 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AC6CA2133F;
-        Fri, 11 Jan 2019 14:41:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CC8DF206B6;
+        Fri, 11 Jan 2019 14:41:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547217682;
-        bh=0VnDfnTpFM7iQYWEgaxnVOQYDN+nwQqIEvnYqZQDbnc=;
+        s=default; t=1547217685;
+        bh=kRyk9dIvF4np2AVcixSNxS4xf3opuzbCKcrR+9R+DSI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TpjQq45fCn3EkT1V/B1gzCznP7GNVCbCzrLQZIUKwbzTbeHxMjRVXcjipuZ8Ri+iR
-         sv1x9LO3b7qEIZaDgv0atLVPKnbazr77LawHNpgskYtViRp0P4f3eQGN7OkzdnwY3M
-         BbM6sje5B4kTq47th2xNgi0HVhhP45Q/3z5YLT8M=
+        b=OpE/06Fo/PVL1SM+eHWC8JbQhrS099Es/8CfPv9OUI7BsVY+DAaM0MyjIvdZJuLMZ
+         T4dkJG8TuTFBg3xh4kxEF3Dt6Jb01XqN69Q7gw696uH8pGVdz+nA3S23j7b9PWno1d
+         MGRyElz3HH+TVw8Xxx6IIsnTWdF9CiKzVCxNd5/0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Brad Love <brad@nextdimension.cc>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Subject: [PATCH 4.19 103/148] media: cx23885: only reset DMA on problematic CPUs
-Date:   Fri, 11 Jan 2019 15:14:41 +0100
-Message-Id: <20190111131118.344793326@linuxfoundation.org>
+        stable@vger.kernel.org, Lyude Paul <lyude@redhat.com>,
+        Ben Skeggs <bskeggs@redhat.com>
+Subject: [PATCH 4.19 145/148] drm/nouveau/drm/nouveau: Check rc from drm_dp_mst_topology_mgr_resume()
+Date:   Fri, 11 Jan 2019 15:15:23 +0100
+Message-Id: <20190111131120.114611562@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131114.337122649@linuxfoundation.org>
 References: <20190111131114.337122649@linuxfoundation.org>
@@ -65,131 +65,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Brad Love <brad@nextdimension.cc>
+From: Lyude Paul <lyude@redhat.com>
 
-commit 4bd46aa0353e022c2401a258e93b107880a66533 upstream.
+commit b89fdf7ae8500feae1100d8b283176a44d31d698 upstream.
 
-It is reported that commit 95f408bbc4e4 ("media: cx23885: Ryzen DMA
-related RiSC engine stall fixes") caused regresssions with other CPUs.
+We need to actually make sure we check this on resume since otherwise we
+won't know whether or not the topology is still there once we've
+resumed, which will cause us to still think the topology is connected
+even after it's been removed if the removal happens mid-suspend.
 
-Ensure that the quirk will be applied only for the CPUs that
-are known to cause problems.
-
-A module option is added for explicit control of the behaviour.
-
-Fixes: 95f408bbc4e4 ("media: cx23885: Ryzen DMA related RiSC engine stall fixes")
-
-Signed-off-by: Brad Love <brad@nextdimension.cc>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Lyude Paul <lyude@redhat.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Ben Skeggs <bskeggs@redhat.com>
+Signed-off-by: Ben Skeggs <bskeggs@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/media/pci/cx23885/cx23885-core.c |   55 +++++++++++++++++++++++++++++--
- drivers/media/pci/cx23885/cx23885.h      |    2 +
- 2 files changed, 55 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/nouveau/dispnv50/disp.c |   12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
---- a/drivers/media/pci/cx23885/cx23885-core.c
-+++ b/drivers/media/pci/cx23885/cx23885-core.c
-@@ -23,6 +23,7 @@
- #include <linux/moduleparam.h>
- #include <linux/kmod.h>
- #include <linux/kernel.h>
-+#include <linux/pci.h>
- #include <linux/slab.h>
- #include <linux/interrupt.h>
- #include <linux/delay.h>
-@@ -41,6 +42,18 @@ MODULE_AUTHOR("Steven Toth <stoth@linuxt
- MODULE_LICENSE("GPL");
- MODULE_VERSION(CX23885_VERSION);
- 
-+/*
-+ * Some platforms have been found to require periodic resetting of the DMA
-+ * engine. Ryzen and XEON platforms are known to be affected. The symptom
-+ * encountered is "mpeg risc op code error". Only Ryzen platforms employ
-+ * this workaround if the option equals 1. The workaround can be explicitly
-+ * disabled for all platforms by setting to 0, the workaround can be forced
-+ * on for any platform by setting to 2.
-+ */
-+static unsigned int dma_reset_workaround = 1;
-+module_param(dma_reset_workaround, int, 0644);
-+MODULE_PARM_DESC(dma_reset_workaround, "periodic RiSC dma engine reset; 0-force disable, 1-driver detect (default), 2-force enable");
-+
- static unsigned int debug;
- module_param(debug, int, 0644);
- MODULE_PARM_DESC(debug, "enable debug messages");
-@@ -603,8 +616,13 @@ static void cx23885_risc_disasm(struct c
- 
- static void cx23885_clear_bridge_error(struct cx23885_dev *dev)
+--- a/drivers/gpu/drm/nouveau/dispnv50/disp.c
++++ b/drivers/gpu/drm/nouveau/dispnv50/disp.c
+@@ -1224,8 +1224,16 @@ nv50_mstm_fini(struct nv50_mstm *mstm)
+ static void
+ nv50_mstm_init(struct nv50_mstm *mstm)
  {
--	uint32_t reg1_val = cx_read(TC_REQ); /* read-only */
--	uint32_t reg2_val = cx_read(TC_REQ_SET);
-+	uint32_t reg1_val, reg2_val;
+-	if (mstm && mstm->mgr.mst_state)
+-		drm_dp_mst_topology_mgr_resume(&mstm->mgr);
++	int ret;
 +
-+	if (!dev->need_dma_reset)
++	if (!mstm || !mstm->mgr.mst_state)
 +		return;
 +
-+	reg1_val = cx_read(TC_REQ); /* read-only */
-+	reg2_val = cx_read(TC_REQ_SET);
- 
- 	if (reg1_val && reg2_val) {
- 		cx_write(TC_REQ, reg1_val);
-@@ -2058,6 +2076,37 @@ void cx23885_gpio_enable(struct cx23885_
- 	/* TODO: 23-19 */
++	ret = drm_dp_mst_topology_mgr_resume(&mstm->mgr);
++	if (ret == -1) {
++		drm_dp_mst_topology_mgr_set_mst(&mstm->mgr, false);
++		drm_kms_helper_hotplug_event(mstm->mgr.dev);
++	}
  }
  
-+static struct {
-+	int vendor, dev;
-+} const broken_dev_id[] = {
-+	/* According with
-+	 * https://openbenchmarking.org/system/1703021-RI-AMDZEN08075/Ryzen%207%201800X/lspci,
-+	 * 0x1451 is PCI ID for the IOMMU found on Ryzen
-+	 */
-+	{ PCI_VENDOR_ID_AMD, 0x1451 },
-+};
-+
-+static bool cx23885_does_need_dma_reset(void)
-+{
-+	int i;
-+	struct pci_dev *pdev = NULL;
-+
-+	if (dma_reset_workaround == 0)
-+		return false;
-+	else if (dma_reset_workaround == 2)
-+		return true;
-+
-+	for (i = 0; i < ARRAY_SIZE(broken_dev_id); i++) {
-+		pdev = pci_get_device(broken_dev_id[i].vendor,
-+				      broken_dev_id[i].dev, NULL);
-+		if (pdev) {
-+			pci_dev_put(pdev);
-+			return true;
-+		}
-+	}
-+	return false;
-+}
-+
- static int cx23885_initdev(struct pci_dev *pci_dev,
- 			   const struct pci_device_id *pci_id)
- {
-@@ -2069,6 +2118,8 @@ static int cx23885_initdev(struct pci_de
- 	if (NULL == dev)
- 		return -ENOMEM;
- 
-+	dev->need_dma_reset = cx23885_does_need_dma_reset();
-+
- 	err = v4l2_device_register(&pci_dev->dev, &dev->v4l2_dev);
- 	if (err < 0)
- 		goto fail_free;
---- a/drivers/media/pci/cx23885/cx23885.h
-+++ b/drivers/media/pci/cx23885/cx23885.h
-@@ -451,6 +451,8 @@ struct cx23885_dev {
- 	/* Analog raw audio */
- 	struct cx23885_audio_dev   *audio_dev;
- 
-+	/* Does the system require periodic DMA resets? */
-+	unsigned int		need_dma_reset:1;
- };
- 
- static inline struct cx23885_dev *to_cx23885(struct v4l2_device *v4l2_dev)
+ static void
 
 
