@@ -4,49 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7E3EC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:43:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22F90C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:43:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD62A2184B
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:43:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E9C21206B6
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:43:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547217798;
-	bh=HSy0PShW78QjUYOCtkPfzlh9PHLODduW5SbZ5xurru8=;
+	s=default; t=1547217803;
+	bh=J7MLIe9kx4UhEAnsTbN4LubRtANRoAQSk+fo99/988w=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ONRALJlgFzTnwHydMM3BWv2j6/ejqgaxXFirp0qB+3CM8qKrSEHz4pwOfbs8g2IgB
-	 FJzzfw1v3DilBvfVak4KEZC6E/J4NGCA8QTLonaYIv8WZaCbQYV7BMM1xUhLJkd6yL
-	 oj7/rWbdR+68K8s4mwqxtDj4k8SBWb3MVUk6iM4E=
+	b=lwdbLWqbSLjOVzYQ7NPgjvBgXSVk+FFZpr8v7fhuszcoGp15VnVIb2AlHKTjINEqa
+	 eUEF82mIpF7hyVWZsv1x/y0zlxA0UsGqYbMNgavTkLRgcySkQm3updhfWA/YRp2GMm
+	 hnv4rUGQQZ7avVI3PuFt+aAXdMEZe4gZ9Y5B+Xx4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391222AbfAKOnR (ORCPT
+        id S2391387AbfAKOnV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:43:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36076 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:43:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36164 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403980AbfAKOnM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:43:12 -0500
+        id S2391057AbfAKOnR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:43:17 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EC60B2184A;
-        Fri, 11 Jan 2019 14:43:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2B1642184A;
+        Fri, 11 Jan 2019 14:43:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547217791;
-        bh=HSy0PShW78QjUYOCtkPfzlh9PHLODduW5SbZ5xurru8=;
+        s=default; t=1547217796;
+        bh=J7MLIe9kx4UhEAnsTbN4LubRtANRoAQSk+fo99/988w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tjgssrJug+tbo5Srr5Hbe49sPoa7XGYAFyIgoh+oct1QYE3Tx02QsLk5cyj0lKVSe
-         Ph1fluonKT/a9fbfR3pcJszkz3N/tjwlFwPdDwZ/Vq+8XPg3ODSKXtZbtq5Yr0v+d+
-         a74JuvUHjhj+H4W7Y7lWw7Dt0OxuYRR4LZ8Rfzf0=
+        b=jW81x+d8mkoxjhOEcmHBdGJPTV+x9k816IPVQ/71jaj05TkLgvoezDgj0MUTgc46Y
+         zmco15uoeaU9tJUcCb0fvkivFtK5C+Ay9VPAUiS5sXU7KNzkmVFfpkbT2tMJV/b21d
+         ApgQZoOszBHEdpFlmFRyAJgohGXykq6MEDmfDiH0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Evan Green <evgreen@chromium.org>,
-        Matthias Kaehlcke <mka@chromium.org>, Stable@vger.kernel.org,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: [PATCH 4.20 43/65] iio: adc: qcom-spmi-adc5: Initialize prescale properly
-Date:   Fri, 11 Jan 2019 15:15:29 +0100
-Message-Id: <20190111131102.331712210@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+0c1d61e4db7db94102ca@syzkaller.appspotmail.com,
+        Dominique Martinet <dominique.martinet@cea.fr>,
+        Eric Van Hensbergen <ericvh@gmail.com>,
+        Latchesar Ionkov <lucho@ionkov.net>
+Subject: [PATCH 4.20 45/65] 9p/net: put a lower bound on msize
+Date:   Fri, 11 Jan 2019 15:15:31 +0100
+Message-Id: <20190111131102.537703599@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131055.331350141@linuxfoundation.org>
 References: <20190111131055.331350141@linuxfoundation.org>
@@ -65,174 +68,81 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Evan Green <evgreen@chromium.org>
+From: Dominique Martinet <dominique.martinet@cea.fr>
 
-commit db23d88756abd38e0995ea8449d0025b3de4b26b upstream.
+commit 574d356b7a02c7e1b01a1d9cba8a26b3c2888f45 upstream.
 
-adc5_get_dt_data uses a local, prop, feeds it to adc5_get_dt_channel_data,
-and then puts the result into adc->chan_props. The problem is
-adc5_get_dt_channel_data may not initialize that structure fully, so a
-garbage value is used for prescale if the optional "qcom,pre-scaling" is
-not defined in DT. adc5_read_raw then uses this as an array index,
-generating a crash that looks like this:
+If the requested msize is too small (either from command line argument
+or from the server version reply), we won't get any work done.
+If it's *really* too small, nothing will work, and this got caught by
+syzbot recently (on a new kmem_cache_create_usercopy() call)
 
-[    6.683186] Unable to handle kernel paging request at virtual address ffffff90e78c7964
-Call trace:
-qcom_vadc_scale_code_voltage_factor+0x74/0x104
-qcom_vadc_scale_hw_calib_die_temp+0x20/0x60
-qcom_adc5_hw_scale+0x78/0xa4
-adc5_read_raw+0x3d0/0x65c
-iio_channel_read+0x240/0x30c
-iio_read_channel_processed+0x10c/0x150
-qpnp_tm_get_temp+0xc0/0x40c
-of_thermal_get_temp+0x7c/0x98
-thermal_zone_get_temp+0xac/0xd8
-thermal_zone_device_update+0xc0/0x38c
-qpnp_tm_probe+0x624/0x81c
-platform_drv_probe+0xe4/0x11c
-really_probe+0x188/0x3fc
-driver_probe_device+0xb8/0x188
-__device_attach_driver+0x114/0x180
-bus_for_each_drv+0xd8/0x118
-__device_attach+0x180/0x27c
-device_initial_probe+0x20/0x2c
-bus_probe_device+0x78/0x124
-deferred_probe_work_func+0xfc/0x138
-process_one_work+0x3d8/0x8b0
-process_scheduled_works+0x48/0x6c
-worker_thread+0x488/0x7cc
-kthread+0x24c/0x264
-ret_from_fork+0x10/0x18
+Just set a minimum msize to 4k in both code paths, until someone
+complains they have a use-case for a smaller msize.
 
-Unfortunately, when I went to add the initializer for this and tried to
-boot it, my machine shut down immediately, complaining that it was
-hotter than the sun. It appears that adc5_chans_pmic and adc5_chans_rev2
-were initializing prescale_index as if it were directly a divisor,
-rather than the index into adc5_prescale_ratios that it is.
+We need to check in both mount option and server reply individually
+because the msize for the first version request would be unchecked
+with just a global check on clnt->msize.
 
-Fix the uninitialized value, and change the static initialization to use
-indices into adc5_prescale_ratios.
-
-Signed-off-by: Evan Green <evgreen@chromium.org>
-Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
-Cc: <Stable@vger.kernel.org>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Link: http://lkml.kernel.org/r/1541407968-31350-1-git-send-email-asmadeus@codewreck.org
+Reported-by: syzbot+0c1d61e4db7db94102ca@syzkaller.appspotmail.com
+Signed-off-by: Dominique Martinet <dominique.martinet@cea.fr>
+Cc: Eric Van Hensbergen <ericvh@gmail.com>
+Cc: Latchesar Ionkov <lucho@ionkov.net>
+Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/iio/adc/qcom-spmi-adc5.c |   58 ++++++++++++++++++++-------------------
- 1 file changed, 31 insertions(+), 27 deletions(-)
+ net/9p/client.c |   21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
---- a/drivers/iio/adc/qcom-spmi-adc5.c
-+++ b/drivers/iio/adc/qcom-spmi-adc5.c
-@@ -423,6 +423,7 @@ struct adc5_channels {
- 	enum vadc_scale_fn_type scale_fn_type;
- };
- 
-+/* In these definitions, _pre refers to an index into adc5_prescale_ratios. */
- #define ADC5_CHAN(_dname, _type, _mask, _pre, _scale)			\
- 	{								\
- 		.datasheet_name = _dname,				\
-@@ -443,63 +444,63 @@ struct adc5_channels {
- 		  _pre, _scale)						\
- 
- static const struct adc5_channels adc5_chans_pmic[ADC5_MAX_CHANNEL] = {
--	[ADC5_REF_GND]		= ADC5_CHAN_VOLT("ref_gnd", 1,
-+	[ADC5_REF_GND]		= ADC5_CHAN_VOLT("ref_gnd", 0,
- 					SCALE_HW_CALIB_DEFAULT)
--	[ADC5_1P25VREF]		= ADC5_CHAN_VOLT("vref_1p25", 1,
-+	[ADC5_1P25VREF]		= ADC5_CHAN_VOLT("vref_1p25", 0,
- 					SCALE_HW_CALIB_DEFAULT)
--	[ADC5_VPH_PWR]		= ADC5_CHAN_VOLT("vph_pwr", 3,
-+	[ADC5_VPH_PWR]		= ADC5_CHAN_VOLT("vph_pwr", 1,
- 					SCALE_HW_CALIB_DEFAULT)
--	[ADC5_VBAT_SNS]		= ADC5_CHAN_VOLT("vbat_sns", 3,
-+	[ADC5_VBAT_SNS]		= ADC5_CHAN_VOLT("vbat_sns", 1,
- 					SCALE_HW_CALIB_DEFAULT)
--	[ADC5_DIE_TEMP]		= ADC5_CHAN_TEMP("die_temp", 1,
-+	[ADC5_DIE_TEMP]		= ADC5_CHAN_TEMP("die_temp", 0,
- 					SCALE_HW_CALIB_PMIC_THERM)
--	[ADC5_USB_IN_I]		= ADC5_CHAN_VOLT("usb_in_i_uv", 1,
-+	[ADC5_USB_IN_I]		= ADC5_CHAN_VOLT("usb_in_i_uv", 0,
- 					SCALE_HW_CALIB_DEFAULT)
--	[ADC5_USB_IN_V_16]	= ADC5_CHAN_VOLT("usb_in_v_div_16", 16,
-+	[ADC5_USB_IN_V_16]	= ADC5_CHAN_VOLT("usb_in_v_div_16", 8,
- 					SCALE_HW_CALIB_DEFAULT)
--	[ADC5_CHG_TEMP]		= ADC5_CHAN_TEMP("chg_temp", 1,
-+	[ADC5_CHG_TEMP]		= ADC5_CHAN_TEMP("chg_temp", 0,
- 					SCALE_HW_CALIB_PM5_CHG_TEMP)
- 	/* Charger prescales SBUx and MID_CHG to fit within 1.8V upper unit */
--	[ADC5_SBUx]		= ADC5_CHAN_VOLT("chg_sbux", 3,
-+	[ADC5_SBUx]		= ADC5_CHAN_VOLT("chg_sbux", 1,
- 					SCALE_HW_CALIB_DEFAULT)
--	[ADC5_MID_CHG_DIV6]	= ADC5_CHAN_VOLT("chg_mid_chg", 6,
-+	[ADC5_MID_CHG_DIV6]	= ADC5_CHAN_VOLT("chg_mid_chg", 3,
- 					SCALE_HW_CALIB_DEFAULT)
--	[ADC5_XO_THERM_100K_PU]	= ADC5_CHAN_TEMP("xo_therm", 1,
-+	[ADC5_XO_THERM_100K_PU]	= ADC5_CHAN_TEMP("xo_therm", 0,
- 					SCALE_HW_CALIB_XOTHERM)
--	[ADC5_AMUX_THM1_100K_PU] = ADC5_CHAN_TEMP("amux_thm1_100k_pu", 1,
-+	[ADC5_AMUX_THM1_100K_PU] = ADC5_CHAN_TEMP("amux_thm1_100k_pu", 0,
- 					SCALE_HW_CALIB_THERM_100K_PULLUP)
--	[ADC5_AMUX_THM2_100K_PU] = ADC5_CHAN_TEMP("amux_thm2_100k_pu", 1,
-+	[ADC5_AMUX_THM2_100K_PU] = ADC5_CHAN_TEMP("amux_thm2_100k_pu", 0,
- 					SCALE_HW_CALIB_THERM_100K_PULLUP)
--	[ADC5_AMUX_THM3_100K_PU] = ADC5_CHAN_TEMP("amux_thm3_100k_pu", 1,
-+	[ADC5_AMUX_THM3_100K_PU] = ADC5_CHAN_TEMP("amux_thm3_100k_pu", 0,
- 					SCALE_HW_CALIB_THERM_100K_PULLUP)
--	[ADC5_AMUX_THM2]	= ADC5_CHAN_TEMP("amux_thm2", 1,
-+	[ADC5_AMUX_THM2]	= ADC5_CHAN_TEMP("amux_thm2", 0,
- 					SCALE_HW_CALIB_PM5_SMB_TEMP)
- };
- 
- static const struct adc5_channels adc5_chans_rev2[ADC5_MAX_CHANNEL] = {
--	[ADC5_REF_GND]		= ADC5_CHAN_VOLT("ref_gnd", 1,
-+	[ADC5_REF_GND]		= ADC5_CHAN_VOLT("ref_gnd", 0,
- 					SCALE_HW_CALIB_DEFAULT)
--	[ADC5_1P25VREF]		= ADC5_CHAN_VOLT("vref_1p25", 1,
-+	[ADC5_1P25VREF]		= ADC5_CHAN_VOLT("vref_1p25", 0,
- 					SCALE_HW_CALIB_DEFAULT)
--	[ADC5_VPH_PWR]		= ADC5_CHAN_VOLT("vph_pwr", 3,
-+	[ADC5_VPH_PWR]		= ADC5_CHAN_VOLT("vph_pwr", 1,
- 					SCALE_HW_CALIB_DEFAULT)
--	[ADC5_VBAT_SNS]		= ADC5_CHAN_VOLT("vbat_sns", 3,
-+	[ADC5_VBAT_SNS]		= ADC5_CHAN_VOLT("vbat_sns", 1,
- 					SCALE_HW_CALIB_DEFAULT)
--	[ADC5_VCOIN]		= ADC5_CHAN_VOLT("vcoin", 3,
-+	[ADC5_VCOIN]		= ADC5_CHAN_VOLT("vcoin", 1,
- 					SCALE_HW_CALIB_DEFAULT)
--	[ADC5_DIE_TEMP]		= ADC5_CHAN_TEMP("die_temp", 1,
-+	[ADC5_DIE_TEMP]		= ADC5_CHAN_TEMP("die_temp", 0,
- 					SCALE_HW_CALIB_PMIC_THERM)
--	[ADC5_AMUX_THM1_100K_PU] = ADC5_CHAN_TEMP("amux_thm1_100k_pu", 1,
-+	[ADC5_AMUX_THM1_100K_PU] = ADC5_CHAN_TEMP("amux_thm1_100k_pu", 0,
- 					SCALE_HW_CALIB_THERM_100K_PULLUP)
--	[ADC5_AMUX_THM2_100K_PU] = ADC5_CHAN_TEMP("amux_thm2_100k_pu", 1,
-+	[ADC5_AMUX_THM2_100K_PU] = ADC5_CHAN_TEMP("amux_thm2_100k_pu", 0,
- 					SCALE_HW_CALIB_THERM_100K_PULLUP)
--	[ADC5_AMUX_THM3_100K_PU] = ADC5_CHAN_TEMP("amux_thm3_100k_pu", 1,
-+	[ADC5_AMUX_THM3_100K_PU] = ADC5_CHAN_TEMP("amux_thm3_100k_pu", 0,
- 					SCALE_HW_CALIB_THERM_100K_PULLUP)
--	[ADC5_AMUX_THM4_100K_PU] = ADC5_CHAN_TEMP("amux_thm4_100k_pu", 1,
-+	[ADC5_AMUX_THM4_100K_PU] = ADC5_CHAN_TEMP("amux_thm4_100k_pu", 0,
- 					SCALE_HW_CALIB_THERM_100K_PULLUP)
--	[ADC5_AMUX_THM5_100K_PU] = ADC5_CHAN_TEMP("amux_thm5_100k_pu", 1,
-+	[ADC5_AMUX_THM5_100K_PU] = ADC5_CHAN_TEMP("amux_thm5_100k_pu", 0,
- 					SCALE_HW_CALIB_THERM_100K_PULLUP)
--	[ADC5_XO_THERM_100K_PU]	= ADC5_CHAN_TEMP("xo_therm_100k_pu", 1,
-+	[ADC5_XO_THERM_100K_PU]	= ADC5_CHAN_TEMP("xo_therm_100k_pu", 0,
- 					SCALE_HW_CALIB_THERM_100K_PULLUP)
- };
- 
-@@ -558,6 +559,9 @@ static int adc5_get_dt_channel_data(stru
- 			return ret;
- 		}
- 		prop->prescale = ret;
-+	} else {
-+		prop->prescale =
-+			adc->data->adc_chans[prop->channel].prescale_index;
+--- a/net/9p/client.c
++++ b/net/9p/client.c
+@@ -181,6 +181,12 @@ static int parse_opts(char *opts, struct
+ 				ret = r;
+ 				continue;
+ 			}
++			if (option < 4096) {
++				p9_debug(P9_DEBUG_ERROR,
++					 "msize should be at least 4k\n");
++				ret = -EINVAL;
++				continue;
++			}
+ 			clnt->msize = option;
+ 			break;
+ 		case Opt_trans:
+@@ -983,10 +989,18 @@ static int p9_client_version(struct p9_c
+ 	else if (!strncmp(version, "9P2000", 6))
+ 		c->proto_version = p9_proto_legacy;
+ 	else {
++		p9_debug(P9_DEBUG_ERROR,
++			 "server returned an unknown version: %s\n", version);
+ 		err = -EREMOTEIO;
+ 		goto error;
  	}
  
- 	ret = of_property_read_u32(node, "qcom,hw-settle-time", &value);
++	if (msize < 4096) {
++		p9_debug(P9_DEBUG_ERROR,
++			 "server returned a msize < 4096: %d\n", msize);
++		err = -EREMOTEIO;
++		goto error;
++	}
+ 	if (msize < c->msize)
+ 		c->msize = msize;
+ 
+@@ -1043,6 +1057,13 @@ struct p9_client *p9_client_create(const
+ 	if (clnt->msize > clnt->trans_mod->maxsize)
+ 		clnt->msize = clnt->trans_mod->maxsize;
+ 
++	if (clnt->msize < 4096) {
++		p9_debug(P9_DEBUG_ERROR,
++			 "Please specify a msize of at least 4k\n");
++		err = -EINVAL;
++		goto free_client;
++	}
++
+ 	err = p9_client_version(clnt);
+ 	if (err)
+ 		goto close_trans;
 
 
