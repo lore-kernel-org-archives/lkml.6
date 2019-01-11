@@ -2,222 +2,98 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5B83C43612
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 01:27:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C68B8C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 01:28:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A3EDD214C6
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 01:27:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 96A282133F
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 01:28:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="fRWA1Gch"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="PX0kpIsH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729249AbfAKB1O (ORCPT
+        id S1729296AbfAKB2N (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 20:27:14 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:38581 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729063AbfAKB1N (ORCPT
+        Thu, 10 Jan 2019 20:28:13 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:42782 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728834AbfAKB2N (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 20:27:13 -0500
-Received: by mail-lf1-f68.google.com with SMTP id a8so9681874lfk.5
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 17:27:11 -0800 (PST)
+        Thu, 10 Jan 2019 20:28:13 -0500
+Received: by mail-pg1-f193.google.com with SMTP id d72so5583267pga.9
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 17:28:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=YNQYs7ALyOMWiFiNiwUSyAnayUvPH25Nlsm5tjQ2dc4=;
-        b=fRWA1GchJJKSjm8TY3AvQcU+BJQ0bROBfUeUsvWPDvln/quMDlsxY33WIwUqwjYrDx
-         cRdiNlVyzBsSpL0P3WKgKFVdpnJQ7h4lh56CfUFbjsB+KYzYf4A5k3m8o76ZvGSsXIbM
-         trvNo/JH3yVaFSxcWfjyANVmHkm6OJH31MpNo+hg411ZUUKmo6worncJT4N9wYQfgKF5
-         LtR/cFs/LsQhBPBKeHbx9JYUCX1f2FssiZ7MROuc7IlkR5M3AJ7PvAlvjrT0I/HlGCEG
-         6h0UB8jIpdVq2jPHn5yitGGy8Zq/w3Z0IIwtgy1H45MBXYznd7tHR/IjWJMKpWlXiprk
-         T0jw==
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:in-reply-to:references:date:message-id
+         :mime-version;
+        bh=2P+pkq/TAVJfpx+QVUhCn9RikOPq88PivZzjtOGkCms=;
+        b=PX0kpIsHZAopLUpTUOPcmSxdoYqWG3Yy2a/gSt4fMAnFTPMwwUZp9lvNX7iUhe0CEO
+         mr97YQ7w7MATf/6pJT7ZjTp5xduZAHtwnnPdIDJ5cb3ltat7IkZXULfiL7Iz5aMqdKmb
+         M1IPOaheORYcAz6PekI7TF5iRMtxmFJWNu6bHeQM56HEB3a+r/+zhiKS29cOuIjP50Dq
+         +mv6Kn5EWfNVPwXwYrsIhj7tXR4JUNhGgkE3oiTS/CeZoxr5Nn/fVQjE6mC682Hrq1My
+         arIrXEGnTS9VKPbcKRtVdYDn9EYVAKzl1Hk7q6W5/SPh8wZsW9V4vUCpsHs66BuSnPfj
+         VqCQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=YNQYs7ALyOMWiFiNiwUSyAnayUvPH25Nlsm5tjQ2dc4=;
-        b=rSOgp4/jSZtuOnut9HVDg1ocK5uyzeIdUpsc2EQMJZ9r3oSTgEzId+/Pynk0w9HXUx
-         r8roFI92Yc8LWk8HcXntSvsQdLnQ81Ar5AnnyiJCoq/5ASNU7xbm7BZjKuAiVjoNTJre
-         /S0C53AzjYZS0qmqpW54b/kFv21MyNNtyp8z91Lo+BeDO73RCtQdkMDYKbbblPFwt7Nl
-         xUo7AkkLFk5VB8yJQfRGKEOhxallYjJRRKJlT92fJxJ5mfv1M6uEPaSr8ZdmTmqxy15U
-         Mlb74VyzvMiCTFw32SCX46sjL9OKUQ02P0gQlw3L79RIJUiuk5LyiMk136bZtI7zBJhm
-         JL4g==
-X-Gm-Message-State: AJcUukcrFX9qxBpq986TIMlWx2Vj0ygKWGBKWTcqWMFNkRiD1IeXx3OY
-        Q0MVZyDwxY7WyqYgxLa4XWbtJbxil1abuAWSyoUz
-X-Google-Smtp-Source: ALg8bN54VbCuOepKE7cI6I3VadlRvwXKQa8wsaoUIWkLpH2Zp1zkM4jqB7OY/o0plMZd0YnpgzHww5CyOrh7mhDsdZ4=
-X-Received: by 2002:a19:8fce:: with SMTP id s75mr6810260lfk.151.1547170030257;
- Thu, 10 Jan 2019 17:27:10 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=2P+pkq/TAVJfpx+QVUhCn9RikOPq88PivZzjtOGkCms=;
+        b=XUAyR7xUZM+NvWDvfrk1gUx1fDpJ5Vt+VjtUYe2D6szFtwZm7AuuHPKdRgkfF/KoxW
+         hOx2xazpoB2YiGE7/Q3jwFImpEH/vAXWXVe++po4ZBS1QQOLGMQWVB0CF+tmk6vNr/FH
+         i6laCBvSvuQiZIJvkWni/1N049TBgVvf7wKYKk+O9BOujsqcbDgXFza3VyAnTy3hTAWt
+         7QiTiLJAGcpEu9LQ6/TSRYli5UkhGY8VuFUnfAgSBsP7jOq+zSAFp9mbAOGWIAVDH9Vq
+         iuSEBjsyZ3hpsOZz21eQurZIz9RE3kDj9wvudQHOijyotKx4QqD6GMbRzTvds39cx3vU
+         wkHA==
+X-Gm-Message-State: AJcUukd6R3Oz+4/lyuBUhaIGDES66H9w1o5Q/e/G23h1ftAuLeW9dVE5
+        SMUiZbqvs2If5DtaTBYK4HD0rQ==
+X-Google-Smtp-Source: ALg8bN5IO4BJcANmQlKQXyWnapZsR/3IqoI/v9r4ESHNsrGTcIk1c3DNbMbLWi6X4V8xHzoCBXXJsQ==
+X-Received: by 2002:a63:184a:: with SMTP id 10mr11378583pgy.81.1547170092711;
+        Thu, 10 Jan 2019 17:28:12 -0800 (PST)
+Received: from localhost (c-71-197-186-152.hsd1.wa.comcast.net. [71.197.186.152])
+        by smtp.googlemail.com with ESMTPSA id r187sm242710873pfc.63.2019.01.10.17.28.11
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 10 Jan 2019 17:28:12 -0800 (PST)
+From:   Kevin Hilman <khilman@baylibre.com>
+To:     Loys Ollivier <lollivier@baylibre.com>, devicetree@vger.kernel.org,
+        linux-amlogic@lists.infradead.org
+Cc:     Loys Ollivier <lollivier@baylibre.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mmc@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: Re: [PATCH v3] arm64: dts: meson: Fix mmc cd-gpios polarity
+In-Reply-To: <1547134822-18498-1-git-send-email-lollivier@baylibre.com>
+References: <1547134822-18498-1-git-send-email-lollivier@baylibre.com>
+Date:   Thu, 10 Jan 2019 17:28:11 -0800
+Message-ID: <7hftu0oudw.fsf@baylibre.com>
 MIME-Version: 1.0
-References: <0000000000001a9aa0057f084a81@google.com> <d54c804a5d2dfd560108912094db9967db5a795b.camel@tycho.nsa.gov>
-In-Reply-To: <d54c804a5d2dfd560108912094db9967db5a795b.camel@tycho.nsa.gov>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Thu, 10 Jan 2019 20:26:58 -0500
-Message-ID: <CAHC9VhTbCFoRZ-u7Z8ymQhjGmuAnwk=1_sL9bpr=mMp1hhE4XQ@mail.gmail.com>
-Subject: Re: general protection fault in ebitmap_destroy
-To:     Stephen Smalley <sds@tycho.nsa.gov>
-Cc:     syzbot <syzbot+6664500f0f18f07a5c0e@syzkaller.appspotmail.com>,
-        Eric Paris <eparis@parisplace.org>,
-        linux-kernel@vger.kernel.org, peter.enderborg@sony.com,
-        selinux@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 9, 2019 at 11:11 AM Stephen Smalley <sds@tycho.nsa.gov> wrote:
-> On Wed, 2019-01-09 at 07:41 -0800, syzbot wrote:
-> > Hello,
-> >
-> > syzbot found the following crash on:
-> >
-> > HEAD commit:    a88cc8da0279 Merge branch 'akpm' (patches from
-> > Andrew)
-> > git tree:       upstream
-> > console output:
-> > https://syzkaller.appspot.com/x/log.txt?x=1722da4f400000
-> > kernel config:
-> > https://syzkaller.appspot.com/x/.config?x=edf1c3031097c304
-> > dashboard link:
-> > https://syzkaller.appspot.com/bug?extid=6664500f0f18f07a5c0e
-> > compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-> > syz repro:
-> > https://syzkaller.appspot.com/x/repro.syz?x=12d43580c00000
-> >
-> > IMPORTANT: if you fix the bug, please add the following tag to the
-> > commit:
-> > Reported-by: syzbot+6664500f0f18f07a5c0e@syzkaller.appspotmail.com
-> >
-> > SELinux: failed to load policy
-> > sel_write_load: 238 callbacks suppressed
-> > SELinux: failed to load policy
-> > kasan: CONFIG_KASAN_INLINE enabled
-> > kasan: GPF could be caused by NULL-ptr deref or user memory access
-> > general protection fault: 0000 [#1] PREEMPT SMP KASAN
-> > CPU: 0 PID: 9316 Comm: syz-executor2 Not tainted 5.0.0-rc1+ #16
-> > Hardware name: Google Google Compute Engine/Google Compute Engine,
-> > BIOS
-> > Google 01/01/2011
-> > RIP: 0010:ebitmap_destroy+0x32/0xf0 security/selinux/ss/ebitmap.c:334
-> > Code: 49 89 fd 41 54 53 e8 9d e6 36 fe 4d 85 ed 0f 84 99 00 00 00 e8
-> > 8f e6
-> > 36 fe 4c 89 ea 48 b8 00 00 00 00 00 fc ff df 48 c1 ea 03 <80> 3c 02
-> > 00 0f
-> > 85 98 00 00 00 49 be 00 00 00 00 00 fc ff df 4d 8b
-> > RSP: 0018:ffff88808967f5c0 EFLAGS: 00010202
-> > RAX: dffffc0000000000 RBX: ffff88808967f6a8 RCX: dffffc0000000000
-> > RDX: 0000000000000001 RSI: ffffffff834b1081 RDI: 0000000000000008
-> > RBP: ffff88808967f5e0 R08: ffff8880972a8140 R09: ffffed1015cc5b90
-> > R10: ffffed1015cc5b8f R11: ffff8880ae62dc7b R12: ffff888099d993c0
-> > R13: 0000000000000008 R14: ffff888099d993c0 R15: ffff88808967f648
-> > FS:  00007f70cd9e5700(0000) GS:ffff8880ae600000(0000)
-> > knlGS:0000000000000000
-> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > CR2: 00000000015e7938 CR3: 0000000096c4a000 CR4: 00000000001406f0
-> > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> > Call Trace:
-> >   sens_destroy+0x49/0xa0 security/selinux/ss/policydb.c:735
-> >   sens_read+0x25d/0x460 security/selinux/ss/policydb.c:1636
-> >   policydb_read+0xed9/0x60d0 security/selinux/ss/policydb.c:2430
-> >   security_load_policy+0x423/0x1830
-> > security/selinux/ss/services.c:2129
-> >   sel_write_load+0x25a/0x470 security/selinux/selinuxfs.c:565
-> >   __vfs_write+0x116/0xb40 fs/read_write.c:485
-> >   vfs_write+0x20c/0x580 fs/read_write.c:549
-> >   ksys_write+0x105/0x260 fs/read_write.c:598
-> >   __do_sys_write fs/read_write.c:610 [inline]
-> >   __se_sys_write fs/read_write.c:607 [inline]
-> >   __x64_sys_write+0x73/0xb0 fs/read_write.c:607
-> >   do_syscall_64+0x1a3/0x800 arch/x86/entry/common.c:290
-> >   entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> > RIP: 0033:0x457ec9
-> > Code: 6d b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48
-> > 89 f7
-> > 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01
-> > f0 ff
-> > ff 0f 83 3b b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-> > RSP: 002b:00007f70cd9e4c78 EFLAGS: 00000246 ORIG_RAX:
-> > 0000000000000001
-> > RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000457ec9
-> > RDX: 000000000000005c RSI: 0000000020000000 RDI: 0000000000000003
-> > RBP: 000000000073bf00 R08: 0000000000000000 R09: 0000000000000000
-> > R10: 0000000000000000 R11: 0000000000000246 R12: 00007f70cd9e56d4
-> > R13: 00000000004c720f R14: 00000000004dc9a0 R15: 00000000ffffffff
-> > Modules linked in:
-> > ---[ end trace 78ea480790940b53 ]---
-> > RIP: 0010:ebitmap_destroy+0x32/0xf0 security/selinux/ss/ebitmap.c:334
-> > Code: 49 89 fd 41 54 53 e8 9d e6 36 fe 4d 85 ed 0f 84 99 00 00 00 e8
-> > 8f e6
-> > 36 fe 4c 89 ea 48 b8 00 00 00 00 00 fc ff df 48 c1 ea 03 <80> 3c 02
-> > 00 0f
-> > 85 98 00 00 00 49 be 00 00 00 00 00 fc ff df 4d 8b
-> > RSP: 0018:ffff88808967f5c0 EFLAGS: 00010202
-> > RAX: dffffc0000000000 RBX: ffff88808967f6a8 RCX: dffffc0000000000
-> > RDX: 0000000000000001 RSI: ffffffff834b1081 RDI: 0000000000000008
-> > RBP: ffff88808967f5e0 R08: ffff8880972a8140 R09: ffffed1015cc5b90
-> > R10: ffffed1015cc5b8f R11: ffff8880ae62dc7b R12: ffff888099d993c0
-> > R13: 0000000000000008 R14: ffff888099d993c0 R15: ffff88808967f648
-> > FS:  00007f70cd9e5700(0000) GS:ffff8880ae700000(0000)
-> > knlGS:0000000000000000
-> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > CR2: 000000000073c000 CR3: 0000000096c4a000 CR4: 00000000001406e0
-> > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
->
-> Possible fix below
->
-> From cc9324299f32db326447a28a836c462fc16bc945 Mon Sep 17 00:00:00 2001
-> From: Stephen Smalley <sds@tycho.nsa.gov>
-> Date: Wed, 9 Jan 2019 10:55:10 -0500
-> Subject: [PATCH] selinux: fix GPF on invalid policy
->
-> levdatum->level can be NULL if we encounter an error while loading
-> the policy during sens_read prior to initializing it.  Make sure
-> sens_destroy handles that case correctly.
->
-> Reported-by: syzbot+6664500f0f18f07a5c0e@syzkaller.appspotmail.com
-> Signed-off-by: Stephen Smalley <sds@tycho.nsa.gov>
-> ---
->  security/selinux/ss/policydb.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
-> index a50d625e7946..c1c31e33657a 100644
-> --- a/security/selinux/ss/policydb.c
-> +++ b/security/selinux/ss/policydb.c
-> @@ -732,7 +732,8 @@ static int sens_destroy(void *key, void *datum, void *p)
->         kfree(key);
->         if (datum) {
->                 levdatum = datum;
-> -               ebitmap_destroy(&levdatum->level->cat);
-> +               if (levdatum->level)
-> +                       ebitmap_destroy(&levdatum->level->cat);
->                 kfree(levdatum->level);
->         }
->         kfree(datum);
-> --
-> 2.20.1
+Loys Ollivier <lollivier@baylibre.com> writes:
 
-...
+> Commit 89a5e15bcba8 ("gpio/mmc/of: Respect polarity in the device tree")
+> changed the behavior of "cd-inverted" to follow the device tree bindings
+> specification.
+> Lines specifying "cd-inverted" are now "active high".
+>
+> Fix the SD card for meson by setting the cd-gpios as "active low" according
+> to the boards specifications.
+>
+> Fixes: 89a5e15bcba8 ("gpio/mmc/of: Respect polarity in the device tree")
+> Signed-off-by: Loys Ollivier <lollivier@baylibre.com>
 
-> > syzbot can test patches for this bug, for details see:
-> > https://goo.gl/tpsmEJ#testing-patches
+Thanks for fixing this!
 
-I'm not sure if this particular bug is one that syzbot can reproduce
-(I recall a different message when it had a reproducer), but it would
-be nice to get some syzbot test verification if possible when posting
-(see the link above for the magic).
+Queued as a fix for v5.1-rc,
 
-Regardless, this looks like a good fix to me; I'm going to merge it
-into the stable-5.0 tree and assuming all goes well I'll probably send
-it up to Linus early next week.
+I see that this is being fixed in the driver also, but I think fixing
+the DTs is necessary also.
 
--- 
-paul moore
-www.paul-moore.com
+Kevin
