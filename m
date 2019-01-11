@@ -2,871 +2,368 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24531C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 20:34:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 188F1C43612
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 20:36:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D0CA821783
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 20:34:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D53C921783
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 20:36:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qbl2Jern"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725774AbfAKUeT convert rfc822-to-8bit (ORCPT
+        id S1725799AbfAKUgD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 15:34:19 -0500
-Received: from out03.mta.xmission.com ([166.70.13.233]:34706 "EHLO
-        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725308AbfAKUeT (ORCPT
+        Fri, 11 Jan 2019 15:36:03 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:41585 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725308AbfAKUgD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 15:34:19 -0500
-Received: from in01.mta.xmission.com ([166.70.13.51])
-        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1gi3VL-0003DG-Lv; Fri, 11 Jan 2019 13:34:11 -0700
-Received: from ip68-227-174-240.om.om.cox.net ([68.227.174.240] helo=x220.xmission.com)
-        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1gi3VI-0002PR-Ld; Fri, 11 Jan 2019 13:34:10 -0700
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     zzoru <zzoru007@gmail.com>
-Cc:     davem@davemloft.net, ktkhai@virtuozzo.com, avagin@virtuozzo.com,
-        dsahern@gmail.com, nicolas.dichtel@6wind.com,
-        tyhicks@canonical.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller@googlegroups.com
-References: <bc63c776-99f9-ca6e-0e81-f91b1448932b@gmail.com>
-Date:   Fri, 11 Jan 2019 14:33:47 -0600
-In-Reply-To: <bc63c776-99f9-ca6e-0e81-f91b1448932b@gmail.com> (zzoru's message
-        of "Sat, 12 Jan 2019 03:07:33 +0900")
-Message-ID: <87fttzaq8k.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+        Fri, 11 Jan 2019 15:36:03 -0500
+Received: by mail-lf1-f66.google.com with SMTP id c16so11716032lfj.8;
+        Fri, 11 Jan 2019 12:36:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=fFPPu0HIu8G+9U251NeXS6S7tzGeri3Oawv2js6PMu8=;
+        b=qbl2JernIzZFzZiVfOdpSW3Xblf/pjLtTeF5cb6Yp4HavdnJfodMGNwlqBTOUW9j4U
+         WecFffGh0Qi7095qCOiheBv4codY7yQidDyuW6L9OFaX6rtXpClEZ7xxeVtSOsb5X04a
+         4aeeF4J+EL8eXVogl0D8Cu/KrQ+B5S6UcBrjMxiJHjJTccU3et9gba1ICMVCLuHHIjE4
+         wJuS/aUoQMD/xH3PD09oLSvA5hgdwQ6+eGAUUBJqGalHjpOCMGj6IWH1KSMrToZroXML
+         Pi6IXf8yfVgfsLtTcZXHhxOMHelrmpYpQuI9VcjxAzVE03cNpt6qme/9RYbBR3B1U9Gi
+         RxnQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=fFPPu0HIu8G+9U251NeXS6S7tzGeri3Oawv2js6PMu8=;
+        b=m7D1s/XXmt1QY3p1ayBMJ3NG9Fyc2FceR84CFZ3Uh5iVknlsWYXHKBQPpdrj+BT71B
+         afHI6IqbXq7qTvGF1f6yovoC1tN5mXH2lrf1vgdNm7CtUSoa2hbkuk7iWVyBCFq4sfZ+
+         60YY/RjBda9hsblwWz/szOfz6OreENCJ61iLcttlSG1EPcgHUz4snyutB7nyivrSrnXm
+         ZGp2UxtlKb7LLrnJM9RVk85h/QJtTuOrOX3yGpjGE23632hi7SpJH+1E8rZdmn86PEbo
+         OK8sd+A4slRl9pOtvC2+Fo9k/cnQGDnae5BEI6hPFOG3OCLTBLlMCJxtLosBd1IsaexC
+         DRNg==
+X-Gm-Message-State: AJcUukdVHfrmnYjWL2AETgpZBXbtymCDBMMzNDFjj0SkrKW7ViqwJx1C
+        nwLeM0kHwqWoksmDhOLv4L9/0rAWa9c=
+X-Google-Smtp-Source: ALg8bN6/2chzZNxKUjUM5RgLEb11QWiUDweafrWt4JVasGB3mopvH5ECvyf7UcYQtUYJbwmUiGcbog==
+X-Received: by 2002:a19:5394:: with SMTP id h20mr9235886lfl.75.1547238960150;
+        Fri, 11 Jan 2019 12:36:00 -0800 (PST)
+Received: from arch.domain.name (89-70-37-207.dynamic.chello.pl. [89.70.37.207])
+        by smtp.gmail.com with ESMTPSA id a2-v6sm16282754lji.13.2019.01.11.12.35.57
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 11 Jan 2019 12:35:58 -0800 (PST)
+From:   Tomasz Duszynski <tduszyns@gmail.com>
+To:     linux-iio@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, Tomasz Duszynski <tduszyns@gmail.com>
+Subject: [PATCH v2] iio: chemical: sps30: allow changing self cleaning period
+Date:   Fri, 11 Jan 2019 21:35:33 +0100
+Message-Id: <20190111203533.11930-1-tduszyns@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-X-XM-SPF: eid=1gi3VI-0002PR-Ld;;;mid=<87fttzaq8k.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=68.227.174.240;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1+57kslp2nB/92ZyTfwmB4JFBuiWa3nCP0=
-X-SA-Exim-Connect-IP: 68.227.174.240
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: Re: net/core: BUG in copy_net_ns()
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-zzoru <zzoru007@gmail.com> writes:
+Sensor can periodically trigger self cleaning. Period can be changed by
+writing a new value to a dedicated attribute. Upon attribute read
+current period gets returned.
 
-> net/core: BUG in copy_net_ns() (net_namespace.c)
+Signed-off-by: Tomasz Duszynski <tduszyns@gmail.com>
+---
+v2:
+ * return available values formated as a range
+ * tweak naming a little (interval -> period)
 
-I don't understand this failure report at all.
+ Documentation/ABI/testing/sysfs-bus-iio-sps30 |  19 +++
+ drivers/iio/chemical/sps30.c                  | 143 +++++++++++++++---
+ 2 files changed, 144 insertions(+), 18 deletions(-)
 
-I don't see the connection to copy_net_ns().  And I don't see how the
-suggested patch short of covering up a memory stomp could possibly make
-a difference.
+diff --git a/Documentation/ABI/testing/sysfs-bus-iio-sps30 b/Documentation/ABI/testing/sysfs-bus-iio-sps30
+index e7ce2c57635e..68fbaf2ad30d 100644
+--- a/Documentation/ABI/testing/sysfs-bus-iio-sps30
++++ b/Documentation/ABI/testing/sysfs-bus-iio-sps30
+@@ -6,3 +6,22 @@ Description:
+ 		Writing 1 starts sensor self cleaning. Internal fan accelerates
+ 		to its maximum speed and keeps spinning for about 10 seconds in
+ 		order to blow out accumulated dust.
++
++What:		/sys/bus/iio/devices/iio:deviceX/cleaning_period
++Date:		January 2019
++KernelVersion:	5.1
++Contact:	linux-iio@vger.kernel.org
++Description:
++		Sensor is capable of triggering self cleaning periodically.
++		Period can be changed by writing a new value here. Upon reading
++		the current one is returned.
++
++		Writing 0 disables periodical self cleaning entirely.
++
++What:		/sys/bus/iio/devices/iio:deviceX/cleaning_period_available
++Date:		January 2019
++KernelVersion:	5.1
++Contact:	linux-iio@vger.kernel.org
++Description:
++		The range of available values represented as the minimum value,
++		the step and the maximum value, all enclosed in square brackets.
+diff --git a/drivers/iio/chemical/sps30.c b/drivers/iio/chemical/sps30.c
+index f3b4390c8f5c..fe5f6309191b 100644
+--- a/drivers/iio/chemical/sps30.c
++++ b/drivers/iio/chemical/sps30.c
+@@ -5,9 +5,6 @@
+  * Copyright (c) Tomasz Duszynski <tduszyns@gmail.com>
+  *
+  * I2C slave address: 0x69
+- *
+- * TODO:
+- *  - support for reading/setting auto cleaning interval
+  */
 
-What am I missing?
+ #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+@@ -21,6 +18,7 @@
+ #include <linux/iio/sysfs.h>
+ #include <linux/iio/trigger_consumer.h>
+ #include <linux/iio/triggered_buffer.h>
++#include <linux/kernel.h>
+ #include <linux/module.h>
 
+ #define SPS30_CRC8_POLYNOMIAL 0x31
+@@ -28,6 +26,9 @@
+ #define SPS30_MAX_READ_SIZE 48
+ /* sensor measures reliably up to 3000 ug / m3 */
+ #define SPS30_MAX_PM 3000
++/* minimum and maximum self cleaning periods in seconds */
++#define SPS30_AUTO_CLEANING_PERIOD_MIN 0
++#define SPS30_AUTO_CLEANING_PERIOD_MAX 604800
 
-> Hello,
->
-> I've got the following error report while fuzzing the kernel with syzkaller.
->
-> On commit 1bdbe227492075d058e37cb3d400e6468d0095b5
->
-> Syzkaller hit 'WARNING in __alloc_pages_slowpath' bug.
->
-> syz-executor561 (17453) used greatest stack depth: 25056 bytes left
-> WARNING: CPU: 0 PID: 692 at mm/page_alloc.c:4415
-> __alloc_pages_slowpath+0x1cb1/0x2220 mm/page_alloc.c:4386
-> Kernel panic - not syncing: panic_on_warn set ...
-> CPU: 0 PID: 692 Comm: kswapd0 Not tainted 5.0.0-rc1+ #4
-> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS
-> Ubuntu-1.8.2-1ubuntu1 04/01/2014
-> Call Trace:
->  __dump_stack lib/dump_stack.c:77 [inline]
->  dump_stack+0xca/0x13e lib/dump_stack.c:113
->  panic+0x278/0x5bf kernel/panic.c:214
->  __warn.cold.10+0x20/0x45 kernel/panic.c:571
->  report_bug+0x246/0x2d0 lib/bug.c:186
->  fixup_bug arch/x86/kernel/traps.c:178 [inline]
->  do_error_trap+0x123/0x1e0 arch/x86/kernel/traps.c:271
->  do_invalid_op+0x31/0x40 arch/x86/kernel/traps.c:290
->  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:973
-> RIP: 0010:__alloc_pages_slowpath+0x1cb1/0x2220 mm/page_alloc.c:4415
-> Code: 8b 84 24 a8 00 00 00 e9 ea f1 ff ff 85 d2 0f 85 0b 01 00 00 48 c7
-> c7 c0 5e 55 84 e8 79 f8 23 02 e9 86 f9 ff ff 44 8b 74 24 0c <0f> 0b 48
-> b8 00 00 00 00 00 fc ff df 48 8b 54 24 18 48 c1 ea 03 80
-> RSP: 0018:ffff8880683fedb8 EFLAGS: 00010046
-> RAX: 0000000000000000 RBX: 0000000000000000 RCX: 1ffff1100d07fda4
-> RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff88807ffdd528
-> RBP: dffffc0000000000 R08: 0000000000000000 R09: 000000000000067a
-> R10: 0000000000000000 R11: ffff88807ffdc487 R12: 0000000000000000
-> R13: ffff8880683ff010 R14: 0000000000415a00 R15: ffff8880683ff010
->  __alloc_pages_nodemask+0x521/0x5f0 mm/page_alloc.c:4555
->  __alloc_pages include/linux/gfp.h:473 [inline]
->  __alloc_pages_node include/linux/gfp.h:486 [inline]
->  kmem_getpages mm/slab.c:1398 [inline]
->  cache_grow_begin+0x95/0x300 mm/slab.c:2666
->  fallback_alloc+0x1ce/0x270 mm/slab.c:3208
->  __do_cache_alloc mm/slab.c:3345 [inline]
->  slab_alloc mm/slab.c:3373 [inline]
->  kmem_cache_alloc+0x286/0x2f0 mm/slab.c:3541
->  create_object+0x83/0x880 mm/kmemleak.c:578
->  kmemleak_alloc_recursive include/linux/kmemleak.h:55 [inline]
->  slab_post_alloc_hook mm/slab.h:442 [inline]
->  slab_alloc mm/slab.c:3381 [inline]
->  kmem_cache_alloc+0x18f/0x2f0 mm/slab.c:3541
->  mempool_alloc+0x13e/0x340 mm/mempool.c:385
->  bio_alloc_bioset+0x36f/0x5d0 block/bio.c:489
->  bio_alloc include/linux/bio.h:393 [inline]
->  submit_bh_wbc.isra.57+0x128/0x680 fs/buffer.c:3061
->  __block_write_full_page+0x6e8/0xcd0 fs/buffer.c:1765
->  block_write_full_page+0x202/0x250 fs/buffer.c:2955
->  pageout mm/vmscan.c:865 [inline]
->  shrink_page_list+0x220f/0x3800 mm/vmscan.c:1383
->  shrink_inactive_list+0x3c2/0xaa0 mm/vmscan.c:1961
->  shrink_list mm/vmscan.c:2273 [inline]
->  shrink_node_memcg.constprop.83+0x4bf/0x10e0 mm/vmscan.c:2538
->  shrink_node+0x162/0xd10 mm/vmscan.c:2753
->  kswapd_shrink_node mm/vmscan.c:3516 [inline]
->  balance_pgdat+0x47f/0xc00 mm/vmscan.c:3674
->  kswapd+0x57c/0xde0 mm/vmscan.c:3929
->  kthread+0x347/0x410 kernel/kthread.c:246
->  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
-> Dumping ftrace buffer:
->    (ftrace buffer empty)
-> Kernel Offset: disabled
-> Rebooting in 86400 seconds..
->
->
-> Syzkaller reproducer:
-> # {Threaded:false Collide:false Repeat:true RepeatTimes:0 Procs:8
-> Sandbox:none Fault:false FaultCall:-1 FaultNth:0 EnableTun:false
-> UseTmpDir:true EnableCgroups:false EnableNetdev:true ResetNet:false
-> HandleSegv:false Repro:false Trace:false}
-> unshare(0x40000000)
->
->
-> C reproducer:
-> // autogenerated by syzkaller (https://github.com/google/syzkaller)
->
-> #define _GNU_SOURCE
->
-> #include <arpa/inet.h>
-> #include <dirent.h>
-> #include <endian.h>
-> #include <errno.h>
-> #include <fcntl.h>
-> #include <net/if.h>
-> #include <net/if_arp.h>
-> #include <netinet/in.h>
-> #include <sched.h>
-> #include <signal.h>
-> #include <stdarg.h>
-> #include <stdbool.h>
-> #include <stdint.h>
-> #include <stdio.h>
-> #include <stdlib.h>
-> #include <string.h>
-> #include <sys/ioctl.h>
-> #include <sys/mount.h>
-> #include <sys/prctl.h>
-> #include <sys/resource.h>
-> #include <sys/socket.h>
-> #include <sys/stat.h>
-> #include <sys/syscall.h>
-> #include <sys/time.h>
-> #include <sys/types.h>
-> #include <sys/uio.h>
-> #include <sys/wait.h>
-> #include <time.h>
-> #include <unistd.h>
->
-> #include <linux/if_addr.h>
-> #include <linux/if_ether.h>
-> #include <linux/if_link.h>
-> #include <linux/if_tun.h>
-> #include <linux/in6.h>
-> #include <linux/ip.h>
-> #include <linux/neighbour.h>
-> #include <linux/net.h>
-> #include <linux/netlink.h>
-> #include <linux/rtnetlink.h>
-> #include <linux/tcp.h>
-> #include <linux/veth.h>
->
-> unsigned long long procid;
->
-> static void sleep_ms(uint64_t ms)
-> {
->   usleep(ms * 1000);
-> }
->
-> static uint64_t current_time_ms(void)
-> {
->   struct timespec ts;
->   if (clock_gettime(CLOCK_MONOTONIC, &ts))
->     exit(1);
->   return (uint64_t)ts.tv_sec * 1000 + (uint64_t)ts.tv_nsec / 1000000;
-> }
->
-> static void use_temporary_dir(void)
-> {
->   char tmpdir_template[] = "./syzkaller.XXXXXX";
->   char* tmpdir = mkdtemp(tmpdir_template);
->   if (!tmpdir)
->     exit(1);
->   if (chmod(tmpdir, 0777))
->     exit(1);
->   if (chdir(tmpdir))
->     exit(1);
-> }
->
-> static bool write_file(const char* file, const char* what, ...)
-> {
->   char buf[1024];
->   va_list args;
->   va_start(args, what);
->   vsnprintf(buf, sizeof(buf), what, args);
->   va_end(args);
->   buf[sizeof(buf) - 1] = 0;
->   int len = strlen(buf);
->   int fd = open(file, O_WRONLY | O_CLOEXEC);
->   if (fd == -1)
->     return false;
->   if (write(fd, buf, len) != len) {
->     int err = errno;
->     close(fd);
->     errno = err;
->     return false;
->   }
->   close(fd);
->   return true;
-> }
->
-> static struct {
->   char* pos;
->   int nesting;
->   struct nlattr* nested[8];
->   char buf[1024];
-> } nlmsg;
->
-> static void netlink_init(int typ, int flags, const void* data, int size)
-> {
->   memset(&nlmsg, 0, sizeof(nlmsg));
->   struct nlmsghdr* hdr = (struct nlmsghdr*)nlmsg.buf;
->   hdr->nlmsg_type = typ;
->   hdr->nlmsg_flags = NLM_F_REQUEST | NLM_F_ACK | flags;
->   memcpy(hdr + 1, data, size);
->   nlmsg.pos = (char*)(hdr + 1) + NLMSG_ALIGN(size);
-> }
->
-> static void netlink_attr(int typ, const void* data, int size)
-> {
->   struct nlattr* attr = (struct nlattr*)nlmsg.pos;
->   attr->nla_len = sizeof(*attr) + size;
->   attr->nla_type = typ;
->   memcpy(attr + 1, data, size);
->   nlmsg.pos += NLMSG_ALIGN(attr->nla_len);
-> }
->
-> static void netlink_nest(int typ)
-> {
->   struct nlattr* attr = (struct nlattr*)nlmsg.pos;
->   attr->nla_type = typ;
->   nlmsg.pos += sizeof(*attr);
->   nlmsg.nested[nlmsg.nesting++] = attr;
-> }
->
-> static void netlink_done(void)
-> {
->   struct nlattr* attr = nlmsg.nested[--nlmsg.nesting];
->   attr->nla_len = nlmsg.pos - (char*)attr;
-> }
->
-> static int netlink_send(int sock)
-> {
->   if (nlmsg.pos > nlmsg.buf + sizeof(nlmsg.buf) || nlmsg.nesting)
->     exit(1);
->   struct nlmsghdr* hdr = (struct nlmsghdr*)nlmsg.buf;
->   hdr->nlmsg_len = nlmsg.pos - nlmsg.buf;
->   struct sockaddr_nl addr;
->   memset(&addr, 0, sizeof(addr));
->   addr.nl_family = AF_NETLINK;
->   unsigned n = sendto(sock, nlmsg.buf, hdr->nlmsg_len, 0,
->                       (struct sockaddr*)&addr, sizeof(addr));
->   if (n != hdr->nlmsg_len)
->     exit(1);
->   n = recv(sock, nlmsg.buf, sizeof(nlmsg.buf), 0);
->   if (n < sizeof(struct nlmsghdr) + sizeof(struct nlmsgerr))
->     exit(1);
->   if (hdr->nlmsg_type != NLMSG_ERROR)
->     exit(1);
->   return -((struct nlmsgerr*)(hdr + 1))->error;
-> }
->
-> static void netlink_add_device_impl(const char* type, const char* name)
-> {
->   struct ifinfomsg hdr;
->   memset(&hdr, 0, sizeof(hdr));
->   netlink_init(RTM_NEWLINK, NLM_F_EXCL | NLM_F_CREATE, &hdr, sizeof(hdr));
->   if (name)
->     netlink_attr(IFLA_IFNAME, name, strlen(name));
->   netlink_nest(IFLA_LINKINFO);
->   netlink_attr(IFLA_INFO_KIND, type, strlen(type));
-> }
->
-> static void netlink_add_device(int sock, const char* type, const char* name)
-> {
->   netlink_add_device_impl(type, name);
->   netlink_done();
->   int err = netlink_send(sock);
->   (void)err;
-> }
->
-> static void netlink_add_veth(int sock, const char* name, const char* peer)
-> {
->   netlink_add_device_impl("veth", name);
->   netlink_nest(IFLA_INFO_DATA);
->   netlink_nest(VETH_INFO_PEER);
->   nlmsg.pos += sizeof(struct ifinfomsg);
->   netlink_attr(IFLA_IFNAME, peer, strlen(peer));
->   netlink_done();
->   netlink_done();
->   netlink_done();
->   int err = netlink_send(sock);
->   (void)err;
-> }
->
-> static void netlink_add_hsr(int sock, const char* name, const char* slave1,
->                             const char* slave2)
-> {
->   netlink_add_device_impl("hsr", name);
->   netlink_nest(IFLA_INFO_DATA);
->   int ifindex1 = if_nametoindex(slave1);
->   netlink_attr(IFLA_HSR_SLAVE1, &ifindex1, sizeof(ifindex1));
->   int ifindex2 = if_nametoindex(slave2);
->   netlink_attr(IFLA_HSR_SLAVE2, &ifindex2, sizeof(ifindex2));
->   netlink_done();
->   netlink_done();
->   int err = netlink_send(sock);
->   (void)err;
-> }
->
-> static void netlink_device_change(int sock, const char* name, bool up,
->                                   const char* master, const void* mac,
->                                   int macsize)
-> {
->   struct ifinfomsg hdr;
->   memset(&hdr, 0, sizeof(hdr));
->   if (up)
->     hdr.ifi_flags = hdr.ifi_change = IFF_UP;
->   netlink_init(RTM_NEWLINK, 0, &hdr, sizeof(hdr));
->   netlink_attr(IFLA_IFNAME, name, strlen(name));
->   if (master) {
->     int ifindex = if_nametoindex(master);
->     netlink_attr(IFLA_MASTER, &ifindex, sizeof(ifindex));
->   }
->   if (macsize)
->     netlink_attr(IFLA_ADDRESS, mac, macsize);
->   int err = netlink_send(sock);
->   (void)err;
-> }
->
-> static int netlink_add_addr(int sock, const char* dev, const void* addr,
->                             int addrsize)
-> {
->   struct ifaddrmsg hdr;
->   memset(&hdr, 0, sizeof(hdr));
->   hdr.ifa_family = addrsize == 4 ? AF_INET : AF_INET6;
->   hdr.ifa_prefixlen = addrsize == 4 ? 24 : 120;
->   hdr.ifa_scope = RT_SCOPE_UNIVERSE;
->   hdr.ifa_index = if_nametoindex(dev);
->   netlink_init(RTM_NEWADDR, NLM_F_CREATE | NLM_F_REPLACE, &hdr,
-> sizeof(hdr));
->   netlink_attr(IFA_LOCAL, addr, addrsize);
->   netlink_attr(IFA_ADDRESS, addr, addrsize);
->   return netlink_send(sock);
-> }
->
-> static void netlink_add_addr4(int sock, const char* dev, const char* addr)
-> {
->   struct in_addr in_addr;
->   inet_pton(AF_INET, addr, &in_addr);
->   int err = netlink_add_addr(sock, dev, &in_addr, sizeof(in_addr));
->   (void)err;
-> }
->
-> static void netlink_add_addr6(int sock, const char* dev, const char* addr)
-> {
->   struct in6_addr in6_addr;
->   inet_pton(AF_INET6, addr, &in6_addr);
->   int err = netlink_add_addr(sock, dev, &in6_addr, sizeof(in6_addr));
->   (void)err;
-> }
->
-> #define DEV_IPV4 "172.20.20.%d"
-> #define DEV_IPV6 "fe80::%02hx"
-> #define DEV_MAC 0x00aaaaaaaaaa
-> static void initialize_netdevices(void)
-> {
->   char netdevsim[16];
->   sprintf(netdevsim, "netdevsim%d", (int)procid);
->   struct {
->     const char* type;
->     const char* dev;
->   } devtypes[] = {
->       {"ip6gretap", "ip6gretap0"}, {"bridge", "bridge0"},
->       {"vcan", "vcan0"},           {"bond", "bond0"},
->       {"team", "team0"},           {"dummy", "dummy0"},
->       {"nlmon", "nlmon0"},         {"caif", "caif0"},
->       {"batadv", "batadv0"},       {"vxcan", "vxcan1"},
->       {"netdevsim", netdevsim},    {"veth", 0},
->   };
->   const char* devmasters[] = {"bridge", "bond", "team"};
->   struct {
->     const char* name;
->     int macsize;
->     bool noipv6;
->   } devices[] = {
->       {"lo", ETH_ALEN},
->       {"sit0", 0},
->       {"bridge0", ETH_ALEN},
->       {"vcan0", 0, true},
->       {"tunl0", 0},
->       {"gre0", 0},
->       {"gretap0", ETH_ALEN},
->       {"ip_vti0", 0},
->       {"ip6_vti0", 0},
->       {"ip6tnl0", 0},
->       {"ip6gre0", 0},
->       {"ip6gretap0", ETH_ALEN},
->       {"erspan0", ETH_ALEN},
->       {"bond0", ETH_ALEN},
->       {"veth0", ETH_ALEN},
->       {"veth1", ETH_ALEN},
->       {"team0", ETH_ALEN},
->       {"veth0_to_bridge", ETH_ALEN},
->       {"veth1_to_bridge", ETH_ALEN},
->       {"veth0_to_bond", ETH_ALEN},
->       {"veth1_to_bond", ETH_ALEN},
->       {"veth0_to_team", ETH_ALEN},
->       {"veth1_to_team", ETH_ALEN},
->       {"veth0_to_hsr", ETH_ALEN},
->       {"veth1_to_hsr", ETH_ALEN},
->       {"hsr0", 0},
->       {"dummy0", ETH_ALEN},
->       {"nlmon0", 0},
->       {"vxcan1", 0, true},
->       {"caif0", ETH_ALEN},
->       {"batadv0", ETH_ALEN},
->       {netdevsim, ETH_ALEN},
->   };
->   int sock = socket(AF_NETLINK, SOCK_RAW, NETLINK_ROUTE);
->   if (sock == -1)
->     exit(1);
->   unsigned i;
->   for (i = 0; i < sizeof(devtypes) / sizeof(devtypes[0]); i++)
->     netlink_add_device(sock, devtypes[i].type, devtypes[i].dev);
->   for (i = 0; i < sizeof(devmasters) / (sizeof(devmasters[0])); i++) {
->     char master[32], slave0[32], veth0[32], slave1[32], veth1[32];
->     sprintf(slave0, "%s_slave_0", devmasters[i]);
->     sprintf(veth0, "veth0_to_%s", devmasters[i]);
->     netlink_add_veth(sock, slave0, veth0);
->     sprintf(slave1, "%s_slave_1", devmasters[i]);
->     sprintf(veth1, "veth1_to_%s", devmasters[i]);
->     netlink_add_veth(sock, slave1, veth1);
->     sprintf(master, "%s0", devmasters[i]);
->     netlink_device_change(sock, slave0, false, master, 0, 0);
->     netlink_device_change(sock, slave1, false, master, 0, 0);
->   }
->   netlink_device_change(sock, "bridge_slave_0", true, 0, 0, 0);
->   netlink_device_change(sock, "bridge_slave_1", true, 0, 0, 0);
->   netlink_add_veth(sock, "hsr_slave_0", "veth0_to_hsr");
->   netlink_add_veth(sock, "hsr_slave_1", "veth1_to_hsr");
->   netlink_add_hsr(sock, "hsr0", "hsr_slave_0", "hsr_slave_1");
->   netlink_device_change(sock, "hsr_slave_0", true, 0, 0, 0);
->   netlink_device_change(sock, "hsr_slave_1", true, 0, 0, 0);
->   for (i = 0; i < sizeof(devices) / (sizeof(devices[0])); i++) {
->     char addr[32];
->     sprintf(addr, DEV_IPV4, i + 10);
->     netlink_add_addr4(sock, devices[i].name, addr);
->     if (!devices[i].noipv6) {
->       sprintf(addr, DEV_IPV6, i + 10);
->       netlink_add_addr6(sock, devices[i].name, addr);
->     }
->     uint64_t macaddr = DEV_MAC + ((i + 10ull) << 40);
->     netlink_device_change(sock, devices[i].name, true, 0, &macaddr,
->                           devices[i].macsize);
->   }
->   close(sock);
-> }
-> static void initialize_netdevices_init(void)
-> {
->   int sock = socket(AF_NETLINK, SOCK_RAW, NETLINK_ROUTE);
->   if (sock == -1)
->     exit(1);
->   struct {
->     const char* type;
->     int macsize;
->     bool noipv6;
->     bool noup;
->   } devtypes[] = {
->       {"nr", 7, true}, {"rose", 5, true, true},
->   };
->   unsigned i;
->   for (i = 0; i < sizeof(devtypes) / sizeof(devtypes[0]); i++) {
->     char dev[32], addr[32];
->     sprintf(dev, "%s%d", devtypes[i].type, (int)procid);
->     sprintf(addr, "172.30.%d.%d", i, (int)procid + 1);
->     netlink_add_addr4(sock, dev, addr);
->     if (!devtypes[i].noipv6) {
->       sprintf(addr, "fe88::%02hx:%02hx", i, (int)procid + 1);
->       netlink_add_addr6(sock, dev, addr);
->     }
->     int macsize = devtypes[i].macsize;
->     uint64_t macaddr = 0xbbbbbb +
->                        ((unsigned long long)i << (8 * (macsize - 2))) +
->                        (procid << (8 * (macsize - 1)));
->     netlink_device_change(sock, dev, !devtypes[i].noup, 0, &macaddr,
-> macsize);
->   }
->   close(sock);
-> }
->
-> static void setup_common()
-> {
->   if (mount(0, "/sys/fs/fuse/connections", "fusectl", 0, 0)) {
->   }
-> }
->
-> static void loop();
->
-> static void sandbox_common()
-> {
->   prctl(PR_SET_PDEATHSIG, SIGKILL, 0, 0, 0);
->   setpgrp();
->   setsid();
->   struct rlimit rlim;
->   rlim.rlim_cur = rlim.rlim_max = 200 << 20;
->   setrlimit(RLIMIT_AS, &rlim);
->   rlim.rlim_cur = rlim.rlim_max = 32 << 20;
->   setrlimit(RLIMIT_MEMLOCK, &rlim);
->   rlim.rlim_cur = rlim.rlim_max = 136 << 20;
->   setrlimit(RLIMIT_FSIZE, &rlim);
->   rlim.rlim_cur = rlim.rlim_max = 1 << 20;
->   setrlimit(RLIMIT_STACK, &rlim);
->   rlim.rlim_cur = rlim.rlim_max = 0;
->   setrlimit(RLIMIT_CORE, &rlim);
->   rlim.rlim_cur = rlim.rlim_max = 256;
->   setrlimit(RLIMIT_NOFILE, &rlim);
->   if (unshare(CLONE_NEWNS)) {
->   }
->   if (unshare(CLONE_NEWIPC)) {
->   }
->   if (unshare(0x02000000)) {
->   }
->   if (unshare(CLONE_NEWUTS)) {
->   }
->   if (unshare(CLONE_SYSVSEM)) {
->   }
->   typedef struct {
->     const char* name;
->     const char* value;
->   } sysctl_t;
->   static const sysctl_t sysctls[] = {
->       {"/proc/sys/kernel/shmmax", "16777216"},
->       {"/proc/sys/kernel/shmall", "536870912"},
->       {"/proc/sys/kernel/shmmni", "1024"},
->       {"/proc/sys/kernel/msgmax", "8192"},
->       {"/proc/sys/kernel/msgmni", "1024"},
->       {"/proc/sys/kernel/msgmnb", "1024"},
->       {"/proc/sys/kernel/sem", "1024 1048576 500 1024"},
->   };
->   unsigned i;
->   for (i = 0; i < sizeof(sysctls) / sizeof(sysctls[0]); i++)
->     write_file(sysctls[i].name, sysctls[i].value);
-> }
->
-> int wait_for_loop(int pid)
-> {
->   if (pid < 0)
->     exit(1);
->   int status = 0;
->   while (waitpid(-1, &status, __WALL) != pid) {
->   }
->   return WEXITSTATUS(status);
-> }
->
-> static int do_sandbox_none(void)
-> {
->   if (unshare(CLONE_NEWPID)) {
->   }
->   int pid = fork();
->   if (pid != 0)
->     return wait_for_loop(pid);
->   setup_common();
->   sandbox_common();
->   initialize_netdevices_init();
->   if (unshare(CLONE_NEWNET)) {
->   }
->   initialize_netdevices();
->   loop();
->   exit(1);
-> }
->
-> #define FS_IOC_SETFLAGS _IOW('f', 2, long)
-> static void remove_dir(const char* dir)
-> {
->   DIR* dp;
->   struct dirent* ep;
->   int iter = 0;
-> retry:
->   while (umount2(dir, MNT_DETACH) == 0) {
->   }
->   dp = opendir(dir);
->   if (dp == NULL) {
->     if (errno == EMFILE) {
->       exit(1);
->     }
->     exit(1);
->   }
->   while ((ep = readdir(dp))) {
->     if (strcmp(ep->d_name, ".") == 0 || strcmp(ep->d_name, "..") == 0)
->       continue;
->     char filename[FILENAME_MAX];
->     snprintf(filename, sizeof(filename), "%s/%s", dir, ep->d_name);
->     while (umount2(filename, MNT_DETACH) == 0) {
->     }
->     struct stat st;
->     if (lstat(filename, &st))
->       exit(1);
->     if (S_ISDIR(st.st_mode)) {
->       remove_dir(filename);
->       continue;
->     }
->     int i;
->     for (i = 0;; i++) {
->       if (unlink(filename) == 0)
->         break;
->       if (errno == EPERM) {
->         int fd = open(filename, O_RDONLY);
->         if (fd != -1) {
->           long flags = 0;
->           if (ioctl(fd, FS_IOC_SETFLAGS, &flags) == 0)
->             close(fd);
->           continue;
->         }
->       }
->       if (errno == EROFS) {
->         break;
->       }
->       if (errno != EBUSY || i > 100)
->         exit(1);
->       if (umount2(filename, MNT_DETACH))
->         exit(1);
->     }
->   }
->   closedir(dp);
->   int i;
->   for (i = 0;; i++) {
->     if (rmdir(dir) == 0)
->       break;
->     if (i < 100) {
->       if (errno == EPERM) {
->         int fd = open(dir, O_RDONLY);
->         if (fd != -1) {
->           long flags = 0;
->           if (ioctl(fd, FS_IOC_SETFLAGS, &flags) == 0)
->             close(fd);
->           continue;
->         }
->       }
->       if (errno == EROFS) {
->         break;
->       }
->       if (errno == EBUSY) {
->         if (umount2(dir, MNT_DETACH))
->           exit(1);
->         continue;
->       }
->       if (errno == ENOTEMPTY) {
->         if (iter < 100) {
->           iter++;
->           goto retry;
->         }
->       }
->     }
->     exit(1);
->   }
-> }
->
-> static void kill_and_wait(int pid, int* status)
-> {
->   kill(-pid, SIGKILL);
->   kill(pid, SIGKILL);
->   int i;
->   for (i = 0; i < 100; i++) {
->     if (waitpid(-1, status, WNOHANG | __WALL) == pid)
->       return;
->     usleep(1000);
->   }
->   DIR* dir = opendir("/sys/fs/fuse/connections");
->   if (dir) {
->     for (;;) {
->       struct dirent* ent = readdir(dir);
->       if (!ent)
->         break;
->       if (strcmp(ent->d_name, ".") == 0 || strcmp(ent->d_name, "..") == 0)
->         continue;
->       char abort[300];
->       snprintf(abort, sizeof(abort), "/sys/fs/fuse/connections/%s/abort",
->                ent->d_name);
->       int fd = open(abort, O_WRONLY);
->       if (fd == -1) {
->         continue;
->       }
->       if (write(fd, abort, 1) < 0) {
->       }
->       close(fd);
->     }
->     closedir(dir);
->   } else {
->   }
->   while (waitpid(-1, status, __WALL) != pid) {
->   }
-> }
->
-> #define SYZ_HAVE_SETUP_TEST 1
-> static void setup_test()
-> {
->   prctl(PR_SET_PDEATHSIG, SIGKILL, 0, 0, 0);
->   setpgrp();
-> }
->
-> #define SYZ_HAVE_RESET_TEST 1
-> static void reset_test()
-> {
->   int fd;
->   for (fd = 3; fd < 30; fd++)
->     close(fd);
-> }
->
-> static void execute_one(void);
->
-> #define WAIT_FLAGS __WALL
->
-> static void loop(void)
-> {
->   int iter;
->   for (iter = 0;; iter++) {
->     char cwdbuf[32];
->     sprintf(cwdbuf, "./%d", iter);
->     if (mkdir(cwdbuf, 0777))
->       exit(1);
->     int pid = fork();
->     if (pid < 0)
->       exit(1);
->     if (pid == 0) {
->       if (chdir(cwdbuf))
->         exit(1);
->       setup_test();
->       execute_one();
->       reset_test();
->       exit(0);
->     }
->     int status = 0;
->     uint64_t start = current_time_ms();
->     for (;;) {
->       if (waitpid(-1, &status, WNOHANG | WAIT_FLAGS) == pid)
->         break;
->       sleep_ms(1);
->       if (current_time_ms() - start < 5 * 1000)
->         continue;
->       kill_and_wait(pid, &status);
->       break;
->     }
->     remove_dir(cwdbuf);
->   }
-> }
->
-> void execute_one(void)
-> {
->   syscall(__NR_unshare, 0x40000000);
-> }
-> int main(void)
-> {
->   syscall(__NR_mmap, 0x20000000, 0x1000000, 3, 0x32, -1, 0);
->   for (procid = 0; procid < 8; procid++) {
->     if (fork() == 0) {
->       use_temporary_dir();
->       do_sandbox_none();
->     }
->   }
->   sleep(1000000);
->   return 0;
-> }
->
->
-> I reviewed kernel code and found a bug that
-> net_drop_ns func doesn't call net_free func when refcount_dec_and_test's
-> return value is zero.
+ /* SPS30 commands */
+ #define SPS30_START_MEAS 0x0010
+@@ -37,6 +38,9 @@
+ #define SPS30_READ_DATA 0x0300
+ #define SPS30_READ_SERIAL 0xd033
+ #define SPS30_START_FAN_CLEANING 0x5607
++#define SPS30_AUTO_CLEANING_PERIOD 0x8004
++/* not a sensor command per se, used only to distinguish write from read */
++#define SPS30_READ_AUTO_CLEANING_PERIOD 0x8005
 
-Yes.  We don't call net_free when the reference count does not decrement
-to zero.  The reference count is initialized to 1 a few lines above the
-section of code in your patch so that should not be a problem.
+ enum {
+ 	PM1,
+@@ -45,6 +49,11 @@ enum {
+ 	PM10,
+ };
 
-> or
-> when rv = down_read_killable(&pernet_ops_rwsem) < 0, it doesn't need to
-> call refcount_dec_and_test.
++enum {
++	RESET,
++	MEASURING,
++};
++
+ struct sps30_state {
+ 	struct i2c_client *client;
+ 	/*
+@@ -52,6 +61,7 @@ struct sps30_state {
+ 	 * Must be held whenever sequence of commands is to be executed.
+ 	 */
+ 	struct mutex lock;
++	int state;
+ };
 
-It doesn't need to but it should be harmless.
+ DECLARE_CRC8_TABLE(sps30_crc8_table);
+@@ -107,6 +117,9 @@ static int sps30_do_cmd(struct sps30_state *state, u16 cmd, u8 *data, int size)
+ 	case SPS30_START_FAN_CLEANING:
+ 		ret = sps30_write_then_read(state, buf, 2, NULL, 0);
+ 		break;
++	case SPS30_READ_AUTO_CLEANING_PERIOD:
++		buf[0] = SPS30_AUTO_CLEANING_PERIOD >> 8;
++		buf[1] = (u8)SPS30_AUTO_CLEANING_PERIOD;
+ 	case SPS30_READ_DATA_READY_FLAG:
+ 	case SPS30_READ_DATA:
+ 	case SPS30_READ_SERIAL:
+@@ -114,6 +127,15 @@ static int sps30_do_cmd(struct sps30_state *state, u16 cmd, u8 *data, int size)
+ 		size += size / 2;
+ 		ret = sps30_write_then_read(state, buf, 2, buf, size);
+ 		break;
++	case SPS30_AUTO_CLEANING_PERIOD:
++		buf[2] = data[0];
++		buf[3] = data[1];
++		buf[4] = crc8(sps30_crc8_table, &buf[2], 2, CRC8_INIT_VALUE);
++		buf[5] = data[2];
++		buf[6] = data[3];
++		buf[7] = crc8(sps30_crc8_table, &buf[5], 2, CRC8_INIT_VALUE);
++		ret = sps30_write_then_read(state, buf, 8, NULL, 0);
++		break;
+ 	}
 
-> https://github.com/torvalds/linux/commit/5ba049a5cc8e24a1643df75bbf65b4efa070fa74#diff-9312644e2968a45510bacdd2b2872ad2
-> (I can't reproduce this bug on v4.15 , and
-> 1bdbe227492075d058e37cb3d400e6468d0095b5 with my patch. Because of the
-> previous version of kernel doesn't have this bug.)
-> This bug can lead to memory leak or DOS.
->
-> I made a patch for this bug. (just revert to a before commit)
+ 	if (ret)
+@@ -170,6 +192,14 @@ static int sps30_do_meas(struct sps30_state *state, s32 *data, int size)
+ 	int i, ret, tries = 5;
+ 	u8 tmp[16];
 
-What am I missing?
++	if (state->state == RESET) {
++		ret = sps30_do_cmd(state, SPS30_START_MEAS, NULL, 0);
++		if (ret)
++			return ret;
++
++		state->state = MEASURING;
++	}
++
+ 	while (tries--) {
+ 		ret = sps30_do_cmd(state, SPS30_READ_DATA_READY_FLAG, tmp, 2);
+ 		if (ret)
+@@ -276,6 +306,24 @@ static int sps30_read_raw(struct iio_dev *indio_dev,
+ 	return -EINVAL;
+ }
 
-The only thing I can see your patch doing is covering up a memory stomp
-that has the effect of changing the value of net->passive.  I am not
-really keen on hiding bugs of that kind.
++static int sps30_do_cmd_reset(struct sps30_state *state)
++{
++	int ret;
++
++	ret = sps30_do_cmd(state, SPS30_RESET, NULL, 0);
++	msleep(300);
++	/*
++	 * Power-on-reset causes sensor to produce some glitch on i2c bus and
++	 * some controllers end up in error state. Recover simply by placing
++	 * some data on the bus, for example STOP_MEAS command, which
++	 * is NOP in this case.
++	 */
++	sps30_do_cmd(state, SPS30_STOP_MEAS, NULL, 0);
++	state->state = RESET;
++
++	return ret;
++}
++
+ static ssize_t start_cleaning_store(struct device *dev,
+ 				    struct device_attribute *attr,
+ 				    const char *buf, size_t len)
+@@ -296,10 +344,82 @@ static ssize_t start_cleaning_store(struct device *dev,
+ 	return len;
+ }
 
++static ssize_t cleaning_period_show(struct device *dev,
++				      struct device_attribute *attr,
++				      char *buf)
++{
++	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
++	struct sps30_state *state = iio_priv(indio_dev);
++	u8 tmp[4];
++	int ret;
++
++	mutex_lock(&state->lock);
++	ret = sps30_do_cmd(state, SPS30_READ_AUTO_CLEANING_PERIOD, tmp, 4);
++	mutex_unlock(&state->lock);
++	if (ret)
++		return ret;
++
++	return sprintf(buf, "%d\n", get_unaligned_be32(tmp));
++}
++
++static ssize_t cleaning_period_store(struct device *dev,
++				       struct device_attribute *attr,
++				       const char *buf, size_t len)
++{
++	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
++	struct sps30_state *state = iio_priv(indio_dev);
++	int val, ret;
++	u8 tmp[4];
++
++	if (kstrtoint(buf, 0, &val))
++		return -EINVAL;
++
++	if ((val < SPS30_AUTO_CLEANING_PERIOD_MIN) &&
++	    (val > SPS30_AUTO_CLEANING_PERIOD_MAX))
++		return -EINVAL;
++
++	put_unaligned_be32(val, tmp);
++
++	mutex_lock(&state->lock);
++	ret = sps30_do_cmd(state, SPS30_AUTO_CLEANING_PERIOD, tmp, 0);
++	if (ret) {
++		mutex_unlock(&state->lock);
++		return ret;
++	}
++
++	msleep(20);
++
++	/*
++	 * sensor requires reset in order to return up to date self cleaning
++	 * period
++	 */
++	ret = sps30_do_cmd_reset(state);
++	if (ret)
++		dev_warn(dev,
++			 "period changed but reads will return the old value\n");
++
++	mutex_unlock(&state->lock);
++
++	return len;
++}
++
++static ssize_t cleaning_period_available_show(struct device *dev,
++					      struct device_attribute *attr,
++					      char *buf)
++{
++	return snprintf(buf, PAGE_SIZE, "[%d %d %d]\n",
++			SPS30_AUTO_CLEANING_PERIOD_MIN, 1,
++			SPS30_AUTO_CLEANING_PERIOD_MAX);
++}
++
+ static IIO_DEVICE_ATTR_WO(start_cleaning, 0);
++static IIO_DEVICE_ATTR_RW(cleaning_period, 0);
++static IIO_DEVICE_ATTR_RO(cleaning_period_available, 0);
 
-> diff --git a/net/core/net_namespace.c b/net/core/net_namespace.c
-> index b02fb19df2cc..9de0ade14956 100644
-> --- a/net/core/net_namespace.c
-> +++ b/net/core/net_namespace.c
-> @@ -431,15 +431,18 @@ struct net *copy_net_ns(unsigned long flags,
->         get_user_ns(user_ns);
->
->         rv = down_read_killable(&pernet_ops_rwsem);
-> -       if (rv < 0)
-> -               goto put_userns;
-> +       if (rv < 0){
-> +        net_free(net);
-> +        dec_net_namespaces(ucounts);
-> +        put_user_ns(user_ns);
-> +        return ERR_PTR(rv);
-> +    }
->
->         rv = setup_net(net, user_ns);
->
->         up_read(&pernet_ops_rwsem);
->
->         if (rv < 0) {
-> -put_userns:
->                 put_user_ns(user_ns);
->                 net_drop_ns(net);
->  dec_ucounts:
->
-> and, sorry for my encrypted mails.
+ static struct attribute *sps30_attrs[] = {
+ 	&iio_dev_attr_start_cleaning.dev_attr.attr,
++	&iio_dev_attr_cleaning_period.dev_attr.attr,
++	&iio_dev_attr_cleaning_period_available.dev_attr.attr,
+ 	NULL
+ };
 
-Eric
+@@ -362,6 +482,7 @@ static int sps30_probe(struct i2c_client *client)
+ 	state = iio_priv(indio_dev);
+ 	i2c_set_clientdata(client, indio_dev);
+ 	state->client = client;
++	state->state = RESET;
+ 	indio_dev->dev.parent = &client->dev;
+ 	indio_dev->info = &sps30_info;
+ 	indio_dev->name = client->name;
+@@ -373,19 +494,11 @@ static int sps30_probe(struct i2c_client *client)
+ 	mutex_init(&state->lock);
+ 	crc8_populate_msb(sps30_crc8_table, SPS30_CRC8_POLYNOMIAL);
+
+-	ret = sps30_do_cmd(state, SPS30_RESET, NULL, 0);
++	ret = sps30_do_cmd_reset(state);
+ 	if (ret) {
+ 		dev_err(&client->dev, "failed to reset device\n");
+ 		return ret;
+ 	}
+-	msleep(300);
+-	/*
+-	 * Power-on-reset causes sensor to produce some glitch on i2c bus and
+-	 * some controllers end up in error state. Recover simply by placing
+-	 * some data on the bus, for example STOP_MEAS command, which
+-	 * is NOP in this case.
+-	 */
+-	sps30_do_cmd(state, SPS30_STOP_MEAS, NULL, 0);
+
+ 	ret = sps30_do_cmd(state, SPS30_READ_SERIAL, buf, sizeof(buf));
+ 	if (ret) {
+@@ -395,12 +508,6 @@ static int sps30_probe(struct i2c_client *client)
+ 	/* returned serial number is already NUL terminated */
+ 	dev_info(&client->dev, "serial number: %s\n", buf);
+
+-	ret = sps30_do_cmd(state, SPS30_START_MEAS, NULL, 0);
+-	if (ret) {
+-		dev_err(&client->dev, "failed to start measurement\n");
+-		return ret;
+-	}
+-
+ 	ret = devm_add_action_or_reset(&client->dev, sps30_stop_meas, state);
+ 	if (ret)
+ 		return ret;
+--
+2.20.1
+
