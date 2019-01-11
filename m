@@ -2,116 +2,83 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4E4BC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 20:04:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83337C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 20:06:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB84F2177B
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 20:04:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547237085;
-	bh=8HrNCJNiKwRhOIAF8zUg3WsP9UV5H9Cb9MN9ILHVXsE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=GBI5EL5rUCNTVZsA0LI8UyLDdACvHmg9jMf+zjJgZU16xqPU3FumzCYo15rYEso6f
-	 qlrZs67nb/DSQ//gm7vY53N6JrqbDURWM1XaRRk/eignQUbMxVtG1V0Eapk6MkGlol
-	 tz4ckLnesiKSZY8Mc1NlO3ahS9PRMtaNxmvD8LyQ=
+	by mail.kernel.org (Postfix) with ESMTP id 60D642133F
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 20:06:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390597AbfAKUEo (ORCPT
+        id S2388905AbfAKUGF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 15:04:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50526 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 15:06:05 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:52640 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732290AbfAKUEn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 15:04:43 -0500
-Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1730271AbfAKUGF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 15:06:05 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9529021872;
-        Fri, 11 Jan 2019 20:04:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547237082;
-        bh=8HrNCJNiKwRhOIAF8zUg3WsP9UV5H9Cb9MN9ILHVXsE=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=KEiv30N42JiryMcHTFeP1lEss7v/nY/2og9j1d31g9sa9Sr4hvQKj/zEe4NTs1fdM
-         RE2V7EQSgk0AIVWPQFy30JiGgyP8kq3fL+GmtMgQ3k3i6XzTUXdUPERbTa+odKDKSI
-         zgNuVlBT3JbOKkQ29VljyUZyUA2zAf7QrhNZ5UjM=
-Received: by mail-qt1-f173.google.com with SMTP id d19so20177977qtq.9;
-        Fri, 11 Jan 2019 12:04:42 -0800 (PST)
-X-Gm-Message-State: AJcUukcFUnp98sNTXJrs4ltB32kzvH8vpE/s2RjOOC7A7czWsR4yO1uh
-        NlQW70Pkl7vmnbQ59TMhIg89yDiMOfi5zbCJEA==
-X-Google-Smtp-Source: ALg8bN5tzqCaDHDFZCV+p2dpTbBIAT8t3PKkHFQ43D+QHqHc1fB5c8VHzVObRmHp97CZFwhjxu+j/XsIcdQp4QxuWr0=
-X-Received: by 2002:a0c:c389:: with SMTP id o9mr15353917qvi.90.1547237081761;
- Fri, 11 Jan 2019 12:04:41 -0800 (PST)
+        by mx1.redhat.com (Postfix) with ESMTPS id 2E46490C7A;
+        Fri, 11 Jan 2019 20:06:05 +0000 (UTC)
+Received: from [10.10.125.65] (ovpn-125-65.rdu2.redhat.com [10.10.125.65])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0AF0326368;
+        Fri, 11 Jan 2019 20:06:03 +0000 (UTC)
+Subject: Re: [PATCH] target: fix a missing check for match_int
+To:     Kangjie Lu <kjlu@umn.edu>
+References: <20181226064818.75984-1-kjlu@umn.edu>
+Cc:     pakki001@umn.edu, "Nicholas A. Bellinger" <nab@linux-iscsi.org>,
+        linux-scsi@vger.kernel.org, target-devel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+From:   Mike Christie <mchristi@redhat.com>
+Message-ID: <5C38F72B.5000203@redhat.com>
+Date:   Fri, 11 Jan 2019 14:06:03 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
+ Thunderbird/38.6.0
 MIME-Version: 1.0
-References: <1547141652-8660-1-git-send-email-john.stultz@linaro.org>
- <1547141652-8660-3-git-send-email-john.stultz@linaro.org> <CAL_Jsq+2dYaCzLSr8n4W=ftSjgmKJaUqwQ4S7qv7ZAaR2A-5XQ@mail.gmail.com>
-In-Reply-To: <CAL_Jsq+2dYaCzLSr8n4W=ftSjgmKJaUqwQ4S7qv7ZAaR2A-5XQ@mail.gmail.com>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Fri, 11 Jan 2019 14:04:30 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqJLm_tDakS10gch8K_3F+mHrzR3isw8Tm=D-R118D1sYQ@mail.gmail.com>
-Message-ID: <CAL_JsqJLm_tDakS10gch8K_3F+mHrzR3isw8Tm=D-R118D1sYQ@mail.gmail.com>
-Subject: Re: [PATCH 2/8 v3] Documentation: bindings: k3dma: Add binding for hisi-dma-avail-chan
-To:     John Stultz <john.stultz@linaro.org>
-Cc:     lkml <linux-kernel@vger.kernel.org>, Vinod Koul <vkoul@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Tanglei Han <hantanglei@huawei.com>,
-        Zhuangluan Su <suzhuangluan@hisilicon.com>,
-        Ryan Grachek <ryan@edited.us>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        "open list:DMA GENERIC OFFLOAD ENGINE SUBSYSTEM" 
-        <dmaengine@vger.kernel.org>, devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20181226064818.75984-1-kjlu@umn.edu>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Fri, 11 Jan 2019 20:06:05 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 11, 2019 at 1:58 PM Rob Herring <robh+dt@kernel.org> wrote:
->
-> On Thu, Jan 10, 2019 at 11:34 AM John Stultz <john.stultz@linaro.org> wrote:
-> >
-> > Some dma channels can be reserved for secure mode or other
-> > hardware on the SoC, so provide a binding for a bitmask
-> > listing the available channels for the kernel to use.
-> >
-> > Cc: Vinod Koul <vkoul@kernel.org>
-> > Cc: Rob Herring <robh+dt@kernel.org>
-> > Cc: Mark Rutland <mark.rutland@arm.com>
-> > Cc: Tanglei Han <hantanglei@huawei.com>
-> > Cc: Zhuangluan Su <suzhuangluan@hisilicon.com>
-> > Cc: Ryan Grachek <ryan@edited.us>
-> > Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> > Cc: dmaengine@vger.kernel.org
-> > Cc: devicetree@vger.kernel.org
-> > Signed-off-by: John Stultz <john.stultz@linaro.org>
-> > ---
-> > v3: Renamed to hisi-dma-avail-chan
-> > ---
-> >  Documentation/devicetree/bindings/dma/k3dma.txt | 3 +++
-> >  1 file changed, 3 insertions(+)
-> >
-> > diff --git a/Documentation/devicetree/bindings/dma/k3dma.txt b/Documentation/devicetree/bindings/dma/k3dma.txt
-> > index 10a2f15..38825d4 100644
-> > --- a/Documentation/devicetree/bindings/dma/k3dma.txt
-> > +++ b/Documentation/devicetree/bindings/dma/k3dma.txt
-> > @@ -14,6 +14,9 @@ Required properties:
-> >                 have specific request line
-> >  - clocks: clock required
-> >
-> > +Optional properties:
-> > +- hisi-dma-avail-chan: Bitmask of available physical channels
->
-> Not quite right. Should be: hisilicon,dma-avail-chan
+On 12/26/2018 12:48 AM, Kangjie Lu wrote:
+> When match_int fails, "arg" is left uninitialized and may contain random
+> value, thus should not be used.
+> The fix checks if match_int fails, and if so, break.
+> 
+> Signed-off-by: Kangjie Lu <kjlu@umn.edu>
+> ---
+>  drivers/target/target_core_rd.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/target/target_core_rd.c b/drivers/target/target_core_rd.c
+> index a6e8106abd6f..3138123143e8 100644
+> --- a/drivers/target/target_core_rd.c
+> +++ b/drivers/target/target_core_rd.c
+> @@ -573,7 +573,8 @@ static ssize_t rd_set_configfs_dev_params(struct se_device *dev,
+>  		token = match_token(ptr, tokens, args);
+>  		switch (token) {
+>  		case Opt_rd_pages:
+> -			match_int(args, &arg);
+> +			if (match_int(args, &arg))
+> +				break;
 
-Actually, we already have the same case elsewhere with
-'brcm,dma-channel-mask'. Maybe there are others. So make the property
-common (i.e. documented in dma.txt) and called 'dma-channel-mask'.
+I think if this fails you would want to return an error.
 
-Whether or not the dmaengine handles this or not is irrelevant to
-whether the binding is common or not. I have no say over OS design
-decisions.
+Also, I think you want to add a similar check for the Opt_rd_nullio call
+below this chunk because arg may initialized to junk.
 
-Rob
+
+>  			rd_dev->rd_page_count = arg;
+>  			pr_debug("RAMDISK: Referencing Page"
+>  				" Count: %u\n", rd_dev->rd_page_count);
+> 
+
