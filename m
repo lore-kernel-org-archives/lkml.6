@@ -4,49 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33FDEC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:29:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 181F1C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:29:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EEE472063F
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:29:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DD053218AE
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:29:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547216960;
-	bh=Hx2TIM8oGR0qhusTW3FpDQhIFEZKVlS9qulW6/k9n2g=;
+	s=default; t=1547216967;
+	bh=Oq0VHcnTRrH73kUKB2ska5zQvmtkTVUfMQuXplUED18=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=VYdt21pohWC62aEBTj6j4x0jU6FwAaRVEnT1ywNKNBYNaXGr3zQWvKyqNtRzg6oXw
-	 rMOZ3w6qMB1fmRv/Zr2nht65nypBIQA3LAYB/Wq7iFiP2fp7C4dliUhsYrRfI1CI65
-	 ZNOD1zzJxUFOLBX2n7me+lQlcAYgqVf+ypnjM08I=
+	b=Dx6qWwgHaypsOsTNODwDrB0/mxdP3WoSMKeOn/jfiyXK4PpgePnZOxEnw/XzcrkKR
+	 4IHkctIxQFNbo6epNNZfYv+UrEj3YlY7oOa4O1j5Xrs6nZNLWs0XcWwg9DpoagMVjv
+	 eiR0qTBn9efg5GfgqeEWnCUfTr5FJpEKEckG4yzA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388697AbfAKO3T (ORCPT
+        id S2388720AbfAKO3Z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:29:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48194 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:29:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48342 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388684AbfAKO3Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:29:16 -0500
+        id S2388701AbfAKO3V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:29:21 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0E3952133F;
-        Fri, 11 Jan 2019 14:29:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CC1872063F;
+        Fri, 11 Jan 2019 14:29:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547216955;
-        bh=Hx2TIM8oGR0qhusTW3FpDQhIFEZKVlS9qulW6/k9n2g=;
+        s=default; t=1547216961;
+        bh=Oq0VHcnTRrH73kUKB2ska5zQvmtkTVUfMQuXplUED18=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cGE1Zre9Nxd86WzLZ9QT/lo4/QFPqkja4R/eRsCkRkC9I2R+22NSujgMr6pO/fv35
-         d/+SpMo3CJ/Uj+XXMwCu3BQlwxDabjHgQKvKn6EDpzIYobZqyt9lvTRV1YIg0QTlfN
-         pc3c3azxpl1CBmaHSxv5mrBi5nn0wH55iCGh+T30=
+        b=r2bg1WRGnLOOMQlYAhZsrxlv7+7CqjNPs/jtje710vC8toO2Am380hOsKAof45h5e
+         9GFT+f7qH52doTcRICs3ACWXq+fxo9v/LbdExo6ATExpaSSKaoC9t5nljHq5wbcsbx
+         m1Fv07BcXFl0kz+N+97PsC3Ivn1JibxzYZzoWGok=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vasily Averin <vvs@virtuozzo.com>,
-        David Teigland <teigland@redhat.com>, stable@kernel.org
-Subject: [PATCH 4.9 51/63] dlm: memory leaks on error path in dlm_user_request()
-Date:   Fri, 11 Jan 2019 15:14:54 +0100
-Message-Id: <20190111131053.772607133@linuxfoundation.org>
+        stable@vger.kernel.org, Andreas Gruenbacher <agruenba@redhat.com>,
+        Bob Peterson <rpeterso@redhat.com>
+Subject: [PATCH 4.9 53/63] gfs2: Fix loop in gfs2_rbm_find
+Date:   Fri, 11 Jan 2019 15:14:56 +0100
+Message-Id: <20190111131054.118295921@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131046.387528003@linuxfoundation.org>
 References: <20190111131046.387528003@linuxfoundation.org>
@@ -65,56 +65,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vasily Averin <vvs@virtuozzo.com>
+From: Andreas Gruenbacher <agruenba@redhat.com>
 
-commit d47b41aceeadc6b58abc9c7c6485bef7cfb75636 upstream.
+commit 2d29f6b96d8f80322ed2dd895bca590491c38d34 upstream.
 
-According to comment in dlm_user_request() ua should be freed
-in dlm_free_lkb() after successful attach to lkb.
+Fix the resource group wrap-around logic in gfs2_rbm_find that commit
+e579ed4f44 broke.  The bug can lead to unnecessary repeated scanning of the
+same bitmaps; there is a risk that future changes will turn this into an
+endless loop.
 
-However ua is attached to lkb not in set_lock_args() but later,
-inside request_lock().
-
-Fixes 597d0cae0f99 ("[DLM] dlm: user locks")
-Cc: stable@kernel.org # 2.6.19
-
-Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
-Signed-off-by: David Teigland <teigland@redhat.com>
+Fixes: e579ed4f44 ("GFS2: Introduce rbm field bii")
+Cc: stable@vger.kernel.org # v3.13+
+Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
+Signed-off-by: Bob Peterson <rpeterso@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/dlm/lock.c |   14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ fs/gfs2/rgrp.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/dlm/lock.c
-+++ b/fs/dlm/lock.c
-@@ -5795,20 +5795,20 @@ int dlm_user_request(struct dlm_ls *ls,
- 			goto out;
+--- a/fs/gfs2/rgrp.c
++++ b/fs/gfs2/rgrp.c
+@@ -1705,9 +1705,9 @@ static int gfs2_rbm_find(struct gfs2_rbm
+ 			goto next_iter;
  		}
- 	}
--
--	/* After ua is attached to lkb it will be freed by dlm_free_lkb().
--	   When DLM_IFL_USER is set, the dlm knows that this is a userspace
--	   lock and that lkb_astparam is the dlm_user_args structure. */
--
- 	error = set_lock_args(mode, &ua->lksb, flags, namelen, timeout_cs,
- 			      fake_astfn, ua, fake_bastfn, &args);
--	lkb->lkb_flags |= DLM_IFL_USER;
--
- 	if (error) {
-+		kfree(ua->lksb.sb_lvbptr);
-+		ua->lksb.sb_lvbptr = NULL;
-+		kfree(ua);
- 		__put_lkb(ls, lkb);
- 		goto out;
- 	}
- 
-+	/* After ua is attached to lkb it will be freed by dlm_free_lkb().
-+	   When DLM_IFL_USER is set, the dlm knows that this is a userspace
-+	   lock and that lkb_astparam is the dlm_user_args structure. */
-+	lkb->lkb_flags |= DLM_IFL_USER;
- 	error = request_lock(ls, lkb, name, namelen, &args);
- 
- 	switch (error) {
+ 		if (ret == -E2BIG) {
++			n += rbm->bii - initial_bii;
+ 			rbm->bii = 0;
+ 			rbm->offset = 0;
+-			n += (rbm->bii - initial_bii);
+ 			goto res_covered_end_of_rgrp;
+ 		}
+ 		return ret;
 
 
