@@ -2,162 +2,360 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AB91C43444
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 20:49:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3538C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 20:54:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D11582133F
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 20:49:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547239760;
-	bh=GE6MFGkevP3oHwgQFacU37gcdTIyXhguSNBrg4fNM9o=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=mYfUXMEVbNwBpMSUr5rl0elk9KCvWp+RkwbQ64ba/Ls/NCaZ3RUzM/BIdyrrqVH7X
-	 QewIFaUfL45QoEBShXuHZ4Q65DvCpR9g7FiPfCdperVgw2YfGjp4wEvjcXJWMo2RtJ
-	 +Pa35A4GlDLXfwKNdDeo+vxxmhLRUpE0Oc46+CB4=
+	by mail.kernel.org (Postfix) with ESMTP id 7B7682183F
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 20:54:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726542AbfAKUtT (ORCPT
+        id S1726570AbfAKUyK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 15:49:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49942 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725801AbfAKUtT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 15:49:19 -0500
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AA8342133F;
-        Fri, 11 Jan 2019 20:49:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547239757;
-        bh=GE6MFGkevP3oHwgQFacU37gcdTIyXhguSNBrg4fNM9o=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=YNQPPe0KElil6Rl5HKa96cu+U5inmCyOe2FmAdsqX+ePklgTC3J18eb59ltmmlGaD
-         q/KLtV/zqBSgjs+qdWg1+ChCU6MoKVG52T2R1qoOzgcBYHPusuyjbNYvQ+ymXWed//
-         kglksjaj9bqTW5VUdxlR3/aXgWkK8F0O45sf1jMU=
-Received: by mail-qt1-f181.google.com with SMTP id y20so20298968qtm.13;
-        Fri, 11 Jan 2019 12:49:17 -0800 (PST)
-X-Gm-Message-State: AJcUukdeQUxzkMgLnC+B9UtM5MThUngUOCmTPedmhkfezCOTJqSjMyJw
-        P/UygiV89b498qwJTHW7gDXAgqGKSD6LHL7Jzw==
-X-Google-Smtp-Source: ALg8bN7eE/X9BYzSc7z8RQeVuiEMPWzapOJpzqt8NFwUPXsUOg1r4gkdhm6+51D0E9cR53Jb88e1f5hQCQO4TLP791I=
-X-Received: by 2002:a0c:f212:: with SMTP id h18mr15620049qvk.106.1547239756893;
- Fri, 11 Jan 2019 12:49:16 -0800 (PST)
+        Fri, 11 Jan 2019 15:54:10 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:39437 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726478AbfAKUyJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 15:54:09 -0500
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1gi3oa-0006zN-RV; Fri, 11 Jan 2019 21:54:04 +0100
+Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1gi3oZ-0002ty-Sm; Fri, 11 Jan 2019 21:54:04 +0100
+Date:   Fri, 11 Jan 2019 21:54:03 +0100
+From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Sheetal Tigadoli <sheetal.tigadoli@broadcom.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com, linux-pwm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Praveen Kumar B <praveen.b@broadcom.com>
+Subject: Re: [PATCH 2/3] drivers: pwm: pwm-bcm-kona: Add pwm-kona-v2 support
+Message-ID: <20190111205403.e4bgszqbrq65jsgh@pengutronix.de>
+References: <1547184076-20521-1-git-send-email-sheetal.tigadoli@broadcom.com>
+ <1547184076-20521-3-git-send-email-sheetal.tigadoli@broadcom.com>
 MIME-Version: 1.0
-References: <20190110221903.3990-4-robh@kernel.org> <154722865051.169631.16957443589975628047@swboyd.mtv.corp.google.com>
- <CAL_JsqJzNBYCMWbZtR37eZd4yx2kc590V+q3603Hg=kG2bZwhw@mail.gmail.com> <154723284041.169631.6622751321828044091@swboyd.mtv.corp.google.com>
-In-Reply-To: <154723284041.169631.6622751321828044091@swboyd.mtv.corp.google.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Fri, 11 Jan 2019 14:49:04 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqJFyC3AXwbd8PoJS1wZ5BSokAPcFi=4FF2DQ6yFi0XwCw@mail.gmail.com>
-Message-ID: <CAL_JsqJFyC3AXwbd8PoJS1wZ5BSokAPcFi=4FF2DQ6yFi0XwCw@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: clock: Convert fixed-clock binding to json-schema
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1547184076-20521-3-git-send-email-sheetal.tigadoli@broadcom.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 11, 2019 at 12:54 PM Stephen Boyd <sboyd@kernel.org> wrote:
->
-> Quoting Rob Herring (2019-01-11 10:27:48)
-> > On Fri, Jan 11, 2019 at 11:44 AM Stephen Boyd <sboyd@kernel.org> wrote:
-> > >
-> > > Quoting Rob Herring (2019-01-10 14:19:01)
-> > > > Convert the fixed-clock binding to DT schema format using json-schema.
-> > > >
-> > >
-> > > Any pointer to the full schema?
-> >
-> > https://github.com/robherring/yaml-bindings/blob/master/schemas/
-> >
-> > And the clock schema in particular:
-> > https://github.com/robherring/yaml-bindings/blob/master/schemas/clock.yaml
->
-> Awesome. Thanks for the pointers! Is the clock schema posted to the list
-> somewhere?
+Hello,
 
-No. Happy to post things, but I'm struggling to find anyone that cares.
+On Fri, Jan 11, 2019 at 10:51:15AM +0530, Sheetal Tigadoli wrote:
+> From: Praveen Kumar B <praveen.b@broadcom.com>
+> 
+> Add support for new version of pwm-kona.
+> Add support to make PWM changes configured and stable.
+> 
+> Signed-off-by: Praveen Kumar B <praveen.b@broadcom.com>
+> Reviewed-by: Ray Jui <ray.jui@broadcom.com>
+> Reviewed-by: Scott Branden <scott.branden@broadcom.com>
+> Signed-off-by: Sheetal Tigadoli <sheetal.tigadoli@broadcom.com>
+> ---
+>  drivers/pwm/pwm-bcm-kona.c | 128 ++++++++++++++++++++++++++++++++++-----------
+>  1 file changed, 98 insertions(+), 30 deletions(-)
+> 
+> diff --git a/drivers/pwm/pwm-bcm-kona.c b/drivers/pwm/pwm-bcm-kona.c
+> index 09a95ae..2b44ad8 100644
+> --- a/drivers/pwm/pwm-bcm-kona.c
+> +++ b/drivers/pwm/pwm-bcm-kona.c
+> @@ -45,30 +45,39 @@
+>   *    high or low depending on its state at that exact instant.
+>   */
+>  
+> -#define PWM_CONTROL_OFFSET			(0x00000000)
+> +#define PWM_CONTROL_OFFSET			0x00000000
+>  #define PWM_CONTROL_SMOOTH_SHIFT(chan)		(24 + (chan))
+>  #define PWM_CONTROL_TYPE_SHIFT(chan)		(16 + (chan))
+>  #define PWM_CONTROL_POLARITY_SHIFT(chan)	(8 + (chan))
+>  #define PWM_CONTROL_TRIGGER_SHIFT(chan)		(chan)
+>  
+> -#define PRESCALE_OFFSET				(0x00000004)
+> +#define PRESCALE_OFFSET				0x00000004
+>  #define PRESCALE_SHIFT(chan)			((chan) << 2)
+>  #define PRESCALE_MASK(chan)			(0x7 << PRESCALE_SHIFT(chan))
+> -#define PRESCALE_MIN				(0x00000000)
+> -#define PRESCALE_MAX				(0x00000007)
+> +#define PRESCALE_MIN				0x00000000
+> +#define PRESCALE_MAX				0x00000007
+>  
+>  #define PERIOD_COUNT_OFFSET(chan)		(0x00000008 + ((chan) << 3))
+> -#define PERIOD_COUNT_MIN			(0x00000002)
+> -#define PERIOD_COUNT_MAX			(0x00ffffff)
+> +#define PERIOD_COUNT_MIN			0x00000002
+> +#define PERIOD_COUNT_MAX			0x00ffffff
+>  
+>  #define DUTY_CYCLE_HIGH_OFFSET(chan)		(0x0000000c + ((chan) << 3))
+> -#define DUTY_CYCLE_HIGH_MIN			(0x00000000)
+> -#define DUTY_CYCLE_HIGH_MAX			(0x00ffffff)
+> +#define DUTY_CYCLE_HIGH_MIN			0x00000000
+> +#define DUTY_CYCLE_HIGH_MAX			0x00ffffff
 
-> > > > Cc: Michael Turquette <mturquette@baylibre.com>
-> > > > Cc: Stephen Boyd <sboyd@kernel.org>
-> > > > Cc: linux-clk@vger.kernel.org
-> > > > Signed-off-by: Rob Herring <robh@kernel.org>
-> > > [...]
-> > > > diff --git a/Documentation/devicetree/bindings/clock/fixed-clock.yaml b/Documentation/devicetree/bindings/clock/fixed-clock.yaml
-> > > > new file mode 100644
-> > > > index 000000000000..8b5628463b90
-> > > > --- /dev/null
-> > > > +++ b/Documentation/devicetree/bindings/clock/fixed-clock.yaml
-> > > > @@ -0,0 +1,44 @@
-> > > > +# SPDX-License-Identifier: GPL-2.0
-> > > > +%YAML 1.2
-> > > > +---
-> > > > +$id: http://devicetree.org/schemas/clock/fixed-clock.yaml#
-> > > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > > > +
-> > > > +title: Binding for simple fixed-rate clock sources.
-> > >
-> > > Why does title have a full stop?
-> >
-> > Because it was there in the original. My script to extract just takes
-> > the first line of alphanumeric text.
->
-> Ok. I think it would be good to treat them like commit subjects that
-> don't have the full stop either, so if the script is able to drop the
-> full stop it would be great.
+All these are unrelated changes.
 
-I can just write a meta-schema to enforce that. :)
+> +#define PWM_MONITOR_OFFSET			0xb0
+> +#define PWM_MONITOR_TIMEOUT_US			5
+> +
+> +enum kona_pwmc_ver {
+> +	KONA_PWM_V1 = 1,
+> +	KONA_PWM_V2
+> +};
+>  
+>  struct kona_pwmc {
+>  	struct pwm_chip chip;
+>  	void __iomem *base;
+>  	struct clk *clk;
+> +	enum kona_pwmc_ver version;
+>  };
+>  
+>  static inline struct kona_pwmc *to_kona_pwmc(struct pwm_chip *_chip)
+> @@ -76,11 +85,40 @@ static inline struct kona_pwmc *to_kona_pwmc(struct pwm_chip *_chip)
+>  	return container_of(_chip, struct kona_pwmc, chip);
+>  }
+>  
+> +static int kona_pwmc_wait_stable(struct pwm_chip *chip, unsigned int chan,
+> +				 unsigned int kona_ver)
+> +{
+> +	struct kona_pwmc *kp = to_kona_pwmc(chip);
+> +	unsigned int value;
+> +	unsigned int count = PWM_MONITOR_TIMEOUT_US * 1000;
+> +
+> +	switch (kona_ver) {
+> +	case KONA_PWM_V1:
+> +		/*
+> +		 * There must be a min 400ns delay between clearing trigger and
+> +		 * settingit. Failing to do this may result in no PWM signal.
 
-> > > > +
-> > > > +maintainers:
-> > > > +  - Michael Turquette <mturquette@baylibre.com>
-> > > > +  - Stephen Boyd <sboyd@kernel.org>
-> > > > +
-> > > > +properties:
-> > > > +  compatible:
-> > > > +    const: fixed-clock
-> > > > +
-> > > > +  "#clock-cells":
-> > > > +    const: 0
-> > > > +
-> > > > +  clock-frequency: true
-> > >
-> > > Why doesn't this need the $ref: /schemas/types.yaml#/... thing?
-> >
-> > You might want to read bindings/example-schema.yaml which tries to
-> > explain some of this.
-> >
-> > Standard properties are already defined in the core schemas. So we
-> > only have to say "we use this property" and any binding specific
-> > constraints. In this case, there aren't any other constraints. It is
-> > also needed to be listed here to mark it required and to satisfy
-> > 'additionalProperties: false'.
->
-> Hmm ok. I suppose I'll have to hold that information in my mind when
-> reviewing bindings. Is there any tooling or some script that I can run
-> on json-schema bindings to verify they're correct? Or to find something
-> redundant like this where a standard property is redefined? Grep would
-> work for the redundant problem I suppose.
+Space missing.
 
-Yes, the meta-schema enforces this at least to the extent there is a
-meta-schema defined for a standard property. Even if not something for
-a specific property, we limit things to a subset of json-schema
-keywords. Also, you also can't define something contradicting a core
-schema (e.g. { reg: { type: string } }), but that wouldn't be found
-until you check actual DTs.
+> +		 */
+> +		ndelay(400);
+> +		return 0;
+> +	case KONA_PWM_V2:
+> +		do {
+> +			value = readl(kp->base + PWM_MONITOR_OFFSET);
+> +			if (!(value & (BIT(chan))))
+> +				return 0;
+> +			ndelay(1);
+> +		} while (count--);
+> +
+> +		return -ETIMEDOUT;
+> +	default:
+> +		return -ENODEV;
+> +	}
 
-The meta-schema check is run with:
-make dt_binding_check
+I wonder if v1 and v2 are different enough to justify a separate driver
+for v2.
 
-This is all documented in Documentation/devicetree/writing-schema.md.
+> +}
+> +
+>  /*
+>   * Clear trigger bit but set smooth bit to maintain old output.
+>   */
+> -static void kona_pwmc_prepare_for_settings(struct kona_pwmc *kp,
+> -	unsigned int chan)
+> +static int kona_pwmc_prepare_for_settings(struct kona_pwmc *kp,
+> +					  unsigned int chan)
+>  {
+>  	unsigned int value = readl(kp->base + PWM_CONTROL_OFFSET);
+>  
+> @@ -88,14 +126,10 @@ static void kona_pwmc_prepare_for_settings(struct kona_pwmc *kp,
+>  	value &= ~(1 << PWM_CONTROL_TRIGGER_SHIFT(chan));
+>  	writel(value, kp->base + PWM_CONTROL_OFFSET);
+>  
+> -	/*
+> -	 * There must be a min 400ns delay between clearing trigger and setting
+> -	 * it. Failing to do this may result in no PWM signal.
+> -	 */
+> -	ndelay(400);
+> +	return kona_pwmc_wait_stable(&kp->chip, chan, kp->version);
+>  }
+>  
+> -static void kona_pwmc_apply_settings(struct kona_pwmc *kp, unsigned int chan)
+> +static int kona_pwmc_apply_settings(struct kona_pwmc *kp, unsigned int chan)
+>  {
+>  	unsigned int value = readl(kp->base + PWM_CONTROL_OFFSET);
+>  
+> @@ -104,8 +138,7 @@ static void kona_pwmc_apply_settings(struct kona_pwmc *kp, unsigned int chan)
+>  	value |= 1 << PWM_CONTROL_TRIGGER_SHIFT(chan);
+>  	writel(value, kp->base + PWM_CONTROL_OFFSET);
+>  
+> -	/* Trigger bit must be held high for at least 400 ns. */
+> -	ndelay(400);
+> +	return kona_pwmc_wait_stable(&kp->chip, chan, kp->version);
+>  }
+>  
+>  static int kona_pwmc_config(struct pwm_chip *chip, struct pwm_device *pwm,
+> @@ -115,6 +148,7 @@ static int kona_pwmc_config(struct pwm_chip *chip, struct pwm_device *pwm,
 
-Rob
+It would be great if you converted the driver to new-style (that is
+implementing .apply instead of .config, .enable, .disable and
+.set_polarity). This usually simplifies the driver and maybe adding
+support for v2 would be easier then, too.
+
+>  	u64 val, div, rate;
+>  	unsigned long prescale = PRESCALE_MIN, pc, dc;
+>  	unsigned int value, chan = pwm->hwpwm;
+> +	int ret;
+>  
+>  	/*
+>  	 * Find period count, duty count and prescale to suit duty_ns and
+> @@ -156,7 +190,12 @@ static int kona_pwmc_config(struct pwm_chip *chip, struct pwm_device *pwm,
+>  	 * validated immediately instead of on enable.
+>  	 */
+>  	if (pwm_is_enabled(pwm)) {
+> -		kona_pwmc_prepare_for_settings(kp, chan);
+> +		ret = kona_pwmc_prepare_for_settings(kp, chan);
+> +		if (ret < 0) {
+> +			dev_err(chip->dev, "failed to prepare pwm settings: %d\n",
+> +				ret);
+> +			return ret;
+> +		}
+>  
+>  		value = readl(kp->base + PRESCALE_OFFSET);
+>  		value &= ~PRESCALE_MASK(chan);
+> @@ -167,7 +206,12 @@ static int kona_pwmc_config(struct pwm_chip *chip, struct pwm_device *pwm,
+>  
+>  		writel(dc, kp->base + DUTY_CYCLE_HIGH_OFFSET(chan));
+>  
+> -		kona_pwmc_apply_settings(kp, chan);
+> +		ret = kona_pwmc_apply_settings(kp, chan);
+> +		if (ret < 0) {
+> +			dev_err(chip->dev, "failed to apply settings: %d\n",
+> +				ret);
+> +			return ret;
+> +		}
+>  	}
+>  
+>  	return 0;
+> @@ -187,7 +231,11 @@ static int kona_pwmc_set_polarity(struct pwm_chip *chip, struct pwm_device *pwm,
+>  		return ret;
+>  	}
+>  
+> -	kona_pwmc_prepare_for_settings(kp, chan);
+> +	ret = kona_pwmc_prepare_for_settings(kp, chan);
+> +	if (ret < 0) {
+> +		dev_err(chip->dev, "failed to prepare pwm settings: %d\n", ret);
+> +		return ret;
+> +	}
+>  
+>  	value = readl(kp->base + PWM_CONTROL_OFFSET);
+>  
+> @@ -198,7 +246,11 @@ static int kona_pwmc_set_polarity(struct pwm_chip *chip, struct pwm_device *pwm,
+>  
+>  	writel(value, kp->base + PWM_CONTROL_OFFSET);
+>  
+> -	kona_pwmc_apply_settings(kp, chan);
+> +	ret = kona_pwmc_apply_settings(kp, chan);
+> +	if (ret < 0) {
+> +		dev_err(chip->dev, "failed to apply pwm settings: %d\n", ret);
+> +		return ret;
+> +	}
+>  
+>  	clk_disable_unprepare(kp->clk);
+>  
+> @@ -231,8 +283,13 @@ static void kona_pwmc_disable(struct pwm_chip *chip, struct pwm_device *pwm)
+>  	struct kona_pwmc *kp = to_kona_pwmc(chip);
+>  	unsigned int chan = pwm->hwpwm;
+>  	unsigned int value;
+> +	int ret;
+>  
+> -	kona_pwmc_prepare_for_settings(kp, chan);
+> +	ret = kona_pwmc_prepare_for_settings(kp, chan);
+> +	if (ret < 0) {
+> +		dev_err(chip->dev, "failed to prepare pwm settings: %d\n", ret);
+> +		return;
+> +	}
+>  
+>  	/* Simulate a disable by configuring for zero duty */
+>  	writel(0, kp->base + DUTY_CYCLE_HIGH_OFFSET(chan));
+> @@ -243,7 +300,11 @@ static void kona_pwmc_disable(struct pwm_chip *chip, struct pwm_device *pwm)
+>  	value &= ~PRESCALE_MASK(chan);
+>  	writel(value, kp->base + PRESCALE_OFFSET);
+>  
+> -	kona_pwmc_apply_settings(kp, chan);
+> +	ret = kona_pwmc_apply_settings(kp, chan);
+> +	if (ret < 0) {
+> +		dev_err(chip->dev, "failed to prepare pwm settings: %d\n", ret);
+> +		return;
+> +	}
+>  
+>  	clk_disable_unprepare(kp->clk);
+>  }
+> @@ -256,14 +317,26 @@ static void kona_pwmc_disable(struct pwm_chip *chip, struct pwm_device *pwm)
+>  	.owner = THIS_MODULE,
+>  };
+>  
+> +static const struct of_device_id bcm_kona_pwmc_dt[] = {
+> +	{ .compatible = "brcm,kona-pwm", .data = (void *)KONA_PWM_V1},
+> +	{ .compatible = "brcm,kona-pwm-v2", .data = (void *)KONA_PWM_V2},
+> +	{ },
+> +};
+> +MODULE_DEVICE_TABLE(of, bcm_kona_pwmc_dt);
+> +
+>  static int kona_pwmc_probe(struct platform_device *pdev)
+>  {
+>  	struct kona_pwmc *kp;
+>  	struct resource *res;
+> +	const struct of_device_id *of_id;
+>  	unsigned int chan;
+>  	unsigned int value = 0;
+>  	int ret = 0;
+>  
+> +	of_id = of_match_node(bcm_kona_pwmc_dt, pdev->dev.of_node);
+> +	if (!of_id)
+> +		return -ENODEV;
+> +
+>  	kp = devm_kzalloc(&pdev->dev, sizeof(*kp), GFP_KERNEL);
+>  	if (kp == NULL)
+>  		return -ENOMEM;
+> @@ -276,6 +349,7 @@ static int kona_pwmc_probe(struct platform_device *pdev)
+>  	kp->chip.npwm = 6;
+>  	kp->chip.of_xlate = of_pwm_xlate_with_flags;
+>  	kp->chip.of_pwm_n_cells = 3;
+> +	kp->version = (enum kona_pwmc_ver)of_id->data;
+>  
+>  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>  	kp->base = devm_ioremap_resource(&pdev->dev, res);
+> @@ -322,12 +396,6 @@ static int kona_pwmc_remove(struct platform_device *pdev)
+>  	return pwmchip_remove(&kp->chip);
+>  }
+>  
+> -static const struct of_device_id bcm_kona_pwmc_dt[] = {
+> -	{ .compatible = "brcm,kona-pwm" },
+> -	{ },
+> -};
+> -MODULE_DEVICE_TABLE(of, bcm_kona_pwmc_dt);
+> -
+>  static struct platform_driver kona_pwmc_driver = {
+>  	.driver = {
+>  		.name = "bcm-kona-pwm",
+> -- 
+> 1.9.1
+> 
+> 
+
+-- 
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
