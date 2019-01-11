@@ -2,56 +2,57 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FDABC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:31:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96AFDC43612
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:31:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4EBCB21841
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:31:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 67E2C2063F
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:31:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547217090;
-	bh=DXZX5eEcjSxvHxq6kmq1A/jqOE7tM1kG/A2w4d5BVSY=;
+	s=default; t=1547217093;
+	bh=BWj9Uzie4zntXf30fEXtv/uevnWFL2Z3AdZv80+j1V4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=v96qj+XMSw8W7J6Vf8lHYg7W3ofCH6SRwhaHbXTvvI6xjfacZqeZJzzI7MXoBPGTV
-	 py/DzDPTCHTZgFAYlBgQZ0OUELFVi2cskbjll0d6gFw2ujDK95zEnpzdZU20vFRpJa
-	 E7bMoTDaCcB1tDc1OI5D3Z+bh8Qkf6elH/ww/1M0=
+	b=Jxzws3BpyAB6wVnfR+OZqNqYlHBVgcfYXur1xvgrhaHNMzjd87Ywm/aKrEMxkwkoP
+	 7n/glWs6Xv9166/OjlLIpWs4VkfZ0MKMOfzluhZPOqTqNiVpxpQzSUqP884zrV8cpM
+	 gzVn1cOpYTZvk8KRmVTcvK6vE6ND52b/xUWf6Ksg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389186AbfAKOb3 (ORCPT
+        id S2389199AbfAKObc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:31:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51038 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:31:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48522 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389170AbfAKObZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:31:25 -0500
+        id S2388733AbfAKO3a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:29:30 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B6CA12177B;
-        Fri, 11 Jan 2019 14:31:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AB6632063F;
+        Fri, 11 Jan 2019 14:29:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547217085;
-        bh=DXZX5eEcjSxvHxq6kmq1A/jqOE7tM1kG/A2w4d5BVSY=;
+        s=default; t=1547216970;
+        bh=BWj9Uzie4zntXf30fEXtv/uevnWFL2Z3AdZv80+j1V4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QoN56IJVp1qSuCZ7LiYICnARHAwNOusP+UvAqziXyeppzyeIq0wl21Nk7beFvFKlG
-         nkvKySz5FKDcCfCSvh1T+Zb6phPiPsG8e/rbAm8DduxvAQTPsHVJmRBo1KUR+8EN/h
-         hriXBLYYfajPMLCTeLELYMQ0SzlcMKifHkS6Irig=
+        b=Kgwb4dMwrDYAZoOYS8YFNiniCH4Pe9ziffFk4zehE+BccTT6uTGbTRWXrqWI5uXGA
+         tJPiIrth5+JguXp4ZVO+QkAmsuj+Qlo9tOLnrxfOpHlY6n37m8SamFJNhjsepC7/wn
+         a3OGcNY3Bg/0SM8B+LAHIdSwXjr7pOku7D3lTMyg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yonglong Liu <liuyonglong@huawei.com>,
-        Peng Li <lipeng321@huawei.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 037/105] net: hns: Avoid net reset caused by pause frames storm
-Date:   Fri, 11 Jan 2019 15:14:08 +0100
-Message-Id: <20190111131106.301806697@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+0c1d61e4db7db94102ca@syzkaller.appspotmail.com,
+        Dominique Martinet <dominique.martinet@cea.fr>,
+        Eric Van Hensbergen <ericvh@gmail.com>,
+        Latchesar Ionkov <lucho@ionkov.net>
+Subject: [PATCH 4.9 56/63] 9p/net: put a lower bound on msize
+Date:   Fri, 11 Jan 2019 15:14:59 +0100
+Message-Id: <20190111131054.634039809@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190111131102.899065735@linuxfoundation.org>
-References: <20190111131102.899065735@linuxfoundation.org>
+In-Reply-To: <20190111131046.387528003@linuxfoundation.org>
+References: <20190111131046.387528003@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 X-Patchwork-Hint: ignore
@@ -63,73 +64,85 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+4.9-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-[ Upstream commit a57275d35576fdd89d8c771eedf1e7cf97e0dfa6 ]
+From: Dominique Martinet <dominique.martinet@cea.fr>
 
-There will be a large number of MAC pause frames on the net,
-which caused tx timeout of net device. And then the net device
-was reset to try to recover it. So that is not useful, and will
-cause some other problems.
+commit 574d356b7a02c7e1b01a1d9cba8a26b3c2888f45 upstream.
 
-So need doubled ndev->watchdog_timeo if device watchdog occurred
-until watchdog_timeo up to 40s and then try resetting to recover
-it.
+If the requested msize is too small (either from command line argument
+or from the server version reply), we won't get any work done.
+If it's *really* too small, nothing will work, and this got caught by
+syzbot recently (on a new kmem_cache_create_usercopy() call)
 
-When collecting dfx information such as hardware registers when tx timeout.
-Some registers for count were cleared when read. So need move this task
-before update net state which also read the count registers.
+Just set a minimum msize to 4k in both code paths, until someone
+complains they have a use-case for a smaller msize.
 
-Signed-off-by: Yonglong Liu <liuyonglong@huawei.com>
-Signed-off-by: Peng Li <lipeng321@huawei.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+We need to check in both mount option and server reply individually
+because the msize for the first version request would be unchecked
+with just a global check on clnt->msize.
+
+Link: http://lkml.kernel.org/r/1541407968-31350-1-git-send-email-asmadeus@codewreck.org
+Reported-by: syzbot+0c1d61e4db7db94102ca@syzkaller.appspotmail.com
+Signed-off-by: Dominique Martinet <dominique.martinet@cea.fr>
+Cc: Eric Van Hensbergen <ericvh@gmail.com>
+Cc: Latchesar Ionkov <lucho@ionkov.net>
+Cc: stable@vger.kernel.org
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/net/ethernet/hisilicon/hns/hns_enet.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+ net/9p/client.c |   21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns/hns_enet.c b/drivers/net/ethernet/hisilicon/hns/hns_enet.c
-index bcd9aaba09b3..f28a639e8393 100644
---- a/drivers/net/ethernet/hisilicon/hns/hns_enet.c
-+++ b/drivers/net/ethernet/hisilicon/hns/hns_enet.c
-@@ -1609,11 +1609,19 @@ static int hns_nic_net_stop(struct net_device *ndev)
- }
+--- a/net/9p/client.c
++++ b/net/9p/client.c
+@@ -156,6 +156,12 @@ static int parse_opts(char *opts, struct
+ 				ret = r;
+ 				continue;
+ 			}
++			if (option < 4096) {
++				p9_debug(P9_DEBUG_ERROR,
++					 "msize should be at least 4k\n");
++				ret = -EINVAL;
++				continue;
++			}
+ 			clnt->msize = option;
+ 			break;
+ 		case Opt_trans:
+@@ -972,10 +978,18 @@ static int p9_client_version(struct p9_c
+ 	else if (!strncmp(version, "9P2000", 6))
+ 		c->proto_version = p9_proto_legacy;
+ 	else {
++		p9_debug(P9_DEBUG_ERROR,
++			 "server returned an unknown version: %s\n", version);
+ 		err = -EREMOTEIO;
+ 		goto error;
+ 	}
  
- static void hns_tx_timeout_reset(struct hns_nic_priv *priv);
-+#define HNS_TX_TIMEO_LIMIT (40 * HZ)
- static void hns_nic_net_timeout(struct net_device *ndev)
- {
- 	struct hns_nic_priv *priv = netdev_priv(ndev);
- 
--	hns_tx_timeout_reset(priv);
-+	if (ndev->watchdog_timeo < HNS_TX_TIMEO_LIMIT) {
-+		ndev->watchdog_timeo *= 2;
-+		netdev_info(ndev, "watchdog_timo changed to %d.\n",
-+			    ndev->watchdog_timeo);
-+	} else {
-+		ndev->watchdog_timeo = HNS_NIC_TX_TIMEOUT;
-+		hns_tx_timeout_reset(priv);
++	if (msize < 4096) {
++		p9_debug(P9_DEBUG_ERROR,
++			 "server returned a msize < 4096: %d\n", msize);
++		err = -EREMOTEIO;
++		goto error;
 +	}
- }
+ 	if (msize < c->msize)
+ 		c->msize = msize;
  
- static int hns_nic_do_ioctl(struct net_device *netdev, struct ifreq *ifr,
-@@ -2193,11 +2201,11 @@ static void hns_nic_service_task(struct work_struct *work)
- 		= container_of(work, struct hns_nic_priv, service_task);
- 	struct hnae_handle *h = priv->ae_handle;
+@@ -1040,6 +1054,13 @@ struct p9_client *p9_client_create(const
+ 	if (clnt->msize > clnt->trans_mod->maxsize)
+ 		clnt->msize = clnt->trans_mod->maxsize;
  
-+	hns_nic_reset_subtask(priv);
- 	hns_nic_update_link_status(priv->netdev);
- 	h->dev->ops->update_led_status(h);
- 	hns_nic_update_stats(priv->netdev);
- 
--	hns_nic_reset_subtask(priv);
- 	hns_nic_service_event_complete(priv);
- }
- 
--- 
-2.19.1
-
++	if (clnt->msize < 4096) {
++		p9_debug(P9_DEBUG_ERROR,
++			 "Please specify a msize of at least 4k\n");
++		err = -EINVAL;
++		goto free_client;
++	}
++
+ 	err = p9_client_version(clnt);
+ 	if (err)
+ 		goto close_trans;
 
 
