@@ -2,89 +2,180 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1984C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 03:48:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE847C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 03:54:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF23321872
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 03:48:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7223320872
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 03:54:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="GfxCLAzI"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eIDfgAtl"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730566AbfAKDsY (ORCPT
+        id S1730553AbfAKDyK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 22:48:24 -0500
-Received: from ozlabs.org ([203.11.71.1]:57573 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728472AbfAKDsX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 22:48:23 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43bTNg4Rjnz9sCh;
-        Fri, 11 Jan 2019 14:48:19 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1547178501;
-        bh=XgczFDd3fsw6t76OZ8FXdT/uIFjV77rA1wzdADUDD9s=;
-        h=Date:From:To:Cc:Subject:From;
-        b=GfxCLAzI7UF1WMkMEet67UT8QcO4ky2xuyT7gHkcvGPOfkyywNBno4DwapbH3cimZ
-         V/XoHmiOPfpK+kwPnAuEuSxNqIWwmbzPjexm+XlRep5lcyWSYbBGfptniKMRmbcT46
-         AO4cg7jj/NDAL8F5qmDPaC+Vrshh3ZC0TX6yuJtzZpmA8YTTMutDcaB0vYARcTDS0r
-         FxuRAV566f1dhmMCQhhlmRgjmbQttvBpeFN83e4r2WmOOLKSC9AAZbpWfHO6x+SFLh
-         aTuapv8Sl87Vcz92mGZOit3olkkQgi/fgrO66H8Y/FqHS98XI/xSCchyDnuaEX/LSK
-         mL537i6SASxKg==
-Date:   Fri, 11 Jan 2019 14:48:18 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     David Miller <davem@davemloft.net>,
-        Networking <netdev@vger.kernel.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Frank Wunderlich <frank-w@public-files.de>
-Subject: linux-next: Signed-off-by missing for commit in the net tree
-Message-ID: <20190111144818.0fe8bde2@canb.auug.org.au>
+        Thu, 10 Jan 2019 22:54:10 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:46618 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728825AbfAKDyJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 22:54:09 -0500
+Received: by mail-ot1-f66.google.com with SMTP id w25so11974797otm.13
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 19:54:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Mh8Y13SDTRaV+A1oBQTFShssINOe7TO814WDWYQK8PQ=;
+        b=eIDfgAtldZAUkxiAEktyusIxFrSMYnws+/L0hQWS//wF4Y0HA+7ZIl+Mmdy+qfeAVo
+         iHks2mCHLn6TkXfgMTIOT97fyZ7rPdCdyx6+U/HG4f7f/fwXu8UnYY5LMvCN+lf2m0T8
+         Cs7HBAjdcNi5IxDxypz7by0O0/0/iIzJNs/YnIQ0St2g2op8hLI3WyX+JJHUz70JhGgp
+         fhHC2xCsL0VWsuQWKpNUF3DxamDenll90bycc6Ts1C3I44Y7jQQhSdN0IbXHzZak+cEt
+         WpxUrf4/FOX0HspiJ2k/bIUBF2tONoocrXF65kL5E32PP0E9nl4Nn4M+zpQqZeYVadi2
+         6LpA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Mh8Y13SDTRaV+A1oBQTFShssINOe7TO814WDWYQK8PQ=;
+        b=gf/rSdNOIPwsKHrfP2ti6h6GBwOalKTdt1K7sVNVxHPWqeMLnp4H40kLASFNNMh4Dv
+         dqF7A0YUi1nhJT3F9VmYIM/nrS6381dSPf6M8OP88d2HeiGFivezkf29D0/Sa5szbfa+
+         krl1/1wdgPDLHUr8TXqXgLeOWkEB7DSdNBgsoQdwX1tmrOb+OiUizTIuV4YieVBamGZR
+         h8c7zqM5VRqocEjjrjcKc+FHCodttnZ7OOYyMcbS4Nz0Mu+/ZKgzQoo4g9pald1WoPiu
+         LIZ8RwLoJv5BkNLzIgMPVNWAnm4bScQhQ2iHo6hu6mxHb4xwDRJBl0bkIlS5wGXttgES
+         V7qw==
+X-Gm-Message-State: AJcUukc9Se+BasfRHDT5thcT+E5NwsiWaOj5pNWSMdBIzdlwYyYZrjmS
+        uuNG8Md1ttuD1MPIMEJ0qVRFsBqsgPa3WXyI2cX95ZS/
+X-Google-Smtp-Source: ALg8bN7hsagFfq3/jS6BnlhjYPEH2g975gQQp87jMZLAaKlMNd7J10IBYEAW9Il2b9e1Gya9AB8OfdyhxPF6D2gJzpw=
+X-Received: by 2002:a9d:14e:: with SMTP id 72mr8898399otu.54.1547178848846;
+ Thu, 10 Jan 2019 19:54:08 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/YmCBCE5/VNM7QcL2feSRQ2n"; protocol="application/pgp-signature"
+References: <20181213105924.30384-1-shameerali.kolothum.thodi@huawei.com> <4fe81519-1ddc-1d73-8c7a-cd0865299b53@arm.com>
+In-Reply-To: <4fe81519-1ddc-1d73-8c7a-cd0865299b53@arm.com>
+From:   Ganapatrao Kulkarni <gklkml16@gmail.com>
+Date:   Fri, 11 Jan 2019 09:23:57 +0530
+Message-ID: <CAKTKpr4uvQtYKrcAMSoaA-sYv2MNCqZgRb2KQhYa23KaYptaUA@mail.gmail.com>
+Subject: Re: [PATCH v3] irqchip: gicv3-its: Use NUMA aware memory allocation
+ for ITS tables
+To:     Marc Zyngier <marc.zyngier@arm.com>
+Cc:     Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
+        LKML <linux-kernel@vger.kernel.org>, shankerd@codeaurora.org,
+        Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>,
+        Robert Richter <Robert.Richter@cavium.com>,
+        Hanjun Guo <guohanjun@huawei.com>,
+        John Garry <john.garry@huawei.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Linuxarm <linuxarm@huawei.com>,
+        "Nair, Jayachandran" <Jayachandran.Nair@cavium.com>,
+        gkulkarni@marvell.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/YmCBCE5/VNM7QcL2feSRQ2n
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Shameer,
 
-Hi all,
+Patch looks OK to me, please feel free to add,
+Reviewed-by: Ganapatrao Kulkarni <gkulkarni@marvell.com>
 
-Commit
+On Thu, Dec 13, 2018 at 5:25 PM Marc Zyngier <marc.zyngier@arm.com> wrote:
+>
+> On 13/12/2018 10:59, Shameer Kolothum wrote:
+> > From: Shanker Donthineni <shankerd@codeaurora.org>
+> >
+> > The NUMA node information is visible to ITS driver but not being used
+> > other than handling hardware errata. ITS/GICR hardware accesses to the
+> > local NUMA node is usually quicker than the remote NUMA node. How slow
+> > the remote NUMA accesses are depends on the implementation details.
+> >
+> > This patch allocates memory for ITS management tables and command
+> > queue from the corresponding NUMA node using the appropriate NUMA
+> > aware functions. This change improves the performance of the ITS
+> > tables read latency on systems where it has more than one ITS block,
+> > and with the slower inter node accesses.
+> >
+> > Apache Web server benchmarking using ab tool on a HiSilicon D06
+> > board with multiple numa mem nodes shows Time per request and
+> > Transfer rate improvements of ~3.6% with this patch.
+> >
+> > Signed-off-by: Shanker Donthineni <shankerd@codeaurora.org>
+> > Signed-off-by: Hanjun Guo <guohanjun@huawei.com>
+> > Signed-off-by: Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
+> > ---
+> >
+> > This is to revive the patch originally sent by Shanker[1] and
+> > to back it up with a benchmark test. Any further testing of
+> > this is most welcome.
+> >
+> > v2-->v3
+> >  -Addressed comments to use page_address().
+> >  -Added Benchmark results to commit log.
+> >  -Removed T-by from Ganapatrao for now.
+> >
+> > v1-->v2
+> >  -Edited commit text.
+> >  -Added Ganapatrao's tested-by.
+> >
+> > Benchmark test details:
+> > --------------------------------
+> > Test Setup:
+> > -D06 with dimm on node 0(Sock#0) and 3 (Sock#1).
+> > -ITS belongs to numa node 0.
+> > -Filesystem mounted on a PCIe NVMe based disk.
+> > -Apache server installed on D06.
+> > -Running ab benchmark test in concurrency mode from a remote m/c
+> >  connected to D06 via  hns3(PCIe) n/w port.
+> >  "ab -k -c 750 -n 2000000 http://10.202.225.188/"
+> >
+> > Test results are avg. of 15 runs.
+> >
+> > For 4.20-rc1  Kernel,
+> > ----------------------------
+> > Time per request(mean, concurrent)  = 0.02753[ms]
+> > Transfer Rate = 416501[Kbytes/sec]
+> >
+> > For 4.20-rc1 +  this patch,
+> > ----------------------------------
+> > Time per request(mean, concurrent)  = 0.02653[ms]
+> > Transfer Rate = 431954[Kbytes/sec]
+> >
+> > % improvement ~3.6%
+> >
+> > vmstat shows around 170K-200K interrupts per second.
+> >
+> > ~# vmstat 1 -w
+> > procs -----------------------memory-- -  -system--
+> >  r  b         swpd         free            in
+> >  5  0            0     30166724          102794
+> >  9  0            0     30141828          171148
+> >  5  0            0     30150160          207185
+> > 13  0            0     30145924          175691
+> > 15  0            0     30140792          145250
+> > 13  0            0     30135556          201879
+> > 13  0            0     30134864          192391
+> > 10  0            0     30133632          168880
+> > ....
+> >
+> > [1] https://patchwork.kernel.org/patch/9833339/
+>
+> The figures certainly look convincing. I'd need someone from Cavium to
+> benchmark it on their hardware and come back with results so that we can
+> make a decision on this.
 
-  b19bce0335e2 ("net: ethernet: mediatek: fix warning in phy_start_aneg")
+Hi Marc,
+My setup got altered during Lab migration from Cavium to Marvell office.
+I don't think, i will have same setup anytime soon.
 
-is missing a Signed-off-by from its author.
+>
+> Thanks,
+>
+>         M.
+> --
+> Jazz is not dead. It just smells funny...
 
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/YmCBCE5/VNM7QcL2feSRQ2n
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlw4EgIACgkQAVBC80lX
-0GxDOQf8CS4+7j4pDYbSDumoahs2ThLSJpJEbpzfGOImIcNHTiA7ch6xw7bgUktK
-da74siHJZYRRt/U3nvQR5cW3c8fA1RTDCqjoPhvu/XaMYzuS4dcJwb2Qiou5fuqa
-4GwNlk+roz9fDeFZPP+aiay2POvAZlIQNm4UiluNTURVqa1Z64Gy5rLgIr5jGak1
-GW7xGuQhPTzqxkbE9ayXVl6Kx3QTsJRS8l9hCgo6xKy5Z9HXbHKvvGDXIwVCU8vm
-Hk24KX2jsJTb/D8kso9AMzMd2iJ8AAoj6fnLup5TA2Oae2y3o82dlKtcggh3dyAm
-49KUNjJ8lQsNB8hFIeSFryvClz0QUg==
-=F1i+
------END PGP SIGNATURE-----
-
---Sig_/YmCBCE5/VNM7QcL2feSRQ2n--
+Thanks,
+Ganapat
