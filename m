@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A655C43444
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:49:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 065DFC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:49:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C397206B6
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:49:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CB468206B6
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:49:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547218156;
-	bh=5DQao4lz0gBIA8aKnxJT9Kfm2pGxGh0GfzYBldR/Wss=;
+	s=default; t=1547218160;
+	bh=N0OIT+0Jo4S4wKbgnFgfGUq1Cib4n1UfEELXIG8scbo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=t23ERKPx8MQjOlfisJW6hw4RjJv5SbfHIuO4qGdJeC0ZBY3T8bsevLwLW908N19p9
-	 MO7jFFyGAxYwURAFMZ3uyca/IHy02hKMaZ15F/gOIzxNv7JjR5gy5UZ1A+oQc9UOdw
-	 oW2c/JlllIGbMhgOZsS7uIr7Du96BIvfs53D4sMo=
+	b=yYjtVseITgWNHqKCyrK0hgIsoXwNyJ4o6c56w9iAHL1v5zWITvKxXss1D2YKzxvby
+	 QOHsOkKF0kICfw8IDUAZOZWFJYkAGoP1hQSIV2wkLDigNt5B5gX83HpEewYhik6aha
+	 vMY8Zaf1hL7PT5kUvzUQTx8tZ5cF7XFjt/fwh9Pc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403963AbfAKOlG (ORCPT
+        id S2391576AbfAKOtT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:41:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33622 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:49:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33774 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403939AbfAKOk5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:40:57 -0500
+        id S2403960AbfAKOlG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:41:06 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6777C2063F;
-        Fri, 11 Jan 2019 14:40:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 28904206B6;
+        Fri, 11 Jan 2019 14:41:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547217656;
-        bh=5DQao4lz0gBIA8aKnxJT9Kfm2pGxGh0GfzYBldR/Wss=;
+        s=default; t=1547217665;
+        bh=N0OIT+0Jo4S4wKbgnFgfGUq1Cib4n1UfEELXIG8scbo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iaK3BWPOSmTTduNEORSMNG+k3pAra8B/I4IU5Bqz9zNBk4pShgKWJ/oLpiqXqpsuh
-         rNATewGFe28hdcwVmdxYKBJb+AD0r3/bhRM+NdYUN11axMTtudvOQUu8IQ3GuuaXPe
-         w7K7RB1/OuozUCK/9W1N+V5OY21U0u1Y+WJm7GsY=
+        b=uTNzKi1QlT6/8dXk8PMGDiiSZNMh82wvRC6bKXJY69pyWv0XpqCV7KMISnXxr9sL2
+         G2Ia3FnMC+lRF0hRei50GSKMWCSQ0dNPGreFdc3/yjhFE6vvsV7HIHnVzK906UYoPh
+         DuXX2azjQJ8fq+SDdtg4IsUtambAail6Ojs6qf+4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>,
-        Pavel Machek <pavel@ucw.cz>,
-        Sebastian Reichel <sebastian.reichel@collabora.com>
-Subject: [PATCH 4.19 141/148] power: supply: olpc_battery: correct the temperature units
-Date:   Fri, 11 Jan 2019 15:15:19 +0100
-Message-Id: <20190111131119.944308459@linuxfoundation.org>
+        stable@vger.kernel.org, Michael Bringmann <mwb@linux.vnet.ibm.com>,
+        Frank Rowand <frank.rowand@sony.com>,
+        Rob Herring <robh@kernel.org>
+Subject: [PATCH 4.19 143/148] of: __of_detach_node() - remove node from phandle cache
+Date:   Fri, 11 Jan 2019 15:15:21 +0100
+Message-Id: <20190111131120.033321628@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131114.337122649@linuxfoundation.org>
 References: <20190111131114.337122649@linuxfoundation.org>
@@ -66,51 +66,107 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Lubomir Rintel <lkundrak@v3.sk>
+From: Frank Rowand <frank.rowand@sony.com>
 
-commit ed54ffbe554f0902689fd6d1712bbacbacd11376 upstream.
+commit 5801169a2ed20003f771acecf3ac00574cf10a38 upstream.
 
-According to [1] and [2], the temperature values are in tenths of degree
-Celsius. Exposing the Celsius value makes the battery appear on fire:
+Non-overlay dynamic devicetree node removal may leave the node in
+the phandle cache.  Subsequent calls to of_find_node_by_phandle()
+will incorrectly find the stale entry.  Remove the node from the
+cache.
 
-  $ upower -i /org/freedesktop/UPower/devices/battery_olpc_battery
-  ...
-      temperature:         236.9 degrees C
+Add paranoia checks in of_find_node_by_phandle() as a second level
+of defense (do not return cached node if detached, do not add node
+to cache if detached).
 
-Tested on OLPC XO-1 and OLPC XO-1.75 laptops.
-
-[1] include/linux/power_supply.h
-[2] Documentation/power/power_supply_class.txt
-
-Fixes: fb972873a767 ("[BATTERY] One Laptop Per Child power/battery driver")
-Cc: stable@vger.kernel.org
-Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-Acked-by: Pavel Machek <pavel@ucw.cz>
-Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+Fixes: 0b3ce78e90fc ("of: cache phandle nodes to reduce cost of of_find_node_by_phandle()")
+Reported-by: Michael Bringmann <mwb@linux.vnet.ibm.com>
+Cc: stable@vger.kernel.org # v4.17+
+Signed-off-by: Frank Rowand <frank.rowand@sony.com>
+Signed-off-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/power/supply/olpc_battery.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/of/base.c       |   31 ++++++++++++++++++++++++++++++-
+ drivers/of/dynamic.c    |    3 +++
+ drivers/of/of_private.h |    4 ++++
+ 3 files changed, 37 insertions(+), 1 deletion(-)
 
---- a/drivers/power/supply/olpc_battery.c
-+++ b/drivers/power/supply/olpc_battery.c
-@@ -428,14 +428,14 @@ static int olpc_bat_get_property(struct
- 		if (ret)
- 			return ret;
+--- a/drivers/of/base.c
++++ b/drivers/of/base.c
+@@ -161,6 +161,28 @@ int of_free_phandle_cache(void)
+ late_initcall_sync(of_free_phandle_cache);
+ #endif
  
--		val->intval = (s16)be16_to_cpu(ec_word) * 100 / 256;
-+		val->intval = (s16)be16_to_cpu(ec_word) * 10 / 256;
- 		break;
- 	case POWER_SUPPLY_PROP_TEMP_AMBIENT:
- 		ret = olpc_ec_cmd(EC_AMB_TEMP, NULL, 0, (void *)&ec_word, 2);
- 		if (ret)
- 			return ret;
++/*
++ * Caller must hold devtree_lock.
++ */
++void __of_free_phandle_cache_entry(phandle handle)
++{
++	phandle masked_handle;
++	struct device_node *np;
++
++	if (!handle)
++		return;
++
++	masked_handle = handle & phandle_cache_mask;
++
++	if (phandle_cache) {
++		np = phandle_cache[masked_handle];
++		if (np && handle == np->phandle) {
++			of_node_put(np);
++			phandle_cache[masked_handle] = NULL;
++		}
++	}
++}
++
+ void of_populate_phandle_cache(void)
+ {
+ 	unsigned long flags;
+@@ -1169,11 +1191,18 @@ struct device_node *of_find_node_by_phan
+ 		if (phandle_cache[masked_handle] &&
+ 		    handle == phandle_cache[masked_handle]->phandle)
+ 			np = phandle_cache[masked_handle];
++		if (np && of_node_check_flag(np, OF_DETACHED)) {
++			WARN_ON(1); /* did not uncache np on node removal */
++			of_node_put(np);
++			phandle_cache[masked_handle] = NULL;
++			np = NULL;
++		}
+ 	}
  
--		val->intval = (int)be16_to_cpu(ec_word) * 100 / 256;
-+		val->intval = (int)be16_to_cpu(ec_word) * 10 / 256;
- 		break;
- 	case POWER_SUPPLY_PROP_CHARGE_COUNTER:
- 		ret = olpc_ec_cmd(EC_BAT_ACR, NULL, 0, (void *)&ec_word, 2);
+ 	if (!np) {
+ 		for_each_of_allnodes(np)
+-			if (np->phandle == handle) {
++			if (np->phandle == handle &&
++			    !of_node_check_flag(np, OF_DETACHED)) {
+ 				if (phandle_cache) {
+ 					/* will put when removed from cache */
+ 					of_node_get(np);
+--- a/drivers/of/dynamic.c
++++ b/drivers/of/dynamic.c
+@@ -268,6 +268,9 @@ void __of_detach_node(struct device_node
+ 	}
+ 
+ 	of_node_set_flag(np, OF_DETACHED);
++
++	/* race with of_find_node_by_phandle() prevented by devtree_lock */
++	__of_free_phandle_cache_entry(np->phandle);
+ }
+ 
+ /**
+--- a/drivers/of/of_private.h
++++ b/drivers/of/of_private.h
+@@ -76,6 +76,10 @@ static inline void __of_detach_node_sysf
+ int of_resolve_phandles(struct device_node *tree);
+ #endif
+ 
++#if defined(CONFIG_OF_DYNAMIC)
++void __of_free_phandle_cache_entry(phandle handle);
++#endif
++
+ #if defined(CONFIG_OF_OVERLAY)
+ void of_overlay_mutex_lock(void);
+ void of_overlay_mutex_unlock(void);
 
 
