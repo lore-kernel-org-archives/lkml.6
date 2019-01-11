@@ -4,52 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F26E2C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:18:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60574C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:18:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BCCD82177B
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:18:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 280C021783
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:18:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547216296;
-	bh=R54gWuY83Skfplo0UwTgLVDNUsRLSivCQc7qGA0dIs8=;
+	s=default; t=1547216300;
+	bh=LjXNoPFKqGwaY7OjIqIxvOPCQKJ5hM6LYYg8I2UmTEI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=C1QuPLjMmofE1gAB2Ya8lYKfTkxHValJxVv/q1wqyGgDmyonXmzSYRzx7r5aCSB1J
-	 HuPKtu4NQCeGc7UNI+oA/6KldoAkdqEd/FeM/PGW4ev2CPYWO+w0DdK4zgj1kpAHQa
-	 2ozYx1d5KJx8iNJY7y9wFHiao9SsKQRI4gCcxKnk=
+	b=zKQscYoz5hwIQZuvY6WLfM2DzcqSPtlw9JOiMkbDXiqZz16HxSdyty8ubvxSLvFql
+	 7XTgEyJxBQgW32PPp1xNcHNV7qwsftG5yszyNcQW9yFcT5czQpjIz3HATo4TtdIVCf
+	 tSjxxWMBE/p1mBDjq4n1Q8KqO/G7x1IMcSC4BFCc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730154AbfAKOSQ (ORCPT
+        id S2387965AbfAKOST (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:18:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34630 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:18:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34598 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387954AbfAKOSL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:18:11 -0500
+        id S2387958AbfAKOSI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:18:08 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E75012177B;
-        Fri, 11 Jan 2019 14:18:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6910F21783;
+        Fri, 11 Jan 2019 14:18:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547216290;
-        bh=R54gWuY83Skfplo0UwTgLVDNUsRLSivCQc7qGA0dIs8=;
+        s=default; t=1547216287;
+        bh=LjXNoPFKqGwaY7OjIqIxvOPCQKJ5hM6LYYg8I2UmTEI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wdTi5YGLLX+okPWwXQB5QQvk6E4MDBzXnEdSAC1grIcutqiDlmufJjQ35ddknnuqh
-         VXx4JDOWKvOq1mnzp7yDuH8jrn73Nd2XWwweuvdfLw1My3cqrG3mUROW+FgiM9Jf0C
-         ucspbLHjzmolBmvZoJs4p+qmwssVMqXuxXw9Dpm8=
+        b=AQ8l7sQFxQ+NoO4sXxUtMEUaWeOa9IHTe6UGVuM0nFlig5iVhSRmzxcjm+UUyL74r
+         br5AaJVRJl6R3ICd7CTkUcVZaYr40cG3Ck/XB2nXldojurjhF/7Vv8pX/qN0gg9pz/
+         bsGumzxSdIBR2gqAV4hJrov8Uz/6e/xjYhZnWEZw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Dexuan Cui <decui@microsoft.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 11/88] Drivers: hv: vmbus: Return -EINVAL for the sys files for unopened channels
-Date:   Fri, 11 Jan 2019 15:07:40 +0100
-Message-Id: <20190111131047.857135317@linuxfoundation.org>
+        stable@vger.kernel.org, Christophe Leroy <christophe.leroy@c-s.fr>,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH 4.4 10/88] gpio: max7301: fix driver for use with CONFIG_VMAP_STACK
+Date:   Fri, 11 Jan 2019 15:07:39 +0100
+Message-Id: <20190111131047.766590333@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131045.137499039@linuxfoundation.org>
 References: <20190111131045.137499039@linuxfoundation.org>
@@ -68,119 +65,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dexuan Cui <decui@microsoft.com>
+From: Christophe Leroy <christophe.leroy@c-s.fr>
 
-commit fc96df16a1ce80cbb3c316ab7d4dc8cd5c2852ce upstream.
+commit abf221d2f51b8ce7b9959a8953f880a8b0a1400d upstream.
 
-Before 98f4c651762c, we returned zeros for unopened channels.
-With 98f4c651762c, we started to return random on-stack values.
+spi_read() and spi_write() require DMA-safe memory. When
+CONFIG_VMAP_STACK is selected, those functions cannot be used
+with buffers on stack.
 
-We'd better return -EINVAL instead.
+This patch replaces calls to spi_read() and spi_write() by
+spi_write_then_read() which doesn't require DMA-safe buffers.
 
-Fixes: 98f4c651762c ("hv: move ringbuffer bus attributes to dev_groups")
-Cc: stable@vger.kernel.org
-Cc: K. Y. Srinivasan <kys@microsoft.com>
-Cc: Haiyang Zhang <haiyangz@microsoft.com>
-Cc: Stephen Hemminger <sthemmin@microsoft.com>
-Signed-off-by: Dexuan Cui <decui@microsoft.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: 0c36ec314735 ("gpio: gpio driver for max7301 SPI GPIO expander")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/hv/vmbus_drv.c |   20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+ drivers/gpio/gpio-max7301.c |   12 +++---------
+ 1 file changed, 3 insertions(+), 9 deletions(-)
 
---- a/drivers/hv/vmbus_drv.c
-+++ b/drivers/hv/vmbus_drv.c
-@@ -316,6 +316,8 @@ static ssize_t out_intr_mask_show(struct
+--- a/drivers/gpio/gpio-max7301.c
++++ b/drivers/gpio/gpio-max7301.c
+@@ -25,7 +25,7 @@ static int max7301_spi_write(struct devi
+ 	struct spi_device *spi = to_spi_device(dev);
+ 	u16 word = ((reg & 0x7F) << 8) | (val & 0xFF);
  
- 	if (!hv_dev->channel)
- 		return -ENODEV;
-+	if (hv_dev->channel->state != CHANNEL_OPENED_STATE)
-+		return -EINVAL;
- 	hv_ringbuffer_get_debuginfo(&hv_dev->channel->outbound, &outbound);
- 	return sprintf(buf, "%d\n", outbound.current_interrupt_mask);
+-	return spi_write(spi, (const u8 *)&word, sizeof(word));
++	return spi_write_then_read(spi, &word, sizeof(word), NULL, 0);
  }
-@@ -329,6 +331,8 @@ static ssize_t out_read_index_show(struc
  
- 	if (!hv_dev->channel)
- 		return -ENODEV;
-+	if (hv_dev->channel->state != CHANNEL_OPENED_STATE)
-+		return -EINVAL;
- 	hv_ringbuffer_get_debuginfo(&hv_dev->channel->outbound, &outbound);
- 	return sprintf(buf, "%d\n", outbound.current_read_index);
- }
-@@ -343,6 +347,8 @@ static ssize_t out_write_index_show(stru
+ /* A read from the MAX7301 means two transfers; here, one message each */
+@@ -37,14 +37,8 @@ static int max7301_spi_read(struct devic
+ 	struct spi_device *spi = to_spi_device(dev);
  
- 	if (!hv_dev->channel)
- 		return -ENODEV;
-+	if (hv_dev->channel->state != CHANNEL_OPENED_STATE)
-+		return -EINVAL;
- 	hv_ringbuffer_get_debuginfo(&hv_dev->channel->outbound, &outbound);
- 	return sprintf(buf, "%d\n", outbound.current_write_index);
- }
-@@ -357,6 +363,8 @@ static ssize_t out_read_bytes_avail_show
- 
- 	if (!hv_dev->channel)
- 		return -ENODEV;
-+	if (hv_dev->channel->state != CHANNEL_OPENED_STATE)
-+		return -EINVAL;
- 	hv_ringbuffer_get_debuginfo(&hv_dev->channel->outbound, &outbound);
- 	return sprintf(buf, "%d\n", outbound.bytes_avail_toread);
- }
-@@ -371,6 +379,8 @@ static ssize_t out_write_bytes_avail_sho
- 
- 	if (!hv_dev->channel)
- 		return -ENODEV;
-+	if (hv_dev->channel->state != CHANNEL_OPENED_STATE)
-+		return -EINVAL;
- 	hv_ringbuffer_get_debuginfo(&hv_dev->channel->outbound, &outbound);
- 	return sprintf(buf, "%d\n", outbound.bytes_avail_towrite);
- }
-@@ -384,6 +394,8 @@ static ssize_t in_intr_mask_show(struct
- 
- 	if (!hv_dev->channel)
- 		return -ENODEV;
-+	if (hv_dev->channel->state != CHANNEL_OPENED_STATE)
-+		return -EINVAL;
- 	hv_ringbuffer_get_debuginfo(&hv_dev->channel->inbound, &inbound);
- 	return sprintf(buf, "%d\n", inbound.current_interrupt_mask);
- }
-@@ -397,6 +409,8 @@ static ssize_t in_read_index_show(struct
- 
- 	if (!hv_dev->channel)
- 		return -ENODEV;
-+	if (hv_dev->channel->state != CHANNEL_OPENED_STATE)
-+		return -EINVAL;
- 	hv_ringbuffer_get_debuginfo(&hv_dev->channel->inbound, &inbound);
- 	return sprintf(buf, "%d\n", inbound.current_read_index);
- }
-@@ -410,6 +424,8 @@ static ssize_t in_write_index_show(struc
- 
- 	if (!hv_dev->channel)
- 		return -ENODEV;
-+	if (hv_dev->channel->state != CHANNEL_OPENED_STATE)
-+		return -EINVAL;
- 	hv_ringbuffer_get_debuginfo(&hv_dev->channel->inbound, &inbound);
- 	return sprintf(buf, "%d\n", inbound.current_write_index);
- }
-@@ -424,6 +440,8 @@ static ssize_t in_read_bytes_avail_show(
- 
- 	if (!hv_dev->channel)
- 		return -ENODEV;
-+	if (hv_dev->channel->state != CHANNEL_OPENED_STATE)
-+		return -EINVAL;
- 	hv_ringbuffer_get_debuginfo(&hv_dev->channel->inbound, &inbound);
- 	return sprintf(buf, "%d\n", inbound.bytes_avail_toread);
- }
-@@ -438,6 +456,8 @@ static ssize_t in_write_bytes_avail_show
- 
- 	if (!hv_dev->channel)
- 		return -ENODEV;
-+	if (hv_dev->channel->state != CHANNEL_OPENED_STATE)
-+		return -EINVAL;
- 	hv_ringbuffer_get_debuginfo(&hv_dev->channel->inbound, &inbound);
- 	return sprintf(buf, "%d\n", inbound.bytes_avail_towrite);
- }
+ 	word = 0x8000 | (reg << 8);
+-	ret = spi_write(spi, (const u8 *)&word, sizeof(word));
+-	if (ret)
+-		return ret;
+-	/*
+-	 * This relies on the fact, that a transfer with NULL tx_buf shifts out
+-	 * zero bytes (=NOOP for MAX7301)
+-	 */
+-	ret = spi_read(spi, (u8 *)&word, sizeof(word));
++	ret = spi_write_then_read(spi, &word, sizeof(word), &word,
++				  sizeof(word));
+ 	if (ret)
+ 		return ret;
+ 	return word & 0xff;
 
 
