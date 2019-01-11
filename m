@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-13.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CAF71C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:37:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FB30C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:37:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A039421841
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:37:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EBC3321841
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:37:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547217463;
-	bh=9ng9cKJ2gvzjvZUd6RopQBhVsZudwdxhQrmswdYjfhk=;
+	s=default; t=1547217471;
+	bh=ALQVA96f1LcA3FepxwHA4fz9Eqjm6CCcSOa+XT9T/wI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=BYjhRGttpH8tm0TWQUv85y4qHYDFIPCENttN1Qwi4GZV1pCia+kCYjCBMUiOIUNuk
-	 RVP2nanZgSQL5yHG3Eu1Y5eCQPrgMogKkAswXojhEMUM0+74GrH92nz36psjEutU7l
-	 n6xzHiFxfN0H7jshIykGBTZDGE87bQtA9h5BQn24=
+	b=KSG6JpGszaquTfOIsMzsRygJzW5Ci3vw1U5t7Bt0LqQVNLT/3oTSPDifHkt+Uq93c
+	 ZKWp03fO8imOKGWq7pxe19WDj0Blt7IXyI35RmYSHnQYs949yuRUAFzoqX5sbRkA3+
+	 EWhAO1sO+0d4w6cAoyb62NUafN2nR1uqp/hKU8mo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390238AbfAKOhm (ORCPT
+        id S2390712AbfAKOht (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:37:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58084 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:37:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58254 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390638AbfAKOhd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:37:33 -0500
+        id S2390236AbfAKOhk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:37:40 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 42D0C204EC;
-        Fri, 11 Jan 2019 14:37:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E90E0204EC;
+        Fri, 11 Jan 2019 14:37:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547217451;
-        bh=9ng9cKJ2gvzjvZUd6RopQBhVsZudwdxhQrmswdYjfhk=;
+        s=default; t=1547217459;
+        bh=ALQVA96f1LcA3FepxwHA4fz9Eqjm6CCcSOa+XT9T/wI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Py6elxZK4t/krEkg3469FiYe7Tn3nfv5VCpiA4XrlQIszKuq7qdW6XVLY8mLaKtX0
-         Hutljyq69dIPi3SBlZq4BTmLho7DUbruGpgSWVFAdpdS1889oETdT4sTvj/oD2lEBy
-         yCXJiMB4jY2QTvMkybUBh4Dt68R1w0oYEpCMf6jY=
+        b=tW3AdMciVd/l4WYoqxa0CMhOpKZfVtme/Up8ZxqrRA8g5ewwxiagqVgfrDHTG7DbI
+         QcFD5YM+LcDl3+ANhiyeW4Pij1QpUsSaukfT/R/pTLIdpq9EAoVlKTZwtft4NTu29p
+         55LA7QpPXokgGy/1P0s9N8rlPB4xNl9nybn3YOt8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Falcon <tlfalcon@linux.ibm.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Taehee Yoo <ap420073@gmail.com>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 027/148] ibmvnic: Fix non-atomic memory allocation in IRQ context
-Date:   Fri, 11 Jan 2019 15:13:25 +0100
-Message-Id: <20190111131115.392381183@linuxfoundation.org>
+Subject: [PATCH 4.19 020/148] netfilter: nf_tables: fix suspicious RCU usage in nft_chain_stats_replace()
+Date:   Fri, 11 Jan 2019 15:13:18 +0100
+Message-Id: <20190111131115.127891672@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131114.337122649@linuxfoundation.org>
 References: <20190111131114.337122649@linuxfoundation.org>
@@ -66,66 +66,161 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 1d1bbc37f89b0559c9e913682f2489d89cfde6b8 ]
+[ Upstream commit 4c05ec47384ab3627b62814e8f886e90cc38ce15 ]
 
-ibmvnic_reset allocated new reset work item objects in a non-atomic
-context. This can be called from a tasklet, generating the output below.
-Allocate work items with the GFP_ATOMIC flag instead.
+basechain->stats is rcu protected data which is updated from
+nft_chain_stats_replace(). This function is executed from the commit
+phase which holds the pernet nf_tables commit mutex - not the global
+nfnetlink subsystem mutex.
 
-BUG: sleeping function called from invalid context at mm/slab.h:421
-in_atomic(): 1, irqs_disabled(): 1, pid: 93, name: kworker/0:2
-INFO: lockdep is turned off.
-irq event stamp: 66049
-hardirqs last  enabled at (66048): [<c000000000122468>] tasklet_action_common.isra.12+0x78/0x1c0
-hardirqs last disabled at (66049): [<c000000000befce8>] _raw_spin_lock_irqsave+0x48/0xf0
-softirqs last  enabled at (66044): [<c000000000a8ac78>] dev_deactivate_queue.constprop.28+0xc8/0x160
-softirqs last disabled at (66045): [<c0000000000306e0>] call_do_softirq+0x14/0x24
-CPU: 0 PID: 93 Comm: kworker/0:2 Kdump: loaded Not tainted 4.20.0-rc6-00001-g1b50a8f03706 #7
-Workqueue: events linkwatch_event
-Call Trace:
-[c0000003fffe7ae0] [c000000000bc83e4] dump_stack+0xe8/0x164 (unreliable)
-[c0000003fffe7b30] [c00000000015ba0c] ___might_sleep+0x2dc/0x320
-[c0000003fffe7bb0] [c000000000391514] kmem_cache_alloc_trace+0x3e4/0x440
-[c0000003fffe7c30] [d000000005b2309c] ibmvnic_reset+0x16c/0x360 [ibmvnic]
-[c0000003fffe7cc0] [d000000005b29834] ibmvnic_tasklet+0x1054/0x2010 [ibmvnic]
-[c0000003fffe7e00] [c0000000001224c8] tasklet_action_common.isra.12+0xd8/0x1c0
-[c0000003fffe7e60] [c000000000bf1238] __do_softirq+0x1a8/0x64c
-[c0000003fffe7f90] [c0000000000306e0] call_do_softirq+0x14/0x24
-[c0000003f3967980] [c00000000001ba50] do_softirq_own_stack+0x60/0xb0
-[c0000003f39679c0] [c0000000001218a8] do_softirq+0xa8/0x100
-[c0000003f39679f0] [c000000000121a74] __local_bh_enable_ip+0x174/0x180
-[c0000003f3967a60] [c000000000bf003c] _raw_spin_unlock_bh+0x5c/0x80
-[c0000003f3967a90] [c000000000a8ac78] dev_deactivate_queue.constprop.28+0xc8/0x160
-[c0000003f3967ad0] [c000000000a8c8b0] dev_deactivate_many+0xd0/0x520
-[c0000003f3967b70] [c000000000a8cd40] dev_deactivate+0x40/0x60
-[c0000003f3967ba0] [c000000000a5e0c4] linkwatch_do_dev+0x74/0xd0
-[c0000003f3967bd0] [c000000000a5e694] __linkwatch_run_queue+0x1a4/0x1f0
-[c0000003f3967c30] [c000000000a5e728] linkwatch_event+0x48/0x60
-[c0000003f3967c50] [c0000000001444e8] process_one_work+0x238/0x710
-[c0000003f3967d20] [c000000000144a48] worker_thread+0x88/0x4e0
-[c0000003f3967db0] [c00000000014e3a8] kthread+0x178/0x1c0
-[c0000003f3967e20] [c00000000000bfd0] ret_from_kernel_thread+0x5c/0x6c
+Test commands to reproduce the problem are:
+   %iptables-nft -I INPUT
+   %iptables-nft -Z
+   %iptables-nft -Z
 
-Signed-off-by: Thomas Falcon <tlfalcon@linux.ibm.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+This patch uses RCU calls to handle basechain->stats updates to fix a
+splat that looks like:
+
+[89279.358755] =============================
+[89279.363656] WARNING: suspicious RCU usage
+[89279.368458] 4.20.0-rc2+ #44 Tainted: G        W    L
+[89279.374661] -----------------------------
+[89279.379542] net/netfilter/nf_tables_api.c:1404 suspicious rcu_dereference_protected() usage!
+[...]
+[89279.406556] 1 lock held by iptables-nft/5225:
+[89279.411728]  #0: 00000000bf45a000 (&net->nft.commit_mutex){+.+.}, at: nf_tables_valid_genid+0x1f/0x70 [nf_tables]
+[89279.424022] stack backtrace:
+[89279.429236] CPU: 0 PID: 5225 Comm: iptables-nft Tainted: G        W    L    4.20.0-rc2+ #44
+[89279.430135] Call Trace:
+[89279.430135]  dump_stack+0xc9/0x16b
+[89279.430135]  ? show_regs_print_info+0x5/0x5
+[89279.430135]  ? lockdep_rcu_suspicious+0x117/0x160
+[89279.430135]  nft_chain_commit_update+0x4ea/0x640 [nf_tables]
+[89279.430135]  ? sched_clock_local+0xd4/0x140
+[89279.430135]  ? check_flags.part.35+0x440/0x440
+[89279.430135]  ? __rhashtable_remove_fast.constprop.67+0xec0/0xec0 [nf_tables]
+[89279.430135]  ? sched_clock_cpu+0x126/0x170
+[89279.430135]  ? find_held_lock+0x39/0x1c0
+[89279.430135]  ? hlock_class+0x140/0x140
+[89279.430135]  ? is_bpf_text_address+0x5/0xf0
+[89279.430135]  ? check_flags.part.35+0x440/0x440
+[89279.430135]  ? __lock_is_held+0xb4/0x140
+[89279.430135]  nf_tables_commit+0x2555/0x39c0 [nf_tables]
+
+Fixes: f102d66b335a4 ("netfilter: nf_tables: use dedicated mutex to guard transactions")
+Signed-off-by: Taehee Yoo <ap420073@gmail.com>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/ibm/ibmvnic.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/linux/netfilter/nfnetlink.h | 12 ------------
+ net/netfilter/nf_tables_api.c       | 21 +++++++++++++--------
+ net/netfilter/nf_tables_core.c      |  2 +-
+ 3 files changed, 14 insertions(+), 21 deletions(-)
 
-diff --git a/drivers/net/ethernet/ibm/ibmvnic.c b/drivers/net/ethernet/ibm/ibmvnic.c
-index 5058bd83bdd6..c8704b1690eb 100644
---- a/drivers/net/ethernet/ibm/ibmvnic.c
-+++ b/drivers/net/ethernet/ibm/ibmvnic.c
-@@ -2055,7 +2055,7 @@ static int ibmvnic_reset(struct ibmvnic_adapter *adapter,
- 		}
+diff --git a/include/linux/netfilter/nfnetlink.h b/include/linux/netfilter/nfnetlink.h
+index 4a520d3304a2..cf09ab37b45b 100644
+--- a/include/linux/netfilter/nfnetlink.h
++++ b/include/linux/netfilter/nfnetlink.h
+@@ -62,18 +62,6 @@ static inline bool lockdep_nfnl_is_held(__u8 subsys_id)
+ }
+ #endif /* CONFIG_PROVE_LOCKING */
+ 
+-/*
+- * nfnl_dereference - fetch RCU pointer when updates are prevented by subsys mutex
+- *
+- * @p: The pointer to read, prior to dereferencing
+- * @ss: The nfnetlink subsystem ID
+- *
+- * Return the value of the specified RCU-protected pointer, but omit
+- * the READ_ONCE(), because caller holds the NFNL subsystem mutex.
+- */
+-#define nfnl_dereference(p, ss)					\
+-	rcu_dereference_protected(p, lockdep_nfnl_is_held(ss))
+-
+ #define MODULE_ALIAS_NFNL_SUBSYS(subsys) \
+ 	MODULE_ALIAS("nfnetlink-subsys-" __stringify(subsys))
+ 
+diff --git a/net/netfilter/nf_tables_api.c b/net/netfilter/nf_tables_api.c
+index fe0558b15fd3..ed9af46720e1 100644
+--- a/net/netfilter/nf_tables_api.c
++++ b/net/netfilter/nf_tables_api.c
+@@ -1199,7 +1199,8 @@ static int nf_tables_fill_chain_info(struct sk_buff *skb, struct net *net,
+ 		if (nla_put_string(skb, NFTA_CHAIN_TYPE, basechain->type->name))
+ 			goto nla_put_failure;
+ 
+-		if (basechain->stats && nft_dump_stats(skb, basechain->stats))
++		if (rcu_access_pointer(basechain->stats) &&
++		    nft_dump_stats(skb, rcu_dereference(basechain->stats)))
+ 			goto nla_put_failure;
  	}
  
--	rwi = kzalloc(sizeof(*rwi), GFP_KERNEL);
-+	rwi = kzalloc(sizeof(*rwi), GFP_ATOMIC);
- 	if (!rwi) {
- 		spin_unlock_irqrestore(&adapter->rwi_lock, flags);
- 		ibmvnic_close(netdev);
+@@ -1375,7 +1376,8 @@ static struct nft_stats __percpu *nft_stats_alloc(const struct nlattr *attr)
+ 	return newstats;
+ }
+ 
+-static void nft_chain_stats_replace(struct nft_base_chain *chain,
++static void nft_chain_stats_replace(struct net *net,
++				    struct nft_base_chain *chain,
+ 				    struct nft_stats __percpu *newstats)
+ {
+ 	struct nft_stats __percpu *oldstats;
+@@ -1383,8 +1385,9 @@ static void nft_chain_stats_replace(struct nft_base_chain *chain,
+ 	if (newstats == NULL)
+ 		return;
+ 
+-	if (chain->stats) {
+-		oldstats = nfnl_dereference(chain->stats, NFNL_SUBSYS_NFTABLES);
++	if (rcu_access_pointer(chain->stats)) {
++		oldstats = rcu_dereference_protected(chain->stats,
++					lockdep_commit_lock_is_held(net));
+ 		rcu_assign_pointer(chain->stats, newstats);
+ 		synchronize_rcu();
+ 		free_percpu(oldstats);
+@@ -1421,9 +1424,10 @@ static void nf_tables_chain_destroy(struct nft_ctx *ctx)
+ 		struct nft_base_chain *basechain = nft_base_chain(chain);
+ 
+ 		module_put(basechain->type->owner);
+-		free_percpu(basechain->stats);
+-		if (basechain->stats)
++		if (rcu_access_pointer(basechain->stats)) {
+ 			static_branch_dec(&nft_counters_enabled);
++			free_percpu(rcu_dereference_raw(basechain->stats));
++		}
+ 		kfree(chain->name);
+ 		kfree(basechain);
+ 	} else {
+@@ -1572,7 +1576,7 @@ static int nf_tables_addchain(struct nft_ctx *ctx, u8 family, u8 genmask,
+ 				kfree(basechain);
+ 				return PTR_ERR(stats);
+ 			}
+-			basechain->stats = stats;
++			rcu_assign_pointer(basechain->stats, stats);
+ 			static_branch_inc(&nft_counters_enabled);
+ 		}
+ 
+@@ -6145,7 +6149,8 @@ static void nft_chain_commit_update(struct nft_trans *trans)
+ 		return;
+ 
+ 	basechain = nft_base_chain(trans->ctx.chain);
+-	nft_chain_stats_replace(basechain, nft_trans_chain_stats(trans));
++	nft_chain_stats_replace(trans->ctx.net, basechain,
++				nft_trans_chain_stats(trans));
+ 
+ 	switch (nft_trans_chain_policy(trans)) {
+ 	case NF_DROP:
+diff --git a/net/netfilter/nf_tables_core.c b/net/netfilter/nf_tables_core.c
+index ffd5c0f9412b..60f258f2c707 100644
+--- a/net/netfilter/nf_tables_core.c
++++ b/net/netfilter/nf_tables_core.c
+@@ -101,7 +101,7 @@ static noinline void nft_update_chain_stats(const struct nft_chain *chain,
+ 	struct nft_stats *stats;
+ 
+ 	base_chain = nft_base_chain(chain);
+-	if (!base_chain->stats)
++	if (!rcu_access_pointer(base_chain->stats))
+ 		return;
+ 
+ 	local_bh_disable();
 -- 
 2.19.1
 
