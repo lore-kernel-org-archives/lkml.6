@@ -7,49 +7,48 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CEA81C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:41:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5084FC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:41:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F551206B6
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:41:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1721721841
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:41:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547217676;
-	bh=9EH/BuI1qT7BNmO0SFPLIzOeYvhtQel8qalD2WkM9Ew=;
+	s=default; t=1547217681;
+	bh=vEVaW8836Ts2jkbK9GqHiLxcWVwtrha3i6JCGn8K/uo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=iJ8yaqoSoBftYECA2ZFHXlsxJ07GOc1fB9SBif4CiX1LDTTarcCtshII6ZoxSWN00
-	 lqUr8iPxUSz/mrVEd9yHrUATOQA8FhnOZ9IH7pmuuFV+BgXAYREp7M+ClNH4HGZDAA
-	 J1R7h0LruUeMHCNxuUTFTLbOplT0B0UCJyO0mW4A=
+	b=KaZJk/PT53sAfM/U6CbrHJiQTckrEaxO4NyGzLOsu9gaJs9FoPyK61JANH9W62+6Q
+	 ux4/qHRq5BOW28QHgfxMGgGJ/1TLvjBqFO36MbxXVYj7ndWYM1ZDuMTgmsttpITWrp
+	 zeLHiNOwAaFtL6gR/ru9Qh0LykVoI6TPGl5vr3UA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387577AbfAKOlQ (ORCPT
+        id S2403993AbfAKOlU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:41:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33868 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:41:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33976 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403979AbfAKOlL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:41:11 -0500
+        id S2390990AbfAKOlR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:41:17 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 51CC32063F;
-        Fri, 11 Jan 2019 14:41:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1EE8D2063F;
+        Fri, 11 Jan 2019 14:41:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547217670;
-        bh=9EH/BuI1qT7BNmO0SFPLIzOeYvhtQel8qalD2WkM9Ew=;
+        s=default; t=1547217676;
+        bh=vEVaW8836Ts2jkbK9GqHiLxcWVwtrha3i6JCGn8K/uo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=i7y4zbxzJB5Xu6DyKGSN9m5GKmODulGCPN9Kbm0oGgDBHRBBo4h+fDp8xJTN7oMmP
-         t5vhG7zjUe7bKENFZp9KwpGb2nCJuU/6Dh4XfHKB/7ITx8TtOru4RbC1EYZ54NAn4o
-         rAdXmzI5MsamN8O36N/Zyueer+XbdqNuGYF0OH3o=
+        b=XpfCG+UeDsQ7HYrQxq25fge5DfxcECGjQ6fVjBN1FF2TSgDFLfCJTmTwfaz6MGoO+
+         NHQmNaJkSFRl26lmN/n9PuFQtrJPPs28LfT1KvOpMUtRAyuZutQLUyvp95qAOchPXn
+         Q/miL8MzZ8r8RY6DNUC/4vi/QDMqXBM95SepuMWQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Sebastian Kuzminsky <seb.kuzminsky@gmail.com>,
-        Dennis Krein <Dennis.Krein@netapp.com>,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>
-Subject: [PATCH 4.19 109/148] srcu: Lock srcu_data structure in srcu_gp_start()
-Date:   Fri, 11 Jan 2019 15:14:47 +0100
-Message-Id: <20190111131118.571242496@linuxfoundation.org>
+        stable@vger.kernel.org, Matthew Wilcox <willy@infradead.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.19 111/148] Fix failure path in alloc_pid()
+Date:   Fri, 11 Jan 2019 15:14:49 +0100
+Message-Id: <20190111131118.694414566@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131114.337122649@linuxfoundation.org>
 References: <20190111131114.337122649@linuxfoundation.org>
@@ -68,48 +67,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dennis Krein <Dennis.Krein@netapp.com>
+From: Matthew Wilcox <willy@infradead.org>
 
-commit eb4c2382272ae7ae5d81fdfa5b7a6c86146eaaa4 upstream.
+commit 1a80dade010c7a7f4885a4c4c2a7ac22cc7b34df upstream.
 
-The srcu_gp_start() function is called with the srcu_struct structure's
-->lock held, but not with the srcu_data structure's ->lock.  This is
-problematic because this function accesses and updates the srcu_data
-structure's ->srcu_cblist, which is protected by that lock.  Failing to
-hold this lock can result in corruption of the SRCU callback lists,
-which in turn can result in arbitrarily bad results.
+The failure path removes the allocated PIDs from the wrong namespace.
+This could lead to us inadvertently reusing PIDs in the leaf namespace
+and leaking PIDs in parent namespaces.
 
-This commit therefore makes srcu_gp_start() acquire the srcu_data
-structure's ->lock across the calls to rcu_segcblist_advance() and
-rcu_segcblist_accelerate(), thus preventing this corruption.
-
-Reported-by: Bart Van Assche <bvanassche@acm.org>
-Reported-by: Christoph Hellwig <hch@infradead.org>
-Reported-by: Sebastian Kuzminsky <seb.kuzminsky@gmail.com>
-Signed-off-by: Dennis Krein <Dennis.Krein@netapp.com>
-Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
-Tested-by: Dennis Krein <Dennis.Krein@netapp.com>
-Cc: <stable@vger.kernel.org> # 4.16.x
+Fixes: 95846ecf9dac ("pid: replace pid bitmap implementation with IDR API")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Matthew Wilcox <willy@infradead.org>
+Acked-by: "Eric W. Biederman" <ebiederm@xmission.com>
+Reviewed-by: Oleg Nesterov <oleg@redhat.com>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/rcu/srcutree.c |    2 ++
- 1 file changed, 2 insertions(+)
+ kernel/pid.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/kernel/rcu/srcutree.c
-+++ b/kernel/rcu/srcutree.c
-@@ -448,10 +448,12 @@ static void srcu_gp_start(struct srcu_st
+--- a/kernel/pid.c
++++ b/kernel/pid.c
+@@ -233,8 +233,10 @@ out_unlock:
  
- 	lockdep_assert_held(&ACCESS_PRIVATE(sp, lock));
- 	WARN_ON_ONCE(ULONG_CMP_GE(sp->srcu_gp_seq, sp->srcu_gp_seq_needed));
-+	spin_lock_rcu_node(sdp);  /* Interrupts already disabled. */
- 	rcu_segcblist_advance(&sdp->srcu_cblist,
- 			      rcu_seq_current(&sp->srcu_gp_seq));
- 	(void)rcu_segcblist_accelerate(&sdp->srcu_cblist,
- 				       rcu_seq_snap(&sp->srcu_gp_seq));
-+	spin_unlock_rcu_node(sdp);  /* Interrupts remain disabled. */
- 	smp_mb(); /* Order prior store to ->srcu_gp_seq_needed vs. GP start. */
- 	rcu_seq_start(&sp->srcu_gp_seq);
- 	state = rcu_seq_state(READ_ONCE(sp->srcu_gp_seq));
+ out_free:
+ 	spin_lock_irq(&pidmap_lock);
+-	while (++i <= ns->level)
+-		idr_remove(&ns->idr, (pid->numbers + i)->nr);
++	while (++i <= ns->level) {
++		upid = pid->numbers + i;
++		idr_remove(&upid->ns->idr, upid->nr);
++	}
+ 
+ 	/* On failure to allocate the first pid, reset the state */
+ 	if (ns->pid_allocated == PIDNS_ADDING)
 
 
