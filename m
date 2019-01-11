@@ -2,1030 +2,449 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CB49C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:23:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B57AC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:23:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB2252177B
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:23:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D19302183F
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:23:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="e8fktOQa";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="bFLAUg3b"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388169AbfAKOXi (ORCPT
+        id S2388188AbfAKOXu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:23:38 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:52939 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388139AbfAKOX1 (ORCPT
+        Fri, 11 Jan 2019 09:23:50 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:45982 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728929AbfAKOXt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:23:27 -0500
-Received: from dude.hi.pengutronix.de ([2001:67c:670:100:1d::7])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <ore@pengutronix.de>)
-        id 1ghxiT-00054S-Nb; Fri, 11 Jan 2019 15:23:21 +0100
-Received: from ore by dude.hi.pengutronix.de with local (Exim 4.92-RC4)
-        (envelope-from <ore@pengutronix.de>)
-        id 1ghxiO-0002xN-AR; Fri, 11 Jan 2019 15:23:16 +0100
-From:   Oleksij Rempel <o.rempel@pengutronix.de>
-To:     Paul Burton <paul.burton@mips.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     John Crispin <john@phrozen.org>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, Felix Fietkau <nbd@nbd.name>
-Subject: [PATCH v1 10/11] MIPS: ath79: drop platform device registration code
-Date:   Fri, 11 Jan 2019 15:22:39 +0100
-Message-Id: <20190111142240.10908-11-o.rempel@pengutronix.de>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190111142240.10908-1-o.rempel@pengutronix.de>
-References: <20190111142240.10908-1-o.rempel@pengutronix.de>
+        Fri, 11 Jan 2019 09:23:49 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 9B65660985; Fri, 11 Jan 2019 14:23:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1547216627;
+        bh=w+QbnzcRJnb3qlsj3+tsUrLu/jTW4vdL60TdIsToSe4=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=e8fktOQaT/xb7X7lMXgkORv4cW7BGRcogvAQuJ1RCCBFwOjzvZAcpDdawUrS/z0/B
+         0BuDi4Ajqqp09pcjFwYsyMhCnOAwmBATeocLaoaA/wrfKIZ7wcdJoQV77rtwPLJUBd
+         8Acf3sM7saUQQU15wD5YvW3Wz9ujzvez+5lUcOUM=
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id AFFFB60985;
+        Fri, 11 Jan 2019 14:23:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1547216624;
+        bh=w+QbnzcRJnb3qlsj3+tsUrLu/jTW4vdL60TdIsToSe4=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=bFLAUg3bd/thqVNIeEVpP0hN+FQAjsdv1bpFYzbDnl3ag/CHD0bW+/DXZGpV/gEI3
+         B3aMI0vzUKnxKxiJOlxNZIwaCNZ/M5CPn1KMF3KDOtBNc72pMu4AApnsndPG3uHX3c
+         7W+vkK29oRrqb200Aa2P9viUHTj1tE1/ov5SKBsA=
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::7
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Date:   Fri, 11 Jan 2019 19:53:43 +0530
+From:   Balakrishna Godavarthi <bgodavar@codeaurora.org>
+To:     Matthias Kaehlcke <mka@chromium.org>
+Cc:     Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org,
+        hemantg@codeaurora.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v7 4/4] Bluetooth: btqca: inject command complete event
+ during fw download
+In-Reply-To: <20190110204328.GA261387@google.com>
+References: <20181228114819.17479-1-bgodavar@codeaurora.org>
+ <20181228114819.17479-5-bgodavar@codeaurora.org>
+ <2C799DB5-8033-45B5-A790-A16F73641645@holtmann.org>
+ <de93a7b7169a0cfb8f28f5d8e5138dc7@codeaurora.org>
+ <1FC4CC11-B070-4ACF-9107-857A4D392876@holtmann.org>
+ <1ec946b46301124c90aa12abffeca176@codeaurora.org>
+ <20190102221510.GQ261387@google.com>
+ <c34d44c656cf38a25dbfc9c6a1dd8106@codeaurora.org>
+ <20190110204328.GA261387@google.com>
+Message-ID: <fc3430d2ba5e049883f91ff56aac0dbd@codeaurora.org>
+X-Sender: bgodavar@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: John Crispin <john@phrozen.org>
+Hi Matthias,
 
-With the target now being fully OF based, we can drop the legacy platform
-device registration code. All devices and their drivers are now probed
-via OF.
+On 2019-01-11 02:13, Matthias Kaehlcke wrote:
+> Hi Balakrishna,
+> 
+> On Thu, Jan 10, 2019 at 08:30:43PM +0530, Balakrishna Godavarthi wrote:
+>> Hi Matthias,
+>> 
+>> On 2019-01-03 03:45, Matthias Kaehlcke wrote:
+>> > On Mon, Dec 31, 2018 at 11:34:46AM +0530, Balakrishna Godavarthi wrote:
+>> > > Hi Marcel,
+>> > >
+>> > > On 2018-12-30 13:40, Marcel Holtmann wrote:
+>> > > > Hi Balakrishna,
+>> > > >
+>> > > > > > > Latest qualcomm chips are not sending an command complete event for
+>> > > > > > > every firmware packet sent to chip. They only respond with a vendor
+>> > > > > > > specific event for the last firmware packet. This optimization will
+>> > > > > > > decrease the BT ON time. Due to this we are seeing a timeout error
+>> > > > > > > message logs on the console during firmware download. Now we are
+>> > > > > > > injecting a command complete event once we receive an vendor
+>> > > > > > > specific
+>> > > > > > > event for the last RAM firmware packet.
+>> > > > > > > Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
+>> > > > > > > ---
+>> > > > > > > drivers/bluetooth/btqca.c | 39
+>> > > > > > > ++++++++++++++++++++++++++++++++++++++-
+>> > > > > > > drivers/bluetooth/btqca.h |  3 +++
+>> > > > > > > 2 files changed, 41 insertions(+), 1 deletion(-)
+>> > > > > > > diff --git a/drivers/bluetooth/btqca.c b/drivers/bluetooth/btqca.c
+>> > > > > > > index ec9e03a6b778..0b533f65f652 100644
+>> > > > > > > --- a/drivers/bluetooth/btqca.c
+>> > > > > > > +++ b/drivers/bluetooth/btqca.c
+>> > > > > > > @@ -144,6 +144,7 @@ static void qca_tlv_check_data(struct
+>> > > > > > > rome_config *config,
+>> > > > > > > 		 * In case VSE is skipped, only the last segment is acked.
+>> > > > > > > 		 */
+>> > > > > > > 		config->dnld_mode = tlv_patch->download_mode;
+>> > > > > > > +		config->dnld_type = config->dnld_mode;
+>> > > > > > > 		BT_DBG("Total Length           : %d bytes",
+>> > > > > > > 		       le32_to_cpu(tlv_patch->total_size));
+>> > > > > > > @@ -264,6 +265,31 @@ static int qca_tlv_send_segment(struct
+>> > > > > > > hci_dev *hdev, int seg_size,
+>> > > > > > > 	return err;
+>> > > > > > > }
+>> > > > > > > +static int qca_inject_cmd_complete_event(struct hci_dev *hdev)
+>> > > > > > > +{
+>> > > > > > > +	struct hci_event_hdr *hdr;
+>> > > > > > > +	struct hci_ev_cmd_complete *evt;
+>> > > > > > > +	struct sk_buff *skb;
+>> > > > > > > +
+>> > > > > > > +	skb = bt_skb_alloc(sizeof(*hdr) + sizeof(*evt) + 1, GFP_KERNEL);
+>> > > > > > > +	if (!skb)
+>> > > > > > > +		return -ENOMEM;
+>> > > > > > > +
+>> > > > > > > +	hdr = skb_put(skb, sizeof(*hdr));
+>> > > > > > > +	hdr->evt = HCI_EV_CMD_COMPLETE;
+>> > > > > > > +	hdr->plen = sizeof(*evt) + 1;
+>> > > > > > > +
+>> > > > > > > +	evt = skb_put(skb, sizeof(*evt));
+>> > > > > > > +	evt->ncmd = 1;
+>> > > > > > > +	evt->opcode = HCI_OP_NOP;
+>> >
+>> > After looking a bit more at it I realize HCI_OP_NOP is not a good
+>> > value in this case:
+>> >
+>> > static void hci_cmd_complete_evt(...)
+>> > {
+>> >   ...
+>> >
+>> >   if (*opcode != HCI_OP_NOP)
+>> >     cancel_delayed_work(&hdev->cmd_timer);
+>> >
+>> >   ...
+>> > }
+>> >
+>> > https://elixir.bootlin.com/linux/v4.19/source/net/bluetooth/hci_event.c#L3351
+>> >
+>> > Cancelling the command timeout is precisely what we want. Not sure why
+>> > the patch with HCI_OP_NOP makes the timeouts go away in most cases
+>> > (but not e.g. when inserting an msleep(1000) after downloading the
+>> > NVM.
+>> >
+>> > I suggest to pass the opcode of the command to be completed.
+>> >
+>> > > > > > > +
+>> > > > > > > +	skb_put_u8(skb, QCA_HCI_CC_SUCCESS);
+>> > > > > > > +
+>> > > > > > > +	hci_skb_pkt_type(skb) = HCI_EVENT_PKT;
+>> > > > > > > +
+>> > > > > > > +	return hci_recv_frame(hdev, skb);
+>> > > > > > > +}
+>> > > > > > > +
+>> > > > > > > static int qca_download_firmware(struct hci_dev *hdev,
+>> > > > > > > 				  struct rome_config *config)
+>> > > > > > > {
+>> > > > > > > @@ -297,11 +323,22 @@ static int
+>> > > > > > > qca_download_firmware(struct hci_dev *hdev,
+>> > > > > > > 		ret = qca_tlv_send_segment(hdev, segsize, segment,
+>> > > > > > > 					    config->dnld_mode);
+>> > > > > > > 		if (ret)
+>> > > > > > > -			break;
+>> > > > > > > +			goto out;
+>> > > > > > > 		segment += segsize;
+>> > > > > > > 	}
+>> > > > > > > +	/* Latest qualcomm chipsets are not sending a command
+>> > > > > > > complete event
+>> > > > > > > +	 * for every fw packet sent. They only respond with a
+>> > > > > > > vendor specific
+>> > > > > > > +	 * event for the last packet. This optimization in the chip will
+>> > > > > > > +	 * decrease the BT in initialization time. Here we will
+>> > > > > > > inject a command
+>> > > > > > > +	 * complete event to avoid a command timeout error message.
+>> > > > > > > +	 */
+>> > > > > > > +	if ((config->dnld_type == ROME_SKIP_EVT_VSE_CC ||
+>> > > > > > > +	    config->dnld_type == ROME_SKIP_EVT_VSE))
+>> > > > > > > +		return qca_inject_cmd_complete_event(hdev);
+>> > > > > > > +
+>> > > > > > have you actually considered using __hci_cmd_send in that case. It is
+>> > > > > > allowed for vendor OGF to use that command. I see you actually do use
+>> > > > > > it and now I am failing to understand what this is for.
+>> > > > > [Bala]: thanks for reviewing the change.
+>> > > > >
+>> > > > > __hci_cmd_send() can be used only to send the command to the chip.
+>> > > > > it will not wait for the response for the command sent.
+>> > > > >
+>> > > > > as you know that every vendor command sent to chip will respond with
+>> > > > > vendor specific event and command complete event.
+>> > > > > but in our case chip will only respond with vendor specific event
+>> > > > > only. so we are injecting command complete event.
+>> > > >
+>> > > > and __hci_cmd_sync_ev is also not working for you? However since you
+>> > > > are not waiting for the vendor event anyway and just injecting
+>> > > > cmd_complete, I wonder what’s the difference in just using
+>> > > > __hci_cmd_send and not bothering to wait or inject at all. I am
+>> > > > failing to see where this injection makes a difference.
+>> > > >
+>> > > > For me it is a big difference if we are injecting one event like in
+>> > > > the case of Intel compared to injecting one for every command. It will
+>> > > > show a wrong picture in btmon and that is a bad idea.
+>> > > >
+>> > > > Regards
+>> > > >
+>> > > > Marcel
+>> > >
+>> > > [Bala]: here is the use case, when ever we download the fw packets
+>> > > i.e. RAM
+>> > > image, for every command sent(i.e. fw packet) from
+>> > > the host chip will respond with an vendor specific event and command
+>> > > complete event.
+>> > >
+>> > > the above is taking more time to setup the BT device. then we came
+>> > > up with
+>> > > solution where we enable flags in fw file (i.e. RAM image header)
+>> > > whether to wait for event to be received or sent the total packets
+>> > > and wait
+>> > > for the events for the last packet.
+>> > >
+>> > > So currently we are handling both the cases in the code. i.e wait
+>> > > for event
+>> > > for all packet or wait for an event for the last packet.
+>> > >
+>> > > but in the second case i.e. wait for event for the last packet sent,
+>> > > we are
+>> > > only receiving an vendor specific event from chip which holds the
+>> > > status of
+>> > > fw download.
+>> > >
+>> > > so as __hci_cmd_sync_ev() requires an command complete event. so we
+>> > > are
+>> > > injecting it after the vendor specific event received for the last
+>> > > packet.
+>> > >
+>> > > This helps to overcome 0xfc00 timeout error logging on console.
+>> >
+>> > Some more details:
+>> >
+>> > The timeout error is actually from reading the 'SoC version', which
+>> > uses the same command code as the firmware download
+>> > (EDL_PATCH_CMD_OPCODE). Without reading the 'SoC version' it would be
+>> > from the command to write the first firmware segment.
+>> >
+>> > If the download of a firmware binary takes >= 2s (HCI_CMD_TIMEOUT) the
+>> > timeout would still occur. If necessary this could be mitigated by
+>> > injecting some command complete events during the firmware download,
+>> > though I expect Marcel wouldn't be overly happy with that, since it
+>> > would affect btmon even more.
+>> >
+>> > Regards
+>> >
+>> > Matthias
+>> 
+>> [Bala]: Basically every vendor specific command we sent to chip,
+>> chip should respond with an vendor specific event followed by an 
+>> command
+>> complete event
+>> or some times it will only respond with an command complete event.
+>> but in any case command complete event is mandatory to all the command 
+>> we
+>> sent to the chip.
+> 
+> Is this ("command complete event is mandatory to all the command we
+> sent to the chip") a description of what the chip actually does, or
+> what it should be doing according to the spec?
+> 
+> As mentioned earlier, the timeout we see originates from reading the
+> SoC version:
+> 
+> diff --git a/drivers/bluetooth/btqca.c b/drivers/bluetooth/btqca.c
+> index 0b533f65f652fc..1e484e61799571 100644
+> --- a/drivers/bluetooth/btqca.c
+> +++ b/drivers/bluetooth/btqca.c
+> @@ -400,6 +400,10 @@ int qca_uart_setup(struct hci_dev *hdev, uint8_t 
+> baudrate,
+>                 return err;
+>         }
+> 
+> +       printk("DBG: ZZZzzzzzzz\n");
+> +       msleep(2500);
+> +       printk("DBG: good morning!\n");
+> +
+>         /* Download NVM configuration */
+>         config.type = TLV_TYPE_NVM;
+>         if (soc_type == QCA_WCN3990)
+> 
+> When you boot with this patch you'll see something like this:
+> 
+> [   15.531365] DBG: reading SoC version
+> [   15.544963] DBG: ZZZzzzzzzz
+> [   17.590282] Bluetooth: hci0: command 0xfc00 tx timeout
+> [   18.099110] DBG: good morning!
+> 
 
-Signed-off-by: John Crispin <john@phrozen.org>
----
- arch/mips/ath79/Makefile           |  10 --
- arch/mips/ath79/common.h           |   2 -
- arch/mips/ath79/dev-common.c       | 159 -------------------
- arch/mips/ath79/dev-common.h       |  18 ---
- arch/mips/ath79/dev-gpio-buttons.c |  56 -------
- arch/mips/ath79/dev-gpio-buttons.h |  23 ---
- arch/mips/ath79/dev-leds-gpio.c    |  54 -------
- arch/mips/ath79/dev-leds-gpio.h    |  21 ---
- arch/mips/ath79/dev-spi.c          |  38 -----
- arch/mips/ath79/dev-spi.h          |  22 ---
- arch/mips/ath79/dev-usb.c          | 242 -----------------------------
- arch/mips/ath79/dev-usb.h          |  17 --
- arch/mips/ath79/dev-wmac.c         | 155 ------------------
- arch/mips/ath79/dev-wmac.h         |  17 --
- arch/mips/ath79/setup.c            |   1 -
- 15 files changed, 835 deletions(-)
- delete mode 100644 arch/mips/ath79/dev-common.c
- delete mode 100644 arch/mips/ath79/dev-common.h
- delete mode 100644 arch/mips/ath79/dev-gpio-buttons.c
- delete mode 100644 arch/mips/ath79/dev-gpio-buttons.h
- delete mode 100644 arch/mips/ath79/dev-leds-gpio.c
- delete mode 100644 arch/mips/ath79/dev-leds-gpio.h
- delete mode 100644 arch/mips/ath79/dev-spi.c
- delete mode 100644 arch/mips/ath79/dev-spi.h
- delete mode 100644 arch/mips/ath79/dev-usb.c
- delete mode 100644 arch/mips/ath79/dev-usb.h
- delete mode 100644 arch/mips/ath79/dev-wmac.c
- delete mode 100644 arch/mips/ath79/dev-wmac.h
+[Bala]: my previous analysis were wrong. thanks for pointing me to the 
+correct issue.
+         i am able to see timeout after version command.(used some sleep)
+         here is the reason for it.
 
-diff --git a/arch/mips/ath79/Makefile b/arch/mips/ath79/Makefile
-index bd0c9b8b1b5b..e18d9a2ecf62 100644
---- a/arch/mips/ath79/Makefile
-+++ b/arch/mips/ath79/Makefile
-@@ -11,13 +11,3 @@
- obj-y	:= prom.o setup.o common.o clock.o
- 
- obj-$(CONFIG_EARLY_PRINTK)		+= early_printk.o
--
--#
--# Devices
--#
--obj-y					+= dev-common.o
--obj-$(CONFIG_ATH79_DEV_GPIO_BUTTONS)	+= dev-gpio-buttons.o
--obj-$(CONFIG_ATH79_DEV_LEDS_GPIO)	+= dev-leds-gpio.o
--obj-$(CONFIG_ATH79_DEV_SPI)		+= dev-spi.o
--obj-$(CONFIG_ATH79_DEV_USB)		+= dev-usb.o
--obj-$(CONFIG_ATH79_DEV_WMAC)		+= dev-wmac.o
-diff --git a/arch/mips/ath79/common.h b/arch/mips/ath79/common.h
-index 870c6b2e97e8..77dd989e5ce0 100644
---- a/arch/mips/ath79/common.h
-+++ b/arch/mips/ath79/common.h
-@@ -24,6 +24,4 @@ unsigned long ath79_get_sys_clk_rate(const char *id);
- 
- void ath79_ddr_ctrl_init(void);
- 
--void ath79_gpio_init(void);
--
- #endif /* __ATH79_COMMON_H */
-diff --git a/arch/mips/ath79/dev-common.c b/arch/mips/ath79/dev-common.c
-deleted file mode 100644
-index 9d0172a4dc69..000000000000
---- a/arch/mips/ath79/dev-common.c
-+++ /dev/null
-@@ -1,159 +0,0 @@
--/*
-- *  Atheros AR71XX/AR724X/AR913X common devices
-- *
-- *  Copyright (C) 2008-2011 Gabor Juhos <juhosg@openwrt.org>
-- *  Copyright (C) 2008 Imre Kaloz <kaloz@openwrt.org>
-- *
-- *  Parts of this file are based on Atheros' 2.6.15 BSP
-- *
-- *  This program is free software; you can redistribute it and/or modify it
-- *  under the terms of the GNU General Public License version 2 as published
-- *  by the Free Software Foundation.
-- */
--
--#include <linux/kernel.h>
--#include <linux/init.h>
--#include <linux/platform_device.h>
--#include <linux/platform_data/gpio-ath79.h>
--#include <linux/serial_8250.h>
--#include <linux/clk.h>
--#include <linux/err.h>
--
--#include <asm/mach-ath79/ath79.h>
--#include <asm/mach-ath79/ar71xx_regs.h>
--#include "common.h"
--#include "dev-common.h"
--
--static struct resource ath79_uart_resources[] = {
--	{
--		.start	= AR71XX_UART_BASE,
--		.end	= AR71XX_UART_BASE + AR71XX_UART_SIZE - 1,
--		.flags	= IORESOURCE_MEM,
--	},
--};
--
--#define AR71XX_UART_FLAGS (UPF_BOOT_AUTOCONF | UPF_SKIP_TEST | UPF_IOREMAP)
--static struct plat_serial8250_port ath79_uart_data[] = {
--	{
--		.mapbase	= AR71XX_UART_BASE,
--		.irq		= ATH79_MISC_IRQ(3),
--		.flags		= AR71XX_UART_FLAGS,
--		.iotype		= UPIO_MEM32,
--		.regshift	= 2,
--	}, {
--		/* terminating entry */
--	}
--};
--
--static struct platform_device ath79_uart_device = {
--	.name		= "serial8250",
--	.id		= PLAT8250_DEV_PLATFORM,
--	.resource	= ath79_uart_resources,
--	.num_resources	= ARRAY_SIZE(ath79_uart_resources),
--	.dev = {
--		.platform_data	= ath79_uart_data
--	},
--};
--
--static struct resource ar933x_uart_resources[] = {
--	{
--		.start	= AR933X_UART_BASE,
--		.end	= AR933X_UART_BASE + AR71XX_UART_SIZE - 1,
--		.flags	= IORESOURCE_MEM,
--	},
--	{
--		.start	= ATH79_MISC_IRQ(3),
--		.end	= ATH79_MISC_IRQ(3),
--		.flags	= IORESOURCE_IRQ,
--	},
--};
--
--static struct platform_device ar933x_uart_device = {
--	.name		= "ar933x-uart",
--	.id		= -1,
--	.resource	= ar933x_uart_resources,
--	.num_resources	= ARRAY_SIZE(ar933x_uart_resources),
--};
--
--void __init ath79_register_uart(void)
--{
--	unsigned long uart_clk_rate;
--
--	uart_clk_rate = ath79_get_sys_clk_rate("uart");
--
--	if (soc_is_ar71xx() ||
--	    soc_is_ar724x() ||
--	    soc_is_ar913x() ||
--	    soc_is_ar934x() ||
--	    soc_is_qca955x()) {
--		ath79_uart_data[0].uartclk = uart_clk_rate;
--		platform_device_register(&ath79_uart_device);
--	} else if (soc_is_ar933x()) {
--		platform_device_register(&ar933x_uart_device);
--	} else {
--		BUG();
--	}
--}
--
--void __init ath79_register_wdt(void)
--{
--	struct resource res;
--
--	memset(&res, 0, sizeof(res));
--
--	res.flags = IORESOURCE_MEM;
--	res.start = AR71XX_RESET_BASE + AR71XX_RESET_REG_WDOG_CTRL;
--	res.end = res.start + 0x8 - 1;
--
--	platform_device_register_simple("ath79-wdt", -1, &res, 1);
--}
--
--static struct ath79_gpio_platform_data ath79_gpio_pdata;
--
--static struct resource ath79_gpio_resources[] = {
--	{
--		.flags = IORESOURCE_MEM,
--		.start = AR71XX_GPIO_BASE,
--		.end = AR71XX_GPIO_BASE + AR71XX_GPIO_SIZE - 1,
--	},
--	{
--		.start	= ATH79_MISC_IRQ(2),
--		.end	= ATH79_MISC_IRQ(2),
--		.flags	= IORESOURCE_IRQ,
--	},
--};
--
--static struct platform_device ath79_gpio_device = {
--	.name		= "ath79-gpio",
--	.id		= -1,
--	.resource	= ath79_gpio_resources,
--	.num_resources	= ARRAY_SIZE(ath79_gpio_resources),
--	.dev = {
--		.platform_data	= &ath79_gpio_pdata
--	},
--};
--
--void __init ath79_gpio_init(void)
--{
--	if (soc_is_ar71xx()) {
--		ath79_gpio_pdata.ngpios = AR71XX_GPIO_COUNT;
--	} else if (soc_is_ar7240()) {
--		ath79_gpio_pdata.ngpios = AR7240_GPIO_COUNT;
--	} else if (soc_is_ar7241() || soc_is_ar7242()) {
--		ath79_gpio_pdata.ngpios = AR7241_GPIO_COUNT;
--	} else if (soc_is_ar913x()) {
--		ath79_gpio_pdata.ngpios = AR913X_GPIO_COUNT;
--	} else if (soc_is_ar933x()) {
--		ath79_gpio_pdata.ngpios = AR933X_GPIO_COUNT;
--	} else if (soc_is_ar934x()) {
--		ath79_gpio_pdata.ngpios = AR934X_GPIO_COUNT;
--		ath79_gpio_pdata.oe_inverted = 1;
--	} else if (soc_is_qca955x()) {
--		ath79_gpio_pdata.ngpios = QCA955X_GPIO_COUNT;
--		ath79_gpio_pdata.oe_inverted = 1;
--	} else {
--		BUG();
--	}
--
--	platform_device_register(&ath79_gpio_device);
--}
-diff --git a/arch/mips/ath79/dev-common.h b/arch/mips/ath79/dev-common.h
-deleted file mode 100644
-index 0f514e1affce..000000000000
---- a/arch/mips/ath79/dev-common.h
-+++ /dev/null
-@@ -1,18 +0,0 @@
--/*
-- *  Atheros AR71XX/AR724X/AR913X common devices
-- *
-- *  Copyright (C) 2008-2010 Gabor Juhos <juhosg@openwrt.org>
-- *  Copyright (C) 2008 Imre Kaloz <kaloz@openwrt.org>
-- *
-- *  This program is free software; you can redistribute it and/or modify it
-- *  under the terms of the GNU General Public License version 2 as published
-- *  by the Free Software Foundation.
-- */
--
--#ifndef _ATH79_DEV_COMMON_H
--#define _ATH79_DEV_COMMON_H
--
--void ath79_register_uart(void);
--void ath79_register_wdt(void);
--
--#endif /* _ATH79_DEV_COMMON_H */
-diff --git a/arch/mips/ath79/dev-gpio-buttons.c b/arch/mips/ath79/dev-gpio-buttons.c
-deleted file mode 100644
-index 366b35fb164d..000000000000
---- a/arch/mips/ath79/dev-gpio-buttons.c
-+++ /dev/null
-@@ -1,56 +0,0 @@
--/*
-- *  Atheros AR71XX/AR724X/AR913X GPIO button support
-- *
-- *  Copyright (C) 2008-2010 Gabor Juhos <juhosg@openwrt.org>
-- *  Copyright (C) 2008 Imre Kaloz <kaloz@openwrt.org>
-- *
-- *  This program is free software; you can redistribute it and/or modify it
-- *  under the terms of the GNU General Public License version 2 as published
-- *  by the Free Software Foundation.
-- */
--
--#include "linux/init.h"
--#include "linux/slab.h"
--#include <linux/platform_device.h>
--
--#include "dev-gpio-buttons.h"
--
--void __init ath79_register_gpio_keys_polled(int id,
--					    unsigned poll_interval,
--					    unsigned nbuttons,
--					    struct gpio_keys_button *buttons)
--{
--	struct platform_device *pdev;
--	struct gpio_keys_platform_data pdata;
--	struct gpio_keys_button *p;
--	int err;
--
--	p = kmemdup(buttons, nbuttons * sizeof(*p), GFP_KERNEL);
--	if (!p)
--		return;
--
--	pdev = platform_device_alloc("gpio-keys-polled", id);
--	if (!pdev)
--		goto err_free_buttons;
--
--	memset(&pdata, 0, sizeof(pdata));
--	pdata.poll_interval = poll_interval;
--	pdata.nbuttons = nbuttons;
--	pdata.buttons = p;
--
--	err = platform_device_add_data(pdev, &pdata, sizeof(pdata));
--	if (err)
--		goto err_put_pdev;
--
--	err = platform_device_add(pdev);
--	if (err)
--		goto err_put_pdev;
--
--	return;
--
--err_put_pdev:
--	platform_device_put(pdev);
--
--err_free_buttons:
--	kfree(p);
--}
-diff --git a/arch/mips/ath79/dev-gpio-buttons.h b/arch/mips/ath79/dev-gpio-buttons.h
-deleted file mode 100644
-index 481847ac1cba..000000000000
---- a/arch/mips/ath79/dev-gpio-buttons.h
-+++ /dev/null
-@@ -1,23 +0,0 @@
--/*
-- *  Atheros AR71XX/AR724X/AR913X GPIO button support
-- *
-- *  Copyright (C) 2008-2010 Gabor Juhos <juhosg@openwrt.org>
-- *  Copyright (C) 2008 Imre Kaloz <kaloz@openwrt.org>
-- *
-- *  This program is free software; you can redistribute it and/or modify it
-- *  under the terms of the GNU General Public License version 2 as published
-- *  by the Free Software Foundation.
-- */
--
--#ifndef _ATH79_DEV_GPIO_BUTTONS_H
--#define _ATH79_DEV_GPIO_BUTTONS_H
--
--#include <linux/input.h>
--#include <linux/gpio_keys.h>
--
--void ath79_register_gpio_keys_polled(int id,
--				     unsigned poll_interval,
--				     unsigned nbuttons,
--				     struct gpio_keys_button *buttons);
--
--#endif /* _ATH79_DEV_GPIO_BUTTONS_H */
-diff --git a/arch/mips/ath79/dev-leds-gpio.c b/arch/mips/ath79/dev-leds-gpio.c
-deleted file mode 100644
-index dcb1debcefb8..000000000000
---- a/arch/mips/ath79/dev-leds-gpio.c
-+++ /dev/null
-@@ -1,54 +0,0 @@
--/*
-- *  Atheros AR71XX/AR724X/AR913X common GPIO LEDs support
-- *
-- *  Copyright (C) 2008-2010 Gabor Juhos <juhosg@openwrt.org>
-- *  Copyright (C) 2008 Imre Kaloz <kaloz@openwrt.org>
-- *
-- *  This program is free software; you can redistribute it and/or modify it
-- *  under the terms of the GNU General Public License version 2 as published
-- *  by the Free Software Foundation.
-- */
--
--#include <linux/init.h>
--#include <linux/slab.h>
--#include <linux/platform_device.h>
--
--#include "dev-leds-gpio.h"
--
--void __init ath79_register_leds_gpio(int id,
--				     unsigned num_leds,
--				     struct gpio_led *leds)
--{
--	struct platform_device *pdev;
--	struct gpio_led_platform_data pdata;
--	struct gpio_led *p;
--	int err;
--
--	p = kmemdup(leds, num_leds * sizeof(*p), GFP_KERNEL);
--	if (!p)
--		return;
--
--	pdev = platform_device_alloc("leds-gpio", id);
--	if (!pdev)
--		goto err_free_leds;
--
--	memset(&pdata, 0, sizeof(pdata));
--	pdata.num_leds = num_leds;
--	pdata.leds = p;
--
--	err = platform_device_add_data(pdev, &pdata, sizeof(pdata));
--	if (err)
--		goto err_put_pdev;
--
--	err = platform_device_add(pdev);
--	if (err)
--		goto err_put_pdev;
--
--	return;
--
--err_put_pdev:
--	platform_device_put(pdev);
--
--err_free_leds:
--	kfree(p);
--}
-diff --git a/arch/mips/ath79/dev-leds-gpio.h b/arch/mips/ath79/dev-leds-gpio.h
-deleted file mode 100644
-index 6e5d8851ebcf..000000000000
---- a/arch/mips/ath79/dev-leds-gpio.h
-+++ /dev/null
-@@ -1,21 +0,0 @@
--/*
-- *  Atheros AR71XX/AR724X/AR913X common GPIO LEDs support
-- *
-- *  Copyright (C) 2008-2010 Gabor Juhos <juhosg@openwrt.org>
-- *  Copyright (C) 2008 Imre Kaloz <kaloz@openwrt.org>
-- *
-- *  This program is free software; you can redistribute it and/or modify it
-- *  under the terms of the GNU General Public License version 2 as published
-- *  by the Free Software Foundation.
-- */
--
--#ifndef _ATH79_DEV_LEDS_GPIO_H
--#define _ATH79_DEV_LEDS_GPIO_H
--
--#include <linux/leds.h>
--
--void ath79_register_leds_gpio(int id,
--			      unsigned num_leds,
--			      struct gpio_led *leds);
--
--#endif /* _ATH79_DEV_LEDS_GPIO_H */
-diff --git a/arch/mips/ath79/dev-spi.c b/arch/mips/ath79/dev-spi.c
-deleted file mode 100644
-index aa30163efbfd..000000000000
---- a/arch/mips/ath79/dev-spi.c
-+++ /dev/null
-@@ -1,38 +0,0 @@
--/*
-- *  Atheros AR71XX/AR724X/AR913X SPI controller device
-- *
-- *  Copyright (C) 2008-2010 Gabor Juhos <juhosg@openwrt.org>
-- *  Copyright (C) 2008 Imre Kaloz <kaloz@openwrt.org>
-- *
-- *  This program is free software; you can redistribute it and/or modify it
-- *  under the terms of the GNU General Public License version 2 as published
-- *  by the Free Software Foundation.
-- */
--
--#include <linux/platform_device.h>
--#include <asm/mach-ath79/ar71xx_regs.h>
--#include "dev-spi.h"
--
--static struct resource ath79_spi_resources[] = {
--	{
--		.start	= AR71XX_SPI_BASE,
--		.end	= AR71XX_SPI_BASE + AR71XX_SPI_SIZE - 1,
--		.flags	= IORESOURCE_MEM,
--	},
--};
--
--static struct platform_device ath79_spi_device = {
--	.name		= "ath79-spi",
--	.id		= -1,
--	.resource	= ath79_spi_resources,
--	.num_resources	= ARRAY_SIZE(ath79_spi_resources),
--};
--
--void __init ath79_register_spi(struct ath79_spi_platform_data *pdata,
--			       struct spi_board_info const *info,
--			       unsigned n)
--{
--	spi_register_board_info(info, n);
--	ath79_spi_device.dev.platform_data = pdata;
--	platform_device_register(&ath79_spi_device);
--}
-diff --git a/arch/mips/ath79/dev-spi.h b/arch/mips/ath79/dev-spi.h
-deleted file mode 100644
-index d732565ca736..000000000000
---- a/arch/mips/ath79/dev-spi.h
-+++ /dev/null
-@@ -1,22 +0,0 @@
--/*
-- *  Atheros AR71XX/AR724X/AR913X SPI controller device
-- *
-- *  Copyright (C) 2008-2010 Gabor Juhos <juhosg@openwrt.org>
-- *  Copyright (C) 2008 Imre Kaloz <kaloz@openwrt.org>
-- *
-- *  This program is free software; you can redistribute it and/or modify it
-- *  under the terms of the GNU General Public License version 2 as published
-- *  by the Free Software Foundation.
-- */
--
--#ifndef _ATH79_DEV_SPI_H
--#define _ATH79_DEV_SPI_H
--
--#include <linux/spi/spi.h>
--#include <asm/mach-ath79/ath79_spi_platform.h>
--
--void ath79_register_spi(struct ath79_spi_platform_data *pdata,
--			 struct spi_board_info const *info,
--			 unsigned n);
--
--#endif /* _ATH79_DEV_SPI_H */
-diff --git a/arch/mips/ath79/dev-usb.c b/arch/mips/ath79/dev-usb.c
-deleted file mode 100644
-index 8227265bcc2d..000000000000
---- a/arch/mips/ath79/dev-usb.c
-+++ /dev/null
-@@ -1,242 +0,0 @@
--/*
-- *  Atheros AR7XXX/AR9XXX USB Host Controller device
-- *
-- *  Copyright (C) 2008-2011 Gabor Juhos <juhosg@openwrt.org>
-- *  Copyright (C) 2008 Imre Kaloz <kaloz@openwrt.org>
-- *
-- *  Parts of this file are based on Atheros' 2.6.15 BSP
-- *
-- *  This program is free software; you can redistribute it and/or modify it
-- *  under the terms of the GNU General Public License version 2 as published
-- *  by the Free Software Foundation.
-- */
--
--#include <linux/kernel.h>
--#include <linux/init.h>
--#include <linux/delay.h>
--#include <linux/irq.h>
--#include <linux/dma-mapping.h>
--#include <linux/platform_device.h>
--#include <linux/usb/ehci_pdriver.h>
--#include <linux/usb/ohci_pdriver.h>
--
--#include <asm/mach-ath79/ath79.h>
--#include <asm/mach-ath79/ar71xx_regs.h>
--#include "common.h"
--#include "dev-usb.h"
--
--static u64 ath79_usb_dmamask = DMA_BIT_MASK(32);
--
--static struct usb_ohci_pdata ath79_ohci_pdata = {
--};
--
--static struct usb_ehci_pdata ath79_ehci_pdata_v1 = {
--	.has_synopsys_hc_bug	= 1,
--};
--
--static struct usb_ehci_pdata ath79_ehci_pdata_v2 = {
--	.caps_offset		= 0x100,
--	.has_tt			= 1,
--};
--
--static void __init ath79_usb_register(const char *name, int id,
--				      unsigned long base, unsigned long size,
--				      int irq, const void *data,
--				      size_t data_size)
--{
--	struct resource res[2];
--	struct platform_device *pdev;
--
--	memset(res, 0, sizeof(res));
--
--	res[0].flags = IORESOURCE_MEM;
--	res[0].start = base;
--	res[0].end = base + size - 1;
--
--	res[1].flags = IORESOURCE_IRQ;
--	res[1].start = irq;
--	res[1].end = irq;
--
--	pdev = platform_device_register_resndata(NULL, name, id,
--						 res, ARRAY_SIZE(res),
--						 data, data_size);
--
--	if (IS_ERR(pdev)) {
--		pr_err("ath79: unable to register USB at %08lx, err=%d\n",
--		       base, (int) PTR_ERR(pdev));
--		return;
--	}
--
--	pdev->dev.dma_mask = &ath79_usb_dmamask;
--	pdev->dev.coherent_dma_mask = DMA_BIT_MASK(32);
--}
--
--#define AR71XX_USB_RESET_MASK	(AR71XX_RESET_USB_HOST | \
--				 AR71XX_RESET_USB_PHY | \
--				 AR71XX_RESET_USB_OHCI_DLL)
--
--static void __init ath79_usb_setup(void)
--{
--	void __iomem *usb_ctrl_base;
--
--	ath79_device_reset_set(AR71XX_USB_RESET_MASK);
--	mdelay(1000);
--	ath79_device_reset_clear(AR71XX_USB_RESET_MASK);
--
--	usb_ctrl_base = ioremap(AR71XX_USB_CTRL_BASE, AR71XX_USB_CTRL_SIZE);
--
--	/* Turning on the Buff and Desc swap bits */
--	__raw_writel(0xf0000, usb_ctrl_base + AR71XX_USB_CTRL_REG_CONFIG);
--
--	/* WAR for HW bug. Here it adjusts the duration between two SOFS */
--	__raw_writel(0x20c00, usb_ctrl_base + AR71XX_USB_CTRL_REG_FLADJ);
--
--	iounmap(usb_ctrl_base);
--
--	mdelay(900);
--
--	ath79_usb_register("ohci-platform", -1,
--			   AR71XX_OHCI_BASE, AR71XX_OHCI_SIZE,
--			   ATH79_MISC_IRQ(6),
--			   &ath79_ohci_pdata, sizeof(ath79_ohci_pdata));
--
--	ath79_usb_register("ehci-platform", -1,
--			   AR71XX_EHCI_BASE, AR71XX_EHCI_SIZE,
--			   ATH79_CPU_IRQ(3),
--			   &ath79_ehci_pdata_v1, sizeof(ath79_ehci_pdata_v1));
--}
--
--static void __init ar7240_usb_setup(void)
--{
--	void __iomem *usb_ctrl_base;
--
--	ath79_device_reset_clear(AR7240_RESET_OHCI_DLL);
--	ath79_device_reset_set(AR7240_RESET_USB_HOST);
--
--	mdelay(1000);
--
--	ath79_device_reset_set(AR7240_RESET_OHCI_DLL);
--	ath79_device_reset_clear(AR7240_RESET_USB_HOST);
--
--	usb_ctrl_base = ioremap(AR7240_USB_CTRL_BASE, AR7240_USB_CTRL_SIZE);
--
--	/* WAR for HW bug. Here it adjusts the duration between two SOFS */
--	__raw_writel(0x3, usb_ctrl_base + AR71XX_USB_CTRL_REG_FLADJ);
--
--	iounmap(usb_ctrl_base);
--
--	ath79_usb_register("ohci-platform", -1,
--			   AR7240_OHCI_BASE, AR7240_OHCI_SIZE,
--			   ATH79_CPU_IRQ(3),
--			   &ath79_ohci_pdata, sizeof(ath79_ohci_pdata));
--}
--
--static void __init ar724x_usb_setup(void)
--{
--	ath79_device_reset_set(AR724X_RESET_USBSUS_OVERRIDE);
--	mdelay(10);
--
--	ath79_device_reset_clear(AR724X_RESET_USB_HOST);
--	mdelay(10);
--
--	ath79_device_reset_clear(AR724X_RESET_USB_PHY);
--	mdelay(10);
--
--	ath79_usb_register("ehci-platform", -1,
--			   AR724X_EHCI_BASE, AR724X_EHCI_SIZE,
--			   ATH79_CPU_IRQ(3),
--			   &ath79_ehci_pdata_v2, sizeof(ath79_ehci_pdata_v2));
--}
--
--static void __init ar913x_usb_setup(void)
--{
--	ath79_device_reset_set(AR913X_RESET_USBSUS_OVERRIDE);
--	mdelay(10);
--
--	ath79_device_reset_clear(AR913X_RESET_USB_HOST);
--	mdelay(10);
--
--	ath79_device_reset_clear(AR913X_RESET_USB_PHY);
--	mdelay(10);
--
--	ath79_usb_register("ehci-platform", -1,
--			   AR913X_EHCI_BASE, AR913X_EHCI_SIZE,
--			   ATH79_CPU_IRQ(3),
--			   &ath79_ehci_pdata_v2, sizeof(ath79_ehci_pdata_v2));
--}
--
--static void __init ar933x_usb_setup(void)
--{
--	ath79_device_reset_set(AR933X_RESET_USBSUS_OVERRIDE);
--	mdelay(10);
--
--	ath79_device_reset_clear(AR933X_RESET_USB_HOST);
--	mdelay(10);
--
--	ath79_device_reset_clear(AR933X_RESET_USB_PHY);
--	mdelay(10);
--
--	ath79_usb_register("ehci-platform", -1,
--			   AR933X_EHCI_BASE, AR933X_EHCI_SIZE,
--			   ATH79_CPU_IRQ(3),
--			   &ath79_ehci_pdata_v2, sizeof(ath79_ehci_pdata_v2));
--}
--
--static void __init ar934x_usb_setup(void)
--{
--	u32 bootstrap;
--
--	bootstrap = ath79_reset_rr(AR934X_RESET_REG_BOOTSTRAP);
--	if (bootstrap & AR934X_BOOTSTRAP_USB_MODE_DEVICE)
--		return;
--
--	ath79_device_reset_set(AR934X_RESET_USBSUS_OVERRIDE);
--	udelay(1000);
--
--	ath79_device_reset_clear(AR934X_RESET_USB_PHY);
--	udelay(1000);
--
--	ath79_device_reset_clear(AR934X_RESET_USB_PHY_ANALOG);
--	udelay(1000);
--
--	ath79_device_reset_clear(AR934X_RESET_USB_HOST);
--	udelay(1000);
--
--	ath79_usb_register("ehci-platform", -1,
--			   AR934X_EHCI_BASE, AR934X_EHCI_SIZE,
--			   ATH79_CPU_IRQ(3),
--			   &ath79_ehci_pdata_v2, sizeof(ath79_ehci_pdata_v2));
--}
--
--static void __init qca955x_usb_setup(void)
--{
--	ath79_usb_register("ehci-platform", 0,
--			   QCA955X_EHCI0_BASE, QCA955X_EHCI_SIZE,
--			   ATH79_IP3_IRQ(0),
--			   &ath79_ehci_pdata_v2, sizeof(ath79_ehci_pdata_v2));
--
--	ath79_usb_register("ehci-platform", 1,
--			   QCA955X_EHCI1_BASE, QCA955X_EHCI_SIZE,
--			   ATH79_IP3_IRQ(1),
--			   &ath79_ehci_pdata_v2, sizeof(ath79_ehci_pdata_v2));
--}
--
--void __init ath79_register_usb(void)
--{
--	if (soc_is_ar71xx())
--		ath79_usb_setup();
--	else if (soc_is_ar7240())
--		ar7240_usb_setup();
--	else if (soc_is_ar7241() || soc_is_ar7242())
--		ar724x_usb_setup();
--	else if (soc_is_ar913x())
--		ar913x_usb_setup();
--	else if (soc_is_ar933x())
--		ar933x_usb_setup();
--	else if (soc_is_ar934x())
--		ar934x_usb_setup();
--	else if (soc_is_qca955x())
--		qca955x_usb_setup();
--	else
--		BUG();
--}
-diff --git a/arch/mips/ath79/dev-usb.h b/arch/mips/ath79/dev-usb.h
-deleted file mode 100644
-index 4b86a69ca080..000000000000
---- a/arch/mips/ath79/dev-usb.h
-+++ /dev/null
-@@ -1,17 +0,0 @@
--/*
-- *  Atheros AR71XX/AR724X/AR913X USB Host Controller support
-- *
-- *  Copyright (C) 2008-2010 Gabor Juhos <juhosg@openwrt.org>
-- *  Copyright (C) 2008 Imre Kaloz <kaloz@openwrt.org>
-- *
-- *  This program is free software; you can redistribute it and/or modify it
-- *  under the terms of the GNU General Public License version 2 as published
-- *  by the Free Software Foundation.
-- */
--
--#ifndef _ATH79_DEV_USB_H
--#define _ATH79_DEV_USB_H
--
--void ath79_register_usb(void);
--
--#endif /* _ATH79_DEV_USB_H */
-diff --git a/arch/mips/ath79/dev-wmac.c b/arch/mips/ath79/dev-wmac.c
-deleted file mode 100644
-index da190b1b87ce..000000000000
---- a/arch/mips/ath79/dev-wmac.c
-+++ /dev/null
-@@ -1,155 +0,0 @@
--/*
-- *  Atheros AR913X/AR933X SoC built-in WMAC device support
-- *
-- *  Copyright (C) 2010-2011 Jaiganesh Narayanan <jnarayanan@atheros.com>
-- *  Copyright (C) 2008-2011 Gabor Juhos <juhosg@openwrt.org>
-- *  Copyright (C) 2008 Imre Kaloz <kaloz@openwrt.org>
-- *
-- *  Parts of this file are based on Atheros 2.6.15/2.6.31 BSP
-- *
-- *  This program is free software; you can redistribute it and/or modify it
-- *  under the terms of the GNU General Public License version 2 as published
-- *  by the Free Software Foundation.
-- */
--
--#include <linux/init.h>
--#include <linux/delay.h>
--#include <linux/irq.h>
--#include <linux/platform_device.h>
--#include <linux/ath9k_platform.h>
--
--#include <asm/mach-ath79/ath79.h>
--#include <asm/mach-ath79/ar71xx_regs.h>
--#include "dev-wmac.h"
--
--static struct ath9k_platform_data ath79_wmac_data;
--
--static struct resource ath79_wmac_resources[] = {
--	{
--		/* .start and .end fields are filled dynamically */
--		.flags	= IORESOURCE_MEM,
--	}, {
--		/* .start and .end fields are filled dynamically */
--		.flags	= IORESOURCE_IRQ,
--	},
--};
--
--static struct platform_device ath79_wmac_device = {
--	.name		= "ath9k",
--	.id		= -1,
--	.resource	= ath79_wmac_resources,
--	.num_resources	= ARRAY_SIZE(ath79_wmac_resources),
--	.dev = {
--		.platform_data = &ath79_wmac_data,
--	},
--};
--
--static void __init ar913x_wmac_setup(void)
--{
--	/* reset the WMAC */
--	ath79_device_reset_set(AR913X_RESET_AMBA2WMAC);
--	mdelay(10);
--
--	ath79_device_reset_clear(AR913X_RESET_AMBA2WMAC);
--	mdelay(10);
--
--	ath79_wmac_resources[0].start = AR913X_WMAC_BASE;
--	ath79_wmac_resources[0].end = AR913X_WMAC_BASE + AR913X_WMAC_SIZE - 1;
--	ath79_wmac_resources[1].start = ATH79_CPU_IRQ(2);
--	ath79_wmac_resources[1].end = ATH79_CPU_IRQ(2);
--}
--
--
--static int ar933x_wmac_reset(void)
--{
--	ath79_device_reset_set(AR933X_RESET_WMAC);
--	ath79_device_reset_clear(AR933X_RESET_WMAC);
--
--	return 0;
--}
--
--static int ar933x_r1_get_wmac_revision(void)
--{
--	return ath79_soc_rev;
--}
--
--static void __init ar933x_wmac_setup(void)
--{
--	u32 t;
--
--	ar933x_wmac_reset();
--
--	ath79_wmac_device.name = "ar933x_wmac";
--
--	ath79_wmac_resources[0].start = AR933X_WMAC_BASE;
--	ath79_wmac_resources[0].end = AR933X_WMAC_BASE + AR933X_WMAC_SIZE - 1;
--	ath79_wmac_resources[1].start = ATH79_CPU_IRQ(2);
--	ath79_wmac_resources[1].end = ATH79_CPU_IRQ(2);
--
--	t = ath79_reset_rr(AR933X_RESET_REG_BOOTSTRAP);
--	if (t & AR933X_BOOTSTRAP_REF_CLK_40)
--		ath79_wmac_data.is_clk_25mhz = false;
--	else
--		ath79_wmac_data.is_clk_25mhz = true;
--
--	if (ath79_soc_rev == 1)
--		ath79_wmac_data.get_mac_revision = ar933x_r1_get_wmac_revision;
--
--	ath79_wmac_data.external_reset = ar933x_wmac_reset;
--}
--
--static void ar934x_wmac_setup(void)
--{
--	u32 t;
--
--	ath79_wmac_device.name = "ar934x_wmac";
--
--	ath79_wmac_resources[0].start = AR934X_WMAC_BASE;
--	ath79_wmac_resources[0].end = AR934X_WMAC_BASE + AR934X_WMAC_SIZE - 1;
--	ath79_wmac_resources[1].start = ATH79_IP2_IRQ(1);
--	ath79_wmac_resources[1].end = ATH79_IP2_IRQ(1);
--
--	t = ath79_reset_rr(AR934X_RESET_REG_BOOTSTRAP);
--	if (t & AR934X_BOOTSTRAP_REF_CLK_40)
--		ath79_wmac_data.is_clk_25mhz = false;
--	else
--		ath79_wmac_data.is_clk_25mhz = true;
--}
--
--static void qca955x_wmac_setup(void)
--{
--	u32 t;
--
--	ath79_wmac_device.name = "qca955x_wmac";
--
--	ath79_wmac_resources[0].start = QCA955X_WMAC_BASE;
--	ath79_wmac_resources[0].end = QCA955X_WMAC_BASE + QCA955X_WMAC_SIZE - 1;
--	ath79_wmac_resources[1].start = ATH79_IP2_IRQ(1);
--	ath79_wmac_resources[1].end = ATH79_IP2_IRQ(1);
--
--	t = ath79_reset_rr(QCA955X_RESET_REG_BOOTSTRAP);
--	if (t & QCA955X_BOOTSTRAP_REF_CLK_40)
--		ath79_wmac_data.is_clk_25mhz = false;
--	else
--		ath79_wmac_data.is_clk_25mhz = true;
--}
--
--void __init ath79_register_wmac(u8 *cal_data)
--{
--	if (soc_is_ar913x())
--		ar913x_wmac_setup();
--	else if (soc_is_ar933x())
--		ar933x_wmac_setup();
--	else if (soc_is_ar934x())
--		ar934x_wmac_setup();
--	else if (soc_is_qca955x())
--		qca955x_wmac_setup();
--	else
--		BUG();
--
--	if (cal_data)
--		memcpy(ath79_wmac_data.eeprom_data, cal_data,
--		       sizeof(ath79_wmac_data.eeprom_data));
--
--	platform_device_register(&ath79_wmac_device);
--}
-diff --git a/arch/mips/ath79/dev-wmac.h b/arch/mips/ath79/dev-wmac.h
-deleted file mode 100644
-index c9cd8709f090..000000000000
---- a/arch/mips/ath79/dev-wmac.h
-+++ /dev/null
-@@ -1,17 +0,0 @@
--/*
-- *  Atheros AR913X/AR933X SoC built-in WMAC device support
-- *
-- *  Copyright (C) 2008-2011 Gabor Juhos <juhosg@openwrt.org>
-- *  Copyright (C) 2008 Imre Kaloz <kaloz@openwrt.org>
-- *
-- *  This program is free software; you can redistribute it and/or modify it
-- *  under the terms of the GNU General Public License version 2 as published
-- *  by the Free Software Foundation.
-- */
--
--#ifndef _ATH79_DEV_WMAC_H
--#define _ATH79_DEV_WMAC_H
--
--void ath79_register_wmac(u8 *cal_data);
--
--#endif /* _ATH79_DEV_WMAC_H */
-diff --git a/arch/mips/ath79/setup.c b/arch/mips/ath79/setup.c
-index 7a9ba4464756..4a70c5de8c92 100644
---- a/arch/mips/ath79/setup.c
-+++ b/arch/mips/ath79/setup.c
-@@ -32,7 +32,6 @@
- #include <asm/mach-ath79/ath79.h>
- #include <asm/mach-ath79/ar71xx_regs.h>
- #include "common.h"
--#include "dev-common.h"
- 
- #define ATH79_SYS_TYPE_LEN	64
- 
+         01 00 fc 01 19 (we send the command to chip to request version)
+         04 ff 0e 00 02 0a 00 00 00 01 00 01 02 14 02 01 40(chip will 
+respond with the vendor specific event payload will be chip version)
+         04 0e 04 01 00 00 00(command complete event)
+
+        issue is with command complete event. ideally command complete 
+event payload holds the command for which chip sends command complete 
+event.
+
+        breaking the command
+
+        04 : event packet (fixed)
+        0e : command complete event(fixed)
+        04 : size of the payload,
+
+        01 : no of commands in the payload
+        00 : OCF (opocde lsb)
+        00 : OGF (opcode msb)
+        00 : status of command executed,
+
+       payload is form byte 4 to byte 7. which hold the command i.e 
+opcode
+       form the above response opcode is 0x0000. ideally this should be 
+0xfc00
+       because the command complete response from the chip is for the 
+command 0xfc00.
+
+       Checked with Chip firmware dev team for the reason, it was an 
+limitation or an bug in the chip ROM firmware
+       in the current chipset, which is fixed in the coming chipset.
+
+       so we expect the command 0xfc00 but recevuies 0x00. so that is the 
+reason we see an timeouts.
+       for all the vendor commands we receive 0x0000 in the command 
+complete event.
+
+       if comes a new question how are we not seeing an 0xfc00 when we 
+inject an command complete event.
+       i experimented this patch, when i inject the command complete 
+event from the soc version still i can see the command timeouts.
+
+       The reason for no timeouts error, we are injecting an command 
+complete after last packet sent out, so this injection helps
+       .bin file to speed out it download part, so as the bin is dumped  
+fastly we send an HCI RESET Comamnd where we recevie an command complete 
+event
+       with non zero opcode which is cancelling the command timeout 
+timer.
+
+       when we inject command complete event, in short we are completing 
+setup process in less than 2 seconds(command timeout timer value),
+       so before 2 seconds we are sending an HCI RESET command whose 
+command complete event opcode value is an non zero (which cancels the 
+command timeout timer)
+
+
+>> In our case, we have an two fw files i.e. *.tlv and *.bin.
+>> tlv is an RAM image of the chip where as bin is an nvm image of the 
+>> chip. so
+>> tlv will be of
+>> more size which require an  lot more time to dump the file in to chip,
+>> while dumping the tlv, we divide tlv as packet of size 245 bytes and 
+>> send
+>> them as an command packet to the chip. chip should respond with an  
+>> command
+>> complete event.
+>> then only we will send the next packet. but size of the tlv is large, 
+>> to
+>> optimize this we will
+>> not wait for the either an vendor specific event or an command 
+>> complete
+>> event.
+> 
+> Let's make sure we have an accurate picture, which of the following is
+> correct:
+> 
+> 1. the chip sends a command complete event after each packet, as an
+> optimization the BT driver doesn't wait for it
+> 
+> 2. as an optimization the chip does not send a command complete event
+> and the driver has to deal with it
+> 
+> My understanding is that it's 2), but the wording above seems to
+> describe 1)
+> 
+[Bala]: point 2 is true.
+
+>> But as we need to be on the sync, i.e. whether are we sending an 
+>> correct
+>> packets or not,
+>> for the last fw packet we sent to the chip.. chip will to do an CRC 
+>> check
+>> for the total no of packets received and respond with an vendor 
+>> specific
+>> event.
+>> 
+>> We decode the vendor specific event and decide whether the fw download 
+>> is
+>> success or not.  here we send an fw packet as command so stack expects 
+>> an
+>> command complete event.
+>> where this is missing from the chip. this is  expected behavior from 
+>> chip.
+>> 
+>> So currently i am inject an command complete event after receiving an 
+>> vendor
+>> event for the last packet of the tlv.
+> 
+> And the same for the .bin if I'm not mistaken.
+> 
+>> This we inject only once for the last command packet sent to the chip.
+>> i don't think this will effect the btmon.
+> 
+> I don't know enough about btmon to comment on that, in any case Marcel
+> raised concerns.
+> 
+> And I think my comment that triggered this disucssion remains true:
+> 
+>> If the download of a firmware binary takes >= 2s (HCI_CMD_TIMEOUT) the
+>> timeout would still occur. If necessary this could be mitigated by
+>> injecting some command complete events during the firmware download.
+> 
+> Not sure it's a likely case, it might be an issue with larger firmware
+> files and/or slower UART speeds.
+> 
+> Thanks
+> 
+> Matthias
+
+[Bala]:  i don't think it is a good idea to handle this kind of 
+limitations in the HOST driver.
+
+Thanks for pointing me the actual issue.
+
 -- 
-2.20.1
-
+Regards
+Balakrishna.
