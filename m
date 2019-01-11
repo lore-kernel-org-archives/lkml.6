@@ -3,56 +3,57 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48FF8C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 08:33:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4D11C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 08:33:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 18A1A20874
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 08:33:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7244420872
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 08:33:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547195618;
-	bh=ilLtGkj2iHcA72skp8sL+/oebdvbxBzki0Mfg4V7sQI=;
+	s=default; t=1547195637;
+	bh=lYLZ1fsbLS8KYAm5cE4Qbzw1iabheBnVOksYYx2cEt8=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=tP1FwODKl1Fw4bCmLL4Luj2bUOdS8iIhOAFUGYr2xmF5R0rTD9nHqr8vcQk+igpfw
-	 5gzbXfBHxsEb1iOZV995TppQ14/qv0jsqc6Y7b6F7ailIINabzpb6ZO/1/O7l/tEDA
-	 axaiJMJJTdjNUfSHcs3htnfKqZ/3N8H+Lqe/8FGw=
+	b=SdaOoAjNznW4+5JzQ3ypyERYxEy16oOUQvrg9PsxeFZECGkR1JBvkAhQ60S+vtxE2
+	 Be6W79CHxdjGnd/RI2oBuB/q1d37LSG6/SbbU5dnXlcVyYFA6b9CIjNsOFaRS4fIA9
+	 SlzIKvM7IDV9BqmCvZZEtYWluhOq3zhYcxjOQpVo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730730AbfAKIdh (ORCPT
+        id S1730799AbfAKId4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 03:33:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56564 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 03:33:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56822 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728175AbfAKIdg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 03:33:36 -0500
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+        id S1728175AbfAKIdz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 03:33:55 -0500
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9078921783;
-        Fri, 11 Jan 2019 08:33:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1239B214C6;
+        Fri, 11 Jan 2019 08:33:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547195615;
-        bh=ilLtGkj2iHcA72skp8sL+/oebdvbxBzki0Mfg4V7sQI=;
+        s=default; t=1547195634;
+        bh=lYLZ1fsbLS8KYAm5cE4Qbzw1iabheBnVOksYYx2cEt8=;
         h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=uqwXG5kjsroGEKIcDR9jxWvYGd8iPm1WmET5Rlvdm1Q247rEud05hSOnjWw6emuLT
-         /7VMMTFr8HIIqWzaR9h+5UDe8v9D+YsGguGjYCTZe/PYTeKnQYNclb8JjWjF+9T2+n
-         tIH3mXsEYUOtrwdEJSkDEm/5Lx+/O203GQII4NCM=
-Received: by mail-lj1-f181.google.com with SMTP id s5-v6so12148760ljd.12;
-        Fri, 11 Jan 2019 00:33:35 -0800 (PST)
-X-Gm-Message-State: AJcUukevE+LmjwUuIIQzG12c/ErM2me5nHYFmAQ/WRNIOE5gydk1lHBQ
-        PrRY0NZQ7PQJ55a38BDEsYzQ3fRhI9b+B1UtPpA=
-X-Google-Smtp-Source: ALg8bN61FeAJnmMyFF4fv6DchkQp0LOEUzuDw1AZ0u8t2tz4kJ1AmTMiy0J6L/wz+LKsFWNXzNR9Yv5Daj/s3Mp7VpU=
-X-Received: by 2002:a2e:551:: with SMTP id 78-v6mr7473508ljf.82.1547195613753;
- Fri, 11 Jan 2019 00:33:33 -0800 (PST)
+        b=d4SQGBeeBHWrwJWcT7yQsyOAUPUtl4xHwuFCgiog2A8xHeTGOAZ2ReObQhFFiLjhC
+         wwbQkHD6RvUjNhcsQPW6NVMG6DUXpCYVZoRzy6LzbjMePtakmT/5ayEcUX5M5L4hgf
+         jM5qDs+dA70KtlehkgqQx4z0I6IrwA46Asue67oo=
+Received: by mail-lj1-f176.google.com with SMTP id q2-v6so12160665lji.10;
+        Fri, 11 Jan 2019 00:33:53 -0800 (PST)
+X-Gm-Message-State: AJcUukcKW4ar7iQTWPMNn6kMfUqSAc3cFkDYdpCaSSG9CmfIucsVET5r
+        XT7pWLzWFW1B5f8prSapN0lOaFffTWif41FxeGI=
+X-Google-Smtp-Source: ALg8bN4idQMnzlcuSVedLIDuqNpTFTh1SZJsuMqGXJfGMLxlNexMV53bkJp/fAhAHSNfmwkePvxO3I0YOPRheSYeYAs=
+X-Received: by 2002:a2e:5d12:: with SMTP id r18-v6mr8884448ljb.89.1547195632259;
+ Fri, 11 Jan 2019 00:33:52 -0800 (PST)
 MIME-Version: 1.0
-References: <20190108165601.25708-1-pawel.mikolaj.chmiel@gmail.com> <20190108165601.25708-2-pawel.mikolaj.chmiel@gmail.com>
-In-Reply-To: <20190108165601.25708-2-pawel.mikolaj.chmiel@gmail.com>
+References: <20190108165601.25708-1-pawel.mikolaj.chmiel@gmail.com> <20190108165601.25708-3-pawel.mikolaj.chmiel@gmail.com>
+In-Reply-To: <20190108165601.25708-3-pawel.mikolaj.chmiel@gmail.com>
 From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Fri, 11 Jan 2019 09:33:22 +0100
-X-Gmail-Original-Message-ID: <CAJKOXPd6NpAoSKuBHCzV2U3Z_cOT9ctf=0nYbYhzRj9opJd9EA@mail.gmail.com>
-Message-ID: <CAJKOXPd6NpAoSKuBHCzV2U3Z_cOT9ctf=0nYbYhzRj9opJd9EA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/4] ARM: dts: s5pv210: aries: Add reserved memory for mfc
+Date:   Fri, 11 Jan 2019 09:33:41 +0100
+X-Gmail-Original-Message-ID: <CAJKOXPdZPTP1c1GN-274G0jBMCHZiXk1C3Q+JnergehkuExPXg@mail.gmail.com>
+Message-ID: <CAJKOXPdZPTP1c1GN-274G0jBMCHZiXk1C3Q+JnergehkuExPXg@mail.gmail.com>
+Subject: Re: [PATCH v2 2/4] ARM: dts: s5pv210: aries: Support for more devices
+ present on Aries
 To:     =?UTF-8?Q?Pawe=C5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
 Cc:     kgene@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
         linux@armlinux.org.uk, xc-racer2@live.ca,
@@ -70,15 +71,24 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 On Tue, 8 Jan 2019 at 17:56, Pawe=C5=82 Chmiel
 <pawel.mikolaj.chmiel@gmail.com> wrote:
 >
-> THis commit adds memory reservation required by MFC to run.
-> On S5PV210 both regions needs to be on separate memory banks.
-> Size of both regions is taken from stock sources.
+> From: Jonathan Bakker <xc-racer2@live.ca>
 >
+> This commit enables following devices present on Aries based phones:
+> - pwm-vibrator attached to PWM 1
+> - poweroff support
+> - Atmel maXTouch touchscreen, connected to i2c2
+> - Broadcom BCM4329 bluetooth over uart0
+>
+> Signed-off-by: Jonathan Bakker <xc-racer2@live.ca>
 > Signed-off-by: Pawe=C5=82 Chmiel <pawel.mikolaj.chmiel@gmail.com>
 > ---
 > Changes from v1:
->    - Fixed name of nodes to be more generic
+>    - Touchscreen irq pin should have PULL_NONE, since it's already
+>      pulled up with 2.8v
+>    - Touchscreen irq should be edge failing (like in vendor sources)
 > ---
+>  arch/arm/boot/dts/s5pv210-aries.dtsi | 68 ++++++++++++++++++++++++++++
+>  1 file changed, 68 insertions(+)
 
 Thanks, applied.
 
