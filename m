@@ -2,57 +2,56 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-13.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96AFDC43612
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:31:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04856C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:31:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 67E2C2063F
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:31:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CAC262133F
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:31:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547217093;
-	bh=BWj9Uzie4zntXf30fEXtv/uevnWFL2Z3AdZv80+j1V4=;
+	s=default; t=1547217100;
+	bh=6hfM0QvCVRM246k6i6h8NC6/FU9QBms7zSK00ym5LU8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Jxzws3BpyAB6wVnfR+OZqNqYlHBVgcfYXur1xvgrhaHNMzjd87Ywm/aKrEMxkwkoP
-	 7n/glWs6Xv9166/OjlLIpWs4VkfZ0MKMOfzluhZPOqTqNiVpxpQzSUqP884zrV8cpM
-	 gzVn1cOpYTZvk8KRmVTcvK6vE6ND52b/xUWf6Ksg=
+	b=gdAlqGvY7o0Habi9b5kr/c9ahVispNZdSE0IKgNmEr7eVapc/SrwPs0M/vGQkcqu3
+	 rRQ05+4Mgr7Vm23b0AyhhSrxMguufQhgRh3PF9+gDFzHyX0us5es2iW6cC882Wmr7a
+	 5VS2X+t5jWSyYoqGwtYXhztyoBL292d1BmdWlVkA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389199AbfAKObc (ORCPT
+        id S2389211AbfAKObk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:31:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48522 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:31:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51172 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388733AbfAKO3a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:29:30 -0500
+        id S2389190AbfAKObb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:31:31 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AB6632063F;
-        Fri, 11 Jan 2019 14:29:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 154BF2133F;
+        Fri, 11 Jan 2019 14:31:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547216970;
-        bh=BWj9Uzie4zntXf30fEXtv/uevnWFL2Z3AdZv80+j1V4=;
+        s=default; t=1547217090;
+        bh=6hfM0QvCVRM246k6i6h8NC6/FU9QBms7zSK00ym5LU8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Kgwb4dMwrDYAZoOYS8YFNiniCH4Pe9ziffFk4zehE+BccTT6uTGbTRWXrqWI5uXGA
-         tJPiIrth5+JguXp4ZVO+QkAmsuj+Qlo9tOLnrxfOpHlY6n37m8SamFJNhjsepC7/wn
-         a3OGcNY3Bg/0SM8B+LAHIdSwXjr7pOku7D3lTMyg=
+        b=U1ViCkoeVRlGMn0lBMXDyzKcS2QbPATNrHaQ61NDVRuwY1pTtuizDtkC1D+vF4NIL
+         Sj95B0qT9XvV4W/MxrJ3yQZA4LoLveUYKq8er1qvyQ23t4hnXI9Xz6Tsk3LgpgJvSM
+         rMxyH5EAflP7VAGSxVjkT7zQ/7/1vTSaqQWATa/I=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+0c1d61e4db7db94102ca@syzkaller.appspotmail.com,
-        Dominique Martinet <dominique.martinet@cea.fr>,
-        Eric Van Hensbergen <ericvh@gmail.com>,
-        Latchesar Ionkov <lucho@ionkov.net>
-Subject: [PATCH 4.9 56/63] 9p/net: put a lower bound on msize
-Date:   Fri, 11 Jan 2019 15:14:59 +0100
-Message-Id: <20190111131054.634039809@linuxfoundation.org>
+        stable@vger.kernel.org, Yonglong Liu <liuyonglong@huawei.com>,
+        Peng Li <lipeng321@huawei.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 039/105] net: hns: Add mac pcs config when enable|disable mac
+Date:   Fri, 11 Jan 2019 15:14:10 +0100
+Message-Id: <20190111131106.464502562@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190111131046.387528003@linuxfoundation.org>
-References: <20190111131046.387528003@linuxfoundation.org>
+In-Reply-To: <20190111131102.899065735@linuxfoundation.org>
+References: <20190111131102.899065735@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 X-Patchwork-Hint: ignore
@@ -64,85 +63,80 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Dominique Martinet <dominique.martinet@cea.fr>
+[ Upstream commit 726ae5c9e5f0c18eca8ea5296b526242c3e89822 ]
 
-commit 574d356b7a02c7e1b01a1d9cba8a26b3c2888f45 upstream.
+In some case, when mac enable|disable and adjust link, may cause hard to
+link(or abnormal) between mac and phy. This patch adds the code for rx PCS
+to avoid this bug.
 
-If the requested msize is too small (either from command line argument
-or from the server version reply), we won't get any work done.
-If it's *really* too small, nothing will work, and this got caught by
-syzbot recently (on a new kmem_cache_create_usercopy() call)
+Disable the rx PCS when driver disable the gmac, and enable the rx PCS
+when driver enable the mac.
 
-Just set a minimum msize to 4k in both code paths, until someone
-complains they have a use-case for a smaller msize.
-
-We need to check in both mount option and server reply individually
-because the msize for the first version request would be unchecked
-with just a global check on clnt->msize.
-
-Link: http://lkml.kernel.org/r/1541407968-31350-1-git-send-email-asmadeus@codewreck.org
-Reported-by: syzbot+0c1d61e4db7db94102ca@syzkaller.appspotmail.com
-Signed-off-by: Dominique Martinet <dominique.martinet@cea.fr>
-Cc: Eric Van Hensbergen <ericvh@gmail.com>
-Cc: Latchesar Ionkov <lucho@ionkov.net>
-Cc: stable@vger.kernel.org
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Yonglong Liu <liuyonglong@huawei.com>
+Signed-off-by: Peng Li <lipeng321@huawei.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/9p/client.c |   21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+ drivers/net/ethernet/hisilicon/hns/hns_dsaf_gmac.c | 14 ++++++++++----
+ drivers/net/ethernet/hisilicon/hns/hns_dsaf_reg.h  |  1 +
+ 2 files changed, 11 insertions(+), 4 deletions(-)
 
---- a/net/9p/client.c
-+++ b/net/9p/client.c
-@@ -156,6 +156,12 @@ static int parse_opts(char *opts, struct
- 				ret = r;
- 				continue;
- 			}
-+			if (option < 4096) {
-+				p9_debug(P9_DEBUG_ERROR,
-+					 "msize should be at least 4k\n");
-+				ret = -EINVAL;
-+				continue;
-+			}
- 			clnt->msize = option;
- 			break;
- 		case Opt_trans:
-@@ -972,10 +978,18 @@ static int p9_client_version(struct p9_c
- 	else if (!strncmp(version, "9P2000", 6))
- 		c->proto_version = p9_proto_legacy;
- 	else {
-+		p9_debug(P9_DEBUG_ERROR,
-+			 "server returned an unknown version: %s\n", version);
- 		err = -EREMOTEIO;
- 		goto error;
- 	}
+diff --git a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_gmac.c b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_gmac.c
+index 8c7bc5cf193c..5e8930d02f50 100644
+--- a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_gmac.c
++++ b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_gmac.c
+@@ -67,11 +67,14 @@ static void hns_gmac_enable(void *mac_drv, enum mac_commom_mode mode)
+ 	struct mac_driver *drv = (struct mac_driver *)mac_drv;
  
-+	if (msize < 4096) {
-+		p9_debug(P9_DEBUG_ERROR,
-+			 "server returned a msize < 4096: %d\n", msize);
-+		err = -EREMOTEIO;
-+		goto error;
+ 	/*enable GE rX/tX */
+-	if ((mode == MAC_COMM_MODE_TX) || (mode == MAC_COMM_MODE_RX_AND_TX))
++	if (mode == MAC_COMM_MODE_TX || mode == MAC_COMM_MODE_RX_AND_TX)
+ 		dsaf_set_dev_bit(drv, GMAC_PORT_EN_REG, GMAC_PORT_TX_EN_B, 1);
+ 
+-	if ((mode == MAC_COMM_MODE_RX) || (mode == MAC_COMM_MODE_RX_AND_TX))
++	if (mode == MAC_COMM_MODE_RX || mode == MAC_COMM_MODE_RX_AND_TX) {
++		/* enable rx pcs */
++		dsaf_set_dev_bit(drv, GMAC_PCS_RX_EN_REG, 0, 0);
+ 		dsaf_set_dev_bit(drv, GMAC_PORT_EN_REG, GMAC_PORT_RX_EN_B, 1);
 +	}
- 	if (msize < c->msize)
- 		c->msize = msize;
+ }
  
-@@ -1040,6 +1054,13 @@ struct p9_client *p9_client_create(const
- 	if (clnt->msize > clnt->trans_mod->maxsize)
- 		clnt->msize = clnt->trans_mod->maxsize;
+ static void hns_gmac_disable(void *mac_drv, enum mac_commom_mode mode)
+@@ -79,11 +82,14 @@ static void hns_gmac_disable(void *mac_drv, enum mac_commom_mode mode)
+ 	struct mac_driver *drv = (struct mac_driver *)mac_drv;
  
-+	if (clnt->msize < 4096) {
-+		p9_debug(P9_DEBUG_ERROR,
-+			 "Please specify a msize of at least 4k\n");
-+		err = -EINVAL;
-+		goto free_client;
+ 	/*disable GE rX/tX */
+-	if ((mode == MAC_COMM_MODE_TX) || (mode == MAC_COMM_MODE_RX_AND_TX))
++	if (mode == MAC_COMM_MODE_TX || mode == MAC_COMM_MODE_RX_AND_TX)
+ 		dsaf_set_dev_bit(drv, GMAC_PORT_EN_REG, GMAC_PORT_TX_EN_B, 0);
+ 
+-	if ((mode == MAC_COMM_MODE_RX) || (mode == MAC_COMM_MODE_RX_AND_TX))
++	if (mode == MAC_COMM_MODE_RX || mode == MAC_COMM_MODE_RX_AND_TX) {
++		/* disable rx pcs */
++		dsaf_set_dev_bit(drv, GMAC_PCS_RX_EN_REG, 0, 1);
+ 		dsaf_set_dev_bit(drv, GMAC_PORT_EN_REG, GMAC_PORT_RX_EN_B, 0);
 +	}
-+
- 	err = p9_client_version(clnt);
- 	if (err)
- 		goto close_trans;
+ }
+ 
+ /* hns_gmac_get_en - get port enable
+diff --git a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_reg.h b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_reg.h
+index 5ae3d017ddbc..ae97b203f73b 100644
+--- a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_reg.h
++++ b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_reg.h
+@@ -534,6 +534,7 @@
+ #define GMAC_LD_LINK_COUNTER_REG		0x01D0UL
+ #define GMAC_LOOP_REG				0x01DCUL
+ #define GMAC_RECV_CONTROL_REG			0x01E0UL
++#define GMAC_PCS_RX_EN_REG			0x01E4UL
+ #define GMAC_VLAN_CODE_REG			0x01E8UL
+ #define GMAC_RX_OVERRUN_CNT_REG			0x01ECUL
+ #define GMAC_RX_LENGTHFIELD_ERR_CNT_REG		0x01F4UL
+-- 
+2.19.1
+
 
 
