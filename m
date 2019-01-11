@@ -4,52 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A78E8C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:40:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1424DC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:40:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 79D3C2133F
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:40:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DAC282184A
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:40:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547217631;
-	bh=UOdzwU+SPY92oRjHbsCbeqtGlHkhSteNjOpf+XoZmeI=;
+	s=default; t=1547217634;
+	bh=ilLru7CQ0RU1aO+bM/Kjt/6SLLsoHddtSaCzzRiVpus=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=gpFqb+91pI8me8ad6ZP6EmztSeoGW6JKJc7p+FLaJksgWdVdZXdCr4/+eD+CNRM42
-	 ngWpjcUFZ18lz5eZIs1oaubKEGOH1nd5KlH2lN7pRN+g5YVqhWEsEkFIVOveJ9W94G
-	 SFjQPY4ZX4tzb5Fe/qf+CZOQ9hPFRex32aFccSVI=
+	b=pdvBXK/RIQkatUR8U6d9nkfVldJWVDTdZB7Ci85ld6zadvei4xgZ5mJ9c7D520hrg
+	 TI1VBcCYRj3umojLwDOP/euAchZurLhbUvM7hEmbemwzPQcOffKeyJhu1QdI4p36BR
+	 2836K5U59ooTFxW4xLsTmBWQ97gsqNo35gC1Px4M=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391237AbfAKOka (ORCPT
+        id S2391248AbfAKOke (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:40:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33062 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:40:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33124 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391207AbfAKOk2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:40:28 -0500
+        id S2390859AbfAKOkb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:40:31 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B8308206B6;
-        Fri, 11 Jan 2019 14:40:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 41B1821848;
+        Fri, 11 Jan 2019 14:40:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547217628;
-        bh=UOdzwU+SPY92oRjHbsCbeqtGlHkhSteNjOpf+XoZmeI=;
+        s=default; t=1547217630;
+        bh=ilLru7CQ0RU1aO+bM/Kjt/6SLLsoHddtSaCzzRiVpus=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=btpBoXUp3PYeZ2/aomEruqQhflwtm/rDSpThjf1SdtTlNtBDQGz9pTW8BuRX93TQR
-         QPgStjtl3HBL+bdkK4YdoAyH4CTbqibVRPx+vIyoEFa+YSaHlxd+2tEDHhb0cXPnRH
-         Z32HD2WifyT7rjxaaf4an20oFsu/m88nF9U2siRg=
+        b=OQ6sxwS87XaMCxdhgXubeYF3m/fzVYc5nTmVdXA4DgwXzZk6oxL6yh91qLOXpWve0
+         EX/U3frJgIvtuHnZ790cv7Mz1eblybGKWjQiR6BXvnqEswhiDAPB3WPjqp2KabGW1W
+         t8lKfBQ3S47nlfiksQhE3KADhD0/qfbLj9Mz2/+E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        syzbot+0c1d61e4db7db94102ca@syzkaller.appspotmail.com,
-        Dominique Martinet <dominique.martinet@cea.fr>,
-        Eric Van Hensbergen <ericvh@gmail.com>,
-        Latchesar Ionkov <lucho@ionkov.net>
-Subject: [PATCH 4.19 131/148] 9p/net: put a lower bound on msize
-Date:   Fri, 11 Jan 2019 15:15:09 +0100
-Message-Id: <20190111131119.509618306@linuxfoundation.org>
+        Walker Benjamin <benjamin.walker@intel.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Zhu Yanjun <yanjun.zhu@oracle.com>,
+        Doug Ledford <dledford@redhat.com>
+Subject: [PATCH 4.19 132/148] rxe: fix error completion wr_id and qp_num
+Date:   Fri, 11 Jan 2019 15:15:10 +0100
+Message-Id: <20190111131119.545132025@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131114.337122649@linuxfoundation.org>
 References: <20190111131114.337122649@linuxfoundation.org>
@@ -68,81 +68,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dominique Martinet <dominique.martinet@cea.fr>
+From: Sagi Grimberg <sagi@grimberg.me>
 
-commit 574d356b7a02c7e1b01a1d9cba8a26b3c2888f45 upstream.
+commit e48d8ed9c6193502d849b35767fd18e20bbd7ba2 upstream.
 
-If the requested msize is too small (either from command line argument
-or from the server version reply), we won't get any work done.
-If it's *really* too small, nothing will work, and this got caught by
-syzbot recently (on a new kmem_cache_create_usercopy() call)
+Error completions must still contain a valid wr_id and
+qp_num such that the consumer can rely on. Correctly
+fill these fields in receive error completions.
 
-Just set a minimum msize to 4k in both code paths, until someone
-complains they have a use-case for a smaller msize.
-
-We need to check in both mount option and server reply individually
-because the msize for the first version request would be unchecked
-with just a global check on clnt->msize.
-
-Link: http://lkml.kernel.org/r/1541407968-31350-1-git-send-email-asmadeus@codewreck.org
-Reported-by: syzbot+0c1d61e4db7db94102ca@syzkaller.appspotmail.com
-Signed-off-by: Dominique Martinet <dominique.martinet@cea.fr>
-Cc: Eric Van Hensbergen <ericvh@gmail.com>
-Cc: Latchesar Ionkov <lucho@ionkov.net>
+Reported-by: Walker Benjamin <benjamin.walker@intel.com>
 Cc: stable@vger.kernel.org
+Signed-off-by: Sagi Grimberg <sagi@grimberg.me>
+Reviewed-by: Zhu Yanjun <yanjun.zhu@oracle.com>
+Tested-by: Zhu Yanjun <yanjun.zhu@oracle.com>
+Signed-off-by: Doug Ledford <dledford@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/9p/client.c |   21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+ drivers/infiniband/sw/rxe/rxe_resp.c |   13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
 
---- a/net/9p/client.c
-+++ b/net/9p/client.c
-@@ -181,6 +181,12 @@ static int parse_opts(char *opts, struct
- 				ret = r;
- 				continue;
- 			}
-+			if (option < 4096) {
-+				p9_debug(P9_DEBUG_ERROR,
-+					 "msize should be at least 4k\n");
-+				ret = -EINVAL;
-+				continue;
-+			}
- 			clnt->msize = option;
- 			break;
- 		case Opt_trans:
-@@ -993,10 +999,18 @@ static int p9_client_version(struct p9_c
- 	else if (!strncmp(version, "9P2000", 6))
- 		c->proto_version = p9_proto_legacy;
- 	else {
-+		p9_debug(P9_DEBUG_ERROR,
-+			 "server returned an unknown version: %s\n", version);
- 		err = -EREMOTEIO;
- 		goto error;
- 	}
+--- a/drivers/infiniband/sw/rxe/rxe_resp.c
++++ b/drivers/infiniband/sw/rxe/rxe_resp.c
+@@ -844,11 +844,16 @@ static enum resp_states do_complete(stru
  
-+	if (msize < 4096) {
-+		p9_debug(P9_DEBUG_ERROR,
-+			 "server returned a msize < 4096: %d\n", msize);
-+		err = -EREMOTEIO;
-+		goto error;
+ 	memset(&cqe, 0, sizeof(cqe));
+ 
+-	wc->wr_id		= wqe->wr_id;
+-	wc->status		= qp->resp.status;
+-	wc->qp			= &qp->ibqp;
++	if (qp->rcq->is_user) {
++		uwc->status             = qp->resp.status;
++		uwc->qp_num             = qp->ibqp.qp_num;
++		uwc->wr_id              = wqe->wr_id;
++	} else {
++		wc->status              = qp->resp.status;
++		wc->qp                  = &qp->ibqp;
++		wc->wr_id               = wqe->wr_id;
 +	}
- 	if (msize < c->msize)
- 		c->msize = msize;
  
-@@ -1055,6 +1069,13 @@ struct p9_client *p9_client_create(const
- 	if (clnt->msize > clnt->trans_mod->maxsize)
- 		clnt->msize = clnt->trans_mod->maxsize;
- 
-+	if (clnt->msize < 4096) {
-+		p9_debug(P9_DEBUG_ERROR,
-+			 "Please specify a msize of at least 4k\n");
-+		err = -EINVAL;
-+		goto free_client;
-+	}
-+
- 	err = p9_client_version(clnt);
- 	if (err)
- 		goto close_trans;
+-	/* fields after status are not required for errors */
+ 	if (wc->status == IB_WC_SUCCESS) {
+ 		wc->opcode = (pkt->mask & RXE_IMMDT_MASK &&
+ 				pkt->mask & RXE_WRITE_MASK) ?
 
 
