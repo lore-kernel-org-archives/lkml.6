@@ -2,184 +2,222 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4570C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 01:24:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5B83C43612
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 01:27:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85EDE20872
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 01:24:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A3EDD214C6
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 01:27:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="fRWA1Gch"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729224AbfAKBYv (ORCPT
+        id S1729249AbfAKB1O (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 20:24:51 -0500
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:15592 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726369AbfAKBYv (ORCPT
+        Thu, 10 Jan 2019 20:27:14 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:38581 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729063AbfAKB1N (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 20:24:51 -0500
-X-IronPort-AV: E=Sophos;i="5.56,463,1539619200"; 
-   d="scan'208";a="51752292"
-Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
-  by heian.cn.fujitsu.com with ESMTP; 11 Jan 2019 09:24:49 +0800
-Received: from G08CNEXCHPEKD01.g08.fujitsu.local (unknown [10.167.33.80])
-        by cn.fujitsu.com (Postfix) with ESMTP id 5C2A14BAD7CC;
-        Fri, 11 Jan 2019 09:24:49 +0800 (CST)
-Received: from localhost.localdomain (10.167.225.56) by
- G08CNEXCHPEKD01.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Fri, 11 Jan 2019 09:24:48 +0800
-Date:   Fri, 11 Jan 2019 09:23:53 +0800
-From:   Chao Fan <fanc.fnst@cn.fujitsu.com>
-To:     Borislav Petkov <bp@alien8.de>
-CC:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
-        <tglx@linutronix.de>, <mingo@redhat.com>, <hpa@zytor.com>,
-        <keescook@chromium.org>, <bhe@redhat.com>, <msys.mizuma@gmail.com>,
-        <indou.takao@jp.fujitsu.com>, <caoj.fnst@cn.fujitsu.com>
-Subject: Re: [PATCH v15 3/6] x86/boot: Introduce efi_get_rsdp_addr() to find
- RSDP from EFI table
-Message-ID: <20190111012353.GD2216@localhost.localdomain>
-References: <20190107032243.25324-1-fanc.fnst@cn.fujitsu.com>
- <20190107032243.25324-4-fanc.fnst@cn.fujitsu.com>
- <20190110211523.GG17621@zn.tnic>
+        Thu, 10 Jan 2019 20:27:13 -0500
+Received: by mail-lf1-f68.google.com with SMTP id a8so9681874lfk.5
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 17:27:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=YNQYs7ALyOMWiFiNiwUSyAnayUvPH25Nlsm5tjQ2dc4=;
+        b=fRWA1GchJJKSjm8TY3AvQcU+BJQ0bROBfUeUsvWPDvln/quMDlsxY33WIwUqwjYrDx
+         cRdiNlVyzBsSpL0P3WKgKFVdpnJQ7h4lh56CfUFbjsB+KYzYf4A5k3m8o76ZvGSsXIbM
+         trvNo/JH3yVaFSxcWfjyANVmHkm6OJH31MpNo+hg411ZUUKmo6worncJT4N9wYQfgKF5
+         LtR/cFs/LsQhBPBKeHbx9JYUCX1f2FssiZ7MROuc7IlkR5M3AJ7PvAlvjrT0I/HlGCEG
+         6h0UB8jIpdVq2jPHn5yitGGy8Zq/w3Z0IIwtgy1H45MBXYznd7tHR/IjWJMKpWlXiprk
+         T0jw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=YNQYs7ALyOMWiFiNiwUSyAnayUvPH25Nlsm5tjQ2dc4=;
+        b=rSOgp4/jSZtuOnut9HVDg1ocK5uyzeIdUpsc2EQMJZ9r3oSTgEzId+/Pynk0w9HXUx
+         r8roFI92Yc8LWk8HcXntSvsQdLnQ81Ar5AnnyiJCoq/5ASNU7xbm7BZjKuAiVjoNTJre
+         /S0C53AzjYZS0qmqpW54b/kFv21MyNNtyp8z91Lo+BeDO73RCtQdkMDYKbbblPFwt7Nl
+         xUo7AkkLFk5VB8yJQfRGKEOhxallYjJRRKJlT92fJxJ5mfv1M6uEPaSr8ZdmTmqxy15U
+         Mlb74VyzvMiCTFw32SCX46sjL9OKUQ02P0gQlw3L79RIJUiuk5LyiMk136bZtI7zBJhm
+         JL4g==
+X-Gm-Message-State: AJcUukcrFX9qxBpq986TIMlWx2Vj0ygKWGBKWTcqWMFNkRiD1IeXx3OY
+        Q0MVZyDwxY7WyqYgxLa4XWbtJbxil1abuAWSyoUz
+X-Google-Smtp-Source: ALg8bN54VbCuOepKE7cI6I3VadlRvwXKQa8wsaoUIWkLpH2Zp1zkM4jqB7OY/o0plMZd0YnpgzHww5CyOrh7mhDsdZ4=
+X-Received: by 2002:a19:8fce:: with SMTP id s75mr6810260lfk.151.1547170030257;
+ Thu, 10 Jan 2019 17:27:10 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20190110211523.GG17621@zn.tnic>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Originating-IP: [10.167.225.56]
-X-yoursite-MailScanner-ID: 5C2A14BAD7CC.A08FF
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
+References: <0000000000001a9aa0057f084a81@google.com> <d54c804a5d2dfd560108912094db9967db5a795b.camel@tycho.nsa.gov>
+In-Reply-To: <d54c804a5d2dfd560108912094db9967db5a795b.camel@tycho.nsa.gov>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Thu, 10 Jan 2019 20:26:58 -0500
+Message-ID: <CAHC9VhTbCFoRZ-u7Z8ymQhjGmuAnwk=1_sL9bpr=mMp1hhE4XQ@mail.gmail.com>
+Subject: Re: general protection fault in ebitmap_destroy
+To:     Stephen Smalley <sds@tycho.nsa.gov>
+Cc:     syzbot <syzbot+6664500f0f18f07a5c0e@syzkaller.appspotmail.com>,
+        Eric Paris <eparis@parisplace.org>,
+        linux-kernel@vger.kernel.org, peter.enderborg@sony.com,
+        selinux@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 10, 2019 at 10:15:23PM +0100, Borislav Petkov wrote:
->On Mon, Jan 07, 2019 at 11:22:40AM +0800, Chao Fan wrote:
->> Memory information in SRAT is necessary to fix the conflict between
->> KASLR and memory-hotremove. So RSDP and SRAT should be parsed.
->> 
->> When booting form KEXEC/EFI/BIOS, the methods to compute RSDP
->> are different. When booting from EFI, EFI table points to RSDP.
->> So parse the EFI table and find the RSDP.
->> 
->> Signed-off-by: Chao Fan <fanc.fnst@cn.fujitsu.com>
->> ---
->>  arch/x86/boot/compressed/acpi.c | 83 +++++++++++++++++++++++++++++++++
->>  1 file changed, 83 insertions(+)
->> 
->> diff --git a/arch/x86/boot/compressed/acpi.c b/arch/x86/boot/compressed/acpi.c
->> index 7ca5001d7639..f74c5d033d79 100644
->> --- a/arch/x86/boot/compressed/acpi.c
->> +++ b/arch/x86/boot/compressed/acpi.c
->> @@ -5,6 +5,8 @@
->>  #include "../string.h"
->>  
->>  #include <linux/acpi.h>
->> +#include <linux/efi.h>
->> +#include <asm/efi.h>
->>  
->>  /*
->>   * Max length of 64-bit hex address string is 19, prefix "0x" + 16 hex
->> @@ -28,3 +30,84 @@ static acpi_physical_address get_acpi_rsdp(void)
->>  #endif
->>  	return 0;
->>  }
->> +
->> +/* Search EFI table for RSDP. */
->> +static acpi_physical_address efi_get_rsdp_addr(void)
->> +{
->> +	acpi_physical_address rsdp_addr = 0;
+On Wed, Jan 9, 2019 at 11:11 AM Stephen Smalley <sds@tycho.nsa.gov> wrote:
+> On Wed, 2019-01-09 at 07:41 -0800, syzbot wrote:
+> > Hello,
+> >
+> > syzbot found the following crash on:
+> >
+> > HEAD commit:    a88cc8da0279 Merge branch 'akpm' (patches from
+> > Andrew)
+> > git tree:       upstream
+> > console output:
+> > https://syzkaller.appspot.com/x/log.txt?x=1722da4f400000
+> > kernel config:
+> > https://syzkaller.appspot.com/x/.config?x=edf1c3031097c304
+> > dashboard link:
+> > https://syzkaller.appspot.com/bug?extid=6664500f0f18f07a5c0e
+> > compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> > syz repro:
+> > https://syzkaller.appspot.com/x/repro.syz?x=12d43580c00000
+> >
+> > IMPORTANT: if you fix the bug, please add the following tag to the
+> > commit:
+> > Reported-by: syzbot+6664500f0f18f07a5c0e@syzkaller.appspotmail.com
+> >
+> > SELinux: failed to load policy
+> > sel_write_load: 238 callbacks suppressed
+> > SELinux: failed to load policy
+> > kasan: CONFIG_KASAN_INLINE enabled
+> > kasan: GPF could be caused by NULL-ptr deref or user memory access
+> > general protection fault: 0000 [#1] PREEMPT SMP KASAN
+> > CPU: 0 PID: 9316 Comm: syz-executor2 Not tainted 5.0.0-rc1+ #16
+> > Hardware name: Google Google Compute Engine/Google Compute Engine,
+> > BIOS
+> > Google 01/01/2011
+> > RIP: 0010:ebitmap_destroy+0x32/0xf0 security/selinux/ss/ebitmap.c:334
+> > Code: 49 89 fd 41 54 53 e8 9d e6 36 fe 4d 85 ed 0f 84 99 00 00 00 e8
+> > 8f e6
+> > 36 fe 4c 89 ea 48 b8 00 00 00 00 00 fc ff df 48 c1 ea 03 <80> 3c 02
+> > 00 0f
+> > 85 98 00 00 00 49 be 00 00 00 00 00 fc ff df 4d 8b
+> > RSP: 0018:ffff88808967f5c0 EFLAGS: 00010202
+> > RAX: dffffc0000000000 RBX: ffff88808967f6a8 RCX: dffffc0000000000
+> > RDX: 0000000000000001 RSI: ffffffff834b1081 RDI: 0000000000000008
+> > RBP: ffff88808967f5e0 R08: ffff8880972a8140 R09: ffffed1015cc5b90
+> > R10: ffffed1015cc5b8f R11: ffff8880ae62dc7b R12: ffff888099d993c0
+> > R13: 0000000000000008 R14: ffff888099d993c0 R15: ffff88808967f648
+> > FS:  00007f70cd9e5700(0000) GS:ffff8880ae600000(0000)
+> > knlGS:0000000000000000
+> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > CR2: 00000000015e7938 CR3: 0000000096c4a000 CR4: 00000000001406f0
+> > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> > Call Trace:
+> >   sens_destroy+0x49/0xa0 security/selinux/ss/policydb.c:735
+> >   sens_read+0x25d/0x460 security/selinux/ss/policydb.c:1636
+> >   policydb_read+0xed9/0x60d0 security/selinux/ss/policydb.c:2430
+> >   security_load_policy+0x423/0x1830
+> > security/selinux/ss/services.c:2129
+> >   sel_write_load+0x25a/0x470 security/selinux/selinuxfs.c:565
+> >   __vfs_write+0x116/0xb40 fs/read_write.c:485
+> >   vfs_write+0x20c/0x580 fs/read_write.c:549
+> >   ksys_write+0x105/0x260 fs/read_write.c:598
+> >   __do_sys_write fs/read_write.c:610 [inline]
+> >   __se_sys_write fs/read_write.c:607 [inline]
+> >   __x64_sys_write+0x73/0xb0 fs/read_write.c:607
+> >   do_syscall_64+0x1a3/0x800 arch/x86/entry/common.c:290
+> >   entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> > RIP: 0033:0x457ec9
+> > Code: 6d b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48
+> > 89 f7
+> > 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01
+> > f0 ff
+> > ff 0f 83 3b b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+> > RSP: 002b:00007f70cd9e4c78 EFLAGS: 00000246 ORIG_RAX:
+> > 0000000000000001
+> > RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000457ec9
+> > RDX: 000000000000005c RSI: 0000000020000000 RDI: 0000000000000003
+> > RBP: 000000000073bf00 R08: 0000000000000000 R09: 0000000000000000
+> > R10: 0000000000000000 R11: 0000000000000246 R12: 00007f70cd9e56d4
+> > R13: 00000000004c720f R14: 00000000004dc9a0 R15: 00000000ffffffff
+> > Modules linked in:
+> > ---[ end trace 78ea480790940b53 ]---
+> > RIP: 0010:ebitmap_destroy+0x32/0xf0 security/selinux/ss/ebitmap.c:334
+> > Code: 49 89 fd 41 54 53 e8 9d e6 36 fe 4d 85 ed 0f 84 99 00 00 00 e8
+> > 8f e6
+> > 36 fe 4c 89 ea 48 b8 00 00 00 00 00 fc ff df 48 c1 ea 03 <80> 3c 02
+> > 00 0f
+> > 85 98 00 00 00 49 be 00 00 00 00 00 fc ff df 4d 8b
+> > RSP: 0018:ffff88808967f5c0 EFLAGS: 00010202
+> > RAX: dffffc0000000000 RBX: ffff88808967f6a8 RCX: dffffc0000000000
+> > RDX: 0000000000000001 RSI: ffffffff834b1081 RDI: 0000000000000008
+> > RBP: ffff88808967f5e0 R08: ffff8880972a8140 R09: ffffed1015cc5b90
+> > R10: ffffed1015cc5b8f R11: ffff8880ae62dc7b R12: ffff888099d993c0
+> > R13: 0000000000000008 R14: ffff888099d993c0 R15: ffff88808967f648
+> > FS:  00007f70cd9e5700(0000) GS:ffff8880ae700000(0000)
+> > knlGS:0000000000000000
+> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > CR2: 000000000073c000 CR3: 0000000096c4a000 CR4: 00000000001406e0
+> > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 >
+> Possible fix below
 >
-><---- newline here.
+> From cc9324299f32db326447a28a836c462fc16bc945 Mon Sep 17 00:00:00 2001
+> From: Stephen Smalley <sds@tycho.nsa.gov>
+> Date: Wed, 9 Jan 2019 10:55:10 -0500
+> Subject: [PATCH] selinux: fix GPF on invalid policy
 >
+> levdatum->level can be NULL if we encounter an error while loading
+> the policy during sens_read prior to initializing it.  Make sure
+> sens_destroy handles that case correctly.
+>
+> Reported-by: syzbot+6664500f0f18f07a5c0e@syzkaller.appspotmail.com
+> Signed-off-by: Stephen Smalley <sds@tycho.nsa.gov>
+> ---
+>  security/selinux/ss/policydb.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
+> index a50d625e7946..c1c31e33657a 100644
+> --- a/security/selinux/ss/policydb.c
+> +++ b/security/selinux/ss/policydb.c
+> @@ -732,7 +732,8 @@ static int sens_destroy(void *key, void *datum, void *p)
+>         kfree(key);
+>         if (datum) {
+>                 levdatum = datum;
+> -               ebitmap_destroy(&levdatum->level->cat);
+> +               if (levdatum->level)
+> +                       ebitmap_destroy(&levdatum->level->cat);
+>                 kfree(levdatum->level);
+>         }
+>         kfree(datum);
+> --
+> 2.20.1
 
-Will add it.
+...
 
->> +#ifdef CONFIG_EFI
->> +	efi_system_table_t *systab;
->> +	struct efi_info *ei;
->> +	bool efi_64;
->> +	char *sig;
->> +	int size;
->> +	int i;
->> +
->> +	ei = &boot_params->efi_info;
->> +	sig = (char *)&ei->efi_loader_signature;
->> +
->> +	if (!strncmp(sig, EFI64_LOADER_SIGNATURE, 4)) {
->> +		efi_64 = true;
->> +	} else if (!strncmp(sig, EFI32_LOADER_SIGNATURE, 4)) {
->> +		efi_64 = false;
->> +	} else {
->> +		debug_putstr("Wrong EFI loader signature.\n");
->> +		return 0;
->> +	}
->> +
->> +	/* Get systab from boot params. Based on efi_init(). */
->> +#ifdef CONFIG_X86_64
->> +	systab = (efi_system_table_t *)(ei->efi_systab | ((__u64)ei->efi_systab_hi<<32));
->> +#else
->> +	if (ei->efi_systab_hi || ei->efi_memmap_hi) {
->> +		debug_putstr("Error getting RSDP address: EFI system table located above 4GB.\n");
->> +		return 0;
->> +	}
->> +	systab = (efi_system_table_t *)ei->efi_systab;
->> +#endif
->> +
->> +	if (!systab)
->> +		error("EFI system table is not found.");
->
->s/is//
+> > syzbot can test patches for this bug, for details see:
+> > https://goo.gl/tpsmEJ#testing-patches
 
-Will drop the 'is'.
+I'm not sure if this particular bug is one that syzbot can reproduce
+(I recall a different message when it had a reproducer), but it would
+be nice to get some syzbot test verification if possible when posting
+(see the link above for the magic).
 
->
->> +
->> +	/*
->> +	 * Get EFI tables from systab. Based on efi_config_init() and
->> +	 * efi_config_parse_tables().
->> +	 */
->> +	size = efi_64 ? sizeof(efi_config_table_64_t) :
->> +			sizeof(efi_config_table_32_t);
->> +
->> +	for (i = 0; i < systab->nr_tables; i++) {
->> +		void *config_tables;
->> +		unsigned long table;
->> +		efi_guid_t guid;
->> +
->> +		config_tables = (void *)(systab->tables + size * i);
->> +		if (efi_64) {
->> +			efi_config_table_64_t *tmp_table;
->> +			u64 table64;
->> +
->> +			tmp_table = config_tables;
->> +			guid = tmp_table->guid;
->> +			table64 = tmp_table->table;
->> +			table = table64;
->
->That table64 looks superfluous.
+Regardless, this looks like a good fix to me; I'm going to merge it
+into the stable-5.0 tree and assuming all goes well I'll probably send
+it up to Linus early next week.
 
-Yes, 'table64' looks superfluous here, but after these lines, there is:
-                        if (!IS_ENABLED(CONFIG_X86_64) && table64 >> 32) {
-so the 'table64' is useful here for i386. 'table' is unsigned long, it
-can't do the right shift. But the 'table64' who is u64 can do that right
-shift.
-
-Thanks,
-Chao Fan
-
->
->-- 
->Regards/Gruss,
->    Boris.
->
->Good mailing practices for 400: avoid top-posting and trim the reply.
->
->
-
-
+-- 
+paul moore
+www.paul-moore.com
