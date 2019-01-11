@@ -4,50 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E72B3C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:26:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 181A8C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:26:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B579120874
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:26:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D39A620874
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:26:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547216801;
-	bh=pEQAogmCEa6ELPqc039DvRhTOfpGGG70c9vb91Q/29I=;
+	s=default; t=1547216804;
+	bh=xguMtctK6F4fsqcmC4g3wDGgmz4Veasv2R0VDyhWB7Y=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=E+E5cCWavhLzx/CwCACELPhjCyhcVTJrgbNLQRfYj7jDcUTwgjs0+DwkgEEeSaCCv
-	 MgOQYmv4jIbWJO22mNaUDFSI6PFJm1vMnKUOqX4j+klzIJl4fyAguhIkHigv3Tx842
-	 s4m0WZEMy4S+V2Rk1/CUZNHhFTCcsKz/hlo3WotE=
+	b=ENSSq2StPFSEn0o2dNH+A2KivcOhO5cATSY90ONwh28f2niFM2cLrzUHovxJS9KLT
+	 muM3vsh+ohE6gSWOKaOPjrS2APdWuSssPwGU8uYN/vM+YWhuR1FNlm7gGgzriYuslw
+	 h7Iop5d1Eh1SsdpW/f7/IikqifNk7fs05HxReMYQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387902AbfAKORo (ORCPT
+        id S2388301AbfAKO0o (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:17:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34072 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:26:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34172 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387884AbfAKORj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:17:39 -0500
+        id S2387897AbfAKORo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:17:44 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9C9FA21841;
-        Fri, 11 Jan 2019 14:17:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BBF102177B;
+        Fri, 11 Jan 2019 14:17:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547216259;
-        bh=pEQAogmCEa6ELPqc039DvRhTOfpGGG70c9vb91Q/29I=;
+        s=default; t=1547216264;
+        bh=xguMtctK6F4fsqcmC4g3wDGgmz4Veasv2R0VDyhWB7Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XnrT2fWQZJ97EZ2cZJttA8QNZNpcsb0C7qweVVPsFRuIVwYAzTwJXGtJqtjVV7TJH
-         eFBFRhWb3XHd+Hqq1Al9YjFvfnaHUENR+7zFVUJYs7m+YhfKVrbAa1UiS2Ez68ioh+
-         49wqHHwDHewdtK8B/zP7teb+m0L/jqAu8pOlobyE=
+        b=fXRujlhU45/E0ZEk2oF9d4l1gG+ej6AUB+mLO333BkNINNOIFmB36RsVbqzofepAd
+         275aI9mKb4Woz2Ev5H8IfX0D7Ul083fbCdwbOTB2GwpyguuTqmmkvWhQtDMXJinbRi
+         dkUjps1ld2Ode3mb5MUC74x08euPqiT7HpfdPfPw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.4 33/88] ALSA: emux: Fix potential Spectre v1 vulnerabilities
-Date:   Fri, 11 Jan 2019 15:08:02 +0100
-Message-Id: <20190111131050.875514944@linuxfoundation.org>
+        stable@vger.kernel.org, Mohan Kumar <mkumard@nvidia.com>,
+        Dara Ramesh <dramesh@nvidia.com>,
+        Sameer Pujar <spujar@nvidia.com>, Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.4 35/88] ALSA: hda/tegra: clear pending irq handlers
+Date:   Fri, 11 Jan 2019 15:08:04 +0100
+Message-Id: <20190111131051.065992594@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131045.137499039@linuxfoundation.org>
 References: <20190111131045.137499039@linuxfoundation.org>
@@ -66,69 +66,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Gustavo A. R. Silva <gustavo@embeddedor.com>
+From: Sameer Pujar <spujar@nvidia.com>
 
-commit 4aea96f4237cea0c51a8bc87c0db31f0f932f1f0 upstream.
+commit 63d2a9ec310d8bcc955574220d4631aa55c1a80c upstream.
 
-info.mode and info.port are indirectly controlled by user-space,
-hence leading to a potential exploitation of the Spectre variant 1
-vulnerability.
+Even after disabling interrupts on the module, it could be possible
+that irq handlers are still running. System hang is seen during
+suspend path. It was found that, there were pending writes on the
+HDA bus and clock was disabled by that time.
 
-These issues were detected with the help of Smatch:
+Above mentioned issue is fixed by clearing any pending irq handlers
+before disabling clocks and returning from hda suspend.
 
-sound/synth/emux/emux_hwdep.c:72 snd_emux_hwdep_misc_mode() warn: potential spectre issue 'emu->portptrs[i]->ctrls' [w] (local cap)
-sound/synth/emux/emux_hwdep.c:75 snd_emux_hwdep_misc_mode() warn: potential spectre issue 'emu->portptrs' [w] (local cap)
-sound/synth/emux/emux_hwdep.c:75 snd_emux_hwdep_misc_mode() warn: potential spectre issue 'emu->portptrs[info.port]->ctrls' [w] (local cap)
-
-Fix this by sanitizing both info.mode and info.port before using them
-to index emu->portptrs[i]->ctrls, emu->portptrs[info.port]->ctrls and
-emu->portptrs.
-
-Notice that given that speculation windows are large, the policy is
-to kill the speculation on the first load and not worry if it can be
-completed with a dependent load/store [1].
-
-[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-Cc: stable@vger.kernel.org
+Suggested-by: Mohan Kumar <mkumard@nvidia.com>
+Suggested-by: Dara Ramesh <dramesh@nvidia.com>
+Signed-off-by: Sameer Pujar <spujar@nvidia.com>
+Cc: <stable@vger.kernel.org>
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/synth/emux/emux_hwdep.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ sound/pci/hda/hda_tegra.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/sound/synth/emux/emux_hwdep.c
-+++ b/sound/synth/emux/emux_hwdep.c
-@@ -22,9 +22,9 @@
- #include <sound/core.h>
- #include <sound/hwdep.h>
- #include <linux/uaccess.h>
-+#include <linux/nospec.h>
- #include "emux_voice.h"
+--- a/sound/pci/hda/hda_tegra.c
++++ b/sound/pci/hda/hda_tegra.c
+@@ -249,10 +249,12 @@ static int hda_tegra_suspend(struct devi
+ 	struct snd_card *card = dev_get_drvdata(dev);
+ 	struct azx *chip = card->private_data;
+ 	struct hda_tegra *hda = container_of(chip, struct hda_tegra, chip);
++	struct hdac_bus *bus = azx_bus(chip);
  
--
- #define TMP_CLIENT_ID	0x1001
+ 	snd_power_change_state(card, SNDRV_CTL_POWER_D3hot);
  
- /*
-@@ -66,13 +66,16 @@ snd_emux_hwdep_misc_mode(struct snd_emux
- 		return -EFAULT;
- 	if (info.mode < 0 || info.mode >= EMUX_MD_END)
- 		return -EINVAL;
-+	info.mode = array_index_nospec(info.mode, EMUX_MD_END);
+ 	azx_stop_chip(chip);
++	synchronize_irq(bus->irq);
+ 	azx_enter_link_reset(chip);
+ 	hda_tegra_disable_clocks(hda);
  
- 	if (info.port < 0) {
- 		for (i = 0; i < emu->num_ports; i++)
- 			emu->portptrs[i]->ctrls[info.mode] = info.value;
- 	} else {
--		if (info.port < emu->num_ports)
-+		if (info.port < emu->num_ports) {
-+			info.port = array_index_nospec(info.port, emu->num_ports);
- 			emu->portptrs[info.port]->ctrls[info.mode] = info.value;
-+		}
- 	}
- 	return 0;
- }
 
 
