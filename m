@@ -7,48 +7,48 @@ X-Spam-Status: No, score=-13.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AFDEC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:02:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCCBDC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:02:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E2EF20874
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:02:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 84B6820874
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:02:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547218939;
-	bh=IxZ6p/O+4dCBbexu9Z+YglBYruvNvDgFrIGLhecfBjE=;
+	s=default; t=1547218941;
+	bh=seTiWryhXIED45OrJys+hPz9N2hD+l54qqzsTk11m0Q=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Unh01LbcmmrrwHk5bXkRSTmY6EdoaDZWtutdmIo+0eEq7SyJTDGBX4vtrQCPtZCg0
-	 dwzpON9pNiWTlN9/5josvrqGul1waAGGfWaD3wpesFIj/4sWS2QcKuTMx4R5HVdnwU
-	 4oLHmduqYj0yynl+ZHPGKSyLw3pgSr94bnZjNtMc=
+	b=ZGolAmnbUxxVeWA1PaeSu0ecPYAo5pabVQLUn7ll7OsslKMFGNiP0Xm3lY/MkCyYq
+	 bM63YE3QiCDD4SzutkVuua3M/gv8EJaJi6ee9KA1Ny3UPaW3pqpneLsWpoFhaQ0kbz
+	 itkQKAzYUQVUSxd4yqeZgrJqr1Q5VLn2/OeAcph0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388762AbfAKObi (ORCPT
+        id S2391768AbfAKPCU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:31:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51246 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 10:02:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51326 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388733AbfAKObe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:31:34 -0500
+        id S2388628AbfAKObg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:31:36 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AD77F2177B;
-        Fri, 11 Jan 2019 14:31:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 951A82133F;
+        Fri, 11 Jan 2019 14:31:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547217093;
-        bh=IxZ6p/O+4dCBbexu9Z+YglBYruvNvDgFrIGLhecfBjE=;
+        s=default; t=1547217096;
+        bh=seTiWryhXIED45OrJys+hPz9N2hD+l54qqzsTk11m0Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hNKWxA/gtVhFuAA8nMPjigrHFv97vnpQx3gVUDa0zZxwYKF5z6ei0iuRceMPNr1f9
-         X/rkhM/Qyv/GSQWWXD/lip02nrKGdjjDQ9IvDVCGwUQXqzJ849l2vimzqeifm+FhxF
-         dYJ5c8ETpvYQbAu1ogBiJ33ZvIj9xMhA2+qAhlHk=
+        b=t2TYT8FoSp5gg4/bIZsHVdi46ghPqqNtJwn0J1uUpLq8SlHI9+UGStNN9OacN7FNo
+         KUeI2GxcP1MX15Ap6PV2Dm0Bg83ssEeg/7F3aOV+iILnJPRBVndlIl8jFTm7RFoHJ7
+         vj8g5KACh/vjUebkhzk1wqsjHCBf1yBK1WCI/h+Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yonglong Liu <liuyonglong@huawei.com>,
-        Peng Li <lipeng321@huawei.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Chuck Lever <chuck.lever@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 040/105] net: hns: Fix ping failed when use net bridge and send multicast
-Date:   Fri, 11 Jan 2019 15:14:11 +0100
-Message-Id: <20190111131106.510846309@linuxfoundation.org>
+Subject: [PATCH 4.14 041/105] SUNRPC: Fix a race with XPRT_CONNECTING
+Date:   Fri, 11 Jan 2019 15:14:12 +0100
+Message-Id: <20190111131106.598434268@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131102.899065735@linuxfoundation.org>
 References: <20190111131102.899065735@linuxfoundation.org>
@@ -67,323 +67,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 6adafc356e20189193b38ee6b9af7743078bf6b4 ]
+[ Upstream commit cf76785d30712d90185455e752337acdb53d2a5d ]
 
-Create a net bridge, add eth and vnet to the bridge. The vnet is used
-by a virtual machine. When ping the virtual machine from the outside
-host and the virtual machine send multicast at the same time, the ping
-package will lost.
+Ensure that we clear XPRT_CONNECTING before releasing the XPRT_LOCK so that
+we don't have races between the (asynchronous) socket setup code and
+tasks in xprt_connect().
 
-The multicast package send to the eth, eth will send it to the bridge too,
-and the bridge learn the mac of eth. When outside host ping the virtual
-mechine, it will match the promisc entry of the eth which is not expected,
-and the bridge send it to eth not to vnet, cause ping lost.
-
-So this patch change promisc tcam entry position to the END of 512 tcam
-entries, which indicate lower priority. And separate one promisc entry to
-two: mc & uc, to avoid package match the wrong tcam entry.
-
-Signed-off-by: Yonglong Liu <liuyonglong@huawei.com>
-Signed-off-by: Peng Li <lipeng321@huawei.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
+Tested-by: Chuck Lever <chuck.lever@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../ethernet/hisilicon/hns/hns_dsaf_main.c    | 257 +++++++++++++++---
- 1 file changed, 216 insertions(+), 41 deletions(-)
+ net/sunrpc/xprtsock.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_main.c b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_main.c
-index 9086d566a624..51d42d7f6074 100644
---- a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_main.c
-+++ b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_main.c
-@@ -934,6 +934,62 @@ static void hns_dsaf_tcam_mc_cfg(
- 	spin_unlock_bh(&dsaf_dev->tcam_lock);
+diff --git a/net/sunrpc/xprtsock.c b/net/sunrpc/xprtsock.c
+index 30192abfdc3b..05a58cc1b0cd 100644
+--- a/net/sunrpc/xprtsock.c
++++ b/net/sunrpc/xprtsock.c
+@@ -2223,8 +2223,8 @@ static void xs_udp_setup_socket(struct work_struct *work)
+ 	trace_rpc_socket_connect(xprt, sock, 0);
+ 	status = 0;
+ out:
+-	xprt_unlock_connect(xprt, transport);
+ 	xprt_clear_connecting(xprt);
++	xprt_unlock_connect(xprt, transport);
+ 	xprt_wake_pending_tasks(xprt, status);
  }
  
-+/**
-+ * hns_dsaf_tcam_uc_cfg_vague - INT
-+ * @dsaf_dev: dsa fabric device struct pointer
-+ * @address,
-+ * @ptbl_tcam_data,
-+ */
-+static void hns_dsaf_tcam_uc_cfg_vague(struct dsaf_device *dsaf_dev,
-+				       u32 address,
-+				       struct dsaf_tbl_tcam_data *tcam_data,
-+				       struct dsaf_tbl_tcam_data *tcam_mask,
-+				       struct dsaf_tbl_tcam_ucast_cfg *tcam_uc)
-+{
-+	spin_lock_bh(&dsaf_dev->tcam_lock);
-+	hns_dsaf_tbl_tcam_addr_cfg(dsaf_dev, address);
-+	hns_dsaf_tbl_tcam_data_cfg(dsaf_dev, tcam_data);
-+	hns_dsaf_tbl_tcam_ucast_cfg(dsaf_dev, tcam_uc);
-+	hns_dsaf_tbl_tcam_match_cfg(dsaf_dev, tcam_mask);
-+	hns_dsaf_tbl_tcam_data_ucast_pul(dsaf_dev);
-+
-+	/*Restore Match Data*/
-+	tcam_mask->tbl_tcam_data_high = 0xffffffff;
-+	tcam_mask->tbl_tcam_data_low = 0xffffffff;
-+	hns_dsaf_tbl_tcam_match_cfg(dsaf_dev, tcam_mask);
-+
-+	spin_unlock_bh(&dsaf_dev->tcam_lock);
-+}
-+
-+/**
-+ * hns_dsaf_tcam_mc_cfg_vague - INT
-+ * @dsaf_dev: dsa fabric device struct pointer
-+ * @address,
-+ * @ptbl_tcam_data,
-+ * @ptbl_tcam_mask
-+ * @ptbl_tcam_mcast
-+ */
-+static void hns_dsaf_tcam_mc_cfg_vague(struct dsaf_device *dsaf_dev,
-+				       u32 address,
-+				       struct dsaf_tbl_tcam_data *tcam_data,
-+				       struct dsaf_tbl_tcam_data *tcam_mask,
-+				       struct dsaf_tbl_tcam_mcast_cfg *tcam_mc)
-+{
-+	spin_lock_bh(&dsaf_dev->tcam_lock);
-+	hns_dsaf_tbl_tcam_addr_cfg(dsaf_dev, address);
-+	hns_dsaf_tbl_tcam_data_cfg(dsaf_dev, tcam_data);
-+	hns_dsaf_tbl_tcam_mcast_cfg(dsaf_dev, tcam_mc);
-+	hns_dsaf_tbl_tcam_match_cfg(dsaf_dev, tcam_mask);
-+	hns_dsaf_tbl_tcam_data_mcast_pul(dsaf_dev);
-+
-+	/*Restore Match Data*/
-+	tcam_mask->tbl_tcam_data_high = 0xffffffff;
-+	tcam_mask->tbl_tcam_data_low = 0xffffffff;
-+	hns_dsaf_tbl_tcam_match_cfg(dsaf_dev, tcam_mask);
-+
-+	spin_unlock_bh(&dsaf_dev->tcam_lock);
-+}
-+
- /**
-  * hns_dsaf_tcam_mc_invld - INT
-  * @dsaf_id: dsa fabric id
-@@ -1491,6 +1547,27 @@ static u16 hns_dsaf_find_empty_mac_entry(struct dsaf_device *dsaf_dev)
- 	return DSAF_INVALID_ENTRY_IDX;
- }
- 
-+/**
-+ * hns_dsaf_find_empty_mac_entry_reverse
-+ * search dsa fabric soft empty-entry from the end
-+ * @dsaf_dev: dsa fabric device struct pointer
-+ */
-+static u16 hns_dsaf_find_empty_mac_entry_reverse(struct dsaf_device *dsaf_dev)
-+{
-+	struct dsaf_drv_priv *priv = hns_dsaf_dev_priv(dsaf_dev);
-+	struct dsaf_drv_soft_mac_tbl *soft_mac_entry;
-+	int i;
-+
-+	soft_mac_entry = priv->soft_mac_tbl + (DSAF_TCAM_SUM - 1);
-+	for (i = (DSAF_TCAM_SUM - 1); i > 0; i--) {
-+		/* search all entry from end to start.*/
-+		if (soft_mac_entry->index == DSAF_INVALID_ENTRY_IDX)
-+			return i;
-+		soft_mac_entry--;
-+	}
-+	return DSAF_INVALID_ENTRY_IDX;
-+}
-+
- /**
-  * hns_dsaf_set_mac_key - set mac key
-  * @dsaf_dev: dsa fabric device struct pointer
-@@ -2666,58 +2743,156 @@ int hns_dsaf_get_regs_count(void)
- 	return DSAF_DUMP_REGS_NUM;
- }
- 
--/* Reserve the last TCAM entry for promisc support */
--#define dsaf_promisc_tcam_entry(port) \
--	(DSAF_TCAM_SUM - DSAFV2_MAC_FUZZY_TCAM_NUM + (port))
--void hns_dsaf_set_promisc_tcam(struct dsaf_device *dsaf_dev,
--			       u32 port, bool enable)
-+static void set_promisc_tcam_enable(struct dsaf_device *dsaf_dev, u32 port)
- {
-+	struct dsaf_tbl_tcam_ucast_cfg tbl_tcam_ucast = {0, 1, 0, 0, 0x80};
-+	struct dsaf_tbl_tcam_data tbl_tcam_data_mc = {0x01000000, port};
-+	struct dsaf_tbl_tcam_data tbl_tcam_mask_uc = {0x01000000, 0xf};
-+	struct dsaf_tbl_tcam_mcast_cfg tbl_tcam_mcast = {0, 0, {0} };
- 	struct dsaf_drv_priv *priv = hns_dsaf_dev_priv(dsaf_dev);
--	struct dsaf_drv_soft_mac_tbl *soft_mac_entry = priv->soft_mac_tbl;
--	u16 entry_index;
--	struct dsaf_drv_tbl_tcam_key tbl_tcam_data, tbl_tcam_mask;
--	struct dsaf_tbl_tcam_mcast_cfg mac_data = {0};
-+	struct dsaf_tbl_tcam_data tbl_tcam_data_uc = {0, port};
-+	struct dsaf_drv_mac_single_dest_entry mask_entry;
-+	struct dsaf_drv_tbl_tcam_key temp_key, mask_key;
-+	struct dsaf_drv_soft_mac_tbl *soft_mac_entry;
-+	u16 entry_index = DSAF_INVALID_ENTRY_IDX;
-+	struct dsaf_drv_tbl_tcam_key mac_key;
-+	struct hns_mac_cb *mac_cb;
-+	u8 addr[ETH_ALEN] = {0};
-+	u8 port_num;
-+	u16 mskid;
- 
--	if ((AE_IS_VER1(dsaf_dev->dsaf_ver)) || HNS_DSAF_IS_DEBUG(dsaf_dev))
-+	/* promisc use vague table match with vlanid = 0 & macaddr = 0 */
-+	hns_dsaf_set_mac_key(dsaf_dev, &mac_key, 0x00, port, addr);
-+	entry_index = hns_dsaf_find_soft_mac_entry(dsaf_dev, &mac_key);
-+	if (entry_index != DSAF_INVALID_ENTRY_IDX)
- 		return;
- 
--	/* find the tcam entry index for promisc */
--	entry_index = dsaf_promisc_tcam_entry(port);
--
--	memset(&tbl_tcam_data, 0, sizeof(tbl_tcam_data));
--	memset(&tbl_tcam_mask, 0, sizeof(tbl_tcam_mask));
--
--	/* config key mask */
--	if (enable) {
--		dsaf_set_field(tbl_tcam_data.low.bits.port_vlan,
--			       DSAF_TBL_TCAM_KEY_PORT_M,
--			       DSAF_TBL_TCAM_KEY_PORT_S, port);
--		dsaf_set_field(tbl_tcam_mask.low.bits.port_vlan,
--			       DSAF_TBL_TCAM_KEY_PORT_M,
--			       DSAF_TBL_TCAM_KEY_PORT_S, 0xf);
--
--		/* SUB_QID */
--		dsaf_set_bit(mac_data.tbl_mcast_port_msk[0],
--			     DSAF_SERVICE_NW_NUM, true);
--		mac_data.tbl_mcast_item_vld = true;	/* item_vld bit */
-+	/* put promisc tcam entry in the end. */
-+	/* 1. set promisc unicast vague tcam entry. */
-+	entry_index = hns_dsaf_find_empty_mac_entry_reverse(dsaf_dev);
-+	if (entry_index == DSAF_INVALID_ENTRY_IDX) {
-+		dev_err(dsaf_dev->dev,
-+			"enable uc promisc failed (port:%#x)\n",
-+			port);
-+		return;
-+	}
-+
-+	mac_cb = dsaf_dev->mac_cb[port];
-+	(void)hns_mac_get_inner_port_num(mac_cb, 0, &port_num);
-+	tbl_tcam_ucast.tbl_ucast_out_port = port_num;
-+
-+	/* config uc vague table */
-+	hns_dsaf_tcam_uc_cfg_vague(dsaf_dev, entry_index, &tbl_tcam_data_uc,
-+				   &tbl_tcam_mask_uc, &tbl_tcam_ucast);
-+
-+	/* update software entry */
-+	soft_mac_entry = priv->soft_mac_tbl;
-+	soft_mac_entry += entry_index;
-+	soft_mac_entry->index = entry_index;
-+	soft_mac_entry->tcam_key.high.val = mac_key.high.val;
-+	soft_mac_entry->tcam_key.low.val = mac_key.low.val;
-+	/* step back to the START for mc. */
-+	soft_mac_entry = priv->soft_mac_tbl;
-+
-+	/* 2. set promisc multicast vague tcam entry. */
-+	entry_index = hns_dsaf_find_empty_mac_entry_reverse(dsaf_dev);
-+	if (entry_index == DSAF_INVALID_ENTRY_IDX) {
-+		dev_err(dsaf_dev->dev,
-+			"enable mc promisc failed (port:%#x)\n",
-+			port);
-+		return;
-+	}
-+
-+	memset(&mask_entry, 0x0, sizeof(mask_entry));
-+	memset(&mask_key, 0x0, sizeof(mask_key));
-+	memset(&temp_key, 0x0, sizeof(temp_key));
-+	mask_entry.addr[0] = 0x01;
-+	hns_dsaf_set_mac_key(dsaf_dev, &mask_key, mask_entry.in_vlan_id,
-+			     port, mask_entry.addr);
-+	tbl_tcam_mcast.tbl_mcast_item_vld = 1;
-+	tbl_tcam_mcast.tbl_mcast_old_en = 0;
-+
-+	if (port < DSAF_SERVICE_NW_NUM) {
-+		mskid = port;
-+	} else if (port >= DSAF_BASE_INNER_PORT_NUM) {
-+		mskid = port - DSAF_BASE_INNER_PORT_NUM + DSAF_SERVICE_NW_NUM;
- 	} else {
--		mac_data.tbl_mcast_item_vld = false;	/* item_vld bit */
-+		dev_err(dsaf_dev->dev, "%s,pnum(%d)error,key(%#x:%#x)\n",
-+			dsaf_dev->ae_dev.name, port,
-+			mask_key.high.val, mask_key.low.val);
-+		return;
+@@ -2451,8 +2451,8 @@ static void xs_tcp_setup_socket(struct work_struct *work)
  	}
- 
--	dev_dbg(dsaf_dev->dev,
--		"set_promisc_entry, %s Mac key(%#x:%#x) entry_index%d\n",
--		dsaf_dev->ae_dev.name, tbl_tcam_data.high.val,
--		tbl_tcam_data.low.val, entry_index);
-+	dsaf_set_bit(tbl_tcam_mcast.tbl_mcast_port_msk[mskid / 32],
-+		     mskid % 32, 1);
-+	memcpy(&temp_key, &mask_key, sizeof(mask_key));
-+	hns_dsaf_tcam_mc_cfg_vague(dsaf_dev, entry_index, &tbl_tcam_data_mc,
-+				   (struct dsaf_tbl_tcam_data *)(&mask_key),
-+				   &tbl_tcam_mcast);
- 
--	/* config promisc entry with mask */
--	hns_dsaf_tcam_mc_cfg(dsaf_dev, entry_index,
--			     (struct dsaf_tbl_tcam_data *)&tbl_tcam_data,
--			     (struct dsaf_tbl_tcam_data *)&tbl_tcam_mask,
--			     &mac_data);
-+	/* update software entry */
-+	soft_mac_entry += entry_index;
-+	soft_mac_entry->index = entry_index;
-+	soft_mac_entry->tcam_key.high.val = temp_key.high.val;
-+	soft_mac_entry->tcam_key.low.val = temp_key.low.val;
-+}
- 
--	/* config software entry */
-+static void set_promisc_tcam_disable(struct dsaf_device *dsaf_dev, u32 port)
-+{
-+	struct dsaf_tbl_tcam_data tbl_tcam_data_mc = {0x01000000, port};
-+	struct dsaf_tbl_tcam_ucast_cfg tbl_tcam_ucast = {0, 0, 0, 0, 0};
-+	struct dsaf_tbl_tcam_mcast_cfg tbl_tcam_mcast = {0, 0, {0} };
-+	struct dsaf_drv_priv *priv = hns_dsaf_dev_priv(dsaf_dev);
-+	struct dsaf_tbl_tcam_data tbl_tcam_data_uc = {0, 0};
-+	struct dsaf_tbl_tcam_data tbl_tcam_mask = {0, 0};
-+	struct dsaf_drv_soft_mac_tbl *soft_mac_entry;
-+	u16 entry_index = DSAF_INVALID_ENTRY_IDX;
-+	struct dsaf_drv_tbl_tcam_key mac_key;
-+	u8 addr[ETH_ALEN] = {0};
-+
-+	/* 1. delete uc vague tcam entry. */
-+	/* promisc use vague table match with vlanid = 0 & macaddr = 0 */
-+	hns_dsaf_set_mac_key(dsaf_dev, &mac_key, 0x00, port, addr);
-+	entry_index = hns_dsaf_find_soft_mac_entry(dsaf_dev, &mac_key);
-+
-+	if (entry_index == DSAF_INVALID_ENTRY_IDX)
-+		return;
-+
-+	/* config uc vague table */
-+	hns_dsaf_tcam_uc_cfg_vague(dsaf_dev, entry_index, &tbl_tcam_data_uc,
-+				   &tbl_tcam_mask, &tbl_tcam_ucast);
-+	/* update soft management table. */
-+	soft_mac_entry = priv->soft_mac_tbl;
- 	soft_mac_entry += entry_index;
--	soft_mac_entry->index = enable ? entry_index : DSAF_INVALID_ENTRY_IDX;
-+	soft_mac_entry->index = DSAF_INVALID_ENTRY_IDX;
-+	/* step back to the START for mc. */
-+	soft_mac_entry = priv->soft_mac_tbl;
-+
-+	/* 2. delete mc vague tcam entry. */
-+	addr[0] = 0x01;
-+	memset(&mac_key, 0x0, sizeof(mac_key));
-+	hns_dsaf_set_mac_key(dsaf_dev, &mac_key, 0x00, port, addr);
-+	entry_index = hns_dsaf_find_soft_mac_entry(dsaf_dev, &mac_key);
-+
-+	if (entry_index == DSAF_INVALID_ENTRY_IDX)
-+		return;
-+
-+	/* config mc vague table */
-+	hns_dsaf_tcam_mc_cfg_vague(dsaf_dev, entry_index, &tbl_tcam_data_mc,
-+				   &tbl_tcam_mask, &tbl_tcam_mcast);
-+	/* update soft management table. */
-+	soft_mac_entry += entry_index;
-+	soft_mac_entry->index = DSAF_INVALID_ENTRY_IDX;
-+}
-+
-+/* Reserve the last TCAM entry for promisc support */
-+void hns_dsaf_set_promisc_tcam(struct dsaf_device *dsaf_dev,
-+			       u32 port, bool enable)
-+{
-+	if (enable)
-+		set_promisc_tcam_enable(dsaf_dev, port);
-+	else
-+		set_promisc_tcam_disable(dsaf_dev, port);
+ 	status = -EAGAIN;
+ out:
+-	xprt_unlock_connect(xprt, transport);
+ 	xprt_clear_connecting(xprt);
++	xprt_unlock_connect(xprt, transport);
+ 	xprt_wake_pending_tasks(xprt, status);
  }
  
- int hns_dsaf_wait_pkt_clean(struct dsaf_device *dsaf_dev, int port)
 -- 
 2.19.1
 
