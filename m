@@ -2,112 +2,153 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3716EC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 10:06:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04549C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 10:07:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE62820872
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 10:06:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C7E712177E
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 10:07:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="TSqlUULP"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cNX4uAlE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731637AbfAKKG6 (ORCPT
+        id S1731649AbfAKKHI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 05:06:58 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:45270 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731380AbfAKKG5 (ORCPT
+        Fri, 11 Jan 2019 05:07:08 -0500
+Received: from mail-io1-f67.google.com ([209.85.166.67]:42564 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731121AbfAKKHI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 05:06:57 -0500
-Received: by mail-ed1-f66.google.com with SMTP id d39so12574867edb.12
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Jan 2019 02:06:55 -0800 (PST)
+        Fri, 11 Jan 2019 05:07:08 -0500
+Received: by mail-io1-f67.google.com with SMTP id x6so11759677ioa.9;
+        Fri, 11 Jan 2019 02:07:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brauner.io; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=vJf48/sX7AnRDpDJIWf3yAdJDrwjCu5NvywBcajjBw8=;
-        b=TSqlUULPXi7TXzrD2EdkkE4BzmnHqf5XPq0NuPEi0/W9pso5mGoCiIAUNOl+XJfbH5
-         24Rzy/y3xrOl++Cg+z5C05BPJ3Q262S4jRvp95eUvYrld0gYosD85WQJCAf03RiyXmDW
-         KAsodYygeZOeKzrDNL0nPwDlUNTz7p5nLPV+ILQ82b+1BQUEVaeEv/uXBKPCyNrVbrFN
-         4YyMxAJ5FTHhnd8DX2a0HLi8TyFPKhkX97u1j+jH1drgwrOQteI+uqwqjWj6GyP3sMOp
-         YY/mV1+qAbWhReY3ybHQfUJy8NOOYmZ1+mpX40tkD6xryt9UvEm4nF7bsQ3Izc4tbMal
-         6A1w==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=0tV770gtlc+wsy+UJoYxGMN9qBxuKgWLEh7SlyYwABc=;
+        b=cNX4uAlETZADN8aGRufMP3D/4vQLNg3X69OiSMjhjWYl7auJI9j39DuE573wzYBGPB
+         Z54d5fPFgjAi6qVJ+oWkKC2s4Q8LQXwrsMqf/Xqe5JAX+Ih3hgn/w1hVd1LMrQ2RwSxm
+         DLjcGH7rmc6U9CbplCjwBYbbNR1zJ3hBsKXnndGo291m4QEMvTkV2e+IiaOyqrAvm3l8
+         sop06tgie9xWkc+XMY4MO8IzM3AiwyEGYDE02eCIDXqlt467X05ipHMqhcdd+jbMOH08
+         +xEvlP6cymto4k/R9yxie0s814znsJDeXyjjXz5Zr4zPOaoYl0WaPUQVEZR3pA6WlABt
+         4tfg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=vJf48/sX7AnRDpDJIWf3yAdJDrwjCu5NvywBcajjBw8=;
-        b=fwWEw6JSd5BEnTZC0+xpHdy5p6G50S/zZd5zDSwKnoEyYui7qukmctT/YNe7yqMMXL
-         jxCWpTUP1kV3AZdzhwDcWfwoIf8cZEd+1Jz3fvJq3zZ7HuJLn9rRoEbOFGSvbdTA19BY
-         H8fbEfXgi9Bh0/DSDOfMJsG1SybFhsoccbB9bRc4VoqCGgOytQT9O0eREDuBgADt3/WL
-         rBsmzpscoefYD5CQUOj5WvEM8Ow1jIBycctOe5Pfm2Iz3XWNNgjbrddOLlvhHMPGE5HI
-         GxTxlaqUPh4kjMyYB/ifJaOydFw1QMuJ4GWGrKN4SkYCYLRFCqLZmyLVhE1Fz80ShPSE
-         sgTQ==
-X-Gm-Message-State: AJcUukflOxFFWz3PdxA/FOWSEGoYMrConQDD5CK8J852DHCtEVCF6o7j
-        9F8r/hwdVedUgMoeQxB8bgt83w==
-X-Google-Smtp-Source: ALg8bN7BetzpTMMgvuYKqy6f3Bd4ZSVxrnfprlI+W4JJm/Q8gDObVX86HHh+STvjPbXtMIEC1gC71w==
-X-Received: by 2002:a17:906:154c:: with SMTP id c12-v6mr11435180ejd.69.1547201214790;
-        Fri, 11 Jan 2019 02:06:54 -0800 (PST)
-Received: from brauner.io ([2a02:8109:b6c0:d6c:c571:88:8aee:976c])
-        by smtp.gmail.com with ESMTPSA id a38sm2214446edd.44.2019.01.11.02.06.53
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 11 Jan 2019 02:06:54 -0800 (PST)
-Date:   Fri, 11 Jan 2019 11:06:53 +0100
-From:   Christian Brauner <christian@brauner.io>
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     tkjos@android.com, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org, arve@android.com,
-        dan.carpenter@oracle.com, joel@joelfernandes.org, maco@android.com,
-        tkjos@google.com
-Subject: Re: [PATCH v2 2/2] binderfs: reserve devices for initial mount
-Message-ID: <20190111100652.vw5dhopo5vyc24he@brauner.io>
-References: <20190102113219.3716-1-christian@brauner.io>
- <20190102113219.3716-2-christian@brauner.io>
- <20190111091818.GA17058@kroah.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=0tV770gtlc+wsy+UJoYxGMN9qBxuKgWLEh7SlyYwABc=;
+        b=XePnYf2BrUfVbZQFD9qB2MvcNH003046fAKoSnVyiEVAZQlzd5xoTIYyythWzYkvh2
+         +P/e3MhFh0L4euDvhz8dkkRZb5g1vRnXG4wfPJcA6sypsmOiGiG8uJ1wuNBrtUw/D/TK
+         dKUkRrtMAjpQrQw+EUlpmJI5j8qCQezRhsmo88e6FW+lwGSDdjxg34dI1F2ZNkteLXN7
+         2sV3er89jdWIYmTSl8kp5jdhx+Hx2029j16V1SmlexdUBENAgHuwpmoIeuhT33nRRFvc
+         rQGftEzcxC8SD4ckWTEEr5DdTWhY9v5maV20K3NofhO45uzQY1oj3D3Gr4y8bWZf2mbR
+         tLwg==
+X-Gm-Message-State: AJcUukebX908oomLV3tG2SJV9zSJNdRsmFdc1tzc+r7j+XITKc0ht46z
+        Ov3epLKV87y/F0UoZKbGPPNTykGPyRlJEbUQM07w2eLtbQ==
+X-Google-Smtp-Source: ALg8bN5Xzg+bZMposKlY51+EUlou7mGmeHx/TDH2StE42hULTAMczRfTbyGp2nwSeReF6n6voVc0KWtaO+hN0ViqkcQ=
+X-Received: by 2002:a5e:de01:: with SMTP id e1mr9201968iok.137.1547201226390;
+ Fri, 11 Jan 2019 02:07:06 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190111091818.GA17058@kroah.com>
-User-Agent: NeoMutt/20180716
+References: <1547183577-20309-1-git-send-email-kernelfans@gmail.com>
+ <1547183577-20309-2-git-send-email-kernelfans@gmail.com> <20190111061221.GB13263@localhost.localdomain>
+In-Reply-To: <20190111061221.GB13263@localhost.localdomain>
+From:   Pingfan Liu <kernelfans@gmail.com>
+Date:   Fri, 11 Jan 2019 18:06:55 +0800
+Message-ID: <CAFgQCTvhcNK_-b-eVFZY8Ua2C+GbOVM+h4kB1us2vNvvyNPCYg@mail.gmail.com>
+Subject: Re: [PATCHv2 1/7] x86/mm: concentrate the code to memblock allocator enabled
+To:     Chao Fan <fanc.fnst@cn.fujitsu.com>
+Cc:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>, Yinghai Lu <yinghai@kernel.org>,
+        Tejun Heo <tj@kernel.org>, Baoquan He <bhe@redhat.com>,
+        Juergen Gross <jgross@suse.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Michal Hocko <mhocko@suse.com>, x86@kernel.org,
+        linux-acpi@vger.kernel.org, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 11, 2019 at 10:18:18AM +0100, Greg KH wrote:
-> On Wed, Jan 02, 2019 at 12:32:19PM +0100, Christian Brauner wrote:
-> > The binderfs instance in the initial ipc namespace will always have a
-> > reserve of 4 binder devices unless explicitly capped by specifying a lower
-> > value via the "max" mount option.
-> > This ensures when binder devices are removed (on accident or on purpose)
-> > they can always be recreated without risking that all minor numbers have
-> > already been used up.
-> > 
-> > Cc: Todd Kjos <tkjos@google.com>
-> > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
-> > ---
-> > v2:
-> > - patch unchanged
-> > v1:
-> > - patch introduced
-> > v0:
-> > - patch not present
-> > ---
-> >  drivers/android/binderfs.c | 7 ++++++-
-> >  1 file changed, 6 insertions(+), 1 deletion(-)
-> 
-> What did you make this patch against?  It doesn't apply cleanly so I
-> don't want to take it until we get everything synced up properly
-> together :(
-> 
-> I'll apply patch 1/2 now, can you rebase and resend this one?
+On Fri, Jan 11, 2019 at 2:13 PM Chao Fan <fanc.fnst@cn.fujitsu.com> wrote:
+>
+> On Fri, Jan 11, 2019 at 01:12:51PM +0800, Pingfan Liu wrote:
+> >This patch identifies the point where memblock alloc start. It has no
+> >functional.
+> [...]
+> >+#ifdef CONFIG_MEMORY_HOTPLUG
+> >+      /*
+> >+       * Memory used by the kernel cannot be hot-removed because Linux
+> >+       * cannot migrate the kernel pages. When memory hotplug is
+> >+       * enabled, we should prevent memblock from allocating memory
+> >+       * for the kernel.
+> >+       *
+> >+       * ACPI SRAT records all hotpluggable memory ranges. But before
+> >+       * SRAT is parsed, we don't know about it.
+> >+       *
+> >+       * The kernel image is loaded into memory at very early time. We
+> >+       * cannot prevent this anyway. So on NUMA system, we set any
+> >+       * node the kernel resides in as un-hotpluggable.
+> >+       *
+> >+       * Since on modern servers, one node could have double-digit
+> >+       * gigabytes memory, we can assume the memory around the kernel
+> >+       * image is also un-hotpluggable. So before SRAT is parsed, just
+> >+       * allocate memory near the kernel image to try the best to keep
+> >+       * the kernel away from hotpluggable memory.
+> >+       */
+> >+      if (movable_node_is_enabled())
+> >+              memblock_set_bottom_up(true);
+>
+> Hi Pingfan,
+>
+> In my understanding, 'movable_node' is based on the that memory near
+> kernel is considered as in the same node as kernel in high possibility.
+>
+> If SRAT has been parsed early, do we still need the kernel parameter
+> 'movable_node'? Since you have got the memory information about hot-remove,
+> so I wonder if it's OK to drop 'movable_node', and if memory-hotremove is
+> enabled, change memblock allocation according to SRAT.
+>
+x86_32 still need this logic. Maybe it can be doable later.
 
-Yup. I'll rebase on top of char-misc-linus now. :)
-
-Thanks!
-Christian
+Thanks,
+Pingfan
+> If there is something wrong in my understanding, please let me know.
+>
+> Thanks,
+> Chao Fan
+>
+> >+#endif
+> >       init_mem_mapping();
+> >+      memblock_set_current_limit(get_max_mapped());
+> >
+> >       idt_setup_early_pf();
+> >
+> >@@ -1145,8 +1145,6 @@ void __init setup_arch(char **cmdline_p)
+> >        */
+> >       mmu_cr4_features = __read_cr4() & ~X86_CR4_PCIDE;
+> >
+> >-      memblock_set_current_limit(get_max_mapped());
+> >-
+> >       /*
+> >        * NOTE: On x86-32, only from this point on, fixmaps are ready for use.
+> >        */
+> >--
+> >2.7.4
+> >
+> >
+> >
+>
+>
