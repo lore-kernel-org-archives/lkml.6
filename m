@@ -2,75 +2,107 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A677FC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:22:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11D6FC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:22:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 64FE62177B
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:22:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="CSe3SXHC"
+	by mail.kernel.org (Postfix) with ESMTP id C93B62177B
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:22:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547216538;
+	bh=XXtm1G79+COmzgI/UzjzLZSW+UWrBINFIIo5XnLJqXo=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=WN39E0hnl9KeoKFEAN9DWHZC/wbt5gF4TmHi6goNdCletbsXfewR5doMnLoBQJuzl
+	 fyFMrNbgQI95nZQXhLYyD1wJLnFqJB8eNqbCGL7aE8wwMjWwFkomS5V6oxcdERn0ce
+	 mUXeVsQ2lX/RL846iGGS+/3Y4OX6/G/2QfvZtPYw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732832AbfAKOWJ (ORCPT
+        id S1732879AbfAKOWR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:22:09 -0500
-Received: from vps0.lunn.ch ([185.16.172.187]:40351 "EHLO vps0.lunn.ch"
+        Fri, 11 Jan 2019 09:22:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36606 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729624AbfAKOTi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:19:38 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch; s=20171124;
-        h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date; bh=0RigYZLJue07QZWT7y7EUdLva04itwCInh7YyWYd71c=;
-        b=CSe3SXHCrsRC5qnMMAFqJJA2e8kfJ524ZZIrQ8FiwIwQMpAE10KIn574spw9yj6FDG1d8K+LTnmN6oNHdUq6aXhwkyDVb/7XO3MgKweKGEMXEwpSnjKh7AY5thd5oSBHMOuBTiuZjImQWwO1kGok+4uDnjZlXfs5UlahUhYQKgM=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.84_2)
-        (envelope-from <andrew@lunn.ch>)
-        id 1ghxem-0001Lw-Mc; Fri, 11 Jan 2019 15:19:32 +0100
-Date:   Fri, 11 Jan 2019 15:19:32 +0100
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Camelia Alexandra Groza <camelia.groza@nxp.com>
-Cc:     "f.fainelli@gmail.com" <f.fainelli@gmail.com>,
-        "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "oss@buserror.net" <oss@buserror.net>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net] net: phy: guard against accessing a NULL features
- bitmap
-Message-ID: <20190111141932.GC20924@lunn.ch>
-References: <1547207806-30572-1-git-send-email-camelia.groza@nxp.com>
- <20190111133730.GA1895@lunn.ch>
- <VI1PR04MB47994BB92D3E766C6B4E37C9F2850@VI1PR04MB4799.eurprd04.prod.outlook.com>
+        id S2388032AbfAKOTd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:19:33 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6A1552177B;
+        Fri, 11 Jan 2019 14:19:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547216372;
+        bh=XXtm1G79+COmzgI/UzjzLZSW+UWrBINFIIo5XnLJqXo=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=L55PM0WSZgk9eJTfbpSxQMv9AASO72oT1RQvaX19OEEoMsx2aWeeBzy9RKe910+7r
+         KOQz0xFMjEzlOvyesfqqDra6RM/KFBIlfj9eGgFcOx5RnQFofkf/HuyiYGVSJGEgyx
+         7dv8OeCdofdFyirlbZ5v6x8e/SlZj3lNVumrWgvU=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Hui Peng <benquike@163.com>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.4 75/88] ALSA: usb-audio: Fix an out-of-bound read in create_composite_quirks
+Date:   Fri, 11 Jan 2019 15:08:44 +0100
+Message-Id: <20190111131058.522571573@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190111131045.137499039@linuxfoundation.org>
+References: <20190111131045.137499039@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <VI1PR04MB47994BB92D3E766C6B4E37C9F2850@VI1PR04MB4799.eurprd04.prod.outlook.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> > Hi Camelia
-> > 
-> > A NULL features is a driver bug. So i would prefer to solve this
-> > differently.
-> >
-> > Please make phy_driver_register() do a WARN_ON(!new_driver->features)
-> > and return -EINVAL.
-> 
-> I wasn't aware that features are mandatory. I'll make the change.
+4.4-stable review patch.  If anyone has any objections, please let me know.
 
-It was not origionally, but really it should be now.
+------------------
 
-> Yes, there are five drivers that don't have features configured: BCM8706, BCM8727, CS4340, TN2020 and KSZ8873MLL.
+From: Hui Peng <benquike@163.com>
 
-> I'm planning to send patches on net-next for the Cortina and
-> Teranetics ones at least, but fixing the generic crash was my
-> priority.
+commit cbb2ebf70daf7f7d97d3811a2ff8e39655b8c184 upstream.
 
-O.K, will take the others.
+In `create_composite_quirk`, the terminating condition of for loops is
+`quirk->ifnum < 0`. So any composite quirks should end with `struct
+snd_usb_audio_quirk` object with ifnum < 0.
 
-Thanks
-	Andrew
+    for (quirk = quirk_comp->data; quirk->ifnum >= 0; ++quirk) {
+
+    	.....
+    }
+
+the data field of Bower's & Wilkins PX headphones usb device device quirks
+do not end with {.ifnum = -1}, wihch may result in out-of-bound read.
+
+This Patch fix the bug by adding an ending quirk object.
+
+Fixes: 240a8af929c7 ("ALSA: usb-audio: Add a quirck for B&W PX headphones")
+Signed-off-by: Hui Peng <benquike@163.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ sound/usb/quirks-table.h |    3 +++
+ 1 file changed, 3 insertions(+)
+
+--- a/sound/usb/quirks-table.h
++++ b/sound/usb/quirks-table.h
+@@ -3321,6 +3321,9 @@ AU0828_DEVICE(0x2040, 0x7270, "Hauppauge
+ 					}
+ 				}
+ 			},
++			{
++				.ifnum = -1
++			},
+ 		}
+ 	}
+ },
+
+
