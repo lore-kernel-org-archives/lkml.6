@@ -7,49 +7,49 @@ X-Spam-Status: No, score=-13.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 571A4C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:03:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF79AC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:03:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1FC4E2084C
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:03:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 859132084C
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:03:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547218987;
-	bh=I325aI7M92gMHajSOAnNufpsZBCZ4yCWgSk+WygFTZI=;
+	s=default; t=1547218996;
+	bh=/wLt4GF9q75kAK3JEmX43eMg8ptGf7023/pAyeZntnU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=xsSWEQVJl5rFd/j+TnCCbI5gshp0uIgeMzPW0YkUn1sAi35dWBV9nDXazp6tRdZG8
-	 znZJ6a9+B92NdG5Pvj5SZaizmoK01TdFCz4lTgPeE0redHFBt3jl3qtRx9wPvri7GF
-	 AokYG7j35rVx+fbGepuEXIv+feL3/tnHyDi8sSJg=
+	b=YJkncitauiywPSjZMOyIfjc9tu44wn+7mUOtZGXPfNdBzJ98D/8ut86wQ/CUroqw2
+	 A2zx+7AAmhNwSGGuC5xTBq1vCnSwCyO+6rypv0fuFiraYeEw+E9bobjPEZ8gr5R+YX
+	 2sTCRZfl4O5An3nJ9VRTdjlJYJNIXTKRSfiXkwSE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391826AbfAKPDG (ORCPT
+        id S2389086AbfAKObD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 10:03:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50716 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:31:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50506 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389115AbfAKObK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:31:10 -0500
+        id S2388462AbfAKOa7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:30:59 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 45A9F21841;
-        Fri, 11 Jan 2019 14:31:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2C1CE2063F;
+        Fri, 11 Jan 2019 14:30:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547217069;
-        bh=I325aI7M92gMHajSOAnNufpsZBCZ4yCWgSk+WygFTZI=;
+        s=default; t=1547217058;
+        bh=/wLt4GF9q75kAK3JEmX43eMg8ptGf7023/pAyeZntnU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BuBkWYVYkomSzpQrPfZYg5LOMoR5VdloM2R4E2hh6P15pX3io40t7Y71FDvWdRR3K
-         yY3a8Hqpi7YDUkAwRckhC8CrqpAw9qoO+VLT6+0zg5ddvKPjL0zbX62MEtblFADIcP
-         qkFeGG0HKo0GQQHfYENMKLoWDG8vbphk4H7WoItc=
+        b=sP7q1GjuJvoHCZbOh6d/pLmKE69GbwkUNpQFe8aBdIx1uAUICOlMHCr/de6Rls5FZ
+         vrMz2ZQUW6bfSTxNquw/KidqhLlfsGRqHDyWl1FVw/Ejmwoqrdv/2lz3Wi/Ocy+bKv
+         juhYgceFQbgAnslhQklvwflDMFIRAALbtYFD9ObQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sudarsana Reddy Kalluru <Sudarsana.Kalluru@cavium.com>,
-        Ariel Elior <ariel.elior@cavium.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Peter Hutterer <peter.hutterer@who-t.net>,
+        Martin Kepplinger <martin.kepplinger@ginzinger.com>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 023/105] bnx2x: Clear fip MAC when fcoe offload support is disabled
-Date:   Fri, 11 Jan 2019 15:13:54 +0100
-Message-Id: <20190111131105.282232427@linuxfoundation.org>
+Subject: [PATCH 4.14 007/105] Input: restore EV_ABS ABS_RESERVED
+Date:   Fri, 11 Jan 2019 15:13:38 +0100
+Message-Id: <20190111131103.688005937@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131102.899065735@linuxfoundation.org>
 References: <20190111131102.899065735@linuxfoundation.org>
@@ -68,37 +68,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit bbf666c1af916ed74795493c564df6fad462cc80 ]
+[ Upstream commit c201e3808e0e4be9b98d192802085a9f491bd80c ]
 
-On some customer setups it was observed that shmem contains a non-zero fip
-MAC for 57711 which would lead to enabling of SW FCoE.
-Add a software workaround to clear the bad fip mac address if no FCoE
-connections are supported.
+ABS_RESERVED was added in d9ca1c990a7 and accidentally removed as part of
+ffe0e7cf290f5c9 when the high-resolution scrolling code was removed.
 
-Signed-off-by: Sudarsana Reddy Kalluru <Sudarsana.Kalluru@cavium.com>
-Signed-off-by: Ariel Elior <ariel.elior@cavium.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Peter Hutterer <peter.hutterer@who-t.net>
+Reviewed-by: Martin Kepplinger <martin.kepplinger@ginzinger.com>
+Acked-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ include/uapi/linux/input-event-codes.h | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
-index bd3e3f080ebf..688d84cd6187 100644
---- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
-+++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
-@@ -11733,8 +11733,10 @@ static void bnx2x_get_fcoe_info(struct bnx2x *bp)
- 	 * If maximum allowed number of connections is zero -
- 	 * disable the feature.
- 	 */
--	if (!bp->cnic_eth_dev.max_fcoe_conn)
-+	if (!bp->cnic_eth_dev.max_fcoe_conn) {
- 		bp->flags |= NO_FCOE_FLAG;
-+		eth_zero_addr(bp->fip_mac);
-+	}
- }
+diff --git a/include/uapi/linux/input-event-codes.h b/include/uapi/linux/input-event-codes.h
+index f4058bd4c373..61769d4b7dba 100644
+--- a/include/uapi/linux/input-event-codes.h
++++ b/include/uapi/linux/input-event-codes.h
+@@ -742,6 +742,15 @@
  
- static void bnx2x_get_cnic_info(struct bnx2x *bp)
+ #define ABS_MISC		0x28
+ 
++/*
++ * 0x2e is reserved and should not be used in input drivers.
++ * It was used by HID as ABS_MISC+6 and userspace needs to detect if
++ * the next ABS_* event is correct or is just ABS_MISC + n.
++ * We define here ABS_RESERVED so userspace can rely on it and detect
++ * the situation described above.
++ */
++#define ABS_RESERVED		0x2e
++
+ #define ABS_MT_SLOT		0x2f	/* MT slot being modified */
+ #define ABS_MT_TOUCH_MAJOR	0x30	/* Major axis of touching ellipse */
+ #define ABS_MT_TOUCH_MINOR	0x31	/* Minor axis (omit if circular) */
 -- 
 2.19.1
 
