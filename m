@@ -2,78 +2,122 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA191C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 10:03:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88B73C43612
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 10:05:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A7D3221848
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 10:03:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Y8ZzuVWz"
+	by mail.kernel.org (Postfix) with ESMTP id 649812177E
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 10:05:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731591AbfAKKC7 (ORCPT
+        id S1731607AbfAKKFo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 05:02:59 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:56254 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727653AbfAKKC7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 05:02:59 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=pcTMygEALRHllzFZxAMVlB56K3XYfhrHxK7e9gi5eDs=; b=Y8ZzuVWzO1AebgDhpKIBTWlOr
-        fH8MlCNm2sUuAlNutbHFS+XCUWbkOUBEsGQmxmppbQBYZ3j+IVOSZiOIgbuGuuPW4nBITngLHGcVx
-        dLdPkGmqcskPVAQP90N2PCCFLIvj1V/5rBvXppD1qzYplCNkpmS41zACybBQxjx6oEqSWfKLis4mQ
-        h+sUoFatpVDvrDfHMiubofyD/CLlzgZuEfGALfKtfvBsM3vQOrp+7C6vvxZp4Md+GtiNOS2CF+vDo
-        YiT5sCVUGahWyMz2acqlbAbPlA3RKXVoYph2EL5JRfqnMRQ1MMSVdQfhKD8RfNnUX9iKvTbJYvBVb
-        q/jTSFARQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1ghteQ-0008Dc-Il; Fri, 11 Jan 2019 10:02:55 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 5C00F201267E1; Fri, 11 Jan 2019 11:02:53 +0100 (CET)
-Date:   Fri, 11 Jan 2019 11:02:53 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Esme <esploit@protonmail.ch>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        JJiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: PROBLEM: syzkaller found / reduced C repro for non-fatal
- unchecked MSR access error
-Message-ID: <20190111100253.GO30894@hirez.programming.kicks-ass.net>
-References: <z3BgwrH88cXG8bH06po3hzY6vkYpdvZWqzSGl4lLXojvzk-33tKzdK1NWsTL1Ta-CBG7GKAWYziBAfPKsGA2CV6MVkXT93Al3SUfArOnUQE=@protonmail.ch>
+        Fri, 11 Jan 2019 05:05:44 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:45811 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731320AbfAKKFo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 05:05:44 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 2592B207B6; Fri, 11 Jan 2019 11:05:42 +0100 (CET)
+Received: from localhost (alyon-652-1-22-18.w109-213.abo.wanadoo.fr [109.213.145.18])
+        by mail.bootlin.com (Postfix) with ESMTPSA id E0F6020734;
+        Fri, 11 Jan 2019 11:05:41 +0100 (CET)
+Date:   Fri, 11 Jan 2019 11:05:42 +0100
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Oliver.Rohe@wago.com
+Cc:     a.zummo@towertech.it, linux-rtc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] rtc: rs5c372: r2221: fix to use the correct XSTP bit
+Message-ID: <20190111100542.GA2547@piout.net>
+References: <1547031572-7097-1-git-send-email-oliver.rohe@wago.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <z3BgwrH88cXG8bH06po3hzY6vkYpdvZWqzSGl4lLXojvzk-33tKzdK1NWsTL1Ta-CBG7GKAWYziBAfPKsGA2CV6MVkXT93Al3SUfArOnUQE=@protonmail.ch>
+In-Reply-To: <1547031572-7097-1-git-send-email-oliver.rohe@wago.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 10, 2019 at 11:21:16PM +0000, Esme wrote:
-> Attached is a fairly small C repro I did not see any references to
-> this possible flaw (unchecked MSR access) in relation to
-> __NR_perf_event_open
-> 
-> Attached is the config directly extracted from proc.  This is the call
-> stack in relation to the MSR access error (5.0.0-rc1+), I get a very
-> similar stack running this test case on a stock Ubuntu
-> "4.18.0-11-generic" (pasted after this one).
+Hello,
 
-> -- Esme
+On 09/01/2019 10:59:40+0000, Oliver.Rohe@wago.com wrote:
+> The Ricoh chips have slightly different register layouts
+> and the r2221 chip uses bit 5 as the oscillator halt sensor bit.
 > 
-> [   70.228744] unchecked MSR access error: WRMSR to 0xc0010000 (tried to write 0x0000020000130076) at rIP: 0xffffffff812dde28 (native_write_msr+0x8/0x30)
+> Signed-off-by: Olive Rohe <oliver.rohe@wago.com>
+> ---
+>  drivers/rtc/rtc-rs5c372.c | 32 +++++++++++++++++++++-----------
+>  1 file changed, 21 insertions(+), 11 deletions(-)
+> 
+> diff --git a/drivers/rtc/rtc-rs5c372.c b/drivers/rtc/rtc-rs5c372.c
+> index c503832..ff35dce 100644
+> --- a/drivers/rtc/rtc-rs5c372.c
+> +++ b/drivers/rtc/rtc-rs5c372.c
+> @@ -52,8 +52,8 @@
+>  #	define RS5C_CTRL1_CT4		(4 << 0)	/* 1 Hz level irq */
+>  #define RS5C_REG_CTRL2		15
+>  #	define RS5C372_CTRL2_24		(1 << 5)
+> -#	define R2025_CTRL2_XST		(1 << 5)
+> -#	define RS5C_CTRL2_XSTP		(1 << 4)	/* only if !R2025S/D */
+> +#	define R2x2x_CTRL2_XSTP		(1 << 5)	/* only if R2x2x */
 
-That's K7_EVNTSEL0. What kind of hardware are you running this on?
+I wouldn't rename that define as later on, it may be used for RTCs that
+doesn't match R2x2x (as is the case for RV5C387_CTRL1_24 for example).
+the bit doesn't even have the same meaning on R2025 and R2221.
+
+> +#	define RS5C_CTRL2_XSTP		(1 << 4)	/* only if !R2x2x */
+>  #	define RS5C_CTRL2_CTFG		(1 << 2)
+>  #	define RS5C_CTRL2_AAFG		(1 << 1)	/* or WAFG */
+>  #	define RS5C_CTRL2_BAFG		(1 << 0)	/* or DAFG */
+> @@ -519,20 +519,30 @@ static int rs5c_oscillator_setup(struct rs5c372 *rs5c372)
+>  	unsigned char buf[2];
+>  	int addr, i, ret = 0;
+>  
+> -	if (rs5c372->type == rtc_r2025sd) {
+> -		if (rs5c372->regs[RS5C_REG_CTRL2] & R2025_CTRL2_XST)
+> +	addr   = RS5C_ADDR(RS5C_REG_CTRL1);
+> +	buf[0] = rs5c372->regs[RS5C_REG_CTRL1];
+> +	buf[1] = rs5c372->regs[RS5C_REG_CTRL2];
+> +
+> +	/* handle xstp bit */
+> +	switch (rs5c372->type) {
+> +	case rtc_r2025sd:
+> +		if (buf[1] & R2x2x_CTRL2_XSTP)
+>  			return ret;
+> -		rs5c372->regs[RS5C_REG_CTRL2] |= R2025_CTRL2_XST;
+> -	} else {
+> -		if (!(rs5c372->regs[RS5C_REG_CTRL2] & RS5C_CTRL2_XSTP))
+> +		rs5c372->regs[RS5C_REG_CTRL2] |= R2x2x_CTRL2_XSTP;
+> +		break;
+> +	case rtc_r2221tl:
+> +		if (!(buf[1] & R2x2x_CTRL2_XSTP))
+> +			return ret;
+> +		rs5c372->regs[RS5C_REG_CTRL2] &= ~R2x2x_CTRL2_XSTP;
+> +		break;
+> +
+> +	default:
+> +		if (!(buf[1] & RS5C_CTRL2_XSTP))
+>  			return ret;
+>  		rs5c372->regs[RS5C_REG_CTRL2] &= ~RS5C_CTRL2_XSTP;
+> +		break;
+>  	}
+>  
+
+Note that this is actually quite bad to restart the oscillator on probe.
+The best would be to do that only in rs5c372_rtc_set_time once you know
+the set time is good. then you can return -EINVAL from
+rs5c372_rtc_read_time when you know the oscillator is stopped so
+userspace know the RTC time is bad. This could be done as a follw up
+patch.
+
+There is also more work needed to clean up that driver if you have time
+and are willing to.
+
+-- 
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
