@@ -2,111 +2,105 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 964BBC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 17:01:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0212EC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 17:02:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D9B920874
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 17:01:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C7F7320874
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 17:02:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X/arqjGT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732671AbfAKRBp (ORCPT
+        id S2387430AbfAKRCp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 12:01:45 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:44087 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730064AbfAKRBp (ORCPT
+        Fri, 11 Jan 2019 12:02:45 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:46786 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727821AbfAKRCp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 12:01:45 -0500
-Received: by mail-pg1-f194.google.com with SMTP id t13so6534147pgr.11
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Jan 2019 09:01:44 -0800 (PST)
+        Fri, 11 Jan 2019 12:02:45 -0500
+Received: by mail-wr1-f65.google.com with SMTP id l9so15905161wrt.13;
+        Fri, 11 Jan 2019 09:02:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=LHSbZBpGFusKe1IsGJ7RVXHsLgK473H+pmS8ZdQfo9w=;
+        b=X/arqjGTAhR+eZgqui44ET2i9c4F+pDRkdrU4upEQKIA0zM5AaTxhTyq1RrrcdK9E0
+         fL/EqH8KMp+RvliTknwVLo1shJBuG6yZW6Pe0eu6xCnqKdKndiMiXJdQ+ruU2lNkDPuv
+         lYutUxF089my30ZVEACP14h/lIEU5gTINr1Xigbekqx4+GroyFUTBn0hf4CD865/2gvD
+         Fw8PNGiJd7s8uzZnFqdu4FXvz2vowld3CME9ybglWU63lNaxczhVD3zuT4ninfippO5q
+         R//7zjN1tjcK6yTlbJCY5hu45rhH3RIhEvursmgDd8U0I/sN9VveLc7eyD0EGw8kPb17
+         FhAQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=RNb0P6UJcWzbCft/rqy6otNgknXEmxON4cZHrTaO2f4=;
-        b=DIK2rpWaFwZ6yhlmjSHVL1elWMwXNY17tOL1BDJMp11grwpGeGhoqRg0kLQwVBeZFd
-         DXMKg8Aw1yia4mYktFS3um0xnHIxT+W1ko8DR3Xhf66qFl2S5MjdRQqRU+ldvuMU7Jtu
-         jmXcNlmPH/mVqtBd9y41LYq4ueXmHcdpIcgDMuuTa7ClpbqRDOGsFSi4T/PdUJLKr2xy
-         9CVvTs0B10GHXphK3u6foQkGQw7DQuDSkYsl5jDqZDI55d5RjJTdNhBIbwO/wQFBxTPm
-         255K5EI7kDar7Jcrg87fVfqIGaMh1g1oa8LH2tJoW9PQgA+Kwov+S+agUEVFpGqCFP+3
-         zeng==
-X-Gm-Message-State: AJcUukdbxFcFqYu68xrqCDGphRI5+/1HPnDjzdjoE5vhapCxMR08Tsul
-        R9StJmL+HPGxLzr6mlAx+6A=
-X-Google-Smtp-Source: ALg8bN6eXlehCbcSPBsWIlXxqfn4tGpiHqI0PxJJsixsaMqKdPZC6ZQliOjvheXrZHS3Vmqv/ZimqQ==
-X-Received: by 2002:aa7:8354:: with SMTP id z20mr15105181pfm.81.1547226103881;
-        Fri, 11 Jan 2019 09:01:43 -0800 (PST)
-Received: from ?IPv6:2620:15c:2cd:203:5cdc:422c:7b28:ebb5? ([2620:15c:2cd:203:5cdc:422c:7b28:ebb5])
-        by smtp.gmail.com with ESMTPSA id 84sm281445271pfa.115.2019.01.11.09.01.42
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=LHSbZBpGFusKe1IsGJ7RVXHsLgK473H+pmS8ZdQfo9w=;
+        b=QVPiX8e2P2nXEWDGEbqMfqu97Jy0t8Mj+5udsijDKYusv4JKQB1dYkQ4ZsK0h3cLB5
+         nLTehNhFL7tJJhmzu8nj8KFqFizdp1jiSKoCBGoZ4KinH2ZF6XEqCnSs0e29MBXZkTA+
+         fWJah1Ppp+XIG2z4FAoiyJyvmd/JCgAi7htf1VT+E5P/3qg4xFr0Wnl78IJ4bwxIEvkl
+         0b0bEqaFWUsXBZoXzHxzaGLbrN4A8i7WMCv2ePCqzzfQy1KxXxkl7xFx8jl8/B1UHn2n
+         Kp4gazTFdwtyABSDiqsIWb/BUIlpnqv8lIUF3fKfJFD2Ag9EEPEYrU0JB+qSuYtYuqNW
+         7MEA==
+X-Gm-Message-State: AJcUukcJ4zLQH1PZsMeBTmL2iikmAcmJIc1eryOw0iciGo+ijHSGDRlA
+        eKLgqaCWCNnfcAUKFU8NpPqXHLyc
+X-Google-Smtp-Source: ALg8bN6qWUSXoPscq3J5lpQbQUtOxCaRPRgFSeWpfLfQqPqGWi5ElPCKmDdQyED4ArpfFR7BUs8WeA==
+X-Received: by 2002:adf:e6ce:: with SMTP id y14mr14877635wrm.239.1547226163393;
+        Fri, 11 Jan 2019 09:02:43 -0800 (PST)
+Received: from orange.redhat.com (ip-89-102-68-132.net.upcbroadband.cz. [89.102.68.132])
+        by smtp.gmail.com with ESMTPSA id s3sm17174034wmj.23.2019.01.11.09.02.42
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 11 Jan 2019 09:01:43 -0800 (PST)
-Message-ID: <1547226101.83374.80.camel@acm.org>
-Subject: Re: [PATCH v6 00/16] locking/lockdep: Add support for dynamic keys
-From:   Bart Van Assche <bvanassche@acm.org>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     mingo@redhat.com, tj@kernel.org, longman@redhat.com,
-        johannes.berg@intel.com, linux-kernel@vger.kernel.org
-Date:   Fri, 11 Jan 2019 09:01:41 -0800
-In-Reply-To: <20190111165529.GA14054@worktop.programming.kicks-ass.net>
-References: <20190109210204.192109-1-bvanassche@acm.org>
-         <20190111124835.GP1900@hirez.programming.kicks-ass.net>
-         <1547222103.83374.72.camel@acm.org>
-         <20190111165529.GA14054@worktop.programming.kicks-ass.net>
-Content-Type: text/plain; charset="UTF-7"
-X-Mailer: Evolution 3.26.2-1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Fri, 11 Jan 2019 09:02:42 -0800 (PST)
+From:   Ilya Dryomov <idryomov@gmail.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Ceph updates for 5.0-rc2
+Date:   Fri, 11 Jan 2019 18:02:26 +0100
+Message-Id: <20190111170226.19872-1-idryomov@gmail.com>
+X-Mailer: git-send-email 2.14.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2019-01-11 at 17:55 +-0100, Peter Zijlstra wrote:
-+AD4 On Fri, Jan 11, 2019 at 07:55:03AM -0800, Bart Van Assche wrote:
-+AD4 +AD4 On Fri, 2019-01-11 at 13:48 +-0100, Peter Zijlstra wrote:
-+AD4 +AD4 +AD4 I spotted this new v6 in my inbox and have rebased to it.
-+AD4 +AD4 
-+AD4 +AD4 Thanks+ACE
-+AD4 +AD4 
-+AD4 +AD4 +AD4 On Wed, Jan 09, 2019 at 01:01:48PM -0800, Bart Van Assche wrote:
-+AD4 +AD4 +AD4 
-+AD4 +AD4 +AD4 +AD4 The changes compared to v5 are:
-+AD4 +AD4 +AD4 +AD4 - Modified zap+AF8-class() such that it doesn't try to free a list entry that
-+AD4 +AD4 +AD4 +AD4   is already being freed.
-+AD4 +AD4 +AD4 
-+AD4 +AD4 +AD4 I however have a question on this+ADs this seems wrong. Once a list entry
-+AD4 +AD4 +AD4 is enqueued it should not be reachable anymore. If we can reach an entry
-+AD4 +AD4 +AD4 after call+AF8-rcu() happened, we've got a problem.
-+AD4 +AD4 
-+AD4 +AD4 Apparently I confused you - sorry that I was not more clear. What I meant is
-+AD4 +AD4 that I changed a single if test into a loop. The graph lock is held while that
-+AD4 +AD4 loop is being executed so the code below is serialized against the code called
-+AD4 +AD4 from inside the RCU callback:
-+AD4 +AD4 
-+AD4 +AD4 +AEAAQA -4574,8 +-4563,9 +AEAAQA static void zap+AF8-class(struct pending+AF8-free +ACo-pf, struct lock
-+AD4 +AD4 +AF8-class +ACo-class)
-+AD4 +AD4                 entry +AD0 list+AF8-entries +- i+ADs
-+AD4 +AD4                 if (entry-+AD4-class +ACEAPQ class +ACYAJg entry-+AD4-links+AF8-to +ACEAPQ class)
-+AD4 +AD4                         continue+ADs
-+AD4 +AD4 -               if (+AF8AXw-test+AF8-and+AF8-set+AF8-bit(i, pf-+AD4-list+AF8-entries+AF8-being+AF8-freed))
-+AD4 +AD4 +-               if (list+AF8-entry+AF8-being+AF8-freed(i))
-+AD4 +AD4                         continue+ADs
-+AD4 
-+AD4 Yes, it is the above change that caught my eye.. That checks +AF8-both+AF8 your
-+AD4 lists. One is your current open one (+AEA-pf), but the other could already
-+AD4 be pending the call+AF8-rcu().
-+AD4 
-+AD4 So my question is why do we have to check both ?+ACE How come the old code,
-+AD4 that only checked +AEA-pf, is wrong?
-+AD4 
-+AD4 +AD4 +-               set+AF8-bit(i, pf-+AD4-list+AF8-entries+AF8-being+AF8-freed)+ADs
-+AD4 +AD4                 nr+AF8-list+AF8-entries--+ADs
-+AD4 +AD4                 list+AF8-del+AF8-rcu(+ACY-entry-+AD4-entry)+ADs
-+AD4 +AD4         +AH0
+Hi Linus,
 
-The list+AF8-del+AF8-rcu() call must only happen once. I ran into complaints reporting that
-the list+AF8-del+AF8-rcu() call triggered list corruption. This change made these complaints
-disappear.
+The following changes since commit bfeffd155283772bbe78c6a05dec7c0128ee500c:
 
-Bart.
+  Linux 5.0-rc1 (2019-01-06 17:08:20 -0800)
+
+are available in the Git repository at:
+
+  https://github.com/ceph/ceph-client.git tags/ceph-for-5.0-rc2
+
+for you to fetch changes up to 85f5a4d666fd9be73856ed16bb36c5af5b406b29:
+
+  rbd: don't return 0 on unmap if RBD_DEV_FLAG_REMOVING is set (2019-01-10 09:45:09 +0100)
+
+----------------------------------------------------------------
+A patch to allow setting abort_on_full and a fix for an old "rbd unmap"
+edge case, marked for stable.
+
+----------------------------------------------------------------
+Dongsheng Yang (1):
+      libceph: allow setting abort_on_full for rbd
+
+Ilya Dryomov (1):
+      rbd: don't return 0 on unmap if RBD_DEV_FLAG_REMOVING is set
+
+Souptick Joarder (1):
+      ceph: use vmf_error() in ceph_filemap_fault()
+
+ drivers/block/rbd.c             |  9 ++++-----
+ fs/ceph/addr.c                  |  5 +----
+ fs/ceph/super.c                 |  4 ++--
+ include/linux/ceph/libceph.h    |  6 ++++--
+ include/linux/ceph/osd_client.h |  1 -
+ net/ceph/ceph_common.c          | 11 ++++++++++-
+ net/ceph/debugfs.c              |  2 +-
+ net/ceph/osd_client.c           |  4 ++--
+ 8 files changed, 24 insertions(+), 18 deletions(-)
