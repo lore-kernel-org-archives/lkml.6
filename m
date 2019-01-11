@@ -2,84 +2,105 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D585C43444
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:26:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 290D2C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:26:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 44D9C20874
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:26:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="CsvY9CXu"
+	by mail.kernel.org (Postfix) with ESMTP id E471C2177B
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:26:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547216772;
+	bh=Qhk/2P48zIr1OxkJBCIirYBQp+qXFzKeB2+b5eg655w=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=Pp5kAjNQMQ+gfpooCmefRylvifW6wzJ5PjcaDaqBzXdxMCdxDV38F6swyAYzQro5b
+	 ax0MNDRdD49IezYT/BKhebHwvz7xChchjug1+937p55nTWZa8v2HdE/FK5XmlSrSd3
+	 aYphLjkBkSkr6fy4wNXpeuBZ/8h19TviztusV5RQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731130AbfAKO0C (ORCPT
+        id S2388286AbfAKO0L (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:26:02 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:36665 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732487AbfAKOZw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:25:52 -0500
-Received: by mail-lf1-f67.google.com with SMTP id a16so10937760lfg.3
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Jan 2019 06:25:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=eMezhPlibajiGAUTYo08rPGVJy9LI+52kVipFELMAgQ=;
-        b=CsvY9CXuHvuP2vTpRQyKuR/UFoKr2gc+Zd1n5HWeW3jeQeJrAzB8eBNZmGtnEZ6RdB
-         vp8jZlgGDUgSR1AjbcHxNt00u5/mn/ScwOaE3oM2AZPDZJnNDU0+VSxfpEH1JEA9Rfk+
-         LDNQzmeGNrE1fq1QcUooxTZdilxSiv5vEXc98=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=eMezhPlibajiGAUTYo08rPGVJy9LI+52kVipFELMAgQ=;
-        b=TiuKL3DppWHGUNtVs7zeLatfuz02vD1RgB4nbQMLC1gOzYl2BwCMoQJ8aco3jrkMKf
-         fn/Bhx0nfpPuQ6CtHaLnD20dQoGFoQ6cKGGs3G/enn5ycVRHf1h/1ENM/aRzrdmqJtlD
-         x4Ug30c8RcN8u8SLtNlV1nJakSrPp3PSuT4tVTLpAvjgBCbLF3QgdI2906hp68wbnLhY
-         y6gOxLb9d/+rt8F7n/4RTM0Pk9enOCnmJnhN1OId1z8B9myvA3t28HwmibP0FTIibOaA
-         3EDeysiSFDiRZ2hGnR5ZIRXVMS2uj/ztxmHFujQ2xf/MohKD9Wu/Gp6rRxewOwP4UrEN
-         0jdw==
-X-Gm-Message-State: AJcUukcUejPOhS5Utpw1eM+UG3VGeyZTF+iRZ7UtC0Nz+sbBBEOqq0S5
-        hH8nDK+SqPwTKKQpHXtk5ZXNBzzrAArdLtQ4kpxNtKfZ
-X-Google-Smtp-Source: ALg8bN6aiLFd5CFB+xSIBHKWd6SdJTQ+kll9fKsdXbyRMUwy4ow0dOqzUTcdToXSWNu3qzVWZgxi9O6aBOv+ycsVxok=
-X-Received: by 2002:a19:f813:: with SMTP id a19mr7889089lff.67.1547216749948;
- Fri, 11 Jan 2019 06:25:49 -0800 (PST)
+        Fri, 11 Jan 2019 09:26:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34684 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726503AbfAKOSN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:18:13 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 83C5421841;
+        Fri, 11 Jan 2019 14:18:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547216293;
+        bh=Qhk/2P48zIr1OxkJBCIirYBQp+qXFzKeB2+b5eg655w=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=ZqgRUQM22Tj11K95JHvvYJ6NyMxXDGiIVO9Z0yRnvq26RubTbaDBpR1sc7zkXytNO
+         5qMbygZlcCfybc0Q3esX+kOVy2QCfmZXY8ZsW2PBH0PN+R0p3ujNwjv7Wmkpv8YhVK
+         bSaYr7mJv+zcKpdiy5ugtTVtvvh/iuE0uW4aoUpQ=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tyler Hicks <tyhicks@canonical.com>, security@kernel.org
+Subject: [PATCH 4.4 12/88] x86/mtrr: Dont copy uninitialized gentry fields back to userspace
+Date:   Fri, 11 Jan 2019 15:07:41 +0100
+Message-Id: <20190111131048.027594430@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190111131045.137499039@linuxfoundation.org>
+References: <20190111131045.137499039@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
-References: <64a23e6f8751ee6f1387a611a9d5dba43694b0d0.1546999151.git.ryder.lee@mediatek.com>
-In-Reply-To: <64a23e6f8751ee6f1387a611a9d5dba43694b0d0.1546999151.git.ryder.lee@mediatek.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 11 Jan 2019 15:25:38 +0100
-Message-ID: <CACRpkdaJ29di4GxcHNa+pUtV62aF+8SRKTzYMAJHd-8j0oiX=Q@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: mediatek: fix build errors for moore core when
- CONFIG_OF is not enabled
-To:     Ryder Lee <ryder.lee@mediatek.com>
-Cc:     Sean Wang <sean.wang@kernel.org>,
-        Weijie Gao <weijie.gao@mediatek.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-mediatek@lists.infradead.org>,
-        stable <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 9, 2019 at 3:14 AM Ryder Lee <ryder.lee@mediatek.com> wrote:
+4.4-stable review patch.  If anyone has any objections, please let me know.
 
-> on i386 or x86_64:
->
-> Lots of build errors for drivers/pinctrl/mediatek/pinctrl-moore.c when
-> CONFIG_OF is not enabled (but COMPILE_TEST is).
+------------------
 
-Patch applied with Seans ACK and trimming down the subject
-and commit message a bit :)
+From: Colin Ian King <colin.king@canonical.com>
 
-Yours,
-Linus Walleij
+commit 32043fa065b51e0b1433e48d118821c71b5cd65d upstream.
+
+Currently the copy_to_user of data in the gentry struct is copying
+uninitiaized data in field _pad from the stack to userspace.
+
+Fix this by explicitly memset'ing gentry to zero, this also will zero any
+compiler added padding fields that may be in struct (currently there are
+none).
+
+Detected by CoverityScan, CID#200783 ("Uninitialized scalar variable")
+
+Fixes: b263b31e8ad6 ("x86, mtrr: Use explicit sizing and padding for the 64-bit ioctls")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Tyler Hicks <tyhicks@canonical.com>
+Cc: security@kernel.org
+Link: https://lkml.kernel.org/r/20181218172956.1440-1-colin.king@canonical.com
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ arch/x86/kernel/cpu/mtrr/if.c |    2 ++
+ 1 file changed, 2 insertions(+)
+
+--- a/arch/x86/kernel/cpu/mtrr/if.c
++++ b/arch/x86/kernel/cpu/mtrr/if.c
+@@ -173,6 +173,8 @@ mtrr_ioctl(struct file *file, unsigned i
+ 	struct mtrr_gentry gentry;
+ 	void __user *arg = (void __user *) __arg;
+ 
++	memset(&gentry, 0, sizeof(gentry));
++
+ 	switch (cmd) {
+ 	case MTRRIOC_ADD_ENTRY:
+ 	case MTRRIOC_SET_ENTRY:
+
+
