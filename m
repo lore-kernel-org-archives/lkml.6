@@ -4,50 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 622D6C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:11:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 666DAC43612
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:11:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 24FE220874
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:11:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 31CC921872
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:11:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547219477;
-	bh=clrFIkPPb5kZQUAbQK/cn5QOzDEy6qGl7VphZZxMJYk=;
+	s=default; t=1547219483;
+	bh=1lRnoQcT6JvBEScvKhR1ZbjtxTTOweW+zH8rn45s4AA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=GGLpMVEwEXIVVBoxOfiBwkLr0zE3HlVvvnECGCza1qW+pfZMgb1L2WR3ydfKbb0dW
-	 iAsDru80DRw7MT7Qy+a8b3FmZY4+ygVFzdIQj4uNbcy1MQFtgnD3J6QfNdca0Cer8r
-	 O95820EQee/m2Wbp3nDda52rRpkHHUHGXHGGvjOU=
+	b=ZZJpNiGL8P5XHpwcp3CiHTojZfhwrhZY2nDolWf/4WcLbyEIVXNgA+u+WOs0gFcPW
+	 pmadqQMKP2IRywCYnPUA+P1SAcYo1mCE2IZ9UGcESFUcAWmQYMbTMakEv6ZhZHScLo
+	 25rRxq5MdtogWKjnl1hwwNkW9ELA5+NobmB4wkWQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387594AbfAKOQO (ORCPT
+        id S2387567AbfAKOQJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:16:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60526 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:16:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60414 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387560AbfAKOQL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:16:11 -0500
+        id S2387550AbfAKOQG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:16:06 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3AF83214D8;
-        Fri, 11 Jan 2019 14:16:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 161B42177B;
+        Fri, 11 Jan 2019 14:16:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547216170;
-        bh=clrFIkPPb5kZQUAbQK/cn5QOzDEy6qGl7VphZZxMJYk=;
+        s=default; t=1547216165;
+        bh=1lRnoQcT6JvBEScvKhR1ZbjtxTTOweW+zH8rn45s4AA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=D9oejuFzLs90I9vCCoabRl3rgdpShLAdIB201YTfGZz+X+uwGWOfEL4V0/UbA0c+c
-         p4HjWOj9K4SvcWsCdjHep65q/GZEkI4SQ50GzAhtoFhz95I74c1dQoDa+o01eEdddd
-         j7A51F3/wk7fo4FJzFl0IYJ/DZxCEI+bdJ8aErhE=
+        b=AXSh0S9+7iGaxbkqWLWq/P/9hp9WwJaL+bzbMrL/kYt/XwHd+C/c1qiPWtBbDAHkb
+         CXMAbF8BY1tcrDzgmx9b9eA3iEk3cFzXzalnuuVMnepabE8CZuKZFcMFu3BQhWTqpS
+         VyOuGXUBgdKewwOtzGrc2McqLMLDpuWDKeGOwkvU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>,
-        Pavel Machek <pavel@ucw.cz>,
-        Sebastian Reichel <sebastian.reichel@collabora.com>
-Subject: [PATCH 3.18 47/47] power: supply: olpc_battery: correct the temperature units
-Date:   Fri, 11 Jan 2019 15:08:32 +0100
-Message-Id: <20190111131002.152502547@linuxfoundation.org>
+        stable@vger.kernel.org, "Yan, Zheng" <zyan@redhat.com>,
+        Ilya Dryomov <idryomov@gmail.com>
+Subject: [PATCH 3.18 45/47] ceph: dont update importing caps mseq when handing cap export
+Date:   Fri, 11 Jan 2019 15:08:30 +0100
+Message-Id: <20190111131001.960851612@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111130956.170952125@linuxfoundation.org>
 References: <20190111130956.170952125@linuxfoundation.org>
@@ -66,51 +65,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Lubomir Rintel <lkundrak@v3.sk>
+From: Yan, Zheng <zyan@redhat.com>
 
-commit ed54ffbe554f0902689fd6d1712bbacbacd11376 upstream.
+commit 3c1392d4c49962a31874af14ae9ff289cb2b3851 upstream.
 
-According to [1] and [2], the temperature values are in tenths of degree
-Celsius. Exposing the Celsius value makes the battery appear on fire:
+Updating mseq makes client think importer mds has accepted all prior
+cap messages and importer mds knows what caps client wants. Actually
+some cap messages may have been dropped because of mseq mismatch.
 
-  $ upower -i /org/freedesktop/UPower/devices/battery_olpc_battery
-  ...
-      temperature:         236.9 degrees C
+If mseq is left untouched, importing cap's mds_wanted later will get
+reset by cap import message.
 
-Tested on OLPC XO-1 and OLPC XO-1.75 laptops.
-
-[1] include/linux/power_supply.h
-[2] Documentation/power/power_supply_class.txt
-
-Fixes: fb972873a767 ("[BATTERY] One Laptop Per Child power/battery driver")
 Cc: stable@vger.kernel.org
-Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-Acked-by: Pavel Machek <pavel@ucw.cz>
-Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+Signed-off-by: "Yan, Zheng" <zyan@redhat.com>
+Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/power/olpc_battery.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/ceph/caps.c |    1 -
+ 1 file changed, 1 deletion(-)
 
---- a/drivers/power/olpc_battery.c
-+++ b/drivers/power/olpc_battery.c
-@@ -425,14 +425,14 @@ static int olpc_bat_get_property(struct
- 		if (ret)
- 			return ret;
- 
--		val->intval = (s16)be16_to_cpu(ec_word) * 100 / 256;
-+		val->intval = (s16)be16_to_cpu(ec_word) * 10 / 256;
- 		break;
- 	case POWER_SUPPLY_PROP_TEMP_AMBIENT:
- 		ret = olpc_ec_cmd(EC_AMB_TEMP, NULL, 0, (void *)&ec_word, 2);
- 		if (ret)
- 			return ret;
- 
--		val->intval = (int)be16_to_cpu(ec_word) * 100 / 256;
-+		val->intval = (int)be16_to_cpu(ec_word) * 10 / 256;
- 		break;
- 	case POWER_SUPPLY_PROP_CHARGE_COUNTER:
- 		ret = olpc_ec_cmd(EC_BAT_ACR, NULL, 0, (void *)&ec_word, 2);
+--- a/fs/ceph/caps.c
++++ b/fs/ceph/caps.c
+@@ -2830,7 +2830,6 @@ retry:
+ 			tcap->cap_id = t_cap_id;
+ 			tcap->seq = t_seq - 1;
+ 			tcap->issue_seq = t_seq - 1;
+-			tcap->mseq = t_mseq;
+ 			tcap->issued |= issued;
+ 			tcap->implemented |= issued;
+ 			if (cap == ci->i_auth_cap)
 
 
