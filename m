@@ -4,50 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78F41C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:01:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01119C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:01:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A6FE20874
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:01:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B89EC2133F
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:01:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547218884;
-	bh=zsx95tr77YSr0QiPXlgOhUB29WFniypO/X5CQYrexrA=;
+	s=default; t=1547218889;
+	bh=IgvIW6DgqY/tcfUk3f/8ePXEjNift/3I2THuG9eF+eA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=sw+FsmIoE7ERd6pW/EWaZJfffW2fgTIQP5wk4nTezwEkHbTGAWi5lWJCd1/11Rx2b
-	 kvxXNDdyOEdn0Ixla5yiZ1bFxFWAeKTFpSRZzhk/D2cRg1a83++Epb300wObcMnFGQ
-	 iQdj23jJypnnFbnNT+rhs3pIuxAFZUi0ph749TJg=
+	b=uB6klhbMhviDi7bswpaAv8VoeBCVttEKXlnTJf8G+X5G0gtnLTjgwE64LJHbIZJvR
+	 p16H9C9TuTABVkjtIbncuHxEYDc+e3v4n9FW7E9eiSZzPF6vfhUggp7SWC/iwKk1uc
+	 bkGjcwJ1AIsuqQa+DJ6Ivi20B+dYzjvPXlChUa9c=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391797AbfAKPBX (ORCPT
+        id S2389355AbfAKOcK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 10:01:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52150 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:32:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51990 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387891AbfAKOcN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:32:13 -0500
+        id S2389325AbfAKOcF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:32:05 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6745F2063F;
-        Fri, 11 Jan 2019 14:32:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4A6852133F;
+        Fri, 11 Jan 2019 14:32:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547217132;
-        bh=zsx95tr77YSr0QiPXlgOhUB29WFniypO/X5CQYrexrA=;
+        s=default; t=1547217124;
+        bh=IgvIW6DgqY/tcfUk3f/8ePXEjNift/3I2THuG9eF+eA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kApF8YoD61D9FPXIXjTCwXHUbfkg8uX0cLf4C9lEFfyv1nhoNU5tiHi07o29qu9HS
-         n7laWJWACf+4arswtuFyC4N2ILX9NmPW49jkk6fTqyohO4ZrBhyaHJCUe/P5jDNCu+
-         bm09zIRPwR7pRqRCcyJpUSH5JU9HeO8E5v/yVsgw=
+        b=rQzSUEzrWxV0fzszAJ+/K4CCpTMQnu/YAuQeB6b/C97HQS72iJN99hiU+9LwVvKmQ
+         knmqawErzs0CXhFwW7aJinRFfblOncKKJje86fpT1XqcZ9+BkK9/6eRWF4DaupAyNn
+         iOOUWOSdomwVMkVq8NRz+/Z2MiE2OgA/iwA9cyIU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Daniele Palmas <dnlplm@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org,
+        =?UTF-8?q?Mantas=20Mikul=C4=97nas?= <grawity@gmail.com>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 053/105] qmi_wwan: Fix qmap header retrieval in qmimux_rx_fixup
-Date:   Fri, 11 Jan 2019 15:14:24 +0100
-Message-Id: <20190111131107.510193356@linuxfoundation.org>
+Subject: [PATCH 4.14 051/105] Input: synaptics - enable SMBus for HP EliteBook 840 G4
+Date:   Fri, 11 Jan 2019 15:14:22 +0100
+Message-Id: <20190111131107.360833214@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131102.899065735@linuxfoundation.org>
 References: <20190111131102.899065735@linuxfoundation.org>
@@ -66,69 +68,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit d667044f49513d55fcfefe4fa8f8d96091782901 ]
+[ Upstream commit 7a71712293ba303aad928f580b89addb0be2892e ]
 
-This patch fixes qmap header retrieval when modem is configured for
-dl data aggregation.
+dmesg reports that "Your touchpad (PNP: SYN3052 SYN0100 SYN0002 PNP0f13)
+says it can support a different bus."
 
-Signed-off-by: Daniele Palmas <dnlplm@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+I've tested the offered psmouse.synaptics_intertouch=1 with 4.18.x and
+4.19.x and it seems to work well. No problems seen with suspend/resume.
+
+Also, it appears that RMI/SMBus mode is actually required for 3-4 finger
+multitouch gestures to work -- otherwise they are not reported at all.
+
+Information from dmesg in both modes:
+
+  psmouse serio3: synaptics: Touchpad model: 1, fw: 8.2, id: 0x1e2b1,
+      caps: 0xf00123/0x840300/0x2e800/0x0, board id: 3139, fw id: 2000742
+
+  psmouse serio3: synaptics: Trying to set up SMBus access
+  rmi4_smbus 6-002c: registering SMbus-connected sensor
+  rmi4_f01 rmi4-00.fn01: found RMI device,
+      manufacturer: Synaptics, product: TM3139-001, fw id: 2000742
+
+Signed-off-by: Mantas Mikulėnas <grawity@gmail.com>
+Reviewed-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/usb/qmi_wwan.c | 15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
+ drivers/input/mouse/synaptics.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/net/usb/qmi_wwan.c b/drivers/net/usb/qmi_wwan.c
-index 969474c9d297..891f8f975b43 100644
---- a/drivers/net/usb/qmi_wwan.c
-+++ b/drivers/net/usb/qmi_wwan.c
-@@ -151,17 +151,18 @@ static bool qmimux_has_slaves(struct usbnet *dev)
- 
- static int qmimux_rx_fixup(struct usbnet *dev, struct sk_buff *skb)
- {
--	unsigned int len, offset = sizeof(struct qmimux_hdr);
-+	unsigned int len, offset = 0;
- 	struct qmimux_hdr *hdr;
- 	struct net_device *net;
- 	struct sk_buff *skbn;
-+	u8 qmimux_hdr_sz = sizeof(*hdr);
- 
--	while (offset < skb->len) {
--		hdr = (struct qmimux_hdr *)skb->data;
-+	while (offset + qmimux_hdr_sz < skb->len) {
-+		hdr = (struct qmimux_hdr *)(skb->data + offset);
- 		len = be16_to_cpu(hdr->pkt_len);
- 
- 		/* drop the packet, bogus length */
--		if (offset + len > skb->len)
-+		if (offset + len + qmimux_hdr_sz > skb->len)
- 			return 0;
- 
- 		/* control packet, we do not know what to do */
-@@ -176,7 +177,7 @@ static int qmimux_rx_fixup(struct usbnet *dev, struct sk_buff *skb)
- 			return 0;
- 		skbn->dev = net;
- 
--		switch (skb->data[offset] & 0xf0) {
-+		switch (skb->data[offset + qmimux_hdr_sz] & 0xf0) {
- 		case 0x40:
- 			skbn->protocol = htons(ETH_P_IP);
- 			break;
-@@ -188,12 +189,12 @@ static int qmimux_rx_fixup(struct usbnet *dev, struct sk_buff *skb)
- 			goto skip;
- 		}
- 
--		skb_put_data(skbn, skb->data + offset, len);
-+		skb_put_data(skbn, skb->data + offset + qmimux_hdr_sz, len);
- 		if (netif_rx(skbn) != NET_RX_SUCCESS)
- 			return 0;
- 
- skip:
--		offset += len + sizeof(struct qmimux_hdr);
-+		offset += len + qmimux_hdr_sz;
- 	}
- 	return 1;
- }
+diff --git a/drivers/input/mouse/synaptics.c b/drivers/input/mouse/synaptics.c
+index 515a0b0d48bf..e9ec5d10e0a9 100644
+--- a/drivers/input/mouse/synaptics.c
++++ b/drivers/input/mouse/synaptics.c
+@@ -179,6 +179,7 @@ static const char * const smbus_pnp_ids[] = {
+ 	"LEN0096", /* X280 */
+ 	"LEN0097", /* X280 -> ALPS trackpoint */
+ 	"LEN200f", /* T450s */
++	"SYN3052", /* HP EliteBook 840 G4 */
+ 	"SYN3221", /* HP 15-ay000 */
+ 	NULL
+ };
 -- 
 2.19.1
 
