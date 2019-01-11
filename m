@@ -7,50 +7,54 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 065DFC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:49:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5693EC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:49:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB468206B6
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:49:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 27605218A4
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:49:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547218160;
-	bh=N0OIT+0Jo4S4wKbgnFgfGUq1Cib4n1UfEELXIG8scbo=;
+	s=default; t=1547218166;
+	bh=Qi/zkqveRfUhXddwbTRb5f3pdnt67YTSr7WSKxlzjMw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=yYjtVseITgWNHqKCyrK0hgIsoXwNyJ4o6c56w9iAHL1v5zWITvKxXss1D2YKzxvby
-	 QOHsOkKF0kICfw8IDUAZOZWFJYkAGoP1hQSIV2wkLDigNt5B5gX83HpEewYhik6aha
-	 vMY8Zaf1hL7PT5kUvzUQTx8tZ5cF7XFjt/fwh9Pc=
+	b=MVoEFEUwQ5tW4H8zPJ/Kz4QvdM3vQ9As6cetJFqSZM7PaCzqOAx7DUyS3ReKXygH7
+	 pAL4BZ8WbggmC23tU2TN8kHSDIv0sZfRfRnII8DvFkfmO9ORbu44HdpI1oTw1j01hO
+	 ijCXUqmvEgr+SLHhQEY1vyBXikd6uQDJc8Fl+aOk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391576AbfAKOtT (ORCPT
+        id S2391593AbfAKOtY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:49:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33774 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:49:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39838 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403960AbfAKOlG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:41:06 -0500
+        id S2391578AbfAKOtV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:49:21 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 28904206B6;
-        Fri, 11 Jan 2019 14:41:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4E86B2063F;
+        Fri, 11 Jan 2019 14:49:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547217665;
-        bh=N0OIT+0Jo4S4wKbgnFgfGUq1Cib4n1UfEELXIG8scbo=;
+        s=default; t=1547218160;
+        bh=Qi/zkqveRfUhXddwbTRb5f3pdnt67YTSr7WSKxlzjMw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uTNzKi1QlT6/8dXk8PMGDiiSZNMh82wvRC6bKXJY69pyWv0XpqCV7KMISnXxr9sL2
-         G2Ia3FnMC+lRF0hRei50GSKMWCSQ0dNPGreFdc3/yjhFE6vvsV7HIHnVzK906UYoPh
-         DuXX2azjQJ8fq+SDdtg4IsUtambAail6Ojs6qf+4=
+        b=qRcke5WAiiiucBiKgyh6MLddP8s6B+8SgxwX+4sSSQm3GSn4fASnebAPQjN8s8PxT
+         JChOSkUdEBZ95n41wEgwWGvFwiWBkcQFlqrvS7bNTNxr8qFHY8XdNpHeekQi8mHK5o
+         ZKmZ5AUTx07IuVvFnhMzTyaSzZjKiMGXB7IP0r1g=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Bringmann <mwb@linux.vnet.ibm.com>,
-        Frank Rowand <frank.rowand@sony.com>,
-        Rob Herring <robh@kernel.org>
-Subject: [PATCH 4.19 143/148] of: __of_detach_node() - remove node from phandle cache
-Date:   Fri, 11 Jan 2019 15:15:21 +0100
-Message-Id: <20190111131120.033321628@linuxfoundation.org>
+        stable@vger.kernel.org, Ashok Raj <ashok.raj@intel.com>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        "Ramos Falcon, Ernesto R" <ernesto.r.ramos.falcon@intel.com>,
+        Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
+        Sohil Mehta <sohil.mehta@intel.com>,
+        Joerg Roedel <jroedel@suse.de>
+Subject: [PATCH 4.14 098/105] iommu/vt-d: Handle domain agaw being less than iommu agaw
+Date:   Fri, 11 Jan 2019 15:15:09 +0100
+Message-Id: <20190111131111.065157899@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190111131114.337122649@linuxfoundation.org>
-References: <20190111131114.337122649@linuxfoundation.org>
+In-Reply-To: <20190111131102.899065735@linuxfoundation.org>
+References: <20190111131102.899065735@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 X-Patchwork-Hint: ignore
@@ -62,111 +66,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.19-stable review patch.  If anyone has any objections, please let me know.
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Frank Rowand <frank.rowand@sony.com>
+From: Sohil Mehta <sohil.mehta@intel.com>
 
-commit 5801169a2ed20003f771acecf3ac00574cf10a38 upstream.
+commit 3569dd07aaad71920c5ea4da2d5cc9a167c1ffd4 upstream.
 
-Non-overlay dynamic devicetree node removal may leave the node in
-the phandle cache.  Subsequent calls to of_find_node_by_phandle()
-will incorrectly find the stale entry.  Remove the node from the
-cache.
+The Intel IOMMU driver opportunistically skips a few top level page
+tables from the domain paging directory while programming the IOMMU
+context entry. However there is an implicit assumption in the code that
+domain's adjusted guest address width (agaw) would always be greater
+than IOMMU's agaw.
 
-Add paranoia checks in of_find_node_by_phandle() as a second level
-of defense (do not return cached node if detached, do not add node
-to cache if detached).
+The IOMMU capabilities in an upcoming platform cause the domain's agaw
+to be lower than IOMMU's agaw. The issue is seen when the IOMMU supports
+both 4-level and 5-level paging. The domain builds a 4-level page table
+based on agaw of 2. However the IOMMU's agaw is set as 3 (5-level). In
+this case the code incorrectly tries to skip page page table levels.
+This causes the IOMMU driver to avoid programming the context entry. The
+fix handles this case and programs the context entry accordingly.
 
-Fixes: 0b3ce78e90fc ("of: cache phandle nodes to reduce cost of of_find_node_by_phandle()")
-Reported-by: Michael Bringmann <mwb@linux.vnet.ibm.com>
-Cc: stable@vger.kernel.org # v4.17+
-Signed-off-by: Frank Rowand <frank.rowand@sony.com>
-Signed-off-by: Rob Herring <robh@kernel.org>
+Fixes: de24e55395698 ("iommu/vt-d: Simplify domain_context_mapping_one")
+Cc: <stable@vger.kernel.org>
+Cc: Ashok Raj <ashok.raj@intel.com>
+Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
+Cc: Lu Baolu <baolu.lu@linux.intel.com>
+Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
+Reported-by: Ramos Falcon, Ernesto R <ernesto.r.ramos.falcon@intel.com>
+Tested-by: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+Signed-off-by: Sohil Mehta <sohil.mehta@intel.com>
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/of/base.c       |   31 ++++++++++++++++++++++++++++++-
- drivers/of/dynamic.c    |    3 +++
- drivers/of/of_private.h |    4 ++++
- 3 files changed, 37 insertions(+), 1 deletion(-)
+ drivers/iommu/intel-iommu.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/of/base.c
-+++ b/drivers/of/base.c
-@@ -161,6 +161,28 @@ int of_free_phandle_cache(void)
- late_initcall_sync(of_free_phandle_cache);
- #endif
+--- a/drivers/iommu/intel-iommu.c
++++ b/drivers/iommu/intel-iommu.c
+@@ -2093,7 +2093,7 @@ static int domain_context_mapping_one(st
+ 	 * than default.  Unnecessary for PT mode.
+ 	 */
+ 	if (translation != CONTEXT_TT_PASS_THROUGH) {
+-		for (agaw = domain->agaw; agaw != iommu->agaw; agaw--) {
++		for (agaw = domain->agaw; agaw > iommu->agaw; agaw--) {
+ 			ret = -ENOMEM;
+ 			pgd = phys_to_virt(dma_pte_addr(pgd));
+ 			if (!dma_pte_present(pgd))
+@@ -2107,7 +2107,7 @@ static int domain_context_mapping_one(st
+ 			translation = CONTEXT_TT_MULTI_LEVEL;
  
-+/*
-+ * Caller must hold devtree_lock.
-+ */
-+void __of_free_phandle_cache_entry(phandle handle)
-+{
-+	phandle masked_handle;
-+	struct device_node *np;
-+
-+	if (!handle)
-+		return;
-+
-+	masked_handle = handle & phandle_cache_mask;
-+
-+	if (phandle_cache) {
-+		np = phandle_cache[masked_handle];
-+		if (np && handle == np->phandle) {
-+			of_node_put(np);
-+			phandle_cache[masked_handle] = NULL;
-+		}
-+	}
-+}
-+
- void of_populate_phandle_cache(void)
- {
- 	unsigned long flags;
-@@ -1169,11 +1191,18 @@ struct device_node *of_find_node_by_phan
- 		if (phandle_cache[masked_handle] &&
- 		    handle == phandle_cache[masked_handle]->phandle)
- 			np = phandle_cache[masked_handle];
-+		if (np && of_node_check_flag(np, OF_DETACHED)) {
-+			WARN_ON(1); /* did not uncache np on node removal */
-+			of_node_put(np);
-+			phandle_cache[masked_handle] = NULL;
-+			np = NULL;
-+		}
- 	}
- 
- 	if (!np) {
- 		for_each_of_allnodes(np)
--			if (np->phandle == handle) {
-+			if (np->phandle == handle &&
-+			    !of_node_check_flag(np, OF_DETACHED)) {
- 				if (phandle_cache) {
- 					/* will put when removed from cache */
- 					of_node_get(np);
---- a/drivers/of/dynamic.c
-+++ b/drivers/of/dynamic.c
-@@ -268,6 +268,9 @@ void __of_detach_node(struct device_node
- 	}
- 
- 	of_node_set_flag(np, OF_DETACHED);
-+
-+	/* race with of_find_node_by_phandle() prevented by devtree_lock */
-+	__of_free_phandle_cache_entry(np->phandle);
- }
- 
- /**
---- a/drivers/of/of_private.h
-+++ b/drivers/of/of_private.h
-@@ -76,6 +76,10 @@ static inline void __of_detach_node_sysf
- int of_resolve_phandles(struct device_node *tree);
- #endif
- 
-+#if defined(CONFIG_OF_DYNAMIC)
-+void __of_free_phandle_cache_entry(phandle handle);
-+#endif
-+
- #if defined(CONFIG_OF_OVERLAY)
- void of_overlay_mutex_lock(void);
- void of_overlay_mutex_unlock(void);
+ 		context_set_address_root(context, virt_to_phys(pgd));
+-		context_set_address_width(context, iommu->agaw);
++		context_set_address_width(context, agaw);
+ 	} else {
+ 		/*
+ 		 * In pass through mode, AW must be programmed to
 
 
