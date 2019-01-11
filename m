@@ -2,131 +2,129 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7AB5C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 23:34:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF3BBC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 23:34:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A3F5020878
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 23:34:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8DF9B20878
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 23:34:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="HDDB3w9B"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="nZUTE5uV";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="e6FaTe+F"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726433AbfAKXd7 (ORCPT
+        id S1726465AbfAKXeV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 18:33:59 -0500
-Received: from mail-vs1-f65.google.com ([209.85.217.65]:33114 "EHLO
-        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725915AbfAKXd6 (ORCPT
+        Fri, 11 Jan 2019 18:34:21 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:40594 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725829AbfAKXeV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 18:33:58 -0500
-Received: by mail-vs1-f65.google.com with SMTP id p74so10338335vsc.0
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Jan 2019 15:33:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=pdquelxyM31B3HhqLOpbZpiCdiHlaRLDSIQ8xr4xk4o=;
-        b=HDDB3w9B7iR2vaV/oPBgu/OdJP5AuKGPDU/amm78+J87mmdRBLKBTZ/Hr3oYrJ61jk
-         xiS0Hkm5xr+TsyrkMwcobVCnpt8rey04vRtGE8NqrYcedCbV8k49UkJF71yB7nxfAFYE
-         oKYDpkQvZW+d462WgJKrQWeIoQBS7jCEteih4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=pdquelxyM31B3HhqLOpbZpiCdiHlaRLDSIQ8xr4xk4o=;
-        b=nSgXDSlH+MVEdX8h9WkCUFO0fnvxuCxTUYIXOE4//6BFtk1VjiPHBQ4PFMm8zQ8fAo
-         Y6+FivgZICyNL+cobiJiDFzeI0BTy308F+81z/GgVnHCd/izG5mRdyx1RzvtsTojTqqR
-         /hamPFGLwlM/qL/fvu+mBA+55n5e2+GoBAV8I+MoIRddcGRgiKX5eKVV2Qm624Qj06Fv
-         x7SPsIm72XsDqOe6ib0xeN47M24bYEKqJtMGLzUu3pCKGQLl0s/CL7qbRtfiyxpeCKqr
-         41NFvVT1Pt/Mw90uezW1WfV9DWaTGXda8Revnn3Af1sm1UTrR12/7vAjBTa6PqpIhw82
-         07VA==
-X-Gm-Message-State: AJcUuke0UYGtspfLEPNcSukVDejDYg/68DKQZlYqwgN+JQCCXdh5urWf
-        ZGDpZ46Ej4diyzCs3HovKfJ8paunlRM=
-X-Google-Smtp-Source: ALg8bN6ix5NZ7QAvzRny9ErWR3WGkMcagp6WKlYOhR5gEyc8quMy8VKT08BkCn10a5T4PsKXq1Khew==
-X-Received: by 2002:a67:34c4:: with SMTP id m65mr7082797vsi.192.1547249637401;
-        Fri, 11 Jan 2019 15:33:57 -0800 (PST)
-Received: from mail-ua1-f48.google.com (mail-ua1-f48.google.com. [209.85.222.48])
-        by smtp.gmail.com with ESMTPSA id a187sm50533975vkf.26.2019.01.11.15.33.55
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 11 Jan 2019 15:33:56 -0800 (PST)
-Received: by mail-ua1-f48.google.com with SMTP id t8so5332385uap.0
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Jan 2019 15:33:55 -0800 (PST)
-X-Received: by 2002:a9f:2b44:: with SMTP id q4mr5926952uaj.126.1547249635563;
- Fri, 11 Jan 2019 15:33:55 -0800 (PST)
+        Fri, 11 Jan 2019 18:34:21 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 18C43608CE; Fri, 11 Jan 2019 23:34:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1547249660;
+        bh=zE59Vfxh1F9CXCKP5GImn133C6c/nvYKTLYgyjzhtTU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=nZUTE5uVB/4BHmuyX9k4a8Zik8y7NNuTKaHB3t1LKsZ9YKsfCruw14UuH4aj4cJjw
+         exzBn2Qsf1K/Au9z2rO2ZuLYY8iwpH7EvEhQFdhre+DyQL0Mxw+5PWMqHBRaapUOyM
+         Iuv6fnlWePyBY3VSc55bv1OWdDftaG59YLXDwBx0=
+Received: from localhost (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: ilina@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id E352360397;
+        Fri, 11 Jan 2019 23:34:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1547249659;
+        bh=zE59Vfxh1F9CXCKP5GImn133C6c/nvYKTLYgyjzhtTU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=e6FaTe+FJ5Y0W0NRN0IrKUbaFB9i0b+3IpExcWcysVc2mjnKktMTl+4oFQCk55evE
+         0JdAxRe+d0xUVqgaf9drQoDkYunj03OoKkHB1yopiqk4+vvQZSTImLfCga6mwbTtgp
+         lKeqYFP3OEFZhTFCYoxPscQNqNN+KOqj4yEDRT3s=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E352360397
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
+Date:   Fri, 11 Jan 2019 16:34:18 -0700
+From:   Lina Iyer <ilina@codeaurora.org>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     evgreen@chromium.org, marc.zyngier@arm.com,
+        linux-kernel@vger.kernel.org, rplsssn@codeaurora.org,
+        linux-arm-msm@vger.kernel.org, thierry.reding@gmail.com,
+        bjorn.andersson@linaro.org
+Subject: Re: [PATCH 3/7] drivers: irqchip: add PDC irqdomain for wakeup
+ capable GPIOs
+Message-ID: <20190111233418.GA29875@codeaurora.org>
+References: <20181219221105.3004-1-ilina@codeaurora.org>
+ <20181219221105.3004-4-ilina@codeaurora.org>
+ <154533717951.79149.1309452983166815703@swboyd.mtv.corp.google.com>
+ <20190107184836.GG14960@codeaurora.org>
+ <154724735183.169631.5181161977573120432@swboyd.mtv.corp.google.com>
 MIME-Version: 1.0
-References: <20190111225402.6133-1-bjorn.andersson@linaro.org>
-In-Reply-To: <20190111225402.6133-1-bjorn.andersson@linaro.org>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Fri, 11 Jan 2019 15:33:44 -0800
-X-Gmail-Original-Message-ID: <CAD=FV=WdCVENn8-5qBUPmiWm5z95_+pxuKv=075e6n1tcaS97w@mail.gmail.com>
-Message-ID: <CAD=FV=WdCVENn8-5qBUPmiWm5z95_+pxuKv=075e6n1tcaS97w@mail.gmail.com>
-Subject: Re: [PATCH] scsi: ufs: Consider device limitations for dma_mask
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Vinayak Holikatti <vinholikatti@gmail.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <154724735183.169631.5181161977573120432@swboyd.mtv.corp.google.com>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On Fri, Jan 11, 2019 at 2:54 PM Bjorn Andersson
-<bjorn.andersson@linaro.org> wrote:
+On Fri, Jan 11 2019 at 15:55 -0700, Stephen Boyd wrote:
+>Quoting Lina Iyer (2019-01-07 10:48:36)
+>> On Thu, Dec 20 2018 at 13:19 -0700, Stephen Boyd wrote:
+>> >Quoting Lina Iyer (2018-12-19 14:11:01)
+>>
+>> >> +static const struct pdc_gpio_pin_data sdm845_gpio_data = {
+>> >> +       .size = ARRAY_SIZE(sdm845_gpio_pdc_map),
+>> >> +       .map = sdm845_gpio_pdc_map,
+>> >> +};
+>> >> +
+>> >> +const struct of_device_id pdc_gpio_match_table[] = {
+>> >> +       { .compatible = "qcom,845-pdc", .data = &sdm845_gpio_data },
+>> >
+>> >Why not qcom,sdm845-pdc?
+>> >
+>> The compatible matches the compatible specified in the PDC driver. Not
+>> sure why the 'sdm' was left out at that time.
 >
-> On Qualcomm SDM845 the capabilities of the UFS MEM controller states
-> that it's capable of dealing with 64 bit addresses, but DMA addresses
-> are truncated causing IOMMU faults when trying to issue operations.
+>Are you going to add sdm?
 >
-> Limit the DMA mask to that of the device, so that DMA allocations
-> is limited to the range supported by the bus and device and not just
-> following what the controller's capabilities states.
+Realized this is a bug. Will fix.
+>>
+>> >> +       { },
+>> >> +};
+>> >
+>> >I wonder why we wouldn't just put this all into the qcom-pdc.c file at
+>> >the bottom and then have that IRQCHIP_DECLARE() macros call small
+>> >functions that pass the pdc to gpio mapping table to qcom_pdc_init()
+>> >that takes a third argument?
+>> >
+>> We could. I feel we would be adding tables like this and it just
+>> clutters up the driver file. May be in the future we could move to
+>> target specific data file like the gpios, but that could be excessive
+>> too. Thought this might be a compromise. I am open to change.
 >
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> ---
->  drivers/scsi/ufs/ufshcd.c | 13 ++++++++-----
->  1 file changed, 8 insertions(+), 5 deletions(-)
+>Ok. The benefit to my approach is that we don't do the string match
+>twice. We do it once and sacrifice a little code space to jump to the
+>real init function with the data we want. We can then put those chip
+>tables inside some #ifdef to save space and allow configurations to turn
+>off everything in EXPERT mode but leave everything default enabled
+>otherwise.
 >
-> diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
-> index 9ba7671b84f8..dc0eb59dd46f 100644
-> --- a/drivers/scsi/ufs/ufshcd.c
-> +++ b/drivers/scsi/ufs/ufshcd.c
-> @@ -8151,11 +8151,14 @@ EXPORT_SYMBOL_GPL(ufshcd_dealloc_host);
->   */
->  static int ufshcd_set_dma_mask(struct ufs_hba *hba)
->  {
-> -       if (hba->capabilities & MASK_64_ADDRESSING_SUPPORT) {
-> -               if (!dma_set_mask_and_coherent(hba->dev, DMA_BIT_MASK(64)))
-> -                       return 0;
-> -       }
-> -       return dma_set_mask_and_coherent(hba->dev, DMA_BIT_MASK(32));
-> +       u64 dma_mask = dma_get_mask(hba->dev);
-> +
-> +       if (hba->capabilities & MASK_64_ADDRESSING_SUPPORT)
-> +               dma_mask &= DMA_BIT_MASK(64);
-> +       else
-> +               dma_mask &= DMA_BIT_MASK(32);
+Sure. I will use this idea.
 
-Just because I'm annoying like that, I'll point out  that the above is
-a bit on the silly side.  Instead I'd do:
-
-if (!(hba->capabilities & MASK_64_ADDRESSING_SUPPORT))
-    dma_mask &= DMA_BIT_MASK(32);
-
-AKA: your code is masking a 64-bit variable with a value that is known
-to be 0xffffffffffffffff, which is kinda a no-op.
-
-
-...other than the nit, this seems sane to me.
-
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
-Tested-by: Douglas Anderson <dianders@chromium.org>
+>>
+>> >I really hope that in the future all the gpios can be wakeup capable so
+>> >that we don't need to have the table at all!
+>> >
+>> I doubt there are plans to support that in hardware. We should plan for
+>> supporting tables like this for other chipsets based on the PDC
+>> architecture.
+>>
+>
+>Uh oh. That's sad.
+>
