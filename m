@@ -2,190 +2,273 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56E8CC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 01:08:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4A04C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 01:10:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 29C40206B7
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 01:08:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5D5FA21872
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 01:10:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547169003;
+	bh=44re3ioC46R04kd0jRgavTIfVGzneHy2eGIak4fexIM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=QNRDEIwzEFZgsFzPrmhpKiOqZ6QF3yojr65Zv9bzeZBFCh8pJuFiAYTPNWxSfBe7f
+	 lK+HP0N2FzSXh0Z5g3ciWhbV+4Mb/+3Fd0nmef5oo+1UKR+HCWdELelsDZO8oC2aTH
+	 V8p8NeuE2K3HvJ3x9O+oP9UBnqzxW5mSgedYGTDc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728880AbfAKBIM (ORCPT
+        id S1728988AbfAKBKC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 20:08:12 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:49482 "EHLO mx1.redhat.com"
+        Thu, 10 Jan 2019 20:10:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45622 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727682AbfAKBIL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 20:08:11 -0500
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1727682AbfAKBKC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 20:10:02 -0500
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 6DE5C9F75D;
-        Fri, 11 Jan 2019 01:08:11 +0000 (UTC)
-Received: from redhat.com (dhcp-17-208.bos.redhat.com [10.18.17.208])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 6C4C760A35;
-        Fri, 11 Jan 2019 01:08:10 +0000 (UTC)
-Date:   Thu, 10 Jan 2019 20:08:08 -0500
-From:   Joe Lawrence <joe.lawrence@redhat.com>
-To:     Nicolai Stange <nstange@suse.de>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        live-patching@vger.kernel.org, Torsten Duwe <duwe@lst.de>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Jiri Kosina <jkosina@suse.cz>,
-        Balbir Singh <bsingharora@gmail.com>
-Subject: Re: ppc64le reliable stack unwinder and scheduled tasks
-Message-ID: <20190111010808.GA17858@redhat.com>
-References: <7f468285-b149-37e2-e782-c9e538b997a9@redhat.com>
- <87bm4ocbbt.fsf@suse.de>
+        by mail.kernel.org (Postfix) with ESMTPSA id F051F2177E
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jan 2019 01:10:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547169001;
+        bh=44re3ioC46R04kd0jRgavTIfVGzneHy2eGIak4fexIM=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=WCMFbsRfsvsxU2Kx8WCl9HeSXNd7gGMu8N+KZPpcgs+nnI0d81T3sUEdk0372T+Hp
+         XWIUIoHVQWrQhN+V15xZKXieFcw8XAcU/cYEwHRue4JxNUtRZmkp+sa1OKdSvQLRCj
+         tA7rYwUZrNGspZ6NJgrDhPPS90wbo9RWjzZJ67cI=
+Received: by mail-wr1-f50.google.com with SMTP id t6so13395533wrr.12
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 17:10:00 -0800 (PST)
+X-Gm-Message-State: AJcUukcNH0llvm75JCL7tRcya24ukHDBN/h3WwiNG3hcKdDELRGzeJaG
+        rLhQHFFF7NMI9H+0YiW6XpIoRLi5C9n3Tn0UKlAyiw==
+X-Google-Smtp-Source: ALg8bN4q1lgry3ZNwaD0S5aVtuFhhq91vTUSMC0mJXEkdVYIf1fas3y57LX/tzdrcBmejC03DeIuJ62xzcQkm2hfay8=
+X-Received: by 2002:adf:f0c5:: with SMTP id x5mr10991838wro.77.1547168999346;
+ Thu, 10 Jan 2019 17:09:59 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87bm4ocbbt.fsf@suse.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Fri, 11 Jan 2019 01:08:11 +0000 (UTC)
+References: <20190103143227.9138-1-jlee@suse.com> <20190106181026.GA15256@amd>
+ <20190107173743.GC4210@linux-l9pv.suse> <CALCETrWHjn_WN1WRc2pbFPB+H-ZL_1y=8dhhHoVqA53Q7Pj5vA@mail.gmail.com>
+ <20190109163958.GG9503@linux-l9pv.suse> <CALCETrUprUNLci+tQ+P7PV3PvS4ruxz5jrGH3R_FDV4SFp3r9g@mail.gmail.com>
+ <20190110151256.GN3599@linux-l9pv.suse>
+In-Reply-To: <20190110151256.GN3599@linux-l9pv.suse>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Thu, 10 Jan 2019 17:09:46 -0800
+X-Gmail-Original-Message-ID: <CALCETrU5qWzMSLxa28XHXBsg-gZwkxfzrqztTbBO+qcCYQbTMA@mail.gmail.com>
+Message-ID: <CALCETrU5qWzMSLxa28XHXBsg-gZwkxfzrqztTbBO+qcCYQbTMA@mail.gmail.com>
+Subject: Re: [PATCH 0/5 v2][RFC] Encryption and authentication for hibernate
+ snapshot image
+To:     joeyli <jlee@suse.com>, David Howells <dhowells@redhat.com>
+Cc:     Andy Lutomirski <luto@kernel.org>, Pavel Machek <pavel@ucw.cz>,
+        "Lee, Chun-Yi" <joeyli.kernel@gmail.com>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        LKML <linux-kernel@vger.kernel.org>, linux-pm@vger.kernel.org,
+        keyrings@vger.kernel.org,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Chen Yu <yu.c.chen@intel.com>,
+        Oliver Neukum <oneukum@suse.com>,
+        Ryan Chen <yu.chen.surf@gmail.com>,
+        Giovanni Gherdovich <ggherdovich@suse.cz>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Jann Horn <jannh@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 11, 2019 at 01:00:38AM +0100, Nicolai Stange wrote:
-> Hi Joe,
-> 
-> Joe Lawrence <joe.lawrence@redhat.com> writes:
-> 
-> > tl;dr: On ppc64le, what is top-most stack frame for scheduled tasks
-> >        about?
-> 
-> If I'm reading the code in _switch() correctly, the first frame is
-> completely uninitialized except for the pointer back to the caller's
-> stack frame.
-> 
-> For completeness: _switch() saves the return address, i.e. the link
-> register into its parent's stack frame, as is mandated by the ABI and
-> consistent with your findings below: it's always the second stack frame
-> where the return address into __switch_to() is kept.
+On Thu, Jan 10, 2019 at 7:13 AM joeyli <jlee@suse.com> wrote:
 >
+> On Wed, Jan 09, 2019 at 10:47:42AM -0800, Andy Lutomirski wrote:
+> > On Wed, Jan 9, 2019 at 8:40 AM joeyli <jlee@suse.com> wrote:
+> > >
+> > > Hi Andy,
+> > >
+> > > Thanks for your review!
+> > >
+> > > On Tue, Jan 08, 2019 at 01:41:48PM -0800, Andy Lutomirski wrote:
+> > > > > On Jan 7, 2019, at 9:37 AM, joeyli <jlee@suse.com> wrote:
+> > > > >
+> > > > > Hi Pavel,
+> > > > >
+> > > > > Thanks for your review!
+> > > > >
+> > > > >> On Sun, Jan 06, 2019 at 07:10:27PM +0100, Pavel Machek wrote:
+> > > > >> Hi!
+> > > > >>
+> > > > >>> This patchset is the implementation of encryption and authentic=
+ation
+> > > > >>> for hibernate snapshot image. The image will be encrypted by AE=
+S and
+> > > > >>> authenticated by HMAC.
+> > > > >>
+> > > > >> Ok, so you encrypt.
+> > > > >
+> > > > > Yes, encryption and authentication.
+> > > > >
+> > > > >>> The hibernate function can be used to snapshot memory pages to =
+an image,
+> > > > >>> then kernel restores the image to memory space in a appropriate=
+ time.
+> > > > >>> There have secrets in snapshot image and cracker may modifies i=
+t for
+> > > > >>> hacking system. Encryption and authentication of snapshot image=
+ can protect
+> > > > >>> the system.
+> > > > >>>
+> > > > >>> Hibernate function requests the master key through key retentio=
+n service.
+> > > > >>> The snapshot master key can be a trusted key or a user defined =
+key. The
+> > > > >>> name of snapshot master key is fixed to "swsusp-kmk". User shou=
+ld loads
+> > > > >>> swsusp-kmk to kernel by keyctl tool before the hibernation resu=
+me.
+> > > > >>> e.g. The swsusp-kmk must be loaded before systemd-hibernate-res=
+ume
+> > > > >>
+> > > > >> But if userspace has a key, encryption is useless against root.
+> > > > >
+> > > > > Yes, but this concern is not only for hibernation encryption. Thi=
+s patch
+> > > > > set does not provide solution against this concern.
+> > > > >
+> > > > > The purpose of this patch set is to encrypt and authenticate hibe=
+rnate
+> > > > > snapshot image in kernel space. It also requests key through keyr=
+ing
+> > > > > mechanism. Which means that we can easy to adapt to new key type =
+from
+> > > > > keyring in the future.
+> > > > >
+> > > > > Currently TPM trusted key or user defined key types are not again=
+st
+> > > > > root. Even using the TPM trusted key, it still can be unsealed by=
+ root
+> > > > > before the PCRs be capped (unless we capped PCRs in kernel).
+> > > > >
+> > > > > My solution for keeping the secret by kernel is the EFI secure ke=
+y type:
+> > > > >    https://lkml.org/lkml/2018/8/5/31
+> > > > >
+> > > > > But the EFI boot variable doesn't design for keeping secret, so W=
+indows
+> > > > > and OEM/ODM do not use boot variable to keep secret. So this idea=
+ can
+> > > > > not be accepted. We must think other key type against root.
+> > > > >
+> > > > >>> The TPM trusted key type is preferred to be the master key. But=
+ user
+> > > > >>> defined key can also be used for testing or when the platform d=
+oesn't
+> > > > >>> have TPM. User must be aware that the security of user key reli=
+es on
+> > > > >>> user space. If the root account be compromised, then the user k=
+ey will
+> > > > >>> easy to be grabbed.
+> > > > >>
+> > > > >> In the TPM case, does userland have access to the key?
+> > > > >
+> > > > > In the TPM case, userland can only touch the sealed key blob. So =
+userland
+> > > > > doesn't know the real secret. But it has risk that root unseals t=
+he key
+> > > > > before PCRs be capped.
+> > > > >
+> > > > >> Please explain your security goals.
+> > > > >
+> > > > > My security goals:
+> > > > >
+> > > > > - Encrypt and authicate hibernate snapshot image in kernel space.=
+ Userspace
+> > > > >  can only touch an encrypted and signed snapshot image.
+> > > >
+> > > > Signed?
+> > > >
+> > > > I=E2=80=99m not entirely convinced that the keyring mechanism is wh=
+at you
+> > > > want. ISTM that there are two goals here:
+> > > >
+> > > > a) Encryption: it should be as hard as can reasonably be arranged t=
+o
+> > > > extract secrets from a hibernation image.
+> > > >
+> > > > b) Authentication part 1: it should not be possible for someone in
+> > > > possession of a turned-off machine to tamper with the hibernation
+> > > > image such that the image, when booted, will leak its secrets. This
+> > > > should protect against attackers who don=E2=80=99t know the encrypt=
+ion key.
+> > > >
+> > > > c) Authentication part 2: it should be to verify, to the extent
+> > > > practical, that the image came from the same machine and was really
+> > > > created using hibernation.  Or maybe by the same user.
+> > > >
+> > > > For (a) and (b), using an AE mode where the key is protected in som=
+e
+> > > > reasonable way.  Joey, why are you using HMAC?  Please tell me you=
+=E2=80=99re
+> > > > at least doing encrypt-then-MAC.  But why not use a real AE mode li=
+ke
+> > > > AES-GCM?
+> > >
+> > > The reason for using HMAC is the history for development. My first pa=
+tch
+> > > set is only for hibernate authentication. Then I added encryption cod=
+e on
+> > > top of my authentication patches in last version.
+> > >
+> > > I am doing encrypt-then-MAC. My code ecrypts each page by AES then HM=
+AC
+> > > whole snapshot image. I feed encrypted data pages one by one to
+> > > crypto_shash_update() API for calculating the hash for whole image.
+> >
+> > ...
+> >
+> > I think you should write down a clear description of the data format.
+>
+> Hibernation allocates free pages for building snapshot image. Those free
+> pages are scattered in memory. So kernel marks those page numbers on a
+> bitmap to locate them. Because this image buffer is discontinuous, so I
+> use update mode hashing whole image.
+>
+> > A general problem with crypto is that the fact that it appears to work
+> > doesn't mean it's secure at all, and it's very hard to follow the
+> > code.  Especially in Linux using the crypto API -- code using the
+> > crypto API tends to be mostly boilerplate.
+> >
+>
+> hm... Do you mean that the implementation of HMAC in crypto cannot be
+> trusted? I hope at least that I can trust the update mode for normal
+> hash like SHA256 or SHA512?
 
-Hi Nicolai,
+No, I fully expect the crypto code to do what it says.  What I mean is
+that you can easily create utterly broken things that involve crypto,
+but they still work fine when you use then non-maliciously.
 
-Good, that makes a lot of sense.  I couldn't find any reference
-explaining the contents of frame 0, only unwinding code here and there
-(as in crash-utility) that stepped over it.
- 
-> <snip>
-> 
+> > >
+> > > Sorry for I didn't capture the meaning of "acceptable usage". The tru=
+sted
+> > > key already be unsealed by TPM when the key be enrolled by keyctl too=
+l.
+> > > So my code just extract the unsealed key data (the random number) for
+> > > encryption.
 > >
+> > If someone creates a trusted key that is used for asymmetric crypto or
+> > perhaps a trusted key that is intended to be used for, say, an HMAC
+> > key, you should not also use it to derive hibernation keys.  This is
+> > what I mean by "acceptable usage".
 > >
-> > Example 1 (RHEL-7)
-> > ==================
-> >
-> > crash> struct task_struct.thread c00000022fd015c0 | grep ksp
-> >     ksp = 0xc0000000288af9c0
-> >
-> > crash> rd 0xc0000000288af9c0 -e 0xc0000000288b0000
-> >
-> >  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-> >
-> > sp[0]:
-> >
-> > c0000000288af9c0:  c0000000288afb90 0000000000dd0000   ...(............
-> > c0000000288af9d0:  c000000000002a94 c000000001c60a00   .*..............
-> >
-> >         crash> sym c000000000002a94
-> >         c000000000002a94 (T) hardware_interrupt_common+0x114
-> 
-> So that c000000000002a94 certainly wasn't stored by _switch(). I think
-> what might have happened is that the switching frame aliased with some
-> prior interrupt frame as setup by hardware_interrupt_common().
-> 
-> The interrupt and switching frames seem to share a common layout as far
-> as the lower STACK_FRAME_OVERHEAD + sizeof(struct pt_regs) bytes are
-> concerned.
-> 
-> That address into hardware_interrupt_common() could have been written by
-> the do_IRQ() called from there.
-> 
+>
+> When keyring is producing encrypted key, the trusted key be used to
+> derive the encrypt key and authenticate key to encrypt and hmac sign
+> a encrypted key. So trusted key can be used in symmetric crypto.
 
-That was my initial theory, but then when I saw an ordinary scheduled
-task with a similarly strange frame 0, I thought that _switch() might
-have been doing something clever (or not).  But according your earlier
-explanation, it would line up that these values may be inherited from
-do_IRQ() or the like.
+Can it?
 
-> 
-> > c0000000288af9e0:  c000000001c60a80 0000000000000000   ................
-> > c0000000288af9f0:  c0000000288afbc0 0000000000dd0000   ...(............
-> > c0000000288afa00:  c0000000014322e0 c000000001c60a00   ."C.............
-> > c0000000288afa10:  c0000002303ae380 c0000002303ae380   ..:0......:0....
-> > c0000000288afa20:  7265677368657265 0000000000002200   erehsger."......
-> >
-> >         Uh-oh...
-> >
-> >         /* Mark stacktraces with exception frames as unreliable. */
-> >         stack[STACK_FRAME_MARKER] == STACK_FRAME_REGS_MARKER
-> 
-> 
-> Aliasing of the switching stack frame with some prior interrupt stack
-> frame would explain why that STACK_FRAME_REGS_MARKER is still found on
-> the stack, i.e. it's a leftover.
-> 
-> For testing, could you try whether clearing the word at STACK_FRAME_MARKER
-> from _switch() helps?
-> 
-> I.e. something like (completely untested):
+David, you actually understand the overall kernel keyring design.  Do
+keys in the keyring have usage constraints?
 
-I'll kick off some builds tonight and try to get tests lined up
-tomorrow.  Unfortunately these take a bit of time to run setup, schedule
-and complete, so perhaps by next week.
-
-> 
-> diff --git a/arch/powerpc/kernel/entry_64.S b/arch/powerpc/kernel/entry_64.S
-> index 435927f549c4..b747d0647ec4 100644
-> --- a/arch/powerpc/kernel/entry_64.S
-> +++ b/arch/powerpc/kernel/entry_64.S
-> @@ -596,6 +596,10 @@ _GLOBAL(_switch)
->  	SAVE_8GPRS(14, r1)
->  	SAVE_10GPRS(22, r1)
->  	std	r0,_NIP(r1)	/* Return to switch caller */
-> +
-> +	li	r23,0
-> +	std	r23,96(r1)	/* 96 == STACK_FRAME_MARKER * sizeof(long) */
-> +
->  	mfcr	r23
->  	std	r23,_CCR(r1)
->  	std	r1,KSP(r3)	/* Set old stack pointer */
-> 
-> 
-
-This may be sufficient to avoid the condition, but if the contents of
-frame 0 are truely uninitialized (not to be trusted), should the
-unwinder be even looking at that frame (for STACK_FRAMES_REGS_MARKER),
-aside from the LR and other stack size geometry sanity checks?
-
-> <snap>
-> 
-> >
-> > save_stack_trace_tsk_reliable
-> > =============================
-> >
-> > arch/powerpc/kernel/stacktrace.c :: save_stack_trace_tsk_reliable() does
-> > take into account the first stackframe, but only to verify that the link
-> > register is indeed pointing at kernel code address.
-> 
-> It's actually the other way around:
-> 
-> 	if (!firstframe && !__kernel_text_address(ip))
-> 		return 1;
-> 
-> 
-> So the address gets sanitized only if it's _not_ coming from the first
-> frame.
-
-Yup, that's right, I had it backwards.
-
-Thanks!
-
--- Joe
+But I think you need to take a big step back here.  We already have
+kernel/power/user.c.  It seems to me that you can do a better job of
+what you're trying to do with less code by using it.  Why do you need
+new kernel code *at all* to accomplish your goals?
