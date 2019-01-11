@@ -2,57 +2,52 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-13.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F28BC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:38:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB943C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:38:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0DF7B206B6
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:38:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AE8E22133F
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:38:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547217520;
-	bh=oDpuDh9651Kp+X7IDY6vxLwLUIhr4lUpaHbpvzVmciI=;
+	s=default; t=1547217524;
+	bh=/Wmo1i+hAQS/43i20NggAhuU4UbU9xTedILewX+11g4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=alzMimm29u5TfCNwWFigH0wB1188reZ4p2WCechbthZn6YUQl+sR7TkCzxmTzdPb6
-	 ncBhp5Gjf2H7lBLDA5jvkJS/VqoR9b5APe9TnwiwQQuQDj/D2j9J8qUlMsAt8OF8nb
-	 jUtuFGYfQutMYLrhm9p8Tn5y/2cVxPSRLfH5qyVQ=
+	b=OfwJG99e5lPIf+e2h/iK1hw5PoiycoRGg7XPfeSd/AeawOBqmihBGnPDHhoub9p9r
+	 Pt7DfDR3536VQbeBdvtDNWXvIx1lGe/h2jSzyVs/obnUY0ea1D+FIjuKVaR9IsOhxi
+	 BH0g7tIxMK5Xiw91VTFBl4pKfv5iqUFuo7mZKCLE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390892AbfAKOij (ORCPT
+        id S2390916AbfAKOin (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:38:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59230 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:38:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59386 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390858AbfAKOie (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:38:34 -0500
+        id S2390120AbfAKOil (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:38:41 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4F7B82184B;
-        Fri, 11 Jan 2019 14:38:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 255EC2184B;
+        Fri, 11 Jan 2019 14:38:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547217513;
-        bh=oDpuDh9651Kp+X7IDY6vxLwLUIhr4lUpaHbpvzVmciI=;
+        s=default; t=1547217520;
+        bh=/Wmo1i+hAQS/43i20NggAhuU4UbU9xTedILewX+11g4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ziHRKY9AgO2KWwFLe7fdLT/t0bnY5T48NOvtS5xGn9bSu7qOYEB3ChsU7EHYrOoWD
-         KbtOag9OquZAQzLYzi2wltuPbrCqYUn5+5zxvlOr7Z1kZFFOA559RznwuTyn3680cR
-         C4AcvxnJ5Te4lQlHZTgqXhiQUrJy7Tjbui9Fely4=
+        b=iCmyvvocCbTUA3dzm7lcJKU58jjp4RQ+16uXUmi8JiIkgtNfKp/hp05RP0aHnQrxm
+         mUMrMKwJT0jGlGmA2aykxKuCpLtQ93Fd4+8YdrwbsNOB29/Uk5frSdHxEMMIeoFkT5
+         fU01sz5rueofDwFqVOqfujrjkojz0NMjQ5gHfGkY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Huang, Ying" <ying.huang@intel.com>,
-        Hugh Dickins <hughd@google.com>,
-        Rik van Riel <riel@redhat.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Minchan Kim <minchan@kernel.org>, Shaohua Li <shli@kernel.org>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.19 088/148] mm, swap: fix swapoff with KSM pages
-Date:   Fri, 11 Jan 2019 15:14:26 +0100
-Message-Id: <20190111131117.715165054@linuxfoundation.org>
+        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 064/148] vxge: ensure data0 is initialized in when fetching firmware version information
+Date:   Fri, 11 Jan 2019 15:14:02 +0100
+Message-Id: <20190111131116.810920737@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131114.337122649@linuxfoundation.org>
 References: <20190111131114.337122649@linuxfoundation.org>
@@ -71,70 +66,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Huang Ying <ying.huang@intel.com>
+[ Upstream commit f7db2beb4c2c6cc8111f5ab90fc7363ca91107b6 ]
 
-commit 7af7a8e19f0c5425ff639b0f0d2d244c2a647724 upstream.
+Currently variable data0 is not being initialized so a garbage value is
+being passed to vxge_hw_vpath_fw_api and this value is being written to
+the rts_access_steer_data0 register.  There are other occurrances where
+data0 is being initialized to zero (e.g. in function
+vxge_hw_upgrade_read_version) so I think it makes sense to ensure data0
+is initialized likewise to 0.
 
-KSM pages may be mapped to the multiple VMAs that cannot be reached from
-one anon_vma.  So during swapin, a new copy of the page need to be
-generated if a different anon_vma is needed, please refer to comments of
-ksm_might_need_to_copy() for details.
+Detected by CoverityScan, CID#140696 ("Uninitialized scalar variable")
 
-During swapoff, unuse_vma() uses anon_vma (if available) to locate VMA and
-virtual address mapped to the page, so not all mappings to a swapped out
-KSM page could be found.  So in try_to_unuse(), even if the swap count of
-a swap entry isn't zero, the page needs to be deleted from swap cache, so
-that, in the next round a new page could be allocated and swapin for the
-other mappings of the swapped out KSM page.
-
-But this contradicts with the THP swap support.  Where the THP could be
-deleted from swap cache only after the swap count of every swap entry in
-the huge swap cluster backing the THP has reach 0.  So try_to_unuse() is
-changed in commit e07098294adf ("mm, THP, swap: support to reclaim swap
-space for THP swapped out") to check that before delete a page from swap
-cache, but this has broken KSM swapoff too.
-
-Fortunately, KSM is for the normal pages only, so the original behavior
-for KSM pages could be restored easily via checking PageTransCompound().
-That is how this patch works.
-
-The bug is introduced by e07098294adf ("mm, THP, swap: support to reclaim
-swap space for THP swapped out"), which is merged by v4.14-rc1.  So I
-think we should backport the fix to from 4.14 on.  But Hugh thinks it may
-be rare for the KSM pages being in the swap device when swapoff, so nobody
-reports the bug so far.
-
-Link: http://lkml.kernel.org/r/20181226051522.28442-1-ying.huang@intel.com
-Fixes: e07098294adf ("mm, THP, swap: support to reclaim swap space for THP swapped out")
-Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
-Reported-by: Hugh Dickins <hughd@google.com>
-Tested-by: Hugh Dickins <hughd@google.com>
-Acked-by: Hugh Dickins <hughd@google.com>
-Cc: Rik van Riel <riel@redhat.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Minchan Kim <minchan@kernel.org>
-Cc: Shaohua Li <shli@kernel.org>
-Cc: Daniel Jordan <daniel.m.jordan@oracle.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Fixes: 8424e00dfd52 ("vxge: serialize access to steering control register")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- mm/swapfile.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/neterion/vxge/vxge-config.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/mm/swapfile.c
-+++ b/mm/swapfile.c
-@@ -2208,7 +2208,8 @@ int try_to_unuse(unsigned int type, bool
- 		 */
- 		if (PageSwapCache(page) &&
- 		    likely(page_private(page) == entry.val) &&
--		    !page_swapped(page))
-+		    (!PageTransCompound(page) ||
-+		     !swap_page_trans_huge_swapped(si, entry)))
- 			delete_from_swap_cache(compound_head(page));
+diff --git a/drivers/net/ethernet/neterion/vxge/vxge-config.c b/drivers/net/ethernet/neterion/vxge/vxge-config.c
+index 398011c87643..bf4302e45dcd 100644
+--- a/drivers/net/ethernet/neterion/vxge/vxge-config.c
++++ b/drivers/net/ethernet/neterion/vxge/vxge-config.c
+@@ -807,7 +807,7 @@ __vxge_hw_vpath_fw_ver_get(struct __vxge_hw_virtualpath *vpath,
+ 	struct vxge_hw_device_date *fw_date = &hw_info->fw_date;
+ 	struct vxge_hw_device_version *flash_version = &hw_info->flash_version;
+ 	struct vxge_hw_device_date *flash_date = &hw_info->flash_date;
+-	u64 data0, data1 = 0, steer_ctrl = 0;
++	u64 data0 = 0, data1 = 0, steer_ctrl = 0;
+ 	enum vxge_hw_status status;
  
- 		/*
+ 	status = vxge_hw_vpath_fw_api(vpath,
+-- 
+2.19.1
+
 
 
