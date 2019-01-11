@@ -4,49 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DD57C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:28:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD008C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:28:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D33162177B
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:28:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9381721841
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:28:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547216926;
-	bh=8FS3llxSYcAFvcCczElNp0X5P+icTLBE62RrhPPMI7Y=;
+	s=default; t=1547216932;
+	bh=9ES5nj9/RJdo1PbDyJC1bdkX/CHN7CEIzipdXkPOxWQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Hqmqp3uH6QsvOGhg1zInpfK3WLN1AW8J9WHatdRCDQdEouJVpW+3Jvj8MpZV4cQWU
-	 P/lFgMxbX13g6YDDFs8vfGaa7G5IrEyQHJxrjs3fR5chOvplpgfqUq5fEvvhs4hxrh
-	 RaX/5mgMVBHlmUet6PATP5CnjviItmBCDZxoBw6I=
+	b=N13/mHM83BBOB6WBfTH591K8iD2ZigWrGkhEezVrzoYKPGgzsOvYIrjYjHAe0XtmS
+	 Q+HLbofQ5ZMblLYEK8+oASlSMZ9A/hdHW1m18I+zwuUakEhT+UeVHSufYHJgrmr5yG
+	 NVpxJ2l/ticgWdUAgxgfDEx9xS/gTOC0Fe+dvAAg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388576AbfAKO2q (ORCPT
+        id S2388588AbfAKO2w (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:28:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47522 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:28:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47640 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388214AbfAKO2n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:28:43 -0500
+        id S2388214AbfAKO2s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:28:48 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 285D02177B;
-        Fri, 11 Jan 2019 14:28:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4D6952133F;
+        Fri, 11 Jan 2019 14:28:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547216922;
-        bh=8FS3llxSYcAFvcCczElNp0X5P+icTLBE62RrhPPMI7Y=;
+        s=default; t=1547216927;
+        bh=9ES5nj9/RJdo1PbDyJC1bdkX/CHN7CEIzipdXkPOxWQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TS1glXQPbIdyb5/Waewf+dgDRKlYuWFDPaiWqQ3T1Vsr1tESHFbNcY6y9FeVpTEl0
-         /qV8OD5ChnDFpcJ0LbvHaiorWGf8nMuV0Zf7VErSu13re2XJ5Zqxz7t0/s/ubjUrzB
-         EAnA1s8FOuqDRgQWPFnaEM5v2iXosJBBJAdY8Fwc=
+        b=P1aqaCrUgrpmAYtDcJrfSq3GSGio8eHzuu1f0/CtlHiJbDSIoNVFlJVx7aG9NyiI1
+         /ROmzJSmEXx+UAhrJZR4wFlhTLceGRK40Qh4HH/WLOYSz/ss0GcetfCiEV9yQ95ycc
+         FjQjhsJm8b4rirmkRH2yF6SJr04oQj3a2mmng7OA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vasily Averin <vvs@virtuozzo.com>,
-        "J. Bruce Fields" <bfields@redhat.com>
-Subject: [PATCH 4.9 40/63] sunrpc: use SVC_NET() in svcauth_gss_* functions
-Date:   Fri, 11 Jan 2019 15:14:43 +0100
-Message-Id: <20190111131052.070844720@linuxfoundation.org>
+        stable@vger.kernel.org, linux-crypto@vger.kernel.org,
+        Martin Willi <martin@strongswan.org>,
+        Eric Biggers <ebiggers@google.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Subject: [PATCH 4.9 42/63] crypto: x86/chacha20 - avoid sleeping with preemption disabled
+Date:   Fri, 11 Jan 2019 15:14:45 +0100
+Message-Id: <20190111131052.654348898@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131046.387528003@linuxfoundation.org>
 References: <20190111131046.387528003@linuxfoundation.org>
@@ -65,56 +66,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vasily Averin <vvs@virtuozzo.com>
 
-commit b8be5674fa9a6f3677865ea93f7803c4212f3e10 upstream.
+From: Eric Biggers <ebiggers@google.com>
 
-Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: J. Bruce Fields <bfields@redhat.com>
+In chacha20-simd, clear the MAY_SLEEP flag in the blkcipher_desc to
+prevent sleeping with preemption disabled, under kernel_fpu_begin().
+
+This was fixed upstream incidentally by a large refactoring,
+commit 9ae433bc79f9 ("crypto: chacha20 - convert generic and x86
+versions to skcipher").  But syzkaller easily trips over this when
+running on older kernels, as it's easily reachable via AF_ALG.
+Therefore, this patch makes the minimal fix for older kernels.
+
+Fixes: c9320b6dcb89 ("crypto: chacha20 - Add a SSSE3 SIMD variant for x86_64")
+Cc: linux-crypto@vger.kernel.org
+Cc: Martin Willi <martin@strongswan.org>
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- net/sunrpc/auth_gss/svcauth_gss.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ arch/x86/crypto/chacha20_glue.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/net/sunrpc/auth_gss/svcauth_gss.c
-+++ b/net/sunrpc/auth_gss/svcauth_gss.c
-@@ -1112,7 +1112,7 @@ static int svcauth_gss_legacy_init(struc
- 	struct kvec *resv = &rqstp->rq_res.head[0];
- 	struct rsi *rsip, rsikey;
- 	int ret;
--	struct sunrpc_net *sn = net_generic(rqstp->rq_xprt->xpt_net, sunrpc_net_id);
-+	struct sunrpc_net *sn = net_generic(SVC_NET(rqstp), sunrpc_net_id);
+--- a/arch/x86/crypto/chacha20_glue.c
++++ b/arch/x86/crypto/chacha20_glue.c
+@@ -77,6 +77,7 @@ static int chacha20_simd(struct blkciphe
  
- 	memset(&rsikey, 0, sizeof(rsikey));
- 	ret = gss_read_verf(gc, argv, authp,
-@@ -1223,7 +1223,7 @@ static int svcauth_gss_proxy_init(struct
- 	uint64_t handle;
- 	int status;
- 	int ret;
--	struct net *net = rqstp->rq_xprt->xpt_net;
-+	struct net *net = SVC_NET(rqstp);
- 	struct sunrpc_net *sn = net_generic(net, sunrpc_net_id);
+ 	blkcipher_walk_init(&walk, dst, src, nbytes);
+ 	err = blkcipher_walk_virt_block(desc, &walk, CHACHA20_BLOCK_SIZE);
++	desc->flags &= ~CRYPTO_TFM_REQ_MAY_SLEEP;
  
- 	memset(&ud, 0, sizeof(ud));
-@@ -1414,7 +1414,7 @@ svcauth_gss_accept(struct svc_rqst *rqst
- 	__be32		*rpcstart;
- 	__be32		*reject_stat = resv->iov_base + resv->iov_len;
- 	int		ret;
--	struct sunrpc_net *sn = net_generic(rqstp->rq_xprt->xpt_net, sunrpc_net_id);
-+	struct sunrpc_net *sn = net_generic(SVC_NET(rqstp), sunrpc_net_id);
+ 	crypto_chacha20_init(state, crypto_blkcipher_ctx(desc->tfm), walk.iv);
  
- 	dprintk("RPC:       svcauth_gss: argv->iov_len = %zd\n",
- 			argv->iov_len);
-@@ -1702,7 +1702,7 @@ svcauth_gss_release(struct svc_rqst *rqs
- 	struct rpc_gss_wire_cred *gc = &gsd->clcred;
- 	struct xdr_buf *resbuf = &rqstp->rq_res;
- 	int stat = -EINVAL;
--	struct sunrpc_net *sn = net_generic(rqstp->rq_xprt->xpt_net, sunrpc_net_id);
-+	struct sunrpc_net *sn = net_generic(SVC_NET(rqstp), sunrpc_net_id);
- 
- 	if (gc->gc_proc != RPC_GSS_PROC_DATA)
- 		goto out;
 
 
