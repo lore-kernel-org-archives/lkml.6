@@ -4,48 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA4ABC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:14:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 792DBC43444
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:14:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 97A1421783
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:14:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3D74120874
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:14:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547216078;
-	bh=uSaZtYgjRdXaBv79pL3TfpM2hA9767/lAmsqJnfEQx4=;
+	s=default; t=1547216081;
+	bh=k+xhMifa6pMdYSDyTVl71yg0EHd61XlAo+cs4IETlRc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=i46JthK4OxIZbw39/Rs4MX8UtC6pOMOhA0Z3wLdovlVL4iBchq0l51cULAXx+jcpH
-	 QlDX1axXhUlTLU5VUZlaqUxHGu1Oyk7BFaz5DsyL0KLhSUFYAj9nxW1IF+EWgp8DjM
-	 hhkLj6R5YNgIUzz/4gF+kgupzBxY+P8z64CpP+kI=
+	b=AekcUahvRujtwD3/n2H4s4xAJq89hsQBgaBlJbL5xxmncsP1MMzucYrxbocrODfMR
+	 Cd2wxbf8Tzh6o52L3+TfDECSw6/OJgQlLJVbpYLuinVMxDLWwruv66+dQcyaajb484
+	 4gx5DOADQasq2D4TjFSCAf9nms3lvv5OL6+ySO6M=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733098AbfAKOOh (ORCPT
+        id S1733110AbfAKOOk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:14:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58260 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:14:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58380 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733073AbfAKOOd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:14:33 -0500
+        id S1733073AbfAKOOj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:14:39 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C5F03214D8;
-        Fri, 11 Jan 2019 14:14:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 01BCD214D8;
+        Fri, 11 Jan 2019 14:14:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547216073;
-        bh=uSaZtYgjRdXaBv79pL3TfpM2hA9767/lAmsqJnfEQx4=;
+        s=default; t=1547216078;
+        bh=k+xhMifa6pMdYSDyTVl71yg0EHd61XlAo+cs4IETlRc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ah8vFsUo2coYX88elOGYjRhZr395UWJTQkh3SE6bAsguk9ePEhCxm15wgBBbLoNvN
-         LaqQQaylxFrRh6MJiUFRaGpBxgiigjHmfK5b6xmdi6Jiof77JP+qFsY/PKS+exu+1I
-         u0lWeVqMViM219DF4SrZkFQpy21xO8POvQQ+vZvg=
+        b=wTl/ZC+vWE/O8Avls7UqyL8dzP+3XYiR6C/A1MrHCBi3I+iZsDtGqgISdX8XIj80l
+         S9aSXjJ2f5/cFmFU90Et82yzfaDUz7snr8JlhQmSafDpZs45IIZ5xeaQqqIRaS8Bow
+         0nT0rguuZH10kngr3fDedYohsaIKBMJidfV7RJjE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH 3.18 03/47] mmc: core: Reset HPI enabled state during re-init and in case of errors
-Date:   Fri, 11 Jan 2019 15:07:48 +0100
-Message-Id: <20190111130956.627378859@linuxfoundation.org>
+        stable@vger.kernel.org, Christophe Leroy <christophe.leroy@c-s.fr>,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH 3.18 05/47] gpio: max7301: fix driver for use with CONFIG_VMAP_STACK
+Date:   Fri, 11 Jan 2019 15:07:50 +0100
+Message-Id: <20190111130956.854184298@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111130956.170952125@linuxfoundation.org>
 References: <20190111130956.170952125@linuxfoundation.org>
@@ -64,38 +65,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ulf Hansson <ulf.hansson@linaro.org>
+From: Christophe Leroy <christophe.leroy@c-s.fr>
 
-commit a0741ba40a009f97c019ae7541dc61c1fdf41efb upstream.
+commit abf221d2f51b8ce7b9959a8953f880a8b0a1400d upstream.
 
-During a re-initialization of the eMMC card, we may fail to re-enable HPI.
-In these cases, that isn't properly reflected in the card->ext_csd.hpi_en
-bit, as it keeps being set. This may cause following attempts to use HPI,
-even if's not enabled. Let's fix this!
+spi_read() and spi_write() require DMA-safe memory. When
+CONFIG_VMAP_STACK is selected, those functions cannot be used
+with buffers on stack.
 
-Fixes: eb0d8f135b67 ("mmc: core: support HPI send command")
+This patch replaces calls to spi_read() and spi_write() by
+spi_write_then_read() which doesn't require DMA-safe buffers.
+
+Fixes: 0c36ec314735 ("gpio: gpio driver for max7301 SPI GPIO expander")
 Cc: <stable@vger.kernel.org>
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mmc/core/mmc.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/gpio/gpio-max7301.c |   12 +++---------
+ 1 file changed, 3 insertions(+), 9 deletions(-)
 
---- a/drivers/mmc/core/mmc.c
-+++ b/drivers/mmc/core/mmc.c
-@@ -1485,9 +1485,11 @@ static int mmc_init_card(struct mmc_host
- 		if (err) {
- 			pr_warn("%s: Enabling HPI failed\n",
- 				mmc_hostname(card->host));
-+			card->ext_csd.hpi_en = 0;
- 			err = 0;
--		} else
-+		} else {
- 			card->ext_csd.hpi_en = 1;
-+		}
- 	}
+--- a/drivers/gpio/gpio-max7301.c
++++ b/drivers/gpio/gpio-max7301.c
+@@ -25,7 +25,7 @@ static int max7301_spi_write(struct devi
+ 	struct spi_device *spi = to_spi_device(dev);
+ 	u16 word = ((reg & 0x7F) << 8) | (val & 0xFF);
  
- 	/*
+-	return spi_write(spi, (const u8 *)&word, sizeof(word));
++	return spi_write_then_read(spi, &word, sizeof(word), NULL, 0);
+ }
+ 
+ /* A read from the MAX7301 means two transfers; here, one message each */
+@@ -37,14 +37,8 @@ static int max7301_spi_read(struct devic
+ 	struct spi_device *spi = to_spi_device(dev);
+ 
+ 	word = 0x8000 | (reg << 8);
+-	ret = spi_write(spi, (const u8 *)&word, sizeof(word));
+-	if (ret)
+-		return ret;
+-	/*
+-	 * This relies on the fact, that a transfer with NULL tx_buf shifts out
+-	 * zero bytes (=NOOP for MAX7301)
+-	 */
+-	ret = spi_read(spi, (u8 *)&word, sizeof(word));
++	ret = spi_write_then_read(spi, &word, sizeof(word), &word,
++				  sizeof(word));
+ 	if (ret)
+ 		return ret;
+ 	return word & 0xff;
 
 
