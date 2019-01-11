@@ -2,64 +2,64 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04549C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 10:07:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E445CC43444
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 10:08:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C7E712177E
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 10:07:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AAC6D20872
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 10:08:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cNX4uAlE"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pKS1rELE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731649AbfAKKHI (ORCPT
+        id S1731652AbfAKKIj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 05:07:08 -0500
-Received: from mail-io1-f67.google.com ([209.85.166.67]:42564 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731121AbfAKKHI (ORCPT
+        Fri, 11 Jan 2019 05:08:39 -0500
+Received: from mail-io1-f66.google.com ([209.85.166.66]:37143 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727653AbfAKKIj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 05:07:08 -0500
-Received: by mail-io1-f67.google.com with SMTP id x6so11759677ioa.9;
-        Fri, 11 Jan 2019 02:07:06 -0800 (PST)
+        Fri, 11 Jan 2019 05:08:39 -0500
+Received: by mail-io1-f66.google.com with SMTP id g8so11782351iok.4;
+        Fri, 11 Jan 2019 02:08:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=0tV770gtlc+wsy+UJoYxGMN9qBxuKgWLEh7SlyYwABc=;
-        b=cNX4uAlETZADN8aGRufMP3D/4vQLNg3X69OiSMjhjWYl7auJI9j39DuE573wzYBGPB
-         Z54d5fPFgjAi6qVJ+oWkKC2s4Q8LQXwrsMqf/Xqe5JAX+Ih3hgn/w1hVd1LMrQ2RwSxm
-         DLjcGH7rmc6U9CbplCjwBYbbNR1zJ3hBsKXnndGo291m4QEMvTkV2e+IiaOyqrAvm3l8
-         sop06tgie9xWkc+XMY4MO8IzM3AiwyEGYDE02eCIDXqlt467X05ipHMqhcdd+jbMOH08
-         +xEvlP6cymto4k/R9yxie0s814znsJDeXyjjXz5Zr4zPOaoYl0WaPUQVEZR3pA6WlABt
-         4tfg==
+        bh=LUPiDJ7lnfm6wI/6H7WU6hN/VwCa62q6oRlvnlQWtA4=;
+        b=pKS1rELEFRWnEbgPRB33fqg4Ldf7pDMNfaJWJK6PiMwPiBUhTDbirHslHtkELzOgpS
+         rhqnyqt0uCNkHo1dYwmIRvEq1dfumYu3VqyGs7TaQ77sfaeGVzznsCl6oE+ySWZg6uRE
+         lcXFSJPjc1PmPi+qTm/TQ2+phaFZnLXZCq5cPS9OTqD6kepoo7AbNDSN0YhDYccacXCL
+         +YQgVB2slDxHWxi5EDdKK7gTZ5sgzQiqueEuGmgymvVLDu9LwNuy8Mfh034yTCDlxg4s
+         /Qmcza0Q2Gj9nyAvp2u7nK+HgQmHDThCgds5rtWP5f8LceXsWKH55q+a+Is8uQo/d+VY
+         8N/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=0tV770gtlc+wsy+UJoYxGMN9qBxuKgWLEh7SlyYwABc=;
-        b=XePnYf2BrUfVbZQFD9qB2MvcNH003046fAKoSnVyiEVAZQlzd5xoTIYyythWzYkvh2
-         +P/e3MhFh0L4euDvhz8dkkRZb5g1vRnXG4wfPJcA6sypsmOiGiG8uJ1wuNBrtUw/D/TK
-         dKUkRrtMAjpQrQw+EUlpmJI5j8qCQezRhsmo88e6FW+lwGSDdjxg34dI1F2ZNkteLXN7
-         2sV3er89jdWIYmTSl8kp5jdhx+Hx2029j16V1SmlexdUBENAgHuwpmoIeuhT33nRRFvc
-         rQGftEzcxC8SD4ckWTEEr5DdTWhY9v5maV20K3NofhO45uzQY1oj3D3Gr4y8bWZf2mbR
-         tLwg==
-X-Gm-Message-State: AJcUukebX908oomLV3tG2SJV9zSJNdRsmFdc1tzc+r7j+XITKc0ht46z
-        Ov3epLKV87y/F0UoZKbGPPNTykGPyRlJEbUQM07w2eLtbQ==
-X-Google-Smtp-Source: ALg8bN5Xzg+bZMposKlY51+EUlou7mGmeHx/TDH2StE42hULTAMczRfTbyGp2nwSeReF6n6voVc0KWtaO+hN0ViqkcQ=
-X-Received: by 2002:a5e:de01:: with SMTP id e1mr9201968iok.137.1547201226390;
- Fri, 11 Jan 2019 02:07:06 -0800 (PST)
+        bh=LUPiDJ7lnfm6wI/6H7WU6hN/VwCa62q6oRlvnlQWtA4=;
+        b=UaUYSyx161ODABofgSVW4HNHAHsbMaYAOvNiyysOVhr9Pa66HYlSJi3qnpTWuh3YC/
+         FLmke9xb3CzhqhHTNe0eMmPPWeRbPS7GH4JOGx4OQzZf4vQzcqCDnMkrgoU1urIwE43L
+         VY4N8sO6eNjYbV5l8jqtetaNJkgpZrH603pCDTi+1LnsC/ktwqRH4Uq/YKCxHDRHKX5d
+         hIE0wTlUsgHpaXBirHM3lqdsuGEuwgPi77zLRyO4ATAekcw9K6n31XHsnwLTWuYleGcg
+         8ThCxJOROBJkcivyJRizgsAfK4NOZNSUbnUefQ1AxfJDydU4P2gcYRTMCyubvucYcDjr
+         Ys2A==
+X-Gm-Message-State: AJcUukeNjstzv8uOzMGDj9lY+9ilB0ju5miy72/ySx6yGT0K86S27V8r
+        htV7wuzyLB3KPO3Dh32QFwPw0RajcUngzulhPg==
+X-Google-Smtp-Source: ALg8bN6WNs9URoD/NSCPCuBXeMSAJYykLzC0vXg1F0Wbe88bwpgBSntGdZZd1qx3KHGpRnmJFPd6BTU9VL+vpU+enrI=
+X-Received: by 2002:a6b:3f06:: with SMTP id m6mr8569121ioa.117.1547201318130;
+ Fri, 11 Jan 2019 02:08:38 -0800 (PST)
 MIME-Version: 1.0
 References: <1547183577-20309-1-git-send-email-kernelfans@gmail.com>
- <1547183577-20309-2-git-send-email-kernelfans@gmail.com> <20190111061221.GB13263@localhost.localdomain>
-In-Reply-To: <20190111061221.GB13263@localhost.localdomain>
+ <1547183577-20309-3-git-send-email-kernelfans@gmail.com> <20190111053036.GA13263@localhost.localdomain>
+In-Reply-To: <20190111053036.GA13263@localhost.localdomain>
 From:   Pingfan Liu <kernelfans@gmail.com>
-Date:   Fri, 11 Jan 2019 18:06:55 +0800
-Message-ID: <CAFgQCTvhcNK_-b-eVFZY8Ua2C+GbOVM+h4kB1us2vNvvyNPCYg@mail.gmail.com>
-Subject: Re: [PATCHv2 1/7] x86/mm: concentrate the code to memblock allocator enabled
+Date:   Fri, 11 Jan 2019 18:08:26 +0800
+Message-ID: <CAFgQCTvWk6t_8fQG3OqNAQDX-23ZaRuCzRyM40-do1rPAhzwhw@mail.gmail.com>
+Subject: Re: [PATCHv2 2/7] acpi: change the topo of acpi_table_upgrade()
 To:     Chao Fan <fanc.fnst@cn.fujitsu.com>
 Cc:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
@@ -82,69 +82,112 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 11, 2019 at 2:13 PM Chao Fan <fanc.fnst@cn.fujitsu.com> wrote:
+On Fri, Jan 11, 2019 at 1:31 PM Chao Fan <fanc.fnst@cn.fujitsu.com> wrote:
 >
-> On Fri, Jan 11, 2019 at 01:12:51PM +0800, Pingfan Liu wrote:
-> >This patch identifies the point where memblock alloc start. It has no
-> >functional.
-> [...]
-> >+#ifdef CONFIG_MEMORY_HOTPLUG
-> >+      /*
-> >+       * Memory used by the kernel cannot be hot-removed because Linux
-> >+       * cannot migrate the kernel pages. When memory hotplug is
-> >+       * enabled, we should prevent memblock from allocating memory
-> >+       * for the kernel.
-> >+       *
-> >+       * ACPI SRAT records all hotpluggable memory ranges. But before
-> >+       * SRAT is parsed, we don't know about it.
-> >+       *
-> >+       * The kernel image is loaded into memory at very early time. We
-> >+       * cannot prevent this anyway. So on NUMA system, we set any
-> >+       * node the kernel resides in as un-hotpluggable.
-> >+       *
-> >+       * Since on modern servers, one node could have double-digit
-> >+       * gigabytes memory, we can assume the memory around the kernel
-> >+       * image is also un-hotpluggable. So before SRAT is parsed, just
-> >+       * allocate memory near the kernel image to try the best to keep
-> >+       * the kernel away from hotpluggable memory.
-> >+       */
-> >+      if (movable_node_is_enabled())
-> >+              memblock_set_bottom_up(true);
+> On Fri, Jan 11, 2019 at 01:12:52PM +0800, Pingfan Liu wrote:
+> >The current acpi_table_upgrade() relies on initrd_start, but this var is
+> >only valid after relocate_initrd(). There is requirement to extract the
+> >acpi info from initrd before memblock-allocator can work(see [2/4]), hence
+> >acpi_table_upgrade() need to accept the input param directly.
+> >
+> >Signed-off-by: Pingfan Liu <kernelfans@gmail.com>
+> >Acked-by: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+> >Cc: Thomas Gleixner <tglx@linutronix.de>
+> >Cc: Ingo Molnar <mingo@redhat.com>
+> >Cc: Borislav Petkov <bp@alien8.de>
+> >Cc: "H. Peter Anvin" <hpa@zytor.com>
+> >Cc: Dave Hansen <dave.hansen@linux.intel.com>
+> >Cc: Andy Lutomirski <luto@kernel.org>
+> >Cc: Peter Zijlstra <peterz@infradead.org>
+> >Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+> >Cc: Len Brown <lenb@kernel.org>
+> >Cc: Yinghai Lu <yinghai@kernel.org>
+> >Cc: Tejun Heo <tj@kernel.org>
+> >Cc: Chao Fan <fanc.fnst@cn.fujitsu.com>
+> >Cc: Baoquan He <bhe@redhat.com>
+> >Cc: Juergen Gross <jgross@suse.com>
+> >Cc: Andrew Morton <akpm@linux-foundation.org>
+> >Cc: Mike Rapoport <rppt@linux.vnet.ibm.com>
+> >Cc: Vlastimil Babka <vbabka@suse.cz>
+> >Cc: Michal Hocko <mhocko@suse.com>
+> >Cc: x86@kernel.org
+> >Cc: linux-acpi@vger.kernel.org
+> >Cc: linux-mm@kvack.org
+> >---
+> > arch/arm64/kernel/setup.c | 2 +-
+> > arch/x86/kernel/setup.c   | 2 +-
+> > drivers/acpi/tables.c     | 4 +---
+> > include/linux/acpi.h      | 4 ++--
+> > 4 files changed, 5 insertions(+), 7 deletions(-)
+> >
+> >diff --git a/arch/arm64/kernel/setup.c b/arch/arm64/kernel/setup.c
+> >index f4fc1e0..bc4b47d 100644
+> >--- a/arch/arm64/kernel/setup.c
+> >+++ b/arch/arm64/kernel/setup.c
+> >@@ -315,7 +315,7 @@ void __init setup_arch(char **cmdline_p)
+> >       paging_init();
+> >       efi_apply_persistent_mem_reservations();
+> >
+> >-      acpi_table_upgrade();
+> >+      acpi_table_upgrade((void *)initrd_start, initrd_end - initrd_start);
+> >
+> >       /* Parse the ACPI tables for possible boot-time configuration */
+> >       acpi_boot_table_init();
+> >diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
+> >index ac432ae..dc8fc5d 100644
+> >--- a/arch/x86/kernel/setup.c
+> >+++ b/arch/x86/kernel/setup.c
+> >@@ -1172,8 +1172,8 @@ void __init setup_arch(char **cmdline_p)
+> >
+> >       reserve_initrd();
+> >
+> >-      acpi_table_upgrade();
+> >
+> I wonder whether this will cause two blank lines together.
 >
-> Hi Pingfan,
->
-> In my understanding, 'movable_node' is based on the that memory near
-> kernel is considered as in the same node as kernel in high possibility.
->
-> If SRAT has been parsed early, do we still need the kernel parameter
-> 'movable_node'? Since you have got the memory information about hot-remove,
-> so I wonder if it's OK to drop 'movable_node', and if memory-hotremove is
-> enabled, change memblock allocation according to SRAT.
->
-x86_32 still need this logic. Maybe it can be doable later.
+Yes, will fix it in next version.
 
 Thanks,
 Pingfan
-> If there is something wrong in my understanding, please let me know.
->
 > Thanks,
 > Chao Fan
 >
-> >+#endif
-> >       init_mem_mapping();
-> >+      memblock_set_current_limit(get_max_mapped());
+> >+      acpi_table_upgrade((void *)initrd_start, initrd_end - initrd_start);
+> >       vsmp_init();
 > >
-> >       idt_setup_early_pf();
+> >       io_delay_init();
+> >diff --git a/drivers/acpi/tables.c b/drivers/acpi/tables.c
+> >index 61203ee..84e0a79 100644
+> >--- a/drivers/acpi/tables.c
+> >+++ b/drivers/acpi/tables.c
+> >@@ -471,10 +471,8 @@ static DECLARE_BITMAP(acpi_initrd_installed, NR_ACPI_INITRD_TABLES);
 > >
-> >@@ -1145,8 +1145,6 @@ void __init setup_arch(char **cmdline_p)
-> >        */
-> >       mmu_cr4_features = __read_cr4() & ~X86_CR4_PCIDE;
+> > #define MAP_CHUNK_SIZE   (NR_FIX_BTMAPS << PAGE_SHIFT)
 > >
-> >-      memblock_set_current_limit(get_max_mapped());
-> >-
-> >       /*
-> >        * NOTE: On x86-32, only from this point on, fixmaps are ready for use.
-> >        */
+> >-void __init acpi_table_upgrade(void)
+> >+void __init acpi_table_upgrade(void *data, size_t size)
+> > {
+> >-      void *data = (void *)initrd_start;
+> >-      size_t size = initrd_end - initrd_start;
+> >       int sig, no, table_nr = 0, total_offset = 0;
+> >       long offset = 0;
+> >       struct acpi_table_header *table;
+> >diff --git a/include/linux/acpi.h b/include/linux/acpi.h
+> >index ed80f14..0b6e0b6 100644
+> >--- a/include/linux/acpi.h
+> >+++ b/include/linux/acpi.h
+> >@@ -1254,9 +1254,9 @@ acpi_graph_get_remote_endpoint(const struct fwnode_handle *fwnode,
+> > #endif
+> >
+> > #ifdef CONFIG_ACPI_TABLE_UPGRADE
+> >-void acpi_table_upgrade(void);
+> >+void acpi_table_upgrade(void *data, size_t size);
+> > #else
+> >-static inline void acpi_table_upgrade(void) { }
+> >+static inline void acpi_table_upgrade(void *data, size_t size) { }
+> > #endif
+> >
+> > #if defined(CONFIG_ACPI) && defined(CONFIG_ACPI_WATCHDOG)
 > >--
 > >2.7.4
 > >
