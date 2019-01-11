@@ -4,49 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 156D9C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:11:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8015C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:11:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB3C521841
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:11:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7F21520874
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:11:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547219494;
-	bh=OPxcUoiHXeVLNVDh8vmEtIvJou7Y0spdCALi8/Wc3wY=;
+	s=default; t=1547219516;
+	bh=29UfRNUapT6q+pj2eh9E6pNMkawcXlnBJEIVOayiIiI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=nUBABncwXjDZt5UYjDEWCorDJ9jD4Fsr2etFScZUC0obA4IcuqMNalbqrvYpY7B/u
-	 8umitA7L+Y1ArsOQwTao1RiboOVbMKtIwbYlVvfILW+E4x9imsCLIebffskobtpZAu
-	 wWX1R1Kn4X+fhzCcd4rZ3wjCn8wVc/HfePTM1C2k=
+	b=LHA+tYogh0Y0+z1d6Hjlhw+A48feoWOwDPJEuAbve70O94pYCq9EFefziM6cWpBCL
+	 WWbZOP2JKb/UZEa6eYwj1uXCRNHfzGQJv35Ma81tgiqqHIn/ZRvoCCcKz6l4hhbLDr
+	 cpk54NmUNG1N7Os85Eiqzg4ulJbGrqfBOIvHoivI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388433AbfAKPLe (ORCPT
+        id S2388653AbfAKPLz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 10:11:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60254 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 10:11:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59818 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732220AbfAKOP6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:15:58 -0500
+        id S2387430AbfAKOPh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:15:37 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7243F20874;
-        Fri, 11 Jan 2019 14:15:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1139020874;
+        Fri, 11 Jan 2019 14:15:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547216158;
-        bh=OPxcUoiHXeVLNVDh8vmEtIvJou7Y0spdCALi8/Wc3wY=;
+        s=default; t=1547216136;
+        bh=29UfRNUapT6q+pj2eh9E6pNMkawcXlnBJEIVOayiIiI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nuJOJKsLnbzS5Yh9FVUnQoK3fvL+HTo15lqJPF06/ZyqrmCAWF9V7XYFRMhofBpDN
-         Ox52D7vycPZBjbEHEQfYLudP3Nf0qcEXxNSAPx4xUxtmEGeRJQ2QEPi2BT3K/EN4po
-         xVbVgQtNjhVZCDn1cQh07bsPoPCqmzZOyQb7X9l0=
+        b=mr5kKXPoD92UQQNpzgpl0hNfo2JcOpZ3l1SZn83ReDL4Q6w4isZj+lZouWCu/aOT5
+         yroyL7WA4H630e+aLCmwD8hwhi+Pnk0nAUeGsxZwv604D68PhLxsKb4aFTZlxOxNC0
+         IdNx+UBGUhUM1AxGZpeY7pi2ve6obLWB9TMoMTqM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andreas Gruenbacher <agruenba@redhat.com>,
-        Bob Peterson <rpeterso@redhat.com>
-Subject: [PATCH 3.18 42/47] gfs2: Fix loop in gfs2_rbm_find
-Date:   Fri, 11 Jan 2019 15:08:27 +0100
-Message-Id: <20190111131001.562236476@linuxfoundation.org>
+        stable@vger.kernel.org, "Yavuz, Tuba" <tuba@ece.ufl.edu>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 3.18 35/47] ALSA: cs46xx: Potential NULL dereference in probe
+Date:   Fri, 11 Jan 2019 15:08:20 +0100
+Message-Id: <20190111131000.650955331@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111130956.170952125@linuxfoundation.org>
 References: <20190111130956.170952125@linuxfoundation.org>
@@ -65,37 +66,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Andreas Gruenbacher <agruenba@redhat.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-commit 2d29f6b96d8f80322ed2dd895bca590491c38d34 upstream.
+commit 1524f4e47f90b27a3ac84efbdd94c63172246a6f upstream.
 
-Fix the resource group wrap-around logic in gfs2_rbm_find that commit
-e579ed4f44 broke.  The bug can lead to unnecessary repeated scanning of the
-same bitmaps; there is a risk that future changes will turn this into an
-endless loop.
+The "chip->dsp_spos_instance" can be NULL on some of the ealier error
+paths in snd_cs46xx_create().
 
-Fixes: e579ed4f44 ("GFS2: Introduce rbm field bii")
-Cc: stable@vger.kernel.org # v3.13+
-Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
-Signed-off-by: Bob Peterson <rpeterso@redhat.com>
+Reported-by: "Yavuz, Tuba" <tuba@ece.ufl.edu>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/gfs2/rgrp.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/pci/cs46xx/dsp_spos.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/fs/gfs2/rgrp.c
-+++ b/fs/gfs2/rgrp.c
-@@ -1671,9 +1671,9 @@ static int gfs2_rbm_find(struct gfs2_rbm
- 			goto next_iter;
- 		}
- 		if (ret == -E2BIG) {
-+			n += rbm->bii - initial_bii;
- 			rbm->bii = 0;
- 			rbm->offset = 0;
--			n += (rbm->bii - initial_bii);
- 			goto res_covered_end_of_rgrp;
- 		}
- 		return ret;
+--- a/sound/pci/cs46xx/dsp_spos.c
++++ b/sound/pci/cs46xx/dsp_spos.c
+@@ -899,6 +899,9 @@ int cs46xx_dsp_proc_done (struct snd_cs4
+ 	struct dsp_spos_instance * ins = chip->dsp_spos_instance;
+ 	int i;
+ 
++	if (!ins)
++		return 0;
++
+ 	snd_info_free_entry(ins->proc_sym_info_entry);
+ 	ins->proc_sym_info_entry = NULL;
+ 
 
 
