@@ -2,87 +2,105 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5EAAC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:02:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC0B1C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:02:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B042A2177B
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:02:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ABDE0218AE
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:02:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dSjiSK1g"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733003AbfAKOCi (ORCPT
+        id S1733016AbfAKOCt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:02:38 -0500
-Received: from mga14.intel.com ([192.55.52.115]:47234 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729247AbfAKOCh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:02:37 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Jan 2019 06:02:36 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,465,1539673200"; 
-   d="scan'208";a="107502868"
-Received: from gandrejc-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.254.144])
-  by orsmga006.jf.intel.com with ESMTP; 11 Jan 2019 06:02:28 -0800
-Date:   Fri, 11 Jan 2019 16:02:26 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     James Bottomley <James.Bottomley@hansenpartnership.com>,
-        Stephan Mueller <smueller@chronox.de>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "Lee, Chun-Yi" <joeyli.kernel@gmail.com>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Pavel Machek <pavel@ucw.cz>,
-        LKML <linux-kernel@vger.kernel.org>, linux-pm@vger.kernel.org,
-        keyrings@vger.kernel.org,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Chen Yu <yu.c.chen@intel.com>,
-        Oliver Neukum <oneukum@suse.com>,
-        Ryan Chen <yu.chen.surf@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Giovanni Gherdovich <ggherdovich@suse.cz>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Jann Horn <jannh@google.com>
-Subject: Re: [PATCH 1/5 v2] PM / hibernate: Create snapshot keys handler
-Message-ID: <20190111140226.GA6448@linux.intel.com>
-References: <20190103143227.9138-1-jlee@suse.com>
- <4499700.LRS4F2YjjC@tauon.chronox.de>
- <20190108050358.llsox32hggn2jioe@gondor.apana.org.au>
- <1565399.7ulKdI1fm5@tauon.chronox.de>
- <D70458DE-712B-4767-8143-7DC9107689C3@amacapital.net>
- <1546994671.6077.10.camel@HansenPartnership.com>
- <CALCETrWTAYpWv73MgAz=NUfvJSLq965fWMYvJnDepJoRBsgt6Q@mail.gmail.com>
+        Fri, 11 Jan 2019 09:02:49 -0500
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:37615 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729247AbfAKOCt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:02:49 -0500
+Received: by mail-qk1-f196.google.com with SMTP id g125so6562515qke.4
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jan 2019 06:02:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=VDBJgxxbY2NrWHhBFQ+tGTwnQKhAzl68PFStSFa0F7A=;
+        b=dSjiSK1gX3sungWxyzDzKb1aOU1lKMhUtKwsYtKTaHjcowk/XUXihvhu1Cqpd8prmJ
+         pDNpG5vrVoVhfBnjxP4XlENftUFOPOoPo88sk4Erthtc+dpWnnQOQP7vNK0PHbdA0jR7
+         nL8wldtfSvv7V8go14VulRhVg509BtwQ/XYycRQGeB8t7//3CUWUk3nT+Aa6y2Lasqf1
+         sar3q7p4p8zn1OswCernromkWOif4Y7BuNA7A4vDJ1Hxu3vU1/MS/19tlm15LsLftplK
+         SWZ7/PagdVLRxCDmppgz842/lxaTjHXiImK46g9x/Ml6lrWrrB5jyoS4lmO8fX+z0gZw
+         hWyA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=VDBJgxxbY2NrWHhBFQ+tGTwnQKhAzl68PFStSFa0F7A=;
+        b=i51D28R3MIFixj2k5NleuGnz+F4x0XJokPCa3ga7v30spE14OcSZOo2Ro4XheexcV6
+         HNaxX5R4Pbb+cTZapATrQ2MBrvwbufOaz2/F6KYQ7jo2SMe1l1fk/ZOwICo8s1ZHdNpU
+         TurSKCeG6VUd4a4WOJ8fPU3ecXRnauKgbXlAt+biZIdB4F8wM9O90vOrg4gejzFVTfr8
+         jIrSWieGA7a9CGutrHvRFFPXt9+hzwHDFMROC9oUtotay0ahva7Bozk3xQv/cDALPeuC
+         jZEhYw3uKSnNS/mMRXjx/bTpZWw3rePKSAPpUQf0XFRnGSZlRGF5st4Zkg75oKZmxEcB
+         DEFA==
+X-Gm-Message-State: AJcUukf1rm1pEyx9OuMhZqJVq7nl8XBMmF4zk2h/ZHNZB+9qWBvAzvYu
+        EqxhIS4gQln0sFryA29UoXg=
+X-Google-Smtp-Source: ALg8bN5DHOcg9/FdbGWQfK71mOO+yogDFzc3UHVdGL4gbCIVFZuUaWJ0cgmMtNPzhH8WPIJ0i+XIyw==
+X-Received: by 2002:a37:9442:: with SMTP id w63mr12697333qkd.109.1547215367911;
+        Fri, 11 Jan 2019 06:02:47 -0800 (PST)
+Received: from localhost ([144.121.20.162])
+        by smtp.gmail.com with ESMTPSA id f19sm45081835qtf.1.2019.01.11.06.02.46
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 11 Jan 2019 06:02:46 -0800 (PST)
+From:   Rob Clark <robdclark@gmail.com>
+To:     dri-devel@lists.freedesktop.org
+Cc:     Rob Clark <robdclark@gmail.com>, Dave Airlie <airlied@redhat.com>,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        David Airlie <airlied@linux.ie>,
+        Thierry Reding <treding@nvidia.com>,
+        Daniel Stone <daniels@collabora.com>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        YueHaibing <yuehaibing@huawei.com>,
+        Rob Clark <rclark@redhat.com>,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] drm/cirrus: fix connector leak at unload
+Date:   Fri, 11 Jan 2019 09:02:34 -0500
+Message-Id: <20190111140242.29002-1-robdclark@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CALCETrWTAYpWv73MgAz=NUfvJSLq965fWMYvJnDepJoRBsgt6Q@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 08, 2019 at 05:43:53PM -0800, Andy Lutomirski wrote:
-> (Also, do we have a sensible story of how the TPM interacts with
-> hibernation at all?  Presumably we should at least try to replay the
-> PCR operations that have occurred so that we can massage the PCRs into
-> the same state post-hibernation.  Also, do we have any way for the
-> kernel to sign something with the TPM along with an attestation that
-> the signature was requested *by the kernel*?  Something like a
-> sub-hierarchy of keys that the kernel explicitly prevents userspace
-> from accessing?)
+This fixes an '*ERROR* connector VGA-2 leaked!' splat at driver unload.
 
-Kernel can keep it is own key hierarchy in memory as TPM2 chips allow
-to offload data in encrypted form and load it to TPM when it needs to
-use it.
+Signed-off-by: Rob Clark <robdclark@gmail.com>
+---
+Similar case to the issue that was fixed recently in drm/ast
 
-The in-kernel resource manager that I initiated couple years ago
-provides this type of functionality.
+ drivers/gpu/drm/cirrus/cirrus_fbdev.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-/Jarkko
+diff --git a/drivers/gpu/drm/cirrus/cirrus_fbdev.c b/drivers/gpu/drm/cirrus/cirrus_fbdev.c
+index 4dd499c7d1ba..bb379ec4c182 100644
+--- a/drivers/gpu/drm/cirrus/cirrus_fbdev.c
++++ b/drivers/gpu/drm/cirrus/cirrus_fbdev.c
+@@ -256,6 +256,8 @@ static int cirrus_fbdev_destroy(struct drm_device *dev,
+ {
+ 	struct drm_framebuffer *gfb = gfbdev->gfb;
+ 
++	drm_crtc_force_disable_all(dev);
++
+ 	drm_fb_helper_unregister_fbi(&gfbdev->helper);
+ 
+ 	vfree(gfbdev->sysram);
+-- 
+2.20.1
+
