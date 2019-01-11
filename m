@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C449C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:17:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72E36C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:17:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0CF8321783
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:17:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 439EF2183F
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:17:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547216271;
-	bh=oYStL8Y6IyLE4TFHrfAg59N1iY7PQI/e4gYdMfNgup0=;
+	s=default; t=1547216275;
+	bh=kvXAy6lcUUEjLBycXGNrOEtK+2w96DRKrVuJmLsDN6w=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=JNGCIkyVkKp1Ax7HCRp2Lxa26S4bWgDZ8hPOKdiZ4p7yhsSeX6W4bWplOcOdmdle8
-	 txkPmOimgZn7ghxyUzeczbLl96C289q44+vWx8lU354ZUyYQ9w1V6fQVY3RMVwfAO6
-	 4TwqckBbP4qy69BAxhR6z8vESW0UdvX9i8949Ip8=
+	b=WzCKCLVOD2dQr7LMO+7JiVLdYW0aY6812wIqLVYKZF0KqNQ9J8lYuH/fFW22DgQrK
+	 Z90cFS51X/k6PyNeVxdixdvEWSa9CRiPTzHyi8A+dzYj9ylZNY29AXZUS9LkY6NU+e
+	 ul0btJX0UQe5K+UUO/u/gkBvbYXHb7cNvPZ1KOgQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387920AbfAKORt (ORCPT
+        id S2387924AbfAKORx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:17:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34200 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:17:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34246 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727745AbfAKORs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:17:48 -0500
+        id S1727745AbfAKORu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:17:50 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C7BD92177B;
-        Fri, 11 Jan 2019 14:17:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 51B0A21783;
+        Fri, 11 Jan 2019 14:17:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547216267;
-        bh=oYStL8Y6IyLE4TFHrfAg59N1iY7PQI/e4gYdMfNgup0=;
+        s=default; t=1547216269;
+        bh=kvXAy6lcUUEjLBycXGNrOEtK+2w96DRKrVuJmLsDN6w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vXv0l2W3BTdKh9u0fGEwsky/RFpcRpatVxgjpxPSTx8fCYnVqBWcu0d/Y/fUmbo2Z
-         bxyM225YcPsRL7WBOSbgXuTBpBNosM5VH97v1+ynw1cg2Bn4t30RKTaWrchajWtq1b
-         4UufFuyfkYMAZdJ5XmM8OHomF6AXhqsUfxJKKabM=
+        b=j1zsQ7MIxvauJdST90IgPj/kDlTTmpIO3vA8MXFtzuXactUft1T+k6IR+LfDKDbz3
+         7p1/V9tQ9oatURKrUitf4/AEywIl0W6e+cjwCgeyXH4OduXnKVnFRytc7lIpbnaJNe
+         vQnr8zjjqE50/XBG4R5XxD71RIJqql0uigIizhno=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Russell King <rmk+kernel@armlinux.org.uk>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH 4.4 09/88] mmc: omap_hsmmc: fix DMA API warning
-Date:   Fri, 11 Jan 2019 15:07:38 +0100
-Message-Id: <20190111131047.673305450@linuxfoundation.org>
+        stable@vger.kernel.org, Scott Chen <scott@labau.com.tw>,
+        Johan Hovold <johan@kernel.org>
+Subject: [PATCH 4.4 36/88] USB: serial: pl2303: add ids for Hewlett-Packard HP POS pole displays
+Date:   Fri, 11 Jan 2019 15:08:05 +0100
+Message-Id: <20190111131051.180447676@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131045.137499039@linuxfoundation.org>
 References: <20190111131045.137499039@linuxfoundation.org>
@@ -65,66 +65,61 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Russell King <rmk+kernel@armlinux.org.uk>
+From: Scott Chen <scott@labau.com.tw>
 
-commit 0b479790684192ab7024ce6a621f93f6d0a64d92 upstream.
+commit 8d503f206c336677954160ac62f0c7d9c219cd89 upstream.
 
-While booting with rootfs on MMC, the following warning is encountered
-on OMAP4430:
+Add device ids to pl2303 for the HP POS pole displays:
+LM920:   03f0:026b
+TD620:   03f0:0956
+LD960TA: 03f0:4439
+LD220TA: 03f0:4349
+LM940:   03f0:5039
 
-omap-dma-engine 4a056000.dma-controller: DMA-API: mapping sg segment longer than device claims to support [len=69632] [max=65536]
-
-This is because the DMA engine has a default maximum segment size of 64K
-but HSMMC sets:
-
-        mmc->max_blk_size = 512;       /* Block Length at max can be 1024 */
-        mmc->max_blk_count = 0xFFFF;    /* No. of Blocks is 16 bits */
-        mmc->max_req_size = mmc->max_blk_size * mmc->max_blk_count;
-        mmc->max_seg_size = mmc->max_req_size;
-
-which ends up telling the block layer that we support a maximum segment
-size of 65535*512, which exceeds the advertised DMA engine capabilities.
-
-Fix this by clamping the maximum segment size to the lower of the
-maximum request size and of the DMA engine device used for either DMA
-channel.
-
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Signed-off-by: Scott Chen <scott@labau.com.tw>
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mmc/host/omap_hsmmc.c |   12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+ drivers/usb/serial/pl2303.c |    5 +++++
+ drivers/usb/serial/pl2303.h |    5 +++++
+ 2 files changed, 10 insertions(+)
 
---- a/drivers/mmc/host/omap_hsmmc.c
-+++ b/drivers/mmc/host/omap_hsmmc.c
-@@ -2117,7 +2117,6 @@ static int omap_hsmmc_probe(struct platf
- 	mmc->max_blk_size = 512;       /* Block Length at max can be 1024 */
- 	mmc->max_blk_count = 0xFFFF;    /* No. of Blocks is 16 bits */
- 	mmc->max_req_size = mmc->max_blk_size * mmc->max_blk_count;
--	mmc->max_seg_size = mmc->max_req_size;
+--- a/drivers/usb/serial/pl2303.c
++++ b/drivers/usb/serial/pl2303.c
+@@ -86,9 +86,14 @@ static const struct usb_device_id id_tab
+ 	{ USB_DEVICE(YCCABLE_VENDOR_ID, YCCABLE_PRODUCT_ID) },
+ 	{ USB_DEVICE(SUPERIAL_VENDOR_ID, SUPERIAL_PRODUCT_ID) },
+ 	{ USB_DEVICE(HP_VENDOR_ID, HP_LD220_PRODUCT_ID) },
++	{ USB_DEVICE(HP_VENDOR_ID, HP_LD220TA_PRODUCT_ID) },
+ 	{ USB_DEVICE(HP_VENDOR_ID, HP_LD960_PRODUCT_ID) },
++	{ USB_DEVICE(HP_VENDOR_ID, HP_LD960TA_PRODUCT_ID) },
+ 	{ USB_DEVICE(HP_VENDOR_ID, HP_LCM220_PRODUCT_ID) },
+ 	{ USB_DEVICE(HP_VENDOR_ID, HP_LCM960_PRODUCT_ID) },
++	{ USB_DEVICE(HP_VENDOR_ID, HP_LM920_PRODUCT_ID) },
++	{ USB_DEVICE(HP_VENDOR_ID, HP_LM940_PRODUCT_ID) },
++	{ USB_DEVICE(HP_VENDOR_ID, HP_TD620_PRODUCT_ID) },
+ 	{ USB_DEVICE(CRESSI_VENDOR_ID, CRESSI_EDY_PRODUCT_ID) },
+ 	{ USB_DEVICE(ZEAGLE_VENDOR_ID, ZEAGLE_N2ITION3_PRODUCT_ID) },
+ 	{ USB_DEVICE(SONY_VENDOR_ID, SONY_QN3USB_PRODUCT_ID) },
+--- a/drivers/usb/serial/pl2303.h
++++ b/drivers/usb/serial/pl2303.h
+@@ -123,10 +123,15 @@
  
- 	mmc->caps |= MMC_CAP_MMC_HIGHSPEED | MMC_CAP_SD_HIGHSPEED |
- 		     MMC_CAP_WAIT_WHILE_BUSY | MMC_CAP_ERASE;
-@@ -2174,6 +2173,17 @@ static int omap_hsmmc_probe(struct platf
- 		goto err_irq;
- 	}
+ /* Hewlett-Packard POS Pole Displays */
+ #define HP_VENDOR_ID		0x03f0
++#define HP_LM920_PRODUCT_ID	0x026b
++#define HP_TD620_PRODUCT_ID	0x0956
+ #define HP_LD960_PRODUCT_ID	0x0b39
+ #define HP_LCM220_PRODUCT_ID	0x3139
+ #define HP_LCM960_PRODUCT_ID	0x3239
+ #define HP_LD220_PRODUCT_ID	0x3524
++#define HP_LD220TA_PRODUCT_ID	0x4349
++#define HP_LD960TA_PRODUCT_ID	0x4439
++#define HP_LM940_PRODUCT_ID	0x5039
  
-+	/*
-+	 * Limit the maximum segment size to the lower of the request size
-+	 * and the DMA engine device segment size limits.  In reality, with
-+	 * 32-bit transfers, the DMA engine can do longer segments than this
-+	 * but there is no way to represent that in the DMA model - if we
-+	 * increase this figure here, we get warnings from the DMA API debug.
-+	 */
-+	mmc->max_seg_size = min3(mmc->max_req_size,
-+			dma_get_max_seg_size(host->rx_chan->device->dev),
-+			dma_get_max_seg_size(host->tx_chan->device->dev));
-+
- 	/* Request IRQ for MMC operations */
- 	ret = devm_request_irq(&pdev->dev, host->irq, omap_hsmmc_irq, 0,
- 			mmc_hostname(mmc), host);
+ /* Cressi Edy (diving computer) PC interface */
+ #define CRESSI_VENDOR_ID	0x04b8
 
 
