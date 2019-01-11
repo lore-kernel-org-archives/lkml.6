@@ -7,48 +7,47 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3675C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:00:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF340C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:01:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C5E3320874
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:00:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B757A2133F
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:01:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547218859;
-	bh=Ojsh2q1HNdMmL9H8RHUYtacw2UMA+4Gu8+oyRvv9nTU=;
+	s=default; t=1547218870;
+	bh=BCW1uAKkWF+5lq8cD7sp69W5/q6TYpgRQOKJ6z6k0ZM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=uRp5xvGiuRQQ7zsr97aBGOdxqfPEHaVaNxEcR7NMY0jiioM2zZQhWfOlNcFz+oaCv
-	 7L8pIKRNzfhmqYWid1dj0SbMitTa7+sWw9Vw5q+anxsHl1iw8UFUijrUCuGEwM8mjf
-	 mRv6owHzFwLI1OZgD/6SvQj+dNDCeAbPsQUhkKmQ=
+	b=k/4YLepuGuMUak8+45fbErcUEQv4xrD1Y436ULD2EaDZbldQOaGh3Rmb1ebKcr9ja
+	 AdzyZF3j+ak6Iz+FfW7UVn90Ggiv0igq1smNB049/joIBLrUzRtW7Wo3YGE0q0yMz8
+	 6Vx2ZEHGwHgQeyob/8j7Vm/dqZVe4kDBgmJ6gsts=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391740AbfAKPA6 (ORCPT
+        id S2389410AbfAKOcY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 10:00:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52528 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:32:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52360 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389438AbfAKOca (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:32:30 -0500
+        id S2389395AbfAKOcW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:32:22 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5A16021848;
-        Fri, 11 Jan 2019 14:32:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3F3722063F;
+        Fri, 11 Jan 2019 14:32:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547217149;
-        bh=Ojsh2q1HNdMmL9H8RHUYtacw2UMA+4Gu8+oyRvv9nTU=;
+        s=default; t=1547217141;
+        bh=BCW1uAKkWF+5lq8cD7sp69W5/q6TYpgRQOKJ6z6k0ZM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RgpL3LUipFYSzI2CR+Z27+9aXuazyIcU/6MPrf0UawKY97xc/NQ2FchhAQsIwiBKv
-         Ctn6v6Hg7a52To5U45f3gWZPSYKgZhhYgBtYhTXG3/0Hy54Huhg5bxjtuGmfdVf5mc
-         DvMeQnZ76baoLST5fcMicgETkU+L7x1Y1QbCP7wM=
+        b=t4q4mYjHlDmftHwDcUuF23jGEOQpaEH4YCq1zTJ9AvUWDTLROjwXW9YYh2JbLyS0p
+         4vOzTHK+znnXxe9PKhsIqVl5Uu+n0ocJ/12RvKP1U2Ztc2yJPHo1FDDDJmoarFyytt
+         W9sIjj4uTWspJ3q6V1WI0Hvp8xcXeQ3GUU8K5MrI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
-        Tom Gundersen <teg@jklm.no>,
-        David Herrmann <dh.herrmann@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.14 059/105] fork: record start_time late
-Date:   Fri, 11 Jan 2019 15:14:30 +0100
-Message-Id: <20190111131107.990974869@linuxfoundation.org>
+        stable@vger.kernel.org, "Ewan D. Milne" <emilne@redhat.com>,
+        Laurence Oberman <loberman@redhat.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 4.14 056/105] scsi: lpfc: do not set queue->page_count to 0 if pc_sli4_params.wqpcnt is invalid
+Date:   Fri, 11 Jan 2019 15:14:27 +0100
+Message-Id: <20190111131107.703166915@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131102.899065735@linuxfoundation.org>
 References: <20190111131102.899065735@linuxfoundation.org>
@@ -67,78 +66,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: David Herrmann <dh.herrmann@gmail.com>
+From: Ewan D. Milne <emilne@redhat.com>
 
-commit 7b55851367136b1efd84d98fea81ba57a98304cf upstream.
+commit 4e87eb2f46ea547d12a276b2e696ab934d16cfb6 upstream.
 
-This changes the fork(2) syscall to record the process start_time after
-initializing the basic task structure but still before making the new
-process visible to user-space.
+Certain older adapters such as the OneConnect OCe10100 may not have a valid
+wqpcnt value.  In this case, do not set queue->page_count to 0 in
+lpfc_sli4_queue_alloc() as this will prevent the driver from initializing.
 
-Technically, we could record the start_time anytime during fork(2).  But
-this might lead to scenarios where a start_time is recorded long before
-a process becomes visible to user-space.  For instance, with
-userfaultfd(2) and TLS, user-space can delay the execution of fork(2)
-for an indefinite amount of time (and will, if this causes network
-access, or similar).
-
-By recording the start_time late, it much closer reflects the point in
-time where the process becomes live and can be observed by other
-processes.
-
-Lastly, this makes it much harder for user-space to predict and control
-the start_time they get assigned.  Previously, user-space could fork a
-process and stall it in copy_thread_tls() before its pid is allocated,
-but after its start_time is recorded.  This can be misused to later-on
-cycle through PIDs and resume the stalled fork(2) yielding a process
-that has the same pid and start_time as a process that existed before.
-This can be used to circumvent security systems that identify processes
-by their pid+start_time combination.
-
-Even though user-space was always aware that start_time recording is
-flaky (but several projects are known to still rely on start_time-based
-identification), changing the start_time to be recorded late will help
-mitigate existing attacks and make it much harder for user-space to
-control the start_time a process gets assigned.
-
-Reported-by: Jann Horn <jannh@google.com>
-Signed-off-by: Tom Gundersen <teg@jklm.no>
-Signed-off-by: David Herrmann <dh.herrmann@gmail.com>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: 895427bd01 ("scsi: lpfc: NVME Initiator: Base modifications")
+Cc: stable@vger.kernel.org # 4.11+
+Signed-off-by: Ewan D. Milne <emilne@redhat.com>
+Reviewed-by: Laurence Oberman <loberman@redhat.com>
+Tested-by:   Laurence Oberman <loberman@redhat.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/fork.c |   13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
+ drivers/scsi/lpfc/lpfc_sli.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -1672,8 +1672,6 @@ static __latent_entropy struct task_stru
+--- a/drivers/scsi/lpfc/lpfc_sli.c
++++ b/drivers/scsi/lpfc/lpfc_sli.c
+@@ -13941,7 +13941,8 @@ lpfc_sli4_queue_alloc(struct lpfc_hba *p
+ 			hw_page_size))/hw_page_size;
  
- 	posix_cpu_timers_init(p);
+ 	/* If needed, Adjust page count to match the max the adapter supports */
+-	if (queue->page_count > phba->sli4_hba.pc_sli4_params.wqpcnt)
++	if (phba->sli4_hba.pc_sli4_params.wqpcnt &&
++	    (queue->page_count > phba->sli4_hba.pc_sli4_params.wqpcnt))
+ 		queue->page_count = phba->sli4_hba.pc_sli4_params.wqpcnt;
  
--	p->start_time = ktime_get_ns();
--	p->real_start_time = ktime_get_boot_ns();
- 	p->io_context = NULL;
- 	p->audit_context = NULL;
- 	cgroup_fork(p);
-@@ -1838,6 +1836,17 @@ static __latent_entropy struct task_stru
- 		goto bad_fork_free_pid;
- 
- 	/*
-+	 * From this point on we must avoid any synchronous user-space
-+	 * communication until we take the tasklist-lock. In particular, we do
-+	 * not want user-space to be able to predict the process start-time by
-+	 * stalling fork(2) after we recorded the start_time but before it is
-+	 * visible to the system.
-+	 */
-+
-+	p->start_time = ktime_get_ns();
-+	p->real_start_time = ktime_get_boot_ns();
-+
-+	/*
- 	 * Make it visible to the rest of the system, but dont wake it up yet.
- 	 * Need tasklist lock for parent etc handling!
- 	 */
+ 	INIT_LIST_HEAD(&queue->list);
 
 
