@@ -7,47 +7,46 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8A11C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:17:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C449C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:17:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6DDF821783
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:17:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0CF8321783
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:17:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547216267;
-	bh=OIsowgbriFpDzFUx/E/wBCj243I9ujx5HvZrXopR8Kg=;
+	s=default; t=1547216271;
+	bh=oYStL8Y6IyLE4TFHrfAg59N1iY7PQI/e4gYdMfNgup0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=P8v2X9t9KFvAs6d1AHWHg3Yq/OlTaL2UnLyWgCQjiiOrmwFUVbDJTPcuF5mcfdjiE
-	 wEMoOvDF0XUjm0tjFu+ddkJ1h0/a3oILpO/JqOYy/MUv5JOqBD31xUu+WpZ3IXrquA
-	 ZUYFpMzQcOuD6Yd7VOMAUPFx4wd3H/EGQb6xX4Wc=
+	b=JNGCIkyVkKp1Ax7HCRp2Lxa26S4bWgDZ8hPOKdiZ4p7yhsSeX6W4bWplOcOdmdle8
+	 txkPmOimgZn7ghxyUzeczbLl96C289q44+vWx8lU354ZUyYQ9w1V6fQVY3RMVwfAO6
+	 4TwqckBbP4qy69BAxhR6z8vESW0UdvX9i8949Ip8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387912AbfAKORq (ORCPT
+        id S2387920AbfAKORt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:17:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34122 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:17:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34200 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731271AbfAKORm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:17:42 -0500
+        id S1727745AbfAKORs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:17:48 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2A5282184A;
-        Fri, 11 Jan 2019 14:17:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C7BD92177B;
+        Fri, 11 Jan 2019 14:17:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547216261;
-        bh=OIsowgbriFpDzFUx/E/wBCj243I9ujx5HvZrXopR8Kg=;
+        s=default; t=1547216267;
+        bh=oYStL8Y6IyLE4TFHrfAg59N1iY7PQI/e4gYdMfNgup0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gZU8fgZxMsDcsP698gHGjXqw5hz+7Md1vcYKiqP5QJV8zuW7Z29yTs8Biu0JgskRT
-         Ujv43wTtpXTGM1atK0aUIgeGzDwH8Yw+m7+GKixc9TC9THdClZ40csDkPnvyuOBfUd
-         aGSQmdql7npfd7f9bZFn2AUgVPFGqZIfTz7osixU=
+        b=vXv0l2W3BTdKh9u0fGEwsky/RFpcRpatVxgjpxPSTx8fCYnVqBWcu0d/Y/fUmbo2Z
+         bxyM225YcPsRL7WBOSbgXuTBpBNosM5VH97v1+ynw1cg2Bn4t30RKTaWrchajWtq1b
+         4UufFuyfkYMAZdJ5XmM8OHomF6AXhqsUfxJKKabM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Mantas=20Mikul=C4=97nas?= <grawity@gmail.com>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.4 34/88] ALSA: hda: add mute LED support for HP EliteBook 840 G4
-Date:   Fri, 11 Jan 2019 15:08:03 +0100
-Message-Id: <20190111131050.973773748@linuxfoundation.org>
+        stable@vger.kernel.org, Russell King <rmk+kernel@armlinux.org.uk>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH 4.4 09/88] mmc: omap_hsmmc: fix DMA API warning
+Date:   Fri, 11 Jan 2019 15:07:38 +0100
+Message-Id: <20190111131047.673305450@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131045.137499039@linuxfoundation.org>
 References: <20190111131045.137499039@linuxfoundation.org>
@@ -66,33 +65,66 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mantas Mikulėnas <grawity@gmail.com>
+From: Russell King <rmk+kernel@armlinux.org.uk>
 
-commit 40906ebe3af6a48457151b3c6726b480f6a6cb13 upstream.
+commit 0b479790684192ab7024ce6a621f93f6d0a64d92 upstream.
 
-Tested with 4.19.9.
+While booting with rootfs on MMC, the following warning is encountered
+on OMAP4430:
 
-v2: Changed from CXT_FIXUP_MUTE_LED_GPIO to CXT_FIXUP_HP_DOCK because
-    that's what the existing fixups for EliteBooks use.
+omap-dma-engine 4a056000.dma-controller: DMA-API: mapping sg segment longer than device claims to support [len=69632] [max=65536]
 
-Signed-off-by: Mantas Mikulėnas <grawity@gmail.com>
+This is because the DMA engine has a default maximum segment size of 64K
+but HSMMC sets:
+
+        mmc->max_blk_size = 512;       /* Block Length at max can be 1024 */
+        mmc->max_blk_count = 0xFFFF;    /* No. of Blocks is 16 bits */
+        mmc->max_req_size = mmc->max_blk_size * mmc->max_blk_count;
+        mmc->max_seg_size = mmc->max_req_size;
+
+which ends up telling the block layer that we support a maximum segment
+size of 65535*512, which exceeds the advertised DMA engine capabilities.
+
+Fix this by clamping the maximum segment size to the lower of the
+maximum request size and of the DMA engine device used for either DMA
+channel.
+
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
 Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/hda/patch_conexant.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/mmc/host/omap_hsmmc.c |   12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
---- a/sound/pci/hda/patch_conexant.c
-+++ b/sound/pci/hda/patch_conexant.c
-@@ -853,6 +853,7 @@ static const struct snd_pci_quirk cxt506
- 	SND_PCI_QUIRK(0x103c, 0x8079, "HP EliteBook 840 G3", CXT_FIXUP_HP_DOCK),
- 	SND_PCI_QUIRK(0x103c, 0x807C, "HP EliteBook 820 G3", CXT_FIXUP_HP_DOCK),
- 	SND_PCI_QUIRK(0x103c, 0x80FD, "HP ProBook 640 G2", CXT_FIXUP_HP_DOCK),
-+	SND_PCI_QUIRK(0x103c, 0x828c, "HP EliteBook 840 G4", CXT_FIXUP_HP_DOCK),
- 	SND_PCI_QUIRK(0x103c, 0x83b3, "HP EliteBook 830 G5", CXT_FIXUP_HP_DOCK),
- 	SND_PCI_QUIRK(0x103c, 0x83d3, "HP ProBook 640 G4", CXT_FIXUP_HP_DOCK),
- 	SND_PCI_QUIRK(0x103c, 0x8174, "HP Spectre x360", CXT_FIXUP_HP_SPECTRE),
+--- a/drivers/mmc/host/omap_hsmmc.c
++++ b/drivers/mmc/host/omap_hsmmc.c
+@@ -2117,7 +2117,6 @@ static int omap_hsmmc_probe(struct platf
+ 	mmc->max_blk_size = 512;       /* Block Length at max can be 1024 */
+ 	mmc->max_blk_count = 0xFFFF;    /* No. of Blocks is 16 bits */
+ 	mmc->max_req_size = mmc->max_blk_size * mmc->max_blk_count;
+-	mmc->max_seg_size = mmc->max_req_size;
+ 
+ 	mmc->caps |= MMC_CAP_MMC_HIGHSPEED | MMC_CAP_SD_HIGHSPEED |
+ 		     MMC_CAP_WAIT_WHILE_BUSY | MMC_CAP_ERASE;
+@@ -2174,6 +2173,17 @@ static int omap_hsmmc_probe(struct platf
+ 		goto err_irq;
+ 	}
+ 
++	/*
++	 * Limit the maximum segment size to the lower of the request size
++	 * and the DMA engine device segment size limits.  In reality, with
++	 * 32-bit transfers, the DMA engine can do longer segments than this
++	 * but there is no way to represent that in the DMA model - if we
++	 * increase this figure here, we get warnings from the DMA API debug.
++	 */
++	mmc->max_seg_size = min3(mmc->max_req_size,
++			dma_get_max_seg_size(host->rx_chan->device->dev),
++			dma_get_max_seg_size(host->tx_chan->device->dev));
++
+ 	/* Request IRQ for MMC operations */
+ 	ret = devm_request_irq(&pdev->dev, host->irq, omap_hsmmc_irq, 0,
+ 			mmc_hostname(mmc), host);
 
 
