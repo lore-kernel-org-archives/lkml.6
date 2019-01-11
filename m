@@ -4,49 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97F0DC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:20:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 709DEC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:20:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D2832183F
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:20:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3601F2183F
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:20:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547216421;
-	bh=Sqy42z9xIHQHfoDgApDEgNJrdrJQKchgtw4WdgNSZZk=;
+	s=default; t=1547216425;
+	bh=ppz06c4vCKnszKSiMDtZs+RwRADevR4IMkN73e37ONY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=KYWF15OgBjVzxP7tCgyTdGT9yhfLpj4hWUH/2L6ilwvJqM3YvlaCRhP/sp+epd0Fm
-	 go6bu/j1FdRPew5WGYnpBMXzwtQkjdaiVOxgiPTGMlYaDeqX2nzWBv6erkthR3yvY3
-	 tUKU3VvPl4KWgWlK7jGKrB5HGv7jyOyA3lwq0ya8=
+	b=WkhnI4ZNkTykfiRM3xvDpscmoGRotT0CVs/9+TQ/xIOBxE8ljutbvDAwQkxrbHG7Q
+	 BIK+Vf2dfkp1hblBCDezLtXqK49l7imspgx5N+CWJYyQfoS6JCl8MynUAFzVRhU3zO
+	 S9L+jWKOLwIZ/Ff+Ncfbsbl71fdZ+G7g0zhGr4Ww=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388095AbfAKOUT (ORCPT
+        id S1728941AbfAKOUY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:20:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37906 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:20:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38088 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731443AbfAKOUP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:20:15 -0500
+        id S1731443AbfAKOUV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:20:21 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F16972184A;
-        Fri, 11 Jan 2019 14:20:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 16C8E21783;
+        Fri, 11 Jan 2019 14:20:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547216415;
-        bh=Sqy42z9xIHQHfoDgApDEgNJrdrJQKchgtw4WdgNSZZk=;
+        s=default; t=1547216420;
+        bh=ppz06c4vCKnszKSiMDtZs+RwRADevR4IMkN73e37ONY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZKgNcWKbBgNzRv+2aV1eL3hi+UcejBg07m/YX6x6iCMkEJ0f2C0xawh/pPdiBBW+a
-         vCRHf5DwbaxgEjdkgYLVcstajenvQCJ/fhFrDTXY32pyi5d2VNDml/n0y1ZkXOwE6P
-         de1iIWmI4fmu0ljGh3e9XYDkhDWEOq6CI1A9Tme0=
+        b=jslcMGwVP5gBZTb1o0FTv/7gHcM0qkGeIMRyJn71tvfeS38PSP1f2eQBYT46V6h/Q
+         wPXaioxrdLZN+cTX6gRPb+bR5GQ+36pNVRUhiUBOM0uqb5NzT8Cxn3bzyptdyGQUx/
+         4JkgETxh3GakBVvA2j3ghTFJ4UtXgQWe0lY3sBHI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Yan, Zheng" <zyan@redhat.com>,
-        Ilya Dryomov <idryomov@gmail.com>
-Subject: [PATCH 4.4 84/88] ceph: dont update importing caps mseq when handing cap export
-Date:   Fri, 11 Jan 2019 15:08:53 +0100
-Message-Id: <20190111131059.677677167@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Subject: [PATCH 4.4 86/88] intel_th: msu: Fix an off-by-one in attribute store
+Date:   Fri, 11 Jan 2019 15:08:55 +0100
+Message-Id: <20190111131059.914695192@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131045.137499039@linuxfoundation.org>
 References: <20190111131045.137499039@linuxfoundation.org>
@@ -65,35 +65,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Yan, Zheng <zyan@redhat.com>
+From: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 
-commit 3c1392d4c49962a31874af14ae9ff289cb2b3851 upstream.
+commit ec5b5ad6e272d8d6b92d1007f79574919862a2d2 upstream.
 
-Updating mseq makes client think importer mds has accepted all prior
-cap messages and importer mds knows what caps client wants. Actually
-some cap messages may have been dropped because of mseq mismatch.
+The 'nr_pages' attribute of the 'msc' subdevices parses a comma-separated
+list of window sizes, passed from userspace. However, there is a bug in
+the string parsing logic wherein it doesn't exclude the comma character
+from the range of characters as it consumes them. This leads to an
+out-of-bounds access given a sufficiently long list. For example:
 
-If mseq is left untouched, importing cap's mds_wanted later will get
-reset by cap import message.
+> # echo 8,8,8,8 > /sys/bus/intel_th/devices/0-msc0/nr_pages
+> ==================================================================
+> BUG: KASAN: slab-out-of-bounds in memchr+0x1e/0x40
+> Read of size 1 at addr ffff8803ffcebcd1 by task sh/825
+>
+> CPU: 3 PID: 825 Comm: npktest.sh Tainted: G        W         4.20.0-rc1+
+> Call Trace:
+>  dump_stack+0x7c/0xc0
+>  print_address_description+0x6c/0x23c
+>  ? memchr+0x1e/0x40
+>  kasan_report.cold.5+0x241/0x308
+>  memchr+0x1e/0x40
+>  nr_pages_store+0x203/0xd00 [intel_th_msu]
 
-Cc: stable@vger.kernel.org
-Signed-off-by: "Yan, Zheng" <zyan@redhat.com>
-Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
+Fix this by accounting for the comma character.
+
+Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Fixes: ba82664c134ef ("intel_th: Add Memory Storage Unit driver")
+Cc: stable@vger.kernel.org # v4.4+
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ceph/caps.c |    1 -
- 1 file changed, 1 deletion(-)
+ drivers/hwtracing/intel_th/msu.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/fs/ceph/caps.c
-+++ b/fs/ceph/caps.c
-@@ -3243,7 +3243,6 @@ retry:
- 			tcap->cap_id = t_cap_id;
- 			tcap->seq = t_seq - 1;
- 			tcap->issue_seq = t_seq - 1;
--			tcap->mseq = t_mseq;
- 			tcap->issued |= issued;
- 			tcap->implemented |= issued;
- 			if (cap == ci->i_auth_cap)
+--- a/drivers/hwtracing/intel_th/msu.c
++++ b/drivers/hwtracing/intel_th/msu.c
+@@ -1418,7 +1418,8 @@ nr_pages_store(struct device *dev, struc
+ 		if (!end)
+ 			break;
+ 
+-		len -= end - p;
++		/* consume the number and the following comma, hence +1 */
++		len -= end - p + 1;
+ 		p = end + 1;
+ 	} while (len);
+ 
 
 
