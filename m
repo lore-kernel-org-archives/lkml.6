@@ -2,104 +2,104 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C004C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:58:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EA43C43612
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:58:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EFBFE2133F
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:58:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1013F21841
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:58:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547218698;
-	bh=0/BU9iWaJGDoSgvqhp0/Zzd9dkmQ+jUEV9vteDSYO+o=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=mZGYyQAJwVT+Iekv8gAUH7X/fJ3JMUm3PoHEce+KxWcglGI8sbls4guxynssXvVdv
-	 E2PWysnJgmdT+ZrCTg2K+AJvu5PJSQigXFeuhIjiMGMEezlTWi+FpdPU0gbwyuxTXz
-	 VVc8dgluIfb97NvdVUAdzIoMPUifXWoWXlyGLY+4=
+	s=default; t=1547218710;
+	bh=xI0z/B6D8BzkSCxcCpul+OEe+Z9Kk6cyC64z74GkG5I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=V1coxFig4hEI+J2S8eU1nwqmcOFzIYQWWHao7bN6KUJpWmIqXCvf52Vzs9yHx6uJ2
+	 OoKZmsirjH+h7bLGUY8IilWPyZq3gFd5aD1GzAAY6mRvWUfgm2KA1PtFniyD3F2fCp
+	 p+tTUoPqNGVWTt8YHZAnuBo8PUgCFs9Vd+GEyX94=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390263AbfAKO6Q (ORCPT
+        id S2391725AbfAKO63 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:58:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55050 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389966AbfAKOep (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:34:45 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7E9472133F;
-        Fri, 11 Jan 2019 14:34:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547217285;
-        bh=0/BU9iWaJGDoSgvqhp0/Zzd9dkmQ+jUEV9vteDSYO+o=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zaR6qz3OhtH21+PMeSU5598s29KKtrOrkBJ5ixyg2ilQNAV0OrqycvCX/os7Jt586
-         soFYjt8tPzGgjwu0lsHjQ/qjDc2W6i6AErwIYFU/NfxCrLtkHWG/VsvNjGjHBJCvUH
-         N00pLmSBgSqQHs7f1yfrkbQWWjQYOn9Z7lCGJIoU=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Christophe Leroy <christophe.leroy@c-s.fr>,
-        Kees Cook <keescook@chromium.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 4.14 104/105] lib: fix build failure in CONFIG_DEBUG_VIRTUAL test
-Date:   Fri, 11 Jan 2019 15:15:15 +0100
-Message-Id: <20190111131111.394160949@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190111131102.899065735@linuxfoundation.org>
-References: <20190111131102.899065735@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+        Fri, 11 Jan 2019 09:58:29 -0500
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:43193 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389843AbfAKO6Y (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:58:24 -0500
+Received: by mail-oi1-f194.google.com with SMTP id u18so12390654oie.10;
+        Fri, 11 Jan 2019 06:58:23 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Ds23Kc4NbLJYAPLR+KmNeecEzQBYJ4yctQTt7YXJ13Q=;
+        b=R9LleeBV36zm7FyP3k1hYshPyXPwc5R0I5pxygSSyXDtSOYbLSUUXDa1Zzo48g6WE3
+         c4kQg9A6aANkOWdTNuZDmSMrGGU+aQpIOS864vdHIYP77kIbypQka/rsorm3GVmjkGw9
+         uTBeJ4+Pz+lnSgM/eYyRns89zcFE9SMJOysMgJiutNxdhqw7ZI+4nfmLZqp/x4ogc+kj
+         7eewb1tX6J4SVxlr/YolOQaGruKFGDlcp13/4RDcjVGRX+b1bu5kOlVTk/8ogg4TENnl
+         m6D3Oz6fiJ6/DCRTVWHJlcg3LVjAufrpaGnE855EI12Br8U1teMt41b25OvVOb0Lc9nN
+         WokQ==
+X-Gm-Message-State: AJcUukdAq0lygLyctpHUbp6Honmo8TxYfgQxJYhS3EjXZAg71YU5oKsQ
+        yh5dBZeGa28oDEAOigkwqw==
+X-Google-Smtp-Source: ALg8bN7ds9LSvRfrJD7MU0qK2pPHyEmsatuDj3+W6hbmoC1qaq1dlOr/UVD+djOSk6uc0RMct8cHOw==
+X-Received: by 2002:aca:c2c3:: with SMTP id s186mr9687526oif.173.1547218703091;
+        Fri, 11 Jan 2019 06:58:23 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id t8sm36295060otp.69.2019.01.11.06.58.22
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 11 Jan 2019 06:58:22 -0800 (PST)
+Date:   Fri, 11 Jan 2019 08:58:21 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Yong Wu <yong.wu@mediatek.com>
+Cc:     Joerg Roedel <joro@8bytes.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Tomasz Figa <tfiga@google.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-mediatek@lists.infradead.org, srv_heupstream@mediatek.com,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        iommu@lists.linux-foundation.org, arnd@arndb.de,
+        yingjoe.chen@mediatek.com, yong.wu@mediatek.com,
+        youlin.pei@mediatek.com, Nicolas Boichat <drinkcat@chromium.org>
+Subject: Re: [PATCH 01/13] dt-binding: mediatek: Get rid of mediatek,larb for
+ multimedia HW
+Message-ID: <20190111145821.GA32150@bogus>
+References: <1546318276-18993-1-git-send-email-yong.wu@mediatek.com>
+ <1546318276-18993-2-git-send-email-yong.wu@mediatek.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1546318276-18993-2-git-send-email-yong.wu@mediatek.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+On Tue, 1 Jan 2019 12:51:04 +0800, Yong Wu wrote:
+> After adding device_link between the consumer with the smi-larbs,
+> if the consumer call its owner pm_runtime_get(_sync), the
+> pm_runtime_get(_sync) of smi-larb and smi-common will be called
+> automatically. Thus, the consumer don't need the property.
+> 
+> And IOMMU also know which larb this consumer connects with from
+> iommu id in the "iommus=" property.
+> 
+> Signed-off-by: Yong Wu <yong.wu@mediatek.com>
+> ---
+> I guess it should go through Matthias's tree if the patch is ok,
+> thus I don't separate to different patches. If it's really needed,
+> please feel free to tell me.
+> ---
+>  .../devicetree/bindings/display/mediatek/mediatek,disp.txt       | 9 ---------
+>  .../devicetree/bindings/media/mediatek-jpeg-decoder.txt          | 4 ----
+>  Documentation/devicetree/bindings/media/mediatek-mdp.txt         | 8 --------
+>  Documentation/devicetree/bindings/media/mediatek-vcodec.txt      | 4 ----
+>  4 files changed, 25 deletions(-)
+> 
 
-------------------
-
-From: Christophe Leroy <christophe.leroy@c-s.fr>
-
-commit 10fdf838e5f540beca466e9d1325999c072e5d3f upstream.
-
-On several arches, virt_to_phys() is in io.h
-
-Build fails without it:
-
-  CC      lib/test_debug_virtual.o
-lib/test_debug_virtual.c: In function 'test_debug_virtual_init':
-lib/test_debug_virtual.c:26:7: error: implicit declaration of function 'virt_to_phys' [-Werror=implicit-function-declaration]
-  pa = virt_to_phys(va);
-       ^
-
-Fixes: e4dace361552 ("lib: add test module for CONFIG_DEBUG_VIRTUAL")
-CC: stable@vger.kernel.org
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-Reviewed-by: Kees Cook <keescook@chromium.org>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- lib/test_debug_virtual.c |    1 +
- 1 file changed, 1 insertion(+)
-
---- a/lib/test_debug_virtual.c
-+++ b/lib/test_debug_virtual.c
-@@ -5,6 +5,7 @@
- #include <linux/vmalloc.h>
- #include <linux/slab.h>
- #include <linux/sizes.h>
-+#include <linux/io.h>
- 
- #include <asm/page.h>
- #ifdef CONFIG_MIPS
-
-
+Reviewed-by: Rob Herring <robh@kernel.org>
