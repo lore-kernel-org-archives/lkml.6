@@ -2,433 +2,201 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 001AEC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 23:56:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66C7FC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 23:56:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B07FF2084E
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 23:56:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2A58F2084E
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 23:56:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="1zbh2o8y"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="dkWEYR/f"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726477AbfAKX4c (ORCPT
+        id S1726504AbfAKX4h (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 18:56:32 -0500
-Received: from vps0.lunn.ch ([185.16.172.187]:40874 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726193AbfAKX4c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 18:56:32 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch; s=20171124;
-        h=Message-Id:Date:Subject:Cc:To:From; bh=de0GN29/GFrx2AyAsjE0cKYSkJFDsOEKVBk5zucsQVM=;
-        b=1zbh2o8yC6jnZAo4ezjjhJrfgCq7AfBfIFlN0tb751h+Cpg/3AkBW7Bs5SHGnAt4Jf+20t7hR+TK2tclujWJoggZYY56R7Slr0BKojCOOhVJANQCai8c5IUmUH/sk8GOrEboJFcdxxp66rWnkq5eXbV7b5/90cEEVsB7dL+aSHA=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.84_2)
-        (envelope-from <andrew@lunn.ch>)
-        id 1gi6es-0004bZ-Oe; Sat, 12 Jan 2019 00:56:14 +0100
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Emeric Dupont <emeric.dupont@zii.aero>,
-        Andrew Lunn <andrew@lunn.ch>
-Subject: [PATCH v3] mfd: tqmx86: IO controller with i2c, wachdog and gpio
-Date:   Sat, 12 Jan 2019 00:56:05 +0100
-Message-Id: <1547250965-17668-1-git-send-email-andrew@lunn.ch>
-X-Mailer: git-send-email 2.1.4
+        Fri, 11 Jan 2019 18:56:37 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:45771 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726193AbfAKX4f (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 18:56:35 -0500
+Received: by mail-pl1-f196.google.com with SMTP id a14so7433264plm.12
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jan 2019 15:56:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=UN8Oq7d/Dcb3RKkuvC0fAKKytkoQOOOoxHVDrV+f4SE=;
+        b=dkWEYR/fBnxoRQm+MSBTIth3AZ3RL0zokwMtXycC0cW3ovVCFAv29PIXI76rJGmaDw
+         OKItOyDjWolsxwIen8KNGy6GvyUoU36zulW1KxCfOs4vCDS5aIFnqbkbghOIQNixFyjv
+         cvac8KGB/igaXa7wXOzvS9WYIHpgH8iG+ADv0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=UN8Oq7d/Dcb3RKkuvC0fAKKytkoQOOOoxHVDrV+f4SE=;
+        b=KgV9zqYZWVgW4z5+Ka5tffQHnuFZfSjFZ9ZC4EXr1wDBfz9b4vFoumZhFiurkH5JM2
+         jc+14n7GgHFWd5b4L/oVu9Qi9B6o5ZUx56rl7BCnieTOwgUDzxnGBzinVHUpOVDZH/a+
+         HaJn+aLxyPQRM2OCNIgwl6KV7tOxDCrZg8yFiIxKteIyJLP2wb3GjXsMtq/VspJeznPX
+         j0+KRJVJmkOnxhs7kR4ZLG5DO/PqQ3TtEgYGPgtgTA5ikN0Qqa6ZtwPjThfijreRRecy
+         RAX2ZJOpIt1zrAHQS9oE3yDuWaFRD7HUt6l/6U521pDom1kNCsCSbuglTMYiiND28rmq
+         QiFA==
+X-Gm-Message-State: AJcUukdhCiOoF9KTV7163cTM7lWn5JvfIJwokXcg8F9OHQ+82G8l6C3x
+        B6Th8ic1Vdq4xOD5h9m4/rp+3A==
+X-Google-Smtp-Source: ALg8bN7JtxyUiNAVLaZa6cCeluMg8eX7qT+8bB9e0NouqJrJ6Wq85NVcKBP+BF29tA6f1f2Wm8oJ0g==
+X-Received: by 2002:a17:902:14b:: with SMTP id 69mr16852917plb.52.1547250994864;
+        Fri, 11 Jan 2019 15:56:34 -0800 (PST)
+Received: from localhost ([2620:15c:202:1:75a:3f6e:21d:9374])
+        by smtp.gmail.com with ESMTPSA id d25sm130689749pfe.40.2019.01.11.15.56.34
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 11 Jan 2019 15:56:34 -0800 (PST)
+Date:   Fri, 11 Jan 2019 15:56:33 -0800
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Balakrishna Godavarthi <bgodavar@codeaurora.org>
+Cc:     Johan Hovold <johan@kernel.org>, marcel@holtmann.org,
+        johan.hedberg@gmail.com, linux-kernel@vger.kernel.org,
+        linux-bluetooth@vger.kernel.org, hemantg@codeaurora.org,
+        linux-arm-msm@vger.kernel.org, Johan Hovold <jhovold@gmail.com>
+Subject: Re: [PATCH v5 2/5] Bluetooth: hci_qca: Deassert RTS while baudrate
+ change command
+Message-ID: <20190111235633.GK261387@google.com>
+References: <20181220144639.15928-1-bgodavar@codeaurora.org>
+ <20181220144639.15928-3-bgodavar@codeaurora.org>
+ <20190109145224.GN14782@localhost>
+ <b5160d8862b49f0369fa58610516d354@codeaurora.org>
+ <20190110143928.GE3430@localhost>
+ <61301df80bd6a8ee0265b31b7f6a3aa1@codeaurora.org>
+ <20190111013707.GD261387@google.com>
+ <194b5d18ea86830b6a24939d483a964c@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <194b5d18ea86830b6a24939d483a964c@codeaurora.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The QMX86 is a PLD present on some TQ-Systems ComExpress modules. It
-provides 1 or 2 I2C bus masters, 8 GPIOs and a watchdog timer. Add an
-MFD which will instantiate the individual drivers.
+On Fri, Jan 11, 2019 at 08:37:12PM +0530, Balakrishna Godavarthi wrote:
+> Hi Matthias,
+> 
+> On 2019-01-11 07:07, Matthias Kaehlcke wrote:
+> > On Thu, Jan 10, 2019 at 08:22:12PM +0530, Balakrishna Godavarthi wrote:
+> > > Hi Johan,
+> > > 
+> > > On 2019-01-10 20:09, Johan Hovold wrote:
+> > > > On Thu, Jan 10, 2019 at 08:04:12PM +0530, Balakrishna Godavarthi wrote:
+> > > > > Hi Johan,
+> > > > >
+> > > > > On 2019-01-09 20:22, Johan Hovold wrote:
+> > > > > > On Thu, Dec 20, 2018 at 08:16:36PM +0530, Balakrishna Godavarthi wrote:
+> > > > > >> This patch will help to stop frame reassembly errors while changing
+> > > > > >> the baudrate. This is because host send a change baudrate request
+> > > > > >> command to the chip with 115200 bps, Whereas chip will change their
+> > > > > >> UART clocks to the enable for new baudrate and sends the response
+> > > > > >> for the change request command with newer baudrate, On host side
+> > > > > >> we are still operating in 115200 bps which results of reading garbage
+> > > > > >> data. Here we are pulling RTS line, so that chip we will wait to send
+> > > > > >> data
+> > > > > >> to host until host change its baudrate.
+> > > >
+> > > > > >> +		/* Deassert RTS while changing the baudrate of chip and host.
+> > > > > >> +		 * This will prevent chip from transmitting its response with
+> > > > > >> +		 * the new baudrate while the host port is still operating at
+> > > > > >> +		 * the old speed.
+> > > > > >> +		 */
+> > > > > >> +		qcadev = serdev_device_get_drvdata(hu->serdev);
+> > > > > >> +		if (qcadev->btsoc_type == QCA_WCN3990)
+> > > > > >> +			serdev_device_set_rts(hu->serdev, false);
+> > > > > >> +
+> > > > > >
+> > > > > > This may not do what you want unless you also disable hardware flow
+> > > > > > control.
+> > > >
+> > > > > Here my requirement here is to block the chip to send its data before
+> > > > > HOST changes it is baudrate. So if i disable flow control lines of
+> > > > > HOST which will be in low state.  so that the chip will send it data
+> > > > > before HOST change the baudrate of HOST. which results in frame
+> > > > > reassembly error.
+> > > >
+> > > > Not sure I understand what you're trying to say above. My point is that
+> > > > you cannot reliable control RTS when you have automatic flow control
+> > > > enabled (i.e. it is managed by hardware and it's state reflects whether
+> > > > there's room in the UART receive FIFO).
+> > > >
+> > > > Johan
+> > > 
+> > > [Bala]: Yes i got your point, but our driver
+> > 
+> > I suppose with "our driver" you refer to a Qualcomm UART driver like
+> > qcom_geni_serial.c. Unless the Bluetooth controller is really tied to
+> > some specific SoC (e.g. because it is on-chip) you shouldn't make
+> > assumptions about the UART driver or hardware beyond standard
+> > behavior.
+> > 
+> > But even if we assume that the driver you mention is used, I think you
+> > are rather confirming Johan's concern than dispersing it:
+> > 
+> 
+> [Bala]: now understood the point.
+> 
+> > > will not support automatic flow control (based on the FIFO status)
+> > > unless we explicitly enabled via software. i.e. if we enable the
+> > > flow, hardware will look for it else it will not looks for CTS or
+> > > RTS Line.
+> > 
+> > So we agree that the UART hardware may change RTS if hardware flow
+> > control is enabled?
+> > 
+> > static int qca_send_power_pulse(struct hci_uart *hu, u8 cmd)
+> > {
+> >   ...
+> >   hci_uart_set_flow_control(hu, false);
+> >   ...
+> > }
+> > 
+> > I still find it utterly confusing that set_flow_control(false) enables
+> > flow control, but that's what it does, hence after
+> > qca_send_power_pulse() flow control is (re-)enabled.
+> > 
+> > So far I haven't seen problems with qcom_geni_serial.c overriding the
+> > level set with serdev_device_set_rts(), but I tend to agree with Johan
+> > that this could be a problem (if not with this UART (driver) then with
+> > another). I'm not keen about adding more flow control on/off clutter,
+> > but if that is needed for the driver to operate reliably across
+> > platforms so be it.
+> > 
+> > Cheers
+> > 
+> > Matthias
+> 
+> [Bala]: previously we have disabling the flow control, that is not pulling
+> the RTS line if it disabled.
+>         so that the reason we are explicilty pulling it by calling set_rts()
+> with false.
+> 
+>         Johan concern can be fixed either of two ways.
+> 
+>         1. disable the flow control, but the uart driver should pull the RTS
+> line high. as the line is unused
+>         2. disable the flow control and call set_rts with false that will
+> helps us to pull the RTS line.
 
-Signed-off-by: Andrew Lunn <andrew@lunn.ch>
----
-v2:
+I don't think you can rely on 1. You might succeed to convince a
+specific UART driver/hardware to do this, however you'd have to ensure
+the same behavior on all other types of UARTs that could be used in
+combination with the chip, which doesn't seem feasible.
+In case the hardware completely relinquishes control of the RTS pin
+upon disabling flow control the state of the signal could depend on
+the pin configuration, i.e. whether Linux (or the bootloader) enables
+a pull-up/down, which may vary across boards, even if they use the
+same SoC.
 
-Drop setting i2c bus speed, which removes the build dependencies on
-the i2c ocores patches. This can be added back later.
+I think it will have to be the second option.
 
-v3
---
+Cheers
 
-Fix indentation of help
-Fix SPDX to match MODULE_LICENSE
-Remove warranty text
-Add my Copyright
-Sort include files
-Add _REG_ to register defines
-Add #defines for all resources
-Replace magic numbers with #defines
-Rename pld_clock to pld_clock_rate
-Remove wrapper around ioread8()/iowrite8()
-Scatter const keyword in a few places
-Remove enum for cells
-Implement lookup for board in tq_board_if
-Rename ioeic to io_ext_int_val to make is more readable
-Handle optional calls in a different way
-Better group code and structures
-Kill all the sysfs attributes
-Use devm_mfd_add_devices()
-Don't exist silently for unknown board ID
-
-Not addressed, waiting for answers:
-MODULE_PARM for GPIO interrupts
-Not using regmap, intel IO not supported by regmap
-Setting GPIO irq on resource structure
-Global tqmx86_pdev
-Jumping through hoops
----
- drivers/mfd/Kconfig  |   8 ++
- drivers/mfd/Makefile |   1 +
- drivers/mfd/tqmx86.c | 303 +++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 312 insertions(+)
- create mode 100644 drivers/mfd/tqmx86.c
-
-diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-index 8c5dfdce4326..87cfb0afaf84 100644
---- a/drivers/mfd/Kconfig
-+++ b/drivers/mfd/Kconfig
-@@ -1676,6 +1676,14 @@ config MFD_TC6393XB
- 	help
- 	  Support for Toshiba Mobile IO Controller TC6393XB
- 
-+config MFD_TQMX86
-+       tristate "TQ-Systems IO controller TQMX86"
-+       select MFD_CORE
-+       help
-+	  Say yes here to enable support for various functions of the
-+	  TQ-Systems IO controller and watchdog device, found on their
-+	  ComExpress CPU modules.
-+
- config MFD_VX855
- 	tristate "VIA VX855/VX875 integrated south bridge"
- 	depends on PCI
-diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
-index 12980a4ad460..7f4790662988 100644
---- a/drivers/mfd/Makefile
-+++ b/drivers/mfd/Makefile
-@@ -36,6 +36,7 @@ obj-$(CONFIG_MFD_TC3589X)	+= tc3589x.o
- obj-$(CONFIG_MFD_T7L66XB)	+= t7l66xb.o tmio_core.o
- obj-$(CONFIG_MFD_TC6387XB)	+= tc6387xb.o tmio_core.o
- obj-$(CONFIG_MFD_TC6393XB)	+= tc6393xb.o tmio_core.o
-+obj-$(CONFIG_MFD_TQMX86)	+= tqmx86.o
- 
- obj-$(CONFIG_MFD_ARIZONA)	+= arizona-core.o
- obj-$(CONFIG_MFD_ARIZONA)	+= arizona-irq.o
-diff --git a/drivers/mfd/tqmx86.c b/drivers/mfd/tqmx86.c
-new file mode 100644
-index 000000000000..144c176cf2bc
---- /dev/null
-+++ b/drivers/mfd/tqmx86.c
-@@ -0,0 +1,303 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * TQ-Systems PLD MFD core driver, based on vendor driver by
-+ * Vadim V.Vlasov <vvlasov@dev.rtsoft.ru>
-+ *
-+ * Copyright (c) 2015 TQ-Systems GmbH
-+ * Copyright (c) 2019 Andrew Lunn <andrew@lunn.ch>
-+ */
-+
-+#include <linux/delay.h>
-+#include <linux/dmi.h>
-+#include <linux/i2c.h>
-+#include <linux/io.h>
-+#include <linux/mfd/core.h>
-+#include <linux/module.h>
-+#include <linux/platform_data/i2c-ocores.h>
-+#include <linux/platform_device.h>
-+
-+#define TQMX86_IOBASE	0x160
-+#define TQMX86_IOSIZE	0x3f
-+#define TQMX86_IOBASE_I2C	0x1a0
-+#define TQMX86_IOSIZE_I2C	0xa
-+#define TQMX86_IOBASE_WATCHDOG	0x18b
-+#define TQMX86_IOSIZE_WATCHDOG	0x2
-+#define TQMX86_IOBASE_GPIO	0x18d
-+#define TQMX86_IOSIZE_GPIO	0x4
-+
-+#define TQMX86_REG_BOARD_ID	0x20
-+#define TQMX86_REG_BOARD_REV	0x21
-+#define TQMX86_REG_IO_EXT_INT	0x26
-+#define TQMX86_REG_IO_EXT_INT_MASK		0x3
-+#define TQMX86_REG_IO_EXT_INT_GPIO_SHIFT	4
-+#define TQMX86_REG_I2C_DETECT	0x47
-+#define TQMX86_REG_I2C_DETECT_SOFT		0xa5
-+#define TQMX86_REG_I2C_INT_EN	0x49
-+
-+#define I2C_KIND_SOFT	1	/* Ocores I2C soft controller */
-+#define I2C_KIND_HARD	2	/* Machxo2 I2C hard controller */
-+
-+/**
-+ * struct tqmx86_device_data - Internal representation of the PLD device
-+ * @io_base:		Pointer to the IO memory
-+ * @pld_clock_rate:	PLD clock frequency
-+ * @dev:		Pointer to kernel device structure
-+ * @i2c_type:		Hard of soft I2C hardware macro
-+ */
-+struct tqmx86_device_ddata {
-+	void __iomem	*io_base;
-+	u32		pld_clock_rate;
-+	u32		i2c_type;
-+};
-+
-+/**
-+ * struct tqmx86_platform_data - PLD hardware configuration structure
-+ * @ioresource:		IO addresses of the PLD
-+ */
-+struct tqmx86_platform_ddata {
-+	struct resource	*ioresource;
-+};
-+
-+static uint gpio_irq;
-+module_param(gpio_irq, uint, 0);
-+MODULE_PARM_DESC(gpio_irq, "GPIO IRQ number (7, 9, 12)");
-+
-+static const u8 i2c_irq_ctl[] = {
-+	[7] = 1,
-+	[9] = 2,
-+	[12] = 3
-+};
-+
-+static const struct resource tqmx_i2c_soft_resources[] = {
-+	DEFINE_RES_IO(TQMX86_IOBASE_I2C, TQMX86_IOSIZE_I2C),
-+};
-+
-+static const struct resource tqmx_watchdog_resources[] = {
-+	DEFINE_RES_IO(TQMX86_IOBASE_WATCHDOG, TQMX86_IOSIZE_WATCHDOG),
-+};
-+
-+static struct resource tqmx_gpio_resources[] = {
-+	DEFINE_RES_IO(TQMX86_IOBASE_GPIO, TQMX86_IOSIZE_GPIO),
-+	DEFINE_RES_IRQ(0)
-+};
-+
-+static struct i2c_board_info tqmx86_i2c_devices[] = {
-+	{
-+		/* 4K EEPROM at 0x50 */
-+		I2C_BOARD_INFO("24c32", 0x50),
-+	},
-+};
-+
-+static struct ocores_i2c_platform_data ocores_platfom_ddata = {
-+	.num_devices = ARRAY_SIZE(tqmx86_i2c_devices),
-+	.devices = tqmx86_i2c_devices,
-+};
-+
-+static const struct mfd_cell tqmx86_devs[] = {
-+	{
-+		.name = "ocores-i2c",
-+		.platform_data = &ocores_platfom_ddata,
-+		.pdata_size = sizeof(ocores_platfom_ddata),
-+		.resources = tqmx_i2c_soft_resources,
-+		.num_resources = ARRAY_SIZE(tqmx_i2c_soft_resources),
-+	},
-+	{
-+		.name = "tqmx86-wdt",
-+		.resources = tqmx_watchdog_resources,
-+		.num_resources = 1,
-+		.ignore_resource_conflicts = 1,
-+	},
-+	{
-+		.name = "tqmx86-gpio",
-+		.resources = tqmx_gpio_resources,
-+		.num_resources = ARRAY_SIZE(tqmx_gpio_resources),
-+		.ignore_resource_conflicts = 1,
-+	},
-+};
-+
-+static const struct tq_board_info {
-+	u8 board_id;
-+	char *name;
-+	u32 pld_clock_rate;
-+} tq_board_info[] = {
-+	{ 0, "", 0 },
-+	{ 1, "TQMxE38M", 33000 },
-+	{ 2, "TQMx50UC", 24000 },
-+	{ 3, "TQMxE38C", 33000 },
-+	{ 4, "TQMx60EB", 24000 },
-+	{ 5, "TQMxE39M", 25000 },
-+	{ 6, "TQMxE39C", 25000 },
-+	{ 7, "TQMxE39x", 25000 },
-+	{ 8, "TQMx70EB", 24000 },
-+	{ 9, "TQMx80UC", 24000 },
-+	{10, "TQMx90UC", 24000 }
-+};
-+
-+static int tqmx86_probe(struct platform_device *pdev)
-+{
-+	u8 board_id, rev, i2c_det, i2c_ien, io_ext_int_val;
-+	struct device *dev = &pdev->dev;
-+	struct tqmx86_device_ddata *pld;
-+	struct resource *ioport;
-+	int i;
-+
-+	pld = devm_kzalloc(dev, sizeof(*pld), GFP_KERNEL);
-+	if (!pld)
-+		return -ENOMEM;
-+
-+	ioport = platform_get_resource(pdev, IORESOURCE_IO, 0);
-+	if (!ioport)
-+		return -EINVAL;
-+
-+	pld->io_base = devm_ioport_map(dev, ioport->start,
-+				       resource_size(ioport));
-+	if (!pld->io_base)
-+		return -ENOMEM;
-+
-+	platform_set_drvdata(pdev, pld);
-+
-+	board_id = ioread8(pld->io_base + TQMX86_REG_BOARD_ID);
-+	for (i = 0; i < ARRAY_SIZE(tq_board_info); i++)
-+		if (tq_board_info[i].board_id == board_id)
-+			break;
-+
-+	if (i == ARRAY_SIZE(tq_board_info)) {
-+		dev_info(&pdev->dev,
-+			 "Board ID %d not supported by this driver\n",
-+			 board_id);
-+		return -ENODEV;
-+	}
-+
-+	rev = ioread8(pld->io_base + TQMX86_REG_BOARD_REV);
-+
-+	dev_info(&pdev->dev,
-+		 "Found %s - Board ID %d, PCB Revision %d, PLD Revision %d\n",
-+		 tq_board_info[i].name, board_id, rev >> 4, rev & 0xf);
-+
-+	pld->pld_clock_rate = tq_board_info[i].pld_clock_rate;
-+
-+	i2c_det = ioread8(pld->io_base + TQMX86_REG_I2C_DETECT);
-+	i2c_ien = ioread8(pld->io_base + TQMX86_REG_I2C_INT_EN);
-+
-+	if (i2c_det == TQMX86_REG_I2C_DETECT_SOFT)
-+		pld->i2c_type = I2C_KIND_SOFT;
-+	else
-+		pld->i2c_type = I2C_KIND_HARD;
-+
-+	io_ext_int_val =
-+		(i2c_irq_ctl[gpio_irq] & TQMX86_REG_IO_EXT_INT_MASK) <<
-+		TQMX86_REG_IO_EXT_INT_GPIO_SHIFT;
-+
-+	if (io_ext_int_val) {
-+		iowrite8(io_ext_int_val, pld->io_base + TQMX86_REG_IO_EXT_INT);
-+		if (ioread8(pld->io_base + TQMX86_REG_IO_EXT_INT) !=
-+		    io_ext_int_val) {
-+			dev_warn(&pdev->dev,
-+				 "gpio interrupts not supported.\n");
-+			gpio_irq = 0;
-+		}
-+	}
-+
-+	ocores_platfom_ddata.clock_khz = pld->pld_clock_rate;
-+	tqmx_gpio_resources[1].start = gpio_irq;
-+
-+	if (pld->i2c_type == I2C_KIND_SOFT)
-+		return devm_mfd_add_devices(&pdev->dev, PLATFORM_DEVID_NONE,
-+					    tqmx86_devs,
-+					    ARRAY_SIZE(tqmx86_devs),
-+					    NULL, 0, NULL);
-+
-+	/* Skip the soft I2C cell */
-+	return devm_mfd_add_devices(&pdev->dev, PLATFORM_DEVID_NONE,
-+				    &tqmx86_devs[1],
-+				    ARRAY_SIZE(tqmx86_devs) - 1,
-+				    NULL, 0, NULL);
-+}
-+
-+static struct resource tqmx86_ioresource[] = {
-+	DEFINE_RES_IO(TQMX86_IOBASE, TQMX86_IOSIZE),
-+};
-+
-+static const struct tqmx86_platform_ddata tqmx86_platform_ddata_generic = {
-+	.ioresource	= &tqmx86_ioresource[0],
-+};
-+
-+static struct platform_device *tqmx86_pdev;
-+
-+static int tqmx86_create_platform_device(const struct dmi_system_id *id)
-+{
-+	struct tqmx86_platform_ddata *pdata = id->driver_data;
-+	int ret;
-+
-+	tqmx86_pdev = platform_device_alloc("tqmx86", -1);
-+	if (!tqmx86_pdev)
-+		return -ENOMEM;
-+
-+	ret = platform_device_add_data(tqmx86_pdev, pdata, sizeof(*pdata));
-+	if (ret)
-+		goto err;
-+
-+	ret = platform_device_add_resources(tqmx86_pdev, pdata->ioresource, 1);
-+	if (ret)
-+		goto err;
-+
-+	ret = platform_device_add(tqmx86_pdev);
-+	if (ret)
-+		goto err;
-+
-+	return 0;
-+err:
-+	platform_device_put(tqmx86_pdev);
-+	return ret;
-+}
-+
-+static const struct dmi_system_id tqmx86_dmi_table[] __initconst = {
-+	{
-+		.ident = "TQMX86",
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "TQ-Group"),
-+			DMI_MATCH(DMI_PRODUCT_NAME, "TQMx"),
-+		},
-+		.driver_data = (void *)&tqmx86_platform_ddata_generic,
-+		.callback = tqmx86_create_platform_device,
-+	},
-+	{}
-+};
-+MODULE_DEVICE_TABLE(dmi, tqmx86_dmi_table);
-+
-+static struct platform_driver tqmx86_driver = {
-+	.driver		= {
-+		.name	= "tqmx86",
-+	},
-+	.probe		= tqmx86_probe,
-+};
-+
-+static int __init tqmx86_init(void)
-+{
-+	if (gpio_irq != 0 && gpio_irq != 7 &&
-+	    gpio_irq != 9 && gpio_irq != 12) {
-+		pr_warn("tqmx86: Invalid GPIO IRQ (%d)\n", gpio_irq);
-+		gpio_irq = 0;
-+	}
-+
-+	if (!dmi_check_system(tqmx86_dmi_table))
-+		return -ENODEV;
-+
-+	return platform_driver_register(&tqmx86_driver);
-+}
-+
-+static void __exit tqmx86_exit(void)
-+{
-+	if (tqmx86_pdev)
-+		platform_device_unregister(tqmx86_pdev);
-+
-+	platform_driver_unregister(&tqmx86_driver);
-+}
-+
-+module_init(tqmx86_init);
-+module_exit(tqmx86_exit);
-+
-+MODULE_DESCRIPTION("TQx86 PLD Core Driver");
-+MODULE_AUTHOR("Andrew Lunn <andrew@lunn.ch>");
-+MODULE_LICENSE("GPL");
-+MODULE_ALIAS("platform:tqmx86");
--- 
-2.20.1
-
+Matthias
