@@ -6,62 +6,62 @@ X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F39B4C43612
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 20:40:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D129AC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 20:40:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C6DB821872
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 20:40:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A3AD520878
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 20:40:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547239210;
-	bh=B+yduUUIwCD7tw2+nNifrvAkOnqhEsYI9yy1qrk/zpM=;
+	s=default; t=1547239214;
+	bh=m9Ul3B7N93UFqYinGHKk2n1E+3XsbewUdmO63FEB1n0=;
 	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
-	b=Y7+wpgP63MhSLzb/kSEc2hAj3PmDsOTI4DS/Txv1+fm4wu0g5zkCrvhG5ja+jXhXR
-	 06RXzyw9CBEBF0es32ysv/NKYONMr3MZl4KQE135v4CiBugbc+vNM+M8idGJHwN7en
-	 d2EauhvUggvW86fGqUJBu+UJDWtHpQWJDY2bdnc0=
+	b=Ed+7InX2OlHI6lxYJ2Zg6t5G0oTJapbOYYkQRcQvRt9qF6l1VOJ2e1Z3pc3EksXfE
+	 uD+XZ4Zg4558N1SeIHEJNpd9ckUhoStO3lUWJzPxMdQfncPSRJvi1Jr5m1Q6nEl1cl
+	 7DDmwooRSE6mIgEDvs9Vas0NcHFtzT3aSFsBRakM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726368AbfAKUkD (ORCPT
+        id S1726292AbfAKUkC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 15:40:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45770 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725797AbfAKUkC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 11 Jan 2019 15:40:02 -0500
-Subject: Re: [PULL REQUEST] i2c for 5.0
+Received: from mail.kernel.org ([198.145.29.99]:45756 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725774AbfAKUkC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 15:40:02 -0500
+Subject: Re: [GIT PULL] arm64: fixes for -rc2
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1547239201;
-        bh=B+yduUUIwCD7tw2+nNifrvAkOnqhEsYI9yy1qrk/zpM=;
+        bh=m9Ul3B7N93UFqYinGHKk2n1E+3XsbewUdmO63FEB1n0=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=ur6w1erJmj3FrzQTi6k9bUhF0LiBt1yzwANA3p3h5FWecdshmM3/6JJ7P8v7N0Lb7
-         DnBXRHgphmgdi675pc4Vuuudu1U61FL9akNUR5O6gLBV9rL06gOiMiBdVGd+b3FUA+
-         wdaTxpxd2ThBiWTPDJwWEgH+/vfrf7Rjr+uqVajQ=
+        b=S44j6YjEQ3P4UKWcY87kcKQgKAX6fRVKiyzWuBk8X4gsYXbELLJX0X5qM4jxSRbJj
+         7Di7H2zslPq148CI+VbjEwLdfBUNshlMnDoAwYzNpqOqEjWGNpSwZl9Ncw4XMKXgfR
+         gpCVoqMQAIkH9G+1W856g+OCILRSkOG8GuHzX9wQ=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20190111185648.GA9214@kunai>
-References: <20190111185648.GA9214@kunai>
+In-Reply-To: <20190111182057.GB32645@fuggles.cambridge.arm.com>
+References: <20190111182057.GB32645@fuggles.cambridge.arm.com>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20190111185648.GA9214@kunai>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git i2c/for-current
-X-PR-Tracked-Commit-Id: b67d4530cdade7ebfafa2c6b46f2a0dad3e41bcb
+X-PR-Tracked-Message-Id: <20190111182057.GB32645@fuggles.cambridge.arm.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git
+ tags/arm64-fixes
+X-PR-Tracked-Commit-Id: 279667212ab2a4f36c3b0347657ddcc11f9cfa25
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 4b3c31c8d4dda4d70f3f24a165f3be99499e0328
-Message-Id: <154723920176.6200.4730029465296064601.pr-tracker-bot@kernel.org>
+X-PR-Merge-Commit-Id: c3405d689974555532c12a4f3a5e72dedc660c0b
+Message-Id: <154723920158.6200.7472731315707078708.pr-tracker-bot@kernel.org>
 Date:   Fri, 11 Jan 2019 20:40:01 +0000
-To:     Wolfram Sang <wsa@the-dreams.de>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Peter Rosin <peda@axentia.se>,
-        Bartosz Golaszewski <brgl@bgdev.pl>
+To:     Will Deacon <will.deacon@arm.com>
+Cc:     torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, catalin.marinas@arm.com,
+        lorenzo.pieralisi@arm.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Fri, 11 Jan 2019 19:56:52 +0100:
+The pull request you sent on Fri, 11 Jan 2019 18:20:57 +0000:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git i2c/for-current
+> git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git tags/arm64-fixes
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/4b3c31c8d4dda4d70f3f24a165f3be99499e0328
+https://git.kernel.org/torvalds/c/c3405d689974555532c12a4f3a5e72dedc660c0b
 
 Thank you!
 
