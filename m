@@ -2,53 +2,57 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04A00C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:33:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75AE7C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:33:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB24821848
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:32:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3F0AA21841
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:33:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547217179;
-	bh=E7ZcDDKDHT6syj1/76ZeFa69lf/szMedwlwkFKCAeLU=;
+	s=default; t=1547217183;
+	bh=WD3W5EkdGJef9qLkhV0nC4dAJIA0CbQ1doQT18lnmGE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=0KLbgo6uiN2RFOiW4cKwPJSNBthXQSFBLcXn2XD8hCjPLAHCb0mLh5nv9Nkmok6z0
-	 jBsXZe7tPyxdHbLLvTJNwFLjAIw5A06kKQzOm++F0UuO9QYJW7z1jtGvu8A7UEGf7s
-	 BgIZQVyJ7cA1jW2AZU99FH1R99/K+JIyVVMHRVEc=
+	b=Yielu52d/oUG7a5h3OPRB5iSPq0kd/ymPPGIWi+WHuuxrmVNB5/hewwXPE+ARAPWb
+	 uhmOGbg+UDRY+WfAS9+EkM0SpVV7AgLt0tbNgVTlSjCb9rVfZvSSJzpupuJbSBr3wE
+	 vTYpAI1tdoN9l0Urfm7Ms9VgKN3PI/hOP254ZhTY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389559AbfAKOc7 (ORCPT
+        id S2389571AbfAKOdC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:32:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53052 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:33:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53138 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387920AbfAKOc5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:32:57 -0500
+        id S2389557AbfAKOc7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:32:59 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E38C82133F;
-        Fri, 11 Jan 2019 14:32:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7622D204EC;
+        Fri, 11 Jan 2019 14:32:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547217176;
-        bh=E7ZcDDKDHT6syj1/76ZeFa69lf/szMedwlwkFKCAeLU=;
+        s=default; t=1547217178;
+        bh=WD3W5EkdGJef9qLkhV0nC4dAJIA0CbQ1doQT18lnmGE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rjREyh1h+2ChD8N6GEcdpltEPd134vAFQGoJwuewnJ2aW8O37ZsvHbL1bpdcRWqNr
-         O9L3zCi235vZZXvNycbSSuj/eXQMk9QG3uB5B8pQATnOVsKYidBpZglH5VtOfthG8s
-         pVH46yAFySJq2qYP68Ohd6Nk/v873L4J2igqvVrM=
+        b=oPBrNIXi8/oUxZyaDjbhlYo/oviJkzWNPM2eC4TIYCk1Z58fyLtQG/pPbGr5q44Ta
+         4v75NK4CeYd7P7XVsZ91CD/xCe/NG++lzp3RSOleYmBAUWBA14Hwm1KH0det7I9hj3
+         IgglVzZMneqgG13RgocU+UGCRhEWgAIQnsMyraxw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Martin Zaharinov <micron10@gmail.com>,
-        Florian Westphal <fw@strlen.de>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 022/105] netfilter: nat: cant use dst_hold on noref dst
-Date:   Fri, 11 Jan 2019 15:13:53 +0100
-Message-Id: <20190111131105.165943651@linuxfoundation.org>
+        stable@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>,
+        Christoph Hellwig <hch@lst.de>,
+        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.14 064/105] mm, hmm: use devm semantics for hmm_devmem_{add, remove}
+Date:   Fri, 11 Jan 2019 15:14:35 +0100
+Message-Id: <20190111131108.377659245@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131102.899065735@linuxfoundation.org>
 References: <20190111131102.899065735@linuxfoundation.org>
@@ -67,49 +71,287 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 542fbda0f08f1cbbc250f9e59f7537649651d0c8 ]
+From: Dan Williams <dan.j.williams@intel.com>
 
-The dst entry might already have a zero refcount, waiting on rcu list
-to be free'd.  Using dst_hold() transitions its reference count to 1, and
-next dst release will try to free it again -- resulting in a double free:
+commit 58ef15b765af0d2cbe6799ec564f1dc485010ab8 upstream.
 
-  WARNING: CPU: 1 PID: 0 at include/net/dst.h:239 nf_xfrm_me_harder+0xe7/0x130 [nf_nat]
-  RIP: 0010:nf_xfrm_me_harder+0xe7/0x130 [nf_nat]
-  Code: 48 8b 5c 24 60 65 48 33 1c 25 28 00 00 00 75 53 48 83 c4 68 5b 5d 41 5c c3 85 c0 74 0d 8d 48 01 f0 0f b1 0a 74 86 85 c0 75 f3 <0f> 0b e9 7b ff ff ff 29 c6 31 d2 b9 20 00 48 00 4c 89 e7 e8 31 27
-  Call Trace:
-  nf_nat_ipv4_out+0x78/0x90 [nf_nat_ipv4]
-  nf_hook_slow+0x36/0xd0
-  ip_output+0x9f/0xd0
-  ip_forward+0x328/0x440
-  ip_rcv+0x8a/0xb0
+devm semantics arrange for resources to be torn down when
+device-driver-probe fails or when device-driver-release completes.
+Similar to devm_memremap_pages() there is no need to support an explicit
+remove operation when the users properly adhere to devm semantics.
 
-Use dst_hold_safe instead and bail out if we cannot take a reference.
+Note that devm_kzalloc() automatically handles allocating node-local
+memory.
 
-Fixes: a4c2fd7f7891 ("net: remove DST_NOCACHE flag")
-Reported-by: Martin Zaharinov <micron10@gmail.com>
-Signed-off-by: Florian Westphal <fw@strlen.de>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Link: http://lkml.kernel.org/r/154275559545.76910.9186690723515469051.stgit@dwillia2-desk3.amr.corp.intel.com
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Jérôme Glisse <jglisse@redhat.com>
+Cc: "Jérôme Glisse" <jglisse@redhat.com>
+Cc: Logan Gunthorpe <logang@deltatee.com>
+Cc: Balbir Singh <bsingharora@gmail.com>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- net/netfilter/nf_nat_core.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ include/linux/hmm.h |    4 -
+ mm/hmm.c            |  127 +++++++++-------------------------------------------
+ 2 files changed, 25 insertions(+), 106 deletions(-)
 
-diff --git a/net/netfilter/nf_nat_core.c b/net/netfilter/nf_nat_core.c
-index af8345fc4fbd..ed0ea64b8d04 100644
---- a/net/netfilter/nf_nat_core.c
-+++ b/net/netfilter/nf_nat_core.c
-@@ -97,7 +97,8 @@ int nf_xfrm_me_harder(struct net *net, struct sk_buff *skb, unsigned int family)
- 	dst = skb_dst(skb);
- 	if (dst->xfrm)
- 		dst = ((struct xfrm_dst *)dst)->route;
--	dst_hold(dst);
-+	if (!dst_hold_safe(dst))
-+		return -EHOSTUNREACH;
+--- a/include/linux/hmm.h
++++ b/include/linux/hmm.h
+@@ -437,8 +437,7 @@ struct hmm_devmem {
+  * enough and allocate struct page for it.
+  *
+  * The device driver can wrap the hmm_devmem struct inside a private device
+- * driver struct. The device driver must call hmm_devmem_remove() before the
+- * device goes away and before freeing the hmm_devmem struct memory.
++ * driver struct.
+  */
+ struct hmm_devmem *hmm_devmem_add(const struct hmm_devmem_ops *ops,
+ 				  struct device *device,
+@@ -446,7 +445,6 @@ struct hmm_devmem *hmm_devmem_add(const
+ struct hmm_devmem *hmm_devmem_add_resource(const struct hmm_devmem_ops *ops,
+ 					   struct device *device,
+ 					   struct resource *res);
+-void hmm_devmem_remove(struct hmm_devmem *devmem);
  
- 	dst = xfrm_lookup(net, dst, &fl, skb->sk, 0);
- 	if (IS_ERR(dst))
--- 
-2.19.1
-
+ /*
+  * hmm_devmem_page_set_drvdata - set per-page driver data field
+--- a/mm/hmm.c
++++ b/mm/hmm.c
+@@ -767,7 +767,6 @@ static void hmm_devmem_ref_exit(void *da
+ 
+ 	devmem = container_of(ref, struct hmm_devmem, ref);
+ 	percpu_ref_exit(ref);
+-	devm_remove_action(devmem->device, &hmm_devmem_ref_exit, data);
+ }
+ 
+ static void hmm_devmem_ref_kill(void *data)
+@@ -778,7 +777,6 @@ static void hmm_devmem_ref_kill(void *da
+ 	devmem = container_of(ref, struct hmm_devmem, ref);
+ 	percpu_ref_kill(ref);
+ 	wait_for_completion(&devmem->completion);
+-	devm_remove_action(devmem->device, &hmm_devmem_ref_kill, data);
+ }
+ 
+ static int hmm_devmem_fault(struct vm_area_struct *vma,
+@@ -818,7 +816,7 @@ static void hmm_devmem_radix_release(str
+ 	mutex_unlock(&hmm_devmem_lock);
+ }
+ 
+-static void hmm_devmem_release(struct device *dev, void *data)
++static void hmm_devmem_release(void *data)
+ {
+ 	struct hmm_devmem *devmem = data;
+ 	struct resource *resource = devmem->resource;
+@@ -826,11 +824,6 @@ static void hmm_devmem_release(struct de
+ 	struct zone *zone;
+ 	struct page *page;
+ 
+-	if (percpu_ref_tryget_live(&devmem->ref)) {
+-		dev_WARN(dev, "%s: page mapping is still live!\n", __func__);
+-		percpu_ref_put(&devmem->ref);
+-	}
+-
+ 	/* pages are dead and unused, undo the arch mapping */
+ 	start_pfn = (resource->start & ~(PA_SECTION_SIZE - 1)) >> PAGE_SHIFT;
+ 	npages = ALIGN(resource_size(resource), PA_SECTION_SIZE) >> PAGE_SHIFT;
+@@ -961,19 +954,6 @@ error:
+ 	return ret;
+ }
+ 
+-static int hmm_devmem_match(struct device *dev, void *data, void *match_data)
+-{
+-	struct hmm_devmem *devmem = data;
+-
+-	return devmem->resource == match_data;
+-}
+-
+-static void hmm_devmem_pages_remove(struct hmm_devmem *devmem)
+-{
+-	devres_release(devmem->device, &hmm_devmem_release,
+-		       &hmm_devmem_match, devmem->resource);
+-}
+-
+ /*
+  * hmm_devmem_add() - hotplug ZONE_DEVICE memory for device memory
+  *
+@@ -1001,8 +981,7 @@ struct hmm_devmem *hmm_devmem_add(const
+ 
+ 	static_branch_enable(&device_private_key);
+ 
+-	devmem = devres_alloc_node(&hmm_devmem_release, sizeof(*devmem),
+-				   GFP_KERNEL, dev_to_node(device));
++	devmem = devm_kzalloc(device, sizeof(*devmem), GFP_KERNEL);
+ 	if (!devmem)
+ 		return ERR_PTR(-ENOMEM);
+ 
+@@ -1016,11 +995,11 @@ struct hmm_devmem *hmm_devmem_add(const
+ 	ret = percpu_ref_init(&devmem->ref, &hmm_devmem_ref_release,
+ 			      0, GFP_KERNEL);
+ 	if (ret)
+-		goto error_percpu_ref;
++		return ERR_PTR(ret);
+ 
+-	ret = devm_add_action(device, hmm_devmem_ref_exit, &devmem->ref);
++	ret = devm_add_action_or_reset(device, hmm_devmem_ref_exit, &devmem->ref);
+ 	if (ret)
+-		goto error_devm_add_action;
++		return ERR_PTR(ret);
+ 
+ 	size = ALIGN(size, PA_SECTION_SIZE);
+ 	addr = min((unsigned long)iomem_resource.end,
+@@ -1040,16 +1019,12 @@ struct hmm_devmem *hmm_devmem_add(const
+ 
+ 		devmem->resource = devm_request_mem_region(device, addr, size,
+ 							   dev_name(device));
+-		if (!devmem->resource) {
+-			ret = -ENOMEM;
+-			goto error_no_resource;
+-		}
++		if (!devmem->resource)
++			return ERR_PTR(-ENOMEM);
+ 		break;
+ 	}
+-	if (!devmem->resource) {
+-		ret = -ERANGE;
+-		goto error_no_resource;
+-	}
++	if (!devmem->resource)
++		return ERR_PTR(-ERANGE);
+ 
+ 	devmem->resource->desc = IORES_DESC_DEVICE_PRIVATE_MEMORY;
+ 	devmem->pfn_first = devmem->resource->start >> PAGE_SHIFT;
+@@ -1058,28 +1033,13 @@ struct hmm_devmem *hmm_devmem_add(const
+ 
+ 	ret = hmm_devmem_pages_create(devmem);
+ 	if (ret)
+-		goto error_pages;
+-
+-	devres_add(device, devmem);
++		return ERR_PTR(ret);
+ 
+-	ret = devm_add_action(device, hmm_devmem_ref_kill, &devmem->ref);
+-	if (ret) {
+-		hmm_devmem_remove(devmem);
++	ret = devm_add_action_or_reset(device, hmm_devmem_release, devmem);
++	if (ret)
+ 		return ERR_PTR(ret);
+-	}
+ 
+ 	return devmem;
+-
+-error_pages:
+-	devm_release_mem_region(device, devmem->resource->start,
+-				resource_size(devmem->resource));
+-error_no_resource:
+-error_devm_add_action:
+-	hmm_devmem_ref_kill(&devmem->ref);
+-	hmm_devmem_ref_exit(&devmem->ref);
+-error_percpu_ref:
+-	devres_free(devmem);
+-	return ERR_PTR(ret);
+ }
+ EXPORT_SYMBOL(hmm_devmem_add);
+ 
+@@ -1095,8 +1055,7 @@ struct hmm_devmem *hmm_devmem_add_resour
+ 
+ 	static_branch_enable(&device_private_key);
+ 
+-	devmem = devres_alloc_node(&hmm_devmem_release, sizeof(*devmem),
+-				   GFP_KERNEL, dev_to_node(device));
++	devmem = devm_kzalloc(device, sizeof(*devmem), GFP_KERNEL);
+ 	if (!devmem)
+ 		return ERR_PTR(-ENOMEM);
+ 
+@@ -1110,12 +1069,12 @@ struct hmm_devmem *hmm_devmem_add_resour
+ 	ret = percpu_ref_init(&devmem->ref, &hmm_devmem_ref_release,
+ 			      0, GFP_KERNEL);
+ 	if (ret)
+-		goto error_percpu_ref;
++		return ERR_PTR(ret);
+ 
+-	ret = devm_add_action(device, hmm_devmem_ref_exit, &devmem->ref);
++	ret = devm_add_action_or_reset(device, hmm_devmem_ref_exit,
++			&devmem->ref);
+ 	if (ret)
+-		goto error_devm_add_action;
+-
++		return ERR_PTR(ret);
+ 
+ 	devmem->pfn_first = devmem->resource->start >> PAGE_SHIFT;
+ 	devmem->pfn_last = devmem->pfn_first +
+@@ -1123,60 +1082,22 @@ struct hmm_devmem *hmm_devmem_add_resour
+ 
+ 	ret = hmm_devmem_pages_create(devmem);
+ 	if (ret)
+-		goto error_devm_add_action;
++		return ERR_PTR(ret);
+ 
+-	devres_add(device, devmem);
++	ret = devm_add_action_or_reset(device, hmm_devmem_release, devmem);
++	if (ret)
++		return ERR_PTR(ret);
+ 
+-	ret = devm_add_action(device, hmm_devmem_ref_kill, &devmem->ref);
+-	if (ret) {
+-		hmm_devmem_remove(devmem);
++	ret = devm_add_action_or_reset(device, hmm_devmem_ref_kill,
++			&devmem->ref);
++	if (ret)
+ 		return ERR_PTR(ret);
+-	}
+ 
+ 	return devmem;
+-
+-error_devm_add_action:
+-	hmm_devmem_ref_kill(&devmem->ref);
+-	hmm_devmem_ref_exit(&devmem->ref);
+-error_percpu_ref:
+-	devres_free(devmem);
+-	return ERR_PTR(ret);
+ }
+ EXPORT_SYMBOL(hmm_devmem_add_resource);
+ 
+ /*
+- * hmm_devmem_remove() - remove device memory (kill and free ZONE_DEVICE)
+- *
+- * @devmem: hmm_devmem struct use to track and manage the ZONE_DEVICE memory
+- *
+- * This will hot-unplug memory that was hotplugged by hmm_devmem_add on behalf
+- * of the device driver. It will free struct page and remove the resource that
+- * reserved the physical address range for this device memory.
+- */
+-void hmm_devmem_remove(struct hmm_devmem *devmem)
+-{
+-	resource_size_t start, size;
+-	struct device *device;
+-	bool cdm = false;
+-
+-	if (!devmem)
+-		return;
+-
+-	device = devmem->device;
+-	start = devmem->resource->start;
+-	size = resource_size(devmem->resource);
+-
+-	cdm = devmem->resource->desc == IORES_DESC_DEVICE_PUBLIC_MEMORY;
+-	hmm_devmem_ref_kill(&devmem->ref);
+-	hmm_devmem_ref_exit(&devmem->ref);
+-	hmm_devmem_pages_remove(devmem);
+-
+-	if (!cdm)
+-		devm_release_mem_region(device, start, size);
+-}
+-EXPORT_SYMBOL(hmm_devmem_remove);
+-
+-/*
+  * A device driver that wants to handle multiple devices memory through a
+  * single fake device can use hmm_device to do so. This is purely a helper
+  * and it is not needed to make use of any HMM functionality.
 
 
