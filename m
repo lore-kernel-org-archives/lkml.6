@@ -2,133 +2,108 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B853C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 06:13:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3BCEC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 06:13:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC0DA20870
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 06:13:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B3D0420874
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 06:13:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kJ7W4Kfy"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730036AbfAKGNY (ORCPT
+        id S1729973AbfAKGNY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Fri, 11 Jan 2019 01:13:24 -0500
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:19975 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728042AbfAKGNX (ORCPT
+Received: from mail-pf1-f175.google.com ([209.85.210.175]:42586 "EHLO
+        mail-pf1-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729735AbfAKGNX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 11 Jan 2019 01:13:23 -0500
-X-IronPort-AV: E=Sophos;i="5.56,464,1539619200"; 
-   d="scan'208";a="51771161"
-Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
-  by heian.cn.fujitsu.com with ESMTP; 11 Jan 2019 14:13:20 +0800
-Received: from G08CNEXCHPEKD01.g08.fujitsu.local (unknown [10.167.33.80])
-        by cn.fujitsu.com (Postfix) with ESMTP id 912FD4BAD914;
-        Fri, 11 Jan 2019 14:13:17 +0800 (CST)
-Received: from localhost.localdomain (10.167.225.56) by
- G08CNEXCHPEKD01.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Fri, 11 Jan 2019 14:13:15 +0800
-Date:   Fri, 11 Jan 2019 14:12:21 +0800
-From:   Chao Fan <fanc.fnst@cn.fujitsu.com>
-To:     Pingfan Liu <kernelfans@gmail.com>
-CC:     <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>, Yinghai Lu <yinghai@kernel.org>,
-        Tejun Heo <tj@kernel.org>, Baoquan He <bhe@redhat.com>,
-        Juergen Gross <jgross@suse.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Michal Hocko <mhocko@suse.com>, <x86@kernel.org>,
-        <linux-acpi@vger.kernel.org>, <linux-mm@kvack.org>
-Subject: Re: [PATCHv2 1/7] x86/mm: concentrate the code to memblock allocator
- enabled
-Message-ID: <20190111061221.GB13263@localhost.localdomain>
-References: <1547183577-20309-1-git-send-email-kernelfans@gmail.com>
- <1547183577-20309-2-git-send-email-kernelfans@gmail.com>
+Received: by mail-pf1-f175.google.com with SMTP id 64so6453462pfr.9
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 22:13:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
+        bh=Y+hx95wNwvvnHrz1TzVAbOiSXn47Osrjx4hOYYqb5z4=;
+        b=kJ7W4KfyAWwkPECg+/UQ4InOjfWsTWRJQR00VfZc5I27/3/U6E46KzTfTXpNks+Akp
+         B+rF+ZX14p3yYQsuVlWMWPVIUWl8as2XAE4LGyvRxUxpjyL0neU4dsgX7BhHMf/4VohB
+         NYzZP5iJw0JWL8RqXoV1st+WMGIi8idoSY9HFDQIza8iZcMCJxTEh0njybMYGqv892AU
+         8eYEg5uXfnmhgutY7qoFfYkJP3F6Tqh13/4g7qxKwDiEvYKaW80GA6ANDsHe7aUc4oHp
+         J+Y8FII7p0bKBwcV3H7wSbAT1qjSh8BVbOt9DAsb5EhrIQhW147GCpk6nGTVDwgk0kw0
+         5iwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to;
+        bh=Y+hx95wNwvvnHrz1TzVAbOiSXn47Osrjx4hOYYqb5z4=;
+        b=YDABKLtsOdMOkNmzke5st6I+BIocT34IWvG7XM7O3bjbsGDgUP49w4kPphg+iHj9rq
+         uxpWXp0Nkp3srRWiU1SqA3gvg8HpYxZNuD6piwPH+fIv8mhfOjktMvWZfQvhSZBwJvpH
+         hOp+FHt4ymJI5GrHJpeFerh5vVCWpbc/KcyJoVlBdzpvQoyV3FdqKAx8Cy3R1fbDDP2Y
+         iPBQbKtu/dcKvGHoC6i6InjM+W5O2oeu+I6GzYwJuX66iH36Yg/BfHQi3nKEVADmwjNF
+         H+4MJQOxR4hpWb5RREX4sM9rJp/+mB7NlbIzPFyTuzTwBQwqmuL6PtJJmVBPu5iSU1my
+         p6GA==
+X-Gm-Message-State: AJcUukdEtofH3lzgNmIKJMp11tqR1MjFswVJ7CHPvpfHYcwE0ycQIwFu
+        TNvX9eVBAP8kJRZYObQLmsA69EwEiaTXqe+rLovafA==
+X-Google-Smtp-Source: ALg8bN75f/x1zJNLoct+z9jfEYWsXHsefB6YB2Hhy6XgIVLy/m8dtcI6x0aphLYI7EBqmqRARkh5pnRRhUSGgfGNeYs=
+X-Received: by 2002:a62:528e:: with SMTP id g136mr13885239pfb.111.1547187201753;
+ Thu, 10 Jan 2019 22:13:21 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <1547183577-20309-2-git-send-email-kernelfans@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Originating-IP: [10.167.225.56]
-X-yoursite-MailScanner-ID: 912FD4BAD914.ADDB6
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
+References: <CAH2r5mtQTu1mwh0Zpep71A5oHHYboLv5qD=8n_LeASzmncNx4g@mail.gmail.com>
+In-Reply-To: <CAH2r5mtQTu1mwh0Zpep71A5oHHYboLv5qD=8n_LeASzmncNx4g@mail.gmail.com>
+From:   Steve French <smfrench@gmail.com>
+Date:   Fri, 11 Jan 2019 00:13:10 -0600
+Message-ID: <CAH2r5mv6KN+3_wjfAjawA8yfqGefA2fa_HkbU7YMovGg_jkYEQ@mail.gmail.com>
+Subject: Fwd: scp bug due to progress indicator when copying from remote to
+ local on Linux
+To:     LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 11, 2019 at 01:12:51PM +0800, Pingfan Liu wrote:
->This patch identifies the point where memblock alloc start. It has no
->functional.
-[...]
->+#ifdef CONFIG_MEMORY_HOTPLUG
->+	/*
->+	 * Memory used by the kernel cannot be hot-removed because Linux
->+	 * cannot migrate the kernel pages. When memory hotplug is
->+	 * enabled, we should prevent memblock from allocating memory
->+	 * for the kernel.
->+	 *
->+	 * ACPI SRAT records all hotpluggable memory ranges. But before
->+	 * SRAT is parsed, we don't know about it.
->+	 *
->+	 * The kernel image is loaded into memory at very early time. We
->+	 * cannot prevent this anyway. So on NUMA system, we set any
->+	 * node the kernel resides in as un-hotpluggable.
->+	 *
->+	 * Since on modern servers, one node could have double-digit
->+	 * gigabytes memory, we can assume the memory around the kernel
->+	 * image is also un-hotpluggable. So before SRAT is parsed, just
->+	 * allocate memory near the kernel image to try the best to keep
->+	 * the kernel away from hotpluggable memory.
->+	 */
->+	if (movable_node_is_enabled())
->+		memblock_set_bottom_up(true);
+---------- Forwarded message ---------
+From: Steve French <smfrench@gmail.com>
+Date: Fri, Jan 11, 2019 at 12:11 AM
+Subject: scp bug due to progress indicator when copying from remote to
+local on Linux
+To: CIFS <linux-cifs@vger.kernel.org>, linux-fsdevel
+<linux-fsdevel@vger.kernel.org>
+Cc: CIFS <linux-cifs@vger.kernel.org>, Pavel Shilovsky <piastryyy@gmail.com>
 
-Hi Pingfan,
 
-In my understanding, 'movable_node' is based on the that memory near
-kernel is considered as in the same node as kernel in high possibility.
+In discussing an interesting problem with scp recently with Pavel, we
+found a fairly obvious bug in scp when it is run with a progress
+indicator (which is the default when the source file is remote).
 
-If SRAT has been parsed early, do we still need the kernel parameter
-'movable_node'? Since you have got the memory information about hot-remove,
-so I wonder if it's OK to drop 'movable_node', and if memory-hotremove is
-enabled, change memblock allocation according to SRAT.
+scp triggers "SIGALRM" probably from update_progress_meter() in
+progressmeter.c when executed with "scp localhost:somelargefile /mnt"
+ie with an ssh source path but a local path for the target, as long as
+the flush of the large amount of cached data to disk (which seems to
+be triggered by the ftruncate call in scp.c) takes more than a few
+seconds (which can be common depending on disk or network speed).
 
-If there is something wrong in my understanding, please let me know.
+It is interesting that this can be avoided easily by running in quiet
+mode ("-q") which disables the progress meter in scp, but it seems
+very, very broken that scp of a large file can 'fail' when using a
+progress meter (unless caching were disabled on the file system) due
+to the slight delay in ftruncate due to triggering a flush of a large
+amount of cached data to disk sequentially.
 
+Any thoughts of whether scp is actively maintained and best approach
+to fix progressmeter.c so it doesn't break on Linux?
+
+--
 Thanks,
-Chao Fan
 
->+#endif
-> 	init_mem_mapping();
->+	memblock_set_current_limit(get_max_mapped());
-> 
-> 	idt_setup_early_pf();
-> 
->@@ -1145,8 +1145,6 @@ void __init setup_arch(char **cmdline_p)
-> 	 */
-> 	mmu_cr4_features = __read_cr4() & ~X86_CR4_PCIDE;
-> 
->-	memblock_set_current_limit(get_max_mapped());
->-
-> 	/*
-> 	 * NOTE: On x86-32, only from this point on, fixmaps are ready for use.
-> 	 */
->-- 
->2.7.4
->
->
->
+Steve
 
 
+-- 
+Thanks,
+
+Steve
