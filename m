@@ -7,48 +7,47 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 377C8C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:16:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00D3CC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:16:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A06621783
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:16:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C4F3521783
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:16:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547216183;
-	bh=d4iQL5w7fjhIBI4fBstXh5noOcdITY7486dFvbpVVLg=;
+	s=default; t=1547216186;
+	bh=1HqbdEcZHvrxG3kdlPPJHT+Ax2MnSDeGx0MFFpdy/tk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=NJMXLeZP27jWjyHbYI+10Lgu76UQRQpjFrekGTS12gYMiKW9KiecrXuStVVM4ilkL
-	 HL1JXQ5IMMFI/H2E77Q+tu99LTKxDgiVZQ+IQGhF1etLlUuOHnYOTzDQLf3ccX+Nyy
-	 XbwUgkaGa377+huqSHgWnDXjFeNxME+WMAuDhb4s=
+	b=helTnCy+0jF+yS+D36EWmN3ulNmo6u/yXdYn6jwmkNNiYUdJe7WHQWDXHnPDCQ1m8
+	 Jt+Dq5qS5hHTnYBGSbR8wb3JH/gTydKU01N5iWKHasEdhCHAt8xNtzDl03QHJHVzG5
+	 bO8D/xMWF5HTFrW6ddLw4k4Z/A5zQ6WEvOHwgXU8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731163AbfAKOQW (ORCPT
+        id S1728201AbfAKOQ0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:16:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60702 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:16:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60756 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387589AbfAKOQT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:16:19 -0500
+        id S2387624AbfAKOQV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:16:21 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 025FE214D8;
-        Fri, 11 Jan 2019 14:16:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D5217214D8;
+        Fri, 11 Jan 2019 14:16:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547216178;
-        bh=d4iQL5w7fjhIBI4fBstXh5noOcdITY7486dFvbpVVLg=;
+        s=default; t=1547216181;
+        bh=1HqbdEcZHvrxG3kdlPPJHT+Ax2MnSDeGx0MFFpdy/tk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=F4AvLmOQnpX2yrDOiYHyOpZlS9GJnVU5C3r9N1E3h/m4h8uauH5MXjut7oKfrIwUR
-         s0QXUJDTDT/7sq52GRUo7w/qlqELuI63RPMcrFafimIs5XASgshR40KoCC3RGPGLG7
-         ZDu/znS2rSPf/Povw9gYto/O9FUypK+nHFI4so5M=
+        b=0s6OEwpL063QgC1UQOA/TS87dfdnVTyDEE4maA7cth4S/7UdpAZerC8qqCDKZU4ob
+         vusnH69aPcxmVT9lA9/6jkBNPvxmKqRvXSdnl4O6cT+IKHb+Fc73MyKP8qMOjP2ZBG
+         Nh5BEr4vjZj00MW8OEh80OYubTA7iJG9f3JPQKzU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Adit Ranadive <aditr@vmware.com>,
-        Vishnu Dasa <vdasa@vmware.com>,
-        Jorgen Hansen <jhansen@vmware.com>,
+        stable@vger.kernel.org, Dietmar Hahn <dietmar.hahn@ts.fujitsu.com>,
+        Juergen Gross <jgross@suse.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 3.18 17/47] VSOCK: Send reset control packet when socket is partially bound
-Date:   Fri, 11 Jan 2019 15:08:02 +0100
-Message-Id: <20190111130958.194121911@linuxfoundation.org>
+Subject: [PATCH 3.18 18/47] xen/netfront: tolerate frags with no data
+Date:   Fri, 11 Jan 2019 15:08:03 +0100
+Message-Id: <20190111130958.460866136@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111130956.170952125@linuxfoundation.org>
 References: <20190111130956.170952125@linuxfoundation.org>
@@ -67,128 +66,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jorgen Hansen <jhansen@vmware.com>
+From: Juergen Gross <jgross@suse.com>
 
-[ Upstream commit a915b982d8f5e4295f64b8dd37ce753874867e88 ]
+[ Upstream commit d81c5054a5d1d4999c7cdead7636b6cd4af83d36 ]
 
-If a server side socket is bound to an address, but not in the listening
-state yet, incoming connection requests should receive a reset control
-packet in response. However, the function used to send the reset
-silently drops the reset packet if the sending socket isn't bound
-to a remote address (as is the case for a bound socket not yet in
-the listening state). This change fixes this by using the src
-of the incoming packet as destination for the reset packet in
-this case.
+At least old Xen net backends seem to send frags with no real data
+sometimes. In case such a fragment happens to occur with the frag limit
+already reached the frontend will BUG currently even if this situation
+is easily recoverable.
 
-Fixes: d021c344051a ("VSOCK: Introduce VM Sockets")
-Reviewed-by: Adit Ranadive <aditr@vmware.com>
-Reviewed-by: Vishnu Dasa <vdasa@vmware.com>
-Signed-off-by: Jorgen Hansen <jhansen@vmware.com>
+Modify the BUG_ON() condition accordingly.
+
+Tested-by: Dietmar Hahn <dietmar.hahn@ts.fujitsu.com>
+Signed-off-by: Juergen Gross <jgross@suse.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/vmw_vsock/vmci_transport.c |   67 ++++++++++++++++++++++++++++++-----------
- 1 file changed, 50 insertions(+), 17 deletions(-)
+ drivers/net/xen-netfront.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/vmw_vsock/vmci_transport.c
-+++ b/net/vmw_vsock/vmci_transport.c
-@@ -273,6 +273,31 @@ vmci_transport_send_control_pkt_bh(struc
- }
+--- a/drivers/net/xen-netfront.c
++++ b/drivers/net/xen-netfront.c
+@@ -913,7 +913,7 @@ static RING_IDX xennet_fill_frags(struct
+ 		if (skb_shinfo(skb)->nr_frags == MAX_SKB_FRAGS) {
+ 			unsigned int pull_to = NETFRONT_SKB_CB(skb)->pull_to;
  
- static int
-+vmci_transport_alloc_send_control_pkt(struct sockaddr_vm *src,
-+				      struct sockaddr_vm *dst,
-+				      enum vmci_transport_packet_type type,
-+				      u64 size,
-+				      u64 mode,
-+				      struct vmci_transport_waiting_info *wait,
-+				      u16 proto,
-+				      struct vmci_handle handle)
-+{
-+	struct vmci_transport_packet *pkt;
-+	int err;
-+
-+	pkt = kmalloc(sizeof(*pkt), GFP_KERNEL);
-+	if (!pkt)
-+		return -ENOMEM;
-+
-+	err = __vmci_transport_send_control_pkt(pkt, src, dst, type, size,
-+						mode, wait, proto, handle,
-+						true);
-+	kfree(pkt);
-+
-+	return err;
-+}
-+
-+static int
- vmci_transport_send_control_pkt(struct sock *sk,
- 				enum vmci_transport_packet_type type,
- 				u64 size,
-@@ -281,9 +306,7 @@ vmci_transport_send_control_pkt(struct s
- 				u16 proto,
- 				struct vmci_handle handle)
- {
--	struct vmci_transport_packet *pkt;
- 	struct vsock_sock *vsk;
--	int err;
- 
- 	vsk = vsock_sk(sk);
- 
-@@ -293,17 +316,10 @@ vmci_transport_send_control_pkt(struct s
- 	if (!vsock_addr_bound(&vsk->remote_addr))
- 		return -EINVAL;
- 
--	pkt = kmalloc(sizeof(*pkt), GFP_KERNEL);
--	if (!pkt)
--		return -ENOMEM;
--
--	err = __vmci_transport_send_control_pkt(pkt, &vsk->local_addr,
--						&vsk->remote_addr, type, size,
--						mode, wait, proto, handle,
--						true);
--	kfree(pkt);
--
--	return err;
-+	return vmci_transport_alloc_send_control_pkt(&vsk->local_addr,
-+						     &vsk->remote_addr,
-+						     type, size, mode,
-+						     wait, proto, handle);
- }
- 
- static int vmci_transport_send_reset_bh(struct sockaddr_vm *dst,
-@@ -321,12 +337,29 @@ static int vmci_transport_send_reset_bh(
- static int vmci_transport_send_reset(struct sock *sk,
- 				     struct vmci_transport_packet *pkt)
- {
-+	struct sockaddr_vm *dst_ptr;
-+	struct sockaddr_vm dst;
-+	struct vsock_sock *vsk;
-+
- 	if (pkt->type == VMCI_TRANSPORT_PACKET_TYPE_RST)
- 		return 0;
--	return vmci_transport_send_control_pkt(sk,
--					VMCI_TRANSPORT_PACKET_TYPE_RST,
--					0, 0, NULL, VSOCK_PROTO_INVALID,
--					VMCI_INVALID_HANDLE);
-+
-+	vsk = vsock_sk(sk);
-+
-+	if (!vsock_addr_bound(&vsk->local_addr))
-+		return -EINVAL;
-+
-+	if (vsock_addr_bound(&vsk->remote_addr)) {
-+		dst_ptr = &vsk->remote_addr;
-+	} else {
-+		vsock_addr_init(&dst, pkt->dg.src.context,
-+				pkt->src_port);
-+		dst_ptr = &dst;
-+	}
-+	return vmci_transport_alloc_send_control_pkt(&vsk->local_addr, dst_ptr,
-+					     VMCI_TRANSPORT_PACKET_TYPE_RST,
-+					     0, 0, NULL, VSOCK_PROTO_INVALID,
-+					     VMCI_INVALID_HANDLE);
- }
- 
- static int vmci_transport_send_negotiate(struct sock *sk, size_t size)
+-			BUG_ON(pull_to <= skb_headlen(skb));
++			BUG_ON(pull_to < skb_headlen(skb));
+ 			__pskb_pull_tail(skb, pull_to - skb_headlen(skb));
+ 		}
+ 		BUG_ON(skb_shinfo(skb)->nr_frags >= MAX_SKB_FRAGS);
 
 
