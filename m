@@ -4,50 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D9A6C43444
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:57:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EDF1C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:57:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 34E2F20872
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:57:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4648A20874
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:57:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547218648;
-	bh=XzWRRl7DUTei8OXy/29Pn5koSm/dXj3qY5ZvHAlUEAo=;
+	s=default; t=1547218653;
+	bh=WP/zcWhpwRlhMNcjk0siQYAaUGun/LBd/uVcHXuOTXs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=X7TFREGM7MGQgQhMQ7GVH6elpSlE2SdBp2uYpAj4q1EVpRo57EAv+AtWV9k9JK5Mj
-	 P6Y8i+BiCSBYYd7DmsjXDXXhsGPODjV10TFtBkMPWH0CEd7bovlICjRg+gBZh7ub8a
-	 ZufmY19zOfZl9lDnVp6YrCVE7uHcqn8V/0VumdCU=
+	b=Omv1b2g5ubyPGg73laUE0v/093nMUbxHDPTsA6zmJ0E+g5YCngwxRu02FGNVmi/qZ
+	 oszOwtUlvTe+JJ38UsXwQ2m+f8VbOAU0zYMVOVMzETONW9CNJONt9P5aOkl0TT027w
+	 LSwF8xnvdhfRjna2NRAR4/A0d9hGVlv3Yto84rdg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390104AbfAKOfR (ORCPT
+        id S2391678AbfAKO5c (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:35:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55488 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:57:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55446 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390078AbfAKOfO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:35:14 -0500
+        id S2390084AbfAKOfM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:35:12 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C73EA2133F;
-        Fri, 11 Jan 2019 14:35:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4B6FB204EC;
+        Fri, 11 Jan 2019 14:35:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547217314;
-        bh=XzWRRl7DUTei8OXy/29Pn5koSm/dXj3qY5ZvHAlUEAo=;
+        s=default; t=1547217311;
+        bh=WP/zcWhpwRlhMNcjk0siQYAaUGun/LBd/uVcHXuOTXs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mfxUu41zVKp/cgn7jo0sJBrxE99eFjldJJ7E61TOawR/6VWEJHv8KbE52S6CazApE
-         4rR3Dqk4SOD/1XfmVziiOVND6gPxr6wQITTz9Rw9fnaoc4hHpATD9tvkzLKeZ3PxId
-         wbNElHku29pTFhg+TAAJl0Y0plyF6PEmJryE2MH8=
+        b=vmsRvRYZG3aPgDgh7Lcijmk+DkIgr6fC+p2XM9hzeuH49UTdmgAGQht72LOxV6vaM
+         tl43PXWXF41ebkxo7XZ/DU9yXr8+7+4cmJd+1u80bjs+m8F3hKQXKCr+x5AxlzJbFX
+         v9vyoEZcurM7fNZUfdX8sPUYDCezDqvSy2z1UuZA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Benjamin Poirier <bpoirier@suse.com>,
+        stable@vger.kernel.org, Wei Yongjun <weiyongjun1@huawei.com>,
         Steffen Klassert <steffen.klassert@secunet.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 017/148] xfrm: Fix bucket count reported to userspace
-Date:   Fri, 11 Jan 2019 15:13:15 +0100
-Message-Id: <20190111131115.020657766@linuxfoundation.org>
+Subject: [PATCH 4.19 016/148] xfrm: Fix error return code in xfrm_output_one()
+Date:   Fri, 11 Jan 2019 15:13:14 +0100
+Message-Id: <20190111131114.977100189@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131114.337122649@linuxfoundation.org>
 References: <20190111131114.337122649@linuxfoundation.org>
@@ -66,32 +66,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit ca92e173ab34a4f7fc4128bd372bd96f1af6f507 ]
+[ Upstream commit 533555e5cbb6aa2d77598917871ae5b579fe724b ]
 
-sadhcnt is reported by `ip -s xfrm state count` as "buckets count", not the
-hash mask.
+xfrm_output_one() does not return a error code when there is
+no dst_entry attached to the skb, it is still possible crash
+with a NULL pointer dereference in xfrm_output_resume(). Fix
+it by return error code -EHOSTUNREACH.
 
-Fixes: 28d8909bc790 ("[XFRM]: Export SAD info.")
-Signed-off-by: Benjamin Poirier <bpoirier@suse.com>
+Fixes: 9e1437937807 ("xfrm: Fix NULL pointer dereference when skb_dst_force clears the dst_entry.")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/xfrm/xfrm_state.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/xfrm/xfrm_output.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/net/xfrm/xfrm_state.c b/net/xfrm/xfrm_state.c
-index 7a34990a68b1..cc0203efb584 100644
---- a/net/xfrm/xfrm_state.c
-+++ b/net/xfrm/xfrm_state.c
-@@ -794,7 +794,7 @@ void xfrm_sad_getinfo(struct net *net, struct xfrmk_sadinfo *si)
- {
- 	spin_lock_bh(&net->xfrm.xfrm_state_lock);
- 	si->sadcnt = net->xfrm.state_num;
--	si->sadhcnt = net->xfrm.state_hmask;
-+	si->sadhcnt = net->xfrm.state_hmask + 1;
- 	si->sadhmcnt = xfrm_state_hashmax;
- 	spin_unlock_bh(&net->xfrm.xfrm_state_lock);
- }
+diff --git a/net/xfrm/xfrm_output.c b/net/xfrm/xfrm_output.c
+index 261995d37ced..6d20fbcde000 100644
+--- a/net/xfrm/xfrm_output.c
++++ b/net/xfrm/xfrm_output.c
+@@ -102,6 +102,7 @@ static int xfrm_output_one(struct sk_buff *skb, int err)
+ 		skb_dst_force(skb);
+ 		if (!skb_dst(skb)) {
+ 			XFRM_INC_STATS(net, LINUX_MIB_XFRMOUTERROR);
++			err = -EHOSTUNREACH;
+ 			goto error_nolock;
+ 		}
+ 
 -- 
 2.19.1
 
