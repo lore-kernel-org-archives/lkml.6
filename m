@@ -7,48 +7,46 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80362C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:05:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66A31C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:06:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F3322084C
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:05:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 37ADD20874
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:06:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547219154;
-	bh=oHZcHCe2YupJyMPBt7ATMpqoSxgqvpVovXGeoZRUyuI=;
+	s=default; t=1547219169;
+	bh=YnQNqWA581ctRX4TARNSSnkerKLOveUkyL+4q2obDVg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ZU0MwgKjumU2zZWjF6Ko+xOkzFAeBL8BQ04TBwPk3fEzujalvjk1j+Pcx5VAthR53
-	 +m/vcbJbZvvohCLN7nnNOr+Eb/TMgNIvYi/cR/y/+c46EzMIEz8gZBissVGbW3T8lo
-	 XanHJMa9sGsaZNaZBBwZ74eA1xtMcrfQ/S/3z6z0=
+	b=I5Velrx8/Br5/BLGL380Gb+eqSsGGO3jAondMLKAN9qXrsAZOGw+YcOdVFumYnD5L
+	 IClhtEoczJx3Tnz7cENEgLNtAVKJa8E1GvfPCMebHhvl0vIRSsL2ZOzMq5wk4OWHsL
+	 xAn85v3xjuAdSrqaNfyCnYrTQgnY4T/VbBpVl+pA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388709AbfAKO3W (ORCPT
+        id S2390895AbfAKPGI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:29:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48262 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 10:06:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48066 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388694AbfAKO3T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:29:19 -0500
+        id S2388647AbfAKO3K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:29:10 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 320372177B;
-        Fri, 11 Jan 2019 14:29:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6323C2133F;
+        Fri, 11 Jan 2019 14:29:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547216958;
-        bh=oHZcHCe2YupJyMPBt7ATMpqoSxgqvpVovXGeoZRUyuI=;
+        s=default; t=1547216949;
+        bh=YnQNqWA581ctRX4TARNSSnkerKLOveUkyL+4q2obDVg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=E3fz/173gvhMZn0WaTMdboX/aECMihYXkggzeB8di5YgkXQWsVZQL5bg/Idv3MVkl
-         zwuL/15mGQtZSdf71z0uSFUxCgTvpyE1696av932zy2LM2J3Jh0zpCQGChn/1wwNdx
-         kRc9oj0HrA+yUafwA1NtDTNTwAcMt2b0xnHdJBVU=
+        b=A7MPhHge+0RSZwYhi2PJZQ5pJztUjihn5hb7yNkV3Lqmmxs+PLRJQ/Eil+TIwvgfB
+         fTdjkrYEUJ+BSc9E/vpbNzWsKUhWOLX95icWdxbRCTQCNpN8z9RNQP34bvatX9Noy1
+         EaJJgjRPqQneYvnKsPRiim8uLwysvNso4D2JVewE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pan Bian <bianpan2016@163.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        Bob Peterson <rpeterso@redhat.com>
-Subject: [PATCH 4.9 52/63] gfs2: Get rid of potential double-freeing in gfs2_create_inode
-Date:   Fri, 11 Jan 2019 15:14:55 +0100
-Message-Id: <20190111131053.959358163@linuxfoundation.org>
+        stable@vger.kernel.org, Vasily Averin <vvs@virtuozzo.com>,
+        David Teigland <teigland@redhat.com>, stable@kernel.org
+Subject: [PATCH 4.9 49/63] dlm: possible memory leak on error path in create_lkb()
+Date:   Fri, 11 Jan 2019 15:14:52 +0100
+Message-Id: <20190111131053.567054246@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131046.387528003@linuxfoundation.org>
 References: <20190111131046.387528003@linuxfoundation.org>
@@ -67,70 +65,30 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Andreas Gruenbacher <agruenba@redhat.com>
+From: Vasily Averin <vvs@virtuozzo.com>
 
-commit 6ff9b09e00a441599f3aacdf577254455a048bc9 upstream.
+commit 23851e978f31eda8b2d01bd410d3026659ca06c7 upstream.
 
-In gfs2_create_inode, after setting and releasing the acl / default_acl, the
-acl / default_acl pointers are not set to NULL as they should be.  In that
-state, when the function reaches label fail_free_acls, gfs2_create_inode will
-try to release the same acls again.
+Fixes 3d6aa675fff9 ("dlm: keep lkbs in idr")
+Cc: stable@kernel.org # 3.1
 
-Fix that by setting the pointers to NULL after releasing the acls.  Slightly
-simplify the logic.  Also, posix_acl_release checks for NULL already, so
-there is no need to duplicate those checks here.
-
-Fixes: e01580bf9e4d ("gfs2: use generic posix ACL infrastructure")
-Reported-by: Pan Bian <bianpan2016@163.com>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: stable@vger.kernel.org # v4.9+
-Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
-Signed-off-by: Bob Peterson <rpeterso@redhat.com>
+Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
+Signed-off-by: David Teigland <teigland@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/gfs2/inode.c |   18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+ fs/dlm/lock.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/fs/gfs2/inode.c
-+++ b/fs/gfs2/inode.c
-@@ -740,17 +740,19 @@ static int gfs2_create_inode(struct inod
- 			       the gfs2 structures. */
- 	if (default_acl) {
- 		error = __gfs2_set_acl(inode, default_acl, ACL_TYPE_DEFAULT);
-+		if (error)
-+			goto fail_gunlock3;
- 		posix_acl_release(default_acl);
-+		default_acl = NULL;
- 	}
- 	if (acl) {
--		if (!error)
--			error = __gfs2_set_acl(inode, acl, ACL_TYPE_ACCESS);
-+		error = __gfs2_set_acl(inode, acl, ACL_TYPE_ACCESS);
-+		if (error)
-+			goto fail_gunlock3;
- 		posix_acl_release(acl);
-+		acl = NULL;
+--- a/fs/dlm/lock.c
++++ b/fs/dlm/lock.c
+@@ -1210,6 +1210,7 @@ static int create_lkb(struct dlm_ls *ls,
+ 
+ 	if (rv < 0) {
+ 		log_error(ls, "create_lkb idr error %d", rv);
++		dlm_free_lkb(lkb);
+ 		return rv;
  	}
  
--	if (error)
--		goto fail_gunlock3;
--
- 	error = security_inode_init_security(&ip->i_inode, &dip->i_inode, name,
- 					     &gfs2_initxattrs, NULL);
- 	if (error)
-@@ -783,10 +785,8 @@ fail_free_inode:
- 		gfs2_glock_put(ip->i_gl);
- 	gfs2_rsqa_delete(ip, NULL);
- fail_free_acls:
--	if (default_acl)
--		posix_acl_release(default_acl);
--	if (acl)
--		posix_acl_release(acl);
-+	posix_acl_release(default_acl);
-+	posix_acl_release(acl);
- fail_gunlock:
- 	gfs2_dir_no_add(&da);
- 	gfs2_glock_dq_uninit(ghs);
 
 
