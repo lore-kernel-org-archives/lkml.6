@@ -7,48 +7,51 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D742CC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:22:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 515F6C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:22:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A69562177B
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:22:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1B46720700
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:22:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547216571;
-	bh=OBdc61lQxiXNHbBuOCVX8JL08GRm5mznpK2z/dGS9A0=;
+	s=default; t=1547216579;
+	bh=ObGw4xElizEXEUkPdzBo4x/1vip3i5Y7b8VteIiXv5s=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=GoBcHAwKcQf1Cv1afFgOoxTNaBVHTAEKR7nFtXffSksgQdhAxiabiyXnHoL7WgQq8
-	 QM+YOyacmJOaJdVL4/7HfYQbYrngL4OLnDlBx5QD0q7L/KGnr2+UZ0jvDEhhNdPS7i
-	 P7oioMP6xpyZ8uANgIss7gtuL1ZsWgkP5vGi8zlg=
+	b=yiohTPsqkU9Od7r8WEhsah6EeVrbDUh1mXf6ujy5u8LRBCSnKQ8e+sVHum79mTb/X
+	 2TOfxtsj4Up/kZ8IuNIKn9u1To8zkRn/ZNki9P2NgawbnuijUXcQ+1k0aql+kdS5X9
+	 722vqI8qWVQN6lJcxXJ6tGSiqpp6kCab92kUjDI4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732796AbfAKOWp (ORCPT
+        id S1733025AbfAKOW6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:22:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35966 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:22:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35784 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730968AbfAKOTL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:19:11 -0500
+        id S1730832AbfAKOTG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:19:06 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 284932183F;
-        Fri, 11 Jan 2019 14:19:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0E2EB2177B;
+        Fri, 11 Jan 2019 14:19:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547216350;
-        bh=OBdc61lQxiXNHbBuOCVX8JL08GRm5mznpK2z/dGS9A0=;
+        s=default; t=1547216345;
+        bh=ObGw4xElizEXEUkPdzBo4x/1vip3i5Y7b8VteIiXv5s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GbeMoYZmU8Ds7FaeLTiWAUK75CbwvWj6nSzEujnd97nZBJ/FroTTx0RD/cHXaoXqC
-         wbyCF+aAM6To20Acyk9lV96IHUoxTKm77FvBCNdV6pEqk3trGL4BNqWeZTN0siWwbf
-         nmg87kBYRBZmD2qtR7fH5IPSdXmrfWlBGEJfy9js=
+        b=RDSNWLaxIDZndWjfTKhoF7LzQV4h66jhVJ8qycwQo424NkGv7H/DRF3+b9gSekCKy
+         qrwVQhEsBGEREdrBJLqDZkUBxOFDgSb/Hv+faSHriNCxA1RG40Z1I3XdQmgCJi1fol
+         U1Q/kwbds0vO93gyrf1+x3kqVj2m88NFCbIGvX2E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Pavel Tikhomirov <ptikhomirov@virtuozzo.com>,
-        Vasily Averin <vvs@virtuozzo.com>, NeilBrown <neilb@suse.com>,
-        "J. Bruce Fields" <bfields@redhat.com>, stable@kernel.org
-Subject: [PATCH 4.4 68/88] sunrpc: fix cache_head leak due to queued request
-Date:   Fri, 11 Jan 2019 15:08:37 +0100
-Message-Id: <20190111131057.402185567@linuxfoundation.org>
+        stable@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>,
+        Christoph Hellwig <hch@lst.de>, Michal Hocko <mhocko@suse.com>,
+        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.4 66/88] mm, devm_memremap_pages: mark devm_memremap_pages() EXPORT_SYMBOL_GPL
+Date:   Fri, 11 Jan 2019 15:08:35 +0100
+Message-Id: <20190111131057.064559895@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131045.137499039@linuxfoundation.org>
 References: <20190111131045.137499039@linuxfoundation.org>
@@ -67,69 +70,53 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vasily Averin <vvs@virtuozzo.com>
+From: Dan Williams <dan.j.williams@intel.com>
 
-commit 4ecd55ea074217473f94cfee21bb72864d39f8d7 upstream.
+commit 808153e1187fa77ac7d7dad261ff476888dcf398 upstream.
 
-After commit d202cce8963d, an expired cache_head can be removed from the
-cache_detail's hash.
+devm_memremap_pages() is a facility that can create struct page entries
+for any arbitrary range and give drivers the ability to subvert core
+aspects of page management.
 
-However, the expired cache_head may be waiting for a reply from a
-previously submitted request. Such a cache_head has an increased
-refcounter and therefore it won't be freed after cache_put(freeme).
+Specifically the facility is tightly integrated with the kernel's memory
+hotplug functionality.  It injects an altmap argument deep into the
+architecture specific vmemmap implementation to allow allocating from
+specific reserved pages, and it has Linux specific assumptions about page
+structure reference counting relative to get_user_pages() and
+get_user_pages_fast().  It was an oversight and a mistake that this was
+not marked EXPORT_SYMBOL_GPL from the outset.
 
-Because the cache_head was removed from the hash it cannot be found
-during cache_clean() and can be leaked forever, together with stalled
-cache_request and other taken resources.
+Again, devm_memremap_pagex() exposes and relies upon core kernel internal
+assumptions and will continue to evolve along with 'struct page', memory
+hotplug, and support for new memory types / topologies.  Only an in-kernel
+GPL-only driver is expected to keep up with this ongoing evolution.  This
+interface, and functionality derived from this interface, is not suitable
+for kernel-external drivers.
 
-In our case we noticed it because an entry in the export cache was
-holding a reference on a filesystem.
-
-Fixes d202cce8963d ("sunrpc: never return expired entries in sunrpc_cache_lookup")
-Cc: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
-Cc: stable@kernel.org # 2.6.35
-Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
-Reviewed-by: NeilBrown <neilb@suse.com>
-Signed-off-by: J. Bruce Fields <bfields@redhat.com>
+Link: http://lkml.kernel.org/r/154275557457.76910.16923571232582744134.stgit@dwillia2-desk3.amr.corp.intel.com
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Cc: "Jérôme Glisse" <jglisse@redhat.com>
+Cc: Balbir Singh <bsingharora@gmail.com>
+Cc: Logan Gunthorpe <logang@deltatee.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/sunrpc/cache.c |   10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+ kernel/memremap.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/sunrpc/cache.c
-+++ b/net/sunrpc/cache.c
-@@ -54,6 +54,11 @@ static void cache_init(struct cache_head
- 	h->last_refresh = now;
+--- a/kernel/memremap.c
++++ b/kernel/memremap.c
+@@ -202,5 +202,5 @@ void *devm_memremap_pages(struct device
+ 	devres_add(dev, page_map);
+ 	return __va(res->start);
  }
- 
-+static void cache_fresh_locked(struct cache_head *head, time_t expiry,
-+				struct cache_detail *detail);
-+static void cache_fresh_unlocked(struct cache_head *head,
-+				struct cache_detail *detail);
-+
- struct cache_head *sunrpc_cache_lookup(struct cache_detail *detail,
- 				       struct cache_head *key, int hash)
- {
-@@ -95,6 +100,7 @@ struct cache_head *sunrpc_cache_lookup(s
- 			if (cache_is_expired(detail, tmp)) {
- 				hlist_del_init(&tmp->cache_list);
- 				detail->entries --;
-+				cache_fresh_locked(tmp, 0, detail);
- 				freeme = tmp;
- 				break;
- 			}
-@@ -110,8 +116,10 @@ struct cache_head *sunrpc_cache_lookup(s
- 	cache_get(new);
- 	write_unlock(&detail->hash_lock);
- 
--	if (freeme)
-+	if (freeme) {
-+		cache_fresh_unlocked(freeme, detail);
- 		cache_put(freeme, detail);
-+	}
- 	return new;
- }
- EXPORT_SYMBOL_GPL(sunrpc_cache_lookup);
+-EXPORT_SYMBOL(devm_memremap_pages);
++EXPORT_SYMBOL_GPL(devm_memremap_pages);
+ #endif /* CONFIG_ZONE_DEVICE */
 
 
