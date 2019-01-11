@@ -2,180 +2,143 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE847C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 03:54:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DC25C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 03:58:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7223320872
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 03:54:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eIDfgAtl"
+	by mail.kernel.org (Postfix) with ESMTP id 4241820870
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 03:58:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730553AbfAKDyK (ORCPT
+        id S1730585AbfAKD6l (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 22:54:10 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:46618 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728825AbfAKDyJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 22:54:09 -0500
-Received: by mail-ot1-f66.google.com with SMTP id w25so11974797otm.13
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Jan 2019 19:54:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Mh8Y13SDTRaV+A1oBQTFShssINOe7TO814WDWYQK8PQ=;
-        b=eIDfgAtldZAUkxiAEktyusIxFrSMYnws+/L0hQWS//wF4Y0HA+7ZIl+Mmdy+qfeAVo
-         iHks2mCHLn6TkXfgMTIOT97fyZ7rPdCdyx6+U/HG4f7f/fwXu8UnYY5LMvCN+lf2m0T8
-         Cs7HBAjdcNi5IxDxypz7by0O0/0/iIzJNs/YnIQ0St2g2op8hLI3WyX+JJHUz70JhGgp
-         fhHC2xCsL0VWsuQWKpNUF3DxamDenll90bycc6Ts1C3I44Y7jQQhSdN0IbXHzZak+cEt
-         WpxUrf4/FOX0HspiJ2k/bIUBF2tONoocrXF65kL5E32PP0E9nl4Nn4M+zpQqZeYVadi2
-         6LpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Mh8Y13SDTRaV+A1oBQTFShssINOe7TO814WDWYQK8PQ=;
-        b=gf/rSdNOIPwsKHrfP2ti6h6GBwOalKTdt1K7sVNVxHPWqeMLnp4H40kLASFNNMh4Dv
-         dqF7A0YUi1nhJT3F9VmYIM/nrS6381dSPf6M8OP88d2HeiGFivezkf29D0/Sa5szbfa+
-         krl1/1wdgPDLHUr8TXqXgLeOWkEB7DSdNBgsoQdwX1tmrOb+OiUizTIuV4YieVBamGZR
-         h8c7zqM5VRqocEjjrjcKc+FHCodttnZ7OOYyMcbS4Nz0Mu+/ZKgzQoo4g9pald1WoPiu
-         LIZ8RwLoJv5BkNLzIgMPVNWAnm4bScQhQ2iHo6hu6mxHb4xwDRJBl0bkIlS5wGXttgES
-         V7qw==
-X-Gm-Message-State: AJcUukc9Se+BasfRHDT5thcT+E5NwsiWaOj5pNWSMdBIzdlwYyYZrjmS
-        uuNG8Md1ttuD1MPIMEJ0qVRFsBqsgPa3WXyI2cX95ZS/
-X-Google-Smtp-Source: ALg8bN7hsagFfq3/jS6BnlhjYPEH2g975gQQp87jMZLAaKlMNd7J10IBYEAW9Il2b9e1Gya9AB8OfdyhxPF6D2gJzpw=
-X-Received: by 2002:a9d:14e:: with SMTP id 72mr8898399otu.54.1547178848846;
- Thu, 10 Jan 2019 19:54:08 -0800 (PST)
+        Thu, 10 Jan 2019 22:58:41 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:46208 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728472AbfAKD6l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 10 Jan 2019 22:58:41 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 910E683F4C;
+        Fri, 11 Jan 2019 03:58:40 +0000 (UTC)
+Received: from [10.72.12.143] (ovpn-12-143.pek2.redhat.com [10.72.12.143])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id B68F81E7;
+        Fri, 11 Jan 2019 03:58:34 +0000 (UTC)
+Subject: Re: [PATCH net V2] vhost: log dirty page correctly
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jintack Lim <jintack@cs.columbia.edu>
+References: <20190109072947.23240-1-jasowang@redhat.com>
+ <20190109091937-mutt-send-email-mst@kernel.org>
+ <8704a816-ec70-8e56-b141-3f17c41bb999@redhat.com>
+ <20190110090610-mutt-send-email-mst@kernel.org>
+From:   Jason Wang <jasowang@redhat.com>
+Message-ID: <b49e17ec-a420-7216-4ef4-22285df4f71c@redhat.com>
+Date:   Fri, 11 Jan 2019 11:58:32 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-References: <20181213105924.30384-1-shameerali.kolothum.thodi@huawei.com> <4fe81519-1ddc-1d73-8c7a-cd0865299b53@arm.com>
-In-Reply-To: <4fe81519-1ddc-1d73-8c7a-cd0865299b53@arm.com>
-From:   Ganapatrao Kulkarni <gklkml16@gmail.com>
-Date:   Fri, 11 Jan 2019 09:23:57 +0530
-Message-ID: <CAKTKpr4uvQtYKrcAMSoaA-sYv2MNCqZgRb2KQhYa23KaYptaUA@mail.gmail.com>
-Subject: Re: [PATCH v3] irqchip: gicv3-its: Use NUMA aware memory allocation
- for ITS tables
-To:     Marc Zyngier <marc.zyngier@arm.com>
-Cc:     Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
-        LKML <linux-kernel@vger.kernel.org>, shankerd@codeaurora.org,
-        Ganapatrao Kulkarni <ganapatrao.kulkarni@cavium.com>,
-        Robert Richter <Robert.Richter@cavium.com>,
-        Hanjun Guo <guohanjun@huawei.com>,
-        John Garry <john.garry@huawei.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Linuxarm <linuxarm@huawei.com>,
-        "Nair, Jayachandran" <Jayachandran.Nair@cavium.com>,
-        gkulkarni@marvell.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190110090610-mutt-send-email-mst@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Fri, 11 Jan 2019 03:58:40 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Shameer,
 
-Patch looks OK to me, please feel free to add,
-Reviewed-by: Ganapatrao Kulkarni <gkulkarni@marvell.com>
+On 2019/1/10 下午10:07, Michael S. Tsirkin wrote:
+> On Thu, Jan 10, 2019 at 08:37:17PM +0800, Jason Wang wrote:
+>> On 2019/1/9 下午10:25, Michael S. Tsirkin wrote:
+>>> On Wed, Jan 09, 2019 at 03:29:47PM +0800, Jason Wang wrote:
+>>>> Vhost dirty page logging API is designed to sync through GPA. But we
+>>>> try to log GIOVA when device IOTLB is enabled. This is wrong and may
+>>>> lead to missing data after migration.
+>>>>
+>>>> To solve this issue, when logging with device IOTLB enabled, we will:
+>>>>
+>>>> 1) reuse the device IOTLB translation result of GIOVA->HVA mapping to
+>>>>      get HVA, for writable descriptor, get HVA through iovec. For used
+>>>>      ring update, translate its GIOVA to HVA
+>>>> 2) traverse the GPA->HVA mapping to get the possible GPA and log
+>>>>      through GPA. Pay attention this reverse mapping is not guaranteed
+>>>>      to be unique, so we should log each possible GPA in this case.
+>>>>
+>>>> This fix the failure of scp to guest during migration. In -next, we
+>>>> will probably support passing GIOVA->GPA instead of GIOVA->HVA.
+>>>>
+>>>> Fixes: 6b1e6cc7855b ("vhost: new device IOTLB API")
+>>>> Reported-by: Jintack Lim<jintack@cs.columbia.edu>
+>>>> Cc: Jintack Lim<jintack@cs.columbia.edu>
+>>>> Signed-off-by: Jason Wang<jasowang@redhat.com>
+>>>> ---
+>>>> The patch is needed for stable.
+>>>> Changes from V1:
+>>>> - return error instead of warn
+>>>> ---
+>>>>    drivers/vhost/net.c   |  3 +-
+>>>>    drivers/vhost/vhost.c | 82 +++++++++++++++++++++++++++++++++++--------
+>>>>    drivers/vhost/vhost.h |  3 +-
+>>>>    3 files changed, 72 insertions(+), 16 deletions(-)
+>>>>
+>>>> diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
+>>>> index 36f3d0f49e60..bca86bf7189f 100644
+>>>> --- a/drivers/vhost/net.c
+>>>> +++ b/drivers/vhost/net.c
+>>>> @@ -1236,7 +1236,8 @@ static void handle_rx(struct vhost_net *net)
+>>>>    		if (nvq->done_idx > VHOST_NET_BATCH)
+>>>>    			vhost_net_signal_used(nvq);
+>>>>    		if (unlikely(vq_log))
+>>>> -			vhost_log_write(vq, vq_log, log, vhost_len);
+>>>> +			vhost_log_write(vq, vq_log, log, vhost_len,
+>>>> +					vq->iov, in);
+>>>>    		total_len += vhost_len;
+>>>>    		if (unlikely(vhost_exceeds_weight(++recv_pkts, total_len))) {
+>>>>    			vhost_poll_queue(&vq->poll);
+>>>> diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
+>>>> index 9f7942cbcbb2..ee095f08ffd4 100644
+>>>> --- a/drivers/vhost/vhost.c
+>>>> +++ b/drivers/vhost/vhost.c
+>>>> @@ -1733,11 +1733,70 @@ static int log_write(void __user *log_base,
+>>>>    	return r;
+>>>>    }
+>>>> +static int log_write_hva(struct vhost_virtqueue *vq, u64 hva, u64 len)
+>>>> +{
+>>>> +	struct vhost_umem *umem = vq->umem;
+>>>> +	struct vhost_umem_node *u;
+>>>> +	u64 gpa;
+>>>> +	int r;
+>>>> +	bool hit = false;
+>>>> +
+>>>> +	list_for_each_entry(u, &umem->umem_list, link) {
+>>>> +		if (u->userspace_addr < hva &&
+>>>> +		    u->userspace_addr + u->size >=
+>>>> +		    hva + len) {
+>>> So this tries to see that the GPA range is completely within
+>>> the GVA region. Does this have to be the case?
+>> You mean e.g a buffer that crosses the boundary of two memory regions?
+> Yes - where hva and gva could be contigious.
 
-On Thu, Dec 13, 2018 at 5:25 PM Marc Zyngier <marc.zyngier@arm.com> wrote:
->
-> On 13/12/2018 10:59, Shameer Kolothum wrote:
-> > From: Shanker Donthineni <shankerd@codeaurora.org>
-> >
-> > The NUMA node information is visible to ITS driver but not being used
-> > other than handling hardware errata. ITS/GICR hardware accesses to the
-> > local NUMA node is usually quicker than the remote NUMA node. How slow
-> > the remote NUMA accesses are depends on the implementation details.
-> >
-> > This patch allocates memory for ITS management tables and command
-> > queue from the corresponding NUMA node using the appropriate NUMA
-> > aware functions. This change improves the performance of the ITS
-> > tables read latency on systems where it has more than one ITS block,
-> > and with the slower inter node accesses.
-> >
-> > Apache Web server benchmarking using ab tool on a HiSilicon D06
-> > board with multiple numa mem nodes shows Time per request and
-> > Transfer rate improvements of ~3.6% with this patch.
-> >
-> > Signed-off-by: Shanker Donthineni <shankerd@codeaurora.org>
-> > Signed-off-by: Hanjun Guo <guohanjun@huawei.com>
-> > Signed-off-by: Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
-> > ---
-> >
-> > This is to revive the patch originally sent by Shanker[1] and
-> > to back it up with a benchmark test. Any further testing of
-> > this is most welcome.
-> >
-> > v2-->v3
-> >  -Addressed comments to use page_address().
-> >  -Added Benchmark results to commit log.
-> >  -Removed T-by from Ganapatrao for now.
-> >
-> > v1-->v2
-> >  -Edited commit text.
-> >  -Added Ganapatrao's tested-by.
-> >
-> > Benchmark test details:
-> > --------------------------------
-> > Test Setup:
-> > -D06 with dimm on node 0(Sock#0) and 3 (Sock#1).
-> > -ITS belongs to numa node 0.
-> > -Filesystem mounted on a PCIe NVMe based disk.
-> > -Apache server installed on D06.
-> > -Running ab benchmark test in concurrency mode from a remote m/c
-> >  connected to D06 via  hns3(PCIe) n/w port.
-> >  "ab -k -c 750 -n 2000000 http://10.202.225.188/"
-> >
-> > Test results are avg. of 15 runs.
-> >
-> > For 4.20-rc1  Kernel,
-> > ----------------------------
-> > Time per request(mean, concurrent)  = 0.02753[ms]
-> > Transfer Rate = 416501[Kbytes/sec]
-> >
-> > For 4.20-rc1 +  this patch,
-> > ----------------------------------
-> > Time per request(mean, concurrent)  = 0.02653[ms]
-> > Transfer Rate = 431954[Kbytes/sec]
-> >
-> > % improvement ~3.6%
-> >
-> > vmstat shows around 170K-200K interrupts per second.
-> >
-> > ~# vmstat 1 -w
-> > procs -----------------------memory-- -  -system--
-> >  r  b         swpd         free            in
-> >  5  0            0     30166724          102794
-> >  9  0            0     30141828          171148
-> >  5  0            0     30150160          207185
-> > 13  0            0     30145924          175691
-> > 15  0            0     30140792          145250
-> > 13  0            0     30135556          201879
-> > 13  0            0     30134864          192391
-> > 10  0            0     30133632          168880
-> > ....
-> >
-> > [1] https://patchwork.kernel.org/patch/9833339/
->
-> The figures certainly look convincing. I'd need someone from Cavium to
-> benchmark it on their hardware and come back with results so that we can
-> make a decision on this.
 
-Hi Marc,
-My setup got altered during Lab migration from Cavium to Marvell office.
-I don't think, i will have same setup anytime soon.
+Ok, let me add the overlap range logging in v3.
+
 
 >
-> Thanks,
 >
->         M.
-> --
-> Jazz is not dead. It just smells funny...
+>>> And if yes why not return 0 below instead of hit = true?
+>> I think it's safe but not sure for the case like two GPAs can map to same
+>> HVA?
+> Oh I see. Yes that's possible. Document the motivation?
+>
 
-Thanks,
-Ganapat
+Ok.
+
+Thanks
+
