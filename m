@@ -2,119 +2,135 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0CE1C43612
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 17:43:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7430C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 17:44:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C8CA520874
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 17:43:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="gDSadxU1"
+	by mail.kernel.org (Postfix) with ESMTP id 857B220878
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 17:44:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547228654;
+	bh=O/HUrYYxLFFTdVRLBprksuW+5WBvx8+afTff2Pkw+Ko=;
+	h=Subject:In-Reply-To:References:Cc:To:From:Date:List-ID:From;
+	b=O6+FZLhvYEqmDpqH544dc3n7hGkE7JNAir9NnjpKS0F2+oV+v2dHgCwvCJ4LGGm9w
+	 mtYAUlMGKOyOK4LUAeD/Ckt6CM01qzekeRdN/gqwPKvNS/72gfTWsxXdr1oDxE9pnO
+	 xjLVQyqh55zXYSQ685kXc4IJujj6svHGmzxIBj9U=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732007AbfAKRny (ORCPT
+        id S1732568AbfAKRoN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 12:43:54 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:52890 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731396AbfAKRnx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 12:43:53 -0500
-Received: by mail-wm1-f66.google.com with SMTP id m1so3192315wml.2
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Jan 2019 09:43:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=73ZZ4fNLAhFNtb9hEaivYNzAY6zrbpKkLXaUVSUSU2A=;
-        b=gDSadxU1et7O7+rVNReKBU+SI2e8zUA3yfc/XNGLlC+37bmoxWI8LiIebDH1uLpH5Y
-         gF6DlxelE0/ELmF7X2OgthLI9ia/jwp6ymv62MUZ4ZRtX5cwu31n6vxKoD+zl2ZCyDAt
-         S1ybI2b25oO3j8HcV2zrh6k1wf99fKhM//ZFfHay97U25cuhspeF7qb9EOuohfX7LR0B
-         lpgwt69YNR7qndQwRLEIbd0jMIhLmvY66T4v4sCg1bYfYt+SMs1Qbq/oLlmsL9iwuIbL
-         eIiMfGhbQLPbas6YcEBwTbbDrtiwigRfy1qBmLomdbgfM08sYT2euvcK1hXlvgcfZdl2
-         tZSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=73ZZ4fNLAhFNtb9hEaivYNzAY6zrbpKkLXaUVSUSU2A=;
-        b=mEEjCozt8gMYndUvD7JjgzkJa0WTVABglgoJJGRr6l4I4Cht8KJ2QaXvE+YoydbdO3
-         hF9ULyGOyyc8DMq41tXz8ltzFxrpMlIuU/6J+zRdIrFW+9shvbRZHUFknh1C9+AXp/La
-         SvGbxp3mX0DBo0pe0fq3IX8mVjsglUqdgZfb7rl3nvC4cNf/DngxfeoKl3yO7j9IIi+K
-         yW2s4hR6MafxAhnLdHWPKA44F0Pc4oGanf6kqpMarcuEeMFptpRGL1f8eY8WE9aS7xhs
-         SLnQm5cYSibkj6qZjY8VdDGJEgMAvaJzJfhAH2/aG0hb/G64Z5JNH02W2vynh5xmZYnA
-         TllQ==
-X-Gm-Message-State: AJcUukf7RVE8FZo1VG37YhskiNArHCKL35Xfi1pKKvv4Js+fInUOEPBv
-        2k68GQQ9kwSVyQL0W3huVsS5Cg==
-X-Google-Smtp-Source: ALg8bN4uZgkSLTUZjmvBnlIS/Jvw6R9aKNb5wnDZ69Gs5lGAJRYK+eaI4Z0eUcUnUkM1GS/4vEjSHw==
-X-Received: by 2002:a1c:f509:: with SMTP id t9mr3337128wmh.76.1547228631152;
-        Fri, 11 Jan 2019 09:43:51 -0800 (PST)
-Received: from debian-brgl.home ([2a01:cb1d:af:5b00:6d6c:8493:1ab5:dad7])
-        by smtp.gmail.com with ESMTPSA id 129sm28839338wmd.18.2019.01.11.09.43.49
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 11 Jan 2019 09:43:50 -0800 (PST)
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        stable@vger.kernel.org
-Subject: [PATCH v2] gpiolib: fix line event timestamps for nested irqs
-Date:   Fri, 11 Jan 2019 18:43:47 +0100
-Message-Id: <20190111174347.25040-1-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.19.1
+        Fri, 11 Jan 2019 12:44:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43872 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731396AbfAKRoM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 12:44:12 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 673B120874;
+        Fri, 11 Jan 2019 17:44:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547228651;
+        bh=O/HUrYYxLFFTdVRLBprksuW+5WBvx8+afTff2Pkw+Ko=;
+        h=Subject:In-Reply-To:References:Cc:To:From:Date:From;
+        b=r/HDcVsog+ppED98B7hQP4QzFFMYdbnlmzeSKDMREW6XSNk0jlkKTfYJNLeM2uP8R
+         uh4gsSn7cSNRoSAORr0hS64W0gRoYI+VIlKnat+x9HBTTUBp8284+12GGaAXpanWpz
+         z6S9TqQKGIiaw/LSSw14TiayIOUvPk2uPQ+MRlqM=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] dt-bindings: clock: Convert fixed-clock binding to json-schema
+User-Agent: alot/0.8
+In-Reply-To: <20190110221903.3990-4-robh@kernel.org>
+References: <20190110221903.3990-4-robh@kernel.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org
+To:     Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org
+Message-ID: <154722865051.169631.16957443589975628047@swboyd.mtv.corp.google.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+Date:   Fri, 11 Jan 2019 09:44:10 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Quoting Rob Herring (2019-01-10 14:19:01)
+> Convert the fixed-clock binding to DT schema format using json-schema.
+>=20
 
-Nested interrupts run inside the calling thread's context and the top
-half handler is never called which means that we never read the
-timestamp.
+Any pointer to the full schema?
 
-This issue came up when trying to read line events from a gpiochip
-using regmap_irq_chip for interrupts.
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> Cc: linux-clk@vger.kernel.org
+> Signed-off-by: Rob Herring <robh@kernel.org>
+[...]
+> diff --git a/Documentation/devicetree/bindings/clock/fixed-clock.yaml b/D=
+ocumentation/devicetree/bindings/clock/fixed-clock.yaml
+> new file mode 100644
+> index 000000000000..8b5628463b90
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/fixed-clock.yaml
+> @@ -0,0 +1,44 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/fixed-clock.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Binding for simple fixed-rate clock sources.
 
-Fix it by reading the timestamp from the irq thread function if it's
-still 0 by the time the second handler is called.
+Why does title have a full stop?
 
-Fixes: d58f2bf261fd ("gpio: Timestamp events in hardirq handler")
-Cc: stable@vger.kernel.org
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
----
-v1 -> v2:
-- add Fixes: to the commit message and Cc stable
-- directly assing ktime_get_real_ns() to ge.timestamp
+> +
+> +maintainers:
+> +  - Michael Turquette <mturquette@baylibre.com>
+> +  - Stephen Boyd <sboyd@kernel.org>
+> +
+> +properties:
+> +  compatible:
+> +    const: fixed-clock
+> +
+> +  "#clock-cells":
+> +    const: 0
+> +
+> +  clock-frequency: true
 
- drivers/gpio/gpiolib.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+Why doesn't this need the $ref: /schemas/types.yaml#/... thing?
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 1651d7f0a303..d1adfdf50fb3 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -828,7 +828,14 @@ static irqreturn_t lineevent_irq_thread(int irq, void *p)
- 	/* Do not leak kernel stack to userspace */
- 	memset(&ge, 0, sizeof(ge));
- 
--	ge.timestamp = le->timestamp;
-+	/*
-+	 * We may be running from a nested threaded interrupt in which case
-+	 * we didn't get the timestamp from lineevent_irq_handler().
-+	 */
-+	if (!le->timestamp)
-+		ge.timestamp = ktime_get_real_ns();
-+	else
-+		ge.timestamp = le->timestamp;
- 
- 	if (le->eflags & GPIOEVENT_REQUEST_RISING_EDGE
- 	    && le->eflags & GPIOEVENT_REQUEST_FALLING_EDGE) {
--- 
-2.19.1
+> +  clock-accuracy:
+> +    description: accuracy of clock in ppb (parts per billion).
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +
+> +  clock-output-names:
+> +    maxItems: 1
+
+Is there a schema for strings?
+
+> +
+> +required:
+> +  - compatible
+> +  - "#clock-cells"
+> +  - clock-frequency
+> +
+> +additionalProperties: false
+
+Does this always have to be specified even if it's false?
+
+> +
+> +examples:
+> +  - |
+> +    clock {
+> +      compatible =3D "fixed-clock";
+> +      #clock-cells =3D <0>;
+> +      clock-frequency =3D <1000000000>;
+> +      clock-accuracy =3D <100>;
+> +    };
+> +...
+>=20
+
+Is the triple dot part of the schema?
 
