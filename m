@@ -7,38 +7,38 @@ X-Spam-Status: No, score=-13.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89FA0C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:37:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D368BC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:37:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5BA1B21841
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:37:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A32352133F
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:37:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547217424;
-	bh=Bb6Lm4Yh8LHqw9hNc4S0OtLykEJ4Y/ufqF0IpXO0wmE=;
+	s=default; t=1547217428;
+	bh=nzi/7HJghO4Zo1n7urxSs+0LR2Sm8s61a8oLmS7AlJ4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=nxxwuwkNOUeOM2kxBWPDleRwHJw17ZhcEhQ3ipurI6ifFgQoJpi2L1ilCjZrIzgL1
-	 FXgpbscvVk94EJjB4VWsfHpU8+dfnjbwk7zXSYx5Pbmer3m9bvpGTWxK6ED3Revkzs
-	 jGjSYpYfEkLBlPOFV3B9U7YAINenZLMAQpNPGpfg=
+	b=ZAhJjOwY1j/YSRudIJd32q8Z/4cydqjd7Lvub41xcWdWHSyHNp6iu8Ek2rvTst6NH
+	 sk+Jc16p8M1VHYtSOoe4eHFyIq95SHop3IpfoLgB0m6bn1MNhCaqEYDJJCB9X+pFsK
+	 V3OeM+X5NcftsuK7qBRXo56tEi0l9ht/7M8DA7vs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390546AbfAKOhD (ORCPT
+        id S2390557AbfAKOhH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:37:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57410 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:37:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57464 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390529AbfAKOhA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:37:00 -0500
+        id S2390541AbfAKOhD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:37:03 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E3D15204EC;
-        Fri, 11 Jan 2019 14:36:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B3E422063F;
+        Fri, 11 Jan 2019 14:37:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547217419;
-        bh=Bb6Lm4Yh8LHqw9hNc4S0OtLykEJ4Y/ufqF0IpXO0wmE=;
+        s=default; t=1547217422;
+        bh=nzi/7HJghO4Zo1n7urxSs+0LR2Sm8s61a8oLmS7AlJ4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=c6OqgoHHFU4kU3k19BP70gvYiOSTQDPlF/zm8W85Dua1Kn+qre0mpV0hLNT1NRzRv
-         kZNrQ5Sa/11AdGOFtBnjWJ77/zoIMqBeZLp+guse1j14lrrfNSXhsYfkzigUkJthbD
-         55WjTp/QS2AtclpuXKMCjj9Q5lZaeUAMxBSprkwg=
+        b=nDm2JX1Ce4V/rtbd/6qf0wQDpqGji2yUDWoh2MYEsJ5AES7KrdLWNhbzJyuNWq8bS
+         GlyECSHtf4Rh0DY40UkScCxiczPnDxOLPK2x6tqUh+c8TVaLZMClWcN024jS89JMje
+         WRVPIUWgvD0XKwKoeQSU0yjZZXSTyrs48xrykJ80=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -46,9 +46,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Peng Li <lipeng321@huawei.com>,
         "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 052/148] net: hns: Avoid net reset caused by pause frames storm
-Date:   Fri, 11 Jan 2019 15:13:50 +0100
-Message-Id: <20190111131116.353117793@linuxfoundation.org>
+Subject: [PATCH 4.19 053/148] net: hns: Fix ntuple-filters status error.
+Date:   Fri, 11 Jan 2019 15:13:51 +0100
+Message-Id: <20190111131116.392678786@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131114.337122649@linuxfoundation.org>
 References: <20190111131114.337122649@linuxfoundation.org>
@@ -67,67 +67,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit a57275d35576fdd89d8c771eedf1e7cf97e0dfa6 ]
+[ Upstream commit 7e74a19ca522aec7c2be201a7ae1d1d57ded409b ]
 
-There will be a large number of MAC pause frames on the net,
-which caused tx timeout of net device. And then the net device
-was reset to try to recover it. So that is not useful, and will
-cause some other problems.
-
-So need doubled ndev->watchdog_timeo if device watchdog occurred
-until watchdog_timeo up to 40s and then try resetting to recover
-it.
-
-When collecting dfx information such as hardware registers when tx timeout.
-Some registers for count were cleared when read. So need move this task
-before update net state which also read the count registers.
+The ntuple-filters features is forced on by chip.
+But it shows "ntuple-filters: off [fixed]" when use ethtool.
+This patch make it correct with "ntuple-filters: on [fixed]".
 
 Signed-off-by: Yonglong Liu <liuyonglong@huawei.com>
 Signed-off-by: Peng Li <lipeng321@huawei.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/hisilicon/hns/hns_enet.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/hisilicon/hns/hns_enet.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/net/ethernet/hisilicon/hns/hns_enet.c b/drivers/net/ethernet/hisilicon/hns/hns_enet.c
-index 03d959c7a39f..8a53c82c72b4 100644
+index 8a53c82c72b4..6242249c9f4c 100644
 --- a/drivers/net/ethernet/hisilicon/hns/hns_enet.c
 +++ b/drivers/net/ethernet/hisilicon/hns/hns_enet.c
-@@ -1509,11 +1509,19 @@ static int hns_nic_net_stop(struct net_device *ndev)
- }
- 
- static void hns_tx_timeout_reset(struct hns_nic_priv *priv);
-+#define HNS_TX_TIMEO_LIMIT (40 * HZ)
- static void hns_nic_net_timeout(struct net_device *ndev)
- {
- 	struct hns_nic_priv *priv = netdev_priv(ndev);
- 
--	hns_tx_timeout_reset(priv);
-+	if (ndev->watchdog_timeo < HNS_TX_TIMEO_LIMIT) {
-+		ndev->watchdog_timeo *= 2;
-+		netdev_info(ndev, "watchdog_timo changed to %d.\n",
-+			    ndev->watchdog_timeo);
-+	} else {
-+		ndev->watchdog_timeo = HNS_NIC_TX_TIMEOUT;
-+		hns_tx_timeout_reset(priv);
-+	}
- }
- 
- static int hns_nic_do_ioctl(struct net_device *netdev, struct ifreq *ifr,
-@@ -2076,11 +2084,11 @@ static void hns_nic_service_task(struct work_struct *work)
- 		= container_of(work, struct hns_nic_priv, service_task);
- 	struct hnae_handle *h = priv->ae_handle;
- 
-+	hns_nic_reset_subtask(priv);
- 	hns_nic_update_link_status(priv->netdev);
- 	h->dev->ops->update_led_status(h);
- 	hns_nic_update_stats(priv->netdev);
- 
--	hns_nic_reset_subtask(priv);
- 	hns_nic_service_event_complete(priv);
- }
- 
+@@ -2374,7 +2374,7 @@ static int hns_nic_dev_probe(struct platform_device *pdev)
+ 	ndev->min_mtu = MAC_MIN_MTU;
+ 	switch (priv->enet_ver) {
+ 	case AE_VERSION_2:
+-		ndev->features |= NETIF_F_TSO | NETIF_F_TSO6;
++		ndev->features |= NETIF_F_TSO | NETIF_F_TSO6 | NETIF_F_NTUPLE;
+ 		ndev->hw_features |= NETIF_F_IP_CSUM | NETIF_F_IPV6_CSUM |
+ 			NETIF_F_RXCSUM | NETIF_F_SG | NETIF_F_GSO |
+ 			NETIF_F_GRO | NETIF_F_TSO | NETIF_F_TSO6;
 -- 
 2.19.1
 
