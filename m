@@ -2,67 +2,114 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 339B9C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 06:27:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92BC0C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 06:29:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 04A9C20872
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 06:27:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5E5B520872
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 06:29:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G8t9+leX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730727AbfAKG1y convert rfc822-to-8bit (ORCPT
+        id S1730786AbfAKG3T (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 01:27:54 -0500
-Received: from mout.gmx.net ([212.227.15.19]:32931 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729109AbfAKG1x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 01:27:53 -0500
-Received: from frank-bq ([91.14.68.96]) by mail.gmx.com (mrgmx001
- [212.227.17.190]) with ESMTPSA (Nemesis) id 0Lj1jy-1hGd9L0tNW-00dGCP; Fri, 11
- Jan 2019 07:27:45 +0100
-Date:   Fri, 11 Jan 2019 07:27:40 +0100
-User-Agent: K-9 Mail for Android
-In-Reply-To: <685063fd-a1c2-954a-db1e-b1339ad90e15@gmail.com>
-References: <20190111144818.0fe8bde2@canb.auug.org.au> <685063fd-a1c2-954a-db1e-b1339ad90e15@gmail.com>
+        Fri, 11 Jan 2019 01:29:19 -0500
+Received: from mail-pl1-f178.google.com ([209.85.214.178]:34739 "EHLO
+        mail-pl1-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730368AbfAKG3S (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 01:29:18 -0500
+Received: by mail-pl1-f178.google.com with SMTP id w4so6322652plz.1;
+        Thu, 10 Jan 2019 22:29:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
+        bh=OdodkZXE/tn4FSNB0NpaxXBP5rBK66K7xUvRbQ3QQps=;
+        b=G8t9+leX/R+b0ea637u0vaiVTBYH/thNk4j8J2YXFUfoDOIgML7QaQJLJa17tZvJ96
+         0zpSXmjPSAoVMX7vC6b8e+Wi/tG/3Wq375t2irMV4ZgIVSlrQW4y5eNhT1GdY1/8Idtj
+         Qg7uVlR2alC0mzFDOaTHB5bW2IYuGA3KcuX3i7Wct6/4PhQi1ldCNs+2NqKMYxvClvTY
+         Kw++50Mlkb5h8v3hMRS1biZjrdi/as+njR0LAhHE+qV+JtNOodzwzlxoTwA+KY4NvJ7L
+         ySGq6h9WcrtBwp+6+hGy5Qq3G6P1jdC0EIPKSB3tEIzFiX23JAAjey89VNBfcDPLmxd+
+         tknQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to;
+        bh=OdodkZXE/tn4FSNB0NpaxXBP5rBK66K7xUvRbQ3QQps=;
+        b=V5V/TVm2j/rfPth4Mtrfkl80CYAQCzjFnVeB8QM7trCi54wmbPIMif9qh0MdOXljaL
+         eoizENJMvgOG0aj49iahN1YpnVLz2zFjGiSNvDo+an6CXRvu9Z/GlDqQAaAURYahsqxv
+         dFfPecvtJX7p0RzSxhKBmHeTe/fo2ZqkOP66d10nl1PhfDIqRgmVuYSyohSpsja95SJ7
+         mJX2powohiYBwZmaUOu8Y94I3LEWH5Bh1X3INRjy66mX0jqCPAJ2F7K+i9ojgYiWIsNr
+         333olmrtyCbCo7b+G0V94FSs/tNMeb0DG2w3Ime0PRIc90y1AmBqtWFo3pBMYqr+nB0e
+         tQFw==
+X-Gm-Message-State: AJcUukelZzHZcOJK6+r6R9ARrdNVU8D3xDrjPTswsGQRbdluezaDjCNF
+        hoTpoe9WZPlQTwOa3bqcDRoXxnWB1/C6O1nT6zr8mg==
+X-Google-Smtp-Source: ALg8bN6xDNakegZu5VO6zYghKXQP1Fybl0Cs/tbckQHCGLzY5SIhE+zYpSmJlCCVcGebE67V5BXbUchc1wYHxesUWX8=
+X-Received: by 2002:a17:902:e085:: with SMTP id cb5mr13277448plb.24.1547188156884;
+ Thu, 10 Jan 2019 22:29:16 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Subject: Re: linux-next: Signed-off-by missing for commit in the net tree
-Reply-to: frank-w@public-files.de
-To:     Heiner Kallweit <hkallweit1@gmail.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        David Miller <davem@davemloft.net>,
-        Networking <netdev@vger.kernel.org>
-CC:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-From:   Frank Wunderlich <frank-w@public-files.de>
-Message-ID: <6892B6C2-5432-41BD-AAD2-28C8D7233273@public-files.de>
-X-Provags-ID: V03:K1:70q7tXRiBYeh+HxmlfzIhQmck/MDskJTyzhNykfKzhki1NSIEMx
- 9LNNl/608JgQHtF/HmBLuMlCoP4PxYpZ+F7rzFXhC1a/r/xCDKTsOrOHxlscYPTRQXzHHpb
- HlSHVKunfa4/dfEHwlSEjjjekv8rpQLpyP4QFczGP2UonXYmyCITjYl1lJRRl9KJVXr+PEB
- 5+81UyiUtaigOrWgyz7wA==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:gmoOoBUCX/I=:F2fR771sjubIG7dTPXf7la
- YPp9F4tD5QGA5wHpNANcba9EwqFppNgQlOGikkc7jQKEOXwssAC4Rc1v+qR9Gt9SwDcumNgE3
- 5eac3sbjnFCXLeBqxV7Yuor0BmRLpIw+0JnkTCoSVXcbH8fSvhO5+0vSVp8ufn1vYiB+9oNTX
- J1RaO9fgLTZsAvRDQh9uoXEZXUN2ifz0k9bJei9yhKw3FN1G+m9yJ2PIJ1m4aZX3EdcQKE7To
- jD/WNbKDe36aaWuZeLxOnpDU37onigrHz8PnMyTehajdXB3EwEtujua6fQqJxnwfGhv/Zi3h3
- R3s5PEsSFhzf+qLPWzUmYb+SN4BNN+FtCfRgpkEZ2oHEvGkcxkGBPElo/KlRSCfOsfZYLkTWk
- a9SBNSwWd/C9RFPzlFjfbh7z4GqeQgRTW2rdVG56SdFkFtXp7VGz7peMdPx8/rcy/vJx891NA
- xB+q6xJs8QRdlMDWPmp2Ksxkda8AR0R3IzusoB0IXW443x2HJt2ClwL739nBBR/TkPtd40FRb
- zLIWYJ3eXIuS7SMhMF8pFKkP4pb15GRZtGkgSSegUoGi9CZi00jBxJ+p6zUjT7abfA63uXup5
- rHuCpKw6AMWorxFhjYX5U2fM1PCYFfLQH4W2vKc7OB98t3f+/UptyNbI7i4mAGXfRYzx9IZhs
- piIJSvVG2sYyL0AK7y6ZEnKmY8UZo8J4OZPlKxY5+cN4/c2OV4wnxLiYWD7LSHkWj1P4NPc89
- aeNrvm/PaTt1ggXAe0qSg58y/tblVYOwuo+0iLHCHh4jeFeh0lDgbDylCrEpu+ntcAaX5iutq
- ahRN8dVtKaCNQGGFmgeGg/jIRfs4NuI0GaAIyNjkLpNsrrhR7oWt/X4cQgATeN9habHaOcr41
- cq7VfRFCmljk/GhtdG0tl+QleZzXwOuNyk0+XMgn5ZygOFd2DnH9p8m3lV2w2ldRpYmZ+Fdfw
- XHDXDuRonmQ==
+References: <1547159098-19011-1-git-send-email-pshilov@microsoft.com> <1547159098-19011-5-git-send-email-pshilov@microsoft.com>
+In-Reply-To: <1547159098-19011-5-git-send-email-pshilov@microsoft.com>
+From:   Steve French <smfrench@gmail.com>
+Date:   Fri, 11 Jan 2019 00:29:04 -0600
+Message-ID: <CAH2r5mtF41PP_CJ_VDNdftJycNh53mOemC5FN-PYGGN3Hg=ETA@mail.gmail.com>
+Subject: Fwd: [PATCH 4/7] CIFS: Do not hide EINTR after sending network packets
+To:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Should i make v3 with all tags or me as author?
+Pavel's patch looks correct to me, but since this may be a common
+issue, how to better handle unexpected EINTR on sock_sendmsg, others
+outside cifs/smb3 world may have run into this before and have
+additional comments.
 
-Regards Frank
+---------- Forwarded message ---------
+From: Pavel Shilovsky <piastryyy@gmail.com>
+Date: Thu, Jan 10, 2019 at 4:25 PM
+Subject: [PATCH 4/7] CIFS: Do not hide EINTR after sending network packets
+To: <linux-cifs@vger.kernel.org>
+Cc: Steve French <smfrench@gmail.com>, Ronnie Sahlberg <lsahlber@redhat.com>
+
+
+Currently we hide EINTR code returned from sock_sendmsg()
+and return 0 instead. This makes a caller think that we
+have successfully completed the network operation which is
+not true. Fix this by properly returning EINTR to callers.
+
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Pavel Shilovsky <pshilov@microsoft.com>
+---
+ fs/cifs/transport.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/cifs/transport.c b/fs/cifs/transport.c
+index e047f06..aaff9c5 100644
+--- a/fs/cifs/transport.c
++++ b/fs/cifs/transport.c
+@@ -387,7 +387,7 @@ __smb_send_rqst(struct TCP_Server_Info *server,
+int num_rqst,
+        if (rc < 0 && rc != -EINTR)
+                cifs_dbg(VFS, "Error %d sending data on socket to server\n",
+                         rc);
+-       else
++       else if (rc > 0)
+                rc = 0;
+
+        return rc;
+--
+2.7.4
+
+
+
+-- 
+Thanks,
+
+Steve
