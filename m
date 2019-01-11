@@ -2,111 +2,102 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E27AC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:33:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3CACC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:37:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F3369218C3
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:33:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rqCdQJf0"
+	by mail.kernel.org (Postfix) with ESMTP id BCC1420836
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:37:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733132AbfAKPdY (ORCPT
+        id S1730605AbfAKPhU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 10:33:24 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:39687 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730193AbfAKPdY (ORCPT
+        Fri, 11 Jan 2019 10:37:20 -0500
+Received: from www262.sakura.ne.jp ([202.181.97.72]:38123 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728632AbfAKPhT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 10:33:24 -0500
-Received: by mail-pf1-f193.google.com with SMTP id r136so7100241pfc.6
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Jan 2019 07:33:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=dIgoxrKtHZ5BuC4BTF7icHBp5uTqqFOdRNmLX2AjHBc=;
-        b=rqCdQJf0xTNxdbeLXWaO1qle9NAphP5wp5LYt8D8RFab5kXeL19cMQ2k3pkQU4+Dfm
-         NO3TDT8OXSWPUs08cdlI+5CHMjXHpsmjWHXptqMPrDgfar94+0c6ZLk2plejJ7yE5vtI
-         mKNS52bOxnrNkQam+SPZMXpNwkG7Y8f9ymIOX/2YTCJFaJlat7GhpYNygzt3zaUwlC9C
-         gwaD9Ze/rxqy+H3y5BhMST25h+gxLLrU5tLnLpvGNUwjW438HEH8puk3x8P5cpU1+iQy
-         sH+Eza9q8AvL5j+VVKcf0WM9Ju4RxsdQlc20fd+oFIBINfft9cAp5jvpVrKPOZKohuRf
-         WWzA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=dIgoxrKtHZ5BuC4BTF7icHBp5uTqqFOdRNmLX2AjHBc=;
-        b=VXXQ75oD+Y7mN+6wV+eILf+gbZB5F8h+sEALquXXqK8LX8CD8bEfYUXFk+LHcLQaYU
-         fc+145WlAZlwa8Ea0xWBtc+2PxFO5EVj/WVFgCGH5lpC48znJjL7FA6Jx4wHozJ1EPnz
-         GccjF9tu6O4zyUqRwCgCdb729SawnPFZ0HtoEnqay6YMjjuTpxRbt++iGJ/UteqJI3oI
-         A/U9WDH9VMYG6SAvZBerMHk8rOVTF7VvZFniUuRrggv2Vu43rLRP92W6sP0Oh4bOaht+
-         NjcpI6VN8TxC1SLShtt9Vr11NiBwu0ePTn25EvZGOu2t0mZ3QDgwd8keH3cmZvF4l+C9
-         dxWA==
-X-Gm-Message-State: AJcUukfAzmSi0jUeUvdRdaI5GmdmAal80sArD51OYXt+8qBtn+pBZAdY
-        fq2Y00ZnDqo1zaDy/X06D6s=
-X-Google-Smtp-Source: ALg8bN6BdWI7TjyfVdfaKM+5viQbM93hH1qKfiluPjbr83WWRZKb8EL6k88OVdJcZa+gxwVrz/dBgg==
-X-Received: by 2002:a62:d448:: with SMTP id u8mr14963906pfl.105.1547220803382;
-        Fri, 11 Jan 2019 07:33:23 -0800 (PST)
-Received: from nishad ([106.51.25.107])
-        by smtp.gmail.com with ESMTPSA id f20sm99778435pfn.177.2019.01.11.07.33.20
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 11 Jan 2019 07:33:22 -0800 (PST)
-Date:   Fri, 11 Jan 2019 21:03:16 +0530
-From:   Nishad Kamdar <nishadkamdar@gmail.com>
-To:     Johan Hovold <johan@kernel.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alex Elder <elder@kernel.org>,
-        Rui Miguel Silva <rmfrfs@gmail.com>,
-        greybus-dev@lists.linaro.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org,
-        Nishad Kamdar <nishadkamdar@gmail.com>
-Subject: [PATCH v6 0/2]  greybus: gpio: Switch to the gpio descriptor
- interface
-Message-ID: <cover.1547219996.git.nishadkamdar@gmail.com>
+        Fri, 11 Jan 2019 10:37:19 -0500
+Received: from fsav305.sakura.ne.jp (fsav305.sakura.ne.jp [153.120.85.136])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x0BFb5oD003418;
+        Sat, 12 Jan 2019 00:37:05 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav305.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav305.sakura.ne.jp);
+ Sat, 12 Jan 2019 00:37:05 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav305.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank126126163036.bbtec.net [126.126.163.36])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x0BFb5gc003406
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
+        Sat, 12 Jan 2019 00:37:05 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: [PATCH 0/2] oom, memcg: do not report racy no-eligible OOM
+To:     Michal Hocko <mhocko@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-mm@kvack.org, Johannes Weiner <hannes@cmpxchg.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <e55fb27c-f23b-0ac5-acfd-7265c0a3b8dc@i-love.sakura.ne.jp>
+ <20190109120212.GT31793@dhcp22.suse.cz>
+ <201901102359.x0ANxIbn020225@www262.sakura.ne.jp>
+ <fbdfdfeb-5664-ddf3-4d65-c64f9851ac26@i-love.sakura.ne.jp>
+ <20190111113354.GD14956@dhcp22.suse.cz>
+ <0d67b389-91e2-18ab-b596-39361b895c89@i-love.sakura.ne.jp>
+ <20190111133401.GA6997@dhcp22.suse.cz>
+ <d9f7b139-d51b-93ae-b5ad-856fd9f2c168@i-love.sakura.ne.jp>
+ <20190111150703.GI14956@dhcp22.suse.cz>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <baa43a5a-6cae-bc4e-5911-13d4bfcd32f2@i-love.sakura.ne.jp>
+Date:   Sat, 12 Jan 2019 00:37:05 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20190111150703.GI14956@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch series converts uses of the old GPIO API to the GPIO
-descriptor API. It also converts the GPIO driver to use the
-GPIO irqchip library GPIOLIB_IRQCHIP instead of repimplementing
-the same.
+On 2019/01/12 0:07, Michal Hocko wrote:
+> On Fri 11-01-19 23:31:18, Tetsuo Handa wrote:
+>> The OOM killer invoked by [ T9694] called printk() but didn't kill anything.
+>> Instead, SIGINT from Ctrl-C killed all thread groups sharing current->mm.
+> 
+> I still do not get it. Those other processes are not sharing signals.
+> Or is it due to injecting the signal too all of them with the proper
+> timing?
 
-Changes in v6:
- - Patchset now contains two patches as the patch
-   1 has been accepted.
- - Changes mentioned in individual patches of the set.
-Changes in v5:
- - Drop the patch which uses gpiochip_get_data() in place of
-   gpio_chip_to_gb_gpio_controller() as of now.
- - This is because it currently breaks the driver, since
-   gpiochip_add() sets the data pointer to NULL.  
-Changes in v4:
- - Changes mentioned in individual patches of the set.
-Changes in v3:
- - Combines the latest versions of the three greybus patches together
-   in a patch series.
+Pressing Ctrl-C between after task_will_free_mem(p) in oom_kill_process() and
+before __oom_kill_process() (e.g. dump_header()) made fatal_signal_pending() = T
+for all of them.
 
-Nishad Kamdar (2):
-  staging: greybus: arche-apb-ctrl.c: Switch to the gpio descriptor
-    interface
-  staging: greybus: arche-platform: Switch to the gpio descriptor
-    interface
+> Anyway, could you update your patch and abstract 
+> 	if (unlikely(tsk_is_oom_victim(current) ||
+> 		     fatal_signal_pending(current) ||
+> 		     current->flags & PF_EXITING))
+> 
+> in try_charge and reuse it in mem_cgroup_out_of_memory under the
+> oom_lock with an explanation please?
 
- drivers/staging/greybus/arche-apb-ctrl.c | 152 +++++++++--------------
- drivers/staging/greybus/arche-platform.c | 124 ++++++------------
- 2 files changed, 102 insertions(+), 174 deletions(-)
+I don't think doing so makes sense, for
 
--- 
-2.17.1
+  tsk_is_oom_victim(current) = T && fatal_signal_pending(current) == F
+
+can't happen for mem_cgroup_out_of_memory() under the oom_lock, and
+current->flags cannot get PF_EXITING when current is inside
+mem_cgroup_out_of_memory(). fatal_signal_pending(current) alone is
+appropriate for mem_cgroup_out_of_memory() under the oom_lock because
+
+  tsk_is_oom_victim(current) = F && fatal_signal_pending(current) == T
+
+can happen there.
+
+Also, doing so might become wrong in future, for mem_cgroup_out_of_memory()
+is also called from memory_max_write() which does not bail out upon
+PF_EXITING. I don't think we can call memory_max_write() after current
+thread got PF_EXITING, but nobody knows what change will happen in future.
 
