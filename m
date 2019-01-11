@@ -2,68 +2,106 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.5 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AC1EC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 18:18:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A153C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 18:21:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D52C21841
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 18:18:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="m+Cf+HAs"
+	by mail.kernel.org (Postfix) with ESMTP id C9A13205C9
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 18:21:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390049AbfAKSSF (ORCPT
+        id S1732758AbfAKSVC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 13:18:05 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:47540 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725446AbfAKSRv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 13:17:51 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=1OVXCR1mjUwq4tLpezy0do9F2yqLN8Ngt8OXoBccdbg=; b=m+Cf+HAs/tuj1zPW6T420dWrV
-        zYwtxVEbSoxOaEKDccke0S3tb8J+kpAICy9SmATcqo7h1SW1GVqNtDKjWWwK8x5x6PkaiWnUQd8Xn
-        LvvAsZRZsuhpS3kyT4062XKvYQGt71pvh10h7tDg9mvPjK8KVAm3FeHmMtvLuOuq1oEwwXCr7uLb3
-        3eHjO1cD2hLZvPuLd4QsIfnhdzsoMRgtX9eQnE+oY+ngbjeLuR4sYRqUjmLyQYVz7zfIblxiiF8Uo
-        FSRps+jVE+kD1DfQ83zUydf7+GivJljiZ8SKYFOo+VF8VbORuPRb8zaV1xjslnP/Y/pT9gMo/00Vh
-        qF6/KVAaQ==;
-Received: from 089144213167.atnat0022.highway.a1.net ([89.144.213.167] helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gi1NB-0000vd-Dk; Fri, 11 Jan 2019 18:17:37 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     Pawel Osciak <pawel@osciak.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>
-Cc:     Russell King <linux@armlinux.org.uk>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        iommu@lists.linux-foundation.org,
-        linux-arm-kernel@lists.infradead.org,
-        linuxppc-dev@lists.ozlabs.org, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: fix a layering violation in videobuf2 and improve dma_map_resource
-Date:   Fri, 11 Jan 2019 19:17:28 +0100
-Message-Id: <20190111181731.11782-1-hch@lst.de>
-X-Mailer: git-send-email 2.20.1
+        Fri, 11 Jan 2019 13:21:02 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:33162 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730454AbfAKSVB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 13:21:01 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 30FEF80D;
+        Fri, 11 Jan 2019 10:21:01 -0800 (PST)
+Received: from fuggles.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 217443F6CF;
+        Fri, 11 Jan 2019 10:20:59 -0800 (PST)
+Date:   Fri, 11 Jan 2019 18:20:57 +0000
+From:   Will Deacon <will.deacon@arm.com>
+To:     torvalds@linux-foundation.org
+Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        catalin.marinas@arm.com, lorenzo.pieralisi@arm.com
+Subject: [GIT PULL] arm64: fixes for -rc2
+Message-ID: <20190111182057.GB32645@fuggles.cambridge.arm.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.11.1+86 (6f28e57d73f2) ()
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi all,
+Hi Linus,
 
-this series fixes a rather gross layering violation in videobuf2, which
-pokes into arm DMA mapping internals to get a DMA address for memory that
-does not have a page structure, and to do so fixes up the dma_map_resource
-implementation to be practically useful.
+Another handful of arm64 fixes here. Most of the complication comes from
+improving our kpti code to avoid lengthy pauses (30+ seconds) during boot
+when we rewrite the page tables. There are also a couple of IORT fixes
+that came in via Lorenzo. Usual summary in the tag.
+
+Please pull,
+
+Thanks,
+
+Will
+
+--->8
+
+The following changes since commit bfeffd155283772bbe78c6a05dec7c0128ee500c:
+
+  Linux 5.0-rc1 (2019-01-06 17:08:20 -0800)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git tags/arm64-fixes
+
+for you to fetch changes up to 279667212ab2a4f36c3b0347657ddcc11f9cfa25:
+
+  arm64: kexec_file: return successfully even if kaslr-seed doesn't exist (2019-01-11 10:10:51 +0000)
+
+----------------------------------------------------------------
+arm64 fixes for -rc2
+
+- Don't error in kexec_file_load if kaslr-seed is missing in device-tree
+
+- Fix incorrect argument type passed to iort_match_node_callback()
+
+- Fix IORT build failure when CONFIG_IOMMU_API=n
+
+- Fix kpti performance regression with new rodata default option
+
+- Typo fix
+
+----------------------------------------------------------------
+AKASHI Takahiro (1):
+      arm64: kexec_file: return successfully even if kaslr-seed doesn't exist
+
+Jean-Philippe Brucker (1):
+      ACPI/IORT: Fix rc_dma_get_range()
+
+Qian Cai (1):
+      ACPI/IORT: Fix build when CONFIG_IOMMU_API=n
+
+Will Deacon (2):
+      arm64: asm-prototypes: Fix fat-fingered typo in comment
+      arm64: kpti: Avoid rewriting early page tables when KASLR is enabled
+
+ arch/arm64/include/asm/asm-prototypes.h |  2 +-
+ arch/arm64/include/asm/mmu.h            | 41 +++++++++++++++++++++++++++++++++
+ arch/arm64/include/asm/pgtable-prot.h   |  4 ++--
+ arch/arm64/kernel/cpu_errata.c          |  2 +-
+ arch/arm64/kernel/cpufeature.c          |  9 ++++++--
+ arch/arm64/kernel/head.S                |  1 +
+ arch/arm64/kernel/machine_kexec_file.c  |  4 +++-
+ drivers/acpi/arm64/iort.c               |  5 ++--
+ 8 files changed, 59 insertions(+), 9 deletions(-)
