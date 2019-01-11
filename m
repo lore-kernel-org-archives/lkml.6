@@ -7,53 +7,52 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37738C43444
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:48:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CAA9C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:48:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F21422063F
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:48:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ECF0E21872
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:48:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547218089;
-	bh=ALJSbr3o1WPgOeVXEOLA9T1IHgFEur3nJmIds5Seupc=;
+	s=default; t=1547218095;
+	bh=71JzEisJYWZsj3eTYxi1gQOwQc8jLi+td/2BsyfvgUM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=x4jc1MHwi4+F7r2ydTYEdA00ZepHeWVEoGG9rqEoknf2o7m8xgOG3N7Q5FP7Gi/Ad
-	 WkyKmvT3HJsTm/HxcrZcXbGlr0/WqUL+IFOhOsZpn6iW8UW2LZeZHokunCYLAVtHeK
-	 RgWVB5gHDgmZrXcOpAftbI48FiZF5q+eN7DHlTx8=
+	b=C3Wy/arXkjP4Yf4JLZZbNghNgbHy8LfT9HsYPTwwF7s7uZA+Abm8N1AwzvnqSH9Gd
+	 IKSios5y8/tDNalTiY9MApNDdFtPJAs9gHCm1W4JAcRbKAQy5iIDhwxydsqTwI1kQ9
+	 L+D60IZHCQNa8PQBKXGVEIBlMX+bi5qIEIzTeWwk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391335AbfAKOmA (ORCPT
+        id S2404069AbfAKOl5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:42:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34704 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:41:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34610 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404057AbfAKOly (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:41:54 -0500
+        id S2404044AbfAKOlu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:41:50 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 712FC21841;
-        Fri, 11 Jan 2019 14:41:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7F2BD2063F;
+        Fri, 11 Jan 2019 14:41:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547217713;
-        bh=ALJSbr3o1WPgOeVXEOLA9T1IHgFEur3nJmIds5Seupc=;
+        s=default; t=1547217709;
+        bh=71JzEisJYWZsj3eTYxi1gQOwQc8jLi+td/2BsyfvgUM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YO8QfMw7t7H9ewpFJCizjt7ElDx7V+bTNFbazAF4xWRwA7EJ+D4nxS//RYUGqPJbv
-         42at+529sezckX8Spsi2s5VSxVRtg+1bd6nC7wulmPtwXH9CUzju8o1T2Lw6NOY51g
-         cx6gr8TIlAN3vScAeZ3JgsD/H0THA3JWdLetmdMk=
+        b=P1tieIm15y0ZZDsCs19gsowMp383lAi7Sn6YvpQ+xhFlOb+6SdtfJiyj9O0GNPJ8x
+         CQg2sMWtYgu52100wzsKv/Nv4Ew0vfbUMrqlccSy+CSIjX/kfyo3dpU96ojULwvqP0
+         0xesfWAEavEIxD8iuROAMm9eXM+HxYiSwyIC+n4s=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
         Christoph Hellwig <hch@lst.de>,
         =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Balbir Singh <bsingharora@gmail.com>,
         Michal Hocko <mhocko@suse.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Balbir Singh <bsingharora@gmail.com>
-Subject: [PATCH 4.20 15/65] mm, hmm: mark hmm_devmem_{add, add_resource} EXPORT_SYMBOL_GPL
-Date:   Fri, 11 Jan 2019 15:15:01 +0100
-Message-Id: <20190111131058.494129031@linuxfoundation.org>
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.20 13/65] mm, hmm: use devm semantics for hmm_devmem_{add, remove}
+Date:   Fri, 11 Jan 2019 15:14:59 +0100
+Message-Id: <20190111131058.239240598@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131055.331350141@linuxfoundation.org>
 References: <20190111131055.331350141@linuxfoundation.org>
@@ -74,163 +73,285 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Dan Williams <dan.j.williams@intel.com>
 
-commit 02917e9f8676207a4c577d4d94eae12bf348e9d7 upstream.
+commit 58ef15b765af0d2cbe6799ec564f1dc485010ab8 upstream.
 
-At Maintainer Summit, Greg brought up a topic I proposed around
-EXPORT_SYMBOL_GPL usage.  The motivation was considerations for when
-EXPORT_SYMBOL_GPL is warranted and the criteria for taking the exceptional
-step of reclassifying an existing export.  Specifically, I wanted to make
-the case that although the line is fuzzy and hard to specify in abstract
-terms, it is nonetheless clear that devm_memremap_pages() and HMM
-(Heterogeneous Memory Management) have crossed it.  The
-devm_memremap_pages() facility should have been EXPORT_SYMBOL_GPL from the
-beginning, and HMM as a derivative of that functionality should have
-naturally picked up that designation as well.
+devm semantics arrange for resources to be torn down when
+device-driver-probe fails or when device-driver-release completes.
+Similar to devm_memremap_pages() there is no need to support an explicit
+remove operation when the users properly adhere to devm semantics.
 
-Contrary to typical rules, the HMM infrastructure was merged upstream with
-zero in-tree consumers.  There was a promise at the time that those users
-would be merged "soon", but it has been over a year with no drivers
-arriving.  While the Nouveau driver is about to belatedly make good on
-that promise it is clear that HMM was targeted first and foremost at an
-out-of-tree consumer.
+Note that devm_kzalloc() automatically handles allocating node-local
+memory.
 
-HMM is derived from devm_memremap_pages(), a facility Christoph and I
-spearheaded to support persistent memory.  It combines a device lifetime
-model with a dynamically created 'struct page' / memmap array for any
-physical address range.  It enables coordination and control of the many
-code paths in the kernel built to interact with memory via 'struct page'
-objects.  With HMM the integration goes even deeper by allowing device
-drivers to hook and manipulate page fault and page free events.
-
-One interpretation of when EXPORT_SYMBOL is suitable is when it is
-exporting stable and generic leaf functionality.  The
-devm_memremap_pages() facility continues to see expanding use cases,
-peer-to-peer DMA being the most recent, with no clear end date when it
-will stop attracting reworks and semantic changes.  It is not suitable to
-export devm_memremap_pages() as a stable 3rd party driver API due to the
-fact that it is still changing and manipulates core behavior.  Moreover,
-it is not in the best interest of the long term development of the core
-memory management subsystem to permit any external driver to effectively
-define its own system-wide memory management policies with no
-encouragement to engage with upstream.
-
-I am also concerned that HMM was designed in a way to minimize further
-engagement with the core-MM.  That, with these hooks in place,
-device-drivers are free to implement their own policies without much
-consideration for whether and how the core-MM could grow to meet that
-need.  Going forward not only should HMM be EXPORT_SYMBOL_GPL, but the
-core-MM should be allowed the opportunity and stimulus to change and
-address these new use cases as first class functionality.
-
-Original changelog:
-
-hmm_devmem_add(), and hmm_devmem_add_resource() duplicated
-devm_memremap_pages() and are now simple now wrappers around the core
-facility to inject a dev_pagemap instance into the global pgmap_radix and
-hook page-idle events.  The devm_memremap_pages() interface is base
-infrastructure for HMM.  HMM has more and deeper ties into the kernel
-memory management implementation than base ZONE_DEVICE which is itself a
-EXPORT_SYMBOL_GPL facility.
-
-Originally, the HMM page structure creation routines copied the
-devm_memremap_pages() code and reused ZONE_DEVICE.  A cleanup to unify the
-implementations was discussed during the initial review:
-http://lkml.iu.edu/hypermail/linux/kernel/1701.2/00812.html Recent work to
-extend devm_memremap_pages() for the peer-to-peer-DMA facility enabled
-this cleanup to move forward.
-
-In addition to the integration with devm_memremap_pages() HMM depends on
-other GPL-only symbols:
-
-    mmu_notifier_unregister_no_release
-    percpu_ref
-    region_intersects
-    __class_create
-
-It goes further to consume / indirectly expose functionality that is not
-exported to any other driver:
-
-    alloc_pages_vma
-    walk_page_range
-
-HMM is derived from devm_memremap_pages(), and extends deep core-kernel
-fundamentals. Similar to devm_memremap_pages(), mark its entry points
-EXPORT_SYMBOL_GPL().
-
-[logang@deltatee.com: PCI/P2PDMA: match interface changes to devm_memremap_pages()]
-  Link: http://lkml.kernel.org/r/20181130225911.2900-1-logang@deltatee.com
-Link: http://lkml.kernel.org/r/154275560565.76910.15919297436557795278.stgit@dwillia2-desk3.amr.corp.intel.com
+Link: http://lkml.kernel.org/r/154275559545.76910.9186690723515469051.stgit@dwillia2-desk3.amr.corp.intel.com
 Signed-off-by: Dan Williams <dan.j.williams@intel.com>
-Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
 Reviewed-by: Christoph Hellwig <hch@lst.de>
-Cc: Logan Gunthorpe <logang@deltatee.com>
+Reviewed-by: Jérôme Glisse <jglisse@redhat.com>
 Cc: "Jérôme Glisse" <jglisse@redhat.com>
-Cc: Balbir Singh <bsingharora@gmail.com>,
+Cc: Logan Gunthorpe <logang@deltatee.com>
+Cc: Balbir Singh <bsingharora@gmail.com>
 Cc: Michal Hocko <mhocko@suse.com>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
 Cc: <stable@vger.kernel.org>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/pci/p2pdma.c |   10 ++--------
- mm/hmm.c             |    4 ++--
- 2 files changed, 4 insertions(+), 10 deletions(-)
+ include/linux/hmm.h |    4 -
+ mm/hmm.c            |  127 +++++++++-------------------------------------------
+ 2 files changed, 25 insertions(+), 106 deletions(-)
 
---- a/drivers/pci/p2pdma.c
-+++ b/drivers/pci/p2pdma.c
-@@ -82,10 +82,8 @@ static void pci_p2pdma_percpu_release(st
- 	complete_all(&p2p->devmap_ref_done);
- }
- 
--static void pci_p2pdma_percpu_kill(void *data)
-+static void pci_p2pdma_percpu_kill(struct percpu_ref *ref)
- {
--	struct percpu_ref *ref = data;
--
- 	/*
- 	 * pci_p2pdma_add_resource() may be called multiple times
- 	 * by a driver and may register the percpu_kill devm action multiple
-@@ -198,6 +196,7 @@ int pci_p2pdma_add_resource(struct pci_d
- 	pgmap->type = MEMORY_DEVICE_PCI_P2PDMA;
- 	pgmap->pci_p2pdma_bus_offset = pci_bus_address(pdev, bar) -
- 		pci_resource_start(pdev, bar);
-+	pgmap->kill = pci_p2pdma_percpu_kill;
- 
- 	addr = devm_memremap_pages(&pdev->dev, pgmap);
- 	if (IS_ERR(addr)) {
-@@ -211,11 +210,6 @@ int pci_p2pdma_add_resource(struct pci_d
- 	if (error)
- 		goto pgmap_free;
- 
--	error = devm_add_action_or_reset(&pdev->dev, pci_p2pdma_percpu_kill,
--					  &pdev->p2pdma->devmap_ref);
--	if (error)
--		goto pgmap_free;
--
- 	pci_info(pdev, "added peer-to-peer DMA memory %pR\n",
- 		 &pgmap->res);
- 
---- a/mm/hmm.c
-+++ b/mm/hmm.c
-@@ -1110,7 +1110,7 @@ struct hmm_devmem *hmm_devmem_add(const
- 		return result;
- 	return devmem;
- }
--EXPORT_SYMBOL(hmm_devmem_add);
-+EXPORT_SYMBOL_GPL(hmm_devmem_add);
- 
+--- a/include/linux/hmm.h
++++ b/include/linux/hmm.h
+@@ -512,8 +512,7 @@ struct hmm_devmem {
+  * enough and allocate struct page for it.
+  *
+  * The device driver can wrap the hmm_devmem struct inside a private device
+- * driver struct. The device driver must call hmm_devmem_remove() before the
+- * device goes away and before freeing the hmm_devmem struct memory.
++ * driver struct.
+  */
+ struct hmm_devmem *hmm_devmem_add(const struct hmm_devmem_ops *ops,
+ 				  struct device *device,
+@@ -521,7 +520,6 @@ struct hmm_devmem *hmm_devmem_add(const
  struct hmm_devmem *hmm_devmem_add_resource(const struct hmm_devmem_ops *ops,
  					   struct device *device,
-@@ -1164,7 +1164,7 @@ struct hmm_devmem *hmm_devmem_add_resour
- 		return result;
- 	return devmem;
- }
--EXPORT_SYMBOL(hmm_devmem_add_resource);
-+EXPORT_SYMBOL_GPL(hmm_devmem_add_resource);
+ 					   struct resource *res);
+-void hmm_devmem_remove(struct hmm_devmem *devmem);
  
  /*
+  * hmm_devmem_page_set_drvdata - set per-page driver data field
+--- a/mm/hmm.c
++++ b/mm/hmm.c
+@@ -987,7 +987,6 @@ static void hmm_devmem_ref_exit(void *da
+ 
+ 	devmem = container_of(ref, struct hmm_devmem, ref);
+ 	percpu_ref_exit(ref);
+-	devm_remove_action(devmem->device, &hmm_devmem_ref_exit, data);
+ }
+ 
+ static void hmm_devmem_ref_kill(void *data)
+@@ -998,7 +997,6 @@ static void hmm_devmem_ref_kill(void *da
+ 	devmem = container_of(ref, struct hmm_devmem, ref);
+ 	percpu_ref_kill(ref);
+ 	wait_for_completion(&devmem->completion);
+-	devm_remove_action(devmem->device, &hmm_devmem_ref_kill, data);
+ }
+ 
+ static int hmm_devmem_fault(struct vm_area_struct *vma,
+@@ -1036,7 +1034,7 @@ static void hmm_devmem_radix_release(str
+ 	mutex_unlock(&hmm_devmem_lock);
+ }
+ 
+-static void hmm_devmem_release(struct device *dev, void *data)
++static void hmm_devmem_release(void *data)
+ {
+ 	struct hmm_devmem *devmem = data;
+ 	struct resource *resource = devmem->resource;
+@@ -1044,11 +1042,6 @@ static void hmm_devmem_release(struct de
+ 	struct zone *zone;
+ 	struct page *page;
+ 
+-	if (percpu_ref_tryget_live(&devmem->ref)) {
+-		dev_WARN(dev, "%s: page mapping is still live!\n", __func__);
+-		percpu_ref_put(&devmem->ref);
+-	}
+-
+ 	/* pages are dead and unused, undo the arch mapping */
+ 	start_pfn = (resource->start & ~(PA_SECTION_SIZE - 1)) >> PAGE_SHIFT;
+ 	npages = ALIGN(resource_size(resource), PA_SECTION_SIZE) >> PAGE_SHIFT;
+@@ -1174,19 +1167,6 @@ error:
+ 	return ret;
+ }
+ 
+-static int hmm_devmem_match(struct device *dev, void *data, void *match_data)
+-{
+-	struct hmm_devmem *devmem = data;
+-
+-	return devmem->resource == match_data;
+-}
+-
+-static void hmm_devmem_pages_remove(struct hmm_devmem *devmem)
+-{
+-	devres_release(devmem->device, &hmm_devmem_release,
+-		       &hmm_devmem_match, devmem->resource);
+-}
+-
+ /*
+  * hmm_devmem_add() - hotplug ZONE_DEVICE memory for device memory
+  *
+@@ -1214,8 +1194,7 @@ struct hmm_devmem *hmm_devmem_add(const
+ 
+ 	dev_pagemap_get_ops();
+ 
+-	devmem = devres_alloc_node(&hmm_devmem_release, sizeof(*devmem),
+-				   GFP_KERNEL, dev_to_node(device));
++	devmem = devm_kzalloc(device, sizeof(*devmem), GFP_KERNEL);
+ 	if (!devmem)
+ 		return ERR_PTR(-ENOMEM);
+ 
+@@ -1229,11 +1208,11 @@ struct hmm_devmem *hmm_devmem_add(const
+ 	ret = percpu_ref_init(&devmem->ref, &hmm_devmem_ref_release,
+ 			      0, GFP_KERNEL);
+ 	if (ret)
+-		goto error_percpu_ref;
++		return ERR_PTR(ret);
+ 
+-	ret = devm_add_action(device, hmm_devmem_ref_exit, &devmem->ref);
++	ret = devm_add_action_or_reset(device, hmm_devmem_ref_exit, &devmem->ref);
+ 	if (ret)
+-		goto error_devm_add_action;
++		return ERR_PTR(ret);
+ 
+ 	size = ALIGN(size, PA_SECTION_SIZE);
+ 	addr = min((unsigned long)iomem_resource.end,
+@@ -1253,16 +1232,12 @@ struct hmm_devmem *hmm_devmem_add(const
+ 
+ 		devmem->resource = devm_request_mem_region(device, addr, size,
+ 							   dev_name(device));
+-		if (!devmem->resource) {
+-			ret = -ENOMEM;
+-			goto error_no_resource;
+-		}
++		if (!devmem->resource)
++			return ERR_PTR(-ENOMEM);
+ 		break;
+ 	}
+-	if (!devmem->resource) {
+-		ret = -ERANGE;
+-		goto error_no_resource;
+-	}
++	if (!devmem->resource)
++		return ERR_PTR(-ERANGE);
+ 
+ 	devmem->resource->desc = IORES_DESC_DEVICE_PRIVATE_MEMORY;
+ 	devmem->pfn_first = devmem->resource->start >> PAGE_SHIFT;
+@@ -1271,28 +1246,13 @@ struct hmm_devmem *hmm_devmem_add(const
+ 
+ 	ret = hmm_devmem_pages_create(devmem);
+ 	if (ret)
+-		goto error_pages;
+-
+-	devres_add(device, devmem);
++		return ERR_PTR(ret);
+ 
+-	ret = devm_add_action(device, hmm_devmem_ref_kill, &devmem->ref);
+-	if (ret) {
+-		hmm_devmem_remove(devmem);
++	ret = devm_add_action_or_reset(device, hmm_devmem_release, devmem);
++	if (ret)
+ 		return ERR_PTR(ret);
+-	}
+ 
+ 	return devmem;
+-
+-error_pages:
+-	devm_release_mem_region(device, devmem->resource->start,
+-				resource_size(devmem->resource));
+-error_no_resource:
+-error_devm_add_action:
+-	hmm_devmem_ref_kill(&devmem->ref);
+-	hmm_devmem_ref_exit(&devmem->ref);
+-error_percpu_ref:
+-	devres_free(devmem);
+-	return ERR_PTR(ret);
+ }
+ EXPORT_SYMBOL(hmm_devmem_add);
+ 
+@@ -1308,8 +1268,7 @@ struct hmm_devmem *hmm_devmem_add_resour
+ 
+ 	dev_pagemap_get_ops();
+ 
+-	devmem = devres_alloc_node(&hmm_devmem_release, sizeof(*devmem),
+-				   GFP_KERNEL, dev_to_node(device));
++	devmem = devm_kzalloc(device, sizeof(*devmem), GFP_KERNEL);
+ 	if (!devmem)
+ 		return ERR_PTR(-ENOMEM);
+ 
+@@ -1323,12 +1282,12 @@ struct hmm_devmem *hmm_devmem_add_resour
+ 	ret = percpu_ref_init(&devmem->ref, &hmm_devmem_ref_release,
+ 			      0, GFP_KERNEL);
+ 	if (ret)
+-		goto error_percpu_ref;
++		return ERR_PTR(ret);
+ 
+-	ret = devm_add_action(device, hmm_devmem_ref_exit, &devmem->ref);
++	ret = devm_add_action_or_reset(device, hmm_devmem_ref_exit,
++			&devmem->ref);
+ 	if (ret)
+-		goto error_devm_add_action;
+-
++		return ERR_PTR(ret);
+ 
+ 	devmem->pfn_first = devmem->resource->start >> PAGE_SHIFT;
+ 	devmem->pfn_last = devmem->pfn_first +
+@@ -1336,60 +1295,22 @@ struct hmm_devmem *hmm_devmem_add_resour
+ 
+ 	ret = hmm_devmem_pages_create(devmem);
+ 	if (ret)
+-		goto error_devm_add_action;
++		return ERR_PTR(ret);
+ 
+-	devres_add(device, devmem);
++	ret = devm_add_action_or_reset(device, hmm_devmem_release, devmem);
++	if (ret)
++		return ERR_PTR(ret);
+ 
+-	ret = devm_add_action(device, hmm_devmem_ref_kill, &devmem->ref);
+-	if (ret) {
+-		hmm_devmem_remove(devmem);
++	ret = devm_add_action_or_reset(device, hmm_devmem_ref_kill,
++			&devmem->ref);
++	if (ret)
+ 		return ERR_PTR(ret);
+-	}
+ 
+ 	return devmem;
+-
+-error_devm_add_action:
+-	hmm_devmem_ref_kill(&devmem->ref);
+-	hmm_devmem_ref_exit(&devmem->ref);
+-error_percpu_ref:
+-	devres_free(devmem);
+-	return ERR_PTR(ret);
+ }
+ EXPORT_SYMBOL(hmm_devmem_add_resource);
+ 
+ /*
+- * hmm_devmem_remove() - remove device memory (kill and free ZONE_DEVICE)
+- *
+- * @devmem: hmm_devmem struct use to track and manage the ZONE_DEVICE memory
+- *
+- * This will hot-unplug memory that was hotplugged by hmm_devmem_add on behalf
+- * of the device driver. It will free struct page and remove the resource that
+- * reserved the physical address range for this device memory.
+- */
+-void hmm_devmem_remove(struct hmm_devmem *devmem)
+-{
+-	resource_size_t start, size;
+-	struct device *device;
+-	bool cdm = false;
+-
+-	if (!devmem)
+-		return;
+-
+-	device = devmem->device;
+-	start = devmem->resource->start;
+-	size = resource_size(devmem->resource);
+-
+-	cdm = devmem->resource->desc == IORES_DESC_DEVICE_PUBLIC_MEMORY;
+-	hmm_devmem_ref_kill(&devmem->ref);
+-	hmm_devmem_ref_exit(&devmem->ref);
+-	hmm_devmem_pages_remove(devmem);
+-
+-	if (!cdm)
+-		devm_release_mem_region(device, start, size);
+-}
+-EXPORT_SYMBOL(hmm_devmem_remove);
+-
+-/*
   * A device driver that wants to handle multiple devices memory through a
+  * single fake device can use hmm_device to do so. This is purely a helper
+  * and it is not needed to make use of any HMM functionality.
 
 
