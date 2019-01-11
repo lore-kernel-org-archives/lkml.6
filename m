@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03D8CC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:10:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A0B8C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:10:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CCFDD20874
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:10:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ECFC520874
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:10:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547219423;
-	bh=uaqGE23CK3zUIKgN59kcI1JN8xayUKHIyU+GVrEi+7Q=;
+	s=default; t=1547219444;
+	bh=mBuBpgpTGLipM6ZfATVu1WbxwZn3iMCynPb8cls9xV0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=BXnz2P8SCx55gnorbCEGR98kpzxy/I2EWnxS0scYruWjueRkJOKxsUZP1II+l3axZ
-	 1p3JYXpWYsatkXsudv5/ubG6BWUZWu2gg3E+4BCU7QN/tsM2e73j6mFuDL+NuSr/SV
-	 Yk4dBjDted2zxxJsDLcDe04x6829NLqXefVHlLB4=
+	b=lLf1gS9YnNqBCC6aw3xU4o7r7gpjy2TO3FFBWy5KKxg2vj9wclh972grFHkRErng3
+	 Qz7vzyHKUeD7XY+FtFae/SF7nzcu1qiTJgt6p4xIpFB4qMx0fn+f+GAwiiyS07k6MC
+	 pOMliI7KslX/kXWgFLcppYnurzyj4CsWN0+mtcAk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403796AbfAKPKX (ORCPT
+        id S2391996AbfAKPKn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 10:10:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33224 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 10:10:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:32912 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387757AbfAKOQx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:16:53 -0500
+        id S2387686AbfAKOQl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:16:41 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6B5DA21783;
-        Fri, 11 Jan 2019 14:16:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 683DA21783;
+        Fri, 11 Jan 2019 14:16:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547216212;
-        bh=uaqGE23CK3zUIKgN59kcI1JN8xayUKHIyU+GVrEi+7Q=;
+        s=default; t=1547216199;
+        bh=mBuBpgpTGLipM6ZfATVu1WbxwZn3iMCynPb8cls9xV0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bObbdAp+/mYV00OeotZ+AOga31FyBueeO5fpqGdUy+3ggvlAvB5wP87xWPGAG3bop
-         8WUggJ5nxBnqfPzOBhvNH1aE6tzw0sSbRsVTbtwf8uWSvqTIddyTyDMBacjqZVN4JF
-         4bxqUOSBqGFA5fFYfP/Y0ynmWnghyXni2ttCyCEE=
+        b=hwgAQItuuebTfV3ZWhocFXL44rRV4s6Jknr/l+ufKgMSxz46PaIJckH4u8SAqLa/Y
+         8pZOqgmaHvuy5T6SVLu87nlgBUY8S+aZ+lApOmA0PrjgWVlk3zdZAmZnX7CtBie8xH
+         rdwwX8yp8hfiTKe7JaYcGurZUHe6ewTb5RXH9EoQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tyrel Datwyler <tyreld@linux.vnet.ibm.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 17/88] ibmveth: fix DMA unmap error in ibmveth_xmit_start error path
-Date:   Fri, 11 Jan 2019 15:07:46 +0100
-Message-Id: <20190111131048.670525163@linuxfoundation.org>
+        stable@vger.kernel.org, Tore Anderson <tore@fud.no>,
+        Johan Hovold <johan@kernel.org>
+Subject: [PATCH 4.4 04/88] USB: serial: option: add HP lt4132
+Date:   Fri, 11 Jan 2019 15:07:33 +0100
+Message-Id: <20190111131046.977429380@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131045.137499039@linuxfoundation.org>
 References: <20190111131045.137499039@linuxfoundation.org>
@@ -65,60 +65,83 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
+From: Tore Anderson <tore@fud.no>
 
-[ Upstream commit 756af9c642329d54f048bac2a62f829b391f6944 ]
+commit d57ec3c83b5153217a70b561d4fb6ed96f2f7a25 upstream.
 
-Commit 33a48ab105a7 ("ibmveth: Fix DMA unmap error") fixed an issue in the
-normal code path of ibmveth_xmit_start() that was originally introduced by
-Commit 6e8ab30ec677 ("ibmveth: Add scatter-gather support"). This original
-fix missed the error path where dma_unmap_page is wrongly called on the
-header portion in descs[0] which was mapped with dma_map_single. As a
-result a failure to DMA map any of the frags results in a dmesg warning
-when CONFIG_DMA_API_DEBUG is enabled.
+The HP lt4132 is a rebranded Huawei ME906s-158 LTE modem.
 
-------------[ cut here ]------------
-DMA-API: ibmveth 30000002: device driver frees DMA memory with wrong function
-  [device address=0x000000000a430000] [size=172 bytes] [mapped as page] [unmapped as single]
-WARNING: CPU: 1 PID: 8426 at kernel/dma/debug.c:1085 check_unmap+0x4fc/0xe10
-...
-<snip>
-...
-DMA-API: Mapped at:
-ibmveth_start_xmit+0x30c/0xb60
-dev_hard_start_xmit+0x100/0x450
-sch_direct_xmit+0x224/0x490
-__qdisc_run+0x20c/0x980
-__dev_queue_xmit+0x1bc/0xf20
+The interface with protocol 0x16 is "CDC ECM & NCM" according to the *.inf
+files included with the Windows driver. Attaching the option driver to it
+doesn't result in a /dev/ttyUSB* device being created, so I've excluded it.
+Note that it is also excluded for corresponding Huawei-branded devices, cf.
+commit d544db293a44 ("USB: support new huawei devices in option.c").
 
-This fixes the API misuse by unampping descs[0] with dma_unmap_single.
+T:  Bus=01 Lev=01 Prnt=01 Port=02 Cnt=02 Dev#=  3 Spd=480 MxCh= 0
+D:  Ver= 2.00 Cls=00(>ifc ) Sub=00 Prot=ff MxPS=64 #Cfgs=  3
+P:  Vendor=03f0 ProdID=a31d Rev=01.02
+S:  Manufacturer=HP Inc.
+S:  Product=HP lt4132 LTE/HSPA+ 4G Module
+S:  SerialNumber=0123456789ABCDEF
+C:  #Ifs= 6 Cfg#= 1 Atr=a0 MxPwr=2mA
+I:  If#=0x0 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=06 Prot=10 Driver=option
+I:  If#=0x1 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=06 Prot=13 Driver=option
+I:  If#=0x2 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=06 Prot=12 Driver=option
+I:  If#=0x3 Alt= 0 #EPs= 1 Cls=ff(vend.) Sub=06 Prot=16 Driver=(none)
+I:  If#=0x4 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=06 Prot=14 Driver=option
+I:  If#=0x5 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=06 Prot=1b Driver=option
 
-Fixes: 6e8ab30ec677 ("ibmveth: Add scatter-gather support")
-Signed-off-by: Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+T:  Bus=01 Lev=01 Prnt=01 Port=02 Cnt=02 Dev#=  3 Spd=480 MxCh= 0
+D:  Ver= 2.00 Cls=00(>ifc ) Sub=00 Prot=ff MxPS=64 #Cfgs=  3
+P:  Vendor=03f0 ProdID=a31d Rev=01.02
+S:  Manufacturer=HP Inc.
+S:  Product=HP lt4132 LTE/HSPA+ 4G Module
+S:  SerialNumber=0123456789ABCDEF
+C:  #Ifs= 7 Cfg#= 2 Atr=a0 MxPwr=2mA
+I:  If#=0x0 Alt= 0 #EPs= 1 Cls=02(commc) Sub=06 Prot=00 Driver=cdc_ether
+I:  If#=0x1 Alt= 0 #EPs= 2 Cls=0a(data ) Sub=06 Prot=00 Driver=cdc_ether
+I:  If#=0x2 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=06 Prot=10 Driver=option
+I:  If#=0x3 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=06 Prot=13 Driver=option
+I:  If#=0x4 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=06 Prot=12 Driver=option
+I:  If#=0x5 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=06 Prot=14 Driver=option
+I:  If#=0x6 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=06 Prot=1b Driver=option
+
+T:  Bus=01 Lev=01 Prnt=01 Port=02 Cnt=02 Dev#=  3 Spd=480 MxCh= 0
+D:  Ver= 2.00 Cls=00(>ifc ) Sub=00 Prot=ff MxPS=64 #Cfgs=  3
+P:  Vendor=03f0 ProdID=a31d Rev=01.02
+S:  Manufacturer=HP Inc.
+S:  Product=HP lt4132 LTE/HSPA+ 4G Module
+S:  SerialNumber=0123456789ABCDEF
+C:  #Ifs= 3 Cfg#= 3 Atr=a0 MxPwr=2mA
+I:  If#=0x0 Alt= 0 #EPs= 1 Cls=02(commc) Sub=0e Prot=00 Driver=cdc_mbim
+I:  If#=0x1 Alt= 1 #EPs= 2 Cls=0a(data ) Sub=00 Prot=02 Driver=cdc_mbim
+I:  If#=0x2 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=06 Prot=14 Driver=option
+
+Signed-off-by: Tore Anderson <tore@fud.no>
+Cc: stable@vger.kernel.org
+[ johan: drop id defines ]
+Signed-off-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/ethernet/ibm/ibmveth.c |    6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/ibm/ibmveth.c
-+++ b/drivers/net/ethernet/ibm/ibmveth.c
-@@ -1163,11 +1163,15 @@ out:
- 
- map_failed_frags:
- 	last = i+1;
--	for (i = 0; i < last; i++)
-+	for (i = 1; i < last; i++)
- 		dma_unmap_page(&adapter->vdev->dev, descs[i].fields.address,
- 			       descs[i].fields.flags_len & IBMVETH_BUF_LEN_MASK,
- 			       DMA_TO_DEVICE);
- 
-+	dma_unmap_single(&adapter->vdev->dev,
-+			 descs[0].fields.address,
-+			 descs[0].fields.flags_len & IBMVETH_BUF_LEN_MASK,
-+			 DMA_TO_DEVICE);
- map_failed:
- 	if (!firmware_has_feature(FW_FEATURE_CMO))
- 		netdev_err(netdev, "tx: unable to map xmit buffer\n");
+---
+ drivers/usb/serial/option.c |    7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+--- a/drivers/usb/serial/option.c
++++ b/drivers/usb/serial/option.c
+@@ -1943,7 +1943,12 @@ static const struct usb_device_id option
+ 	{ USB_DEVICE_AND_INTERFACE_INFO(WETELECOM_VENDOR_ID, WETELECOM_PRODUCT_WMD200, 0xff, 0xff, 0xff) },
+ 	{ USB_DEVICE_AND_INTERFACE_INFO(WETELECOM_VENDOR_ID, WETELECOM_PRODUCT_6802, 0xff, 0xff, 0xff) },
+ 	{ USB_DEVICE_AND_INTERFACE_INFO(WETELECOM_VENDOR_ID, WETELECOM_PRODUCT_WMD300, 0xff, 0xff, 0xff) },
+-	{ USB_DEVICE_AND_INTERFACE_INFO(0x03f0, 0x421d, 0xff, 0xff, 0xff) }, /* HP lt2523 (Novatel E371) */
++	{ USB_DEVICE_AND_INTERFACE_INFO(0x03f0, 0x421d, 0xff, 0xff, 0xff) },	/* HP lt2523 (Novatel E371) */
++	{ USB_DEVICE_AND_INTERFACE_INFO(0x03f0, 0xa31d, 0xff, 0x06, 0x10) },	/* HP lt4132 (Huawei ME906s-158) */
++	{ USB_DEVICE_AND_INTERFACE_INFO(0x03f0, 0xa31d, 0xff, 0x06, 0x12) },
++	{ USB_DEVICE_AND_INTERFACE_INFO(0x03f0, 0xa31d, 0xff, 0x06, 0x13) },
++	{ USB_DEVICE_AND_INTERFACE_INFO(0x03f0, 0xa31d, 0xff, 0x06, 0x14) },
++	{ USB_DEVICE_AND_INTERFACE_INFO(0x03f0, 0xa31d, 0xff, 0x06, 0x1b) },
+ 	{ } /* Terminating entry */
+ };
+ MODULE_DEVICE_TABLE(usb, option_ids);
 
 
