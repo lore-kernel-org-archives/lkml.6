@@ -4,206 +4,203 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD43AC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 11:06:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14BB4C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 11:06:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 939692177B
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 11:06:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D9DE32177B
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 11:06:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732248AbfAKLGn (ORCPT
+        id S1732262AbfAKLGu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 06:06:43 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:8185 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730124AbfAKLGd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 06:06:33 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 6FE632CD7FA;
-        Fri, 11 Jan 2019 11:06:32 +0000 (UTC)
-Received: from localhost (ovpn-8-28.pek2.redhat.com [10.72.8.28])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id CBF055D6AA;
-        Fri, 11 Jan 2019 11:06:22 +0000 (UTC)
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, Theodore Ts'o <tytso@mit.edu>,
-        Omar Sandoval <osandov@fb.com>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Dave Chinner <dchinner@redhat.com>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-raid@vger.kernel.org,
-        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        linux-xfs@vger.kernel.org, Gao Xiang <gaoxiang25@huawei.com>,
-        Christoph Hellwig <hch@lst.de>, linux-ext4@vger.kernel.org,
-        Coly Li <colyli@suse.de>, linux-bcache@vger.kernel.org,
-        Boaz Harrosh <ooo@electrozaur.com>,
-        Bob Peterson <rpeterso@redhat.com>, cluster-devel@redhat.com,
-        Ming Lei <ming.lei@redhat.com>
-Subject: [PATCH V13 19/19] block: kill BLK_MQ_F_SG_MERGE
-Date:   Fri, 11 Jan 2019 19:01:27 +0800
-Message-Id: <20190111110127.21664-20-ming.lei@redhat.com>
-In-Reply-To: <20190111110127.21664-1-ming.lei@redhat.com>
-References: <20190111110127.21664-1-ming.lei@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Fri, 11 Jan 2019 11:06:32 +0000 (UTC)
+        Fri, 11 Jan 2019 06:06:50 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:53152 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730124AbfAKLGr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 06:06:47 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0381A80D;
+        Fri, 11 Jan 2019 03:06:47 -0800 (PST)
+Received: from [10.1.197.78] (ostrya.cambridge.arm.com [10.1.197.78])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 60B843F694;
+        Fri, 11 Jan 2019 03:06:44 -0800 (PST)
+Subject: Re: [RFC v3 14/21] iommu: introduce device fault data
+To:     Jacob Pan <jacob.jun.pan@linux.intel.com>,
+        Eric Auger <eric.auger@redhat.com>
+Cc:     "yi.l.liu@linux.intel.com" <yi.l.liu@linux.intel.com>,
+        "kevin.tian@intel.com" <kevin.tian@intel.com>,
+        "alex.williamson@redhat.com" <alex.williamson@redhat.com>,
+        "ashok.raj@intel.com" <ashok.raj@intel.com>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "peter.maydell@linaro.org" <peter.maydell@linaro.org>,
+        Will Deacon <Will.Deacon@arm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Christoffer Dall <Christoffer.Dall@arm.com>,
+        Marc Zyngier <Marc.Zyngier@arm.com>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
+        Robin Murphy <Robin.Murphy@arm.com>,
+        "kvmarm@lists.cs.columbia.edu" <kvmarm@lists.cs.columbia.edu>,
+        "eric.auger.pro@gmail.com" <eric.auger.pro@gmail.com>
+References: <20190108102633.17482-1-eric.auger@redhat.com>
+ <20190108102633.17482-15-eric.auger@redhat.com>
+ <20190110104544.26f3bcb1@jacob-builder>
+From:   Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+Message-ID: <63a19100-c3dd-9dbd-b37a-9dfbe254459e@arm.com>
+Date:   Fri, 11 Jan 2019 11:06:29 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
+MIME-Version: 1.0
+In-Reply-To: <20190110104544.26f3bcb1@jacob-builder>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-QUEUE_FLAG_NO_SG_MERGE has been killed, so kill BLK_MQ_F_SG_MERGE too.
+On 10/01/2019 18:45, Jacob Pan wrote:
+> On Tue,  8 Jan 2019 11:26:26 +0100
+> Eric Auger <eric.auger@redhat.com> wrote:
+> 
+>> From: Jacob Pan <jacob.jun.pan@linux.intel.com>
+>>
+>> Device faults detected by IOMMU can be reported outside IOMMU
+>> subsystem for further processing. This patch intends to provide
+>> a generic device fault data such that device drivers can be
+>> communicated with IOMMU faults without model specific knowledge.
+>>
+>> The proposed format is the result of discussion at:
+>> https://lkml.org/lkml/2017/11/10/291
+>> Part of the code is based on Jean-Philippe Brucker's patchset
+>> (https://patchwork.kernel.org/patch/9989315/).
+>>
+>> The assumption is that model specific IOMMU driver can filter and
+>> handle most of the internal faults if the cause is within IOMMU driver
+>> control. Therefore, the fault reasons can be reported are grouped
+>> and generalized based common specifications such as PCI ATS.
+>>
+>> Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
+>> Signed-off-by: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+>> Signed-off-by: Liu, Yi L <yi.l.liu@linux.intel.com>
+>> Signed-off-by: Ashok Raj <ashok.raj@intel.com>
+>> Signed-off-by: Eric Auger <eric.auger@redhat.com>
+>> [moved part of the iommu_fault_event struct in the uapi, enriched
+>>  the fault reasons to be able to map unrecoverable SMMUv3 errors]
+>> ---
+>>  include/linux/iommu.h      | 55 ++++++++++++++++++++++++-
+>>  include/uapi/linux/iommu.h | 83
+>> ++++++++++++++++++++++++++++++++++++++ 2 files changed, 136
+>> insertions(+), 2 deletions(-)
+>>
+>> diff --git a/include/linux/iommu.h b/include/linux/iommu.h
+>> index 244c1a3d5989..1dedc2d247c2 100644
+>> --- a/include/linux/iommu.h
+>> +++ b/include/linux/iommu.h
+>> @@ -49,13 +49,17 @@ struct bus_type;
+>>  struct device;
+>>  struct iommu_domain;
+>>  struct notifier_block;
+>> +struct iommu_fault_event;
+>>  
+>>  /* iommu fault flags */
+>> -#define IOMMU_FAULT_READ	0x0
+>> -#define IOMMU_FAULT_WRITE	0x1
+>> +#define IOMMU_FAULT_READ		(1 << 0)
+>> +#define IOMMU_FAULT_WRITE		(1 << 1)
+>> +#define IOMMU_FAULT_EXEC		(1 << 2)
+>> +#define IOMMU_FAULT_PRIV		(1 << 3)
+>>  
+>>  typedef int (*iommu_fault_handler_t)(struct iommu_domain *,
+>>  			struct device *, unsigned long, int, void *);
+>> +typedef int (*iommu_dev_fault_handler_t)(struct iommu_fault_event *,
+>> void *); 
+>>  struct iommu_domain_geometry {
+>>  	dma_addr_t aperture_start; /* First address that can be
+>> mapped    */ @@ -255,6 +259,52 @@ struct iommu_device {
+>>  	struct device *dev;
+>>  };
+>>  
+>> +/**
+>> + * struct iommu_fault_event - Generic per device fault data
+>> + *
+>> + * - PCI and non-PCI devices
+>> + * - Recoverable faults (e.g. page request), information based on
+>> PCI ATS
+>> + * and PASID spec.
+>> + * - Un-recoverable faults of device interest
+>> + * - DMA remapping and IRQ remapping faults
+>> + *
+>> + * @fault: fault descriptor
+>> + * @device_private: if present, uniquely identify device-specific
+>> + *                  private data for an individual page request.
+>> + * @iommu_private: used by the IOMMU driver for storing
+>> fault-specific
+>> + *                 data. Users should not modify this field before
+>> + *                 sending the fault response.
+>> + */
+>> +struct iommu_fault_event {
+>> +	struct iommu_fault fault;
+>> +	u64 device_private;
+> I think we want to move device_private to uapi since it gets injected
+> into the guest, then returned by guest in case of page response. For
+> VT-d we also need 128 bits of private data. VT-d spec. 7.7.1
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Omar Sandoval <osandov@fb.com>
-Signed-off-by: Ming Lei <ming.lei@redhat.com>
----
- block/blk-mq-debugfs.c       | 1 -
- drivers/block/loop.c         | 2 +-
- drivers/block/nbd.c          | 2 +-
- drivers/block/rbd.c          | 2 +-
- drivers/block/skd_main.c     | 1 -
- drivers/block/xen-blkfront.c | 2 +-
- drivers/md/dm-rq.c           | 2 +-
- drivers/mmc/core/queue.c     | 3 +--
- drivers/scsi/scsi_lib.c      | 2 +-
- include/linux/blk-mq.h       | 1 -
- 10 files changed, 7 insertions(+), 11 deletions(-)
+Ah, I didn't notice the format changed in VT-d rev3. On that topic, how
+do we manage future extensions to the iommu_fault struct? Should we add
+~48 bytes of padding after device_private, along with some flags telling
+which field is valid, or deal with it using a structure version like we
+do for the invalidate and bind structs? In the first case, iommu_fault
+wouldn't fit in a 64-byte cacheline anymore, but I'm not sure we care.
 
-diff --git a/block/blk-mq-debugfs.c b/block/blk-mq-debugfs.c
-index 2f9a11ef5bad..2ba0aa05ce13 100644
---- a/block/blk-mq-debugfs.c
-+++ b/block/blk-mq-debugfs.c
-@@ -250,7 +250,6 @@ static const char *const alloc_policy_name[] = {
- static const char *const hctx_flag_name[] = {
- 	HCTX_FLAG_NAME(SHOULD_MERGE),
- 	HCTX_FLAG_NAME(TAG_SHARED),
--	HCTX_FLAG_NAME(SG_MERGE),
- 	HCTX_FLAG_NAME(BLOCKING),
- 	HCTX_FLAG_NAME(NO_SCHED),
- };
-diff --git a/drivers/block/loop.c b/drivers/block/loop.c
-index 28dd22c6f83f..e3b9212ec7a1 100644
---- a/drivers/block/loop.c
-+++ b/drivers/block/loop.c
-@@ -1906,7 +1906,7 @@ static int loop_add(struct loop_device **l, int i)
- 	lo->tag_set.queue_depth = 128;
- 	lo->tag_set.numa_node = NUMA_NO_NODE;
- 	lo->tag_set.cmd_size = sizeof(struct loop_cmd);
--	lo->tag_set.flags = BLK_MQ_F_SHOULD_MERGE | BLK_MQ_F_SG_MERGE;
-+	lo->tag_set.flags = BLK_MQ_F_SHOULD_MERGE;
- 	lo->tag_set.driver_data = lo;
- 
- 	err = blk_mq_alloc_tag_set(&lo->tag_set);
-diff --git a/drivers/block/nbd.c b/drivers/block/nbd.c
-index 08696f5f00bb..999c94de78e5 100644
---- a/drivers/block/nbd.c
-+++ b/drivers/block/nbd.c
-@@ -1570,7 +1570,7 @@ static int nbd_dev_add(int index)
- 	nbd->tag_set.numa_node = NUMA_NO_NODE;
- 	nbd->tag_set.cmd_size = sizeof(struct nbd_cmd);
- 	nbd->tag_set.flags = BLK_MQ_F_SHOULD_MERGE |
--		BLK_MQ_F_SG_MERGE | BLK_MQ_F_BLOCKING;
-+		BLK_MQ_F_BLOCKING;
- 	nbd->tag_set.driver_data = nbd;
- 
- 	err = blk_mq_alloc_tag_set(&nbd->tag_set);
-diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
-index 8e5140bbf241..3dfd300b5283 100644
---- a/drivers/block/rbd.c
-+++ b/drivers/block/rbd.c
-@@ -3988,7 +3988,7 @@ static int rbd_init_disk(struct rbd_device *rbd_dev)
- 	rbd_dev->tag_set.ops = &rbd_mq_ops;
- 	rbd_dev->tag_set.queue_depth = rbd_dev->opts->queue_depth;
- 	rbd_dev->tag_set.numa_node = NUMA_NO_NODE;
--	rbd_dev->tag_set.flags = BLK_MQ_F_SHOULD_MERGE | BLK_MQ_F_SG_MERGE;
-+	rbd_dev->tag_set.flags = BLK_MQ_F_SHOULD_MERGE;
- 	rbd_dev->tag_set.nr_hw_queues = 1;
- 	rbd_dev->tag_set.cmd_size = sizeof(struct work_struct);
- 
-diff --git a/drivers/block/skd_main.c b/drivers/block/skd_main.c
-index a10d5736d8f7..a7040f9a1b1b 100644
---- a/drivers/block/skd_main.c
-+++ b/drivers/block/skd_main.c
-@@ -2843,7 +2843,6 @@ static int skd_cons_disk(struct skd_device *skdev)
- 		skdev->sgs_per_request * sizeof(struct scatterlist);
- 	skdev->tag_set.numa_node = NUMA_NO_NODE;
- 	skdev->tag_set.flags = BLK_MQ_F_SHOULD_MERGE |
--		BLK_MQ_F_SG_MERGE |
- 		BLK_ALLOC_POLICY_TO_MQ_FLAG(BLK_TAG_ALLOC_FIFO);
- 	skdev->tag_set.driver_data = skdev;
- 	rc = blk_mq_alloc_tag_set(&skdev->tag_set);
-diff --git a/drivers/block/xen-blkfront.c b/drivers/block/xen-blkfront.c
-index 0ed4b200fa58..d43a5677ccbc 100644
---- a/drivers/block/xen-blkfront.c
-+++ b/drivers/block/xen-blkfront.c
-@@ -977,7 +977,7 @@ static int xlvbd_init_blk_queue(struct gendisk *gd, u16 sector_size,
- 	} else
- 		info->tag_set.queue_depth = BLK_RING_SIZE(info);
- 	info->tag_set.numa_node = NUMA_NO_NODE;
--	info->tag_set.flags = BLK_MQ_F_SHOULD_MERGE | BLK_MQ_F_SG_MERGE;
-+	info->tag_set.flags = BLK_MQ_F_SHOULD_MERGE;
- 	info->tag_set.cmd_size = sizeof(struct blkif_req);
- 	info->tag_set.driver_data = info;
- 
-diff --git a/drivers/md/dm-rq.c b/drivers/md/dm-rq.c
-index 4eb5f8c56535..b2f8eb2365ee 100644
---- a/drivers/md/dm-rq.c
-+++ b/drivers/md/dm-rq.c
-@@ -527,7 +527,7 @@ int dm_mq_init_request_queue(struct mapped_device *md, struct dm_table *t)
- 	md->tag_set->ops = &dm_mq_ops;
- 	md->tag_set->queue_depth = dm_get_blk_mq_queue_depth();
- 	md->tag_set->numa_node = md->numa_node_id;
--	md->tag_set->flags = BLK_MQ_F_SHOULD_MERGE | BLK_MQ_F_SG_MERGE;
-+	md->tag_set->flags = BLK_MQ_F_SHOULD_MERGE;
- 	md->tag_set->nr_hw_queues = dm_get_blk_mq_nr_hw_queues();
- 	md->tag_set->driver_data = md;
- 
-diff --git a/drivers/mmc/core/queue.c b/drivers/mmc/core/queue.c
-index 35cc138b096d..cc19e71c71d4 100644
---- a/drivers/mmc/core/queue.c
-+++ b/drivers/mmc/core/queue.c
-@@ -410,8 +410,7 @@ int mmc_init_queue(struct mmc_queue *mq, struct mmc_card *card)
- 	else
- 		mq->tag_set.queue_depth = MMC_QUEUE_DEPTH;
- 	mq->tag_set.numa_node = NUMA_NO_NODE;
--	mq->tag_set.flags = BLK_MQ_F_SHOULD_MERGE | BLK_MQ_F_SG_MERGE |
--			    BLK_MQ_F_BLOCKING;
-+	mq->tag_set.flags = BLK_MQ_F_SHOULD_MERGE | BLK_MQ_F_BLOCKING;
- 	mq->tag_set.nr_hw_queues = 1;
- 	mq->tag_set.cmd_size = sizeof(struct mmc_queue_req);
- 	mq->tag_set.driver_data = mq;
-diff --git a/drivers/scsi/scsi_lib.c b/drivers/scsi/scsi_lib.c
-index b13cc9288ba0..afad57071cb6 100644
---- a/drivers/scsi/scsi_lib.c
-+++ b/drivers/scsi/scsi_lib.c
-@@ -1899,7 +1899,7 @@ int scsi_mq_setup_tags(struct Scsi_Host *shost)
- 	shost->tag_set.queue_depth = shost->can_queue;
- 	shost->tag_set.cmd_size = cmd_size;
- 	shost->tag_set.numa_node = NUMA_NO_NODE;
--	shost->tag_set.flags = BLK_MQ_F_SHOULD_MERGE | BLK_MQ_F_SG_MERGE;
-+	shost->tag_set.flags = BLK_MQ_F_SHOULD_MERGE;
- 	shost->tag_set.flags |=
- 		BLK_ALLOC_POLICY_TO_MQ_FLAG(shost->hostt->tag_alloc_policy);
- 	shost->tag_set.driver_data = shost;
-diff --git a/include/linux/blk-mq.h b/include/linux/blk-mq.h
-index 0e030f5f76b6..b0c814bcc7e3 100644
---- a/include/linux/blk-mq.h
-+++ b/include/linux/blk-mq.h
-@@ -218,7 +218,6 @@ struct blk_mq_ops {
- enum {
- 	BLK_MQ_F_SHOULD_MERGE	= 1 << 0,
- 	BLK_MQ_F_TAG_SHARED	= 1 << 1,
--	BLK_MQ_F_SG_MERGE	= 1 << 2,
- 	BLK_MQ_F_BLOCKING	= 1 << 5,
- 	BLK_MQ_F_NO_SCHED	= 1 << 6,
- 	BLK_MQ_F_ALLOC_POLICY_START_BIT = 8,
--- 
-2.9.5
+> For exception tracking (e.g. unanswered page request), I can add timer
+> and list info later when I include PRQ. sounds ok?
+>> +	u64 iommu_private;
+[...]
+>> +/**
+>> + * struct iommu_fault - Generic fault data
+>> + *
+>> + * @type contains fault type
+>> + * @reason fault reasons if relevant outside IOMMU driver.
+>> + * IOMMU driver internal faults are not reported.
+>> + * @addr: tells the offending page address
+>> + * @fetch_addr: tells the address that caused an abort, if any
+>> + * @pasid: contains process address space ID, used in shared virtual
+>> memory
+>> + * @page_req_group_id: page request group index
+>> + * @last_req: last request in a page request group
+>> + * @pasid_valid: indicates if the PRQ has a valid PASID
+>> + * @prot: page access protection flag:
+>> + *	IOMMU_FAULT_READ, IOMMU_FAULT_WRITE
+>> + */
+>> +
+>> +struct iommu_fault {
+>> +	__u32	type;   /* enum iommu_fault_type */
+>> +	__u32	reason; /* enum iommu_fault_reason */
+>> +	__u64	addr;
+>> +	__u64	fetch_addr;
+>> +	__u32	pasid;
+>> +	__u32	page_req_group_id;
+>> +	__u32	last_req;
+>> +	__u32	pasid_valid;
+>> +	__u32	prot;
+>> +	__u32	access;
+
+What does @access contain? Can it be squashed into @prot?
+
+Thanks,
+Jean
+
+> relocated to uapi, Yi can you confirm?
+> 	__u64 device_private[2];
+> 
+>> +};
+>>  #endif /* _UAPI_IOMMU_H */
+> 
+> _______________________________________________
+> iommu mailing list
+> iommu@lists.linux-foundation.org
+> https://lists.linuxfoundation.org/mailman/listinfo/iommu
+> 
 
