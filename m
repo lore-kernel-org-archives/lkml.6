@@ -2,110 +2,110 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05974C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:59:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89F17C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:00:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C12FE20874
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:59:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547218792;
-	bh=mACBTY/W+1wmzWAWnQc/gYcmmj6H2wrl12MKg1agPAw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=xmtuGKooEbgH1MDgIn9+ga4IeVe7qGZR2WFCSTlrm1ecOO0Gj2qKY/txiRvnWCReq
-	 qr6fmj8Cmfz2PSfz0RdV2nMDDInsm6Sy08xEIb9VC3w3QoL3rTxsIkkX7FwzMiTSCy
-	 INfjveD9aJplF3Ak0BN2ezKzHo5vDbq6NdDJEDO4=
+	by mail.kernel.org (Postfix) with ESMTP id 6115521848
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 15:00:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391775AbfAKO7v (ORCPT
+        id S2391781AbfAKPAA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:59:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53646 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389655AbfAKOd0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:33:26 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 57BA7204EC;
-        Fri, 11 Jan 2019 14:33:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547217205;
-        bh=mACBTY/W+1wmzWAWnQc/gYcmmj6H2wrl12MKg1agPAw=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=R35/DtdrU4p3bnCBI5aOPqpvJlEJ4ZehYQa4BB2JNFoxbjdhY/yTA+BTrtgPtuKGp
-         OOUxrq8Bpk+/wht0+Qs3DmVVW36KQFQj0/5Mk0tvjXdCDUiUB/7BAK+N4DK5qfi4Y/
-         HXmzp6Vjakqksk6bQhuE4krPWFNhQTx26++vrMAc=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.14 082/105] ALSA: usb-audio: Avoid access before bLength check in build_audio_procunit()
-Date:   Fri, 11 Jan 2019 15:14:53 +0100
-Message-Id: <20190111131109.865091338@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190111131102.899065735@linuxfoundation.org>
-References: <20190111131102.899065735@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+        Fri, 11 Jan 2019 10:00:00 -0500
+Received: from lb1-smtp-cloud9.xs4all.net ([194.109.24.22]:50783 "EHLO
+        lb1-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2389655AbfAKO76 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:59:58 -0500
+Received: from [IPv6:2001:983:e9a7:1:b51b:802b:6c83:309a] ([IPv6:2001:983:e9a7:1:b51b:802b:6c83:309a])
+        by smtp-cloud9.xs4all.net with ESMTPA
+        id hyHqgnT3nMWvEhyHrgcVJ1; Fri, 11 Jan 2019 15:59:56 +0100
+Subject: Re: [alsa-devel] [PATCH v9 4/4] sound/usb: Use Media Controller API
+ to share media resources
+To:     shuah <shuah@kernel.org>, mchehab@kernel.org
+Cc:     Takashi Iwai <tiwai@suse.de>, perex@perex.cz, tiwai@suse.com,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        linux-media@vger.kernel.org
+References: <cover.1545154777.git.shuah@kernel.org>
+ <2fb40852e4035b2a58010ce7416448918f12804f.1545154778.git.shuah@kernel.org>
+ <s5hefadbp5m.wl-tiwai@suse.de>
+ <5f9588b5-657a-78ee-9614-ed0ef1fc5839@kernel.org>
+From:   Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <f13637a7-5c15-ba43-9929-78fef09e54fb@xs4all.nl>
+Date:   Fri, 11 Jan 2019 15:59:54 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <5f9588b5-657a-78ee-9614-ed0ef1fc5839@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+X-CMAE-Envelope: MS4wfFkZYbF27O8q+LVhIIrRyxTGO0XRmi7ql17YfW+RJjzQbSivhn3wF2flxqyGOnLpJPEFaXG1OQ1I4Sgmgg8LXyVt4z6uHsnbSuF0S5oK7IsEOmmFNwaV
+ GSB8F50n6W7SYRpFUxg/ZC/LVRRsyFXTfj+e2eXhtZwjyNVQF7VVkjcGpVnyOSznzfk5KhYNlbPf5wcIv4deLpPKVrssCT7OFma+ydYHMA/R5XiTCP4K50ug
+ DSWs+FlWQgQtC5X6cVhD2Cmr0fSHBp+to5tiVItAtCg3s+s96Dld719MZToX50Pz4F4J6HNELKEoim5galVkiNsyt4nX3GjEMq4+kD4Yi7rQFnihgfpko4Cy
+ kOerWCx8XtI6wkqiWTfYpeB9zD1aWIPe535EOM2ycMIGh6QAX37IRFxhL9oCTClCvxXfkAIsbanpHiyKiif5QUFv/be/pdD82RXkJWLMIHne+dAL4OvwT78X
+ Ft6SMdvetTlcO7cf
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+On 1/11/19 3:57 PM, shuah wrote:
+> On 12/19/18 6:51 AM, Takashi Iwai wrote:
+>> On Tue, 18 Dec 2018 18:59:39 +0100,
+>> shuah@kernel.org wrote:
+>>>
+>>> From: Shuah Khan <shuah@kernel.org>
+>>>
+>>> Media Device Allocator API to allows multiple drivers share a media device.
+>>> This API solves a very common use-case for media devices where one physical
+>>> device (an USB stick) provides both audio and video. When such media device
+>>> exposes a standard USB Audio class, a proprietary Video class, two or more
+>>> independent drivers will share a single physical USB bridge. In such cases,
+>>> it is necessary to coordinate access to the shared resource.
+>>>
+>>> Using this API, drivers can allocate a media device with the shared struct
+>>> device as the key. Once the media device is allocated by a driver, other
+>>> drivers can get a reference to it. The media device is released when all
+>>> the references are released.
+>>>
+>>> Change the ALSA driver to use the Media Controller API to share media
+>>> resources with DVB, and V4L2 drivers on a AU0828 media device.
+>>>
+>>> The Media Controller specific initialization is done after sound card is
+>>> registered. ALSA creates Media interface and entity function graph nodes
+>>> for Control, Mixer, PCM Playback, and PCM Capture devices.
+>>>
+>>> snd_usb_hw_params() will call Media Controller enable source handler
+>>> interface to request the media resource. If resource request is granted,
+>>> it will release it from snd_usb_hw_free(). If resource is busy, -EBUSY is
+>>> returned.
+>>>
+>>> Media specific cleanup is done in usb_audio_disconnect().
+>>>
+>>> Signed-off-by: Shuah Khan <shuah@kernel.org>
+>>
+>> Feel free to take my ack regarding the sound stuff:
+>>    Reviewed-by: Takashi Iwai <tiwai@suse.de>
+>>
+>>
+>> Thanks!
+>>
+>> Takashi
+>>
+> 
+> Hi Mauro,
+> 
+> Any update on this patch series?
 
-------------------
+I'm planning to process this series for 5.1. Haven't gotten around to it yet,
+but I expect to do this next week.
 
-From: Takashi Iwai <tiwai@suse.de>
+Still going through all the pending patches after the Christmas period :-)
 
-commit f4351a199cc120ff9d59e06d02e8657d08e6cc46 upstream.
+Regards,
 
-The parser for the processing unit reads bNrInPins field before the
-bLength sanity check, which may lead to an out-of-bound access when a
-malformed descriptor is given.  Fix it by assignment after the bLength
-check.
-
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- sound/usb/mixer.c |   10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
-
---- a/sound/usb/mixer.c
-+++ b/sound/usb/mixer.c
-@@ -1888,7 +1888,7 @@ static int build_audio_procunit(struct m
- 				char *name)
- {
- 	struct uac_processing_unit_descriptor *desc = raw_desc;
--	int num_ins = desc->bNrInPins;
-+	int num_ins;
- 	struct usb_mixer_elem_info *cval;
- 	struct snd_kcontrol *kctl;
- 	int i, err, nameid, type, len;
-@@ -1903,7 +1903,13 @@ static int build_audio_procunit(struct m
- 		0, NULL, default_value_info
- 	};
- 
--	if (desc->bLength < 13 || desc->bLength < 13 + num_ins ||
-+	if (desc->bLength < 13) {
-+		usb_audio_err(state->chip, "invalid %s descriptor (id %d)\n", name, unitid);
-+		return -EINVAL;
-+	}
-+
-+	num_ins = desc->bNrInPins;
-+	if (desc->bLength < 13 + num_ins ||
- 	    desc->bLength < num_ins + uac_processing_unit_bControlSize(desc, state->mixer->protocol)) {
- 		usb_audio_err(state->chip, "invalid %s descriptor (id %d)\n", name, unitid);
- 		return -EINVAL;
-
-
+	Hans
