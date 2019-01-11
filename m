@@ -2,131 +2,297 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F79CC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 06:25:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D889BC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 06:25:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 09FED20870
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 06:25:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 928BE2183F
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 06:25:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c9xpndwq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730456AbfAKGY7 (ORCPT
+        id S1730572AbfAKGZH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 01:24:59 -0500
-Received: from mail.tripleback.net ([198.50.226.104]:40742 "EHLO
-        mail.tripleback.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728295AbfAKGY6 (ORCPT
+        Fri, 11 Jan 2019 01:25:07 -0500
+Received: from mail-pg1-f177.google.com ([209.85.215.177]:43798 "EHLO
+        mail-pg1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728295AbfAKGZH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 01:24:58 -0500
-Received: from localhost (mail.clusterducks.int [127.0.0.1])
-        by mail.tripleback.net (Postfix) with ESMTP id C3647C0E65;
-        Fri, 11 Jan 2019 01:26:41 -0500 (EST)
-X-Virus-Scanned: amavisd-new at tripleback.net
-Received: from mail.tripleback.net ([127.0.0.1])
-        by localhost (mail.tripleback.net [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id psW4Mc9eoHwK; Fri, 11 Jan 2019 01:26:41 -0500 (EST)
-Received: from [192.168.0.22] (S010664777daa9143.du.shawcable.net [184.66.63.229])
-        (using TLSv1 with cipher ECDHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: kash@tripleback.net)
-        by mail.tripleback.net (Postfix) with ESMTPSA id 87A80C0CC3;
-        Fri, 11 Jan 2019 01:26:40 -0500 (EST)
-Subject: Re: x86/fpu: Don't export __kernel_fpu_{begin,end}()
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-References: <20190111054058.GA27966 () kroah ! com>
-From:   Kash Pande <kash@tripleback.net>
-Openpgp: preference=signencrypt
-Autocrypt: addr=kash@tripleback.net; prefer-encrypt=mutual; keydata=
- mQENBFk4mtYBCACd55EsQx9d/7r6jPgo9+Niwyv6QBYGBc5ww9pPOBrN0oSO47Hm+oSOO5Bu
- yywIw4U5DTUtvdj7elfnsJMhunduhc2P8p7rhLxcQeFIm+yghOepkjqhxTdFLsgavmcnubxy
- Olc29b2fByIVXnFAwHypgpHEqEWTHp2cnNVOtuO9GeIr8YxB+wO4Z5rDnNnEsOuLSJq9kG9c
- uoI8RF+StEBmYVRCfELhafBlluURLRPO/Uoax8+wFyq4/d3iDVtKyrDdvxLG0aXkj3Wfc6rY
- l8trOQl1zw8dCfJMw0+LPaj2EVza1HGCdhgIrg2cS1nKNjNDnIZB/8RwBU99FIY1xoGXABEB
- AAG0O0thc2ggUGFuZGUgKEdlbmVyYXRlZCBKdW5lIDd0aCwgMjAxNykgPGthc2hAdHJpcGxl
- YmFjay5uZXQ+iQFOBBMBCAA4FiEE5MQWwRLWQeWW1A0MLHWyk7icJXgFAlk4mtYCGwMFCwkI
- BwIGFQgJCgsCBBYCAwECHgECF4AACgkQLHWyk7icJXiG1Af9HI1f87UPQPEpsWVHuoeMlPra
- NPrefNZ+O1vnQEdTHEQ+Mc49ozLtpdrpi0VqKYlsdVHxhY5YbzyTC2tdHtiL2LTwbnkrqKMN
- 6DJSiogXFLH/q+SzXoAUxqN8rrRptVEHSYrxENt+ZN5R0A071QrURdEa2vLXicjMGitvdVcV
- pxdRLJgSqQygSlKysoQsY2vvgRujD322BEwDqgq3XWCMIo3ld/riMSCiO8ShCvmqojeWRfh2
- ComhNSzzbn2oGUceEJRJ++mv+0i1jMzO+9L5qsrYnH7KnPA1HsORqHGi7+wJdRn4zG/+g+Ey
- hoTk2WVCDC/Gp4t9CYeQOa/rC1kxm7kBDQRZOJrWAQgA75dQD3FhNz1JDUuAEDRpKOJA7A1A
- t11ItkvolADQwJYtAqoMjFybAG+rN+H2+6CLFsShO2RLY8K1FJVPy31am9qeY5WWO1PhU3tg
- PHVeGOYF/mWTxNBKSwZgfWo8cOT9OcUTjTTR8z58kEcbZJ6PtiPyCsk2MKFMT+OcJ3w7GB2K
- KViN5L4f4sBOOgFZ5U+hNNcLOTmYk8ba2w0GnT4ePnidby8XStGIt1sVeNkbD2hdRUdXtpku
- OKQ2iw/j/GBo7+B7lYMBOSZaxKwpyEt7DPSJuLATSu6l16oDk4uqXulXC1td1fXfXfGLudHN
- sXUJDE/0jf2r8Mi3rPUdPn+dpwARAQABiQE2BBgBCAAgFiEE5MQWwRLWQeWW1A0MLHWyk7ic
- JXgFAlk4mtYCGwwACgkQLHWyk7icJXiv4gf7BqzcEq7IYUIMUI/ubyQuKdASfLHxbGmEJkxk
- Q7iPf38zLucS7jL3XnXrhkU4rzNneaQ0jn/bYhyo2ZDrmIloSOIYQPJTdCU53waLqbdgOSZH
- zVm7aFHVs7/C/joNxZ9Qcg75zdhAJP1bTWTBdmvofJFjwV3YXxhW9U0qIt6Dqq4IQ6TB2tzw
- bMiVH+IeWnlIwBScamT3DAXmu4CxKUpgkqmFsDL2aZve1ZUxwMwgblDZqBKdZoLJEYQ4Llf6
- JXZmkBNIuO8GA0ZGamjEOvxwn3OYPd7I2FQESawdKNAzv734vCCYELEQFP2mh04B32bEH4ei
- 2oovF94E7UQCVIZg7Q==
-Message-ID: <37e65786-1ee6-1ce1-d66a-18e10c969e8b@tripleback.net>
-Date:   Thu, 10 Jan 2019 22:24:51 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.3
+        Fri, 11 Jan 2019 01:25:07 -0500
+Received: by mail-pg1-f177.google.com with SMTP id v28so5883520pgk.10;
+        Thu, 10 Jan 2019 22:25:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ol//U3TDKHlVdIcTiYZgJWZueZkmNjJlUQ0lD7JH1ys=;
+        b=c9xpndwqUokEmeFxh/T3M4uLYmsLIIgkrb3zMIZW/Gu6pgTE/wbXQPL3WZjpoCnL4l
+         LKcqzuciCh73SEsVU+V3VdcQNwozB+6ZuBtAdwI8kfa51FYjJmHYKACTCkOjFn9HMscq
+         5621hVoy3JndMnKqB1+ehN2tieUtfVf59m/3a2gWoWeLMk4k19STvMBXooMrXdghCGeY
+         gqjzNkMadiOwyJBx99hbYezs0MwV0oon1W+7ERwVGRZXzB2aCfhkubro14HLMhNE9Tbn
+         ydveqxPAAIXvHjk1ySyPRq0BPDvt8XA8ZWbxAnXdJfM+f8ETbahkmOM7DRWX/Qp0ClEX
+         nXfg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ol//U3TDKHlVdIcTiYZgJWZueZkmNjJlUQ0lD7JH1ys=;
+        b=ddQIXPx5g715MjKgBfpsAZ9yy5EihfQrnLiINC59SPtI0Gme6tzkziw50YA8VVz7mZ
+         VWFo4cunvpJUoPd4144GRcYEHfztjzdEha7PTsNc9sNRao0IMCveI5hY4fCa9U+rJoQC
+         3W0PI7Y3JnMDVJKRYElA6gtyvn+DqCAh1Jbri4B1fetABk/vYu5MjqapHkfeYwIL0Jmx
+         vd85OrHPSickWQHNKWaqVUPAamEysG1PMkXnp4x7OFszlkAxqESdrWN0GfyQI4NHGxEu
+         SHkfDOAMWmjqFdaGZUXQ667wnzgkOVMmgmyVrKU6unUzM0fAbKd6uo9+lyyHgvQYw0NL
+         oujA==
+X-Gm-Message-State: AJcUukft6ezKIVxoH89KicIF3vxruhdwdkK5iol4sFj8mlFLTnF16LX+
+        OuV6A/86fhxAhh1dG3malJDgFhOI4UD61HdSPZeyNw==
+X-Google-Smtp-Source: ALg8bN5ZRR8AeTqs7pD3UNwQXGIH5b0/wJCZ65nPcW+ENzdOOTtS4O3IcDCNDgfQ/Y9mC51h8Z0l5MKQJ6ZI/Dv/hE0=
+X-Received: by 2002:a63:82c6:: with SMTP id w189mr12397112pgd.344.1547187905755;
+ Thu, 10 Jan 2019 22:25:05 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20190111054058.GA27966 () kroah ! com>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="2upDJ0FKOu8LXPf81TxwwkG1TfnAElxxK"
+References: <1547159098-19011-1-git-send-email-pshilov@microsoft.com> <1547159098-19011-8-git-send-email-pshilov@microsoft.com>
+In-Reply-To: <1547159098-19011-8-git-send-email-pshilov@microsoft.com>
+From:   Steve French <smfrench@gmail.com>
+Date:   Fri, 11 Jan 2019 00:24:54 -0600
+Message-ID: <CAH2r5mt5NinzUbxtPz2M0qaU_6+MkaaEqD-UkrO-BRM=SZZ17Q@mail.gmail.com>
+Subject: Fwd: [PATCH 7/7] CIFS: Fix error paths in writeback code
+To:     linux-fsdevel <linux-fsdevel@vger.kernel.org>, bfoster@redhat.com,
+        Jeff Layton <jlayton@redhat.com>
+Cc:     Pavel Shilovskiy <pshilov@microsoft.com>,
+        CIFS <linux-cifs@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---2upDJ0FKOu8LXPf81TxwwkG1TfnAElxxK
-Content-Type: multipart/mixed; boundary="OcTbKYYLy7oV9EI5hn4vvRFw2hEtyBPKH";
- protected-headers="v1"
-From: Kash Pande <kash@tripleback.net>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- linux-kernel@vger.kernel.org
-Message-ID: <37e65786-1ee6-1ce1-d66a-18e10c969e8b@tripleback.net>
-Subject: Re: x86/fpu: Don't export __kernel_fpu_{begin,end}()
-References: <20190111054058.GA27966 () kroah ! com>
-In-Reply-To: <20190111054058.GA27966 () kroah ! com>
+These changes in writepage and writepages for cifs remind me of
+loosely related writeback changes that Jeff and Brian have done in the
+VFS/MM layer, so was hopeful that others might have comments if they
+see anything missing from Pavel's patch.
 
---OcTbKYYLy7oV9EI5hn4vvRFw2hEtyBPKH
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Content-Language: en-US
-
-On 2019-01-10 9:40 p.m., Greg Kroah-Hartman wrote:
-> Sorry, no, we do not keep symbols exported for no in-kernel users.
->
-> greg k-h
+---------- Forwarded message ---------
+From: Pavel Shilovsky <piastryyy@gmail.com>
+Date: Thu, Jan 10, 2019 at 4:25 PM
+Subject: [PATCH 7/7] CIFS: Fix error paths in writeback code
+To: <linux-cifs@vger.kernel.org>
+Cc: Steve French <smfrench@gmail.com>, Ronnie Sahlberg <lsahlber@redhat.com>
 
 
-Hi Greg,
+This patch aims to address writeback code problems related to error
+paths. In particular it respects EINTR and related error codes and
+stores the first error occured during writeback in order to return it
+to a caller.
+
+Signed-off-by: Pavel Shilovsky <pshilov@microsoft.com>
+---
+ fs/cifs/cifsglob.h | 19 +++++++++++++++++++
+ fs/cifs/cifssmb.c  |  7 ++++---
+ fs/cifs/file.c     | 29 +++++++++++++++++++++++------
+ fs/cifs/inode.c    | 10 ++++++++++
+ 4 files changed, 56 insertions(+), 9 deletions(-)
+
+diff --git a/fs/cifs/cifsglob.h b/fs/cifs/cifsglob.h
+index 7709268..94dbdbe 100644
+--- a/fs/cifs/cifsglob.h
++++ b/fs/cifs/cifsglob.h
+@@ -1575,6 +1575,25 @@ static inline void free_dfs_info_array(struct
+dfs_info3_param *param,
+        kfree(param);
+ }
+
++static inline bool is_interrupt_error(int error)
++{
++       switch (error) {
++       case -EINTR:
++       case -ERESTARTSYS:
++       case -ERESTARTNOHAND:
++       case -ERESTARTNOINTR:
++               return true;
++       }
++       return false;
++}
++
++static inline bool is_retryable_error(int error)
++{
++       if (is_interrupt_error(error) || error == -EAGAIN)
++               return true;
++       return false;
++}
++
+ #define   MID_FREE 0
+ #define   MID_REQUEST_ALLOCATED 1
+ #define   MID_REQUEST_SUBMITTED 2
+diff --git a/fs/cifs/cifssmb.c b/fs/cifs/cifssmb.c
+index b1f49c1..6930cdb 100644
+--- a/fs/cifs/cifssmb.c
++++ b/fs/cifs/cifssmb.c
+@@ -2114,7 +2114,7 @@ cifs_writev_requeue(struct cifs_writedata *wdata)
+
+                for (j = 0; j < nr_pages; j++) {
+                        unlock_page(wdata2->pages[j]);
+-                       if (rc != 0 && rc != -EAGAIN) {
++                       if (rc != 0 && !is_retryable_error(rc)) {
+                                SetPageError(wdata2->pages[j]);
+                                end_page_writeback(wdata2->pages[j]);
+                                put_page(wdata2->pages[j]);
+@@ -2123,7 +2123,7 @@ cifs_writev_requeue(struct cifs_writedata *wdata)
+
+                if (rc) {
+                        kref_put(&wdata2->refcount, cifs_writedata_release);
+-                       if (rc == -EAGAIN)
++                       if (is_retryable_error(rc))
+                                continue;
+                        break;
+                }
+@@ -2132,7 +2132,8 @@ cifs_writev_requeue(struct cifs_writedata *wdata)
+                i += nr_pages;
+        } while (i < wdata->nr_pages);
+
+-       mapping_set_error(inode->i_mapping, rc);
++       if (rc != 0 && !is_retryable_error(rc))
++               mapping_set_error(inode->i_mapping, rc);
+        kref_put(&wdata->refcount, cifs_writedata_release);
+ }
+
+diff --git a/fs/cifs/file.c b/fs/cifs/file.c
+index c23bf9d..109b1ef 100644
+--- a/fs/cifs/file.c
++++ b/fs/cifs/file.c
+@@ -732,7 +732,8 @@ cifs_reopen_file(struct cifsFileInfo *cfile, bool can_flush)
+
+        if (can_flush) {
+                rc = filemap_write_and_wait(inode->i_mapping);
+-               mapping_set_error(inode->i_mapping, rc);
++               if (!is_interrupt_error(rc))
++                       mapping_set_error(inode->i_mapping, rc);
+
+                if (tcon->unix_ext)
+                        rc = cifs_get_inode_info_unix(&inode, full_path,
+@@ -2109,6 +2110,7 @@ static int cifs_writepages(struct address_space *mapping,
+        pgoff_t end, index;
+        struct cifs_writedata *wdata;
+        int rc = 0;
++       int saved_rc = 0;
+        unsigned int xid;
+
+        /*
+@@ -2137,8 +2139,10 @@ static int cifs_writepages(struct address_space *mapping,
+
+                rc = server->ops->wait_mtu_credits(server, cifs_sb->wsize,
+                                                   &wsize, &credits);
+-               if (rc)
++               if (rc != 0) {
++                       done = true;
+                        break;
++               }
+
+                tofind = min((wsize / PAGE_SIZE) - 1, end - index) + 1;
+
+@@ -2146,6 +2150,7 @@ static int cifs_writepages(struct address_space *mapping,
+                                                  &found_pages);
+                if (!wdata) {
+                        rc = -ENOMEM;
++                       done = true;
+                        add_credits_and_wake_if(server, credits, 0);
+                        break;
+                }
+@@ -2174,7 +2179,7 @@ static int cifs_writepages(struct address_space *mapping,
+                if (rc != 0) {
+                        add_credits_and_wake_if(server, wdata->credits, 0);
+                        for (i = 0; i < nr_pages; ++i) {
+-                               if (rc == -EAGAIN)
++                               if (is_retryable_error(rc))
+                                        redirty_page_for_writepage(wbc,
+                                                           wdata->pages[i]);
+                                else
+@@ -2182,7 +2187,7 @@ static int cifs_writepages(struct address_space *mapping,
+                                end_page_writeback(wdata->pages[i]);
+                                put_page(wdata->pages[i]);
+                        }
+-                       if (rc != -EAGAIN)
++                       if (!is_retryable_error(rc))
+                                mapping_set_error(mapping, rc);
+                }
+                kref_put(&wdata->refcount, cifs_writedata_release);
+@@ -2192,6 +2197,15 @@ static int cifs_writepages(struct address_space *mapping,
+                        continue;
+                }
+
++               /* Return immediately if we received a signal during writing */
++               if (is_interrupt_error(rc)) {
++                       done = true;
++                       break;
++               }
++
++               if (rc != 0 && saved_rc == 0)
++                       saved_rc = rc;
++
+                wbc->nr_to_write -= nr_pages;
+                if (wbc->nr_to_write <= 0)
+                        done = true;
+@@ -2209,6 +2223,9 @@ static int cifs_writepages(struct address_space *mapping,
+                goto retry;
+        }
+
++       if (saved_rc != 0)
++               rc = saved_rc;
++
+        if (wbc->range_cyclic || (range_whole && wbc->nr_to_write > 0))
+                mapping->writeback_index = index;
+
+@@ -2241,8 +2258,8 @@ cifs_writepage_locked(struct page *page, struct
+writeback_control *wbc)
+        set_page_writeback(page);
+ retry_write:
+        rc = cifs_partialpagewrite(page, 0, PAGE_SIZE);
+-       if (rc == -EAGAIN) {
+-               if (wbc->sync_mode == WB_SYNC_ALL)
++       if (is_retryable_error(rc)) {
++               if (wbc->sync_mode == WB_SYNC_ALL && rc == -EAGAIN)
+                        goto retry_write;
+                redirty_page_for_writepage(wbc, page);
+        } else if (rc != 0) {
+diff --git a/fs/cifs/inode.c b/fs/cifs/inode.c
+index 5b883a0..ba1152b 100644
+--- a/fs/cifs/inode.c
++++ b/fs/cifs/inode.c
+@@ -2260,6 +2260,11 @@ cifs_setattr_unix(struct dentry *direntry,
+struct iattr *attrs)
+         * the flush returns error?
+         */
+        rc = filemap_write_and_wait(inode->i_mapping);
++       if (is_interrupt_error(rc)) {
++               rc = -ERESTARTSYS;
++               goto out;
++       }
++
+        mapping_set_error(inode->i_mapping, rc);
+        rc = 0;
+
+@@ -2403,6 +2408,11 @@ cifs_setattr_nounix(struct dentry *direntry,
+struct iattr *attrs)
+         * the flush returns error?
+         */
+        rc = filemap_write_and_wait(inode->i_mapping);
++       if (is_interrupt_error(rc)) {
++               rc = -ERESTARTSYS;
++               goto cifs_setattr_exit;
++       }
++
+        mapping_set_error(inode->i_mapping, rc);
+        rc = 0;
+
+--
+2.7.4
 
 
-Can you please address the email that Lukas was responding to?
 
+-- 
+Thanks,
 
-Thanks.
-
-
-
---OcTbKYYLy7oV9EI5hn4vvRFw2hEtyBPKH--
-
---2upDJ0FKOu8LXPf81TxwwkG1TfnAElxxK
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEE5MQWwRLWQeWW1A0MLHWyk7icJXgFAlw4NrMACgkQLHWyk7ic
-JXj4ZAf/Zn8AZUP/r4o5Lo5By83c69WvXz60yCT/c5c08o9vJ7G4WAKQqjOpy+wG
-6rOrBbC8nNmJTn47ku07rfkIaWG5mBZ8fU9PNGfa1FFUXoirCdpzMiAiIDi8Ctgc
-7Was6bpvsz7X08P71sKBwww79otnqsJL3Zr1JtvQY8FN57gIL/mKD0pP/6zm0Pd0
-h+rL1++zCVft3lFOnlst7vTLrqVZtRb/Dg/iXuhcXmXNC1uLBVBplafQvkyfqQXH
-VHMEn0Njm72L7uoWtAXmeeXux2DtwgO8VIM6VecvMER810YyotnlRLffbJthC1wo
-wbosGu/jGzCiqUGF6w8vB+PPhw1t2Q==
-=1p7u
------END PGP SIGNATURE-----
-
---2upDJ0FKOu8LXPf81TxwwkG1TfnAElxxK--
+Steve
