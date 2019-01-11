@@ -7,49 +7,47 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1749AC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:34:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F6E6C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:34:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D320D218B0
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:34:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1253C218A4
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:34:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547217258;
-	bh=+ELslH/ty6WpziABfi7YX7D2YdyCwi22xyApWWz8wDI=;
+	s=default; t=1547217268;
+	bh=QcjO0Untq7QPZXVuR48RBdtJeyv0+sJ6a2weJkJDw9I=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=iWiBxcZYnQg9fB/Z/Rz0j3sjNzNAiF4IOQsvINYY0MjO8uJs0GPDz32dywSpDQJUK
-	 DVNQ0ZmRqNLCmE8e5Lzz5FMyBWCVrLo2ueAV1KVgo+7wvAc1/bDBVn6p//hK/LIgZF
-	 /BOqtnrx2+17YnnQY8Kba6wU9Vpk5j/ecvOsr1F8=
+	b=LxlXQY4ZzaYMfk74KpFv6NejtJKJ/jzAtFXmoaS/tiv53O5vc+6jnfoOy+A1GJ7nK
+	 /BvgYC3l9+NBASCu0459H2iBwdYpSeK2/yRoVuyvOR/ySNOaHSBIHaPZZW0cZIvqdH
+	 mpGD2PAIusSMgF5EqdNunhqVwSgdZACT6doUM3ZM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389873AbfAKOeR (ORCPT
+        id S2389902AbfAKOe0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:34:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54466 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:34:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54632 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389849AbfAKOeL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:34:11 -0500
+        id S2389874AbfAKOeV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:34:21 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CE84C2063F;
-        Fri, 11 Jan 2019 14:34:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 249F421848;
+        Fri, 11 Jan 2019 14:34:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547217251;
-        bh=+ELslH/ty6WpziABfi7YX7D2YdyCwi22xyApWWz8wDI=;
+        s=default; t=1547217260;
+        bh=QcjO0Untq7QPZXVuR48RBdtJeyv0+sJ6a2weJkJDw9I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jpm7Wh3LMB2IrqmSddMxOisK0LdUvjYSG5w3tAj8osU1FJtZb3YLBtGMYjUGFTjwG
-         RM91c/0OezK9n2D2sz+gGijsLBz+hR6Z0/RoWyIRDFZmgAq6j+Wb8Gjm9Fbty2XGA7
-         FepQZ7i2ouWEZcyvmu+nelSXUOwqwv5d/cuWZwDc=
+        b=vVqL27iDm4FDvblQ538O/3+uaopzaOXIotTdzR8VCGVKnJbNpUYunDXX0HVxr9dNM
+         KMSk6HtZnBu/5ZHVhpnD021MuxAgkhbNGgGpvstDvNaEH+ULS2GyBSLIZOklLuWQbc
+         Ooy7cx4DtC1i+mjun4N65C+B2uSYLJA9Weeo60Vg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Walker Benjamin <benjamin.walker@intel.com>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Zhu Yanjun <yanjun.zhu@oracle.com>,
-        Doug Ledford <dledford@redhat.com>
-Subject: [PATCH 4.14 097/105] rxe: fix error completion wr_id and qp_num
-Date:   Fri, 11 Jan 2019 15:15:08 +0100
-Message-Id: <20190111131111.020885444@linuxfoundation.org>
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Frank Haverkamp <haver@linux.vnet.ibm.com>
+Subject: [PATCH 4.14 101/105] genwqe: Fix size check
+Date:   Fri, 11 Jan 2019 15:15:12 +0100
+Message-Id: <20190111131111.217518418@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131102.899065735@linuxfoundation.org>
 References: <20190111131102.899065735@linuxfoundation.org>
@@ -68,48 +66,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sagi Grimberg <sagi@grimberg.me>
+From: Christian Borntraeger <borntraeger@de.ibm.com>
 
-commit e48d8ed9c6193502d849b35767fd18e20bbd7ba2 upstream.
+commit fdd669684655c07dacbdb0d753fd13833de69a33 upstream.
 
-Error completions must still contain a valid wr_id and
-qp_num such that the consumer can rely on. Correctly
-fill these fields in receive error completions.
+Calling the test program genwqe_cksum with the default buffer size of
+2MB triggers the following kernel warning on s390:
 
-Reported-by: Walker Benjamin <benjamin.walker@intel.com>
+WARNING: CPU: 30 PID: 9311 at mm/page_alloc.c:3189 __alloc_pages_nodemask+0x45c/0xbe0
+CPU: 30 PID: 9311 Comm: genwqe_cksum Kdump: loaded Not tainted 3.10.0-957.el7.s390x #1
+task: 00000005e5d13980 ti: 00000005e7c6c000 task.ti: 00000005e7c6c000
+Krnl PSW : 0704c00180000000 00000000002780ac (__alloc_pages_nodemask+0x45c/0xbe0)
+           R:0 T:1 IO:1 EX:1 Key:0 M:1 W:0 P:0 AS:3 CC:0 PM:0 EA:3
+Krnl GPRS: 00000000002932b8 0000000000b73d7c 0000000000000010 0000000000000009
+           0000000000000041 00000005e7c6f9b8 0000000000000001 00000000000080d0
+           0000000000000000 0000000000b70500 0000000000000001 0000000000000000
+           0000000000b70528 00000000007682c0 0000000000277df2 00000005e7c6f9a0
+Krnl Code: 000000000027809e: de7195001000	ed	1280(114,%r9),0(%r1)
+	   00000000002780a4: a774fead		brc	7,277dfe
+	  #00000000002780a8: a7f40001		brc	15,2780aa
+	  >00000000002780ac: 92011000		mvi	0(%r1),1
+	   00000000002780b0: a7f4fea7		brc	15,277dfe
+	   00000000002780b4: 9101c6b6		tm	1718(%r12),1
+	   00000000002780b8: a784ff3a		brc	8,277f2c
+	   00000000002780bc: a7f4fe2e		brc	15,277d18
+Call Trace:
+([<0000000000277df2>] __alloc_pages_nodemask+0x1a2/0xbe0)
+ [<000000000013afae>] s390_dma_alloc+0xfe/0x310
+ [<000003ff8065f362>] __genwqe_alloc_consistent+0xfa/0x148 [genwqe_card]
+ [<000003ff80658f7a>] genwqe_mmap+0xca/0x248 [genwqe_card]
+ [<00000000002b2712>] mmap_region+0x4e2/0x778
+ [<00000000002b2c54>] do_mmap+0x2ac/0x3e0
+ [<0000000000292d7e>] vm_mmap_pgoff+0xd6/0x118
+ [<00000000002b081c>] SyS_mmap_pgoff+0xdc/0x268
+ [<00000000002b0a34>] SyS_old_mmap+0x8c/0xb0
+ [<000000000074e518>] sysc_tracego+0x14/0x1e
+ [<000003ffacf87dc6>] 0x3ffacf87dc6
+
+turns out the check in __genwqe_alloc_consistent uses "> MAX_ORDER"
+while the mm code uses ">= MAX_ORDER". Fix genwqe.
+
 Cc: stable@vger.kernel.org
-Signed-off-by: Sagi Grimberg <sagi@grimberg.me>
-Reviewed-by: Zhu Yanjun <yanjun.zhu@oracle.com>
-Tested-by: Zhu Yanjun <yanjun.zhu@oracle.com>
-Signed-off-by: Doug Ledford <dledford@redhat.com>
+Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
+Signed-off-by: Frank Haverkamp <haver@linux.vnet.ibm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/sw/rxe/rxe_resp.c |   13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
+ drivers/misc/genwqe/card_utils.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/infiniband/sw/rxe/rxe_resp.c
-+++ b/drivers/infiniband/sw/rxe/rxe_resp.c
-@@ -845,11 +845,16 @@ static enum resp_states do_complete(stru
+--- a/drivers/misc/genwqe/card_utils.c
++++ b/drivers/misc/genwqe/card_utils.c
+@@ -217,7 +217,7 @@ u32 genwqe_crc32(u8 *buff, size_t len, u
+ void *__genwqe_alloc_consistent(struct genwqe_dev *cd, size_t size,
+ 			       dma_addr_t *dma_handle)
+ {
+-	if (get_order(size) > MAX_ORDER)
++	if (get_order(size) >= MAX_ORDER)
+ 		return NULL;
  
- 	memset(&cqe, 0, sizeof(cqe));
- 
--	wc->wr_id		= wqe->wr_id;
--	wc->status		= qp->resp.status;
--	wc->qp			= &qp->ibqp;
-+	if (qp->rcq->is_user) {
-+		uwc->status             = qp->resp.status;
-+		uwc->qp_num             = qp->ibqp.qp_num;
-+		uwc->wr_id              = wqe->wr_id;
-+	} else {
-+		wc->status              = qp->resp.status;
-+		wc->qp                  = &qp->ibqp;
-+		wc->wr_id               = wqe->wr_id;
-+	}
- 
--	/* fields after status are not required for errors */
- 	if (wc->status == IB_WC_SUCCESS) {
- 		wc->opcode = (pkt->mask & RXE_IMMDT_MASK &&
- 				pkt->mask & RXE_WRITE_MASK) ?
+ 	return dma_zalloc_coherent(&cd->pci_dev->dev, size, dma_handle,
 
 
