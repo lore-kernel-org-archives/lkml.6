@@ -7,46 +7,48 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB774C43612
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:59:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACAA9C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:59:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B342C20874
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:59:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7CBB720874
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:59:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547218762;
-	bh=QAZkod8VibXScJoGwvhbeX58tJUwL3u2vqV2WGNglOw=;
+	s=default; t=1547218766;
+	bh=yIoDZR4h0aF2nxBoV4coHjPS8pFl2XiTUaMbnIHYcd8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=MC8u+/qRno3ZkUvWLf+VNh9GSWD0uwvx9jC0jV2N8jLiPBCHSsKCOd/+OCROCyrBH
-	 9ijqnJHfk1eZYU6XnFA4GOQO8UnEcScbKNqPkjGcrUCOlQn8A3/qXZjwupNHoS1Fe0
-	 OnrNy0MLjbX/PbFiDUjH5G2rwtryfPy96nmBmArs=
+	b=K57suZ1M9e40IE/BBTa/ypirkFnQP08nUUz2aSYIzH7wLly6lHt7ThZJT5ZaynRUE
+	 Z4FDUkrFppbbm1C9kRdiMXiyHIKqZNPRYiUyuqzn8AmTrxd9dkzOXz9t57UY9u40p/
+	 2OAJ24HcXOCfhizipfWz/cjNpCT2SWKhdfoHLC6E=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389743AbfAKOds (ORCPT
+        id S2389730AbfAKOdq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:33:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53932 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:33:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53978 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389035AbfAKOdm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:33:42 -0500
+        id S2389280AbfAKOdp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:33:45 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 78A1421841;
-        Fri, 11 Jan 2019 14:33:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 159E0204EC;
+        Fri, 11 Jan 2019 14:33:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547217221;
-        bh=QAZkod8VibXScJoGwvhbeX58tJUwL3u2vqV2WGNglOw=;
+        s=default; t=1547217224;
+        bh=yIoDZR4h0aF2nxBoV4coHjPS8pFl2XiTUaMbnIHYcd8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PF+zXyQ04GjW3uBxc5VheH/Hy9At3nRbR/x5oZMXaOeruauwxJN86vJR5RCN6wPKL
-         dh7UtbC4zxAoXdsSRixmqJFOUyO5186dG7WuMTUGt73ZqIS3gm/7vEu6EQc2vuFtey
-         eWsSldxx/ONt7rEJWMOAowsqZ2N1m/1FXfzKlSIo=
+        b=2mTo9SRsfNe6h8F+jNdLDY8Ic1cZ7RnfIz2YvvPZX/QPSL8/sYK0jFBVOHKMG1cEM
+         sEBgh0NUP7VE/ZoyJ1Edon7zL/XANumXrLwziRP0homfTarXaZgggvQrfRK6Tuu8Pl
+         /HNvfSEOdmVgD+2j9SGx0CaoMVihkK/uvTnaxGlo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vasily Averin <vvs@virtuozzo.com>,
-        David Teigland <teigland@redhat.com>, stable@kernel.org
-Subject: [PATCH 4.14 087/105] dlm: memory leaks on error path in dlm_user_request()
-Date:   Fri, 11 Jan 2019 15:14:58 +0100
-Message-Id: <20190111131110.270300360@linuxfoundation.org>
+        stable@vger.kernel.org, Pan Bian <bianpan2016@163.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Bob Peterson <rpeterso@redhat.com>
+Subject: [PATCH 4.14 088/105] gfs2: Get rid of potential double-freeing in gfs2_create_inode
+Date:   Fri, 11 Jan 2019 15:14:59 +0100
+Message-Id: <20190111131110.329078534@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131102.899065735@linuxfoundation.org>
 References: <20190111131102.899065735@linuxfoundation.org>
@@ -65,56 +67,70 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vasily Averin <vvs@virtuozzo.com>
+From: Andreas Gruenbacher <agruenba@redhat.com>
 
-commit d47b41aceeadc6b58abc9c7c6485bef7cfb75636 upstream.
+commit 6ff9b09e00a441599f3aacdf577254455a048bc9 upstream.
 
-According to comment in dlm_user_request() ua should be freed
-in dlm_free_lkb() after successful attach to lkb.
+In gfs2_create_inode, after setting and releasing the acl / default_acl, the
+acl / default_acl pointers are not set to NULL as they should be.  In that
+state, when the function reaches label fail_free_acls, gfs2_create_inode will
+try to release the same acls again.
 
-However ua is attached to lkb not in set_lock_args() but later,
-inside request_lock().
+Fix that by setting the pointers to NULL after releasing the acls.  Slightly
+simplify the logic.  Also, posix_acl_release checks for NULL already, so
+there is no need to duplicate those checks here.
 
-Fixes 597d0cae0f99 ("[DLM] dlm: user locks")
-Cc: stable@kernel.org # 2.6.19
-
-Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
-Signed-off-by: David Teigland <teigland@redhat.com>
+Fixes: e01580bf9e4d ("gfs2: use generic posix ACL infrastructure")
+Reported-by: Pan Bian <bianpan2016@163.com>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: stable@vger.kernel.org # v4.9+
+Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
+Signed-off-by: Bob Peterson <rpeterso@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/dlm/lock.c |   14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ fs/gfs2/inode.c |   18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
---- a/fs/dlm/lock.c
-+++ b/fs/dlm/lock.c
-@@ -5792,20 +5792,20 @@ int dlm_user_request(struct dlm_ls *ls,
- 			goto out;
- 		}
+--- a/fs/gfs2/inode.c
++++ b/fs/gfs2/inode.c
+@@ -743,17 +743,19 @@ static int gfs2_create_inode(struct inod
+ 			       the gfs2 structures. */
+ 	if (default_acl) {
+ 		error = __gfs2_set_acl(inode, default_acl, ACL_TYPE_DEFAULT);
++		if (error)
++			goto fail_gunlock3;
+ 		posix_acl_release(default_acl);
++		default_acl = NULL;
  	}
--
--	/* After ua is attached to lkb it will be freed by dlm_free_lkb().
--	   When DLM_IFL_USER is set, the dlm knows that this is a userspace
--	   lock and that lkb_astparam is the dlm_user_args structure. */
--
- 	error = set_lock_args(mode, &ua->lksb, flags, namelen, timeout_cs,
- 			      fake_astfn, ua, fake_bastfn, &args);
--	lkb->lkb_flags |= DLM_IFL_USER;
--
- 	if (error) {
-+		kfree(ua->lksb.sb_lvbptr);
-+		ua->lksb.sb_lvbptr = NULL;
-+		kfree(ua);
- 		__put_lkb(ls, lkb);
- 		goto out;
+ 	if (acl) {
+-		if (!error)
+-			error = __gfs2_set_acl(inode, acl, ACL_TYPE_ACCESS);
++		error = __gfs2_set_acl(inode, acl, ACL_TYPE_ACCESS);
++		if (error)
++			goto fail_gunlock3;
+ 		posix_acl_release(acl);
++		acl = NULL;
  	}
  
-+	/* After ua is attached to lkb it will be freed by dlm_free_lkb().
-+	   When DLM_IFL_USER is set, the dlm knows that this is a userspace
-+	   lock and that lkb_astparam is the dlm_user_args structure. */
-+	lkb->lkb_flags |= DLM_IFL_USER;
- 	error = request_lock(ls, lkb, name, namelen, &args);
- 
- 	switch (error) {
+-	if (error)
+-		goto fail_gunlock3;
+-
+ 	error = security_inode_init_security(&ip->i_inode, &dip->i_inode, name,
+ 					     &gfs2_initxattrs, NULL);
+ 	if (error)
+@@ -788,10 +790,8 @@ fail_free_inode:
+ 	}
+ 	gfs2_rsqa_delete(ip, NULL);
+ fail_free_acls:
+-	if (default_acl)
+-		posix_acl_release(default_acl);
+-	if (acl)
+-		posix_acl_release(acl);
++	posix_acl_release(default_acl);
++	posix_acl_release(acl);
+ fail_gunlock:
+ 	gfs2_dir_no_add(&da);
+ 	gfs2_glock_dq_uninit(ghs);
 
 
