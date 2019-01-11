@@ -4,56 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA87AC43612
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:47:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 282E0C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:47:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BAF80206B6
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:47:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E0FAA2063F
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:47:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547218045;
-	bh=r7y15Grucrf0LGXelMlve6wIEgUgLw1S8IV4kcReYtI=;
+	s=default; t=1547218056;
+	bh=2XNpW+HpyJRdvEXVFhp1MNDTYtnk4CSy4Bf1h4/krQA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=0umFtCKPPp7V4Z5hmYdCSpySHUVT+jwZV5QJBSkOv9g6oh1aMunFDFTjDyb5XSlOK
-	 qwM2DGdF5ZWgvTcVZDi34Kb7DLFmbe5uXgMiSzvXkkYlwj7jkm9vgyoIUU//AhwVI1
-	 bZl2kuOQK1krpBi7UTc8qRHfffQ610qHGGzMyqe8=
+	b=L8+qrKLt0//U6BxJRGsmOy9BJk3OC6Hywi6ilZpuPIPAlXbYI65Loc4VVkJ65FLtU
+	 uVXPsOaKDBGz0f/vAQGNx/bEzyzZesEviftbbmqHTLO67F3ECrffSBBGZ//vwg4KAU
+	 AMgkE5n/HEe1oQ9XQGnV15dqOxYaIiJWO8SdJ7nI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391492AbfAKOrZ (ORCPT
+        id S2391367AbfAKOmN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:47:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38668 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:42:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34928 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391390AbfAKOrV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:47:21 -0500
+        id S2391351AbfAKOmI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:42:08 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7DDE42063F;
-        Fri, 11 Jan 2019 14:47:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ACAC22063F;
+        Fri, 11 Jan 2019 14:42:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547218040;
-        bh=r7y15Grucrf0LGXelMlve6wIEgUgLw1S8IV4kcReYtI=;
+        s=default; t=1547217728;
+        bh=2XNpW+HpyJRdvEXVFhp1MNDTYtnk4CSy4Bf1h4/krQA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=S3KmBYxkV3pb03Q/0J5cWzH6+U/lmsBwLclWG9Ox6Z4czSwQCl7CgyICLvLSwcwTU
-         UnV+hlOzDVuw0KXP1hgjbA9NlT6iQa8m8fkqamIRt95KA9zDAqvKPyREdZ7HYBq0us
-         NhtjcRjRCPons+PdKiRAxelUIpE5Lcx8Z18h2TLs=
+        b=12AczPZ9k1s5vouzOxdONUDkQRqbCLtUcJdG2Hv/75K3Uloc26rpwglwf7O9D2FAk
+         oVX/Z7vzlx9gHXI48+AuG/ynFcOGQgdtvQes/HJzOO5J6h3xrUjEF7a2pcnZDt1tJU
+         sJLmOJZOx5zKiV+j6wPga97jXYfE/OJgPQDA6+6g=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ashok Raj <ashok.raj@intel.com>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        "Ramos Falcon, Ernesto R" <ernesto.r.ramos.falcon@intel.com>,
-        Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
-        Sohil Mehta <sohil.mehta@intel.com>,
-        Joerg Roedel <jroedel@suse.de>
-Subject: [PATCH 4.4 83/88] iommu/vt-d: Handle domain agaw being less than iommu agaw
-Date:   Fri, 11 Jan 2019 15:08:52 +0100
-Message-Id: <20190111131059.557465397@linuxfoundation.org>
+        stable@vger.kernel.org, "Ewan D. Milne" <emilne@redhat.com>,
+        Laurence Oberman <loberman@redhat.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 4.20 02/65] scsi: lpfc: do not set queue->page_count to 0 if pc_sli4_params.wqpcnt is invalid
+Date:   Fri, 11 Jan 2019 15:14:48 +0100
+Message-Id: <20190111131056.286850843@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190111131045.137499039@linuxfoundation.org>
-References: <20190111131045.137499039@linuxfoundation.org>
+In-Reply-To: <20190111131055.331350141@linuxfoundation.org>
+References: <20190111131055.331350141@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 X-Patchwork-Hint: ignore
@@ -65,63 +61,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.4-stable review patch.  If anyone has any objections, please let me know.
+4.20-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Sohil Mehta <sohil.mehta@intel.com>
+From: Ewan D. Milne <emilne@redhat.com>
 
-commit 3569dd07aaad71920c5ea4da2d5cc9a167c1ffd4 upstream.
+commit 4e87eb2f46ea547d12a276b2e696ab934d16cfb6 upstream.
 
-The Intel IOMMU driver opportunistically skips a few top level page
-tables from the domain paging directory while programming the IOMMU
-context entry. However there is an implicit assumption in the code that
-domain's adjusted guest address width (agaw) would always be greater
-than IOMMU's agaw.
+Certain older adapters such as the OneConnect OCe10100 may not have a valid
+wqpcnt value.  In this case, do not set queue->page_count to 0 in
+lpfc_sli4_queue_alloc() as this will prevent the driver from initializing.
 
-The IOMMU capabilities in an upcoming platform cause the domain's agaw
-to be lower than IOMMU's agaw. The issue is seen when the IOMMU supports
-both 4-level and 5-level paging. The domain builds a 4-level page table
-based on agaw of 2. However the IOMMU's agaw is set as 3 (5-level). In
-this case the code incorrectly tries to skip page page table levels.
-This causes the IOMMU driver to avoid programming the context entry. The
-fix handles this case and programs the context entry accordingly.
-
-Fixes: de24e55395698 ("iommu/vt-d: Simplify domain_context_mapping_one")
-Cc: <stable@vger.kernel.org>
-Cc: Ashok Raj <ashok.raj@intel.com>
-Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
-Cc: Lu Baolu <baolu.lu@linux.intel.com>
-Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
-Reported-by: Ramos Falcon, Ernesto R <ernesto.r.ramos.falcon@intel.com>
-Tested-by: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-Signed-off-by: Sohil Mehta <sohil.mehta@intel.com>
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
+Fixes: 895427bd01 ("scsi: lpfc: NVME Initiator: Base modifications")
+Cc: stable@vger.kernel.org # 4.11+
+Signed-off-by: Ewan D. Milne <emilne@redhat.com>
+Reviewed-by: Laurence Oberman <loberman@redhat.com>
+Tested-by:   Laurence Oberman <loberman@redhat.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/iommu/intel-iommu.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/scsi/lpfc/lpfc_sli.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/iommu/intel-iommu.c
-+++ b/drivers/iommu/intel-iommu.c
-@@ -2041,7 +2041,7 @@ static int domain_context_mapping_one(st
- 	 * than default.  Unnecessary for PT mode.
- 	 */
- 	if (translation != CONTEXT_TT_PASS_THROUGH) {
--		for (agaw = domain->agaw; agaw != iommu->agaw; agaw--) {
-+		for (agaw = domain->agaw; agaw > iommu->agaw; agaw--) {
- 			ret = -ENOMEM;
- 			pgd = phys_to_virt(dma_pte_addr(pgd));
- 			if (!dma_pte_present(pgd))
-@@ -2055,7 +2055,7 @@ static int domain_context_mapping_one(st
- 			translation = CONTEXT_TT_MULTI_LEVEL;
+--- a/drivers/scsi/lpfc/lpfc_sli.c
++++ b/drivers/scsi/lpfc/lpfc_sli.c
+@@ -14501,7 +14501,8 @@ lpfc_sli4_queue_alloc(struct lpfc_hba *p
+ 			hw_page_size))/hw_page_size;
  
- 		context_set_address_root(context, virt_to_phys(pgd));
--		context_set_address_width(context, iommu->agaw);
-+		context_set_address_width(context, agaw);
- 	} else {
- 		/*
- 		 * In pass through mode, AW must be programmed to
+ 	/* If needed, Adjust page count to match the max the adapter supports */
+-	if (queue->page_count > phba->sli4_hba.pc_sli4_params.wqpcnt)
++	if (phba->sli4_hba.pc_sli4_params.wqpcnt &&
++	    (queue->page_count > phba->sli4_hba.pc_sli4_params.wqpcnt))
+ 		queue->page_count = phba->sli4_hba.pc_sli4_params.wqpcnt;
+ 
+ 	INIT_LIST_HEAD(&queue->list);
 
 
