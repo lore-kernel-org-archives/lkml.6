@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E8BAC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:44:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E75DC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:44:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4121221841
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:44:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BCF3021848
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:44:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547217849;
-	bh=p0HcT2UTNZVTQY7pTc8FF5T6l2SMhd3UKSaZhQZN4E8=;
+	s=default; t=1547217852;
+	bh=m+BDDSNKDi3petwEPL/zp8eE5VM6jeQdz77FJ9KUJAk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ozND5JsTVlCxmE/G9q/nMbE2Ci87rkOfbLacXfbjyEhh7h2ZrYX+Y14FsGI7d98hM
-	 y2NWLKXPiyWSD8/3Ftq8imJLDyqQ7Yg3BclwyLdyOn3rl3m+MiHAyS0INgojczCg/S
-	 hDpz03dW2ZvHSXKpv6DvcsLsQTJLtTPowg7oHnrc=
+	b=RcLFek7/D2wN5QdTKYnIXb6tJxBUqVtbYRgkFa1Re3yJoqxb+H7AYpWxbzQh1IhFm
+	 8Wi+DVwNZpsfomZ42mZhtFe/JBcuviL7GEP3zlKGY4mNfNhTmRW3AN8hnOUtAEhd2j
+	 ActqwD1/sc20LT5kodZnF5zD71z4MH1ZZOIPODlI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404549AbfAKOoI (ORCPT
+        id S2404564AbfAKOoL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:44:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37002 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:44:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37074 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404527AbfAKOoC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:44:02 -0500
+        id S2404550AbfAKOoI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:44:08 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E4B052063F;
-        Fri, 11 Jan 2019 14:44:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6D5EA206B6;
+        Fri, 11 Jan 2019 14:44:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547217842;
-        bh=p0HcT2UTNZVTQY7pTc8FF5T6l2SMhd3UKSaZhQZN4E8=;
+        s=default; t=1547217847;
+        bh=m+BDDSNKDi3petwEPL/zp8eE5VM6jeQdz77FJ9KUJAk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xgsts8GLRwCapOMF+1L7doZHY3wQuHQA+ao5BJqKpzVMGn01sRq4y+RIC02rjk+ys
-         6vMzYqGQ9wSnUpuigRYx2oczTKCTc9xkJZeyU1BEKuVaZo7aq5JyPmGrIf++H64pZ+
-         UhSJ1WXA2BgB87s7LcfP4gHWapuDGqIN3GFJZj5k=
+        b=okFVmic05eOMqYkbmmKSUVyP0aOYhzv3Rp43zc8LcJ1avnuROSKAk6lqV6mduqXbO
+         8sa6Jp7+K0dHTWqrwNeJR7Zu+H2J4jkWf8iy/LZYWrQARmZrRVu+VSeDQyoP89vxuF
+         1NZBbnHlRXMxar+tT8XjRMIEhNF6UQepuRffy8vo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andreas Gruenbacher <agruenba@redhat.com>,
-        Bob Peterson <rpeterso@redhat.com>
-Subject: [PATCH 4.20 34/65] gfs2: Fix loop in gfs2_rbm_find
-Date:   Fri, 11 Jan 2019 15:15:20 +0100
-Message-Id: <20190111131101.050023821@linuxfoundation.org>
+        stable@vger.kernel.org, Christophe Leroy <christophe.leroy@c-s.fr>,
+        Kees Cook <keescook@chromium.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 4.20 62/65] lib: fix build failure in CONFIG_DEBUG_VIRTUAL test
+Date:   Fri, 11 Jan 2019 15:15:48 +0100
+Message-Id: <20190111131104.292995789@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131055.331350141@linuxfoundation.org>
 References: <20190111131055.331350141@linuxfoundation.org>
@@ -65,37 +66,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Andreas Gruenbacher <agruenba@redhat.com>
+From: Christophe Leroy <christophe.leroy@c-s.fr>
 
-commit 2d29f6b96d8f80322ed2dd895bca590491c38d34 upstream.
+commit 10fdf838e5f540beca466e9d1325999c072e5d3f upstream.
 
-Fix the resource group wrap-around logic in gfs2_rbm_find that commit
-e579ed4f44 broke.  The bug can lead to unnecessary repeated scanning of the
-same bitmaps; there is a risk that future changes will turn this into an
-endless loop.
+On several arches, virt_to_phys() is in io.h
 
-Fixes: e579ed4f44 ("GFS2: Introduce rbm field bii")
-Cc: stable@vger.kernel.org # v3.13+
-Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
-Signed-off-by: Bob Peterson <rpeterso@redhat.com>
+Build fails without it:
+
+  CC      lib/test_debug_virtual.o
+lib/test_debug_virtual.c: In function 'test_debug_virtual_init':
+lib/test_debug_virtual.c:26:7: error: implicit declaration of function 'virt_to_phys' [-Werror=implicit-function-declaration]
+  pa = virt_to_phys(va);
+       ^
+
+Fixes: e4dace361552 ("lib: add test module for CONFIG_DEBUG_VIRTUAL")
+CC: stable@vger.kernel.org
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+Reviewed-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/gfs2/rgrp.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ lib/test_debug_virtual.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/fs/gfs2/rgrp.c
-+++ b/fs/gfs2/rgrp.c
-@@ -1780,9 +1780,9 @@ static int gfs2_rbm_find(struct gfs2_rbm
- 			goto next_iter;
- 		}
- 		if (ret == -E2BIG) {
-+			n += rbm->bii - initial_bii;
- 			rbm->bii = 0;
- 			rbm->offset = 0;
--			n += (rbm->bii - initial_bii);
- 			goto res_covered_end_of_rgrp;
- 		}
- 		return ret;
+--- a/lib/test_debug_virtual.c
++++ b/lib/test_debug_virtual.c
+@@ -5,6 +5,7 @@
+ #include <linux/vmalloc.h>
+ #include <linux/slab.h>
+ #include <linux/sizes.h>
++#include <linux/io.h>
+ 
+ #include <asm/page.h>
+ #ifdef CONFIG_MIPS
 
 
