@@ -2,109 +2,115 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63209C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 01:31:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1954C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 01:31:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C46B2133F
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 01:31:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547170280;
-	bh=MzN244KRXno61F4Z0wl9U4CiE9hw7fCydiIba+x3HTk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=ZfyicmAV60aUHNXPnfFlq0Twr5qTlKGiwIxsSalfBK8f2Q8QH952sU0NxAWgeXvgu
-	 fq/f/NgafsuZLEwUqi4nfxIXYr1ncI4JKBUBkqgXLLor2eJf/p6St5NOEJcbtnIiL0
-	 chVy6lQuH37thiDDKUHQVsxYhyGv/Bqe7RN2FVgk=
+	by mail.kernel.org (Postfix) with ESMTP id A59B620879
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 01:31:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729369AbfAKBbT (ORCPT
+        id S1729399AbfAKBbu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 10 Jan 2019 20:31:19 -0500
-Received: from lgeamrelo11.lge.com ([156.147.23.51]:37509 "EHLO
-        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727846AbfAKBbS (ORCPT
+        Thu, 10 Jan 2019 20:31:50 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:52283 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726369AbfAKBbu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 10 Jan 2019 20:31:18 -0500
-Received: from unknown (HELO lgemrelse6q.lge.com) (156.147.1.121)
-        by 156.147.23.51 with ESMTP; 11 Jan 2019 10:31:16 +0900
-X-Original-SENDERIP: 156.147.1.121
-X-Original-MAILFROM: namhyung@kernel.org
-Received: from unknown (HELO sejong) (10.177.227.17)
-        by 156.147.1.121 with ESMTP; 11 Jan 2019 10:31:16 +0900
-X-Original-SENDERIP: 10.177.227.17
-X-Original-MAILFROM: namhyung@kernel.org
-Date:   Fri, 11 Jan 2019 10:31:16 +0900
-From:   Namhyung Kim <namhyung@kernel.org>
-To:     Jiri Olsa <jolsa@kernel.org>
-Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>, kernel-team@lge.com
-Subject: Re: [PATCHv2 0/6] perf session: Add reader object
-Message-ID: <20190111013115.GA557@sejong>
-References: <20190110101301.6196-1-jolsa@kernel.org>
+        Thu, 10 Jan 2019 20:31:50 -0500
+X-UUID: b2a527fe380b4a38854dbd2a139b7a58-20190111
+X-UUID: b2a527fe380b4a38854dbd2a139b7a58-20190111
+Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw01.mediatek.com
+        (envelope-from <ck.hu@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 1819157637; Fri, 11 Jan 2019 09:31:30 +0800
+Received: from mtkcas09.mediatek.inc (172.21.101.178) by
+ mtkmbs02n2.mediatek.inc (172.21.101.101) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Fri, 11 Jan 2019 09:31:28 +0800
+Received: from [172.21.77.4] (172.21.77.4) by mtkcas09.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Fri, 11 Jan 2019 09:31:28 +0800
+Message-ID: <1547170288.29836.2.camel@mtksdaap41>
+Subject: Re: Aw: Re: [PATCH] drm/mediatek: Add MTK Framebuffer-Device
+ (mt7623)
+From:   CK Hu <ck.hu@mediatek.com>
+To:     Frank Wunderlich <frank-w@public-files.de>
+CC:     Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@linux.ie>,
+        Alexander Ryabchenko <d3adme4t@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Date:   Fri, 11 Jan 2019 09:31:28 +0800
+In-Reply-To: <trinity-0da588a3-1277-4421-ad6b-1f6aeb129dd6-1547146897687@3c-app-gmx-bs35>
+References: <20190102084917.4049-1-frank-w@public-files.de>
+         <20190107103640.GH21184@phenom.ffwll.local>
+         <CAKMK7uEqxz4TAt_iwEC+dMWboVxCeCduyABsSwD0Ns7k=Z_UWA@mail.gmail.com>
+         <trinity-0da588a3-1277-4421-ad6b-1f6aeb129dd6-1547146897687@3c-app-gmx-bs35>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190110101301.6196-1-jolsa@kernel.org>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+Content-Transfer-Encoding: 7bit
+X-TM-SNTS-SMTP: 0A9927583E6C4C5F7B56FD85D3FBAA413171D2A9E01E6C960CD787995FFDBB712000:8
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jirka,
+Hi, Frank:
 
-On Thu, Jan 10, 2019 at 11:12:55AM +0100, Jiri Olsa wrote:
-> hi,
-> this patchset adds reader object to interface event
-> processing for any data. It's defined as:
+On Thu, 2019-01-10 at 20:01 +0100, Frank Wunderlich wrote:
+> Hi Daniel,
 > 
->   struct reader {
->         int fd;
->         u64 data_size;
->         u64 data_offset;
->   };
+> > > Would be good to use the new generic fbdev emulation code here, for even
+> > > less code. Or at least know why this isn't possible to use for mtk (and
+> > > maybe address that in the core code). Hand-rolling fbdev code shouldn't be
+> > > needed anymore.
+> > 
+> > Back on the mailing list, no private replies please:
 > 
-> Now we can simply define reader object for arbitrary file
-> data portion and pass it to reader__process_events function
-> to process its data.
+> i don't wanted to spam all people with dumb questions ;)
 > 
-> It's preparation for multiple file storage under perf.data
-> directory.
+> > For examples please grep for drm_fbdev_generic_setup(). There's also a
+> > still in-flight series from Gerd Hoffmann to convert over bochs. That,
+> > plus all the kerneldoc linked from there should get you started.
+> > -Daniel
+> 
+> this is one of google best founds if i search for drm_fbdev_generic_setup:
+> 
+> https://lkml.org/lkml/2018/12/19/305
+> 
+> not very helpful...
+> 
+> so i tried kernel-doc
+> 
+> https://www.kernel.org/doc/html/latest/gpu/drm-kms-helpers.html?highlight=drm_fbdev_generic_setup#c.drm_fbdev_generic_setup
+> 
+> which is nice function-reference but i've found no generic workflow
+> 
+> as the posted driver is "only" a driver ported from kernel 4.4 by Alexander, i don't know if this new framework can be used and which parts need to be changed. I only try to bring his code Mainline....
+> Maybe CK Hu can help here because driver is originally from him and he knows internals. Or maybe you can help here?
 
-I'm looking forward to seeing it soon! :)
+I could help on this but I'm a little busy now, so I'm not sure how long
+this process takes.
 
-Acked-by: Namhyung Kim <namhyung@kernel.org>
-
-Thanks,
-Namhyung
-
+Regards,
+CK
 
 > 
-> Available also in:
->   git://git.kernel.org/pub/scm/linux/kernel/git/jolsa/perf.git
->   perf/reader
+> i personally make my first steps as spare-time kernel-developer :)
 > 
-> Changes in v2:
->   - rebased on latest perf/core
->   - added dependency patch (1/6) that was omitted in the original post
+> regards Frank
 > 
-> thanks,
-> jirka
-> 
-> 
-> ---
-> Jiri Olsa (6):
->       perf session: Rearrange perf_session__process_events function
->       perf session: Get rid of file_size variable
->       perf session: Add reader object
->       perf session: Add data_size to reader object
->       perf session: Add data_offset to reader object
->       perf session: Add reader__process_events function
-> 
->  tools/perf/util/session.c | 85 ++++++++++++++++++++++++++++++++++++++++++++++++++-----------------------------------
->  1 file changed, 50 insertions(+), 35 deletions(-)
+> _______________________________________________
+> Linux-mediatek mailing list
+> Linux-mediatek@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-mediatek
+
+
