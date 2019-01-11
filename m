@@ -7,47 +7,46 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9107C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:43:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B304DC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:43:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8926421848
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:43:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7CCAA20872
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:43:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547217810;
-	bh=lVAHxWYVszceiDGS7BJnn7DdpClBWDR9oIC27TBZrWQ=;
+	s=default; t=1547217813;
+	bh=R/lRsQL0JvBa4VCX+CAfFFwAtlp3ux5rbadx48Pzi+M=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=R0HaKw/WuRH+Pps48pNvv/A0RswcBCWR+lrvOtqj1lE0og+5dmA8YnYumyZYiiRza
-	 taaSE4JR/9eeS3sgKYX3LDJRGF7lFAlo5a/KLSDB/pe46uj4qJT4UsTPOWZ5q0ki1B
-	 zzGk6dK0fYFMb5HaX8PYoA94g0S+N0vbMMT3QC6s=
+	b=HNPqsswVDxG2s3rEzFyEoc9KuT7seHir9yIUsUp1D7tR+iCW029YdPZ7oajmPIck3
+	 qIYwWpn/U9f0zfab5uE/2ixqS3dlTuK0q62naKN0BovZldh2udMEvqQMuMrLp2qNOi
+	 qh55w9kRsYqMT5TXjkcJR5euHdCmSRnnOcjACfe8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404384AbfAKOna (ORCPT
+        id S2404396AbfAKOnc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:43:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36254 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:43:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36350 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404355AbfAKOnW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:43:22 -0500
+        id S2404367AbfAKOn2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:43:28 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B12EB21841;
-        Fri, 11 Jan 2019 14:43:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 724B420872;
+        Fri, 11 Jan 2019 14:43:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547217802;
-        bh=lVAHxWYVszceiDGS7BJnn7DdpClBWDR9oIC27TBZrWQ=;
+        s=default; t=1547217807;
+        bh=R/lRsQL0JvBa4VCX+CAfFFwAtlp3ux5rbadx48Pzi+M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HzGRkove3wuNubuHlmJJMFndonjsn2RL8KmMKhODpEWE8UTNxKeeF2PUM3gJDyH8s
-         c9BzelkrXZm0h5Wv00WZyTSJYGPi7Do9tBkbstbpYglZZVWeAHSJ0YMQzqMKNYK7U0
-         qbWM3tfVLwuibEpRhPILeM/PE4oE5QsyGTJxUNJc=
+        b=iRoqUGefLRWXoidZNGJSN0kMTNXmsGq0WxbokhPrF85gbTnbxDspXraTXIl6dXQPF
+         h3q3wOu/9Jq60yk8blS29iEywniVBAZYC1XWoWMPEQ/n2LfeorQucxOfiMoxcJa9JC
+         78zXn/VbEzou/tmbSfNNNT9nXG1SD6ziXkPSh+0Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Ammy Yi <ammy.yi@intel.com>
-Subject: [PATCH 4.20 47/65] stm class: Fix a module refcount leak in policy creation error path
-Date:   Fri, 11 Jan 2019 15:15:33 +0100
-Message-Id: <20190111131102.760686276@linuxfoundation.org>
+        stable@vger.kernel.org, Steve Wise <swise@opengridcomputing.com>,
+        Jason Gunthorpe <jgg@mellanox.com>
+Subject: [PATCH 4.20 49/65] RDMA/iwcm: Dont copy past the end of dev_name() string
+Date:   Fri, 11 Jan 2019 15:15:35 +0100
+Message-Id: <20190111131102.958577073@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131055.331350141@linuxfoundation.org>
 References: <20190111131055.331350141@linuxfoundation.org>
@@ -66,79 +65,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+From: Steve Wise <swise@opengridcomputing.com>
 
-commit c18614a1a11276837bdd44403d84d207c9951538 upstream.
+commit d53ec8af56d5163f8a42e961ece3aeb5c560e79d upstream.
 
-Commit c7fd62bc69d0 ("stm class: Introduce framing protocol drivers")
-adds a bug into the error path of policy creation, that would do a
-module_put() on a wrong module, if one tried to create a policy for
-an stm device which already has a policy, using a different protocol.
-IOW,
+We now use dev_name(&ib_device->dev) instead of ib_device->name in iwpm
+messages.  The name field in struct device is a const char *, where as
+ib_device->name is a char array of size IB_DEVICE_NAME_MAX, and it is
+pre-initialized to zeros.
 
-| mkdir /config/stp-policy/dummy_stm.0:p_basic.test
-| mkdir /config/stp-policy/dummy_stm.0:p_sys-t.test # puts "p_basic"
-| mkdir /config/stp-policy/dummy_stm.0:p_sys-t.test # "p_basic" -> -1
+Since iw_cm_map() was using memcpy() to copy in the device name, and
+copying IWPM_DEVNAME_SIZE bytes, it ends up copying past the end of the
+source device name string and copying random bytes.  This results in iwpmd
+failing the REGISTER_PID request from iwcm.  Thus port mapping is broken.
 
-throws:
+Validate the device and if names, and use strncpy() to inialize the entire
+message field.
 
-| general protection fault: 0000 [#1] SMP PTI
-| CPU: 3 PID: 2887 Comm: mkdir
-| RIP: 0010:module_put.part.31+0xe/0x90
-| Call Trace:
-|  module_put+0x13/0x20
-|  stm_put_protocol+0x11/0x20 [stm_core]
-|  stp_policy_make+0xf1/0x210 [stm_core]
-|  ? __kmalloc+0x183/0x220
-|  ? configfs_mkdir+0x10d/0x4c0
-|  configfs_mkdir+0x169/0x4c0
-|  vfs_mkdir+0x108/0x1c0
-|  do_mkdirat+0xe8/0x110
-|  __x64_sys_mkdir+0x1b/0x20
-|  do_syscall_64+0x5a/0x140
-|  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-
-Correct this sad mistake by calling calling 'put' on the correct
-reference, which happens to match another error path in the same
-function, so we consolidate the two at the same time.
-
-Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Fixes: c7fd62bc69d0 ("stm class: Introduce framing protocol drivers")
-Reported-by: Ammy Yi <ammy.yi@intel.com>
-Cc: stable <stable@vger.kernel.org>
+Fixes: 896de0090a85 ("RDMA/core: Use dev_name instead of ibdev->name")
+Cc: stable@vger.kernel.org
+Signed-off-by: Steve Wise <swise@opengridcomputing.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/hwtracing/stm/policy.c |   12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+ drivers/infiniband/core/iwcm.c |   12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
---- a/drivers/hwtracing/stm/policy.c
-+++ b/drivers/hwtracing/stm/policy.c
-@@ -440,10 +440,8 @@ stp_policy_make(struct config_group *gro
+--- a/drivers/infiniband/core/iwcm.c
++++ b/drivers/infiniband/core/iwcm.c
+@@ -502,17 +502,21 @@ static void iw_cm_check_wildcard(struct
+  */
+ static int iw_cm_map(struct iw_cm_id *cm_id, bool active)
+ {
++	const char *devname = dev_name(&cm_id->device->dev);
++	const char *ifname = cm_id->device->iwcm->ifname;
+ 	struct iwpm_dev_data pm_reg_msg;
+ 	struct iwpm_sa_data pm_msg;
+ 	int status;
  
- 	stm->policy = kzalloc(sizeof(*stm->policy), GFP_KERNEL);
- 	if (!stm->policy) {
--		mutex_unlock(&stm->policy_mutex);
--		stm_put_protocol(pdrv);
--		stm_put_device(stm);
--		return ERR_PTR(-ENOMEM);
-+		ret = ERR_PTR(-ENOMEM);
-+		goto unlock_policy;
- 	}
++	if (strlen(devname) >= sizeof(pm_reg_msg.dev_name) ||
++	    strlen(ifname) >= sizeof(pm_reg_msg.if_name))
++		return -EINVAL;
++
+ 	cm_id->m_local_addr = cm_id->local_addr;
+ 	cm_id->m_remote_addr = cm_id->remote_addr;
  
- 	config_group_init_type_name(&stm->policy->group, name,
-@@ -458,7 +456,11 @@ unlock_policy:
- 	mutex_unlock(&stm->policy_mutex);
+-	memcpy(pm_reg_msg.dev_name, dev_name(&cm_id->device->dev),
+-	       sizeof(pm_reg_msg.dev_name));
+-	memcpy(pm_reg_msg.if_name, cm_id->device->iwcm->ifname,
+-	       sizeof(pm_reg_msg.if_name));
++	strncpy(pm_reg_msg.dev_name, devname, sizeof(pm_reg_msg.dev_name));
++	strncpy(pm_reg_msg.if_name, ifname, sizeof(pm_reg_msg.if_name));
  
- 	if (IS_ERR(ret)) {
--		stm_put_protocol(stm->pdrv);
-+		/*
-+		 * pdrv and stm->pdrv at this point can be quite different,
-+		 * and only one of them needs to be 'put'
-+		 */
-+		stm_put_protocol(pdrv);
- 		stm_put_device(stm);
- 	}
- 
+ 	if (iwpm_register_pid(&pm_reg_msg, RDMA_NL_IWCM) ||
+ 	    !iwpm_valid_pid())
 
 
