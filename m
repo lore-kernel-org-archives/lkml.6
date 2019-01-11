@@ -2,100 +2,105 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DDD5C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 08:43:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57AF0C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 08:43:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F4952084C
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 08:43:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2056D2084C
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 08:43:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="I7fyq4rP"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="TPDmlZ4b"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731217AbfAKIn3 (ORCPT
+        id S1731224AbfAKIn5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 03:43:29 -0500
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:10592 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728031AbfAKIn2 (ORCPT
+        Fri, 11 Jan 2019 03:43:57 -0500
+Received: from perceval.ideasonboard.com ([213.167.242.64]:51540 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727753AbfAKIn5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 03:43:28 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c38571d0001>; Fri, 11 Jan 2019 00:43:09 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Fri, 11 Jan 2019 00:43:27 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Fri, 11 Jan 2019 00:43:27 -0800
-Received: from [10.21.132.148] (10.124.1.5) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 11 Jan
- 2019 08:43:25 +0000
-Subject: Re: [PATCH] ASoC: core: Fix deferral of machine drivers
-To:     Mark Brown <broonie@kernel.org>
-CC:     Liam Girdwood <lgirdwood@gmail.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>,
-        Marcel Ziswiler <marcel@ziswiler.com>,
-        Matthias Reichl <hias@horus.com>
-References: <1546968494-22993-1-git-send-email-jonathanh@nvidia.com>
- <20190109183605.GH10405@sirena.org.uk>
- <44a64e6e-c9ec-8eba-60fe-eda092250d82@nvidia.com>
- <20190110164835.GF9541@sirena.org.uk>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <96f2e729-8ec2-44ee-448c-255c07c068b9@nvidia.com>
-Date:   Fri, 11 Jan 2019 08:43:24 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Fri, 11 Jan 2019 03:43:57 -0500
+Received: from localhost.localdomain (unknown [96.44.9.117])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id C2959547;
+        Fri, 11 Jan 2019 09:43:53 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1547196234;
+        bh=xnsY6Qa5b4FsbIRZrB5tyRpiIjdtn3sW2YqJ4YCbtXs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=TPDmlZ4blXNj5eSpH3ktUW6hH+ZphFYUXAds+x1taQYCgjJPbUtc6zJBkp7CUbuf5
+         FyBQRSWwFg7F7KqwvnVTElFTbK9SU8J5Rfip6qIesX/B0Ybe7bkCmb1ifp0ZFlR0ia
+         BaqAxbTTdTsYZrH0lZIGkKZ36+4JtHEdktcA0Wmo=
+Date:   Fri, 11 Jan 2019 03:43:46 -0500
+From:   Paul Elder <paul.elder@ideasonboard.com>
+To:     Alan Stern <stern@rowland.harvard.edu>
+Cc:     laurent.pinchart@ideasonboard.com, kieran.bingham@ideasonboard.com,
+        b-liu@ti.com, rogerq@ti.com, balbi@kernel.org,
+        gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 0/6] usb: gadget: add mechanism to asynchronously
+ validate data stage of ctrl out request
+Message-ID: <20190111084346.GC32268@localhost.localdomain>
+References: <20190109070856.27460-1-paul.elder@ideasonboard.com>
+ <Pine.LNX.4.44L0.1901101520090.1206-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
-In-Reply-To: <20190110164835.GF9541@sirena.org.uk>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1547196190; bh=5pcftrVeWBzWp7XI8Y7Iqk9O1htsm06nDe6veZvMQHw=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=I7fyq4rPS3pTAQcFn6xV+mxLvj32/4I8OtCZVGHZtedXK6Mu3bpKtQFPw4IntQOkZ
-         vPLKVAxuVVjf+IYMNdcbbL3mBDrXsdXUaunJ3OES6AhXFOpq16oYyiovDurquo+bid
-         a1C5itGhKY5u+aMexpz7TSjpE15SglFuFVPkW2frZwvYKpS7oW6V2L3e3XUXuSOUXE
-         zGrBR5s7xGfWr4dHCt0QgPRo3dDJA+8va8ofFfg0qYJA8K21M0IV9XpA39zysMCBKx
-         bGPJSAU0Mz5iFrVWlP7oxH4ekXoQzV/MDphBv0NR0k8VCY/pRIovjvqideix+fZMgQ
-         9H6JSaqKI5VjQ==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Pine.LNX.4.44L0.1901101520090.1206-100000@iolanthe.rowland.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-On 10/01/2019 16:48, Mark Brown wrote:
-> On Thu, Jan 10, 2019 at 12:13:36PM +0000, Jon Hunter wrote:
->> On 09/01/2019 18:36, Mark Brown wrote:
->>> On Tue, Jan 08, 2019 at 05:28:14PM +0000, Jon Hunter wrote:
+On Thu, Jan 10, 2019 at 03:39:25PM -0500, Alan Stern wrote:
+> On Wed, 9 Jan 2019, Paul Elder wrote:
 > 
->>>> -	struct snd_soc_dai_link_component *platform;
->>>> +	struct snd_soc_dai_link_component platform;
+> > This patch series adds a mechanism to allow asynchronously validating
+> > the data stage of a control OUT request, and for stalling or suceeding
+> > the request accordingly.
 > 
->>> This breaks the build for the SCU cards (and we needs a little rebase
->>> against another fix I just merged, though I did do that when applying).
+> One thing we haven't mentioned explicitly: What should happen when the 
+> time for the status stage rolls around if the gadget driver queues a 
+> non-zero length request?
+
+Ah, yeah, I missed that.
+
+> This can happen in a few different ways.  One obvious possibility is
+> that the gadget driver sets the explicit_status flag and then submits a
+> non-zero length request.  Another is that the gadget driver submits
+> _two_ requests during the data stage (the second would be interpreted
+> as the status-stage request).  A third is that the gadget driver
+> submits a data-stage request that is too long and the excess portion is
+> used for the status stage.
 > 
->> Sorry I still don't see the build break, can you point me to it?
+> My feeling is that the behavior in these cases should officially be
+> undefined.  Almost anything could happen: the status stage could STALL,
+> it could succeed, it could NAK, or it could send a non-zero packet to
+> the host.  The request could return with 0 status or an error status,
+> and req->actual could take on any reasonable value.
 > 
-> I'd need to find your patch again and fix the rebase issue.  It was
-> assigning a pointer to a platform IIRC.
+> Alternatively, the UDC driver could detect these errors and report them 
+> somehow.  Maybe STALL the status stage and complete the request with 
+> -EPIPE status or some such thing.
+> 
+> Any preferences or other ideas?
 
-Sorry I still don't see it. Happen to recall the config you were using
-to build? I tried enabling the various SH soundcards (which I believe
-the SCU card is under).
+I think error detection and reporting would be useful. The question is
+what action to take after that; either leave it undefined or STALL. I
+think STALL would be fine, since if a non-zero length request is
+submitted for a status stage, intentionally or not, it isn't part of
+proper behavior and should count as an error.
 
-Jon
+> One other thing: Some UDC drivers may assume that the data stage of a 
+> control transfer never spans more than a single usb_request.  Should 
+> this become an official requirement?
 
--- 
-nvpublic
+Would the data stage of a control transfer ever need more space than a
+single usb_request can contain? I know UVC doesn't; that's why we pack
+it together with the setup stage data in 3/6. If so, I would think we
+can make it a requirement.
+
+
+Paul
