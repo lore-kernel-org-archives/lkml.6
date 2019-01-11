@@ -2,121 +2,67 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9A3DC43612
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 09:00:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B620AC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 09:00:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A2BD820657
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 09:00:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8A935214C6
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 09:00:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731297AbfAKJAV (ORCPT
+        id S1731330AbfAKJA1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 04:00:21 -0500
-Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:55295 "EHLO
-        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725779AbfAKJAU (ORCPT
+        Fri, 11 Jan 2019 04:00:27 -0500
+Received: from out30-132.freemail.mail.aliyun.com ([115.124.30.132]:35523 "EHLO
+        out30-132.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725779AbfAKJAY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 04:00:20 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R161e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04420;MF=zhang.jia@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0TI.JvuE_1547197175;
-Received: from localhost(mailfrom:zhang.jia@linux.alibaba.com fp:SMTPD_---0TI.JvuE_1547197175)
+        Fri, 11 Jan 2019 04:00:24 -0500
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R991e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04452;MF=zhang.jia@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0TI.KgAr_1547197174;
+Received: from localhost(mailfrom:zhang.jia@linux.alibaba.com fp:SMTPD_---0TI.KgAr_1547197174)
           by smtp.aliyun-inc.com(127.0.0.1);
-          Fri, 11 Jan 2019 16:59:35 +0800
+          Fri, 11 Jan 2019 16:59:34 +0800
 From:   Jia Zhang <zhang.jia@linux.alibaba.com>
 To:     jarkko.sakkinen@linux.intel.com, peterhuewe@gmx.de, jgg@ziepe.ca,
         tweek@google.com
 Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
         zhang.jia@linux.alibaba.com
-Subject: [PATCH 1/2] tpm/eventlog/tpm1: Simplify walking over *pos measurements
-Date:   Fri, 11 Jan 2019 16:59:32 +0800
-Message-Id: <1547197173-52826-2-git-send-email-zhang.jia@linux.alibaba.com>
+Subject: [PATCH v2 0/2] tpm/eventlog/tpm1: Small fixes
+Date:   Fri, 11 Jan 2019 16:59:31 +0800
+Message-Id: <1547197173-52826-1-git-send-email-zhang.jia@linux.alibaba.com>
 X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1547197173-52826-1-git-send-email-zhang.jia@linux.alibaba.com>
-References: <1547197173-52826-1-git-send-email-zhang.jia@linux.alibaba.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The responsibility of tpm1_bios_measurements_start() is to walk
-over the first *pos measurements, ensuring the skipped and
-to-be-read measurements are not out-of-boundary.
+Change since V1:
 
-Current logic is complicated a bit. Just employ a do-while loop
-with necessary sanity check, and then get the goal.
+- Add test results with LTP.
+- Rewrite patch 1's commit header.
 
-Signed-off-by: Jia Zhang <zhang.jia@linux.alibaba.com>
----
- drivers/char/tpm/eventlog/tpm1.c | 37 ++++++++++++++-----------------------
- 1 file changed, 14 insertions(+), 23 deletions(-)
+Here is the test result with LTP testcase ima_tpm.sh which is used
+to verify binary_bios_measurements.
 
-diff --git a/drivers/char/tpm/eventlog/tpm1.c b/drivers/char/tpm/eventlog/tpm1.c
-index 58c8478..4cf8303 100644
---- a/drivers/char/tpm/eventlog/tpm1.c
-+++ b/drivers/char/tpm/eventlog/tpm1.c
-@@ -74,7 +74,7 @@
- /* returns pointer to start of pos. entry of tcg log */
- static void *tpm1_bios_measurements_start(struct seq_file *m, loff_t *pos)
- {
--	loff_t i;
-+	loff_t i = 0;
- 	struct tpm_chip *chip = m->private;
- 	struct tpm_bios_log *log = &chip->log;
- 	void *addr = log->bios_event_log;
-@@ -83,38 +83,29 @@ static void *tpm1_bios_measurements_start(struct seq_file *m, loff_t *pos)
- 	u32 converted_event_size;
- 	u32 converted_event_type;
- 
--
- 	/* read over *pos measurements */
--	for (i = 0; i < *pos; i++) {
-+	do {
- 		event = addr;
- 
-+		/* check if current entry is valid */
-+		if (addr + sizeof(struct tcpa_event) >= limit)
-+			return NULL;
-+
- 		converted_event_size =
- 		    do_endian_conversion(event->event_size);
- 		converted_event_type =
- 		    do_endian_conversion(event->event_type);
- 
--		if ((addr + sizeof(struct tcpa_event)) < limit) {
--			if ((converted_event_type == 0) &&
--			    (converted_event_size == 0))
--				return NULL;
--			addr += (sizeof(struct tcpa_event) +
--				 converted_event_size);
--		}
--	}
--
--	/* now check if current entry is valid */
--	if ((addr + sizeof(struct tcpa_event)) >= limit)
--		return NULL;
--
--	event = addr;
-+		if (((converted_event_type == 0) && (converted_event_size == 0))
-+		    || ((addr + sizeof(struct tcpa_event) + converted_event_size)
-+			>= limit))
-+			return NULL;
- 
--	converted_event_size = do_endian_conversion(event->event_size);
--	converted_event_type = do_endian_conversion(event->event_type);
-+		if (i++ == *pos)
-+			break;
- 
--	if (((converted_event_type == 0) && (converted_event_size == 0))
--	    || ((addr + sizeof(struct tcpa_event) + converted_event_size)
--		>= limit))
--		return NULL;
-+		addr += (sizeof(struct tcpa_event) + converted_event_size);
-+	} while (1);
- 
- 	return addr;
- }
--- 
-1.8.3.1
+ima_tpm 1 TINFO: timeout per run is 0h 5m 0s
+ima_tpm 1 TINFO: /proc/cmdline: BOOT_IMAGE=/boot/vmlinuz-5.0.0-rc1+ root=UUID=c665e92c-736d-4b08-9143-a57396f935f3 ro rootwait crashkernel=auto console=tty0 console=ttyS0,115200 reboot=efi ima_hash=sha1
+ima_tpm 1 TINFO: verify boot aggregate
+ima_tpm 1 TPASS: bios aggregate matches IMA boot aggregate
+ima_tpm 2 TINFO: verify PCR values
+ima_tpm 2 TINFO: evmctl version: evmctl 1.1
+ima_tpm 2 TCONF: TPM Hardware Support not enabled in kernel or no TPM chip found
 
+Summary:
+passed   1
+failed   0   
+skipped  1   
+warnings 0
+
+Note:
+The 2nd test in ima_tpm requires /sys/class/tpm/tpm0/device/pcrs but this
+interface is not available if TPM2 device used. So the test result showed
+above is expected.
+
+Jia
