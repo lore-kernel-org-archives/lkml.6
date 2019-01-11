@@ -2,136 +2,111 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B14C2C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:24:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CC7AC43612
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:24:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8743220874
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:24:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C1E382177B
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:24:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1547216693;
+	bh=pPEPtHfvYu7x5wLzLLYYLVSV4S6HhrFe+SoD1KbL6zg=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=fXpWz5aMGzhHP+EhZyNSpE8OqcKRSG/Ffucsr09MpnOkHtDsL0acusNe7PoOOTrgL
+	 sMXE1pYyGC06c2Vhc3Si7898juUqiTSmVnaXUq7WTgQGVaQcC8uxLxhfi+egfhUx9O
+	 nuApClweDu4NxhYlBeJ2bnJaUu3kT6PFeY0eVmbA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388225AbfAKOYk (ORCPT
+        id S1732131AbfAKOSv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:24:40 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:40975 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388032AbfAKOXX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:23:23 -0500
-Received: from dude.hi.pengutronix.de ([2001:67c:670:100:1d::7])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <ore@pengutronix.de>)
-        id 1ghxiP-00054I-76; Fri, 11 Jan 2019 15:23:17 +0100
-Received: from ore by dude.hi.pengutronix.de with local (Exim 4.92-RC4)
-        (envelope-from <ore@pengutronix.de>)
-        id 1ghxiO-0002vm-0e; Fri, 11 Jan 2019 15:23:16 +0100
-From:   Oleksij Rempel <o.rempel@pengutronix.de>
-To:     Paul Burton <paul.burton@mips.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     Oleksij Rempel <o.rempel@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, John Crispin <john@phrozen.org>,
-        Felix Fietkau <nbd@nbd.name>
-Subject: [PATCH v1 00/11] MIPS: ath79: move towards proper OF support
-Date:   Fri, 11 Jan 2019 15:22:29 +0100
-Message-Id: <20190111142240.10908-1-o.rempel@pengutronix.de>
+        Fri, 11 Jan 2019 09:18:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35276 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387991AbfAKOSp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:18:45 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8DAB52177B;
+        Fri, 11 Jan 2019 14:18:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1547216325;
+        bh=pPEPtHfvYu7x5wLzLLYYLVSV4S6HhrFe+SoD1KbL6zg=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=ekq4YUrItK261WrhcW7LKpFLWuzGvz4prvLyJz1V9v4ThKFr17xaPrjhMkNzI0oS2
+         90uCh8VPg/v+gI1i3EuOIZbXs5/ng510PmLmcvNkVGD03I8ufV8q/V6Jy9J7lknP2Z
+         wp204qBl4w3bneBs2cAYbgihSwMtNkbhM5yMF13U=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Qian Cai <cai@lca.pw>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 59/88] checkstack.pl: fix for aarch64
+Date:   Fri, 11 Jan 2019 15:08:28 +0100
+Message-Id: <20190111131055.117385077@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190111131045.137499039@linuxfoundation.org>
+References: <20190111131045.137499039@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::7
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patches are take from OpenWRT, rebased and tested with kernel
-v5.0-rt1 on DPTechnics DPT-Module (Atheros AR9331) by me.
+4.4-stable review patch.  If anyone has any objections, please let me know.
 
-Since one dt-bindings header is touched, I added DT maintainers to the
-TO/CC.
+------------------
 
-Felix Fietkau (6):
-  MIPS: ath79: add helpers for setting clocks and expose the ref clock
-  MIPS: ath79: move legacy "wdt" and "uart" clock aliases out of soc
-    init
-  MIPS: ath79: pass PLL base to clock init functions
-  MIPS: ath79: make specifying the reference clock in DT optional
-  MIPS: ath79: support setting up clock via DT on all SoC types
-  MIPS: ath79: export switch MDIO reference clock
+[ Upstream commit f1733a1d3cd32a9492f4cf866be37bb46e10163d ]
 
-John Crispin (5):
-  MIPS: ath79: drop legacy IRQ code
-  MIPS: ath79: drop machfiles
-  MIPS: ath79: drop legacy pci code
-  MIPS: ath79: drop platform device registration code
-  MIPS: ath79: drop !OF clock code
+There is actually a space after "sp," like this,
 
- arch/mips/Kconfig                        |   1 -
- arch/mips/ath79/Kconfig                  |  73 -----
- arch/mips/ath79/Makefile                 |  23 +-
- arch/mips/ath79/clock.c                  | 342 ++++++++++-------------
- arch/mips/ath79/common.h                 |   5 -
- arch/mips/ath79/dev-common.c             | 159 -----------
- arch/mips/ath79/dev-common.h             |  18 --
- arch/mips/ath79/dev-gpio-buttons.c       |  56 ----
- arch/mips/ath79/dev-gpio-buttons.h       |  23 --
- arch/mips/ath79/dev-leds-gpio.c          |  54 ----
- arch/mips/ath79/dev-leds-gpio.h          |  21 --
- arch/mips/ath79/dev-spi.c                |  38 ---
- arch/mips/ath79/dev-spi.h                |  22 --
- arch/mips/ath79/dev-usb.c                | 242 ----------------
- arch/mips/ath79/dev-usb.h                |  17 --
- arch/mips/ath79/dev-wmac.c               | 155 ----------
- arch/mips/ath79/dev-wmac.h               |  17 --
- arch/mips/ath79/irq.c                    | 169 -----------
- arch/mips/ath79/mach-ap121.c             |  92 ------
- arch/mips/ath79/mach-ap136.c             | 156 -----------
- arch/mips/ath79/mach-ap81.c              | 100 -------
- arch/mips/ath79/mach-db120.c             | 136 ---------
- arch/mips/ath79/mach-pb44.c              | 128 ---------
- arch/mips/ath79/mach-ubnt-xm.c           | 126 ---------
- arch/mips/ath79/machtypes.h              |  28 --
- arch/mips/ath79/pci.c                    | 273 ------------------
- arch/mips/ath79/pci.h                    |  35 ---
- arch/mips/ath79/setup.c                  |  78 +-----
- arch/mips/include/asm/mach-ath79/ath79.h |   4 -
- arch/mips/pci/Makefile                   |   1 +
- arch/mips/pci/fixup-ath79.c              |  21 ++
- include/dt-bindings/clock/ath79-clk.h    |   4 +-
- 32 files changed, 185 insertions(+), 2432 deletions(-)
- delete mode 100644 arch/mips/ath79/dev-common.c
- delete mode 100644 arch/mips/ath79/dev-common.h
- delete mode 100644 arch/mips/ath79/dev-gpio-buttons.c
- delete mode 100644 arch/mips/ath79/dev-gpio-buttons.h
- delete mode 100644 arch/mips/ath79/dev-leds-gpio.c
- delete mode 100644 arch/mips/ath79/dev-leds-gpio.h
- delete mode 100644 arch/mips/ath79/dev-spi.c
- delete mode 100644 arch/mips/ath79/dev-spi.h
- delete mode 100644 arch/mips/ath79/dev-usb.c
- delete mode 100644 arch/mips/ath79/dev-usb.h
- delete mode 100644 arch/mips/ath79/dev-wmac.c
- delete mode 100644 arch/mips/ath79/dev-wmac.h
- delete mode 100644 arch/mips/ath79/irq.c
- delete mode 100644 arch/mips/ath79/mach-ap121.c
- delete mode 100644 arch/mips/ath79/mach-ap136.c
- delete mode 100644 arch/mips/ath79/mach-ap81.c
- delete mode 100644 arch/mips/ath79/mach-db120.c
- delete mode 100644 arch/mips/ath79/mach-pb44.c
- delete mode 100644 arch/mips/ath79/mach-ubnt-xm.c
- delete mode 100644 arch/mips/ath79/machtypes.h
- delete mode 100644 arch/mips/ath79/pci.c
- delete mode 100644 arch/mips/ath79/pci.h
- create mode 100644 arch/mips/pci/fixup-ath79.c
+    ffff2000080813c8:       a9bb7bfd        stp     x29, x30, [sp, #-80]!
 
+Right now, checkstack.pl isn't able to print anything on aarch64,
+because it won't be able to match the stating objdump line of a function
+due to this missing space.  Hence, it displays every stack as zero-size.
+
+After this patch, checkpatch.pl is able to match the start of a
+function's objdump, and is then able to calculate each function's stack
+correctly.
+
+Link: http://lkml.kernel.org/r/20181207195843.38528-1-cai@lca.pw
+Signed-off-by: Qian Cai <cai@lca.pw>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ scripts/checkstack.pl | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/scripts/checkstack.pl b/scripts/checkstack.pl
+index dd8397894d5c..12a6940741fe 100755
+--- a/scripts/checkstack.pl
++++ b/scripts/checkstack.pl
+@@ -46,8 +46,8 @@ my (@stack, $re, $dre, $x, $xs, $funcre);
+ 	$xs	= "[0-9a-f ]";	# hex character or space
+ 	$funcre = qr/^$x* <(.*)>:$/;
+ 	if ($arch eq 'aarch64') {
+-		#ffffffc0006325cc:       a9bb7bfd        stp     x29, x30, [sp,#-80]!
+-		$re = qr/^.*stp.*sp,\#-([0-9]{1,8})\]\!/o;
++		#ffffffc0006325cc:       a9bb7bfd        stp     x29, x30, [sp, #-80]!
++		$re = qr/^.*stp.*sp, \#-([0-9]{1,8})\]\!/o;
+ 	} elsif ($arch eq 'arm') {
+ 		#c0008ffc:	e24dd064	sub	sp, sp, #100	; 0x64
+ 		$re = qr/.*sub.*sp, sp, #(([0-9]{2}|[3-9])[0-9]{2})/o;
 -- 
-2.20.1
+2.19.1
+
+
 
