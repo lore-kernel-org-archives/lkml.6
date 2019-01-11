@@ -4,50 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23396C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:27:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A524C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:27:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E4C4920874
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:27:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E2B2520874
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:27:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547216822;
-	bh=xaMGKVsLRsPj3RTnr+lHbGGaokaXLEBxh07LtxnQ3G8=;
+	s=default; t=1547216829;
+	bh=fiMgZs1nSIjVFdYyQRN5hJ8LtQ/hytCPazcY2id7dkY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=O6uy1NJRXrNRx0U01sRqArm7JYL76FuhCPpaRNUdGZN8VmnXQIijjp2Va1b44JtNI
-	 yvAFON1UHlNlIqg8EKz5XRXQpd1CqbpxFcw2MC3QxOxZxrVQj9g1LKSL54inMBnhw3
-	 m3jRI1or6r08H8xnfXLwo+sYeMZ98GuxtGIgdK5g=
+	b=rFnI/7yqBliu/ufwiZvFNPuCoAj4eb0XR3hFcpg8btBq7qkLfr4cVqxulNAc7PtLB
+	 NI+07cCMTZ92POQjmXdBh4bUVQQ0DthTASz+Ft6SMFvEGRDLk8qPpuIxSjRukz1PlP
+	 PY64FFWtVRHzpE5rxrx0iehCrnbh0sqtfPYzJ08I=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388120AbfAKO1B (ORCPT
+        id S1729143AbfAKORZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:27:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33934 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:17:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33760 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387861AbfAKORb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:17:31 -0500
+        id S2387851AbfAKORW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:17:22 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BC5D72177B;
-        Fri, 11 Jan 2019 14:17:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6AF1C2184A;
+        Fri, 11 Jan 2019 14:17:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547216251;
-        bh=xaMGKVsLRsPj3RTnr+lHbGGaokaXLEBxh07LtxnQ3G8=;
+        s=default; t=1547216240;
+        bh=fiMgZs1nSIjVFdYyQRN5hJ8LtQ/hytCPazcY2id7dkY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OsX3IYiVZzmGhl+rUp1n1PjsBZ701DbvXLlFsIa0XKx/PuGd8+pcsOPur1ZFjbJDL
-         +zJF+v4aoKFwyrpStkSKpcxElfBL3gdWKqKLdJd4y4Mxbs7BY/Ww7pVum3Lz3mT0Zc
-         /qo5BdaxbOVwfqwHpQlzYC4rP+/97ynubVyLmfH8=
+        b=pjjXlOckUBgLG4IWFXU693igEFFZXxHDdRwihOf/3OJpWjYIyGMayQB2k4LvGPwo4
+         rEEFY12bNn2m8kOKzvsUF9e6QEyaqMYfCJ2e95uL2suFvvydy6OQBk9/mqtizXZnZj
+         9VQVH0pvevx/G/MUsmW7mYf/wcCGzKG3t7tsAADg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.4 30/88] ALSA: rme9652: Fix potential Spectre v1 vulnerability
-Date:   Fri, 11 Jan 2019 15:07:59 +0100
-Message-Id: <20190111131050.532349010@linuxfoundation.org>
+        stable@vger.kernel.org, Adit Ranadive <aditr@vmware.com>,
+        Vishnu Dasa <vdasa@vmware.com>,
+        Jorgen Hansen <jhansen@vmware.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.4 26/88] VSOCK: Send reset control packet when socket is partially bound
+Date:   Fri, 11 Jan 2019 15:07:55 +0100
+Message-Id: <20190111131050.025072477@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131045.137499039@linuxfoundation.org>
 References: <20190111131045.137499039@linuxfoundation.org>
@@ -66,71 +67,128 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Gustavo A. R. Silva <gustavo@embeddedor.com>
+From: Jorgen Hansen <jhansen@vmware.com>
 
-commit 0b84304ef5da92add8dc75a1b07879c5374cdb05 upstream.
+[ Upstream commit a915b982d8f5e4295f64b8dd37ce753874867e88 ]
 
-info->channel is indirectly controlled by user-space, hence leading to
-a potential exploitation of the Spectre variant 1 vulnerability.
+If a server side socket is bound to an address, but not in the listening
+state yet, incoming connection requests should receive a reset control
+packet in response. However, the function used to send the reset
+silently drops the reset packet if the sending socket isn't bound
+to a remote address (as is the case for a bound socket not yet in
+the listening state). This change fixes this by using the src
+of the incoming packet as destination for the reset packet in
+this case.
 
-This issue was detected with the help of Smatch:
-
-sound/pci/rme9652/hdsp.c:4100 snd_hdsp_channel_info() warn: potential spectre issue 'hdsp->channel_map' [r] (local cap)
-
-Fix this by sanitizing info->channel before using it to index hdsp->channel_map
-
-Notice that given that speculation windows are large, the policy is
-to kill the speculation on the first load and not worry if it can be
-completed with a dependent load/store [1].
-
-Also, notice that I refactored the code a bit in order to get rid of the
-following checkpatch warning:
-
-ERROR: do not use assignment in if condition
-FILE: sound/pci/rme9652/hdsp.c:4103:
-	if ((mapped_channel = hdsp->channel_map[info->channel]) < 0)
-
-[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
-
-Cc: stable@vger.kernel.org
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Fixes: d021c344051a ("VSOCK: Introduce VM Sockets")
+Reviewed-by: Adit Ranadive <aditr@vmware.com>
+Reviewed-by: Vishnu Dasa <vdasa@vmware.com>
+Signed-off-by: Jorgen Hansen <jhansen@vmware.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- sound/pci/rme9652/hdsp.c |   10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ net/vmw_vsock/vmci_transport.c |   67 ++++++++++++++++++++++++++++++-----------
+ 1 file changed, 50 insertions(+), 17 deletions(-)
 
---- a/sound/pci/rme9652/hdsp.c
-+++ b/sound/pci/rme9652/hdsp.c
-@@ -30,6 +30,7 @@
- #include <linux/math64.h>
- #include <linux/vmalloc.h>
- #include <linux/io.h>
-+#include <linux/nospec.h>
+--- a/net/vmw_vsock/vmci_transport.c
++++ b/net/vmw_vsock/vmci_transport.c
+@@ -273,6 +273,31 @@ vmci_transport_send_control_pkt_bh(struc
+ }
  
- #include <sound/core.h>
- #include <sound/control.h>
-@@ -4065,15 +4066,16 @@ static int snd_hdsp_channel_info(struct
- 				    struct snd_pcm_channel_info *info)
+ static int
++vmci_transport_alloc_send_control_pkt(struct sockaddr_vm *src,
++				      struct sockaddr_vm *dst,
++				      enum vmci_transport_packet_type type,
++				      u64 size,
++				      u64 mode,
++				      struct vmci_transport_waiting_info *wait,
++				      u16 proto,
++				      struct vmci_handle handle)
++{
++	struct vmci_transport_packet *pkt;
++	int err;
++
++	pkt = kmalloc(sizeof(*pkt), GFP_KERNEL);
++	if (!pkt)
++		return -ENOMEM;
++
++	err = __vmci_transport_send_control_pkt(pkt, src, dst, type, size,
++						mode, wait, proto, handle,
++						true);
++	kfree(pkt);
++
++	return err;
++}
++
++static int
+ vmci_transport_send_control_pkt(struct sock *sk,
+ 				enum vmci_transport_packet_type type,
+ 				u64 size,
+@@ -281,9 +306,7 @@ vmci_transport_send_control_pkt(struct s
+ 				u16 proto,
+ 				struct vmci_handle handle)
  {
- 	struct hdsp *hdsp = snd_pcm_substream_chip(substream);
--	int mapped_channel;
-+	unsigned int channel = info->channel;
+-	struct vmci_transport_packet *pkt;
+ 	struct vsock_sock *vsk;
+-	int err;
  
--	if (snd_BUG_ON(info->channel >= hdsp->max_channels))
-+	if (snd_BUG_ON(channel >= hdsp->max_channels))
- 		return -EINVAL;
-+	channel = array_index_nospec(channel, hdsp->max_channels);
+ 	vsk = vsock_sk(sk);
  
--	if ((mapped_channel = hdsp->channel_map[info->channel]) < 0)
-+	if (hdsp->channel_map[channel] < 0)
+@@ -293,17 +316,10 @@ vmci_transport_send_control_pkt(struct s
+ 	if (!vsock_addr_bound(&vsk->remote_addr))
  		return -EINVAL;
  
--	info->offset = mapped_channel * HDSP_CHANNEL_BUFFER_BYTES;
-+	info->offset = hdsp->channel_map[channel] * HDSP_CHANNEL_BUFFER_BYTES;
- 	info->first = 0;
- 	info->step = 32;
- 	return 0;
+-	pkt = kmalloc(sizeof(*pkt), GFP_KERNEL);
+-	if (!pkt)
+-		return -ENOMEM;
+-
+-	err = __vmci_transport_send_control_pkt(pkt, &vsk->local_addr,
+-						&vsk->remote_addr, type, size,
+-						mode, wait, proto, handle,
+-						true);
+-	kfree(pkt);
+-
+-	return err;
++	return vmci_transport_alloc_send_control_pkt(&vsk->local_addr,
++						     &vsk->remote_addr,
++						     type, size, mode,
++						     wait, proto, handle);
+ }
+ 
+ static int vmci_transport_send_reset_bh(struct sockaddr_vm *dst,
+@@ -321,12 +337,29 @@ static int vmci_transport_send_reset_bh(
+ static int vmci_transport_send_reset(struct sock *sk,
+ 				     struct vmci_transport_packet *pkt)
+ {
++	struct sockaddr_vm *dst_ptr;
++	struct sockaddr_vm dst;
++	struct vsock_sock *vsk;
++
+ 	if (pkt->type == VMCI_TRANSPORT_PACKET_TYPE_RST)
+ 		return 0;
+-	return vmci_transport_send_control_pkt(sk,
+-					VMCI_TRANSPORT_PACKET_TYPE_RST,
+-					0, 0, NULL, VSOCK_PROTO_INVALID,
+-					VMCI_INVALID_HANDLE);
++
++	vsk = vsock_sk(sk);
++
++	if (!vsock_addr_bound(&vsk->local_addr))
++		return -EINVAL;
++
++	if (vsock_addr_bound(&vsk->remote_addr)) {
++		dst_ptr = &vsk->remote_addr;
++	} else {
++		vsock_addr_init(&dst, pkt->dg.src.context,
++				pkt->src_port);
++		dst_ptr = &dst;
++	}
++	return vmci_transport_alloc_send_control_pkt(&vsk->local_addr, dst_ptr,
++					     VMCI_TRANSPORT_PACKET_TYPE_RST,
++					     0, 0, NULL, VSOCK_PROTO_INVALID,
++					     VMCI_INVALID_HANDLE);
+ }
+ 
+ static int vmci_transport_send_negotiate(struct sock *sk, size_t size)
 
 
