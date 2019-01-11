@@ -7,45 +7,46 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06E1EC43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:40:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B44CC43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:40:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C309821841
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:40:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4FA8C2063F
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:40:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547217607;
-	bh=subV7PZCj4edp3nY1BblvIJ9lnaiZUCssgfrsL0eyck=;
+	s=default; t=1547217611;
+	bh=FGFxA5Me/4Oj9pcsXGhfUHvRbTJy4KGcQVt76UIu/n4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=nJZen0niV0vhuPMNmuU5dXLwRY4Kz/9VxMPJ9rjig8J69duoF8CtOMvMh6tMJZTep
-	 PXQ196ALvNFueO3YvgJvQXT/uvu2+Du12bML3J/KjDLkWuxtfTAzHUhEoT+DSd5e+L
-	 RvKVNKVEL8ISxl8p8j3+xDRxV8ROLjOOOwdkesSU=
+	b=u2cjRQxFB7gUArmp82G+DUGpG1jASXWI1wSvWj6L1LAxwNHAQKFVnRj1sLYZden42
+	 Ts2E4hg4OmpGEb8xLkuKnDQu+ANErQexArDvaCxc8Am7qgOFtdCyAB4+Hx1xBJ3cx8
+	 Lge2TDGf6bfR3I6Yapis/eBZfpEyTzQtwZTK2D4g=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391172AbfAKOkH (ORCPT
+        id S2403865AbfAKOkK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:40:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60900 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:40:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60976 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391147AbfAKOkC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:40:02 -0500
+        id S2403847AbfAKOkI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:40:08 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A8A7521841;
-        Fri, 11 Jan 2019 14:40:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 42A5C2063F;
+        Fri, 11 Jan 2019 14:40:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547217602;
-        bh=subV7PZCj4edp3nY1BblvIJ9lnaiZUCssgfrsL0eyck=;
+        s=default; t=1547217607;
+        bh=FGFxA5Me/4Oj9pcsXGhfUHvRbTJy4KGcQVt76UIu/n4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Q3Ssjb1H1oEGC4UhFse/MhG0tWcu9DOEkner5ZRoPwazMNeecucE+XKRc38YBWj25
-         EA5i7Oys8HnMIp/GVmYEuv2tquekaNYQ2qVZYKdqIdav53RKqAFVk/JC0S4iGzO2mN
-         XCBlGKa4PpMB62J78Lc2V3KySJkc66vF/xDtl5Ko=
+        b=JC70NUvo1PP0UvkV7lrpG2CxcBk3D82jGwS0um6+oikcaCrsBsh6Zu4zUGKASouMc
+         rbUa23I7bOrfx9YRoB6EDMwG/rBqHpnfrKQztjVZqzBHbRQOVlLorzZM34FM7Pm1d1
+         mF+Xt4Tbe+uaZ4Y/uqXHL7lMuDBCo3npoIy0+6Vs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.19 105/148] ALSA: usb-audio: Avoid access before bLength check in build_audio_procunit()
-Date:   Fri, 11 Jan 2019 15:14:43 +0100
-Message-Id: <20190111131118.419944767@linuxfoundation.org>
+        stable@vger.kernel.org, Chuck Lever <chuck.lever@oracle.com>,
+        "J. Bruce Fields" <bfields@redhat.com>
+Subject: [PATCH 4.19 124/148] nfsd4: zero-length WRITE should succeed
+Date:   Fri, 11 Jan 2019 15:15:02 +0100
+Message-Id: <20190111131119.212173111@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131114.337122649@linuxfoundation.org>
 References: <20190111131114.337122649@linuxfoundation.org>
@@ -64,48 +65,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: J. Bruce Fields <bfields@redhat.com>
 
-commit f4351a199cc120ff9d59e06d02e8657d08e6cc46 upstream.
+commit fdec6114ee1f0f43b1ad081ad8d46b23ba126d70 upstream.
 
-The parser for the processing unit reads bNrInPins field before the
-bLength sanity check, which may lead to an out-of-bound access when a
-malformed descriptor is given.  Fix it by assignment after the bLength
-check.
+Zero-length writes are legal; from 5661 section 18.32.3: "If the count
+is zero, the WRITE will succeed and return a count of zero subject to
+permissions checking".
 
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+This check is unnecessary and is causing zero-length reads to return
+EINVAL.
+
+Cc: stable@vger.kernel.org
+Fixes: 3fd9557aec91 "NFSD: Refactor the generic write vector fill helper"
+Cc: Chuck Lever <chuck.lever@oracle.com>
+Signed-off-by: J. Bruce Fields <bfields@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/usb/mixer.c |   10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ fs/nfsd/nfs4proc.c |    2 --
+ 1 file changed, 2 deletions(-)
 
---- a/sound/usb/mixer.c
-+++ b/sound/usb/mixer.c
-@@ -2314,7 +2314,7 @@ static int build_audio_procunit(struct m
- 				char *name)
- {
- 	struct uac_processing_unit_descriptor *desc = raw_desc;
--	int num_ins = desc->bNrInPins;
-+	int num_ins;
- 	struct usb_mixer_elem_info *cval;
- 	struct snd_kcontrol *kctl;
- 	int i, err, nameid, type, len;
-@@ -2329,7 +2329,13 @@ static int build_audio_procunit(struct m
- 		0, NULL, default_value_info
- 	};
+--- a/fs/nfsd/nfs4proc.c
++++ b/fs/nfsd/nfs4proc.c
+@@ -1015,8 +1015,6 @@ nfsd4_write(struct svc_rqst *rqstp, stru
  
--	if (desc->bLength < 13 || desc->bLength < 13 + num_ins ||
-+	if (desc->bLength < 13) {
-+		usb_audio_err(state->chip, "invalid %s descriptor (id %d)\n", name, unitid);
-+		return -EINVAL;
-+	}
-+
-+	num_ins = desc->bNrInPins;
-+	if (desc->bLength < 13 + num_ins ||
- 	    desc->bLength < num_ins + uac_processing_unit_bControlSize(desc, state->mixer->protocol)) {
- 		usb_audio_err(state->chip, "invalid %s descriptor (id %d)\n", name, unitid);
- 		return -EINVAL;
+ 	nvecs = svc_fill_write_vector(rqstp, write->wr_pagelist,
+ 				      &write->wr_head, write->wr_buflen);
+-	if (!nvecs)
+-		return nfserr_io;
+ 	WARN_ON_ONCE(nvecs > ARRAY_SIZE(rqstp->rq_vec));
+ 
+ 	status = nfsd_vfs_write(rqstp, &cstate->current_fh, filp,
 
 
