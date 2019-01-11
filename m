@@ -2,166 +2,120 @@ Return-Path: <SRS0=uvhX=PT=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 103D4C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 20:12:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37928C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 20:12:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC00E2177B
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 20:12:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0A3C52177B
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 20:12:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="YSHauSFf"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="M8yx8CLM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390667AbfAKUMh (ORCPT
+        id S2390696AbfAKUMv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 15:12:37 -0500
-Received: from aserp2130.oracle.com ([141.146.126.79]:55458 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389268AbfAKUMh (ORCPT
+        Fri, 11 Jan 2019 15:12:51 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:42849 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388788AbfAKUMu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 15:12:37 -0500
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0BK3YQ7038845;
-        Fri, 11 Jan 2019 20:10:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id; s=corp-2018-07-02;
- bh=n1i+b3unkjpNYxqcEhfDSmY/9FySvsyj3Uo3w/fMxNE=;
- b=YSHauSFf1/rr7TAiE5uAWY4ThO9J3AN3nFh5+xR+uUG35wUhXc2r5mWzSNluzu9CYXNu
- nP4ILwnO5vnbzUFHZF+jkzN7MnOQCJ7fNQz8+O6yht6eWBpb9m+/IieJpIydiNxc3tJU
- jcDFwWqDFm1p1QJat/S2EbMu//+FJh8ChFJTnbhxHdS7vmhAfp8lUuYBapcXwOrYG9H9
- mGUFSyea19jcHRtmH4tmEfh0L5HQk4BMK7kWufEoyCUR1wuWFDSu8jxg+YSkhfcFHDHj
- q8xrAp0jzTEmFL5/VXqWm0+2MUxfkVIljvrsxZA52io9jz8LqIb6JO6CV6mlIVL+HAjc oQ== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by aserp2130.oracle.com with ESMTP id 2ptj3ef3dn-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 11 Jan 2019 20:10:17 +0000
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x0BKAGmd022776
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 11 Jan 2019 20:10:16 GMT
-Received: from abhmp0014.oracle.com (abhmp0014.oracle.com [141.146.116.20])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x0BKADA6013556;
-        Fri, 11 Jan 2019 20:10:13 GMT
-Received: from monkey.oracle.com (/50.38.38.67)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 11 Jan 2019 12:10:13 -0800
-From:   Mike Kravetz <mike.kravetz@oracle.com>
-To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Cc:     Hugh Dickins <hughd@google.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Toshi Kani <toshi.kani@hpe.com>,
-        Boaz Harrosh <boazh@netapp.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>
-Subject: [RFC PATCH] mm: align anon mmap for THP
-Date:   Fri, 11 Jan 2019 12:10:03 -0800
-Message-Id: <20190111201003.19755-1-mike.kravetz@oracle.com>
-X-Mailer: git-send-email 2.17.2
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9133 signatures=668680
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1901110159
+        Fri, 11 Jan 2019 15:12:50 -0500
+Received: by mail-lf1-f67.google.com with SMTP id l10so11651340lfh.9
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jan 2019 12:12:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=/45zICDjw0ekmJ13lUuG5Az2jUPs8RRC0mdZikz3nv0=;
+        b=M8yx8CLMSaa+tX4DwXY7gV2PjXNFKxBNkXslbdhrPIl1tXPG3DKO31MBAN1uXbz92B
+         YELXCXkdf2f0jQRi23Gz6cmWbCDhOWx9ytx4xoCDJ6F2YanQD+iTokQTlQhk8EfhVQJN
+         xZ7YT3PNusw3/FnuPC3IwSofuzF9MZCz4rmkU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/45zICDjw0ekmJ13lUuG5Az2jUPs8RRC0mdZikz3nv0=;
+        b=kQehWXOEhqJzh9R7/trU1pxCFkwqlDwpYsvm5pcxpspQJQ5hq+DtbzLKgctql9namP
+         Z+3CnMHGWQhR6MUUzxNPRUJ2YKAeT3rQV6qF2muGMEyHnPXb6eHqIkjJiEzUOKQ9vqG6
+         6FMpzxsV9R5VtHShWMOa8H4H4ktX8ofu5XL2enAyqcsppcwuEN8j6NicoPceFDyBSLNp
+         z/ArDq3UuDR2GRCSi1C2CB1m2FJ9gJ+/lO7roGNv5unKmEoIJemUt68M5Opar2h9Cgf7
+         67mot9DxsWGJMNzWAUYl78Pt3DAR7tFsyQGN1Udpj+FXPpFEddDx47UbheBWlLyskmmV
+         2zFw==
+X-Gm-Message-State: AJcUukcQZhRUELMKJCvUnWW/GGUJ9jIjRJAafdtfZRRcOWnlBCJ756Vs
+        R5hYSIv5dgyayIZqW7OyPYAPoWo+PFk=
+X-Google-Smtp-Source: ALg8bN5+m/on/haA+afbgR+Do+S63tLQfb1KZVB+miGbmQDewZ37WSrW/AOgXh3oOu+Nsr93Db2J8g==
+X-Received: by 2002:a19:c801:: with SMTP id y1mr8499582lff.53.1547237568155;
+        Fri, 11 Jan 2019 12:12:48 -0800 (PST)
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com. [209.85.167.45])
+        by smtp.gmail.com with ESMTPSA id e5-v6sm15728230ljj.91.2019.01.11.12.12.46
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 11 Jan 2019 12:12:47 -0800 (PST)
+Received: by mail-lf1-f45.google.com with SMTP id e26so11684011lfc.2
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Jan 2019 12:12:46 -0800 (PST)
+X-Received: by 2002:a19:6e0b:: with SMTP id j11mr9500440lfc.124.1547237566319;
+ Fri, 11 Jan 2019 12:12:46 -0800 (PST)
+MIME-Version: 1.0
+References: <cover.1547073843.git.jpoimboe@redhat.com> <20190110203023.GL2861@worktop.programming.kicks-ass.net>
+ <20190110205226.iburt6mrddsxnjpk@treble> <CAHk-=whR7LzKcuB9Z2km1T25DUkJcbE9rNhCzApAPADbDqMhmQ@mail.gmail.com>
+ <CALCETrWBwTVHWXahVXMMBL4QA1f+YdKgv1XANXPsk86FjFFH2Q@mail.gmail.com>
+ <B374297A-8298-4CED-8EC0-6A39BDBA5F05@vmware.com> <20190111151525.tf7lhuycyyvjjxez@treble>
+ <CAHk-=wjJm8DpCsw=Wno01q4VFqUeiLKE8QmbAtUJurYhn3jRqA@mail.gmail.com> <20190111200420.qtyffayxceysoarf@treble>
+In-Reply-To: <20190111200420.qtyffayxceysoarf@treble>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 11 Jan 2019 12:12:30 -0800
+X-Gmail-Original-Message-ID: <CAHk-=whLu9kG3dqgXUkCrNrTp0NVtdOOWxvonXTfhtq-krXo+Q@mail.gmail.com>
+Message-ID: <CAHk-=whLu9kG3dqgXUkCrNrTp0NVtdOOWxvonXTfhtq-krXo+Q@mail.gmail.com>
+Subject: Re: [PATCH v3 0/6] Static calls
+To:     Josh Poimboeuf <jpoimboe@redhat.com>
+Cc:     Nadav Amit <namit@vmware.com>, Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Jason Baron <jbaron@akamai.com>, Jiri Kosina <jkosina@suse.cz>,
+        David Laight <David.Laight@aculab.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Julia Cartwright <julia@ni.com>, Jessica Yu <jeyu@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Edward Cree <ecree@solarflare.com>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-At LPC last year, Boaz Harrosh asked why he had to 'jump through hoops'
-to get an address returned by mmap() suitably aligned for THP.  It seems
-that if mmap is asking for a mapping length greater than huge page
-size, it should align the returned address to huge page size.
+On Fri, Jan 11, 2019 at 12:04 PM Josh Poimboeuf <jpoimboe@redhat.com> wrote:
+>
+> But really, to me, having to create and manage all those custom
+> trampolines still feels a lot more complex than just making a gap on the
+> stack.
 
-THP alignment has already been added for DAX, shm and tmpfs.  However,
-simple anon mappings does not take THP alignment into account.
+There are no "all those custom trampolines".
 
-I could not determine if this was ever considered or discussed in the past.
+There is literally *one* custom trampoline that you generate as you do
+the rewriting.
 
-There is a maze of arch specific and independent get_unmapped_area
-routines.  The patch below just modifies the common vm_unmapped_area
-routine.  It may be too simplistic, but I wanted to throw out some
-code while asking if something like this has ever been considered.
+Well, two, since you need the version with the "sti" before the jmp.
 
-Signed-off-by: Mike Kravetz <mike.kravetz@oracle.com>
----
- include/linux/huge_mm.h |  6 ++++++
- include/linux/mm.h      |  3 +++
- mm/mmap.c               | 11 +++++++++++
- 3 files changed, 20 insertions(+)
+It would be possible to generate the custom trampoline on the fly in
+the BP handler itself, and just have a magic flag for that case. But
+it's probably simpler to do it in the caller, since you need to
+generate that special writable and executable code sequence. You
+probably don't want to do that at BP time.
 
-diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-index 4663ee96cf59..dbff7ea7d2e7 100644
---- a/include/linux/huge_mm.h
-+++ b/include/linux/huge_mm.h
-@@ -117,6 +117,10 @@ static inline bool transparent_hugepage_enabled(struct vm_area_struct *vma)
- 	return false;
- }
- 
-+#define thp_enabled_globally()						\
-+	(transparent_hugepage_flags &					\
-+	 ((1<<TRANSPARENT_HUGEPAGE_FLAG) |				\
-+	  (1<<TRANSPARENT_HUGEPAGE_REQ_MADV_FLAG)))
- #define transparent_hugepage_use_zero_page()				\
- 	(transparent_hugepage_flags &					\
- 	 (1<<TRANSPARENT_HUGEPAGE_USE_ZERO_PAGE_FLAG))
-@@ -262,6 +266,8 @@ static inline bool transparent_hugepage_enabled(struct vm_area_struct *vma)
- 	return false;
- }
- 
-+#define thp_enabled_globally() false
-+
- static inline void prep_transhuge_page(struct page *page) {}
- 
- #define transparent_hugepage_flags 0UL
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 5411de93a363..131b0be0bbeb 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -2358,6 +2358,7 @@ struct vm_unmapped_area_info {
- 	unsigned long align_offset;
- };
- 
-+extern void thp_vma_unmapped_align(struct vm_unmapped_area_info *info);
- extern unsigned long unmapped_area(struct vm_unmapped_area_info *info);
- extern unsigned long unmapped_area_topdown(struct vm_unmapped_area_info *info);
- 
-@@ -2373,6 +2374,8 @@ extern unsigned long unmapped_area_topdown(struct vm_unmapped_area_info *info);
- static inline unsigned long
- vm_unmapped_area(struct vm_unmapped_area_info *info)
- {
-+	thp_vma_unmapped_align(info);
-+
- 	if (info->flags & VM_UNMAPPED_AREA_TOPDOWN)
- 		return unmapped_area_topdown(info);
- 	else
-diff --git a/mm/mmap.c b/mm/mmap.c
-index 6c04292e16a7..f9c111394052 100644
---- a/mm/mmap.c
-+++ b/mm/mmap.c
-@@ -1864,6 +1864,17 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
- 	return error;
- }
- 
-+void thp_vma_unmapped_align(struct vm_unmapped_area_info *info)
-+{
-+	if (!thp_enabled_globally())
-+		return;
-+
-+	if (info->align_mask || info->length < HPAGE_PMD_SIZE)
-+		return;
-+
-+	info->align_mask = PAGE_MASK & (HPAGE_PMD_SIZE - 1);
-+}
-+
- unsigned long unmapped_area(struct vm_unmapped_area_info *info)
- {
- 	/*
--- 
-2.17.2
+You probably want to use a FIX_TEXT_POKE2 page for the generated
+sequence that just maps some generated code executably for a short
+while. Or something like that.
 
+              Linus
+
+             Linus
