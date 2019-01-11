@@ -4,49 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6033C43387
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:42:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77407C43387
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:42:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A55842184A
-	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:42:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 49BEA21841
+	for <linux-kernel@archiver.kernel.org>; Fri, 11 Jan 2019 14:42:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1547217753;
-	bh=ya2H4zafnSXs90y/RmLA4RALINQUHsB9vrFMJBbUwsg=;
+	s=default; t=1547217757;
+	bh=giUAEdQCaAd5+eyzVF24Wk2jX2jaEvpuhEAFWoV2n7s=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=r7EwnCddiOkTMtGUtpsQ6pTJBbY7QXn4G9Bti/nggqMTgbIkSeV0+O9hi9ePkqV8N
-	 S/DXQJEzfvy4ap6wG3vidotJMRR9ci6uK1Uc8WCSqc4qUNRaGYU3p+y5j38iNPbZTy
-	 AWdSdD3ZbtGAFbB5dhNfoGD2FkhFVqnRPOdWjvsU=
+	b=R1X8/ScdoqdOLLl/of1m8rF/+GLp8+u+IQ0DHiFPDR6dKMgE3d1rJpKANdNNzQxZ/
+	 KxfycU3NaJz8TwZ1YVzn+HNyqb1OMtkUM2IYkViSFt1oFkQLpOXt3G7dyRQ4IWxwYT
+	 DHU2nLv4Q8OQZt8b9PNVRyunYGw2HF15Wfa3d9jE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404181AbfAKOmd (ORCPT
+        id S2404195AbfAKOmg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 11 Jan 2019 09:42:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35238 "EHLO mail.kernel.org"
+        Fri, 11 Jan 2019 09:42:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35288 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404166AbfAKOm3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 11 Jan 2019 09:42:29 -0500
+        id S2403877AbfAKOmc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 11 Jan 2019 09:42:32 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C0209206B6;
-        Fri, 11 Jan 2019 14:42:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6279C2063F;
+        Fri, 11 Jan 2019 14:42:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1547217748;
-        bh=ya2H4zafnSXs90y/RmLA4RALINQUHsB9vrFMJBbUwsg=;
+        s=default; t=1547217750;
+        bh=giUAEdQCaAd5+eyzVF24Wk2jX2jaEvpuhEAFWoV2n7s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IF2TqD4mlkbvnnUwE0xhnUZUuuyBAAFPyAIK51eSSIHJHOGUccE206VZ4wqyuMn6i
-         J5M6lfIdjfcgWpE/mX1f/wyH41aSJwjniRqVoa2jgrzen+Grm9d2rAQbhsVgNmMt/S
-         7uTn3Ag9i8tuFvtyb4UeIMVlhZzrKgp33Ws8Oa+k=
+        b=jPrNuHqTpYbnFTfNbyfxhUcNG9FpKDVO6taKsgR+hNQaDbrWKhd01DJ4f11/rlb6R
+         8ogphx30m+w4ZE6YlHK8ErlYKuA6hRjwsq3X1QtqdTTgHV4bnzqv4tJklhtEG+C9dT
+         5VKWl3EI0HMMrb+TGiJvKx6yoDFIwweweeHQgnBs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paolo Valente <paolo.valente@linaro.org>,
-        Ming Lei <ming.lei@redhat.com>, Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.20 26/65] block: deactivate blk_stat timer in wbt_disable_default()
-Date:   Fri, 11 Jan 2019 15:15:12 +0100
-Message-Id: <20190111131059.971083279@linuxfoundation.org>
+        stable@vger.kernel.org, Damien Le Moal <damien.lemoal@wdc.com>,
+        Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 4.20 27/65] block: mq-deadline: Fix write completion handling
+Date:   Fri, 11 Jan 2019 15:15:13 +0100
+Message-Id: <20190111131100.086969226@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190111131055.331350141@linuxfoundation.org>
 References: <20190111131055.331350141@linuxfoundation.org>
@@ -65,96 +65,101 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ming Lei <ming.lei@redhat.com>
+From: Damien Le Moal <damien.lemoal@wdc.com>
 
-commit 544fbd16a461a318cd80537d1331c0df5c6cf930 upstream.
+commit 7211aef86f79583e59b88a0aba0bc830566f7e8e upstream.
 
-rwb_enabled() can't be changed when there is any inflight IO.
+For a zoned block device using mq-deadline, if a write request for a
+zone is received while another write was already dispatched for the same
+zone, dd_dispatch_request() will return NULL and the newly inserted
+write request is kept in the scheduler queue waiting for the ongoing
+zone write to complete. With this behavior, when no other request has
+been dispatched, rq_list in blk_mq_sched_dispatch_requests() is empty
+and blk_mq_sched_mark_restart_hctx() not called. This in turn leads to
+__blk_mq_free_request() call of blk_mq_sched_restart() to not run the
+queue when the already dispatched write request completes. The newly
+dispatched request stays stuck in the scheduler queue until eventually
+another request is submitted.
 
-wbt_disable_default() may set rwb->wb_normal as zero, however the
-blk_stat timer may still be pending, and the timer function will update
-wrb->wb_normal again.
+This problem does not affect SCSI disk as the SCSI stack handles queue
+restart on request completion. However, this problem is can be triggered
+the nullblk driver with zoned mode enabled.
 
-This patch introduces blk_stat_deactivate() and applies it in
-wbt_disable_default(), then the following IO hang triggered when running
-parted & switching io scheduler can be fixed:
+Fix this by always requesting a queue restart in dd_dispatch_request()
+if no request was dispatched while WRITE requests are queued.
 
-[  369.937806] INFO: task parted:3645 blocked for more than 120 seconds.
-[  369.938941]       Not tainted 4.20.0-rc6-00284-g906c801e5248 #498
-[  369.939797] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-[  369.940768] parted          D    0  3645   3239 0x00000000
-[  369.941500] Call Trace:
-[  369.941874]  ? __schedule+0x6d9/0x74c
-[  369.942392]  ? wbt_done+0x5e/0x5e
-[  369.942864]  ? wbt_cleanup_cb+0x16/0x16
-[  369.943404]  ? wbt_done+0x5e/0x5e
-[  369.943874]  schedule+0x67/0x78
-[  369.944298]  io_schedule+0x12/0x33
-[  369.944771]  rq_qos_wait+0xb5/0x119
-[  369.945193]  ? karma_partition+0x1c2/0x1c2
-[  369.945691]  ? wbt_cleanup_cb+0x16/0x16
-[  369.946151]  wbt_wait+0x85/0xb6
-[  369.946540]  __rq_qos_throttle+0x23/0x2f
-[  369.947014]  blk_mq_make_request+0xe6/0x40a
-[  369.947518]  generic_make_request+0x192/0x2fe
-[  369.948042]  ? submit_bio+0x103/0x11f
-[  369.948486]  ? __radix_tree_lookup+0x35/0xb5
-[  369.949011]  submit_bio+0x103/0x11f
-[  369.949436]  ? blkg_lookup_slowpath+0x25/0x44
-[  369.949962]  submit_bio_wait+0x53/0x7f
-[  369.950469]  blkdev_issue_flush+0x8a/0xae
-[  369.951032]  blkdev_fsync+0x2f/0x3a
-[  369.951502]  do_fsync+0x2e/0x47
-[  369.951887]  __x64_sys_fsync+0x10/0x13
-[  369.952374]  do_syscall_64+0x89/0x149
-[  369.952819]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-[  369.953492] RIP: 0033:0x7f95a1e729d4
-[  369.953996] Code: Bad RIP value.
-[  369.954456] RSP: 002b:00007ffdb570dd48 EFLAGS: 00000246 ORIG_RAX: 000000000000004a
-[  369.955506] RAX: ffffffffffffffda RBX: 000055c2139c6be0 RCX: 00007f95a1e729d4
-[  369.956389] RDX: 0000000000000001 RSI: 0000000000001261 RDI: 0000000000000004
-[  369.957325] RBP: 0000000000000002 R08: 0000000000000000 R09: 000055c2139c6ce0
-[  369.958199] R10: 0000000000000000 R11: 0000000000000246 R12: 000055c2139c0380
-[  369.959143] R13: 0000000000000004 R14: 0000000000000100 R15: 0000000000000008
-
-Cc: stable@vger.kernel.org
-Cc: Paolo Valente <paolo.valente@linaro.org>
-Signed-off-by: Ming Lei <ming.lei@redhat.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Fixes: 5700f69178e9 ("mq-deadline: Introduce zone locking support")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Damien Le Moal <damien.lemoal@wdc.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
----
- block/blk-stat.h |    5 +++++
- block/blk-wbt.c  |    4 +++-
- 2 files changed, 8 insertions(+), 1 deletion(-)
+Add missing export of blk_mq_sched_restart()
 
---- a/block/blk-stat.h
-+++ b/block/blk-stat.h
-@@ -145,6 +145,11 @@ static inline void blk_stat_activate_nse
- 	mod_timer(&cb->timer, jiffies + nsecs_to_jiffies(nsecs));
- }
- 
-+static inline void blk_stat_deactivate(struct blk_stat_callback *cb)
-+{
-+	del_timer_sync(&cb->timer);
-+}
-+
- /**
-  * blk_stat_activate_msecs() - Gather block statistics during a time window in
-  * milliseconds.
---- a/block/blk-wbt.c
-+++ b/block/blk-wbt.c
-@@ -760,8 +760,10 @@ void wbt_disable_default(struct request_
- 	if (!rqos)
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+
+---
+ block/blk-mq-sched.c |    3 ++-
+ block/blk-mq-sched.h |    1 +
+ block/mq-deadline.c  |   12 +++++++++++-
+ 3 files changed, 14 insertions(+), 2 deletions(-)
+
+--- a/block/blk-mq-sched.c
++++ b/block/blk-mq-sched.c
+@@ -54,13 +54,14 @@ void blk_mq_sched_assign_ioc(struct requ
+  * Mark a hardware queue as needing a restart. For shared queues, maintain
+  * a count of how many hardware queues are marked for restart.
+  */
+-static void blk_mq_sched_mark_restart_hctx(struct blk_mq_hw_ctx *hctx)
++void blk_mq_sched_mark_restart_hctx(struct blk_mq_hw_ctx *hctx)
+ {
+ 	if (test_bit(BLK_MQ_S_SCHED_RESTART, &hctx->state))
  		return;
- 	rwb = RQWB(rqos);
--	if (rwb->enable_state == WBT_STATE_ON_DEFAULT)
-+	if (rwb->enable_state == WBT_STATE_ON_DEFAULT) {
-+		blk_stat_deactivate(rwb->cb);
- 		rwb->wb_normal = 0;
-+	}
- }
- EXPORT_SYMBOL_GPL(wbt_disable_default);
  
+ 	set_bit(BLK_MQ_S_SCHED_RESTART, &hctx->state);
+ }
++EXPORT_SYMBOL_GPL(blk_mq_sched_mark_restart_hctx);
+ 
+ void blk_mq_sched_restart(struct blk_mq_hw_ctx *hctx)
+ {
+--- a/block/blk-mq-sched.h
++++ b/block/blk-mq-sched.h
+@@ -15,6 +15,7 @@ bool blk_mq_sched_try_merge(struct reque
+ 				struct request **merged_request);
+ bool __blk_mq_sched_bio_merge(struct request_queue *q, struct bio *bio);
+ bool blk_mq_sched_try_insert_merge(struct request_queue *q, struct request *rq);
++void blk_mq_sched_mark_restart_hctx(struct blk_mq_hw_ctx *hctx);
+ void blk_mq_sched_restart(struct blk_mq_hw_ctx *hctx);
+ 
+ void blk_mq_sched_insert_request(struct request *rq, bool at_head,
+--- a/block/mq-deadline.c
++++ b/block/mq-deadline.c
+@@ -373,9 +373,16 @@ done:
+ 
+ /*
+  * One confusing aspect here is that we get called for a specific
+- * hardware queue, but we return a request that may not be for a
++ * hardware queue, but we may return a request that is for a
+  * different hardware queue. This is because mq-deadline has shared
+  * state for all hardware queues, in terms of sorting, FIFOs, etc.
++ *
++ * For a zoned block device, __dd_dispatch_request() may return NULL
++ * if all the queued write requests are directed at zones that are already
++ * locked due to on-going write requests. In this case, make sure to mark
++ * the queue as needing a restart to ensure that the queue is run again
++ * and the pending writes dispatched once the target zones for the ongoing
++ * write requests are unlocked in dd_finish_request().
+  */
+ static struct request *dd_dispatch_request(struct blk_mq_hw_ctx *hctx)
+ {
+@@ -384,6 +391,9 @@ static struct request *dd_dispatch_reque
+ 
+ 	spin_lock(&dd->lock);
+ 	rq = __dd_dispatch_request(dd);
++	if (!rq && blk_queue_is_zoned(hctx->queue) &&
++	    !list_empty(&dd->fifo_list[WRITE]))
++		blk_mq_sched_mark_restart_hctx(hctx);
+ 	spin_unlock(&dd->lock);
+ 
+ 	return rq;
 
 
